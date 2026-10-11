@@ -457,6 +457,24 @@ Goal: a cost per matched function, so the whole job can be priced before committ
      virtuals), not shared YR headers, so the sources are proof, not `src/` material;
      about 200 references stay unverified for want of names; the draw excluded functions
      over 1,500 bytes, EA's patch sites and the 26% of code with no module name.
+   - **Consolidation pilot (11 October 2026): four of the twenty moved into `src/` on
+     real headers, all MATCH.** Three (TeamClass's play-music mission, the options
+     struct's `Save`, `MapClass::In_Local_Radar`) were TibSun's code unchanged once the
+     headers carried YR's layout: minutes each by hand. The fourth,
+     `BaseClass::Mark_Node_Placed` (name invented), needed YR's object and type
+     hierarchies; on them it matched in three checks with no stubs (Sonnet, 74k
+     tokens).
+   - **Headers are the real cost, once.** `tools/headercheck.py` proves a class's size,
+     member offsets and every vtable slot against the exe through RTTI; Sonnet alone
+     took ObjectClass, MissionClass, RadioClass, TechnoClass, BuildingClass,
+     ObjectTypeClass, TechnoTypeClass and BuildingTypeClass to PASS (YR added about
+     100 virtuals to the object chain and about 250 members to TechnoTypeClass). About
+     0.8M agent tokens for the checker, the layout fix and those eight classes. Names
+     the agents mapped from TS to YR by position are marked as guesses for matches to
+     settle.
+   - **Per-function consolidation is cheap once a class's header exists;** a header is a
+     one-off that every function on that class shares. YR has about 950 classes, most
+     far smaller than these.
 7. **Price it.** Scale the measured cost to about 20k game functions (less what OpenTS
    carries over), and decide.
 
