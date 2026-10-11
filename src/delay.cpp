@@ -1,0 +1,144 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright 2026 ra2-decomp contributors
+// Copyright 2025 Electronic Arts Inc.; 2026 OpenTS contributors
+// Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
+
+#include "always.h"
+#include "delay.h"
+#include "stimer.h"
+#include "timer.h"
+
+// FUNCTION: 0x004A50A0
+void Delay(int duration)
+{
+	CDTimerClass<SystemTimerClass> timer(duration);
+
+	while (timer() != 0) {
+		;
+	}
+
+#if (FALSE)
+	while (duration--)
+		Wait_Vert_Blank(VertBlank);
+#endif
+}
+
+// FUNCTION: 0x004A50F0
+DelayTimerClass::DelayTimerClass(void) :
+	Timer(0),
+	IsActive(false),
+	IsToCountUp(false)
+{
+}
+
+// FUNCTION: 0x004A5110
+bool DelayTimerClass::Is_Count_Up_Active(void) const
+{
+	if (IsActive && IsToCountUp) {
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x004A5130
+bool DelayTimerClass::Is_Count_Down_Active(void) const
+{
+	if (IsActive && !IsToCountUp) {
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x004A5150
+bool DelayTimerClass::Has_Ended(void) const
+{
+	if (!IsActive || Timer.Has_Completed()) {
+		return(true);
+	}
+
+	return(false);
+}
+
+// FUNCTION: 0x004A51B0
+bool DelayTimerClass::Is_Count_Up_Complete(void) const
+{
+	if (!IsActive && IsToCountUp == true) {
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x004A51D0
+bool DelayTimerClass::Is_Count_Down_Complete(void) const
+{
+	if (!IsActive && !IsToCountUp) {
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x004A51F0
+void DelayTimerClass::Count_Up(double duration)
+{
+	if (IsActive || IsToCountUp != true) {
+		IsActive = true;
+		Duration = duration * TICKS_PER_MINUTE;
+		Timer = Duration;
+		IsToCountUp = true;
+	}
+}
+
+// FUNCTION: 0x004A5240
+void DelayTimerClass::Count_Down(double duration)
+{
+	if (IsActive || IsToCountUp) {
+		IsActive = true;
+		Duration = duration * TICKS_PER_MINUTE;
+		Timer = Duration;
+		IsToCountUp = false;
+	}
+}
+
+// FUNCTION: 0x004A5290
+void DelayTimerClass::Reverse(void)
+{
+	if (IsActive) {
+		Timer.Reverse();
+		IsToCountUp = !IsToCountUp;
+	}
+}
+
+// FUNCTION: 0x004A52D0
+void DelayTimerClass::End_Count_Up(void)
+{
+	IsActive = false;
+	IsToCountUp = true;
+}
+
+// FUNCTION: 0x004A52E0
+void DelayTimerClass::End_Count_Down(void)
+{
+	IsActive = false;
+	IsToCountUp = false;
+}
+
+// FUNCTION: 0x004A52F0
+double DelayTimerClass::Percent_Complete(void) const
+{
+	if (IsActive) {
+		return(Timer.Progress());
+	}
+	return(1.0);
+}
+
+// FUNCTION: 0x004A5360
+void DelayTimerClass::End_Count(void)
+{
+	if (Is_Count_Up_Active()) {
+		End_Count_Up();
+	}
+
+	if (Is_Count_Down_Active()) {
+		End_Count_Down();
+	}
+}

@@ -51,6 +51,18 @@
 #include "target.hh"
 #include "tube.hh"
 
+// FUNCTION: 0x006EC770
+void TeamClass::TMission_MOVECELL(TeamMissionClass * mission, bool first_time)
+{
+	if (first_time) {
+		Cell cell;
+		cell.X = mission->Data.Value % 128;
+		cell.Y = mission->Data.Value / 128;
+		Assign_Mission_Target(&Map[cell]);
+	}
+	Coordinate_Move();
+}
+
 // FUNCTION: 0x006EDEF0
 void TeamClass::TMission_PLAY_MUSIC(TeamMissionClass * mission, bool)
 {

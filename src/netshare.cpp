@@ -1,0 +1,65 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright 2026 ra2-decomp contributors
+// Copyright 2025 Electronic Arts Inc.; 2026 OpenTS contributors
+// Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
+
+#include "always.h"
+#include "netshare.h"
+#include "_rules.h"
+#include "cd.h"
+#include "conquer.h"
+#include "data.h"
+#include "dbgprint.h"
+#include "globals.h"
+#include "goptions.h"
+#include "ipxmgr.h"
+#include "language\language.h"
+#include "lzopipe.h"
+#include "lzostraw.h"
+#include "mapgen.h"
+#include "modemhst.h"
+#include "msgbox.h"
+#include "netdlg.h"
+#include "netdlg2.h"
+#include "newmenu.h"
+#include "nulldlg.h"
+#include "nullmgr.h"
+#include "ownrdraw.h"
+#include "rules.h"
+#include "scenario.h"
+#include "sendfile.h"
+#include "session.h"
+#include "stimer.h"
+#include "wdtnet.h"
+#include "windlg.h"
+#include "wolapi\wolapi.h"
+#include "wonline.h"
+#include "worlddom.h"
+#include "wstring.h"
+#include "xpipe.h"
+#include "xstraw.h"
+#include <ctime>
+
+// FUNCTION: 0x005E26C0
+HWND GameoptWindow(void)
+{
+	HWND dialog;
+
+	dialog = WS_Find_Dialog(IDD_WOL_GAMEOPT);
+	if (dialog) {
+		return(dialog);
+	}
+	dialog = WS_Find_Dialog(IDD_WOL_GUEST);
+	if (dialog) {
+		return(dialog);
+	}
+	dialog = WS_Find_Dialog(IDD_MPLAYER_HOST);
+	if (dialog) {
+		return(dialog);
+	}
+	dialog = WS_Find_Dialog(IDD_MPLAYER_GUEST);
+	if (dialog) {
+		return(dialog);
+	}
+	return(0);
+}

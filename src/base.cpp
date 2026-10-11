@@ -30,6 +30,36 @@ inline BaseNodeClass * BaseClass::Get_Node(BuildingClass const * obj)
 	return(NULL);
 }
 
+// FUNCTION: 0x0042E640
+bool BaseNodeClass::operator == (BaseNodeClass const & node)
+{
+	return(Type == node.Type && CellID == node.CellID);
+}
+
+// FUNCTION: 0x0042E670
+bool BaseNodeClass::operator !=(BaseNodeClass const & node)
+{
+	return(!(*this == node));
+}
+
+// FUNCTION: 0x0042E6F0
+BaseClass::BaseClass(void) :
+	Nodes(),
+	PercentBuilt(0),
+	InnerCells(),
+	OuterCells(),
+	PlacementCenter(0,0),
+	BaseAreaRect(0,0,0,0),
+	LastBaseAreaRect(0,0,0,0),
+	House(NULL)
+{
+}
+
+// FUNCTION: 0x0042F1E0
+BaseClass::BaseClass(NoInitClass const & x)
+{
+}
+
 // FUNCTION: 0x0042F260
 void BaseClass::Mark_Node_Placed(BuildingClass const * obj)
 {

@@ -29,6 +29,28 @@
 #include <ctime> // for station ID computation
 #include <dos.h> // for station ID computation
 
+// FUNCTION: 0x0069A340
+unsigned int SessionClass::Compute_Unique_ID(void)
+{
+	unsigned int id;
+	char *path;
+	unsigned i;
+
+	id = timeGetTime();
+
+	unsigned int space_available = Disk_Space_Available();
+	Add_CRC(&id, space_available);
+
+	path = getenv("PATH");
+	if (path) {
+		for (i = 0; i < strlen(path); i++) {
+			Add_CRC(&id, (unsigned int)path[i]);
+		}
+	}
+
+	return(id);
+}
+
 // FUNCTION: 0x0069B560
 bool GameOptionsType::Save(IStream * stream) const
 {
