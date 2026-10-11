@@ -15,7 +15,7 @@ __pycache__/
 *.rep/
 *.idb
 *.i64
-ghidra/
+/ghidra/
 
 # Playtest copy of the game.
 playtest/

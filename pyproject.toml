@@ -1,0 +1,9 @@
+[project]
+name = "ra2-decomp"
+version = "0.1.0"
+description = "Tooling for a matching decompilation of Yuri's Revenge (gamemd.exe)"
+requires-python = ">=3.11"
+dependencies = [
+    "capstone>=5",
+    "pefile>=2023.2.7",
+]
