@@ -1,7 +1,6 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 6 October 2026: parked, waiting for token budget. Folder holds this plan only:
-no code, no tools, no binaries. Next step is the spike under "First session".
+Status, 11 October 2026: spike in progress (see "First session").
 
 ## The goal
 
@@ -130,6 +129,16 @@ compiler era). Many RA2 classes are the RA classes grown up: same names, same pa
   using the rebuilt PDB and reports per-function accuracy. Its maintainers note that an
   unused inline or enum added to a header shifts the codegen of about 5% of functions:
   OpenTS's include-order trap again.
+- [Open-BFME-1](https://github.com/Open-BFME/Open-BFME-1) (Battle for Middle-earth 1,
+  MSVC 7.1, GPL-3): an AI agent fleet pushing one verified function per commit, 59k
+  commits by October 2026; progress self-reported, anywhere from 8% to over 50%. Different
+  compiler and engine (SAGE, ported from Generals source), so no code carries over; its
+  `AGENTS.md` and `docs/matching.md` are the reference for agent logistics. Taken from it:
+  relocation targets are checked, not just skipped (step 4); attempts are logged and near
+  misses banked (step 6); unproven functions keep address-based names ("Name
+  precedence"); a vague agent prompt "produced zero progress" in six measured sessions.
+  Not taken: it commits its compiler and the retail exes, and its 218 tools and 40-60
+  minute full gate are a warning about tooling sprawl.
 
 ### Further references
 
@@ -229,7 +238,10 @@ footing:
 - source code only: the README says plainly that you must own the game to build or run
   anything, and that the project is not affiliated with EA;
 - a repo of its own, kept separate from Tiberian Factions' Workshop presence;
-- private through the spike; talk to the Phobos community before it goes public.
+- private through the spike; talk to the Phobos community before it goes public. The
+  OpenTS Discord already favours byte matching (October 2026: "verify identical ASM with
+  the same compiler and options" is how to do it) and is cool on non-matching AI ports
+  and the recomp, so open with the checker, not with the agents.
 
 Licence to decide, with one constraint: OpenTS is GPL-3, so tier 0 (compiling OpenTS's
 function unchanged) copies GPL code into `src/`, and `src/` must then be GPL-3. Byte
@@ -240,68 +252,91 @@ file: use them for facts (addresses, layouts, behaviour), never paste their head
 
 Goal: a cost per matched function, so the whole job can be priced before committing.
 
-1. **Toolchain.** Get VC6 build 12.00.8447 running under Wine. Decided 11 October 2026:
-   no original disc is available, so the compiler is downloaded, the same way the other
-   decomps get theirs.
-   - A setup script fetches the base VC6 install and the service pack whose `cl` is
-     12.00.8447 (SP3, confirmed: see below), checks every download
-     against a SHA-256 pinned in the script, and installs into the gitignored `toolchain/`.
-     The compiler is never committed or redistributed.
-   - Gate: `cl` must print **12.00.8447** before anything else runs. A near miss is not
-     good enough, because each service pack can emit different code.
-   - Not the SP6 portable that TheSuperHackers' CI pulls (`itsmattkc/MSVC600`, pinned commit
-     and SHA-256): wrong build for us, but its fetch-and-verify step is the pattern to copy.
-     The base install's libraries (build 8168) match the Rich header's prebuilt objects.
-   - Sources found 11 October 2026 (archive.org; SHA-1 as archive.org lists it, pin SHA-256
-     after the first download):
+1. **Toolchain. Done 11 October 2026.** No original disc is available, so the compiler is
+   downloaded, the same way the other decomps get theirs. `tools/setup_toolchain.sh`
+   fetches the base VC6 disc and the SP3 disc, checks both against pinned SHA-256s, lays
+   SP3's compiler files over the base `VC98/` tree in the gitignored `toolchain/vc6sp3/`,
+   checks the installed compiler and linker files against pinned SHA-256s, and runs the
+   gate. `tools/wcl` runs `cl` under Wine (`tools/wlink` and `tools/wlib` the linker and
+   librarian), with the repo mapped to drive `Y:` because the compiler's output depends on
+   the paths it sees (Byte Tactics measured this). The compiler is never committed.
+   - **Gate: an object's `@comp.id` reads product 11, build 8447,** the Rich header's entry
+     for the game's 513 C++ modules (`tools/compid.py`). Not the `cl` banner: no service
+     pack updates `CL.EXE`, so it prints 12.00.8168 whatever sits behind it.
+   - **What SP3 changes**, read from `sp398ent.inf` and the files' version info:
+     `C2.DLL` 12.00.8447 (the code generator, shipped disguised as `msvcep.dll` in
+     `VS6SP3_1.EXE`, and the only file that sets the 8447 stamp), `C1.DLL` and `C1XX.DLL`
+     12.00.8472, `LINK.EXE` 6.00.8447, `CVTRES.EXE` 5.00.1736, the CRT libraries (`LIBC`,
+     `LIBCMT`, `MSVCRT` and debug variants), `ATL`, `OLEAUT32` and `UUID` libs and
+     `OLEAUTO.H`. All but `C2.DLL` sit in `VS6sp3_4.cab` inside `VS6SP3_5.EXE`. `CL.EXE`,
+     `LIB.EXE` and `MSPDB60.DLL` stay at the base disc's 8168. The setup script installs
+     the whole SP3 set, as SP3's installer would have on Westwood's machines. On a probe
+     the 8168 and 8472 front ends emit identical objects; if a function ever differs
+     between them, that is the place to test.
+   - The same package holds two other `C2.DLL` builds for other editions (`msse.dll`
+     11.99.8447, `intro.dll` 11.98.8447); not ours. Linker 6.00.8447 matches the Rich
+     header's product-4 entry.
+   - Sources (archive.org). SHA-256 pinned in the script for the two discs used; SP4 and
+     SP5 are kept for reference only:
 
-     | What | Item | File | SHA-1 |
+     | What | Item | File | SHA-256 |
      |---|---|---|---|
-     | Base VS6 Enterprise | `en_vs6_ent` | `en_vs6_ent_cd1.iso` (643 MB) | `25e382cabcf6c648a327db3b90ff38962bfc0e84` |
-     | SP3 (May 1999) | `ms-technet-tnsb9908` | `TNSB9908.iso` (594 MB), in `VSTUDIO/SP3/` | `bf599ed15861b69ea89ffa52626eb252df2053be` |
-     | SP4 (fallback) | `X05-86592` | `2000-08_X05-86592_X05-78367_vs6sp4.7z` (379 MB) | `05a28ded15429ae0ea10b27ef646056c565f5284` |
-     | SP5 (reference only) | `vs6sp5` | `vs6sp5.exe` (136 MB) | `6af12fb3e2c7c271be67c9c9833c63b82bb7b9bf` |
+     | Base VS6 Enterprise CD1 | `en_vs6_ent` | `en_vs6_ent_cd1.iso` (643 MB) | `d38250b8…ae0347` |
+     | SP3 (May 1999) | `ms-technet-tnsb9908` | `TNSB9908.iso` (594 MB), in `VSTUDIO/SP3/` | `f3eefbd0…a004a928` |
+     | SP4 (reference) | `X05-86592` | `2000-08_X05-86592_X05-78367_vs6sp4.7z` (379 MB) | `09ea2026…82ba831` |
+     | SP5 (reference) | `vs6sp5` | `vs6sp5.exe` (136 MB) | `10a83404…6a604` |
 
-     SHA-256, measured on the first download (all four passed archive.org's SHA-1):
-
-     ```
-     d38250b86c3bef0d8123cade40abd1728a776e22e9633683c3e311a913ae0347  en_vs6_ent_cd1.iso
-     f3eefbd0b7d7958a44ef63c2bb28bcf75ef8d5adcd2e65082f54fb399004a928  TNSB9908.iso
-     09ea2026811f1d29a403aebd9f799528ddbd664c0aedd7b809c1b395f82ba831  2000-08_X05-86592_X05-78367_vs6sp4.7z
-     10a834041223ad21181c0e87c0a90930d976498556af2e8f959a044101e6a604  vs6sp5.exe
-     ```
-
-     Fetch with stall detection (`curl --speed-limit 10240 --speed-time 30 -C -` in a retry
-     loop): archive.org transfers stall on network changes and resume cleanly.
-
-     **Confirmed 11 October 2026: 8447 is SP3's code generator.** Version stamps read from
-     the files: the base disc's `VC98/BIN/CL.EXE`, `C1XX.DLL` and `C2.DLL` are all
-     12.00.8168 (VC6 RTM). SP3 ships only a new `C2.DLL`, packed as `msvcep.dll` inside
-     `VS6SP3_1.EXE` and stamped 12.00.8447; it carries no `CL.EXE` or `C1XX.DLL`. So
-     Westwood's compiler is the base install with SP3's `C2.DLL`, which also explains the
-     Rich header: our objects carry 8447, while the prebuilt libraries carry 8168. The same
-     package holds two other `C2.DLL` builds (`msse.dll` 11.99.8447, `intro.dll` 11.98.8447)
-     for other editions; not ours. SP3 file names are disguised, so the setup script must
-     map them through `sp398ent.stf` or pick files by their version info, not by name.
-
-     CD1 holds Visual C++ in plain `VC98/`; CDs 2 and 3 are not needed. The SP3 files
-     on the TechNet disc are `VS6SP3_1.EXE` to `VS6SP3_10.EXE` plus `VS6SP3S1/S2.EXE`.
+     Downloads retry with stall detection (`curl --speed-limit 10240 --speed-time 30 -C -`):
+     archive.org transfers stall on network changes and resume cleanly.
    - MASM 6.13 (build 7299) is only needed for the 48 assembly objects; source it later.
-   - Read homm1-decomp's `AGENTS.md` and Wine setup first (VC6 SP5, CC0, already working).
-     The Generals Docker/Wine route (`../generals-pad/docs/PLAN.md`) and Byte Tactics'
-     setup script are the other references.
-2. **Flags.** Match a handful of CRT functions to fix the compiler flags.
+   - Risk: Open-BFME reports Ubuntu 24.04's Wine 9.0 (the one here) hanging MSVC 7.1's
+     `cl.exe` on some files. Not seen with VC6 yet. If it happens: WineHQ 11, or
+     [Wibo](https://github.com/decompals/wibo), a small Win32 loader that is also faster
+     per compile.
+2. **Flags. Done 11 October 2026: `cl /c /O2 /Ob2 /Gr /GR /MT`.** The CRT is linked as
+   prebuilt objects, so matching it only identifies the library. The flags came from
+   compiling Westwood's own code and diffing it against the exe:
+   - **/MT, SP3's LIBCMT.** No CRT DLL is imported; the entry point is LIBCMT's
+     `WinMainCRTStartup`. Base and SP3 LIBCMT differ only in `strftime.obj` and
+     `tzset.obj`, and the exe holds SP3's (`__Strftime` and `_cvtdate` match only SP3's).
+   - **/O2 /Ob2.** `RawFileClass::Open(name, rights)`, `Size`, `Bias` and `Seek` (464
+     bytes, with `Raw_Seek` auto-inlined twice) match byte for byte, from wwlib's source
+     as OpenTS and Renegade carry it, on the first compile. /Ob1 does not inline
+     `Raw_Seek`; /O1 and /G6 change the code; /G5 is the same as the default blend.
+     /O2 also implies /Gf, which fits: game string literals are pooled into `.data`.
+   - **/Gr.** Static members such as `BulletTypeClass::Find_Index` (0x46CC90) take their
+     argument in ECX and return with a plain `ret`, and the game's qsort comparators are
+     marked `__cdecl` explicitly. /Gr reproduces `Find_Index` except for one register
+     choice (EAX against ECX for the element pointer): a source-shape question for step 6.
+   - **/GR, no /GX.** 962 RTTI type descriptors, no `__CxxFrameHandler`; the only
+     exception frames are `__try` blocks (`_except_handler3`, mostly CRT, one game
+     function at 0x6BB9A3).
+   - **No /Op, no /QIfist.** `ObjectClass::Is_Red`-style health check at 0x5F5CD0 (double
+     compare against `Rule->ConditionRed`) matches without /Op. Float-to-int goes through
+     2,029 calls to a helper at 0x7C5F00, which is not LIBCMT's `__ftol`: the linker took
+     `__ftol` from another library first. Identify it before the whole-exe link.
+   - Still to confirm when a function needs it: `/Zp` (default 8 assumed).
+   - **Most MASM objects are the CRT's.** LIBCMT carries 73 MASM 6.13.7299 objects, and
+     the code of 34 of them is in the exe (`memcpy`, `strlen`, `stricmp`, `llmul`,
+     `chkstk`, the x87 helpers and so on), linked prebuilt. So at most about 14 of the Rich
+     header's 48 MASM objects are Westwood's or third-party assembly, far less MASM work
+     than "Scale" assumed.
 3. **Symbols.** Pull YRpp's addresses and class layouts into a `symbols.csv`; cross-check
    function bounds with Ghidra.
 4. **Checker.** A `check.py <addr>` that compiles one function and diffs it against
-   `gamemd.exe`, ignoring linker-filled bytes. reccmp, objdiff, or a port of Byte
-   Tactics' or homm1-decomp's tools: adopt before building.
+   `gamemd.exe`. reccmp, objdiff, or a port of Byte Tactics' or homm1-decomp's tools:
+   adopt before building. Linker-filled bytes are not compared, but what they point at
+   is: a string literal must equal the string at the original's address, a global must
+   resolve to the same address everywhere, a call must reach the right function. Masking
+   them alone lets a wrong callee or global pass as a match.
 5. **Whole-exe build.** Split the original into one object per module so every commit
    links a complete, launchable `gamemd.exe`, each function swapping in as it matches.
    Try matching one module's data section too: the first evidence on whether the MD5 goal
    is reachable.
 6. **Twenty functions.** Mixed sizes, half with an OpenTS counterpart and half RA2-only.
-   Record for each: matched or not, best %, check runs, tokens spent.
+   Record for each: matched or not, best %, check runs, tokens spent, minutes, model,
+   and for a stall the kind of blocker. A near miss is saved with its score for the next
+   attempt to start from.
 7. **Price it.** Scale the measured cost to about 20k game functions (less what OpenTS
    carries over), and decide.
 
@@ -318,7 +353,9 @@ Step 6 is where parallel agents pay, if the maintainer opts in to a workflow for
   one, and shared class headers need an owner or a claim, or parallel agents will break
   each other's matches.
 - **Name precedence.** Westwood's own names (assert strings, OpenTS) over YRpp's, over
-  invented ones. Fixed once in `symbols.csv` before agents start naming.
+  invented ones. Fixed once in `symbols.csv` before agents start naming. A byte match
+  proves nothing about a name: a function whose identity is unproven keeps an
+  address-based name rather than a plausible guess.
 
 ## Playtest install
 
