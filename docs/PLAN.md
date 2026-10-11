@@ -598,6 +598,12 @@ matches alone come to roughly 8-9 weeks of a full weekly allowance, or about 8 m
 a quarter of each week. A floor, not a price: consolidation onto real headers, the large
 functions and EA's patch sites are not in it yet.
 
+The meter counts every session on the account, and other agents ran alongside the spike
+(the week read 4% after the consolidation pilot), so these percentages are upper bounds.
+Agent token counts are this project's own: about 1.75M for the 20 matches, 0.8M for the
+pilot's one-off headers and tools, 74k to consolidate a function once its headers exist.
+Measure the weekly share again in a window with nothing else running.
+
 ## Open questions
 
 - Does `game.exe` (RA2 without YR) share enough to be worth matching too, or is YR the
