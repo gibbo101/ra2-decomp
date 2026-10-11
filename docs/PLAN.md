@@ -208,6 +208,24 @@ same logic as `Force_CD_Available` in EA's GPL Red Alert source. v1 matches it l
 other code. It is plain game logic, not protection, but tag those functions in the queue
 so a refusal goes to a by-hand batch instead of stalling a bulk run.
 
+**The Steam exe is not pristine 1.001** (found 11 October 2026). Ares identifies YR builds
+by whole-file size and CRC-32: 1.001 retail CD is 4,813,072 bytes, CRC `0x098465B3`;
+First Decade `0xEB903080`; Ultimate Collection (Origin) 4,816,864 bytes, `0x1B499086`;
+all share link timestamp `0x3BDF544E`. The Steam exe has that timestamp but is 5,286,208
+bytes with CRC `0xA3F19485`, and its PE checksum is stale, so it was changed after
+linking:
+- **Code patched in place.** The CD-drive scan at 0x4E60E1 (a loop over drive letters
+  'a' to 'z') has its loop branch overwritten with `nop`s; 0x751C8E has six bytes
+  blanked; the function at 0x55CFD0 starts with `nop`s and jumps over its own body. These
+  are the sites found so far, from stray `nop` runs; others may not leave `nop`s.
+- **Resources replaced.** `.text`, `.rdata` and `.data` sit at the same file offsets as a
+  4.8 MB exe would have them; the growth is all in `.rsrc` (565 KB against about 100 KB).
+
+So patched functions cannot match compiled source, and the MD5 goal as written (the Steam
+exe's) needs EA's post-link patch reproduced. A pristine 1.001 would be the clean target:
+Westwood's 1.001 patch (2.38 MB, still mirrored) may carry the whole exe. Decide the
+target before step 4 (see "Open questions").
+
 Scale against Byte Tactics: `.text` is about 4.8 times TA's whole exe. The recomp project
 counted about 24,900 functions and 954 classes in `gamemd.exe`, including library code.
 
@@ -304,9 +322,9 @@ Goal: a cost per matched function, so the whole job can be priced before committ
      as OpenTS and Renegade carry it, on the first compile. /Ob1 does not inline
      `Raw_Seek`; /O1 and /G6 change the code; /G5 is the same as the default blend.
      /O2 also implies /Gf, which fits: game string literals are pooled into `.data`.
-   - **/Gr.** Static members such as `BulletTypeClass::Find_Index` (0x46CC90) take their
+   - **/Gr.** Static members such as `CampaignClass::FindIndex` (0x46CC90) take their
      argument in ECX and return with a plain `ret`, and the game's qsort comparators are
-     marked `__cdecl` explicitly. /Gr reproduces `Find_Index` except for one register
+     marked `__cdecl` explicitly. /Gr reproduces `FindIndex` except for one register
      choice (EAX against ECX for the element pointer): a source-shape question for step 6.
    - **/GR, no /GX.** 962 RTTI type descriptors, no `__CxxFrameHandler`; the only
      exception frames are `__try` blocks (`_except_handler3`, mostly CRT, one game
@@ -322,7 +340,22 @@ Goal: a cost per matched function, so the whole job can be priced before committ
      header's 48 MASM objects are Westwood's or third-party assembly, far less MASM work
      than "Scale" assumed.
 3. **Symbols.** Pull YRpp's addresses and class layouts into a `symbols.csv`; cross-check
-   function bounds with Ghidra.
+   function bounds with Ghidra. **Functions and globals done 11 October 2026; layouts not
+   yet.**
+   - `tools/yrpp_symbols.py` extracts YRpp's facts (address, kind, qualified name,
+     convention, header) into `data/symbols.csv`: 1,808 functions, 511 globals, 22 vtable
+     constants, 103 import slots. Two of its function addresses are wrong (they fall
+     inside other instructions: `MPSiegeClass::SpawnBaseUnits` 0x5CAA50,
+     `TeamTypeClass::CanRecruitUnit` 0x6F1320).
+   - `tools/functions.py` maps every function into `data/functions.csv`: 19,826 starts,
+     each with its evidence (alignment padding, call target, vtable or callback pointer,
+     YRpp, Ghidra). VC6 pads game functions with `nop` to 16 bytes, which alone finds
+     about 18,000; a start without padding must follow a return, jump, no-return call or
+     switch table. It re-synchronises its sweep after the switch tables VC6 keeps in
+     `.text`, and drops 158 data values that only look like code pointers.
+   - Ghidra 12.1.4's default analysis (`tools/ghidra.sh`, 93 s) finds only 8,584
+     functions: it misses most code reached only through vtables. Where it does find a
+     function, its extent equals the map's for 8,114 of 8,581.
 4. **Checker.** A `check.py <addr>` that compiles one function and diffs it against
    `gamemd.exe`. reccmp, objdiff, or a port of Byte Tactics' or homm1-decomp's tools:
    adopt before building. Linker-filled bytes are not compared, but what they point at
@@ -422,8 +455,12 @@ divided by the number matched, times the functions left after tier 0, gives the 
 
 ## Open questions
 
+- **Which exe is the target?** The Steam exe is 1.001 with EA's post-link patches (see
+  "The binary"). Options: match pristine 1.001 (needs a copy: Westwood's 1.001 patch, or
+  a player's disc install) and treat the Steam patches as a known diff; or match the
+  Steam exe and list its patched functions as unmatchable. Decide before step 4.
 - Does `game.exe` (RA2 without YR) share enough to be worth matching too, or is YR the
-  only target? (Which service pack 8447 is gets settled in spike step 1.)
+  only target?
 - What fraction of YR functions have an OpenTS counterpart? Measure it in the spike by
   comparing function lengths and call graphs.
 - Is there any surviving `tsun.dbg` or `gamemd` debug build? A symbol file would make
