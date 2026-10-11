@@ -630,6 +630,18 @@ Agent token counts are this project's own: about 1.75M for the 20 matches, 0.8M 
 pilot's one-off headers and tools, 74k to consolidate a function once its headers exist.
 Measure the weekly share again in a window with nothing else running.
 
+**First price, 11 October 2026 (API-rate equivalents, first matches).** Game code left
+after tier 0 and the CRT is 3.64 MB in 17,991 functions: 17,590 under 1.5 KB (2.34 MB),
+133 of 1.5-2 KB (0.23 MB), 228 of 2-6 KB (0.71 MB), 40 over 6 KB (0.35 MB). At the
+measured rates: small functions about $7k (about $3 per KB, all matched in the sample);
+1.5-6 KB about $8-12k (about $4 per KB attempted, 40% matched, residue extra); over 6 KB
+unmeasured, at least $3-5k; class headers, one-off, about $1-3k. Roughly $20-27k in all.
+Twenty small functions cost at most 1% of a week, so a week's allowance is worth at
+least about $1.6-2k of agent work: roughly 10-15 full weeks, or about a year at a quarter
+of each week. The largest uncertainties: the register-allocation residue (a permuter
+could cut it sharply), how much tier 0 saves (1,300 to 4,300 functions), and the
+weekly-meter calibration.
+
 ## Open questions
 
 - Does `game.exe` (RA2 without YR) share enough to be worth matching too, or is YR the
