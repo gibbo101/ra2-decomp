@@ -30,6 +30,8 @@ that comes first.
 - A comment never points to a doc.
 - Checker markers that tie a function to its address are tooling, not comments, and are
   allowed.
+- The licence header that opens every file in `src/` and `include/` (format in the README)
+  is a legal notice, not a comment; it is required, and none of the rules above apply.
 
 ## Commits
 

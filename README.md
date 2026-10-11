@@ -28,4 +28,20 @@ Electronic Arts Inc.
 
 ## Licence
 
-Not yet decided. See "Legal footing" in `docs/PLAN.md`.
+- **Game source** (`src/`, `include/`): GNU GPL version 3 or later, in `COPYING.md`. Part
+  of it derives from source Electronic Arts released under the GPL (Command & Conquer,
+  Red Alert, Renegade) and from [OpenTS](https://github.com/OpenTS-Developers), so
+  Electronic Arts' additional terms at the end of `COPYING.md` apply to that material.
+- **Tooling and data** (everything else): MIT, in `LICENSE`.
+
+Neither licence grants any right to Electronic Arts' trademarks or to the game itself.
+
+Every file in `src/` and `include/` starts with this header; the second copyright line
+and the last line appear only when the file carries Electronic Arts or OpenTS material:
+
+```cpp
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright 2026 ra2-decomp contributors
+// Copyright 2025 Electronic Arts Inc.; 2026 OpenTS contributors
+// Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
+```

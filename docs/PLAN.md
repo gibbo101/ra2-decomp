@@ -273,10 +273,16 @@ footing:
   the same compiler and options" is how to do it) and is cool on non-matching AI ports
   and the recomp, so open with the checker, not with the agents.
 
-Licence to decide, with one constraint: OpenTS is GPL-3, so tier 0 (compiling OpenTS's
-function unchanged) copies GPL code into `src/`, and `src/` must then be GPL-3. Byte
-Tactics' no-licence stance only stands if tier 0 is dropped. YRpp and Ares carry no licence
-file: use them for facts (addresses, layouts, behaviour), never paste their headers verbatim.
+**Licence, decided 11 October 2026: `src/` and `include/` GPL-3.0-or-later, tooling and
+data MIT** (`COPYING.md`, `LICENSE`, header convention in the README). Tier 0 compiles
+OpenTS's functions unchanged, and Westwood's GPL'd wwlib code is the source of many
+matches, so the game source must be GPL-3 anyway; a no-licence stance like Byte
+Tactics' would mean keeping agents away from OpenTS, its biggest head start. GPL-3 also
+matches OpenTS, Vinifera, Phobos and `opents-linux`, so fixes can flow both ways. No
+licence choice changes EA's position; the footing above does that work.
+
+YRpp and Ares carry no licence file: use them for facts (addresses, layouts, behaviour),
+never paste their headers verbatim.
 
 ## First session: the spike
 
@@ -390,8 +396,6 @@ Goal: a cost per matched function, so the whole job can be priced before committ
      must land at the same place in the function, a string literal or constant must equal
      the original's target bytes, a call or global must reach its known address. A name
      with no known address yet is reported as unverified, not as a mismatch.
-   - Matched sources stay out of `src/` until its licence is decided: the first ones are
-     Westwood code via OpenTS and Renegade, both GPL-3 (see "Legal footing").
 5. **Whole-exe build.** Split the original into one object per module so every commit
    links a complete, launchable `gamemd.exe`, each function swapping in as it matches.
    Try matching one module's data section too: the first evidence on whether the MD5 goal
