@@ -286,7 +286,9 @@ def yrpp_layout(cls: str):
         raise SystemExit(f"{cls}: not in data/layouts.csv")
     size = int(rows[0]["size"])
     base = next((r["type"] for r in rows if r["member"] == "<primary base>"), None)
-    fields = [r for r in rows if not r["member"].startswith("<")]
+    # A class's own vtable pointer is not a data member the header declares.
+    fields = [r for r in rows if not r["member"].startswith("<")
+              and not r["member"].endswith(("vftable pointer", "vtable pointer"))]
     starts = sorted({int(r["offset"]) for r in fields} | {size})
     members, padding = [], []
     for r in fields:
@@ -312,7 +314,10 @@ def check_members(ours, yrpp, padding_spans) -> int:
             verdict = "ok"
         elif mine:
             inside = [y for y in yrpp if y[1] < at < y[1] + y[2]]
-            if inside:
+            ends_inside = inside and all(at + m[2] <= inside[0][1] + inside[0][2] for m in mine)
+            if inside and ends_inside and inside[0][0].lower().startswith("unknown"):
+                verdict = f"note: inside YRpp's undivided {inside[0][0]}"
+            elif inside:
                 verdict = f"MISMATCH: inside YRpp {inside[0][0]}"
             elif any(p[0] <= at < p[1] for p in padding_spans):
                 verdict = "MISMATCH: in YRpp's padding"
