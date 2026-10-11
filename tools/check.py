@@ -302,6 +302,11 @@ def check_ref(orig, obj, raw, target, sec, start, address, got, names, local):
         want = orig.imports().get(imported)
         if want is not None:
             return ("ok" if got == want else "mismatch"), want
+    # A placeholder name carries its own address.
+    placeholder = re.search(r"(?:^|::)(?:FUN|DAT)_([0-9A-Fa-f]{8})$", name)
+    if placeholder:
+        want = int(placeholder.group(1), 16)
+        return ("ok" if got == want else "mismatch"), want
     # An undecorated name says nothing about which overload it is once another overload of
     # that name is known by its decorated symbol.
     overloaded = any(qualified(d) == name for d in local)

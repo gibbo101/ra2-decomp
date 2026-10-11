@@ -91,7 +91,8 @@ def declared_name(head: str) -> tuple[str, str]:
     """The function name and calling convention in a declaration ending before its body."""
     flat = " ".join(head.split())
     flat = re.sub(r"^.*\b(public|protected|private)\s*:", "", flat)
-    flat = LEADING_MACROS.sub("", flat).strip()
+    flat = LEADING_MACROS.sub("", flat)
+    flat = re.sub(r"__declspec\s*\((?:[^()]|\([^()]*\))*\)", "", flat).strip()
     depth, cut = 0, None
     for k, c in enumerate(flat):
         if c == "(":
@@ -118,7 +119,8 @@ def extract(path: Path, rel: str):
         return "::".join(inside)
 
     rows = []
-    for m in re.finditer(r"\b(\w+)\s*\(\s*" + ADDR, text):
+    prev_end = 0
+    for m in re.finditer(r"\b(\w+)\s*\(\s*" + ADDR + r"[^)]*\)", text):
         macro, addr = m.group(1), int(m.group(2), 16)
         if macro not in FUNC_MACROS:
             continue
@@ -126,14 +128,16 @@ def extract(path: Path, rel: str):
         if inner and not inner[-1][3]:
             s, _, head, _ = inner[-1]
         else:
-            # A wrapper standing in for the body: the declaration runs up to the macro.
-            s = max(text.rfind(c, 0, m.start()) for c in ";{}") + 1
+            # A wrapper standing in for the body: the declaration runs up to the macro,
+            # from the previous statement or the previous wrapper, whichever is later.
+            s = max(max(text.rfind(c, 0, m.start()) for c in ";{}") + 1, prev_end)
             head = text[s:m.start()]
         name, conv = declared_name(head)
         if macro in ("JMP_THIS", "THISCALL"):
             conv = "__thiscall"
         cls = owner(s)
         rows.append((addr, "function", f"{cls}::{name}" if cls else name, conv, rel))
+        prev_end = m.end()
     for m in re.finditer(r"\bDEFINE_REFERENCE\s*\(([^;]*?),\s*(\w+)\s*,\s*" + ADDR + r"\s*\)", text):
         cls = owner(m.start())
         rows.append((int(m.group(3), 16), "data", f"{cls}::{m.group(2)}" if cls else m.group(2), "", rel))

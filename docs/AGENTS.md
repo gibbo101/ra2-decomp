@@ -12,6 +12,9 @@ original compiler turns into that function's exact bytes. MATCH means
   `reference/tibsun/code/`, into `build/spike/<ADDR>/include/` and edit the copy.
 - Never edit `src/`, `include/`, `reference/`, `data/`, `tools/` or `docs/`. Other
   agents work at the same time; the coordinator merges results.
+- Keep helper scripts and variant files in `build/spike/<ADDR>/` too: the scratchpad is
+  shared. No two files may differ only in case: under Wine they write one `.obj`, and
+  the compile fails with only the file name in the log.
 
 ## Loop
 
@@ -21,42 +24,173 @@ original compiler turns into that function's exact bytes. MATCH means
    does (same calls, strings, shape) and start from it, with its `#include` lines. YR
    changed many classes: member offsets are in `data/layouts.csv` (YRpp's names), and
    `include/abstract.h` and `include/abstype.h` show how YR headers differ from TS.
-   No TibSun file: write the function from the disassembly.
+   No TibSun file listed: grep `reference/tibsun/code/` for the callees and strings
+   anyway (ctx.py has missed one), then write the function from the disassembly.
    Headers in `include/` for these classes are proven against the exe (size, member
    offsets, every vtable slot): AbstractClass, AbstractTypeClass, ObjectClass,
    MissionClass, RadioClass, TechnoClass, BuildingClass, ObjectTypeClass,
    TechnoTypeClass, BuildingTypeClass, BaseClass, TeamClass. Include them rather than
    writing stand-ins; `uv run tools/headercheck.py <Class>` proves any header you fix in
    your overlay.
-3. Mark the definition with `// FUNCTION: <ADDR>` on the line before it.
+3. Mark the definition with `// FUNCTION: <ADDR>` on the line before it. The function
+   must not be `static`: an unused static is discarded and the checker finds nothing.
 4. `uv run tools/check.py build/spike/<ADDR>/<module>.cpp <ADDR> --overlay build/spike/<ADDR>/include`
 5. Read the diff, change the source, repeat.
 
 Stop at MATCH, or after 30 checks without the score rising, or after 45 minutes (for a
 function over 2,000 bytes: 60 checks or 90 minutes).
+Every compile counts as a check, including those your own scripts run.
 
 ## Rules
 
 - The flags are fixed (`/O2 /Ob2 /Gr /GR /MT /DWIN32`). No inline assembly, `__emit`,
   `#pragma optimize`, hard-coded addresses or `volatile` tricks.
 - Name callees and globals as `tools/ctx.py` names them (YRpp or TibSun names); an
-  unnamed one is `FUN_<ADDR>` / `DAT_<ADDR>`. Declare each with the calling convention
-  the disassembly shows: `this` in ECX is `__thiscall` (any member function); a free or
-  static function is `__fastcall` by default under /Gr (first two arguments in ECX and
-  EDX), so a CRT function or a `qsort` comparator must be declared `__cdecl`.
+  unnamed one is `FUN_<ADDR>` / `DAT_<ADDR>`. `data/symbols.csv` labels several one-line
+  UI functions `UI::GetResource`; 0x00622B50 is `UI::StandardWndProc`.
+- Declare each callee with the calling convention the disassembly shows. A member
+  function is thiscall already; writing `__thiscall` is error C4234. A free or static
+  function is `__fastcall` by default under /Gr (first two arguments in ECX and EDX), so
+  a CRT function or a `qsort` comparator must be declared `__cdecl`. ECX alone does not
+  prove a member: a free `__fastcall` function also takes its first argument there.
 - `WRONG TARGETS` means the bytes match but a call or global is declared as the wrong
   thing: fix the declaration, not the code.
 
 ## What has worked
 
-- When `__FILE__` and a line number are pushed, pin them:
-  `#line 215 "D:\\ra2mdpost\\AbsType.cpp"` on the line before the statement.
-- A test of a string's first character compiled to the original's order as
-  `if (*name)`, not `if (name[0])`.
-- A function placed after its neighbours in the original may be an out-of-line
-  definition where TibSun has it inline in the header.
-- Register-choice differences: try another form of the same expression, a temporary,
-  the order of declarations, or `const` on parameters.
+Each entry: what the diff showed, then the source change that fixed it.
+
+### Reading the diff
+- The percentage compares disassembled instructions. A frame-size change alters every
+  `[esp+N]`, and a length change disassembles jump tables as code, so better source can
+  score lower. In a large function judge by byte length and by the instruction shapes.
+- Write the whole body, every repeated block included, before tuning registers.
+- `FUN_`/`DAT_` names are not checked against their address, so a MATCH can still have
+  two globals swapped. Read the reference lines (`+0x.. NAME: original 0x..`).
+- Inlined code often has an out-of-line copy or a twin elsewhere; match that first.
+  VoxelAnimClass::VoxelAnimClass (0x007493B0) has AnimClass's bounce code.
+
+### Declarations
+- A callee returning a class by value takes a hidden buffer: a virtual pushes only the
+  buffer (`virtual Coord F(void)`); a free `__fastcall` one gets it in ECX.
+- A varargs function is always `__cdecl`. Caller-popped pushes around an ECX call may
+  be the arguments of a following varargs call, not of the ECX one.
+- A callee returning a double in st0 is `double __cdecl F(double)`. A pushed double
+  ending `...60000000` (`0x3FF6666660000000`) is a widened float literal: write `1.4f`.
+- `setne` on a callee's result means the callee returns `unsigned char`, not `bool`.
+  `cmp; sbb; inc` is an unsigned compare: the value is unsigned.
+- An 8-byte Point2D argument is passed on the stack. `or ecx,-1 / or eax,-1 / push`
+  comes from a by-value default argument, `F(Point2D p = Point2D(-1, -1))`.
+- `obj.F()` on an object, not a pointer or reference, calls a virtual directly; so does a
+  virtual on `this` inside a constructor. Call through a pointer to keep it virtual.
+- `DAT_` globals packed together are often one object's fields (SessionClass::Instance
+  near 0xA8B238): declare the object, with real offsets, as a static member.
+- `#undef LoadString` after `<windows.h>`. Include `<stddef.h>` and `"always.h"` before
+  `stringtable.h` so `wchar_t` is defined.
+
+### Evaluation order
+- Arguments are evaluated right to left. To call a nested callee first (GetDlgItem, an
+  INI read), put its result in a temporary.
+- For `a * b` on doubles the right operand loads first: write the operands in the
+  reverse of the disassembly's load order.
+- Within one expression VC6 makes a call before plain loads. If the original loads values
+  into callee-saved registers before a call, load them in earlier statements:
+  `int key = p->Key; int old = t[i]; t[i] = old + p->F(key);`. One such statement can
+  fix the whole function's register allocation.
+- A load order no rewording moves: look at the inline constructor's parameter types.
+  `CellStruct(int x, int y)` keeps adds 32-bit (`lea`); short parameters narrow them.
+- `(*this)[Count++] = x` through an inline `operator[]`, or
+  `int n = Count; Count = n + 1; V[n] = x;`, stores the count first; `V[Count++]` does not.
+- `c = Coord(pt, 0); c += r;` gives a zeroed-register Z store and load/add/store order;
+  direct initialisation or `c = c + r` does not.
+- A sum used once stays inline in its expression; a local for it reschedules the code.
+
+### Branches and returns
+- `return strcmp(a, b) == 0;` gives `sete`; the branching form is
+  `if (strcmp(a, b) != 0) return false; else return true;`.
+- Early returns that merged into `setne`: write nested `if` blocks. Conversely
+  `return (A && B && C) ? 1 : 0;` keeps every temporary alive, each in its own slot.
+- `if (a || b) X; else Y;` has one fixed block order however it is written. For the
+  other order, make both tests reach one block: `if (a) goto none; if (b) { none: X }`.
+- `!p ? 0 : p->Count` and `p ? p->Count : 0` give opposite branch polarity.
+- `setcc; test; jne` on one register is an inlined function returning bool.
+
+### Registers
+- VC6 ranks variables by use count, weighted by branch; one use more or fewer moves a
+  variable into or out of EBX/EBP. Re-read a member instead of a local, or the reverse.
+- An induction variable that starts at a member offset (`mov ebp,0x15d8 ... cmp
+  ebp,0x1618`) comes from writing `Type->Arr[i]` in full at each use. A cached pointer
+  gives a zero-based index plus a displacement. Global tables likewise: `T[k].X` each time.
+- A search loop matched with `Node *n = &Nodes[i];` and the loop-invariant hoisted into
+  a local, where repeated `Nodes[i]` did not.
+- Use parameters directly instead of copying them to locals: VC6 then packs a later
+  local into the dead argument slot, as the original does.
+- Block structure moves registers far from the change: one loop filling two arrays
+  instead of two loops, or unrolled `EnableWindow(GetDlgItem(...))` calls instead of a loop.
+- Moving a few statements into a small function that /Ob2 inlines changes allocation
+  around them; try it when the original treats a block as separate.
+- Declare variables used across `case`s once at function scope, TibSun style.
+
+### Stack frame
+- Locals are laid out by size, not declaration order. To fix two objects' order, make
+  them members of one local struct.
+- A buffer declared inside the loop body gives `push ecx`; one at function level does not.
+- One variable shared by two branches shares a slot; one per branch gets its own.
+- A class returned by value: a temporary and a named local give different frames
+  (Wstring in 0x0046DFD0 needed the temporary).
+- `Coord c = p->F();` copies from the return pointer; a `const &` argument does not.
+
+### Inlining
+- A TibSun out-of-line function may be inline in YR, or the reverse (a function placed
+  after its neighbours). If ours calls what the original inlines, define it `inline` first.
+- What the original calls (constructors, `Add`) stays a call when declared without a body.
+- The original mixes call and inline forms of one function: wrap one use in a one-line
+  inline helper. Helpers nested too deep stop inlining and become real calls.
+- `member.Type::Type();` in a constructor body builds a member with no null test and
+  after the statements before it; placement new adds the test.
+
+### Constructs
+- Deleting destructor (`test flags,1`, then `operator delete`; callers `push 1` to a
+  vtable slot): declare the destructor virtual and annotate `~Class`; check.py tries
+  `??1`, `??_G` and `??_E`. `??_G` is emitted only if something `delete`s the class.
+- Dialog procedures: `LOWORD(wparam)`/`HIWORD(wparam)` keep compares unmasked and put
+  msg and wparam in the original's registers. Jump tables land in the function's tail.
+- A for-loop variable outlives its loop (old scope rules): give each loop its own name.
+- A constructor storing two vptrs (base, then derived) does its work in the base
+  constructor; the derived one is empty. Init list versus body moves the vptr store.
+- A function-local static whose guard is re-tested at each use sits in an inline accessor.
+- A pushed `__FILE__` and line: `#line 215 "D:\\ra2mdpost\\AbsType.cpp"` before the
+  statement. A string's first-character test: `if (*name)`, not `if (name[0])`.
+
+### Headers
+- headercheck matches members by offset, not name: leave padding gaps undeclared. A
+  member named `pad`/`align`, or inside YRpp's `align_*` bytes, is flagged; to fill a
+  gap use unnamed bitfields (`unsigned char : 8`, `unsigned int : 32`).
+- MSVC never reuses a base's tail padding. Where the CSV and the exe disagree, the
+  offsets the constructor and Read_INI store to are the authority.
+- A bool YR keeps in a 4-byte field becomes `BOOL`. `__declspec(align)` and anonymous
+  unions do not compile; use a plain struct for a union-shaped member.
+- Constness differing from the base (`Read_INI(CCINIClass const &)` against
+  `CCINIClass &`) adds a slot instead of overriding: count one high, address mismatch.
+- "inherited in the exe, overridden in ours": delete our override; "overridden in the
+  exe, inherited in ours": add one. A TS virtual with no YR slot becomes non-virtual.
+- The linker folded every `return 0` function into `_purecall`, so an exe slot holding
+  it may be a `return 0` body, not a pure virtual.
+- TS sizes YR changed: StageClass 24 to 28 bytes (`YRStageClass` in techno.h),
+  BANIM_COUNT 13 to 21, attached particle systems 5 to 8, weapon slots 3 to 18.
+- Keep TS member names at YR's offsets; use YRpp names only for members TS lacks.
+
+## Known dead ends
+
+- Reordering local declarations, or `const` on parameters: never moved anything.
+- Loop forms (unsigned, short, `do`/`while`, a slot pointer) to rebase an induction
+  variable.
+- Parameter types (int, unsigned, short, `__int64`, struct) to push registers instead of
+  immediates.
+- Rewording an expression to change its load order.
+- A varargs member to explain an ECX argument plus caller-popped pushes.
+- `delete this` in a deleting destructor: it adds a virtual call and a null test.
+- For 0x00421EA0's x87 order: removing uses of 0, Vector3 constructor or member forms.
 
 ## Report
 
