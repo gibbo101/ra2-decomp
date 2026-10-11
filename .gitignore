@@ -26,3 +26,6 @@ playtest/
 *.pem
 *.key
 .claude/settings.local.json
+
+# Third-party reference clones.
+reference/
