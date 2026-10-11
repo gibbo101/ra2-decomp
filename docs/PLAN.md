@@ -244,7 +244,7 @@ Goal: a cost per matched function, so the whole job can be priced before committ
    no original disc is available, so the compiler is downloaded, the same way the other
    decomps get theirs.
    - A setup script fetches the base VC6 install and the service pack whose `cl` is
-     12.00.8447 (believed to be SP3, possibly also SP4: confirm), checks every download
+     12.00.8447 (SP3, confirmed: see below), checks every download
      against a SHA-256 pinned in the script, and installs into the gitignored `toolchain/`.
      The compiler is never committed or redistributed.
    - Gate: `cl` must print **12.00.8447** before anything else runs. A near miss is not
@@ -274,7 +274,17 @@ Goal: a cost per matched function, so the whole job can be priced before committ
      Fetch with stall detection (`curl --speed-limit 10240 --speed-time 30 -C -` in a retry
      loop): archive.org transfers stall on network changes and resume cleanly.
 
-     CD1 should hold Visual C++; CDs 2 and 3 are not expected to be needed. The SP3 files
+     **Confirmed 11 October 2026: 8447 is SP3's code generator.** Version stamps read from
+     the files: the base disc's `VC98/BIN/CL.EXE`, `C1XX.DLL` and `C2.DLL` are all
+     12.00.8168 (VC6 RTM). SP3 ships only a new `C2.DLL`, packed as `msvcep.dll` inside
+     `VS6SP3_1.EXE` and stamped 12.00.8447; it carries no `CL.EXE` or `C1XX.DLL`. So
+     Westwood's compiler is the base install with SP3's `C2.DLL`, which also explains the
+     Rich header: our objects carry 8447, while the prebuilt libraries carry 8168. The same
+     package holds two other `C2.DLL` builds (`msse.dll` 11.99.8447, `intro.dll` 11.98.8447)
+     for other editions; not ours. SP3 file names are disguised, so the setup script must
+     map them through `sp398ent.stf` or pick files by their version info, not by name.
+
+     CD1 holds Visual C++ in plain `VC98/`; CDs 2 and 3 are not needed. The SP3 files
      on the TechNet disc are `VS6SP3_1.EXE` to `VS6SP3_10.EXE` plus `VS6SP3S1/S2.EXE`.
    - MASM 6.13 (build 7299) is only needed for the 48 assembly objects; source it later.
    - Read homm1-decomp's `AGENTS.md` and Wine setup first (VC6 SP5, CC0, already working).
