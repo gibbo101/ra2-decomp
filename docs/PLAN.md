@@ -262,6 +262,18 @@ Goal: a cost per matched function, so the whole job can be priced before committ
      | SP4 (fallback) | `X05-86592` | `2000-08_X05-86592_X05-78367_vs6sp4.7z` (379 MB) | `05a28ded15429ae0ea10b27ef646056c565f5284` |
      | SP5 (reference only) | `vs6sp5` | `vs6sp5.exe` (136 MB) | `6af12fb3e2c7c271be67c9c9833c63b82bb7b9bf` |
 
+     SHA-256, measured on the first download (all four passed archive.org's SHA-1):
+
+     ```
+     d38250b86c3bef0d8123cade40abd1728a776e22e9633683c3e311a913ae0347  en_vs6_ent_cd1.iso
+     f3eefbd0b7d7958a44ef63c2bb28bcf75ef8d5adcd2e65082f54fb399004a928  TNSB9908.iso
+     09ea2026811f1d29a403aebd9f799528ddbd664c0aedd7b809c1b395f82ba831  2000-08_X05-86592_X05-78367_vs6sp4.7z
+     10a834041223ad21181c0e87c0a90930d976498556af2e8f959a044101e6a604  vs6sp5.exe
+     ```
+
+     Fetch with stall detection (`curl --speed-limit 10240 --speed-time 30 -C -` in a retry
+     loop): archive.org transfers stall on network changes and resume cleanly.
+
      CD1 should hold Visual C++; CDs 2 and 3 are not expected to be needed. The SP3 files
      on the TechNet disc are `VS6SP3_1.EXE` to `VS6SP3_10.EXE` plus `VS6SP3S1/S2.EXE`.
    - MASM 6.13 (build 7299) is only needed for the 48 assembly objects; source it later.
