@@ -23,6 +23,7 @@ Bytes EA patched after linking are first put back from data/exe_patches.csv.
 import csv
 import difflib
 import re
+import shutil
 import struct
 import subprocess
 import sys
@@ -40,6 +41,8 @@ FLAGS = ["/c", "/O2", "/Ob2", "/Gr", "/GR", "/MT"]
 ANNOTATION = re.compile(r"^\s*//\s*FUNCTION:\s*(0x[0-9A-Fa-f]+)\s*$")
 FORBIDDEN = re.compile(r"\b(__asm|_asm|__emit|_emit)\b|#\s*pragma\s+(optimize|code_seg)")
 PADDING = (0x90, 0xCC)
+TIBSUN = ROOT / "reference/tibsun/code"
+HEADERS = ROOT / "build/include"
 
 
 class Original:
@@ -131,6 +134,21 @@ def qualified(sym: str) -> str:
     return sym.lstrip("_@").split("@", 1)[0]
 
 
+def prepare_headers() -> None:
+    """Assemble build/include: the TibSun archive's headers with include/ laid over them.
+    One directory, because a quoted #include searches the including file's own first."""
+    if not TIBSUN.is_dir():
+        raise SystemExit(f"{TIBSUN} is missing: run tools/setup_toolchain.sh")
+    if HEADERS.exists():
+        shutil.rmtree(HEADERS)
+    for base in (TIBSUN, ROOT / "include"):
+        for h in base.rglob("*"):
+            if h.is_file() and h.suffix.lower() in (".h", ".hh", ".hpp", ".inl"):
+                dest = HEADERS / h.relative_to(base)
+                dest.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(h, dest)
+
+
 def compile_source(src: Path) -> tuple[Path | None, str]:
     text = src.read_text(errors="replace")
     bad = FORBIDDEN.search(text)
@@ -140,7 +158,8 @@ def compile_source(src: Path) -> tuple[Path | None, str]:
     out = ROOT / "build/obj" / rel.with_suffix(".obj")
     out.parent.mkdir(parents=True, exist_ok=True)
     out.unlink(missing_ok=True)
-    cmd = [str(ROOT / "tools/wcl"), *FLAGS, f"/I{winpath(ROOT / 'include')}",
+    prepare_headers()
+    cmd = [str(ROOT / "tools/wcl"), *FLAGS, f"/I{winpath(HEADERS)}",
            f"/Fo{winpath(out)}", winpath(src)]
     proc = subprocess.run(cmd, capture_output=True, text=True, cwd=ROOT)
     log = proc.stdout + proc.stderr
@@ -172,12 +191,18 @@ def disasm(code: bytes, va: int) -> list[str]:
 
 def compare(orig: Original, obj: CoffObject, raw: bytes, address: int, name: str,
             names: dict[str, int], local: dict[str, int]) -> Result:
+    """The best result among the compiled functions the name could be: overloads share one."""
     prefixes = mangled(name)
     picks = [f for f in obj.functions() if f[0].name.startswith(prefixes)]
-    if len(picks) != 1:
+    if not picks:
         cands = ", ".join(f[0].name for f in obj.functions())
-        raise SystemExit(f"{name}: expected one compiled function, found {len(picks)} ({cands})")
-    sym, sec, start, end = picks[0]
+        raise SystemExit(f"{name}: no compiled function has this name ({cands})")
+    results = [compare_one(orig, obj, raw, address, name, names, local, p) for p in picks]
+    return max(results, key=lambda r: (r.matched, r.bytes_match, r.ratio))
+
+
+def compare_one(orig, obj, raw, address, name, names, local, pick) -> Result:
+    sym, sec, start, end = pick
     relocs = [r for r in sec.relocs if start <= r.offset < end]
     masked = {r.offset - start + k for r in relocs for k in range(4)}
     ours = sec.data[start:end]
@@ -191,7 +216,8 @@ def compare(orig: Original, obj: CoffObject, raw: bytes, address: int, name: str
         k in masked or a == b for k, (a, b) in enumerate(zip(ours, theirs)))
     res = Result(address, name, size, len(ours), same)
 
-    for r in relocs:
+    # Field offsets line up with the original's only when the bytes do.
+    for r in relocs if same else []:
         off = r.offset - start
         if off + 4 > len(theirs):
             continue
@@ -252,9 +278,17 @@ def check_ref(orig, obj, raw, target, sec, start, address, got, names, local):
     return "unverified", None
 
 
+OPERATORS = {"==": "8", "!=": "9", "=": "4", "[]": "A", "()": "R", "<": "M", ">": "O",
+             "<=": "N", ">=": "P", "+": "H", "-": "G", "*": "D", "/": "K", "new": "2",
+             "delete": "3"}
+
+
 def mangled(name: str) -> tuple[str, ...]:
     parts = name.split("::")
     last, scopes = parts[-1], parts[:-1]
+    if last.startswith("operator"):
+        code = OPERATORS.get(last[len("operator"):])
+        return (f"??{code}{''.join(s + '@' for s in reversed(scopes))}@",) if code else (last,)
     if scopes and last == scopes[-1]:
         return (f"??0{last}@{''.join(s + '@' for s in reversed(scopes[:-1]))}@",)
     if last.startswith("~"):
@@ -293,7 +327,7 @@ def main() -> None:
             print(line)
         if not res.matched:
             failed += 1
-            print("\n".join(res.diff[:60]))
+            print("\n".join(res.diff[:400]))
     raise SystemExit(1 if failed else 0)
 
 

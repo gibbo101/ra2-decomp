@@ -411,8 +411,29 @@ Goal: a cost per matched function, so the whole job can be priced before committ
      spanning a segment end: 14,348 of 19,283 game functions are named; 4,935 are not,
      mostly whole segments with no evidence yet (the twelve before `abstract`). Direct
      calls barely help (8% go to a function within 20 places).
-   - **Data probe:** match one small module whole, data included, as the first evidence
-     on whether the MD5 goal is reachable.
+   - **Data probe: AbsType.cpp (11 October 2026).** `src/abstype.cpp`, from the TibSun
+     archive's version with YR's changes, matches 7 of the module's 8 written functions
+     (691 of 990 bytes); `Read_INI` is a register-allocation near miss (42.6%, `this` in
+     a different register). Headers: YR versions of `abstract.h` (two more interface
+     bases, two fields, one virtual fewer), `abstype.h`, `ini.h`, `rect.h` in `include/`,
+     laid over TibSun's by the checker. What the module's data shows:
+     - **Falls out by itself:** the string literals come out in the original's order and
+       contiguous, and the four vtables (each after its RTTI locator) land at exactly the
+       original's addresses relative to one another.
+     - **Include graph:** Westwood's file included `rect.h` (indirectly), whose
+       header-defined `RECT_NONE` gives every including module its own copy and
+       initialiser; TS's AbsType has it too. TibSun's slimmed headers lost it, so the
+       initialisers fingerprint each module's include graph.
+     - **Placement inside the module:** `Init_Theater` sits after `Compute_CRC` only when
+       defined out of line at the end of the file. The compiler still emits the
+       scalar deleting destructor and the `RECT_NONE` initialiser first, where the
+       original has them last; LINK keeps each object's own order (tested with a map).
+     - **`.bss` order:** ours puts `RECT_NONE` before the module's own 4-byte global;
+       the original has them the other way round. If VC6 orders `.bss` by a hash of
+       names (OpenTS's note), the global's real name decides it.
+     Verdict so far: code and initialised data line up naturally; the MD5 goal hinges on
+     the compiler's emission order (generated functions, initialisers, `.bss`), which
+     is specific and testable but unsolved.
 6. **Twenty functions.** Mixed sizes, half with an OpenTS counterpart and half RA2-only.
    Record for each: matched or not, best %, check runs, tokens spent, minutes, model,
    and for a stall the kind of blocker. A near miss is saved with its score for the next

@@ -1,0 +1,9 @@
+address,name,result,size,source
+0x00410800,AbstractTypeClass::AbstractTypeClass,MATCH,340,src/abstype.cpp
+0x00410960,AbstractTypeClass::AbstractTypeClass,MATCH,86,src/abstype.cpp
+0x004109C0,AbstractTypeClass::~AbstractTypeClass,MATCH,114,src/abstype.cpp
+0x00410A40,AbstractTypeClass::operator==,MATCH,25,src/abstype.cpp
+0x00410A60,AbstractTypeClass::Read_INI,42.6%,299,src/abstype.cpp
+0x00410B90,AbstractTypeClass::Write_INI,MATCH,71,src/abstype.cpp
+0x00410BE0,AbstractTypeClass::Compute_CRC,MATCH,52,src/abstype.cpp
+0x00410C20,AbstractTypeClass::Init_Theater,MATCH,3,src/abstype.cpp

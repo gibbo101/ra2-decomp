@@ -1,36 +1,59 @@
 """Re-check every annotated function under src/: the merge gate.
 
-Usage: uv run tools/checkall.py
+Usage: uv run tools/checkall.py [--record]
 
-Prints one line per function and exits non-zero if any annotated function no longer
-matches, since a header edit can change the code of functions it never touches.
+Prints one line per function. Fails if a function data/progress.csv records as MATCH no
+longer matches, since a header edit can change the code of functions it never touches.
+--record rewrites data/progress.csv with the results.
 """
 
+import csv
+import re
 import subprocess
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+PROGRESS = ROOT / "data/progress.csv"
+LINE = re.compile(r"^(0x[0-9A-F]{8}) (.+?): (MATCH|WRONG TARGETS|[\d.]+%) \((\d+)/(\d+) bytes")
 
 
 def main() -> None:
+    record = "--record" in sys.argv[1:]
+    before = {}
+    if PROGRESS.exists():
+        with PROGRESS.open() as f:
+            before = {r["address"]: r["result"] for r in csv.DictReader(f)}
     sources = sorted((ROOT / "src").rglob("*.cpp")) if (ROOT / "src").exists() else []
-    matched = failed = 0
+    rows, broken = [], []
     for src in sources:
         proc = subprocess.run([sys.executable, str(ROOT / "tools/check.py"), str(src)],
                               capture_output=True, text=True, cwd=ROOT)
+        found = False
         for line in proc.stdout.splitlines():
-            if line.startswith("0x"):
-                print(line)
-                if ": MATCH (" in line:
-                    matched += 1
-                else:
-                    failed += 1
-        if proc.returncode and not proc.stdout.startswith("0x"):
-            print(f"{src.relative_to(ROOT)}: {proc.stdout.strip() or proc.stderr.strip()}")
-            failed += 1
-    print(f"{matched} matched, {failed} not")
-    sys.exit(1 if failed else 0)
+            m = LINE.match(line)
+            if not m:
+                continue
+            found = True
+            print(line)
+            addr, name, result, size = m.group(1), m.group(2), m.group(3), m.group(5)
+            rows.append([addr, name, result, size, src.relative_to(ROOT).as_posix()])
+            if before.get(addr) == "MATCH" and result != "MATCH":
+                broken.append(f"{addr} {name}")
+        if not found:
+            print(f"{src.relative_to(ROOT)}: {(proc.stdout + proc.stderr).strip()}")
+            broken.append(str(src.relative_to(ROOT)))
+    matched = [r for r in rows if r[2] == "MATCH"]
+    print(f"{len(matched)} of {len(rows)} functions match "
+          f"({sum(int(r[3]) for r in matched)} of {sum(int(r[3]) for r in rows)} bytes)")
+    if broken:
+        print("no longer matching: " + ", ".join(broken))
+    if record and not broken:
+        with PROGRESS.open("w", newline="") as f:
+            w = csv.writer(f, lineterminator="\n")
+            w.writerow(["address", "name", "result", "size", "source"])
+            w.writerows(rows)
+    sys.exit(1 if broken else 0)
 
 
 if __name__ == "__main__":

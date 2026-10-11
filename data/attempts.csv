@@ -1,0 +1,9 @@
+date,address,function,model,result,best,checks,minutes,blocker,notes
+2026-10-11,0x00410800,AbstractTypeClass::AbstractTypeClass(char const *),opus-5.5 (coordinator),MATCH,100,1,,,TibSun source plus YR's UIName default
+2026-10-11,0x00410960,AbstractTypeClass::AbstractTypeClass(NoInitClass const &),opus-5.5 (coordinator),MATCH,100,6,,,label test written as *UINameLabel; operator[] reorders the vptr stores
+2026-10-11,0x004109C0,AbstractTypeClass::~AbstractTypeClass,opus-5.5 (coordinator),MATCH,100,1,,,TibSun source unchanged
+2026-10-11,0x00410A40,AbstractTypeClass::operator==,opus-5.5 (coordinator),MATCH,100,1,,,out of line in YR; stricmp(string, IniName)
+2026-10-11,0x00410A60,AbstractTypeClass::Read_INI,opus-5.5 (coordinator),partial,42.6,6,,register allocation,shape frame and calls agree; YR keeps this in EBX and reloads ini from its argument; tried const ini and buffer placement
+2026-10-11,0x00410B90,AbstractTypeClass::Write_INI,opus-5.5 (coordinator),MATCH,100,1,,,
+2026-10-11,0x00410BE0,AbstractTypeClass::Compute_CRC,opus-5.5 (coordinator),MATCH,100,1,,,adds the UIName label to the CRC
+2026-10-11,0x00410C20,AbstractTypeClass::Init_Theater,opus-5.5 (coordinator),MATCH,100,2,,,defined out of line at the end of the file; its address follows Compute_CRC

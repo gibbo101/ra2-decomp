@@ -97,6 +97,17 @@ if [ ! -f "$TC/wineprefix/system.reg" ]; then
     WINEPREFIX="$TC/wineprefix" wineserver -w
 fi
 
+# The TibSun archive: OpenTS's frozen matching baseline, whose headers the build falls back
+# on for every class Yuri's Revenge did not change.
+TIBSUN_COMMIT=dbfbfbfaac40364ce7e1cd8fad7bcade5c6fb0d4
+if [ ! -d "$ROOT/reference/tibsun/.git" ]; then
+    git clone -q https://github.com/OpenTS-Developers/TibSun.git "$ROOT/reference/tibsun"
+fi
+if [ "$(git -C "$ROOT/reference/tibsun" rev-parse HEAD)" != "$TIBSUN_COMMIT" ]; then
+    git -C "$ROOT/reference/tibsun" fetch -q origin "$TIBSUN_COMMIT"
+    git -C "$ROOT/reference/tibsun" checkout -q "$TIBSUN_COMMIT"
+fi
+
 # Gate: a compiled object must carry the stamp the Rich header records for the game's
 # C++ modules (product 11, build 8447).
 probe="$ROOT/build/probe"
