@@ -76,6 +76,34 @@ if [ ! -d "$VC" ]; then
     trap - EXIT
 fi
 
+# The include path the installer sets up: VC98\include, then mfc\include, then
+# atl\include (its AddToReg actions in SETUP/VS98ENT.STF).
+for sub in MFC ATL; do
+    if [ ! -d "$VC/$sub/INCLUDE" ]; then
+        tmp="$(mktemp -d -p "$TC")"
+        7z x -y -bso0 -bsp0 "$BASE_ISO" -o"$tmp" "VC98/$sub/INCLUDE/*"
+        mkdir -p "$VC/$sub"
+        mv "$tmp/VC98/$sub/INCLUDE" "$VC/$sub/INCLUDE"
+        rm -rf "$tmp"
+    fi
+done
+
+# The disc stores some files under short names that its installer renames, as listed in
+# SETUP/VS98ENT.INF ("vc98\include\xception<exception>").
+inf="$(mktemp -d -p "$TC")"
+7z e -y -bso0 -bsp0 "$BASE_ISO" -o"$inf" 'SETUP/VS98ENT.INF'
+grep -a -o -i -E 'vc98\\(bin|include|lib)\\[^,<]+<[^>]+>' "$inf/VS98ENT.INF" | sort -u |
+while IFS= read -r entry; do
+    dir="$(echo "$entry" | cut -d'\' -f2 | tr '[:lower:]' '[:upper:]')"
+    short="$(echo "$entry" | cut -d'\' -f3 | cut -d'<' -f1)"
+    long="$(echo "$entry" | sed 's/.*<\(.*\)>/\1/')"
+    found="$(find "$VC/$dir" -maxdepth 1 -iname "$short" | head -n 1)"
+    if [ -n "$found" ] && [ ! -e "$VC/$dir/$long" ]; then
+        mv "$found" "$VC/$dir/$long"
+    fi
+done
+rm -rf "$inf"
+
 # The files that decide what the build emits, as the base install plus SP3 leaves them.
 (cd "$VC" && sha256sum -c --quiet) <<'EOF'
 d9220fdfaf355c81f26e7b03c5dc628ec72ff81c99dc38ed98b1ad4bdbbb309c  BIN/CL.EXE

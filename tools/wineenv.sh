@@ -16,4 +16,5 @@ winpath() {
 export WINEPREFIX="$ROOT/toolchain/wineprefix"
 export WINEDEBUG=-all
 [ "$(readlink "$WINEPREFIX/dosdevices/y:" 2>/dev/null)" = "$ROOT" ] || ln -sfn "$ROOT" "$WINEPREFIX/dosdevices/y:"
-export INCLUDE="$(winpath "$TC/INCLUDE")" LIB="$(winpath "$TC/LIB")"
+export INCLUDE="$(winpath "$TC/INCLUDE");$(winpath "$TC/MFC/INCLUDE");$(winpath "$TC/ATL/INCLUDE")"
+export LIB="$(winpath "$TC/LIB")"

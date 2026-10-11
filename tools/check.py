@@ -2,6 +2,7 @@
 
     uv run tools/check.py src/rawfile.cpp            # every annotated function in the file
     uv run tools/check.py src/rawfile.cpp 0x65CF00   # one of them
+    uv run tools/check.py work.cpp --overlay hdrs/    # headers in hdrs/ override include/
 
 A function is tied to its address by a marker on the line before its definition:
 
@@ -22,6 +23,8 @@ Bytes EA patched after linking are first put back from data/exe_patches.csv.
 
 import csv
 import difflib
+import hashlib
+import os
 import re
 import shutil
 import struct
@@ -37,12 +40,11 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from coff import REL_DIR32, REL_REL32, CoffObject  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
-FLAGS = ["/c", "/O2", "/Ob2", "/Gr", "/GR", "/MT"]
+FLAGS = ["/c", "/O2", "/Ob2", "/Gr", "/GR", "/MT", "/DWIN32"]
 ANNOTATION = re.compile(r"^\s*//\s*FUNCTION:\s*(0x[0-9A-Fa-f]+)\s*$")
 FORBIDDEN = re.compile(r"\b(__asm|_asm|__emit|_emit)\b|#\s*pragma\s+(optimize|code_seg)")
 PADDING = (0x90, 0xCC)
 TIBSUN = ROOT / "reference/tibsun/code"
-HEADERS = ROOT / "build/include"
 
 
 class Original:
@@ -134,22 +136,27 @@ def qualified(sym: str) -> str:
     return sym.lstrip("_@").split("@", 1)[0]
 
 
-def prepare_headers() -> None:
-    """Assemble build/include: the TibSun archive's headers with include/ laid over them.
-    One directory, because a quoted #include searches the including file's own first."""
+def prepare_headers(overlay: Path | None) -> Path:
+    """One directory of headers for this run: the TibSun archive's, include/ over them,
+    then `overlay`'s. One directory, because a quoted #include searches the including
+    file's own first; one per run, so parallel checks never share it. Its name has a
+    fixed length, since the paths the compiler sees can move its output."""
     if not TIBSUN.is_dir():
         raise SystemExit(f"{TIBSUN} is missing: run tools/setup_toolchain.sh")
-    if HEADERS.exists():
-        shutil.rmtree(HEADERS)
-    for base in (TIBSUN, ROOT / "include"):
+    tag = hashlib.sha256(f"{os.getpid()} {overlay}".encode()).hexdigest()[:8]
+    headers = ROOT / "build/hdr" / tag
+    if headers.exists():
+        shutil.rmtree(headers)
+    for base in (TIBSUN, ROOT / "include", *([overlay] if overlay else [])):
         for h in base.rglob("*"):
             if h.is_file() and h.suffix.lower() in (".h", ".hh", ".hpp", ".inl"):
-                dest = HEADERS / h.relative_to(base)
+                dest = headers / h.relative_to(base)
                 dest.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copyfile(h, dest)
+    return headers
 
 
-def compile_source(src: Path) -> tuple[Path | None, str]:
+def compile_source(src: Path, overlay: Path | None = None) -> tuple[Path | None, str]:
     text = src.read_text(errors="replace")
     bad = FORBIDDEN.search(text)
     if bad:
@@ -158,10 +165,14 @@ def compile_source(src: Path) -> tuple[Path | None, str]:
     out = ROOT / "build/obj" / rel.with_suffix(".obj")
     out.parent.mkdir(parents=True, exist_ok=True)
     out.unlink(missing_ok=True)
-    prepare_headers()
-    cmd = [str(ROOT / "tools/wcl"), *FLAGS, f"/I{winpath(HEADERS)}",
+    headers = prepare_headers(overlay)
+    extra = [f"/I{winpath(headers / 'vqalib')}"] if (headers / "vqalib").is_dir() else []
+    cmd = [str(ROOT / "tools/wcl"), *FLAGS, f"/I{winpath(headers)}", *extra,
            f"/Fo{winpath(out)}", winpath(src)]
-    proc = subprocess.run(cmd, capture_output=True, text=True, cwd=ROOT)
+    try:
+        proc = subprocess.run(cmd, capture_output=True, text=True, cwd=ROOT)
+    finally:
+        shutil.rmtree(headers, ignore_errors=True)
     log = proc.stdout + proc.stderr
     return (out if proc.returncode == 0 and out.exists() else None), log
 
@@ -300,12 +311,18 @@ def mangled(name: str) -> tuple[str, ...]:
 def main() -> None:
     if len(sys.argv) < 2:
         raise SystemExit(__doc__)
-    src = Path(sys.argv[1])
-    only = {int(a, 16) for a in sys.argv[2:]}
+    argv = sys.argv[1:]
+    overlay = None
+    if "--overlay" in argv:
+        k = argv.index("--overlay")
+        overlay = Path(argv[k + 1]).resolve()
+        del argv[k:k + 2]
+    src = Path(argv[0])
+    only = {int(a, 16) for a in argv[1:]}
     targets = [(a, n) for a, n in annotations(src) if not only or a in only]
     if not targets:
         raise SystemExit(f"{src}: no annotated functions to check")
-    objpath, log = compile_source(src)
+    objpath, log = compile_source(src, overlay)
     if objpath is None:
         print(log)
         raise SystemExit(1)
