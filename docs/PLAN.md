@@ -238,6 +238,21 @@ only updates an installed retail 1.000 `gamemd.exe`; it does not carry the exe.
 - A clean 1.001 copy can still replace the guesswork later: Ares' size and CRC verify
   one if the community has it.
 
+**The First Decade's exe, 11 October 2026.** TFD's `gamemd.exe` (from archive.org's TFD
+disc image, kept only in `orig/gamemd-tfd.exe`) is Ares's "1.001 (TFD)": 4,813,072 bytes,
+CRC `0xEB903080`, the CD build's size and timestamp, retail-sized resources. Its code
+differs from Steam's in only 118 bytes across 12 functions, nearly all the CD check:
+five `counter` functions and one at 0x4A80D0 stubbed to `mov al,1; ret` and the like,
+`GetDriveType == DRIVE_CDROM` tests blanked in GDlgSupp, MainLoop and voc, branches forced
+in netdlg2 and voc. Where TFD holds compiler-shaped code, its bytes are the original:
+those 21 code sites, plus Steam's "TUC" (Ultimate Collection) version suffix and a 2-byte
+`.rdata` size field, are now `data/exe_patches.csv`, and the function map is built on the
+restored code (three stubs had faked function boundaries). TFD carries its own no-CD
+patch at 0x4A81D7/0x4A820D, where Steam has the compiler's code; any edit TFD and Steam
+share stays invisible to this comparison. TFD's TS and RA2 exes are kept too
+(`orig/ts-game-tfd.exe`, `orig/game-tfd.exe`); TFD's TS exe carries two extra
+`stxt` sections, a SafeDisc wrapper.
+
 Scale against Byte Tactics: `.text` is about 4.8 times TA's whole exe. The recomp project
 counted about 24,900 functions and 954 classes in `gamemd.exe`, including library code.
 

@@ -3670,8 +3670,7 @@ address,size,evidence,name
 0x0049F420,289,PCYG,MapClass::GetRandomCoordsNear
 0x0049F550,111,PCG,
 0x0049F5C0,91,PCYG,CopyProtection::IsLauncherRunning
-0x0049F620,3,PCYG,CopyProtection::NotifyLauncher
-0x0049F623,273,G,
+0x0049F620,276,PCYG,CopyProtection::NotifyLauncher
 0x0049F740,88,PCYG,CopyProtection::DispatchLauncherMessage
 0x0049F7A0,264,PCYG,CopyProtection::CheckProtectedData
 0x0049F8B0,101,PCYG,CopyProtection::ShutDown
@@ -3980,8 +3979,7 @@ address,size,evidence,name
 0x004A7FE0,80,PCG,
 0x004A8030,73,VG,
 0x004A8080,73,PVG,
-0x004A80D0,6,PCYG,CDDriveManagerClass::GetCDNumber
-0x004A80D6,400,G,
+0x004A80D0,406,PCYG,CDDriveManagerClass::GetCDNumber
 0x004A8270,341,PCG,
 0x004A83D0,69,P,
 0x004A8420,23,PV,
@@ -5199,8 +5197,7 @@ address,size,evidence,name
 0x004E5E20,161,PCG,
 0x004E5ED0,352,PCG,
 0x004E6030,53,CG,
-0x004E6070,78,PCYG,CDDriveManagerClass::CDDriveManagerClass
-0x004E60C0,114,P,
+0x004E6070,194,PCYG,CDDriveManagerClass::CDDriveManagerClass
 0x004E6140,1,P,
 0x004E6150,59,PCG,
 0x004E6190,276,PCG,
@@ -8214,7 +8211,7 @@ address,size,evidence,name
 0x0055CC10,8,P,
 0x0055CC20,742,P,
 0x0055CF10,182,PCG,
-0x0055CFD0,906,CG,
+0x0055CFD0,906,PCG,
 0x0055D360,2940,PCYG,Game::MainLoop
 0x0055DEE0,636,PCYG,Game::KeyboardProcess
 0x0055E160,676,PCG,

@@ -93,8 +93,17 @@ def main() -> None:
     pe = pefile.PE(str(exe))
     text = pe.sections[0]
     base = pe.OPTIONAL_HEADER.ImageBase + text.VirtualAddress
-    code = text.get_data()[: text.Misc_VirtualSize]
+    code = bytearray(text.get_data()[: text.Misc_VirtualSize])
     end = base + len(code)
+    # EA's post-link patches leave stubs and nop runs that look like function boundaries;
+    # the map is of the compiler's code, so their original bytes are put back first.
+    with (ROOT / "data/exe_patches.csv").open() as f:
+        for r in csv.DictReader(f):
+            at = int(r["address"], 16)
+            if base <= at < end:
+                orig = bytes.fromhex(r["original"])
+                code[at - base:at - base + len(orig)] = orig
+    code = bytes(code)
 
     starts, padded, calls, tables, after_end = set(), set(), set(), set(), set()
     sweep(code, base, starts, padded, calls, tables, after_end)
