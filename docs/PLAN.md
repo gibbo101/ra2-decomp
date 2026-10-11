@@ -370,8 +370,9 @@ Goal: a cost per matched function, so the whole job can be priced before committ
      about 18,000; a start without padding must follow a return, jump, no-return call or
      switch table. It re-synchronises its sweep after the switch tables VC6 keeps in
      `.text`, and drops 158 data values that only look like code pointers.
-   - `tools/yrpp_layouts.py` has clang lay out YRpp's classes for 32-bit Windows with
-     Microsoft bitfields and writes `data/layouts.csv`: 283 classes, 4,966 members and
+   - `tools/yrpp_layouts.py` has clang lay out YRpp's classes with the Microsoft 32-bit
+     ABI (MinGW's headers, MSVC record layout; an Itanium-ABI first version put members
+     in a base's tail padding, which MSVC never does) and writes `data/layouts.csv`: 283 classes, 4,966 members and
      bases with offsets and types. YRpp's 50 `sizeof` assertions all hold, and the
      offsets used by the functions matched in step 2 agree (`RawFileClass::Handle` +0x14,
      `ObjectClass::Health` +0x6C, `RulesClass::ConditionRed` +0x1708). Names are YRpp's;
