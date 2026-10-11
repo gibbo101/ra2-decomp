@@ -22,11 +22,18 @@ original compiler turns into that function's exact bytes. MATCH means
    changed many classes: member offsets are in `data/layouts.csv` (YRpp's names), and
    `include/abstract.h` and `include/abstype.h` show how YR headers differ from TS.
    No TibSun file: write the function from the disassembly.
+   Headers in `include/` for these classes are proven against the exe (size, member
+   offsets, every vtable slot): AbstractClass, AbstractTypeClass, ObjectClass,
+   MissionClass, RadioClass, TechnoClass, BuildingClass, ObjectTypeClass,
+   TechnoTypeClass, BuildingTypeClass, BaseClass, TeamClass. Include them rather than
+   writing stand-ins; `uv run tools/headercheck.py <Class>` proves any header you fix in
+   your overlay.
 3. Mark the definition with `// FUNCTION: <ADDR>` on the line before it.
 4. `uv run tools/check.py build/spike/<ADDR>/<module>.cpp <ADDR> --overlay build/spike/<ADDR>/include`
 5. Read the diff, change the source, repeat.
 
-Stop at MATCH, or after 30 checks without the score rising, or after 45 minutes.
+Stop at MATCH, or after 30 checks without the score rising, or after 45 minutes (for a
+function over 2,000 bytes: 60 checks or 90 minutes).
 
 ## Rules
 
