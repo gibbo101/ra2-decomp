@@ -303,7 +303,9 @@ def mangled(name: str) -> tuple[str, ...]:
     if scopes and last == scopes[-1]:
         return (f"??0{last}@{''.join(s + '@' for s in reversed(scopes[:-1]))}@",)
     if last.startswith("~"):
-        return (f"??1{last[1:]}@{''.join(s + '@' for s in reversed(scopes[:-1]))}@",)
+        # The compiler also generates the scalar and vector deleting destructors from it.
+        scope = "".join(s + "@" for s in reversed(scopes[:-1]))
+        return tuple(f"{kind}{last[1:]}@{scope}@" for kind in ("??1", "??_G", "??_E"))
     scope = "".join(s + "@" for s in reversed(scopes))
     return (f"?{last}@{scope}@", f"_{last}@", f"@{last}@", f"_{last}")
 
