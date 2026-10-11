@@ -26,7 +26,8 @@ that comes first.
   intent of a non-obvious branch.
 - Never names, dates, decisions, tickets, issue numbers, "fixes the bug" or history. That
   belongs in the commit message or the docs.
-- Two lines at most. Anything longer goes in a doc under `docs/`, and the comment points to it.
+- Two lines at most. A longer comment needs the maintainer's sign-off before it is written.
+- A comment never points to a doc.
 - Checker markers that tie a function to its address are tooling, not comments, and are
   allowed.
 

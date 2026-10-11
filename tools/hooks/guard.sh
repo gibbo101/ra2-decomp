@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 # Blocks personal data, secrets and game binaries from commits and pushes.
-# Usage and setup: docs/COMMIT_GUARD.md.
 set -euo pipefail
 
 private_list="$(git rev-parse --git-common-dir)/info/private-strings"
