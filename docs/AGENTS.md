@@ -15,6 +15,9 @@ original compiler turns into that function's exact bytes. MATCH means
 - Keep helper scripts and variant files in `build/spike/<ADDR>/` too: the scratchpad is
   shared. No two files may differ only in case: under Wine they write one `.obj`, and
   the compile fails with only the file name in the log.
+- Before you finish, delete the scratch you made that nobody needs (probes, logs, variant
+  copies) with `rm` on files or `find DIR -type f -delete`, never a recursive force
+  delete. Keep your best source and its header overlay.
 
 ## Loop
 
