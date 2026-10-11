@@ -224,8 +224,19 @@ linking:
 So patched functions cannot match compiled source, and the MD5 goal as written (the Steam
 exe's) needs EA's post-link patch reproduced. A pristine 1.001 would be the clean target,
 but Westwood's 1.001 patch (`YR1001EN.EXE`, 2.38 MB) is an RTPatch 5.20 binary diff that
-only updates an installed retail 1.000 `gamemd.exe`; it does not carry the exe. Decide
-the target before step 4 (see "Open questions").
+only updates an installed retail 1.000 `gamemd.exe`; it does not carry the exe.
+
+**Decided 11 October 2026: the target is the Steam exe.**
+- The source is Westwood's 1.001, CD check included; v1 still means the game as shipped.
+- Each EA patch site is recorded in the repo: address, the bytes Westwood's code would
+  have, the bytes EA wrote, and the evidence. EA likely changed more than the CD check
+  (compatibility for newer systems), so sites also surface during matching: a function
+  that differs from the Steam bytes only in a small patch-shaped spot.
+- The checker counts a function as matched when its only differences lie at recorded
+  sites. The whole-exe build applies EA's patches after linking, as EA did, so the MD5
+  goal stays the Steam exe's.
+- A clean 1.001 copy can still replace the guesswork later: Ares' size and CRC verify
+  one if the community has it.
 
 Scale against Byte Tactics: `.text` is about 4.8 times TA's whole exe. The recomp project
 counted about 24,900 functions and 954 classes in `gamemd.exe`, including library code.
@@ -456,12 +467,6 @@ divided by the number matched, times the functions left after tier 0, gives the 
 
 ## Open questions
 
-- **Which exe is the target?** The Steam exe is 1.001 with EA's post-link patches (see
-  "The binary"). Options: match pristine 1.001 (needs a disc install, 1.000 plus
-  Westwood's RTPatch) and treat the Steam patches as a known diff; or match the Steam
-  exe, with each EA patch site recorded so that a function differing only there counts
-  as matched and the build re-applies the patch for the MD5. EA likely changed more than
-  the CD check (compatibility for newer systems). Decide before step 4.
 - Does `game.exe` (RA2 without YR) share enough to be worth matching too, or is YR the
   only target?
 - What fraction of YR functions have an OpenTS counterpart? Measure it in the spike by
