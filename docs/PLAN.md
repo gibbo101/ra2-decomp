@@ -226,7 +226,8 @@ footing:
 
 - no game files, no compiler binaries in the repo; the player brings the game, a setup
   script fetches the compiler;
-- not affiliated with EA, said plainly in the README;
+- source code only: the README says plainly that you must own the game to build or run
+  anything, and that the project is not affiliated with EA;
 - a repo of its own, kept separate from Tiberian Factions' Workshop presence;
 - private through the spike; talk to the Phobos community before it goes public.
 
