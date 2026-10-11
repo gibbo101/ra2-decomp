@@ -396,16 +396,38 @@ Goal: a cost per matched function, so the whole job can be priced before committ
      must land at the same place in the function, a string literal or constant must equal
      the original's target bytes, a call or global must reach its known address. A name
      with no known address yet is reported as unverified, not as a mismatch.
-5. **Whole-exe build.** Split the original into one object per module so every commit
-   links a complete, launchable `gamemd.exe`, each function swapping in as it matches.
-   Try matching one module's data section too: the first evidence on whether the MD5 goal
-   is reachable.
+5. **Module layout and a data probe.** Rescoped 11 October 2026: the whole-exe build
+   moves after the spike (see "After the spike"), since it prices nothing and has little
+   to link yet.
+   - **Layout, drafted:** `tools/modules.py` writes `data/modules.csv`. The exe keeps 74
+     of Westwood's `__FILE__` paths (`D:\ra2mdpost\Techno.CPP`), and the functions using
+     them show modules linked in case-insensitive alphabetical order, as OpenTS found for
+     TS. With OpenTS's class-to-file map and RTTI (each virtual belongs to the most basic
+     class whose vtable holds it), 239 modules are placed and 7,616 of 19,283 game
+     functions sit inside a module's evidence span; 11,667 lie in gaps between modules.
+     Direct calls barely help (8% go to a function within 20 places); the stronger next
+     source is global data, which `.data` and `.bss` also lay out per module in the same
+     order. Refine as step 6 needs it.
+   - **Data probe:** match one small module whole, data included, as the first evidence
+     on whether the MD5 goal is reachable.
 6. **Twenty functions.** Mixed sizes, half with an OpenTS counterpart and half RA2-only.
    Record for each: matched or not, best %, check runs, tokens spent, minutes, model,
    and for a stall the kind of blocker. A near miss is saved with its score for the next
    attempt to start from.
 7. **Price it.** Scale the measured cost to about 20k game functions (less what OpenTS
    carries over), and decide.
+
+### After the spike
+
+The whole-exe build, in Byte Tactics' order (their `docs/linking.md` is the map):
+
+- **Placement:** compiled pieces put at the original's addresses over the original
+  image, every reference resolved by name and checked. Cheap, and worth it once there is
+  enough source that the placed build differs from the original only where intended.
+- **An ordinary `LINK.EXE` link:** the unmatched code and data carved out of the
+  original as relocatable objects. The exe has no relocation table, so every address in
+  code and data is recovered by analysis; globals come from source, the import tables
+  are rebuilt, and EA's patch sites are applied after linking.
 
 Steps 1 to 5 are one interactive session with an Opus coordinator: tooling, no fan-out.
 Step 6 is where parallel agents pay, if the maintainer opts in to a workflow for it.
