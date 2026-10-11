@@ -490,6 +490,17 @@ Goal: a cost per matched function, so the whole job can be priced before committ
    - **Per-function consolidation is cheap once a class's header exists;** a header is a
      one-off that every function on that class shares. YR has about 950 classes, most
      far smaller than these.
+   - **Large-function sample (11 October 2026): 2 of 5 matched.** Seeded draw of 2-6 KB
+     functions with the proven headers available. Sonnet matched `UnitTypeClass::
+     Read_INI` (2,188 bytes) in 6 checks; Opus matched a map-generator dialog procedure
+     (2,404). Two stalled close: a 5,648-byte dialog procedure at 85.5% (full length,
+     about 98% of instructions) and `AnimClass`'s constructor at 87.9%, each on a couple
+     of register choices after 60-90 Opus checks; an RA2-only PlanMgr function stayed
+     at 39.9%. About 2.3M agent tokens, roughly $55-65 at API rates, 47 minutes: about
+     $4 per KB attempted and $12-14 per KB matched, against $3 per KB for the small set.
+     Large functions are reconstructed almost whole and stall on register allocation:
+     the tier-3 residue, for Fable by hand or a permuter (Byte Tactics' at 90% and up),
+     with near misses banked as `partial` in the meantime.
 7. **Price it.** Scale the measured cost to about 20k game functions (less what OpenTS
    carries over), and decide.
 
