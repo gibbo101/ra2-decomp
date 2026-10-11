@@ -240,11 +240,22 @@ file: use them for facts (addresses, layouts, behaviour), never paste their head
 
 Goal: a cost per matched function, so the whole job can be priced before committing.
 
-1. **Toolchain.** Get VC6 build 12.00.8447 running under Wine. Read homm1-decomp's
-   `AGENTS.md` and Wine setup first: same compiler family, already solved, and its `cl`
-   version pins down which service pack 8447 is. The Generals community's `vc6` preset and
-   Docker/Wine route (see `../generals-pad/docs/PLAN.md`) and Byte Tactics' setup script
-   show how others fetch it.
+1. **Toolchain.** Get VC6 build 12.00.8447 running under Wine. Decided 11 October 2026:
+   no original disc is available, so the compiler is downloaded, the same way the other
+   decomps get theirs.
+   - A setup script fetches the base VC6 install and the service pack whose `cl` is
+     12.00.8447 (believed to be SP3, possibly also SP4: confirm), checks every download
+     against a SHA-256 pinned in the script, and installs into the gitignored `toolchain/`.
+     The compiler is never committed or redistributed.
+   - Gate: `cl` must print **12.00.8447** before anything else runs. A near miss is not
+     good enough, because each service pack can emit different code.
+   - Not the SP6 portable that TheSuperHackers' CI pulls (`itsmattkc/MSVC600`, pinned commit
+     and SHA-256): wrong build for us, but its fetch-and-verify step is the pattern to copy.
+     The base install's libraries (build 8168) match the Rich header's prebuilt objects.
+   - MASM 6.13 (build 7299) is only needed for the 48 assembly objects; source it later.
+   - Read homm1-decomp's `AGENTS.md` and Wine setup first (VC6 SP5, CC0, already working).
+     The Generals Docker/Wine route (`../generals-pad/docs/PLAN.md`) and Byte Tactics'
+     setup script are the other references.
 2. **Flags.** Match a handful of CRT functions to fix the compiler flags.
 3. **Symbols.** Pull YRpp's addresses and class layouts into a `symbols.csv`; cross-check
    function bounds with Ghidra.
@@ -340,8 +351,8 @@ divided by the number matched, times the functions left after tier 0, gives the 
 
 ## Open questions
 
-- Which VC6 service pack is 12.00.8447, and does `game.exe` (RA2 without YR) share
-  enough to be worth matching too, or is YR the only target?
+- Does `game.exe` (RA2 without YR) share enough to be worth matching too, or is YR the
+  only target? (Which service pack 8447 is gets settled in spike step 1.)
 - What fraction of YR functions have an OpenTS counterpart? Measure it in the spike by
   comparing function lengths and call graphs.
 - Is there any surviving `tsun.dbg` or `gamemd` debug build? A symbol file would make
