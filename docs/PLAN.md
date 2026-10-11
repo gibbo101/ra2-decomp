@@ -352,8 +352,7 @@ Goal: a cost per matched function, so the whole job can be priced before committ
      header's 48 MASM objects are Westwood's or third-party assembly, far less MASM work
      than "Scale" assumed.
 3. **Symbols.** Pull YRpp's addresses and class layouts into a `symbols.csv`; cross-check
-   function bounds with Ghidra. **Functions and globals done 11 October 2026; layouts not
-   yet.**
+   function bounds with Ghidra. **Done 11 October 2026.**
    - `tools/yrpp_symbols.py` extracts YRpp's facts (address, kind, qualified name,
      convention, header) into `data/symbols.csv`: 1,808 functions, 511 globals, 22 vtable
      constants, 103 import slots. Two of its function addresses are wrong (they fall
@@ -365,6 +364,12 @@ Goal: a cost per matched function, so the whole job can be priced before committ
      about 18,000; a start without padding must follow a return, jump, no-return call or
      switch table. It re-synchronises its sweep after the switch tables VC6 keeps in
      `.text`, and drops 158 data values that only look like code pointers.
+   - `tools/yrpp_layouts.py` has clang lay out YRpp's classes for 32-bit Windows with
+     Microsoft bitfields and writes `data/layouts.csv`: 283 classes, 4,966 members and
+     bases with offsets and types. YRpp's 50 `sizeof` assertions all hold, and the
+     offsets used by the functions matched in step 2 agree (`RawFileClass::Handle` +0x14,
+     `ObjectClass::Health` +0x6C, `RulesClass::ConditionRed` +0x1708). Names are YRpp's;
+     Westwood's take precedence when known.
    - Ghidra 12.1.4's default analysis (`tools/ghidra.sh`, 93 s) finds only 8,584
      functions: it misses most code reached only through vtables. Where it does find a
      function, its extent equals the map's for 8,114 of 8,581.
