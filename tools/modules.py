@@ -3,15 +3,18 @@
 Usage: uv run tools/modules.py [OPENTS_CODE_DIR]
 
 The linker placed modules in case-insensitive alphabetical order of file name, so each
-module is one address range and the ranges are sorted by name. Two kinds of evidence
-name a function's module:
+module is one address range and the ranges are sorted by name. Most modules end with the
+same 23-byte initialiser, which zeroes the module's own copy of a static object a common
+header defines; those initialisers cut the code into segments of one module each (a
+segment holds more than one module only where a module lacks the header). Evidence
+naming a function's module:
   F  the function references a __FILE__ path the exe still holds (D:\\ra2mdpost\\X.cpp)
   O  the function's class (its YRpp name) is defined in that file in OpenTS
   V  the function is a virtual of a class (from the RTTI vtables) defined in that file
      in OpenTS; a virtual belongs to the most basic class whose vtable holds it
-The labelling kept is the one that agrees with the most evidence (F counts ten times O)
-while staying in alphabetical order. Functions between two modules' last and first
-evidence are left unassigned and listed as gaps.
+Each segment takes the name with the most evidence (F counts ten times O or V), and the
+names kept are those that stay in alphabetical order; a segment with no name kept is
+written as "?".
 """
 
 import bisect
@@ -26,6 +29,7 @@ import pefile
 
 ROOT = Path(__file__).resolve().parent.parent
 WEIGHT = {"F": 10, "O": 1, "V": 1}
+END_MARKER = re.compile(rb"\x33\xc0\xa3....\xa3....\xa3....\xa3....\xc3", re.S)
 
 
 def file_anchors(pe, functions):
@@ -85,13 +89,16 @@ def opents_classes(code_dir: Path):
 
 
 def best_monotone(points):
-    """The heaviest subsequence of (address, key, weight) whose keys never decrease."""
+    """The heaviest subsequence of (segment, key, weight) whose keys never decrease, and
+    strictly increase from one segment to the next: a module never spans a segment end."""
     n = len(points)
     best, prev = [0] * n, [-1] * n
-    for i, (_, key, w) in enumerate(points):
+    for i, (seg, key, w) in enumerate(points):
         best[i] = w
         for j in range(i):
-            if points[j][1] <= key and best[j] + w > best[i]:
+            pseg, pkey = points[j][0], points[j][1]
+            ok = pkey < key or (pkey == key and pseg == seg)
+            if ok and best[j] + w > best[i]:
                 best[i], prev[i] = best[j] + w, j
     i = max(range(n), key=best.__getitem__)
     keep = []
@@ -130,43 +137,68 @@ def main() -> None:
                 labels[int(r["address"], 16)][stem.lower()] += WEIGHT["O"]
                 display.setdefault(stem.lower(), stem)
 
-    points = [(a, c.most_common(1)[0][0], c.most_common(1)[0][1]) for a, c in sorted(labels.items())
-              if a < library_start]
-    kept = best_monotone(points)
-    module_of = {a: key for a, key, _ in kept}
-
-    spans = []
-    for a, key, _ in kept:
-        if spans and spans[-1][0] == key:
-            spans[-1][2] = a
-            spans[-1][3] += 1
-        else:
-            spans.append([key, a, a, 1])
-
-    size = {int(r["address"], 16): int(r["size"]) for r in rows}
+    text = pe.sections[0]
+    t0 = pe.OPTIONAL_HEADER.ImageBase + text.VirtualAddress
     game = bisect.bisect_left(functions, library_start)
+    ends = sorted(bisect.bisect_left(functions, t0 + m.start())
+                  for m in END_MARKER.finditer(text.get_data()) if t0 + m.start() < library_start)
+    cuts = [0] + [e + 1 for e in ends] + ([game] if not ends or ends[-1] + 1 < game else [])
+
+    segment_of = {}
+    for k, (lo, hi) in enumerate(zip(cuts, cuts[1:])):
+        for fn in functions[lo:hi]:
+            segment_of[fn] = k
+
+    points = [(segment_of[a], c.most_common(1)[0][0], c.most_common(1)[0][1], a)
+              for a, c in sorted(labels.items()) if a in segment_of]
+    kept = best_monotone([p[:3] for p in points])
+    kept_at = {}
+    i = 0
+    for seg, key, w in kept:
+        while points[i][:3] != (seg, key, w):
+            i += 1
+        kept_at[points[i][3]] = key
+        i += 1
+
+    # Within a segment the module changes only where its kept labels change; leading and
+    # trailing functions belong to the segment's first and last module.
+    size = {int(r["address"], 16): int(r["size"]) for r in rows}
     out = ROOT / "data/modules.csv"
+    named = unknown = 0
     with out.open("w", newline="") as f:
         w = csv.writer(f, lineterminator="\n")
-        w.writerow(["module", "first", "last", "evidence", "functions"])
+        w.writerow(["module", "first", "last", "functions", "certain"])
 
-        def gap(lo: int, hi: int) -> None:
-            """Functions [lo, hi) of the map that no module's evidence covers."""
-            if hi > lo:
-                last = functions[hi - 1]
-                w.writerow(["?", f"0x{functions[lo]:08X}", f"0x{last + size[last] - 1:08X}", 0, hi - lo])
+        def emit(name, fns, certain):
+            last = fns[-1]
+            w.writerow([name, f"0x{fns[0]:08X}", f"0x{last + size[last] - 1:08X}", len(fns),
+                        "yes" if certain else "no"])
 
-        nxt = 0
-        for key, first, last, n in spans:
-            lo, hi = bisect.bisect_left(functions, first), bisect.bisect_right(functions, last)
-            gap(nxt, lo)
-            w.writerow([display[key], f"0x{first:08X}", f"0x{last + size[last] - 1:08X}", n, hi - lo])
-            nxt = hi
-        gap(nxt, game)
-    dropped = len(points) - len(kept)
-    assigned = sum(bisect.bisect_right(functions, s[2]) - bisect.bisect_left(functions, s[1]) for s in spans)
-    print(f"{len(spans)} modules -> {out}: {assigned} of {game} game functions inside a module's "
-          f"evidence span; {dropped} of {len(points)} labels overruled by the order")
+        for lo, hi in zip(cuts, cuts[1:]):
+            fns = functions[lo:hi]
+            marks = [(k, kept_at[fn]) for k, fn in enumerate(fns) if fn in kept_at]
+            if not marks:
+                emit("?", fns, False)
+                unknown += len(fns)
+                continue
+            runs = []
+            for k, key in marks:
+                if runs and runs[-1][0] == key:
+                    runs[-1][2] = k
+                else:
+                    runs.append([key, k, k])
+            start = 0
+            for r, (key, first, last) in enumerate(runs):
+                end = len(fns) if r == len(runs) - 1 else last + 1
+                if start < first and r > 0:
+                    emit("?", fns[start:first], False)
+                    unknown += first - start
+                    start = first
+                emit(display[key], fns[start:end], r == 0 or start == first)
+                named += end - start
+                start = end
+    print(f"{len(cuts) - 1} segments -> {out}: {named} of {game} game functions named, "
+          f"{unknown} not; {len(points) - len(kept)} of {len(points)} labels overruled")
 
 
 if __name__ == "__main__":

@@ -402,12 +402,15 @@ Goal: a cost per matched function, so the whole job can be priced before committ
    - **Layout, drafted:** `tools/modules.py` writes `data/modules.csv`. The exe keeps 74
      of Westwood's `__FILE__` paths (`D:\ra2mdpost\Techno.CPP`), and the functions using
      them show modules linked in case-insensitive alphabetical order, as OpenTS found for
-     TS. With OpenTS's class-to-file map and RTTI (each virtual belongs to the most basic
-     class whose vtable holds it), 239 modules are placed and 7,616 of 19,283 game
-     functions sit inside a module's evidence span; 11,667 lie in gaps between modules.
-     Direct calls barely help (8% go to a function within 20 places); the stronger next
-     source is global data, which `.data` and `.bss` also lay out per module in the same
-     order. Refine as step 6 needs it.
+     TS. Most modules also end with the same 23-byte initialiser: a common header defines
+     a static 16-byte object, so every module including it gets its own copy and
+     initialiser (312 of them; none falls inside any of the 73 anchored modules). Those
+     cut the code into 313 segments of about one module each. Names come from the
+     `__FILE__` paths, OpenTS's class-to-file map and RTTI (each virtual belongs to the
+     most basic class whose vtable holds it), kept only in alphabetical order and never
+     spanning a segment end: 14,348 of 19,283 game functions are named; 4,935 are not,
+     mostly whole segments with no evidence yet (the twelve before `abstract`). Direct
+     calls barely help (8% go to a function within 20 places).
    - **Data probe:** match one small module whole, data included, as the first evidence
      on whether the MD5 goal is reachable.
 6. **Twenty functions.** Mixed sizes, half with an OpenTS counterpart and half RA2-only.
