@@ -1,6 +1,6 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 11 October 2026: spike in progress (see "First session").
+Status, 11 October 2026: spike done and priced (see "Budget"); going ahead: tier 0 and a permuter first, then batches module by module.
 
 ## The goal
 
