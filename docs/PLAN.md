@@ -373,12 +373,25 @@ Goal: a cost per matched function, so the whole job can be priced before committ
    - Ghidra 12.1.4's default analysis (`tools/ghidra.sh`, 93 s) finds only 8,584
      functions: it misses most code reached only through vtables. Where it does find a
      function, its extent equals the map's for 8,114 of 8,581.
-4. **Checker.** A `check.py <addr>` that compiles one function and diffs it against
-   `gamemd.exe`. reccmp, objdiff, or a port of Byte Tactics' or homm1-decomp's tools:
-   adopt before building. Linker-filled bytes are not compared, but what they point at
-   is: a string literal must equal the string at the original's address, a global must
-   resolve to the same address everywhere, a call must reach the right function. Masking
-   them alone lets a wrong callee or global pass as a match.
+4. **Checker. Done 11 October 2026.** `tools/check.py <file> [addr]` compiles a source
+   file with the step-2 flags and checks every function annotated `// FUNCTION: 0x...`
+   on the line before its definition. Written on Byte Tactics' design (their checker
+   is tied to their project; the core is small): length from `data/functions.csv`,
+   EA's patch sites restored from `data/exe_patches.csv` first, a diff of the
+   disassembly when it fails. `tools/checkall.py` re-checks everything under `src/`: the
+   merge gate. reccmp needs a linked exe and a PDB, objdiff a split original; both fit
+   step 5 better. Verified on the step-2 functions: the four `RawFileClass` ones and
+   0x5F5CD0 MATCH, `CampaignClass::FindIndex` shows its one register difference, and
+   swapping `GetLastError` for `GetTickCount` (identical bytes) reports WRONG TARGETS.
+   `tools/libmatch.py` places 558 LIBCMT functions from 216 objects
+   (`data/library.csv`), so CRT calls are verified by name and the queue can skip
+   prebuilt code; the CRT block starts at 0x7C8A8E.
+   - Linker-filled bytes are not compared, but what they point at is: a jump or table
+     must land at the same place in the function, a string literal or constant must equal
+     the original's target bytes, a call or global must reach its known address. A name
+     with no known address yet is reported as unverified, not as a mismatch.
+   - Matched sources stay out of `src/` until its licence is decided: the first ones are
+     Westwood code via OpenTS and Renegade, both GPL-3 (see "Legal footing").
 5. **Whole-exe build.** Split the original into one object per module so every commit
    links a complete, launchable `gamemd.exe`, each function swapping in as it matches.
    Try matching one module's data section too: the first evidence on whether the MD5 goal

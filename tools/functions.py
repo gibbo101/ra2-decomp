@@ -8,6 +8,7 @@ A function start needs at least one piece of evidence, recorded as letters:
   V  a pointer in .rdata or .data (vtables, callbacks) targets it
   Y  YRpp names it (data/symbols.csv)
   G  Ghidra's analysis found it (build/ghidra/functions.csv, when present)
+  L  a prebuilt library function was found here (data/library.csv)
 Every start must also be an instruction boundary of a linear sweep of .text. A
 function's size runs to the next start, less the padding before it.
 """
@@ -100,12 +101,16 @@ def main() -> None:
     ptrs = pointers(pe, base, end)
     yrpp = read_starts(ROOT / "data/symbols.csv")
     ghidra = read_starts(ROOT / "build/ghidra/functions.csv")
+    library = {}
+    if (ROOT / "data/library.csv").exists():
+        with (ROOT / "data/library.csv").open() as f:
+            library = {int(r["address"], 16): r["symbol"] for r in csv.DictReader(f)}
 
     # A switch table stored in .text throws the sweep out of step until it happens to
     # resynchronise. An aligned start that other evidence names is taken as a boundary
     # and swept from again when padding precedes it, or when it lies past a switch
     # table of the function before it.
-    named = {a for s_ in (calls, yrpp, ghidra) for a in s_}
+    named = {a for s_ in (calls, yrpp, ghidra, library) for a in s_}
     while True:
         known = sorted(padded | (named & starts))
         table_list = sorted(tables)
@@ -117,7 +122,8 @@ def main() -> None:
 
         resync = [a for a in named | {p for p in ptrs if p % 16 == 0}
                   if base < a < end and a not in starts and a % 16 == 0
-                  and (code[a - 1 - base] == NOP or (a in named and after_table(a)))]
+                  and (code[a - 1 - base] == NOP or (a in named and after_table(a))
+                       or a in library)]
         if not resync:
             break
         for a in resync:
@@ -132,7 +138,8 @@ def main() -> None:
         return i >= 0 and (j < 0 or table_list[i] > known[j])
 
     evidence: dict[int, str] = {}
-    for letter, addrs in (("P", padded), ("C", calls), ("V", ptrs), ("Y", yrpp), ("G", ghidra)):
+    for letter, addrs in (("P", padded), ("C", calls), ("V", ptrs), ("Y", yrpp), ("G", ghidra),
+                          ("L", library)):
         for a in addrs:
             if base <= a < end and a in starts:
                 # A pointer into the middle of game code is a jump-table entry or a
@@ -144,7 +151,7 @@ def main() -> None:
     # on into it: after a return, jump, no-return call or switch table. A direct call
     # target is a function start wherever it lies.
     mid = {a: e for a, e in evidence.items()
-           if "P" not in e and "C" not in e and a != base
+           if "P" not in e and "C" not in e and "L" not in e and a != base
            and a not in after_end and not after_table(a)}
     for a in mid:
         del evidence[a]
@@ -161,7 +168,7 @@ def main() -> None:
             stop = nxt
             while stop > a + 1 and code[stop - 1 - base] == NOP:
                 stop -= 1
-            w.writerow([f"0x{a:08X}", stop - a, evidence[a], yrpp.get(a, "")])
+            w.writerow([f"0x{a:08X}", stop - a, evidence[a], yrpp.get(a) or library.get(a, "")])
 
     print(f"{len(ordered)} functions -> {out}")
     by = {}
