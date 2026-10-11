@@ -434,10 +434,28 @@ Goal: a cost per matched function, so the whole job can be priced before committ
      Verdict so far: code and initialised data line up naturally; the MD5 goal hinges on
      the compiler's emission order (generated functions, initialisers, `.bss`), which
      is specific and testable but unsolved.
-6. **Twenty functions.** Mixed sizes, half with an OpenTS counterpart and half RA2-only.
-   Record for each: matched or not, best %, check runs, tokens spent, minutes, model,
-   and for a stall the kind of blocker. A near miss is saved with its score for the next
-   attempt to start from.
+6. **Twenty functions. First run 11 October 2026: 20 of 20 matched.** A seeded draw of
+   game functions from named modules, 19 to 1,238 bytes (5,983 in all), ten in modules TS
+   has and ten RA2-only, none already matched by tier 0 and none with patch-like `nop`s.
+   One workflow (`docs/AGENTS.md`, `tools/ctx.py`, a header overlay per agent): Sonnet 5.5
+   at medium effort first, Opus 5.5 at high effort on its misses, starting from Sonnet's
+   best source and notes. Every attempt is in `data/attempts.csv`; every MATCH was
+   re-checked by the coordinator.
+   - **Tier 1 matched 15, tier 2 four of the five it got.** The fifth was a scalar
+     deleting destructor the checker could not select; both agents proved the bytes
+     equal without gaming the checker, which now considers `??_G` and `??_E`.
+   - **Opus's four were register-allocation and scheduling stalls** (460, 205, 474 and
+     776 bytes), solved by source shape: writing a member access out at each use instead
+     of caching a pointer, temporaries built with the TibSun constructor, sums kept
+     inline. These go into `docs/AGENTS.md` as the guide grows.
+   - **Cost:** about $16-20 at API rates (Sonnet input side $6.24, Opus $5.14, 440k
+     output tokens derived from the workflow's total; transcripts log a streamed
+     message's usage before it ends, so per-agent output is not measurable), 15 minutes
+     wall-clock, 57 agent-minutes.
+   - **Caveats:** agents matched against self-contained class stubs (padding, dummy
+     virtuals), not shared YR headers, so the sources are proof, not `src/` material;
+     about 200 references stay unverified for want of names; the draw excluded functions
+     over 1,500 bytes, EA's patch sites and the 26% of code with no module name.
 7. **Price it.** Scale the measured cost to about 20k game functions (less what OpenTS
    carries over), and decide.
 
@@ -552,7 +570,14 @@ the weekly limit. It is built to be stopped and resumed at any point:
 
 Sizing comes from the spike, not a guess: plan usage spent on the 20 test functions,
 divided by the number matched, times the functions left after tier 0, gives the total in
-"weeks of spare budget". Record that figure here once measured.
+"weeks of spare budget".
+
+**First measure, 11 October 2026:** the 20-function run moved weekly usage from 2% to 3%
+(the meter shows whole percents, and the coordinator's own work is in it), so about 1%
+of a week per 20 matched functions. With 16-18k functions left after tier 0, first
+matches alone come to roughly 8-9 weeks of a full weekly allowance, or about 8 months at
+a quarter of each week. A floor, not a price: consolidation onto real headers, the large
+functions and EA's patch sites are not in it yet.
 
 ## Open questions
 
