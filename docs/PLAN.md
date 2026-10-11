@@ -313,7 +313,7 @@ Goal: a cost per matched function, so the whole job can be priced before committ
      11.99.8447, `intro.dll` 11.98.8447); not ours. Linker 6.00.8447 matches the Rich
      header's product-4 entry.
    - Sources (archive.org). SHA-256 pinned in the script for the two discs used; SP4 and
-     SP5 are kept for reference only:
+     SP5 are not kept (re-fetch them from the table if needed):
 
      | What | Item | File | SHA-256 |
      |---|---|---|---|
