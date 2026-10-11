@@ -1,0 +1,28 @@
+# Game binaries and the compiler are never committed: the player brings the game,
+# a setup script fetches the toolchain.
+orig/
+toolchain/
+build/
+*.exe
+*.dll
+*.dbg
+*.pdb
+__pycache__/
+.venv/
+
+# Reverse-engineering databases embed the original exe.
+*.gpr
+*.rep/
+*.idb
+*.i64
+ghidra/
+
+# Playtest copy of the game.
+playtest/
+
+# Secrets and local settings.
+.env
+.env.*
+*.pem
+*.key
+.claude/settings.local.json
