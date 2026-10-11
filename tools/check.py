@@ -179,15 +179,19 @@ def compile_source(src: Path, overlay: Path | None = None) -> tuple[Path | None,
     out.parent.mkdir(parents=True, exist_ok=True)
     out.unlink(missing_ok=True)
     headers = prepare_headers(overlay)
-    extra = [f"/I{winpath(headers / 'vqalib')}"] if (headers / "vqalib").is_dir() else []
-    cmd = [str(ROOT / "tools/wcl"), *FLAGS, f"/I{winpath(headers)}", *extra,
-           f"/Fo{winpath(out)}", winpath(src)]
     try:
-        proc = subprocess.run(cmd, capture_output=True, text=True, cwd=ROOT)
+        proc = run_compiler(headers, f"/Fo{winpath(out)}", winpath(src))
     finally:
         shutil.rmtree(headers, ignore_errors=True)
     log = proc.stdout + proc.stderr
     return (out if proc.returncode == 0 and out.exists() else None), log
+
+
+def run_compiler(headers: Path, *args: str) -> subprocess.CompletedProcess:
+    """The original compiler with the fixed flags and `headers` (from prepare_headers)."""
+    extra = [f"/I{winpath(headers / 'vqalib')}"] if (headers / "vqalib").is_dir() else []
+    cmd = [str(ROOT / "tools/wcl"), *FLAGS, f"/I{winpath(headers)}", *extra, *args]
+    return subprocess.run(cmd, capture_output=True, text=True, cwd=ROOT)
 
 
 @dataclass
