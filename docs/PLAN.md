@@ -540,6 +540,22 @@ Step 6 is where parallel agents pay, if the maintainer opts in to a workflow for
   offset) do not match unchanged; `AbstractTypeClass` is one. Those are tier-1 work
   starting from near-identical source.
 
+**Tier 0 landed, 11 October 2026:** `tools/tier0.py` (re-runnable in seconds) compiles
+403 of 404 TibSun files, finds 1,531 functions at exactly one YR start and resolves 54 more
+by their relocation targets, copies each into its YR module's `src/` file and proves it
+there against YR's headers: **946 functions, 105 KB, match**, with the merge gate at 957
+of 958. Per-function outcomes are in `data/tier0.csv`. Left for later passes:
+- 185 conflicts with `data/modules.csv`, nearly all modules with no `RECT_NONE`
+  initialiser folded into a neighbour's segment (vqalib into `zbuffer`, wstring into
+  `wspudp`, ...): splitting those segments lands about 178 more (32 KB).
+- 45 that fail in `src/` (29 differ under YR's headers, 2 WRONG TARGETS, 11 the checker
+  cannot name: namespaced classes, conversion operators, statics).
+- 3,206 ambiguous, mostly header inlines and compiler-generated functions; module
+  placement would resolve about 200 more.
+- Review: `src/netdlg2.cpp` carries about 730 lines of an unannotated static helper one
+  matched function calls; small relocation-free functions are identified by bytes alone,
+  so a few names may be wrong (one false identity was caught).
+
 ### Decide before the first batch
 
 - **Module layout.** Which function lives in which source file, and the link order, decide
