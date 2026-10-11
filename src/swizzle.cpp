@@ -133,6 +133,23 @@ HRESULT STDMETHODCALLTYPE SwizzleManagerClass::Get_Save_Size(int *size)
 	return(S_OK);
 }
 
+// FUNCTION: 0x006CF430
+LONG STDMETHODCALLTYPE SwizzleManagerClass::QueryInterface(REFIID riid, LPVOID * ppvObject)
+{
+	if (ppvObject == NULL) {
+		return(E_POINTER);
+	}
+
+	if ( riid != IID_ISwizzle && riid != IID_IUnknown) {
+		return(E_NOINTERFACE);
+	}
+
+	*ppvObject = reinterpret_cast<ISwizzle *>(this);
+
+	reinterpret_cast<IUnknown *>(*ppvObject)->AddRef();
+	return(S_OK);
+}
+
 // FUNCTION: 0x006CF490
 HRESULT STDMETHODCALLTYPE SwizzleManagerClass::Fetch_Swizzle_ID(void *pointer, LONG *id)
 {

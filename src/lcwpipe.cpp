@@ -23,3 +23,13 @@ LCWPipe::LCWPipe(CompControl control, int blocksize) :
 	Buffer2 = new char[BlockSize+SafetyMargin];
 	BlockHeader.CompCount = 0xFFFF;
 }
+
+// FUNCTION: 0x00552060
+LCWPipe::~LCWPipe(void)
+{
+	delete [] Buffer;
+	Buffer = NULL;
+
+	delete [] Buffer2;
+	Buffer2 = NULL;
+}

@@ -21,6 +21,14 @@
 
 static bool BrightnessCalculated = false;
 
+// FUNCTION: 0x00420D40
+HRESULT STDMETHODCALLTYPE AlphaShapeClass::GetClassID(CLSID * retval)
+{
+	if (retval == NULL) return(E_POINTER);
+	*retval = CLSID_AlphaShapeClass;
+	return(S_OK);
+}
+
 // FUNCTION: 0x00420E40
 HRESULT STDMETHODCALLTYPE AlphaShapeClass::Save(IStream * stream, BOOL cleardirty)
 {

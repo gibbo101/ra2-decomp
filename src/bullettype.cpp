@@ -32,3 +32,21 @@ Coord const BulletTypeClass::Coord_Fixup(Coord const & coord) const
 	c.Z = z;
 	return(c);
 }
+
+// FUNCTION: 0x0046C730
+HRESULT STDMETHODCALLTYPE BulletTypeClass::Save(IStream * stream, BOOL cleardirty)
+{
+	HRESULT result = BASECLASS::Save(stream, cleardirty);
+	if (SUCCEEDED(result)) {
+		result = S_OK;
+	}
+	return(result);
+}
+
+// FUNCTION: 0x0046C750
+HRESULT STDMETHODCALLTYPE BulletTypeClass::GetClassID(CLSID * retval)
+{
+	if (retval == NULL) return(E_POINTER);
+	*retval = CLSID_BulletTypeClass;
+	return(S_OK);
+}

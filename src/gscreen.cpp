@@ -31,6 +31,23 @@ GScreenClass::GScreenClass(void) :
 {
 }
 
+// FUNCTION: 0x004F4240
+LONG GScreenClass::QueryInterface(REFIID riid, LPVOID * ppvObject)
+{
+	if (ppvObject == NULL) {
+		return(E_POINTER);
+	}
+
+	if (riid != IID_IUnknown && riid != IID_IGameMap) {
+		return(E_NOINTERFACE);
+	}
+
+	*ppvObject = reinterpret_cast<IGameMap *>(this);
+
+	reinterpret_cast<IUnknown *>(*ppvObject)->AddRef();
+	return(S_OK);
+}
+
 // FUNCTION: 0x004F42B0
 void GScreenClass::Init(TheaterType theater)
 {

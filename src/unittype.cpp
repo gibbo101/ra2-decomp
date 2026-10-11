@@ -29,3 +29,31 @@ TPoint2D<int> UnitTypeClass::Turret_Adjust(Dir256 dir, TPoint2D<int> const & xy)
 {
 	return(xy);
 }
+
+// FUNCTION: 0x00747EB0
+Coord const UnitTypeClass::Coord_Fixup(Coord const & coord) const
+{
+	Coord fix = coord;
+	if (fix.Z < Map.Get_Height_GL(fix)) {
+		fix.Z = Map.Get_Height_GL(fix);
+	}
+	return(fix);
+}
+
+// FUNCTION: 0x00747F30
+HRESULT STDMETHODCALLTYPE UnitTypeClass::GetClassID(CLSID * retval)
+{
+	if (retval == NULL) return(E_POINTER);
+	*retval = CLSID_UnitTypeClass;
+	return(S_OK);
+}
+
+// FUNCTION: 0x007480B0
+HRESULT STDMETHODCALLTYPE UnitTypeClass::Save(IStream *stream, int cleardirty)
+{
+	HRESULT result = BASECLASS::Save(stream, cleardirty);
+	if (SUCCEEDED(result)) {
+		result = S_OK;
+	}
+	return(result);
+}

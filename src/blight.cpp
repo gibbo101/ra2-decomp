@@ -28,6 +28,20 @@
 #include "wave.h"
 #include "xsurface.h"
 
+// FUNCTION: 0x00436910
+HRESULT STDMETHODCALLTYPE BuildingLightClass::GetClassID(CLSID * retval)
+{
+	if (retval == NULL) return(E_POINTER);
+	*retval = CLSID_BuildingLightClass;
+	return(S_OK);
+}
+
+// FUNCTION: 0x004369C0
+HRESULT STDMETHODCALLTYPE BuildingLightClass::Save(IStream * stream, BOOL cleardirty)
+{
+	return(BASECLASS::Save(stream, cleardirty));
+}
+
 // FUNCTION: 0x00437030
 bool BuildingLightClass::Limbo(void)
 {

@@ -107,3 +107,9 @@ bool Movie_Advance_Frame(VQHandle * handle, bool &finished)
 	CurrentVQ = NULL;
 	return(res);
 }
+
+// FUNCTION: 0x005C00B0
+bool Movie_Is_Playing(void)
+{
+	return(CurrentVQ != NULL);
+}

@@ -22,3 +22,13 @@ LZOPipe::LZOPipe(CompControl control, int blocksize) :
 	Buffer2 = new char[BlockSize+SafetyMargin];
 	BlockHeader.CompCount = 0xFFFF;
 }
+
+// FUNCTION: 0x0055C310
+LZOPipe::~LZOPipe(void)
+{
+	delete [] Buffer;
+	Buffer = NULL;
+
+	delete [] Buffer2;
+	Buffer2 = NULL;
+}

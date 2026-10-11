@@ -31,6 +31,23 @@ Point3D ObjectTypeClass::Pixel_Dimensions(void) const
 	return(Point3D(10, 10, 10));
 }
 
+// FUNCTION: 0x005F7640
+Cell const * ObjectTypeClass::Occupy_List(bool) const
+{
+	static Cell const _list[] = {Cell(0, 0), REFRESH_EOL};
+	return(_list);
+}
+
+// FUNCTION: 0x005F9950
+HRESULT STDMETHODCALLTYPE ObjectTypeClass::Save(IStream *stream, int cleardirty)
+{
+	HRESULT result = BASECLASS::Save(stream, cleardirty);
+	if (SUCCEEDED(result)) {
+		result = S_OK;
+	}
+	return(result);
+}
+
 // FUNCTION: 0x005F9970
 HRESULT STDMETHODCALLTYPE ObjectTypeClass::GetSizeMax(ULARGE_INTEGER *pcbSize)
 {

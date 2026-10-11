@@ -23,3 +23,13 @@ LCWStraw::LCWStraw(CompControl control, int blocksize) :
 		Buffer2 = new char[BlockSize+SafetyMargin];
 	}
 }
+
+// FUNCTION: 0x00552450
+LCWStraw::~LCWStraw(void)
+{
+	delete [] Buffer;
+	Buffer = NULL;
+
+	delete [] Buffer2;
+	Buffer2 = NULL;
+}

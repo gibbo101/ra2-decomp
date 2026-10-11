@@ -66,3 +66,27 @@ void IsometricTileTypeClass::Clear_Z_Shapes(void)
 	SlopeZShapes[2] = NULL;
 	SlopeZShapes[3] = NULL;
 }
+
+// FUNCTION: 0x00549B50
+Coord const IsometricTileTypeClass::Coord_Fixup(Coord const & coord) const
+{
+	return(coord);
+}
+
+// FUNCTION: 0x00549D70
+HRESULT STDMETHODCALLTYPE IsometricTileTypeClass::Save(IStream * stream, BOOL cleardirty)
+{
+	HRESULT result = BASECLASS::Save(stream, cleardirty);
+	if (SUCCEEDED(result)) {
+		result = S_OK;
+	}
+	return(result);
+}
+
+// FUNCTION: 0x00549D90
+HRESULT STDMETHODCALLTYPE IsometricTileTypeClass::GetClassID(CLSID * retval)
+{
+	if (retval == NULL) return(E_POINTER);
+	*retval = CLSID_IsometricTileTypeClass;
+	return(S_OK);
+}

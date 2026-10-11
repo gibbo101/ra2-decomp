@@ -80,6 +80,14 @@ int CellClass::Spot_Index(Coord const & coord)
 	return(index+1);
 }
 
+// FUNCTION: 0x00485200
+HRESULT STDMETHODCALLTYPE CellClass::GetClassID(CLSID * retval)
+{
+	if (retval == NULL) return(E_POINTER);
+	*retval = CLSID_CellClass;
+	return(S_OK);
+}
+
 // FUNCTION: 0x00487E50
 int STDMETHODCALLTYPE CellClass::What_Am_I(void) const
 {

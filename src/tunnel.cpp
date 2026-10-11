@@ -36,3 +36,11 @@ MoveType STDMETHODCALLTYPE TunnelLocomotionClass::Can_Enter_Cell(CellStruct cell
 	}
 	return(MOVE_OK);
 }
+
+// FUNCTION: 0x0072A110
+HRESULT STDMETHODCALLTYPE TunnelLocomotionClass::GetClassID(CLSID * retval)
+{
+	if (retval == NULL) return(E_POINTER);
+	*retval = CLSID_TunnelLocomotion;
+	return(S_OK);
+}

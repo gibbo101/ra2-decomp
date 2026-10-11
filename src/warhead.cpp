@@ -29,3 +29,11 @@ float _Parse_Percentage(const char * string)
 
 	return(atof(string));
 }
+
+// FUNCTION: 0x0075E080
+HRESULT STDMETHODCALLTYPE WarheadTypeClass::GetClassID(CLSID * retval)
+{
+	if (retval == NULL) return(E_POINTER);
+	*retval = CLSID_WarheadTypeClass;
+	return(S_OK);
+}

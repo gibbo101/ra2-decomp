@@ -28,3 +28,21 @@ void TagClass::Init(void)
 		delete Tags[0];
 	}
 }
+
+// FUNCTION: 0x006E56A0
+HRESULT STDMETHODCALLTYPE TagClass::GetClassID(CLSID * retval)
+{
+	if (retval == NULL) return(E_POINTER);
+	*retval = CLSID_TagClass;
+	return(S_OK);
+}
+
+// FUNCTION: 0x006E57A0
+HRESULT STDMETHODCALLTYPE TagClass::Save(IStream * stream, BOOL cleardirty)
+{
+	HRESULT result = BASECLASS::Save(stream, cleardirty);
+	if (SUCCEEDED(result)) {
+		result = S_OK;
+	}
+	return(result);
+}

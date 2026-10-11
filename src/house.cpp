@@ -80,6 +80,12 @@ IApplication * STDMETHODCALLTYPE HouseClass::Get_Application(void)
 	return(app);
 }
 
+// FUNCTION: 0x004F6E60
+LONG STDMETHODCALLTYPE HouseClass::ID_Number(void)
+{
+	return(HeapID);
+}
+
 // FUNCTION: 0x004FA210
 SUGGESTED_TEAM_LIST HouseClass::Suggested_New_Team(bool alertcheck)
 {
@@ -103,4 +109,12 @@ ZoneType HouseClass::Which_Zone(Cell const & cell) const
 Cell HouseClass::Find_Cell_In_Zone(TechnoClass const * techno, ZoneType zone) const
 {
 	return(Cell(0, 0));
+}
+
+// FUNCTION: 0x005046F0
+HRESULT STDMETHODCALLTYPE HouseClass::GetClassID(CLSID * retval)
+{
+	if (retval == NULL) return(E_POINTER);
+	*retval = CLSID_HouseClass;
+	return(S_OK);
 }

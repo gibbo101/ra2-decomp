@@ -10,6 +10,23 @@
 #include "scenario.h"
 #include "swizzle.h"
 
+// FUNCTION: 0x00429210
+LONG STDMETHODCALLTYPE TiberianSunClassFactory::QueryInterface(REFIID riid, LPVOID *ppvObject)
+{
+	if (ppvObject == NULL) {
+		return(E_POINTER);
+	}
+
+	if (riid != IID_IClassFactory && riid != IID_IUnknown) {
+		return(E_NOINTERFACE);
+	}
+
+	*ppvObject = static_cast<IClassFactory *>(this);
+
+	reinterpret_cast<IUnknown *>(*ppvObject)->AddRef();
+	return(S_OK);
+}
+
 // FUNCTION: 0x00429270
 HRESULT STDMETHODCALLTYPE TiberianSunClassFactory::CreateInstance(LPUNKNOWN pUnkOuter, REFIID riid, LPVOID * ppvObject)
 {

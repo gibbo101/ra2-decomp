@@ -16,3 +16,17 @@ boolean TeleportLocomotionClass::Is_Stationary(void)
 	}
 	return(false);
 }
+
+// FUNCTION: 0x00719C60
+HRESULT STDMETHODCALLTYPE TeleportLocomotionClass::GetClassID(CLSID * retval)
+{
+	if (retval == NULL) return(E_POINTER);
+	*retval = CLSID_TeleportLocomotion;
+	return(S_OK);
+}
+
+// FUNCTION: 0x00719E20
+LayerType STDMETHODCALLTYPE TeleportLocomotionClass::In_Which_Layer(void)
+{
+	return(LAYER_GROUND);
+}

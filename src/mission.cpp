@@ -46,6 +46,21 @@ char const * MissionControlClass::Name(void) const
 	return(Missions[Mission]);
 }
 
+// FUNCTION: 0x005B3910
+MissionType MissionClass::Mission_From_Name(char const * name)
+{
+	MissionType	order;
+
+	if (name) {
+		for (order = MISSION_FIRST; order < MISSION_COUNT; order++) {
+			if (stricmp(Missions[order], name) == 0) {
+				return(order);
+			}
+		}
+	}
+	return(MISSION_NONE);
+}
+
 // FUNCTION: 0x005B3950
 char const * MissionClass::Mission_Name(MissionType mission)
 {

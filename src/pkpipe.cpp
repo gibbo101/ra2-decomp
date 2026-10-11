@@ -39,3 +39,76 @@ void PKPipe::Put_To(Pipe * pipe)
 		ChainTo = &BF;
 	}
 }
+
+// FUNCTION: 0x00632D60
+void PKPipe::Key(PKey const * key)
+{
+	if (key == NULL) {
+		Flush();
+		IsGettingKey = false;
+	}
+	CipherKey = key;
+
+	if (CipherKey != NULL) {
+		IsGettingKey = true;
+		if (Control == DECRYPT) {
+			Counter = BytesLeft = Encrypted_Key_Length();
+		}
+	}
+}
+
+// FUNCTION: 0x00632DC0
+int PKPipe::Put(void const * source, int length)
+{
+	if (source == NULL || length < 1 || CipherKey == NULL) {
+		return(BASECLASS::Put(source, length));
+	}
+
+	int total = 0;
+
+	if (IsGettingKey) {
+		if (Control == ENCRYPT) {
+			char buffer[MAX_KEY_BLOCK_SIZE];
+			memset(buffer, '\0', sizeof(buffer));
+			Rand.Get(buffer, BLOWFISH_KEY_SIZE);
+
+			int didput = CipherKey->Encrypt(buffer, Plain_Key_Length(), Buffer);
+			total += BASECLASS::Put(Buffer, didput);
+			BF.Key(buffer, BLOWFISH_KEY_SIZE);
+
+			IsGettingKey = false;
+
+		} else {
+			int toget = (BytesLeft < length) ? BytesLeft : length;
+			memmove(&Buffer[Counter-BytesLeft], source, toget);
+			length -= toget;
+			BytesLeft -= toget;
+			source = (char *)source + toget;
+
+			if (BytesLeft == 0) {
+				char buffer[MAX_KEY_BLOCK_SIZE];
+				CipherKey->Decrypt(Buffer, Counter, buffer);
+				BF.Key(buffer, BLOWFISH_KEY_SIZE);
+
+				IsGettingKey = false;
+			}
+		}
+	}
+
+	total += BASECLASS::Put(source, length);
+	return(total);
+}
+
+// FUNCTION: 0x00632F30
+int PKPipe::Encrypted_Key_Length(void) const
+{
+	if (CipherKey == NULL) return(0);
+	return(CipherKey->Block_Count(BLOWFISH_KEY_SIZE) * CipherKey->Crypt_Block_Size());
+}
+
+// FUNCTION: 0x00632F60
+int PKPipe::Plain_Key_Length(void) const
+{
+	if (CipherKey == NULL) return(0);
+	return(CipherKey->Block_Count(BLOWFISH_KEY_SIZE) * CipherKey->Plain_Block_Size());
+}

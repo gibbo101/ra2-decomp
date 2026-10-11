@@ -23,6 +23,12 @@ struct AcceleratorTracker {
 
 static DynamicVectorClass<AcceleratorTracker> _Accelerators;
 
+// FUNCTION: 0x005D4E70
+void Add_Modeless_Dialog(HWND dialog)
+{
+	_ModelessDialogs.Add(dialog);
+}
+
 // FUNCTION: 0x005D4ED0
 void Remove_Modeless_Dialog(HWND dialog)
 {

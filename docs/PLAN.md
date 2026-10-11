@@ -544,7 +544,12 @@ Step 6 is where parallel agents pay, if the maintainer opts in to a workflow for
 403 of 404 TibSun files, finds 1,531 functions at exactly one YR start and resolves 54 more
 by their relocation targets, copies each into its YR module's `src/` file and proves it
 there against YR's headers: **946 functions, 105 KB, match**, with the merge gate at 957
-of 958. Per-function outcomes are in `data/tier0.csv`. Left for later passes:
+of 958. Feeding tier 0's landed functions back into the module map as evidence then split
+small modules out of their neighbours' segments (wstring, vqalib, mpmath, palette, ...;
+335 module names, 15,324 of 19,280 game functions placed), and a module filter settled
+ambiguous candidates: **1,317 tier-0 functions, 144 KB**, merge gate 1,328 of 1,329.
+Per-function outcomes are in `data/tier0.csv`. The first run's leftovers, since cut to
+13 conflicts, 53 failures in `src/` and 2,998 ambiguous:
 - 185 conflicts with `data/modules.csv`, nearly all modules with no `RECT_NONE`
   initialiser folded into a neighbour's segment (vqalib into `zbuffer`, wstring into
   `wspudp`, ...): splitting those segments lands about 178 more (32 KB).

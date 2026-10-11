@@ -42,6 +42,16 @@
 #include "ramp.hh"
 #include <cstdio>
 
+static bool * GlobalGrowthState = NULL;
+
+// FUNCTION: 0x0074D430
+void VeinholeMonsterClass::Draw_All(void)
+{
+	for (int i = VeinholeMonsters.Count() - 1; i >= 0; i--) {
+		VeinholeMonsters[i]->Draw_It();
+	}
+}
+
 // FUNCTION: 0x0074D760
 void VeinholeMonsterClass::Reset(void)
 {
@@ -49,4 +59,27 @@ void VeinholeMonsterClass::Reset(void)
 		delete VeinholeMonsters[i];
 	}
 	VeinholeMonsters.Clear();
+}
+
+// FUNCTION: 0x0074E880
+void VeinholeMonsterClass::Clear_Global_Data(void)
+{
+	if (GlobalGrowthState) {
+		delete [] GlobalGrowthState;
+		GlobalGrowthState = NULL;
+	}
+}
+
+// FUNCTION: 0x0074EEE0
+HRESULT STDMETHODCALLTYPE VeinholeMonsterClass::Save(IStream * stream, BOOL cleardirty)
+{
+	return(BASECLASS::Save(stream, cleardirty));
+}
+
+// FUNCTION: 0x0074F2D0
+HRESULT STDMETHODCALLTYPE VeinholeMonsterClass::GetClassID(CLSID * retval)
+{
+	if (retval == NULL) return(E_POINTER);
+	*retval = CLSID_VeinholeMonsterClass;
+	return(S_OK);
 }

@@ -147,3 +147,21 @@ void Tactical::Reset_Dirty_Rectangles(void)
 		DirtyAreas.Delete_Index(0);
 	}
 }
+
+// FUNCTION: 0x006DBCE0
+HRESULT STDMETHODCALLTYPE Tactical::GetClassID(CLSID * retval)
+{
+	if (retval == NULL) return(E_POINTER);
+	*retval = CLSID_TacticalMapClass;
+	return(S_OK);
+}
+
+// FUNCTION: 0x006DBE00
+HRESULT STDMETHODCALLTYPE Tactical::Save(IStream * stream, BOOL cleardirty)
+{
+	HRESULT result = BASECLASS::Save(stream, cleardirty);
+	if (SUCCEEDED(result)) {
+		result = S_OK;
+	}
+	return(result);
+}

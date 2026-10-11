@@ -27,6 +27,12 @@ int Is_Disk_Inserted(int disk)
 	return(true);
 }
 
+// FUNCTION: 0x0047AAB0
+int CDFileClass::Open(int rights)
+{
+	return(BASECLASS::Open(rights));
+}
+
 // FUNCTION: 0x0047AAC0
 void CDFileClass::Refresh_Search_Drives (void)
 {

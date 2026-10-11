@@ -38,6 +38,20 @@ void Calculate_Index_To_Surface_LUT(int stride);
 
 Point2D Spiral_Index_To_Point(int index);
 
+// FUNCTION: 0x0053CB90
+IonBlastClass::~IonBlastClass(void)
+{
+	IonBlasts.Delete(this);
+}
+
+// FUNCTION: 0x0053D310
+void IonBlastClass::Update_All(void)
+{
+	for (int i = IonBlasts.Count() - 1; i >= 0; i--) {
+		IonBlasts[i]->AI();
+	}
+}
+
 // FUNCTION: 0x0053D550
 void IonBlastClass::Clear_All(void)
 {

@@ -7,11 +7,13 @@ Usage: uv run tools/tier0.py [--files abstype.cpp,base.cpp] [--jobs N] [--no-lan
 2. Looks for every compiled function of 8 bytes or more at the function starts of the
    same size in data/functions.csv, relocation fields as wildcards, EA's patches undone.
 3. Rules out addresses where a relocation target is known and differs, as check.py
-   resolves them, also using the other candidates' unique addresses; one address keeps
-   one function.
+   resolves them, also using the other candidates' unique addresses. Of several
+   survivors, the one lying in the module named after the TibSun file is kept when it is
+   the only one there; one address keeps one function.
 4. Copies each survivor's definition, comments removed, into src/<module>.cpp (module from
-   data/modules.csv, or the TibSun file's stem where that is "?"), with the file-scope
-   items it needs, and keeps it only if check.py prints MATCH there.
+   data/modules.csv, or the TibSun file's module where that is "?"; the VQA library's are
+   vqalib/X), with the file-scope items it needs, and keeps it only if check.py prints
+   MATCH there.
 5. Writes data/tier0.csv. Functions already annotated in src/ are skipped, so it re-runs.
 """
 
@@ -30,6 +32,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import check  # noqa: E402
 from coff import CoffObject  # noqa: E402
+from modules import sort_key  # noqa: E402
 
 ROOT = check.ROOT
 TIBSUN = check.TIBSUN
@@ -45,6 +48,7 @@ LICENCE = """\
 KEYWORDS = {"if", "for", "while", "switch", "return", "sizeof", "__declspec", "defined",
             "operator", "catch", "throw", "new", "delete", "static_cast", "const_cast",
             "reinterpret_cast", "dynamic_cast", "__stdcall", "__cdecl", "__fastcall"}
+STATIC = {"static", "_STATIC"}    # _STATIC is the VQA library's macro for static
 PROC = re.compile(r"^(\S+)\s+PROC NEAR")
 LISTED = re.compile(r"^; (\d+)\s*: ?(.*)$")
 ERROR = re.compile(r"^(.*?)\((\d+)\) : (?:fatal )?error (C\d+): (.*)$")
@@ -262,11 +266,11 @@ def describe(it: Item, lines: list[str]) -> None:
         is_proto = False
         it.names = names
     words = set(re.findall(r"\w+", flat))
-    local = "static" in words or "typedef" in words or "extern" in words or bool(
+    local = bool(words & STATIC) or "typedef" in words or "extern" in words or bool(
         re.match(r"\s*(?:typedef\s+)?(?:class|struct|union|enum)\b", flat))
     it.helper = not qualified_def and (local or is_proto)
     it.proto = is_proto
-    it.static = "static" in words
+    it.static = bool(words & STATIC)
 
 
 def item_text(src: "Source", it: Item) -> str:
@@ -324,6 +328,11 @@ def cpp_files(only: set[str] | None) -> list[Path]:
 
 def obj_stem(cpp: Path) -> str:
     return cpp.stem if cpp.parent == TIBSUN else f"{cpp.parent.name}_{cpp.stem}"
+
+
+def module_name(cpp: Path) -> str:
+    """The module a TibSun file's code links as, as data/modules.csv names it."""
+    return cpp.stem if cpp.parent == TIBSUN else f"{cpp.parent.name}/{cpp.stem}"
 
 
 def compile_one(cpp: Path) -> tuple[Path, bool]:
@@ -406,6 +415,7 @@ class Fn:
     address: int = 0
     unverified: str = ""
     note: str = ""
+    placed: bool = False       # chosen from several survivors by its module
 
 
 OBJECTS: dict[str, tuple[bytes, CoffObject]] = {}
@@ -537,6 +547,12 @@ def disambiguate(fns: list[Fn], orig, modules) -> None:
         if new == unique:
             break
         unique = new
+    # Several survivors: the one in the TibSun file's own module, if it is the only one.
+    for fn in fns:
+        if len(fn.survivors) > 1 and fn.cpp is not None:
+            home = [a for a in fn.survivors if modules(a).lower() == module_name(fn.cpp).lower()]
+            if len(home) == 1:
+                fn.placed, fn.survivors = True, home
     # One address, one function: the claim whose file is the address's module, then the
     # one with more proven references, wins; a tie leaves the address to nobody.
     claims: dict[int, list[Fn]] = {}
@@ -550,7 +566,7 @@ def disambiguate(fns: list[Fn], orig, modules) -> None:
         mod = modules(a)
 
         def rank(fn):
-            stem = fn.cpp.stem.lower() if fn.cpp else ""
+            stem = module_name(fn.cpp).lower() if fn.cpp else ""
             unver, ok = fn.scores[a]
             return (mod.lower() == stem, fn.item is not None, ok, -unver, len(fn.hits) == 1)
         cl.sort(key=rank, reverse=True)
@@ -787,6 +803,7 @@ def land(u: Unit, matched_before: set[int]) -> None:
                     for fn in users or list(u.fns):
                         drop(u, fn, "needs an item with inline assembly")
             continue
+        u.path.parent.mkdir(exist_ok=True)
         u.path.write_text(text, encoding="latin-1")
         proc = subprocess.run([sys.executable, str(ROOT / "tools/check.py"), str(u.path)],
                               capture_output=True, text=True, cwd=ROOT)
@@ -901,6 +918,8 @@ def finish(u: Unit) -> None:
             u.path.unlink(missing_ok=True)
         else:
             u.path.write_text(u.original, encoding="latin-1")
+    if u.path.parent != ROOT / "src" and u.path.parent.is_dir() and not any(u.path.parent.iterdir()):
+        u.path.parent.rmdir()
 
 
 # ---------------------------------------------------------------- main
@@ -951,10 +970,12 @@ def main() -> None:
             fn.status, fn.note = "not_in_cpp", "defined in a header or generated by the compiler"
             continue
         mod = module(fn.address)
-        stem = fn.cpp.stem
+        stem = module_name(fn.cpp)
         if mod == "?":
             lo, hi = module.window(fn.address)
-            if not lo.lower() <= stem.lower() <= hi.lower():
+            key = sort_key(stem)
+            fits = (not lo or sort_key(lo) <= key) and (hi == "~" or key <= sort_key(hi))
+            if not fits:
                 fn.status, fn.note = "conflict", f"modules.csv says ? between {lo} and {hi}"
                 continue
             mod = stem
@@ -989,7 +1010,8 @@ def main() -> None:
     for fn in fns:
         addr = f"0x{fn.address:08X}" if fn.address else ";".join(f"0x{a:08X}" for a in fn.hits)
         tib = fn.cpp.relative_to(TIBSUN).as_posix() if fn.cpp else f"({fn.obj}.obj)"
-        rows[fn.symbol] = [addr, len(fn.data), tib, fn.symbol, fn.status, fn.unverified, fn.note]
+        note = "; ".join(n for n in ("placed by module" if fn.placed else "", fn.note) if n)
+        rows[fn.symbol] = [addr, len(fn.data), tib, fn.symbol, fn.status, fn.unverified, note]
     rows = sorted(rows.values(), key=lambda r: (r[0], r[3]))
     with CSV_OUT.open("w", newline="") as f:
         w = csv.writer(f, lineterminator="\n")

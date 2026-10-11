@@ -59,6 +59,30 @@ ImpactType FlyLocomotionClass::Physics(Coord & coord, DirType facing)
 	return(IMPACT_NONE);
 }
 
+// FUNCTION: 0x004CF940
+Point2DStruct STDMETHODCALLTYPE FlyLocomotionClass::Shadow_Point(void)
+{
+	return(Point2D(0, 0));
+}
+
+// FUNCTION: 0x004CFC80
+HRESULT STDMETHODCALLTYPE FlyLocomotionClass::GetClassID(CLSID * retval)
+{
+	if (retval == NULL) return(E_POINTER);
+	*retval = CLSID_FlyerLocomotion;
+	return(S_OK);
+}
+
+// FUNCTION: 0x004CFCC0
+HRESULT STDMETHODCALLTYPE FlyLocomotionClass::Load(IStream * stream)
+{
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		new (this) FlyLocomotionClass(NoInitClass());
+	}
+	return(result);
+}
+
 // FUNCTION: 0x004CFD90
 boolean STDMETHODCALLTYPE FlyLocomotionClass::Is_Powered(void)
 {

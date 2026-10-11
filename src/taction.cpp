@@ -78,3 +78,21 @@ bool TActionClass::TAction_ION_STORM_STOP(HouseClass * , ObjectClass * , Trigger
 	IonStormClass::Ion_Storm_End();
 	return(true);
 }
+
+// FUNCTION: 0x006E3D70
+HRESULT STDMETHODCALLTYPE TActionClass::GetClassID(CLSID * retval)
+{
+	if (retval == NULL) return(E_POINTER);
+	*retval = CLSID_ActionClass;
+	return(S_OK);
+}
+
+// FUNCTION: 0x006E3E30
+HRESULT STDMETHODCALLTYPE TActionClass::Save(IStream * stream, BOOL cleardirty)
+{
+	HRESULT result = BASECLASS::Save(stream, cleardirty);
+	if (SUCCEEDED(result)) {
+		result = S_OK;
+	}
+	return(result);
+}

@@ -67,6 +67,12 @@ bool RadarClass::Map_Cell(Cell const & cell, HouseClass * house)
 	return(false);
 }
 
+// FUNCTION: 0x00653F50
+void RadarClass::Set_Map_Dimensions(Rect const & size, bool reset_cells, int cell_height, bool refresh_map)
+{
+	BASECLASS::Set_Map_Dimensions(size, reset_cells, cell_height, refresh_map);
+}
+
 // FUNCTION: 0x00653F70
 void RadarClass::Set_Tactical_Position(Coord const & coord)
 {

@@ -24,6 +24,11 @@
 #include "unit.h"
 #include "tube.hh"
 
+// FUNCTION: 0x00513D00
+HoverLocomotionClass::~HoverLocomotionClass(void)
+{
+}
+
 // FUNCTION: 0x00514C80
 boolean STDMETHODCALLTYPE HoverLocomotionClass::Is_Moving_Now(void)
 {
@@ -57,4 +62,29 @@ void HoverLocomotionClass::Do_Shove(void)
 	if (Percent_Chance(50)) {
 		ShoveAccum = -ShoveAccum;
 	}
+}
+
+// FUNCTION: 0x00517070
+HRESULT STDMETHODCALLTYPE HoverLocomotionClass::GetClassID(CLSID * retval)
+{
+	if (retval == NULL) return(E_POINTER);
+	*retval = CLSID_HoverLocomotion;
+	return(S_OK);
+}
+
+// FUNCTION: 0x00517100
+LayerType STDMETHODCALLTYPE HoverLocomotionClass::In_Which_Layer(void)
+{
+	return(LAYER_GROUND);
+}
+
+// FUNCTION: 0x00517210
+boolean STDMETHODCALLTYPE HoverLocomotionClass::Is_Moving_Here(CoordStruct to)
+{
+	Coord coord = Head_To_Coord();
+
+	if (coord.As_Cell() == ((Coord &)to).As_Cell() && abs(coord.Z - to.Z) <= LEVEL_LEPTON_H) {
+		return(true);
+	}
+	return(false);
 }

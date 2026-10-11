@@ -42,8 +42,32 @@
 #include "zbuffer.h"
 #include "draw.hh"
 
+// FUNCTION: 0x0062D6F0
+bool ParticleClass::Mark(MarkType mark)
+{
+	if (BASECLASS::Mark(mark)) {
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x0062D710
+Cell const * ParticleClass::Occupy_List(bool placement) const
+{
+	static Cell const _list[] = {REFRESH_EOL};
+	return(_list);
+}
+
 // FUNCTION: 0x0062D780
 int Approximate_Distance(Point2D & pt)
 {
 	return((int)(abs(pt.X) + abs(pt.Y)) >> 1);
+}
+
+// FUNCTION: 0x0062D930
+HRESULT STDMETHODCALLTYPE ParticleClass::GetClassID(CLSID * retval)
+{
+	if (retval == NULL) return(E_POINTER);
+	*retval = CLSID_ParticleClass;
+	return(S_OK);
 }

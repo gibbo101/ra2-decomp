@@ -191,6 +191,13 @@ HRESULT ConnectionPointClass::QueryInterface(REFIID riid, void** ppv)
 	return(E_NOINTERFACE);
 }
 
+// FUNCTION: 0x004A0520
+ULONG ConnectionPointClass::AddRef(void)
+{
+	COMRefCount++;
+	return(InterlockedIncrement(&RefCount));
+}
+
 // FUNCTION: 0x004A0540
 ULONG ConnectionPointClass::Release(void)
 {

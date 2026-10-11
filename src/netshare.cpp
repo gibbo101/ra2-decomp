@@ -40,6 +40,21 @@
 #include "xstraw.h"
 #include <ctime>
 
+// FUNCTION: 0x005E2620
+unsigned int Wstring_Hash(Wstring & string)
+{
+	unsigned int hash = 0;
+
+	hash = string.length();
+
+	for (unsigned int i = 0; i < string.length(); i++) {
+		hash += *(string.get() + i);
+		hash += i;
+		hash = (hash << 8) ^ (hash >> 24);
+	}
+	return(hash);
+}
+
 // FUNCTION: 0x005E26C0
 HWND GameoptWindow(void)
 {

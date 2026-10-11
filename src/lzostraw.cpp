@@ -23,3 +23,13 @@ LZOStraw::LZOStraw(CompControl control, int blocksize) :
 		Buffer2 = new char[BlockSize+SafetyMargin];
 	}
 }
+
+// FUNCTION: 0x0055C780
+LZOStraw::~LZOStraw(void)
+{
+	delete [] Buffer;
+	Buffer = NULL;
+
+	delete [] Buffer2;
+	Buffer2 = NULL;
+}

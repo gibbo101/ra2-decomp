@@ -12,6 +12,8 @@
 #include "quat.h"
 #include "ramp.hh"
 
+int SomeNumbers[17] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 5, 6, 7, 8, 9, 10, 11, 12 };
+
 Vector3 LightTiltVectors[256];
 
 float ExtraLightTiltAngles[6] = { 0.0, 0.08726389, 0.17452778, 0.26179168, 0.17452778, 0.08726389 };
@@ -68,6 +70,12 @@ Matrix3D Get_Slope_Transition_Matrix(int oldramp, int newramp, double time)
 	} else {
 		return(SlopeMatrices[newramp]);
 	}
+}
+
+// FUNCTION: 0x00755AC0
+int Get_Some_Voxel_Number(int index)
+{
+	return(SomeNumbers[index]);
 }
 
 // FUNCTION: 0x00755AD0

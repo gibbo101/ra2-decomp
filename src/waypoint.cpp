@@ -33,8 +33,22 @@ const char *Waypoint_To_Name(WAYPOINT wp)
 	return(_string);
 }
 
+// FUNCTION: 0x007636F0
+WaypointClass::WaypointClass(void) :
+	Location(0,0,0)
+{
+}
+
 // FUNCTION: 0x00763700
 WaypointClass::WaypointClass(Coord const & coord) :
 	Location(coord)
 {
+}
+
+// FUNCTION: 0x00763C30
+HRESULT STDMETHODCALLTYPE WaypointPathClass::GetClassID(CLSID * retval)
+{
+	if (retval == NULL) return(E_POINTER);
+	*retval = CLSID_WaypointPath;
+	return(S_OK);
 }

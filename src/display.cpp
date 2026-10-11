@@ -99,6 +99,12 @@ Cell DisplayClass::Get_Occupy_Dimensions(Cell const * list) const
 	return(cell);
 }
 
+// FUNCTION: 0x004A9700
+void DisplayClass::AI(KeyNumType & input, Point2D const & xy)
+{
+	BASECLASS::AI(input, xy);
+}
+
 // FUNCTION: 0x004A9840
 bool DisplayClass::Scroll_Map(FacingType facing, int & distance, bool really)
 {
@@ -142,6 +148,12 @@ void DisplayClass::Reposition_Sidebar(void)
 		CloseWindow(UnusedWindow);
 		UnusedWindow = 0;
 	}
+}
+
+// FUNCTION: 0x004AE6D0
+LRESULT DisplayClass::Windows_Message_Proc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
+{
+	return(DefWindowProc(hWnd, Msg, wParam, lParam));
 }
 
 // FUNCTION: 0x004AE6F0

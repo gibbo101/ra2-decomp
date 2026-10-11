@@ -28,6 +28,12 @@
 #include "xstraw.h"
 #include "color.hh"
 
+// FUNCTION: 0x006406E0
+MapPreviewClass::MapPreviewClass(void) :
+	SurfacePtr(NULL)
+{
+}
+
 // FUNCTION: 0x006406F0
 MapPreviewClass::~MapPreviewClass(void)
 {

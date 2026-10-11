@@ -23,6 +23,14 @@
 #include "layer.hh"
 #include <new.h>
 
+// FUNCTION: 0x004B6200
+HRESULT STDMETHODCALLTYPE DropPodLocomotionClass::GetClassID(CLSID * retval)
+{
+	if (retval == NULL) return(E_POINTER);
+	*retval = CLSID_BallisticLocomotion;
+	return(S_OK);
+}
+
 // FUNCTION: 0x004B63B0
 HRESULT STDMETHODCALLTYPE DropPodLocomotionClass::Begin_Piggyback(ILocomotion * pointer)
 {
@@ -48,4 +56,10 @@ HRESULT STDMETHODCALLTYPE DropPodLocomotionClass::End_Piggyback(ILocomotion ** p
 		return(S_OK);
 	}
 	return(S_FALSE);
+}
+
+// FUNCTION: 0x004B64D0
+LayerType STDMETHODCALLTYPE DropPodLocomotionClass::In_Which_Layer(void)
+{
+	return(LAYER_AIR);
 }

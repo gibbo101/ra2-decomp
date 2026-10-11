@@ -54,3 +54,62 @@ void PKStraw::Key(PKey const * key)
 	Counter = 0;
 	BytesLeft = 0;
 }
+
+// FUNCTION: 0x00633130
+int PKStraw::Get(void * source, int length)
+{
+	if (source == NULL || length < 1 || CipherKey == NULL) {
+		return(BASECLASS::Get(source, length));
+	}
+
+	int total = 0;
+
+	if (IsGettingKey) {
+		if (Control == DECRYPT) {
+			char cbuffer[MAX_KEY_BLOCK_SIZE];
+			int got = BASECLASS::Get(cbuffer, Encrypted_Key_Length());
+
+			if (got != Encrypted_Key_Length()) return(0);
+
+			CipherKey->Decrypt(cbuffer, got, Buffer);
+			BF.Key(Buffer, BLOWFISH_KEY_SIZE);
+
+		} else {
+			char buffer[MAX_KEY_BLOCK_SIZE];
+			memset(buffer, '\0', sizeof(buffer));
+			Rand.Get(buffer, BLOWFISH_KEY_SIZE);
+
+			Counter = BytesLeft = CipherKey->Encrypt(buffer, Plain_Key_Length(), Buffer);
+			BF.Key(buffer, BLOWFISH_KEY_SIZE);
+		}
+
+		IsGettingKey = false;
+	}
+
+	if (BytesLeft > 0) {
+		int tocopy = (length < BytesLeft) ? length : BytesLeft;
+		memmove(source, &Buffer[Counter-BytesLeft], tocopy);
+		source = (char *)source + tocopy;
+		BytesLeft -= tocopy;
+		length -= tocopy;
+		total += tocopy;
+	}
+
+	total += BASECLASS::Get(source, length);
+
+	return(total);
+}
+
+// FUNCTION: 0x00633300
+int PKStraw::Encrypted_Key_Length(void) const
+{
+	if (CipherKey == NULL) return(0);
+	return(CipherKey->Block_Count(BLOWFISH_KEY_SIZE) * CipherKey->Crypt_Block_Size());
+}
+
+// FUNCTION: 0x00633330
+int PKStraw::Plain_Key_Length(void) const
+{
+	if (CipherKey == NULL) return(0);
+	return(CipherKey->Block_Count(BLOWFISH_KEY_SIZE) * CipherKey->Plain_Block_Size());
+}

@@ -43,3 +43,11 @@ Coord const BuildingTypeClass::Coord_Fixup(Coord const & coord) const
 	crd.Z = Map.Get_Height_GL(crd);
 	return(crd);
 }
+
+// FUNCTION: 0x00465380
+HRESULT STDMETHODCALLTYPE BuildingTypeClass::GetClassID(CLSID * retval)
+{
+	if (retval == NULL) return(E_POINTER);
+	*retval = CLSID_BuildingTypeClass;
+	return(S_OK);
+}

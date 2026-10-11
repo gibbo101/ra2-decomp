@@ -27,3 +27,9 @@ char const * ListClass::Get_Item(int index) const
 	index = MIN(index, List.Count()-1);
 	return(List[index]);
 }
+
+// FUNCTION: 0x00557D10
+void ListClass::Set_Tabs(int const * tabs)
+{
+	Tabs = tabs;
+}

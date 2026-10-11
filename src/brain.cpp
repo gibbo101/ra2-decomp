@@ -15,6 +15,24 @@
 #include "tracker.h"
 #include "vector.h"
 
+// FUNCTION: 0x0043A500
+HRESULT STDMETHODCALLTYPE NeuronClass::GetClassID(CLSID * retval)
+{
+	if (retval == NULL) return(E_POINTER);
+	*retval = CLSID_NeuronClass;
+	return(S_OK);
+}
+
+// FUNCTION: 0x0043A5B0
+HRESULT STDMETHODCALLTYPE NeuronClass::Save(IStream * stream, BOOL cleardirty)
+{
+	HRESULT result = BASECLASS::Save(stream, cleardirty);
+	if (SUCCEEDED(result)) {
+		result = S_OK;
+	}
+	return(result);
+}
+
 // FUNCTION: 0x0043A600
 BrainClass::~BrainClass(void)
 {

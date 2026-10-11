@@ -20,3 +20,32 @@ int STDMETHODCALLTYPE AbstractClass::What_Am_I(void) const
 {
 	return(RTTI);
 }
+
+// FUNCTION: 0x00410260
+HRESULT STDMETHODCALLTYPE AbstractClass::QueryInterface(REFIID riid, LPVOID * ppvObject)
+{
+	if (ppvObject == NULL) {
+		return(E_POINTER);
+	}
+
+	*ppvObject = NULL;
+
+	if (riid == IID_IUnknown) {
+		*ppvObject = (IUnknown *)(IPersistStream *)this;
+	}
+	if (riid == IID_IPersistStream) {
+		*ppvObject = (IPersistStream *)this;
+	}
+	if (riid == IID_IPersist) {
+		*ppvObject = (IPersist *)this;
+	}
+	if (riid == IID_IRTTITypeInfo) {
+		*ppvObject = (IRTTITypeInfo *)this;
+	}
+	if (*ppvObject == NULL) {
+		return(E_NOINTERFACE);
+	}
+
+	AddRef();
+	return(S_OK);
+}

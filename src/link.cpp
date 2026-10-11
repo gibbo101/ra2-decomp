@@ -12,6 +12,13 @@ LinkClass::~LinkClass(void)
 	Remove();
 }
 
+// FUNCTION: 0x005565F0
+void LinkClass::Zap(void)
+{
+	Next = 0;
+	Prev = 0;
+}
+
 // FUNCTION: 0x00556600
 LinkClass & LinkClass::operator = (LinkClass const & link)
 {

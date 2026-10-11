@@ -79,3 +79,11 @@ Point2D Lerp(Point2D const & a, Point2D const & b, float t)
 	int y = int((a.Y * inv) + (b.Y * t));
 	return(Point2D(x,y));
 }
+
+// FUNCTION: 0x0075F840
+HRESULT STDMETHODCALLTYPE WaveClass::GetClassID(CLSID * retval)
+{
+	if (retval == NULL) return(E_POINTER);
+	*retval = CLSID_WaveClass;
+	return(S_OK);
+}

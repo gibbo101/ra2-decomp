@@ -36,3 +36,11 @@ ArmorType Armor_From_Name(char const * name)
 
 	return(ARMOR_NONE);
 }
+
+// FUNCTION: 0x00772C90
+HRESULT STDMETHODCALLTYPE WeaponTypeClass::GetClassID(CLSID * retval)
+{
+	if (retval == NULL) return(E_POINTER);
+	*retval = CLSID_WeaponTypeClass;
+	return(S_OK);
+}

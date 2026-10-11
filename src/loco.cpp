@@ -49,6 +49,21 @@ LONG STDMETHODCALLTYPE LocomotionClass::QueryInterface(REFIID riid, LPVOID *ppvO
 	return(S_OK);
 }
 
+// FUNCTION: 0x0055ABB0
+ZGradientType STDMETHODCALLTYPE LocomotionClass::Z_Gradient(void)
+{
+	return(ZGRAD_90DEG);
+}
+
+// FUNCTION: 0x0055ABD0
+Point2DStruct STDMETHODCALLTYPE LocomotionClass::Draw_Point(void)
+{
+	Point2DStruct pt;
+	pt.X = 0;
+	pt.Y = 0;
+	return(pt);
+}
+
 // FUNCTION: 0x0055AC70
 CoordStruct STDMETHODCALLTYPE LocomotionClass::Destination(void)
 {

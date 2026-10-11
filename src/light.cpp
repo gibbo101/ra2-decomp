@@ -89,3 +89,21 @@ void LightSourceClass::Process_Lighting(int time_budget_ms, bool force)
 		_update_interval = more_to_free ? 1 : 50;
 	}
 }
+
+// FUNCTION: 0x00555080
+HRESULT STDMETHODCALLTYPE LightSourceClass::GetClassID(CLSID * retval)
+{
+	if (retval == NULL) return(E_POINTER);
+	*retval = CLSID_LightSource;
+	return(S_OK);
+}
+
+// FUNCTION: 0x00555110
+HRESULT STDMETHODCALLTYPE LightSourceClass::Save(IStream * stream, BOOL cleardirty)
+{
+	HRESULT result = BASECLASS::Save(stream, cleardirty);
+	if (SUCCEEDED(result)) {
+		result = S_OK;
+	}
+	return(result);
+}

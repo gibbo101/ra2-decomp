@@ -51,6 +51,16 @@
 #include "target.hh"
 #include "tube.hh"
 
+// FUNCTION: 0x006EC540
+HRESULT STDMETHODCALLTYPE TeamClass::Save(IStream * stream, BOOL cleardirty)
+{
+	HRESULT result = BASECLASS::Save(stream, cleardirty);
+	if (SUCCEEDED(result)) {
+		result = S_OK;
+	}
+	return(result);
+}
+
 // FUNCTION: 0x006EC770
 void TeamClass::TMission_MOVECELL(TeamMissionClass * mission, bool first_time)
 {

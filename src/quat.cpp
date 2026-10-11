@@ -45,3 +45,42 @@ float & Quaternion::operator [](int i)
 {
 	return (&X)[i];
 }
+
+// FUNCTION: 0x00645D10
+const float Quaternion::operator [](int i) const
+{
+	return (&X)[i];
+}
+
+// FUNCTION: 0x00645D20
+Quaternion Quaternion::operator=(const Quaternion & q)
+{
+	X = q[0];
+	Y = q[1];
+	Z = q[2];
+	W = q[3];
+
+	return(*this);
+}
+
+// FUNCTION: 0x00646980
+Matrix3D Build_Matrix3D(const Quaternion &q)
+{
+	Matrix3D m;
+
+	m[0].X = 1.0f - 2.0f * (q[1] * q[1] + q[2] * q[2]);
+	m[0].Y = 2.0f * (q[0] * q[1] - q[2] * q[3]);
+	m[0].Z = 2.0f * (q[2] * q[0] + q[1] * q[3]);
+
+	m[1].X = 2.0f * (q[0] * q[1] + q[2] * q[3]);
+	m[1].Y = 1.0f - 2.0f * (q[2] * q[2] + q[0] * q[0]);
+	m[1].Z = 2.0f * (q[1] * q[2] - q[0] * q[3]);
+
+	m[2].X = 2.0f * (q[2] * q[0] - q[1] * q[3]);
+	m[2].Y = 2.0f * (q[1] * q[2] + q[0] * q[3]);
+	m[2].Z = 1.0f - 2.0f * (q[1] * q[1] + q[0] * q[0]);
+
+	m[0].W = m[1].W = m[2].W = 0.0f;
+
+	return(m);
+}

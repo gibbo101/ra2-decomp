@@ -89,3 +89,14 @@ char const *Name_From_RTTI(RTTIType rtti)
 	}
 	return(UNKNOWN_RTTI_NAME);
 }
+
+// FUNCTION: 0x0040DCE0
+RTTIType RTTI_From_Name(char const *name)
+{
+	for (int i = 0; i < RTTI_COUNT; i++) {
+		if (!strcmpi(RTTIs[i].Name, name)) {
+			return(RTTIs[i].RTTI);
+		}
+	}
+	return(RTTI_NONE);
+}

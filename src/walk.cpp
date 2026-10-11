@@ -23,6 +23,20 @@
 #include "unit.h"
 #include "layer.hh"
 
+// FUNCTION: 0x0075C640
+HRESULT STDMETHODCALLTYPE WalkLocomotionClass::GetClassID(CLSID * retval)
+{
+	if (retval == NULL) return(E_POINTER);
+	*retval = CLSID_WalkLocomotion;
+	return(S_OK);
+}
+
+// FUNCTION: 0x0075C7E0
+LayerType STDMETHODCALLTYPE WalkLocomotionClass::In_Which_Layer(void)
+{
+	return(LAYER_GROUND);
+}
+
 // FUNCTION: 0x0075C850
 HRESULT STDMETHODCALLTYPE WalkLocomotionClass::Begin_Piggyback(ILocomotion * pointer)
 {
@@ -48,4 +62,14 @@ HRESULT STDMETHODCALLTYPE WalkLocomotionClass::End_Piggyback(ILocomotion ** poin
 		return(S_OK);
 	}
 	return(S_FALSE);
+}
+
+// FUNCTION: 0x0075CA80
+boolean STDMETHODCALLTYPE WalkLocomotionClass::Is_Moving_Here(CoordStruct to)
+{
+	Coord headto = Head_To_Coord();
+	if (headto.As_Cell() == Coord(to).As_Cell() && abs(headto.Z - to.Z) <= LEVEL_LEPTON_H) {
+		return(true);
+	}
+	return(false);
 }
