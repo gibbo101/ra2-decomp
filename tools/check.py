@@ -108,18 +108,31 @@ def annotations(src: Path) -> list[tuple[int, str]]:
     return out
 
 
+def known_decorated() -> dict[str, int]:
+    """Decorated symbol -> address, from data/progress.csv and data/names.csv."""
+    out = {}
+    for path in (ROOT / "data/progress.csv", ROOT / "data/names.csv"):
+        if path.exists():
+            with path.open() as f:
+                for r in csv.DictReader(f):
+                    if r.get("symbol"):
+                        out[r["symbol"]] = int(r["address"], 16)
+    return out
+
+
 def known_names() -> dict[str, int]:
-    """Qualified name -> address, from data/symbols.csv and every annotated source."""
+    """Qualified name -> address, from Westwood's proven names, YRpp and the CRT."""
     names = {}
+    # Westwood's names, proven by matches, before YRpp's.
+    with (ROOT / "data/names.csv").open() as f:
+        for r in csv.DictReader(f):
+            names.setdefault(r["name"], int(r["address"], 16))
     with (ROOT / "data/symbols.csv").open() as f:
         for r in csv.DictReader(f):
             names.setdefault(r["name"], int(r["address"], 16))
     with (ROOT / "data/library.csv").open() as f:
         for r in csv.DictReader(f):
             names.setdefault(qualified(r["symbol"]), int(r["address"], 16))
-    for src in (ROOT / "src").rglob("*.cpp") if (ROOT / "src").exists() else []:
-        for addr, name in annotations(src):
-            names[name] = addr
     return names
 
 
@@ -184,6 +197,7 @@ class Result:
     size: int
     ours: int
     bytes_match: bool
+    symbol: str = ""
     refs: list[str] = field(default_factory=list)
     mismatched_refs: int = 0
     unverified: int = 0
@@ -202,7 +216,8 @@ def disasm(code: bytes, va: int) -> list[str]:
 
 def compare(orig: Original, obj: CoffObject, raw: bytes, address: int, name: str,
             names: dict[str, int], local: dict[str, int]) -> Result:
-    """The best result among the compiled functions the name could be: overloads share one."""
+    """The best result among the compiled functions the name could be: overloads share one.
+    `local` maps decorated symbols to addresses; `names` maps undecorated names."""
     prefixes = mangled(name)
     picks = [f for f in obj.functions() if f[0].name.startswith(prefixes)]
     if not picks:
@@ -225,7 +240,7 @@ def compare_one(orig, obj, raw, address, name, names, local, pick) -> Result:
     theirs = orig.read(address, size)
     same = len(ours) == len(theirs) and all(
         k in masked or a == b for k, (a, b) in enumerate(zip(ours, theirs)))
-    res = Result(address, name, size, len(ours), same)
+    res = Result(address, name, size, len(ours), same, sym.name)
 
     # Field offsets line up with the original's only when the bytes do.
     for r in relocs if same else []:
@@ -269,10 +284,10 @@ def check_ref(orig, obj, raw, target, sec, start, address, got, names, local):
         want = address - start + target.value
         return ("ok" if got == want else "mismatch"), want
     name = qualified(target.name)
+    if target.name in local:
+        want = local[target.name]
+        return ("ok" if got == want else "mismatch"), want
     if target.section > 0:
-        if name in local:
-            want = local[name]
-            return ("ok" if got == want else "mismatch"), want
         tsec = obj.sections[target.section - 1]
         if not tsec.is_code:
             content = tsec.data[target.value:] if target.name.startswith(("??_C@", "__real@")) else b""
@@ -283,7 +298,10 @@ def check_ref(orig, obj, raw, target, sec, start, address, got, names, local):
         want = orig.imports().get(imported)
         if want is not None:
             return ("ok" if got == want else "mismatch"), want
-    if name in names:
+    # An undecorated name says nothing about which overload it is once another overload of
+    # that name is known by its decorated symbol.
+    overloaded = any(qualified(d) == name for d in local)
+    if name in names and not overloaded:
         want = names[name]
         return ("ok" if got == want else "mismatch"), want
     return "unverified", None
@@ -330,7 +348,11 @@ def main() -> None:
         raise SystemExit(1)
     raw = objpath.read_bytes()
     obj, orig, names = CoffObject(raw), Original(), known_names()
-    local = {n: a for a, n in annotations(src)}
+    # Which compiled function each annotation is decides what its own symbol resolves to,
+    # so pick them first, by bytes alone.
+    local = known_decorated()
+    for address, name in annotations(src):
+        local[compare(orig, obj, raw, address, name, {}, {}).symbol] = address
     failed = 0
     for address, name in targets:
         res = compare(orig, obj, raw, address, name, names, local)
@@ -341,7 +363,7 @@ def main() -> None:
         else:
             verdict = f"{res.ratio * 100:.1f}%"
         extra = f", {res.unverified} unverified" if res.unverified else ""
-        print(f"0x{address:08X} {name}: {verdict} ({res.ours}/{res.size} bytes{extra})")
+        print(f"0x{address:08X} {name}: {verdict} ({res.ours}/{res.size} bytes{extra}) {res.symbol}")
         for line in res.refs:
             print(line)
         if not res.matched:

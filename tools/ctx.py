@@ -40,6 +40,8 @@ def main() -> None:
     size = int(functions[address]["size"])
 
     names: dict[int, str] = {}
+    for r in load_csv("names.csv"):
+        names.setdefault(int(r["address"], 16), r["name"])
     for r in load_csv("symbols.csv"):
         names.setdefault(int(r["address"], 16), r["name"])
     for r in load_csv("library.csv"):

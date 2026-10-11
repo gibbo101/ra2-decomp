@@ -15,7 +15,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 PROGRESS = ROOT / "data/progress.csv"
-LINE = re.compile(r"^(0x[0-9A-F]{8}) (.+?): (MATCH|WRONG TARGETS|[\d.]+%) \((\d+)/(\d+) bytes")
+LINE = re.compile(r"^(0x[0-9A-F]{8}) (.+?): (MATCH|WRONG TARGETS|[\d.]+%) \((\d+)/(\d+) bytes[^)]*\) (\S+)")
 
 
 def main() -> None:
@@ -36,8 +36,8 @@ def main() -> None:
                 continue
             found = True
             print(line)
-            addr, name, result, size = m.group(1), m.group(2), m.group(3), m.group(5)
-            rows.append([addr, name, result, size, src.relative_to(ROOT).as_posix()])
+            addr, name, result, size, symbol = m.group(1), m.group(2), m.group(3), m.group(5), m.group(6)
+            rows.append([addr, name, result, size, src.relative_to(ROOT).as_posix(), symbol])
             if before.get(addr) == "MATCH" and result != "MATCH":
                 broken.append(f"{addr} {name}")
         if not found:
@@ -51,7 +51,7 @@ def main() -> None:
     if record and not broken:
         with PROGRESS.open("w", newline="") as f:
             w = csv.writer(f, lineterminator="\n")
-            w.writerow(["address", "name", "result", "size", "source"])
+            w.writerow(["address", "name", "result", "size", "source", "symbol"])
             w.writerows(rows)
     sys.exit(1 if broken else 0)
 
