@@ -252,6 +252,18 @@ Goal: a cost per matched function, so the whole job can be priced before committ
    - Not the SP6 portable that TheSuperHackers' CI pulls (`itsmattkc/MSVC600`, pinned commit
      and SHA-256): wrong build for us, but its fetch-and-verify step is the pattern to copy.
      The base install's libraries (build 8168) match the Rich header's prebuilt objects.
+   - Sources found 11 October 2026 (archive.org; SHA-1 as archive.org lists it, pin SHA-256
+     after the first download):
+
+     | What | Item | File | SHA-1 |
+     |---|---|---|---|
+     | Base VS6 Enterprise | `en_vs6_ent` | `en_vs6_ent_cd1.iso` (643 MB) | `25e382cabcf6c648a327db3b90ff38962bfc0e84` |
+     | SP3 (May 1999) | `ms-technet-tnsb9908` | `TNSB9908.iso` (594 MB), in `VSTUDIO/SP3/` | `bf599ed15861b69ea89ffa52626eb252df2053be` |
+     | SP4 (fallback) | `X05-86592` | `2000-08_X05-86592_X05-78367_vs6sp4.7z` (379 MB) | `05a28ded15429ae0ea10b27ef646056c565f5284` |
+     | SP5 (reference only) | `vs6sp5` | `vs6sp5.exe` (136 MB) | `6af12fb3e2c7c271be67c9c9833c63b82bb7b9bf` |
+
+     CD1 should hold Visual C++; CDs 2 and 3 are not expected to be needed. The SP3 files
+     on the TechNet disc are `VS6SP3_1.EXE` to `VS6SP3_10.EXE` plus `VS6SP3S1/S2.EXE`.
    - MASM 6.13 (build 7299) is only needed for the 48 assembly objects; source it later.
    - Read homm1-decomp's `AGENTS.md` and Wine setup first (VC6 SP5, CC0, already working).
      The Generals Docker/Wine route (`../generals-pad/docs/PLAN.md`) and Byte Tactics'
