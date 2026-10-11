@@ -432,6 +432,27 @@ The whole-exe build, in Byte Tactics' order (their `docs/linking.md` is the map)
 Steps 1 to 5 are one interactive session with an Opus coordinator: tooling, no fan-out.
 Step 6 is where parallel agents pay, if the maintainer opts in to a workflow for it.
 
+### Tier 0, measured (11 October 2026)
+
+- **Use the TibSun archive, not OpenTS.**
+  [OpenTS-Developers/TibSun](https://github.com/OpenTS-Developers/TibSun) is the frozen
+  matching baseline (about 95% of TS 2.03's functions byte-exact); OpenTS has since moved
+  to C++20 and VS2022 and no longer compiles under VC6. The archive does, unchanged: 378
+  of its 394 files compile with our toolchain and flags in 11 seconds (the 16 failures
+  need SDK headers: DirectX, WOLAPI, VQA). Cloned to `reference/tibsun`.
+- **TS was built with the same toolchain.** TS 2.03's Rich header shows the same VC6 SP3
+  (438 C++ objects at 8447), the same 8168 CRT and MASM 7299. Compiled TibSun
+  `abstype.cpp` is found byte for byte in TS's exe; of 8,714 TibSun functions of 16 bytes
+  or more, 7,949 are found in TS (4,655 at one address). The installed Steam TS exe is not
+  retail 2.03 either (MD5 `d46f79b9…`, timestamp 2000-06-05 21:26:42 like retail): EA
+  patched it too.
+- **Yield in YR:** 1,321 TibSun functions (173 KB) are found unchanged at exactly one
+  address, 1,266 of them exactly on a mapped function. Another 3,012 are found at several
+  addresses: small functions YR repeats (trivial getters, destructors); the checker's
+  reference checks tell those apart. Classes RA2 changed (new members shift every
+  offset) do not match unchanged; `AbstractTypeClass` is one. Those are tier-1 work
+  starting from near-identical source.
+
 ### Decide before the first batch
 
 - **Module layout.** Which function lives in which source file, and the link order, decide
@@ -473,7 +494,7 @@ escalate) and needs no premium model. Prices are API rates per million tokens
 
 | Tier | Who | Takes |
 |---|---|---|
-| 0 | A script, no model | Every YR function with an OpenTS counterpart: compile OpenTS's version unchanged and diff it. Exact matches are free. |
+| 0 | A script, no model | Every YR function with a TS counterpart: compile the TibSun archive's version unchanged and diff it. Exact matches are free. |
 | 1 | Sonnet 5.5, medium effort ($2/$10) | Fresh functions and tier-0 near misses. Expected to land most small and mid-sized ones. |
 | 2 | Opus 5.5, high or xhigh ($4/$20) | Tier-1 stalls (no gain in about 30 checks) and large functions. |
 | 3 | Fable 5.1 ($10/$50) | The residue: register allocation and instruction order. |
@@ -513,8 +534,9 @@ divided by the number matched, times the functions left after tier 0, gives the 
 
 - Does `game.exe` (RA2 without YR) share enough to be worth matching too, or is YR the
   only target?
-- What fraction of YR functions have an OpenTS counterpart? Measure it in the spike by
-  comparing function lengths and call graphs.
+- What fraction of YR functions have a TS counterpart? First measure in the spike (see
+  "Tier 0, measured"): at least 1,321 unchanged, up to about 4,300 once duplicates are
+  told apart. Near misses (TS code with RA2's shifted offsets) are not counted yet.
 - Is there any surviving `tsun.dbg` or `gamemd` debug build? A symbol file would make
   a whole-exe match possible.
 - Is the whole-exe MD5 reachable? Matching one module's data section during the spike
