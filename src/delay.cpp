@@ -7,6 +7,100 @@
 #include "delay.h"
 #include "stimer.h"
 #include "timer.h"
+#include "fastmath.h"
+#include "coord.h"
+#include "cell.h"
+
+extern const double ONE_RAD;
+extern const double CELL_LEPTON_DIAG;
+extern const double RAD_45;
+extern const double RAD_60;
+extern const double RAD_90;
+extern const int LEVEL_LEPTON_H;
+extern const double DAT_007E5E28;
+extern double DAT_008A0128;
+extern double DAT_008A0110;
+extern const double CELL_SLOPE_ANGLE;
+extern const double CELL_DIAG_SLOPE_ANGLE;
+extern const int BRIDGE_LEPTON_HEIGHT;
+
+// FUNCTION: 0x004A4EA0
+
+
+
+const double CELL_LEPTON_DIAG = fastmath::sqrt(pow((double)CELL_LEPTON_H, 2) * 2);
+
+// FUNCTION: 0x004A4ED0
+
+
+
+double DAT_008A0128 = CELL_LEPTON_DIAG / DAT_007E5E28;
+
+// FUNCTION: 0x004A4EF0
+
+
+
+double DAT_008A0110 = 1.0 / DAT_008A0128;
+
+// FUNCTION: 0x004A4F10
+
+
+
+const double RAD_45 = ONE_RAD * 45;
+
+// FUNCTION: 0x004A4F30
+
+
+
+const double RAD_60 = ONE_RAD * 60;
+
+// FUNCTION: 0x004A4F50
+
+
+
+const double RAD_90 = ONE_RAD * 90;
+
+// FUNCTION: 0x004A4F70
+
+
+
+const int LEVEL_LEPTON_H = (int)(fastmath::tan(RAD_90 - RAD_60) * CELL_LEPTON_DIAG * 0.5);
+
+// FUNCTION: 0x004A4FB0
+
+
+
+const double CELL_SLOPE_ANGLE = fastmath::atan(LEVEL_LEPTON_H * (1 / (double)CELL_LEPTON_H));
+
+// FUNCTION: 0x004A4FE0
+
+
+
+const double CELL_DIAG_SLOPE_ANGLE = fastmath::atan((LEVEL_LEPTON_H * 2) / CELL_LEPTON_DIAG);
+
+// FUNCTION: 0x004A5010
+
+
+
+const int BRIDGE_LEPTON_HEIGHT = (int)((LEVEL_LEPTON_H * BRIDGE_CELL_HEIGHT) + 0.5);
+
+// FUNCTION: 0x004A5040
+
+
+
+Cell const CELL_NONE(0, 0);
+
+// FUNCTION: 0x004A5050
+
+
+
+Coord const COORD_NONE(0, 0, 0);
+
+// FUNCTION: 0x004A5070
+
+
+
+Coord const DAT_008A0118(128, 128, 0);
 
 // FUNCTION: 0x004A50A0
 void Delay(int duration)
@@ -142,3 +236,17 @@ void DelayTimerClass::End_Count(void)
 		End_Count_Down();
 	}
 }
+
+struct ZeroQuad {
+	int A;
+	int B;
+	int C;
+	int D;
+	ZeroQuad(void) : A(0), B(0), C(0), D(0) {}
+};
+
+// FUNCTION: 0x004A5390
+
+
+
+ZeroQuad DAT_008A0138;

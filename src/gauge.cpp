@@ -116,3 +116,23 @@ int TriColorGaugeClass::Set_Yellow_Limit(int value)
 	}
 	return(false);
 }
+
+// FUNCTION: 0x004E30B0
+void GaugeClass::Use_Thumb(int value)
+{
+	HasThumb = value ? true : false;
+}
+
+extern int DAT_008B3F90;
+extern int DAT_008B3F94;
+extern int DAT_008B3F98;
+extern int DAT_008B3F9C;
+
+// FUNCTION: 0x004E3110
+void FUN_004E3110(void)
+{
+	DAT_008B3F90 = 0;
+	DAT_008B3F94 = 0;
+	DAT_008B3F98 = 0;
+	DAT_008B3F9C = 0;
+}

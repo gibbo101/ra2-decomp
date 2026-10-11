@@ -21,9 +21,34 @@
 #include "layer.hh"
 #include <new.h>
 
+// FUNCTION: 0x005AFEF0
+MechLocomotionClass::MechLocomotionClass(void) :
+	BASECLASS(),
+	DestinationCoord(COORD_NONE),
+	HeadToCoord(COORD_NONE),
+	IsMoving(false)
+{
+}
+
 // FUNCTION: 0x005AFF50
+// FUNCTION: 0x005B1B50
 MechLocomotionClass::~MechLocomotionClass(void)
 {
+}
+
+// FUNCTION: 0x005AFF70
+boolean STDMETHODCALLTYPE MechLocomotionClass::Is_Moving(void)
+{
+	return(IsMoving);
+}
+
+// FUNCTION: 0x005AFF80
+CoordStruct STDMETHODCALLTYPE MechLocomotionClass::Destination(void)
+{
+	if (Is_Moving()) {
+		return(DestinationCoord);
+	}
+	return(COORD_NONE);
 }
 
 // FUNCTION: 0x005B0060
@@ -31,6 +56,21 @@ boolean STDMETHODCALLTYPE MechLocomotionClass::Process(void)
 {
 	Movement_AI(true);
 	return(Is_Moving());
+}
+
+// FUNCTION: 0x005B0120
+void STDMETHODCALLTYPE MechLocomotionClass::Stop_Moving(void)
+{
+	DestinationCoord = COORD_NONE;
+	if (HeadToCoord == COORD_NONE) {
+		IsMoving = false;
+	}
+}
+
+// FUNCTION: 0x005B01A0
+void STDMETHODCALLTYPE MechLocomotionClass::Force_Immediate_Destination(CoordStruct coord)
+{
+	HeadToCoord = coord;
 }
 
 // FUNCTION: 0x005B1960
@@ -67,4 +107,18 @@ boolean STDMETHODCALLTYPE MechLocomotionClass::Is_Moving_Here(CoordStruct to)
 	}
 
 	return(false);
+}
+
+extern int DAT_00ABEE60;
+extern int DAT_00ABEE64;
+extern int DAT_00ABEE68;
+extern int DAT_00ABEE6C;
+
+// FUNCTION: 0x005B1B80
+void FUN_005B1B80(void)
+{
+	DAT_00ABEE60 = 0;
+	DAT_00ABEE64 = 0;
+	DAT_00ABEE68 = 0;
+	DAT_00ABEE6C = 0;
 }

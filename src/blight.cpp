@@ -36,10 +36,57 @@ HRESULT STDMETHODCALLTYPE BuildingLightClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
+// FUNCTION: 0x00436950
+HRESULT STDMETHODCALLTYPE BuildingLightClass::Load(IStream *stream)
+{
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		new (this) BuildingLightClass(NoInitClass());
+
+		Swizzle_Pointer(&Owner);
+		Swizzle_Pointer(&Target);
+	}
+	return(result);
+}
+
 // FUNCTION: 0x004369C0
 HRESULT STDMETHODCALLTYPE BuildingLightClass::Save(IStream * stream, BOOL cleardirty)
 {
 	return(BASECLASS::Save(stream, cleardirty));
+}
+
+// FUNCTION: 0x00436A00
+void BuildingLightClass::Detach(AbstractClass const * target, bool all)
+{
+	BASECLASS::Detach(target, all);
+	if (Target == target) {
+		Target = NULL;
+	}
+	if (Owner == target) {
+		Owner = NULL;
+	}
+}
+
+// FUNCTION: 0x00436F40
+void BuildingLightClass::Compute_CRC(CRCEngine & crc) const
+{
+	BASECLASS::Compute_CRC(crc);
+	crc(Speed);
+	crc(RotationPivot.X);
+	crc(RotationPivot.Y);
+	crc(RotationPivot.Z);
+	crc(RotationTarget.X);
+	crc(RotationTarget.Y);
+	crc(RotationTarget.Z);
+	crc(Acceleration);
+	crc(IsOppositeDirection);
+	crc(Behavior);
+	if (Target != NULL) {
+		crc(Target->Fetch_ID());
+	}
+	if (Owner != NULL) {
+		crc(Owner->Fetch_ID());
+	}
 }
 
 // FUNCTION: 0x00437030
@@ -60,4 +107,11 @@ bool BuildingLightClass::Unlimbo(Coord const & coord, Dir256 dir)
 		return(true);
 	}
 	return(false);
+}
+
+// FUNCTION: 0x004370C0
+BuildingLightClass::~BuildingLightClass(void)
+{
+	Limbo();
+	BuildingLights.Delete(this);
 }
