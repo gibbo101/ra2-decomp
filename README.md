@@ -16,7 +16,9 @@ audio, maps, strings or other assets, and it never will. You must own a legal co
   takes the executable's resources from it.
 - **Running** the result needs your installed game for all of its data.
 
-The compiler is not included either. A setup script will fetch it.
+The compiler is not included either. `tools/setup_toolchain.sh` fetches Visual C++ 6.0 and
+Service Pack 3 from archive.org, checks them against pinned hashes and sets them up under
+Wine (needs `curl`, `7z`, `cabextract`, `wine` and `python3`).
 
 ## Not affiliated with EA
 
