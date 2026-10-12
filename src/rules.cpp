@@ -55,6 +55,11 @@
 
 template<> void VectorClass<ColorScheme *>::Clear(void);
 void FUN_006269A0(void);
+void __fastcall FUN_00626AB0(char const * name, HSVClass & hsv);
+struct BytePaletteStub { unsigned char Bytes[768]; };
+extern BytePaletteStub DAT_00886380;
+extern BytePaletteStub FileSystem_TEMPERAT_PAL;
+ColorScheme * __fastcall Scheme_Find_By_Name(char const * name, HSVClass & hsv, BytePaletteStub const & base, BytePaletteStub const & screen, int levels);
 void Difficulty_Get(CCINIClass const & ini, DifficultyClass & diff, char const * section);
 class MPGameModeStub { public: CCINIClass * FUN_005D67B0(void); };
 struct SessionStub { int GameMode; MPGameModeStub * Mode; bool Is_Multiplayer(void) const {return GameMode != 0 && GameMode != 5;} };
@@ -260,6 +265,24 @@ void Difficulty_Get(CCINIClass const & ini, DifficultyClass & diff, char const *
 	}
 }
 
+// FUNCTION: 0x0066D3A0
+bool RulesClass::Color_Schemes(CCINIClass const & ini)
+{
+	static char const * COLORS = "Colors";
+	if (ini.Is_Present(COLORS)) {
+		int count = ini.Entry_Count(COLORS);
+		for (int i = 0; i < count; i++) {
+			char const * name = ini.Get_Entry(COLORS, i);
+			HSVClass hsv = ini.Get_HSVClass(COLORS, name, HSVClass(0, 0, 0));
+			FUN_00626AB0(name, hsv);
+			Scheme_Find_By_Name(name, hsv, DAT_00886380, FileSystem_TEMPERAT_PAL, 1);
+			Scheme_Find_By_Name(name, hsv, DAT_00886380, FileSystem_TEMPERAT_PAL, 0x35);
+		}
+		return(true);
+	}
+	return(false);
+}
+
 // FUNCTION: 0x0066D480
 bool RulesClass::Read_ColorAdd(CCINIClass const & ini)
 {
@@ -271,6 +294,43 @@ bool RulesClass::Read_ColorAdd(CCINIClass const & ini)
 			RGBClass color = ini.Get_RGBClass(COLORADD, key, RGBClass(0, 0, 0));
 			ColorAdd[index] = color;
 		}
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00671EA0
+bool RulesClass::MPlayer(CCINIClass const & ini)
+{
+	static char const * MPLAYER = "MultiplayerDialogSettings";
+	if (ini.Is_Present(MPLAYER)) {
+		MinMoney = ini.Get_Int(MPLAYER, "MinMoney", MinMoney);
+		MPMoney = ini.Get_Int(MPLAYER, "Money", MPMoney);
+		MPMaxMoney = ini.Get_Int(MPLAYER, "MaxMoney", MPMaxMoney);
+		MoneyIncrement = ini.Get_Int(MPLAYER, "MoneyIncrement", MoneyIncrement);
+		MinUnitCount = ini.Get_Int(MPLAYER, "MinUnitCount", MinUnitCount);
+		MPUnitCount = ini.Get_Int(MPLAYER, "UnitCount", MPUnitCount);
+		MaxUnitCount = ini.Get_Int(MPLAYER, "MaxUnitCount", MaxUnitCount);
+		MPBuildLevel = ini.Get_Int(MPLAYER, "TechLevel", MPBuildLevel);
+		GameSpeed = ini.Get_Int(MPLAYER, "GameSpeed", GameSpeed);
+		AIDifficultyStruct = ini.Get_Int(MPLAYER, "AIDifficulty", AIDifficultyStruct);
+		AIPlayers = ini.Get_Int(MPLAYER, "AIPlayers", AIPlayers);
+		IsMPBridgeDestruction = ini.Get_Bool(MPLAYER, "BridgeDestruction", IsMPBridgeDestruction);
+		IsMPShadowGrow = ini.Get_Bool(MPLAYER, "ShadowGrow", IsMPShadowGrow);
+		Shroud = ini.Get_Bool(MPLAYER, "Shroud", Shroud);
+		IsMPBasesOn = ini.Get_Bool(MPLAYER, "Bases", IsMPBasesOn);
+		IsMPTiberiumGrow = ini.Get_Bool(MPLAYER, "TiberiumGrows", IsMPTiberiumGrow);
+		IsMPCrates = ini.Get_Bool(MPLAYER, "Crates", IsMPCrates);
+		IsMPCaptureTheFlag = ini.Get_Bool(MPLAYER, "CaptureTheFlag", IsMPCaptureTheFlag);
+		HarvesterTruce = ini.Get_Bool(MPLAYER, "HarvesterTruce", HarvesterTruce);
+		MultiEngineer = ini.Get_Bool(MPLAYER, "MultiEngineer", MultiEngineer);
+		AlliesAllowed = ini.Get_Bool(MPLAYER, "AlliesAllowed", AlliesAllowed);
+		AllyChangeAllowed = ini.Get_Bool(MPLAYER, "AllyChangeAllowed", AllyChangeAllowed);
+		ShortGame = ini.Get_Bool(MPLAYER, "ShortGame", ShortGame);
+		SuperWeaponsAllowed = ini.Get_Bool(MPLAYER, "SuperWeaponsAllowed", SuperWeaponsAllowed);
+		BuildOffAlly = ini.Get_Bool(MPLAYER, "BuildOffAlly", BuildOffAlly);
+		FogOfWar = ini.Get_Bool(MPLAYER, "FogOfWar", FogOfWar);
+		MCVRedeploys = ini.Get_Bool(MPLAYER, "MCVRedeploys", MCVRedeploys);
 		return(true);
 	}
 	return(false);

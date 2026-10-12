@@ -64,6 +64,12 @@
 #include "ramp.hh"
 #include "tube.hh"
 
+void __cdecl FUN_004068E0(char const * format, ...);
+
+inline IsometricTileTypeClass * Next_Tile_In_Set(IsometricTileTypeClass * type, int index) { return type->Next_Tile_From_Set(index); }
+inline unsigned short * Preview_Tile_Of(IsometricTileTypeClass * type, int tile, int level) { return type->Preview_Tile(tile, level); }
+inline VisualType Building_Visual(BuildingClass * building) { return building->Visual_Character(false, NULL); }
+
 class PixelFXClass
 {
 	public:
@@ -200,6 +206,62 @@ CellClass::CellClass(void) :
 	Create_ID();
 	Flag.Composite = 0;
 	BridgeFlag.Composite = 0;
+}
+
+// FUNCTION: 0x0047BDB0
+int CellClass::Preview_Cell_Color(unsigned char & unknown, bool terrainonly) const
+{
+	unknown = 0;
+	BuildingClass * obj = Cell_Building();
+
+	if (!terrainonly && obj != NULL && !obj->Class->IsInvisible && !obj->Class->IsInvisibleInGame && Building_Visual(obj) != VISUAL_HIDDEN) {
+		ColorScheme * owner_scheme = ColorSchemes[obj->House->Scheme];
+		unsigned int color = owner_scheme->Converter->Convert_Pixel(owner_scheme->Color);
+		if (color == 0) {
+			FUN_004068E0("We just got a black pixel for the preview image for the building %s\n", obj->Class->IniName);
+		}
+		return((color << 16) | color);
+	}
+
+	if (IsUnderBridge) {
+		RGBClass bridge_color = OverlayTypes[OVERLAY_BRIDGE1]->Get_Radar_Color(0);
+		unsigned int color = DSurface::Build_Hicolor_Pixel(bridge_color);
+		if (color == 0) {
+			bridge_color = OverlayTypes[OVERLAY_BRIDGE1]->RadarColor;
+			color = DSurface::Build_Hicolor_Pixel(bridge_color);
+			if (color == 0) {
+				FUN_004068E0("We just got a black pixel for the preview image for a bridge\n");
+			}
+		}
+		return((color << 16) | color);
+	}
+
+	IsometricTileTypeClass * ittype;
+
+	int icon;
+	if (ITType != ISOTILE_NONE) {
+		ittype = IsometricTileTypes[ITType];
+	} else {
+		ittype = IsometricTileTypes[TILE_CLEAR];
+	}
+
+	icon = 0;
+	if (ITType != ISOTILE_NONE) {
+		if (ittype->NumTileTypesInSet > 1) {
+			if (ittype->Is_Randomized(SubTile)) {
+				icon = IsBridgeDamaged ? 1 : 0;
+			} else {
+				int numtiles = ittype->NumTileTypesInSet;
+				icon = Clear_Icon(ITType, numtiles);
+			}
+		}
+	} else {
+		icon = Clear_Icon(TILE_CLEAR, ittype->NumTileTypesInSet);
+	}
+
+	IsometricTileTypeClass * next_isotype = Next_Tile_In_Set(ittype, icon);
+	unsigned short * tile = Preview_Tile_Of(next_isotype, SubTile, Height);
+	return(((tile[0] << 16) | tile[1]));
 }
 
 // FUNCTION: 0x0047C3D0

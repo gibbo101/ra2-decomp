@@ -161,8 +161,10 @@ Each entry: what the diff showed, then the source change that fixed it.
 - What the original calls (constructors, `Add`) stays a call when declared without a body.
 - The original mixes call and inline forms of one function: wrap one use in a one-line
   inline helper. Helpers nested too deep stop inlining and become real calls.
-- VC6 inlines one level. When the original calls what ours inlines, look for a TibSun
-  wrapper around it (`Cell_Terrain()` around `Cell_Find_Object`): the nested call stays.
+- A nested call left out of line under an inlined wrapper (`Cell_Terrain()` around
+  `Cell_Find_Object`) is the inline budget: call the wrapper, as TibSun does. If both
+  levels still inline, wrap other calls in the function in file-local inline helpers
+  until it stays; each helper must contain a call (Preview_Cell_Color needed three).
 - A callee the original inlines that lives in the same module is defined in that file
   (`Do_AnimTypes`, `Read_X`); define it there and VC6 inlines it.
 - Each function has an inline budget, spent from the last member destructor backwards:

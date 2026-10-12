@@ -358,3 +358,7 @@ date,address,function,model,result,best,checks,minutes,blocker,notes
 2026-10-12,0x006EAE60,TeamClass::Detach,opus-5.5 (coordinator),MATCH,100,1,,,Landed once functions.py split it from 0x006EAA90's extent.
 2026-10-12,0x0045E520,BuildingTypeClass::BuildingTypeClass,opus-5.5 (coordinator),MATCH,100,1,,,Landed once progress.csv recorded the TechnoTypeClass NoInit constructor it calls.
 2026-10-12,0x00671EA0,RulesClass::Read_MultiplayerDialogSettings,opus-5.5 (coordinator),failed,0,0,,lost,"Reported MATCH by the rules agent, but absent from src/rules.cpp after the batch; redo."
+2026-10-12,0x00671EA0,RulesClass::MPlayer,sonnet-5.5 (batch 2 follow-up),MATCH,100,1,,,Redone after the batch lost it: section MultiplayerDialogSettings with YR's keys in the original's order.
+2026-10-12,0x0066D3A0,RulesClass::Color_Schemes,sonnet-5.5 (batch 2 follow-up),MATCH,100,1,,,Get_HSVClass then the ColorScheme lookup per entry; the palettes are a byte stand-in until the palette header exists.
+2026-10-12,0x0047BDB0,CellClass::Preview_Cell_Color,sonnet-5.5 (batch 2 follow-up),MATCH,100,,,,Cell_Building() plus three file-local inline call wrappers keep Cell_Find_Object out of line.
+2026-10-12,0x0047C620,CellClass::Is_Clear_To_Build,sonnet-5.5 (batch 2 follow-up),partial,65.8,4,,block layout,The shared return-false block lands in the tail instead of early at 0x47C6D1; ||/goto/local/if-else reshaping did not move it.

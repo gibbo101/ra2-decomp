@@ -218,6 +218,7 @@ address,name,result,size,source,symbol
 0x0047B360,CellClass::CellClass,MATCH,54,src/cell.cpp,??0CellClass@@QAE@ABVNoInitClass@@@Z
 0x0047BB60,CellClass::~CellClass,MATCH,137,src/cell.cpp,??1CellClass@@UAE@XZ
 0x0047BBF0,CellClass::CellClass,MATCH,440,src/cell.cpp,??0CellClass@@QAE@XZ
+0x0047BDB0,CellClass::Preview_Cell_Color,MATCH,674,src/cell.cpp,?Preview_Cell_Color@CellClass@@QBEHAAE_N@Z
 0x0047C3D0,CellClass::Cell_Techno,MATCH,250,src/cell.cpp,?Cell_Techno@CellClass@@QBEPAVTechnoClass@@ABVPoint2D@@_NPBV2@@Z
 0x0047C4D0,CellClass::Cell_Find_Object,MATCH,73,src/cell.cpp,?Cell_Find_Object@CellClass@@QBEPAVObjectClass@@W4RTTIType@@_N@Z
 0x0047C520,CellClass::Cell_Building,MATCH,47,src/cell.cpp,?Cell_Building@CellClass@@QBEPAVBuildingClass@@XZ
@@ -1111,7 +1112,9 @@ address,name,result,size,source,symbol
 0x0066D150,RulesClass::Elevation_Model,MATCH,154,src/rules.cpp,?Elevation_Model@RulesClass@@QAE_NABVCCINIClass@@@Z
 0x0066D1F0,RulesClass::Wall_Model,MATCH,115,src/rules.cpp,?Wall_Model@RulesClass@@QAE_NABVCCINIClass@@@Z
 0x0066D270,Difficulty_Get,MATCH,302,src/rules.cpp,?Difficulty_Get@@YIXABVCCINIClass@@AAVDifficultyClass@@PBD@Z
+0x0066D3A0,RulesClass::Color_Schemes,MATCH,222,src/rules.cpp,?Color_Schemes@RulesClass@@QAE_NABVCCINIClass@@@Z
 0x0066D480,RulesClass::Read_ColorAdd,MATCH,170,src/rules.cpp,?Read_ColorAdd@RulesClass@@QAE_NABVCCINIClass@@@Z
+0x00671EA0,RulesClass::MPlayer,MATCH,903,src/rules.cpp,?MPlayer@RulesClass@@QAE_NABVCCINIClass@@@Z
 0x00672230,RulesClass::Heap_Maximums,MATCH,69,src/rules.cpp,?Heap_Maximums@RulesClass@@QAE_NABVCCINIClass@@@Z
 0x006722F0,RulesClass::Do_HouseTypes,MATCH,106,src/rules.cpp,?Do_HouseTypes@RulesClass@@QAE_NABVCCINIClass@@@Z
 0x006725F0,RulesClass::Do_SuperWeaponTypes,MATCH,106,src/rules.cpp,?Do_SuperWeaponTypes@RulesClass@@QAE_NABVCCINIClass@@@Z
