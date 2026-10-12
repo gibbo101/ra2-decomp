@@ -45,13 +45,18 @@ static struct
 {
 	char const * Name;
 	PipEnum Type;
-} _pips[6] = {
-	{ "empty", PIP_EMPTY },
+} _pips[11] = {
 	{ "green", PIP_GREEN },
 	{ "yellow", PIP_YELLOW },
 	{ "white", PIP_WHITE },
 	{ "red", PIP_RED },
-	{ "blue", PIP_BLUE }
+	{ "blue", PIP_BLUE },
+	{ "persongreen", PIP_PERSON_GREEN },
+	{ "personyellow", PIP_PERSON_YELLOW },
+	{ "personwhite", PIP_PERSON_WHITE },
+	{ "personred", PIP_PERSON_RED },
+	{ "personblue", PIP_PERSON_BLUE },
+	{ "personpurple", PIP_PERSON_PURPLE }
 };
 
 static struct

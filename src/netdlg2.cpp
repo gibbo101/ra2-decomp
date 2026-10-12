@@ -246,7 +246,7 @@ static void Get_Join_Responses(void)
 			}
 
 			if (Session.Games.Count() && Session.GPacket.PlayerInfo.NameCRC !=
-				Compute_Name_CRC(Session.GameName)) {
+				Compute_Name_CRC((char *)Session.GameName)) {
 				found = 1;
 			}
 
@@ -274,7 +274,7 @@ static void Get_Join_Responses(void)
 
 				for (i = 0; i < Session.Players.Count(); i++) {
 					NodeNameType * player = Session.Players[i];
-					if (strcmp(player->Name,Session.GameName) && player->Player.Status != 0) {
+					if (strcmp(player->Name,(char *)Session.GameName) && player->Player.Status != 0) {
 						player->Player.Status = 0;
 						EnableWindow(GetDlgItem(GameoptWindow(), IDC_ACCEPT), TRUE);
 					}
@@ -293,7 +293,7 @@ static void Get_Join_Responses(void)
 		if (Session.GPacket.Command==NET_CONFIRM_JOIN) {
 			if ( JoinState != JOIN_CONFIRMED) {
 				JoinState = JOIN_CONFIRMED;
-				strcpy (Session.GameName, Session.GPacket.Name);
+				strcpy ((char *)Session.GameName, Session.GPacket.Name);
 				Session.House = Session.GPacket.PlayerInfo.House;
 				Session.ColorIdx = Session.GPacket.PlayerInfo.Color;
 
@@ -504,7 +504,7 @@ static void Get_Join_Responses(void)
 			if (player_removed) {
 				for (i = 0; i < Session.Players.Count(); i++) {
 					NodeNameType * player = Session.Players[i];
-					if (strcmp(player->Name,Session.GameName) && player->Player.Status != 0) {
+					if (strcmp(player->Name,(char *)Session.GameName) && player->Player.Status != 0) {
 						player->Player.Status = 0;
 						EnableWindow(GetDlgItem(GameoptWindow(), IDC_ACCEPT), TRUE);
 					}
@@ -596,7 +596,7 @@ static void Get_Join_Responses(void)
 		if (Session.GPacket.Command==NET_MESSAGE) {
 			if ( JoinState==JOIN_CONFIRMED) {
 				if (Session.GPacket.Message.NameCRC ==
-					Compute_Name_CRC(Session.GameName)) {
+					Compute_Name_CRC((char *)Session.GameName)) {
 					PMessagePrintf(ColorUser, "[%s] %s", Session.GPacket.Name, Session.GPacket.Message.Buf);
 					Sound_Effect(Rule->IncomingMessage, 1.0, 0);
 				}
@@ -732,7 +732,7 @@ static void Get_Join_Responses(void)
 				Session.Players.Add (who);
 
 				for (i = 0; i < Session.Players.Count(); i++) {
-					if (strcmp(Session.Players[i]->Name, Session.GameName)) {
+					if (strcmp(Session.Players[i]->Name, (char *)Session.GameName)) {
 						Session.Players[i]->Player.Status = 0;
 					}
 				}

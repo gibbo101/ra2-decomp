@@ -48,6 +48,13 @@ class DisplayClass: public MapClass
 		bool ProximityCheck;
 		bool ShroudCheck;
 
+		Cell CurrentFoundationCopy_CenterCell;
+		Cell CurrentFoundationCopy_TopLeftOffset;
+		Cell const * CurrentFoundationCopy_Data;
+		ObjectClass * CurrentBuildingCopy;
+		ObjectTypeClass const * CurrentBuildingTypeCopy;
+		HousesType CurrentBuildingOwnerArrayIndexCopy;
+
 		bool FollowingObject;
 		ObjectClass * FollowingObjectPtr;
 
@@ -81,6 +88,7 @@ class DisplayClass: public MapClass
 		virtual void Reposition_Sidebar(void);
 		virtual void Abort_Drag_Select(void);
 		virtual bool Map_Cell(Cell const & cell, HouseClass * house);
+		virtual bool RevealFogShroud(Cell const & cell, HouseClass * house, bool increase);
 		virtual bool Fog_Map_Cell(Cell const & cell, HouseClass * house);
 		virtual bool Shadow_Map_Cell(Cell const & cell, HouseClass * house);
 		virtual MouseType Get_Mouse_Shape(void) const = 0;
@@ -138,6 +146,8 @@ class DisplayClass: public MapClass
 
 		bool IsWaypointMode;
 
+		bool PlaceBeaconMode;
+
 		SuperWeaponType IsTargettingMode;
 
 		WaypointClass * DraggedWaypoint;
@@ -167,7 +177,12 @@ class DisplayClass: public MapClass
 
 		bool IsShadowPresent;
 
-		int BandX,BandY;
+		struct BandStruct {
+			int BandX;
+			int BandY;
+		};
+
+		BandStruct Band;
 		int NewX,NewY;
 
 		static void const *ShadowShapes;

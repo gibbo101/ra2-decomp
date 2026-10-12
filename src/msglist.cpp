@@ -117,10 +117,10 @@ void MessageListClass::Compute_Y(void)
 	int y;
 
 	if (IsEdit && AdjustEdit) {
-		y = MessageY + Height;
+		y = MessagePos.MessageY + Height;
 	}
 	else {
-		y = MessageY;
+		y = MessagePos.MessageY;
 	}
 	if (MessageList) {
 		gadg = MessageList;

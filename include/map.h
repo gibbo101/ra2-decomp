@@ -259,6 +259,8 @@ class MapClass: public GScreenClass
 		virtual void Set_Map_Dimensions(Rect const & size, bool, int cell_height, bool);
 		virtual void Set_Local_Dimensions(Rect const & size);
 
+		bool unknown_10;
+
 		ZONE_PAIR_HASH_SET * ZoneAdjacency;
 
 		unsigned short * Zones[MZONE_COUNT];
@@ -277,8 +279,6 @@ class MapClass: public GScreenClass
 
 		DynamicVectorClass<Cell> PendingBridgeCells;
 
-		DynamicVectorClass<Cell> DirtyIceCells;
-
 		Rect PlayRect;
 
 		Rect LocalRect;
@@ -294,29 +294,10 @@ class MapClass: public GScreenClass
 
 		int TotalValue;
 
-		struct CrackedIceStruct
-		{
-			CrackedIceStruct(int solidify_frame = 0) : CellID(0,0), SolidifyFrame(solidify_frame) {}
-
-			bool operator==(const CrackedIceStruct & that) const { return(that.CellID == CellID && that.SolidifyFrame == SolidifyFrame); }
-			bool operator!=(const CrackedIceStruct & that) const { return(that.CellID != CellID || that.SolidifyFrame != SolidifyFrame); }
-
-			Cell CellID;
-
-			int SolidifyFrame;
-		};
-
-	protected:
-
-		int DeformMask;
-		Cell DeformCell;
-		int DeformFrame;
-
-		DynamicVectorClass<CrackedIceStruct> CrackedIce;
-
-	public:
-
 		VectorClass<CellClass *> Array;
+
+		// Lowest cell level on the map, or 13 before it is computed.
+		int MaxLevel;
 
 	protected:
 

@@ -29,10 +29,12 @@
 #include "levitate.h"
 #include "mission.h"
 #include "movie.h"
+#include "multiplayer.h"
 #include "overtype.h"
 #include "psystype.h"
 #include "ptype.h"
 #include "scheme.h"
+#include "session.h"
 #include "script.h"
 #include "side.h"
 #include "smudtype.h"
@@ -68,9 +70,6 @@ template<> void VectorClass<ColorScheme *>::Clear(void);
 void FUN_006269A0(void);
 void __fastcall FUN_00626AB0(char const * name, HSVClass & hsv);
 void Difficulty_Get(CCINIClass const & ini, DifficultyClass & diff, char const * section);
-class MPGameModeStub { public: CCINIClass * FUN_005D67B0(void); };
-struct SessionStub { int GameMode; MPGameModeStub * Mode; bool Is_Multiplayer(void) const {return GameMode != 0 && GameMode != 5;} };
-extern SessionStub DAT_00A8B238;
 
 // FUNCTION: 0x006686C0
 void RulesClass::Initialize(CCINIClass & ini)
@@ -159,8 +158,8 @@ void RulesClass::Initialize(CCINIClass & ini)
 
 	Read_ColorAdd(ini);
 
-	if (DAT_00A8B238.GameMode != 0 && DAT_00A8B238.Mode != NULL) {
-		Addition(*DAT_00A8B238.Mode->FUN_005D67B0());
+	if (Session.Type != GAME_NORMAL && Session.MPGameMode != NULL) {
+		Addition(*Session.MPGameMode->FUN_005D67B0());
 	}
 }
 

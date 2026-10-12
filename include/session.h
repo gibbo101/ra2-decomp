@@ -29,12 +29,12 @@ class UnitClass;
 class PhoneEntryClass;
 class CellClass;
 class INIClass;
+class MPGameModeClass;
 
 #define	MPLAYER_BUILD_LEVEL_MAX		10
 #define	MAX_MPLAYER_COLORS			8
 
-#define	MAX_IPX_PACKET_SIZE			(((546 - sizeof(CommHeaderType)) / \
-												sizeof(EventClass) ) * sizeof(EventClass))
+#define	MAX_IPX_PACKET_SIZE			558
 #define	MAX_SERIAL_PACKET_SIZE		256
 
 #ifdef HOUSE_NAME_MAX
@@ -166,7 +166,7 @@ enum NetCommandType {
 };
 
 struct MPlayerScoreType {
-	char Name[MPLAYER_NAME_MAX];
+	wchar_t Name[MPLAYER_NAME_MAX];
 
 	int Scheme;
 
@@ -443,6 +443,20 @@ struct GameOptionsType {
 
 };
 
+struct SessionOptionsClass {
+	int MPGameMode;
+	int ScenIndex;
+	int GameSpeed;
+	int Credits;
+	int UnitCount;
+	bool ShortGame;
+	bool SuperWeaponsAllowed;
+	bool BuildOffAlly;
+	bool MCVRepacks;
+	bool CratesAppear;
+	int SlotData[8][3];
+};
+
 struct MPStatsType {
 	char Name[64];
 	int MaxRoundTrip;
@@ -482,8 +496,10 @@ class SessionClass
 		bool Log_To_File(FILE *out);
 
 		GameType Type;
-		bool IsWDT;
-		int WDTTerritory;
+		MPGameModeClass * MPGameMode;
+		int unknown_08;
+		int unknown_0C;
+		int unknown_10;
 
 		CommProtocolType CommProtocol;
 
@@ -494,21 +510,26 @@ class SessionClass
 		char Handle[MPLAYER_NAME_MAX];
 		int PrefColor;
 		int ColorIdx;
+		int unknown_164;
+		int unknown_168;
+		int unknown_16C;
+		int unknown_170;
 		int House;
-		int ObiWan;
-		int Solo;
+		int idxSide2;
+		int Color;
+		int Color2;
+		int Side;
+		int Side2;
 
-		char *PreferredServer;
+		SessionOptionsClass Skirmish;
+		SessionOptionsClass LAN;
+		SessionOptionsClass WOL;
 
-		int Locale;
-
-		int LastLocale;
-
-		bool StoreNickname;
+		BOOL MultiplayerObserver;
+		int Unknown_304;
+		bool WOLLimitResolution;
 
 		int LastNicknameSlot;
-
-		bool PlayerIsGDI;
 
 		int MaxPlayers;
 		int NumPlayers;
@@ -517,57 +538,57 @@ class SessionClass
 		unsigned int FrameSendRate;
 
 		int			DesiredFrameRate;
-
 		int			ProcessTimer;
 		int			ProcessTicks;
 		int			ProcessFrames;
-
 		int			MaxMaxAhead;
-
 		int			PrecalcMaxAhead;
 		int			PrecalcDesiredFrameRate;
 
 		MPStatsType ConnectionStats[MAX_PLAYERS];
 
-		char MasterPlayerName[MPLAYER_NAME_MAX + 1];
-		int MasterPlayerID;
-
-		bool ShowInternetDebug;
+		bool EnableMultiplayerDebug;
+		bool DrawMPDebugStats;
+		char field_67E;
+		char field_67F;
 
 		int LoadGame;
-
 		int EmergencySave;
 
 		bool SquadAlliances;
-
 		bool SawGameCompletion;
-
 		bool OutOfSync;
+		char field_68B;
 
 		unsigned int PlayingAgainstVersion;
 
 		DynamicVectorClass<MultiMission *> Scenarios;
 
 		char ScenarioFileName[_MAX_FNAME+_MAX_EXT+2];
-
 		char ScenarioDigest [32+2];
 		unsigned int ScenarioFileLength;
 		bool ScenarioIsOfficial;
-
+		int unknown_8D4;
 		char ScenarioRequests[MAX_PLAYERS];
 		int  RequestCount;
+
 		IPXAddressClass	HostAddress;
 
 		DynamicVectorClass<GlobalPacketType *> KickProposals;
-
 		int KickVoteCount[MAX_PLAYERS];
-
 		int KickVoteWho[MAX_PLAYERS][MAX_PLAYERS];
 
 		MessageListClass Messages;
 		IPXAddressClass MessageAddress;
-		char LastMessage[MAX_MESSAGE_LENGTH];
+
+		bool PlayerChatEnabled[8];
+		bool LANTaunts;
+		bool WOLTaunts;
+
+		wchar_t LastMessage[MAX_MESSAGE_LENGTH];
 		unsigned WWChat		: 1;
+		bool unknown_1FC0;
+		bool unknown_1FC1;
 
 		MPlayerScoreType Score[MAX_MULTI_NAMES];
 		int GamesPlayed;
@@ -578,6 +599,7 @@ class SessionClass
 		static char Descriptions[100][40];
 		static int CountMin[2];
 		static int CountMax[2];
+
 		static char const * GlobalPacketNames[];
 		static char const * SerialPacketNames[];
 
@@ -591,7 +613,7 @@ class SessionClass
 		bool NetStealth;
 		bool NetProtect;
 		bool NetOpen;
-		char GameName[MPLAYER_NAME_MAX];
+		wchar_t GameName[MPLAYER_NAME_MAX];
 		GlobalPacketType GPacket;
 		int GPacketlen;
 		IPXAddressClass GAddress;
@@ -601,23 +623,30 @@ class SessionClass
 		DynamicVectorClass <NodeNameType *> Games;
 		DynamicVectorClass <NodeNameType *> Players;
 		DynamicVectorClass <NodeNameType *> Chat;
+
+		int unknown_2854[9];
+		bool unknown_2878;
+
 		int Suspended;
 
 		unsigned ModemService		: 1;
 		int CurPhoneIdx;
 		SerialSettingsType SerialDefaults;
 		ModemGameType ModemType;
-
 		DynamicVectorClass<PhoneEntryClass *> PhoneBook;
 		DynamicVectorClass <char *> InitStrings;
 		DynamicVectorClass <char const *> CallWaitStrings;
 		static char const * DialMethodCheck[ DIAL_METHODS ];
-
 		static const int CallWaitStringIDs[ CALL_WAIT_STRINGS_NUM ];
 
 		int PlayerLatency[MAX_PLAYERS];
-
 		int LatencyFudge;
+
+		unsigned char unknown_2968[0x6B8];
+		wchar_t MasterPlayerName[MPLAYER_NAME_MAX + 1];
+		unsigned char unknown_304A[0x2A];
+		int MasterPlayerID;
+		unsigned char unknown_3078[0x34];
 
 		int TrapFrame;
 		RTTIType TrapObjType;
@@ -627,6 +656,8 @@ class SessionClass
 		CellClass * TrapCell;
 		int TrapCheckHeap;
 		int TrapPrintCRC;
+
+		bool CurrentlyInGame;
 };
 
 extern SessionClass Session;

@@ -11,3 +11,9 @@ address,name,symbol,evidence
 0x008B4150,AnimTypes,,YRpp AnimTypeClass::Array; TibSun's AnimTypes in 0x00422B20 AnimTypeClass lookup
 0x00481180,CellClass::Closest_Free_Spot,,YRpp FindInfantrySubposition; TibSun's argument use, ret 0x14
 0x00703590,TechnoClass::Nearby_Location,,TibSun's body; called by 0x00739CD0 UnitClass undeploy
+0x0087F7E8,Map,,YRpp MapClass::Instance (TibSun's MouseClass global Map)
+0x00A8B238,Session,,YRpp SessionClass::Instance
+0x00816EE0,RTTIs,,"name table of 0x0040DCB0 Name_From_RTTI and 0x0040DCE0 RTTI_From_Name: 74 (name, RTTIType) pairs, <none> to DiskLaser, ending at ""Unknown"" 0x00817130"
+0x0081BA88,_mzones,,"name table of 0x00474E40 CCINIClass::Get_MZoneType: 13 names, Normal to CrusherAll"
+0x0081B958,_pips,,"name table of 0x004748A0 CCINIClass::Get_PipEnum: 11 (name, PipEnum) pairs, green to personpurple"
+0x004F42F0,GScreenClass::Flag_To_Redraw,,"YRpp MapClass::RedrawSidebar; GScreenClass vtable slot 14, body is TibSun's Flag_To_Redraw (TacticalMap redraw flag, DrawFlags, Map.Increment_Redraw_Counter)"

@@ -14,7 +14,9 @@
 #include "super.hh"
 
 class InitClass {};
+class ColorScheme;
 class FactoryClass;
+class HouseClass;
 
 class SidebarClass : public PowerClass
 {
@@ -43,7 +45,8 @@ class SidebarClass : public PowerClass
 
 			GADGET_CAMEO=1000,
 
-			COLUMNS=2
+			COLUMNS=2,
+			STRIPS=4
 		};
 
 		static ShapeSet const * SidebarShape;
@@ -68,10 +71,11 @@ class SidebarClass : public PowerClass
 		virtual void Draw_It(bool complete) override;
 		virtual void Reposition_Sidebar(void) override;
 		virtual char const * Help_Text(int id) override;
+		virtual void DisposeOfArt(void) override;
 
 		void Zoom_Mode_Control(void);
 		bool Abandon_Production(RTTIType type, FactoryClass * factory);
-		bool Activate(int control);
+		virtual bool Activate(int control);
 		bool Add(RTTIType type, int ID);
 		bool Sidebar_Click(KeyNumType & input, int x, int y);
 		void Recalc(void);
@@ -143,6 +147,8 @@ class SidebarClass : public PowerClass
 					QUEUE_COUNT_X_OFFSET=60
 				};
 
+				bool AllowedToDraw;
+
 				int X,Y;
 
 				Rect ObjectRect;
@@ -192,7 +198,11 @@ class SidebarClass : public PowerClass
 
 					int BuildableID;
 					RTTIType BuildableType;
+					BOOL IsAlt;
 					FactoryClass * Factory;
+					int unknown_10;
+					StageClass Progress;
+					int FlashEndFrame;
 				};
 				BuildType Buildables[MAX_BUILDABLES];
 
@@ -206,7 +216,14 @@ class SidebarClass : public PowerClass
 				static ShapeButtonClass DownButton[COLUMNS];
 				static SelectClass SelectButton[COLUMNS][MAX_SLOTS];
 
-		} Column[COLUMNS];
+		};
+
+		StripClass Column[STRIPS];
+
+		int unknown_5394;
+		int unknown_5398;
+		int ActiveTabIndex;
+		int unknown_53A0;
 
 		bool IsCameoText;
 
@@ -217,6 +234,20 @@ class SidebarClass : public PowerClass
 		bool IsForceCompleteRedraw;
 
 		bool IsToRedrawCredits;
+
+		HouseClass * DiplomacyHouses[8];
+		int DiplomacyKills[8];
+		int DiplomacyOwned[8];
+		int DiplomacyPowerDrain[8];
+		ColorScheme * DiplomacyColors[8];
+		int unknown_544C[8];
+		int unknown_546C[8];
+		int unknown_548C[8];
+		int unknown_54AC[8];
+		int unknown_54CC[8];
+		int unknown_54EC[8];
+		unsigned char unknown_550C;
+		int DiplomacyNumHouses;
 
 		class SBGadgetClass: public GadgetClass {
 			public:
@@ -247,7 +278,6 @@ class SidebarClass : public PowerClass
 		bool Activate_Demolish(int control);
 		int Which_Column(RTTIType type);
 
-		bool IsRepairActive;
-		bool IsUpgradeActive;
-		bool IsDemolishActive;
+		bool unknown_bool_5514;
+		bool unknown_bool_5515;
 };

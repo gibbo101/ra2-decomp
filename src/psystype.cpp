@@ -38,9 +38,7 @@ ParticleSystemBehaviorType Particle_System_Behavior_From_Name(char const * name)
 		"Gas",
 		"Fire",
 		"Spark",
-		"Railgun",
-		"Web",
-		"WeakGas"
+		"Railgun"
 	};
 
 	for (ParticleSystemBehaviorType behavior = PSYS_BEHAVIOR_FIRST; behavior < PSYS_BEHAVIOR_COUNT; behavior++) {

@@ -31,6 +31,7 @@ class MPGameModeClass
 {
 	public:
 		static MPGameModeClass * __fastcall Get(int index);
+		CCINIClass * FUN_005D67B0(void);
 
 		MPGameModeClass(NoInitClass const &) {}
 		virtual ~MPGameModeClass(void);

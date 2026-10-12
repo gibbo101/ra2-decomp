@@ -707,6 +707,16 @@ The merge also found a checker gap. A reference to a global object whose address
 checker does not know is reported as unverified, so a wrong member offset passes. With
 YR's addresses for the map object and the session object in names.csv, 33 matched
 functions point at the wrong members: 11 through Map and 22 through Session.
+An Opus agent gave the map class chain (GScreen through Mouse, with a new power.h and
+tab.h) and SessionClass YR's layout, proven against the constructors and every
+instruction that touches the two objects, and brought all 33 back to MATCH with the two
+addresses in names.csv, so the checker now verifies them. RadarClass was 0x18 bytes
+short; YRpp's padding at DisplayClass+0x11E4 is really RadarClass's first field, and
+its IPXAddressClass is 2 bytes short. The same test found four name tables sized for
+TS (RTTI names, movement zones, pips, superweapon names) and fixed them;
+`tools/refaudit.py` now runs that test. Left open: the particle behaviour-name table,
+which has the same TS count but whose fix flips 0x0073CEC0 for compiler-internal
+reasons. Cost: about 0.5M tokens, 39 minutes.
 
 ### Decide before the first batch
 

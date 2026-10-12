@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 #pragma once
 
+#include "audioctl.h"
 #include "coord.h"
 #include "display.h"
 #include "hashtable.h"
@@ -70,10 +71,14 @@ class RadarClass: public DisplayClass
 
 		virtual void One_Time(void) override;
 		virtual void Init_Clear(void) override;
+		virtual void Init_IO(void) override;
 
 		void Post_Load_Radar_Fixup(void);
 
 		virtual bool Map_Cell(Cell const & cell, HouseClass * house) override;
+		virtual bool RevealFogShroud(Cell const & cell, HouseClass * house, bool increase) override;
+		virtual char const * Help_Text(int id) override;
+		virtual void DisposeOfArt(void);
 		virtual Cell Click_Cell_Calc(Point2D const & point) const;
 		virtual void AI(KeyNumType & input, Point2D const & xy) override;
 		virtual void Draw_It(bool complete=false) override;
@@ -211,6 +216,12 @@ class RadarClass: public DisplayClass
 		int RadarMode;
 
 		int SuspendedRadarMode;
+
+		int unknown_14B8;
+		bool unknown_bool_14BC;
+		bool unknown_bool_14BD;
+		AudioController unknown_14C0;
+		int unknown_int_14D4;
 
 		bool DoesRadarExist;
 

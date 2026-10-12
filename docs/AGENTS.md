@@ -256,6 +256,11 @@ Each entry: what the diff showed, then the source change that fixed it.
   (VocClass::PlayGlobal takes volume before panning).
 - A function that matches YRpp's address may be TS's under another name (FindInfantry-
   Subposition is Closest_Free_Spot): compare with TibSun before adding a member.
+- An unverified reference proves nothing: a wrong offset into a global object whose
+  address check.py does not know passes. Give each object you reach into a names.csv
+  row; `uv run tools/refaudit.py` lists symbols whose references imply different bases.
+- A match that flips after an unrelated header edit (enumerator counts alone moved
+  0x0073CEC0's block layout) is compiler-internal: change the header edit, not the function.
 - A TS layout can agree with YR's for a prefix only: run headercheck before porting a
   function that reaches past a class's proven part.
 - Where YRpp groups members into a struct and TS has flat fields, use a nested struct

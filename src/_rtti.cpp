@@ -75,6 +75,16 @@ struct {
 	{ "FoggedObject",		RTTI_FOGGEDOBJECT },
 	{ "AlphaShape",			RTTI_ALPHASHAPE },
 	{ "VeinholeMonster",	RTTI_VEINHOLEMONSTER },
+	{ "NavyType",			RTTI_NAVYTYPE },
+	{ "SpawnManager",		RTTI_SPAWNMANAGER },
+	{ "CaptureManager",		RTTI_CAPTUREMANAGER },
+	{ "Parasite",			RTTI_PARASITE },
+	{ "Bomb",				RTTI_BOMB },
+	{ "Temporal",			RTTI_TEMPORAL },
+	{ "RadSite",			RTTI_RADSITE },
+	{ "Airstrike",			RTTI_AIRSTRIKE },
+	{ "SlaveManager",		RTTI_SLAVEMANAGER },
+	{ "DiskLaser",			RTTI_DISKLASER },
 };
 
 static char UNKNOWN_RTTI_NAME[] = { "Unknown" };
