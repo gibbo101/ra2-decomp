@@ -561,6 +561,24 @@ Per-function outcomes are in `data/tier0.csv`. The first run's leftovers, since 
   matched function calls; small relocation-free functions are identified by bytes alone,
   so a few names may be wrong (one false identity was caught).
 
+### Batch 1 (12 October 2026)
+
+110 small functions (under 1.5 KB) in nine TS-derived modules, one agent per module
+writing straight into `src/` on the real headers, Sonnet then Opus on near misses; an
+agent could edit only its own module's header. Sonnet landed 69; about 30 more matched
+byte for byte but only with YR's layout in shared headers the agents could not touch,
+so Opus could not land them either. One coordinator-run agent then gave the shared
+headers YR's real layout (RulesClass, HouseClass, CellClass, FootClass, the file
+classes, GadgetClass and its subclasses, the surfaces, ConvertClass, ...; headercheck
+PASS where YRpp has the class) and landed all 30. **99 of 110 matched**; 11 stay banked
+in `build/batch/` (register near misses, three wrong extents in `data/functions.csv`,
+one overload the checker resolves by undecorated name). Cost: about 1.6M tokens for the
+batch and 0.5M for the header merge. Merge gate: 1,426 of 1,427.
+
+Lesson: shared headers, not matching, held back a quarter of the batch. Later batches
+merge requested header changes between the Sonnet and Opus tiers, so header-gated
+functions land without spending Opus on them.
+
 ### Decide before the first batch
 
 - **Module layout.** Which function lives in which source file, and the link order, decide
