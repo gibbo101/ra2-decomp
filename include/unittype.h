@@ -71,7 +71,7 @@ class UnitTypeClass : public TechnoTypeClass
 
 		virtual RTTIType Fetch_RTTI(void) const override;
 		virtual int Fetch_Object_Size(bool oldsave) const override;
-		virtual int Get_Object_Size_Delta(void) const override;
+		virtual bool CanUseWaypoint(void) const override;
 		virtual void Compute_CRC(CRCEngine & crc) const override;
 		virtual int Fetch_Heap_ID(void) const override;
 
@@ -86,8 +86,8 @@ class UnitTypeClass : public TechnoTypeClass
 		virtual Point3D Lepton_Dimensions(void) const override;
 		virtual bool Create_And_Place(Cell const & cell, HouseClass * house = NULL) const override;
 		virtual ObjectClass * Create_One_Of(HouseClass * house) const override;
-		virtual bool Legal_Placement(Cell const & pos, HouseClass * house) const override;
-		virtual int Flight_Level(void) const override;
+		virtual bool CanAttackMove(void) const override;
+		virtual int Repair_Step(void) const override;
 
 		TPoint2D<int> Turret_Adjust(Dir256 dir, TPoint2D<int> const & xy) const;
 

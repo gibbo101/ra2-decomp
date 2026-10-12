@@ -33,8 +33,10 @@ original compiler turns into that function's exact bytes. MATCH means
    offsets, every vtable slot): AbstractClass, AbstractTypeClass, ObjectClass,
    MissionClass, RadioClass, TechnoClass, BuildingClass, ObjectTypeClass,
    TechnoTypeClass, BuildingTypeClass, BaseClass, TeamClass, AnimClass, AnimTypeClass,
-   UnitTypeClass, and the shared ones batch 1 gave YR's layout (RulesClass, HouseClass,
-   CellClass, FootClass, the file classes, the gadgets, the surfaces). Include them
+   UnitTypeClass, UnitClass, InfantryTypeClass, AircraftTypeClass, TeamTypeClass,
+   HouseTypeClass, WarheadTypeClass, BombClass, ParasiteClass, LineTrail, and the shared
+   ones batch 1 gave YR's layout (RulesClass, HouseClass, CellClass, FootClass, the file
+   classes, the gadgets, the surfaces). Include them
    rather than writing stand-ins; `uv run tools/headercheck.py <Class>` proves any header you fix in
    your overlay.
 3. Mark the definition with `// FUNCTION: <ADDR>` on the line before it. The function
@@ -120,6 +122,7 @@ Each entry: what the diff showed, then the source change that fixed it.
   `if (strcmp(a, b) != 0) return false; else return true;`.
 - Early returns that merged into `setne`: write nested `if` blocks. Conversely
   `return (A && B && C) ? 1 : 0;` keeps every temporary alive, each in its own slot.
+- A `goto` to the shared tail and a `return` compile differently.
 - `if (a || b) X; else Y;` has one fixed block order however it is written. For the
   other order, make both tests reach one block: `if (a) goto none; if (b) { none: X }`.
 - `!p ? 0 : p->Count` and `p ? p->Count : 0` give opposite branch polarity.
@@ -158,6 +161,14 @@ Each entry: what the diff showed, then the source change that fixed it.
 - What the original calls (constructors, `Add`) stays a call when declared without a body.
 - The original mixes call and inline forms of one function: wrap one use in a one-line
   inline helper. Helpers nested too deep stop inlining and become real calls.
+- VC6 inlines one level. When the original calls what ours inlines, look for a TibSun
+  wrapper around it (`Cell_Terrain()` around `Cell_Find_Object`): the nested call stays.
+- A callee the original inlines that lives in the same module is defined in that file
+  (`Do_AnimTypes`, `Read_X`); define it there and VC6 inlines it.
+- Each function has an inline budget, spent from the last member destructor backwards:
+  moving one member's cleanup into a file-local inline helper shifts which stay calls.
+- Nested inline decisions depend on how many expansions a function already holds; a
+  code-neutral inline helper can flip them.
 - `member.Type::Type();` in a constructor body builds a member with no null test and
   after the statements before it; placement new adds the test.
 
@@ -195,6 +206,9 @@ Each entry: what the diff showed, then the source change that fixed it.
 - TS sizes YR changed: StageClass 24 to 28 bytes (`stage.h`), BANIM_COUNT 13 to 21
   (`banim.hh`), attached particle systems 5 to 8, weapon slots 3 to 18.
 - Keep TS member names at YR's offsets; use YRpp names only for members TS lacks.
+- YR signatures that differ from TS: Take_Damage has 7 arguments, Is_Moving_Onto_Bridge
+  and Destination_Coord take a `TechnoClass *`; MissionClass slot 0x1E8 is
+  `void QueueMission(MissionType, bool)` and 0x1EC is `bool Commence(void)`.
 - A TS layout can agree with YR's for a prefix only (ScenarioClass, to 0x218): run
   headercheck before porting a function that reaches past it.
 - Porting a stub-based match: drop the overlay and map stub members onto the real

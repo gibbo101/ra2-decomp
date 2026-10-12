@@ -428,7 +428,8 @@ class BuildingTypeClass : public TechnoTypeClass
 
 		virtual RTTIType Fetch_RTTI(void) const override;
 		virtual int Fetch_Object_Size(bool oldsave) const override;
-		virtual int Get_Object_Size_Delta(void) const override;
+		virtual bool CanUseWaypoint(void) const override;
+		virtual bool CanAttackMove(void) const override;
 		virtual void Compute_CRC(CRCEngine & crc) const override;
 		virtual int Fetch_Heap_ID(void) const override;
 
@@ -451,7 +452,6 @@ class BuildingTypeClass : public TechnoTypeClass
 
 		bool Is_Factory(void) const {return(ToBuild != RTTI_NONE);}
 		virtual int Raw_Cost(void) const override;
-		virtual int Repair_Cost(void) const override;
 
 		Cell const * Exit_List(void) const;
 		Rect Get_Draw_Rect(void);
@@ -476,7 +476,7 @@ class BuildingTypeClass : public TechnoTypeClass
 
 	private:
 
-		static Cell const OccupyLists[BSIZE_COUNT][24];
+		static Cell const OccupyLists[BSIZE_COUNT][30];
 
 		static Cell const ExitLists[BSIZE_COUNT][30];
 

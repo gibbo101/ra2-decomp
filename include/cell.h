@@ -155,7 +155,12 @@ class CellClass : public AbstractClass
 			unsigned char Composite;
 		} BridgeFlag;
 
-		unsigned AltFlags;
+		unsigned IsMapped:1;
+		unsigned IsVisible:1;
+		unsigned IsFogMapped:1;
+		unsigned IsFogVisible:1;
+		unsigned IsAltUnknown:1;
+		unsigned : 27;
 
 		int ShroudCounter;
 
@@ -230,7 +235,7 @@ class CellClass : public AbstractClass
 		bool Can_Tiberium_Germinate(TiberiumClass const * tiberium) const;
 		bool Can_Tiberium_Grow(void) const;
 		bool Can_Tiberium_Spread(void) const;
-		bool Is_Bridge_Here(void) const;
+		bool Is_Bridge_Here(void) const {return(IsUnderBridge);}
 		BuildingClass * Cell_Building(void) const;
 		Cell Fetch_CellID(void) const {return(CellID);}
 		void Set_CellID(Cell const & cell);

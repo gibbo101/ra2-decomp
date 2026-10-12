@@ -5,6 +5,7 @@
 #pragma once
 
 #include "abstract.h"
+#include "audioctl.h"
 #include "assert.h"
 #include "coord.h"
 #include "face.h"
@@ -58,9 +59,9 @@ class ObjectClass : public AbstractClass
 
 		BombClass * AttachedBomb;
 
-		char AmbientSoundController[20];
+		AudioController AmbientSoundController;
 
-		char CustomSoundController[20];
+		AudioController CustomSoundController;
 
 		int CustomSound;
 
@@ -92,9 +93,9 @@ class ObjectClass : public AbstractClass
 
 		bool IsFalling;
 
-		bool IsToExplode;
-
 		bool IsABomb;
+
+		bool IsToExplode;
 
 		bool IsActive;
 
@@ -131,8 +132,10 @@ class ObjectClass : public AbstractClass
 		virtual TechnoTypeClass const * Techno_Type_Class(void) const;
 		__declspec( property( get=Techno_Type_Class) ) TechnoTypeClass const * TClass;
 		virtual ObjectTypeClass const * Class_Of(void) const {return(0);}
+		bool Is_Type_Named(char const * name) const;
+		void Clear_Line_Trail(void);
 		bool Is_Infantry(void) const {return(Fetch_RTTI() == RTTI_INFANTRY);}
-		bool Is_Foot(void) const;
+		bool Is_Foot(void) const { if (this == NULL) return(false); unsigned char flag = ((unsigned char)AbstractFlags >> 2) & 1; return(flag != 0); }
 		virtual int Get_Ownable(void) const;
 		virtual char const * Full_Name(void) const {return("");}
 		virtual bool Can_Repair(void) const;
@@ -149,7 +152,7 @@ class ObjectClass : public AbstractClass
 		virtual int Sort_Y(void) const;
 		virtual bool On_Ground(void) const override;
 		virtual bool In_Air(void) const override;
-		virtual bool Is_Moving_Onto_Bridge(void) const;
+		virtual bool Is_Moving_Onto_Bridge(TechnoClass * docker = NULL) const;
 		virtual bool Occupies_Cells(void) const {return(true);}
 		virtual bool IsDisguised(void) const;
 		virtual bool IsDisguisedAs(HouseClass * house) const;
@@ -221,7 +224,7 @@ class ObjectClass : public AbstractClass
 
 		virtual bool In_Range(Coord const & coord, int which=0) const;
 		virtual int Weapon_Range(int =0) const;
-		virtual ResultType Take_Damage(int & damage, int distance, WarheadTypeClass const * warhead, TechnoClass * source=0, bool forced=false, bool=false);
+		virtual ResultType Take_Damage(int & damage, int distance, WarheadTypeClass const * warhead, TechnoClass * source=0, bool forced=false, bool=false, HouseClass * = 0);
 		virtual void Destroy(void);
 		virtual void Scatter(Coord const &, bool forced=false, bool nokidding=false);
 		virtual bool Catch_Fire(void);

@@ -14,6 +14,7 @@
 #include "anim.h"
 #include "animtype.h"
 #include "assert.h"
+#include "bomb.h"
 #include "building.h"
 #include "builtype.h"
 #include "cell.h"
@@ -23,6 +24,7 @@
 #include "infantry.h"
 #include "infatype.h"
 #include "inline.h"
+#include "linetrail.h"
 #include "logic.h"
 #include "map.h"
 #include "mono.h"
@@ -35,7 +37,232 @@
 #include "tag.h"
 #include "tagtype.h"
 #include "tracker.h"
+#include "vector.h"
+#include "voc.h"
 #define	GRAVITY	1.4
+
+// FUNCTION: 0x005F3900
+ObjectClass::ObjectClass(void) :
+	BASECLASS(),
+	Riser(0,0,0),
+	Next(NULL),
+	Tag(NULL),
+	AttachedBomb(NULL),
+	CustomSound(-1),
+	BombVisible(false),
+	Strength(255),
+	EstimatedHealth(255),
+	IsDown(false),
+	IsToDamage(true),
+	unknown_7C(0),
+	IsToDisplay(false),
+	IsInLimbo(true),
+	InOpenToppedTransport(false),
+	IsSelected(false),
+	IsAnimAttached(false),
+	Parachute(NULL),
+	IsOnBridge(false),
+	IsFalling(false),
+	IsABomb(false),
+	IsToExplode(false),
+	IsActive(true),
+	Layer(LAYER_NONE),
+	IsSubmittedToLayer(false),
+	IsVisible(true),
+	Position(COORD_NONE),
+	LineTrailer(NULL)
+{
+	AmbientSoundController.FUN_00405BE0();
+	CustomSoundController.FUN_00405BE0();
+	Objects.Add(this);
+	ObjectPtrTracker.Add(this);
+	AbstractTypePtrTracker.Add(this);
+	TagPtrTracker.Add(this);
+	AbstractFlags |= 2;
+}
+
+// FUNCTION: 0x005F3B50
+ObjectClass::ObjectClass(NoInitClass const & x) :
+	BASECLASS(x)
+{
+}
+
+// FUNCTION: 0x005F3B80
+ObjectClass::~ObjectClass(void)
+{
+	if (AttachedBomb != NULL) {
+		AttachedBomb->Disarm();
+	}
+	ObjectsToDelete.Delete(this);
+	Objects.Delete(this);
+	ObjectPtrTracker.Delete(this);
+	AbstractTypePtrTracker.Delete(this);
+	TagPtrTracker.Delete(this);
+	Next = NULL;
+	IsActive = false;
+	AmbientSoundController.Stop();
+	CustomSoundController.Stop();
+	AmbientSoundController.FUN_00405C00();
+	CustomSoundController.FUN_00405C00();
+	if (LineTrailer != NULL) {
+		LineTrailer->~LineTrail();
+		LineTrailer = NULL;
+	}
+	if (IsSubmittedToLayer) {
+		Logic.Remove(this);
+	}
+}
+
+// FUNCTION: 0x005F3D90
+void ObjectClass::Clear_Line_Trail(void)
+{
+	if (LineTrailer != NULL) {
+		LineTrailer->~LineTrail();
+		LineTrailer = NULL;
+	}
+}
+
+// FUNCTION: 0x005F3DB0
+DirStruct * AbstractClass::GetTargetDirection(DirStruct * dir, AbstractClass const * target) const
+{
+	DirType d = Direction(Center_Coord(), target->Center_Coord());
+	DirStruct r;
+	r.Raw = d.Raw;
+	*dir = r;
+	return(dir);
+}
+
+// FUNCTION: 0x005F3E30
+void const * ObjectClass::Get_Image_Data(void) const
+{
+	return(Class_Of()->Get_Image_Data());
+}
+
+// FUNCTION: 0x005F3E50
+bool ObjectClass::Is_Type_Named(char const * name) const
+{
+	return(*Class_Of() == name);
+}
+
+inline void ObjectClass::Set_Height(int z)
+{
+	if (IsDown) {
+		Mark(MARK_UP);
+		Position.Z = z;
+		Mark(MARK_DOWN);
+	} else {
+		Position.Z = z;
+	}
+}
+
+// FUNCTION: 0x005F3E70
+void ObjectClass::AI(void)
+{
+	if (!IsInLimbo) {
+		if (Class_Of() != NULL && Class_Of()->AmbientSound != -1) {
+			VocClass::PlayAt(Class_Of()->AmbientSound, Get_Coord(), &AmbientSoundController);
+		}
+		if (CustomSound != -1) {
+			VocClass::PlayAt(CustomSound, Get_Coord(), &CustomSoundController);
+		}
+	}
+
+	if (IsFalling) {
+		LayerType layer = In_Which_Layer();
+
+		Height += Riser.Z;
+		if (HeightAGL <= 0) {
+			HeightAGL = 0;
+			IsFalling = false;
+			Per_Cell_Process(PCP_END);
+
+			if (Parachute != NULL) {
+				Parachute->RemainingIterations = 0;
+			}
+		}
+
+		if (!IsInLimbo) {
+			if (IsAnimAttached) {
+				Riser.Z -= 1;
+				Riser.Z = MAX(Riser.Z, Rule->ParachuteMaxFallRate);
+			} else {
+				Riser.Z -= GRAVITY;
+				Riser.Z = MAX(Riser.Z, Rule->NoParachuteMaxFallRate);
+			}
+
+			if (layer != In_Which_Layer()) {
+				Map.Submit(this);
+			}
+
+			if (!IsFalling) {
+				if (IsToExplode && Strength > 0) {
+					int damage = Strength;
+					Take_Damage(damage, 0, Rule->C4Warhead, NULL, true, true);
+				}
+
+				if (Fetch_RTTI() == RTTI_ANIM) {
+					AnimClass * anim = (AnimClass *)this;
+					if (anim->Type->IsFlamingGuy) {
+						anim->FlamingGuyExpire = true;
+						anim->Animation.Set_Rate(1);
+						anim->Animation.Set_Stage(FACING_COUNT * anim->Type->RunningFrames + 1);
+						if (Map[Get_Coord()].Land_Type() == LAND_WATER) {
+							new AnimClass(Rule->SplashList[0], Get_Coord() + Coord(0, 0, 3));
+						}
+					}
+				}
+			}
+		} else {
+			Map.Remove(this);
+		}
+	}
+}
+
+// FUNCTION: 0x005F4160
+void ObjectClass::Fall_From_Height(void)
+{
+	IsFalling = true;
+	IsToExplode = true;
+
+	Mark(MARK_UP);
+	Map.Remove(this);
+	IsOnBridge = false;
+	Map.Submit(this);
+	Mark(MARK_DOWN);
+
+	if (Is_Foot()) {
+		FootClass * foot = (FootClass *)this;
+		if (!foot->Locomotion->Is_Moving()) {
+			foot->Clear_Occupy_Bit(Get_Coord());
+		} else {
+			foot->Locomotion->Mark_All_Occupation_Bits(MARK_UP);
+		}
+	}
+}
+
+// FUNCTION: 0x005F4240
+ActionType ObjectClass::What_Action(ObjectClass const *, bool) const
+{
+	return(ACTION_NONE);
+}
+
+// FUNCTION: 0x005F4250
+ActionType ObjectClass::What_Action(Cell const &, bool, bool) const
+{
+	return(ACTION_NONE);
+}
+
+// FUNCTION: 0x005F4260
+LayerType ObjectClass::In_Which_Layer(void) const
+{
+	if (!In_Air()) {
+		return(LAYER_GROUND);
+	}
+	if (HeightAGL < Rule->JumpjetCruiseHeight) {
+		return(LAYER_AIR);
+	}
+	return(LAYER_TOP);
+}
 
 // FUNCTION: 0x005F61A0
 VoxelDataStruct::~VoxelDataStruct(void)

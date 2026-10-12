@@ -615,6 +615,33 @@ layout agrees only to 0x218), a uicmnds function whose original calls one templa
 instance's members and inlines another's, and the three spike near misses. `build/spike/`
 is gone. Merge gate: 1,452 of 1,452 (170.8 KB).
 
+### Batch 2 (12 October 2026)
+
+108 small functions, the first twelve unmatched in each of nine modules whose classes
+already had proven headers (anim, builtype, cell, foot, House, object, rules, team,
+techtype). Same shape as batch 1 plus the lesson from it: after the Sonnet tier, one
+Opus agent landed every shared-header change the module agents asked for, verified
+against the exe, and the functions those changes gated. **101 of 108 matched:**
+Sonnet 74, the header merge 25, Opus 1, and one landed once a callee's name was
+recorded. One more the rules agent reported as MATCH was missing from `src/` at the
+end, which is why the coordinator re-checks every claim. The
+merge gave nine more classes YR's full layout (UnitClass, InfantryTypeClass,
+AircraftTypeClass, TeamTypeClass, HouseTypeClass, WarheadTypeClass and three small
+ones) and settled YR signatures TS lacks (Take_Damage's seventh argument, QueueMission
+and Commence's slots). Agents also landed about a dozen unlisted functions their
+targets inlined or needed. Banked: three cell functions (one matches once ScenarioClass
+has YR's layout; the other two need TibSun's wrapper calls instead of the direct ones),
+a rules function on Is_Present's inlining, and team's 0x006EAA90 at about 82%; the
+rules agent skipped one function and lost another. A wrong
+extent there showed the map missed functions that follow a switch table and are named
+only by a vtable pointer; `functions.py` now takes those where the table ends exactly
+(7 new starts). Cost: about 2.65M tokens, 1 hour 45 minutes. Merge gate: 1,562 of 1,562
+(202.6 KB).
+
+Lesson: the header merge between tiers worked. It turned a quarter of the batch from
+blocked into matched without spending Opus per function, and left the Opus tier only
+the true near misses.
+
 ### Decide before the first batch
 
 - **Module layout.** Which function lives in which source file, and the link order, decide

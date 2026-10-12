@@ -36,6 +36,203 @@
 #include "warhead.h"
 #include "weapon.h"
 
+// FUNCTION: 0x0045B1B0 $E
+// FUNCTION: 0x0045B1C0 $E
+Cell const BuildingTypeClass::OccupyLists[BSIZE_COUNT][30] = {
+	/* BSIZE_11 */ { Cell(0,0),REFRESH_EOL },
+	/* BSIZE_21 */ { Cell(0,0),Cell(1,0),REFRESH_EOL },
+	/* BSIZE_12 */ { Cell(0,0),Cell(0,1),REFRESH_EOL },
+	/* BSIZE_22 */ { Cell(0,0),Cell(1,0),Cell(0,1),Cell(1,1),REFRESH_EOL },
+	/* BSIZE_23 */ { Cell(0,0),Cell(1,0),Cell(0,1),Cell(1,1),Cell(0,2),Cell(1,2),REFRESH_EOL },
+	/* BSIZE_32 */ { Cell(0,0),Cell(1,0),Cell(2,0),Cell(0,1),Cell(1,1),Cell(2,1),REFRESH_EOL },
+	/* BSIZE_33 */ { Cell(0,0),Cell(1,0),Cell(2,0),Cell(0,1),Cell(1,1),Cell(2,1),Cell(0,2),Cell(1,2),Cell(2,2),REFRESH_EOL },
+	/* BSIZE_35 */ { Cell(0,0),Cell(1,0),Cell(2,0),Cell(0,1),Cell(1,1),Cell(2,1),Cell(0,2),Cell(1,2),Cell(2,2),Cell(0,3),Cell(1,3),Cell(2,3),Cell(0,4),Cell(1,4),Cell(2,4),REFRESH_EOL },
+	/* BSIZE_42 */ { Cell(0,0),Cell(1,0),Cell(2,0),Cell(3,0),Cell(0,1),Cell(1,1),Cell(2,1),Cell(3,1),REFRESH_EOL },
+	/* BSIZE_33_REF */ { Cell(0,0),Cell(1,0),Cell(2,0),Cell(0,1),Cell(1,1),Cell(0,2),Cell(1,2),Cell(2,2),REFRESH_EOL },
+	/* BSIZE_13 */ { Cell(0,0),Cell(0,1),Cell(0,2),REFRESH_EOL },
+	/* BSIZE_31 */ { Cell(0,0),Cell(1,0),Cell(2,0),REFRESH_EOL },
+	/* BSIZE_43 */ { Cell(0,0),Cell(1,0),Cell(2,0),Cell(3,0),Cell(0,1),Cell(1,1),Cell(2,1),Cell(3,1),Cell(0,2),Cell(1,2),Cell(2,2),Cell(3,2),REFRESH_EOL },
+	/* BSIZE_14 */ { Cell(0,0),Cell(0,1),Cell(0,2),Cell(0,3),REFRESH_EOL },
+	/* BSIZE_15 */ { Cell(0,0),Cell(0,1),Cell(0,2),Cell(0,3),Cell(0,4),REFRESH_EOL },
+	/* BSIZE_26 */ { Cell(0,0),Cell(1,0),Cell(0,1),Cell(1,1),Cell(0,2),Cell(1,2),Cell(0,3),Cell(1,3),Cell(0,4),Cell(1,4),Cell(0,5),Cell(1,5),REFRESH_EOL },
+	/* BSIZE_25 */ { Cell(0,0),Cell(1,0),Cell(0,1),Cell(1,1),Cell(0,2),Cell(1,2),Cell(0,3),Cell(1,3),Cell(0,4),Cell(1,4),REFRESH_EOL },
+	/* BSIZE_53 */ { Cell(0,0),Cell(1,0),Cell(2,0),Cell(3,0),Cell(4,0),Cell(0,1),Cell(1,1),Cell(2,1),Cell(3,1),Cell(4,1),Cell(0,2),Cell(1,2),Cell(2,2),Cell(3,2),Cell(4,2),REFRESH_EOL },
+	/* BSIZE_44 */ { Cell(0,0),Cell(1,0),Cell(2,0),Cell(3,0),Cell(0,1),Cell(1,1),Cell(2,1),Cell(3,1),Cell(0,2),Cell(1,2),Cell(2,2),Cell(3,2),Cell(0,3),Cell(1,3),Cell(2,3),Cell(3,3),REFRESH_EOL },
+	/* BSIZE_34 */ { Cell(0,0),Cell(1,0),Cell(2,0),Cell(0,1),Cell(1,1),Cell(2,1),Cell(0,2),Cell(1,2),Cell(2,2),Cell(0,3),Cell(1,3),Cell(2,3),REFRESH_EOL },
+	/* BSIZE_64 */ { Cell(0,0),Cell(1,0),Cell(2,0),Cell(3,0),Cell(4,0),Cell(5,0),Cell(0,1),Cell(1,1),Cell(2,1),Cell(3,1),Cell(4,1),Cell(5,1),Cell(0,2),Cell(1,2),Cell(2,2),Cell(3,2),Cell(4,2),Cell(5,2),Cell(0,3),Cell(1,3),Cell(2,3),Cell(3,3),Cell(4,3),Cell(5,3),REFRESH_EOL },
+	/* BSIZE_00 */ { REFRESH_EOL }
+};
+
+// FUNCTION: 0x0045C2F0 $E
+// FUNCTION: 0x0045C300 $E
+Cell const BuildingTypeClass::ExitLists[BSIZE_COUNT][30] = {
+	/* BSIZE_11 */ { Cell(0,1),Cell(-1,1),Cell(1,1),Cell(-1,0),Cell(1,0),Cell(0,-1),Cell(-1,-1),Cell(1,-1),REFRESH_EOL },
+	/* BSIZE_21 */ { Cell(0,1),Cell(1,1),Cell(-1,1),Cell(2,1),Cell(-1,0),Cell(2,0),Cell(0,-1),Cell(1,-1),Cell(-1,-1),Cell(2,-1),REFRESH_EOL },
+	/* BSIZE_12 */ { Cell(0,2),Cell(1,2),Cell(-1,2),Cell(-1,1),Cell(1,1),Cell(-1,0),Cell(1,0),Cell(0,-1),Cell(-1,-1),Cell(1,-1),REFRESH_EOL },
+	/* BSIZE_22 */ { Cell(0,2),Cell(1,2),Cell(-1,2),Cell(2,2),Cell(-1,1),Cell(2,1),Cell(-1,0),Cell(2,0),Cell(0,-1),Cell(1,-1),Cell(-1,-1),Cell(2,-1),REFRESH_EOL },
+	/* BSIZE_23 */ { Cell(0,3),Cell(1,3),Cell(-1,3),Cell(2,3),Cell(-1,2),Cell(2,2),Cell(-1,1),Cell(2,1),Cell(-1,0),Cell(2,0),Cell(0,-1),Cell(1,-1),Cell(-1,-1),Cell(2,-1),REFRESH_EOL },
+	/* BSIZE_32 */ { Cell(0,2),Cell(1,2),Cell(2,2),Cell(-1,2),Cell(3,2),Cell(-1,1),Cell(3,1),Cell(-1,0),Cell(3,0),Cell(0,-1),Cell(1,-1),Cell(2,-1),Cell(-1,-1),Cell(3,-1),REFRESH_EOL },
+	/* BSIZE_33 */ { Cell(0,3),Cell(1,3),Cell(2,3),Cell(-1,3),Cell(3,3),Cell(-1,2),Cell(3,2),Cell(-1,1),Cell(3,1),Cell(-1,0),Cell(3,0),Cell(0,-1),Cell(1,-1),Cell(2,-1),Cell(-1,-1),Cell(3,-1),REFRESH_EOL },
+	/* BSIZE_35 */ { Cell(-1,-1),Cell(0,-1),Cell(1,-1),Cell(2,-1),Cell(3,-1),Cell(-1,0),Cell(3,0),Cell(-1,1),Cell(3,1),Cell(-1,2),Cell(3,2),Cell(-1,3),Cell(3,3),Cell(-1,4),Cell(3,4),Cell(-1,5),Cell(0,5),Cell(1,5),Cell(2,5),Cell(3,5),REFRESH_EOL },
+	/* BSIZE_42 */ { Cell(0,2),Cell(1,2),Cell(2,2),Cell(3,2),Cell(-1,2),Cell(4,2),Cell(-1,1),Cell(4,1),Cell(-1,0),Cell(4,0),Cell(0,-1),Cell(1,-1),Cell(2,-1),Cell(3,-1),Cell(-1,-1),Cell(4,-1),REFRESH_EOL },
+	/* BSIZE_33_REF */ { Cell(0,0),REFRESH_EOL },
+	/* BSIZE_13 */ { Cell(-1,-1),Cell(0,-1),Cell(1,-1),Cell(-1,0),Cell(1,0),Cell(-1,1),Cell(1,1),Cell(-1,2),Cell(1,2),Cell(-1,3),Cell(0,3),Cell(1,3),REFRESH_EOL },
+	/* BSIZE_31 */ { Cell(-1,-1),Cell(0,-1),Cell(1,-1),Cell(2,-1),Cell(3,-1),Cell(-1,0),Cell(3,0),Cell(-1,1),Cell(0,1),Cell(1,1),Cell(2,1),Cell(3,1),REFRESH_EOL },
+	/* BSIZE_43 */ { Cell(0,3),Cell(1,3),Cell(2,3),Cell(-1,3),Cell(3,3),Cell(-1,2),Cell(3,2),Cell(-1,1),Cell(3,1),Cell(-1,0),Cell(3,0),Cell(0,-1),Cell(1,-1),Cell(2,-1),Cell(-1,-1),Cell(3,-1),REFRESH_EOL },
+	/* BSIZE_14 */ { Cell(-1,-1),Cell(0,-1),Cell(1,-1),Cell(-1,0),Cell(1,0),Cell(-1,1),Cell(1,1),Cell(-1,2),Cell(1,2),Cell(-1,3),Cell(1,3),Cell(-1,4),Cell(0,4),Cell(1,4),REFRESH_EOL },
+	/* BSIZE_15 */ { Cell(-1,-1),Cell(0,-1),Cell(1,-1),Cell(-1,0),Cell(1,0),Cell(-1,1),Cell(1,1),Cell(-1,2),Cell(1,2),Cell(-1,3),Cell(1,3),Cell(-1,4),Cell(1,4),Cell(-1,5),Cell(0,5),Cell(1,5),REFRESH_EOL },
+	/* BSIZE_26 */ { Cell(-1,-1),Cell(0,-1),Cell(1,-1),Cell(2,-1),Cell(-1,0),Cell(2,0),Cell(-1,1),Cell(2,1),Cell(-1,2),Cell(2,2),Cell(-1,3),Cell(2,3),Cell(-1,5),Cell(2,5),Cell(-1,6),Cell(0,6),Cell(1,6),Cell(2,6),REFRESH_EOL },
+	/* BSIZE_25 */ { Cell(-1,-1),Cell(0,-1),Cell(1,-1),Cell(2,-1),Cell(-1,0),Cell(2,0),Cell(-1,1),Cell(2,1),Cell(-1,2),Cell(2,2),Cell(-1,3),Cell(2,3),Cell(-1,5),Cell(0,5),Cell(1,5),Cell(2,5),REFRESH_EOL },
+	/* BSIZE_53 */ { Cell(-1,-1),Cell(0,-1),Cell(1,-1),Cell(2,-1),Cell(3,-1),Cell(4,-1),Cell(5,-1),Cell(-1,0),Cell(5,0),Cell(-1,1),Cell(5,1),Cell(-1,2),Cell(5,2),Cell(-1,3),Cell(0,3),Cell(1,3),Cell(2,3),Cell(3,3),Cell(4,3),Cell(5,3),REFRESH_EOL },
+	/* BSIZE_44 */ { Cell(-1,-1),Cell(0,-1),Cell(1,-1),Cell(2,-1),Cell(3,-1),Cell(4,-1),Cell(-1,4),Cell(0,4),Cell(1,4),Cell(2,4),Cell(3,4),Cell(4,4),Cell(-1,0),Cell(-1,1),Cell(-1,2),Cell(-1,3),Cell(-1,4),Cell(4,0),Cell(4,1),Cell(4,2),Cell(4,3),Cell(4,4),REFRESH_EOL },
+	/* BSIZE_34 */ { Cell(0,4),Cell(1,4),Cell(2,4),Cell(-1,4),Cell(3,4),Cell(-1,2),Cell(3,2),Cell(-1,1),Cell(3,1),Cell(-1,0),Cell(3,0),Cell(0,-1),Cell(1,-1),Cell(2,-1),Cell(-1,-1),Cell(3,-1),REFRESH_EOL },
+	/* BSIZE_64 */ { Cell(2,-1),REFRESH_EOL },
+	/* BSIZE_00 */ { REFRESH_EOL }
+};
+
+
+static struct {
+	char const * Name;
+	int Value;
+} _buildcats[6] = {
+	{ "DontCare", 0 },
+	{ "Tech", 1 },
+	{ "Power", 3 },
+	{ "Resource", 2 },
+	{ "Infrastructure", 4 },
+	{ "Combat", 5 }
+};
+
+// FUNCTION: 0x0045DD20
+char const * Name_From_BuildCat(int value)
+{
+	for (int index = 0; index < 6; index++) {
+		if (_buildcats[index].Value == value) {
+			return(_buildcats[index].Name);
+		}
+	}
+	return(_buildcats[0].Name);
+}
+
+// FUNCTION: 0x0045DD50
+int BuildCat_From_Name(char const * name)
+{
+	for (int index = 0; index < 6; index++) {
+		if (strcmpi(_buildcats[index].Name, name) == 0) {
+			return(_buildcats[index].Value);
+		}
+	}
+	return(0);
+}
+
+// FUNCTION: 0x0045E520
+BuildingTypeClass::BuildingTypeClass(NoInitClass const & x) :
+	BASECLASS(x),
+	BuildupData(NULL),
+	BuildupFilename(x),
+	PowersUpBuilding(x)
+{
+}
+
+// FUNCTION: 0x0045E580
+BuildingTypeClass::~BuildingTypeClass(void)
+{
+	if (BuildupLoaded && BuildupData != NULL) {
+		delete (ShapeSet *)BuildupData;
+		BuildupData = NULL;
+		BuildupLoaded = false;
+	}
+	if (BibShapeLoaded && BibShape != NULL) {
+		delete (ShapeSet *)BibShape;
+		BibShape = NULL;
+		BibShapeLoaded = false;
+	}
+	if (DeployingAnimLoaded && DeployingAnim != NULL) {
+		delete (ShapeSet *)DeployingAnim;
+		DeployingAnim = NULL;
+		DeployingAnimLoaded = false;
+	}
+	if (UnderDoorAnimLoaded && UnderDoorAnim != NULL) {
+		delete (ShapeSet *)UnderDoorAnim;
+		UnderDoorAnim = NULL;
+		UnderDoorAnimLoaded = false;
+	}
+	if (RubbleLoaded && Rubble != NULL) {
+		delete (ShapeSet *)Rubble;
+		Rubble = NULL;
+		RubbleLoaded = false;
+	}
+	if (RoofDeployingAnimLoaded && RoofDeployingAnim != NULL) {
+		delete (ShapeSet *)RoofDeployingAnim;
+		RoofDeployingAnim = NULL;
+		RoofDeployingAnimLoaded = false;
+	}
+	if (UnderRoofDoorAnimLoaded && UnderRoofDoorAnim != NULL) {
+		delete (ShapeSet *)UnderRoofDoorAnim;
+		UnderRoofDoorAnim = NULL;
+		UnderRoofDoorAnimLoaded = false;
+	}
+	Detach_This_From_All(this, true);
+	BuildingTypes.Delete(this);
+}
+
+// FUNCTION: 0x0045E750
+void BuildingTypeClass::One_Time(void)
+{
+}
+
+// FUNCTION: 0x0045E760
+StructType BuildingTypeClass::From_Given_Name(char const * name)
+{
+	if (name != NULL) {
+		for (int classid = STRUCT_FIRST; classid < BuildingTypes.Count(); classid++) {
+			if (stricmp(BuildingTypes[classid]->GivenName, name) == 0) {
+				return((StructType)classid);
+			}
+		}
+	}
+	return(STRUCT_NONE);
+}
+
+// FUNCTION: 0x0045E7B0
+StructType BuildingTypeClass::From_Name(char const * name)
+{
+	if (name != NULL) {
+		for (StructType classid = STRUCT_FIRST; classid < BuildingTypes.Count(); classid++) {
+			if (stricmp(BuildingTypes[classid]->Name(), name) == 0) {
+				return(classid);
+			}
+		}
+	}
+	return(STRUCT_NONE);
+}
+
+// FUNCTION: 0x0045E800
+bool BuildingTypeClass::Create_And_Place(Cell const & cell, HouseClass * house) const
+{
+	BuildingClass * ptr;
+
+	ptr = new BuildingClass(this, house);
+	if (ptr != NULL) {
+		return(ptr->Unlimbo(cell, DIR_N));
+	}
+	return(false);
+}
+
+// FUNCTION: 0x0045E880
+ObjectClass * BuildingTypeClass::Create_One_Of(HouseClass * house) const
+{
+	return(new BuildingClass(this, house));
+}
+
+// FUNCTION: 0x0045E8B0
+void BuildingTypeClass::Init_Anim(BStateType state, int start, int count, int rate) const
+{
+	((int &)Anims[state].Start) = start;
+	((int &)Anims[state].Count) = count;
+	((int &)Anims[state].Rate) = rate;
+}
+
 // FUNCTION: 0x00464A70
 Coord const BuildingTypeClass::Coord_Fixup(Coord const & coord) const
 {

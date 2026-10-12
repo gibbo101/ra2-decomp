@@ -204,7 +204,7 @@ class BuildingClass : public TechnoClass
 		virtual Coord Render_Coord(void) const override;
 		virtual Coord Fire_Coord(int which) const override;
 		virtual Coord Center_Coord(void) const override;
-		virtual Coord Destination_Coord(void) const override;
+		virtual Coord Destination_Coord(TechnoClass * docker = NULL) const override;
 		virtual int Sort_Y(void) const override;
 		virtual Coord Exit_Coord(void) const override;
 
@@ -246,7 +246,7 @@ class BuildingClass : public TechnoClass
 		virtual void Death_Announcement(TechnoClass const * source=0) const override;
 		virtual FireErrorType Can_Fire(AbstractClass *, int which) const override;
 		virtual AbstractClass * Greatest_Threat(ThreatType threat, Coord const & coord, bool) const override;
-		virtual ResultType Take_Damage(int & damage, int distance, WarheadTypeClass const * warhead, TechnoClass * source=0, bool forced=false, bool=false) override;
+		virtual ResultType Take_Damage(int & damage, int distance, WarheadTypeClass const * warhead, TechnoClass * source=0, bool forced=false, bool=false, HouseClass * = 0) override;
 		virtual bool Captured(HouseClass * newowner) override;
 		virtual WeaponDataStruct const * Get_Class_Weapon_Data(int which=0) const override;
 		virtual bool Is_Turret_Equipped() const override;

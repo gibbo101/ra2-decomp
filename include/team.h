@@ -108,8 +108,9 @@ class TeamClass : public AbstractClass
 		virtual void Compute_CRC(CRCEngine & crc) const override;
 
 		bool Add(FootClass *);
-		bool Remove(FootClass *, int typeindex=-1);
-		bool Can_Add(FootClass * obj, int & typeindex) const;
+		bool AddMember(FootClass *, bool);
+		bool Remove(FootClass *, int typeindex=-1, bool = false);
+		bool Can_Add(FootClass * obj, int & typeindex, bool flag) const;
 		bool Is_Empty(void) const {return(Member == NULL);}
 		FootClass * Get_Member(void) {return(Member);}
 		void Team_Members(TEAM_MEMBER_LIST & list);

@@ -43,8 +43,8 @@ class MissionClass : public ObjectClass
 		virtual void AI(void) override;
 		virtual void Compute_CRC(CRCEngine &) const override;
 
+		virtual void QueueMission(MissionType mission, bool start);
 		virtual bool Commence(void);
-		virtual bool Ready_To_Commence(void) {return(true);};
 		virtual void Set_Mission(MissionType mission);
 		virtual void  Override_Mission(MissionType mission, AbstractClass *, AbstractClass *);
 		virtual bool Restore_Mission(void);

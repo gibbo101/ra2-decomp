@@ -11,4 +11,9 @@ struct AudioController
 	void * EventType;
 	void ** AudioIndex;
 	unsigned Unused;
+
+	void FUN_00405BE0(void);
+	void FUN_00405C00(void);
+	void Stop(void);
+	void EndLooping(void);
 };

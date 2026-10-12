@@ -160,6 +160,7 @@ class FootClass : public TechnoClass
 		virtual void RemoveGunner(FootClass * gunner);
 		virtual bool Should_Delete_Off_Map(void);
 		virtual bool Is_Considered_Slow(void);
+		bool Is_Entering_Structure(void) const;
 		virtual bool Deploy_To_Fire(void) const {return(false);};
 		virtual void AddSensorsAt(Cell cell);
 		virtual void RemoveSensorsAt(Cell cell);
@@ -182,7 +183,7 @@ class FootClass : public TechnoClass
 		virtual BuildingClass * FindNearestDockBuilding(BuildingTypeClass * type, unsigned unk2, unsigned unk3) const;
 		virtual void Overrun_Square(Cell const & cell, bool threaten) {};
 		virtual int Current_Speed(void);
-		virtual void Approach_Target(void);
+		virtual void Approach_Target(bool = false);
 		virtual void Fixup_Path(PathStruct *) {};
 		virtual void Set_Speed(double speed);
 		virtual void Stop_Movement_Animation(void);
@@ -196,12 +197,12 @@ class FootClass : public TechnoClass
 		bool Basic_Path(Cell cell, int path_offset = 0, int avoidance = 0);
 
 		virtual void Compute_CRC(CRCEngine &) const override;
-		virtual Coord Destination_Coord(void) const override;
+		virtual Coord Destination_Coord(TechnoClass * docker = NULL) const override;
 		virtual RadioMessageType Receive_Message(RadioClass * from, RadioMessageType message, int & param) override;
 		virtual bool Can_Demolish(void) const override;
 		bool Is_Recruitable(HouseClass const * house=NULL) const;
 		bool Is_On_Priority_Mission(void) const;
-		virtual bool Is_Moving_Onto_Bridge(void) const override;
+		virtual bool Is_Moving_Onto_Bridge(TechnoClass * docker = NULL) const override;
 		virtual bool Occupies_Cells(void) const override {return(IsOccupyingCell);};
 		virtual void Delete_Me(void) override;
 
@@ -233,7 +234,7 @@ class FootClass : public TechnoClass
 		virtual bool Active_Click_With(ActionType action, Cell const & cell, bool) override;
 
 		virtual void Stun(void) override;
-		virtual ResultType Take_Damage(int & damage, int distance, WarheadTypeClass const * warhead, TechnoClass * source=0, bool forced=false, bool=false) override;
+		virtual ResultType Take_Damage(int & damage, int distance, WarheadTypeClass const * warhead, TechnoClass * source=0, bool forced=false, bool=false, HouseClass * = 0) override;
 		virtual void Death_Announcement(TechnoClass const * source=0) const override;
 		virtual bool Captured(HouseClass * newowner) override;
 

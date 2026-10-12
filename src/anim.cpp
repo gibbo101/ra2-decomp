@@ -44,6 +44,95 @@
 #include "tiberium.h"
 #include "tracker.h"
 #include "bench.hh"
+#include "fastmath.h"
+#include "coord.h"
+#include <math.h>
+
+extern const double DAT_007E3308;
+extern const double DAT_007E3310;
+extern double DAT_0089A158;
+extern double DAT_0089A1B8;
+extern double DAT_0089A1A0;
+extern double DAT_0089A198;
+extern double DAT_0089A168;
+extern double DAT_0089A138;
+extern int DAT_0089A1C0;
+extern double DAT_0089A170;
+extern double DAT_0089A188;
+extern int DAT_0089A1B4;
+
+// FUNCTION: 0x00421CB0
+
+
+
+double DAT_0089A158 = fastmath::sqrt(pow((double)CELL_LEPTON_H, 2) * 2);
+
+// FUNCTION: 0x00421CE0
+
+
+
+double DAT_0089A1B8 = DAT_0089A158 / DAT_007E3308;
+
+// FUNCTION: 0x00421D00
+
+
+
+double DAT_0089A1A0 = 1.0 / DAT_0089A1B8;
+
+// FUNCTION: 0x00421D20
+
+
+
+double DAT_0089A198 = DAT_007E3310 * 45;
+
+// FUNCTION: 0x00421D40
+
+
+
+double DAT_0089A168 = DAT_007E3310 * 60;
+
+// FUNCTION: 0x00421D60
+
+
+
+double DAT_0089A138 = DAT_007E3310 * 90;
+
+// FUNCTION: 0x00421D80
+
+
+
+int DAT_0089A1C0 = (int)(fastmath::tan(DAT_0089A138 - DAT_0089A168) * DAT_0089A158 * 0.5);
+
+// FUNCTION: 0x00421DC0
+
+
+
+double DAT_0089A170 = fastmath::atan(DAT_0089A1C0 * (1 / (double)CELL_LEPTON_H));
+
+// FUNCTION: 0x00421DF0
+
+
+
+double DAT_0089A188 = fastmath::atan((DAT_0089A1C0 * 2) / DAT_0089A158);
+
+// FUNCTION: 0x00421E20
+
+
+
+int DAT_0089A1B4 = (int)((DAT_0089A1C0 * 4) + 0.5);
+
+// FUNCTION: 0x00421E50
+
+
+
+Cell const DAT_0089A150(0, 0);
+
+// FUNCTION: 0x00421E60
+
+
+
+Coord const DAT_0089A178(0, 0, 0);
+
 
 // FUNCTION: 0x00422BE0
 Coord AnimClass::Center_Coord(void) const

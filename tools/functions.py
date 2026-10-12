@@ -159,10 +159,16 @@ def main() -> None:
             j = bisect.bisect_left(known, a) - 1
             return i >= 0 and (j < 0 or table_list[i] > known[j])
 
+        def table_ends_at(a: int) -> bool:
+            lo = known[bisect.bisect_left(known, a) - 1] if known and known[0] < a else base
+            in_fn = lambda at: lo <= int.from_bytes(code[at - base:at - base + 4], "little") < a
+            index = lambda at: all(x < 0x40 for x in code[at - base:at - base + 4])
+            return (in_fn(a - 4) or index(a - 4)) and not (in_fn(a) or index(a))
+
         resync = [a for a in named | {p for p in ptrs if p % 16 == 0}
                   if base < a < end and a not in starts and a % 16 == 0
-                  and (code[a - 1 - base] == NOP or (a in named and after_table(a))
-                       or a in library)]
+                  and (code[a - 1 - base] == NOP or a in library
+                       or (after_table(a) and (a in named or table_ends_at(a))))]
         if not resync:
             break
         for a in resync:

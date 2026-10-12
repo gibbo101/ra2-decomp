@@ -44,7 +44,10 @@ class AbstractClass : public IPersistStream, public IRTTITypeInfo, public INotic
 		__declspec(property(get = Fetch_RTTI)) RTTIType RTTI;
 		int ID;
 
-		int AbstractFlags;
+		unsigned char AbstractFlags;
+		unsigned char : 8;
+		unsigned char : 8;
+		unsigned char : 8;
 		int unknown_18;
 
 		LONG RefCount;
@@ -92,10 +95,10 @@ class AbstractClass : public IPersistStream, public IRTTITypeInfo, public INotic
 
 		virtual bool Is_Inactive(void) const;
 
-		bool Is_Techno(void) const;
+		bool Is_Techno(void) const { if (this == NULL) return(false); unsigned char flag = AbstractFlags & 1; return(flag != 0); }
 
 		virtual Coord Center_Coord(void) const;
-		virtual Coord Destination_Coord(void) const;
+		virtual Coord Destination_Coord(TechnoClass * docker = NULL) const;
 
 		virtual bool On_Ground(void) const;
 		virtual bool In_Air(void) const;
@@ -103,6 +106,8 @@ class AbstractClass : public IPersistStream, public IRTTITypeInfo, public INotic
 		virtual Coord As_Coord(void) const;
 
 		virtual void AI(void);
+
+		DirStruct * GetTargetDirection(DirStruct * dir, AbstractClass const * target) const;
 
 #ifdef _DEBUG
 		virtual void Debug_Dump(MonoClass *mono) const {};

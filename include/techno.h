@@ -456,6 +456,7 @@ class TechnoClass : public RadioClass
 		virtual void vt_entry_47C(unsigned);
 		virtual void Assign_Destination(AbstractClass * target, bool = true);
 		virtual bool Enter_Idle_Mode(bool initial=false, bool = true);
+		bool Is_Draining(void) const;
 		virtual void UpdateSight(unsigned, unsigned, unsigned, unsigned, unsigned);
 		virtual void vt_entry_48C(unsigned, unsigned, unsigned, unsigned);
 		virtual bool ForceCreate(Coord & coord, unsigned unk = 0);
@@ -533,7 +534,7 @@ class TechnoClass : public RadioClass
 		bool Should_Use_High_Arc(int which) const;
 		double Target_Threat(TechnoClass * target, Coord const & firing_coord = COORD_NONE) const;
 
-		virtual ResultType Take_Damage(int & damage, int distance, WarheadTypeClass const * warhead, TechnoClass * source=0, bool forced=false, bool=false) override;
+		virtual ResultType Take_Damage(int & damage, int distance, WarheadTypeClass const * warhead, TechnoClass * source=0, bool forced=false, bool=false, HouseClass * = 0) override;
 		bool Evaluate_Cell(ThreatType method, int mask, Cell const & cell, int range, TechnoClass const ** object, int & value, int zone=0) const;
 		bool Evaluate_Object(ThreatType method, int mask, int range, TechnoClass const * object, int & value, int zone=-1, Coord const & coord=COORD_NONE) const;
 		int Evaluate_Just_Cell(Cell const & cell) const;

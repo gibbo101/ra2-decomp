@@ -547,6 +547,9 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 		bool Is_Human_Player(void) const;
 
 		bool Can_Build_Here(BuildingTypeClass *building,  Cell const & cell);
+		float FUN_0050BDF0(TechnoTypeClass const * type) const;
+		float FUN_0050BEB0(TechnoTypeClass const * type) const;
+		bool FUN_0050B730(void) const;
 
 		static void Read_All(CCINIClass const & ini);
 		void Read_INI(CCINIClass const & ini);

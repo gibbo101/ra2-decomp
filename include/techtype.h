@@ -32,6 +32,8 @@ struct YRWeaponDataStruct : public WeaponDataStruct
 
 struct TurretControl
 {
+	TurretControl(void) {}
+	TurretControl(int travel, int compress, int recover, int hold) : Travel(travel), CompressFrames(compress), RecoverFrames(recover), HoldFrames(hold) {}
 	int Travel;
 	int CompressFrames;
 	int RecoverFrames;
@@ -472,7 +474,8 @@ class TechnoTypeClass : public ObjectTypeClass
 		virtual HRESULT STDMETHODCALLTYPE Save(IStream * stream, BOOL cleardirty) override;
 		virtual HRESULT STDMETHODCALLTYPE GetSizeMax(ULARGE_INTEGER *pcbSize) override;
 
-		virtual int Get_Object_Size_Delta(void) const override {return(0);};
+		virtual bool CanUseWaypoint(void) const;
+		virtual bool CanAttackMove(void) const;
 		virtual void Compute_CRC(CRCEngine & crc) const override;
 		bool Is_Two_Shooter(void) const;
 		virtual bool Legal_Placement(Cell const & pos, HouseClass * house) const;
@@ -480,7 +483,6 @@ class TechnoTypeClass : public ObjectTypeClass
 		int Max_Passengers(void) const {return(MaxPassengers);}
 		virtual int Repair_Cost(void) const;
 		virtual int Repair_Step(void) const;
-		virtual int Flight_Level(void) const;
 		virtual int GetRefund(HouseClass * house, bool unknown) const;
 		virtual int GetFlightLevel(void) const;
 		virtual void const * Get_Cameo_Data(void) const override;
@@ -496,4 +498,5 @@ class TechnoTypeClass : public ObjectTypeClass
 		void Set_Weapon(WeaponDataStruct const & weapon, int which);
 
 		static void const * WakeShapes;
+		static DynamicVectorClass<TechnoTypeClass *> Array;
 };

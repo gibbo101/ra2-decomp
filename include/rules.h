@@ -68,15 +68,20 @@ class RulesClass
 		RulesClass(NoInitClass const & x);
 		~RulesClass(void);
 
-		void Initialize(CCINIClass const & ini);
+		void Initialize(CCINIClass & ini);
 
-		bool Addition(CCINIClass const & ini);
+		bool Addition(CCINIClass & ini);
+		bool Read_AdvancedCommandBar(CCINIClass const & ini, bool flag);
 
-		bool Special_Weapons(CCINIClass const & ini);
+		bool Special_Weapons(CCINIClass & ini);
 		bool Audio_Visual_Rules(CCINIClass const & ini);
 		bool Crate_Rules(CCINIClass const & ini);
+		bool Radiation(CCINIClass const & ini);
+		bool Elevation_Model(CCINIClass const & ini);
+		bool Wall_Model(CCINIClass const & ini);
 		bool Combat_Damage(CCINIClass const & ini);
 		bool Color_Schemes(CCINIClass const & ini);
+		bool Read_ColorAdd(CCINIClass const & ini);
 
 		bool General(CCINIClass const & ini);
 		bool MPlayer(CCINIClass const & ini);
