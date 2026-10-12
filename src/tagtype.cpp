@@ -18,6 +18,160 @@
 #include "trigtype.h"
 #include "vector.h"
 
+// FUNCTION: 0x006E5AE0 $E16
+// FUNCTION: 0x006E5B20 $E14
+DynamicVectorClass<TagTypeClass *> TagTypes;
+
+// FUNCTION: 0x006E5B60
+TagTypeClass::TagTypeClass(char const *name) :
+	BASECLASS(name),
+	HeapID(-1),
+	Persistence(VOLATILE),
+	FirstTrigger(NULL)
+{
+	GivenName = TStringID<48>(IniName);
+	HeapID = TagTypes.Count();
+	TagTypes.Add(this);
+	AbstractTypePtrTracker.Add(this);
+}
+
+// FUNCTION: 0x006E5CA0
+TagTypeClass::~TagTypeClass(void)
+{
+	Detach_This_From_All(this, true);
+	TriggerTypeClass *trigtype = FirstTrigger;
+	FirstTrigger = NULL;
+	while (trigtype != NULL) {
+		TriggerTypeClass *linked = trigtype->LinkedTo;
+		trigtype->LinkedTo = NULL;
+		delete trigtype;
+		trigtype = linked;
+	}
+	for (int i = 0; i < Tags.Count(); i++) {
+		if (Tags[i]->Class == this) {
+			delete Tags[i];
+			i--;
+		}
+	}
+	AbstractTypePtrTracker.Delete(this);
+	TagTypes.Delete(this);
+}
+
+// FUNCTION: 0x006E5DD0
+bool TagTypeClass::Link(TriggerTypeClass *trigger)
+{
+	if (trigger != NULL) {
+		trigger->LinkedTo = FirstTrigger;
+		FirstTrigger = trigger;
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x006E5E00
+bool TagTypeClass::Unlink(TriggerTypeClass *trigger)
+{
+	if (FirstTrigger == trigger) {
+		FirstTrigger = trigger->LinkedTo;
+		return(true);
+	}
+	TriggerTypeClass *trigtype = FirstTrigger;
+	while (trigtype != NULL) {
+		if (trigtype->LinkedTo == trigger) {
+			trigtype->LinkedTo = trigger->LinkedTo;
+			return(true);
+		}
+		trigtype = trigtype->LinkedTo;
+	}
+	return(false);
+}
+
+// FUNCTION: 0x006E5E50
+void TagTypeClass::Detach(AbstractClass const * target, bool all)
+{
+	if (FirstTrigger == target) {
+		FirstTrigger = FirstTrigger->LinkedTo;
+	}
+}
+
+// FUNCTION: 0x006E5E70
+TagTypeClass * TagTypeClass::From_Name(char const * name)
+{
+	if (name != NULL) {
+		for (int index = 0; index < TagTypes.Count(); index++) {
+			TagTypeClass *ttptr = TagTypes[index];
+			if (stricmp(ttptr->IniName, name) == 0 || stricmp(ttptr->GivenName, name) == 0) {
+				return(ttptr);
+			}
+		}
+	}
+	return(NULL);
+}
+
+// FUNCTION: 0x006E5ED0
+void TagTypeClass::Read_All(CCINIClass & ini)
+{
+	int len = ini.Entry_Count(INI_NAME);
+	for (int index = 0; index < len; index++) {
+		char const * entry = ini.Get_Entry(INI_NAME, index);
+		char name[24];
+		if (ini.Get_String(INI_NAME, entry, "", name, sizeof(name)) <= 0) {
+			continue;
+		}
+		TagTypeClass * tag = TFind_Or_Make<TagTypeClass>(entry, TagTypes);
+		Swizzler.Here_I_Am(ahtoi(entry), (void*)tag);
+		tag->Read_INI(ini);
+	}
+}
+
+// FUNCTION: 0x006E5FE0
+void TagTypeClass::Write_All(CCINIClass & ini)
+{
+	int numtypes = ini.Entry_Count(INI_NAME);
+	int index;
+	for (index = 0; index < numtypes; index++) {
+		char const * entry = ini.Get_Entry(INI_NAME, index);
+		char buffer[32];
+		ini.Get_String(INI_NAME, entry, "", buffer, sizeof(buffer));
+		ini.Clear(buffer);
+	}
+	ini.Clear(INI_NAME);
+	for (index = 0; index < TagTypes.Count(); index++) {
+		TagTypes[index]->Write_INI(ini);
+	}
+}
+
+// FUNCTION: 0x006E6080
+bool TagTypeClass::Read_INI(CCINIClass & ini)
+{
+	char buffer[128];
+	ini.Reset();
+	if (ini.Get_String(INI_NAME, IniName, "", buffer, sizeof(buffer))) {
+		char * token = strtok(buffer, ",");
+		Persistence = (PersistentType)atoi(buffer);
+		token = strtok(NULL, ",");
+		GivenName = TStringID<48>(token);
+		token = strtok(NULL, ",");
+		FirstTrigger = TriggerTypeClass::Find_Or_Make(token);
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x006E6160
+bool TagTypeClass::Write_INI(CCINIClass & ini) const
+{
+	char buffer[128];
+	if (FirstTrigger == NULL) {
+		wsprintf(buffer, "%s,<none>", (char const *)GivenName);
+		ini.Put_String(INI_NAME, IniName, buffer);
+	} else {
+		wsprintf(buffer, "%d,%s,%s", Persistence, (char const *)GivenName, (char const *)FirstTrigger->IniName);
+		ini.Put_String(INI_NAME, IniName, buffer);
+	}
+	return(true);
+}
+
 // FUNCTION: 0x006E63A0
 HRESULT STDMETHODCALLTYPE TagTypeClass::GetClassID(CLSID * retval)
 {

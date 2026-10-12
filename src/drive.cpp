@@ -26,6 +26,91 @@
 #include "tube.hh"
 #include <new.h>
 
+// FUNCTION: 0x004AF540
+DriveLocomotionClass::DriveLocomotionClass(void) :
+	BASECLASS(),
+	CurrentRamp(0),
+	PreviousRamp(0),
+	RampTimer(),
+	DestinationCoord(COORD_NONE),
+	HeadToCoord(COORD_NONE),
+	IsOnShortTrack(false),
+	IsTurretLockedDown(false),
+	IsRotating(false),
+	IsDriving(false),
+	IsRocking(false),
+	IsLocomotorUnlocked(true),
+	SpeedAccum(0),
+	TargetSpeed(0),
+	TrackNumber(-1),
+	TrackIndex(-1),
+	Piggybacker(NULL)
+{
+}
+
+// FUNCTION: 0x004AF5E0
+DriveLocomotionClass::~DriveLocomotionClass(void)
+{
+}
+
+// FUNCTION: 0x004AF610
+HRESULT DriveLocomotionClass::Piggyback_CLSID(CLSID * classid)
+{
+	if (classid == NULL) {
+		return(E_POINTER);
+	}
+
+	if (Piggybacker != NULL) {
+		IPersistPtr ptr(Piggybacker);
+		if (ptr == NULL) {
+			return(E_FAIL);
+		}
+		return(ptr->GetClassID(classid));
+	}
+
+	IPersistPtr ptr(this);
+	if (ptr == NULL) {
+		return(E_FAIL);
+	}
+	return(ptr->GetClassID(classid));
+}
+
+// FUNCTION: 0x004AF720
+HRESULT STDMETHODCALLTYPE DriveLocomotionClass::QueryInterface(REFIID riid, LPVOID * ppvObject)
+{
+	HRESULT result = BASECLASS::QueryInterface(riid, ppvObject);
+
+	if (result == E_NOINTERFACE) {
+		if (riid == IID_IPiggyback) {
+			*ppvObject = (IPiggyback*)this;
+		}
+		if (*ppvObject == NULL) {
+			result = E_NOINTERFACE;
+		} else {
+			AddRef();
+			result = S_OK;
+		}
+	}
+	return(result);
+}
+
+// FUNCTION: 0x004AF780
+HRESULT STDMETHODCALLTYPE DriveLocomotionClass::Load(IStream * stream)
+{
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		new (this) DriveLocomotionClass(NoInitClass());
+
+		bool haspiggy;
+		stream->Read(&haspiggy, sizeof(haspiggy), NULL);
+
+		if (haspiggy) {
+			result = OleLoadFromStream(stream, IID_ILocomotion, (void**)&Piggybacker);
+		}
+	}
+	return(result);
+}
+
 // FUNCTION: 0x004AF800
 HRESULT STDMETHODCALLTYPE DriveLocomotionClass::Save(IStream * stream, BOOL cleardirty)
 {
@@ -43,6 +128,81 @@ HRESULT STDMETHODCALLTYPE DriveLocomotionClass::Save(IStream * stream, BOOL clea
 		}
 	}
 	return(result);
+}
+
+// FUNCTION: 0x004AF8E0
+HRESULT STDMETHODCALLTYPE DriveLocomotionClass::Begin_Piggyback(ILocomotion *pointer)
+{
+	if (pointer == NULL) {
+		return(E_POINTER);
+	}
+	if (Piggybacker == NULL) {
+		Piggybacker = pointer;
+		return(S_OK);
+	}
+	return(E_FAIL);
+}
+
+// FUNCTION: 0x004AF930
+HRESULT DriveLocomotionClass::End_Piggyback(ILocomotion **pointer)
+{
+	if (pointer == NULL) {
+		return(E_POINTER);
+	}
+	if (Piggybacker != NULL) {
+		*pointer = Piggybacker;
+		Piggybacker.Detach();
+		return(S_OK);
+	}
+	return(S_FALSE);
+}
+
+// FUNCTION: 0x004AF970
+boolean DriveLocomotionClass::Is_Ok_To_End(void)
+{
+	if (!Is_Moving() && (Piggybacker != NULL && IsLocomotorUnlocked && !LinkedTo->IsAttackedByLocomotor)) {
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x004AF9B0
+Matrix3D DriveLocomotionClass::Get_Slope_Matrix(void) const
+{
+	Matrix3D mtx(true);
+
+	if (!RampTimer.Has_Completed2()) {
+		mtx = ::Get_Slope_Transition_Matrix(PreviousRamp, CurrentRamp, Get_Slope_Ratio());
+	} else if (CurrentRamp) {
+		mtx = ::Get_Slope_Matrix(CurrentRamp);
+	}
+
+	return(mtx);
+}
+
+// FUNCTION: 0x004AFAA0
+double DriveLocomotionClass::Get_Slope_Ratio(void) const
+{
+	return(RampTimer.Progress());
+}
+
+// FUNCTION: 0x004AFB00
+void DriveLocomotionClass::Set_Slope(int ramp)
+{
+	int cur = CurrentRamp;
+	if (ramp != cur) {
+		PreviousRamp = cur;
+		CurrentRamp = ramp;
+		RampTimer = 3;
+	}
+}
+
+// FUNCTION: 0x004AFB40
+void STDMETHODCALLTYPE DriveLocomotionClass::Force_New_Slope(int ramp)
+{
+	PreviousRamp = ramp;
+	CurrentRamp = ramp;
+	RampTimer = 0;
 }
 
 // FUNCTION: 0x004B4820

@@ -277,6 +277,8 @@ Each entry: what the diff showed, then the source change that fixed it.
 - An unverified reference proves nothing: a wrong offset into a global object whose
   address check.py does not know passes. Give each object you reach into a names.csv
   row; `uv run tools/refaudit.py` lists symbols whose references imply different bases.
+- UnitClass::Draw_It (0x0073CEC0) flips with the number of declarations in cell.h:
+  after any cell.h edit, re-check it; adding real members, not dummies, restores it.
 - A match that flips after an unrelated header edit (enumerator counts alone moved
   0x0073CEC0's block layout) is compiler-internal: change the header edit, not the function.
 - A TS layout can agree with YR's for a prefix only: run headercheck before porting a

@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
 #include "score.h"
 #include "_keyboar.h"
 #include "_mixfile.h"
@@ -40,6 +41,19 @@
 #define MAX_FAMENAME_LENGTH	104
 
 bool StillUpdating;
+
+// FUNCTION: 0x0068CB30 $E2
+// FUNCTION: 0x0068CB60 $E5
+// FUNCTION: 0x0068CB80 $E8
+// FUNCTION: 0x0068CBA0 $E11
+// FUNCTION: 0x0068CBC0 $E14
+// FUNCTION: 0x0068CBE0 $E17
+// FUNCTION: 0x0068CC00 $E20
+// FUNCTION: 0x0068CC40 $E23
+// FUNCTION: 0x0068CC70 $E26
+// FUNCTION: 0x0068CCA0 $E29
+// FUNCTION: 0x0068CCD0 $E32
+// FUNCTION: 0x0068CCE0 $E35
 
 int score_font_count;
 

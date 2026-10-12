@@ -13,12 +13,229 @@
 #include "rect.h"
 #include "trim.h"
 #include "xpipe.h"
+#include "wstring.h"
 #include "xstraw.h"
 #include <cctype>
 #include <cstddef>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+
+// FUNCTION: 0x005256F0
+INIClass::~INIClass(void)
+{
+	Clear();
+}
+
+// FUNCTION: 0x005257C0
+bool INIClass::Clear(char const * section, char const * entry)
+{
+	Reset();
+	if (section == NULL) {
+		SectionList.Delete();
+		SectionIndex.Clear();
+
+		while (TailComment != NULL) {
+			free(TailComment->Comment);
+			INIComment * next = TailComment->Next;
+			delete TailComment;
+			TailComment = next;
+		}
+
+	} else {
+		INISection * secptr = Find_Section(section);
+		if (secptr != NULL) {
+			if (entry != NULL) {
+				INIEntry * entptr = secptr->Find_Entry(entry);
+				if (entptr != NULL) {
+					secptr->EntryIndex.Remove_Index(entptr->Index_ID());
+					delete entptr;
+				}
+			} else {
+				SectionIndex.Remove_Index(secptr->Index_ID());
+				delete secptr;
+			}
+		}
+	}
+
+	return(true);
+}
+
+// FUNCTION: 0x00525A10
+int INIClass::Load(FileClass & file, bool keepcomments)
+{
+	Reset();
+	FileStraw fs(file);
+	return(Load(fs, keepcomments));
+}
+
+// FUNCTION: 0x00526420
+int INIClass::Save(FileClass & file) const
+{
+	const_cast<INIClass *>(this)->Reset();
+	FilePipe fp(file);
+	return(Save(fp));
+}
+
+// FUNCTION: 0x00526470
+int INIClass::Save(Pipe & pipe) const
+{
+	const_cast<INIClass *>(this)->Reset();
+	int total = 0;
+	char spacebuffer[MAX_LINE_LENGTH];
+
+	memset(spacebuffer, ' ', sizeof(spacebuffer));
+	spacebuffer[MAX_LINE_LENGTH - 1] = '\0';
+
+	INISection * secptr = SectionList.First();
+	while (secptr && secptr->Is_Valid()) {
+
+		if (total > 0 && secptr->PrefixComment == NULL) {
+			total += pipe.Put("\r\n", strlen("\r\n"));
+		}
+
+		INIComment * cmtptr = secptr->PrefixComment;
+		while (cmtptr != NULL) {
+			if (cmtptr->Comment != NULL) {
+				total += pipe.Put(cmtptr->Comment, strlen(cmtptr->Comment));
+				total += pipe.Put("\r\n", strlen("\r\n"));
+			}
+			cmtptr = cmtptr->Next;
+		}
+
+		total += pipe.Put("[", 1);
+		total += pipe.Put(secptr->Section, strlen(secptr->Section));
+		total += pipe.Put("]", 1);
+		total += pipe.Put("\r\n", strlen("\r\n"));
+
+		INIEntry * entryptr = secptr->EntryList.First();
+		while (entryptr && entryptr->Is_Valid()) {
+
+			INIComment * cmtptr = entryptr->PrefixComment;
+			while (cmtptr != NULL) {
+				if (cmtptr->Comment != NULL) {
+					total += pipe.Put(cmtptr->Comment, strlen(cmtptr->Comment));
+					total += pipe.Put("\r\n", strlen("\r\n"));
+				}
+				cmtptr = cmtptr->Next;
+			}
+
+			int entrylen = strlen(entryptr->Entry);
+			int valuelen = strlen(entryptr->Value);
+			int spacepad = entryptr->AssignColumn - (entrylen);
+			int totalspacepad = 0;
+			spacepad = MIN(MAX_LINE_LENGTH / 2, spacepad);
+
+			total += pipe.Put(entryptr->Entry, entrylen);
+			if (spacepad > 0) {
+				total += pipe.Put(spacebuffer, spacepad);
+				totalspacepad += spacepad;
+			}
+
+			total += pipe.Put("=", 1);
+
+			spacepad = entryptr->ValueColumn - (entrylen + totalspacepad + 1);
+			spacepad = MIN(MAX_LINE_LENGTH / 2, spacepad);
+
+			if (spacepad > 0) {
+				total += pipe.Put(spacebuffer, spacepad);
+				totalspacepad += spacepad;
+			}
+
+			total += pipe.Put(entryptr->Value, valuelen);
+
+			if (entryptr->LineComment != NULL) {
+				spacepad = entryptr->CommentColumn - (entrylen + valuelen + totalspacepad + 1);
+				spacepad = MIN(MAX_LINE_LENGTH / 2, spacepad);
+
+				if (spacepad > 0) {
+					total += pipe.Put(spacebuffer, spacepad);
+				}
+
+				total += pipe.Put(";", 1);
+				total += pipe.Put(entryptr->LineComment, strlen(entryptr->LineComment));
+			}
+
+			total += pipe.Put("\r\n", strlen("\r\n"));
+
+			entryptr = entryptr->Next();
+		}
+
+		secptr = secptr->Next();
+	}
+
+	INIComment * cmtptr = TailComment;
+	while (cmtptr != NULL) {
+		if (cmtptr->Comment != NULL) {
+			total += pipe.Put(cmtptr->Comment, strlen(cmtptr->Comment));
+			total += pipe.Put("\r\n", strlen("\r\n"));
+		}
+		cmtptr = cmtptr->Next;
+	}
+
+	total += pipe.End();
+
+	return(total);
+}
+
+// FUNCTION: 0x00526810
+INIClass::INISection * INIClass::Find_Section(char const * section) const
+{
+	if (section != NULL) {
+		long crc = CRCEngine()(section, strlen(section));
+
+		if (SectionIndex.Is_Present(crc)) {
+			return(SectionIndex[crc]);
+		}
+	}
+	return(NULL);
+}
+
+// FUNCTION: 0x00526950
+int INIClass::Section_Count(void) const
+{
+	return(SectionIndex.Count());
+}
+
+// FUNCTION: 0x00526960
+int INIClass::Entry_Count(char const * section) const
+{
+	INISection * secptr = Find_Section(section);
+	if (secptr != NULL) {
+		return(secptr->EntryIndex.Count());
+	}
+	return(0);
+}
+
+// FUNCTION: 0x00526A30
+int INIClass::Entry_Count(Wstring const & section) const
+{
+	return(Entry_Count(section.get()));
+}
+
+// FUNCTION: 0x00526B00
+void INIClass::Reset(void)
+{
+	CurrentSectionName = NULL;
+	CurrentSection = NULL;
+}
+
+// FUNCTION: 0x00526CC0
+char const * INIClass::Get_Entry(char const * section, int index) const
+{
+	INISection * secptr = Find_Section(section);
+
+	if (secptr != NULL && index < secptr->EntryIndex.Count()) {
+		INIEntry * entryptr = secptr->EntryList.First();
+
+		while (entryptr != NULL && entryptr->Is_Valid()) {
+			if (index == 0) return(entryptr->Entry);
+			index--;
+			entryptr = entryptr->Next();
+		}
+	}
+	return(NULL);
+}
 
 // FUNCTION: 0x00526E80
 bool INIClass::Put_UUBlock(char const * section, void const * block, int len)

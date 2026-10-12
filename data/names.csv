@@ -40,3 +40,6 @@ address,name,symbol,evidence
 0x00721270,ThemeClass::GetID,,YRpp ThemeClass::GetID
 0x0065ADC0,RadioClass::HasFreeLink,?HasFreeLink@RadioClass@@QBE_NXZ,no-argument overload; checked in the disassembly by the batch 8 header merge
 0x0065ADF0,RadioClass::HasFreeLink,?HasFreeLink@RadioClass@@QBE_NPBVTechnoClass@@@Z,TechnoClass overload; checked in the disassembly by the batch 8 header merge
+0x00B04BD0,RadSites,,YRpp RadSiteClass::Array; its initialiser and atexit stub are 0x0065B160 and 0x0065B1A0
+0x007E98C0,CLSID_RadSiteClass,,read by RadSiteClass::GetClassID at 0x0065B480
+0x007258D0,Detach_This_From_All,,YRpp AbstractClass::AnnounceExpiredPointer; fastcall with the object in ecx and the bool in dl

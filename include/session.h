@@ -620,9 +620,9 @@ class SessionClass
 		unsigned short GProductID;
 		char MetaPacket[MAX_IPX_PACKET_SIZE];
 		int MetaSize;
+		DynamicVectorClass <NodeNameType *> Chat;
 		DynamicVectorClass <NodeNameType *> Games;
 		DynamicVectorClass <NodeNameType *> Players;
-		DynamicVectorClass <NodeNameType *> Chat;
 
 		int unknown_2854[9];
 		bool unknown_2878;

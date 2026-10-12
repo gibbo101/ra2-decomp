@@ -14,6 +14,7 @@
 class FileClass;
 class Pipe;
 class PKey;
+class Wstring;
 class Straw;
 template<class T> class TRect;
 typedef TRect<int> Rect;
@@ -41,6 +42,7 @@ class INIClass {
 		bool Section_Present(char const * section) const {return(Find_Section(section) != NULL);}
 
 		int Entry_Count(char const * section) const;
+		int Entry_Count(Wstring const & section) const;
 		char const * Get_Entry(char const * section, int index) const;
 
 		PKey Get_PKey(bool fast) const;

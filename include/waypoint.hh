@@ -5,9 +5,9 @@
 #pragma once
 
 enum WaypointType {
-	WAYPT_HOME = 98,
+	WAYPT_HOME = 699,
 	WAYPT_REINF,
 	WAYPT_SPECIAL,
 
-	WAYPT_COUNT = 702
+	WAYPT_COUNT
 };

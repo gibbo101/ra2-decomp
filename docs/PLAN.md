@@ -772,6 +772,20 @@ count, since a call that never returns runs into the next function. Seven starts
 all checked, and NameReadiness landed. Banked: two techtype functions (76.4%, 18.5%).
 Cost: about 2.1M tokens, 52 minutes. Merge gate: 2,380 of 2,380 (366.8 KB).
 
+### Batch 10 (13 October 2026)
+
+isotype, Scenario, Score, Ini, keyboard, jumpjet, drive, tagtype, ramfile. **106 of 108
+matched**, the best yet. Three modules opened with a geometry run that the agents
+marked on the shared header straight away. The ramfile range turned out to hold
+RadSiteClass's code (YRpp's symbols call its destructor RadarEventClass's), now in
+src/ramfile.cpp with a proven header. The merge put SessionClass's three vectors in
+YR's order (Chat, Games, Players; TS has Games first) from how 0x005E00B0 searches
+them, set WAYPT_HOME to 699 from the pushed constants, and through refaudit found that
+Start_Scenario called INIClass::Get_Int where the original calls Get_VQType. A cell.h
+declaration flipped UnitClass::Draw_It again; three more real radiation members, read
+from the exe, restored it. Banked: a jumpjet function at 99.6% and an INI lookup
+(26.8%). Cost: about 1.4M tokens, 41 minutes. Merge gate: 2,486 of 2,486 (381.0 KB).
+
 ### Decide before the first batch
 
 - **Module layout.** Which function lives in which source file, and the link order, decide

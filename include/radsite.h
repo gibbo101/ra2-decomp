@@ -4,9 +4,14 @@
 
 #include "abstract.h"
 #include "ftimer.h"
+#include "light.h"
 #include "timer.h"
+#include "vector.h"
 
-class LightSourceClass;
+class RadSiteClass;
+
+EXTERN_C const CLSID CLSID_RadSiteClass;
+extern DynamicVectorClass<RadSiteClass *> RadSites;
 
 struct TintStruct
 {
@@ -35,6 +40,8 @@ class RadSiteClass : public AbstractClass
 		int RadDuration;
 		int RadTimeLeft;
 
+		RadSiteClass(void);
+		RadSiteClass(NoInitClass const & x);
 		virtual ~RadSiteClass(void) override;
 
 		virtual HRESULT STDMETHODCALLTYPE GetClassID(CLSID * retval) override;
@@ -47,4 +54,5 @@ class RadSiteClass : public AbstractClass
 		virtual void AI(void) override;
 
 		int GetRadLevel(void);
+		int GetSpread(void);
 };

@@ -5,6 +5,7 @@
 
 #define INCLUDE_COM
 #include "always.h"
+#include "geometry.h"
 #include "isotype.h"
 #include "_alpha.h"
 #include "_convert.h"
@@ -38,6 +39,19 @@
 #include "tracker.h"
 #include "vector.h"
 #include "zbuffer.h"
+
+// FUNCTION: 0x00543C60 $E2
+// FUNCTION: 0x00543C90 $E5
+// FUNCTION: 0x00543CB0 $E8
+// FUNCTION: 0x00543CD0 $E11
+// FUNCTION: 0x00543CF0 $E14
+// FUNCTION: 0x00543D10 $E17
+// FUNCTION: 0x00543D30 $E20
+// FUNCTION: 0x00543D70 $E23
+// FUNCTION: 0x00543DA0 $E26
+// FUNCTION: 0x00543DD0 $E29
+// FUNCTION: 0x00543E00 $E32
+// FUNCTION: 0x00543E10 $E35
 
 // FUNCTION: 0x00544E30
 IsometricTileType IsometricTileTypeClass::Fixup_Tile_Type(IsometricTileType current_type)

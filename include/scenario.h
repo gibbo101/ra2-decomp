@@ -35,6 +35,32 @@ class AbstractClass;
 class CellClass;
 class ObjectClass;
 
+class MissionTimerString {
+	public:
+		MissionTimerString(void) { Buffer[0] = '\0'; }
+		MissionTimerString(NoInitClass const &) {}
+		MissionTimerString(char const * text)
+		{
+			if (!text) {
+				Buffer[0] = '\0';
+			} else {
+				strncpy(Buffer, text, sizeof(Buffer) - 1);
+				Buffer[sizeof(Buffer) - 1] = '\0';
+			}
+		}
+		MissionTimerString & operator=(MissionTimerString const & that)
+		{
+			if (&that != this) {
+				memcpy(Buffer, that.Buffer, sizeof(Buffer));
+			}
+			return *this;
+		}
+		operator char const *(void) const { return Buffer; }
+		char const & operator[](int index) const { return Buffer[index]; }
+	private:
+		char Buffer[32];
+};
+
 class ScenarioClass {
 	public:
 
@@ -103,7 +129,7 @@ class ScenarioClass {
 		DiffType CDifficulty;
 
 		mutable TTimerClass<SystemTimerClass> ElapsedTimer;
-		TTimerClass<SystemTimerClass> PauseTimer;
+		CDTimerClass<SystemTimerClass> PauseTimer;
 		int unknown_62C;
 		bool IsGamePaused;
 
@@ -125,7 +151,7 @@ class ScenarioClass {
 
 		CDTimerClass<FrameTimerClass> MissionTimer;
 		wchar_t const * MissionTimerTextCSF;
-		char MissionTimerText[32];
+		MissionTimerString MissionTimerText;
 
 		CDTimerClass<FrameTimerClass> ShroudTimer;
 

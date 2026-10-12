@@ -1283,3 +1283,114 @@ date,address,function,model,result,best,checks,minutes,blocker,notes
 2026-10-12,0x00743270,UnitClass::Read_INI,opus-5.5 high,MATCH,100,75,,,"UnitClass::Read_INI now matches and is in src/unit.cpp in TibSun's nested-if style. It needed four source changes. (1) `followers.Clear();` straight after `DynamicVectorClass<int> followers;`. The inlined DynamicVectorClass::Clear explains why the original stores ActiveCount, IsAllocated and VectorMax last in the constructor. (2) The mission token goes into its own local first: `char * name = strtok(NULL, "",""); MissionType mission = MissionClass::Mission_From_Name(name);`. This alone moves mission into EBX and gives the split zero register (the xor ebx,ebx at the loop top). (3) In the follower loop, `UnitClass * unit = Units[i];` comes before `int followerid = followers[i];`. (4) Strength: `double fs; unit->Strength = (fs = strength) * unit->Class->MaxStrength / 256.0;`. This is the only form tried that gives the original's fild strength / fimul MaxStrength / fmul order. TibSun's form and the parenthesised form both reorder the x87 loads. It also needs `extern int __fastcall FUN_0050C170(char const * name);`, added next to the other externs in unit.cpp. No overlay is needed."
 2026-10-12,0x004D9C60,FootClass::Can_Reach,opus-5.5 high,MATCH,100,27,,,"FootClass::Can_Reach now matches and is in src/foot.cpp, between 0x004D9C10 and 0x004D9E70. The fix was to put the subtraction inside each arm of the ternary: `int height_difference = adjacent_cell->IsUnderBridge ? adjacent_cell->Height - current_cell->Height : cell_height - current_cell->Height;`, then `switch (abs(height_difference))` and `if (height_difference > 0)` in case 1. `int current_height = current_cell->Height;` still comes after the ternary. VC6 lifts the shared current_cell->Height load out of the two arms into the block before the branch and merges the two `sub`s after it. That gives the original's instruction order with the register allocation unchanged. Moving the local earlier gave the right order but changed the allocation every time (57-88%). The 4 unverified references are AdjacentCell and MapClass::operator[](Cell), which other matched foot functions use too."
 2026-10-12,0x006CC2B0,SuperClass::NameReadiness,opus-5.5 (coordinator),MATCH,100,1,,,Landed from the bank once functions.py stopped splitting it at a case label that a data pointer names.
+2026-10-13,0x00543C60,$E2,sonnet-5.5 medium,MATCH,100,2,,,$E2 CELL_LEPTON_DIAG
+2026-10-13,0x00543C90,$E5,sonnet-5.5 medium,MATCH,100,2,,,$E5 LEPTONS_PER_PIXEL
+2026-10-13,0x00543CB0,$E8,sonnet-5.5 medium,MATCH,100,2,,,$E8 PIXELS_PER_LEPTON
+2026-10-13,0x00543CD0,$E11,sonnet-5.5 medium,MATCH,100,2,,,$E11 RAD_45
+2026-10-13,0x00543CF0,$E14,sonnet-5.5 medium,MATCH,100,2,,,$E14 RAD_60
+2026-10-13,0x00543D10,$E17,sonnet-5.5 medium,MATCH,100,2,,,$E17 RAD_90
+2026-10-13,0x00543D30,$E20,sonnet-5.5 medium,MATCH,100,2,,,$E20 LEVEL_LEPTON_H
+2026-10-13,0x00543D70,$E23,sonnet-5.5 medium,MATCH,100,2,,,$E23 CELL_SLOPE_ANGLE
+2026-10-13,0x00543DA0,$E26,sonnet-5.5 medium,MATCH,100,2,,,$E26 CELL_DIAG_SLOPE_ANGLE
+2026-10-13,0x00543DD0,$E29,sonnet-5.5 medium,MATCH,100,2,,,$E29 BRIDGE_LEPTON_HEIGHT
+2026-10-13,0x00543E00,$E32,sonnet-5.5 medium,MATCH,100,2,,,$E32 CELL_NONE
+2026-10-13,0x00543E10,$E35,sonnet-5.5 medium,MATCH,100,2,,,$E35 COORD_NONE
+2026-10-13,0x00683280,_$E210,sonnet-5.5 medium,MATCH,100,3,,,Static initialiser for the unused system-timer global ScenUnusedTimer; two unnamed markers precede the global definition.
+2026-10-13,0x006832B0,_$E208,sonnet-5.5 medium,MATCH,100,1,,,Empty atexit stub for ScenUnusedTimer; shares the marker pair above.
+2026-10-13,0x006832C0,ScenarioClass::ScenarioClass,sonnet-5.5 medium,MATCH,100,3,,,"ScenarioClass::ScenarioClass(void). Needed wcscpy for the wide strings, strcpy for the narrow ones, and an inline Set_Global_To/Set_Local_To visible in the file."
+2026-10-13,0x00683560,ScenarioClass::ScenarioClass,sonnet-5.5 medium,MATCH,100,3,,,ScenarioClass::ScenarioClass(NoInitClass const&). Init list is the timers and MissionTimerText(x); the TypeList members are default-constructed.
+2026-10-13,0x00683610,ScenarioClass::Reset,sonnet-5.5 medium,MATCH,100,2,,,"ScenarioClass::Reset, using YR's values rather than TibSun's. PauseTimer had to become a CDTimerClass, and MissionTimerText a string class."
+2026-10-13,0x00683AB0,Start_Scenario,sonnet-5.5 medium,MATCH,100,6,,,"Start_Scenario. Session members are reached through DAT_ globals (A8DA84, A8DAB4, A8B254, A8B8CC) because session.h has the wrong offsets for them. The INI block is scoped, and the Suspended-- is skipped on CD failure, as in the exe."
+2026-10-13,0x00683EB0,Pause_Scenario,sonnet-5.5 medium,MATCH,100,2,,,Pause_Scenario. Needed .Value() on ElapsedTimer in the DebugString call.
+2026-10-13,0x00683FB0,Resume_Scenario,sonnet-5.5 medium,MATCH,100,1,,,Resume_Scenario.
+2026-10-13,0x00684060,Hold_Scenario,sonnet-5.5 medium,MATCH,100,3,,,"Hold_Scenario(int seconds), a pause that nests through a counter and lets the player lock input. Read IsInputLocked into a local bool first."
+2026-10-13,0x00684180,Release_Scenario,sonnet-5.5 medium,MATCH,100,2,,,"Release_Scenario, the counterpart of Hold_Scenario. DAT_00B054CC must be bool."
+2026-10-13,0x00684240,Lock_Scenario_Input,sonnet-5.5 medium,MATCH,100,1,,,Lock_Scenario_Input.
+2026-10-13,0x00684290,Unlock_Scenario_Input,sonnet-5.5 medium,MATCH,100,1,,,Unlock_Scenario_Input.
+2026-10-13,0x0068CB30,$E2,sonnet-5.5 medium,MATCH,100,1,,,"$E2, CELL_LEPTON_DIAG from geometry.h"
+2026-10-13,0x0068CB60,$E5,sonnet-5.5 medium,MATCH,100,1,,,"$E5, LEPTONS_PER_PIXEL"
+2026-10-13,0x0068CB80,$E8,sonnet-5.5 medium,MATCH,100,1,,,"$E8, PIXELS_PER_LEPTON"
+2026-10-13,0x0068CBA0,$E11,sonnet-5.5 medium,MATCH,100,1,,,"$E11, RAD_45"
+2026-10-13,0x0068CBC0,$E14,sonnet-5.5 medium,MATCH,100,1,,,"$E14, RAD_60"
+2026-10-13,0x0068CBE0,$E17,sonnet-5.5 medium,MATCH,100,1,,,"$E17, RAD_90"
+2026-10-13,0x0068CC00,$E20,sonnet-5.5 medium,MATCH,100,1,,,"$E20, LEVEL_LEPTON_H"
+2026-10-13,0x0068CC40,$E23,sonnet-5.5 medium,MATCH,100,1,,,"$E23, CELL_SLOPE_ANGLE"
+2026-10-13,0x0068CC70,$E26,sonnet-5.5 medium,MATCH,100,1,,,"$E26, CELL_DIAG_SLOPE_ANGLE"
+2026-10-13,0x0068CCA0,$E29,sonnet-5.5 medium,MATCH,100,1,,,"$E29, BRIDGE_LEPTON_HEIGHT"
+2026-10-13,0x0068CCD0,$E32,sonnet-5.5 medium,MATCH,100,1,,,"$E32, CELL_NONE"
+2026-10-13,0x0068CCE0,$E35,sonnet-5.5 medium,MATCH,100,1,,,"$E35, COORD_NONE"
+2026-10-13,0x005256F0,INIClass::~INIClass,sonnet-5.5 medium,MATCH,100,2,,,"~INIClass, TibSun body."
+2026-10-13,0x005257C0,INIClass::Clear,sonnet-5.5 medium,MATCH,100,14,,,Reset() first; section lookup via Find_Section (needs long crc there) and INISection::Find_Entry inlined; the Is_Present calls stay out of line only in that shape.
+2026-10-13,0x00525A10,INIClass::Load,sonnet-5.5 medium,MATCH,100,2,,,Load(FileClass&) is Reset() then FileStraw + Load(Straw&).
+2026-10-13,0x00526420,INIClass::Save,sonnet-5.5 medium,MATCH,100,2,,,Save(FileClass&) is Reset() (via const_cast) then FilePipe + Save(Pipe&).
+2026-10-13,0x00526470,INIClass::Save,sonnet-5.5 medium,MATCH,100,2,,,"Save(Pipe&), TibSun body plus the Reset() YR adds. TibSun comments stripped."
+2026-10-13,0x00526810,INIClass::Find_Section,sonnet-5.5 medium,MATCH,100,2,,,This is Find_Section (YRpp GetSection); the header's GetSection stays undefined.
+2026-10-13,0x00526950,INIClass::Section_Count,sonnet-5.5 medium,MATCH,100,1,,,Section_Count.
+2026-10-13,0x00526960,INIClass::Entry_Count,sonnet-5.5 medium,MATCH,100,4,,,Entry_Count(char const*) is TibSun's body once Find_Section uses `long crc`.
+2026-10-13,0x00526A30,INIClass::Entry_Count,sonnet-5.5 medium,MATCH,100,1,,,"Entry_Count(Wstring const &) is Entry_Count(section.get()), new overload in ini.h."
+2026-10-13,0x00526B00,INIClass::Reset,sonnet-5.5 medium,MATCH,100,1,,,"Reset, defined in ini.cpp so Clear, Load and Save inline it."
+2026-10-13,0x00526B10,,sonnet-5.5 medium,partial,26.8,10,,inline budget and layout of the section-name cache (INIClass::Find_Entry with section and entry),"The original compares the section pointer with CurrentSectionName, otherwise looks the section up, stores both cache fields (both zeroed on failure) and re-enters the cached path. Its section lookup is Find_Section inlined with one Is_Present inlined and one called, and the entry lookup is INISection::Find_Entry fully inlined. Every shape I tried (explicit if/else, tail recursion, Find_Section or explicit lookup) inlined both section Is_Present calls, so the budget and block order differ. Best source (explicit if/else) is in build/batch/Ini/0x00526B10.cpp. Removed from src/."
+2026-10-13,0x00526CC0,INIClass::Get_Entry,sonnet-5.5 medium,MATCH,100,1,,,"Get_Entry (YRpp GetKeyName), TibSun body."
+2026-10-13,0x0054EC60,_$E5,sonnet-5.5 medium,MATCH,100,1,,,static init of a double global (sqrt of pow*2)
+2026-10-13,0x0054EC90,_$E8,sonnet-5.5 medium,MATCH,100,1,,,"static init, double divide"
+2026-10-13,0x0054ECB0,_$E11,sonnet-5.5 medium,MATCH,100,1,,,"static init, double divide"
+2026-10-13,0x0054ECD0,_$E14,sonnet-5.5 medium,MATCH,100,2,,,operands written in reverse of load order
+2026-10-13,0x0054ECF0,_$E17,sonnet-5.5 medium,MATCH,100,2,,,operands written in reverse of load order
+2026-10-13,0x0054ED10,_$E20,sonnet-5.5 medium,MATCH,100,2,,,operands written in reverse of load order
+2026-10-13,0x0054ED30,_$E23,sonnet-5.5 medium,MATCH,100,2,,,written as K * (diag * tan(..)) to get the original load order
+2026-10-13,0x0054ED70,_$E26,sonnet-5.5 medium,MATCH,100,1,,,atan(int * const)
+2026-10-13,0x0054EDA0,_$E29,sonnet-5.5 medium,MATCH,100,1,,,atan((int*2)/diag)
+2026-10-13,0x0054EDD0,_$E32,sonnet-5.5 medium,MATCH,100,1,,,(int)(int*4 + const)
+2026-10-13,0x0054EE00,_$E35,sonnet-5.5 medium,MATCH,100,1,,,two-short zero global (a Cell constant)
+2026-10-13,0x0054EE10,_$E38,sonnet-5.5 medium,MATCH,100,1,,,three-int zero global (a Coord constant)
+2026-10-13,0x0054AC40,JumpjetLocomotionClass::JumpjetLocomotionClass,sonnet-5.5 medium,MATCH,100,2,,,Constructor. Body is Facing.Set_Desired(DIR_E) then Facing.Set(DIR_E); member init list as TibSun plus IsPiggyReady(false) and Piggybacker(NULL).
+2026-10-13,0x0054AD00,JumpjetLocomotionClass::~JumpjetLocomotionClass,sonnet-5.5 medium,MATCH,100,1,,,Empty destructor; the Piggybacker smart-pointer release comes from the new member.
+2026-10-13,0x0054AD30,JumpjetLocomotionClass::Link_To_Object,sonnet-5.5 medium,MATCH,100,4,,,"Link_To_Object (YR-only override). Copies the nine TechnoType Jumpjet stats into the locomotor, with Height = MAX(type height, 2*LEVEL_LEPTON_H) using a local for the type height, then rebuilds Facing from a named FacingClass local, calls Set_Desired and Set with DIR_E, and calls the base."
+2026-10-13,0x0054AE50,JumpjetLocomotionClass::Is_Moving,sonnet-5.5 medium,MATCH,100,1,,,Is_Moving.
+2026-10-13,0x0054AE60,JumpjetLocomotionClass::Destination,sonnet-5.5 medium,MATCH,100,1,,,Destination; TibSun source unchanged.
+2026-10-13,0x0054AEC0,,sonnet-5.5 medium,partial,99.6,24,,instruction scheduling: one pair of loads swapped,"Process. Size matches (760/760) and everything else is identical. The only diff is that the original loads the vtable pointer (mov edx,[ecx]) for the second LinkedTo->Center_Coord() call before the z-load of the first result; ours loads z first. Tried Coord/Point3D/ctor-form/function-scope declarations, reordered comparisons, and inline vs named Cell and CellClass temporaries without moving it. No overlay needed. Source is banked at build/batch/jumpjet/0x0054AEC0.cpp and removed from src/. Logic: Movement_AI; Crash on ion-sensitive offline; crashing start/steer branch; state switch with UNKNOWN sent to goto done; unselect/reveal fog handling; Submit only if IsActive and the layer changed."
+2026-10-13,0x0054B1C0,JumpjetLocomotionClass::Move_To,sonnet-5.5 medium,MATCH,100,2,,,Move_To. TibSun shape with YR changes: Nearby_Location called with SPEED_HOVER and MZONE_FLYER; the unit-without-BalloonHover case passes checkbridge=false and allowunderbridge=false; HeadToCoord and NavCom only assigned when MissionQueue and Get_Mission are not MISSION_ENTER; descent restart clears InAir and handles MISSION_UNLOAD.
+2026-10-13,0x0054B4D0,JumpjetLocomotionClass::Stop_Moving,sonnet-5.5 medium,MATCH,100,6,,,"Stop_Moving. Early return on ScenarioInit; Nearby_Location uses TClass->Speed and TClass->MZone with Cell(cell) as a temporary and the default nearto. The no-destination fallback does Take_Damage and HeadToCoord=COORD_NONE only when Strength>0, both inside that if."
+2026-10-13,0x0054B6E0,JumpjetLocomotionClass::Do_Turn,sonnet-5.5 medium,MATCH,100,1,,,Do_Turn; TibSun source unchanged.
+2026-10-13,0x0054B750,JumpjetLocomotionClass::Load,sonnet-5.5 medium,MATCH,100,1,,,"Load; same shape as DriveLocomotionClass::Load, using the Piggybacker member."
+2026-10-13,0x0054B7E0,JumpjetLocomotionClass::Save,sonnet-5.5 medium,MATCH,100,1,,,Save; same shape as DriveLocomotionClass::Save.
+2026-10-13,0x0054B8D0,JumpjetLocomotionClass::In_Which_Layer,sonnet-5.5 medium,MATCH,100,3,,,"This is In_Which_Layer. The ret 4 is just the ILocomotion this pointer, not a Can_Enter_Cell argument. Result is LAYER_GROUND if the foot is not In_Air or the adjusted height is 0, otherwise LAYER_AIR plus (height >= Height), written as an int add."
+2026-10-13,0x004AF540,DriveLocomotionClass::DriveLocomotionClass,sonnet-5.5 medium,MATCH,100,1,,,"DriveLocomotionClass constructor, TibSun source as is"
+2026-10-13,0x004AF5E0,DriveLocomotionClass::~DriveLocomotionClass,sonnet-5.5 medium,MATCH,100,1,,,"~DriveLocomotionClass, empty body"
+2026-10-13,0x004AF610,DriveLocomotionClass::Piggyback_CLSID,sonnet-5.5 medium,MATCH,100,1,,,Piggyback_CLSID
+2026-10-13,0x004AF720,DriveLocomotionClass::QueryInterface,sonnet-5.5 medium,MATCH,100,1,,,QueryInterface
+2026-10-13,0x004AF780,DriveLocomotionClass::Load,sonnet-5.5 medium,MATCH,100,1,,,Load
+2026-10-13,0x004AF8E0,DriveLocomotionClass::Begin_Piggyback,sonnet-5.5 medium,MATCH,100,1,,,Begin_Piggyback
+2026-10-13,0x004AF930,DriveLocomotionClass::End_Piggyback,sonnet-5.5 medium,MATCH,100,1,,,End_Piggyback
+2026-10-13,0x004AF970,DriveLocomotionClass::Is_Ok_To_End,sonnet-5.5 medium,MATCH,100,2,,,Is_Ok_To_End needs an extra condition over TibSun: !LinkedTo->IsAttackedByLocomotor (FootClass byte at 0x6AD)
+2026-10-13,0x004AF9B0,DriveLocomotionClass::Get_Slope_Matrix,sonnet-5.5 medium,MATCH,100,1,,,Get_Slope_Matrix
+2026-10-13,0x004AFAA0,DriveLocomotionClass::Get_Slope_Ratio,sonnet-5.5 medium,MATCH,100,1,,,Get_Slope_Ratio
+2026-10-13,0x004AFB00,DriveLocomotionClass::Set_Slope,sonnet-5.5 medium,MATCH,100,1,,,Set_Slope
+2026-10-13,0x004AFB40,DriveLocomotionClass::Force_New_Slope,sonnet-5.5 medium,MATCH,100,1,,,Force_New_Slope
+2026-10-13,0x006E5AE0,$E16,sonnet-5.5 medium,MATCH,100,2,,,"Static init for TagTypes, annotated $E16 (the atexit registration)."
+2026-10-13,0x006E5B20,$E14,sonnet-5.5 medium,MATCH,100,2,,,"The TagTypes atexit stub, annotated $E14."
+2026-10-13,0x006E5B60,TagTypeClass::TagTypeClass,sonnet-5.5 medium,MATCH,100,1,,,"TagTypeClass constructor, TibSun source unchanged."
+2026-10-13,0x006E5CA0,TagTypeClass::~TagTypeClass,sonnet-5.5 medium,MATCH,100,1,,,"TagTypeClass destructor, TibSun source unchanged."
+2026-10-13,0x006E5DD0,TagTypeClass::Link,sonnet-5.5 medium,MATCH,100,1,,,Link (symbols.csv calls it AddTrigger).
+2026-10-13,0x006E5E00,TagTypeClass::Unlink,sonnet-5.5 medium,MATCH,100,1,,,Unlink (symbols.csv calls it RemoveTrigger).
+2026-10-13,0x006E5E50,TagTypeClass::Detach,sonnet-5.5 medium,MATCH,100,1,,,Detach.
+2026-10-13,0x006E5E70,TagTypeClass::From_Name,sonnet-5.5 medium,MATCH,100,1,,,From_Name (symbols.csv calls it FindByNameOrID).
+2026-10-13,0x006E5ED0,TagTypeClass::Read_All,sonnet-5.5 medium,MATCH,100,2,,,"Read_All (symbols.csv calls it LoadFromINIList). Needed TFind_Or_Make<TagTypeClass>(entry, TagTypes) written directly, because the original inlines it. The parameter had to become non-const CCINIClass &."
+2026-10-13,0x006E5FE0,TagTypeClass::Write_All,sonnet-5.5 medium,MATCH,100,1,,,Write_All (symbols.csv calls it SaveToINIList).
+2026-10-13,0x006E6080,TagTypeClass::Read_INI,sonnet-5.5 medium,MATCH,100,2,,,"Read_INI. The original opens with ini.Reset(), which TibSun's version lacks."
+2026-10-13,0x006E6160,TagTypeClass::Write_INI,sonnet-5.5 medium,MATCH,100,1,,,Write_INI.
+2026-10-13,0x0065B160,$E48,sonnet-5.5 medium,MATCH,100,30,,header (other module),Static init of the RadSiteClass vector. Matches only with a plain global (RadSites); a static class member gives a 88-byte guarded atexit stub instead of the original 59 bytes.
+2026-10-13,0x0065B1A0,$E46,sonnet-5.5 medium,MATCH,100,30,,header (other module),atexit destructor stub of the same vector. Same plain-global finding as 0x0065B160. Matches with overlay only (radsite.h).
+2026-10-13,0x0065B1E0,RadSiteClass::RadSiteClass,sonnet-5.5 medium,MATCH,100,30,,header (other module),"RadSiteClass::RadSiteClass(void), with RadSites.Add(this). Needs the constructor declared in radsite.h. Overlay match."
+2026-10-13,0x0065B2A0,RadSiteClass::RadSiteClass,sonnet-5.5 medium,MATCH,100,30,,header (other module),RadSiteClass(NoInitClass const &). Needs the declaration in radsite.h. Overlay match.
+2026-10-13,0x0065B2F0,RadSiteClass::~RadSiteClass,sonnet-5.5 medium,MATCH,100,30,,header (other module),"RadSiteClass::~RadSiteClass. Needs cell.h FUN_00487C70(RadSiteClass*) and a LightSourceClass with a virtual destructor in radsite.h. Take the cell in a local first so push 0 comes after the Map call. AnnounceExpiredPointer is a free __fastcall function (object in ecx, bool in dl), declared locally in the .cpp. Overlay match."
+2026-10-13,0x0065B3A0,RadSiteClass::Fetch_Object_Size,sonnet-5.5 medium,MATCH,100,30,,header (other module),Fetch_Object_Size returns sizeof(*this). Overlay match only because the file needs the overlay.
+2026-10-13,0x0065B3B0,RadSiteClass::Compute_CRC,sonnet-5.5 medium,MATCH,100,30,,header (other module),Compute_CRC calls the base. Overlay match only because the file needs the overlay.
+2026-10-13,0x0065B3C0,RadSiteClass::Fetch_RTTI,sonnet-5.5 medium,MATCH,100,30,,header (other module),Fetch_RTTI returns RTTI_RADSITE. Overlay match only because the file needs the overlay.
+2026-10-13,0x0065B3D0,RadSiteClass::Load,sonnet-5.5 medium,MATCH,100,30,,header (other module),"Load: base Load, then placement-new NoInit constructor and Swizzle_Pointer(&LightSource), same shape as BuildingLightClass::Load. Overlay match."
+2026-10-13,0x0065B450,RadSiteClass::Save,sonnet-5.5 medium,MATCH,100,30,,header (other module),Save calls the base Save. Overlay match only because the file needs the overlay.
+2026-10-13,0x0065B470,RadSiteClass::GetClassID,sonnet-5.5 medium,MATCH,100,30,,header (other module),"GetClassID copies the 16-byte CLSID at 0x007E98C0. It is declared in the .cpp as extern ""C"" const CLSID CLSID_RadSiteClass. TibSun has no such CLSID, so the checker lists it unverified. Overlay match."
+2026-10-13,0x0065B4B0,RadSiteClass::GetSpread,sonnet-5.5 medium,MATCH,100,30,,header (other module),Defined out of line as int RadSiteClass::GetSpread(void) { return Spread; }; an inline body in the header is never emitted. Needs the declaration in radsite.h. Overlay match.
+2026-10-13,0x00526B10,,opus-5.5 high (header merge),failed,26.8,0,,Inline budget and layout of the section-name cache (INIClass::Find_Entry with section and entry),Not re-run: the banked file is an unmarked fragment that does not compile on its own. None of the headers changed here touch INIClass. Left in build/batch/Ini/.
+2026-10-13,0x0054AEC0,,opus-5.5 high (header merge),partial,99.6,1,,Instruction scheduling: one pair of loads swapped,Re-checked against the updated include/ with no overlay: still 99.6% (760/760 bytes). Left in build/batch/jumpjet/.
+2026-10-13,0x0054AEC0,,opus-5.5 high,partial,99.6,28,,"instruction scheduling: after the first LinkedTo->Center_Coord(), the original loads the vtable pointer for the second Center_Coord call (mov edx,[ecx]) before the Z load/store of the first result. Ours loads and stores Z first. Size (760/760), frame, registers and everything else are identical.","Still banked at build/batch/jumpjet/0x0054AEC0.cpp, unchanged; not in src/. No overlay needed. 28 new variants did not move the pair. 1. Copy forms for position: CoordStruct via operator, explicit casts, a POD reinterpret copy, assignment instead of construction, a const-ref bind then copy, and a file-local inline Center_Of wrapper. 2. Declaration order and scope: function scope vs block scope, center declared before position. 3. Cell forms: named Cell, Cell(Coord) ctor, Coord(...).As_Cell(), and the Map[] result held as a CellClass* or CellClass& local. 4. A Cell_Center inline helper. 5. The comparison written several ways: reversed operands, negated &&, Point2D compare, and by-value or by-ref Off_Center inline helpers. 6. A dummy read of position.Z, and the call made through an ObjectClass* cast. Every variant gave the same one-pair diff, a smaller or larger frame, or (when the copy was memberwise or POD) dropped the dead Z store and came to 756 bytes. Finding: the original keeps a dead self-copy of Z (load [buf+8], store to the same slot), which only an implicit Coord class copy reproduces. This suggests position shares its slot with the return buffer, and that VC6 sees an alias edge between that store and the vtable load in ours but not in the original. Source of that difference not found."
