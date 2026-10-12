@@ -28,6 +28,28 @@
 #include "wave.h"
 #include "xsurface.h"
 
+// FUNCTION: 0x00435820
+BuildingLightClass::BuildingLightClass(TechnoClass * owner) :
+	BASECLASS(),
+	Speed(0),
+	RotationPivot(COORD_NONE),
+	RotationTarget(COORD_NONE),
+	Acceleration(0),
+	IsOppositeDirection(false),
+	Behavior(0),
+	Target(NULL),
+	Owner(owner)
+{
+	BuildingLights.Add(this);
+	if (owner != NULL) {
+		Init_Rotation_Arc(owner);
+
+		Unlimbo(PositionCoord);
+		Set_Behavior_Type(LIGHT_BEHAVIOR_SWEEP);
+		IsOppositeDirection = BuildingLights.ID(this) % 2 != 0;
+	}
+}
+
 // FUNCTION: 0x00436910
 HRESULT STDMETHODCALLTYPE BuildingLightClass::GetClassID(CLSID * retval)
 {
@@ -177,6 +199,9 @@ bool BuildingLightClass::Unlimbo(Coord const & coord, Dir256 dir)
 	return(false);
 }
 
+// FUNCTION: 0x00437090 Coord::Coord
+
+// FUNCTION: 0x00435B50
 // FUNCTION: 0x004370C0
 BuildingLightClass::~BuildingLightClass(void)
 {

@@ -594,6 +594,17 @@ Lesson: shared headers, not matching, held back a quarter of the batch. Later ba
 merge requested header changes between the Sonnet and Opus tiers, so header-gated
 functions land without spending Opus on them.
 
+Backlog (12 October 2026, one Opus agent, about 0.3M tokens): eight of the eleven
+landed, plus AbstractTypeClass::Read_INI (a missing `else`, not a regression). The
+three wrong extents had one cause: a function nothing calls directly, aligned straight
+after a `ret` with no padding. `functions.py` now follows each function's flow and
+splits off code it never reaches (evidence `F`): 98 new starts, 92 extents changed, 53
+of them confirmed by Ghidra. The checker treats an undecorated name as ambiguous when
+another overload is in play, and takes a named marker for a function a header defines.
+StageClass (28 bytes) and BANIM_COUNT (21) are fixed from the exe. Still banked: the
+two stats queue functions (an inline-and-call mix of Grow and Shrink) and the 0x004A65C0
+/ 0x004A66D0 twins at 95.5%. Merge gate: 1,435 of 1,435.
+
 ### Decide before the first batch
 
 - **Module layout.** Which function lives in which source file, and the link order, decide

@@ -37,6 +37,9 @@ original compiler turns into that function's exact bytes. MATCH means
    your overlay.
 3. Mark the definition with `// FUNCTION: <ADDR>` on the line before it. The function
    must not be `static`: an unused static is discarded and the checker finds nothing.
+   A function a header defines, which the module's object emits out of line (an inline
+   constructor, a compiler-generated destructor), takes `// FUNCTION: <ADDR> Class::Name`
+   with no definition after it.
 4. `uv run tools/check.py build/spike/<ADDR>/<module>.cpp <ADDR> --overlay build/spike/<ADDR>/include`
 5. Read the diff, change the source, repeat.
 
@@ -119,6 +122,8 @@ Each entry: what the diff showed, then the source change that fixed it.
 - `setcc; test; jne` on one register is an inlined function returning bool.
 
 ### Registers
+- Before blaming register allocation, compare the tail and the length: one missing
+  statement (an `else` branch) moves every register after it.
 - VC6 ranks variables by use count, weighted by branch; one use more or fewer moves a
   variable into or out of EBX/EBP. Re-read a member instead of a local, or the reverse.
 - An induction variable that starts at a member offset (`mov ebp,0x15d8 ... cmp
@@ -156,6 +161,8 @@ Each entry: what the diff showed, then the source change that fixed it.
 - Deleting destructor (`test flags,1`, then `operator delete`; callers `push 1` to a
   vtable slot): declare the destructor virtual and annotate `~Class`; check.py tries
   `??1`, `??_G` and `??_E`. `??_G` is emitted only if something `delete`s the class.
+- A destructor that stores no vptr before calling the base destructor means the class
+  declares none: remove the declaration. Even an empty declared one adds the store.
 - Dialog procedures: `LOWORD(wparam)`/`HIWORD(wparam)` keep compares unmasked and put
   msg and wparam in the original's registers. Jump tables land in the function's tail.
 - A for-loop variable outlives its loop (old scope rules): give each loop its own name.
@@ -179,8 +186,8 @@ Each entry: what the diff showed, then the source change that fixed it.
   exe, inherited in ours": add one. A TS virtual with no YR slot becomes non-virtual.
 - The linker folded every `return 0` function into `_purecall`, so an exe slot holding
   it may be a `return 0` body, not a pure virtual.
-- TS sizes YR changed: StageClass 24 to 28 bytes (`YRStageClass` in techno.h),
-  BANIM_COUNT 13 to 21, attached particle systems 5 to 8, weapon slots 3 to 18.
+- TS sizes YR changed: StageClass 24 to 28 bytes (`stage.h`), BANIM_COUNT 13 to 21
+  (`banim.hh`), attached particle systems 5 to 8, weapon slots 3 to 18.
 - Keep TS member names at YR's offsets; use YRpp names only for members TS lacks.
 
 ## Known dead ends

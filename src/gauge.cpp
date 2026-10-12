@@ -264,6 +264,9 @@ void GaugeClass::Use_Thumb(int value)
 	HasThumb = value ? true : false;
 }
 
+// FUNCTION: 0x004E30D0 GaugeClass::~GaugeClass
+// FUNCTION: 0x004E30F0 TriColorGaugeClass::~TriColorGaugeClass
+
 extern int DAT_008B3F90;
 extern int DAT_008B3F94;
 extern int DAT_008B3F98;

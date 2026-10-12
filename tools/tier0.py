@@ -768,7 +768,9 @@ def annotations_text(text: str) -> list[tuple[int, str]]:
     out = []
     for i, line in enumerate(lines):
         m = check.ANNOTATION.match(line)
-        if m:
+        if m and m.group(2):
+            out.append((int(m.group(1), 16), m.group(2)))
+        elif m:
             n = re.search(r"((?:\w+::)*(?:operator\s*\S+?|~?\w+))\s*\(", " ".join(lines[i + 1:i + 4]))
             out.append((int(m.group(1), 16), n.group(1).replace(" ", "") if n else ""))
     return out

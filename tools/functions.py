@@ -9,6 +9,8 @@ A function start needs at least one piece of evidence, recorded as letters:
   Y  YRpp names it (data/symbols.csv)
   G  Ghidra's analysis found it (build/ghidra/functions.csv, when present)
   L  a prebuilt library function was found here (data/library.csv)
+  F  code after a function's return that no path through that function reaches, at an
+     aligned address: a function nothing calls directly, placed with no padding before it
 Every start must also be an instruction boundary of a linear sweep of .text. A
 function's size runs to the next start, less the padding before it.
 """
@@ -59,6 +61,34 @@ def sweep(code: bytes, base: int, starts: set, padded: set, calls: set, tables: 
                 if t and base <= int(t.group(1), 16) < base + len(code):
                     tables.add(int(t.group(1), 16))
         prev = mnem
+
+
+def reached_end(md, code: bytes, base: int, lo: int, hi: int, roots: set) -> int:
+    """The end of the furthest instruction in [lo, hi) that flow from `lo` and `roots`
+    reaches: jumps, branches, calls returning, switch tables, and offsets taken as operands."""
+    seen, todo, far = set(), [lo, *roots], lo
+    while todo:
+        at = todo.pop()
+        while lo <= at < hi and at not in seen:
+            seen.add(at)
+            insn = next(md.disasm_lite(code[at - base:at - base + 16], at, 1), None)
+            if insn is None:
+                break
+            _, size, mnem, ops = insn
+            far = max(far, at + size)
+            for v in re.findall(r"0x[0-9a-f]+", ops):
+                if lo < int(v, 16) < hi:
+                    todo.append(int(v, 16))
+            t = TABLE_OPERAND.search(ops)
+            if t and mnem == "jmp":
+                entry = int(t.group(1), 16)
+                while lo <= entry < hi and lo <= struct.unpack_from("<I", code, entry - base)[0] < hi:
+                    todo.append(struct.unpack_from("<I", code, entry - base)[0])
+                    entry += 4
+            if mnem in ("ret", "jmp", "int3"):
+                break
+            at += size
+    return far
 
 
 def pointers(pe: pefile.PE, lo: int, hi: int):
@@ -167,6 +197,33 @@ def main() -> None:
     first = base
     if first not in evidence:
         evidence[first] = "P"
+
+    # A function whose flow ends before the next start, with code after its last return,
+    # holds a second function there when that code begins on an aligned boundary.
+    md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_32)
+    boundaries = after_end | padded
+    pending = sorted(evidence)
+    while pending:
+        new = []
+        ordered = sorted(evidence)
+        for a in pending:
+            i = bisect.bisect_right(ordered, a)
+            nxt = ordered[i] if i < len(ordered) else end
+            # Data pointers into the code before a candidate (unwind funclets) extend the
+            # flow; those past it point into the second function.
+            roots = set()
+            while True:
+                at = reached_end(md, code, base, a, nxt, roots)
+                while at < nxt and code[at - base] == NOP:
+                    at += 1
+                more = {p for p in ptrs if a < p < at} - roots
+                if not more:
+                    break
+                roots |= more
+            if a < at < nxt and at % 16 == 0 and at in starts and at in boundaries:
+                evidence[at] = "F"
+                new.append(at)
+        pending = new
 
     ordered = sorted(evidence)
     with out.open("w", newline="") as f:

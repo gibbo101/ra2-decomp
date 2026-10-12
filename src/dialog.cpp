@@ -226,6 +226,14 @@ Point2D Conquer_Clip_Text_Print_Wide(wchar_t const * text, Surface * surface, Re
 	return point;
 }
 
+// FUNCTION: 0x004A6500
+Point2D Conquer_Clip_Text_Print_Wide(wchar_t const * text, Surface * surface, Rect const * rect, Point2D const * pt, ColorScheme * scheme, unsigned back, TextPrintType flag, int width, int const * tabs)
+{
+	RGBClass rgb = scheme->HSV;
+	unsigned fore = (rgb.Get_Red() >> DSurface::RedLeft << DSurface::RedRight) | (rgb.Get_Green() >> DSurface::GreenLeft << DSurface::GreenRight) | (rgb.Get_Blue() >> DSurface::BlueLeft << DSurface::BlueRight);
+	return Conquer_Clip_Text_Print_Wide(text, surface, rect, pt, fore, back, flag, width, tabs);
+}
+
 // FUNCTION: 0x004A67E0
 unsigned char * Font_Palette(int color)
 {

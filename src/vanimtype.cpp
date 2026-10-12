@@ -203,6 +203,27 @@ HRESULT STDMETHODCALLTYPE VoxelAnimTypeClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
+// FUNCTION: 0x0074B810
+HRESULT STDMETHODCALLTYPE VoxelAnimTypeClass::Load(IStream *stream)
+{
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		new (this) VoxelAnimTypeClass(NoInitClass());
+
+		Swizzle_Pointer(&Warhead);
+		Swizzle_Pointer(&BounceAnim);
+		Swizzle_Pointer(&ExpireAnim);
+		Swizzle_Pointer(&TrailerAnim);
+		Swizzle_Pointer(&Spawns);
+		Swizzle_Pointer(&AttachedSystem);
+
+		Fetch_Voxel_Image();
+
+		result = S_OK;
+	}
+	return(result);
+}
+
 // FUNCTION: 0x0074B8D0
 HRESULT STDMETHODCALLTYPE VoxelAnimTypeClass::Save(IStream *stream, int cleardirty)
 {

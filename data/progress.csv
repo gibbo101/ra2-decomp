@@ -7,7 +7,7 @@ address,name,result,size,source,symbol
 0x00410960,AbstractTypeClass::AbstractTypeClass,MATCH,86,src/abstype.cpp,??0AbstractTypeClass@@QAE@ABVNoInitClass@@@Z
 0x004109C0,AbstractTypeClass::~AbstractTypeClass,MATCH,114,src/abstype.cpp,??1AbstractTypeClass@@UAE@XZ
 0x00410A40,AbstractTypeClass::operator==,MATCH,25,src/abstype.cpp,??8AbstractTypeClass@@QBE_NPBD@Z
-0x00410A60,AbstractTypeClass::Read_INI,42.6%,299,src/abstype.cpp,?Read_INI@AbstractTypeClass@@UAE_NAAVCCINIClass@@@Z
+0x00410A60,AbstractTypeClass::Read_INI,MATCH,299,src/abstype.cpp,?Read_INI@AbstractTypeClass@@UAE_NAAVCCINIClass@@@Z
 0x00410B90,AbstractTypeClass::Write_INI,MATCH,71,src/abstype.cpp,?Write_INI@AbstractTypeClass@@UBE_NAAVCCINIClass@@@Z
 0x00410BE0,AbstractTypeClass::Compute_CRC,MATCH,52,src/abstype.cpp,?Compute_CRC@AbstractTypeClass@@UBEXAAVCRCEngine@@@Z
 0x00410C20,AbstractTypeClass::Init_Theater,MATCH,3,src/abstype.cpp,?Init_Theater@AbstractTypeClass@@UAEXW4TheaterType@@@Z
@@ -81,6 +81,7 @@ address,name,result,size,source,symbol
 0x004319D0,Benchmark::Step,MATCH,58,src/bench.cpp,?Step@Benchmark@@QAEIXZ
 0x00431A10,Benchmark::Value,MATCH,21,src/bench.cpp,?Value@Benchmark@@QBEIXZ
 0x00431F50,BufferIOFileClass::Open,MATCH,31,src/bfiofile.cpp,?Open@BufferIOFileClass@@UAEHPBDH@Z
+0x00435820,BuildingLightClass::BuildingLightClass,MATCH,816,src/blight.cpp,??0BuildingLightClass@@QAE@PAVTechnoClass@@@Z
 0x00436910,BuildingLightClass::GetClassID,MATCH,56,src/blight.cpp,?GetClassID@BuildingLightClass@@UAGJPAU_GUID@@@Z
 0x00436950,BuildingLightClass::Load,MATCH,107,src/blight.cpp,?Load@BuildingLightClass@@UAGJPAUIStream@@@Z
 0x004369C0,BuildingLightClass::Save,MATCH,23,src/blight.cpp,?Save@BuildingLightClass@@UAGJPAUIStream@@H@Z
@@ -92,6 +93,8 @@ address,name,result,size,source,symbol
 0x00436F40,BuildingLightClass::Compute_CRC,MATCH,229,src/blight.cpp,?Compute_CRC@BuildingLightClass@@UBEXAAVCRCEngine@@@Z
 0x00437030,BuildingLightClass::Limbo,MATCH,31,src/blight.cpp,?Limbo@BuildingLightClass@@UAE_NXZ
 0x00437050,BuildingLightClass::Unlimbo,MATCH,49,src/blight.cpp,?Unlimbo@BuildingLightClass@@UAE_NABVCoord@@W4Dir256@@@Z
+0x00437090,Coord::Coord,MATCH,25,src/blight.cpp,??0Coord@@QAE@HHH@Z
+0x00435B50,BuildingLightClass::~BuildingLightClass,MATCH,134,src/blight.cpp,??1BuildingLightClass@@UAE@XZ
 0x004370C0,BuildingLightClass::~BuildingLightClass,MATCH,154,src/blight.cpp,??_GBuildingLightClass@@UAEPAXI@Z
 0x00437FC0,BlowfishEngine::~BlowfishEngine,MATCH,13,src/blowfish.cpp,??1BlowfishEngine@@QAE@XZ
 0x00437FD0,BlowfishEngine::Submit_Key,MATCH,40,src/blowfish.cpp,?Submit_Key@BlowfishEngine@@QAEXPBXH@Z
@@ -342,6 +345,7 @@ address,name,result,size,source,symbol
 0x004A60E0,Fancy_Text_Print_Wide,MATCH,212,src/dialog.cpp,?Fancy_Text_Print_Wide@@YAPAVPoint2D@@PAV1@PBGPAVSurface@@PBV?$TRect@H@@PBV1@IIW4TextPrintType@@ZZ
 0x004A61C0,Fancy_Text_Print_Wide,MATCH,416,src/dialog.cpp,?Fancy_Text_Print_Wide@@YAPAVPoint2D@@PAV1@PBGPAVSurface@@PBV?$TRect@H@@PBV1@PAVColorScheme@@IW4TextPrintType@@ZZ
 0x004A6360,Conquer_Clip_Text_Print_Wide,MATCH,404,src/dialog.cpp,?Conquer_Clip_Text_Print_Wide@@YI?AVPoint2D@@PBGPAVSurface@@PBV?$TRect@H@@PBV1@IIW4TextPrintType@@HPBH@Z
+0x004A6500,Conquer_Clip_Text_Print_Wide,MATCH,192,src/dialog.cpp,?Conquer_Clip_Text_Print_Wide@@YI?AVPoint2D@@PBGPAVSurface@@PBV?$TRect@H@@PBV1@PAVColorScheme@@IW4TextPrintType@@HPBH@Z
 0x004A67E0,Font_Palette,MATCH,52,src/dialog.cpp,?Font_Palette@@YIPAEH@Z
 0x004A6820,FUN_004A6820,MATCH,23,src/dialog.cpp,?FUN_004A6820@@YIXXZ
 0x004A6840,DIB8Class::DIB8Class,MATCH,430,src/dib.cpp,??0DIB8Class@@QAE@PAUHWND__@@HHAAVPaletteClass@@@Z
@@ -500,6 +504,8 @@ address,name,result,size,source,symbol
 0x004E2B20,TriColorGaugeClass::Set_Yellow_Limit,MATCH,34,src/gauge.cpp,?Set_Yellow_Limit@TriColorGaugeClass@@UAEHH@Z
 0x004E2B50,TriColorGaugeClass::Draw_Me,MATCH,1360,src/gauge.cpp,?Draw_Me@TriColorGaugeClass@@UAEHH@Z
 0x004E30B0,GaugeClass::Use_Thumb,MATCH,15,src/gauge.cpp,?Use_Thumb@GaugeClass@@UAEXH@Z
+0x004E30D0,GaugeClass::~GaugeClass,MATCH,30,src/gauge.cpp,??_GGaugeClass@@UAEPAXI@Z
+0x004E30F0,TriColorGaugeClass::~TriColorGaugeClass,MATCH,30,src/gauge.cpp,??_GTriColorGaugeClass@@UAEPAXI@Z
 0x004E3110,FUN_004E3110,MATCH,23,src/gauge.cpp,?FUN_004E3110@@YIXXZ
 0x004E6070,GetCDClass::GetCDClass,MATCH,194,src/getcd.cpp,??0GetCDClass@@QAE@XZ
 0x004E6150,Get_CPU_Type,MATCH,59,src/getcpu.cpp,?Get_CPU_Type@@YIXAAHAA_NPADH@Z
@@ -891,6 +897,7 @@ address,name,result,size,source,symbol
 0x005FDD20,Which_Tiberium_Type,MATCH,190,src/overlay.cpp,?Which_Tiberium_Type@@YI?AW4TiberiumType@@W4OverlayType@@@Z
 0x005FDDF0,OverlayClass::Post_Read_Vein_Fixups,MATCH,261,src/overlay.cpp,?Post_Read_Vein_Fixups@OverlayClass@@SIXXZ
 0x005FDF10,OverlayClass::GetClassID,MATCH,56,src/overlay.cpp,?GetClassID@OverlayClass@@UAGJPAU_GUID@@@Z
+0x005FE020,XSurface::XSurface,MATCH,32,src/overlay.cpp,??0XSurface@@QAE@HH@Z
 0x005FE040,Init_005FE040,MATCH,23,src/overlay.cpp,?Init_005FE040@@YIXXZ
 0x005FE4C0,OverlayTypeClass::Occupy_List,MATCH,91,src/overtype.cpp,?Occupy_List@OverlayTypeClass@@UBEPBVCell@@_N@Z
 0x005FEA30,OverlayTypeClass::Coord_Fixup,MATCH,31,src/overtype.cpp,?Coord_Fixup@OverlayTypeClass@@UBE?BVCoord@@ABV2@@Z
@@ -1189,6 +1196,7 @@ address,name,result,size,source,symbol
 0x0074B640,VoxelAnimTypeClass::From_Name,MATCH,65,src/vanimtype.cpp,?From_Name@VoxelAnimTypeClass@@SI?AW4VoxelAnimType@@PBD@Z
 0x0074B690,VoxelAnimTypeClass::Compute_CRC,MATCH,313,src/vanimtype.cpp,?Compute_CRC@VoxelAnimTypeClass@@UBEXAAVCRCEngine@@@Z
 0x0074B7D0,VoxelAnimTypeClass::GetClassID,MATCH,56,src/vanimtype.cpp,?GetClassID@VoxelAnimTypeClass@@UAGJPAU_GUID@@@Z
+0x0074B810,VoxelAnimTypeClass::Load,MATCH,182,src/vanimtype.cpp,?Load@VoxelAnimTypeClass@@UAGJPAUIStream@@@Z
 0x0074B8D0,VoxelAnimTypeClass::Save,MATCH,29,src/vanimtype.cpp,?Save@VoxelAnimTypeClass@@UAGJPAUIStream@@H@Z
 0x0074B8F0,VoxelAnimTypeClass::Detach,MATCH,99,src/vanimtype.cpp,?Detach@VoxelAnimTypeClass@@UAEXPBVAbstractClass@@_N@Z
 0x0074B960,VoxelAnimTypeClass::Find_Or_Make,MATCH,131,src/vanimtype.cpp,?Find_Or_Make@VoxelAnimTypeClass@@SIPAV1@PBD@Z

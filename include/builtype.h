@@ -133,7 +133,7 @@ class BuildingTypeClass : public TechnoTypeClass
 			bool PoweredSpecial;
 		};
 
-		AnimDataType AnimData[21];
+		AnimDataType AnimData[BANIM_COUNT];
 
 		int Upgrades;
 

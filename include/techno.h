@@ -64,11 +64,6 @@ struct RecoilData
 	unsigned Data[8];
 };
 
-struct YRStageClass : public StageClass
-{
-	unsigned unknown_18;
-};
-
 struct YRVectorData
 {
 	void * VTable;
@@ -90,7 +85,7 @@ class TechnoClass : public RadioClass
 		};
 
 		FlasherClass Flashing;
-		YRStageClass Animation;
+		StageClass Animation;
 
 		CargoClass Cargo;
 		TechnoClass * Transporter;
@@ -145,7 +140,7 @@ class TechnoClass : public RadioClass
 		HouseClass * House;
 
 		CloakType Cloak;
-		YRStageClass CloakingDevice;
+		StageClass CloakingDevice;
 		CDTimerClass<FrameTimerClass> CloakDelay;
 
 		float WarpFactor;

@@ -35,7 +35,8 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from check import ROOT, Original, known_decorated, prepare_headers, qualified, run_compiler, winpath  # noqa: E402
+from check import (ROOT, Original, known_decorated, overloaded, prepare_headers, qualified,  # noqa: E402
+                   run_compiler, winpath)
 from coff import CoffObject  # noqa: E402
 
 PROBE = "HeaderProbe"
@@ -379,7 +380,7 @@ def check_vtable(cls: str, ours: list[str], theirs: list[int], parent: list[int]
     for k in range(max(len(ours), len(theirs))):
         sym = ours[k] if k < len(ours) else ""
         addr = theirs[k] if k < len(theirs) else None
-        verdict = slot_verdict(cls, k, sym, addr, parent, purecall, decorated, unique)
+        verdict = slot_verdict(cls, k, sym, addr, parent, purecall, decorated, unique, ours)
         problems += verdict != "ok"
         names = ", ".join(yrpp.get(addr, [])) if addr else ""
         shown = f"0x{addr:08X}" if addr else "-"
@@ -387,14 +388,16 @@ def check_vtable(cls: str, ours: list[str], theirs: list[int], parent: list[int]
     return problems
 
 
-def slot_verdict(cls, k, sym, addr, parent, purecall, decorated, unique) -> str:
+def slot_verdict(cls, k, sym, addr, parent, purecall, decorated, unique, ours=()) -> str:
     if not sym:
         return "MISMATCH: we have no slot"
     if addr is None:
         return "MISMATCH: the exe has no slot"
     if sym == "__purecall":
         return "ok" if addr == purecall else "MISMATCH: pure in ours, not in the exe"
-    known = decorated.get(sym, unique.get(qualified(sym)))
+    known = decorated.get(sym)
+    if known is None and not overloaded(sym, decorated, ours):
+        known = unique.get(qualified(sym))
     if known is not None and known != addr:
         return f"MISMATCH: ours is at 0x{known:08X}"
     exe_inherited = parent is not None and k < len(parent) and parent[k] == addr

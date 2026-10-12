@@ -4,3 +4,5 @@ address,name,symbol,evidence
 0x00578460,MapClass::In_Local_Radar,?In_Local_Radar@MapClass@@QBE_NABVCell@@_N@Z,"called by 0x00578390 MapClass::In_Local_Radar(Rect const &, bool), matched with TibSun source"
 0x007C8E17,operator new,??2@YAPAXI@Z,YRpp CRT.h _new; the call target of operator new in matched 0x0043C0D0 and 0x00733E10
 0x007C8B3D,operator delete,??3@YAXPAX@Z,YRpp CRT.h _delete; the call target of operator delete in matched 0x0063EE30
+0x005F7090,ObjectTypeClass::ObjectTypeClass,??0ObjectTypeClass@@QAE@PBD@Z,YRpp ObjectTypeClass.h ObjectTypeClass(const char*); passes its argument to AbstractTypeClass(char const *) at matched 0x00410800
+0x005F7320,ObjectTypeClass::ObjectTypeClass,??0ObjectTypeClass@@QAE@ABVNoInitClass@@@Z,passes its argument to AbstractTypeClass(NoInitClass const &) at matched 0x00410960; the call target of new (this) VoxelAnimTypeClass(NoInitClass()) in matched 0x0074B810

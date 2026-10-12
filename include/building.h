@@ -51,8 +51,8 @@ class BuildingClass : public TechnoClass
 
 		CDTimerClass<FrameTimerClass> PlacementDelay;
 
-		AnimClass * Anims[21];
-		bool AnimStates[21];
+		AnimClass * Anims[BANIM_COUNT];
+		bool AnimStates[BANIM_COUNT];
 
 		AnimClass * DamageFireAnims[8];
 		bool RequiresDamageFires;
@@ -73,7 +73,7 @@ class BuildingClass : public TechnoClass
 
 		int FirestormWallFrame;
 
-		YRStageClass BuildingStage;
+		StageClass BuildingStage;
 
 		Rect LastRenderRect;
 		Coord LastRenderCoord;

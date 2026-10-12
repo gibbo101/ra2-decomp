@@ -76,6 +76,8 @@ bool AbstractTypeClass::Read_INI(CCINIClass & ini)
 		if (UINameLabel[0]) {
 #line 215 "D:\\ra2mdpost\\AbsType.cpp"
 			UIName = StringTable::LoadString(UINameLabel, NULL, __FILE__, __LINE__);
+		} else {
+			UIName = NoUIName_00887734;
 		}
 		return(true);
 	}

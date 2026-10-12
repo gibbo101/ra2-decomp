@@ -1,0 +1,36 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright 2026 ra2-decomp contributors
+// Copyright 2025 Electronic Arts Inc.; 2026 OpenTS contributors
+// Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
+#pragma once
+
+enum BAnimType {
+	BANIM_NONE = -1,
+
+	BANIM_UPGRADE_ONE,
+	BANIM_UPGRADE_TWO,
+	BANIM_UPGRADE_THREE,
+	BANIM_ACTIVE_ONE,
+	BANIM_ACTIVE_TWO,
+	BANIM_ACTIVE_THREE,
+	BANIM_ACTIVE_FOUR,
+	BANIM_PRE_PRODUCTION,
+	BANIM_PRODUCTION,
+	BANIM_TURRET,
+	BANIM_SPECIAL_ONE,
+	BANIM_SPECIAL_TWO,
+	BANIM_SPECIAL_THREE,
+	BANIM_SPECIAL_FOUR,
+	BANIM_SUPER_ONE,
+	BANIM_SUPER_TWO,
+	BANIM_SUPER_THREE,
+	BANIM_SUPER_FOUR,
+	BANIM_IDLE,
+	BANIM_LOW_POWER,
+	BANIM_SUPER_LOW_POWER,
+
+	BANIM_COUNT,
+	BANIM_FIRST = 0,
+
+	BANIM_ALL = -2,
+};

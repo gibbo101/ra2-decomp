@@ -10,6 +10,9 @@ A function is tied to its address by a marker on the line before its definition:
     // FUNCTION: 0x0065CF00
     int RawFileClass::Seek(int pos, int dir)
 
+A function a header defines, which the file's object emits out of line, is named on its
+marker instead: `// FUNCTION: 0x005FE020 XSurface::XSurface`.
+
 A function MATCHES when it is as long as the original (data/functions.csv), every byte
 the compiler emits is identical, and every field the linker fills in points at the
 right target:
@@ -47,7 +50,7 @@ from coff import REL_DIR32, REL_REL32, CoffObject  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 FLAGS = ["/c", "/O2", "/Ob2", "/Gr", "/GR", "/MT", "/DWIN32"]
-ANNOTATION = re.compile(r"^\s*//\s*FUNCTION:\s*(0x[0-9A-Fa-f]+)\s*$")
+ANNOTATION = re.compile(r"^\s*//\s*FUNCTION:\s*(0x[0-9A-Fa-f]+)(?:\s+((?:\w+::)*~?\w+))?\s*$")
 FORBIDDEN = re.compile(r"\b(__asm|_asm|__emit|_emit)\b|#\s*pragma\s+(optimize|code_seg)")
 PADDING = (0x90, 0xCC)
 TIBSUN = ROOT / "reference/tibsun/code"
@@ -108,6 +111,9 @@ def annotations(src: Path) -> list[tuple[int, str]]:
     for i, line in enumerate(lines):
         m = ANNOTATION.match(line)
         if not m:
+            continue
+        if m.group(2):
+            out.append((int(m.group(1), 16), m.group(2)))
             continue
         decl = " ".join(lines[i + 1:i + 4])
         n = re.search(r"((?:\w+::)*(?:operator\s*\S+?|~?\w+))\s*\(", decl)
@@ -363,6 +369,20 @@ def compare_one(orig, obj, raw, address, name, names, local, pick, score=False) 
     return res
 
 
+def function_symbols(obj: CoffObject) -> set[str]:
+    """Every function symbol the object defines or references."""
+    if not hasattr(obj, "function_names"):
+        obj.function_names = {s.name for s in obj.symbols if s.type == 0x20}
+    return obj.function_names
+
+
+def overloaded(sym: str, decorated, declared=()) -> bool:
+    """Whether the undecorated name of `sym` is ambiguous: another overload of it is known
+    by its decorated symbol, or is in `declared` too."""
+    name = qualified(sym)
+    return any(d != sym and qualified(d) == name for d in (*decorated, *declared))
+
+
 def check_ref(orig, obj, raw, target, sec, start, address, got, names, local):
     """Whether a linker-filled field points where the original's does."""
     if target.section == sec.number:
@@ -388,10 +408,7 @@ def check_ref(orig, obj, raw, target, sec, start, address, got, names, local):
     if placeholder:
         want = int(placeholder.group(1), 16)
         return ("ok" if got == want else "mismatch"), want
-    # An undecorated name says nothing about which overload it is once another overload of
-    # that name is known by its decorated symbol.
-    overloaded = any(qualified(d) == name for d in local)
-    if name in names and not overloaded:
+    if name in names and not overloaded(target.name, local, function_symbols(obj)):
         want = names[name]
         return ("ok" if got == want else "mismatch"), want
     return "unverified", None
