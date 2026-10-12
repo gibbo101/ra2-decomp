@@ -33,6 +33,9 @@ Electronic Arts Inc.
   Red Alert, Renegade) and from [OpenTS](https://github.com/OpenTS-Developers), so
   Electronic Arts' additional terms at the end of `COPYING.md` apply to that material.
 - **Tooling and data** (everything else): MIT, in `LICENSE`.
+  `tools/permute.py` and `tools/permute_mutate.py` are adapted from the MIT-licensed
+  tools of [Byte Tactics](https://github.com/HectorBailey/byte-tactics) and keep their
+  notice.
 
 Neither licence grants any right to Electronic Arts' trademarks or to the game itself.
 

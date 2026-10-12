@@ -41,4 +41,6 @@ that comes first.
 - No personal data in files, comments, commit messages or author fields: no real names,
   personal email, home-directory paths or host names. Author email is the GitHub no-reply
   address.
+- A third party's licence notice on code adapted from them stays intact, author name
+  included; the rule above covers the maintainer's own data.
 - No Co-Authored-By or other AI attribution lines in commit messages.
