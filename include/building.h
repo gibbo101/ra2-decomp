@@ -57,6 +57,8 @@ class BuildingClass : public TechnoClass
 		AnimClass * DamageFireAnims[8];
 		bool RequiresDamageFires;
 
+		void FUN_0043C0D0(void);
+
 		BuildingTypeClass const * Upgrades[BUILDING_UPGRADE_MAX];
 
 		int LastSuperWeaponIndex;

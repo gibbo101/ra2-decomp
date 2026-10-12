@@ -1,0 +1,102 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright 2026 ra2-decomp contributors
+// Copyright 2025 Electronic Arts Inc.; 2026 OpenTS contributors
+// Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
+#pragma once
+
+#include "always.h"
+#include "vector.h"
+#include "widewstring.h"
+#include "wstring.h"
+#include "cell.h"
+
+#include <windows.h>
+
+class CCINIClass;
+class NoInitClass;
+class HouseClass;
+
+class MPTeam
+{
+	public:
+		virtual ~MPTeam(void);
+		virtual bool IsTeamIncluded(int index);
+		virtual bool SetPlayerTeam(int player);
+
+		wchar_t * Title;
+		int Index;
+};
+
+class MPGameModeClass
+{
+	public:
+		static MPGameModeClass * __fastcall Get(int index);
+
+		MPGameModeClass(NoInitClass const &) {}
+		virtual ~MPGameModeClass(void);
+		virtual bool vt_entry_04(void);
+		virtual bool vt_entry_08(void);
+		virtual bool vt_entry_0C(unsigned a);
+		virtual bool vt_entry_10(void);
+		virtual bool vt_entry_14(unsigned a);
+		virtual bool vt_entry_18(void);
+		virtual bool vt_entry_1C(unsigned a);
+		virtual void vt_entry_20(void);
+		virtual void vt_entry_24(void);
+		virtual int vt_entry_28(void);
+		virtual int vt_entry_2C(void);
+		virtual int vt_entry_30(void);
+		virtual bool CanAllyWith(int index);
+		virtual void vt_entry_38(unsigned a);
+		virtual bool IsAIAllowed(void);
+		virtual bool vt_entry_40(void);
+		virtual int FirstValidMapIndex(void);
+		virtual void PopulateTeamDropdown(HWND hwnd, DynamicVectorClass<MPTeam *> * teams, MPTeam * team);
+		virtual void DrawTeamDropdown(HWND hwnd, DynamicVectorClass<MPTeam *> * teams, MPTeam * team);
+		virtual void PopulateTeamDropdownForPlayer(HWND hwnd, int index);
+		virtual bool vt_entry_54(int a1, int a2, void * ptr, int a4, short a5, int a6, int a7);
+		virtual bool vt_entry_58(int a1, int a2, void * ptr, int a4, short a5, int a6, int a7, int a8, int a9);
+		virtual bool vt_entry_5C(unsigned a, unsigned b, unsigned c);
+		virtual bool vt_entry_60(void);
+		virtual bool vt_entry_64(void);
+		virtual bool vt_entry_68(void);
+		virtual int RandomHumanCountryIndex(void);
+		virtual int RandomAICountryIndex(void);
+		virtual void vt_entry_74(unsigned a, unsigned b);
+		virtual void vt_entry_78(unsigned a);
+		virtual bool UnfixAlliances(void);
+		virtual bool StartingPositionsToHouseBaseCells(char unused);
+		virtual bool StartingPositionsToHouseBaseCells2(bool arg);
+		virtual bool AllyTeams(void);
+		virtual bool vt_entry_8C(void);
+		virtual void vt_entry_90(void);
+		virtual void vt_entry_94(void);
+		virtual int vt_entry_98(void);
+		virtual void vt_entry_9C(void);
+		virtual void vt_entry_A0(unsigned a);
+		virtual void vt_entry_A4(unsigned a);
+		virtual bool vt_entry_A8(void);
+		virtual void vt_entry_AC(void);
+		virtual void vt_entry_B0(void);
+		virtual bool vt_entry_B4(int a1, void * ptr, int a3, short a4, int a5, int a6, int a7);
+		virtual int vt_entry_B8(void);
+		virtual bool vt_entry_BC(void);
+		virtual void CreateMPTeams(DynamicVectorClass<MPTeam> * teams);
+		virtual Cell * AssignStartingPositionsToHouse(Cell * result, int house, DynamicVectorClass<Cell> * coords, unsigned char * satisfied);
+		virtual bool SpawnBaseUnits(HouseClass * house, unsigned unused);
+		virtual bool GenerateStartingUnits(HouseClass * house, int & amount);
+
+		bool unknown_4;
+		DynamicVectorClass<MPTeam *> MPTeams;
+		WideWstring UIName;
+		WideWstring CSFTooltip;
+		int MPModeIndex;
+		Wstring INIFilename;
+		Wstring MapFilter;
+		bool AIAllowed;
+		CCINIClass * INI;
+		bool AlliesAllowed;
+		bool wolTourney;
+		bool wolClanTourney;
+		bool MustAlly;
+};

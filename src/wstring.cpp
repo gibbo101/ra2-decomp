@@ -19,6 +19,21 @@ Wstring::Wstring(IN const Wstring& other) :str(NULL)
 	}
 }
 
+// FUNCTION: 0x007B4710
+bool Wstring::operator==(IN char const* other) const
+{
+	if ((str == NULL) && (other == NULL))
+		return(TRUE);
+
+	if ((str == NULL) || (other == NULL))
+		return(FALSE);
+
+	if (strcmp(str, other) != 0)
+		return(FALSE);
+	else
+		return(TRUE);
+}
+
 // FUNCTION: 0x007B4780
 bool Wstring::operator==(IN Wstring const& other) const
 {

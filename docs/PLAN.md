@@ -605,6 +605,16 @@ StageClass (28 bytes) and BANIM_COUNT (21) are fixed from the exe. Still banked:
 two stats queue functions (an inline-and-call mix of Grow and Shrink) and the 0x004A65C0
 / 0x004A66D0 twins at 95.5%. Merge gate: 1,435 of 1,435.
 
+Spike consolidation (12 October 2026, one Sonnet agent, about 0.44M tokens): 15 of the
+18 stub-based spike matches now match in `src/` on real headers, plus one function
+found on the way; twelve new headers (AnimClass, AnimTypeClass and UnitTypeClass PASS
+headercheck). Three identities came from the vtable the constructor stores last:
+0x00779690 is PlayerProfile's constructor, 0x00628E80 and 0x0063EE30 are template
+vector destructors. Banked: the map-seed dialog (needs YR's ScenarioClass, whose TS
+layout agrees only to 0x218), a uicmnds function whose original calls one template
+instance's members and inlines another's, and the three spike near misses. `build/spike/`
+is gone. Merge gate: 1,452 of 1,452 (170.8 KB).
+
 ### Decide before the first batch
 
 - **Module layout.** Which function lives in which source file, and the link order, decide

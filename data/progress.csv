@@ -30,6 +30,7 @@ address,name,result,size,source,symbol
 0x00420D40,AlphaShapeClass::GetClassID,MATCH,56,src/alphashp.cpp,?GetClassID@AlphaShapeClass@@UAGJPAU_GUID@@@Z
 0x00420E40,AlphaShapeClass::Save,MATCH,33,src/alphashp.cpp,?Save@AlphaShapeClass@@UAGJPAUIStream@@H@Z
 0x004216C0,AlphaShapeClass::Calculate_Brightness_Table,MATCH,112,src/alphashp.cpp,?Calculate_Brightness_Table@AlphaShapeClass@@SIXXZ
+0x00422BE0,AnimClass::Center_Coord,MATCH,133,src/anim.cpp,?Center_Coord@AnimClass@@UBE?AVCoord@@XZ
 0x004238B0,AnimClass::Mark,MATCH,18,src/anim.cpp,?Mark@AnimClass@@UAE_NW4MarkType@@@Z
 0x004238D0,AnimClass::Occupy_List,MATCH,69,src/anim.cpp,?Occupy_List@AnimClass@@UBEPBVCell@@_N@Z
 0x00426540,AnimClass::GetClassID,MATCH,56,src/anim.cpp,?GetClassID@AnimClass@@UAGJPAU_GUID@@@Z
@@ -76,6 +77,7 @@ address,name,result,size,source,symbol
 0x0042F1E0,BaseClass::BaseClass,MATCH,119,src/base.cpp,??0BaseClass@@QAE@ABVNoInitClass@@@Z
 0x0042F260,BaseClass::Mark_Node_Placed,MATCH,212,src/base.cpp,?Mark_Node_Placed@BaseClass@@QAEXPBVBuildingClass@@@Z
 0x0042FD30,Base64_Encode,MATCH,285,src/base64.cpp,?Base64_Encode@@YIHPBXHPAXH@Z
+0x004300E0,Init_004300E0,MATCH,44,src/beacon.cpp,?Init_004300E0@@YIXXZ
 0x004318F0,Benchmark::Benchmark,MATCH,47,src/bench.cpp,??0Benchmark@@QAE@XZ
 0x00431920,Benchmark::Reset,MATCH,12,src/bench.cpp,?Reset@Benchmark@@QAEXXZ
 0x004319D0,Benchmark::Step,MATCH,58,src/bench.cpp,?Step@Benchmark@@QAEIXZ
@@ -118,8 +120,10 @@ address,name,result,size,source,symbol
 0x0043AEF0,BufferClass::BufferClass,MATCH,31,src/buffer.cpp,??0BufferClass@@QAE@H@Z
 0x0043AF10,BufferClass::BufferClass,MATCH,13,src/buffer.cpp,??0BufferClass@@QAE@XZ
 0x0043AF20,BufferClass::~BufferClass,MATCH,17,src/buffer.cpp,??1BufferClass@@QAE@XZ
+0x0043C0D0,BuildingClass::FUN_0043C0D0,MATCH,460,src/building.cpp,?FUN_0043C0D0@BuildingClass@@QAEXXZ
 0x00459E80,BuildingClass::GetClassID,MATCH,56,src/building.cpp,?GetClassID@BuildingClass@@UAGJPAU_GUID@@@Z
 0x00464A70,BuildingTypeClass::Coord_Fixup,MATCH,74,src/builtype.cpp,?Coord_Fixup@BuildingTypeClass@@UBE?BVCoord@@ABV2@@Z
+0x00464B30,BuildingTypeClass::Compute_CRC,MATCH,1238,src/builtype.cpp,?Compute_CRC@BuildingTypeClass@@UBEXAAVCRCEngine@@@Z
 0x00465380,BuildingTypeClass::GetClassID,MATCH,56,src/builtype.cpp,?GetClassID@BuildingTypeClass@@UAGJPAU_GUID@@@Z
 0x00466660,BulletClass::Occupy_List,MATCH,69,src/bullet.cpp,?Occupy_List@BulletClass@@UBEPBVCell@@_N@Z
 0x004666C0,BulletClass::Mark,MATCH,18,src/bullet.cpp,?Mark@BulletClass@@UAE_NW4MarkType@@@Z
@@ -222,6 +226,7 @@ address,name,result,size,source,symbol
 0x0048E570,ControlClass::ControlClass,MATCH,39,src/control.cpp,??0ControlClass@@QAE@ABV0@@Z
 0x0048E600,ControlClass::Make_Peer,MATCH,10,src/control.cpp,?Make_Peer@ControlClass@@UAEXAAVGadgetClass@@@Z
 0x0048E620,ControlClass::Draw_Me,MATCH,33,src/control.cpp,?Draw_Me@ControlClass@@UAEHH@Z
+0x0049D120,CoopCamp_0049B610::FUN_0049D120,MATCH,623,src/coopcamp.cpp,?FUN_0049D120@CoopCamp_0049B610@@QAE_NXZ
 0x0049F550,Adjacent_Coord_With_Height,MATCH,111,src/coord.cpp,?Adjacent_Coord_With_Height@@YI?AVCoord@@ABV1@W4FacingType@@@Z
 0x0049FAE0,CounterClass::Value,MATCH,81,src/counter.cpp,?Value@CounterClass@@QBEHH@Z
 0x0049FC80,CounterClass::Reserve,MATCH,81,src/counter.cpp,?Reserve@CounterClass@@QAE_NH@Z
@@ -792,6 +797,7 @@ address,name,result,size,source,symbol
 0x005BFF60,Movie_Play,MATCH,274,src/movies.cpp,?Movie_Play@@YIXPAUVQHandle@@_NW4ThemeType@@1@Z
 0x005C0080,Movie_Advance_Frame,MATCH,37,src/movies.cpp,?Movie_Advance_Frame@@YI_NPAUVQHandle@@AA_N@Z
 0x005C00B0,Movie_Is_Playing,MATCH,14,src/movies.cpp,?Movie_Is_Playing@@YI_NXZ
+0x005C18A0,MPCooperative::vt_entry_10,MATCH,215,src/mpcoop.cpp,?vt_entry_10@MPCooperative@@UAE_NXZ
 0x005C6120,Clear_Vector,MATCH,46,src/mplayer.cpp,?Clear_Vector@@YIXPAV?$DynamicVectorClass@PAUNodeNameType@@@@@Z
 0x005C69A0,XMP_Count_Bytes,MATCH,26,src/mpmath.cpp,?XMP_Count_Bytes@@YIHPBIH@Z
 0x005C69C0,XMP_Move,MATCH,17,src/mpmath.cpp,?XMP_Move@@YIXPAIPBIH@Z
@@ -840,6 +846,7 @@ address,name,result,size,source,symbol
 0x005D5010,Remove_Accelerator,MATCH,97,src/msgloop.cpp,?Remove_Accelerator@@YIXPAUHACCEL__@@@Z
 0x005D5870,MillisecondSystemTimerClass::MillisecondSystemTimerClass,MATCH,15,src/mstimer.cpp,??0MillisecondSystemTimerClass@@QAE@XZ
 0x005D5880,MillisecondSystemTimerClass::~MillisecondSystemTimerClass,MATCH,9,src/mstimer.cpp,??1MillisecondSystemTimerClass@@QAE@XZ
+0x005D5F30,MPGameModeClass::Get,MATCH,201,src/multiplayer.cpp,?Get@MPGameModeClass@@SIPAV1@H@Z
 0x005DAB80,Compute_Name_CRC,MATCH,122,src/netdlg.cpp,?Compute_Name_CRC@@YIIPAD@Z
 0x005DAF20,Net2Callback,MATCH,13,src/netdlg2.cpp,?Net2Callback@@YI_NXZ
 0x005E2620,Wstring_Hash,MATCH,68,src/netshare.cpp,?Wstring_Hash@@YIIAAVWstring@@@Z
@@ -865,6 +872,7 @@ address,name,result,size,source,symbol
 0x005F1F00,NullModemClass::Reset_Response_Time,MATCH,20,src/nullmgr.cpp,?Reset_Response_Time@NullModemClass@@UAEX_N@Z
 0x005F1F20,NullModemClass::Oldest_Send,MATCH,72,src/nullmgr.cpp,?Oldest_Send@NullModemClass@@QAEPAXXZ
 0x005F1F70,NullModemClass::Configure_Debug,MATCH,43,src/nullmgr.cpp,?Configure_Debug@NullModemClass@@UAEXHHHPAPADHH@Z
+0x005F2950,NullModemClass::Dial_Modem,MATCH,903,src/nullmgr.cpp,?Dial_Modem@NullModemClass@@QAE?AW4DialStatusType@@PADW4DialMethodType@@_N@Z
 0x005F3170,NullModemClass::Hangup_Modem,MATCH,430,src/nullmgr.cpp,?Hangup_Modem@NullModemClass@@QAE_NXZ
 0x005F3320,NullModemClass::Setup_Modem_Echo,MATCH,19,src/nullmgr.cpp,?Setup_Modem_Echo@NullModemClass@@QAEXP6IXD@Z@Z
 0x005F3350,NullModemClass::Print_EchoBuf,MATCH,71,src/nullmgr.cpp,?Print_EchoBuf@NullModemClass@@QAEXXZ
@@ -934,6 +942,7 @@ address,name,result,size,source,symbol
 0x00626170,PaletteClass::Partial_Adjust,MATCH,54,src/palette.cpp,?Partial_Adjust@PaletteClass@@QAEXHPAD@Z
 0x006261B0,PaletteClass::Partial_Adjust,MATCH,75,src/palette.cpp,?Partial_Adjust@PaletteClass@@QAEXHABV1@PAD@Z
 0x00626200,PaletteClass::Closest_Color,MATCH,69,src/palette.cpp,?Closest_Color@PaletteClass@@QBEHABVRGBClass@@@Z
+0x00628E80,?$VectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@::~?$VectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@,MATCH,73,src/palette.cpp,??_G?$VectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@@@UAEPAXI@Z
 0x0062D6F0,ParticleClass::Mark,MATCH,18,src/particle.cpp,?Mark@ParticleClass@@UAE_NW4MarkType@@@Z
 0x0062D710,ParticleClass::Occupy_List,MATCH,69,src/particle.cpp,?Occupy_List@ParticleClass@@UBEPBVCell@@_N@Z
 0x0062D780,Approximate_Distance,MATCH,26,src/particle.cpp,?Approximate_Distance@@YIHAAVPoint2D@@@Z
@@ -963,6 +972,10 @@ address,name,result,size,source,symbol
 0x00633130,PKStraw::Get,MATCH,455,src/pkstraw.cpp,?Get@PKStraw@@UAEHPAXH@Z
 0x00633300,PKStraw::Encrypted_Key_Length,MATCH,40,src/pkstraw.cpp,?Encrypted_Key_Length@PKStraw@@ABEHXZ
 0x00633330,PKStraw::Plain_Key_Length,MATCH,39,src/pkstraw.cpp,?Plain_Key_Length@PKStraw@@ABEHXZ
+0x006333D0,Init_006333D0,MATCH,40,src/pkstraw.cpp,?Init_006333D0@@YIXXZ
+0x0063D630,FUN_0063D630,MATCH,474,src/planmgr.cpp,?FUN_0063D630@@YIXHHVPoint2D@@0H@Z
+0x0063E540,?$DynamicVectorClass@H::Add,MATCH,80,src/planmgr.cpp,?Add@?$DynamicVectorClass@H@@QAE_NABH@Z
+0x0063EE30,?$VectorClass@PAVEventClass@@::~?$VectorClass@PAVEventClass@@,MATCH,73,src/planmgr.cpp,??_G?$VectorClass@PAVEventClass@@@@UAEPAXI@Z
 0x0063F080,Rasterize_Polygon,MATCH,602,src/polygon.cpp,?Rasterize_Polygon@@YIXABUPolygonShapeStruct@@AAUPolygonRasterStruct@@@Z
 0x0063F2E0,Rasterize_Line_Span,MATCH,439,src/polygon.cpp,?Rasterize_Line_Span@@YIXHHHHHHAAPAVPoint2D@@@Z
 0x006406E0,MapPreviewClass::MapPreviewClass,MATCH,9,src/preview.cpp,??0MapPreviewClass@@QAE@XZ
@@ -1177,8 +1190,10 @@ address,name,result,size,source,symbol
 0x007286D0,TubeClass::GetClassID,MATCH,56,src/tube.cpp,?GetClassID@TubeClass@@EAGJPAU_GUID@@@Z
 0x0072A090,TunnelLocomotionClass::Can_Enter_Cell,MATCH,71,src/tunnel.cpp,?Can_Enter_Cell@TunnelLocomotionClass@@UAG?AW4MoveType@@UCellStruct@@@Z
 0x0072A110,TunnelLocomotionClass::GetClassID,MATCH,56,src/tunnel.cpp,?GetClassID@TunnelLocomotionClass@@UAGJPAU_GUID@@@Z
+0x007307F0,Init_007307F0,MATCH,19,src/uicmnds.cpp,?Init_007307F0@@YIXXZ
 0x00746DE0,UnitClass::GetClassID,MATCH,56,src/unit.cpp,?GetClassID@UnitClass@@UAGJPAU_GUID@@@Z
 0x00747600,UnitTypeClass::Turret_Adjust,MATCH,21,src/unittype.cpp,?Turret_Adjust@UnitTypeClass@@QBE?AV?$TPoint2D@H@@W4Dir256@@ABV2@@Z
+0x00747620,UnitTypeClass::Read_INI,MATCH,2188,src/unittype.cpp,?Read_INI@UnitTypeClass@@UAE_NAAVCCINIClass@@@Z
 0x00747EB0,UnitTypeClass::Coord_Fixup,MATCH,97,src/unittype.cpp,?Coord_Fixup@UnitTypeClass@@UBE?BVCoord@@ABV2@@Z
 0x00747F30,UnitTypeClass::GetClassID,MATCH,56,src/unittype.cpp,?GetClassID@UnitTypeClass@@UAGJPAU_GUID@@@Z
 0x007480B0,UnitTypeClass::Save,MATCH,29,src/unittype.cpp,?Save@UnitTypeClass@@UAGJPAUIStream@@H@Z
@@ -1405,9 +1420,11 @@ address,name,result,size,source,symbol
 0x00777B60,Build_By_String,MATCH,23,src/winstub.cpp,?Build_By_String@@YIPADPADH@Z
 0x00777B80,Build_By_Initials,MATCH,47,src/winstub.cpp,?Build_By_Initials@@YIPADPADH@Z
 0x00777BB0,Build_Version_String,MATCH,116,src/winstub.cpp,?Build_Version_String@@YIPADPADH@Z
+0x00779690,PlayerProfile::PlayerProfile,MATCH,145,src/wolpersonainformation.cpp,??0PlayerProfile@@QAE@ABVWstring@@HDHHHHHHHHDABVWideWstring@@1@Z
 0x007B25E0,WinsockInterfaceClass::Clear_Socket_Error,MATCH,79,src/wsproto.cpp,?Clear_Socket_Error@WinsockInterfaceClass@@UAEXI@Z
 0x007B26D0,WinsockInterfaceClass::Get_Host_Name,MATCH,66,src/wsproto.cpp,?Get_Host_Name@WinsockInterfaceClass@@UAE_NPADH@Z
 0x007B4690,Wstring::Wstring,MATCH,82,src/wstring.cpp,??0Wstring@@QAE@ABV0@@Z
+0x007B4710,Wstring::operator==,MATCH,99,src/wstring.cpp,??8Wstring@@QBE_NPBD@Z
 0x007B4780,Wstring::operator==,MATCH,102,src/wstring.cpp,??8Wstring@@QBE_NABV0@@Z
 0x007B4860,Wstring::operator!=,MATCH,102,src/wstring.cpp,??9Wstring@@QBE_NABV0@@Z
 0x007B4A10,Wstring::cat,MATCH,175,src/wstring.cpp,?cat@Wstring@@QAEDPBD@Z

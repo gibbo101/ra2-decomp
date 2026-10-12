@@ -45,6 +45,15 @@
 #include "tracker.h"
 #include "bench.hh"
 
+// FUNCTION: 0x00422BE0
+Coord AnimClass::Center_Coord(void) const
+{
+	if (OwnerObject != NULL) {
+		return(OwnerObject->Center_Coord() + BASECLASS::Center_Coord());
+	}
+	return(BASECLASS::Center_Coord());
+}
+
 // FUNCTION: 0x004238B0
 bool AnimClass::Mark(MarkType mark)
 {

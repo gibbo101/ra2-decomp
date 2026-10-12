@@ -78,6 +78,31 @@
 #include "weapon.h"
 #include "color.hh"
 
+extern Point2D DAT_0089C848;
+
+// FUNCTION: 0x0043C0D0
+void BuildingClass::FUN_0043C0D0(void)
+{
+	int count = Rule->DamageFireTypes.Count();
+	if (count) {
+		int idx = Random_Pick(0, count - 1);
+		for (int i = 0; i < 8; i++) {
+			if (Class->DamageFireOffset[i] == DAT_0089C848) return;
+			if (DamageFireAnims[i]) return;
+			Coord c = Coord(TacticalMap->Pixel_To_Lepton(Class->DamageFireOffset[i]), 0);
+			c += Render_Coord();
+			AnimClass * anim = new AnimClass(Rule->DamageFireTypes[idx], c, 0, 1, (ShapeFlags_Type)0x600, 0, false);
+			if (anim) {
+				DamageFireAnims[i] = anim;
+				anim->ZAdjust = (((Class->DamageFireOffset[i].Y - (Class->Height() + Class->Width()) * 15) * 3) >> 1) - 10;
+				if (anim->ZAdjust > 0) anim->ZAdjust = 0;
+				if (anim->Type->End > 0) anim->Animation.Set_Stage(Random_Pick(0, anim->Type->End - 1));
+				if (++idx >= count) idx = 0;
+			}
+		}
+	}
+}
+
 // FUNCTION: 0x00459E80
 HRESULT STDMETHODCALLTYPE BuildingClass::GetClassID(CLSID * retval)
 {

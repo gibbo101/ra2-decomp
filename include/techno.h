@@ -5,6 +5,7 @@
 #pragma once
 
 #include "_voxel.h"
+#include "audioctl.h"
 #include "cargo.h"
 #include "comtypes.h"
 #include "door.h"
@@ -49,15 +50,6 @@ class TeamClass;
 class RadBeam;
 class PlanningTokenClass;
 class ObjectTypeClass;
-
-struct AudioController
-{
-	void * Event;
-	unsigned Stamp;
-	void * EventType;
-	void ** AudioIndex;
-	unsigned Unused;
-};
 
 struct RecoilData
 {

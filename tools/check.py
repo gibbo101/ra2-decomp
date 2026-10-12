@@ -11,7 +11,9 @@ A function is tied to its address by a marker on the line before its definition:
     int RawFileClass::Seek(int pos, int dir)
 
 A function a header defines, which the file's object emits out of line, is named on its
-marker instead: `// FUNCTION: 0x005FE020 XSurface::XSurface`.
+marker instead: `// FUNCTION: 0x005FE020 XSurface::XSurface`. A template instance is named by its
+mangled class name: `// FUNCTION: 0x0063E540 ?$DynamicVectorClass@H::Add` (an explicit
+`template class DynamicVectorClass<int>;` makes the object emit it).
 
 A function MATCHES when it is as long as the original (data/functions.csv), every byte
 the compiler emits is identical, and every field the linker fills in points at the
@@ -50,7 +52,7 @@ from coff import REL_DIR32, REL_REL32, CoffObject  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 FLAGS = ["/c", "/O2", "/Ob2", "/Gr", "/GR", "/MT", "/DWIN32"]
-ANNOTATION = re.compile(r"^\s*//\s*FUNCTION:\s*(0x[0-9A-Fa-f]+)(?:\s+((?:\w+::)*~?\w+))?\s*$")
+ANNOTATION = re.compile(r"^\s*//\s*FUNCTION:\s*(0x[0-9A-Fa-f]+)(?:\s+((?:[\w?$@]+::)*~?[\w?$@]+))?\s*$")
 FORBIDDEN = re.compile(r"\b(__asm|_asm|__emit|_emit)\b|#\s*pragma\s+(optimize|code_seg)")
 PADDING = (0x90, 0xCC)
 TIBSUN = ROOT / "reference/tibsun/code"

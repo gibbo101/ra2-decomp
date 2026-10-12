@@ -32,14 +32,18 @@ original compiler turns into that function's exact bytes. MATCH means
    Headers in `include/` for these classes are proven against the exe (size, member
    offsets, every vtable slot): AbstractClass, AbstractTypeClass, ObjectClass,
    MissionClass, RadioClass, TechnoClass, BuildingClass, ObjectTypeClass,
-   TechnoTypeClass, BuildingTypeClass, BaseClass, TeamClass. Include them rather than
-   writing stand-ins; `uv run tools/headercheck.py <Class>` proves any header you fix in
+   TechnoTypeClass, BuildingTypeClass, BaseClass, TeamClass, AnimClass, AnimTypeClass,
+   UnitTypeClass, and the shared ones batch 1 gave YR's layout (RulesClass, HouseClass,
+   CellClass, FootClass, the file classes, the gadgets, the surfaces). Include them
+   rather than writing stand-ins; `uv run tools/headercheck.py <Class>` proves any header you fix in
    your overlay.
 3. Mark the definition with `// FUNCTION: <ADDR>` on the line before it. The function
    must not be `static`: an unused static is discarded and the checker finds nothing.
    A function a header defines, which the module's object emits out of line (an inline
    constructor, a compiler-generated destructor), takes `// FUNCTION: <ADDR> Class::Name`
-   with no definition after it.
+   with no definition after it. A template instance takes its mangled class name
+   (`// FUNCTION: 0x0063E540 ?$DynamicVectorClass@H::Add`) and `template class X<T>;`
+   to force emission; VC6 ignores `template bool X<int>::f(...)`.
 4. `uv run tools/check.py build/spike/<ADDR>/<module>.cpp <ADDR> --overlay build/spike/<ADDR>/include`
 5. Read the diff, change the source, repeat.
 
@@ -169,6 +173,8 @@ Each entry: what the diff showed, then the source change that fixed it.
 - A constructor storing two vptrs (base, then derived) does its work in the base
   constructor; the derived one is empty. Init list versus body moves the vptr store.
 - A function-local static whose guard is re-tested at each use sits in an inline accessor.
+- The vptr a constructor or destructor stores last names its class: read the RTTI at
+  vtable minus 4 (`Exe.vtables()` in headercheck.py) before naming one.
 - A pushed `__FILE__` and line: `#line 215 "D:\\ra2mdpost\\AbsType.cpp"` before the
   statement. A string's first-character test: `if (*name)`, not `if (name[0])`.
 
@@ -189,6 +195,10 @@ Each entry: what the diff showed, then the source change that fixed it.
 - TS sizes YR changed: StageClass 24 to 28 bytes (`stage.h`), BANIM_COUNT 13 to 21
   (`banim.hh`), attached particle systems 5 to 8, weapon slots 3 to 18.
 - Keep TS member names at YR's offsets; use YRpp names only for members TS lacks.
+- A TS layout can agree with YR's for a prefix only (ScenarioClass, to 0x218): run
+  headercheck before porting a function that reaches past it.
+- Porting a stub-based match: drop the overlay and map stub members onto the real
+  header by offset, keeping TS names. Most then match in one or two checks.
 
 ## Known dead ends
 
@@ -201,6 +211,8 @@ Each entry: what the diff showed, then the source change that fixed it.
 - A varargs member to explain an ECX argument plus caller-popped pushes.
 - `delete this` in a deleting destructor: it adds a virtual call and a null test.
 - For 0x00421EA0's x87 order: removing uses of 0, Vector3 constructor or member forms.
+- `DynamicVectorClass<T>`'s constructor and Add are called for some T and inlined for
+  others in the original; no instantiation order tried reproduces it.
 
 ## Report
 

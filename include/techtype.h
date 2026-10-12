@@ -489,6 +489,7 @@ class TechnoTypeClass : public ObjectTypeClass
 		virtual int Get_Ownable(void) const override;
 		virtual int Max_Pips(void) const override;
 		bool In_Range(Coord const & coord, AbstractClass * target, WeaponTypeClass * weapon) const;
+		void FUN_00717890(int index, int weapon);
 		virtual bool Read_INI(CCINIClass & ini) override;
 
 		WeaponDataStruct const * Get_Weapon(int which) const;

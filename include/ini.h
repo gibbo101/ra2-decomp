@@ -142,6 +142,7 @@ class INIClass {
 
 		static bool Is_A_Section(char * buffer);
 		INISection * Find_Section(char const * section) const;
+		INISection * GetSection(char const * section);
 		INIEntry * Find_Entry(char const * section, char const * entry) const;
 		static void Strip_Comments(char * buffer);
 		static char * Scan_Line_For_Columns(char * buffer, int & assign_pos, int & value_pos, int & comment_pos);

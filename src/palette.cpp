@@ -5,6 +5,9 @@
 
 #include "always.h"
 #include "palette.h"
+#include "hashstr.h"
+#include "hashtable.h"
+#include "vector.h"
 #include <cstring>
 
 // FUNCTION: 0x00626020
@@ -76,3 +79,8 @@ int PaletteClass::Closest_Color(RGBClass const & rgb) const
 	}
 	return(closest);
 }
+
+class SchemeNode;
+
+// FUNCTION: 0x00628E80 ?$VectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@::~?$VectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@
+template class VectorClass<HashObject<HashString, SchemeNode *> >;

@@ -18,6 +18,8 @@
 #include "ownrdraw.h"
 #include "session.h"
 #include "wincomm.h"
+#include "stringtable.h"
+#include "stimer.h"
 #define ESC		         27
 #define NOKEY           0xffff
 #define INIT_COMMAND_RETRIES	2
@@ -541,6 +543,132 @@ void NullModemClass::Configure_Debug(int, int type_offset, int type_size,
 	if (Connection)
 		Connection->Queue->Configure_Debug (type_offset, type_size, names,
 			namestart, namecount);
+}
+
+extern char ModemRXString[80];
+
+namespace OwnerDraw {
+	HWND Custom_Message_Box(wchar_t const * btn1txt, wchar_t const * btn2txt, bool * cancelled);
+}
+
+// FUNCTION: 0x005F2950
+DialStatusType NullModemClass::Dial_Modem(char * string, DialMethodType method, bool reconnect)
+{
+	bool process = true;
+	int delay;
+	DialStatusType dialstatus = DIAL_ERROR;
+	wchar_t const * text_buffer;
+	char buffer[80*3];
+
+	DebugString("Dial_Modem\n");
+
+	if (reconnect == true) {
+#line 1409 "D:\\ra2mdpost\\NullMgr.CPP"
+		text_buffer = StringTable::LoadString("TXT_MODEM_CONNERR_REDIALING", NULL, __FILE__, __LINE__);
+	} else {
+#line 1411 "D:\\ra2mdpost\\NullMgr.CPP"
+		text_buffer = StringTable::LoadString("TXT_DIALING", NULL, __FILE__, __LINE__);
+	}
+	ModemDialogIsOpen = false;
+#line 1415 "D:\\ra2mdpost\\NullMgr.CPP"
+	HWND dialog = OwnerDraw::Custom_Message_Box(text_buffer, StringTable::LoadString("TXT_CANCEL", NULL, __FILE__, __LINE__), &ModemDialogIsOpen);
+
+	if (dialog) {
+		OwnerDraw::Display_Dialog(dialog);
+
+		DebugString("Setting modem dial type\n");
+		SerialPort->Set_Modem_Dial_Type((WinCommDialMethodType) method);
+
+		DebugString("Clearing results buffer\n");
+		SerialPort->Get_Modem_Result(TIMER_SECOND, buffer, 81, -1);
+
+		DebugString("Calling dial function\n");
+		SerialPort->Dial_Modem(string);
+
+		SerialPort->Set_Abort_Function((int(*)(void))Abort_Modem);
+		ModemDialogIsOpen = false;
+
+		delay = ModemWaitCarrier;
+		DebugString("Waiting for dial result\n");
+		while (process == true) {
+
+			if (OwnerDraw::Dialog_Message_Handler() != 1 && !ModemDialogIsOpen) {
+				Title_Screen_Restore();
+				memset(buffer, 0, sizeof(buffer));
+				delay = SerialPort->Get_Modem_Result(delay, buffer, 81, TIMER_SECOND / 4);
+
+				if (delay == -1000) {
+					dialstatus = DIAL_CANCELED;
+					if (SerialPort != NULL) {
+						char escape[3] = "\r";
+						SerialPort->Write_To_Serial_Port((unsigned char*)escape, sizeof(escape)-1);
+					}
+					DebugString("Dialling cancelled\n");
+					process = false;
+					break;
+				}
+
+				strupr(buffer);
+				if (strlen(buffer)) {
+					DebugString("From Modem: %s\n", buffer);
+				}
+
+				if ( strstr( buffer, "CON" ) != 0 ) {
+					memset (ModemRXString, 0, 80);
+					strncpy (ModemRXString, buffer, 79);
+					dialstatus = DIAL_CONNECTED;
+					DebugString("Dial result is %s\n", buffer);
+					process = false;
+				} else if ( strncmp( buffer, "BUSY", 4 ) == 0 ) {
+					dialstatus = DIAL_BUSY;
+					DebugString("Dial result is %s\n", buffer);
+					process = false;
+				} else if ( strncmp( buffer, "NO C", 4 ) == 0 ) {
+					dialstatus = DIAL_NO_CARRIER;
+					DebugString("Dial result is %s\n", buffer);
+					process = false;
+				} else if ( strncmp( buffer, "NO D", 4 ) == 0 ) {
+					dialstatus = DIAL_NO_DIAL_TONE;
+					DebugString("Dial result is %s\n", buffer);
+					process = false;
+				} else if ( strncmp( buffer, "ERRO", 4 ) == 0 ) {
+					dialstatus = DIAL_ERROR;
+					DebugString("Dial result is %s\n", buffer);
+					process = false;
+				}
+
+				if (delay <= 0) {
+					DebugString("NullModemClass::Dial_Modem has timed out\n");
+					if (strlen(buffer)) {
+						DebugString("Dial result is %s\n", buffer);
+					}
+					if (SerialPort != NULL) {
+						char escape[3] = "\r";
+						SerialPort->Write_To_Serial_Port((unsigned char*)escape, sizeof(escape)-1);
+					}
+					dialstatus = DIAL_TIMEOUT;
+					process = false;
+					break;
+				}
+			} else {
+				dialstatus = DIAL_CANCELED;
+				process = false;
+				if (SerialPort != NULL) {
+					char escape[3] = "\r";
+					SerialPort->Write_To_Serial_Port((unsigned char *)escape, sizeof(escape)-1);
+				}
+				DebugString("Dialling cancelled\n");
+				break;
+			}
+		}
+
+		SerialPort->Set_Abort_Function(NULL);
+		ModemDialogIsOpen = false;
+
+		OwnerDraw::End_Dialog(dialog);
+	}
+
+	return( dialstatus );
 }
 
 // FUNCTION: 0x005F3170
