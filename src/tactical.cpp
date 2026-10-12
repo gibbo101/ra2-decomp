@@ -58,6 +58,122 @@
 #include "zbuffer.h"
 #include "ramp.hh"
 #include "scrspeed.hh"
+#include "fastmath.h"
+
+DynamicVectorClass<DirtyAreaStruct> Tactical::DirtyAreas;
+
+Tactical::Selectable Tactical::SelectableObjects[Tactical::MAX_SELECTABLE_OBJECTS];
+
+DynamicVectorClass<ShadowControlClass *> Tactical::ShadowControls;
+
+static double PixelsPerLepton;
+static double ZPixelsPerLepton = fastmath::sin(RAD_60) * (PixelsPerLepton = 60.0 / CELL_LEPTON_DIAG);
+static double ZLeptonsPerPixel = CELL_LEPTON_DIAG / (fastmath::sin(RAD_60) * 60.0);
+
+// FUNCTION: 0x006D1A60 $E195
+// FUNCTION: 0x006D1AA0 $E192
+// FUNCTION: 0x006D1B00 $E198
+// FUNCTION: 0x006D1B10 $E204
+// FUNCTION: 0x006D1B50 $E201
+// FUNCTION: 0x006D1BB0 $E207
+// FUNCTION: 0x006D1BF0 $E210
+
+// FUNCTION: 0x006D1C20
+Tactical::Tactical(void) :
+	LastAIFrame(-1),
+	Flags(false, false),
+	TacPixelX(0),
+	TacPixelY(0),
+	LastTacPixelX(0),
+	LastTacPixelY(0),
+	ZoomFactor(1.0),
+	SelectableCount(0),
+	MoveFrom(COORD_NONE),
+	MoveTo(COORD_NONE),
+	MoveSpeed(0),
+	MoveFactor(0),
+	CellRedrawCount(0),
+	TacticalCoord(0,0),
+	LastTacticalCoord(0,0),
+	DesiredTacticalCoord(0,0),
+	IsFirstRender(true),
+	IsToRedraw(false),
+	UnusedBool(false),
+	VisibleCellRect(RECT_NONE),
+	RubberBandStart(0,0),
+	RubberBandEnd(0,0),
+	WaypointAnimCounter(0),
+	WaypointAnimTimer()
+{
+	for (int i = 0; i < ARRAY_SIZE(CellRedraw); i++) {
+		CellRedraw[i] = NULL;
+	}
+
+	ScreenText[0] = '\0';
+	EndGameGraphicsFrame = -1;
+
+	CoordToPixelMatrix.Make_Identity();
+	CoordToPixelMatrix.Rotate_X(RAD_60);
+	CoordToPixelMatrix.Rotate_Z(RAD_45);
+	CoordToPixelMatrix.Scale(60.0f / (float)CELL_LEPTON_DIAG);
+
+	float x_scale = 8.5334f;
+	float y_scale = 4.2667f;
+	PixelToCoordMatrix.Set(
+		 y_scale, x_scale, 0.0f, 0.0f,
+		-y_scale, x_scale, 0.0f, 0.0f,
+		 0.0f,    0.0f,    1.0f, 0.0f);
+
+	TacticalMap = this;
+}
+
+// FUNCTION: 0x006D1E30
+Tactical::Tactical(const NoInitClass &x) :
+	BASECLASS(x)
+{
+}
+
+// FUNCTION: 0x006D1E80
+Tactical::~Tactical(void)
+{
+	TacticalMap = NULL;
+}
+
+// FUNCTION: 0x006D1EB0
+Point2D Tactical::Rectangular_To_Isometric(Point2D point)
+{
+	Point2D iso;
+	iso.X = point.X * 60 / 2;
+	iso.Y = point.X * 30 / 2;
+	iso.X += point.Y * 60 / -2;
+	iso.Y += point.Y * 30 / 2;
+	return(iso);
+}
+
+static int Lepton_To_Z_Pixel(LEPTON lepton)
+{
+	int fudge = 0;
+	if (lepton >= 728) {
+		fudge = 1;
+	}
+	return(int(lepton * ZPixelsPerLepton + fudge + 0.5));
+}
+
+// FUNCTION: 0x006D1F10
+Point2D Tactical::Coord_To_Pixel_Absolute(Coord const & coord)
+{
+	Point2D pixel = Rectangular_To_Isometric(Point2D(coord.X, coord.Y));
+	pixel.X /= 256;
+	pixel.Y /= 256;
+	pixel.Y -= Lepton_To_Z_Pixel(coord.Z);
+	return(pixel);
+}
+
+// FUNCTION: 0x006D20E0
+int Tactical::Z_Lepton_To_Pixel(LEPTON lepton)
+{
+	return(Lepton_To_Z_Pixel(lepton));
+}
 
 // FUNCTION: 0x006D2790
 void Tactical::Register_Dirty_Area(Rect area, bool refresh_shroud)

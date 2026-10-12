@@ -510,7 +510,7 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 		void Adjust_Drain(int adjust);
 		void Update_Spied_Radar(HouseClass * house);
 		void Update_Spied_Power_Plants(void);
-		void Update_Factories(RTTIType rtti);
+		void Update_Factories(RTTIType rtti, bool naval, int buildcat);
 		double Power_Fraction(void) const;
 		double Tiberium_Fraction(void) const;
 		double Weed_Fraction(void) const;

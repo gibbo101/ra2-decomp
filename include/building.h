@@ -103,7 +103,7 @@ class BuildingClass : public TechnoClass
 		CDTimerClass<FrameTimerClass> CashProductionTimer;
 		bool IsAllowedToSell;
 		bool IsReadyToCommence;
-		bool IsRepairing;
+		bool IsWrenchVisible;
 		bool IsGoingToBlow;
 		bool IsSurvivorless;
 		bool IsCharging;
@@ -113,7 +113,7 @@ class BuildingClass : public TechnoClass
 		bool HasOpened;
 		bool IsDamagedAnims;
 		bool IsFogged;
-		bool IsWrenchVisible;
+		bool IsRepairing;
 		bool HasBuildupData;
 		bool IsPoweredOn;
 		char CloakGeneratorState;
@@ -150,7 +150,7 @@ class BuildingClass : public TechnoClass
 		virtual void const * Get_Image_Data(void) const override;
 		virtual int How_Many_Survivors(void) const override;
 		virtual void Scatter_Incoming_Infantry(void) const override;
-		virtual int Get_Collateral_Damage(void) const override;
+		virtual int DistanceToDockingCoord(TechnoClass * docker) const;
 		virtual int Get_Z_Adjust(void) const override;
 		virtual bool Is_Move_Override(void) const override;
 		virtual DirType Turret_Facing(void) const override;
@@ -205,7 +205,7 @@ class BuildingClass : public TechnoClass
 		Matrix3D Get_Barrel_Matrix(void) const;
 
 		virtual Coord Target_Coord(void) const override;
-		virtual Coord Docking_Coord(void) const override;
+		virtual Coord Docking_Coord(TechnoClass * docker) const override;
 		virtual Coord Render_Coord(void) const override;
 		virtual Coord Fire_Coord(int which, Coord base) const override;
 		virtual Coord Center_Coord(void) const override;
@@ -218,7 +218,6 @@ class BuildingClass : public TechnoClass
 		virtual void Init(void) override;
 		virtual void Detach(AbstractClass const * target, bool all) override;
 		virtual void Detach_All(bool all=true) override;
-		virtual void Grand_Opening(bool captured = false);
 		virtual MoveType Can_Enter_Cell(CellClass const * cell, FacingType dir = FACING_NONE, int cell_height = -1, CellClass const * = 0, bool = true) const override;
 		virtual bool Unlimbo(Coord const & , Dir256 dir = DIR_N) override;
 		virtual bool Limbo(void) override;
@@ -237,9 +236,10 @@ class BuildingClass : public TechnoClass
 		virtual void Draw_Radial_Indicator(void) const override;
 		void Draw_Overlays(Point2D const & point, Rect const & cliprect) const;
 		void Begin_Mode(BStateType bstate);
-		virtual void Draw_Extras(Point2D &point, Rect &rect);
 		virtual void Update_Buildables(void);
+		virtual void Draw_Extras(Point2D &point, Rect &rect);
 		virtual DirType Aim_Direction(AbstractClass * target) const;
+		virtual void Grand_Opening(bool captured = false);
 		void AfterDestruction(void);
 		void Make_Fogged(DynamicVectorClass<FoggedObjectClass *> * fogged_objects = NULL, CellClass * cellptr = NULL, bool fade = false);
 		void Charge_Turret(void);
@@ -280,10 +280,10 @@ class BuildingClass : public TechnoClass
 		virtual void Assign_Target(AbstractClass * target) override;
 		virtual void Do_Destruction(TechnoClass * last_contact, TechnoClass * source, bool forced, Cell const * offset);
 		virtual bool Toggle_Primary(void);
-		virtual unsigned entry_380(void);
 		virtual void SensorArrayDeactivate(Cell cell = Cell());
-		virtual void DisguiseDetectorActivate(Cell cell = Cell());
+		virtual void SensorArrayActivate(Cell cell = Cell());
 		virtual void DisguiseDetectorDeactivate(Cell cell = Cell());
+		virtual void DisguiseDetectorActivate(Cell cell = Cell());
 		void Turn_On(void);
 		void Turn_Off(void);
 		void Power_On(void);

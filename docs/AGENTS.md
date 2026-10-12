@@ -137,6 +137,9 @@ Each entry: what the diff showed, then the source change that fixed it.
   other order, make both tests reach one block: `if (a) goto none; if (b) { none: X }`.
 - `!p ? 0 : p->Count` and `p ? p->Count : 0` give opposite branch polarity.
 - `setcc; test; jne` on one register is an inlined function returning bool.
+- `bool b = unit->F() != 0;` for a bool virtual that compiles to `setne; test`.
+- Write identical tails out in full in each branch, null tests included: VC6 merges them
+  itself and then allocates registers as the original does (0x006F6AC0).
 - A clamp that merges two stores or lands in the wrong register: `MAX(v, 0)` where the
   ternary `(v <= 0) ? 0 : v` failed (0x0047F250).
 
@@ -168,6 +171,10 @@ Each entry: what the diff showed, then the source change that fixed it.
 - A class returned by value: a temporary and a named local give different frames
   (Wstring in 0x0046DFD0 needed the temporary).
 - `Coord c = p->F();` copies from the return pointer; a `const &` argument does not.
+- A local can share a dead argument slot depending on which statement it is declared
+  before (0x006CB560: `bool charged` before `UIName = ...`).
+- VC6 never schedules a store above the end of an inlined constructor's stores: wrap
+  fields whose store order is off in a small struct with one (Tactical's two bools).
 - A frame 8 bytes too big is often a Coord temporary the original overlaps with a dead
   slot: pass it by value into a file-local inline helper (`Coord_Pixel` in 0x0073CEC0).
 
@@ -194,6 +201,8 @@ Each entry: what the diff showed, then the source change that fixed it.
   one-line plain wrapper (`_Conscript` in team.cpp).
 - An inline helper written as a template can crash VC6 (internal compiler error); write
   one overload per type.
+- The shape of repeated inlines matters, not only their count: a nested ternary left
+  room for a later timer constructor that a multi-statement body pushed out of line.
 - Calls in an unused local spend the inline budget too: three `Count()` calls kept the
   `Cell(int, int)` constructor a call in 0x004684E0.
 - `member.Type::Type();` in a constructor body builds a member with no null test and
@@ -215,6 +224,7 @@ Each entry: what the diff showed, then the source change that fixed it.
   vtable minus 4 (`Exe.vtables()` in headercheck.py) before naming one.
 - Static initialisers and atexit stubs are named `$E<n>`, numbered across the whole
   file: after any header or file change, re-read the number from the checker's listing.
+- TibSun's `dynamic_cast<ObjectClass *>` is `AbstractFlags & 2` in YR.
 - A pushed `__FILE__` and line: `#line 215 "D:\\ra2mdpost\\AbsType.cpp"` before the
   statement. A string's first-character test: `if (*name)`, not `if (name[0])`.
 
@@ -242,6 +252,8 @@ Each entry: what the diff showed, then the source change that fixed it.
   them in the reverse of the exe's slots (RadioClass's three Transmit_Message).
 - An unknown virtual: `headercheck.py <Class>` prints every slot with its name; look the
   offset up there before adding a declaration.
+- YRpp's parameter order can be wrong: trust the original's push order
+  (VocClass::PlayGlobal takes volume before panning).
 - A function that matches YRpp's address may be TS's under another name (FindInfantry-
   Subposition is Closest_Free_Spot): compare with TibSun before adding a member.
 - A TS layout can agree with YR's for a prefix only: run headercheck before porting a

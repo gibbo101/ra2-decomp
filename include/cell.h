@@ -236,6 +236,7 @@ class CellClass : public AbstractClass
 		bool Can_Tiberium_Grow(void) const;
 		bool Can_Tiberium_Spread(void) const;
 		bool Is_Bridge_Here(void) const {return(IsUnderBridge);}
+		int GetLevel(void) const;
 		BuildingClass * Cell_Building(void) const;
 		Cell Fetch_CellID(void) const {return(CellID);}
 		void Set_CellID(Cell const & cell);

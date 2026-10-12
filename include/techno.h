@@ -510,7 +510,6 @@ class TechnoClass : public RadioClass
 		DirType Barrel_Pitch(AbstractClass * target) const;
 		void Laser_Zap(AbstractClass * target, int which, WeaponTypeClass const * weapon, Coord const & source_coord);
 		void Rock(Coord const & coord, float force);
-		void Draw_Health_Bar_Old(Point2D const & point, Rect const & rect) const;
 
 
 		bool Is_Z_Fudge_Bridge(void) const;
@@ -556,6 +555,9 @@ class TechnoClass : public RadioClass
 		virtual int Weapon_Range(int which) const override;
 		void Set_Owner(HouseClass * newowner);
 		int Get_Sight_Bonus(Coord const & coord);
+		int Elevation_Distance(AbstractClass const * target) const;
+		int Elevation_Range_Bonus(AbstractClass const * target) const;
+		bool In_Weapon_Range(Coord const & coord, AbstractClass * target, WeaponTypeClass * weapon) const;
 		static void Remove_Target(AbstractClass * target);
 		bool Has_Ability(AbilityType ability) const;
 		bool Should_Use_High_Arc(int which) const;

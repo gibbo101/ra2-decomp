@@ -19,6 +19,7 @@
 #include "anim.h"
 #include "bench.h"
 #include "blit.h"
+#include "bomblist.h"
 #include "bound.h"
 #include "bsurface.h"
 #include "building.h"
@@ -28,7 +29,6 @@
 #include "bullettype.h"
 #include "ccrand.h"
 #include "cell.h"
-#include "combat.h"
 #include "data.h"
 #include "dbgprint.h"
 #include "dialog.h"
@@ -84,7 +84,9 @@
 #include "bench.hh"
 #include "tube.hh"
 
-// FUNCTION: 0x006F2AD0 $E223
+
+
+// FUNCTION: 0x006F2AD0 $E224
 CDTimerClass<FrameTimerClass> TechnoClass::ActionLineTimer;
 
 // FUNCTION: 0x006F2AF0
@@ -882,6 +884,207 @@ void TechnoClass::Draw_Single_Selection_Bracket(Coord const & coord1, Coord cons
 	} else {
 		TacticalMap->Draw_3D_Line(c1, coord1, color, 0);
 	}
+}
+
+// FUNCTION: 0x006F60C0
+void TechnoClass::vt_entry_448(unsigned, unsigned)
+{
+}
+
+// FUNCTION: 0x006F6AC0
+bool TechnoClass::Limbo(void)
+{
+	if (!IsInLimbo && TClass != NULL) {
+		if (TClass->RevealToAll) {
+			vt_entry_48C(0, 0, 1, (unsigned)PlayerPtr);
+		} else {
+			vt_entry_48C(0, 0, 0, 0);
+		}
+		Map.RevealArea3(Coord(Position), LastSightRange - 3, LastSightRange + 3, false);
+		if (TClass->GapGenerator) {
+			DestroyGap();
+		}
+		if (TClass->BombSight != 0) {
+			BombListClass::Instance.RemoveDetector(this);
+		}
+		if (TClass->OpenTopped) {
+			TechnoClass * passenger = Cargo.Attached_Object();
+			if (passenger != NULL) {
+				do {
+					passenger->Assign_Target(NULL);
+					passenger = (TechnoClass *)passenger->Next;
+				} while (passenger != NULL && (passenger->AbstractFlags & 4));
+			}
+		}
+		House->Tracking_Active_Remove(this, false);
+		if (Risk() > 0) {
+			if (this != NULL && (AbstractFlags & 4)) {
+				CellClass * cell = &Map[((FootClass *)this)->LastAdjacencyCell];
+				if (cell != NULL) {
+					cell->Adjust_Threat(Owner(), -ThreatPosed);
+					ThreatPosed = 0;
+				}
+			} else {
+				CellClass * cell = Get_Cell_Ptr();
+				if (cell != NULL) {
+					cell->Adjust_Threat(Owner(), -ThreatPosed);
+					ThreatPosed = 0;
+				}
+			}
+		}
+		if (IsRadarTracked) {
+			Radar_Untrack();
+		}
+		TurretRotateSoundController.EndLooping();
+		IsTurretRotateSoundPlaying = true;
+		TurretIsRotating = 0;
+		GattlingSoundController.EndLooping();
+		IsGattlingSoundPlaying = false;
+		unknown_4BC = 0;
+		UnusedGattlingSoundController.EndLooping();
+		IsUnusedGattlingSoundPlaying = false;
+		unknown_4D8 = 0;
+	}
+	return(BASECLASS::Limbo());
+}
+
+static inline int Sight_Bonus_For(Coord const & coord)
+{
+	return(10 * (coord.Z / Rule->LeptonsPerSightIncrease));
+}
+
+// FUNCTION: 0x006F6CA0
+bool TechnoClass::Unlimbo(Coord const & coord, Dir256 dir)
+{
+	if (BASECLASS::Unlimbo(coord, dir)) {
+		IsInPlayfield = Map.In_Local_Radar(coord.As_Cell());
+		if (!IsActive) {
+			return(true);
+		}
+		UpdateSight(0, 0, 0, 0, 0);
+		Map.RevealArea3(Coord(Position), 0, LastSightRange + 3, false);
+		if (TClass->BombSight != 0) {
+			BombListClass::Instance.AddDetector(this);
+		}
+		House->Tracking_Active_Add(this, false);
+		PrimaryFacing.Set(dir);
+		BarrelPitch.Set(DIR_E << 8);
+		BarrelPitch.Set_Desired(DirType(DIR_E << 8) - (TClass->FireAngle << 8));
+		IsTurretRotateSoundPlaying = true;
+		TurretIsRotating = 0;
+		if (RTTI == RTTI_INFANTRY) {
+			UnlimboingInfantry = true;
+		}
+		Enter_Idle_Mode(true);
+		UnlimboingInfantry = false;
+		if (Ready_To_Next_Mission()) {
+			Commence();
+		}
+		SightIncrease = Sight_Bonus_For(coord);
+		if (!Map.In_Local_Radar(coord.As_Cell())) {
+			IsDiscoveredByPlayer = false;
+		}
+		CellClass * cell = Get_Cell_Ptr();
+		if (cell != NULL) {
+			cell->Adjust_Threat(Owner(), ThreatPosed = Risk());
+		}
+		RadarPos = Map.Coord_To_Radar_Pixel(PositionCoord, true);
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x006F6F40
+int TechnoClass::Get_Sight_Bonus(Coord const & coord)
+{
+	return(10 * (coord.Z / Rule->LeptonsPerSightIncrease));
+}
+
+// FUNCTION: 0x006F6F60
+int TechnoClass::Elevation_Distance(AbstractClass const * target) const
+{
+	if (!On_Ground() || !target->On_Ground()) {
+		return(0);
+	}
+	Cell mycell = Center_Coord().As_Cell();
+	Cell theircell = target->Center_Coord().As_Cell();
+	CellClass * mine = &Map[mycell];
+	CellClass * theirs = &Map[theircell];
+	int diff = (mine->GetLevel() - theirs->GetLevel() < 0) ? 0 : mine->GetLevel() - theirs->GetLevel();
+	double bonus = MIN((diff / Rule->ElevationIncrement) * Rule->ElevationIncrementBonus, Rule->ElevationBonusCap);
+	int height = LEVEL_LEPTON_H * diff;
+	int range = (int)bonus << 8;
+	return((int)fastmath::sqrt((double)(range * range + height * height)));
+}
+
+// FUNCTION: 0x006F70E0
+int TechnoClass::Elevation_Range_Bonus(AbstractClass const * target) const
+{
+	if (!On_Ground() || !target->On_Ground()) {
+		return(0);
+	}
+	Cell mycell = Center_Coord().As_Cell();
+	Cell theircell = target->Center_Coord().As_Cell();
+	CellClass * mine = &Map[mycell];
+	CellClass * theirs = &Map[theircell];
+	int diff = (mine->GetLevel() - theirs->GetLevel() < 0) ? 0 : mine->GetLevel() - theirs->GetLevel();
+	double bonus = MIN((diff / Rule->ElevationIncrement) * Rule->ElevationIncrementBonus, Rule->ElevationBonusCap);
+	return((int)bonus << 8);
+}
+
+// FUNCTION: 0x006F7660
+bool TechnoClass::TriggersCellInset(AbstractClass * target)
+{
+	if (IsAreaFire()) {
+		WarheadTypeClass const * warhead = GetDeployWeapon()->Weapon->WarheadPtr;
+		if (warhead != NULL) {
+			float inset = warhead->SpreadFactor;
+			inset -= warhead->CellInset;
+			Cell mine = Center_Coord().As_Cell();
+			Cell theirs = target->Center_Coord().As_Cell();
+			if (mine.Distance_To(theirs) <= inset) {
+				return(true);
+			}
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x006F7780
+bool TechnoClass::IsCloseEnoughToAttack(AbstractClass * target) const
+{
+	return(In_Range(target, What_Weapon_Should_I_Use(target)));
+}
+
+// FUNCTION: 0x006F77B0
+bool TechnoClass::In_Range(AbstractClass * target, int which) const
+{
+	if (target == NULL) {
+		return(true);
+	}
+	Coord coord = Center_Coord();
+	WeaponTypeClass * weapon = Get_Class_Weapon_Data(which)->Weapon;
+	if (weapon != NULL && weapon->CellRangefinding) {
+		coord = Map[Center_Coord().As_Cell()].Center_Coord();
+		if (IsOnBridge) {
+			coord.Z += BRIDGE_LEPTON_HEIGHT;
+		}
+	}
+	if (In_Air()) {
+		coord.Z = target->Center_Coord().Z;
+	}
+	return(In_Weapon_Range(coord, target, weapon));
+}
+
+// FUNCTION: 0x006F78D0
+bool TechnoClass::InAuxiliarySearchRange(AbstractClass * target) const
+{
+	int which = GetSecondaryWeaponIndex();
+	WeaponDataStruct const * data = Get_Class_Weapon_Data(which);
+	if (data != NULL && data->Weapon != NULL && data->Weapon->NeverUse) {
+		return(In_Range(target, which));
+	}
+	return(IsCloseEnoughToAttack(target));
 }
 
 // FUNCTION: 0x00708C10

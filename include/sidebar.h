@@ -238,6 +238,8 @@ class SidebarClass : public PowerClass
 
 		bool Scroll(bool up, int column);
 		bool Page(bool up, int column);
+		void RepaintSidebar(int tab);
+		static int GetObjectTabIdx(RTTIType type, int id, bool naval);
 
 	private:
 		bool Activate_Repair(int control);

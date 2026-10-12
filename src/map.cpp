@@ -49,10 +49,96 @@
 #include "overlay.hh"
 #include "ramp.hh"
 #include <new>
+#include <cmath>
 
 int SubzoneHash(unsigned int const & key);
 
 #define IS_TILE_IN_SET(setname, setsize) (tile >= IsometricTileTypeClass::setname && tile < IsometricTileTypeClass::setname + setsize)
+
+extern double __cdecl FUN_004CAC40(double);
+extern double __cdecl FUN_004CAD50(double);
+extern double __cdecl FUN_004CADE0(double);
+extern double DAT_007E1708, DAT_007E1710, DAT_007E1718, DAT_007E1720, DAT_007E1728;
+extern double DAT_007E1730, DAT_007E1738, DAT_007E1740, DAT_007ED3C0, DAT_007ED3C8;
+extern double DAT_00ABD488, DAT_00ABDDA0, DAT_00ABDC38, DAT_00ABDC30, DAT_00ABDA58;
+extern double DAT_00ABD458, DAT_00ABDA60, DAT_00ABDC20;
+extern int DAT_00ABDE88, DAT_00ABDD98, DAT_00ABDC10, DAT_00ABDC14, DAT_00ABDC18;
+extern short DAT_00ABD480, DAT_00ABD482;
+
+// FUNCTION: 0x00561710
+void Init_00561710(void)
+{
+	DAT_00ABD488 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2.0);
+}
+
+// FUNCTION: 0x00561740
+void Init_00561740(void)
+{
+	DAT_00ABDDA0 = DAT_00ABD488 / DAT_007ED3C0;
+}
+
+// FUNCTION: 0x00561760
+void Init_00561760(void)
+{
+	DAT_00ABDC38 = DAT_007E1718 / DAT_00ABDDA0;
+}
+
+// FUNCTION: 0x00561780
+void Init_00561780(void)
+{
+	DAT_00ABDC30 = DAT_007E1720 * DAT_007ED3C8;
+}
+
+// FUNCTION: 0x005617A0
+void Init_005617A0(void)
+{
+	DAT_00ABDA58 = DAT_007E1728 * DAT_007ED3C8;
+}
+
+// FUNCTION: 0x005617C0
+void Init_005617C0(void)
+{
+	DAT_00ABD458 = DAT_007E1730 * DAT_007ED3C8;
+}
+
+// FUNCTION: 0x005617E0
+void Init_005617E0(void)
+{
+	DAT_00ABDE88 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00ABD458 - DAT_00ABDA58) * DAT_00ABD488));
+}
+
+// FUNCTION: 0x00561820
+void Init_00561820(void)
+{
+	DAT_00ABDA60 = FUN_004CADE0(DAT_00ABDE88 * DAT_007E1740);
+}
+
+// FUNCTION: 0x00561850
+void Init_00561850(void)
+{
+	DAT_00ABDC20 = FUN_004CADE0((DAT_00ABDE88 * 2) / DAT_00ABD488);
+}
+
+// FUNCTION: 0x00561880
+void Init_00561880(void)
+{
+	DAT_00ABDD98 = (int)((DAT_00ABDE88 * 4) + DAT_007E1738);
+}
+
+// FUNCTION: 0x005618B0
+void Init_005618B0(void)
+{
+	DAT_00ABD480 = 0;
+	DAT_00ABD482 = 0;
+}
+
+// FUNCTION: 0x005618C0
+void Init_005618C0(void)
+{
+	DAT_00ABDC10 = 0;
+	DAT_00ABDC14 = 0;
+	DAT_00ABDC18 = 0;
+}
 
 // FUNCTION: 0x0056CB80
 int SubzoneHash(unsigned int const & key)

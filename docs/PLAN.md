@@ -692,6 +692,22 @@ declarations it needs, and the merge brief keeps other batches' files. Banked: t
 aircraft missions (76%, registers and inline budget) and the voxel blitter (51%).
 Cost: about 2.0M tokens, 54 minutes. Merge gate: 1,880 of 1,880 (286.1 KB).
 
+### Batch 6 (12 October 2026)
+
+House, Techno, building, foot, team, object, Super, map, Tactical. **105 of 108
+matched**. The merge gave SuperClass, SuperWeaponTypeClass, BombListClass and
+RadarEventClass YR's layout, found that a requested InputManagerClass was TibSun's
+Keyboard and that a requested key table was two Options fields, and moved the Options
+object to YR's address. Opus landed seven of the merge's near misses, including the
+Tactical constructor after 40 checks. Banked: TechnoClass's pre-render (77.5%, inline
+budget), a trajectory function (45.1%) and the team patrol mission (61.3%). Cost: about
+2.3M tokens, 58 minutes. Merge gate: 1,988 of 1,988 (306.0 KB).
+
+The merge also found a checker gap. A reference to a global object whose address the
+checker does not know is reported as unverified, so a wrong member offset passes. With
+YR's addresses for the map object and the session object in names.csv, 33 matched
+functions point at the wrong members: 11 through Map and 22 through Session.
+
 ### Decide before the first batch
 
 - **Module layout.** Which function lives in which source file, and the link order, decide

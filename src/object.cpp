@@ -333,6 +333,84 @@ bool ObjectClass::Active_Click_With(ActionType, Cell const &, Cell const &, bool
 	return(false);
 }
 
+// FUNCTION: 0x005F4370
+void ObjectClass::Clicked_As_Target(int)
+{
+}
+
+// FUNCTION: 0x005F4380
+bool ObjectClass::In_Range(Coord const &, int) const
+{
+	return(false);
+}
+
+// FUNCTION: 0x005F4390
+int ObjectClass::Weapon_Range(int) const
+{
+	return(0);
+}
+
+// FUNCTION: 0x005F43A0
+void ObjectClass::Scatter(Coord const &, bool, bool)
+{
+}
+
+// FUNCTION: 0x005F43B0
+bool ObjectClass::Catch_Fire(void)
+{
+	return(false);
+}
+
+// FUNCTION: 0x005F43C0
+void ObjectClass::Fire_Out(void)
+{
+}
+
+// FUNCTION: 0x005F43D0
+int ObjectClass::Value(void) const
+{
+	return(0);
+}
+
+// FUNCTION: 0x005F43E0
+MissionType ObjectClass::Get_Mission(void) const
+{
+	return(MISSION_NONE);
+}
+
+// FUNCTION: 0x005F43F0
+void ObjectClass::Repair(int)
+{
+}
+
+// FUNCTION: 0x005F4400
+void ObjectClass::Sell_Back(int)
+{
+}
+
+// FUNCTION: 0x005F4410
+void ObjectClass::Move(FacingType facing)
+{
+	Mark(MARK_UP);
+	Coord coord = Adjacent_Cell(PositionCoord, facing);
+	if (Can_Enter_Cell(&Map[coord], facing) == MOVE_OK) {
+		PositionCoord = coord;
+	}
+	Mark(MARK_DOWN);
+}
+
+// FUNCTION: 0x005F44A0
+void ObjectClass::Unselect(void)
+{
+	if (IsSelected) {
+		CurrentObject.Delete(this);
+		IsSelected = false;
+		if (Map.Object_To_Follow() == this) {
+			Map.Set_To_Follow(NULL);
+		}
+	}
+}
+
 // FUNCTION: 0x005F61A0
 VoxelDataStruct::~VoxelDataStruct(void)
 {
@@ -352,4 +430,10 @@ bool ObjectClass::operator < (ObjectClass const & object) const
 bool ObjectClass::operator > (ObjectClass const & object) const
 {
 	return((Sort_Y() > object.Sort_Y()) ? true : false);
+}
+
+// FUNCTION: 0x005F6C80
+Coord ObjectClass::Docking_Coord(TechnoClass * ) const
+{
+	return(Center_Coord());
 }

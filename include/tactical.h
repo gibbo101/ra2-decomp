@@ -202,12 +202,20 @@ class Tactical : public AbstractClass
 			MAX_SELECTABLE_OBJECTS = 500
 		};
 
-		char ScreenText[64];
+		wchar_t ScreenText[64];
+
+		int EndGameGraphicsFrame;
 
 		int LastAIFrame;
 
-		bool field_58;
-		bool field_59;
+		struct FlagPair {
+			FlagPair(void) {}
+			FlagPair(bool a, bool b) : field_58(a), field_59(b) {}
+
+			bool field_58;
+			bool field_59;
+		} Flags;
+		char gap_AE[2];
 
 		int TacPixelX;
 		int TacPixelY;
@@ -224,8 +232,6 @@ class Tactical : public AbstractClass
 		};
 
 		static Selectable SelectableObjects[MAX_SELECTABLE_OBJECTS];
-
-		int SelectableCount;
 
 		Point2D MoveFrom;
 		Point2D MoveTo;
@@ -255,9 +261,13 @@ class Tactical : public AbstractClass
 		int WaypointAnimCounter;
 		CDTimerClass<SystemTimerClass> WaypointAnimTimer;
 
+		int SelectableCount;
+
 		Matrix3D CoordToPixelMatrix;
 
 		Matrix3D PixelToCoordMatrix;
+
+		int field_E14;
 
 		static DynamicVectorClass<DirtyAreaStruct> DirtyAreas;
 

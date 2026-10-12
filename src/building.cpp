@@ -167,7 +167,7 @@ BuildingClass::BuildingClass(BuildingTypeClass const * type, HouseClass * house)
 	CashProductionTimer(0),
 	IsAllowedToSell(true),
 	IsReadyToCommence(false),
-	IsRepairing(false),
+	IsWrenchVisible(false),
 	IsGoingToBlow(false),
 	IsSurvivorless(false),
 	IsCharging(false),
@@ -177,7 +177,7 @@ BuildingClass::BuildingClass(BuildingTypeClass const * type, HouseClass * house)
 	HasOpened(false),
 	IsDamagedAnims(false),
 	IsFogged(false),
-	IsWrenchVisible(false),
+	IsRepairing(false),
 	HasBuildupData(false),
 	IsPoweredOn(true),
 	CloakGeneratorState(0),
@@ -718,6 +718,502 @@ void BuildingClass::Update_Buildables(void)
 				break;
 		}
 	}
+}
+
+// FUNCTION: 0x00445880
+bool BuildingClass::Limbo(void)
+{
+	Coord coord = PositionCoord;
+	bool threatnode = false;
+	bool res = false;
+	Cell cell = coord;
+	int i;
+
+	if (!IsInLimbo && Class != NULL) {
+
+		for (i = 0; i < 8; i++) {
+			if (DamageFireAnims[i] != NULL) {
+				DamageFireAnims[i]->Delete_Me();
+				DamageFireAnims[i] = NULL;
+			}
+		}
+
+		if (Class->OrePurifier && ActuallyPlacedOnMap) {
+			House->NumOrePurifiers--;
+			if (House->NumOrePurifiers < 0) {
+				House->NumOrePurifiers = 0;
+			}
+		}
+
+		if (Class->IsHelipad && ActuallyPlacedOnMap) {
+			House->AirportDocks -= Class->NumberOfDocks;
+			if (House->AirportDocks < 0) {
+				House->AirportDocks = 0;
+			}
+		}
+
+		if (Class->InfantryGainSelfHeal && ActuallyPlacedOnMap) {
+			House->InfantrySelfHeal -= Class->InfantryGainSelfHeal;
+			if (House->InfantrySelfHeal < 0) {
+				House->InfantrySelfHeal = 0;
+			}
+		}
+
+		if (Class->UnitsGainSelfHeal && ActuallyPlacedOnMap) {
+			House->UnitsSelfHeal -= Class->UnitsGainSelfHeal;
+			if (House->UnitsSelfHeal < 0) {
+				House->UnitsSelfHeal = 0;
+			}
+		}
+
+		if (Class->IsLaserFencePost) {
+			Update_Laser_Fence_Connections(false);
+		}
+
+		if (!ScenarioInit) {
+			if (Class->IsSensorArray) {
+				SensorArrayDeactivate(CELL_NONE);
+			}
+			if (Class->DetectDisguise) {
+				DisguiseDetectorDeactivate(CELL_NONE);
+			}
+			if ((Class->UndeploysInto == NULL || !Class->ResourceGatherer) && !IsStrange()) {
+				Release_Base_Area();
+			}
+		}
+
+		for (i = 0; i < BUILDING_UPGRADE_MAX; i++) {
+			if (Upgrades[i] != NULL && Upgrades[i]->IsThreatRatingNode) {
+				threatnode = true;
+				break;
+			}
+		}
+
+		if (!GameActive) {
+			res = true;
+		}
+
+		if (!res) {
+			if (Class == Rule->WallTower) {
+				for (i = 0; i < FACING_COUNT; i += FACING_COUNT / 4) {
+					Cell c = AdjacentCell[i & 7] + cell;
+					CellClass * cptr = &Map[c];
+					cptr->Wall_Update(false);
+					if (cptr->Overlay != OVERLAY_NONE && OverlayTypes[cptr->Overlay]->IsWall && cptr->OverlayData < OVERLAYDATA_WALL_DAMAGE_STAGE) {
+						cptr->Reduce_Wall(200);
+					}
+				}
+			}
+
+			if (Class == Rule->GDIGateOne || Class == Rule->NodGateOne) {
+				Map[Cell(cell - Cell(1, 0))].Wall_Update(false);
+				Map[Cell(cell + Cell(3, 0))].Wall_Update(false);
+			}
+
+			if (Class == Rule->GDIGateTwo || Class == Rule->NodGateTwo) {
+				Map[Cell(cell - Cell(0, 1))].Wall_Update(false);
+				Map[Cell(cell + Cell(0, 3))].Wall_Update(false);
+			}
+
+			if (Class->ToTile == NULL) {
+				int w = Class->Width();
+				int h = Class->Height();
+				Cell position = PositionCell;
+
+				for (int y = 0; y < h + 2; y++) {
+					for (int x = 0; x < w + 2; x++) {
+						CellClass *cptr = &Map[(position - Cell(1, 1)) + Cell(x, y)];
+						cptr->AdjacentObjectCount--;
+					}
+				}
+			}
+
+			if (TacticalMap != NULL) {
+				TacticalMap->Register_Dirty_Area(Get_Render_Rect());
+			}
+
+			if (BuildingLight != NULL) {
+				BuildingLight->Delete_Me();
+			}
+
+			House->Active_Remove(this);
+			House->IsRecalcNeeded = true;
+			House->Recalc_Center();
+
+			if (House == PlayerPtr) {
+				Map.PowerClass::IsToRedraw = true;
+				Map.Flag_To_Redraw();
+			}
+
+			House->Invalidate_Base_Node_Position(this);
+		}
+	}
+
+	if (!res) {
+		res = BASECLASS::Limbo();
+
+		if (threatnode) {
+			House->Activate_Threat_Node();
+		}
+
+		if (Class->ToBuild != RTTI_NONE) {
+			House->Update_Factories(Class->ToBuild, Class->Naval, 0);
+		}
+	}
+
+	if (Class->IsLaserFencePost && !ScenarioInit) {
+		LaserFenceFrame = 0;
+	}
+
+	return(res);
+}
+
+// FUNCTION: 0x00445E50
+DirType BuildingClass::Turret_Facing(void) const
+{
+	if (!Is_Turret_Equipped() && TarCom != NULL) {
+		return(::Direction(Center_Coord(), TarCom->Center_Coord()));
+	}
+	return(PrimaryFacing.Current());
+}
+
+// FUNCTION: 0x00445F00
+AbstractClass * BuildingClass::Greatest_Threat(ThreatType threat, Coord const & coord, bool onlyenemy) const
+{
+	if (PrimaryWeapon != NULL) {
+		threat = ThreatType(threat | PrimaryWeapon->Allowed_Threats());
+	}
+	if (SecondaryWeapon != NULL) {
+		threat = ThreatType(threat | SecondaryWeapon->Allowed_Threats());
+	}
+	threat = ThreatType(threat | THREAT_RANGE);
+	return(BASECLASS::Greatest_Threat(threat, coord, onlyenemy));
+}
+
+// FUNCTION: 0x00446FF0
+void BuildingClass::Repair(int control)
+{
+	switch (control) {
+		case -1:
+			IsRepairing = (IsRepairing == false);
+			break;
+
+		case 1:
+			if (IsRepairing) return;
+			IsRepairing = true;
+			break;
+
+		case 0:
+			if (!IsRepairing) return;
+			IsRepairing = false;
+			break;
+
+		default:
+			break;
+	}
+
+	VocType soundid;
+	if (IsRepairing) {
+		if (Strength == Class->MaxStrength) {
+			soundid = Rule->ScoldSound;
+		} else {
+			soundid = Rule->GenericClick;
+			if (House->Is_Player_Control()) {
+				Clicked_As_Target();
+			}
+			IsWrenchVisible = true;
+			if (House->Is_Player_Control()) {
+				VoxClass::Play("EVA_Repairing", -1, -1);
+			}
+		}
+	} else {
+		soundid = Rule->GenericClick;
+	}
+	if (House->Is_Player_Control()) {
+		VocClass::PlayAt(soundid, PositionCoord, NULL);
+	}
+}
+
+void BuildingClass::Begin_Anim(BAnimType anim, bool damaged, int delay)
+{
+	bool garrisoned = GetOccupantCount() > 0;
+	char const * name = damaged ? Class->AnimData[anim].AnimDamaged : (garrisoned ? Class->AnimData[anim].AnimGarrisoned : Class->AnimData[anim].Anim);
+	if (name != NULL && *name) {
+		PlayAnim(name, anim, damaged, garrisoned, false);
+	}
+}
+
+// FUNCTION: 0x00447110
+void BuildingClass::Sell_Back(int control)
+{
+	if (HasBuildupData) {
+		bool decon = false;
+		switch (control) {
+			case -1:
+				decon = (Get_Mission() != MISSION_DECONSTRUCTION);
+				break;
+
+			case 1:
+				if (Get_Mission() == MISSION_DECONSTRUCTION) return;
+				if (IsGoingToBlow) return;
+				decon = true;
+				break;
+
+			case 0:
+				if (Get_Mission() != MISSION_DECONSTRUCTION) return;
+				decon = false;
+				break;
+
+			default:
+				break;
+		}
+
+		if (decon) {
+			QueueMission(MISSION_DECONSTRUCTION, false);
+			Commence();
+		}
+		if (House->Is_Player_Control()) {
+			VocClass::PlayGlobal(Rule->GenericClick, 1.0f, 0x2000);
+		}
+	} else {
+		if (Class->IsFirestormWall) {
+			Class->Cost_Of(House);
+			House->FUN_0050B730();
+			Limbo();
+			Delete_Me();
+		}
+	}
+}
+
+// FUNCTION: 0x00447210
+ActionType BuildingClass::What_Action(ObjectClass const * object, bool disallow_force) const
+{
+	if (Class->IsInvisibleInGame) {
+		return(ACTION_NONE);
+	}
+
+	if (object->Fetch_RTTI() == RTTI_BUILDING && ((BuildingClass *)object)->Class->IsInvisibleInGame) {
+		return(ACTION_NONE);
+	}
+
+	ActionType action = BASECLASS::What_Action(object, disallow_force);
+
+	if (action == ACTION_TOGGLE_SELECT) {
+		return(action);
+	}
+
+	if (action == ACTION_SELF) {
+		if (Class->GapGenerator && PlayerPtr == House) {
+			if (!GapSuperCharged && House->Power_Output() - House->Power_Drain() <= Class->ExtraDrain) {
+				goto none;
+			}
+			action = ACTION_SELF;
+		} else if (((Class->UnitAbsorb || Class->InfantryAbsorb) && Cargo.How_Many() > 0) || GetOccupantCount() > 0) {
+			action = ACTION_SELF;
+		} else if (Class->ToBuild == RTTI_NONE) {
+			action = ACTION_NONE;
+		}
+		if (action == ACTION_SELF && Class->ToBuild != RTTI_NONE && IsLeader) {
+			action = ACTION_NONE;
+		}
+	} else if (action == ACTION_ATTACK) {
+		if (PrimaryWeapon != NULL) {
+			if (!PrimaryWeapon->Bullet->IsAntiGround || Class->IsEMPulseCannon) {
+				action = ACTION_NONE;
+			}
+			if (CurrentMission == MISSION_DECONSTRUCTION) {
+none:
+				action = ACTION_NONE;
+			}
+		}
+	}
+
+	if (action == ACTION_MOVE || action == ACTION_NOMOVE) {
+		if (!Can_Player_Move()) {
+			action = ACTION_SELECT;
+		} else if (Class->ToBuild == RTTI_INFANTRYTYPE || Class->ToBuild == RTTI_UNITTYPE || Class->ToBuild == RTTI_AIRCRAFTTYPE) {
+			bool altdown = (Keyboard->Down(Options.KeyForceMove1) || Keyboard->Down(Options.KeyForceMove2));
+			if (!altdown) {
+				action = ACTION_SELECT;
+			} else {
+				Cell cell = object->Center_Coord().As_Cell();
+				if (Class->ToBuild != RTTI_AIRCRAFTTYPE) {
+					if (!Is_In_Same_Zone(cell)) {
+						action = ACTION_NOMOVE;
+					}
+					if (!Map[cell].IsUnderBridge && Map[cell].Passability != PASSABLE_LAND) {
+						action = ACTION_NOMOVE;
+					}
+				}
+			}
+		}
+	}
+
+	if (action == ACTION_ATTACK && object->Class_Of()->IsImmune) {
+		action = ACTION_NOMOVE;
+	}
+	return(action);
+}
+
+// FUNCTION: 0x00447540
+ActionType BuildingClass::What_Action(Cell const & cell, bool check_fog, bool disallow_force) const
+{
+	if (Class->IsInvisibleInGame) {
+		return(ACTION_NONE);
+	}
+
+	ActionType action;
+
+	if (Class->UndeploysInto != NULL && check_fog) {
+		action = BASECLASS::What_Action(cell, false, disallow_force);
+		if (!Map.Is_Shrouded(Map[cell].Center_Coord())) {
+			if (action == ACTION_MOVE && Map[cell].Land_Type() == LAND_TIBERIUM && Class->ResourceDestination && Class->ResourceGatherer) {
+				return(ACTION_HARVEST);
+			}
+		}
+	} else {
+		action = BASECLASS::What_Action(cell, check_fog, disallow_force);
+	}
+
+	if (action == ACTION_MOVE || action == ACTION_NOMOVE) {
+		if (!Can_Player_Move() && action == ACTION_MOVE) {
+			action = ACTION_NONE;
+		} else if (Is_Move_Override()) {
+			if (!(Keyboard->Down(Options.KeyForceMove1) || Keyboard->Down(Options.KeyForceMove2))) {
+				action = ACTION_NONE;
+			} else if (Class->ToBuild != RTTI_AIRCRAFTTYPE) {
+				if (!Is_In_Same_Zone(cell)) {
+					action = ACTION_NOMOVE;
+				}
+				if (!Map[cell].IsUnderBridge && Map[cell].Passability != PASSABLE_LAND) {
+					action = ACTION_NOMOVE;
+				}
+			}
+		}
+	}
+
+	if (action == ACTION_ATTACK && PrimaryWeapon != NULL) {
+		if (!PrimaryWeapon->Bullet->IsAntiGround || Class->IsEMPulseCannon) {
+			action = ACTION_NONE;
+		}
+		if (CurrentMission == MISSION_DECONSTRUCTION) {
+			action = ACTION_NONE;
+		}
+	}
+
+	if (action != ACTION_ATTACK && Is_Move_Override() && House->Is_Player_Control()) {
+		action = ACTION_MOVE;
+	}
+	return(action);
+}
+
+// FUNCTION: 0x00447780
+void BuildingClass::Begin_Mode(BStateType bstate)
+{
+	QueueBState = bstate;
+	if (BState == BSTATE_NONE || bstate == BSTATE_CONSTRUCTION || ScenarioInit) {
+		QueueBState = BSTATE_NONE;
+		BState = bstate;
+		BuildingTypeClass::AnimControlType const * ctrl = Fetch_Anim_Control();
+
+		if (ScenarioInit) {
+			Begin_Anim(BANIM_IDLE, HealthRatio <= Rule->ConditionYellow);
+		}
+		if (ScenarioInit) {
+			Begin_Anim(BANIM_ACTIVE_ONE, HealthRatio <= Rule->ConditionYellow);
+		}
+		if (ScenarioInit) {
+			Begin_Anim(BANIM_ACTIVE_TWO, HealthRatio <= Rule->ConditionYellow);
+		}
+		if (ScenarioInit) {
+			Begin_Anim(BANIM_ACTIVE_THREE, HealthRatio <= Rule->ConditionYellow);
+		}
+		if (ScenarioInit) {
+			Begin_Anim(BANIM_ACTIVE_FOUR, HealthRatio <= Rule->ConditionYellow);
+		}
+
+		int rate = ctrl->Rate;
+		if (Class->Normalized && bstate != BSTATE_CONSTRUCTION) {
+			rate = Options.Normalize_Delay(rate);
+		}
+		Animation.Set_Rate(rate);
+		Animation.Set_Stage(ctrl->Start);
+	}
+}
+
+// FUNCTION: 0x00447AC0
+Coord BuildingClass::Center_Coord(void) const
+{
+	int h = (Class->Height(false) * (CELL_LEPTON_H / 2)) - (CELL_LEPTON_H / 2);
+	int w = (Class->Width() * (CELL_LEPTON_W / 2)) - (CELL_LEPTON_W / 2);
+
+	return(PositionCoord + Coord(w, h));
+}
+
+// FUNCTION: 0x00447B20
+Coord BuildingClass::Docking_Coord(TechnoClass * docker) const
+{
+	if (Class->IsWeeder) {
+		Cell cell = PositionCell + Cell(2, 1);
+		Coord coord = Coord(cell, 0);
+		coord.Z = PositionCoord.Z;
+		return(coord);
+	}
+
+	Coord coord;
+
+	if (Class->IsRefinery) {
+		return(BASECLASS::Docking_Coord(docker) + Coord(CELL_LEPTON_W / 2, 0, 0));
+	} else if (Class->Bunker && docker != NULL) {
+		Dir256 dir = ::Direction(Center_Coord(), docker->Center_Coord()).As_Dir256();
+		if (dir >= 0 && dir < 0x40) {
+			return(Center_Coord() + Coord(CELL_LEPTON_W / 2, -CELL_LEPTON_H / 2, 0));
+		} else if (dir >= 0x40 && dir < 0x80) {
+			return(Center_Coord() + Coord(CELL_LEPTON_W / 2, CELL_LEPTON_H / 2, 0));
+		} else if (dir >= 0x80 && dir < 0xC0) {
+			return(Center_Coord() + Coord(-CELL_LEPTON_W / 2, CELL_LEPTON_H / 2, 0));
+		} else {
+			return(Center_Coord() + Coord(-CELL_LEPTON_W / 2, -CELL_LEPTON_H / 2, 0));
+		}
+	} else if (!Class->IsHelipad && !Class->IsCanUnitRepair) {
+		return(BASECLASS::Docking_Coord(docker));
+	} else {
+		switch (Class->NumberOfDocks) {
+			case 0:
+				return(Center_Coord());
+
+			case 1:
+				coord = Center_Coord() + Class->DockingOffsets[0];
+				return(coord);
+
+			default:
+				int index = FindLinkIndex(docker);
+				if (index >= 0 && index < Class->NumberOfDocks) {
+					coord = Center_Coord() + Class->DockingOffsets[index];
+					return(coord);
+				}
+				return(Center_Coord());
+		}
+	}
+	return(coord);
+}
+
+// FUNCTION: 0x00447E00
+int BuildingClass::DistanceToDockingCoord(TechnoClass * docker) const
+{
+	return(Docking_Coord(docker).Distance_To(docker->Center_Coord()));
+}
+
+// FUNCTION: 0x00447E90
+Coord BuildingClass::Destination_Coord(TechnoClass * docker) const
+{
+	if (Class->IsHelipad) {
+		return(Docking_Coord(docker));
+	}
+	if (Class->IsCanUnitRepair || Class->Bunker) {
+		return(Docking_Coord(docker));
+	}
+	return(Center_Coord());
 }
 
 // FUNCTION: 0x00459E80

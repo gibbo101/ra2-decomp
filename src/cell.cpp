@@ -721,6 +721,12 @@ HRESULT STDMETHODCALLTYPE CellClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
+// FUNCTION: 0x00487D50
+int CellClass::GetLevel(void) const
+{
+	return(Height + (IsBridgeDeck ? BRIDGE_CELL_HEIGHT : 0));
+}
+
 // FUNCTION: 0x00487E50
 int STDMETHODCALLTYPE CellClass::What_Am_I(void) const
 {

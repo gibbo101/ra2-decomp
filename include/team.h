@@ -193,6 +193,12 @@ class TeamClass : public AbstractClass
 		void TMission_FLASH(TeamMissionClass * mission, bool);
 		void TMission_PLAY_ANIM(TeamMissionClass * mission, bool);
 		void TMission_TALK_BUBBLE(TeamMissionClass * mission, bool);
+		void TMission_ATT_WAYPT_BUILDING(TeamMissionClass * mission, bool);
+		void TMission_ENTER_GRINDER(TeamMissionClass * mission, bool);
+		void TMission_ENTER_BIO_REACTOR(TeamMissionClass * mission, bool);
+		void TMission_ENTER_TANK_BUNKER(TeamMissionClass * mission, bool);
+		void TMission_ENTER_BATTLE_BUNKER(TeamMissionClass * mission, bool);
+		void TMission_GARRISON_STRUCTURE(TeamMissionClass * mission, bool);
 
 		int Recruit(int typeindex);
 		bool Is_A_Member(void const * who) const;

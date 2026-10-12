@@ -33,7 +33,6 @@
 #include "inline.h"
 #include "ion.h"
 #include "ipiggy.h"
-#include "loco.h"
 #include "mono.h"
 #include "notify.h"
 #include "parasite.h"
@@ -755,6 +754,371 @@ void FootClass::Override_Mission(MissionType mission, AbstractClass * tarcom, Ab
 	BASECLASS::Override_Mission(mission, tarcom, navcom);
 
 	Assign_Destination(navcom);
+}
+
+// FUNCTION: 0x004D8F80
+bool FootClass::Restore_Mission(void)
+{
+	if (BASECLASS::Restore_Mission()) {
+		Assign_Destination(SuspendedNavCom);
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x004D8FB0
+RadioMessageType FootClass::Receive_Message(RadioClass * from, RadioMessageType message, int & param)
+{
+	BuildingClass const * building = NULL;
+	ObjectClass * object = NULL;
+
+	switch (message) {
+
+		case RADIO_ON_DEPOT:
+			building = Map[Center_Coord()].Cell_Building();
+			if (building == (RadioClass const *)from) {
+				return(RADIO_ROGER);
+			}
+			return(RADIO_NEGATIVE);
+
+		case RADIO_REPAIR:
+			if (NavCom != NULL) return(RADIO_NEGATIVE);
+			break;
+
+		case RADIO_RUN_AWAY:
+			if (HasAnyLink()) {
+				if (NavCom == FUN_0065AD30(0)) {
+					Assign_Destination(NULL);
+				}
+			}
+			if (Get_Mission() == MISSION_SLEEP) {
+				QueueMission(MISSION_GUARD, false);
+				if (Ready_To_Next_Mission()) {
+					Commence();
+				}
+			}
+			if (Get_Mission() == MISSION_ENTER) {
+				QueueMission(MISSION_GUARD, false);
+			}
+			if (!IsRotating && NavCom == NULL) {
+				Scatter(COORD_NONE, true, true);
+			}
+			break;
+
+		case RADIO_NEED_TO_MOVE:
+			param = (int)NavCom;
+			if (NavCom == NULL || !Locomotion->Is_Moving()) {
+				return(RADIO_ROGER);
+			}
+			return(RADIO_NEGATIVE);
+
+		case RADIO_MOVE_HERE:
+			object = (ObjectClass *)param;
+			{
+				if (object != NULL && PositionCell == Cell(object->Center_Coord())) {
+					return(RADIO_YEA_NOW_WHAT);
+				} else {
+					if (Mission == MISSION_GUARD && MissionQueue == MISSION_NONE) {
+						QueueMission(MISSION_MOVE, false);
+					}
+					if (MissionQueue == MISSION_ENTER && Ready_To_Next_Mission()) {
+						Commence();
+					}
+					Assign_Destination((ObjectClass *)param);
+					Shorten_Mission_Timer();
+				}
+			}
+			return(RADIO_ROGER);
+
+		case RADIO_TRYING_TO_LOAD:
+			if (Mission == MISSION_ENTER || MissionQueue == MISSION_ENTER) {
+				BASECLASS::Receive_Message(from, message, param);
+				return(RADIO_ROGER);
+			}
+			break;
+	}
+	return(BASECLASS::Receive_Message(from, message, param));
+}
+
+// FUNCTION: 0x004D9290
+int FootClass::Do_MISSION_ENTER(void)
+{
+	TechnoClass * contact = FUN_0065AD30(0);
+	if (contact == NULL) {
+		contact = Dynamic_Cast<TechnoClass *>(ArchiveTarget);
+	}
+
+	if (contact != NULL) {
+		if (Transmit_Message(RADIO_DOCKING, contact) != RADIO_ROGER && !IsTethered) {
+			Transmit_Message(RADIO_OVER_OUT);
+			Enter_Idle_Mode();
+		} else {
+			if (NavCom == NULL && RouteQueue.Count() > 0) {
+				IPiggybackPtr piggy(Locomotion);
+				if (piggy != NULL && piggy->Is_Ok_To_End()) {
+					piggy->End_Piggyback(&Locomotion);
+				}
+				if (RouteQueue.Count() > 0) {
+					Assign_Destination(RouteQueue[0], false);
+					RouteQueue.Delete_Index(0);
+				}
+			} else if (Techno_Type_Class()->Teleporter) {
+				AbstractClass * target = NavCom;
+				unknown_5A0 = NULL;
+				NavCom = NULL;
+				Assign_Destination(target, true);
+			}
+		}
+	} else {
+		if (!Move_To_Object_Nearby()) {
+			if (NavCom == NULL || NavCom->RTTI != RTTI_UNIT && NavCom->RTTI != RTTI_AIRCRAFT) {
+				Enter_Idle_Mode();
+			}
+		}
+		Commence();
+	}
+
+	return(Current_Mission_Control().Normal_Delay() + Random_Pick(0, 2));
+}
+
+// FUNCTION: 0x004D94A0
+void FootClass::vt_entry_47C(unsigned value)
+{
+	unknown_5A0 = (AbstractClass *)value;
+}
+
+namespace LocomotionClass { namespace CLSIDs { extern const CLSID Hover; } }
+
+// FUNCTION: 0x004D94B0
+void FootClass::Assign_Destination(AbstractClass * target, bool)
+{
+	unknown_5A0 = NULL;
+
+	if (IsAttackedByLocomotor && target != NULL) {
+		return;
+	}
+	if (InOpenToppedTransport && target != NULL) {
+		return;
+	}
+	if (BunkerLinkedItem != NULL && target != NULL) {
+		return;
+	}
+	if (LocomotorTarget != NULL && target != NULL) {
+		ReleaseLocomotor(true);
+	}
+
+	NavCom = target;
+
+	if (target == NULL && IsAttackedByLocomotor && LocomotorSource != NULL) {
+		LocomotorSource->LocomotorTarget = NULL;
+		LocomotorSource = NULL;
+		IsLetGoByLocomotor = true;
+	}
+
+	if (NavCom != NULL) {
+		if (ParticleSystems[ATTACHED_PARTICLE_FIRE] != NULL) {
+			ParticleSystems[ATTACHED_PARTICLE_FIRE]->Delete_Me();
+			ParticleSystems[ATTACHED_PARTICLE_FIRE] = NULL;
+		}
+
+		CLSID locoid;
+		IPersistPtr persist(Locomotion);
+		persist->GetClassID(&locoid);
+
+		if (locoid == LocomotionClass::CLSIDs::Hover && PathDelay == 0) {
+			PathDelay = 1;
+		}
+
+		if (unknown_bool_6AC) {
+			unknown_bool_6AC = false;
+		} else {
+			Locomotion->Move_To(NavCom->Destination_Coord(this));
+		}
+	} else if (RTTI != RTTI_AIRCRAFT || (CurrentMission != MISSION_ATTACK && MissionQueue != MISSION_ATTACK) || TarCom == NULL) {
+		Locomotion->Stop_Moving();
+		NavCom = target;
+	}
+
+	IsToPathAroundBlockage = false;
+	BlockagePathDelay = Rule->BlockagePathDelay;
+	PathDelay = 0;
+}
+
+// FUNCTION: 0x004D9720
+void FootClass::Detach_All(bool all)
+{
+	if (all) {
+		if (Team && !ScenarioInit) {
+			Team->Remove(this);
+		}
+	}
+
+	if (!all) {
+		TechnoClass * contact = FUN_0065AD30(0);
+		if (contact != NULL && !House->Is_Ally(contact)) {
+			Transmit_Message(RADIO_OVER_OUT);
+		}
+	} else {
+		Transmit_Message(RADIO_OVER_OUT);
+	}
+
+	BASECLASS::Detach_All(all);
+}
+
+// FUNCTION: 0x004D97A0
+int FootClass::Rescue_Mission(AbstractClass * tarcom)
+{
+	if (tarcom == NULL) return(0);
+
+	if (TarCom == tarcom) {
+		return(-Risk());
+	}
+
+	if (TarCom != NULL && (TarCom->AbstractFlags & 1) && ((TechnoClass *)TarCom)->Is_Weapon_Equipped()) {
+		return(0);
+	}
+
+	bool basedefense = Team != NULL && Team->Class->IsBaseDefense;
+	if ((Team != NULL && !basedefense) || Get_Mission() == MISSION_HARVEST || !Risk()) {
+		return(0);
+	}
+
+	int dist = Distance(tarcom) - Weapon_Range(0);
+	int threat = Risk() * 1024;
+	int speed = -1;
+	if (dist > 0) {
+		speed = MAX((unsigned)Get_Max_Speed(), (unsigned)1);
+
+		int ratio = (speed > 0) ? MAX(dist / speed, 1) : 1;
+
+		threat = MAX(threat/ratio, 1);
+	}
+	return(threat);
+}
+
+// FUNCTION: 0x004D98C0
+void FootClass::Death_Announcement(TechnoClass const * ) const
+{
+	if (House->Is_Player_Control() && !Techno_Type_Class()->Spawned) {
+		if (RadarEventClass::Create(RADAREVENT_UNIT_LOST, PositionCell)) {
+			VoxClass::Play("EVA_UnitLost", -1, -1);
+		}
+	}
+}
+
+// FUNCTION: 0x004D9920
+AbstractClass * FootClass::Greatest_Threat(ThreatType method, Coord const & coord, bool onlyenemy) const
+{
+	if (IsScanLimited) {
+		method = ThreatType(method & ~THREAT_AREA);
+		method = ThreatType(method | THREAT_RANGE);
+	}
+
+	AbstractClass * target = BASECLASS::Greatest_Threat(method, coord, onlyenemy);
+
+	if (IsScanLimited && target == NULL) {
+		const_cast<FootClass *>(this)->IsScanLimited = false;
+	}
+
+	return(target);
+}
+
+extern bool ScenarioStarted;
+
+// FUNCTION: 0x004D9960
+void FootClass::Detach(AbstractClass const * target, bool all)
+{
+	int index;
+
+	BASECLASS::Detach(target, all);
+
+	if (Team == target) {
+		Team = NULL;
+	}
+
+	if (ParasiteEatingMe == target) {
+		if (ParasiteEatingMe->Strength == 0 || !ScenarioStarted) {
+			ParasiteEatingMe = NULL;
+		}
+	}
+
+	if (ParasiteEatingMe != NULL && ParasiteEatingMe->Strength > 0) {
+		ParasiteEatingMe->ParasiteImUsing->Detach(target, true);
+	}
+
+	if (target == this) {
+		ParasiteEatingMe = NULL;
+	}
+
+	if (Member == target && all) {
+		if (target != NULL) {
+			Member = Member->Member;
+		}
+	}
+
+	if (ArchiveTarget == target) {
+		ArchiveTarget = NULL;
+	}
+
+	if (SuspendedNavCom == target) {
+		SuspendedNavCom = NULL;
+	}
+
+	if (NavCom == target) {
+		bool clear = true;
+		CellClass * cptr;
+		if (!all && target != NULL && target->Is_Techno() && (cptr = &Map[target->Center_Coord()], cptr->Is_Sensed(House->HeapID))) {
+			clear = false;
+		}
+		if (Get_Mission() == MISSION_CAPTURE && RTTI == RTTI_INFANTRY && ((InfantryClass *)this)->Class->Occupier && NavCom != NULL && (NavCom->AbstractFlags & 2) && ((ObjectClass *)NavCom)->IsActive && ((ObjectClass *)NavCom)->Strength > 0 && ((ObjectClass *)NavCom)->Get_Mission() != MISSION_DECONSTRUCTION) {
+		} else if (clear) {
+			unknown_5A0 = NULL;
+			NavCom = NULL;
+		}
+	}
+
+	if (MegaTarget == target) {
+		if (MegaTarget != NULL) {
+			MegaDestination = &Map[MegaTarget->Center_Coord().As_Cell()];
+		} else {
+			MegaDestination = NULL;
+		}
+		MegaTarget = NULL;
+	}
+
+	if (MegaDestination == target) {
+		MegaDestination = NULL;
+	}
+
+	for (index = 0; index < NavQueue.Count(); index++) {
+		if (NavQueue[index] == target) {
+			NavQueue.Delete_Index(index);
+			index--;
+		}
+	}
+
+	for (index = 0; index < RouteQueue.Count(); index++) {
+		if (RouteQueue[index] == target) {
+			RouteQueue.Delete_Index(index);
+			index--;
+		}
+	}
+}
+
+// FUNCTION: 0x004D9C00
+int FootClass::Offload_Tiberium_Bail(void)
+{
+	return(0);
+}
+
+// FUNCTION: 0x004D9C10
+MoveType FootClass::Can_Enter_Cell(CellClass const * cell, FacingType, int cell_height, CellClass const *, bool use_locomotor_enter_check) const
+{
+	if (Locomotion != NULL && use_locomotor_enter_check) {
+		CellStruct cellnum = (CellStruct &)cell->CellID;
+		return(Locomotion->Can_Enter_Cell(cellnum));
+	}
+	return(MOVE_OK);
 }
 
 // FUNCTION: 0x004D9FF0

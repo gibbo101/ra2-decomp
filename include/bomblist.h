@@ -1,0 +1,26 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright 2026 ra2-decomp contributors
+#pragma once
+
+#include "vector.h"
+
+class AbstractClass;
+class BombClass;
+class ObjectClass;
+class TechnoClass;
+
+class BombListClass
+{
+	public:
+		void Update(void);
+		void Plant(TechnoClass * source, ObjectClass * target);
+		void AddDetector(TechnoClass * detector);
+		void RemoveDetector(TechnoClass * detector);
+		void PointerGotInvalid(AbstractClass * target);
+
+		static BombListClass Instance;
+
+		DynamicVectorClass<BombClass *> Bombs;
+		DynamicVectorClass<TechnoClass *> Detectors;
+		int UpdateDelay;
+};

@@ -72,6 +72,11 @@
 #include "color.hh"
 #include "strategy.hh"
 
+extern DynamicVectorClass<TechnoClass *> DAT_00A8EC78;
+#define Technos DAT_00A8EC78
+extern DynamicVectorClass<FactoryClass *> DAT_00A83E30;
+#define Factories DAT_00A83E30
+
 extern double __cdecl FUN_004CAC40(double);
 extern double __cdecl FUN_004CAD50(double);
 extern double __cdecl FUN_004CADE0(double);
@@ -379,10 +384,193 @@ LONG STDMETHODCALLTYPE HouseClass::Power_Drain(void)
 	return(Drain);
 }
 
+// FUNCTION: 0x004F6A20
+LONG STDMETHODCALLTYPE HouseClass::Category_Quantity(CategoryType category)
+{
+	int quantity = 0;
+
+	for (int index = 0; index < Technos.Count(); index++) {
+		TechnoClass * techno = Technos[index];
+		if (techno->House == this && techno->TClass->Category == category) {
+			quantity++;
+		}
+	}
+
+	return(quantity);
+}
+
+// FUNCTION: 0x004F6A80
+LONG STDMETHODCALLTYPE HouseClass::Apparent_Category_Quantity(CategoryType category)
+{
+	int quantity = 0;
+
+	for (int index = 0; index < Technos.Count(); index++) {
+		TechnoClass * techno = Technos[index];
+		if (techno->House == this && techno->TClass->Category == category) {
+			quantity++;
+		}
+	}
+
+	return(quantity);
+}
+
+// FUNCTION: 0x004F6AE0
+LONG STDMETHODCALLTYPE HouseClass::Category_Power(CategoryType category)
+{
+	int quantity = 0;
+
+	for (int index = 0; index < Technos.Count(); index++) {
+		TechnoClass * techno = Technos[index];
+		TechnoTypeClass const * ttype = techno->TClass;
+		if (techno->House == this && ttype->Category == category) {
+			quantity += ttype->Risk + ttype->Reward;
+		}
+	}
+
+	return(quantity);
+}
+
+// FUNCTION: 0x004F6B50
+LONG STDMETHODCALLTYPE HouseClass::Apparent_Category_Power(CategoryType category)
+{
+	int quantity = 0;
+
+	for (int index = 0; index < Technos.Count(); index++) {
+		TechnoClass * techno = Technos[index];
+		TechnoTypeClass const * ttype = techno->TClass;
+		if (techno->House == this && ttype->Category == category) {
+			quantity += ttype->Risk + ttype->Reward;
+		}
+	}
+
+	return(quantity);
+}
+
+Cell HouseClass::Get_Base_Center(void) const
+{
+	if (BaseCenter == CELL_NONE) {
+		return(BaseSpawnCell);
+	}
+	return(BaseCenter);
+}
+
+static inline Coord Base_Coord(Cell base)
+{
+	if (base == CELL_NONE) {
+		return(COORD_NONE);
+	}
+	return(Map[base].Center_Coord());
+}
+
+// FUNCTION: 0x004F6BC0
+CellStruct STDMETHODCALLTYPE HouseClass::Base_Center(void)
+{
+	Cell cell;
+	cell.X = Base_Coord(Get_Base_Center()).X / CELL_LEPTON_W;
+	cell.Y = Base_Coord(Get_Base_Center()).Y / CELL_LEPTON_H;
+	return((CellStruct &)cell);
+}
+
+// FUNCTION: 0x004F6D10
+CellStruct STDMETHODCALLTYPE HouseClass::Apparent_Base_Center(void)
+{
+	Cell cell;
+	cell.X = Base_Coord(Get_Base_Center()).X / CELL_LEPTON_W;
+	cell.Y = Base_Coord(Get_Base_Center()).Y / CELL_LEPTON_H;
+	return((CellStruct &)cell);
+}
+
 // FUNCTION: 0x004F6E60
 LONG STDMETHODCALLTYPE HouseClass::ID_Number(void)
 {
 	return(HeapID);
+}
+
+// FUNCTION: 0x004F6E70
+double HouseClass::Tiberium_Fraction(void) const
+{
+	if ((int)Tiberium.Get_Total_Amount() == 0) {
+		return(0.f);
+	}
+	return(Tiberium.Get_Total_Amount() / Capacity);
+}
+
+// FUNCTION: 0x004F6EB0
+void HouseClass::One_Time(void)
+{
+}
+
+// FUNCTION: 0x004F6EC0
+DiffType HouseClass::Assign_Handicap(DiffType handicap)
+{
+	DiffType old = Difficulty;
+	Difficulty = handicap;
+
+	if (Session.Type != GAME_NORMAL) {
+		HouseTypeClass const * hptr = Class;
+		FirepowerBias = hptr->FirepowerBias * Rule->Diff[handicap].FirepowerBias;
+		GroundspeedBias = hptr->GroundspeedBias * Rule->Diff[handicap].GroundspeedBias * Rule->GameSpeedBias;
+		AirspeedBias = hptr->AirspeedBias * Rule->Diff[handicap].AirspeedBias * Rule->GameSpeedBias;
+		ArmorBias = hptr->ArmorBias * Rule->Diff[handicap].ArmorBias;
+		ROFBias = hptr->ROFBias * Rule->Diff[handicap].ROFBias;
+		CostBias = hptr->CostBias * Rule->Diff[handicap].CostBias;
+		RepairDelay = Rule->Diff[handicap].RepairDelay;
+		BuildDelay = Rule->Diff[handicap].BuildDelay;
+		BuildSpeedBias = hptr->BuildSpeedBias * Rule->Diff[handicap].BuildSpeedBias * Rule->GameSpeedBias;
+	} else {
+		FirepowerBias = Rule->Diff[handicap].FirepowerBias;
+		GroundspeedBias = Rule->Diff[handicap].GroundspeedBias * Rule->GameSpeedBias;
+		AirspeedBias = Rule->Diff[handicap].AirspeedBias * Rule->GameSpeedBias;
+		ArmorBias = Rule->Diff[handicap].ArmorBias;
+		ROFBias = Rule->Diff[handicap].ROFBias;
+		CostBias = Rule->Diff[handicap].CostBias;
+		RepairDelay = Rule->Diff[handicap].RepairDelay;
+		BuildDelay = Rule->Diff[handicap].BuildDelay;
+		BuildSpeedBias = Rule->Diff[handicap].BuildSpeedBias * Rule->GameSpeedBias;
+	}
+
+	TeamTime = 175 * HeapID + Rule->TeamDelays[handicap];
+
+	return(old);
+}
+
+// FUNCTION: 0x004F7850
+HouseStaticClass::HouseStaticClass(void) :
+	IQ(0),
+	TechLevel(1),
+	Allies(0),
+	InitialCredits(0),
+	Edge(SOURCE_NONE)
+{
+}
+
+// FUNCTION: 0x004F83C0
+FactoryClass * HouseClass::Factory_Producing_This(ObjectTypeClass const * object) const
+{
+	FactoryClass * fptr = NULL;
+	for (int i = 0; i < Factories.Count(); i++) {
+		if (Factories[i]->Get_House() == this && Factories[i]->Get_Object() != NULL) {
+			if (Factories[i]->Get_Object()->TClass == object) {
+				fptr = Factories[i];
+				break;
+			}
+		}
+	}
+	return(fptr);
+}
+
+// FUNCTION: 0x004F9370
+void HouseClass::Super_Weapon_Handler(void)
+{
+	for (int i = 0; i < SuperWeapon.Count(); i++) {
+		SuperClass * super = SuperWeapon[i];
+		if (super->AI(this == PlayerPtr)) {
+			if (this == PlayerPtr) {
+				int id = super->Class->Fetch_Heap_ID();
+				Map.RepaintSidebar(SidebarClass::GetObjectTabIdx(RTTI_SUPERWEAPON, id, false));
+			}
+		}
+	}
 }
 
 // FUNCTION: 0x004FA210

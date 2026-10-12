@@ -3,6 +3,7 @@
 // Copyright 2025 Electronic Arts Inc.; 2026 OpenTS contributors
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
+#define INCLUDE_COM
 #include "always.h"
 
 #include "team.h"
@@ -1122,6 +1123,70 @@ HRESULT STDMETHODCALLTYPE TeamClass::Save(IStream * stream, BOOL cleardirty)
 	return(result);
 }
 
+// FUNCTION: 0x006EC560
+HRESULT STDMETHODCALLTYPE TeamClass::GetClassID(CLSID * retval)
+{
+	if (retval == NULL) return(E_POINTER);
+	*retval = CLSID_TeamClass;
+	return(S_OK);
+}
+
+// FUNCTION: 0x006EC5A0
+void TeamClass::Compute_CRC(CRCEngine & crc) const
+{
+	BASECLASS::Compute_CRC(crc);
+
+	crc(Class->Fetch_ID());
+
+	crc(House->Fetch_ID());
+
+	if (ClosestMember != NULL) {
+		crc(ClosestMember->Fetch_ID());
+	}
+
+	crc(Total);
+	crc(Risk);
+
+	if (Member != NULL) {
+		crc(Member->Fetch_ID());
+	}
+
+	crc((int)TimeOut);
+	crc((int)SuspendTimer);
+
+	if (Tag != NULL) {
+		crc(Tag->Fetch_ID());
+	}
+
+	crc(IsForcedActive);
+	crc(IsHasBeen);
+	crc(IsFullStrength);
+	crc(IsUnderStrength);
+	crc(IsReforming);
+	crc(IsLagging);
+	crc(IsAltered);
+	crc(JustAltered);
+	crc(IsMoving);
+	crc(IsNextMission);
+	crc(IsLeaveMap);
+	crc(Suspended);
+
+	crc(Quantity, sizeof(Quantity));
+}
+
+// FUNCTION: 0x006EC730
+void TeamClass::TMission_GOTO_SHROUD(TeamMissionClass * mission, bool first_time)
+{
+	if (first_time) {
+		FootClass *unit = (FootClass *)Zone;
+		if (unit == NULL) {
+			unit = Member;
+		}
+		Assign_Mission_Target(Map.Find_Nearby_Shroud(unit));
+	}
+	Coordinate_Move();
+}
+
 // FUNCTION: 0x006EC770
 void TeamClass::TMission_MOVECELL(TeamMissionClass * mission, bool first_time)
 {
@@ -1132,6 +1197,163 @@ void TeamClass::TMission_MOVECELL(TeamMissionClass * mission, bool first_time)
 		Assign_Mission_Target(&Map[cell]);
 	}
 	Coordinate_Move();
+}
+
+// FUNCTION: 0x006EC7D0
+void TeamClass::TMission_MOVE(TeamMissionClass * mission, bool first_time)
+{
+	if (first_time) {
+		FootClass * leader = Fetch_A_Leader();
+		Cell movecell = Scen->Get_Waypoint_Cell(mission->Data.Value);
+		Assign_Mission_Target(&Map[movecell]);
+		if (!Is_Leaving_Map()) {
+			if (leader->Can_Enter_Cell(&Map[movecell], FACING_NONE, -1, NULL, false) != MOVE_OK) {
+				movecell = Map.Nearby_Location(movecell, leader->TClass->Speed);
+			}
+		}
+		if (movecell != CELL_NONE) {
+			Assign_Mission_Target(&Map[movecell]);
+		} else {
+			Assign_Mission_Target(NULL);
+		}
+	}
+	Coordinate_Move();
+}
+
+inline bool TeamClass::Ammo_Check(void) const
+{
+	bool r = false;
+	FootClass * unit = Member;
+	while (unit != NULL) {
+		if (unit->TClass->MaxAmmo <= 0 || unit->Ammo > 0) {
+			r = true;
+			break;
+		}
+		unit = unit->Member;
+	}
+	return(r);
+}
+
+// FUNCTION: 0x006EC9A0
+void TeamClass::TMission_ATT_WAYPT(TeamMissionClass * mission, bool first_time)
+{
+	if (first_time) {
+		CellClass * trgt = (CellClass *)Scen->Get_Waypoint_Target(mission->Data.Value);
+		if (Is_Target_Cell(trgt)) {
+			ObjectClass * otrgt = trgt->Cell_Object(Point2D(0, 0), trgt->IsUnderBridge);
+			if (otrgt) {
+				trgt = (CellClass *)otrgt;
+			}
+		}
+		Assign_Mission_Target(trgt);
+	}
+
+	if (MissionTarget && Ammo_Check()) {
+		Coordinate_Attack();
+	} else {
+		Assign_Mission_Target(NULL);
+		IsNextMission = true;
+	}
+}
+
+// FUNCTION: 0x006ECA70
+void TeamClass::TMission_ATT_WAYPT_BUILDING(TeamMissionClass * mission, bool first_time)
+{
+	if (first_time) {
+		AbstractClass * trgt = Scen->Get_Waypoint_Target(mission->Data.Value);
+		if (Is_Target_Cell(trgt)) {
+			CellClass * cell = (CellClass *)trgt;
+			trgt = cell->Cell_Object(Point2D(0, 0), cell->IsUnderBridge);
+			if (trgt == NULL || trgt->RTTI != RTTI_BUILDING) {
+				trgt = NULL;
+			}
+		} else {
+			trgt = NULL;
+		}
+		Assign_Mission_Target(trgt);
+	}
+
+	if (MissionTarget && Ammo_Check()) {
+		Coordinate_Attack();
+	} else {
+		Assign_Mission_Target(NULL);
+		IsNextMission = true;
+	}
+}
+
+// FUNCTION: 0x006ECB50
+void TeamClass::TMission_ENTER_GRINDER(TeamMissionClass * mission, bool)
+{
+	FootClass * unit = Member;
+	while (unit != NULL) {
+		bool entered = unit->EnterGrinder() != 0;
+		FootClass * next = unit->Member;
+		if (entered) {
+			Remove(unit, -1, true);
+		}
+		unit = next;
+	}
+	IsNextMission = true;
+}
+
+// FUNCTION: 0x006ECBA0
+void TeamClass::TMission_ENTER_TANK_BUNKER(TeamMissionClass * mission, bool)
+{
+	FootClass * unit = Member;
+	while (unit != NULL) {
+		bool entered = unit->EnterTankBunker() != 0;
+		FootClass * next = unit->Member;
+		if (entered) {
+			Remove(unit, -1, true);
+		}
+		unit = next;
+	}
+	IsNextMission = true;
+}
+
+// FUNCTION: 0x006ECBF0
+void TeamClass::TMission_ENTER_BIO_REACTOR(TeamMissionClass * mission, bool)
+{
+	FootClass * unit = Member;
+	while (unit != NULL) {
+		bool entered = unit->EnterBioReactor() != 0;
+		FootClass * next = unit->Member;
+		if (entered) {
+			Remove(unit, -1, true);
+		}
+		unit = next;
+	}
+	IsNextMission = true;
+}
+
+// FUNCTION: 0x006ECC40
+void TeamClass::TMission_ENTER_BATTLE_BUNKER(TeamMissionClass * mission, bool)
+{
+	FootClass * unit = Member;
+	while (unit != NULL) {
+		bool entered = unit->EnterBattleBunker() != 0;
+		FootClass * next = unit->Member;
+		if (entered) {
+			Remove(unit, -1, true);
+		}
+		unit = next;
+	}
+	IsNextMission = true;
+}
+
+// FUNCTION: 0x006ECC90
+void TeamClass::TMission_GARRISON_STRUCTURE(TeamMissionClass * mission, bool)
+{
+	FootClass * unit = Member;
+	while (unit != NULL) {
+		bool entered = unit->GarrisonStructure() != 0;
+		FootClass * next = unit->Member;
+		if (entered) {
+			Remove(unit, -1, true);
+		}
+		unit = next;
+	}
+	IsNextMission = true;
 }
 
 // FUNCTION: 0x006EDEF0
