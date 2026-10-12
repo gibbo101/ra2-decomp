@@ -561,6 +561,21 @@ Per-function outcomes are in `data/tier0.csv`. The first run's leftovers, since 
   matched function calls; small relocation-free functions are identified by bytes alone,
   so a few names may be wrong (one false identity was caught).
 
+### The permuter (12 October 2026)
+
+`tools/permute.py` (Byte Tactics' MIT-licensed tree-sitter mutation catalogue and search,
+ported onto check.py; uncommitted pending the maintainer's call on keeping their
+copyright line, which names their author) and `check.py --score`, an instruction-level
+score with addresses, local jump targets and stack slots masked. It recovers a
+deliberately broken matched function in under a second, and runs about 2,400-4,500
+variants a minute on 14 workers. On the near misses Opus left (the campaign-score
+dialog at 97.8% normalised, `AnimClass`'s constructor at 93.4%, a dialog text function
+at 97.8%) it found nothing in about 260,000 compiles: what remains is register and x87
+scheduling ties no source rearrangement reaches, as Byte Tactics found for functions
+agents had already worked over. Use: a token-free sweep after Opus stops at 95% or more
+with only register or order differences left (`--stall 5`); never before Opus, where the
+gaps are semantic. A lower penalty score with a falling raw percentage is noise.
+
 ### Batch 1 (12 October 2026)
 
 110 small functions (under 1.5 KB) in nine TS-derived modules, one agent per module
