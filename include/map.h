@@ -320,6 +320,7 @@ class MapClass: public GScreenClass
 };
 
 extern CellClass BlubCell;
+extern CellClass InvalidCell;
 
 int SubzoneHash(unsigned int const & key);
 extern int MZonePassability[MZONE_COUNT][PASSABLE_COUNT];

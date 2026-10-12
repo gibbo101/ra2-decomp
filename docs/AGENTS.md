@@ -126,13 +126,18 @@ Each entry: what the diff showed, then the source change that fixed it.
 - `Map[Adjacent_Cell(Get_Cell(), face)]` with no named Cell local keeps the original's
   add order; a named local loads the adjacent offset first.
 - A sum used once stays inline in its expression; a local for it reschedules the code.
+- A field stored twice, or stored through a register: VC6's aliasing of writes through
+  casts, e.g. `(Point2D &)rect = ...; ((Point2D *)&rect)[1] = ...;` (0x006D2DE0).
 
 ### Branches and returns
 - `return strcmp(a, b) == 0;` gives `sete`; the branching form is
   `if (strcmp(a, b) != 0) return false; else return true;`.
 - Early returns that merged into `setne`: write nested `if` blocks. Conversely
   `return (A && B && C) ? 1 : 0;` keeps every temporary alive, each in its own slot.
-- A `goto` to the shared tail and a `return` compile differently.
+- A `goto` to the shared tail and a `return` compile differently. A tail emitted twice
+  where the original has one: TibSun's early returns turned into `goto done`.
+- Part of a computation tail-merged across branches: compute it inside each branch,
+  so the common half merges and the rest stays (0x0051FB00).
 - `if (a || b) X; else Y;` has one fixed block order however it is written. For the
   other order, make both tests reach one block: `if (a) goto none; if (b) { none: X }`.
 - `!p ? 0 : p->Count` and `p ? p->Count : 0` give opposite branch polarity.

@@ -438,7 +438,7 @@ class TechnoClass : public RadioClass
 		virtual void Assign_Target(AbstractClass * target);
 		virtual BulletClass * Fire_At(AbstractClass * target, int which=0);
 		virtual void Guard(void);
-		virtual bool Captured(HouseClass * newowner);
+		virtual bool Captured(HouseClass * newowner, bool announce = true);
 		virtual void vt_entry_3D8(unsigned, unsigned, unsigned);
 		virtual bool Crash(ObjectClass * killer);
 		virtual bool IsAreaFire(void) const;
@@ -510,6 +510,7 @@ class TechnoClass : public RadioClass
 		DirType Barrel_Pitch(AbstractClass * target) const;
 		void Laser_Zap(AbstractClass * target, int which, WeaponTypeClass const * weapon, Coord const & source_coord);
 		void Rock(Coord const & coord, float force);
+		void FUN_0070F770(void);
 
 
 		bool Is_Z_Fudge_Bridge(void) const;

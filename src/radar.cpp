@@ -40,6 +40,57 @@
 #include "voc.h"
 #include "vox.h"
 #include "vqa.h"
+#include "fastmath.h"
+#include "coord.h"
+
+extern const double ONE_RAD;
+extern const double DAT_007F02A8;
+extern const double DAT_00B048D8;
+extern const double DAT_00B049F8;
+extern const double DAT_00B049E0;
+extern const double DAT_00B049D8;
+extern const double DAT_00B048E8;
+extern const double DAT_00B048A0;
+extern const int DAT_00B04A34;
+extern const double DAT_00B048F0;
+extern const double DAT_00B04970;
+extern const int DAT_00B049F4;
+
+// FUNCTION: 0x00652680 $E108
+const double DAT_00B048D8 = fastmath::sqrt(pow((double)CELL_LEPTON_H, 2) * 2);
+
+// FUNCTION: 0x006526B0 $E111
+const double DAT_00B049F8 = DAT_00B048D8 / DAT_007F02A8;
+
+// FUNCTION: 0x006526D0 $E114
+const double DAT_00B049E0 = 1.0 / DAT_00B049F8;
+
+// FUNCTION: 0x006526F0 $E117
+const double DAT_00B049D8 = ONE_RAD * 45;
+
+// FUNCTION: 0x00652710 $E120
+const double DAT_00B048E8 = ONE_RAD * 60;
+
+// FUNCTION: 0x00652730 $E123
+const double DAT_00B048A0 = ONE_RAD * 90;
+
+// FUNCTION: 0x00652750 $E126
+const int DAT_00B04A34 = (int)(fastmath::tan(DAT_00B048A0 - DAT_00B048E8) * DAT_00B048D8 * 0.5);
+
+// FUNCTION: 0x00652790 $E129
+const double DAT_00B048F0 = fastmath::atan(DAT_00B04A34 * (1 / (double)CELL_LEPTON_H));
+
+// FUNCTION: 0x006527C0 $E132
+const double DAT_00B04970 = fastmath::atan((DAT_00B04A34 * 2) / DAT_00B048D8);
+
+// FUNCTION: 0x006527F0 $E135
+const int DAT_00B049F4 = (int)((DAT_00B04A34 * BRIDGE_CELL_HEIGHT) + 0.5);
+
+// FUNCTION: 0x00652820 $E138
+Cell const DAT_00B048C0(0, 0);
+
+// FUNCTION: 0x00652830 $E141
+Coord const DAT_00B04900(0, 0, 0);
 
 // FUNCTION: 0x00653760
 Cell RadarClass::Click_Cell_Calc(Point2D const & point) const

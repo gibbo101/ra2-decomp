@@ -1008,6 +1008,198 @@ int UnitClass::Do_MISSION_GUARD(void)
 	return(BASECLASS::Do_MISSION_GUARD());
 }
 
+// FUNCTION: 0x00740A90
+int UnitClass::Do_MISSION_MOVE(void)
+{
+	IsHarvesting = false;
+
+	if (Deployed || Deploying || Undeploying) {
+		QueueMission(MISSION_GUARD, false);
+		return(1);
+	}
+
+	if (!Door.Is_Door_Closed()) {
+		APC_Close_Door();
+	}
+
+	return(BASECLASS::Do_MISSION_MOVE());
+}
+
+// FUNCTION: 0x00740B10
+int UnitClass::Do_MISSION_PATROL(void)
+{
+	IsHarvesting = false;
+
+	if (!Door.Is_Door_Closed()) {
+		APC_Close_Door();
+	}
+
+	return(BASECLASS::Do_MISSION_PATROL());
+}
+
+// FUNCTION: 0x00740DF0
+bool UnitClass::Flag_Attach(HousesType house)
+{
+	if (house != HOUSE_NONE && Flagged == HOUSE_NONE) {
+		Flagged = house;
+		Mark(MARK_CHANGE);
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00740E20
+bool UnitClass::Flag_Remove(void)
+{
+	if (Flagged != HOUSE_NONE) {
+		Flagged = HOUSE_NONE;
+		Mark(MARK_CHANGE);
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00740E50
+int UnitClass::Pip_Count(void) const
+{
+	return(BASECLASS::Pip_Count());
+}
+
+// FUNCTION: 0x00740E60
+void UnitClass::APC_Close_Door(void)
+{
+	Door.Close_Door(Class->DeployTime);
+}
+
+// FUNCTION: 0x00740E80
+void UnitClass::APC_Open_Door(void)
+{
+	if (!Locomotion->Is_Moving() && !IsRotating) {
+		Door.Open_Door(Class->DeployTime);
+	}
+}
+
+// FUNCTION: 0x00740EE0
+InfantryTypeClass const * UnitClass::Crew_Type(void) const
+{
+	return(BASECLASS::Crew_Type());
+}
+
+// FUNCTION: 0x00740EF0
+int UnitClass::Do_MISSION_REPAIR(void)
+{
+	BuildingClass * nearest = TryNearestDockBuilding((TypeList<BuildingTypeClass *> *)&Rule->RepairBay, 0, 0);
+
+	IsHarvesting = false;
+
+	if (nearest == NULL) {
+		if (TryNearestDockBuilding((TypeList<BuildingTypeClass *> *)&Rule->RepairBay, 0, 1)) {
+			Enter_Idle_Mode();
+		}
+	} else {
+		if (Transmit_Message(RADIO_HELLO, nearest) == RADIO_ROGER) {
+			QueueMission(MISSION_ENTER, false);
+			return(1);
+		}
+	}
+
+	return(Current_Mission_Control().Normal_Delay());
+}
+
+// FUNCTION: 0x00740F80
+DirType UnitClass::Fire_Direction(void) const
+{
+	if (Class->IsTurretEquipped) {
+		return(SecondaryFacing.Current());
+	}
+
+	return(BASECLASS::Fire_Direction());
+}
+
+// FUNCTION: 0x00740FD0
+FireErrorType UnitClass::Can_Fire(AbstractClass * target, int which, bool ignoreRange) const
+{
+	if (DeathCounter >= 0) {
+		return(FIRE_CANT);
+	}
+
+	if (SpawnManager != NULL && SpawnManager->CountLaunchingSpawns()) {
+		return(FIRE_BUSY);
+	}
+
+	if (DirectRockerLinkedUnit != NULL) {
+		return(FIRE_ILLEGAL);
+	}
+
+	FireErrorType fire = BASECLASS::Can_Fire(target, which, ignoreRange);
+
+	if (fire == FIRE_OK || fire == FIRE_FACING) {
+		bool buildable = Map[(Coord const &)PositionCoord].Can_Build_Here();
+		if (Class->DeployToFire && Deploy_To_Fire() && !buildable) {
+			return(FIRE_MUST_DEPLOY);
+		}
+	}
+
+	if (fire == FIRE_OK) {
+		if (IsTethered && FUN_0065AD40(0)->Fetch_RTTI() == RTTI_BUILDING) {
+			return(FIRE_CANT);
+		}
+
+		WeaponTypeClass const * weapon = Get_Class_Weapon_Data(which)->Weapon;
+
+		if (Combat_Damage() < 0) {
+			TechnoClass const * techno = Dynamic_Cast<TechnoClass const *>((AbstractClass const *)target);
+			if (techno == NULL || !techno->IsStrange() || techno->HealthRatio >= Rule->ConditionGreen) {
+				return(FIRE_ILLEGAL);
+			}
+		}
+
+		if (!Class->MobileFire && NavCom != NULL) {
+			return(FIRE_MOVING);
+		}
+
+		if (!weapon->FireWhileMoving) {
+			if (!Class->BalloonHover && NavCom != NULL) {
+				return(FIRE_MOVING);
+			}
+			if (Class->BalloonHover && Locomotion->Is_Moving_Now()) {
+				return(FIRE_MOVING);
+			}
+		}
+
+		if ((weapon->UseSparkParticles || weapon->UseFireParticles) && NavCom != NULL) {
+			return(FIRE_MOVING);
+		}
+
+		if (TemporalImUsing != NULL && NavCom != NULL) {
+			return(FIRE_MOVING);
+		}
+
+		if (!IsFiring && IsRotating && weapon->Bullet->ROT == 0) {
+			return(FIRE_ROTATING);
+		}
+
+		if (!weapon->OmniFire && !Class->LargeVisceroid && !Class->SmallVisceroid) {
+			DirType turret;
+			if (Class->IsTurretEquipped) {
+				turret = SecondaryFacing.Current();
+			} else {
+				turret = PrimaryFacing.Current();
+			}
+			DirType rot = (weapon->Bullet->ROT ? DIR_STEP_16 : DIR_STEP_32);
+			if (rot < (turret - Direction(target))) {
+				return(FIRE_FACING);
+			}
+		}
+
+		FireErrorType locomotion_fire = Locomotion->Can_Fire();
+		if (locomotion_fire != FIRE_OK) {
+			return(locomotion_fire);
+		}
+	}
+	return(fire);
+}
+
 // FUNCTION: 0x00746DE0
 HRESULT STDMETHODCALLTYPE UnitClass::GetClassID(CLSID * retval)
 {

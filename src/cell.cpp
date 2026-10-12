@@ -70,13 +70,6 @@ inline IsometricTileTypeClass * Next_Tile_In_Set(IsometricTileTypeClass * type, 
 inline unsigned short * Preview_Tile_Of(IsometricTileTypeClass * type, int tile, int level) { return type->Preview_Tile(tile, level); }
 inline VisualType Building_Visual(BuildingClass * building) { return building->Visual_Character(false, NULL); }
 
-inline Coord CellClass::Cell_Coord(void) const
-{
-	Coord coord(Fetch_CellID());
-	coord.Z = Get_Height();
-	return(coord);
-}
-
 class PixelFXClass
 {
 	public:
@@ -588,6 +581,11 @@ struct FileSystem {
 class SHPStruct
 {
 	public:
+		short Type;
+		short Width;
+		short Height;
+		short Count;
+		void Load(void);
 		Rect GetFrameBounds(int frame) const;
 		void * GetPixels(int frame) const;
 };
@@ -695,6 +693,276 @@ void CellClass::Draw_Overlay_Shadow(Point2D const & xpoint, Rect const & cliprec
 	}
 	Draw_Shape(*LogicalSurface, *Drawer, shape, frame + shape->Get_Count() / 2, point, cliprect,
 		ShapeFlags_Type(0x4601), NULL, -2 - yoffset);
+}
+
+// FUNCTION: 0x0047FB90
+Rect CellClass::Overlay_Render_Rect(void) const
+{
+	if (Overlay == OVERLAY_NONE) {
+		return(Rect(0, 0, 0, 0));
+	}
+
+	int frame = OverlayData;
+	OverlayTypeClass * overlay = OverlayTypes[Overlay];
+	ShapeSet const * image = NULL;
+
+	if (overlay->IsTiberium) {
+		TiberiumType tib = Which_Tiberium_Type(Overlay);
+		if (tib != TIBERIUM_NONE) {
+			TiberiumClass * tiberium = Tiberiums[tib];
+			if (Ramp != 0) {
+				OverlayTypeClass * tib_overlay = OverlayTypes[tiberium->Variety + tiberium->Overlay->HeapID + tiberium->RampVariety / 4 * (Ramp - 1) + CellID.X * CellID.Y % (tiberium->RampVariety / 4)];
+				image = (ShapeSet const *)tib_overlay->Get_Image_Data();
+			} else {
+				OverlayTypeClass * tib_overlay = OverlayTypes[tiberium->Overlay->HeapID + CellID.X * CellID.Y % tiberium->Variety];
+				image = (ShapeSet const *)tib_overlay->Get_Image_Data();
+			}
+		}
+	} else if (overlay->IsRubble) {
+		image = NULL;
+		if (Rubble) {
+			Rubble->FUN_0045F160(&image, &frame);
+		}
+	} else {
+		image = (ShapeSet const *)overlay->Get_Image_Data();
+	}
+
+	Point2D point;
+	TacticalMap->Coord_To_Pixel(Coord_Whole(CellID), point);
+
+	point += Overlay_Draw_Offset();
+	point.X -= 30;
+
+	if (image == NULL) {
+		return(Rect(0, 0, 0, 0));
+	}
+
+	((SHPStruct *)image)->Load();
+	if (overlay->IsCrate) {
+		frame = 0;
+	}
+
+	SHPStruct const * shp = (SHPStruct const *)image;
+	return(shp->GetFrameBounds(frame) + (point - Point2D(shp->Width / 2, shp->Height / 2)));
+}
+
+// FUNCTION: 0x0047FDE0
+Rect CellClass::Overlay_Shadow_Render_Rect(void) const
+{
+	SHPStruct const * image = NULL;
+	OverlayTypeClass * overlay = NULL;
+
+	if (Overlay != OVERLAY_NONE) {
+		overlay = OverlayTypes[Overlay];
+		image = (SHPStruct const *)overlay->Get_Image_Data();
+	}
+
+	if (!image) {
+		return(Rect(0, 0, 0, 0));
+	}
+
+	unsigned char frame = OverlayData;
+	if (overlay->IsCrate) {
+		frame = 0;
+	}
+	int shadowframe = image->Count / 2 + frame;
+
+	Point2D point;
+	TacticalMap->Coord_To_Pixel(Coord_Whole(CellID), point);
+
+	point += Overlay_Draw_Offset();
+	point.X -= 30;
+
+	if (IsBridgeDeck) {
+		if (OverlayData >= OVERLAYDATA_BRIDGE_NS_FULL1 && OverlayData <= OVERLAYDATA_BRIDGE_NS_END2) {
+			point += Point2D(-15, 7);
+		}
+	}
+
+	Point2D d0 = point + point;
+	Point2D d1 = point + point;
+	return(image->GetFrameBounds(shadowframe) + (point - Point2D(image->Width / 2, image->Height / 2)));
+}
+
+// FUNCTION: 0x0047FF80
+Rect CellClass::Cell_Render_Rect(void) const
+{
+	Point2D point;
+	TacticalMap->Coord_To_Pixel(Coord_Whole(CellID), point);
+	point.X += -30;
+	point.Y += DSurface::ViewBounds.Y - 15 * Height;
+
+	Rect rect;
+	rect.X = point.X;
+	rect.Y = point.Y;
+	rect.Width = 60;
+	rect.Height = 30;
+
+	if (ITType == ISOTILE_NONE) {
+		return(rect);
+	}
+
+	if (ITType >= ISOTILE_FIRST && ITType < IsometricTileTypes.Count()) {
+		IsometricTileTypeClass * itype = IsometricTileTypes[ITType];
+		int subtile = SubTile;
+		IsoTileSet const * image = (IsoTileSet const *)itype->Get_Image_Data();
+		if (image == NULL) {
+			return(Rect());
+		}
+		subtile = MIN(subtile, image->Tile_Count() - 1);
+		IsoTileRecord const * tile = image->Fetch_Record_Pointer_Unsafe(subtile);
+		if (tile->IsHasExtraData) {
+			int dy = MAX(0, tile->Y - tile->ExtraY);
+			rect.Y -= dy;
+			rect.Height += dy;
+		}
+		return(rect);
+	} else {
+		FUN_004068E0("Invalid tile at (%d, %d)\n", CellID.X, CellID.Y);
+		return(rect);
+	}
+}
+
+// FUNCTION: 0x00480110
+Point2D CellClass::Overlay_Draw_Offset(void) const
+{
+	Point2D offset = ::Overlay_Draw_Offset(Overlay);
+	if (IsBridgeDeck) {
+		offset.Y -= 16;
+		if (OverlayData >= OVERLAYDATA_BRIDGE_NS_FULL1 && OverlayData <= OVERLAYDATA_BRIDGE_NS_END2) {
+			offset.Y -= 15;
+		}
+	} else if (Overlay == 0xEF) {
+		offset.Y -= 15;
+	}
+	offset.Y += DSurface::ViewBounds.Y - 15 * Height;
+	offset += Point2D(30, 15);
+	Point2D doubled = offset + offset;
+	return(offset);
+}
+
+// FUNCTION: 0x00480180
+void CellClass::Wipe_Depth(Point2D const & point, Rect const & cliprect)
+{
+	IsometricTileTypes[ISOTILE_CLEAR]->Draw_Tile(TileDrawers[0], 0, *DSurface::Temp, point.X, point.Y, cliprect, Height, TileBrightness, 1, 0, false, true, false, false);
+}
+
+// FUNCTION: 0x004801F0
+void CellClass::Draw_Shroud_And_Fog(Point2D const & point, Rect const & cliprect)
+{
+	ShadowFrame = TacticalMap->Cell_Shadow(CellID, false);
+
+	int shadow_frame = ShadowFrame;
+	if (shadow_frame == -2) {
+		shadow_frame = 15;
+	} else if (shadow_frame == -1) {
+		shadow_frame = 0;
+	}
+
+	Draw_Shroud_Or_Fog_Shape(point, cliprect, shadow_frame);
+
+	FogFrame = TacticalMap->Cell_Shadow(CellID, true);
+
+	if (!Scen->Special.IsFogOfWar || PlayerPtr->IsDefeated) {
+		return;
+	}
+
+	int fog_frame = FogFrame;
+	if (fog_frame == -2) {
+		fog_frame = 15;
+	} else if (fog_frame == -1) {
+		fog_frame = 0;
+	}
+
+	Draw_Fog_Shape(point, cliprect, fog_frame);
+}
+
+inline void CellClass::Fetch_Icon(IsometricTileTypeClass *& ittype, int & subtile, int * icon, bool doicon) const
+{
+	if (ITType != ISOTILE_NONE) {
+		ittype = IsometricTileTypes[ITType];
+		subtile = SubTile;
+		if (ittype->NumTileTypesInSet > 1) {
+			if (ittype->Is_Randomized(SubTile)) {
+				if (doicon) *icon = IsBridgeDamaged;
+			} else {
+				if (doicon) *icon = Clear_Icon(ITType, ittype->NumTileTypesInSet);
+			}
+		}
+	} else {
+		subtile = 0;
+		ittype = IsometricTileTypes[TILE_CLEAR];
+		if (doicon) *icon = Clear_Icon(TILE_CLEAR, ittype->NumTileTypesInSet);
+	}
+}
+
+// FUNCTION: 0x004802A0
+void CellClass::Draw_Shadow_Cast(Point2D const & point, Rect const & cliprect)
+{
+	int subtile;
+	IsometricTileTypeClass * isotype;
+
+	Fetch_Icon(isotype, subtile, NULL, false);
+	if (isotype->IsShadowCaster) {
+		isotype->Draw_Shadow_Caster(subtile, DSurface::Temp, Point2D(point.X, point.Y - 15 * Height), cliprect, -2 - 15 * (Height - 4));
+	}
+}
+
+// FUNCTION: 0x00480510
+bool CellClass::Has_Wall_Or_Gate(OverlayType type, FacingType facing) const
+{
+	if (Overlay == type && Overlay != OVERLAY_NONE) {
+		return(true);
+	}
+	if (type == OVERLAY_NONE) {
+		if (Overlay == OVERLAY_GDI_WALL || Overlay == OVERLAY_NOD_WALL || (int)Overlay == 0xF3) {
+			return(true);
+		}
+		return(false);
+	}
+
+	if (type == OVERLAY_GDI_WALL || type == OVERLAY_SANDBAG_WALL) {
+		BuildingClass * obj = (BuildingClass *)OccupierPtr;
+		while (obj != NULL) {
+			if (obj->Fetch_RTTI() == RTTI_BUILDING) {
+				BuildingTypeClass * btype = obj->Class;
+				if (obj->Strength > 0) {
+					if ((btype == Rule->GDIGateOne && (facing == FACING_E || facing == FACING_W)) ||
+						(btype == Rule->GDIGateTwo && (facing == FACING_N || facing == FACING_S)) ||
+						(btype == Rule->WallTower)) {
+						return(true);
+					}
+				}
+			}
+			obj = (BuildingClass *)obj->Next;
+		}
+	}
+
+	if (type == OVERLAY_NOD_WALL) {
+		BuildingClass * obj = (BuildingClass *)OccupierPtr;
+		while (obj != NULL) {
+			if (obj->Fetch_RTTI() == RTTI_BUILDING) {
+				BuildingTypeClass * btype = obj->Class;
+				if (obj->Strength > 0) {
+					if ((btype == Rule->NodGateOne && (facing == FACING_E || facing == FACING_W)) ||
+						(btype == Rule->NodGateTwo && (facing == FACING_N || facing == FACING_S))) {
+						return(true);
+					}
+				}
+			}
+			obj = (BuildingClass *)obj->Next;
+		}
+	}
+
+	return(false);
+}
+
+// FUNCTION: 0x00480A30
+Coord CellClass::Cell_Coord(void) const
+{
+	Coord coord(Fetch_CellID());
+	coord.Z = Get_Height();
+	return(coord);
 }
 
 // FUNCTION: 0x004810A0

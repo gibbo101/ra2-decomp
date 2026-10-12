@@ -17,3 +17,4 @@ address,name,symbol,evidence
 0x0081BA88,_mzones,,"name table of 0x00474E40 CCINIClass::Get_MZoneType: 13 names, Normal to CrusherAll"
 0x0081B958,_pips,,"name table of 0x004748A0 CCINIClass::Get_PipEnum: 11 (name, PipEnum) pairs, green to personpurple"
 0x004F42F0,GScreenClass::Flag_To_Redraw,,"YRpp MapClass::RedrawSidebar; GScreenClass vtable slot 14, body is TibSun's Flag_To_Redraw (TacticalMap redraw flag, DrawFlags, Map.Increment_Redraw_Counter)"
+0x00B0CE28,TacticalDimensions,,every reference in src/tactical.cpp implies this base (refaudit)

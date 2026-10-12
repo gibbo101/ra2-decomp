@@ -718,6 +718,20 @@ TS (RTTI names, movement zones, pips, superweapon names) and fixed them;
 which has the same TS count but whose fix flips 0x0073CEC0 for compiler-internal
 reasons. Cost: about 0.5M tokens, 39 minutes.
 
+### Batch 7 (12 October 2026)
+
+map, Display, Radar, Sidebar, Session, Tactical, cell, Infantry, Unit, the first batch
+on the corrected map and session layouts. **103 of 108 matched**; most of the display
+modules' functions were the small compiler-generated helpers at their starts. The merge
+corrected TechnoClass::Captured's signature (a second `announce` argument, from the
+`ret 8` of all four overrides), adopted SmudgeTypeClass, and rejected a request to make
+DirType::Direction out of line, since a landed function inlines it twice. Its refaudit
+pass found no new offset errors; the one new object it named, TacticalDimensions, now
+has a names.csv row. Banked: a tile-shadow renderer (76.4%), CellClass's Draw_It and
+wall update (62%, 41%) and UnitClass's load direction (64.8%, inline budget); the
+cell agent never started Draw_Overlay. Cost: about 1.9M tokens, 49 minutes. Merge
+gate: 2,091 of 2,091 (321.8 KB).
+
 ### Decide before the first batch
 
 - **Module layout.** Which function lives in which source file, and the link order, decide

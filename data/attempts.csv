@@ -849,7 +849,6 @@ date,address,function,model,result,best,checks,minutes,blocker,notes
 2026-10-12,0x006CB7B0,SuperClass::Lose,sonnet-5.5 medium,MATCH,100,1,,,"SuperClass::Lose, landed"
 2026-10-12,0x006CB820,SuperClass::SetReadiness,sonnet-5.5 medium,MATCH,100,1,,,"SuperClass::SetReadiness, landed"
 2026-10-12,0x006CB830,SuperClass::StopPreclickAnim,sonnet-5.5 medium,MATCH,100,4,,overlay header,SuperClass::StopPreclickAnim matches with the overlay suprtype.h. The ternary `Control = (CustomChargeTime == -1) ? Class->RechargeTime : CustomChargeTime` is what fixed the register choice. Not in src/. Source: build/batch/Super/0x006CB830.cpp
-2026-10-12,0x006CB4D0 AND 0X006CB830 (LANDING NOTE),,sonnet-5.5 medium,MATCH,100,0,,,Both land once the suprtype.h change below is merged; they are saved as build/batch/Super/0x006CB4D0.cpp and 0x006CB830.cpp
 2026-10-12,0x00561710,Init_00561710,sonnet-5.5 medium,MATCH,100,1,,,"Init_00561710: sqrt(pow*2) static init, as Init_00511200."
 2026-10-12,0x00561740,Init_00561740,sonnet-5.5 medium,MATCH,100,1,,,Init_00561740
 2026-10-12,0x00561760,Init_00561760,sonnet-5.5 medium,MATCH,100,1,,,Init_00561760
@@ -922,3 +921,122 @@ date,address,function,model,result,best,checks,minutes,blocker,notes
 2026-10-12,0x005F3170,NullModemClass::Hangup_Modem,opus-5.5 high,MATCH,100,,,,"Re-matched with Session at its YR address in names.csv; before, its member offsets were wrong and passed as unverified. Fixed by giving SessionClass YR's layout."
 2026-10-12,0x0064AC90,Kick_Packet_Received,opus-5.5 high,MATCH,100,,,,"Re-matched with Session at its YR address in names.csv; before, its member offsets were wrong and passed as unverified. Fixed by giving SessionClass YR's layout."
 2026-10-12,0x00696C40,SerialEdit::Delete_Init_String,opus-5.5 high,MATCH,100,,,,"Re-matched with Session at its YR address in names.csv; before, its member offsets were wrong and passed as unverified. Fixed by giving SessionClass YR's layout."
+2026-10-12,0x005618E0,Init_005618E0,sonnet-5.5 medium,MATCH,100,1,,,Init_005618E0: three global stores
+2026-10-12,0x00561900,Init_00561900,sonnet-5.5 medium,MATCH,100,1,,,Init_00561900: thunk calling FUN_00561910
+2026-10-12,0x005638C0,Init_005638C0,sonnet-5.5 medium,MATCH,100,1,,,Init_005638C0: thunk calling FUN_005638D0
+2026-10-12,0x00565060,$E177,sonnet-5.5 medium,MATCH,100,3,,,Static init of a global CellClass InvalidCell. Must be a plain global: a static member of MapClass makes the dtor stub add a guard byte. The $E number shifts as code is added to the file (currently $E177).
+2026-10-12,0x00565080,$E175,sonnet-5.5 medium,MATCH,100,3,,,"Atexit stub for InvalidCell (currently $E175, re-read the number from the checker's listing)"
+2026-10-12,0x00565090,MapClass::MapClass,sonnet-5.5 medium,MATCH,100,2,,,MapClass::MapClass(void): empty body plus MaxLevel = 13; member constructors do the rest
+2026-10-12,0x00565190,MapClass::MapClass,sonnet-5.5 medium,MATCH,100,3,,,"MapClass::MapClass(NoInitClass const&): init list with unknown_10(false), Array(x); two separate SUBZONE loops (clear hash table pointers, then Clear tracking plus null pointers)"
+2026-10-12,0x005652C0,MapClass::~MapClass,sonnet-5.5 medium,MATCH,100,1,,,MapClass::~MapClass copied from TibSun; matched first try
+2026-10-12,0x00565470,MapClass::PlayRect_To_Cell_Point,sonnet-5.5 medium,MATCH,100,1,,,MapClass::PlayRect_To_Cell_Point from TibSun
+2026-10-12,0x005654A0,MapClass::LocalRect_To_Cell_Point,sonnet-5.5 medium,MATCH,100,1,,,MapClass::LocalRect_To_Cell_Point from TibSun
+2026-10-12,0x005654E0,MapClass::Cell_To_PlayRect_Point,sonnet-5.5 medium,MATCH,100,1,,,MapClass::Cell_To_PlayRect_Point from TibSun
+2026-10-12,0x00565520,MapClass::Cell_To_LocalRect_Point,sonnet-5.5 medium,MATCH,100,1,,,MapClass::Cell_To_LocalRect_Point from TibSun
+2026-10-12,0x004A8440,Init_004A8440,sonnet-5.5 medium,MATCH,100,1,,,Init_004A8440: pow init stub
+2026-10-12,0x004A8470,Init_004A8470,sonnet-5.5 medium,MATCH,100,1,,,Init_004A8470
+2026-10-12,0x004A8490,Init_004A8490,sonnet-5.5 medium,MATCH,100,1,,,Init_004A8490
+2026-10-12,0x004A84B0,Init_004A84B0,sonnet-5.5 medium,MATCH,100,1,,,Init_004A84B0
+2026-10-12,0x004A84D0,Init_004A84D0,sonnet-5.5 medium,MATCH,100,1,,,Init_004A84D0
+2026-10-12,0x004A84F0,Init_004A84F0,sonnet-5.5 medium,MATCH,100,1,,,Init_004A84F0
+2026-10-12,0x004A8510,Init_004A8510,sonnet-5.5 medium,MATCH,100,1,,,Init_004A8510
+2026-10-12,0x004A8550,Init_004A8550,sonnet-5.5 medium,MATCH,100,1,,,Init_004A8550
+2026-10-12,0x004A8580,Init_004A8580,sonnet-5.5 medium,MATCH,100,1,,,Init_004A8580
+2026-10-12,0x004A85B0,Init_004A85B0,sonnet-5.5 medium,MATCH,100,1,,,Init_004A85B0
+2026-10-12,0x004A85E0,Init_004A85E0,sonnet-5.5 medium,MATCH,100,1,,,Init_004A85E0
+2026-10-12,0x004A85F0,Init_004A85F0,sonnet-5.5 medium,MATCH,100,1,,,Init_004A85F0
+2026-10-12,0x00652680,$E108,sonnet-5.5 medium,MATCH,100,3,,,"$E109, cell-diagonal constant: fastmath::sqrt(pow((double)CELL_LEPTON_H,2)*2)"
+2026-10-12,0x006526B0,$E111,sonnet-5.5 medium,MATCH,100,3,,,"$E112, diag / DAT_007F02A8. The 60.0 must be an extern const double, not a literal, or VC6 emits fmul"
+2026-10-12,0x006526D0,$E114,sonnet-5.5 medium,MATCH,100,3,,,"$E115, 1.0 / previous"
+2026-10-12,0x006526F0,$E117,sonnet-5.5 medium,MATCH,100,3,,,"$E118, ONE_RAD*45"
+2026-10-12,0x00652710,$E120,sonnet-5.5 medium,MATCH,100,3,,,"$E121, ONE_RAD*60"
+2026-10-12,0x00652730,$E123,sonnet-5.5 medium,MATCH,100,3,,,"$E124, ONE_RAD*90"
+2026-10-12,0x00652750,$E126,sonnet-5.5 medium,MATCH,100,3,,,"$E127, level lepton height"
+2026-10-12,0x00652790,$E129,sonnet-5.5 medium,MATCH,100,3,,,"$E130, slope angle"
+2026-10-12,0x006527C0,$E132,sonnet-5.5 medium,MATCH,100,3,,,"$E133, diagonal slope angle"
+2026-10-12,0x006527F0,$E135,sonnet-5.5 medium,MATCH,100,3,,,"$E136, bridge lepton height"
+2026-10-12,0x00652820,$E138,sonnet-5.5 medium,MATCH,100,3,,,"$E139, Cell const (0,0)"
+2026-10-12,0x00652830,$E141,sonnet-5.5 medium,MATCH,100,3,,,"$E142, Coord const (0,0,0)"
+2026-10-12,0x006A4A20,Init_006A4A20,sonnet-5.5 medium,MATCH,100,2,,,Init_006A4A20: sqrt(pow*2) static-initialiser stub
+2026-10-12,0x006A4A50,Init_006A4A50,sonnet-5.5 medium,MATCH,100,2,,,Init_006A4A50
+2026-10-12,0x006A4A70,Init_006A4A70,sonnet-5.5 medium,MATCH,100,2,,,Init_006A4A70
+2026-10-12,0x006A4A90,Init_006A4A90,sonnet-5.5 medium,MATCH,100,2,,,"Init_006A4A90, const operand first fixed WRONG TARGETS"
+2026-10-12,0x006A4AB0,Init_006A4AB0,sonnet-5.5 medium,MATCH,100,2,,,"Init_006A4AB0, same operand swap"
+2026-10-12,0x006A4AD0,Init_006A4AD0,sonnet-5.5 medium,MATCH,100,2,,,"Init_006A4AD0, same operand swap"
+2026-10-12,0x006A4AF0,Init_006A4AF0,sonnet-5.5 medium,MATCH,100,2,,,Init_006A4AF0
+2026-10-12,0x006A4B30,Init_006A4B30,sonnet-5.5 medium,MATCH,100,2,,,Init_006A4B30
+2026-10-12,0x006A4B60,Init_006A4B60,sonnet-5.5 medium,MATCH,100,2,,,Init_006A4B60
+2026-10-12,0x006A4B90,Init_006A4B90,sonnet-5.5 medium,MATCH,100,2,,,Init_006A4B90
+2026-10-12,0x006A4BC0,Init_006A4BC0,sonnet-5.5 medium,MATCH,100,2,,,Init_006A4BC0
+2026-10-12,0x006A4BD0,Init_006A4BD0,sonnet-5.5 medium,MATCH,100,2,,,Init_006A4BD0
+2026-10-12,0x00696D20,Init_00696D20,sonnet-5.5 medium,MATCH,100,1,,,Init_00696D20
+2026-10-12,0x00696D50,Init_00696D50,sonnet-5.5 medium,MATCH,100,1,,,Init_00696D50
+2026-10-12,0x00696D70,Init_00696D70,sonnet-5.5 medium,MATCH,100,1,,,Init_00696D70
+2026-10-12,0x00696D90,Init_00696D90,sonnet-5.5 medium,MATCH,100,2,,,operands reversed
+2026-10-12,0x00696DB0,Init_00696DB0,sonnet-5.5 medium,MATCH,100,2,,,operands reversed
+2026-10-12,0x00696DD0,Init_00696DD0,sonnet-5.5 medium,MATCH,100,2,,,operands reversed
+2026-10-12,0x00696DF0,Init_00696DF0,sonnet-5.5 medium,MATCH,100,2,,,DAT_007E1738 * (DAT_00B057E8 * tan(...)); _ftol unverified only
+2026-10-12,0x00696E30,Init_00696E30,sonnet-5.5 medium,MATCH,100,1,,,Init_00696E30
+2026-10-12,0x00696E60,Init_00696E60,sonnet-5.5 medium,MATCH,100,1,,,Init_00696E60
+2026-10-12,0x00696E90,Init_00696E90,sonnet-5.5 medium,MATCH,100,1,,,_ftol unverified only
+2026-10-12,0x00696EC0,Init_00696EC0,sonnet-5.5 medium,MATCH,100,1,,,Init_00696EC0
+2026-10-12,0x00696ED0,Init_00696ED0,sonnet-5.5 medium,MATCH,100,1,,,Init_00696ED0
+2026-10-12,0x006D1FE0,Tactical::Coord_To_Pixel_Absolute,sonnet-5.5 medium,MATCH,100,1,,,Tactical::Coord_To_Pixel_Absolute(Point2D const &): Rectangular_To_Isometric then /= 256 on each axis.
+2026-10-12,0x006D2070,Tactical::Pixel_To_Lepton,sonnet-5.5 medium,MATCH,100,1,,,"Tactical::Pixel_To_Lepton: Vector3 through PixelToCoordMatrix, as in TibSun."
+2026-10-12,0x006D2120,Tactical::Pixel_To_Z_Lepton,sonnet-5.5 medium,MATCH,100,1,,,"Tactical::Pixel_To_Z_Lepton: LEPTON(ZLeptonsPerPixel * (pixel - 0.5)), using the existing file-static."
+2026-10-12,0x006D2140,Tactical::Coord_To_Pixel,sonnet-5.5 medium,MATCH,100,1,,,Tactical::Coord_To_Pixel with the edge zone written as the constants 360 and 180 and the extent read from TacticalDimensions.
+2026-10-12,0x006D2280,Tactical::Pixel_To_Coord,sonnet-5.5 medium,MATCH,100,1,,,Tactical::Pixel_To_Coord (TibSun form).
+2026-10-12,0x006D2360,Tactical::Pixel_To_Coord_Absolute,sonnet-5.5 medium,MATCH,100,1,,,Tactical::Pixel_To_Coord_Absolute (TibSun form).
+2026-10-12,0x006D2420,Tactical::Setup_Trigger_Scroll,sonnet-5.5 medium,MATCH,100,1,,,Tactical::Setup_Trigger_Scroll. The function-local static float table matched the exe's table at 0x8428EC with no extern.
+2026-10-12,0x006D2540,Tactical::AI,sonnet-5.5 medium,MATCH,100,3,,,Tactical::AI. The original inlines Set_Tactical_Position(Point2D const &) and Clamp_Pixel_To_Tactical; I defined Set_Tactical_Position above AI in src/tactical.cpp (no FUNCTION marker). It computes a separate result Point2D: if (Clamp_To_Tactical_Rect(clamped) && !Debug_Map) result = clamped; else result = point.
+2026-10-12,0x006D2B50,Tactical_noop,sonnet-5.5 medium,MATCH,100,1,,,"Tactical_noop(int,int,int,int): a free function with an empty body. Under the default fastcall the last two ints go on the stack, which gives ret 8."
+2026-10-12,0x006D2B60,Tactical::Wipe_Depth,sonnet-5.5 medium,MATCH,100,15,,,"Tactical::Wipe_Depth. In the cell loop, call Coord_To_Pixel(coord, pixel) with its result otherwise unused, then write `Point2D at = TacticalRect.TopLeft + (pixel + Point2D(-30, -15));` and pass `at` to Wipe_Depth. That one expression shape was the only one of about 12 that gave MATCH. Others gave 99.5% with the lea operands swapped, or made Coord_To_Pixel_Absolute inline."
+2026-10-12,0x006D2DE0,Tactical::Render_Tiles,sonnet-5.5 medium,partial,81.9,45,,register allocation and store scheduling of the per-cell Rect in the redraw loop,Render_Tiles. 602 vs 605 bytes. The dirty-area and pan parts match. In the cell loop the original stores Height (via ecx) right after X and reads the Coord_To_Pixel result straight from the returned pointer. Ours reads it through a pointer copy and pushes the Intersect arguments earlier. Writing Height before Width gets the 60 hoisted into ebx as in the original. About 40 variants of the Rect construction and Point2D expressions did not move it further. Banked at build/batch/Tactical/0x006D2DE0.cpp; it does not match with an overlay (no header change involved).
+2026-10-12,0x006D3040,,sonnet-5.5 medium,partial,76.4,25,,register allocation: the original hoists 60 into ebp and stores Height before Y,"Render_Tile_Shadows. 583 vs 588 bytes; same cell-rect structure as 0x006D2DE0. It reaches 76.4% only with a file-local inline helper that wraps the Coord_To_Pixel_Absolute call, which keeps the call out of line. Banked at build/batch/Tactical/0x006D3040.cpp; no overlay involved."
+2026-10-12,0x0047F6A0,,sonnet-5.5 medium,failed,0,0,,not attempted,"CellClass::DrawOverlay, 1264 bytes. Not started; the pass went to the smaller functions first. TibSun Draw_Overlay is the starting point."
+2026-10-12,0x0047FB90,CellClass::Overlay_Render_Rect,sonnet-5.5 medium,MATCH,100,14,,,"Overlay_Render_Rect. Needed `image = NULL;` repeated in the rubble branch to put the zero in EBX, Which_Tiberium_Type(Overlay) for the tiberium lookup, and `GetFrameBounds(frame) + (point - Point2D(w, h))` as the last expression. Uses a local SHPStruct stub (Width/Height/Count/Load) in cell.cpp."
+2026-10-12,0x0047FDE0,CellClass::Overlay_Shadow_Render_Rect,sonnet-5.5 medium,MATCH,100,8,,,Overlay_Shadow_Render_Rect. Keeps the OverlayTypeClass pointer in a local across the null test. The original calls the Coord constructor out of line; two unused `Point2D d = point + point;` locals at the end spend the inline budget so that happens. Without them it scores 53%.
+2026-10-12,0x0047FF80,CellClass::Cell_Render_Rect,sonnet-5.5 medium,MATCH,100,1,,,Cell_Render_Rect. TibSun source with literal constants and DSurface::ViewBounds.Y for TacticalRect.Y.
+2026-10-12,0x00480110,CellClass::Overlay_Draw_Offset,sonnet-5.5 medium,MATCH,100,4,,,Overlay_Draw_Offset. The `else if (Overlay == 0xEF) offset.Y -= 15;` branch is not in TibSun. One unused `Point2D doubled = offset + offset;` stops callers from inlining it; without it Draw_Overlay_Shadow (0x0047F510) breaks.
+2026-10-12,0x00480180,CellClass::Wipe_Depth,sonnet-5.5 medium,MATCH,100,2,,,Wipe_Depth. Draws into DSurface::Temp and passes TileBrightness (offset 0x10C).
+2026-10-12,0x004801F0,CellClass::Draw_Shroud_And_Fog,sonnet-5.5 medium,MATCH,100,1,,,Draw_Shroud_And_Fog. TibSun source as is.
+2026-10-12,0x004802A0,CellClass::Draw_Shadow_Cast,sonnet-5.5 medium,MATCH,100,2,,,"Draw_Shadow_Cast. Fetch_Icon is defined inline in cell.cpp (TibSun body). The point is built inline as `Point2D(point.X, point.Y - 15 * Height)` with no local; the surface is DSurface::Temp."
+2026-10-12,0x00480350,,sonnet-5.5 medium,partial,62.2,20,,register allocation,"Draw_It, 437 of 437 bytes. Needs the smudtype.h overlay below to reach 62.2%; without it the smudge Draw_It is slot 0xA8, not 0xA0. The original keeps the zero constant in EBX and ittype in EDI, while ours puts both in EDI. Best attempt is in build/batch/cell/0x00480350.cpp and does not match even with the overlay. Not in src."
+2026-10-12,0x00480510,CellClass::Has_Wall_Or_Gate,sonnet-5.5 medium,MATCH,100,2,,,"Has_Wall_Or_Gate. Uses obj->Fetch_RTTI() (a virtual call, slot 0x2c) instead of the TibSun RTTI field, and adds `|| (int)Overlay == 0xF3` to the OVERLAY_NONE case."
+2026-10-12,0x00480630,,sonnet-5.5 medium,partial,40.6,18,,inlining,"Wall_Update, 1015 bytes. Ours is 1326 bytes. The original inlines a dead Union that keeps only the X and Y ifs, then calls Drawing::Union (0x00487F40) out of line twice. It also calls Cell operator+ out of line for the outer Adjacent_Cell and inlines it in the inner loops. No source form reproduced the dead Union or the call pattern. Best attempt is in build/batch/cell/0x00480630.cpp. Not in src."
+2026-10-12,0x00480A30,CellClass::Cell_Coord,sonnet-5.5 medium,MATCH,100,1,,,Cell_Coord. Moved the previously inline CellClass::Cell_Coord from the top of cell.cpp to a plain definition at this address. Cell_Color and the other functions that use it stay MATCH.
+2026-10-12,0x0051F640,InfantryClass::Do_MISSION_GUARD_AREA,sonnet-5.5 medium,MATCH,100,1,,,Do_MISSION_GUARD_AREA; landed in src/infantry.cpp; override added to include/infantry.h
+2026-10-12,0x0051F660,InfantryClass::Do_MISSION_MOVE,sonnet-5.5 medium,MATCH,100,2,,,"Do_MISSION_MOVE; landed in src/infantry.cpp. Slot 0x480 is Assign_Destination(NULL, true), not Enter_Idle_Mode."
+2026-10-12,0x0051F6E0,InfantryClass::Do_MISSION_UNLOAD,sonnet-5.5 medium,MATCH,100,3,,,Do_MISSION_UNLOAD; landed in src/infantry.cpp. Needed the 1b..1e goto-into-block trick for block order.
+2026-10-12,0x0051F800,InfantryClass::What_Action,sonnet-5.5 medium,partial,90.7,14,,code layout: the shared attack-support tail is emitted twice,"What_Action(Cell const&, bool, bool), 774 vs 749 bytes. The second tail copy uses edx for the vtable, so VC does not merge it. Every single-copy form (goto, do-while, else-if, bool flag) makes VC spill action to the stack. Not in src; best source in build/batch/Infantry/0x0051F800.cpp, no overlay needed."
+2026-10-12,0x0051FAF0,InfantryClass::Class_Of,sonnet-5.5 medium,MATCH,100,1,,,Class_Of returns Class; landed in src/infantry.cpp
+2026-10-12,0x0051FB00,InfantryClass::Read_INI,sonnet-5.5 medium,partial,99.7,12,,code layout of the x narrowing in the cell-number branch,"Read_INI, 993 vs 993 bytes. The only difference is where the NewINIFormat>=4 branch jumps: the original skips the join's movsx ecx,cx, ours does not. Tried a short x, per-branch casts and a per-branch Cell. Needs Read_INI(CCINIClass &) non-const (done in include/infantry.h) and extern int __fastcall FUN_0050C170(char const*) (HouseClass::FindIndexByName) in the source. Not in src; banked in build/batch/Infantry/0x0051FB00.cpp."
+2026-10-12,0x0051FEF0,InfantryClass::Write_INI,sonnet-5.5 medium,MATCH,100,1,,,"Write_INI; landed in src/infantry.cpp, TibSun source nearly verbatim"
+2026-10-12,0x005200B0,InfantryClass::Fear_AI,sonnet-5.5 medium,MATCH,100,6,,,Fear_AI; landed in src/infantry.cpp. Fear is now int in include/infantry.h. A file-local static inline Reduce_Fear(int &) gives the memory dec instead of a register dec.
+2026-10-12,0x00520260,InfantryClass::Edge_Of_World_AI,sonnet-5.5 medium,MATCH,100,3,,,"Edge_Of_World_AI out-of-line copy; landed in src/infantry.cpp. The body lives in a static inline helper Edge_Of_World(InfantryClass *) above AI, which now calls the helper. The member at 0x00520260 is a one-line wrapper. AI still MATCH."
+2026-10-12,0x005202F0,InfantryClass::Theft_AI,sonnet-5.5 medium,MATCH,100,4,,header: TechnoClass::Captured takes a second bool argument,"Theft_AI. Overlay match only, not in src; banked in build/batch/Infantry/0x005202F0.cpp. Distance is written Center_Coord().Distance_To(unit->Center_Coord()) to get the original call order."
+2026-10-12,0x005206B0,InfantryClass::Firing_AI,sonnet-5.5 medium,MATCH,100,5,,header: FootClass::AbortMotion not declared,"Firing_AI. Overlay match only, not in src; banked in build/batch/Infantry/0x005206B0.cpp. Uses the 1b..1e goto-into-block trick twice, and Stop_Driver() for slot 0x500."
+2026-10-12,0x00520AE0,InfantryClass::Doing_AI,sonnet-5.5 medium,MATCH,100,7,,header: StageClass::HasChanged is private; FUN_0070F770 undeclared,"Doing_AI. Overlay match only, not in src; banked in build/batch/Infantry/0x00520AE0.cpp. Case bodies must be in the original's source order (0x1b, 0x26, 0x1f, 0x22, 0xb-0xf, 0x14/0x15/0x24, default); no return after Delete_Me."
+2026-10-12,0x00740A90,UnitClass::Do_MISSION_MOVE,sonnet-5.5 medium,MATCH,100,3,,,"UnitClass::Do_MISSION_MOVE. Queues MISSION_GUARD (5) if Deployed, Deploying or Undeploying; otherwise closes the door and calls the base."
+2026-10-12,0x00740B10,UnitClass::Do_MISSION_PATROL,sonnet-5.5 medium,MATCH,100,1,,,"UnitClass::Do_MISSION_PATROL, from the TibSun source."
+2026-10-12,0x00740B60,,sonnet-5.5 medium,MATCH,100,3,,header outside unit.h,UnitClass::Desired_Load_Dir. Matches 656/656 bytes only with the face.h overlay. Banked as an overlay match in build/batch/Unit/0x00740B60.cpp and removed from src/.
+2026-10-12,0x00740DF0,UnitClass::Flag_Attach,sonnet-5.5 medium,MATCH,100,1,,,"UnitClass::Flag_Attach, from the TibSun source."
+2026-10-12,0x00740E20,UnitClass::Flag_Remove,sonnet-5.5 medium,MATCH,100,1,,,"UnitClass::Flag_Remove, from the TibSun source."
+2026-10-12,0x00740E50,UnitClass::Pip_Count,sonnet-5.5 medium,MATCH,100,1,,,"UnitClass::Pip_Count. A base-class call, which compiles to a tail jmp to TechnoClass::Pip_Count."
+2026-10-12,0x00740E60,UnitClass::APC_Close_Door,sonnet-5.5 medium,MATCH,100,1,,,UnitClass::APC_Close_Door.
+2026-10-12,0x00740E80,UnitClass::APC_Open_Door,sonnet-5.5 medium,MATCH,100,1,,,"UnitClass::APC_Open_Door, from the TibSun source."
+2026-10-12,0x00740EE0,UnitClass::Crew_Type,sonnet-5.5 medium,MATCH,100,1,,,"UnitClass::Crew_Type. A base-class call, which compiles to a tail jmp."
+2026-10-12,0x00740EF0,UnitClass::Do_MISSION_REPAIR,sonnet-5.5 medium,MATCH,100,2,,,"UnitClass::Do_MISSION_REPAIR. Uses TryNearestDockBuilding on &Rule->RepairBay, cast to TypeList<BuildingTypeClass *> *. The second call passes (0, 1). Mission 7 is MISSION_ENTER. It ends in Current_Mission_Control().Normal_Delay()."
+2026-10-12,0x00740F80,UnitClass::Fire_Direction,sonnet-5.5 medium,MATCH,100,1,,,"UnitClass::Fire_Direction. Returns SecondaryFacing.Current() if Class->IsTurretEquipped, otherwise the base call."
+2026-10-12,0x00740FD0,UnitClass::Can_Fire,sonnet-5.5 medium,MATCH,100,4,,header outside unit.h,"UnitClass::Can_Fire (GetFireError). Matches 869/869 bytes only with the spawnmgr.h overlay. Banked as an overlay match in build/batch/Unit/0x00740FD0.cpp and removed from src/. The exe's object virtual at slot 0x80 is IsStrange, so the source calls techno->IsStrange() where TibSun has Considered_Vehicle. The source also calls FUN_0065AD40(0) for the radio link."
+2026-10-12,0x00740B60,,opus-5.5 high (header merge),partial,64.8,14,,inlining (inline budget),"UnitClass::Desired_Load_Dir. It matches 656/656 only with the rejected face.h overlay, which is kept in build/batch/Unit/include/face.h with the banked source. Against include/ in unit.cpp the real inline Direction expands, giving 64.8% (735 bytes). A file-local inline wrapper turns Direction into a call (67.8%, 662 bytes), but the wrapper evaluates both Center_Coord results before pushing them. Helpers that spend inline budget late in the function, and unused-local padding, never pushed Direction out of line."
+2026-10-12,0x006D2DE0,Tactical::Render_Tiles,opus-5.5 high (header merge),partial,81.9,1,,register allocation,"Tactical::Render_Tiles, measured in a copy of src/tactical.cpp: 602/605 bytes. Store order of the per-cell Rect in the redraw loop. No header involved."
+2026-10-12,0x006D3040,,opus-5.5 high (header merge),partial,76.4,1,,register allocation,"Tactical::Render_Tile_Shadows, measured in a copy of src/tactical.cpp: 583/588 bytes. The original hoists 60 into ebp and stores Height before Y."
+2026-10-12,0x0047F6A0,,opus-5.5 high (header merge),failed,0,0,,not attempted,"The cell agent did not attempt it, and there is no banked source."
+2026-10-12,0x00480350,,opus-5.5 high (header merge),partial,62.2,2,,register allocation,"CellClass::Draw_It. With smudtype.h now in include/ it gives 62.2% (437/437) when placed in a copy of src/cell.cpp. Compiled standalone from the banked file it gives 40.5%, because it needs cell.cpp's own definitions. The original keeps zero in EBX and ittype in EDI. The smudge Draw_It call now goes through slot 0xA0."
+2026-10-12,0x00480630,,opus-5.5 high (header merge),partial,40.6,2,,inlining,CellClass::Wall_Update. 40.6% standalone and 30.4% inside a copy of src/cell.cpp. The original inlines one partial Union and calls Union out of line twice.
+2026-10-12,0x0051F800,InfantryClass::What_Action,opus-5.5 high (header merge),partial,90.7,1,,code layout,InfantryClass::What_Action. Unchanged against include/ in a copy of src/infantry.cpp (774/749 bytes): the shared attack-support tail is emitted twice.
+2026-10-12,0x0051FB00,InfantryClass::Read_INI,opus-5.5 high (header merge),partial,99.7,1,,code layout,"InfantryClass::Read_INI, 993/993 bytes in a copy of src/infantry.cpp. It needs file-scope `extern int __fastcall FUN_0050C170(char const * name);` and the `extern CellClass InvalidCell;` that stays in map.h. One jump lands on the join's movsx ecx,cx."
+2026-10-12,0x006D2DE0,Tactical::Render_Tiles,opus-5.5 high,MATCH,100,49,,,"Tactical::Render_Tiles, landed in src/tactical.cpp between Wipe_Depth and Blit_Tiles. The original stores Y twice and H through a register. That comes from VC6 aliasing when the rect is written through Point2D casts: (Point2D &)rect = Point2D(pixel.X - 30, pixel.Y); ((Point2D *)&rect)[1] = Point2D(60, 30); rect.Y += TacticalRect.Y;. No header change. The 81.9% file banked earlier at build/batch/Tactical/0x006D2DE0.cpp is now out of date. I left it in place because deleting it is your call."
+2026-10-12,0x0051F800,InfantryClass::What_Action,opus-5.5 high,MATCH,100,21,,,"InfantryClass::What_Action(Cell const&, bool, bool) is landed in src/infantry.cpp. Two changes from the banked attempt made it match. (1) A single copy of the attack-support check, in TibSun's early-return shape with each return turned into `goto done` (a `goto` into an else block also matches). (2) The JumpJet tunnel test is written as `if (Is_Near_Tunnel_NW()) action = NONE; else if (Is_Near_Tunnel_ES()) action = NONE;`. The second assignment is tail-merged after register allocation but still counts toward action's weight. With it, action keeps EBX, so check_fog and the constant RTTI_BUILDING (6) no longer take EBX and push action onto the stack."
+2026-10-12,0x0051FB00,InfantryClass::Read_INI,opus-5.5 high,MATCH,100,9,,,"InfantryClass::Read_INI is landed in src/infantry.cpp, with `extern int __fastcall FUN_0050C170(char const * name);` added after the includes. The fix was to compute the coord inside each branch: `Coord coord; if (NewINIFormat >= 4) { int x = atoi(..); int y = atoi(..); coord = Cell(x, y).As_Coord(); } else { coord = Cell(atoi(strtok(NULL, "",""))).As_Coord(); }`. The y narrowing then tail-merges and the x narrowing stays in each branch, as in the original. The cellnum must be passed inline: a named `int cellnum` local swapped the add registers in the later StoppingCoordAbs + Coord_Whole sum."

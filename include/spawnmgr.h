@@ -42,4 +42,5 @@ class SpawnManagerClass : public AbstractClass
 		virtual void AI(void) override;
 
 		void ResetTarget(void);
+		int CountLaunchingSpawns(void);
 };

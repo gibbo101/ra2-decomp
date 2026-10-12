@@ -222,6 +222,7 @@ class FootClass : public TechnoClass
 		virtual bool Is_Allowed_To_Leave_Map(void) const override;
 		void Link_DropPod(void);
 		Cell Move_Order(Cell const & where, bool consider_fog);
+		void AbortMotion(void);
 
 		virtual VisualType Visual_Character(bool raw = false, HouseClass const * = NULL) const override;
 		virtual bool Limbo(void) override;
@@ -242,7 +243,7 @@ class FootClass : public TechnoClass
 		virtual void Stun(void) override;
 		virtual ResultType Take_Damage(int & damage, int distance, WarheadTypeClass const * warhead, TechnoClass * source=0, bool forced=false, bool=false, HouseClass * = 0) override;
 		virtual void Death_Announcement(TechnoClass const * source=0) const override;
-		virtual bool Captured(HouseClass * newowner) override;
+		virtual bool Captured(HouseClass * newowner, bool announce = true) override;
 
 		virtual void AI(void) override;
 		virtual void Sell_Back(int control) override;

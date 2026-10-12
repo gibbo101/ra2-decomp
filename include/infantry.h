@@ -21,7 +21,7 @@ class InfantryClass : public FootClass
 
 		CDTimerClass<FrameTimerClass> Comment;
 
-		FearType Fear;
+		int Fear;
 
 		bool IsBerzerk;
 
@@ -99,6 +99,9 @@ class InfantryClass : public FootClass
 		virtual int Do_MISSION_ATTACK(void) override;
 		virtual int Do_MISSION_GUARD(void) override;
 		virtual int Do_MISSION_HUNT(void) override;
+		virtual int Do_MISSION_GUARD_AREA(void) override;
+		virtual int Do_MISSION_MOVE(void) override;
+		virtual int Do_MISSION_UNLOAD(void) override;
 		virtual void Rocking_AI(void) override;
 		int FUN_00521320(void);
 		virtual void Berzerk(void) override;
@@ -116,7 +119,7 @@ class InfantryClass : public FootClass
 		virtual void Debug_Dump(MonoClass *mono) const override;
 #endif
 
-		static void Read_INI(CCINIClass const & ini);
+		static void Read_INI(CCINIClass & ini);
 		static void Write_INI(CCINIClass & ini);
 
 		virtual bool IsDeployed(void) const;

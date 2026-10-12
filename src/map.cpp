@@ -63,6 +63,9 @@ extern double DAT_007E1730, DAT_007E1738, DAT_007E1740, DAT_007ED3C0, DAT_007ED3
 extern double DAT_00ABD488, DAT_00ABDDA0, DAT_00ABDC38, DAT_00ABDC30, DAT_00ABDA58;
 extern double DAT_00ABD458, DAT_00ABDA60, DAT_00ABDC20;
 extern int DAT_00ABDE88, DAT_00ABDD98, DAT_00ABDC10, DAT_00ABDC14, DAT_00ABDC18;
+extern int DAT_00ABDC48, DAT_00ABDC40, DAT_00ABDC44;
+extern void FUN_00561910(void);
+extern void FUN_005638D0(void);
 extern short DAT_00ABD480, DAT_00ABD482;
 
 // FUNCTION: 0x00561710
@@ -138,6 +141,131 @@ void Init_005618C0(void)
 	DAT_00ABDC10 = 0;
 	DAT_00ABDC14 = 0;
 	DAT_00ABDC18 = 0;
+}
+
+// FUNCTION: 0x005618E0
+void Init_005618E0(void)
+{
+	DAT_00ABDC48 = 0;
+	DAT_00ABDC40 = 0x80;
+	DAT_00ABDC44 = 0x80;
+}
+
+// FUNCTION: 0x00561900
+void Init_00561900(void)
+{
+	FUN_00561910();
+}
+
+// FUNCTION: 0x005638C0
+void Init_005638C0(void)
+{
+	FUN_005638D0();
+}
+
+// FUNCTION: 0x00565060 $E177
+// FUNCTION: 0x00565080 $E175
+CellClass InvalidCell;
+
+// FUNCTION: 0x00565090
+MapClass::MapClass(void)
+{
+	MaxLevel = 13;
+}
+
+// FUNCTION: 0x00565190
+MapClass::MapClass(NoInitClass const & x) :
+	BASECLASS(x),
+	unknown_10(false),
+	ZoneAdjacency(NULL),
+	ZoneConnections(),
+	PendingBridgeCells(),
+	Array(x),
+	Crates(),
+	TaggedCells()
+{
+	int i;
+
+	for (i = 0; i < MZONE_COUNT; i++) {
+		Zones[i] = NULL;
+	}
+	for (i = 0; i < SUBZONE_COUNT; i++) {
+		SubzoneConnectionHashTable[i] = NULL;
+	}
+	for (i = 0; i < SUBZONE_COUNT; i++) {
+		SubzoneTracking[i].Clear();
+		SubzoneConnectionHashTable[i] = NULL;
+	}
+	ZoneAdjacency = NULL;
+}
+
+// FUNCTION: 0x005652C0
+MapClass::~MapClass(void)
+{
+	VeinholeMonsterClass::Reset();
+	VeinholeMonsterClass::Clear_Global_Data();
+	TiberiumClass::Deinit_Tiberium_Spread_System();
+	TiberiumClass::Deinit_Tiberium_Growth_System();
+
+	if (CellZones != NULL) {
+		delete [] CellZones;
+		CellZones = NULL;
+	}
+
+	if (ZoneAdjacency != NULL) {
+		delete ZoneAdjacency;
+		ZoneAdjacency = NULL;
+	}
+
+	if (CellSubzones != NULL) {
+		delete [] CellSubzones;
+		CellSubzones = NULL;
+	}
+
+	for (int i = 0; i < SUBZONE_COUNT; i++) {
+		if (SubzoneConnectionHashTable[i] != NULL)  {
+			delete SubzoneConnectionHashTable[i];
+			SubzoneConnectionHashTable[i] = NULL;
+		}
+	}
+}
+
+// FUNCTION: 0x00565470
+Point2D MapClass::PlayRect_To_Cell_Point(Point2D const & point) const
+{
+	int x = ((point.Y + 1) >> 1) + point.X;
+	int y = ((point.Y >> 1) - point.X) + PlayRect.Width;
+	return(Point2D(x, y));
+}
+
+// FUNCTION: 0x005654A0
+Point2D MapClass::LocalRect_To_Cell_Point(Point2D const & point) const
+{
+	return(PlayRect_To_Cell_Point(point + LocalRect.Top_Left()));
+}
+
+// FUNCTION: 0x005654E0
+Point2D MapClass::Cell_To_PlayRect_Point(Point2D const & point) const
+{
+	int px = point.X;
+	int py = point.Y;
+	int w = PlayRect.Width;
+
+	int d;
+	if ((w & 1) != 0) {
+		d = px - py + 1;
+	} else {
+		d = px - py;
+	}
+	int x = w / 2 + (d >> 1);
+	int y = px + py - w;
+	return(Point2D(x, y));
+}
+
+// FUNCTION: 0x00565520
+Point2D MapClass::Cell_To_LocalRect_Point(Point2D const & point) const
+{
+	return(Cell_To_PlayRect_Point(point) - LocalRect.Top_Left());
 }
 
 // FUNCTION: 0x0056CB80

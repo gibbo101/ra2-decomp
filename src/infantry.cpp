@@ -63,6 +63,8 @@
 #include "weapon.h"
 #include "bench.hh"
 
+extern int __fastcall FUN_0050C170(char const * name);
+
 // FUNCTION: 0x00517A50
 InfantryClass::InfantryClass(InfantryTypeClass const * type, HouseClass * house) :
 	BASECLASS(house),
@@ -213,15 +215,15 @@ void InfantryClass::Detach(AbstractClass const * target, bool all)
 	}
 }
 
-inline bool InfantryClass::Edge_Of_World_AI(void)
+static inline bool Edge_Of_World(InfantryClass * infantry)
 {
-	if (Team != NULL && IsInPlayfield) {
-		Team->IsLeaveMap = true;
+	if (infantry->Team != NULL && infantry->IsInPlayfield) {
+		infantry->Team->IsLeaveMap = true;
 	}
 
-	if (Team == NULL && Get_Mission() == MISSION_GUARD && !Map.In_Radar(PositionCoord)) {
-		Stun();
-		Delete_Me();
+	if (infantry->Team == NULL && infantry->Get_Mission() == MISSION_GUARD && !Map.In_Radar(infantry->PositionCoord)) {
+		infantry->Stun();
+		infantry->Delete_Me();
 		return(true);
 	}
 	return(false);
@@ -381,7 +383,7 @@ deploy_fire:
 		}
 	}
 
-	if (Edge_Of_World_AI()) {
+	if (Edge_Of_World(this)) {
 		return;
 	}
 
@@ -954,6 +956,589 @@ int InfantryClass::Do_MISSION_GUARD(void)
 		delay = BASECLASS::Do_MISSION_GUARD();
 	}
 	return(delay);
+}
+
+// FUNCTION: 0x0051F640
+int InfantryClass::Do_MISSION_GUARD_AREA(void)
+{
+	int delay = FUN_00521320();
+	if (delay == -1) {
+		delay = BASECLASS::Do_MISSION_GUARD_AREA();
+	}
+	return(delay);
+}
+
+// FUNCTION: 0x0051F660
+int InfantryClass::Do_MISSION_MOVE(void)
+{
+	if (Doing == 0x1b || Doing == 0x1c || Doing == 0x1d || Doing == 0x1e) {
+		if (Owner_HouseClass()->FUN_0050B730()) {
+			Assign_Destination(NULL, true);
+			return(1);
+		}
+		if (Class->UndeployDelay <= -1) {
+			Do_Action((DoType)0x1f, false, false);
+			return(Class->DoControls[0x1f].Count);
+		}
+	}
+	return(BASECLASS::Do_MISSION_MOVE());
+}
+
+// FUNCTION: 0x0051F6E0
+int InfantryClass::Do_MISSION_UNLOAD(void)
+{
+	if (Class->Deployer) {
+		int delay = -1;
+		if (Doing == 0x1b) goto undeploy;
+		if (Doing == 0x1c) goto undeploy;
+		if (Doing == 0x1d) goto undeploy;
+		if (Doing == 0x1e) {
+undeploy:
+			if (Class->UndeployDelay <= -1) {
+				Do_Action((DoType)0x1f, true, false);
+			}
+		} else {
+			Do_Action((DoType)0x1b, true, false);
+			WeaponDataStruct const * weapon = GetDeployWeapon();
+			if (FUN_0070E240(weapon) && weapon->Weapon->AreaFire) {
+				if (Is_Type_Named("DESO")) {
+					delay = Class->DoControls[0x1b].Count + 1;
+				} else {
+					Assign_Target(&Map[Get_Cell()]);
+				}
+			}
+			if (Class->UndeployDelay > -1) {
+				delay = Class->UndeployDelay;
+			}
+		}
+		Set_Mission(MISSION_GUARD);
+		Assign_Destination(NULL, true);
+		if (delay > -1) {
+			return(delay);
+		}
+	}
+	return(BASECLASS::Do_MISSION_UNLOAD());
+}
+
+// FUNCTION: 0x0051F800
+ActionType InfantryClass::What_Action(Cell const & cell, bool check_fog, bool disallow_force) const
+{
+	if (!House->Is_Player_Control()) {
+		return(ACTION_NONE);
+	}
+
+	ActionType action = BASECLASS::What_Action(cell, check_fog, disallow_force);
+
+	if (Combat_Damage() < 0 && House->Is_Player_Control() && action == ACTION_ATTACK) {
+		action = ACTION_GUARD_AREA;
+	}
+
+	if (Class->JumpJet && (action == ACTION_MOVE || action == ACTION_NOMOVE)) {
+		if (Map[cell].Is_Near_Tunnel_NW()) {
+			action = ACTION_NONE;
+		} else if (Map[cell].Is_Near_Tunnel_ES()) {
+			action = ACTION_NONE;
+		}
+	}
+
+	if (House->Is_Player_Control() && Class->Deployer && (Doing == 0x1b || Doing == 0x1c || Doing == 0x1d || Doing == 0x1e) && (action == ACTION_MOVE || action == ACTION_ATTACK)) {
+		if (action == ACTION_MOVE) {
+			action = ACTION_NOMOVE;
+		} else {
+			bool inrange = false;
+			if (Class->DeployFire) {
+				int weapon = What_Weapon_Should_I_Use(NULL);
+				Coord coord = cell;
+				inrange = In_Range(coord, weapon);
+			}
+			if (!inrange) {
+				action = ACTION_NOMOVE;
+			}
+		}
+	} else if (action == ACTION_MOVE && Map[cell].Has_Tunnel()) {
+		return(Map[cell].Can_Enter_Tunnel(this) ? ACTION_ENTER_TUNNEL : ACTION_NO_ENTER_TUNNEL);
+	}
+
+	CellClass * cellptr = &Map[cell];
+	BuildingTypeClass * fogged_building = NULL;
+	FoggedObjectClass * fogged_object = NULL;
+
+	if (Scen->Special.IsFogOfWar && check_fog && cellptr->FoggedObjects != NULL) {
+		for (int i = 0; i < cellptr->FoggedObjects->Count(); i++) {
+			fogged_object = (*cellptr->FoggedObjects)[i];
+			if (fogged_object->CanDraw && fogged_object->RTTI == RTTI_BUILDING) {
+				if (fogged_object->RTTI == RTTI_BUILDING) {
+					fogged_building = (BuildingTypeClass *)fogged_object->Records[0].TypeClass;
+				} else {
+					fogged_building = NULL;
+				}
+				break;
+			}
+		}
+	}
+
+	if (Class->IsEngineer && fogged_building != NULL && House->Is_Player_Control()) {
+		if (fogged_building->IsBridgeRepairHut) {
+			action = Map.Can_Repair_Bridge(fogged_object->Center_Coord()) ? ACTION_GREPAIR : ACTION_NO_GREPAIR;
+			goto done;
+		}
+		if (fogged_building->IsRepairable) {
+			action = ACTION_CAPTURE;
+			goto done;
+		}
+	}
+
+	if (action == ACTION_ATTACK && !Is_Weapon_Equipped()) {
+		action = ACTION_ATTACK_SUPPORT;
+	}
+done:
+	if (House->Is_Player_Control() && action == ACTION_NONE && !Class->JumpJet && Can_Player_Move()) {
+		action = ACTION_NOMOVE;
+	}
+
+	return(action);
+}
+
+// FUNCTION: 0x0051FAF0
+ObjectTypeClass const * InfantryClass::Class_Of(void) const
+{
+	return(Class);
+}
+
+// FUNCTION: 0x0051FB00
+void InfantryClass::Read_INI(CCINIClass & ini)
+{
+	ini.Reset();
+
+	int len = ini.Entry_Count(INI_Name);
+	for (int index = 0; index < len; index++) {
+		char const * entry = ini.Get_Entry(INI_Name, index);
+		char buf[128];
+		ini.Get_String(INI_Name, entry, NULL, buf, sizeof(buf));
+
+		int inhouse = FUN_0050C170(strtok(buf, ","));
+		if (inhouse != -1) {
+			HouseClass * inhousep = Houses[inhouse];
+			InfantryType classid = InfantryTypeClass::From_Name(strtok(NULL, ","));
+
+			if (classid != INFANTRY_NONE) {
+				InfantryClass * infantry = new InfantryClass(InfantryTypes[classid], inhousep);
+				if (infantry != NULL) {
+					int strength = atoi(strtok(NULL, ","));
+
+					Coord coord;
+					if (NewINIFormat >= 4) {
+						int x = atoi(strtok(NULL, ","));
+						int y = atoi(strtok(NULL, ","));
+						coord = Cell(x, y).As_Coord();
+					} else {
+						coord = Cell(atoi(strtok(NULL, ","))).As_Coord();
+					}
+
+					int sub = atoi(strtok(NULL, ","));
+					coord = StoppingCoordAbs[sub] + Coord_Whole(coord);
+
+					MissionType mission = MissionClass::Mission_From_Name(strtok(NULL, ","));
+					char * validation = strtok(NULL, ",");
+					Dir256 dir;
+					if (validation) {
+						dir = (Dir256)atoi(validation);
+					} else {
+						dir = DIR_N;
+					}
+
+					validation = strtok(NULL, ",");
+					if (validation) {
+						TagTypeClass * tp = TagTypeClass::From_Name(validation);
+						if (tp != NULL) {
+							TagClass * tt = Find_Or_Make(tp);
+							if (tt != NULL) {
+								infantry->Attach_Tag(tt);
+							}
+						}
+					}
+
+					validation = strtok(NULL, ",");
+					if (validation) {
+						infantry->Veterancy.From_Integer(atoi(validation));
+					}
+
+					validation = strtok(NULL, ",");
+					if (validation) {
+						infantry->Group = atoi(validation);
+					}
+
+					validation = strtok(NULL, ",");
+					if (validation) {
+						infantry->IsOnBridge = atoi(validation) != 0;
+						if (infantry->IsOnBridge) {
+							coord.Z = Map.Get_Height_GL(coord) + BRIDGE_LEPTON_HEIGHT;
+						} else {
+							coord.Z = Map.Get_Height_GL(coord);
+						}
+					}
+
+					validation = strtok(NULL, ",");
+					if (validation) {
+						infantry->IsTeamRecruitable = atoi(validation) != 0;
+					}
+
+					validation = strtok(NULL, ",");
+					if (validation) {
+						infantry->IsAutocreateRecruitable = atoi(validation) != 0;
+					}
+
+					if (&Map[coord] != &InvalidCell && infantry->Unlimbo(coord, dir)) {
+						infantry->Strength = infantry->Class->MaxStrength * (strength / 256.0);
+						if (infantry->Strength > infantry->Class->MaxStrength - 3) infantry->Strength = infantry->Class->MaxStrength;
+						if (infantry->Strength < 1) infantry->Strength = 1;
+						infantry->EstimatedHealth = infantry->Strength;
+						infantry->QueueMission(mission, false);
+						infantry->Commence();
+					} else {
+						delete infantry;
+					}
+				}
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x0051FEF0
+void InfantryClass::Write_INI(CCINIClass & ini)
+{
+	ini.Clear(INI_Name);
+
+	for (int index = 0; index < Infantry.Count(); index++) {
+		InfantryClass * infantry = Infantry[index];
+		if (!infantry->IsInLimbo) {
+			char uname[10];
+			char buf[128];
+
+			sprintf(uname, "%d", index);
+			sprintf(buf, "%s,%s,%d,%d,%d,%d,%s,%d,%s,%d,%d,%d,%d,%d",
+					(char const *)infantry->House->IniName,
+					(char const *)infantry->Class->IniName,
+					int(infantry->HealthRatio * 256),
+					infantry->PositionCell.X,
+					infantry->PositionCell.Y,
+					CellClass::Spot_Index(infantry->PositionCoord),
+					MissionClass::Mission_Name((infantry->Get_Mission() == MISSION_NONE) ?
+						infantry->MissionQueue : infantry->Get_Mission()),
+					infantry->PrimaryFacing.Current().As_Dir256(),
+					infantry->Tag != NULL ? (char const *)infantry->Tag->Class->IniName : "None",
+					infantry->Veterancy.To_Integer(),
+					infantry->Group,
+					infantry->IsOnBridge,
+					infantry->IsTeamRecruitable,
+					infantry->IsAutocreateRecruitable
+				);
+			ini.Put_String(INI_Name, uname, buf);
+		}
+	}
+}
+
+static inline void Reduce_Fear(int & fear)
+{
+	fear--;
+}
+
+// FUNCTION: 0x005200B0
+void InfantryClass::Fear_AI(void)
+{
+	if (Fear > 0) {
+		if (!Class->IsFearless) {
+			Reduce_Fear(Fear);
+		}
+
+		if (Fear == 0 && Ammo == 0 && Is_Weapon_Equipped()) {
+			Ammo = Class->MaxAmmo;
+		}
+
+		if (IsProne) {
+			if (Fear < 0x32 && Doing != 0x1b && Doing != 0x1c && Doing != 0x1d && Doing != 0x1e) {
+				Do_Action((DoType)7, false, false);
+			}
+		} else {
+			if (Fear >= 0x32 && Doing != 0x1b && Doing != 0x1c && Doing != 0x1d && Doing != 0x1e) {
+				if (!House->FUN_0050B730() || (NavCom == NULL && !Locomotion->Is_Moving())) {
+					if (!Class->IsFraidyCat) {
+						Do_Action((DoType)5, false, false);
+					}
+				}
+			}
+		}
+	}
+
+	if (Class->IsFraidyCat && Fear > 0x32 && Doing != 0x1b && Doing != 0x1c && Doing != 0x1d && Doing != 0x1e && !IsFalling && !Locomotion->Is_Moving() && NavCom == NULL) {
+		Scatter(COORD_NONE, true);
+	}
+}
+
+// FUNCTION: 0x00520260
+bool InfantryClass::Edge_Of_World_AI(void)
+{
+	return(Edge_Of_World(this));
+}
+
+// FUNCTION: 0x005202F0
+bool InfantryClass::Theft_AI(void)
+{
+	if (!Class->IsThief) return(false);
+	if (NavCom == NULL) return(false);
+	if (NavCom->Fetch_RTTI() != RTTI_UNIT) return(false);
+
+	UnitClass * unit = (UnitClass *)NavCom;
+	if (House->Is_Ally(unit)) return(false);
+
+	Coord coord = unit->Destination_Coord(this);
+	int z = coord.Z;
+	coord = Center_Coord();
+
+	if (abs(z - coord.Z) < LEVEL_LEPTON_H) {
+		if (Center_Coord().Distance_To(unit->Center_Coord()) < CELL_LEPTON / 2) {
+			if (unit->Tag != NULL) {
+				unit->Tag->Spring(TEVENT_PLAYER_ENTERED, this);
+			}
+			unit->Transmit_Message(RADIO_OVER_OUT);
+			unit->Detach_All(false);
+			if (Tag != NULL && Tag->Is_To_Inherit()) {
+				unit->Attach_Tag(Tag);
+			}
+			unit->Captured(House, true);
+			unit->EnteredByInfType = Class->HeapID;
+			Delete_Me();
+			return(true);
+		}
+	}
+
+	if (Center_Coord().Distance_To(unit->Center_Coord()) < 2 * CELL_LEPTON) {
+		if (Coord(Locomotion->Destination()) != COORD_NONE) {
+			if (unit->Distance(Coord(Locomotion->Destination())) <= CELL_LEPTON / 2) {
+				return(false);
+			}
+		}
+		Assign_Destination(NavCom);
+	} else {
+		if (Coord(Locomotion->Destination()) != COORD_NONE) {
+			if (unit->Destination_Coord(this).As_Cell() == Coord(Locomotion->Destination()).As_Cell()) {
+				return(false);
+			}
+		}
+	}
+	Assign_Destination(NavCom);
+	return(false);
+}
+
+// FUNCTION: 0x005206B0
+void InfantryClass::Firing_AI(void)
+{
+	if (TarCom != NULL) {
+		int primary = What_Weapon_Should_I_Use(TarCom);
+
+		if (!IsFiring) {
+			switch (Can_Fire(TarCom, primary, true)) {
+				case FIRE_ILLEGAL:
+					if (Combat_Damage(primary) < 0) {
+						AbstractClass * obj = TarCom;
+						if (obj != NULL && (obj->AbstractFlags & 2) && obj->Fetch_RTTI() == RTTI_INFANTRY) {
+							if (((ObjectClass *)obj)->HealthRatio >= Rule->ConditionGreen) {
+								Assign_Target(NULL);
+							}
+						} else {
+							Assign_Target(NULL);
+						}
+					}
+					break;
+
+				case FIRE_CLOAKED:
+					Do_Uncloak(false);
+					break;
+
+				case FIRE_OK:
+					if (Is_JumpJet()) {
+						Do_Action((DoType)0x1a);
+					} else if (Doing == 0x1b) {
+						goto deployed;
+					} else if (Doing == 0x1c) {
+						goto deployed;
+					} else if (Doing == 0x1d) {
+						goto deployed;
+					} else if (Doing == 0x1e) {
+deployed:
+						Do_Action((DoType)0x1d);
+					} else if (Airstrike != NULL && (Doing == 0x28 || Doing == 0x29)) {
+						Animation.Set_Stage(0);
+					} else if (primary != 0 && IsProne && Class->DoControls[0x29].Count != 0) {
+						Do_Action((DoType)0x29);
+					} else if (primary != 0 && Class->DoControls[0x28].Count != 0) {
+						Do_Action((DoType)0x28);
+					} else if (IsProne) {
+						Do_Action((DoType)8);
+					} else {
+						Do_Action((DoType)4);
+					}
+
+					IsFiring = true;
+					PrimaryFacing.Set(GetTargetDirection(TarCom));
+
+					if (TarCom == NavCom) {
+						AbortMotion();
+						Stop_Driver();
+					}
+					break;
+			}
+		}
+
+		int firestage = Class->FireLaunch;
+		if (IsProne) firestage = Class->ProneLaunch;
+		if (primary != 0) {
+			if (IsProne && Class->DoControls[0x29].Count != 0) firestage = Class->SecondaryProne;
+			if (!IsProne && Class->DoControls[0x28].Count != 0) firestage = Class->SecondaryFire;
+		}
+
+		if (IsFiring && Animation.Fetch_Stage() == firestage) {
+			primary = What_Weapon_Should_I_Use(TarCom);
+			if (Can_Fire(TarCom, primary, true) == FIRE_OK) {
+				Fire_At(TarCom, primary);
+			} else {
+				IsFiring = false;
+				if (IsProne) {
+					Do_Action((DoType)2);
+				} else if (Doing == 0x1b) {
+					goto deployed_idle;
+				} else if (Doing == 0x1c) {
+					goto deployed_idle;
+				} else if (Doing == 0x1d) {
+					goto deployed_idle;
+				} else if (Doing == 0x1e) {
+deployed_idle:
+					Do_Action((DoType)0x1c);
+				} else {
+					Do_Action((DoType)0);
+				}
+			}
+
+			if (TarCom != NULL) {
+				WeaponDataStruct const * wdata = Get_Class_Weapon_Data(0);
+				if (wdata->Weapon->MaxSpeed < Rule->Incoming) {
+					Map[TarCom->Center_Coord()].Incoming(PositionCoord, true);
+				}
+			}
+		}
+	} else {
+		IsFiring = false;
+	}
+}
+
+// FUNCTION: 0x00520AE0
+void InfantryClass::Doing_AI(void)
+{
+	if (Doing == -1 || Animation.Fetch_Stage() >= Class->DoControls[Doing].Count) {
+		switch (Doing) {
+			case 0x1b:
+				Do_Action((DoType)0x1c, true, false);
+				if (!Class->DeployedCrushable) {
+					Uncrushable = true;
+				}
+				FUN_0070F770();
+				break;
+
+			case 0x26:
+				if (Get_Mission() == (MissionType)0xa) {
+					Do_Action((DoType)0x26, true, false);
+				} else {
+					Do_Action((DoType)0, true, false);
+				}
+				break;
+
+			case 0x1f:
+				Do_Action((DoType)0, true, false);
+				if (!Class->DeployedCrushable) {
+					Uncrushable = false;
+				}
+				break;
+
+			case 0x22:
+				Do_Action((DoType)0x23, true, false);
+				break;
+
+			case 0xb:
+			case 0xc:
+			case 0xd:
+			case 0xe:
+			case 0xf:
+				if (Animation.Fetch_Stage() >= Class->DoControls[Doing].Count) {
+					if (Class->DeadBodies.Count() > 0) {
+						new AnimClass(Class->DeadBodies.Pick(Scen->RandomNumber), Center_Coord());
+					} else if (!Class->NotHuman) {
+						new AnimClass(Rule->DeadBodies.Pick(Scen->RandomNumber), Center_Coord());
+					}
+					Delete_Me();
+				}
+				break;
+
+			case 0x14:
+			case 0x15:
+			case 0x24:
+				if (Animation.Fetch_Stage() >= Class->DoControls[Doing].Count) {
+					Delete_Me();
+				}
+				break;
+
+			case 0x21:
+				break;
+
+			default:
+				if (Doing != -1) {
+					if (Class->DoControls[Doing].Facing != -1) {
+						PrimaryFacing.Set((DirType)(Class->DoControls[Doing].Facing << 13));
+					}
+				}
+
+				if (Locomotion->Is_Moving() && Speed > 0.1) {
+					if (IsProne) {
+						Do_Action((DoType)6, true, false);
+					} else {
+						Do_Action((DoType)3, true, false);
+					}
+				} else if ((Doing == 0x28 || Doing == 0x29) && Airstrike != NULL && TarCom != NULL && !Locomotion->Is_Moving()) {
+					if (IsProne) {
+						Do_Action((DoType)0x29, true, false);
+					} else {
+						Do_Action((DoType)0x28, true, false);
+					}
+					IsFiring = false;
+				} else if (Doing == 0x1b) {
+					goto settle;
+				} else if (Doing == 0x1c) {
+					goto settle;
+				} else if (Doing == 0x1d) {
+					goto settle;
+				} else if (Doing == 0x1e) {
+settle:
+					Do_Action((DoType)0x1c, true, false);
+				} else if (IsProne) {
+					Do_Action((DoType)2, true, false);
+				} else {
+					Do_Action((DoType)0, true, false);
+				}
+				break;
+		}
+	}
+
+	if (Doing == 0x21 && !IsFalling) {
+		Do_Action((DoType)0, true, false);
+	}
+
+	DoInfoStruct const * info = &Class->DoControls[Doing];
+	for (int i = 0; i < info->SoundCount; i++) {
+		if (Animation.Has_Changed()) {
+			if (Animation.Fetch_Stage() % MAX(info->Count, 1) == (&info->Sound1StartFrame)[i * 2]) {
+				VocClass::PlayAt((&info->Sound1StartFrame)[i * 2 + 1], PositionCoord);
+			}
+		}
+	}
 }
 
 // FUNCTION: 0x00521B00
