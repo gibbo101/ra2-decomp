@@ -10,6 +10,7 @@
 #include "_map.h"
 #include "_mixfile.h"
 #include "_rules.h"
+#include "_tactica.h"
 #include "animtype.h"
 #include "building.h"
 #include "builtype.h"
@@ -17,6 +18,7 @@
 #include "bullettype.h"
 #include "cell.h"
 #include "combat.h"
+#include "fastmath.h"
 #include "findmake.h"
 #include "globals.h"
 #include "ilocos.h"
@@ -27,6 +29,7 @@
 #include "rules.h"
 #include "session.h"
 #include "swizzle.h"
+#include "tactical.h"
 #include "tracker.h"
 #include "unittype.h"
 #include "vanimtype.h"
@@ -393,4 +396,59 @@ bool TechnoTypeClass::HasMultipleTurrets(void) const
 void TechnoTypeClass::FUN_00717890(int index, int weapon)
 {
 	TurretWeapon[weapon] = index;
+}
+
+// FUNCTION: 0x007178B0
+int TechnoTypeClass::FUN_007178B0(int weapon) const
+{
+	return(TurretWeapon[weapon]);
+}
+
+// FUNCTION: 0x007179A0 TechnoTypeClass::~TechnoTypeClass
+
+// FUNCTION: 0x007179C0
+void FUN_007179C0(void)
+{
+}
+
+// FUNCTION: 0x00717A30
+void TurretControl::FUN_00717A30(int travel)
+{
+	Travel = travel;
+}
+
+// FUNCTION: 0x00717A40
+int TurretControl::FUN_00717A40(void) const
+{
+	return(Travel);
+}
+
+// FUNCTION: 0x00717A50
+void TurretControl::FUN_00717A50(int frames)
+{
+	CompressFrames = (frames > 0) ? frames : 1;
+}
+
+// FUNCTION: 0x00717A70
+int TurretControl::FUN_00717A70(void) const
+{
+	return(CompressFrames);
+}
+
+// FUNCTION: 0x00717A80
+void TurretControl::FUN_00717A80(int frames)
+{
+	RecoverFrames = (frames > 0) ? frames : 1;
+}
+
+// FUNCTION: 0x00717AA0
+int TurretControl::FUN_00717AA0(void) const
+{
+	return(RecoverFrames);
+}
+
+// FUNCTION: 0x00717AB0
+void TurretControl::FUN_00717AB0(int frames)
+{
+	HoldFrames = (frames > 0) ? frames : 1;
 }

@@ -160,6 +160,7 @@ class ObjectClass : public AbstractClass
 		virtual HouseClass * GetDisguiseHouse(bool against_allies) const;
 
 		int Distance(AbstractClass const * target) const;
+		bool IsCrushable(TechnoClass * crusher) const;
 		int Distance(Coord const & coord) const {return(Center_Coord().Distance_To(coord));}
 		int Distance_To(AbstractClass const * obj) const {return(Distance(obj->Center_Coord()));}
 		int Planar_Distance(AbstractClass const * target) const;

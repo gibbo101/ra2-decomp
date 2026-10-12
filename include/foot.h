@@ -189,7 +189,7 @@ class FootClass : public TechnoClass
 		virtual BuildingClass * FindNearestDockBuilding(BuildingTypeClass * type, unsigned unk2, unsigned unk3) const;
 		virtual void Overrun_Square(Cell const & cell, bool threaten) {};
 		virtual int Current_Speed(void);
-		virtual void Approach_Target(bool = false);
+		virtual AbstractClass * Approach_Target(bool = false);
 		virtual void Fixup_Path(PathStruct *) {};
 		virtual void Set_Speed(double speed);
 		virtual void Stop_Movement_Animation(void);

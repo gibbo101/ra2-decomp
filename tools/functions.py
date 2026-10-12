@@ -63,11 +63,14 @@ def sweep(code: bytes, base: int, starts: set, padded: set, calls: set, tables: 
         prev = mnem
 
 
-def reached_end(md, code: bytes, base: int, lo: int, hi: int, roots: set) -> int:
+def reached_end(md, code: bytes, base: int, lo: int, hi: int, roots: set,
+                targets: set | None = None) -> int:
     """The end of the furthest instruction in [lo, hi) that flow from `lo` and `roots`
     reaches: jumps, branches, calls returning, switch tables, and offsets taken as operands.
-    A pushed offset is a callback argument (atexit), not flow."""
+    A pushed offset is a callback argument (atexit), not flow. `targets` collects the
+    addresses that flow jumps to."""
     seen, todo, far = set(), [lo, *roots], lo
+    targets = set() if targets is None else targets
     while todo:
         at = todo.pop()
         while lo <= at < hi and at not in seen:
@@ -80,11 +83,13 @@ def reached_end(md, code: bytes, base: int, lo: int, hi: int, roots: set) -> int
             for v in re.findall(r"0x[0-9a-f]+", ops) if mnem != "push" else ():
                 if lo < int(v, 16) < hi:
                     todo.append(int(v, 16))
+                    targets.add(int(v, 16))
             t = TABLE_OPERAND.search(ops)
             if t and mnem == "jmp":
                 entry = int(t.group(1), 16)
                 while lo <= entry < hi and lo <= struct.unpack_from("<I", code, entry - base)[0] < hi:
                     todo.append(struct.unpack_from("<I", code, entry - base)[0])
+                    targets.add(todo[-1])
                     entry += 4
             if mnem in ("ret", "jmp", "int3"):
                 break
@@ -201,6 +206,19 @@ def main() -> None:
            and a not in after_end and not after_table(a)}
     for a in mid:
         del evidence[a]
+    # A start that only a data pointer names, which flow from the function before it
+    # jumps to, is a case label inside that function.
+    md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_32)
+    ordered = sorted(evidence)
+    case_labels = []
+    for i, a in enumerate(ordered[1:-1], 1):
+        if evidence[a] == "V":
+            reached: set = set()
+            reached_end(md, code, base, ordered[i - 1], ordered[i + 1], set(), reached)
+            if a in reached:
+                case_labels.append(a)
+    for a in case_labels:
+        del evidence[a]
     first = base
     if first not in evidence:
         evidence[first] = "P"
@@ -244,6 +262,7 @@ def main() -> None:
             w.writerow([f"0x{a:08X}", stop - a, evidence[a], yrpp.get(a) or library.get(a, "")])
 
     print(f"{len(ordered)} functions -> {out}")
+    print("case labels named by a data pointer, dropped:", " ".join(f"0x{a:08X}" for a in case_labels))
     by = {}
     for a, e in mid.items():
         by[e] = by.get(e, 0) + 1

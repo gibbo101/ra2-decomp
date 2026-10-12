@@ -39,9 +39,25 @@
 #include "vector.h"
 #include "vox.h"
 #include "weapon.h"
+#include "stringtable.h"
 
 extern Cell DAT_00B0C038[9];
 extern wchar_t DAT_00887734[];
+extern int DAT_008809A0;
+
+class LightningStorm
+{
+	public:
+		static bool HasDeferment(void);
+		static void PrintMessage(void);
+};
+
+class PsyDom
+{
+	public:
+		static bool Active(void);
+		static void PrintMessage(void);
+};
 
 static inline void Release_Animation(SuperClass * super)
 {
@@ -246,7 +262,7 @@ void SuperClass::SetReadiness(bool ready)
 // FUNCTION: 0x006CB830
 char SuperClass::StopPreclickAnim(bool isPlayer)
 {
-	Release_Animation(this);
+	DetachAnimation();
 	if (IsPresent && !IsReady && (!IsSuspended || Class->PreClick)) {
 		OldStage = -1;
 		Control.Start();
@@ -255,6 +271,307 @@ char SuperClass::StopPreclickAnim(bool isPlayer)
 		return(1);
 	}
 	return(0);
+}
+
+static inline void Restart_Charge(SuperClass * super)
+{
+	Release_Animation(super);
+	if (super->IsPresent && !super->IsReady && (!super->IsSuspended || super->Class->PreClick)) {
+		super->OldStage = -1;
+		super->Control.Start();
+		super->Control = (super->CustomChargeTime == -1) ? super->Class->RechargeTime : super->CustomChargeTime;
+		if (super->Class->UseChargeDrain) super->ChargeDrainState = SuperClass::CHARGING;
+	}
+}
+
+static inline int Charge_Time(SuperClass const * super)
+{
+	return((super->CustomChargeTime != -1) ? super->CustomChargeTime : super->Class->RechargeTime);
+}
+
+// FUNCTION: 0x006CB920
+bool SuperClass::Discharged(bool player, Cell const & cell)
+{
+	if (Class->UseChargeDrain) {
+		if (House->FUN_0050B730()) {
+			if (ChargeDrainState == FIRESTORM_ON) {
+				ChargeDrainState = READY;
+				Control = Charge_Time(this) - Control.Value() / Rule->ChargeToDrainRatio;
+				return(false);
+			}
+			if (ChargeDrainState == READY) {
+				ChargeDrainState = FIRESTORM_ON;
+				Control = (Charge_Time(this) - Control.Value()) * Rule->ChargeToDrainRatio;
+				Launch(cell, player);
+				return(false);
+			}
+		} else {
+			if (!House->FirestormDefenseActivated) {
+				Launch(cell, player);
+			}
+		}
+		return(false);
+	}
+
+	if (!(Control.Is_Active() && IsPresent && IsReady)) {
+		if (!Class->PostClick) return(false);
+	}
+	if (Class->Type == SUPER_LIGHTNING_STORM && LightningStorm::HasDeferment()) {
+		if (player) LightningStorm::PrintMessage();
+		return(false);
+	}
+	if (Class->Type == SUPER_PSYCHIC_DOMINATOR && PsyDom::Active()) {
+		if (player) PsyDom::PrintMessage();
+		return(false);
+	}
+	int chargeLeft = Control.Value();
+	Launch(cell, player);
+	if (!Class->PostClick) IsReady = false;
+	if (IsOneTime) {
+		IsOneTime = false;
+		return(Lose());
+	}
+	if (Class->IsManualControl) {
+		Control = (CustomChargeTime == -1) ? Class->RechargeTime : CustomChargeTime;
+		OldStage = -1;
+		Control.Stop();
+		return(false);
+	}
+	if (!Class->PreClick && !Class->PostClick) {
+		Restart_Charge(this);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x006CBCA0
+bool SuperClass::AI(bool player)
+{
+	if (SpecialSoundDuration > 0) SpecialSoundDuration--;
+	if (SpecialSoundDuration == 0) {
+		SpecialSoundDuration = -1;
+		VocClass::PlayAt(Class->SpecialSound, *(Coord *)SpecialSoundLocation, NULL);
+	}
+	if (DAT_008809A0 != 4 && Animation != NULL) {
+		Animation->Invisible = true;
+		Animation->StartSoundAudioController.End();
+	}
+	if (IsPresent && (!IsReady || Class->UseChargeDrain) && !IsSuspended) {
+		if (!Control.Is_Active()) {
+			if (OldStage != -1) {
+				OldStage = -1;
+				return(true);
+			}
+		} else {
+			if (Control == 0) {
+				if (Class->UseChargeDrain) {
+					if (ChargeDrainState == FIRESTORM_ON) {
+						ChargeDrainState = CHARGING;
+						Control = (CustomChargeTime == -1) ? Class->RechargeTime : CustomChargeTime;
+					} else {
+						ChargeDrainState = READY;
+						IsReady = true;
+					}
+					return(true);
+				}
+				IsReady = true;
+				if (player) {
+					switch (Class->Type) {
+					case SUPER_MULTI_MISSILE:
+						VoxClass::Play("EVA_NuclearMissileReady");
+						break;
+					case SUPER_IRON_CURTAIN:
+						VoxClass::Play("EVA_IronCurtainReady");
+						break;
+					case SUPER_FORCE_SHIELD:
+						VoxClass::Play("EVA_ForceShieldReady");
+						break;
+					case SUPER_LIGHTNING_STORM:
+						VoxClass::Play("EVA_LightningStormReady");
+						break;
+					case SUPER_PSYCHIC_DOMINATOR:
+						VoxClass::Play("EVA_PsychicDominatorReady");
+						break;
+					case SUPER_CHRONO_SPHERE:
+						VoxClass::Play("EVA_ChronosphereReady");
+						break;
+					case SUPER_PARA_DROP:
+					case SUPER_AMER_PARA_DROP:
+						VoxClass::Play("EVA_ReinforcementsReady");
+						break;
+					case SUPER_SPY_PLANE:
+						VoxClass::Play("EVA_SpyPlaneReady");
+						break;
+					case SUPER_GENETIC_CONVERTER:
+						VoxClass::Play("EVA_GeneticMutatorReady");
+						break;
+					case SUPER_PSYCHIC_REVEAL:
+						VoxClass::Play("EVA_PsychicRevealReady");
+						break;
+					default:
+						break;
+			}
+				}
+				ReadyFrame = Frame;
+				return(true);
+			} else {
+				if (Anim_Stage() != OldStage) {
+					OldStage = Anim_Stage();
+					return(true);
+				}
+			}
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x006CBEE0
+int SuperClass::Anim_Stage(void) const
+{
+	if (IsPresent) {
+		int stage;
+		if (Class->UseChargeDrain) {
+			if (ChargeDrainState == FIRESTORM_ON) {
+				stage = ANIMATION_STAGES * (1 - double(Charge_Time(this) * Rule->ChargeToDrainRatio - Control.Value()) / (Charge_Time(this) * Rule->ChargeToDrainRatio));
+			} else {
+				stage = ANIMATION_STAGES * (double(Charge_Time(this) - Control.Value()) / Charge_Time(this));
+			}
+		} else {
+			if (IsReady) {
+				return(ANIMATION_STAGES);
+			}
+			stage = ANIMATION_STAGES * (double(Charge_Time(this) - Control.Value()) / Charge_Time(this));
+		}
+		stage = MIN(stage, ANIMATION_STAGES-1);
+		return(stage);
+	}
+	return(0);
+}
+
+// FUNCTION: 0x006CC070
+void FUN_006CC070(void)
+{
+}
+
+// FUNCTION: 0x006CC080
+void SuperClass::Forced_Charge(bool player)
+{
+	if (IsPresent) {
+		IsReady = true;
+		int time = (CustomChargeTime == -1) ? Class->RechargeTime : CustomChargeTime;
+		int remaining = time - int(time * 1.0f);
+		if (remaining == 0) IsReady = true;
+		Control.Start();
+		Control = remaining;
+		if (player) {
+			switch (Class->Type) {
+			case SUPER_MULTI_MISSILE:
+				VoxClass::Play("EVA_NuclearMissileReady");
+				break;
+			case SUPER_IRON_CURTAIN:
+				VoxClass::Play("EVA_IronCurtainReady");
+				break;
+			case SUPER_FORCE_SHIELD:
+				VoxClass::Play("EVA_ForceShieldReady");
+				break;
+			case SUPER_LIGHTNING_STORM:
+				VoxClass::Play("EVA_LightningStormReady");
+				break;
+			case SUPER_PSYCHIC_DOMINATOR:
+				VoxClass::Play("EVA_PsychicDominatorReady");
+				break;
+			case SUPER_CHRONO_SPHERE:
+				VoxClass::Play("EVA_ChronosphereReady");
+				break;
+			case SUPER_PARA_DROP:
+			case SUPER_AMER_PARA_DROP:
+				VoxClass::Play("EVA_ReinforcementsReady");
+				break;
+			case SUPER_SPY_PLANE:
+				VoxClass::Play("EVA_SpyPlaneReady");
+				break;
+			case SUPER_GENETIC_CONVERTER:
+				VoxClass::Play("EVA_GeneticMutatorReady");
+				break;
+			case SUPER_PSYCHIC_REVEAL:
+				VoxClass::Play("EVA_PsychicRevealReady");
+				break;
+			default:
+				break;
+			}
+		}
+		ReadyFrame = Frame;
+		if (Class->UseChargeDrain) ChargeDrainState = READY;
+	}
+}
+
+// FUNCTION: 0x006CC1E0
+void SuperClass::SetCharge(int percentage)
+{
+	if (IsPresent && percentage >= 0 && percentage <= 100) {
+		int time = (CustomChargeTime == -1) ? Class->RechargeTime : CustomChargeTime;
+		int remaining = time - int(time * (percentage * 0.01f));
+		if (remaining == 0) IsReady = true;
+		Control.Start();
+		Control = remaining;
+	}
+}
+
+// FUNCTION: 0x006CC260
+int SuperClass::GetRechargeTime(void)
+{
+	int time = CustomChargeTime;
+	if (time != -1) goto done;
+	time = Class->RechargeTime;
+done:
+	return(time);
+}
+
+// FUNCTION: 0x006CC280
+void SuperClass::SetRechargeTime(int time)
+{
+	CustomChargeTime = time;
+}
+
+// FUNCTION: 0x006CC290
+void SuperClass::ResetRechargeTime(void)
+{
+	CustomChargeTime = -1;
+}
+
+// FUNCTION: 0x006CC2A0
+bool SuperClass::Is_Powered(void) const
+{
+	return(Class->IsPowered);
+}
+
+
+// FUNCTION: 0x006CC2B0
+wchar_t const * SuperClass::NameReadiness(void) const
+{
+	if (!IsSuspended) {
+		if (Class->UseChargeDrain) {
+			switch (ChargeDrainState) {
+				case CHARGING:
+#line 919 "D:\\ra2mdpost\\Super.CPP"
+					return(StringTable::LoadString("TXT_CHARGING", NULL, __FILE__, __LINE__));
+				case READY:
+#line 922 "D:\\ra2mdpost\\Super.CPP"
+					return(StringTable::LoadString("TXT_READY", NULL, __FILE__, __LINE__));
+				case FIRESTORM_ON:
+#line 925 "D:\\ra2mdpost\\Super.CPP"
+					return(StringTable::LoadString("TXT_FIRESTORM_ON", NULL, __FILE__, __LINE__));
+				default:
+					return(NULL);
+			}
+		}
+		if (IsReady) {
+#line 944 "D:\\ra2mdpost\\Super.CPP"
+			return(StringTable::LoadString("TXT_READY", NULL, __FILE__, __LINE__));
+		}
+		return(NULL);
+	}
+#line 950 "D:\\ra2mdpost\\Super.CPP"
+	return(StringTable::LoadString("TXT_HOLD", NULL, __FILE__, __LINE__));
 }
 
 // FUNCTION: 0x006CDEB0

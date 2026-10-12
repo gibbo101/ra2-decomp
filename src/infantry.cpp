@@ -41,6 +41,7 @@
 #include "mono.h"
 #include "overlay.h"
 #include "overtype.h"
+#include "radsite.h"
 #include "rules.h"
 #include "slavemgr.h"
 #include "scheme.h"
@@ -1541,10 +1542,271 @@ settle:
 	}
 }
 
+// FUNCTION: 0x00520F40
+void InfantryClass::Movement_AI(void)
+{
+	if (Get_Mission() == MISSION_MOVE && !Locomotion->Is_Moving()) {
+		if (NavCom == NULL) {
+			Enter_Idle_Mode();
+		} else {
+			Assign_Destination(NavCom);
+			Set_Speed(1.0);
+		}
+	}
+
+	if (NavCom != NULL) {
+		Cell cell = NavCom->Destination_Coord(this).As_Cell();
+
+		if ((!IsZoneCheat || Can_Enter_Cell(Get_Target_Cell_Ptr()) != MOVE_NO) && !Locomotion->Is_Moving() && !IsTethered && NavCom != NULL && IsInPlayfield && !Map.Is_Same_Cell_Zone(Destination_Coord(NULL).As_Cell(), cell, Class->MZone, Is_Moving_Onto_Bridge(NULL), Map[cell].IsUnderBridge, Is_Allowed_To_Leave_Map())) {
+			if (!Class->IsCapture && Get_Mission() != MISSION_ENTER) {
+				Assign_Destination(NULL);
+			}
+		}
+	}
+
+	if (Locomotion->Is_Really_Moving_Now()) {
+		if (Is_JumpJet()) {
+			if (!IsFiring) {
+				if (Speed > 0.8) {
+					Do_Action((DoType)0x18);
+				} else {
+					Do_Action((DoType)0x17);
+				}
+			}
+		} else {
+			if (IsProne) {
+				Do_Action((DoType)6);
+			} else {
+				Do_Action((DoType)3);
+			}
+		}
+	} else {
+		if (Doing == 3 || Doing == 0x18 || Doing == 0x17) {
+			Do_Action((DoType)0);
+		} else if (Doing == 6) {
+			Do_Action((DoType)2);
+		} else if (Doing == 0x11) {
+			Do_Action((DoType)0x10);
+		}
+	}
+}
+
+// FUNCTION: 0x00521320
+int InfantryClass::FUN_00521320(void)
+{
+	if (Doing == 0x1b) goto deployed;
+	if (Doing == 0x1c) goto deployed;
+	if (Doing == 0x1d) goto deployed;
+	if (Doing == 0x1e) {
+deployed:
+		if (Class->UndeployDelay > -1) {
+			Do_Action((DoType)0x1f, false, false);
+			return(Class->DoControls[0x1f].Count);
+		}
+		if (Class->DeployFire) {
+			if (Class->ImmuneToRadiation) {
+				RadSiteClass * site = Map[Get_Cell()].FUN_00487C80();
+				WeaponTypeClass * weapon = Get_Class_Weapon_Data(1)->Weapon;
+				int level = weapon->RadLevel / 3;
+				if (site == NULL || site->GetRadLevel() < level) {
+					Assign_Target(&Map[Get_Cell()]);
+					if (Can_Fire(TarCom, 1, true) == 0) {
+						Fire_At(TarCom, 1);
+						Assign_Target(NULL);
+						Do_Action((DoType)0x1d, false, false);
+						return(Class->DoControls[0x1d].Count);
+					}
+					Assign_Target(NULL);
+				}
+				return(Current_Mission_Control().Normal_Delay() + Random_Pick(10, 20));
+			}
+			Rocking_AI();
+			return(Current_Mission_Control().Normal_Delay() + Random_Pick(0, 2));
+		}
+		return(-1);
+	}
+
+	if (!Owner_HouseClass()->FUN_0050B730() && Class->Deployer && Class->DeployFire && Class->UndeployDelay <= -1 && NavCom == NULL && CurrentMissionStartTime + Rule->AIAutoDeployFrameDelay[House->Difficulty] < Frame) {
+		if (ArchiveTarget != NULL) {
+			if (ArchiveTarget->Center_Coord().As_Cell() != Center_Coord().As_Cell()) {
+				return(-1);
+			}
+		}
+		if (!Class->ImmuneToRadiation) {
+			if (!Locomotion->Is_Moving()) {
+				Do_Action((DoType)0x1b, false, false);
+				return(Class->DoControls[0x1b].Count);
+			}
+			Locomotion->Stop_Moving();
+			ShouldDeploy = true;
+			return(Current_Mission_Control().Normal_Delay() + Random_Pick(0, 2));
+		}
+	}
+	return(-1);
+}
+
+// FUNCTION: 0x005216C0
+void const * InfantryClass::Get_Image_Data(void) const
+{
+	return(BASECLASS::Get_Image_Data());
+}
+
+// FUNCTION: 0x005216D0
+bool InfantryClass::Is_Ready_To_Random_Animate(void) const
+{
+	if (!BASECLASS::Is_Ready_To_Random_Animate()) {
+		return(false);
+	}
+	if (Locomotion->Is_Moving()) {
+		return(false);
+	}
+	if (IsProne) {
+		return(false);
+	}
+	if (IsFiring) {
+		return(false);
+	}
+	if (Doing == 0x1b) goto not_ready;
+	if (Doing == 0x1c) goto not_ready;
+	if (Doing == 0x1d) goto not_ready;
+	if (Doing == 0x1e) {
+not_ready:
+		return(false);
+	}
+	if (Doing == 1 || Doing == 0 || Doing == 0x10) {
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00521760
+bool InfantryClass::Paradrop(Coord const & coord)
+{
+	if (BASECLASS::Paradrop(coord)) {
+		if (House->FUN_0050B730()) {
+			QueueMission(MISSION_GUARD, false);
+		} else {
+			QueueMission(MISSION_HUNT, false);
+		}
+		Do_Action((DoType)0x21, true, false);
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x005217C0
+void InfantryClass::Set_Occupy_Bit(Coord const & coord)
+{
+	int spot_index = CellClass::Spot_Index(coord);
+	CellClass & cell = Map[coord];
+	if (Map.Get_Height_GL(coord) + BRIDGE_LEPTON_HEIGHT <= coord.Z && cell.IsUnderBridge) {
+		cell.BridgeFlag.Composite |= (1 << spot_index);
+		cell.BridgeInfType = Owner();
+	} else {
+		cell.Flag.Composite |= (1 << spot_index);
+		cell.InfType = Owner();
+	}
+}
+
+// FUNCTION: 0x00521850
+void InfantryClass::Clear_Occupy_Bit(Coord const & coord)
+{
+	int spot_index = CellClass::Spot_Index(coord);
+	CellClass & cell = Map[coord];
+	int height = Map.Get_Height_GL(coord);
+
+	if (height + BRIDGE_LEPTON_HEIGHT <= coord.Z) {
+		cell.BridgeFlag.Composite &= ~(1 << spot_index);
+		if (!(cell.BridgeFlag.Composite & 0x1C)) {
+			cell.BridgeInfType = HOUSE_NONE;
+		}
+	} else {
+		cell.Flag.Composite &= ~(1 << spot_index);
+		if (!(cell.Flag.Composite & 0x1C)) {
+			cell.InfType = HOUSE_NONE;
+		}
+	}
+}
+
+// FUNCTION: 0x005218E0
+int InfantryClass::What_Weapon_Should_I_Use(AbstractClass * target) const
+{
+	if (Class->DeployFire) {
+		if (Doing == 0x1b) goto deploy_weapon;
+		if (Doing == 0x1c) goto deploy_weapon;
+		if (Doing == 0x1d) goto deploy_weapon;
+		if (Doing == 0x1e) {
+deploy_weapon:
+			return(Class->DeployFireWeapon);
+		}
+		if (InOpenToppedTransport && Techno_Type_Class()->OpenTransportWeapon != -1) {
+			return(Techno_Type_Class()->OpenTransportWeapon);
+		}
+		return(0);
+	}
+	return(BASECLASS::What_Weapon_Should_I_Use(target));
+}
+
+// FUNCTION: 0x00521960
+HRESULT STDMETHODCALLTYPE InfantryClass::Load(IStream * stream)
+{
+	TargetTracker.Remove_Index(Fetch_ID());
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		ILocomotion * locomotion = Locomotion;
+
+		new (this) InfantryClass(NoInitClass());
+
+		Locomotion = locomotion;
+		locomotion->Release();
+
+		TargetTracker.Add_Index(Fetch_ID(), this);
+		Swizzle_Pointer(&Class);
+		Swizzle_Pointer(&Disguise);
+		Swizzle_Pointer(&DisguisedAsHouse);
+
+		result = S_OK;
+	}
+	return(result);
+}
+
 // FUNCTION: 0x00521B00
 HRESULT STDMETHODCALLTYPE InfantryClass::Save(IStream * stream, BOOL cleardirty)
 {
 	return(BASECLASS::Save(stream, cleardirty));
+}
+
+// FUNCTION: 0x00521B20
+void InfantryClass::Stop_Movement_Animation(void)
+{
+	if (Doing == 6 || Doing == 3 || Doing == 0x11) {
+		Doing = (DoType)-1;
+	}
+}
+
+// FUNCTION: 0x00521B40
+void InfantryClass::vt_entry_54C(void)
+{
+	if (ShouldDeploy) {
+		ShouldDeploy = false;
+		Do_Action((DoType)0x1b);
+	}
+}
+
+// FUNCTION: 0x00521B60
+bool InfantryClass::Ready_To_Next_Mission(void) const
+{
+	if (CurrentMission != MISSION_STICKY && CurrentMission != MISSION_RESCUE) {
+		if (!IsFiring && !IsFalling) {
+			if (Locomotion->Is_Moving_Now() && Mission != MISSION_GUARD && Mission != MISSION_HUNT && (Mission != MISSION_ATTACK || TarCom)) {
+				return(false);
+			}
+			if (Doing == DO_NOTHING || MasterDoControls[Doing].Interrupt) {
+				return(true);
+			}
+		}
+	}
+	return(false);
 }
 
 // FUNCTION: 0x00523300

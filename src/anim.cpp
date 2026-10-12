@@ -24,6 +24,7 @@
 #include "draw.h"
 #include "globals.h"
 #include "goptions.h"
+#include "bullet.h"
 #include "house.h"
 #include "incdec.h"
 #include "inline.h"
@@ -31,6 +32,7 @@
 #include "notify.h"
 #include "overlay.h"
 #include "overtype.h"
+#include "partsys.h"
 #include "rules.h"
 #include "scenario.h"
 #include "scheme.h"
@@ -62,6 +64,23 @@ extern int DAT_0089A1C0;
 extern double DAT_0089A170;
 extern double DAT_0089A188;
 extern int DAT_0089A1B4;
+struct FileSystem
+{
+	static char TEMPERAT_PAL[];
+};
+struct Game
+{
+	static bool __cdecl CallBack(void);
+};
+void __fastcall FUN_00489280(Coord const & coord, int damage, TechnoClass * source, WarheadTypeClass const * warhead, bool affect_tiberium, HouseClass * house);
+void __fastcall FUN_004A3C30(void * palette, int rate, bool (__cdecl * callback)(void));
+extern const double DAT_007E3570;
+class SHPStruct
+{
+	public:
+		Rect GetFrameBounds(int frame) const;
+};
+extern ParticleSystemClass * DAT_00A8ED78;
 
 // FUNCTION: 0x00421CB0
 
@@ -304,7 +323,7 @@ Cell const * AnimClass::Occupy_List(bool) const
 	return(_simple);
 }
 
-// FUNCTION: 0x00423920 $E141
+// FUNCTION: 0x00423920 $E144
 
 // FUNCTION: 0x00423930
 BounceResultType AnimClass::Bounce_AI(void)
@@ -394,6 +413,232 @@ void AnimClass::FUN_00424C90(BulletClass * bullet)
 void AnimClass::FUN_00424CA0(HouseClass * house)
 {
 	Owner = house;
+}
+
+// FUNCTION: 0x00424CB0
+LayerType AnimClass::In_Which_Layer(void) const
+{
+	if (OwnerObject != NULL) {
+		return(LAYER_GROUND);
+	}
+	if (Type != NULL) {
+		return(Type->Layer);
+	}
+	return(LAYER_AIR);
+}
+
+// FUNCTION: 0x00424CE0
+void AnimClass::Start(void)
+{
+	Mark(MARK_CHANGE);
+
+	if (!IsInert && Type->Report != -1) {
+		VocClass::PlayAt(Type->Report, Center_Coord(), &StartSoundAudioController);
+	} else {
+		StartSoundAudioController.Stop();
+	}
+	StopSoundAudioController.Stop();
+
+	if (Type->MiddleFrameIndex == 0) {
+		Middle();
+	}
+
+	if (!IsInert && Type->TiberiumChainReaction) {
+		CellClass * cptr = &Map[Center_Coord()];
+		TiberiumType tib = cptr->Tiberium_Type_Here();
+
+		if (tib != TIBERIUM_NONE) {
+			TiberiumClass * tiberium = Tiberiums[tib];
+			cptr->Reduce_Tiberium(cptr->OverlayData + 1);
+
+			if (tiberium->Debris.Count() > 0 && (abs(Scen->RandomNumber) % 3) == 0) {
+				AnimClass * debris = new AnimClass(tiberium->Debris[Random_Pick(0, tiberium->Debris.Count()-1)], Center_Coord() + Coord(0, 0, 10));
+				debris->LightConvert = ColorSchemes[tiberium->Color]->Converter;
+				debris->TintColor = cptr->Brightness;
+			}
+
+			FUN_00489280(PositionCoord, Rule->TiberiumExplosionDamage, NULL, Rule->C4Warhead, false, NULL);
+
+			cptr->Recalc_Attributes();
+			Map.ResetZones(cptr->CellID);
+			Map.RecalculateSubZones(cptr->CellID);
+		}
+	}
+}
+
+// FUNCTION: 0x00424F00
+void AnimClass::Middle(void)
+{
+	Cell cell = Center_Coord().As_Cell();
+	CellClass * cellptr = &Map[cell];
+
+	int width = 30;
+	int height = 30;
+
+	SHPStruct const * shape = (SHPStruct const *)Get_Image_Data();
+	if (shape != NULL) {
+		if (Type->MiddleFrameWidth == -1) {
+			Type->MiddleFrameWidth = shape->GetFrameBounds(Type->MiddleFrameIndex).Width;
+		}
+		if (Type->MiddleFrameHeight == -1) {
+			Type->MiddleFrameHeight = shape->GetFrameBounds(Type->MiddleFrameIndex).Height;
+		}
+		width = Type->MiddleFrameWidth;
+		height = Type->MiddleFrameHeight;
+	}
+
+	if (Type->SpawnsParticle != -1) {
+		for (int i = 0; i < Type->NumParticles; i++) {
+			Coord pos = PositionCoord;
+			DAT_00A8ED78->Spawn_Particle(ParticleTypes[Type->SpawnsParticle], pos);
+		}
+	}
+
+	if (HeightAGL < 30) {
+		if (Type->Scorch && (!Type->Crater || Scen->RandomNumber(0, 0x7FFFFFFE) * DAT_007E3570 < 0.5)) {
+			SmudgeTypeClass::Scorch_The_Ground(Center_Coord(), width, height, false);
+		} else if (Type->Crater) {
+			cellptr->Reduce_Tiberium(6);
+			if (Type->ForceBigCraters) {
+				SmudgeTypeClass::Crater_The_Ground(Center_Coord(), 300, 300, true);
+			} else {
+				SmudgeTypeClass::Crater_The_Ground(Center_Coord(), width, height, false);
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x00425150
+void AnimClass::Detach(AbstractClass const * target, bool all)
+{
+	BASECLASS::Detach(target, all);
+	if (OwnerObject == target && target != NULL) {
+		Map.Remove(this);
+		OwnerObject->AnimPointerExpired(this);
+		OwnerObject = NULL;
+		UnableToContinue = true;
+		Mark(MARK_UP);
+	}
+	if (Type == target) {
+		Type = NULL;
+	}
+	if (AttachedBullet == target) {
+		AttachedBullet = NULL;
+		Delete_Me();
+	}
+	if (Owner == target) {
+		AttachedBullet = NULL;
+		Delete_Me();
+	}
+}
+
+// FUNCTION: 0x004251F0
+void AnimClass::Do_Atom_Damage(HousesType ownerhouse, Cell const & cell)
+{
+	Coord coord(cell.X * 256 + 128, cell.Y * 256 + 128, 0);
+	FUN_00489280(coord, Rule->AtomDamage, NULL, Rule->NukeWarhead, false, NULL);
+	if (Session.Type == GAME_NORMAL) {
+		FUN_004A3C30(&FileSystem::TEMPERAT_PAL, 30, Game::CallBack);
+	}
+}
+
+// FUNCTION: 0x00425260
+void AnimClass::Disable(void)
+{
+	PowerOff = true;
+}
+
+// FUNCTION: 0x00425270
+void AnimClass::Enable(void)
+{
+	PowerOff = false;
+}
+
+// FUNCTION: 0x00425280
+HRESULT STDMETHODCALLTYPE AnimClass::Load(IStream * stream)
+{
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		new (this) AnimClass(NoInitClass());
+		StartSoundAudioController.FUN_00405BE0();
+		StopSoundAudioController.FUN_00405BE0();
+
+		Swizzle_Pointer(&Type);
+		Swizzle_Pointer(&OwnerObject);
+		Swizzle_Pointer(&AttachedBullet);
+		Swizzle_Pointer(&Owner);
+
+		if (LightConvertIndex > -1) {
+			if (LightConvertIndex < ColorSchemes.Count()) {
+				LightConvert = ColorSchemes[LightConvertIndex]->Converter;
+				return(result);
+			}
+		} else {
+			if (PaletteName[0] != '\0') {
+				DynamicVectorClass<ColorScheme *> * palette = ColorScheme::GeneratePalette(PaletteName);
+				if (palette != NULL) {
+					ColorScheme * scheme = palette->GetItem(0);
+					if (scheme != NULL) {
+						LightConvert = scheme->Converter;
+						return(result);
+					}
+				}
+			}
+			LightConvert = NULL;
+		}
+	}
+	return(result);
+}
+
+// FUNCTION: 0x004253B0
+HRESULT STDMETHODCALLTYPE AnimClass::Save(IStream * stream, BOOL cleardirty)
+{
+	if (LightConvert != NULL) {
+		for (int index = ColorSchemes.Count() - 1; index >= 0; index--) {
+			if (LightConvert == ColorSchemes[index]->Converter) {
+				LightConvertIndex = index;
+				goto done;
+			}
+		}
+	}
+	LightConvertIndex = -1;
+done:
+	return(BASECLASS::Save(stream, cleardirty));
+}
+
+// FUNCTION: 0x00425410
+void AnimClass::Compute_CRC(CRCEngine & crc) const
+{
+	BASECLASS::Compute_CRC(crc);
+	if (OwnerObject != NULL) {
+		crc(OwnerObject->Fetch_ID());
+	}
+	crc((int)unknown_D0);
+	crc(TintColor);
+	crc(ZAdjust);
+	crc(YSortAdjust);
+	crc(LoopDelay);
+	crc(Accum);
+	crc(AnimFlags);
+	crc(HasExtras);
+	crc((int)RemainingIterations);
+	crc(UseCellLightConvert);
+	crc(DeleteOnMapCleanup);
+	crc(UnableToContinue);
+	crc(SkipProcessOnce);
+	crc(PowerOff);
+}
+
+// FUNCTION: 0x00425510
+int AnimClass::Stage_Count(void) const
+{
+	return(Type->End);
+}
+
+// FUNCTION: 0x00425520
+ObjectTypeClass const * AnimClass::Class_Of(void) const
+{
+	return(Type);
 }
 
 // FUNCTION: 0x00426540

@@ -757,6 +757,21 @@ Techno's area modify (96.8%), and INIClass::Is_Present's out-of-line copy, which
 appears once Read_File matches. Cost: about 2.0M tokens, 49 minutes. Merge gate:
 2,275 of 2,275 (344.7 KB).
 
+### Batch 9 (12 October 2026)
+
+wstring, tiberium, Super, techtype, anim, Infantry, Unit, foot, team. **105 of 107
+matched**; the 108th address was not a function. RadSiteClass got YR's full layout;
+Approach_Target returns the target, and ShouldLoseTargetNow is a byte. The merge
+rejected an anim agent's request to make Quaternion's default constructor trivial: the
+exe's voxel initialisers call the four-float constructor, and AnimClass::Load matched
+once the real ColorScheme::GeneratePalette return type was declared. The map fault:
+a case label that a data pointer names was taken for a function, splitting
+SuperClass::NameReadiness. `functions.py` now drops a start whose only evidence is a
+data pointer when flow from the function before it jumps there; fall-through does not
+count, since a call that never returns runs into the next function. Seven starts went,
+all checked, and NameReadiness landed. Banked: two techtype functions (76.4%, 18.5%).
+Cost: about 2.1M tokens, 52 minutes. Merge gate: 2,380 of 2,380 (366.8 KB).
+
 ### Decide before the first batch
 
 - **Module layout.** Which function lives in which source file, and the link order, decide

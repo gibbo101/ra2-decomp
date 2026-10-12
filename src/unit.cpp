@@ -75,6 +75,7 @@
 
 extern int DAT_00B1CFA8, DAT_00B1CFAC, DAT_00B1CFB0, DAT_00B1CFB4;
 extern int DAT_00B1CFC0, DAT_00B1CFC4, DAT_00B1CFC8, DAT_00B1CFCC;
+extern int __fastcall FUN_0050C170(char const * name);
 
 // FUNCTION: 0x00735390
 void FUN_00735390(void)
@@ -1198,6 +1199,391 @@ FireErrorType UnitClass::Can_Fire(AbstractClass * target, int which, bool ignore
 		}
 	}
 	return(fire);
+}
+
+// FUNCTION: 0x00741340
+BulletClass * UnitClass::Fire_At(AbstractClass * target, int which)
+{
+	BulletClass * bullet = NULL;
+	WeaponTypeClass const * weap = Get_Class_Weapon_Data(which)->Weapon;
+	if (weap == NULL) return(NULL);
+
+	bool sync = false;
+	if (which == 0) {
+		int burst = BurstIndex % weap->Burst;
+		int frame = burst < 2 ? Class->FiringSyncFrame[burst] : -1;
+		sync = FiringSyncDelay != -1 && frame != -1;
+	}
+
+	if (Can_Fire(target, which, true) == FIRE_OK) {
+		bullet = BASECLASS::Fire_At(target, which);
+
+		if (bullet != NULL) {
+			if (Class->MaxAmmo > 0 && Ammo < Class->MaxAmmo && !Class->IsManualReload) {
+				StartReloading();
+			}
+
+			if (!sync && Class->FiringFrames > 0) {
+				FiringSyncDelay = 2 * Class->FiringFrames - 1;
+			}
+
+			if (bullet->Class->Scalable) {
+				bullet->InitScalable();
+			}
+
+			if (Class->DisguiseWhenStill) {
+				DisguiseBlinkTimer = weap->DisguiseFakeBlinkTime;
+			}
+		}
+	}
+
+	return(bullet);
+}
+
+// FUNCTION: 0x00741490
+ObjectTypeClass const * UnitClass::Class_Of(void) const
+{
+	return(Class);
+}
+
+// FUNCTION: 0x007414A0
+double UnitClass::Tiberium_Load(void) const
+{
+	if (Class->Harvester || Class->Weeder) {
+		return(Storage.Get_Total_Amount() / (double)Class->Capacity);
+	}
+	return(0.0);
+}
+
+static inline TechnoClass * Techno_Of(AbstractClass * a)
+{
+	if (a == NULL) return(NULL);
+	return((a->AbstractFlags & 1) ? (TechnoClass *)a : NULL);
+}
+
+static inline bool Is_Object(AbstractClass * a)
+{
+	return(a != NULL && (a->AbstractFlags & 2));
+}
+
+static inline ObjectClass * Object_Of(AbstractClass * a)
+{
+	if (a == NULL) return(NULL);
+	return((a->AbstractFlags & 2) ? (ObjectClass *)a : NULL);
+}
+
+// FUNCTION: 0x007414E0
+AbstractClass * UnitClass::Approach_Target(bool force)
+{
+	if (!House->FUN_0050B730() && TarCom != NULL && NavCom == NULL) {
+		TechnoClass * target = Techno_Of(TarCom);
+		if ((Class->IsCrusher || Has_Ability(ABILITY_CRUSHER)) && Distance(TarCom) < Rule->CrushDistance && target != NULL && ((ObjectClass *)target)->IsCrushable(this) && (Class->IsAutoCrush || !House->FUN_0050B730())) {
+			if (!force) {
+				Assign_Destination(TarCom, true);
+			}
+			return(TarCom);
+		}
+	}
+
+	if (Class->BalloonHover) {
+		WeaponTypeClass const * weap = Get_Class_Weapon_Data(What_Weapon_Should_I_Use(TarCom))->Weapon;
+		if (weap != NULL && weap->Bullet != NULL && weap->Bullet->Vertical) {
+			if (!force) {
+				Assign_Destination(TarCom, true);
+			}
+			return(TarCom);
+		}
+	}
+
+	if (Class->OmniCrusher && TarCom != NULL && (!House->IsHuman || !ShouldLoseTargetNow) && Is_Object(TarCom) && Object_Of(TarCom)->IsCrushable(this)) {
+		if (!force) {
+			Assign_Destination(TarCom, true);
+		}
+		return(TarCom);
+	}
+
+	return(BASECLASS::Approach_Target(false));
+}
+
+// FUNCTION: 0x007416A0
+void UnitClass::Overrun_Square(Cell const & cell, bool threaten)
+{
+	CellClass * cellptr = &Map[cell];
+	bool isbridge = false;
+
+	if (cellptr->IsUnderBridge) {
+		isbridge = IsOnBridge || (Map[Center_Coord().As_Cell()].Height == (cellptr->Height + BRIDGE_CELL_HEIGHT));
+	}
+
+	if (Class->IsCrusher || Has_Ability(ABILITY_CRUSHER)) {
+		if (threaten) {
+			if (isbridge) {
+				if (cellptr->BridgeFlag.Composite & 0x1F) {
+					cellptr->Incoming(COORD_NONE, true, false, true);
+				}
+			} else {
+				if (cellptr->Flag.Composite & 0x1F) {
+					cellptr->Incoming(COORD_NONE, true, false, false);
+				}
+			}
+		} else {
+			ObjectClass * object = cellptr->Cell_Occupier(isbridge);
+			bool crushed = false;
+			bool crushed_unit = false;
+			while (object != NULL) {
+				if (object->IsCrushable(this) && (!House->Is_Ally(object) || Class->IsTrain) && Relative_Distance(object->Center_Coord()) < CELL_LEPTON * 64 && !object->IsFalling) {
+					if (object->Fetch_RTTI() == RTTI_INFANTRY && ((InfantryClass *)object)->Class->IsVehicleThief && ((InfantryClass *)object)->NavCom == this && !Class->IsTrain) {
+						ObjectClass * next = object->Next;
+						IsOwnedByPlayer = ((InfantryClass *)object)->IsOwnedByPlayer;
+						Detach_All(false);
+						Captured(((InfantryClass *)object)->House, true);
+						object->Delete_Me();
+						object = next;
+					} else {
+						ObjectClass * next = object->Next;
+						crushed = true;
+						if (object->Fetch_RTTI() == RTTI_UNIT) {
+							crushed_unit = true;
+						}
+						VocClass::PlayAt(object->Class_Of()->CrushSound, PositionCoord, NULL);
+						object->Destroy();
+						object->RegisterDestruction(this);
+						object->Mark(MARK_UP);
+						object->Limbo();
+						object->Delete_Me();
+						object = next;
+					}
+				} else {
+					object = object->Next;
+				}
+			}
+			if (crushed) {
+				Do_Uncloak(false);
+				if (crushed_unit && RockingForwardsPerFrame == 0.0f) {
+					RockingForwardsPerFrame = -0.05f;
+				}
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x00743190
+AbstractClass * UnitClass::Greatest_Threat(ThreatType threat, Coord const & coord, bool onlyenemy) const
+{
+	if (House->FUN_0050B730() && Class->DeployToFire) {
+		return(NULL);
+	}
+	if (!(threat & (THREAT_INFANTRY|THREAT_VEHICLES|THREAT_BUILDINGS|THREAT_TIBERIUM|THREAT_CIVILIANS|THREAT_POWER|THREAT_FACTORIES|THREAT_BASE_DEFENSE|0x8000|0x10000))) {
+		if (FUN_0070DC60() && !Class->IsGattling) {
+			threat = ThreatType(threat | Get_Class_Weapon_Data(FUN_0070DD20())->Weapon->Allowed_Threats());
+		} else {
+			if (Get_Class_Weapon_Data(0)->Weapon != NULL) {
+				threat = ThreatType(threat | Get_Class_Weapon_Data(0)->Weapon->Allowed_Threats());
+			}
+			if (Get_Class_Weapon_Data(1)->Weapon != NULL) {
+				threat = ThreatType(threat | Get_Class_Weapon_Data(1)->Weapon->Allowed_Threats());
+			}
+		}
+	}
+
+	return(BASECLASS::Greatest_Threat(threat, coord, onlyenemy));
+}
+
+// FUNCTION: 0x00743270
+void UnitClass::Read_INI(CCINIClass & ini)
+{
+	UnitClass * unit;
+	int inhouse;
+	UnitType classid;
+	char buf[128];
+
+	ini.Reset();
+
+	DynamicVectorClass<int> followers;
+	followers.Clear();
+
+	int len = ini.Entry_Count(INI_NAME);
+
+	for (int index = 0; index < len; index++) {
+		char const * entry = ini.Get_Entry(INI_NAME, index);
+
+		ini.Get_String(INI_NAME, entry, NULL, buf, sizeof(buf));
+
+		inhouse = FUN_0050C170(strtok(buf, ","));
+		if (inhouse != -1) {
+			classid = UnitTypeClass::From_Name(strtok(NULL, ","));
+			HouseClass * inhousep = Houses[inhouse];
+
+			if (classid != UNIT_NONE) {
+				unit = new UnitClass(UnitTypes[classid], inhousep);
+				if (unit != NULL) {
+					int strength = atoi(strtok(NULL, ","));
+
+					Cell cell;
+					if (NewINIFormat >= 4) {
+						unsigned short x = atoi(strtok(NULL, ","));
+						unsigned short y = atoi(strtok(NULL, ","));
+						cell = Cell(x, y);
+					} else {
+						int c = atoi(strtok(NULL, ","));
+						cell = Cell(c);
+					}
+
+					Coord coord = cell.As_Coord();
+
+					Dir256 dir = (Dir256)atoi(strtok(NULL, ","));
+					char * name = strtok(NULL, ",");
+					MissionType mission = MissionClass::Mission_From_Name(name);
+
+					TagTypeClass * tp = TagTypeClass::From_Name(strtok(NULL, ","));
+					if (tp != NULL) {
+						TagClass * tt = Find_Or_Make(tp);
+						if (tt != NULL) {
+							unit->Attach_Tag(tt);
+						}
+					}
+
+					char * token = strtok(NULL, ",");
+					if (token != NULL) {
+						unit->Veterancy.From_Integer(atoi(token));
+					}
+
+					token = strtok(NULL, ",");
+					if (token != NULL) {
+						unit->Group = atoi(token);
+					}
+
+					token = strtok(NULL, ",");
+					if (token != NULL) {
+						unit->IsOnBridge = atoi(token) != 0;
+						if (unit->IsOnBridge) {
+							coord.Z = Map.Get_Height_GL(coord) + BRIDGE_LEPTON_HEIGHT;
+						}
+					}
+
+					token = strtok(NULL, ",");
+					if (token != NULL) {
+						followers.Add(atoi(token));
+					}
+
+					token = strtok(NULL, ",");
+					if (token != NULL) {
+						unit->IsTeamRecruitable = atoi(token) != 0;
+					}
+
+					token = strtok(NULL, ",");
+					if (token != NULL) {
+						unit->IsAutocreateRecruitable = atoi(token) != 0;
+					}
+
+					if (unit->Unlimbo(coord, dir)) {
+						double fs;
+						unit->Strength = (fs = strength) * unit->Class->MaxStrength / 256.0;
+						if (unit->Strength > unit->Class->MaxStrength - 3) unit->Strength = unit->Class->MaxStrength;
+						if (unit->Strength == 0) unit->Strength = 1;
+						unit->EstimatedHealth = unit->Strength;
+						unit->QueueMission(mission, false);
+						if (unit->Ready_To_Next_Mission()) {
+							unit->Commence();
+						}
+					} else {
+						delete unit;
+					}
+				}
+			}
+		}
+	}
+
+	for (int i = 0; i < Units.Count(); i++) {
+		UnitClass * unit = Units[i];
+		int followerid = followers[i];
+		if ((UnitType)followerid != UNIT_NONE && (unsigned)followerid < (unsigned)Units.Count()) {
+			UnitClass * follower = Units[followerid];
+			unit->FollowingMe = follower;
+			follower->IsFollowing = true;
+		} else {
+			unit->FollowingMe = NULL;
+		}
+	}
+}
+
+// FUNCTION: 0x007436E0
+void UnitClass::Write_INI(CCINIClass & ini)
+{
+	ini.Clear(INI_NAME);
+
+	for (int index = 0; index < Units.Count(); index++) {
+		UnitClass * unit = Units[index];
+		if (unit != NULL && !unit->IsInLimbo && unit->IsActive) {
+			char uname[10];
+			char buf[128];
+
+			sprintf(uname, "%d", index);
+			sprintf(buf, "%s,%s,%d,%d,%d,%d,%s,%s,%d,%d,%d,%d,%d,%d",
+				(char const *)unit->House->IniName,
+				(char const *)unit->Class->IniName,
+				(int)(unit->HealthRatio * 256),
+				unit->PositionCell.X,
+				unit->PositionCell.Y,
+				unit->PrimaryFacing.Current().As_Dir256(),
+				MissionClass::Mission_Name(unit->Get_Mission()),
+				(unit->Tag != NULL && unit->Tag->Class != NULL) ? (char const *)unit->Tag->Class->IniName : "None",
+				unit->Veterancy.To_Integer(),
+				unit->Group,
+				unit->IsOnBridge,
+				(unit->FollowingMe != NULL) ? Units.ID(unit->FollowingMe) : -1,
+				unit->IsTeamRecruitable,
+				unit->IsAutocreateRecruitable
+				);
+			ini.Put_String(INI_NAME, uname, buf);
+		}
+	}
+}
+
+// FUNCTION: 0x007438B0
+int UnitClass::Credit_Load(void) const
+{
+	float total = Storage.Get_Total_Value();
+	return((int)(House->FUN_0050C160() * total));
+}
+
+// FUNCTION: 0x007438F0
+bool UnitClass::Should_Crush_It(TechnoClass const * it) const
+{
+	if (!(Class->IsCrusher || Has_Ability(ABILITY_CRUSHER)) || it == NULL || !((ObjectClass const *)it)->IsCrushable((TechnoClass *)this)) return(false);
+
+	if ((Center_Coord() - it->Center_Coord()).Length() > Rule->CrushDistance) return(false);
+
+	if ((House->FUN_0050B730() && !Rule->IsAutoCrush && !Class->IsAutoCrush) || House->Difficulty == DIFF_HARD) return(false);
+
+	if (!House->FUN_0050B730() && House->IQ < Rule->IQCrush) return(false);
+
+	if (it->IsDisguisedAs(House)) return(false);
+
+	return(true);
+}
+
+// FUNCTION: 0x007440B0
+bool UnitClass::Limbo(void)
+{
+	if (BASECLASS::Limbo()) {
+		if (Flagged != HOUSE_NONE) {
+			Houses[Flagged]->Flag_Attach(Get_Cell(), false);
+			Flagged = HOUSE_NONE;
+		}
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00744100
+int UnitClass::Do_MISSION_GUARD_AREA(void)
+{
+	if (SlaveManager != NULL && Rule->SlaveMinerKickFrameDelay + CurrentMissionStartTime < Frame && SlaveManager->ShouldWakeUpNow()) {
+		SlaveManager->FUN_006B0CC0();
+		return(Current_Mission_Control().Normal_Delay() + Random_Pick(0, 2));
+	}
+	return(BASECLASS::Do_MISSION_GUARD_AREA());
 }
 
 // FUNCTION: 0x00746DE0

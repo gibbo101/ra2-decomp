@@ -53,6 +53,9 @@
 #include "target.hh"
 #include "tube.hh"
 
+ThreatType __fastcall FUN_00645BB0(QuarryType quarry);
+bool __fastcall FUN_005224E0(FootClass * infantry);
+
 static inline CellClass * _As_Cell(AbstractClass * target)
 {
 	return((target == NULL) ? NULL : ((target->RTTI == RTTI_CELL) ? (CellClass *)target : NULL));
@@ -1353,6 +1356,266 @@ void TeamClass::TMission_GARRISON_STRUCTURE(TeamMissionClass * mission, bool)
 		}
 		unit = next;
 	}
+	IsNextMission = true;
+}
+
+// FUNCTION: 0x006ECE60
+void TeamClass::TMission_SPY(TeamMissionClass * mission, bool first_time)
+{
+	if (first_time) {
+		Assign_Mission_Target(Scen->Get_Waypoint_Target(mission->Data.Value));
+	}
+
+	if (Is_Target_Cell(MissionTarget)) {
+		CellClass * cellptr = _As_Cell(MissionTarget);
+
+		ObjectClass * bldg = cellptr->Cell_Object();
+		if (bldg != NULL) {
+			Assign_Mission_Target(bldg);
+			Coordinate_Attack();
+		}
+	} else {
+		if (MissionTarget == NULL) {
+			Assign_Mission_Target(NULL);
+			IsNextMission = true;
+		} else {
+			Coordinate_Attack();
+		}
+	}
+}
+
+// FUNCTION: 0x006ECF10
+void TeamClass::TMission_SCATTER(TeamMissionClass * mission, bool)
+{
+	FootClass * unit = Member;
+	while (unit != NULL) {
+		unit->Scatter(COORD_NONE, true);
+		unit = unit->Member;
+	}
+	IsNextMission = true;
+}
+
+// FUNCTION: 0x006ECF50
+void TeamClass::TMission_CHANGE_HOUSE(TeamMissionClass * mission, bool)
+{
+	FootClass * unit = Member;
+	while (unit != NULL) {
+		FootClass * next = unit->Member;
+		unit->Captured(House_From_HousesType(mission->Data.House));
+		unit = next;
+	}
+	IsNextMission = true;
+}
+
+// FUNCTION: 0x006ECFB0
+void TeamClass::TMission_TEAMCHANGE(TeamMissionClass * mission, bool)
+{
+	TeamClass * team = new TeamClass(TeamTypes[mission->Data.Value], House);
+
+	FootClass * unit = Member;
+	while (unit != NULL) {
+		Remove(unit);
+		team->AddMember(unit, false);
+		unit = Member;
+	}
+	delete this;
+}
+
+// FUNCTION: 0x006ED030
+void TeamClass::TMission_SCRIPT(TeamMissionClass * mission, bool)
+{
+	if (Script != NULL) {
+		delete Script;
+	}
+
+	Script = new ScriptClass(ScriptTypes[mission->Data.Value]);
+	Script->Stop_Script();
+}
+
+// FUNCTION: 0x006ED090
+void TeamClass::TMission_ATTACK(TeamMissionClass * mission, bool)
+{
+	if (MissionTarget == NULL && Member != NULL) {
+		FootClass const * candidate = Fetch_A_Leader();
+
+		ThreatType threat = FUN_00645BB0(mission->Data.Quarry);
+		AbstractClass * found = candidate->Greatest_Threat(threat, candidate->PositionCoord, Class->OnlyTargetHouseEnemy);
+		Assign_Mission_Target(found);
+		if (MissionTarget == NULL || !Ammo_Check()) IsNextMission = true;
+	}
+	if (MissionTarget == NULL || !Ammo_Check()) IsNextMission = true;
+	Coordinate_Attack();
+}
+
+inline bool TeamClass::Has_Air_Transport(void) const
+{
+	for (int i = 0; i < Class->TaskForce->ClassCount; i++) {
+		TechnoTypeClass const * techtype = Class->TaskForce->Members[i].Class;
+		if (techtype->RTTI == RTTI_AIRCRAFTTYPE && techtype->MaxPassengers > 0) {
+			return(true);
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x006ED200
+void TeamClass::TMission_LOAD(TeamMissionClass * mission, bool)
+{
+	FootClass * unit = Member;
+	FootClass * trans = NULL;
+
+	bool transportisaircraft = Has_Air_Transport();
+
+	while (unit != NULL) {
+		if (unit->Techno_Type_Class()->Max_Passengers() > 0 && unit->Cargo.How_Many() < unit->Techno_Type_Class()->Max_Passengers()) {
+			if ((!transportisaircraft && unit->Fetch_RTTI() == RTTI_UNIT) || (transportisaircraft && unit->Fetch_RTTI() == RTTI_AIRCRAFT)) {
+				trans = unit;
+				break;
+			}
+		}
+		unit = unit->Member;
+	}
+
+	if (trans == NULL) {
+		IsNextMission = true;
+		return;
+	}
+
+	if (trans->HasAnyLink()) {
+		return;
+	}
+
+	bool finished = true;
+	unit = Member;
+	while (unit != NULL && Total > 1) {
+		Coordinate_Conscript(unit);
+
+		if (_Is_It_Playing(unit) && unit != trans) {
+			finished = false;
+			if (unit->Mission != MISSION_ENTER) {
+				unit->QueueMission(MISSION_ENTER, false);
+				unit->Assign_Target(NULL);
+				unit->Assign_Destination(trans);
+				break;
+			}
+		}
+
+		unit = unit->Member;
+	}
+
+	if (finished) {
+		if (Class->TransportsReturnOnUnload) {
+			Coord pc = trans->PositionCoord;
+			trans->ArchiveTarget = &Map[pc];
+		}
+		IsNextMission = true;
+	}
+}
+
+// FUNCTION: 0x006ED4D0
+void TeamClass::TMission_DEPLOY(TeamMissionClass * mission, bool)
+{
+	bool finished = true;
+	FootClass * obj = Member;
+
+	while (obj != NULL) {
+		Coordinate_Conscript(obj);
+
+		if (_Is_It_Playing(obj)) {
+			bool deploys = obj->RTTI == RTTI_UNIT && ((UnitClass *)obj)->Class->DeploysInto != NULL;
+			bool simple = obj->RTTI == RTTI_UNIT && ((UnitClass *)obj)->Class->IsSimpleDeployer;
+			bool infdeploy = obj->RTTI == RTTI_INFANTRY && FUN_005224E0(obj);
+
+			if (deploys) {
+				UnitClass * unit = (UnitClass *)obj;
+				finished = false;
+				if (unit->Mission != MISSION_UNLOAD) {
+					unit->Mark(MARK_UP);
+					if (!unit->Class->DeploysInto->Legal_Placement(unit->PositionCell, NULL)) {
+						unit->Class->DeploysInto->Flush_For_Placement(unit->PositionCell, unit->House);
+						unit->Mark(MARK_DOWN);
+					} else {
+						unit->Mark(MARK_DOWN);
+						unit->Assign_Destination(NULL, true);
+						unit->Assign_Target(NULL);
+						unit->QueueMission(MISSION_UNLOAD, false);
+					}
+				}
+			} else if (simple || infdeploy) {
+				if (obj->Mission != MISSION_UNLOAD) {
+					obj->QueueMission(MISSION_UNLOAD, false);
+				}
+			}
+		}
+
+		obj = obj->Member;
+	}
+
+	if (finished) {
+		IsNextMission = true;
+	}
+}
+
+// FUNCTION: 0x006ED770
+void TeamClass::TMission_GUARD(TeamMissionClass * mission, bool first_time)
+{
+	if (first_time) {
+		TimeOut = TICKS_PER_SECOND * mission->Data.Value;
+	}
+
+	Coordinate_Regroup();
+
+	if (TimeOut == 0) {
+		IsNextMission = true;
+	}
+}
+
+// FUNCTION: 0x006ED7E0
+void TeamClass::TMission_DO(TeamMissionClass * mission, bool)
+{
+	FootClass * unit = Member;
+	MissionType do_mission = mission->Data.Mission;
+
+	while (unit != NULL) {
+		Coordinate_Conscript(unit);
+
+		if (_Is_It_Playing(unit)) {
+			if (unit->TarCom == NULL && unit->NavCom == NULL) {
+				TeamMissionType action = Script->Get_Current_Mission().Mission;
+				int stray = (action == (TeamMissionType)0x36 || action == (TeamMissionType)0x35) ? Rule->RelaxedStray : Rule->StrayDistance;
+				if (unit->Distance(Zone) > stray * 2 && do_mission != MISSION_GUARD_AREA) {
+					unit->QueueMission(MISSION_MOVE, false);
+					unit->Assign_Destination(Zone, true);
+					unit->QueueMission(MISSION_MOVE, false);
+					unit->Assign_Destination(&Map[Cell(unit->Adjust_Dest(Zone->Center_Coord().As_Cell()))], true);
+					unit = unit->Member;
+					continue;
+				}
+			}
+
+			if (unit->TarCom == NULL && unit->NavCom == NULL && unit->Get_Mission() != do_mission && (do_mission != MISSION_GUARD || unit->Get_Mission() != MISSION_UNLOAD)) {
+				unit->ArchiveTarget = NULL;
+				unit->QueueMission(do_mission, false);
+				unit->Assign_Target(NULL);
+				unit->Assign_Destination(NULL, true);
+			}
+		}
+
+		unit = unit->Member;
+	}
+}
+
+// FUNCTION: 0x006EDA90
+void TeamClass::TMission_SET_GLOBAL(TeamMissionClass * mission, bool)
+{
+	Scen->Set_Global_To(mission->Data.Value, true);
+	IsNextMission = true;
+}
+
+// FUNCTION: 0x006EDAC0
+void TeamClass::TMission_CLEAR_GLOBAL(TeamMissionClass * mission, bool)
+{
+	Scen->Set_Global_To(mission->Data.Value, false);
 	IsNextMission = true;
 }
 

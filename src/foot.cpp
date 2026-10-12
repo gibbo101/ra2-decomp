@@ -1121,6 +1121,109 @@ MoveType FootClass::Can_Enter_Cell(CellClass const * cell, FacingType, int cell_
 	return(MOVE_OK);
 }
 
+// FUNCTION: 0x004D9C60
+MoveType FootClass::Can_Reach(CellClass const * current_cell, FacingType facing, int & cell_height, bool & onto_bridge, CellClass const * adjacent_cell) const
+{
+	if (adjacent_cell == NULL) {
+		adjacent_cell = &Map[Adjacent_Cell(current_cell->CellID, Facing_Sub(facing, FACING_180))];
+	}
+
+	if (facing != FACING_NONE) {
+		if (adjacent_cell == NULL || current_cell == NULL) {
+			return(MOVE_OK);
+		}
+
+		if (cell_height == -1 && adjacent_cell->IsUnderBridge) {
+			cell_height = adjacent_cell->Height + BRIDGE_CELL_HEIGHT;
+			if (!current_cell->IsBridgeTraversable) {
+				return(MOVE_NO);
+			}
+		}
+
+		int height_difference = adjacent_cell->IsUnderBridge ? adjacent_cell->Height - current_cell->Height : cell_height - current_cell->Height;
+		int current_height = current_cell->Height;
+
+		switch (abs(height_difference)) {
+			case 0:
+				if ((!current_cell->IsUnderBridge || !current_cell->IsBridgeTraversable || !adjacent_cell->IsUnderBridge) && cell_height != -1 && cell_height != current_height) {
+					return(MOVE_NO);
+				}
+				break;
+
+			case 1:
+				if (height_difference > 0) {
+					if (current_cell->Ramp == 0) {
+						return(MOVE_NO);
+					}
+				} else if (adjacent_cell->Ramp == 0) {
+					return(MOVE_NO);
+				}
+				break;
+
+			case BRIDGE_CELL_HEIGHT:
+				if (adjacent_cell->Height == current_height - BRIDGE_CELL_HEIGHT) {
+					if (cell_height != current_height) return(MOVE_NO);
+					if (!adjacent_cell->IsUnderBridge) return(MOVE_NO);
+				}
+				if (current_height != adjacent_cell->Height - BRIDGE_CELL_HEIGHT) return(MOVE_OK);
+				if (!current_cell->IsUnderBridge) return(MOVE_NO);
+				if (!current_cell->IsBridgeTraversable) return(MOVE_NO);
+				onto_bridge = true;
+				break;
+
+			default:
+				return(MOVE_NO);
+		}
+	} else {
+		if (cell_height == -1 && current_cell->IsUnderBridge) {
+			cell_height = current_cell->Height + BRIDGE_CELL_HEIGHT;
+		}
+	}
+	return(MOVE_OK);
+}
+
+static inline int Coord_Distance(Coord const & a, Coord const & b)
+{
+	Coord diff = a - b;
+	return(diff.Length());
+}
+
+// FUNCTION: 0x004D9E70
+bool FootClass::Can_Demolish(void) const
+{
+	switch ((RTTIType)RTTI) {
+		case RTTI_UNIT:
+		case RTTI_AIRCRAFT:
+			if (HasAnyLink() &&
+				FUN_0065AD40(0)->RTTI == RTTI_BUILDING &&
+				((BuildingClass *)FUN_0065AD40(0))->Class->IsCanUnitRepair &&
+				Coord_Distance(Center_Coord(), FUN_0065AD40(0)->Center_Coord()) < CELL_LEPTON / 2) {
+
+				return(true);
+			}
+			break;
+
+		default:
+			break;
+	}
+	return(BASECLASS::Can_Demolish());
+}
+
+// FUNCTION: 0x004D9F70
+void FootClass::Sell_Back(int control)
+{
+	if (control != 0) {
+		if (House->Is_Player_Control()) {
+			VoxClass::Play("EVA_UnitSold", -1, -1);
+			VocClass::PlayGlobal(Rule->SellSound, 1.0f, 0x2000);
+		}
+		House->Refund_Money(Refund_Amount());
+		Stun();
+		Limbo();
+		Delete_Me();
+	}
+}
+
 // FUNCTION: 0x004D9FF0
 Coord FootClass::Likely_Coord(void) const
 {
@@ -1131,4 +1234,156 @@ Coord FootClass::Likely_Coord(void) const
 Cell FootClass::Adjust_Dest(Cell const & cell) const
 {
 	return(cell);
+}
+
+// FUNCTION: 0x004DA030
+void FootClass::Handle_Navigation_List(void)
+{
+	if (NavCom == NULL && NavQueue.Count()) {
+		AbstractClass * target = NavQueue[0];
+
+		if (target != NULL) {
+			Assign_Destination(target);
+			NavQueue.Delete_Index(0);
+
+			if (IsNavQueueLoop) {
+				NavQueue.Add(target);
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x004DA0E0
+void FootClass::Queue_Navigation_List(AbstractClass * target)
+{
+	if (target != NULL) {
+		int count = NavQueue.Count();
+		if (target == this && count > 0) {
+			IsNavQueueLoop = true;
+		} else {
+			if (count == 0) {
+				IsNavQueueLoop = false;
+			}
+			NavQueue.Add(target);
+		}
+
+		if (NavCom == NULL && Mission == MISSION_GUARD) {
+			TechnoClass *tptr = FUN_0065AD30(0);
+			if (tptr == NULL || tptr->RTTI != RTTI_BUILDING || !((BuildingClass*)tptr)->Class->IsWeaponsFactory) {
+				Enter_Idle_Mode();
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x004DA1C0
+void FootClass::Clear_Navigation_List(void)
+{
+	NavQueue.Clear();
+}
+
+// FUNCTION: 0x004DA1D0
+bool FootClass::Is_Allowed_To_Leave_Map(void) const
+{
+	if (!IsInPlayfield) return(false);
+
+	if (!TClass->IsTrain && !IsALoaner && Mission != MISSION_RETREAT && (Team == NULL || !Team->Is_Leaving_Map())) return(false);
+
+	return(true);
+}
+
+// FUNCTION: 0x004DA230
+bool FootClass::Is_Recruitable(HouseClass const * house) const
+{
+	if (house == NULL) {
+		return(false);
+	}
+
+	if (house != House) {
+		return(false);
+	}
+
+	if (IsInLimbo) {
+		return(false);
+	}
+
+	if (Team != NULL) {
+		return(false);
+	}
+
+	if (!Is_Recruitable_Mission(Mission)) {
+		return(false);
+	}
+
+	if (!IsTeamRecruitable) {
+		return(false);
+	}
+
+	return(true);
+}
+
+// FUNCTION: 0x004DA2A0
+bool FootClass::Is_On_Priority_Mission(void) const
+{
+	if (Mission == MISSION_ENTER) return(true);
+	return(false);
+}
+
+// FUNCTION: 0x004DA2B0
+int FootClass::Do_MISSION_UNLOAD(void)
+{
+	return(BASECLASS::Do_MISSION_UNLOAD());
+}
+
+// FUNCTION: 0x004DA2C0
+int FootClass::Do_MISSION_RETREAT(void)
+{
+	enum {
+		FIND_EDGE,
+		TRAVELLING
+	};
+
+	switch (Status) {
+		case FIND_EDGE:
+			if (NavCom != NULL) {
+				Status = TRAVELLING;
+			} else {
+				Cell cell(0,0);
+
+				if (Team != NULL && Team->Class->Get_Origin() != CELL_NONE) {
+					cell = Map.Calculated_Cell(House->FUN_0050DAA0(), Team->Class->Get_Origin(), Center_Coord().As_Cell(), TClass->Speed);
+				}
+
+				if (cell == CELL_NONE) {
+					cell = Map.Calculated_Cell(House->FUN_0050DAA0(), CELL_NONE, Center_Coord().As_Cell(), TClass->Speed);
+				}
+
+				Assign_Destination(&Map[cell]);
+				Status = TRAVELLING;
+			}
+			break;
+
+		case TRAVELLING:
+			if (NavCom == NULL) {
+				Status = FIND_EDGE;
+			}
+			break;
+	}
+
+	return(Current_Mission_Control().Normal_Delay() + Random_Pick(0, 2));
+}
+
+// FUNCTION: 0x004DA4E0
+VisualType FootClass::Visual_Character(bool raw, HouseClass const * house) const
+{
+	VisualType visual = VISUAL_NORMAL;
+
+	if (Locomotion != NULL) {
+		visual = Locomotion->Visual_Character(raw);
+	}
+	if (visual == VISUAL_NORMAL) {
+		visual = BASECLASS::Visual_Character(raw, house);
+	}
+
+	return(visual);
 }

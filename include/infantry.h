@@ -61,6 +61,9 @@ class InfantryClass : public FootClass
 		virtual int Fetch_Object_Size(void) const override;
 		virtual void Compute_CRC(CRCEngine &) const override;
 		virtual bool Is_Ready_To_Random_Animate(void) const override;
+		virtual int What_Weapon_Should_I_Use(AbstractClass * target) const override;
+		virtual bool Ready_To_Next_Mission(void) const override;
+		virtual void vt_entry_54C(void) override;
 		virtual void const * Get_Image_Data(void) const override;
 		int Shape_Number(void) const;
 		virtual ObjectTypeClass const * Class_Of(void) const override;
@@ -131,7 +134,7 @@ class InfantryClass : public FootClass
 		virtual void Scatter(Coord const & threat, bool forced=false, bool nokidding=false) override;
 		virtual Coord Turret_Coord(int which=0) const override;
 		virtual int Current_Speed(void) override;
-		virtual void Approach_Target(bool = false) override;
+		virtual AbstractClass * Approach_Target(bool = false) override;
 		virtual void Stop_Movement_Animation(void) override;
 		bool Is_JumpJet(void) const;
 		bool Should_JumpJet_Fly(Cell const & from, Cell const & to);

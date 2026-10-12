@@ -62,7 +62,11 @@ class SuperClass : public AbstractClass
 		bool Is_Present(void) const {return(IsPresent);}
 		bool Is_One_Time(void) const {return(IsOneTime && IsPresent);}
 
-		char const * State_String(void) const;
+		wchar_t const * NameReadiness(void) const;
+		void Launch(Cell const & cell, bool player);
+		void SetCharge(int percentage);
+		void SetRechargeTime(int time);
+		void ResetRechargeTime(void);
 
 	public:
 		static DynamicVectorClass<SuperClass *> Array;

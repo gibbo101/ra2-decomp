@@ -132,13 +132,13 @@ class UnitClass : public FootClass
 		virtual void RemoveGunner(FootClass * gunner) override;
 		virtual bool Deploy_To_Fire(void) const override;
 		virtual void Overrun_Square(Cell const & cell, bool threaten=true) override;
-		virtual void Approach_Target(bool = false) override;
+		virtual AbstractClass * Approach_Target(bool = false) override;
 		virtual void Assign_Destination(AbstractClass * target, bool = true) override;
 		virtual bool Enter_Idle_Mode(bool initial=false, bool=true) override;
 		virtual MoveType Can_Enter_Cell(CellClass const * cell, FacingType dir = FACING_NONE, int cell_height = -1, CellClass const * = 0, bool = true) const override;
 		virtual void Per_Cell_Process(PCPType why) override;
 
-		static void Read_INI(CCINIClass const & ini);
+		static void Read_INI(CCINIClass & ini);
 		static void Write_INI(CCINIClass & ini);
 
 	private:

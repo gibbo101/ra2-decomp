@@ -38,6 +38,14 @@ struct TurretControl
 	int CompressFrames;
 	int RecoverFrames;
 	int HoldFrames;
+
+	void FUN_00717A30(int travel);
+	int FUN_00717A40(void) const;
+	void FUN_00717A50(int frames);
+	int FUN_00717A70(void) const;
+	void FUN_00717A80(int frames);
+	int FUN_00717AA0(void) const;
+	void FUN_00717AB0(int frames);
 };
 
 class TechnoTypeClass : public ObjectTypeClass
@@ -493,6 +501,8 @@ class TechnoTypeClass : public ObjectTypeClass
 		bool In_Range(Coord const & coord, AbstractClass * target, WeaponTypeClass * weapon) const;
 		bool HasMultipleTurrets(void) const;
 		void FUN_00717890(int index, int weapon);
+		int FUN_007178B0(int weapon) const;
+		CoordStruct * GetParticleSysOffset(CoordStruct * buffer) const;
 		void FUN_00717820(void);
 		static void FUN_00717840(void);
 		virtual bool Read_INI(CCINIClass & ini) override;

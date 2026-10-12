@@ -83,6 +83,8 @@ class AnimClass : public ObjectClass
 		static void Post_Load_Game(void);
 
 		void SetOwnerObject(ObjectClass * owner);
+		void Start(void);
+		void Middle(void);
 		void Make_Invisible(void) {Invisible = true;};
 		void Make_Visible(void) {Invisible = false;};
 		static void Do_Atom_Damage(HousesType ownerhouse, Cell const & cell);

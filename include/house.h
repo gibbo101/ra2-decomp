@@ -556,12 +556,14 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 		bool Is_Build_Limited(TechnoTypeClass const * type) const;
 
 		bool Is_Player_Control(void) const;
+		SourceType FUN_0050DAA0(void) const;
 		bool Is_Human_Player(void) const;
 
 		bool Can_Build_Here(BuildingTypeClass *building,  Cell const & cell);
 		float FUN_0050BDF0(TechnoTypeClass const * type) const;
 		float FUN_0050BEB0(TechnoTypeClass const * type) const;
 		bool FUN_0050B730(void) const;
+		float FUN_0050C160(void) const;
 
 		static void Read_All(CCINIClass const & ini);
 		void Read_INI(CCINIClass const & ini);

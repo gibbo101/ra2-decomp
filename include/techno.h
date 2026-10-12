@@ -316,7 +316,7 @@ class TechnoClass : public RadioClass
 		TechnoClass * QueueUpToEnter;
 		unsigned EMPLockRemaining;
 		unsigned ThreatPosed;
-		unsigned ShouldLoseTargetNow;
+		bool ShouldLoseTargetNow;
 		RadBeam * FiringRadBeam;
 		PlanningTokenClass * PlanningToken;
 		ObjectTypeClass * Disguise;
@@ -382,6 +382,8 @@ class TechnoClass : public RadioClass
 		void Create_Planning_Token(void);
 		void FUN_0070DC70(int which);
 		int FUN_0070DDF0(void);
+		bool FUN_0070DC60(void) const;
+		int FUN_0070DD20(void) const;
 		void GattlingRateUp(int rate);
 		void ReleaseLocomotor(bool set_target);
 		void GattlingRateDown(int rate);

@@ -136,6 +136,8 @@ Each entry: what the diff showed, then the source change that fixed it.
   `return (A && B && C) ? 1 : 0;` keeps every temporary alive, each in its own slot.
 - A `goto` to the shared tail and a `return` compile differently. A tail emitted twice
   where the original has one: TibSun's early returns turned into `goto done`.
+- An instruction one place out of order around a ternary: move the shared operation into
+  each arm (`c ? a - h : b - h`, not `(c ? a : b) - h`; 0x004D9C60).
 - Part of a computation tail-merged across branches: compute it inside each branch,
   so the common half merges and the rest stays (0x0051FB00).
 - `if (a || b) X; else Y;` has one fixed block order however it is written. For the
@@ -204,7 +206,9 @@ Each entry: what the diff showed, then the source change that fixed it.
   (`Clear_Occupy_Bit(Coord(Position))`, not `PositionCoord`, in 0x0051DBD0).
 - Nested inline decisions depend on how many expansions a function already holds; a
   code-neutral inline helper can flip them.
-- A plain function defined above its callers is inlined and also emitted. One too big
+- A plain function defined above its callers is inlined and also emitted; at /Ob2 VC6
+  can also inline a member defined later in the same file, so a newly landed neighbour
+  can break a matched caller (0x006CB560). One too big
   to inline: a file-local `static inline` helper holds the body, and the member is a
   one-line plain wrapper (`_Conscript` in team.cpp).
 - An inline helper written as a template can crash VC6 (internal compiler error); write

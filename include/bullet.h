@@ -64,6 +64,7 @@ class BulletClass : public ObjectClass
 		bool Is_Homing(void) const;
 		void Draw_Voxel(VoxelDataStruct const & voxeldata, Matrix3D const & transform, Point2D const & drawpoint, Rect const & cliprect, int frame, ShapeFlags_Type flags, int brightness) const;
 		void Detonate(Coord const & coord);
+		void InitScalable(void);
 
 		bool IsInaccurate;
 

@@ -263,6 +263,7 @@ class CellClass : public AbstractClass
 		int Preview_Cell_Color(unsigned char & unknown, bool terrainonly) const;
 		int Clear_Icon(IsometricTileType type, int seq_length) const;
 		static int Spot_Index(Coord const & coord);
+		RadSiteClass * FUN_00487C80(void);
 		bool Has_Tunnel(void) const;
 		bool Is_Near_Tunnel_NW(void) const;
 		bool Is_Near_Tunnel_ES(void) const;
