@@ -686,6 +686,742 @@ void AircraftClass::Drop_Off_Cargo(void)
 	}
 }
 
+// FUNCTION: 0x00416D50
+int AircraftClass::Do_MISSION_MOVE_Carryall(void)
+{
+	enum {
+		VALIDATE_LZ,
+		TAKE_OFF,
+		FLY_TO_LZ,
+		LAND
+	};
+
+	TechnoClass * target;
+
+	switch (Status) {
+		case VALIDATE_LZ:
+			DebugString("Do_MISSION_MOVE_Carryall - VALIDATE_LZ\n");
+			if (NavCom == NULL) {
+				DebugString("Do_MISSION_MOVE_Carryall - VALIDATE_LZ - NavCom == NULL\n");
+				Enter_Idle_Mode();
+				break;
+			}
+
+			target = Dynamic_Cast<TechnoClass *>(NavCom);
+			if (target != NULL &&
+				!Cargo.Is_Something_Attached() &&
+				House->Is_Ally(target) &&
+				(!target->Is_Techno() || target->Owner_HouseClass()->Is_Ally(this))
+				&& target->RTTI == RTTI_UNIT) {
+				DebugString("Do_MISSION_MOVE_Carryall - VALIDATE_LZ - target != NULL\n");
+				if (FUN_0065AD30(0) != target) {
+					Transmit_Message(RADIO_OVER_OUT);
+				}
+				if (Transmit_Message(RADIO_HELLO, target) == RADIO_ROGER) {
+					DebugString("Do_MISSION_MOVE_Carryall - VALIDATE_LZ - RADIO_HELLO got RADIO_ROGER\n");
+					if (Transmit_Message(RADIO_WANT_RIDE) != RADIO_ROGER) {
+						DebugString("Do_MISSION_MOVE_Carryall - VALIDATE_LZ - RADIO_WANT_RIDE did not get RADIO_ROGER\n");
+						Transmit_Message(RADIO_OVER_OUT);
+						Enter_Idle_Mode();
+						break;
+					} else {
+						Transmit_Message(RADIO_HOLD_STILL);
+					}
+				} else {
+					Assign_Destination(NULL);
+					Enter_Idle_Mode();
+					break;
+				}
+			}
+			Assign_Destination(New_LZ(NavCom));
+			if (Team != NULL) {
+				Team->Assign_Mission_Target(NavCom);
+			}
+			Status = TAKE_OFF;
+			DebugString("Do_MISSION_MOVE_Carryall - VALIDATE_LZ - Status = TAKE_OFF\n");
+			break;
+
+		case TAKE_OFF:
+			if (NavCom == NULL) {
+				Enter_Idle_Mode();
+				return(1);
+			}
+			Locomotion->Move_To(NavCom->Center_Coord());
+			Status = FLY_TO_LZ;
+			return(1);
+
+		case FLY_TO_LZ:
+			if (NavCom != NULL && !Is_Target_Cell(NavCom) && FUN_0065AD30(0) != NavCom) {
+				DebugString("Do_MISSION_MOVE_Carryall - FLY_TO_LZ - Lost contact\n");
+				Status = VALIDATE_LZ;
+				return(1);
+			}
+
+			if (Is_Target_Cell(NavCom) && !Is_LZ_Clear(NavCom)) {
+				Status = VALIDATE_LZ;
+				return(1);
+			}
+
+			if (Locomotion->Get_Status() == 1) {
+				DebugString("Do_MISSION_MOVE_Carryall - FLY_TO_LZ - Begin landing\n");
+				if (NavCom != NULL && NavCom->RTTI == RTTI_UNIT) {
+					UnitClass *unit = ((UnitClass *)NavCom);
+					if (unit->PositionCoord.As_Cell() != PositionCoord.As_Cell()) {
+						Status = VALIDATE_LZ;
+						DebugString("Do_MISSION_MOVE_Carryall - FLY_TO_LZ - Target moved\n");
+						return(1);
+					} else {
+						IsCarryallNotLanding = false;
+					}
+				} else {
+					IsCarryallNotLanding = false;
+				}
+			}
+			if (!Locomotion->Is_Moving()) {
+				DebugString("Do_MISSION_MOVE_Carryall - FLY_TO_LZ - Stopped moving\n");
+				Status = LAND;
+			}
+			return(1);
+
+		case LAND:
+			DebugString("Do_MISSION_MOVE_Carryall - LAND\n");
+			if (Cargo.Is_Something_Attached() && QueueUpToEnter != NULL) {
+				IsCarryallNotLanding = true;
+			} else if (Cargo.Is_Something_Attached()) {
+				Mark(MARK_UP);
+				Drop_Off_Cargo();
+				Mark(MARK_DOWN);
+				Status = VALIDATE_LZ;
+			} else {
+				DebugString("Do_MISSION_MOVE_Carryall - LAND - Picking up cargo\n");
+				Mark(MARK_UP);
+				UnitClass * unit = Map[(Coord const &)PositionCoord].Cell_Unit(Map[(Coord const &)PositionCoord].IsUnderBridge);
+				if (unit != NULL && unit == FUN_0065AD30(0)) {
+					DebugString("Do_MISSION_MOVE_Carryall - LAND - Got Cell_Unit\n");
+					if (Transmit_Message(RADIO_NEED_TO_MOVE) == RADIO_ROGER) {
+						DebugString("Do_MISSION_MOVE_Carryall - LAND - RADIO_NEED_TO_MOVE got RADIO_ROGER\n");
+						unit->Limbo();
+						unit->IsOnBridge = false;
+						unit->IsInTransport = true;
+						Cargo.Attach(unit);
+					} else {
+						Status = VALIDATE_LZ;
+					}
+				} else {
+					Status = VALIDATE_LZ;
+				}
+				Transmit_Message(RADIO_OVER_OUT);
+				Mark(MARK_DOWN);
+				IsCarryallNotLanding = true;
+				Enter_Idle_Mode();
+			}
+			return(1);
+	}
+
+	return(Current_Mission_Control().Normal_Delay() + Random_Pick(0, 2));
+}
+
+// The cell holding the landing point an aircraft uses to reach the target.
+static inline Cell LZ_Cell(AbstractClass * navcom, AircraftClass * aircraft)
+{
+	return Cell(navcom->Destination_Coord(aircraft));
+}
+
+// FUNCTION: 0x00417300
+int AircraftClass::Do_MISSION_PATROL(void)
+{
+	enum {
+		VALIDATE_LZ,
+		TAKE_OFF,
+		FLY_TO_LZ,
+		IDLE,
+		LAND,
+	};
+
+	unknown_bool_430 = true;
+
+	switch (Status) {
+		case VALIDATE_LZ:
+			if (NavCom == NULL) {
+				Enter_Idle_Mode();
+			} else {
+				Assign_Destination(New_LZ(NavCom));
+				if (Team != NULL) {
+					Team->Assign_Mission_Target(NavCom);
+				}
+				Status = TAKE_OFF;
+			}
+			break;
+
+		case TAKE_OFF:
+			if (NavCom == NULL) {
+				Enter_Idle_Mode();
+				return(1);
+			} else {
+				Locomotion->Move_To(NavCom->Destination_Coord(this));
+				Status = FLY_TO_LZ;
+				return(1);
+			}
+			break;
+
+		case FLY_TO_LZ:
+			if (Ammo == 0) {
+				BuildingClass * building = TryNearestDockBuilding((TypeList<BuildingTypeClass *> *)&Class->Dock, 0, 0);
+				if (building != NULL) {
+					Override_Mission(MISSION_ENTER, NULL, building);
+					Status = VALIDATE_LZ;
+					return(1);
+				}
+			}
+
+			if (Ammo != 0) {
+				AbstractClass * found = Greatest_Threat(THREAT_AREA, PositionCoord, false);
+				ObjectClass * threat = NULL;
+				if (found != NULL && (found->AbstractFlags & 2)) {
+					threat = (ObjectClass *)found;
+				}
+				if (threat != NULL) {
+					Override_Mission(MISSION_ATTACK, threat, NULL);
+					Status = VALIDATE_LZ;
+					return(1);
+				}
+			}
+
+			if (CurrentPath != PATH_NONE) {
+				bool proceed_to_wp = false;
+				if (NavCom != NULL) {
+					Coord tar_coord = NavCom->Center_Coord();
+					Coord diff = PositionCoord - (Point2D)tar_coord;
+					proceed_to_wp = ((Point2D)diff).Length() < CELL_LEPTON;
+				} else {
+					proceed_to_wp = true;
+				}
+				if (proceed_to_wp) {
+					WaypointClass * wp = PlayerPtr->Paths[CurrentPath]->Get_Waypoint(NextWaypoint);
+					WaypointClass * nwp = PlayerPtr->Paths[CurrentPath]->Get_Next_Waypoint(wp);
+					Execute_Waypoint_Path(nwp);
+				}
+			}
+
+			if (!Locomotion->Is_Moving()) {
+				Status = IDLE;
+			} else {
+				if (NavCom != NULL && !Cell_Seems_Ok(LZ_Cell(NavCom, this), true)) {
+					Status = VALIDATE_LZ;
+				} else {
+					Status = LAND;
+				}
+			}
+			return(1);
+
+		case IDLE:
+			Enter_Idle_Mode();
+			return(1);
+
+		case LAND:
+			if (!Locomotion->Is_Moving()) {
+				Status = IDLE;
+			} else {
+				if (NavCom != NULL) {
+					if (!Cell_Seems_Ok(LZ_Cell(NavCom, this), true)) {
+						Status = VALIDATE_LZ;
+					}
+				}
+			}
+			return(1);
+
+		default:
+			break;
+	}
+
+	return(Current_Mission_Control().Normal_Delay() + Random_Pick(0, 2));
+}
+
+// FUNCTION: 0x004176F0
+bool AircraftClass::Enter_Idle_Mode(bool initial, bool resume_waypoint)
+{
+	if (Has_Suspended_Mission()) {
+		Restore_Mission();
+		if (CurrentMission == MISSION_PATROL) {
+			Status = 0;
+			IsLockedStraight = false;
+		}
+		return(false);
+	}
+
+	switch (CurrentMission) {
+		case MISSION_RETREAT:
+		case MISSION_PARADROP_APPROACH:
+		case MISSION_PARADROP_OVERFLY:
+		case MISSION_SPYPLANE_APPROACH:
+		case MISSION_SPYPLANE_OVERFLY:
+			if (Airstrike == NULL) {
+				return(false);
+			}
+			goto proceed;
+		case 5:
+		case 6:
+		case 7:
+		case 8:
+		case 9:
+		case 10:
+		case 11:
+		case 12:
+		case 13:
+		case 14:
+		case 15:
+		case 16:
+		case 17:
+		case 18:
+		case 19:
+		case 20:
+		case 21:
+		case 22:
+		case 23:
+		case 24:
+		case 25:
+		case 28:
+		case 29:
+			goto proceed;
+	}
+proceed:
+
+	if (MissionQueue == MISSION_PARADROP_APPROACH || MissionQueue == MISSION_SPYPLANE_APPROACH) {
+		Commence();
+		return(false);
+	}
+
+	bool result = BASECLASS::Enter_Idle_Mode(initial, resume_waypoint);
+
+	MissionType mission = (House->Is_Human_Player() || Team || !Is_Weapon_Equipped()) ? MISSION_GUARD : MISSION_GUARD_AREA;
+
+	int landingalt = Landing_Altitude();
+	if (In_Which_Layer() == LAYER_GROUND || Get_Height_AGL() <= landingalt || Class->MissileSpawn) {
+		if (IsALoaner) {
+			if (Cargo.Is_Something_Attached()) {
+				if (Team != NULL) {
+					mission = MISSION_GUARD;
+				} else {
+					mission = MISSION_UNLOAD;
+				}
+			} else if (Team == NULL) {
+				Assign_Target(NULL);
+				Assign_Destination(NULL);
+				mission = MISSION_RETREAT;
+			}
+		} else {
+			Assign_Destination(NULL);
+			Assign_Target(NULL);
+			if (!House->Is_Human_Player() && Team == NULL && Is_Weapon_Equipped()) {
+				mission = MISSION_GUARD_AREA;
+			} else {
+				mission = MISSION_GUARD;
+			}
+		}
+	} else {
+		if (Cargo.Is_Something_Attached()) {
+			if (IsALoaner) {
+				if (Team != NULL) {
+					mission = MISSION_GUARD;
+				} else {
+					mission = MISSION_UNLOAD;
+					Assign_Destination(Good_LZ());
+				}
+			} else {
+				Assign_Destination(Good_LZ());
+				mission = MISSION_MOVE;
+			}
+		} else {
+			if ((IsALoaner && House->Is_Human_Player()) || (!House->Is_Human_Player() && !Class->MaxAmmo)) {
+				if (Team != NULL && Team->Has_Entered_Map()) {
+					Team->Remove(this, -1, false);
+				}
+			}
+
+			if (Get_Class_Weapon_Data(0)->Weapon != NULL) {
+				if (IsALoaner) {
+					if (Ammo == 0) {
+						if (Team != NULL) {
+							Team->Remove(this, -1, false);
+						}
+						Assign_Target(NULL);
+						Assign_Destination(NULL);
+						mission = MISSION_RETREAT;
+					} else {
+						if (Team == NULL) {
+							mission = MISSION_HUNT;
+						}
+					}
+				} else if ((Ammo != 0 && TarCom != NULL && Get_Mission() == MISSION_ATTACK) || MissionQueue == MISSION_ATTACK) {
+					mission = MISSION_ATTACK;
+				} else if (In_Air()) {
+					if (NavCom == NULL || CurrentMission != MISSION_ENTER) {
+						if (Class->Dock.Count() > 0 && (IsInPlayfield || Team == NULL)) {
+							BuildingClass * building = TryNearestDockBuilding((TypeList<BuildingTypeClass *> *)&Class->Dock, 0, 0);
+							Assign_Destination(NULL);
+							if (building != NULL && Transmit_Message(RADIO_HELLO, building) == RADIO_ROGER) {
+								Assign_Destination(building);
+								mission = MISSION_ENTER;
+							} else if (Class->IsAirportBound) {
+								Crash(NULL);
+								return(false);
+							} else {
+								Assign_Destination(Good_LZ());
+								mission = MISSION_MOVE;
+							}
+						}
+					}
+				}
+			} else {
+				if (Team != NULL) {
+					return(false);
+				}
+				Assign_Destination(Good_LZ());
+				mission = MISSION_MOVE;
+			}
+		}
+	}
+
+	if (Ammo == 0 && Is_Weapon_Equipped() && !HasAnyLink()) {
+		BuildingClass * building = TryNearestDockBuilding((TypeList<BuildingTypeClass *> *)&Class->Dock, 0, 0);
+		if (building != NULL) {
+			Assign_Destination(building);
+			Assign_Target(NULL);
+			mission = MISSION_ENTER;
+		} else if (Class->IsAirportBound) {
+			Crash(NULL);
+			return(false);
+		}
+	}
+	if (HasAnyLink()) {
+		mission = MISSION_ENTER;
+	}
+
+	QueueMission(mission, false);
+	if (Ready_To_Next_Mission()) {
+		Commence();
+	}
+
+	return(result);
+}
+
+// FUNCTION: 0x00417BD0
+bool AircraftClass::Active_Click_With(ActionType action, ObjectClass * object, bool is_waypoint)
+{
+	action = What_Action(object, is_waypoint);
+
+	switch (action) {
+		case ACTION_TOTE:
+			return(Player_Assign_Mission(MISSION_MOVE, NULL, object));
+
+		case ACTION_NOMOVE:
+			return(false);
+
+		case ACTION_ENTER:
+			return(Player_Assign_Mission(MISSION_ENTER, NULL, object));
+
+		case ACTION_SELF:
+			return(Player_Assign_Mission(MISSION_UNLOAD, NULL, NULL));
+
+		default:
+			break;
+	}
+
+	return(BASECLASS::Active_Click_With(action, object, is_waypoint));
+}
+
+// FUNCTION: 0x00417C80
+bool AircraftClass::Active_Click_With(ActionType action, Cell const & cell, Cell const & cell2, bool is_waypoint)
+{
+	return(BASECLASS::Active_Click_With(action, cell, cell2, is_waypoint));
+}
+
+// FUNCTION: 0x00417CA0
+bool AircraftClass::Player_Assign_Mission(MissionType mission, AbstractClass * target, AbstractClass * destination, AbstractClass * nearby)
+{
+	return(BASECLASS::Player_Assign_Mission(mission, target, destination, nearby));
+}
+
+// FUNCTION: 0x00417CC0
+ActionType AircraftClass::What_Action(ObjectClass const * target, bool disallow_force) const
+{
+	ActionType action = BASECLASS::What_Action(target, disallow_force);
+
+	if (action == ACTION_TOGGLE_SELECT) {
+		return(action);
+	}
+
+	if (action == ACTION_GUARD_AREA && Class->IsAirportBound) {
+		action = ACTION_NONE;
+	}
+
+	if (Class->IsCarryall && House->Is_Player_Control()) {
+		if (action == ACTION_SELECT || action == ACTION_NONE) {
+			if (House->Is_Ally(target)) {
+				if (!target->Is_Techno() || target->Owner_HouseClass()->Is_Ally(this)) {
+					if (!Cargo.Is_Something_Attached() && target->RTTI == RTTI_UNIT) {
+						action = ACTION_TOTE;
+					}
+				}
+			}
+		}
+	}
+
+	if (action == ACTION_NONE) {
+		action = What_Action(target->Center_Coord().As_Cell(), false, disallow_force);
+	}
+
+	if (action == ACTION_SELF) {
+		if (!Cargo.How_Many()) {
+			action = ACTION_NONE;
+		}
+	} else if (action == ACTION_ATTACK && Get_Class_Weapon_Data(0)->Weapon == NULL) {
+		action = ACTION_NONE;
+	}
+
+	if (House->Is_Player_Control() && action == ACTION_SELECT && target->RTTI == RTTI_BUILDING) {
+		BuildingClass * building = (BuildingClass *)target;
+		if (building->Class->IsCanUnitRepair) {
+			if (Class->Dock.Is_In_List(building->Class) && building->HasFreeLink(this) && !building->Cargo.Is_Something_Attached() && ((AircraftClass *)this)->Transmit_Message(RADIO_CAN_LOAD, building) == RADIO_ROGER) {
+				action = ACTION_ENTER;
+			} else {
+				action = ACTION_NO_ENTER;
+			}
+		}
+	}
+
+	if (Class->IsCarryall && action == ACTION_TOTE) {
+		Cell cell = target->PositionCell;
+		if (cell != CELL_NONE) {
+			BuildingClass * building = (BuildingClass *)Map[cell].Cell_Building();
+			if (building != NULL && building->Class->IsWeaponsFactory) {
+				action = ACTION_NONE;
+			}
+		}
+	} else if (action == ACTION_NOMOVE) {
+		if (target->IsDisguised() && target->GetDisguiseHouse(true) == NULL && target->GetDisguise(true)->Fetch_RTTI() == RTTI_OVERLAYTYPE) {
+			action = ACTION_MOVE;
+		}
+	} else if (action == ACTION_ATTACK) {
+		if (target->Class_Of()->IsImmune) {
+			action = ACTION_NOMOVE;
+		}
+	}
+
+	return(action);
+}
+
+// FUNCTION: 0x00417F80
+ActionType AircraftClass::What_Action(Cell const & cell, bool check_fog, bool disallow_force) const
+{
+	if (!House->Is_Player_Control()) {
+		return(ACTION_NONE);
+	}
+
+	ActionType action = BASECLASS::What_Action(cell, check_fog, disallow_force);
+
+	if (action == ACTION_ATTACK && Get_Class_Weapon_Data(0)->Weapon == NULL) {
+		action = ACTION_NONE;
+	}
+
+	return(action);
+}
+
+// FUNCTION: 0x00417FD0
+Dir256 AircraftClass::Pose_Dir(void) const
+{
+	return(Rule->PoseDir);
+}
+
+// FUNCTION: 0x00418E20
+AbstractClass * AircraftClass::New_LZ(AbstractClass * oldlz) const
+{
+	if (oldlz != NULL && (Team == NULL || !Team->Is_Leaving_Map()) && (!Is_LZ_Clear(oldlz) || !Cell_Seems_Ok(oldlz->Destination_Coord(NULL).As_Cell(), false))) {
+		Coord coord = oldlz->Center_Coord();
+
+		if (ScenarioInit) {
+			return(oldlz);
+		}
+
+		for (int radius = 0; radius < Rule->unknown_int_1478 / CELL_LEPTON_W; radius++) {
+			FacingType modifier = Random_Pick(FACING_N, FACING_NW);
+			Cell lastcell(0, 0);
+
+			for (FacingType facing = FACING_N; facing < FACING_COUNT; facing++) {
+				Cell newcell = Move_Cell(Cell(coord), DirType(Facing_Dir(FacingType(facing + modifier))).As_Int() & -(DIR_STEP_8 << 8), radius);
+				if (Map.In_Local_Radar(newcell)) {
+					AbstractClass * newtarget = &Map[newcell];
+
+					if (newcell != lastcell && Is_LZ_Clear(newtarget) && Cell_Seems_Ok(newcell, false)) {
+						return(newtarget);
+					}
+					lastcell = newcell;
+				}
+			}
+		}
+	}
+	return(oldlz);
+}
+
+// FUNCTION: 0x004190B0
+RadioMessageType AircraftClass::Receive_Message(RadioClass * from, RadioMessageType message, int & param)
+{
+	AbstractClass * target;
+
+	switch (CurrentMission) {
+		case MISSION_RETREAT:
+		case MISSION_PARADROP_APPROACH:
+		case MISSION_PARADROP_OVERFLY:
+		case MISSION_SPYPLANE_APPROACH:
+		case MISSION_SPYPLANE_OVERFLY:
+			if (Airstrike == NULL) {
+				return(RADIO_STATIC);
+			}
+			goto proceed;
+		case 5:
+		case 6:
+		case 7:
+		case 8:
+		case 9:
+		case 10:
+		case 11:
+		case 12:
+		case 13:
+		case 14:
+		case 15:
+		case 16:
+		case 17:
+		case 18:
+		case 19:
+		case 20:
+		case 21:
+		case 22:
+		case 23:
+		case 24:
+		case 25:
+		case 28:
+		case 29:
+			goto proceed;
+	}
+proceed:
+
+	switch (message) {
+		case RADIO_RELOAD:
+			if (Ammo >= (Class->MaxAmmo / 2) && TarCom != NULL) {
+				return(RADIO_ROGER);
+			}
+			return(BASECLASS::Receive_Message(from, message, param));
+
+		case RADIO_PREPARED:
+			if (TarCom != NULL) {
+				return(RADIO_NEGATIVE);
+			}
+			return((Ammo != Class->MaxAmmo) ? RADIO_NEGATIVE : RADIO_ROGER);
+
+		case RADIO_ALL_DONE:
+			return((Ammo != Class->MaxAmmo) ? RADIO_NEGATIVE : RADIO_ROGER);
+
+		case RADIO_RUN_AWAY:
+			QueueMission(MISSION_MOVE, false);
+			Assign_Destination(Good_LZ());
+			Transmit_Message(RADIO_OVER_OUT);
+			break;
+
+		case RADIO_MOVE_HERE:
+			BASECLASS::Receive_Message(from, message, param);
+			target = (AbstractClass *)param;
+			if (target != NULL && target->Fetch_RTTI() == RTTI_BUILDING) {
+				if (Transmit_Message(RADIO_CAN_LOAD, Dynamic_Cast<TechnoClass *>(target)) != RADIO_ROGER) {
+					return(RADIO_NEGATIVE);
+				}
+				QueueMission(MISSION_ENTER, false);
+				Assign_Destination(target);
+			} else {
+				QueueMission(MISSION_MOVE, false);
+				Assign_Destination(target);
+			}
+			Commence();
+			return(RADIO_ROGER);
+
+		case RADIO_NEED_TO_MOVE:
+			BASECLASS::Receive_Message(from, message, param);
+			if (!Locomotion->Is_Moving() || NavCom == NULL) {
+				return(RADIO_ROGER);
+			}
+			if (Class->IsAirportBound && NavCom->Fetch_RTTI() == RTTI_CELL && NavCom == Get_Cell_Ptr()) {
+				return(RADIO_ROGER);
+			}
+			return(RADIO_NEGATIVE);
+
+		case RADIO_IM_IN:
+			if (Cargo.How_Many() == Class->Max_Passengers()) {
+				Door.Close_Door(Class->DeployTime);
+			}
+			if (Counts_As_Civ_Evac(from)) {
+				Assign_Target(NULL);
+				Assign_Destination(NULL);
+				QueueMission(MISSION_RETREAT, false);
+			}
+			return(RADIO_ATTACH);
+
+		case RADIO_DOCKING:
+			if (Class->Max_Passengers() > 0 && Cargo.How_Many() < Class->Max_Passengers()) {
+				BASECLASS::Receive_Message(from, message, param);
+
+				if (!Locomotion->Is_Moving()) {
+					Door.Open_Door(Class->DeployTime);
+
+					if (Transmit_Message(RADIO_NEED_TO_MOVE, from) == RADIO_ROGER) {
+						param = (int)this;
+						if (Transmit_Message(RADIO_MOVE_HERE, param, from) != RADIO_ROGER) {
+							Transmit_Message(RADIO_OVER_OUT, from);
+							return(RADIO_ROGER);
+						}
+						FUN_0065AD30(0)->Unselect();
+					}
+				}
+				return(RADIO_ROGER);
+			}
+			break;
+
+		case RADIO_CAN_LOAD:
+			if (Class->Max_Passengers() == 0 || from == NULL || !House->Is_Ally(from)) {
+				return(RADIO_STATIC);
+			}
+			return((Cargo.How_Many() < Class->Max_Passengers()) ? RADIO_ROGER : RADIO_NEGATIVE);
+
+		case RADIO_UNLOADED:
+			if (Class->IsCarryall && Get_Mission() == MISSION_MOVE && IsTethered) {
+				if ((Cargo.Is_Something_Attached() && Cargo.Attached_Object() == from) || NavCom == from) {
+					return(RADIO_NEGATIVE);
+				}
+			}
+			break;
+
+		default:
+			break;
+	}
+
+	return(BASECLASS::Receive_Message(from, message, param));
+}
+
+// FUNCTION: 0x004195A0
+FacingType AircraftClass::Desired_Load_Dir(ObjectClass * object, Cell & moveto) const
+{
+	static FacingType _toface[FACING_COUNT] = {FACING_S, FACING_SW, FACING_SE, FACING_W, FACING_E, FACING_NW, FACING_NE, FACING_N};
+
+	moveto = CELL_NONE;
+
+	Cell center = Center_Coord().As_Cell();
+	for (int face = FACING_N; face < FACING_COUNT; face++) {
+		moveto = AdjacentCell[(int)_toface[face] & 7] + center;
+		if (Map.In_Radar(moveto) && (object->Center_Coord().As_Cell() == moveto || Map[moveto].Is_Clear_To_Move(SPEED_FOOT, false, false))) {
+			return(FACING_N);
+		}
+	}
+	return(FACING_N);
+}
+
 // FUNCTION: 0x0041B5C0
 HRESULT STDMETHODCALLTYPE AircraftClass::Save(IStream * stream, int cleardirty)
 {

@@ -49,6 +49,7 @@
 #include "ipiggy.h"
 #include "isotile.h"
 #include "isotype.h"
+#include "laser.h"
 #include "light.h"
 #include "lightcon.h"
 #include "mono.h"
@@ -81,6 +82,7 @@
 #include "color.hh"
 
 extern Point2D DAT_0089C848;
+void __fastcall FUN_00750D40(Coord const & coord, AudioController * controller);
 
 
 // FUNCTION: 0x0043B4C0
@@ -1214,6 +1216,310 @@ Coord BuildingClass::Destination_Coord(TechnoClass * docker) const
 		return(Docking_Coord(docker));
 	}
 	return(Center_Coord());
+}
+
+// FUNCTION: 0x00447F10
+FireErrorType BuildingClass::Can_Fire(AbstractClass * target, int which, bool ignoreRange) const
+{
+	if (Class->CanBeOccupied && (!Class->CanOccupyFire || !GetOccupantCount())) {
+		return(FIRE_ILLEGAL);
+	}
+	if (IsBeingDrained()) {
+		return(FIRE_ILLEGAL);
+	}
+	if (Class->IsEMPulseCannon) {
+		return(FIRE_CANT);
+	}
+	if (Get_Mission() == MISSION_DECONSTRUCTION || Get_Mission() == MISSION_CONSTRUCTION) {
+		return(FIRE_ILLEGAL);
+	}
+	if (!IsPowerOnline()) {
+		return(FIRE_CANT);
+	}
+	if (DelayBeforeFiring) {
+		return(FIRE_REARM);
+	}
+
+	FireErrorType canfire = TechnoClass::Can_Fire(target, which, ignoreRange);
+	if (canfire == FIRE_OK && Is_Turret_Equipped()) {
+		DirType towards = Aim_Direction(target);
+		DirType by = Class->IsTurretAnimAVoxel ? DIR_MIN : DIR_STEP_32;
+		if (!PrimaryFacing.Current().Is_Complete_Turn(towards, by)) {
+			return(FIRE_FACING);
+		}
+	}
+	return(canfire);
+}
+
+// FUNCTION: 0x00448070
+bool BuildingClass::FUN_00448070(bool demote)
+{
+	RTTIType type = Class->ToBuild;
+	if (type == RTTI_NONE) {
+		return(false);
+	}
+	bool was = IsLeader;
+	int count = House->Buildings.Count();
+	BuildingClass * building;
+	for (int index = 0; index < count; index++) {
+		building = House->Buildings[index];
+		if (!building->IsInLimbo && building->IsLeader) {
+			if (building->Class->ToBuild == type) {
+				if ((Class->Naval && building->Class->Naval) || (!Class->Naval && !building->Class->Naval)) {
+					if (demote) {
+						building->IsLeader = false;
+						IsLeader = true;
+					}
+					goto done;
+				}
+			}
+		}
+	}
+	IsLeader = true;
+done:
+	if (Class->ToBuild == RTTI_BUILDINGTYPE) {
+		House->FUN_0050DB00(this);
+	}
+	return(IsLeader != was);
+}
+
+// FUNCTION: 0x00448160
+bool BuildingClass::Toggle_Primary(void)
+{
+	if (Class->ToBuild == RTTI_NONE) {
+		return(IsLeader);
+	}
+	if (IsLeader) {
+		IsLeader = false;
+	} else {
+		int count = House->Buildings.Count();
+		for (int index = 0; index < count; index++) {
+			BuildingClass * building = House->Buildings[index];
+			if (!building->IsInLimbo && building->Class->ToBuild == Class->ToBuild &&
+				((Class->Naval && building->Class->Naval) || (!Class->Naval && !building->Class->Naval))) {
+				building->IsLeader = false;
+			}
+		}
+		IsLeader = true;
+		if (House->Is_Player_Control()) {
+			VoxClass::Play("EVA_PrimaryBuildingSelected", -1, -1);
+		}
+		if (Class->ToBuild == RTTI_BUILDINGTYPE) {
+			House->FUN_0050DB00(this);
+		}
+	}
+	Mark(MARK_CHANGE);
+	return(IsLeader);
+}
+
+// FUNCTION: 0x00449410
+int BuildingClass::Sort_Y(void) const
+{
+	int y = BASECLASS::Sort_Y();
+	return(y + (Class->IsTurretAnimAVoxel != 0 ? 32 : 0) - (Class->IsGate != 0 ? 16 : 0));
+}
+
+// FUNCTION: 0x00449440
+MoveType BuildingClass::Can_Enter_Cell(CellClass const * cell, FacingType dir, int cell_height, CellClass const *, bool) const
+{
+	Cell c = cell->CellID;
+	if (Class->UndeploysInto && IsDown) {
+		return(Map[c].Is_Clear_To_Build(Class->Speed, (BuildingTypeClass *)Class, House) ? MOVE_OK : MOVE_NO);
+	}
+	return(Class->Legal_Placement(c, House) ? MOVE_OK : MOVE_NO);
+}
+
+// FUNCTION: 0x004494C0
+bool BuildingClass::Can_Demolish(void) const
+{
+	if (IsBeingDrained() || Class->IsUnsellable) {
+		return(false);
+	}
+	if (HasBuildupData && BState != BSTATE_CONSTRUCTION && Get_Mission() != MISSION_DECONSTRUCTION && Get_Mission() != MISSION_CONSTRUCTION) {
+		return(true);
+	}
+	if (Class->IsFirestormWall && !House->FirestormDefenseActivated) {
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00449540
+bool BuildingClass::Clear_Weapons_Factory_Bib(void)
+{
+	if (Class->IsWeaponsFactory) {
+		Cell exit = Class->ExitList[10];
+		Cell cell = exit + PositionCell;
+		Cell cell2 = Cell(cell.X - 1, cell.Y);
+		Coord coord = cell2.As_Coord();
+		CellClass * cellptr = &Map[cell2];
+
+		TechnoClass * tech = cellptr->Cell_Techno(Point2D(0, 0), false, this);
+		if (tech != NULL) {
+			DebugString("Weapons factory clearing %s from bib\n", (const char *)tech->Techno_Type_Class()->IniName);
+			cellptr->Incoming((Coord const &)DAT_0089C848, true, true);
+			for (FacingType f = FACING_FIRST; f < FACING_COUNT; f++) {
+				CellClass * cptr = &cellptr->Adjacent_Cell(f);
+				TechnoClass * tech = cptr->Cell_Techno(Point2D(0, 0), false, this);
+				if (tech != NULL) {
+					DebugString("Weapons factory clearing %s from bib area\n", (const char *)tech->Techno_Type_Class()->IniName);
+					cptr->Incoming(coord, true, true);
+				}
+			}
+			return(true);
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x004496B0
+int BuildingClass::Do_MISSION_GUARD(void)
+{
+	if (Techno_Type_Class()->IsGattling) {
+		GattlingRateDown(MissionAccumulateTime);
+		MissionAccumulateTime = 0;
+	}
+
+	if (Is_Weapon_Equipped()) {
+		IsReadyToCommence = true;
+		if (!Class->IsEMPulseCannon) {
+			bool idle = false;
+			if (Class->SuperWeapon != -1 && SuperClass::Array[Class->SuperWeapon]->Class->AuxBuilding && House->ABQuantity.Value(SuperClass::Array[Class->SuperWeapon]->Class->AuxBuilding->HeapID) == 0) {
+				idle = true;
+			} else if (Class->SuperWeapon == -1) {
+				idle = true;
+			}
+			if (idle) {
+				if (!Class->CanBeOccupied || GetOccupantCount() > 0) {
+					if (TarCom != NULL) {
+						QueueMission(MISSION_ATTACK, false);
+						Commence();
+						return(1);
+					}
+				}
+			}
+		}
+	} else {
+		if (Class->IsHasStupidGuardMode) {
+			return(100);
+		}
+
+		switch (Status) {
+			case 0:
+				Begin_Mode(BSTATE_IDLE);
+				Status = 1;
+				break;
+
+			case 1:
+				if (Class->IsCanUnitRepair || Class->IsCanUnitReload || Class->Bunker) {
+					for (int index = 0; index < RadioLinks.Length(); index++) {
+						TechnoClass * contact = FUN_0065AD30(index);
+						if (contact != NULL && contact->Is_Techno() && contact->Mission == MISSION_ENTER && Distance_To(contact) < CELL_LEPTON / 4) {
+							if (Transmit_Message(RADIO_NEED_TO_MOVE, contact) == RADIO_ROGER) {
+								QueueMission(MISSION_REPAIR, false);
+								return(1);
+							}
+						}
+					}
+				}
+				if (Class->IsWeaponsFactory) {
+					Clear_Weapons_Factory_Bib();
+				}
+				break;
+
+			default:
+				break;
+		}
+
+		if (Class->IsCanUnitReload && HasAnyLink()) {
+			if (Transmit_Message(RADIO_PREPARED) != RADIO_ROGER && Transmit_Message(RADIO_NEED_TO_MOVE) == RADIO_ROGER) {
+				QueueMission(MISSION_REPAIR, false);
+			}
+		}
+		if (Class->IsCanUnitRepair) {
+			return(Current_Mission_Control().Normal_Delay() + Random_Pick(0, 2));
+		}
+		return(Current_Mission_Control().Normal_Delay() * 3 + Random_Pick(0, 2));
+	}
+	return(Current_Mission_Control().AA_Delay() + Random_Pick(0, 2));
+}
+
+// FUNCTION: 0x00449A40
+int BuildingClass::Do_MISSION_GUARD_AREA(void)
+{
+	return(Do_MISSION_GUARD());
+}
+
+// FUNCTION: 0x00449A50
+int BuildingClass::Do_MISSION_CONSTRUCTION(void)
+{
+	switch (Status) {
+		case 0:
+			Begin_Mode(BSTATE_CONSTRUCTION);
+			Transmit_Message(RADIO_BUILDING);
+			{
+				int sound = Class->BuildupSound;
+				if (sound == -1) {
+					sound = Rule->Construction;
+				}
+				if (sound != -1) {
+					VocClass::PlayAt(sound, PositionCoord, &Audio7);
+				}
+			}
+			IsToDisplay = true;
+			Status = 1;
+			break;
+
+		case 1:
+			IsToDisplay = true;
+			FUN_00750D40(PositionCoord, &Audio7);
+			if (IsReadyToCommence) {
+				Transmit_Message(RADIO_COMPLETE);
+				Transmit_Message(RADIO_OVER_OUT);
+				Begin_Mode(BSTATE_IDLE);
+				Grand_Opening();
+				QueueMission(MISSION_GUARD, false);
+				if (!Class->IsLaserFence) {
+					PrimaryFacing.Set(Class->StartFace);
+				}
+				Class->Free_Buildup_Data();
+				Audio7.EndLooping();
+			}
+			break;
+
+		default:
+			break;
+	}
+	return(1);
+}
+
+// FUNCTION: 0x00449BC0
+bool BuildingClass::Can_Player_Move(void) const
+{
+	if (Class->UndeploysInto) {
+		if (!Class->IsConstructionYard) {
+			return(true);
+		}
+		if (Session.Type && ArchiveTarget && House->Is_Human_Player()) {
+			if (Session.Type && Session.Options.MCVRedeploy && MindControlledBy == NULL) {
+				return(true);
+			}
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x0044ABD0
+void BuildingClass::FireLaser(Coord coords)
+{
+	RGBClass black(0, 0, 0);
+	LaserDrawClass * laser = new LaserDrawClass(Fire_Coord(0, Coord(0, 0, 0)), coords, 0, true, House->LaserColor, black, black, Rule->PrismSupportDuration, false, true, 1.0f, 0.0f);
+	if (laser) {
+		laser->IsHouseColor = true;
+		laser->Thickness = 3;
+	}
+	Arm = Rule->PrismSupportDelay;
+	SupportingPrisms = 0;
 }
 
 // FUNCTION: 0x00459E80

@@ -32,6 +32,10 @@
 #include "xpipe.h"
 #include "xstraw.h"
 
+char const * Name_From_BuildCat(int value);
+int BuildCat_From_Name(char const * name);
+VoxType Vox_From_Name(char const * name);
+
 static inline int _Scale_To_256(int val)
 {
 	val = MIN(val, 100);
@@ -87,6 +91,71 @@ static struct
 	{ "6x4", BSIZE_64 },
 	{ "0x0", BSIZE_00 }
 };
+
+void CCINIClass::Calculate_Message_Digest(void)
+{
+	SHAPipe sha;
+	BASECLASS::Save(sha);
+	sha.Result(Digest);
+	IsDigestPresent = true;
+}
+
+void CCINIClass::Invalidate_Message_Digest(void)
+{
+	IsDigestPresent = false;
+}
+
+// FUNCTION: 0x004741F0
+int CCINIClass::ReadCCFile(FileClass & file, bool withdigest, bool loadcomments)
+{
+	FileStraw straw(file);
+	return(Load(straw, withdigest, loadcomments));
+}
+
+// FUNCTION: 0x00474320
+int CCINIClass::Load(Straw & file, bool withdigest, bool loadcomments)
+{
+	int ok = BASECLASS::Load(file, loadcomments);
+
+	Invalidate_Message_Digest();
+	if (ok && withdigest) {
+		unsigned char digest[20];
+		int len = Get_UUBlock("Digest", digest, sizeof(digest));
+		if (len == 0) {
+			return(2);
+		}
+		if (len > 0) {
+			Clear("Digest");
+			Calculate_Message_Digest();
+			if (memcmp(digest, Digest, sizeof(digest)) != 0) {
+				return(2);
+			}
+		}
+	}
+	return(ok);
+}
+
+// FUNCTION: 0x00474430
+int CCINIClass::Save(FileClass & file, bool withdigest) const
+{
+	FilePipe pipe(file);
+	return(Save(pipe, withdigest));
+}
+
+// FUNCTION: 0x00474540
+int CCINIClass::Save(Pipe & pipe, bool withdigest) const
+{
+	if (!withdigest) {
+		return(BASECLASS::Save(pipe));
+	}
+
+	((CCINIClass *)this)->Clear("Digest");
+	((CCINIClass *)this)->Calculate_Message_Digest();
+	((CCINIClass *)this)->Put_UUBlock("Digest", Digest, sizeof(Digest));
+	int length = BASECLASS::Save(pipe);
+	((CCINIClass *)this)->Clear("Digest");
+	return(length);
+}
 
 // FUNCTION: 0x00474620
 LEPTON CCINIClass::Get_Lepton(char const * section, char const * entry, LEPTON defvalue) const
@@ -173,6 +242,52 @@ PipEnum CCINIClass::Get_PipEnum(char const * section, char const * entry, PipEnu
 	return(PIP_GREEN);
 }
 
+// FUNCTION: 0x00474910
+bool CCINIClass::Put_PipEnum(char const * section, char const * entry, PipEnum value)
+{
+	if (value != PIP_EMPTY) {
+		return(Put_String(section, entry, _pips[value].Name));
+	}
+	return(false);
+}
+
+static struct
+{
+	char const * Name;
+	PipScaleType Index;
+} _pipscales[5] = {
+	{ "Ammo", PIPSCALE_AMMO },
+	{ "Tiberium", PIPSCALE_TIBERIUM },
+	{ "Passengers", PIPSCALE_PASSENGERS },
+	{ "Power", PIPSCALE_POWER },
+	{ "Charge", PIPSCALE_CHARGE }
+};
+
+// FUNCTION: 0x00474940
+PipScaleType CCINIClass::Get_PipScaleType(char const * section, char const * entry, PipScaleType defvalue) const
+{
+	char buffer[32];
+
+	if (Get_String(section, entry, "", buffer, sizeof(buffer)) > 0) {
+		for (int index = 0; index < ARRAY_SIZE(_pipscales); index++) {
+			if (!strcmpi(buffer, _pipscales[index].Name)) {
+				return(_pipscales[index].Index);
+			}
+		}
+		return(PIPSCALE_NONE);
+	}
+	return(defvalue);
+}
+
+// FUNCTION: 0x004749B0
+bool CCINIClass::Put_PipScaleType(char const * section, char const * entry, PipScaleType value)
+{
+	if (value != PIPSCALE_NONE) {
+		return(Put_String(section, entry, _pipscales[value].Name));
+	}
+	return(false);
+}
+
 // FUNCTION: 0x004749E0
 CategoryType CCINIClass::Get_CategoryType(char const * section, char const * entry, CategoryType defvalue) const
 {
@@ -241,6 +356,15 @@ RGBClass CCINIClass::Get_RGBClass(char const * section, char const * entry, RGBC
 	return(defvalue);
 }
 
+// FUNCTION: 0x00474C20
+bool CCINIClass::Put_RGBClass(char const * section, char const * entry, RGBClass const & value)
+{
+	char buffer[64];
+
+	sprintf(buffer, "%d,%d,%d", value.Get_Red(), value.Get_Green(), value.Get_Blue());
+	return(Put_String(section, entry, buffer));
+}
+
 // FUNCTION: 0x00474C70
 HSVClass CCINIClass::Get_HSVClass(char const * section, char const * entry, HSVClass const & defvalue) const
 {
@@ -255,6 +379,15 @@ HSVClass CCINIClass::Get_HSVClass(char const * section, char const * entry, HSVC
 		return(hsv);
 	}
 	return(defvalue);
+}
+
+// FUNCTION: 0x00474D50
+bool CCINIClass::Put_HSVClass(char const * section, char const * entry, HSVClass const & value)
+{
+	char buffer[64];
+
+	sprintf(buffer, "%d,%d,%d", value.Get_Hue(), value.Get_Saturation(), value.Get_Value());
+	return(Put_String(section, entry, buffer));
 }
 
 // FUNCTION: 0x00474DA0
@@ -317,6 +450,36 @@ ActionType CCINIClass::Get_ActionType(char const * section, char const * entry, 
 	return(ACTION_NONE);
 }
 
+// FUNCTION: 0x00474F50
+SuperWeaponType CCINIClass::Get_SuperWeaponType(char const * section, char const * entry, SuperWeaponType defvalue) const
+{
+	char buffer[32];
+	char emptystr[28];
+
+	char * defname;
+	if (defvalue != SUPER_NONE) {
+		defname = SuperWeaponTypes[defvalue]->IniName;
+	}
+	else {
+		emptystr[0] = '\0';
+		defname = emptystr;
+	}
+	Get_String(section, entry, defname, buffer, sizeof(buffer));
+	return(SuperWeaponTypeClass::From_Name(buffer));
+}
+
+// FUNCTION: 0x00474FA0
+VoxType CCINIClass::Get_VoxType(char const * section, char const * entry, VoxType defvalue) const
+{
+	char buffer[100];
+
+	Get_String(section, entry, "", buffer, sizeof(buffer));
+	if (strlen(buffer) != 0) {
+		return(Vox_From_Name(buffer));
+	}
+	return(defvalue);
+}
+
 // FUNCTION: 0x00474FF0
 RTTIType CCINIClass::Get_RTTIType(char const * section, char const * entry, RTTIType defvalue) const
 {
@@ -330,6 +493,15 @@ RTTIType CCINIClass::Get_RTTIType(char const * section, char const * entry, RTTI
 bool CCINIClass::Put_RTTIType(char const * section, char const * entry, RTTIType value)
 {
 	return(Put_String(section, entry, Name_From_RTTI(value)));
+}
+
+// FUNCTION: 0x00475060
+int CCINIClass::Get_BuildCat(char const * section, char const * entry, int defvalue) const
+{
+	char buffer[32];
+
+	Get_String(section, entry, Name_From_BuildCat(defvalue), buffer, sizeof(buffer));
+	return(BuildCat_From_Name(buffer));
 }
 
 // FUNCTION: 0x004750D0

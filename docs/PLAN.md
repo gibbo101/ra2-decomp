@@ -743,6 +743,20 @@ check.py now fails a file in which two markers resolve to the same compiled func
 which a prefix-matched `$E` name could do silently. Cost: about 0.24M tokens, 25 minutes.
 Merge gate: 2,142 of 2,142 (323.1 KB).
 
+### Batch 8 (12 October 2026)
+
+TAction, aircraft, rules, ccini, voc, House, Techno, building, PlanMgr. **105 of 108
+matched.** The merge adopted YR layouts for LaserDrawClass, ParticleSystemClass,
+ThemeClass and TerrainTypeClass, and fixed three type classes whose `Read_INI` took a
+const INI and so added a slot instead of overriding. The TAction agent applied the
+geometry header to its file, the first batch to do so unprompted. PlanMgr's file now
+holds the geometry run pkstraw.cpp had kept as a stand-in (13 functions). Twenty
+type-array and INI globals and both HasFreeLink overloads got names.csv rows from
+YRpp's symbols, so their references are verified. Banked: House's money check (72.1%),
+Techno's area modify (96.8%), and INIClass::Is_Present's out-of-line copy, which
+appears once Read_File matches. Cost: about 2.0M tokens, 49 minutes. Merge gate:
+2,275 of 2,275 (344.7 KB).
+
 ### Decide before the first batch
 
 - **Module layout.** Which function lives in which source file, and the link order, decide

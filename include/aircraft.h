@@ -98,7 +98,7 @@ class AircraftClass : public FootClass, public IFlyControl
 
 		virtual bool Active_Click_With(ActionType action, ObjectClass * object, bool) override;
 		virtual bool Active_Click_With(ActionType action, Cell const & cell, Cell const & cell2, bool) override;
-		virtual void Player_Assign_Mission(MissionType mission, AbstractClass * target=NULL, AbstractClass * destination=NULL, AbstractClass * nearby=NULL) override;
+		virtual bool Player_Assign_Mission(MissionType mission, AbstractClass * target=NULL, AbstractClass * destination=NULL, AbstractClass * nearby=NULL) override;
 
 		virtual ResultType Take_Damage(int & damage, int distance, WarheadTypeClass const * warhead, TechnoClass * source, bool forced=false, bool=false, HouseClass * = 0) override;
 		virtual BulletClass * Fire_At(AbstractClass * target, int which) override;

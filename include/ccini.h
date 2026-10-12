@@ -73,7 +73,7 @@ class CCINIClass : public INIClass
 	public:
 		CCINIClass(void) : IsDigestPresent(false) {}
 
-		CCINIClass * ReadCCFile(FileClass & file, bool withdigest, bool loadcomments);
+		int ReadCCFile(FileClass & file, bool withdigest, bool loadcomments);
 		int Load(FileClass & file, bool withdigest, bool loadcomments = false);
 		int Load(Straw & file, bool withdigest, bool loadcomments = false);
 		int Save(FileClass & file, bool withdigest) const;
@@ -105,6 +105,7 @@ class CCINIClass : public INIClass
 		BSizeType Get_BSizeType(char const * section, char const * entry, BSizeType defvalue) const;
 		MZoneType Get_MZoneType(char const * section, char const * entry, MZoneType defvalue) const;
 		ActionType Get_ActionType(char const * section, char const * entry, ActionType defvalue) const;
+		int Get_BuildCat(char const * section, char const * entry, int defvalue) const;
 		SuperWeaponType Get_SuperWeaponType(char const * section, char const * entry, SuperWeaponType defvalue) const;
 		VoxType Get_VoxType(char const * section, char const * entry, VoxType defvalue) const;
 		RTTIType Get_RTTIType(char const * section, char const * entry, RTTIType defvalue) const;

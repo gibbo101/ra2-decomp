@@ -61,6 +61,7 @@ class MapClass: public GScreenClass
 		virtual void Init_Cells(void);
 
 		void Fresh_Map(void);
+		void sub_657CE0(void);
 		void Sight_From(Coord const & coord, int sightrange, HouseClass * house, bool incremental=false, bool=false, bool=false, bool=true);
 		void RevealArea3(Coord const & coord, int height, int radius, bool skip_reveal);
 		bool In_Radar(Cell const & cell) const;

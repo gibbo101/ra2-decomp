@@ -415,7 +415,7 @@ class TechnoClass : public RadioClass
 		virtual int VoiceDeploy(void);
 		virtual void Response_Attack(void);
 		virtual bool ClickedEvent(int event);
-		virtual void Player_Assign_Mission(MissionType order, AbstractClass * target=NULL, AbstractClass * destination=NULL, AbstractClass * nearby=NULL);
+		virtual bool Player_Assign_Mission(MissionType order, AbstractClass * target=NULL, AbstractClass * destination=NULL, AbstractClass * nearby=NULL);
 		virtual bool IsUnderEMP(void) const;
 		virtual bool IsParalyzed(void) const;
 		virtual bool CanCheer(void) const;
@@ -547,6 +547,7 @@ class TechnoClass : public RadioClass
 		Coord Predict_Target_Coord(void) const;
 
 		double Area_Modify(Cell const & cell) const;
+		void StartReloading(void);
 		void Base_Is_Attacked(TechnoClass const * enemy);
 		void Kill_Cargo(TechnoClass * source);
 		virtual void Record_The_Kill(TechnoClass * source) override;
@@ -565,8 +566,8 @@ class TechnoClass : public RadioClass
 		double Target_Threat(TechnoClass * target, Coord const & firing_coord = COORD_NONE) const;
 
 		virtual ResultType Take_Damage(int & damage, int distance, WarheadTypeClass const * warhead, TechnoClass * source=0, bool forced=false, bool=false, HouseClass * = 0) override;
-		bool Evaluate_Cell(ThreatType method, int mask, Cell const & cell, int range, TechnoClass const ** object, int & value, int zone=0) const;
-		bool Evaluate_Object(ThreatType method, int mask, int range, TechnoClass const * object, int & value, int zone=-1, Coord const & coord=COORD_NONE) const;
+		bool TryAutoTargetObject(ThreatType method, int mask, Cell const & cell, int range, TechnoClass const ** object, int & value, int zone=0) const;
+		bool CanAutoTargetObject(ThreatType method, int mask, int range, TechnoClass const * object, int & value, int zone=-1, Coord const & coord=COORD_NONE) const;
 		int Evaluate_Just_Cell(Cell const & cell) const;
 
 		void Assign_Archive_Target(AbstractClass * target);

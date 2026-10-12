@@ -18,3 +18,25 @@ address,name,symbol,evidence
 0x0081B958,_pips,,"name table of 0x004748A0 CCINIClass::Get_PipEnum: 11 (name, PipEnum) pairs, green to personpurple"
 0x004F42F0,GScreenClass::Flag_To_Redraw,,"YRpp MapClass::RedrawSidebar; GScreenClass vtable slot 14, body is TibSun's Flag_To_Redraw (TacticalMap redraw flag, DrawFlags, Map.Increment_Redraw_Counter)"
 0x00B0CE28,TacticalDimensions,,every reference in src/tactical.cpp implies this base (refaudit)
+0x00A8B218,AircraftTypes,,YRpp AircraftTypeClass::Array
+0x00A83C68,BuildingTypes,,YRpp BuildingTypeClass::Array
+0x00A83C80,BulletTypes,,YRpp BulletTypeClass::Array
+0x00A83C98,HouseTypes,,YRpp HouseTypeClass::Array
+0x00A8E348,InfantryTypes,,YRpp InfantryTypeClass::Array
+0x00A8E3A8,MissionControl,,YRpp MissionControlClass::Array
+0x00A83D80,OverlayTypes,,YRpp OverlayTypeClass::Array
+0x00A83D68,ParticleSystemTypes,,YRpp ParticleSystemTypeClass::Array
+0x00A83D98,ParticleTypes,,YRpp ParticleTypeClass::Array
+0x00A8EC18,SmudgeTypes,,YRpp SmudgeTypeClass::Array
+0x00A8E330,SuperWeaponTypes,,YRpp SuperWeaponTypeClass::Array
+0x00A8E318,TerrainTypes,,YRpp TerrainTypeClass::Array
+0x00A83CE0,UnitTypes,,YRpp UnitTypeClass::Array
+0x00A8EB28,VoxelAnimTypes,,YRpp VoxelAnimTypeClass::Array
+0x008874C0,Warheads,,YRpp WarheadTypeClass::Array
+0x00887568,Weapons,,YRpp WeaponTypeClass::Array
+0x00887180,ArtINI,,YRpp CCINIClass::INI_Art
+0x005B3760,MissionControlClass::Read_INI,,YRpp MissionControlClass::LoadFromINI
+0x00721210,ThemeClass::From_Name,,YRpp ThemeClass::FindIndex
+0x00721270,ThemeClass::GetID,,YRpp ThemeClass::GetID
+0x0065ADC0,RadioClass::HasFreeLink,?HasFreeLink@RadioClass@@QBE_NXZ,no-argument overload; checked in the disassembly by the batch 8 header merge
+0x0065ADF0,RadioClass::HasFreeLink,?HasFreeLink@RadioClass@@QBE_NPBVTechnoClass@@@Z,TechnoClass overload; checked in the disassembly by the batch 8 header merge

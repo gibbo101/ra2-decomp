@@ -502,6 +502,8 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 		void Recalc_Center(void);
 		bool Does_Enemy_Building_Exist(StructType) const;
 		void Harvested(int tiberium, TiberiumType slot);
+		float Give_Tiberium(float amount, int slot);
+		BuildingClass * Emptiest_Silo(void) const;
 		void Harvested_Weed(int weed, int slot);
 		void Spend_Money(int money);
 		void Refund_Money(int money);
@@ -550,6 +552,7 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 		static AnimClass * PsiWarn(HouseClass * house, ObjectClass * target, BulletClass * bullet, char const * name);
 
 		void Invalidate_Base_Node_Position(BuildingClass * building);
+		SourceType FUN_0050DB00(BuildingClass * building);
 		bool Is_Build_Limited(TechnoTypeClass const * type) const;
 
 		bool Is_Player_Control(void) const;

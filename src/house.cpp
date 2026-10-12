@@ -496,6 +496,155 @@ void HouseClass::Super_Weapon_Handler(void)
 	}
 }
 
+// FUNCTION: 0x004F93E0
+void HouseClass::Attacked(BuildingClass * source)
+{
+	if (source != NULL && source->IsStrange()) return;
+
+	bool mine = Is_Player_Control();
+	bool ally = PlayerPtr && PlayerPtr != this && Is_Ally(PlayerPtr) && (Session.Type == GAME_NORMAL || !source->House->Class->IsMultiplayPassive);
+
+	if (mine) {
+		if (source && source->Class && source->Class->UndeploysInto && source->Class->ResourceGatherer) {
+			if (RadarEventClass::Create(RADAREVENT_HARVESTER_ATTACKED, source->Center_Coord().As_Cell())) {
+				VoxClass::Play("EVA_OreMinerUnderAttack", -1, -1);
+			}
+		} else {
+			if (RadarEventClass::Create(RADAREVENT_BASE_ATTACKED, source->Center_Coord().As_Cell())) {
+				VoxClass::Play("EVA_OurBaseIsUnderAttack", -1, -1);
+				VocClass::PlayGlobal(Rule->BaseUnderAttackSound, 1.0f, 0x2000);
+			}
+		}
+	} else if (ally) {
+		if (RadarEventClass::Create(RADAREVENT_ALLY_BASE_ATTACKED, source->Center_Coord().As_Cell())) {
+			VoxClass::Play("EVA_OurAllyIsUnderAttack", -1, -1);
+			VocClass::PlayGlobal(Rule->BaseUnderAttackSound, 1.0f, 0x2000);
+		}
+	}
+
+	for (int index = 0; index < HouseTags.Count(); index++) {
+		HouseTags[index]->Spring(TEVENT_ATTACKED);
+	}
+}
+
+// FUNCTION: 0x004F9610
+float HouseClass::Give_Tiberium(float amount, int slot)
+{
+	PointTotal += amount * 5.0f;
+	Credits += Tiberiums[slot]->CreditValue * Class->IncomeMult * amount;
+	return(amount);
+}
+
+// FUNCTION: 0x004F9670
+BuildingClass * HouseClass::Emptiest_Silo(void) const
+{
+	BuildingClass * best = NULL;
+	float bestroom = 0;
+	int count = Buildings.Count();
+	for (int index = 0; index < count; index++) {
+		BuildingClass * b = Buildings[index];
+		if (b && b->IsDown) {
+			int capacity = b->Class->Capacity;
+			if (capacity > 0) {
+				float room = capacity - b->Storage.Get_Total_Amount();
+				if (!best || room > bestroom) {
+					bestroom = room;
+					best = b;
+				}
+			}
+		}
+	}
+	return(best);
+}
+
+// FUNCTION: 0x004F9700
+void HouseClass::Harvested_Weed(int weed, int slot)
+{
+	int i = weed;
+	while (i > 0) {
+		if (Rule->WeedCapacity <= Weed.Get_Total_Amount()) {
+			break;
+		}
+		Weed.Increase_Amount(1, slot);
+		i--;
+	}
+}
+
+// FUNCTION: 0x004F9750
+double HouseClass::Weed_Fraction(void) const
+{
+	if (Weed.Get_Total_Amount() == 0) {
+		return(0.f);
+	}
+	return((double)Weed.Get_Total_Amount() / Rule->WeedCapacity);
+}
+
+// FUNCTION: 0x004F9950
+void HouseClass::Refund_Money(int money)
+{
+	Credits += money;
+}
+
+// FUNCTION: 0x004F9970
+void HouseClass::Silo_Redraw_Check(int oldtib, int oldcap)
+{
+	int oldratio = 0;
+	if (oldcap) oldratio = ((double)oldtib / oldcap * 4.0) + 0.5;
+	int newratio = 0;
+	if (Capacity) newratio = ((double)Tiberium.Get_Total_Amount() / Capacity * 4.0)  + 0.5;
+
+	if (oldratio != newratio) {
+		int count = Buildings.Count();
+		for (int index = 0; index < count; index++) {
+			BuildingClass * b = Buildings[index];
+			if (b && !b->IsInLimbo && b->Class->IsSiloDamage) {
+				b->Mark(MARK_CHANGE);
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x004F9A10
+bool HouseClass::Is_Ally(HousesType house) const
+{
+	if (house == HeapID) return(true);
+	if (house != HOUSE_NONE) {
+		return(((1<<house) & Allies) != 0);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x004F9A50
+bool HouseClass::Is_Ally(HouseClass const * house) const
+{
+	if (house) {
+		if (house == this) {
+			return(true);
+		}
+		return(Is_Ally(house->HeapID));
+	}
+
+	return(false);
+}
+
+// FUNCTION: 0x004F9A90
+bool HouseClass::Is_Ally(ObjectClass const * object) const
+{
+	if (object) {
+		return(Is_Ally(object->Owner_HouseClass()));
+	}
+	return(false);
+}
+
+// FUNCTION: 0x004F9AF0
+bool HouseClass::CanOverpower(AbstractClass const * target) const
+{
+	if (target && (target->AbstractFlags & 2)) {
+		return(Is_Ally(target->Owner_HouseClass()));
+	}
+	return(false);
+}
+
 // FUNCTION: 0x004FA210
 SUGGESTED_TEAM_LIST HouseClass::Suggested_New_Team(bool alertcheck)
 {
@@ -527,4 +676,13 @@ HRESULT STDMETHODCALLTYPE HouseClass::GetClassID(CLSID * retval)
 	if (retval == NULL) return(E_POINTER);
 	*retval = CLSID_HouseClass;
 	return(S_OK);
+}
+
+// FUNCTION: 0x0050B6F0
+bool HouseClass::Is_Player_Control(void) const
+{
+	if (Session.Type == GAME_NORMAL) {
+		return(IsHuman || IsPlayerControl);
+	}
+	return(this == PlayerPtr) == true;
 }

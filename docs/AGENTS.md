@@ -142,6 +142,9 @@ Each entry: what the diff showed, then the source change that fixed it.
   other order, make both tests reach one block: `if (a) goto none; if (b) { none: X }`.
 - `!p ? 0 : p->Count` and `p ? p->Count : 0` give opposite branch polarity.
 - `setcc; test; jne` on one register is an inlined function returning bool.
+- A sparse switch that the original compiles to a byte-index jump table: list every
+  in-range case and send the no-op ones to a label after the switch with `goto`;
+  `break` lets VC6 drop them and emit a compare chain.
 - `bool b = unit->F() != 0;` for a bool virtual that compiles to `setne; test`.
 - Write identical tails out in full in each branch, null tests included: VC6 merges them
   itself and then allocates registers as the original does (0x006F6AC0).
@@ -263,6 +266,8 @@ Each entry: what the diff showed, then the source change that fixed it.
   offset up there before adding a declaration.
 - YRpp's parameter order can be wrong: trust the original's push order
   (VocClass::PlayGlobal takes volume before panning).
+- A callee overloaded in the exe but only one overload referenced in a file: give both
+  overloads a names.csv row with their decorated symbol, or check.py resolves by name.
 - A function that matches YRpp's address may be TS's under another name (FindInfantry-
   Subposition is Closest_Free_Spot): compare with TibSun before adding a member.
 - An unverified reference proves nothing: a wrong offset into a global object whose

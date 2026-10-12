@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
 #include "voc.h"
 #include "_mixfile.h"
 #include "_rect.h"
@@ -17,6 +18,19 @@
 #include "vector.h"
 
 DynamicVectorClass<VocClass *> Vocs;
+
+// FUNCTION: 0x00750110 $E2
+// FUNCTION: 0x00750140 $E5
+// FUNCTION: 0x00750160 $E8
+// FUNCTION: 0x00750180 $E11
+// FUNCTION: 0x007501A0 $E14
+// FUNCTION: 0x007501C0 $E17
+// FUNCTION: 0x007501E0 $E20
+// FUNCTION: 0x00750220 $E23
+// FUNCTION: 0x00750250 $E26
+// FUNCTION: 0x00750280 $E29
+// FUNCTION: 0x007502B0 $E32
+// FUNCTION: 0x007502C0 $E35
 
 // FUNCTION: 0x007532D0
 VocClass * VocClass_From_Name(char const * name)

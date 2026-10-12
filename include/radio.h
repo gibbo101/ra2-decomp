@@ -15,7 +15,7 @@ class RadioClass : public MissionClass
 {
 		typedef MissionClass BASECLASS;
 
-	private:
+	public:
 
 		RadioMessageType Old[3];
 
@@ -37,6 +37,8 @@ class RadioClass : public MissionClass
 
 		bool In_Radio_Contact(void) const {return(RadioLinks[0] != 0);};
 		bool HasAnyLink(void) const;
+		bool HasFreeLink(void) const;
+		bool HasFreeLink(TechnoClass const * ignore) const;
 		void SetLinkCount(int count);
 		void Radio_Off(void) {RadioLinks[0] = 0;};
 		TechnoClass * Contact_With_Whom(void) const {return(RadioLinks[0]);};

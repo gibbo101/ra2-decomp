@@ -1087,6 +1087,245 @@ bool TechnoClass::InAuxiliarySearchRange(AbstractClass * target) const
 	return(IsCloseEnoughToAttack(target));
 }
 
+// FUNCTION: 0x006F7930
+bool TechnoClass::IsCloseEnoughToAttackCoords(Coord const & coord) const
+{
+	AbstractClass * target = &Map[coord];
+	return(In_Range(target, What_Weapon_Should_I_Use(target)));
+}
+
+// FUNCTION: 0x006F7970
+bool TechnoClass::In_Range(Coord const & coord, int which) const
+{
+	return(In_Range(&Map[coord], which));
+}
+
+// FUNCTION: 0x006F9DB0
+HousesType TechnoClass::Owner(void) const
+{
+	return(House->HeapID);
+}
+
+// FUNCTION: 0x006F9DC0
+HouseClass * TechnoClass::Owner_HouseClass(void) const
+{
+	return(House);
+}
+
+// FUNCTION: 0x006F9DD0
+void TechnoClass::Clicked_As_Target(int count)
+{
+	if (!IsDisguisedAs(PlayerPtr) || GetDisguiseHouse(true)) {
+		Flashing.FlashCount = count;
+	}
+}
+
+// FUNCTION: 0x006F9E10
+bool TechnoClass::Is_Voxel_Loaded(void) const
+{
+	if (TClass->Voxel.VoxLib == NULL) {
+		return(false);
+	}
+	if (TClass->Voxel.VoxLib->Load_Failed()) {
+		return(false);
+	}
+	return(true);
+}
+
+// FUNCTION: 0x006FB010
+void TechnoClass::Reload(void)
+{
+	int max = TClass->MaxAmmo;
+	if (max != -1 && Ammo < max) {
+		if (ReloadTimer == 0) {
+			Ammo++;
+			Mark(MARK_CHANGE);
+			StartReloading();
+		}
+	}
+}
+
+// FUNCTION: 0x006FB080
+void TechnoClass::StartReloading(void)
+{
+	int max = TClass->MaxAmmo;
+	if (Ammo < max) {
+		if (Ammo == 0 && TClass->EmptyReload != -1) {
+			ReloadTimer = TClass->EmptyReload;
+			return;
+		}
+		int steps = (TClass->PipWrap == 0) ? 1 : Ammo / TClass->PipWrap;
+		int delay = TClass->ReloadIncrement * steps * steps;
+		ReloadTimer = TClass->Reload + delay;
+	}
+}
+
+// FUNCTION: 0x006FB170
+void TechnoClass::CreateGap(void)
+{
+	if (PlayerPtr != NULL && !GeneratingGap && IsPowerOnline()) {
+		if (GapRadius == 0) {
+			GapRadius = TClass->GapRadiusInCells;
+		}
+		GeneratingGap = true;
+
+		Coord coord = Position;
+		coord.X += (Tactical::Z_Lepton_To_Pixel(coord.Z) / -30) << 8;
+		coord.Y += (Tactical::Z_Lepton_To_Pixel(coord.Z) / -30) << 8;
+		Cell center = coord.As_Cell();
+
+		int radius = GapRadius;
+		for (int dx = -2 - radius; dx < radius + 2; dx++) {
+			for (int dy = -2 - radius; dy < radius + 2; dy++) {
+				if (dx * dx + dy * dy < (radius + 1) * (radius + 1)) {
+					Cell cell = center + Cell(dx, dy);
+					if (!Owner_HouseClass()->Is_Player_Control() && !House->Is_Ally(PlayerPtr) && !PlayerPtr->IsDefeated) {
+						if (Map[cell].ShroudCounter != 1) {
+							if (Map[cell].ShroudCounter >= 0) {
+								++Map[cell].ShroudCounter;
+							}
+						}
+						++Map[cell].GapsCoveringThisCell;
+						if (Map[cell].ShroudCounter >= 1) {
+							Map[cell].IsAltUnknown = false;
+							Map[cell].IsFogVisible = false;
+						}
+					}
+					if (Owner_HouseClass()->Is_Player_Control() || House->Is_Ally(PlayerPtr) || PlayerPtr->IsDefeated) {
+						++Map[cell].unknown_13C;
+					}
+				}
+			}
+		}
+
+		if (PlayerPtr != NULL) {
+			PlayerPtr->IsVisionary = false;
+		}
+		Map.sub_657CE0();
+		Map.Flag_To_Redraw(GS_REDRAW_ALL);
+	}
+}
+
+static inline TechnoClass * Cast_To_Techno(ObjectClass const * object)
+{
+	if (object == NULL) {
+		return(NULL);
+	}
+	if (object->AbstractFlags & 1) {
+		return((TechnoClass *)object);
+	}
+	return(NULL);
+}
+
+// FUNCTION: 0x006F8960
+bool TechnoClass::TryAutoTargetObject(ThreatType method, int mask, Cell const & cell, int range, TechnoClass const ** object, int & value, int zone) const
+{
+	*object = NULL;
+	value = 0;
+
+	CellClass * cellptr = &Map[cell];
+
+	if (zone != -1 && Map.Get_Cell_Zone(cell, TClass->MZone, true) != zone) {
+		return(false);
+	}
+
+	ObjectClass const * tentative = cellptr->Cell_Occupier(true);
+	TechnoClass * tech = NULL;
+	if (tentative == NULL) {
+		tentative = cellptr->Cell_Occupier(false);
+	}
+
+	bool controlled = false;
+	HouseClass * controller = NULL;
+	if (Transporter != NULL && Transporter->TClass->OpenTopped) {
+		if (Transporter->MindControlledBy != NULL) {
+			controller = Transporter->MindControlledBy->House;
+			controlled = true;
+		}
+	}
+
+	while (tentative != NULL) {
+		if (tentative != this) {
+			tech = Cast_To_Techno(tentative);
+			if (tech) {
+				if (Combat_Damage() < 0) {
+					if (tech->HealthRatio < Rule->ConditionGreen && House->Is_Ally(tech)) break;
+				} else {
+					if ((!House->Is_Ally(tech) && !controlled)
+						|| TClass->AttackFriendlies
+						|| Berzerk
+						|| (controlled && controller != NULL && controller->Is_Ally(tech))
+						|| (RTTI == RTTI_INFANTRY
+							&& (((InfantryClass *)this)->IsBerzerk
+							|| (((InfantryClass *)this)->Class->IsEngineer
+								&& CurrentMission == MISSION_GUARD_AREA
+								&& tech->HealthRatio <= Rule->ConditionRed
+								&& tech->RTTI == RTTI_BUILDING
+								&& ((BuildingClass *)tech)->Class->Cost_Of(tech->House) > 0)))) {
+						break;
+					}
+				}
+			}
+		}
+		tentative = tentative->Next;
+	}
+
+	if (tech == NULL) {
+		return(false);
+	}
+	*object = tech;
+
+	bool result = false;
+	if (!House->Is_Ally(tech) || Combat_Damage() < 0
+		|| (!House->Is_Human_Player() && this != NULL && RTTI == RTTI_INFANTRY
+			&& ((InfantryClass *)((RTTI == RTTI_INFANTRY) ? this : NULL))->Class->IsEngineer)
+		|| TClass->AttackFriendlies || Berzerk || controlled) {
+		result = CanAutoTargetObject(method, mask, range, tech, value, -1, COORD_NONE);
+	}
+	return(result);
+}
+
+// FUNCTION: 0x006F8C10
+int TechnoClass::Evaluate_Just_Cell(Cell const & cell) const
+{
+	if (House->Is_Human_Player()) {
+		return(0);
+	}
+
+	if (!Rule->Diff[House->Difficulty].IsWallDestroyer) {
+		return(0);
+	}
+
+	CellClass const * cellptr = &Map[cell];
+	if (cellptr->Overlay == OVERLAY_NONE || !OverlayTypes[cellptr->Overlay]->IsWall) {
+		return(0);
+	}
+
+	int primary = What_Weapon_Should_I_Use(&Map[cell]);
+	if (!In_Range(cell, primary)) {
+		return(0);
+	}
+
+	WeaponDataStruct const * data = GetTurretWeapon();
+	if (data == NULL || data->Weapon == NULL || data->Weapon->WarheadPtr == NULL) {
+		return(0);
+	}
+
+	if (data->Weapon->Bullet != NULL && !data->Weapon->Bullet->IsAntiGround) {
+		return(0);
+	}
+
+	if (!data->Weapon->WarheadPtr->IsWallDestroyer) {
+		return(0);
+	}
+
+	if (cellptr->Owner == HOUSE_NONE || House->Is_Ally(Houses[cellptr->Owner])) {
+		return(0);
+	}
+
+	return(Weapon_Range(0) - Distance(cell));
+}
+
 // FUNCTION: 0x00708C10
 FacingType TechnoClass::Desired_Load_Dir(ObjectClass * , Cell & moveto) const
 {

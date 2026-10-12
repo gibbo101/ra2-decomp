@@ -748,3 +748,142 @@ bool RulesClass::Read_AdvancedCommandBar(CCINIClass const & ini, bool multiplaye
 	}
 	return(false);
 }
+
+extern unsigned int DAT_00B053B4;
+extern bool DAT_00B053B8;
+int FUN_005D5ED0(void);
+
+// FUNCTION: 0x00679A10
+bool RulesClass::Objects(CCINIClass & ini)
+{
+	for (int house = HOUSE_FIRST; house < HouseTypes.Count(); house++) {
+		HouseTypes[house]->Read_INI(ini);
+	}
+	for (int index = 0; index < SuperWeaponTypes.Count(); index++) {
+		SuperWeaponTypes[index]->Read_INI(ini);
+	}
+	for (int anim = 0; anim < AnimTypes.Count(); anim++) {
+		AnimTypes[anim]->Read_INI(ArtINI);
+	}
+	int bindex;
+	for (bindex = 0; bindex < BuildingTypes.Count(); bindex++) {
+		BuildingTypes[bindex]->Read_INI(ini);
+	}
+	for (int aindex = 0; aindex < AircraftTypes.Count(); aindex++) {
+		AircraftTypes[aindex]->Read_INI(ini);
+	}
+	for (int uindex = 0; uindex < UnitTypes.Count(); uindex++) {
+		UnitTypes[uindex]->Read_INI(ini);
+	}
+	for (int iindex = 0; iindex < InfantryTypes.Count(); iindex++) {
+		InfantryTypes[iindex]->Read_INI(ini);
+	}
+	int windex;
+	for (windex = 0; windex < Weapons.Count(); windex++) {
+		Weapons[windex]->Read_INI(ini);
+	}
+	for (int proj = 0; proj < BulletTypes.Count(); proj++) {
+		BulletTypes[proj]->Read_INI(ini);
+	}
+	for (int whead = 0; whead < ::Warheads.Count(); whead++) {
+		::Warheads[whead]->Read_INI(ini);
+	}
+	for (windex = 0; windex < Weapons.Count(); windex++) {
+		Weapons[windex]->Init_Max_Speed();
+	}
+	for (bindex = 0; bindex < BuildingTypes.Count(); bindex++) {
+		BuildingTypes[bindex]->Calculate_Base_Defense_Values();
+	}
+	for (int tindex = 0; tindex < TerrainTypes.Count(); tindex++) {
+		TerrainTypes[tindex]->Read_INI(ini);
+	}
+	for (int sindex = 0; sindex < SmudgeTypes.Count(); sindex++) {
+		SmudgeTypes[sindex]->Read_INI(ini);
+	}
+	for (int oindex = 0; oindex < OverlayTypes.Count(); oindex++) {
+		OverlayTypes[oindex]->Read_INI(ini);
+	}
+	for (int pindex = 0; pindex < ParticleTypes.Count(); pindex++) {
+		ParticleTypes[pindex]->Read_INI(ini);
+	}
+	for (int psindex = 0; psindex < ParticleSystemTypes.Count(); psindex++) {
+		ParticleSystemTypes[psindex]->Read_INI(ini);
+	}
+	for (int vindex = 0; vindex < VoxelAnimTypes.Count(); vindex++) {
+		VoxelAnimTypes[vindex]->Read_INI(ini);
+	}
+	for (int mission = MISSION_FIRST; mission < MISSION_COUNT; mission++) {
+		MissionControlClass * miss = &MissionControl[mission];
+		miss->Mission = (MissionType)mission;
+		miss->Read_INI(ini);
+	}
+	return(true);
+}
+
+// FUNCTION: 0x00679CC0
+int FUN_00679CC0(void)
+{
+	if (!DAT_00B053B8) {
+		CCINIClass ini;
+		CCFileClass file("CoopCampMD.ini");
+		if (ini.ReadCCFile(file, false, false)) {
+			DAT_00B053B4 = ini.Get_Unique_ID();
+		}
+		DAT_00B053B8 = true;
+	}
+	return DAT_00B053B4;
+}
+
+// FUNCTION: 0x00679D90
+int RulesClass::Get_Rule_Unique_ID(void)
+{
+	int id = RuleINI->Get_Unique_ID();
+	int count = FUN_005D5ED0();
+	for (int index = 1; index <= count; index++) {
+		MPGameModeClass * mode = MPGameModeClass::Get(index);
+		if (mode != NULL) {
+			id += mode->FUN_005D67B0()->Get_Unique_ID();
+		}
+	}
+	return id + FUN_00679CC0();
+}
+
+// FUNCTION: 0x00679EC0
+int RulesClass::Get_Art_Unique_ID(void)
+{
+	return ArtINI.Get_Unique_ID();
+}
+
+// FUNCTION: 0x00679ED0
+int RulesClass::Get_AI_Unique_ID(void)
+{
+	return AIINI.Get_Unique_ID();
+}
+
+// FUNCTION: 0x00679EE0
+void RulesClass::Load_Art_INI(void)
+{
+	ArtINI.Clear();
+	CCFileClass art("ARTMD.INI");
+	ArtINI.ReadCCFile(art, false, false);
+}
+
+// FUNCTION: 0x00679F70 ?$VectorClass@H::~?$VectorClass@H
+template class VectorClass<int>;
+
+class BuildingTypeClass;
+class UnitTypeClass;
+class AircraftTypeClass;
+class InfantryTypeClass;
+
+// FUNCTION: 0x00679FA0 ?$VectorClass@PBVBuildingTypeClass@@::~?$VectorClass@PBVBuildingTypeClass@@
+template class VectorClass<BuildingTypeClass const *>;
+
+// FUNCTION: 0x00679FD0 ?$VectorClass@PBVUnitTypeClass@@::~?$VectorClass@PBVUnitTypeClass@@
+template class VectorClass<UnitTypeClass const *>;
+
+// FUNCTION: 0x0067A000 ?$VectorClass@PBVAircraftTypeClass@@::~?$VectorClass@PBVAircraftTypeClass@@
+template class VectorClass<AircraftTypeClass const *>;
+
+// FUNCTION: 0x0067A030 ?$VectorClass@PBVInfantryTypeClass@@::~?$VectorClass@PBVInfantryTypeClass@@
+template class VectorClass<InfantryTypeClass const *>;

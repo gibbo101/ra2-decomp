@@ -111,7 +111,7 @@ class RulesClass
 		bool Jumpjet_Controls(CCINIClass const & ini);
 		bool Difficulty(CCINIClass const & ini);
 		bool Do_Movies(CCINIClass const & ini);
-		bool Objects(CCINIClass const & ini);
+		bool Objects(CCINIClass & ini);
 
 		void Save(IStream * stream);
 		void Load(IStream * stream);

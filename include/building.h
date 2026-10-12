@@ -156,7 +156,7 @@ class BuildingClass : public TechnoClass
 		virtual DirType Turret_Facing(void) const override;
 		virtual bool Is_Ready_To_Cloak(void) const override;
 		virtual bool Should_Uncloak(void) const override;
-		virtual DirType Barrel_Pitch(AbstractClass * target) const override;
+		virtual void Grand_Opening(bool captured = false);
 		virtual Coord Turret_Coord(int which=0) const override;
 		virtual InfantryTypeClass const * Crew_Type(void) const override;
 		virtual int Pip_Count(void) const override;
@@ -239,7 +239,6 @@ class BuildingClass : public TechnoClass
 		virtual void Update_Buildables(void);
 		virtual void Draw_Extras(Point2D &point, Rect &rect);
 		virtual DirType Aim_Direction(AbstractClass * target) const;
-		virtual void Grand_Opening(bool captured = false);
 		void AfterDestruction(void);
 		void Make_Fogged(DynamicVectorClass<FoggedObjectClass *> * fogged_objects = NULL, CellClass * cellptr = NULL, bool fade = false);
 		void Charge_Turret(void);
@@ -256,6 +255,9 @@ class BuildingClass : public TechnoClass
 		virtual bool Captured(HouseClass * newowner, bool announce = true) override;
 		virtual WeaponDataStruct const * Get_Class_Weapon_Data(int which=0) const override;
 		virtual bool Is_Turret_Equipped() const override;
+		bool IsBeingDrained(void) const;
+		void FireLaser(Coord coords);
+		bool FUN_00448070(bool demote);
 		void Update_Radar_Spied(void);
 		void Spied_By(HouseClass * house);
 
@@ -280,6 +282,7 @@ class BuildingClass : public TechnoClass
 		virtual void Assign_Target(AbstractClass * target) override;
 		virtual void Do_Destruction(TechnoClass * last_contact, TechnoClass * source, bool forced, Cell const * offset);
 		virtual bool Toggle_Primary(void);
+		virtual void FUN_00455820(int arg);
 		virtual void SensorArrayDeactivate(Cell cell = Cell());
 		virtual void SensorArrayActivate(Cell cell = Cell());
 		virtual void DisguiseDetectorDeactivate(Cell cell = Cell());

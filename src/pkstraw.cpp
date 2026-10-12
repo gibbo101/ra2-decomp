@@ -10,8 +10,6 @@
 #include <cmath>
 #include <cstring>
 
-extern double DAT_007E1708, DAT_007E1710, DAT_00AC4BE8;
-extern double __cdecl FUN_004CAC40(double);
 
 // FUNCTION: 0x00633050
 PKStraw::PKStraw(CryptControl control, RandomStraw & rnd) :
@@ -116,10 +114,4 @@ int PKStraw::Plain_Key_Length(void) const
 {
 	if (CipherKey == NULL) return(0);
 	return(CipherKey->Block_Count(BLOWFISH_KEY_SIZE) * CipherKey->Plain_Block_Size());
-}
-
-// FUNCTION: 0x006333D0
-void Init_006333D0(void)
-{
-	DAT_00AC4BE8 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2.0);
 }
