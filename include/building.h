@@ -58,6 +58,7 @@ class BuildingClass : public TechnoClass
 		bool RequiresDamageFires;
 
 		void FUN_0043C0D0(void);
+		void FUN_0043C2A0(void);
 
 		BuildingTypeClass const * Upgrades[BUILDING_UPGRADE_MAX];
 
@@ -82,14 +83,14 @@ class BuildingClass : public TechnoClass
 		Point2D LastRenderOffset;
 
 		bool IsOn;
-		bool UnusedBuildingBool1;
+		bool IsOverpowered;
 		bool RegisteredAsPoweredUnitSource;
 
 		int SupportingPrisms;
 		bool HasExtraPowerBonus;
 		bool HasExtraPowerDrain;
-		YRVectorData Overpowerers;
-		YRVectorData Occupants;
+		DynamicVectorClass<InfantryClass *> Overpowerers;
+		DynamicVectorClass<InfantryClass *> Occupants;
 		int FiringOccupantIndex;
 		AudioController Audio7;
 		AudioController Audio8;
@@ -121,13 +122,15 @@ class BuildingClass : public TechnoClass
 
 		int StorageFilledSlots;
 		TechnoTypeClass * SecretProduction;
-		unsigned char ColorAdd[3];
+		unsigned char ColorAdd;
+		unsigned char ColorAddG : 8;
+		unsigned char ColorAddB : 8;
 		int unknown_int_6FC;
 		unsigned short Brightness;
 		char UpgradeLevel;
 		char GateFrame;
 		int PrismStage;
-		int PrismTargetCoords[3];
+		CoordStruct PrismTargetCoords;
 		int DelayBeforeFiring;
 		unsigned TankBunkerState;
 
@@ -142,7 +145,7 @@ class BuildingClass : public TechnoClass
 		BuildingTypeClass::AnimControlType const * Fetch_Anim_Control(void) {return(&Class->Anims[BState]);};
 
 		virtual RTTIType Fetch_RTTI(void) const override;
-		virtual int Fetch_Object_Size(bool oldsave) const override;
+		virtual int Fetch_Object_Size(void) const override;
 		virtual void Compute_CRC(CRCEngine &) const override;
 		virtual void const * Get_Image_Data(void) const override;
 		virtual int How_Many_Survivors(void) const override;
@@ -190,6 +193,7 @@ class BuildingClass : public TechnoClass
 		int Set_Turret_Frame(void);
 		void Set_Turret_Index(int index);
 		int Shape_Number(void) const;
+		void DrawInfoTipAndSpiedSelection(Point2D * location, Rect * rect) const;
 		int Power_Output(void) const;
 		int Power_Drain(void) const;
 		Cell Check_Point(CheckPointType cp) const;
@@ -214,7 +218,6 @@ class BuildingClass : public TechnoClass
 		virtual void Detach(AbstractClass const * target, bool all) override;
 		virtual void Detach_All(bool all=true) override;
 		virtual void Grand_Opening(bool captured = false);
-		virtual void Update_Buildables(void);
 		virtual MoveType Can_Enter_Cell(CellClass const * cell, FacingType dir = FACING_NONE, int cell_height = -1, CellClass const * = 0, bool = true) const override;
 		virtual bool Unlimbo(Coord const & , Dir256 dir = DIR_N) override;
 		virtual bool Limbo(void) override;
@@ -234,6 +237,7 @@ class BuildingClass : public TechnoClass
 		void Draw_Overlays(Point2D const & point, Rect const & cliprect) const;
 		void Begin_Mode(BStateType bstate);
 		virtual void Draw_Extras(Point2D &point, Rect &rect);
+		virtual void Update_Buildables(void);
 		virtual DirType Aim_Direction(AbstractClass * target) const;
 		void Make_Fogged(DynamicVectorClass<FoggedObjectClass *> * fogged_objects = NULL, CellClass * cellptr = NULL, bool fade = false);
 		void Charge_Turret(void);
@@ -244,7 +248,7 @@ class BuildingClass : public TechnoClass
 		virtual void Clicked_As_Target(int = 7) override;
 
 		virtual void Death_Announcement(TechnoClass const * source=0) const override;
-		virtual FireErrorType Can_Fire(AbstractClass *, int which) const override;
+		virtual FireErrorType Can_Fire(AbstractClass *, int which, bool ignoreRange) const override;
 		virtual AbstractClass * Greatest_Threat(ThreatType threat, Coord const & coord, bool) const override;
 		virtual ResultType Take_Damage(int & damage, int distance, WarheadTypeClass const * warhead, TechnoClass * source=0, bool forced=false, bool=false, HouseClass * = 0) override;
 		virtual bool Captured(HouseClass * newowner) override;
@@ -312,6 +316,8 @@ class BuildingClass : public TechnoClass
 		virtual void Plot_On_Radar(void) const override;
 
 		bool Clear_Weapons_Factory_Bib(void);
+		int FirstActiveSWIdx(void) const;
+		int SecondActiveSWIdx(void) const;
 
 		void Init_Laser_Fence(void);
 		void Update_Laser_Fence_Connections(int explode);

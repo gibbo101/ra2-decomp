@@ -65,7 +65,8 @@ def sweep(code: bytes, base: int, starts: set, padded: set, calls: set, tables: 
 
 def reached_end(md, code: bytes, base: int, lo: int, hi: int, roots: set) -> int:
     """The end of the furthest instruction in [lo, hi) that flow from `lo` and `roots`
-    reaches: jumps, branches, calls returning, switch tables, and offsets taken as operands."""
+    reaches: jumps, branches, calls returning, switch tables, and offsets taken as operands.
+    A pushed offset is a callback argument (atexit), not flow."""
     seen, todo, far = set(), [lo, *roots], lo
     while todo:
         at = todo.pop()
@@ -76,7 +77,7 @@ def reached_end(md, code: bytes, base: int, lo: int, hi: int, roots: set) -> int
                 break
             _, size, mnem, ops = insn
             far = max(far, at + size)
-            for v in re.findall(r"0x[0-9a-f]+", ops):
+            for v in re.findall(r"0x[0-9a-f]+", ops) if mnem != "push" else ():
                 if lo < int(v, 16) < hi:
                     todo.append(int(v, 16))
             t = TABLE_OPERAND.search(ops)
@@ -186,7 +187,7 @@ def main() -> None:
     for letter, addrs in (("P", padded), ("C", calls), ("V", ptrs), ("Y", yrpp), ("G", ghidra),
                           ("L", library)):
         for a in addrs:
-            if base <= a < end and a in starts:
+            if base <= a < end and a in starts and (a not in tables or letter == "C"):
                 # A pointer into the middle of game code is a jump-table entry or a
                 # stray constant, not a function, unless something else agrees.
                 if letter == "V" and a % 16 and a not in calls:

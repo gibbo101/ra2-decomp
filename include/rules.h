@@ -796,9 +796,9 @@ class RulesClass
 		bool MutateExplosion;
 		int CollapseChance;
 		int WeedCapacity;
-		float ExtraUnitLight;
-		float ExtraInfantryLight;
-		float ExtraAircraftLight;
+		int ExtraUnitLight;
+		int ExtraInfantryLight;
+		int ExtraAircraftLight;
 		bool IsComputerParanoid;
 		bool IsCurleyShuffle;
 		bool IsBlendedFog;

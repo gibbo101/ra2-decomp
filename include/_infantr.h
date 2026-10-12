@@ -1,0 +1,26 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright 2026 ra2-decomp contributors
+// Copyright 2025 Electronic Arts Inc.; 2026 OpenTS contributors
+// Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
+#pragma once
+
+#include "facing.hh"
+
+struct DoStruct {
+	bool Interrupt;
+	bool IsMobile;
+	bool RandomStart;
+	unsigned char Rate;
+};
+
+struct DoInfoStruct {
+	int Frame;
+	int Count;
+	int Jump;
+	FacingType Facing;
+	int SoundCount;
+	int Sound1StartFrame;
+	int Sound1Index;
+	int Sound2StartFrame;
+	int Sound2Index;
+};

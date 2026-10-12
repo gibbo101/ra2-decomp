@@ -44,7 +44,7 @@ class UnitClass : public FootClass
 		virtual char const * Full_Name(void) const override;
 		virtual void Detach(AbstractClass const * target, bool all = true) override;
 		virtual RTTIType Fetch_RTTI(void) const override;
-		virtual int Fetch_Object_Size(bool oldsave) const override;
+		virtual int Fetch_Object_Size(void) const override;
 		virtual void Compute_CRC(CRCEngine &) const override;
 		virtual bool IsStrange(void) const override;
 		virtual bool IsDisguisedAs(HouseClass * house) const override;
@@ -69,7 +69,7 @@ class UnitClass : public FootClass
 		virtual int Pip_Count(void) const override;
 		virtual InfantryTypeClass const * Crew_Type(void) const override;
 		virtual DirType Fire_Direction(void) const override;
-		virtual FireErrorType Can_Fire(AbstractClass * target, int which) const override;
+		virtual FireErrorType Can_Fire(AbstractClass * target, int which, bool ignoreRange) const override;
 		virtual double Tiberium_Load(void) const override;
 		virtual int What_Weapon_Should_I_Use(AbstractClass * target) const override;
 		virtual bool IsUnderEMP(void) const override;
@@ -121,7 +121,6 @@ class UnitClass : public FootClass
 		virtual int Do_MISSION_PATROL(void) override;
 		void Rotation_AI(void);
 		void Firing_AI(void);
-		void Reload_AI(void);
 		bool Edge_Of_World_AI(void);
 		void Tunnel_AI(void);
 		void Visceroid_AI(void);

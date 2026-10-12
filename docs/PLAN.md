@@ -642,6 +642,23 @@ Lesson: the header merge between tiers worked. It turned a quarter of the batch 
 blocked into matched without spending Opus per function, and left the Opus tier only
 the true near misses.
 
+### Batch 3 (12 October 2026)
+
+The same shape on nine more modules: Techno, building, aircraft, Infantry, Unit,
+teamtype, houstype, warhead, mission. **99 of 107 matched** (one of the 108 was a jump
+table the map had taken for a function). The header merge gave WeaponTypeClass and
+BulletTypeClass YR's full layout, replaced six opaque manager stubs (spawn, slave,
+capture, temporal, airstrike, electric bolt) with proven classes, and fixed YR
+signatures: Fetch_Object_Size takes no arguments, Techno_Draw_Object takes 16 dwords,
+the storage class holds floats. Two map faults surfaced and are fixed in
+`functions.py`: an address pushed as a callback argument (atexit) was followed as flow,
+hiding the callback, and a switch table preceded by padding was taken for a function
+(10 starts added, 16 removed, each checked by hand). The checker resolved `toupper` to
+the CRT's `__toupper`; a C symbol now loses one prefix character, not all. Banked: four
+register or layout near misses (93.9% to 97.6%), two building functions waiting on
+SuperClass and a CounterClass, and the initialiser now split from its callback. Cost:
+about 3.2M tokens, 82 minutes. Merge gate: 1,670 of 1,670 (234.2 KB).
+
 ### Decide before the first batch
 
 - **Module layout.** Which function lives in which source file, and the link order, decide

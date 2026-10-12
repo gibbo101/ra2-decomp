@@ -67,6 +67,7 @@ class DSurface : public XSurface
 		LPDIRECTDRAWSURFACE Get_DD_Surface(void) { return(SurfacePtr); }
 
 		static DSurface * Composite;
+		static DSurface * Temp;
 
 		static bool AllowStretchBlits;
 

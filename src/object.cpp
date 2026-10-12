@@ -123,13 +123,9 @@ void ObjectClass::Clear_Line_Trail(void)
 }
 
 // FUNCTION: 0x005F3DB0
-DirStruct * AbstractClass::GetTargetDirection(DirStruct * dir, AbstractClass const * target) const
+DirType AbstractClass::GetTargetDirection(AbstractClass const * target) const
 {
-	DirType d = Direction(Center_Coord(), target->Center_Coord());
-	DirStruct r;
-	r.Raw = d.Raw;
-	*dir = r;
-	return(dir);
+	return(Direction(Center_Coord(), target->Center_Coord()));
 }
 
 // FUNCTION: 0x005F3E30

@@ -162,7 +162,8 @@ def qualified(sym: str) -> str:
     if sym.startswith("?"):
         parts = sym[1:].split("@@", 1)[0].split("@")
         return "::".join(reversed(parts[1:])) + ("::" if len(parts) > 1 else "") + parts[0]
-    return sym.lstrip("_@").split("@", 1)[0]
+    # A C symbol carries one prefix character: _toupper is toupper, __toupper is _toupper.
+    return (sym[1:] if sym[:1] in ("_", "@") else sym).split("@", 1)[0]
 
 
 def prepare_headers(overlay: Path | None) -> Path:

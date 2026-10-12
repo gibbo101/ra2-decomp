@@ -22,7 +22,7 @@ class BuildingLightClass : public ObjectClass
 		virtual HRESULT STDMETHODCALLTYPE Save(IStream * stream, BOOL cleardirty) override;
 
 		virtual ObjectTypeClass const * Class_Of(void) const override;
-		virtual int Fetch_Object_Size(bool oldsave) const override;
+		virtual int Fetch_Object_Size(void) const override;
 		virtual void Compute_CRC(CRCEngine & crc) const override;
 		virtual void Detach(AbstractClass const * target, bool all = true) override;
 		virtual RTTIType Fetch_RTTI(void) const override {return(RTTI_LIGHT);}

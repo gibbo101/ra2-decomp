@@ -427,7 +427,7 @@ class BuildingTypeClass : public TechnoTypeClass
 		int Height(bool bib=false) const;
 
 		virtual RTTIType Fetch_RTTI(void) const override;
-		virtual int Fetch_Object_Size(bool oldsave) const override;
+		virtual int Fetch_Object_Size(void) const override;
 		virtual bool CanUseWaypoint(void) const override;
 		virtual bool CanAttackMove(void) const override;
 		virtual void Compute_CRC(CRCEngine & crc) const override;

@@ -45,6 +45,7 @@ class RadioClass : public MissionClass
 
 		bool In_Radio_Contact(void) const {return(RadioLinks.Items != 0 && RadioLinks.Items[0] != 0);};
 		bool HasAnyLink(void) const;
+		void SetLinkCount(int count);
 		void Radio_Off(void) {if (RadioLinks.Items) RadioLinks.Items[0] = 0;};
 		TechnoClass * Contact_With_Whom(void) const {return(RadioLinks.Items ? RadioLinks.Items[0] : 0);};
 

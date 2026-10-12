@@ -15,7 +15,8 @@ original compiler turns into that function's exact bytes. MATCH means
 - Keep helper scripts and variant files in `build/spike/<ADDR>/` too: the scratchpad is
   shared. No two files may differ only in case: under Wine they write one `.obj`, and
   the compile fails with only the file name in the log.
-- The session scratchpad is shared too: delete only files you created there.
+- The session scratchpad is shared with the coordinator and other agents: delete only
+  files you created, by name. Never run a delete over the whole scratchpad.
 - Before you finish, delete the scratch you made that nobody needs (probes, logs, variant
   copies) with `rm` on files or `find DIR -type f -delete`, never a recursive force
   delete. Keep your best source and its header overlay.
@@ -131,6 +132,8 @@ Each entry: what the diff showed, then the source change that fixed it.
 - `setcc; test; jne` on one register is an inlined function returning bool.
 
 ### Registers
+- ESI and EDI swapped with every other byte identical: add one real use of a variable
+  and see whether the allocation flips; if it does, look for the use the original had.
 - Before blaming register allocation, compare the tail and the length: one missing
   statement (an `else` branch) moves every register after it.
 - VC6 ranks variables by use count, weighted by branch; one use more or fewer moves a

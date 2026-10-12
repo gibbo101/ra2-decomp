@@ -50,10 +50,15 @@ class TeamClass;
 class RadBeam;
 class PlanningTokenClass;
 class ObjectTypeClass;
+class Surface;
 
 struct RecoilData
 {
-	unsigned Data[8];
+	TurretControl Turret;
+	float TravelPerFrame;
+	float TravelSoFar;
+	int State;
+	int TravelFramesLeft;
 };
 
 struct YRVectorData
@@ -359,6 +364,13 @@ class TechnoClass : public RadioClass
 		virtual void SetLastFlightMapCoords(Cell coord);
 		virtual Cell Find_Exit_Cell(TechnoClass const * techno) const;
 		virtual Coord Turret_Coord(int which=0) const;
+		Coord Get_FLH(int which, Coord base) const;
+		void Create_Planning_Token(void);
+		void FUN_0070DC70(int which);
+		int FUN_0070DDF0(void);
+		void GattlingRateUp(int rate);
+		void GattlingRateDown(int rate);
+		bool FUN_0070E240(WeaponDataStruct const * weapon);
 		virtual FacingType Desired_Load_Dir(ObjectClass * , Cell & moveto) const;
 		virtual DirType Fire_Direction(void) const;
 		virtual InfantryTypeClass const * Crew_Type(void) const;
@@ -406,7 +418,7 @@ class TechnoClass : public RadioClass
 		virtual bool InAuxiliarySearchRange(AbstractClass * target) const;
 		virtual void Death_Announcement(TechnoClass const * source=0) const = 0;
 		virtual int GetFireErrorWithoutRange(AbstractClass * target, int which) const;
-		virtual FireErrorType Can_Fire(AbstractClass * target, int which=0) const;
+		virtual FireErrorType Can_Fire(AbstractClass * target, int which=0, bool ignoreRange=false) const;
 		virtual AbstractClass * Greatest_Threat(ThreatType threat, Coord const & coord, bool) const;
 		virtual void Assign_Target(AbstractClass * target);
 		virtual BulletClass * Fire_At(AbstractClass * target, int which=0);
@@ -558,14 +570,14 @@ class TechnoClass : public RadioClass
 		virtual void Debug_Dump(MonoClass *mono) const override;
 #endif
 
-		void Techno_Draw_Object(ShapeSet const * shapefile, int shapenum, Point2D const & drawpoint, Rect const & rect, Dir256 rotation=DIR_N, int scale=0x0100, int zadjust=0, ZGradientType zgrad=ZGRAD_GROUND, bool=false, int brightness=0, ShapeSet const * zshapefile=0, int zshapenum=0, Point2D zoff = Point2D(0,0), ShapeFlags_Type negflags=SHAPE_NORMAL) const;
+		void Techno_Draw_Object(ShapeSet const * shapefile, int shapenum, Point2D const & drawpoint, Rect const & rect, Dir256 rotation=DIR_N, int scale=0x0100, int zadjust=0, ZGradientType zgrad=ZGRAD_GROUND, bool=false, int brightness=0, int tint=0, ShapeSet const * zshapefile=0, int zshapenum=0, Point2D zoff = Point2D(0,0), ShapeFlags_Type negflags=SHAPE_NORMAL) const;
 
 		virtual void Draw_Pre_Render(Point2D const & point, Rect const & cliprect) const override;
 		virtual void Draw_Post_Render(Point2D const & point, Rect const & cliprect) const override;
 
 
 		void Techno_Blit_Voxel(StaticBufferClass::Entry const & cache, Point2D const & point, Rect const & cliprect, ShapeFlags_Type flags, int brightness) const;
-		void Techno_Draw_Voxel_Shadow(VoxelDataStruct const & voxeldata, int layer_index, int key, VoxelIndexClass * cache, Rect const & cliprect, Point2D const & point, Matrix3D const & matrix, bool force_cache) const;
+		void Techno_Draw_Voxel_Shadow(VoxelDataStruct const & voxeldata, int layer_index, int key, VoxelIndexClass * cache, Rect const & cliprect, Point2D const & point, Matrix3D const & matrix, bool force_cache, Surface * surface, int shadow_x, int shadow_y) const;
 		SurfaceRegion Techno_Render_Voxel_Object(VoxelDataStruct const & voxeldata, Matrix3D const & matrix, Point2D const & point, Rect const & cliprect, int frame, ShapeFlags_Type flags, int brightness) const;
 		SurfaceRegion Techno_Render_Voxel_Shadow(VoxelDataStruct const & voxeldata, Matrix3D const & matrix, Point2D const & point, Rect const & cliprect, int layer_index, ShapeFlags_Type flags, bool cached) const;
 

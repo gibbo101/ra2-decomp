@@ -28,7 +28,7 @@ class OverlayClass : public ObjectClass
 		OverlayClass(NoInitClass const & x) : BASECLASS(x) {};
 		virtual ~OverlayClass(void) override;
 
-		virtual int Fetch_Object_Size(bool oldsave) const override {return(sizeof(*this));}
+		virtual int Fetch_Object_Size(void) const override {return(sizeof(*this));}
 
 		virtual HRESULT STDMETHODCALLTYPE GetClassID(CLSID * retval) override;
 		virtual HRESULT STDMETHODCALLTYPE Load(IStream * stream) override;

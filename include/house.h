@@ -46,6 +46,8 @@ class FootClass;
 class FactoryClass;
 class HouseTypeClass;
 class ObjectClass;
+class AnimClass;
+class BulletClass;
 class TechnoClass;
 class TagClass;
 class BuildingClass;
@@ -385,7 +387,7 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 		virtual HRESULT STDMETHODCALLTYPE FindConnectionPoint(REFIID riid, IConnectionPoint **ppCP) override;
 
 		virtual RTTIType Fetch_RTTI(void) const override;
-		virtual int Fetch_Object_Size(bool oldsave) const override;
+		virtual int Fetch_Object_Size(void) const override;
 		virtual void Compute_CRC(CRCEngine &) const override;
 		virtual int Fetch_Heap_ID(void) const override;
 
@@ -434,6 +436,7 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 		bool Is_Ally(HouseClass const * house) const;
 		bool Is_Ally(ObjectClass const * object) const;
 		bool Is_Ally(AbstractClass const * target) const;
+		bool CanOverpower(AbstractClass const * target) const;
 #ifdef _DEBUG
 		void Debug_Dump(MonoClass *mono) const;
 		void Print_Zone_Stats(int x, int y, ZoneType zone, MonoClass * mono) const;
@@ -482,7 +485,7 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 		PathType New_Waypoint_Path(void) const;
 		bool Can_Add_Waypoint_To_Path(void) const;
 
-		FactoryClass * Fetch_Factory(RTTIType rtti) const;
+		FactoryClass * Fetch_Factory(RTTIType rtti, bool naval, int buildcat) const;
 		void Set_Factory(RTTIType rtti, FactoryClass * factory);
 		void Update_Production_Mode(RTTIType type);
 		void Production_Status_Changed(void) {IsRecalcNeeded = true;}
@@ -539,6 +542,7 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 		bool Can_Make_Money(void);
 
 		static void One_Time(void);
+		static AnimClass * PsiWarn(HouseClass * house, ObjectClass * target, BulletClass * bullet, char const * name);
 
 		void Invalidate_Base_Node_Position(BuildingClass * building);
 		bool Is_Build_Limited(TechnoTypeClass const * type) const;

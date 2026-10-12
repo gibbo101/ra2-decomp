@@ -74,7 +74,7 @@ class HouseTypeClass : public AbstractTypeClass
 		virtual ULONG STDMETHODCALLTYPE Release(void) override;
 
 		virtual RTTIType Fetch_RTTI(void) const override;
-		virtual int Fetch_Object_Size(bool oldsave) const override;
+		virtual int Fetch_Object_Size(void) const override;
 		virtual void Compute_CRC(CRCEngine &) const override;
 		virtual int Fetch_Heap_ID(void) const override;
 

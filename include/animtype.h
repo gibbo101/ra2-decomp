@@ -113,7 +113,7 @@ class AnimTypeClass : public ObjectTypeClass
 		virtual RTTIType Fetch_RTTI(void) const override {return(RTTI_ANIMTYPE);}
 		virtual void Compute_CRC(CRCEngine &) const override;
 		virtual int Fetch_Heap_ID(void) const override {return(HeapID);}
-		virtual int Fetch_Object_Size(bool oldsave) const override {return(sizeof(*this));};
+		virtual int Fetch_Object_Size(void) const override {return(sizeof(*this));};
 		virtual void Detach(AbstractClass const * target, bool all = true) override;
 
 		virtual void Init_Theater(TheaterType theater) override;

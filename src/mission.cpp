@@ -14,6 +14,86 @@
 #include "mono.h"
 #include "bench.hh"
 
+// FUNCTION: 0x005B2DA0
+MissionClass::MissionClass(void) :
+	BASECLASS(),
+	CurrentMission(MISSION_NONE),
+	SuspendedMission(MISSION_NONE),
+	MissionQueue(MISSION_NONE),
+	IsMissionUnloadStandby(false),
+	Status(0),
+	CurrentMissionStartTime(0),
+	MissionAccumulateTime(0),
+	Timer(0)
+{
+}
+
+// FUNCTION: 0x005B2E10
+int MissionClass::Do_MISSION_SLEEP(void)
+{
+	return(TICKS_PER_SECOND*30);
+}
+
+// FUNCTION: 0x005B2E20
+int MissionClass::Do_MISSION_HARMLESS(void)
+{
+	return(TICKS_PER_SECOND*30);
+}
+
+// FUNCTION: 0x005B2E30
+int MissionClass::Do_MISSION_AMBUSH(void)
+{
+	return(TICKS_PER_SECOND*30);
+}
+
+// FUNCTION: 0x005B2E40
+int MissionClass::Do_MISSION_ATTACK(void)
+{
+	return(TICKS_PER_SECOND*30);
+}
+
+// FUNCTION: 0x005B2E50
+int MissionClass::Do_MISSION_CAPTURE(void)
+{
+	return(TICKS_PER_SECOND*30);
+}
+
+// FUNCTION: 0x005B2E60
+int MissionClass::Do_MISSION_EATEN(void)
+{
+	return(TICKS_PER_SECOND*30);
+}
+
+// FUNCTION: 0x005B2E70
+int MissionClass::Do_MISSION_GUARD(void)
+{
+	return(TICKS_PER_SECOND*30);
+}
+
+// FUNCTION: 0x005B2E80
+int MissionClass::Do_MISSION_GUARD_AREA(void)
+{
+	return(TICKS_PER_SECOND*30);
+}
+
+// FUNCTION: 0x005B2E90
+int MissionClass::Do_MISSION_HARVEST(void)
+{
+	return(TICKS_PER_SECOND*30);
+}
+
+// FUNCTION: 0x005B2EA0
+int MissionClass::Do_MISSION_HUNT(void)
+{
+	return(TICKS_PER_SECOND*30);
+}
+
+// FUNCTION: 0x005B2EB0
+int MissionClass::Do_MISSION_MOVE(void)
+{
+	return(TICKS_PER_SECOND*30);
+}
+
 // FUNCTION: 0x005B36E0
 bool MissionClass::Is_Recruitable_Mission(MissionType mission)
 {

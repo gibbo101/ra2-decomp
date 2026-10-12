@@ -30,6 +30,138 @@ float _Parse_Percentage(const char * string)
 	return(atof(string));
 }
 
+namespace LocomotionClass { namespace CLSIDs { extern const CLSID Teleport; } }
+
+inline void Make_ID(WarheadTypeClass * w) { w->AbstractClass::Create_ID(); }
+
+// FUNCTION: 0x0075CEC0
+WarheadTypeClass::WarheadTypeClass(char const * ininame) :
+	BASECLASS(ininame),
+	Deform(0),
+	ProneDamage(1.),
+	DeformThreshhold(0),
+	ExplosionSet(),
+	InfantryDeath(0),
+	SpreadFactor(0),
+	CellInset(0),
+	PercentAtMax(1),
+	CausesDelayKill(false),
+	DelayKillFrames(5),
+	DelayKillAtMax(1),
+	CombatLightSize(0),
+	Particle(NULL),
+	IsWallDestroyer(false),
+	WallAbsoluteDestroyer(false),
+	PenetratesBunker(false),
+	IsWoodDestroyer(false),
+	IsTiberiumDestroyer(false),
+	IsOrganic(false),
+	IsSparky(false),
+	Sonic(false),
+	IsFire(false),
+	IsConventional(false),
+	IsRocker(false),
+	DirectRocker(false),
+	IsBright(false),
+	CLDisableRed(false),
+	CLDisableGreen(false),
+	CLDisableBlue(false),
+	IsEMEffect(false),
+	MindControl(false),
+	Poison(false),
+	IvanBomb(false),
+	ElectricAssault(false),
+	Parasite(false),
+	Temporal(false),
+	IsLocomotor(false),
+	Locomotor(LocomotionClass::CLSIDs::Teleport),
+	Airstrike(false),
+	Psychedelic(false),
+	BombDisarm(false),
+	Paralyzes(0),
+	Culling(false),
+	MakesDisguise(false),
+	NukeMaker(false),
+	Radiation(false),
+	PsychicDamage(false),
+	AffectsAllies(true),
+	Bullets(false),
+	IsVeinhole(false),
+	ShakeXlo(0),
+	ShakeXhi(0),
+	ShakeYlo(0),
+	ShakeYhi(0),
+	DebrisTypes(),
+	DebrisMaximums(),
+	MaxDebris(0),
+	MinDebris(0)
+{
+	Make_ID(this);
+
+	TypeList<VoxelAnimTypeClass *> * debris = &DebrisTypes;
+	TypeList<int> * maximums = &DebrisMaximums;
+	debris->Clear();
+	maximums->Clear();
+
+	Warheads.Add(this);
+	AbstractTypePtrTracker.Add(this);
+
+	for (int armor = ARMOR_FIRST; armor < ARMOR_COUNT; armor++) {
+		Modifier[armor] = 1;
+	}
+}
+
+// FUNCTION: 0x0075D1B0
+WarheadTypeClass::WarheadTypeClass(NoInitClass const & x) :
+	BASECLASS(x),
+	DebrisTypes(x),
+	DebrisMaximums(x)
+{
+}
+
+// FUNCTION: 0x0075D230
+WarheadTypeClass::~WarheadTypeClass(void)
+{
+	Detach_This_From_All(this, true);
+	Warheads.Delete(this);
+	AbstractTypePtrTracker.Delete(this);
+}
+
+// FUNCTION: 0x0075DEC0
+void WarheadTypeClass::Compute_CRC(CRCEngine & crc) const
+{
+	BASECLASS::Compute_CRC(crc);
+	crc(IsWallDestroyer);
+	crc(IsWoodDestroyer);
+	crc(IsTiberiumDestroyer);
+	crc(IsOrganic);
+	crc(IsSparky);
+	crc(Sonic);
+	crc(IsFire);
+	crc(IsConventional);
+	crc(IsRocker);
+	crc(DirectRocker);
+	crc(IsBright);
+	crc(CLDisableRed);
+	crc(CLDisableGreen);
+	crc(CLDisableBlue);
+	crc(Deform);
+	crc(DeformThreshhold);
+	crc(ProneDamage);
+	crc(IsVeinhole);
+	crc(ShakeXlo);
+	crc(ShakeXhi);
+	crc(ShakeYlo);
+	crc(ShakeYhi);
+	crc(&Locomotor, sizeof(Locomotor));
+	for (int armor = ARMOR_FIRST; armor < ARMOR_COUNT; armor++) {
+		crc(Modifier[armor]);
+	}
+
+	crc(ExplosionSet.Count());
+	crc(InfantryDeath);
+}
+
 // FUNCTION: 0x0075E080
 HRESULT STDMETHODCALLTYPE WarheadTypeClass::GetClassID(CLSID * retval)
 {
@@ -37,3 +169,83 @@ HRESULT STDMETHODCALLTYPE WarheadTypeClass::GetClassID(CLSID * retval)
 	*retval = CLSID_WarheadTypeClass;
 	return(S_OK);
 }
+
+// FUNCTION: 0x0075E0C0
+HRESULT STDMETHODCALLTYPE WarheadTypeClass::Load(IStream * stream)
+{
+	DebrisTypes.Clear();
+	DebrisMaximums.Clear();
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		new (this) WarheadTypeClass(NoInitClass());
+
+		ExplosionSet.Load(stream);
+		DebrisTypes.Load(stream);
+		DebrisMaximums.Load(stream);
+
+		for (int i = 0; i < ExplosionSet.Count(); i++) {
+			Swizzle_Pointer(&ExplosionSet[i]);
+		}
+		for (int j = 0; j < DebrisTypes.Count(); j++) {
+			Swizzle_Pointer(&DebrisTypes[j]);
+		}
+		Swizzle_Pointer(&Particle);
+
+		result = S_OK;
+	}
+	return(result);
+}
+
+// FUNCTION: 0x0075E2C0
+HRESULT STDMETHODCALLTYPE WarheadTypeClass::Save(IStream * stream, BOOL cleardirty)
+{
+	HRESULT result = BASECLASS::Save(stream, cleardirty);
+	if (SUCCEEDED(result)) {
+		ExplosionSet.Save(stream);
+		DebrisTypes.Save(stream);
+		DebrisMaximums.Save(stream);
+
+		result = S_OK;
+	}
+	return(result);
+}
+
+// FUNCTION: 0x0075E3B0
+WarheadTypeClass * WarheadTypeClass::Find_Or_Make(const char * name)
+{
+	return(TFind_Or_Make<WarheadTypeClass>(name, Warheads));
+}
+
+// FUNCTION: 0x0075E440
+void WarheadTypeClass::Detach(AbstractClass const * target, bool all)
+{
+	if (target == (AbstractClass *)Particle) {
+		Particle = NULL;
+	}
+	ExplosionSet.Delete((AnimTypeClass *)target);
+}
+
+// FUNCTION: 0x0075E4A0
+WarheadTypeClass * WarheadTypeClass::From_Name(char const * name)
+{
+	for (int index = 0; index < Warheads.Count(); index++) {
+		if (stricmp(Warheads[index]->Name(), name) == 0) {
+			return(Warheads[index]);
+		}
+	}
+	return(NULL);
+}
+
+// FUNCTION: 0x0075E4F0
+int WarheadTypeClass::Fetch_Object_Size(void) const
+{
+	return(sizeof(*this));
+}
+
+// FUNCTION: 0x0075E500
+RTTIType WarheadTypeClass::Fetch_RTTI(void) const
+{
+	return(RTTI_WARHEADTYPE);
+}
+
+// FUNCTION: 0x0075E510 WarheadTypeClass::~WarheadTypeClass

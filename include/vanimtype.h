@@ -34,7 +34,7 @@ class VoxelAnimTypeClass : public ObjectTypeClass
 
 		virtual void Compute_CRC(CRCEngine & crc) const override;
 		virtual RTTIType Fetch_RTTI(void) const override {return(RTTI_VOXELANIMTYPE);}
-		virtual int Fetch_Object_Size(bool oldsave) const override {return(sizeof(*this));}
+		virtual int Fetch_Object_Size(void) const override {return(sizeof(*this));}
 
 		virtual bool Read_INI(CCINIClass & ini) override;
 

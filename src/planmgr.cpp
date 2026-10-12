@@ -60,9 +60,10 @@ void __fastcall FUN_0063D630(int outline, int fill, Point2D a, Point2D b, int fr
 }
 
 class EventClass;
+class PlanningNodeClass;
 
-// FUNCTION: 0x0063E540 ?$DynamicVectorClass@H::Add
-template class DynamicVectorClass<int>;
+// FUNCTION: 0x0063E540 ?$DynamicVectorClass@PAVPlanningNodeClass@@::Add
+template class DynamicVectorClass<PlanningNodeClass *>;
 
 // FUNCTION: 0x0063EE30 ?$VectorClass@PAVEventClass@@::~?$VectorClass@PAVEventClass@@
 template class VectorClass<EventClass *>;

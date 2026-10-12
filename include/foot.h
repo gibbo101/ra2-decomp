@@ -171,7 +171,7 @@ class FootClass : public TechnoClass
 		virtual bool Stop_Driver(void);
 		virtual bool Is_Docked_For_Repair(void);
 		virtual bool ChronoWarpTo(Coord dest);
-		virtual void Draw_Object(ShapeSet const * shapefile, int shapenum, Point2D const & xy, Rect const & rect, Dir256 rotation=DIR_N, int scale=0x0100, int zadjust=0, ZGradientType zgrad=ZGRAD_GROUND, bool=false, int brightness=0, ShapeSet const * zshapefile=0, int zshapenum=0, Point2D zoff=Point2D(0,0), ShapeFlags_Type flags=SHAPE_NORMAL) const;
+		virtual void Draw_Object(ShapeSet const * shapefile, int shapenum, Point2D const & xy, Rect const & rect, Dir256 rotation=DIR_N, int scale=0x0100, int zadjust=0, ZGradientType zgrad=ZGRAD_GROUND, bool=false, int brightness=0, int tint=0, ShapeSet const * zshapefile=0, int zshapenum=0, Point2D zoff=Point2D(0,0), ShapeFlags_Type flags=SHAPE_NORMAL) const;
 		virtual void Draw_A_VXL(VoxelDataStruct const & voxeldata, int frame, int key, VoxelIndexClass * cache, Rect const & cliprect, Point2D const & point, Matrix3D const & matrix, int brightness, ShapeFlags_Type flags, int unknown) const;
 		virtual void Berzerk(void) {};
 		virtual void Start_Fear(void) {};
@@ -226,7 +226,7 @@ class FootClass : public TechnoClass
 		virtual int Get_Z_Adjust(void) const override;
 		virtual ZGradientType Get_Z_Gradient(void) const override;
 		virtual void Draw_Action_Line(void) const override;
-		void Draw_Voxel_Shadow(VoxelDataStruct const & voxeldata, int layer_index, int key, VoxelIndexClass * cache, Rect const & cliprect, Point2D const & point, Matrix3D const & matrix, bool force_cache) const;
+		void Draw_Voxel_Shadow(VoxelDataStruct const & voxeldata, int layer_index, int key, VoxelIndexClass * cache, Rect const & cliprect, Point2D const & point, Matrix3D const & matrix, bool force_cache, Surface * surface, int shadow_x, int shadow_y) const;
 
 		virtual ActionType What_Action(ObjectClass const *, bool disallow_force = false) const override;
 		virtual ActionType What_Action(Cell const &, bool check_fog = false, bool disallow_force = false) const override;
@@ -293,9 +293,9 @@ class FootClass : public TechnoClass
 		PathStruct * Find_Path(Cell const & dest, FacingType * final_moves, int maxlen, MoveType threshhold, int path_offset, int avoidance);
 };
 
-inline void FootClass::Draw_Object(ShapeSet const * shapefile, int shapenum, Point2D const & xy, Rect const & rect, Dir256 rotation, int scale, int zadjust, ZGradientType zgrad, bool zwrite, int brightness, ShapeSet const * zshapefile, int zshapenum, Point2D zoff, ShapeFlags_Type negflags) const
+inline void FootClass::Draw_Object(ShapeSet const * shapefile, int shapenum, Point2D const & xy, Rect const & rect, Dir256 rotation, int scale, int zadjust, ZGradientType zgrad, bool zwrite, int brightness, int tint, ShapeSet const * zshapefile, int zshapenum, Point2D zoff, ShapeFlags_Type negflags) const
 {
-	Techno_Draw_Object(shapefile, shapenum, xy, rect, rotation, scale, zadjust, zgrad, zwrite, brightness, zshapefile, zshapenum, zoff, negflags);
+	Techno_Draw_Object(shapefile, shapenum, xy, rect, rotation, scale, zadjust, zgrad, zwrite, brightness, tint, zshapefile, zshapenum, zoff, negflags);
 }
 
 inline FootClass * AbstractClass::As_FootClass(void)

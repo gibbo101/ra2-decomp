@@ -5,6 +5,7 @@
 #pragma once
 
 #include "coord.h"
+#include "face.h"
 #include "globals.h"
 #include "irtti.h"
 #include "notice.h"
@@ -85,7 +86,7 @@ class AbstractClass : public IPersistStream, public IRTTITypeInfo, public INotic
 		virtual void Detach(AbstractClass const * target, bool all = true);
 
 		virtual RTTIType Fetch_RTTI(void) const = 0;
-		virtual int Fetch_Object_Size(bool oldsave) const = 0;
+		virtual int Fetch_Object_Size(void) const = 0;
 		virtual void Compute_CRC(CRCEngine &) const;
 
 		virtual HousesType Owner(void) const;
@@ -107,7 +108,7 @@ class AbstractClass : public IPersistStream, public IRTTITypeInfo, public INotic
 
 		virtual void AI(void);
 
-		DirStruct * GetTargetDirection(DirStruct * dir, AbstractClass const * target) const;
+		DirType GetTargetDirection(AbstractClass const * target) const;
 
 #ifdef _DEBUG
 		virtual void Debug_Dump(MonoClass *mono) const {};

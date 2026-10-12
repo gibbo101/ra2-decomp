@@ -85,7 +85,7 @@ class AnimClass : public ObjectClass
 		static void Do_Atom_Damage(HousesType ownerhouse, Cell const & cell);
 
 		virtual RTTIType Fetch_RTTI(void) const override;
-		virtual int Fetch_Object_Size(bool oldsave) const override;
+		virtual int Fetch_Object_Size(void) const override;
 		virtual void Compute_CRC(CRCEngine &) const override;
 		virtual bool Limbo(void) override;
 		virtual void Delete_Me(void) override;
@@ -112,6 +112,8 @@ class AnimClass : public ObjectClass
 
 		Coord Next_Flaming_Guy_Coord(void);
 		bool Is_Valid_Flaming_Guy_Cell(Cell const & cell);
+		void FUN_00424C90(BulletClass * bullet);
+		void FUN_00424CA0(HouseClass * house);
 
 		virtual BounceResultType Bounce_AI(void);
 		virtual int Stage_Count(void) const;

@@ -229,7 +229,7 @@ class CellClass : public AbstractClass
 		void Detach(AbstractClass const * target);
 
 		virtual RTTIType Fetch_RTTI(void) const override;
-		virtual int Fetch_Object_Size(bool oldsave) const override;
+		virtual int Fetch_Object_Size(void) const override;
 
 		LEPTON Get_Height(Point2D const & point = Point2D(CELL_LEPTON_W / 2, CELL_LEPTON_H / 2)) const;
 		bool Can_Tiberium_Germinate(TiberiumClass const * tiberium) const;

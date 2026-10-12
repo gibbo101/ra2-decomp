@@ -606,3 +606,6 @@ AbilityFlagsType CCINIClass::Get_Abilities(char const * section, char const * en
 	}
 	return(defvalue);
 }
+
+// FUNCTION: 0x00477EC0 ?$DynamicVectorClass@H::Add
+template class DynamicVectorClass<int>;
