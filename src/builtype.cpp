@@ -233,6 +233,280 @@ void BuildingTypeClass::Init_Anim(BStateType state, int start, int count, int ra
 	((int &)Anims[state].Rate) = rate;
 }
 
+struct FileSystem {
+	static void const * LoadFile(char const * name, bool flag);
+};
+
+class SHPStruct
+{
+	public:
+		short Zero;
+		short Width;
+		short Height;
+		short Count;
+		Rect GetFrameBounds(int frame) const;
+		void * GetPixels(int frame) const;
+};
+
+// FUNCTION: 0x0045E8F0
+void BuildingTypeClass::Fetch_Z_Data(void)
+{
+	if (BuildingZShape == NULL) {
+		BuildingZShape = FileSystem::LoadFile("BUILDNGZ.SHA", false);
+		((SHPStruct const *)BuildingZShape)->GetFrameBounds(0);
+		char * data = (char *)((SHPStruct const *)BuildingZShape)->GetPixels(0);
+		int width = ((SHPStruct const *)BuildingZShape)->Width;
+		int height = ((SHPStruct const *)BuildingZShape)->Height;
+
+		for (int h = 0; h < height; h++) {
+			for (int w = 0; w < width; w++) {
+				if (data[h * width + w] != 0) {
+					data[h * width + w] -= 0x41;
+				}
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x0045E970
+void BuildingTypeClass::Init(TheaterType theater)
+{
+	Fetch_Z_Data();
+	PowerOffShapes = FileSystem::LoadFile("POWEROFF.SHP", false);
+	WrenchShapes = FileSystem::LoadFile("WRENCH.SHP", false);
+
+	char fullname[_MAX_FNAME+_MAX_EXT];
+
+	int maxcloak = 0;
+
+	for (StructType sindex = STRUCT_FIRST; sindex < BuildingTypes.Count(); sindex++) {
+		BuildingTypeClass * classptr = BuildingTypes[sindex];
+
+		maxcloak = MAX(maxcloak, classptr->CloakRadiusInCells);
+
+		if (classptr->IsTheater) {
+			if (!classptr->IsDemandLoad) {
+				_makepath(fullname, NULL, NULL, classptr->Graphic_Name(), Theaters[theater].Suffix);
+				classptr->ImageData = FileSystem::LoadFile(fullname, false);
+			} else {
+				if (classptr->ImageData != NULL) {
+					delete (ShapeSet *)classptr->ImageData;
+					classptr->ImageData = NULL;
+					classptr->ImageAllocated = false;
+				}
+			}
+
+			if (!classptr->IsDemandLoadBuildup) {
+				_makepath(fullname, NULL, NULL, classptr->BuildupFilename, Theaters[theater].Suffix);
+				classptr->BuildupData = FileSystem::LoadFile(fullname, false);
+			} else {
+				if (classptr->BuildupData != NULL) {
+					delete (ShapeSet *)classptr->BuildupData;
+					classptr->BuildupData = NULL;
+					classptr->BuildupLoaded = false;
+				}
+			}
+
+			if (classptr->BuildupData) {
+				int timedelay = 1;
+				int count = ((SHPStruct const *)classptr->BuildupData)->Count;
+				if (count != 0) {
+					timedelay = (5 * TICKS_PER_SECOND) / count;
+				}
+				classptr->Init_Anim(BSTATE_CONSTRUCTION, 0, count, timedelay);
+			}
+		} else if (classptr->IsNewTheater) {
+			if (classptr->IsDemandLoad) {
+				if (classptr->ImageData != NULL) {
+					delete (ShapeSet *)classptr->ImageData;
+					classptr->ImageData = NULL;
+					classptr->ImageAllocated = false;
+				}
+			}
+			if (classptr->IsDemandLoadBuildup) {
+				if (classptr->BuildupData != NULL) {
+					delete (ShapeSet *)classptr->BuildupData;
+					classptr->BuildupData = NULL;
+					classptr->BuildupLoaded = false;
+				}
+			}
+			classptr->Fetch_Building_Normal_Image(theater);
+		}
+	}
+
+	if (maxcloak != 0) {
+		delete CloakingSurface;
+		CloakingSurface = new BSurface(maxcloak + 16, maxcloak + 16, 1);
+	}
+}
+
+// FUNCTION: 0x0045EBD0
+Point3D BuildingTypeClass::Pixel_Dimensions(void) const
+{
+	SHPStruct const * data = (SHPStruct const *)Get_Image_Data();
+	int w;
+	int h;
+	if (data != NULL) {
+		Rect r = data->GetFrameBounds(0);
+		w = r.Width;
+		h = r.Height;
+	} else {
+		w = 0;
+		h = 0;
+	}
+	return(Point3D(w, w, h));
+}
+
+// FUNCTION: 0x0045EC20
+Cell const * BuildingTypeClass::Occupy_List(bool placement) const
+{
+	static Cell const _templap[] = {REFRESH_EOL};
+	if (OccupyList != NULL) {
+		return(OccupyList);
+	}
+	return(_templap);
+}
+
+// FUNCTION: 0x0045EC80 $E
+// FUNCTION: 0x0045EC90
+int BuildingTypeClass::Width(void) const
+{
+	return(SizeWidth[Size]);
+}
+
+// FUNCTION: 0x0045ECA0
+int BuildingTypeClass::Height(bool bib) const
+{
+	return(SizeHeight[Size] + ((bib && IsBibbed) ? 1 : 0));
+}
+
+// FUNCTION: 0x0045ECE0
+int BuildingTypeClass::Max_Pips(void) const
+{
+	int maxpips = (Width() * 60) / 8;
+
+	switch (PipScale) {
+		case PIPSCALE_TIBERIUM:
+			if (IsWeeder) {
+				return(Bound((int)(Rule->WeedCapacity), 0, maxpips));
+			} else {
+				return(Bound((int)(Capacity), 0, maxpips));
+			}
+
+		case PIPSCALE_POWER:
+			return(maxpips);
+
+		default:
+			return(BASECLASS::Max_Pips());
+	}
+}
+
+// FUNCTION: 0x0045ED50
+int BuildingTypeClass::Raw_Cost(void) const
+{
+	int cost = BASECLASS::Raw_Cost();
+
+	if (this == Rule->PadAircraft[0]->Dock[0] && !Rule->IsSeparate) {
+		cost -= (Rule->PadAircraft[0]->Raw_Cost() + Rule->PadAircraft[1]->Raw_Cost())/2;
+	}
+	if (FreeUnit != NULL) {
+		cost -= FreeUnit->Raw_Cost();
+		cost = MAX(cost, 0);
+	}
+	return(cost);
+}
+
+// FUNCTION: 0x0045EDD0
+int BuildingTypeClass::Cost_Of(HouseClass * house) const
+{
+	int cost = BASECLASS::Cost_Of(house);
+
+	if (this == Rule->PadAircraft[0]->Dock[0] && !Rule->IsSeparate) {
+		cost += (Rule->PadAircraft[0]->Cost_Of(house) + Rule->PadAircraft[1]->Cost_Of(house))/2;
+	}
+	if (FreeUnit != NULL) {
+		cost += FreeUnit->Cost_Of(house);
+		cost = MAX(cost, 0);
+	}
+	return(cost);
+}
+
+// FUNCTION: 0x0045EE70
+int BuildingTypeClass::Flush_For_Placement(Cell const & cell, HouseClass * house) const
+{
+	bool again = false;
+	if (cell != CELL_NONE) {
+		Cell const * list = Occupy_List(true);
+
+		while (*list != REFRESH_EOL) {
+			Cell newcell = cell + *list++;
+
+			if (Map.In_Radar(newcell)) {
+				CellClass & cptr = Map[newcell];
+				if (cptr.Overlay != OVERLAY_NONE && (this != Rule->WallTower || cptr.Overlay != OVERLAY_BRICK_WALL)) {
+					return(2);
+				}
+				ObjectClass * occupier = cptr.Cell_Occupier();
+				if (occupier != NULL) {
+					if (occupier->RTTI == RTTI_TERRAIN) {
+						return(2);
+					}
+					if (occupier->AbstractFlags & 1) {
+						TechnoClass * techno = (TechnoClass *)occupier;
+						if (techno->RTTI == RTTI_BUILDING) {
+							if (!((BuildingClass *)techno)->Can_Upgrade(this, house)) {
+								return(2);
+							}
+						} else {
+							if (techno->House->Is_Ally(house) && techno->Is_Foot()) {
+								again = true;
+								if (((FootClass *)techno)->NavCom == NULL || &Map[techno->Get_Coord()] == ((FootClass *)techno)->NavCom) {
+									Map[newcell].Incoming(COORD_NONE, true, true);
+								}
+							} else {
+								return(2);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	if (again) {
+		return(1);
+	} else {
+		return(0);
+	}
+}
+
+void FUN_005F9710(char * name);
+
+// FUNCTION: 0x0045F040
+void const * BuildingTypeClass::Get_Image_Data(void) const
+{
+	if (ImageData == NULL && IsDemandLoad) {
+		if (TheaterImageFile[0] != '\0') {
+			CCFileClass file(TheaterImageFile);
+			file.Is_Available(false);
+			(void *&)ImageData = Load_Alloc_Data(file);
+			if (ImageData != NULL) {
+				(bool &)ImageAllocated = true;
+			} else {
+				char fallback[260];
+				strncpy(fallback, TheaterImageFile, 19);
+				FUN_005F9710(fallback);
+				CCFileClass file2(fallback);
+				(void *&)ImageData = Load_Alloc_Data(file2);
+				if (ImageData != NULL) {
+					(bool &)ImageAllocated = true;
+				}
+			}
+		}
+		return(ImageData);
+	}
+	return(ImageData);
+}
+
 // FUNCTION: 0x00464A70
 Coord const BuildingTypeClass::Coord_Fixup(Coord const & coord) const
 {

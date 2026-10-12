@@ -50,7 +50,7 @@ original compiler turns into that function's exact bytes. MATCH means
    constructor, a compiler-generated destructor), takes `// FUNCTION: <ADDR> Class::Name`
    with no definition after it. A template instance takes its mangled class name
    (`// FUNCTION: 0x0063E540 ?$DynamicVectorClass@H::Add`) and `template class X<T>;`
-   to force emission; VC6 ignores `template bool X<int>::f(...)`.
+   to force emission; an operator is named as written (`?$TPoint2D@H::operator==`); VC6 ignores `template bool X<int>::f(...)`.
 4. `uv run tools/check.py build/spike/<ADDR>/<module>.cpp <ADDR> --overlay build/spike/<ADDR>/include`
 5. Read the diff, change the source, repeat.
 
@@ -168,6 +168,8 @@ Each entry: what the diff showed, then the source change that fixed it.
 - A class returned by value: a temporary and a named local give different frames
   (Wstring in 0x0046DFD0 needed the temporary).
 - `Coord c = p->F();` copies from the return pointer; a `const &` argument does not.
+- A frame 8 bytes too big is often a Coord temporary the original overlaps with a dead
+  slot: pass it by value into a file-local inline helper (`Coord_Pixel` in 0x0073CEC0).
 
 ### Inlining
 - A TibSun out-of-line function may be inline in YR, or the reverse (a function placed
@@ -181,8 +183,10 @@ Each entry: what the diff showed, then the source change that fixed it.
   until it stays; each helper must contain a call (Preview_Cell_Color needed three).
 - A callee the original inlines that lives in the same module is defined in that file
   (`Do_AnimTypes`, `Read_X`); define it there and VC6 inlines it.
-- Each function has an inline budget, spent from the last member destructor backwards:
-  moving one member's cleanup into a file-local inline helper shifts which stay calls.
+- Each function has an inline budget, spent from the end of the function backwards:
+  moving one member's cleanup into a file-local inline helper shifts which stay calls,
+  and a late expression's shape decides whether an earlier call inlines
+  (`Clear_Occupy_Bit(Coord(Position))`, not `PositionCoord`, in 0x0051DBD0).
 - Nested inline decisions depend on how many expansions a function already holds; a
   code-neutral inline helper can flip them.
 - A plain function defined above its callers is inlined and also emitted. One too big
@@ -236,8 +240,10 @@ Each entry: what the diff showed, then the source change that fixed it.
   `void QueueMission(MissionType, bool)` and 0x1EC is `bool Commence(void)`.
 - MSVC lays out overloaded virtuals of one name in reverse declaration order: declare
   them in the reverse of the exe's slots (RadioClass's three Transmit_Message).
-- An unknown virtual: count slots back from a known one in the header (0x350
-  IsPowerOnline, 0x3AC IsCloseEnoughToAttack) before adding a declaration.
+- An unknown virtual: `headercheck.py <Class>` prints every slot with its name; look the
+  offset up there before adding a declaration.
+- A function that matches YRpp's address may be TS's under another name (FindInfantry-
+  Subposition is Closest_Free_Spot): compare with TibSun before adding a member.
 - A TS layout can agree with YR's for a prefix only: run headercheck before porting a
   function that reaches past a class's proven part.
 - Where YRpp groups members into a struct and TS has flat fields, use a nested struct

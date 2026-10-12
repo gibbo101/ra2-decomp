@@ -169,8 +169,9 @@ class BuildingClass : public TechnoClass
 		bool Add_Upgrade(void);
 		bool Remove_Upgrade(void);
 		void Sell_All_Upgrades(void);
+		bool CanBeOccupiedBy(InfantryClass * infantry) const;
 		virtual ObjectTypeClass const * Class_Of(void) const override;
-		virtual char const * Full_Name(void) const override;
+		virtual wchar_t const * Full_Name(void) const override;
 		virtual DirType Fire_Direction(void) const override;
 		virtual bool IsStrange(void) const override;
 		virtual bool CanBeSelectedNow(void) const override;

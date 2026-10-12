@@ -41,7 +41,7 @@ class UnitClass : public FootClass
 
 		virtual void Init(void) override;
 		virtual ObjectTypeClass const * Class_Of(void) const override;
-		virtual char const * Full_Name(void) const override;
+		virtual wchar_t const * Full_Name(void) const override;
 		virtual void Detach(AbstractClass const * target, bool all = true) override;
 		virtual RTTIType Fetch_RTTI(void) const override;
 		virtual int Fetch_Object_Size(void) const override;
@@ -55,6 +55,8 @@ class UnitClass : public FootClass
 
 		bool Goto_Clear_Spot(void);
 		bool Try_To_Deploy(void);
+		void Deploy(void);
+		void Undeploy(void);
 		virtual void Scatter(Coord const &, bool forced=false, bool nokidding=false) override;
 		bool Flag_Attach(HousesType house);
 		bool Flag_Remove(void);

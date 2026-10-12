@@ -383,6 +383,7 @@ class TechnoClass : public RadioClass
 		void FUN_0070DC70(int which);
 		int FUN_0070DDF0(void);
 		void GattlingRateUp(int rate);
+		void ReleaseLocomotor(bool set_target);
 		void GattlingRateDown(int rate);
 		bool FUN_0070E240(WeaponDataStruct const * weapon);
 		virtual FacingType Desired_Load_Dir(ObjectClass * , Cell & moveto) const;

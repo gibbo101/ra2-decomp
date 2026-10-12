@@ -84,7 +84,7 @@
 #include "bench.hh"
 #include "tube.hh"
 
-// FUNCTION: 0x006F2AD0 $E221
+// FUNCTION: 0x006F2AD0 $E223
 CDTimerClass<FrameTimerClass> TechnoClass::ActionLineTimer;
 
 // FUNCTION: 0x006F2AF0

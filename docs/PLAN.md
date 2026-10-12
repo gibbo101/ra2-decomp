@@ -676,6 +676,22 @@ the shroud shape (EBP frame), BulletClass::Unlimbo (72.8%, x87 spill), and
 BuildingClass's barrel pitch (98.5%). Cost: about 2.9M tokens, 65 minutes. Merge gate:
 1,774 of 1,774 (262.1 KB).
 
+### Batch 5 (12 October 2026)
+
+Nine game-object modules: aircraft, Infantry, Unit, rules, techtype, houstype, anim,
+builtype, Super. **105 of 108 matched**, the best batch yet: most of their classes were
+already proven, so the Sonnet tier landed 87 alone. The header merge settled what the
+agents asked for against TibSun before adding anything: three YRpp names
+(FindInfantrySubposition, CurrentPlayer, AnimTypeClass::Array) turned out to be TS's
+Closest_Free_Spot, PlayerPtr and AnimTypes, already declared. It gave ActionType YR's 73
+values, TheaterDataType YR's layout (checked against all six theaters in the exe), and
+SideClass and the 12-argument Bit_Blit. The checker now takes operator names in markers,
+which landed `TPoint2D<int>::operator==`. The merge deleted an earlier batch's overlay
+along with this batch's; the banked AnimClass constructor now lists the five
+declarations it needs, and the merge brief keeps other batches' files. Banked: two
+aircraft missions (76%, registers and inline budget) and the voxel blitter (51%).
+Cost: about 2.0M tokens, 54 minutes. Merge gate: 1,880 of 1,880 (286.1 KB).
+
 ### Decide before the first batch
 
 - **Module layout.** Which function lives in which source file, and the link order, decide

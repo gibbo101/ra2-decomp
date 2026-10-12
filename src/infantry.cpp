@@ -45,6 +45,7 @@
 #include "slavemgr.h"
 #include "scheme.h"
 #include "session.h"
+#include "stringtable.h"
 #include "sun.h"
 #include "swizzle.h"
 #include "tactical.h"
@@ -675,6 +676,284 @@ deploy_fire:
 	}
 
 	return(BASECLASS::Stop_Driver());
+}
+
+// FUNCTION: 0x0051DBD0
+bool InfantryClass::Start_Driver(Coord & headto)
+{
+	Coord old = headto;
+
+	headto = Map[headto].Closest_Free_Spot(Move_Coord(headto, DirType().Direction(Center_Coord(), headto) + ((DIR_S << 8) - 1), CELL_LEPTON / 2 - 4), false, Map[headto].IsUnderBridge, false);
+	if (headto == COORD_NONE && Can_Enter_Cell(&Map[old]) == MOVE_OK) {
+		headto = Map[old].Closest_Free_Spot(Move_Coord(old, DirType().Direction(Center_Coord(), headto) + ((DIR_S << 8) - 1), CELL_LEPTON / 2), true, Map[old].IsUnderBridge, false);
+	}
+
+	if (headto != COORD_NONE && BASECLASS::Start_Driver(headto)) {
+		if (!IsActive) return(false);
+		Clear_Occupy_Bit(Coord(Position));
+		Set_Occupy_Bit(headto);
+		return(true);
+	}
+
+	return(false);
+}
+
+// FUNCTION: 0x0051DF10
+bool InfantryClass::Limbo(void)
+{
+	Locomotion->Stop_Movement_Animation();
+	unknown_int_6E8 = 2;
+	IsProne = false;
+	Doing = DO_STAND_READY;
+	return(FootClass::Limbo());
+}
+
+// FUNCTION: 0x0051DF60
+BulletClass * InfantryClass::Fire_At(AbstractClass * target, int which)
+{
+	IsFiring = false;
+
+	BulletClass * bullet = BASECLASS::Fire_At(target, which);
+	if (bullet != NULL && !IsInLimbo) {
+		if (Class->IsFraidyCat && !Ammo) {
+			Fear = (FearType)0x12c;
+			if (Get_Mission() == MISSION_ATTACK || Get_Mission() == MISSION_HUNT) {
+				QueueMission(MISSION_GUARD, false);
+			}
+		}
+	}
+	return(bullet);
+}
+
+// FUNCTION: 0x0051DFF0
+bool InfantryClass::Unlimbo(Coord const & xcoord, Dir256 facing)
+{
+	int height = Map.Get_Height_GL(xcoord);
+	Coord coord = xcoord;
+
+	if (coord.Z == height) {
+		coord = Map[xcoord].Closest_Free_Spot(xcoord, ScenarioInit || !Map.In_Local_Radar(xcoord.As_Cell()), false, false);
+		if (coord == COORD_NONE) {
+			return(false);
+		}
+		coord.Z = height;
+	}
+
+	if (BASECLASS::Unlimbo(coord, facing)) {
+		if (Class->SightRange == 0) {
+			IsDiscoveredByPlayer = false;
+		}
+
+		if (coord.Z <= height + BRIDGE_LEPTON_HEIGHT) {
+			Set_Occupy_Bit(coord);
+		}
+
+		unknown_int_6E8 = 2;
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x0051E140
+AbstractClass * InfantryClass::Greatest_Threat(ThreatType threat, Coord const & coord, bool onlyenemy) const
+{
+	if (!House->Is_Human_Player() && Class->IsEngineer) {
+		if (House->ToCapture != NULL && Distance_To(House->ToCapture) < 15 * CELL_LEPTON) {
+			return(House->ToCapture);
+		}
+		threat = ThreatType(threat | THREAT_CAPTURE);
+	}
+
+	if (Class->IsVehicleThief) {
+		if (NavCom != NULL && NavCom->Is_Techno() && ((TechnoClass *)NavCom)->IsStrange() && !((TechnoClass *)NavCom)->Techno_Type_Class()->IsTrain && Distance(NavCom) < 15 * CELL_LEPTON) {
+			return(NavCom);
+		}
+	}
+
+	if (!Is_Weapon_Equipped()) {
+		if (!Class->IsCapture && !Class->IsVehicleThief) {
+			return(NULL);
+		}
+		if (Class->IsVehicleThief) {
+			threat = ThreatType((threat & ~(THREAT_BUILDINGS|THREAT_VEHICLES|THREAT_BOATS|THREAT_AIR)) | THREAT_VEHICLES);
+		}
+	}
+
+	if ((threat & (THREAT_INFANTRY|THREAT_VEHICLES|THREAT_BUILDINGS|THREAT_TIBERIUM|THREAT_CIVILIANS|THREAT_POWER|THREAT_FACTORIES|THREAT_BASE_DEFENSE|0x8000|0x10000)) == 0) {
+		if (Get_Class_Weapon_Data(0)->Weapon != NULL) {
+			threat = ThreatType(threat | Get_Class_Weapon_Data(0)->Weapon->Allowed_Threats());
+		}
+		if (Get_Class_Weapon_Data(1)->Weapon != NULL) {
+			threat = ThreatType(threat | Get_Class_Weapon_Data(1)->Weapon->Allowed_Threats());
+		}
+	}
+
+	if (Is_Weapon_Equipped() && Get_Class_Weapon_Data(0)->Weapon->WarheadPtr->IsOrganic) {
+		threat = ThreatType(threat & ~(THREAT_BUILDINGS|THREAT_VEHICLES|THREAT_BOATS|THREAT_AIR));
+	}
+
+	if ((Class->IsBomber || Has_Ability(ABILITY_C4)) && !House->Is_Human_Player()) {
+		threat = ThreatType(threat | THREAT_BUILDINGS);
+	}
+
+	if (Class->IsThief) {
+		threat = ThreatType(threat | THREAT_CAPTURE | THREAT_TIBERIUM);
+	}
+	return(BASECLASS::Greatest_Threat(threat, coord, onlyenemy));
+}
+
+// FUNCTION: 0x0051F190
+bool InfantryClass::Active_Click_With(ActionType action, ObjectClass * object, bool is_waypoint)
+{
+	action = What_Action(object, is_waypoint);
+
+	switch (action) {
+		case ACTION_GREPAIR:
+		case ACTION_DAMAGE:
+		case ACTION_CAPTURE:
+			action = ACTION_CAPTURE;
+			break;
+
+		case ACTION_HEAL:
+		case 57:
+			action = ACTION_ATTACK;
+			break;
+
+		case ACTION_SABOTAGE:
+		case ACTION_ATTACK:
+		case ACTION_GUARD_AREA:
+		case ACTION_MOVE:
+			action = action;
+			break;
+
+		default:
+			break;
+	}
+
+	if (object == this && action == ACTION_ATTACK) {
+		return(false);
+	}
+	if (TechnoClass::Berzerk) {
+		return(false);
+	}
+	return(BASECLASS::Active_Click_With(action, object, is_waypoint));
+}
+
+// FUNCTION: 0x0051F250
+bool InfantryClass::Active_Click_With(ActionType action, Cell const & cell, Cell const & cell2, bool is_waypoint)
+{
+	if (Doing == 0x1b) goto deploy_fire;
+	if (Doing == 0x1c) goto deploy_fire;
+	if (Doing == 0x1d) goto deploy_fire;
+	if (Doing == 0x1e) {
+deploy_fire:
+		if (What_Action(cell, false, is_waypoint) == ACTION_NOMOVE) {
+			return(false);
+		}
+	}
+	if (TechnoClass::Berzerk) {
+		return(false);
+	}
+	return(BASECLASS::Active_Click_With(action, cell, cell2, is_waypoint));
+}
+
+// FUNCTION: 0x0051F2C0
+wchar_t const * InfantryClass::Full_Name(void) const
+{
+	if (IsTechnician) {
+#line 4636 "D:\\ra2mdpost\\Infantry.CPP"
+		return(StringTable::LoadString("TXT_TECHNICIAN", NULL, __FILE__, __LINE__));
+	}
+
+	if (IsDisguised() && !House->Is_Ally(PlayerPtr)) {
+		return(GetDisguise(true)->UIName);
+	}
+
+	return(Class->UIName);
+}
+
+// FUNCTION: 0x0051F330
+void InfantryClass::Rocking_AI(void)
+{
+	int weapon = What_Weapon_Should_I_Use(NULL);
+	if (TarCom != NULL && In_Range(TarCom, weapon)) {
+		return;
+	}
+
+	AbstractClass * target = Greatest_Threat(THREAT_RANGE, PositionCoord, false);
+	if (TarCom != NULL || target != NULL) {
+		Assign_Target(target);
+	}
+	if (target != NULL) {
+		return;
+	}
+	if (CurrentMission != MISSION_GUARD && !Techno_Type_Class()->JumpJet) {
+		Enter_Idle_Mode(false, true);
+	}
+}
+
+// FUNCTION: 0x0051F3E0
+int InfantryClass::Do_MISSION_ATTACK(void)
+{
+	if ((Class->IsBomber || Has_Ability(ABILITY_C4)) && TarCom != NULL && TarCom->Fetch_RTTI() == RTTI_BUILDING && ((BuildingClass *)TarCom)->Class->CanC4 && !((BuildingClass *)TarCom)->Class->IsInvisibleInGame) {
+		Assign_Destination(TarCom, true);
+		QueueMission(MISSION_SABOTAGE, false);
+		return(1);
+	}
+
+	if (!House->Is_Human_Player() && TarCom != NULL && TarCom->Fetch_RTTI() == RTTI_BUILDING && (Class->IsCapture || ((Class->Occupier || Class->Assaulter) && ((BuildingClass *)TarCom)->CanBeOccupiedBy(this)))) {
+		Assign_Destination(TarCom, true);
+		Set_Mission(MISSION_CAPTURE);
+		return(1);
+	}
+
+	if (House->Is_Human_Player()) {
+		if (Doing == 0x1b) goto deploy_fire;
+		if (Doing == 0x1c) goto deploy_fire;
+		if (Doing == 0x1d) goto deploy_fire;
+		if (Doing == 0x1e) {
+deploy_fire:
+			Rocking_AI();
+			return(Current_Mission_Control().Normal_Delay() + Random_Pick(0, 2));
+		}
+	}
+
+	return(BASECLASS::Do_MISSION_ATTACK());
+}
+
+// FUNCTION: 0x0051F540
+int InfantryClass::Do_MISSION_HUNT(void)
+{
+	if (!House->Is_Human_Player() && TarCom != NULL && TarCom->Fetch_RTTI() == RTTI_BUILDING && (Class->IsCapture || ((Class->Occupier || Class->Assaulter) && ((BuildingClass *)TarCom)->CanBeOccupiedBy(this)))) {
+		Assign_Destination(TarCom, true);
+		Set_Mission(MISSION_CAPTURE);
+		return(1);
+	}
+
+	if (!House->Is_Human_Player()) {
+		if (Doing == 0x1b) goto deploy_fire;
+		if (Doing == 0x1c) goto deploy_fire;
+		if (Doing == 0x1d) goto deploy_fire;
+		if (Doing == 0x1e) {
+deploy_fire:
+			if (TarCom == NULL) {
+				Do_Action((DoType)0x1f, false, false);
+				return(1);
+			}
+		}
+	}
+
+	return(BASECLASS::Do_MISSION_HUNT());
+}
+
+// FUNCTION: 0x0051F620
+int InfantryClass::Do_MISSION_GUARD(void)
+{
+	int delay = FUN_00521320();
+	if (delay == -1) {
+		delay = BASECLASS::Do_MISSION_GUARD();
+	}
+	return(delay);
 }
 
 // FUNCTION: 0x00521B00

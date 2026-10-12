@@ -53,6 +53,17 @@
 #include "bench.hh"
 #include <cstring>
 
+namespace Powerups {
+extern char const * Effects[19];
+extern int Weights[19];
+extern AnimType Anims[19];
+extern double Arguments[19];
+extern bool Naval[19];
+}
+void __fastcall FUN_006CFD20(int button, int slot);
+int __fastcall FUN_006CFCC0(char const * name);
+void __fastcall FUN_006CFDB0(int count);
+extern int DAT_008427CC;
 template<> void VectorClass<ColorScheme *>::Clear(void);
 void FUN_006269A0(void);
 void __fastcall FUN_00626AB0(char const * name, HSVClass & hsv);
@@ -342,7 +353,19 @@ bool RulesClass::Heap_Maximums(CCINIClass const & ini)
 	return(true);
 }
 
-
+// FUNCTION: 0x00672280
+bool RulesClass::Do_InfantryTypes(CCINIClass const & ini)
+{
+	static char const * INFANTRYTYPES = "InfantryTypes";
+	char buffer[32];
+	int count = ini.Entry_Count(INFANTRYTYPES);
+	for (int i = 0; i < count; i++) {
+		if (ini.Get_String(INFANTRYTYPES, ini.Get_Entry(INFANTRYTYPES, i), "", buffer, sizeof(buffer))) {
+			InfantryTypeClass::Find_Or_Make(buffer);
+		}
+	}
+	return(count > 0);
+}
 
 // FUNCTION: 0x006722F0
 bool RulesClass::Do_HouseTypes(CCINIClass const & ini)
@@ -353,6 +376,60 @@ bool RulesClass::Do_HouseTypes(CCINIClass const & ini)
 	for (int i = 0; i < count; i++) {
 		if (ini.Get_String(HOUSES, ini.Get_Entry(HOUSES, i), "", buffer, sizeof(buffer))) {
 			HouseTypeClass::Find_Or_Make(buffer);
+		}
+	}
+	return(count > 0);
+}
+
+// FUNCTION: 0x00672360
+bool RulesClass::Do_VehicleTypes(CCINIClass const & ini)
+{
+	static char const * VEHICLETYPES = "VehicleTypes";
+	char buffer[32];
+	int count = ini.Entry_Count(VEHICLETYPES);
+	for (int i = 0; i < count; i++) {
+		if (ini.Get_String(VEHICLETYPES, ini.Get_Entry(VEHICLETYPES, i), "", buffer, sizeof(buffer))) {
+			UnitTypeClass::Find_Or_Make(buffer);
+		}
+	}
+	return(count > 0);
+}
+
+// FUNCTION: 0x006723D0
+bool RulesClass::Do_AircraftTypes(CCINIClass const & ini)
+{
+	static char const * AIRCRAFTTYPES = "AircraftTypes";
+	char buffer[32];
+	int count = ini.Entry_Count(AIRCRAFTTYPES);
+	for (int i = 0; i < count; i++) {
+		if (ini.Get_String(AIRCRAFTTYPES, ini.Get_Entry(AIRCRAFTTYPES, i), "", buffer, sizeof(buffer))) {
+			AircraftTypeClass::Find_Or_Make(buffer);
+		}
+	}
+	return(count > 0);
+}
+
+// FUNCTION: 0x00672440
+bool RulesClass::Do_Sides(CCINIClass const & ini)
+{
+	static char const * SIDES = "Sides";
+	int count = ini.Entry_Count(SIDES);
+	DebugString("Processing sides.\n");
+	for (int i = 0; i < count; i++) {
+		char const * name = ini.Get_Entry(SIDES, i);
+		int side = SideClass::From_Name(name);
+		SideClass * sidep;
+		if (side == SIDE_NONE) {
+			sidep = new SideClass(name);
+		} else {
+			sidep = ::Sides[side];
+		}
+		DebugString("Side %d: %s \n", i, (char const *)sidep->IniName);
+		sidep->Houses = ini.Get_House_List(SIDES, name, sidep->Houses);
+		for (int house = 0; house < sidep->Houses.Count(); house++) {
+			side = sidep->Houses[house];
+			HouseTypes[side]->Side = (SideType)::Sides.ID(sidep);
+			DebugString("  %s\n", (char const *)HouseTypes[side]->IniName);
 		}
 	}
 	return(count > 0);
@@ -372,6 +449,20 @@ bool RulesClass::Do_SuperWeaponTypes(CCINIClass const & ini)
 	return(count > 0);
 }
 
+// FUNCTION: 0x00672660
+bool RulesClass::Do_BuildingTypes(CCINIClass const & ini)
+{
+	static char const * BUILDINGTYPES = "BuildingTypes";
+	char buffer[32];
+	int count = ini.Entry_Count(BUILDINGTYPES);
+	for (int i = 0; i < count; i++) {
+		if (ini.Get_String(BUILDINGTYPES, ini.Get_Entry(BUILDINGTYPES, i), "", buffer, sizeof(buffer))) {
+			BuildingTypeClass::Find_Or_Make(buffer);
+		}
+	}
+	return(count > 0);
+}
+
 // FUNCTION: 0x006726D0
 bool RulesClass::Do_TerrainTypes(CCINIClass const & ini)
 {
@@ -382,6 +473,18 @@ bool RulesClass::Do_TerrainTypes(CCINIClass const & ini)
 		if (ini.Get_String(TERRAINTYPES, ini.Get_Entry(TERRAINTYPES, i), "", buffer, sizeof(buffer))) {
 			TerrainTypeClass::Find_Or_Make(buffer);
 		}
+	}
+	return(count > 0);
+}
+
+// FUNCTION: 0x00672740
+bool RulesClass::Do_TeamTypes(CCINIClass & ini)
+{
+	static char const * TEAMS = "Teams";
+	int count = ini.Entry_Count(TEAMS);
+	for (int i = 0; i < count; i++) {
+		TeamTypeClass * team = TGet_Class<TeamTypeClass>(ini, TEAMS, ini.Get_Entry(TEAMS, i), NULL);
+		team->Read_INI(ini);
 	}
 	return(count > 0);
 }
@@ -483,6 +586,120 @@ bool RulesClass::Do_ParticleSystemTypes(CCINIClass const & ini)
 	return(count > 0);
 }
 
+// FUNCTION: 0x00673E80
+bool RulesClass::Powerups(CCINIClass const & ini)
+{
+	static char const * POWERUPS = "Powerups";
+	if (ini.Is_Present(POWERUPS)) {
+		for (int crate = 0; crate < 19; crate++) {
+			char buffer[128];
+			if (ini.Get_String(POWERUPS, ::Powerups::Effects[crate], "0,NONE", buffer, sizeof(buffer))) {
+				char * token = strtok(buffer, ",");
+				if (token) {
+					strtrim(token);
+					::Powerups::Weights[crate] = atoi(token);
+				}
+				token = strtok(NULL, ",");
+				if (token) {
+					strtrim(token);
+					::Powerups::Anims[crate] = Anim_From_Name(token);
+				}
+				token = strtok(NULL, ",");
+				if (token != NULL) {
+					strtrim(token);
+					if (stricmp(token, "yes") == 0) {
+						::Powerups::Naval[crate] = true;
+					} else if (stricmp(token, "no") == 0) {
+						::Powerups::Naval[crate] = false;
+					}
+				}
+				token = strtok(NULL, ",");
+				if (token != NULL) {
+					if (strchr(token, '%') != NULL) {
+						::Powerups::Arguments[crate] = atof(token) * 0.01;
+					} else {
+						strtrim(token);
+						::Powerups::Arguments[crate] = atof(token);
+					}
+				}
+			}
+		}
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00674000
+bool RulesClass::Land_Types(CCINIClass const & ini)
+{
+	static char const * _lands[LAND_COUNT] = {
+		"Clear", "Road", "Water", "Rock", "Wall", "Tiberium",
+		"Beach", "Rough", "Ice", "Railroad", "Tunnel", "Weeds",
+	};
+	for (int land = LAND_FIRST; land < LAND_COUNT; land++) {
+		GroundType * gptr = &Ground[land];
+		if (ini.Is_Present(_lands[land])) {
+			gptr->Cost[SPEED_HOVER] = MIN(ini.Get_Float(_lands[land], "Hover", 1.0), 1.0);
+			gptr->Cost[SPEED_FOOT] = MIN(ini.Get_Float(_lands[land], "Foot", 1.0), 1.0);
+			gptr->Cost[SPEED_TRACK] = MIN(ini.Get_Float(_lands[land], "Track", 1.0), 1.0);
+			gptr->Cost[SPEED_WHEEL] = MIN(ini.Get_Float(_lands[land], "Wheel", 1.0), 1.0);
+			gptr->Cost[SPEED_WINGED] = 1.0f;
+			gptr->Cost[SPEED_FLOAT] = MIN(ini.Get_Float(_lands[land], "Float", 1.0), 1.0);
+			gptr->Cost[SPEED_AMPHIBIOUS] = MIN(ini.Get_Float(_lands[land], "Amphibious", 1.0), 1.0);
+			gptr->Cost[SPEED_CREEP] = MIN(ini.Get_Float(_lands[land], "FloatBeach", 1.0), 1.0);
+			gptr->Build = ini.Get_Bool(_lands[land], "Buildable", false);
+		}
+	}
+	return(true);
+}
+
+// FUNCTION: 0x00674240
+bool RulesClass::IQ(CCINIClass const & ini)
+{
+	static char const * IQCONTROL = "IQ";
+	if (ini.Is_Present(IQCONTROL)) {
+		MaxIQ = ini.Get_Int(IQCONTROL, "MaxIQLevels", MaxIQ);
+		IQSuperWeapons = ini.Get_Int(IQCONTROL, "SuperWeapons", IQSuperWeapons);
+		IQProduction = ini.Get_Int(IQCONTROL, "Production", IQProduction);
+		IQGuardArea = ini.Get_Int(IQCONTROL, "GuardArea", IQGuardArea);
+		IQRepairSell = ini.Get_Int(IQCONTROL, "RepairSell", IQRepairSell);
+		IQCrush = ini.Get_Int(IQCONTROL, "AutoCrush", IQCrush);
+		IQScatter = ini.Get_Int(IQCONTROL, "Scatter", IQScatter);
+		IQContentScan = ini.Get_Int(IQCONTROL, "ContentScan", IQContentScan);
+		IQAircraft = ini.Get_Int(IQCONTROL, "Aircraft", IQAircraft);
+		IQHarvester = ini.Get_Int(IQCONTROL, "Harvester", IQHarvester);
+		IQSellBack = ini.Get_Int(IQCONTROL, "SellBack", IQSellBack);
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x006743D0
+bool RulesClass::Jumpjet_Controls(CCINIClass const & ini)
+{
+	static char const * SECTION = "JumpjetControls";
+	if (ini.Is_Present(SECTION)) {
+		JumpjetTurnRate = ini.Get_Int(SECTION, "TurnRate", JumpjetTurnRate);
+		JumpjetSpeed = ini.Get_Int(SECTION, "Speed", JumpjetSpeed);
+		JumpjetClimb = ini.Get_Float(SECTION, "Climb", JumpjetClimb);
+		JumpjetCruiseHeight = ini.Get_Int(SECTION, "CruiseHeight", JumpjetCruiseHeight);
+		JumpjetAcceleration = ini.Get_Float(SECTION, "Acceleration", JumpjetAcceleration);
+		JumpjetWobblesPerSecond = ini.Get_Float(SECTION, "WobblesPerSecond", JumpjetWobblesPerSecond);
+		JumpjetWobbleDeviation = ini.Get_Int(SECTION, "WobbleDeviation", JumpjetWobbleDeviation);
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00674500
+bool RulesClass::Difficulty(CCINIClass const & ini)
+{
+	Difficulty_Get(ini, Diff[DIFF_EASY], "Easy");
+	Difficulty_Get(ini, Diff[DIFF_NORMAL], "Normal");
+	Difficulty_Get(ini, Diff[DIFF_HARD], "Difficult");
+	return(true);
+}
+
 // FUNCTION: 0x00674550
 bool RulesClass::Do_Movies(CCINIClass const & ini)
 {
@@ -496,6 +713,37 @@ bool RulesClass::Do_Movies(CCINIClass const & ini)
 					::Movies.Add(strdup(buffer));
 				}
 			}
+		}
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00674650
+bool RulesClass::Read_AdvancedCommandBar(CCINIClass const & ini, bool multiplayer)
+{
+	static char const * BAR = "AdvancedCommandBar";
+	static char const * MPBAR = "MultiplayerAdvancedCommandBar";
+	static char const * BUTTONLIST = "ButtonList";
+	static char const * NONE = "";
+	char const * section = multiplayer ? MPBAR : BAR;
+	char buffer[512];
+	if (ini.Is_Present(section)) {
+		for (int i = 0; i < 25; i++) {
+			FUN_006CFD20(i, DAT_008427CC);
+		}
+		if (ini.Get_String(section, BUTTONLIST, NONE, buffer, sizeof(buffer))) {
+			int count = 0;
+			int slot = 0;
+			for (char * token = strtok(buffer, ","); token; token = strtok(NULL, ",")) {
+				int button = FUN_006CFCC0(token);
+				if (button != DAT_008427CC) {
+					FUN_006CFD20(button, slot);
+				}
+				count++;
+				slot++;
+			}
+			FUN_006CFDB0(count);
 		}
 		return(true);
 	}

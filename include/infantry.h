@@ -64,7 +64,7 @@ class InfantryClass : public FootClass
 		virtual void const * Get_Image_Data(void) const override;
 		int Shape_Number(void) const;
 		virtual ObjectTypeClass const * Class_Of(void) const override;
-		virtual const char * Full_Name(void) const override;
+		virtual wchar_t const * Full_Name(void) const override;
 
 		virtual bool Unlimbo(Coord const & coord, Dir256 facing) override;
 		virtual bool Paradrop(Coord const & coord) override;
@@ -98,6 +98,9 @@ class InfantryClass : public FootClass
 		bool Ready_To_Commence(void);
 		virtual int Do_MISSION_ATTACK(void) override;
 		virtual int Do_MISSION_GUARD(void) override;
+		virtual int Do_MISSION_HUNT(void) override;
+		virtual void Rocking_AI(void) override;
+		int FUN_00521320(void);
 		virtual void Berzerk(void) override;
 		virtual void Start_Fear(void) override;
 		virtual void Stop_Fear(void) override;

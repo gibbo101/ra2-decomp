@@ -88,3 +88,12 @@ boolean STDMETHODCALLTYPE HoverLocomotionClass::Is_Moving_Here(CoordStruct to)
 	}
 	return(false);
 }
+
+// FUNCTION: 0x00517310 ?$TPoint2D@H::operator==
+template<class T>
+bool TPoint2D<T>::operator == (TPoint2D<T> const & rvalue) const
+{
+	return(X==rvalue.X && Y==rvalue.Y);
+}
+
+template class TPoint2D<int>;

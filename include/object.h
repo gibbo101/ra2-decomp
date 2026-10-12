@@ -137,7 +137,7 @@ class ObjectClass : public AbstractClass
 		bool Is_Infantry(void) const {return(Fetch_RTTI() == RTTI_INFANTRY);}
 		bool Is_Foot(void) const { if (this == NULL) return(false); unsigned char flag = ((unsigned char)AbstractFlags >> 2) & 1; return(flag != 0); }
 		virtual int Get_Ownable(void) const;
-		virtual char const * Full_Name(void) const {return("");}
+		virtual wchar_t const * Full_Name(void) const {return(L"");}
 		virtual bool Can_Repair(void) const;
 		virtual bool Can_Demolish(void) const;
 		virtual bool Can_Player_Fire(void) const;

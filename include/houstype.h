@@ -19,7 +19,16 @@ class HouseTypeClass : public AbstractTypeClass
 		typedef AbstractTypeClass BASECLASS;
 
 	public:
-		char ParentCountry[25];
+		struct CountryName
+		{
+			char Buffer[25];
+			CountryName(void) { Buffer[0] = '\0'; }
+			CountryName(NoInitClass const &) {}
+			operator char const *(void) const { return(Buffer); }
+			operator char *(void) { return(Buffer); }
+		};
+
+		CountryName ParentCountry;
 		HousesType HeapID;
 		HousesType House;
 		SideType Side;
@@ -77,6 +86,8 @@ class HouseTypeClass : public AbstractTypeClass
 		virtual int Fetch_Object_Size(void) const override;
 		virtual void Compute_CRC(CRCEngine &) const override;
 		virtual int Fetch_Heap_ID(void) const override;
+
+		static DynamicVectorClass<HouseTypeClass *> Array;
 
 		static HousesType From_Name(char const * name);
 		static void One_Time(void);

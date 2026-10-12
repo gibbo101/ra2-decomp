@@ -6,3 +6,8 @@ address,name,symbol,evidence
 0x007C8B3D,operator delete,??3@YAXPAX@Z,YRpp CRT.h _delete; the call target of operator delete in matched 0x0063EE30
 0x005F7090,ObjectTypeClass::ObjectTypeClass,??0ObjectTypeClass@@QAE@PBD@Z,YRpp ObjectTypeClass.h ObjectTypeClass(const char*); passes its argument to AbstractTypeClass(char const *) at matched 0x00410800
 0x005F7320,ObjectTypeClass::ObjectTypeClass,??0ObjectTypeClass@@QAE@ABVNoInitClass@@@Z,passes its argument to AbstractTypeClass(NoInitClass const &) at matched 0x00410960; the call target of new (this) VoxelAnimTypeClass(NoInitClass()) in matched 0x0074B810
+0x0050B6F0,HouseClass::Is_Player_Control,,byte-identical to TibSun's body; called by 0x007404B0 UnitClass::What_Action
+0x00A83D4C,PlayerPtr,,YRpp HouseClass::CurrentPlayer; TibSun's PlayerPtr in 0x007404B0 and earlier matches
+0x008B4150,AnimTypes,,YRpp AnimTypeClass::Array; TibSun's AnimTypes in 0x00422B20 AnimTypeClass lookup
+0x00481180,CellClass::Closest_Free_Spot,,YRpp FindInfantrySubposition; TibSun's argument use, ret 0x14
+0x00703590,TechnoClass::Nearby_Location,,TibSun's body; called by 0x00739CD0 UnitClass undeploy

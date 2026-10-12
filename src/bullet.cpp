@@ -49,8 +49,8 @@ DynamicVectorClass<BulletClass *> BulletClass::ScalableBullets;
 
 extern Cell DAT_0089DDF0;
 
-// FUNCTION: 0x004662E0 $E104
-// FUNCTION: 0x00466320 $E101
+// FUNCTION: 0x004662E0 $E106
+// FUNCTION: 0x00466320 $E103
 
 // FUNCTION: 0x00466380
 BulletClass::BulletClass(void) :
@@ -136,7 +136,7 @@ Cell const * BulletClass::Occupy_List(bool) const
 	return(_list);
 }
 
-// FUNCTION: 0x004666B0 $E107
+// FUNCTION: 0x004666B0 $E109
 
 // FUNCTION: 0x004666C0
 bool BulletClass::Mark(MarkType mark)

@@ -47,4 +47,6 @@ class SlaveManagerClass : public AbstractClass
 		void LostSlave(InfantryClass * slave);
 		void Killed(TechnoClass * killer, HouseClass * owner = NULL);
 		void AllGuard(void);
+		bool ShouldWakeUpNow(void);
+		void FUN_006B0CC0(void);
 };

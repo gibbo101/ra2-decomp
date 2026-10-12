@@ -10,6 +10,7 @@
 #include "coord.h"
 #include "object.h"
 #include "stage.h"
+#include "vector.h"
 
 #include "draw.hh"
 #include "layer.hh"
@@ -68,6 +69,8 @@ class AnimClass : public ObjectClass
 		AudioController StartSoundAudioController;
 		AudioController StopSoundAudioController;
 
+		static DynamicVectorClass<AnimClass *> Array;
+
 		AnimClass(AnimTypeClass const * type, Coord const & coord, int timedelay = 0, int loop = 1, ShapeFlags_Type flags = ShapeFlags_Type(SHAPE_WIN_REL|SHAPE_CENTER), int zadjust = 0, bool reverse = false);
 		AnimClass(NoInitClass const & x) : BASECLASS(x), Animation(x), Bounce(x) {};
 		AnimClass(void);
@@ -79,7 +82,7 @@ class AnimClass : public ObjectClass
 
 		static void Post_Load_Game(void);
 
-		void Attach_To(ObjectClass *obj);
+		void SetOwnerObject(ObjectClass * owner);
 		void Make_Invisible(void) {Invisible = true;};
 		void Make_Visible(void) {Invisible = false;};
 		static void Do_Atom_Damage(HousesType ownerhouse, Cell const & cell);

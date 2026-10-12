@@ -95,7 +95,7 @@ class RulesClass
 		bool Do_SuperWeaponTypes(CCINIClass const & ini);
 		bool Do_BuildingTypes(CCINIClass const & ini);
 		bool Do_TerrainTypes(CCINIClass const & ini);
-		bool Do_TeamTypes(CCINIClass const & ini);
+		bool Do_TeamTypes(CCINIClass & ini);
 		bool Do_SmudgeTypes(CCINIClass const & ini);
 		bool Do_OverlayTypes(CCINIClass const & ini);
 		bool Do_AnimTypes(CCINIClass const & ini);

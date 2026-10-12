@@ -52,7 +52,7 @@ from coff import REL_DIR32, REL_REL32, CoffObject  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 FLAGS = ["/c", "/O2", "/Ob2", "/Gr", "/GR", "/MT", "/DWIN32"]
-ANNOTATION = re.compile(r"^\s*//\s*FUNCTION:\s*(0x[0-9A-Fa-f]+)(?:\s+((?:[\w?$@]+::)*~?[\w?$@]+))?\s*$")
+ANNOTATION = re.compile(r"^\s*//\s*FUNCTION:\s*(0x[0-9A-Fa-f]+)(?:\s+((?:[\w?$@]+::)*(?:operator\S+|~?[\w?$@]+)))?\s*$")
 FORBIDDEN = re.compile(r"\b(__asm|_asm|__emit|_emit)\b|#\s*pragma\s+(optimize|code_seg)")
 PADDING = (0x90, 0xCC)
 TIBSUN = ROOT / "reference/tibsun/code"

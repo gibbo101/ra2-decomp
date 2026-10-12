@@ -493,9 +493,13 @@ class TechnoTypeClass : public ObjectTypeClass
 		bool In_Range(Coord const & coord, AbstractClass * target, WeaponTypeClass * weapon) const;
 		bool HasMultipleTurrets(void) const;
 		void FUN_00717890(int index, int weapon);
+		void FUN_00717820(void);
+		static void FUN_00717840(void);
 		virtual bool Read_INI(CCINIClass & ini) override;
 
 		WeaponDataStruct const * Get_Weapon(int which) const;
+		YRWeaponDataStruct * GetWeapon(int index);
+		YRWeaponDataStruct * GetEliteWeapon(int index);
 		void Set_Weapon(WeaponDataStruct const & weapon, int which);
 
 		static void const * WakeShapes;

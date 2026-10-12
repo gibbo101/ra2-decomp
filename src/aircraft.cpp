@@ -20,6 +20,7 @@
 #include "ccrand.h"
 #include "cell.h"
 #include "dbgprint.h"
+#include "fastmath.h"
 #include "findmake.h"
 #include "house.h"
 #include "houstype.h"
@@ -303,6 +304,10 @@ void AircraftClass::Draw_It(Point2D const & xpoint, Rect const & cliprect) const
 	BASECLASS::Draw_It(xpoint, cliprect);
 }
 
+int __fastcall FUN_0050DA80(HouseClass * house);
+int __fastcall FUN_0050DAC0(HouseClass * house);
+extern Coord DAT_00889E88;
+
 // FUNCTION: 0x00414A10
 void AircraftClass::Draw_Rotors(Point2D const & xy, Rect const & cliprect) const
 {
@@ -349,6 +354,338 @@ int AircraftClass::Do_MISSION_HUNT(void)
 	}
 	return(Current_Mission_Control().Normal_Delay() + Random_Pick(0, 2));
 }
+// FUNCTION: 0x004151E0
+int AircraftClass::Do_MISSION_UNLOAD(void)
+{
+	enum {
+		SEARCH_FOR_LZ,
+		FLY_TO_LZ,
+		LAND_ON_LZ,
+		UNLOAD_PASSENGERS,
+		TAKE_OFF
+	};
+
+	switch (Status) {
+		case SEARCH_FOR_LZ:
+			if (HeightAGL == 0 && (double)PitchAngle == 0 && (NavCom == NULL || (PositionCoord == NavCom->Center_Coord()))) {
+				Status = UNLOAD_PASSENGERS;
+			} else {
+				if (NavCom == NULL && Class->IsDropship && HeightAGL > 0) {
+					BuildingClass * building = TryNearestDockBuilding((TypeList<BuildingTypeClass *> *)&Class->Dock, 0, 0);
+					if (building != NULL) {
+						Assign_Destination(building, true);
+					} else {
+						Assign_Destination(Good_LZ(), true);
+					}
+				} else if (NavCom == NULL) {
+					Status = LAND_ON_LZ;
+				} else if (Is_LZ_Clear(NavCom)) {
+					FootClass * foot = Cargo.Attached_Object();
+					if (foot != NULL && foot->Team && foot->Team->Class->Get_Origin() != CELL_NONE) {
+						Assign_Destination(New_LZ(&Map[foot->Team->Class->Get_Origin()]), true);
+					} else {
+						Assign_Destination(New_LZ(&Map[Scen->Get_Waypoint_Cell((WAYPOINT)0x2bc)]), true);
+						if (Team != NULL) {
+							Team->Assign_Mission_Target(NavCom);
+						}
+					}
+				} else {
+					if (HeightAGL != Class->GetFlightLevel()) {
+						Status = TAKE_OFF;
+					} else {
+						Status = FLY_TO_LZ;
+					}
+				}
+			}
+			break;
+
+		case FLY_TO_LZ:
+			if (!Locomotion->Is_Moving()) {
+				Status = LAND_ON_LZ;
+			}
+			if (!Is_LZ_Clear(NavCom)) {
+				Status = SEARCH_FOR_LZ;
+			}
+			break;
+
+		case LAND_ON_LZ:
+			if (!Locomotion->Is_Moving()) {
+				Status = UNLOAD_PASSENGERS;
+			}
+			return(1);
+
+		case UNLOAD_PASSENGERS:
+			if (!IsTethered) {
+				if (Cargo.Is_Something_Attached()) {
+					if (Class->IsCarryall) {
+						Mark(MARK_UP);
+						Drop_Off_Cargo();
+						Mark(MARK_DOWN);
+					} else {
+						FootClass * unit = (FootClass *)Cargo.Detach_Object();
+
+						Map.Pick_Up(PositionCell, this);
+
+						if (Exit_Object(unit, CELL_NONE)) {
+							unit->IsInTransport = false;
+						}
+
+						Map.Place_Down(PositionCell, this);
+
+						if (!unit->IsInTransport) {
+							if (unit->Team != NULL) {
+								Team->AddMember(unit, false);
+							}
+						}
+
+						if (!Cargo.Is_Something_Attached()) {
+							Enter_Idle_Mode();
+						}
+					}
+				} else {
+					Enter_Idle_Mode();
+				}
+			}
+			break;
+
+		case TAKE_OFF:
+			Status = SEARCH_FOR_LZ;
+			return(1);
+
+		default:
+			break;
+	}
+	return(Current_Mission_Control().Normal_Delay() + Random_Pick(0, 2));
+}
+
+// FUNCTION: 0x004155F0
+int AircraftClass::Do_MISSION_SPYPLANE_APPROACH(void)
+{
+	int dist = Distance(TarCom);
+	if (TarCom == NULL) {
+		Assign_Destination(NULL, true);
+		QueueMission(MISSION_RETREAT, false);
+	} else if (NavCom == NULL) {
+		Assign_Destination(TarCom, true);
+	} else if (dist <= Get_Class_Weapon_Data(0)->Weapon->Range) {
+		vt_entry_48C(0, 0, 0, 0);
+		UpdateSight(0, 0, 0, 0, Get_Class_Weapon_Data(0)->Weapon->Attack);
+		Map.RevealArea3(PositionCoord, 0, LastSightRange + 3, false);
+		VocClass::PlayAt(Rule->SpyPlaneCamera, PositionCoord);
+	}
+
+	if (dist <= 0x300) {
+		QueueMission(MISSION_SPYPLANE_OVERFLY, false);
+		IsLockedStraight = true;
+		int edge = FUN_0050DAC0(House);
+		Cell cell = Map.Calculated_Cell((SourceType)edge, CELL_NONE, CELL_NONE, SPEED_WINGED, true, MZONE_NORMAL);
+		if (cell != CELL_NONE) {
+			Assign_Destination(&Map[cell], true);
+		}
+	}
+	return(Rule->SpyPlaneCameraFrames);
+}
+
+// FUNCTION: 0x004157C0
+int AircraftClass::Do_MISSION_SPYPLANE_OVERFLY(void)
+{
+	int dist = Distance(TarCom);
+	if (dist <= Get_Primary_Weapon()->Range) {
+		vt_entry_48C(0, 0, 0, 0);
+		UpdateSight(0, 0, 0, 0, Get_Class_Weapon_Data(0)->Weapon->Attack);
+		Coord coord = PositionCoord;
+		Map.RevealArea3(coord, 0, LastSightRange + 3, false);
+	}
+
+	if (NavCom == NULL) {
+		int edge = FUN_0050DAC0(House);
+		Cell cell = Map.Calculated_Cell((SourceType)edge, CELL_NONE, CELL_NONE, SPEED_WINGED, true, MZONE_NORMAL);
+		if (cell != CELL_NONE) {
+			Assign_Destination(&Map[cell], true);
+		}
+	}
+	return(3);
+}
+
+// FUNCTION: 0x004158E0
+int AircraftClass::Do_MISSION_PARADROP_APPROACH(void)
+{
+	if (TarCom == NULL) {
+		Assign_Destination(NULL, true);
+		QueueMission(MISSION_RETREAT, false);
+		return(3);
+	}
+
+	if (NavCom == NULL) {
+		Assign_Destination(TarCom, true);
+		return(3);
+	}
+
+	if (Distance(TarCom) <= Rule->ParadropRadius) {
+		QueueMission(MISSION_PARADROP_OVERFLY, false);
+		NumParadropsLeft--;
+	}
+	return(3);
+}
+
+// FUNCTION: 0x00415A50
+int AircraftClass::Do_MISSION_RETREAT(void)
+{
+	if (NavCom == NULL) {
+		int edge = House->Control.Edge;
+		if (edge < 0 || edge > 3) edge = FUN_0050DA80(House);
+		Cell cell = Map.Calculated_Cell((SourceType)edge, CELL_NONE, CELL_NONE, SPEED_WINGED, true, MZONE_NORMAL);
+		if (cell != CELL_NONE) {
+			Assign_Destination(&Map[cell], true);
+			return(3);
+		}
+	} else if (NavCom == Get_Cell_Ptr()) {
+		Assign_Destination(NULL, true);
+	}
+	return(3);
+}
+
+// FUNCTION: 0x00415B10
+int AircraftClass::Exit_Object(TechnoClass * unit, Cell)
+{
+	static FacingType _toface[FACING_COUNT] = {FACING_S, FACING_SW, FACING_SE, FACING_NW, FACING_NE, FACING_N, FACING_W, FACING_E};
+	Cell cell(0, 0);
+
+	FacingType face;
+	for (face = FACING_N; face < FACING_COUNT; face++) {
+		FacingType dir = _toface[face];
+		cell = AdjacentCell[(int)dir & 7] + PositionCell;
+		if (unit->Can_Enter_Cell(&Map[cell]) == MOVE_OK) break;
+	}
+
+	if (unit->Unlimbo(PositionCoord, DirType(Facing_Dir(_toface[face])).As_Dir256())) {
+		unit->QueueMission(MISSION_MOVE, false);
+		unit->Assign_Destination(&Map[cell]);
+		if (Transmit_Message(RADIO_HELLO, unit) == RADIO_ROGER) {
+			Transmit_Message(RADIO_UNLOAD);
+		}
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00415C60
+int AircraftClass::Paradrop_Cargo(void)
+{
+	FootClass * passenger = (FootClass *)Cargo.Detach_Object();
+	if (passenger != NULL) {
+		Ammo--;
+		Coord drop = Center_Coord();
+		DirType dir;
+		if (Ammo & 1) {
+			dir = PrimaryFacing.Current().Left_90();
+		} else {
+			dir = PrimaryFacing.Current().Right_90();
+		}
+		double rad = dir.As_Radian();
+		drop = Coord((int)(fastmath::cos(rad) * 128.0 + drop.X), (int)((double)drop.Y - fastmath::sin(rad) * 128.0), drop.Z);
+		CellClass * cell = &Map[drop];
+
+		if (passenger->Can_Enter_Cell(cell) == MOVE_OK) {
+			Coord sub = cell->Closest_Free_Spot(drop, false, false, false);
+			if (sub != DAT_00889E88) {
+				drop.X = sub.X;
+				drop.Y = sub.Y;
+				if (passenger->Paradrop(drop)) {
+					VocClass::PlayAt(Rule->ChuteSound, PositionCoord);
+					passenger->LastAdjacencyCell = Map[drop].Center_Coord().As_Cell();
+					if (Team != NULL) {
+						Team->Remove(passenger, -1, false);
+					}
+					Arm = 0;
+					NumParadropsLeft = 5;
+					return(0);
+				}
+			}
+		}
+		Cargo.Attach(passenger);
+		passenger->Hidden();
+		Ammo++;
+	}
+	return(0);
+}
+
+// FUNCTION: 0x004165C0
+ResultType AircraftClass::Take_Damage(int & damage, int distance, WarheadTypeClass const * warhead, TechnoClass * source, bool forced, bool no_crew, HouseClass * source_house)
+{
+	ResultType res = BASECLASS::Take_Damage(damage, distance, warhead, source, forced, no_crew, source_house);
+
+	switch (res) {
+		case RESULT_DESTROYED:
+			Death_Announcement(NULL);
+			if (Class->Explosion.Count() > 0) {
+				new AnimClass(Class->Explosion.Pick(Scen->RandomNumber), Target_Coord());
+			}
+
+			if (!Crash(source)) {
+				Delete_Me();
+			}
+			break;
+
+		case RESULT_ALREADY_DESTROYED:
+			res = RESULT_ALREADY_DESTROYED;
+			break;
+
+		default:
+			break;
+	}
+	return(res);
+}
+
+// FUNCTION: 0x004166C0
+int AircraftClass::Do_MISSION_MOVE(void)
+{
+	if (Class->IsCarryall) {
+		return(Do_MISSION_MOVE_Carryall());
+	}
+	return(Do_MISSION_MOVE_Normal());
+}
+
+// FUNCTION: 0x00416AF0
+void AircraftClass::Drop_Off_Cargo(void)
+{
+	DebugString("Do_MISSION_MOVE_Carryall - LAND - Dropping off cargo\n");
+
+	FootClass * unit = Cargo.Detach_Object();
+
+	Coord coord = PositionCoord;
+	coord.Z = Map.Get_Height_GL(coord);
+	if (Map[coord].IsUnderBridge) {
+		coord.Z += BRIDGE_LEPTON_HEIGHT;
+		unit->IsOnBridge = true;
+	} else {
+		unit->IsOnBridge = false;
+	}
+
+	unit->Locomotion.Release();
+	unit->Locomotion = ILocomotionPtr(unit->TClass->Locomotor);
+	unit->Locomotion->Link_To_Object(unit);
+
+	if (!unit->Unlimbo(coord)) {
+		Cargo.Attach(unit);
+	} else {
+		unit->IsInTransport = false;
+		unit->vt_entry_48C(0, 0, 0, 0);
+		unit->UpdateSight(0, 0, 0, 0, 0);
+		Map.RevealArea3(PositionCoord, unit->LastSightRange - 3, unit->LastSightRange + 3, false);
+		Cell nearby = Nearby_Location();
+		if (FUN_0065AD30(0) == unit) {
+			Transmit_Message(RADIO_UNTETHER);
+			Transmit_Message(RADIO_OVER_OUT);
+		}
+		if (nearby != CELL_NONE) {
+			Assign_Destination(&Map[nearby]);
+		} else {
+			Assign_Destination(NULL);
+		}
+	}
+}
+
 // FUNCTION: 0x0041B5C0
 HRESULT STDMETHODCALLTYPE AircraftClass::Save(IStream * stream, int cleardirty)
 {

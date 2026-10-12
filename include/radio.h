@@ -40,6 +40,8 @@ class RadioClass : public MissionClass
 		void SetLinkCount(int count);
 		void Radio_Off(void) {RadioLinks[0] = 0;};
 		TechnoClass * Contact_With_Whom(void) const {return(RadioLinks[0]);};
+		TechnoClass * FUN_0065AD30(int index);
+		TechnoClass * FUN_0065AD40(int index) const;
 
 		virtual void Detach(AbstractClass const * target, bool all = true) override;
 		virtual void Compute_CRC(CRCEngine &) const override;

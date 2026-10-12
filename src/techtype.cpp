@@ -202,3 +202,195 @@ int TechnoTypeClass::Repair_Step(void) const
 {
 	return(Rule->RepairStep);
 }
+
+// FUNCTION: 0x00712130
+bool TechnoTypeClass::Is_Two_Shooter(void) const
+{
+	WeaponTypeClass *pri = Weapons[0].Weapon;
+
+	if (pri != NULL) {
+		WeaponTypeClass *sec = Weapons[1].Weapon;
+
+		if (pri == sec || pri->Burst > 1) {
+			return(true);
+		}
+
+		if (sec != NULL && sec->Burst > 1) {
+			return(true);
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00716150
+bool TechnoTypeClass::Legal_Placement(Cell const & pos, HouseClass * house) const
+{
+	if (pos == CELL_NONE) return(0);
+
+	Cell const * offset = Occupy_List(true);
+	bool build = (Fetch_RTTI() == RTTI_BUILDINGTYPE);
+	bool any_blocked = false;
+	bool any_clear = false;
+
+	BuildingTypeClass * bptr = (BuildingTypeClass *)this;
+
+	while (offset != NULL && *offset != REFRESH_EOL) {
+		Cell cell = pos + *offset++;
+
+		if (build) {
+			if (!Map[cell].Is_Clear_To_Build(bptr->Speed, bptr, house)) {
+				any_blocked = true;
+			} else {
+				any_clear = true;
+			}
+		} else {
+			if (!Map[cell].Is_Clear_To_Move(Speed, false, false)) {
+				any_blocked = true;
+			} else {
+				any_clear = true;
+			}
+		}
+	}
+
+	if (build && bptr->ToTile != NULL) {
+		return(any_clear);
+	}
+	return(any_blocked == 0);
+}
+
+// FUNCTION: 0x00716290
+int TechnoTypeClass::Max_Pips(void) const
+{
+	switch (PipScale) {
+		case PIPSCALE_POWER:
+			return(10);
+
+		case PIPSCALE_AMMO:
+			return(MaxAmmo);
+
+		case PIPSCALE_CHARGE:
+			return(Weapons[0].Weapon->Attack);
+
+		case PIPSCALE_TIBERIUM:
+			return(Fetch_RTTI() == RTTI_INFANTRYTYPE ? 3 : 5);
+
+		case PIPSCALE_PASSENGERS:
+			return(MaxPassengers);
+
+	}
+	return(0);
+}
+
+// FUNCTION: 0x00716DC0
+HRESULT STDMETHODCALLTYPE TechnoTypeClass::Save(IStream *stream, BOOL cleardirty)
+{
+	HRESULT result = BASECLASS::Save(stream, cleardirty);
+	if (SUCCEEDED(result)) {
+		Dock.Save(stream);
+		DebrisTypes.Save(stream);
+		DebrisAnims.Save(stream);
+		VoiceSelect.Save(stream);
+		VoiceSelectEnslaved.Save(stream);
+		VoiceSelectDeactivated.Save(stream);
+		VoiceMove.Save(stream);
+		VoiceAttack.Save(stream);
+		VoiceSpecialAttack.Save(stream);
+		VoiceDie.Save(stream);
+		VoiceFeedback.Save(stream);
+		MoveSound.Save(stream);
+		DieSound.Save(stream);
+		Explosion.Save(stream);
+		DestroyAnim.Save(stream);
+		DebrisMaximums.Save(stream);
+		Prerequisite.Save(stream);
+		PrerequisiteOverride.Save(stream);
+		DamageParticleSystems.Save(stream);
+		DestroyParticleSystems.Save(stream);
+
+		result = S_OK;
+	}
+	return(result);
+}
+
+// FUNCTION: 0x007170A0
+HRESULT STDMETHODCALLTYPE TechnoTypeClass::GetSizeMax(ULARGE_INTEGER *pcbSize)
+{
+	HRESULT res = BASECLASS::GetSizeMax(pcbSize);
+	if (SUCCEEDED(res)) {
+		pcbSize->LowPart += sizeof(int) + (sizeof(VoiceSelect[0]) * VoiceSelect.Count());
+		pcbSize->LowPart += sizeof(int) + (sizeof(VoiceSelectEnslaved[0]) * VoiceSelectEnslaved.Count());
+		pcbSize->LowPart += sizeof(int) + (sizeof(VoiceSelectDeactivated[0]) * VoiceSelectDeactivated.Count());
+		pcbSize->LowPart += sizeof(int) + (sizeof(VoiceMove[0]) * VoiceMove.Count());
+		pcbSize->LowPart += sizeof(int) + (sizeof(VoiceAttack[0]) * VoiceAttack.Count());
+		pcbSize->LowPart += sizeof(int) + (sizeof(VoiceSpecialAttack[0]) * VoiceSpecialAttack.Count());
+		pcbSize->LowPart += sizeof(int) + (sizeof(VoiceDie[0]) * VoiceDie.Count());
+		pcbSize->LowPart += sizeof(int) + (sizeof(VoiceFeedback[0]) * VoiceFeedback.Count());
+		pcbSize->LowPart += sizeof(int) + (sizeof(MoveSound[0]) * MoveSound.Count());
+		pcbSize->LowPart += sizeof(int) + (sizeof(DieSound[0]) * DieSound.Count());
+		pcbSize->LowPart += sizeof(int) + (sizeof(Explosion[0]) * Explosion.Count());
+		pcbSize->LowPart += sizeof(int) + (sizeof(DestroyAnim[0]) * DestroyAnim.Count());
+		pcbSize->LowPart += sizeof(int) + (sizeof(DebrisTypes[0]) * DebrisTypes.Count());
+		pcbSize->LowPart += sizeof(int) + (sizeof(DebrisAnims[0]) * DebrisAnims.Count());
+		pcbSize->LowPart += sizeof(int) + (sizeof(Dock[0]) * Dock.Count());
+		pcbSize->LowPart += sizeof(int) + (sizeof(DebrisMaximums[0]) * DebrisMaximums.Count());
+		pcbSize->LowPart += sizeof(int) + (sizeof(DamageParticleSystems[0]) * DamageParticleSystems.Count());
+		pcbSize->LowPart += sizeof(int) + (sizeof(DestroyParticleSystems[0]) * DestroyParticleSystems.Count());
+		res = S_OK;
+	}
+	return(res);
+}
+
+// FUNCTION: 0x007177C0
+YRWeaponDataStruct * TechnoTypeClass::GetWeapon(int index)
+{
+	return(&Weapons[index]);
+}
+
+// FUNCTION: 0x007177E0
+YRWeaponDataStruct * TechnoTypeClass::GetEliteWeapon(int index)
+{
+	return(&EliteWeapons[index]);
+}
+
+// FUNCTION: 0x00717800
+int TechnoTypeClass::GetFlightLevel(void) const
+{
+	if (FlightLevel == -1) {
+		return(Rule->FlightLevel);
+	}
+	return(FlightLevel);
+}
+
+class ColorScheme
+{
+	public:
+		static DynamicVectorClass<ColorSchemeClass *> * __fastcall GeneratePalette(char const * name);
+};
+
+// FUNCTION: 0x00717820
+void TechnoTypeClass::FUN_00717820(void)
+{
+	if (PaletteFile[0]) {
+		Palette = ColorScheme::GeneratePalette(PaletteFile);
+	}
+}
+
+// FUNCTION: 0x00717840
+void TechnoTypeClass::FUN_00717840(void)
+{
+	for (int index = 0; index < Array.Count(); index++) {
+		Array[index]->FUN_00717820();
+	}
+}
+
+// FUNCTION: 0x00717880
+bool TechnoTypeClass::HasMultipleTurrets(void) const
+{
+	return(TurretCount > 0);
+}
+
+// FUNCTION: 0x00717890
+void TechnoTypeClass::FUN_00717890(int index, int weapon)
+{
+	TurretWeapon[weapon] = index;
+}

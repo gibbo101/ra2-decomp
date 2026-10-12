@@ -240,7 +240,7 @@ class CellClass : public AbstractClass
 		Cell Fetch_CellID(void) const {return(CellID);}
 		void Set_CellID(Cell const & cell);
 		Coord Cell_Coord(void) const;
-		Coord Closest_Free_Spot(Coord const & coord, bool any=false, bool bridge=false) const;
+		Coord Closest_Free_Spot(Coord const & coord, bool any=false, bool bridge=false, bool use_cell_coord=false) const;
 		Coord Free_Spot(void) const {return(Closest_Free_Spot(Cell_Coord()));}
 		CellClass & Adjacent_Cell(FacingType face) {return((CellClass &)((*((CellClass const *)this)).Adjacent_Cell(face)));}
 		CellClass const & Adjacent_Cell(FacingType face) const;

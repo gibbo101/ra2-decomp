@@ -28,6 +28,7 @@
 #include "incdec.h"
 #include "inline.h"
 #include "lightcon.h"
+#include "notify.h"
 #include "overlay.h"
 #include "overtype.h"
 #include "rules.h"
@@ -48,6 +49,7 @@
 #include "coord.h"
 #include <math.h>
 
+extern DynamicVectorClass<AnimClass *> DAT_00A83E00;
 extern const double DAT_007E3308;
 extern const double DAT_007E3310;
 extern double DAT_0089A158;
@@ -133,6 +135,139 @@ Cell const DAT_0089A150(0, 0);
 
 Coord const DAT_0089A178(0, 0, 0);
 
+// FUNCTION: 0x00421E80
+
+
+
+Coord const DAT_0089A1A8(CELL_LEPTON_W / 2, CELL_LEPTON_H / 2, 0);
+
+// FUNCTION: 0x00422720
+AnimClass::AnimClass(void) :
+	BASECLASS(),
+	Animation(),
+	Type(NULL),
+	OwnerObject(NULL),
+	unknown_D0(-1),
+	LightConvert(NULL),
+	LightConvertIndex(-1),
+	TintColor(1000),
+	ZAdjust(0),
+	YSortAdjust(0),
+	IsBuildingAnim(false),
+	UnderTemporal(false),
+	Paused(false),
+	Unpaused(false),
+	PausedAnimFrame(0),
+	Reverse(false),
+	Bounce(),
+	TimeToDie(false),
+	LoopDelay(0),
+	Accum(0.0),
+	HasExtras(false),
+	RemainingIterations(1),
+	UseCellLightConvert(false),
+	DeleteOnMapCleanup(false),
+	UnableToContinue(false),
+	SkipProcessOnce(true),
+	Invisible(false),
+	PowerOff(false)
+{
+	Array.Add(this);
+	StartSoundAudioController.FUN_00405BE0();
+	StopSoundAudioController.FUN_00405BE0();
+	IsActive = true;
+}
+
+bool AnimClass::Limbo(void)
+{
+	if (Type != NULL && Type->IsVeins) {
+		Map[(Coord const &)PositionCoord].IsAnimAttached = false;
+	}
+
+	if (BASECLASS::Limbo()) {
+		Map.Remove(this);
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x004228E0
+AnimClass::~AnimClass(void)
+{
+	Detach_This_From_All(this, true);
+	if (GameActive) {
+		if (OwnerObject != NULL) {
+			ObjectClass * to = OwnerObject;
+
+			int index;
+			for (index = 0; index < Array.Count(); index++) {
+				if (Array[index] != this && Array[index]->OwnerObject == OwnerObject) break;
+			}
+
+			if (index == Array.Count()) {
+				to->Fire_Out();
+				to->IsAnimAttached = false;
+			}
+			OwnerObject = NULL;
+		}
+		AnimClass::Limbo();
+	}
+
+	PointerExpiredNotification::NotifyInvalidType.Delete(this);
+
+	if (Type != NULL) {
+		Type->Free_Image();
+	}
+
+	StartSoundAudioController.EndLooping();
+	StopSoundAudioController.EndLooping();
+	StartSoundAudioController.FUN_00405C00();
+	StopSoundAudioController.FUN_00405C00();
+
+	OwnerObject = NULL;
+	Type = NULL;
+
+	if (Fetch_ID() == -2) {
+		DAT_00A83E00.Delete(this);
+	} else {
+		Array.Delete(this);
+	}
+}
+
+// FUNCTION: 0x00422B20
+AnimType Anim_From_Name(char const * name)
+{
+	if (name == NULL) return(ANIM_NONE);
+
+	if (strcmpi(name, "<none>") == 0) return(ANIM_NONE);
+
+	for (AnimType anim = ANIM_FIRST; anim < AnimTypes.Count(); anim++) {
+		if (stricmp(AnimTypes[anim]->IniName, name) == 0) {
+			return(anim);
+		}
+	}
+	return(ANIM_NONE);
+}
+
+// FUNCTION: 0x00422B80
+void Shorten_Attached_Anims(ObjectClass * obj)
+{
+	if (obj != NULL) {
+		for (int index = 0; index < AnimClass::Array.Count(); index++) {
+			AnimClass * anim = AnimClass::Array[index];
+
+			if (anim->OwnerObject == obj) {
+				anim->RemainingIterations = 0;
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x00422BC0
+int AnimClass::Sort_Y(void) const
+{
+	return(BASECLASS::Sort_Y() + YSortAdjust);
+}
 
 // FUNCTION: 0x00422BE0
 Coord AnimClass::Center_Coord(void) const
@@ -141,6 +276,15 @@ Coord AnimClass::Center_Coord(void) const
 		return(OwnerObject->Center_Coord() + BASECLASS::Center_Coord());
 	}
 	return(BASECLASS::Center_Coord());
+}
+
+// FUNCTION: 0x00422C70
+bool AnimClass::Render(Rect & rect, bool forced, bool extras_only) const
+{
+	if (LoopDelay != 0) {
+		return(false);
+	}
+	return(BASECLASS::Render(rect, forced, extras_only));
 }
 
 // FUNCTION: 0x004238B0
@@ -158,6 +302,98 @@ Cell const * AnimClass::Occupy_List(bool) const
 	static Cell _simple[] = {REFRESH_EOL};
 
 	return(_simple);
+}
+
+// FUNCTION: 0x00423920 $E141
+
+// FUNCTION: 0x00423930
+BounceResultType AnimClass::Bounce_AI(void)
+{
+	BounceClass & bounce = Bounce;
+	BounceResultType bounce_result = bounce.AI();
+
+	if (Type->IsMeteor) {
+		bounce.Velocity.Z += bounce.Gravity;
+	}
+
+	switch (bounce_result) {
+		case BOUNCE_IMPACT: {
+			if (Type->BounceAnim != NULL) {
+				new AnimClass(Type->BounceAnim, Center_Coord());
+			}
+			ObjectClass * optr = Map[bounce.Get_Bounce_Coord()].Cell_Occupier();
+			while (optr != NULL) {
+				Coord cdiff = bounce.Get_Bounce_Coord() - optr->Center_Coord();
+				int rad = abs(cdiff.X) + abs(cdiff.Y);
+				if (rad <= Type->DamageRadius) {
+					int damage = (int)Type->Damage;
+					optr->Take_Damage(damage, TacticalMap->Z_Lepton_To_Pixel(rad), Type->Warhead);
+				}
+				optr = optr->Next;
+			}
+			break;
+		}
+		case BOUNCE_SETTLED:
+			Delete_Me();
+			break;
+	}
+
+	Set_Coord(bounce.Get_Bounce_Coord());
+
+	return(bounce_result);
+}
+
+// FUNCTION: 0x00424B50
+void AnimClass::SetOwnerObject(ObjectClass * owner)
+{
+	if (OwnerObject != NULL) {
+		ObjectClass * to = OwnerObject;
+
+		bool down = IsDown;
+		if (down) {
+			Map.Remove(this);
+		}
+
+		int index;
+		for (index = 0; index < Array.Count(); index++) {
+			if (Array[index] != this && Array[index]->OwnerObject == OwnerObject) break;
+		}
+
+		if (index == Array.Count()) {
+			to->Fire_Out();
+			to->IsAnimAttached = false;
+		}
+
+		Coord center = Center_Coord();
+		OwnerObject = NULL;
+
+		Set_Coord(center);
+
+		if (down) {
+			Map.Submit(this);
+		}
+	}
+
+	if (owner == NULL) return;
+
+	Coord center = Center_Coord();
+	Map.Remove(this);
+	owner->IsAnimAttached = true;
+	OwnerObject = owner;
+	Set_Coord(center - owner->Center_Coord());
+	Map.Submit(this);
+}
+
+// FUNCTION: 0x00424C90
+void AnimClass::FUN_00424C90(BulletClass * bullet)
+{
+	AttachedBullet = bullet;
+}
+
+// FUNCTION: 0x00424CA0
+void AnimClass::FUN_00424CA0(HouseClass * house)
+{
+	Owner = house;
 }
 
 // FUNCTION: 0x00426540
