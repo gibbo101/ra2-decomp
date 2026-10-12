@@ -14,6 +14,8 @@
 #include "surface.h"
 #include "vector.h"
 
+// FUNCTION: 0x004A5390 $E2
+
 // FUNCTION: 0x004A53B0
 Dial8Class::Dial8Class(int id, int x, int y, int w, int h, Dir256 dir) :
 	BASECLASS(id, x, y, w, h, LEFTPRESS | LEFTHELD | LEFTRELEASE, true)

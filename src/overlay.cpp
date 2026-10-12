@@ -5,6 +5,8 @@
 
 #define INCLUDE_COM
 #include "always.h"
+#include "geometry.h"
+#include "rect.h"
 #include "overlay.h"
 #include "_map.h"
 #include "_rect.h"
@@ -41,6 +43,21 @@
 #include "xpipe.h"
 #include "xstraw.h"
 #include "overlay.hh"
+
+// FUNCTION: 0x005FC170 $E2
+// FUNCTION: 0x005FC1A0 $E5
+// FUNCTION: 0x005FC1C0 $E8
+// FUNCTION: 0x005FC1E0 $E11
+// FUNCTION: 0x005FC200 $E14
+// FUNCTION: 0x005FC220 $E17
+// FUNCTION: 0x005FC240 $E20
+// FUNCTION: 0x005FC280 $E23
+// FUNCTION: 0x005FC2B0 $E26
+// FUNCTION: 0x005FC2E0 $E29
+// FUNCTION: 0x005FC310 $E32
+// FUNCTION: 0x005FC320 $E35
+// FUNCTION: 0x005FC340 $E38
+// FUNCTION: 0x005FC360 $E41
 
 // FUNCTION: 0x005FC380
 OverlayClass::OverlayClass(OverlayTypeClass const * ttype, Cell const & pos, HousesType house) :
@@ -339,15 +356,5 @@ HRESULT STDMETHODCALLTYPE OverlayClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-extern int DAT_00AC15F8, DAT_00AC15FC, DAT_00AC1600, DAT_00AC1604;
-
 // FUNCTION: 0x005FE020 XSurface::XSurface
 
-// FUNCTION: 0x005FE040
-void Init_005FE040(void)
-{
-	DAT_00AC15F8 = 0;
-	DAT_00AC15FC = 0;
-	DAT_00AC1600 = 0;
-	DAT_00AC1604 = 0;
-}

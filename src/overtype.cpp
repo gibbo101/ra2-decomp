@@ -30,6 +30,8 @@
 #include "swizzle.h"
 #include "tracker.h"
 
+// FUNCTION: 0x005FE040 $E2
+
 // FUNCTION: 0x005FE4C0
 Cell const * OverlayTypeClass::Occupy_List(bool) const
 {

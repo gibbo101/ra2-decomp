@@ -464,9 +464,16 @@ def main() -> None:
     # Which compiled function each annotation is decides what its own symbol resolves to,
     # so pick them first, by bytes alone.
     local = known_decorated()
-    for address, name in annotations(src):
-        local[compare(orig, obj, raw, address, name, {}, {}).symbol] = address
+    claimed: dict[str, int] = {}
     failed = 0
+    for address, name in annotations(src):
+        symbol = compare(orig, obj, raw, address, name, {}, {}).symbol
+        if symbol in claimed and claimed[symbol] != address:
+            print(f"0x{address:08X} {name or symbol}: same compiled function as "
+                  f"0x{claimed[symbol]:08X} ({symbol})")
+            failed += 1
+        claimed[symbol] = address
+        local[symbol] = address
     for address, name in targets:
         res = compare(orig, obj, raw, address, name, names, local, score)
         if res.matched:

@@ -229,6 +229,10 @@ Each entry: what the diff showed, then the source change that fixed it.
   vtable minus 4 (`Exe.vtables()` in headercheck.py) before naming one.
 - Static initialisers and atexit stubs are named `$E<n>`, numbered across the whole
   file: after any header or file change, re-read the number from the checker's listing.
+  A marker name is a prefix (`$E2` also matches `$E20`): name each one in full.
+- A run of about 13 small initialisers per file (CELL_LEPTON_DIAG through COORD_NONE)
+  is `include/geometry.h`'s per-file constants: include it right after `always.h`
+  (before any `extern` of the same names) and mark them; never write `Init_` stand-ins.
 - TibSun's `dynamic_cast<ObjectClass *>` is `AbstractFlags & 2` in YR.
 - A pushed `__FILE__` and line: `#line 215 "D:\\ra2mdpost\\AbsType.cpp"` before the
   statement. A string's first-character test: `if (*name)`, not `if (name[0])`.

@@ -732,6 +732,17 @@ wall update (62%, 41%) and UnitClass's load direction (64.8%, inline budget); th
 cell agent never started Draw_Overlay. Cost: about 1.9M tokens, 49 minutes. Merge
 gate: 2,091 of 2,091 (321.8 KB).
 
+The batch agents had matched 109 compiler-generated initialisers as hand-written
+`Init_<address>` functions storing to raw addresses: bytes right, source wrong. They
+are the per-file copies of a header's geometry constants (13 in YR, three more than TS
+and in another order), which every including file initialises again. An Opus agent
+moved them into `include/geometry.h`, converted 105 to markers on the compiler's own
+initialisers, and found 51 more copies in files that already include the header. Four
+stay as stand-ins: one belongs to a file not yet started, three are other initialisers.
+check.py now fails a file in which two markers resolve to the same compiled function,
+which a prefix-matched `$E` name could do silently. Cost: about 0.24M tokens, 25 minutes.
+Merge gate: 2,142 of 2,142 (323.1 KB).
+
 ### Decide before the first batch
 
 - **Module layout.** Which function lives in which source file, and the link order, decide

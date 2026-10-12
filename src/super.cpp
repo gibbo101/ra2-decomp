@@ -5,6 +5,8 @@
 
 #define INCLUDE_COM
 #include "always.h"
+#include "rect.h"
+#include "geometry.h"
 #include "super.h"
 #include "_map.h"
 #include "_rules.h"
@@ -38,16 +40,6 @@
 #include "vox.h"
 #include "weapon.h"
 
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern double DAT_007E1708, DAT_007E1710, DAT_007E1718, DAT_007E1720, DAT_007E1728;
-extern double DAT_007E1730, DAT_007E1738, DAT_007E1740, DAT_007F3FA8, DAT_007F3FB0;
-extern double DAT_00B0C008, DAT_00B0C080, DAT_00B0C068, DAT_00B0C060, DAT_00B0C010;
-extern double DAT_00B0BFE8, DAT_00B0C018, DAT_00B0C030;
-extern int DAT_00B0C088, DAT_00B0C07C, DAT_00B0C020, DAT_00B0C024, DAT_00B0C028;
-extern Cell DAT_00B0C000;
-extern int DAT_00B0C070, DAT_00B0C074, DAT_00B0C078;
 extern Cell DAT_00B0C038[9];
 extern wchar_t DAT_00887734[];
 
@@ -64,89 +56,20 @@ static inline void Release_Animation(SuperClass * super)
 	}
 }
 
-// FUNCTION: 0x006CAC10
-void Init_006CAC10(void)
-{
-	DAT_00B0C008 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2.0);
-}
-
-// FUNCTION: 0x006CAC40
-void Init_006CAC40(void)
-{
-	DAT_00B0C080 = DAT_00B0C008 / DAT_007F3FA8;
-}
-
-// FUNCTION: 0x006CAC60
-void Init_006CAC60(void)
-{
-	DAT_00B0C068 = DAT_007E1718 / DAT_00B0C080;
-}
-
-// FUNCTION: 0x006CAC80
-void Init_006CAC80(void)
-{
-	DAT_00B0C060 = DAT_007E1720 * DAT_007F3FB0;
-}
-
-// FUNCTION: 0x006CACA0
-void Init_006CACA0(void)
-{
-	DAT_00B0C010 = DAT_007E1728 * DAT_007F3FB0;
-}
-
-// FUNCTION: 0x006CACC0
-void Init_006CACC0(void)
-{
-	DAT_00B0BFE8 = DAT_007E1730 * DAT_007F3FB0;
-}
-
-// FUNCTION: 0x006CACE0
-void Init_006CACE0(void)
-{
-	DAT_00B0C088 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B0BFE8 - DAT_00B0C010) * DAT_00B0C008));
-}
-
-// FUNCTION: 0x006CAD20
-void Init_006CAD20(void)
-{
-	DAT_00B0C018 = FUN_004CADE0(DAT_00B0C088 * DAT_007E1740);
-}
-
-// FUNCTION: 0x006CAD50
-void Init_006CAD50(void)
-{
-	DAT_00B0C030 = FUN_004CADE0((DAT_00B0C088 * 2) / DAT_00B0C008);
-}
-
-// FUNCTION: 0x006CAD80
-void Init_006CAD80(void)
-{
-	DAT_00B0C07C = (int)((DAT_00B0C088 * 4) + DAT_007E1738);
-}
-
-// FUNCTION: 0x006CADB0
-void Init_006CADB0(void)
-{
-	DAT_00B0C000.X = 0;
-	DAT_00B0C000.Y = 0;
-}
-
-// FUNCTION: 0x006CADC0
-void Init_006CADC0(void)
-{
-	DAT_00B0C020 = 0;
-	DAT_00B0C024 = 0;
-	DAT_00B0C028 = 0;
-}
-
-
-// FUNCTION: 0x006CADE0
-void Init_006CADE0(void)
-{
-	DAT_00B0C078 = 0;
-	DAT_00B0C070 = 128;
-	DAT_00B0C074 = 128;
-}
+// FUNCTION: 0x006CABF0 $E2
+// FUNCTION: 0x006CAC10 $E5
+// FUNCTION: 0x006CAC40 $E8
+// FUNCTION: 0x006CAC60 $E11
+// FUNCTION: 0x006CAC80 $E14
+// FUNCTION: 0x006CACA0 $E17
+// FUNCTION: 0x006CACC0 $E20
+// FUNCTION: 0x006CACE0 $E23
+// FUNCTION: 0x006CAD20 $E26
+// FUNCTION: 0x006CAD50 $E29
+// FUNCTION: 0x006CAD80 $E32
+// FUNCTION: 0x006CADB0 $E35
+// FUNCTION: 0x006CADC0 $E38
+// FUNCTION: 0x006CADE0 $E41
 
 // FUNCTION: 0x006CAE00
 void Init_006CAE00(void)
@@ -172,7 +95,7 @@ SuperClass::SuperClass(void) :
 	BlinkTimer(0),
 	SpecialSoundDuration(-1),
 	NeedsBuilding(true),
-	ChronoMapCoords(DAT_00B0C000),
+	ChronoMapCoords(CELL_NONE),
 	Animation(NULL),
 	AnimationGotInvalid(false),
 	IsPresent(false),
@@ -195,7 +118,7 @@ SuperClass::SuperClass(SuperWeaponTypeClass * type, HouseClass * owner) :
 	BlinkTimer(0),
 	SpecialSoundDuration(-1),
 	NeedsBuilding(true),
-	ChronoMapCoords(DAT_00B0C000),
+	ChronoMapCoords(CELL_NONE),
 	Animation(NULL),
 	AnimationGotInvalid(false),
 	IsPresent(false),
