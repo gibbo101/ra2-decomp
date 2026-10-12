@@ -362,3 +362,9 @@ date,address,function,model,result,best,checks,minutes,blocker,notes
 2026-10-12,0x0066D3A0,RulesClass::Color_Schemes,sonnet-5.5 (batch 2 follow-up),MATCH,100,1,,,Get_HSVClass then the ColorScheme lookup per entry; the palettes are a byte stand-in until the palette header exists.
 2026-10-12,0x0047BDB0,CellClass::Preview_Cell_Color,sonnet-5.5 (batch 2 follow-up),MATCH,100,,,,Cell_Building() plus three file-local inline call wrappers keep Cell_Find_Object out of line.
 2026-10-12,0x0047C620,CellClass::Is_Clear_To_Build,sonnet-5.5 (batch 2 follow-up),partial,65.8,4,,block layout,The shared return-false block lands in the tail instead of early at 0x47C6D1; ||/goto/local/if-else reshaping did not move it.
+2026-10-12,0x0047C060,CellClass::Cell_Color,opus-5.5 (headers),MATCH,100,,,,Landed once ScenarioClass had YR's layout.
+2026-10-12,0x0066D3A0,RulesClass::Color_Schemes,opus-5.5 (headers),MATCH,100,,,,Re-landed on the real ColorScheme and palette headers; YR passes 53 intensity levels.
+2026-10-12,0x0065C6D0,Random2Class::Random2Class,opus-5.5 (headers),MATCH,100,,,,Proves Random2Class's 1012-byte YR layout.
+2026-10-12,0x0065C780,Random2Class::operator(),opus-5.5 (headers),MATCH,100,,,,
+2026-10-12,0x0065C7E0,"Random2Class::operator()(int,int)",opus-5.5 (headers),MATCH,100,,,,
+2026-10-12,0x00596300,MapSeedDlgProc,opus-5.5 (headers),header-gated,100,,,needs other headers,"Still matches on stubs only; needs LoadOptionsClass, MapSeedClass (0x178), MapGeneratorClass, PreviewClass, WWMouseClass and about 14 callee identities (list in the banked file)."

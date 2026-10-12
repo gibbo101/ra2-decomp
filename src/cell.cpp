@@ -264,6 +264,97 @@ int CellClass::Preview_Cell_Color(unsigned char & unknown, bool terrainonly) con
 	return(((tile[0] << 16) | tile[1]));
 }
 
+struct DAT_007E1BD0_Entry {
+	float Scale;
+	char Rest[0x6C];
+};
+extern DAT_007E1BD0_Entry DAT_007E1BD0[];
+
+// FUNCTION: 0x0047C060
+void CellClass::Cell_Color(RGBClass & lowcolor, RGBClass & highcolor) const
+{
+	TerrainClass * tptr = Cell_Terrain();
+	if (tptr != NULL) {
+		lowcolor = RGBClass(200, 200, 160);
+		highcolor = RGBClass(200, 200, 160);
+		return;
+	}
+
+	if (IsUnderBridge) {
+		highcolor = lowcolor = OverlayTypes[OVERLAY_BRIDGE1]->Get_Radar_Color(0);
+		return;
+	}
+
+	IsometricTileTypeClass * itype = (ITType != ISOTILE_NONE) ? IsometricTileTypes[ITType] : IsometricTileTypes[TILE_CLEAR];
+
+	OverlayType overlay = Overlay;
+	if (overlay == OVERLAY_NONE) goto tile;
+	if ((overlay == OVERLAY_LOWBRIDGE_27 || overlay == OVERLAY_LOWBRIDGE_28) && (Overlay == OVERLAY_NONE || Overlay == (OverlayType)0xE7 || Overlay == (OverlayType)0xE8)) goto tile;
+	if (overlay != (OverlayType)0xEF) {
+		OverlayTypeClass * otype = OverlayTypes[overlay];
+
+		if (!otype->IsTiberium) {
+			if ((overlay >= OVERLAY_LOWBRIDGE_01 && overlay <= OVERLAY_LOWBRIDGE_26) || (overlay >= 0xCD && overlay <= 0xE6)) {
+				lowcolor = OverlayTypes[overlay]->Get_Radar_Color(1);
+			} else {
+				lowcolor = OverlayTypes[overlay]->Get_Radar_Color(OverlayData);
+			}
+			highcolor = lowcolor;
+			return;
+		}
+
+		if (otype->CellAnim != NULL) {
+			ShapeSet * shape = (ShapeSet *)otype->CellAnim->Get_Image_Data();
+			highcolor = lowcolor = shape->Get_Color(OverlayData);
+			return;
+		}
+
+		if (Which_Tiberium_Type(overlay) != TIBERIUM_NONE) {
+			lowcolor = RGBClass(170, 170, 130);
+			highcolor = RGBClass(170, 170, 130);
+			return;
+		}
+	}
+
+	tile:
+	int tile = 0;
+	if (ITType != ISOTILE_NONE) {
+		if (itype->NumTileTypesInSet > 1) {
+			if (itype->Is_Randomized(SubTile)) {
+				tile = IsBridgeDamaged ? 1 : 0;
+			} else {
+				int numtiles = itype->NumTileTypesInSet;
+				tile = Clear_Icon(ITType, numtiles);
+			}
+		}
+	} else {
+		int numtiles = itype->NumTileTypesInSet;
+		tile = Clear_Icon(TILE_CLEAR, numtiles);
+	}
+
+	IsometricTileTypeClass * next = itype->Next_Tile_From_Set(tile);
+	if (next->ImageData == NULL && next->IsFileLoaded) {
+		next->Load_Tile_Image();
+	}
+
+	IsoTileSet * set = (IsoTileSet *)next->ImageData;
+	if (set->Fetch_Record_Pointer_Unsafe(SubTile) != NULL) {
+		IsoTileRecord const * record = set->Fetch_Record_Pointer_Unsafe(SubTile);
+		RGBClass color(record->LowColor.Red, record->LowColor.Green, record->LowColor.Blue);
+
+		color = RGBClass(NoInitClass()).Set(color, DAT_007E1BD0[Scen->Theater].Scale);
+
+		int red = color.Get_Red() >> 1;
+		int green = color.Get_Green() >> 1;
+		int blue = color.Get_Blue() >> 1;
+		lowcolor = RGBClass(red, green, blue);
+		highcolor = RGBClass(red, green, blue);
+	} else {
+		lowcolor = RGBClass(60, 60, 60);
+		highcolor = RGBClass(60, 60, 60);
+	}
+}
+
 // FUNCTION: 0x0047C3D0
 TechnoClass * CellClass::Cell_Techno(Point2D const & xy, bool bridge, TechnoClass const * notthis) const
 {

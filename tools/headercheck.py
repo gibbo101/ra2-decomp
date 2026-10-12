@@ -304,6 +304,14 @@ def yrpp_layout(cls: str):
 
 # --- the checks ---------------------------------------------------------------------------
 
+def fits_inside(theirs, holder, ours) -> bool:
+    """Whether YRpp's member lies within our aggregate `holder`. A YRpp span runs to the next
+    YRpp member, so it may also cover up to 3 bytes of alignment padding after the holder."""
+    end, their_end = holder[1] + holder[2], theirs[1] + theirs[2]
+    return their_end <= end or (their_end - end < 4
+                                and not any(end <= m[1] < their_end for m in ours))
+
+
 def check_members(ours, yrpp, padding_spans) -> int:
     print(f"{'offset':>8}  {'ours':<28} {'YRpp':<28} verdict")
     problems = 0
@@ -328,7 +336,7 @@ def check_members(ours, yrpp, padding_spans) -> int:
             holder = [m for m in ours if m[1] < at < m[1] + m[2]]
             if all(t[3] for t in theirs):
                 verdict = "note: bitfield, not checked"
-            elif holder and holder[0][3] and all(at + t[2] <= holder[0][1] + holder[0][2] for t in theirs):
+            elif holder and holder[0][3] and all(fits_inside(t, holder[0], ours) for t in theirs):
                 verdict = f"note: inside our {holder[0][0]}"
             elif holder:
                 verdict = f"MISMATCH: inside our {holder[0][0]}"

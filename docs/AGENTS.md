@@ -15,6 +15,7 @@ original compiler turns into that function's exact bytes. MATCH means
 - Keep helper scripts and variant files in `build/spike/<ADDR>/` too: the scratchpad is
   shared. No two files may differ only in case: under Wine they write one `.obj`, and
   the compile fails with only the file name in the log.
+- The session scratchpad is shared too: delete only files you created there.
 - Before you finish, delete the scratch you made that nobody needs (probes, logs, variant
   copies) with `rm` on files or `find DIR -type f -delete`, never a recursive force
   delete. Keep your best source and its header overlay.
@@ -34,7 +35,8 @@ original compiler turns into that function's exact bytes. MATCH means
    MissionClass, RadioClass, TechnoClass, BuildingClass, ObjectTypeClass,
    TechnoTypeClass, BuildingTypeClass, BaseClass, TeamClass, AnimClass, AnimTypeClass,
    UnitTypeClass, UnitClass, InfantryTypeClass, AircraftTypeClass, TeamTypeClass,
-   HouseTypeClass, WarheadTypeClass, BombClass, ParasiteClass, LineTrail, and the shared
+   HouseTypeClass, WarheadTypeClass, BombClass, ParasiteClass, LineTrail, ScenarioClass,
+   Random2Class, ColorScheme, and the shared
    ones batch 1 gave YR's layout (RulesClass, HouseClass, CellClass, FootClass, the file
    classes, the gadgets, the surfaces). Include them
    rather than writing stand-ins; `uv run tools/headercheck.py <Class>` proves any header you fix in
@@ -211,8 +213,12 @@ Each entry: what the diff showed, then the source change that fixed it.
 - YR signatures that differ from TS: Take_Damage has 7 arguments, Is_Moving_Onto_Bridge
   and Destination_Coord take a `TechnoClass *`; MissionClass slot 0x1E8 is
   `void QueueMission(MissionType, bool)` and 0x1EC is `bool Commence(void)`.
-- A TS layout can agree with YR's for a prefix only (ScenarioClass, to 0x218): run
-  headercheck before porting a function that reaches past it.
+- A TS layout can agree with YR's for a prefix only: run headercheck before porting a
+  function that reaches past a class's proven part.
+- Where YRpp groups members into a struct and TS has flat fields, use a nested struct
+  with TS's field names (ScenarioClass's lighting).
+- A YRpp row can merge two classes (MapSeedClass with the generator): trust the
+  constructor and the size passed to `new` over data/layouts.csv.
 - Porting a stub-based match: drop the overlay and map stub members onto the real
   header by offset, keeping TS names. Most then match in one or two checks.
 

@@ -219,6 +219,7 @@ address,name,result,size,source,symbol
 0x0047BB60,CellClass::~CellClass,MATCH,137,src/cell.cpp,??1CellClass@@UAE@XZ
 0x0047BBF0,CellClass::CellClass,MATCH,440,src/cell.cpp,??0CellClass@@QAE@XZ
 0x0047BDB0,CellClass::Preview_Cell_Color,MATCH,674,src/cell.cpp,?Preview_Cell_Color@CellClass@@QBEHAAE_N@Z
+0x0047C060,CellClass::Cell_Color,MATCH,873,src/cell.cpp,?Cell_Color@CellClass@@QBEXAAVRGBClass@@0@Z
 0x0047C3D0,CellClass::Cell_Techno,MATCH,250,src/cell.cpp,?Cell_Techno@CellClass@@QBEPAVTechnoClass@@ABVPoint2D@@_NPBV2@@Z
 0x0047C4D0,CellClass::Cell_Find_Object,MATCH,73,src/cell.cpp,?Cell_Find_Object@CellClass@@QBEPAVObjectClass@@W4RTTIType@@_N@Z
 0x0047C520,CellClass::Cell_Building,MATCH,47,src/cell.cpp,?Cell_Building@CellClass@@QBEPAVBuildingClass@@XZ
@@ -1080,6 +1081,9 @@ address,name,result,size,source,symbol
 0x0065C890,Random3Class::Random3Class,MATCH,18,src/random.cpp,??0Random3Class@@QAE@II@Z
 0x0065C8B0,Random3Class::operator(),MATCH,94,src/random.cpp,??RRandom3Class@@QAEHXZ
 0x0065C910,Random3Class::operator(),MATCH,230,src/random.cpp,??RRandom3Class@@QAEHHH@Z
+0x0065C6D0,Random2Class::Random2Class,MATCH,170,src/random.cpp,??0Random2Class@@QAE@I@Z
+0x0065C780,Random2Class::operator(),MATCH,81,src/random.cpp,??RRandom2Class@@QAEHXZ
+0x0065C7E0,Random2Class::operator(),MATCH,173,src/random.cpp,??RRandom2Class@@QAEHHH@Z
 0x0065CB30,RawFileClass::Open,MATCH,31,src/rawfile.cpp,?Open@RawFileClass@@UAEHPBDH@Z
 0x0065D510,Read_Line,MATCH,176,src/readline.cpp,?Read_Line@@YIHAAVFileClass@@PADHAA_N@Z
 0x0065D5C0,Read_Line,MATCH,152,src/readline.cpp,?Read_Line@@YIHAAVStraw@@PADHAA_N@Z

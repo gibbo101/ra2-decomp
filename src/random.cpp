@@ -50,3 +50,39 @@ int Random3Class::operator() (int minval, int maxval)
 {
 	return(Pick_Random_Number(*this, minval, maxval));
 }
+
+// FUNCTION: 0x0065C6D0
+Random2Class::Random2Class(unsigned seed) :
+	Index1(0),
+	Index2(103)
+{
+	Random3Class random(seed);
+
+	for (int index = 0; index < TABLE_SIZE; index++) {
+		Table[index] = random;
+	}
+	unknown_00 = false;
+}
+
+// FUNCTION: 0x0065C780
+int Random2Class::operator() (void)
+{
+	if (unknown_00) return(0);
+
+	Table[Index1] ^= Table[Index2];
+	int val = Table[Index1];
+
+	Index1++;
+	Index2++;
+
+	if (Index1 >= TABLE_SIZE) Index1 = 0;
+	if (Index2 >= TABLE_SIZE) Index2 = 0;
+
+	return(val);
+}
+
+// FUNCTION: 0x0065C7E0
+int Random2Class::operator() (int minval, int maxval)
+{
+	return(Pick_Random_Number(*this, minval, maxval));
+}

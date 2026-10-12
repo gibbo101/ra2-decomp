@@ -56,10 +56,6 @@
 template<> void VectorClass<ColorScheme *>::Clear(void);
 void FUN_006269A0(void);
 void __fastcall FUN_00626AB0(char const * name, HSVClass & hsv);
-struct BytePaletteStub { unsigned char Bytes[768]; };
-extern BytePaletteStub DAT_00886380;
-extern BytePaletteStub FileSystem_TEMPERAT_PAL;
-ColorScheme * __fastcall Scheme_Find_By_Name(char const * name, HSVClass & hsv, BytePaletteStub const & base, BytePaletteStub const & screen, int levels);
 void Difficulty_Get(CCINIClass const & ini, DifficultyClass & diff, char const * section);
 class MPGameModeStub { public: CCINIClass * FUN_005D67B0(void); };
 struct SessionStub { int GameMode; MPGameModeStub * Mode; bool Is_Multiplayer(void) const {return GameMode != 0 && GameMode != 5;} };
@@ -275,8 +271,8 @@ bool RulesClass::Color_Schemes(CCINIClass const & ini)
 			char const * name = ini.Get_Entry(COLORS, i);
 			HSVClass hsv = ini.Get_HSVClass(COLORS, name, HSVClass(0, 0, 0));
 			FUN_00626AB0(name, hsv);
-			Scheme_Find_By_Name(name, hsv, DAT_00886380, FileSystem_TEMPERAT_PAL, 1);
-			Scheme_Find_By_Name(name, hsv, DAT_00886380, FileSystem_TEMPERAT_PAL, 0x35);
+			ColorScheme::Find_Or_Make(name, hsv, SchemePalette, GamePalette, 1);
+			ColorScheme::Find_Or_Make(name, hsv, SchemePalette, GamePalette, 0x35);
 		}
 		return(true);
 	}
