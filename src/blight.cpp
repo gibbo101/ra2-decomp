@@ -67,6 +67,74 @@ void BuildingLightClass::Detach(AbstractClass const * target, bool all)
 	}
 }
 
+// FUNCTION: 0x00436A40
+void BuildingLightClass::Init_Rotation_Arc(TechnoClass * owner)
+{
+	Coord target = Move_Coord(owner->PositionCoord, owner->PrimaryFacing.Current(), Rule->SpotlightLocationRadius);
+	RotationTarget = target;
+
+	RotationPivot = Move_Coord(owner->PositionCoord, owner->PrimaryFacing.Current(), -Rule->SpotlightMovementRadius);
+
+	PositionCoord = target;
+}
+
+// FUNCTION: 0x00436BE0
+void BuildingLightClass::Set_Behavior_Type(LightBehaviorType type)
+{
+	Behavior = type;
+	Speed = 0;
+
+	if (Behavior == LIGHT_BEHAVIOR_FOLLOW) {
+		Cell cell = PositionCell;
+
+		int mindist = 9999999;
+		ObjectClass * closest = NULL;
+
+		HouseClass * house = Owner->House;
+
+		for (int x = -1; x < 2; x++) {
+			for (int y = -1; y < 2; y++) {
+				ObjectClass * occupier = Map[Cell(TPoint2D<short>(x + cell.X, y + cell.Y))].Cell_Occupier();
+				while (occupier != NULL) {
+					if ((occupier->RTTI == RTTI_INFANTRY || occupier->RTTI == RTTI_UNIT) && !house->Is_Ally(occupier)) {
+						int dist = occupier->Center_Coord().Distance_To(Get_Coord());
+						if (dist < mindist) {
+							closest = occupier;
+							mindist = dist;
+						}
+					}
+					occupier = occupier->Next;
+				}
+
+			}
+		}
+
+		if (closest != NULL) {
+			Target = (TechnoClass *)closest;
+		}
+	}
+}
+
+// FUNCTION: 0x00436DA0
+int BuildingLightClass::Detection_Radius(void) const
+{
+	static const double _scale = 7.466666666666666;
+	int radius = Sweep_Stage() * _scale;
+	radius += Rule->SpotlightRadius;
+	return(radius);
+}
+
+// FUNCTION: 0x00436E80
+int BuildingLightClass::Sweep_Stage(void) const
+{
+	int dist = Center_Coord().Distance_To(Owner->Center_Coord());
+	int radius = Rule->SpotlightLocationRadius;
+	if (dist < radius) {
+		return(0);
+	}
+	return((dist - radius) / ((Rule->SpotlightMovementRadius - radius) / 10));
+}
+
 // FUNCTION: 0x00436F40
 void BuildingLightClass::Compute_CRC(CRCEngine & crc) const
 {

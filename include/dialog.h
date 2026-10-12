@@ -6,6 +6,8 @@
 
 #include "point.h"
 
+#include <stddef.h>
+
 #include "color.hh"
 #include "dialog.hh"
 
@@ -23,6 +25,15 @@ Point2D __cdecl Fancy_Text_Print(int text, Surface & surface, Rect const & rect,
 Point2D Simple_Text_Print(char const * text, Surface & surface, Rect const & rect, Point2D const & pt, ColorScheme * scheme, int back, TextPrintType flag, int fore);
 Point2D Plain_Text_Print(int text, Surface & surface, Rect const &rect, Point2D const & xy, int , int back, TextPrintType flag, int scheme, int fore);
 Point2D Plain_Text_Print(char const * text, Surface & surface, Rect const &rect, Point2D const & pt, int , int back, TextPrintType flag, int scheme, int fore);
+
+Rect * Drawing_GetTextDimensions(Rect * out, wchar_t const * text, Point2D loc, unsigned short flags, int marginX, int marginY);
+int Count_Text_Lines(wchar_t const * text, int unused, int columns, int * width, int * height);
+Point2D Simple_Text_Print_Wide(wchar_t const * text, Surface * surface, Rect const * bounds, Point2D const * pt, unsigned fore, unsigned back, TextPrintType flags, int unused);
+Point2D Simple_Text_Print_Wide(wchar_t const * text, Surface * surface, Rect const * bounds, Point2D const * pt, ColorScheme * scheme, unsigned back, TextPrintType flags, int unused);
+Point2D * __cdecl Fancy_Text_Print_Wide(Point2D * ret, wchar_t const * text, Surface * surface, Rect const * bounds, Point2D const * pt, unsigned fore, unsigned back, TextPrintType flags, ...);
+Point2D * __cdecl Fancy_Text_Print_Wide(Point2D * ret, wchar_t const * text, Surface * surface, Rect const * bounds, Point2D const * pt, ColorScheme * scheme, unsigned back, TextPrintType flags, ...);
+Point2D Conquer_Clip_Text_Print_Wide(wchar_t const * text, Surface * surface, Rect const * rect, Point2D const * pt, unsigned fore, unsigned back, TextPrintType flag, int width, int const * tabs);
+Point2D Conquer_Clip_Text_Print_Wide(wchar_t const * text, Surface * surface, Rect const * rect, Point2D const * pt, ColorScheme * scheme, unsigned back, TextPrintType flag, int width, int const * tabs);
 
 FontClass *Font_From_TPF(TextPrintType flags);
 unsigned char * Font_Palette(int color);

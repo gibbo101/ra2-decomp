@@ -51,11 +51,32 @@ CoordStruct STDMETHODCALLTYPE MechLocomotionClass::Destination(void)
 	return(COORD_NONE);
 }
 
+// FUNCTION: 0x005AFFE0
+CoordStruct STDMETHODCALLTYPE MechLocomotionClass::Head_To_Coord(void)
+{
+	if (HeadToCoord != COORD_NONE) {
+		return(HeadToCoord);
+	}
+	return(LinkedTo->PositionCoord);
+}
+
 // FUNCTION: 0x005B0060
 boolean STDMETHODCALLTYPE MechLocomotionClass::Process(void)
 {
 	Movement_AI(true);
 	return(Is_Moving());
+}
+
+// FUNCTION: 0x005B0080
+void STDMETHODCALLTYPE MechLocomotionClass::Move_To(CoordStruct to)
+{
+	if (!LinkedTo->IsUnderEMP() && !LinkedTo->IsParalyzed() && !LinkedTo->IsBeingWarpedOut() && !LinkedTo->IsWarpingIn()) {
+		DestinationCoord = to;
+		if (Map[(Coord)to].IsUnderBridge) {
+			DestinationCoord.Z += Tactical::Pixel_To_Z_Lepton(60);
+		}
+		IsMoving = true;
+	}
 }
 
 // FUNCTION: 0x005B0120
@@ -67,10 +88,50 @@ void STDMETHODCALLTYPE MechLocomotionClass::Stop_Moving(void)
 	}
 }
 
+// FUNCTION: 0x005B0170
+void MechLocomotionClass::Do_Turn(DirStruct coord)
+{
+	LinkedTo->PrimaryFacing.Set_Desired(coord);
+}
+
 // FUNCTION: 0x005B01A0
 void STDMETHODCALLTYPE MechLocomotionClass::Force_Immediate_Destination(CoordStruct coord)
 {
 	HeadToCoord = coord;
+}
+
+// FUNCTION: 0x005B17B0
+bool MechLocomotionClass::Mark_Head_To(Coord const & coord)
+{
+	Coord crd = coord;
+
+	if (crd != COORD_NONE) {
+		crd.Z = Map.Get_Height_GL(crd);
+		if (Map[coord].IsUnderBridge && LinkedTo->Get_Coord().Z > crd.Z + 2 * LEVEL_LEPTON_H + LEVEL_LEPTON_H) {
+			crd.Z += BRIDGE_LEPTON_HEIGHT;
+		}
+	}
+
+	if (HeadToCoord != COORD_NONE) {
+		LinkedTo->Clear_Occupy_Bit(HeadToCoord);
+	}
+
+	if (Map[crd].Goodie_Check(LinkedTo) && !LinkedTo->IsInLimbo) {
+		HeadToCoord = crd;
+	} else {
+		HeadToCoord = COORD_NONE;
+		if (!LinkedTo->IsActive) {
+			return(false);
+		}
+	}
+
+	if (HeadToCoord != COORD_NONE) {
+		LinkedTo->Set_Occupy_Bit(HeadToCoord);
+		return(true);
+	}
+
+	LinkedTo->Set_Occupy_Bit(LinkedTo->PositionCoord);
+	return(false);
 }
 
 // FUNCTION: 0x005B1960
@@ -95,6 +156,26 @@ HRESULT STDMETHODCALLTYPE MechLocomotionClass::Load(IStream * stream)
 LayerType STDMETHODCALLTYPE MechLocomotionClass::In_Which_Layer(void)
 {
 	return(LAYER_GROUND);
+}
+
+// FUNCTION: 0x005B19E0
+boolean STDMETHODCALLTYPE MechLocomotionClass::Is_Moving_Now(void)
+{
+	if (LinkedTo->PrimaryFacing.Is_Rotating()) {
+		return(true);
+	}
+	if (Is_Moving() && HeadToCoord != COORD_NONE && LinkedTo->Current_Speed() > 0) {
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x005B1A50
+void STDMETHODCALLTYPE MechLocomotionClass::Mark_All_Occupation_Bits(int mark)
+{
+	if (mark == MARK_UP) {
+		LinkedTo->Clear_Occupy_Bit((Coord)Head_To_Coord());
+	}
 }
 
 // FUNCTION: 0x005B1AA0

@@ -22,7 +22,7 @@ template<class T> class TPoint3D;
 
 class INIClass {
 	public:
-		INIClass(void) : TailComment(NULL) {}
+		INIClass(void) : CurrentSectionName(NULL), CurrentSection(NULL), TailComment(NULL) {}
 		virtual ~INIClass(void);
 
 		int Load(FileClass & file, bool keepcomments = false);
@@ -56,6 +56,7 @@ class INIClass {
 		TPoint2D<int> const Get_Point(char const * section, char const * entry, TPoint2D<int> const & defvalue) const;
 		TPoint3D<float> const Get_Point(char const * section, char const * entry, TPoint3D<float> const & defvalue) const;
 		CLSID const Get_CLSID(char const * section, char const * entry, CLSID defvalue) const;
+		class TechnoTypeClass * GetTechnoType(char const * section, char const * entry) const;
 
 		bool Put_Bool(char const * section, char const * entry, bool value);
 		bool Put_Float(char const * section, char const * entry, double number);
@@ -144,6 +145,9 @@ class INIClass {
 		INIEntry * Find_Entry(char const * section, char const * entry) const;
 		static void Strip_Comments(char * buffer);
 		static char * Scan_Line_For_Columns(char * buffer, int & assign_pos, int & value_pos, int & comment_pos);
+
+		char * CurrentSectionName;
+		INISection * CurrentSection;
 
 		List<INISection *> SectionList;
 

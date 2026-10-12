@@ -38,8 +38,6 @@ class MechLocomotionClass : public LocomotionClass
 		virtual int Fetch_Object_Size(bool oldsave = false) const override {return(sizeof(*this));}
 
 	private:
-		unsigned int : 32;
-
 		Coord DestinationCoord;
 
 		Coord HeadToCoord;

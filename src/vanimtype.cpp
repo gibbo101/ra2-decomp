@@ -73,6 +73,84 @@ VoxelAnimTypeClass::~VoxelAnimTypeClass(void)
 	}
 }
 
+// FUNCTION: 0x0074B050
+bool VoxelAnimTypeClass::Read_INI(CCINIClass & ini)
+{
+	ini.Reset();
+	if (BASECLASS::Read_INI(ini)) {
+		IsNormalized = ini.Get_Bool(IniName, "Normalized", IsNormalized);
+		IsTranslucent = ini.Get_Bool(IniName, "Translucent", IsTranslucent);
+		IsTiberium = ini.Get_Bool(IniName, "IsTiberium", IsTiberium);
+		IsMeteor = ini.Get_Bool(IniName, "IsMeteor", IsMeteor);
+		Elasticity = ini.Get_Float(IniName, "Elasticity", Elasticity);
+
+		double min_angular_vel = ini.Get_Float(IniName, "MinAngularVelocity", -1.0);
+		if (min_angular_vel != 0.0) {
+			MinAngularVelocity = min_angular_vel * (3.1415 / 180.0);
+		}
+
+		double max_angular_vel = ini.Get_Float(IniName, "MaxAngularVelocity", -1.0);
+		if (max_angular_vel != 0.0) {
+			MaxAngularVelocity = max_angular_vel * (3.1415 / 180.0);
+		}
+
+		Duration = ini.Get_Int(IniName, "Duration", Duration);
+		MinZVel = ini.Get_Float(IniName, "MinZVel", MinZVel);
+		MaxZVel = ini.Get_Float(IniName, "MaxZVel", MaxZVel);
+		MaxXYVel = ini.Get_Float(IniName, "MaxXYVel", MaxXYVel);
+
+		Spawns = TGet_Class(ini, IniName, "Spawns", Spawns);
+		SpawnCount = ini.Get_Int(IniName, "SpawnCount", SpawnCount);
+
+		bool share_body_data = ini.Get_Bool(IniName, "ShareBodyData", false);
+		bool share_turret_data = ini.Get_Bool(IniName, "ShareTurretData", false);
+		bool share_barrel_data = ini.Get_Bool(IniName, "ShareBarrelData", false);
+
+		VoxelIndex = ini.Get_Int(IniName, "VoxelIndex", VoxelIndex);
+
+		StartSound = ini.Get_VocType(IniName, "StartSound", StartSound);
+		StopSound = ini.Get_VocType(IniName, "StopSound", StopSound);
+
+		BounceAnim = TGet_Class(ini, IniName, "BounceAnim", BounceAnim);
+		ExpireAnim = TGet_Class(ini, IniName, "ExpireAnim", ExpireAnim);
+		TrailerAnim = TGet_Class(ini, IniName, "TrailerAnim", TrailerAnim);
+
+		Damage = ini.Get_Int(IniName, "Damage", Damage);
+		DamageRadius = ini.Get_Int(IniName, "DamageRadius", DamageRadius);
+
+		Warhead = TGet_Class(ini, IniName, "Warhead", Warhead);
+		AttachedSystem = TGet_Class(ini, IniName, "AttachedSystem", AttachedSystem);
+
+		IsSharesSourceData = share_body_data || share_barrel_data || share_turret_data;
+
+		if (IsSharesSourceData) {
+			TechnoTypeClass const * source = ini.GetTechnoType(IniName, "ShareSource");
+			if (source) {
+				if (share_body_data) {
+					Voxel = source->Voxel;
+				} else if (share_turret_data) {
+					Voxel = source->AuxVoxel;
+				} else if (share_barrel_data) {
+					Voxel = source->AuxVoxel2;
+				}
+			} else {
+				Voxel.VoxLib = NULL;
+				Voxel.MotLib = NULL;
+			}
+		} else {
+			char path[512];
+			_makepath(path, NULL, NULL, GraphicName, ".VXL");
+			CCFileClass file(path);
+			if (Voxel.VoxLib) {
+				delete Voxel.VoxLib;
+			}
+			Voxel.VoxLib = new VoxelLibrary(file, false);
+		}
+		return(true);
+	}
+	return(false);
+}
+
 // FUNCTION: 0x0074B620
 char const * VoxelAnimTypeClass::Name_From(VoxelAnimType anim)
 {
