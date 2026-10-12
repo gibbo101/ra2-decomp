@@ -381,6 +381,8 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 		virtual LONG STDMETHODCALLTYPE Apparent_Category_Quantity(CategoryType category) override;
 		virtual LONG STDMETHODCALLTYPE Apparent_Category_Power(CategoryType category) override;
 		virtual CellStruct STDMETHODCALLTYPE Apparent_Base_Center() override;
+		Cell Get_Base_Center(void) const;
+		bool IonSensitivesShouldBeOffline(void) const;
 		virtual bool STDMETHODCALLTYPE Is_Powered() override;
 
 		virtual HRESULT STDMETHODCALLTYPE EnumConnectionPoints(IEnumConnectionPoints **ppEnum) override;
@@ -397,6 +399,8 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 		void Super_Weapon_Handler(void);
 		int * Factory_Counter(RTTIType rtti);
 		int Factory_Count(RTTIType rtti) const;
+		double FUN_0050C0A0(TechnoTypeClass const * type) const;
+		int FUN_00500910(RTTIType rtti, bool naval) const;
 		DiffType Assign_Handicap(DiffType handicap);
 		AbstractClass * Find_Juicy_Target(Coord const & coord) const;
 		Cell Where_To_Go(FootClass const * object) const;
@@ -540,6 +544,7 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 		void Lost_Firestorm_Generator(void);
 
 		bool Can_Make_Money(void);
+		TechnoTypeClass const * FirstBuildableFromArray(DynamicVectorClass<BuildingTypeClass const *> const & list) const;
 
 		static void One_Time(void);
 		static AnimClass * PsiWarn(HouseClass * house, ObjectClass * target, BulletClass * bullet, char const * name);

@@ -659,6 +659,23 @@ register or layout near misses (93.9% to 97.6%), two building functions waiting 
 SuperClass and a CounterClass, and the initialiser now split from its callback. Cost:
 about 3.2M tokens, 82 minutes. Merge gate: 1,670 of 1,670 (234.2 KB).
 
+### Batch 4 (12 October 2026)
+
+Nine modules whose headers were mostly proven: House, cell, foot, object, team, bullet,
+weapon, Techno, building. **102 of 108 matched**, plus two functions the header merge
+found: RadioClass's NoInit constructor, which the exe has out of line, and ObjectClass's
+cell overload of Active_Click_With, which sits beside the object overload batch 2
+landed. The merge brought in YR's EventClass (111 bytes, packed, 47 event types),
+xTargetClass, the event queue with its timing array, map.h and tactical.h, and the
+RadioClass vtable: three Transmit_Message overloads that MSVC lays out in reverse
+declaration order. TechnoClass's Get_FLH turned out to be its Fire_Coord slot. One
+function waited a record pass: the checker resolves an overloaded callee by decorated
+name only once progress.csv holds it. Banked: CellClass's two bridge setters (71.5%,
+bitfield spill order), its placement cursor (37%, this and the type swap registers),
+the shroud shape (EBP frame), BulletClass::Unlimbo (72.8%, x87 spill), and
+BuildingClass's barrel pitch (98.5%). Cost: about 2.9M tokens, 65 minutes. Merge gate:
+1,774 of 1,774 (262.1 KB).
+
 ### Decide before the first batch
 
 - **Module layout.** Which function lives in which source file, and the link order, decide

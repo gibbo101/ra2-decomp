@@ -36,4 +36,6 @@ class ParasiteClass : public AbstractClass
 		virtual void Detach(AbstractClass const * target, bool all = true) override;
 		virtual void Compute_CRC(CRCEngine & crc) const override;
 		virtual void AI(void) override;
+
+		void ExitUnit(void);
 };

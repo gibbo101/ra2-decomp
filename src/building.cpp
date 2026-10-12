@@ -17,6 +17,7 @@
 #include "anim.h"
 #include "animtype.h"
 #include "blight.h"
+#include "bomb.h"
 #include "bound.h"
 #include "bsurface.h"
 #include "builtype.h"
@@ -31,6 +32,7 @@
 #include "drive.h"
 #include "dsurface.h"
 #include "event.h"
+#include "fastmath.h"
 #include "factory.h"
 #include "fog.h"
 #include "globals.h"
@@ -359,6 +361,363 @@ int BuildingClass::Get_Z_Adjust(void) const
 		return(Class->AnimData[BANIM_TURRET].ZAdjust + pixel);
 	}
 	return(pixel);
+}
+
+// FUNCTION: 0x0043ED40
+DirType BuildingClass::Aim_Direction(AbstractClass * target) const
+{
+	Coord coord = COORD_NONE;
+
+	if (Class->PrimaryFirePixelOffset != Point2D(0xFFFF, 0xFFFF)) {
+		coord = Coord(TacticalMap->Pixel_To_Lepton(Class->PrimaryFirePixelOffset), 0);
+	} else {
+		Point2D pt(Class->AnimData[BANIM_TURRET].Location.X, Class->AnimData[BANIM_TURRET].Location.Y);
+		if (pt != Point2D(0, 0)) {
+			coord = Coord(TacticalMap->Pixel_To_Lepton(pt), 0);
+		}
+	}
+	coord = coord + Center_Coord();
+	return(::Direction(coord, target->Center_Coord()));
+}
+
+// FUNCTION: 0x0043EE50
+int BuildingClass::Set_Turret_Frame(void)
+{
+	int stage = 0;
+
+	if (Is_Turret_Equipped() && Anims[BANIM_TURRET] != NULL) {
+		DirType dir = PrimaryFacing.Current();
+		stage = BASECLASS::BodyShape[dir.As_Dir32()];
+		AnimClass * anim = Anims[BANIM_TURRET];
+		if (anim != NULL) {
+			anim->Animation.Set_Stage(stage);
+			anim->Animation.Set_Step(0);
+		}
+	}
+	return(stage);
+}
+
+// FUNCTION: 0x0043EEB0
+void BuildingClass::Set_Turret_Index(int index)
+{
+	char buffer[64];
+	if (index != TurretIndex && !Class->IsTurretAnimAVoxel) {
+		DestroyNthAnim(BANIM_TURRET);
+		if (index != -1) {
+			strcpy(buffer, Class->GraphicName);
+			strcat(buffer, "_");
+			int len = strlen(buffer);
+			buffer[len] = index + 'B';
+			buffer[len + 1] = '\0';
+			PlayAnim(buffer, BANIM_TURRET, false, false, false);
+			TurretIndex = index;
+		}
+	}
+}
+
+// FUNCTION: 0x0043EF90
+int BuildingClass::Shape_Number(void) const
+{
+	int shapenum = Animation.Fetch_Stage();
+
+	if (Class->IsLaserFence) {
+		return(LaserFenceFrame);
+	}
+
+	if (Class->IsFirestormWall) {
+		return(FirestormWallFrame);
+	}
+
+	if (BState == BSTATE_CONSTRUCTION) {
+		if (Class->IsGate) {
+			shapenum = (Class->Anims[BSTATE_CONSTRUCTION].Start + Class->Anims[BSTATE_CONSTRUCTION].Count - 1) - shapenum;
+		}
+		if (Get_Mission() == MISSION_DECONSTRUCTION) {
+			shapenum = (Class->Anims[BState].Start + Class->Anims[BState].Count - 1) - shapenum;
+		}
+	} else if (Class->CanBeOccupied) {
+		shapenum = 0;
+		if (GetOccupantCount() > 0) {
+			shapenum = 2;
+		}
+		if (HealthRatio <= Rule->ConditionRed || (Techno_Type_Class()->Level > 0 && HealthRatio <= Rule->ConditionYellow)) {
+			shapenum++;
+		}
+		if (Class->Level == -1 && shapenum == 3) {
+			shapenum = 1;
+		}
+	} else if (Class->IsGate) {
+		if (HealthRatio <= Rule->ConditionYellow) {
+			return(Class->GateStages + 1);
+		}
+		return(0);
+	} else {
+		if (HealthRatio <= Rule->ConditionYellow) {
+			if (BState == BSTATE_IDLE) {
+				shapenum++;
+			} else {
+				int last1 = Class->Anims[BSTATE_IDLE].Start + Class->Anims[BSTATE_IDLE].Count;
+				int last2 = Class->Anims[BSTATE_ACTIVE].Start + Class->Anims[BSTATE_ACTIVE].Count;
+				int largest = MAX(last1, last2);
+				last2 = Class->Anims[BSTATE_AUX1].Start + Class->Anims[BSTATE_AUX1].Count;
+				largest = MAX(largest, last2);
+				last2 = Class->Anims[BSTATE_AUX2].Start + Class->Anims[BSTATE_AUX2].Count;
+				largest = MAX(largest, last2);
+				shapenum += largest;
+			}
+		}
+	}
+	return(shapenum);
+}
+
+extern DynamicVectorClass<BuildingClass *> DAT_008B41E0;
+
+inline void Register_Dirty(Rect const & area)
+{
+	TacticalMap->Register_Dirty_Area(area, false);
+}
+
+// FUNCTION: 0x00441F60
+void BuildingClass::AfterDestruction(void)
+{
+	ShapeSet const * shape;
+	int frame;
+
+	if (Class->FUN_0045F160(&shape, &frame)) {
+		Cell const * offset = Occupy_List();
+		Cell origin = Render_Coord().As_Cell();
+
+		while (*offset != REFRESH_EOL) {
+			Cell newcell = origin + *offset++;
+			CellClass * cellptr = &Map[newcell];
+			cellptr->Register_For_Redraw();
+			cellptr->Overlay = (OverlayType)0xef;
+			cellptr->Rubble = NULL;
+			cellptr->Recalc_Attributes(-1);
+			Map.ResetZones(cellptr->CellID);
+			Map.RecalculateSubZones(cellptr->CellID);
+			cellptr->BecomeUntargetable();
+		}
+
+		CellClass * cellptr = &Map[origin];
+		cellptr->Rubble = Class;
+		Rect area = Union(cellptr->Overlay_Render_Rect(), cellptr->Overlay_Shadow_Render_Rect());
+		Register_Dirty(area - DSurface::ViewBounds.TopLeft);
+		TacticalMap->Flag_Cell(Map[origin]);
+	}
+
+	if (Class->CrateBeneath) {
+		Cell cell = Render_Coord().As_Cell();
+		if (Class->CrateBeneathIsMoney) {
+			Map.PlacePowerupCrate(cell, 0);
+		} else {
+			Map.PlacePowerupCrate(cell, 20);
+		}
+	}
+}
+
+// FUNCTION: 0x00442C40
+void BuildingClass::Init(void)
+{
+	BASECLASS::Init();
+	if (House != NULL) {
+		WhoLastHurtMe = House->Class->House;
+		House->Tracking_Add(this);
+	}
+	if (Class != NULL) {
+		EstimatedHealth = Strength = Class->MaxStrength;
+		if (Class->InitialAmmo == -1) {
+			Ammo = Class->MaxAmmo;
+		} else {
+			Ammo = Class->InitialAmmo;
+		}
+		PrimaryFacing.Set_ROT(Class->ROT);
+		if (Class->Get_Buildup_Data() == NULL) {
+			IsAllowedToSell = false;
+		} else {
+			Class->Free_Buildup_Data();
+			HasBuildupData = true;
+		}
+		if (House != NULL && House->WarFactoryInfiltrated && !Class->Naval && Class->IsTrainable && Class->UndeploysInto != NULL) {
+			Veterancy.Set_Veteran(true);
+		}
+	}
+	if (Class != NULL && Class->SecretLab) {
+		DAT_008B41E0.Add(this);
+	}
+}
+
+// FUNCTION: 0x00443410
+bool BuildingClass::Active_Click_With(ActionType action, ObjectClass * object, bool)
+{
+	if (action == ACTION_ATTACK) {
+		if (object != NULL) {
+			Player_Assign_Mission(MISSION_ATTACK, object, NULL, NULL);
+			return(true);
+		}
+		return(true);
+	}
+
+	if (action == ACTION_SELF) {
+		if (Class->ToBuild != RTTI_NONE) {
+			OutList.Add(EventClass(Owner(), EventClass::PRIMARY, TargetClass(this)));
+		}
+		if (Class->GapGenerator) {
+			Player_Assign_Mission(MISSION_UNLOAD, object, NULL, NULL);
+		}
+		if (Class->UnitAbsorb || Class->InfantryAbsorb) {
+			Player_Assign_Mission(MISSION_UNLOAD, object, NULL, NULL);
+		}
+		if (GetOccupantCount() > 0) {
+			Player_Assign_Mission(MISSION_UNLOAD, object, NULL, NULL);
+			return(true);
+		}
+		return(true);
+	}
+
+	if (action == (ActionType)0x37) {
+		OutList.Add(EventClass(AttachedBomb->OwnerHouse->HeapID, EventClass::DETONATE, TargetClass(this)));
+	} else if (action == ACTION_MOVE) {
+		RTTIType build = Class->ToBuild;
+		if (build != RTTI_INFANTRYTYPE && build != RTTI_UNITTYPE && build != RTTI_AIRCRAFTTYPE) {
+			OutList.Add(EventClass(Owner(), EventClass::ARCHIVE, TargetClass(this), TargetClass(object)));
+		} else {
+			Cell cell = object->Center_Coord().As_Cell();
+			Assign_Rally_Point(cell, true);
+		}
+		return(true);
+	}
+
+	return(true);
+}
+
+// FUNCTION: 0x004436F0
+bool BuildingClass::Active_Click_With(ActionType action, Cell const & cell, Cell const & cell2, bool)
+{
+	if (action == ACTION_ATTACK) {
+		Player_Assign_Mission(MISSION_ATTACK, &Map[cell], NULL, NULL);
+		return(true);
+	}
+
+	if (action == (ActionType)6 || action == ACTION_MOVE) {
+		bool blocked = false;
+		if (Class->IsConstructionYard) {
+			if (!House->Is_Human_Player() || !Session.Type || !Session.Options.MCVRedeploy || MindControlledBy != NULL) {
+				blocked = true;
+			}
+		}
+		if (!blocked) {
+			if (Class->UndeploysInto != NULL || Is_Move_Override()) {
+				Assign_Rally_Point(cell, true);
+			}
+		}
+		if (Class->UndeploysInto != NULL && !blocked) {
+			OutList.Add(EventClass(Owner(), EventClass::SELL, TargetClass(this)));
+		}
+	}
+	return(true);
+}
+
+// FUNCTION: 0x00443860
+void BuildingClass::Assign_Rally_Point(Cell const & cell, bool play_eva)
+{
+	Cell nearbyloc;
+	SpeedType speed = SPEED_FOOT;
+	MZoneType mzone = MZONE_NORMAL;
+
+	bool underbridge = Map[cell].IsUnderBridge;
+
+	if (Class->ToBuild == RTTI_AIRCRAFTTYPE) {
+		speed = SPEED_WINGED;
+		mzone = MZONE_FLYER;
+	}
+	if (Class->Naval) {
+		speed = (SpeedType)6;
+		mzone = (MZoneType)4;
+	}
+
+	Coord here = Position;
+	int zone = Map.Get_Cell_Zone(here.As_Cell(), mzone, underbridge);
+
+	nearbyloc = Map.Nearby_Location(cell, speed, zone, mzone, underbridge, Point2D(1, 1), false, false, false, true, Cell(0, 0), false, false);
+
+	if (nearbyloc != CELL_NONE) {
+		OutList.Add(EventClass(Owner(), EventClass::ARCHIVE, TargetClass(this), TargetClass(&Map[nearbyloc])));
+	} else if (Class->IsConstructionYard && House->Is_Human_Player() && Session.Type && Session.Options.MCVRedeploy && MindControlledBy == NULL) {
+		OutList.Add(EventClass(Owner(), EventClass::ARCHIVE, TargetClass(this), TargetClass(&Map[Center_Coord()])));
+		return;
+	}
+	if (play_eva && House->Is_Player_Control() && !Class->IsConstructionYard && !Class->ResourceDestination) {
+		VoxClass::Play("EVA_NewRallyPointEstablished", -1, -1);
+	}
+}
+
+// FUNCTION: 0x00443B90
+void BuildingClass::Assign_Target(AbstractClass * target)
+{
+	if (CurrentMission == MISSION_DECONSTRUCTION) goto none;
+	if (!IsPowerOnline()) {
+none:
+		target = NULL;
+	} else if (target != NULL && PrimaryWeapon != NULL && !PrimaryWeapon->Bullet->IsAntiAircraft && !IsCloseEnoughToAttack(target)) {
+		BASECLASS::Assign_Target(NULL);
+		if (Class->IsTickTank || Class->IsArtillary) {
+			if (!House->Is_Human_Player() && !IsUnderEMP()) {
+				QueueMission(MISSION_DECONSTRUCTION, false);
+				Commence();
+			}
+		}
+		return;
+	}
+	BASECLASS::Assign_Target(target);
+}
+
+// FUNCTION: 0x004456D0
+void BuildingClass::Update_Buildables(void)
+{
+	if (House == PlayerPtr && !IsInLimbo && IsDiscoveredByPlayer && IsOn) {
+		switch (Class->ToBuild) {
+			StructType i;
+			UnitType u;
+			InfantryType f;
+			AircraftType a;
+
+			case RTTI_BUILDINGTYPE:
+				for (i = STRUCT_FIRST; i < BuildingTypes.Count(); i++) {
+					if (PlayerPtr->Can_Build((const ObjectTypeClass *)BuildingTypes[i], false, true)) {
+						Map.Add(RTTI_BUILDINGTYPE, i);
+					}
+				}
+				break;
+
+			case RTTI_UNITTYPE:
+				for (u = UNIT_FIRST; u < UnitTypes.Count(); u++) {
+					if (PlayerPtr->Can_Build((const ObjectTypeClass *)UnitTypes[u], false, true)) {
+						Map.Add(RTTI_UNITTYPE, u);
+					}
+				}
+				break;
+
+			case RTTI_INFANTRYTYPE:
+				for (f = INFANTRY_FIRST; f < InfantryTypes.Count(); f++) {
+					if (PlayerPtr->Can_Build((const ObjectTypeClass *)InfantryTypes[f], false, true)) {
+						Map.Add(RTTI_INFANTRYTYPE, f);
+					}
+				}
+				break;
+
+			case RTTI_AIRCRAFTTYPE:
+				for (a = AIRCRAFT_FIRST; a < AircraftTypes.Count(); a++) {
+					if (PlayerPtr->Can_Build((const ObjectTypeClass *)AircraftTypes[a], false, true)) {
+						Map.Add(RTTI_AIRCRAFTTYPE, a);
+					}
+				}
+				break;
+
+			default:
+				break;
+		}
+	}
 }
 
 // FUNCTION: 0x00459E80

@@ -74,7 +74,7 @@ class InfantryClass : public FootClass
 		virtual void Draw_It(Point2D const & point, Rect const & cliprect) const override;
 
 		virtual bool Active_Click_With(ActionType action, ObjectClass * object, bool) override;
-		virtual bool Active_Click_With(ActionType action, Cell const & cell, bool) override;
+		virtual bool Active_Click_With(ActionType action, Cell const & cell, Cell const & cell2, bool) override;
 
 		virtual ActionType What_Action(ObjectClass const *, bool disallow_force = false) const override;
 		virtual ActionType What_Action(Cell const &, bool check_fog = false, bool disallow_force = false) const override;

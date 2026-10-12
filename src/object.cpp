@@ -260,6 +260,79 @@ LayerType ObjectClass::In_Which_Layer(void) const
 	return(LAYER_TOP);
 }
 
+// FUNCTION: 0x005F42A0
+int ObjectClass::Get_Ownable(void) const
+{
+	return(0x7FFFFFFF);
+}
+
+// FUNCTION: 0x005F42B0
+bool ObjectClass::Can_Repair(void) const
+{
+	return(false);
+}
+
+// FUNCTION: 0x005F42C0
+bool ObjectClass::Can_Demolish(void) const
+{
+	return(false);
+}
+
+// FUNCTION: 0x005F42D0
+bool ObjectClass::Can_Player_Fire(void) const
+{
+	return(false);
+}
+
+// FUNCTION: 0x005F42E0
+bool ObjectClass::Can_Player_Move(void) const
+{
+	return(false);
+}
+
+// FUNCTION: 0x005F42F0
+void ObjectClass::RegisterDestruction(TechnoClass *)
+{
+}
+
+// FUNCTION: 0x005F4300
+void ObjectClass::Record_The_Kill(TechnoClass *)
+{
+}
+
+// FUNCTION: 0x005F4310
+void ObjectClass::Do_Shimmer(void)
+{
+}
+
+// FUNCTION: 0x005F4320
+int ObjectClass::Exit_Object(TechnoClass *, Cell)
+{
+	return(0);
+}
+
+// FUNCTION: 0x005F4330
+void ObjectClass::Hidden(void)
+{
+}
+
+// FUNCTION: 0x005F4340
+void ObjectClass::Look(bool, bool)
+{
+}
+
+// FUNCTION: 0x005F4350
+bool ObjectClass::Active_Click_With(ActionType, ObjectClass *, bool)
+{
+	return(false);
+}
+
+// FUNCTION: 0x005F4360
+bool ObjectClass::Active_Click_With(ActionType, Cell const &, Cell const &, bool)
+{
+	return(false);
+}
+
 // FUNCTION: 0x005F61A0
 VoxelDataStruct::~VoxelDataStruct(void)
 {

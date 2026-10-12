@@ -22,6 +22,7 @@
 #include "storage.h"
 #include "techtype.h"
 #include "timer.h"
+#include "vector.h"
 #include "veteran.h"
 
 #include "cloak.hh"
@@ -48,7 +49,11 @@ class SpawnManagerClass;
 class SlaveManagerClass;
 class TeamClass;
 class RadBeam;
-class PlanningTokenClass;
+class PlanningTokenClass
+{
+	public:
+		void FUN_00636310(void);
+};
 class ObjectTypeClass;
 class Surface;
 
@@ -59,6 +64,16 @@ struct RecoilData
 	float TravelSoFar;
 	int State;
 	int TravelFramesLeft;
+
+	RecoilData(void)
+	{
+		Turret.Travel = 2;
+		Turret.CompressFrames = 1;
+		Turret.RecoverFrames = 1;
+		Turret.HoldFrames = 1;
+		TravelSoFar = 0;
+		State = 0;
+	}
 };
 
 struct YRVectorData
@@ -280,9 +295,9 @@ class TechnoClass : public RadioClass
 		bool unknown_bool_43A;
 		unsigned unknown_43C;
 
-		YRVectorData CurrentTargetThreatValues;
-		YRVectorData CurrentTargets;
-		YRVectorData AttackedTargets;
+		DynamicVectorClass<int> CurrentTargetThreatValues;
+		DynamicVectorClass<AbstractClass *> CurrentTargets;
+		DynamicVectorClass<AbstractClass *> AttackedTargets;
 
 		AudioController TurretRotateSoundController;
 		int IsTurretRotateSoundPlaying;
@@ -364,7 +379,6 @@ class TechnoClass : public RadioClass
 		virtual void SetLastFlightMapCoords(Cell coord);
 		virtual Cell Find_Exit_Cell(TechnoClass const * techno) const;
 		virtual Coord Turret_Coord(int which=0) const;
-		Coord Get_FLH(int which, Coord base) const;
 		void Create_Planning_Token(void);
 		void FUN_0070DC70(int which);
 		int FUN_0070DDF0(void);
@@ -400,7 +414,7 @@ class TechnoClass : public RadioClass
 		virtual int VoiceDeploy(void);
 		virtual void Response_Attack(void);
 		virtual bool ClickedEvent(int event);
-		virtual void Player_Assign_Mission(MissionType order, AbstractClass * target=NULL, AbstractClass * destination=NULL);
+		virtual void Player_Assign_Mission(MissionType order, AbstractClass * target=NULL, AbstractClass * destination=NULL, AbstractClass * nearby=NULL);
 		virtual bool IsUnderEMP(void) const;
 		virtual bool IsParalyzed(void) const;
 		virtual bool CanCheer(void) const;
@@ -516,7 +530,7 @@ class TechnoClass : public RadioClass
 		int Time_To_Build(void) const;
 		virtual ActionType What_Action(ObjectClass const *, bool disallow_force = false) const override;
 		virtual ActionType What_Action(Cell const &, bool check_fog = false, bool disallow_force = false) const override;
-		virtual Coord Fire_Coord(int which) const override;
+		virtual Coord Fire_Coord(int which, Coord base) const override;
 
 		virtual HousesType Owner(void) const override;
 		virtual HouseClass * Owner_HouseClass(void) const override;
@@ -583,7 +597,7 @@ class TechnoClass : public RadioClass
 
 		virtual void Hidden(void) override;
 		virtual bool Mark(MarkType mark=MARK_CHANGE) override;
-		virtual int Exit_Object(TechnoClass *) override;
+		virtual int Exit_Object(TechnoClass * techno, Cell cell) override;
 		virtual void Do_Shimmer(void) override;
 		int Get_Predator_Offset(void) const;
 		void Calculate_Sinking_Offset(short height, int y);
@@ -603,6 +617,8 @@ class TechnoClass : public RadioClass
 		virtual bool Unlimbo(Coord const & , Dir256 facing=DIR_N) override;
 		virtual void Init(void) override;
 		virtual void Detach(AbstractClass const * target, bool all) override;
+
+		static DynamicVectorClass<TechnoClass *> Array;
 
 		static CDTimerClass<FrameTimerClass> ActionLineTimer;
 

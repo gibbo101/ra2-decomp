@@ -4,10 +4,13 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 #pragma once
 
+class NoInitClass;
+
 class UnitTrackerClass
 {
 	public:
 		UnitTrackerClass(void);
+		UnitTrackerClass(NoInitClass const &) {}
 
 		void Increment_Unit_Total(int unit_type);
 		void Decrement_Unit_Total(int unit_type);

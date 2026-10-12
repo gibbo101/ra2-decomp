@@ -93,12 +93,12 @@ class AircraftClass : public FootClass, public IFlyControl
 		virtual void Look(bool incremental=false, bool=false) override;
 		void Draw_Rotors(Point2D const & xy, Rect const & cliprect) const;
 		bool FUN_00414A20(MissionType mission) const;
-		virtual int Exit_Object(TechnoClass *) override;
+		virtual int Exit_Object(TechnoClass * techno, Cell cell) override;
 		virtual void Draw_It(Point2D const & point, Rect const & cliprect) const override;
 
 		virtual bool Active_Click_With(ActionType action, ObjectClass * object, bool) override;
-		virtual bool Active_Click_With(ActionType action, Cell const & cell, bool) override;
-		virtual void Player_Assign_Mission(MissionType mission, AbstractClass * target=NULL, AbstractClass * destination=NULL) override;
+		virtual bool Active_Click_With(ActionType action, Cell const & cell, Cell const & cell2, bool) override;
+		virtual void Player_Assign_Mission(MissionType mission, AbstractClass * target=NULL, AbstractClass * destination=NULL, AbstractClass * nearby=NULL) override;
 
 		virtual ResultType Take_Damage(int & damage, int distance, WarheadTypeClass const * warhead, TechnoClass * source, bool forced=false, bool=false, HouseClass * = 0) override;
 		virtual BulletClass * Fire_At(AbstractClass * target, int which) override;

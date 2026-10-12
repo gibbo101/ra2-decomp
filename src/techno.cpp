@@ -50,6 +50,7 @@
 #include "lightcon.h"
 #include "mono.h"
 #include "overtype.h"
+#include "notify.h"
 #include "parasite.h"
 #include "partsys.h"
 #include "psystype.h"
@@ -83,6 +84,7 @@
 #include "bench.hh"
 #include "tube.hh"
 
+// FUNCTION: 0x006F2AD0 $E221
 CDTimerClass<FrameTimerClass> TechnoClass::ActionLineTimer;
 
 // FUNCTION: 0x006F2AF0
@@ -312,7 +314,7 @@ int TechnoClass::How_Many_Survivors(void) const
 }
 
 // FUNCTION: 0x006F3AD0
-Coord TechnoClass::Get_FLH(int which, Coord base) const
+Coord TechnoClass::Fire_Coord(int which, Coord base) const
 {
 	TechnoTypeClass const * tclass = TClass;
 	int flhx = 0;
@@ -449,6 +451,436 @@ void TechnoClass::Init(void)
 		Set_Recoil(BarrelRecoil, TClass->BarrelAnimData);
 		IsTurretRotateSoundPlaying = 1;
 		TurretIsRotating = 0;
+	}
+}
+
+// FUNCTION: 0x006F4300
+TechnoClass::TechnoClass(NoInitClass const & x) :
+	BASECLASS(x),
+	Flashing(x),
+	Animation(x),
+	Cargo(x),
+	Veterancy(x),
+	IdleTimer(x),
+	RadarFlashTimer(x),
+	TargetingTimer(x),
+	IronCurtainTimer(x),
+	IronTintTimer(x),
+	InfantryBlinkTimer(x),
+	DisguiseBlinkTimer(x),
+	ReloadTimer(x),
+	CloakDelay(x),
+	Arm(x),
+	Storage(x),
+	Door(x),
+	BarrelPitch(x),
+	PrimaryFacing(x),
+	SecondaryFacing(x),
+	TargetingLaserTimer(x),
+	CurrentTargetThreatValues(0, 0),
+	CurrentTargets(0, 0),
+	AttackedTargets(0, 0)
+{
+	bool found = false;
+	for (int i = 0; i < Array.Count(); i++) {
+		if (Array[i] == this) {
+			found = true;
+			break;
+		}
+	}
+	TurretRotateSoundController.FUN_00405BE0();
+	GattlingSoundController.FUN_00405BE0();
+	UnusedGattlingSoundController.FUN_00405BE0();
+	QueuedVoiceSoundController.FUN_00405BE0();
+	QueuedVoiceIndex = -1;
+	unknown_4F4 = -1;
+	if (!found) {
+		Array.Add(this);
+	}
+}
+
+
+// FUNCTION: 0x006F4500
+TechnoClass::~TechnoClass(void)
+{
+	if (PlanningToken != NULL) {
+		PlanningToken->FUN_00636310();
+		PlanningToken = NULL;
+	}
+
+	if (CaptureManager != NULL) {
+		delete CaptureManager;
+		CaptureManager = NULL;
+	}
+
+	if (SpawnManager != NULL) {
+		delete SpawnManager;
+		SpawnManager = NULL;
+	}
+
+	if (SlaveManager != NULL) {
+		SlaveManager->Killed(NULL, 0);
+		delete SlaveManager;
+		SlaveManager = NULL;
+	}
+
+	if (TemporalImUsing != NULL) {
+		delete TemporalImUsing;
+		TemporalImUsing = NULL;
+	}
+
+	if (Airstrike != NULL && Airstrike->Owner == this) {
+		delete Airstrike;
+		Airstrike = NULL;
+	}
+
+	TurretRotateSoundController.End();
+	TurretRotateSoundController.FUN_00405C00();
+	GattlingSoundController.End();
+	GattlingSoundController.FUN_00405C00();
+	UnusedGattlingSoundController.End();
+	UnusedGattlingSoundController.FUN_00405C00();
+	QueuedVoiceSoundController.FUN_00405C00();
+
+	House = NULL;
+	IsOwnedByPlayer = false;
+	Array.Delete(this);
+	PointerExpiredNotification::NotifyInvalidHouse.Delete(this);
+
+	if (BehindAnim != NULL) {
+		BehindAnim->Delete_Me();
+		BehindAnim = NULL;
+	}
+
+	if (DeployAnim != NULL) {
+		DeployAnim->Delete_Me();
+		DeployAnim = NULL;
+	}
+}
+
+// FUNCTION: 0x006F47A0
+int TechnoClass::Time_To_Build(void) const
+{
+	int val = Class_Of()->Time_To_Build();
+	val = val * House->FUN_0050C0A0(Techno_Type_Class());
+	val = val * Techno_Type_Class()->BuildTimeMultiplier;
+
+	float power = House->Power_Fraction();
+	float modifier = 1.0f - (1.0f - power) * Rule->LowPowerPenaltyModifier;
+	if ((double)Rule->MinLowPowerProductionSpeed >= (double)modifier) {
+		modifier = Rule->MinLowPowerProductionSpeed;
+	}
+	if (power < 1.0f && (double)Rule->MaxLowPowerProductionSpeed <= (double)modifier) {
+		modifier = Rule->MaxLowPowerProductionSpeed;
+	}
+	if (modifier == 0.0f) {
+		modifier = 0.01f;
+	}
+	val = val / modifier;
+
+	bool naval = false;
+	if (Fetch_RTTI() == RTTI_UNIT) {
+		TechnoTypeClass const * type = Techno_Type_Class();
+		if (type != NULL) {
+			naval = type->Naval;
+		}
+	}
+	int count = House->FUN_00500910(Fetch_RTTI(), naval);
+	float multiple = Rule->MultipleFactory;
+	if (multiple > 0.0f && count - 1 > 0) {
+		for (int i = count - 1; i > 0; i--) {
+			val = val * multiple;
+		}
+	}
+
+	if (Fetch_RTTI() == RTTI_BUILDING && ((BuildingClass const *)this)->Class->IsWall) {
+		return(val * Rule->WallBuildSpeedCoefficient);
+	}
+	return(val);
+}
+
+// FUNCTION: 0x006F4960
+bool TechnoClass::Revealed(HouseClass * house)
+{
+	if (house == PlayerPtr) {
+		if (IsDiscoveredByPlayer) {
+			return(false);
+		}
+	} else {
+		if (IsDiscoveredByComputer) {
+			return(false);
+		}
+		IsDiscoveredByComputer = true;
+	}
+
+	if (BASECLASS::Revealed(house)) {
+		if (!house->Is_Human_Player() && Get_Mission() == MISSION_AMBUSH) {
+			QueueMission(MISSION_HUNT, false);
+		}
+
+		if (house == PlayerPtr) {
+			IsDiscoveredByPlayer = true;
+			House->RecalcPower = true;
+			House->RecalcRadar = true;
+
+			if (!IsOwnedByPlayer) {
+				if (!ScenarioInit && Tag != NULL) {
+					Tag->Spring(TEVENT_DISCOVERED, this);
+				}
+
+				House->IsDiscovered = true;
+			}
+		} else {
+			IsDiscoveredByComputer = true;
+		}
+		return(true);
+	}
+	return(false);
+}
+
+
+// FUNCTION: 0x006F4A40
+void TechnoClass::Hidden(void)
+{
+	if (IsDiscoveredByPlayer) {
+		if (!House->Is_Human_Player()) {
+			IsDiscoveredByPlayer = false;
+		}
+	}
+}
+
+
+// FUNCTION: 0x006F4A70
+bool TechnoClass::Mark(MarkType mark)
+{
+	if (BASECLASS::Mark(mark)) {
+		if (IsTethered) {
+			Transmit_Message(RADIO_REDRAW);
+		}
+		return(true);
+	}
+	return(false);
+}
+
+static inline AircraftClass * Aircraft_Of(AbstractClass * object)
+{
+	if (object == NULL) {
+		return(NULL);
+	}
+	return((object->Fetch_RTTI() == RTTI_AIRCRAFT) ? (AircraftClass *)object : NULL);
+}
+
+static inline bool Is_Foot_Object(AbstractClass const * object)
+{
+	if (object == NULL) {
+		return(false);
+	}
+	unsigned char flag = (object->AbstractFlags >> 2) & 1;
+	return(flag != 0);
+}
+
+// FUNCTION: 0x006F4AB0
+RadioMessageType TechnoClass::Receive_Message(RadioClass * from, RadioMessageType message, int & param)
+{
+	WeaponDataStruct const * weapon;
+	int cost;
+	int step;
+	switch (message) {
+		case RADIO_ATTACK_THIS:
+			weapon = GetTurretWeapon();
+			if (weapon != NULL && weapon->Weapon != NULL) {
+				Assign_Target((AbstractClass *)param);
+				QueueMission(MISSION_ATTACK, false);
+				return(RADIO_ROGER);
+			}
+			break;
+
+		case RADIO_TETHER:
+			if (RTTI == RTTI_AIRCRAFT && Aircraft_Of(this)->Class->IsAirportBound) {
+				break;
+			}
+			if (!IsTethered) {
+				IsTethered = true;
+				Transmit_Message(RADIO_TETHER, from);
+				return(RADIO_ROGER);
+			}
+			break;
+
+		case RADIO_UNTETHER:
+			if (IsTethered) {
+				IsTethered = false;
+				Transmit_Message(RADIO_UNTETHER, from);
+				return(RADIO_ROGER);
+			}
+			break;
+
+		case RADIO_ALT_TETHER:
+			if (!IsAlternativeTether) {
+				IsAlternativeTether = true;
+				Transmit_Message(RADIO_ALT_TETHER, from);
+				return(RADIO_ROGER);
+			}
+			break;
+
+		case RADIO_ALT_UNTETHER:
+			if (IsAlternativeTether) {
+				IsAlternativeTether = false;
+				Transmit_Message(RADIO_ALT_UNTETHER, from);
+				return(RADIO_ROGER);
+			}
+			break;
+
+		case RADIO_UNLOADED:
+			Transmit_Message(RADIO_UNTETHER, from);
+			return(Transmit_Message(RADIO_OVER_OUT, from));
+
+		case RADIO_OVER_OUT:
+			if (IsTethered && ((TechnoClass *)from)->IsTethered) {
+				Transmit_Message(RADIO_UNTETHER, from);
+			}
+			BASECLASS::Receive_Message(from, message, param);
+			return(RADIO_ROGER);
+
+		case RADIO_UNLOAD:
+		case RADIO_BACKUP_NOW:
+		case RADIO_HOLD_STILL:
+			Transmit_Message(RADIO_TETHER, from);
+			BASECLASS::Receive_Message(from, message, param);
+			return(RADIO_ROGER);
+
+		case RADIO_RELOAD:
+			if (Ammo == Techno_Type_Class()->MaxAmmo) {
+				return(RADIO_NEGATIVE);
+			}
+			Ammo++;
+			return(RADIO_ROGER);
+
+		case RADIO_REPAIR:
+			if (HealthRatio < Rule->ConditionGreen) {
+				cost = Techno_Type_Class()->Repair_Cost();
+				step = Techno_Type_Class()->Repair_Step();
+				if (step <= 1) {
+					step = 1;
+				}
+
+				if (House->Available_Money() >= cost) {
+					if (cost != 0) {
+						House->Spend_Money(cost);
+					}
+					Strength += step;
+					EstimatedHealth += step;
+
+					if (Is_Foot_Object(this) && ((FootClass *)this)->ParasiteEatingMe != NULL) {
+						((FootClass *)this)->ParasiteEatingMe->ParasiteImUsing->SuppressionTimer = 50;
+						((FootClass *)this)->ParasiteEatingMe->ParasiteImUsing->ExitUnit();
+					}
+
+					if (HealthRatio > Rule->ConditionYellow || HeightAGL < -10) {
+						if (ParticleSystems[ATTACHED_PARTICLE_DAMAGE] != NULL) {
+							ParticleSystems[ATTACHED_PARTICLE_DAMAGE]->Delete_Me();
+						}
+					}
+
+					if (HealthRatio < Rule->ConditionGreen) {
+						return(RADIO_ROGER);
+					}
+					EstimatedHealth = Strength = Techno_Type_Class()->MaxStrength;
+					return(RADIO_ALL_DONE);
+				}
+				return(RADIO_CANT);
+			}
+			return(RADIO_NEGATIVE);
+
+		default:
+			break;
+	}
+	return(BASECLASS::Receive_Message(from, message, param));
+}
+
+// FUNCTION: 0x006F4EB0
+void TechnoClass::Sensed(void)
+{
+	int i;
+
+	CellClass & cell = Map[Center_Coord().As_Cell()];
+	if (Cloak == CLOAKED && PlayerPtr != NULL && House != PlayerPtr && !cell.Is_Sensed(PlayerPtr->HeapID)) {
+		Unselect();
+	}
+
+	if (cell.Is_Cloaked(House->HeapID) && Is_Ready_To_Cloak()) {
+		DynamicVectorClass<TechnoClass *> targeting_me;
+		for (i = Array.Count() - 1; i >= 0; i--) {
+			TechnoClass * tech = Array[i];
+			if (tech->TarCom == this) {
+				if (Map[Center_Coord()].Is_Sensed(tech->House->HeapID) || tech->House == House) {
+					targeting_me.Add(tech);
+				}
+			}
+		}
+		Do_Cloak();
+		for (i = targeting_me.Count() - 1; i >= 0; i--) {
+			targeting_me[i]->Assign_Target(this);
+		}
+	}
+}
+
+
+// FUNCTION: 0x006F5090
+void TechnoClass::Per_Cell_Process(PCPType why)
+{
+	if (why == PCP_END) {
+		if (TemporalImUsing != NULL && TemporalImUsing->Target != NULL) {
+			TemporalImUsing->LetGo();
+		}
+
+		Cell cell = Center_Coord().As_Cell();
+
+		Sensed();
+
+		if (Tag != NULL) {
+			Tag->Spring(TEVENT_NEAR_WAYPOINT, this);
+		}
+
+		if (!IsInPlayfield && Map.In_Local_Radar(cell, true)) {
+			IsInPlayfield = true;
+		}
+
+		if (!IsDiscoveredByPlayer && Map[cell].IsAltUnknown) {
+			Revealed(PlayerPtr);
+		}
+
+		Map[cell].Trigger_Veins();
+	}
+}
+
+// FUNCTION: 0x006F5EF0
+void TechnoClass::Draw_Double_Selection_Bracket(Coord const & coord1, Coord const & coord2, int color)
+{
+	Coord c1 = (coord1 + coord1 + coord1 + coord2) / 4;
+	Coord c2 = (coord2 + coord2 + coord2 + coord1) / 4;
+
+	if (coord1.Z > c1.Z) {
+		TacticalMap->Draw_3D_Line(coord1, c1, color, 0);
+	} else {
+		TacticalMap->Draw_3D_Line(c1, coord1, color, 0);
+	}
+
+	if (coord2.Z > c2.Z) {
+		TacticalMap->Draw_3D_Line(coord2, c2, color, 0);
+	} else {
+		TacticalMap->Draw_3D_Line(c2, coord2, color, 0);
+	}
+}
+
+// FUNCTION: 0x006F6030
+void TechnoClass::Draw_Single_Selection_Bracket(Coord const & coord1, Coord const & coord2, int color)
+{
+	Coord c1 = (coord1 + coord1 + coord1 + coord2) / 4;
+
+	if (coord1.Z > c1.Z) {
+		TacticalMap->Draw_3D_Line(coord1, c1, color, 0);
+	} else {
+		TacticalMap->Draw_3D_Line(c1, coord1, color, 0);
 	}
 }
 

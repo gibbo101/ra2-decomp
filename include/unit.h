@@ -96,7 +96,7 @@ class UnitClass : public FootClass
 		virtual ActionType What_Action(Cell const &, bool check_fog = false, bool disallow_force = false) const override;
 		virtual ActionType What_Action(ObjectClass const *, bool disallow_force = false) const override;
 		virtual bool Active_Click_With(ActionType action, ObjectClass * object, bool) override;
-		virtual bool Active_Click_With(ActionType , Cell const &, bool) override;
+		virtual bool Active_Click_With(ActionType , Cell const &, Cell const &, bool) override;
 
 		virtual ResultType Take_Damage(int & damage, int distance, WarheadTypeClass const * warhead, TechnoClass * source=0, bool forced=false, bool=false, HouseClass * = 0) override;
 		virtual BulletClass * Fire_At(AbstractClass * target, int which=0) override;

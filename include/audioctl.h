@@ -15,5 +15,6 @@ struct AudioController
 	void FUN_00405BE0(void);
 	void FUN_00405C00(void);
 	void Stop(void);
+	void End(void);
 	void EndLooping(void);
 };

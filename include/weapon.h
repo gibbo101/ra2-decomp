@@ -46,6 +46,7 @@ class WeaponTypeClass : public AbstractTypeClass
 		bool Is_Wall_Destroyer(void) const;
 
 		void Init_Max_Speed(void);
+		int Get_Speed(int range) const;
 
 		int AmbientDamage;
 		int Burst;

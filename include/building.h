@@ -206,7 +206,7 @@ class BuildingClass : public TechnoClass
 		virtual Coord Target_Coord(void) const override;
 		virtual Coord Docking_Coord(void) const override;
 		virtual Coord Render_Coord(void) const override;
-		virtual Coord Fire_Coord(int which) const override;
+		virtual Coord Fire_Coord(int which, Coord base) const override;
 		virtual Coord Center_Coord(void) const override;
 		virtual Coord Destination_Coord(TechnoClass * docker = NULL) const override;
 		virtual int Sort_Y(void) const override;
@@ -227,7 +227,7 @@ class BuildingClass : public TechnoClass
 		virtual VisualType Visual_Character(bool raw = false, HouseClass const * = NULL) const override;
 		virtual void Set_Occupy_Bit(Coord const & coord) override;
 		virtual void Clear_Occupy_Bit(Coord const & coord) override;
-		virtual int Exit_Object(TechnoClass * base) override;
+		virtual int Exit_Object(TechnoClass * base, Cell cell) override;
 		virtual bool Render(Rect &, bool forced, bool extras_only) const override;
 		virtual void Draw_It(Point2D const & point, Rect const & cliprect) const override;
 		virtual void Editor_Draw_It(Point2D const & point, Rect const & cliprect) const override;
@@ -239,12 +239,13 @@ class BuildingClass : public TechnoClass
 		virtual void Draw_Extras(Point2D &point, Rect &rect);
 		virtual void Update_Buildables(void);
 		virtual DirType Aim_Direction(AbstractClass * target) const;
+		void AfterDestruction(void);
 		void Make_Fogged(DynamicVectorClass<FoggedObjectClass *> * fogged_objects = NULL, CellClass * cellptr = NULL, bool fade = false);
 		void Charge_Turret(void);
 		void Discharge_Turret(void);
 
 		virtual bool Active_Click_With(ActionType action, ObjectClass * object, bool) override;
-		virtual bool Active_Click_With(ActionType action, Cell const & cell, bool) override;
+		virtual bool Active_Click_With(ActionType action, Cell const & cell, Cell const & cell2, bool) override;
 		virtual void Clicked_As_Target(int = 7) override;
 
 		virtual void Death_Announcement(TechnoClass const * source=0) const override;
@@ -309,7 +310,7 @@ class BuildingClass : public TechnoClass
 		bool Can_Be_Undeployed(void);
 		virtual int Apparent_Brightness(int brightness = 1000) const override;
 		virtual void Assign_Destination(AbstractClass * target, bool = true) override;
-		void Assign_Rally_Point(Cell const & cell);
+		void Assign_Rally_Point(Cell const & cell, bool play_eva);
 		virtual bool Enter_Idle_Mode(bool initial=false,  bool = true) override;
 		virtual void Radar_Track(void) override;
 		virtual void Radar_Untrack(void) override;
@@ -333,9 +334,9 @@ class BuildingClass : public TechnoClass
 
 		void Begin_Anim(BAnimType anim, bool damaged, int delay = 0);
 		void Set_Anim_Coords(void);
-		void Create_Anim(char const * name, BAnimType anim, bool damaged, int delay);
+		bool PlayAnim(char const * name, BAnimType anim, bool damaged, bool a, bool b);
 		void Detach_Anim(AnimClass * anim);
-		void End_Anim(BAnimType anim);
+		void DestroyNthAnim(BAnimType anim);
 		void Set_Anim_Damage_State(bool damaged);
 		void Set_Anim_Drawer(ConvertClass * drawer, int brightness);
 		void Update_Anim_Appearance(void);

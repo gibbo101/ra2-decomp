@@ -443,6 +443,8 @@ class BuildingTypeClass : public TechnoTypeClass
 		virtual bool Create_And_Place(Cell const & cell, HouseClass * house = NULL) const override;
 		virtual ObjectClass * Create_One_Of(HouseClass * house) const override;
 		virtual Cell const * Occupy_List(bool placement=false) const override;
+		bool FUN_0045F160(ShapeSet const ** shape, int * frame);
+		bool FUN_0045F1D0(ShapeSet const ** shape, int * frame);
 		virtual void const * Get_Image_Data(void) const override;
 		void Fetch_Building_Normal_Image(TheaterType theater);
 		void Fetch_Building_Voxel_Image(void);

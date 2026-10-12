@@ -6,18 +6,10 @@
 
 #include "globals.h"
 #include "mission.h"
+#include "vector.h"
 
 class ObjectClass;
 class TechnoClass;
-
-struct RadioLinkVector
-{
-	void * VTable;
-	TechnoClass ** Items;
-	int Capacity;
-	bool IsInitialized;
-	bool IsAllocated;
-};
 
 class RadioClass : public MissionClass
 {
@@ -27,7 +19,7 @@ class RadioClass : public MissionClass
 
 		RadioMessageType Old[3];
 
-		RadioLinkVector RadioLinks;
+		VectorClass<TechnoClass *> RadioLinks;
 
 #ifdef _DEBUG
 
@@ -37,24 +29,24 @@ class RadioClass : public MissionClass
 	public:
 
 		RadioClass(void);
-		RadioClass(NoInitClass const & x) : BASECLASS(x) {};
+		RadioClass(NoInitClass const & x);
 		virtual ~RadioClass(void) override {};
 
 		virtual HRESULT STDMETHODCALLTYPE Load(IStream * stream) override;
 		virtual HRESULT STDMETHODCALLTYPE Save(IStream * stream, BOOL cleardirty) override;
 
-		bool In_Radio_Contact(void) const {return(RadioLinks.Items != 0 && RadioLinks.Items[0] != 0);};
+		bool In_Radio_Contact(void) const {return(RadioLinks[0] != 0);};
 		bool HasAnyLink(void) const;
 		void SetLinkCount(int count);
-		void Radio_Off(void) {if (RadioLinks.Items) RadioLinks.Items[0] = 0;};
-		TechnoClass * Contact_With_Whom(void) const {return(RadioLinks.Items ? RadioLinks.Items[0] : 0);};
+		void Radio_Off(void) {RadioLinks[0] = 0;};
+		TechnoClass * Contact_With_Whom(void) const {return(RadioLinks[0]);};
 
 		virtual void Detach(AbstractClass const * target, bool all = true) override;
 		virtual void Compute_CRC(CRCEngine &) const override;
 		virtual RadioMessageType Receive_Message(RadioClass * from, RadioMessageType message, int & param) override;
-		virtual RadioMessageType Transmit_Message(RadioMessageType message, int & param=LParam, RadioClass * to=NULL);
+		virtual RadioMessageType Transmit_Message(RadioMessageType message, int & param, RadioClass * to=NULL);
 		virtual RadioMessageType Transmit_Message(RadioMessageType message, RadioClass * to);
-		virtual RadioMessageType SendCommandWithData(RadioMessageType command, AbstractClass * & inout, TechnoClass * recipient);
+		virtual RadioMessageType Transmit_Message(RadioMessageType message);
 		virtual void SendToEachLink(RadioMessageType command);
 #ifdef _DEBUG
 		virtual void Debug_Dump(MonoClass *mono) const override;

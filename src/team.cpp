@@ -52,6 +52,17 @@
 #include "target.hh"
 #include "tube.hh"
 
+static inline CellClass * _As_Cell(AbstractClass * target)
+{
+	return((target == NULL) ? NULL : ((target->RTTI == RTTI_CELL) ? (CellClass *)target : NULL));
+}
+
+static inline int _Coord_Distance(Coord const & a, Coord const & b)
+{
+	Coord t = a - b;
+	return(t.Length());
+}
+
 static inline bool _Is_It_Breathing(FootClass const * object)
 {
 	if (object == NULL || !object->IsActive || object->Strength == 0) return(false);
@@ -64,6 +75,57 @@ static inline bool _Is_It_Playing(FootClass const * object)
 	if (!_Is_It_Breathing(object)) return(false);
 	if (!object->IsInitiated && object->RTTI != RTTI_AIRCRAFT) return(false);
 	return(true);
+}
+
+bool TeamClass::Is_A_Member(void const * who) const
+{
+	FootClass * unit = Member;
+	while (unit != NULL) {
+		if (unit == who) {
+			return(true);
+		}
+		unit = unit->Member;
+	}
+	return(false);
+}
+
+FootClass * TeamClass::Fetch_A_Leader(void) const
+{
+	FootClass * m = Member;
+	FootClass * leader = m;
+	int best = -1;
+	for (; m != NULL; m = m->Member) {
+		int rating = m->TClass->LeadershipRating;
+		if (_Is_It_Playing(m) && rating > best) {
+			leader = m;
+			best = rating;
+		}
+	}
+	return(leader);
+}
+
+static inline bool _Conscript(TeamClass * team, FootClass * unit)
+{
+	if (_Is_It_Breathing(unit) && !unit->IsInitiated) {
+		TeamMissionType action = team->Script->Get_Current_Mission().Mission;
+		int stray = (action == (TeamMissionType)0x36 || action == (TeamMissionType)0x35) ? Rule->RelaxedStray : Rule->StrayDistance;
+		if (unit->Distance(team->Zone) > stray) {
+			if (unit->NavCom == NULL) {
+				unit->QueueMission(MISSION_MOVE, false);
+				unit->Assign_Target(NULL);
+				unit->Assign_Destination(team->Zone);
+			}
+			return(true);
+		} else {
+			unit->IsInitiated = true;
+		}
+	}
+	return(false);
+}
+
+bool TeamClass::Coordinate_Conscript(FootClass * unit)
+{
+	return(_Conscript(this, unit));
 }
 
 // FUNCTION: 0x006E8A90
@@ -690,20 +752,364 @@ void TeamClass::Calc_Center(AbstractClass *& center, AbstractClass *& close_memb
 	}
 }
 
-// FUNCTION: 0x006EC3D0
-FootClass * TeamClass::Fetch_A_Leader(void) const
+// FUNCTION: 0x006EB380
+void TeamClass::Took_Damage(FootClass *, ResultType result, TechnoClass * source)
 {
-	FootClass * m = Member;
-	FootClass * leader = m;
-	int best = -1;
-	for (; m != NULL; m = m->Member) {
-		int rating = m->TClass->LeadershipRating;
-		if (_Is_It_Playing(m) && rating > best) {
-			leader = m;
-			best = rating;
+	if ((source != NULL) && (result != RESULT_NONE) && (!Class->IsSuicide)) {
+		if (!IsMoving) {
+			Zone = NULL;
+			IsRegrouping = true;
+			IsReforming = true;
+		} else {
+			if (source && !Is_A_Member(source) && Member && Member->RTTI != RTTI_AIRCRAFT && Member->PrimaryWeapon != NULL) {
+				if (Target != source) {
+					if (Class->IsAnnoyance) {
+						IsRegrouping = true;
+						IsReforming = true;
+						Zone = NULL;
+					}
+					if (Target != NULL) {
+						TechnoClass * techno = Dynamic_Cast<TechnoClass *>(Target);
+						if (techno != NULL && techno->PrimaryWeapon != NULL) {
+							if (Zone == NULL || techno->IsCloseEnoughToAttackCoords(Zone->Center_Coord())) {
+								return;
+							}
+						}
+					}
+					source->Fetch_RTTI();
+				}
+			}
 		}
 	}
-	return(leader);
+}
+
+// FUNCTION: 0x006EB490
+void TeamClass::Coordinate_Attack(void)
+{
+	if (Target == NULL) {
+		Target = MissionTarget;
+	}
+
+	FootClass * leader = Fetch_A_Leader();
+	if (Is_Target_Cell(Target) && Member != NULL && leader->RTTI != RTTI_AIRCRAFT) {
+		CellClass * cellptr = _As_Cell(Target);
+		if (cellptr->Cell_Object()) {
+			Target = cellptr->Cell_Object();
+		}
+	}
+
+	if (Frame % 8 == 4) {
+		if (leader->Can_Fire(Target, leader->What_Weapon_Should_I_Use(Target), true) == (FireErrorType)5) {
+			TargetNotAssigned = true;
+		}
+	}
+
+	if (Target == NULL) {
+		IsNextMission = true;
+	} else {
+		TeamMissionClass mission = Script->Get_Current_Mission();
+		bool has_attacker = false;
+		FootClass * unit = Member;
+		while (unit != NULL) {
+			Coordinate_Conscript(unit);
+
+			if (_Is_It_Playing(unit)) {
+				if (mission.Mission == TMISSION_SPY && unit->RTTI == RTTI_INFANTRY && ((InfantryClass *)unit)->Class->IsCapture) {
+					unit->QueueMission(MISSION_CAPTURE, false);
+					unit->Assign_Target(Target);
+				} else {
+					if (unit->Mission != MISSION_ATTACK && unit->Mission != MISSION_ENTER && unit->Mission != MISSION_CAPTURE && unit->Mission != MISSION_SABOTAGE && (unit->Mission != MISSION_UNLOAD || !unit->Deploy_To_Fire())) {
+						unit->Transmit_Message(RADIO_OVER_OUT);
+						unit->QueueMission(MISSION_ATTACK, false);
+						unit->Assign_Target(NULL);
+						unit->Assign_Destination(NULL);
+					}
+				}
+
+				if (unit->TarCom != Target && unit->TarCom == NULL) {
+					unit->Assign_Target(Target);
+				}
+
+				if (unit->RTTI != RTTI_AIRCRAFT || unit->PrimaryWeapon == NULL || unit->Ammo > 0) {
+					has_attacker = true;
+				}
+			} else if (Class->IsDroppod && unit->IsInLimbo) {
+				has_attacker = true;
+			}
+
+			unit = unit->Member;
+		}
+		if (!has_attacker) {
+			IsNextMission = true;
+		}
+	}
+}
+
+// FUNCTION: 0x006EB870
+bool TeamClass::Coordinate_Regroup(void)
+{
+	FootClass * unit = Member;
+	bool retval = true;
+
+	while (unit != NULL) {
+		Coordinate_Conscript(unit);
+
+		if (_Is_It_Playing(unit)) {
+			TeamMissionType action = Script->Get_Current_Mission().Mission;
+			int stray = (action == (TeamMissionType)0x36 || action == (TeamMissionType)0x35) ? Rule->RelaxedStray : Rule->StrayDistance;
+			if (unit->Distance(Zone) > stray) {
+				if (unit->Mission == MISSION_GUARD_AREA && unit->TarCom != NULL) {
+					goto hold;
+				}
+				if (unit->NavCom == NULL) {
+					retval = false;
+					unit->QueueMission(MISSION_MOVE, false);
+					Cell dest = unit->Adjust_Dest(Zone->Center_Coord().As_Cell());
+					unit->Assign_Destination(&Map[dest]);
+				}
+			} else {
+hold:
+				if (unit->Mission != MISSION_GUARD_AREA) {
+					unit->QueueMission(MISSION_GUARD, false);
+					unit->Assign_Destination(NULL);
+				}
+			}
+		}
+
+		unit = unit->Member;
+	}
+	if (retval == true) {
+		IsRegrouping = false;
+	}
+	return(retval);
+}
+
+// FUNCTION: 0x006EBAD0
+void TeamClass::Coordinate_Move(void)
+{
+	FootClass * unit = Member;
+	bool finished = true;
+	bool found = false;
+
+	if (unit == NULL) return;
+
+	if (Target == NULL) {
+		Target = MissionTarget;
+	}
+
+	if (Target != NULL) {
+
+		if (!Lagging_Units()) {
+
+			while (unit != NULL) {
+
+				if (Coordinate_Conscript(unit)) {
+					finished = false;
+				}
+
+				if (unit->Mission == MISSION_UNLOAD || unit->MissionQueue == MISSION_UNLOAD) {
+					finished = false;
+				}
+
+				if (_Is_It_Playing(unit) && unit->Mission != MISSION_UNLOAD && unit->MissionQueue != MISSION_UNLOAD) {
+					TeamMissionType action = Script->Get_Current_Mission().Mission;
+					int stray = (action == (TeamMissionType)0x36 || action == (TeamMissionType)0x35) ? Rule->RelaxedStray : Rule->StrayDistance;
+					if (unit->In_Air()) {
+						stray *= 2;
+					}
+
+					found = true;
+
+					int dist = unit->Distance(Target);
+
+					if (dist > stray ||
+						(unit->HeightAGL < 0 && Script->Get_Next_Mission().Mission != TMISSION_MOVE) ||
+						(unit->RTTI == RTTI_AIRCRAFT && unit->Height > 0 &&
+						&Map[unit->Center_Coord()] != Target &&
+						Script->Get_Next_Mission().Mission != TMISSION_MOVE)) {
+
+						if (Class->IsAggressive && unit->TarCom != NULL) {
+							if (!unit->unknown_bool_68E) {
+								unit = unit->Member;
+								continue;
+							}
+							unit->Assign_Target(NULL);
+						}
+						if (unit->Mission != MISSION_MOVE) {
+							unit->QueueMission(MISSION_MOVE, false);
+							if (unit->Ready_To_Next_Mission()) {
+								unit->Commence();
+							}
+						}
+
+						if (unit->NavCom == NULL) {
+							unit->Assign_Destination(Target);
+						}
+						AbstractClass * nav = unit->NavCom;
+						if (nav != Target) {
+							if (unit->TClass->BalloonHover || (nav != Target && unit->RTTI == RTTI_AIRCRAFT && nav == unit->Get_Cell_Ptr())) {
+								unit->Assign_Destination(Target);
+							}
+						}
+						finished = false;
+					} else {
+						if (unit->Mission == MISSION_MOVE && (unit->NavCom == NULL || (unit->Distance(unit->NavCom) <= Rule->CloseEnoughDistance && !unit->Locomotion->Is_Moving()))) {
+							if (unit->TarCom == NULL) {
+								unit->Assign_Destination(NULL);
+								unit->Enter_Idle_Mode();
+							}
+						}
+					}
+
+					bool at_dest = (unit->RTTI == RTTI_AIRCRAFT && unit->NavCom == unit->Get_Cell_Ptr());
+					bool hovering = ((unit->AbstractFlags & 1) && unit->TClass->BalloonHover && dist < stray);
+					if (unit->NavCom != NULL && !at_dest && !hovering) {
+						finished = hovering;
+					}
+				}
+
+				unit = unit->Member;
+			}
+		} else {
+			finished = false;
+		}
+	}
+
+	if (!found) {
+		finished = false;
+	}
+
+	if (finished && IsMoving) {
+		IsNextMission = true;
+	}
+}
+
+// FUNCTION: 0x006EBF50
+bool TeamClass::Lagging_Units(void)
+{
+	FootClass * unit = Member;
+	bool lag = false;
+
+	if (!IsLagging) return(false);
+
+	while (unit != NULL) {
+
+		if (_Is_It_Playing(unit)) {
+			TeamMissionType action = Script->Get_Current_Mission().Mission;
+			int stray = (action == (TeamMissionType)0x36 || action == (TeamMissionType)0x35) ? Rule->RelaxedStray : Rule->StrayDistance;
+			if (unit->RTTI == RTTI_AIRCRAFT) {
+				stray *= 3;
+			}
+			if (Class->IsGuardSlower && !unit->Is_Considered_Slow()) {
+				stray /= 3;
+			}
+
+			if (_Coord_Distance(unit->Center_Coord(), ClosestMember->Center_Coord()) > stray) {
+				if (unit->NavCom == NULL) {
+					unit->QueueMission(MISSION_MOVE, false);
+					unit->Assign_Destination(ClosestMember);
+				}
+				lag = true;
+
+			} else {
+				if (unit->Mission != MISSION_GUARD) {
+					unit->QueueMission(MISSION_GUARD, false);
+					unit->Assign_Destination(NULL);
+				}
+			}
+		}
+		unit = unit->Member;
+	}
+
+	IsLagging = lag;
+	return(lag);
+}
+
+// FUNCTION: 0x006EC130 TeamClass::Coordinate_Conscript
+
+// FUNCTION: 0x006EC220 TeamClass::Is_A_Member
+
+// FUNCTION: 0x006EC250
+void TeamClass::Suspend_Teams(int priority, HouseClass const * house)
+{
+	for (int index = 0; index < Teams.Count(); index++) {
+		TeamClass * team = Teams[index];
+
+		if (team != NULL && house == team->House && team->Class->RecruitPriority < priority) {
+			while (team->Member) {
+				team->Remove(team->Member);
+			}
+			team->IsAltered = team->JustAltered = true;
+			team->SuspendTimer = Rule->SuspendDelay * TICKS_PER_MINUTE;
+			team->Suspended = true;
+		}
+	}
+}
+
+// FUNCTION: 0x006EC300
+bool TeamClass::Is_Leaving_Map(void) const
+{
+	if (IsMoving && Script->Has_Missions_Remaining()) {
+		TeamMissionClass const mission = Script->Get_Current_Mission();
+
+		if (mission.Mission == TMISSION_MOVE && !Map.In_Local_Radar(Scen->Get_Waypoint_Cell(mission.Data.Value))) {
+			return(true);
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x006EC370
+bool TeamClass::Has_Entered_Map(void) const
+{
+	bool ok = true;
+	FootClass * foot = Member;
+	while (foot != NULL) {
+		if (!foot->IsInPlayfield) {
+			ok = false;
+			break;
+		}
+		foot = (FootClass *)foot->Member;
+	}
+	return(ok);
+}
+
+// FUNCTION: 0x006EC3A0
+void TeamClass::Scan_Limit(void)
+{
+	Assign_Mission_Target(NULL);
+	FootClass * foot = Member;
+	while (foot != NULL) {
+		foot->Assign_Target(NULL);
+		foot->IsScanLimited = true;
+		foot = foot->Member;
+	}
+}
+
+// FUNCTION: 0x006EC3D0 TeamClass::Fetch_A_Leader
+
+// FUNCTION: 0x006EC450
+HRESULT STDMETHODCALLTYPE TeamClass::Load(IStream * stream)
+{
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		new (this) TeamClass(NoInitClass());
+
+		Swizzle_Pointer(&Class);
+		Swizzle_Pointer(&Script);
+		Swizzle_Pointer(&House);
+		Swizzle_Pointer(&Tag);
+		Swizzle_Pointer(&Member);
+		Swizzle_Pointer(&ClosestMember);
+		Swizzle_Pointer(&Target);
+		Swizzle_Pointer(&Zone);
+		Swizzle_Pointer(&MissionTarget);
+		Swizzle_Pointer(&HouseToScout);
+		Swizzle_Pointer(&UnusedPtr1);
+
+		result = S_OK;
+	}
+	return(result);
 }
 
 // FUNCTION: 0x006EC540

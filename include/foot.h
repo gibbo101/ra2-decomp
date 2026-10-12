@@ -14,6 +14,12 @@ class BuildingClass;
 class WaypointClass;
 struct PathStruct;
 
+class AircraftTrackerClass
+{
+	public:
+		void Add(FootClass * foot);
+};
+
 class ParasiteClass;
 
 class FootClass : public TechnoClass
@@ -231,7 +237,7 @@ class FootClass : public TechnoClass
 		virtual ActionType What_Action(ObjectClass const *, bool disallow_force = false) const override;
 		virtual ActionType What_Action(Cell const &, bool check_fog = false, bool disallow_force = false) const override;
 		virtual bool Active_Click_With(ActionType action, ObjectClass * object, bool) override;
-		virtual bool Active_Click_With(ActionType action, Cell const & cell, bool) override;
+		virtual bool Active_Click_With(ActionType action, Cell const & cell, Cell const & cell2, bool) override;
 
 		virtual void Stun(void) override;
 		virtual ResultType Take_Damage(int & damage, int distance, WarheadTypeClass const * warhead, TechnoClass * source=0, bool forced=false, bool=false, HouseClass * = 0) override;
@@ -276,6 +282,7 @@ class FootClass : public TechnoClass
 		virtual void Override_Mission(MissionType mission, AbstractClass * tarcom, AbstractClass * navcom) override;
 		virtual bool Restore_Mission(void) override;
 		Cell Adjust_Dest(Cell const & cell) const;
+		BuildingClass * Adjacent_Overpowerable_Building(void);
 
 
 		Cell Safety_Point(Cell const & src, Cell const & dst, int start, int max);
@@ -309,3 +316,4 @@ inline FootClass const * AbstractClass::As_FootClass(void) const
 }
 
 extern DynamicVectorClass<FootClass *> Feet;
+extern AircraftTrackerClass AircraftTracker;

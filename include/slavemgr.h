@@ -8,6 +8,7 @@
 #include "vector.h"
 
 class CellClass;
+class HouseClass;
 class InfantryClass;
 class InfantryTypeClass;
 class TechnoClass;
@@ -44,4 +45,6 @@ class SlaveManagerClass : public AbstractClass
 
 		bool FUN_006B0880(TechnoClass * slave, CellClass * cell);
 		void LostSlave(InfantryClass * slave);
+		void Killed(TechnoClass * killer, HouseClass * owner = NULL);
+		void AllGuard(void);
 };

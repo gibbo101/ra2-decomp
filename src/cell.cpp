@@ -70,6 +70,13 @@ inline IsometricTileTypeClass * Next_Tile_In_Set(IsometricTileTypeClass * type, 
 inline unsigned short * Preview_Tile_Of(IsometricTileTypeClass * type, int tile, int level) { return type->Preview_Tile(tile, level); }
 inline VisualType Building_Visual(BuildingClass * building) { return building->Visual_Character(false, NULL); }
 
+inline Coord CellClass::Cell_Coord(void) const
+{
+	Coord coord(Fetch_CellID());
+	coord.Z = Get_Height();
+	return(coord);
+}
+
 class PixelFXClass
 {
 	public:
@@ -447,6 +454,247 @@ void CellClass::Set_Wall_Owner(void)
 		}
 		Owner = owner;
 	}
+}
+
+// FUNCTION: 0x0047DD70
+void CellClass::Destroy_Bridge(void)
+{
+	if (!Debug_Map) {
+		ObjectClass * occupier = Cell_Occupier();
+		while (occupier != NULL) {
+			ObjectClass * next = occupier->Next;
+			occupier->Take_Damage(occupier->Strength, 0, Rule->C4Warhead, NULL, true, true);
+			occupier = next;
+		}
+
+		occupier = Cell_Occupier(true);
+		while (occupier != NULL) {
+			ObjectClass * next = occupier->Next;
+			occupier->Fall_From_Height();
+			occupier = next;
+		}
+
+		Map.PendingBridgeCells.Add(CellID);
+
+		if (Rule->BridgeExplosions.Count() > 0 && Random_Double(0.0, 1.0) < 0.95) {
+			Coord coord = CellID;
+			coord.Z = LEVEL_LEPTON_H * Height + BRIDGE_LEPTON_HEIGHT;
+			coord.X += Random_Double(-0.5, 0.5) * 50;
+			coord.Y += Random_Double(-0.5, 0.5) * 50;
+
+			if (Random_Double(0.0, 1.0) < 0.5) {
+				new AnimClass(Rule->MetallicDebris[Random_Pick(0, Rule->MetallicDebris.Count() - 1)], coord);
+			}
+
+			new AnimClass(Rule->BridgeExplosions[Random_Pick(0, Rule->BridgeExplosions.Count() - 1)], coord, Random_Pick(1, 5));
+		}
+	}
+}
+
+// FUNCTION: 0x0047E8A0
+void CellClass::Occupy_Down(ObjectClass * object, bool bridge)
+{
+	ObjectClass * optr = Cell_Occupier(bridge);
+
+	if (object == NULL) return;
+
+	if (object->RTTI == RTTI_BUILDING && optr) {
+		while (optr->Next != NULL) {
+			optr = optr->Next;
+		}
+		optr->Next = object;
+		object->Next = NULL;
+	} else if (bridge) {
+		if (optr == NULL || optr->Next != object) {
+			object->Next = optr;
+			BridgeOccupierPtr = object;
+		}
+	} else {
+		if (optr == NULL || optr->Next != object) {
+			object->Next = optr;
+			OccupierPtr = object;
+		}
+	}
+
+	if (!Map.Is_Shrouded(Cell_Coord()) && !Map.Is_Fogged(Cell_Coord()) || Session.Type != GAME_NORMAL) {
+		object->Revealed(PlayerPtr);
+	}
+
+	if (object->RTTI != RTTI_INFANTRY && object->Occupies_Cells()) {
+		if (object->RTTI == RTTI_BUILDING) {
+			object->Set_Occupy_Bit(CellID);
+		} else {
+			object->Set_Occupy_Bit(object->Get_Coord());
+		}
+	}
+}
+
+// FUNCTION: 0x0047EA90
+void CellClass::Occupy_Up(ObjectClass * object, bool bridge)
+{
+	if (object == NULL) return;
+
+	ObjectClass * optr = Cell_Occupier(bridge);
+
+	if (optr == object) {
+		if (bridge) {
+			BridgeOccupierPtr = object->Next;
+		} else {
+			OccupierPtr = object->Next;
+		}
+		object->Next = NULL;
+	} else {
+		while (optr != NULL) {
+			if (optr->Next == object) {
+				optr->Next = object->Next;
+				object->Next = NULL;
+				break;
+			}
+			optr = optr->Next;
+		}
+	}
+
+	if (object->RTTI != RTTI_INFANTRY && object->Occupies_Cells()) {
+		if (object->RTTI == RTTI_BUILDING) {
+			object->Clear_Occupy_Bit(CellID);
+		} else {
+			object->Clear_Occupy_Bit(object->Get_Coord());
+		}
+	}
+}
+
+// FUNCTION: 0x0047EBA0
+UnitClass * CellClass::Cell_Unit(bool bridge) const
+{
+	return((UnitClass*)Cell_Find_Object(RTTI_UNIT, bridge));
+}
+
+// FUNCTION: 0x0047EBF0
+AircraftClass * CellClass::Cell_Aircraft(bool bridge) const
+{
+	return((AircraftClass*)Cell_Find_Object(RTTI_AIRCRAFT, bridge));
+}
+
+// FUNCTION: 0x0047EC40
+InfantryClass * CellClass::Cell_Infantry(bool bridge) const
+{
+	return((InfantryClass*)Cell_Find_Object(RTTI_INFANTRY, bridge));
+}
+
+struct FileSystem {
+	static void const * LoadFile(char const * name, bool flag);
+};
+
+class SHPStruct
+{
+	public:
+		Rect GetFrameBounds(int frame) const;
+		void * GetPixels(int frame) const;
+};
+
+// FUNCTION: 0x0047F250
+void CellClass::Draw_Fog_Shape(Point2D const & drawpoint, Rect const & cliprect, int shapenum)
+{
+	static bool shapes_loaded = false;
+	static SHPStruct const * shapes = NULL;
+
+	if (!shapes_loaded) {
+		shapes_loaded = true;
+		shapes = (SHPStruct const *)FileSystem::LoadFile("FOG.SHP", false);
+	}
+
+	Rect shaperect = shapes->GetFrameBounds(shapenum);
+
+	if (drawpoint.Y + shaperect.Y + shaperect.Height < cliprect.Y + 1) return;
+	if (drawpoint.Y >= cliprect.Height + cliprect.Y) return;
+	if (drawpoint.X + shaperect.X + shaperect.Width < cliprect.X + 1) return;
+	if (drawpoint.X >= cliprect.X + cliprect.Width) return;
+
+	int inter_top = MAX(cliprect.Y, drawpoint.Y + shaperect.Y);
+	int src_y = inter_top - drawpoint.Y - shaperect.Y;
+	int inter_bottom = MIN(cliprect.Y + cliprect.Height, drawpoint.Y + shaperect.Y + shaperect.Height);
+
+	int inter_left = MAX(cliprect.X, drawpoint.X + shaperect.X);
+	int src_x = inter_left - drawpoint.X - shaperect.X;
+	int inter_right = MIN(cliprect.X + cliprect.Width, drawpoint.X + shaperect.X + shaperect.Width);
+
+	int shape_skip = drawpoint.X - inter_right + shaperect.X + shaperect.Width + src_x;
+	int alpha_skip = inter_left - inter_right + AlphaBuffer->Get_Buffer_Width();
+
+	unsigned char * shapeptr = (unsigned char *)shapes->GetPixels(shapenum);
+	unsigned short * alphaptr = (unsigned short *)AlphaBuffer->Get_Buffer_Offset(Point2D(inter_left, inter_top - TacticalRect.Y));
+
+	shapeptr += src_x + src_y * shaperect.Width;
+	if (&alphaptr[inter_right - inter_left + (inter_bottom - inter_top) * AlphaBuffer->Get_Buffer_Width() + 2] >= (unsigned short *)AlphaBuffer->Get_Buffer_End()) {
+		for (int i = inter_top; i < inter_bottom; i++) {
+			for (int j = inter_left; j < inter_right; j++) {
+				unsigned char pixel = *shapeptr++;
+				if (pixel <= 0x7F) {
+					if (*alphaptr == 127) {
+						*alphaptr = pixel;
+					} else {
+						*alphaptr = MAX(*alphaptr + pixel - 127, 0);
+					}
+				}
+				alphaptr++;
+				alphaptr = (unsigned short *)AlphaBuffer->Wrap_Overflow((unsigned)alphaptr);
+			}
+			shapeptr += shape_skip;
+			alphaptr += alpha_skip;
+			alphaptr = (unsigned short *)AlphaBuffer->Wrap_Overflow((unsigned)alphaptr);
+		}
+	} else {
+		for (int i = inter_top; i < inter_bottom; i++) {
+			for (int j = inter_left; j < inter_right; j++) {
+				unsigned char pixel = *shapeptr++;
+				if (pixel <= 0x7F) {
+					if (*alphaptr == 127) {
+						*alphaptr = pixel;
+					} else {
+						*alphaptr = MAX(*alphaptr + pixel - 127, 0);
+					}
+				}
+				++alphaptr;
+			}
+			shapeptr += shape_skip;
+			alphaptr += alpha_skip;
+		}
+	}
+}
+
+// FUNCTION: 0x0047F510
+void CellClass::Draw_Overlay_Shadow(Point2D const & xpoint, Rect const & cliprect)
+{
+	int yoffset = 15 * Height;
+	OverlayTypeClass * otype = OverlayTypes[Overlay];
+	ShapeSet const * shape = (ShapeSet const *)otype->Get_Image_Data();
+
+	Point2D point = xpoint + Overlay_Draw_Offset();
+	point -= cliprect.Top_Left();
+
+	if (IsBridgeDeck) {
+		if (OverlayData >= OVERLAYDATA_BRIDGE_NS_FULL1 && OverlayData <= OVERLAYDATA_BRIDGE_NS_END2) {
+			point += Point2D(-15, 7);
+		}
+	}
+	if (Drawer == NULL) {
+		Init_Drawer();
+	}
+
+	unsigned char frame = OverlayData;
+	if (otype->IsCrate) {
+		frame = 0;
+	} else if (otype->IsRubble) {
+		ShapeSet const * rshape;
+		int rframe;
+		if (Rubble == NULL) return;
+		if (!Rubble->FUN_0045F1D0(&rshape, &rframe)) return;
+		Draw_Shape(*LogicalSurface, *Drawer, rshape, rframe, point, cliprect,
+			ShapeFlags_Type(0x4601), NULL, -2 - yoffset);
+		return;
+	}
+	Draw_Shape(*LogicalSurface, *Drawer, shape, frame + shape->Get_Count() / 2, point, cliprect,
+		ShapeFlags_Type(0x4601), NULL, -2 - yoffset);
 }
 
 // FUNCTION: 0x004810A0

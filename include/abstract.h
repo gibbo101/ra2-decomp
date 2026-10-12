@@ -83,6 +83,7 @@ class AbstractClass : public IPersistStream, public IRTTITypeInfo, public INotic
 		}
 
 		virtual void Init(void);
+		void BecomeUntargetable(void);
 		virtual void Detach(AbstractClass const * target, bool all = true);
 
 		virtual RTTIType Fetch_RTTI(void) const = 0;

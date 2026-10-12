@@ -37,7 +37,9 @@ original compiler turns into that function's exact bytes. MATCH means
    TechnoTypeClass, BuildingTypeClass, BaseClass, TeamClass, AnimClass, AnimTypeClass,
    UnitTypeClass, UnitClass, InfantryTypeClass, AircraftTypeClass, TeamTypeClass,
    HouseTypeClass, WarheadTypeClass, BombClass, ParasiteClass, LineTrail, ScenarioClass,
-   Random2Class, ColorScheme, and the shared
+   Random2Class, ColorScheme, AircraftClass, BulletClass, WeaponTypeClass,
+   BulletTypeClass, EventClass, the spawn, slave, capture and temporal managers,
+   AirstrikeClass, EBolt, and the shared
    ones batch 1 gave YR's layout (RulesClass, HouseClass, CellClass, FootClass, the file
    classes, the gadgets, the surfaces). Include them
    rather than writing stand-ins; `uv run tools/headercheck.py <Class>` proves any header you fix in
@@ -117,7 +119,12 @@ Each entry: what the diff showed, then the source change that fixed it.
 - `(*this)[Count++] = x` through an inline `operator[]`, or
   `int n = Count; Count = n + 1; V[n] = x;`, stores the count first; `V[Count++]` does not.
 - `c = Coord(pt, 0); c += r;` gives a zeroed-register Z store and load/add/store order;
-  direct initialisation or `c = c + r` does not.
+  direct initialisation or `c = c + r` does not. A named `Coord pt` added with `+=`
+  fixed a double X store that `predicted - (Coord(pp, 0) + coord)` gave.
+- x87 loads of a Coord difference in Z, Y, X order: the difference in a named local
+  inside a file-local helper. `Distance_To` and `(a - b).Length()` load Y, Z, X.
+- `Map[Adjacent_Cell(Get_Cell(), face)]` with no named Cell local keeps the original's
+  add order; a named local loads the adjacent offset first.
 - A sum used once stays inline in its expression; a local for it reschedules the code.
 
 ### Branches and returns
@@ -130,6 +137,8 @@ Each entry: what the diff showed, then the source change that fixed it.
   other order, make both tests reach one block: `if (a) goto none; if (b) { none: X }`.
 - `!p ? 0 : p->Count` and `p ? p->Count : 0` give opposite branch polarity.
 - `setcc; test; jne` on one register is an inlined function returning bool.
+- A clamp that merges two stores or lands in the wrong register: `MAX(v, 0)` where the
+  ternary `(v <= 0) ? 0 : v` failed (0x0047F250).
 
 ### Registers
 - ESI and EDI swapped with every other byte identical: add one real use of a variable
@@ -176,6 +185,13 @@ Each entry: what the diff showed, then the source change that fixed it.
   moving one member's cleanup into a file-local inline helper shifts which stay calls.
 - Nested inline decisions depend on how many expansions a function already holds; a
   code-neutral inline helper can flip them.
+- A plain function defined above its callers is inlined and also emitted. One too big
+  to inline: a file-local `static inline` helper holds the body, and the member is a
+  one-line plain wrapper (`_Conscript` in team.cpp).
+- An inline helper written as a template can crash VC6 (internal compiler error); write
+  one overload per type.
+- Calls in an unused local spend the inline budget too: three `Count()` calls kept the
+  `Cell(int, int)` constructor a call in 0x004684E0.
 - `member.Type::Type();` in a constructor body builds a member with no null test and
   after the statements before it; placement new adds the test.
 
@@ -193,6 +209,8 @@ Each entry: what the diff showed, then the source change that fixed it.
 - A function-local static whose guard is re-tested at each use sits in an inline accessor.
 - The vptr a constructor or destructor stores last names its class: read the RTTI at
   vtable minus 4 (`Exe.vtables()` in headercheck.py) before naming one.
+- Static initialisers and atexit stubs are named `$E<n>`, numbered across the whole
+  file: after any header or file change, re-read the number from the checker's listing.
 - A pushed `__FILE__` and line: `#line 215 "D:\\ra2mdpost\\AbsType.cpp"` before the
   statement. A string's first-character test: `if (*name)`, not `if (name[0])`.
 
@@ -216,6 +234,10 @@ Each entry: what the diff showed, then the source change that fixed it.
 - YR signatures that differ from TS: Take_Damage has 7 arguments, Is_Moving_Onto_Bridge
   and Destination_Coord take a `TechnoClass *`; MissionClass slot 0x1E8 is
   `void QueueMission(MissionType, bool)` and 0x1EC is `bool Commence(void)`.
+- MSVC lays out overloaded virtuals of one name in reverse declaration order: declare
+  them in the reverse of the exe's slots (RadioClass's three Transmit_Message).
+- An unknown virtual: count slots back from a known one in the header (0x350
+  IsPowerOnline, 0x3AC IsCloseEnoughToAttack) before adding a declaration.
 - A TS layout can agree with YR's for a prefix only: run headercheck before porting a
   function that reaches past a class's proven part.
 - Where YRpp groups members into a struct and TS has flat fields, use a nested struct
@@ -236,6 +258,8 @@ Each entry: what the diff showed, then the source change that fixed it.
 - A varargs member to explain an ECX argument plus caller-popped pushes.
 - `delete this` in a deleting destructor: it adds a virtual call and a null test.
 - For 0x00421EA0's x87 order: removing uses of 0, Vector3 constructor or member forms.
+- An EBP frame pointer in a function with no floating point (0x0047EFE0): nothing tried
+  made VC6 emit one.
 - `DynamicVectorClass<T>`'s constructor and Add are called for some T and inlined for
   others in the original; no instantiation order tried reproduces it.
 

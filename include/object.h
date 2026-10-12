@@ -147,7 +147,7 @@ class ObjectClass : public AbstractClass
 		virtual Coord Docking_Coord(void) const {return(Center_Coord());}
 		virtual Coord Center_Coord(void) const override;
 		virtual Coord Render_Coord(void) const {return(Center_Coord());}
-		virtual Coord Fire_Coord(int which) const {return(Center_Coord() + Coord(0, 0, 50));}
+		virtual Coord Fire_Coord(int which, Coord base) const {return(Center_Coord() + Coord(0, 0, 50));}
 		virtual Coord Exit_Coord(void) const {return(Center_Coord());}
 		virtual int Sort_Y(void) const;
 		virtual bool On_Ground(void) const override;
@@ -183,7 +183,7 @@ class ObjectClass : public AbstractClass
 		virtual void Clear_Occupy_Bit(Coord const & coord);
 		virtual void Delete_Me(void);
 		virtual void Do_Shimmer(void);
-		virtual int Exit_Object(TechnoClass *);
+		virtual int Exit_Object(TechnoClass * techno, Cell cell);
 		virtual bool Render(Rect &, bool forced, bool extras_only) const;
 		virtual Cell const * Occupy_List(bool placement=false) const;
 
@@ -213,7 +213,7 @@ class ObjectClass : public AbstractClass
 		virtual bool CanBeSelectedNow(void) const;
 
 		virtual bool Active_Click_With(ActionType , ObjectClass *, bool);
-		virtual bool Active_Click_With(ActionType , Cell const &, bool);
+		virtual bool Active_Click_With(ActionType , Cell const &, Cell const &, bool);
 		virtual void Clicked_As_Target(int = 7);
 		virtual bool Select(void);
 		virtual void Unselect(void);

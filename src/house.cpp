@@ -81,6 +81,7 @@ extern double DAT_00A8EFA0, DAT_00A8F030, DAT_00A8F018, DAT_00A8F010, DAT_00A8EF
 extern double DAT_00A8EF58, DAT_00A8EFF0, DAT_00A8F008;
 extern int DAT_00A8F038, DAT_00A8F02C, DAT_00A8EFF8, DAT_00A8EFFC, DAT_00A8F000;
 extern short DAT_00A8EF98, DAT_00A8EF9A;
+extern int DAT_00A8F020, DAT_00A8F024, DAT_00A8F028;
 
 // FUNCTION: 0x004F4F00
 void Init_004F4F00(void)
@@ -157,12 +158,225 @@ void Init_004F50B0(void)
 	DAT_00A8F000 = 0;
 }
 
+// FUNCTION: 0x004F50D0
+void Init_004F50D0(void)
+{
+	DAT_00A8F028 = 0;
+	DAT_00A8F020 = 128;
+	DAT_00A8F024 = 128;
+}
+
+// FUNCTION: 0x004F50F0 $E1
+
+// FUNCTION: 0x004F5130 $E1
+DynamicVectorClass<HouseClass::BuildChoiceClass *> HouseClass::BuildChoice;
+
+// FUNCTION: 0x004F5190
+HouseClass::HouseClass(NoInitClass const & x) :
+	BASECLASS(x),
+	Control(x),
+	AlertTime(x),
+	BorrowedTime(x),
+	PowerBlackoutTimer(x),
+	RadarBlackoutTimer(x),
+	AircraftTotals(x),
+	InfantryTotals(x),
+	UnitTotals(x),
+	BuildingTotals(x),
+	DestroyedAircraft(x),
+	DestroyedInfantry(x),
+	DestroyedUnits(x),
+	DestroyedBuildings(x),
+	CapturedBuildings(x),
+	TotalCrates(x),
+	RemapColorRGB(x),
+	LaserColor(x),
+	Base(x),
+	Tiberium(x),
+	Weed(x),
+	Attack(x),
+	AITimer(x),
+	PickEnemyTimer(x),
+	DamageTime(x),
+	TeamTime(x),
+	TriggerTime(x),
+	SpeakAttackDelay(x),
+	SpeakPowerDelay(x),
+	SpeakMoneyDelay(x),
+	SpeakMaxedDelay(x),
+	IniName(x)
+{
+
+}
+
+inline UnitTypeClass const * First_Ownable(HouseClass const * house, TypeList<UnitTypeClass const *> const & list)
+{
+	int owners = 1 << HouseTypeClass::From_Name(house->Class->ParentCountry);
+	for (int i = 0; i < list.Count(); i++) {
+		if (owners & list[i]->Ownable) {
+			return(list[i]);
+		}
+	}
+	return(NULL);
+}
+
+// FUNCTION: 0x004F6540
+bool HouseClass::Can_Make_Money(void)
+{
+	bool hasdest = CountResourceDestinations > 0;
+	bool hasgath = CountResourceGatherers > 0;
+	bool haswf = CountWarfactories > 0;
+	bool hascy = ConYards.Count() > 0;
+
+	if (AUQuantity.Value(First_Ownable(this, Rule->BaseUnit)->HeapID)) {
+		hascy = true;
+	}
+
+	if (hasdest && hasgath) {
+		return(true);
+	}
+
+	int credits = Available_Money();
+
+	bool canbuildref = FirstBuildableFromArray(Rule->BuildRefinery) != NULL;
+
+	bool hasharvtype = First_Ownable(this, Rule->HarvesterUnit) != NULL;
+
+	int harvcost;
+	if (hasharvtype) {
+		harvcost = First_Ownable(this, Rule->HarvesterUnit)->Cost_Of(this);
+	} else {
+		harvcost = 0x7FFFFFFF;
+	}
+
+	int wfcost = FirstBuildableFromArray(Rule->BuildWeapons)->Cost_Of(this);
+
+	if (!canbuildref && hasharvtype) {
+		if (hasgath) {
+			return(true);
+		}
+		if (haswf && credits >= harvcost) {
+			return(true);
+		}
+		if (hascy && credits >= wfcost + harvcost) {
+			return(true);
+		}
+		return(false);
+	}
+
+	int refcost = FirstBuildableFromArray(Rule->BuildRefinery)->Cost_Of(this);
+
+	if (canbuildref && !hasharvtype) {
+		if (hasgath) {
+			return(true);
+		}
+		if (hascy && credits >= refcost) {
+			return(true);
+		}
+		return(false);
+	}
+
+	if (hasdest) {
+		if ((haswf && credits >= harvcost) || (hascy && (credits >= wfcost + harvcost || credits >= refcost))) {
+			return(true);
+		}
+		return(false);
+	}
+
+	if (hascy && credits > refcost) {
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x004F6830
+HRESULT STDMETHODCALLTYPE HouseClass::QueryInterface(REFIID riid, LPVOID * ppvObject)
+{
+	if (ppvObject == NULL) {
+		return(E_POINTER);
+	}
+
+	*ppvObject = NULL;
+
+	if (riid == IID_IUnknown) {
+		*ppvObject = reinterpret_cast<IUnknown *>(this);
+	}
+
+	if (riid == IID_IHouse) {
+		*ppvObject = static_cast<IHouse *>(this);
+	}
+
+	if (riid == IID_IPublicHouse) {
+		*ppvObject = static_cast<IPublicHouse *>(this);
+	}
+
+	if (riid == IID_IConnectionPointContainer) {
+		*ppvObject = static_cast<IConnectionPointContainer *>(this);
+	}
+
+	if (riid == IID_IPersist) {
+		*ppvObject = static_cast<IPersist *>(this);
+	}
+
+	if (riid == IID_IPersistStream) {
+		*ppvObject = static_cast<IPersistStream *>(this);
+	}
+
+	if (*ppvObject == 0) {
+		return(E_NOINTERFACE);
+	}
+
+	this->AddRef();
+
+	return(S_OK);
+}
+
+// FUNCTION: 0x004F6910
+bool STDMETHODCALLTYPE HouseClass::Is_Powered(void)
+{
+	return(Power >= Drain);
+}
+
 // FUNCTION: 0x004F6930
 IApplication * STDMETHODCALLTYPE HouseClass::Get_Application(void)
 {
 	IApplication *app;
 	ApplicationInstance.QueryInterface(IID_IApplication, (void**)&app);
 	return(app);
+}
+
+// FUNCTION: 0x004F6950
+BSTR STDMETHODCALLTYPE HouseClass::Name(void)
+{
+	WCHAR psz[32];
+	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, (char *)Class->GivenName, -1, psz, ARRAY_SIZE(psz));
+	return(SysAllocString(psz));
+}
+
+// FUNCTION: 0x004F6990
+LONG STDMETHODCALLTYPE HouseClass::Available_Money(void)
+{
+	float mult = Class->IncomeMult;
+	int value = Tiberium.Get_Total_Value();
+	return((LONG)(value * mult + Credits));
+}
+
+// FUNCTION: 0x004F69D0
+LONG STDMETHODCALLTYPE HouseClass::Available_Storage(void)
+{
+	return(Capacity - (int)Tiberium.Get_Total_Amount());
+}
+
+// FUNCTION: 0x004F6A00
+LONG STDMETHODCALLTYPE HouseClass::Power_Output(void)
+{
+	return(Power);
+}
+
+// FUNCTION: 0x004F6A10
+LONG STDMETHODCALLTYPE HouseClass::Power_Drain(void)
+{
+	return(Drain);
 }
 
 // FUNCTION: 0x004F6E60

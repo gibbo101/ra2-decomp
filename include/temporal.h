@@ -36,4 +36,6 @@ class TemporalClass : public AbstractClass
 		virtual int Fetch_Object_Size(void) const override;
 		virtual void Compute_CRC(CRCEngine & crc) const override;
 		virtual void AI(void) override;
+
+		void LetGo(void);
 };
