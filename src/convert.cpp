@@ -656,6 +656,7 @@ void ConvertClass::Reinitialize_Hicolor_Tables(int redleft, int redright, int gr
 
 template class BlitTransXlat<unsigned short>;
 
+// FUNCTION: 0x004912B0 ?$BlitTransXlat@G::BlitForward
 // FUNCTION: 0x00491300 ?$BlitTransXlat@G::BlitBackward
 // FUNCTION: 0x00491330 ?$BlitTransXlat@G::Blit_Copy_Tinted
 // FUNCTION: 0x00491360 ?$BlitTransXlat@G::Blit_Move_Tinted

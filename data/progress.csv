@@ -497,6 +497,7 @@ address,name,result,size,source,symbol
 0x00490B90,ConvertClass::Blitter_From_Flags,MATCH,695,src/convert.cpp,?Blitter_From_Flags@ConvertClass@@QBEPBVBlitter@@W4ShapeFlags_Type@@@Z
 0x00490E50,ConvertClass::RLEBlitter_From_Flags,MATCH,676,src/convert.cpp,?RLEBlitter_From_Flags@ConvertClass@@QBEPBVRLEBlitter@@W4ShapeFlags_Type@@@Z
 0x00491100,ConvertClass::Reinitialize_Hicolor_Tables,MATCH,268,src/convert.cpp,?Reinitialize_Hicolor_Tables@ConvertClass@@SIXHHHHHH@Z
+0x004912B0,?$BlitTransXlat@G::BlitForward,MATCH,70,src/convert.cpp,?BlitForward@?$BlitTransXlat@G@@UBEXPAXPBXHH00HH@Z
 0x00491300,?$BlitTransXlat@G::BlitBackward,MATCH,45,src/convert.cpp,?BlitBackward@?$BlitTransXlat@G@@UBEXPAXPBXHH00H@Z
 0x00491330,?$BlitTransXlat@G::Blit_Copy_Tinted,MATCH,45,src/convert.cpp,?Blit_Copy_Tinted@?$BlitTransXlat@G@@UBEXPAXPBXHH00HHG@Z
 0x00491360,?$BlitTransXlat@G::Blit_Move_Tinted,MATCH,45,src/convert.cpp,?Blit_Move_Tinted@?$BlitTransXlat@G@@UBEXPAXPBXHH00HG@Z
@@ -989,6 +990,7 @@ address,name,result,size,source,symbol
 0x004FA2E0,HouseClass::Adjust_Threat,MATCH,106,src/house.cpp,?Adjust_Threat@HouseClass@@QAEXHH@Z
 0x004FA350,HouseClass::Begin_Production,MATCH,1464,src/house.cpp,?Begin_Production@HouseClass@@QAE?AW4ProdFailType@@W4RTTIType@@H_N1@Z
 0x004FA910,HouseClass::Suspend_Production,MATCH,252,src/house.cpp,?Suspend_Production@HouseClass@@QAE?AW4ProdFailType@@W4RTTIType@@H_N@Z
+0x004FAD20,HouseClass::Special_Weapon_AI,MATCH,301,src/house.cpp,?Special_Weapon_AI@HouseClass@@QAEXW4SuperWeaponType@@@Z
 0x004FAE50,HouseClass::Place_Special_Blast,MATCH,166,src/house.cpp,?Place_Special_Blast@HouseClass@@QAE_NW4SuperWeaponType@@ABVCell@@@Z
 0x004FB6B0,HouseClass::Just_Built,MATCH,395,src/house.cpp,?Just_Built@HouseClass@@QAEXPAVTechnoClass@@@Z
 0x004FD120,HouseClass::Find_Build_Location,MATCH,35,src/house.cpp,?Find_Build_Location@HouseClass@@QBE?AVCoord@@PAVBuildingClass@@@Z

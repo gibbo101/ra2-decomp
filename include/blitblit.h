@@ -1787,3 +1787,159 @@ class BlitTranslucentWriteAlpha : public Blitter {
 	private:
 		T const * TranslateTable;
 };
+
+#if defined(_MSC_VER)
+
+#pragma optimize("", off)
+
+template <>
+inline void BlitTrans<unsigned char>::BlitForward(void * dest, void const * source, int len, int z_min, void *z_buff, void *a_buff, int alpha_level, int warp_offset) const
+{
+	__asm {
+		mov	esi,[source]
+		mov	edi,[dest]
+		mov	ecx,[len]
+		dec	edi
+		inc	ecx
+	}
+again:
+	__asm {
+		dec	ecx
+		jz		fini
+		mov	al,[esi]
+		inc	edi
+		inc	esi
+		test	al,al
+		jz		again
+		mov	[edi],al
+		jmp	again
+	}
+fini:;
+}
+
+template <>
+inline void BlitTransXlat<unsigned short>::BlitForward(void * dest, void const * source, int len, int z_min, void *z_buff, void *a_buff, int alpha_level, int warp_offset) const
+{
+	unsigned short const * xlator = TranslateTable;
+
+	__asm {
+		mov	ebx,[xlator]
+		mov	ecx,[len]
+		inc	ecx
+		mov	edi,[dest]
+		sub	edi,2
+		mov	esi,[source]
+		xor	eax,eax
+	}
+again:
+	__asm {
+		dec	ecx
+		jz		over
+		add	edi,2
+		mov	al,[esi]
+		inc	esi
+		or		al,al
+		jz		again
+		mov	dx,[ebx+eax*2]
+		mov	[edi],dx
+		jmp	again
+	}
+over:;
+}
+
+template <>
+inline void BlitTransRemapXlat<unsigned short>::BlitForward(void * dest, void const * source, int len, int z_min, void *z_buff, void *a_buff, int alpha_level, int warp_offset) const
+{
+	unsigned short const * translator = TranslateTable;
+	unsigned char const * remapper = RemapTable;
+
+	__asm {
+		mov	ecx,[len]
+		mov	edi,[dest]
+		sub	edi,2
+		mov	esi,[source]
+		mov	ebx,[remapper]
+		mov	edx,[translator]
+		xor	eax,eax
+	}
+
+again:
+	__asm {
+		dec	ecx
+		jz		over
+		add	edi,2
+		xor	eax,eax
+		lodsb
+		or		al,al
+		jz		again
+		mov	al,[ebx+eax]
+		mov	ax,[edx+eax*2]
+		mov	[edi],ax
+		jmp	again
+	}
+over:;
+}
+
+#if 0
+template <>
+inline void BlitTransZRemapXlat<unsigned short>::BlitForward(void * dest, void const * source, int len, int z_min, void *z_buff, void *a_buff, int alpha_level, int warp_offset) const
+{
+	unsigned short const * translator = TranslateTable;
+	unsigned char const * remapper = *RemapTable;
+
+	__asm {
+		mov	ecx,[len]
+		mov	edi,[dest]
+		sub	edi,2
+		mov	esi,[source]
+		mov	ebx,[remapper]
+		mov	edx,[translator]
+		xor	eax,eax
+	}
+
+again:
+	__asm {
+		dec	ecx
+		jz		over
+		add	edi,2
+		xor	eax,eax
+		lodsb
+		or		al,al
+		jz		again
+		mov	al,[ebx+eax]
+		mov	ax,[edx+eax*2]
+		mov	[edi],ax
+		jmp	again
+	}
+over:;
+}
+
+template <>
+inline void BlitPlainXlat<unsigned short>::BlitForward(void * dest, void const * source, int len, int z_min, void *z_buff, void *a_buff, int alpha_level, int warp_offset) const
+{
+	unsigned short const * remapper = TranslateTable;
+	__asm {
+		mov	ebx,[remapper]
+		mov	ecx,[len]
+		mov	esi,[source]
+		mov	edi,[dest]
+		sub	edi,2
+	}
+again:
+
+	__asm {
+		xor	eax,eax
+		add	edi,2
+		mov	al,[esi]
+		inc	esi
+		mov	ax,[ebx+eax*2]
+		mov	[edi],ax
+		dec	ecx
+		jnz	again
+	}
+}
+
+#endif
+#endif
+
+#pragma optimize("", on)

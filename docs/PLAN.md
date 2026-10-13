@@ -830,7 +830,8 @@ and the coordinator deleted those blocks before merging. 0x4FAA10 swallowed an u
 Special_Weapon_AI at 0x4FAD20 because the F rule decoded switch tables as code, and the
 map counted int3 padding in 114 extents; functions.py fixes both, with no matched
 function moved. 0x4912B0 looked like a padding fault, but the original is Westwood's
-inline asm, so it cannot land under the repo rules. Banked: four House, building and UI command functions
+inline asm; it landed once that asm, copied unchanged from the archive, was allowed.
+Special_Weapon_AI landed too (`::Buildings`, since HouseClass has its own member). Banked: four House, building and UI command functions
 (66% to 93%). Wstring::get has the same twin problem (0x7B5400 and 0x7B5440), still
 open. The project's delete hook had nothing to stop. Cost: about 2.4M tokens, 55
 minutes. Merge gate: 2,792 of 2,792 (430.3 KB).

@@ -48,3 +48,4 @@ address,name,symbol,evidence
 0x004C66C0,EventClass::EventClass,??0EventClass@@QAE@HE@Z,constructor taking (index, type) called by 0x00730F30
 0x006D8700,Tactical::Cell_Shadow,,0x00567DA0 MapClass::RevealArea3 matched with TS name; returns int (movsx eax)
 0x006DA7D0,Tactical::Flag_Cell,,0x00567DA0 MapClass::RevealArea3 matched with TS name
+0x00A8EB40,Buildings,,global building vector (YRpp BuildingClass::Array); 0x004FAD20 HouseClass::Special_Weapon_AI matched

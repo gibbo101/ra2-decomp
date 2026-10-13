@@ -1088,6 +1088,29 @@ ProdFailType HouseClass::Suspend_Production(RTTIType type, int id, bool naval)
 	return(PROD_OK);
 }
 
+// FUNCTION: 0x004FAD20
+void HouseClass::Special_Weapon_AI(SuperWeaponType id)
+{
+	BuildingClass * bestptr = NULL;
+	int best = -1;
+
+	for (int index = 0; index < ::Buildings.Count(); index++) {
+		BuildingClass * b = ::Buildings[index];
+
+		if (b != NULL && !b->IsInLimbo && b->Strength && !Is_Ally(b)) {
+			if (Percent_Chance(90) && (b->Value() > best || best == -1)) {
+				best = b->Value();
+				bestptr = b;
+			}
+		}
+	}
+
+	if (bestptr) {
+		Cell cell = bestptr->Center_Coord().As_Cell();
+		Place_Special_Blast(id, cell);
+	}
+}
+
 // FUNCTION: 0x004FAE50
 bool HouseClass::Place_Special_Blast(SuperWeaponType id, Cell const & cell)
 {
