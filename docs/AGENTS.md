@@ -304,6 +304,8 @@ Each entry: what the diff showed, then the source change that fixed it.
   `include/ownrdraw.h` overrides the TibSun copy.
 - An adopted TibSun header can carry Westwood's inline asm and `#pragma optimize`
   (blitblit.h): delete those blocks; the repo rules ban them even when original.
+- A function the original wrote in inline asm cannot land: log it in attempts.csv with
+  blocker `original inline asm` and move on. A match measured against an asm header is not one.
 - The message list is `Session.Messages`, not a global; Add_Message takes YR's 7 arguments.
 
 ## Known dead ends

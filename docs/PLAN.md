@@ -825,9 +825,11 @@ TibSun's blitter, blitblit, rlerle and factory headers, proved against the exe. 
 found that 0x7B4620, not 0x7B66C0, is Wstring's constructor: the other is
 WideWstring's, which YR's OwnerDraw cells use, so ownrdraw.h now lives in include/. The
 adopted blitblit.h and rlerle.h still held Westwood's inline asm and `#pragma optimize`,
-and the coordinator deleted those blocks before merging. Two misses are map faults:
-0x4912B0 counts 10 int3 padding bytes, and 0x4FAA10 swallows an unlisted
-Special_Weapon_AI at 0x4FAD20. Banked: four House, building and UI command functions
+and the coordinator deleted those blocks before merging. 0x4FAA10 swallowed an unlisted
+Special_Weapon_AI at 0x4FAD20 because the F rule decoded switch tables as code, and the
+map counted int3 padding in 114 extents; functions.py fixes both, with no matched
+function moved. 0x4912B0 looked like a padding fault, but the original is Westwood's
+inline asm, so it cannot land under the repo rules. Banked: four House, building and UI command functions
 (66% to 93%). Wstring::get has the same twin problem (0x7B5400 and 0x7B5440), still
 open. The project's delete hook had nothing to stop. Cost: about 2.4M tokens, 55
 minutes. Merge gate: 2,792 of 2,792 (430.3 KB).

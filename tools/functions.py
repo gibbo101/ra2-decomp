@@ -9,10 +9,11 @@ A function start needs at least one piece of evidence, recorded as letters:
   Y  YRpp names it (data/symbols.csv)
   G  Ghidra's analysis found it (build/ghidra/functions.csv, when present)
   L  a prebuilt library function was found here (data/library.csv)
-  F  code after a function's return that no path through that function reaches, at an
-     aligned address: a function nothing calls directly, placed with no padding before it
+  F  code after a function's return or switch tables that no path through that function
+     reaches, at an aligned address: a function nothing calls directly, placed with no
+     padding before it
 Every start must also be an instruction boundary of a linear sweep of .text. A
-function's size runs to the next start, less the padding before it.
+function's size runs to the next start, less the padding (nop or int3) before it.
 """
 
 import bisect
@@ -27,6 +28,7 @@ import pefile
 
 ROOT = Path(__file__).resolve().parent.parent
 NOP = 0x90
+PADDING = (NOP, 0xCC)
 TABLE_OPERAND = re.compile(r"(?:dword ptr \[\w+\*4 \+ |byte ptr \[\w+ \+ )(0x[0-9a-f]+)\]")
 
 
@@ -64,13 +66,17 @@ def sweep(code: bytes, base: int, starts: set, padded: set, calls: set, tables: 
 
 
 def reached_end(md, code: bytes, base: int, lo: int, hi: int, roots: set,
-                seen: set | None = None, code_only: bool = False) -> int:
-    """The end of the furthest instruction in [lo, hi) that flow from `lo` and `roots`
-    reaches: jumps, branches, calls returning, switch tables, and offsets taken as operands.
-    A pushed offset is a callback argument (atexit), not flow. With `code_only`, a switch
-    table's address is data, not flow, and `seen` collects every instruction reached."""
+                seen: set | None = None, code_only: bool = False,
+                data_ends: set | None = None) -> int:
+    """The end of the furthest instruction or switch table in [lo, hi) that flow from
+    `lo` and `roots` reaches: jumps, branches, calls returning, switch tables, and offsets
+    taken as operands. A switch table is data, never decoded as code; a byte index table
+    runs while its entries index the function's jump tables. A pushed offset is a callback
+    argument (atexit), not flow. With `code_only`, tables do not extend the end. `seen`
+    collects every instruction reached, `data_ends` the end of each table."""
     seen = set() if seen is None else seen
     todo, far = [lo, *roots], lo
+    jump_tables, index_tables = {}, set()
     while todo:
         at = todo.pop()
         while lo <= at < hi and at not in seen:
@@ -81,19 +87,32 @@ def reached_end(md, code: bytes, base: int, lo: int, hi: int, roots: set,
             _, size, mnem, ops = insn
             far = max(far, at + size)
             t = TABLE_OPERAND.search(ops)
-            table = int(t.group(1), 16) if t and code_only else None
+            table = int(t.group(1), 16) if t else None
             for v in re.findall(r"0x[0-9a-f]+", ops) if mnem != "push" else ():
                 if lo < int(v, 16) < hi and int(v, 16) != table:
                     todo.append(int(v, 16))
-            if t and mnem == "jmp":
-                entry = int(t.group(1), 16)
-                while lo <= entry < hi and lo <= struct.unpack_from("<I", code, entry - base)[0] < hi:
+            if t and mnem == "jmp" and lo <= table < hi:
+                entry = table
+                while entry < hi and lo <= struct.unpack_from("<I", code, entry - base)[0] < hi:
                     todo.append(struct.unpack_from("<I", code, entry - base)[0])
                     entry += 4
+                jump_tables[table] = entry
+            elif t and lo <= table < hi:
+                index_tables.add(table)
             if mnem in ("ret", "jmp", "int3"):
                 break
             at += size
-    return far
+    if code_only:
+        return far
+    ends = set(jump_tables.values())
+    cases = max(((e - s) // 4 for s, e in jump_tables.items()), default=0)
+    for entry in index_tables:
+        while entry < hi and code[entry - base] < cases:
+            entry += 1
+        ends.add(entry)
+    if data_ends is not None:
+        data_ends |= ends
+    return max(far, *ends) if ends else far
 
 
 def pointers(pe: pefile.PE, lo: int, hi: int):
@@ -222,8 +241,8 @@ def main() -> None:
     if first not in evidence:
         evidence[first] = "P"
 
-    # A function whose flow ends before the next start, with code after its last return,
-    # holds a second function there when that code begins on an aligned boundary.
+    # A function whose flow ends before the next start, with code after its last return
+    # or switch table, holds a second function there when that code is aligned.
     md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_32)
     boundaries = after_end | padded
     pending = sorted(evidence)
@@ -235,16 +254,18 @@ def main() -> None:
             nxt = ordered[i] if i < len(ordered) else end
             # Data pointers into the code before a candidate (unwind funclets) extend the
             # flow; those past it point into the second function.
-            roots = set()
+            roots, data_ends = set(), set()
             while True:
-                at = reached_end(md, code, base, a, nxt, roots)
+                at = reached_end(md, code, base, a, nxt, roots, data_ends=data_ends)
+                after_data = at in data_ends
                 while at < nxt and code[at - base] == NOP:
                     at += 1
                 more = {p for p in ptrs if a < p < at} - roots
                 if not more:
                     break
                 roots |= more
-            if a < at < nxt and at % 16 == 0 and at in starts and at in boundaries:
+            if (a < at < nxt and at % 16 == 0 and at in starts and at not in tables
+                    and (at in boundaries or after_data)):
                 evidence[at] = "F"
                 new.append(at)
         pending = new
@@ -256,7 +277,7 @@ def main() -> None:
         for i, a in enumerate(ordered):
             nxt = ordered[i + 1] if i + 1 < len(ordered) else end
             stop = nxt
-            while stop > a + 1 and code[stop - 1 - base] == NOP:
+            while stop > a + 1 and code[stop - 1 - base] in PADDING:
                 stop -= 1
             w.writerow([f"0x{a:08X}", stop - a, evidence[a], yrpp.get(a) or library.get(a, "")])
 
