@@ -44,7 +44,8 @@ inline void ShipLocomotionClass::Set_Slope(int ramp)
 	}
 }
 
-inline bool ShipLocomotionClass::Stop_Driver(void)
+// FUNCTION: 0x006A0470
+bool ShipLocomotionClass::Stop_Driver(void)
 {
 	if (HeadToCoord != COORD_NONE) {
 		HeadToCoord = COORD_NONE;
@@ -254,4 +255,151 @@ boolean STDMETHODCALLTYPE ShipLocomotionClass::Process(void)
 	}
 
 	return(Is_Moving());
+}
+
+// FUNCTION: 0x006A01A0
+void ShipLocomotionClass::Mark_Track(Coord const & headto, MarkType type)
+{
+	if (headto != COORD_NONE) {
+		if (!IsOnShortTrack && TrackNumber != -1) {
+			int tracknum = TrackControl[TrackNumber].Track;
+			if (tracknum) {
+				TrackType const * ptr = RawTracks[tracknum - 1].Track;
+				int cellidx = RawTracks[tracknum - 1].Cell;
+				if (cellidx > -1) {
+					Dir256 dir = ptr[cellidx].Facing;
+
+					if (TrackIndex < cellidx && cellidx != -1) {
+						Point2D offset = Smooth_Turn(ptr[cellidx].Offset, dir);
+						if (type == MARK_UP) {
+							Coord coord(offset.X, offset.Y, LinkedTo->Height);
+							LinkedTo->Clear_Occupy_Bit(coord);
+						} else {
+							if (type == MARK_DOWN || type == MARK_DOWN_FORCED) {
+								Coord coord(offset.X, offset.Y, LinkedTo->Height);
+								LinkedTo->Set_Occupy_Bit(coord);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		if (type == MARK_UP) {
+			LinkedTo->Clear_Occupy_Bit(headto);
+		} else {
+			if (type == MARK_DOWN || type == MARK_DOWN_FORCED) {
+				LinkedTo->Set_Occupy_Bit(headto);
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x006A0310
+void STDMETHODCALLTYPE ShipLocomotionClass::Force_Track(int track, CoordStruct coord)
+{
+	TrackNumber = track;
+	TrackIndex = 0;
+	if ((Coord)coord != COORD_NONE) {
+		if (Start_Driver(coord)) {
+			DestinationCoord = coord;
+			TargetSpeed = 1.0;
+		}
+	}
+}
+
+// FUNCTION: 0x006A04C0
+bool ShipLocomotionClass::Start_Driver(Coord const & headto)
+{
+	Stop_Driver();
+	if (headto != COORD_NONE) {
+		HeadToCoord = headto;
+		IsDriving = true;
+
+		if (Map[headto].Goodie_Check(LinkedTo) && !LinkedTo->IsInLimbo) {
+			Mark_Track(headto, MARK_DOWN);
+			return(true);
+		}
+		if (!LinkedTo->IsActive) return(false);
+
+		HeadToCoord = COORD_NONE;
+		IsDriving = false;
+	}
+	return(false);
+}
+
+// FUNCTION: 0x006A05C0
+void STDMETHODCALLTYPE ShipLocomotionClass::Do_Turn(DirStruct coord)
+{
+	LinkedTo->PrimaryFacing.Set_Desired(coord);
+}
+
+// FUNCTION: 0x006A3DA0
+void ShipLocomotionClass::Lay_Track(void)
+{
+}
+
+// FUNCTION: 0x006A3DB0
+Point2D ShipLocomotionClass::Smooth_Turn(Point2D const & adj, Dir256 & dir)
+{
+	Dir256 workdir = dir;
+	int x,y;
+	int temp;
+	TrackControlType flags = TrackControl[TrackNumber].Flag;
+
+	x = adj.X;
+	y = adj.Y;
+
+	if (flags & F_T) {
+		temp	= x;
+		x		= y;
+		y 		= temp;
+		workdir = (Dir256)((DIR_W - workdir) & DIR_MAX);
+	}
+
+	if (flags & F_X) {
+		x 		 = -x;
+		workdir = (Dir256)(-workdir & DIR_MAX);
+	}
+
+	if (flags & F_Y) {
+		y = -y;
+		workdir = (Dir256)((DIR_S - workdir) & DIR_MAX);
+	}
+
+	dir = workdir;
+
+	return(Point2D(HeadToCoord.X + x, HeadToCoord.Y + y));
+}
+
+// FUNCTION: 0x006A3E30
+bool ShipLocomotionClass::Incoming(Cell cell)
+{
+	return(Map.Try_Open_Gate(LinkedTo, cell));
+}
+
+// FUNCTION: 0x006A3E50
+LayerType STDMETHODCALLTYPE ShipLocomotionClass::In_Which_Layer(void)
+{
+	return(LAYER_GROUND);
+}
+
+// FUNCTION: 0x006A3E60
+HRESULT STDMETHODCALLTYPE ShipLocomotionClass::GetClassID(CLSID * retval)
+{
+	if (retval == NULL) return(E_POINTER);
+	*retval = CLSID_ShipLocomotion;
+	return(S_OK);
+}
+
+// FUNCTION: 0x006A3EA0
+int STDMETHODCALLTYPE ShipLocomotionClass::Z_Adjust(void)
+{
+	return(0);
+}
+
+// FUNCTION: 0x006A3EB0
+ZGradientType STDMETHODCALLTYPE ShipLocomotionClass::Z_Gradient(void)
+{
+	return(BASECLASS::Z_Gradient());
 }

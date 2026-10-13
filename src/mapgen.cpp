@@ -1051,6 +1051,173 @@ bool MapRegionClass::Is_Bridge_Allowed(Rect const & rect) const
 	return(false);
 }
 
+// FUNCTION: 0x005904B0
+bool MapRegionClass::Place_Bridge_Hut(Rect const & rect) const
+{
+	for (int y = rect.Y; y < rect.Y + rect.Height + 1; y++) {
+		for (int x = rect.X; x < rect.X + rect.Width + 1; x++) {
+			CellClass *cptr = &Map[Cell(x,y)];
+			if (cptr->Overlay == OVERLAY_NONE && cptr->Is_Tile_Clear() && cptr->Cell_Occupier() == NULL) {
+				HouseClass *hptr = House_From_HousesType(HouseTypeClass::From_Name("Neutral"));
+				StructType caba = BuildingTypeClass::From_Name("CABHUT");
+				BuildingClass *thehut = new BuildingClass(BuildingTypes[caba], hptr);
+				thehut->Unlimbo(cptr->CellID);
+				return(true);
+			}
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x005905D0
+void MapRegionClass::Make_Region_Connections(void)
+{
+	if (ContainsWater) {
+		for (int i = 0; i < NeighborRegions->Count() - 1; i++) {
+			MapRegionClass * region = From_ID((*NeighborRegions)[i]);
+			if (region->NeighborRegions->Count() > 1 || region->CellCount > 50) {
+				for (int k = i + 1; k < NeighborRegions->Count(); k++) {
+					MapRegionClass * region2 = From_ID((*NeighborRegions)[k]);
+					if ((region2->NeighborRegions->Count() > 1 || region2->CellCount > 50) && !region2->ContainsWater) {
+						if (region2->CellHeight == region->CellHeight && region->CellHeight == CellHeight) {
+							Connect_Regions_With_Bridge(region, region2);
+						}
+					}
+				}
+			}
+		}
+	} else {
+		for (int i = 0; i < NeighborRegions->Count(); i++) {
+			MapRegionClass * region = From_ID((*NeighborRegions)[i]);
+			if (region->ID > ID && region->CellHeight != CellHeight) {
+				int total = 0;
+				int target = ((int)Pick_Random_UInt(0, 100) < RandomMapGen.SeedData.Accessibility ? Pick_Random_UInt(1, 2) : 0) + 1;
+
+				int tries = 0;
+
+				int id1 = region->CellHeight > CellHeight ? region->ID : ID;
+				int id2 = region->CellHeight > CellHeight ? ID : region->ID;
+
+				MapRegionClass * region2 = From_ID(id1);
+				DynamicVectorClass<Cell> * cells = region2->Build_Border_Cell_List();
+
+				while (total < target && tries < 100) {
+					Cell cell = (*cells)[Pick_Random_UInt(0, cells->Count() - 1)];
+					if (Map.In_Local_Radar(cell)) {
+						total += region2->Connect_Regions_With_Ramp(cell, id2, (float)tries * 0.01f) ? 1 : 0;
+					}
+					tries++;
+				}
+				if (total == 0) {
+					HasConnections = false;
+				}
+
+				delete cells;
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x00590FD0
+unsigned MapRegionClass::Build_Neighbor_Region_Mask(Cell const & cell, bool & valid, int unknown, float threshold)
+{
+	static const double lo = 5.0;
+	static const double hi = 15.0;
+	int min_count = (int)(((hi - lo) * (1.0f - threshold)) + lo);
+	Cell c = (cell - Cell(2, 2));
+	int ox = c.X;
+	int oy = c.Y;
+
+	if (!MapGeneratorClass::Region_Cell_Count_At_Least(Rect(ox, oy, 5, 5), ID, unknown, min_count)) {
+		valid = false;
+		return(0);
+	}
+
+	unsigned mask = 0;
+	for (int y = 0; y < 3; y++) {
+		for (int x = 0; x < 3; x++) {
+			if (y != 1 || x != 1) {
+				if (MapGeneratorClass::Region_Cell_Count_At_Least(Rect(ox + 5 * (x - 1), oy + 5 * (y - 1), 5, 5), ID, unknown, min_count)) {
+					static int _facing_bits[3][3] = {
+						MG_FACINGF_NW, MG_FACINGF_N, MG_FACINGF_NE,
+						MG_FACINGF_W, 0, MG_FACINGF_E,
+						MG_FACINGF_SW, MG_FACINGF_S, MG_FACINGF_SE
+					};
+					mask |= _facing_bits[y][x];
+				}
+			}
+		}
+	}
+
+	return(mask);
+}
+
+// FUNCTION: 0x00594010
+bool MapRegionClass::Is_Ramp_Area_Clear(Rect & rect, int id)
+{
+	if (Map.In_Local_Radar(Cell(rect.X, rect.Y)) &&
+		Map.In_Local_Radar(Cell(rect.X + rect.Width - 1, rect.Y)) &&
+		Map.In_Local_Radar(Cell(rect.X, rect.Y + rect.Height - 1)) &&
+		Map.In_Local_Radar(Cell(rect.X + rect.Width - 1,rect.Y + rect.Height - 1))) {
+
+		for (int y = rect.Y; y < rect.Y + rect.Height; y++) {
+			for (int x = rect.X; x < rect.X + rect.Width; x++) {
+				Cell cell(x, y);
+				int rid = CellData::Get_Region(cell);
+				if (rid != ID && rid != id) {
+					return(false);
+				}
+				CellClass * cptr = &Map[cell];
+				if (!cptr->Is_Tile_Clear()) {
+					return(false);
+				}
+			}
+		}
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00594190
+void MapRegionClass::Flatten_Area(Rect const & rect, int region_id)
+{
+	for (int y = rect.Y; y < rect.Y + rect.Height; y++) {
+		for (int x = rect.X; x < rect.X + rect.Width; x++) {
+			Cell cell(x, y);
+			if (My_In_Radar(cell)) {
+				CellData::Set_Region(cell, region_id);
+				CellClass * cellptr = &Map[cell];
+				cellptr->Height = From_ID(region_id)->CellHeight;
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x005942F0
+void MapRegionClass::Flatten_Area(Rect const & rect)
+{
+	for (int y = rect.Y; y < rect.Y + rect.Height; y++) {
+		for (int x = rect.X; x < rect.X + rect.Width; x++) {
+			Cell cell(x, y);
+			if (My_In_Radar(cell)) {
+				CellData::Set_Region(cell, ID);
+				Map[cell].Height = CellHeight;
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x005943E0
+MapRegionClass * MapRegionClass::From_ID(int id)
+{
+	for (int i = 0; i < MapRegions.Count(); i++) {
+		if (MapRegions[i]->ID == id) {
+			return(MapRegions[i]);
+		}
+	}
+	return(NULL);
+}
+
 // FUNCTION: 0x00595CE0
 void Clean_Up_RMCache(void)
 {

@@ -93,6 +93,10 @@ namespace OwnerDraw {
 		int leftMargin;
 	};
 
+	struct WinNode {
+		WinNode *next;
+	};
+
 	struct WinData {
 
 		LPARAM userData;
@@ -107,6 +111,15 @@ namespace OwnerDraw {
 		int toolTipsEnabled;
 
 		union {
+			struct {
+				wchar_t *text;
+				int hasText;
+				int asciiOnly;
+				WinNode *nodes;
+				int hasFocus;
+				WideWstring *editText;
+			} Wide;
+
 			struct {
 				ArrayList<int> *rowColors;
 				ArrayList<int> *selStates;
@@ -192,6 +205,23 @@ namespace OwnerDraw {
 		COLORREF textColor;
 		int field_138;
 		int animState;
+		unsigned char reserved[0xC0];
+
+		~WinData(void)
+		{
+			if (Wide.text) {
+				delete Wide.text;
+				Wide.text = NULL;
+			}
+			while (Wide.nodes) {
+				Remove_Node(Wide.nodes);
+			}
+			if (Wide.editText) {
+				delete Wide.editText;
+			}
+		}
+
+		void Remove_Node(WinNode *node);
 	};
 
 	void Initialize(void);

@@ -10,12 +10,9 @@
 #include <cctype>
 #include <cstring>
 
-char Wstring::truncate(unsigned int len)
+Wstring::Wstring(IN char const* string) :str(NULL)
 {
-	Wstring tmp;
-	if (!tmp.set(len, get()) || !set(tmp.get()))
-		return(FALSE);
-	return(TRUE);
+	set(string);
 }
 
 // FUNCTION: 0x007B4620
@@ -505,6 +502,153 @@ char Wstring::set(unsigned int size, IN char const* string)
 	str[size] = 0;
 
 	return(TRUE);
+}
+
+// FUNCTION: 0x007B5B30
+void Wstring::toLower(void)
+{
+	unsigned int i;
+
+	for (i = 0; i < length(); i++)
+	{
+		if ((str[i] >= 'A') && (str[i] <= 'Z'))
+			str[i] = tolower(str[i]);
+	}
+}
+
+// FUNCTION: 0x007B5B80
+Wstring Wstring::toLower(void) const
+{
+	Wstring tmp = *this;
+	tmp.toLower();
+	return(tmp);
+}
+
+// FUNCTION: 0x007B5C50
+void Wstring::toUpper(void)
+{
+	unsigned int i;
+
+	for (i = 0; i < length(); i++)
+	{
+		if ((str[i] >= 'a') && (str[i] <= 'z'))
+			str[i] = toupper(str[i]);
+	}
+}
+
+// FUNCTION: 0x007B5CA0
+Wstring Wstring::toUpper(void) const
+{
+	Wstring tmp = *this;
+	tmp.toUpper();
+	return(tmp);
+}
+
+// FUNCTION: 0x007B5D70
+char Wstring::truncate(unsigned int len)
+{
+	Wstring tmp;
+	if (!tmp.set(len, get()) || !set(tmp.get()))
+		return(FALSE);
+	return(TRUE);
+}
+
+// FUNCTION: 0x007B5E30
+char Wstring::truncate(char c)
+{
+	int  len;
+
+	if (str == NULL)
+		return(FALSE);
+
+	char* cptr = strchr(str, c);
+	if (cptr == NULL)
+		return(FALSE);
+	len = (int)(cptr - str);
+	truncate((unsigned int)len);
+	return(TRUE);
+}
+
+// FUNCTION: 0x007B5F10
+int Wstring::getToken(int offset, char const* delim, Wstring& out) const
+{
+	int i;
+	int start;
+	int stop;
+
+	if (offset < 0)
+		return(-1);
+
+	for (i = offset; i < (int)length(); i++) {
+		if (strchr(delim, str[i]) == NULL)
+			break;
+	}
+	if (i >= (int)length())
+		return(-1);
+	start = i;
+
+	for (; i < (int)length(); i++) {
+		if (strchr(delim, str[i]) != NULL)
+			break;
+	}
+	stop = i - 1;
+	out.set(str + start);
+	out.truncate((unsigned int)stop - start + 1);
+	return(stop + 1);
+}
+
+// FUNCTION: 0x007B60E0
+int Wstring::getLine(int offset, Wstring& out) const
+{
+	int i;
+	int start;
+	int stop;
+
+	start = i = offset;
+	if (start >= (int)length())
+		return(-1);
+
+	for (; i < (int)length(); i++) {
+		if (strchr("\r\n", str[i]) != NULL)
+			break;
+	}
+	stop = i;
+	if ((str[stop] == '\r') && (str[stop + 1] == '\n'))
+		stop++;
+
+	out.set(str + start);
+	out.truncate((unsigned int)stop - start + 1);
+	return(stop + 1);
+}
+
+// FUNCTION: 0x007B6280
+int Wstring::toInt(void) const
+{
+	return(atoi(str));
+}
+
+// FUNCTION: 0x007B6290
+Wstring Wstring_FromInt(int value)
+{
+	char buf[16];
+	sprintf(buf, "%d", value);
+	return(Wstring(buf));
+}
+
+// FUNCTION: 0x007B6320
+Wstring Wstring_FromInt(int value, int width)
+{
+	char buf[16];
+	sprintf(buf, "%%0%dd", width);
+	sprintf(buf, buf, value);
+	return(Wstring(buf));
+}
+
+// FUNCTION: 0x007B63C0
+Wstring operator+(char const* a, Wstring const& b)
+{
+	Wstring tmp(a);
+	return(tmp + b);
 }
 
 // FUNCTION: 0x007B66C0

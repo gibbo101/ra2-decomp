@@ -1896,3 +1896,347 @@ void FootClass::FUN_004DC340(void)
 		DSurface::Composite->Draw_Masked_Dashed_Line(start_point, end_point, DSurface::Build_Hicolor_Pixel(color), DAT_00822540, offset, false);
 	}
 }
+
+// FUNCTION: 0x004DC760
+double FootClass::Threat_Avoidance_Value(void) const
+{
+	if (Team != NULL && Team->Class->AvoidThreats) {
+		return(1.0);
+	}
+	return(ThreatAvoidanceCoefficient);
+}
+
+// FUNCTION: 0x004DC790
+bool FootClass::Should_Delete_Off_Map(void)
+{
+	if (!IsInPlayfield) {
+		return(false);
+	}
+	if (Team != NULL && !Team->Is_Leaving_Map()) {
+		return(false);
+	}
+	if (TClass->IsTrain && NavCom != NULL && Map.In_Local_Radar(NavCom->Center_Coord())) {
+		return(false);
+	}
+	return(true);
+}
+
+// FUNCTION: 0x004DC810
+void FootClass::Set_Waypoint_Path(PathType path, char index)
+{
+	if (path != PATH_NONE) {
+		CurrentPath = path;
+		NextWaypoint = index;
+		WaypointClass * wpc = PlayerPtr->Paths[path]->Get_Waypoint(index);
+		WaypointTargetCell = wpc->Location.As_Cell();
+	} else {
+		CurrentPath = PATH_NONE;
+		NextWaypoint = 0;
+		WaypointTargetCell = Cell(0, 0);
+	}
+	WaypointOffsetCell = Cell(0, 0);
+}
+
+// FUNCTION: 0x004DC8C0
+bool FootClass::Execute_Waypoint_Path(WaypointClass * waypoint)
+{
+	bool action_succeeded = false;
+	ActionType occupier_action;
+	Cell waypoint_offset;
+	int waypoint_zone;
+	int adjusted_zone;
+
+	if (unknown_bool_430) {
+		unknown_bool_43A = true;
+	}
+
+	if (waypoint != NULL) {
+		PlayerPtr->Fetch_Waypoint_Data(waypoint, CurrentPath, NextWaypoint);
+
+		Coord waypoint_coord = waypoint->Location;
+		ObjectClass * occupying_object = Map[waypoint_coord].Cell_Occupier();
+		TechnoClass * occupying_techno = Dynamic_Cast<TechnoClass *>(occupying_object);
+
+		WaypointTargetCell = waypoint_coord;
+
+		bool was_voice_allowed = AllowVoice;
+		AllowVoice = false;
+
+		Cell waypoint_cell = waypoint_coord;
+
+		bool is_direct_waypoint = true;
+		bool should_click_occupier = false;
+
+		if (occupying_techno != NULL) {
+			BuildingClass * building;
+			bool needs_repair;
+			bool needs_reload;
+			bool is_allied_building;
+
+			occupier_action = What_Action(occupying_object, true);
+
+			if (PlayerPtr->Is_Ally(occupying_techno->House)) {
+				if (occupying_techno->RTTI == RTTI_BUILDING) {
+					building = (BuildingClass *)occupying_techno;
+
+					needs_repair = (building->Class->IsCanUnitRepair &&
+						Strength < (int)TClass->MaxStrength &&
+						RTTI != RTTI_INFANTRY);
+
+					needs_reload = (building->Class->IsCanUnitReload &&
+						Ammo < TClass->MaxAmmo &&
+						Ammo != -1);
+
+					is_allied_building = building->House->Is_Ally(PlayerPtr);
+
+					if ((needs_repair || needs_reload) &&
+						is_allied_building &&
+						occupier_action != ACTION_SELECT &&
+						occupier_action != ACTION_TOGGLE_SELECT) {
+						should_click_occupier = true;
+					}
+				}
+			} else if (occupier_action != ACTION_TOGGLE_SELECT &&
+					   occupier_action != ACTION_SELECT &&
+					   occupier_action != ACTION_MOVE &&
+					   occupier_action != ACTION_NOMOVE) {
+				should_click_occupier = true;
+			}
+
+			if (!should_click_occupier) {
+				Cell nearby_cell = Map.Nearby_Location(
+					waypoint_cell,
+					TClass->Speed,
+					Map.Get_Cell_Zone(waypoint_cell, TClass->MZone, Map[waypoint_cell].IsUnderBridge),
+					TClass->MZone,
+					false,
+					Point2D(1, 1),
+					false,
+					true,
+					false,
+					true,
+					Cell(0, 0));
+
+				if (nearby_cell != CELL_NONE) {
+					WaypointOffsetCell = nearby_cell - waypoint_cell;
+					is_direct_waypoint = false;
+				}
+			}
+		}
+
+		if (should_click_occupier) {
+			occupier_action = What_Action(occupying_object, true);
+			action_succeeded = Active_Click_With(occupier_action, occupying_object, true);
+			WaypointOffsetCell = Cell(0, 0);
+		} else {
+
+			occupier_action = What_Action(waypoint_cell, false, true);
+			waypoint_offset = WaypointOffsetCell;
+			Cell adjusted_waypoint = waypoint_cell + waypoint_offset;
+			CellClass * adjusted_cell = &Map[adjusted_waypoint];
+			CellClass * waypoint_map_cell = &Map[waypoint_cell];
+			ActionType adjusted_action = What_Action(adjusted_waypoint, false, true);
+
+			waypoint_zone = Map.Get_Cell_Zone(waypoint_cell, TClass->MZone, waypoint_map_cell->IsUnderBridge);
+			adjusted_zone = Map.Get_Cell_Zone(adjusted_waypoint, TClass->MZone, adjusted_cell->IsUnderBridge);
+			int destination_zone = Map.Get_Cell_Zone(Destination_Coord().As_Cell(), TClass->MZone, Is_Moving_Onto_Bridge());
+			MoveType entry_result = Can_Enter_Cell(adjusted_cell, FACING_NONE,
+				adjusted_cell->Height + (BRIDGE_CELL_HEIGHT * adjusted_cell->IsUnderBridge), 0, true);
+
+			int walk_distance_limit = MAX(abs((int)waypoint_offset.X), abs((int)waypoint_offset.Y));
+			walk_distance_limit = MIN(5, walk_distance_limit + 3);
+
+			if (occupier_action != adjusted_action && is_direct_waypoint ||
+				entry_result != MOVE_OK ||
+				waypoint_zone != adjusted_zone ||
+				destination_zone != waypoint_zone ||
+				is_direct_waypoint && Search.Test_Cell_Walk(adjusted_waypoint, waypoint_cell, this,
+					adjusted_cell->IsUnderBridge, waypoint_map_cell->IsUnderBridge, MZONE_NONE) > walk_distance_limit) {
+				action_succeeded = Active_Click_With(occupier_action, waypoint_cell, Cell(-1, -1), true);
+				WaypointOffsetCell = Cell(0, 0);
+			} else {
+				action_succeeded = Active_Click_With(occupier_action, adjusted_waypoint, Cell(-1, -1), true);
+				WaypointTargetCell = adjusted_waypoint;
+			}
+		}
+
+		if (was_voice_allowed) {
+			AllowVoice = true;
+		}
+	}
+
+	if (!action_succeeded) {
+		CurrentPath = PATH_NONE;
+		NextWaypoint = 0;
+		WaypointOffsetCell = Cell(0, 0);
+		WaypointTargetCell = Cell(0, 0);
+	}
+
+	unknown_bool_43A = false;
+	return(action_succeeded);
+}
+
+// FUNCTION: 0x004DCE80
+bool FootClass::Tiberium_Check(Cell & center)
+{
+	if (!Map.In_Local_Radar(center)) return(false);
+
+	if ((Session.Type != GAME_NORMAL || (!IsOwnedByPlayer || !Map.Is_Shrouded(center.As_Coord(Map.Get_Height_GL(center)))))) {
+		if (!Map.Is_Same_Cell_Zone(Destination_Coord().As_Cell(), center, TClass->MZone, Is_Moving_Onto_Bridge(), false, false)) return(false);
+		CellClass * cptr = &Map[center];
+		if (cptr->Land_Type() == LAND_TIBERIUM && !Can_Enter_Cell(cptr)) {
+			return(true);
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x004DCFE0
+bool FootClass::Goto_Tiberium(int rad, unsigned allow_weighted)
+{
+	if (NavCom == NULL) {
+		Cell newcell = ScanForTiberium(rad, allow_weighted);
+		if (newcell != CELL_NONE) {
+			if (newcell == Center_Coord().As_Cell()) {
+				return(true);
+			}
+			Assign_Destination(&Map[newcell]);
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x004DD0A0
+Cell FootClass::ScanForTiberium(int rad, unsigned unk)
+{
+	Cell bestcell = CELL_NONE;
+
+	Cell center = Center_Coord().As_Cell();
+	if (Map[center].Land_Type() == LAND_TIBERIUM) {
+		return(center);
+	} else {
+		Cell cell(0, 0);
+		int bestvalue = -1;
+		for (int radius = 1; radius < rad; radius++) {
+			for (int x = -radius; x <= radius; x++) {
+				cell = center + Cell(x, -radius);
+				if (Tiberium_Check(cell)) {
+					int value = Map[cell].Tiberium_Value();
+					if (value > bestvalue) {
+						bestvalue = value;
+						bestcell = cell;
+					}
+				}
+
+				cell = center + Cell(x, +radius);
+				if (Tiberium_Check(cell)) {
+					int value = Map[cell].Tiberium_Value();
+					if (value > bestvalue) {
+						bestvalue = value;
+						bestcell = cell;
+					}
+				}
+
+				cell = center + Cell(-radius, x);
+				if (Tiberium_Check(cell)) {
+					int value = Map[cell].Tiberium_Value();
+					if (value > bestvalue) {
+						bestvalue = value;
+						bestcell = cell;
+					}
+				}
+
+				cell = center + Cell(+radius, x);
+				if (Tiberium_Check(cell)) {
+					int value = Map[cell].Tiberium_Value();
+					if (value > bestvalue) {
+						bestvalue = value;
+						bestcell = cell;
+					}
+				}
+			}
+			if (bestvalue != -1) break;
+		}
+	}
+	return(bestcell);
+}
+
+// FUNCTION: 0x004DD890
+Cell FootClass::Search_For_Weed(int rad)
+{
+	Cell bestcell = CELL_NONE;
+	Cell center = Center_Coord().As_Cell();
+	if (Weed_Check(center, 0, 0)) {
+		return(center);
+	} else {
+		Cell cell(0, 0);
+		for (int radius = 1; radius < rad; radius++) {
+			for (int x = -radius; x <= radius; x++) {
+				cell = center;
+				if (Weed_Check(cell, x, -radius)) {
+					bestcell = cell;
+				}
+
+				cell = center;
+				if (Weed_Check(cell, x, +radius)) {
+					bestcell = cell;
+				}
+
+				cell = center;
+				if (Weed_Check(cell, -radius, x)) {
+					bestcell = cell;
+				}
+
+				cell = center;
+				if (Weed_Check(cell, +radius, x)) {
+					bestcell = cell;
+				}
+			}
+			if (bestcell != CELL_NONE) break;
+		}
+	}
+	return(bestcell);
+}
+
+// FUNCTION: 0x004DD9F0
+bool FootClass::Weed_Check(Cell & center, int x, int y)
+{
+	Cell cell = center + Cell(x, y);
+
+	if (!Map.In_Local_Radar(cell)) return(false);
+
+	center = cell;
+
+	if ((Session.Type != GAME_NORMAL || (!IsOwnedByPlayer || !Map.Is_Shrouded(center.As_Coord(Map.Get_Height_GL(center)))))) {
+		if (!Map.Is_Same_Cell_Zone(Destination_Coord().As_Cell(), center, TClass->MZone, Is_Moving_Onto_Bridge(), false, false)) return(false);
+		CellClass * cptr = &Map[center];
+		if (!Can_Enter_Cell(cptr) && cptr->Land_Type() == LAND_WEEDS && cptr->OverlayData >= OVERLAYDATA_FIRST_SOLID_VEIN) {
+			return(true);
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x004DDB90
+bool FootClass::Goto_Weed(int rad)
+{
+	if (NavCom == NULL) {
+		Cell newcell = Search_For_Weed(rad);
+		if (newcell != CELL_NONE) {
+			if (newcell == Center_Coord().As_Cell()) {
+				return(true);
+			}
+			Assign_Destination(&Map[newcell]);
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x004DDC40
+bool FootClass::Is_Moving_Onto_Bridge(TechnoClass * docker) const
+{
+	if (CurrentTube >= 0) {
+		return(false);
+	}
+	return(BASECLASS::Is_Moving_Onto_Bridge(docker));
+}

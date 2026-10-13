@@ -253,7 +253,12 @@ Each entry: what the diff showed, then the source change that fixed it.
   vtable minus 4 (`Exe.vtables()` in headercheck.py) before naming one.
 - Static initialisers and atexit stubs are named `$E<n>`, numbered across the whole
   file: after any header or file change, re-read the number from the checker's listing.
-  A marker name is a prefix (`$E2` also matches `$E20`): name each one in full.
+  A marker name is a prefix (`$E2` also matches `$E20`): name each one in full. A bare
+  `$E` claims the file's first initialiser, and checkall fails two claims on one function.
+- A template instance's element type comes from its vtable's RTTI, not from look-alike
+  code: palette's vectors are `HSVClass`, which compiles the same as `RGBClass`.
+- A file-static helper the compiler emits only for its callers (team's `_Is_It_Breathing`)
+  lands with its first caller, not before.
 - A run of about 13 small initialisers per file (CELL_LEPTON_DIAG through COORD_NONE)
   is `include/geometry.h`'s per-file constants: include it right after `always.h`
   (before any `extern` of the same names) and mark them; never write `Init_` stand-ins.

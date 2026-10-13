@@ -3,7 +3,8 @@
 Usage: uv run tools/checkall.py [--record]
 
 Prints one line per function. Fails if a function data/progress.csv records as MATCH no
-longer matches, since a header edit can change the code of functions it never touches.
+longer matches, since a header edit can change the code of functions it never touches,
+or if two annotations in one file claim the same compiled function.
 --record rewrites data/progress.csv with the results.
 """
 
@@ -16,6 +17,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 PROGRESS = ROOT / "data/progress.csv"
 LINE = re.compile(r"^(0x[0-9A-F]{8}) (.+?): (MATCH|WRONG TARGETS|[\d.]+%) \((\d+)/(\d+) bytes[^)]*\) (\S+)")
+DUPLICATE = re.compile(r"^(0x[0-9A-F]{8}) .+: same compiled function as ")
 
 
 def main() -> None:
@@ -31,6 +33,10 @@ def main() -> None:
                               capture_output=True, text=True, cwd=ROOT)
         found = False
         for line in proc.stdout.splitlines():
+            if DUPLICATE.match(line):
+                print(line)
+                broken.append(line)
+                continue
             m = LINE.match(line)
             if not m:
                 continue

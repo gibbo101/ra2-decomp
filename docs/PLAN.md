@@ -879,6 +879,20 @@ declared `volatile`; the archive has no SoundNode, so there is no Westwood sourc
 the qualifier is original, and they stay banked. 0x005F5B4C is a padding byte, not a
 function. Cost: about 6.5M tokens. Merge gate: 3,470 of 3,470 (554.3 KB).
 
+### Batches 19 and 20 (13 October 2026)
+
+**Batch 19: 134 of 144**; the merge adopted xmouse.h with YR's extra SetCoords slot,
+gave ScanForTiberium its YR signature and found WideWstring's destructor non-virtual.
+**Batch 20: 128 of 144**; MapGen (7) and map (8) were the weak modules, register
+allocation throughout. The merge adopted hsv.h and found, from the vtables' RTTI, that
+palette's vector instances are `HSVClass`, not `RGBClass`; it fixed three markers but
+landed six more under the RGB name, one of which claimed the same compiled function as
+an older marker. checkall never saw that, because check.py reports a duplicate claim on
+a line of its own: checkall now fails on it. Its first run found an older pair, two bare
+`$E` thunk markers in builtype.cpp, now given exact names. MovieHandle (YR's movie
+player base) and CLSID_ShipLocomotion are proven. Cost: about 5.0M tokens. Merge gate:
+3,733 of 3,733 (593.0 KB).
+
 ### Decide before the first batch
 
 - **Module layout.** Which function lives in which source file, and the link order, decide

@@ -2163,6 +2163,8 @@ void TechnoClass::Set_Owner(HouseClass * newowner)
 	IsOwnedByPlayer = (newowner == PlayerPtr && PlayerPtr != NULL);
 }
 
+namespace Unsorted { extern bool ArmageddonMode; }
+
 // FUNCTION: 0x00702D40
 void TechnoClass::RegisterDestruction(TechnoClass * destroyer)
 {
@@ -2362,6 +2364,304 @@ int TechnoClass::Evaluate_Just_Cell(Cell const & cell) const
 	}
 
 	return(Weapon_Range(0) - Distance(cell));
+}
+
+// FUNCTION: 0x00703230
+void TechnoClass::Record_The_Kill(HouseClass * source)
+{
+	int total_recorded = 0;
+	int points = Techno_Type_Class()->Cost_Of(House);
+	if (IsActive && Tag && source) Tag->Spring(TEVENT_ATTACKED, this);
+	if (IsActive && Tag && source) Tag->Spring(TEVENT_DISCOVERED, this);
+	if (IsActive && Fetch_RTTI() != RTTI_UNIT) {
+		if (IsActive && Tag && source) Tag->Spring(TEVENT_DESTROYED, this);
+		if (IsActive && Tag) Tag->Spring(TEVENT_DESTROYED_ANY, this);
+		if (IsActive && Tag) Tag->Spring(TEVENT_DESTROYED_ANY_X, this);
+	}
+	if (source != NULL) {
+		if (source->Is_Ally(this)) {
+			points = 0;
+		} else if (Veterancy.Is_Veteran()) {
+			points += points;
+		} else if (Veterancy.Is_Elite()) {
+			points *= 3;
+		}
+		House->WhoLastHurtMe = source->HeapID;
+		source->PointTotal += points;
+	}
+	switch (Fetch_RTTI()) {
+		case RTTI_BUILDING:
+			if (!Techno_Type_Class()->IsInsignificant) {
+				if (((BuildingClass *)this)->WhoLastHurtMe != HOUSE_NONE) {
+					House->BuildingsLost++;
+				}
+				if (source != NULL) {
+					if (!Techno_Type_Class()->DontScore) {
+						source->DestroyedBuildings.Increment_Unit_Total(((BuildingClass *)this)->Class->HeapID);
+						source->BuildingsKilled[Owner()]++;
+					}
+				}
+				if (Map.Is_Player_Names()) {
+					Map.Redraw_Radar(false);
+				}
+			}
+			break;
+		case RTTI_AIRCRAFT:
+			if (source != NULL && !Techno_Type_Class()->DontScore) {
+				source->DestroyedAircraft.Increment_Unit_Total(((AircraftClass *)this)->Class->HeapID);
+				total_recorded++;
+			}
+		case RTTI_INFANTRY:
+			if (source != NULL && !total_recorded && !Techno_Type_Class()->DontScore) {
+				source->DestroyedInfantry.Increment_Unit_Total(((InfantryClass *)this)->Class->HeapID);
+				total_recorded++;
+			}
+		case RTTI_UNIT:
+			if (source != NULL && !total_recorded && !Techno_Type_Class()->DontScore) {
+				source->DestroyedUnits.Increment_Unit_Total(((UnitClass *)this)->Class->HeapID);
+				total_recorded++;
+			}
+			House->UnitsLost++;
+			if (source != NULL && !Techno_Type_Class()->DontScore) {
+				source->UnitsKilled[Owner()]++;
+			}
+			if (Map.Is_Player_Names()) {
+				Map.Redraw_Radar(false);
+			}
+			break;
+		default:
+			break;
+	}
+}
+
+// FUNCTION: 0x00703590
+Cell TechnoClass::Nearby_Location(TechnoClass const * techno) const
+{
+	SpeedType speed = Techno_Type_Class()->Speed;
+	if (speed == SPEED_WINGED) {
+		speed = SPEED_TRACK;
+	}
+	Cell cell;
+	if (techno != NULL) {
+		cell = techno->Center_Coord().As_Cell();
+	} else {
+		cell = Center_Coord().As_Cell();
+	}
+	MZoneType mzone = Techno_Type_Class()->MZone;
+	int zone = mzone != MZONE_NONE ? Map.Get_Cell_Zone(cell, mzone, IsOnBridge) : -1;
+	return(Map.Nearby_Location(cell, speed, zone, mzone, IsOnBridge));
+}
+
+// FUNCTION: 0x007036C0
+void TechnoClass::Do_Uncloak(bool silent)
+{
+	if (Cloak == CLOAKED || Cloak == CLOAKING) {
+		Cloak = UNCLOAKING;
+		CloakingDevice.Set_Stage(Rule->CloakingStages - 1);
+		CloakingDevice.Set_Rate(Techno_Type_Class()->CloakingSpeed);
+		CloakingDevice.Set_Step(-1);
+		if (!silent) {
+			VocClass::PlayAt(Rule->CloakSound, PositionCoord);
+		}
+	}
+}
+
+// FUNCTION: 0x00703770
+void TechnoClass::Do_Cloak(bool silent)
+{
+	if (Cloak == UNCLOAKED || Cloak == UNCLOAKING) {
+		Detach_All(false);
+		Cloak = CLOAKING;
+		CloakingDevice.Set_Stage(0);
+		CloakingDevice.Set_Rate(Techno_Type_Class()->CloakingSpeed);
+		CloakingDevice.Set_Step(1);
+		if (!silent) {
+			VocClass::PlayAt(Rule->CloakSound, PositionCoord);
+		}
+		if (House != PlayerPtr && IsSelected) {
+			Unselect();
+		}
+	}
+}
+
+// FUNCTION: 0x00703850
+void TechnoClass::Do_Shimmer(void)
+{
+	Do_Uncloak();
+}
+
+// FUNCTION: 0x00703860
+VisualType TechnoClass::Visual_Character(bool raw, HouseClass const * house) const
+{
+	if (Techno_Type_Class()->IsInvisible && IsOwnedByPlayer) return(VISUAL_NORMAL);
+	if (Techno_Type_Class()->IsInvisible && !IsOwnedByPlayer && !Unsorted::ArmageddonMode) return(VISUAL_HIDDEN);
+	if (Cloak == UNCLOAKED || Unsorted::ArmageddonMode || Fetch_RTTI() == RTTI_BUILDING) return(VISUAL_NORMAL);
+	if (Cloak == CLOAKED) {
+		if (raw && house != NULL && Map[PositionCoord.As_Cell()].Is_Sensed(house->HeapID)) return(VISUAL_SHADOWY);
+		if (!raw && !MainWindow) return(VISUAL_SHADOWY);
+		if (!raw && IsOwnedByPlayer) return(VISUAL_SHADOWY);
+		if (!raw && Map[PositionCoord.As_Cell()].Is_Sensed(PlayerPtr->HeapID)) return(VISUAL_SHADOWY);
+		if (!raw && (Session.Type != GAME_NORMAL && House != NULL && PlayerPtr != NULL && PlayerPtr->Is_Ally(House) && House->Is_Ally(PlayerPtr))) return(VISUAL_SHADOWY);
+		return(VISUAL_HIDDEN);
+	}
+	int stage = CloakingDevice.Fetch_Stage();
+	if (stage <= 0) {
+		return(VISUAL_NORMAL);
+	}
+	stage = double(stage) / Rule->CloakingStages * 256;
+	if (stage < 0x0040) return(VISUAL_INDISTINCT);
+	if (stage < 0x0080) return(VISUAL_DARKEN);
+	if (stage < 0x00C0) return(VISUAL_SHADOWY);
+	if (!raw && IsOwnedByPlayer) return(VISUAL_SHADOWY);
+	if (stage < 0x00FF) return(VISUAL_RIPPLE);
+	return(VISUAL_HIDDEN);
+}
+
+// FUNCTION: 0x00703B10
+bool TechnoClass::Is_Z_Fudge_Bridge(void) const
+{
+	Cell cell = Get_Cell();
+	CellClass * cptr = &Map[cell];
+
+	if (cptr != NULL && !IsOnBridge) {
+		CellClass * south = &Map[Adjacent_Cell(cell, FACING_S)];
+		CellClass * north = &Map[Adjacent_Cell(cell, FACING_N)];
+		CellClass * east = &Map[Adjacent_Cell(cell, FACING_E)];
+		CellClass * west = &Map[Adjacent_Cell(cell, FACING_W)];
+
+		if (cptr->IsUnderBridge ||
+			(south != NULL && south->IsUnderBridge && south->IsBridgeEastWest) ||
+			(west != NULL && west->IsUnderBridge && !west->IsBridgeEastWest) ||
+			(east != NULL && east->IsUnderBridge && !east->IsBridgeEastWest) ||
+			(north != NULL && north->IsUnderBridge && north->IsBridgeEastWest)) {
+			return(true);
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00703CC0
+bool TechnoClass::Was_Z_Fudge_Bridge(void) const
+{
+	Cell cell = Get_Cell();
+	CellClass * cptr = &Map[cell];
+
+	if (cptr != NULL && !IsOnBridge) {
+		CellClass * south = &Map[Adjacent_Cell(cell, FACING_S)];
+		CellClass * north = &Map[Adjacent_Cell(cell, FACING_N)];
+		CellClass * east = &Map[Adjacent_Cell(cell, FACING_E)];
+		CellClass * west = &Map[Adjacent_Cell(cell, FACING_W)];
+
+		if (cptr->WasUnderBridge ||
+			(south != NULL && south->WasUnderBridge && south->IsBridgeEastWest) ||
+			(west != NULL && west->WasUnderBridge && !west->IsBridgeEastWest) ||
+			(east != NULL && east->WasUnderBridge && !east->IsBridgeEastWest) ||
+			(north != NULL && north->WasUnderBridge && north->IsBridgeEastWest)) {
+			return(true);
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00703E70
+int TechnoClass::Get_Z_Fudge_Column(void) const
+{
+	Cell cell = Get_Cell();
+	int fudge = 0;
+	CellClass * cptr = &Map[cell];
+
+	if (cptr != NULL && (Is_Z_Fudge_Bridge() || Was_Z_Fudge_Bridge())) {
+		CellClass * south = &Map[Adjacent_Cell(cell, FACING_S)];
+		CellClass * east = &Map[Adjacent_Cell(cell, FACING_E)];
+		CellClass * south_east = &Map[Adjacent_Cell(cell, FACING_SE)];
+
+		if (south != NULL && east != NULL && south_east != NULL) {
+			if (south->ITType != (IsometricTileType)0xFFFF && south->ITType != (IsometricTileType)0xFF) {
+				int tile = south->ITType - IsometricTileTypeClass::BridgeSet + 1;
+				if (tile >= 7 && tile <= 16) {
+					fudge = 1;
+				}
+			}
+			if (east->ITType != (IsometricTileType)0xFFFF && east->ITType != (IsometricTileType)0xFF) {
+				int tile = east->ITType - IsometricTileTypeClass::BridgeSet + 1;
+				if (tile >= 7 && tile <= 16) {
+					fudge = 1;
+				}
+			}
+			if (south_east->ITType != (IsometricTileType)0xFFFF && south_east->ITType != (IsometricTileType)0xFF) {
+				int tile = south_east->ITType - IsometricTileTypeClass::BridgeSet + 1;
+				if (tile >= 7 && tile <= 16) {
+					fudge++;
+				}
+			}
+		}
+	}
+	return(fudge);
+}
+
+// FUNCTION: 0x00704000
+int TechnoClass::Get_Z_Fudge_Tunnel(void) const
+{
+	int fudge = 0;
+	Cell cell = PositionCell;
+
+	if (!IsOnBridge) {
+		CellClass * north = &Map[Adjacent_Cell(cell, DIR_N)];
+		CellClass * west = &Map[Adjacent_Cell(cell, DIR_W)];
+		Cell tuncell = CELL_NONE;
+		CellClass * own = &Map[cell];
+
+		if (north != NULL && west != NULL) {
+			if (own->Has_Tunnel()) {
+				tuncell = own->Fetch_CellID();
+			} else if (north->Has_Tunnel()) {
+				tuncell = north->Fetch_CellID();
+			} else if (west->Has_Tunnel()) {
+				tuncell = west->Fetch_CellID();
+			}
+
+			if (tuncell != CELL_NONE) {
+				north = &Map[Adjacent_Cell(tuncell, DIR_N)];
+				west = &Map[Adjacent_Cell(tuncell, DIR_W)];
+
+				if (north != NULL && west != NULL) {
+					north = &Map[Adjacent_Cell(north->Fetch_CellID(), DIR_N)];
+					west = &Map[Adjacent_Cell(west->Fetch_CellID(), DIR_W)];
+
+					if (north != NULL && west != NULL) {
+						if (west->Has_Tunnel() || north->Has_Tunnel()) {
+							fudge = 1;
+						}
+					}
+				}
+			}
+		}
+	}
+	return(fudge);
+}
+
+// FUNCTION: 0x00704240
+int TechnoClass::Get_Z_Fudge_Cliff(void) const
+{
+	int fudge = 0;
+	Cell cell = Get_Cell();
+	CellClass * cptr = &Map[cell];
+
+	if (!IsOnBridge) {
+		CellClass * south_east = &Map[Adjacent_Cell(Get_Cell(), FACING_SE)];
+		if (south_east != NULL) {
+			if (south_east->Height - cptr->Height >= 4) {
+				fudge = 2;
+			}
+			south_east = &Map[Adjacent_Cell(south_east->Fetch_CellID(), FACING_SE)];
+			if (south_east != NULL) {
+				if (south_east->Height - cptr->Height >= 4) {
+					fudge = 1;
+				}
+			}
+		}
+	}
+	return(fudge);
 }
 
 // FUNCTION: 0x00708C10

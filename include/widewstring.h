@@ -11,6 +11,7 @@ class WideWstring
 	public:
 		WideWstring(void);
 		WideWstring(WideWstring const & other);
+		~WideWstring(void);
 
 		wchar_t * str;
 };

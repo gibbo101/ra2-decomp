@@ -233,7 +233,7 @@ class BuildingClass : public TechnoClass
 		virtual void Editor_Draw_It(Point2D const & point, Rect const & cliprect) const override;
 		virtual bool Mark(MarkType mark=MARK_CHANGE) override;
 		virtual Rect Get_Render_Rect(void) override;
-		virtual void Draw_Radial_Indicator(void) const override;
+		virtual void Draw_Radial_Indicator(DWORD) override;
 		void Draw_Overlays(Point2D const & point, Rect const & cliprect) const;
 		void Begin_Mode(BStateType bstate);
 		virtual void Update_Buildables(void);
@@ -290,7 +290,7 @@ class BuildingClass : public TechnoClass
 		virtual void SensorArrayDeactivate(Cell cell = Cell());
 		virtual void SensorArrayActivate(Cell cell = Cell());
 		virtual void DisguiseDetectorDeactivate(Cell cell = Cell());
-		virtual void DisguiseDetectorActivate(Cell cell = Cell());
+		virtual unsigned vt_entry_504(void);
 		void Turn_On(void);
 		void Turn_Off(void);
 		void Power_On(void);
@@ -346,6 +346,9 @@ class BuildingClass : public TechnoClass
 		void PlayNthAnim(BAnimType anim, bool damaged, bool garrisoned, int delay = 0);
 		void Detach_Anim(AnimClass * anim);
 		void DestroyNthAnim(BAnimType anim);
+		void HideNthAnim(BAnimType anim);
+		void DisableTemporal(void);
+		void EnableTemporal(void);
 		void Set_Anim_Damage_State(bool damaged);
 		void Set_Anim_Drawer(ConvertClass * drawer, int brightness);
 		void Update_Anim_Appearance(void);

@@ -444,5 +444,33 @@ template class DynamicVectorClass<RGBClass>;
 // FUNCTION: 0x00628040 ?$DynamicVectorClass@PAVColorScheme@@::ID
 template class DynamicVectorClass<ColorScheme *>;
 
+
+// FUNCTION: 0x00628070 ?$HashTableClass@VHashString@@PAVSchemeNode@@::?$HashTableClass@VHashString@@PAVSchemeNode@@
+
+// FUNCTION: 0x00628110 ?$HashTableClass@VHashString@@PAVSchemeNode@@::Find
+template<>
+SchemeNode ** HashTableClass<HashString, SchemeNode *>::Find(HashString const & key)
+{
+	return(Find_Node(this, key));
+}
+
+// FUNCTION: 0x00628170 ?$HashTableClass@VHashString@@PAVSchemeNode@@::Next
+template<>
+HashString * HashTableClass<HashString, SchemeNode *>::Next(HashIterator * it)
+{
+	return(Next_Key(this, it));
+}
+
+// FUNCTION: 0x006281F0 ?$VectorClass@VHSVClass@@::operator==
+// FUNCTION: 0x00628240 ?$DynamicVectorClass@VHSVClass@@::?$DynamicVectorClass@VHSVClass@@
+// FUNCTION: 0x006282E0 ?$VectorClass@VHSVClass@@::Resize
+// FUNCTION: 0x006283E0 ?$VectorClass@VHSVClass@@::Clear
+// FUNCTION: 0x00628410 ?$VectorClass@VHSVClass@@::ID
+// FUNCTION: 0x00628470 ?$VectorClass@VHSVClass@@::ID
+// FUNCTION: 0x006284A0 ?$DynamicVectorClass@VHSVClass@@::Resize
+// FUNCTION: 0x006285A0 ?$DynamicVectorClass@VHSVClass@@::ID
+// FUNCTION: 0x006285F0 ?$DynamicVectorClass@VHSVClass@@::~?$DynamicVectorClass@VHSVClass@@
+template class DynamicVectorClass<HSVClass>;
+
 // FUNCTION: 0x00628E80 ?$VectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@::~?$VectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@
 template class VectorClass<HashObject<HashString, SchemeNode *> >;

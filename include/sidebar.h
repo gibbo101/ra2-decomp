@@ -96,6 +96,7 @@ class SidebarClass : public PowerClass
 		void FUN_006A76F0(int tab);
 		void FUN_006A7760(int tab);
 		static int FUN_006A8080(int count);
+		static int FUN_006A8090(int count);
 		void FUN_006A5130(bool flag);
 		bool Factory_Link(FactoryClass * factory, RTTIType type, int id);
 
@@ -131,7 +132,7 @@ class SidebarClass : public PowerClass
 
 				bool Add(RTTIType type, int ID);
 				bool Abandon_Production(FactoryClass const * factory);
-				bool Scroll(bool up);
+				bool Scroll(bool up, int amount);
 				bool Page(bool up);
 				bool AI(KeyNumType & input, Point2D const & xy);
 				char const * Help_Text(int id);
@@ -144,6 +145,7 @@ class SidebarClass : public PowerClass
 				void Deactivate(void);
 				void Flag_To_Redraw(void);
 				void FUN_006A8710(RTTIType type, int id);
+				bool SortsBefore(RTTIType type, int id, RTTIType otherType, int otherId);
 				bool Factory_Link(FactoryClass * factory, RTTIType type, int id);
 				ShapeSet const * Get_Special_Cameo(SuperWeaponType type);
 

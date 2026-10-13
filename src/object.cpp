@@ -154,7 +154,8 @@ bool ObjectClass::Is_Type_Named(char const * name) const
 	return(*Class_Of() == name);
 }
 
-inline void ObjectClass::Set_Height(int z)
+// FUNCTION: 0x005F6060
+void ObjectClass::Set_Height(int z)
 {
 	if (IsDown) {
 		Mark(MARK_UP);
@@ -1072,6 +1073,94 @@ bool ObjectClass::Is_Green_HP(void) const
 	return(HealthRatio > Rule->ConditionYellow);
 }
 
+// FUNCTION: 0x005F5DD0
+HealthState ObjectClass::GetHealthStatus(void) const
+{
+	if (Is_Red_HP()) {
+		return(HEALTH_RED);
+	}
+	if (Is_Yellow_HP()) {
+		return(HEALTH_YELLOW);
+	}
+	return(HEALTH_GREEN);
+}
+
+// FUNCTION: 0x005F5E80
+HRESULT STDMETHODCALLTYPE ObjectClass::Load(IStream * stream)
+{
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		Swizzle_Pointer(&Next);
+		Swizzle_Pointer(&Tag);
+		Swizzle_Pointer(&AttachedBomb);
+		Swizzle_Pointer((void **)&unknown_18);
+		Swizzle_Pointer(&Parachute);
+		AmbientSoundController.FUN_00405BE0();
+		CustomSoundController.FUN_00405BE0();
+		LineTrailer = NULL;
+		result = S_OK;
+	}
+	return(result);
+}
+
+// FUNCTION: 0x005F5F00
+int ObjectClass::Get_Cell_Height(void) const
+{
+	CellClass * cell = Get_Cell_Ptr();
+	return(cell->Height + (IsOnBridge ? BRIDGE_CELL_HEIGHT : 0));
+}
+
+// FUNCTION: 0x005F5F30
+int ObjectClass::Get_Height(void) const
+{
+	return(Position.Z);
+}
+
+// FUNCTION: 0x005F5F40
+int ObjectClass::Get_Height_AGL(void) const
+{
+	int height = Position.Z - Map.Get_Height_GL(PositionCoord);
+	if (IsOnBridge) {
+		height -= BRIDGE_LEPTON_HEIGHT;
+	}
+	return(height);
+}
+
+// FUNCTION: 0x005F5FA0
+void ObjectClass::Set_Height_AGL(int height)
+{
+	if (IsOnBridge) {
+		height += BRIDGE_LEPTON_HEIGHT;
+	}
+	if (IsDown) {
+		Mark(MARK_UP);
+		Position.Z = height + Map.Get_Height_GL(PositionCoord);
+		Mark(MARK_DOWN);
+	} else {
+		Position.Z = height + Map.Get_Height_GL(PositionCoord);
+	}
+}
+
+// FUNCTION: 0x005F60A0
+void ObjectClass::Set_Occupy_Bit(Coord const & coord)
+{
+	if (Map.Get_Height_GL(coord) + BRIDGE_LEPTON_HEIGHT <= coord.Z && Map[coord].IsUnderBridge) {
+		Map[coord].BridgeFlag.Occupy.Monolith = true;
+	} else {
+		Map[coord].Flag.Occupy.Monolith = true;
+	}
+}
+
+// FUNCTION: 0x005F6120
+void ObjectClass::Clear_Occupy_Bit(Coord const & coord)
+{
+	if (Map.Get_Height_GL(coord) + BRIDGE_LEPTON_HEIGHT <= coord.Z && Map[coord].IsUnderBridge) {
+		Map[coord].BridgeFlag.Occupy.Monolith = false;
+	} else {
+		Map[coord].Flag.Occupy.Monolith = false;
+	}
+}
+
 // FUNCTION: 0x005F61A0
 VoxelDataStruct::~VoxelDataStruct(void)
 {
@@ -1093,8 +1182,77 @@ bool ObjectClass::operator > (ObjectClass const & object) const
 	return((Sort_Y() > object.Sort_Y()) ? true : false);
 }
 
+// FUNCTION: 0x005F6250
+void ObjectClass::Compute_CRC(CRCEngine & crc) const
+{
+	BASECLASS::Compute_CRC(crc);
+
+	if (Next != NULL) {
+		crc(Next->Fetch_ID());
+	}
+
+	if (Tag != NULL) {
+		crc(Tag->Fetch_ID());
+	}
+
+	crc(Strength);
+	crc(IsDown);
+	if (Session.Type == GAME_NORMAL || Session.Type == GAME_SKIRMISH) {
+		crc(IsToDisplay);
+		crc(IsSelected);
+	}
+	crc(IsInLimbo);
+	crc(IsAnimAttached);
+	crc(IsOnBridge);
+	crc(IsFalling);
+	crc(IsToExplode);
+	crc(IsActive);
+	crc(Position.X);
+	crc(Position.Y);
+	crc(Position.Z);
+}
+
+// FUNCTION: 0x005F6360
+int ObjectClass::Distance(AbstractClass const * target) const
+{
+	if (target == NULL) {
+		return(0);
+	}
+	int dist = Center_Coord().Distance_To(target->Center_Coord());
+	BuildingClass * obj = target->RTTI == RTTI_BUILDING ? (BuildingClass *)target : NULL;
+	if (obj) {
+		dist -= ((obj->Class->Width() + obj->Class->Height()) * (CELL_LEPTON / 4));
+		if (dist < 0) dist = 0;
+	}
+	return(dist);
+}
+
+// FUNCTION: 0x005F6440
+int ObjectClass::Planar_Distance(AbstractClass const * target) const
+{
+	if (target == NULL) {
+		return(0);
+	}
+	int dist = Point2D(Center_Coord()).Distance_To(Point2D(target->Center_Coord()));
+	BuildingClass * obj = target->RTTI == RTTI_BUILDING ? (BuildingClass *)target : NULL;
+	if (obj) {
+		dist -= ((obj->Class->Width() + obj->Class->Height()) * (CELL_LEPTON / 4));
+		if (dist < 0) dist = 0;
+	}
+	return(dist);
+}
+
 // FUNCTION: 0x005F6C80
 Coord ObjectClass::Docking_Coord(TechnoClass * ) const
 {
 	return(Center_Coord());
+}
+
+// FUNCTION: 0x005F6CB0
+void ObjectClass::FUN_005F6CB0(int sound)
+{
+	CustomSound = sound;
+	if (sound == -1) {
+		CustomSoundController.End();
+	}
 }

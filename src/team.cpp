@@ -36,6 +36,8 @@
 #include "script.h"
 #include "session.h"
 #include "sun.h"
+#include "super.h"
+#include "suprtype.h"
 #include "swizzle.h"
 #include "tactical.h"
 #include "tag.h"
@@ -61,6 +63,7 @@ void __fastcall LightningStorm_Start(int duration, int deferment, int center, bo
 void __cdecl LightningStorm_RequestStop(void);
 extern int DAT_00B0E948;
 void __fastcall FUN_005BF260(VQType movie, ThemeType theme, bool a, bool b, bool c);
+void __fastcall FUN_0070F120(FootClass * unit, TalkType bubble);
 
 BuildingClass * __fastcall Pick_Building_With_Property(BuildingTypeClass * type, HouseClass * house, FootClass * unit, TargetPropertyType prop, bool only_enemy);
 BuildingClass * __fastcall Pick_Own_Building_With_Property(BuildingTypeClass * type, HouseClass * house, FootClass * unit, TargetPropertyType prop, bool only_enemy);
@@ -76,6 +79,7 @@ static inline int _Coord_Distance(Coord const & a, Coord const & b)
 	return(t.Length());
 }
 
+// FUNCTION: 0x006EF9E0 _Is_It_Breathing
 static inline bool _Is_It_Breathing(FootClass const * object)
 {
 	if (object == NULL || !object->IsActive || object->Strength == 0) return(false);
@@ -2292,4 +2296,170 @@ void TeamClass::TMission_SUCCESS(TeamMissionClass * mission, bool)
 {
 	IsNextMission = true;
 	Succeeded = true;
+}
+
+// FUNCTION: 0x006EF4D0
+void TeamClass::Team_Members(TEAM_MEMBER_LIST & list)
+{
+	for (int i = 0; i < Class->TaskForce->ClassCount; i++) {
+		TechnoTypeClass const * techtype = Class->TaskForce->Members[i].Class;
+		int count = Class->TaskForce->Members[i].Quantity;
+		while (count > 0) {
+			list.Add(techtype);
+			count--;
+		}
+	}
+
+	FootClass *unit = Member;
+	while (unit != NULL) {
+		list.Delete(unit->TClass);
+		unit = unit->Member;
+	}
+}
+
+// FUNCTION: 0x006EF5C0
+void TeamClass::TMission_FLASH(TeamMissionClass * mission, bool first_time)
+{
+	if (first_time) {
+		Flash(mission->Data.Value);
+		IsNextMission = true;
+	}
+}
+
+// FUNCTION: 0x006EF5F0
+void TeamClass::Flash(int count)
+{
+	FootClass *unit = Member;
+	while (unit != NULL) {
+		unit->Flashing.FlashCount = count;
+		unit = unit->Member;
+	}
+}
+
+// FUNCTION: 0x006EF610
+void TeamClass::TMission_PLAY_ANIM(TeamMissionClass * mission, bool first_time)
+{
+	int type = (int)mission->Data.AType;
+	if (first_time && type >= 0 && type < AnimTypes.Count()) {
+		FootClass *unit = Member;
+		int loops = (unsigned short)mission->Data.ALoops;
+		AnimTypeClass *atype = AnimTypes[type];
+		while (unit != NULL) {
+			AnimClass * anim = new AnimClass(atype, unit->Center_Coord(), 0, loops);
+			if (anim != NULL) {
+				anim->SetOwnerObject(unit);
+			}
+			unit = unit->Member;
+		}
+	}
+	IsNextMission = true;
+}
+
+// FUNCTION: 0x006EF6D0
+void TeamClass::TMission_TALK_BUBBLE(TeamMissionClass * mission, bool first_time)
+{
+	if (first_time) {
+		FUN_0070F120(Member, (TalkType)mission->Data.Value);
+		IsNextMission = true;
+	}
+}
+
+static inline FootClass * _Leader_Of(TeamClass const * team)
+{
+	return(_Team_Leader(team));
+}
+
+static inline void _Fire_Super(HouseClass * house, SuperClass * super, Cell const & cell)
+{
+	house->Place_Special_Blast(super->Class->Type, cell);
+}
+
+// FUNCTION: 0x006EFC70
+void TeamClass::TMission_IRON_CURTAIN(TeamMissionClass * mission, bool)
+{
+	FootClass * leader = _Leader_Of(this);
+	if (leader == NULL) {
+		IsNextMission = true;
+		return;
+	}
+	SuperClass * super = NULL;
+	HouseClass * house = leader->House;
+	for (int index = 0; index < house->SuperWeapon.Count(); index++) {
+		if (house->SuperWeapon[index]->Class->Type == SUPER_IRON_CURTAIN) {
+			super = house->SuperWeapon[index];
+			break;
+		}
+	}
+	if (super == NULL) {
+		IsNextMission = true;
+		return;
+	}
+
+	if (super->IsReady && house->Power_Fraction() >= 1.0) {
+		Cell cell = Zone->Center_Coord().As_Cell();
+		house->Place_Special_Blast(super->Class->Type, cell);
+		IsNextMission = true;
+		return;
+	}
+
+	int left = super->Control;
+	double recharge = super->GetRechargeTime();
+	if (super->IsPresent) {
+		if ((double)left / recharge <= 1.0f - Rule->AIMinorSuperReadyPercent) {
+			return;
+		}
+	}
+	IsNextMission = true;
+}
+
+// FUNCTION: 0x006F0130
+void TeamClass::TMission_CHRONO_ATTACK(TeamMissionClass * mission, bool)
+{
+	FootClass * leader = _Team_Leader(this);
+	if (leader != NULL) {
+		HouseClass * house = leader->House;
+		SuperClass * sphere = NULL;
+		SuperClass * warp = NULL;
+		for (int index = 0; index < house->SuperWeapon.Count(); index++) {
+			SuperClass * super = house->SuperWeapon[index];
+			if (super->Class->Type == SUPER_CHRONO_SPHERE) {
+				sphere = super;
+			}
+			if (super->Class->Type == SUPER_CHRONO_WARP) {
+				warp = super;
+			}
+		}
+		if (sphere != NULL && warp != NULL) {
+			if (sphere->IsReady && house->Power_Fraction() >= 1.0) {
+				ThreatType threat = FUN_00645BB0(mission->Data.Quarry);
+				AbstractClass * target = leader->Greatest_Threat(threat, leader->PositionCoord, Class->OnlyTargetHouseEnemy);
+				if (target != NULL) {
+					_Fire_Super(house, sphere, Zone->Center_Coord().As_Cell());
+					_Fire_Super(house, warp, target->Center_Coord().As_Cell());
+					Assign_Mission_Target(target);
+				}
+				IsNextMission = true;
+			} else {
+				int left = sphere->Control;
+				double recharge = sphere->GetRechargeTime();
+				if (sphere->IsPresent) {
+					if ((double)left / recharge <= 1.0f - Rule->AIMinorSuperReadyPercent) {
+						return;
+					}
+				}
+				IsNextMission = true;
+			}
+		} else {
+			IsNextMission = true;
+		}
+	} else {
+		IsNextMission = true;
+	}
+}
+
+// FUNCTION: 0x006F03B0
+int TeamClass::Stray_Distance(void)
+{
+	TeamMissionType action = Script->Get_Current_Mission().Mission;
+	return((action == (TeamMissionType)0x36 || action == (TeamMissionType)0x35) ? Rule->RelaxedStray : Rule->StrayDistance);
 }

@@ -142,11 +142,6 @@ struct FileSystem {
 	static void * __fastcall LoadWholeFileEx(char const * name, bool & allocated);
 };
 
-void SidebarClass::StripClass::One_Time(int)
-{
-	FileSystem::DARKEN_SHP = FileSystem::LoadFile("DARKEN.SHP", false);
-}
-
 // FUNCTION: 0x006A5000
 void SidebarClass::One_Time(void)
 {
@@ -182,6 +177,7 @@ extern int DAT_00B0B4EC;
 extern int DAT_00B0B4F0;
 extern int DAT_00B0B4F8;
 extern int DAT_00B0B4FC;
+extern int DAT_00B0B500;
 
 // FUNCTION: 0x006A5090
 void SidebarClass::FUN_006A5090(void)
@@ -1218,6 +1214,278 @@ bool SidebarClass::Activate(int control)
 int SidebarClass::FUN_006A8080(int count)
 {
 	return DAT_00B0B4FC * count;
+}
+
+// FUNCTION: 0x006A8090
+int SidebarClass::FUN_006A8090(int count)
+{
+	return DAT_00B0B500 * count + 1;
+}
+
+// FUNCTION: 0x006A80A0
+SidebarClass::StripClass::StripClass(InitClass const &) :
+	X(0),
+	Y(0),
+	ObjectRect(DAT_00B07DC8),
+	ID(0),
+	IsToRedraw(true),
+	IsBuilding(false),
+	IsScrollingDown(false),
+	IsScrolling(false),
+	Flasher(-1),
+	TopIndex(0),
+	Scroller(0),
+	Slid(0),
+	LastSlid(0),
+	BuildableCount(0)
+{
+	for (int index = 0; index < MAX_BUILDABLES; index++) {
+		Buildables[index].BuildableID = 0;
+		Buildables[index].BuildableType = RTTI_NONE;
+		Buildables[index].IsAlt = 0;
+		Buildables[index].Factory = NULL;
+	}
+}
+
+// FUNCTION: 0x006A8160
+void SidebarClass::StripClass::One_Time(int)
+{
+	FileSystem::DARKEN_SHP = FileSystem::LoadFile("DARKEN.SHP", false);
+}
+
+// FUNCTION: 0x006A8180
+ShapeSet const * SidebarClass::StripClass::Get_Special_Cameo(SuperWeaponType type)
+{
+	if ((unsigned)type < (unsigned)SuperWeaponTypes.Count()) {
+		return SuperWeaponTypes[type]->CameoData;
+	}
+	return NULL;
+}
+
+// FUNCTION: 0x006A81B0
+void SidebarClass::StripClass::Init_Clear(void)
+{
+	IsScrollingDown = false;
+	IsScrolling = false;
+	IsBuilding = false;
+	Flasher = -1;
+	TopIndex = 0;
+	Slid = 0;
+	BuildableCount = 0;
+
+	for (int index = 0; index < MAX_BUILDABLES; index++) {
+		Buildables[index].BuildableID = 0;
+		Buildables[index].BuildableType = RTTI_NONE;
+		Buildables[index].IsAlt = 0;
+		Buildables[index].Factory = NULL;
+		Buildables[index].unknown_10 = 0;
+		Buildables[index].Progress.Set_Rate(0);
+		Buildables[index].Progress.Set_Stage(0);
+		Buildables[index].FlashEndFrame = 0;
+	}
+}
+
+static inline int Strip_Rows(void)
+{
+	int side = Scen->PlayerSideIndex;
+	int reserved;
+	if (side == 0) {
+		reserved = 0x1a;
+	} else if (side == 1) {
+		reserved = 0x12;
+	} else {
+		reserved = 0x12;
+	}
+	return (DAT_00886F94 - DAT_00B0B4F8 - reserved + DAT_00886F9C - 7) / 50;
+}
+
+// FUNCTION: 0x006A8220
+void SidebarClass::StripClass::Init_IO(int id)
+{
+	ID = id;
+
+	int rows = Strip_Rows();
+	for (int row = 0; row < rows; row++) {
+		for (int col = 0; col < 2; col++) {
+			int slot = row * 2 + col;
+			SelectClass & g = SelectButton[ID * 60 + slot];
+			g.ID = 202;
+			g.X = Map.Column[ID].X + DAT_00B0B4FC * col;
+			g.Y = Map.Column[ID].Y + FUN_006A8090(row);
+			g.Width = 60;
+			g.Height = 48;
+			g.Set_Owner(*this, slot);
+		}
+	}
+}
+
+// FUNCTION: 0x006A8330
+void SidebarClass::StripClass::Activate(void)
+{
+	int count = Strip_Rows() * 2;
+	for (int index = 0; index < count; index++) {
+		SelectButton[ID * 60 + index].Zap();
+		Map.Add_A_Button(SelectButton[ID * 60 + index]);
+	}
+	DAT_00884B8F = true;
+}
+
+// FUNCTION: 0x006A83E0
+void SidebarClass::StripClass::Deactivate(void)
+{
+	for (int index = 0; index < 60; index++) {
+		Map.Remove_A_Button(SelectButton[ID * 60 + index]);
+	}
+}
+
+TechnoTypeClass const * __fastcall Fetch_Techno_Type(RTTIType type, int id);
+
+// FUNCTION: 0x006A8420
+bool SidebarClass::StripClass::SortsBefore(RTTIType type, int id, RTTIType otherType, int otherId)
+{
+	TechnoTypeClass const * left = Fetch_Techno_Type(type, id);
+	TechnoTypeClass const * right = Fetch_Techno_Type(otherType, otherId);
+
+	if (otherType == RTTI_NONE) {
+		return true;
+	}
+
+	bool leftSpecial = (type == RTTI_SPECIAL || type == RTTI_SUPERWEAPON || type == RTTI_SUPERWEAPONTYPE);
+	bool rightSpecial = (otherType == RTTI_SPECIAL || otherType == RTTI_SUPERWEAPON || otherType == RTTI_SUPERWEAPONTYPE);
+	bool leftTech, leftAir, leftNaval, leftNormal, rightTech, rightAir, rightNaval, rightNormal;
+	int leftCost, rightCost;
+	wchar_t const * leftName;
+	wchar_t const * rightName;
+
+	if (leftSpecial && rightSpecial) {
+		SuperWeaponTypeClass * a = SuperWeaponTypes[id];
+		SuperWeaponTypeClass * b = SuperWeaponTypes[otherId];
+		if (a->RechargeTime < b->RechargeTime) {
+			return true;
+		}
+		if (a->RechargeTime > b->RechargeTime) {
+			return false;
+		}
+		leftName = a->UIName;
+		rightName = b->UIName;
+		goto compare_names;
+	}
+
+	if (!leftSpecial && !rightSpecial) {
+		int side = PlayerPtr->Class->Side;
+		bool leftOwn = (side == left->AIBasePlanningSide);
+		bool rightOwn = (side == right->AIBasePlanningSide);
+		if (leftOwn && !rightOwn) {
+			return true;
+		}
+		if (!leftOwn && rightOwn) {
+			return false;
+		}
+	}
+
+	leftTech = (type == RTTI_UNITTYPE || type == RTTI_AIRCRAFTTYPE);
+	leftAir = leftTech && left->ConsideredAircraft;
+	leftNaval = leftTech && left->Naval;
+	leftNormal = !leftAir && !leftNaval;
+
+	rightTech = (otherType == RTTI_UNITTYPE || otherType == RTTI_AIRCRAFTTYPE);
+	rightAir = rightTech && right->ConsideredAircraft;
+	rightNaval = rightTech && right->Naval;
+	rightNormal = !rightAir && !rightNaval;
+
+	if (leftSpecial) {
+		if (rightAir || rightNaval || rightNormal) {
+			return true;
+		}
+	} else if (leftNormal) {
+		if (rightSpecial) {
+			return false;
+		}
+		if (rightAir || rightNaval) {
+			return true;
+		}
+	} else if (leftAir) {
+		if (rightSpecial) {
+			return false;
+		}
+		if (rightNormal) {
+			return false;
+		}
+		if (rightNaval) {
+			return true;
+		}
+	} else if (leftNaval) {
+		if (rightSpecial) {
+			return false;
+		}
+		if (rightNormal || rightAir) {
+			return false;
+		}
+	}
+
+	if (left->Level < right->Level) {
+		return true;
+	}
+	if (left->Level > right->Level) {
+		return false;
+	}
+	leftCost = left->Cost_Of(PlayerPtr);
+	rightCost = right->Cost_Of(PlayerPtr);
+	if (leftCost < rightCost) {
+		return true;
+	}
+	if (leftCost > rightCost) {
+		return false;
+	}
+	leftName = left->UIName;
+	rightName = right->UIName;
+compare_names:
+	if (wcscmp(leftName, rightName) > 0) {
+		return false;
+	}
+	return true;
+}
+
+// FUNCTION: 0x006A87F0
+bool SidebarClass::StripClass::Add(RTTIType type, int id)
+{
+	if (BuildableCount <= MAX_BUILDABLES) {
+		for (int index = 0; index < BuildableCount; index++) {
+			if (Buildables[index].BuildableType == type && Buildables[index].BuildableID == id) {
+				return false;
+			}
+		}
+		if (!ScenarioInit && type != RTTI_SPECIAL) {
+			VoxClass::Play("EVA_NewConstructionOptions");
+		}
+		FUN_006A8710(type, id);
+		IsToRedraw = true;
+		DAT_00884B8F = true;
+		return true;
+	}
+	return false;
+}
+
+// FUNCTION: 0x006A8860
+bool SidebarClass::StripClass::Scroll(bool up, int amount)
+{
+	if (up) {
+		if (!TopIndex) {
+			return false;
+		}
+		Scroller -= amount;
+	} else {
+		int rows = Strip_Rows();
+		if (PlayerPtr == DAT_00AC1198) {
+			if (TopIndex + rows / 2 >= DAT_00884CF8) {
+				return false;
+			}
+		} else if ((TopIndex + rows) * 2 >= BuildableCount) {
+			return false;
+		}
+		Scroller += amount;
+	}
+	return true;
 }
 
 // FUNCTION: 0x006ABC60

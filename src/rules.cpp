@@ -967,3 +967,23 @@ template class DynamicVectorClass<InfantryTypeClass const *>;
 // FUNCTION: 0x0067A960 ?$DynamicVectorClass@PBVTerrainTypeClass@@::ID
 // FUNCTION: 0x0067A980 ?$VectorClass@PBVTerrainTypeClass@@::GetItem
 template class TypeList<TerrainTypeClass const *>;
+
+// FUNCTION: 0x0067A990 ?$VectorClass@PBVVoxelAnimTypeClass@@::~?$VectorClass@PBVVoxelAnimTypeClass@@
+template class VectorClass<VoxelAnimTypeClass const *>;
+
+// FUNCTION: 0x0067A9E0 ?$VectorClass@PBVSmudgeTypeClass@@::~?$VectorClass@PBVSmudgeTypeClass@@
+template class VectorClass<SmudgeTypeClass const *>;
+
+// FUNCTION: 0x0067AA30 ?$VectorClass@PBVTerrainTypeClass@@::~?$VectorClass@PBVTerrainTypeClass@@
+template class VectorClass<TerrainTypeClass const *>;
+
+// FUNCTION: 0x0067AA80 ?$VectorClass@PBVVoxelAnimTypeClass@@::operator=
+// FUNCTION: 0x0067AAF0 ?$VectorClass@PBVVoxelAnimTypeClass@@::operator==
+// FUNCTION: 0x0067AB30 ?$VectorClass@PBVVoxelAnimTypeClass@@::Resize
+// FUNCTION: 0x0067ABE0 ?$VectorClass@PBVVoxelAnimTypeClass@@::Clear
+// FUNCTION: 0x0067AC10 ?$VectorClass@PBVVoxelAnimTypeClass@@::ID
+// FUNCTION: 0x0067AC50 ?$VectorClass@PBVVoxelAnimTypeClass@@::ID
+// FUNCTION: 0x0067AC70 ?$DynamicVectorClass@PBVVoxelAnimTypeClass@@::?$DynamicVectorClass@PBVVoxelAnimTypeClass@@
+// FUNCTION: 0x0067ACD0 ?$DynamicVectorClass@PBVVoxelAnimTypeClass@@::Resize
+// FUNCTION: 0x0067AD80 ?$DynamicVectorClass@PBVVoxelAnimTypeClass@@::Add
+template class DynamicVectorClass<VoxelAnimTypeClass const *>;

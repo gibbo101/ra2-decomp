@@ -1237,10 +1237,195 @@ int FUN_0056C200(void)
 	return(1);
 }
 
+// FUNCTION: 0x0056C210
+ObjectClass * MapClass::Close_Object(Coord const & coord) const
+{
+	ObjectClass * object = 0;
+	int distance = 0;
+	Cell cell = coord.As_Cell();
+
+	static Cell _offsets[] = {Cell(0,0), Cell(-1,0), Cell(1,0), Cell(0,-1), Cell(0,1), Cell(-1,1), Cell(1,1), Cell(1,-1), Cell(-1,-1)};
+	for (int index = 0; index < ARRAY_SIZE(_offsets); index++) {
+		Cell newcell = Cell(cell + _offsets[index]);
+		if (In_Radar(newcell)) {
+			for (ObjectClass * o = (*this)[newcell].Cell_Occupier(); o != NULL; o = o->Next) {
+				if (!(o->AbstractFlags & 1) || ((TechnoClass *)o)->IsOwnedByPlayer || ((TechnoClass *)o)->Cloak != CLOAKED) {
+					int d=-1;
+					if (o->RTTI == RTTI_BUILDING) {
+						d = Distance(coord, (Coord)newcell);
+						if (d > 0x00B5) d = -1;
+					} else {
+						d = Distance(coord, o->Center_Coord());
+					}
+					if (d >= 0 && (!object || d < distance)) {
+						distance = d;
+						object = o;
+					}
+				}
+			}
+		}
+	}
+
+	if (object && distance > 0xB5) {
+		object = 0;
+	}
+	Cell unused = cell + _offsets[0];
+	return(object);
+}
+
+// FUNCTION: 0x0056C500 $E227
+
 // FUNCTION: 0x0056CB80
 int SubzoneHash(unsigned int const & key)
 {
 	return(key & 0xF | ((key >> 12) & 0xF));
+}
+
+// FUNCTION: 0x0056D3A0
+int MapClass::Get_Cell_Zone_ID(Cell const & cell)
+{
+	return(CellZones[Get_Cell_Zone_Index(cell)].ZoneID);
+}
+
+// FUNCTION: 0x0056D3F0
+int MapClass::Get_Cell_Zone_Index(Cell const & cell)
+{
+	int index = cell.X + cell.Y * (PlayRect.Height + PlayRect.Width + 1);
+	if (index < 0) {
+		return(0);
+	}
+	if (index >= CellZoneCount) {
+		index = CellZoneCount - 1;
+	}
+	return(index);
+}
+
+// FUNCTION: 0x0056D430
+int MapClass::Get_Cell_Subzone_Index(Cell const & cell)
+{
+	return(cell.X + cell.Y * (PlayRect.Height + PlayRect.Width + 1));
+}
+
+// FUNCTION: 0x0056D460
+void MapClass::ResetZones(Cell const & cell)
+{
+	CellZoneStruct * cell_data = &CellZones[Get_Cell_Zone_Index(cell)];
+
+	int stride = Map.PlayRect.Width + Map.PlayRect.Height + 1;
+	int offsets[FACING_COUNT] = {
+		-(stride + 0),
+		-(stride - 1),
+		1,
+		stride + 1,
+		stride + 0,
+		stride - 1,
+		-1,
+		-(stride + 1),
+	};
+
+	if (cell_data->Passability != PASSABLE_OUTSIDE) {
+		CellZoneStruct * land_neighbor = NULL;
+		bool has_land_neighbor = false;
+		for (FacingType i = FACING_FIRST; i < FACING_COUNT; i++) {
+			land_neighbor = &cell_data[offsets[i]];
+			if (land_neighbor->Passability == PASSABLE_LAND) {
+				has_land_neighbor = true;
+				break;
+			}
+		}
+
+		if (has_land_neighbor && land_neighbor != NULL) {
+			int transitions = 0;
+			int prev_zone = 0;
+
+			for (FacingType j = FACING_FIRST; j < FACING_COUNT; j++) {
+				CellZoneStruct * neighbor = &cell_data[offsets[j]];
+				if (Zones[MZONE_NORMAL][neighbor->ZoneID] != Zones[MZONE_NORMAL][prev_zone] && neighbor->Passability != PASSABLE_OUTSIDE) {
+					prev_zone = neighbor->ZoneID;
+					transitions++;
+				}
+			}
+
+			if (transitions <= 3 && cell_data->Passability == PASSABLE_LAND) {
+				cell_data->ZoneID = land_neighbor->ZoneID;
+				return;
+			}
+		}
+
+		Map.Zone_Reset();
+	}
+}
+
+// FUNCTION: 0x0056D5A0
+void MapClass::Update_Cell_Zone_Constructively(Cell const & cell)
+{
+	CellZoneStruct * cell_data = &CellZones[Get_Cell_Zone_Index(cell)];
+	int passability = cell_data->Passability;
+
+	int stride = Map.PlayRect.Width + Map.PlayRect.Height + 1;
+	int offsets[FACING_COUNT] = {
+		-(stride + 0),
+		-(stride - 1),
+		1,
+		stride + 1,
+		stride + 0,
+		stride - 1,
+		-1,
+		-(stride + 1),
+	};
+
+	if (passability != PASSABLE_OUTSIDE) {
+		CellZoneStruct * land_neighbor = NULL;
+		bool has_land_neighbor = false;
+		for (FacingType i = FACING_FIRST; i < FACING_COUNT; i++) {
+			land_neighbor = &cell_data[offsets[i]];
+			if (land_neighbor->Passability == passability) {
+				has_land_neighbor = true;
+				break;
+			}
+		}
+
+		if (has_land_neighbor && land_neighbor != NULL) {
+			int transitions = 0;
+			int prev_zone = 0;
+
+			for (FacingType j = FACING_FIRST; j < FACING_COUNT; j++) {
+				if (Zones[MZONE_NORMAL][cell_data[offsets[j]].ZoneID] != Zones[MZONE_NORMAL][prev_zone] && cell_data[offsets[j]].Passability != PASSABLE_OUTSIDE) {
+					prev_zone = cell_data[offsets[j]].ZoneID;
+					transitions++;
+				}
+			}
+
+			if (transitions <= 3) {
+				cell_data->ZoneID = land_neighbor->ZoneID;
+				return;
+			}
+		}
+
+		Map.Zone_Reset();
+	}
+}
+
+// FUNCTION: 0x0056DA10
+int MapClass::Zone_Connection_Index(Cell const & cell, int maxdist, int index)
+{
+	for (int i = index; i < ZoneConnections.Count(); i++) {
+		ZoneConnectionClass * con = &ZoneConnections[i];
+		if (con->Type == 0) {
+			Cell f = con->From;
+			Cell t = con->To;
+			if ((f.X - t.X) == 0) {
+				if (cell.Y >= f.Y && cell.Y <= t.Y && abs(cell.X - f.X) <= maxdist) {
+					return(i);
+				}
+			} else {
+				if (cell.X <= t.X && cell.X >= f.X && abs(cell.Y - f.Y) <= maxdist) {
+					return(i);
+				}
+			}
+		}
+	}
+	return(-1);
 }
 
 // FUNCTION: 0x00577A50

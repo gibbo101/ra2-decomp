@@ -463,7 +463,7 @@ int AircraftClass::Do_MISSION_UNLOAD(void)
 // FUNCTION: 0x004155F0
 int AircraftClass::Do_MISSION_SPYPLANE_APPROACH(void)
 {
-	int dist = Distance(TarCom);
+	int dist = Planar_Distance(TarCom);
 	if (TarCom == NULL) {
 		Assign_Destination(NULL, true);
 		QueueMission(MISSION_RETREAT, false);
@@ -491,7 +491,7 @@ int AircraftClass::Do_MISSION_SPYPLANE_APPROACH(void)
 // FUNCTION: 0x004157C0
 int AircraftClass::Do_MISSION_SPYPLANE_OVERFLY(void)
 {
-	int dist = Distance(TarCom);
+	int dist = Planar_Distance(TarCom);
 	if (dist <= Get_Primary_Weapon()->Range) {
 		vt_entry_48C(0, 0, 0, 0);
 		UpdateSight(0, 0, 0, 0, Get_Class_Weapon_Data(0)->Weapon->Attack);
@@ -523,7 +523,7 @@ int AircraftClass::Do_MISSION_PARADROP_APPROACH(void)
 		return(3);
 	}
 
-	if (Distance(TarCom) <= Rule->ParadropRadius) {
+	if (Planar_Distance(TarCom) <= Rule->ParadropRadius) {
 		QueueMission(MISSION_PARADROP_OVERFLY, false);
 		NumParadropsLeft--;
 	}
@@ -1844,6 +1844,30 @@ bool AircraftClass::INoticeSink_Unknown(DWORD unknown, DWORD unknown2)
 }
 
 // FUNCTION: 0x0041BDD0 ObjectClass::Target_Coord
+
+// FUNCTION: 0x0041BE00 ObjectClass::Render_Coord
+
+// FUNCTION: 0x0041BE30 ObjectClass::Exit_Coord
+
+// FUNCTION: 0x0041BE60 ObjectClass::GetDisguise
+
+// FUNCTION: 0x0041BE70 ObjectClass::GetDisguiseHouse
+
+// FUNCTION: 0x0041BE80 ObjectClass::Draw_Radial_Indicator
+
+// FUNCTION: 0x0041BE90 ObjectClass::Assign_Mission
+
+// FUNCTION: 0x0041BEA0 ObjectClass::Get_Cell
+
+// FUNCTION: 0x0041BEE0 TechnoClass::Is_Move_Override
+
+// FUNCTION: 0x0041BEF0 TechnoClass::Is_Ready_To_Move
+
+// FUNCTION: 0x0041BF00 TechnoClass::Anti_Air
+
+// FUNCTION: 0x0041BF10 TechnoClass::Anti_Armor
+
+// FUNCTION: 0x0041BF20 TechnoClass::Anti_Infantry
 
 // FUNCTION: 0x0041C090 FootClass::Draw_Object
 

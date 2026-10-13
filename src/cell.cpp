@@ -2106,6 +2106,182 @@ void CellClass::Redraw_Veins(void)
 	Recalc_Attributes();
 }
 
+#define IS_SET_VALID(setname) (IsometricTileTypeClass::setname != ISOTILE_INVALID)
+#define IS_TILE_IN_SET(setname, setsize) (ITType >= IsometricTileTypeClass::setname && ITType < IsometricTileTypeClass::setname + setsize)
+#define IS_TILE_IN_VALID_SET(setname, setsize) (IS_SET_VALID(setname) && IS_TILE_IN_SET(setname, setsize))
+
+// FUNCTION: 0x00486380
+bool CellClass::Is_Tile_Clear(void) const
+{
+	if (ITType == ISOTILE_NONE || ITType == ISOTILE_CLEAR) {
+		return(true);
+	}
+
+	return(false);
+}
+
+// FUNCTION: 0x004863A0
+bool CellClass::Is_Tile_Ramp(void) const
+{
+	if (IS_TILE_IN_SET(RampStart, RAMP_BASE_COUNT) ||
+		IS_TILE_IN_SET(RampSmooth, RAMP_SMOOTH_COUNT)) {
+		return(true);
+	}
+
+	return(false);
+}
+
+// FUNCTION: 0x004863D0
+bool CellClass::Is_Tile_Cliff(void) const
+{
+	if (IS_TILE_IN_VALID_SET(CliffSet, CLIFF_COUNT)) return(true);
+
+	if (IS_TILE_IN_VALID_SET(WaterfallEast, WATERFALL_EAST_COUNT)) {
+		if (ITType == IsometricTileTypeClass::WaterfallEast || ITType == IsometricTileTypeClass::WaterfallEast + WATERFALL_EAST_COUNT-1) {
+			if (SubTile == 0 || SubTile == 4) {
+				return(false);
+			}
+		}
+		return(true);
+	}
+
+	if (IS_TILE_IN_VALID_SET(WaterfallWest, WATERFALL_WEST_COUNT)) {
+		if (ITType == IsometricTileTypeClass::WaterfallWest || ITType == IsometricTileTypeClass::WaterfallWest + WATERFALL_WEST_COUNT-1) {
+			if (SubTile == 1 || SubTile == 3) {
+				return(false);
+			}
+		}
+		return(true);
+	}
+
+	if (IS_TILE_IN_VALID_SET(WaterfallSouth, WATERFALL_SOUTH_COUNT)) {
+		if (ITType == IsometricTileTypeClass::WaterfallSouth || ITType == IsometricTileTypeClass::WaterfallSouth + WATERFALL_SOUTH_COUNT-1) {
+			if (SubTile == 0 || SubTile == 1) {
+				return(false);
+			}
+		}
+		return(true);
+	}
+
+	if (IS_TILE_IN_VALID_SET(WaterfallNorth, WATERFALL_NORTH_COUNT)) {
+		if (ITType == IsometricTileTypeClass::WaterfallNorth || ITType == IsometricTileTypeClass::WaterfallNorth + WATERFALL_NORTH_COUNT-1) {
+			if (SubTile == 2 || SubTile == 3) {
+				return(false);
+			}
+		}
+		return(true);
+	}
+
+	if (IS_TILE_IN_VALID_SET(CliffRamps, CLIFF_RAMPS_COUNT)) return(true);
+	if (IS_TILE_IN_VALID_SET(WaterCaves, 4)) return(true);
+	if (IS_TILE_IN_VALID_SET(BridgeSet, BRIDGE_COUNT)) return(true);
+	if (IS_TILE_IN_VALID_SET(TrainBridgeSet, TRAIN_BRIDGE_COUNT)) return(true);
+	if (IS_TILE_IN_VALID_SET(DestroyableCliffs, DESTROYABLE_CLIFFS_COUNT)) return(true);
+	if (IS_TILE_IN_VALID_SET(WaterCliffs, WATER_CLIFFS_COUNT)) return(true);
+
+	return(false);
+}
+
+// FUNCTION: 0x004865B0
+bool CellClass::Is_Tile_Shore(void) const
+{
+	if (IS_TILE_IN_SET(ShorePieces, SHORE_PIECES_COUNT)) {
+		return(true);
+	}
+
+	return(false);
+}
+
+// FUNCTION: 0x004865D0
+bool CellClass::Is_Tile_With_Water(void) const
+{
+	if (Is_Tile_Shore()) {
+		return(true);
+	}
+
+	if (IS_TILE_IN_SET(WaterSet, WATER_COUNT) ||
+		IS_TILE_IN_SET(WaterfallEast, WATERFALL_EAST_COUNT) ||
+		IS_TILE_IN_SET(WaterfallWest, WATERFALL_WEST_COUNT) ||
+		IS_TILE_IN_SET(WaterfallSouth, WATERFALL_SOUTH_COUNT) ||
+		IS_TILE_IN_SET(WaterfallNorth, WATERFALL_NORTH_COUNT)) {
+		return(true);
+	}
+
+	return(false);
+}
+
+// FUNCTION: 0x00486650
+bool CellClass::Is_Tile_Misc_Pavement(void) const
+{
+	if (IS_TILE_IN_SET(MiscPaveTile, MISC_PAVE_TILE_COUNT)) {
+		return(true);
+	}
+
+	return(false);
+}
+
+// FUNCTION: 0x00486670
+bool CellClass::Is_Tile_Pavement(void) const
+{
+	if (IS_TILE_IN_SET(PaveTile, PAVE_TILE_COUNT)) {
+		return(true);
+	}
+
+	return(false);
+}
+
+// FUNCTION: 0x00486690
+bool CellClass::Is_Tile_Dirt_Road(void) const
+{
+	if (IS_TILE_IN_SET(DirtRoadJunction, DIRT_ROAD_JUNCTION_COUNT) ||
+		IS_TILE_IN_SET(DirtRoadCurve, DIRT_ROAD_CURVE_COUNT) ||
+		IS_TILE_IN_SET(DirtRoadStraight, DIRT_ROAD_STRAIGHT_COUNT)) {
+		return(true);
+	}
+
+	return(false);
+}
+
+// FUNCTION: 0x004866D0
+bool CellClass::Is_Tile_Paved_Road(void) const
+{
+	if (IS_TILE_IN_SET(PavedRoads, PAVED_ROAD_COUNT)) {
+		return(true);
+	}
+
+	return(false);
+}
+
+// FUNCTION: 0x004866F0
+bool CellClass::Is_Tile_Paved_Road_End(void) const
+{
+	if (IS_TILE_IN_SET(PavedRoadEnds, PAVED_ROAD_ENDS_COUNT)) {
+		return(true);
+	}
+
+	return(false);
+}
+
+// FUNCTION: 0x00486710
+bool CellClass::Is_Tile_Paved_Road_Slope(void) const
+{
+	if (IS_TILE_IN_SET(PavedRoadSlopes, PAVED_ROAD_SLOPES_COUNT)) {
+		return(true);
+	}
+
+	return(false);
+}
+
+// FUNCTION: 0x00486730
+bool CellClass::Is_Tile_Road_Median(void) const
+{
+	if (IS_TILE_IN_SET(Medians, 14)) {
+		return(true);
+	}
+
+	return(false);
+}
+
 // FUNCTION: 0x004867B0
 bool CellClass::Is_Tile_Clear_To_Green_LAT(void) const
 {

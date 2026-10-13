@@ -777,6 +777,46 @@ bool ObjectClass::IsStrange(void) const
 
 // FUNCTION: 0x004264B0 ObjectClass::Per_Cell_Process
 
+// FUNCTION: 0x004264C0 ObjectClass::Can_Enter_Cell
+
+// FUNCTION: 0x004264D0 ObjectClass::Can_Reach
+
+// FUNCTION: 0x004264E0
+bool ObjectClass::IsBeingWarpedOut(void) const
+{
+	return(false);
+}
+
+// FUNCTION: 0x004264F0
+bool ObjectClass::IsWarpingIn(void) const
+{
+	return(false);
+}
+
+// FUNCTION: 0x00426500
+bool ObjectClass::IsWarpingSomethingOut(void) const
+{
+	return(false);
+}
+
+// FUNCTION: 0x00426510
+bool ObjectClass::IsNotWarping(void) const
+{
+	return(true);
+}
+
+// FUNCTION: 0x00426520
+void * ObjectClass::GetRemapColour(void) const
+{
+	return(NULL);
+}
+
+// FUNCTION: 0x00426530
+int AnimClass::Fetch_Object_Size(void) const
+{
+	return(sizeof(*this));
+}
+
 // FUNCTION: 0x00426540
 HRESULT STDMETHODCALLTYPE AnimClass::GetClassID(CLSID * retval)
 {
@@ -784,3 +824,14 @@ HRESULT STDMETHODCALLTYPE AnimClass::GetClassID(CLSID * retval)
 	*retval = CLSID_AnimClass;
 	return(S_OK);
 }
+
+// FUNCTION: 0x00426580
+RTTIType AnimClass::Fetch_RTTI(void) const
+{
+	return(RTTI_ANIM);
+}
+
+// FUNCTION: 0x00426590 AnimClass::~AnimClass
+
+
+// FUNCTION: 0x00426620 ?$CDTimerClass@VFrameTimerClass@@::?$CDTimerClass@VFrameTimerClass@@

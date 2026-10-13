@@ -36,8 +36,8 @@
 #include "warhead.h"
 #include "weapon.h"
 
-// FUNCTION: 0x0045B1B0 $E
-// FUNCTION: 0x0045B1C0 $E
+// FUNCTION: 0x0045B1B0 $E177
+// FUNCTION: 0x0045B1C0 $E154
 Cell const BuildingTypeClass::OccupyLists[BSIZE_COUNT][30] = {
 	/* BSIZE_11 */ { Cell(0,0),REFRESH_EOL },
 	/* BSIZE_21 */ { Cell(0,0),Cell(1,0),REFRESH_EOL },
@@ -63,8 +63,8 @@ Cell const BuildingTypeClass::OccupyLists[BSIZE_COUNT][30] = {
 	/* BSIZE_00 */ { REFRESH_EOL }
 };
 
-// FUNCTION: 0x0045C2F0 $E
-// FUNCTION: 0x0045C300 $E
+// FUNCTION: 0x0045C2F0 $E202
+// FUNCTION: 0x0045C300 $E179
 Cell const BuildingTypeClass::ExitLists[BSIZE_COUNT][30] = {
 	/* BSIZE_11 */ { Cell(0,1),Cell(-1,1),Cell(1,1),Cell(-1,0),Cell(1,0),Cell(0,-1),Cell(-1,-1),Cell(1,-1),REFRESH_EOL },
 	/* BSIZE_21 */ { Cell(0,1),Cell(1,1),Cell(-1,1),Cell(2,1),Cell(-1,0),Cell(2,0),Cell(0,-1),Cell(1,-1),Cell(-1,-1),Cell(2,-1),REFRESH_EOL },

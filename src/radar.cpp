@@ -60,6 +60,7 @@ extern int DAT_00B04A30;
 extern DynamicVectorClass<TechnoClass *> DAT_00A8EC78;
 #define Technos DAT_00A8EC78
 extern HouseClass * PlayerPtr;
+namespace Unsorted { extern int MuteSWLaunches; }
 inline bool RadarTrackingStruct::Use_Head(void) const { return(Object->House == PlayerPtr); }
 int __fastcall FUN_00753250(char const * name);
 void __fastcall FUN_0055AF40(int value);
@@ -457,7 +458,7 @@ void RadarClass::AI(KeyNumType & input, Point2D const & xy)
 	}
 
 	if (RadarMode == 4) {
-		Play_Movie();
+		FUN_006578F0();
 	} else if (!FUN_0053BAE0()) {
 		FUN_00753580();
 	}
@@ -1276,12 +1277,52 @@ void RadarClass::Set_Radar_State(bool on, bool sound)
 		}
 		DebugString("Radar: DEACTIVING\n");
 	}
+	RadarAnimFrame = RadarAnimFrame;
 }
 
 // FUNCTION: 0x00656CA0
 bool RadarClass::Is_Radar_Active(void)
 {
 	return(RadarState == RSTATE_ACTIVE);
+}
+
+// FUNCTION: 0x00656CB0
+void RadarClass::Radar_Activate(int control, bool flag)
+{
+	if (Session.Type != GAME_NORMAL && PlayerPtr->IsDefeated && Unsorted::MuteSWLaunches) {
+		control = 1;
+	}
+	if (RadarMode == control) {
+		return;
+	}
+	if (RadarMode == RMODE_MOVIE || (RadarMode == RMODE_4 && control != RMODE_MOVIE)) {
+		if (RadarState != RSTATE_MOVIE_DONE) {
+			SuspendedRadarMode = control;
+			return;
+		}
+	}
+	switch (control) {
+		case 0:
+			Set_Radar_State(false, RadarMode == RMODE_TACTICAL);
+			break;
+		case 1:
+			if ((RadarState == RSTATE_ACTIVE || RadarState == RSTATE_MOVIE_DONE) && Is_Radar_Existing() == true) {
+				Queue_Next_Movie();
+				break;
+			}
+			Set_Radar_State(Is_Radar_Existing(), flag);
+			break;
+		case 4:
+			break;
+		default:
+			if (RadarState == RSTATE_ACTIVE || RadarState == RSTATE_MOVIE_DONE) {
+				Queue_Next_Movie();
+				break;
+			}
+			Set_Radar_State(true, false);
+			break;
+	}
+	RadarMode = control;
 }
 
 // FUNCTION: 0x00656DC0
@@ -1296,6 +1337,21 @@ bool RadarClass::Is_Radar_Existing(void)
 	return(DoesRadarExist);
 }
 
+// FUNCTION: 0x00656DF0
+void RadarClass::Toggle_Radar(bool on)
+{
+	if (DoesRadarExist != on) {
+		DoesRadarExist = on;
+		char const * txt = on ? "on" : "off";
+		DebugString("Radar: TacticalMap availability is %s\n", txt);
+		if (RadarMode == RMODE_TACTICAL) {
+			Set_Radar_State(on, true);
+		} else {
+			Radar_Activate(1, true);
+		}
+	}
+}
+
 // FUNCTION: 0x00656E50
 bool RadarClass::Is_Player_Names(void)
 {
@@ -1307,3 +1363,220 @@ bool RadarClass::Is_Playing_Movie(void)
 {
 	return(RadarMode == RMODE_MOVIE && RadarState == RSTATE_ACTIVE);
 }
+
+// FUNCTION: 0x00656E90
+void RadarClass::Redraw_Radar(bool complete)
+{
+	IsToRedraw = true;
+	FullRedraw = FullRedraw || complete;
+}
+
+void FUN_00752370(void);
+void FUN_00752480(int index, int position, int flags);
+void FUN_00753570(void);
+bool FUN_007532A0(int index);
+void FUN_00408390(void);
+int FUN_00408410(void);
+void FUN_005BF580(void);
+
+// FUNCTION: 0x006578F0
+void RadarClass::FUN_006578F0(void)
+{
+	switch (unknown_14B8) {
+		case 0:
+			FUN_00752370();
+			FUN_00752480(unknown_int_14D4, 0, 3);
+			FUN_00753570();
+			unknown_14B8 = 1;
+			break;
+		case 1:
+			if (FUN_007532A0(unknown_int_14D4)) {
+				if (DAT_00B45B68) {
+					FUN_00408390();
+				}
+				unknown_14B8 = 2;
+			}
+			break;
+		case 2:
+			if (DAT_00B45B68 == 0 || FUN_00408410()) {
+				if (DAT_00B45B68) {
+					FUN_00753580();
+					FUN_005BF580();
+				}
+				Radar_Activate(3, false);
+				unknown_14C0.EndLooping();
+				unknown_14C0.SetEvent((AudioEvent *)VocClass::PlayGlobal(Rule->MovieOn, 1.0f, 0x2000), NULL);
+				FUN_0055AF40(Rule->DetailMinFrameRateMovie);
+			}
+			break;
+	}
+}
+
+void FUN_007529E0(void);
+void FUN_005BF530(void);
+void __fastcall Hold_Scenario(int seconds);
+void Release_Scenario(void);
+
+// FUNCTION: 0x006579E0
+void RadarClass::Play_Movie(void)
+{
+	MovieHandle * movie = NULL;
+	bool hold = false;
+	bool has = IngameVQ.Count() > 0;
+	bool finished;
+
+	if (!unknown_bool_14BD && has) {
+		FUN_007529E0();
+	}
+
+	if (FullRedraw == true && !unknown_bool_14BD) {
+		ConvertClass * drawer = FUN_0072F510();
+		Draw_Shape(*DAT_00887300, *drawer, (ShapeSet const *)DAT_00B04A38, 32, Point2D(RadX, RadWidth), DAT_00887300->Get_Rect());
+		LastDrawRect = Rect(RadX, RadWidth, DAT_007F5BF8, 110);
+		DebugString("Radar: Movie full redrawn\n");
+	}
+
+	if (has) {
+		if (IngameVQ.Count() > 0 && (movie = IngameVQ[0]) != NULL) {
+			if (movie->AdvanceFrame() == true) {
+				LastDrawRect = Rect(RadX, RadWidth, DAT_007F5BF8, 110);
+			}
+			finished = movie->FramesLeft();
+			hold = movie->State;
+		} else {
+			finished = true;
+		}
+	} else {
+		finished = false;
+	}
+
+	if (finished == true) {
+		if (movie != NULL) {
+			IngameVQ.Delete(movie);
+			delete movie;
+		}
+		has = IngameVQ.Count() != 0;
+		if (has) {
+			DebugString("Radar: Next movie.\n");
+			unknown_14C0.EndLooping();
+			unknown_14C0.SetEvent((AudioEvent *)VocClass::PlayGlobal(Rule->MovieOn, 1.0f, 0x2000), NULL);
+			RadarState = RSTATE_NEXT_MOVIE;
+			RadarAnimFrame = RADAR_ACTIVATED_FRAME;
+		}
+	}
+
+	IsToRedraw = false;
+
+	if (!has) {
+		DebugString("Radar: Movie done.\n");
+		RadarState = RSTATE_MOVIE_DONE;
+		Radar_Activate(SuspendedRadarMode, false);
+		FUN_005BF530();
+		hold = has;
+		unknown_14C0.EndLooping();
+		unknown_14C0.SetEvent((AudioEvent *)VocClass::PlayGlobal(Rule->MovieOff, 1.0f, 0x2000), NULL);
+		FUN_0055AF40(Rule->DetailMinFrameRateNormal);
+		IsToRedraw = true;
+	}
+
+	unknown_bool_14BD = !finished;
+	if (unknown_bool_14BC != hold) {
+		if (hold) {
+			Hold_Scenario(0);
+			unknown_bool_14BC = true;
+		} else {
+			Release_Scenario();
+			unknown_bool_14BC = false;
+		}
+	}
+}
+
+// FUNCTION: 0x00657CE0
+void RadarClass::Complete_Radar_Refresh(void)
+{
+	if (MainWindow == NULL) {
+		RadarSurface->Blit_From(RadarSurface->Get_Rect(), *BackgroundSurface, BackgroundSurface->Get_Rect());
+		Render_Tracked_Objects();
+	} else {
+		int width = RadarSurface->Get_Width();
+		int height = RadarSurface->Get_Height();
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				Plot_Radar_Pixel(Point2D(x, y));
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x00658640
+void RadarClass::FUN_00658640(HWND dialog)
+{
+	int local = -1;
+	int count = Houses.Count();
+	for (int i = 0; i < count; i++) {
+		HouseClass * house = Houses[i];
+		if (house) {
+			if (house->Is_Player_Control()) {
+				local = i;
+			} else if (house->Class->IsMultiplayPassive) {
+				continue;
+			}
+			FUN_00658330(dialog, i, house);
+		}
+	}
+	HouseClass * player = Houses[local];
+	HouseClass * first = Houses[0];
+	FUN_00658330(dialog, 0, player);
+	FUN_00658330(dialog, local, first);
+}
+
+namespace UI {
+	HWND __fastcall BeginDialog(int resource, WNDPROC proc, int param);
+	void __fastcall FocusOnWindow(HWND window);
+	void __fastcall EndDialog(HWND window);
+	bool Updated(void);
+}
+class InputManagerClass {
+	public:
+		void DoSomething(void);
+		static InputManagerClass * Instance;
+};
+extern bool UserInputLocked;
+#include "scenario.h"
+LRESULT CALLBACK FUN_00657DA0(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+
+// FUNCTION: 0x006586D0
+void FUN_006586D0(void)
+{
+	int result;
+
+	HWND dialog = UI::BeginDialog(0x73, FUN_00657DA0, 0);
+	UserInputLocked = true;
+	InputManagerClass::Instance->DoSomething();
+	if (dialog) {
+		SetWindowLong(dialog, DWL_USER, (LONG)&result);
+		UI::FocusOnWindow(dialog);
+		result = 0;
+		while (true) {
+			if (UI::Updated()) {
+				result = 0x423;
+				break;
+			}
+			if (result) {
+				break;
+			}
+		}
+		UI::EndDialog(dialog);
+	}
+	InputManagerClass::Instance->DoSomething();
+	UserInputLocked = Scen->IsInputLocked;
+	Map.Flag_To_Redraw(GS_REDRAW_ALL);
+}
+
+// FUNCTION: 0x00658770
+char const * RadarClass::Help_Text(int id)
+{
+	return(BASECLASS::Help_Text(id));
+}
+
+// FUNCTION: 0x00658780 RadarClass::RTacticalClass::~RTacticalClass

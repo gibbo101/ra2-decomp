@@ -41,6 +41,12 @@ class AnimClass;
 class BombClass;
 class LineTrail;
 
+enum HealthState {
+	HEALTH_RED = 0,
+	HEALTH_YELLOW = 1,
+	HEALTH_GREEN = 2,
+};
+
 #pragma warning(push)
 #pragma warning(disable:4716)
 class ObjectClass : public AbstractClass
@@ -158,8 +164,8 @@ class ObjectClass : public AbstractClass
 		virtual bool Occupies_Cells(void) const {return(true);}
 		virtual bool IsDisguised(void) const {return(false);}
 		virtual bool IsDisguisedAs(HouseClass * house) const {return(false);}
-		virtual ObjectTypeClass * GetDisguise(bool against_allies) const;
-		virtual HouseClass * GetDisguiseHouse(bool against_allies) const;
+		virtual ObjectTypeClass * GetDisguise(bool against_allies) const {return(0);}
+		virtual HouseClass * GetDisguiseHouse(bool against_allies) const {return(0);}
 
 		int Distance(AbstractClass const * target) const;
 		bool IsCrushable(TechnoClass * crusher) const;
@@ -195,6 +201,7 @@ class ObjectClass : public AbstractClass
 		bool Is_Red_HP(void) const;
 		bool Is_Yellow_HP(void) const;
 		bool Is_Green_HP(void) const;
+		HealthState GetHealthStatus(void) const;
 
 		__declspec( property( get=Get_Health_Ratio, put=Set_Health_Ratio ) ) double HealthRatio;
 
@@ -208,7 +215,7 @@ class ObjectClass : public AbstractClass
 
 		virtual Rect Get_Visual_Rect(void) const;
 		virtual Rect Get_Render_Rect(void);
-		virtual void Draw_Radial_Indicator(void) const {};
+		virtual void Draw_Radial_Indicator(DWORD) {}
 
 	private:
 		virtual void Mark_For_Redraw(void);
@@ -281,6 +288,7 @@ class ObjectClass : public AbstractClass
 		virtual bool IsNotWarping(void) const;
 		virtual void * GetRemapColour(void) const;
 		void Set_Height(int height);
+		void FUN_005F6CB0(int sound);
 
 		__declspec( property( get=Get_Height, put=Set_Height ) ) int Height;
 

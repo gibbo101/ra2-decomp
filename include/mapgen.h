@@ -137,11 +137,11 @@ public:
 
 		void Build_Neighbor_Regions(void);
 		void Make_Region_Connections(void);
-		unsigned Build_Neighbor_Region_Mask(Cell const & cell, bool & valid, int unknown);
+		unsigned Build_Neighbor_Region_Mask(Cell const & cell, bool & valid, int unknown, float threshold);
 		bool Connect_Regions_With_Bridge(MapRegionClass * region1, MapRegionClass * region2);
 		bool Is_Bridge_Allowed(Rect const & rect) const;
 		bool Place_Bridge_Hut(Rect const & rect) const;
-		bool Connect_Regions_With_Ramp(Cell const & cell, int region_id, bool allow_fallback);
+		bool Connect_Regions_With_Ramp(Cell const & cell, int region_id, float threshold);
 		bool Build_South_Ramp(Cell const & cell1, Cell const & cell2, int region_id);
 		bool Build_East_Ramp(Cell const & cell1, Cell const & cell2, int region_id);
 		bool Build_North_Ramp(Cell const & cell1, Cell const & cell2, int region_id);
@@ -406,6 +406,8 @@ inline bool My_In_Radar(Cell const &cell)
 			y - x < MapRegionClass::MapStartDiagonal &&
 			y + x <= MapRegionClass::MapEndDiagonal) ? true : false;
 }
+
+void Create_Zone_Region(CellClass *cptr, MZoneType mzone, int zone);
 
 void Do_Random_Map(HWND, bool (*callback)());
 int Do_Random_Map_Dialog(bool (*callback)());

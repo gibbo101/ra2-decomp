@@ -139,7 +139,7 @@ class FootClass : public TechnoClass
 		virtual int Do_MISSION_UNLOAD(void) override;
 		virtual Cell GetLastFlightMapCoords(void) const override;
 		virtual void SetLastFlightMapCoords(Cell coord) override;
-		virtual Cell ScanForTiberium(Cell * buffer, int range, unsigned unk) const override;
+		virtual Cell ScanForTiberium(int range, unsigned unk) override;
 		virtual bool EnterGrinder(void) override;
 		virtual bool EnterBioReactor(void) override;
 		virtual bool EnterTankBunker(void) override;
@@ -251,7 +251,7 @@ class FootClass : public TechnoClass
 		virtual void AI(void) override;
 		virtual void Sell_Back(int control) override;
 		virtual void Set_Waypoint_Path(PathType path, char index) override;
-		void Execute_Waypoint_Path(WaypointClass * waypoint);
+		bool Execute_Waypoint_Path(WaypointClass * waypoint);
 		virtual AbstractClass * Greatest_Threat(ThreatType threat, Coord const & coord, bool) const override;
 		virtual void Detach(AbstractClass const * target, bool all) override;
 		virtual void Detach_All(bool all=true) override;
@@ -292,7 +292,7 @@ class FootClass : public TechnoClass
 		Cell Safety_Point(Cell const & src, Cell const & dst, int start, int max);
 		int Rescue_Mission(AbstractClass * tarcom);
 		bool Tiberium_Check(Cell & center);
-		bool Goto_Tiberium(int rad, bool allow_weighted = false);
+		bool Goto_Tiberium(int rad, unsigned allow_weighted = false);
 		Cell Search_For_Tiberium(int rad, bool allow_weighted = false);
 		Cell Search_For_Tiberium_Weighted(int rad);
 

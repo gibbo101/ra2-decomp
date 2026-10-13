@@ -1519,10 +1519,233 @@ bool HouseClass::Flag_To_Lose(bool silent)
 	return(IsToLose);
 }
 
+// FUNCTION: 0x004FCDC0
+void HouseClass::Flag_To_End(void)
+{
+	if (!IsToLose && !IsToWin) {
+		Flag_To_Win();
+	} else {
+		BorrowedTime.Start();
+	}
+}
+
+// FUNCTION: 0x004FCE00
+void HouseClass::Init_Data(int color, HousesType house, int credits)
+{
+	Credits = Control.InitialCredits = credits;
+	Class->Scheme = color;
+	Scheme = color;
+}
+
+// FUNCTION: 0x004FCE30
+double HouseClass::Power_Fraction(void) const
+{
+	if (Power >= Drain || Drain == 0) return(1);
+
+	if (Power) {
+		return((float)Power / (float)Drain);
+	}
+	return(0);
+}
+
+// FUNCTION: 0x004FCE80
+void HouseClass::Sell_Wall(Cell const & cell, bool quiet)
+{
+	if (cell != CELL_NONE) {
+		CellClass const & cptr = Map[cell];
+		OverlayType overlay = cptr.Overlay;
+
+		if (overlay != OVERLAY_NONE) {
+			HousesType owner = cptr.Owner;
+
+			if (owner != HOUSE_NONE && Houses[owner]->Is_Human_Player()) {
+				OverlayTypeClass const * optr = OverlayTypes[overlay];
+
+				if (optr->IsWall) {
+					BuildingTypeClass const * btype = NULL;
+					for (int i = 0; i < BuildingTypes.Count(); i++) {
+						if (BuildingTypes[i]->ToOverlay == optr) {
+							btype = BuildingTypes[i];
+							break;
+						}
+					}
+
+					if (btype != NULL && !btype->IsUnsellable) {
+
+						if (PlayerPtr == this && !quiet) {
+							VocClass::PlayGlobal(Rule->SellSound, 1.0f, 0x2000);
+						}
+
+						btype->Cost_Of(this);
+						Map[cell].Overlay = OVERLAY_NONE;
+						Map[cell].OverlayData = 0;
+						Map[cell].Owner = HOUSE_NONE;
+						Map[cell].Recalc_Attributes();
+						Map[cell].Wall_Update();
+						Map.Radar_Background(cell);
+						Map[cell].BecomeUntargetable();
+						Map.Update_Cell_Zone(cell);
+						Map.Update_Cell_Subzones(cell);
+					}
+				}
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x004FD040
+BuildingTypeClass const * HouseClass::Suggest_New_Building(void) const
+{
+	if (BuildStructure != STRUCT_NONE) {
+		return(BuildingTypes[BuildStructure]);
+	}
+	return(NULL);
+}
+
+// FUNCTION: 0x004FD060
+BuildingClass * HouseClass::Find_Building(StructType type, ZoneType zone) const
+{
+	if (BQuantity.Value(type) > 0) {
+		int count = Buildings.Count();
+		for (int index = 0; index < count; index++) {
+			BuildingClass * b = Buildings[index];
+			if (b && !b->IsInLimbo && BuildingTypes.ID(b->Class) == type) {
+				if (zone == ZONE_NONE || Which_Zone(b->Center_Coord()) == zone) {
+					return(b);
+				}
+			}
+		}
+	}
+	return(NULL);
+}
+
 // FUNCTION: 0x004FD120
 Coord HouseClass::Find_Build_Location(BuildingClass * building) const
 {
 	return(COORD_NONE);
+}
+
+// FUNCTION: 0x004FD940
+UrgencyType HouseClass::Check_Fire_Sale(void)
+{
+	if (State != STATE_ATTACKED) {
+		for (int i = 0; i < Buildings.Count(); i++) {
+			BuildingClass * bptr = Buildings[i];
+			if (bptr != NULL && bptr->IsActive && !bptr->IsInLimbo && bptr->Class->ToBuild != RTTI_NONE) {
+				return(URGENCY_NONE);
+			}
+		}
+		return(URGENCY_CRITICAL);
+	}
+	return(URGENCY_NONE);
+}
+
+// FUNCTION: 0x004FDCE0
+bool HouseClass::AI_Fire_Sale(UrgencyType urgency)
+{
+	if (urgency == URGENCY_CRITICAL) {
+		Fire_Sale();
+		All_To_Hunt();
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x004FEA60
+int HouseClass::AI_Unit(void)
+{
+	if (BuildUnit != UNIT_NONE) return(TICKS_PER_SECOND);
+
+	UnitTypeClass const * harvtype = First_Ownable(this, Rule->HarvesterUnit);
+	if (harvtype != NULL) {
+		int gatherers = CountResourceGatherers;
+		int wanted = Rule->HarvestersPerRefinery[Difficulty] * CountResourceDestinations;
+		if (FirstBuildableFromArray(Rule->BuildRefinery) == NULL) {
+			wanted = Rule->AISlaveMinerNumber[Difficulty];
+		}
+		if (IQ >= Rule->IQHarvester && !IsTiberiumShort && !Is_Human_Player() && wanted > gatherers) {
+			if ((unsigned int)harvtype->Level <= (unsigned int)Control.TechLevel) {
+				BuildUnit = harvtype->HeapID;
+				return(TICKS_PER_SECOND);
+			}
+		}
+	} else if (CountResourceGatherers < Rule->AISlaveMinerNumber[Difficulty]) {
+		BuildingTypeClass const * ref = (BuildingTypeClass const *)FirstBuildableFromArray(Rule->BuildRefinery);
+		if (ref != NULL && ref->UndeploysInto != NULL) {
+			BuildUnit = ref->UndeploysInto->HeapID;
+			return(TICKS_PER_SECOND);
+		}
+	}
+
+	int i;
+	int counter[100];
+	int value[ARRAY_SIZE(counter)];
+	memset(counter, 0x00, sizeof(counter));
+	for (i = 0; i < ARRAY_SIZE(value); i++) {
+		value[i] = 0x7FFFFFFF;
+	}
+
+	for (i = 0; i < Teams.Count(); i++) {
+		TeamClass * tptr = Teams[i];
+		if (tptr != NULL) {
+
+			int val = tptr->CreationFrame;
+
+			if (((tptr->Class->IsReinforcable && !tptr->IsFullStrength) || (!tptr->IsForcedActive && !tptr->IsHasBeen)) && tptr->House == this) {
+				TEAM_MEMBER_LIST _members;
+				tptr->Team_Members(_members);
+
+				for (int subindex = 0; subindex < _members.Count(); subindex++) {
+
+					UnitTypeClass const * memtype = (UnitTypeClass const *)_members[subindex];
+
+					if (memtype->RTTI == RTTI_UNITTYPE) {
+						counter[memtype->HeapID]++;
+						if (val < value[memtype->HeapID]) {
+							value[memtype->HeapID] = val;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	for (int oindex = 0; oindex < Units.Count(); oindex++) {
+		UnitClass * obj = Units[oindex];
+		if (obj != NULL && counter[obj->Class->HeapID] > 0 && obj->Is_Recruitable(this)) {
+			counter[obj->Class->HeapID]--;
+		}
+	}
+
+	int bestval = -1;
+	int bestcount = 0;
+	UnitType lasttype = UNIT_NONE;
+	int lastval = 0x7FFFFFFF;
+	UnitType bestlist[ARRAY_SIZE(counter)];
+	for (UnitType type = UnitType(0); type < UnitTypes.Count(); type++) {
+		if (counter[type] > 0 && Can_Build(UnitTypes[type], false, false) && UnitTypes[type]->Cost_Of(this) <= Available_Money()) {
+			if (bestval == -1 || bestval < counter[type]) {
+				bestval = counter[type];
+				bestcount = 0;
+			}
+			bestlist[bestcount++] = type;
+
+			if (lasttype == UNIT_NONE || value[type] < lastval) {
+				lasttype = type;
+				lastval = value[type];
+			}
+		}
+	}
+
+	if (Random_Double(0, 0x7FFFFFFE) < Rule->FillEarliestTeamProbability[Difficulty] / 100.0) {
+		BuildUnit = lasttype;
+	} else {
+		if (bestcount) {
+			BuildUnit = bestlist[Random_Pick(0, bestcount-1)];
+		}
+	}
+
+	return(TICKS_PER_SECOND);
 }
 
 // FUNCTION: 0x004FFD90

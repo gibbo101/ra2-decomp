@@ -5,6 +5,7 @@
 
 #define INCLUDE_COM
 #include "always.h"
+#include "geometry.h"
 #include "teamtype.h"
 #include "_rules.h"
 #include "aitrig.h"
@@ -600,3 +601,18 @@ template class DynamicVectorClass<TeamTypeClass const *>;
 template class VectorClass<TRIGGER_DIST_OBJ>;
 
 // FUNCTION: 0x006F2440 ?$VectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@::ID
+
+// FUNCTION: 0x006F2490 ?$DynamicVectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@::ID
+// FUNCTION: 0x006F24B0 ?$DynamicVectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@::Resize
+// FUNCTION: 0x006F25E0 ?$DynamicVectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@::Add
+// FUNCTION: 0x006F2640 ?$DynamicVectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@::ID
+// FUNCTION: 0x006F25D0 ?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@::~?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@
+// FUNCTION: 0x006F2680 ?$DynamicVectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@::~?$DynamicVectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@
+// FUNCTION: 0x006F26E0 ?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@::~?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@
+// FUNCTION: 0x006F2720 ?$VectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@::~?$VectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@
+// FUNCTION: 0x006F2780 ?$VectorClass@PBVTeamTypeClass@@::operator=
+template class VectorClass<TeamTypeClass const *>;
+// FUNCTION: 0x006F27F0 ?$VectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@::?$VectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@
+
+// FUNCTION: 0x006F28A0 $E2
+// FUNCTION: 0x006F28D0 $E5

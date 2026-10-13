@@ -539,6 +539,168 @@ int IsometricTileTypeClass::Ramp_Type(int tile) const
 	return(0);
 }
 
+// FUNCTION: 0x00549830
+bool IsometricTileTypeClass::Get_Tile_Image(int tilenum, unsigned char **buffer, int width, int height)
+{
+	#define __ "\x20"
+	#define XX "\xDB"
+
+	static unsigned char _tilemask[] = {
+		__ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ XX XX XX XX __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __
+		__ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ XX XX XX XX XX XX XX XX __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __
+		__ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ XX XX XX XX XX XX XX XX XX XX XX XX __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __
+		__ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __
+		__ __ __ __ __ __ __ __ __ __ __ __ __ __ XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX __ __ __ __ __ __ __ __ __ __ __ __ __ __
+		__ __ __ __ __ __ __ __ __ __ __ __ XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX __ __ __ __ __ __ __ __ __ __ __ __
+		__ __ __ __ __ __ __ __ __ __ XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX __ __ __ __ __ __ __ __ __ __
+		__ __ __ __ __ __ __ __ XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX __ __ __ __ __ __ __ __
+		__ __ __ __ __ __ XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX __ __ __ __ __ __
+		__ __ __ __ XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX __ __ __ __
+		__ __ XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX __ __
+		XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX
+		__ __ XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX __ __
+		__ __ __ __ XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX __ __ __ __
+		__ __ __ __ __ __ XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX __ __ __ __ __ __
+		__ __ __ __ __ __ __ __ XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX __ __ __ __ __ __ __ __
+		__ __ __ __ __ __ __ __ __ __ XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX __ __ __ __ __ __ __ __ __ __
+		__ __ __ __ __ __ __ __ __ __ __ __ XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX __ __ __ __ __ __ __ __ __ __ __ __
+		__ __ __ __ __ __ __ __ __ __ __ __ __ __ XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX __ __ __ __ __ __ __ __ __ __ __ __ __ __
+		__ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __
+		__ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ XX XX XX XX XX XX XX XX XX XX XX XX __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __
+		__ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ XX XX XX XX XX XX XX XX __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __
+		__ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ XX XX XX XX __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __
+		__ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __
+	};
+
+	#undef __
+	#undef XX
+
+	int tilew = 0;
+	int tileh = 0;
+	memset(*buffer, 0, width * height);
+	IsoTileSet *isotile = (IsoTileSet *)Get_Image_Data();
+
+	if (isotile != NULL) {
+		tilenum = tilenum % isotile->Tile_Count();
+		const IsoTileRecord *record = ((const IsoTileRecord *)isotile->Fetch_Record_Pointer_Unsafe(tilenum));
+
+		if (record != NULL) {
+			Get_Tile_Pixel_Dimensions(tilenum, tilew, tileh);
+
+			if (tilew <= width && tileh <= height) {
+
+				unsigned char *buf = *buffer;
+				unsigned char *end = &(*buffer)[width * height];
+
+				if (record->IsHasExtraData) {
+					buf += width * (record->Y - record->ExtraY);
+					if (buf >= end) {
+						return(false);
+					}
+				}
+
+				unsigned char *mask = _tilemask;
+				unsigned char *image = (unsigned char *)(record + 1);
+
+				for (int py = 0; py < isotile->Pixel_Height(); py++) {
+					for (int px = 0; px < isotile->Pixel_Width(); px++) {
+
+						if (*mask++ != '\x20') {
+							*buf = *image;
+							image++;
+						}
+
+						buf++;
+						if (buf >= end) {
+							return(false);
+						}
+					}
+
+					buf += width - isotile->Pixel_Width();
+					if (buf >= end) {
+						return(false);
+					}
+				}
+
+				if (record->IsHasExtraData) {
+
+					buf = &(*buffer)[record->ExtraX - record->X];
+					if (buf >= end) {
+						return(false);
+					}
+
+					unsigned char *extraimage = (unsigned char *)record + record->ExtraOffset;
+
+					for (int ey = 0; ey < record->ExtraHeight; ey++) {
+						for (int ex = 0; ex < record->ExtraWidth; ex++) {
+							if (*extraimage != 0) {
+								*buf = *extraimage;
+							}
+							buf++;
+							extraimage++;
+							if (buf >= end) {
+								return(false);
+							}
+
+						}
+
+						buf += width - record->ExtraWidth;
+						if (buf >= end) {
+							return(false);
+						}
+
+					}
+				}
+				return(true);
+			}
+		}
+		return(false);
+	}
+
+	return(true);
+}
+
+// FUNCTION: 0x00549A00
+void World_To_Screen(int x, int y, int & xx, int & yy)
+{
+	xx = x * 60 / 2;
+	yy = x * 30 / 2;
+	xx += y * 60 / -2;
+	yy += y * 30 / 2;
+}
+
+// FUNCTION: 0x00549A60
+int IsometricTileTypeClass::Get_Y_Offset(int tile)
+{
+	IsoTileSet const * tileset = (IsoTileSet const *)Get_Image_Data();
+	if (tileset != NULL && tile < tileset->Tile_Count()) {
+		IsoTileRecord const * record = tileset->Tiles[tile];
+		if (record != NULL) {
+			if ((record->IsHasExtraData) != 0) {
+				return(record->ExtraY - record->Y);
+			}
+		}
+	}
+
+	return(0);
+}
+
+// FUNCTION: 0x00549AA0
+bool IsometricTileTypeClass::Create_And_Place(Cell const & cell, HouseClass * house) const
+{
+	if (new IsometricTileClass(HeapID, cell)) {
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00549AE0
+ObjectClass * IsometricTileTypeClass::Create_One_Of(HouseClass * house) const
+{
+	((IsometricTileTypeClass *)this)->Load_Tile_Image();
+	return(new IsometricTileClass(HeapID, CELL_NONE));
+}
+
 // FUNCTION: 0x00549B30
 void IsometricTileTypeClass::Clear_Z_Shapes(void)
 {
@@ -553,6 +715,55 @@ void IsometricTileTypeClass::Clear_Z_Shapes(void)
 Coord const IsometricTileTypeClass::Coord_Fixup(Coord const & coord) const
 {
 	return(coord);
+}
+
+// FUNCTION: 0x00549B70
+void IsometricTileTypeClass::Compute_CRC(CRCEngine & crc) const
+{
+	BASECLASS::Compute_CRC(crc);
+	crc(HeapID);
+	crc(MarbleMadness);
+	crc(NonMarbleMadness);
+	crc(TileSetBaseID);
+	crc(PreviewTiles.Count());
+	if (NextTileTypeInSet != NULL) {
+		crc(NextTileTypeInSet->Fetch_ID());
+	}
+	crc(ToSnowTheater);
+	crc(ToTemperateTheater);
+	crc(AttachesTo);
+	crc(ZAdjust);
+	crc(Unused1);
+	crc(IsMorphable);
+	crc(IsShadowCaster);
+	crc(Width);
+	crc(Height);
+	crc(Unused2);
+	crc(NumTileTypesInSet);
+}
+
+// FUNCTION: 0x00549C80
+HRESULT STDMETHODCALLTYPE IsometricTileTypeClass::Load(IStream * stream)
+{
+	int i;
+	int j;
+	for (i = 0; i < TileDrawers.Count(); i++) {
+		delete TileDrawers[i];
+		TileDrawers[i] = NULL;
+	}
+
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		new (this) IsometricTileTypeClass(NoInitClass());
+
+		Swizzle_Pointer(&NextTileTypeInSet);
+		for (j = 0; j < TileDrawers.Count(); j++) {
+			TileDrawers[j] = NULL;
+		}
+		Build_Preview_Tiles();
+		return(S_OK);
+	}
+	return(result);
 }
 
 // FUNCTION: 0x00549D70
@@ -571,4 +782,22 @@ HRESULT STDMETHODCALLTYPE IsometricTileTypeClass::GetClassID(CLSID * retval)
 	if (retval == NULL) return(E_POINTER);
 	*retval = CLSID_IsometricTileTypeClass;
 	return(S_OK);
+}
+
+// FUNCTION: 0x00549DD0
+void IsometricTileTypeClass::Detach(AbstractClass const * target, bool all)
+{
+	if (NextTileTypeInSet == target) {
+		NextTileTypeInSet = NULL;
+	}
+
+	if (Anim != ANIM_NONE && AnimTypes[Anim] == target) {
+		Anim = ANIM_NONE;
+	}
+}
+
+// FUNCTION: 0x00549E20
+unsigned short IsometricTileTypeClass::Preview_Tile_Color(int tile, int level, bool use_high_color)
+{
+	return(PreviewTiles[tile][(use_high_color ? 1 : 0) + level * 2]);
 }

@@ -13,6 +13,7 @@
 #include "_rules.h"
 #include "_tactica.h"
 #include "_weapon.h"
+#include "_xmouse.h"
 #include "anim.h"
 #include "blight.h"
 #include "building.h"
@@ -90,6 +91,17 @@ inline HouseClass * Find_House(TriggerClass * trig, int index)
 }
 
 DynamicVectorClass<TActionClass *> Actions;
+
+void __fastcall FUN_0072DDB0(void);
+void __fastcall FUN_0072DEF0(void);
+void __fastcall FUN_006842F0(bool enable);
+void __fastcall FUN_005BF260(VQType movie, ThemeType theme, bool a, bool b, bool c);
+void __fastcall FUN_00750F40(Coord const * coord, int mask);
+void __fastcall FUN_005BF390(VQType movie, bool pause);
+
+extern Cell DAT_00B0E680;
+extern wchar_t DAT_00887734[];
+extern char DAT_00889F64[];
 
 extern DynamicVectorClass<TechnoClass *> DAT_00A8EC78;
 #define Technos DAT_00A8EC78
@@ -871,6 +883,145 @@ bool TActionClass::TAction_ADD_TIMER(HouseClass * , ObjectClass * , TriggerClass
 {
 	Scen->MissionTimer = Scen->MissionTimer + Data.Value * TICKS_PER_SECOND;
 	Map.Redraw_Tab();
+	return(true);
+}
+
+// FUNCTION: 0x006E14A0
+bool TActionClass::TAction_SUB_TIMER(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	if (Scen->MissionTimer <= Data.Value * TICKS_PER_SECOND) {
+		Scen->MissionTimer = 0;
+	} else {
+		Scen->MissionTimer = Scen->MissionTimer - Data.Value * TICKS_PER_SECOND;
+	}
+	Map.Redraw_Tab();
+	return(true);
+}
+
+// FUNCTION: 0x006E1530
+bool TActionClass::TAction_SET_TIMER(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	Scen->MissionTimer = Data.Value * TICKS_PER_SECOND;
+	Scen->MissionTimer.Start();
+	Scen->MissionTimerTextCSF = DAT_00887734;
+	Scen->MissionTimerText = MissionTimerString(DAT_00889F64);
+	Map.Redraw_Tab();
+	return(true);
+}
+
+// FUNCTION: 0x006E15F0
+bool TActionClass::TAction_SET_TIMER_TEXT(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	char const * text = Text[0] ? Text : NULL;
+	MissionTimerString label(text);
+	if (text) {
+		Scen->MissionTimerTextCSF = StringTable::LoadString(text, NULL, "D:\\ra2mdpost\\TAction.CPP", 2242);
+		Scen->MissionTimerText = label;
+	} else {
+		Scen->MissionTimerTextCSF = DAT_00887734;
+		Scen->MissionTimerText = MissionTimerString(DAT_00889F64);
+	}
+	Map.Redraw_Tab();
+	return(true);
+}
+
+// FUNCTION: 0x006E16D0
+bool TActionClass::TAction_PLAY_MOVIE(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	FUN_0072DDB0();
+	MouseCursor->Release_Mouse();
+	FUN_006842F0(false);
+	FUN_005BF260(Data.Movie, THEME_NONE, true, true, true);
+	FUN_006842F0(true);
+	MouseCursor->Capture_Mouse();
+	FUN_0072DEF0();
+	return(true);
+}
+
+// FUNCTION: 0x006E1720
+bool TActionClass::TAction_PLAY_INGAME_MOVIE(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	FUN_005BF390(Data.Movie, false);
+	return(true);
+}
+
+// FUNCTION: 0x006E1740
+bool TActionClass::TAction_PLAY_INGAME_MOVIE_PAUSE(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	FUN_005BF390(Data.Movie, true);
+	return(true);
+}
+
+// FUNCTION: 0x006E1760
+bool TActionClass::TAction_PLAY_SOUND(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	VocClass::PlayGlobal(Data.Sound, 1.0f, 0x2000);
+	return(true);
+}
+
+// FUNCTION: 0x006E1780
+bool TActionClass::TAction_PLAY_SOUND_RANDOM(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	Cell list[100];
+	int count = 0;
+
+	for (int index = 0; index < WAYPT_COUNT; index++) {
+		if (Scen->Is_Valid_Waypoint(index)) {
+			list[count++] = Scen->Get_Waypoint_Cell(index);
+			if (count == sizeof(list)) break;
+		}
+	}
+
+	VocClass::PlayIndexAtPos(Data.Sound, Coord(list[Random_Pick(0, count-1)]), 0);
+	return(true);
+}
+
+// FUNCTION: 0x006E1830
+ObjectClass * __fastcall Coord_Object(Coord const & coord)
+{
+	Cell cell = Cell(coord);
+	ObjectClass * object = NULL;
+	if (cell != DAT_00B0E680) {
+		CellClass * cellptr = &Map[cell];
+		object = cellptr->Cell_Building();
+		if (object == NULL) {
+			object = (ObjectClass *)cellptr->Cell_Terrain(false);
+		}
+	}
+	return(object);
+}
+
+// FUNCTION: 0x006E18B0
+bool TActionClass::TAction_PLAY_SOUND_AT(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	Coord coord = Scen->Get_Waypoint_Coord(EffectLocation);
+	ObjectClass * object = Coord_Object(coord);
+	if (object != NULL) {
+		object->FUN_005F6CB0(Data.Sound);
+	} else {
+		VocClass::PlayIndexAtPos(Data.Sound, coord, 1);
+	}
+	return(true);
+}
+
+// FUNCTION: 0x006E1980
+bool TActionClass::TAction_STOP_SOUND_AT(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	Coord coord = Scen->Get_Waypoint_Coord(EffectLocation);
+	ObjectClass * object = Coord_Object(coord);
+	if (object != NULL) {
+		object->FUN_005F6CB0(-1);
+	} else {
+		FUN_00750F40(&coord, 1);
+	}
+	return(true);
+}
+
+// FUNCTION: 0x006E1A40
+bool TActionClass::TAction_TELEPORT_HOUSE(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
+{
+	Cell cell = Scen->Get_Waypoint_Cell(EffectLocation);
+	house->FUN_0050D6D0(cell);
 	return(true);
 }
 

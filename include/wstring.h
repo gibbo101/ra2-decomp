@@ -41,7 +41,10 @@ public:
 	char			set(char c, unsigned int index);
 	void			setSize(int bytes);
 	void			toLower(void);
+	Wstring			toLower(void) const;
 	void			toUpper(void);
+	Wstring			toUpper(void) const;
+	int				toInt(void) const;
 	char			truncate(unsigned int len);
 	char			truncate(char c);
 	int				getToken(int offset, char const* delim, Wstring& out) const;
@@ -62,3 +65,7 @@ public:
 private:
 	char*			str;
 };
+
+Wstring Wstring_FromInt(int value);
+Wstring Wstring_FromInt(int value, int width);
+Wstring operator+(char const* a, Wstring const& b);

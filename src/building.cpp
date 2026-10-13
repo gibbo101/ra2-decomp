@@ -1750,32 +1750,6 @@ static inline void Replay_Anim(BuildingClass * building, BAnimType anim, bool da
 	}
 }
 
-void BuildingClass::Set_Anim_Damage_State(bool damaged)
-{
-	if (IsDamagedAnims != damaged) {
-		IsDamagedAnims = damaged;
-		for (int i = 0; i < BANIM_COUNT; i++) {
-			if (Anims[i] != NULL) {
-				PlayNthAnim((BAnimType)i, damaged, false);
-			}
-		}
-	}
-}
-
-void BuildingClass::Set_Anim_Translucency(int translucency)
-{
-	int trans = translucency;
-	if (trans == 15 && Visual_Character() == VISUAL_HIDDEN) {
-		trans = 16;
-	}
-
-	for (int i = 0; i < BANIM_COUNT; i++) {
-		if (Anims[i] != NULL) {
-			Anims[i]->TranslucencyLevel = trans;
-		}
-	}
-}
-
 // FUNCTION: 0x0044E8F0
 void BuildingClass::Detach(AbstractClass const * target, bool all)
 {
@@ -2407,6 +2381,235 @@ void BuildingClass::PlayAnim(char const * name, BAnimType anim, bool damaged, bo
 		}
 
 		Warp_Pause(this, animptr);
+	}
+}
+
+// FUNCTION: 0x00451B40
+void BuildingClass::Detach_Anim(AnimClass * anim)
+{
+	if (IsActive) {
+		for (int i = 0; i < BANIM_COUNT; i++) {
+			if (Anims[i] == anim) {
+				Anims[i] = NULL;
+				switch (i) {
+					case BANIM_SPECIAL_ONE:
+						if (Class->IsCanUnitRepair) {
+							if (HasAnyLink() && Mission == MISSION_REPAIR) {
+								Replay_Anim(this, BANIM_SPECIAL_TWO, HealthRatio <= Rule->ConditionYellow);
+							} else {
+								Replay_Anim(this, BANIM_IDLE, HealthRatio <= Rule->ConditionYellow);
+							}
+						} else if (Class->IsAnimDelayedFire && anim->TimeToDie) {
+							Begin_Anim(BANIM_ACTIVE_ONE, HealthRatio <= Rule->ConditionYellow);
+						}
+						break;
+
+					case BANIM_SPECIAL_THREE:
+						if (Class->IsCanUnitRepair && anim->TimeToDie) {
+							Replay_Anim(this, BANIM_IDLE, HealthRatio <= Rule->ConditionYellow);
+						}
+						break;
+
+					case BANIM_SUPER_TWO:
+						if (anim->TimeToDie) {
+							Replay_Anim(this, BANIM_SUPER_THREE, HealthRatio <= Rule->ConditionYellow);
+						}
+						break;
+
+					case BANIM_SUPER_FOUR:
+						if (anim->TimeToDie) {
+							Replay_Anim(this, BANIM_SUPER_ONE, HealthRatio <= Rule->ConditionYellow);
+						}
+						break;
+				}
+				break;
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x00451E40
+void BuildingClass::DestroyNthAnim(BAnimType anim)
+{
+	if (anim == BANIM_ALL) {
+		for (int i = 0; i < BANIM_COUNT; i++) {
+			AnimClass * animation = Anims[i];
+			if (animation != NULL) {
+				Anims[i] = NULL;
+				delete animation;
+			}
+		}
+	} else {
+		AnimClass * animation = Anims[anim];
+		if (animation != NULL) {
+			Anims[anim] = NULL;
+			delete animation;
+		}
+	}
+}
+
+// FUNCTION: 0x00451EA0
+void BuildingClass::HideNthAnim(BAnimType anim)
+{
+	if (anim == BANIM_ALL) {
+		for (int i = 0; i < BANIM_COUNT; i++) {
+			if (Anims[i] != NULL) {
+				Anims[i]->Make_Invisible();
+			}
+		}
+	} else {
+		AnimClass * animation = Anims[anim];
+		if (animation != NULL) {
+			animation->Make_Invisible();
+		}
+	}
+}
+
+// FUNCTION: 0x00451EE0
+void BuildingClass::Set_Anim_Damage_State(bool damaged)
+{
+	if (IsDamagedAnims != damaged) {
+		IsDamagedAnims = damaged;
+		for (int i = 0; i < BANIM_COUNT; i++) {
+			if (Anims[i] != NULL) {
+				PlayNthAnim((BAnimType)i, damaged, false);
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x00451F60
+void BuildingClass::Set_Anim_Drawer(ConvertClass * drawer, int brightness)
+{
+	for (int i = 0; i < BANIM_COUNT; i++) {
+		AnimClass * anim = Anims[i];
+		if (anim != NULL) {
+			if (anim->Type != NULL && anim->Type->ShouldUseCellDrawer) {
+				anim->LightConvert = (LightConvertClass *)drawer;
+				anim->TintColor = brightness;
+			}
+			Set_Anim_Translucency(TranslucencyLevel);
+		}
+	}
+}
+
+// FUNCTION: 0x00452000
+void BuildingClass::Update_Anim_Appearance(void)
+{
+	ConvertClass * drawer = (ConvertClass *)GetRemapColour();
+	int cellbrightness = Get_Cell_Ptr()->Brightness;
+	int brightness = Apparent_Brightness(cellbrightness);
+	if (IsIronCurtained() || (Airstrike != NULL && Airstrike->Target == Building_Of(this))) {
+		brightness = GetEffectTintIntensity(brightness);
+	}
+	Brightness = brightness;
+	Set_Anim_Drawer(drawer, Brightness);
+	Set_Anim_Translucency(TranslucencyLevel);
+}
+
+// FUNCTION: 0x00452170
+void BuildingClass::Set_Anim_Translucency(int translucency)
+{
+	int trans = translucency;
+	if (trans == 15 && Visual_Character() == VISUAL_HIDDEN) {
+		trans = 16;
+	}
+
+	for (int i = 0; i < BANIM_COUNT; i++) {
+		if (Anims[i] != NULL) {
+			Anims[i]->TranslucencyLevel = trans;
+		}
+	}
+}
+
+// FUNCTION: 0x004521C0
+void BuildingClass::DisableTemporal(void)
+{
+	IsOn = false;
+	for (int i = 0; i < BANIM_COUNT; i++) {
+		AnimClass * anim = Anims[i];
+		if (anim != NULL) {
+			anim->Paused = true;
+			anim->Unpaused = false;
+			anim->PausedAnimFrame = anim->Animation.Fetch_Stage();
+			anim->UnderTemporal = true;
+		}
+	}
+}
+
+// FUNCTION: 0x00452210
+void BuildingClass::EnableTemporal(void)
+{
+	IsOn = true;
+	for (int i = 0; i < BANIM_COUNT; i++) {
+		AnimClass * anim = Anims[i];
+		if (anim != NULL) {
+			anim->Paused = false;
+			anim->Unpaused = true;
+			anim->UnderTemporal = false;
+		}
+	}
+}
+
+// FUNCTION: 0x00452250
+unsigned BuildingClass::vt_entry_504(void)
+{
+	return(0);
+}
+
+// FUNCTION: 0x00452260
+void BuildingClass::Turn_On(void)
+{
+	if (!IsOn && EMPLockRemaining == 0) {
+		IsOn = true;
+		IsToDisplay = true;
+		House->RecalcPower = true;
+		House->RecalcRadar = true;
+		House->IsRecalcNeeded = true;
+		IsPoweredOn = true;
+
+		if (LightSource) {
+			LightSource->Enable();
+		}
+
+		if (Class->IsLaserFencePost) {
+			Toggle_Laser_Fence_Post(false);
+		}
+
+		for (int i = 0; i < BANIM_COUNT; i++) {
+			if (Class->AnimData[i].Powered && Anims[i] != NULL) {
+				Anims[i]->Enable();
+			}
+		}
+
+		if (Class->ToBuild != RTTI_NONE) {
+			House->Update_Factories(Class->ToBuild, Class->Naval, 0);
+		}
+
+		if (House->Is_Player_Control()) {
+			VoxClass::Play("EVA_BuildingOnLine", -1, -1);
+		}
+	}
+}
+
+// FUNCTION: 0x00452360
+void BuildingClass::Turn_Off(void)
+{
+	if (IsOn && (Class->Drain > 0 || Class->IsPowered)) {
+		IsOn = false;
+		IsToDisplay = true;
+		House->RecalcPower = true;
+		House->RecalcRadar = true;
+		House->IsRecalcNeeded = true;
+		Power_Off();
+
+		if (House->Is_Player_Control()) {
+			VoxClass::Play("EVA_BuildingOffLine", -1, -1);
+		}
+
+		if (Class->ToBuild != RTTI_NONE) {
+			House->Update_Factories(Class->ToBuild, Class->Naval, 0);
+		}
 	}
 }
 

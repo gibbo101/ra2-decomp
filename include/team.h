@@ -198,6 +198,11 @@ class TeamClass : public AbstractClass
 		void TMission_ENTER_BIO_REACTOR(TeamMissionClass * mission, bool);
 		void TMission_ENTER_TANK_BUNKER(TeamMissionClass * mission, bool);
 		void TMission_ENTER_BATTLE_BUNKER(TeamMissionClass * mission, bool);
+		void TMission_MOVE_TO_ENEMY_APPROACH(TeamMissionClass * mission, bool);
+		void TMission_MOVE_TO_BASE_FRONT(TeamMissionClass * mission, bool);
+		void TMission_IRON_CURTAIN(TeamMissionClass * mission, bool);
+		void TMission_CHRONO_BUILDING(TeamMissionClass * mission, bool);
+		void TMission_CHRONO_ATTACK(TeamMissionClass * mission, bool);
 		void TMission_GARRISON_STRUCTURE(TeamMissionClass * mission, bool);
 		void TMission_MOVETO_FRIENDLY_BUILDING_WITH_PROPERTY(TeamMissionClass * mission, bool);
 
@@ -209,9 +214,10 @@ class TeamClass : public AbstractClass
 		bool Coordinate_Conscript(FootClass * unit);
 		void Calc_Center(AbstractClass *& center, AbstractClass *& obj_center) const;
 		bool Lagging_Units(void);
-		FootClass * Fetch_A_Leader(void) const;
 		bool Ammo_Check(void) const;
 
 	public:
+		FootClass * Fetch_A_Leader(void) const;
+		int Stray_Distance(void);
 		int Quantity[MAX_TEAM_CLASSCOUNT];
 };

@@ -422,6 +422,7 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 		void Just_Built(TechnoClass * product);
 		void Special_Weapon_AI(SuperWeaponType id);
 		void FUN_004FAF00(SuperClass * super, Cell const * cell);
+		void FUN_0050D6D0(Cell cell);
 		bool Place_Special_Blast(SuperWeaponType id, Cell const & cell);
 		bool Flag_Attach(Cell const & cell, bool set_home = false);
 		bool Flag_Attach(UnitClass * object, bool set_home = false);

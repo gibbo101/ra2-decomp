@@ -52,6 +52,8 @@ class UICommandHolder
 {
 	public:
 		virtual ~UICommandHolder(void);
+		int Reserved[3];
+		void * Table;
 };
 
 extern UICommandHolder * DAT_00B0FE6C;
@@ -616,4 +618,172 @@ wchar_t * __fastcall FUN_00731D10(wchar_t * buffer)
 		return wcscpy(buffer, StringTable::LoadString("MSG:SelAcrossMap", NULL, "D:\\ra2mdpost\\UICmnds.cpp", 0x3f3));
 	}
 	return wcscpy(buffer, StringTable::LoadString("MSG:SelAcrossScreen", NULL, "D:\\ra2mdpost\\UICmnds.cpp", 0x3f5));
+}
+
+typedef DynamicVectorClass<ObjectClass *> ObjectList;
+typedef DynamicVectorClass<TechnoClass *> TechnoList;
+
+class TacticalSelection
+{
+	public:
+		int Count(void);
+		ObjectClass * Get(int index);
+};
+extern TacticalSelection * TacticalSelectionInstance;
+extern bool DAT_00B0FE64;
+extern int DAT_00A8ECC8;
+bool __fastcall FUN_007342C0(ObjectClass * object);
+int __fastcall FUN_00732580(TechnoClass * techno, int unused);
+int __fastcall FUN_007325C0(TechnoClass * techno, int unused);
+void __fastcall FUN_006DA770(Tactical * tactical);
+extern Tactical * TacticalMap;
+
+// FUNCTION: 0x00731D90
+void __fastcall FUN_00731D90(wchar_t * buffer, wchar_t const * name)
+{
+	wchar_t upper[100];
+	if (DAT_00B0FE6C->Table && name) {
+		wcscpy(upper, name);
+		_wcsupr(upper);
+		int count = DAT_00A8ECB8.Count();
+		if (count == 0) {
+			swprintf(buffer, StringTable::LoadString("MSG:NoUnitsSel", NULL, "D:\\ra2mdpost\\UICmnds.cpp", 0x408), upper);
+			return;
+		}
+		int total = 0;
+		for (int i = 0; i < count; i++) {
+			ObjectClass * object = DAT_00A8ECB8[i];
+			if (object && object->Is_Techno()) {
+				HouseClass * house = ((TechnoClass *)object)->House;
+				total += object->Class_Of()->Cost_Of(house);
+			}
+		}
+		swprintf(buffer, StringTable::LoadString("MSG:UnitsWorth", NULL, "D:\\ra2mdpost\\UICmnds.cpp", 0x41c), count, upper, total);
+		return;
+	}
+	wcscpy(buffer, StringTable::LoadString("MSG:NavEmpty", NULL, "D:\\ra2mdpost\\UICmnds.cpp", 0x3fe));
+}
+
+// FUNCTION: 0x00731EB0
+TechnoList * __fastcall FUN_00731EB0(bool (__fastcall * test)(TechnoClass *, int), int arg)
+{
+	TechnoList * result = new TechnoList;
+	int count = DAT_00A8EC78.Count();
+	for (int i = 0; i < count; i++) {
+		TechnoClass * techno = DAT_00A8EC78[i];
+		if (test(techno, arg)) {
+			result->Add(techno);
+		}
+	}
+	return result;
+}
+
+// FUNCTION: 0x00731F70
+ObjectList * __fastcall FUN_00731F70(bool (__fastcall * test)(ObjectClass *, int), int arg)
+{
+	ObjectList * result = new ObjectList;
+	int count = TacticalSelectionInstance->Count();
+	for (int i = 0; i < count; i++) {
+		ObjectClass * object = TacticalSelectionInstance->Get(i);
+		if (object && object->Is_Techno() && test(object, arg)) {
+			result->Add(object);
+		}
+	}
+	return result;
+}
+
+// FUNCTION: 0x00732050
+ObjectList * FUN_00732050(void)
+{
+	ObjectList * result = new ObjectList;
+	int count = DAT_00A8ECC8;
+	for (int i = 0; i < count; i++) {
+		ObjectClass * object = DAT_00A8ECB8[i];
+		if (object && object->Is_Techno()) {
+			result->Add(object);
+		}
+	}
+	return result;
+}
+
+// FUNCTION: 0x00732110
+void __fastcall FUN_00732110(ObjectList * list, void (__fastcall * fn)(ObjectClass *, int), int arg)
+{
+	int count = list->Count();
+	for (int i = 0; i < count; i++) {
+		fn((*list)[i], arg);
+	}
+}
+
+// FUNCTION: 0x00732140
+void __fastcall FUN_00732140(ObjectList * list, bool (__fastcall * test)(ObjectClass *, int), void (__fastcall * fn)(ObjectClass *, int), int test_arg, int fn_arg)
+{
+	int count = list->Count();
+	for (int i = 0; i < count; i++) {
+		ObjectClass * object = (*list)[i];
+		if (test(object, test_arg)) {
+			fn(object, fn_arg);
+		}
+	}
+}
+
+// FUNCTION: 0x00732190
+bool __fastcall FUN_00732190(ObjectList * list, bool (__fastcall * test)(ObjectClass *, int), int arg)
+{
+	int count = list->Count();
+	for (int i = 0; i < count; i++) {
+		if (!test((*list)[i], arg)) {
+			return false;
+		}
+	}
+	return true;
+}
+
+// FUNCTION: 0x007321D0
+bool __fastcall FUN_007321D0(ObjectList * list, bool (__fastcall * test)(ObjectClass *, int), int arg)
+{
+	int count = list->Count();
+	for (int i = 0; i < count; i++) {
+		if (test((*list)[i], arg)) {
+			return true;
+		}
+	}
+	return false;
+}
+
+// FUNCTION: 0x00732210
+int __fastcall FUN_00732210(DynamicVectorClass<char *> * list, char const * name)
+{
+	for (int i = 0; i < list->Count(); i++) {
+		if (strcmp(name, (*list)[i]) == 0) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+// FUNCTION: 0x00732580
+int __fastcall FUN_00732580(TechnoClass * techno, int unused)
+{
+	if (techno && techno->IsActive) {
+		bool owned;
+		if (Session.Type == GAME_NORMAL) {
+			owned = techno->House->IsPlayerControl;
+		} else {
+			owned = techno->House->Is_Player_Control();
+		}
+		if (owned) {
+			return true;
+		}
+	}
+	return false;
+}
+
+// FUNCTION: 0x007325C0
+int __fastcall FUN_007325C0(TechnoClass * techno, int unused)
+{
+	if (techno->Fetch_RTTI() != RTTI_BUILDING && techno->Techno_Type_Class()->IsSelectableCombatant && techno->CanBeSelectedNow()) {
+		return true;
+	}
+	return false;
 }

@@ -88,7 +88,7 @@ class RadarClass: public DisplayClass
 		virtual void Set_Tactical_Position(Coord const & coord);
 		virtual void Init_For_House(void);
 
-		void Radar_Activate(int control, int flag);
+		void Radar_Activate(int control, bool flag);
 		void Radar_Background(Cell const & cell);
 		Point2D Coord_To_Radar_Pixel(Coord const & coord, bool clip);
 		bool Cell_On_Radar(Cell const & cell);
@@ -130,7 +130,11 @@ class RadarClass: public DisplayClass
 
 		void Render_Radar(void);
 		void Play_Movie(void);
+		void FUN_006578F0(void);
 		void Complete_Radar_Refresh(void);
+
+		void FUN_00658330(HWND dialog, int index, HouseClass * house);
+		void FUN_00658640(HWND dialog);
 
 		void Queue_Next_Movie(void);
 		void Set_Buttons(bool on);

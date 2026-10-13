@@ -1295,5 +1295,27 @@ AbilityFlagsType CCINIClass::Get_Abilities(char const * section, char const * en
 
 // FUNCTION: 0x00477750 SHAPipe::~SHAPipe
 
+// FUNCTION: 0x00477770 FileStraw::~FileStraw
+// FUNCTION: 0x00477790 FilePipe::~FilePipe
+
+// FUNCTION: 0x004777B0 ?$TypeList@H::?$TypeList@H
+template class TypeList<int>;
+
+// FUNCTION: 0x00477840 ?$DynamicVectorClass@H::Clear
+// FUNCTION: 0x00477870 ?$VectorClass@H::ID
+// FUNCTION: 0x00477890 ?$VectorClass@H::GetItem
+
+// FUNCTION: 0x004778A0 ?$DynamicVectorClass@PAVTechnoTypeClass@@::Clear
+template class DynamicVectorClass<TechnoTypeClass *>;
+
+// FUNCTION: 0x004778D0 ?$VectorClass@PAVTechnoTypeClass@@::ID
+// FUNCTION: 0x004778F0 ?$VectorClass@PAVTechnoTypeClass@@::GetItem
+
+// FUNCTION: 0x00477900 ?$DynamicVectorClass@VRGBClass@@::Clear
+template class DynamicVectorClass<RGBClass>;
+
+// FUNCTION: 0x00477930 ?$VectorClass@VRGBClass@@::ID
+// FUNCTION: 0x00477960 ?$VectorClass@VRGBClass@@::GetItem
+
 // FUNCTION: 0x00477EC0 ?$DynamicVectorClass@H::Add
 template class DynamicVectorClass<int>;

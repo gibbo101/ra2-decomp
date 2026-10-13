@@ -119,7 +119,7 @@ class IsometricTileTypeClass : public ObjectTypeClass
 		virtual HRESULT STDMETHODCALLTYPE GetClassID(CLSID * retval) override;
 
 		virtual RTTIType Fetch_RTTI(void) const override {return(RTTI_ISOTILETYPE);}
-		virtual int Fetch_Object_Size(bool = false) const override {return(sizeof(*this));}
+		virtual int Fetch_Object_Size(void) const override {return(sizeof(*this));}
 		virtual void Compute_CRC(CRCEngine & crc) const override;
 		virtual int Fetch_Heap_ID(void) const override {return(HeapID);};
 

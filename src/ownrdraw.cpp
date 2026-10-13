@@ -3,6 +3,7 @@
 // Copyright 2025 Electronic Arts Inc.; 2026 OpenTS contributors
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
+#define NDEBUG
 #include "always.h"
 #include "ownrdraw.h"
 #include "_keyboar.h"
@@ -101,6 +102,66 @@ ODShortPair DAT_00AC1B38;
 // FUNCTION: 0x006004F0 $E87
 ODIntTriple DAT_00AC1DF8;
 
+
+struct ODCenterTriple { int a; int b; int c; ODCenterTriple(void) { c = 0; a = 128; b = 128; } };
+
+// FUNCTION: 0x00600510 $E90
+ODCenterTriple DAT_00AC4888;
+
+// FUNCTION: 0x00600530 $E95
+// FUNCTION: 0x00600550 $E93
+SurfaceCacheClass SurfaceCache;
+
+namespace OwnerDraw {
+	extern int ControlInsetPx;
+	extern int ListSelectionFillColor;
+	extern int DefaultBorderColor;
+	extern int ScrollButtonBevelAlpha;
+	extern int PrimaryTextColor;
+	extern int AltComboTextColor;
+	extern int ImeCompositionTextColor;
+	extern int CaretColor;
+	extern int UnusedMidGrayColor;
+	extern int AltSelectionFillColor;
+	extern int AltBorderColor;
+	extern int BevelLightColor;
+	extern int BevelShadowColor;
+	extern int DisabledTextColor;
+	extern int AltDisabledTextColor;
+	extern int DisabledBorderColor;
+	extern int AltDisabledBorderColor;
+	extern int DisabledOverlayAlpha;
+	extern int SelectedTabTextColor;
+	extern int TooltipBackgroundColor;
+	extern int UnusedDarkAccentColor;
+}
+
+// FUNCTION: 0x00600560
+void OwnerDraw::Initialize(void)
+{
+	ControlInsetPx = 1;
+	ListSelectionFillColor = 0xff;
+	DefaultBorderColor = 0xff;
+	ScrollButtonBevelAlpha = 0x7f;
+	PrimaryTextColor = 0xffff;
+	AltComboTextColor = 0xeeeeee;
+	ImeCompositionTextColor = 0x9f9f;
+	CaretColor = 0xffffff;
+	UnusedMidGrayColor = 0x808080;
+	AltSelectionFillColor = 0x626262;
+	AltBorderColor = 0x929292;
+	BevelLightColor = 0xc5bea7;
+	BevelShadowColor = 0x807a68;
+	DisabledTextColor = 0x9f;
+	AltDisabledTextColor = 0x8f8f8f;
+	DisabledBorderColor = 0x9f;
+	AltDisabledBorderColor = 0x646464;
+	DisabledOverlayAlpha = 0x60;
+	SelectedTabTextColor = 0xaaaa;
+	TooltipBackgroundColor = 0x221b0b;
+	UnusedDarkAccentColor = 0x443716;
+}
+
 // FUNCTION: 0x00600630
 OwnerDraw::CellData::CellData(void)
 {
@@ -108,6 +169,18 @@ OwnerDraw::CellData::CellData(void)
 	color = -1;
 	pingtime = -1;
 	surf = NULL;
+}
+
+// FUNCTION: 0x00600660
+unsigned int Hash_HWND(HWND &key)
+{
+	return(*(unsigned int*)&key);
+}
+
+// FUNCTION: 0x00600670
+unsigned int Hash_CtrlMsg(OwnerDraw::CtrlMsgData &key)
+{
+	return((unsigned int)((int)key.message * (int)key.window));
 }
 
 // FUNCTION: 0x00600680
@@ -118,6 +191,18 @@ bool OwnerDraw::CtrlMsgData::operator ==(CtrlMsgData const & that) const
 	}
 	return(false);
 }
+
+
+// FUNCTION: 0x006006B0 $E100
+// FUNCTION: 0x00600750 $E98
+namespace OwnerDraw { Dictionary<HWND, WNDPROC> DialogProcs(Hash_HWND); }
+
+// FUNCTION: 0x00600880 $E105
+// FUNCTION: 0x00600920 $E103
+namespace OwnerDraw { Dictionary<HWND, WNDPROC> SubclassProcs(Hash_HWND); }
+
+// FUNCTION: 0x00600A50 $E110
+namespace OwnerDraw { Dictionary<HWND, OwnerDraw::WinData> Dialogs(Hash_HWND); }
 
 // FUNCTION: 0x0061F190
 void ODInitMasks(void)

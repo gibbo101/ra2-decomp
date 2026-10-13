@@ -369,9 +369,9 @@ class TechnoClass : public RadioClass
 		virtual unsigned vt_entry_2C8(unsigned, unsigned);
 		virtual bool Is_In_Same_Zone(Coord const & coord) const;
 		virtual int How_Many_Survivors(void) const;
-		virtual int Anti_Air(void) const;
-		virtual int Anti_Armor(void) const;
-		virtual int Anti_Infantry(void) const;
+		virtual int Anti_Air(void) const {return(0);}
+		virtual int Anti_Armor(void) const {return(0);}
+		virtual int Anti_Infantry(void) const {return(0);}
 		virtual void GotHijacked(void);
 		virtual int What_Weapon_Should_I_Use(AbstractClass * target) const;
 		virtual int SelectNavalTargeting(AbstractClass * target) const;
@@ -405,7 +405,7 @@ class TechnoClass : public RadioClass
 		virtual bool Is_Sensed_By_House(HouseClass const * house) const;
 		virtual bool Is_Renovator(void) const;
 		virtual void Advance_Waypoint_Path(void);
-		virtual Cell ScanForTiberium(Cell * buffer, int range, unsigned unk) const;
+		virtual Cell ScanForTiberium(int range, unsigned unk);
 		virtual bool EnterGrinder(void);
 		virtual bool EnterBioReactor(void);
 		virtual bool EnterTankBunker(void);
@@ -560,7 +560,7 @@ class TechnoClass : public RadioClass
 		virtual void Clicked_As_Target(int count = 7) override;
 		virtual bool Select(void) override;
 		Coord Predict_Target_Coord(void) const;
-		void FUN_007049C0(Coord start, Coord end, RGBClass color, int a, int b) const;
+		void FUN_007049C0(Coord start, Coord end, RGBClass color, unsigned char a, unsigned char b) const;
 
 		double Area_Modify(Cell const & cell) const;
 		void StartReloading(void);
