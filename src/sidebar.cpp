@@ -44,6 +44,7 @@
 #include "session.h"
 #include "scheme.h"
 #include "shapeset.h"
+#include "stringtable.h"
 #include "super.h"
 #include "suprtype.h"
 #include "surface.h"
@@ -68,6 +69,7 @@
 // FUNCTION: 0x006A4BD0 $E38
 // FUNCTION: 0x006A4BF0 $E41
 
+// FUNCTION: 0x006AACB0
 SidebarClass::StripClass::SelectClass::SelectClass(void) :
 	ControlClass(0, 0, 0, 60, 48, LEFTPRESS|RIGHTPRESS|LEFTUP),
 	Strip(0),
@@ -1488,6 +1490,147 @@ bool SidebarClass::StripClass::Scroll(bool up, int amount)
 	return true;
 }
 
+// FUNCTION: 0x006A8920
+bool SidebarClass::StripClass::Scroll(bool up)
+{
+	return Scroll(up, 1);
+}
+
+// FUNCTION: 0x006A89E0
+bool SidebarClass::StripClass::Page(bool up)
+{
+	int amount = Strip_Rows();
+	if (PlayerPtr == DAT_00AC1198) {
+		amount = 1;
+	}
+	return Scroll(up, amount);
+}
+
+// FUNCTION: 0x006A8B10
+void SidebarClass::StripClass::Flag_To_Redraw(void)
+{
+	IsToRedraw = true;
+	Map.Flag_To_Redraw();
+}
+
+extern bool DAT_00884B8C;
+extern unsigned short DAT_00B07BC4[];
+
+// FUNCTION: 0x006A92E0
+unsigned short const * SidebarClass::StripClass::Help_Text(int id)
+{
+	int i = id + TopIndex * 2;
+	if (Game::IsActive) {
+		if (i < BuildableCount && BuildableCount < MAX_BUILDABLES) {
+			if (Buildables[i].BuildableType == RTTI_SPECIAL) {
+				return SuperWeaponTypes[Buildables[i].BuildableID]->UIName;
+			}
+			TechnoTypeClass const * choice = Fetch_Techno_Type(Buildables[i].BuildableType, Buildables[i].BuildableID);
+			if (choice) {
+				if (DAT_00884B8C) {
+					swprintf(DAT_00B07BC4, StringTable::LoadString("TXT_MONEY_FORMAT_1", NULL, "D:\\ra2mdpost\\Sidebar.CPP", 3180), choice->Cost_Of(PlayerPtr));
+				} else {
+					swprintf(DAT_00B07BC4, StringTable::LoadString("TXT_MONEY_FORMAT_2", NULL, "D:\\ra2mdpost\\Sidebar.CPP", 3182), choice->UIName, choice->Cost_Of(PlayerPtr));
+				}
+				int n = wcslen(DAT_00B07BC4);
+				if (n > 0) {
+					wchar_t * text = DAT_00B07BC4;
+					do {
+						if (*text == L' ') {
+							*text = L'\n';
+						}
+						text++;
+					} while (--n);
+				}
+				return DAT_00B07BC4;
+			}
+		}
+	}
+	return NULL;
+}
+
+// FUNCTION: 0x006A93F0
+void SidebarClass::StripClass::AddButtons(void)
+{
+	AllowedToDraw = true;
+	int count = Strip_Rows() * 2;
+	for (int index = 0; index < count; index++) {
+		SelectButton[ID * 60 + index].Zap();
+		Map.Add_A_Button(SelectButton[ID * 60 + index]);
+	}
+	DAT_00884B8F = true;
+}
+
+// FUNCTION: 0x006A94B0
+void SidebarClass::StripClass::RemoveButtons(void)
+{
+	AllowedToDraw = false;
+	for (int index = 0; index < 60; index++) {
+		Map.Remove_A_Button(SelectButton[ID * 60 + index]);
+	}
+}
+
+// FUNCTION: 0x006A94F0
+int SidebarClass::StripClass::FUN_006A94F0(int index)
+{
+	int progress = 0;
+	if (Buildables[index].Factory) {
+		progress = Buildables[index].Factory->Completion();
+	}
+	if (Buildables[index].unknown_10 == 1) {
+		int stage = Buildables[index].Progress.Fetch_Stage();
+		if (stage > progress) {
+			progress = (progress + stage) / 2;
+		}
+	}
+	return progress;
+}
+
+// FUNCTION: 0x006AACE0
+void SidebarClass::StripClass::SelectClass::Set_Owner(StripClass & strip, int index)
+{
+	Strip = &strip;
+	Index = index;
+}
+
+extern bool UserInputLocked;
+
+// FUNCTION: 0x006AB990
+void SidebarClass::StripClass::SelectClass::OnMouseEnter(void)
+{
+	ToolTips->Save_Timer_Delay();
+	ToolTips->Set_Timer_Delay(0);
+	unknown_34 = true;
+	Strip->IsToRedraw = true;
+	Map.Flag_To_Redraw();
+	DAT_00884B8F = true;
+	DAT_00B0B518 = true;
+}
+
+// FUNCTION: 0x006AB9E0
+void SidebarClass::StripClass::SelectClass::OnMouseLeave(void)
+{
+	ToolTips->Restore_Timer_Delay();
+	unknown_34 = false;
+	Strip->IsToRedraw = true;
+	Map.Flag_To_Redraw();
+	DAT_00884B8F = true;
+	DAT_00B0B518 = true;
+}
+
+// FUNCTION: 0x006ABA20
+bool SidebarClass::StripClass::SelectClass::FUN_006ABA20(void)
+{
+	return unknown_34 && !UserInputLocked;
+}
+
+// FUNCTION: 0x006ABA40
+int SidebarClass::SBGadgetClass::Action(unsigned flags, KeyNumType & key, int modifier)
+{
+	Map.Override_Mouse_Shape(MOUSE_NORMAL, false);
+	return true;
+}
+
 // FUNCTION: 0x006ABC60
 int SidebarClass::GetObjectTabIdx(RTTIType type, int id, bool naval)
 {
@@ -1504,11 +1647,4 @@ int SidebarClass::GetObjectTabIdx(RTTIType type, int id, bool naval)
 		return 1;
 	}
 	return -1;
-}
-
-// FUNCTION: 0x006AACE0
-void SidebarClass::StripClass::SelectClass::Set_Owner(StripClass & strip, int index)
-{
-	Strip = &strip;
-	Index = index;
 }

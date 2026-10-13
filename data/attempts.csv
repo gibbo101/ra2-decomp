@@ -1725,3 +1725,19 @@ date,address,function,model,result,best,checks,minutes,blocker,notes
 2026-10-13,0x00657DA0,,sonnet-5.5 + opus-5.5,partial,35.5,0,,register allocation,Radar; not retried
 2026-10-13,0x00658330,,sonnet-5.5 + opus-5.5,partial,64.8,0,,register allocation,Radar; not retried
 2026-10-13,0x006A8710,,sonnet-5.5 + opus-5.5,partial,71.1,0,,register allocation (EBX/EBP swap),Sidebar; not retried
+2026-10-13,0x004FF700,,sonnet-5.5 + opus-5.5,partial,100,2,,map fault,"Tracking_Add (YRpp AddTracking). The functions.csv row is still 640 bytes and folds in Factory_Counter. Disassembly shows the jump tables end at 0x4FF8EE, a nop at 0x4FF8EF, and Factory_Counter starting at 0x4FF8F0 (144 bytes, to 0x4FF980). Re-verified by overriding the sizes in memory only (data/ not edited): Tracking_Add MATCHES 495/495 and Factory_Counter 144/144. All 100 annotated functions in"
+2026-10-13,0x004FFDD0,,sonnet-5.5 + opus-5.5,partial,53,0,,inline budget,Unchanged; banked with the overlay.
+2026-10-13,0x00704E40,,sonnet-5.5 + opus-5.5,partial,35.5,0,,inline budget and register allocation,Unchanged; banked.
+2026-10-13,0x00705270,,sonnet-5.5 + opus-5.5,partial,46,0,,inline budget and register allocation,"Unchanged. The shift globals it needs are DSurface::RedLeft and the others (int), not a new Drawing struct."
+2026-10-13,0x00705860,,sonnet-5.5 + opus-5.5,partial,41.4,0,,register allocation and frame layout,"Unchanged. It keeps its dsurface.h overlay for FUN_004BEAC0, because adding that declaration to include/ breaks 0x0073CEC0."
+2026-10-13,0x00706640,,sonnet-5.5 + opus-5.5,partial,59.2,0,,register allocation and inline budget,Unchanged; banked.
+2026-10-13,0x00732600,,sonnet-5.5 + opus-5.5,partial,66.7,0,,inline budget and register shape,Unchanged.
+2026-10-13,0x007327D0,,sonnet-5.5 + opus-5.5,partial,57.2,0,,inline budget,Unchanged.
+2026-10-13,0x00732950,,sonnet-5.5 + opus-5.5,partial,21.3,0,,inline budget,Unchanged.
+2026-10-13,0x00733160,,sonnet-5.5 + opus-5.5,partial,21.9,0,,register allocation,Unchanged.
+2026-10-13,0x0049B430,,sonnet-5.5 + opus-5.5,partial,100,5,,needs #pragma auto_inline(off),"Matches alone, but defining it in coopcamp.cpp makes VC6 inline it into 0x0049D120, which then fails; only #pragma auto_inline(off) prevents that, and the rules ban it. Banked."
+2026-10-13,0x0049B930,,sonnet-5.5 + opus-5.5,failed,0,0,,function map boundary,"Not attempted. data/functions.csv ends the function at 26 bytes, and 0x0049B94A is a separate 809-byte entry. The coordinator needs to merge them in the function map before any source can match. The DAT_00A80228 extern in coopcamp.cpp stays until the House batch declares HouseClass::Array."
+2026-10-13,0x005D6000,,sonnet-5.5 + opus-5.5,partial,44.4,1,,register allocation,Re-checked against the landed widewstring.h: unchanged at 44.4%. The header was never the blocker. VC6 caches SendMessageA in ebx and keeps the zero in edi. The banked file and Multiplayer overlay are left in place.
+2026-10-13,0x005D6130,,sonnet-5.5 + opus-5.5,partial,39,1,,register allocation,"Unchanged at 39.0% against the real header. Same SendMessageA-in-ebx and zero-in-edi blocker as 0x005D6000, plus the bool load-then-test shape."
+2026-10-13,0x0067B180,,sonnet-5.5 + opus-5.5,partial,0,2,,element type unknown,"Byte-identical twin of 0x0067AE00 (VectorClass operator=); its callers do not show which element type it is, so the annotation was removed."
+2026-10-13,0x006A4280,,sonnet-5.5 + opus-5.5,partial,0,0,,not annotated: inline member emitted out of line,"ShipLocomotionClass::Is_Piggybacking is inline in ship.h (Piggybacker != NULL); its out-of-line copy needs an annotation and a check, neither done."

@@ -320,5 +320,6 @@ inline ObjectClass * As_Object(AbstractClass * target)
 	return(dynamic_cast<ObjectClass *>(target));
 }
 
+Rect Vector_Rect(DynamicVectorClass<ObjectClass *> const & list);
 Coord Vector_Center(DynamicVectorClass<ObjectClass *> const & list);
 ObjectClass * Vector_Closest_Object(DynamicVectorClass<ObjectClass *> const & list, Coord const & coord);

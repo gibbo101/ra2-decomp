@@ -224,13 +224,13 @@ def main() -> None:
            and a not in after_end and not after_table(a)}
     for a in mid:
         del evidence[a]
-    # A start that only a data pointer names, which flow from the function before it
-    # reaches, is a label or the tail after a call inside that function.
+    # A start that only a data pointer or Ghidra names, which flow from the function
+    # before it reaches, is a label or the tail after a call inside that function.
     md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_32)
     ordered = sorted(evidence)
     case_labels = []
     for i, a in enumerate(ordered[1:-1], 1):
-        if evidence[a] == "V":
+        if set(evidence[a]) <= {"V", "G"}:
             reached: set = set()
             reached_end(md, code, base, ordered[i - 1], ordered[i + 1], set(), reached, True)
             if a in reached:
@@ -282,7 +282,7 @@ def main() -> None:
             w.writerow([f"0x{a:08X}", stop - a, evidence[a], yrpp.get(a) or library.get(a, "")])
 
     print(f"{len(ordered)} functions -> {out}")
-    print("case labels named by a data pointer, dropped:", " ".join(f"0x{a:08X}" for a in case_labels))
+    print("labels named only by a data pointer or Ghidra, dropped:", " ".join(f"0x{a:08X}" for a in case_labels))
     by = {}
     for a, e in mid.items():
         by[e] = by.get(e, 0) + 1

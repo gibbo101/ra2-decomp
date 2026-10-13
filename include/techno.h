@@ -55,6 +55,7 @@ class PlanningTokenClass
 {
 	public:
 		void FUN_00636310(void);
+		int FUN_00636DC0(void);
 };
 class ObjectTypeClass;
 class Surface;
@@ -382,8 +383,18 @@ class TechnoClass : public RadioClass
 		virtual Cell Find_Exit_Cell(TechnoClass const * techno) const;
 		virtual Coord Turret_Coord(int which=0) const;
 		void Create_Planning_Token(void);
+		static void __stdcall FUN_00705860(Coord start, Coord end);
+		static void __stdcall FUN_00705270(Coord src, Coord dst, RGBClass color, unsigned char shadow);
+		static void Draw_A_Link_To(Coord src, Coord dst, RGBClass color);
+		void FUN_00705D10(PlanningTokenClass * token);
+		PlanningTokenClass * FUN_00705D20(void);
+		bool FUN_00705D30(void);
+		void FUN_00705D60(void);
+		void TryNextPlanningTokenNode(void);
 		void FUN_0070DC70(int which);
 		int GetEffectTintIntensity(int brightness) const;
+		int GetInvulnerabilityTintIntensity(int brightness) const;
+		int GetAirstrikeTintIntensity(int brightness) const;
 		int FUN_0070DDF0(void);
 		int FUN_007011A0(void);
 		bool FUN_0070DC60(void) const;
@@ -612,10 +623,10 @@ class TechnoClass : public RadioClass
 		virtual void Draw_Post_Render(Point2D const & point, Rect const & cliprect) const override;
 
 
-		void Techno_Blit_Voxel(StaticBufferClass::Entry const & cache, Point2D const & point, Rect const & cliprect, ShapeFlags_Type flags, int brightness) const;
+		void Techno_Blit_Voxel(StaticBufferClass::Entry const & cache, Point2D const & point, Rect const & cliprect, ShapeFlags_Type flags, int brightness, int unknown) const;
 		void Techno_Draw_Voxel_Shadow(VoxelDataStruct const & voxeldata, int layer_index, int key, VoxelIndexClass * cache, Rect const & cliprect, Point2D const & point, Matrix3D const & matrix, bool force_cache, Surface * surface, int shadow_x, int shadow_y) const;
-		SurfaceRegion Techno_Render_Voxel_Object(VoxelDataStruct const & voxeldata, Matrix3D const & matrix, Point2D const & point, Rect const & cliprect, int frame, ShapeFlags_Type flags, int brightness) const;
-		SurfaceRegion Techno_Render_Voxel_Shadow(VoxelDataStruct const & voxeldata, Matrix3D const & matrix, Point2D const & point, Rect const & cliprect, int layer_index, ShapeFlags_Type flags, bool cached) const;
+		SurfaceRegion Techno_Render_Voxel_Object(VoxelDataStruct const & voxeldata, Matrix3D const & matrix, Point2D const & point, Rect const & cliprect, int frame, ShapeFlags_Type flags, int brightness, int unknown) const;
+		SurfaceRegion Techno_Render_Voxel_Shadow(VoxelDataStruct const & voxeldata, Matrix3D const & matrix, Point2D const & point, Rect const & cliprect, int layer_index, ShapeFlags_Type flags, bool cached, Surface * surface, int shadow_x, int shadow_y) const;
 
 		virtual void Hidden(void) override;
 		virtual bool Mark(MarkType mark=MARK_CHANGE) override;
@@ -657,6 +668,16 @@ class TechnoClass : public RadioClass
 
 inline bool TechnoClass::Is_Allowed_To_Leave_Map(void) const { return(false); }
 inline bool TechnoClass::Is_Renovator(void) const { return(false); }
+inline bool TechnoClass::IsIronCurtained(void) const { return(IronCurtainTimer.Value() > 0); }
+inline bool TechnoClass::CanCheer(void) const { return(false); }
+inline void TechnoClass::Cheer(bool) {}
+inline bool TechnoClass::CanOccupyFire(void) const { return(false); }
+inline int TechnoClass::GetOccupyRangeBonus(void) const { return(0); }
+inline int TechnoClass::GetOccupantCount(void) const { return(0); }
+inline void TechnoClass::Rocking_AI(void) {}
+inline bool TechnoClass::vt_entry_434(unsigned) const { return(false); }
+inline void TechnoClass::UpdateRefinerySmokeSystems(void) {}
+inline bool TechnoClass::IsDisguised(void) const { return(Disguised); }
 inline bool TechnoClass::Is_Turret_Equipped(void) const { return(TClass->IsTurretEquipped); }
 inline bool TechnoClass::Is_Move_Override(void) const { return(false); }
 inline bool TechnoClass::Is_In_Team(void) const { return(false); }
@@ -665,15 +686,6 @@ inline bool TechnoClass::Is_Ready_To_Move(void) const { return(true); }
 inline DirType TechnoClass::Turret_Facing(void) const
 {
 	return(PrimaryFacing.Current());
-}
-
-inline WeaponDataStruct const * TechnoClass::Get_Class_Weapon_Data(int which) const
-{
-	if (Veterancy.Is_Elite() && which == 0) {
-		return(TClass->Get_Weapon(2));
-	}
-
-	return(TClass->Get_Weapon(which));
 }
 
 inline void TechnoClass::Advance_Waypoint_Path(void)

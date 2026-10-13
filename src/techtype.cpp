@@ -27,6 +27,7 @@
 #include "notify.h"
 #include "psystype.h"
 #include "rules.h"
+#include "scheme.h"
 #include "session.h"
 #include "swizzle.h"
 #include "tactical.h"
@@ -363,12 +364,6 @@ int TechnoTypeClass::GetFlightLevel(void) const
 	}
 	return(FlightLevel);
 }
-
-class ColorScheme
-{
-	public:
-		static DynamicVectorClass<ColorSchemeClass *> * __fastcall GeneratePalette(char const * name);
-};
 
 // FUNCTION: 0x00717820
 void TechnoTypeClass::FUN_00717820(void)

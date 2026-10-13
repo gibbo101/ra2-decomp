@@ -34,6 +34,7 @@ class MPGameModeClass
 		CCINIClass * FUN_005D67B0(void);
 
 		MPGameModeClass(NoInitClass const &) {}
+		MPGameModeClass(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex);
 		virtual ~MPGameModeClass(void);
 		virtual bool vt_entry_04(void);
 		virtual bool vt_entry_08(void);

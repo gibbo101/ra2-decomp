@@ -398,7 +398,7 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 		static void Computer_Paranoid(void);
 		bool Is_Allowed_To_Ally(HouseClass * house) const;
 		void Super_Weapon_Handler(void);
-		int * Factory_Counter(RTTIType rtti);
+		int * Factory_Counter(RTTIType rtti, unsigned char naval);
 		int Factory_Count(RTTIType rtti) const;
 		void CalculateCostMultipliers(void);
 		double FUN_0050C050(TechnoTypeClass const * type) const;

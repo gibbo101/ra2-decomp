@@ -1580,3 +1580,18 @@ char const * RadarClass::Help_Text(int id)
 }
 
 // FUNCTION: 0x00658780 RadarClass::RTacticalClass::~RTacticalClass
+
+// FUNCTION: 0x006587A0 RadarClass::~RadarClass
+
+// FUNCTION: 0x00658890 ?$DynamicVectorClass@U?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@::Clear
+// FUNCTION: 0x006588C0 ?$DynamicVectorClass@U?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@::ID
+// FUNCTION: 0x006588E0 ?$VectorClass@U?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@::GetItem
+// FUNCTION: 0x00658910 ?$VectorClass@U?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@::operator==
+// FUNCTION: 0x00658970 ?$VectorClass@U?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@::Resize
+// FUNCTION: 0x00658A70 ?$VectorClass@U?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@::Clear
+// FUNCTION: 0x00658AA0 ?$VectorClass@U?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@::ID
+// FUNCTION: 0x00658AF0 ?$VectorClass@U?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@::ID
+// FUNCTION: 0x00658B10 ?$DynamicVectorClass@U?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@::Resize
+// FUNCTION: 0x00658C20 ?$DynamicVectorClass@U?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@::ID
+// FUNCTION: 0x00658C60 ?$DynamicVectorClass@U?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@::~?$DynamicVectorClass@U?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@
+template class DynamicVectorClass<HashObject<RadarTrackingStruct, TechnoClass *> >;

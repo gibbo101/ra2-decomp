@@ -82,7 +82,7 @@ struct ShadowCasterInfo {
 	int XOffset;
 	int YOffset;
 
-	ShadowCasterInfo(int frame = 0, int index = 0, int x = 0, int y = 0) : Frame(frame), Index(index), XOffset(x), YOffset(y) {}
+	ShadowCasterInfo(int frame = 0, int index = 0, int x = 0, int y = 0);
 };
 
 ShadowCasterInfo ShadowCasterSlopeInfo[10] = {
@@ -801,3 +801,79 @@ unsigned short IsometricTileTypeClass::Preview_Tile_Color(int tile, int level, b
 {
 	return(PreviewTiles[tile][(use_high_color ? 1 : 0) + level * 2]);
 }
+
+// FUNCTION: 0x00549E90
+void IsometricTileTypeClass::Build_Preview_Tiles(void)
+{
+	int i;
+	int j;
+
+	IsoTileSet const * tileset = (IsoTileSet const *)ImageData;
+
+	for (i = 0; i < PreviewTiles.Count(); i++) {
+		if (PreviewTiles[i] != NULL) {
+			delete [] PreviewTiles[i];
+		}
+	}
+
+	PreviewTiles.Clear();
+
+	for (i = 0; i < tileset->Tile_Count(); i++) {
+		if (tileset->Tiles[i] != NULL) {
+			unsigned short * buffer = new unsigned short[24 + 2];
+			IsoTileRecord const * record = tileset->Tiles[i];
+
+			PreviewTiles.Add(buffer);
+
+			RGBClass low(record->LowColor.Red, record->LowColor.Green, record->LowColor.Blue);
+			RGBClass high(record->HighColor.Red, record->HighColor.Green, record->HighColor.Blue);
+
+			static float const _brightness_factor = 1.4f;
+
+			RGBClass alow((NoInitClass()));
+			alow.Set(low, _brightness_factor);
+
+			RGBClass ahigh((NoInitClass()));
+			ahigh.Set(high, _brightness_factor);
+
+			unsigned short * ptr = buffer;
+
+			for (j = 0; j <= 12; j++) {
+				RGBClass tmp = RGBClass(NoInitClass()).Lerp(low, alow, float((double)j / 12.0f));
+				ptr[0] = DSurface::Build_Hicolor_Pixel(tmp.Get_Red(), tmp.Get_Green(), tmp.Get_Blue());
+
+				tmp = RGBClass(NoInitClass()).Lerp(high, ahigh, float((double)j / 12.0f));
+				ptr[1] = DSurface::Build_Hicolor_Pixel(tmp.Get_Red(), tmp.Get_Green(), tmp.Get_Blue());
+
+				ptr += 2;
+			}
+		} else {
+			PreviewTiles.Add(NULL);
+		}
+	}
+}
+
+// FUNCTION: 0x0054A120
+ShadowCasterInfo::ShadowCasterInfo(int frame, int index, int x, int y) : Frame(frame), Index(index), XOffset(x), YOffset(y)
+{
+}
+
+// FUNCTION: 0x0054A140 IsometricTileTypeClass::Fetch_RTTI
+
+// FUNCTION: 0x0054A150 IsometricTileTypeClass::Fetch_Object_Size
+
+// FUNCTION: 0x0054A160 IsometricTileTypeClass::Fetch_Heap_ID
+
+// FUNCTION: 0x0054A170 IsometricTileTypeClass::~IsometricTileTypeClass
+
+// FUNCTION: 0x0054A190 ?$DynamicVectorClass@PAUTileInsertType@IsometricTileTypeClass@@::Clear
+
+// FUNCTION: 0x0054A1C0 ?$VectorClass@PAUTileInsertType@IsometricTileTypeClass@@::ID
+
+// FUNCTION: 0x0054A1E0 ?$VectorClass@PAUTileInsertType@IsometricTileTypeClass@@::GetItem
+
+// FUNCTION: 0x0054A1F0 ?$DynamicVectorClass@PAG::Clear
+
+// FUNCTION: 0x0054A220 ?$VectorClass@PAG::ID
+
+// FUNCTION: 0x0054A240 ?$VectorClass@PAG::GetItem

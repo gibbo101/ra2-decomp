@@ -11,9 +11,12 @@ class HashString
 		HashString(char const * str);
 		HashString(HashString const & that);
 		HashString & operator = (HashString const & that);
-		bool operator == (HashString const & that) const;
-		bool operator != (HashString const & that) const;
+		bool operator == (HashString const & that);
+		bool operator != (HashString const & that);
 		bool operator ! (void) const;
 
 		char Str[256];
 };
+
+bool operator == (HashString const & a, HashString const & b);
+bool operator != (HashString const & a, HashString const & b);

@@ -49,6 +49,8 @@ public:
 	char			truncate(char c);
 	int				getToken(int offset, char const* delim, Wstring& out) const;
 	int				getLine(int offset, Wstring& out) const;
+	bool			containsAny(char const* chars) const;
+	bool			containsAny(Wstring const& chars) const;
 
 	bool			operator==(char const* other) const;
 	bool			operator==(Wstring const& other) const;

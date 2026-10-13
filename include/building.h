@@ -302,6 +302,11 @@ class BuildingClass : public TechnoClass
 		void Enable_Cloak_Generator(void);
 		void Disable_Cloak_Generator(void);
 		void Disable_Sensor_Array(void);
+		void EnableStuff(void);
+		void FUN_00452820(InfantryClass * infantry);
+		bool FUN_004528A0(AbstractClass const * target);
+		bool FUN_00452940(CellClass const * cell);
+		void DisableStuff(void);
 		void Enable_Sensor_Array(void);
 
 		virtual bool ForceCreate(Coord & coord, unsigned unk = 0) override;

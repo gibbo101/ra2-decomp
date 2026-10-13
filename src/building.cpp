@@ -2613,6 +2613,199 @@ void BuildingClass::Turn_Off(void)
 	}
 }
 
+// FUNCTION: 0x00452410
+void BuildingClass::EnableStuff(void)
+{
+	IsPoweredOn = true;
+	if (LightSource != NULL) {
+		LightSource->Enable();
+	}
+	if (Class->IsLaserFencePost) {
+		Toggle_Laser_Fence_Post(false);
+	}
+	for (int i = 0; i < BANIM_COUNT; i++) {
+		if (Class->AnimData[i].Powered && Anims[i] != NULL) {
+			Anims[i]->Enable();
+		}
+	}
+}
+
+// FUNCTION: 0x00452480
+void BuildingClass::DisableStuff(void)
+{
+	IsPoweredOn = false;
+	if (LightSource != NULL) {
+		LightSource->Disable();
+	}
+	if (Class->IsCloakGenerator) {
+		CloakGeneratorState = -1;
+		if (CurrentCloakRadius == 0) {
+			CurrentCloakRadius = Class->CloakRadiusInCells;
+		}
+		IsToDisplay = true;
+	}
+	if (Class->GapGenerator && GeneratingGap) {
+		DestroyGap();
+	}
+	if (Class->IsLaserFencePost) {
+		Toggle_Laser_Fence_Post(false);
+	}
+	for (int i = 0; i < BANIM_COUNT; i++) {
+		if (Class->AnimData[i].Powered && Anims[i] != NULL) {
+			Anims[i]->Disable();
+		}
+	}
+}
+
+// FUNCTION: 0x00452540
+bool BuildingClass::Open_Gate(void)
+{
+	if (!Class->IsGate) {
+		return(true);
+	}
+	if (Get_Mission() == MISSION_OPEN && !Door.Is_Door_Closing() && !Door.Is_Door_Closed()) {
+		return(Is_Gate_Open());
+	}
+	Set_Mission(MISSION_NONE);
+	QueueMission(MISSION_OPEN, false);
+	Commence();
+	return(false);
+}
+
+// FUNCTION: 0x004525F0
+bool BuildingClass::Is_Gate_Open(void) const
+{
+	if (!Class->IsGate) {
+		return(true);
+	}
+	if (Get_Mission() == MISSION_OPEN && Door.Is_Door_Open()) {
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00452630
+bool BuildingClass::Can_Repair(void) const
+{
+	if (Strength == 0) {
+		return(false);
+	}
+	if (!Class->ClickRepairable) {
+		return(false);
+	}
+	if (IsStrange()) {
+		return(false);
+	}
+	return(BASECLASS::Can_Repair());
+}
+
+// FUNCTION: 0x00452670
+bool BuildingClass::Can_Upgrade(BuildingTypeClass const * upgrade, HouseClass const * upgrader) const
+{
+	if (upgrader != House || stricmp(upgrade->PowersUpBuilding, Class->IniName)) {
+		goto failed;
+	}
+
+	if (upgrade->PowersUpToLevel != -1) {
+		if (upgrade->PowersUpToLevel <= 0 || upgrade->PowersUpToLevel > BUILDING_UPGRADE_MAX) {
+			goto failed;
+		}
+	} else {
+		if (UpgradeLevel < Class->Upgrades) {
+			return(true);
+		}
+	}
+
+	if (UpgradeLevel == 0) {
+		return(true);
+	}
+
+failed:
+	return(false);
+}
+
+// FUNCTION: 0x004526F0
+WeaponDataStruct const * BuildingClass::Get_Class_Weapon_Data(int which) const
+{
+	if (UpgradeLevel != 0) {
+		for (int i = 0; i < UpgradeLevel; i++) {
+			if (Upgrades[i] != NULL) {
+				WeaponDataStruct const * weapon = Upgrades[i]->Get_Weapon(which);
+				if (weapon->Weapon != NULL) {
+					return(weapon);
+				}
+			}
+		}
+	}
+	if (CanOccupyFire() && FiringOccupantIndex < Occupants.Count()) {
+		InfantryClass * occupant = Occupants[FiringOccupantIndex];
+		if (occupant->Veterancy.Is_Elite()) {
+			if (occupant->Class->EliteOccupyWeapon.Weapon != NULL) {
+				return(&occupant->Class->EliteOccupyWeapon);
+			}
+			return(occupant->Get_Class_Weapon_Data(0));
+		}
+		if (occupant->Class->OccupyWeapon.Weapon != NULL) {
+			return(&occupant->Class->OccupyWeapon);
+		}
+		return(occupant->Get_Class_Weapon_Data(0));
+	}
+	return(BASECLASS::Get_Class_Weapon_Data(which));
+}
+
+// FUNCTION: 0x004527D0
+bool BuildingClass::Is_Turret_Equipped(void) const
+{
+	if (Class->IsTurretEquipped) {
+		return(true);
+	}
+	if (UpgradeLevel != 0) {
+		for (int i = 0; i < UpgradeLevel; i++) {
+			if (Upgrades[i] != NULL && Upgrades[i]->IsTurretEquipped) {
+				return(true);
+			}
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00452820
+void BuildingClass::FUN_00452820(InfantryClass * infantry)
+{
+	Overpowerers.Delete(infantry);
+	Overpowerers.Add(infantry);
+}
+
+// FUNCTION: 0x004528A0
+bool BuildingClass::FUN_004528A0(AbstractClass const * target)
+{
+	Coord a = Center_Coord();
+	Coord b = target->Center_Coord();
+	return(a.Distance_To(b) <= Class->PsychicDetectionRadius << 8);
+}
+
+// FUNCTION: 0x00452940
+bool BuildingClass::FUN_00452940(CellClass const * cell)
+{
+	Coord a = Center_Coord();
+	Coord b = cell->Cell_Coord();
+	return(a.Distance_To(b) <= Class->PsychicDetectionRadius << 8);
+}
+
+// FUNCTION: 0x004529E0
+void BuildingClass::Init_Laser_Fence(void)
+{
+	if (!ScenarioInit && Class->IsLaserFencePost) {
+		if (IsActive && !IsInLimbo) {
+			Connect_Laser_Fence(FACING_N);
+			Connect_Laser_Fence(FACING_E);
+			Connect_Laser_Fence(FACING_S);
+			Connect_Laser_Fence(FACING_W);
+			Toggle_Laser_Fence_Post(true);
+		}
+	}
+}
+
 // FUNCTION: 0x00459E80
 HRESULT STDMETHODCALLTYPE BuildingClass::GetClassID(CLSID * retval)
 {

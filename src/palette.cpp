@@ -469,8 +469,34 @@ HashString * HashTableClass<HashString, SchemeNode *>::Next(HashIterator * it)
 // FUNCTION: 0x00628470 ?$VectorClass@VHSVClass@@::ID
 // FUNCTION: 0x006284A0 ?$DynamicVectorClass@VHSVClass@@::Resize
 // FUNCTION: 0x006285A0 ?$DynamicVectorClass@VHSVClass@@::ID
-// FUNCTION: 0x006285F0 ?$DynamicVectorClass@VHSVClass@@::~?$DynamicVectorClass@VHSVClass@@
+// FUNCTION: 0x006285F0 ?$VectorClass@PAVColorScheme@@::~?$VectorClass@PAVColorScheme@@
 template class DynamicVectorClass<HSVClass>;
+
+// FUNCTION: 0x00628640 ?$DynamicVectorClass@PAVColorScheme@@::~?$DynamicVectorClass@PAVColorScheme@@
+
+// FUNCTION: 0x00628690 ?$DynamicVectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@::~?$DynamicVectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@
+
+// FUNCTION: 0x00628740 ?_F?$DynamicVectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@
+
+// FUNCTION: 0x00628760 ?$VectorClass@VHSVClass@@::~?$VectorClass@VHSVClass@@
+
+// FUNCTION: 0x006287B0 ?$DynamicVectorClass@VHSVClass@@::~?$DynamicVectorClass@VHSVClass@@
+
+// FUNCTION: 0x00628800 ?$DynamicVectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@::Clear
+
+// FUNCTION: 0x00628830 ?$DynamicVectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@::ID
+
+// FUNCTION: 0x00628860 ?$VectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@::GetItem
+
+// FUNCTION: 0x006288A0 ?$VectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@::operator==
+
+// FUNCTION: 0x006288F0 ?$VectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@::Resize
+
+// FUNCTION: 0x00628A40 ?$VectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@::Clear
+
+// FUNCTION: 0x00628A70 ?$VectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@::ID
+
+template class DynamicVectorClass<HashObject<HashString, SchemeNode *> >;
 
 // FUNCTION: 0x00628E80 ?$VectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@::~?$VectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@
 template class VectorClass<HashObject<HashString, SchemeNode *> >;

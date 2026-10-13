@@ -660,3 +660,24 @@ template class BlitTransXlat<unsigned short>;
 // FUNCTION: 0x00491300 ?$BlitTransXlat@G::BlitBackward
 // FUNCTION: 0x00491330 ?$BlitTransXlat@G::Blit_Copy_Tinted
 // FUNCTION: 0x00491360 ?$BlitTransXlat@G::Blit_Move_Tinted
+
+// FUNCTION: 0x00491390 ?$DynamicVectorClass@PAVConvertClass@@::Clear
+template class DynamicVectorClass<ConvertClass *>;
+
+// FUNCTION: 0x004913C0 ?$VectorClass@PAVConvertClass@@::ID
+// FUNCTION: 0x004913E0 ?$VectorClass@PAVConvertClass@@::GetItem
+
+// FUNCTION: 0x004913F0 ?$BlitPlainXlat@E::BlitForward
+// FUNCTION: 0x00491430 ?$BlitPlainXlat@E::BlitBackward
+// FUNCTION: 0x00491460 ?$BlitPlainXlat@E::Blit_Copy_Tinted
+// FUNCTION: 0x00491490 ?$BlitPlainXlat@E::Blit_Move_Tinted
+template class BlitPlainXlat<unsigned char>;
+
+// FUNCTION: 0x004914C0 ?$BlitTransXlat@E::BlitForward
+// FUNCTION: 0x00491500 ?$BlitTransXlat@E::BlitBackward
+// FUNCTION: 0x00491530 ?$BlitTransXlat@E::Blit_Copy_Tinted
+// FUNCTION: 0x00491560 ?$BlitTransXlat@E::Blit_Move_Tinted
+template class BlitTransXlat<unsigned char>;
+
+// FUNCTION: 0x00491590 ?$BlitTransZRemapXlat@E::BlitForward
+template class BlitTransZRemapXlat<unsigned char>;

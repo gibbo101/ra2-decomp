@@ -55,17 +55,6 @@ bool ShipLocomotionClass::Stop_Driver(void)
 	return(false);
 }
 
-inline bool ShipLocomotionClass::Abandon_Navigation(void)
-{
-	if (LinkedTo->RouteQueue.Count() == 0) {
-		LinkedTo->Assign_Destination(NULL);
-		return(false);
-	}
-
-	LinkedTo->AbortMotion();
-	return(LinkedTo->Enter_Idle_Mode());
-}
-
 // FUNCTION: 0x0069F250
 void STDMETHODCALLTYPE ShipLocomotionClass::Force_New_Slope(int ramp)
 {
@@ -402,4 +391,139 @@ int STDMETHODCALLTYPE ShipLocomotionClass::Z_Adjust(void)
 ZGradientType STDMETHODCALLTYPE ShipLocomotionClass::Z_Gradient(void)
 {
 	return(BASECLASS::Z_Gradient());
+}
+
+// FUNCTION: 0x006A3EC0
+bool ShipLocomotionClass::Abandon_Navigation(void)
+{
+	if (LinkedTo->RouteQueue.Count() == 0) {
+		LinkedTo->Assign_Destination(NULL);
+		return(false);
+	}
+
+	LinkedTo->AbortMotion();
+	return(LinkedTo->Enter_Idle_Mode());
+}
+
+// FUNCTION: 0x006A3F00
+void STDMETHODCALLTYPE ShipLocomotionClass::Mark_All_Occupation_Bits(int mark)
+{
+	if (HeadToCoord != COORD_NONE) {
+		Mark_Track(HeadToCoord, (MarkType)mark);
+	}
+}
+
+// FUNCTION: 0x006A3F50
+boolean STDMETHODCALLTYPE ShipLocomotionClass::Is_Moving_Here(CoordStruct to)
+{
+	Coord coord = Head_To_Coord();
+
+	if (coord != COORD_NONE) {
+		if (!IsOnShortTrack && TrackNumber != -1) {
+			int tracknum = TrackControl[TrackNumber].Track;
+			if (tracknum) {
+				TrackType const * ptr = RawTracks[tracknum - 1].Track;
+				int cellidx = RawTracks[tracknum - 1].Cell;
+				if (cellidx > -1) {
+					Dir256 dir = ptr[cellidx].Facing;
+
+					if (TrackIndex < cellidx && cellidx != -1) {
+						Point2D pt = Smooth_Turn(ptr[cellidx].Offset, dir);
+						Coord there = LinkedTo->PositionCoord;
+						there.X = pt.X;
+						there.Y = pt.Y;
+						if (there.As_Cell() == ((Coord &)to).As_Cell() && abs(there.Z - to.Z) <= LEVEL_LEPTON_H) {
+							return(true);
+						}
+					}
+				}
+			}
+		}
+
+		if (coord.As_Cell() == ((Coord &)to).As_Cell() && abs(coord.Z - to.Z) <= LEVEL_LEPTON_H) {
+			return(true);
+		}
+	}
+
+	return(false);
+}
+
+// FUNCTION: 0x006A4130
+boolean STDMETHODCALLTYPE ShipLocomotionClass::Will_Jump_Tracks(void)
+{
+	TurnTrackType	const * track;
+	int				tracknum;
+	FacingType		nextface;
+	bool				adj;
+
+	nextface = LinkedTo->Path[0];
+
+	if (nextface >= FACING_NONE && nextface <= FACING_COUNT) {
+
+		track = &TrackControl[TrackNumber];
+		if (IsOnShortTrack) {
+			tracknum = track->StartTrack;
+		} else {
+			tracknum = track->Track;
+		}
+
+		adj = false;
+		if (nextface != FACING_COUNT && nextface != FACING_NONE && Dir_Facing(track->Facing) != nextface) {
+			adj = true;
+		}
+
+		if (nextface != FACING_COUNT && nextface != FACING_NONE && adj && RawTracks[tracknum-1].Jump == TrackIndex && TrackIndex) {
+			TurnTrackType const * newtrack;
+			int	tnum;
+
+			tnum = (int)(Dir_Facing(track->Facing) * FACING_COUNT) + (int)nextface;
+			newtrack = &TrackControl[tnum];
+			if (newtrack->Track && RawTracks[newtrack->Track-1].Entry) {
+				return(true);
+			}
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x006A4210
+void STDMETHODCALLTYPE ShipLocomotionClass::Lock(void)
+{
+	IsLocomotorUnlocked = false;
+}
+
+// FUNCTION: 0x006A4220
+void STDMETHODCALLTYPE ShipLocomotionClass::Unlock(void)
+{
+	IsLocomotorUnlocked = true;
+}
+
+// FUNCTION: 0x006A4230
+int STDMETHODCALLTYPE ShipLocomotionClass::Get_Track_Number(void)
+{
+	return(TrackNumber);
+}
+
+// FUNCTION: 0x006A4240
+int STDMETHODCALLTYPE ShipLocomotionClass::Get_Track_Index(void)
+{
+	return(TrackIndex);
+}
+
+// FUNCTION: 0x006A4250
+int STDMETHODCALLTYPE ShipLocomotionClass::Get_Speed_Accum(void)
+{
+	return(SpeedAccum);
+}
+
+// FUNCTION: 0x006A4260
+ULONG STDMETHODCALLTYPE ShipLocomotionClass::AddRef(void)
+{
+	return(BASECLASS::AddRef());
+}
+
+// FUNCTION: 0x006A4270
+ULONG STDMETHODCALLTYPE ShipLocomotionClass::Release(void)
+{
+	return(BASECLASS::Release());
 }

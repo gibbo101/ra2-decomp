@@ -1869,6 +1869,30 @@ bool AircraftClass::INoticeSink_Unknown(DWORD unknown, DWORD unknown2)
 
 // FUNCTION: 0x0041BF20 TechnoClass::Anti_Infantry
 
+// FUNCTION: 0x0041BF30 TechnoClass::Is_Renovator
+
+// FUNCTION: 0x0041BF40 TechnoClass::IsIronCurtained
+
+// FUNCTION: 0x0041BF80 TechnoClass::CanCheer
+
+// FUNCTION: 0x0041BF90 TechnoClass::Cheer
+
+// FUNCTION: 0x0041BFA0 TechnoClass::Is_Turret_Equipped
+
+// FUNCTION: 0x0041BFB0 TechnoClass::CanOccupyFire
+
+// FUNCTION: 0x0041BFC0 TechnoClass::GetOccupyRangeBonus
+
+// FUNCTION: 0x0041BFD0 TechnoClass::GetOccupantCount
+
+// FUNCTION: 0x0041BFE0 TechnoClass::Rocking_AI
+
+// FUNCTION: 0x0041BFF0 TechnoClass::vt_entry_434
+
+// FUNCTION: 0x0041C000 TechnoClass::UpdateRefinerySmokeSystems
+
+// FUNCTION: 0x0041C010 TechnoClass::IsDisguised
+
 // FUNCTION: 0x0041C090 FootClass::Draw_Object
 
 // FUNCTION: 0x0041C190

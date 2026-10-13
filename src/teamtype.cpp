@@ -616,3 +616,55 @@ template class VectorClass<TeamTypeClass const *>;
 
 // FUNCTION: 0x006F28A0 $E2
 // FUNCTION: 0x006F28D0 $E5
+
+namespace fastmath { double __cdecl tan(double x); double __cdecl atan(double x); }
+extern const double DAT_007E1718;
+extern const double DAT_007E1720;
+extern const double DAT_007E1728;
+extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
+extern const double DAT_007F4888;
+extern double DAT_00B0EB28;
+extern double DAT_00B0EA58;
+
+struct TTShortPair { short a; short b; TTShortPair(void) { a = 0; b = 0; } };
+struct TTIntTriple { int a; int b; int c; TTIntTriple(void) { a = 0; b = 0; c = 0; } };
+struct TTIntQuad { int a; int b; int c; int d; TTIntQuad(void) { a = 0; b = 0; c = 0; d = 0; } };
+struct TTCenterTriple { int a; int b; int c; TTCenterTriple(void) { c = 0; a = 128; b = 128; } };
+
+// FUNCTION: 0x006F28F0 $E8
+double DAT_00B0EB10 = DAT_007E1718 / DAT_00B0EB28;
+
+// FUNCTION: 0x006F2910 $E11
+double DAT_00B0EB08 = DAT_007F4888 * DAT_007E1720;
+
+// FUNCTION: 0x006F2930 $E14
+double DAT_00B0EA60 = DAT_007F4888 * DAT_007E1728;
+
+// FUNCTION: 0x006F2950 $E17
+double DAT_00B0EA30 = DAT_007F4888 * DAT_007E1730;
+
+// FUNCTION: 0x006F2970 $E20
+int DAT_00B0EB34 = (int)(fastmath::tan(DAT_00B0EA30 - DAT_00B0EA60) * DAT_00B0EA58 * DAT_007E1738);
+
+// FUNCTION: 0x006F29B0 $E23
+double DAT_00B0EA68 = fastmath::atan(DAT_00B0EB34 * DAT_007E1740);
+
+// FUNCTION: 0x006F29E0 $E26
+double DAT_00B0EAA0 = fastmath::atan((DAT_00B0EB34 * 2) / DAT_00B0EA58);
+
+// FUNCTION: 0x006F2A10 $E29
+int DAT_00B0EB24 = (int)(DAT_00B0EB34 * 4 + DAT_007E1738);
+
+// FUNCTION: 0x006F2A40 $E32
+TTShortPair DAT_00B0EA50;
+
+// FUNCTION: 0x006F2A50 $E35
+TTIntTriple DAT_00B0EA90;
+
+// FUNCTION: 0x006F2A70 $E38
+TTCenterTriple DAT_00B0EB18;
+
+// FUNCTION: 0x006F2A90 $E144
+TTIntQuad DAT_00B0EA40;

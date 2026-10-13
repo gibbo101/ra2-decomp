@@ -96,6 +96,8 @@ void __fastcall FUN_0072DDB0(void);
 void __fastcall FUN_0072DEF0(void);
 void __fastcall FUN_006842F0(bool enable);
 void __fastcall FUN_005BF260(VQType movie, ThemeType theme, bool a, bool b, bool c);
+void __fastcall FUN_00752480(int index, int a, int b);
+void __fastcall FUN_00578100(MapClass * map);
 void __fastcall FUN_00750F40(Coord const * coord, int mask);
 void __fastcall FUN_005BF390(VQType movie, bool pause);
 
@@ -1022,6 +1024,132 @@ bool TActionClass::TAction_TELEPORT_HOUSE(HouseClass * house, ObjectClass * , Tr
 {
 	Cell cell = Scen->Get_Waypoint_Cell(EffectLocation);
 	house->FUN_0050D6D0(cell);
+	return(true);
+}
+
+// FUNCTION: 0x006E1A70
+bool TActionClass::TAction_RESHROUD(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	if (!PlayerPtr->IsVisionary) {
+		Cell waypoint = Scen->Get_Waypoint_Cell(Data.Value);
+		int height = Map[waypoint].Height + ((Map[waypoint].IsUnderBridge || Map[waypoint].WasUnderBridge) ? BRIDGE_CELL_HEIGHT : 0);
+		Map.Shroud_Gap_Area(Coord(waypoint - Cell(height/2, height/2)) + Coord(0, 0, height * LEVEL_LEPTON_H), Rule->RevealTriggerRadius);
+		FUN_00578100(&Map);
+	}
+	return(true);
+}
+
+// FUNCTION: 0x006E1B90
+bool TActionClass::TAction_PLAY_MUSIC(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	Theme.Queue_Song(Data.Theme);
+	return(true);
+}
+
+// FUNCTION: 0x006E1BB0
+bool TActionClass::TAction_PLAY_SPEECH(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	FUN_00752480(Data.Speech, 2, -1);
+	return(true);
+}
+
+// FUNCTION: 0x006E1BD0
+bool TActionClass::TAction_1_SPECIAL(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
+{
+	house->SuperWeapon[Data.Special]->Grant(true, false, false);
+
+	if (PlayerPtr == house) {
+		Map.AddCameo(RTTI_SPECIAL, Data.Special);
+		Map.RepaintSidebar(SidebarClass::GetObjectTabIdx(RTTI_SPECIAL, Data.Special, false));
+	}
+	return(true);
+}
+
+// FUNCTION: 0x006E1C40
+bool TActionClass::TAction_FULL_SPECIAL(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
+{
+	house->SuperWeapon[Data.Special]->Grant(false, false, false);
+	house->SuperWeapon[Data.Special]->NeedsBuilding = false;
+
+	if (PlayerPtr == house) {
+		Map.AddCameo(RTTI_SPECIAL, Data.Special);
+		Map.RepaintSidebar(SidebarClass::GetObjectTabIdx(RTTI_SPECIAL, Data.Special, false));
+	}
+	return(true);
+}
+
+// FUNCTION: 0x006E1CC0
+bool TActionClass::TAction_DZ(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	Cell waypoint = Scen->Get_Waypoint_Cell(EffectLocation);
+	Coord coord = Coord(waypoint);
+	coord.Z = Map.Get_Height_GL(coord);
+	if ( Map[waypoint].IsUnderBridge || Map[waypoint].WasUnderBridge ) {
+		coord.Z += BRIDGE_LEPTON_HEIGHT;
+	}
+
+	AnimClass * anim = new AnimClass(Rule->FlareAnim, coord);
+	anim->IsInert = true;
+	return(true);
+}
+
+// FUNCTION: 0x006E1DC0
+bool TActionClass::TAction_WIN(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	if (Data.House == PlayerPtr->Class->House) {
+		PlayerPtr->Flag_To_Win();
+	} else {
+		PlayerPtr->Flag_To_Lose();
+	}
+	return(true);
+}
+
+// FUNCTION: 0x006E1E00
+bool TActionClass::TAction_LOSE(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	if (Data.House != PlayerPtr->Class->House) {
+		PlayerPtr->Flag_To_Win();
+	} else {
+		PlayerPtr->Flag_To_Lose();
+	}
+	return(true);
+}
+
+// FUNCTION: 0x006E1E40
+bool TActionClass::TAction_BEGIN_PRODUCTION(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
+{
+	HouseClass * h = Find_House(trig, Data.House);
+	if (h == NULL) return(false);
+	h->Begin_Production();
+	return(true);
+}
+
+// FUNCTION: 0x006E1EA0
+bool TActionClass::TAction_FIRE_SALE(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
+{
+	HouseClass * h = Find_House(trig, Data.House);
+	if (h == NULL) return(false);
+	h->State = STATE_ENDGAME;
+	return(true);
+}
+
+// FUNCTION: 0x006E1F00
+bool TActionClass::TAction_AUTOCREATE(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
+{
+	HouseClass * h = Find_House(trig, Data.House);
+	if (h == NULL) return(false);
+	h->IsAlerted = true;
+	return(true);
+}
+
+// FUNCTION: 0x006E1F60
+bool TActionClass::TAction_CREATE_TEAM(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	ScenarioInit++;
+	if (Team != NULL) {
+		Team->Create_One_Of(NULL);
+	}
+	ScenarioInit--;
 	return(true);
 }
 

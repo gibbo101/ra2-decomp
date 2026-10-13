@@ -1748,6 +1748,294 @@ int HouseClass::AI_Unit(void)
 	return(TICKS_PER_SECOND);
 }
 
+// FUNCTION: 0x004FEEE0
+int HouseClass::AI_Infantry(void)
+{
+	if (BuildInfantry != INFANTRY_NONE) return(TICKS_PER_SECOND);
+
+	int i;
+	int counter[100];
+	int value[ARRAY_SIZE(counter)];
+	memset(counter, 0x00, sizeof(counter));
+	for (i = 0; i < ARRAY_SIZE(value); i++) {
+		value[i] = 0x7FFFFFFF;
+	}
+
+	for (i = 0; i < Teams.Count(); i++) {
+		TeamClass * tptr = Teams[i];
+		if (tptr != NULL) {
+
+			int val = tptr->CreationFrame;
+
+			if (((tptr->Class->IsReinforcable && !tptr->IsFullStrength) || (!tptr->IsForcedActive && !tptr->IsHasBeen)) && tptr->House == this) {
+				TEAM_MEMBER_LIST _members;
+				tptr->Team_Members(_members);
+
+				for (int subindex = 0; subindex < _members.Count(); subindex++) {
+
+					InfantryTypeClass const * memtype = (InfantryTypeClass const *)_members[subindex];
+
+					if (memtype->RTTI == RTTI_INFANTRYTYPE) {
+						counter[memtype->HeapID]++;
+						if (val < value[memtype->HeapID]) {
+							value[memtype->HeapID] = val;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	for (int oindex = 0; oindex < Infantry.Count(); oindex++) {
+		InfantryClass * obj = Infantry[oindex];
+		if (obj != NULL && counter[obj->Class->HeapID] > 0 && obj->Is_Recruitable(this)) {
+			counter[obj->Class->HeapID]--;
+		}
+	}
+
+	int bestval = -1;
+	int bestcount = 0;
+	InfantryType lasttype = INFANTRY_NONE;
+	int lastval = 0x7FFFFFFF;
+	InfantryType bestlist[ARRAY_SIZE(counter)];
+	for (InfantryType type = InfantryType(0); type < InfantryTypes.Count(); type++) {
+		if (counter[type] > 0 && Can_Build(InfantryTypes[type], false, false) && InfantryTypes[type]->Cost_Of(this) <= Available_Money()) {
+			if (bestval == -1 || bestval < counter[type]) {
+				bestval = counter[type];
+				bestcount = 0;
+			}
+			bestlist[bestcount++] = type;
+
+			if (lasttype == INFANTRY_NONE || value[type] < lastval) {
+				lasttype = type;
+				lastval = value[type];
+			}
+		}
+	}
+
+	if (Random_Double(0, 0x7FFFFFFE) < Rule->FillEarliestTeamProbability[Difficulty] / 100.0) {
+		BuildInfantry = lasttype;
+	} else {
+		if (bestcount) {
+			BuildInfantry = bestlist[Random_Pick(0, bestcount-1)];
+		}
+	}
+
+	return(TICKS_PER_SECOND);
+}
+
+// FUNCTION: 0x004FF210
+int HouseClass::AI_Aircraft(void)
+{
+	if (BuildAircraft != AIRCRAFT_NONE) return(TICKS_PER_SECOND);
+
+	int i;
+	int counter[100];
+	int value[ARRAY_SIZE(counter)];
+	memset(counter, 0x00, sizeof(counter));
+	for (i = 0; i < ARRAY_SIZE(value); i++) {
+		value[i] = 0x7FFFFFFF;
+	}
+
+	for (i = 0; i < Teams.Count(); i++) {
+		TeamClass * tptr = Teams[i];
+		if (tptr != NULL) {
+
+			int val = tptr->CreationFrame;
+
+			if (((tptr->Class->IsReinforcable && !tptr->IsFullStrength) || (!tptr->IsForcedActive && !tptr->IsHasBeen)) && tptr->House == this) {
+				TEAM_MEMBER_LIST _members;
+				tptr->Team_Members(_members);
+
+				for (int subindex = 0; subindex < _members.Count(); subindex++) {
+
+					AircraftTypeClass const * memtype = (AircraftTypeClass const *)_members[subindex];
+
+					if (memtype->RTTI == RTTI_AIRCRAFTTYPE) {
+						counter[memtype->HeapID]++;
+						if (val < value[memtype->HeapID]) {
+							value[memtype->HeapID] = val;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	for (int oindex = 0; oindex < Aircraft.Count(); oindex++) {
+		AircraftClass * obj = Aircraft[oindex];
+		if (obj != NULL && counter[obj->Class->HeapID] > 0 && obj->Is_Recruitable(this)) {
+			counter[obj->Class->HeapID]--;
+		}
+	}
+
+	int bestval = -1;
+	int bestcount = 0;
+	AircraftType lasttype = AIRCRAFT_NONE;
+	int lastval = 0x7FFFFFFF;
+	AircraftType bestlist[ARRAY_SIZE(counter)];
+	for (AircraftType type = AircraftType(0); type < AircraftTypes.Count(); type++) {
+		if (counter[type] > 0 && Can_Build(AircraftTypes[type], false, false) && AircraftTypes[type]->Cost_Of(this) <= Available_Money()) {
+			if (bestval == -1 || bestval < counter[type]) {
+				bestval = counter[type];
+				bestcount = 0;
+			}
+			bestlist[bestcount++] = type;
+
+			if (lasttype == AIRCRAFT_NONE || value[type] < lastval) {
+				lasttype = type;
+				lastval = value[type];
+			}
+		}
+	}
+
+	if (Random_Double(0, 0x7FFFFFFE) < Rule->FillEarliestTeamProbability[Difficulty] / 100.0) {
+		BuildAircraft = lasttype;
+	} else {
+		if (bestcount) {
+			BuildAircraft = bestlist[Random_Pick(0, bestcount-1)];
+		}
+	}
+
+	return(TICKS_PER_SECOND);
+}
+
+// FUNCTION: 0x004FF540
+void HouseClass::Production_Begun(TechnoClass const * product)
+{
+}
+
+// FUNCTION: 0x004FF550
+void HouseClass::Tracking_Remove(TechnoClass const * techno)
+{
+	((TechnoClass *)techno)->CountedAsOwned = false;
+	if (techno->TClass->IsInsignificant) return;
+	if (techno->TClass->DontScore) return;
+
+	switch ((RTTIType)techno->Fetch_RTTI()) {
+		case RTTI_BUILDING:
+			if (techno->IsStrange() || (((BuildingClass *)techno)->Class->UndeploysInto != NULL && ((BuildingClass *)techno)->Class->UndeploysInto->ResourceGatherer)) {
+				CurUnits--;
+			} else {
+				CurBuildings--;
+			}
+			BQuantity.Decrement(techno->TClass->Fetch_Heap_ID());
+			break;
+
+		case RTTI_AIRCRAFT:
+			CurAircraft--;
+			AQuantity.Decrement(techno->TClass->Fetch_Heap_ID());
+			break;
+
+		case RTTI_INFANTRY:
+			if (techno->CountedAsOwnedSpecial) {
+				CurInfantry--;
+				((TechnoClass *)techno)->CountedAsOwnedSpecial = false;
+			}
+			IQuantity.Decrement(techno->TClass->Fetch_Heap_ID());
+			break;
+
+		case RTTI_UNIT:
+			CurUnits--;
+			UQuantity.Decrement(techno->TClass->Fetch_Heap_ID());
+			if (techno->TClass->Naval && techno->TClass->MaxPassengers == 0) {
+				OwnedNavy--;
+			}
+			break;
+
+		default:
+			break;
+	}
+}
+
+int * HouseClass::Factory_Counter(RTTIType rtti, unsigned char naval)
+{
+	switch (rtti) {
+		case RTTI_UNIT:
+		case RTTI_UNITTYPE:
+			if (naval) return(&NumShipyards);
+			return(&UnitFactories);
+
+		case RTTI_AIRCRAFT:
+		case RTTI_AIRCRAFTTYPE:
+			return(&AircraftFactories);
+
+		case RTTI_INFANTRY:
+		case RTTI_INFANTRYTYPE:
+			return(&InfantryFactories);
+
+		case RTTI_BUILDING:
+		case RTTI_BUILDINGTYPE:
+			return(&BuildingFactories);
+
+		default:
+			break;
+	}
+	return(NULL);
+}
+
+// FUNCTION: 0x004FF980
+void HouseClass::Active_Remove(TechnoClass const * techno)
+{
+	if (techno->Fetch_RTTI() == RTTI_BUILDING) {
+		TechnoTypeClass const * type = techno->TClass;
+		int naval = type != NULL && type->Naval;
+		int * fptr = Factory_Counter(((BuildingClass *)techno)->Class->ToBuild, naval);
+		if (fptr != NULL) {
+			*fptr = *fptr - 1;
+		}
+	}
+}
+
+// FUNCTION: 0x004FFA50
+void HouseClass::Active_Add(TechnoClass const * techno)
+{
+	if (techno->Fetch_RTTI() == RTTI_BUILDING) {
+		TechnoTypeClass const * type = techno->TClass;
+		int naval = type != NULL && type->Naval;
+		int * fptr = Factory_Counter(((BuildingClass *)techno)->Class->ToBuild, naval);
+		if (fptr != NULL) {
+			*fptr = *fptr + 1;
+		}
+	}
+}
+
+static inline Cell Base_Cell_Wide(HouseClass const * house)
+{
+	if ((TPoint2D<short> const &)house->BaseCenter == CELL_NONE) {
+		return(house->BaseSpawnCell);
+	}
+	return(house->BaseCenter);
+}
+
+static inline Coord Base_Center_Coord(HouseClass const * house)
+{
+	return(Base_Coord(Base_Cell_Wide(house)));
+}
+
+// FUNCTION: 0x004FFB20
+ZoneType HouseClass::Which_Zone(Coord const & coord) const
+{
+	if (coord == COORD_NONE) return(ZONE_NONE);
+
+	int distance = Distance(Base_Coord(Get_Base_Center()), coord);
+	if (distance <= Radius) return(ZONE_CORE);
+	if (distance > Radius*4) return(ZONE_NONE);
+
+	Dir256 facing = Direction(Base_Center_Coord(this), coord).As_Dir256();
+	if (facing > DIR_NE && facing < DIR_NW) return(ZONE_NORTH);
+	if (facing > DIR_SW && facing < DIR_SE) return(ZONE_SOUTH);
+	if (facing > DIR_NE || facing >= DIR_SE) return(ZONE_WEST);
+	return(ZONE_EAST);
+}
+
+// FUNCTION: 0x004FFD50
+ZoneType HouseClass::Which_Zone(ObjectClass const * object) const
+{
+	if (!object) return(ZONE_NONE);
+	return(Which_Zone(object->Center_Coord()));
+}
+
 // FUNCTION: 0x004FFD90
 ZoneType HouseClass::Which_Zone(Cell const & cell) const
 {

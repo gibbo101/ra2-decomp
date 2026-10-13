@@ -115,11 +115,13 @@ class SidebarClass : public PowerClass
 					SelectClass(void);
 					SelectClass(NoInitClass const & x) : ControlClass(x) {};
 
-					void Set_Owner(StripClass & strip, int index);
+					void Set_Owner(StripClass & strip, int index); bool FUN_006ABA20(void);
+					virtual void OnMouseEnter(void) override;
+					virtual void OnMouseLeave(void) override;
 
 					StripClass * Strip;
 					int Index;
-					int unknown_34;
+					bool unknown_34; unsigned char : 8; unsigned char : 8; unsigned char : 8;
 
 				protected:
 					virtual int Action(unsigned flags, KeyNumType & key, int modifier) override;
@@ -132,10 +134,10 @@ class SidebarClass : public PowerClass
 
 				bool Add(RTTIType type, int ID);
 				bool Abandon_Production(FactoryClass const * factory);
-				bool Scroll(bool up, int amount);
+				bool Scroll(bool up, int amount); bool Scroll(bool up); void AddButtons(void); void RemoveButtons(void); int FUN_006A94F0(int index);
 				bool Page(bool up);
 				bool AI(KeyNumType & input, Point2D const & xy);
-				char const * Help_Text(int id);
+				unsigned short const * Help_Text(int id);
 				void Draw_It(bool complete);
 				void One_Time(int id);
 				void Init_Clear(void);

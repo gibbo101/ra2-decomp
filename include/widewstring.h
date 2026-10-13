@@ -11,7 +11,22 @@ class WideWstring
 	public:
 		WideWstring(void);
 		WideWstring(WideWstring const & other);
+		WideWstring(wchar_t const * string);
 		~WideWstring(void);
+
+		wchar_t *		get(void) const;
+		wchar_t *		text(void) const;
+		unsigned int	length(void) const;
+		int				toInt(void) const;
+		int				getToken(int offset, wchar_t const * delim, WideWstring & out) const;
+
+		bool			operator==(wchar_t const * other) const;
+		bool			operator==(WideWstring const & other) const;
+		bool			operator!=(wchar_t const * other) const;
+		bool			operator!=(WideWstring const & other) const;
+
+		WideWstring &	operator=(wchar_t const * other);
+		WideWstring &	operator=(WideWstring const & other);
 
 		wchar_t * str;
 };

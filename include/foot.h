@@ -225,6 +225,8 @@ class FootClass : public TechnoClass
 		Cell Move_Order(Cell const & where, bool consider_fog);
 		void AbortMotion(void);
 		void UpdatePassengerCoords(void);
+		void RemovePassenger(FootClass * passenger);
+		FootClass * RemoveFirstPassenger(void);
 
 		virtual VisualType Visual_Character(bool raw = false, HouseClass const * = NULL) const override;
 		virtual bool Limbo(void) override;

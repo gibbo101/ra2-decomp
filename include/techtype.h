@@ -22,7 +22,7 @@ class AnimTypeClass;
 class WeaponTypeClass;
 class AircraftTypeClass;
 class InfantryTypeClass;
-class ColorSchemeClass;
+class ColorScheme;
 template<class T> class DynamicVectorClass;
 
 struct YRWeaponDataStruct : public WeaponDataStruct
@@ -471,7 +471,7 @@ class TechnoTypeClass : public ObjectTypeClass
 		int ZFudgeBridge;
 
 		char PaletteFile[32];
-		DynamicVectorClass<ColorSchemeClass *> * Palette;
+		DynamicVectorClass<ColorScheme *> * Palette;
 		unsigned int : 32;
 
 		TechnoTypeClass(NoInitClass const & x);

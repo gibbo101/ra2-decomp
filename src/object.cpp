@@ -1242,6 +1242,147 @@ int ObjectClass::Planar_Distance(AbstractClass const * target) const
 	return(dist);
 }
 
+// FUNCTION: 0x005F6500
+int ObjectClass::Relative_Distance(AbstractClass const * target) const
+{
+	if (target == NULL) {
+		return(0);
+	}
+
+	Coord center = Center_Coord();
+	Coord target_center = target->Center_Coord();
+	Point2D pt(center.X - target_center.X, center.Y - target_center.Y);
+	return((pt.X * pt.X) + (pt.Y * pt.Y));
+}
+
+// FUNCTION: 0x005F6560
+int ObjectClass::Relative_Distance(Coord const & coord) const
+{
+	Coord center = Center_Coord();
+	Point2D pt(center.X - coord.X, center.Y - coord.Y);
+	return((pt.X * pt.X) + (pt.Y * pt.Y));
+}
+
+// FUNCTION: 0x005F65A0
+Coord ObjectClass::Center_Coord(void) const
+{
+	return(PositionCoord);
+}
+
+// FUNCTION: 0x005F65D0
+void ObjectClass::Editor_Draw_It(Point2D const & point, Rect const & cliprect) const
+{
+	Draw_It(point, cliprect);
+}
+
+// FUNCTION: 0x005F65F0
+void ObjectClass::Delete_Me(void)
+{
+	if (AttachedBomb != NULL) {
+		AttachedBomb->Disarm();
+	}
+	if (this != NULL && (AbstractFlags & 1)) {
+		((TechnoClass *)this)->Kill_Cargo(NULL);
+	}
+	Detach_This_From_All(this, true);
+	Limbo();
+	IsActive = false;
+	ObjectsToDelete.Add(this);
+}
+
+// FUNCTION: 0x005F6690
+bool ObjectClass::Is_Inactive(void) const
+{
+	return(IsActive==false);
+}
+
+// FUNCTION: 0x005F66A0
+Rect Vector_Rect(DynamicVectorClass<ObjectClass *> const & list)
+{
+	Rect bounds(0, 0, 0, 0);
+
+	if (list.Count() > 0) {
+		bounds.X = list[0]->PositionCoord.X;
+		bounds.Y = list[0]->PositionCoord.Y;
+
+		for (int i = list.Count() - 1; i >= 0; i--) {
+			Coord coord = list[i]->PositionCoord;
+			int x = coord.X;
+			int y = coord.Y;
+
+			if (x < bounds.X) {
+				bounds.Width += bounds.X - x;
+				bounds.X = x;
+			}
+			if (y < bounds.Y) {
+				bounds.Height += bounds.Y - y;
+				bounds.Y = y;
+			}
+			if (x > bounds.X + bounds.Width) {
+				bounds.Width = x - bounds.X;
+			}
+			if (y > bounds.Y + bounds.Height) {
+				bounds.Height = y - bounds.Y;
+			}
+		}
+	}
+	return(bounds);
+}
+
+// FUNCTION: 0x005F6790
+Coord Vector_Center(DynamicVectorClass<ObjectClass *> const & list)
+{
+	Coord center = Coord(0, 0, 0);
+	int count = list.Count();
+	for (int i = count - 1; i >= 0; i--) {
+		center += list[i]->PositionCoord;
+	}
+	center.X /= count;
+	center.Y /= count;
+	center.Z /= count;
+	return(center);
+}
+
+// FUNCTION: 0x005F6810
+ObjectClass * Vector_Closest_Object(DynamicVectorClass<ObjectClass *> const & list, Coord const & coord)
+{
+	ObjectClass * closest = NULL;
+	int mindist = 99999999;
+
+	for (int i = list.Count() - 1; i >= 0; i--) {
+		if (closest == NULL) {
+			closest = list[i];
+			mindist = coord.Distance_To(closest->PositionCoord);
+		} else {
+			int dist = Distance(coord, list[i]->PositionCoord);
+			if (dist < mindist) {
+				closest = list[i];
+				mindist = dist;
+			}
+		}
+	}
+	return(closest);
+}
+
+// FUNCTION: 0x005F6940
+void ObjectClass::Set_Coord(Coord const & coord)
+{
+	Position = coord;
+}
+
+// FUNCTION: 0x005F6960
+CellClass * ObjectClass::Get_Cell_Ptr(void) const
+{
+	Map[Get_Coord()];
+	return(&Map[Get_Coord()]);
+}
+
+// FUNCTION: 0x005F69C0
+Cell ObjectClass::Get_Target_Cell(void) const
+{
+	return(Destination_Coord().As_Cell());
+}
+
 // FUNCTION: 0x005F6C80
 Coord ObjectClass::Docking_Coord(TechnoClass * ) const
 {

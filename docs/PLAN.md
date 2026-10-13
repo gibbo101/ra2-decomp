@@ -893,6 +893,23 @@ a line of its own: checkall now fails on it. Its first run found an older pair, 
 player base) and CLSID_ShipLocomotion are proven. Cost: about 5.0M tokens. Merge gate:
 3,733 of 3,733 (593.0 KB).
 
+### Batches 21 and 22 (13 October 2026)
+
+**Batch 21: 132 of 144** (House 8 of 10 real, since two of its addresses were tails the
+map fix merged away, and AI_Infantry and AI_Aircraft landed at their full 805 bytes);
+Get_Class_Weapon_Data moved out of line with YR's body, and the convert blitters all
+landed. **Batch 22: 139 of 144**: the merge gave WideWstring its full Wstring-mirror
+interface and matched palette's hash lookups by making HashString's member operators
+non-const, which explains a self-jumping free fastcall operator== in the exe. It also
+resolved its own module agents' duplicate claims by vtable RTTI. A map-fix agent found
+why Ghidra-only starts survived inside early-return functions (the case-label pass only
+tested data-pointer starts) and merged five split pairs, none matched. The coopcamp
+agent had used `#pragma auto_inline(off)` to keep a helper out of line; the pragma is
+gone and the helper banked, since the rules ban it. Still open: 0x4FF700 hides
+Factory_Counter at 0x4FF8F0 after a jump table, and Put_TextBlock (0x5271C0) needs a
+retry now that its extent is right. Cost: about 4.1M tokens. Merge gate: 4,009 of 4,009
+(626.2 KB).
+
 ### Decide before the first batch
 
 - **Module layout.** Which function lives in which source file, and the link order, decide

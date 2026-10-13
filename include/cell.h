@@ -300,6 +300,7 @@ class CellClass : public AbstractClass
 		void Trigger_Veins(void);
 
 		bool Is_Tile_Water(void) const;
+		bool Is_Tile_Not_Water(void) const;
 		bool Is_Tile_Clear(void) const;
 		bool Is_Tile_Ramp(void) const;
 		bool Is_Tile_Cliff(void) const;

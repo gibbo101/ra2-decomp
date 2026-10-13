@@ -82,6 +82,9 @@
 #include "voc.h"
 #include "vox.h"
 #include "voxdrsys.h"
+#include "stbuffer.h"
+#include "_voxel.h"
+#include "voxlib.h"
 #include "warhead.h"
 #include "wave.h"
 #include "weapon.h"
@@ -2664,6 +2667,100 @@ int TechnoClass::Get_Z_Fudge_Cliff(void) const
 	return(fudge);
 }
 
+// FUNCTION: 0x00705CA0
+Coord TechnoClass::GetAttackCoordinates(void) const
+{
+	if (Get_Mission() == MISSION_ATTACK && TarCom != NULL) {
+		return(TarCom->As_Coord());
+	}
+	return(Position);
+}
+
+// FUNCTION: 0x00705D10
+void TechnoClass::FUN_00705D10(PlanningTokenClass * token)
+{
+	PlanningToken = token;
+}
+
+// FUNCTION: 0x00705D20
+PlanningTokenClass * TechnoClass::FUN_00705D20(void)
+{
+	return(PlanningToken);
+}
+
+// FUNCTION: 0x00705D30
+bool TechnoClass::FUN_00705D30(void)
+{
+	if (PlanningToken == NULL) {
+		return(false);
+	}
+	return(PlanningToken->FUN_00636DC0() > 0 ? true : false);
+}
+
+// FUNCTION: 0x00705D50
+bool TechnoClass::IsNotWarpingIn(void) const
+{
+	return(IsWarpingIn() ? false : true);
+}
+
+// FUNCTION: 0x00705D60
+void TechnoClass::FUN_00705D60(void)
+{
+	TryNextPlanningTokenNode();
+}
+
+// FUNCTION: 0x00705D70
+void * TechnoClass::GetRemapColour(void) const
+{
+	TechnoTypeClass const * type = Techno_Type_Class();
+	int index = House->Scheme;
+	DynamicVectorClass<ColorScheme *> * palette = type->Palette;
+	if (palette != NULL) {
+		return((*palette)[index]->Converter);
+	}
+	if (!IsClearlyVisibleTo(PlayerPtr) && GetDisguiseHouse(true) != NULL) {
+		return(ColorSchemes[GetDisguiseHouse(true)->Scheme]->Converter);
+	}
+	return(ColorSchemes[index]->Converter);
+}
+
+// FUNCTION: 0x00706BD0
+void TechnoClass::Techno_Draw_Voxel_Shadow(VoxelDataStruct const & voxeldata, int layer_index, int key, VoxelIndexClass * cache, Rect const & cliprect, Point2D const & point, Matrix3D const & matrix, bool force_cache, Surface * surface, int shadow_x, int shadow_y) const
+{
+	if (Cloak != UNCLOAKED || Techno_Type_Class()->NoShadow || voxeldata.VoxLib->Load_Failed()) {
+		return;
+	}
+
+	if (key != -1) {
+		if (cache == NULL || Techno_Type_Class()->DisableShadowCache) {
+			key = -1;
+		} else {
+			StaticBufferClass::Entry * entry = (*cache)[key];
+			if (entry != NULL) {
+				Techno_Blit_Voxel(*entry, point, cliprect, ShapeFlags_Type(SHAPE_DARKEN|SHAPE_ZGRAD), NORMAL_LIGHT, 0);
+				return;
+			}
+			if (!force_cache) {
+				return;
+			}
+		}
+	}
+
+	SurfaceRegion region = Techno_Render_Voxel_Shadow(voxeldata, matrix, point, cliprect, layer_index, ShapeFlags_Type(SHAPE_DARKEN|SHAPE_ZGRAD), key != -1, surface, shadow_x, shadow_y);
+	if (key != -1) {
+		StaticBufferClass::Entry * data = VoxelStaticBuffer.Add(*VoxelDrawSystem::Get_Surface(), region);
+		if (data == NULL || !cache->Add_Index(key, data)) {
+			Class_Of();
+			ObjectTypeClass::Clear_Voxel_Indexes();
+			if (data == NULL) {
+				data = VoxelStaticBuffer.Add(*VoxelDrawSystem::Get_Surface(), region);
+			}
+			cache->Add_Index(key, data);
+		}
+		Techno_Draw_Voxel_Shadow(voxeldata, layer_index, key, cache, cliprect, point, matrix, false, NULL, 0, 0);
+	}
+}
+
 // FUNCTION: 0x00708C10
 FacingType TechnoClass::Desired_Load_Dir(ObjectClass * , Cell & moveto) const
 {
@@ -2675,4 +2772,16 @@ FacingType TechnoClass::Desired_Load_Dir(ObjectClass * , Cell & moveto) const
 void TechnoClass::Reset_Action_Line_Timer(void)
 {
 	ActionLineTimer = 25;
+}
+
+// FUNCTION: 0x0070E140
+WeaponDataStruct const * TechnoClass::Get_Class_Weapon_Data(int which) const
+{
+	if (which == -1) return(NULL);
+
+	if (Veterancy.Is_Elite()) {
+		WeaponDataStruct const * weapon = ((TechnoTypeClass *)Techno_Type_Class())->GetEliteWeapon(which);
+		if (weapon != NULL && weapon->Weapon != NULL) return(weapon);
+	}
+	return(((TechnoTypeClass *)Techno_Type_Class())->GetWeapon(which));
 }

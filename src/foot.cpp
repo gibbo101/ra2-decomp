@@ -21,6 +21,7 @@
 #include "bench.h"
 #include "building.h"
 #include "builtype.h"
+#include "capmgr.h"
 #include "ccrand.h"
 #include "cell.h"
 #include "convert.h"
@@ -2239,4 +2240,253 @@ bool FootClass::Is_Moving_Onto_Bridge(TechnoClass * docker) const
 		return(false);
 	}
 	return(BASECLASS::Is_Moving_Onto_Bridge(docker));
+}
+
+// FUNCTION: 0x004DDC60
+bool FootClass::Is_LZ_Clear(AbstractClass * target) const
+{
+	if (target == NULL) return(false);
+	Cell cell = target->Center_Coord().As_Cell();
+	if (!Map.In_Local_Radar(cell)) return(false);
+
+	TechnoClass * object = Map[cell].Cell_Techno();
+	if (object) {
+		if ((TechnoClass const *)this == object) return(true);
+
+		if (FUN_0065AD40(0) == object) {
+			return(true);
+		}
+		if (Techno_Type_Class()->Spawned) {
+			if (object->SpawnManager != NULL) return(true);
+			if (object->Techno_Type_Class()->Spawned) return(true);
+		}
+		return(false);
+	}
+
+	if (!Map[cell].Is_Clear_To_Move(SPEED_TRACK, false, false)) return(false);
+
+	for (int i = 0; i < Aircraft.Count(); i++) {
+		AircraftClass * aptr = Aircraft[i];
+		if (aptr->IsActive && !aptr->IsInLimbo && aptr->NavCom == target && aptr != this) {
+			return(false);
+		}
+	}
+
+	return(true);
+}
+
+// FUNCTION: 0x004DDDE0
+ActionType FootClass::What_Action(Cell const & cell, bool check_fog, bool disallow_force) const
+{
+	ActionType action = BASECLASS::What_Action(cell, check_fog, disallow_force);
+
+	Coord coord = cell;
+	coord.Z = Map.Get_Height_GL(coord);
+	if (Map[coord].IsUnderBridge) {
+		coord.Z += BRIDGE_LEPTON_HEIGHT;
+	}
+
+	if (Map.Is_Shrouded(coord) && action != ACTION_NONE) {
+		if (Techno_Type_Class()->IsMoveToShroud && Map.In_Local_Radar(cell)) {
+			if (action != ACTION_PATROL_WAYPOINT) {
+				action = ACTION_MOVE;
+			}
+		} else {
+			action = ACTION_NOMOVE;
+		}
+	}
+
+	return(action);
+}
+
+// FUNCTION: 0x004DDED0
+ActionType FootClass::What_Action(ObjectClass const * target, bool disallow_force) const
+{
+	ActionType action = BASECLASS::What_Action(target, disallow_force);
+
+	Coord coord = target->Center_Coord();
+	coord.Z = Map.Get_Height_GL(coord);
+	if (Map[coord].IsUnderBridge) {
+		coord.Z += BRIDGE_LEPTON_HEIGHT;
+	}
+
+	if (Map.Is_Shrouded(coord) && action != ACTION_NONE && Session.Type == GAME_NORMAL) {
+		if (Techno_Type_Class()->IsMoveToShroud) {
+			action = ACTION_MOVE;
+		} else {
+			action = ACTION_NOMOVE;
+		}
+	}
+
+	return(action);
+}
+
+// FUNCTION: 0x004DDF90
+int FootClass::Do_MISSION_RESCUE(void)
+{
+	enum {
+		ENGAGE_THREATS,
+		TRAVELLING
+	};
+
+	switch (Status) {
+
+		case ENGAGE_THREATS:
+			if (TarCom != NULL) {
+				Approach_Target();
+			} else {
+				if (ArchiveTarget == NULL) {
+					ArchiveTarget = &Map[(Coord const &)PositionCoord];
+				}
+
+				IsScanLimited = false;
+
+				ObjectClass * threat = (ObjectClass *)Greatest_Threat(THREAT_NORMAL, ArchiveTarget->Center_Coord(), false);
+				if (threat != NULL) {
+					if (threat->Distance(ArchiveTarget->Center_Coord()) < Threat_Range(1) * 1.5) {
+						Assign_Target(threat);
+					}
+				}
+
+				if (TarCom != NULL) {
+					return(1);
+				} else {
+					Status = TRAVELLING;
+					Cell where = House->Where_To_Go(this);
+					if (where != CELL_NONE) {
+						Assign_Destination(&Map[where]);
+					} else {
+						Assign_Destination(NULL);
+					}
+					ArchiveTarget = NULL;
+				}
+			}
+			break;
+
+		case TRAVELLING:
+			if (NavCom == NULL) {
+				ArchiveTarget = NULL;
+				QueueMission(MISSION_GUARD_AREA, false);
+				Commence();
+			}
+			break;
+	}
+
+	return(Current_Mission_Control().Normal_Delay() + Random_Pick(0, 2));
+}
+
+// FUNCTION: 0x004DE1D0
+Cell FootClass::Move_Order(Cell const & where, bool consider_fog)
+{
+	ActionType action = What_Action(where, consider_fog, false);
+	bool inradar = Map.In_Local_Radar(where);
+
+	Coord coord = where;
+	coord.Z = Map.Get_Height_GL(coord);
+	if (Map[coord].IsUnderBridge) {
+		coord.Z += BRIDGE_LEPTON_HEIGHT;
+	}
+
+	if (Techno_Type_Class()->IsMoveToShroud || !Map.Is_Shrouded(coord)) {
+
+		Cell cell = where;
+		CellClass * cptr = &Map[Destination_Coord(NULL)];
+
+		MZoneType mzone = Techno_Type_Class()->MZone;
+		if (mzone == MZONE_SUBTERANNEAN) {
+			mzone = MZONE_NORMAL;
+		} else if (mzone == MZONE_FLYER && House->IonSensitivesShouldBeOffline()) {
+			mzone = MZONE_INFANTRY;
+		}
+
+		bool moveanywhere = (In_Air() || Techno_Type_Class()->IsSubterranean || (RTTI == RTTI_INFANTRY && ((InfantryClass *)this)->Class->JumpJet && !House->IonSensitivesShouldBeOffline()) || RTTI == RTTI_AIRCRAFT) ? true : false;
+		bool ontobridge = Is_Moving_Onto_Bridge(NULL);
+
+		Coord coord2 = where.As_Coord();
+		coord2.Z = Map.Get_Height_GL(coord2);
+		if (Map[coord2].IsUnderBridge) {
+			coord2.Z += BRIDGE_LEPTON_HEIGHT;
+		}
+
+		bool shroud = Map.Is_Shrouded(coord2);
+
+		if (moveanywhere && action == ACTION_NOMOVE) {
+			cell = Map.Nearby_Location(where, Techno_Type_Class()->Speed, -1, mzone, Map[where].IsUnderBridge, Point2D(1, 1), false, true, Techno_Type_Class()->IsSubterranean && HeightAGL < 0);
+		} else if (!inradar || shroud || (!moveanywhere && (!Techno_Type_Class()->Teleporter || action == ACTION_NOMOVE) && !Map.Is_Same_Cell_Zone(cptr->CellID, cell, mzone, ontobridge, Map[where].IsUnderBridge, false))) {
+			cell = Map.Nearby_Location(where, Techno_Type_Class()->Speed, Map.Get_Cell_Zone(cptr->CellID, mzone, ontobridge), mzone, Map[where].IsUnderBridge, Point2D(1, 1), false, true, false, true);
+		}
+
+		if (cell != CELL_NONE) {
+			return(cell);
+		}
+	}
+
+	return(CELL_NONE);
+}
+
+// FUNCTION: 0x004DE580
+void FootClass::Advance_Waypoint_Path(void)
+{
+	if (CurrentPath != PATH_NONE) {
+		WaypointClass * wp = PlayerPtr->Paths[CurrentPath]->Get_Waypoint(NextWaypoint);
+		WaypointClass * next_wp = PlayerPtr->Paths[CurrentPath]->Get_Next_Waypoint(wp);
+		Execute_Waypoint_Path(next_wp);
+	}
+}
+
+// FUNCTION: 0x004DE5D0
+void FootClass::Delete_Me(void)
+{
+	if (CaptureManager != NULL) {
+		CaptureManager->FreeAll();
+	}
+	if (LocomotorTarget != NULL) {
+		ReleaseLocomotor(true);
+	}
+	if (Team != NULL) {
+		Team->Remove(this, -1, false);
+	}
+	BASECLASS::Delete_Me();
+}
+
+// FUNCTION: 0x004DE620
+bool FootClass::In_Air(void) const
+{
+	return(BASECLASS::In_Air());
+}
+
+// FUNCTION: 0x004DE630
+void FootClass::AddPassenger(FootClass * passenger)
+{
+	BASECLASS::AddPassenger(passenger);
+	if (Techno_Type_Class()->Gunner && Cargo.How_Many() == 1) {
+		ReceiveGunner(passenger);
+	}
+}
+
+// FUNCTION: 0x004DE670
+void FootClass::RemovePassenger(FootClass * passenger)
+{
+	Cargo.Detach(passenger);
+	if (passenger != NULL && Techno_Type_Class()->LeaveTransportSound != -1) {
+		VocClass::PlayIndexAtPos(Techno_Type_Class()->LeaveTransportSound, PositionCoord, 0);
+	}
+	if (Techno_Type_Class()->Gunner && !Cargo.How_Many()) {
+		RemoveGunner(passenger);
+	}
+}
+
+// FUNCTION: 0x004DE710
+FootClass * FootClass::RemoveFirstPassenger(void)
+{
+	FootClass * passenger = Cargo.Detach_Object();
+	if (Techno_Type_Class()->Gunner && !Cargo.How_Many()) {
+		RemoveGunner(passenger);
+	}
+	return(passenger);
+}
+
+// FUNCTION: 0x004DE750
+void FootClass::ReceiveGunner(FootClass * gunner)
+{
 }

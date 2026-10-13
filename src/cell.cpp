@@ -2282,6 +2282,36 @@ bool CellClass::Is_Tile_Road_Median(void) const
 	return(false);
 }
 
+// FUNCTION: 0x00486750
+bool CellClass::Is_Tile_Bridge(void) const
+{
+	if (IS_TILE_IN_VALID_SET(BridgeSet, BRIDGE_COUNT)) {
+		return(true);
+	}
+
+	return(false);
+}
+
+// FUNCTION: 0x00486770
+bool CellClass::Is_Tile_Train_Bridge(void) const
+{
+	if (IS_TILE_IN_VALID_SET(TrainBridgeSet, TRAIN_BRIDGE_COUNT)) {
+		return(true);
+	}
+
+	return(false);
+}
+
+// FUNCTION: 0x00486790
+bool CellClass::Is_Tile_Clear_To_Sand_LAT(void) const
+{
+	if (IS_TILE_IN_SET(ClearToSandLat, 16)) {
+		return(true);
+	}
+
+	return(false);
+}
+
 // FUNCTION: 0x004867B0
 bool CellClass::Is_Tile_Clear_To_Green_LAT(void) const
 {
@@ -2289,6 +2319,185 @@ bool CellClass::Is_Tile_Clear_To_Green_LAT(void) const
 		return(true);
 	}
 	return(false);
+}
+
+// FUNCTION: 0x004867E0
+bool CellClass::Is_Tile_Not_Water(void) const
+{
+	if (ITType >= IsometricTileTypeClass::WaterSet && ITType < IsometricTileTypeClass::WaterSet + 14) {
+		return(false);
+	}
+
+	return(true);
+}
+
+inline bool CellClass::Is_Cloaked(HousesType house) const
+{
+	return((CloakedBy & (1 << house)) != 0);
+}
+
+inline bool CellClass::Is_Sensed(HousesType house) const
+{
+	return((short)SensorsOfHouses[house] > 0);
+}
+
+// FUNCTION: 0x00486800
+bool CellClass::Should_Draw_As_Cloaked(HousesType house) const
+{
+	if (PlayerPtr != NULL) {
+		if (Is_Cloaked(house)) {
+			if (house == PlayerPtr->HeapID) {
+				return(true);
+			}
+			if (!Is_Sensed(PlayerPtr->HeapID)) {
+				return(true);
+			}
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00486840
+Coord CellClass::Center_Coord(void) const
+{
+	Point2D pt = Point2D((CellID.X * CELL_LEPTON_W) + CELL_LEPTON_W / 2, (CellID.Y * CELL_LEPTON_H) + CELL_LEPTON_H / 2);
+	Coord coord;
+	coord.X = pt.X;
+	coord.Y = pt.Y;
+	coord.Z = Get_Height(pt);
+	return(coord);
+}
+
+// FUNCTION: 0x00486890
+Coord CellClass::As_Coord(void) const
+{
+	if (IsUnderBridge) {
+		return(Center_Coord() + Coord(0, 0, BRIDGE_LEPTON_HEIGHT));
+	}
+
+	return(Center_Coord());
+}
+
+// FUNCTION: 0x00486900
+bool CellClass::Is_Tile_Destroyable_Cliff(void) const
+{
+	if (ITType == IsometricTileTypeClass::DestroyableCliffs + DESTROYABLE_CLIFFS_COUNT-2) {
+		return(true);
+	}
+
+	if (ITType == IsometricTileTypeClass::DestroyableCliffs + DESTROYABLE_CLIFFS_COUNT-1) {
+		return(true);
+	}
+
+	return(false);
+}
+
+// FUNCTION: 0x00486920
+void CellClass::Trigger_Veins(void)
+{
+	if (Overlay == OVERLAY_VEINS && OverlayData >= OVERLAYDATA_FIRST_SOLID_VEIN && Ramp == RAMP_NONE && !IsAnimAttached) {
+		ObjectClass * occupier = Cell_Occupier();
+		while (occupier != NULL) {
+			if (occupier->HeightAGL <= 5 && occupier->Is_Techno() &&
+				!occupier->TClass->IsImmuneToVeins && !((TechnoClass *)occupier)->Has_Ability(ABILITY_VEIN_PROOF)) {
+
+				new AnimClass(Rule->VeinAttack, Cell_Coord() - Coord(CELL_LEPTON_W / 2, CELL_LEPTON_H / 2));
+				IsAnimAttached = true;
+			}
+			occupier = occupier->Next;
+		}
+	}
+}
+
+// FUNCTION: 0x00486A70
+void CellClass::Fog_Cell(void)
+{
+	if (Scen->Special.IsFogOfWar) {
+		Cell cell = CellID;
+
+		for (int height = 1; height <= 15; height += 2) {
+			CellClass *cptr = &Map[cell];
+
+			if (cptr->Height >= height - 2 && cptr->Height <= height) {
+				if (!cptr->IsFogged) {
+					FOGGED_OBJECT_LIST * fogged_objects = new FOGGED_OBJECT_LIST;
+					fogged_objects->Resize(1);
+					fogged_objects->Set_Growth_Step(1);
+
+					cptr->IsFogged = true;
+					ObjectClass * occupier = cptr->Cell_Occupier();
+
+					while (occupier != NULL) {
+						int rtti = occupier->What_Am_I();
+						if (rtti == RTTI_BUILDING) {
+							BuildingClass * building = (BuildingClass *)occupier;
+							building->PositionCell;
+							if (building->Should_Fog()) {
+								bool fade;
+								if (building->IsStrange() || building->TranslucencyLevel == 15) {
+									fade = false;
+								} else {
+									fade = true;
+								}
+								building->Make_Fogged(fogged_objects, cptr, fade);
+							}
+						} else if (rtti == RTTI_UNIT || rtti == RTTI_AIRCRAFT || rtti == RTTI_INFANTRY) {
+							occupier->Unselect();
+						}
+						occupier = occupier->Next;
+					}
+
+					if (fogged_objects->Count() > 0) {
+						cptr->FoggedObjects = fogged_objects;
+					} else {
+						delete fogged_objects;
+					}
+				}
+			}
+			cell += Cell(1,1);
+		}
+	}
+}
+
+// FUNCTION: 0x00486BF0
+void CellClass::Unfog_Cell(void)
+{
+	Cell cell = CellID;
+	for (int i = 1; i < 15; i += 2) {
+		CellClass *cptr = &Map[cell];
+		int height = cptr->Height;
+		if (height >= i - 2 && height <= i) {
+			cptr->IsFogged = false;
+			cptr->Remove_Fogged_Objects();
+		}
+		cell += Cell(1,1);
+	}
+}
+
+// FUNCTION: 0x00486C50
+void CellClass::Remove_Fogged_Objects(void)
+{
+	if (FoggedObjects != NULL) {
+		for (int i = FoggedObjects->Count() - 1; i >= 0; i--) {
+			FoggedObjectClass * obj = (*FoggedObjects)[i];
+			if (obj->Get_Head_Record_Occupy_List() != NULL) {
+				Cell const * list = obj->Get_Head_Record_Occupy_List();
+				while (*list != REFRESH_EOL) {
+					Coord coord = obj->Position;
+					Cell cell = *list + coord.As_Cell();
+					CellClass * cptr = &Map[cell];
+					if (cptr != this && cptr->FoggedObjects != NULL) {
+						cptr->FoggedObjects->Delete(obj);
+					}
+					list++;
+				}
+			}
+			delete obj;
+		}
+		FoggedObjects->Clear();
+		delete FoggedObjects;
+		FoggedObjects = NULL;
+	}
 }
 
 // FUNCTION: 0x00487D50

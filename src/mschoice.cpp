@@ -11,10 +11,88 @@
 #include "ccini.h"
 #include "data.h"
 #include "dbgprint.h"
-#include "dsaudio.h"
 #include "globals.h"
 #include "goptions.h"
 #include "mixfile.h"
+
+int FUN_00407000(void);
+
+// FUNCTION: 0x005CEDD0
+MapChoice::MapChoice(void)
+{
+	Stages.Clear();
+	AnimPaletteName.clear();
+	AnimEntries.Clear();
+}
+
+// FUNCTION: 0x005CEE60
+MapChoice::~MapChoice(void)
+{
+	Deinit();
+}
+
+// FUNCTION: 0x005CF5F0
+void MapChoice::Deinit(void)
+{
+	int i;
+
+	for (i = 0; i < SoundEntries.Count(); i++) {
+		MSSfxEntry * sfx = SoundEntries[i];
+		if (sfx != NULL) {
+			delete sfx;
+		}
+	}
+	SoundEntries.Clear();
+	TextRect.Set(0, 0, 640, 400);
+	for (i = 0; i < AnimEntries.Count(); i++) {
+		MSAnimEntry * anim = AnimEntries[i];
+		if (anim != NULL) {
+			delete anim;
+		}
+	}
+	AnimEntries.Clear();
+	for (i = 0; i < Stages.Count(); i++) {
+		MapStage * stage = Stages[i];
+		if (stage != NULL) {
+			delete stage;
+		}
+	}
+	Stages.Clear();
+}
+
+// FUNCTION: 0x005CF6B0
+MapStage * MapChoice::Find_Stage_By_Name(Wstring const & name)
+{
+	if (name != NULL) {
+		for (int index = 0; index < Stages.Count(); index++) {
+			Wstring wanted = name;
+			wanted.toLower();
+			Wstring label = Stages[index]->Get_Stage_Label();
+			label.toLower();
+			if (wanted == label) {
+				return(Stages[index]);
+			}
+		}
+	}
+	return(NULL);
+}
+
+// FUNCTION: 0x005CF760
+MapStage * MapChoice::Find_Stage_By_Scenario(Wstring const & name)
+{
+	if (name != NULL) {
+		for (int index = 0; index < Stages.Count(); index++) {
+			Wstring wanted = name;
+			wanted.toLower();
+			Wstring scenario = Stages[index]->Get_Scenario_Name();
+			scenario.toLower();
+			if (wanted == scenario) {
+				return(Stages[index]);
+			}
+		}
+	}
+	return(NULL);
+}
 
 // FUNCTION: 0x005CF810
 MapStage * MapChoice::Find_Stage_By_ID(unsigned short index)
@@ -29,4 +107,154 @@ MapStage * MapChoice::Find_Stage_By_ID(unsigned short index)
 short MapChoice::Get_Stage_ID(MapStage * stage)
 {
 	return(Stages.ID(stage));
+}
+
+// FUNCTION: 0x005CF840
+MSSfxEntry * MapChoice::Find_Sound(Wstring const & name)
+{
+	if (!FUN_00407000()) return(NULL);
+	for (int i = 0; i < SoundEntries.Count(); i++) {
+		MSSfxEntry * sfx = SoundEntries[i];
+		Wstring have = sfx->Name;
+		have.toLower();
+		Wstring wanted = name;
+		wanted.toLower();
+		if (have == wanted) {
+			return(sfx);
+		}
+	}
+	return(NULL);
+}
+
+// FUNCTION: 0x005D0070
+MapStage::~MapStage(void)
+{
+	int index;
+
+	for (index = 0; index < TextEntries.Count(); index++) {
+		MSTextEntry * entry = TextEntries[index];
+		if (entry != NULL) {
+			delete entry;
+		}
+	}
+	for (index = 0; index < Selections.Count(); index++) {
+		MapSelection * selection = Selections[index];
+		if (selection != NULL) {
+			delete selection;
+		}
+	}
+}
+
+// FUNCTION: 0x005D0190
+MapSelection * MapStage::Find_Selection_By_Name(char const * name) const
+{
+	Wstring wanted = name;
+	wanted.toLower();
+	for (int i = 0; i < Selections.Count(); i++) {
+		if (Selections[i]->Get_Stage_Label() != NULL) {
+			Wstring label = Selections[i]->Get_Stage_Label();
+			label.toLower();
+			if (wanted == label) {
+				return(Selections[i]);
+			}
+		}
+	}
+	return(NULL);
+}
+
+// FUNCTION: 0x005D0240
+Wstring MapStage::Find_Selection_By_Index(int index) const
+{
+	for (int i = 0; i < Selections.Count(); i++) {
+		if ((char)index == Selections[i]->Get_Index()) {
+			return(Selections[i]->Get_Stage_Label());
+		}
+	}
+	return(Wstring((char const *)NULL));
+}
+
+// FUNCTION: 0x005D0290
+MSTextEntry::MSTextEntry(WideWstring const & string) :
+	XPos(0),
+	YPos(0),
+	StartTime(0),
+	String((wchar_t const *)NULL)
+{
+	WideWstring token;
+	int pos = string.getToken(0, L",", token);
+	if (token.length() > 0) {
+		XPos = token.toInt();
+	}
+	pos = string.getToken(pos, L",", token);
+	if (token.length() > 0) {
+		YPos = token.toInt();
+	}
+	pos = string.getToken(pos, L",", token);
+	if (token.length() > 0) {
+		StartTime = token.toInt();
+	}
+	string.getToken(pos, L",", token);
+	if (token.length() > 0) {
+		String = token;
+	}
+}
+
+// FUNCTION: 0x005D0380
+MSAnimEntry::MSAnimEntry(Wstring const & string) :
+	Filename((char const *)NULL),
+	XPos(0),
+	YPos(0),
+	Rate(0)
+{
+	Wstring token;
+	int pos = string.getToken(0, ",", token);
+	if (token.length() > 0) {
+		Filename = token;
+	}
+	pos = string.getToken(pos, ",", token);
+	if (token.length() > 0) {
+		XPos = token.toInt();
+	}
+	pos = string.getToken(pos, ",", token);
+	if (token.length() > 0) {
+		YPos = token.toInt();
+	}
+	string.getToken(pos, ",", token);
+	if (token.length() > 0) {
+		Rate = token.toInt();
+	}
+}
+
+// FUNCTION: 0x005D0470
+MSSfxEntry::MSSfxEntry(Wstring const & name, Wstring const & string) :
+	Name((char const *)NULL),
+	AllocLoaded(false),
+	Sample(NULL),
+	Volume(255)
+{
+	if (name != NULL && FUN_00407000()) {
+		Wstring file_name;
+		int pos = string.getToken(0, ",", file_name);
+		Wstring volume_str;
+		string.getToken(pos, ",", volume_str);
+
+		if (volume_str != NULL) {
+			Volume = volume_str.toInt();
+			if (Volume > 100) {
+				Volume = 100;
+			} else if (Volume < 0) {
+				Volume = 0;
+			}
+			Volume = 255 * Volume / 100;
+		}
+
+		if (Volume > 0 && file_name != NULL) {
+			Name = name;
+		}
+	}
+}
+
+// FUNCTION: 0x005D0580
+MSSfxEntry::~MSSfxEntry(void)
+{
 }

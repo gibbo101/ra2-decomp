@@ -27,6 +27,7 @@ class CaptureManagerClass : public AbstractClass
 		CaptureManagerClass(NoInitClass const & x);
 		virtual ~CaptureManagerClass(void) override;
 
+		void FreeAll(void);
 		bool FUN_00472330(TechnoClass * techno);
 
 		virtual HRESULT STDMETHODCALLTYPE GetClassID(CLSID * retval) override;

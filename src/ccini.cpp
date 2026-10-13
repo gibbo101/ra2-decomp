@@ -1302,7 +1302,7 @@ AbilityFlagsType CCINIClass::Get_Abilities(char const * section, char const * en
 template class TypeList<int>;
 
 // FUNCTION: 0x00477840 ?$DynamicVectorClass@H::Clear
-// FUNCTION: 0x00477870 ?$VectorClass@H::ID
+// FUNCTION: 0x00477870 ?$DynamicVectorClass@H::ID
 // FUNCTION: 0x00477890 ?$VectorClass@H::GetItem
 
 // FUNCTION: 0x004778A0 ?$DynamicVectorClass@PAVTechnoTypeClass@@::Clear
@@ -1316,6 +1316,25 @@ template class DynamicVectorClass<RGBClass>;
 
 // FUNCTION: 0x00477930 ?$VectorClass@VRGBClass@@::ID
 // FUNCTION: 0x00477960 ?$VectorClass@VRGBClass@@::GetItem
+
+// FUNCTION: 0x00477990 ?$TypeList@H::~?$TypeList@H
+// FUNCTION: 0x004779E0 ?$DynamicVectorClass@H::?$DynamicVectorClass@H
+
+// FUNCTION: 0x00477A70 ?$TypeList@PAVTechnoTypeClass@@::~?$TypeList@PAVTechnoTypeClass@@
+template class TypeList<TechnoTypeClass *>;
+
+// FUNCTION: 0x00477AC0 ?$TypeList@VRGBClass@@::~?$TypeList@VRGBClass@@
+template class TypeList<RGBClass>;
+
+// FUNCTION: 0x00477B10 ?$DynamicVectorClass@H::~?$DynamicVectorClass@H
+// FUNCTION: 0x00477B60 ?$VectorClass@H::?$VectorClass@H
+// FUNCTION: 0x00477BE0 ?$VectorClass@H::?$VectorClass@H
+// FUNCTION: 0x00477C30 ?$VectorClass@H::operator==
+// FUNCTION: 0x00477C70 ?$VectorClass@H::Resize
+// FUNCTION: 0x00477D20 ?$VectorClass@H::Clear
+// FUNCTION: 0x00477D50 ?$VectorClass@H::ID
+// FUNCTION: 0x00477D90 ?$VectorClass@H::ID
+template class VectorClass<int>;
 
 // FUNCTION: 0x00477EC0 ?$DynamicVectorClass@H::Add
 template class DynamicVectorClass<int>;

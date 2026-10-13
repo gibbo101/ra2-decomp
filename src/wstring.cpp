@@ -5,6 +5,7 @@
 
 #include "always.h"
 #include "widewstring.h"
+#include <wchar.h>
 #include "wstring.h"
 #include "win.h"
 #include <cctype>
@@ -651,7 +652,169 @@ Wstring operator+(char const* a, Wstring const& b)
 	return(tmp + b);
 }
 
+// FUNCTION: 0x007B64E0
+Wstring operator+(Wstring const& a, Wstring const& b)
+{
+	Wstring tmp = a;
+	tmp.cat(b);
+	return(tmp);
+}
+
+// FUNCTION: 0x007B6630
+bool Wstring::containsAny(char const* chars) const
+{
+	if (chars == NULL || str == NULL)
+		return(false);
+	unsigned int len = strlen(str);
+	return(strcspn(str, chars) < len);
+}
+
+// FUNCTION: 0x007B6670
+bool Wstring::containsAny(Wstring const& chars) const
+{
+	return(containsAny(chars.get()));
+}
+
 // FUNCTION: 0x007B66C0
 WideWstring::WideWstring(void) :str(NULL)
 {
+}
+
+// FUNCTION: 0x007B66D0
+WideWstring::WideWstring(wchar_t const* string) :str(NULL)
+{
+	str = new wchar_t[string ? wcslen(string) + 1 : 1];
+	str[0] = 0;
+	if (string)
+		wcscpy(str, string);
+}
+
+// FUNCTION: 0x007B6720
+WideWstring::WideWstring(WideWstring const& other) :str(NULL)
+{
+	if (other.str) {
+		str = new wchar_t[wcslen(other.str) + 1];
+		wcscpy(str, other.str);
+	}
+}
+
+// FUNCTION: 0x007B6760
+WideWstring::~WideWstring(void)
+{
+	if (str)
+		delete[](str);
+	str = NULL;
+}
+
+// FUNCTION: 0x007B6780
+bool WideWstring::operator==(wchar_t const* other) const
+{
+	if ((str == NULL) && (other == NULL))
+		return(TRUE);
+
+	if ((str == NULL) || (other == NULL))
+		return(FALSE);
+
+	if (wcscmp(str, other) != 0)
+		return(FALSE);
+	else
+		return(TRUE);
+}
+
+// FUNCTION: 0x007B67C0
+bool WideWstring::operator==(WideWstring const& other) const
+{
+	if ((str == NULL) && (other.str == NULL))
+		return(TRUE);
+
+	if ((str == NULL) || (other.str == NULL))
+		return(FALSE);
+
+	if (wcscmp(str, other.str) != 0)
+		return(FALSE);
+	else
+		return(TRUE);
+}
+
+// FUNCTION: 0x007B6800
+bool WideWstring::operator!=(wchar_t const* other) const
+{
+	if ((str == NULL) && (other == NULL))
+		return(FALSE);
+
+	if ((str == NULL) || (other == NULL))
+		return(TRUE);
+
+	if (wcscmp(str, other) != 0)
+		return(TRUE);
+	else
+		return(FALSE);
+}
+
+// FUNCTION: 0x007B6840
+bool WideWstring::operator!=(WideWstring const& other) const
+{
+	if ((str == NULL) && (other.str == NULL))
+		return(FALSE);
+
+	if ((str == NULL) || (other.str == NULL))
+		return(TRUE);
+
+	if (wcscmp(str, other.str) != 0)
+		return(TRUE);
+	else
+		return(FALSE);
+}
+
+// FUNCTION: 0x007B6880
+WideWstring& WideWstring::operator=(wchar_t const* other)
+{
+	if (str)
+		delete[](str);
+	str = NULL;
+	str = new wchar_t[other ? wcslen(other) + 1 : 1];
+	str[0] = 0;
+	if (other)
+		wcscpy(str, other);
+	return(*this);
+}
+
+// FUNCTION: 0x007B68E0
+WideWstring& WideWstring::operator=(WideWstring const& other)
+{
+	if (*this == other)
+		return(*this);
+
+	*this = other.get();
+	return(*this);
+}
+
+// FUNCTION: 0x007B7100
+wchar_t* WideWstring::get(void) const
+{
+	if (!str)
+		return((wchar_t *)L"");
+	return(str);
+}
+
+// FUNCTION: 0x007B7140
+wchar_t* WideWstring::text(void) const
+{
+	if (!str)
+		return((wchar_t *)L"");
+	return(str);
+}
+
+// FUNCTION: 0x007B71B0
+unsigned int WideWstring::length(void) const
+{
+	if (str == NULL)
+		return(0);
+	return((unsigned int)wcslen(str));
+}
+
+// FUNCTION: 0x007B7D80
+int WideWstring::toInt(void) const
+{
+	return(wcstol(str, NULL, 10));
 }

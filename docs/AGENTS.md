@@ -67,8 +67,8 @@ Every compile counts as a check, including those your own scripts run.
 ## Rules
 
 - The flags are fixed (`/O2 /Ob2 /Gr /GR /MT /DWIN32`). No inline assembly, `__emit`,
-  `#pragma optimize`, hard-coded addresses or `volatile` tricks, except Westwood's own
-  inline asm and pragmas, copied unchanged from a TibSun archive header.
+  `#pragma optimize` or `auto_inline`, hard-coded addresses or `volatile` tricks, except
+  Westwood's own inline asm and pragmas, copied unchanged from a TibSun archive header.
 - Name callees and globals as `tools/ctx.py` names them (YRpp or TibSun names); an
   unnamed one is `FUN_<ADDR>` / `DAT_<ADDR>`. `data/symbols.csv` labels several one-line
   UI functions `UI::GetResource`; 0x00622B50 is `UI::StandardWndProc`.
@@ -257,6 +257,8 @@ Each entry: what the diff showed, then the source change that fixed it.
   `$E` claims the file's first initialiser, and checkall fails two claims on one function.
 - A template instance's element type comes from its vtable's RTTI, not from look-alike
   code: palette's vectors are `HSVClass`, which compiles the same as `RGBClass`.
+- A free fastcall `operator==` whose body jumps to itself comes from a member operator==
+  that is non-const: a const operand falls through to the free one (HashString).
 - A file-static helper the compiler emits only for its callers (team's `_Is_It_Breathing`)
   lands with its first caller, not before.
 - A run of about 13 small initialisers per file (CELL_LEPTON_DIAG through COORD_NONE)

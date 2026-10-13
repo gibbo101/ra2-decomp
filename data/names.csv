@@ -55,3 +55,6 @@ address,name,symbol,evidence
 0x00517590,HSVClass::operator!=,??9HSVClass@@QBE_NABV0@@Z,thiscall ret 4 in the hsv module; called by 0x006281F0 VectorClass<HSVClass>::operator==
 0x005175D0,operator==,??8@YI_NABVHSVClass@@0@Z,free HSVClass operator== (ECX/EDX); called by 0x00628410 VectorClass<HSVClass>::ID
 0x007E9AB0,CLSID_ShipLocomotion,,read by ShipLocomotionClass at 0x006A3E60 and its COM entry points
+0x004F4CE0,HashString::operator==,??8HashString@@QAE_NABV0@@Z,non-const member; called by palette's HashObject compares (0x006288A0)
+0x004F4D80,operator==,??8@YI_NABVHashString@@0@Z,free fastcall HashString operator== (jmp to itself); called by 0x004F4D90
+0x004F4D90,operator!=,??9@YI_NABVHashString@@0@Z,free fastcall HashString operator!=; called by palette 0x006288A0
