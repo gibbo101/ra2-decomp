@@ -192,6 +192,149 @@ Point2D MapClass::Cell_To_LocalRect_Point(Point2D const & point) const
 	return(Cell_To_PlayRect_Point(point) - LocalRect.Top_Left());
 }
 
+// FUNCTION: 0x00565580
+Cell MapClass::PlayRect_To_Cell(Cell const & cell)
+{
+	Point2D pt = PlayRect_To_Cell_Point(Point2D(cell.X, cell.Y));
+	return(Cell(pt.X, pt.Y));
+}
+
+// FUNCTION: 0x005655C0
+Cell MapClass::LocalRect_To_Cell(Cell const & cell)
+{
+	Point2D pt = LocalRect_To_Cell_Point(Point2D(cell.X, cell.Y));
+	return(Cell(pt.X, pt.Y));
+}
+
+// FUNCTION: 0x00565610
+Cell MapClass::Cell_To_PlayRect(Cell const & cell)
+{
+	Point2D pt = Cell_To_PlayRect_Point(Point2D(cell.X, cell.Y));
+	return(Cell(pt.X, pt.Y));
+}
+
+// FUNCTION: 0x00565660
+Cell MapClass::Cell_To_LocalRect(Cell const & cell)
+{
+	Point2D pt = Cell_To_LocalRect_Point(Point2D(cell.X, cell.Y));
+	return(Cell(pt.X, pt.Y));
+}
+
+// FUNCTION: 0x005656D0
+LONG STDMETHODCALLTYPE MapClass::Is_Visible(CellStruct cell)
+{
+	return((*this)[cell].IsFogVisible);
+}
+
+// FUNCTION: 0x005657A0
+CellClass & MapClass::operator[](Cell const & cell) const
+{
+	int cellnum = cell.X + cell.Y * MAP_CELL_H;
+
+	if (cellnum >= 0 && cellnum < MAP_CELL_TOTAL && Array[cellnum] != NULL) {
+		return(*Array[cellnum]);
+	}
+
+	InvalidCell.CellID = cell;
+	return(InvalidCell);
+}
+
+// FUNCTION: 0x005657E0
+bool MapClass::Is_Valid(Cell const & cell)
+{
+	int cellnum = cell.X + cell.Y * MAP_CELL_H;
+
+	if (Array[cellnum] != NULL) {
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00565800
+void MapClass::One_Time(void)
+{
+	BASECLASS::One_Time();
+
+	XSize = MAP_CELL_W;
+	YSize = MAP_CELL_H;
+	Size = XSize * YSize;
+
+	Alloc_Cells();
+
+	if (ZoneAdjacency == NULL) {
+		ZoneAdjacency = new ZONE_PAIR_HASH_SET(20, 256, SubzoneHash);
+	}
+
+	int i;
+	for (i = 0; i < ARRAY_SIZE(SubzoneTracking); i++) {
+		SubzoneTracking[i].Clear();
+		SubzoneConnectionHashTable[i] = new SUBZONE_CONNECTION_HASH_SET(20, 256, SubzoneHash);
+	}
+
+	for (i = 0; i < MZONE_COUNT; i++) {
+		Zones[i] = NULL;
+	}
+}
+
+// FUNCTION: 0x005659F0
+void MapClass::Init_Clear(void)
+{
+	DebugString("MapClass::Init_Clear entry\n");
+	Call_Back();
+	DepthBuffer->Fill(0xFFFF);
+	AlphaBuffer->Fill(127);
+	Call_Back();
+	BASECLASS::Init_Clear();
+	Call_Back();
+	for (int index = 0; index < ARRAY_SIZE(Crates); index++) {
+		Crates[index].Init();
+	}
+	MaxLevel = 13;
+	Redraws = 0;
+	DebugString("MapClass::Init_Clear done\n");
+}
+
+// FUNCTION: 0x00565AA0
+void MapClass::Alloc_Cells(void)
+{
+	new (&Array) VectorClass<CellClass *>;
+	Array.Resize(Size);
+
+	for (int i = 0; i < Size; i++) {
+		Array[i] = NULL;
+	}
+}
+
+// FUNCTION: 0x00565B00
+void MapClass::Free_Cells(void)
+{
+	int i;
+
+	for (i = 0; i < Array.Length(); i++) {
+		CellClass * cptr = Array[i];
+		if (cptr != NULL) {
+			cptr->BridgeDeckCell = NULL;
+			cptr->UnusedCell = 0;
+		}
+	}
+
+	for (i = 0; i < Array.Length(); i++) {
+		if (Array[i] != NULL) {
+			delete Array[i];
+			Array[i] = NULL;
+		}
+	}
+
+	IsometricTileTypeClass::Free_Unused_Drawers(0, true);
+
+	if (Array.Length() < MAP_CELL_TOTAL) {
+		Array.Resize(MAP_CELL_TOTAL);
+		for (i = 0; i < Array.Length(); i++) {
+			Array[i] = NULL;
+		}
+	}
+}
+
 // FUNCTION: 0x0056CB80
 int SubzoneHash(unsigned int const & key)
 {

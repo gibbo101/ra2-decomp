@@ -4,9 +4,22 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
 #include "motlib.h"
 #include "wwfile.h"
 #include "voxel.hh"
+
+// FUNCTION: 0x005BBF90 $E2
+// FUNCTION: 0x005BBFC0 $E5
+// FUNCTION: 0x005BBFE0 $E8
+// FUNCTION: 0x005BC000 $E11
+// FUNCTION: 0x005BC020 $E14
+// FUNCTION: 0x005BC040 $E17
+// FUNCTION: 0x005BC060 $E20
+// FUNCTION: 0x005BC0A0 $E23
+// FUNCTION: 0x005BC0D0 $E26
+// FUNCTION: 0x005BC100 $E29
+// FUNCTION: 0x005BC130 $E32
 
 // FUNCTION: 0x005BD570
 MotionLibrary::MotionLibrary(FileClass & file) :

@@ -15,6 +15,7 @@ class CellClass;
 class Cell;
 class ShadowControlClass;
 class Surface;
+class ColorScheme;
 
 enum DrawPassType {
 	DRAW_PASS_PAN = 0,
@@ -177,13 +178,14 @@ class Tactical : public AbstractClass
 		bool Is_Cell_Visible (Cell const & cell);
 		void Update_Visible_Cells(void);
 
-		void Set_Caption_Text(int text_id);
+		void Set_Caption_Text(wchar_t const * text, int frame);
 		void Clear_Caption_Text(void);
-		void Draw_Screen_Text(char const * text);
+		void Draw_Screen_Text(wchar_t const * text);
 
 		void Draw_Rally_Points(bool inshroud);
 		void Draw_Waypoints(bool inshroud);
 		static void Draw_Radial_Indicators(void);
+		static int DrawTimer(int index, ColorScheme * scheme, int time, wchar_t const * text, unsigned __int64 * flashtime, bool * flashstate);
 
 		void Debug_Draw_Occupier_Links(void);
 		void Debug_Draw_Occupation_Flags(void);

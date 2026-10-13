@@ -88,6 +88,193 @@
 // FUNCTION: 0x004A85F0 $E38
 // FUNCTION: 0x004A8610 $E41
 
+// FUNCTION: 0x004A8630 $E240
+// FUNCTION: 0x004A8680 $E237
+LayerClass DisplayClass::Layer[LAYER_COUNT];
+
+void const * DisplayClass::ShadowShapes;
+void const * DisplayClass::PlacementShapes;
+void const * DAT_008A0418;
+
+// FUNCTION: 0x004A86E0 $E246
+// FUNCTION: 0x004A8710 $E243
+DisplayClass::TacticalClass DisplayClass::TacButton;
+
+// FUNCTION: 0x004A8730
+DisplayClass::DisplayClass(void) :
+	ZoneCell(CELL_NONE),
+	ZoneOffset(0,0),
+	CursorSize(0),
+	ProximityCheck(false),
+	ShroudCheck(false),
+	CurrentFoundationCopy_CenterCell(CELL_NONE),
+	CurrentFoundationCopy_TopLeftOffset(0,0),
+	CurrentFoundationCopy_Data(0),
+	CurrentBuildingCopy(0),
+	CurrentBuildingTypeCopy(0),
+	CurrentBuildingOwnerArrayIndexCopy(HOUSE_NONE),
+	FollowingObject(false),
+	FollowingObjectPtr(NULL),
+	PendingObjectPtr(0),
+	PendingObject(0),
+	PendingHouse(HOUSE_NONE),
+	IsRepairMode(false),
+	IsSellMode(false),
+	IsPowerMode(false),
+	IsWaypointMode(false),
+	PlaceBeaconMode(false),
+	IsTargettingMode(SUPER_NONE),
+	DraggedWaypoint(NULL),
+	DraggedWaypointCoord(0,0,0),
+	IsRubberBand(false),
+	IsTentative(false),
+	IsShadowPresent(false),
+	Band(),
+	NewX(0),
+	NewY(0)
+{
+	ShadowShapes = NULL;
+	PlacementShapes = NULL;
+	DAT_008A0418 = NULL;
+}
+
+struct FileSystem {
+	static void const * LoadFile(char const * name, bool flag);
+};
+extern Rect __fastcall FUN_0072AD20(void);
+
+// FUNCTION: 0x004A8850
+void DisplayClass::One_Time(void)
+{
+	BASECLASS::One_Time();
+
+	PlacementShapes = FileSystem::LoadFile("PLACE.SHP", false);
+	ShadowShapes = FileSystem::LoadFile("SHADOW.SHP", false);
+
+	Rect rect = FUN_0072AD20();
+	Set_View_Dimensions(rect);
+}
+
+// FUNCTION: 0x004A88C0
+void DisplayClass::Init_Clear(void)
+{
+	BASECLASS::Init_Clear();
+
+	PendingObjectPtr = 0;
+	PendingObject = 0;
+	PendingHouse = HOUSE_NONE;
+	CursorSize = 0;
+	IsTargettingMode = SUPER_NONE;
+	IsRepairMode = false;
+	IsRubberBand = false;
+	IsTentative = false;
+	IsSellMode = false;
+	IsPowerMode = false;
+
+	for (LayerType layer = LAYER_FIRST; layer < LAYER_COUNT; layer++) {
+		Layer[layer].Init();
+	}
+}
+
+// FUNCTION: 0x004A8930
+void DisplayClass::Init_IO(void)
+{
+	BASECLASS::Init_IO();
+	if (!Debug_Map) {
+		TacButton.Zap();
+		Add_A_Button(TacButton);
+	}
+}
+
+// FUNCTION: 0x004A8960
+void DisplayClass::Set_View_Dimensions(Rect const & dimensions)
+{
+	DebugString("Set_View_Dimensions(%d,%d,%d,%d)\n", dimensions.X, dimensions.Y, dimensions.Width, dimensions.Height);
+
+	DSurface::ViewBounds = dimensions;
+
+	if (TacticalMap != NULL) {
+		TacticalMap->Set_View_Dimensions(DSurface::ViewBounds);
+
+		Hide_Mouse();
+
+		if (DepthBuffer != NULL) {
+			DebugString("Deleting ZBuffer\n");
+			delete DepthBuffer;
+			DepthBuffer = NULL;
+		}
+
+		DepthBuffer = new ZBuffer(DSurface::ViewBounds);
+		DepthBuffer->Set_Scroll(ZBUFFER_MAX);
+		DebugString("Allocating ZBuffer (%dx%d)\n", DSurface::ViewBounds.Width, DSurface::ViewBounds.Height);
+
+		if (AlphaBuffer != NULL) {
+			DebugString("Deleting ABuffer\n");
+			delete AlphaBuffer;
+			AlphaBuffer = NULL;
+		}
+
+		AlphaBuffer = new ABuffer(DSurface::ViewBounds);
+		DebugString("Allocating ABuffer (%dx%d)\n", DSurface::ViewBounds.Width, DSurface::ViewBounds.Height);
+
+		Show_Mouse();
+	}
+
+	Map.Reposition_Sidebar();
+
+	TacButton.X = DSurface::ViewBounds.X;
+	TacButton.Y = DSurface::ViewBounds.Y;
+	TacButton.Width = DSurface::ViewBounds.Width;
+	TacButton.Height = DSurface::ViewBounds.Height;
+
+	if (ToolTips != NULL) {
+		ToolTip tooltip;
+		tooltip.ID = 500;
+		tooltip.Text = TXT_NONE;
+		tooltip.Region = DSurface::ViewBounds;
+		ToolTips->Remove(500);
+		ToolTips->Add(&tooltip);
+	}
+
+	Session.Messages.Init(
+		DSurface::ViewBounds.X + 3, DSurface::ViewBounds.Y,
+		6,
+		MAX_MESSAGE_LENGTH-14,
+		7 * 2,
+		-1, -1,
+		0,
+		20,
+		MAX_MESSAGE_LENGTH - 14,
+		DSurface::ViewBounds.Width - 6);
+
+	Session.Messages.Set_Width(DSurface::ViewBounds.Width);
+
+	DebugString("Set_View_Dimensions(exit)\n");
+}
+
+// FUNCTION: 0x004A8BF0
+void DisplayClass::SetActiveFoundation(Cell const * list)
+{
+	if (CursorSize) {
+		Cursor_Mark(ZoneCell+ZoneOffset, false);
+	}
+	ZoneOffset = CELL_NONE;
+
+	if (list) {
+		static Cell _list[120];
+
+		memcpy(_list, list, sizeof(_list));
+		CursorSize = _list;
+		Cell dim = Get_Occupy_Dimensions(CursorSize);
+		dim -= Cell(1,1);
+		ZoneOffset = -dim / 2;
+		Cursor_Mark(ZoneCell+ZoneOffset, true);
+	} else {
+		CursorSize = 0;
+	}
+}
+
+// FUNCTION: 0x004A8D40 $E249
 // FUNCTION: 0x004A94F0
 Cell DisplayClass::Get_Occupy_Dimensions(Cell const * list) const
 {

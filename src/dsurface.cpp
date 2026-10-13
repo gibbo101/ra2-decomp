@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
 #include "dsurface.h"
 #include "blit.h"
 #include "dbgprint.h"
@@ -11,6 +12,19 @@
 #include "misc.h"
 #include "swap.h"
 #include <math.h>
+
+// FUNCTION: 0x004BA3B0 $E2
+// FUNCTION: 0x004BA3E0 $E5
+// FUNCTION: 0x004BA400 $E8
+// FUNCTION: 0x004BA420 $E11
+// FUNCTION: 0x004BA440 $E14
+// FUNCTION: 0x004BA460 $E17
+// FUNCTION: 0x004BA480 $E20
+// FUNCTION: 0x004BA4C0 $E23
+// FUNCTION: 0x004BA4F0 $E26
+// FUNCTION: 0x004BA520 $E29
+// FUNCTION: 0x004BA550 $E32
+// FUNCTION: 0x004BA560 $E35
 
 // FUNCTION: 0x004BA6B0
 DSurface::~DSurface(void)

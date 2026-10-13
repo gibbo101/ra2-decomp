@@ -64,13 +64,13 @@ def sweep(code: bytes, base: int, starts: set, padded: set, calls: set, tables: 
 
 
 def reached_end(md, code: bytes, base: int, lo: int, hi: int, roots: set,
-                targets: set | None = None) -> int:
+                seen: set | None = None, code_only: bool = False) -> int:
     """The end of the furthest instruction in [lo, hi) that flow from `lo` and `roots`
     reaches: jumps, branches, calls returning, switch tables, and offsets taken as operands.
-    A pushed offset is a callback argument (atexit), not flow. `targets` collects the
-    addresses that flow jumps to."""
-    seen, todo, far = set(), [lo, *roots], lo
-    targets = set() if targets is None else targets
+    A pushed offset is a callback argument (atexit), not flow. With `code_only`, a switch
+    table's address is data, not flow, and `seen` collects every instruction reached."""
+    seen = set() if seen is None else seen
+    todo, far = [lo, *roots], lo
     while todo:
         at = todo.pop()
         while lo <= at < hi and at not in seen:
@@ -80,16 +80,15 @@ def reached_end(md, code: bytes, base: int, lo: int, hi: int, roots: set,
                 break
             _, size, mnem, ops = insn
             far = max(far, at + size)
-            for v in re.findall(r"0x[0-9a-f]+", ops) if mnem != "push" else ():
-                if lo < int(v, 16) < hi:
-                    todo.append(int(v, 16))
-                    targets.add(int(v, 16))
             t = TABLE_OPERAND.search(ops)
+            table = int(t.group(1), 16) if t and code_only else None
+            for v in re.findall(r"0x[0-9a-f]+", ops) if mnem != "push" else ():
+                if lo < int(v, 16) < hi and int(v, 16) != table:
+                    todo.append(int(v, 16))
             if t and mnem == "jmp":
                 entry = int(t.group(1), 16)
                 while lo <= entry < hi and lo <= struct.unpack_from("<I", code, entry - base)[0] < hi:
                     todo.append(struct.unpack_from("<I", code, entry - base)[0])
-                    targets.add(todo[-1])
                     entry += 4
             if mnem in ("ret", "jmp", "int3"):
                 break
@@ -207,14 +206,14 @@ def main() -> None:
     for a in mid:
         del evidence[a]
     # A start that only a data pointer names, which flow from the function before it
-    # jumps to, is a case label inside that function.
+    # reaches, is a label or the tail after a call inside that function.
     md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_32)
     ordered = sorted(evidence)
     case_labels = []
     for i, a in enumerate(ordered[1:-1], 1):
         if evidence[a] == "V":
             reached: set = set()
-            reached_end(md, code, base, ordered[i - 1], ordered[i + 1], set(), reached)
+            reached_end(md, code, base, ordered[i - 1], ordered[i + 1], set(), reached, True)
             if a in reached:
                 case_labels.append(a)
     for a in case_labels:

@@ -965,6 +965,63 @@ Coord CellClass::Cell_Coord(void) const
 	return(coord);
 }
 
+// FUNCTION: 0x00480CB0
+int CellClass::Reduce_Wall(int damage)
+{
+	if (Overlay != OVERLAY_NONE) {
+		bool destroyed = false;
+		OverlayTypeClass const * wall = OverlayTypes[Overlay];
+
+		if (wall->IsWall) {
+			if (damage == -1 || damage >= wall->DamagePoints || ScenarioInit) {
+				destroyed = true;
+			} else {
+				destroyed = Random_Pick(0, wall->DamagePoints) < damage;
+			}
+
+			if (destroyed) {
+				Rect rect = Union(Overlay_Render_Rect(), Overlay_Shadow_Render_Rect());
+				rect.Y -= TacticalRect.Y;
+				TacticalMap->Register_Dirty_Area(rect);
+				OverlayData+=OVERLAYDATA_WALL_DAMAGE_STAGE;
+
+				if ((OverlayData>>OVERLAYDATA_WALL_DAMAGE_SHIFT) == wall->DamageLevels-1 && wall->DamageLevels > 2) {
+					for (FacingType dir = FACING_FIRST; dir < FACING_COUNT; dir = FacingType(dir + FACING_90)) {
+						CellClass * adjacent = (CellClass *)&((CellClass const *)this)->Adjacent_Cell(dir);
+						if (adjacent->Overlay != OVERLAY_NONE && OverlayTypes[adjacent->Overlay]->IsWall && adjacent->Overlay == Overlay && adjacent->OverlayData < OVERLAYDATA_WALL_DAMAGE_STAGE) {
+							adjacent->Reduce_Wall(200);
+						}
+					}
+				}
+
+				if (damage == -1 ||
+					(OverlayData>>OVERLAYDATA_WALL_DAMAGE_SHIFT) >= wall->DamageLevels ||
+					((OverlayData>>OVERLAYDATA_WALL_DAMAGE_SHIFT) == wall->DamageLevels-1 && (OverlayData & OVERLAYDATA_WALL_FRAME_MASK)==0)	) {
+
+					Owner = HOUSE_NONE;
+					Overlay = OVERLAY_NONE;
+					OverlayData = 0;
+					Recalc_Attributes();
+					Map.ResetZones(CellID);
+					Map.RecalculateSubZones(CellID);
+					Map.Flag_Background_Update(CellID);
+					Adjacent_Cell(FACING_N).Wall_Update();
+					Adjacent_Cell(FACING_W).Wall_Update();
+					Adjacent_Cell(FACING_S).Wall_Update();
+					((CellClass &)((CellClass const *)this)->Adjacent_Cell(FACING_E)).Wall_Update();
+					Detach_This_From_All(this);
+
+					for (int dir = FACING_FIRST; dir < FACING_COUNT; dir++) {
+						((CellClass &)((CellClass const *)this)->Adjacent_Cell((FacingType)dir)).AdjacentObjectCount--;
+					}
+					return(true);
+				}
+			}
+		}
+	}
+	return(false);
+}
+
 // FUNCTION: 0x004810A0
 int CellClass::Spot_Index(Coord const & coord)
 {
@@ -979,6 +1036,202 @@ int CellClass::Spot_Index(Coord const & coord)
 	if (rel.Y > CELL_LEPTON/2) index |= 0x02;
 	if (index == 0) return(0);
 	return(index+1);
+}
+
+// FUNCTION: 0x00481130
+bool CellClass::Is_Spot_Free(int spot_index, bool bridge) const
+{
+	if (spot_index == 0 || spot_index == 1) {
+		return(false);
+	}
+
+	if (bridge) {
+		return(! (BridgeFlag.Composite & (1 << spot_index)) );
+	}
+	else {
+		return(! (Flag.Composite & (1 << spot_index)) );
+	}
+}
+
+// FUNCTION: 0x004814A0
+BuildingClass * CellClass::Get_Gate(void) const
+{
+	BuildingClass * building = Cell_Building();
+	if (building != NULL && !building->Class->IsGate) {
+		building = NULL;
+	}
+	return(building);
+}
+
+// FUNCTION: 0x004814F0
+int CellClass::Clear_Icon(IsometricTileType type, int seq_length) const
+{
+	static bool _init = false;
+	static int _small_pattern[16] = { 0, 1, 2, 3, 3, 2, 1, 0, 2, 3, 0, 1, 1, 0, 3, 2 };
+	static int _large_pattern[64];
+	static Point2DStruct _adjacent_icon[8] = {
+		{-1,-1}, {0,-1}, {1,-1}, {-1,0}, {1,0}, {-1,1}, {0,1}, {1,1}
+	};
+
+	if (!_init) {
+		_init = true;
+		memset(_large_pattern, 0xFF, sizeof(_large_pattern));
+
+		for (int i = 0; i < ARRAY_SIZE(_large_pattern); ++i) {
+			int random = -1;
+			for (int j = 0; j < ARRAY_SIZE(_large_pattern); j++) {
+				random = NonCriticalRandomNumber() & 7;
+				bool duplicate = false;
+
+				for (int k = 0; k < ARRAY_SIZE(_adjacent_icon); ++k) {
+					int num = i + _adjacent_icon[k].X + _adjacent_icon[k].Y * 8;
+
+					if (num < 0) num += 64;
+					if (num >= 64) num -= 64;
+
+					if (_large_pattern[num] == random) {
+						duplicate = true;
+						break;
+					}
+				}
+
+				if (!duplicate) {
+					break;
+				}
+			}
+			_large_pattern[i] = random;
+		}
+	}
+
+	Cell cell = Fetch_CellID();
+	if (SubTile != 0) {
+		IsometricTileTypeClass const * isotype = IsometricTileTypes[type];
+		if (isotype->Get_Image_Data() == NULL) {
+			return(0);
+		}
+		Point2D p = IsoTile_Dimensions(isotype);
+		cell = cell - Cell(SubTile % p.X, SubTile / p.X);
+		cell.X /= p.X;
+		cell.Y /= p.Y;
+	}
+	if (seq_length <= 4) {
+		return(_small_pattern[(cell.X & 0x03) | ((cell.Y & 0x03) << 2)]);
+	} else {
+		return(_large_pattern[(cell.X & 0x07) + ((cell.Y & 0x07) << 3)]);
+	}
+}
+
+// FUNCTION: 0x00481670
+void CellClass::Incoming(Coord const & threat, bool forced, bool nokidding, bool bridge)
+{
+	ObjectClass * object = NULL;
+	TechnoClass * techno = NULL;
+
+	object = Cell_Occupier(bridge);
+	bool elite = false;
+	if (!nokidding) {
+		while (object != NULL) {
+			techno = Dynamic_Cast<TechnoClass *>(object);
+			if (techno != NULL && techno->Veterancy.Is_Elite()) {
+				elite = true;
+				break;
+			}
+			object = object->Next;
+		}
+	}
+
+	object = Cell_Occupier(bridge);
+
+	DynamicVectorClass<ObjectClass *> objs;
+	while (object != NULL) {
+		objs.Add(object);
+		object = object->Next;
+	}
+
+	for (int i = 0; i < objs.Count(); i++) {
+		techno = Dynamic_Cast<TechnoClass *>(objs[i]);
+		if (elite || nokidding || Rule->IsScatter ||
+			(techno != NULL && ((techno->Has_Ability(ABILITY_SCATTER) || techno->House->IQ >= Rule->IQScatter)))) {
+			objs[i]->Scatter(threat, forced, nokidding);
+		}
+	}
+}
+
+// FUNCTION: 0x00481810
+CellClass const & CellClass::Adjacent_Cell(FacingType face) const
+{
+	if ((unsigned)face >= FACING_COUNT) {
+		return(*this);
+	}
+
+	Cell newcell = ::Adjacent_Cell(Fetch_CellID(), face);
+	return(Map[newcell]);
+}
+
+// FUNCTION: 0x00481870
+void CellClass::Adjust_Threat(HousesType house, int threat_value)
+{
+	int region = Map.Cell_Region(Fetch_CellID());
+
+	for (HousesType lp = HOUSE_FIRST; lp < Houses.Count(); lp ++) {
+		HouseClass * house_ptr = Houses[lp];
+		if (house_ptr && house_ptr->HeapID != house && !house_ptr->Is_Ally(house)) {
+			house_ptr->Adjust_Threat(region, threat_value);
+		}
+	}
+}
+
+// FUNCTION: 0x004818E0
+int CellClass::Tiberium_Adjust(bool pregame)
+{
+	if (Overlay != OVERLAY_NONE) {
+		static int _adj[13] = {0,1,3,4,6,7,8,10,11,7,0,1,6};
+
+		TiberiumType tibtype = Which_Tiberium_Type(Overlay);
+		if (tibtype != TIBERIUM_NONE) {
+			TiberiumClass * tiberium = Tiberiums[tibtype];
+			int	count = 0;
+
+			int value = tiberium->CreditValue;
+			if (pregame) {
+				Overlay = (OverlayType)Random_Pick((int)tiberium->Overlay, (int)&tiberium->Overlay[tiberium->Variety - 1]);
+			}
+
+			for (FacingType face = FACING_FIRST; face < FACING_COUNT; face++) {
+				CellClass & adjc = Adjacent_Cell(face);
+
+				if (Which_Tiberium_Type(adjc.Overlay) == tibtype) {
+					count++;
+				}
+			}
+
+			OverlayData = _adj[count % Tiberiums[tibtype]->FrameCount];
+			return((OverlayData+1) * value);
+		}
+	}
+	return(0);
+}
+
+// FUNCTION: 0x00483410
+bool CellClass::Flag_Place(HousesType house)
+{
+	if (!IsFlagged && Is_Clear_To_Move(SPEED_TRACK, false, false)) {
+		IsFlagged = true;
+		Owner = house;
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00483460
+bool CellClass::Flag_Remove(void)
+{
+	if (IsFlagged) {
+		IsFlagged = false;
+		Owner = HOUSE_NONE;
+		return(true);
+	}
+	return(false);
 }
 
 // FUNCTION: 0x00485200

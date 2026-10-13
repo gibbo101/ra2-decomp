@@ -19,6 +19,7 @@
 #include "alphashp.h"
 #include "anim.h"
 #include "animtype.h"
+#include "bitfont.h"
 #include "building.h"
 #include "builtype.h"
 #include "cell.h"
@@ -46,6 +47,7 @@
 #include "rules.h"
 #include "scheme.h"
 #include "session.h"
+#include "shapeset.h"
 #include "stimer.h"
 #include "sun.h"
 #include "swap.h"
@@ -61,6 +63,8 @@
 #include "fastmath.h"
 
 extern Rect TacticalDimensions;
+namespace Unsorted { extern bool ArmageddonMode; }
+namespace FileSystem { extern ShapeSet * GRFXTXT_SHP; extern ConvertClass * GRFXTXT_Convert; }
 Point2D Lerp(Point2D const & a, Point2D const & b, float t);
 
 DynamicVectorClass<DirtyAreaStruct> Tactical::DirtyAreas;
@@ -73,13 +77,13 @@ static double PixelsPerLepton;
 static double ZPixelsPerLepton = fastmath::sin(RAD_60) * (PixelsPerLepton = 60.0 / CELL_LEPTON_DIAG);
 static double ZLeptonsPerPixel = CELL_LEPTON_DIAG / (fastmath::sin(RAD_60) * 60.0);
 
-// FUNCTION: 0x006D1A60 $E196
-// FUNCTION: 0x006D1AA0 $E193
-// FUNCTION: 0x006D1B00 $E199
-// FUNCTION: 0x006D1B10 $E205
-// FUNCTION: 0x006D1B50 $E202
-// FUNCTION: 0x006D1BB0 $E208
-// FUNCTION: 0x006D1BF0 $E211
+// FUNCTION: 0x006D1A60 $E198
+// FUNCTION: 0x006D1AA0 $E195
+// FUNCTION: 0x006D1B00 $E201
+// FUNCTION: 0x006D1B10 $E207
+// FUNCTION: 0x006D1B50 $E204
+// FUNCTION: 0x006D1BB0 $E210
+// FUNCTION: 0x006D1BF0 $E213
 
 // FUNCTION: 0x006D1C20
 Tactical::Tactical(void) :
@@ -447,6 +451,256 @@ void Tactical::Render_Tiles(Rect const & xpanrect, Rect const & ypanrect, bool f
 				Draw_Tiles(redraw, redraw);
 			}
 		}
+	}
+}
+
+// FUNCTION: 0x006D3290
+void Tactical::Render_Overlays(Rect const & xpanrect, Rect const & ypanrect, bool fullredraw)
+{
+	if (fullredraw) {
+		Draw_Overlays(TacticalRect);
+	} else {
+		if (xpanrect.Is_Valid()) {
+			Draw_Overlays(xpanrect);
+		}
+		if (ypanrect.Is_Valid()) {
+			Draw_Overlays(ypanrect);
+		}
+	}
+
+	if (CellRedrawCount > 0 && !fullredraw) {
+		for (int i = 0; i < CellRedrawCount; i++) {
+			Coord coord = Coord_Whole(Coord(CellRedraw[i]->Fetch_CellID()));
+			Point2D pixel;
+			Coord_To_Pixel(coord, pixel);
+
+			Rect rect;
+			rect.X = pixel.X - 30;
+			rect.Width = 60;
+			rect.Height = 30;
+			rect.Y = pixel.Y;
+			Rect rect2 = rect;
+			rect2.Y += TacticalRect.Y;
+
+			Draw_Overlays(rect2);
+		}
+	}
+
+	if (DirtyAreas.Count()) {
+		for (int i = DirtyAreas.Count() - 1; i >= 0; i--) {
+			Rect redraw = DirtyAreas[i].Area;
+			redraw.Y += TacticalRect.Y;
+			redraw = Intersect(TacticalRect, redraw);
+
+			if (redraw.Is_Valid()) {
+				Draw_Overlays(redraw);
+			}
+		}
+	}
+}
+
+static inline void Fogged_Rect(Rect const & r)
+{
+	::Draw_Fogged_Objects(r);
+}
+
+// FUNCTION: 0x006D3470
+void Tactical::Render_Fogged_Objects(Rect const & xpanrect, Rect const & ypanrect, bool fullredraw)
+{
+	if (fullredraw) {
+		::Draw_Fogged_Objects(TacticalRect);
+	} else {
+		if (xpanrect.Is_Valid()) {
+			::Draw_Fogged_Objects(xpanrect);
+		}
+		if (ypanrect.Is_Valid()) {
+			::Draw_Fogged_Objects(ypanrect);
+		}
+	}
+
+	if (CellRedrawCount > 0 && !fullredraw) {
+		for (int i = 0; i < CellRedrawCount; i++) {
+			Coord coord = Coord_Whole(Coord(CellRedraw[i]->Fetch_CellID()));
+			Point2D pixel;
+			Coord_To_Pixel(coord, pixel);
+
+			Rect rect;
+			rect.X = pixel.X - 30;
+			rect.Width = 60;
+			rect.Height = 30;
+			rect.Y = pixel.Y;
+			Rect rect2 = rect;
+			rect2.Y += TacticalRect.Y;
+
+			Fogged_Rect(rect2);
+		}
+	}
+
+	if (DirtyAreas.Count()) {
+		for (int i = DirtyAreas.Count() - 1; i >= 0; i--) {
+			Rect redraw = DirtyAreas[i].Area;
+			redraw.Y += TacticalRect.Y;
+			redraw = Intersect(TacticalRect, redraw);
+
+			if (redraw.Is_Valid()) {
+				::Draw_Fogged_Objects(redraw);
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x006D3660
+void Tactical::Render_Shroud(Rect const & xpanrect, Rect const & ypanrect, Rect const & cliprect, bool fullredraw)
+{
+	if (CellRedrawCount > 0 && !fullredraw) {
+		for (int i = 0; i < CellRedrawCount; i++) {
+			Coord coord = CellRedraw[i]->Cell_Coord();
+			coord.Z = 0;
+			Point2D raw;
+			Coord_To_Pixel(coord, raw);
+			Point2D pixel = raw - Point2D(30, 15) + TacticalRect.TopLeft;
+
+			if (MainWindow) {
+				CellRedraw[i]->Draw_Shroud_And_Fog(pixel, cliprect);
+			}
+			AlphaShapeClass::Draw_In_Area(pixel, cliprect);
+		}
+	} else if (fullredraw) {
+		Draw_Shroud(TacticalRect);
+	}
+
+	if (xpanrect.Is_Valid() && !fullredraw) {
+		Draw_Shroud(xpanrect);
+	}
+	if (ypanrect.Is_Valid() && !fullredraw) {
+		Draw_Shroud(ypanrect);
+	}
+
+	for (int i = 0; i < DirtyAreas.Count(); i++) {
+		Rect redraw = DirtyAreas[i].Area + TacticalRect.TopLeft;
+		Rect inter = Intersect(redraw, cliprect);
+
+		if (DirtyAreas[i].IsToRefreshShroud) {
+			AlphaBuffer->Update(inter);
+			Draw_Shroud(inter);
+		}
+	}
+}
+
+BitFont * __fastcall FUN_004A60D0(int flags);
+namespace Game { unsigned __int64 __fastcall AudioGetTime(void); }
+
+struct TimerFlashSource {
+	int Unused[5];
+	ColorScheme * Scheme;
+};
+extern TimerFlashSource * DAT_00B054D4;
+
+static inline Point2D * Print_Timer(wchar_t const * text, Point2D const & pt, ColorScheme * scheme)
+{
+	Point2D ret;
+	return Fancy_Text_Print_Wide(&ret, text, DSurface::Composite, &DSurface::Composite->Get_Rect(), &pt, scheme, 0, TextPrintType(0x4618));
+}
+
+// FUNCTION: 0x006D4B50
+int Tactical::DrawTimer(int index, ColorScheme * scheme, int time, wchar_t const * text, unsigned __int64 * flashtime, bool * flashstate)
+{
+	wchar_t buf1[256];
+	wchar_t buf2[256];
+	wchar_t buf3[256];
+	BitFont * font = FUN_004A60D0(0x4618);
+
+	int total_minutes = time / 60;
+	int hours = total_minutes / 60;
+	int seconds = time % 60;
+	int minutes = total_minutes % 60;
+
+	if (hours) {
+		swprintf(buf1, L"%s  %d:%02d:%02d", text, hours, minutes, seconds);
+		swprintf(buf2, L"%s  ", text);
+		swprintf(buf3, L"%d:%02d:%02d", hours, minutes, seconds);
+	} else {
+		swprintf(buf1, L"%s  %02d:%02d", text, minutes, seconds);
+		swprintf(buf2, L"%s  ", text);
+		swprintf(buf3, L"%02d:%02d", minutes, seconds);
+	}
+
+	int width = 0;
+	font->GetTextDimension(buf3, &width, NULL, TacticalRect.Width);
+
+	ColorScheme * flash = scheme;
+	if (time == 0 && flashtime && flashstate) {
+		if (*flashtime <= Game::AudioGetTime()) {
+			*flashtime = Game::AudioGetTime() + 1000;
+			*flashstate = !*flashstate;
+		}
+		if (*flashstate) {
+			flash = DAT_00B054D4->Scheme;
+		}
+	}
+
+	Point2D pt1(TacticalRect.Width - width - 3, TacticalRect.Height - (font->field_1C + 2) * (index + 1));
+	Print_Timer(buf2, pt1, scheme);
+
+	Point2D pt2(TacticalRect.Width - 3, TacticalRect.Height - (font->field_1C + 2) * (index + 1));
+	return (int)Print_Timer(buf3, pt2, flash);
+}
+
+// FUNCTION: 0x006D4DB0
+void Tactical::Set_Caption_Text(wchar_t const * text, int frame)
+{
+	if (!text) {
+		Clear_Caption_Text();
+	} else {
+		wcscpy(ScreenText, text);
+	}
+	EndGameGraphicsFrame = frame;
+}
+
+// FUNCTION: 0x006D4E00
+void Tactical::Clear_Caption_Text(void)
+{
+	EndGameGraphicsFrame = -1;
+	ScreenText[0] = L'\0';
+}
+
+// FUNCTION: 0x006D4E20
+void Tactical::Draw_Screen_Text(wchar_t const * text)
+{
+	if (Unsorted::ArmageddonMode) {
+		return;
+	}
+	if (text == NULL || wcslen(text) == 0) {
+		if (EndGameGraphicsFrame == -1) {
+			return;
+		}
+	}
+	if (!DSurface::Composite->Is_Direct_Draw()) {
+		return;
+	}
+
+	int frame = EndGameGraphicsFrame;
+	if (frame != -1 && FileSystem::GRFXTXT_Convert && FileSystem::GRFXTXT_SHP && FileSystem::GRFXTXT_SHP->Get_Count() > frame) {
+		Point2D point((TacticalRect.Width - FileSystem::GRFXTXT_SHP->Get_Width()) / 2, (TacticalRect.Height - FileSystem::GRFXTXT_SHP->Get_Height()) / 2);
+		Draw_Shape(*DSurface::Composite, *FileSystem::GRFXTXT_Convert, FileSystem::GRFXTXT_SHP, frame, point, TacticalRect);
+		return;
+	}
+
+	if (text && wcslen(text) > 0) {
+		Rect rect = TacticalRect;
+		unsigned color = DSurface::Build_Hicolor_Pixel(255, 255, 255);
+		BitFont * font = BitFont::Instance;
+		int width;
+		int height;
+		font->GetTextDimension(text, &width, &height, rect.Width);
+
+		int x = rect.X + (rect.Width - width) / 2;
+		int y = rect.Y + (rect.Height - height) / 2;
+		LTRBStruct bounds = { rect.X, rect.Y, rect.X + rect.Width, rect.Y + rect.Height };
+		font->SetClipMode(true);
+		font->SetBounds(&bounds);
+		font->SetColor(color);
+		BitText::Instance->Print(font, DSurface::Composite, text, x, y, 0, 0);
 	}
 }
 

@@ -58,6 +58,8 @@ double Random_Fraction(void);
 
 unsigned int Pick_Random_UInt(unsigned int minval, unsigned int maxval);
 
+MapGeneratorClass RandomMapGen;
+
 Random2Class RMGRandom;
 
 #define RMG_RANDOM_DOUBLE(max_value) ((unsigned int)RMGRandom() * (double)(max_value)) * (1.0 / UINT_MAX)
@@ -107,6 +109,126 @@ class NormalDistribution
 		double Spare;
 		double (*Rand)(void);
 };
+
+NormalDistribution RMGGaussian(Random_Fraction);
+
+extern int DAT_00ABED0C;
+extern int DAT_00ABDFD0;
+extern int DAT_00ABDFD4;
+extern int DAT_00ABEC90;
+extern int DAT_00ABECD0;
+extern Cell DAT_00ABE304[8];
+extern Point2D DAT_00ABE328[8];
+
+// FUNCTION: 0x0058B740 $E185
+// FUNCTION: 0x0058B760 $E183
+// FUNCTION: 0x0058B770 $E188
+// FUNCTION: 0x0058B780 $E191
+
+// FUNCTION: 0x0058B7B0
+void FUN_0058B7B0(void)
+{
+}
+
+// FUNCTION: 0x0058B7C0
+void FUN_0058B7C0(void)
+{
+}
+
+// FUNCTION: 0x0058B7D0
+int FUN_0058B7D0(void)
+{
+	return DAT_00ABED0C;
+}
+
+// FUNCTION: 0x0058B7E0
+int FUN_0058B7E0(void)
+{
+	return DAT_00ABDFD4;
+}
+
+// FUNCTION: 0x0058B7F0
+int FUN_0058B7F0(void)
+{
+	return DAT_00ABDFD0;
+}
+
+// FUNCTION: 0x0058B800
+int FUN_0058B800(void)
+{
+	return DAT_00ABEC90;
+}
+
+// FUNCTION: 0x0058B810
+int FUN_0058B810(void)
+{
+	return DAT_00ABECD0;
+}
+
+static inline Point2D Start_Point(int index)
+{
+	if (index >= 0 && index < DAT_00ABED0C) {
+		return DAT_00ABE328[index];
+	}
+	return Point2D(0, 0);
+}
+
+// FUNCTION: 0x0058B820
+void FUN_0058B820(void)
+{
+	DAT_00ABED0C = 0;
+	if (Scen == NULL || TacticalMap == NULL) {
+		return;
+	}
+	for (int i = 0; i < 8; i++) {
+		if (!Scen->Is_Valid_Waypoint(i)) {
+			break;
+		}
+		CellClass * cell = &Map[Scen->Get_Waypoint_Cell(i)];
+		int x;
+		int y;
+		TacticalMap->Lepton_To_Map_Pixel(cell->Center_Coord().X, cell->Center_Coord().Y, x, y);
+		DAT_00ABE304[DAT_00ABED0C] = Scen->Get_Waypoint_Cell(i);
+		DAT_00ABE328[DAT_00ABED0C] = Point2D(x / 60, y / 30);
+		DAT_00ABED0C++;
+	}
+
+	Map.Reset_Iterator();
+	int minx = 10000;
+	int miny = 10000;
+	int maxx = 0;
+	int maxy = 0;
+	CellClass * cptr;
+	while ((cptr = Map.Iterate()) != NULL) {
+		if (Map.In_Local_Radar(cptr->CellID, true)) {
+			int x;
+			int y;
+			TacticalMap->Lepton_To_Map_Pixel(cptr->Center_Coord().X, cptr->Center_Coord().Y, x, y);
+			int px = x / 60;
+			int py = y / 30;
+			if (px < minx) minx = px;
+			if (px > maxx) maxx = px;
+			if (py < miny) miny = py;
+			if (py > maxy) maxy = py;
+		}
+	}
+	DAT_00ABDFD0 = miny;
+	DAT_00ABDFD4 = minx;
+	DAT_00ABEC90 = maxx - minx;
+	DAT_00ABECD0 = maxy - miny;
+
+	if (Scen != NULL) {
+		Scen->NumberStartingPoints = DAT_00ABED0C;
+		for (int j = 0; j < Scen->NumberStartingPoints; j++) {
+			Scen->StartingPoints[j] = Start_Point(j);
+			Scen->HouseHomeCells[j] = DAT_00ABE304[j];
+		}
+		Scen->StartX = DAT_00ABDFD4;
+		Scen->StartY = DAT_00ABDFD0;
+		Scen->Width = DAT_00ABEC90;
+		Scen->Height = DAT_00ABECD0;
+	}
+}
 
 // FUNCTION: 0x0058BDC0
 MapRegionClass::CellData::CellData(void) :

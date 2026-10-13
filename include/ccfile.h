@@ -9,12 +9,15 @@
 
 #include <climits>
 
+class Wstring;
+
 class CCFileClass : public CDFileClass
 {
 		typedef CDFileClass BASECLASS;
 
 	public:
 		CCFileClass(char const * filename);
+		CCFileClass(Wstring const & filename);
 		CCFileClass(void);
 		virtual ~CCFileClass(void) override {Position = 0;};
 

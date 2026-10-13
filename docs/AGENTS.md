@@ -16,7 +16,8 @@ original compiler turns into that function's exact bytes. MATCH means
   shared. No two files may differ only in case: under Wine they write one `.obj`, and
   the compile fails with only the file name in the log.
 - The session scratchpad is shared with the coordinator and other agents: delete only
-  files you created, by name. Never run a delete over the whole scratchpad.
+  files you created, one by name. No recursive delete of any kind (`rm -r`, `find
+  -delete`, `rmtree`) over the scratchpad, `build/coord/` or `build/obj/`.
 - Before you finish, delete the scratch you made that nobody needs (probes, logs, variant
   copies) with `rm` on files or `find DIR -type f -delete`, never a recursive force
   delete. Keep your best source and its header overlay.

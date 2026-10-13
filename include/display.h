@@ -98,6 +98,7 @@ class DisplayClass: public MapClass
 		virtual void Put_Place_Back(TechnoClass * ) {};
 		void Cursor_Mark(Cell const & pos, bool on);
 		void Set_Cursor_Shape(Cell const * list);
+		void SetActiveFoundation(Cell const * list);
 		Cell Set_Cursor_Pos(Cell const & pos = CELL_NONE);
 		Cell Get_Occupy_Dimensions(Cell const *list) const;
 
@@ -180,6 +181,7 @@ class DisplayClass: public MapClass
 		struct BandStruct {
 			int BandX;
 			int BandY;
+			BandStruct(void) : BandX(0), BandY(0) {}
 		};
 
 		BandStruct Band;
@@ -188,6 +190,7 @@ class DisplayClass: public MapClass
 		static void const *ShadowShapes;
 
 		static void const *PlacementShapes;
+
 
 		bool Good_Reinforcement_Cell(Cell const & outcell, Cell const & incell, SpeedType loco, int zone, MZoneType mzone) const;
 

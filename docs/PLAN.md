@@ -799,6 +799,23 @@ nobody has proven, a tooltip lookup (56.6%), and SuperClass's deleting destructo
 whose call to the out-of-line destructor ours inlines. Cost: about 1.4M tokens,
 36 minutes. Merge gate: 2,591 of 2,591 (392.4 KB).
 
+### Batch 12 (13 October 2026)
+
+MapGen, msanim, Ion, dsurface, motlib, Display, map, Tactical, cell. **98 of 106
+matched**; two of the 108 addresses were not functions. CCFileClass's second
+constructor takes a Wstring, and both overloads now have decorated names.csv rows.
+Two more map faults: the map split DisplayClass::One_Time and a motlib initialiser
+after a call, where a data pointer that happens to equal the next address named the
+tail. The case-label rule now counts fall-through as well as jumps, but only after
+ignoring switch-table addresses, which had made the flow walk run through table data
+into the next function. That removed 15 more false starts and no matched function, and
+both functions landed. Banked: six Tactical and cell functions on register
+allocation (41% to 91%), and two others. The header merge broke the delete rule and
+removed the whole session scratchpad: only other agents' scratch copies were lost,
+since the coordinator's files live in build/coord/, and the rule is now explicit about
+recursive deletes. Cost: about 1.8M tokens, 47 minutes. Merge gate: 2,689 of 2,689
+(407.8 KB).
+
 ### Decide before the first batch
 
 - **Module layout.** Which function lives in which source file, and the link order, decide
