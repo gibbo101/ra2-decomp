@@ -1893,7 +1893,39 @@ bool AircraftClass::INoticeSink_Unknown(DWORD unknown, DWORD unknown2)
 
 // FUNCTION: 0x0041C010 TechnoClass::IsDisguised
 
+// FUNCTION: 0x0041C020
+bool TechnoClass::IsDisguisedAs(HouseClass *) const
+{
+	return(Disguised);
+}
+
+// FUNCTION: 0x0041C030
+void TechnoClass::ClearDisguise(void)
+{
+	Disguised = false;
+}
+
+// FUNCTION: 0x0041C040 TechnoClass::Random_Animate
+
+// FUNCTION: 0x0041C050 FootClass::Is_In_Team
+
+// FUNCTION: 0x0041C060 FootClass::Deploy_To_Fire
+
+// FUNCTION: 0x0041C070 FootClass::Occupies_Cells
+
+// FUNCTION: 0x0041C080 FootClass::JumpJet_To_Walk
+
 // FUNCTION: 0x0041C090 FootClass::Draw_Object
+
+// FUNCTION: 0x0041C0F0 FootClass::Berzerk
+
+// FUNCTION: 0x0041C100 FootClass::Start_Fear
+
+// FUNCTION: 0x0041C110 FootClass::Stop_Fear
+
+// FUNCTION: 0x0041C120 FootClass::Do_Idle
+
+// FUNCTION: 0x0041C130 FootClass::Overrun_Square
 
 // FUNCTION: 0x0041C190
 HRESULT STDMETHODCALLTYPE AircraftClass::GetClassID(CLSID * retval)

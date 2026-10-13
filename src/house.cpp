@@ -80,9 +80,10 @@
 extern DynamicVectorClass<TechnoClass *> DAT_00A8EC78;
 #define Technos DAT_00A8EC78
 extern DynamicVectorClass<FactoryClass *> DAT_00A83E30;
-namespace Unsorted { extern int MuteSWLaunches; }
+namespace Unsorted { extern int MuteSWLaunches; extern Cell CellSpreadTable[]; }
 #define Factories DAT_00A83E30
 extern HouseClass * DAT_00AC1198;
+extern int DAT_007ED3FC;
 
 // FUNCTION: 0x004F4EE0 $E2
 // FUNCTION: 0x004F4F00 $E5
@@ -936,6 +937,11 @@ static inline void Assign_Primary_Factory(HouseClass * house, RTTIType type, boo
 	}
 }
 
+static inline void Clear_Production_Flag(HouseClass * house, RTTIType type, bool naval, int buildcat)
+{
+	house->FUN_005007A0(type, naval, buildcat, false);
+}
+
 // FUNCTION: 0x004FA350
 ProdFailType HouseClass::Begin_Production(RTTIType type, int id, bool naval, bool resume)
 {
@@ -955,7 +961,7 @@ ProdFailType HouseClass::Begin_Production(RTTIType type, int id, bool naval, boo
 		}
 	}
 	unsigned char flag = Production_Flag(this, type, naval, buildcat);
-	FUN_005007A0(type, naval, buildcat, false);
+	Clear_Production_Flag(this, type, naval, buildcat);
 
 	tech = Fetch_Techno_Type(type, id);
 
@@ -1048,18 +1054,6 @@ ProdFailType HouseClass::Begin_Production(RTTIType type, int id, bool naval, boo
 	}
 
 	return(PROD_CANT);
-}
-
-static inline int Build_Category(RTTIType type, int id)
-{
-	if (id < 0) {
-		return(0);
-	}
-	TechnoTypeClass const * tech = Fetch_Techno_Type(type, id);
-	if (type == RTTI_BUILDING || type == RTTI_BUILDINGTYPE) {
-		return(((BuildingTypeClass const *)tech)->BuildCat);
-	}
-	return(0);
 }
 
 // FUNCTION: 0x004FA910
@@ -2040,6 +2034,254 @@ ZoneType HouseClass::Which_Zone(ObjectClass const * object) const
 ZoneType HouseClass::Which_Zone(Cell const & cell) const
 {
 	return(Which_Zone((Coord)cell));
+}
+
+// FUNCTION: 0x00500200
+Cell HouseClass::Where_To_Go(FootClass const * object) const
+{
+	ZoneType zone;
+	if (object->Anti_Air() + object->Anti_Armor() + object->Anti_Infantry() == 0) {
+		zone = ZONE_CORE;
+	} else {
+		zone = Random_Pick(ZONE_NORTH, ZONE_WEST);
+	}
+
+	Cell cell = Random_Cell_In_Zone(zone);
+
+	return(Map.Nearby_Location(cell, SPEED_TRACK, Map.Get_Cell_Zone(object->PositionCoord.As_Cell())));
+}
+
+// FUNCTION: 0x00500300
+AbstractClass * HouseClass::Find_Juicy_Target(Coord const & coord) const
+{
+	UnitClass * best = 0;
+	int value = 0;
+	Cell center = coord.As_Cell();
+	int left = DAT_007ED3FC;
+
+	if (left > 0) {
+		Cell const * ptr = Unsorted::CellSpreadTable;
+		while (left > 0) {
+			Cell cell = center + *ptr;
+			UnitClass * unit = Map[cell].Cell_Unit(true);
+
+			if (unit && !unit->IsInLimbo && !Is_Ally(unit) && unit->House->Which_Zone(unit) == ZONE_NONE && unit->HeightAGL >= -20 && unit->Cloak != CLOAKED) {
+				int val = coord.Distance_To(unit->Center_Coord());
+
+				if (value == 0 || val < value) {
+					value = val;
+					best = unit;
+				}
+			}
+			ptr++;
+			left--;
+		}
+		if (best) {
+			return(best);
+		}
+	}
+	return(NULL);
+}
+
+static inline void Assign_Production_Flag(HouseClass * house, RTTIType type, bool naval, int buildcat, bool flag)
+{
+	switch (type) {
+		case RTTI_INFANTRY:
+		case RTTI_INFANTRYTYPE:
+			house->InfantryType_53D1 = flag;
+
+		case RTTI_UNIT:
+		case RTTI_UNITTYPE:
+			if (naval) {
+				house->ShipType_53D3 = flag;
+			} else {
+				house->VehicleType_53D2 = flag;
+			}
+			break;
+
+		case RTTI_BUILDING:
+		case RTTI_BUILDINGTYPE:
+			if (buildcat == 5) {
+				house->DefenseType_53D8 = flag;
+			} else {
+				house->BuildingType_53D4 = flag;
+			}
+			break;
+
+		case RTTI_AIRCRAFT:
+		case RTTI_AIRCRAFTTYPE:
+			house->AircraftType_53D0 = flag;
+			break;
+	}
+}
+
+// FUNCTION: 0x005004E0
+int __fastcall Build_Category(RTTIType type, int id)
+{
+	if (id < 0) {
+		return(0);
+	}
+	TechnoTypeClass const * tech = Fetch_Techno_Type(type, id);
+	if (type == RTTI_BUILDING || type == RTTI_BUILDINGTYPE) {
+		return(((BuildingTypeClass const *)tech)->BuildCat);
+	}
+	return(0);
+}
+
+// FUNCTION: 0x00500510
+FactoryClass * HouseClass::Fetch_Factory(RTTIType rtti, bool naval, int buildcat) const
+{
+	return(Primary_Factory(this, rtti, naval, buildcat));
+}
+
+// FUNCTION: 0x005005B0
+void HouseClass::FUN_005005B0(RTTIType rtti, bool naval, int buildcat)
+{
+	Assign_Production_Flag(this, rtti, naval, buildcat, true);
+}
+
+// FUNCTION: 0x00500660
+void HouseClass::FUN_00500660(RTTIType rtti, bool naval, int buildcat)
+{
+	Assign_Production_Flag(this, rtti, naval, buildcat, false);
+}
+
+// FUNCTION: 0x00500700
+unsigned char HouseClass::FUN_00500700(RTTIType rtti, bool naval, int buildcat) const
+{
+	return(Production_Flag(this, rtti, naval, buildcat));
+}
+
+// FUNCTION: 0x005007A0
+void HouseClass::FUN_005007A0(RTTIType type, bool naval, int buildcat, bool flag)
+{
+	switch (type) {
+		case RTTI_INFANTRY:
+		case RTTI_INFANTRYTYPE:
+			InfantryType_53D1 = flag;
+
+		case RTTI_UNIT:
+		case RTTI_UNITTYPE:
+			if (naval) {
+				ShipType_53D3 = flag;
+			} else {
+				VehicleType_53D2 = flag;
+			}
+			break;
+
+		case RTTI_BUILDING:
+		case RTTI_BUILDINGTYPE:
+			if (buildcat == 5) {
+				DefenseType_53D8 = flag;
+			} else {
+				BuildingType_53D4 = flag;
+			}
+			break;
+
+		case RTTI_AIRCRAFT:
+		case RTTI_AIRCRAFTTYPE:
+			AircraftType_53D0 = flag;
+			break;
+	}
+}
+
+// FUNCTION: 0x00500850
+void HouseClass::Set_Factory(FactoryClass * factory, RTTIType rtti, bool naval, int buildcat)
+{
+	Assign_Primary_Factory(this, rtti, naval, buildcat, factory);
+}
+
+// FUNCTION: 0x00500910
+int HouseClass::FUN_00500910(RTTIType rtti, bool naval) const
+{
+	int const * ptr;
+
+	switch (rtti) {
+		case RTTI_UNIT:
+		case RTTI_UNITTYPE:
+			if (naval) {
+				ptr = &NumShipyards;
+			} else {
+				ptr = &UnitFactories;
+			}
+			break;
+
+		case RTTI_AIRCRAFT:
+		case RTTI_AIRCRAFTTYPE:
+			ptr = &AircraftFactories;
+			break;
+
+		case RTTI_INFANTRY:
+		case RTTI_INFANTRYTYPE:
+			ptr = &InfantryFactories;
+			break;
+
+		case RTTI_BUILDING:
+		case RTTI_BUILDINGTYPE:
+			ptr = &BuildingFactories;
+			break;
+
+		default:
+			ptr = NULL;
+			break;
+	}
+	if (ptr != NULL) {
+		return(*ptr);
+	}
+	return(0);
+}
+
+// FUNCTION: 0x005009B0
+void HouseClass::Read_All(CCINIClass const & ini)
+{
+	char buffer[HOUSE_NAME_MAX];
+	int count = ini.Entry_Count("Houses");
+
+	for (int i = 0; i < count; i++) {
+		ini.Get_String("Houses", ini.Get_Entry("Houses", i), "", buffer, sizeof(buffer));
+		int country = ini.Get_HousesType(buffer, "Country", HOUSE_NONE);
+		if (country == -1) country = 0;
+		HouseClass * house = new HouseClass(HouseTypes[country]);
+		house->IniName = TStringID<HOUSE_NAME_MAX>(buffer);
+	}
+
+	for (int j = 0; j < Houses.Count(); j++) {
+		HouseClass * p = Houses[j];
+		p->Read_INI(ini);
+		if (Session.Type == GAME_NORMAL) {
+			if (p->Is_Human_Player()) {
+				p->Assign_Handicap(Scen->Difficulty);
+			} else {
+				p->Assign_Handicap(Scen->CDifficulty);
+			}
+		}
+	}
+
+	if (Houses.Count() == 0) {
+		for (int k = 0; k < HouseTypes.Count(); k++) {
+			HouseClass * house = new HouseClass(HouseTypes[k]);
+			house->Read_INI(ini);
+		}
+	}
+}
+
+// FUNCTION: 0x00501160
+void HouseClass::Write_All(CCINIClass & ini)
+{
+	char buffer[32];
+
+	ini.Clear("Houses");
+
+	for (int i = 0; i < Houses.Count(); i++) {
+		char name[32];
+		strcpy(name, Houses[i]->IniName);
+		sprintf(buffer, "%d", i);
+		ini.Put_String("Houses", buffer, name);
+	}
+
+	for (int j = 0; j < Houses.Count(); j++) {
+		Houses[j]->Write_INI(ini);
+	}
 }
 
 // FUNCTION: 0x00501AA0

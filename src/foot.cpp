@@ -2490,3 +2490,224 @@ FootClass * FootClass::RemoveFirstPassenger(void)
 void FootClass::ReceiveGunner(FootClass * gunner)
 {
 }
+
+// FUNCTION: 0x004DE760
+void FootClass::RemoveGunner(FootClass * gunner)
+{
+}
+
+// FUNCTION: 0x004DE770
+bool FootClass::IsParalyzed(void) const
+{
+	return(ParalysisTimer.Value() != 0);
+}
+
+// FUNCTION: 0x004DE7B0
+void FootClass::AddSensorsAt(Cell cell)
+{
+	int radius = Techno_Type_Class()->SensorsSight;
+	int radius_sq = radius * radius;
+	HousesType house = House->HeapID;
+
+	if (cell == CELL_NONE) {
+		cell = Center_Coord().As_Cell();
+	}
+
+	for (int y = -radius; y < radius; y++) {
+		for (int x = -radius; x < radius; x++) {
+			Cell here = Cell(cell.X + x, cell.Y + y);
+			if (x * x + y * y < radius_sq) {
+				CellClass * cptr = &Map[here];
+				cptr->Sensed_By(house);
+				for (ObjectClass * obj = cptr->Cell_Occupier(); obj; obj = obj->Next) {
+					RTTIType rtti = obj->RTTI;
+					if (rtti == RTTI_UNIT || rtti == RTTI_INFANTRY || rtti == RTTI_AIRCRAFT) {
+						((TechnoClass *)obj)->Sensed();
+					}
+				}
+				BuildingClass * building = cptr->Cell_Building();
+				if (building && building->House != PlayerPtr && building->Visual_Character(false, NULL)) {
+					building->IsToDisplay = true;
+				}
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x004DE940
+void FootClass::RemoveSensorsAt(Cell cell)
+{
+	int radius = Techno_Type_Class()->SensorsSight;
+	int radius_sq = radius * radius;
+	HousesType house = House->HeapID;
+
+	if (cell == CELL_NONE) {
+		cell = Center_Coord().As_Cell();
+	}
+
+	for (int y = -radius; y < radius; y++) {
+		for (int x = -radius; x < radius; x++) {
+			Cell here = Cell(cell.X + x, cell.Y + y);
+			if (x * x + y * y < radius_sq) {
+				CellClass * cptr = &Map[here];
+				if (!cptr->Is_Sensed(house)) {
+					continue;
+				}
+				{
+					cptr->Unsensed_By(house);
+					for (ObjectClass * obj = cptr->Cell_Occupier(); obj; obj = obj->Next) {
+						RTTIType rtti = obj->RTTI;
+						if (rtti == RTTI_UNIT || rtti == RTTI_INFANTRY || rtti == RTTI_AIRCRAFT) {
+							((TechnoClass *)obj)->Sensed();
+						}
+					}
+					BuildingClass * building = cptr->Cell_Building();
+					if (building && building->House != PlayerPtr && building->Visual_Character(false, NULL)) {
+						building->IsToDisplay = true;
+					}
+				}
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x004DEAE0
+int FootClass::IronCurtain(int duration, HouseClass * source, bool force_shield)
+{
+	if (Techno_Type_Class()->Organic) {
+		int damage = Techno_Type_Class()->MaxStrength;
+		return(Take_Damage(damage, 0, Rule->C4Warhead, NULL, false, false, NULL));
+	}
+	if (ParasiteEatingMe != NULL) {
+		ParasiteEatingMe->ParasiteImUsing->SuppressionTimer = 50;
+		ParasiteEatingMe->ParasiteImUsing->ExitUnit();
+	}
+	ParalysisTimer = 0;
+	return(BASECLASS::IronCurtain(duration, source, force_shield));
+}
+
+extern const double DAT_007E3570;
+extern const double DAT_007E9280;
+extern const double DAT_007E3860;
+
+// FUNCTION: 0x004DEBB0
+bool FootClass::Crash(ObjectClass * killer)
+{
+	if (Get_Height_AGL() > 0) {
+		if (Strength > 0) {
+			if (killer && Tag != NULL) Tag->Spring(TEVENT_FIRST_DAMAGED, this);
+			if (Tag != NULL && IsActive) Tag->Spring(TEVENT_FIRST_DAMAGED_ANY, this);
+
+			if (Tag != NULL && IsActive && killer) {
+				Tag->Spring(TEVENT_FIRST_DAMAGED_ANY, this, CELL_NONE, false, (TechnoClass *)killer);
+			}
+
+			if (!IsActive) {
+				return(true);
+			}
+			RegisterDestruction((TechnoClass *)killer);
+			if (!IsActive) {
+				return(true);
+			}
+			if (!IsAttackedByLocomotor) {
+				Strength = 0;
+			}
+		}
+
+		IsCrashing = true;
+		Transmit_Message(RADIO_OVER_OUT);
+		Stun();
+		Kill_Cargo((TechnoClass *)killer);
+
+		if (RTTI != RTTI_INFANTRY && !ScenarioInit) {
+			RockingSidewaysPerFrame = Scen->RandomNumber(0, 0x7FFFFFFE) * DAT_007E9280 * DAT_007E3570 + DAT_007E3860;
+			if (Scen->RandomNumber(0, 1) == 0) {
+				RockingSidewaysPerFrame = -RockingSidewaysPerFrame;
+			}
+			RockingForwardsPerFrame = DAT_007E3860 * (Scen->RandomNumber(0, 0x7FFFFFFE) * DAT_007E3570);
+		}
+
+		Detach_This_From_All(this, false);
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x004DED70
+void const * FootClass::Get_Image_Data(void) const
+{
+	Cell cell = Center_Coord().As_Cell();
+	CellClass * cptr = &Map[cell];
+
+	if (!House->Is_Ally(PlayerPtr) && IsDisguised() && !cptr->Is_Disguise_Sensed(PlayerPtr->HeapID)) {
+		return(GetDisguise(false)->ImageData);
+	}
+	if (!IsClearlyVisibleTo(PlayerPtr)) {
+		return(GetDisguise(true)->ImageData);
+	}
+	return(BASECLASS::Get_Image_Data());
+}
+
+// FUNCTION: 0x004DEE50
+BuildingClass * FootClass::FindNearestDockBuilding(BuildingTypeClass * type, unsigned unk2, unsigned unk3) const
+{
+	int distance = -1;
+	return(FindCloserDockBuilding(type, unk2, unk3, &distance));
+}
+
+// FUNCTION: 0x004DEE80
+BuildingClass * FootClass::FindCloserDockBuilding(BuildingTypeClass * type, unsigned unk2, unsigned unk3, int * distance) const
+{
+	BuildingClass * result = NULL;
+
+	if (House->BQuantity.Value(type->HeapID)) {
+		int count = House->Buildings.Count();
+		for (int index = 0; index < count; index++) {
+			BuildingClass * building = House->Buildings[index];
+			if (building && !building->IsInLimbo && building->Class == type) {
+				if (unk3 == 1 || building->HasFreeLink(this)) {
+					if (RTTI != RTTI_AIRCRAFT) {
+						Cell cell1 = building->Center_Coord().As_Cell();
+						Cell cell2 = Destination_Coord().As_Cell();
+						if (!Map.Is_Same_Cell_Zone(cell2, cell1, Techno_Type_Class()->MZone, ((ObjectClass *)this)->Is_Moving_Onto_Bridge(), false, false)) {
+							continue;
+						}
+					}
+					if (((FootClass *)this)->Transmit_Message(RADIO_CAN_LOAD, building) == RADIO_ROGER) {
+						int dist = Relative_Distance(building);
+						if (*distance == -1 || dist < *distance || building->IsLeader) {
+							result = building;
+							*distance = dist;
+						}
+					}
+				}
+			}
+		}
+	}
+	return(result);
+}
+
+// FUNCTION: 0x004DF040
+BuildingClass * FootClass::TryNearestDockBuilding(TypeList<BuildingTypeClass *> * list, unsigned unk2, unsigned unk3) const
+{
+	BuildingClass * result = NULL;
+	int best = -1;
+	for (int index = 0; index < list->Count(); index++) {
+		int distance = -1;
+		BuildingClass * building = FindCloserDockBuilding((*list)[index], unk2, unk3, &distance);
+		if (building) {
+			if (!result || distance < best || best == -1 || building->IsLeader) {
+				result = building;
+				best = distance;
+			}
+		}
+	}
+	return(result);
+}
+
+// FUNCTION: 0x004DF0D0
+void FootClass::AbortMotion(void)
+{
+	unknown_5A0 = NULL;
+	NavCom = NULL;
+}

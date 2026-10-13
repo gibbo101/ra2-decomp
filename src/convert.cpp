@@ -680,4 +680,22 @@ template class BlitPlainXlat<unsigned char>;
 template class BlitTransXlat<unsigned char>;
 
 // FUNCTION: 0x00491590 ?$BlitTransZRemapXlat@E::BlitForward
+// FUNCTION: 0x004915E0 ?$BlitTransZRemapXlat@E::BlitBackward
+// FUNCTION: 0x00491610 ?$BlitTransZRemapXlat@E::Blit_Copy_Tinted
+// FUNCTION: 0x00491640 ?$BlitTransZRemapXlat@E::Blit_Move_Tinted
 template class BlitTransZRemapXlat<unsigned char>;
+
+// FUNCTION: 0x00491670 ?$BlitTransRemapDest@E::BlitForward
+// FUNCTION: 0x004916B0 ?$BlitTransRemapDest@E::BlitBackward
+// FUNCTION: 0x004916E0 ?$BlitTransRemapDest@E::Blit_Copy_Tinted
+// FUNCTION: 0x00491710 ?$BlitTransRemapDest@E::Blit_Move_Tinted
+template class BlitTransRemapDest<unsigned char>;
+
+// FUNCTION: 0x00491740 ?$BlitTransRemapXlat@E::BlitForward
+// FUNCTION: 0x00491790 ?$BlitTransRemapXlat@E::BlitBackward
+// FUNCTION: 0x004917C0 ?$BlitTransRemapXlat@E::Blit_Copy_Tinted
+// FUNCTION: 0x004917F0 ?$BlitTransRemapXlat@E::Blit_Move_Tinted
+template class BlitTransRemapXlat<unsigned char>;
+
+// FUNCTION: 0x00491820 ?$RLEBlitTransXlat@E::Blit
+template class RLEBlitTransXlat<unsigned char>;

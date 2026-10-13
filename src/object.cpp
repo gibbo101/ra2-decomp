@@ -1383,6 +1383,99 @@ Cell ObjectClass::Get_Target_Cell(void) const
 	return(Destination_Coord().As_Cell());
 }
 
+// FUNCTION: 0x005F6A10
+CellClass * ObjectClass::Get_Target_Cell_Ptr(void) const
+{
+	return(&Map[Destination_Coord().As_Cell()]);
+}
+
+// FUNCTION: 0x005F6A70
+bool ObjectClass::Is_Moving_Onto_Bridge(TechnoClass * docker) const
+{
+	bool bridge = IsOnBridge;
+
+	Coord destination = Destination_Coord(docker);
+	int dest_height = Map.Get_Height_GL(destination);
+	int current_height = Map.Get_Height_GL(PositionCoord);
+
+	if (!IsOnBridge) {
+		if (current_height - dest_height > 3 * LEVEL_LEPTON_H) {
+			if (Map[destination].IsUnderBridge) {
+				return(true);
+			}
+		}
+	}
+
+	if (IsOnBridge) {
+		if (dest_height - current_height > 3 * LEVEL_LEPTON_H) {
+			return(false);
+		}
+	}
+	return(bridge);
+}
+
+// FUNCTION: 0x005F6B50
+void ObjectClass::Set_Waypoint_Path(PathType path, char index)
+{
+}
+
+// FUNCTION: 0x005F6B60
+bool ObjectClass::On_Ground(void) const
+{
+	if (IsDown) {
+		if (Get_Height_AGL() < LEVEL_LEPTON_H * 2) {
+			return(true);
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x005F6B90
+bool ObjectClass::In_Air(void) const
+{
+	if (IsDown) {
+		if (Get_Height_AGL() >= LEVEL_LEPTON_H * 2) {
+			return(true);
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x005F6BC0
+TechnoTypeClass const * ObjectClass::Techno_Type_Class(void) const
+{
+	return(0);
+}
+
+// FUNCTION: 0x005F6BD0
+int ObjectClass::Sort_Y(void) const
+{
+	return(Render_Coord().Y + Render_Coord().X);
+}
+
+// FUNCTION: 0x005F6C10
+bool ObjectClass::Considered_Vehicle(void) const
+{
+	return(Get_Height_AGL() > -20);
+}
+
+// FUNCTION: 0x005F6C30
+bool ObjectClass::CanBeSelected(void) const
+{
+	if (IsDisguisedAs(PlayerPtr)) {
+		if (GetDisguiseHouse(true) == NULL) {
+			return(false);
+		}
+	}
+	return(Class_Of()->IsSelectable);
+}
+
+// FUNCTION: 0x005F6C70
+bool ObjectClass::CanBeSelectedNow(void) const
+{
+	return(CanBeSelected());
+}
+
 // FUNCTION: 0x005F6C80
 Coord ObjectClass::Docking_Coord(TechnoClass * ) const
 {
@@ -1395,5 +1488,25 @@ void ObjectClass::FUN_005F6CB0(int sound)
 	CustomSound = sound;
 	if (sound == -1) {
 		CustomSoundController.End();
+	}
+}
+
+// FUNCTION: 0x005F6CD0
+bool ObjectClass::IsCrushable(TechnoClass * crusher) const
+{
+	if (crusher != NULL && crusher->Techno_Type_Class()->OmniCrusher && this != NULL && (AbstractFlags & 1) && !Techno_Type_Class()->OmniCrushResistant && Fetch_RTTI() != RTTI_BUILDING && !crusher->House->Is_Ally(this) && !IsIronCurtained()) {
+		return(true);
+	}
+	if (Class_Of()->IsCrushable && this != NULL && (AbstractFlags & 1) && !((TechnoClass *)this)->Uncrushable && !crusher->House->Is_Ally(this) && !IsIronCurtained()) {
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x005F6DA0
+void ObjectClass::AnimPointerExpired(AnimClass * anim)
+{
+	if (anim == Parachute) {
+		Parachute = 0;
 	}
 }

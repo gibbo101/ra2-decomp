@@ -14,6 +14,7 @@
 #include "trim.h"
 #include "xpipe.h"
 #include "wstring.h"
+#include "widewstring.h"
 #include "xstraw.h"
 #include <cctype>
 #include <cstddef>
@@ -243,7 +244,6 @@ Wstring INIClass::Get_Entry(Wstring const & section, int index) const
 	return Wstring(Get_Entry(section.text(), index));
 }
 
-
 // FUNCTION: 0x00526E80
 bool INIClass::Put_UUBlock(char const * section, void const * block, int len)
 {
@@ -313,6 +313,51 @@ int INIClass::Get_UUBlock(char const * section, void * block, int len) const
 	}
 	total += b64pipe.End();
 	return(total);
+}
+
+// FUNCTION: 0x005271C0
+bool INIClass::Put_TextBlock(char const * section, char const * text)
+{
+	if (section == NULL) return(false);
+
+	Clear(section);
+
+	int index = 1;
+	while (text != NULL && *text != '\0') {
+
+		char buffer[128];
+
+		strncpy(buffer, text, 75);
+		buffer[75] = '\0';
+
+		char b[32];
+		sprintf(b, "%d", index);
+
+		int count = strlen(buffer);
+		if (count > 0) {
+			if (count >= 75) {
+				while (count) {
+					char c = buffer[count];
+					if (c != 0 && (unsigned char)c <= ' ') break;
+					count--;
+				}
+
+				if (count == 0) {
+					break;
+				} else {
+					buffer[count] = '\0';
+				}
+			}
+
+			strtrim(buffer);
+			Put_String(section, b, buffer);
+			index++;
+			text = ((char  *)text) + count;
+		} else {
+			break;
+		}
+	}
+	return(true);
 }
 
 // FUNCTION: 0x005275C0
@@ -410,6 +455,17 @@ bool INIClass::Put_Hex(char const * section, char const * entry, int number)
 	return(Put_String(section, entry, buffer));
 }
 
+// FUNCTION: 0x005281C0
+bool INIClass::Put_Hex(Wstring const & section, Wstring const & entry, int number)
+{
+	char buffer[MAX_LINE_LENGTH];
+	char * entrystr = entry.text();
+	char * sectionstr = section.text();
+
+	sprintf(buffer, "%X", number);
+	return(Put_String(sectionstr, entrystr, buffer));
+}
+
 // FUNCTION: 0x005285B0
 bool INIClass::Put_Float(char const * section, char const * entry, double number)
 {
@@ -417,6 +473,108 @@ bool INIClass::Put_Float(char const * section, char const * entry, double number
 
 	sprintf(buffer, "%f", (float)number);
 	return(Put_String(section, entry, buffer));
+}
+
+// FUNCTION: 0x00528600
+bool INIClass::Put_Float(Wstring const & section, Wstring const & entry, double number)
+{
+	char buffer[MAX_LINE_LENGTH];
+	char * entrystr = entry.text();
+	char * sectionstr = section.text();
+
+	sprintf(buffer, "%f", (double)(float)number);
+	return(Put_String(sectionstr, entrystr, buffer));
+}
+
+// FUNCTION: 0x00528660
+bool INIClass::Put_String(char const * section, char const * entry, char const * string)
+{
+	if (section == NULL || entry == NULL) return(false);
+
+	INISection * secptr = Find_Section(section);
+
+	if (secptr == NULL) {
+		secptr = new INISection(strdup(section));
+		if (secptr == NULL) return(false);
+		SectionList.Add_Tail(secptr);
+		SectionIndex.Add_Index(secptr->Index_ID(), secptr);
+	}
+
+	INIComment * cmtptr = NULL;
+	char * line_comment = NULL;
+	int comment_col = 0;
+	int assign_col = 0;
+	int value_col = 0;
+	INIEntry * entryptr = secptr->Find_Entry(entry);
+	if (entryptr != NULL) {
+		cmtptr = entryptr->PrefixComment;
+		line_comment = entryptr->LineComment;
+		comment_col = entryptr->CommentColumn;
+		assign_col = entryptr->AssignColumn;
+		value_col = entryptr->ValueColumn;
+		entryptr->PrefixComment = NULL;
+		entryptr->LineComment = NULL;
+
+		secptr->EntryIndex.Remove_Index(entryptr->Index_ID());
+		delete entryptr;
+	}
+
+	if (string != NULL && strlen(string) > 0) {
+		entryptr = new INIEntry(strdup(entry), strdup(string), cmtptr, line_comment, comment_col, assign_col, value_col);
+
+		if (entryptr == NULL) {
+			free(line_comment);
+
+			while (cmtptr != NULL) {
+				free(cmtptr->Comment);
+				INIComment * next = cmtptr->Next;
+				delete cmtptr;
+				cmtptr = next;
+			}
+
+			return(false);
+		}
+		secptr->EntryList.Add_Tail(entryptr);
+		secptr->EntryIndex.Add_Index(entryptr->Index_ID(), entryptr);
+	}
+	return(true);
+}
+
+// FUNCTION: 0x005289E0
+bool INIClass::Put_String(Wstring const & section, Wstring const & entry, Wstring const & string)
+{
+	return(Put_String(section.text(), entry.text(), string.text()));
+}
+
+// FUNCTION: 0x00528E00
+bool INIClass::Put_UnicodeString(char const * section, char const * entry, wchar_t const * string)
+{
+	bool result;
+
+	result = false;
+	if (string != NULL) {
+		int size = wcslen(string) * 8;
+		char * buffer = new char[size + 1];
+		if (buffer != NULL) {
+			char * ptr = buffer;
+			*ptr = 0;
+			while (*string != 0) {
+				itoa(*string, ptr, 16);
+				strcat(ptr, ",");
+				ptr = buffer + strlen(buffer);
+				string++;
+			}
+			result = Put_String(section, entry, buffer);
+			delete buffer;
+		}
+	}
+	return(result);
+}
+
+// FUNCTION: 0x00528ED0
+bool INIClass::Put_UnicodeString(Wstring const & section, Wstring const & entry, WideWstring const & string)
+{
+	return(Put_UnicodeString(section.text(), entry.text(), string.text()));
 }
 
 // FUNCTION: 0x00529560

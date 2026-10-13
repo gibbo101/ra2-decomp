@@ -73,7 +73,7 @@ class LocomotionClass : public IPersistStream, public ILocomotion
 		virtual int STDMETHODCALLTYPE Get_Track_Index(void) override {return(-1);}
 		virtual int STDMETHODCALLTYPE Get_Speed_Accum(void) override {return(-1);}
 
-		virtual int Fetch_Object_Size(bool oldsave = false) const = 0;
+		virtual int Fetch_Object_Size(void) const = 0;
 
 	protected:
 

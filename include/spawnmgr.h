@@ -42,6 +42,7 @@ class SpawnManagerClass : public AbstractClass
 		virtual void AI(void) override;
 
 		void KillNodes(void);
+		void UnlinkPointer(AbstractClass * ptr);
 		void SetTarget(AbstractClass * target);
 		void ResetTarget(void);
 		int CountLaunchingSpawns(void);

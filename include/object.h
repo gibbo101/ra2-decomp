@@ -135,7 +135,7 @@ class ObjectClass : public AbstractClass
 		virtual ActionType What_Action(Cell const &, bool check_fog = false, bool disallow_force = false) const;
 		virtual LayerType In_Which_Layer(void) const;
 		bool Not_Underground(void) const;
-		virtual bool Considered_Vehicle(void) const {return(false);}
+		virtual bool Considered_Vehicle(void) const;
 		virtual bool IsStrange(void) const;
 		virtual TechnoTypeClass const * Techno_Type_Class(void) const;
 		__declspec( property( get=Techno_Type_Class) ) TechnoTypeClass const * TClass;

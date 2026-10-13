@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
 #include "palette.h"
 #include "hashstr.h"
 #include "hashtable.h"
@@ -496,7 +497,29 @@ template class DynamicVectorClass<HSVClass>;
 
 // FUNCTION: 0x00628A70 ?$VectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@::ID
 
+// FUNCTION: 0x00628AD0 ?$VectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@::ID
+
+// FUNCTION: 0x00628B00 ?$DynamicVectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@::?$DynamicVectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@
+
+// FUNCTION: 0x00628BB0 ?$DynamicVectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@::Resize
+
+// FUNCTION: 0x00628D10 ?$DynamicVectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@::Add
+
+// FUNCTION: 0x00628D80 ?$DynamicVectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@::ID
+
+// FUNCTION: 0x00628DD0 ?$HashObject@VHashString@@PAVSchemeNode@@::?$HashObject@VHashString@@PAVSchemeNode@@
+
+// FUNCTION: 0x00628DF0 ?$VectorClass@VRGBClass@@::?$VectorClass@VRGBClass@@
+
+template struct HashObject<HashString, SchemeNode *>;
 template class DynamicVectorClass<HashObject<HashString, SchemeNode *> >;
 
 // FUNCTION: 0x00628E80 ?$VectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@::~?$VectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@
+
+// FUNCTION: 0x00628ED0 ?$VectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@::?$VectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@
 template class VectorClass<HashObject<HashString, SchemeNode *> >;
+
+// FUNCTION: 0x00628F80 $E2
+// FUNCTION: 0x00628FB0 $E5
+// FUNCTION: 0x00628FD0 $E8
+// FUNCTION: 0x00628FF0 $E11

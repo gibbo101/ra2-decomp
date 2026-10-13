@@ -15,6 +15,7 @@
 class CCINIClass;
 class NoInitClass;
 class HouseClass;
+class MPMapEntry;
 
 class MPTeam
 {
@@ -32,6 +33,7 @@ class MPGameModeClass
 	public:
 		static MPGameModeClass * __fastcall Get(int index);
 		CCINIClass * FUN_005D67B0(void);
+		bool FUN_005D63E0(MPMapEntry * map);
 
 		MPGameModeClass(NoInitClass const &) {}
 		MPGameModeClass(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex);

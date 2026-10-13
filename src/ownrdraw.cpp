@@ -722,6 +722,244 @@ typed:
 	}
 }
 
+int __fastcall FUN_004A38D0(int a, int b);
+extern int DAT_00833674;
+extern int DAT_00B0FB48;
+extern int DAT_00B0FB10;
+extern int DAT_00B0FB30;
+extern int DAT_00B0FAD0;
+
+// FUNCTION: 0x00603810
+int FUN_00603810(HWND dialog, HWND control)
+{
+	OwnerDraw::WinData *data = NULL;
+	int type;
+
+	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
+		type = *(int *)((char *)data + 0x6c);
+	} else {
+		type = 0;
+	}
+	int id = GetDlgCtrlID(control);
+	return 0;
+}
+
+// FUNCTION: 0x00603870
+int FUN_00603870(HWND dialog, HWND control, int arg)
+{
+	OwnerDraw::WinData *data = NULL;
+	int type;
+
+	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
+		type = *(int *)((char *)data + 0x6c);
+	} else {
+		type = 0;
+	}
+	int id = GetDlgCtrlID(control);
+
+	if (type == 0x94 ||
+		type == 0xd8 ||
+		type == 0xf5 ||
+		type == 0xe2 ||
+		type == 0xd5 ||
+		type == 0x101 ||
+		type == 0x129 ||
+		type == 0xd7 ||
+		type == 0xbb ||
+		type == 0x100 ||
+		type == 0xd6 ||
+		type == 0x125 ||
+		type == 0x122 ||
+		type == 0x112 ||
+		type == 0xe7 ||
+		type == 0x116 ||
+		type == 0x11d ||
+		type == 0x11c ||
+		type == 0xfe ||
+		type == 0x10f ||
+		type == 0x117 ||
+		type == 0x114 ||
+		type == 0xe6 ||
+		type == 0xf3 ||
+		type == 0xf4 ||
+		type == 0x2bc ||
+		type == 0x10e ||
+		type == 0x108 ||
+		type == 0xbc6 ||
+		type == 0xbc7) {
+		if (id == 0x71c) {
+			return FUN_004A38D0(DAT_00833674, arg);
+		}
+	}
+	if (type == 0x94) {
+		if (id == 0x6ea) {
+			return DAT_00B0FB48;
+		}
+		if (id == 0x6ec) {
+			return DAT_00B0FB10;
+		}
+	}
+	if (type == 0x103) {
+		goto typed;
+	}
+	if (type == 0xbc7) {
+typed:
+		if (id == 0x72b) {
+			return DAT_00B0FB30;
+		}
+		goto done;
+	}
+	if (type == 0xc4) {
+		if (id == 0x7a9) {
+			return DAT_00B0FAD0;
+		}
+	}
+done:
+	return 0;
+}
+
+// FUNCTION: 0x00603AA0
+int FUN_00603AA0(HWND dialog, HWND control)
+{
+	OwnerDraw::WinData *data = NULL;
+	HWND key = dialog;
+	int type;
+
+	if (!OwnerDraw::Dialogs.getPointer(key, &data) || data == NULL) {
+		return 0;
+	}
+	type = *(int *)((char *)data + 0x6c);
+	if (!(type == 0x10d ||
+		type == 0xd9 ||
+		type == 0xf0 ||
+		type == 0xce ||
+		type == 0x120 ||
+		type == 0x121 ||
+		type == 0x115 ||
+		type == 0xd3 ||
+		type == 0xcf ||
+		type == 0x11f ||
+		type == 0xc3 ||
+		type == 0x11b ||
+		type == 0xe1 ||
+		type == 0x11e ||
+		type == 0xc4 ||
+		type == 0x130 ||
+		type == 0xd0 ||
+		type == 0xfc ||
+		type == 0x126)) {
+		return 0;
+	}
+	*(int *)((char *)data + 0xb0) = 2;
+
+	key = control;
+	char name[128];
+	GetClassName(control, name, 128);
+	if (strcmp(name, "Edit") != 0 && strcmp(name, "NewEdit") != 0) {
+		bool owner_drawn;
+		if (strcmp(name, "ListBox") == 0) {
+			OwnerDraw::WinData *list_data = NULL;
+			if (OwnerDraw::Dialogs.getPointer(key, &list_data)) {
+				owner_drawn = *(int *)((char *)list_data + 0x68) == 1;
+				goto decided;
+			}
+		}
+		if (strcmp(name, "ComboBox") != 0) {
+			return 0;
+		}
+		owner_drawn = (GetWindowLong(key, GWL_STYLE) & 3) != 3;
+decided:
+		if (!owner_drawn) {
+			return 0;
+		}
+	}
+	return 0xc0;
+}
+
+// FUNCTION: 0x00603D30
+void FUN_00603D30(HWND dialog, int value)
+{
+	OwnerDraw::WinData *data = NULL;
+	HWND key = dialog;
+
+	if (OwnerDraw::Dialogs.getPointer(key, &data) && data != NULL) {
+		*(int *)((char *)data + 0x70) = 2;
+		*(int *)((char *)data + 0x14) = value;
+		InvalidateRect(dialog, NULL, TRUE);
+	}
+}
+
+// FUNCTION: 0x00603DB0
+LRESULT FUN_00603DB0(HWND window, int value)
+{
+	return SendMessage(window, 0x4e5, 0, value & 0xff);
+}
+
+// FUNCTION: 0x00603DD0
+LRESULT FUN_00603DD0(HWND window, int value)
+{
+	return SendMessage(window, 0x4e6, 0, value & 0xff);
+}
+
+// FUNCTION: 0x00603DF0
+bool FUN_00603DF0(HWND window)
+{
+	return SendMessage(window, 0x4e7, 0, 0) ? true : false;
+}
+
+// FUNCTION: 0x00603E10
+LRESULT FUN_00603E10(HWND window, int low, int high)
+{
+	return SendMessage(window, 0x4e8, 0, MAKELONG(low, high));
+}
+
+// FUNCTION: 0x00603E40
+void FUN_00603E40(HWND dialog, int value)
+{
+	OwnerDraw::WinData *data = NULL;
+
+	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
+		*(int *)((char *)data + 0xc0) = value;
+	}
+}
+
+// FUNCTION: 0x00603EA0
+int FUN_00603EA0(HWND dialog)
+{
+	OwnerDraw::WinData *data = NULL;
+
+	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
+		return *(int *)((char *)data + 0xc0);
+	}
+	return -1;
+}
+
+struct WideTextRequest {
+	int first;
+	int second;
+	WideWstring text;
+};
+
+// FUNCTION: 0x00603F00
+WideWstring FUN_00603F00(HWND window, int first, int second)
+{
+	WideTextRequest request;
+	request.first = first;
+	request.second = second;
+	SendMessage(window, 0x4e9, 0, (LPARAM)&request);
+	return request.text;
+}
+
+// FUNCTION: 0x00603F60
+WideWstring FUN_00603F60(HWND window, int first)
+{
+	WideTextRequest request;
+	request.first = first;
+	request.second = -1;
+	SendMessage(window, 0x4e9, 0, (LPARAM)&request);
+	return request.text;
+}
+
 // FUNCTION: 0x0061F190
 void ODInitMasks(void)
 {

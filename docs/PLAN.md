@@ -910,6 +910,18 @@ Factory_Counter at 0x4FF8F0 after a jump table, and Put_TextBlock (0x5271C0) nee
 retry now that its extent is right. Cost: about 4.1M tokens. Merge gate: 4,009 of 4,009
 (626.2 KB).
 
+### Batches 23 and 24 (13 October 2026)
+
+**Batch 23: 136 of 144**; the merge gave VoxelAnimClass YR's layout (two more audio
+controllers, size 0x148) and fixed Blit_Block's, RLE_Blit's and Prep_For_Shadow's argument
+counts from their `ret` sizes; the wonline and convert modules landed all 12. **Batch 24:
+129 of 144**; every locomotor's Fetch_Object_Size takes no argument in YR, so eight
+locomotor headers were adopted to keep the abstract base satisfiable, and FlyLocomotion
+gained AirportBound. Put_TextBlock landed on its retry after the map fix. Ini's misses
+all hinge on how Find_Entry inlines; coopcamp's are register swaps. A map fault is still
+open: 0x453840 ends in a Ghidra-only tail at 0x4539E0 that the flow pass did not reach.
+Cost: about 4.6M tokens. Merge gate: 4,279 of 4,279 (660.2 KB).
+
 ### Decide before the first batch
 
 - **Module layout.** Which function lives in which source file, and the link order, decide

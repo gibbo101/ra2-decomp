@@ -29,6 +29,8 @@ class CaptureManagerClass : public AbstractClass
 
 		void FreeAll(void);
 		bool FUN_00472330(TechnoClass * techno);
+		bool CannotControlAnyMore(void);
+		bool FUN_00471F90(AbstractClass * ptr);
 
 		virtual HRESULT STDMETHODCALLTYPE GetClassID(CLSID * retval) override;
 		virtual HRESULT STDMETHODCALLTYPE Load(IStream * stream) override;

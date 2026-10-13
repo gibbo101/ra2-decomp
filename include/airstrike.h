@@ -46,4 +46,5 @@ class AirstrikeClass : public AbstractClass
 		virtual void Compute_CRC(CRCEngine & crc) const override;
 		virtual void AI(void) override;
 		void ClearTarget(void);
+		void InvalidatePointer(AbstractClass * ptr);
 };

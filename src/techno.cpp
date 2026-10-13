@@ -2761,6 +2761,429 @@ void TechnoClass::Techno_Draw_Voxel_Shadow(VoxelDataStruct const & voxeldata, in
 	}
 }
 
+extern int DAT_00B43180;
+
+// FUNCTION: 0x00707280
+SurfaceRegion TechnoClass::Techno_Render_Voxel_Shadow(VoxelDataStruct const & voxeldata, Matrix3D const & matrix, Point2D const & point, Rect const & cliprect, int layer_index, ShapeFlags_Type flags, bool cached, Surface * surface, int shadow_x, int shadow_y) const
+{
+	Matrix3D mtx3;
+	Matrix3D mtx2 = matrix * Matrix3D(voxeldata.MotLib->Get_Layer_Matrix(layer_index, 0));
+
+	if (Techno_Type_Class()->UseBuffer) {
+		DAT_00B43180 = 1;
+	}
+
+	mtx3.Make_Identity();
+	if (Techno_Type_Class()->ConsideredAircraft) {
+		mtx3.Scale(0.5f);
+	}
+
+	VoxelDrawSystem::Reset();
+	VoxelDrawSystem::Prep_For_Shadow(voxeldata.VoxLib, layer_index, 0, VoxelCameraMatrix * mtx3, mtx2, VoxelShadowLightVector, surface, shadow_x, shadow_y);
+	SurfaceRegion region = VoxelDrawSystem::Render();
+
+	if (!cached) {
+		Rect r = VoxelDrawSystem::Get_Surface()->Get_Rect();
+		Blit_Block(*LogicalSurface, *NormalDrawer, *VoxelDrawSystem::Get_Surface(), region.Bounds, region.Point + point, cliprect, NULL, NormalDrawer->Blitter_From_Flags(flags), Get_Z_Adjust(), Get_Z_Gradient());
+	}
+
+	if (Techno_Type_Class()->UseBuffer) {
+		DAT_00B43180 = 1;
+	}
+
+	return(region);
+}
+
+// FUNCTION: 0x00707750
+void TechnoClass::Calculate_Sinking_Offset(short height, int y)
+{
+	SinkingYOffset = TacticalMap->TacPixelY + height + y - 10;
+	FacingType dir = PrimaryFacing.Current().As_Dir8();
+	if (dir == FACING_N || dir == FACING_W) {
+		SinkingYOffset -= 8;
+	} else if (dir == FACING_NW) {
+		SinkingYOffset -= 12;
+	}
+}
+
+static inline void Stop_Drain(TechnoClass * drainer)
+{
+	if (drainer->DrainAnim != NULL) {
+		drainer->DrainAnim->Delete_Me();
+		drainer->DrainAnim = NULL;
+	}
+	if (drainer->DrainTarget != NULL) {
+		drainer->DrainTarget->DrainingMe = NULL;
+		if (drainer->DrainTarget->House != NULL) {
+			drainer->DrainTarget->House->RecalcPower = true;
+		}
+		drainer->DrainTarget = NULL;
+	}
+}
+
+// FUNCTION: 0x007077C0
+void TechnoClass::Detach(AbstractClass const * target, bool all)
+{
+	BASECLASS::Detach(target, all);
+
+	if (all) {
+		Cargo.Detach((FootClass *)target);
+	}
+
+	bool clear_target = true;
+
+	if (target == SpawnOwner) {
+		SpawnOwner = NULL;
+	}
+	if (target == OriginallyOwnedByHouse) {
+		OriginallyOwnedByHouse = NULL;
+	}
+	if (target == MindControlledByHouse) {
+		MindControlledByHouse = NULL;
+	}
+	if (target == TemporalTargetingMe) {
+		TemporalTargetingMe = NULL;
+	}
+	if (target == Airstrike) {
+		Airstrike = NULL;
+	}
+	if (target == BeingManipulatedBy) {
+		BeingManipulatedBy = NULL;
+	}
+	if (target == BunkerLinkedItem && ScenarioInit) {
+		BunkerLinkedItem = NULL;
+	}
+
+	if (target == DrainTarget) {
+		Stop_Drain(this);
+		DrainTarget = NULL;
+	}
+
+	if (target == Transporter && Transporter != NULL) {
+		if (!Transporter->IsActive || !Transporter->Strength || ScenarioInit) {
+			Transporter = NULL;
+		}
+	}
+
+	TechnoClass * drainer = DrainingMe;
+	if (target == drainer) {
+		Stop_Drain(drainer);
+		DrainingMe = NULL;
+	}
+
+	if (target == DrainAnim) {
+		DrainAnim = NULL;
+	}
+	if (target == MindControlRingAnim) {
+		MindControlRingAnim = NULL;
+	}
+	if (target == DeployAnim) {
+		DeployAnim = NULL;
+	}
+
+	if (!all && target != NULL && target->Is_Techno()) {
+		CellClass * cptr = &Map[target->Center_Coord()];
+		if (cptr->Is_Sensed(House->HeapID)) {
+			clear_target = false;
+		}
+	}
+
+	if (TarCom == target && clear_target) {
+		if (all || target->Owner_HouseClass() != House) {
+			if (TargetingTimer > 10 && !ScenarioInit) {
+				TargetingTimer = Scen->RandomNumber(4, 8);
+			}
+			Assign_Target(NULL);
+			if (Has_Suspended_Mission()) {
+				Restore_Mission();
+				if (RTTI == RTTI_AIRCRAFT && CurrentMission == MISSION_PATROL) {
+					Status = 0;
+					((AircraftClass *)this)->IsLockedStraight = false;
+				}
+			}
+		}
+	}
+
+	if (SuspendedTarCom == target && clear_target) {
+		SuspendedTarCom = NULL;
+	}
+
+	if (House == target) {
+		House = NULL;
+		IsOwnedByPlayer = false;
+	}
+
+	if (IsDisguised() && GetDisguiseHouse(true) == target) {
+		ClearDisguise();
+	}
+
+	for (int i = 0; i < 8; i++) {
+		if (ParticleSystems[i] == target) {
+			ParticleSystems[i] = NULL;
+		}
+	}
+
+	if (Wave == target) {
+		Wave = NULL;
+	}
+
+	if (all) {
+		if (QueueUpToEnter == target) {
+			QueueUpToEnter = NULL;
+		}
+		if (ArchivedTarget == target) {
+			ArchivedTarget = NULL;
+		}
+		if (CaptureManager != NULL) {
+			CaptureManager->FUN_00471F90((AbstractClass *)target);
+		}
+	}
+
+	if (SpawnManager != NULL) {
+		SpawnManager->UnlinkPointer((AbstractClass *)target);
+	}
+
+	if (TemporalImUsing != NULL) {
+		TemporalImUsing->FUN_0071AB60((AbstractClass *)target);
+	}
+
+	if (Airstrike != NULL && Airstrike->Owner == this) {
+		Airstrike->InvalidatePointer((AbstractClass *)target);
+	}
+
+	if (target == DirectRockerLinkedUnit) {
+		DirectRockerLinkedUnit->DirectRockerLinkedUnit = NULL;
+		DirectRockerLinkedUnit = NULL;
+	}
+
+	if (target == LocomotorTarget) {
+		ReleaseLocomotor(true);
+		if (LocomotorTarget != NULL) {
+			LocomotorTarget->LocomotorSource = NULL;
+			LocomotorTarget = NULL;
+		}
+	}
+
+	if (target == LocomotorSource) {
+		LocomotorSource->ReleaseLocomotor(true);
+		if (LocomotorSource != NULL) {
+			LocomotorSource->LocomotorTarget = NULL;
+			LocomotorSource = NULL;
+		}
+	}
+
+	if (target == OldTeam) {
+		OldTeam = NULL;
+	}
+
+	if (target == BehindAnim) {
+		BehindAnim = NULL;
+	}
+
+	int index = -1;
+	for (int slot = 0; slot < CurrentTargets.Count(); slot++) {
+		if (target == CurrentTargets[slot]) {
+			index = slot;
+			break;
+		}
+	}
+	if (index != -1) {
+		CurrentTargetThreatValues.Delete_Index(index);
+		CurrentTargets.Delete((AbstractClass *)target);
+	}
+	AttackedTargets.Delete((AbstractClass *)target);
+}
+
+// FUNCTION: 0x00707CB0
+void TechnoClass::Kill_Cargo(TechnoClass * source)
+{
+	while (Cargo.Is_Something_Attached()) {
+		Cargo.Attached_Object()->Remove_From_Team();
+		FootClass * foot = Cargo.Detach_Object();
+		if (foot != NULL) {
+			foot->Kill_Cargo(foot);
+			foot->RegisterDestruction(source);
+			foot->Delete_Me();
+		}
+	}
+}
+
+// FUNCTION: 0x00707D20
+InfantryTypeClass const * TechnoClass::Crew_Type(void) const
+{
+	if (!TClass->IsCrew) {
+		return(NULL);
+	}
+
+	InfantryTypeClass const * infantry;
+	if (House->ActLike == 0) {
+		infantry = Rule->AlliedCrew;
+	} else if (House->ActLike == 1) {
+		infantry = Rule->SovietCrew;
+	} else if (House->ActLike == 2) {
+		infantry = Rule->ThirdCrew;
+	} else {
+		infantry = Rule->Technician;
+	}
+	if (House->Class->Side != -1) {
+		if (Is_Weapon_Equipped() && Percent_Chance(15)) {
+			infantry = Rule->Technician;
+		}
+	} else {
+		infantry = Rule->Technician;
+	}
+	return(infantry);
+}
+
+// FUNCTION: 0x00707DD0
+int TechnoClass::Value(void) const
+{
+	int value = 0;
+
+	if (Rule->Diff[House->Difficulty].IsContentScan || House->IQ >= Rule->IQContentScan) {
+		if (Cargo.Is_Something_Attached()) {
+			FootClass * object = Cargo.Attached_Object();
+
+			while (object != NULL) {
+				value += object->Value();
+				object = (FootClass *)(ObjectClass *)object->Next;
+			}
+		}
+	}
+
+	return(Risk() + TClass->Reward + value);
+}
+
+// FUNCTION: 0x00707E60
+int TechnoClass::Threat_Range(int control) const
+{
+	if (control == -1) return(-1);
+
+	if (control == 0) {
+		bool is_renovator = Is_Renovator();
+		if (TClass->ThreatRange != 0 && !is_renovator) {
+			return(TClass->ThreatRange);
+		}
+		return(0);
+	}
+
+	int range = TClass->ThreatRange;
+	if (range == 0) {
+		range = MAX(Weapon_Range(0), Weapon_Range(1));
+	}
+
+	range *= 2;
+	if (control == 2) {
+		range = Bound(range, 7 * CELL_LEPTON, 16 * CELL_LEPTON);
+	} else {
+		range = Bound(range, 0, 16 * CELL_LEPTON);
+	}
+
+	return(range);
+}
+
+// FUNCTION: 0x00707F60
+bool TechnoClass::Is_In_Same_Zone(Coord const & coord) const
+{
+	MZoneType zone = TClass->MZone;
+
+	if (zone != MZONE_NONE) {
+		if (coord != COORD_NONE) {
+			Cell cell1 = coord.As_Cell();
+			Cell cell2 = Destination_Coord(NULL).As_Cell();
+
+			return(Map.Is_Same_Cell_Zone(cell2, cell1, zone, ((ObjectClass *)this)->Is_Moving_Onto_Bridge(NULL), Map[cell1].IsUnderBridge, Is_Allowed_To_Leave_Map()));
+		}
+	}
+	return(true);
+}
+
+static inline bool Is_Object(AbstractClass const * a)
+{
+	if (a == NULL) return(false);
+	unsigned char flag = (a->AbstractFlags >> 1) & 1;
+	return(flag != 0);
+}
+
+// FUNCTION: 0x007087C0
+bool TechnoClass::CanRetaliateToAttacker(ObjectClass * attacker, WarheadTypeClass * warhead)
+{
+	if (attacker == NULL) return(false);
+
+	if (!Techno_Type_Class()->CanRetaliate) return(false);
+
+	if (SlaveOwner != NULL || SlaveManager != NULL) return(false);
+
+	if (DrainTarget != NULL && !House->IsHuman) return(false);
+
+	if (CaptureManager != NULL && CaptureManager->CannotControlAnyMore()) return(false);
+
+	if (SpawnManager != NULL) return(false);
+
+	if (House->Is_Human_Player() && TarCom != NULL) return(false);
+
+	if (!Current_Mission_Control().IsRetaliate) return(false);
+
+	if (House->Is_Ally(attacker)) return(false);
+
+	if (attacker->IsDisguisedAs(House)) return(false);
+
+	if (Combat_Damage() <= 0 || !Is_Weapon_Equipped()) return(false);
+
+	TechnoTypeClass const * ttype = Techno_Type_Class();
+	int which = What_Weapon_Should_I_Use(attacker);
+	FireErrorType error = (FireErrorType)GetFireErrorWithoutRange(attacker, which);
+	if (error == FIRE_ILLEGAL || error == FIRE_CANT) return(false);
+
+	if (House->Is_Human_Player() && attacker->RTTI == RTTI_BUILDING &&
+			(RTTI == RTTI_INFANTRY && ((InfantryTypeClass const *)ttype)->IsBomber || Has_Ability(ABILITY_C4))) {
+		return(false);
+	}
+
+	if (House->Is_Human_Player() && RTTI == RTTI_UNIT) {
+		BuildingTypeClass const * deploys_into = ((UnitClass const *)this)->Class->DeploysInto;
+		if (deploys_into != NULL && deploys_into->IsArtillary) {
+			return(false);
+		}
+	}
+
+	if (House->Is_Human_Player() && !Rule->IsSmartDefense && RTTI != RTTI_BUILDING) {
+		if (CurrentMission != MISSION_GUARD_AREA && CurrentMission != MISSION_GUARD && CurrentMission != MISSION_PATROL) {
+			return(false);
+		}
+	}
+
+	if (Is_Foot() && ((FootClass *)this)->Team != NULL && ((FootClass *)this)->Team->Class->IsSuicide) {
+		return(false);
+	}
+
+	if (!House->Is_Human_Player() && Is_Object(TarCom)
+			&& Target_Threat((TechnoClass *)TarCom) > Target_Threat((TechnoClass *)attacker)) {
+		return(false);
+	}
+
+	if (Is_Foot() && attacker == ((FootClass *)this)->ParasiteEatingMe) {
+		return(false);
+	}
+
+	WeaponDataStruct const * wdata = Get_Class_Weapon_Data(which);
+	WeaponTypeClass const * weapon = wdata->Weapon;
+	if (weapon != NULL && weapon->WarheadPtr != NULL) {
+		if ((float)weapon->WarheadPtr->Modifier[attacker->Techno_Type_Class()->Armor] > 0.01f) {
+			return(true);
+		}
+		return(false);
+	}
+
+	return(true);
+}
+
+// FUNCTION: 0x00708B30
+int TechnoClass::Get_Ownable(void) const
+{
+	return(TClass->Get_Ownable());
+}
+
 // FUNCTION: 0x00708C10
 FacingType TechnoClass::Desired_Load_Dir(ObjectClass * , Cell & moveto) const
 {

@@ -1595,3 +1595,45 @@ char const * RadarClass::Help_Text(int id)
 // FUNCTION: 0x00658C20 ?$DynamicVectorClass@U?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@::ID
 // FUNCTION: 0x00658C60 ?$DynamicVectorClass@U?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@::~?$DynamicVectorClass@U?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@
 template class DynamicVectorClass<HashObject<RadarTrackingStruct, TechnoClass *> >;
+
+// FUNCTION: 0x00658D10 ?$VectorClass@U?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@::~?$VectorClass@U?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@
+// FUNCTION: 0x00658D60 ?$VectorClass@VPoint2D@@::?$VectorClass@VPoint2D@@
+// FUNCTION: 0x00658DE0 ?$DynamicVectorClass@U?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@::?$DynamicVectorClass@U?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@
+
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007E1720;
+extern const double DAT_007E1728;
+extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
+extern const double DAT_007F0470;
+extern const double DAT_007F0478;
+
+// FUNCTION: 0x00658E80 $E192
+double DAT_00B04A78 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x00658EB0 $E195
+double DAT_00B04AC8 = DAT_00B04A78 / DAT_007F0470;
+
+// FUNCTION: 0x00658ED0 $E198
+double DAT_00B04AB0 = DAT_007E1718 / DAT_00B04AC8;
+
+// FUNCTION: 0x00658EF0 $E201
+double DAT_00B04AA8 = DAT_007E1720 * DAT_007F0478;
+
+// FUNCTION: 0x00658F10 $E204
+double DAT_00B04A80 = DAT_007E1728 * DAT_007F0478;
+
+// FUNCTION: 0x00658F30 $E207
+double DAT_00B04A40 = DAT_007E1730 * DAT_007F0478;
+
+// FUNCTION: 0x00658F50 $E210
+int DAT_00B04AD0 = (int)(fastmath::tan(DAT_00B04A40 - DAT_00B04A80) * DAT_007E1738 * DAT_00B04A78);
+
+// FUNCTION: 0x00658F90 $E213
+double DAT_00B04A88 = fastmath::atan(DAT_00B04AD0 * DAT_007E1740);
+
+// FUNCTION: 0x00658FC0 $E216
+double DAT_00B04AA0 = fastmath::atan((DAT_00B04AD0 * 2) / DAT_00B04A78);

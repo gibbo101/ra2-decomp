@@ -1000,3 +1000,17 @@ template class DynamicVectorClass<VoxelAnimTypeClass const *>;
 // FUNCTION: 0x0067B100 ?$DynamicVectorClass@PBVSmudgeTypeClass@@::Add
 // FUNCTION: 0x0067B150 ?$DynamicVectorClass@PBVSmudgeTypeClass@@::ID
 template class DynamicVectorClass<SmudgeTypeClass const *>;
+
+// FUNCTION: 0x0067B1F0 ?$VectorClass@PBVTerrainTypeClass@@::operator==
+// FUNCTION: 0x0067B230 ?$VectorClass@PBVTerrainTypeClass@@::Resize
+// FUNCTION: 0x0067B2E0 ?$VectorClass@PBVTerrainTypeClass@@::Clear
+// FUNCTION: 0x0067B310 ?$VectorClass@PBVTerrainTypeClass@@::ID
+// FUNCTION: 0x0067B350 ?$VectorClass@PBVTerrainTypeClass@@::ID
+// FUNCTION: 0x0067B370 ?$DynamicVectorClass@PBVTerrainTypeClass@@::?$DynamicVectorClass@PBVTerrainTypeClass@@
+// FUNCTION: 0x0067B3D0 ?$DynamicVectorClass@PBVTerrainTypeClass@@::Resize
+// FUNCTION: 0x0067B480 ?$DynamicVectorClass@PBVTerrainTypeClass@@::Add
+// FUNCTION: 0x0067B4D0 ?$DynamicVectorClass@PBVTerrainTypeClass@@::ID
+template class DynamicVectorClass<TerrainTypeClass const *>;
+
+// FUNCTION: 0x0067B500 TGet_Class
+template WarheadTypeClass * TGet_Class<WarheadTypeClass>(CCINIClass const &, char const *, char const *, WarheadTypeClass *);

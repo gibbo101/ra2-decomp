@@ -15,6 +15,7 @@ class FileClass;
 class Pipe;
 class PKey;
 class Wstring;
+class WideWstring;
 class Straw;
 template<class T> class TRect;
 typedef TRect<int> Rect;
@@ -53,6 +54,8 @@ class INIClass {
 		int Get_Int(char const * section, char const * entry, int defvalue=0) const;
 		int Get_Int(Wstring const & section, Wstring const & entry, int defvalue=0) const;
 		int Get_String(char const * section, char const * entry, char const * defvalue, char * buffer, int size) const;
+		int Get_String(Wstring const & section, Wstring const & entry, Wstring const & defvalue, Wstring & result) const;
+		int Get_UnicodeString(char const * section, char const * entry, wchar_t const * defvalue, wchar_t * buffer, int size) const;
 		int Get_TextBlock(char const * section, char * buffer, int len) const;
 		int Get_UUBlock(char const * section, void * buffer, int len) const;
 		Rect const Get_Rect(char const * section, char const * entry, Rect const & defvalue) const;
@@ -65,11 +68,14 @@ class INIClass {
 
 		bool Put_Bool(char const * section, char const * entry, bool value);
 		bool Put_Float(char const * section, char const * entry, double number);
+		bool Put_Float(Wstring const & section, Wstring const & entry, double number);
 		bool Put_Hex(char const * section, char const * entry, int number);
+		bool Put_Hex(Wstring const & section, Wstring const & entry, int number);
 		bool Put_Int(char const * section, char const * entry, int number, int format=0);
 		bool Put_Int(Wstring const & section, Wstring const & entry, int number, int format=0);
 		bool Put_PKey(PKey const & key);
 		bool Put_String(char const * section, char const * entry, char const * string);
+		bool Put_String(Wstring const & section, Wstring const & entry, Wstring const & string);
 		bool Put_TextBlock(char const * section, char const * text);
 		bool Put_UUBlock(char const * section, void const * block, int len);
 		bool Put_Rect(char const * section, char const * entry, Rect const & value);
@@ -78,6 +84,8 @@ class INIClass {
 		bool Put_Point(char const * section, char const * entry, TPoint3D<float> const & value);
 		bool Put_Point(char const * section, char const * entry, TPoint2D<int> const & value);
 		bool Put_CLSID(char const * section, char const * entry, CLSID const & value);
+		bool Put_UnicodeString(char const * section, char const * entry, wchar_t const * string);
+		bool Put_UnicodeString(Wstring const & section, Wstring const & entry, WideWstring const & string);
 
 		enum {MAX_LINE_LENGTH=512};
 

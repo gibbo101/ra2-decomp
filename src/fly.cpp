@@ -88,3 +88,5 @@ boolean STDMETHODCALLTYPE FlyLocomotionClass::Is_Powered(void)
 {
 	return(BASECLASS::Is_Powered());
 }
+
+// FUNCTION: 0x004D0390 FlyLocomotionClass::Fetch_Object_Size

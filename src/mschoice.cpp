@@ -258,3 +258,27 @@ MSSfxEntry::MSSfxEntry(Wstring const & name, Wstring const & string) :
 MSSfxEntry::~MSSfxEntry(void)
 {
 }
+
+// FUNCTION: 0x005D0590
+void MSSfxEntry::Play(void)
+{
+}
+
+// FUNCTION: 0x005D05A0 ?$DynamicVectorClass@VPoint2D@@::Clear
+// FUNCTION: 0x005D05D0 ?$DynamicVectorClass@VPoint2D@@::ID
+// FUNCTION: 0x005D05F0 ?$VectorClass@VPoint2D@@::GetItem
+template class DynamicVectorClass<Point2D>;
+
+// FUNCTION: 0x005D0610 ?$DynamicVectorClass@PAVMSTextEntry@@::Clear
+// FUNCTION: 0x005D0640 ?$DynamicVectorClass@PAVMSTextEntry@@::ID
+// FUNCTION: 0x005D0660 ?$VectorClass@PAVMSTextEntry@@::GetItem
+template class DynamicVectorClass<MSTextEntry *>;
+
+// FUNCTION: 0x005D0670 ?$DynamicVectorClass@PAVMapSelection@@::Clear
+// FUNCTION: 0x005D06A0 ?$DynamicVectorClass@PAVMapSelection@@::ID
+// FUNCTION: 0x005D06C0 ?$VectorClass@PAVMapSelection@@::GetItem
+template class DynamicVectorClass<MapSelection *>;
+
+// FUNCTION: 0x005D06D0 ?$DynamicVectorClass@PAVMSAnimEntry@@::Clear
+// FUNCTION: 0x005D0700 ?$DynamicVectorClass@PAVMSAnimEntry@@::ID
+template class DynamicVectorClass<MSAnimEntry *>;

@@ -627,20 +627,6 @@ void SidebarClass::FUN_006A60E0(int tab)
 
 int __fastcall FUN_005004E0(RTTIType type, int id);
 
-bool SidebarClass::StripClass::Factory_Link(FactoryClass * factory, RTTIType type, int id)
-{
-	for (int index = 0; index < BuildableCount; index++) {
-		if (Buildables[index].BuildableType == type && Buildables[index].BuildableID == id) {
-			Buildables[index].Factory = factory;
-			IsBuilding = true;
-			IsToRedraw = true;
-			Map.Flag_To_Redraw();
-			return true;
-		}
-	}
-	return false;
-}
-
 // FUNCTION: 0x006A6140
 bool SidebarClass::Factory_Link(FactoryClass * factory, RTTIType type, int id)
 {
@@ -1631,6 +1617,82 @@ int SidebarClass::SBGadgetClass::Action(unsigned flags, KeyNumType & key, int mo
 	return true;
 }
 
+// FUNCTION: 0x006ABA60
+bool SidebarClass::StripClass::Factory_Link(FactoryClass * factory, RTTIType type, int id)
+{
+	for (int index = 0; index < BuildableCount; index++) {
+		if (Buildables[index].BuildableType == type && Buildables[index].BuildableID == id) {
+			Buildables[index].Factory = factory;
+			IsBuilding = true;
+			IsToRedraw = true;
+			Map.Flag_To_Redraw();
+			return true;
+		}
+	}
+	return false;
+}
+
+// FUNCTION: 0x006ABAC0
+bool SidebarClass::StripClass::FUN_006ABAC0(void)
+{
+	return BuildableCount > 0;
+}
+
+// FUNCTION: 0x006ABAD0
+bool SidebarClass::Abandon_Production(RTTIType type, int id, FactoryClass * factory)
+{
+	return Column[GetObjectTabIdx(type, id, false)].Abandon_Production(factory);
+}
+
+static inline TechnoClass * Building_Cast(TechnoClass * object)
+{
+	if (object == NULL) return NULL;
+	return object->Fetch_RTTI() == RTTI_BUILDING ? object : (TechnoClass *)NULL;
+}
+static inline bool Is_Building(TechnoClass * object)
+{
+	return object && object->Fetch_RTTI() == RTTI_BUILDING;
+}
+
+// FUNCTION: 0x006ABB60
+bool SidebarClass::StripClass::Abandon_Production(FactoryClass const * factory)
+{
+	if (factory && factory->Get_Object() && Is_Building(factory->Get_Object())) {
+		Building_Cast(factory->Get_Object())->ClearSidebarTabObject();
+	}
+	bool abandoned = false;
+	bool idle = true;
+	for (int index = 0; index < BuildableCount; index++) {
+		if (Buildables[index].Factory == factory) {
+			((FactoryClass *)factory)->Abandon();
+			Buildables[index].Factory = NULL;
+			abandoned = true;
+			Buildables[index].unknown_10 = 0;
+		} else if (Buildables[index].Factory != NULL) {
+			idle = false;
+		}
+	}
+	if (abandoned) {
+		IsToRedraw = true;
+		Map.Flag_To_Redraw();
+		DAT_00884B8F = true;
+	}
+	if (idle) {
+		IsBuilding = false;
+	}
+	return abandoned;
+}
+
+namespace Game { extern int SpecialDialog; }
+
+// FUNCTION: 0x006ABC40
+void FUN_006ABC40(void)
+{
+	if (Session.Type != GAME_NORMAL) {
+		Game::SpecialDialog = 8;
+	}
+}
+
 // FUNCTION: 0x006ABC60
 int SidebarClass::GetObjectTabIdx(RTTIType type, int id, bool naval)
 {
@@ -1647,4 +1709,47 @@ int SidebarClass::GetObjectTabIdx(RTTIType type, int id, bool naval)
 		return 1;
 	}
 	return -1;
+}
+
+// FUNCTION: 0x006ABCD0
+int SidebarClass::GetObjectTabIdxByCat(RTTIType type, int buildCat, bool naval)
+{
+	if (type == RTTI_INFANTRYTYPE) {
+		return 2;
+	}
+	if (type == RTTI_UNITTYPE || type == RTTI_AIRCRAFTTYPE) {
+		return 3;
+	}
+	if (type == RTTI_BUILDINGTYPE) {
+		return buildCat == 5;
+	}
+	return -1;
+}
+
+// FUNCTION: 0x006ABD10
+int SidebarClass::FUN_006ABD10(void)
+{
+	for (int index = 0; index < STRIPS; index++) {
+		if (Column[index].BuildableCount > 0) {
+			return index;
+		}
+	}
+	return -1;
+}
+
+extern int DAT_00886F9C;
+
+// FUNCTION: 0x006AC3E0
+int SidebarClass::Max_Visible(void)
+{
+	int side = Scen->PlayerSideIndex;
+	int reserved;
+	if (side == 0) {
+		reserved = 0x1a;
+	} else if (side == 1) {
+		reserved = 0x12;
+	} else {
+		reserved = 0x12;
+	}
+	return (DAT_00886F94 - DAT_00B0B4F8 - reserved + DAT_00886F9C - 7) / 50;
 }

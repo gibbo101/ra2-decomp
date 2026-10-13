@@ -225,3 +225,5 @@ LayerType STDMETHODCALLTYPE JumpjetLocomotionClass::In_Which_Layer(void)
 	layer += (height >= Height);
 	return((LayerType)layer);
 }
+
+// FUNCTION: 0x0054DF90 JumpjetLocomotionClass::Fetch_Object_Size

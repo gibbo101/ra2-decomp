@@ -1308,7 +1308,7 @@ template class TypeList<int>;
 // FUNCTION: 0x004778A0 ?$DynamicVectorClass@PAVTechnoTypeClass@@::Clear
 template class DynamicVectorClass<TechnoTypeClass *>;
 
-// FUNCTION: 0x004778D0 ?$VectorClass@PAVTechnoTypeClass@@::ID
+// FUNCTION: 0x004778D0 ?$DynamicVectorClass@PAVTechnoTypeClass@@::ID
 // FUNCTION: 0x004778F0 ?$VectorClass@PAVTechnoTypeClass@@::GetItem
 
 // FUNCTION: 0x00477900 ?$DynamicVectorClass@VRGBClass@@::Clear
@@ -1336,5 +1336,23 @@ template class TypeList<RGBClass>;
 // FUNCTION: 0x00477D90 ?$VectorClass@H::ID
 template class VectorClass<int>;
 
+// FUNCTION: 0x00477DB0 ?$DynamicVectorClass@H::?$DynamicVectorClass@H
+// FUNCTION: 0x00477E10 ?$DynamicVectorClass@H::Resize
 // FUNCTION: 0x00477EC0 ?$DynamicVectorClass@H::Add
+// FUNCTION: 0x00477F10 ?$DynamicVectorClass@H::ID
 template class DynamicVectorClass<int>;
+
+// FUNCTION: 0x00477F40 ?$VectorClass@PAVTechnoTypeClass@@::?$VectorClass@PAVTechnoTypeClass@@
+// FUNCTION: 0x00477FC0 ?$VectorClass@PAVTechnoTypeClass@@::operator==
+// FUNCTION: 0x00478000 ?$VectorClass@PAVTechnoTypeClass@@::Resize
+// FUNCTION: 0x004780B0 ?$VectorClass@PAVTechnoTypeClass@@::Clear
+// FUNCTION: 0x004780E0 ?$VectorClass@PAVTechnoTypeClass@@::ID
+// FUNCTION: 0x00478120 ?$VectorClass@PAVTechnoTypeClass@@::ID
+template class VectorClass<TechnoTypeClass *>;
+
+// FUNCTION: 0x00478140 ?$DynamicVectorClass@PAVTechnoTypeClass@@::Resize
+// FUNCTION: 0x004781F0 ?$DynamicVectorClass@PAVTechnoTypeClass@@::ID
+template class DynamicVectorClass<TechnoTypeClass *>;
+
+// FUNCTION: 0x00478220 ?$VectorClass@VRGBClass@@::?$VectorClass@VRGBClass@@
+template class VectorClass<RGBClass>;

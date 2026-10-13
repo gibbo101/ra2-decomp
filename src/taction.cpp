@@ -66,10 +66,12 @@
 #include <cstdio>
 
 void __fastcall FUN_00489280(Coord const & coord, int damage, TechnoClass * source, WarheadTypeClass const * warhead, bool affecttiberium, HouseClass * house);
-void __fastcall FUN_0048A620(int damage, WarheadTypeClass const * warhead, Coord coord, int a, int b);
+void __fastcall FUN_0048A620(Coord coord, int damage, WarheadTypeClass const * warhead, bool forced, int flags);
 char const * __fastcall FUN_00751590(int index);
 int __fastcall FUN_00753250(char const * name);
 
+bool __fastcall FUN_0065D8E0(TeamTypeClass * team, int waypoint);
+void __fastcall FUN_00539EB0(int duration, int deferment, Cell target, bool a);
 HouseClass * __fastcall FUN_00726910(TriggerClass * trig);
 bool __fastcall FUN_00510F60(int index);
 HouseClass * __fastcall FUN_00510ED0(int index);
@@ -102,6 +104,11 @@ void __fastcall FUN_00750F40(Coord const * coord, int mask);
 void __fastcall FUN_005BF390(VQType movie, bool pause);
 
 extern Cell DAT_00B0E680;
+extern struct PendingStruct { int Ptr; int Type; int House; } DAT_0088098C;
+extern bool DAT_0088099A;
+extern bool DAT_0088099B;
+extern bool DAT_0088099C;
+void __fastcall FUN_00684240(void);
 extern wchar_t DAT_00887734[];
 extern char DAT_00889F64[];
 
@@ -530,7 +537,7 @@ bool TActionClass::TAction_DAMAGE(HouseClass * , ObjectClass * , TriggerClass * 
 bool TActionClass::TAction_LIGHT_SMALL(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	WarheadTypeClass const * warhead = Rule->C4Warhead;
-	FUN_0048A620(50, warhead, Waypoint_As_Coord(), 0, 0);
+	FUN_0048A620(Waypoint_As_Coord(), 50, warhead, false, 0);
 	return(true);
 }
 
@@ -538,7 +545,7 @@ bool TActionClass::TAction_LIGHT_SMALL(HouseClass * , ObjectClass * , TriggerCla
 bool TActionClass::TAction_LIGHT_MEDIUM(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	WarheadTypeClass const * warhead = Rule->C4Warhead;
-	FUN_0048A620(100, warhead, Waypoint_As_Coord(), 0, 0);
+	FUN_0048A620(Waypoint_As_Coord(), 100, warhead, false, 0);
 	return(true);
 }
 
@@ -546,7 +553,7 @@ bool TActionClass::TAction_LIGHT_MEDIUM(HouseClass * , ObjectClass * , TriggerCl
 bool TActionClass::TAction_LIGHT_LARGE(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	WarheadTypeClass const * warhead = Rule->C4Warhead;
-	FUN_0048A620(300, warhead, Waypoint_As_Coord(), 0, 0);
+	FUN_0048A620(Waypoint_As_Coord(), 300, warhead, false, 0);
 	return(true);
 }
 
@@ -1153,6 +1160,164 @@ bool TActionClass::TAction_CREATE_TEAM(HouseClass * , ObjectClass * , TriggerCla
 	return(true);
 }
 
+// FUNCTION: 0x006E1F90
+bool TActionClass::TAction_DESTROY_TEAM(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	if (Team != NULL) {
+		Team->Destroy_All_Of();
+	}
+	return(true);
+}
+
+// FUNCTION: 0x006E1FB0
+bool TActionClass::TAction_SPAWN_TEAM(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	if (Team != NULL) {
+		return(FUN_0065D8E0(Team, -1));
+	}
+	return(false);
+}
+
+// FUNCTION: 0x006E1FD0
+bool TActionClass::TAction_SPAWN_TEAM_AT_WP(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	if (Team == NULL || EffectLocation == -1) return(false);
+	return(FUN_0065D8E0(Team, EffectLocation));
+}
+
+// FUNCTION: 0x006E1FF0
+bool TActionClass::TAction_ALL_HUNT(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
+{
+	HouseClass * h = Find_House(trig, Data.House);
+	if (h == NULL) return(false);
+	h->All_To_Hunt();
+	return(true);
+}
+
+// FUNCTION: 0x006E2050
+bool TActionClass::TAction_DESTROY_OBJECT(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & cell)
+{
+	bool any = false;
+	bool process = true;
+	while (process) {
+		process = false;
+		for (int index = 0; index < Technos.Count(); index++) {
+			TechnoClass * techno = Technos[index];
+			if (techno->Strength > 0 && techno->IsActive && techno->IsDown && !techno->IsInLimbo && techno->Tag != NULL && techno->Tag->Is_Trigger_Attached(trig)) {
+				int damage = techno->Strength;
+				techno->Take_Damage(damage, 0, Rule->C4Warhead, 0, true);
+				any = true;
+				process = true;
+				index--;
+			}
+		}
+	}
+
+	if (cell != DAT_00B0E680) {
+		int tries = 3;
+		while (Map.Damage_Bridge(cell) == false && tries-- > 0) {};
+		Point2D point;
+		Coord coord = Coord(cell);
+		coord.Z += BRIDGE_LEPTON_HEIGHT;
+		TacticalMap->Coord_To_Pixel(coord, point);
+		Rect dirty (point.X-128, point.Y-128, 256, 256);
+		TacticalMap->Register_Dirty_Area(dirty);
+	}
+	return(any);
+}
+
+// FUNCTION: 0x006E21D0
+bool TActionClass::TAction_NOP(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	return(true);
+}
+
+// FUNCTION: 0x006E21E0
+bool TActionClass::TAction_RESIZE_PLAYER_VIEW(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	Map.LocalRect = TriggerRect;
+	Map.Reset_Radar();
+
+	Map.Reset_Iterator();
+	CellClass *cptr = Map.Iterate();
+
+	while (cptr) {
+		cptr->Recalc_Attributes();
+		cptr = Map.Iterate();
+	}
+
+	Map.Zone_Reset();
+	Map.Reset_All_Subzones();
+
+	Map.Complete_Radar_Refresh();
+
+	for (int i = Buildings.Count() - 1; i >= 0; i--) {
+		Buildings[i]->Update_Radar_Position(true);
+	}
+
+	return(true);
+}
+
+// FUNCTION: 0x006E2290
+bool TActionClass::TAction_PLAY_ANIM(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	Cell waypoint = Scen->Get_Waypoint_Cell(EffectLocation);
+	Coord coord = Coord (waypoint);
+	coord.Z = Map.Get_Height_GL(coord);
+	if ( Map[waypoint].IsUnderBridge || Map[waypoint].WasUnderBridge ) {
+		coord.Z += BRIDGE_LEPTON_HEIGHT;
+	}
+	AnimClass * anim = new AnimClass(AnimTypes[Data.Anim], coord);
+	anim->IsInert = true;
+	return(true);
+}
+
+// FUNCTION: 0x006E2390
+bool TActionClass::TAction_DO_EXPLOSION(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	Cell waypoint = Scen->Get_Waypoint_Cell(EffectLocation);
+	Coord coord = Coord (waypoint);
+	coord.Z = Map.Get_Height_GL(coord);
+	if ( Map[waypoint].IsUnderBridge || Map[waypoint].WasUnderBridge ) {
+		coord.Z += BRIDGE_LEPTON_HEIGHT;
+	}
+	WeaponType weapon = Data.Weapon;
+	WeaponTypeClass * ww = Weapons[weapon];
+	int damage = ww->Attack;
+	AnimTypeClass const * aptr = Combat_Anim(damage, ww->WarheadPtr, Map[coord].Land_Type(), coord);
+
+	if (aptr) {
+		new AnimClass(aptr, coord, 0, 1, ShapeFlags_Type(SHAPE_CENTER|SHAPE_WIN_REL|SHAPE_ZGRAD), Get_Explosion_Z(coord));
+	}
+
+	FUN_0048A620(coord, damage, Weapons[weapon]->WarheadPtr, false, 0);
+	FUN_00489280(coord, damage, NULL, Weapons[weapon]->WarheadPtr, true, NULL);
+	return(true);
+}
+
+// FUNCTION: 0x006E2520
+bool TActionClass::TAction_METEOR_IMPACT(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	Cell waypoint = Scen->Get_Waypoint_Cell(EffectLocation);
+	Coord coord = Coord (waypoint);
+	coord.Z = Map.Get_Height_GL(coord);
+	if ( Map[waypoint].IsUnderBridge || Map[waypoint].WasUnderBridge ) {
+		coord.Z += BRIDGE_LEPTON_HEIGHT;
+	}
+	new VoxelAnimClass(VoxelAnimTypes[Data.VAnim], coord, NULL);
+	return(true);
+}
+
+// FUNCTION: 0x006E2600
+bool TActionClass::TAction_ION_STORM_START(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	if (IonStormClass::Is_Ion_Storm_Active()) {
+		return(false);
+	}
+	FUN_00539EB0(Data.Value, Rule->LightningDeferment, DAT_00B0E680, false);
+	return(true);
+}
+
 // FUNCTION: 0x006E2640
 bool TActionClass::TAction_ION_STORM_STOP(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
@@ -1161,6 +1326,22 @@ bool TActionClass::TAction_ION_STORM_STOP(HouseClass * , ObjectClass * , Trigger
 	}
 
 	IonStormClass::Ion_Storm_End();
+	return(true);
+}
+
+// FUNCTION: 0x006E2660
+bool TActionClass::TAction_CLEAR_MODES(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	DAT_0088098C.Ptr = 0;
+	DAT_0088098C.Type = 0;
+	DAT_0088098C.House = -1;
+	Map.SetActiveFoundation(NULL);
+	Map.Repair_Mode_Control(0);
+	Map.Sell_Mode_Control(0);
+	DAT_0088099A = false;
+	DAT_0088099B = false;
+	DAT_0088099C = false;
+	FUN_00684240();
 	return(true);
 }
 

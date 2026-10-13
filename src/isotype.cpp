@@ -868,12 +868,36 @@ ShadowCasterInfo::ShadowCasterInfo(int frame, int index, int x, int y) : Frame(f
 
 // FUNCTION: 0x0054A190 ?$DynamicVectorClass@PAUTileInsertType@IsometricTileTypeClass@@::Clear
 
-// FUNCTION: 0x0054A1C0 ?$VectorClass@PAUTileInsertType@IsometricTileTypeClass@@::ID
+// FUNCTION: 0x0054A1C0 ?$DynamicVectorClass@PAUTileInsertType@IsometricTileTypeClass@@::ID
 
 // FUNCTION: 0x0054A1E0 ?$VectorClass@PAUTileInsertType@IsometricTileTypeClass@@::GetItem
 
 // FUNCTION: 0x0054A1F0 ?$DynamicVectorClass@PAG::Clear
 
-// FUNCTION: 0x0054A220 ?$VectorClass@PAG::ID
+// FUNCTION: 0x0054A220 ?$DynamicVectorClass@PAG::ID
 
 // FUNCTION: 0x0054A240 ?$VectorClass@PAG::GetItem
+
+// FUNCTION: 0x0054A250 ?$VectorClass@PAUTileInsertType@IsometricTileTypeClass@@::operator==
+
+// FUNCTION: 0x0054A290 ?$VectorClass@PAUTileInsertType@IsometricTileTypeClass@@::Resize
+
+// FUNCTION: 0x0054A340 ?$VectorClass@PAUTileInsertType@IsometricTileTypeClass@@::Clear
+
+// FUNCTION: 0x0054A370 ?$VectorClass@PAUTileInsertType@IsometricTileTypeClass@@::ID
+
+// FUNCTION: 0x0054A3B0 ?$VectorClass@PAUTileInsertType@IsometricTileTypeClass@@::ID
+
+// FUNCTION: 0x0054A3D0 ?$DynamicVectorClass@PAUTileInsertType@IsometricTileTypeClass@@::Resize
+
+// FUNCTION: 0x0054A480 ?$DynamicVectorClass@PAUTileInsertType@IsometricTileTypeClass@@::ID
+
+// FUNCTION: 0x0054A4B0 ?$VectorClass@PAG::operator==
+
+// FUNCTION: 0x0054A4F0 ?$VectorClass@PAG::Resize
+
+// FUNCTION: 0x0054A5A0 ?$VectorClass@PAG::Clear
+
+// FUNCTION: 0x0054A5D0 ?$VectorClass@PAG::ID
+
+// FUNCTION: 0x0054A610 ?$VectorClass@PAG::ID

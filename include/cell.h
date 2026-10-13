@@ -414,6 +414,8 @@ class CellClass : public AbstractClass
 
 		void Init_Light(int & intensity, int & ambient, int & brightness, int & tile_brightness, int & alt_brightness, int & red_tint, int & green_tint, int & blue_tint) const;
 		void Recalc_Light(void);
+		bool Is_Disguise_Sensed(HousesType house) const;
+		void Disguise_Sensed_By(HousesType house);
 
 	private:
 		CellClass (CellClass const &);

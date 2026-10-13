@@ -2806,6 +2806,331 @@ void BuildingClass::Init_Laser_Fence(void)
 	}
 }
 
+// FUNCTION: 0x00452A40
+void BuildingClass::Update_Laser_Fence_Connections(int explode)
+{
+	if (!ScenarioInit && Class->IsLaserFencePost) {
+		bool do_explode = false;
+		if (explode == (int)true) {
+			do_explode = true;
+		}
+		FacingType dir = FACING_N;
+		Cell origin = Center_Coord().As_Cell();
+
+		static int _facing_bits[] = { 1 << 0, 1 << 1, 1 << 2, 1 << 3 };
+
+		for (int i = 0; i < ARRAY_SIZE(_facing_bits); i++) {
+			Cell adjacent = Adjacent_Cell(origin, dir);
+			BuildingClass * building = Map[adjacent].Cell_Building();
+			if (building != NULL && building->Class->IsLaserFence) {
+				if (Owner() == building->Owner()) {
+					if ((building->PrimaryFacing.Current().As_Axis()) == (dir & 3)) {
+						LaserFenceFrame |= _facing_bits[i];
+						Disconnect_Laser_Fence(dir, do_explode);
+					}
+				}
+			}
+			dir = Facing_Add(dir, FACING_90);
+		}
+	}
+}
+
+// FUNCTION: 0x00452BB0
+BuildingClass * BuildingClass::Find_Laser_Fence_Post(FacingType dir, bool connected, int xrange)
+{
+	int range = 1;
+
+	if (xrange < 0) {
+		if (Class->IsLaserFencePost) {
+			range = Class->ThreatRange >> 8;
+			range = MAX(range, 1);
+		}
+	} else {
+		range = xrange;
+	}
+
+	unsigned face = (unsigned)dir % 4;
+	Cell working_cell = Center_Coord().As_Cell();
+	BuildingClass * result = NULL;
+
+	for (int i = 0; i < range; i++) {
+		working_cell = Adjacent_Cell(working_cell, dir);
+		BuildingClass * building = Map[working_cell].Cell_Building();
+
+		if (building) {
+			if (building->Class->IsLaserFencePost) {
+				if (Owner() == building->Owner()) {
+					result = building;
+				}
+			}
+
+			if (!connected) break;
+			if (!building->Class->IsLaserFence)	break;
+			if (Owner() != building->Owner()) break;
+			if ((building->PrimaryFacing.Current().As_Axis()) != (int)face) break;
+		}
+	}
+
+	return(result);
+}
+
+// FUNCTION: 0x00452D40
+void BuildingClass::Init_All_Laser_Fences(void)
+{
+	for (int i = 0; i < Buildings.Count(); i++) {
+		BuildingClass * building = Buildings[i];
+		if (building != NULL && building->Class->IsLaserFencePost) {
+			building->Init_Laser_Fence();
+		}
+	}
+}
+
+// FUNCTION: 0x00453240
+void BuildingClass::Unlimbo_Laser_Fence_Helper(Cell const & cell)
+{
+	CellClass * cptr = &Map[cell];
+	if (cptr != NULL) {
+		BuildingClass * fence = cptr->Cell_Building();
+		if (fence != NULL && fence->Class->IsLaserFence) {
+			int facing = fence->PrimaryFacing.Current().As_Axis();
+			BuildingClass * building = NULL;
+			Cell old_cell = cell;
+
+			Cell working_cell = Adjacent_Cell(old_cell, (FacingType)facing);
+			while (working_cell.X != old_cell.X || working_cell.Y != old_cell.Y) {
+				building = Map[working_cell].Cell_Building();
+				if (building == NULL) {
+					break;
+				}
+				if (building->Class->IsLaserFencePost) {
+					building->Disconnect_Laser_Fence(FacingType(facing | FACING_180), false);
+					break;
+				}
+				if (!building->Class->IsLaserFence) {
+					building = NULL;
+					break;
+				}
+				old_cell = working_cell;
+				working_cell = Adjacent_Cell(old_cell, (FacingType)facing);
+			}
+			if (building == NULL) {
+				fence->Delete_Me();
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x00453370
+void BuildingClass::Init_Laser_Fence_Frame(void)
+{
+	if (!ScenarioInit && Class->IsLaserFencePost) {
+		LaserFenceFrame = 0;
+	}
+}
+
+inline Cell Next_Cell(Cell const & cell, Cell const & adj) { return cell + adj; }
+
+// FUNCTION: 0x004533A0
+void BuildingClass::Toggle_Laser_Fence_Post(bool force)
+{
+	if (Class->IsLaserFencePost && IsActive && !IsInLimbo) {
+
+		int range = Class->ThreatRange >> 8;
+		range = MAX(range, 1);
+
+		bool on = false;
+		if (IsPowerOnline() && IsPoweredOn && Mission != MISSION_DECONSTRUCTION && Mission != MISSION_CONSTRUCTION) {
+			on = true;
+		}
+
+		FacingType dir = FACING_N;
+		for (int i = 0; i < FACING_COUNT / 2; i++, dir = Facing_Add(dir, FACING_90)) {
+
+			Cell working_cell = Adjacent_Cell(Center_Coord().As_Cell(), dir);
+			BuildingClass * building = Map[working_cell].Cell_Building();
+			int face = dir & 3;
+
+			if (building == NULL) continue;
+			if (!building->Class->IsLaserFence) continue;
+			if (Owner() != building->Owner()) continue;
+			if ((building->PrimaryFacing.Current().As_Axis()) != face) continue;
+
+			BuildingClass * first = building;
+			BuildingClass * last = building;
+
+			if (!force) {
+				if (on) {
+					if (building->LaserFenceFrame < 8) continue;
+				} else {
+					if (building->LaserFenceFrame >= 8) continue;
+				}
+			}
+
+			BuildingClass * post = NULL;
+			if (on) {
+				post = Find_Laser_Fence_Post(dir, true, -1);
+			}
+
+			int first_frame = 12;
+			int mid_frame = 12;
+			int last_frame = 12;
+			if (face == 2) {
+				first_frame = 8;
+				mid_frame = 8;
+				last_frame = 8;
+			}
+
+			bool post_on = false;
+			if (on && post != NULL && post->IsPowerOnline() && post->IsPoweredOn
+					&& post->Mission != MISSION_DECONSTRUCTION && post->Mission != MISSION_CONSTRUCTION) {
+
+				post_on = true;
+				switch (dir) {
+					case FACING_N:
+						first_frame = 5;
+						mid_frame = 4;
+						last_frame = 6;
+						break;
+
+					case FACING_S:
+						first_frame = 6;
+						mid_frame = 4;
+						last_frame = 5;
+						break;
+
+					case FACING_E:
+						first_frame = 1;
+						mid_frame = 0;
+						last_frame = 2;
+						break;
+
+					case FACING_W:
+						first_frame = 2;
+						mid_frame = 0;
+						last_frame = 1;
+						break;
+
+					default:
+						break;
+				}
+			}
+
+			int index = 0;
+			while (building != NULL) {
+				if (index >= range) break;
+				if (!building->Class->IsLaserFence) break;
+				if (Owner() != building->Owner()) break;
+				if ((building->PrimaryFacing.Current().As_Axis()) != face) break;
+
+				last = building;
+				if (building == first) {
+					building->LaserFenceFrame = first_frame;
+				} else {
+					building->LaserFenceFrame = mid_frame;
+				}
+				building->IsToDisplay = true;
+
+				if (post_on) {
+					ObjectClass * occupier = Map[working_cell].Cell_Occupier();
+					while (occupier != NULL) {
+						RTTIType rtti = occupier->RTTI;
+						if (rtti > RTTI_NONE && (rtti <= RTTI_AIRCRAFT || rtti == RTTI_INFANTRY)) {
+							ObjectClass * next = occupier->Next;
+							if (occupier->Strength > 0) {
+								occupier->Take_Damage(occupier->Strength, 0, Rule->C4Warhead, building, true, true);
+							}
+							occupier = next;
+						} else {
+							occupier = occupier->Next;
+						}
+					}
+				}
+
+				index++;
+				working_cell = Next_Cell(working_cell, AdjacentCell[(int)dir & 0x07]);
+				building = Map[working_cell].Cell_Building();
+			}
+
+			if (post_on && last != NULL) {
+				if (first == last) {
+					if (face == 2) {
+						last->LaserFenceFrame = 3;
+					} else {
+						last->LaserFenceFrame = 7;
+					}
+				} else {
+					last->LaserFenceFrame = last_frame;
+				}
+				last->IsToDisplay = true;
+			}
+		}
+	}
+}
+
+
+// FUNCTION: 0x00453A70
+Coord BuildingClass::Turret_Coord(int which) const
+{
+	if (!Class->CanBeOccupied || GetOccupantCount() <= 0) {
+		if (Class->PrimaryFirePixelOffset != Point2D(0xFFFF, 0xFFFF)) {
+			Coord pt(TacticalMap->Pixel_To_Lepton(Class->PrimaryFirePixelOffset), 0);
+			return(Render_Coord() + pt);
+		}
+	} else {
+		Coord pt(TacticalMap->Pixel_To_Lepton(Class->MuzzleFlash[FiringOccupantIndex]), 0);
+		return(pt + Render_Coord());
+	}
+	if (Class->IsBarrelAnimAVoxel) {
+		return(Voxel_Fire_Coord(which, false));
+	}
+
+	Coord coord = BASECLASS::Turret_Coord(which);
+	if (Class->IsTurretAnimAVoxel) {
+		Point2D pt(Class->AnimData[BANIM_TURRET].Location.X, Class->AnimData[BANIM_TURRET].Location.Y);
+		coord += TacticalMap->Pixel_To_Lepton(pt);
+	}
+	return(coord);
+}
+
+
+// FUNCTION: 0x00453BF0
+Coord BuildingClass::Voxel_Fire_Coord(int which, bool just_fired) const
+{
+	WeaponTypeClass *weapon = Get_Class_Weapon_Data(which)->Weapon;
+	int burst;
+	if (just_fired) {
+		if (BurstIndex == 0) {
+			burst = weapon->Burst - 1;
+		} else {
+			burst = BurstIndex - 1;
+		}
+	} else {
+		burst = BurstIndex;
+	}
+
+	int yoffset;
+	if (burst == 0) {
+		yoffset = +Class->VoxelBarrelOffsetToBarrelEnd.Y;
+	}
+	else if (burst == 1) {
+		yoffset = -Class->VoxelBarrelOffsetToBarrelEnd.Y;
+	} else {
+		yoffset = 0;
+	}
+	Vector3 vec(Class->VoxelBarrelOffsetToBarrelEnd.X, yoffset, Class->VoxelBarrelOffsetToBarrelEnd.Z);
+
+	Vector3 v = Get_Barrel_Matrix() * vec;
+
+	Coord coord = Coord(v.X, -v.Y, v.Z);
+
+	coord = Render_Coord() + coord;
+
+	Point2D lpt(Class->AnimData[BANIM_TURRET].Location.X, Class->AnimData[BANIM_TURRET].Location.Y);
+	coord += TacticalMap->Pixel_To_Lepton(lpt);
+
+	return(coord);
+}
+
 // FUNCTION: 0x00459E80
 HRESULT STDMETHODCALLTYPE BuildingClass::GetClassID(CLSID * retval)
 {

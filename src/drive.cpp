@@ -260,3 +260,5 @@ ULONG STDMETHODCALLTYPE DriveLocomotionClass::Release(void)
 {
 	return(BASECLASS::Release());
 }
+
+// FUNCTION: 0x004B4CF0 DriveLocomotionClass::Fetch_Object_Size

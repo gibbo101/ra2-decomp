@@ -44,6 +44,7 @@
 #include "mouse.h"
 #include "tactical.h"
 #include "scenario.h"
+#include "cell.h"
 #include <mmsystem.h>
 #include <string.h>
 #include "stringtable.h"
@@ -967,4 +968,426 @@ void FUN_007331B0(void)
 		}
 		DAT_00B0FE6C = (UICommandHolder *)list;
 	}
+}
+
+extern wchar_t const DAT_00887734[];
+extern int DAT_00845560;
+extern int DAT_00845564;
+extern int DAT_00B0FE70;
+extern char DAT_00B0FD70[];
+int __fastcall FUN_007335F0(TechnoClass * techno, int unused);
+
+static inline wchar_t const * Health_Text(int status)
+{
+	if (status == 0) {
+		return StringTable::LoadString("MSG:Critical", NULL, "D:\\ra2mdpost\\UICmnds.cpp", 0x644);
+	}
+	if (status == 1) {
+		return StringTable::LoadString("MSG:HeavilyDamaged", NULL, "D:\\ra2mdpost\\UICmnds.cpp", 0x646);
+	}
+	if (status == 2) {
+		return StringTable::LoadString("MSG:Healthy", NULL, "D:\\ra2mdpost\\UICmnds.cpp", 0x648);
+	}
+	return DAT_00887734;
+}
+
+static inline int Cycle_Step(int value)
+{
+	if (value == -1) {
+		return 0;
+	}
+	if (value == 0) {
+		return 1;
+	}
+	return value == 1 ? 2 : 0;
+}
+
+static inline ObjectList * Wrap_All(void)
+{
+	return FUN_00732050();
+}
+
+static inline ObjectList * Wrap_Filter(bool (__fastcall * test)(ObjectClass *, int), int arg)
+{
+	return FUN_00731F70(test, arg);
+}
+
+static inline void Append_Object(ObjectList * list, ObjectClass * object)
+{
+	list->Add(object);
+}
+
+static inline void Mixed_Check(wchar_t const *& name, int next)
+{
+	ObjectList * all = New_Object_List();
+	int total = DAT_00A8ECC8;
+	for (int j = 0; j < total; j++) {
+		ObjectClass * object = DAT_00A8ECB8[j];
+		if (object && object->Is_Techno()) {
+			Append_Object(all, object);
+		}
+	}
+	int shown = all->Count();
+	for (int k = 0; k < shown; k++) {
+		if ((*all)[k]->GetHealthStatus() != next) {
+			name = StringTable::LoadString("MSG:Mixed", NULL, "D:\\ra2mdpost\\UICmnds.cpp", 0x62f);
+			break;
+		}
+	}
+	if (all) {
+		delete all;
+	}
+}
+
+static inline void Show_Message(wchar_t * text, wchar_t const * name)
+{
+	FUN_00731D90(text, name);
+	FUN_00730A90(text, 240);
+}
+
+// FUNCTION: 0x00733380
+void __fastcall FUN_00733380(bool redraw)
+{
+	wchar_t text[256];
+	int next;
+	if (Unsorted::MuteSWLaunches) {
+		return;
+	}
+	if (Unsorted::NavCycleMode != 3) {
+		FUN_00730970();
+		ObjectList * list = Wrap_All();
+		DAT_00B0FE6C = (UICommandHolder *)list;
+		if (list->Count() == 0) {
+			if (list) {
+				delete list;
+			}
+			DAT_00B0FE6C = NULL;
+			DAT_00B0FE6C = (UICommandHolder *)Wrap_Filter((bool (__fastcall *)(ObjectClass *, int))FUN_007335F0, 0);
+		}
+		FUN_006DA740(TacticalMap);
+		next = 0;
+	} else {
+		next = Cycle_Step(DAT_00845560);
+		if (redraw) {
+			FUN_006DA740(TacticalMap);
+		}
+	}
+	ObjectList * selection = (ObjectList *)DAT_00B0FE6C;
+	int count = selection->Count();
+	for (int i = 0; i < count; i++) {
+		ObjectClass * object = (*selection)[i];
+		if (object->GetHealthStatus() == next) {
+			object->Select();
+		}
+	}
+	wchar_t const * name;
+	if (next == 0) {
+		name = StringTable::LoadString("MSG:Critical", NULL, "D:\\ra2mdpost\\UICmnds.cpp", 0x644);
+	} else if (next == 1) {
+		name = StringTable::LoadString("MSG:HeavilyDamaged", NULL, "D:\\ra2mdpost\\UICmnds.cpp", 0x646);
+	} else if (next == 2) {
+		name = StringTable::LoadString("MSG:Healthy", NULL, "D:\\ra2mdpost\\UICmnds.cpp", 0x648);
+	} else {
+		name = DAT_00887734;
+	}
+	Mixed_Check(name, next);
+	Show_Message(text, name);
+	ObjectList * current = (ObjectList *)DAT_00B0FE6C;
+	DAT_00845560 = next;
+	int remaining = current->Count();
+	Unsorted::NavCycleMode = 0;
+	if (remaining) {
+		Unsorted::NavCycleMode = 3;
+	}
+	DAT_00B0FE58 = false;
+}
+
+// FUNCTION: 0x007335F0
+int __fastcall FUN_007335F0(TechnoClass * techno, int unused)
+{
+	if (techno && techno->IsActive && Player_Owned(techno) && techno->Fetch_RTTI() != RTTI_BUILDING) {
+		return true;
+	}
+	return false;
+}
+
+// FUNCTION: 0x00733640
+wchar_t const * __fastcall FUN_00733640(int status)
+{
+	return Health_Text(status);
+}
+
+// FUNCTION: 0x007336A0
+int __fastcall FUN_007336A0(int value)
+{
+	if (value == -1) {
+		return 0;
+	}
+	if (value == 0) {
+		return 1;
+	}
+	return value == 1 ? 2 : 0;
+}
+
+class VeterancyReader
+{
+	public:
+		int FUN_00750030(void);
+};
+
+static inline int Cycle_Rank(int value)
+{
+	if (value == -1) {
+		return 0;
+	}
+	if (value == 0) {
+		return 1;
+	}
+	return value == 1 ? 2 : 0;
+}
+
+static inline void Mixed_Rank(wchar_t const *& name, int next)
+{
+	ObjectList * all = New_Object_List();
+	int total = DAT_00A8ECC8;
+	for (int j = 0; j < total; j++) {
+		ObjectClass * object = DAT_00A8ECB8[j];
+		if (object && object->Is_Techno()) {
+			Append_Object(all, object);
+		}
+	}
+	int shown = all->Count();
+	for (int k = 0; k < shown; k++) {
+		TechnoClass * techno = (TechnoClass *)(*all)[k];
+		if (((VeterancyReader *)&techno->Veterancy)->FUN_00750030() != next) {
+			name = StringTable::LoadString("MSG:Mixed", NULL, "D:\\ra2mdpost\\UICmnds.cpp", 0x67a);
+			break;
+		}
+	}
+	if (all) {
+		delete all;
+	}
+}
+
+// FUNCTION: 0x007336C0
+void __fastcall FUN_007336C0(bool redraw)
+{
+	wchar_t text[256];
+	int next;
+	if (Unsorted::MuteSWLaunches) {
+		return;
+	}
+	if (Unsorted::NavCycleMode != 4) {
+		FUN_00730970();
+		ObjectList * list = Wrap_All();
+		DAT_00B0FE6C = (UICommandHolder *)list;
+		if (list->Count() == 0) {
+			if (list) {
+				delete list;
+			}
+			DAT_00B0FE6C = NULL;
+			DAT_00B0FE6C = (UICommandHolder *)Wrap_Filter((bool (__fastcall *)(ObjectClass *, int))FUN_007335F0, 0);
+		}
+		FUN_006DA740(TacticalMap);
+		next = 0;
+	} else {
+		next = Cycle_Rank(DAT_00845564);
+		if (redraw) {
+			FUN_006DA740(TacticalMap);
+		}
+	}
+	ObjectList * selection = (ObjectList *)DAT_00B0FE6C;
+	int count = selection->Count();
+	for (int i = 0; i < count; i++) {
+		ObjectClass * object = (*selection)[i];
+		if (((VeterancyReader *)&((TechnoClass *)object)->Veterancy)->FUN_00750030() == next) {
+			object->Select();
+		}
+	}
+	wchar_t const * name;
+	if (next == 0) {
+		name = StringTable::LoadString("MSG:Elite", NULL, "D:\\ra2mdpost\\UICmnds.cpp", 0x68e);
+	} else if (next == 1) {
+		name = StringTable::LoadString("MSG:Veteran", NULL, "D:\\ra2mdpost\\UICmnds.cpp", 0x690);
+	} else if (next == 2) {
+		name = StringTable::LoadString("MSG:LittleExperience", NULL, "D:\\ra2mdpost\\UICmnds.cpp", 0x692);
+	} else {
+		name = DAT_00887734;
+	}
+	Mixed_Rank(name, next);
+	Show_Message(text, name);
+	ObjectList * current = (ObjectList *)DAT_00B0FE6C;
+	DAT_00845564 = next;
+	int remaining = current->Count();
+	Unsorted::NavCycleMode = 0;
+	if (remaining) {
+		Unsorted::NavCycleMode = 4;
+	}
+	DAT_00B0FE58 = false;
+}
+
+// FUNCTION: 0x00733930
+wchar_t const * __fastcall FUN_00733930(int level)
+{
+	if (level == 0) {
+		return StringTable::LoadString("MSG:Elite", NULL, "D:\\ra2mdpost\\UICmnds.cpp", 0x68e);
+	}
+	if (level == 1) {
+		return StringTable::LoadString("MSG:Veteran", NULL, "D:\\ra2mdpost\\UICmnds.cpp", 0x690);
+	}
+	if (level == 2) {
+		return StringTable::LoadString("MSG:LittleExperience", NULL, "D:\\ra2mdpost\\UICmnds.cpp", 0x692);
+	}
+	return DAT_00887734;
+}
+
+// FUNCTION: 0x00733990
+int __fastcall FUN_00733990(int value)
+{
+	if (value == -1) {
+		return 0;
+	}
+	if (value == 0) {
+		return 1;
+	}
+	return value == 1 ? 2 : 0;
+}
+
+char * __fastcall FUN_00733E10(ObjectList * items, char const * preferred, int limit, int * best);
+int __fastcall FUN_00733C60(TechnoClass * techno, char const * name);
+extern char DAT_00B0FD70[];
+
+static inline int Named_Selectable(TechnoClass * techno, char const * name)
+{
+	char const * id = techno->Class_Of()->IniName;
+	if (name && strcmp(id, name) == 0 && techno->CanBeSelectedNow()) {
+		return true;
+	}
+	return false;
+}
+
+static inline ObjectList * Collect_Selected(void)
+{
+	ObjectList * all = New_Object_List();
+	int total = DAT_00A8ECC8;
+	for (int j = 0; j < total; j++) {
+		ObjectClass * object = DAT_00A8ECB8[j];
+		if (object && object->Is_Techno()) {
+			Append_Object(all, object);
+		}
+	}
+	return all;
+}
+
+static inline void Find_Mixed(ObjectList * all, char const * chosen, wchar_t const *& name)
+{
+	int shown = all->Count();
+	for (int k = 0; k < shown; k++) {
+		if (!(unsigned char)FUN_00733C60((TechnoClass *)(*all)[k], chosen)) {
+			name = StringTable::LoadString("MSG:Mixed", NULL, "D:\\ra2mdpost\\UICmnds.cpp", 0x6c3);
+			break;
+		}
+	}
+}
+
+static inline void Remember_Name(char * chosen, int best)
+{
+	DAT_00B0FE70 = best;
+	strcpy(DAT_00B0FD70, chosen);
+	if (chosen) {
+		delete chosen;
+	}
+}
+
+static inline void Find_Mixed_Outer(ObjectList * all, char const * chosen, wchar_t const *& name)
+{
+	Find_Mixed(all, chosen, name);
+}
+
+// FUNCTION: 0x007339B0
+void __fastcall FUN_007339B0(bool redraw)
+{
+	wchar_t text[256];
+	int best;
+	char * chosen;
+	if (Unsorted::MuteSWLaunches) {
+		return;
+	}
+	if (Unsorted::NavCycleMode != 5) {
+		FUN_00730970();
+		ObjectList * list = Wrap_All();
+		DAT_00B0FE6C = (UICommandHolder *)list;
+		if (list->Count() == 0) {
+			if (list) {
+				delete list;
+			}
+			DAT_00B0FE6C = NULL;
+			DAT_00B0FE6C = (UICommandHolder *)Wrap_Filter((bool (__fastcall *)(ObjectClass *, int))FUN_007335F0, 0);
+		}
+		FUN_006DA740(TacticalMap);
+		chosen = FUN_00733E10((ObjectList *)DAT_00B0FE6C, NULL, 0x7fffffff, &best);
+	} else {
+		chosen = FUN_00733E10((ObjectList *)DAT_00B0FE6C, DAT_00B0FD70, DAT_00B0FE70, &best);
+		if (redraw) {
+			FUN_006DA740(TacticalMap);
+		}
+	}
+	ObjectList * selection = (ObjectList *)DAT_00B0FE6C;
+	int count = selection->Count();
+	for (int i = 0; i < count; i++) {
+		TechnoClass * techno = (TechnoClass *)(*selection)[i];
+		char const * id = techno->Class_Of()->IniName;
+		if (chosen && strcmp(id, chosen) == 0 && techno->CanBeSelectedNow()) {
+			techno->Select();
+		}
+	}
+	wchar_t const * name = NULL;
+	ObjectList * all = Collect_Selected();
+	Find_Mixed_Outer(all, chosen, name);
+	if (!name && DAT_00A8ECC8 > 0) {
+		name = DAT_00A8ECB8[0]->Class_Of()->UIName;
+	}
+	Show_Message(text, name);
+	Remember_Name(chosen, best);
+	int remaining = all->Count();
+	Unsorted::NavCycleMode = 0;
+	if (remaining) {
+		Unsorted::NavCycleMode = 5;
+	}
+	DAT_00B0FE58 = false;
+	if (all) {
+		delete all;
+	}
+}
+
+// FUNCTION: 0x00733C60
+int __fastcall FUN_00733C60(TechnoClass * techno, char const * name)
+{
+	char const * id = techno->Class_Of()->IniName;
+	if (name && strcmp(id, name) == 0 && techno->CanBeSelectedNow()) {
+		return true;
+	}
+	return false;
+}
+
+// FUNCTION: 0x00733CD0
+NameList * __fastcall FUN_00733CD0(ObjectList * objects)
+{
+	NameList * list = new NameList(0, NULL);
+	int count = objects->Count();
+	for (int i = 0; i < count; i++) {
+		Add_Name(list, (*objects)[i]->Class_Of()->IniName);
+	}
+	return list;
+}
+
+extern int DAT_00845558;
+
+// FUNCTION: 0x00734210
+void FUN_00734210(void)
+{
+	DAT_00845550 = timeGetTime() - 0x641;
+	DAT_00845554 = -1;
+	DAT_00845558 = timeGetTime() - 0x641;
+	DAT_0084555C = -100;
 }

@@ -39,4 +39,5 @@ class TemporalClass : public AbstractClass
 
 		void LetGo(void);
 		void JustLetGo(void);
+		void FUN_0071AB60(AbstractClass * ptr);
 };

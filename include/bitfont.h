@@ -4,6 +4,8 @@
 
 #include <stddef.h>
 
+#undef DrawText
+
 class Surface;
 
 struct LTRBStruct
@@ -70,6 +72,7 @@ class BitText
 		virtual ~BitText(void);
 
 		void Print(BitFont * font, Surface * surface, wchar_t const * text, int x, int y, int w, int h);
+		void DrawText(BitFont * font, Surface * surface, wchar_t const * text, int x, int y, int w, int h, char a8, int a9, int a10);
 
 		static BitText * Instance;
 };

@@ -210,10 +210,7 @@ class TechnoClass : public RadioClass
 
 		int PurchasePrice;
 
-		ParticleSystemClass * ParticleSystems[ATTACHED_PARTICLE_COUNT];
-		ParticleSystemClass * unk1ParticleSystem;
-		ParticleSystemClass * unk2ParticleSystem;
-		ParticleSystemClass * FiringParticleSystem;
+		ParticleSystemClass * ParticleSystems[8];
 
 		WaveClass * Wave;
 
@@ -241,7 +238,7 @@ class TechnoClass : public RadioClass
 		CDTimerClass<FrameTimerClass> TargetingLaserTimer;
 
 		unsigned short SoundRandomSeed;
-		unsigned short unknown_3CA;
+		short SinkingYOffset;
 
 		bool CountedAsOwned;
 
@@ -548,7 +545,7 @@ class TechnoClass : public RadioClass
 
 
 
-		bool Is_Allowed_To_Retaliate(TechnoClass const * source, WarheadTypeClass const * warhead) const;
+		bool CanRetaliateToAttacker(ObjectClass * attacker, WarheadTypeClass * warhead);
 		virtual bool Is_Players_Army(void) const override;
 		int Combat_Damage(int which=-1) const;
 
@@ -635,6 +632,7 @@ class TechnoClass : public RadioClass
 		int Get_Predator_Offset(void) const;
 		void Calculate_Sinking_Offset(short height, int y);
 		void Draw_Target_Laser(void) const;
+		void ClearSidebarTabObject(void);
 		static void Draw_Double_Selection_Bracket(Coord const & coord1, Coord const & coord2, int color);
 		static void Draw_Single_Selection_Bracket(Coord const & coord1, Coord const & coord2, int color);
 

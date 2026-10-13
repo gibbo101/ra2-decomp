@@ -26,6 +26,7 @@ class CellClass;
 class BuildingTypeClass;
 class FootClass;
 class TechnoClass;
+class WarheadTypeClass;
 template<typename K, typename V>
 class HashTableClass;
 
@@ -63,6 +64,8 @@ class MapClass: public GScreenClass
 
 		void Fresh_Map(void);
 		void sub_657CE0(void);
+		static int DamageArea(Coord const & coord, int damage, TechnoClass * source, WarheadTypeClass const * warhead, bool affect_tiberium, HouseClass * house);
+		static void FlashbangWarheadAt(int damage, WarheadTypeClass const * warhead, Coord coord, bool force = false, int flags = 0);
 		void Sight_From(Coord const & coord, int sightrange, HouseClass * house, bool incremental=false, bool=false, bool=false, bool=true);
 		void RevealArea0(int, int, Coord * coord, int sightrange, HouseClass * house, bool, bool, bool, bool);
 		void RevealArea1(Coord * coord, int sightrange, HouseClass * house, bool, bool, bool, bool, bool);

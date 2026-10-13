@@ -19,6 +19,7 @@ void __cdecl FUN_004068E0(char const * format, ...);
 extern DynamicVectorClass<HouseClass *> DAT_00A80228;
 
 char __fastcall FUN_0049B430(int nibble);
+void __fastcall FUN_0049B7E0(CoopPlayerStats * stats, bool second);
 
 static inline char HexDigit(int nibble)
 {
@@ -236,6 +237,237 @@ void __fastcall FUN_0049B7E0(CoopPlayerStats * stats, bool second)
 	}
 }
 
+// FUNCTION: 0x0049BC80
+bool CoopCamp_0049B610::FUN_0049BC80(int * out)
+{
+	if (!Field6C) {
+		return false;
+	}
+	*out = Field44;
+	return true;
+}
+
+// FUNCTION: 0x0049BCA0
+bool CoopCamp_0049B610::FUN_0049BCA0(int * out)
+{
+	if (!Field6C) {
+		return false;
+	}
+	*out = ItemCount;
+	return true;
+}
+
+// FUNCTION: 0x0049BCC0
+bool CoopCamp_0049B610::FUN_0049BCC0(int * out)
+{
+	if (!Field6C) {
+		return false;
+	}
+	*out = Field38;
+	return true;
+}
+
+// FUNCTION: 0x0049BCE0
+bool CoopCamp_0049B610::FUN_0049BCE0(DynamicVectorClass<CoopPlayerStats *> * list, int * out)
+{
+	if (!Field6C) {
+		return false;
+	}
+	while (list->Count()) {
+		operator delete((*list)[0]);
+		list->Delete_Index(0);
+	}
+	CoopPlayerStats * a = (CoopPlayerStats *)operator new(0x70);
+	FUN_0049B7E0(a, false);
+	CoopPlayerStats * b = (CoopPlayerStats *)operator new(0x70);
+	FUN_0049B7E0(b, true);
+	if (strcmp(Name, FUN_007350C0(a->Name)) != 0) {
+		CoopPlayerStats * t = a;
+		a = b;
+		b = t;
+	}
+	for (int i = 0; i < 2; i++) {
+		CoopPlayerStats * s = (i == 0) ? a : b;
+		s->Kills = (&Field48)[i];
+		s->Built = (&Field50)[i];
+		s->Lost = (&Field58)[i];
+		s->Alive = Field38;
+		s->Score = (&Field60)[i];
+		list->Add(s);
+	}
+	*out = Field68;
+	return true;
+}
+
+// FUNCTION: 0x0049BE40
+bool CoopCamp_0049B610::FUN_0049BE40(void)
+{
+	if (!Name[0] || !Map[0]) {
+		return true;
+	}
+	char section[100];
+	CCFileClass file("coopsave.ini");
+	struct Holder {
+		CCINIClass ini;
+	} h;
+	CCINIClass & ini = h.ini;
+	ini.ReadCCFile(file, false, false);
+	file.Close();
+
+	int i = 0;
+	char const * p;
+	for (p = Name; *p && i < 0x3fd; i++, p++) {
+		if (!isalnum(*p)) {
+			DAT_0089ED18[i++] = '=';
+			int hi = *p >> 4;
+			DAT_0089ED18[i++] = HexDigit(hi);
+			DAT_0089ED18[i] = FUN_0049B430(*p & 0xf);
+		} else {
+			DAT_0089ED18[i] = *p;
+		}
+	}
+	DAT_0089ED18[i] = 0;
+	strcpy(section, DAT_0089ED18);
+	i = 0;
+	for (p = Map; *p && i < 0x3fd; i++, p++) {
+		if (!isalnum(*p)) {
+			DAT_0089ED18[i++] = '=';
+			int hi = *p >> 4;
+			DAT_0089ED18[i++] = HexDigit(hi);
+			DAT_0089ED18[i] = FUN_0049B430(*p & 0xf);
+		} else {
+			DAT_0089ED18[i] = *p;
+		}
+	}
+	DAT_0089ED18[i] = 0;
+	strcat(section, DAT_0089ED18);
+
+	CCFileClass out;
+	FileClass * pf = &out;
+	pf->Set_Name("coopsave.ini");
+	pf->Open(2);
+	ini.Clear(section, NULL);
+	ini.Save(out, false);
+	out.Close();
+	return true;
+}
+
+// FUNCTION: 0x0049C0D0
+bool CoopCamp_0049B610::FUN_0049C0D0(void)
+{
+	if (!Name[0] || !Map[0]) {
+		return false;
+	}
+	int i = 0;
+	char const * p;
+	for (p = Name; *p && i < 0x3fd; i++, p++) {
+		if (!isalnum(*p)) {
+			DAT_0089ED18[i++] = '=';
+			int hi = *p >> 4;
+			DAT_0089ED18[i++] = HexDigit(hi);
+			DAT_0089ED18[i] = HexDigit(*p & 0xf);
+		} else {
+			DAT_0089ED18[i] = *p;
+		}
+	}
+	DAT_0089ED18[i] = 0;
+	char section[100];
+	char key[32];
+	int campaign;
+	strcpy(section, DAT_0089ED18);
+	i = 0;
+	for (p = Map; *p && i < 0x3fd; i++, p++) {
+		if (!isalnum(*p)) {
+			DAT_0089ED18[i++] = '=';
+			int hi = *p >> 4;
+			DAT_0089ED18[i++] = HexDigit(hi);
+			DAT_0089ED18[i] = HexDigit(*p & 0xf);
+		} else {
+			DAT_0089ED18[i] = *p;
+		}
+	}
+	DAT_0089ED18[i] = 0;
+	strcat(section, DAT_0089ED18);
+
+	CCFileClass file("coopsave.ini");
+	struct Holder {
+		CCINIClass ini;
+	} h;
+	CCINIClass & ini = h.ini;
+	if (!ini.ReadCCFile(file, false, false)) {
+		return false;
+	}
+	Field38 = ini.Get_Int(section, "CurrentMap", 0);
+	ini.Get_Int(section, "Score", 0);
+	Field44 = ini.Get_Int(section, "CampaignType", -1);
+	Field14 = ini.Get_HousesType(section, "House1", (HousesType)-2);
+	Field18 = ini.Get_Int(section, "Color1", -2);
+	Field30 = ini.Get_HousesType(section, "House2", (HousesType)-2);
+	Field34 = ini.Get_Int(section, "Color2", -2);
+	Field48 = ini.Get_Int(section, "Kills1", 0);
+	Field4C = ini.Get_Int(section, "Kills2", 0);
+	Field50 = ini.Get_Int(section, "Built1", 0);
+	Field54 = ini.Get_Int(section, "Built2", 0);
+	Field58 = ini.Get_Int(section, "Lost1", 0);
+	Field5C = ini.Get_Int(section, "Lost2", 0);
+	Field60 = ini.Get_Int(section, "Score1", 0);
+	Field64 = ini.Get_Int(section, "Score2", 0);
+	Field68 = ini.Get_Int(section, "Time", 0);
+	campaign = Field44;
+	if (!DAT_0089F518.Loaded) {
+		DAT_0089F518.FUN_0049DB00();
+	}
+	if (campaign < 0 || campaign >= DAT_0089F518.EntryCount) {
+		ItemCount = 0;
+		return false;
+	}
+	{
+	CoopCampEntry * entry = &DAT_0089F518.Entries[campaign];
+	ItemCount = entry->MapCount;
+	Items = (void **)operator new(entry->MapCount << 2);
+	for (int n = 0; n < ItemCount; n++) {
+		sprintf(key, "Map%d", n + 1);
+		Items[n] = operator new(0x104);
+		ini.Get_String(section, key, "undefined", (char *)Items[n], 0x104);
+	}
+	Field6C = true;
+	return true;
+	}
+}
+
+// FUNCTION: 0x0049D070
+bool CoopCamp_0049B610::FUN_0049D070(void ** out, int index)
+{
+	bool result = false;
+	*out = 0;
+	if (index == -1) {
+		index = Field38;
+	}
+	if (index < 0 || index >= ItemCount) {
+		index = -1;
+	}
+	if (Field6C) {
+		if (index != -1) {
+			*out = Items[index];
+		}
+		if (*out) {
+			result = true;
+		}
+	}
+	return result;
+}
+
+// FUNCTION: 0x0049D0C0
+bool CoopCamp_0049B610::FUN_0049D0C0(int * house, int * color)
+{
+	if (Field6C) {
+		*house = Field14;
+		*color = Field18;
+		return true;
+	}
+	return false;
+}
+
 // FUNCTION: 0x0049D120
 bool CoopCamp_0049B610::FUN_0049D120(void)
 {
@@ -243,6 +475,7 @@ bool CoopCamp_0049B610::FUN_0049D120(void)
 		return false;
 	}
 	char section[100];
+	char key[32];
 	struct Loaded {
 		CCFileClass file;
 		CCINIClass ini;

@@ -501,7 +501,10 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 		bool Can_Add_Waypoint_To_Path(void) const;
 
 		FactoryClass * Fetch_Factory(RTTIType rtti, bool naval, int buildcat) const;
-		void Set_Factory(RTTIType rtti, FactoryClass * factory);
+		void Set_Factory(FactoryClass * factory, RTTIType rtti, bool naval, int buildcat);
+		void FUN_005005B0(RTTIType rtti, bool naval, int buildcat);
+		void FUN_00500660(RTTIType rtti, bool naval, int buildcat);
+		unsigned char FUN_00500700(RTTIType rtti, bool naval, int buildcat) const;
 		void Update_Production_Mode(RTTIType type);
 		void Production_Status_Changed(void) {IsRecalcNeeded = true;}
 

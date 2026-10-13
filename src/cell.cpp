@@ -2331,16 +2331,6 @@ bool CellClass::Is_Tile_Not_Water(void) const
 	return(true);
 }
 
-inline bool CellClass::Is_Cloaked(HousesType house) const
-{
-	return((CloakedBy & (1 << house)) != 0);
-}
-
-inline bool CellClass::Is_Sensed(HousesType house) const
-{
-	return((short)SensorsOfHouses[house] > 0);
-}
-
 // FUNCTION: 0x00486800
 bool CellClass::Should_Draw_As_Cloaked(HousesType house) const
 {
@@ -2498,6 +2488,112 @@ void CellClass::Remove_Fogged_Objects(void)
 		delete FoggedObjects;
 		FoggedObjects = NULL;
 	}
+}
+
+// FUNCTION: 0x00486D90
+int CellClass::Occupation_Mask(HousesType house) const
+{
+	if (!(OccupiedBy & (1 << house))) {
+		return(-1);
+	}
+
+	int mask = 0;
+	for (int dir = 0; dir < FACING_COUNT; dir++) {
+		CellClass const & adjacent = Adjacent_Cell(FacingType(dir));
+		if (adjacent.OccupiedBy & (1 << house)) {
+			mask |= (1 << dir);
+		}
+	}
+	return(mask);
+}
+
+// FUNCTION: 0x00486E30
+int CellClass::Reduce_Weed(void)
+{
+	VeinholeMonsterClass * veinhole = VeinholeMonsterClass::Get_Vein_Owner_At(CellID);
+	if (veinhole != NULL) {
+		veinhole->Reduce_Veins_At(this);
+	} else {
+		Map[CellID].Redraw_Veins();
+	}
+	return(0);
+}
+
+// FUNCTION: 0x00486E70
+void CellClass::Register_For_Redraw(void)
+{
+	Rect rect = Union(Union(Cell_Render_Rect(), Overlay_Render_Rect()), Overlay_Shadow_Render_Rect());
+	TacticalMap->Register_Dirty_Area(rect - TacticalRect.TopLeft);
+	Map.Radar_Background(CellID);
+}
+
+// FUNCTION: 0x00486FF0
+bool CellClass::Can_Burrow_Here(void) const
+{
+	if (!Map.In_Local_Radar(this)) {
+		return(true);
+	}
+
+	if (ITType < ISOTILE_FIRST || ITType >= IsometricTileTypes.Count() || IsometricTileTypes[ITType]->IsAllowBurrowing) {
+		if (Ramp == 0 && !IsUnderBridge && !WasUnderBridge) {
+			if (Cell_Building() != NULL) {
+				return(false);
+			}
+			if (Cell_Terrain() != NULL) {
+				return(false);
+			}
+			return(true);
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x004870B0
+bool CellClass::Is_Cloaked(HousesType house) const
+{
+	return((CloakedBy & (1 << house)) != 0);
+}
+
+// FUNCTION: 0x004870D0
+bool CellClass::Is_Sensed(HousesType house) const
+{
+	return((short)SensorsOfHouses[house] > 0);
+}
+
+// FUNCTION: 0x004870F0
+bool CellClass::Is_Disguise_Sensed(HousesType house) const
+{
+	return((short)DisguiseSensorsOfHouses[house] > 0);
+}
+
+// FUNCTION: 0x00487110
+void CellClass::Cloaked_By(HousesType house)
+{
+	CloakedBy |= (1 << house);
+}
+
+// FUNCTION: 0x00487130
+void CellClass::Uncloaked_By(HousesType house)
+{
+	CloakedBy &= ~(1 << house);
+}
+
+// FUNCTION: 0x00487150
+void CellClass::Sensed_By(HousesType house)
+{
+	SensorsOfHouses[house]++;
+}
+
+// FUNCTION: 0x00487160
+void CellClass::Unsensed_By(HousesType house)
+{
+	SensorsOfHouses[house]--;
+}
+
+// FUNCTION: 0x00487170
+void CellClass::Disguise_Sensed_By(HousesType house)
+{
+	DisguiseSensorsOfHouses[house]++;
 }
 
 // FUNCTION: 0x00487D50

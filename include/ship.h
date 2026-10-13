@@ -62,7 +62,7 @@ class ShipLocomotionClass : public LocomotionClass, public IPiggyback
 		virtual HRESULT STDMETHODCALLTYPE Piggyback_CLSID(GUID * classid) override;
 		virtual boolean STDMETHODCALLTYPE Is_Piggybacking(void) override {return(Piggybacker != NULL);}
 
-		virtual int Fetch_Object_Size(bool oldsave = false) const override {return(sizeof(*this));}
+		virtual int Fetch_Object_Size(void) const override {return(sizeof(*this));}
 
 		bool Stop_Driver(void);
 		bool Start_Driver(Coord const & headto);

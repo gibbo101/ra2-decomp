@@ -149,6 +149,7 @@ class SidebarClass : public PowerClass
 				void FUN_006A8710(RTTIType type, int id);
 				bool SortsBefore(RTTIType type, int id, RTTIType otherType, int otherId);
 				bool Factory_Link(FactoryClass * factory, RTTIType type, int id);
+				bool FUN_006ABAC0(void);
 				ShapeSet const * Get_Special_Cameo(SuperWeaponType type);
 
 				enum SideBarGeneralEnums {
@@ -297,6 +298,8 @@ class SidebarClass : public PowerClass
 		bool Page(bool up, int column);
 		void RepaintSidebar(int tab);
 		static int GetObjectTabIdx(RTTIType type, int id, bool naval);
+		static int GetObjectTabIdxByCat(RTTIType type, int buildCat, bool naval);
+		int FUN_006ABD10(void);
 
 	private:
 		bool Activate_Repair(int control);

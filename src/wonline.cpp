@@ -3,12 +3,18 @@
 // Copyright 2025 Electronic Arts Inc.; 2026 OpenTS contributors
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
+#define NDEBUG
+
 #include "always.h"
 #include "arraylist.h"
+#include "dict.h"
 #include "wstring.h"
 
 #include <windows.h>
 #include <ole2.h>
+
+unsigned int __fastcall Wstring_Hash(Wstring & string);
+#define HASH_ARG (Wstring_Hash)
 
 class OLEInitializer
 {
@@ -40,3 +46,35 @@ ArrayList<int> DAT_00B76AE0;
 // FUNCTION: 0x0077B9C0
 // FUNCTION: 0x0077B9E0
 ArrayList<int> DAT_00B77900;
+
+// FUNCTION: 0x0077BA00
+// FUNCTION: 0x0077BA20
+ArrayList<int> DAT_00B76520;
+
+struct LadderA {
+	char Data[0x6C];
+};
+
+struct LadderB {
+	char Data[0x44];
+};
+
+// FUNCTION: 0x0077BA40
+// FUNCTION: 0x0077BAE0
+Dictionary<Wstring, LadderA> DAT_00B768C0 HASH_ARG;
+
+// FUNCTION: 0x0077BC10
+// FUNCTION: 0x0077BCB0
+Dictionary<Wstring, LadderA> DAT_00B73AF8 HASH_ARG;
+
+// FUNCTION: 0x0077BDE0
+// FUNCTION: 0x0077BE80
+Dictionary<Wstring, LadderA> DAT_00B77D80 HASH_ARG;
+
+// FUNCTION: 0x0077BFB0
+// FUNCTION: 0x0077C050
+Dictionary<Wstring, LadderB> DAT_00B76640 HASH_ARG;
+
+// FUNCTION: 0x0077C180
+// FUNCTION: 0x0077C220
+Dictionary<Wstring, int> DAT_00B76680 HASH_ARG;

@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
 #include "ship.h"
 #include "_map.h"
 #include "_rules.h"
@@ -527,3 +528,30 @@ ULONG STDMETHODCALLTYPE ShipLocomotionClass::Release(void)
 {
 	return(BASECLASS::Release());
 }
+
+// FUNCTION: 0x006A42A0 ShipLocomotionClass::Fetch_Object_Size
+
+// FUNCTION: 0x006A42B0 ShipLocomotionClass::~ShipLocomotionClass
+ShipLocomotionClass::~ShipLocomotionClass(void)
+{
+}
+
+// FUNCTION: 0x006A4300 ShipLocomotionClass::QueryInterface
+
+// FUNCTION: 0x006A4310 ShipLocomotionClass::AddRef
+
+// FUNCTION: 0x006A4320 ShipLocomotionClass::Release
+
+// FUNCTION: 0x006A4330 ShipLocomotionClass::QueryInterface
+
+// FUNCTION: 0x006A4340 ShipLocomotionClass::AddRef
+
+// FUNCTION: 0x006A4350 ShipLocomotionClass::Release
+
+// FUNCTION: 0x006A4360 $E2
+
+// FUNCTION: 0x006A4390 $E5
+
+// FUNCTION: 0x006A43B0 $E8
+
+// FUNCTION: 0x006A43D0 $E11

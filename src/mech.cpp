@@ -190,6 +190,8 @@ boolean STDMETHODCALLTYPE MechLocomotionClass::Is_Moving_Here(CoordStruct to)
 	return(false);
 }
 
+// FUNCTION: 0x005B1B40 MechLocomotionClass::Fetch_Object_Size
+
 extern int DAT_00ABEE60;
 extern int DAT_00ABEE64;
 extern int DAT_00ABEE68;
