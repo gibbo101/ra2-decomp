@@ -90,6 +90,7 @@ class CCINIClass : public INIClass
 		VQType Get_VQType(char const * section, char const * entry, VQType defvalue) const;
 		VocType Get_VocType(char const * section, char const * entry, VocType defvalue) const;
 		int Get_Owners(char const * section, char const * entry, int defvalue) const;
+		int Get_Houses(char const * section, char const * entry, int defvalue) const;
 		CrateType Get_CrateType(char const * section, char const * entry, CrateType defvalue) const;
 
 		SideType Get_Side(char const * section, char const * entry, SideType defvalue) const;
@@ -131,6 +132,8 @@ class CCINIClass : public INIClass
 		bool Put_MPHType(char const * section, char const * entry, MPHType value);
 		bool Put_VQType(char const * section, char const * entry, VQType value);
 		bool Put_Owners(char const * section, char const * entry, int value);
+		bool Put_Houses(char const * section, char const * entry, int value);
+		bool Put_BuildCat(char const * section, char const * entry, int value);
 		bool Put_SourceType(char const * section, char const * entry, SourceType value);
 		bool Put_TheaterType(char const * section, char const * entry, TheaterType value);
 		bool Put_ThemeType(char const * section, char const * entry, ThemeType value);

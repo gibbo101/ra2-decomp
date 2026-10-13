@@ -55,7 +55,7 @@ class RadarClass: public DisplayClass
 
 	public:
 		RadarClass(void);
-		RadarClass(NoInitClass const & x) : BASECLASS(x) {};
+		RadarClass(NoInitClass const & x) : BASECLASS(x) { unknown_14C0.FUN_00405BE0(); }
 		virtual ~RadarClass(void) override;
 
 		int RadX;
@@ -88,7 +88,7 @@ class RadarClass: public DisplayClass
 		virtual void Set_Tactical_Position(Coord const & coord);
 		virtual void Init_For_House(void);
 
-		void Radar_Activate(int control);
+		void Radar_Activate(int control, int flag);
 		void Radar_Background(Cell const & cell);
 		Point2D Coord_To_Radar_Pixel(Coord const & coord, bool clip);
 		bool Cell_On_Radar(Cell const & cell);
@@ -133,6 +133,7 @@ class RadarClass: public DisplayClass
 		void Complete_Radar_Refresh(void);
 
 		void Queue_Next_Movie(void);
+		void Set_Buttons(bool on);
 
 		void Clear_Background_Stack(void) { BackgroundStack.Clear(); }
 

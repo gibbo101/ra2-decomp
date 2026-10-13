@@ -887,3 +887,34 @@ template class VectorClass<AircraftTypeClass const *>;
 
 // FUNCTION: 0x0067A030 ?$VectorClass@PBVInfantryTypeClass@@::~?$VectorClass@PBVInfantryTypeClass@@
 template class VectorClass<InfantryTypeClass const *>;
+
+class TerrainTypeClass;
+class VoxelAnimTypeClass;
+
+// FUNCTION: 0x0067A060 ?$VectorClass@PBVTerrainTypeClass@@::~?$VectorClass@PBVTerrainTypeClass@@
+template class VectorClass<TerrainTypeClass const *>;
+
+// FUNCTION: 0x0067A090 ?$TypeList@H::operator=
+template class TypeList<int>;
+
+// FUNCTION: 0x0067A110 ?$TypeList@PBVBuildingTypeClass@@::operator=
+template class TypeList<BuildingTypeClass const *>;
+
+// FUNCTION: 0x0067A190 ?$TypeList@PBVUnitTypeClass@@::operator=
+template class TypeList<UnitTypeClass const *>;
+
+// FUNCTION: 0x0067A210 ?$TypeList@PBVAircraftTypeClass@@::operator=
+template class TypeList<AircraftTypeClass const *>;
+
+// FUNCTION: 0x0067A290 ?$TypeList@PBVInfantryTypeClass@@::operator=
+template class TypeList<InfantryTypeClass const *>;
+
+// FUNCTION: 0x0067A310 ?$TypeList@PBVTerrainTypeClass@@::operator=
+template class TypeList<TerrainTypeClass const *>;
+
+// FUNCTION: 0x0067A390 ?$TypeList@PBVVoxelAnimTypeClass@@::?$TypeList@PBVVoxelAnimTypeClass@@
+// FUNCTION: 0x0067A3C0 ?$TypeList@PBVVoxelAnimTypeClass@@::Save
+// FUNCTION: 0x0067A410 ?$DynamicVectorClass@PBVVoxelAnimTypeClass@@::Clear
+// FUNCTION: 0x0067A440 ?$DynamicVectorClass@PBVVoxelAnimTypeClass@@::ID
+// FUNCTION: 0x0067A460 ?$VectorClass@PBVVoxelAnimTypeClass@@::GetItem
+template class TypeList<VoxelAnimTypeClass const *>;

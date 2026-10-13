@@ -835,6 +835,19 @@ inline asm, so it cannot land under the repo rules. Banked: four House, building
 open. The project's delete hook had nothing to stop. Cost: about 2.4M tokens, 55
 minutes. Merge gate: 2,792 of 2,792 (430.3 KB).
 
+### Batch 14 (13 October 2026)
+
+The first 12-module batch: map, MapGen, Tactical, cell, foot, rules, ccini, Sidebar,
+Radar, houstype, object, team. **138 of 144 matched**, eight modules all 12. Sonnet 134,
+the header merge 8 (including SidebarClass::Init_IO and ObjectClass::Unlimbo, near misses
+it finished), Opus none. The merge adopted passblty.hh with YR's extra PASSABLE_BEACH and
+alphashp.h, and fixed Draw_Voxel's and Record_The_Kill's signatures, each proved by the
+exe. Tactical's Cell_Shadow and Flag_Cell now have names.csv rows. Banked: three Tactical
+functions (inline budget, registers, frame), RevealArea1 at 99.2% and two register
+misses. The same session fixed the map generator (switch tables, int3 padding) and
+allowed Westwood's own inline asm. Cost: about 2.8M tokens, 73 minutes. Merge gate:
+2,935 of 2,935 (456.0 KB).
+
 ### Decide before the first batch
 
 - **Module layout.** Which function lives in which source file, and the link order, decide

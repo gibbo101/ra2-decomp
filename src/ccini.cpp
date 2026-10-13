@@ -14,6 +14,7 @@
 #include "conquer.h"
 #include "coord.h"
 #include "globals.h"
+#include "house.h"
 #include "houstype.h"
 #include "incdec.h"
 #include "infatype.h"
@@ -32,6 +33,11 @@
 #include "xpipe.h"
 #include "xstraw.h"
 
+int __fastcall FUN_0050C170(char const * name);
+int __fastcall FUN_00510FB0(char const * name);
+bool FUN_00510F60(int index);
+char const * __fastcall FUN_00510E10(int index, char * buffer, int size);
+char const * __fastcall FUN_00751590(int index);
 char const * Name_From_BuildCat(int value);
 int BuildCat_From_Name(char const * name);
 VoxType Vox_From_Name(char const * name);
@@ -504,6 +510,12 @@ int CCINIClass::Get_BuildCat(char const * section, char const * entry, int defva
 	return(BuildCat_From_Name(buffer));
 }
 
+// FUNCTION: 0x004750A0
+bool CCINIClass::Put_BuildCat(char const * section, char const * entry, int value)
+{
+	return(Put_String(section, entry, Name_From_BuildCat(value)));
+}
+
 // FUNCTION: 0x004750D0
 int CCINIClass::Get_Owners(char const * section, char const * entry, int defvalue) const
 {
@@ -522,6 +534,78 @@ int CCINIClass::Get_Owners(char const * section, char const * entry, int defvalu
 	return(ownable);
 }
 
+// FUNCTION: 0x00475150
+bool CCINIClass::Put_Owners(char const * section, char const * entry, int value)
+{
+	char buffer[128];
+
+	buffer[0] = '\0';
+
+	if (value == 0) {
+		return(true);
+	}
+
+	for (HousesType house = HOUSE_FIRST; house < HouseTypes.Count(); house++) {
+		HouseTypeClass * type = HouseTypes[house];
+		if ((value & (1 << type->House)) != 0) {
+			if (buffer[0] != '\0') {
+				strcat(buffer, ",");
+			}
+			strcat(buffer, type->Name());
+		}
+	}
+
+	if (buffer[0] != '\0') {
+		return(Put_String(section, entry, buffer));
+	}
+	return(true);
+}
+
+// FUNCTION: 0x00475260
+int CCINIClass::Get_Houses(char const * section, char const * entry, int defvalue) const
+{
+	char buffer[128];
+	int ownable = defvalue;
+
+	if (Get_String(section, entry, "", buffer, sizeof(buffer))) {
+		ownable = 0;
+		char * name = strtok(buffer, ",");
+
+		while (name) {
+			ownable |= (1 << FUN_0050C170(name));
+			name = strtok(NULL, ",");
+		}
+	}
+	return(ownable);
+}
+
+// FUNCTION: 0x004752E0
+bool CCINIClass::Put_Houses(char const * section, char const * entry, int value)
+{
+	char buffer[128];
+
+	buffer[0] = '\0';
+
+	if (value == 0) {
+		return(true);
+	}
+
+	for (int house = 0; house < Houses.Count(); house++) {
+		HouseClass * ptr = Houses[house];
+		if ((value & (1 << ptr->HeapID)) != 0) {
+			if (buffer[0] != '\0') {
+				strcat(buffer, ",");
+			}
+			strcat(buffer, ptr->IniName);
+		}
+	}
+
+	if (buffer[0] != '\0') {
+		return(Put_String(section, entry, buffer));
+	}
+	return(true);
+}
+
 // FUNCTION: 0x004753F0
 ArmorType CCINIClass::Get_ArmorType(char const * section, char const * entry, ArmorType defvalue) const
 {
@@ -529,6 +613,21 @@ ArmorType CCINIClass::Get_ArmorType(char const * section, char const * entry, Ar
 
 	Get_String(section, entry, ArmorName[defvalue], buffer, sizeof(buffer));
 	return(Armor_From_Name(buffer));
+}
+
+// FUNCTION: 0x00475440
+bool CCINIClass::Put_ArmorType(char const * section, char const * entry, ArmorType value)
+{
+	return(Put_String(section, entry, ArmorName[value]));
+}
+
+// FUNCTION: 0x00475460
+bool CCINIClass::Put_VocType(char const * section, char const * entry, VocType value)
+{
+	if ((char)value == VOC_NONE) {
+		return(Put_String(section, entry, "<none>"));
+	}
+	return(Put_String(section, entry, FUN_00751590(value)));
 }
 
 // FUNCTION: 0x004754B0
@@ -546,6 +645,70 @@ LandType CCINIClass::Get_LandType(char const * section, char const * entry, Land
 bool CCINIClass::Put_LandType(char const * section, char const * entry, LandType value)
 {
 	return(Put_String(section, entry, Name_From_Land(value)));
+}
+
+// FUNCTION: 0x00475540
+HousesType CCINIClass::Get_HousesType(char const * section, char const * entry, HousesType defvalue) const
+{
+	char buffer[128];
+
+	if (Get_String(section, entry, "", buffer, sizeof(buffer))) {
+		HousesType house = (HousesType)FUN_00510FB0(buffer);
+		if (FUN_00510F60(house)) {
+			return(house);
+		}
+		house = HouseTypeClass::From_Name(buffer);
+		if (house == HOUSE_NONE) {
+			HouseTypeClass * type = new HouseTypeClass(buffer);
+			return((HousesType)HouseTypes.ID(type));
+		}
+		return(house);
+	}
+	return(defvalue);
+}
+
+// FUNCTION: 0x00475610
+bool CCINIClass::Put_HousesType(char const * section, char const * entry, HousesType value)
+{
+	char buffer[128];
+
+	strcpy(buffer, "<none>");
+	if (FUN_00510F60(value)) {
+		FUN_00510E10(value, buffer, sizeof(buffer));
+	} else if (value == -2) {
+		strcpy(buffer, "<random>");
+	} else if (value == -3) {
+		strcpy(buffer, "<random>");
+	} else if (value != HOUSE_NONE && value >= 0 && value < HouseTypes.Count()) {
+		strcpy(buffer, HouseTypes[value]->Name());
+	}
+	return(Put_String(section, entry, buffer));
+}
+
+// FUNCTION: 0x004756F0
+SideType CCINIClass::Get_Side(char const * section, char const * entry, SideType defvalue) const
+{
+	char buffer[128];
+
+	if (Get_String(section, entry, "", buffer, sizeof(buffer))) {
+		SideType side = SideClass::From_Name(buffer);
+		if (side == SIDE_NONE) {
+			SideClass * type = new SideClass(buffer);
+			return((SideType)Sides.ID(type));
+		}
+		return(side);
+	}
+	return(defvalue);
+}
+
+// FUNCTION: 0x004757A0
+bool CCINIClass::Put_Side(char const * section, char const * entry, SideType value)
+{
+	char const * name = "<none>";
+	if (value != SIDE_NONE) {
+		name = Sides[value]->Name();
+	}
+	return(Put_String(section, entry, name));
 }
 
 // FUNCTION: 0x004757D0
@@ -569,6 +732,23 @@ bool CCINIClass::Put_VQType(char const * section, char const * entry, VQType val
 		return(Put_String(section, entry, "<none>"));
 	}
 	return(Put_String(section, entry, Movies[value]));
+}
+
+// FUNCTION: 0x00475870
+TheaterType CCINIClass::Get_TheaterType(char const * section, char const * entry, TheaterType defvalue) const
+{
+	char buffer[128];
+
+	if (Get_String(section, entry, "", buffer, sizeof(buffer))) {
+		return(Theater_From_Name(buffer));
+	}
+	return(defvalue);
+}
+
+// FUNCTION: 0x004758C0
+bool CCINIClass::Put_TheaterType(char const * section, char const * entry, TheaterType value)
+{
+	return(Put_String(section, entry, Theaters[value].Name));
 }
 
 // FUNCTION: 0x004758F0

@@ -21,6 +21,8 @@ class ShapeButtonClass : public ToggleClass
 		virtual int Draw_Me(int forced=false) override;
 		virtual void Set_Shape(ShapeSet const * data, int override_width = 0, int override_height = 0);
 		ShapeSet const * Get_Shape_Data(void) {return(ShapeData);};
+		void SetLoadedStatus(bool loaded);
+		bool StopFlashing(void);
 
 		enum ShapeButtonClassEnums {
 			UP_SHAPE,

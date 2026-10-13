@@ -1234,6 +1234,434 @@ bool CellClass::Flag_Remove(void)
 	return(false);
 }
 
+// FUNCTION: 0x00483480
+void CellClass::Shimmer(void)
+{
+	ObjectClass * object = Cell_Occupier();
+
+	while (object) {
+		object->Do_Shimmer();
+		object = object->Next;
+	}
+}
+
+// FUNCTION: 0x004834A0
+bool CellClass::Is_Clear_To_Move(SpeedType loco, bool ignoreinfantry, bool ignorevehicles, int zone, MZoneType check, int cell_height, bool checkbridge) const
+{
+	if (loco == SPEED_WINGED) {
+		return(true);
+	}
+
+	if (zone != -1) {
+		if (zone != Map.Get_Cell_Zone(CellID, check, checkbridge)) {
+			return(false);
+		}
+	}
+
+	if (cell_height != -1) {
+		if (cell_height != Height) {
+			if (!IsUnderBridge || cell_height != Height + BRIDGE_CELL_HEIGHT) {
+				return(false);
+			}
+		} else if (IsUnderBridge && !checkbridge) {
+			return(false);
+		}
+	}
+
+	bool bridge = false;
+	int composite;
+	if ((cell_height == -1 || cell_height == Height + BRIDGE_CELL_HEIGHT) && IsUnderBridge) {
+		bridge = true;
+		composite = BridgeFlag.Composite;
+	} else {
+		composite = Flag.Composite;
+	}
+
+	if (ignoreinfantry) {
+		composite &= 0xE0;
+	}
+	if (ignorevehicles) {
+		composite &= 0x5F;
+	}
+	if (composite != 0) {
+		return(false);
+	}
+
+	LandType land = Land_Type();
+
+	OverlayTypeClass const * overlay = NULL;
+	if (Overlay != OVERLAY_NONE) {
+	 	overlay = OverlayTypes[Overlay];
+	}
+	if (overlay != NULL && overlay->IsWall) {
+		if (check != MZONE_DESTROYER && check != MZONE_AMPHIBIOUS_DESTROYER && check != MZONE_INFANTRY_DESTROYER && (check != MZONE_CRUSHER && check != MZONE_AMPHIBIOUS_CRUSHER || !overlay->IsCrushable) && check != 12) {
+			return(false);
+		}
+
+		land = LAND_CLEAR;
+	}
+
+	if (::Ground[land].Cost[loco] == 0 && !bridge) {
+		return(false);
+	}
+
+	return(true);
+}
+
+// FUNCTION: 0x00483610
+bool CellClass::Is_Bridge_Here(void) const
+{
+	return(IsUnderBridge);
+}
+
+// FUNCTION: 0x00483620
+bool CellClass::Can_Tiberium_Grow(void) const
+{
+	if (!Scen->IsTibGrowth) return(false);
+
+	TiberiumType tiberium = Which_Tiberium_Type(Overlay);
+
+	if (tiberium == TIBERIUM_NONE) return(false);
+
+	TiberiumClass *tptr = Tiberiums[tiberium];
+
+	if (Ramp != RAMP_NONE) return(false);
+
+	if (OverlayData >= tptr->FrameCount - 1) return(false);
+
+	if (tptr->GrowthPercentage < 0.00001) return(false);
+
+	return(true);
+}
+
+// FUNCTION: 0x00483690
+bool CellClass::Can_Tiberium_Spread(void) const
+{
+	if (!Scen->Special.IsTSpread) return(false);
+
+	TiberiumType tiberium = Which_Tiberium_Type(Overlay);
+
+	if (tiberium == TIBERIUM_NONE) return(false);
+
+	if (OverlayData <= tiberium / 2) return(false);
+
+	if (Ramp != RAMP_NONE) return(false);
+
+	if (Tiberiums[tiberium]->SpreadPercentage < 0.00001) return(false);
+
+	if (Cell_Occupier() != NULL) return(false);
+
+	return(true);
+}
+
+inline TiberiumType Overlay_Tiberium(CellClass const * cell) { return Which_Tiberium_Type(cell->Overlay); }
+
+// FUNCTION: 0x00483710
+bool CellClass::Grow_Tiberium(void)
+{
+	if (Can_Tiberium_Grow()) {
+		return(Place_Tiberium(Overlay_Tiberium(this), 1));
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00483780
+bool CellClass::Spread_Tiberium(bool forced)
+{
+	if (!forced) {
+		if (!Can_Tiberium_Spread()) return(false);
+	}
+
+	TiberiumType tibtype = Which_Tiberium_Type(Overlay);
+
+	if (!forced) {
+		if (tibtype == TIBERIUM_NONE) return(false);
+	}
+
+	if (tibtype == TIBERIUM_NONE) {
+		tibtype = TIBERIUM_FIRST;
+	}
+
+	TiberiumClass * tiberium = Tiberiums[tibtype];
+	FacingType offset = Random_Pick(FACING_N, FACING_NW);
+	for (FacingType index = FACING_N; index < FACING_COUNT; index++) {
+		FacingType facing = Facing_Add(index, offset);
+		CellClass * newcell;
+		if ((unsigned)facing >= FACING_COUNT) {
+			newcell = this;
+		} else {
+			Cell here = Fetch_CellID();
+			Cell next = here + AdjacentCell[(int)facing & 7];
+			newcell = &Map[next];
+		}
+
+		if (newcell != NULL && newcell->Can_Tiberium_Germinate(tiberium)) {
+			return(newcell->Place_Tiberium(tibtype, 3));
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x004838E0
+bool CellClass::Can_Tiberium_Germinate(TiberiumClass const * tiberium) const
+{
+	if (!Map.In_Local_Radar(CellID)) return(false);
+
+	if (IsUnderBridge || WasUnderBridge) return(false);
+
+	BuildingClass const * building = Cell_Building();
+	if (building != NULL && building->Strength > 0 && !building->Class->IsInvisible && !building->Class->IsInvisibleInGame) return(false);
+
+	TerrainClass * terrain = Cell_Terrain();
+	if (terrain != NULL && terrain->Class->IsTiberiumSpawn) return(false);
+
+	if (!Ground[Land_Type()].Build) return(false);
+
+	if (Overlay != OVERLAY_NONE) return(false);
+
+	if (Ramp != RAMP_NONE) return(false);
+
+	if (ITType >= ISOTILE_FIRST && ITType < IsometricTileTypes.Count() && !IsometricTileTypes[ITType]->IsAllowTiberium) return(false);
+
+	return(true);
+}
+
+// FUNCTION: 0x004839F0
+HRESULT STDMETHODCALLTYPE CellClass::Load(IStream * stream)
+{
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		new (this) CellClass(NoInitClass());
+
+		if (FoggedObjects != NULL) {
+			FoggedObjects = new FOGGED_OBJECT_LIST;
+
+			int count;
+			result = stream->Read(&count, sizeof(count), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+
+			for (int i = 0; i < count; i++) {
+				FoggedObjectClass * fogged = NULL;
+				if (FAILED(stream->Read(&fogged, sizeof(fogged), NULL))) {
+					return(S_OK);
+				}
+				FoggedObjects->Add(fogged);
+			}
+
+			for (int j = 0; j < FoggedObjects->Count(); j++) {
+				Swizzle_Pointer(&(*FoggedObjects)[j]);
+			}
+		}
+
+		PixelFX = NULL;
+
+		int id = CellID.X + CellID.Y * MAP_CELL_W;
+		if (Map.Array[id] != NULL) {
+			delete Map.Array[id];
+			Map.Array[id] = NULL;
+		}
+		Map.Array[id] = this;
+
+		Swizzle_Pointer(&BridgeDeckCell);
+		Swizzle_Pointer(&UnusedCell);
+		Swizzle_Pointer(&Tag);
+		Swizzle_Pointer(&Jumpjet);
+		Swizzle_Pointer(&OccupierPtr);
+		Swizzle_Pointer(&BridgeOccupierPtr);
+		Swizzle_Pointer(&RadSite);
+		Swizzle_Pointer(&Rubble);
+
+		if (Overlay == 0xb3 || Overlay == 0xf2) {
+			Overlay = OVERLAY_NONE;
+			OverlayData = 0;
+		}
+
+		result = S_OK;
+	}
+	return(result);
+}
+
+// FUNCTION: 0x00483C10
+HRESULT STDMETHODCALLTYPE CellClass::Save(IStream * stream, BOOL cleardirty)
+{
+	HRESULT result = BASECLASS::Save(stream, cleardirty);
+	if (SUCCEEDED(result)) {
+		if (FoggedObjects != NULL) {
+			int count = FoggedObjects->Count();
+			result = stream->Write(&count, sizeof(count), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+
+			for (int i = 0; i < count; i++) {
+				result = stream->Write(&(*FoggedObjects)[i], sizeof((*FoggedObjects)[i]), NULL);
+				if (FAILED(result)) {
+					return(S_OK);
+				}
+			}
+		}
+
+		result = S_OK;
+	}
+	return(result);
+}
+
+// FUNCTION: 0x00483C80
+void CellClass::Recalc_Passability(void)
+{
+	if (!Map.In_Local_Radar(CellID)) {
+		Passability = PASSABLE_OUTSIDE;
+		return;
+	}
+
+	if (Overlay != OVERLAY_NONE) {
+		OverlayTypeClass const * overlay = OverlayTypes[Overlay];
+		if (overlay->IsCrushable) {
+			Passability = PASSABLE_CRUSH;
+			return;
+		}
+		if (overlay->IsWall) {
+			Passability = PASSABLE_BLOCKED;
+			return;
+		}
+		if (Ground[overlay->Land].Cost[SPEED_WHEEL] == 0) {
+			Passability = PASSABLE_NO;
+			return;
+		}
+		if (overlay->IsARock) {
+			Passability = PASSABLE_NO;
+			return;
+		}
+		if (overlay->IsRubble) {
+			Passability = PASSABLE_LAND;
+			return;
+		}
+	}
+
+	if (Land == LAND_WATER) {
+		Passability = PASSABLE_WATER;
+		return;
+	}
+
+	if (Land == LAND_BEACH) {
+		Passability = PASSABLE_BEACH;
+		return;
+	}
+
+	if (Ground[Land].Cost[SPEED_WHEEL] <= 0.01) {
+		Passability = PASSABLE_NO;
+		return;
+	}
+
+	ObjectClass * occupier = OccupierPtr;
+	while (occupier != NULL) {
+		switch (occupier->Fetch_RTTI()) {
+			case RTTI_BUILDING:
+				if (((BuildingClass *)occupier)->Class->IsFirestormWall) {
+					if (((BuildingClass *)occupier)->House->FirestormDefenseActivated) {
+						Passability = PASSABLE_NO;
+						return;
+					}
+				} else if (((BuildingClass *)occupier)->Class->IsLaserFence) {
+					if (((BuildingClass *)occupier)->LaserFenceFrame != 12 && ((BuildingClass *)occupier)->LaserFenceFrame != 8) {
+						Passability = PASSABLE_NO;
+					}
+				}
+				break;
+
+			case RTTI_TERRAIN:
+				if ((Scen->Theater != THEATER_SNOW && ((TerrainClass *)occupier)->Class->TemperateOccupationBits != 7) ||
+					(Scen->Theater == THEATER_SNOW && ((TerrainClass *)occupier)->Class->SnowOccupationBits != 7)) {
+
+					Passability = PASSABLE_PARTIALLY_BLOCKED;
+					return;
+				}
+
+				Passability = PASSABLE_BLOCKED;
+				return;
+		}
+		occupier = occupier->Next;
+	}
+
+	Passability = PASSABLE_LAND;
+}
+
+inline void CellClass::Inc_Drawer_Ref_Count(LightConvertClass * convert) const
+{
+	convert->Add_Reference();
+}
+
+// FUNCTION: 0x00483E30
+void CellClass::Init_Drawer(LightConvertClass * drawer, int intensity, int ambient, int brightness, int tile_brightness, int alt_brightness)
+{
+	bool got_drawer = false;
+	int red_tint, green_tint, blue_tint;
+
+	if (drawer != NULL) {
+		if (Drawer != NULL) {
+			Dec_Drawer_Ref_Count(Drawer);
+		}
+		Drawer = drawer;
+		Inc_Drawer_Ref_Count(Drawer);
+
+		red_tint = Drawer->NormalRedTint;
+		green_tint = Drawer->NormalGreenTint;
+		blue_tint = Drawer->NormalBlueTint;
+
+		got_drawer = true;
+
+	} else if (CellID != Cell(0, 0) && CellID != Cell(-1, -1)) {
+		Init_Light(intensity, ambient, brightness, tile_brightness, alt_brightness, red_tint, green_tint, blue_tint);
+
+		if (Drawer != NULL) {
+			int r_clamped = red_tint, g_clamped = green_tint, b_clamped = blue_tint;
+			Clamp_Tile_RGB(r_clamped, g_clamped, b_clamped);
+			if (Drawer->NormalRedTint != r_clamped ||
+				Drawer->NormalGreenTint != g_clamped ||
+				Drawer->NormalBlueTint != b_clamped) {
+				Dec_Drawer_Ref_Count(Drawer);
+				Drawer = NULL;
+			}
+		}
+
+		if (Drawer == NULL) {
+			Drawer = IsometricTileTypeClass::Find_Or_Make_Drawer(red_tint, green_tint, blue_tint);
+			if (Drawer != NULL) {
+				Inc_Drawer_Ref_Count(Drawer);
+			}
+		}
+
+		got_drawer = true;
+	}
+
+	if (got_drawer) {
+		Intensity = intensity;
+		Ambient = ambient;
+		Brightness = brightness;
+		TileBrightness = tile_brightness;
+		AltBrightness = alt_brightness;
+		RedTint = red_tint;
+		GreenTint = green_tint;
+		BlueTint = blue_tint;
+		return;
+	}
+
+	Drawer = IsometricTileTypeClass::Find_Or_Make_Drawer(NORMAL_LIGHT, NORMAL_LIGHT, NORMAL_LIGHT);
+	if (Drawer != NULL) {
+		Inc_Drawer_Ref_Count(Drawer);
+	}
+	Brightness = NORMAL_LIGHT;
+	TileBrightness = NORMAL_LIGHT;
+	AltBrightness = NORMAL_LIGHT;
+	RedTint = NORMAL_LIGHT;
+	GreenTint = NORMAL_LIGHT;
+	BlueTint = NORMAL_LIGHT;
+	Intensity = 0x10000;
+	Ambient = 0;
+}
+
 // FUNCTION: 0x00485200
 HRESULT STDMETHODCALLTYPE CellClass::GetClassID(CLSID * retval)
 {

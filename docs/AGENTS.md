@@ -226,6 +226,12 @@ Each entry: what the diff showed, then the source change that fixed it.
   after the statements before it; placement new adds the test.
 
 ### Constructs
+- Load-all-then-store-all of a struct copy (an RGB colour): copy through a named
+  temporary (`RGBClass c = ...; x->Color = c;`); a direct assignment interleaves.
+- A loop whose inline helpers keep their own null tests: put the test in the `while`
+  condition; a `break` inside the loop lets VC6 fold them.
+- A clamp the original writes as compare-and-store (`if (x < 0) x = 0; return x;`);
+  an early `return 0` gives setl/dec/and.
 - Deleting destructor (`test flags,1`, then `operator delete`; callers `push 1` to a
   vtable slot): declare the destructor virtual and annotate `~Class`; check.py tries
   `??1`, `??_G` and `??_E`. `??_G` is emitted only if something `delete`s the class.
@@ -307,6 +313,10 @@ Each entry: what the diff showed, then the source change that fixed it.
   (blitblit.h's blitter specialisations): keep those blocks unchanged; they are the
   original. Asm you write yourself, or edits to Westwood's, are still banned.
 - The message list is `Session.Messages`, not a global; Add_Message takes YR's 7 arguments.
+- A static member with a constructor added to a widely included header (`dsurface.h`)
+  renumbers the `$E` markers of every file that includes it: declare it extern in the user.
+- YR's PassabilityType has PASSABLE_BEACH at 3 (8 values); Draw_Voxel takes 10 arguments;
+  Record_The_Kill takes `HouseClass *`.
 
 ## Known dead ends
 

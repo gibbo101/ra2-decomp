@@ -79,6 +79,8 @@ class SidebarClass : public PowerClass
 		bool Add(RTTIType type, int ID);
 		bool Sidebar_Click(KeyNumType & input, int x, int y);
 		void Recalc(void);
+		void FUN_006A5090(void);
+		void FUN_006A5130(bool flag);
 		bool Factory_Link(FactoryClass * factory, RTTIType type, int id);
 
 		int Max_Visible(void);
@@ -100,6 +102,7 @@ class SidebarClass : public PowerClass
 
 					StripClass * Strip;
 					int Index;
+					int unknown_34;
 
 				protected:
 					virtual int Action(unsigned flags, KeyNumType & key, int modifier) override;
@@ -136,6 +139,7 @@ class SidebarClass : public PowerClass
 					OBJECT_WIDTH=64,
 					MAX_VISIBLE=4,
 					MAX_SLOTS=20,
+					SELECT_BUTTONS=240,
 					SCROLL_RATE=OBJECT_HEIGHT,
 					UP_X_OFFSET=5,
 					UP_Y_OFFSET=25,
@@ -214,7 +218,7 @@ class SidebarClass : public PowerClass
 
 				static ShapeButtonClass UpButton[COLUMNS];
 				static ShapeButtonClass DownButton[COLUMNS];
-				static SelectClass SelectButton[COLUMNS][MAX_SLOTS];
+				static SelectClass SelectButton[SELECT_BUTTONS];
 
 		};
 

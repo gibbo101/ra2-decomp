@@ -48,17 +48,23 @@
 #include "tube.h"
 #include "vein.h"
 #include "zbuffer.h"
+#include "multiplayer.h"
 #include "overlay.hh"
 #include "ramp.hh"
 #include <new>
 #include <cmath>
 
 int SubzoneHash(unsigned int const & key);
+extern int DAT_00ABDE88;
 
 #define IS_TILE_IN_SET(setname, setsize) (tile >= IsometricTileTypeClass::setname && tile < IsometricTileTypeClass::setname + setsize)
 
 extern void FUN_00561910(void);
 extern void FUN_005638D0(void);
+
+extern int DAT_007ED3CC[];
+extern int DAT_007ED3D0[];
+namespace Unsorted { extern Cell CellSpreadTable[]; }
 
 // FUNCTION: 0x005616F0 $E2
 // FUNCTION: 0x00561710 $E5
@@ -226,6 +232,22 @@ LONG STDMETHODCALLTYPE MapClass::Is_Visible(CellStruct cell)
 	return((*this)[cell].IsFogVisible);
 }
 
+// FUNCTION: 0x00565730
+CellClass & MapClass::operator[](Coord const & coord) const
+{
+	int x = coord.X / CELL_LEPTON_W;
+	int y = coord.Y / CELL_LEPTON_H;
+
+	int cellnum = x + y * MAP_CELL_H;
+
+	if (cellnum >= 0 && cellnum < Array.Length() && Array[cellnum] != NULL) {
+		return(*Array[cellnum]);
+	}
+
+	InvalidCell.CellID = Cell(x, y);
+	return(InvalidCell);
+}
+
 // FUNCTION: 0x005657A0
 CellClass & MapClass::operator[](Cell const & cell) const
 {
@@ -333,6 +355,284 @@ void MapClass::Free_Cells(void)
 			Array[i] = NULL;
 		}
 	}
+}
+
+// FUNCTION: 0x00565BC0
+void MapClass::Init_Cells(void)
+{
+	TotalValue = 0;
+	for (int y = 0; y < MAP_CELL_H; y++) {
+		for (int x = 0; x < MAP_CELL_W; x++) {
+			int cellnum = x + y * MAP_CELL_H;
+			if (cellnum < Array.Length() && Array[cellnum] != NULL) {
+				new (Array[cellnum]) CellClass;
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x00567110
+void MapClass::Fresh_Map(void)
+{
+	int i;
+
+	if (CellZones != NULL) {
+		delete [] CellZones;
+		CellZones = NULL;
+	}
+	if (CellSubzones != NULL) {
+		delete [] CellSubzones;
+		CellSubzones = NULL;
+	}
+
+	CellZoneCount = (PlayRect.Width + PlayRect.Height + 1) * (PlayRect.Width + PlayRect.Height + 1);
+
+	CellZones = new CellZoneStruct[CellZoneCount];
+	CellSubzones = new CellSubzoneStruct[CellZoneCount];
+
+	Search.Update_Map_Dimensions(PlayRect);
+
+	for (i = 0; i < SUBZONE_COUNT; i++) {
+		int v = (1 << (i + 1));
+		SubzoneTracking[i].Set_Growth_Step((4 * PlayRect.Width * PlayRect.Height) / (v * v));
+	}
+
+	Overpass();
+	Compute_Zone_Connections();
+	Zone_Reset();
+	for (int index = SUBZONE_COUNT - 1; index >= 0; index--) {
+		SubzoneTracking[index].Clear();
+		Reset_Subzone(index);
+	}
+	Search.Reset();
+}
+
+// FUNCTION: 0x00567230
+void MapClass::Set_Local_Dimensions(Rect const & size)
+{
+	LocalRect = Intersect(size, PlayRect);
+	LocalRect.X = MAX(LocalRect.X, 2);
+	LocalRect.Y = MAX(LocalRect.Y, 2);
+	LocalRect.Width = MIN(LocalRect.Width, PlayRect.Width - LocalRect.X - 2);
+	LocalRect.Height = MIN(LocalRect.Height, PlayRect.Height - LocalRect.Y - (2 * 3));
+
+	Map.Flag_To_Redraw(GS_REDRAW_ALL);
+	for (int i = 0; i < Technos.Count(); i++) {
+		TechnoClass * t = Technos[i];
+		bool was = t->IsInPlayfield;
+		t->IsInPlayfield = In_Local_Radar(t->PositionCell);
+		if (!was && t->IsInPlayfield && t->House->Is_Player_Control() && t->RTTI != RTTI_BUILDING && t->IsActive && !t->IsInLimbo) {
+			t->Look();
+		}
+	}
+}
+
+// FUNCTION: 0x00567370
+void MapClass::RevealArea0(int, int, Coord * coord, int sightrange, HouseClass * house, bool a, bool b, bool c, bool d)
+{
+	RevealArea1(coord, sightrange, house, a, b, c, d, true);
+}
+
+// FUNCTION: 0x005678E0
+void MapClass::RevealArea2(Coord * xcoord, int sightrange, HouseClass * house, bool incremental, bool dont_map, bool unfog, bool byheight, bool increase)
+{
+	int cell_height = xcoord->Z / DAT_00ABDE88;
+
+	Coord coord = *xcoord;
+	coord.X = coord.X + (Tactical::Z_Lepton_To_Pixel(coord.Z) / -30) * CELL_LEPTON;
+	coord.Y = coord.Y + (Tactical::Z_Lepton_To_Pixel(coord.Z) / -30) * CELL_LEPTON;
+
+	Cell cell = coord.As_Cell();
+	Cell hoffset = cell - xcoord->As_Cell() - Cell(2, 2);
+
+	bool edge = (Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) && Session.MPGameMode != NULL && !Session.MPGameMode->vt_entry_04();
+
+	if (!In_Radar(cell)) return;
+	if (!sightrange) return;
+	if (sightrange >= 11 || sightrange > 10) {
+		sightrange = 10;
+	}
+
+	int count = RadiusCount[sightrange];
+	Cell const * ptr = &RadiusOffset[0];
+	Cell const * ptr2 = &OcclusionOffset[0];
+	if (!Rule->IsRevealByHeight && incremental) {
+		if (sightrange > 2) {
+			ptr += RadiusCount[sightrange - 3];
+			ptr2 += RadiusCount[sightrange - 3];
+			count -= RadiusCount[sightrange - 3];
+		}
+	}
+	ptr2--;
+
+	if (house != NULL && PlayerPtr != NULL) {
+		if (house != PlayerPtr) {
+			if ((house->RadarSpied & (1 << PlayerPtr->Class->House)) != 0) {
+				house = PlayerPtr;
+			}
+		}
+		if (house != PlayerPtr) {
+			if (house->Is_Ally(PlayerPtr) && Rule->IsAllyReveal) {
+				house = PlayerPtr;
+			}
+		}
+	}
+
+	if (house != PlayerPtr) {
+		return;
+	}
+
+	while (count--) {
+		Cell newcell;
+		ptr2++;
+		newcell = cell + *ptr++;
+
+		if (!In_Radar(newcell)) continue;
+		if (abs(newcell.X - cell.X) > sightrange) continue;
+		if (Distance(newcell, cell) > sightrange) continue;
+
+		CellClass * cellptr = &(*this)[newcell];
+		if (byheight && Rule->IsRevealByHeight) {
+			Cell offcell;
+			offcell.X = newcell.X - hoffset.X;
+			offcell.Y = newcell.Y - hoffset.Y;
+			if (Map[*ptr2 + offcell].Height > cell_height + 3) continue;
+		}
+
+		int cx = cellptr->CellID.X;
+		int cy = cellptr->CellID.Y;
+		cellptr->IsToFog = false;
+		if (unfog) {
+			if (cellptr->IsPlot && cellptr->IsCursorHere) continue;
+			if (!cellptr->IsFogVisible) continue;
+			Map.Fog_Map_Cell(newcell, house);
+		} else {
+			if (edge) {
+				if (cx == 7) {
+					if (cy == PlayRect.Width + 5) continue;
+				} else if (cx == 13) {
+					if (cy == PlayRect.Width + 11) continue;
+				}
+				if (cx == PlayRect.Height + 13) {
+					if (cy == PlayRect.Width + PlayRect.Height - 15) continue;
+				}
+			}
+			Map.RevealFogShroud(newcell, house, increase);
+		}
+	}
+}
+
+static inline void Reveal_Radius(int & height, int & radius)
+{
+	if (radius > 11) {
+		radius = 11;
+	} else if (radius < 3) {
+		radius = 3;
+	}
+
+	if (height < 0) {
+		height = 0;
+		goto base;
+	}
+	if (height > 8) {
+		height = 8;
+	}
+	if (height == 0) {
+base:
+		radius = DAT_007ED3D0[radius];
+	} else {
+		radius = DAT_007ED3D0[radius] - DAT_007ED3CC[height];
+	}
+}
+
+// FUNCTION: 0x00567DA0
+void MapClass::RevealArea3(Coord const & coord, int height, int radius, int skipreveal)
+{
+	Reveal_Radius(height, radius);
+
+	if (!skipreveal) {
+		Coord c = coord;
+		c.X += (Tactical::Z_Lepton_To_Pixel(c.Z) / -30) * CELL_LEPTON;
+		c.Y += (Tactical::Z_Lepton_To_Pixel(c.Z) / -30) * CELL_LEPTON;
+		Cell center = c.As_Cell();
+		Cell const * ptr = Unsorted::CellSpreadTable;
+		if (height != 0) {
+			ptr = &Unsorted::CellSpreadTable[DAT_007ED3CC[height]];
+		}
+		while (radius--) {
+			Cell cell = *ptr++ + center;
+			CellClass * cptr = &(*this)[cell];
+			char occ = TacticalMap->Cell_Shadow(cell, false);
+			if (occ != cptr->ShadowFrame) {
+				cptr->ShadowFrame = occ;
+				cptr->VisibilityChanged = true;
+				TacticalMap->Flag_Cell(*cptr);
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x00567F70
+void MapClass::Shroud_Gap_Area(Coord const & coord, int radius)
+{
+	Coord c = coord;
+	c.X += (Tactical::Z_Lepton_To_Pixel(c.Z) / -30) << 8;
+	c.Y += (Tactical::Z_Lepton_To_Pixel(c.Z) / -30) << 8;
+	Cell center = c.As_Cell();
+
+	for (int dx = -2 - radius; dx < radius + 2; dx++) {
+		for (int dy = -2 - radius; dy < radius + 2; dy++) {
+			if (dx * dx + dy * dy < (radius + 1) * (radius + 1)) {
+				Cell cell = center + Cell(dx, dy);
+				if (Map[cell].ShroudCounter == 0) {
+					Map[cell].ShroudCounter = 1;
+					Map[cell].IsFogVisible = false;
+					Map[cell].IsAltUnknown = false;
+				}
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x00568140
+void MapClass::Unshroud_Gap_Area(Coord const & coord, int radius)
+{
+	Coord c = coord;
+	c.X += (Tactical::Z_Lepton_To_Pixel(c.Z) / -30) << 8;
+	c.Y += (Tactical::Z_Lepton_To_Pixel(c.Z) / -30) << 8;
+	Cell center = c.As_Cell();
+
+	for (int dx = -2 - radius; dx < radius + 2; dx++) {
+		for (int dy = -2 - radius; dy < radius + 2; dy++) {
+			if (dx * dx + dy * dy < (radius + 1) * (radius + 1)) {
+				Cell cell = center + Cell(dx, dy);
+				Map[cell].ShroudCounter = 0;
+				Map[cell].GapsCoveringThisCell = 0;
+				Map[cell].IsAltUnknown = true;
+				Map[cell].IsFogVisible = true;
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x00568300
+bool MapClass::In_Radar(Cell const & cell) const
+{
+	int x = cell.X;
+	int y = cell.Y;
+	if ((x + y > PlayRect.Width) &&
+		(x - y < PlayRect.Width) &&
+		(y - x < PlayRect.Width) &&
+		(x + y <= PlayRect.Width + 2 * PlayRect.Height)) {
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00568350
+bool MapClass::In_Radar(Coord const & coord) const
+{
+	return(In_Radar(coord.As_Cell()));
 }
 
 // FUNCTION: 0x0056CB80

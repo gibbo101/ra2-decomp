@@ -1619,6 +1619,138 @@ void TeamClass::TMission_CLEAR_GLOBAL(TeamMissionClass * mission, bool)
 	IsNextMission = true;
 }
 
+// FUNCTION: 0x006EDAF0
+void TeamClass::TMission_SET_LOCAL(TeamMissionClass * mission, bool)
+{
+	Scen->Set_Local_To(mission->Data.Value, true);
+	IsNextMission = true;
+}
+
+// FUNCTION: 0x006EDB20
+void TeamClass::TMission_CLEAR_LOCAL(TeamMissionClass * mission, bool)
+{
+	Scen->Set_Local_To(mission->Data.Value, false);
+	IsNextMission = true;
+}
+
+// FUNCTION: 0x006EDB50
+void TeamClass::TMission_HOUND_DOG(TeamMissionClass * mission, bool)
+{
+	Calc_Center(Zone, ClosestMember);
+	Target = Zone;
+	Coordinate_Move();
+
+	TechnoClass *trgt = Dynamic_Cast<TechnoClass *>(Zone);
+	if (trgt != NULL) {
+		FootClass *unit = Member;
+		while (unit != NULL) {
+			if (_Is_It_Playing(unit)) {
+				if (unit->TarCom != NULL && unit->TarCom != trgt->TarCom) {
+					unit->Assign_Target(NULL);
+				}
+				if (trgt->TarCom != NULL) {
+					if (!unit->Locomotion->Is_Moving() && unit->Is_Weapon_Equipped() && unit->Mission == MISSION_GUARD) {
+						unit->QueueMission(MISSION_ATTACK, false);
+						unit->Assign_Target(trgt->TarCom);
+					}
+				}
+			}
+			unit = unit->Member;
+		}
+	}
+}
+
+// FUNCTION: 0x006EDC70
+void TeamClass::TMission_UNPANIC(TeamMissionClass * mission, bool)
+{
+	FootClass *unit = Member;
+	while (unit != NULL) {
+		unit->Stop_Fear();
+		unit = unit->Member;
+	}
+	IsNextMission = true;
+}
+
+// FUNCTION: 0x006EDCA0
+void TeamClass::TMission_FORCE_FACING(TeamMissionClass * mission, bool)
+{
+	FootClass *unit = Member;
+	bool is_complete = true;
+	while (unit != NULL) {
+		if (unit->Locomotion->Is_Moving()) {
+			is_complete = false;
+		} else {
+			if (unit->PrimaryFacing.Current() != mission->Data.Facing) {
+				unit->Locomotion->Do_Turn((DirStruct &)DirType(mission->Data.Facing));
+			}
+		}
+		unit = unit->Member;
+	}
+	if (is_complete) {
+		IsNextMission = true;
+	}
+}
+
+// FUNCTION: 0x006EDD60
+void TeamClass::TMission_PANIC(TeamMissionClass * mission, bool)
+{
+	FootClass *unit = Member;
+	while (unit != NULL) {
+		unit->Start_Fear();
+		unit = unit->Member;
+	}
+	IsNextMission = true;
+}
+
+// FUNCTION: 0x006EDD90
+void TeamClass::TMission_BERZERK(TeamMissionClass * mission, bool)
+{
+	FootClass *unit = Member;
+	while (unit != NULL) {
+		unit->Berzerk();
+		unit = unit->Member;
+	}
+	IsNextMission = true;
+}
+
+// FUNCTION: 0x006EDDC0
+void TeamClass::TMission_IDLE_ANIM(TeamMissionClass * mission, bool)
+{
+	FootClass *unit = Member;
+	while (unit != NULL) {
+		unit->Do_Idle(mission->Data.Value);
+		unit = unit->Member;
+	}
+	IsNextMission = true;
+}
+
+// FUNCTION: 0x006EDE10
+void TeamClass::TMission_LOOP(TeamMissionClass * mission, bool)
+{
+	Script->Set_Line(mission->Data.Value-2);
+	IsNextMission = true;
+}
+
+// FUNCTION: 0x006EDE40
+void TeamClass::TMission_WIN(TeamMissionClass * mission, bool)
+{
+	PlayerPtr->Flag_To_Win();
+	IsNextMission = true;
+}
+
+// FUNCTION: 0x006EDE60
+void TeamClass::TMission_LOSE(TeamMissionClass * mission, bool)
+{
+	PlayerPtr->Flag_To_Lose();
+	IsNextMission = true;
+}
+
+// FUNCTION: 0x006EDE80
+void TeamClass::TMission_PLAY_SPEECH(TeamMissionClass * mission, bool)
+{
+	IsNextMission = true;
+}
+
 // FUNCTION: 0x006EDEF0
 void TeamClass::TMission_PLAY_MUSIC(TeamMissionClass * mission, bool)
 {

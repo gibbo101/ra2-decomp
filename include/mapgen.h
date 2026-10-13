@@ -156,6 +156,8 @@ public:
 
 		DynamicVectorClass<int> *NeighborRegions;
 
+		int Unknown4;
+
 		int ID;
 
 		int CellCount;
@@ -171,6 +173,8 @@ public:
 		bool HasConnections;
 
 		int SplitCount;
+
+		int Unknown20;
 
 		bool Discardable;
 

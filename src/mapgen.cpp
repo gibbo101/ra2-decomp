@@ -230,6 +230,93 @@ void FUN_0058B820(void)
 	}
 }
 
+// FUNCTION: 0x0058BB00
+Point2D FUN_0058BB00(int index)
+{
+	if (index >= 0 && index < DAT_00ABED0C) {
+		return DAT_00ABE328[index];
+	}
+	return Point2D(0, 0);
+}
+
+// FUNCTION: 0x0058BB30
+void FUN_0058BB30(void)
+{
+	if (Scen != NULL) {
+		Scen->NumberStartingPoints = DAT_00ABED0C;
+		for (int j = 0; j < Scen->NumberStartingPoints; j++) {
+			Scen->StartingPoints[j] = Start_Point(j);
+			Scen->HouseHomeCells[j] = DAT_00ABE304[j];
+		}
+		Scen->StartX = DAT_00ABDFD4;
+		Scen->StartY = DAT_00ABDFD0;
+		Scen->Width = DAT_00ABEC90;
+		Scen->Height = DAT_00ABECD0;
+	}
+}
+
+// FUNCTION: 0x0058BC20
+void FUN_0058BC20(void)
+{
+	DAT_00ABED0C = 0;
+}
+
+DynamicVectorClass<MapRegionClass *> MapRegionClass::MapRegions;
+
+// FUNCTION: 0x0058BC30 $E197
+// FUNCTION: 0x0058BC70 $E194
+
+// FUNCTION: 0x0058BCD0
+bool FUN_0058BCD0(int value)
+{
+	return value == 1 || value == 3 || value == 4;
+}
+
+static inline bool Is_Three_Or_Four(int value)
+{
+	return value == 3 || value == 4;
+}
+
+// FUNCTION: 0x0058BCF0
+bool FUN_0058BCF0(int value)
+{
+	return !Is_Three_Or_Four(value);
+}
+
+// FUNCTION: 0x0058BD20
+bool FUN_0058BD20(int value)
+{
+	return value == 3 || value == 4;
+}
+
+// FUNCTION: 0x0058BD40
+bool FUN_0058BD40(int value)
+{
+	return value == 4 || value == 3;
+}
+
+// FUNCTION: 0x0058BD60
+bool FUN_0058BD60(int value)
+{
+	return value == 3 || value == 4;
+}
+
+// FUNCTION: 0x0058BD80
+bool FUN_0058BD80(int a, int b)
+{
+	switch (a) {
+		case 0:
+			return b == 3;
+		case 1:
+		case 3:
+		case 4:
+			return b != 3;
+		case 2:
+			return true;
+	}
+	return false;
+}
+
 // FUNCTION: 0x0058BDC0
 MapRegionClass::CellData::CellData(void) :
 	CellID(0,0),
@@ -277,6 +364,29 @@ Cell MapRegionClass::Pick_Random_Clear_Map_Cell(void)
 			return(cell);
 		}
 	}
+}
+
+// FUNCTION: 0x0058BF70
+MapRegionClass::MapRegionClass(Cell cell) :
+	NeighborRegions(0),
+	Unknown4(0),
+	ID(TotalCount),
+	CellCount(0),
+	CellHeight(Map[cell].Height),
+	ContainsWater(Map[cell].Is_Tile_With_Water()),
+	Position(cell),
+	Unsplittable(false),
+	HasConnections(true),
+	SplitCount(0),
+	Unknown20(0),
+	Discardable(false),
+	Cells(),
+	RegionBounds(0,0,0,0)
+{
+	Cells.Set_Growth_Step(100000);
+
+	TotalCount++;
+	MapRegions.Add(this);
 }
 
 // FUNCTION: 0x0058C1C0

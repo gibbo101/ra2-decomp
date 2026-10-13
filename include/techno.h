@@ -470,7 +470,7 @@ class TechnoClass : public RadioClass
 		virtual void Draw_Action_Line(void) const;
 		virtual unsigned GetDisguiseFlags(unsigned flags) const;
 		virtual bool IsClearlyVisibleTo(HouseClass * house) const;
-		virtual void Draw_Voxel(VoxelDataStruct const & voxeldata, int frame, int key, VoxelIndexClass * cache, Rect const & cliprect, Point2D const & point, Matrix3D const & matrix, int brightness, ShapeFlags_Type negflags) const;
+		virtual void Draw_Voxel(VoxelDataStruct const & voxeldata, int frame, int key, VoxelIndexClass * cache, Rect const & cliprect, Point2D const & point, Matrix3D const & matrix, int brightness, int unknown, ShapeFlags_Type negflags) const;
 		virtual void vt_entry_448(unsigned, unsigned);
 		virtual void Draw_Health_Bar(Point2D const & point, Rect const & rect, bool sensed_underground) const;
 		virtual void Draw_Pips(Point2D const & bottomleft, Point2D const & bottomright, Rect const & rect) const;
@@ -558,7 +558,7 @@ class TechnoClass : public RadioClass
 		void StartReloading(void);
 		void Base_Is_Attacked(TechnoClass const * enemy);
 		void Kill_Cargo(TechnoClass * source);
-		virtual void Record_The_Kill(TechnoClass * source) override;
+		virtual void Record_The_Kill(HouseClass * source) override;
 		virtual bool In_Range(Coord const & coord, int which=0) const override;
 		virtual void Override_Mission(MissionType mission, AbstractClass * tarcom, AbstractClass * navcom) override;
 		virtual bool Restore_Mission(void) override;

@@ -18,6 +18,7 @@ class AircraftTrackerClass
 {
 	public:
 		void Add(FootClass * foot);
+		void Remove(FootClass * foot);
 };
 
 class ParasiteClass;
@@ -223,6 +224,7 @@ class FootClass : public TechnoClass
 		void Link_DropPod(void);
 		Cell Move_Order(Cell const & where, bool consider_fog);
 		void AbortMotion(void);
+		void UpdatePassengerCoords(void);
 
 		virtual VisualType Visual_Character(bool raw = false, HouseClass const * = NULL) const override;
 		virtual bool Limbo(void) override;

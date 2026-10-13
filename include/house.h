@@ -399,6 +399,7 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 		void Super_Weapon_Handler(void);
 		int * Factory_Counter(RTTIType rtti);
 		int Factory_Count(RTTIType rtti) const;
+		double FUN_0050C050(TechnoTypeClass const * type) const;
 		double FUN_0050C0A0(TechnoTypeClass const * type) const;
 		int FUN_00500910(RTTIType rtti, bool naval) const;
 		DiffType Assign_Handicap(DiffType handicap);

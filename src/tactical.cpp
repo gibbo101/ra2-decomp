@@ -274,21 +274,6 @@ void Tactical::Setup_Trigger_Scroll(Coord const & coord, int speed)
 	MoveFrom = TacticalCoord;
 }
 
-void Tactical::Set_Tactical_Position(Point2D const & point)
-{
-	Point2D clamped = point;
-	Point2D result;
-	if (Clamp_To_Tactical_Rect(clamped) && !Debug_Map) {
-		result = clamped;
-	} else {
-		result = point;
-	}
-	TacticalCoord = result;
-	DesiredTacticalCoord = result;
-	Update_Visible_Cells();
-	IsToRedraw = true;
-}
-
 // FUNCTION: 0x006D2540
 void Tactical::AI(void)
 {
@@ -708,6 +693,99 @@ void Tactical::Draw_Screen_Text(wchar_t const * text)
 bool Tactical::Blit_Tiles(void)
 {
 	return(LogicalSurface->Blit_From(TacticalRect, *TileSurface, TacticalRect));
+}
+
+// FUNCTION: 0x006D5F60
+void Tactical::Set_View_Dimensions(Rect const & dimensions)
+{
+	TacticalDimensions = dimensions;
+	Set_Tactical_Position(DesiredTacticalCoord);
+}
+
+// FUNCTION: 0x006D6000
+void Tactical::Set_Tactical_Position(Point2D const & point)
+{
+	Point2D clamped = point;
+	Point2D result;
+	if (Clamp_To_Tactical_Rect(clamped) && !Debug_Map) {
+		result = clamped;
+	} else {
+		result = point;
+	}
+	TacticalCoord = result;
+	DesiredTacticalCoord = result;
+	Update_Visible_Cells();
+	IsToRedraw = true;
+}
+
+// FUNCTION: 0x006D6170
+Point2D Tactical::Get_Tactical_Position(void)
+{
+	return(TacticalCoord);
+}
+
+// FUNCTION: 0x006D6190
+Point2D Tactical::Get_Relative_Tactical_Position(void)
+{
+	Point2D tac_offset = Point2D(TacPixelX, TacPixelY);
+	return(TacticalCoord - tac_offset);
+}
+
+// FUNCTION: 0x006D61C0
+void Tactical::Rectangular_To_Isometric(int xin, int yin, int & xout, int & yout)
+{
+	xout = xin * 60 / 2;
+	yout = xin * 30 / 2;
+	xout += yin * 60 / -2;
+	yout += yin * 30 / 2;
+}
+
+// FUNCTION: 0x006D6220
+void Tactical::Isometric_To_Rectangular(int xin, int yin, int & xout, int & yout)
+{
+	xout = ((60 / 2) * yin + (30 / 2) * xin) / 576 - 65536;
+	yout = ((60 / 2) * yin - (30 / 2) * xin) / 576 + 65536;
+}
+
+// FUNCTION: 0x006D6280
+void Tactical::Cell_To_Rectangular(int xin, int yin, int & xout, int & yout)
+{
+	int xsh = xin << 8;
+	int ysh = yin << 8;
+	xout = ((60 / 2) * ysh + (30 / 2) * xsh) / 576 - 65536;
+	yout = ((60 / 2) * ysh - (30 / 2) * xsh) / 576 + 65536;
+}
+
+// FUNCTION: 0x006D62E0
+void Tactical::Lepton_To_Map_Pixel(int xin, int yin, int & xout, int & yout)
+{
+	Rectangular_To_Isometric(xin, yin, xout, yout);
+
+	xout = xout / 256;
+	yout = yout / 256;
+
+	xout += (60 / 2) * 512;
+}
+
+// FUNCTION: 0x006D6370
+void Tactical::Cell_To_Rectangular_Centered(int xin, int yin, int & xout, int & yout)
+{
+	static int xoff = -1;
+	static int yoff = -1;
+
+	int x, y;
+	Cell_To_Rectangular(xin, yin, x, y);
+
+	if (xoff == -1 && yoff == -1) {
+		xoff = -65536;
+		yoff = 65536;
+	}
+
+	x -= xoff;
+	y -= yoff;
+
+	xout = x;
+	yout = y;
 }
 
 // FUNCTION: 0x006D6A90

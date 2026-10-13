@@ -235,7 +235,7 @@ class CellClass : public AbstractClass
 		bool Can_Tiberium_Germinate(TiberiumClass const * tiberium) const;
 		bool Can_Tiberium_Grow(void) const;
 		bool Can_Tiberium_Spread(void) const;
-		bool Is_Bridge_Here(void) const {return(IsUnderBridge);}
+		bool Is_Bridge_Here(void) const;
 		int GetLevel(void) const;
 		BuildingClass * Cell_Building(void) const;
 		Cell Fetch_CellID(void) const {return(CellID);}
@@ -323,6 +323,7 @@ class CellClass : public AbstractClass
 
 		bool Is_Fogged(void) const;
 		bool Is_Shrouded(void) const;
+		void Unshroud(void);
 		bool Can_Build_Here(void) const;
 		int Occupation_Mask(HousesType house) const;
 

@@ -1387,3 +1387,267 @@ VisualType FootClass::Visual_Character(bool raw, HouseClass const * house) const
 
 	return(visual);
 }
+
+// FUNCTION: 0x004DAF10
+void FootClass::Draw_A_VXL(VoxelDataStruct const & voxeldata, int frame, int key, VoxelIndexClass * cache, Rect const & cliprect, Point2D const & point, Matrix3D const & matrix, int brightness, ShapeFlags_Type flags, int unknown) const
+{
+	Matrix3D mtx = matrix;
+	Point2D pt = point;
+
+	if (Locomotion != NULL) {
+		pt = Point2D(Locomotion->Draw_Point()) + point;
+	}
+
+	TechnoClass::Draw_Voxel(voxeldata, frame, key, cache, cliprect, pt, mtx, brightness, unknown, flags);
+}
+
+// FUNCTION: 0x004DAFC0
+int FootClass::Get_Z_Adjust(void) const
+{
+	int adjust = 0;
+	if (Locomotion != NULL) {
+		adjust = Locomotion->Z_Adjust();
+	}
+
+	int column = TClass->ZFudgeColumn * Get_Z_Fudge_Column();
+	int tunnel = TClass->ZFudgeTunnel * Get_Z_Fudge_Tunnel();
+	int cliff = TClass->ZFudgeCliff * Get_Z_Fudge_Cliff();
+	int bridge = 0;
+	if (Is_Z_Fudge_Bridge()) {
+		bridge = TClass->ZFudgeBridge;
+	}
+
+	int max_fudge = MAX(column, tunnel);
+	max_fudge = MAX(max_fudge, cliff);
+	max_fudge = MAX(max_fudge, bridge);
+
+	adjust += BASECLASS::Get_Z_Adjust();
+	adjust += max_fudge;
+	return(adjust);
+}
+
+// FUNCTION: 0x004DB0A0
+ZGradientType FootClass::Get_Z_Gradient(void) const
+{
+	if (Locomotion != NULL) {
+		return(Locomotion->Z_Gradient());
+	}
+	return(ZGRAD_90DEG);
+}
+
+// FUNCTION: 0x004DB0D0
+void FootClass::Draw_Voxel_Shadow(VoxelDataStruct const & voxeldata, int layer_index, int key, VoxelIndexClass * cache, Rect const & cliprect, Point2D const & point, Matrix3D const & matrix, bool force_cache, Surface * surface, int shadow_x, int shadow_y) const
+{
+	if (Locomotion != NULL && Locomotion->Is_To_Have_Shadow() == (boolean)true) {
+		Point2D drawpoint = point;
+		if (Locomotion != NULL) {
+			drawpoint = Point2D(Locomotion->Shadow_Point()) + point;
+		}
+		Techno_Draw_Voxel_Shadow(voxeldata, layer_index, key, cache, cliprect, drawpoint, matrix, force_cache, surface, shadow_x, shadow_y);
+	}
+}
+
+// FUNCTION: 0x004DB1A0
+int FootClass::Current_Speed(void)
+{
+	int speed = Get_Max_Speed() * House->FUN_0050C050(TClass) * SpeedBias;
+	if (Has_Ability(ABILITY_FASTER)) {
+		speed *= Rule->VeteranSpeed;
+	}
+	speed *= Speed;
+	if (RTTI == RTTI_UNIT && ((UnitClass *)this)->Flagged != HOUSE_NONE) {
+		speed /= 2;
+	}
+	return(speed);
+}
+
+// FUNCTION: 0x004DB250
+void FootClass::Draw_It(Point2D const &, Rect const &) const
+{
+}
+
+// FUNCTION: 0x004DB260
+bool FootClass::Limbo(void)
+{
+	if (!IsInLimbo && Techno_Type_Class() != NULL) {
+		Cell cell = LastAdjacencyCell;
+		for (int face = FACING_FIRST; face < FACING_COUNT; face++) {
+			Cell c = Adjacent_Cell_By_Value(cell, FacingType(face));
+			CellClass * cptr = &Map[c];
+			cptr->AdjacentObjectCount--;
+		}
+		if (!ScenarioInit) {
+			Stop_Driver();
+		}
+		if (Locomotion != NULL) {
+			Locomotion->Mark_All_Occupation_Bits(0);
+			Locomotion->Limbo();
+		}
+		MoveSoundAudioController.End();
+		if (Techno_Type_Class()->SensorsSight != 0) {
+			RemoveSensorsAt(CELL_NONE);
+		}
+		if (GetLastFlightMapCoords() != CELL_NONE) {
+			AircraftTracker.Remove(this);
+		}
+	}
+	return(BASECLASS::Limbo());
+}
+
+void __fastcall FUN_004E02C0(void * loco);
+
+// FUNCTION: 0x004DB3C0
+HRESULT STDMETHODCALLTYPE FootClass::Load(IStream * stream)
+{
+	if (Locomotion) {
+		((ILocomotion *)Locomotion)->Release();
+	}
+	Locomotion.Detach();
+
+	HRESULT result = TechnoClass::Load(stream);
+	if (SUCCEEDED(result)) {
+		int index;
+		int count;
+
+		result = stream->Read(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+
+		new (&RouteQueue) DynamicVectorClass<AbstractClass *>;
+
+		for (index = 0; index < count; index++) {
+			AbstractClass * obj = NULL;
+			result = stream->Read(&obj, sizeof(obj), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+			RouteQueue.Add(obj);
+		}
+
+		result = stream->Read(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+
+		new (&NavQueue) DynamicVectorClass<AbstractClass *>;
+
+		for (index = 0; index < count; index++) {
+			AbstractClass * obj = NULL;
+			result = stream->Read(&obj, sizeof(obj), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+			NavQueue.Add(obj);
+		}
+
+		Locomotion.Detach();
+		FUN_004E02C0(&reinterpret_cast<char &>(Locomotion));
+		Locomotion.Detach();
+		OleLoadFromStream(stream, IID_ILocomotion, (LPVOID *)&reinterpret_cast<char &>(Locomotion));
+		unknown_5A0 = NULL;
+		Swizzle_Pointer(&Team);
+		Swizzle_Pointer(&Member);
+		Swizzle_Pointer(&NavCom);
+		Swizzle_Pointer(&SuspendedNavCom);
+		Swizzle_Pointer(&MegaDestination);
+		Swizzle_Pointer(&MegaTarget);
+		Swizzle_Pointer(&PatrolCell);
+		Swizzle_Pointer(&ParasiteEatingMe);
+		Swizzle_Pointer(&ParasiteImUsing);
+		MoveSoundAudioController.FUN_00405BE0();
+		IsMoveSoundPlaying = false;
+		MoveSoundDelay = 0;
+		for (index = 0; index < NavQueue.Count(); index++) {
+			Swizzle_Pointer(&NavQueue[index]);
+		}
+		for (index = 0; index < RouteQueue.Count(); index++) {
+			Swizzle_Pointer(&RouteQueue[index]);
+		}
+		return(S_OK);
+	}
+	return(result);
+}
+
+// FUNCTION: 0x004DB690
+HRESULT STDMETHODCALLTYPE FootClass::Save(IStream * stream, BOOL cleardirty)
+{
+	HRESULT result = TechnoClass::Save(stream, cleardirty);
+	if (SUCCEEDED(result)) {
+		int index;
+		int count = RouteQueue.Count();
+
+		result = stream->Write(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+
+		for (index = 0; index < count; index++) {
+			result = stream->Write(&RouteQueue[index], sizeof(RouteQueue[index]), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+		}
+
+		count = NavQueue.Count();
+
+		result = stream->Write(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+
+		for (index = 0; index < count; index++) {
+			result = stream->Write(&NavQueue[index], sizeof(NavQueue[index]), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+		}
+
+		IPersistStreamPtr persist(Locomotion);
+		OleSaveToStream(persist, stream);
+
+		result = S_OK;
+	}
+	return(result);
+}
+
+// FUNCTION: 0x004DB7E0
+LayerType FootClass::In_Which_Layer(void) const
+{
+	return(Locomotion->In_Which_Layer());
+}
+
+// FUNCTION: 0x004DB810
+void FootClass::Set_Coord(Coord const & coord)
+{
+	Coord old = Position;
+	bool moved;
+	if (coord != old) {
+		moved = true;
+	} else {
+		moved = false;
+	}
+	if (IsDown) {
+		Mark(MARK_UP);
+		BASECLASS::Set_Coord(coord);
+		Mark(MARK_DOWN);
+	} else {
+		BASECLASS::Set_Coord(coord);
+	}
+	if (moved && Techno_Type_Class()->OpenTopped) {
+		UpdatePassengerCoords();
+	}
+}
+
+namespace LocomotionClass { namespace CLSIDs { extern const CLSID Droppod; } }
+
+// FUNCTION: 0x004DB8A0
+void FootClass::Link_DropPod(void)
+{
+	ILocomotionPtr locomotion = Locomotion;
+	ILocomotionPtr ballistic(LocomotionClass::CLSIDs::Droppod);
+	ballistic->Link_To_Object(this);
+	IPiggybackPtr piggy(ballistic);
+	piggy->Begin_Piggyback(locomotion);
+	Locomotion = ballistic;
+}

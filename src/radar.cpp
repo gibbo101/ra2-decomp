@@ -56,6 +56,8 @@ extern const int DAT_00B04A34;
 extern const double DAT_00B048F0;
 extern const double DAT_00B04970;
 extern const int DAT_00B049F4;
+extern int DAT_00B04A30;
+int __fastcall FUN_00753250(char const * name);
 
 // FUNCTION: 0x00652680 $E109
 const double DAT_00B048D8 = fastmath::sqrt(pow((double)CELL_LEPTON_H, 2) * 2);
@@ -175,6 +177,210 @@ void RadarClass::Queue_Next_Movie(void)
 	RadarAnimFrame = RADAR_ACTIVATED_FRAME;
 }
 
+#include "multiplayer.h"
+#include "session.h"
+#include "tooltip.h"
+#undef LoadString
+#include "stringtable.h"
+
+extern int DAT_007F5BF8;
+extern int DAT_00B0FA68;
+extern char const * DAT_008391F4;
+extern char const * DAT_008391F8;
+extern void * DAT_00B048E0;
+extern void * DAT_00B048AC;
+extern bool DAT_00B048F9;
+extern bool DAT_00B048F8;
+extern Rect DAT_00B048C8;
+extern int DAT_00B04A1C;
+extern int DAT_00B04A38;
+
+namespace Game { extern int SpecialDialog; }
+extern bool DAT_00A8EB7C;
+extern int DAT_00886FA8;
+extern int DAT_00B45B68;
+bool __fastcall FUN_0053BAE0(void);
+void __fastcall FUN_00753580(void);
+
+extern DSurface * DAT_00887300;
+ConvertClass * __fastcall FUN_0072F510(void);
+
+struct ShpHeader {
+	short Zero;
+	short Width;
+	short Height;
+};
+
+struct FileSystem {
+	static void * __fastcall LoadWholeFileEx(char const * name, bool & allocated);
+	static ConvertClass * SIDEBAR_PAL;
+};
+
+struct Drawing {
+	static unsigned char RedShiftRight;
+	static unsigned char GreenShiftRight;
+	static unsigned char BlueShiftRight;
+	static int RedShiftLeft;
+	static int GreenShiftLeft;
+	static int BlueShiftLeft;
+};
+
+struct TextColor {
+	unsigned char R;
+	unsigned char G;
+	unsigned char B;
+	unsigned char A;
+};
+
+struct CCToolTip {
+	static TextColor ToolTipTextColor;
+	static ToolTipManager * Instance;
+};
+
+// FUNCTION: 0x00652CF0
+void RadarClass::One_Time(void)
+{
+	DebugString("RadarClass::One_Time()\n");
+	RadX = 0;
+	RadY = 16;
+	RadWidth = 48;
+	RadIHeight = 140;
+	RadPWidth = 108;
+	RadOffY = 140;
+	RadIWidth = 108;
+	RadOffX = 49;
+
+	BASECLASS::One_Time();
+
+	DAT_00B04A20.X = RadOffX;
+	DAT_00B04A20.Y = RadIHeight;
+	DAT_00B04A20.Width = RadPWidth;
+	DAT_00B04A30 = 223;
+	unknown_int_14D4 = FUN_00753250("EVA_IncomingTransmission");
+}
+
+// FUNCTION: 0x00652D90
+void RadarClass::DisposeOfArt(void)
+{
+	if (DAT_00B048F9) {
+		delete (char *)DAT_00B048E0;
+		DAT_00B048F9 = false;
+	}
+	DAT_00B048E0 = NULL;
+	if (DAT_00B048F8) {
+		delete (char *)DAT_00B048AC;
+		DAT_00B048F8 = false;
+	}
+	DAT_00B048AC = NULL;
+}
+
+// FUNCTION: 0x00652DE0
+void RadarClass::Init_Clear(void)
+{
+	BASECLASS::Init_Clear();
+	DebugString("RadarClass::Init_Clear\n");
+
+	RadarState = RSTATE_INACTIVE;
+	RadarMode = RMODE_UNAVAILABLE;
+	unknown_bool_14BD = false;
+	unknown_bool_14BC = false;
+	RadarAnimFrame = 0;
+	DoesRadarExist = false;
+	IsToRedraw = true;
+	BackgroundStack.Clear();
+	PixelStack.Clear();
+	DebugString("RadarClass::Init_Clear done\n");
+}
+
+// FUNCTION: 0x00652E50
+void RadarClass::Set_Buttons(bool on)
+{
+	if (on) {
+		Add_A_Button(RadarStatics::DAT_00B04978);
+		Add_A_Button(RadarStatics::DAT_00B04910);
+	} else {
+		Remove_A_Button(RadarStatics::DAT_00B04978);
+		Remove_A_Button(RadarStatics::DAT_00B04910);
+	}
+}
+
+inline int Pack_Color(TextColor const & c)
+{
+	return (c.R >> Drawing::RedShiftRight << Drawing::RedShiftLeft)
+		| (c.G >> Drawing::GreenShiftRight << Drawing::GreenShiftLeft)
+		| (c.B >> Drawing::BlueShiftRight << Drawing::BlueShiftLeft);
+}
+
+// FUNCTION: 0x00652E90
+void RadarClass::Init_For_House(void)
+{
+	DebugString("RadarClass::Init_For_House()\n");
+	DisposeOfArt();
+
+	int side = *(int *)((char *)Scen + 0x34b8);
+	if (side == 0) {
+		RadHeight = (DAT_007F5BF8 - 144) / 2 + 4;
+		DAT_00B04A00.X = RadX + 11;
+		DAT_00B04A00.Y = RadY + 4;
+		DAT_00B048C8.X = RadX + 83;
+	} else if (side == 1) {
+		RadHeight = (DAT_007F5BF8 - 145) / 2 + 5;
+		DAT_00B04A00.X = RadX + 14;
+		DAT_00B04A00.Y = RadY + 5;
+		DAT_00B048C8.X = RadX + 86;
+	} else {
+		RadHeight = (DAT_007F5BF8 - 145) / 2 + 5;
+		DAT_00B04A00.X = RadX + 14;
+		DAT_00B04A00.Y = RadY + 5;
+		DAT_00B048C8.X = RadX + 86;
+	}
+	DAT_00B048C8.Y = DAT_00B04A00.Y;
+	DAT_00B04A1C = RadHeight;
+
+	DAT_00B048E0 = FileSystem::LoadWholeFileEx(DAT_008391F4, DAT_00B048F9);
+	DAT_00B048AC = FileSystem::LoadWholeFileEx(DAT_008391F8, DAT_00B048F8);
+	DAT_00B04A00.Width = ((ShpHeader *)DAT_00B048E0)->Width;
+	DAT_00B04A00.Height = ((ShpHeader *)DAT_00B048E0)->Height;
+	DAT_00B048C8.Width = ((ShpHeader *)DAT_00B048AC)->Width;
+	DAT_00B048C8.Height = ((ShpHeader *)DAT_00B048AC)->Height;
+	DAT_00B04A38 = DAT_00B0FA68;
+
+	RadPHeight = Pack_Color(CCToolTip::ToolTipTextColor);
+}
+
+// FUNCTION: 0x00653010
+void RadarClass::Init_IO(void)
+{
+	BASECLASS::Init_IO();
+
+	if (!Debug_Map) {
+		RadarStatics::DAT_00B04978.ID = 242;
+		RadarStatics::DAT_00B04978.DrawOnSidebar = true;
+		RadarStatics::DAT_00B04978.ShapeDrawer = FileSystem::SIDEBAR_PAL;
+		RadarStatics::DAT_00B04978.IsOn = false;
+		RadarStatics::DAT_00B04978.IsToggleType = 0;
+		RadarStatics::DAT_00B04978.Set_Flags(5);
+		RadarStatics::DAT_00B04978.Set_Position(DAT_00B04A00.X, DAT_00B04A00.Y);
+		RadarStatics::DAT_00B04978.Set_Shape((ShapeSet const *)DAT_00B048E0, 0, 0);
+		RadarStatics::DAT_00B04978.Flag_To_Redraw();
+
+		RadarStatics::DAT_00B04910.ShapeDrawer = FileSystem::SIDEBAR_PAL;
+		RadarStatics::DAT_00B04910.ID = 243;
+		RadarStatics::DAT_00B04910.DrawOnSidebar = true;
+		RadarStatics::DAT_00B04910.IsOn = false;
+		RadarStatics::DAT_00B04910.IsToggleType = 0;
+		RadarStatics::DAT_00B04910.Set_Flags(5);
+		RadarStatics::DAT_00B04910.Set_Position(DAT_00B048C8.X, DAT_00B048C8.Y);
+		RadarStatics::DAT_00B04910.Set_Shape((ShapeSet const *)DAT_00B048AC, 0, 0);
+		RadarStatics::DAT_00B04910.Flag_To_Redraw();
+	}
+}
+
+// FUNCTION: 0x00653750
+void RadarClass::Noop(int, int)
+{
+}
+
 // FUNCTION: 0x00653760
 Cell RadarClass::Click_Cell_Calc(Point2D const & point) const
 {
@@ -201,6 +407,57 @@ bool RadarClass::Map_Cell(Cell const & cell, HouseClass * house)
 	return(false);
 }
 
+// FUNCTION: 0x00653830
+bool RadarClass::RevealFogShroud(Cell const & cell, HouseClass * house, bool increase)
+{
+	if (BASECLASS::RevealFogShroud(cell, house, increase)) {
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00653850
+void RadarClass::AI(KeyNumType & input, Point2D const & xy)
+{
+	BASECLASS::AI(input, xy);
+
+	int offset = DAT_00A8EB7C ? DAT_00886FA8 : 0;
+
+	Rect r1 = DAT_00B04A00;
+	r1.X += offset;
+	if (r1.Is_Point_Within(xy)) {
+		Map.Override_Mouse_Shape(MOUSE_NORMAL, false);
+	}
+
+	Rect r2 = DAT_00B048C8;
+	r2.X += offset;
+	if (r2.Is_Point_Within(xy)) {
+		Map.Override_Mouse_Shape(MOUSE_NORMAL, false);
+	}
+
+	if (input == 0x80F2) {
+		if (Session.Type != GAME_NORMAL && !((Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) && Session.MPGameMode && Session.MPGameMode->vt_entry_08() && Session.MPGameMode->vt_entry_04())) {
+			Game::SpecialDialog = 8;
+		} else {
+			Game::SpecialDialog = 9;
+		}
+	} else if (input == 0x80F3) {
+		Game::SpecialDialog = 1;
+	}
+
+	if (DAT_00B45B68 > 0 && RadarMode != 3 && RadarMode != 4) {
+		SuspendedRadarMode = RadarMode;
+		Radar_Activate(4, 0);
+		unknown_14B8 = 0;
+	}
+
+	if (RadarMode == 4) {
+		Play_Movie();
+	} else if (!FUN_0053BAE0()) {
+		FUN_00753580();
+	}
+}
+
 // FUNCTION: 0x00653F50
 void RadarClass::Set_Map_Dimensions(Rect const & size, bool reset_cells, int cell_height, bool refresh_map)
 {
@@ -219,6 +476,117 @@ bool RadarClass::Cell_On_Radar(Cell const & cell)
 	return(In_Local_Radar(cell));
 }
 
+// FUNCTION: 0x00653FA0
+void RadarClass::Draw_Names(void)
+{
+	int c_idx;
+	int house;
+	HouseClass * ptr;
+	int y;
+	wchar_t txt[40];
+	int h;
+	int kills;
+	ColorScheme * color;
+	int style;
+
+	if (!Map.IsSidebarActive) {
+		return;
+	}
+
+	ConvertClass * drawer = FUN_0072F510();
+	Draw_Shape(*DAT_00887300, *drawer, (ShapeSet const *)DAT_00B04A38, 32, Point2D(RadX, RadWidth), DAT_00887300->Get_Rect());
+
+	y = RadOffX + 2;
+	Fancy_Text_Print_Wide((Point2D *)&(Point2D const &)Point2D(), StringTable::LoadString("TXT_NAME_COLON", NULL, "D:\\ra2mdpost\\Radar.CPP", 1268), DAT_00887300, &DAT_00887300->Get_Rect(), &(Point2D const &)Point2D(RadHeight, y), Fetch_Scheme_By_Name("Grey", 1), 0, TextPrintType(0x19));
+	Fancy_Text_Print_Wide((Point2D *)&(Point2D const &)Point2D(), StringTable::LoadString("TXT_KILLS_COLON", NULL, "D:\\ra2mdpost\\Radar.CPP", 1270), DAT_00887300, &DAT_00887300->Get_Rect(), &(Point2D const &)Point2D(RadOffY + RadHeight - 2, y), Fetch_Scheme_By_Name("Grey", 1), 0, TextPrintType(0x219));
+
+	y += 7;
+	DAT_00887300->Draw_Line(Point2D(RadHeight, y), Point2D(RadOffY + RadHeight - 1, y), FileSystem::SIDEBAR_PAL->Convert_Pixel(14));
+	y += 4;
+
+	for (house = 0; house < Houses.Count(); house++) {
+		ptr = Houses[house];
+
+		if (!ptr || !ptr->Class->IsMultiplay) continue;
+
+		c_idx = ptr->Scheme;
+
+		if (ptr->IsDefeated) {
+			color = Fetch_Scheme_By_Name("Grey", 1);
+			style = 0x19;
+		} else {
+			color = ColorSchemes[c_idx];
+			style = 0x4019;
+		}
+
+		txt[0] = 0;
+		swprintf(txt, L"%s", ptr->UIName);
+
+		if (wcslen(txt) == 0) {
+			wcscpy(txt, L"________");
+		}
+
+		if (wcslen(txt) > 18) {
+			txt[18] = '.';
+			txt[19] = 0;
+		}
+		Fancy_Text_Print_Wide((Point2D *)&(Point2D const &)Point2D(), txt, DAT_00887300, &DAT_00887300->Get_Rect(), &(Point2D const &)Point2D(RadHeight, y), color, 0, TextPrintType(style));
+
+		kills = 0;
+		for (h = 0; h < 20; h++) {
+			kills += ptr->UnitsKilled[h];
+			kills += ptr->BuildingsKilled[h];
+		}
+		swprintf(txt, L"%2d", kills);
+		Fancy_Text_Print_Wide((Point2D *)&(Point2D const &)Point2D(), txt, DAT_00887300, &DAT_00887300->Get_Rect(), &(Point2D const &)Point2D(RadOffY + RadHeight - 2, y), color, 0, TextPrintType(style | 0x200));
+
+		y += 9;
+	}
+}
+
+// FUNCTION: 0x00654320
+void RadarClass::Reposition_Sidebar(void)
+{
+	BASECLASS::Reposition_Sidebar();
+
+	int offset = DAT_00A8EB7C ? DAT_00886FA8 : 0;
+
+	RadarStatics::DAT_00B04978.DrawOffset.X = -offset;
+	RadarStatics::DAT_00B04978.Set_Position(DAT_00B04A00.X + offset, DAT_00B04A00.Y);
+	RadarStatics::DAT_00B04978.Flag_To_Redraw();
+
+	RadarStatics::DAT_00B04910.DrawOffset.X = -offset;
+	RadarStatics::DAT_00B04910.Set_Position(DAT_00B048C8.X + offset, DAT_00B048C8.Y);
+	RadarStatics::DAT_00B04910.Flag_To_Redraw();
+
+	RadarButton.Set_Position(RadHeight + offset, RadOffX);
+	RadarButton.Flag_To_Redraw();
+
+	ToolTip tip;
+	tip.ID = 242;
+	tip.Text = (int)"Tip:BriefingButton";
+	if (Session.Type != GAME_NORMAL) {
+		tip.Text = (int)"Tip:DiplomacyButton";
+	}
+	tip.Region.X = RadarStatics::DAT_00B04978.X;
+	tip.Region.Y = RadarStatics::DAT_00B04978.Y;
+	tip.Region.Width = RadarStatics::DAT_00B04978.Width;
+	tip.Region.Height = RadarStatics::DAT_00B04978.Height;
+	CCToolTip::Instance->Remove(242);
+	CCToolTip::Instance->Add(&tip);
+
+	tip.ID = 243;
+	tip.Text = (int)"Tip:OptionsButton";
+	tip.Region.X = RadarStatics::DAT_00B04910.X;
+	tip.Region.Y = RadarStatics::DAT_00B04910.Y;
+	tip.Region.Width = RadarStatics::DAT_00B04910.Width;
+	tip.Region.Height = RadarStatics::DAT_00B04910.Height;
+	CCToolTip::Instance->Remove(243);
+	CCToolTip::Instance->Add(&tip);
+
+	FullRedraw = true;
+}
+
 // FUNCTION: 0x00655890
 int RadarTrackingStruct::Hash_Old(RadarTrackingStruct const & s)
 {
@@ -235,4 +603,34 @@ int RadarTrackingStruct::Hash2(RadarTrackingStruct const & s)
 void RadarClass::Init_Radar(void)
 {
 	RadarTrackingTable = new RADAR_HASH_TABLE(10, 256, RadarTrackingStruct::Hash2);
+}
+
+// FUNCTION: 0x00656CA0
+bool RadarClass::Is_Radar_Active(void)
+{
+	return(RadarState == RSTATE_ACTIVE);
+}
+
+// FUNCTION: 0x00656DC0
+bool RadarClass::Is_Radar_Tactical(void)
+{
+	return(RadarMode == RMODE_TACTICAL && RadarState == RSTATE_ACTIVE);
+}
+
+// FUNCTION: 0x00656DE0
+bool RadarClass::Is_Radar_Existing(void)
+{
+	return(DoesRadarExist);
+}
+
+// FUNCTION: 0x00656E50
+bool RadarClass::Is_Player_Names(void)
+{
+	return(RadarMode == RMODE_PLAYER_NAMES && RadarState == RSTATE_ACTIVE);
+}
+
+// FUNCTION: 0x00656E70
+bool RadarClass::Is_Playing_Movie(void)
+{
+	return(RadarMode == RMODE_MOVIE && RadarState == RSTATE_ACTIVE);
 }

@@ -245,3 +245,44 @@ RTTIType HouseTypeClass::Fetch_RTTI(void) const
 {
 	return(RTTI_HOUSETYPE);
 }
+
+// FUNCTION: 0x00512720
+int HouseTypeClass::Fetch_Object_Size(void) const
+{
+	return(sizeof(*this));
+}
+
+// FUNCTION: 0x00512730
+int HouseTypeClass::Fetch_Heap_ID(void) const
+{
+	return(HeapID);
+}
+
+// FUNCTION: 0x00512740
+ULONG STDMETHODCALLTYPE HouseTypeClass::AddRef(void)
+{
+	return(1);
+}
+
+// FUNCTION: 0x00512750
+ULONG STDMETHODCALLTYPE HouseTypeClass::Release(void)
+{
+	return(1);
+}
+
+// FUNCTION: 0x00512760 HouseTypeClass::~HouseTypeClass
+
+// FUNCTION: 0x005128A0 ?$DynamicVectorClass@PAVInfantryTypeClass@@::Clear
+template class DynamicVectorClass<InfantryTypeClass *>;
+
+// FUNCTION: 0x005128D0 ?$VectorClass@PAVInfantryTypeClass@@::ID
+// FUNCTION: 0x005128F0 ?$VectorClass@PAVInfantryTypeClass@@::GetItem
+
+// FUNCTION: 0x00512900 ?$DynamicVectorClass@PAVUnitTypeClass@@::Clear
+template class DynamicVectorClass<UnitTypeClass *>;
+
+// FUNCTION: 0x00512930 ?$VectorClass@PAVUnitTypeClass@@::ID
+// FUNCTION: 0x00512950 ?$VectorClass@PAVUnitTypeClass@@::GetItem
+
+// FUNCTION: 0x00512960 ?$TypeList@PAVAircraftTypeClass@@::?$TypeList@PAVAircraftTypeClass@@
+template class TypeList<AircraftTypeClass *>;
