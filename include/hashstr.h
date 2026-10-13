@@ -8,10 +8,12 @@ class HashString
 {
 	public:
 		HashString(void);
+		HashString(char const * str);
 		HashString(HashString const & that);
 		HashString & operator = (HashString const & that);
 		bool operator == (HashString const & that) const;
 		bool operator != (HashString const & that) const;
+		bool operator ! (void) const;
 
 		char Str[256];
 };

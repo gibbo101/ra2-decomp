@@ -323,7 +323,7 @@ Cell const * AnimClass::Occupy_List(bool) const
 	return(_simple);
 }
 
-// FUNCTION: 0x00423920 $E144
+// FUNCTION: 0x00423920 $E145
 
 // FUNCTION: 0x00423930
 BounceResultType AnimClass::Bounce_AI(void)

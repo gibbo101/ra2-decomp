@@ -241,6 +241,11 @@ Each entry: what the diff showed, then the source change that fixed it.
   is `include/geometry.h`'s per-file constants: include it right after `always.h`
   (before any `extern` of the same names) and mark them; never write `Init_` stand-ins.
 - TibSun's `dynamic_cast<ObjectClass *>` is `AbstractFlags & 2` in YR.
+- Consecutive static members with destructors share one `$S` guard byte; a function
+  definition between two of them starts a new byte. Order definitions to match the
+  original's guard bits (0x006A4C80).
+- A range named for one class can hold another's code (the side range is ship
+  locomotion, the ramfile range RadSiteClass): read the vtable and RTTI first.
 - A pushed `__FILE__` and line: `#line 215 "D:\\ra2mdpost\\AbsType.cpp"` before the
   statement. A string's first-character test: `if (*name)`, not `if (name[0])`.
 

@@ -66,6 +66,7 @@ class LocomotionClass : public IPersistStream, public ILocomotion
 		virtual boolean STDMETHODCALLTYPE Will_Jump_Tracks(void) override {return(false);}
 		virtual boolean STDMETHODCALLTYPE Is_Really_Moving_Now(void) override {return(Is_Moving_Now());}
 		virtual void STDMETHODCALLTYPE Stop_Movement_Animation(void) override {}
+		virtual void STDMETHODCALLTYPE Limbo(void) override {}
 		virtual void STDMETHODCALLTYPE Lock(void) override {}
 		virtual void STDMETHODCALLTYPE Unlock(void) override {}
 		virtual int STDMETHODCALLTYPE Get_Track_Number(void) override {return(-1);}

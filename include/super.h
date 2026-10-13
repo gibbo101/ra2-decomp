@@ -58,6 +58,10 @@ class SuperClass : public AbstractClass
 		bool Can_Place(void) const;
 		bool Is_Charging(void) const;
 		bool Is_Powered(void) const;
+		char CanFire(void) const;
+		bool ShouldDrawProgress(void) const;
+		void Reset(void);
+		bool ShouldFlashTab(void) const;
 		bool Is_Ready(void) const {return(IsReady);}
 		bool Is_Present(void) const {return(IsPresent);}
 		bool Is_One_Time(void) const {return(IsOneTime && IsPresent);}

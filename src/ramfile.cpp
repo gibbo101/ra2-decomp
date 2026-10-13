@@ -16,8 +16,8 @@
 
 DynamicVectorClass<RadSiteClass *> RadSites;
 
-// FUNCTION: 0x0065B160 $E48
-// FUNCTION: 0x0065B1A0 $E46
+// FUNCTION: 0x0065B160 $E49
+// FUNCTION: 0x0065B1A0 $E47
 
 // FUNCTION: 0x0065B1E0
 RadSiteClass::RadSiteClass(void) :

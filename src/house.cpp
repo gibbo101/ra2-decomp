@@ -94,9 +94,9 @@ extern DynamicVectorClass<FactoryClass *> DAT_00A83E30;
 // FUNCTION: 0x004F50B0 $E38
 // FUNCTION: 0x004F50D0 $E41
 
-// FUNCTION: 0x004F50F0 $E201
+// FUNCTION: 0x004F50F0 $E202
 
-// FUNCTION: 0x004F5130 $E198
+// FUNCTION: 0x004F5130 $E199
 DynamicVectorClass<HouseClass::BuildChoiceClass *> HouseClass::BuildChoice;
 
 // FUNCTION: 0x004F5190

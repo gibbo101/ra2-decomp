@@ -257,6 +257,7 @@ class SidebarClass : public PowerClass
 				virtual int Action(unsigned flags, KeyNumType & key, int modifier) override;
 		};
 
+		static ShapeButtonClass TabButtons[4];
 		static ShapeButtonClass Repair;
 		static ShapeButtonClass Upgrade;
 		static ShapeButtonClass Power;

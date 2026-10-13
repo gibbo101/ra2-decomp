@@ -19,7 +19,7 @@ class ToggleClass : public ControlClass
 
 		bool IsOn;
 
-		bool IsToggleType;
+		int IsToggleType;
 
 	protected:
 

@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
 #include "loco.h"
 #include "_map.h"
 #include "_tactica.h"
@@ -19,6 +20,19 @@
 #include "move.hh"
 #include "visual.hh"
 #include "zgrad.hh"
+
+// FUNCTION: 0x0055A4D0 $E2
+// FUNCTION: 0x0055A500 $E5
+// FUNCTION: 0x0055A520 $E8
+// FUNCTION: 0x0055A540 $E11
+// FUNCTION: 0x0055A560 $E14
+// FUNCTION: 0x0055A580 $E17
+// FUNCTION: 0x0055A5A0 $E20
+// FUNCTION: 0x0055A5E0 $E23
+// FUNCTION: 0x0055A610 $E26
+// FUNCTION: 0x0055A640 $E29
+// FUNCTION: 0x0055A670 $E32
+// FUNCTION: 0x0055A680 $E35
 
 // FUNCTION: 0x0055A9B0
 LONG STDMETHODCALLTYPE LocomotionClass::QueryInterface(REFIID riid, LPVOID *ppvObject)

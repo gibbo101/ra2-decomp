@@ -574,12 +574,54 @@ wchar_t const * SuperClass::NameReadiness(void) const
 	return(StringTable::LoadString("TXT_HOLD", NULL, __FILE__, __LINE__));
 }
 
+// FUNCTION: 0x006CC360
+char SuperClass::CanFire(void) const
+{
+	if (!IsSuspended) {
+		if (Class->UseChargeDrain) {
+			bool b = ChargeDrainState != CHARGING;
+			return(b);
+		} else {
+			return(IsReady);
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x006CDE80
+void __stdcall FUN_006CDE80(int, int)
+{
+}
+
+// FUNCTION: 0x006CDE90
+bool SuperClass::ShouldDrawProgress(void) const
+{
+	if (Class->UseChargeDrain) return(true);
+	return(!IsReady);
+}
+
 // FUNCTION: 0x006CDEB0
 HRESULT STDMETHODCALLTYPE SuperClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
 	*retval = CLSID_SuperWeaponClass;
 	return(S_OK);
+}
+
+// FUNCTION: 0x006CDEF0
+HRESULT STDMETHODCALLTYPE SuperClass::Load(IStream * stream)
+{
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		new (this) SuperClass(NoInitClass());
+		if (Animation != NULL) PointerExpiredNotification::NotifyInvalidAnim.Add(this);
+		Swizzle_Pointer(&Class);
+		Swizzle_Pointer(&House);
+		Swizzle_Pointer(&Animation);
+		BlinkTimer = 0;
+		result = S_OK;
+	}
+	return(result);
 }
 
 // FUNCTION: 0x006CDFD0
@@ -591,3 +633,64 @@ HRESULT STDMETHODCALLTYPE SuperClass::Save(IStream * stream, BOOL cleardirty)
 	}
 	return(result);
 }
+
+// FUNCTION: 0x006CDFF0
+void SuperClass::Detach(AbstractClass const * target, bool all)
+{
+	if (target == House) House = NULL;
+	if (target == Class) Class = NULL;
+	if (target == Animation) {
+		Animation = NULL;
+		AnimationGotInvalid = true;
+	}
+}
+
+// FUNCTION: 0x006CE020
+void SuperClass::Compute_CRC(CRCEngine & crc) const
+{
+	BASECLASS::Compute_CRC(crc);
+	crc(IsPresent);
+	crc(IsOneTime);
+	crc(IsReady);
+	crc(OldStage);
+	crc(ChargeDrainState);
+	crc(NeedsBuilding);
+	crc(AnimationGotInvalid);
+	if (Animation != NULL) {
+		crc(Animation->RemainingIterations);
+		crc(Animation->Fetch_ID());
+	}
+}
+
+// FUNCTION: 0x006CE0B0
+void SuperClass::Reset(void)
+{
+	Release_Animation(this);
+	IsReady = false;
+	OldStage = -1;
+	bool active = Control.Is_Active();
+	Control = Charge_Time(this);
+	if (!active) Control.Stop();
+}
+
+// FUNCTION: 0x006CE1A0
+bool SuperClass::ShouldFlashTab(void) const
+{
+	if (IsSuspended) goto done;
+	if (Class->UseChargeDrain) {
+		if (ChargeDrainState == CHARGING) goto done;
+	} else {
+		if (!IsReady) goto done;
+	}
+	{
+		int duration = Class->FlashSidebarTabFrames;
+		if (duration == -1) return(true);
+		if (duration != 0 && ReadyFrame + duration > Frame) return(true);
+	}
+done:
+	return(false);
+}
+
+// FUNCTION: 0x006CE1F0 SuperClass::What_Am_I
+// FUNCTION: 0x006CE200 SuperClass::Fetch_RTTI
+// FUNCTION: 0x006CE210 SuperClass::Fetch_Object_Size

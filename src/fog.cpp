@@ -5,6 +5,7 @@
 
 #define INCLUDE_COM
 #include "always.h"
+#include "geometry.h"
 #include "fog.h"
 #include "_convert.h"
 #include "_map.h"
@@ -35,6 +36,19 @@
 #include "tactical.h"
 #include "terrain.h"
 #include "vector.h"
+
+// FUNCTION: 0x004D0560 $E2
+// FUNCTION: 0x004D0590 $E5
+// FUNCTION: 0x004D05B0 $E8
+// FUNCTION: 0x004D05D0 $E11
+// FUNCTION: 0x004D05F0 $E14
+// FUNCTION: 0x004D0610 $E17
+// FUNCTION: 0x004D0630 $E20
+// FUNCTION: 0x004D0670 $E23
+// FUNCTION: 0x004D06A0 $E26
+// FUNCTION: 0x004D06D0 $E29
+// FUNCTION: 0x004D0700 $E32
+// FUNCTION: 0x004D0710 $E35
 
 // FUNCTION: 0x004D27D0
 HRESULT STDMETHODCALLTYPE FoggedObjectClass::GetClassID(CLSID * retval)

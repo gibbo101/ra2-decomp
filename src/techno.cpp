@@ -86,7 +86,7 @@
 
 
 
-// FUNCTION: 0x006F2AD0 $E224
+// FUNCTION: 0x006F2AD0 $E225
 CDTimerClass<FrameTimerClass> TechnoClass::ActionLineTimer;
 
 // FUNCTION: 0x006F2AF0

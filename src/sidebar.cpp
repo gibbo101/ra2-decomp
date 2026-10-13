@@ -64,6 +64,31 @@
 // FUNCTION: 0x006A4BD0 $E38
 // FUNCTION: 0x006A4BF0 $E41
 
+// FUNCTION: 0x006A4C10 $E156
+// FUNCTION: 0x006A4C40 $E153
+SidebarClass::SBGadgetClass SidebarClass::Background;
+
+SidebarClass::SBGadgetClass::SBGadgetClass(void) :
+	GadgetClass(0, 0, 1, 1, LEFTUP)
+{
+}
+
+// FUNCTION: 0x006A4C60 $E162
+// FUNCTION: 0x006A4C80 $E159
+ShapeButtonClass SidebarClass::Power;
+// FUNCTION: 0x006A4CA0 $E167
+// FUNCTION: 0x006A4CC0 $E165
+ShapeButtonClass SidebarClass::Repair;
+// FUNCTION: 0x006A4CE0 $E172
+// FUNCTION: 0x006A4D10 $E170
+ShapeButtonClass SidebarClass::TabButtons[4];
+// FUNCTION: 0x006A4D40 $E177
+// FUNCTION: 0x006A4D60 $E175
+ShapeButtonClass SidebarClass::Upgrade;
+// FUNCTION: 0x006A4D80 $E182
+// FUNCTION: 0x006A4DA0 $E180
+ShapeButtonClass SidebarClass::Waypoint;
+
 // FUNCTION: 0x006AACE0
 void SidebarClass::StripClass::SelectClass::Set_Owner(StripClass & strip, int index)
 {

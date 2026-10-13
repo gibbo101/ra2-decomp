@@ -786,6 +786,19 @@ declaration flipped UnitClass::Draw_It again; three more real radiation members,
 from the exe, restored it. Banked: a jumpjet function at 99.6% and an INI lookup
 (26.8%). Cost: about 1.4M tokens, 41 minutes. Merge gate: 2,486 of 2,486 (381.0 KB).
 
+### Batch 11 (13 October 2026)
+
+fog, loco, ToolTip, palette, side, Super, tiberium, Radar, Sidebar. **104 of 108
+matched.** The side range turned out to be ShipLocomotionClass (now src/ship.cpp),
+which needed ILocomotion's Limbo before Lock, as YRpp has it, and a Shadow_Matrix
+override. ShapeButtonClass got YR's layout (96 bytes, with a flash timer) after
+ToggleClass's toggle type proved to be a dword, and HashTableClass got its iterator.
+The merge renumbered static-initialiser markers in nine files after one new static in
+sidebar.h. Banked: three palette and hash functions that need an inline `First`
+nobody has proven, a tooltip lookup (56.6%), and SuperClass's deleting destructor,
+whose call to the out-of-line destructor ours inlines. Cost: about 1.4M tokens,
+36 minutes. Merge gate: 2,591 of 2,591 (392.4 KB).
+
 ### Decide before the first batch
 
 - **Module layout.** Which function lives in which source file, and the link order, decide
