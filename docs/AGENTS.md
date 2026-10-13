@@ -16,11 +16,14 @@ original compiler turns into that function's exact bytes. MATCH means
   shared. No two files may differ only in case: under Wine they write one `.obj`, and
   the compile fails with only the file name in the log.
 - The session scratchpad is shared with the coordinator and other agents: delete only
-  files you created, one by name. No recursive delete of any kind (`rm -r`, `find
-  -delete`, `rmtree`) over the scratchpad, `build/coord/` or `build/obj/`.
+  files you created, one by name.
+- No recursive delete of any kind, anywhere. The project hook
+  (`.claude/hooks/no-recursive-delete.py`) blocks `rm -r`, `find -delete` (except
+  `-type d -empty`), `find -exec rm`, `xargs rm`, `rmtree`, `git clean` and
+  `rsync --delete`. A blocked delete is a stop sign: never route around it.
 - Before you finish, delete the scratch you made that nobody needs (probes, logs, variant
-  copies) with `rm` on files or `find DIR -type f -delete`, never a recursive force
-  delete. Keep your best source and its header overlay.
+  copies): `rm` on the files by name or by a glob in one directory, then `rmdir` the
+  empty directory. Keep your best source and its header overlay.
 
 ## Loop
 
