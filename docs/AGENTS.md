@@ -308,6 +308,8 @@ Each entry: what the diff showed, then the source change that fixed it.
   row; `uv run tools/refaudit.py` lists symbols whose references imply different bases.
 - UnitClass::Draw_It (0x0073CEC0) flips with the parity of declarations added to any
   header it includes (cell.h, map.h): re-check it, and restore it with a second real one.
+- Code ported from TibSun brings Westwood's `/* ** */` comments and commented-out code:
+  cut them to the comment rules (two `//` lines of behaviour) before landing.
 - `#define NDEBUG` before the includes is how a file whose original has its asserts
   compiled out is built (ownrdraw.cpp, wonline.cpp).
 - A match that flips after an unrelated header edit (enumerator counts alone moved

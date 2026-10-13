@@ -789,6 +789,243 @@ WideWstring& WideWstring::operator=(WideWstring const& other)
 	return(*this);
 }
 
+// FUNCTION: 0x007B6970
+char WideWstring::cat(wchar_t const* s)
+{
+	wchar_t* oldStr;
+	unsigned int len;
+
+	if (s == NULL)
+		return(TRUE);
+
+	oldStr = str;
+
+	len = wcslen(s) + 1;
+	if (oldStr)
+		len += wcslen(oldStr);
+
+	str = new wchar_t[(len * sizeof(wchar_t))];
+
+	if (oldStr)   wcscpy(str, oldStr);
+	else         str[0] = 0;
+
+	wcscat(str, s);
+
+	if (oldStr)
+		delete[](oldStr);
+
+	return(TRUE);
+}
+
+// FUNCTION: 0x007B69F0
+char WideWstring::cat(unsigned int size, wchar_t const* s)
+{
+	wchar_t* oldStr;
+	unsigned int len;
+
+	oldStr = str;
+
+	len = size + 1;
+	if (oldStr)
+		len += wcslen(oldStr);
+
+	str = new wchar_t[(len * sizeof(wchar_t))];
+
+	if (oldStr)
+		wcscpy(str, oldStr);
+	else
+		str[0] = 0;
+
+	if (s)
+		wcsncat(str, s, size);
+
+	if (oldStr)
+		delete[](oldStr);
+
+	return(TRUE);
+}
+
+// FUNCTION: 0x007B6A60
+char WideWstring::cat(WideWstring const& other)
+{
+	return(cat(other.get()));
+}
+
+// FUNCTION: 0x007B6AE0 ?YWideWstring
+WideWstring& WideWstring::operator+=(wchar_t const* string)
+{
+	cat(string);
+	return(*this);
+}
+
+// FUNCTION: 0x007B6B60 ?YWideWstring
+WideWstring& WideWstring::operator+=(WideWstring const& other)
+{
+	cat(other.get());
+	return(*this);
+}
+
+// FUNCTION: 0x007B6BE0 ?HWideWstring
+WideWstring WideWstring::operator+(wchar_t const* string) const
+{
+	WideWstring temp = *this;
+	temp.cat(string);
+	return(temp);
+}
+
+// FUNCTION: 0x007B6CB0 ?HWideWstring
+WideWstring WideWstring::operator+(WideWstring const& s) const
+{
+	WideWstring temp = *this;
+	temp.cat(s);
+	return(temp);
+}
+
+// FUNCTION: 0x007B6D90
+wchar_t WideWstring::remove(int pos, int count)
+{
+	wchar_t* s;
+	int   len;
+
+	len = (int)wcslen(str);
+
+	if (pos + count > len)
+		pos = len - count;
+	if (pos < 0)
+	{
+		count += pos;
+		pos = 0;
+	}
+	if (count <= 0)
+		return(FALSE);
+
+	s = new wchar_t[len - count + 1];
+
+	str[pos] = 0;
+	str[pos + count - 1] = 0;
+
+	wcscpy(s, str);
+	wcscat(s, &(str[pos + count]));
+	delete[](str);
+	str = s;
+
+	return(TRUE);
+}
+
+// FUNCTION: 0x007B6E20
+char WideWstring::removeChar(wchar_t c)
+{
+	int     len = 0;
+	wchar_t* cptr = NULL;
+	char    removed = FALSE;
+
+	if (str == NULL)
+		return(FALSE);
+
+	len = wcslen(str);
+	while ((cptr = (wchar_t *)wcschr((wchar_t const *)str, c)) != NULL)
+	{
+		memmove(cptr, cptr + 1, (len - 1) * sizeof(wchar_t) - ((int)(cptr - str)));
+		len--;
+		str[len] = 0;
+		removed = TRUE;
+	}
+	if (removed)
+	{
+		wchar_t* newStr = new wchar_t[wcslen(str) + 1];
+		wcscpy(newStr, str);
+		delete[](str);
+		str = newStr;
+	}
+	return(removed);
+}
+
+// FUNCTION: 0x007B6EC0
+void WideWstring::removeSpaces(void)
+{
+	removeChar(' ');
+	removeChar('\t');
+}
+
+// FUNCTION: 0x007B6EE0
+void WideWstring::trimLeading(WideWstring const& delim)
+{
+	unsigned int i = 0;
+
+	while (i < length())
+	{
+		wchar_t const* d = delim.str;
+		if (!d) d = L"";
+		if (!wcschr(d, str[i]))
+			break;
+		i++;
+	}
+	if (i > 0)
+		remove(0, i);
+}
+
+// FUNCTION: 0x007B6F40
+void WideWstring::trimTrailing(WideWstring const& delim)
+{
+	unsigned int i = length();
+
+	while (i--)
+	{
+		wchar_t const* d = delim.str;
+		if (!d) d = L"";
+		if (!wcschr(d, str[i]))
+			break;
+	}
+	truncate(i + 1);
+}
+
+void WideWstring::clear(void)
+{
+	if (str)
+		delete[](str);
+	str = NULL;
+}
+
+char WideWstring::set(wchar_t const* s)
+{
+	unsigned int len;
+
+	clear();
+
+	len = s ? (unsigned int)wcslen(s) + 1 : 1;
+
+	str = new wchar_t[len];
+	str[0] = 0;
+	if (s)
+		wcscpy(str, s);
+
+	return(TRUE);
+}
+
+char WideWstring::set(unsigned int size, wchar_t const* string)
+{
+	unsigned int len;
+
+	clear();
+	len = size + 1;
+
+	str = new wchar_t[len];
+	str[0] = 0;
+	if (string)
+		wcsncpy(str, string, size);
+	str[size] = 0;
+
+	return(TRUE);
+}
+
+char WideWstring::truncate(unsigned int len)
+{
+	WideWstring tmp;
+	if (!tmp.set(len, get()) || !set(tmp.get()))
+		return(FALSE);
+	return(TRUE);
+}
+
 // FUNCTION: 0x007B7100
 wchar_t* WideWstring::get(void) const
 {

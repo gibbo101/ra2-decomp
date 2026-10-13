@@ -63,7 +63,7 @@ class DisplayClass: public MapClass
 		HousesType PendingHouse;
 
 		DisplayClass(void);
-		DisplayClass(NoInitClass const & x) : BASECLASS(x) {};
+		DisplayClass(NoInitClass const & x) : BASECLASS(x), WaypointColor(), Band(x) {};
 
 		virtual void Read_INI(CCINIClass const & ini);
 		void Write_INI(CCINIClass & ini);
@@ -187,6 +187,7 @@ class DisplayClass: public MapClass
 			int BandX;
 			int BandY;
 			BandStruct(void) : BandX(0), BandY(0) {}
+			BandStruct(NoInitClass const &) {}
 		};
 
 		BandStruct Band;

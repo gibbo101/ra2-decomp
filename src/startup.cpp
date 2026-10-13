@@ -5,6 +5,7 @@
 
 #define INCLUDE_COM
 #include "always.h"
+#include "geometry.h"
 #include "_alpha.h"
 #include "_command.h"
 #include "_convert.h"
@@ -130,6 +131,19 @@
 #include <conio.h>
 #include <io.h>
 #include <cfloat>
+
+// FUNCTION: 0x006BB070 $E2
+// FUNCTION: 0x006BB0A0 $E5
+// FUNCTION: 0x006BB0C0 $E8
+// FUNCTION: 0x006BB0E0 $E11
+// FUNCTION: 0x006BB100 $E14
+// FUNCTION: 0x006BB120 $E17
+// FUNCTION: 0x006BB140 $E20
+// FUNCTION: 0x006BB180 $E23
+// FUNCTION: 0x006BB1B0 $E26
+// FUNCTION: 0x006BB1E0 $E29
+// FUNCTION: 0x006BB210 $E32
+// FUNCTION: 0x006BB220 $E35
 
 // FUNCTION: 0x006BB2E0
 bool SetRegKeyValue(const LPCSTR pszKey, const LPCSTR pszSubkey, const LPCSTR pszValue)

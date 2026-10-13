@@ -24,6 +24,7 @@
 #include "builtype.h"
 #include "bullet.h"
 #include "bullettype.h"
+#include "capmgr.h"
 #include "ccrand.h"
 #include "cell.h"
 #include "combat.h"
@@ -3129,6 +3130,368 @@ Coord BuildingClass::Voxel_Fire_Coord(int which, bool just_fired) const
 	coord += TacticalMap->Pixel_To_Lepton(lpt);
 
 	return(coord);
+}
+
+// FUNCTION: 0x00453D60
+void BuildingClass::Set_Occupy_Bit(Coord const & coord)
+{
+	Map[coord.As_Cell()].Flag.Occupy.Building = true;
+}
+
+// FUNCTION: 0x00453DC0
+void BuildingClass::Clear_Occupy_Bit(Coord const & coord)
+{
+	Map[coord.As_Cell()].Flag.Occupy.Building = false;
+}
+
+// FUNCTION: 0x00453E20
+HRESULT STDMETHODCALLTYPE BuildingClass::Load(IStream * stream)
+{
+	TargetTracker.Remove_Index(Fetch_ID());
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		int index;
+		int count;
+		HRESULT hr;
+
+		new (this) BuildingClass(NoInitClass());
+
+		TargetTracker.Add_Index(Fetch_ID(), this);
+
+		Swizzle_Pointer(&Class);
+		Swizzle_Pointer(&Factory);
+		Swizzle_Pointer(&WhomToRepay);
+		Swizzle_Pointer(&AnimToTrack);
+		Swizzle_Pointer(&PsiWarnAnim);
+		Swizzle_Pointer(&BuildingLight);
+		Audio7.FUN_00405BE0();
+		Audio8.FUN_00405BE0();
+		Swizzle_Pointer(&SecretProduction);
+
+		hr = stream->Read(&count, sizeof(count), NULL);
+		if (FAILED(hr)) {
+			return(hr);
+		}
+
+		for (index = 0; index < count; index++) {
+			InfantryClass * obj;
+			hr = stream->Read(&obj, sizeof(obj), NULL);
+			if (FAILED(hr)) {
+				return(hr);
+			}
+			Overpowerers.Add(obj);
+		}
+
+		for (index = 0; index < count; index++) {
+			Swizzle_Pointer(&Overpowerers[index]);
+		}
+
+		hr = stream->Read(&count, sizeof(count), NULL);
+		if (FAILED(hr)) {
+			return(hr);
+		}
+
+		for (index = 0; index < count; index++) {
+			InfantryClass * obj;
+			hr = stream->Read(&obj, sizeof(obj), NULL);
+			if (FAILED(hr)) {
+				return(hr);
+			}
+			Occupants.Add(obj);
+		}
+
+		for (index = 0; index < count; index++) {
+			Swizzle_Pointer(&Occupants[index]);
+		}
+
+		for (index = 0; index < BANIM_COUNT; index++) {
+			Swizzle_Pointer(&Anims[index]);
+		}
+
+		for (index = 0; index < ARRAY_SIZE(Upgrades); index++) {
+			Swizzle_Pointer(&Upgrades[index]);
+		}
+
+		for (index = 0; index < ARRAY_SIZE(DamageFireAnims); index++) {
+			Swizzle_Pointer(&DamageFireAnims[index]);
+		}
+
+		LightSource = NULL;
+	}
+	return(result);
+}
+
+// FUNCTION: 0x00454190
+HRESULT STDMETHODCALLTYPE BuildingClass::Save(IStream * stream, BOOL cleardirty)
+{
+	HRESULT result = BASECLASS::Save(stream, cleardirty);
+	if (SUCCEEDED(result)) {
+		int index;
+		HRESULT hr;
+		int count = Overpowerers.Count();
+
+		hr = stream->Write(&count, sizeof(count), NULL);
+		if (FAILED(hr)) {
+			return(hr);
+		}
+
+		for (index = 0; index < count; index++) {
+			hr = stream->Write(&Overpowerers[index], sizeof(Overpowerers[index]), NULL);
+			if (FAILED(hr)) {
+				return(hr);
+			}
+		}
+
+		count = Occupants.Count();
+
+		hr = stream->Write(&count, sizeof(count), NULL);
+		if (FAILED(hr)) {
+			return(hr);
+		}
+
+		for (index = 0; index < count; index++) {
+			hr = stream->Write(&Occupants[index], sizeof(Occupants[index]), NULL);
+			if (FAILED(hr)) {
+				return(hr);
+			}
+		}
+	}
+	return(result);
+}
+
+// FUNCTION: 0x00454250
+bool BuildingClass::Ready_To_Next_Mission(void) const
+{
+	if (IsReadyToCommence) {
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00454260
+void BuildingClass::Compute_CRC(CRCEngine & crc) const
+{
+	BASECLASS::Compute_CRC(crc);
+	crc((int)CountDown);
+	crc((int)CashProductionTimer);
+	crc(BState);
+	crc(QueueBState);
+	crc(WhoLastHurtMe);
+	if (WhomToRepay != NULL) {
+		crc(WhomToRepay->Fetch_ID());
+	}
+	crc(LastStrength);
+	if (AnimToTrack != NULL) {
+		crc(AnimToTrack->Fetch_ID());
+	}
+	crc((int)PlacementDelay);
+	crc(TurretIndex);
+	crc(LaserFenceFrame);
+	crc(FirestormWallFrame);
+	crc(IsOn);
+	crc(IsPoweredOn);
+	crc(IsToRebuild);
+	crc(IsToRepair);
+	crc(IsAllowedToSell);
+	crc(IsReadyToCommence);
+	crc(IsRepairing);
+	crc(IsWrenchVisible);
+	crc(IsGoingToBlow);
+	crc(IsSurvivorless);
+	crc(IsCharging);
+	crc(IsCharged);
+	crc(IsCaptured);
+	crc(ActuallyPlacedOnMap);
+	crc(HasEngineer);
+	crc(HasOpened);
+	crc(IsDamagedAnims);
+	crc(Brightness);
+	crc(UpgradeLevel);
+}
+
+// FUNCTION: 0x004544A0
+VisualType BuildingClass::Visual_Character(bool raw, HouseClass const * house) const
+{
+	if (TranslucencyLevel != 0) {
+		if (TranslucencyLevel > 10) {
+			if (raw) {
+				if (house != NULL) {
+					if (Map[PositionCoord.As_Cell()].Is_Sensed(house->HeapID)) {
+						return(VISUAL_SHADOWY);
+					}
+				}
+			} else {
+				if (IsOwnedByPlayer || Is_Sensed_By_Player() || !MainWindow || (Session.Type != GAME_NORMAL && House != NULL && PlayerPtr != NULL && PlayerPtr->Is_Ally(House) && House->Is_Ally(PlayerPtr))) {
+					return(VISUAL_SHADOWY);
+				}
+			}
+			return(VISUAL_HIDDEN);
+		}
+
+		if (TranslucencyLevel > 5) {
+			return(VISUAL_DARKEN);
+		}
+
+		return(VISUAL_INDISTINCT);
+	}
+
+	return(BASECLASS::Visual_Character(raw, house));
+}
+
+// FUNCTION: 0x004545D0
+void BuildingClass::FUN_004545D0(void)
+{
+	DestroyNthAnim(BANIM_SUPER_LOW_POWER);
+	for (int i = 0; i < BANIM_COUNT; i++) {
+		if (Class->AnimData[i].Powered) {
+			if (Anims[i] != NULL) {
+				Anims[i]->Enable();
+			}
+		} else if (Class->AnimData[i].PoweredLight) {
+			if (Anims[i] == NULL && ActuallyPlacedOnMap) {
+				if (!Class->IsAnimDelayedFire || i != BANIM_SPECIAL_ONE) {
+					Replay_Anim(this, (BAnimType)i, HealthRatio <= Rule->ConditionYellow);
+				}
+			}
+		} else if (Class->AnimData[i].PoweredEffect) {
+			if (AnimStates[i]) {
+				AnimStates[i] = false;
+				Replay_Anim(this, (BAnimType)i, HealthRatio <= Rule->ConditionYellow);
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x00454730
+void BuildingClass::FUN_00454730(void)
+{
+	DestroyNthAnim(BANIM_LOW_POWER);
+	for (int i = 0; i < BANIM_COUNT; i++) {
+		if (Class->AnimData[i].PoweredSpecial) {
+			Replay_Anim(this, (BAnimType)i, HealthRatio <= Rule->ConditionYellow);
+		}
+	}
+}
+
+// FUNCTION: 0x004547C0
+void BuildingClass::FUN_004547C0(void)
+{
+	for (int i = 0; i < BANIM_COUNT; i++) {
+		if (Class->AnimData[i].Powered) {
+			if (Anims[i] != NULL) {
+				Anims[i]->Disable();
+			}
+		} else if (Class->AnimData[i].PoweredLight) {
+			if (Anims[i] != NULL) {
+				DestroyNthAnim((BAnimType)i);
+				if (i == BANIM_SPECIAL_ONE) {
+					if (Class->IsAnimDelayedFire && Class->AnimData[BANIM_ACTIVE_ONE].Powered) {
+						Replay_Anim(this, BANIM_ACTIVE_ONE, HealthRatio <= Rule->ConditionYellow);
+					}
+				}
+			}
+		} else if (Class->AnimData[i].PoweredEffect) {
+			if (Anims[i] != NULL) {
+				AnimStates[i] = true;
+				DestroyNthAnim((BAnimType)i);
+				if (i == BANIM_SUPER_THREE) {
+					Replay_Anim(this, BANIM_SUPER_LOW_POWER, HealthRatio <= Rule->ConditionYellow);
+				}
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x00454930
+void BuildingClass::FUN_00454930(void)
+{
+	Replay_Anim(this, BANIM_LOW_POWER, HealthRatio <= Rule->ConditionYellow);
+	for (int i = 0; i < BANIM_COUNT; i++) {
+		if (Class->AnimData[i].PoweredSpecial) {
+			DestroyNthAnim((BAnimType)i);
+		}
+	}
+}
+
+// FUNCTION: 0x004549B0
+void BuildingClass::FUN_004549B0(void)
+{
+	if (IsPowerOnline()) {
+		if (Class->PowersUnit != NULL && !RegisteredAsPoweredUnitSource) {
+			RegisteredAsPoweredUnitSource = true;
+			House->FUN_0050E010(Class->PowersUnit);
+		}
+
+		if (Class->IsCloakGenerator && CloakGeneratorState <= 0 && CurrentCloakRadius != Class->CloakRadiusInCells) {
+			CloakGeneratorState = 1;
+			if (CurrentCloakRadius == Class->CloakRadiusInCells) {
+				CurrentCloakRadius = 0;
+			}
+			IsToDisplay = true;
+		}
+
+		if (Class->GapGenerator && !GeneratingGap) {
+			CreateGap();
+		}
+
+		if (Class->IsPowered && Class->Drain > 0) {
+			FUN_004545D0();
+		}
+
+		if (Class->PoweredSpecial) {
+			DestroyNthAnim(BANIM_LOW_POWER);
+			for (int i = 0; i < BANIM_COUNT; i++) {
+				if (Class->AnimData[i].PoweredSpecial) {
+					Replay_Anim(this, (BAnimType)i, HealthRatio <= Rule->ConditionYellow);
+				}
+			}
+		}
+	} else {
+		if (Class->PowersUnit != NULL && RegisteredAsPoweredUnitSource) {
+			RegisteredAsPoweredUnitSource = false;
+			House->LostPoweredCenter(Class->PowersUnit);
+		}
+
+		if (CaptureManager != NULL) {
+			CaptureManager->FreeAll();
+		}
+
+		if (LocomotorTarget != NULL) {
+			ReleaseLocomotor(true);
+		}
+
+		if (Class->IsCloakGenerator && CloakGeneratorState >= 0 && CurrentCloakRadius != 0) {
+			CloakGeneratorState = -1;
+			IsToDisplay = true;
+		}
+
+		if (Class->GapGenerator && GeneratingGap) {
+			DestroyGap();
+			if (GapSuperCharged) {
+				GapSuperCharged = false;
+				HasExtraPowerDrain = false;
+				House->RecalcPower = true;
+				GapRadius = Class->GapRadiusInCells;
+				CreateGap();
+			}
+		}
+
+		if (Class->IsPowered && Class->Drain > 0) {
+			FUN_004547C0();
+		}
+
+		if (Class->PoweredSpecial) {
+			HouseClass * house = House;
+			if ((int)house->PowerBlackoutTimer != 0 || house->IsBeingDrained) {
+				Replay_Anim(this, BANIM_LOW_POWER, HealthRatio <= Rule->ConditionYellow);
+				for (int i = 0; i < BANIM_COUNT; i++) {
+					if (Class->AnimData[i].PoweredSpecial) {
+						DestroyNthAnim((BAnimType)i);
+					}
+				}
+			}
+		}
+	}
 }
 
 // FUNCTION: 0x00459E80

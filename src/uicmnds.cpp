@@ -47,6 +47,7 @@
 #include "cell.h"
 #include <mmsystem.h>
 #include <string.h>
+#include <math.h>
 #include "stringtable.h"
 
 class UICommandHolder
@@ -633,7 +634,7 @@ class TacticalSelection
 extern TacticalSelection * TacticalSelectionInstance;
 extern bool DAT_00B0FE64;
 extern int DAT_00A8ECC8;
-bool __fastcall FUN_007342C0(ObjectClass * object);
+unsigned char __fastcall FUN_007342C0(ObjectClass * object);
 bool __fastcall FUN_00732580(TechnoClass * techno, int unused);
 int __fastcall FUN_007325C0(TechnoClass * techno, int unused);
 void __fastcall FUN_006DA770(Tactical * tactical);
@@ -1391,3 +1392,70 @@ void FUN_00734210(void)
 	DAT_00845558 = timeGetTime() - 0x641;
 	DAT_0084555C = -100;
 }
+
+extern BuildingClass * DAT_00B0FE5C;
+extern BuildingClass * DAT_00B0FE60;
+
+// FUNCTION: 0x00734250
+void __fastcall FUN_00734250(BuildingClass * building)
+{
+	if (building->Class->BuildCat == 5) {
+		DAT_00B0FE60 = building;
+	} else {
+		DAT_00B0FE5C = building;
+	}
+}
+
+// FUNCTION: 0x00734270
+void TechnoClass::ClearSidebarTabObject(void)
+{
+	if (this == NULL) {
+		DAT_00B0FE5C = NULL;
+		DAT_00B0FE60 = NULL;
+	} else if (this == (TechnoClass *)DAT_00B0FE5C) {
+		DAT_00B0FE5C = NULL;
+	} else if (this == (TechnoClass *)DAT_00B0FE60) {
+		DAT_00B0FE60 = NULL;
+	}
+}
+
+// FUNCTION: 0x007342A0
+BuildingClass * FUN_007342A0(void)
+{
+	return DAT_00B0FE5C;
+}
+
+// FUNCTION: 0x007342B0
+BuildingClass * FUN_007342B0(void)
+{
+	return DAT_00B0FE60;
+}
+
+// FUNCTION: 0x007342C0
+unsigned char __fastcall FUN_007342C0(ObjectClass * object)
+{
+	if (!object) {
+		return 0;
+	}
+	unsigned char flag = object->AbstractFlags & 1;
+	return flag;
+}
+
+// FUNCTION: 0x007342D0 ?$DynamicVectorClass@PAVTechnoClass@@::?$DynamicVectorClass@PAVTechnoClass@@
+template class DynamicVectorClass<TechnoClass *>;
+
+// FUNCTION: 0x00734330 ?$DynamicVectorClass@PBD::?$DynamicVectorClass@PBD
+// FUNCTION: 0x00734390 ?$DynamicVectorClass@PBD::Add
+template class DynamicVectorClass<char const *>;
+
+// FUNCTION: 0x007343E0 ?$VectorClass@PBD::?$VectorClass@PBD
+template class VectorClass<char const *>;
+
+// FUNCTION: 0x00734430 $E148
+// FUNCTION: 0x00734460 $E151
+// FUNCTION: 0x00734480 $E154
+extern double __cdecl FUN_004CAC40(double);
+double DAT_00B11E98 = FUN_004CAC40(pow(256.0, 2.0) * 2);
+extern const double DAT_007F5C18;
+double DAT_00B1CF50 = DAT_00B11E98 / DAT_007F5C18;
+double DAT_00B1CF38 = 1.0 / DAT_00B1CF50;

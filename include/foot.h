@@ -156,7 +156,7 @@ class FootClass : public TechnoClass
 		virtual bool HaveMegaMission(void) const override;
 		virtual bool HaveAttackMoveTarget(void) const override;
 		virtual int GetMegaMission(void) const override;
-		virtual Coord GetAttackMoveCoords(Coord * buffer) override;
+		virtual Coord GetAttackMoveCoords(void) override;
 		virtual bool MegaMissionIsAttackMove(void) const override;
 		virtual bool ContinueMegaMission(void) override;
 		virtual void UpdateAttackMove(void) override;
@@ -224,6 +224,7 @@ class FootClass : public TechnoClass
 		void Link_DropPod(void);
 		Cell Move_Order(Cell const & where, bool consider_fog);
 		void AbortMotion(void);
+		void ResolveMegaTarget(void);
 		void UpdatePassengerCoords(void);
 		void RemovePassenger(FootClass * passenger);
 		FootClass * RemoveFirstPassenger(void);

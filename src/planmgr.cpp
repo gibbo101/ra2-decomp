@@ -254,6 +254,17 @@ class PlanningNodeClass
 		void Add_Member(TechnoClass * techno, EventClass const * event);
 		int Find_Member(TechnoClass * techno);
 		TechnoClass * Member_Owner(int index);
+		EventClass Get_Event(int index);
+		EventClass Get_Event_For(TechnoClass * techno);
+		bool Has_Member(TechnoClass * techno);
+		HouseClass * Lead_House(void);
+		Coord Lead_Coord(void);
+		Point2D Lead_Pixel(void);
+		bool Hit_Test(int x, int y);
+		bool Lead_At(Coord coord);
+		Rect Lead_Rect(void);
+		bool Is_Past_Start(void);
+		void Promote_Events(void);
 		void FUN_00635120(void);
 		void FUN_00635DB0(int);
 		void FUN_00634E10(PlanMember *);
@@ -512,4 +523,135 @@ int PlanningNodeClass::Find_Member(TechnoClass * techno)
 TechnoClass * PlanningNodeClass::Member_Owner(int index)
 {
 	return Members[index]->Owner;
+}
+
+Rect __fastcall FUN_00634510(int size, Point2D center);
+
+static inline Point2D Coord_To_View(Coord coord)
+{
+	Point2D pixel;
+	TacticalMap->Coord_To_Pixel(coord, pixel);
+	pixel.X += DSurface::ViewBounds.X;
+	pixel.Y += DSurface::ViewBounds.Y;
+	return pixel;
+}
+
+// FUNCTION: 0x006342E0
+EventClass PlanningNodeClass::Get_Event(int index)
+{
+	return *Members[index]->Packet;
+}
+
+// FUNCTION: 0x00634310
+EventClass PlanningNodeClass::Get_Event_For(TechnoClass * techno)
+{
+	int index = Find_Member(techno);
+	PlanMember * member = (index == -1) ? 0 : Members[index];
+	return *member->Packet;
+}
+
+// FUNCTION: 0x00634360
+bool PlanningNodeClass::Has_Member(TechnoClass * techno)
+{
+	return Find_Member(techno) != -1;
+}
+
+// FUNCTION: 0x006343B0
+HouseClass * PlanningNodeClass::Lead_House(void)
+{
+	return Members[0]->Owner->House;
+}
+
+// FUNCTION: 0x006343C0
+Coord PlanningNodeClass::Lead_Coord(void)
+{
+	Coord coord = FUN_00633BC0(*Members[0]->Packet);
+	return coord;
+}
+
+// FUNCTION: 0x00634400
+Point2D PlanningNodeClass::Lead_Pixel(void)
+{
+	Coord coord = FUN_00633BC0(*Members[0]->Packet);
+	return Coord_To_View(coord);
+}
+
+static inline Coord Event_Coord(EventClass const & e) { return FUN_00633BC0(e); }
+static inline Point2D Pixel_0(Coord const & c) { return FUN_006339E0(c); }
+static inline Point2D Pixel_1(Coord const & c) { return Pixel_0(c); }
+static inline Point2D Pixel_2(Coord const & c) { return Pixel_1(c); }
+static inline Point2D Pixel_3(Coord const & c) { return Pixel_2(c); }
+static inline Point2D Pixel_4(Coord const & c) { return Pixel_3(c); }
+static inline Point2D Pixel_5(Coord const & c) { return Pixel_4(c); }
+static inline Point2D Pixel_6(Coord const & c) { return Pixel_5(c); }
+static inline Point2D Pixel_7(Coord const & c) { return Pixel_6(c); }
+static inline Point2D Pixel_Of(Coord c) { Point2D p = Pixel_7(c); return p; }
+static inline Rect Around_0(int size, Point2D p) { return FUN_00634510(size, p); }
+static inline Rect Around_1(int size, Point2D p) { return Around_0(size, p); }
+static inline Rect Around_2(int size, Point2D p) { return Around_1(size, p); }
+static inline Rect Around_3(int size, Point2D p) { return Around_2(size, p); }
+static inline Rect Around_4(int size, Point2D p) { return Around_3(size, p); }
+static inline Rect Around_5(int size, Point2D p) { return Around_4(size, p); }
+static inline Rect Around_6(int size, Point2D p) { return Around_5(size, p); }
+static inline Rect Around_7(int size, Point2D p) { return Around_6(size, p); }
+static inline Rect Around(int size, Point2D p) { return Around_7(size, p); }
+
+// FUNCTION: 0x00634470
+bool PlanningNodeClass::Hit_Test(int x, int y)
+{
+	Rect r = Around(8, Pixel_Of(Event_Coord(*Members[0]->Packet)));
+	Rect big = r;
+	big.Width += 8;
+	big.Height += 8;
+	big.X -= 4;
+	big.Y -= 4;
+	return big.Is_Point_Within(Point2D(x, y));
+}
+
+// FUNCTION: 0x00634510
+Rect __fastcall FUN_00634510(int size, Point2D center)
+{
+	int offset = -(size / 2);
+	Point2D corner = center;
+	corner.X += offset;
+	corner.Y += offset;
+	return Rect(corner, size, size);
+}
+
+// FUNCTION: 0x00634550
+bool PlanningNodeClass::Lead_At(Coord coord)
+{
+	Coord c = FUN_00633BC0(*Members[0]->Packet);
+	return c.X == coord.X && c.Y == coord.Y && c.Z == coord.Z;
+}
+
+// FUNCTION: 0x006345A0
+Rect PlanningNodeClass::Lead_Rect(void)
+{
+	Coord coord = FUN_00633BC0(*Members[0]->Packet);
+	Point2D pixel;
+	TacticalMap->Coord_To_Pixel(coord, pixel);
+	pixel.X += DSurface::ViewBounds.X;
+	pixel.Y += DSurface::ViewBounds.Y;
+	return FUN_00634510(8, pixel);
+}
+
+// FUNCTION: 0x00634630
+bool PlanningNodeClass::Is_Past_Start(void)
+{
+	if (Members.Count() == 0) return false;
+	PlanToken * token = FUN_00705D20(Members[0]->Owner);
+	int index = token->Nodes.ID(this);
+	int start = token->LoopStart;
+	return start != -1 && index >= start;
+}
+
+// FUNCTION: 0x00634680
+void PlanningNodeClass::Promote_Events(void)
+{
+	int count = Members.Count();
+	for (int i = 0; i < count; i++) {
+		EventClass * packet = Members[i]->Packet;
+		if (packet->Data.MegaMission.Mission == 2) packet->Data.MegaMission.Mission = 0x1d;
+	}
 }

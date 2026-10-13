@@ -196,7 +196,7 @@ struct SerialSettingsType {
 #pragma pack(1)
 
 struct NodeNameType {
-	char Name[MPLAYER_NAME_MAX];
+	wchar_t Name[20];
 		IPXAddressClass Address;
 	union {
 		struct {

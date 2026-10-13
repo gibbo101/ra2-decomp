@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
 #include "netshare.h"
 #include "_rules.h"
 #include "cd.h"
@@ -39,6 +40,20 @@
 #include "xpipe.h"
 #include "xstraw.h"
 #include <ctime>
+
+
+// FUNCTION: 0x005E2430 $E2
+// FUNCTION: 0x005E2460 $E5
+// FUNCTION: 0x005E2480 $E8
+// FUNCTION: 0x005E24A0 $E11
+// FUNCTION: 0x005E24C0 $E14
+// FUNCTION: 0x005E24E0 $E17
+// FUNCTION: 0x005E2500 $E20
+// FUNCTION: 0x005E2540 $E23
+// FUNCTION: 0x005E2570 $E26
+// FUNCTION: 0x005E25A0 $E29
+// FUNCTION: 0x005E25D0 $E32
+// FUNCTION: 0x005E25E0 $E35
 
 // FUNCTION: 0x005E2620
 unsigned int Wstring_Hash(Wstring & string)

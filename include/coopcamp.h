@@ -6,6 +6,7 @@
 
 #include "ccini.h"
 #include "vector.h"
+#include "wstring.h"
 
 struct CoopPlayerStats;
 
@@ -24,11 +25,14 @@ class CoopCamp_0049B610
 		bool FUN_0049C0D0(void);
 		bool FUN_0049C5A0(void);
 		bool FUN_0049CC50(int index, int time, CoopPlayerStats first, CoopPlayerStats second);
-		bool FUN_0049CCF0(int index, VectorClass<int> picks, int count, int unused, char const * map, char const * name);
+		bool FUN_0049CCF0(int index, DynamicVectorClass<int> picks, char const * map, char const * name);
 		bool FUN_0049D070(void ** out, int index);
 		bool FUN_0049D0C0(int * house, int * color);
+		bool FUN_0049D0F0(int * house, int * color);
 		bool FUN_0049CAF0(int index);
 		bool FUN_0049D120(void);
+		bool FUN_0049D390(char * out);
+		bool FUN_0049D680(void);
 
 		char Name[0x14];
 		int Field14;
@@ -67,21 +71,32 @@ struct CoopPlayerStats
 	int Pad64[3];
 };
 
+typedef DynamicVectorClass<char *> CoopCampNameList;
+
 struct CoopCampEntry
 {
-	char Pad0[8];
+	int Pad0;
+	wchar_t * Title;
 	char MapCount;
 	char Pad9[3];
 	char * Names;
-	char Pad10[0x4c - 0x10];
+	DynamicVectorClass<CoopCampNameList *> ListA;
+	DynamicVectorClass<CoopCampNameList *> ListB;
+	wchar_t * Extra;
+	Wstring Text44;
+	Wstring Text48;
 };
 
-class CoopCampSource_0049E4F0 : public CCINIClass
+class CoopCampSource_0049E4F0
 {
 	public:
-		CoopCampSource_0049E4F0(void) { Loaded = false; }
+		CCINIClass Ini;
+		CoopCampSource_0049E4F0(void);
 		~CoopCampSource_0049E4F0(void);
+		bool FUN_0049E3B0(int index, CoopCampEntry ** out);
+		bool FUN_0049E400(char const * name, CoopCampEntry ** out);
 		bool FUN_0049E4F0(int * count);
+		bool FUN_0049E740(DynamicVectorClass<wchar_t *> * list);
 		void FUN_0049DB00(void);
 
 		CoopCampEntry * Entries;

@@ -48,6 +48,11 @@
 #include "waypoint.h"
 #include "weapon.h"
 
+#include "velocity.h"
+
+template class TPoint3D<int>;
+template class TVelocity3D<double>;
+
 extern int __fastcall FUN_0050C170(char const * name);
 
 // FUNCTION: 0x00413CD0
@@ -1927,6 +1932,32 @@ void TechnoClass::ClearDisguise(void)
 
 // FUNCTION: 0x0041C130 FootClass::Overrun_Square
 
+// FUNCTION: 0x0041C140 FootClass::Fixup_Path
+
+// FUNCTION: 0x0041C150
+Cell FootClass::GetLastFlightMapCoords(void) const
+{
+	return(LastFlightMapCoords);
+}
+
+// FUNCTION: 0x0041C160
+void FootClass::SetLastFlightMapCoords(Cell coord)
+{
+	LastFlightMapCoords = coord;
+}
+
+// FUNCTION: 0x0041C170
+int AircraftClass::Fetch_Object_Size(void) const
+{
+	return(sizeof(*this));
+}
+
+// FUNCTION: 0x0041C180
+RTTIType AircraftClass::Fetch_RTTI(void) const
+{
+	return(RTTI_AIRCRAFT);
+}
+
 // FUNCTION: 0x0041C190
 HRESULT STDMETHODCALLTYPE AircraftClass::GetClassID(CLSID * retval)
 {
@@ -1934,6 +1965,32 @@ HRESULT STDMETHODCALLTYPE AircraftClass::GetClassID(CLSID * retval)
 	*retval = CLSID_AircraftClass;
 	return(S_OK);
 }
+
+// FUNCTION: 0x0041C1D0
+wchar_t const * AircraftClass::Full_Name(void) const
+{
+	return(Class->UIName);
+}
+
+// FUNCTION: 0x0041C1E0
+DirType AircraftClass::Turret_Facing(void) const
+{
+	return(SecondaryFacing.Current());
+}
+
+// FUNCTION: 0x0041C200
+ObjectTypeClass const * AircraftClass::Class_Of(void) const
+{
+	return(Class);
+}
+
+// FUNCTION: 0x0041C210 AircraftClass::~AircraftClass
+
+// FUNCTION: 0x0041C230 ?$TPoint3D@H::?$TPoint3D@H
+
+// FUNCTION: 0x0041C250 ?$_com_ptr_t@V?$_com_IIID@UILocomotion@@$1?_GUID_070f3290_9841_11d1_b709_00a024ddafd1@@3U__s_GUID@@A@@::CreateInstance
+
+// FUNCTION: 0x0041C2E0 ?$TVelocity3D@N::Get_Pitch
 
 // FUNCTION: 0x004196B0
 MoveType AircraftClass::Can_Enter_Cell(CellClass const * cell, FacingType, int cell_height, CellClass const *, bool) const

@@ -698,4 +698,28 @@ template class BlitTransRemapDest<unsigned char>;
 template class BlitTransRemapXlat<unsigned char>;
 
 // FUNCTION: 0x00491820 ?$RLEBlitTransXlat@E::Blit
+// FUNCTION: 0x004918A0 ?$RLEBlitTransXlat@E::Blit_Copy_Tinted
 template class RLEBlitTransXlat<unsigned char>;
+
+// FUNCTION: 0x004918E0 ?$RLEBlitTransZRemapXlat@E::Blit
+// FUNCTION: 0x00491970 ?$RLEBlitTransZRemapXlat@E::Blit_Copy_Tinted
+template class RLEBlitTransZRemapXlat<unsigned char>;
+
+// FUNCTION: 0x004919B0 ?$RLEBlitTransRemapDest@E::Blit
+// FUNCTION: 0x00491A30 ?$RLEBlitTransRemapDest@E::Blit_Copy_Tinted
+template class RLEBlitTransRemapDest<unsigned char>;
+
+// FUNCTION: 0x00491A70 ?$RLEBlitTransRemapXlat@E::Blit
+// FUNCTION: 0x00491B00 ?$RLEBlitTransRemapXlat@E::Blit_Copy_Tinted
+template class RLEBlitTransRemapXlat<unsigned char>;
+
+// FUNCTION: 0x00491B40 ?$RLEBlitTransXlatZRead@E::Blit
+// FUNCTION: 0x00491C10 ?$RLEBlitTransXlatZRead@E::Blit_Copy_Tinted
+template class RLEBlitTransXlatZRead<unsigned char>;
+
+// FUNCTION: 0x00491C50 ?$RLEBlitTransZRemapXlatZRead@E::Blit
+// FUNCTION: 0x00491D50 ?$RLEBlitTransZRemapXlatZRead@E::Blit_Copy_Tinted
+template class RLEBlitTransZRemapXlatZRead<unsigned char>;
+
+// FUNCTION: 0x00491D90 ?$RLEBlitTransRemapDestZRead@E::Blit
+template class RLEBlitTransRemapDestZRead<unsigned char>;

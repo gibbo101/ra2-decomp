@@ -19,6 +19,22 @@ class WideWstring
 		unsigned int	length(void) const;
 		int				toInt(void) const;
 		int				getToken(int offset, wchar_t const * delim, WideWstring & out) const;
+		char			cat(wchar_t const * s);
+		char			cat(unsigned int size, wchar_t const * s);
+		char			cat(WideWstring const & other);
+		WideWstring &	operator+=(wchar_t const * string);
+		WideWstring &	operator+=(WideWstring const & other);
+		WideWstring		operator+(wchar_t const * string) const;
+		WideWstring		operator+(WideWstring const & s) const;
+		wchar_t			remove(int pos, int count);
+		char			removeChar(wchar_t c);
+		void			removeSpaces(void);
+		void			trimLeading(WideWstring const & delim);
+		void			trimTrailing(WideWstring const & delim);
+		char			truncate(unsigned int len);
+		char			set(unsigned int size, wchar_t const * string);
+		char			set(wchar_t const * s);
+		void			clear(void);
 
 		bool			operator==(wchar_t const * other) const;
 		bool			operator==(WideWstring const & other) const;

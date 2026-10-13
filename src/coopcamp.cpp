@@ -3,6 +3,7 @@
 // Copyright 2025 Electronic Arts Inc.; 2026 OpenTS contributors
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
+#define NDEBUG
 #include "always.h"
 #include "ccfile.h"
 #include "ccini.h"
@@ -16,6 +17,7 @@ extern char DAT_0089ED18[];
 extern char DAT_0089F118[];
 char * __fastcall FUN_007350C0(wchar_t const * text);
 void __cdecl FUN_004068E0(char const * format, ...);
+void __fastcall FUN_005E3720(char const * text);
 extern DynamicVectorClass<HouseClass *> DAT_00A80228;
 
 char __fastcall FUN_0049B430(int nibble);
@@ -468,6 +470,17 @@ bool CoopCamp_0049B610::FUN_0049D0C0(int * house, int * color)
 	return false;
 }
 
+// FUNCTION: 0x0049D0F0
+bool CoopCamp_0049B610::FUN_0049D0F0(int * house, int * color)
+{
+	if (Field6C) {
+		*house = Field30;
+		*color = Field34;
+		return true;
+	}
+	return false;
+}
+
 // FUNCTION: 0x0049D120
 bool CoopCamp_0049B610::FUN_0049D120(void)
 {
@@ -518,3 +531,239 @@ bool CoopCamp_0049B610::FUN_0049D120(void)
 	strcat(section, DAT_0089ED18);
 	return ini.GetSection(section) != NULL;
 }
+
+// FUNCTION: 0x0049D390
+bool CoopCamp_0049B610::FUN_0049D390(char * out)
+{
+	if (!Name[0] || !Map[0]) {
+		return false;
+	}
+	char section[100];
+	char key[32];
+	struct Loaded {
+		CCFileClass file;
+		CCINIClass ini;
+		Loaded(void) : file("coopsave.ini") {}
+	} l;
+	CCFileClass & file = l.file;
+	CCINIClass & ini = l.ini;
+	if (!ini.ReadCCFile(file, false, false)) {
+		l.file.Close();
+	} else {
+		l.file.Close();
+
+		int i = 0;
+		char const * p;
+		for (p = Name; *p && i < 0x3fd; i++, p++) {
+			if (!isalnum(*p)) {
+				DAT_0089ED18[i++] = '=';
+				int hi = *p >> 4;
+				DAT_0089ED18[i++] = HexDigit(hi);
+				DAT_0089ED18[i] = FUN_0049B430(*p & 0xf);
+			} else {
+				DAT_0089ED18[i] = *p;
+			}
+		}
+		DAT_0089ED18[i] = 0;
+		strcpy(section, DAT_0089ED18);
+		i = 0;
+		for (p = Map; *p && i < 0x3fd; i++, p++) {
+			if (!isalnum(*p)) {
+				DAT_0089ED18[i++] = '=';
+				int hi = *p >> 4;
+				DAT_0089ED18[i++] = HexDigit(hi);
+				DAT_0089ED18[i] = FUN_0049B430(*p & 0xf);
+			} else {
+				DAT_0089ED18[i] = *p;
+			}
+		}
+		DAT_0089ED18[i] = 0;
+		strcat(section, DAT_0089ED18);
+		int current = ini.Get_Int(section, "CurrentMap", 0);
+		sprintf(key, "Map%d", current + 1);
+		ini.Get_String(section, key, "undefined", out, 0x104);
+		if (strcmp(out, "undefined") == 0) {
+			return true;
+		}
+	}
+	return false;
+}
+
+// FUNCTION: 0x0049D680
+bool CoopCamp_0049B610::FUN_0049D680(void)
+{
+	if (!Field6C) {
+		return false;
+	}
+	CoopCampEntry * entry;
+	if (!DAT_0089F518.FUN_0049E3B0(Field44, &entry)) {
+		return false;
+	}
+	char line[0x190];
+	char pick[16];
+	sprintf(line, "C0,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d", Field44, Field38, Field68, Field48, Field50, Field58, Field60, Field4C, Field54, Field5C, Field64);
+	for (int k = 0; k < ItemCount; k++) {
+		int found = 0;
+		for (int j = 0; j < 3; j++) {
+			if (!strcmpi(&entry->Names[k * 0x30c + j * 0x104], (char const *)Items[k])) {
+				found = j;
+				break;
+			}
+		}
+		sprintf(pick, ",%d", found);
+		strcat(line, pick);
+	}
+	strcat(line, ",-1,");
+	char const * p;
+	int i = 0;
+	for (p = Name; *p && i < 0x3fd; i++, p++) {
+		if (!isalnum(*p)) {
+			DAT_0089ED18[i++] = '=';
+			int hi = *p >> 4;
+			DAT_0089ED18[i++] = HexDigit(hi);
+			DAT_0089ED18[i] = HexDigit(*p & 0xf);
+		} else {
+			DAT_0089ED18[i] = *p;
+		}
+	}
+	DAT_0089ED18[i] = 0;
+	strcat(line, DAT_0089ED18);
+	strcat(line, ",");
+	i = 0;
+	for (p = Map; *p && i < 0x3fd; i++, p++) {
+		if (!isalnum(*p)) {
+			DAT_0089ED18[i++] = '=';
+			int hi = *p >> 4;
+			DAT_0089ED18[i++] = HexDigit(hi);
+			DAT_0089ED18[i] = HexDigit(*p & 0xf);
+		} else {
+			DAT_0089ED18[i] = *p;
+		}
+	}
+	DAT_0089ED18[i] = 0;
+	strcat(line, DAT_0089ED18);
+	FUN_004068E0("@@@@ Sending campaign game option string: %s\n", line);
+	FUN_005E3720(line);
+	FUN_004068E0("@@@@ Sent\n");
+	return true;
+}
+
+// FUNCTION: 0x0049D9F0
+int __fastcall FUN_0049D9F0(char const * name)
+{
+	if (strcmpi(name, "<random>") == 0) {
+		return -2;
+	}
+	if (name) {
+		for (int i = 0; i < HouseTypes.Count(); i++) {
+			HouseTypeClass * type = HouseTypes[i];
+			if (strcmpi(type->Full_Name(), name) == 0 || strcmpi(type->Name(), name) == 0) {
+				return i;
+			}
+		}
+	}
+	return -1;
+}
+
+// FUNCTION: 0x0049DA60
+CoopCampSource_0049E4F0::CoopCampSource_0049E4F0(void)
+{
+	Loaded = false;
+}
+
+// FUNCTION: 0x0049E3B0
+bool CoopCampSource_0049E4F0::FUN_0049E3B0(int index, CoopCampEntry ** out)
+{
+	if (!Loaded) {
+		FUN_0049DB00();
+	}
+	if (index >= 0 && index < EntryCount) {
+		*out = &Entries[index];
+		return true;
+	}
+	*out = 0;
+	return false;
+}
+
+// FUNCTION: 0x0049E400
+bool CoopCampSource_0049E4F0::FUN_0049E400(char const * name, CoopCampEntry ** out)
+{
+	if (!Loaded) {
+		FUN_0049DB00();
+	}
+	for (int i = 0; i < EntryCount; i++) {
+		for (int j = 0; j < 3; j++) {
+			for (int k = 0; k < Entries[i].MapCount; k++) {
+				if (strnicmp(name, &Entries[i].Names[k * 0x30c + j * 0x104], strlen(&Entries[i].Names[k * 0x30c + j * 0x104])) == 0) {
+					*out = &Entries[i];
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}
+
+// FUNCTION: 0x0049E4F0
+bool CoopCampSource_0049E4F0::FUN_0049E4F0(int * count)
+{
+	if (!Loaded) {
+		FUN_0049DB00();
+	}
+	*count = EntryCount;
+	return Loaded;
+}
+
+// FUNCTION: 0x0049E510
+CoopCampSource_0049E4F0::~CoopCampSource_0049E4F0(void)
+{
+	if (Entries) {
+		for (int i = 0; i < EntryCount; i++) {
+			if (Entries[i].Names) {
+				delete Entries[i].Title;
+				delete Entries[i].Extra;
+				delete Entries[i].Names;
+			}
+			for (int a = 0; a < Entries[i].ListB.Count(); a++) {
+				for (int b = 0; b < Entries[i].ListB[a]->Count(); b++) {
+					delete (*Entries[i].ListB[a])[b];
+				}
+				Entries[i].ListB[a]->Clear();
+				delete Entries[i].ListB[a];
+			}
+			Entries[i].ListB.Clear();
+			for (int c = 0; c < Entries[i].ListA.Count(); c++) {
+				for (int d = 0; d < Entries[i].ListA[c]->Count(); d++) {
+					delete (*Entries[i].ListA[c])[d];
+				}
+				Entries[i].ListA[c]->Clear();
+				delete Entries[i].ListA[c];
+			}
+			Entries[i].ListA.Clear();
+		}
+		delete[] Entries;
+		Entries = 0;
+		Loaded = false;
+	}
+}
+
+// FUNCTION: 0x0049E740
+bool CoopCampSource_0049E4F0::FUN_0049E740(DynamicVectorClass<wchar_t *> * list)
+{
+	if (!Loaded) {
+		FUN_0049DB00();
+	}
+	if (Loaded) {
+		list->Resize(EntryCount, 0);
+		for (int i = 0; i < EntryCount; i++) {
+			(*list)[i] = new wchar_t[0x81];
+			if ((*list)[i]) {
+				wcscpy((*list)[i], Entries[i].Title);
+			}
+		}
+		return true;
+	}
+	return false;
+}
+
+// FUNCTION: 0x0049E8E0 ?$List@PAUINISection@INIClass@@::?$List@PAUINISection@INIClass@@

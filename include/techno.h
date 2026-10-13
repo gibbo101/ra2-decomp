@@ -510,7 +510,7 @@ class TechnoClass : public RadioClass
 		virtual bool HaveMegaMission(void) const;
 		virtual bool HaveAttackMoveTarget(void) const;
 		virtual int GetMegaMission(void) const;
-		virtual Coord GetAttackMoveCoords(Coord * buffer);
+		virtual Coord GetAttackMoveCoords(void);
 		virtual bool CanUseWaypoint(void) const;
 		virtual bool CanAttackOnTheMove(void) const;
 		virtual bool MegaMissionIsAttackMove(void) const;

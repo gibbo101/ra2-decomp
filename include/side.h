@@ -28,6 +28,8 @@ class SideClass : public AbstractTypeClass
 
 		static SideType From_Name(char const * name);
 
+		static DynamicVectorClass<SideClass *> Array;
+
 	public:
 
 		TypeList<int> Houses;

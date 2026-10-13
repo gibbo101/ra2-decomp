@@ -3,6 +3,8 @@
 // Copyright 2025 Electronic Arts Inc.; 2026 OpenTS contributors
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
+#define NDEBUG
+
 #include "always.h"
 #include "mapgen.h"
 #include "_map.h"
@@ -25,6 +27,7 @@
 #include "incdec.h"
 #include "infantry.h"
 #include "infatype.h"
+#include "index.h"
 #include "init.h"
 #include "inline.h"
 #include "isotype.h"
@@ -39,6 +42,7 @@
 #include "rules.h"
 #include "smartdeform.h"
 #include "smudtype.h"
+#include "stringtable.h"
 #include "tactical.h"
 #include "tagtype.h"
 #include "terrain.h"
@@ -112,6 +116,36 @@ class NormalDistribution
 
 NormalDistribution RMGGaussian(Random_Fraction);
 
+namespace UI {
+	HWND __fastcall BeginDialog(int resource, DLGPROC proc, int param);
+	void __fastcall FocusOnWindow(HWND window);
+	void __fastcall EndDialog(HWND window);
+	bool Updated(void);
+}
+extern bool (*RMGCallback)();
+BOOL CALLBACK Map_Seed_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+class RefPtrBase
+{
+	public:
+		RefPtrBase(void);
+		virtual ~RefPtrBase(void);
+		void Set(void * ptr);
+
+		void * Ptr;
+};
+
+class TerritoryRef : public RefPtrBase
+{
+	public:
+		TerritoryRef(void) {}
+		~TerritoryRef(void) {}
+};
+
+TerritoryRef __fastcall WDT_Get_Territory_Ref(int index);
+char * CalcRandomMapDigest(void);
+void __fastcall FUN_005E7EB0(MapPreviewClass * preview);
+extern Cell DAT_00ABE300;
+extern int FUN_00734FD0(void);
 extern int DAT_00ABED0C;
 extern int DAT_00ABDFD0;
 extern int DAT_00ABDFD4;
@@ -1218,6 +1252,212 @@ MapRegionClass * MapRegionClass::From_ID(int id)
 	return(NULL);
 }
 
+void __fastcall Create_Zone_Region(CellClass * cptr, MZoneType mzone, int zone);
+
+// FUNCTION: 0x00594700
+void Create_Zone_Regions(MZoneType mzone, int zone)
+{
+	MapRegionClass::Destroy_Cell_Regions();
+
+	Map.Reset_Iterator();
+	CellClass * cptr;
+	while ((cptr = Map.Iterate()) != NULL) {
+		if (My_In_Radar(cptr->CellID) &&
+			MapRegionClass::Get_Cell_Data(cptr->CellID).RegionID == -1 &&
+			cptr->Passability == PASSABLE_LAND &&
+			Map.Get_Cell_Zone(cptr->CellID, mzone, false) == zone) {
+			Create_Zone_Region(cptr, mzone, zone);
+		}
+	}
+}
+
+// FUNCTION: 0x00594870
+void MapRegionClass::Pick_Start_Points(int first_waypoint)
+{
+	Rect bounds = Map.LocalRect;
+	bounds.X += 4;
+	bounds.Y += 4;
+	bounds.Width -= 8;
+	bounds.Height -= 8;
+	DynamicVectorClass<Cell> cells;
+
+	int target = Pick_Random_UInt(0, 2) + Unknown20 * 15;
+	for (int tries = 0; cells.Count() < target && tries < 300; tries++) {
+		Cell c = Cells[Pick_Random_UInt(0, Cells.Count() - 1)];
+		Rect rect(c.X - 3, c.Y - 3, 6, 6);
+		if (MapGeneratorClass::Can_Place_Paved_Road(rect, false, false) && Map.In_Area_Radar(bounds, c, true)) {
+			cells.Add(c);
+		}
+	}
+
+	DynamicVectorClass<Cell> * layout = Pick_Spread_Cells(cells);
+	if (layout == NULL) {
+		return;
+	}
+
+	for (int k = 0; k < 8; k++) {
+		Scen->HouseHomeCells[k] = DAT_00ABE300;
+	}
+
+	int wp = first_waypoint;
+	for (int i = 0; i < Unknown20; i++) {
+		Scen->Set_Waypoint((WAYPOINT)wp, (*layout)[i]);
+		Map[Scen->Get_Waypoint_Cell((WAYPOINT)wp)].IsWaypoint = true;
+		Scen->HouseHomeCells[i] = (*layout)[i];
+		wp++;
+	}
+
+	for (int j = 0; j < Unknown20; j++) {
+		if (layout->Count() > 0) {
+			layout->Delete_Index(0);
+		}
+	}
+
+	if (Unknown0 != NULL) {
+		delete Unknown0;
+	}
+	Unknown0 = layout;
+}
+
+// FUNCTION: 0x00595400
+void MapRegionClass::Place_Neutral_Building(void)
+{
+	HouseClass * neutral = House_From_HousesType(HouseTypeClass::From_Name("Neutral"));
+	bool placed = false;
+	int tries = 0;
+
+	BuildingClass * building = new BuildingClass(Rule->NeutralTechBuildings[Pick_Random_UInt(0, Rule->NeutralTechBuildings.Count() - 1)], neutral);
+
+	while (!placed) {
+		if (tries >= 100) {
+			break;
+		}
+
+		Cell building_cell = Cells[Pick_Random_UInt(0, Cells.Count() - 1)];
+		int height = Map[building_cell].Height;
+
+		Cell const * list = building->Class->Occupy_List(true);
+		bool ok = true;
+		while (*list != REFRESH_EOL) {
+			CellClass * cellptr = &Map[building_cell + *list];
+			if (cellptr->Cell_Occupier() != NULL || !cellptr->Is_Tile_Clear() || cellptr->Height != height || cellptr->Land_Type() == LAND_ROCK || !Map.In_Local_Radar(cellptr) || !MapRegionClass::CellData::Is_Not_Inviolate(cellptr->CellID)) {
+				ok = false;
+			}
+			list++;
+			if (!ok) break;
+		}
+
+		if (ok) {
+			if (building->Unlimbo(Coord(building_cell, 0))) {
+				placed = true;
+			}
+		}
+		tries++;
+	}
+
+	if (!placed) {
+		if (building != NULL) {
+			delete building;
+		}
+	}
+}
+
+// FUNCTION: 0x00595680
+MapSeedClass::MapSeedClass(void) :
+	Biome(0),
+	MapType(1),
+	Resources(1),
+	Hills(0),
+	Time(1),
+	WaterAmount(0),
+	NumPlayers(2),
+	Tiberium(0),
+	TiberiumLayout(0),
+	Vegetation(0),
+	Cities(0),
+	Width(0),
+	Height(0),
+	Accessibility(0),
+	Cliffs(0),
+	Seed(-1)
+{
+	Extension = "SED";
+	MapDescription[0] = L'\0';
+	Description = MapDescription;
+	if (FUN_00734FD0()) {
+		wcscpy(MapDescription, StringTable::LoadString("TXT_RANDOM_MAP_DESCRIPTION", NULL, "D:\\ra2mdpost\\MapGen.cpp", 3934));
+	}
+}
+
+// FUNCTION: 0x00595710
+void MapSeedClass::Reload_Description(void)
+{
+	wcscpy(MapDescription, StringTable::LoadString("TXT_RANDOM_MAP_DESCRIPTION", NULL, "D:\\ra2mdpost\\MapGen.cpp", 3934));
+}
+
+// FUNCTION: 0x00595740
+MapGeneratorClass::MapGeneratorClass(void) :
+	SeedData(),
+	MapSeeder(NULL),
+	MapPreview(NULL),
+	LocalWidth(0),
+	LocalHeight(0),
+	RMGMinimumTiberium(2500),
+	RMGMaximumTiberium(5500),
+	MaxTrees(500),
+	PreviewStale(true),
+	SeededWaterAmount(0),
+	CellHeight(4),
+	PlaceWaterfall(false)
+{
+}
+
+// FUNCTION: 0x00595BC0
+int Do_Random_Map_Dialog(bool (*callback)())
+{
+	LONG res = 0;
+
+	RandomMapGen.Load_Settings();
+
+	HWND dialog = UI::BeginDialog(0x105, Map_Seed_Dialog_Proc, 0);
+	if (dialog) {
+		RMGCallback = callback;
+		RandomMapGen.SeedData.Callback = callback;
+		SetWindowLongA(dialog, DWL_USER, (LONG)&res);
+		SendMessageA(dialog, 0x4A9, 0, 1);
+		UI::FocusOnWindow(dialog);
+		while (res == 0) {
+			if (UI::Updated() == 1) {
+				break;
+			}
+			if (callback != NULL) {
+				callback();
+			}
+			Title_Screen_Restore(false);
+		}
+		UI::EndDialog(dialog);
+	}
+
+	RMGCallback = MapGen_Call_Back;
+	RandomMapGen.SeedData.Callback = NULL;
+
+	if (RandomMapGen.MapPreview != NULL) {
+		if (RandomMapGen.MapPreview->Get_Preview_Surface() != NULL) {
+			RawFileClass file("RandMap.img");
+			Write_PCX_File(file, *RandomMapGen.MapPreview->Get_Preview_Surface(), &GamePalette);
+		}
+		delete RandomMapGen.MapPreview;
+		RandomMapGen.MapPreview = NULL;
+	}
+
+	if (RandomMapGen.MapSeeder != NULL) {
+		delete RandomMapGen.MapSeeder;
+		RandomMapGen.MapSeeder = NULL;
+	}
+
+	return(res);
+}
+
 // FUNCTION: 0x00595CE0
 void Clean_Up_RMCache(void)
 {
@@ -1287,6 +1527,144 @@ void Clean_Up_RMCache(void)
 		delete files[0];
 		files.Delete_Index(0);
 	}
+}
+
+// FUNCTION: 0x00595FB0
+void Do_Random_Map(HWND dialog, bool (*callback)())
+{
+	TerritoryRef territory;
+	if (Session.Type == GAME_INTERNET && Session.unknown_0C == 3) {
+		territory.Set(WDT_Get_Territory_Ref(Session.unknown_08).Ptr);
+	}
+	if (territory.Ptr != NULL) {
+		RandomMapGen.SeedData.NumPlayers = 4;
+	}
+	char *digest = CalcRandomMapDigest();
+	char name[128];
+	memset(name, 0, sizeof(name));
+	strncpy(name, "rmcache\\", sizeof(name));
+	strncat(name, digest, sizeof(name));
+	delete digest;
+	strncat(name, ".mmp", sizeof(name));
+	CCFileClass cfile(name);
+
+	if (cfile.Is_Available()) {
+		if (RandomMapGen.MapPreview == NULL) {
+			RandomMapGen.MapPreview = new MapPreviewClass;
+		}
+		if (RandomMapGen.MapPreview->Read_PCX_Preview(name)) {
+			RawFileClass file("RandMap.img");
+			Write_PCX_File(file, *RandomMapGen.MapPreview->Get_Preview_Surface(), &GamePalette);
+			delete RandomMapGen.MapPreview;
+			RandomMapGen.MapPreview = NULL;
+			return;
+		}
+
+		delete RandomMapGen.MapPreview;
+		RandomMapGen.MapPreview = NULL;
+	}
+
+	RMGCallback = callback;
+	RandomMapGen.SeedData.Callback = callback;
+	if (RandomMapGen.SeedData.Seed == -1) {
+		RandomMapGen.SeedData.Seed = Sim_Random_Pick(0U, 65535U);
+	}
+	RandomMapGen.Generate_Random_Map(true, dialog);
+	RandomMapGen.MapPreview->Create_Preview();
+	if (Session.Type == GAME_INTERNET && Session.unknown_0C == 3) {
+		FUN_005E7EB0(RandomMapGen.MapPreview);
+	}
+
+	if (RandomMapGen.MapSeeder != NULL) {
+		delete RandomMapGen.MapSeeder;
+	}
+
+	RandomMapGen.MapSeeder = new MapSeedClass;
+	memcpy(RandomMapGen.MapSeeder, &RandomMapGen.SeedData, sizeof(RandomMapGen.SeedData));
+
+	Scen->Set_Scenario_Name("RandomMap");
+	Title_Screen_Restore(false);
+
+	if (RandomMapGen.MapPreview != NULL) {
+		if (RandomMapGen.MapPreview->Get_Preview_Surface() != NULL) {
+			RawFileClass file("RandMap.img");
+			Write_PCX_File(file, *RandomMapGen.MapPreview->Get_Preview_Surface(), &GamePalette);
+			WIN32_FIND_DATA ff;
+			if (FindFirstFile("rmcache", &ff) == INVALID_HANDLE_VALUE) {
+				CreateDirectory("rmcache", 0);
+			}
+			CopyFile("RandMap.img", name, FALSE);
+			Clean_Up_RMCache();
+		}
+		delete RandomMapGen.MapPreview;
+		RandomMapGen.MapPreview = NULL;
+	}
+
+	if (RandomMapGen.MapSeeder != NULL) {
+		delete RandomMapGen.MapSeeder;
+		RandomMapGen.MapSeeder = NULL;
+	}
+}
+
+// FUNCTION: 0x00596C70
+void MapSeedClass::Get_Settings(HWND dialog)
+{
+	HWND handle;
+	int old;
+
+	old = MapType;
+	handle = GetDlgItem(dialog, 0x405);
+	MapType = ComboBox_GetItemData(handle, ComboBox_GetCurSel(handle));
+	if (old != MapType) {
+		RandomMapGen.PreviewStale = true;
+	}
+
+	old = Biome;
+	handle = GetDlgItem(dialog, 0x407);
+	Biome = ComboBox_GetItemData(handle, ComboBox_GetCurSel(handle));
+	if (old != Biome) {
+		RandomMapGen.PreviewStale = true;
+	}
+
+	old = Resources;
+	handle = GetDlgItem(dialog, 0x408);
+	Resources = ComboBox_GetItemData(handle, ComboBox_GetCurSel(handle));
+	if (old != Resources) {
+		RandomMapGen.PreviewStale = true;
+	}
+
+	old = Time;
+	handle = GetDlgItem(dialog, 0x3EA);
+	Time = ComboBox_GetItemData(handle, ComboBox_GetCurSel(handle));
+	if (old != Time) {
+		RandomMapGen.PreviewStale = true;
+	}
+
+	old = Width;
+	handle = GetDlgItem(dialog, 0x406);
+	Height = Width = ComboBox_GetItemData(handle, ComboBox_GetCurSel(handle));
+	if (old != Width) {
+		RandomMapGen.PreviewStale = true;
+	}
+
+	int old_players = NumPlayers;
+	handle = GetDlgItem(dialog, 0x3EB);
+	NumPlayers = SendMessageA(handle, WM_USER, 0, 0);
+	if (old_players != NumPlayers) {
+		RandomMapGen.PreviewStale = true;
+	} else if (!RandomMapGen.PreviewStale) {
+		goto done;
+	}
+
+	Randomize(MapType);
+	if (RandomMapGen.MapPreview != NULL) {
+		delete RandomMapGen.MapPreview;
+	}
+	RandomMapGen.MapPreview = NULL;
+	RandomMapGen.PreviewStale = false;
+
+done:
+	Fixup_Settings();
 }
 
 // FUNCTION: 0x00597A10

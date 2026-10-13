@@ -58,3 +58,6 @@ address,name,symbol,evidence
 0x004F4CE0,HashString::operator==,??8HashString@@QAE_NABV0@@Z,non-const member; called by palette's HashObject compares (0x006288A0)
 0x004F4D80,operator==,??8@YI_NABVHashString@@0@Z,free fastcall HashString operator== (jmp to itself); called by 0x004F4D90
 0x004F4D90,operator!=,??9@YI_NABVHashString@@0@Z,free fastcall HashString operator!=; called by palette 0x006288A0
+0x00AA0E28,IsometricTileTypeClass::BridgeSet,,theater init 0x00545150 stores BridgeSet here; CellClass::Is_Tile_Bridge 0x00486750 reads it
+0x00ABAD1C,IsometricTileTypeClass::TrainBridgeSet,,YR WoodBridgeSet; theater init stores it; CellClass::Is_Tile_Train_Bridge 0x00486770 reads it
+0x00577BB0,MapClass::Shroud_The_Map,,TibSun body; called by TeamClass::TMission_RESHROUD 0x006EE1B0

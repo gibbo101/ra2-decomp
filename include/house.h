@@ -404,6 +404,8 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 		double FUN_0050C050(TechnoTypeClass const * type) const;
 		double FUN_0050C0A0(TechnoTypeClass const * type) const;
 		bool FUN_0050B370(TechnoTypeClass const * type);
+		void FUN_0050E010(UnitTypeClass * type);
+		void LostPoweredCenter(UnitTypeClass * type);
 		int FUN_00500910(RTTIType rtti, bool naval) const;
 		DiffType Assign_Handicap(DiffType handicap);
 		AbstractClass * Find_Juicy_Target(Coord const & coord) const;
@@ -443,10 +445,10 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 		void Destroy_All_Non_Buildings_Naval(void);
 		void Make_Ally(HouseClass * house, bool announce);
 		void Make_Ally(HousesType house, bool announce);
-		void Make_Ally(ObjectClass * object);
+		void Make_Ally(ObjectClass * object, bool announce);
 		void Make_Enemy(HouseClass * house, bool announce);
 		void Make_Enemy(HousesType house, bool announce);
-		void Make_Enemy(ObjectClass * object);
+		void Make_Enemy(ObjectClass * object, bool announce);
 		bool Is_Ally(HousesType house) const;
 		bool Is_Ally(HouseClass const * house) const;
 		bool Is_Ally(ObjectClass const * object) const;

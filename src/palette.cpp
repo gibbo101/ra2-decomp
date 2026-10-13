@@ -11,6 +11,7 @@
 #include "vector.h"
 #include "scheme.h"
 #include "_theater.h"
+#include "rect.h"
 #include <cstring>
 
 // FUNCTION: 0x00626020
@@ -186,7 +187,7 @@ class SchemeLibrary
 		SchemeLibrary(void) :
 			Mode(-1),
 			Names(new DynamicVectorClass<char *>),
-			Colors(new DynamicVectorClass<RGBClass>),
+			Colors(new DynamicVectorClass<HSVClass>),
 			Table(new HashTableClass<HashString, SchemeNode *>(10, 31, (int (__fastcall *)(HashString const &))SchemeHash))
 		{
 		}
@@ -201,7 +202,7 @@ class SchemeLibrary
 
 		int Mode;
 		DynamicVectorClass<char *> * Names;
-		DynamicVectorClass<RGBClass> * Colors;
+		DynamicVectorClass<HSVClass> * Colors;
 		HashTableClass<HashString, SchemeNode *> * Table;
 };
 
@@ -277,7 +278,7 @@ void SchemeLibrary_Free(void)
 }
 
 // FUNCTION: 0x00626AB0
-void __fastcall SchemeLibrary_Add(char const * name, RGBClass const & color)
+void __fastcall SchemeLibrary_Add(char const * name, HSVClass const & color)
 {
 	Library();
 	char * copy = new char[256];
@@ -375,7 +376,7 @@ DynamicVectorClass<ColorScheme *> * SchemeLibrary::Generate(char const * name)
 	DynamicVectorClass<ColorScheme *> * schemes = new DynamicVectorClass<ColorScheme *>(20);
 	for (int index = 0; index < count; index++) {
 		char * id = (*Names)[index];
-		RGBClass base = (*Colors)[index];
+		HSVClass base = (*Colors)[index];
 		ColorScheme * scheme = new ColorScheme(id, base, pal, *(PaletteClass *)FileSystem::TEMPERAT_PAL, 1, false);
 		scheme->ID = index * 2;
 		schemes->Add(scheme);
@@ -430,11 +431,10 @@ template class DynamicVectorClass<char *>;
 // FUNCTION: 0x00627D50 ?$VectorClass@PAD::ID
 // FUNCTION: 0x00627D70 ?$VectorClass@PAD::GetItem
 
-// FUNCTION: 0x00627D80 ?$DynamicVectorClass@VRGBClass@@::Clear
-template class DynamicVectorClass<RGBClass>;
+// FUNCTION: 0x00627D80 ?$DynamicVectorClass@VHSVClass@@::Clear
 
-// FUNCTION: 0x00627DB0 ?$VectorClass@VRGBClass@@::ID
-// FUNCTION: 0x00627DE0 ?$VectorClass@VRGBClass@@::GetItem
+// FUNCTION: 0x00627DB0 ?$DynamicVectorClass@VHSVClass@@::ID
+// FUNCTION: 0x00627DE0 ?$VectorClass@VHSVClass@@::GetItem
 
 // FUNCTION: 0x00627E10 ?$VectorClass@PAVColorScheme@@::operator==
 // FUNCTION: 0x00627E50 ?$VectorClass@PAVColorScheme@@::Resize
@@ -509,7 +509,7 @@ template class DynamicVectorClass<HSVClass>;
 
 // FUNCTION: 0x00628DD0 ?$HashObject@VHashString@@PAVSchemeNode@@::?$HashObject@VHashString@@PAVSchemeNode@@
 
-// FUNCTION: 0x00628DF0 ?$VectorClass@VRGBClass@@::?$VectorClass@VRGBClass@@
+// FUNCTION: 0x00628DF0 ?$VectorClass@VHSVClass@@::?$VectorClass@VHSVClass@@
 
 template struct HashObject<HashString, SchemeNode *>;
 template class DynamicVectorClass<HashObject<HashString, SchemeNode *> >;
@@ -523,3 +523,14 @@ template class VectorClass<HashObject<HashString, SchemeNode *> >;
 // FUNCTION: 0x00628FB0 $E5
 // FUNCTION: 0x00628FD0 $E8
 // FUNCTION: 0x00628FF0 $E11
+
+// FUNCTION: 0x00629010 $E14
+// FUNCTION: 0x00629030 $E17
+// FUNCTION: 0x00629050 $E20
+// FUNCTION: 0x00629090 $E23
+// FUNCTION: 0x006290C0 $E26
+// FUNCTION: 0x006290F0 $E29
+// FUNCTION: 0x00629120 $E32
+// FUNCTION: 0x00629130 $E35
+// FUNCTION: 0x00629150 $E38
+// FUNCTION: 0x00629170 $E42

@@ -134,6 +134,9 @@ public:
 		void Increase_Height(char cell_height);
 		void Mark_Interior_Cells(void);
 		double Get_Angle_Score(const Cell & cell1, const Cell & cell2, double ref_angle);
+		DynamicVectorClass<Cell> *Pick_Spread_Cells(DynamicVectorClass<Cell> &cells);
+		void Pick_Start_Points(int first_waypoint);
+		void Place_Neutral_Building(void);
 
 		void Build_Neighbor_Regions(void);
 		void Make_Region_Connections(void);
@@ -156,7 +159,7 @@ public:
 
 	public:
 
-		DynamicVectorClass<int> *Unknown0;
+		DynamicVectorClass<Cell> *Unknown0;
 
 		DynamicVectorClass<int> *NeighborRegions;
 
@@ -198,6 +201,7 @@ class MapSeedClass : public LoadOptionsClass
 
 	public:
 		MapSeedClass(void);
+		void Reload_Description(void);
 
 		bool Save(const char * name);
 		bool Load(const char * name);
@@ -217,7 +221,7 @@ class MapSeedClass : public LoadOptionsClass
 		void Set_Scroll_Bar(HWND handle, unsigned int min, unsigned int max, int position, bool enable);
 		void Set_Checkbox(HWND handle, bool state, bool enable);
 
-		void Randomize(void);
+		void Randomize(int map_type);
 		void Fixup_Settings(void);
 		void Fixup_WDT_Settings(void);
 		void Clamp_Setting(int & setting, int min, int max, bool use_midpoint) const;
@@ -275,6 +279,7 @@ class MapGeneratorClass
 		int Get_Cell_Data_Spread(Cell const &cell);
 		void Clear_Cell_Data_Spreads(void);
 
+		void Load_Settings(void);
 		void Init_Regions(void);
 		bool Make_Regions(void);
 		bool Expand_All_High_Ground(void);
@@ -384,7 +389,7 @@ class MapGeneratorClass
 
 		int MaxTrees;
 
-		unsigned char : 8;
+		bool PreviewStale;
 
 		int SeededWaterAmount;
 

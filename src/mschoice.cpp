@@ -281,4 +281,22 @@ template class DynamicVectorClass<MapSelection *>;
 
 // FUNCTION: 0x005D06D0 ?$DynamicVectorClass@PAVMSAnimEntry@@::Clear
 // FUNCTION: 0x005D0700 ?$DynamicVectorClass@PAVMSAnimEntry@@::ID
+// FUNCTION: 0x005D0720 ?$VectorClass@PAVMSAnimEntry@@::GetItem
 template class DynamicVectorClass<MSAnimEntry *>;
+
+// FUNCTION: 0x005D0730 ?$DynamicVectorClass@PAVMSSfxEntry@@::Clear
+// FUNCTION: 0x005D0760 ?$DynamicVectorClass@PAVMSSfxEntry@@::ID
+// FUNCTION: 0x005D0780 ?$VectorClass@PAVMSSfxEntry@@::GetItem
+template class DynamicVectorClass<MSSfxEntry *>;
+
+// FUNCTION: 0x005D0790 ?$DynamicVectorClass@PAVMapStage@@::Clear
+// FUNCTION: 0x005D07C0 ?$DynamicVectorClass@PAVMapStage@@::ID
+// FUNCTION: 0x005D07E0 ?$VectorClass@PAVMapStage@@::GetItem
+template class DynamicVectorClass<MapStage *>;
+
+// FUNCTION: 0x005D07F0 ?$VectorClass@VPoint2D@@::operator==
+// FUNCTION: 0x005D0850 ?$VectorClass@VPoint2D@@::Resize
+// FUNCTION: 0x005D0920 ?$VectorClass@VPoint2D@@::Clear
+// FUNCTION: 0x005D0950 ?$VectorClass@VPoint2D@@::ID
+// FUNCTION: 0x005D09A0 ?$VectorClass@VPoint2D@@::ID
+template class VectorClass<Point2D>;

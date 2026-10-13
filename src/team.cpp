@@ -2463,3 +2463,57 @@ int TeamClass::Stray_Distance(void)
 	TeamMissionType action = Script->Get_Current_Mission().Mission;
 	return((action == (TeamMissionType)0x36 || action == (TeamMissionType)0x35) ? Rule->RelaxedStray : Rule->StrayDistance);
 }
+
+// FUNCTION: 0x006F03F0
+bool TeamClass::Has_Ammo(void) const
+{
+	bool found = false;
+	for (FootClass * unit = Member; unit != NULL; unit = unit->Member) {
+		if (unit->Techno_Type_Class()->MaxAmmo <= 0 || unit->Ammo > 0) {
+			found = true;
+			break;
+		}
+	}
+	return(found);
+}
+
+// FUNCTION: 0x006F0430 TeamClass::Fetch_Object_Size
+// FUNCTION: 0x006F0440 TeamClass::Fetch_RTTI
+
+// FUNCTION: 0x006F0450 TeamClass::~TeamClass
+
+namespace fastmath { double __cdecl sqrt(double x); double __cdecl tan(double x); double __cdecl atan(double x); }
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007E1720;
+extern const double DAT_007E1728;
+extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
+extern const double DAT_007F4790;
+extern const double DAT_007F4798;
+
+// FUNCTION: 0x006F0470 $E132
+double DAT_00B0E9D0 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x006F04A0 $E135
+double DAT_00B0EA20 = DAT_00B0E9D0 / DAT_007F4790;
+
+// FUNCTION: 0x006F04C0 $E138
+double DAT_00B0EA08 = DAT_007E1718 / DAT_00B0EA20;
+
+// FUNCTION: 0x006F04E0 $E141
+double DAT_00B0EA00 = DAT_007E1720 * DAT_007F4798;
+
+// FUNCTION: 0x006F0500 $E144
+double DAT_00B0E9D8 = DAT_007E1728 * DAT_007F4798;
+
+// FUNCTION: 0x006F0520 $E147
+double DAT_00B0E9B0 = DAT_007E1730 * DAT_007F4798;
+
+// FUNCTION: 0x006F0540 $E150
+int DAT_00B0EA28 = (int)(fastmath::tan(DAT_00B0E9B0 - DAT_00B0E9D8) * DAT_007E1738 * DAT_00B0E9D0);
+
+// FUNCTION: 0x006F0580 $E153
+double DAT_00B0E9E0 = fastmath::atan(DAT_00B0EA28 * DAT_007E1740);

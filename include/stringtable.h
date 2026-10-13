@@ -9,3 +9,6 @@ class StringTable
 	public:
 		static wchar_t const * LoadString(char const * label, char * extra, char const * file, int line);
 };
+
+char * __fastcall FUN_007350C0(wchar_t const * text);
+wchar_t * __fastcall FUN_00735120(char const * text);

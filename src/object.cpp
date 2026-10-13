@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
 #include "object.h"
 #include "_logic.h"
 #include "_map.h"
@@ -1030,7 +1031,7 @@ Cell const * ObjectClass::Occupy_List(bool placement) const
 	return(Class_Of()->Occupy_List(placement));
 }
 
-// FUNCTION: 0x005F5C10 $E120
+// FUNCTION: 0x005F5C10 $E165
 
 // FUNCTION: 0x005F5C20
 BuildingClass * ObjectClass::Who_Can_Build_Me(bool intheory, bool legal) const
@@ -1510,3 +1511,17 @@ void ObjectClass::AnimPointerExpired(AnimClass * anim)
 		Parachute = 0;
 	}
 }
+
+// FUNCTION: 0x005F6DC0 ObjectClass::~ObjectClass
+
+// FUNCTION: 0x005F6DE0 $E2
+// FUNCTION: 0x005F6E10 $E5
+// FUNCTION: 0x005F6E30 $E8
+// FUNCTION: 0x005F6E50 $E11
+// FUNCTION: 0x005F6E70 $E14
+// FUNCTION: 0x005F6E90 $E17
+// FUNCTION: 0x005F6EB0 $E20
+// FUNCTION: 0x005F6EF0 $E23
+// FUNCTION: 0x005F6F20 $E26
+// FUNCTION: 0x005F6F50 $E29
+// FUNCTION: 0x005F6F80 $E32

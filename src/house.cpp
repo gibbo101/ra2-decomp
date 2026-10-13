@@ -82,6 +82,7 @@ extern DynamicVectorClass<TechnoClass *> DAT_00A8EC78;
 extern DynamicVectorClass<FactoryClass *> DAT_00A83E30;
 namespace Unsorted { extern int MuteSWLaunches; extern Cell CellSpreadTable[]; }
 #define Factories DAT_00A83E30
+extern DynamicVectorClass<ObjectClass *> DAT_00A8ECB8;
 extern HouseClass * DAT_00AC1198;
 extern int DAT_007ED3FC;
 
@@ -2284,10 +2285,343 @@ void HouseClass::Write_All(CCINIClass & ini)
 	}
 }
 
+SideType FUN_006A46D0(char const * name);
+
+class MPGameModeClass
+{
+	public:
+		virtual ~MPGameModeClass(void);
+		virtual bool vt_entry_04(void);
+};
+
+// FUNCTION: 0x00501210
+void HouseClass::Write_INI(CCINIClass & ini)
+{
+	char name[20];
+	strcpy(name, IniName);
+
+	ini.Clear(name);
+
+	ini.Put_String(name, "Country", Class->IniName);
+	ini.Put_Int(name, "TechLevel", Control.TechLevel);
+	ini.Put_Int(name, "Credits", (int)(Control.InitialCredits / 100));
+	ini.Put_Int(name, "IQ", Control.IQ);
+	ini.Put_SourceType(name, "Edge", Control.Edge);
+	ini.Put_Bool(name, "PlayerControl", IsPlayerControl);
+	ini.Put_Scheme_Index(name, "Color", Scheme);
+
+	int allies = 0;
+	for (int index = 0; index < Houses.Count(); index++) {
+		HouseClass * house = Houses[index];
+		if (Control.Allies & (1L << house->HeapID)) {
+			allies |= (1L << house->HeapID);
+		}
+	}
+	ini.Put_Houses(name, "Allies", allies);
+
+	if (UINameString[0]) {
+		ini.Put_String(name, "UIName", UINameString);
+	}
+	Base.Write_INI(ini, name);
+}
+
+// FUNCTION: 0x005013A0
+HRESULT STDMETHODCALLTYPE HouseClass::Fire_Sale(void)
+{
+	if (CurBuildings > 0) {
+		int count = Buildings.Count();
+		for (int index = 0; index < count; index++) {
+			BuildingClass * b = Buildings[index];
+
+			if (b != NULL && !b->IsInLimbo && b->Strength > 0) {
+				b->Sell_Back(1);
+			}
+		}
+		return(false);
+	}
+	return(true);
+}
+
+// FUNCTION: 0x00501400
+HRESULT STDMETHODCALLTYPE HouseClass::All_To_Hunt(void)
+{
+	for (int index = Technos.Count() - 1; index >= 0; index--) {
+		TechnoClass * techno = Technos[index];
+
+		if (this == techno->House && techno->IsDown && !techno->IsInLimbo) {
+			if (techno->MindControlledByAUnit && techno->Techno_Type_Class()->IsInsignificant && !IsHuman) {
+				int damage = techno->Techno_Type_Class()->MaxStrength;
+				techno->Take_Damage(damage, 0, Rule->C4Warhead, NULL, true, true, false);
+			} else if (techno) {
+				bool foot = techno->Is_Foot();
+				if (foot) {
+					FootClass * f = (FootClass *)techno;
+					if (f->Team) f->Team->Remove(f, -1, false);
+					techno->QueueMission(MISSION_HUNT, false);
+				} else if (techno->Fetch_RTTI() == RTTI_BUILDING) {
+					if (techno->GetOccupantCount() > 0) {
+						((BuildingClass *)techno)->FUN_00457DE0(true, false);
+					}
+				}
+			}
+		}
+	}
+
+	IsAllToHunt = true;
+
+	return(S_OK);
+}
+
+// FUNCTION: 0x00501540
+bool HouseClass::Is_Allowed_To_Ally(HouseClass * house) const
+{
+	if (house != NULL) {
+		if (Is_Ally(house)) {
+			return(false);
+		}
+	}
+
+	if (house->Class->Side == FUN_006A46D0("Civilian") && Session.Type != GAME_NORMAL) {
+		return(false);
+	}
+
+	if (ScenarioInit) {
+		return(true);
+	}
+
+	if (IsDefeated) {
+		return(false);
+	}
+
+	int housecount = 0;
+	int allycount = 0;
+	for (HousesType house2 = HOUSE_FIRST; house2 < Houses.Count(); house2++) {
+		HouseClass * hptr = Houses[house2];
+		if (!hptr->IsDefeated && !hptr->Class->IsMultiplayPassive) {
+			housecount++;
+			if (Is_Ally(hptr)) {
+				allycount++;
+			}
+		}
+	}
+
+	if (housecount == allycount+1) {
+		return(false);
+	}
+
+	return(true);
+}
+
+// FUNCTION: 0x00501640
+void HouseClass::Computer_Paranoid(void)
+{
+	bool paranoid = Rule->AlliesAllowed;
+	if (!((Session.MPGameMode && Session.MPGameMode->vt_entry_04()) || paranoid)) {
+		return;
+	}
+	if (Scen->TeamsPresent) {
+		return;
+	}
+
+	for (HousesType house = HOUSE_FIRST; house < Houses.Count(); house++) {
+		HouseClass * hptr = Houses[house];
+		if (hptr != NULL && !hptr->IsDefeated && !hptr->Is_Human_Player()) {
+			hptr->IsParanoid = true;
+
+			for (HousesType house2 = HOUSE_FIRST; house2 < Houses.Count(); house2++) {
+				HouseClass * hptr2 = Houses[house2];
+				if (hptr2 != NULL && !hptr2->IsDefeated) {
+					if (hptr2->Is_Human_Player()) {
+						hptr->Make_Enemy(hptr2, false);
+					} else {
+						hptr->Make_Ally(hptr2, false);
+					}
+				}
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x00501750
+void HouseClass::Adjust_Power(int adjust)
+{
+	if (!GameActive) return;
+
+	bool waslost = Power < Drain;
+
+	Power += adjust;
+	Update_Spied_Power_Plants();
+
+	bool islost = Power < Drain;
+
+	if (!ScenarioInit && waslost != islost) {
+
+		IConnectionPointContainer *pContainer;
+		QueryInterface(IID_IConnectionPointContainer, (void**)&pContainer);
+
+		IEnumConnectionPoints *ppEnumConnectionPoints;
+		pContainer->EnumConnectionPoints(&ppEnumConnectionPoints);
+
+		IConnectionPoint *pConnectionPoint;
+		while (SUCCEEDED(ppEnumConnectionPoints->Next(1, &pConnectionPoint, NULL))) {
+
+			IID iid;
+			pConnectionPoint->GetConnectionInterface(&iid);
+			if (iid != IID_IPowerEvents) {
+				pConnectionPoint->Release();
+				continue;
+			}
+
+			CONNECTDATA rgpcd;
+			IEnumConnections *ppEnumConnections;
+			pConnectionPoint->EnumConnections(&ppEnumConnections);
+			while (SUCCEEDED(ppEnumConnections->Next(1, &rgpcd, NULL))) {
+				if (islost) {
+					((IPowerEvents *)(rgpcd.pUnk))->Power_Lost();
+				} else {
+					((IPowerEvents *)(rgpcd.pUnk))->Power_Activated();
+				}
+				((IPowerEvents *)(rgpcd.pUnk))->Release();
+			}
+
+			ppEnumConnections->Release();
+			break;
+		}
+
+		pContainer->Release();
+		ppEnumConnectionPoints->Release();
+	}
+}
+
+// FUNCTION: 0x005018C0
+void HouseClass::Adjust_Drain(int adjust)
+{
+	bool waslost = Power < Drain;
+
+	Drain += adjust;
+	Update_Spied_Power_Plants();
+
+	bool islost = Power < Drain;
+
+	if (!ScenarioInit && waslost != islost) {
+
+		IConnectionPointContainer *pContainer;
+		QueryInterface(IID_IConnectionPointContainer, (void**)&pContainer);
+
+		IEnumConnectionPoints *ppEnumConnectionPoints;
+		pContainer->EnumConnectionPoints(&ppEnumConnectionPoints);
+
+		IConnectionPoint *pConnectionPoint;
+		while (SUCCEEDED(ppEnumConnectionPoints->Next(1, &pConnectionPoint, NULL))) {
+
+			IID iid;
+			pConnectionPoint->GetConnectionInterface(&iid);
+			if (iid != IID_IPowerEvents) {
+				pConnectionPoint->Release();
+				continue;
+			}
+
+			CONNECTDATA rgpcd;
+			IEnumConnections *ppEnumConnections;
+			pConnectionPoint->EnumConnections(&ppEnumConnections);
+			while (SUCCEEDED(ppEnumConnections->Next(1, &rgpcd, NULL))) {
+				IPowerEvents *iface = (IPowerEvents *)rgpcd.pUnk;
+				if (islost) {
+					iface->Power_Lost();
+				} else {
+					iface->Power_Activated();
+				}
+				iface->Release();
+			}
+
+			ppEnumConnections->Release();
+			break;
+		}
+
+		pContainer->Release();
+		ppEnumConnectionPoints->Release();
+	}
+}
+
+// FUNCTION: 0x00501A20
+void HouseClass::Update_Spied_Power_Plants(void)
+{
+	int count = DAT_00A8ECB8.Count();
+	if (count) {
+		for (int index = 0; index < count; index++) {
+			ObjectClass const * tech = DAT_00A8ECB8[index];
+			if (tech && tech->Fetch_RTTI() == RTTI_BUILDING) {
+				BuildingClass *bldg = (BuildingClass *)tech;
+				if (!bldg->IsOwnedByPlayer && bldg->Class->Power > 0) {
+					if ( bldg->SpiedBy & (1<<(PlayerPtr->Class->House)) ) {
+						bldg->Mark(MARK_CHANGE);
+					}
+				}
+			}
+		}
+	}
+}
+
 // FUNCTION: 0x00501AA0
 Cell HouseClass::Find_Cell_In_Zone(TechnoClass const * techno, ZoneType zone) const
 {
 	return(Cell(0, 0));
+}
+
+// FUNCTION: 0x00502100
+void HouseClass::Make_Ally(ObjectClass * object, bool announce)
+{
+	if (object) {
+		Make_Ally(object->Owner_HouseClass(), announce);
+	}
+}
+
+// FUNCTION: 0x00502130
+void HouseClass::Make_Enemy(ObjectClass * object, bool announce)
+{
+	if (object) {
+		Make_Enemy(object->Owner_HouseClass(), announce);
+	}
+}
+
+inline bool HouseClass::Can_Place_Waypoint(Cell const & cell)
+{
+	for (PathType path = PATH_FIRST; path < PATH_COUNT; path++) {
+		Ensure_Path(path);
+		for (int index = 0; index < Paths[path]->Waypoint_Count(); index++) {
+			WaypointClass * wp = Paths[path]->Get_Waypoint(index);
+			if (wp->Location.As_Cell() == cell && path != SelectedPath) {
+				return(false);
+			}
+		}
+	}
+	return(true);
+}
+
+inline WaypointPathClass * HouseClass::Ensure_Path(PathType path)
+{
+	WaypointPathClass *wp = Paths[path];
+	if (wp == NULL) {
+		wp = new WaypointPathClass(path);
+		Paths[path] = wp;
+	}
+	return(wp);
+}
+
+// FUNCTION: 0x00502160
+void HouseClass::Place_Waypoint(Coord const & coord)
+{
+	if (Can_Place_Waypoint(coord.As_Cell())) {
+		Ensure_Path(SelectedPath);
+		Paths[SelectedPath]->Add_Waypoint(coord);
+	}
+}
+
+// FUNCTION: 0x00502290
+bool HouseClass::Select_Waypoint(Coord const & coord)
+{
+	Ensure_Path(SelectedPath);
+	return(Paths[SelectedPath]->Select_Waypoint(coord));
 }
 
 // FUNCTION: 0x005046F0

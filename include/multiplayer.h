@@ -24,7 +24,7 @@ class MPTeam
 		virtual bool IsTeamIncluded(int index);
 		virtual bool SetPlayerTeam(int player);
 
-		wchar_t * Title;
+		WideWstring Title;
 		int Index;
 };
 
@@ -34,6 +34,9 @@ class MPGameModeClass
 		static MPGameModeClass * __fastcall Get(int index);
 		CCINIClass * FUN_005D67B0(void);
 		bool FUN_005D63E0(MPMapEntry * map);
+		MPTeam * FUN_005D6620(int index);
+		void FUN_005D6750(void);
+		bool FUN_005D6D80(void);
 
 		MPGameModeClass(NoInitClass const &) {}
 		MPGameModeClass(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex);
@@ -59,7 +62,7 @@ class MPGameModeClass
 		virtual void DrawTeamDropdown(HWND hwnd, DynamicVectorClass<MPTeam *> * teams, MPTeam * team);
 		virtual void PopulateTeamDropdownForPlayer(HWND hwnd, int index);
 		virtual bool vt_entry_54(int a1, int a2, void * ptr, int a4, short a5, int a6, int a7);
-		virtual bool vt_entry_58(int a1, int a2, void * ptr, int a4, short a5, int a6, int a7, int a8, int a9);
+		virtual bool vt_entry_58(int index, DynamicVectorClass<int> picks, char const * map, char const * name);
 		virtual bool vt_entry_5C(unsigned a, unsigned b, unsigned c);
 		virtual bool vt_entry_60(void);
 		virtual bool vt_entry_64(void);
@@ -85,7 +88,7 @@ class MPGameModeClass
 		virtual bool vt_entry_B4(int a1, void * ptr, int a3, short a4, int a5, int a6, int a7);
 		virtual int vt_entry_B8(void);
 		virtual bool vt_entry_BC(void);
-		virtual void CreateMPTeams(DynamicVectorClass<MPTeam> * teams);
+		virtual void CreateMPTeams(DynamicVectorClass<MPTeam *> * teams);
 		virtual Cell * AssignStartingPositionsToHouse(Cell * result, int house, DynamicVectorClass<Cell> * coords, unsigned char * satisfied);
 		virtual bool SpawnBaseUnits(HouseClass * house, unsigned unused);
 		virtual bool GenerateStartingUnits(HouseClass * house, int & amount);

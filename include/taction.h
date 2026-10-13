@@ -172,6 +172,9 @@ class TActionClass : public AbstractClass
 		bool TAction_LOCK_INPUT(HouseClass * house, ObjectClass * object, TriggerClass * trig, Cell const & cell);
 		bool TAction_UNLOCK_INPUT(HouseClass * house, ObjectClass * object, TriggerClass * trig, Cell const & cell);
 		bool TAction_CENTER_VIEWPOINT(HouseClass * house, ObjectClass * object, TriggerClass * trig, Cell const & cell);
+		bool TAction_JUMP_VIEWPOINT(HouseClass * house, ObjectClass * object, TriggerClass * trig, Cell const & cell);
+		bool TAction_CENTER_ON_BASE(HouseClass * house, ObjectClass * object, TriggerClass * trig, Cell const & cell);
+		bool TAction_REVEAL_AROUND_WAYPOINT(HouseClass * house, ObjectClass * object, TriggerClass * trig, Cell const & cell);
 		bool TAction_ZOOM_IN(HouseClass * house, ObjectClass * object, TriggerClass * trig, Cell const & cell);
 		bool TAction_ZOOM_OUT(HouseClass * house, ObjectClass * object, TriggerClass * trig, Cell const & cell);
 		bool TAction_RESHROUD(HouseClass * house, ObjectClass * object, TriggerClass * trig, Cell const & cell);

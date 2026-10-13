@@ -2711,3 +2711,159 @@ void FootClass::AbortMotion(void)
 	unknown_5A0 = NULL;
 	NavCom = NULL;
 }
+
+// FUNCTION: 0x004DF1A0
+void FootClass::ClearMegaMissionData(void)
+{
+	MegaMission = MISSION_NONE;
+	MegaDestination = NULL;
+	MegaTarget = NULL;
+	HasAttackMoveTarget = false;
+}
+
+// FUNCTION: 0x004DF1C0
+bool FootClass::HaveMegaMission(void) const
+{
+	return(MegaMission != MISSION_NONE);
+}
+
+// FUNCTION: 0x004DF1D0
+bool FootClass::HaveAttackMoveTarget(void) const
+{
+	return(HasAttackMoveTarget);
+}
+
+// FUNCTION: 0x004DF1E0
+int FootClass::GetMegaMission(void) const
+{
+	return(MegaMission);
+}
+
+// FUNCTION: 0x004DF1F0
+Coord FootClass::GetAttackMoveCoords(void)
+{
+	if (MegaDestination) {
+		return(MegaDestination->Center_Coord());
+	}
+	if (MegaTarget) {
+		return(MegaTarget->Center_Coord());
+	}
+	return(Coord(-1, -1, -1));
+}
+
+// FUNCTION: 0x004DF280
+void FootClass::ResolveMegaTarget(void)
+{
+	if (MegaTarget) {
+		Cell cell = Cell(MegaTarget->Center_Coord());
+		MegaDestination = &Map[cell];
+		MegaTarget = NULL;
+	} else {
+		MegaDestination = NULL;
+		MegaTarget = NULL;
+	}
+}
+
+// FUNCTION: 0x004DF310
+bool FootClass::MegaMissionIsAttackMove(void) const
+{
+	return(MegaMission == MISSION_ATTACK_MOVE);
+}
+
+// FUNCTION: 0x004DF320
+bool FootClass::ContinueMegaMission(void)
+{
+	bool result = true;
+	HasAttackMoveTarget = false;
+	if (MegaDestination) {
+		QueueMission(MISSION_MOVE, true);
+		Assign_Destination(MegaDestination, true);
+	} else if (MegaTarget) {
+		QueueMission(MISSION_ATTACK, true);
+		Assign_Target(MegaTarget);
+	} else {
+		ClearMegaMissionData();
+		result = false;
+	}
+	return(result);
+}
+
+// FUNCTION: 0x004DF3A0
+void FootClass::UpdateAttackMove(void)
+{
+	if (MegaDestination) {
+		if (HasAttackMoveTarget) {
+			if (InAuxiliarySearchRange(TarCom)) {
+				return;
+			}
+			TarCom = NULL;
+		}
+		if (Target_Something_Nearby(Coord(Position), THREAT_RANGE)) {
+			QueueMission(MISSION_ATTACK, true);
+			HasAttackMoveTarget = true;
+		}
+	} else {
+		if (MegaTarget && InAuxiliarySearchRange(MegaTarget)) {
+			return;
+		}
+		if (HasAttackMoveTarget && InAuxiliarySearchRange(TarCom)) {
+			return;
+		}
+		TarCom = NULL;
+		if (Target_Something_Nearby(Coord(Position), THREAT_RANGE)) {
+			QueueMission(MISSION_ATTACK, true);
+			HasAttackMoveTarget = true;
+		} else {
+			TarCom = MegaTarget;
+		}
+	}
+}
+
+// FUNCTION: 0x004DF4B0
+bool FootClass::RefreshMegaMission(void)
+{
+	bool result = false;
+	if (MegaMission == MISSION_ATTACK_MOVE) {
+		if (HasAttackMoveTarget) {
+			HasAttackMoveTarget = false;
+			result = ContinueMegaMission();
+		} else if (Get_Mission() == MISSION_GUARD || Get_Mission() == MISSION_GUARD) {
+			result = ContinueMegaMission();
+		} else {
+			ClearMegaMissionData();
+			result = false;
+		}
+	}
+	return(result);
+}
+
+namespace LocomotionClass { namespace CLSIDs { extern const CLSID Teleport; } }
+extern int DAT_008B3DF4;
+
+// FUNCTION: 0x004DF7F0
+bool FootClass::ChronoWarpTo(Coord dest)
+{
+	if (In_Air() || IsIronCurtained() || IsImmobilized || IsBeingWarpedOut() || IsWarpingIn()) {
+		return(false);
+	}
+	ILocomotionPtr teleport(LocomotionClass::CLSIDs::Teleport);
+	IPiggybackPtr piggy(teleport);
+	if (Map[dest].IsUnderBridge) {
+		dest.Z += DAT_008B3DF4;
+	}
+	if (RTTI == RTTI_UNIT) {
+		Locomotion->Mark_All_Occupation_Bits(0);
+		Locomotion->Force_Track(-1, dest);
+		Clear_Occupy_Bit(dest);
+		IsOccupyingCell = true;
+	}
+	Assign_Destination(&Map[dest], true);
+	Assign_Destination(NULL, true);
+	teleport->Link_To_Object(this);
+	piggy->Begin_Piggyback(Locomotion);
+	Locomotion = teleport;
+	IsImmobilized = true;
+	(Coord &)ChronoDestCoords = dest;
+	Assign_Destination(&Map[dest], true);
+	return(true);
+}

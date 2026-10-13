@@ -30,6 +30,7 @@
 #include "scenario.h"
 #include "sendfile.h"
 #include "srfcache.h"
+#include "stringtable.h"
 #include "stimer.h"
 #include "timer.h"
 #include "windlg.h"
@@ -106,7 +107,7 @@ static void Send_Join_Queries(int gamenow, int playernow, int chatnow, int init)
 		memset (&packet, 0, sizeof(GlobalPacketType));
 
 		packet.Command = NET_QUERY_PLAYER;
-		strcpy (packet.Name, Session.Games[CurGame]->Name);
+		strcpy (packet.Name, FUN_007350C0(Session.Games[CurGame]->Name));
 
 		Ipx.Send_Global_Message (&packet,
 			sizeof(GlobalPacketType), 0, NULL);
@@ -176,7 +177,7 @@ static void Get_Join_Responses(void)
 		if (Session.GPacket.Command==NET_ANSWER_GAME) {
 			found = 0;
 			for (i = 1; i < Session.Games.Count(); i++) {
-				if (!strcmp(Session.Games[i]->Name, Session.GPacket.Name)) {
+				if (!wcscmp(Session.Games[i]->Name, FUN_00735120(Session.GPacket.Name))) {
 					found = 1;
 
 					Session.Games[i]->Game.LastTime = TickCount;
@@ -208,7 +209,7 @@ static void Get_Join_Responses(void)
 
 			if (found==0) {
 				who = new NodeNameType;
-				strcpy(who->Name, Session.GPacket.Name);
+				wcscpy(who->Name, FUN_00735120(Session.GPacket.Name));
 				who->Address = Session.GAddress;
 				who->Game.IsOpen = Session.GPacket.GameInfo.IsOpen;
 				who->Game.Addon = Session.GPacket.GameInfo.IsFirestorm;
@@ -257,7 +258,7 @@ static void Get_Join_Responses(void)
 			if (found==0) {
 				who = new NodeNameType;
 				memset(who, 0, sizeof(*who));
-				strcpy(who->Name, Session.GPacket.Name);
+				wcscpy(who->Name, FUN_00735120(Session.GPacket.Name));
 				strcpy(who->Player.Serial, Session.GPacket.Serial);
 				who->Address = Session.GAddress;
 				who->Player.House = Session.GPacket.PlayerInfo.House;
@@ -274,7 +275,7 @@ static void Get_Join_Responses(void)
 
 				for (i = 0; i < Session.Players.Count(); i++) {
 					NodeNameType * player = Session.Players[i];
-					if (strcmp(player->Name,(char *)Session.GameName) && player->Player.Status != 0) {
+					if (wcscmp(player->Name, Session.GameName) && player->Player.Status != 0) {
 						player->Player.Status = 0;
 						EnableWindow(GetDlgItem(GameoptWindow(), IDC_ACCEPT), TRUE);
 					}
@@ -301,7 +302,7 @@ static void Get_Join_Responses(void)
 
 				who = new NodeNameType;
 				memset(who, 0, sizeof(*who));
-				strcpy(who->Name, Session.Handle);
+				wcscpy(who->Name, FUN_00735120(Session.Handle));
 				who->Player.House = Session.House;
 				who->Player.Color = Session.ColorIdx;
 				Session.Players.Add (who);
@@ -400,7 +401,7 @@ static void Get_Join_Responses(void)
 
 		if (Session.GPacket.Command==NET_PUB_GAMEOPT) {
 			for (i = 0; i < Session.Players.Count(); i++) {
-				if (!strcmp(Session.Players[i]->Name,Session.GPacket.Name)) {
+				if (!wcscmp(Session.Players[i]->Name, FUN_00735120(Session.GPacket.Name))) {
 					if (i != -1 && !Net2GameStarted) {
 						Session.HostAddress = Session.GAddress;
 						DecodePubGameopt(Session.GPacket.Message.Buf, Session.GPacket.Name);
@@ -414,7 +415,7 @@ static void Get_Join_Responses(void)
 		if (Session.GPacket.Command==NET_PRIV_GAMEOPT) {
 			char *opts = strdup(Session.GPacket.Message.Buf + 1);
 			for (i = 1; i < Session.Players.Count(); i++) {
-				if (!strcmp(Session.Players[i]->Name,Session.GPacket.Name)) {
+				if (!wcscmp(Session.Players[i]->Name, FUN_00735120(Session.GPacket.Name))) {
 					if (i != -1 && Net2GameStarted != 1) {
 						int oldhouse = Session.Players[i]->Player.House;
 						int oldcolor = Session.Players[i]->Player.Color;
@@ -455,7 +456,7 @@ static void Get_Join_Responses(void)
 
 		if (Session.GPacket.Command==NET_SIGN_OFF) {
 			for (i = 1; i < Session.Games.Count(); i++) {
-				if (!strcmp(Session.Games[i]->Name, Session.GPacket.Name) &&
+				if (!wcscmp(Session.Games[i]->Name, FUN_00735120(Session.GPacket.Name)) &&
 					Session.Games[i]->Address==Session.GAddress) {
 					if (i==CurGame) {
 						Clear_Vector (&Session.Players);
@@ -504,7 +505,7 @@ static void Get_Join_Responses(void)
 			if (player_removed) {
 				for (i = 0; i < Session.Players.Count(); i++) {
 					NodeNameType * player = Session.Players[i];
-					if (strcmp(player->Name,(char *)Session.GameName) && player->Player.Status != 0) {
+					if (wcscmp(player->Name, Session.GameName) && player->Player.Status != 0) {
 						player->Player.Status = 0;
 						EnableWindow(GetDlgItem(GameoptWindow(), IDC_ACCEPT), TRUE);
 					}
@@ -546,7 +547,7 @@ static void Get_Join_Responses(void)
 			else {
 				for (i = 0; i < Session.Chat.Count(); i++) {
 					if (Session.Chat[i]->Address==Session.GAddress) {
-						strcpy (Session.Chat[i]->Name, Session.GPacket.Name);
+						wcscpy (Session.Chat[i]->Name, FUN_00735120(Session.GPacket.Name));
 						Session.Chat[i]->Chat.LastTime = TickCount;
 						Session.Chat[i]->Chat.LastChance = 0;
 						Session.Chat[i]->Chat.Color = Session.GPacket.Chat.Color;
@@ -557,7 +558,7 @@ static void Get_Join_Responses(void)
 			}
 			if (!found) {
 				who = new NodeNameType;
-				strcpy (who->Name, Session.GPacket.Name);
+				wcscpy (who->Name, FUN_00735120(Session.GPacket.Name));
 				who->Address = Session.GAddress;
 				who->Chat.LastTime = TickCount;
 				who->Chat.LastChance = 0;
@@ -623,7 +624,7 @@ static void Get_Join_Responses(void)
 			found = 0;
 			resend = 0;
 			for (i = 1; i < Session.Players.Count(); i++) {
-				if (!strcmp(Session.Players[i]->Name,Session.GPacket.Name)) {
+				if (!wcscmp(Session.Players[i]->Name, FUN_00735120(Session.GPacket.Name))) {
 					if (Session.Players[i]->Address != Session.GAddress) {
 						found = 1;
 					}
@@ -633,7 +634,7 @@ static void Get_Join_Responses(void)
 					break;
 				}
 			}
-			if (!strcmp (Session.Players[0]->Name, Session.GPacket.Name)) {
+			if (!wcscmp (Session.Players[0]->Name, FUN_00735120(Session.GPacket.Name))) {
 				found = 1;
 			}
 
@@ -718,7 +719,7 @@ static void Get_Join_Responses(void)
 
 				who = new NodeNameType;
 				memset(who, 0, sizeof(*who));
-				strcpy(who->Name, Session.GPacket.Name);
+				wcscpy(who->Name, FUN_00735120(Session.GPacket.Name));
 				who->Address = Session.GAddress;
 				who->Player.House = Session.GPacket.PlayerInfo.House;
 				strcpy(who->Player.Serial, Session.GPacket.Serial);
@@ -732,7 +733,7 @@ static void Get_Join_Responses(void)
 				Session.Players.Add (who);
 
 				for (i = 0; i < Session.Players.Count(); i++) {
-					if (strcmp(Session.Players[i]->Name, (char *)Session.GameName)) {
+					if (wcscmp(Session.Players[i]->Name, Session.GameName)) {
 						Session.Players[i]->Player.Status = 0;
 					}
 				}

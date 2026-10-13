@@ -968,10 +968,10 @@ template class DynamicVectorClass<InfantryTypeClass const *>;
 // FUNCTION: 0x0067A980 ?$VectorClass@PBVTerrainTypeClass@@::GetItem
 template class TypeList<TerrainTypeClass const *>;
 
-// FUNCTION: 0x0067A990 ?$VectorClass@PBVVoxelAnimTypeClass@@::~?$VectorClass@PBVVoxelAnimTypeClass@@
+// FUNCTION: 0x0067A990 ?$TypeList@PBVVoxelAnimTypeClass@@::~?$TypeList@PBVVoxelAnimTypeClass@@
 template class VectorClass<VoxelAnimTypeClass const *>;
 
-// FUNCTION: 0x0067A9E0 ?$VectorClass@PBVSmudgeTypeClass@@::~?$VectorClass@PBVSmudgeTypeClass@@
+// FUNCTION: 0x0067A9E0 ?$TypeList@PBVSmudgeTypeClass@@::~?$TypeList@PBVSmudgeTypeClass@@
 template class VectorClass<SmudgeTypeClass const *>;
 
 // FUNCTION: 0x0067AA30 ?$VectorClass@PBVTerrainTypeClass@@::~?$VectorClass@PBVTerrainTypeClass@@
@@ -1014,3 +1014,22 @@ template class DynamicVectorClass<TerrainTypeClass const *>;
 
 // FUNCTION: 0x0067B500 TGet_Class
 template WarheadTypeClass * TGet_Class<WarheadTypeClass>(CCINIClass const &, char const *, char const *, WarheadTypeClass *);
+
+// FUNCTION: 0x0067BAC0 TGet_Class@@YIPAVInfantryTypeClass
+template InfantryTypeClass * TGet_Class<InfantryTypeClass>(CCINIClass const &, char const *, char const *, InfantryTypeClass *);
+
+// FUNCTION: 0x0067BCE0 TGet_Class@@YIPAVBuildingTypeClass
+template BuildingTypeClass * TGet_Class<BuildingTypeClass>(CCINIClass const &, char const *, char const *, BuildingTypeClass *);
+
+// FUNCTION: 0x0067BD30 TGet_Class@@YIPAVAircraftTypeClass
+template AircraftTypeClass * TGet_Class<AircraftTypeClass>(CCINIClass const &, char const *, char const *, AircraftTypeClass *);
+
+// FUNCTION: 0x0067BD80 TGet_Class@@YIPAVTerrainTypeClass
+template TerrainTypeClass * TGet_Class<TerrainTypeClass>(CCINIClass const &, char const *, char const *, TerrainTypeClass *);
+
+// FUNCTION: 0x0067BFA0 ?$VectorClass@PBVTerrainTypeClass@@::operator=
+
+// FUNCTION: 0x0067C010 ?$VectorClass@PBVVoxelAnimTypeClass@@::~?$VectorClass@PBVVoxelAnimTypeClass@@
+// FUNCTION: 0x0067C060 ?$DynamicVectorClass@PBVVoxelAnimTypeClass@@::~?$DynamicVectorClass@PBVVoxelAnimTypeClass@@
+// FUNCTION: 0x0067C0B0 ?$VectorClass@PBVSmudgeTypeClass@@::~?$VectorClass@PBVSmudgeTypeClass@@
+// FUNCTION: 0x0067C100 ?$DynamicVectorClass@PBVSmudgeTypeClass@@::~?$DynamicVectorClass@PBVSmudgeTypeClass@@

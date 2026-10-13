@@ -262,6 +262,7 @@ class BuildingClass : public TechnoClass
 		void FUN_004503F0(void);
 		void FUN_004504F0(int stage, CoordStruct const & coords);
 		void FUN_00450590(void);
+		void FUN_00457DE0(bool, bool);
 		void Update_Radar_Spied(void);
 		void Spied_By(HouseClass * house);
 
@@ -306,6 +307,11 @@ class BuildingClass : public TechnoClass
 		void FUN_00452820(InfantryClass * infantry);
 		bool FUN_004528A0(AbstractClass const * target);
 		bool FUN_00452940(CellClass const * cell);
+		void FUN_004545D0(void);
+		void FUN_00454730(void);
+		void FUN_004547C0(void);
+		void FUN_00454930(void);
+		void FUN_004549B0(void);
 		void DisableStuff(void);
 		void Enable_Sensor_Array(void);
 
@@ -340,6 +346,7 @@ class BuildingClass : public TechnoClass
 		void Connect_Laser_Fence(FacingType dir);
 		void Disconnect_Laser_Fence(FacingType dir, bool explode);
 		static void Unlimbo_Laser_Fence_Helper(Cell const & cell);
+		static void __stdcall FUN_00453D60(Coord const & coord);
 		void Init_Laser_Fence_Frame(void);
 		void Toggle_Laser_Fence_Post(bool force);
 

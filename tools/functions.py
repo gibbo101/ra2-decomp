@@ -224,26 +224,31 @@ def main() -> None:
            and a not in after_end and not after_table(a)}
     for a in mid:
         del evidence[a]
-    # A start that only a data pointer or Ghidra names, which flow from the function
-    # before it reaches, is a label or the tail after a call inside that function.
     md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_32)
-    ordered = sorted(evidence)
-    case_labels = []
-    for i, a in enumerate(ordered[1:-1], 1):
-        if set(evidence[a]) <= {"V", "G"}:
-            reached: set = set()
-            reached_end(md, code, base, ordered[i - 1], ordered[i + 1], set(), reached, True)
-            if a in reached:
-                case_labels.append(a)
+
+    def labels(after: set | None) -> list[int]:
+        """Starts that only a data pointer or Ghidra names, which flow from the start
+        before them reaches: labels or tails inside that function. `after` limits the
+        check to starts whose previous start is in it."""
+        ordered = sorted(evidence)
+        found = []
+        for i, a in enumerate(ordered[1:-1], 1):
+            if set(evidence[a]) <= {"V", "G"} and (after is None or ordered[i - 1] in after):
+                reached: set = set()
+                reached_end(md, code, base, ordered[i - 1], ordered[i + 1], set(), reached, True)
+                if a in reached:
+                    found.append(a)
+        return found
+
+    case_labels = labels(None)
     for a in case_labels:
         del evidence[a]
     first = base
     if first not in evidence:
         evidence[first] = "P"
 
-    # A function whose flow ends before the next start, with code after its last return
-    # or switch table, holds a second function there when that code is aligned.
-    md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_32)
+    # Aligned code past a function's last return or switch table that its flow never
+    # reaches is a second function, even where the linear sweep ran through it.
     boundaries = after_end | padded
     pending = sorted(evidence)
     while pending:
@@ -264,10 +269,18 @@ def main() -> None:
                 if not more:
                     break
                 roots |= more
-            if (a < at < nxt and at % 16 == 0 and at in starts and at not in tables
-                    and (at in boundaries or after_data)):
+            if (a < at < nxt and at % 16 == 0 and at not in tables
+                    and ((at in starts and at in boundaries) or after_data)):
+                if at not in starts:
+                    sweep(code, base, starts, set(), set(), set(), set(), at)
                 evidence[at] = "F"
                 new.append(at)
+        # Flow from a new start can reach a label that the start before it did not.
+        dropped = labels(set(new))
+        for a in dropped:
+            del evidence[a]
+            new.append(max(p for p in evidence if p < a))
+        case_labels += dropped
         pending = new
 
     ordered = sorted(evidence)

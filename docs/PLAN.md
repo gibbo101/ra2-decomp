@@ -922,6 +922,24 @@ all hinge on how Find_Entry inlines; coopcamp's are register swaps. A map fault 
 open: 0x453840 ends in a Ghidra-only tail at 0x4539E0 that the flow pass did not reach.
 Cost: about 4.6M tokens. Merge gate: 4,279 of 4,279 (660.2 KB).
 
+### Batches 25, 26 and 27 (14 October 2026)
+
+The first round of three side by side, interrupted once by a lost connection and resumed
+from the journals. **407 of 419 real functions** (142, 124 of 131, 141). Batch 27 opened
+new modules (Startup, Init, ipxmgr, tab, WDTSel, netshare, MPCoop) and landed all 12 in
+nine of them, with YR's IPX and Winsock headers proved by their constructors. Batch 25
+took YR's trigger and trigger-type layouts. Batch 26 settled that palette's vectors are
+HSVClass by RTTI, which left a stale RGB row in progress.csv that failed the gate until
+it was corrected; it also put map's bridge sets on their own address. A names.csv row
+for MapClass::Shroud_The_Map then exposed TAction_RESHROUD as a false match calling a
+different function (0x577C90), now declared as such. The coordinator replaced twelve
+`Init_` stand-ins in tab.cpp with geometry.h markers, and cut ported Westwood comments
+in tactical.cpp. A map-fix agent made the F rule accept after-table starts the sweep had
+run through and re-test labels after each F round: six hidden functions found,
+0x453840 whole. Still open: houstype's three VectorClass operator= labels disagree with
+their callers (byte-identical twins). Cost: about 5.8M tokens. Merge gate: 4,689 of
+4,689 (710.2 KB).
+
 ### Decide before the first batch
 
 - **Module layout.** Which function lives in which source file, and the link order, decide

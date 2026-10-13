@@ -365,7 +365,6 @@ class CellClass : public AbstractClass
 		void Recalc_Attributes(int cell_height=-1);
 		void Recalc_Passability(void);
 		void Destroy_Bridge(void);
-		void On_Bridge_Collapse(void);
 		void Set_Under_Bridge(FacingType facing, bool state = true);
 		void Set_Under_Rail_Bridge(FacingType facing, bool state = true);
 		int  Reduce_Tiberium(int levels);
@@ -374,7 +373,8 @@ class CellClass : public AbstractClass
 		void Incoming(Coord const & threat=COORD_NONE, bool forced=false, bool nokidding=false, bool bridge=false);
 		void Adjust_Threat(HousesType house, int threat_value);
 		void Force_New_Slope_For_Occupiers(void) const;
-		void Kill_Illegal_Occupiers(void);
+		void Kill_Illegal_Occupiers(bool kill_jumpjets);
+		void On_Bridge_Collapse(void);
 
 		Cell Get_Bridge_Deck_Cell(void) const
 		{
@@ -416,6 +416,9 @@ class CellClass : public AbstractClass
 		void Recalc_Light(void);
 		bool Is_Disguise_Sensed(HousesType house) const;
 		void Disguise_Sensed_By(HousesType house);
+		void Disguise_Unsensed_By(HousesType house);
+		void IncreaseShroudCounter(void);
+		void ReduceShroudCounter(void);
 
 	private:
 		CellClass (CellClass const &);

@@ -8,6 +8,14 @@
 #include "ccini.h"
 #include "ccfile.h"
 #include "session.h"
+#include "scenario.h"
+#include "house.h"
+#include "houstype.h"
+#include "unittype.h"
+#include "infatype.h"
+#include "rules.h"
+#include "_rules.h"
+#include <wchar.h>
 #include <windows.h>
 #undef LoadString
 
@@ -18,10 +26,17 @@ class MPPlayerNode
 {
 	public:
 		int FUN_00696F10(void);
+		bool IsObserver(void) { return(Slot == -1); }
 		char pad[0x6b];
 		int Slot;
 };
 #pragma pack(pop)
+
+class MPHouse
+{
+	public:
+		bool FUN_0050B730(void);
+};
 
 class MPMapEntry
 {
@@ -39,6 +54,20 @@ extern MPMapEntry ** DAT_00A8B8CC;
 bool __cdecl FUN_0077D940(void);
 void __fastcall FUN_00623840(HWND hwnd);
 int __fastcall FUN_0069B670(SessionClass * session);
+MPTeam * __fastcall FUN_005C1030(int index);
+extern int DAT_00A8B548;
+extern int DAT_00822CF4;
+extern bool DAT_00ABFDD4;
+extern bool DAT_00ABFDD5;
+void __cdecl FUN_004068E0(char const * format, ...);
+double __cdecl FUN_004CAC40(double);
+DynamicVectorClass<Cell> __fastcall FUN_00688380(char arg);
+
+class MPObserverTeam : public MPTeam
+{
+	public:
+		MPObserverTeam(void);
+};
 
 
 // FUNCTION: 0x005D5AC0
@@ -48,7 +77,7 @@ DynamicVectorClass<MPGameModeClass *> & Game_Modes(void)
 	return(modes);
 }
 
-// FUNCTION: 0x005D5B20 $E69
+// FUNCTION: 0x005D5B20 $E79
 
 static int Game_Mode_Count(void)
 {
@@ -278,4 +307,239 @@ void MPGameModeClass::PopulateTeamDropdown(HWND hwnd, DynamicVectorClass<MPTeam 
 		}
 		SendMessage(hwnd, CB_SETITEMDATA, item, (LPARAM)entry);
 	}
+}
+
+// FUNCTION: 0x005D64C0
+void MPGameModeClass::DrawTeamDropdown(HWND hwnd, DynamicVectorClass<MPTeam *> * teams, MPTeam * team)
+{
+	SendMessage(hwnd, LB_RESETCONTENT, 0, 0);
+	for (int i = 0; i < teams->Count(); i++) {
+		MPTeam * entry = (*teams)[i];
+		int item = SendMessage(hwnd, 0x4CD, 0, (LPARAM)entry);
+		if (entry == team) {
+			SendMessage(hwnd, LB_SETCURSEL, item, 0);
+		}
+		SendMessage(hwnd, LB_SETITEMDATA, item, (LPARAM)entry);
+	}
+}
+
+// FUNCTION: 0x005D6540
+void MPGameModeClass::PopulateTeamDropdownForPlayer(HWND hwnd, int index)
+{
+	FUN_00623840(hwnd);
+	for (int i = 0; i < MPTeams.Count(); i++) {
+		delete MPTeams[i];
+	}
+	MPTeams.Clear();
+	CreateMPTeams(&MPTeams);
+	if (index >= 0 && index < DAT_00A8DA84) {
+		int slot = DAT_00A8DA78[index]->Slot;
+		for (int i = 0; i < MPTeams.Count(); i++) {
+			MPTeam * entry = MPTeams[i];
+			int item = SendMessage(hwnd, CB_ADDSTRING, 0, (LPARAM)entry->Title.text());
+			if (entry->Index == slot) {
+				SendMessage(hwnd, CB_SETCURSEL, item, 0);
+			}
+			SendMessage(hwnd, CB_SETITEMDATA, item, (LPARAM)entry);
+		}
+	}
+}
+
+// FUNCTION: 0x005D6620
+MPTeam * MPGameModeClass::FUN_005D6620(int index)
+{
+	if (MPTeams.Count() < 3) {
+		for (int i = 0; i < MPTeams.Count(); i++) {
+			delete MPTeams[i];
+		}
+		MPTeams.Clear();
+		CreateMPTeams(&MPTeams);
+	}
+	for (int i = 0; i < MPTeams.Count(); i++) {
+		MPTeam * team = MPTeams[i];
+		if (team && team->Index == index) {
+			return(team);
+		}
+	}
+	return(NULL);
+}
+
+// FUNCTION: 0x005D6690
+void MPGameModeClass::CreateMPTeams(DynamicVectorClass<MPTeam *> * teams)
+{
+	teams->Add(new MPObserverTeam);
+	for (int i = 1; i <= DAT_00A8B548; i++) {
+		teams->Add(FUN_005C1030(i));
+	}
+}
+
+// FUNCTION: 0x005D6750
+void MPGameModeClass::FUN_005D6750(void)
+{
+	for (int i = 0; i < MPTeams.Count(); i++) {
+		delete MPTeams[i];
+	}
+	MPTeams.Clear();
+}
+
+// FUNCTION: 0x005D6790
+bool MPGameModeClass::UnfixAlliances(void)
+{
+	Scen->Special.IsAllianceFixed = false;
+	return(true);
+}
+
+// FUNCTION: 0x005D67A0
+bool MPGameModeClass::vt_entry_1C(unsigned a)
+{
+	return(true);
+}
+
+// FUNCTION: 0x005D67B0
+CCINIClass * MPGameModeClass::FUN_005D67B0(void)
+{
+	if (INI == NULL) {
+		INI = New_INI();
+		CCFileClass file(INIFilename);
+		if (file.Is_Available(false)) {
+			INI->ReadCCFile(file, false, false);
+		}
+	}
+	return(INI);
+}
+
+// FUNCTION: 0x005D6BE0
+bool MPGameModeClass::StartingPositionsToHouseBaseCells(char unused)
+{
+	DynamicVectorClass<Cell> cells = FUN_00688380(unused);
+	for (int i = 0; i < Houses.Count(); i++) {
+		HouseClass * house = Houses[i];
+		if (!house->Class->IsMultiplayPassive) {
+			int point = house->StartingPoint;
+			if (point != -2) {
+				house->Set_Base_Spawn_Cell(cells[point]);
+				Scen->HouseIndices[point] = i;
+			}
+		}
+	}
+	return(true);
+}
+
+// FUNCTION: 0x005D6C70
+bool MPGameModeClass::StartingPositionsToHouseBaseCells2(bool arg)
+{
+	DynamicVectorClass<Cell> cells = FUN_00688380(arg);
+	unsigned char used[16];
+	for (int slot = 0; slot < 16; slot++) {
+		if (Scen->HouseIndices[slot] == -1) {
+			used[slot] = 0;
+		} else {
+			used[slot] = 1;
+		}
+	}
+	for (int i = 0; i < Houses.Count(); i++) {
+		HouseClass * house = Houses[i];
+		HouseTypeClass * type = house->Class;
+		if (!type->IsMultiplayPassive) {
+			bool found = false;
+			int point = -1;
+			for (int j = 0; j < 16; j++) {
+				if (Scen->HouseIndices[j] == i) {
+					found = true;
+					point = j;
+				}
+			}
+			if (!found) {
+				FUN_004068E0("Assigning Starting Points for house %d (%s)\n", i, type->Name());
+				Cell cell;
+				Cell chosen = *AssignStartingPositionsToHouse(&cell, i, &cells, used);
+				house->Set_Base_Spawn_Cell(chosen);
+			} else {
+				house->Set_Base_Spawn_Cell(cells[point]);
+			}
+		}
+	}
+	return(true);
+}
+
+static inline void Player_Owner_Mask(int & mask)
+{
+	for (int h = 0; h < Houses.Count(); h++) {
+		HouseTypeClass * type = Houses[h]->Class;
+		if (!type->IsMultiplayPassive) {
+			mask |= 1 << Houses[h]->Class->HeapID;
+		}
+	}
+}
+
+// FUNCTION: 0x005D6D80
+bool MPGameModeClass::FUN_005D6D80(void)
+{
+	int credits = 0;
+	int amount;
+	if (Session.Options.UnitCount > 0) {
+		amount = 0;
+		Player_Owner_Mask(amount);
+		int total = 0;
+		int count = 0;
+		for (int u = 0; u < UnitTypes.Count(); u++) {
+			UnitTypeClass * type = UnitTypes[u];
+			if (type->IsAllowedToStartInMultiplayer && (amount & type->Ownable) && type->Level <= DAT_00822CF4) {
+				bool excluded = false;
+				for (int j = 0; j < Rule->BaseUnit.Count(); j++) {
+					if (Rule->BaseUnit[j] == type) {
+						excluded = true;
+						break;
+					}
+				}
+				if (!excluded) {
+					count++;
+					total += type->Raw_Cost();
+				}
+			}
+		}
+		for (int n = 0; n < InfantryTypes.Count(); n++) {
+			InfantryTypeClass * type = InfantryTypes[n];
+			if (type->IsAllowedToStartInMultiplayer && (amount & type->Ownable) && type->Level <= DAT_00822CF4) {
+				count++;
+				total += type->Raw_Cost();
+			}
+		}
+		if (count == 0) {
+			count = 1;
+		}
+		credits = (total + count / 2) / count * Session.Options.UnitCount;
+	}
+	for (int i = 0; i < Houses.Count(); i++) {
+		HouseClass * house = Houses[i];
+		if (!house->Class->IsMultiplayPassive) {
+			bool skip = false;
+			if (house) {
+				for (int k = 0; k < DAT_00A8DA84; k++) {
+					if (((MPHouse *)house)->FUN_0050B730() && wcscmp(house->UIName, (wchar_t *)DAT_00A8DA78[k]) == 0) {
+						skip = DAT_00A8DA78[k]->IsObserver();
+						break;
+					}
+				}
+			}
+			if (!skip) {
+				amount = credits;
+				if (!SpawnBaseUnits(house, (unsigned)&amount)) {
+					return(false);
+				}
+				if (!GenerateStartingUnits(house, amount)) {
+					return(false);
+				}
+				if (amount > 0) {
+					house->Refund_Money(amount);
+				}
+				house->PBQuantity.Clear();
+				house->PAQuantity.Clear();
+				house->PIQuantity.Clear();
+				house->PUQuantity.Clear();
+			}
+		}
+	}
+	FUN_004068E0("Finished unit generation. Random number is %d\n", Scen->RandomNumber(0, 0xFFFF));
+	return(true);
 }

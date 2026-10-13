@@ -3184,12 +3184,180 @@ int TechnoClass::Get_Ownable(void) const
 	return(TClass->Get_Ownable());
 }
 
+// FUNCTION: 0x00708B40
+int TechnoClass::Risk(void) const
+{
+	TechnoTypeClass const * ttptr = Techno_Type_Class();
+	if (ttptr != NULL) {
+		if (Fetch_RTTI() == RTTI_BUILDING) {
+			if (GetOccupantCount() > 0) {
+				int threat = Rule->ThreatPerOccupant;
+				return(threat * GetOccupantCount());
+			}
+			if (BunkerLinkedItem != NULL) {
+				return(BunkerLinkedItem->Techno_Type_Class()->Risk);
+			}
+		}
+		return(ttptr->Risk);
+	}
+
+	return(0);
+}
+
+// FUNCTION: 0x00708BC0
+double TechnoClass::Tiberium_Load(void) const
+{
+	if (Techno_Type_Class()->Capacity != 0) {
+		double amount = Storage.Get_Total_Amount();
+		return(amount / Techno_Type_Class()->Capacity);
+	}
+	return(0.0);
+}
+
 // FUNCTION: 0x00708C10
 FacingType TechnoClass::Desired_Load_Dir(ObjectClass * , Cell & moveto) const
 {
 	moveto = CELL_NONE;
 	return(FACING_N);
 }
+
+// FUNCTION: 0x00708C30
+int TechnoClass::Pip_Count(void) const
+{
+	double maximum, current;
+	switch (Techno_Type_Class()->PipScale) {
+
+		case PIPSCALE_AMMO:
+			current = Ammo;
+			maximum = Techno_Type_Class()->Max_Pips();
+			break;
+
+		case PIPSCALE_CHARGE:
+			if (CaptureManager == NULL) {
+				return(0);
+			}
+			current = CaptureManager->GetControlledCount();
+			maximum = Techno_Type_Class()->Max_Pips();
+			break;
+
+		case PIPSCALE_PASSENGERS:
+			current = Cargo.How_Many();
+			maximum = Techno_Type_Class()->Max_Pips();
+			break;
+
+		case PIPSCALE_TIBERIUM:
+			current = Storage.Get_Total_Amount();
+			maximum = Techno_Type_Class()->Capacity;
+			break;
+
+		default:
+			return(0);
+	}
+
+	int retval = Techno_Type_Class()->Max_Pips() * (current / maximum) + 0.5;
+	if (!retval && current > 0) retval = 1;
+	return(retval);
+}
+
+// FUNCTION: 0x00708D70
+DirType TechnoClass::Fire_Direction(void) const
+{
+	return(Turret_Facing());
+}
+
+// FUNCTION: 0x00708D90
+void TechnoClass::QueueVoice(int voice)
+{
+	if (MoveFeedback && voice != -1 && House->Is_Player_Control()) {
+		QueuedVoiceIndex = voice;
+	}
+}
+
+#pragma warning(push)
+#pragma warning(disable : 4716)
+// FUNCTION: 0x00708DC0
+int TechnoClass::VoiceCapture(void)
+{
+	if (Techno_Type_Class()->VoiceCapture != -1) {
+		QueueVoice(Techno_Type_Class()->VoiceCapture);
+	} else {
+		VoiceEnter();
+	}
+}
+#pragma warning(pop)
+
+static inline InfantryClass * As_Infantry_Techno(TechnoClass * techno)
+{
+	return(techno->Fetch_RTTI() == RTTI_INFANTRY ? (InfantryClass *)techno : NULL);
+}
+
+#pragma warning(push)
+#pragma warning(disable : 4716)
+// FUNCTION: 0x00708E00
+int TechnoClass::VoiceDeploy(void)
+{
+	if (!unknown_bool_4F8) {
+		if (this != NULL && Is_Infantry() && As_Infantry_Techno(this)->FUN_00522510()) {
+			if (Techno_Type_Class()->VoiceUndeploy != -1) {
+				QueueVoice(Techno_Type_Class()->VoiceUndeploy);
+			}
+		} else if (Techno_Type_Class()->VoiceDeploy != -1) {
+			QueueVoice(Techno_Type_Class()->VoiceDeploy);
+		}
+	}
+	unknown_bool_4F8 = false;
+}
+#pragma warning(pop)
+
+// FUNCTION: 0x00708EB0
+void TechnoClass::Response_Select(void)
+{
+	if (SlaveOwner != NULL) {
+		if (Techno_Type_Class()->VoiceSelectEnslaved.Count()) {
+			QueueVoice(Techno_Type_Class()->VoiceSelectEnslaved.Pick(NonCriticalRandomNumber()));
+		}
+	} else if (Deactivated) {
+		if (Techno_Type_Class()->VoiceSelectDeactivated.Count()) {
+			QueueVoice(Techno_Type_Class()->VoiceSelectDeactivated.Pick(NonCriticalRandomNumber()));
+		}
+	} else if (Techno_Type_Class()->VoiceSelect.Count()) {
+		QueueVoice(Techno_Type_Class()->VoiceSelect.Pick(NonCriticalRandomNumber()));
+	}
+}
+
+// FUNCTION: 0x00708FC0
+void TechnoClass::Response_Move(void)
+{
+	if (Techno_Type_Class()->VoiceMove.Count()) {
+		QueueVoice(Techno_Type_Class()->VoiceMove.Pick(NonCriticalRandomNumber()));
+	}
+}
+
+#pragma warning(push)
+#pragma warning(disable : 4716)
+// FUNCTION: 0x00709020
+int TechnoClass::VoiceEnter(void)
+{
+	if (Techno_Type_Class()->VoiceEnter != -1) {
+		QueueVoice(Techno_Type_Class()->VoiceEnter);
+	} else {
+		Response_Move();
+	}
+}
+#pragma warning(pop)
+
+#pragma warning(push)
+#pragma warning(disable : 4716)
+// FUNCTION: 0x00709060
+int TechnoClass::VoiceHarvest(void)
+{
+	if (Techno_Type_Class()->VoiceHarvest != -1) {
+		QueueVoice(Techno_Type_Class()->VoiceHarvest);
+	} else {
+		Response_Move();
+	}
+}
+#pragma warning(pop)
 
 // FUNCTION: 0x0070D150
 void TechnoClass::Reset_Action_Line_Timer(void)

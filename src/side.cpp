@@ -25,6 +25,9 @@
 #include "wave.h"
 #include "layer.hh"
 #include "tube.hh"
+#include "side.h"
+#include "crc.h"
+#include "tracker.h"
 #include <new.h>
 
 static const double _deaccel = 0.3f;
@@ -555,3 +558,43 @@ ShipLocomotionClass::~ShipLocomotionClass(void)
 // FUNCTION: 0x006A43B0 $E8
 
 // FUNCTION: 0x006A43D0 $E11
+
+// FUNCTION: 0x006A43F0 $E14
+// FUNCTION: 0x006A4410 $E17
+// FUNCTION: 0x006A4430 $E20
+// FUNCTION: 0x006A4470 $E23
+// FUNCTION: 0x006A44A0 $E26
+// FUNCTION: 0x006A44D0 $E29
+// FUNCTION: 0x006A4500 $E32
+// FUNCTION: 0x006A4510 $E35
+// FUNCTION: 0x006A4530 $E38
+
+DynamicVectorClass<SideClass *> SideClass::Array;
+
+// FUNCTION: 0x006A4550
+SideClass::SideClass(char const * ininame) :
+	BASECLASS(ininame),
+	Houses()
+{
+	Create_ID();
+	Array.Add(this);
+}
+
+// FUNCTION: 0x006A4610
+SideClass::~SideClass(void)
+{
+	Detach_This_From_All(this);
+	Array.Delete(this);
+}
+
+// FUNCTION: 0x006A46D0
+SideType SideClass::From_Name(char const * name)
+{
+	for (int classid = 0; classid < Array.Count(); classid++) {
+		if (stricmp(Array[classid]->Name(), name) == 0) {
+			return((SideType)classid);
+		}
+	}
+
+	return(SIDE_NONE);
+}

@@ -59,6 +59,7 @@
 #include "fog.h"
 #include "gamedlg.h"
 #include "getcpu.h"
+#include "geometry.h"
 #include "globals.h"
 #include "houstype.h"
 #include "incdec.h"
@@ -135,6 +136,19 @@
 #include <conio.h>
 #include <ctime>
 #include <dos.h>
+
+// FUNCTION: 0x0052B7C0 $E112
+// FUNCTION: 0x0052B7F0 $E115
+// FUNCTION: 0x0052B810 $E118
+// FUNCTION: 0x0052B830 $E121
+// FUNCTION: 0x0052B850 $E124
+// FUNCTION: 0x0052B870 $E127
+// FUNCTION: 0x0052B890 $E130
+// FUNCTION: 0x0052B8D0 $E133
+// FUNCTION: 0x0052B900 $E136
+// FUNCTION: 0x0052B930 $E139
+// FUNCTION: 0x0052B960 $E142
+// FUNCTION: 0x0052B970 $E145
 
 // FUNCTION: 0x0052D5B0
 BOOL CALLBACK Pick_Protocol_Dialog(HWND window, UINT message, WPARAM wparam, LPARAM           )

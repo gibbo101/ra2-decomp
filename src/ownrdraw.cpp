@@ -40,8 +40,13 @@
 #include <commctrl.h>
 #include <ctime>
 #include <sys\timeb.h>
+#undef LoadString
+#include "stringtable.h"
 
 int _mouse_counter;
+
+char const * __fastcall GetTooltipStringLabel(int type, int id);
+extern wchar_t const DAT_00887734[];
 
 void ODInitMasks(void);
 
@@ -958,6 +963,199 @@ WideWstring FUN_00603F60(HWND window, int first)
 	request.second = -1;
 	SendMessage(window, 0x4e9, 0, (LPARAM)&request);
 	return request.text;
+}
+
+// FUNCTION: 0x00603FC0
+WideWstring FUN_00603FC0(HWND window, int first, WORD low, WORD high)
+{
+	int second = SendMessage((HWND)first, 0x4e8, 0, MAKELONG(low, high));
+	WideWstring text = FUN_00603F00(window, first, second);
+	return text;
+}
+
+// FUNCTION: 0x00604060
+WideWstring FUN_00604060(int type, int id)
+{
+	char const * label = GetTooltipStringLabel(type, id);
+	if (label != NULL) {
+		return WideWstring(StringTable::LoadString(label, NULL, "D:\\ra2mdpost\\ownrdraw.cpp", 0x7a5));
+	}
+	return WideWstring(DAT_00887734);
+}
+
+// FUNCTION: 0x00606740
+void FUN_00606740(HWND dialog, bool value)
+{
+	OwnerDraw::WinData *data = NULL;
+
+	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
+		*((char *)data + 0xbc) = value;
+	}
+}
+
+// FUNCTION: 0x006067A0
+char FUN_006067A0(HWND dialog)
+{
+	OwnerDraw::WinData *data = NULL;
+
+	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
+		return *((char *)data + 0xbc);
+	}
+	return false;
+}
+
+BOOL CALLBACK FUN_00606800(HWND window, LPARAM lparam);
+
+// FUNCTION: 0x006071C0
+BOOL FUN_006071C0(HWND window)
+{
+	return EnumChildWindows(window, FUN_00606800, 1);
+}
+
+// FUNCTION: 0x006071D0
+BOOL FUN_006071D0(HWND window)
+{
+	return EnumChildWindows(window, FUN_00606800, 0);
+}
+
+struct Game { static bool __cdecl CallBack(void); static bool __fastcall MainLoop(void); };
+void __fastcall DrawCampaignMenuTransition(HWND window, bool reverse);
+
+// FUNCTION: 0x00607FD0
+void FUN_00607FD0(HWND dialog)
+{
+	OwnerDraw::WinData *data = NULL;
+	HWND key = dialog;
+
+	if (OwnerDraw::Dialogs.getPointer(key, &data) && data != NULL) {
+		if (*((char *)data + 0xbe)) {
+			HWND item = GetDlgItem(dialog, 0x71a);
+			if (item != NULL) {
+				SendMessage(item, 0x4e2, 0, 0);
+			}
+			DrawCampaignMenuTransition(dialog, false);
+			*((char *)data + 0xbe) = 0;
+		}
+	}
+}
+
+extern bool DAT_00A8D60E;
+extern int DAT_00A8DAB4;
+bool __fastcall FUN_0055CBF0(void);
+void __fastcall FUN_005D4D50(void);
+bool __fastcall FUN_0069BBE0(SessionClass *session);
+
+inline OwnerDraw::WinData *Get_Data(HWND window)
+{
+	OwnerDraw::WinData *data = NULL;
+	if (!OwnerDraw::Dialogs.getPointer(window, &data)) {
+		return NULL;
+	}
+	return data;
+}
+
+// FUNCTION: 0x00608070
+bool FUN_00608070(HWND dialog)
+{
+	if (FUN_0069BBE0(&Session)) {
+		return false;
+	}
+	OwnerDraw::WinData *data = Get_Data(dialog);
+	if (data == NULL) {
+		return false;
+	}
+	bool armed = *((char *)data + 0xbd) && *(int *)((char *)data + 0xb0) == 1;
+	bool visible = IsWindowVisible(dialog) != 0;
+	if (!armed || !visible) {
+		return false;
+	}
+	VocClass::PlayGlobal(Rule->GUIMoveOutSound, 1.0f, 0x2000);
+	bool wasEnabled = IsWindowEnabled(dialog) != 0;
+	EnableWindow(dialog, FALSE);
+	EnumChildWindows(dialog, FUN_00606800, 1);
+	data = Get_Data(dialog);
+	if (data == NULL) {
+		return false;
+	}
+	*((char *)data + 0xbe) = 1;
+	InvalidateRect(dialog, NULL, FALSE);
+	DWORD start = GetTickCount();
+	do {
+		FUN_005D4D50();
+		if (Session.Type == GAME_NORMAL || Session.Type == GAME_SKIRMISH || DAT_00A8D60E || DAT_00A8DAB4) {
+			Game::CallBack();
+		} else if (!FUN_0055CBF0() && Game::MainLoop()) {
+			break;
+		}
+		int done = *((char *)data + 0xbe) == 0;
+		if ((int)(GetTickCount() - start) > 5000 || done) {
+			break;
+		}
+	} while (true);
+	EnumChildWindows(dialog, FUN_00606800, 0);
+	EnableWindow(dialog, wasEnabled);
+	return true;
+}
+
+// FUNCTION: 0x00608260
+bool RunOpenAnimationIfNeeded(HWND dialog)
+{
+	OwnerDraw::WinData *data = NULL;
+
+	if (FUN_0069BBE0(&Session)) {
+		return false;
+	}
+	bool armed;
+	{
+		HWND key = dialog;
+		if (!OwnerDraw::Dialogs.getPointer(key, &data) || data == NULL) {
+			return false;
+		}
+		armed = *((char *)data + 0xbd) && *(int *)((char *)data + 0xb0) == 1;
+	}
+	bool visible = IsWindowVisible(dialog) != 0;
+	if (!armed || !visible) {
+		return false;
+	}
+	VocClass::PlayGlobal(Rule->GUIMoveInSound, 1.0f, 0x2000);
+	bool wasEnabled = IsWindowEnabled(dialog) != 0;
+	EnableWindow(dialog, FALSE);
+	EnumChildWindows(dialog, FUN_00606800, 1);
+	DrawCampaignMenuTransition(dialog, true);
+	EnumChildWindows(dialog, FUN_00606800, 0);
+	EnableWindow(dialog, wasEnabled);
+	InvalidateRect(dialog, NULL, FALSE);
+	return true;
+}
+
+// FUNCTION: 0x00608380
+void FUN_00608380(HWND dialog)
+{
+	OwnerDraw::WinData *data = NULL;
+
+	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
+		*((char *)data + 0xbd) = 1;
+	}
+}
+
+// FUNCTION: 0x006083E0
+void FUN_006083E0(HWND dialog)
+{
+	OwnerDraw::WinData *data = NULL;
+
+	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
+		*((char *)data + 0xbd) = 0;
+	}
+}
+
+// FUNCTION: 0x00608440
+void FUN_00608440(HWND dialog)
+{
+	OwnerDraw::WinData *data = NULL;
+
+	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
+		*((char *)data + 0xd4) = 1;
+	}
 }
 
 // FUNCTION: 0x0061F190

@@ -18,6 +18,7 @@ class ColorScheme;
 class FactoryClass;
 class HouseClass;
 class TechnoClass;
+class TechnoTypeClass;
 
 class SidebarClass : public PowerClass
 {
@@ -78,6 +79,7 @@ class SidebarClass : public PowerClass
 		bool Abandon_Production(RTTIType type, int id, FactoryClass * factory);
 		virtual bool Activate(int control);
 		bool Add(RTTIType type, int ID);
+		void FUN_006AC5F0(TechnoTypeClass const * type, int frames);
 		bool Sidebar_Click(KeyNumType & input, int x, int y);
 		void Recalc(void);
 		void FUN_006A5090(void);
@@ -150,6 +152,7 @@ class SidebarClass : public PowerClass
 				bool SortsBefore(RTTIType type, int id, RTTIType otherType, int otherId);
 				bool Factory_Link(FactoryClass * factory, RTTIType type, int id);
 				bool FUN_006ABAC0(void);
+				void FUN_006AC740(int id, int frames);
 				ShapeSet const * Get_Special_Cameo(SuperWeaponType type);
 
 				enum SideBarGeneralEnums {

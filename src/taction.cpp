@@ -109,6 +109,17 @@ extern bool DAT_0088099A;
 extern bool DAT_0088099B;
 extern bool DAT_0088099C;
 void __fastcall FUN_00684240(void);
+extern DynamicVectorClass<TriggerClass *> DAT_00A8EAE8;
+#define Triggers DAT_00A8EAE8
+extern DynamicVectorClass<TagClass *> DAT_00B0E720;
+#define Tags DAT_00B0E720
+extern bool UserInputLocked;
+class InputManagerClass {
+	public:
+		void DoSomething(void);
+		static InputManagerClass * Instance;
+};
+void __fastcall FUN_007315A0(void);
 extern wchar_t DAT_00887734[];
 extern char DAT_00889F64[];
 
@@ -1035,7 +1046,7 @@ bool TActionClass::TAction_TELEPORT_HOUSE(HouseClass * house, ObjectClass * , Tr
 }
 
 // FUNCTION: 0x006E1A70
-bool TActionClass::TAction_RESHROUD(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+bool TActionClass::TAction_REVEAL_AROUND_WAYPOINT(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	if (!PlayerPtr->IsVisionary) {
 		Cell waypoint = Scen->Get_Waypoint_Cell(Data.Value);
@@ -1342,6 +1353,168 @@ bool TActionClass::TAction_CLEAR_MODES(HouseClass * , ObjectClass * , TriggerCla
 	DAT_0088099B = false;
 	DAT_0088099C = false;
 	FUN_00684240();
+	return(true);
+}
+
+// FUNCTION: 0x006E26C0
+bool TActionClass::TAction_UNLOCK_INPUT(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	Unlock_Scenario_Input();
+	return(true);
+}
+
+// FUNCTION: 0x006E26D0
+bool TActionClass::TAction_CENTER_VIEWPOINT(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	Cell waypoint = Scen->Get_Waypoint_Cell(EffectLocation);
+	Coord coord = Coord (waypoint);
+	coord.Z = Map.Get_Height_GL(coord);
+
+	if (Map[waypoint].IsUnderBridge || Map[waypoint].WasUnderBridge) {
+		coord.Z += BRIDGE_LEPTON_HEIGHT;
+	}
+
+	TacticalMap->Setup_Trigger_Scroll(coord, Data.Speed);
+	return(true);
+}
+
+// FUNCTION: 0x006E2790
+bool TActionClass::TAction_JUMP_VIEWPOINT(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	Cell waypoint = Scen->Get_Waypoint_Cell(EffectLocation);
+	Coord coord = Coord (waypoint);
+	coord.Z = Map.Get_Height_GL(coord);
+
+	if (Map[waypoint].IsUnderBridge || Map[waypoint].WasUnderBridge) {
+		coord.Z += BRIDGE_LEPTON_HEIGHT;
+	}
+
+	TacticalMap->Set_Tactical_Position(coord);
+	return(true);
+}
+
+// FUNCTION: 0x006E2850
+bool TActionClass::TAction_CENTER_ON_BASE(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	FUN_007315A0();
+	return(true);
+}
+
+// FUNCTION: 0x006E2860
+bool TActionClass::TAction_ZOOM_IN(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	TacticalMap->ZoomFactor = Rule->ZoomInFactor;
+	UserInputLocked = true;
+	InputManagerClass::Instance->DoSomething();
+
+	Hide_Mouse();
+	Map.Abort_Drag_Select();
+	Map.Flag_To_Redraw();
+	Map.Render();
+
+	Sleep(1000);
+	return(true);
+}
+
+// FUNCTION: 0x006E28E0
+bool TActionClass::TAction_ZOOM_OUT(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	TacticalMap->ZoomFactor = 1;
+	InputManagerClass::Instance->DoSomething();
+	UserInputLocked = Scen->IsInputLocked;
+
+	Show_Mouse();
+	Map.Flag_To_Redraw();
+	Map.Render();
+
+	return(true);
+}
+
+// FUNCTION: 0x006E2950
+bool TActionClass::TAction_RESHROUD(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
+{
+	Map.FUN_00577C90(house);
+	return(true);
+}
+
+// FUNCTION: 0x006E2970
+bool TActionClass::TAction_CHANGE_SPOTLIGHT_BEHAVIOR(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
+{
+	bool success = false;
+	for (int index = 0; index < Buildings.Count(); index++) {
+		BuildingClass * ptr = Buildings[index];
+		if (ptr->Strength > 0 &&
+				ptr->IsActive &&
+				ptr->IsDown &&
+				!ptr->IsInLimbo &&
+				ptr->Class->HasSpotlight &&
+				ptr->BuildingLight != NULL &&
+				ptr->Tag != NULL &&
+				ptr->Tag->Is_Trigger_Attached(trig)) {
+			ptr->BuildingLight->Set_Behavior_Type(Data.LightBehavior);
+			success = true;
+		}
+	}
+	return(success);
+}
+
+// FUNCTION: 0x006E2A10
+bool TActionClass::TAction_DESTROY_TRIGGER(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	if (Trigger != NULL) {
+		for (int index = Triggers.Count() - 1; index >= 0; index--) {
+			if (Triggers[index]->Class == Trigger) {
+				Triggers[index]->Mark_To_Delete();
+			}
+		}
+	}
+	return(true);
+}
+
+// FUNCTION: 0x006E2A50
+bool TActionClass::TAction_DESTROY_TAG(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	if (Tag != NULL) {
+		int count = Tags.Count();
+		for (int index = 0; index < count; index++) {
+			if (Tags[index]->Class == Tag) {
+				delete Tags[index];
+				index--;
+			}
+		}
+	}
+	return(true);
+}
+
+// FUNCTION: 0x006E2AA0
+bool TActionClass::TAction_FORCE_TRIGGER(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	if (Trigger != NULL) {
+		for (int index = 0; index < Triggers.Count(); index++) {
+			if (Triggers[index]->Class == Trigger) {
+				Triggers[index]->Spring(NULL, DAT_00B0E680);
+			}
+		}
+	}
+	return(true);
+}
+
+// FUNCTION: 0x006E2AF0
+bool TActionClass::TAction_ENABLE_TRIGGER(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	if (Trigger != NULL) {
+		for (int index = 0; index < Triggers.Count(); index++) {
+			TriggerClass * trig = Triggers[index];
+			TriggerTypeClass * type = trig->Class;
+			if (type == Trigger) {
+				if ((Scen->Difficulty != 0 || type->Difficulty.IsEnabledOnEasy) &&
+						(Scen->Difficulty != 1 || type->Difficulty.IsEnabledOnMedium) &&
+						(Scen->Difficulty != 2 || type->Difficulty.IsEnabledOnHard)) {
+					trig->Enable();
+				}
+			}
+		}
+	}
 	return(true);
 }
 

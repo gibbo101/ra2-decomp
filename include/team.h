@@ -103,8 +103,8 @@ class TeamClass : public AbstractClass
 		virtual HRESULT STDMETHODCALLTYPE Load(IStream * stream) override;
 		virtual HRESULT STDMETHODCALLTYPE Save(IStream * stream, BOOL cleardirty) override;
 
-		virtual RTTIType Fetch_RTTI(void) const override;
-		virtual int Fetch_Object_Size(void) const override;
+		virtual RTTIType Fetch_RTTI(void) const override {return(RTTI_TEAM);}
+		virtual int Fetch_Object_Size(void) const override {return(sizeof(*this));}
 		virtual void Compute_CRC(CRCEngine & crc) const override;
 
 		bool Add(FootClass *);
@@ -129,6 +129,7 @@ class TeamClass : public AbstractClass
 		bool Has_Entered_Map(void) const;
 		bool Is_Leaving_Map(void) const;
 		bool Has_Air_Transport(void) const;
+		bool Has_Ammo(void) const;
 
 		static void Suspend_Teams(int priority, HouseClass const * house);
 #ifdef _DEBUG

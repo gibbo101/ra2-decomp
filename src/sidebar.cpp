@@ -1753,3 +1753,82 @@ int SidebarClass::Max_Visible(void)
 	}
 	return (DAT_00886F94 - DAT_00B0B4F8 - reserved + DAT_00886F9C - 7) / 50;
 }
+
+// FUNCTION: 0x006AC5D0
+HRESULT SidebarClass::Load(IStream * stream)
+{
+	return BASECLASS::Load(stream);
+}
+
+// FUNCTION: 0x006AC5E0
+HRESULT SidebarClass::Save(IStream * stream)
+{
+	return BASECLASS::Save(stream);
+}
+
+// FUNCTION: 0x006AC5F0
+void SidebarClass::FUN_006AC5F0(TechnoTypeClass const * type, int frames)
+{
+	int id;
+	for (id = 0; id < InfantryTypes.Count(); id++) {
+		if ((void const *)InfantryTypes[id] == (void const *)type) {
+			goto found;
+		}
+	}
+	for (id = 0; id < UnitTypes.Count(); id++) {
+		if ((void const *)type == (void const *)UnitTypes[id]) {
+			goto found;
+		}
+	}
+	for (id = 0; id < AircraftTypes.Count(); id++) {
+		if ((void const *)type == (void const *)AircraftTypes[id]) {
+			goto found;
+		}
+	}
+	for (id = 0; id < BuildingTypes.Count(); id++) {
+		if ((void const *)type == (void const *)BuildingTypes[id]) {
+			goto found;
+		}
+	}
+	return;
+found:
+	RTTIType rtti = type->Fetch_RTTI();
+	int tab;
+	if (rtti == RTTI_INFANTRY || rtti == RTTI_INFANTRYTYPE) {
+		tab = 2;
+	} else if (rtti == RTTI_UNIT || rtti == RTTI_UNITTYPE || rtti == RTTI_AIRCRAFT || rtti == RTTI_AIRCRAFTTYPE) {
+		tab = 3;
+	} else if (rtti == RTTI_BUILDING || rtti == RTTI_BUILDINGTYPE) {
+		tab = FUN_005004E0(rtti, id) == 5;
+	} else if (rtti == RTTI_SUPERWEAPON || rtti == RTTI_SUPERWEAPONTYPE || rtti == RTTI_SPECIAL) {
+		tab = 1;
+	} else {
+		return;
+	}
+	Column[tab].FUN_006AC740(id, frames);
+	unknown_53A0 = Unsorted::CurrentFrame + frames + 1;
+}
+
+// FUNCTION: 0x006AC740
+void SidebarClass::StripClass::FUN_006AC740(int id, int frames)
+{
+	for (int index = 0; index < MAX_BUILDABLES; index++) {
+		if (Buildables[index].BuildableID == id) {
+			Buildables[index].FlashEndFrame = Unsorted::CurrentFrame + frames;
+			return;
+		}
+	}
+}
+
+// FUNCTION: 0x006AC780 SidebarClass::StripClass::SelectClass::~SelectClass
+
+// FUNCTION: 0x006AC7A0 SidebarClass::SBGadgetClass::~SBGadgetClass
+
+// FUNCTION: 0x006AC7C0 SidebarClass::StripClass::BuildType::BuildType
+
+// FUNCTION: 0x006AC7F0 SidebarClass::~SidebarClass
+
+// FUNCTION: 0x006AC840 DisplayClass::DisplayClass
+
+// FUNCTION: 0x006AC8D0 ?$DynamicVectorClass@VPoint2D@@::?$DynamicVectorClass@VPoint2D@@
+template class DynamicVectorClass<Point2D>;

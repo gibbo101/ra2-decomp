@@ -2596,6 +2596,214 @@ void CellClass::Disguise_Sensed_By(HousesType house)
 	DisguiseSensorsOfHouses[house]++;
 }
 
+// FUNCTION: 0x00487180
+void CellClass::Disguise_Unsensed_By(HousesType house)
+{
+	DisguiseSensorsOfHouses[house]--;
+}
+
+// FUNCTION: 0x00487190
+bool CellClass::Place_Tiberium(TiberiumType tib, int data)
+{
+	TiberiumClass * tiberium = Tiberiums[tib];
+	if (data < tiberium->FrameCount) {
+		if (Can_Tiberium_Germinate(tiberium)) {
+			if (Ramp != RAMP_NONE) {
+				new OverlayClass(OverlayTypes[tiberium->Overlay->HeapID + tiberium->Variety + 2 * Ramp + (Random_Pick(0, 1) - 2)], Fetch_CellID());
+			} else {
+				new OverlayClass(OverlayTypes[tiberium->Overlay->HeapID + Random_Pick(0, 11)], Fetch_CellID());
+			}
+			tiberium->Queue_Growth(CellID);
+			OverlayData = data;
+			Register_For_Redraw();
+			return(true);
+		}
+
+		if (Can_Tiberium_Grow()) {
+			if (Tiberium_Type_Here() == tib) {
+				OverlayData += data;
+				OverlayData = MIN(OverlayData, tiberium->FrameCount - 1);
+				Rect rect = Union(Union(Cell_Render_Rect(), Overlay_Render_Rect()), Overlay_Shadow_Render_Rect());
+				TacticalMap->Register_Dirty_Area(rect - TacticalRect.TopLeft);
+				tiberium->Queue_Spread(CellID);
+				return(true);
+			}
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00487630
+void CellClass::ReduceShroudCounter(void)
+{
+	if (ShroudCounter == 1) {
+		ShroudCounter = 0;
+	}
+	ShroudCounter--;
+	if (!IsFogVisible) {
+		goto reveal;
+	}
+	if (!IsAltUnknown) {
+reveal:
+		if (ShroudCounter <= 0) {
+			IsFogVisible = true;
+			IsAltUnknown = true;
+		}
+	} else {
+		if (ShroudCounter <= 0) {
+			if (IsToShroud == 1) {
+				IsToShroud = false;
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x00487690
+void CellClass::IncreaseShroudCounter(void)
+{
+	int old = ShroudCounter;
+	if (ShroudCounter == -1) {
+		ShroudCounter = 0;
+	}
+	ShroudCounter++;
+	if (ShroudCounter > GapsCoveringThisCell) {
+		ShroudCounter = GapsCoveringThisCell;
+	}
+	if (old <= 0 && ShroudCounter > 0) {
+		IsToShroud = true;
+	}
+}
+
+// FUNCTION: 0x004876F0
+void CellClass::Unshroud(void)
+{
+	IsFogVisible = true;
+	IsAltUnknown = true;
+	if (ShroudCounter > 0) {
+		IsToShroud = true;
+	}
+}
+
+// FUNCTION: 0x00487720
+void CellClass::On_Bridge_Collapse(void)
+{
+	ObjectClass * next;
+	if (BridgeFlag.Composite) {
+		Point2D pt(CellID.X * CELL_LEPTON_W + CELL_LEPTON_W / 2, CellID.Y * CELL_LEPTON_H + CELL_LEPTON_H / 2);
+		Coord coord;
+		coord = Coord(pt, 0);
+		coord.Z = Map.Get_Height_GL(coord) + BRIDGE_LEPTON_HEIGHT;
+		for (int x = -2; x < 3; x++) {
+			for (int y = -2; y < 3; y++) {
+				CellClass * cellptr = &Map[CellID + Cell(x, y)];
+				if (cellptr != this) {
+					ObjectClass * object = cellptr->Cell_Occupier(true);
+					while (object) {
+						next = object->Next;
+						if (object->Is_Foot()) {
+							FootClass * foot = (FootClass *)object;
+							if (foot->Locomotion->Is_Moving_Here(coord)) {
+								int damage = foot->Strength;
+								foot->Take_Damage(damage, 0, Rule->C4Warhead, NULL, true, true);
+							}
+						}
+						object = next;
+					}
+					object = cellptr->Cell_Occupier();
+					while (object) {
+						next = object->Next;
+						if (object->Is_Foot()) {
+							FootClass * foot = (FootClass *)object;
+							if (foot->Locomotion->Is_Moving_Here(coord)) {
+								int damage = foot->Strength;
+								foot->Take_Damage(damage, 0, Rule->C4Warhead, NULL, true, true);
+							}
+						}
+						object = next;
+					}
+				}
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x00487950
+bool CellClass::Is_Shrouded(void) const
+{
+	return(Map.Is_Shrouded(Cell_Coord()));
+}
+
+// FUNCTION: 0x004879B0
+bool CellClass::Is_Fogged(void) const
+{
+	return(Map.Is_Fogged(Cell_Coord()));
+}
+
+// FUNCTION: 0x00487A10
+void CellClass::Kill_Illegal_Occupiers(bool kill_jumpjets)
+{
+	ObjectClass * object = Cell_Occupier();
+	while (object) {
+		ObjectClass * next = object->Next;
+		if (object->Can_Enter_Cell(this) == MOVE_NO ||
+			(kill_jumpjets && object && (object->AbstractFlags & 1) && ((TechnoClass *)object)->Techno_Type_Class()->JumpJet) ||
+			(object && object->Fetch_RTTI() == RTTI_AIRCRAFT)) {
+			int damage = object->Strength;
+			object->Take_Damage(damage, 0, Rule->C4Warhead, NULL, true, true);
+		}
+		object = next;
+	}
+
+	Coord coord = Cell_Coord();
+	for (int x = -2; x < 3; x++) {
+		for (int y = -2; y < 3; y++) {
+			CellClass * cellptr = &Map[Cell(x, y) + CellID];
+			if (cellptr != this) {
+				object = cellptr->Cell_Occupier();
+				while (object) {
+					if (object->Is_Foot()) {
+						FootClass * foot = (FootClass *)object;
+						if (foot->Locomotion->Is_Moving_Here(coord) && foot->Can_Enter_Cell(this) == MOVE_NO) {
+							int damage = foot->Strength;
+							foot->Take_Damage(damage, 0, Rule->C4Warhead, NULL, true, true);
+						}
+					}
+					object = object->Next;
+				}
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x00487C10
+bool CellClass::Can_Build_Here(void) const
+{
+	if (Ramp) {
+		return(false);
+	}
+
+	if (GameActive) {
+		BuildingClass * building = Cell_Building();
+		if (building) {
+			return(false);
+		}
+	}
+
+	return(Ground[Land].Build);
+}
+
+// FUNCTION: 0x00487C70
+void CellClass::FUN_00487C70(RadSiteClass * site)
+{
+	RadSite = site;
+}
+
+// FUNCTION: 0x00487C80
+RadSiteClass * CellClass::FUN_00487C80(void)
+{
+	return(RadSite);
+}
+
 // FUNCTION: 0x00487D50
 int CellClass::GetLevel(void) const
 {

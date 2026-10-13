@@ -355,3 +355,53 @@ template class TypeList<InfantryTypeClass const *>;
 // FUNCTION: 0x005138F0 ?$VectorClass@PBVInfantryTypeClass@@::?$VectorClass@PBVInfantryTypeClass@@
 // FUNCTION: 0x00513940 ?$VectorClass@PBVUnitTypeClass@@::?$VectorClass@PBVUnitTypeClass@@
 // FUNCTION: 0x00513990 ?$VectorClass@PBVAircraftTypeClass@@::?$VectorClass@PBVAircraftTypeClass@@
+
+// FUNCTION: 0x005139E0 HouseTypeClass::QueryInterface
+
+// FUNCTION: 0x005139F0 HouseTypeClass::AddRef
+
+// FUNCTION: 0x00513A00 HouseTypeClass::Release
+
+// FUNCTION: 0x005139E0 HouseTypeClass::QueryInterface
+
+// FUNCTION: 0x005139F0 HouseTypeClass::AddRef
+
+// FUNCTION: 0x00513A00 HouseTypeClass::Release
+
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007E1720;
+extern const double DAT_007E1728;
+extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
+extern const double DAT_007EACE8;
+extern const double DAT_007EACF0;
+
+// FUNCTION: 0x00513A10 $E66
+double DAT_00A8F168 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x00513A40 $E69
+double DAT_00A8F1B8 = DAT_00A8F168 / DAT_007EACE8;
+
+// FUNCTION: 0x00513A60 $E72
+double DAT_00A8F1A0 = DAT_007E1718 / DAT_00A8F1B8;
+
+// FUNCTION: 0x00513A80 $E75
+double DAT_00A8F198 = DAT_007E1720 * DAT_007EACF0;
+
+// FUNCTION: 0x00513AA0 $E78
+double DAT_00A8F170 = DAT_007E1728 * DAT_007EACF0;
+
+// FUNCTION: 0x00513AC0 $E81
+double DAT_00A8F148 = DAT_007E1730 * DAT_007EACF0;
+
+// FUNCTION: 0x00513AE0 $E84
+int DAT_00A8F1C0 = (int)(fastmath::tan(DAT_00A8F148 - DAT_00A8F170) * DAT_007E1738 * DAT_00A8F168);
+
+// FUNCTION: 0x00513B20 $E87
+double DAT_00A8F178 = fastmath::atan(DAT_00A8F1C0 * DAT_007E1740);
+
+// FUNCTION: 0x00513B50 $E90
+double DAT_00A8F190 = fastmath::atan((DAT_00A8F1C0 * 2) / DAT_00A8F168);

@@ -901,3 +901,30 @@ ShadowCasterInfo::ShadowCasterInfo(int frame, int index, int x, int y) : Frame(f
 // FUNCTION: 0x0054A5D0 ?$VectorClass@PAG::ID
 
 // FUNCTION: 0x0054A610 ?$VectorClass@PAG::ID
+
+// FUNCTION: 0x0054A630 ?$DynamicVectorClass@PAG::Resize
+
+// FUNCTION: 0x0054A6E0 ?$DynamicVectorClass@PAG::ID
+
+// FUNCTION: 0x0054A710 ?$DynamicVectorClass@PAG::~?$DynamicVectorClass@PAG
+
+// FUNCTION: 0x0054A760 ?$VectorClass@PAG::~?$VectorClass@PAG
+
+// FUNCTION: 0x0054A7B0 ?$DynamicVectorClass@PAUTileInsertType@IsometricTileTypeClass@@::~?$DynamicVectorClass@PAUTileInsertType@IsometricTileTypeClass@@
+
+// FUNCTION: 0x0054A800 ?$VectorClass@PAUTileInsertType@IsometricTileTypeClass@@::~?$VectorClass@PAUTileInsertType@IsometricTileTypeClass@@
+
+// FUNCTION: 0x0054A850 ?$VectorClass@PAG::?$VectorClass@PAG
+
+struct IsoZeroQuad {
+	int A;
+	int B;
+	int C;
+	int D;
+
+	IsoZeroQuad() : A(0), B(0), C(0), D(0) {}
+};
+
+IsoZeroQuad IsoZeroQuadInstance;
+
+// FUNCTION: 0x0054A8A0 $E210
