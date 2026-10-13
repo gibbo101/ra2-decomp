@@ -20,5 +20,6 @@ class EBolt
 
 		EBolt(void);
 		void Fire(Coord start, Coord end, int zadjust);
+		void SetOwner(TechnoClass * owner, int weapon);
 		~EBolt(void);
 };

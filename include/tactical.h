@@ -155,6 +155,7 @@ class Tactical : public AbstractClass
 		void Draw_Shroud(Rect const & area);
 		void Draw_Tiles(Rect const & area, Rect const & cliprect);
 		void Draw_Tile_Shadows(Rect const & area, Rect const & cliprect);
+		void Draw_Sparkles(Rect const & area, Rect const & cliprect);
 		void Draw_Tiles(Cell const & cell, Rect const & cliprect);
 		void Draw_Tile_Shadows(int, Rect const & area);
 

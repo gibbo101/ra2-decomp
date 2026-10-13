@@ -22,6 +22,7 @@ class ShapeButtonClass : public ToggleClass
 		virtual void Set_Shape(ShapeSet const * data, int override_width = 0, int override_height = 0);
 		ShapeSet const * Get_Shape_Data(void) {return(ShapeData);};
 		void SetLoadedStatus(bool loaded);
+		void ClearShape(void);
 		bool StopFlashing(void);
 
 		enum ShapeButtonClassEnums {

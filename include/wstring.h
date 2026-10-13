@@ -29,6 +29,9 @@ public:
 	void			trimTrailing(Wstring const& delim);
 	char*			get(void) const;
 	char			get(unsigned int index);
+	char*			text(void) const;
+	char			operator[](unsigned int index) const;
+	char			getChar(unsigned int index) const;
 	unsigned int	length(void) const;
 	char			insert(char c, unsigned int pos);
 	char			insert(char const* instring, unsigned int pos);

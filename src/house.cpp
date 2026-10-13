@@ -1194,6 +1194,60 @@ void HouseClass::Just_Built(TechnoClass * product)
 	IsRecalcNeeded = true;
 }
 
+extern struct PendingStruct { int Ptr; int Type; int House; } DAT_0088098C;
+#define DAT_00880990 DAT_0088098C.Type
+#define DAT_00880994 DAT_0088098C.House
+extern DynamicVectorClass<TriggerClass *> DAT_00A8EAE8;
+#define Triggers DAT_00A8EAE8
+extern bool DAT_0088099A;
+extern bool DAT_0088099B;
+extern bool DAT_0088099C;
+extern int CurrentSWType;
+void __fastcall UnselectAll(void);
+
+// FUNCTION: 0x004FB840
+bool HouseClass::Manual_Place(BuildingClass * builder, BuildingClass * object)
+{
+	if (this == PlayerPtr && !DAT_00880990 && builder && object) {
+		UnselectAll();
+		Map.Repair_Mode_Control(0);
+		Map.Sell_Mode_Control(0);
+		DAT_0088099A = false;
+		DAT_0088099B = false;
+		DAT_0088099C = false;
+		CurrentSWType = -1;
+		DAT_00880990 = (int)object->Class;
+		DAT_0088098C.Ptr = (int)object;
+		DAT_00880994 = HeapID;
+		Map.SetActiveFoundation(object->Occupy_List(true));
+		Map.Set_Cursor_Pos(builder->Get_Cell());
+		builder->Mark(MARK_CHANGE);
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x004FB920
+void HouseClass::Clobber_All(void)
+{
+	int i;
+
+	for (i = 0; i < Technos.Count(); i++) {
+		if (Technos[i]->House == this) {
+			delete Technos[i];
+			i--;
+		}
+	}
+	for (i = 0; i < Triggers.Count(); i++) {
+		if (Triggers[i]->Class->House == Class) {
+			delete Triggers[i];
+			i--;
+		}
+	}
+
+	delete this;
+}
+
 // FUNCTION: 0x004FD120
 Coord HouseClass::Find_Build_Location(BuildingClass * building) const
 {

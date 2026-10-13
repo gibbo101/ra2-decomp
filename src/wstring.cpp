@@ -10,56 +10,12 @@
 #include <cctype>
 #include <cstring>
 
-Wstring::~Wstring(void)
-{
-	clear();
-}
-
-char Wstring::set(IN char const* s)
-{
-	unsigned int len;
-
-	clear();
-
-	len = s ? (unsigned int)strlen(s) + 1 : 1;
-
-	str = new char[len];
-	str[0] = 0;
-	if (s)
-		strcpy(str, s);
-
-	return(TRUE);
-}
-
-char Wstring::set(unsigned int size, IN char const* string)
-{
-	unsigned int len;
-
-	clear();
-	len = size + 1;
-
-	str = new char[len];
-	str[0] = 0;
-	if (string)
-		strncpy(str, string, size);
-	str[size] = 0;
-
-	return(TRUE);
-}
-
 char Wstring::truncate(unsigned int len)
 {
 	Wstring tmp;
 	if (!tmp.set(len, get()) || !set(tmp.get()))
 		return(FALSE);
 	return(TRUE);
-}
-
-char* Wstring::get(void) const
-{
-	if (!str)
-		return((char *)"");
-	return(str);
 }
 
 // FUNCTION: 0x007B4620
@@ -78,11 +34,9 @@ Wstring::Wstring(IN const Wstring& other) :str(NULL)
 }
 
 // FUNCTION: 0x007B46F0
-void Wstring::clear(void)
+Wstring::~Wstring(void)
 {
-	if (str)
-		delete[](str);
-	str = NULL;
+	clear();
 }
 
 // FUNCTION: 0x007B4710
@@ -344,6 +298,24 @@ void Wstring::trimTrailing(IN Wstring const& delim)
 	truncate(i + 1);
 }
 
+// FUNCTION: 0x007B5340
+void Wstring::clear(void)
+{
+	if (str)
+		delete[](str);
+	str = NULL;
+}
+
+// FUNCTION: 0x007B5360
+void Wstring::setSize(int size)
+{
+	clear();
+	if (size < 0)
+		return;
+	str = new char[size];
+	memset(str, 0, size);
+}
+
 // FUNCTION: 0x007B53B0
 void Wstring::cellCopy(char* dest, unsigned int len) const
 {
@@ -355,12 +327,156 @@ void Wstring::cellCopy(char* dest, unsigned int len) const
 	dest[len] = 0;
 }
 
+// FUNCTION: 0x007B5400
+char* Wstring::get(void) const
+{
+	if (!str)
+		return((char *)"");
+	return(str);
+}
+
+// FUNCTION: 0x007B5410
+char Wstring::get(unsigned int index)
+{
+	if (index < strlen(str))
+		return(str[index]);
+	return(0);
+}
+
+// FUNCTION: 0x007B5440
+char* Wstring::text(void) const
+{
+	if (!str)
+		return((char *)"");
+	return(str);
+}
+
+// FUNCTION: 0x007B5450
+char Wstring::operator[](unsigned int index) const
+{
+	if (index < strlen(str))
+		return(str[index]);
+	return(0);
+}
+
+// FUNCTION: 0x007B5480
+char Wstring::getChar(unsigned int index) const
+{
+	if (index < strlen(str))
+		return(str[index]);
+	return(0);
+}
+
 // FUNCTION: 0x007B54B0
 unsigned int Wstring::length(void) const
 {
 	if (str == NULL)
 		return(0);
 	return((unsigned int)strlen(str));
+}
+
+// FUNCTION: 0x007B54D0
+char Wstring::insert(char const* instring, unsigned int pos)
+{
+	if (str == NULL)
+		return(set(instring));
+	if (pos > strlen(str))
+		pos = strlen(str);
+	char* newstr = new char[strlen(str) + strlen(instring) + 1];
+	memset(newstr, 0, strlen(str) + strlen(instring) + 1);
+	strcpy(newstr, str);
+	int bytes = strlen(str) + 1 - pos;
+	memmove(newstr + pos + strlen(instring), newstr + pos, bytes);
+	memmove(newstr + pos, instring, strlen(instring));
+	delete[](str);
+	str = newstr;
+	return(TRUE);
+}
+
+// FUNCTION: 0x007B5640
+char Wstring::insert(char k, unsigned int pos)
+{
+	char* s;
+	unsigned int   len;
+	char     c[2];
+
+	if (!str)
+	{
+		c[0] = k;
+		c[1] = 0;
+		return(set(c));
+	}
+
+	len = (unsigned int)strlen(str);
+
+	if (pos > len)
+		pos = len;
+
+	s = (char*)new char[(len + 2)];
+
+	c[0] = str[pos];
+	str[pos] = 0;
+	c[1] = 0;
+	strcpy(s, str);
+	str[pos] = c[0];
+	c[0] = k;
+	strcat(s, c);
+	strcat(s, &(str[pos]));
+	delete[](str);
+	str = s;
+
+	return(TRUE);
+}
+
+// FUNCTION: 0x007B57A0
+char Wstring::replace(char const* replaceThis, char const* withThis)
+{
+	Wstring  dest;
+	char* foundStr, * src;
+	unsigned int   len;
+
+	src = get();
+	while (src && src[0])
+	{
+		foundStr = strstr(src, replaceThis);
+		if (foundStr)
+		{
+			len = (unsigned int)foundStr - (unsigned int)src;
+			if (len)
+			{
+				if (!dest.cat(len, src))
+					return(FALSE);
+			}
+			if (!dest.cat(withThis))
+				return(FALSE);
+			src = foundStr + strlen(replaceThis);
+		}
+		else
+		{
+			if (!dest.cat(src))
+				return(FALSE);
+
+			src = NULL;
+		}
+	}
+	return(set(dest.get()));
+}
+
+// FUNCTION: 0x007B5A40
+char Wstring::set(IN char const* s)
+{
+	unsigned int len;
+
+	clear();
+
+	len = s ? (unsigned int)strlen(s) + 1 : 1;
+
+	str = new char[len];
+	str[0] = 0;
+	if (s)
+		strcpy(str, s);
+
+	return(TRUE);
 }
 
 // FUNCTION: 0x007B5AB0
@@ -370,6 +486,23 @@ char Wstring::set(char c, unsigned int index)
 		return(FALSE);
 
 	str[index] = c;
+
+	return(TRUE);
+}
+
+// FUNCTION: 0x007B5AE0
+char Wstring::set(unsigned int size, IN char const* string)
+{
+	unsigned int len;
+
+	clear();
+	len = size + 1;
+
+	str = new char[len];
+	str[0] = 0;
+	if (string)
+		strncpy(str, string, size);
+	str[size] = 0;
 
 	return(TRUE);
 }

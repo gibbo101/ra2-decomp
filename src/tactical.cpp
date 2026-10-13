@@ -78,11 +78,17 @@ static double ZPixelsPerLepton = fastmath::sin(RAD_60) * (PixelsPerLepton = 60.0
 static double ZLeptonsPerPixel = CELL_LEPTON_DIAG / (fastmath::sin(RAD_60) * 60.0);
 
 // FUNCTION: 0x006D1A60 $E198
+
 // FUNCTION: 0x006D1AA0 $E195
+
 // FUNCTION: 0x006D1B00 $E201
+
 // FUNCTION: 0x006D1B10 $E207
+
 // FUNCTION: 0x006D1B50 $E204
+
 // FUNCTION: 0x006D1BB0 $E210
+
 // FUNCTION: 0x006D1BF0 $E213
 
 // FUNCTION: 0x006D1C20
@@ -795,11 +801,65 @@ int Tactical::Get_Cell_Height(Coord const & coord)
 	return(cellptr->Get_Height(coord));
 }
 
+// FUNCTION: 0x006D6AD0
+int Tactical::Get_Cell_Ramp(Coord const & coord)
+{
+	return(Map[coord].Ramp);
+}
+
 // FUNCTION: 0x006D6AF0
 void Tactical::Add_Shadow_Control(ShadowControlClass control)
 {
 	ShadowControlClass *ctrl = new ShadowControlClass(control);
 	ShadowControls.Add(ctrl);
+}
+
+// FUNCTION: 0x006D6BB0
+CellClass * Tactical::Find_Bridge_Owner_Cell(Cell const & cell)
+{
+	CellClass * cellptr;
+	Cell scan;
+	int i;
+
+	// Scan south along the two columns an east-west span could reach this cell from.
+	scan = cell + Cell(2, 0);
+	for (i = 0; i < 5; ++i) {
+		cellptr = &Map[scan];
+		if (cellptr->IsBridgeDeck && cellptr->Overlay && cellptr->IsBridgeEastWest) {
+			return(cellptr);
+		}
+		scan.Y++;
+	}
+
+	scan = cell + Cell(1, 0);
+	for (i = 0; i < 5; ++i) {
+		cellptr = &Map[scan];
+		if (cellptr->IsBridgeDeck && cellptr->Overlay && cellptr->IsBridgeEastWest) {
+			return(cellptr);
+		}
+		scan.Y++;
+	}
+
+	// Then scan east along the two rows a north-south span could reach it from.
+	scan = cell + Cell(0, 2);
+	for (i = 0; i < 5; ++i) {
+		cellptr = &Map[scan];
+		if (cellptr->IsBridgeDeck && cellptr->Overlay && !cellptr->IsBridgeEastWest) {
+			return(cellptr);
+		}
+		scan.X++;
+	}
+
+	scan = cell + Cell(0, 1);
+	for (i = 0; i < 5; ++i) {
+		cellptr = &Map[scan];
+		if (cellptr->IsBridgeDeck && cellptr->Overlay && !cellptr->IsBridgeEastWest) {
+			return(cellptr);
+		}
+		scan.X++;
+	}
+
+	return(NULL);
 }
 
 // FUNCTION: 0x006D84D0
@@ -811,6 +871,66 @@ Point2D Tactical::Clamp_Pixel_To_Tactical(Point2D const & pixel)
 	} else {
 		return(pixel);
 	}
+}
+
+// FUNCTION: 0x006D8530
+void Tactical::Scroll_Map(FacingType facing, int distance)
+{
+	static Point2D _scroll[FACING_COUNT] = 	{
+		Point2D(0, -1),
+		Point2D(1, -1),
+		Point2D(1, 0),
+		Point2D(1, 1),
+		Point2D(0, 1),
+		Point2D(-1, 1),
+		Point2D(-1, 0),
+		Point2D(-1, -1)
+	};
+
+	int & old_x = TacticalCoord.X;
+	int & old_y = TacticalCoord.Y;
+
+	int new_x = old_x + distance * _scroll[facing].X;
+	int new_y = old_y + distance * _scroll[facing].Y;
+
+	if (old_x != new_x || old_y != new_y) {
+		new_x = new_x - old_x;
+		new_y = new_y - old_y;
+		DesiredTacticalCoord.X += new_x;
+		DesiredTacticalCoord.Y += new_y;
+	}
+}
+
+// FUNCTION: 0x006D8630 $E216
+
+// FUNCTION: 0x006D8640
+bool Tactical::Clamp_To_Tactical_Rect(Point2D & pixel)
+{
+	int xmin = TacticalRect.Width / 2 - (60 >> 1) * (Map.PlayRect.Width - 2 * Map.LocalRect.X);
+	int xmax = xmin + 60 * Map.LocalRect.Width - TacticalRect.Width;
+
+	int ymin = TacticalRect.Height / 2 + (30 >> 1) * (Map.PlayRect.Width + 2 * Map.LocalRect.Y - 5);
+	int ymax = ymin + 30 * (2 * Map.LocalRect.Height + 9) / 2 - TacticalRect.Height;
+
+	bool clamped = false;
+
+	if (pixel.Y < ymin) {
+		clamped = true;
+		pixel.Y = ymin;
+	} else if (pixel.Y > ymax) {
+		pixel.Y = ymax;
+		clamped = true;
+	}
+
+	if (pixel.X < xmin) {
+		pixel.X = xmin;
+		clamped = true;
+	} else if (pixel.X > xmax) {
+		pixel.X = xmax;
+		clamped = true;
+	}
+
+	return(clamped);
 }
 
 // FUNCTION: 0x006D9910

@@ -635,6 +635,389 @@ bool MapClass::In_Radar(Coord const & coord) const
 	return(In_Radar(coord.As_Cell()));
 }
 
+static inline BuildingClass * Building_If_Building(AbstractClass * t)
+{
+	return(t->RTTI == RTTI_BUILDING ? (BuildingClass *)t : (BuildingClass *)0);
+}
+
+#define Cell_In_Range(c, len) ((c).X + (c).Y * 512 >= 0 && (c).X + (c).Y * 512 < (len) && Array[(c).X + (c).Y * 512] != NULL)
+
+// FUNCTION: 0x005687F0
+void MapClass::RemoveContentAt(Cell const * coords, TechnoClass * content)
+{
+	if (!content) return;
+	Cell const * list;
+	int height;
+	int length = Array.Length();
+
+	if (content->Class_Of()->IsFootprint && content->In_Which_Layer() == LAYER_GROUND) {
+		Cell xlist[32];
+		List_Copy(content->Occupy_List(), ARRAY_SIZE(xlist), xlist);
+		for (list = xlist; *list != REFRESH_EOL; list++) {
+			Cell newcell = *coords + *list;
+			if (Cell_In_Range(newcell, length)) {
+				(*this)[newcell].Occupy_Up(content, content->IsOnBridge);
+				(*this)[newcell].Recalc_Attributes();
+			}
+		}
+
+		if (content->RTTI == RTTI_BUILDING) {
+			BuildingClass * building = Building_If_Building(content);
+			if (building->Class->CanHideThings) {
+				height = building->Class->OccupyHeight - 1;
+				if (height <= 0) height = 1;
+
+				char seen[2048];
+				memset(seen, 0, sizeof(seen));
+				for (list = xlist; *list != REFRESH_EOL; list++) {
+					Cell newcell = *coords + *list;
+					int rx = list->X;
+					int ry = list->Y;
+					for (int i = height; i > 0; i--) {
+						if (newcell.X < 0 || newcell.Y < 0) continue;
+						if (rx < 0) rx += 16;
+						if (ry < 0) ry += 16;
+						if (!seen[ry * 16 + rx]) {
+							seen[ry * 16 + rx] = 1;
+							if (Cell_In_Range(newcell, length)) {
+								CellClass & cell = (*this)[newcell];
+								if (cell.OccupyHeightsCoveringMe) cell.OccupyHeightsCoveringMe--;
+							}
+						}
+						newcell.X--;
+						newcell.Y--;
+						rx--;
+						ry--;
+					}
+				}
+
+				for (int i = 0; i < 8; i++) {
+					if (building->Class->RemoveOccupy[i].X != 0xFFFF || building->Class->RemoveOccupy[i].Y != 0xFFFF) {
+						Cell newcell = *coords;
+						newcell.X += building->Class->RemoveOccupy[i].X;
+						newcell.Y += building->Class->RemoveOccupy[i].Y;
+						if (Cell_In_Range(newcell, length)) {
+							CellClass & cell = (*this)[newcell];
+							if (cell.OccupyHeightsCoveringMe) cell.OccupyHeightsCoveringMe--;
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x00568BB0
+int MapClass::Overpass(bool flag)
+{
+	int i;
+	int value = 0;
+
+	for (i = 0; i < AnimClass::Array.Count(); i++) {
+		if (AnimClass::Array[i]->DeleteOnMapCleanup) {
+			delete AnimClass::Array[i];
+			i--;
+		}
+	}
+
+	Reset_Iterator();
+
+	CellClass * iter = Iterate();
+	while (iter) {
+		iter->IsHorizontalLine = false;
+		iter->IsVerticalLine = false;
+		iter = Iterate();
+	}
+
+	Reset_Iterator();
+
+	iter = Iterate();
+	while (iter) {
+		iter->UnusedCell = NULL;
+		iter->Init_Drawer();
+		iter->IsAnimAttached = false;
+
+		if (iter->Tag) {
+			if (iter->Tag->Is_Cross_Horizontal()) {
+				for (i = 0; i < Map.MapRect.Width; i++) {
+					Map[Cell(i + MapRect.X, iter->CellID.Y)].IsHorizontalLine = true;
+				}
+			} else if (iter->Tag->Is_Cross_Vertical()) {
+				for (i = 0; i < Map.MapRect.Height; i++) {
+					Map[Cell(iter->CellID.X, i + MapRect.Y)].IsVerticalLine = true;
+				}
+			}
+		}
+
+		if (flag) {
+			value += iter->Tiberium_Adjust(false);
+		} else {
+			value += iter->Tiberium_Value();
+		}
+		iter->Recalc_Attributes();
+		if (iter->Overlay != OVERLAY_NONE) {
+			if (OverlayTypes[iter->Overlay]->IsWall) {
+				iter->Set_Wall_Owner();
+			}
+		}
+
+		iter = Iterate();
+	}
+	return(value);
+}
+
+// FUNCTION: 0x0056A080
+void MapClass::Repair_All_High_Bridges(void)
+{
+	for (int y = MapRect.Y; y < MapRect.Y + MapRect.Height; y++) {
+		for (int x = MapRect.X; x < MapRect.X + MapRect.Width; x++) {
+			Cell cell(x, y);
+
+			if (!Is_Valid(cell)) {
+				continue;
+			}
+			bool valid = Is_Valid(cell);
+			CellClass * cptr = &Map[cell];
+
+			int bridgetile = cptr->ITType - IsometricTileTypeClass::BridgeSet + 1;
+
+			if ((bridgetile == IsometricTileTypeClass::BridgeTopLeft1 || bridgetile == IsometricTileTypeClass::BridgeTopLeft2) && cptr->SubTile == 8) {
+				Repair_High_Bridge_Span(cptr, FACING_E);
+			}
+
+			if ((bridgetile == IsometricTileTypeClass::BridgeMiddle1 || bridgetile == IsometricTileTypeClass::BridgeMiddle1 + 3 || bridgetile == IsometricTileTypeClass::BridgeMiddle1 + 4 || bridgetile == IsometricTileTypeClass::BridgeMiddle1 + 1 || bridgetile == IsometricTileTypeClass::BridgeMiddle1 + 2) && cptr->SubTile == 5) {
+
+				if (bridgetile == IsometricTileTypeClass::BridgeMiddle1 + 4) {
+					Set_Bridge_Middle_State(cell, IsometricTileType(IsometricTileTypeClass::BridgeMiddle1 + IsometricTileTypeClass::BridgeSet - 1), ISOTILE_INVALID, -1, false);
+
+					Cell base = Adjacent_Cell(cell, FACING_W);
+					Map[base].Height += BRIDGE_CELL_HEIGHT;
+					Map[Adjacent_Cell(base, FACING_N)].Height += BRIDGE_CELL_HEIGHT;
+					Map[Adjacent_Cell(base, FACING_S)].Height += BRIDGE_CELL_HEIGHT;
+				}
+
+				Repair_High_Bridge_Span(cptr, FACING_E);
+			}
+
+			if ((bridgetile == IsometricTileTypeClass::BridgeTopRight1 || bridgetile == IsometricTileTypeClass::BridgeTopRight2) && cptr->SubTile == 12) {
+				Repair_High_Bridge_Span(cptr, FACING_S);
+			}
+
+			if ((bridgetile == IsometricTileTypeClass::BridgeMiddle2 || bridgetile == IsometricTileTypeClass::BridgeMiddle2 + 3 || bridgetile == IsometricTileTypeClass::BridgeMiddle2 + 4 || bridgetile == IsometricTileTypeClass::BridgeMiddle2 + 2 || bridgetile == IsometricTileTypeClass::BridgeMiddle2 + 1) && cptr->SubTile == 7) {
+
+				if (bridgetile == IsometricTileTypeClass::BridgeMiddle2 + 4) {
+					Set_Bridge_Middle_State(cell, IsometricTileType(IsometricTileTypeClass::BridgeMiddle2 + IsometricTileTypeClass::BridgeSet - 1), ISOTILE_INVALID, -1, false);
+
+					Cell base = Adjacent_Cell(cell, FACING_N);
+					Map[base].Height += BRIDGE_CELL_HEIGHT;
+					Map[Adjacent_Cell(base, FACING_E)].Height += BRIDGE_CELL_HEIGHT;
+					Map[Adjacent_Cell(base, FACING_W)].Height += BRIDGE_CELL_HEIGHT;
+				}
+
+				Repair_High_Bridge_Span(cptr, FACING_S);
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x0056AE40
+int MapClass::Write_Binary_1(Pipe & pipe)
+{
+	int total = 0;
+
+	LCWPipe comp(LCWPipe::COMPRESS);
+	comp.Put_To(&pipe);
+
+	for (int i = 0; i < Array.Length(); i++) {
+		CellClass * cellptr = Array[i];
+		if (cellptr) {
+			total += comp.Put(&cellptr->ITType, 2);
+		} else {
+			total += comp.Put(&InvalidCell.ITType, 2);
+		}
+	}
+
+	for (int j = 0; j < Array.Length(); j++) {
+		CellClass * cellptr = Array[j];
+		if (cellptr) {
+			total += comp.Put(&cellptr->SubTile, 1);
+		} else {
+			total += comp.Put(&InvalidCell.SubTile, 1);
+		}
+	}
+
+	for (int k = 0; k < Array.Length(); k++) {
+		CellClass * cellptr = Array[k];
+		if (cellptr) {
+			total += comp.Put(&cellptr->Height, 1);
+		} else {
+			total += comp.Put(&InvalidCell.Height, 1);
+		}
+	}
+
+	return(total);
+}
+
+// FUNCTION: 0x0056AF40
+int MapClass::Write_Binary_2(Pipe & pipe)
+{
+	int total = 0;
+
+	LCWPipe comp(LCWPipe::COMPRESS);
+	comp.Put_To(&pipe);
+
+	int i;
+	for (i = 0; i < Array.Length(); i++) {
+		CellClass * cellptr = Array[i];
+		if (i != 0 && cellptr) {
+			if (In_Radar(cellptr->Fetch_CellID())) {
+				if (cellptr->Fetch_CellID() != CELL_NONE && cellptr != &InvalidCell && (cellptr->ITType != ISOTILE_NONE || cellptr->Height > 0)) {
+					Cell cell = cellptr->Fetch_CellID();
+					total += comp.Put(&cell, sizeof(cell));
+					total += comp.Put(&cellptr->ITType, sizeof(cellptr->ITType));
+					total += comp.Put(&cellptr->SubTile, sizeof(cellptr->SubTile));
+					total += comp.Put(&cellptr->Height, sizeof(cellptr->Height));
+				}
+			}
+		}
+	}
+
+	Cell empty = CELL_NONE;
+	total += comp.Put(&empty, sizeof(empty));
+	for (i = 0; i < 100; i++) {
+		total += comp.Put(&empty, sizeof(empty));
+	}
+	comp.End();
+
+	return(total);
+}
+
+// FUNCTION: 0x0056B0F0
+int MapClass::Write_Binary_3(Pipe & pipe)
+{
+	int total = 0;
+
+	for (int i = 0; i < Array.Length(); i++) {
+		CellClass * cellptr = Array[i];
+		if (i != 0 && cellptr) {
+			if (In_Radar(cellptr->Fetch_CellID())) {
+				if (cellptr->Fetch_CellID() != CELL_NONE && cellptr != &InvalidCell && (cellptr->ITType != ISOTILE_NONE || cellptr->Height > 0)) {
+					Cell cell = cellptr->Fetch_CellID();
+					total += pipe.Put(&cell, sizeof(cell));
+					total += pipe.Put(&cellptr->ITType, sizeof(cellptr->ITType));
+					total += pipe.Put(&cellptr->SubTile, sizeof(cellptr->SubTile));
+					total += pipe.Put(&cellptr->Height, sizeof(cellptr->Height));
+				}
+			}
+		}
+	}
+
+	Cell empty = CELL_NONE;
+	total += pipe.Put(&empty, sizeof(empty));
+
+	return(total);
+}
+
+// FUNCTION: 0x0056B250
+int MapClass::Write_Binary_4(Pipe & pipe)
+{
+	LZOPipe comp(LZOPipe::COMPRESS);
+	comp.Put_To(&pipe);
+	int total = 0;
+
+	for (int i = 0; i < Array.Length(); i++) {
+		CellClass * cellptr = Array[i];
+		if (i != 0 && cellptr) {
+			if (In_Radar(cellptr->Fetch_CellID())) {
+				if (cellptr->Fetch_CellID() != CELL_NONE && cellptr != &InvalidCell && (cellptr->ITType != ISOTILE_NONE || cellptr->Height > 0)) {
+					Cell cell = cellptr->Fetch_CellID();
+					total += comp.Put(&cell, sizeof(cell));
+					total += comp.Put(&cellptr->ITType, sizeof(cellptr->ITType));
+					total += comp.Put(&cellptr->SubTile, sizeof(cellptr->SubTile));
+					total += comp.Put(&cellptr->Height, sizeof(cellptr->Height));
+				}
+			}
+		}
+	}
+
+	Cell empty = CELL_NONE;
+	total += comp.Put(&empty, sizeof(empty));
+	total += comp.End();
+
+	return(total);
+}
+
+// FUNCTION: 0x0056B3F0
+int MapClass::Write_Binary_5(Pipe & pipe)
+{
+	LZOPipe comp(LZOPipe::COMPRESS);
+	comp.Put_To(&pipe);
+	int total = 0;
+
+	for (int i = 0; i < Array.Length(); i++) {
+		CellClass * cellptr = Array[i];
+		if (i != 0 && cellptr) {
+			if (In_Radar(cellptr->Fetch_CellID())) {
+				if (cellptr->Fetch_CellID() != CELL_NONE && cellptr != &InvalidCell && (cellptr->ITType != ISOTILE_NONE || cellptr->Height > 0)) {
+					Cell cell = cellptr->Fetch_CellID();
+					total += comp.Put(&cell, sizeof(cell));
+					total += comp.Put(&cellptr->ITType, sizeof(cellptr->ITType));
+					total += comp.Put(&cellptr->SubTile, sizeof(cellptr->SubTile));
+					total += comp.Put(&cellptr->Height, sizeof(cellptr->Height));
+					total += comp.Put(&cellptr->IsIceGrowthAllowed, sizeof(cellptr->IsIceGrowthAllowed));
+				}
+			}
+		}
+	}
+
+	Cell empty = CELL_NONE;
+	total += comp.Put(&empty, sizeof(empty));
+	total += comp.End();
+
+	return(total);
+}
+
+// FUNCTION: 0x0056B5A0
+bool MapClass::Read_Binary_1(Straw & straw)
+{
+	LCWStraw decomp(LCWStraw::DECOMPRESS);
+	decomp.Get_From(&straw);
+
+	int i;
+
+	for (i = 0; i < MAP_CELL_TOTAL/16; i++) {
+		CellClass * cellptr = &(*this)[Cell(i % 128, i / 128)];
+		if (cellptr != NULL) {
+			cellptr->ITType = ISOTILE_NONE;
+			decomp.Get(&cellptr->ITType, sizeof(cellptr->ITType)/2);
+			cellptr->ITType = IsometricTileTypeClass::Fixup_Tile_Type(cellptr->ITType);
+		} else {
+			decomp.Get(&InvalidCell.ITType, sizeof(InvalidCell.ITType)/2);
+		}
+	}
+
+	for (i = 0; i < MAP_CELL_TOTAL/16; i++) {
+		CellClass * cellptr = &(*this)[Cell(i % 128, i / 128)];
+		if (cellptr != NULL) {
+			decomp.Get(&cellptr->SubTile, sizeof(cellptr->SubTile));
+		} else {
+			decomp.Get(&InvalidCell.SubTile, sizeof(InvalidCell.SubTile));
+		}
+	}
+
+	for (i = 0; i < MAP_CELL_TOTAL/16; i++) {
+		CellClass * cellptr = &(*this)[Cell(i % 128, i / 128)];
+		if (cellptr != NULL) {
+			decomp.Get(&cellptr->Height, sizeof(cellptr->Height));
+		} else {
+			decomp.Get(&InvalidCell.Height, sizeof(InvalidCell.Height));
+		}
+	}
+
+	new (&InvalidCell) CellClass;
+	return(true);
+}
+
 // FUNCTION: 0x0056CB80
 int SubzoneHash(unsigned int const & key)
 {
@@ -647,6 +1030,15 @@ Cell MapClass::Pick_Random_Location(void) const
 	int x = Map.MapRect.X + Random_Pick(0, Map.MapRect.Width-1);
 	int y = Map.MapRect.Y + Random_Pick(0, Map.MapRect.Height-1);
 	return(Cell(x, y));
+}
+
+// FUNCTION: 0x00578350
+void MapClass::Reset_Iterator(void)
+{
+	IterX = 1;
+	IterY = PlayRect.Width;
+	IterColumn = PlayRect.Width - 1;
+	IterCell = &Array[IterX + (IterY * MAP_CELL_H)];
 }
 
 // FUNCTION: 0x00578390

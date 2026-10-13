@@ -33,6 +33,9 @@
 #include "xpipe.h"
 #include "xstraw.h"
 
+namespace Powerups {
+extern char const * Effects[19];
+}
 int __fastcall FUN_0050C170(char const * name);
 int __fastcall FUN_00510FB0(char const * name);
 bool FUN_00510F60(int index);
@@ -768,6 +771,23 @@ bool CCINIClass::Put_ThemeType(char const * section, char const * entry, ThemeTy
 	return(Put_String(section, entry, Theme.Base_Name(value)));
 }
 
+// FUNCTION: 0x00475980
+SourceType CCINIClass::Get_SourceType(char const * section, char const * entry, SourceType defvalue) const
+{
+	char buffer[128];
+
+	if (Get_String(section, entry, "", buffer, sizeof(buffer))) {
+		return(Source_From_Name(buffer));
+	}
+	return(defvalue);
+}
+
+// FUNCTION: 0x004759D0
+bool CCINIClass::Put_SourceType(char const * section, char const * entry, SourceType value)
+{
+	return(Put_String(section, entry, SourceName[value]));
+}
+
 // FUNCTION: 0x004759F0
 CrateType CCINIClass::Get_CrateType(char const * section, char const * entry, CrateType defvalue) const
 {
@@ -777,6 +797,12 @@ CrateType CCINIClass::Get_CrateType(char const * section, char const * entry, Cr
 		return(Crate_From_Name(buffer));
 	}
 	return(defvalue);
+}
+
+// FUNCTION: 0x00475A40
+bool CCINIClass::Put_CrateType(char const * section, char const * entry, CrateType value)
+{
+	return(Put_String(section, entry, ::Powerups::Effects[value]));
 }
 
 // FUNCTION: 0x00475A60
@@ -814,6 +840,38 @@ int CCINIClass::Get_Buildings(char const * section, char const * entry, int defv
 	return(pre);
 }
 
+// FUNCTION: 0x00475B70
+bool CCINIClass::Put_Buildings(char const * section, char const * entry, int value)
+{
+	char buffer[128] = "";
+	int maxi = (32 < BuildingTypes.Count()) ? 32 : BuildingTypes.Count();
+
+	for (StructType index = STRUCT_FIRST; index < maxi; index++) {
+		if ((value & (1L << index)) != 0) {
+
+			if (buffer[0] != '\0') {
+				strcat(buffer, ",");
+			}
+			strcat(buffer, BuildingTypes[index]->IniName);
+		}
+	}
+
+	return(Put_String(section, entry, buffer));
+}
+
+// FUNCTION: 0x00475C70
+bool CCINIClass::Put_VocType_List(char const * section, char const * entry, TypeList<int> value)
+{
+	char buffer[128] = "";
+	for (int index = 0; index < value.Count(); index++) {
+		if (buffer[0]) {
+			strcat(buffer, ",");
+		}
+		strcat(buffer, FUN_00751590(value[index]));
+	}
+	return(Put_String(section, entry, buffer));
+}
+
 // FUNCTION: 0x00475D70
 TypeList<int> CCINIClass::Get_IntList(const char * section, const char * entry, TypeList<int> defvalue) const
 {
@@ -843,6 +901,23 @@ bool CCINIClass::Put_IntList(char const * section, char const * entry, TypeList<
 		}
 		sprintf(number, "%d", value[index]);
 		strcat(buffer, number);
+	}
+	return(Put_String(section, entry, buffer));
+}
+
+// FUNCTION: 0x00476240
+bool CCINIClass::Put_Target_List(const char * section, const char * entry, TypeList<int> const & value)
+{
+	char buffer[MAX_LINE_LENGTH] = "";
+
+	for (int index = 0; index < value.Count(); index++) {
+		if (buffer[0]) {
+			strcat(buffer, ",");
+		}
+		TargetClass target;
+		target.Decode(value[index]);
+		TechnoTypeClass *ttype = target.As_TechnoType();
+		strcat(buffer, ttype->Name());
 	}
 	return(Put_String(section, entry, buffer));
 }
@@ -881,6 +956,85 @@ TPoint3D<int> CCINIClass::Get_Offset(char const * section, char const * entry, T
 		return(point);
 	}
 	return(defvalue);
+}
+
+// FUNCTION: 0x004764F0
+TypeList<TechnoTypeClass *> CCINIClass::Get_TechnoType_List(const char * section, const char * entry, TypeList<TechnoTypeClass *> defvalue) const
+{
+	char buffer[MAX_LINE_LENGTH];
+
+	if (Get_String(section, entry, "", buffer, sizeof(buffer))) {
+		TypeList<TechnoTypeClass *> list;
+		char * token = strtok(buffer, ",");
+		while (token != NULL && *token != '\0') {
+			for (int index = 0; index < TechnoTypes.Count(); index++) {
+				if (!strcmpi(token, TechnoTypes[index]->Name())) {
+					list.Add(TechnoTypes[index]);
+					break;
+				}
+			}
+			token = strtok(NULL, ",");
+		}
+		return(list);
+	}
+	return(defvalue);
+}
+
+// FUNCTION: 0x004766F0
+bool CCINIClass::Put_TechnoType_List(char const * section, char const * entry, TypeList<TechnoTypeClass *> const & value)
+{
+	char buffer[MAX_LINE_LENGTH] = "";
+
+	for (int index = 0; index < value.Count(); index++) {
+		if (buffer[0]) {
+			strcat(buffer, ",");
+		}
+		strcat(buffer, value[index]->Name());
+	}
+	return(Put_String(section, entry, buffer));
+}
+
+// FUNCTION: 0x004767C0
+TypeList<int> CCINIClass::Get_House_List(const char * section, const char * entry, TypeList<int> defvalue) const
+{
+	char buffer[128];
+
+	if (Get_String(section, entry, "", buffer, sizeof(buffer))) {
+		TypeList<int> list;
+		char * token = strtok(buffer, ",");
+		while (token != NULL && *token != '\0') {
+			int house = (int)HouseTypeClass::From_Name(token);
+			if (house != HOUSE_NONE) {
+				list.Add(house);
+			}
+			else {
+				SideType side = SideClass::From_Name(token);
+				if (side != SIDE_NONE) {
+					SideClass * otherside = Sides[side];
+					for (int index = 0; index < otherside->Houses.Count(); index++) {
+						list.Add(otherside->Houses[index]);
+					}
+				}
+			}
+			token = strtok(NULL, ",");
+		}
+		return(list);
+	}
+	return(defvalue);
+}
+
+// FUNCTION: 0x00476A20
+bool CCINIClass::Put_House_List(char const * section, char const * entry, TypeList<HousesType> value)
+{
+	char buffer[128] = "";
+
+	for (int index = 0; index < value.Count(); index++) {
+		if (buffer[0]) {
+			strcat(buffer, ",");
+		}
+		strcat(buffer, HouseTypes[value[index]]->Name());
+	}
+	return(Put_String(section, entry, buffer));
 }
 
 // FUNCTION: 0x00476B20
@@ -925,6 +1079,16 @@ TypeList<RGBClass> CCINIClass::Get_RGBClass_List(const char * section, const cha
 		return(list);
 	}
 	return(defvalue);
+}
+
+// FUNCTION: 0x00476D80
+int CCINIClass::Get_Unique_ID(void) const
+{
+	if (!IsDigestPresent) {
+		((CCINIClass *)this)->Calculate_Message_Digest();
+	}
+
+	return(CRCEngine()(&Digest[0], sizeof(Digest)));
 }
 
 // FUNCTION: 0x00476FC0

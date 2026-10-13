@@ -389,10 +389,45 @@ MapRegionClass::MapRegionClass(Cell cell) :
 	MapRegions.Add(this);
 }
 
+// FUNCTION: 0x0058C070
+MapRegionClass::~MapRegionClass(void)
+{
+	if (NeighborRegions != NULL) {
+		delete NeighborRegions;
+		NeighborRegions = NULL;
+	}
+	MapRegions.Delete(this);
+}
+
+// FUNCTION: 0x0058C100
+void MapRegionClass::Delete_All_Regions(void)
+{
+	MapRegionClass::TotalCount = 0;
+
+	for (int i = MapRegionClass::MapRegions.Count() - 1; i >= 0; i--) {
+		MapRegionClass * region = MapRegionClass::MapRegions[i];
+		if (region != NULL) {
+			delete region;
+		}
+	}
+}
+
 // FUNCTION: 0x0058C1C0
 bool MapRegionClass::CellData::Is_Not_Inviolate(Cell const &cell)
 {
 	return(!MapRegionClass::Get_Cell_Data(cell).Inviolate);
+}
+
+// FUNCTION: 0x0058C1F0
+bool MapRegionClass::CellData::Is_Interior(Cell const &cell)
+{
+	return(MapRegionClass::Get_Cell_Data(cell).Interior);
+}
+
+// FUNCTION: 0x0058C210
+void MapRegionClass::CellData::Set_Inviolate(Cell const &cell)
+{
+	MapRegionClass::Get_Cell_Data(cell).Inviolate = true;
 }
 
 // FUNCTION: 0x0058C240
@@ -420,6 +455,81 @@ MapRegionClass::CellData & MapRegionClass::Get_Cell_Data(Cell const & cell)
 MapRegionClass::CellData & MapRegionClass::Get_Cell_Data(int index)
 {
 	return(RMGCellData[index]);
+}
+
+// FUNCTION: 0x0058C2D0
+void MapRegionClass::Recount_Cells(void)
+{
+	CellCount = 0;
+	int grid_size = MapCellStride * MapCellStride;
+
+	for (int i = 0; i < grid_size; i++) {
+		if (RMGCellData[i].RegionID == ID && RMGCellData[i].CellID != Cell(0,0)) {
+			CellCount++;
+		}
+	}
+}
+
+// FUNCTION: 0x0058C320
+Cell MapRegionClass::Pick_Random_Cell(void)
+{
+	int grid_size = MapCellStride * MapCellStride;
+	unsigned int index = 0;
+	do {
+		index = Pick_Random_UInt(0, grid_size - 1);
+	} while (RMGCellData[index].RegionID != ID || RMGCellData[index].CellID == Cell(0,0));
+
+	return(RMGCellData[index].CellID);
+}
+
+// FUNCTION: 0x0058C3B0
+Cell MapRegionClass::Pick_Random_Clear_Cell(void)
+{
+	int tries = 0;
+	while (true) {
+		Cell cell = Pick_Random_Cell();
+		if (++tries > 200) {
+			return(Cell(0,0));
+		}
+		if (Map[cell].Is_Tile_Clear()) {
+			return(cell);
+		}
+	}
+}
+
+// FUNCTION: 0x0058C4A0
+Cell MapRegionClass::Pick_Random_Clear_Interior_Cell(void)
+{
+	MapRegionClass::CellData & data = RMGCellData[0];
+	int grid_size = MapCellStride * MapCellStride;
+	int tries = 0;
+	do {
+		data = RMGCellData[Pick_Random_UInt(0, grid_size - 1)];
+		if (++tries >= 100) {
+			return(Cell(0,0));
+		}
+	} while (data.RegionID != ID || data.CellID == Cell(0, 0) || !data.Interior || !Map[data.CellID].Is_Tile_Clear());
+	return(data.CellID);
+}
+
+// FUNCTION: 0x0058C5A0
+Cell MapRegionClass::Pick_Random_Clear_Cell_In_Zone(int zone, int region_id)
+{
+	MapRegionClass::CellData & data = RMGCellData[0];
+	int grid_size = MapCellStride * MapCellStride;
+	int tries = 0;
+	CellClass * cellptr;
+	do {
+		data = RMGCellData[Pick_Random_UInt(0, grid_size - 1)];
+		if (++tries >= 100) {
+			return(Cell(0,0));
+		}
+		cellptr = &Map[data.CellID];
+	} while (data.CellID == Cell(0,0)
+			|| Map.Get_Cell_Zone(cellptr->CellID, MZONE_NORMAL, false) != zone
+			|| !cellptr->Is_Tile_Clear()
+			|| (region_id != -1 && data.RegionID != region_id));
+	return(data.CellID);
 }
 
 // FUNCTION: 0x0058C6C0
@@ -458,6 +568,27 @@ double MapRegionClass::Get_Angle_Score(const Cell & cell1, const Cell & cell2, d
 	return(RMG_RANDOM_DOUBLE2(2.5) + _length_weight * length + _angle_weight * angle_diff);
 }
 
+// FUNCTION: 0x0058CE90
+void MapRegionClass::Destroy_Cell_Regions(void)
+{
+	if (RMGCellData != NULL) {
+		int grid_size = MapCellStride * MapCellStride;
+		for (int i = 0; i < grid_size; i++) {
+			RMGCellData[i].RegionID = -1;
+			RMGCellData[i].SpreadID = -1;
+		}
+	}
+
+	for (int i = MapRegionClass::MapRegions.Count() - 1; i >= 0; i--) {
+		MapRegionClass * region = MapRegionClass::MapRegions[i];
+		if (region != NULL) {
+			delete region;
+		}
+	}
+
+	MapRegionClass::TotalCount = 0;
+}
+
 // FUNCTION: 0x0058CF90
 void MapRegionClass::Create_Water_Regions(void)
 {
@@ -469,6 +600,22 @@ void MapRegionClass::Create_Water_Regions(void)
 		if (RMGCellData[i].RegionID == -1 && RMGCellData[i].CellID != Cell(0,0)) {
 			if (cptr->Is_Tile_With_Water() || cptr->Is_Tile_Swamp()) {
 				Create_Region_From_Cell(cptr);
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x0058D010
+void MapRegionClass::Create_Land_Regions(bool unsplittable)
+{
+	int grid_size = MapCellStride * MapCellStride;
+
+	for (int i = 0; i < grid_size; i++) {
+		if (RMGCellData[i].RegionID == -1 && RMGCellData[i].CellID != Cell(0,0)) {
+			CellClass *cptr = &Map[RMGCellData[i].CellID];
+			MapRegionClass *rgn = Create_Region_From_Cell(cptr);
+			if (rgn != NULL) {
+				rgn->Unsplittable = unsplittable;
 			}
 		}
 	}
@@ -496,6 +643,12 @@ int MapRegionClass::CellData::Get_Region(Cell const &cell)
 void MapRegionClass::CellData::Set_Spread(Cell const &cell, int patch_id)
 {
 	MapRegionClass::Get_Cell_Data(cell).SpreadID = patch_id;
+}
+
+// FUNCTION: 0x0058D100
+int MapRegionClass::CellData::Get_Spread(Cell const &cell)
+{
+	return(MapRegionClass::Get_Cell_Data(cell).SpreadID);
 }
 
 // FUNCTION: 0x00595CE0

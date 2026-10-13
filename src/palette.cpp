@@ -9,6 +9,7 @@
 #include "hashtable.h"
 #include "vector.h"
 #include "scheme.h"
+#include "_theater.h"
 #include <cstring>
 
 // FUNCTION: 0x00626020
@@ -94,12 +95,20 @@ int PaletteClass::Closest_Color(RGBClass const & rgb) const
 	return(closest);
 }
 
+struct FileSystem
+{
+	static void const * LoadFile(char const * name, bool flag);
+	static char TEMPERAT_PAL[];
+};
+
+extern char * DAT_00836464;
+
 class SchemeNode
 {
 	public:
 		SchemeNode(char const * name, DynamicVectorClass<ColorScheme *> * schemes);
 		void Release(void);
-		void ReleaseA(void);
+		~SchemeNode(void);
 		void Replace(DynamicVectorClass<ColorScheme *> * schemes);
 
 		char Name[256];
@@ -141,7 +150,7 @@ void SchemeNode::Replace(DynamicVectorClass<ColorScheme *> * schemes)
 }
 
 // FUNCTION: 0x00626370
-void SchemeNode::ReleaseA(void)
+SchemeNode::~SchemeNode(void)
 {
 	if (Schemes) {
 		int count = Schemes->Count();
@@ -150,6 +159,13 @@ void SchemeNode::ReleaseA(void)
 		}
 		delete Schemes;
 		Schemes = 0;
+		count = 0;
+		count++;
+		if (count > 5) {
+			count = 1;
+		}
+		count = 0;
+		count++;
 	}
 }
 
@@ -173,6 +189,14 @@ class SchemeLibrary
 			Table(new HashTableClass<HashString, SchemeNode *>(10, 31, (int (__fastcall *)(HashString const &))SchemeHash))
 		{
 		}
+
+		~SchemeLibrary(void);
+
+		DynamicVectorClass<ColorScheme *> * Lookup(char const * name);
+		DynamicVectorClass<ColorScheme *> * Generate(char const * name);
+		void Add(char const * name);
+		void Replace(char const * name);
+		void Set_Mode(int mode);
 
 		int Mode;
 		DynamicVectorClass<char *> * Names;
@@ -260,6 +284,147 @@ void __fastcall SchemeLibrary_Add(char const * name, RGBClass const & color)
 	DAT_00AC48F0->Names->Add(copy);
 	DAT_00AC48F0->Colors->Add(color);
 }
+
+
+// FUNCTION: 0x00626C60
+int __fastcall SchemeLibrary_Count(void)
+{
+	return(Library()->Names->Count());
+}
+
+// FUNCTION: 0x00626FF0
+void SchemeLibrary_Destroy(void)
+{
+	if (DAT_00AC48F0 != 0) {
+		delete DAT_00AC48F0;
+		DAT_00AC48F0 = 0;
+	}
+}
+
+// FUNCTION: 0x00627020
+void SchemeLibrary_Create(void)
+{
+	Library();
+}
+
+// FUNCTION: 0x00627170 SchemeLibrary::SchemeLibrary
+
+// FUNCTION: 0x006272A0
+SchemeLibrary::~SchemeLibrary(void)
+{
+	if (Table != 0) {
+		SchemeLibrary_Free();
+		delete Names;
+		delete Colors;
+
+		HashIterator it = {0, 0, false};
+		for (HashString * key = Next_Key(Table, &it); key != 0; key = Next_Key(Table, &it)) {
+			SchemeNode * node = *Find_Node(Table, *key);
+			delete node;
+		}
+		SchemeTable * table = Table;
+		for (int index = 0; index < table->NumBuckets; index++) {
+			table->Buckets[index].Clear();
+		}
+		delete Table;
+	}
+}
+
+// FUNCTION: 0x006274F0
+DynamicVectorClass<ColorScheme *> * SchemeLibrary::Lookup(char const * name)
+{
+	HashString key(name);
+	SchemeNode ** node = Find_Node(Table, key);
+	if (node == 0) {
+		return(0);
+	}
+	return((*node)->Schemes);
+}
+
+// FUNCTION: 0x00627590
+DynamicVectorClass<ColorScheme *> * SchemeLibrary::Generate(char const * name)
+{
+	if (Mode == -1) {
+		return(0);
+	}
+
+	char path[256];
+	strcpy(path, name);
+	strcat(path, Theaters[Mode].Suffix);
+	strcat(path, ".");
+	strcat(path, DAT_00836464);
+	strupr(path);
+
+	PaletteClass pal;
+	void const * file = FileSystem::LoadFile(path, false);
+	if (file == 0) {
+		return(0);
+	}
+	memcpy(&pal, file, sizeof(pal));
+
+	for (int slot = 0; slot < 256; slot++) {
+		RGBClass & entry = pal[slot];
+		RGBClass color = entry;
+		entry.Set_Red(color.Get_Red() << 2);
+		entry.Set_Green(color.Get_Green() << 2);
+		entry.Set_Blue(color.Get_Blue() << 2);
+	}
+
+	int count = Colors->Count();
+	DynamicVectorClass<ColorScheme *> * schemes = new DynamicVectorClass<ColorScheme *>(20);
+	for (int index = 0; index < count; index++) {
+		char * id = (*Names)[index];
+		RGBClass base = (*Colors)[index];
+		ColorScheme * scheme = new ColorScheme(id, base, pal, *(PaletteClass *)FileSystem::TEMPERAT_PAL, 1, false);
+		scheme->ID = index * 2;
+		schemes->Add(scheme);
+		scheme = new ColorScheme(id, base, pal, *(PaletteClass *)FileSystem::TEMPERAT_PAL, 53, false);
+		scheme->ID = index * 2 + 1;
+		schemes->Add(scheme);
+	}
+	return(schemes);
+}
+
+// FUNCTION: 0x006278C0
+void SchemeLibrary::Add(char const * name)
+{
+	DynamicVectorClass<ColorScheme *> * schemes = Generate(name);
+	SchemeNode * node = new SchemeNode(name, schemes);
+	HashString key(name);
+	SchemeTable * table = Table;
+	DynamicVectorClass<SchemeEntry> & bucket = table->Buckets[table->HashFunction(key) % table->NumBuckets];
+	for (int index = bucket.Count() - 1; index >= 0; index--) {
+		if (bucket[index].Key == key) {
+			return;
+		}
+	}
+	bucket.Add(SchemeEntry(key, node));
+}
+
+// FUNCTION: 0x00627A10
+void SchemeLibrary::Replace(char const * name)
+{
+	HashString key(name);
+	SchemeNode * node = *Find_Node(Table, key);
+	node->Replace(Generate(name));
+}
+
+// FUNCTION: 0x00627B20
+void SchemeLibrary::Set_Mode(int mode)
+{
+	Mode = mode;
+	HashIterator it = {0, 0, false};
+	HashString * key = Next_Key(Table, &it);
+	while (key != 0) {
+		HashString name(key->Str);
+		SchemeNode * node = *Find_Node(Table, name);
+		node->Replace(Generate(key->Str));
+		key = Next_Key(Table, &it);
+	}
+}
+
+// FUNCTION: 0x00627D20 ?$DynamicVectorClass@PAD::Clear
+template class DynamicVectorClass<char *>;
 
 // FUNCTION: 0x00628E80 ?$VectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@::~?$VectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@
 template class VectorClass<HashObject<HashString, SchemeNode *> >;

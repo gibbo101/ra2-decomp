@@ -213,7 +213,7 @@ void SidebarClass::FUN_006A5090(void)
 	}
 }
 
-namespace Unsorted { extern bool ArmageddonMode; }
+namespace Unsorted { extern bool ArmageddonMode; extern int CurrentFrame; }
 extern HouseClass * DAT_00AC1198;
 extern int DAT_00B0B4DC;
 extern int DAT_00B0B4E8;
@@ -516,6 +516,378 @@ void SidebarClass::Init_For_House(void)
 	DAT_00B0B4C0 = FileSystem::LoadWholeFileEx("LATI.SHP", DAT_00B0B4D8);
 	DAT_00B0B4C4 = FileSystem::LoadWholeFileEx("RUSI.SHP", DAT_00B0B4D9);
 	DAT_00B0B4C8 = FileSystem::LoadWholeFileEx("YRII.SHP", DAT_00B0B4DA);
+}
+
+extern void * DAT_00B0B478;
+extern bool DAT_00884B8F;
+extern bool DAT_00B0B518;
+bool __fastcall FUN_004E1470(GadgetClass * gadget);
+
+static inline int First_Active_Tab(SidebarClass & sidebar)
+{
+	for (int index = 0; index < SidebarClass::STRIPS; index++) {
+		if (sidebar.Column[index].BuildableCount > 0) {
+			return index;
+		}
+	}
+	return -1;
+}
+
+extern void * DAT_00B0B47C;
+extern void * DAT_00B0B480;
+extern bool DAT_00B0B48C;
+extern bool DAT_00B0B48D;
+extern bool DAT_00B0B48E;
+
+// FUNCTION: 0x006A5BF0
+void SidebarClass::DisposeOfArt(void)
+{
+	BASECLASS::DisposeOfArt();
+
+	if (DAT_00B0B488) { delete DAT_00B0B468; DAT_00B0B488 = false; }
+	if (DAT_00B0B489) { delete DAT_00B0B46C; DAT_00B0B489 = false; }
+	if (DAT_00B0B48A) { delete DAT_00B0B470; DAT_00B0B48A = false; }
+	if (DAT_00B0B48B) { delete DAT_00B0B474; DAT_00B0B48B = false; }
+	if (DAT_00B0B48C) { delete DAT_00B0B478; DAT_00B0B48C = false; }
+	if (DAT_00B0B48D) { delete DAT_00B0B47C; DAT_00B0B48D = false; }
+	if (DAT_00B0B48E) { delete DAT_00B0B480; DAT_00B0B48E = false; }
+	if (DAT_00B0B48F) { delete FileSystem::GCLOCK2_SHP; DAT_00B0B48F = false; }
+	if (DAT_00B0B4CC) { delete DAT_00B0B490; DAT_00B0B4CC = false; }
+	if (DAT_00B0B4CD) { delete DAT_00B0B494; DAT_00B0B4CD = false; }
+	if (DAT_00B0B4CE) { delete DAT_00B0B498; DAT_00B0B4CE = false; }
+	if (DAT_00B0B4CF) { delete DAT_00B0B49C; DAT_00B0B4CF = false; }
+	if (DAT_00B0B4D1) { delete DAT_00B0B4A4; DAT_00B0B4D1 = false; }
+	if (DAT_00B0B4D2) { delete DAT_00B0B4A8; DAT_00B0B4D2 = false; }
+	if (DAT_00B0B4D3) { delete DAT_00B0B4AC; DAT_00B0B4D3 = false; }
+	if (DAT_00B0B4D4) { delete DAT_00B0B4B0; DAT_00B0B4D4 = false; }
+	if (DAT_00B0B4D5) { delete DAT_00B0B4B4; DAT_00B0B4D5 = false; }
+	if (DAT_00B0B4D6) { delete DAT_00B0B4B8; DAT_00B0B4D6 = false; }
+	if (DAT_00B0B4D7) { delete DAT_00B0B4BC; DAT_00B0B4D7 = false; }
+	if (DAT_00B0B4D8) { delete DAT_00B0B4C0; DAT_00B0B4D8 = false; }
+	if (DAT_00B0B4D9) { delete DAT_00B0B4C4; DAT_00B0B4D9 = false; }
+	if (DAT_00B0B4D0) { delete DAT_00B0B4A0; DAT_00B0B4D0 = false; }
+	if (DAT_00B0B4DA) { delete DAT_00B0B4C8; DAT_00B0B4DA = false; }
+
+	Power.ClearShape();
+	Repair.ClearShape();
+	for (int index = 0; index < STRIPS; index++) {
+		TabButtons[index].ClearShape();
+	}
+	Upgrade.ClearShape();
+	Waypoint.ClearShape();
+}
+
+// FUNCTION: 0x006A5ED0
+void SidebarClass::FUN_006A5ED0(void)
+{
+	IsToRedraw = true;
+	Column[ActiveTabIndex].IsToRedraw = true;
+	Map.Flag_To_Redraw();
+	if (unknown_53A0 <= Unsorted::CurrentFrame) {
+		unknown_53A0 = Unsorted::CurrentFrame + 2;
+	}
+}
+
+// FUNCTION: 0x006A5F20
+void SidebarClass::OnTechnoDestroyed(TechnoClass * techno)
+{
+	if (IsSidebarActive && techno) {
+		TechnoTypeClass const * type = techno->Techno_Type_Class();
+		if (PlayerPtr) {
+			RTTIType rtti = techno->Fetch_RTTI();
+			int tab = GetObjectTabIdx(rtti, techno->Fetch_Heap_ID(), false);
+			if (tab == ActiveTabIndex) {
+				if (PlayerPtr->FUN_0050B370(type)) {
+					FUN_006A5ED0();
+				}
+			} else if (rtti == RTTI_BUILDING) {
+				if (((BuildingClass *)techno)->Class->IsHelipad && ActiveTabIndex == 3) {
+					FUN_006A5ED0();
+				}
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x006A60A0
+void SidebarClass::RepaintSidebar(int tab)
+{
+	if (tab == ActiveTabIndex) {
+		IsToRedraw = true;
+		Column[tab].IsToRedraw = true;
+		Map.Flag_To_Redraw();
+	}
+}
+
+// FUNCTION: 0x006A60E0
+void SidebarClass::FUN_006A60E0(int tab)
+{
+	if (tab == ActiveTabIndex) {
+		FUN_006A5ED0();
+	}
+}
+
+int __fastcall FUN_005004E0(RTTIType type, int id);
+
+bool SidebarClass::StripClass::Factory_Link(FactoryClass * factory, RTTIType type, int id)
+{
+	for (int index = 0; index < BuildableCount; index++) {
+		if (Buildables[index].BuildableType == type && Buildables[index].BuildableID == id) {
+			Buildables[index].Factory = factory;
+			IsBuilding = true;
+			IsToRedraw = true;
+			Map.Flag_To_Redraw();
+			return true;
+		}
+	}
+	return false;
+}
+
+// FUNCTION: 0x006A6140
+bool SidebarClass::Factory_Link(FactoryClass * factory, RTTIType type, int id)
+{
+	return Column[GetObjectTabIdx(type, id, false)].Factory_Link(factory, type, id);
+}
+
+// FUNCTION: 0x006A6220
+bool SidebarClass::FUN_006A6220(int control)
+{
+	bool old = unknown_bool_5515;
+	if (control == -1) {
+		control = unknown_bool_5515 ? 0 : 1;
+	}
+	switch (control) {
+		case 1:
+			unknown_bool_5515 = true;
+			break;
+
+		default:
+		case 0:
+			unknown_bool_5515 = false;
+			break;
+	}
+	if (old != unknown_bool_5515) {
+		Flag_To_Redraw();
+		IsToRedraw = true;
+		if (!unknown_bool_5515) {
+			Set_Default_Mouse(MOUSE_NORMAL, false);
+		}
+	}
+	return old;
+}
+
+// FUNCTION: 0x006A6290
+bool SidebarClass::FUN_006A6290(int control)
+{
+	bool old = unknown_bool_5514;
+	if (control == -1) {
+		control = unknown_bool_5514 ? 0 : 1;
+	}
+	switch (control) {
+		case 1:
+			unknown_bool_5514 = true;
+			break;
+
+		default:
+		case 0:
+			unknown_bool_5514 = false;
+			break;
+	}
+	if (old != unknown_bool_5514) {
+		Flag_To_Redraw();
+		IsToRedraw = true;
+		if (!unknown_bool_5514) {
+			Set_Default_Mouse(MOUSE_NORMAL, false);
+		}
+	}
+	return old;
+}
+
+// FUNCTION: 0x006A6300
+bool SidebarClass::AddCameo(RTTIType type, int id)
+{
+	if (!Unsorted::ArmageddonMode) {
+		int previous = First_Active_Tab(*this);
+		int tab = GetObjectTabIdx(type, id, false);
+		StripClass & strip = Column[tab];
+
+		if (strip.BuildableCount <= StripClass::MAX_BUILDABLES) {
+			for (int index = 0; index < strip.BuildableCount; index++) {
+				if (strip.Buildables[index].BuildableType == type && strip.Buildables[index].BuildableID == id) {
+					return false;
+				}
+			}
+
+			if (!ScenarioInit && type != RTTI_SPECIAL) {
+				VoxClass::Play("EVA_NewConstructionOptions");
+			}
+			strip.FUN_006A8710(type, id);
+			strip.IsToRedraw = true;
+			DAT_00884B8F = true;
+			FUN_006A67A0(tab);
+			Activate(true);
+
+			if (previous == -1) {
+				int first = First_Active_Tab(*this);
+				if (first != ActiveTabIndex) {
+					TabButtons[ActiveTabIndex].Turn_Off();
+					StripClass & old = Column[ActiveTabIndex];
+					old.AllowedToDraw = false;
+					for (int slot = 0; slot < 60; slot++) {
+						Map.Remove_A_Button(StripClass::SelectButton[old.ID * 60 + slot]);
+					}
+					ActiveTabIndex = first;
+					TabButtons[first].Turn_On();
+					StripClass & current = Column[ActiveTabIndex];
+					current.AllowedToDraw = true;
+					int count = Map.GetVisibleCameoCount();
+					for (int added = 0; added < count; added++) {
+						StripClass::SelectButton[current.ID * 60 + added].Zap();
+						Map.Add_A_Button(StripClass::SelectButton[current.ID * 60 + added]);
+					}
+					DAT_00884B8F = true;
+					UpdateScrollButtons();
+					IsForceCompleteRedraw = true;
+				}
+			}
+
+			IsToRedraw = true;
+			Flag_To_Redraw();
+			if (tab == ActiveTabIndex) {
+				DAT_00B0B518 = true;
+			}
+			return true;
+		}
+	}
+	return false;
+}
+
+extern int DAT_00886F9C;
+extern int DAT_00884CF8;
+
+static inline int Visible_Cameos(void)
+{
+	int side = Scen->PlayerSideIndex;
+	int reserved;
+	if (side == 0) {
+		reserved = 0x1a;
+	} else if (side == 1) {
+		reserved = 0x12;
+	} else {
+		reserved = 0x12;
+	}
+	return (DAT_00886F94 + DAT_00886F9C - DAT_00B0B4F8 - reserved - 7) / 50 * 2;
+}
+
+// FUNCTION: 0x006A6610
+void SidebarClass::UpdateScrollButtons(void)
+{
+	if (PlayerPtr != DAT_00AC1198) {
+		int visible = Visible_Cameos();
+		if (Column[ActiveTabIndex].BuildableCount > visible) {
+			if (!FUN_004E1470(&Upgrade)) {
+				Upgrade.Enable();
+			}
+			if (!FUN_004E1470(&Waypoint)) {
+				Waypoint.Enable();
+			}
+		} else {
+			if (FUN_004E1470(&Upgrade)) {
+				Upgrade.Disable();
+			}
+			if (FUN_004E1470(&Waypoint)) {
+				Waypoint.Disable();
+			}
+		}
+	} else {
+		int visible = Visible_Cameos();
+		if (DAT_00884CF8 * 4 > visible) {
+			if (!FUN_004E1470(&Upgrade)) {
+				Upgrade.Enable();
+			}
+			if (!FUN_004E1470(&Waypoint)) {
+				Waypoint.Enable();
+			}
+		} else {
+			if (FUN_004E1470(&Upgrade)) {
+				Upgrade.Disable();
+			}
+			if (FUN_004E1470(&Waypoint)) {
+				Waypoint.Disable();
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x006A67A0
+void SidebarClass::FUN_006A67A0(int tab)
+{
+	if (First_Active_Tab(*this) == -1 && DAT_00B0B478) {
+		unknown_5398 = 1;
+		unknown_5394 = 0;
+	}
+	if (!FUN_004E1470(&TabButtons[tab])) {
+		TabButtons[tab].Enable();
+	}
+	if (tab == ActiveTabIndex) {
+		UpdateScrollButtons();
+	}
+}
+
+// FUNCTION: 0x006A6820
+void SidebarClass::FUN_006A6820(int tab)
+{
+	if (Column[tab].BuildableCount > 0) {
+		UpdateScrollButtons();
+		return;
+	}
+	TabButtons[tab].Disable();
+
+	int first = First_Active_Tab(*this);
+	if (first == -1) {
+		UpdateScrollButtons();
+		if (DAT_00B0B478) {
+			unknown_5398 = -1;
+			unknown_5394 = ((short *)DAT_00B0B478)[3];
+		}
+	} else if (first != ActiveTabIndex) {
+		TabButtons[ActiveTabIndex].Turn_Off();
+		StripClass & old = Column[ActiveTabIndex];
+		old.AllowedToDraw = false;
+		for (int slot = 0; slot < 60; slot++) {
+			Map.Remove_A_Button(StripClass::SelectButton[old.ID * 60 + slot]);
+		}
+		ActiveTabIndex = first;
+		TabButtons[first].Turn_On();
+		StripClass & current = Column[ActiveTabIndex];
+		current.AllowedToDraw = true;
+		int count = Visible_Cameos();
+		for (int added = 0; added < count; added++) {
+			StripClass::SelectButton[current.ID * 60 + added].Zap();
+			Map.Add_A_Button(StripClass::SelectButton[current.ID * 60 + added]);
+		}
+		DAT_00884B8F = true;
+		UpdateScrollButtons();
+		IsForceCompleteRedraw = true;
+	}
+}
+
+// FUNCTION: 0x006ABC60
+int SidebarClass::GetObjectTabIdx(RTTIType type, int id, bool naval)
+{
+	if (type == RTTI_INFANTRY || type == RTTI_INFANTRYTYPE) {
+		return 2;
+	}
+	if (type == RTTI_UNIT || type == RTTI_UNITTYPE || type == RTTI_AIRCRAFT || type == RTTI_AIRCRAFTTYPE) {
+		return 3;
+	}
+	if (type == RTTI_BUILDING || type == RTTI_BUILDINGTYPE) {
+		return FUN_005004E0(type, id) == 5;
+	}
+	if (type == RTTI_SUPERWEAPON || type == RTTI_SUPERWEAPONTYPE || type == RTTI_SPECIAL) {
+		return 1;
+	}
+	return -1;
 }
 
 // FUNCTION: 0x006AACE0

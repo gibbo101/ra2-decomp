@@ -115,6 +115,9 @@ class InfantryClass : public FootClass
 		bool Edge_Of_World_AI(void);
 		void Firing_AI(void);
 		void Doing_AI(void);
+		bool FUN_005224F0(void) const;
+		bool FUN_00522510(void) const;
+		bool FUN_005224E0(void) const;
 		void Movement_AI(void);
 		void Tunnel_AI(void);
 		bool Theft_AI(void);

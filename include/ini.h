@@ -44,16 +44,19 @@ class INIClass {
 		int Entry_Count(char const * section) const;
 		int Entry_Count(Wstring const & section) const;
 		char const * Get_Entry(char const * section, int index) const;
+		Wstring Get_Entry(Wstring const & section, int index) const;
 
 		PKey Get_PKey(bool fast) const;
 		bool Get_Bool(char const * section, char const * entry, bool defvalue=false) const;
 		double Get_Float(char const * section, char const * entry, double defvalue=0.0) const;
 		int Get_Hex(char const * section, char const * entry, int defvalue=0) const;
 		int Get_Int(char const * section, char const * entry, int defvalue=0) const;
+		int Get_Int(Wstring const & section, Wstring const & entry, int defvalue=0) const;
 		int Get_String(char const * section, char const * entry, char const * defvalue, char * buffer, int size) const;
 		int Get_TextBlock(char const * section, char * buffer, int len) const;
 		int Get_UUBlock(char const * section, void * buffer, int len) const;
 		Rect const Get_Rect(char const * section, char const * entry, Rect const & defvalue) const;
+		Rect const Get_Rect(Wstring const & section, Wstring const & entry, Rect const & defvalue) const;
 		TPoint3D<int> const Get_Point(char const * section, char const * entry, TPoint3D<int> const & defvalue) const;
 		TPoint2D<int> const Get_Point(char const * section, char const * entry, TPoint2D<int> const & defvalue) const;
 		TPoint3D<float> const Get_Point(char const * section, char const * entry, TPoint3D<float> const & defvalue) const;
@@ -64,11 +67,13 @@ class INIClass {
 		bool Put_Float(char const * section, char const * entry, double number);
 		bool Put_Hex(char const * section, char const * entry, int number);
 		bool Put_Int(char const * section, char const * entry, int number, int format=0);
+		bool Put_Int(Wstring const & section, Wstring const & entry, int number, int format=0);
 		bool Put_PKey(PKey const & key);
 		bool Put_String(char const * section, char const * entry, char const * string);
 		bool Put_TextBlock(char const * section, char const * text);
 		bool Put_UUBlock(char const * section, void const * block, int len);
 		bool Put_Rect(char const * section, char const * entry, Rect const & value);
+		bool Put_Rect(Wstring const & section, Wstring const & entry, Rect const & value);
 		bool Put_Point(char const * section, char const * entry, TPoint3D<int> const & value);
 		bool Put_Point(char const * section, char const * entry, TPoint3D<float> const & value);
 		bool Put_Point(char const * section, char const * entry, TPoint2D<int> const & value);

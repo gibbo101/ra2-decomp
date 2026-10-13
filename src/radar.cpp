@@ -57,6 +57,10 @@ extern const double DAT_00B048F0;
 extern const double DAT_00B04970;
 extern const int DAT_00B049F4;
 extern int DAT_00B04A30;
+extern DynamicVectorClass<TechnoClass *> DAT_00A8EC78;
+#define Technos DAT_00A8EC78
+extern HouseClass * PlayerPtr;
+inline bool RadarTrackingStruct::Use_Head(void) const { return(Object->House == PlayerPtr); }
 int __fastcall FUN_00753250(char const * name);
 
 // FUNCTION: 0x00652680 $E109
@@ -587,6 +591,310 @@ void RadarClass::Reposition_Sidebar(void)
 	FullRedraw = true;
 }
 
+// FUNCTION: 0x00654490
+void RadarClass::Set_Local_Dimensions(Rect const & size)
+{
+	BASECLASS::Set_Local_Dimensions(size);
+
+	RadarRect.Y = 10000;
+	RadarRect.X = 10000;
+	RadarRect.Height = 0;
+	RadarRect.Width = 0;
+
+	Cell corner(LocalRect.Y + LocalRect.X + 1, LocalRect.Y + PlayRect.Width - LocalRect.X);
+	Cell corner2(corner);
+	int x = LocalRect.Width - 1;
+	int y = 1 - LocalRect.Width;
+	Cell opposite = corner + Cell(x, y);
+
+	RadarX = corner2.Y - corner.X;
+	field_149C = opposite.X - opposite.Y;
+	RadarY = -1;
+
+	Map.Reset_Iterator();
+	CellClass * iter = Iterate();
+
+	while (iter != NULL) {
+		Cell cell = iter->CellID;
+
+		if (In_Local_Radar(cell)) {
+
+			if (RadarY == -1) {
+				RadarY = iter->CellID.X + iter->CellID.Y;
+			}
+
+			cell = iter->CellID;
+			Rect r = Cell_Radar_Rect(cell);
+
+			if (r.X < RadarRect.X) {
+				RadarRect.X = r.X;
+			} else if (r.X + r.Width > RadarRect.X + RadarRect.Width) {
+				RadarRect.Width = r.X + r.Width - RadarRect.X;
+			}
+
+			if (r.Y < RadarRect.Y) {
+				RadarRect.Y = r.Y;
+			} else if (r.Y + r.Height > RadarRect.Y + RadarRect.Height) {
+				RadarRect.Height = r.Y + r.Height - RadarRect.Y;
+			}
+		}
+		iter = Iterate();
+	}
+}
+
+// FUNCTION: 0x00654650
+void RadarClass::Compute_Radar_Image(void)
+{
+	if (!RadarRect.Is_Valid()) {
+		return;
+	}
+
+	RadarRect.Y = 0;
+	RadarRect.X = 0;
+
+	if (BackgroundSurface != NULL) {
+		delete BackgroundSurface;
+		BackgroundSurface = NULL;
+	}
+	if (BackgroundColors != NULL) {
+		delete BackgroundColors;
+		BackgroundColors = NULL;
+	}
+	if (PixelFlags != NULL) {
+		delete [] PixelFlags;
+		PixelFlags = NULL;
+	}
+
+	Compute_Background(RadarRect, RadarRect, true);
+
+	RadarRect.Width = BackgroundSurface->Get_Width();
+	RadarRect.Height = BackgroundSurface->Get_Height();
+
+	RadarRect.X = RadHeight;
+	if (RadarRect.Width < 140) {
+		RadarRect.X += (140 - RadarRect.Width) / 2;
+	}
+
+	RadarRect.Y = RadOffX;
+	if (RadarRect.Height < 108) {
+		RadarRect.Y += (108 - RadarRect.Height) / 2;
+	}
+
+	if (RadarSurface != NULL) {
+		delete RadarSurface;
+		RadarSurface = NULL;
+	}
+
+	RadarSurface = new DSurface(BackgroundSurface->Get_Width(), BackgroundSurface->Get_Height(), true);
+	RadarSurface->Fill(TBLACK);
+
+	Compute_Foundations();
+}
+
+// FUNCTION: 0x00654EA0
+void RadarClass::Fill_In_Background(Rect const & cell_rect, Rect const & update_rect)
+{
+	RGBClass low(0, 0, 0);
+	RGBClass high(0, 0, 0);
+
+	Reset_Iterator();
+	CellClass * iter = Map.Iterate();
+
+	int a = 2 * Map.LocalRect.X - Map.PlayRect.Width + 1;
+
+	while (iter != NULL) {
+
+		int x = iter->CellID.X;
+		int y = iter->CellID.Y;
+
+		if (x + y >= RadarY) {
+			int origx = x - y - a;
+			int origy = x + y - RadarY;
+			Rect mrect(origx, origy, 2, 1);
+			mrect = Intersect(mrect, update_rect);
+			if (mrect.Is_Valid()) {
+				int idx = mrect.X + mrect.Y * cell_rect.Width;
+				iter->Cell_Color(low, high);
+				if (origx == update_rect.X - 1) {
+					BackgroundColors[idx] = high;
+				} else if (origx == update_rect.Width + update_rect.X - 1) {
+					BackgroundColors[idx] = low;
+				} else {
+					BackgroundColors[idx] = low;
+					BackgroundColors[idx+1] = high;
+				}
+			}
+		}
+		iter = Map.Iterate();
+	}
+}
+
+// FUNCTION: 0x00655050
+Rect RadarClass::Cell_Radar_Rect(Cell const & cell)
+{
+	int cellx = cell.X;
+	int celly = cell.Y;
+	int x = cellx - celly + RadarX;
+	int y = cellx + celly - RadarY;
+	int width = 2;
+	if (x == -1) {
+		x = 0;
+		width = 1;
+	} else if (x == width * LocalRect.Width - 1) {
+		width = 1;
+	}
+	return(Rect(x, y, width, 1));
+}
+
+// FUNCTION: 0x006550C0
+Rect RadarClass::Cell_To_Radar_Pixel(Cell const & cell)
+{
+	int cellx = cell.X;
+	int celly = cell.Y;
+	int x = (cellx - celly + RadarX) * ZoomFactor + RadarRect.X;
+	int y = (cellx + celly - RadarY) * ZoomFactor + RadarRect.Y;
+	if (x == RadarRect.X - 1) x++;
+	return(Rect(x, y, 1, 1));
+}
+
+// FUNCTION: 0x00655150
+Cell RadarClass::Radar_Pixel_To_Cell(Point2D const& point)
+{
+	float x = (point.X / ZoomFactor) - RadarX;
+	float y = (point.Y / ZoomFactor) + RadarY;
+
+	Cell cell;
+	cell.X = int(((x + y) / 2) + 0.5);
+	cell.Y = int(((y - x) / 2) + 0.5);
+
+	return(cell);
+}
+
+// FUNCTION: 0x006551C0
+void RadarClass::Radar_Background(Cell const & cell)
+{
+	for (int i = BackgroundStack.Count() - 1; i >= 0; i--) {
+		if (BackgroundStack[i] == cell) {
+			return;
+		}
+	}
+	BackgroundStack.Add(cell);
+	IsToRedraw = true;
+}
+
+// FUNCTION: 0x00655250
+void RadarClass::Plot_Radar_Background(void)
+{
+	Rect r(0, 0, 0, 0);
+	for (int i = BackgroundStack.Count() - 1; i >= 0; i--) {
+
+		Cell cell = BackgroundStack[i];
+		if (In_Local_Radar(cell)) {
+			Rect update_rect = Cell_Radar_Rect(cell);
+
+			int x = update_rect.X;
+			Rect bounds(0, 0, RadarCellWidth, RadarCellHeight);
+			update_rect = Intersect(update_rect, bounds);
+
+			if (update_rect.Is_Valid()) {
+				RGBClass low(0, 0, 0);
+				RGBClass high(0, 0, 0);
+
+				CellClass * cptr = &Map[cell];
+				int idx = update_rect.X + RadarCellWidth * update_rect.Y;
+				cptr->Cell_Color(low, high);
+
+				if (x == 0 && update_rect.Width == 1) {
+					BackgroundColors[idx+1] = high;
+				} else if (update_rect.Width == 1) {
+					BackgroundColors[idx] = low;
+				} else {
+					BackgroundColors[idx] = low;
+					BackgroundColors[idx+1] = high;
+				}
+
+				Rect radarcellrect(0, 0, RadarCellWidth, RadarCellHeight);
+				Rect rr = Compute_Background(radarcellrect, update_rect, false);
+				r = Union(r, rr);
+			}
+		}
+	}
+
+	BackgroundStack.Clear();
+	CellRedrawRect = r;
+}
+
+// FUNCTION: 0x00655560
+void RadarClass::Radar_Track(TechnoClass * techno, Point2D point)
+{
+	Rect surfacerect = RadarSurface->Get_Rect();
+
+	if (!surfacerect.Is_Point_Within(point)) {
+		if (techno->RTTI == RTTI_BUILDING) return;
+
+		if (point.X < surfacerect.X) {
+			point.X = surfacerect.X;
+		}
+		if (point.X >= surfacerect.X + surfacerect.Width) {
+			point.X = surfacerect.X + surfacerect.Width - 1;
+		}
+		if (point.Y < surfacerect.Y) {
+			point.Y = surfacerect.Y;
+		}
+		if (point.Y >= surfacerect.Y + surfacerect.Height) {
+			point.Y = surfacerect.Y + surfacerect.Height - 1;
+		}
+		techno->RadarPos = point;
+	}
+
+	RADAR_HASH_TABLE::ObjectType track;
+	track.Key.Position = point;
+	track.Key.Object = techno;
+	track.Value = techno;
+
+	if (RadarTrackingTable->Add_Object(track, true)) {
+		Radar_Pixel(point);
+		IsToRedraw = true;
+	}
+}
+
+// FUNCTION: 0x00655740
+void RadarClass::Radar_Untrack(TechnoClass * techno, Point2D point)
+{
+	RADAR_HASH_TABLE::BucketType * bucket = &RadarTrackingTable->Buckets[RadarTrackingStruct(techno, point.X, point.Y).Hash()];
+	RADAR_HASH_TABLE::ObjectType track;
+	track.Key.Position = point;
+	track.Key.Object = techno;
+	track.Value = techno;
+	if (bucket->Delete(track)) {
+		Radar_Pixel(point);
+		IsToRedraw = true;
+	}
+}
+
+// FUNCTION: 0x006557F0
+Point2D RadarClass::Coord_To_Radar_Pixel(Coord const & coord, bool clip)
+{
+	Point2D pt = coord;
+	int x = (pt.X - pt.Y + (RadarX * CELL_LEPTON_W)) * ZoomFactor / CELL_LEPTON_W;
+	int y = (pt.X + pt.Y - (RadarY * CELL_LEPTON_H)) * ZoomFactor / CELL_LEPTON_H;
+	if (clip) {
+		if (x < 0) {
+			x = 0;
+		}
+		if (x >= RadarRect.Width) {
+			x = RadarRect.Width - 1;
+		}
+		if (y < 0) {
+			y = 0;
+		}
+		if (y >= RadarRect.Height) {
+			y = RadarRect.Height - 1;
+		}
+	}
+	return(Point2D(x, y));
+}
+
 // FUNCTION: 0x00655890
 int RadarTrackingStruct::Hash_Old(RadarTrackingStruct const & s)
 {
@@ -603,6 +911,22 @@ int RadarTrackingStruct::Hash2(RadarTrackingStruct const & s)
 void RadarClass::Init_Radar(void)
 {
 	RadarTrackingTable = new RADAR_HASH_TABLE(10, 256, RadarTrackingStruct::Hash2);
+}
+
+// FUNCTION: 0x00655990
+void RadarClass::Reset_Radar(void)
+{
+	if (RadarTrackingTable != NULL) {
+		delete RadarTrackingTable;
+	}
+
+	Init_Radar();
+	Map.Set_Local_Dimensions(Map.LocalRect);
+	Compute_Radar_Image();
+
+	for (int i = 0; i < Technos.Count(); i++) {
+		Technos[i]->IsRadarTracked = false;
+	}
 }
 
 // FUNCTION: 0x00656CA0

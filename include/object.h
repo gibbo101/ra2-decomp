@@ -137,7 +137,7 @@ class ObjectClass : public AbstractClass
 		bool Is_Infantry(void) const {return(Fetch_RTTI() == RTTI_INFANTRY);}
 		bool Is_Foot(void) const { if (this == NULL) return(false); unsigned char flag = ((unsigned char)AbstractFlags >> 2) & 1; return(flag != 0); }
 		virtual int Get_Ownable(void) const;
-		virtual wchar_t const * Full_Name(void) const {return(L"");}
+		virtual wchar_t const * Full_Name(void) const {return(L"No name");}
 		virtual bool Can_Repair(void) const;
 		virtual bool Can_Demolish(void) const;
 		virtual bool Can_Player_Fire(void) const;
@@ -148,7 +148,7 @@ class ObjectClass : public AbstractClass
 		virtual Coord Center_Coord(void) const override;
 		virtual Coord Render_Coord(void) const {return(Center_Coord());}
 		virtual Coord Fire_Coord(int which, Coord base) const {return(Center_Coord() + Coord(0, 0, 50));}
-		virtual Coord Exit_Coord(void) const {return(Center_Coord());}
+		virtual Coord Exit_Coord(int index) const {return(Center_Coord());}
 		virtual int Sort_Y(void) const;
 		virtual bool On_Ground(void) const override;
 		virtual bool In_Air(void) const override;

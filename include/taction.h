@@ -152,6 +152,8 @@ class TActionClass : public AbstractClass
 		bool TAction_1_SPECIAL(HouseClass * house, ObjectClass * object, TriggerClass * trig, Cell const & cell);
 		bool TAction_FULL_SPECIAL(HouseClass * house, ObjectClass * object, TriggerClass * trig, Cell const & cell);
 		bool TAction_PREFERRED_TARGET(HouseClass * house, ObjectClass * object, TriggerClass * trig, Cell const & cell);
+		bool TAction_MIND_CONTROL_BUILDINGS(HouseClass * house, ObjectClass * object, TriggerClass * trig, Cell const & cell);
+		bool TAction_RELINQUISH_BUILDINGS(HouseClass * house, ObjectClass * object, TriggerClass * trig, Cell const & cell);
 		bool TAction_ALL_CHANGE_HOUSE(HouseClass * house, ObjectClass * object, TriggerClass * trig, Cell const & cell);
 		bool TAction_MAKE_ALLY(HouseClass * house, ObjectClass * object, TriggerClass * trig, Cell const & cell);
 		bool TAction_MAKE_ENEMY(HouseClass * house, ObjectClass * object, TriggerClass * trig, Cell const & cell);

@@ -9,6 +9,7 @@
 #include "taction.h"
 #include "_keyboar.h"
 #include "_map.h"
+#include "_rtti.h"
 #include "_rules.h"
 #include "_tactica.h"
 #include "_weapon.h"
@@ -31,6 +32,7 @@
 #include "ionblast.h"
 #include "map.h"
 #include "movie.h"
+#include "stringtable.h"
 #include "partsys.h"
 #include "reinf.h"
 #include "revent.h"
@@ -66,6 +68,26 @@ void __fastcall FUN_00489280(Coord const & coord, int damage, TechnoClass * sour
 void __fastcall FUN_0048A620(int damage, WarheadTypeClass const * warhead, Coord coord, int a, int b);
 char const * __fastcall FUN_00751590(int index);
 int __fastcall FUN_00753250(char const * name);
+
+HouseClass * __fastcall FUN_00726910(TriggerClass * trig);
+bool __fastcall FUN_00510F60(int index);
+HouseClass * __fastcall FUN_00510ED0(int index);
+HouseClass * __fastcall FUN_00502D30(int index);
+void __fastcall FUN_004549B0(BuildingClass * building);
+
+extern DynamicVectorClass<BuildingClass *> DAT_00A8EB40;
+#define Buildings DAT_00A8EB40
+extern DynamicVectorClass<InfantryClass *> DAT_00A83DE8;
+#define Infantry DAT_00A83DE8
+
+inline HouseClass * Find_House(TriggerClass * trig, int index)
+{
+	if (trig == NULL) return(NULL);
+	if (index == 0x2325) return(FUN_00726910(trig));
+	if (index == -1) return(NULL);
+	if (FUN_00510F60(index)) return(FUN_00510ED0(index));
+	return(FUN_00502D30(index));
+}
 
 DynamicVectorClass<TActionClass *> Actions;
 
@@ -503,6 +525,206 @@ bool TActionClass::TAction_LIGHT_MEDIUM(HouseClass * , ObjectClass * , TriggerCl
 {
 	WarheadTypeClass const * warhead = Rule->C4Warhead;
 	FUN_0048A620(100, warhead, Waypoint_As_Coord(), 0, 0);
+	return(true);
+}
+
+// FUNCTION: 0x006E0850
+bool TActionClass::TAction_LIGHT_LARGE(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	WarheadTypeClass const * warhead = Rule->C4Warhead;
+	FUN_0048A620(300, warhead, Waypoint_As_Coord(), 0, 0);
+	return(true);
+}
+
+// FUNCTION: 0x006E08B0
+bool TActionClass::TAction_SELL_ATTACHED(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
+{
+	bool success = false;
+
+	for (int index = 0; index < Buildings.Count(); index++) {
+		BuildingClass * building = Buildings[index];
+		if (building->IsActive &&
+				building->IsDown &&
+				!building->IsInLimbo &&
+				building->Tag != NULL &&
+				building->Tag->Is_Trigger_Attached(trig)) {
+
+			building->Sell_Back(1);
+			success = true;
+		}
+	}
+	return(success);
+}
+
+// FUNCTION: 0x006E0930
+bool TActionClass::TAction_GO_BERZERK(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
+{
+	bool success = false;
+
+	for (int index = 0; index < Infantry.Count(); index++) {
+		InfantryClass * infantry = Infantry[index];
+		if (infantry->IsActive &&
+				infantry->IsDown &&
+				!infantry->IsInLimbo &&
+				infantry->Tag != NULL &&
+				infantry->Tag->Is_Trigger_Attached(trig)) {
+
+			infantry->Berzerk();
+			success = true;
+		}
+	}
+	return(success);
+}
+
+// FUNCTION: 0x006E09A0
+bool TActionClass::TAction_TURN_OFF_ATTACHED(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
+{
+	bool success = false;
+	for (int index = 0; index < Buildings.Count(); index++) {
+		BuildingClass * building = Buildings[index];
+		if (building->IsActive &&
+				building->IsDown &&
+				!building->IsInLimbo &&
+				building->Tag != NULL &&
+				building->Tag->Is_Trigger_Attached(trig) &&
+				building->IsOn) {
+
+			building->Turn_Off();
+			success = true;
+		}
+	}
+	return(success);
+}
+
+// FUNCTION: 0x006E0A20
+bool TActionClass::TAction_TURN_ON_ATTACHED(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
+{
+	bool success = false;
+	for (int index = 0; index < Buildings.Count(); index++) {
+		BuildingClass * building = Buildings[index];
+		if (building->IsActive && building->IsDown && !building->IsInLimbo && building->Tag != NULL && building->Tag->Is_Trigger_Attached(trig) && !building->IsOn) {
+			building->Turn_On();
+			success = true;
+		}
+	}
+	return(success);
+}
+
+// FUNCTION: 0x006E0AA0
+bool TActionClass::TAction_CHANGE_HOUSE(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
+{
+	HouseClass * hptr = Find_House(trig, Data.Value);
+	if (hptr == NULL) {
+		return(false);
+	}
+	bool success = false;
+
+	for (int index = 0; index < Technos.Count(); index++) {
+		TechnoClass * techno = Technos[index];
+		if (techno->IsActive &&
+				techno->IsDown &&
+				!techno->IsInLimbo &&
+				techno->Tag != NULL &&
+				techno->Tag->Is_Trigger_Attached(trig)) {
+
+			techno->Captured(hptr, false);
+			success = true;
+		}
+	}
+	return(success);
+}
+
+// FUNCTION: 0x006E0B60
+bool TActionClass::TAction_ALL_CHANGE_HOUSE(HouseClass * house, ObjectClass * , TriggerClass * trig, Cell const & )
+{
+	bool retval = false;
+
+	HouseClass * hptr = Find_House(trig, Data.Value);
+	if (hptr == NULL) {
+		return(false);
+	}
+
+	for (int index = 0; index < Technos.Count(); index++) {
+		TechnoClass * techno = Technos[index];
+		if (techno->House == house) {
+			BuildingClass * building = (BuildingClass *)techno;
+			if (techno == NULL || techno->RTTI != RTTI_BUILDING || building->Class == NULL || (!building->Class->IsPowered && !building->Class->PoweredSpecial)) {
+				Technos[index]->Captured(hptr, false);
+				retval = true;
+			}
+		}
+	}
+
+	for (int index2 = 0; index2 < Technos.Count(); index2++) {
+		TechnoClass * techno = Technos[index2];
+		if (techno->House == house) {
+			BuildingClass * building = (BuildingClass *)techno;
+			if (techno != NULL && techno->RTTI == RTTI_BUILDING && building->Class != NULL && (building->Class->IsPowered || building->Class->PoweredSpecial)) {
+				Technos[index2]->Captured(hptr, false);
+				FUN_004549B0(building);
+				retval = true;
+			}
+		}
+	}
+
+	return(retval);
+}
+
+// FUNCTION: 0x006E0CA0
+bool TActionClass::TAction_MIND_CONTROL_BUILDINGS(HouseClass * house, ObjectClass * , TriggerClass * trig, Cell const & )
+{
+	HouseClass * hptr = Find_House(trig, Data.Value);
+	if (hptr == NULL) {
+		return(false);
+	}
+	house->MindControlBuildings(hptr);
+	return(true);
+}
+
+// FUNCTION: 0x006E0D00
+bool TActionClass::TAction_RELINQUISH_BUILDINGS(HouseClass * house, ObjectClass * , TriggerClass * trig, Cell const & )
+{
+	HouseClass * hptr = Find_House(trig, Data.Value);
+	if (hptr == NULL) {
+		return(false);
+	}
+	house->RelinquishBuildings(hptr);
+	return(true);
+}
+
+// FUNCTION: 0x006E0D60
+bool TActionClass::TAction_TEXT_TRIGGER(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	char * label = Text[0] ? Text : NULL;
+	int side = Scen->PlayerSideIndex;
+	int scheme = Session.Color_Index_To_Scheme(side == 0 ? 2 : (side == 1 ? 1 : 5));
+	if (label != NULL) {
+		Session.Messages.Add_Message(NULL, 0, StringTable::LoadString(label, NULL, "D:\\ra2mdpost\\TAction.CPP", 1766), scheme, TextPrintType(0x4046), int(Rule->MessageDelay * TICKS_PER_MINUTE), false);
+	}
+	return(true);
+}
+
+// FUNCTION: 0x006E0DF0
+bool TActionClass::TAction_MAKE_ALLY(HouseClass * house, ObjectClass * , TriggerClass * trig, Cell const & )
+{
+	HouseClass * house2 = Find_House(trig, Data.Value);
+	if (house2 == NULL) {
+		return(false);
+	}
+	house->Make_Ally(house2, false);
+	house2->Make_Ally(house, false);
+	return(true);
+}
+
+// FUNCTION: 0x006E0E60
+bool TActionClass::TAction_MAKE_ENEMY(HouseClass * house, ObjectClass * , TriggerClass * trig, Cell const & )
+{
+	HouseClass * house2 = Find_House(trig, Data.Value);
+	if (house2 == NULL) {
+		return(false);
+	}
+	house->Make_Enemy(house2, false);
+	house2->Make_Enemy(house, false);
 	return(true);
 }
 

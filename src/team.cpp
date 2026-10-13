@@ -55,6 +55,11 @@
 
 ThreatType __fastcall FUN_00645BB0(QuarryType quarry);
 bool __fastcall FUN_005224E0(FootClass * infantry);
+bool __fastcall FUN_0053A100(void);
+void __fastcall LightningStorm_Start(int duration, int deferment, int center, bool flag);
+void __cdecl LightningStorm_RequestStop(void);
+extern int DAT_00B0E948;
+void __fastcall FUN_005BF260(VQType movie, ThemeType theme, bool a, bool b, bool c);
 
 static inline CellClass * _As_Cell(AbstractClass * target)
 {
@@ -1751,9 +1756,128 @@ void TeamClass::TMission_PLAY_SPEECH(TeamMissionClass * mission, bool)
 	IsNextMission = true;
 }
 
+// FUNCTION: 0x006EDE90
+void TeamClass::TMission_PLAY_SOUND(TeamMissionClass * mission, bool)
+{
+	VocClass::PlayGlobal(mission->Data.Sound, 1.0f, 0x2000);
+	IsNextMission = true;
+}
+
+// FUNCTION: 0x006EDEC0
+void TeamClass::TMission_PLAY_MOVIE(TeamMissionClass * mission, bool)
+{
+	FUN_005BF260(mission->Data.Movie, THEME_NONE, true, true, true);
+	IsNextMission = true;
+}
+
 // FUNCTION: 0x006EDEF0
 void TeamClass::TMission_PLAY_MUSIC(TeamMissionClass * mission, bool)
 {
 	Theme.Queue_Song(mission->Data.Theme);
+	IsNextMission = true;
+}
+
+// FUNCTION: 0x006EDF10
+void TeamClass::TMission_REDUCE_TIBERIUM(TeamMissionClass * mission, bool)
+{
+	FootClass *unit = Member;
+	while (unit != NULL) {
+		Cell cell = unit->Center_Coord().As_Cell();
+		Map.Area_Reduce_Tiberium(cell);
+		unit = unit->Member;
+	}
+	IsNextMission = true;
+}
+
+// FUNCTION: 0x006EDF90
+void TeamClass::TMission_BEGIN_PRODUCTION(TeamMissionClass * mission, bool)
+{
+	House->IsStarted = true;
+	IsNextMission = true;
+}
+
+// FUNCTION: 0x006EDFB0
+void TeamClass::TMission_FIRE_SALE(TeamMissionClass * mission, bool)
+{
+	House->State = STATE_ENDGAME;
+	IsNextMission = true;
+}
+
+// FUNCTION: 0x006EDFD0
+void TeamClass::TMission_SELF_DESTRUCT(TeamMissionClass * mission, bool)
+{
+	bool doit = true;
+	while (doit) {
+		doit = false;
+
+		FootClass *unit = Member;
+		while (unit != NULL) {
+			if (unit->Strength > 0 && unit->IsActive && unit->IsDown && !unit->IsInLimbo) {
+				int damage = unit->Strength;
+				unit->Take_Damage(damage, 0, Rule->C4Warhead, NULL, true);
+				doit = true;
+			}
+			unit = unit->Member;
+		}
+	}
+	IsNextMission = true;
+}
+
+// FUNCTION: 0x006EE050
+void TeamClass::TMission_DESTROY_MEMBERS(TeamMissionClass * mission, bool)
+{
+	FootClass *unit = Member;
+	while (unit != NULL) {
+		FootClass *next = unit->Member;
+		unit->Limbo();
+		unit->Delete_Me();
+		unit = next;
+	}
+	IsNextMission = true;
+}
+
+// FUNCTION: 0x006EE0A0
+void TeamClass::TMission_ION_STORM_START(TeamMissionClass * mission, bool)
+{
+	if (!FUN_0053A100()) {
+		LightningStorm_Start(mission->Data.Value, Rule->LightningDeferment, DAT_00B0E948, false);
+	}
+	IsNextMission = true;
+}
+
+// FUNCTION: 0x006EE0E0
+void TeamClass::TMission_ION_STORM_END(TeamMissionClass * mission, bool)
+{
+	if (FUN_0053A100()) {
+		LightningStorm_RequestStop();
+	}
+	IsNextMission = true;
+}
+
+// FUNCTION: 0x006EE100
+void TeamClass::TMission_CENTER_VIEWPOINT(TeamMissionClass * mission, bool)
+{
+	Coord coord = Zone->Center_Coord();
+	coord.Z = Map.Get_Height_GL(coord);
+
+	if (Map[coord].IsUnderBridge || Map[coord].WasUnderBridge) {
+		coord.Z += BRIDGE_LEPTON_HEIGHT;
+	}
+
+	TacticalMap->Setup_Trigger_Scroll(coord, mission->Data.Speed);
+	IsNextMission = true;
+}
+
+// FUNCTION: 0x006EE1B0
+void TeamClass::TMission_RESHROUD(TeamMissionClass * mission, bool)
+{
+	Map.Shroud_The_Map(NULL);
+	IsNextMission = true;
+}
+
+// FUNCTION: 0x006EE1D0
+void TeamClass::TMission_REVEAL(TeamMissionClass * mission, bool)
+{
+	Map.Reveal_The_Map(NULL);
 	IsNextMission = true;
 }

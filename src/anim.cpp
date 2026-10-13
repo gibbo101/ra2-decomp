@@ -197,6 +197,7 @@ AnimClass::AnimClass(void) :
 	IsActive = true;
 }
 
+// FUNCTION: 0x00425530
 bool AnimClass::Limbo(void)
 {
 	if (Type != NULL && Type->IsVeins) {
@@ -640,6 +641,117 @@ ObjectTypeClass const * AnimClass::Class_Of(void) const
 {
 	return(Type);
 }
+
+// FUNCTION: 0x004255B0
+void AnimClass::Delete_Me(void)
+{
+	if (OwnerObject != NULL) {
+		OwnerObject->AnimPointerExpired(this);
+	}
+	SetOwnerObject(NULL);
+	StartSoundAudioController.EndLooping();
+	if (!IsInert && Type != NULL && Type->StopSound != -1) {
+		VocClass::PlayAt(Type->StopSound, Center_Coord(), &StopSoundAudioController);
+	}
+	BASECLASS::Delete_Me();
+}
+
+// FUNCTION: 0x00425630
+int AnimClass::Get_Height(void) const
+{
+	int z = Get_Coord().Z;
+	if (OwnerObject != NULL) {
+		z += OwnerObject->Get_Coord().Z;
+	}
+	return(z);
+}
+
+// FUNCTION: 0x004260F0
+bool AnimClass::Is_Valid_Flaming_Guy_Cell(Cell const & cell)
+{
+	CellClass * cptr = &Map[cell];
+
+	if (cptr->IsUnderBridge && Get_Coord().Z - DAT_0089A1C0 * cptr->Height > 2 * DAT_0089A1C0) {
+		if ((cptr->BridgeFlag.Occupy.Building || cptr->BridgeFlag.Occupy.Monolith || cptr->BridgeFlag.Occupy.Vehicle)) {
+			return(false);
+		}
+	} else {
+		if (cptr->Land_Type() == LAND_ROCK || cptr->Land_Type() == LAND_TUNNEL || cptr->Land_Type() == LAND_WALL) {
+			return(false);
+		}
+		if (cptr->Overlay != OVERLAY_NONE && OverlayTypes[cptr->Overlay]->IsWall) {
+			return(false);
+		}
+		if ((cptr->Flag.Occupy.Building || cptr->Flag.Occupy.Monolith || cptr->Flag.Occupy.Vehicle) || DAT_0089A1C0 * cptr->Height - Get_Coord().Z > 2 * DAT_0089A1C0) {
+			return(false);
+		}
+	}
+	return(true);
+}
+
+// FUNCTION: 0x004261D0
+void AnimClass::Post_Load_Game(void)
+{
+	for (int i = 0; i < Array.Count(); i++) {
+		AnimClass * anim = Array[i];
+		if (anim->Type->IsAnimatedTiberium) {
+			CellClass * cptr = &Map[anim->Get_Coord()];
+			TiberiumType tib = cptr->Tiberium_Type_Here();
+			if (tib != TIBERIUM_NONE) {
+				TiberiumClass * tptr = Tiberiums[tib];
+				if (tptr != NULL) {
+					anim->LightConvert = ColorSchemes[tptr->Color]->Converter;
+				}
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x00426270
+void AnimClass::Set_Occupy_Bit(Coord const & coord)
+{
+	int spot_index = CellClass::Spot_Index(coord);
+	CellClass & cell = Map[coord];
+	if (Map.Get_Height_GL(coord) + DAT_0089A1B4 <= coord.Z && cell.IsUnderBridge) {
+		cell.BridgeFlag.Composite |= (1 << spot_index);
+		cell.BridgeInfType = ((AbstractClass *)this)->Owner();
+	} else {
+		cell.Flag.Composite |= (1 << spot_index);
+		cell.InfType = ((AbstractClass *)this)->Owner();
+	}
+}
+
+// FUNCTION: 0x00426300
+void AnimClass::Clear_Occupy_Bit(Coord const & coord)
+{
+	int spot_index = CellClass::Spot_Index(coord);
+	CellClass & cell = Map[coord];
+	int height = Map.Get_Height_GL(coord);
+
+	if (height + DAT_0089A1B4 <= coord.Z) {
+		cell.BridgeFlag.Composite &= ~(1 << spot_index);
+		if (!(cell.BridgeFlag.Composite & 0x1C)) {
+			cell.BridgeInfType = HOUSE_NONE;
+		}
+	} else {
+		cell.Flag.Composite &= ~(1 << spot_index);
+		if (!(cell.Flag.Composite & 0x1C)) {
+			cell.InfType = HOUSE_NONE;
+		}
+	}
+}
+
+// FUNCTION: 0x00426390 ObjectClass::Is_Players_Army
+
+// FUNCTION: 0x004263A0 ObjectClass::Visual_Character
+
+// FUNCTION: 0x004263B0
+bool ObjectClass::IsStrange(void) const
+{
+	return(false);
+}
+
+// FUNCTION: 0x004263C0 ObjectClass::Full_Name
 
 // FUNCTION: 0x00426540
 HRESULT STDMETHODCALLTYPE AnimClass::GetClassID(CLSID * retval)

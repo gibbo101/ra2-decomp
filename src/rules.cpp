@@ -918,3 +918,28 @@ template class TypeList<TerrainTypeClass const *>;
 // FUNCTION: 0x0067A440 ?$DynamicVectorClass@PBVVoxelAnimTypeClass@@::ID
 // FUNCTION: 0x0067A460 ?$VectorClass@PBVVoxelAnimTypeClass@@::GetItem
 template class TypeList<VoxelAnimTypeClass const *>;
+
+class AnimTypeClass;
+class SmudgeTypeClass;
+
+// FUNCTION: 0x0067A470 ?$TypeList@PBVAnimTypeClass@@::?$TypeList@PBVAnimTypeClass@@
+// FUNCTION: 0x0067A4A0 ?$TypeList@PBVAnimTypeClass@@::Save
+template class TypeList<AnimTypeClass const *>;
+
+// FUNCTION: 0x0067A4F0 ?$TypeList@H::?$TypeList@H
+// FUNCTION: 0x0067A520 ?$TypeList@H::Save
+// FUNCTION: 0x0067A570 ?$DynamicVectorClass@H::operator=
+template class DynamicVectorClass<int>;
+
+// FUNCTION: 0x0067A600 ?$TypeList@PBVSmudgeTypeClass@@::?$TypeList@PBVSmudgeTypeClass@@
+// FUNCTION: 0x0067A630 ?$TypeList@PBVSmudgeTypeClass@@::Save
+// FUNCTION: 0x0067A680 ?$DynamicVectorClass@PBVSmudgeTypeClass@@::Clear
+// FUNCTION: 0x0067A6B0 ?$DynamicVectorClass@PBVSmudgeTypeClass@@::ID
+// FUNCTION: 0x0067A6D0 ?$VectorClass@PBVSmudgeTypeClass@@::GetItem
+template class TypeList<SmudgeTypeClass const *>;
+
+// FUNCTION: 0x0067A6E0 ?$TypeList@PBVBuildingTypeClass@@::Save
+template class TypeList<BuildingTypeClass const *>;
+
+// FUNCTION: 0x0067A730 ?$DynamicVectorClass@PBVBuildingTypeClass@@::Count
+template class DynamicVectorClass<BuildingTypeClass const *>;

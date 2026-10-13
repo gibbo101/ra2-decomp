@@ -24,6 +24,7 @@ class BuildingTypeClass : public TechnoTypeClass
 		typedef TechnoTypeClass BASECLASS;
 	public:
 
+		bool FUN_00465D30(void) const;
 		StructType HeapID;
 
 		Cell const * OccupyList;

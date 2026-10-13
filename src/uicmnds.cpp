@@ -38,6 +38,13 @@
 #include "unittype.h"
 #include "vector.h"
 #include "voc.h"
+#include "_map.h"
+#include "_tactica.h"
+#include "display.h"
+#include "mouse.h"
+#include "tactical.h"
+#include "scenario.h"
+#include <mmsystem.h>
 
 class UICommandHolder
 {
@@ -54,6 +61,29 @@ extern int DAT_0084555C;
 namespace Unsorted { extern int MuteSWLaunches; extern int CurrentFrame; }
 bool FUN_00637AA0(void);
 void FUN_0063A0D0(void);
+extern int DAT_00845550;
+extern int DAT_00845554;
+void __fastcall FUN_007313A0(int group);
+void __fastcall FUN_006DA740(Tactical * tactical);
+void FUN_0070D150(void);
+namespace Unsorted { extern bool MoveFeedback; }
+extern Coord DAT_00B0FE10;
+extern Coord DAT_00B0FE38;
+extern Cell DAT_00B0FDF0;
+extern int DAT_00880990;
+extern DynamicVectorClass<UnitClass *> DAT_008B4108;
+class PlanningNode;
+PlanningNode * FUN_0063AC60(void);
+void __fastcall FUN_00637D00(PlanningNode * node);
+void FUN_006379C0(void);
+void FUN_00637A10(void);
+void __fastcall FUN_0063A120(bool a, bool b);
+class BeaconManagerClass
+{
+	public:
+		void Remove_Beacon(int x, int y);
+};
+extern BeaconManagerClass BeaconManager;
 
 
 // FUNCTION: 0x00730970
@@ -230,5 +260,220 @@ void __fastcall FUN_00731060(int group)
 				techno->Group = group - 1;
 			}
 		}
+	}
+}
+
+// FUNCTION: 0x007310D0
+void __fastcall FUN_007310D0(int group)
+{
+	int count = DAT_00A8EC78.Count();
+	for (int i = 0; i < count; i++) {
+		TechnoClass * techno = DAT_00A8EC78[i];
+		if (techno && Player_Owned(techno) && techno->Group == group - 1) {
+			techno->Group = -1;
+		}
+	}
+}
+
+// FUNCTION: 0x00731130
+bool __fastcall FUN_00731130(int group)
+{
+	for (int i = DAT_00A8EC78.Count() - 1; i >= 0; i--) {
+		TechnoClass * techno = DAT_00A8EC78[i];
+		if (techno && !techno->IsInLimbo && Player_Owned(techno)) {
+			if (techno->Group == group - 1 && !techno->IsSelected) {
+				return false;
+			}
+			if (techno->Group != group - 1 && techno->IsSelected) {
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
+static inline void Cancel_Modes(void)
+{
+	Map.Power_Mode_Control(0);
+	Map.Waypoint_Mode_Control(0, false);
+	Map.Repair_Mode_Control(0);
+	Map.Sell_Mode_Control(0);
+	Map.Place_Beacon_Mode_Control(0);
+}
+
+// FUNCTION: 0x007311C0
+void __fastcall FUN_007311C0(int group)
+{
+	Cancel_Modes();
+	if (timeGetTime() - DAT_00845550 < 800 && group == DAT_00845554 && FUN_00731130(group)) {
+		FUN_007313A0(group);
+		return;
+	}
+	DAT_00845550 = timeGetTime();
+	DAT_00845554 = group;
+	FUN_006DA740(TacticalMap);
+	Unsorted::MoveFeedback = true;
+	for (int i = 0; i < DAT_00A8EC78.Count(); i++) {
+		TechnoClass * techno = DAT_00A8EC78[i];
+		if (techno && !techno->IsInLimbo && techno->Group == group - 1 && Player_Owned(techno) && !techno->IsSelected) {
+			techno->Select();
+			techno->RadarFlashTimer = Rule->RadarCombatFlashTime;
+			Unsorted::MoveFeedback = false;
+		}
+	}
+	Unsorted::MoveFeedback = true;
+	FUN_0070D150();
+}
+
+// FUNCTION: 0x007313A0
+void __fastcall FUN_007313A0(int group)
+{
+	Cancel_Modes();
+	if (DAT_00A8ECB8.Count()) {
+		if (!DAT_00A8ECB8[0]->Is_Foot() || ((FootClass *)DAT_00A8ECB8[0])->Group != group - 1) {
+			FUN_006DA740(TacticalMap);
+		}
+	}
+	for (int i = 0; i < DAT_00A8EC78.Count(); i++) {
+		TechnoClass * techno = DAT_00A8EC78[i];
+		if (techno && !techno->IsInLimbo && techno->Group == group - 1 && Player_Owned(techno) && !techno->IsSelected) {
+			techno->Select();
+			Unsorted::MoveFeedback = false;
+		}
+	}
+	Map.Center_Map();
+	Map.Flag_To_Redraw(GS_REDRAW_TACTICAL);
+	Unsorted::MoveFeedback = true;
+}
+
+// FUNCTION: 0x007314C0
+void __fastcall FUN_007314C0(int group)
+{
+	Cancel_Modes();
+	Unsorted::MoveFeedback = true;
+	for (int i = 0; i < DAT_00A8EC78.Count(); i++) {
+		TechnoClass * techno = DAT_00A8EC78[i];
+		if (techno && !techno->IsInLimbo && techno->Group == group - 1 && Player_Owned(techno) && !techno->IsSelected) {
+			techno->Select();
+			Unsorted::MoveFeedback = false;
+		}
+	}
+	Unsorted::MoveFeedback = true;
+}
+
+static inline bool Is_Base_Unit(UnitTypeClass const * type)
+{
+	for (int k = 0; k < Rule->BaseUnit.Count(); k++) {
+		if (Rule->BaseUnit[k] == type) {
+			return true;
+		}
+	}
+	return false;
+}
+
+// FUNCTION: 0x007315A0
+void FUN_007315A0(void)
+{
+	Coord yard = DAT_00B0FE10;
+	Coord other = DAT_00B0FE10;
+	int i = PlayerPtr->Buildings.Count() - 1;
+	if (i >= 0) {
+		for (; i >= 0; i--) {
+			BuildingClass * building = PlayerPtr->Buildings[i];
+			if (building && !building->IsInLimbo) {
+				if (building->Class->IsConstructionYard) {
+					yard = building->Center_Coord();
+					if (building->IsLeader) {
+						break;
+					}
+				} else if (other == DAT_00B0FE10) {
+					other = building->Center_Coord();
+				}
+			}
+		}
+		if (!(other == DAT_00B0FE10 && yard == DAT_00B0FE10)) {
+			goto place;
+		}
+	}
+	if (PlayerPtr->CurUnits) {
+		for (int j = DAT_008B4108.Count() - 1; j >= 0; j--) {
+			UnitClass * unit = DAT_008B4108[j];
+			if (unit && !unit->IsInLimbo && unit->House->Is_Player_Control()) {
+				if (Is_Base_Unit(unit->Class)) {
+					yard = unit->Center_Coord();
+					break;
+				}
+			}
+		}
+	}
+place:
+	Coord base = PlayerPtr->Get_Base_Coord();
+	if (!(base == DAT_00B0FE10) && !(base == DAT_00B0FE38)) {
+		other = base;
+	}
+	if (!(yard == DAT_00B0FE10)) {
+		TacticalMap->Set_Tactical_Position(yard);
+	} else if (!(other == DAT_00B0FE10)) {
+		TacticalMap->Set_Tactical_Position(other);
+	}
+	if (DAT_00880990) {
+		Map.Set_Cursor_Pos(DAT_00B0FDF0);
+	}
+	Map.Set_To_Follow(NULL);
+	Map.Flag_To_Redraw(GS_REDRAW_TACTICAL);
+}
+
+// FUNCTION: 0x00731840
+void __fastcall FUN_00731840(int house)
+{
+	if (Session.Type != GAME_NORMAL && !Scen->Special.IsAllianceFixed && Rule->AlliesAllowed && Rule->AllyChangeAllowed) {
+		OutList.Add(EventClass(PlayerPtr->HeapID, (unsigned char)EventClass::ALLY, house));
+	}
+}
+
+// FUNCTION: 0x007318F0
+void FUN_007318F0(void)
+{
+	if (DAT_00A8ECB8.Count()) {
+		if (!PlayerPtr->IsDefeated && DAT_00A8ECB8[0]->Owner_HouseClass() != PlayerPtr && DAT_00A8ECB8[0]->Owner_HouseClass()->IsHuman) {
+			FUN_00731840(DAT_00A8ECB8[0]->Owner());
+		}
+	}
+}
+
+// FUNCTION: 0x00731A10
+void FUN_00731A10(void)
+{
+	PlanningNode * node = FUN_0063AC60();
+	if (node) {
+		FUN_00637D00(node);
+	} else {
+		BeaconManager.Remove_Beacon(-1, -1);
+	}
+}
+
+// FUNCTION: 0x00731A30
+void FUN_00731A30(void)
+{
+	if (!Unsorted::MuteSWLaunches) {
+		Map.Place_Beacon_Mode_Control(-1);
+	}
+}
+
+// FUNCTION: 0x00731A50
+void __fastcall FUN_00731A50(bool flag)
+{
+	if (!Unsorted::MuteSWLaunches) {
+		FUN_006379C0();
+		FUN_0063A120(flag, true);
+	}
+}
+
+// FUNCTION: 0x00731A70
+void __fastcall FUN_00731A70(bool flag)
+{
+	FUN_00637A10();
+	if (!Unsorted::MuteSWLaunches) {
+		FUN_0063A120(flag, false);
 	}
 }

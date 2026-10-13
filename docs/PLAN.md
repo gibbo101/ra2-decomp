@@ -849,6 +849,22 @@ misses. The same session fixed the map generator (switch tables, int3 padding) a
 allowed Westwood's own inline asm. Cost: about 2.8M tokens, 73 minutes. Merge gate:
 2,935 of 2,935 (456.0 KB).
 
+### Batches 15 and 16 (13 October 2026)
+
+The first pair run at the same time, on separate modules, landed together. **Batch 15:
+127 of 144** (House, Techno, building, aircraft, TAction, PlanMgr, voc, UICmnds, wstring,
+isotype, side, palette); the House agent was cut off by the auto-mode classifier after
+editing two `$E` markers, so 10 of its functions were never tried and stay in the pool.
+Its merge landed 16 more, with YR's MegaMission event layout, RadBeam and audio
+controller members. The Wstring twins settled as `get` (0x7B5400) and `text` (0x7B5440).
+**Batch 16: 123 of 144** (map, MapGen, Tactical, cell, rules, ccini, Sidebar, Radar,
+team, Ini, teamtype, anim); Tactical (5) and Ini (5) were the weak modules: Ini's misses
+all hinge on how Find_Entry inlines, and the map splits Put_TextBlock (0x5271C0) in two
+at 0x5271E0, a map fault still open. The merges ran side by side without a collision.
+Agents' scratch roots symlinked into the repo (orig, toolchain, src, data); the links
+are gone and the rule is in AGENTS.md. Cost: about 6.1M tokens; 67 and 111 minutes.
+Merge gate: 3,189 of 3,189 (505.7 KB).
+
 ### Decide before the first batch
 
 - **Module layout.** Which function lives in which source file, and the link order, decide

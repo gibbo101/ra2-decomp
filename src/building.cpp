@@ -1494,7 +1494,7 @@ int BuildingClass::Do_MISSION_CONSTRUCTION(void)
 }
 
 // FUNCTION: 0x00449BC0
-bool BuildingClass::Can_Player_Move(void) const
+bool BuildingClass::Can_Be_Undeployed(void)
 {
 	if (Class->UndeploysInto) {
 		if (!Class->IsConstructionYard) {
@@ -1798,6 +1798,284 @@ void BuildingClass::Detach(AbstractClass const * target, bool all)
 	Overpowerers.Delete((InfantryClass *)target);
 	if (ScenarioInit) {
 		Occupants.Delete((InfantryClass *)target);
+	}
+}
+
+// FUNCTION: 0x0044EB10
+InfantryTypeClass const * BuildingClass::Crew_Type(void) const
+{
+	if (!IsCaptured && Percent_Chance(25) && Class->ToBuild == RTTI_BUILDINGTYPE) {
+		return(Rule->Engineer);
+	}
+	return(BASECLASS::Crew_Type());
+}
+
+// FUNCTION: 0x0044EB60
+void BuildingClass::FUN_0044EB60(FactoryClass * factory)
+{
+	if (factory != NULL) {
+		TechnoClass * object = factory->Get_Object();
+		bool limbo = IsInLimbo;
+		IsInLimbo = true;
+		if (object != NULL && !object->Techno_Type_Class()->Who_Can_Build_Me(true, false, false, House)) {
+			House->Abandon_Production(Class->ToBuild, object->Techno_Type_Class()->Fetch_Heap_ID(), false, false);
+		}
+		IsInLimbo = limbo;
+	}
+}
+
+// FUNCTION: 0x0044EBF0
+void BuildingClass::Detach_All(bool all)
+{
+	if (all) {
+		if (Factory) {
+			Factory->Abandon();
+			delete (FactoryClass *)Factory;
+			Factory = 0;
+		}
+
+		if (House) {
+			if (Class->ToBuild == RTTI_BUILDINGTYPE) {
+				FUN_0044EB60(House->BuildingFactory);
+				FUN_0044EB60(House->Primary_Unused1);
+				FUN_0044EB60(House->Primary_Unused2);
+				FUN_0044EB60(House->Primary_Unused3);
+				FUN_0044EB60(House->Primary_ForDefenses);
+			} else {
+				FactoryClass * factory = House->Fetch_Factory(Class->ToBuild, Class->Naval, 0);
+				if (factory) {
+					FUN_0044EB60(factory);
+				}
+			}
+		}
+	}
+
+	if (!all) {
+		for (int index = 0; index < RadioLinks.Length(); index++) {
+			TechnoClass * link = FUN_0065AD30(index);
+			if (link && !House->Is_Ally(link)) {
+				Transmit_Message(RADIO_OVER_OUT, link);
+			}
+		}
+	} else {
+		SendToEachLink(RADIO_OVER_OUT);
+	}
+
+	BASECLASS::Detach_All(all);
+}
+
+// FUNCTION: 0x0044EF80
+int BuildingClass::Flush_For_Placement(TechnoClass * techno, Cell const & cell)
+{
+	if (techno) {
+		return(((BuildingTypeClass const *)techno->Class_Of())->Flush_For_Placement(cell, House));
+	}
+	return(-1);
+}
+
+// FUNCTION: 0x0044F5C0
+bool BuildingClass::Can_Player_Move(void) const
+{
+	if ((int)EMPLockRemaining > 0) {
+		return(false);
+	}
+	if (Is_Move_Override()) {
+		return(true);
+	}
+	if (Class->IsConstructionYard) {
+		if (!House->FUN_0050B730() || !Session.Type || !Session.Options.MCVRedeploy || MindControlledBy != NULL) {
+			return(false);
+		}
+	}
+	return(Class->UndeploysInto != NULL);
+}
+
+// FUNCTION: 0x0044F640
+Coord BuildingClass::Exit_Coord(int index) const
+{
+	if (Class->ExitCoordinate != (Coord const &)DAT_0089C848) {
+		return(Class->ExitCoordinate + PositionCoord);
+	}
+	return(Center_Coord());
+}
+
+// FUNCTION: 0x0044F6E0
+Cell BuildingClass::Check_Point(CheckPointType cp) const
+{
+	int xoffset = 6;
+	int yoffset = 5;
+	Cell cell = Center_Coord().As_Cell();
+
+	switch (cp) {
+		case CHECK_STACK:
+			xoffset = 0;
+			break;
+
+		case CHECK_CROSSWIND:
+			yoffset = 0;
+			break;
+
+		case CHECK_DOWNWIND:
+		default:
+			break;
+	}
+
+	if ((cell.X - Map.MapRect.X) > Map.MapRect.Width/2)  {
+		xoffset = -xoffset;
+	}
+
+	if ((cell.Y - Map.MapRect.Y) > Map.MapRect.Height/2)  {
+		yoffset = -yoffset;
+	}
+
+	return(cell + Cell(xoffset, yoffset));
+}
+
+// FUNCTION: 0x0044F7A0
+void BuildingClass::Update_Radar_Spied(void)
+{
+	House->RadarSpied = 0;
+	int count = House->Buildings.Count();
+	for (int index = 0; index < count; index++) {
+		BuildingClass * obj = House->Buildings[index];
+		if (obj && !obj->IsInLimbo && obj->Class->IsRadar) {
+			House->RadarSpied |= obj->SpiedBy;
+		}
+	}
+	Map.Flag_To_Redraw(GS_REDRAW_ALL);
+}
+
+char const * const BuildingClass::INI_NAME = "Structures";
+
+// FUNCTION: 0x0044FE60
+void BuildingClass::Write_All(CCINIClass & ini)
+{
+	ini.Clear(INI_NAME);
+
+	for (int index = 0; index < Buildings.Count(); index++) {
+		BuildingClass * building = Buildings[index];
+		if (!building->IsInLimbo && !building->Class->IsLaserFence) {
+			building->Write_INI(ini);
+		}
+	}
+}
+
+// FUNCTION: 0x0044FEC0
+void BuildingClass::Write_INI(CCINIClass & ini)
+{
+	char	uname[10];
+	char	buf[127];
+
+	sprintf(uname, "%d", Fetch_ID());
+	int behavior;
+	if (BuildingLight != NULL) {
+		behavior = BuildingLight->Behavior;
+	} else {
+		behavior = 0;
+	}
+
+	char const * tag_name;
+	if (Tag != NULL && Tag->Class != NULL) {
+		tag_name = (char const *)Tag->Class->IniName;
+	} else {
+		tag_name = "None";
+	}
+	sprintf(buf, "%s,%s,%d,%d,%d,%d,%s,%d,%d,%d,%d,%d",
+		(char const *)House->IniName,
+		(char const *)Class->IniName,
+		(int)(HealthRatio*256 + .5),
+		Get_Cell().X,
+		Get_Cell().Y,
+		PrimaryFacing.Current().As_Dir256(),
+		tag_name,
+		IsAllowedToSell,
+		IsToRebuild,
+		IsOn,
+		UpgradeLevel,
+		behavior
+	);
+
+	for (int i = 0; i < BUILDING_UPGRADE_MAX; i++) {
+		sprintf(&buf[strlen(buf)], ",%s", Upgrades[i] != NULL ? (char const *)Upgrades[i]->IniName : "None");
+	}
+
+	sprintf(&buf[strlen(buf)], ",%d", IsToRepair != 0);
+	sprintf(&buf[strlen(buf)], ",%d", IsNominal != 0);
+	ini.Put_String(INI_NAME, uname, buf);
+}
+
+// FUNCTION: 0x004500A0
+Coord BuildingClass::Target_Coord(void) const
+{
+	Coord center = Center_Coord();
+	return(Class->TargetCoordOffset + center);
+}
+
+// FUNCTION: 0x004500F0
+void BuildingClass::Factory_AI(void)
+{
+	if (Factory != NULL && Factory->Has_Completed() && PlacementDelay == 0) {
+		TechnoClass * product = Factory->Get_Object();
+
+		switch (Exit_Object(product, CELL_NONE)) {
+			case 0:
+				if (product->Fetch_RTTI() == RTTI_BUILDING && ((BuildingClass *)product)->Class->Naval) {
+					product->Owner_HouseClass()->NodeLogic_1F0 = false;
+				}
+				Factory->Abandon();
+				delete (FactoryClass *)Factory;
+				Factory = 0;
+				break;
+
+			case 1:
+				PlacementDelay = int(Rule->PlacementDelay * TICKS_PER_MINUTE);
+				break;
+
+			case 2:
+				VocClass::PlayIndexAtPos(Class->CreateUnitSound, PositionCoord, 0);
+				House->Just_Built(product);
+				Factory->Completed();
+				delete (FactoryClass *)Factory;
+				Factory = 0;
+				break;
+
+			default:
+				break;
+		}
+	}
+
+	if (House->IsStarted && Get_Mission() != MISSION_CONSTRUCTION && Get_Mission() != MISSION_DECONSTRUCTION && Class->ToBuild != RTTI_NONE) {
+		if (Factory != NULL) {
+			if (PlacementDelay == 0 && !Factory->Is_Building()) {
+				Factory->Abandon();
+				delete (FactoryClass *)Factory;
+				Factory = 0;
+			}
+		} else {
+			if (House->IsStarted && House->Available_Money() > 10) {
+				TechnoTypeClass const * techno = House->Suggest_New_Object(Class->ToBuild, false);
+				if (techno != NULL) {
+					if (techno->Fetch_RTTI() == RTTI_UNITTYPE) {
+						if (Class->Naval) {
+							if (!techno->Naval) return;
+						}
+						if (techno->Naval) {
+							if (!Class->Naval) return;
+						}
+					}
+					Factory = new FactoryClass;
+					if (Factory != NULL) {
+						if (!Factory->Set(*techno, *House, false)) {
+							delete (FactoryClass *)Factory;
+							Factory = 0;
+						} else {
+							House->Production_Begun(Factory->Get_Object());
+							Factory->Start(false);
+						}
+					}
+				}
+			}
+		}
 	}
 }
 

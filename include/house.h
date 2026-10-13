@@ -382,6 +382,7 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 		virtual LONG STDMETHODCALLTYPE Apparent_Category_Power(CategoryType category) override;
 		virtual CellStruct STDMETHODCALLTYPE Apparent_Base_Center() override;
 		Cell Get_Base_Center(void) const;
+		Coord Get_Base_Coord(void);
 		bool IonSensitivesShouldBeOffline(void) const;
 		virtual bool STDMETHODCALLTYPE Is_Powered() override;
 
@@ -399,8 +400,10 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 		void Super_Weapon_Handler(void);
 		int * Factory_Counter(RTTIType rtti);
 		int Factory_Count(RTTIType rtti) const;
+		void CalculateCostMultipliers(void);
 		double FUN_0050C050(TechnoTypeClass const * type) const;
 		double FUN_0050C0A0(TechnoTypeClass const * type) const;
+		bool FUN_0050B370(TechnoTypeClass const * type);
 		int FUN_00500910(RTTIType rtti, bool naval) const;
 		DiffType Assign_Handicap(DiffType handicap);
 		AbstractClass * Find_Juicy_Target(Coord const & coord) const;
@@ -549,6 +552,8 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 		void Lost_Firestorm_Generator(void);
 
 		bool Can_Make_Money(void);
+		void MindControlBuildings(HouseClass * controller);
+		void RelinquishBuildings(HouseClass * controller);
 		TechnoTypeClass const * FirstBuildableFromArray(DynamicVectorClass<BuildingTypeClass const *> const & list) const;
 
 		static void One_Time(void);
@@ -563,6 +568,7 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 		bool Is_Human_Player(void) const;
 
 		bool Can_Build_Here(BuildingTypeClass *building,  Cell const & cell);
+		double GetArmorMultiplier(TechnoTypeClass const * type) const;
 		float FUN_0050BDF0(TechnoTypeClass const * type) const;
 		float FUN_0050BEB0(TechnoTypeClass const * type) const;
 		bool FUN_0050B730(void) const;

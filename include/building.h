@@ -211,7 +211,7 @@ class BuildingClass : public TechnoClass
 		virtual Coord Center_Coord(void) const override;
 		virtual Coord Destination_Coord(TechnoClass * docker = NULL) const override;
 		virtual int Sort_Y(void) const override;
-		virtual Coord Exit_Coord(void) const override;
+		virtual Coord Exit_Coord(int index) const override;
 
 		Coord Voxel_Fire_Coord(int which, bool just_fired) const;
 
@@ -258,6 +258,7 @@ class BuildingClass : public TechnoClass
 		bool IsBeingDrained(void) const;
 		void FireLaser(Coord coords);
 		bool FUN_00448070(bool demote);
+		void FUN_0044EB60(FactoryClass * factory);
 		void Update_Radar_Spied(void);
 		void Spied_By(HouseClass * house);
 

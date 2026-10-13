@@ -23,6 +23,10 @@ class TechnoClass;
 
 extern double __cdecl FUN_004CAC40(double);
 extern Rect __fastcall FUN_0072AD20(void);
+Coord __fastcall FUN_00633BC0(EventClass const & event);
+class xTargetClass;
+class AbstractClass;
+extern AbstractClass * __fastcall FUN_006E6E20(xTargetClass * target);
 extern ConvertClass * FileSystem_MOUSE_PAL;
 extern ShapeSet * DAT_00ABF294;
 
@@ -218,3 +222,117 @@ DynamicVectorClass<TechnoClass *> PlanTechnos::Technos;
 DynamicVectorClass<PlanningNodeClass *> PlanningNodeClass::Unknown1;
 DynamicVectorClass<PlanningNodeClass *> PlanningNodeClass::Unknown2;
 DynamicVectorClass<PlanningTokenClass *> PlanTokens::Array;
+
+#include "event.h"
+#include "target.h"
+
+class PlanEvent
+{
+	public:
+		EventClass Event;
+		int Index;
+		int Link;
+
+		PlanEvent(void);
+		void Set_Event(EventClass const & event);
+		void Set_Index(int index);
+		void Set_Link(int link);
+		void Clear_Index(void);
+		int Next_Index(void);
+		int Prev_Index(void);
+		EventClass * Get_Event(EventClass * event);
+		int Get_Index(void);
+		int Get_Link(void);
+		Coord Get_Coord(void);
+};
+
+// FUNCTION: 0x00633AC0
+PlanEvent::PlanEvent(void) : Index(0), Link(-1)
+{
+}
+
+// FUNCTION: 0x00633AE0
+void PlanEvent::Set_Event(EventClass const & event)
+{
+	Event = event;
+}
+
+// FUNCTION: 0x00633B00
+void PlanEvent::Set_Index(int index)
+{
+	Index = index;
+}
+
+// FUNCTION: 0x00633B10
+void PlanEvent::Set_Link(int link)
+{
+	Link = link;
+}
+
+// FUNCTION: 0x00633B20
+void PlanEvent::Clear_Index(void)
+{
+	Index = 0;
+}
+
+// FUNCTION: 0x00633B30
+int PlanEvent::Next_Index(void)
+{
+	return ++Index;
+}
+
+// FUNCTION: 0x00633B40
+int PlanEvent::Prev_Index(void)
+{
+	return --Index;
+}
+
+// FUNCTION: 0x00633B50
+EventClass * PlanEvent::Get_Event(EventClass * event)
+{
+	*event = Event;
+	return event;
+}
+
+// FUNCTION: 0x00633B70
+int PlanEvent::Get_Index(void)
+{
+	return Index;
+}
+
+// FUNCTION: 0x00633B80
+int PlanEvent::Get_Link(void)
+{
+	return Link;
+}
+
+// FUNCTION: 0x00633B90
+Coord PlanEvent::Get_Coord(void)
+{
+	return Coord(FUN_00633BC0(Event));
+}
+
+// FUNCTION: 0x00633BC0
+Coord __fastcall FUN_00633BC0(EventClass const & event)
+{
+	if (event.Type == EventClass::MEGAMISSION) {
+		AbstractClass * object;
+		if (event.Data.MegaMission.Target.Is_Valid()) {
+			object = FUN_006E6E20((xTargetClass *)&event.Data.MegaMission.Target);
+			if (object) {
+				return object->As_Coord();
+			}
+		} else if (event.Data.MegaMission.Follow.Is_Valid()) {
+			object = FUN_006E6E20((xTargetClass *)&event.Data.MegaMission.Follow);
+			if (object) {
+				return object->As_Coord();
+			}
+		} else if (event.Data.MegaMission.Destination.Is_Valid()) {
+			object = FUN_006E6E20((xTargetClass *)&event.Data.MegaMission.Destination);
+			if (object) {
+				return object->As_Coord();
+			}
+		}
+	}
+	return Coord(-1, -1, -1);
+}

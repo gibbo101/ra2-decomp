@@ -27,6 +27,7 @@
 #include "dsurface.h"
 #include "fog.h"
 #include "globals.h"
+#include "goptions.h"
 #include "houstype.h"
 #include "incdec.h"
 #include "infatype.h"
@@ -83,13 +84,6 @@ CellClass::CellClass(NoInitClass const & x) :
 	Passability(PASSABLE_LAND)
 {
 
-}
-
-inline void CellClass::Dec_Drawer_Ref_Count(LightConvertClass * convert) const
-{
-	if (GameActive) {
-		convert->Remove_Reference();
-	}
 }
 
 // FUNCTION: 0x0047BB60
@@ -1588,11 +1582,6 @@ void CellClass::Recalc_Passability(void)
 	Passability = PASSABLE_LAND;
 }
 
-inline void CellClass::Inc_Drawer_Ref_Count(LightConvertClass * convert) const
-{
-	convert->Add_Reference();
-}
-
 // FUNCTION: 0x00483E30
 void CellClass::Init_Drawer(LightConvertClass * drawer, int intensity, int ambient, int brightness, int tile_brightness, int alt_brightness)
 {
@@ -1660,6 +1649,250 @@ void CellClass::Init_Drawer(LightConvertClass * drawer, int intensity, int ambie
 	BlueTint = NORMAL_LIGHT;
 	Intensity = 0x10000;
 	Ambient = 0;
+}
+
+class PsyDom
+{
+	public:
+		static bool Active(void);
+};
+
+class NukeFlash
+{
+	public:
+		static bool IsFadingIn(void);
+};
+
+// FUNCTION: 0x00484050
+void CellClass::Pick_Drawer(LightConvertClass * & drawer, int & intensity, int & ambient, int & brightness, int & tile_brightness, int & alt_brightness) const
+{
+	intensity = 0x10000;
+	ambient = 0;
+	brightness = NORMAL_LIGHT;
+	tile_brightness = NORMAL_LIGHT;
+	alt_brightness = NORMAL_LIGHT;
+
+	int red_tint, green_tint, blue_tint;
+
+	if (CellID != Cell(0, 0) && CellID != Cell(-1, -1)) {
+		Init_Light(intensity, ambient, brightness, tile_brightness, alt_brightness, red_tint, green_tint, blue_tint);
+
+		bool new_drawer = false;
+		if (Drawer != NULL) {
+			int r_clamped = red_tint, g_clamped = green_tint, b_clamped = blue_tint;
+			Clamp_Tile_RGB(r_clamped, g_clamped, b_clamped);
+			if (Drawer->NormalRedTint == r_clamped &&
+				Drawer->NormalGreenTint == g_clamped &&
+				Drawer->NormalBlueTint == b_clamped) {
+				drawer = Drawer;
+			} else {
+				new_drawer = true;
+			}
+		} else {
+			new_drawer = true;
+		}
+
+		if (new_drawer) {
+			drawer = IsometricTileTypeClass::Find_Or_Make_Drawer(red_tint, green_tint, blue_tint);
+		}
+
+	} else {
+		drawer = IsometricTileTypeClass::Find_Or_Make_Drawer(NORMAL_LIGHT, NORMAL_LIGHT, NORMAL_LIGHT);
+	}
+}
+
+// FUNCTION: 0x00484180
+void CellClass::Init_Light(int & intensity, int & ambient, int & brightness, int & tile_brightness, int & alt_brightness, int & red_tint, int & green_tint, int & blue_tint) const
+{
+	if (CellID != Cell(0, 0) && CellID != Cell(-1, -1)) {
+
+		brightness = NORMAL_LIGHT * Scen->CurrentAmbientLight / 100;
+		red_tint = NORMAL_LIGHT * Scen->NormalLighting.RedTint / 100;
+		green_tint = NORMAL_LIGHT * Scen->NormalLighting.GreenTint / 100;
+		blue_tint = NORMAL_LIGHT * Scen->NormalLighting.BlueTint / 100;
+		ambient = 0;
+
+		for (int i = 0; i < LightSources.Count(); i++) {
+			LightSourceClass * light = LightSources[i];
+			if (light->Is_Enabled() && Options.DetailLevel >= light->DetailLevel) {
+				Coord cc = Cell_Coord();
+				unsigned int dx = cc.X - ((Coord)light->Position).X;
+				unsigned int dy = cc.Y - ((Coord)light->Position).Y;
+				unsigned int visibility = light->Visibility;
+				if (dx * dx + dy * dy <= visibility * visibility) {
+					dx = cc.X - ((Coord)light->Position).X;
+					double fdx = (int)dx;
+					dy = cc.Y - ((Coord)light->Position).Y;
+					double fdy = (int)dy;
+					unsigned int dist = (unsigned int)fastmath::sqrt(fdx * fdx + fdy * fdy);
+					if (dist <= visibility) {
+						int num = (NORMAL_LIGHT * visibility - NORMAL_LIGHT * dist) / visibility;
+						ambient += (num * light->Intensity) / NORMAL_LIGHT;
+						red_tint += (num * light->RedTint) / NORMAL_LIGHT;
+						green_tint += (num * light->GreenTint) / NORMAL_LIGHT;
+						blue_tint += (num * light->BlueTint) / NORMAL_LIGHT;
+					}
+				}
+			}
+		}
+
+		brightness += ambient;
+		alt_brightness = brightness;
+
+		if (IonStormClass::Is_Ion_Storm_Active()) {
+			brightness += Height * Scen->IonLighting.LevelLight - Scen->IonLighting.GroundLight;
+			alt_brightness += (Height + BRIDGE_CELL_HEIGHT) * Scen->IonLighting.LevelLight - Scen->IonLighting.GroundLight;
+		} else if (PsyDom::Active()) {
+			brightness += Height * Scen->NukeLighting.LevelLight - Scen->DominatorLighting.GroundLight;
+			alt_brightness += (Height + BRIDGE_CELL_HEIGHT) * Scen->DominatorLighting.LevelLight - Scen->DominatorLighting.GroundLight;
+		} else if (NukeFlash::IsFadingIn()) {
+			brightness += Height * Scen->NukeLighting.LevelLight - Scen->NukeLighting.GroundLight;
+			alt_brightness += (Height + BRIDGE_CELL_HEIGHT) * Scen->NukeLighting.LevelLight - Scen->NukeLighting.GroundLight;
+		} else {
+			brightness += Height * Scen->NormalLighting.LevelLight - Scen->NormalLighting.GroundLight;
+			alt_brightness += (Height + BRIDGE_CELL_HEIGHT) * Scen->NormalLighting.LevelLight - Scen->NormalLighting.GroundLight;
+		}
+
+		brightness = MIN(brightness, 2000);
+		tile_brightness = brightness;
+
+		Adjust_Tile_RGB(intensity, tile_brightness, red_tint, green_tint, blue_tint);
+
+		alt_brightness = (alt_brightness * intensity) >> 16;
+		alt_brightness = MIN(alt_brightness, 2000);
+
+		brightness = MAX(brightness, 0);
+		tile_brightness = MAX(tile_brightness, 0);
+		alt_brightness = MAX(alt_brightness, 0);
+
+	} else {
+		intensity = 0x10000;
+		ambient = 0;
+		brightness = NORMAL_LIGHT;
+		tile_brightness = NORMAL_LIGHT;
+		alt_brightness = NORMAL_LIGHT;
+		red_tint = NORMAL_LIGHT;
+		green_tint = NORMAL_LIGHT;
+		blue_tint = NORMAL_LIGHT;
+	}
+}
+
+// FUNCTION: 0x00484680
+void CellClass::Recalc_Light(void)
+{
+	Brightness = Ambient + (NORMAL_LIGHT * Scen->CurrentAmbientLight) / 100;
+	AltBrightness = Brightness;
+
+	if (IonStormClass::Is_Ion_Storm_Active()) {
+		Brightness += Height * Scen->IonLighting.LevelLight - Scen->IonLighting.GroundLight;
+		AltBrightness += (Height + BRIDGE_CELL_HEIGHT) * Scen->IonLighting.LevelLight - Scen->IonLighting.GroundLight;
+	} else if (PsyDom::Active()) {
+		Brightness += Height * Scen->DominatorLighting.LevelLight - Scen->DominatorLighting.GroundLight;
+		AltBrightness += (Height + BRIDGE_CELL_HEIGHT) * Scen->DominatorLighting.LevelLight - Scen->DominatorLighting.GroundLight;
+	} else if (NukeFlash::IsFadingIn()) {
+		Brightness += Height * Scen->NukeLighting.LevelLight - Scen->NukeLighting.GroundLight;
+		AltBrightness += (Height + BRIDGE_CELL_HEIGHT) * Scen->NukeLighting.LevelLight - Scen->NukeLighting.GroundLight;
+	} else {
+		Brightness += Height * Scen->NormalLighting.LevelLight - Scen->NormalLighting.GroundLight;
+		AltBrightness += (Height + BRIDGE_CELL_HEIGHT) * Scen->NormalLighting.LevelLight - Scen->NormalLighting.GroundLight;
+	}
+
+	TileBrightness = (Brightness * Intensity) >> 16;
+	AltBrightness = (AltBrightness * Intensity) >> 16;
+
+	Brightness = MIN(Brightness, 2000);
+	TileBrightness = MIN(TileBrightness, 2000);
+	AltBrightness = MIN(AltBrightness, 2000);
+
+	Brightness = MAX(Brightness, 0);
+	TileBrightness = MAX(TileBrightness, 0);
+	AltBrightness = MAX(AltBrightness, 0);
+}
+
+// FUNCTION: 0x00484A80
+void CellClass::Inc_Drawer_Ref_Count(LightConvertClass * convert) const
+{
+	convert->Add_Reference();
+}
+
+// FUNCTION: 0x00484A90
+void CellClass::Dec_Drawer_Ref_Count(LightConvertClass * convert) const
+{
+	if (GameActive) {
+		convert->Remove_Reference();
+	}
+}
+
+// FUNCTION: 0x00484AB0
+bool CellClass::Has_Tunnel(void) const
+{
+	return(Tube >= TUBE_FIRST && Tube < Tubes.Count() && Land == LAND_TUNNEL);
+}
+
+// FUNCTION: 0x00484D60
+bool CellClass::Is_Near_Tunnel_ES(void) const
+{
+	if (Has_Tunnel()) {
+		return(true);
+	}
+
+	CellClass const * south_east = &Adjacent_Cell(FACING_SE);
+	if (south_east != NULL) {
+		CellClass const * south_east2 = &south_east->Adjacent_Cell(FACING_SE);
+		if (south_east2 != NULL) {
+			if (south_east->Has_Tunnel() || south_east2->Has_Tunnel()) {
+				return(true);
+			}
+
+			CellClass const * south = &south_east->Adjacent_Cell(FACING_S);
+			CellClass const * east = &south_east->Adjacent_Cell(FACING_E);
+			if (south != NULL && east != NULL) {
+				if (south->Has_Tunnel() || east->Has_Tunnel()) {
+					return(true);
+				}
+			}
+		}
+	}
+
+	return(false);
+}
+
+// FUNCTION: 0x00484F10
+bool CellClass::Can_Enter_Tunnel(FootClass const * foot) const
+{
+	return(true);
+}
+
+// FUNCTION: 0x00484F20
+TubeClass * CellClass::Get_Tunnel(void) const
+{
+	if (Tube >= TUBE_FIRST && Tube < Tubes.Count()) {
+		return(Tubes[Tube]);
+	}
+	return(NULL);
+}
+
+// FUNCTION: 0x00484F50
+void CellClass::Force_New_Slope_For_Occupiers(void) const
+{
+	int count = 0;
+	ObjectClass * occupier = Cell_Occupier();
+	ObjectClass * occupiers[10];
+
+	while (occupier) {
+		if (count >= 10) break;
+		occupiers[count] = occupier;
+		occupier = occupier->Next;
+		count++;
+	}
+
+	for (int i = 0; i < count; i++) {
+		occupier = occupiers[i];
+		occupier->HeightAGL = 0;
+		if (occupier->RTTI == RTTI_UNIT || occupier->RTTI == RTTI_AIRCRAFT) {
+			((FootClass *)occupier)->Locomotion->Force_New_Slope(Ramp);
+		}
+	}
 }
 
 // FUNCTION: 0x00485200

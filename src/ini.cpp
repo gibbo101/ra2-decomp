@@ -237,6 +237,13 @@ char const * INIClass::Get_Entry(char const * section, int index) const
 	return(NULL);
 }
 
+// FUNCTION: 0x00526D90
+Wstring INIClass::Get_Entry(Wstring const & section, int index) const
+{
+	return Wstring(Get_Entry(section.get(), index));
+}
+
+
 // FUNCTION: 0x00526E80
 bool INIClass::Put_UUBlock(char const * section, void const * block, int len)
 {
@@ -265,6 +272,49 @@ bool INIClass::Put_UUBlock(char const * section, void const * block, int len)
 	return(true);
 }
 
+inline int INIClass::Get_String(char const * section, char const * entry, char const * defvalue, char * buffer, int size) const
+{
+	if (buffer == NULL || size < 2 || section == NULL || entry == NULL) return(0);
+
+	INIEntry * entryptr = Find_Entry(section, entry);
+	if (entryptr != NULL && entryptr->Value != NULL) {
+		defvalue = entryptr->Value;
+	}
+
+	if (defvalue == NULL) {
+		buffer[0] = '\0';
+		return(0);
+	} else {
+		strncpy(buffer, defvalue, size);
+		buffer[size-1] = '\0';
+		strtrim(buffer);
+		return(strlen(buffer));
+	}
+}
+
+// FUNCTION: 0x00526FB0
+int INIClass::Get_UUBlock(char const * section, void * block, int len) const
+{
+	if (section == NULL) return(0);
+
+	Base64Pipe b64pipe(Base64Pipe::DECODE);
+	BufferPipe bpipe(block, len);
+
+	b64pipe.Put_To(&bpipe);
+
+	int total = 0;
+	int counter = Entry_Count(section);
+	for (int index = 0; index < counter; index++) {
+		char buffer[128];
+
+		int length = Get_String(section, Get_Entry(section, index), "=", buffer, sizeof(buffer));
+		int outcount = b64pipe.Put(buffer, length);
+		total += outcount;
+	}
+	total += b64pipe.End();
+	return(total);
+}
+
 // FUNCTION: 0x005275C0
 bool INIClass::Put_Int(char const * section, char const * entry, int number, int format)
 {
@@ -285,6 +335,36 @@ bool INIClass::Put_Int(char const * section, char const * entry, int number, int
 			break;
 	}
 	return(Put_String(section, entry, buffer));
+}
+
+// FUNCTION: 0x00527640
+bool INIClass::Put_Int(Wstring const & section, Wstring const & entry, int number, int format)
+{
+	char buffer[MAX_LINE_LENGTH];
+	char * entrystr = entry.get();
+	char * sectionstr = section.get();
+
+	switch (format) {
+		default:
+		case 0:
+			sprintf(buffer, "%d", number);
+			break;
+
+		case 1:
+			sprintf(buffer, "%Xh", number);
+			break;
+
+		case 2:
+			sprintf(buffer, "$%X", number);
+			break;
+	}
+	return(Put_String(sectionstr, entrystr, buffer));
+}
+
+// FUNCTION: 0x005278F0
+int INIClass::Get_Int(Wstring const & section, Wstring const & entry, int defvalue) const
+{
+	return(Get_Int(section.get(), entry.get(), defvalue));
 }
 
 // FUNCTION: 0x00527B90
@@ -308,6 +388,17 @@ bool INIClass::Put_Rect(char const * section, char const * entry, Rect const & v
 
 	sprintf(buffer, "%d,%d,%d,%d", value.X, value.Y, value.Width, value.Height);
 	return(Put_String(section, entry, buffer));
+}
+
+// FUNCTION: 0x00527C60
+bool INIClass::Put_Rect(Wstring const & section, Wstring const & entry, Rect const & value)
+{
+	char buffer[64];
+	char * entrystr = entry.get();
+	char * sectionstr = section.get();
+
+	sprintf(buffer, "%d,%d,%d,%d", value.X, value.Y, value.Width, value.Height);
+	return(Put_String(sectionstr, entrystr, buffer));
 }
 
 // FUNCTION: 0x00528170

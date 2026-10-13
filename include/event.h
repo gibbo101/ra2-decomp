@@ -111,13 +111,16 @@ class EventClass
 			} General;
 			struct {
 				xTargetClass	Whom;
-				MissionType	Mission;
+				unsigned char	Mission;
+				unsigned char	: 8;
 				xTargetClass	Target;
 				xTargetClass	Destination;
+				xTargetClass	Follow;
+				bool			IsPlanningEvent;
 			} MegaMission;
 			struct {
 				xTargetClass	Whom;
-				MissionType	Mission;
+				unsigned char	Mission;
 				xTargetClass	Target;
 				xTargetClass	Destination;
 				SpeedType	Speed;
@@ -179,7 +182,7 @@ class EventClass
 		EventClass(int index, unsigned char type, int val);
 		EventClass(int index, unsigned char type, Cell const & cell);
 		EventClass(int index, unsigned char type, TargetClass src, TargetClass dest);
-		EventClass(int index, TargetClass src, MissionType mission, TargetClass target, TargetClass destination);
+		EventClass(int index, TargetClass src, MissionType mission, TargetClass target, TargetClass destination, TargetClass follow);
 
 		EventClass(int index, TargetClass src, MissionType mission, TargetClass target, TargetClass destination, SpeedType speed, MPHType maxspeed);
 

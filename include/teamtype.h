@@ -69,6 +69,10 @@ class TeamTypeClass : public AbstractTypeClass
 
 		int Get_Group(void) const;
 		Cell Get_Origin(void) const;
+		Cell Get_Transport_Origin(void) const;
+		void Process_Task_Force(void);
+		static void Process_All_Task_Forces(void);
+		HouseClass * Get_House(void) const;
 
 		bool Can_Recruit(FootClass * foot, HouseClass * house) const;
 		void Flash(int);

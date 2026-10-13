@@ -115,7 +115,7 @@ class AircraftClass : public FootClass, public IFlyControl
 		virtual void Debug_Dump(MonoClass *mono) const override;
 #endif
 
-		static void Read_INI(CCINIClass const & ini);
+		static void Read_INI(CCINIClass & ini);
 		static void Write_INI(CCINIClass & ini);
 
 	public:

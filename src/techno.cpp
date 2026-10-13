@@ -29,12 +29,14 @@
 #include "bullettype.h"
 #include "ccrand.h"
 #include "cell.h"
+#include "combat.h"
 #include "data.h"
 #include "dbgprint.h"
 #include "dialog.h"
 #include "draw.h"
 #include "dsurface.h"
 #include "ebolt.h"
+#include "event.h"
 #include "fog.h"
 #include "globals.h"
 #include "goptions.h"
@@ -56,6 +58,7 @@
 #include "partsys.h"
 #include "psystype.h"
 #include "queue.h"
+#include "radbeam.h"
 #include "revent.h"
 #include "rules.h"
 #include "scheme.h"
@@ -1690,6 +1693,243 @@ EBolt * TechnoClass::CreateEBolt(ObjectClass * target, WeaponTypeClass * weapon,
 
 	ebolt->Fire(source_coord, dest, zadjust);
 	return(ebolt);
+}
+
+// FUNCTION: 0x006FD570
+EBolt * TechnoClass::FireEBolt(ObjectClass * target)
+{
+	int which = What_Weapon_Should_I_Use(target);
+	WeaponTypeClass * weapon = Get_Class_Weapon_Data(which)->Weapon;
+	Coord source = Fire_Coord(which, Coord(0, 0, 0));
+	EBolt * ebolt = CreateEBolt(target, weapon, source);
+	if (ebolt != NULL && Fetch_RTTI() == RTTI_UNIT && IsActive && ((UnitClass *)this)->ElectricBolt == NULL) {
+		((UnitClass *)this)->ElectricBolt = ebolt;
+		ebolt->SetOwner(this, which);
+	}
+	return(ebolt);
+}
+
+static inline TechnoClass * As_Techno(AbstractClass * object)
+{
+	if (object != NULL && (object->AbstractFlags & 1)) {
+		return((TechnoClass *)object);
+	}
+	return(NULL);
+}
+
+// FUNCTION: 0x006FD620
+RadBeam * TechnoClass::CreateRadBeam(ObjectClass * target, int type)
+{
+	RadBeam * beam = RadBeam::Allocate(1);
+	int zadjust = 0;
+	Coord source = Fire_Coord(0, Coord(0, 0, 0));
+	Coord render = Render_Coord();
+	if (source.Y != render.Y) {
+		Point2D p1 = TacticalMap->Coord_To_Pixel_Absolute(source);
+		Point2D p2 = TacticalMap->Coord_To_Pixel_Absolute(render);
+		zadjust = p1.Y - p2.Y;
+	}
+
+	Coord dest;
+	if (target == NULL) goto none;
+	if (!(target->AbstractFlags & 2)) {
+none:
+		dest = target->As_Coord();
+	} else {
+		dest = target->Target_Coord();
+	}
+
+	RGBClass color;
+	switch (type) {
+		case 1:
+			color = Rule->ChronoBeamColor;
+			break;
+
+		case 2:
+			color = Rule->MagnaBeamColor;
+			break;
+
+		default:
+			color = Rule->RadColor;
+			break;
+	}
+
+	beam->FUN_006594A0(source);
+	beam->FUN_006594C0(dest);
+	beam->FUN_006594E0(15);
+	beam->FUN_006594F0(40.0);
+	beam->FUN_00659470(color);
+	beam->FUN_00659490(zadjust);
+	if (type == 2) {
+		beam->FUN_00659540(1);
+		beam->FUN_00659550(true);
+		if (target != NULL && (target->AbstractFlags & 1)) {
+			beam->Owner = As_Techno(target);
+			As_Techno(target)->FiringRadBeam = beam;
+		}
+	}
+	return(beam);
+}
+
+// FUNCTION: 0x006FDA00
+DirType TechnoClass::Barrel_Pitch(AbstractClass * target) const
+{
+	DirType pitch(Dir256(TClass->FireAngle));
+	if (target != NULL) {
+		Coord predicted = Predict_Target_Coord();
+		int which = TClass->HasMultipleTurrets() ? CurrentWeaponNumber : 0;
+		Coord coord = predicted - Turret_Coord(which);
+		WeaponTypeClass const * weapon = Get_Class_Weapon_Data(which)->Weapon;
+		double gravity = Rule->Gravity;
+		BulletTypeClass const * bullet = weapon->Bullet;
+		if (bullet != NULL && bullet->IsFloater) {
+			gravity = Get_Floater_Gravity();
+		}
+		int distance = fastmath::sqrt(pow(coord.X, 2) + pow(coord.Y, 2));
+		int speed = weapon->Get_Speed(distance);
+		if (!Calculate_Projectile_Pitch(Should_Use_High_Arc(which), speed, distance, coord.Z, gravity, pitch)) {
+			pitch = DIR_NW;
+		}
+	}
+	return(pitch);
+}
+
+// FUNCTION: 0x006FDB80
+int TechnoClass::Estimate_Damage(TechnoClass * target, WeaponTypeClass const * weapon) const
+{
+	if (target == NULL) {
+		return(0);
+	}
+	int damage = weapon->Attack;
+	if (weapon->IsSonic || weapon->UseFireParticles) {
+		return(0);
+	}
+
+	if (damage > 0) {
+		damage = (int)(House->FirepowerBias * FirepowerBias * damage);
+		if (Has_Ability(ABILITY_FIREPOWER)) {
+			damage = (int)(damage * Rule->VeteranCombat);
+		}
+		damage = (int)((double)damage / (target->House->GetArmorMultiplier(Techno_Type_Class()) * ArmorBias));
+		if (target->Has_Ability(ABILITY_STRONGER)) {
+			damage = (int)(damage / Rule->VeteranArmor);
+		}
+		if (damage < 1) {
+			damage = 1;
+		}
+		damage = Modify_Damage(damage, weapon->WarheadPtr, target->Class_Of()->Armor, 0);
+	}
+	return(damage);
+}
+
+// FUNCTION: 0x006FF950
+void TechnoClass::FUN_006FF950(void)
+{
+}
+
+bool FUN_00731BF0(void);
+bool FUN_00637AA0(void);
+void FUN_00637DD0(EventClass event);
+
+// FUNCTION: 0x006FFBE0
+bool TechnoClass::Player_Assign_Mission(MissionType order, AbstractClass * target, AbstractClass * destination, AbstractClass * nearby)
+{
+	bool attack_move = FUN_00731BF0() && CanAttackOnTheMove();
+	if ((order == MISSION_MOVE || order == MISSION_ATTACK) && attack_move) {
+		order = MISSION_ATTACK_MOVE;
+	}
+
+	if (FUN_00637AA0()) {
+		EventClass event(PlayerPtr->HeapID, TargetClass(this), order, target, destination, nearby);
+		FUN_00637DD0(event);
+		return(false);
+	}
+
+	if (MoveFeedback) {
+		if (order == MISSION_HARVEST) {
+			VoiceHarvest();
+		} else if (order == MISSION_ATTACK) {
+			Response_Attack(target);
+		} else if (order == MISSION_MOVE || order == MISSION_ATTACK_MOVE) {
+			Response_Move();
+		} else if (order == MISSION_ENTER) {
+			VoiceEnter();
+		} else if (order == MISSION_CAPTURE) {
+			VoiceCapture();
+		} else if (order == MISSION_UNLOAD) {
+			VoiceDeploy();
+		} else if (Techno_Type_Class()->VoiceSpecialAttack.Count() > 0) {
+			QueueVoice(Techno_Type_Class()->VoiceSpecialAttack.Pick(NonCriticalRandomNumber()));
+		}
+	}
+
+	{
+		TargetClass dest(destination);
+		TargetClass targ(target);
+		Queue_Mission(TargetClass(this), order, targ, dest);
+	}
+	return(true);
+}
+
+void __fastcall FUN_00639FD0(EventClass * event);
+
+// FUNCTION: 0x006FFE00
+bool TechnoClass::ClickedEvent(int event)
+{
+	EventClass ev(PlayerPtr->HeapID, (unsigned char)event, TargetClass(this));
+	if (FUN_00637AA0()) {
+		FUN_00639FD0(&ev);
+		return(false);
+	}
+	OutList.Add(ev);
+	return(true);
+}
+
+// FUNCTION: 0x00700C40
+bool TechnoClass::Can_Player_Move(void) const
+{
+	if (!House->Is_Player_Control()) {
+		return(false);
+	}
+	if (IsUnderEMP()) {
+		return(false);
+	}
+	if (BunkerLinkedItem != NULL) {
+		return(false);
+	}
+	if (Techno_Type_Class()->Spawned) {
+		return(false);
+	}
+	if (IsParalyzed()) {
+		return(false);
+	}
+	if (!IsNotWarping()) {
+		return(false);
+	}
+	if (SlaveOwner != NULL) {
+		return(false);
+	}
+	if (Deactivated) {
+		return(false);
+	}
+	if (SpawnManager != NULL && SpawnManager->CountLaunchingSpawns() > 0) {
+		if (SpawnManager->CountLaunchingSpawns() < Techno_Type_Class()->SpawnsNumber) {
+			return(false);
+		}
+	}
+	return(true);
+}
+
+// FUNCTION: 0x00700D10
+bool TechnoClass::Can_Attack_Now(void) const
+{
+	if (this != NULL && Fetch_RTTI() == RTTI_UNIT) {
+		FootClass const * foot = (FootClass const *)this;
+		if ((foot->CurrentTube >= 0 && foot->Deploy_To_Fire()) || IsUnderEMP()) {
+			return(false);
+		}
+	}
+	return(true);
 }
 
 static inline TechnoClass * Cast_To_Techno(ObjectClass const * object)

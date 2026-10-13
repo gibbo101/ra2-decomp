@@ -117,6 +117,7 @@ TeamTypeClass::~TeamTypeClass(void)
 void __cdecl FUN_004068E0(char const * format, ...);
 bool FUN_00510F60(int index);
 HouseClass * FUN_00510ED0(int index);
+int __fastcall FUN_005889F0(int zone, int other);
 
 // FUNCTION: 0x006F09C0
 TeamClass * TeamTypeClass::Create_One_Of(HouseClass * house) const
@@ -339,11 +340,82 @@ Cell TeamTypeClass::Get_Origin(void) const
 	return(Scen->Get_Waypoint_Cell(Origin));
 }
 
+// FUNCTION: 0x006F18E0
+Cell TeamTypeClass::Get_Transport_Origin(void) const
+{
+	if (TransportOrigin == -1) {
+		return(CELL_NONE);
+	}
+	return(Scen->Get_Waypoint_Cell(TransportOrigin));
+}
+
+// FUNCTION: 0x006F1920
+TeamTypeClass * TeamTypeClass::Find_Or_Make(char const * name)
+{
+	return(TFind_Or_Make<TeamTypeClass>(name, Array));
+}
+
+// FUNCTION: 0x006F19B0
+void TeamTypeClass::Read_All(CCINIClass const & ini, INIScopeType scope)
+{
+	char buffer[32];
+
+	int len = ini.Entry_Count("TeamTypes");
+	for (int index = 0; index < len; index++) {
+		char const * entry = ini.Get_Entry("TeamTypes", index);
+		ini.Get_String("TeamTypes", entry, "", buffer, sizeof(buffer));
+		TeamTypeClass * ttptr = Find_Or_Make(buffer);
+		ttptr->Read_INI((CCINIClass &)ini);
+		ttptr->Scope = scope;
+	}
+}
+
+// FUNCTION: 0x006F1AB0
+void TeamTypeClass::Write_All(CCINIClass & ini, INIScopeType scope)
+{
+	char buffer[32];
+	int index;
+
+	int numtypes = ini.Entry_Count("TeamTypes");
+	for (index = 0; index < numtypes; index++) {
+		char const * entry = ini.Get_Entry("TeamTypes", index);
+		ini.Get_String("TeamTypes", entry, "", buffer, sizeof(buffer));
+		ini.Clear(buffer);
+	}
+	ini.Clear("TeamTypes");
+
+	int i = 0;
+	for (index = 0; index < Array.Count(); index++) {
+		if (Array[index]->Scope == scope) {
+			sprintf(buffer, "%d", i++);
+			ini.Put_String("TeamTypes", buffer, (char const *)Array[index]->IniName);
+			Array[index]->Write_INI(ini);
+		}
+	}
+}
+
 // FUNCTION: 0x006F1B90
 HRESULT STDMETHODCALLTYPE TeamTypeClass::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
 	if (SUCCEEDED(result)) {
+		result = S_OK;
+	}
+	return(result);
+}
+
+// FUNCTION: 0x006F1BB0
+HRESULT STDMETHODCALLTYPE TeamTypeClass::Load(IStream * stream)
+{
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		new (this) TeamTypeClass(NoInitClass());
+
+		Swizzle_Pointer(&House);
+		Swizzle_Pointer(&Tag);
+		Swizzle_Pointer(&Script);
+		Swizzle_Pointer(&TaskForce);
+
 		result = S_OK;
 	}
 	return(result);
@@ -355,4 +427,152 @@ HRESULT STDMETHODCALLTYPE TeamTypeClass::GetClassID(CLSID * retval)
 	if (retval == NULL) return(E_POINTER);
 	*retval = CLSID_TeamTypeClass;
 	return(S_OK);
+}
+
+// FUNCTION: 0x006F1C80
+void TeamTypeClass::Compute_CRC(CRCEngine & crc) const
+{
+	BASECLASS::Compute_CRC(crc);
+	crc(Group);
+	crc(IsRecruiter);
+	crc(IsAutocreate);
+	crc(IsPrebuilt);
+	crc(IsReinforcable);
+	crc(IsWhiner);
+	crc(IsAggressive);
+	crc(IsLooseRecruit);
+	crc(IsSuicide);
+	crc(IsDroppod);
+	crc(IsUseTransportOrigin);
+	crc(RecruitPriority);
+	crc(MaxAllowed);
+	crc(Fear);
+
+	if (House != NULL) {
+		crc((RTTIType)House->Fetch_RTTI());
+	}
+	if (House != NULL) {
+		crc(House->Fetch_ID());
+	}
+
+	crc(TechLevel);
+
+	if (Tag != NULL) {
+		crc(Tag->Fetch_ID());
+	}
+
+	crc(Origin);
+	crc(TransportOrigin);
+	crc(Number);
+
+	if (Script != NULL) {
+		crc(Script->Fetch_ID());
+	}
+
+	if (TaskForce != NULL) {
+		crc(TaskForce->Fetch_ID());
+	}
+}
+
+// FUNCTION: 0x006F1E20
+bool TeamTypeClass::Can_Recruit(FootClass * foot, HouseClass * house) const
+{
+	if (foot->Team != NULL && this == foot->Team->Class) {
+		return(false);
+	}
+
+	if (foot->Strength <= 0 || !foot->IsActive || foot->IsInLimbo) {
+		return(false);
+	}
+
+	if (foot->HasAnyLink()) {
+		return(false);
+	}
+
+	if (foot->House != house) {
+		return(false);
+	}
+
+	if (foot->Get_Mission() != MISSION_NONE && !MissionClass::Is_Recruitable_Mission(foot->Get_Mission())) {
+		return(false);
+	}
+
+	if ((!foot->IsTeamRecruitable && !IsAutocreate) || (!foot->IsAutocreateRecruitable && IsAutocreate)) {
+		return(false);
+	}
+
+	if (foot->Team != NULL && foot->Team->Class->RecruitPriority >= RecruitPriority) {
+		return(false);
+	}
+
+	if (foot->Fetch_RTTI() == RTTI_AIRCRAFT && foot->Get_Primary_Weapon() != NULL && foot->Ammo == 0) {
+		return(false);
+	}
+
+	return(true);
+}
+
+// FUNCTION: 0x006F1F30
+void TeamTypeClass::Flash(int frames)
+{
+	for (int index = 0; index < Teams.Count(); index++) {
+		TeamClass * team = Teams[index];
+		if (team->Class == this) {
+			team->Flash(frames);
+		}
+	}
+}
+
+// FUNCTION: 0x006F1F70
+TeamClass * TeamTypeClass::Find_First_Of_Type(void)
+{
+	for (int index = 0; index < Teams.Count(); index++) {
+		TeamClass *team = Teams[index];
+		if (team->Class == this) {
+			return(team);
+		}
+	}
+	return(NULL);
+}
+
+// FUNCTION: 0x006F1FA0
+void TeamTypeClass::Process_Task_Force(void)
+{
+	field_F0 = true;
+	field_F1 = false;
+	field_EC = 9;
+	for (int index = 0; index < TaskForce->ClassCount; index++) {
+		TechnoTypeClass const * type = TaskForce->Members[index].Class;
+		if (type->Naval) {
+			if (type->MaxPassengers == 0) {
+				field_F0 = false;
+			} else {
+				field_F1 = true;
+			}
+		}
+		field_EC = FUN_005889F0(type->MZone, field_EC);
+	}
+	if (IsBaseDefense) {
+		field_F0 = false;
+	}
+}
+
+// FUNCTION: 0x006F2040
+void TeamTypeClass::Process_All_Task_Forces(void)
+{
+	for (int index = 0; index < Array.Count(); index++) {
+		Array[index]->Process_Task_Force();
+	}
+}
+
+// FUNCTION: 0x006F2070
+HouseClass * TeamTypeClass::Get_House(void) const
+{
+	if (House != NULL) {
+		return(House);
+	}
+	if (FUN_00510F60(idxHouse)) {
+		return(FUN_00510ED0(idxHouse));
+	}
+	return(NULL);
 }

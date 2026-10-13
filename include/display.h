@@ -120,6 +120,7 @@ class DisplayClass: public MapClass
 		void Waypoint_Mode_Control(int control, bool edit_selected_path=false);
 		void Power_Mode_Control(int control);
 		void Repair_Mode_Control(int control);
+		void Place_Beacon_Mode_Control(int control);
 		ObjectClass * Object_To_Follow(void) const;
 		void Set_To_Follow(ObjectClass * object);
 		void Break_Follow_Mode(void) { Set_To_Follow(NULL); }

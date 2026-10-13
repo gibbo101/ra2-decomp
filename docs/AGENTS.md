@@ -17,6 +17,8 @@ original compiler turns into that function's exact bytes. MATCH means
   the compile fails with only the file name in the log.
 - The session scratchpad is shared with the coordinator and other agents: delete only
   files you created, one by name.
+- A scratch root copies the files it changes; never symlink `orig/`, `toolchain/`, `src/`,
+  `include/` or `data/` into it: a write or delete through a link reaches the real repo.
 - No recursive delete of any kind, anywhere. The project hook
   (`.claude/hooks/no-recursive-delete.py`) blocks `rm -r`, `find -delete` (except
   `-type d -empty`), `find -exec rm`, `xargs rm`, `rmtree`, `git clean` and
@@ -317,6 +319,11 @@ Each entry: what the diff showed, then the source change that fixed it.
   renumbers the `$E` markers of every file that includes it: declare it extern in the user.
 - YR's PassabilityType has PASSABLE_BEACH at 3 (8 values); Draw_Voxel takes 10 arguments;
   Record_The_Kill takes `HouseClass *`.
+- Inside a member function, a global the class shadows needs `::` (`::Buildings` in a
+  HouseClass member); otherwise the member is read and only the offsets differ.
+- YR signatures: Exit_Coord takes an int index; Shroud_The_Map and Reveal_The_Map take a
+  `HouseClass *`; EventClass's MegaMission constructor has 6 arguments.
+- LightSourceClass has a DetailLevel at +0x34, compared with `Options.DetailLevel`.
 
 ## Known dead ends
 

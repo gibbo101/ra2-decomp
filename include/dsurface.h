@@ -26,7 +26,7 @@ class DSurface : public XSurface
 
 		DSurface(void);
 
-		DSurface(int width, int height, bool system_memory = false);
+		DSurface(int width, int height, bool system_memory = false, bool device_3d = false);
 
 		DSurface(LPDIRECTDRAWSURFACE surfaceptr);
 

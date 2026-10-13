@@ -17,6 +17,7 @@ class InitClass {};
 class ColorScheme;
 class FactoryClass;
 class HouseClass;
+class TechnoClass;
 
 class SidebarClass : public PowerClass
 {
@@ -80,6 +81,16 @@ class SidebarClass : public PowerClass
 		bool Sidebar_Click(KeyNumType & input, int x, int y);
 		void Recalc(void);
 		void FUN_006A5090(void);
+		void FUN_006A5ED0(void);
+		void OnTechnoDestroyed(TechnoClass * techno);
+		void FUN_006A60E0(int tab);
+		bool FUN_006A6220(int control);
+		bool FUN_006A6290(int control);
+		bool AddCameo(RTTIType type, int id);
+		void UpdateScrollButtons(void);
+		int GetVisibleCameoCount(void);
+		void FUN_006A67A0(int tab);
+		void FUN_006A6820(int tab);
 		void FUN_006A5130(bool flag);
 		bool Factory_Link(FactoryClass * factory, RTTIType type, int id);
 
@@ -127,6 +138,7 @@ class SidebarClass : public PowerClass
 				void Activate(void);
 				void Deactivate(void);
 				void Flag_To_Redraw(void);
+				void FUN_006A8710(RTTIType type, int id);
 				bool Factory_Link(FactoryClass * factory, RTTIType type, int id);
 				ShapeSet const * Get_Special_Cameo(SuperWeaponType type);
 

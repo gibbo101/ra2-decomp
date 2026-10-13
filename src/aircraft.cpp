@@ -48,6 +48,8 @@
 #include "waypoint.h"
 #include "weapon.h"
 
+extern int __fastcall FUN_0050C170(char const * name);
+
 // FUNCTION: 0x00413CD0
 bool Counts_As_Civ_Evac(ObjectClass const * candidate)
 {
@@ -1422,10 +1424,238 @@ FacingType AircraftClass::Desired_Load_Dir(ObjectClass * object, Cell & moveto) 
 	return(FACING_N);
 }
 
+// FUNCTION: 0x0041B110
+void AircraftClass::Read_INI(CCINIClass & ini)
+{
+	AircraftClass * air;
+	int inhouse;
+	AircraftType classid;
+	char buf[128];
+
+	ini.Reset();
+
+	int counter = ini.Entry_Count(INI_NAME);
+
+	for (int index = 0; index < counter; index++) {
+		char const * entry = ini.Get_Entry(INI_NAME, index);
+
+		ini.Get_String(INI_NAME, entry, NULL, buf, sizeof(buf));
+
+		inhouse = FUN_0050C170(strtok(buf, ","));
+		if (inhouse != -1) {
+			classid = AircraftTypeClass::From_Name(strtok(NULL, ","));
+
+			if (classid != AIRCRAFT_NONE) {
+				HouseClass * inhousep = Houses[inhouse];
+
+				air = new AircraftClass(AircraftTypes[classid], inhousep);
+				if (air) {
+					int strength = atoi(strtok(NULL, ","));
+
+					Cell cell;
+					if (NewINIFormat >= 4) {
+						unsigned short x = atoi(strtok(NULL, ","));
+						unsigned short y = atoi(strtok(NULL, ","));
+						cell = Cell(x, y);
+					} else {
+						int c = atoi(strtok(NULL, ","));
+						cell = Cell(c);
+					}
+
+					Coord coord = cell.As_Coord();
+
+					Dir256 dir = (Dir256)atoi(strtok(NULL, ","));
+
+					MissionType mission = MissionClass::Mission_From_Name(strtok(NULL, ","));
+
+					TagTypeClass * tp = TagTypeClass::From_Name(strtok(NULL, ","));
+					if (tp != NULL) {
+						TagClass * tt = Find_Or_Make(tp);
+						if (tt != NULL) {
+							air->Attach_Tag(tt);
+						}
+					}
+
+					char * token = strtok(NULL, ",");
+					if (token != NULL) {
+						air->Veterancy.From_Integer(atoi(token));
+					}
+
+					token = strtok(NULL, ",");
+					if (token != NULL) {
+						air->Group = atoi(token);
+					}
+
+					token = strtok(NULL, ",");
+					if (token != NULL) {
+						air->IsTeamRecruitable = atoi(token) != 0;
+					}
+
+					token = strtok(NULL, ",");
+					if (token != NULL) {
+						air->IsAutocreateRecruitable = atoi(token) != 0;
+					}
+
+					if (air->Unlimbo(coord, dir)) {
+						double fs;
+						air->Strength = (fs = strength) * air->Class->MaxStrength / 256.0;
+						if (air->Strength > air->Class->MaxStrength - 3) air->Strength = air->Class->MaxStrength;
+						if (air->Strength == 0) air->Strength = 1;
+						air->EstimatedHealth = air->Strength;
+						air->QueueMission(mission, false);
+						air->Commence();
+					} else {
+						delete air;
+					}
+				}
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x0041B430
+HRESULT STDMETHODCALLTYPE AircraftClass::Load(IStream * stream)
+{
+	TargetTracker.Remove_Index(Fetch_ID());
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		ILocomotion * locomotion = Locomotion;
+
+		new (this) AircraftClass(NoInitClass());
+
+		Locomotion = locomotion;
+		locomotion->Release();
+
+		TargetTracker.Add_Index(Fetch_ID(), this);
+
+		Swizzle_Pointer(&Class);
+		Swizzle_Pointer(&DockNowHeadingTo);
+
+		result = S_OK;
+	}
+	return(result);
+}
+
 // FUNCTION: 0x0041B5C0
 HRESULT STDMETHODCALLTYPE AircraftClass::Save(IStream * stream, int cleardirty)
 {
 	return(BASECLASS::Save(stream, cleardirty));
+}
+
+// FUNCTION: 0x0041B5E0
+bool AircraftClass::Ready_To_Next_Mission(void) const
+{
+	if (CurrentMission != MISSION_STICKY && CurrentMission != MISSION_RESCUE && (!IsLockedStraight || CurrentMission == MISSION_SPYPLANE_APPROACH)) {
+		if (IsCarryallNotLanding) {
+			return(true);
+		}
+		return(false);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x0041B610
+void AircraftClass::Compute_CRC(CRCEngine & crc) const
+{
+	BASECLASS::Compute_CRC(crc);
+	crc(Passenger);
+	crc(unknown_bool_6D0);
+	crc(unknown_bool_6D1);
+	crc((int)NumParadropsLeft);
+}
+
+// FUNCTION: 0x0041B660
+void AircraftClass::Detach(AbstractClass const * target, bool all)
+{
+	BASECLASS::Detach(target, all);
+	if (DockNowHeadingTo == target) {
+		DockNowHeadingTo = NULL;
+	}
+	if (Class == target) {
+		Class = NULL;
+	}
+}
+
+// FUNCTION: 0x0041B6A0
+LONG STDMETHODCALLTYPE AircraftClass::Landing_Altitude(void)
+{
+	if (Class->IsCarryall && !Cargo.Is_Something_Attached() && HasAnyLink()) {
+		TechnoClass * tptr = FUN_0065AD40(0);
+		if (Get_Mission() == MISSION_ENTER) {
+			if (tptr != NULL && tptr->Fetch_RTTI() == RTTI_BUILDING) {
+				BuildingClass * bptr = (BuildingClass *)tptr;
+				if (bptr->Class->IsCanUnitRepair || bptr->Class->IsHelipad) {
+					return(0);
+				}
+			}
+		}
+	}
+
+	if ((HasAnyLink() && Class->IsCarryall) || (Cargo.Is_Something_Attached() && Class->IsCarryall)) {
+		return(100);
+	}
+
+	return(0);
+}
+
+// FUNCTION: 0x0041B760
+LONG STDMETHODCALLTYPE AircraftClass::Landing_Direction(void)
+{
+	if (HasAnyLink()) {
+		TechnoClass * tptr = FUN_0065AD40(0);
+		return(tptr->PrimaryFacing.Current().As_Dir8());
+	}
+	if (Cargo.Is_Something_Attached()) {
+		return(SecondaryFacing.Current().As_Dir8());
+	}
+	return(Rule->PoseDir);
+}
+
+// FUNCTION: 0x0041B7D0
+BOOL STDMETHODCALLTYPE AircraftClass::Is_Loaded(void)
+{
+	return(Cargo.Is_Something_Attached());
+}
+
+// FUNCTION: 0x0041B7F0
+LONG STDMETHODCALLTYPE AircraftClass::Is_Strafe(void)
+{
+	const WeaponDataStruct * data = Get_Class_Weapon_Data(0);
+	if (data == NULL) {
+		return(false);
+	}
+	WeaponTypeClass *weapon = data->Weapon;
+	if (weapon == NULL) {
+		return(false);
+	}
+	if (weapon->Bullet->ROT > 1) {
+		return(false);
+	}
+	if (weapon->Bullet->IsInvisible) {
+		return(false);
+	}
+	return(true);
+}
+
+// FUNCTION: 0x0041B840
+LONG STDMETHODCALLTYPE AircraftClass::Is_Fighter(void)
+{
+	return(Class->IsFighter != 0);
+}
+
+// FUNCTION: 0x0041B860
+LONG STDMETHODCALLTYPE AircraftClass::Is_Locked(void)
+{
+	return(IsLockedStraight);
+}
+
+// FUNCTION: 0x0041B870
+bool AircraftClass::Commence(void)
+{
+	if (CurrentMission != MISSION_SPYPLANE_APPROACH) {
+		IsLockedStraight = false;
+	}
+	return(BASECLASS::Commence());
 }
 
 // FUNCTION: 0x0041C090 FootClass::Draw_Object

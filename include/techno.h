@@ -417,7 +417,7 @@ class TechnoClass : public RadioClass
 		virtual int VoiceCapture(void);
 		virtual void Response_Move(void);
 		virtual int VoiceDeploy(void);
-		virtual void Response_Attack(void);
+		virtual void Response_Attack(AbstractClass * target);
 		virtual bool ClickedEvent(int event);
 		virtual bool Player_Assign_Mission(MissionType order, AbstractClass * target=NULL, AbstractClass * destination=NULL, AbstractClass * nearby=NULL);
 		virtual bool IsUnderEMP(void) const;
@@ -510,6 +510,11 @@ class TechnoClass : public RadioClass
 
 		bool FUN_005F6C70(void) const;
 		EBolt * CreateEBolt(ObjectClass * target, WeaponTypeClass * weapon, Coord const & source_coord);
+		EBolt * FireEBolt(ObjectClass * target);
+		RadBeam * CreateRadBeam(ObjectClass * target, int type);
+		void CreateRadBeams(int spread);
+		void FUN_006FF950(void);
+		int Estimate_Damage(TechnoClass * target, WeaponTypeClass const * weapon) const;
 		LaserDrawClass * CreateLaser(ObjectClass * target, int which, WeaponTypeClass * weapon, Coord const & source_coord);
 		FireErrorType FUN_006FC090(AbstractClass * target, int which) const;
 		bool Is_Immobilized(void) const {return(IsUnderEMP() || IsParalyzed() || IsBeingWarpedOut() || IsWarpingIn());}
