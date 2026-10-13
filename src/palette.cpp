@@ -426,5 +426,23 @@ void SchemeLibrary::Set_Mode(int mode)
 // FUNCTION: 0x00627D20 ?$DynamicVectorClass@PAD::Clear
 template class DynamicVectorClass<char *>;
 
+// FUNCTION: 0x00627D50 ?$VectorClass@PAD::ID
+// FUNCTION: 0x00627D70 ?$VectorClass@PAD::GetItem
+
+// FUNCTION: 0x00627D80 ?$DynamicVectorClass@VRGBClass@@::Clear
+template class DynamicVectorClass<RGBClass>;
+
+// FUNCTION: 0x00627DB0 ?$VectorClass@VRGBClass@@::ID
+// FUNCTION: 0x00627DE0 ?$VectorClass@VRGBClass@@::GetItem
+
+// FUNCTION: 0x00627E10 ?$VectorClass@PAVColorScheme@@::operator==
+// FUNCTION: 0x00627E50 ?$VectorClass@PAVColorScheme@@::Resize
+// FUNCTION: 0x00627F00 ?$VectorClass@PAVColorScheme@@::Clear
+// FUNCTION: 0x00627F30 ?$VectorClass@PAVColorScheme@@::ID
+// FUNCTION: 0x00627F70 ?$VectorClass@PAVColorScheme@@::ID
+// FUNCTION: 0x00627F90 ?$DynamicVectorClass@PAVColorScheme@@::Resize
+// FUNCTION: 0x00628040 ?$DynamicVectorClass@PAVColorScheme@@::ID
+template class DynamicVectorClass<ColorScheme *>;
+
 // FUNCTION: 0x00628E80 ?$VectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@::~?$VectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@
 template class VectorClass<HashObject<HashString, SchemeNode *> >;

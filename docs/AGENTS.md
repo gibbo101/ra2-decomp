@@ -228,6 +228,10 @@ Each entry: what the diff showed, then the source change that fixed it.
   after the statements before it; placement new adds the test.
 
 ### Constructs
+- A non-void function the original lets fall off its end (ObjectClass::IronCurtain is a
+  bare `ret`): an empty body, with warning 4716 disabled in a push/pop around the class.
+- An inline constructor the original calls out of line in one function only: route the
+  call through a file-local inline helper (foot.cpp's Action_Line_Rect).
 - Load-all-then-store-all of a struct copy (an RGB colour): copy through a named
   temporary (`RGBClass c = ...; x->Color = c;`); a direct assignment interleaves.
 - A loop whose inline helpers keep their own null tests: put the test in the `while`

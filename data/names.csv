@@ -51,3 +51,4 @@ address,name,symbol,evidence
 0x00A8EB40,Buildings,,global building vector (YRpp BuildingClass::Array); 0x004FAD20 HouseClass::Special_Weapon_AI matched
 0x00A8EB60,Options,,GameOptionsClass instance (YRpp GameOptionsClass::Instance); 0x00484180 CellClass::Init_Light reads DetailLevel at +0x18
 0x00ABCA10,LightSources,,LightSourceClass vector (YRpp LightSourceClass::Array); 0x00484180 CellClass::Init_Light matched
+0x00ABDFD8,RandomMapGen,,MapGeneratorClass instance (YRpp MapSeedClass::Instance); $E185 0x0058B740 constructs it with mov ecx,0xABDFD8

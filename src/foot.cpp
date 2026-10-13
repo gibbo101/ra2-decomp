@@ -25,6 +25,7 @@
 #include "cell.h"
 #include "convert.h"
 #include "ddist.h"
+#include "dsurface.h"
 #include "goptions.h"
 #include "house.h"
 #include "incdec.h"
@@ -1650,4 +1651,248 @@ void FootClass::Link_DropPod(void)
 	IPiggybackPtr piggy(ballistic);
 	piggy->Begin_Piggyback(locomotion);
 	Locomotion = ballistic;
+}
+
+// FUNCTION: 0x004DB9B0
+bool FootClass::Is_Docked_For_Repair(void)
+{
+	if (NavCom == NULL && TarCom == NULL) {
+		TechnoClass * whom = FUN_0065AD30(0);
+		BuildingClass * bptr = NULL;
+		if (whom != NULL && whom->RTTI == RTTI_BUILDING) {
+			bptr = (BuildingClass *)whom;
+		}
+		bool going_to_repair = (CurrentMission == MISSION_ENTER && bptr != NULL && bptr->Class->IsCanUnitRepair);
+		return(Enter_Idle_Mode(false, going_to_repair == false));
+	}
+	return(false);
+}
+
+// FUNCTION: 0x004DBA30
+void FootClass::Stop_Movement_Animation(void)
+{
+}
+
+// FUNCTION: 0x004DBA40
+void FootClass::vt_entry_54C(void)
+{
+}
+
+// FUNCTION: 0x004DBA50
+bool FootClass::Is_In_Same_Zone_As(ObjectClass const * object) const
+{
+	return(Is_In_Same_Zone(object->Destination_Coord((TechnoClass *)this).As_Cell()));
+}
+
+// FUNCTION: 0x004DBAD0
+void FootClass::Compute_CRC(CRCEngine & crc) const
+{
+	BASECLASS::Compute_CRC(crc);
+	crc(ThreatAvoidanceCoefficient);
+	crc(LastPathingCell.Length());
+	crc(LastTubeCoord.Length());
+	crc(Speed);
+	crc(SpeedBias);
+	if (NavCom != NULL) crc(NavCom->Fetch_ID());
+	if (SuspendedNavCom != NULL) crc(SuspendedNavCom->Fetch_ID());
+	if (Team != NULL) crc(Team->Fetch_ID());
+	if (Member != NULL) crc(Member->Fetch_ID());
+	crc((int)PathDelay);
+	crc(TryTryAgain);
+	crc((int)BaseAttackTimer);
+	crc(HeadToCoord.Length());
+	crc(CurrentTube);
+	crc(CurrentTubeDir);
+	crc(IsScanLimited);
+	crc(IsInitiated);
+	crc(IsNewNavCom);
+	crc(IsPlanningToLook);
+	crc(IsDeploying);
+	crc(IsFiring);
+	crc(IsRotating);
+	crc(IsUnloading);
+	crc(IsNavQueueLoop);
+	crc(IsScattering);
+	crc(IsIdle);
+	crc(IonBlastYDrawOffset);
+}
+
+// FUNCTION: 0x004DBDA0
+bool FootClass::Is_Allowed_To_Recloak(void) const
+{
+	if (BASECLASS::Is_Allowed_To_Recloak()) {
+		if (!Techno_Type_Class()->IsCloakStop || !Locomotion->Is_Moving_Now()) {
+			return(true);
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x004DBDF0
+Coord FootClass::Destination_Coord(TechnoClass * docker) const
+{
+	if (CurrentTube >= TUBE_FIRST) {
+		Cell exit = Tubes[CurrentTube]->Exit;
+		return(exit.As_Coord());
+	} else {
+		CoordStruct tmp = Locomotion->Head_To_Coord();
+		Coord head_to = tmp;
+		if (head_to != COORD_NONE) {
+			return(head_to);
+		}
+		return(Center_Coord());
+	}
+}
+
+// FUNCTION: 0x004DBED0
+bool FootClass::Captured(HouseClass * newowner, bool announce)
+{
+	if (Techno_Type_Class()->SensorsSight != 0) {
+		RemoveSensorsAt(PositionCell);
+	}
+	if (BASECLASS::Captured(newowner, true)) {
+		if (House->IsHuman && Team != NULL) {
+			Team->Remove(this, -1, false);
+		}
+		if (!In_Air()) {
+			LastAdjacencyCell = PositionCell;
+		}
+		if (Techno_Type_Class()->SensorsSight != 0) {
+			AddSensorsAt(PositionCell);
+		}
+		return(true);
+	}
+	if (Techno_Type_Class()->SensorsSight != 0) {
+		AddSensorsAt(PositionCell);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x004DBFD0
+bool FootClass::Is_Considered_Slow(void)
+{
+	if (Get_Class_Weapon_Data(0) == NULL) {
+		return(true);
+	}
+	if (Techno_Type_Class()->Level == -1) {
+		return(true);
+	}
+	if (Techno_Type_Class()->DeploysInto != NULL) {
+		return(true);
+	}
+	if (Techno_Type_Class()->MaxSpeed > 13) {
+		return(false);
+	}
+	return(true);
+}
+
+// FUNCTION: 0x004DC030
+void FootClass::On_Movement_Blocked(void)
+{
+	if (Get_Mission() == MISSION_HUNT) {
+		Assign_Target(NULL);
+		Assign_Destination(NULL);
+	}
+}
+
+// FUNCTION: 0x004DC060
+void FootClass::Draw_Action_Line(bool force, int unknown) const
+{
+	if (!TarCom && !NavCom) {
+		return;
+	}
+
+	if (force || ActionLineTimer > 0) {
+		Coord start_coord;
+		Coord end_coord;
+
+		if (TarCom != NULL) {
+			start_coord = Turret_Coord();
+			end_coord = Predict_Target_Coord();
+			RGBClass color = DSurface::Deconstruct_Hicolor_Pixel(NormalDrawer->Convert_Pixel(RED));
+			FUN_007049C0(start_coord, end_coord, color, 0, 0);
+		} else {
+			start_coord = PositionCoord;
+			if (RouteQueue.Count() == 0) {
+				end_coord = NavCom->Center_Coord();
+			} else {
+				end_coord = RouteQueue[RouteQueue.Count() - 1]->Center_Coord();
+			}
+			if (Map.In_Radar(end_coord.As_Cell()) && Map[end_coord].IsUnderBridge) {
+				end_coord.Z = BRIDGE_LEPTON_HEIGHT + Map.Get_Height_GL(end_coord);
+			}
+			RGBClass color = DSurface::Deconstruct_Hicolor_Pixel(NormalDrawer->Convert_Pixel(GREEN));
+			FUN_007049C0(start_coord, end_coord, color, unknown, 0);
+		}
+	}
+}
+
+extern bool DAT_00822540[];
+
+static inline Rect Action_Line_Rect(Point2D const & point)
+{
+	return(Rect(point - Point2D(2, 2), 3, 3));
+}
+
+static inline void Fill_Action_Rect(Point2D const & point, int pixel)
+{
+	DSurface::Composite->Fill_Rect(Intersect(DSurface::ViewBounds, Action_Line_Rect(point)), pixel);
+}
+
+// FUNCTION: 0x004DC340
+void FootClass::FUN_004DC340(void)
+{
+	RGBClass white(255, 255, 255);
+	RGBClass color;
+
+	if (!TarCom && !NavCom) {
+		return;
+	}
+
+	Coord start_coord;
+	Coord end_coord;
+
+	if (TarCom != NULL) {
+		start_coord = Turret_Coord();
+		end_coord = Predict_Target_Coord();
+	} else {
+		start_coord = PositionCoord;
+		if (RouteQueue.Count() == 0) {
+			end_coord = NavCom->Center_Coord();
+		} else {
+			end_coord = RouteQueue[RouteQueue.Count() - 1]->Center_Coord();
+		}
+		if (Map.In_Radar(end_coord.As_Cell()) && Map[end_coord].IsUnderBridge) {
+			end_coord.Z = BRIDGE_LEPTON_HEIGHT + Map.Get_Height_GL(end_coord);
+		}
+	}
+
+	Point2D start_point;
+	Point2D end_point;
+
+	TacticalMap->Coord_To_Pixel(start_coord, start_point);
+	TacticalMap->Coord_To_Pixel(end_coord, end_point);
+
+	start_point.Y += DSurface::ViewBounds.Y;
+	end_point.Y += DSurface::ViewBounds.Y;
+
+	color = House->RemapColorRGB;
+	int pixel = DSurface::Build_Hicolor_Pixel(color);
+
+	Fill_Action_Rect(start_point, pixel);
+	Fill_Action_Rect(end_point, pixel);
+
+	Rect bounds = DSurface::ViewBounds;
+	if (Clip_Line_To_Rect(start_point, end_point, bounds)) {
+		unsigned int now = timeGetTime();
+		int phase = now & 0x3ff;
+		if (!(phase & 0x200)) {
+			if (phase & 0x100) {
+				phase ^= 0xff;
+			}
+			color.Adjust(phase & 0xff, white);
+		}
+		int offset = (-(int)now >> 5) & 0xf;
+		DSurface::Composite->Draw_Masked_Dashed_Line(start_point, end_point, DSurface::Build_Hicolor_Pixel(color), DAT_00822540, offset, false);
+	}
 }

@@ -7,7 +7,7 @@
 // Interfaces Yuri's Revenge adds to every AbstractClass; neither derives from IUnknown.
 struct __declspec(novtable) INoticeSink
 {
-	virtual bool STDMETHODCALLTYPE INoticeSink_Unknown(DWORD unknown) = 0;
+	virtual bool INoticeSink_Unknown(DWORD unknown, DWORD unknown2) = 0;
 };
 
 struct __declspec(novtable) INoticeSource

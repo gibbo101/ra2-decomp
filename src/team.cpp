@@ -22,6 +22,7 @@
 #include "foot.h"
 #include "globals.h"
 #include "house.h"
+#include "houstype.h"
 #include "infantry.h"
 #include "infatype.h"
 #include "inline.h"
@@ -60,6 +61,9 @@ void __fastcall LightningStorm_Start(int duration, int deferment, int center, bo
 void __cdecl LightningStorm_RequestStop(void);
 extern int DAT_00B0E948;
 void __fastcall FUN_005BF260(VQType movie, ThemeType theme, bool a, bool b, bool c);
+
+BuildingClass * __fastcall Pick_Building_With_Property(BuildingTypeClass * type, HouseClass * house, FootClass * unit, TargetPropertyType prop, bool only_enemy);
+BuildingClass * __fastcall Pick_Own_Building_With_Property(BuildingTypeClass * type, HouseClass * house, FootClass * unit, TargetPropertyType prop, bool only_enemy);
 
 static inline CellClass * _As_Cell(AbstractClass * target)
 {
@@ -102,6 +106,21 @@ FootClass * TeamClass::Fetch_A_Leader(void) const
 {
 	FootClass * m = Member;
 	FootClass * leader = m;
+	int best = -1;
+	for (; m != NULL; m = m->Member) {
+		int rating = m->TClass->LeadershipRating;
+		if (_Is_It_Playing(m) && rating > best) {
+			leader = m;
+			best = rating;
+		}
+	}
+	return(leader);
+}
+
+static inline FootClass * _Team_Leader(TeamClass const * team)
+{
+	FootClass * m = team->Member;
+	FootClass * leader = team->Member;
 	int best = -1;
 	for (; m != NULL; m = m->Member) {
 		int rating = m->TClass->LeadershipRating;
@@ -1452,7 +1471,8 @@ void TeamClass::TMission_ATTACK(TeamMissionClass * mission, bool)
 	Coordinate_Attack();
 }
 
-inline bool TeamClass::Has_Air_Transport(void) const
+// FUNCTION: 0x006EF470
+bool TeamClass::Has_Air_Transport(void) const
 {
 	for (int i = 0; i < Class->TaskForce->ClassCount; i++) {
 		TechnoTypeClass const * techtype = Class->TaskForce->Members[i].Class;
@@ -1880,4 +1900,396 @@ void TeamClass::TMission_REVEAL(TeamMissionClass * mission, bool)
 {
 	Map.Reveal_The_Map(NULL);
 	IsNextMission = true;
+}
+
+// FUNCTION: 0x006EE1F0
+void TeamClass::TMission_FULLY_LOADED(TeamMissionClass * mission, bool)
+{
+	FootClass *unit = Member;
+	while (unit != NULL) {
+		if (unit->TClass->Max_Passengers() > unit->Cargo.How_Many()) {
+			return;
+		}
+		unit = unit->Member;
+	}
+	IsNextMission = true;
+}
+
+// FUNCTION: 0x006EE230
+void TeamClass::TMission_UNLOAD_TRUCK(TeamMissionClass * mission, bool)
+{
+	FootClass *unit = Member;
+	while (unit != NULL) {
+		if (unit->RTTI == RTTI_UNIT) {
+			if (!strcmpi(unit->TClass->IniName, "TRUCKB")) {
+				((UnitClass *)unit)->Class = UnitTypes[UnitTypeClass::From_Name("TRUCKA")];
+			}
+		}
+		unit = unit->Member;
+	}
+	IsNextMission = true;
+}
+
+// FUNCTION: 0x006EE2A0
+void TeamClass::TMission_LOAD_TRUCK(TeamMissionClass * mission, bool)
+{
+	FootClass *unit = Member;
+	while (unit != NULL) {
+		if (unit->RTTI == RTTI_UNIT) {
+			if (!strcmpi(unit->TClass->IniName, "TRUCKA")) {
+				((UnitClass *)unit)->Class = UnitTypes[UnitTypeClass::From_Name("TRUCKB")];
+			}
+		}
+		unit = unit->Member;
+	}
+	IsNextMission = true;
+}
+
+// FUNCTION: 0x006EE310
+void TeamClass::TMission_ATTACK_BUILDING_WITH_PROPERTY(TeamMissionClass * mission, bool first_time)
+{
+	if (first_time && MissionTarget == NULL) {
+		FootClass *unit = Member;
+		if (unit != NULL) {
+			HouseClass * eptr = NULL;
+			TargetPropertyType prop = TargetPropertyType((unsigned short)mission->Data.Prop);
+			int type = mission->Data.Type;
+			BuildingTypeClass *btype = BuildingTypes[type];
+
+			if (unit->House->Enemy != HOUSE_NONE) {
+				eptr = Houses[unit->House->Enemy];
+			}
+
+			BuildingClass * bptr = Pick_Building_With_Property(btype, eptr, unit, prop, Class->OnlyTargetHouseEnemy);
+			if (bptr != NULL) {
+				Assign_Mission_Target(bptr);
+			}
+		}
+	}
+
+	if (MissionTarget && Ammo_Check()) {
+		Coordinate_Attack();
+	} else {
+		Assign_Mission_Target(NULL);
+		IsNextMission = true;
+	}
+}
+
+// FUNCTION: 0x006EE3F0
+void TeamClass::TMission_MOVETO_BUILDING_WITH_PROPERTY(TeamMissionClass * mission, bool)
+{
+	if (MissionTarget == NULL) {
+		FootClass *unit = Member;
+		if (unit != NULL) {
+			HouseClass * eptr = NULL;
+			TargetPropertyType prop = TargetPropertyType((unsigned short)mission->Data.Prop);
+			int type = mission->Data.Type;
+			BuildingTypeClass *btype = BuildingTypes[type];
+
+			if (unit->House->Enemy != HOUSE_NONE) {
+				eptr = Houses[unit->House->Enemy];
+			}
+
+			BuildingClass * bptr = Pick_Building_With_Property(btype, eptr, unit, prop, Class->OnlyTargetHouseEnemy);
+			if (bptr != NULL) {
+				MZoneType mzone = unit->TClass->MZone;
+				Cell cell = bptr->PositionCoord.As_Cell();
+				Cell newcell = Map.Nearby_Location(cell, unit->TClass->Speed, Map.Get_Cell_Zone(unit->Center_Coord().As_Cell(), mzone, unit->IsOnBridge), mzone);
+				if (newcell != CELL_NONE) {
+					Assign_Mission_Target(&Map[newcell]);
+				} else {
+					Assign_Mission_Target(NULL);
+				}
+			}
+			if (MissionTarget == NULL) {
+				IsNextMission = true;
+			}
+		}
+	}
+	Coordinate_Move();
+}
+
+// FUNCTION: 0x006EE5C0
+void TeamClass::TMission_MOVETO_FRIENDLY_BUILDING_WITH_PROPERTY(TeamMissionClass * mission, bool first_time)
+{
+	if (first_time && MissionTarget == NULL) {
+		FootClass * unit = Member;
+		if (unit != NULL) {
+			TargetPropertyType prop = TargetPropertyType((unsigned short)mission->Data.Prop);
+			int type = mission->Data.Type;
+			BuildingTypeClass *btype = BuildingTypes[type];
+
+			FootClass * leader = _Team_Leader(this);
+
+			BuildingClass * bptr = Pick_Own_Building_With_Property(btype, NULL, leader, prop, false);
+			if (bptr != NULL) {
+				MZoneType mzone = leader->TClass->MZone;
+				Cell cell = bptr->PositionCoord.As_Cell();
+				Cell newcell = Map.Nearby_Location(cell, leader->TClass->Speed, Map.Get_Cell_Zone(leader->Center_Coord().As_Cell(), mzone, leader->IsOnBridge), mzone);
+				if (newcell != CELL_NONE) {
+					Assign_Mission_Target(&Map[newcell]);
+				} else {
+					Assign_Mission_Target(NULL);
+				}
+			}
+		}
+	}
+
+	if (MissionTarget == NULL) {
+		IsNextMission = true;
+	} else {
+		Coordinate_Move();
+	}
+}
+
+// FUNCTION: 0x006EE800
+void TeamClass::TMission_SCOUT(TeamMissionClass * mission, bool)
+{
+	int i;
+	FootClass * leader;
+
+	bool should_continue = true;
+	if (HouseToScout == NULL) {
+
+		int scouted_count = 0;
+		for (i = 0; i < House->ScoutNodes.Count(); i++) {
+			if (!House->ScoutNodes[i].IsScouted) {
+				scouted_count++;
+			}
+		}
+
+		if (scouted_count > 0) {
+
+			int picked = Random_Pick(0, scouted_count - 1);
+
+			for (i = 0; i < House->ScoutNodes.Count(); i++) {
+				if (!House->ScoutNodes[i].IsScouted) {
+					if (picked == 0) {
+						HouseToScout = House->ScoutNodes[i].House;
+						break;
+					} else {
+						picked--;
+					}
+				}
+			}
+
+			DynamicVectorClass<BuildingClass *> targets;
+
+			for (i = 0; i < Buildings.Count(); i++) {
+				if (HouseToScout == Buildings[i]->House) {
+					targets.Add(Buildings[i]);
+				}
+			}
+
+			if (targets.Count() > 0) {
+
+				int picked = Random_Pick(0, targets.Count() - 1);
+				BuildingClass * target = targets[picked];
+
+				leader = Fetch_A_Leader();
+				Cell cell = Map.Nearby_Location(target->PositionCoord.As_Cell(), leader->TClass->Speed);
+				if (cell != CELL_NONE) {
+					Assign_Mission_Target(&Map[cell]);
+				} else {
+					Assign_Mission_Target(NULL);
+				}
+			} else {
+				House->Mark_Scouted(HouseToScout);
+				HouseToScout = NULL;
+			}
+		} else {
+			should_continue = false;
+		}
+	} else {
+		leader = _Team_Leader(this);
+		if (leader != NULL && leader->CurrentMission != MISSION_MOVE && leader->MissionQueue != MISSION_MOVE) {
+			House->Mark_Scouted(HouseToScout);
+			HouseToScout = NULL;
+		}
+	}
+
+	Coordinate_Move();
+
+	if (should_continue) {
+		IsNextMission = false;
+	} else {
+		IsNextMission = true;
+	}
+}
+
+// FUNCTION: 0x006EEBD0
+BuildingClass * __fastcall Pick_Building_With_Property(BuildingTypeClass * type, HouseClass * house, FootClass * unit, TargetPropertyType prop, bool only_enemy)
+{
+	int best_same_dist = -1;
+	BuildingClass *best_same_ptr = NULL;
+	int best_dist = -1;
+	BuildingClass *best_ptr = NULL;
+
+	for (int index = 0; index < Buildings.Count(); index++) {
+
+		BuildingClass *ptr = Buildings[index];
+
+		HouseClass *hptr = ptr->House;
+
+		bool same_house = hptr == house;
+
+		if (ptr->Class == type && (same_house || !unit->House->Is_Ally(hptr) || ptr->House->Class->IsMultiplayPassive)) {
+
+			int dist = -1;
+
+			switch (prop) {
+				case TPROPERTY_LEAST_THREAT:
+					dist = INT_MAX - Map.GetThreatPosed(ptr->Center_Coord().As_Cell(), unit->House);
+					break;
+
+				case TPROPERTY_GREATEST_THREAT:
+					dist = Map.GetThreatPosed(ptr->Center_Coord().As_Cell(), unit->House);
+					break;
+
+				case TPROPERTY_NEAREST:
+					dist = INT_MAX - ptr->Get_Coord().Distance_To(unit->Get_Coord());
+					break;
+
+				case TPROPERTY_FARTHEST:
+					dist = ptr->Get_Coord().Distance_To(unit->Get_Coord());
+					break;
+
+			}
+
+			if (dist > best_same_dist && same_house) {
+				best_same_ptr = ptr;
+				best_same_dist = dist;
+			}
+			if (dist > best_dist) {
+				best_ptr = ptr;
+				best_dist = dist;
+			}
+		}
+	}
+
+	if (best_same_ptr == NULL || best_same_dist <= best_dist) {
+		if (!only_enemy) {
+			return(best_ptr);
+		}
+	}
+	return(best_same_ptr);
+}
+
+// FUNCTION: 0x006EEEA0
+BuildingClass * __fastcall Pick_Own_Building_With_Property(BuildingTypeClass * type, HouseClass * house, FootClass * unit, TargetPropertyType prop, bool only_enemy)
+{
+	BuildingClass *best_ptr = NULL;
+	int best_dist = -1;
+
+	HouseClass *owner = unit->House;
+	int count = owner->Buildings.Count();
+	for (int index = 0; index < count; index++) {
+
+		BuildingClass *ptr = owner->Buildings[index];
+
+		if (ptr->Class == type) {
+
+			int dist = -1;
+
+			switch (prop) {
+				case TPROPERTY_LEAST_THREAT:
+					dist = INT_MAX - Map.GetThreatPosed(ptr->Center_Coord().As_Cell(), unit->House);
+					break;
+
+				case TPROPERTY_GREATEST_THREAT:
+					dist = Map.GetThreatPosed(ptr->Center_Coord().As_Cell(), unit->House);
+					break;
+
+				case TPROPERTY_NEAREST:
+					dist = INT_MAX - ptr->Get_Coord().Distance_To(unit->Get_Coord());
+					break;
+
+				case TPROPERTY_FARTHEST:
+					dist = ptr->Get_Coord().Distance_To(unit->Get_Coord());
+					break;
+
+			}
+
+			if (dist > best_dist) {
+				best_ptr = ptr;
+				best_dist = dist;
+			}
+		}
+	}
+
+	return(best_ptr);
+}
+
+// FUNCTION: 0x006EF110
+void TeamClass::TMission_UNLOAD(TeamMissionClass * mission, bool)
+{
+	FootClass * unit = Member;
+	bool finished = true;
+
+	while (unit != NULL) {
+
+		FootClass *next = unit->Member;
+
+		_Conscript(this, unit);
+
+		if (_Is_It_Playing(unit)) {
+			if (unit->Cargo.Is_Something_Attached()) {
+				finished = false;
+
+				if (Map[unit->Center_Coord()].Cell_Building() == NULL && unit->Get_Mission() != MISSION_UNLOAD) {
+					unit->Assign_Destination(NULL);
+					unit->Assign_Target(NULL);
+					unit->QueueMission(MISSION_UNLOAD, false);
+					finished = false;
+				}
+			}
+		}
+
+		unit = next;
+	}
+
+	if (finished) {
+		unit = Member;
+		int unload = mission->Data.Value;
+		bool transportisaircraft = Has_Air_Transport();
+		while (unit != NULL) {
+			FootClass *next = unit->Member;
+
+			if (unit->TClass->Max_Passengers() == 0 || (transportisaircraft && unit->RTTI != RTTI_AIRCRAFT)) {
+				if (unload == 1 || unload == 3) {
+					Remove(unit);
+					unit->Assign_Target(NULL);
+					unit->Assign_Destination(NULL);
+				}
+			} else if (unit->TClass->Max_Passengers() > 0) {
+				if (Class->TransportsReturnOnUnload) {
+					Remove(unit);
+					unit->Assign_Target(NULL);
+					unit->Assign_Destination(unit->ArchiveTarget);
+					unit->QueueMission(MISSION_MOVE, false);
+					if (unit->Ready_To_Next_Mission()) {
+						unit->Commence();
+					}
+					unit->ArchiveTarget = NULL;
+				}
+				else if (unload == 3 || unload == 2) {
+
+					Remove(unit);
+					unit->Assign_Target(NULL);
+					unit->Assign_Destination(NULL);
+				}
+			}
+
+			unit = next;
+		}
+
+		IsNextMission = true;
+	}
+}
+
+// FUNCTION: 0x006EF450
+void TeamClass::TMission_SUCCESS(TeamMissionClass * mission, bool)
+{
+	IsNextMission = true;
+	Succeeded = true;
 }

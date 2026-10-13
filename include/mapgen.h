@@ -5,9 +5,11 @@
 #pragma once
 
 #include "loaddlg.h"
+#include "typelist.h"
 
 #include "isotype.hh"
 
+class BuildingTypeClass;
 class CellClass;
 class MapPreviewClass;
 struct CellNode;
@@ -154,9 +156,9 @@ public:
 
 	public:
 
-		DynamicVectorClass<int> *NeighborRegions;
+		DynamicVectorClass<int> *Unknown0;
 
-		int Unknown4;
+		DynamicVectorClass<int> *NeighborRegions;
 
 		int ID;
 
@@ -205,6 +207,10 @@ class MapSeedClass : public LoadOptionsClass
 		virtual bool Save_File(const char * file_name, const char * descr) override;
 		virtual bool Delete_File(const char * file_name) override;
 		virtual bool Read_File(FileEntryClass * entry, WIN32_FIND_DATAA * ff) override;
+		virtual wchar_t const * GetUIString_Load(void) const override;
+		virtual wchar_t const * GetUIString_Save(void) const override;
+		virtual wchar_t const * GetUIString_Delete(void) const override;
+		virtual wchar_t const * GetUIString_GameSaved(void) const override;
 
 		void Get_Settings(HWND dialog);
 		void Set_Settings(HWND dialog);
@@ -219,6 +225,10 @@ class MapSeedClass : public LoadOptionsClass
 	public:
 
 		int Biome;
+
+		int MapType;
+
+		int Resources;
 
 		int Hills;
 
@@ -245,18 +255,7 @@ class MapSeedClass : public LoadOptionsClass
 
 		int Seed;
 
-		char MapDescription[128];
-
-		int TiberiumWildlife;
-
-		int VeinholeMonsters;
-
-		bool UseIonStorms;
-
-		bool UseBlueTiberium;
-
-		bool UseTransitions;
-
+		wchar_t MapDescription[128];
 };
 
 class MapGeneratorClass
@@ -364,6 +363,28 @@ class MapGeneratorClass
 
 		int LocalWidth;
 		int LocalHeight;
+
+		TypeList<int> RMGLevelLightSettings;
+		TypeList<int> TemperateAmbientLight;
+		TypeList<int> SnowAmbientLight;
+		TypeList<int> TemperateAmbientRed;
+		TypeList<int> TemperateAmbientGreen;
+		TypeList<int> TemperateAmbientBlue;
+		TypeList<int> SnowAmbientRed;
+		TypeList<int> SnowAmbientGreen;
+		TypeList<int> SnowAmbientBlue;
+		TypeList<int> RMGVegetationMinimums;
+		TypeList<int> RMGVegetationMaximums;
+
+		int RMGMinimumTiberium;
+		int RMGMaximumTiberium;
+
+		TypeList<BuildingTypeClass *> TemperateOrePatchLamps;
+		TypeList<BuildingTypeClass *> SnowOrePatchLamps;
+
+		int MaxTrees;
+
+		unsigned char : 8;
 
 		int SeededWaterAmount;
 

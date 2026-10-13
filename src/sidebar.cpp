@@ -872,6 +872,354 @@ void SidebarClass::FUN_006A6820(int tab)
 	}
 }
 
+static inline int Max_Visible_Cameos(void)
+{
+	int side = Scen->PlayerSideIndex;
+	int reserved;
+	if (side == 0) {
+		reserved = 0x1a;
+	} else if (side == 1) {
+		reserved = 0x12;
+	} else {
+		reserved = 0x12;
+	}
+	return (DAT_00886F94 - DAT_00B0B4F8 - reserved + DAT_00886F9C - 7) / 50;
+}
+
+extern Rect DAT_008809F4;
+extern Rect DAT_00B07DC8;
+extern DSurface * DAT_00887300;
+extern CCToolTip * ToolTips;
+
+// FUNCTION: 0x006A6C30
+void SidebarClass::Draw_It(bool complete)
+{
+	DAT_008809F4 = DAT_00B07DC8;
+
+	Surface * old = DSurface::Temp;
+	DSurface::Temp = DAT_00887300;
+	bool redrawn = false;
+
+	Rect window(0, 0, DAT_00887300->Get_Width(), DAT_00887300->Get_Height());
+
+	complete = complete || IsToRedraw || IsForceCompleteRedraw;
+
+	if (IsSidebarActive && complete && !Unsorted::ArmageddonMode) {
+		if (IsForceCompleteRedraw) {
+			redrawn = true;
+
+			Draw_Shape(*DAT_00887300, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)DAT_00B0B468, 0, Point2D(0, DAT_00886F94), window, SHAPE_WIN_REL);
+
+			int y = DAT_00B0B4F8;
+			for (int i = 0; i < Max_Visible_Cameos(); i++) {
+				Draw_Shape(*DAT_00887300, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)DAT_00B0B46C, 0, Point2D(0, y), window, SHAPE_WIN_REL);
+				y += ((ShapeSet const *)DAT_00B0B46C)->Get_Height();
+			}
+
+			Draw_Shape(*DAT_00887300, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)DAT_00B0B470, 0, Point2D(0, y), window, SHAPE_WIN_REL);
+			Draw_Shape(*DAT_00887300, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)DAT_00B0B474, 0, Point2D(0, y + ((ShapeSet const *)DAT_00B0B470)->Get_Height()), window, SHAPE_WIN_REL);
+		}
+
+		Power.Draw_Me(redrawn);
+		Repair.Draw_Me(redrawn);
+		for (int index = 0; index < STRIPS; index++) {
+			TabButtons[index].Draw_Me(true);
+		}
+		Upgrade.Draw_Me(redrawn);
+		Waypoint.Draw_Me(redrawn);
+
+		if (unknown_5398 != 0) {
+			Draw_Shape(*DAT_00887300, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)DAT_00B0B478, unknown_5394, Point2D(0, DAT_00B0B4F8), window, SHAPE_WIN_REL);
+			Draw_Shape(*DAT_00887300, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)DAT_00B0B47C, unknown_5394, Point2D(0, DAT_00B0B4F8), window, SHAPE_WIN_REL);
+			Draw_Shape(*DAT_00887300, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)DAT_00B0B480, unknown_5394, Point2D(0, DAT_00B0B4F8), window, SHAPE_WIN_REL);
+		}
+		DAT_00B0B518 = true;
+	}
+
+	Column[ActiveTabIndex].Draw_It(IsForceCompleteRedraw);
+	BASECLASS::Draw_It(complete || redrawn);
+
+	if (Power.IsDrawn) {
+		Power.IsDrawn = false;
+		DAT_00B0B518 = true;
+	}
+	if (Repair.IsDrawn) {
+		Repair.IsDrawn = false;
+		DAT_00B0B518 = true;
+	}
+	for (int index = 0; index < STRIPS; index++) {
+		if (TabButtons[index].IsDrawn) {
+			DAT_00B0B518 = true;
+			TabButtons[index].IsDrawn = false;
+		}
+	}
+	if (Upgrade.IsDrawn) {
+		Upgrade.IsDrawn = false;
+		DAT_00B0B518 = true;
+	}
+	if (Waypoint.IsDrawn) {
+		Waypoint.IsDrawn = false;
+		DAT_00B0B518 = true;
+	}
+	if (ToolTips != NULL) {
+		ToolTips->Draw_Current(true);
+	}
+
+	Blit_Sidebar(DAT_00B0B518 || IsForceCompleteRedraw);
+	IsToRedraw = false;
+	IsForceCompleteRedraw = false;
+	DSurface::Temp = (DSurface *)old;
+}
+
+namespace Game { extern bool IsActive; extern HWND hWnd; }
+namespace Unsorted { extern bool ScenarioStarted; }
+extern bool DAT_00B0B519;
+extern int DAT_00886F98;
+
+class MouseSlots {
+	public:
+		virtual void Slot0(void);
+		virtual void Slot1(void);
+		virtual void Slot2(void);
+		virtual void Slot3(void);
+		virtual void Slot4(void);
+		virtual void Slot5(void);
+		virtual void Slot6(void);
+		virtual void Slot7(void);
+		virtual void Slot8(void);
+		virtual void Slot9(void);
+		virtual void Slot10(void);
+		virtual void Slot11(void);
+		virtual void Slot12(void);
+		virtual void Slot13(void);
+		virtual void Slot14(void);
+		virtual void Draw_Mouse(Surface * scr, bool issidebarsurface);
+};
+extern MouseSlots * DAT_00887640;
+
+// FUNCTION: 0x006A70E0
+void SidebarClass::Blit_Sidebar(bool complete)
+{
+	if (IsSidebarActive && Game::IsActive && Unsorted::ScenarioStarted) {
+
+		RECT crect;
+		GetClientRect(Game::hWnd, &crect);
+
+		POINT scrnpt;
+		scrnpt.x = crect.left;
+		scrnpt.y = crect.top;
+		ClientToScreen(Game::hWnd, &scrnpt);
+
+		if (!DAT_00B0B518 && !complete) {
+			DAT_00B0B518 = false;
+			if (DAT_008809F4 == DAT_00B07DC8) {
+				if (IsToRedrawCredits) {
+					DAT_00887640->Draw_Mouse(DAT_00887300, true);
+					DAT_00887308->Blit_From(
+						Rect(scrnpt.x + (Options.IsSidebarOnRight ? DSurface::ViewBounds.Width : 0), scrnpt.y, DAT_00886F98, 16),
+						*DAT_00887300,
+						Rect(0, 0, DAT_00886F98, 16),
+						false,
+						true
+					);
+					IsToRedrawCredits = false;
+					DAT_00B0B519 = true;
+				}
+				DAT_00B0B518 = false;
+				return;
+			}
+		} else {
+			DAT_00B0B518 = true;
+		}
+
+		DAT_00887640->Draw_Mouse(DAT_00887300, true);
+		if (DAT_008809F4 == DAT_00B07DC8 && !complete) {
+			if (IsToRedrawCredits) {
+				DAT_00887308->Blit_From(Rect(scrnpt.x + (Options.IsSidebarOnRight ? DSurface::ViewBounds.Width : 0), scrnpt.y, DAT_00886F98, 16), *DAT_00887300, Rect(0, 0, DAT_00886F98, 16), false, true);
+				IsToRedrawCredits = false;
+			}
+			DAT_00887308->Blit_From(Rect(scrnpt.x + (Options.IsSidebarOnRight ? DSurface::ViewBounds.Width : 0), scrnpt.y + DAT_00886F94, DAT_00886F98, DAT_00887300->Get_Height() - DAT_00886F94), *DAT_00887300, Rect(0, DAT_00886F94, DAT_00886F98, DAT_00886F9C), false, true);
+		} else if (DAT_00B0B518) {
+			Rect sb_rect = DAT_00887300->Get_Rect();
+			DAT_00887308->Blit_From(Rect(scrnpt.x + (Options.IsSidebarOnRight ? DSurface::ViewBounds.Width : 0), scrnpt.y, sb_rect.Width, sb_rect.Height), *DAT_00887300, Rect(0, 0, sb_rect.Width, sb_rect.Height), false, true);
+		} else {
+			DAT_00887308->Blit_From(Rect(scrnpt.x + DAT_008809F4.X + (Options.IsSidebarOnRight ? DSurface::ViewBounds.Width : 0), scrnpt.y + DAT_008809F4.Y, DAT_008809F4.Width, DAT_008809F4.Height), *DAT_00887300, DAT_008809F4, false, true);
+		}
+		DAT_00B0B519 = true;
+	}
+	DAT_00B0B518 = false;
+}
+
+// FUNCTION: 0x006A74A0
+void SidebarClass::FUN_006A74A0(int tab)
+{
+	ActiveTabIndex = tab;
+	TabButtons[tab].Turn_On();
+	StripClass & current = Column[ActiveTabIndex];
+	current.AllowedToDraw = true;
+	int count = Max_Visible_Cameos() * 2;
+	for (int added = 0; added < count; added++) {
+		StripClass::SelectButton[current.ID * 60 + added].Zap();
+		Map.Add_A_Button(StripClass::SelectButton[current.ID * 60 + added]);
+	}
+	DAT_00884B8F = true;
+	UpdateScrollButtons();
+}
+
+static inline void Select_Tab(SidebarClass & sb, int tab)
+{
+	if (tab != sb.ActiveTabIndex) {
+		SidebarClass::TabButtons[sb.ActiveTabIndex].Turn_Off();
+		SidebarClass::StripClass & old = sb.Column[sb.ActiveTabIndex];
+		old.AllowedToDraw = false;
+		for (int slot = 0; slot < 60; slot++) {
+			Map.Remove_A_Button(SidebarClass::StripClass::SelectButton[old.ID * 60 + slot]);
+		}
+		sb.ActiveTabIndex = tab;
+		SidebarClass::TabButtons[tab].Turn_On();
+		SidebarClass::StripClass & current = sb.Column[sb.ActiveTabIndex];
+		current.AllowedToDraw = true;
+		int count = Max_Visible_Cameos() * 2;
+		for (int added = 0; added < count; added++) {
+			SidebarClass::StripClass::SelectButton[current.ID * 60 + added].Zap();
+			Map.Add_A_Button(SidebarClass::StripClass::SelectButton[current.ID * 60 + added]);
+		}
+		DAT_00884B8F = true;
+		sb.UpdateScrollButtons();
+		sb.IsForceCompleteRedraw = true;
+	}
+}
+
+// FUNCTION: 0x006A7590
+void SidebarClass::SetTab(int tab)
+{
+	Select_Tab(*this, tab);
+}
+
+// FUNCTION: 0x006A76F0
+void SidebarClass::FUN_006A76F0(int tab)
+{
+	int delay = 10 - Unsorted::CurrentFrame % 10;
+	TabButtons[tab].StartFlashing(10, delay, (Unsorted::CurrentFrame + delay) / 10 % 2 == 0);
+	DAT_00884B8F = true;
+	Map.Flag_To_Redraw();
+}
+
+// FUNCTION: 0x006A7760
+void SidebarClass::FUN_006A7760(int tab)
+{
+	TabButtons[tab].StopFlashing();
+}
+
+// FUNCTION: 0x006A7D20
+void SidebarClass::Recalc(void)
+{
+	bool redraw = false;
+	for (int index = 0; index < STRIPS; index++) {
+		if (Column[index].Recalc() && index == ActiveTabIndex) {
+			Column[index].IsToRedraw = true;
+			redraw = true;
+		}
+	}
+	if (redraw) {
+		IsToRedraw = true;
+		Flag_To_Redraw();
+	}
+}
+
+namespace Game { extern unsigned char RecordingFlag; }
+void FUN_005BF450(void);
+
+// FUNCTION: 0x006A7D70
+bool SidebarClass::Activate(int control)
+{
+	bool old = IsSidebarActive;
+
+	if ((Game::RecordingFlag & 2) && Session.Type != GAME_NORMAL && Session.Type != GAME_SKIRMISH) {
+		return(old);
+	}
+
+	switch (control) {
+		case -1:
+			IsSidebarActive = IsSidebarActive == false;
+			break;
+
+		case 1:
+			IsSidebarActive = true;
+			break;
+
+		default:
+		case 0:
+			IsSidebarActive = false;
+			break;
+	}
+
+	bool changed = IsSidebarActive != old;
+	if (changed) {
+		Set_Buttons(IsSidebarActive);
+		if (IsSidebarActive) {
+			Reposition_Sidebar();
+			IsToRedraw = true;
+			Power.Zap();
+			Add_A_Button(Power);
+			Repair.Zap();
+			Add_A_Button(Repair);
+			for (int index = 0; index < STRIPS; index++) {
+				TabButtons[index].Zap();
+				TabButtons[index].IsPressed = false;
+				Add_A_Button(TabButtons[index]);
+			}
+			Upgrade.Zap();
+			Map.Add_A_Button(Upgrade);
+			Waypoint.Zap();
+			Map.Add_A_Button(Waypoint);
+			Background.Zap();
+			Add_A_Button(Background);
+			RadarButton.Zap();
+			Add_A_Button(RadarButton);
+			for (int strip = 0; strip < STRIPS; strip++) {
+				Column[strip].TopIndex = 0;
+				if (Column[strip].BuildableCount > 0) {
+					TabButtons[strip].Enable();
+				}
+			}
+			TabButtons[ActiveTabIndex].Turn_On();
+			StripClass & current = Column[ActiveTabIndex];
+			current.AllowedToDraw = true;
+			int count = Max_Visible_Cameos() * 2;
+			for (int added = 0; added < count; added++) {
+				StripClass::SelectButton[current.ID * 60 + added].Zap();
+				Map.Add_A_Button(StripClass::SelectButton[current.ID * 60 + added]);
+			}
+			DAT_00884B8F = true;
+			UpdateScrollButtons();
+		} else {
+			FUN_005BF450();
+			Remove_A_Button(Power);
+			Remove_A_Button(Repair);
+			Remove_A_Button(Background);
+			for (int index = 0; index < STRIPS; index++) {
+				Remove_A_Button(TabButtons[index]);
+			}
+			Remove_A_Button(Upgrade);
+			Remove_A_Button(Waypoint);
+			StripClass & current = Column[ActiveTabIndex];
+			for (int slot = 0; slot < 60; slot++) {
+				Map.Remove_A_Button(StripClass::SelectButton[current.ID * 60 + slot]);
+			}
+			Remove_A_Button(RadarButton);
+		}
+		Flag_To_Redraw(GS_REDRAW_ALL);
+	}
+	return(changed);
+}
+
+// FUNCTION: 0x006A8080
+int SidebarClass::FUN_006A8080(int count)
+{
+	return DAT_00B0B4FC * count;
+}
+
 // FUNCTION: 0x006ABC60
 int SidebarClass::GetObjectTabIdx(RTTIType type, int id, bool naval)
 {

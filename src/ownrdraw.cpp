@@ -50,6 +50,57 @@ int WINAPI ODUpdateWindowRect(HWND window, RECT *rect);
 
 BOOL CALLBACK ODAddWindowToList(HWND window, ArrayList<HWND> * list);
 
+namespace fastmath { double __cdecl sqrt(double x); double __cdecl tan(double x); double __cdecl atan(double x); }
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007E1720;
+extern const double DAT_007E1728;
+extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
+extern const double DAT_007EF700;
+extern const double DAT_007EF708;
+
+// FUNCTION: 0x00600340 $E54
+double DAT_00AC1B40 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x00600370 $E57
+double DAT_00AC48A0 = DAT_00AC1B40 / DAT_007EF700;
+
+// FUNCTION: 0x00600390 $E60
+double DAT_00AC4838 = DAT_007E1718 / DAT_00AC48A0;
+
+// FUNCTION: 0x006003B0 $E63
+double DAT_00AC4830 = DAT_007E1720 * DAT_007EF708;
+
+// FUNCTION: 0x006003D0 $E66
+double DAT_00AC1B88 = DAT_007E1728 * DAT_007EF708;
+
+// FUNCTION: 0x006003F0 $E69
+double DAT_00AC1898 = DAT_007E1730 * DAT_007EF708;
+
+// FUNCTION: 0x00600410 $E72
+int DAT_00AC48AC = (int)(fastmath::tan(DAT_00AC1898 - DAT_00AC1B88) * DAT_007E1738 * DAT_00AC1B40);
+
+// FUNCTION: 0x00600450 $E75
+double DAT_00AC1CA0 = fastmath::atan(DAT_00AC48AC * DAT_007E1740);
+
+// FUNCTION: 0x00600480 $E78
+double DAT_00AC4610 = fastmath::atan((DAT_00AC48AC * 2) / DAT_00AC1B40);
+
+// FUNCTION: 0x006004B0 $E81
+int DAT_00AC489C = (int)(DAT_00AC48AC * 4 + DAT_007E1738);
+
+struct ODShortPair { short a; short b; ODShortPair(void) { a = 0; b = 0; } };
+struct ODIntTriple { int a; int b; int c; ODIntTriple(void) { a = 0; b = 0; c = 0; } };
+
+// FUNCTION: 0x006004E0 $E84
+ODShortPair DAT_00AC1B38;
+
+// FUNCTION: 0x006004F0 $E87
+ODIntTriple DAT_00AC1DF8;
+
 // FUNCTION: 0x00600630
 OwnerDraw::CellData::CellData(void)
 {

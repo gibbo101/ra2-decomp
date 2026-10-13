@@ -286,3 +286,20 @@ template class DynamicVectorClass<UnitTypeClass *>;
 
 // FUNCTION: 0x00512960 ?$TypeList@PAVAircraftTypeClass@@::?$TypeList@PAVAircraftTypeClass@@
 template class TypeList<AircraftTypeClass *>;
+
+// FUNCTION: 0x00512990 ?$DynamicVectorClass@PAVAircraftTypeClass@@::Clear
+template class DynamicVectorClass<AircraftTypeClass *>;
+
+// FUNCTION: 0x005129C0 ?$VectorClass@PAVAircraftTypeClass@@::ID
+// FUNCTION: 0x005129E0 ?$VectorClass@PAVAircraftTypeClass@@::GetItem
+
+// FUNCTION: 0x005129F0 ?$VectorClass@PAVInfantryTypeClass@@::~?$VectorClass@PAVInfantryTypeClass@@
+// FUNCTION: 0x00512A40 ?$VectorClass@PAVUnitTypeClass@@::~?$VectorClass@PAVUnitTypeClass@@
+// FUNCTION: 0x00512A90 ?$VectorClass@PAVAircraftTypeClass@@::~?$VectorClass@PAVAircraftTypeClass@@
+// FUNCTION: 0x00512AE0 ?$DynamicVectorClass@PAVInfantryTypeClass@@::~?$DynamicVectorClass@PAVInfantryTypeClass@@
+// FUNCTION: 0x00512B30 ?$DynamicVectorClass@PAVUnitTypeClass@@::~?$DynamicVectorClass@PAVUnitTypeClass@@
+// FUNCTION: 0x00512B80 ?$DynamicVectorClass@PAVAircraftTypeClass@@::~?$DynamicVectorClass@PAVAircraftTypeClass@@
+// FUNCTION: 0x00512BD0 ?$VectorClass@PAVAircraftTypeClass@@::operator=
+// FUNCTION: 0x00512C40 ?$VectorClass@PAVAircraftTypeClass@@::operator==
+// FUNCTION: 0x00512C80 ?$VectorClass@PAVAircraftTypeClass@@::Resize
+template class VectorClass<AircraftTypeClass *>;

@@ -210,7 +210,7 @@ int INIClass::Entry_Count(char const * section) const
 // FUNCTION: 0x00526A30
 int INIClass::Entry_Count(Wstring const & section) const
 {
-	return(Entry_Count(section.get()));
+	return(Entry_Count(section.text()));
 }
 
 // FUNCTION: 0x00526B00
@@ -240,7 +240,7 @@ char const * INIClass::Get_Entry(char const * section, int index) const
 // FUNCTION: 0x00526D90
 Wstring INIClass::Get_Entry(Wstring const & section, int index) const
 {
-	return Wstring(Get_Entry(section.get(), index));
+	return Wstring(Get_Entry(section.text(), index));
 }
 
 
@@ -341,8 +341,8 @@ bool INIClass::Put_Int(char const * section, char const * entry, int number, int
 bool INIClass::Put_Int(Wstring const & section, Wstring const & entry, int number, int format)
 {
 	char buffer[MAX_LINE_LENGTH];
-	char * entrystr = entry.get();
-	char * sectionstr = section.get();
+	char * entrystr = entry.text();
+	char * sectionstr = section.text();
 
 	switch (format) {
 		default:
@@ -364,7 +364,7 @@ bool INIClass::Put_Int(Wstring const & section, Wstring const & entry, int numbe
 // FUNCTION: 0x005278F0
 int INIClass::Get_Int(Wstring const & section, Wstring const & entry, int defvalue) const
 {
-	return(Get_Int(section.get(), entry.get(), defvalue));
+	return(Get_Int(section.text(), entry.text(), defvalue));
 }
 
 // FUNCTION: 0x00527B90
@@ -394,8 +394,8 @@ bool INIClass::Put_Rect(char const * section, char const * entry, Rect const & v
 bool INIClass::Put_Rect(Wstring const & section, Wstring const & entry, Rect const & value)
 {
 	char buffer[64];
-	char * entrystr = entry.get();
-	char * sectionstr = section.get();
+	char * entrystr = entry.text();
+	char * sectionstr = section.text();
 
 	sprintf(buffer, "%d,%d,%d,%d", value.X, value.Y, value.Width, value.Height);
 	return(Put_String(sectionstr, entrystr, buffer));

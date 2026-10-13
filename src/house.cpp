@@ -20,6 +20,7 @@
 #include "assert.h"
 #include "building.h"
 #include "builtype.h"
+#include "capmgr.h"
 #include "ccrand.h"
 #include "cell.h"
 #include "conquer.h"
@@ -61,6 +62,7 @@
 #include "taskforc.h"
 #include "team.h"
 #include "techtype.h"
+#include "temporal.h"
 #include "tiberium.h"
 #include "tracker.h"
 #include "trigger.h"
@@ -80,6 +82,7 @@ extern DynamicVectorClass<TechnoClass *> DAT_00A8EC78;
 extern DynamicVectorClass<FactoryClass *> DAT_00A83E30;
 namespace Unsorted { extern int MuteSWLaunches; }
 #define Factories DAT_00A83E30
+extern HouseClass * DAT_00AC1198;
 
 // FUNCTION: 0x004F4EE0 $E2
 // FUNCTION: 0x004F4F00 $E5
@@ -1248,6 +1251,274 @@ void HouseClass::Clobber_All(void)
 	delete this;
 }
 
+// FUNCTION: 0x004FBD00
+bool HouseClass::Does_Enemy_Building_Exist(StructType btype) const
+{
+	for (HousesType index = HOUSE_FIRST; index < Houses.Count(); index++) {
+		HouseClass * house = Houses[index];
+
+		if (house && !Is_Ally(house) && house->ABQuantity.Value(btype) > 0) {
+			return(true);
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x004FBD80
+TechnoTypeClass const * HouseClass::Suggest_New_Object(RTTIType objecttype, bool kennel) const
+{
+	switch (objecttype) {
+		case RTTI_AIRCRAFT:
+		case RTTI_AIRCRAFTTYPE:
+			if (BuildAircraft != AIRCRAFT_NONE) {
+				return(AircraftTypes[BuildAircraft]);
+			}
+			return(NULL);
+
+		case RTTI_UNIT:
+		case RTTI_UNITTYPE:
+			if (BuildUnit != UNIT_NONE) {
+				return(UnitTypes[BuildUnit]);
+			}
+			return(NULL);
+
+		case RTTI_INFANTRY:
+		case RTTI_INFANTRYTYPE:
+			if (BuildInfantry != INFANTRY_NONE) {
+				return(InfantryTypes[BuildInfantry]);
+			}
+			return(NULL);
+
+		case RTTI_BUILDING:
+		case RTTI_BUILDINGTYPE:
+			if (BuildStructure != STRUCT_NONE) {
+				return(BuildingTypes[BuildStructure]);
+			}
+			return(NULL);
+	}
+	return(NULL);
+}
+
+// FUNCTION: 0x004FBE40
+bool HouseClass::Flag_Remove(AbstractClass * target, bool set_home)
+{
+	bool rc = false;
+
+	if (target) {
+		if (target->Fetch_RTTI() == RTTI_UNIT) {
+			rc = ((UnitClass *)target)->Flag_Remove();
+			if (rc && FlagLocation == target) {
+				FlagLocation = NULL;
+			}
+		} else {
+			Cell cell = target->Center_Coord().As_Cell();
+			if (Map.In_Radar(cell)) {
+				rc = Map[cell].Flag_Remove();
+				if (rc && FlagLocation == target) {
+					FlagLocation = NULL;
+				}
+			}
+		}
+
+		if (set_home) {
+			if (FlagHome != CELL_NONE) {
+				Map[FlagHome].Overlay = OVERLAY_NONE;
+				FlagHome = CELL_NONE;
+			}
+		}
+		return(rc);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x004FBF60
+bool HouseClass::Flag_Attach(Cell const & cell, bool set_home)
+{
+	bool rc;
+
+	if (Map.In_Radar(cell)) {
+		Flag_Remove(FlagLocation, set_home);
+
+		Cell newcell = cell;
+		rc = Map[newcell].Flag_Place(Class->House);
+		if (!rc) {
+			newcell = Map.Nearby_Location(cell, SPEED_TRACK);
+			if (newcell != CELL_NONE) {
+				rc = Map[newcell].Flag_Place(Class->House);
+			}
+		}
+
+		if (rc) {
+			FlagLocation = &Map[newcell];
+		}
+
+		return(rc);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x004FC060
+bool HouseClass::Flag_Attach(UnitClass * object, bool set_home)
+{
+	if (object && !object->IsInLimbo) {
+		Flag_Remove(FlagLocation, set_home);
+
+		object->Flag_Attach(Class->House);
+		FlagLocation = object;
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x004FC6D0
+void HouseClass::Destroy_All(void)
+{
+	int i = 0;
+	TechnoClass * last = NULL;
+
+	while (i < Technos.Count()) {
+		TechnoClass * techno = Technos[i];
+		HouseClass * owner = techno->GetOriginalOwner();
+
+		if (owner == techno->House || (owner == this && (techno->MindControlledBy == NULL || !techno->MindControlledBy->CaptureManager->FUN_00472330(techno)))) {
+			if (owner == this && techno != last) {
+				int damage = techno->Strength;
+				if (techno->TemporalTargetingMe) techno->TemporalTargetingMe->JustLetGo();
+				techno->Take_Damage(damage, 0, Rule->C4Warhead, NULL, true, true, NULL);
+				last = techno;
+				continue;
+			}
+		}
+		i++;
+	}
+}
+
+// FUNCTION: 0x004FC790
+void HouseClass::Destroy_All_Buildings(void)
+{
+	int i = 0;
+	int damage;
+	TechnoClass * last = NULL;
+	while (i < Technos.Count()) {
+		TechnoClass * techno = Technos[i];
+		if (techno->GetOriginalOwner() == this && techno->Fetch_RTTI() == RTTI_BUILDING && !techno->IsInLimbo && techno != last) {
+			damage = techno->Strength;
+			if (techno->TemporalTargetingMe) techno->TemporalTargetingMe->JustLetGo();
+			techno->Take_Damage(damage, 0, Rule->C4Warhead, NULL, true, true, NULL);
+			last = techno;
+		} else {
+			i++;
+		}
+	}
+}
+
+// FUNCTION: 0x004FC820
+void HouseClass::Destroy_All_Non_Buildings_Non_Naval(void)
+{
+	int i = 0;
+	TechnoClass * last = NULL;
+
+	while (i < Technos.Count()) {
+		TechnoClass * techno = Technos[i];
+
+		if (techno->GetOriginalOwner() == this && techno->Fetch_RTTI() != RTTI_BUILDING && !techno->IsInLimbo && !techno->Techno_Type_Class()->Naval && techno != last) {
+			int damage = techno->Strength;
+			if (techno->TemporalTargetingMe) techno->TemporalTargetingMe->JustLetGo();
+			techno->Take_Damage(damage, 0, Rule->C4Warhead, NULL, true, true, NULL);
+			last = techno;
+			continue;
+		}
+		i++;
+	}
+}
+
+// FUNCTION: 0x004FC8D0
+void HouseClass::Destroy_All_Non_Buildings_Naval(void)
+{
+	int i = 0;
+	TechnoClass * last = NULL;
+
+	while (i < Technos.Count()) {
+		TechnoClass * techno = Technos[i];
+
+		if (techno->GetOriginalOwner() == this && techno->Fetch_RTTI() != RTTI_BUILDING && !techno->IsInLimbo && techno->Techno_Type_Class()->Naval && techno != last) {
+			int damage = techno->Strength;
+			if (techno->TemporalTargetingMe) techno->TemporalTargetingMe->JustLetGo();
+			techno->Take_Damage(damage, 0, Rule->C4Warhead, NULL, true, true, NULL);
+			last = techno;
+			continue;
+		}
+		i++;
+	}
+}
+
+// FUNCTION: 0x004FC980
+bool HouseClass::Flag_To_Die(void)
+{
+	if (!IsToWin && !IsToDie && !IsToLose) {
+		IsToDie = true;
+		BorrowedTime = 0;
+	}
+	return(IsToDie);
+}
+
+// FUNCTION: 0x004FC9E0
+bool HouseClass::Flag_To_Win(bool silent)
+{
+	if (!IsToWin && !IsToDie && !IsToLose) {
+		IsToWin = true;
+		if (!silent) {
+			BorrowedTime = int(TICKS_PER_MINUTE * Rule->SavourDelay);
+			if (Session.Type != GAME_NORMAL && Session.Type != GAME_SKIRMISH) {
+				int time = Frame + MAX(BorrowedTime, (int)Session.MaxAhead);
+				BorrowedTime = 10 * ((time + 9) / 10) - Frame;
+			}
+			DebugString("Frame %d, BorrowedTime == %d\n", Frame, (int)BorrowedTime);
+		}
+		if (Session.Type == GAME_NORMAL && Is_Player_Control()) {
+			Lock_Scenario_Input();
+			TacticalMap->Set_Caption_Text(StringTable::LoadString("TXT_SCENARIO_WON", NULL, "D:\\ra2mdpost\\House.CPP", 5639), 0);
+			VoxClass::Play("EVA_MissionAccomplished", -1, -1);
+			Map.Flag_To_Redraw();
+		} else if (Is_Player_Control()) {
+			TacticalMap->Set_Caption_Text(StringTable::LoadString("TXT_VICTORIOUS", NULL, "D:\\ra2mdpost\\House.CPP", 5642), 2);
+			VoxClass::Play("EVA_YouAreVictorious", -1, -1);
+			Map.Flag_To_Redraw();
+		}
+	}
+	return(IsToWin);
+}
+
+// FUNCTION: 0x004FCBD0
+bool HouseClass::Flag_To_Lose(bool silent)
+{
+	IsToWin = false;
+	if (!IsToDie && !IsToLose) {
+		IsToLose = true;
+		if (!silent) {
+			BorrowedTime = int(TICKS_PER_MINUTE * Rule->SavourDelay);
+			if (Session.Type != GAME_NORMAL && Session.Type != GAME_SKIRMISH) {
+				int time = Frame + MAX(BorrowedTime, (int)Session.MaxAhead);
+				BorrowedTime = 10 * ((time + 9) / 10) - Frame;
+			}
+			DebugString("Frame %d, BorrowedTime == %d\n", Frame, (int)BorrowedTime);
+		}
+		if (Session.Type == GAME_NORMAL && Is_Player_Control()) {
+			Lock_Scenario_Input();
+			TacticalMap->Set_Caption_Text(StringTable::LoadString("TXT_SCENARIO_LOST", NULL, "D:\\ra2mdpost\\House.CPP", 5694), 1);
+			VoxClass::Play("EVA_MissionFailed", -1, -1);
+			Map.Flag_To_Redraw();
+		} else if (Is_Player_Control()) {
+			TacticalMap->Set_Caption_Text(StringTable::LoadString("TXT_LOST", NULL, "D:\\ra2mdpost\\House.CPP", 5697), 3);
+			if (PlayerPtr != DAT_00AC1198) {
+				VoxClass::Play("EVA_YouHaveLost", -1, -1);
+			}
+			Map.Flag_To_Redraw();
+		}
+	}
+	return(IsToLose);
+}
+
 // FUNCTION: 0x004FD120
 Coord HouseClass::Find_Build_Location(BuildingClass * building) const
 {
@@ -1281,4 +1552,10 @@ bool HouseClass::Is_Player_Control(void) const
 		return(IsHuman || IsPlayerControl);
 	}
 	return(this == PlayerPtr) == true;
+}
+
+// FUNCTION: 0x0050E000
+void HouseClass::Set_Base_Spawn_Cell(Cell cell)
+{
+	BaseSpawnCell = cell;
 }

@@ -728,6 +728,152 @@ bool TActionClass::TAction_MAKE_ENEMY(HouseClass * house, ObjectClass * , Trigge
 	return(true);
 }
 
+// FUNCTION: 0x006E0ED0
+bool TActionClass::TAction_PREFERRED_TARGET(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
+{
+	if (house != NULL) {
+		house->PreferredTarget = Data.Quarry;
+	}
+	return(true);
+}
+
+// FUNCTION: 0x006E0EF0
+bool TActionClass::TAction_BASE_BUILDING(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
+{
+	if (Data.Bool) {
+		house->IsBaseBuilding = true;
+		if (house->ConYards.Count() > 0) {
+			BuildingClass *building = house->ConYards[0];
+			Cell base_cell = building->Get_Coord().As_Cell();
+			house->Set_Base_Spawn_Cell(base_cell);
+			house->Base.PlacementCenter = base_cell;
+		}
+		if (house->Base.Nodes.Count() == 0) {
+			house->FUN_0050C210();
+		}
+	} else {
+		house->IsBaseBuilding = false;
+	}
+	return(true);
+}
+
+// FUNCTION: 0x006E0F90
+bool TActionClass::TAction_CREEP_SHADOW(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	Map.Encroach_Shadow();
+	return(true);
+}
+
+// FUNCTION: 0x006E0FA0
+bool TActionClass::TAction_SET_GLOBAL(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	Scen->Set_Global_To(Data.Value, true);
+	return(true);
+}
+
+// FUNCTION: 0x006E0FC0
+bool TActionClass::TAction_CLEAR_GLOBAL(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	Scen->Set_Global_To(Data.Value, false);
+	return(true);
+}
+
+// FUNCTION: 0x006E0FE0
+bool TActionClass::TAction_REVEAL_SOME(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	if (!PlayerPtr->IsVisionary) {
+		Cell waypoint = Scen->Get_Waypoint_Cell(Data.Value);
+		int height = Map[waypoint].Height + ((Map[waypoint].IsUnderBridge || Map[waypoint].WasUnderBridge) ? BRIDGE_CELL_HEIGHT : 0);
+		{
+			Coord c1 = Coord(waypoint - Cell(height/2, height/2)) + Coord(0, 0, height * LEVEL_LEPTON_H);
+			Map.RevealArea2(&c1, Rule->RevealTriggerRadius, PlayerPtr, false, false, false, true, false);
+		}
+		{
+			Coord c2 = Coord(waypoint - Cell(height/2, height/2)) + Coord(0, 0, height * LEVEL_LEPTON_H);
+			Map.RevealArea2(&c2, Rule->RevealTriggerRadius, PlayerPtr, false, false, false, true, true);
+		}
+	}
+	return(true);
+}
+
+// FUNCTION: 0x006E1180
+bool TActionClass::TAction_REDUCE_TIBERIUM(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	Cell cell1 = Scen->Get_Waypoint_Cell(Data.Value);
+	Map.Area_Reduce_Tiberium(cell1);
+	return(true);
+}
+
+// FUNCTION: 0x006E11C0
+bool TActionClass::TAction_REVEAL_ZONE(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	if (!PlayerPtr->IsVisionary) {
+		int zone = Map.Get_Cell_Zone(Scen->Get_Waypoint_Cell(Data.Value), MZONE_CRUSHER);
+
+		Map.Reset_Local_Iterator();
+		CellClass *cellptr = Map.Local_Iterate();
+
+		while (cellptr) {
+			if (Map.Get_Cell_Zone(cellptr->CellID, MZONE_CRUSHER) == zone) {
+				int height = cellptr->Height/2;
+				Coord c1 = Coord(cellptr->CellID - Cell(height/2, height/2)) + Coord(0, 0, height * LEVEL_LEPTON_H);
+				Map.RevealArea2(&c1, 2, PlayerPtr, false, false, false, true, false);
+				Coord c2 = Coord(cellptr->CellID - Cell(height/2, height/2)) + Coord(0, 0, height * LEVEL_LEPTON_H);
+				Map.RevealArea2(&c2, 2, PlayerPtr, false, false, false, true, true);
+			}
+			cellptr = Map.Local_Iterate();
+		}
+
+	}
+	return(true);
+}
+
+// FUNCTION: 0x006E1330
+bool TActionClass::TAction_REVEAL_ALL(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	if (!PlayerPtr->IsVisionary) {
+		PlayerPtr->IsVisionary = true;
+
+		Map.Reset_Iterator();
+		CellClass *cellptr = Map.Iterate();
+
+		while (cellptr) {
+			Map.Map_Cell(cellptr->CellID, PlayerPtr);
+			cellptr = Map.Iterate();
+		}
+		Map.Flag_To_Redraw(GS_REDRAW_TACTICAL);
+	}
+	return(true);
+}
+
+// FUNCTION: 0x006E13A0
+bool TActionClass::TAction_START_TIMER(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	if (!Scen->MissionTimer.Is_Active()) {
+		Scen->MissionTimer.Start();
+		Map.Redraw_Tab();
+	}
+	return(true);
+}
+
+// FUNCTION: 0x006E13E0
+bool TActionClass::TAction_STOP_TIMER(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	if (Scen->MissionTimer.Is_Active()) {
+		Scen->MissionTimer.Stop();
+		Map.Redraw_Tab();
+	}
+	return(true);
+}
+
+// FUNCTION: 0x006E1440
+bool TActionClass::TAction_ADD_TIMER(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	Scen->MissionTimer = Scen->MissionTimer + Data.Value * TICKS_PER_SECOND;
+	Map.Redraw_Tab();
+	return(true);
+}
+
 // FUNCTION: 0x006E2640
 bool TActionClass::TAction_ION_STORM_STOP(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {

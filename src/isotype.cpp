@@ -28,6 +28,7 @@
 #include "dsurface.h"
 #include "globals.h"
 #include "isotile.h"
+#include "lightcalc.h"
 #include "lightcon.h"
 #include "mixfile.h"
 #include "palette.h"
@@ -239,6 +240,61 @@ void const * IsometricTileTypeClass::Get_Image_Data(void) const
 	return(data);
 }
 
+// FUNCTION: 0x00544CE0
+IsometricTileType IsometricTileTypeClass::From_Name(char const * name)
+{
+	if (name != NULL) {
+		for (int index = ISOTILE_FIRST; index < IsometricTileTypes.Count(); index++) {
+			if (stricmp(IsometricTileTypes[index]->IniName, name) == 0) {
+				return(IsometricTileType(index));
+			}
+		}
+	}
+	return(ISOTILE_NONE);
+}
+
+// FUNCTION: 0x00544D30
+Cell const * IsometricTileTypeClass::Occupy_List(bool placement) const
+{
+	static Cell _occupy[13*8+5+11];
+	Cell	* ptr;
+
+	IsoTileSet const * tileset = (IsoTileSet const *)Get_Image_Data();
+	unsigned int const * map = (unsigned int const *)tileset->Tiles;
+
+	ptr = &_occupy[0];
+	for (int index = 0; index < Width * Height; index++) {
+		if (*map++ != NULL) {
+			*ptr++ = Cell(index % Width, index / Width);
+		}
+	}
+	*ptr = REFRESH_EOL;
+
+	return((Cell const *)&_occupy[0]);
+}
+
+// FUNCTION: 0x00544DF0 $E208
+
+// FUNCTION: 0x00544E00
+IsometricTileTypeClass * IsometricTileTypeClass::Next_Tile_From_Set(int index)
+{
+	int num = NumTileTypesInSet;
+	int i = index;
+	if (i > num - 1) {
+		i = i % num;
+	}
+
+	if (i == 0) {
+		return(this);
+	}
+
+	IsometricTileTypeClass * next = this;
+	do {
+		next = next->NextTileTypeInSet;
+	} while (--i != 0);
+	return(next);
+}
+
 // FUNCTION: 0x00544E30
 IsometricTileType IsometricTileTypeClass::Fixup_Tile_Type(IsometricTileType current_type)
 {
@@ -255,6 +311,232 @@ IsometricTileType IsometricTileTypeClass::Fixup_Tile_Type(IsometricTileType curr
 		new_type += tileinsert->Offset;
 	}
 	return(new_type);
+}
+
+// FUNCTION: 0x00544E70
+LightConvertClass * IsometricTileTypeClass::Find_Or_Make_Drawer(int r, int g, int b)
+{
+	LightConvertClass * drawer;
+
+	if (VisibleSurface == NULL) {
+		return(NULL);
+	}
+
+	if (r == NORMAL_LIGHT && g == NORMAL_LIGHT && b == NORMAL_LIGHT && TileDrawers.Count() != 0) {
+		return(TileDrawers[0]);
+	}
+
+	Clamp_Tile_RGB(r,g,b);
+
+	for (int i = 1; i < TileDrawers.Count(); i++) {
+		drawer = TileDrawers[i];
+		if (drawer->NormalRedTint == r && drawer->NormalGreenTint == g && drawer->NormalBlueTint == b) {
+			return(drawer);
+		}
+	}
+
+	int levels = 53;
+	if (r + g + b < 2000) {
+		levels = 27;
+	}
+	drawer = new LightConvertClass(IsoTilePalette, GamePalette, *VisibleSurface, r, g, b, TileDrawers.Count() != 0, NULL, levels);
+	TileDrawers.Add(drawer);
+
+	return(drawer);
+}
+
+// FUNCTION: 0x00544FF0
+bool IsometricTileTypeClass::Free_Unused_Drawers(int time_budget_ms, bool force)
+{
+	return(false);
+}
+
+// FUNCTION: 0x00545000
+void IsometricTileTypeClass::Init_Drawers(void)
+{
+	for (int i = 0; i < TileDrawers.Count(); i++) {
+		LightConvertClass *drawer = TileDrawers[i];
+		delete drawer;
+		TileDrawers.Delete_Index(i);
+		i--;
+	}
+
+	TileDrawers.Add(new LightConvertClass(IsoTilePalette, GamePalette, *VisibleSurface, 1000, 1000, 1000, false, NULL, 53));
+
+	BlubCell.Drawer = NULL;
+	BlubCell.Init_Drawer();
+
+	Map.Reset_Iterator();
+	CellClass * cptr = Map.Iterate();
+	while (cptr != NULL) {
+		cptr->Drawer = NULL;
+		cptr = Map.Iterate();
+	}
+}
+
+// FUNCTION: 0x005471F0
+bool IsometricTileTypeClass::Is_Randomized(int tile) const
+{
+	IsoTileSet const * tileset = (IsoTileSet const *)Get_Image_Data();
+
+	if (tileset != NULL) {
+		IsoTileRecord const * record = tileset->Fetch_Record_Pointer(tile);
+		if (record != NULL) {
+			return(record->IsRandomized);
+		}
+	}
+	return(0);
+}
+
+// FUNCTION: 0x00546DA0
+void IsometricTileTypeClass::Load_Tiles(bool skipiteration, bool isrand)
+{
+	CDTimerClass<SystemTimerClass> timer = 0;
+	IsometricTileTypeClass *ptr;
+
+	if (!skipiteration) {
+		Map.Reset_Iterator();
+		CellClass *cptr = Map.Iterate();
+		while (cptr != NULL) {
+			IsometricTileType type = cptr->ITType;
+			int index = 0;
+			int num;
+
+			if (type != ISOTILE_NONE && type < (IsometricTileType)IsometricTileTypes.Count()) {
+				ptr = IsometricTileTypes[type];
+
+				if (ptr->NumTileTypesInSet > 1) {
+					num = ptr->NumTileTypesInSet;
+					if (ptr->Is_Randomized(cptr->SubTile)) {
+						index = cptr->IsBridgeDamaged;
+					} else {
+						num = ptr->NumTileTypesInSet;
+						index = cptr->Clear_Icon(cptr->ITType, num);
+					}
+				}
+			} else {
+				ptr = IsometricTileTypes[TILE_CLEAR];
+				num = ptr->NumTileTypesInSet;
+				index = cptr->Clear_Icon(TILE_CLEAR, num);
+			}
+			ptr = ptr->Next_Tile_From_Set(index);
+			ptr->UseCount++;
+			cptr = Map.Iterate();
+		}
+	}
+
+	int tile_count = 0;
+	int bytes = 0;
+	timer = 1;
+
+	for (int i = 0; i < IsometricTileTypes.Count(); i++) {
+		if (!timer) {
+			Call_Back();
+			timer = 4;
+		}
+
+
+		ptr = IsometricTileTypes[i];
+		while (ptr != NULL) {
+			if (ptr->IsFileLoaded && strlen(ptr->Filename)) {
+				if (!skipiteration && ptr->UseCount == 0 && (!isrand || !ptr->IsRequiredForRMG)) {
+					if (ptr->ImageData != NULL) {
+						delete [] (unsigned char *)ptr->ImageData;
+						ptr->ImageData = NULL;
+						ptr->ImageAllocated = false;
+					}
+				} else {
+					if (ptr->ImageData == NULL) {
+						bytes += ptr->Load_Tile_Data();
+						tile_count++;
+					}
+				}
+			}
+			ptr = ptr->NextTileTypeInSet;
+		}
+	}
+
+	DebugString("Loaded %d isometric tiles consuming %d Kb\n", tile_count, bytes / 1024);
+}
+
+// FUNCTION: 0x00547020
+int IsometricTileTypeClass::Load_Tile_Data(void)
+{
+	CCFileClass file(Filename);
+	int size = file.Size();
+	if (ImageData != NULL) {
+		delete [] (unsigned char *)ImageData;
+	}
+	unsigned char * data = new unsigned char[size];
+	ImageData = data;
+	file.Read(data, size);
+
+	ImageAllocated = true;
+	IsoTileSet * tileset = (IsoTileSet *)ImageData;
+
+	Width = *((unsigned char *)ImageData);
+	Height = *((unsigned char *)ImageData + 4);
+
+	/// Fixup pointers to point to actual memory
+	for (int i = 0; i < (Width * Height); i++) {
+
+		if (tileset->Tiles[i] != NULL) {
+			unsigned char * ptr = (unsigned char *)ImageData;
+			// Only fix up pointers that have not been converted already. The file
+			// has just been read fresh, so none of them ever have been.
+			if ((void *)tileset->Tiles[i] < ptr) {
+				tileset->Tiles[i] = (IsoTileRecord *)(ptr + (unsigned int)tileset->Tiles[i]);
+			}
+		}
+
+	}
+
+	Build_Preview_Tiles();
+
+	return(size);
+}
+
+// FUNCTION: 0x00547110
+void IsometricTileTypeClass::Clear_Use_Counts(void)
+{
+	IsometricTileTypeClass * t;
+	for (int i = 0; i < IsometricTileTypes.Count(); i++) {
+		for (t = IsometricTileTypes[i]; t != NULL; t = t->NextTileTypeInSet) {
+			t->UseCount = 0;
+		}
+	}
+}
+
+// FUNCTION: 0x00547150
+bool IsometricTileTypeClass::Get_Tile_Pixel_Dimensions(int tile, int & width, int & height)
+{
+	IsoTileSet const * tileset = (IsoTileSet const *)Get_Image_Data();
+	if (tileset != NULL) {
+		IsoTileRecord const * record = tileset->Fetch_Record_Pointer(tile);
+		width = tileset->Pixel_Width();
+		height = tileset->Pixel_Height();
+		if (record != NULL) {
+			if ((record->IsHasExtraData) != 0) {
+				height += (record->Y - record->ExtraY);
+			}
+		}
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x005471B0
+int IsometricTileTypeClass::Ramp_Type(int tile) const
+{
+	IsoTileSet const * tileset = (IsoTileSet const *)Get_Image_Data();
+
+	if (tileset != NULL) {
+		IsoTileRecord const * record = tileset->Fetch_Record_Pointer(tile);
+		if (record != NULL) {
+			return(record->RampType);
+		}
+	}
+	return(0);
 }
 
 // FUNCTION: 0x00549B30

@@ -62,6 +62,7 @@ extern DynamicVectorClass<TechnoClass *> DAT_00A8EC78;
 extern HouseClass * PlayerPtr;
 inline bool RadarTrackingStruct::Use_Head(void) const { return(Object->House == PlayerPtr); }
 int __fastcall FUN_00753250(char const * name);
+void __fastcall FUN_0055AF40(int value);
 
 // FUNCTION: 0x00652680 $E109
 const double DAT_00B048D8 = fastmath::sqrt(pow((double)CELL_LEPTON_H, 2) * 2);
@@ -926,6 +927,354 @@ void RadarClass::Reset_Radar(void)
 
 	for (int i = 0; i < Technos.Count(); i++) {
 		Technos[i]->IsRadarTracked = false;
+	}
+}
+
+// FUNCTION: 0x00655A90
+void RadarClass::Clear_Radar(void)
+{
+	if (RadarSurface != NULL) {
+		delete RadarSurface;
+		RadarSurface = NULL;
+	}
+	if (BackgroundSurface != NULL) {
+		delete BackgroundSurface;
+		BackgroundSurface = NULL;
+	}
+	if (BackgroundColors != NULL) {
+		delete BackgroundColors;
+		BackgroundColors = NULL;
+	}
+	if (RadarTrackingTable != NULL) {
+		delete RadarTrackingTable;
+		RadarTrackingTable = NULL;
+	}
+	if (PixelFlags != NULL) {
+		delete [] PixelFlags;
+		PixelFlags = NULL;
+	}
+}
+
+// FUNCTION: 0x00655B20
+void RadarClass::Post_Load_Radar_Fixup(void)
+{
+	RadarSurface = NULL;
+	BackgroundSurface = NULL;
+	BackgroundColors = NULL;
+	RadarTrackingTable = NULL;
+	PixelFlags = NULL;
+
+	Init_Radar();
+
+	Map.Set_Local_Dimensions(Map.LocalRect);
+	Compute_Radar_Image();
+
+	for (int i = 0; i < Technos.Count(); i++) {
+		Technos[i]->IsRadarTracked = false;
+	}
+	if (RadarMode == RMODE_MOVIE) {
+		RadarState = RSTATE_MOVIE_DONE;
+		Radar_Activate(SuspendedRadarMode, 0);
+		FUN_0055AF40(Rule->DetailMinFrameRateNormal);
+	}
+}
+
+// FUNCTION: 0x00656150
+void RadarClass::Render_Tracked_Objects(void)
+{
+	memset(PixelFlags, 0, RadarSurface->Get_Width() * RadarSurface->Get_Height() / 8 + 1);
+
+	for (int b = 0; b < 256; b++) {
+
+		RADAR_HASH_TABLE::BucketType & bucket = RadarTrackingTable->Buckets[b];
+
+		int count = bucket.Count();
+
+		RADAR_HASH_TABLE::ObjectType * ptr = &bucket[0];
+
+		for (int t = 0; t < count; t++) {
+			RadarTrackingStruct * track = &ptr[t].Key;
+			TechnoClass * tech = track->Object;
+
+			int id = track->Position.X + track->Position.Y * RadarSurface->Get_Width();
+			int i = id >> 3;
+			int bit = 1 << (id & 7);
+
+			if ((PixelFlags[i] & bit) == 0) {
+				PixelFlags[i] |= bit;
+
+				ColorScheme * scheme = ColorSchemes[tech->House->Scheme];
+
+				if (tech->IsDisguised()) {
+					if (tech->GetDisguiseHouse(false) != NULL) {
+						scheme = ColorSchemes[tech->GetDisguiseHouse(false)->Scheme];
+					} else {
+						scheme = Fetch_Scheme_By_Name("LightGrey", 1);
+					}
+				}
+
+				int color = scheme->Bright;
+				ConvertClass * drawer = scheme->Converter;
+				if (drawer->Bytes_Per_Pixel() == 1) {
+					unsigned char * translator = (unsigned char *)drawer->Get_Translate_Table();
+					color = translator[color];
+				} else {
+					unsigned short * translator = (unsigned short *)drawer->Get_Translate_Table();
+					color = translator[color];
+				}
+
+				RadarSurface->Put_Pixel(track->Position, color);
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x006562D0
+void RadarClass::Radar_Pixel(Point2D const & point)
+{
+	if (point.X >= 0 && point.X < RadarSurface->Get_Width() && point.Y >= 0 && point.Y < RadarSurface->Get_Height()) {
+		int id = point.X + point.Y * RadarSurface->Get_Width();
+		int i = id >> 3;
+		int bit = 1 << (id & 7);
+		if ((PixelFlags[i] & bit) == 0) {
+			PixelFlags[i] |= bit;
+			PixelStack.Add(point);
+			IsToRedraw = true;
+		}
+	}
+}
+
+// FUNCTION: 0x006563B0
+void RadarClass::Compute_Foundations(void)
+{
+	int i;
+	for (i = 0; i < BSIZE_COUNT; i++) {
+		Foundation[i].Clear();
+
+		int bwidth = BuildingTypeClass::SizeWidth[i];
+		int bheight = BuildingTypeClass::SizeHeight[i];
+
+		int zw;
+		if (bwidth == 1) {
+			zw = max(1.0, ZoomFactor + 0.5);
+		} else {
+			zw = max(2.0, bwidth * ZoomFactor + 0.5);
+		}
+
+		int zh;
+		if (bheight == 1) {
+			zh = max(1.0, ZoomFactor + 0.5);
+		} else {
+			zh = max(2.0, bheight * ZoomFactor + 0.5);
+		}
+
+		int fy = 0;
+		int zs = zh + zw - 1;
+
+		if (zs > 0) {
+			int left_edge = 0;
+			while (true) {
+				int xbegin;
+				if (fy < zh) {
+					xbegin = left_edge;
+				} else {
+					xbegin = fy - 2 * zh + 2;
+				}
+				int xend;
+				if (fy < zw) {
+					xend = fy;
+				} else {
+					xend = 2 * zw - fy - 2;
+				}
+				int fx = xbegin;
+
+				while (fx <= xend) {
+					Foundation[i].Add(Point2D(fx, fy));
+					++fx;
+				}
+				++fy;
+				--left_edge;
+				if (fy >= zs) {
+					break;
+				}
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x00656580
+FOUNDATION_LIST const & RadarClass::Get_Foundation(BuildingTypeClass * btype)
+{
+	return(Foundation[btype->Size]);
+}
+
+// FUNCTION: 0x006565A0
+void RadarClass::Radar_Cell(Cell const & cell)
+{
+	if (RadarSurface != NULL) {
+		Rect r1 = Cell_Radar_Rect(cell);
+		r1 = Intersect(r1, Rect(0, 0, RadarCellWidth, RadarCellHeight));
+		int swidth = RadarSurface->Get_Width();
+		int sheight = RadarSurface->Get_Height();
+
+		if (r1.Is_Valid()) {
+
+			int zx = (int)(r1.X * ZoomFactor);
+			int startx = (zx - 1) & ((zx - 1 < 0) - 1);
+			int width = min((int)((double)(r1.X + r1.Width) * ZoomFactor) + 1, swidth);
+
+			int zy = (int)(r1.Y * ZoomFactor);
+			int starty = (zy - 1) & ((zy - 1 < 0) - 1);
+			int height = min((int)((double)(r1.Y + r1.Height) * ZoomFactor) + 1, sheight);
+
+			for (int y = starty; y < height; y++) {
+				for (int x = startx; x < width; x++) {
+					Radar_Pixel(Point2D(x, y));
+				}
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x006568A0
+HRESULT RadarClass::Load(IStream * stream)
+{
+	int i;
+
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		int count;
+		result = stream->Read(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+
+		unknown_14C0.FUN_00405BE0();
+
+		new (&PixelStack) FOUNDATION_LIST;
+
+		for (i = 0; i < count; i++) {
+			Point2D point;
+			result = stream->Read(&point, sizeof(point), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+			PixelStack.Add(point);
+		}
+
+		result = stream->Read(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+
+		new (&BackgroundStack) DynamicVectorClass<Cell>;
+
+		for (i = 0; i < count; i++) {
+			Cell cell;
+			result = stream->Read(&cell, sizeof(cell), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+			BackgroundStack.Add(cell);
+		}
+
+		for (i = 0; i < BSIZE_COUNT; i++) {
+			new (&Foundation[i]) FOUNDATION_LIST;
+		}
+
+		result = stream->Read(&RadarMode, sizeof(RadarMode), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+		result = stream->Read(&RadarState, sizeof(RadarState), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+		result = stream->Read(&SuspendedRadarMode, sizeof(SuspendedRadarMode), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+		result = stream->Read(&unknown_14B8, sizeof(unknown_14B8), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+
+		unknown_14C0.FUN_00405BE0();
+		result = S_OK;
+	}
+	return(result);
+}
+
+// FUNCTION: 0x00656AC0
+HRESULT RadarClass::Save(IStream * stream)
+{
+	int i;
+
+	HRESULT result = BASECLASS::Save(stream);
+	if (SUCCEEDED(result)) {
+		int count = PixelStack.Count();
+		result = stream->Write(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+
+		for (i = 0; i < count; i++) {
+			result = stream->Write(&PixelStack[i], sizeof(PixelStack[i]), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+		}
+
+		count = BackgroundStack.Count();
+		result = stream->Write(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+
+		for (i = 0; i < count; i++) {
+			result = stream->Write(&BackgroundStack[i], sizeof(BackgroundStack[i]), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+		}
+
+		result = stream->Write(&RadarMode, sizeof(RadarMode), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+		result = stream->Write(&RadarState, sizeof(RadarState), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+		result = stream->Write(&SuspendedRadarMode, sizeof(SuspendedRadarMode), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+		result = stream->Write(&unknown_14B8, sizeof(unknown_14B8), NULL);
+		return(SUCCEEDED(result) ? S_OK : result);
+	}
+	return(result);
+}
+
+// FUNCTION: 0x00656BE0
+void RadarClass::Set_Radar_State(bool on, bool sound)
+{
+	if (on == true) {
+		if (RadarState == RSTATE_INACTIVE || RadarState == RSTATE_DEACTIVATING) {
+			RadarState = RSTATE_ACTIVATING;
+			unknown_14C0.EndLooping();
+			if (sound) {
+				VocClass::PlayGlobal(Rule->RadarOn, 1.0f, 0x2000);
+			}
+			DebugString("Radar: ACTIVATING\n");
+		}
+	} else {
+		unknown_14C0.EndLooping();
+		RadarState = RSTATE_DEACTIVATING;
+		if (sound) {
+			VocClass::PlayGlobal(Rule->RadarOff, 1.0f, 0x2000);
+		}
+		DebugString("Radar: DEACTIVING\n");
 	}
 }
 

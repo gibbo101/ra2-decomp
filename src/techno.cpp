@@ -1932,6 +1932,318 @@ bool TechnoClass::Can_Attack_Now(void) const
 	return(true);
 }
 
+// FUNCTION: 0x007010D0
+bool TechnoClass::Can_Player_Fire(void) const
+{
+	if (!Deactivated && House->Is_Player_Control()) {
+		WeaponDataStruct const * weapon = GetTurretWeapon();
+		if (weapon != NULL && weapon->Weapon != NULL && !IsUnderEMP()) {
+			return(true);
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00701120
+bool TechnoClass::Is_Weapon_Equipped(void) const
+{
+	WeaponDataStruct const * weapon = GetTurretWeapon();
+	return(weapon != NULL && weapon->Weapon != NULL);
+}
+
+// FUNCTION: 0x00701140
+bool TechnoClass::Can_Repair(void) const
+{
+	if (Fetch_RTTI() != RTTI_BUILDING) {
+		return(false);
+	}
+	return(Techno_Type_Class()->IsRepairable && Strength != Class_Of()->MaxStrength);
+}
+
+// FUNCTION: 0x00701190
+bool TechnoClass::IsPowerOnline(void) const
+{
+	return(false);
+}
+
+// FUNCTION: 0x007011A0
+int TechnoClass::FUN_007011A0(void)
+{
+	if (In_Air()) {
+		return(0);
+	}
+	int increment = Rule->ElevationIncrement;
+	if (increment == 0) {
+		return(0);
+	}
+	double bonus = Rule->ElevationIncrementBonus;
+	Cell where = Center_Coord().As_Cell();
+	CellClass * cell = &Map[where];
+	int lowest = Map.FUN_00588990();
+	int diff = (cell->Height - lowest) / increment;
+	double scaled = diff * bonus;
+	double cap = Rule->ElevationBonusCap;
+	scaled = (scaled < cap) ? scaled : Rule->ElevationBonusCap;
+	int height = cell->Height * LEVEL_LEPTON_H;
+	int lift = (int)scaled << 8;
+	return((int)fastmath::sqrt(lift * lift + height * height));
+}
+
+static inline int Passenger_Range(TechnoClass const * transport)
+{
+	int range = 0x7FFFFFFF;
+	TechnoClass * passenger = transport->Cargo.Attached_Object();
+	if (passenger != NULL) {
+		do {
+			WeaponTypeClass * weapon = passenger->GetTurretWeapon()->Weapon;
+			if (weapon != NULL && weapon->Range < range) {
+				range = weapon->Range;
+			}
+			passenger = (TechnoClass *)passenger->Next;
+		} while (passenger != NULL && (passenger->AbstractFlags & 4));
+	}
+	return(range);
+}
+
+// FUNCTION: 0x007012C0
+int TechnoClass::Weapon_Range(int which) const
+{
+	WeaponTypeClass * weapon = Get_Class_Weapon_Data(which)->Weapon;
+	if (weapon != NULL) {
+		int range = weapon->Range;
+		if (Techno_Type_Class()->OpenTopped) {
+			return((range < Passenger_Range(this)) ? range : Passenger_Range(this));
+		}
+		return(range);
+	}
+	return(0);
+}
+
+// FUNCTION: 0x007013A0
+void TechnoClass::Override_Mission(MissionType mission, AbstractClass * tarcom, AbstractClass * navcom)
+{
+	SuspendedTarCom = TarCom;
+	MissionClass::Override_Mission(mission, tarcom, navcom);
+	Assign_Target(tarcom);
+}
+
+// FUNCTION: 0x007013E0
+bool TechnoClass::Restore_Mission(void)
+{
+	if (MissionClass::Restore_Mission()) {
+		Assign_Target(SuspendedTarCom);
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00701410
+void TechnoClass::Renovate(void)
+{
+	Mark(MARK_CHANGE);
+	int max_strength = Techno_Type_Class()->MaxStrength;
+	Strength = max_strength;
+	EstimatedHealth = max_strength;
+	if (Fetch_RTTI() == RTTI_BUILDING) {
+		Repair(0);
+		((BuildingClass *)this)->Set_Anim_Damage_State(HealthRatio <= Rule->ConditionYellow);
+		VocClass::PlayAt(Rule->BuildingRepairedSound, Center_Coord(), NULL);
+	}
+}
+
+extern bool __fastcall FUN_00746DB0(UnitClass * unit);
+extern void __fastcall FUN_00638840(TechnoClass * techno);
+
+static inline UnitClass * Cast_To_Unit(TechnoClass * techno)
+{
+	return((techno->Fetch_RTTI() == RTTI_UNIT) ? (UnitClass *)techno : NULL);
+}
+
+// FUNCTION: 0x007014A0
+bool TechnoClass::Captured(HouseClass * newowner, bool announce)
+{
+	if (newowner != House) {
+		if (House == PlayerPtr && IsSelected) {
+			Unselect();
+		}
+		Assign_Target(NULL);
+		Assign_Destination(NULL, true);
+		if (!(this != NULL && Fetch_RTTI() == RTTI_UNIT && FUN_00746DB0(Cast_To_Unit(this)))) {
+			ArchivedTarget = NULL;
+		}
+		if (CurrentMission != MISSION_DECONSTRUCTION) {
+			if (!(this != NULL && Fetch_RTTI() == RTTI_UNIT && Cast_To_Unit(this)->Class->IsSimpleDeployer) || CurrentMission != MISSION_UNLOAD) {
+				QueueMission(MISSION_GUARD, true);
+			}
+		}
+		if (SpawnManager != NULL) {
+			SpawnManager->KillNodes();
+		}
+		FUN_00638840(this);
+		if (!IsInLimbo) {
+			House->RegisterLoss(this, false);
+		}
+		RegisterDestruction(NULL);
+		newowner->PointTotal += Techno_Type_Class()->Cost_Of(House);
+		House->Tracking_Remove(this);
+		newowner->Tracking_Add(this);
+		switch (Fetch_RTTI()) {
+			case 6:
+				if (!Techno_Type_Class()->DontScore) {
+					newowner->BuildingsKilled[Owner()]++;
+				}
+				break;
+			case 1:
+			case 2:
+			case 15:
+				if (!Techno_Type_Class()->DontScore) {
+					newowner->UnitsKilled[Owner()]++;
+				}
+				break;
+			default:
+				break;
+		}
+		House->WhoLastHurtMe = newowner->Class->House;
+		if (!IsInLimbo) {
+			Mark(MARK_UP);
+		}
+		BecomeUntargetable();
+		if (!IsInLimbo) {
+			Mark(MARK_DOWN_FORCED);
+		}
+		CellClass * cell = NULL;
+		if (!IsInLimbo) {
+			if (!Is_Foot()) {
+				cell = &Map[Coord(Position)];
+			} else {
+				cell = &Map[((FootClass *)this)->LastAdjacencyCell];
+			}
+			if (cell != NULL) {
+				cell->Adjust_Threat(Owner(), -ThreatPosed);
+				ThreatPosed = 0;
+			}
+			vt_entry_48C(0, 0, 0, 0);
+		}
+		House = newowner;
+		IsOwnedByPlayer = (House == PlayerPtr && PlayerPtr != NULL);
+		if (!IsInLimbo) {
+			if (cell != NULL) {
+				cell->Adjust_Threat(Owner(), ThreatPosed = Risk());
+			}
+			House->RegisterGain(this, true);
+		}
+		OriginallyOwnedByHouse = NULL;
+		if (CurrentMission == MISSION_RESCUE || MissionQueue == MISSION_RESCUE) {
+			Set_Mission(MISSION_GUARD);
+		}
+		if (!IsInLimbo) {
+			if (!(Fetch_RTTI() == RTTI_BUILDING && CurrentMission == MISSION_UNLOAD && ((BuildingClass *)this)->Class->IsWeaponsFactory)) {
+				TechnoClass * radio;
+				if (FUN_0065AD30(0) == NULL || (radio = FUN_0065AD30(0))->Fetch_RTTI() != RTTI_BUILDING || !((BuildingClass *)radio)->Class->IsWeaponsFactory) {
+					Assign_Destination(NULL, true);
+					Assign_Target(NULL);
+					Enter_Idle_Mode(false, true);
+				}
+			}
+			if (IsRadarTracked) {
+				Radar_Untrack();
+				Radar_Track();
+			}
+			UpdateSight(0, 0, 0, 0, 0);
+		}
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x007018C0
+void TechnoClass::Set_Owner(HouseClass * newowner)
+{
+	House = newowner;
+	IsOwnedByPlayer = (newowner == PlayerPtr && PlayerPtr != NULL);
+}
+
+// FUNCTION: 0x00702D40
+void TechnoClass::RegisterDestruction(TechnoClass * destroyer)
+{
+	int total_recorded = 0;
+	int points = Techno_Type_Class()->Cost_Of(House);
+	if (IsActive && Tag && destroyer) Tag->Spring(TEVENT_ATTACKED, this);
+	if (IsActive && Tag && destroyer) Tag->Spring(TEVENT_DISCOVERED, this);
+	if (IsActive && Fetch_RTTI() != RTTI_UNIT) {
+		if (IsActive && Tag && destroyer) Tag->Spring(TEVENT_DESTROYED, this);
+		if (IsActive && Tag) Tag->Spring(TEVENT_DESTROYED_ANY, this);
+		if (IsActive && Tag) Tag->Spring(TEVENT_DESTROYED_ANY_X, this);
+	}
+	if (!Techno_Type_Class()->DontScore) {
+		if (destroyer != NULL) {
+			if (destroyer->House->Is_Ally(this)) {
+				points = 0;
+			} else if (Veterancy.Is_Veteran()) {
+				points += points;
+			} else if (Veterancy.Is_Elite()) {
+				points *= 3;
+			}
+			if (destroyer->InOpenToppedTransport && destroyer->Transporter != NULL && destroyer->Transporter->Techno_Type_Class()->IsTrainable) {
+				destroyer->Transporter->Veterancy.Made_A_Kill(destroyer->Transporter->Techno_Type_Class()->Cost_Of(House), points);
+			} else if (destroyer->Techno_Type_Class()->IsTrainable) {
+				destroyer->Veterancy.Made_A_Kill(destroyer->Techno_Type_Class()->Cost_Of(House), points);
+			} else if (destroyer->Techno_Type_Class()->MissileSpawn) {
+				if (destroyer->SpawnOwner != NULL && destroyer->SpawnOwner->Techno_Type_Class()->IsTrainable) {
+					destroyer->SpawnOwner->Veterancy.Made_A_Kill(destroyer->SpawnOwner->Techno_Type_Class()->Cost_Of(House), points);
+				}
+			} else if (destroyer->CanOccupyFire() && destroyer->Fetch_RTTI() == RTTI_BUILDING) {
+				BuildingClass * building = (BuildingClass *)((destroyer->Fetch_RTTI() == RTTI_BUILDING) ? destroyer : NULL);
+				InfantryClass * occupant = building->Occupants[building->FiringOccupantIndex];
+				occupant->Veterancy.Made_A_Kill(occupant->Class->Cost_Of(House), points);
+			}
+			House->WhoLastHurtMe = destroyer->Owner();
+			destroyer->House->PointTotal += points;
+		}
+		switch (Fetch_RTTI()) {
+			case RTTI_BUILDING:
+				if (!Techno_Type_Class()->IsInsignificant) {
+					if (((BuildingClass *)this)->WhoLastHurtMe != HOUSE_NONE) {
+						House->BuildingsLost++;
+					}
+					if (destroyer != NULL && !Techno_Type_Class()->DontScore) {
+						destroyer->House->DestroyedBuildings.Increment_Unit_Total(((BuildingClass *)this)->Class->HeapID);
+						destroyer->House->BuildingsKilled[Owner()]++;
+					}
+					if (Map.Is_Player_Names()) {
+						Map.Redraw_Radar(false);
+					}
+				}
+				break;
+			case RTTI_AIRCRAFT:
+				if (destroyer != NULL && !Techno_Type_Class()->DontScore) {
+					destroyer->House->DestroyedAircraft.Increment_Unit_Total(((AircraftClass *)this)->Class->HeapID);
+					total_recorded++;
+				}
+			case RTTI_INFANTRY:
+				if (destroyer != NULL && !total_recorded && !Techno_Type_Class()->DontScore) {
+					destroyer->House->DestroyedInfantry.Increment_Unit_Total(((InfantryClass *)this)->Class->HeapID);
+					total_recorded++;
+				}
+			case RTTI_UNIT:
+				if (destroyer != NULL && !total_recorded && !Techno_Type_Class()->DontScore) {
+					destroyer->House->DestroyedUnits.Increment_Unit_Total(((UnitClass *)this)->Class->HeapID);
+					total_recorded++;
+				}
+				House->UnitsLost++;
+				if (destroyer != NULL && !Techno_Type_Class()->DontScore) {
+					destroyer->House->UnitsKilled[Owner()]++;
+				}
+				if (Map.Is_Player_Names()) {
+					Map.Redraw_Radar(false);
+				}
+				break;
+			default:
+				break;
+		}
+	}
+}
+
 static inline TechnoClass * Cast_To_Techno(ObjectClass const * object)
 {
 	if (object == NULL) {

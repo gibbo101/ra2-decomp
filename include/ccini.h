@@ -24,6 +24,7 @@
 #include "house.hh"
 #include "infantry.hh"
 #include "land.hh"
+#include "layer.hh"
 #include "mph.hh"
 #include "mzone.hh"
 #include "overlay.hh"
@@ -46,6 +47,7 @@
 
 class TriggerTypeClass;
 class HouseTypeClass;
+class TechnoTypeClass;
 
 enum INIScopeType {
 	SCOPE_LOCAL,
@@ -122,6 +124,10 @@ class CCINIClass : public INIClass
 		static TypeList<int> Get_VocType_List(CCINIClass const & ini, const char * section, const char * entry, TypeList<int> defvalue);
 
 		static TypeList<int> Get_BuildingType_List(CCINIClass const & ini, char const * section, char const * entry, TypeList<int> defvalue);
+		TechnoTypeClass * Get_TechnoType(char const * section, char const * entry) const;
+		LayerType Get_LayerType(char const * section, char const * entry, LayerType defvalue) const;
+		void Get_Int3(char const * section, char const * entry, int * first, int * second, int * third) const;
+		int Get_VHPScan(char const * section, char const * entry, int defvalue) const;
 		AbilityFlagsType Get_Abilities(char const * section, char const * entry, AbilityFlagsType const & defvalue) const;
 		TypeList<RGBClass> Get_RGBClass_List(const char * section, const char * entry, TypeList<RGBClass> defvalue) const;
 
@@ -165,6 +171,8 @@ class CCINIClass : public INIClass
 		bool Put_House_List(char const * section, char const * entry, TypeList<HousesType> value);
 		bool Put_Target(char const * section, char const * entry, TargetClass const & value);
 		bool Put_SpeedType(char const * section, char const * entry, SpeedType value);
+		bool Put_LayerType(char const * section, char const * entry, LayerType value);
+		bool Put_Int3(char const * section, char const * entry, int first, int second, int third);
 		bool Put_VocType_List(char const * section, char const * entry, TypeList<int> value);
 
 		int Get_Unique_ID(void) const;

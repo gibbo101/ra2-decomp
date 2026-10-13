@@ -1018,6 +1018,225 @@ bool MapClass::Read_Binary_1(Straw & straw)
 	return(true);
 }
 
+// FUNCTION: 0x0056B780
+bool MapClass::Read_Binary_2(Straw & straw)
+{
+	LCWStraw decomp(LCWStraw::DECOMPRESS);
+	decomp.Get_From(&straw);
+
+	Cell cell;
+	decomp.Get(&cell, sizeof(cell));
+
+	while (cell != CELL_NONE) {
+		CellClass * cellptr = &(*this)[cell];
+		if (cellptr != NULL && cellptr != &InvalidCell) {
+			cellptr->ITType = ISOTILE_NONE;
+			decomp.Get(&cellptr->ITType, sizeof(cellptr->ITType));
+			cellptr->ITType = IsometricTileTypeClass::Fixup_Tile_Type(cellptr->ITType);
+			decomp.Get(&cellptr->SubTile, sizeof(cellptr->SubTile));
+			decomp.Get(&cellptr->Height, sizeof(cellptr->Height));
+		} else {
+			char tmp[sizeof(cellptr->ITType) + sizeof(cellptr->SubTile) + sizeof(cellptr->Height)];
+			decomp.Get(&tmp, sizeof(tmp));
+		}
+		cell = CELL_NONE;
+		decomp.Get(&cell, sizeof(cell));
+	}
+	new (&InvalidCell) CellClass;
+	return(true);
+}
+
+// FUNCTION: 0x0056B8A0
+bool MapClass::Read_Binary_3(Straw & straw)
+{
+	Cell cell;
+	straw.Get(&cell, sizeof(cell));
+
+	while (cell != CELL_NONE) {
+		CellClass * cellptr = &(*this)[cell];
+		if (cellptr != NULL && cellptr != &InvalidCell) {
+			cellptr->ITType = ISOTILE_NONE;
+			straw.Get(&cellptr->ITType, sizeof(cellptr->ITType));
+			cellptr->ITType = IsometricTileTypeClass::Fixup_Tile_Type(cellptr->ITType);
+			straw.Get(&cellptr->SubTile, sizeof(cellptr->SubTile));
+			straw.Get(&cellptr->Height, sizeof(cellptr->Height));
+		} else {
+			char tmp[sizeof(cellptr->ITType) + sizeof(cellptr->SubTile) + sizeof(cellptr->Height)];
+			straw.Get(&tmp, sizeof(tmp));
+		}
+		cell = CELL_NONE;
+		straw.Get(&cell, sizeof(cell));
+	}
+	new (&InvalidCell) CellClass;
+	return(true);
+}
+
+// FUNCTION: 0x0056B9A0
+bool MapClass::Read_Binary_4(Straw & straw)
+{
+	LZOStraw decomp(LZOStraw::DECOMPRESS);
+	decomp.Get_From(&straw);
+
+	Cell cell;
+	decomp.Get(&cell, sizeof(cell));
+
+	while (cell != CELL_NONE) {
+		CellClass * cellptr = &(*this)[cell];
+		if (cellptr != NULL && cellptr != &InvalidCell) {
+			cellptr->ITType = ISOTILE_NONE;
+			decomp.Get(&cellptr->ITType, sizeof(cellptr->ITType));
+			cellptr->ITType = IsometricTileTypeClass::Fixup_Tile_Type(cellptr->ITType);
+			decomp.Get(&cellptr->SubTile, sizeof(cellptr->SubTile));
+			decomp.Get(&cellptr->Height, sizeof(cellptr->Height));
+		} else {
+			char tmp[sizeof(cellptr->ITType) + sizeof(cellptr->SubTile) + sizeof(cellptr->Height)];
+			decomp.Get(&tmp, sizeof(tmp));
+		}
+		cell = CELL_NONE;
+		decomp.Get(&cell, sizeof(cell));
+	}
+	new (&InvalidCell) CellClass;
+	return(true);
+}
+
+// FUNCTION: 0x0056BAC0
+bool MapClass::Read_Binary_5(Straw & straw)
+{
+	LZOStraw decomp(LZOStraw::DECOMPRESS);
+	decomp.Get_From(&straw);
+
+	Cell cell;
+	decomp.Get(&cell, sizeof(cell));
+
+	while (cell != CELL_NONE) {
+		CellClass * cellptr = &(*this)[cell];
+		if (cellptr != NULL && cellptr != &InvalidCell) {
+			cellptr->ITType = ISOTILE_NONE;
+			decomp.Get(&cellptr->ITType, sizeof(cellptr->ITType));
+			cellptr->ITType = IsometricTileTypeClass::Fixup_Tile_Type(cellptr->ITType);
+			decomp.Get(&cellptr->SubTile, sizeof(cellptr->SubTile));
+			decomp.Get(&cellptr->Height, sizeof(cellptr->Height));
+			decomp.Get(&cellptr->IsIceGrowthAllowed, sizeof(cellptr->IsIceGrowthAllowed));
+		} else {
+			char tmp[sizeof(cellptr->ITType) + sizeof(cellptr->SubTile) + sizeof(cellptr->Height) + sizeof(cellptr->IsIceGrowthAllowed)];
+			decomp.Get(&tmp, sizeof(tmp));
+		}
+		cell = CELL_NONE;
+		decomp.Get(&cell, sizeof(cell));
+	}
+	new (&InvalidCell) CellClass;
+	return(true);
+}
+
+// FUNCTION: 0x0056BBE0
+void MapClass::Logic(void)
+{
+	if (Session.Type != GAME_NORMAL && Session.Options.Goodies) {
+		for (int index = 0; index < ARRAY_SIZE(Crates); index++) {
+			if (Crates[index].Is_Expired()) {
+				Crates[index].Remove_It();
+				Place_Random_Crate();
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x0056BC50
+int MapClass::Cell_Region(Cell const & cell)
+{
+	return((cell.X / REGION_WIDTH) + 1) + (((cell.Y / REGION_HEIGHT) + 1) * MAP_REGION_WIDTH);
+}
+
+// FUNCTION: 0x0056BC80
+Cell MapClass::Region_To_Cell(int region) const
+{
+	return(Cell((region % MAP_REGION_WIDTH) * REGION_WIDTH - 2, (region / MAP_REGION_WIDTH) * REGION_HEIGHT - 2));
+}
+
+// FUNCTION: 0x0056BCD0
+int MapClass::GetThreatPosed(Cell const & cell, HouseClass * house) const
+{
+	Cell c = Map[cell].Fetch_CellID();
+	return(house->Regions[Map.Cell_Region(c)].Threat_Value());
+}
+
+// FUNCTION: 0x0056BD40
+bool MapClass::Place_Random_Crate(void)
+{
+	int crateindex = 0;
+	for (crateindex = 0; crateindex < ARRAY_SIZE(Crates); crateindex++) {
+		if (!Crates[crateindex].Is_Valid()) break;
+	}
+	if (crateindex == ARRAY_SIZE(Crates)) {
+		return(false);
+	}
+
+	for (int index = 0; index < 1000; index++) {
+		Cell cell = Map.Pick_Random_Location();
+		if (Map[cell].Land_Type() == LAND_WATER) {
+			cell = Map.Nearby_Location(cell, SPEED_FLOAT);
+		} else {
+			cell = Map.Nearby_Location(cell, SPEED_TRACK);
+		}
+
+		if (Crates[crateindex].Create_Crate(cell)) {
+			return(true);
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x0056BEC0
+bool MapClass::PlacePowerupCrate(Cell cell, int powerup)
+{
+	if (Map[cell].Land_Type() == LAND_WATER) {
+		cell = Map.Nearby_Location(cell, SPEED_FLOAT);
+	} else {
+		cell = Map.Nearby_Location(cell, SPEED_TRACK);
+	}
+
+	int crateindex = 0;
+	for (crateindex = 0; crateindex < ARRAY_SIZE(Crates); crateindex++) {
+		if (!Crates[crateindex].Is_Valid()) break;
+	}
+	if (crateindex != ARRAY_SIZE(Crates) && Crates[crateindex].Create_Crate(cell)) {
+		if (powerup != 20) {
+			Map[cell].OverlayData = powerup;
+		}
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x0056C020
+bool MapClass::Remove_Crate(Cell const & cell)
+{
+	if (Session.Type != GAME_NORMAL) {
+		for (int index = 0; index < ARRAY_SIZE(Crates); index++) {
+			if (Crates[index].Is_Here(cell)) {
+				return(Crates[index].Remove_It());
+			}
+		}
+	} else {
+		CellClass * cellptr = &(*this)[cell];
+		if (cellptr->Overlay != OVERLAY_NONE && OverlayTypes[cellptr->Overlay]->IsCrate) {
+			Rect dirty = Union(cellptr->Overlay_Render_Rect(), cellptr->Overlay_Shadow_Render_Rect());
+			dirty.Y -= TacticalRect.Y;
+			TacticalMap->Register_Dirty_Area(dirty);
+			cellptr->Overlay = OVERLAY_NONE;
+			cellptr->OverlayData = 0;
+			return(true);
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x0056C200
+int FUN_0056C200(void)
+{
+	return(1);
+}
+
 // FUNCTION: 0x0056CB80
 int SubzoneHash(unsigned int const & key)
 {

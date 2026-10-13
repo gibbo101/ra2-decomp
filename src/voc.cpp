@@ -25,6 +25,7 @@ struct SoundLink
 	SoundLink * Prev;
 	SoundLink * Sentinel;
 
+	void FUN_004072C0(void);
 	void FUN_004072D0(void);
 	SoundLink * FUN_004073C0(void);
 	SoundLink * FUN_004073E0(void);
@@ -38,10 +39,12 @@ struct SoundNode : SoundLink
 	Coord Position;
 	int Flag;
 	int Retired;
+
 };
 
 struct SoundPool
 {
+	void FUN_00407510(void);
 	SoundNode * FUN_00407520(void);
 	void __fastcall FUN_00407530(SoundNode * node);
 };
@@ -53,6 +56,7 @@ extern int DAT_00B1D3AC;
 
 float __fastcall FUN_00750AC0(Coord const & coord, int * panning, VocClass * voc);
 AudioEvent * __fastcall FUN_00750D40(Coord const & coord, AudioController * controller);
+SoundPool * __fastcall FUN_004074D0(int a, int b);
 int __fastcall FUN_004067D0(char const * name, int * priority);
 int __fastcall FUN_00406820(int * control, char const * name);
 int __fastcall FUN_00406870(int * type, char const * name);
@@ -348,6 +352,158 @@ void FUN_00750EC0(void)
 		}
 		node = next;
 	}
+}
+
+// FUNCTION: 0x00750F40
+void __fastcall FUN_00750F40(Coord const * coord, int mask)
+{
+	SoundNode * node = (SoundNode *)DAT_00B1D320.FUN_004073C0();
+	while (node != NULL) {
+		if ((node->Flag & mask) && node->Position == *coord) {
+			node->Controller.End();
+		}
+		node = (SoundNode *)node->FUN_004073E0();
+	}
+}
+
+// FUNCTION: 0x00750FA0
+void FUN_00750FA0(void)
+{
+	SoundNode * node = (SoundNode *)DAT_00B1D320.FUN_004073C0();
+	while (node != NULL) {
+		SoundNode * next = (SoundNode *)node->FUN_004073E0();
+		node->Controller.Stop();
+		node->FUN_00407450();
+		DAT_00B1D3A4->FUN_00407530(node);
+		DAT_00B1D3A8--;
+		node = next;
+	}
+}
+
+// FUNCTION: 0x007510D0
+void FUN_007510D0(INIClass & ini)
+{
+	char buffer[2048];
+	char name[32];
+
+	DAT_00B1D320.FUN_004072C0();
+	DAT_00B1D3A4 = FUN_004074D0(200, 60);
+	DAT_00B1D3A8 = 0;
+	DAT_00B1D3AC = 0;
+
+	if (ini.Is_Present("Defaults")) {
+		DAT_008464B4 = (float)ini.Get_Float("Defaults", "Volume", DAT_008464B4);
+		DAT_008464B8 = (float)ini.Get_Float("Defaults", "MinVolume", DAT_008464B8);
+
+		ini.Get_String("Defaults", "Priority", "NORMAL", buffer, sizeof(buffer));
+		FUN_004067D0(buffer, &DAT_008464B0);
+
+		ini.Get_String("Defaults", "Control", "", buffer, sizeof(buffer));
+		char * token = strtok(buffer, " \t\n");
+		if (token != NULL) {
+			DAT_00B1D3B0 = 0;
+			while (token != NULL) {
+				FUN_00406820(&DAT_00B1D3B0, token);
+				token = strtok(NULL, " \t\n");
+			}
+		}
+
+		ini.Get_String("Defaults", "Type", "", buffer, sizeof(buffer));
+		token = strtok(buffer, " \t\n");
+		if (token != NULL) {
+			DAT_008464BC = 0x20;
+			while (token != NULL) {
+				FUN_00406870(&DAT_008464BC, token);
+				token = strtok(NULL, " \t\n");
+			}
+		}
+
+		DAT_008464C4 = ini.Get_Int("Defaults", "Limit", DAT_008464C4);
+		DAT_008464C0 = ini.Get_Int("Defaults", "Range", DAT_008464C0);
+	}
+
+	if (ini.Is_Present("SoundList")) {
+		int count = ini.Entry_Count("SoundList");
+		for (int i = 0; i < count; i++) {
+			if (ini.Get_String("SoundList", ini.Get_Entry("SoundList", i), "", name, sizeof(name))) {
+				int index = VocClass::FindIndex(name);
+				VocEntry * entry;
+				if (index == -1) {
+					entry = new VocEntry(name);
+				} else {
+					entry = VocArray[index];
+				}
+				entry->Read_INI(ini);
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x007513F0
+void Free_Vocs(void)
+{
+	while (VocArray.Count() > 0) {
+		VocEntry * entry = VocArray[0];
+		if (entry != NULL) {
+			delete entry;
+		}
+	}
+
+	if (DAT_00B1D3A4 != NULL) {
+		FUN_00750FA0();
+		DAT_00B1D3A4->FUN_00407510();
+		DAT_00B1D3A4 = NULL;
+	}
+}
+
+// FUNCTION: 0x007514D0 VocClass::FindIndex
+int __fastcall VocClass::FindIndex(char const * name)
+{
+	if (name != NULL) {
+		for (int i = 0; i < VocArray.Count(); i++) {
+			if (stricmp(name, VocArray[i]->Name()) == 0) {
+				return i;
+			}
+		}
+	}
+	return -1;
+}
+
+// FUNCTION: 0x00751520
+VocEntry * __fastcall FUN_00751520(char const * name)
+{
+	if (name != NULL && stricmp(name, "<none>") != 0) {
+		for (int i = 0; i < VocArray.Count(); i++) {
+			if (stricmp(name, VocArray[i]->Name()) == 0) {
+				return VocArray[i];
+			}
+		}
+	}
+	return NULL;
+}
+
+// FUNCTION: 0x00751590
+char const * __fastcall FUN_00751590(int index)
+{
+	if (index < 0 || index >= VocArray.Count()) {
+		return "<none>";
+	}
+	VocClass * voc = VocArray[index]->Voc;
+	if (voc != NULL) {
+		return voc->FUN_00405170();
+	}
+	return "Invalid Voc";
+}
+
+// FUNCTION: 0x007515C0
+int __fastcall FUN_007515C0(VocEntry * entry)
+{
+	for (int i = 0; i < VocArray.Count(); i++) {
+		if (VocArray[i] == entry) {
+			return i;
+		}
+	}
+	return -1;
 }
 
 // FUNCTION: 0x007532D0

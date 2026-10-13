@@ -436,6 +436,10 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 		bool Flag_To_Win(bool silent = false);
 		bool Flag_To_Lose(bool silent = false);
 		void Flag_To_End(void);
+		void Destroy_All(void);
+		void Destroy_All_Buildings(void);
+		void Destroy_All_Non_Buildings_Non_Naval(void);
+		void Destroy_All_Non_Buildings_Naval(void);
 		void Make_Ally(HouseClass * house, bool announce);
 		void Make_Ally(HousesType house, bool announce);
 		void Make_Ally(ObjectClass * object);
@@ -506,6 +510,8 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 		TechnoTypeClass const * Suggest_New_Object(RTTIType objectype, bool kennel=false) const;
 		BuildingTypeClass const * Suggest_New_Building(void) const;
 		void Recalc_Center(void);
+		void Set_Base_Spawn_Cell(Cell cell);
+		void FUN_0050C210(void);
 		bool Does_Enemy_Building_Exist(StructType) const;
 		void Harvested(int tiberium, TiberiumType slot);
 		float Give_Tiberium(float amount, int slot);
@@ -527,6 +533,8 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 		void Adjust_Threat(int region, int threat);
 		void Tracking_Remove(TechnoClass const * techno);
 		void Tracking_Add(TechnoClass const * techno);
+		void RegisterLoss(TechnoClass * techno, bool keeptiberium);
+		void RegisterGain(TechnoClass * techno, bool ownerchange);
 		void Tracking_Active_Remove(TechnoClass * techno, bool bycapture);
 		void Tracking_Active_Add(TechnoClass * techno, bool bycapture);
 		void Active_Remove(TechnoClass const * techno);

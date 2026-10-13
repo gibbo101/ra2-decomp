@@ -945,6 +945,133 @@ bool ObjectClass::Mark(MarkType mark)
 	return(false);
 }
 
+// FUNCTION: 0x005F5930
+bool ObjectClass::Revealed(HouseClass * house)
+{
+	return(house != NULL);
+}
+
+// FUNCTION: 0x005F5940
+bool ObjectClass::Paradrop(Coord const & coord)
+{
+	CellClass * cellptr;
+	AnimClass * anim;
+
+	if (Map.In_Local_Radar(coord)) {
+		IsFalling = true;
+		cellptr = &Map[coord];
+		if (cellptr != NULL) {
+			bool ok = true;
+			if (cellptr->IsUnderBridge) {
+				IsOnBridge = true;
+				if (!cellptr->IsBridgeTraversable) {
+					ok = false;
+				}
+			}
+			if (ok) {
+				if (Is_Techno()) {
+					MZoneType mz = Techno_Type_Class()->MZone;
+					Cell cell = coord.As_Cell();
+					ok = cellptr->Is_Clear_To_Move(Techno_Type_Class()->Speed, false, false, Map.Get_Cell_Zone(cell, mz, IsOnBridge), mz, -1, true);
+				}
+				if (ok && Unlimbo(coord, (Dir256)0x80)) {
+					Set_Coord(coord);
+
+					if (Fetch_RTTI() == RTTI_BULLET) {
+						anim = new AnimClass(Rule->BombParachute, coord, 0, 1, (ShapeFlags_Type)0x600, 0, false);
+					} else {
+						Coord drop = coord;
+						drop.Z += 75;
+						anim = new AnimClass(Rule->Parachute, drop, 0, 1, (ShapeFlags_Type)0x600, 0, false);
+						Parachute = anim;
+					}
+					if (anim != NULL) {
+						anim->SetOwnerObject(this);
+						if (Fetch_RTTI() != RTTI_BULLET) {
+							anim->LightConvert = (LightConvertClass *)GetRemapColour();
+							anim->TintColor = Get_Cell_Ptr()->Brightness;
+						}
+					}
+					return(true);
+				}
+			}
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x005F5B50
+bool ObjectClass::Attach_Tag(TagClass * tag)
+{
+	if (Tag != NULL) {
+		TagClass * tptr = Tag;
+		tptr->AttachCount--;
+		Tag = NULL;
+	}
+
+	if (tag) {
+		Tag = tag;
+		tag->AttachCount++;
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x005F5B90
+Cell const * ObjectClass::Occupy_List(bool placement) const
+{
+	static Cell const _list[] = {REFRESH_EOL};
+
+	if (Class_Of() == NULL) {
+		return(_list);
+	}
+
+	return(Class_Of()->Occupy_List(placement));
+}
+
+// FUNCTION: 0x005F5C10 $E120
+
+// FUNCTION: 0x005F5C20
+BuildingClass * ObjectClass::Who_Can_Build_Me(bool intheory, bool legal) const
+{
+	return(Class_Of()->Who_Can_Build_Me(intheory, legal, false, Owner_HouseClass()));
+}
+
+// FUNCTION: 0x005F5C60
+double ObjectClass::Get_Health_Ratio(void) const
+{
+	return((double)Strength / Class_Of()->MaxStrength);
+}
+
+// FUNCTION: 0x005F5C80
+void ObjectClass::Set_Health_Ratio(double health)
+{
+	if (health > 0) {
+		Strength = (int)(Class_Of()->MaxStrength * health);
+		if (Strength == 0) Strength = 1;
+	} else {
+		Strength = 0;
+	}
+}
+
+// FUNCTION: 0x005F5CD0
+bool ObjectClass::Is_Red_HP(void) const
+{
+	return(HealthRatio <= Rule->ConditionRed && Strength > 0);
+}
+
+// FUNCTION: 0x005F5D20
+bool ObjectClass::Is_Yellow_HP(void) const
+{
+	return(HealthRatio > Rule->ConditionRed && HealthRatio <= Rule->ConditionYellow);
+}
+
+// FUNCTION: 0x005F5D90
+bool ObjectClass::Is_Green_HP(void) const
+{
+	return(HealthRatio > Rule->ConditionYellow);
+}
+
 // FUNCTION: 0x005F61A0
 VoxelDataStruct::~VoxelDataStruct(void)
 {

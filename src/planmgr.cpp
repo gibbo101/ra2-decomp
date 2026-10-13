@@ -205,13 +205,91 @@ template class DynamicVectorClass<PlanningNodeClass *>;
 // FUNCTION: 0x0063EE30 ?$VectorClass@PAVEventClass@@::~?$VectorClass@PAVEventClass@@
 template class VectorClass<EventClass *>;
 
+class PlanMember
+{
+	public:
+		TechnoClass * Owner;
+		EventClass * Packet;
+		int Branch;
+		bool Active;
+
+		PlanMember(void) : Owner(0), Packet(0), Branch(-1), Active(false) {}
+};
+
+class PlanBranch
+{
+	public:
+		char Data[0x70];
+		int Pending;
+		int Slot;
+		int Tail;
+};
+
+class PlanToken;
+
 class PlanningNodeClass
 {
 	public:
 		static DynamicVectorClass<PlanningNodeClass *> Unknown1;
 		static DynamicVectorClass<PlanningNodeClass *> Unknown2;
 		static DynamicVectorClass<PlanningNodeClass *> Unknown3;
+
+		DynamicVectorClass<PlanMember *> Members;
+		int Id;
+		bool Queued;
+		DynamicVectorClass<PlanBranch *> Branches;
+		bool Flag;
+		char Gap[0x6f];
+		int ActiveCount;
+		int Slot1;
+		int Slot2;
+		int Slot3;
+
+		PlanningNodeClass(int id);
+		int Get_Id(void);
+		int Get_Count(void);
+		int Index_In(TechnoClass * techno);
+		PlanningNodeClass * Prev_Node(TechnoClass * techno);
+		PlanningNodeClass * Next_Node(TechnoClass * techno);
+		void Add_Member(TechnoClass * techno, EventClass const * event);
+		int Find_Member(TechnoClass * techno);
+		TechnoClass * Member_Owner(int index);
+		void FUN_00635120(void);
+		void FUN_00635DB0(int);
+		void FUN_00634E10(PlanMember *);
 };
+
+class PlanToken
+{
+	public:
+		TechnoClass * Owner;
+		DynamicVectorClass<PlanningNodeClass *> Nodes;
+		bool F1C;
+		bool F1D;
+		char Gap[0x6c];
+		int F8C;
+		int LoopCount;
+		int LoopStart;
+
+		PlanningNodeClass * Node_At(int index)
+		{
+			int count = Nodes.Count();
+			if (count == 0) return 0;
+			if (index >= count) {
+				int start = LoopStart;
+				if (start <= 0 && start != 0) return 0;
+				index = (index - start) % LoopCount + start;
+			}
+			if (index < 0 || index >= count) return 0;
+			return Nodes[index];
+		}
+};
+
+extern PlanningNodeClass * DAT_00AC4CCC;
+extern PlanningNodeClass * DAT_00AC4C38;
+extern PlanningNodeClass * DAT_00AC4BF0;
+extern PlanToken * __fastcall FUN_00705D20(TechnoClass * techno);
+
 class PlanTokens { public: static DynamicVectorClass<PlanningTokenClass *> Array; };
 class PlanEvents { public: static DynamicVectorClass<EventClass *> Events; };
 class PlanTechnos { public: static DynamicVectorClass<TechnoClass *> Technos; };
@@ -244,6 +322,7 @@ class PlanEvent
 		int Get_Index(void);
 		int Get_Link(void);
 		Coord Get_Coord(void);
+		Point2D Get_Pixel(void);
 };
 
 // FUNCTION: 0x00633AC0
@@ -335,4 +414,102 @@ Coord __fastcall FUN_00633BC0(EventClass const & event)
 		}
 	}
 	return Coord(-1, -1, -1);
+}
+
+// FUNCTION: 0x00633C60
+Point2D PlanEvent::Get_Pixel(void)
+{
+	Coord coord = FUN_00633BC0(Event);
+	return FUN_006339E0(coord);
+}
+
+// FUNCTION: 0x00633CC0
+PlanningNodeClass::PlanningNodeClass(int id) : Id(id), Queued(false), Flag(false), ActiveCount(0), Slot1(-1), Slot2(-1), Slot3(-1)
+{
+}
+
+// FUNCTION: 0x00633E50
+int PlanningNodeClass::Get_Id(void)
+{
+	return Id;
+}
+
+// FUNCTION: 0x00633E60
+int PlanningNodeClass::Get_Count(void)
+{
+	return Members.Count();
+}
+
+// FUNCTION: 0x00633E70
+int PlanningNodeClass::Index_In(TechnoClass * techno)
+{
+	PlanToken * token = FUN_00705D20(techno);
+	return token->Nodes.ID(this);
+}
+
+// FUNCTION: 0x00633EA0
+PlanningNodeClass * PlanningNodeClass::Prev_Node(TechnoClass * techno)
+{
+	PlanToken * token = FUN_00705D20(techno);
+	int index = token->Nodes.ID(this);
+	if (index != -1) {
+		int count = token->Nodes.Count();
+		if (count == 1) return this;
+		index--;
+		if (index < 0) index = count - 1;
+		return token->Node_At(index);
+	}
+	return 0;
+}
+
+// FUNCTION: 0x00633F20
+PlanningNodeClass * PlanningNodeClass::Next_Node(TechnoClass * techno)
+{
+	PlanToken * token = FUN_00705D20(techno);
+	int index = token->Nodes.ID(this);
+	if (index != -1) {
+		int count = token->Nodes.Count();
+		if (count == 1) return this;
+		index++;
+		if (index >= count) index = 0;
+		return token->Node_At(index);
+	}
+	return 0;
+}
+
+// FUNCTION: 0x00633FA0
+void PlanningNodeClass::Add_Member(TechnoClass * techno, EventClass const * event)
+{
+	PlanMember * member = new PlanMember;
+	member->Owner = techno;
+	EventClass * packet = new EventClass;
+	*packet = *event;
+	member->Packet = packet;
+	Members.Add(member);
+	PlanToken * token = FUN_00705D20(techno);
+	token->Nodes.Add(this);
+	if (token->F8C == -1) {
+		token->F8C = token->Nodes.Count() - 1;
+	}
+	FUN_00634E10(member);
+}
+
+// FUNCTION: 0x00634290
+int PlanningNodeClass::Find_Member(TechnoClass * techno)
+{
+	int result = -1;
+	int count = Members.Count();
+	for (int i = 0; i < count; i++) {
+		if (Members[i]->Owner == techno) {
+			result = i;
+			break;
+		}
+	}
+	return result;
+}
+
+// FUNCTION: 0x006342D0
+TechnoClass * PlanningNodeClass::Member_Owner(int index)
+{
+	return Members[index]->Owner;
 }

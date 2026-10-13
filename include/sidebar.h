@@ -91,6 +91,11 @@ class SidebarClass : public PowerClass
 		int GetVisibleCameoCount(void);
 		void FUN_006A67A0(int tab);
 		void FUN_006A6820(int tab);
+		void FUN_006A74A0(int tab);
+		void SetTab(int tab);
+		void FUN_006A76F0(int tab);
+		void FUN_006A7760(int tab);
+		static int FUN_006A8080(int count);
 		void FUN_006A5130(bool flag);
 		bool Factory_Link(FactoryClass * factory, RTTIType type, int id);
 

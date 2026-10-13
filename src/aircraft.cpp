@@ -1658,6 +1658,193 @@ bool AircraftClass::Commence(void)
 	return(BASECLASS::Commence());
 }
 
+// FUNCTION: 0x0041B890
+bool AircraftClass::Should_Delete_Off_Map(void)
+{
+	if ((TarCom == NULL || CurrentMission == MISSION_SPYPLANE_OVERFLY) && IsInPlayfield &&
+		Get_Mission() != MISSION_PARADROP_APPROACH && Get_Mission() != MISSION_PARADROP_OVERFLY) {
+		if ((Team == NULL && IsALoaner) || (Team != NULL && Team->Is_Leaving_Map())) {
+			return(true);
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x0041B900
+void AircraftClass::Reduce_Ammunition(void)
+{
+}
+
+// FUNCTION: 0x0041B910
+bool AircraftClass::IsStrange(void) const
+{
+	return(On_Ground());
+}
+
+// FUNCTION: 0x0041B920
+bool AircraftClass::In_Air(void) const
+{
+	if (Class == Rule->V3Rocket.Type || Class == Rule->DMisl.Type) {
+		return(Locomotion->Is_Moving_Now() != 0);
+	}
+	return(BASECLASS::In_Air());
+}
+
+// FUNCTION: 0x0041B980
+bool AircraftClass::On_Ground(void) const
+{
+	if (Class == Rule->V3Rocket.Type || Class == Rule->DMisl.Type) {
+		return(Locomotion->Is_Moving_Now() == 0);
+	}
+	return(BASECLASS::On_Ground());
+}
+
+// FUNCTION: 0x0041B9E0
+bool AircraftClass::IsNotWarpingIn(void) const
+{
+	return(IsReturningFromAttackRun);
+}
+
+// FUNCTION: 0x0041B9F0
+void AircraftClass::Set_Mission(MissionType mission)
+{
+	switch (CurrentMission) {
+		case MISSION_RETREAT:
+		case MISSION_PARADROP_APPROACH:
+		case MISSION_PARADROP_OVERFLY:
+		case MISSION_SPYPLANE_APPROACH:
+		case MISSION_SPYPLANE_OVERFLY:
+			if (Airstrike == 0) {
+				switch (mission) {
+					case MISSION_RETREAT:
+					case MISSION_PARADROP_APPROACH:
+					case MISSION_PARADROP_OVERFLY:
+					case MISSION_SPYPLANE_APPROACH:
+					case MISSION_SPYPLANE_OVERFLY:
+						break;
+
+					default:
+						return;
+				}
+			}
+			break;
+	}
+	BASECLASS::Set_Mission(mission);
+}
+
+// FUNCTION: 0x0041BA90
+void AircraftClass::QueueMission(MissionType mission, bool start)
+{
+	switch (CurrentMission) {
+		case MISSION_RETREAT:
+		case MISSION_PARADROP_APPROACH:
+		case MISSION_PARADROP_OVERFLY:
+		case MISSION_SPYPLANE_APPROACH:
+		case MISSION_SPYPLANE_OVERFLY:
+			if (Airstrike == 0) {
+				switch (mission) {
+					case MISSION_RETREAT:
+					case MISSION_PARADROP_APPROACH:
+					case MISSION_PARADROP_OVERFLY:
+					case MISSION_SPYPLANE_APPROACH:
+					case MISSION_SPYPLANE_OVERFLY:
+						break;
+
+					default:
+						return;
+				}
+			}
+			break;
+	}
+	BASECLASS::QueueMission(mission, start);
+}
+
+// FUNCTION: 0x0041BB30
+void AircraftClass::Override_Mission(MissionType mission, AbstractClass * tarcom, AbstractClass * navcom)
+{
+	switch (CurrentMission) {
+		case MISSION_RETREAT:
+		case MISSION_PARADROP_APPROACH:
+		case MISSION_PARADROP_OVERFLY:
+		case MISSION_SPYPLANE_APPROACH:
+		case MISSION_SPYPLANE_OVERFLY:
+			if (Airstrike == 0) {
+				switch (mission) {
+					case MISSION_RETREAT:
+					case MISSION_PARADROP_APPROACH:
+					case MISSION_PARADROP_OVERFLY:
+					case MISSION_SPYPLANE_APPROACH:
+					case MISSION_SPYPLANE_OVERFLY:
+						break;
+
+					default:
+						return;
+				}
+			}
+			break;
+	}
+	BASECLASS::Override_Mission(mission, tarcom, navcom);
+}
+
+// FUNCTION: 0x0041BBD0
+BuildingClass * AircraftClass::TryNearestDockBuilding(TypeList<BuildingTypeClass *> * list, unsigned unk2, unsigned unk3) const
+{
+	if (Class->IsAirportBound && DockNowHeadingTo != NULL) {
+		if (((AircraftClass *)this)->Transmit_Message(RADIO_CAN_LOAD, DockNowHeadingTo) != RADIO_ROGER) {
+			((AircraftClass *)this)->DockNowHeadingTo = NULL;
+		} else {
+			return(DockNowHeadingTo);
+		}
+	}
+	return(((AircraftClass *)this)->DockNowHeadingTo = BASECLASS::TryNearestDockBuilding(list, 0, unk3));
+}
+
+extern BulletClass * __fastcall FUN_0046B050(BulletTypeClass const * type, AbstractClass * target, TechnoClass * payback, int strength, WarheadTypeClass const * warhead, int max_speed, bool bright);
+
+// FUNCTION: 0x0041BC30
+bool AircraftClass::INoticeSink_Unknown(DWORD unknown, DWORD unknown2)
+{
+	if (IsAttackedByLocomotor) {
+		int strength = Rule->CurrentStrengthDamage ? Strength : Class->MaxStrength;
+		int damage = (int)(strength * Rule->FallingDamageMultiplier);
+		if (damage < 0) damage = 0;
+
+		TechnoClass * payback = this;
+		if (BeingManipulatedBy != NULL) {
+			payback = BeingManipulatedBy;
+		}
+
+		BulletClass * bullet = FUN_0046B050(Rule->DeathWeapon->Bullet, this, payback, damage, Rule->C4Warhead, 0, true);
+		Coord coord = Center_Coord();
+		coord.Z -= Get_Height_AGL();
+		if (bullet != NULL) {
+			bullet->Limbo();
+			bullet->Detonate(coord);
+			bullet->Release();
+		}
+
+		if (BeingManipulatedBy != NULL) {
+			RegisterDestruction(BeingManipulatedBy);
+		} else if (ChronoWarpedByHouse != NULL) {
+			Record_The_Kill(ChronoWarpedByHouse);
+		}
+
+		coord = Center_Coord();
+		bullet = FUN_0046B050(Rule->DeathWeapon->Bullet, this, payback, damage, Rule->C4Warhead, 0, true);
+		if (bullet != NULL) {
+			bullet->Limbo();
+			bullet->Detonate(coord);
+			bullet->Release();
+		}
+
+		Delete_Me();
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x0041BDD0 ObjectClass::Target_Coord
+
 // FUNCTION: 0x0041C090 FootClass::Draw_Object
 
 // FUNCTION: 0x0041C190

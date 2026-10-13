@@ -38,4 +38,5 @@ class TemporalClass : public AbstractClass
 		virtual void AI(void) override;
 
 		void LetGo(void);
+		void JustLetGo(void);
 };

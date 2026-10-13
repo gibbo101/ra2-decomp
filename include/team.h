@@ -199,6 +199,7 @@ class TeamClass : public AbstractClass
 		void TMission_ENTER_TANK_BUNKER(TeamMissionClass * mission, bool);
 		void TMission_ENTER_BATTLE_BUNKER(TeamMissionClass * mission, bool);
 		void TMission_GARRISON_STRUCTURE(TeamMissionClass * mission, bool);
+		void TMission_MOVETO_FRIENDLY_BUILDING_WITH_PROPERTY(TeamMissionClass * mission, bool);
 
 		int Recruit(int typeindex);
 		bool Is_A_Member(void const * who) const;

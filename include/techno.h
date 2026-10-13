@@ -383,7 +383,9 @@ class TechnoClass : public RadioClass
 		virtual Coord Turret_Coord(int which=0) const;
 		void Create_Planning_Token(void);
 		void FUN_0070DC70(int which);
+		int GetEffectTintIntensity(int brightness) const;
 		int FUN_0070DDF0(void);
+		int FUN_007011A0(void);
 		bool FUN_0070DC60(void) const;
 		int FUN_0070DD20(void) const;
 		void GattlingRateUp(int rate);
@@ -467,7 +469,7 @@ class TechnoClass : public RadioClass
 		virtual Coord GetAttackCoordinates(void) const;
 		virtual bool IsNotWarpingIn(void) const;
 		virtual bool vt_entry_434(unsigned) const;
-		virtual void Draw_Action_Line(void) const;
+		virtual void Draw_Action_Line(bool force, int unknown) const;
 		virtual unsigned GetDisguiseFlags(unsigned flags) const;
 		virtual bool IsClearlyVisibleTo(HouseClass * house) const;
 		virtual void Draw_Voxel(VoxelDataStruct const & voxeldata, int frame, int key, VoxelIndexClass * cache, Rect const & cliprect, Point2D const & point, Matrix3D const & matrix, int brightness, int unknown, ShapeFlags_Type negflags) const;
@@ -558,6 +560,7 @@ class TechnoClass : public RadioClass
 		virtual void Clicked_As_Target(int count = 7) override;
 		virtual bool Select(void) override;
 		Coord Predict_Target_Coord(void) const;
+		void FUN_007049C0(Coord start, Coord end, RGBClass color, int a, int b) const;
 
 		double Area_Modify(Cell const & cell) const;
 		void StartReloading(void);
@@ -576,6 +579,7 @@ class TechnoClass : public RadioClass
 		static void Remove_Target(AbstractClass * target);
 		bool Has_Ability(AbilityType ability) const;
 		bool Should_Use_High_Arc(int which) const;
+		HouseClass * GetOriginalOwner(void) const;
 		double Target_Threat(TechnoClass * target, Coord const & firing_coord = COORD_NONE) const;
 
 		virtual ResultType Take_Damage(int & damage, int distance, WarheadTypeClass const * warhead, TechnoClass * source=0, bool forced=false, bool=false, HouseClass * = 0) override;
@@ -677,7 +681,7 @@ inline void TechnoClass::Advance_Waypoint_Path(void)
 
 }
 
-inline void TechnoClass::Draw_Action_Line(void) const
+inline void TechnoClass::Draw_Action_Line(bool force, int unknown) const
 {
 
 }

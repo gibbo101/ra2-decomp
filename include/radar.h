@@ -122,7 +122,7 @@ class RadarClass: public DisplayClass
 
 		void Radar_Cell(Cell const & cell);
 		void Resolve_Radar_Point(Point2D const & point, Cell & cell, ObjectClass *& object);
-		void Set_Radar_State(bool on);
+		void Set_Radar_State(bool on, bool sound);
 
 		void Toggle_Radar(bool on);
 		bool Is_Playing_Movie(void);

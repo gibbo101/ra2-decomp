@@ -259,6 +259,9 @@ class BuildingClass : public TechnoClass
 		void FireLaser(Coord coords);
 		bool FUN_00448070(bool demote);
 		void FUN_0044EB60(FactoryClass * factory);
+		void FUN_004503F0(void);
+		void FUN_004504F0(int stage, CoordStruct const & coords);
+		void FUN_00450590(void);
 		void Update_Radar_Spied(void);
 		void Spied_By(HouseClass * house);
 
@@ -270,7 +273,7 @@ class BuildingClass : public TechnoClass
 		int Anti_Infantry_Defense_Value(void);
 
 		void Charging_AI(void);
-		void Rotation_AI(void) {}
+		void Rotation_AI(void);
 		void Factory_AI(void);
 		void Repair_AI(void);
 		void Animation_AI(void);
@@ -339,7 +342,8 @@ class BuildingClass : public TechnoClass
 
 		void Begin_Anim(BAnimType anim, bool damaged, int delay = 0);
 		void Set_Anim_Coords(void);
-		bool PlayAnim(char const * name, BAnimType anim, bool damaged, bool a, bool b);
+		void PlayAnim(char const * name, BAnimType anim, bool damaged, bool garrisoned, int delay);
+		void PlayNthAnim(BAnimType anim, bool damaged, bool garrisoned, int delay = 0);
 		void Detach_Anim(AnimClass * anim);
 		void DestroyNthAnim(BAnimType anim);
 		void Set_Anim_Damage_State(bool damaged);

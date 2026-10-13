@@ -41,6 +41,8 @@ class AnimClass;
 class BombClass;
 class LineTrail;
 
+#pragma warning(push)
+#pragma warning(disable:4716)
 class ObjectClass : public AbstractClass
 {
 		typedef AbstractClass BASECLASS;
@@ -154,8 +156,8 @@ class ObjectClass : public AbstractClass
 		virtual bool In_Air(void) const override;
 		virtual bool Is_Moving_Onto_Bridge(TechnoClass * docker = NULL) const;
 		virtual bool Occupies_Cells(void) const {return(true);}
-		virtual bool IsDisguised(void) const;
-		virtual bool IsDisguisedAs(HouseClass * house) const;
+		virtual bool IsDisguised(void) const {return(false);}
+		virtual bool IsDisguisedAs(HouseClass * house) const {return(false);}
 		virtual ObjectTypeClass * GetDisguise(bool against_allies) const;
 		virtual HouseClass * GetDisguiseHouse(bool against_allies) const;
 
@@ -190,6 +192,9 @@ class ObjectClass : public AbstractClass
 
 		double Get_Health_Ratio(void) const;
 		void Set_Health_Ratio(double health);
+		bool Is_Red_HP(void) const;
+		bool Is_Yellow_HP(void) const;
+		bool Is_Green_HP(void) const;
 
 		__declspec( property( get=Get_Health_Ratio, put=Set_Health_Ratio ) ) double HealthRatio;
 
@@ -218,15 +223,15 @@ class ObjectClass : public AbstractClass
 		virtual void Clicked_As_Target(int = 7);
 		virtual bool Select(void);
 		virtual void Unselect(void);
-		virtual int IronCurtain(int duration, HouseClass * source, bool force_shield);
-		virtual void StopAirstrikeTimer(void);
-		virtual void StartAirstrikeTimer(int duration);
-		virtual bool IsIronCurtained(void) const;
+		virtual int IronCurtain(int duration, HouseClass * source, bool force_shield) {}
+		virtual void StopAirstrikeTimer(void) {}
+		virtual void StartAirstrikeTimer(int duration) {}
+		virtual bool IsIronCurtained(void) const {return(false);}
 
 		virtual bool In_Range(Coord const & coord, int which=0) const;
 		virtual int Weapon_Range(int =0) const;
 		virtual ResultType Take_Damage(int & damage, int distance, WarheadTypeClass const * warhead, TechnoClass * source=0, bool forced=false, bool=false, HouseClass * = 0);
-		virtual void Destroy(void);
+		virtual void Destroy(void) {}
 		virtual void Scatter(Coord const &, bool forced=false, bool nokidding=false);
 		virtual bool Catch_Fire(void);
 		virtual void Fire_Out(void);
@@ -290,6 +295,7 @@ class ObjectClass : public AbstractClass
 		virtual void Debug_Dump(MonoClass *mono) const override;
 #endif
 };
+#pragma warning(pop)
 
 inline ObjectClass * AbstractClass::As_ObjectClass(void)
 {

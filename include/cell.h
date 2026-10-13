@@ -274,7 +274,7 @@ class CellClass : public AbstractClass
 		bool Is_Near_Tunnel_ES(void) const;
 		bool Can_Enter_Tunnel(FootClass const * foot) const;
 		TubeClass * Get_Tunnel(void) const;
-		char const * Tiberium_Name(void) const;
+		wchar_t const * Tiberium_Name(void) const;
 		TiberiumType Tiberium_Type_Here(void) const;
 		bool Place_Tiberium(TiberiumType tib, int data);
 		int Tiberium_Value(void) const;

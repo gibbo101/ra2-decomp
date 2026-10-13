@@ -576,3 +576,27 @@ HouseClass * TeamTypeClass::Get_House(void) const
 	}
 	return(NULL);
 }
+
+// FUNCTION: 0x006F20A0 TeamTypeClass::Fetch_RTTI
+// FUNCTION: 0x006F20B0 TeamTypeClass::Fetch_Object_Size
+// FUNCTION: 0x006F20C0 TeamTypeClass::Fetch_Heap_ID
+
+// FUNCTION: 0x006F20D0 TeamTypeClass::~TeamTypeClass
+
+typedef DiscreteDistributionClass<AITriggerTypeClass>::DIST_OBJ TRIGGER_DIST_OBJ;
+
+// FUNCTION: 0x006F21B0 ?$DynamicVectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@::Clear
+template class DynamicVectorClass<TRIGGER_DIST_OBJ>;
+
+// FUNCTION: 0x006F21F0 ?$VectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@::ID
+// FUNCTION: 0x006F2210 ?$VectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@::GetItem
+
+// FUNCTION: 0x006F2230 ?$DynamicVectorClass@PBVTeamTypeClass@@::?$DynamicVectorClass@PBVTeamTypeClass@@
+template class DynamicVectorClass<TeamTypeClass const *>;
+
+// FUNCTION: 0x006F2290 ?$VectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@::operator==
+// FUNCTION: 0x006F22F0 ?$VectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@::Resize
+// FUNCTION: 0x006F2400 ?$VectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@::Clear
+template class VectorClass<TRIGGER_DIST_OBJ>;
+
+// FUNCTION: 0x006F2440 ?$VectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@::ID

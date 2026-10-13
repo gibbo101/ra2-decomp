@@ -81,6 +81,9 @@ class MapClass: public GScreenClass
 		Cell Nearby_Location(Cell const & cell, SpeedType speed, int zone=-1, MZoneType check=MZONE_NORMAL, bool checkbridge=false, Point2D dimensions=Point2D(1,1), bool checkoverlay=false, bool checkheight=false, bool checkburrow=false, bool allowunderbridge=true, Cell const & nearto=Cell(0, 0), bool flag=false, bool buildable=false) const;
 		bool Base_Region(Cell const & cell, HousesType & house, ZoneType & zone) const;
 		int Cell_Region(Cell const & cell);
+		Cell Region_To_Cell(int region) const;
+		int FUN_00588990(void);
+		int GetThreatPosed(Cell const & cell, HouseClass * house) const;
 		int Cell_Threat(Cell const & cell, HouseClass const & house);
 		Cell Pick_Random_Location(void) const;
 		bool Place_Random_Crate(void);

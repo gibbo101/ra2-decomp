@@ -71,7 +71,7 @@ class AbstractClass : public IPersistStream, public IRTTITypeInfo, public INotic
 		virtual int STDMETHODCALLTYPE What_Am_I(void) const override;
 		virtual int STDMETHODCALLTYPE Fetch_ID(void) const override;
 		virtual void STDMETHODCALLTYPE Create_ID(void) override;
-		virtual bool STDMETHODCALLTYPE INoticeSink_Unknown(DWORD unknown) override;
+		virtual bool INoticeSink_Unknown(DWORD unknown, DWORD unknown2) override;
 		virtual void STDMETHODCALLTYPE INoticeSource_Unknown(void) override;
 
 		AbstractClass & operator = (const AbstractClass & that)

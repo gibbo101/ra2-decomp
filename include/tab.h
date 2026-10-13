@@ -22,14 +22,14 @@ class TabClass: public SidebarClass, public INoticeSink
 		virtual char const * Help_Text(int id) override;
 		virtual void DisposeOfArt(void) override;
 		virtual bool Activate(int control) override;
-		virtual bool STDMETHODCALLTYPE INoticeSink_Unknown(DWORD unknown) override;
+		virtual bool INoticeSink_Unknown(DWORD unknown, DWORD unknown2) override;
 
 		static void Draw_Credits_Tab(void);
 		static void Hilite_Tab(int tab);
 		void Flash_Money(void);
 
 		virtual void One_Time(void) override;
-		void Redraw_Tab(void) {IsToRedraw = true;Flag_To_Redraw();};
+		void Redraw_Tab(void);
 		virtual void Init_For_House(void) override;
 
 		CreditClass Credits;

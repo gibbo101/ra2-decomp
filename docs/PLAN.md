@@ -865,6 +865,20 @@ Agents' scratch roots symlinked into the repo (orig, toolchain, src, data); the 
 are gone and the rule is in AGENTS.md. Cost: about 6.1M tokens; 67 and 111 minutes.
 Merge gate: 3,189 of 3,189 (505.7 KB).
 
+### Batches 17 and 18 (13 October 2026)
+
+The second pair, interrupted by a PC crash during both header merges and resumed from
+the workflow journal: all 24 module agents' results replayed from cache and only the
+merges and Opus reran, on top of the half-merged tree, with no damage. **Batch 17: 137
+of 144** (House's ten untried functions all landed, as did TAction's timers and the
+Destroy_All family). **Batch 18: 139 of 144**; the merge gave MapSeedClass and
+MapGeneratorClass YR's layouts, proved by the save routine's INI keys and the
+constructor, and LoadOptionsClass its 0x38 bytes, which fixed RandomMapGen's offsets
+(now a names.csv row). Open: three voc functions match only with `SoundNode::Retired`
+declared `volatile`; the archive has no SoundNode, so there is no Westwood source to show
+the qualifier is original, and they stay banked. 0x005F5B4C is a padding byte, not a
+function. Cost: about 6.5M tokens. Merge gate: 3,470 of 3,470 (554.3 KB).
+
 ### Decide before the first batch
 
 - **Module layout.** Which function lives in which source file, and the link order, decide

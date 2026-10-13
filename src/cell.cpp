@@ -1895,12 +1895,224 @@ void CellClass::Force_New_Slope_For_Occupiers(void) const
 	}
 }
 
+// FUNCTION: 0x00484FF0
+wchar_t const * CellClass::Tiberium_Name(void) const
+{
+	TiberiumType tib = Which_Tiberium_Type(Overlay);
+	if (tib != TIBERIUM_NONE) {
+		return(Tiberiums[tib]->UIName);
+	}
+	return(NULL);
+}
+
+// FUNCTION: 0x00485010
+TiberiumType CellClass::Tiberium_Type_Here(void) const
+{
+	return(Which_Tiberium_Type(Overlay));
+}
+
+// FUNCTION: 0x00485020
+int CellClass::Tiberium_Value(void) const
+{
+	TiberiumType tib = Which_Tiberium_Type(Overlay);
+	if (tib == TIBERIUM_NONE) {
+		return(0);
+	}
+	return(Tiberiums[tib]->CreditValue * (OverlayData + 1));
+}
+
+// FUNCTION: 0x00485060
+bool CellClass::Is_Tile_Water(void) const
+{
+	return(ITType >= IsometricTileTypeClass::WaterSet && ITType < IsometricTileTypeClass::WaterSet + 14);
+}
+
+// FUNCTION: 0x00485080
+LEPTON CellClass::Occupier_Height(void) const
+{
+	Coord coord(CELL_LEPTON_W / 2, CELL_LEPTON_H / 2, 0);
+	coord.Z = Get_Height(coord);
+
+	BuildingClass * building = NULL;
+	if (GameActive) {
+		ObjectClass * object = Cell_Occupier();
+		while (object != NULL) {
+			if (object->Fetch_RTTI() == RTTI_BUILDING) {
+				building = (BuildingClass *)object;
+				break;
+			}
+			object = object->Next;
+		}
+	}
+	if (building) {
+		Point3D dimensions = building->Class->Lepton_Dimensions();
+		coord.Z += dimensions.Z;
+	} else {
+		TechnoClass * techno = Cell_Techno();
+		if (techno != NULL) {
+			coord.Z += CELL_LEPTON / 3;
+		}
+	}
+
+	return(coord.Z);
+}
+
+// FUNCTION: 0x00485130
+void CellClass::Detach(AbstractClass const * target)
+{
+	if (Tag == target) {
+		if (Tag != NULL) {
+			Tag->AttachCount--;
+		}
+		Tag = NULL;
+		Map.TaggedCells.Delete(CellID);
+	}
+	if (BridgeDeckCell == target) {
+		BridgeDeckCell = NULL;
+	}
+	if (UnusedCell == target) {
+		UnusedCell = NULL;
+	}
+	if (FoggedObjects != NULL) {
+		if (target->Fetch_RTTI() == RTTI_FOGGEDOBJECT) {
+			FoggedObjects->Delete((FoggedObjectClass *)target);
+		}
+	}
+}
+
 // FUNCTION: 0x00485200
 HRESULT STDMETHODCALLTYPE CellClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
 	*retval = CLSID_CellClass;
 	return(S_OK);
+}
+
+// FUNCTION: 0x00485240
+void CellClass::Set_CellID(Cell const & cell)
+{
+	CellID = cell;
+}
+
+// FUNCTION: 0x00485250
+void CellClass::Attach_Tag(TagClass *tag)
+{
+	if (Tag != NULL) {
+		Tag->AttachCount--;
+	}
+
+	Tag = tag;
+	if (Tag != NULL) {
+		Map.TaggedCells.Add(CellID);
+		Tag->AttachCount++;
+	}
+}
+
+// FUNCTION: 0x004852D0
+void CellClass::Register_As_Dirty(void)
+{
+	Point2D point;
+	TacticalMap->Coord_To_Pixel(Coord_Whole(CellID), point);
+	point.Y += TacticalRect.Y - 15 * Height;
+	point -= Point2D(30, 15);
+	TacticalMap->Register_Dirty_Area(Rect(point, 60, 30));
+}
+
+// FUNCTION: 0x00485390
+int CellClass::Get_Vein_Frame(void) const
+{
+	int frame = 0;
+	for (int i = 0; i < FACING_COUNT / 2; i++) {
+		CellClass const & adjacent = Adjacent_Cell(FacingType(i << FACING_45));
+		if (adjacent.Overlay != OVERLAY_NONE && (adjacent.Ramp <= RAMP_NONE || OverlayTypes[adjacent.Overlay]->IsVeins)) {
+			if ((adjacent.Overlay != OVERLAY_VEINS && OverlayTypes[adjacent.Overlay]->IsVeins) ||
+				(adjacent.Overlay == OVERLAY_VEINS && adjacent.OverlayData >= 0x30)) {
+				frame |= 1 << i;
+			}
+		}
+	}
+	return(frame);
+}
+
+// FUNCTION: 0x00485460
+bool CellClass::Can_Place_Veins(void)
+{
+	if (Ramp <= RAMP_SOUTH) {
+		if (Land != LAND_WATER && Land != LAND_ROCK && Land != LAND_ICE && Land != LAND_BEACH) {
+			if (Overlay == OVERLAY_NONE || OverlayTypes[Overlay]->IsVeins) {
+				for (FacingType dir = FACING_N; dir < FACING_COUNT; dir = FacingType(dir + FACING_90)) {
+					CellClass const & adjacent = ((CellClass const *)this)->Adjacent_Cell(dir);
+					if (adjacent.Ramp > RAMP_SOUTH && Ramp == RAMP_NONE) {
+						if (adjacent.Overlay == OVERLAY_NONE || !OverlayTypes[adjacent.Overlay]->IsVeins) {
+							return(false);
+						}
+					}
+					if (adjacent.Land == LAND_WATER || adjacent.Land == LAND_ROCK || adjacent.Land == LAND_ICE || adjacent.Land == LAND_BEACH) {
+						return(false);
+					}
+					if (adjacent.Overlay != OVERLAY_NONE && !OverlayTypes[adjacent.Overlay]->IsVeins) {
+						return(false);
+					}
+				}
+				return(true);
+			}
+		}
+	}
+	return(false);
+}
+
+static inline int _Vein_Frame_B(CellClass const * cell) { return cell->Get_Vein_Frame(); }
+static inline int _Vein_Frame_A(CellClass const * cell) { return _Vein_Frame_B(cell); }
+
+// FUNCTION: 0x00485590
+void CellClass::Redraw_Veins(void)
+{
+	Rect dirty(0, 0, 0, 0);
+	dirty = Union(dirty, Union(Overlay_Render_Rect(), Overlay_Shadow_Render_Rect()));
+
+	OverlayData = 0;
+	int frame = _Vein_Frame_A(this);
+	if (frame == 0 || Ramp != 0) {
+		Overlay = OVERLAY_NONE;
+	} else {
+		OverlayData = 3 * frame + abs(Scen->RandomNumber() % 3);
+	}
+	Map.Radar_Background(CellID);
+
+	for (FacingType dir = FACING_N; dir < FACING_COUNT; dir = FacingType(dir + FACING_90)) {
+		CellClass & adjacent = Adjacent_Cell(dir);
+
+		if (adjacent.Ramp == 0 && adjacent.Overlay == OVERLAY_VEINS && adjacent.OverlayData < 0x30) {
+			int adjframe = _Vein_Frame_A(&adjacent);
+
+			Rect rect(0, 0, 0, 0);
+			rect = Union(rect, Union(adjacent.Overlay_Render_Rect(), adjacent.Overlay_Shadow_Render_Rect()));
+
+			if (adjframe == 0) {
+				adjacent.Overlay = OVERLAY_NONE;
+			} else {
+				adjacent.OverlayData = 3 * adjframe + abs(Scen->RandomNumber() % 3);
+			}
+			adjacent.Recalc_Attributes();
+
+			rect = Union(rect, Union(adjacent.Overlay_Render_Rect(), adjacent.Overlay_Shadow_Render_Rect())) - TacticalRect.TopLeft;
+			TacticalMap->Register_Dirty_Area(rect);
+			Map.Radar_Background(adjacent.CellID);
+		}
+	}
+
+	dirty = Union(dirty, Union(Overlay_Render_Rect(), Overlay_Shadow_Render_Rect())) - TacticalRect.TopLeft;
+	TacticalMap->Register_Dirty_Area(dirty);
+	Recalc_Attributes();
+}
+
+// FUNCTION: 0x004867B0
+bool CellClass::Is_Tile_Clear_To_Green_LAT(void) const
+{
+	if (ITType == IsometricTileTypeClass::GreenTile || (ITType >= IsometricTileTypeClass::ClearToGreenLat && ITType < IsometricTileTypeClass::ClearToGreenLat + 16)) {
+		return(true);
+	}
+	return(false);
 }
 
 // FUNCTION: 0x00487D50

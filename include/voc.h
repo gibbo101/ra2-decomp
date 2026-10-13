@@ -56,6 +56,8 @@ class AudioEvent
 	public:
 		void FUN_004052E0(void);
 		void FUN_004052F0(void);
+		void FUN_004053E0(void);
+		void FUN_00405430(void);
 };
 
 class VocClass
@@ -67,6 +69,7 @@ class VocClass
 		static void * PlayIndexAtPos(int voc, Coord const & coord, int flag);
 		static VocType From_Name(char const * name);
 		VocType Voc_Type(void);
+		static int __fastcall FindIndex(char const * name);
 
 		char const * FUN_00405170(void);
 		int FUN_00405130(void);

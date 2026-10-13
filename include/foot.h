@@ -234,7 +234,8 @@ class FootClass : public TechnoClass
 		virtual bool Mark(MarkType mark=MARK_CHANGE) override;
 		virtual int Get_Z_Adjust(void) const override;
 		virtual ZGradientType Get_Z_Gradient(void) const override;
-		virtual void Draw_Action_Line(void) const override;
+		virtual void Draw_Action_Line(bool force, int unknown) const override;
+		void FUN_004DC340(void);
 		void Draw_Voxel_Shadow(VoxelDataStruct const & voxeldata, int layer_index, int key, VoxelIndexClass * cache, Rect const & cliprect, Point2D const & point, Matrix3D const & matrix, bool force_cache, Surface * surface, int shadow_x, int shadow_y) const;
 
 		virtual ActionType What_Action(ObjectClass const *, bool disallow_force = false) const override;

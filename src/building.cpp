@@ -14,6 +14,7 @@
 #include "_surface.h"
 #include "_tactica.h"
 #include "aircraft.h"
+#include "airstrike.h"
 #include "anim.h"
 #include "animtype.h"
 #include "blight.h"
@@ -1749,6 +1750,32 @@ static inline void Replay_Anim(BuildingClass * building, BAnimType anim, bool da
 	}
 }
 
+void BuildingClass::Set_Anim_Damage_State(bool damaged)
+{
+	if (IsDamagedAnims != damaged) {
+		IsDamagedAnims = damaged;
+		for (int i = 0; i < BANIM_COUNT; i++) {
+			if (Anims[i] != NULL) {
+				PlayNthAnim((BAnimType)i, damaged, false);
+			}
+		}
+	}
+}
+
+void BuildingClass::Set_Anim_Translucency(int translucency)
+{
+	int trans = translucency;
+	if (trans == 15 && Visual_Character() == VISUAL_HIDDEN) {
+		trans = 16;
+	}
+
+	for (int i = 0; i < BANIM_COUNT; i++) {
+		if (Anims[i] != NULL) {
+			Anims[i]->TranslucencyLevel = trans;
+		}
+	}
+}
+
 // FUNCTION: 0x0044E8F0
 void BuildingClass::Detach(AbstractClass const * target, bool all)
 {
@@ -2079,6 +2106,310 @@ void BuildingClass::Factory_AI(void)
 	}
 }
 
+// FUNCTION: 0x004503E0
+void BuildingClass::Rotation_AI(void)
+{
+}
+
+// FUNCTION: 0x004503F0
+void BuildingClass::FUN_004503F0(void)
+{
+	if (PrismStage != 0) {
+		if (--DelayBeforeFiring <= 0) {
+			DelayBeforeFiring = 0;
+			switch (PrismStage) {
+				case 1:
+					if (TarCom != NULL) {
+						if (Can_Fire(TarCom, PrismTargetCoords.X, true) == FIRE_OK) {
+							BulletClass * bullet = Fire_At(TarCom, PrismTargetCoords.X);
+							if (bullet != NULL && SupportingPrisms != 0) {
+								bullet->DamageMultiplier = (unsigned)((Rule->PrismSupportModifier * SupportingPrisms + 100) << 8) / 100;
+								SupportingPrisms = 0;
+							}
+						}
+					}
+					break;
+
+				case 2:
+					FireLaser(PrismTargetCoords);
+					break;
+
+				default:
+					break;
+			}
+			PrismStage = 0;
+		}
+	}
+}
+
+// FUNCTION: 0x004504F0
+void BuildingClass::FUN_004504F0(int stage, CoordStruct const & coords)
+{
+	DelayBeforeFiring = Class->DelayedFireDelay;
+	PrismStage = stage;
+	PrismTargetCoords = coords;
+	DestroyNthAnim(BANIM_ACTIVE_ONE);
+	Replay_Anim(this, BANIM_SPECIAL_ONE, HealthRatio <= Rule->ConditionYellow);
+}
+
+// FUNCTION: 0x00450590
+void BuildingClass::FUN_00450590(void)
+{
+	for (int i = Overpowerers.Count() - 1; i >= 0; i--) {
+		if (Overpowerers[i]->TarCom != this) {
+			Overpowerers.Delete_Index(i);
+		}
+	}
+	int count = Overpowerers.Count();
+	if (count >= 3 || (House->Power_Fraction() == 1.0 && IsOn && count >= 1)) {
+		IsOverpowered = true;
+	} else {
+		IsOverpowered = false;
+	}
+}
+
+// FUNCTION: 0x00450630
+void BuildingClass::Repair_AI(void)
+{
+	if (House->IQ >= Rule->IQRepairSell && Get_Mission() != MISSION_CONSTRUCTION && Get_Mission() != MISSION_DECONSTRUCTION) {
+		if (Can_Repair()) {
+			if (House->Available_Money() >= Rule->RepairThreshhold) {
+				if (!House->DidRepair) {
+					if (!IsRepairing && (IsCaptured || IsToRepair || House->Is_Human_Player())) {
+						House->DidRepair = true;
+						Repair(1);
+						if (!House->Is_Human_Player()) {
+							House->RepairTimer = Random_Pick((int)(House->RepairDelay * (TICKS_PER_MINUTE / 4)), (int)(House->RepairDelay * TICKS_PER_MINUTE * 2));
+						}
+					}
+				}
+			} else {
+				if ((Session.Type != GAME_NORMAL || IsAllowedToSell) &&
+					IsTickedOff &&
+					(unsigned)House->Control.IQ >= (unsigned)Rule->IQSellBack &&
+					(unsigned)Random_Pick(0, 50) < (unsigned)House->Control.TechLevel &&
+					Tag == NULL &&
+					Class->ToBuild != RTTI_BUILDINGTYPE &&
+					HealthRatio < Rule->ConditionRed)
+				{
+					Sell_Back(1);
+				}
+			}
+		}
+	}
+
+	if (IsRepairing && (Frame % (int)(Rule->RepairRate * TICKS_PER_MINUTE)) == 0) {
+		IsWrenchVisible = (IsWrenchVisible == false);
+		int cost = Class->Repair_Cost();
+		int step = Class->Repair_Step();
+		int shapenum = Shape_Number();
+
+		if (House->Available_Money() >= cost) {
+			House->Spend_Money(cost);
+			Strength += step;
+			EstimatedHealth += step;
+			if (Strength >= Class->MaxStrength) {
+				EstimatedHealth = Strength = Class->MaxStrength;
+				IsRepairing = false;
+			}
+			Set_Anim_Damage_State(HealthRatio <= Rule->ConditionYellow);
+			if (HealthRatio > Rule->ConditionYellow && ParticleSystems[ATTACHED_PARTICLE_DAMAGE] != NULL) {
+				ParticleSystems[ATTACHED_PARTICLE_DAMAGE]->Delete_Me();
+			}
+			if (Shape_Number() != shapenum) {
+				IsToDisplay = true;
+			}
+		} else {
+			IsRepairing = false;
+		}
+	}
+}
+
+// FUNCTION: 0x00451330
+int BuildingClass::How_Many_Survivors(void) const
+{
+	if (IsSurvivorless || !Class->IsCrew) return(0);
+
+	int divisor;
+	if (House->ActLike == 0) {
+		divisor = Rule->AlliedSurvivorDivisor;
+	} else if (House->ActLike == 1) {
+		divisor = Rule->SovietSurvivorDivisor;
+	} else if (House->ActLike == 2) {
+		divisor = Rule->ThirdSurvivorDivisor;
+	} else {
+		return(0);
+	}
+	if (divisor == 0) return(0);
+	if (IsCaptured) divisor *= 2;
+	int count = Class->GetRefund(House, false) / divisor;
+	if (count < 1) return(1);
+	if (count > 5) return(5);
+	return(count);
+}
+
+// FUNCTION: 0x004513D0
+void const * BuildingClass::Get_Image_Data(void) const
+{
+	if (BState != BSTATE_CONSTRUCTION && ActuallyPlacedOnMap) {
+		return(Class->Get_Image_Data());
+	}
+	return(Class->Get_Buildup_Data());
+}
+
+// FUNCTION: 0x00451400
+bool BuildingClass::Add_Upgrade(void)
+{
+	if (Strength != Class->MaxStrength) {
+		Strength = Class->MaxStrength;
+		Set_Anim_Damage_State(false);
+		if (HealthRatio > Rule->ConditionYellow) {
+			if (ParticleSystems[ATTACHED_PARTICLE_DAMAGE]) {
+				ParticleSystems[ATTACHED_PARTICLE_DAMAGE]->Delete_Me();
+			}
+		}
+		for (int i = BANIM_ACTIVE_ONE; i <= BANIM_ACTIVE_FOUR; i++) {
+			if (Anims[i] == NULL) {
+				PlayNthAnim((BAnimType)i, false, false);
+			}
+		}
+		IsToDisplay = true;
+	}
+
+	if (Class == Rule->WallTower) {
+		int index = TurretIndex + 1;
+		if (index > 2) index = 0;
+		Set_Turret_Index(index);
+		UpgradeLevel++;
+		return(true);
+	}
+
+	if (UpgradeLevel == Class->Upgrades) {
+		return(false);
+	}
+
+	UpgradeLevel++;
+	PlayNthAnim((BAnimType)(UpgradeLevel - 1), HealthRatio <= Rule->ConditionYellow, false);
+	return(true);
+}
+
+// FUNCTION: 0x00451690
+bool BuildingClass::Remove_Upgrade(void)
+{
+	if (UpgradeLevel == 0) {
+		return(false);
+	}
+
+	bool super = false;
+	if (Upgrades[UpgradeLevel-1] != NULL && Upgrades[UpgradeLevel-1]->SuperWeapon != SUPER_NONE) {
+		super = true;
+	}
+
+	if (Upgrades[UpgradeLevel-1] != NULL && Upgrades[UpgradeLevel-1]->IsTurretEquipped) {
+		DestroyNthAnim(BANIM_TURRET);
+		Upgrades[UpgradeLevel-1] = NULL;
+		UpgradeLevel = 0;
+		TurretIndex = -1;
+		if (super) House->Update_Present_Super_Weapons();
+		return(true);
+	}
+
+	DestroyNthAnim((BAnimType)(UpgradeLevel-1));
+	Upgrades[--UpgradeLevel] = NULL;
+	if (super) House->Update_Present_Super_Weapons();
+	return(true);
+}
+
+// FUNCTION: 0x00451750
+void BuildingClass::PlayNthAnim(BAnimType anim, bool damaged, bool garrisoned, int delay)
+{
+	char const * name = damaged ? Class->AnimData[anim].AnimDamaged : (garrisoned ? Class->AnimData[anim].AnimGarrisoned : Class->AnimData[anim].Anim);
+	if (name != NULL && *name) {
+		PlayAnim(name, anim, damaged, garrisoned, delay);
+	}
+}
+
+// FUNCTION: 0x004517D0
+void BuildingClass::Set_Anim_Coords(void)
+{
+	Coord render = Render_Coord();
+	for (int i = 0; i < BANIM_COUNT; i++) {
+		AnimClass * anim = Anims[i];
+		if (anim != NULL) {
+			anim->Set_Coord(render + TacticalMap->Pixel_To_Coord_Absolute(Class->AnimData[i].Location));
+		}
+	}
+}
+
+static inline BuildingClass * Building_Of(AbstractClass * object)
+{
+	if (object == NULL) return(NULL);
+	return((object->Fetch_RTTI() == RTTI_BUILDING) ? (BuildingClass *)object : NULL);
+}
+
+static inline void Warp_Pause(BuildingClass * building, AnimClass * anim)
+{
+	if (building->IsBeingWarpedOut()) {
+		anim->Paused = true;
+	}
+}
+
+static inline void Power_Disable(BuildingClass * building, AnimClass * anim, int index)
+{
+	if (!(building->IsPoweredOn && building->IsPowerOnline()) && building->Class->IsPowered && building->Class->AnimData[index].Powered) {
+		anim->Disable();
+	}
+}
+
+// FUNCTION: 0x00451890
+void BuildingClass::PlayAnim(char const * name, BAnimType anim, bool damaged, bool garrisoned, int delay)
+{
+	Set_Anim_Damage_State(damaged);
+
+	AnimType animtype = AnimTypeClass::From_Name(name);
+	if (animtype != ANIM_NONE) {
+		Coord coord (Render_Coord() + TacticalMap->Pixel_To_Coord_Absolute(Class->AnimData[anim].Location));
+		AnimClass * animptr = new AnimClass(AnimTypes[animtype], coord, delay, 1, ShapeFlags_Type(SHAPE_CENTER|SHAPE_WIN_REL|SHAPE_ZREAD));
+
+		animptr->ZAdjust = Class->AnimData[anim].ZAdjust;
+		animptr->YSortAdjust = Class->AnimData[anim].YSort;
+		animptr->IsBuildingAnim = true;
+
+		if (IsFogged) {
+			animptr->IsFogged = true;
+		}
+
+		Set_Anim_Translucency(TranslucencyLevel);
+
+		if (Anims[anim] != NULL) {
+			animptr->Animation.Set_Stage(Anims[anim]->Animation.Fetch_Stage());
+			AnimClass * oldanim = Anims[anim];
+			Anims[anim] = NULL;
+			delete oldanim;
+		}
+
+		Anims[anim] = animptr;
+
+		Power_Disable(this, animptr, anim);
+
+		if (animptr->Type->ShouldUseCellDrawer) {
+			animptr->LightConvert = (LightConvertClass *)GetRemapColour();
+			int cellbrightness = Get_Cell_Ptr()->Brightness;
+			int brightness = Apparent_Brightness(cellbrightness);
+			if (IsIronCurtained() || (Airstrike != NULL && Airstrike->Target == Building_Of(this))) {
+				brightness = GetEffectTintIntensity(brightness);
+			}
+			animptr->TintColor = brightness;
+		}
+
+		if (anim == BANIM_TURRET && Class->IsBarrelAnimAVoxel) {
+			animptr->Make_Invisible();
+		}
+
+		Warp_Pause(this, animptr);
+	}
+}
+
 // FUNCTION: 0x00459E80
 HRESULT STDMETHODCALLTYPE BuildingClass::GetClassID(CLSID * retval)
 {
@@ -2086,3 +2417,6 @@ HRESULT STDMETHODCALLTYPE BuildingClass::GetClassID(CLSID * retval)
 	*retval = CLSID_BuildingClass;
 	return(S_OK);
 }
+
+// FUNCTION: 0x0045A130 ?$TRect@H::?$TRect@H
+template class TRect<int>;

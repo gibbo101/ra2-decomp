@@ -943,3 +943,27 @@ template class TypeList<BuildingTypeClass const *>;
 
 // FUNCTION: 0x0067A730 ?$DynamicVectorClass@PBVBuildingTypeClass@@::Count
 template class DynamicVectorClass<BuildingTypeClass const *>;
+
+// FUNCTION: 0x0067A740 ?$TypeList@PBVUnitTypeClass@@::?$TypeList@PBVUnitTypeClass@@
+// FUNCTION: 0x0067A770 ?$TypeList@PBVUnitTypeClass@@::Save
+template class TypeList<UnitTypeClass const *>;
+
+// FUNCTION: 0x0067A7C0 ?$DynamicVectorClass@PBVUnitTypeClass@@::Count
+template class DynamicVectorClass<UnitTypeClass const *>;
+
+// FUNCTION: 0x0067A7D0 ?$TypeList@PBVAircraftTypeClass@@::Save
+template class TypeList<AircraftTypeClass const *>;
+
+// FUNCTION: 0x0067A820 ?$TypeList@PBVInfantryTypeClass@@::?$TypeList@PBVInfantryTypeClass@@
+// FUNCTION: 0x0067A850 ?$TypeList@PBVInfantryTypeClass@@::Save
+template class TypeList<InfantryTypeClass const *>;
+
+// FUNCTION: 0x0067A8A0 ?$DynamicVectorClass@PBVInfantryTypeClass@@::Count
+template class DynamicVectorClass<InfantryTypeClass const *>;
+
+// FUNCTION: 0x0067A8B0 ?$TypeList@PBVTerrainTypeClass@@::?$TypeList@PBVTerrainTypeClass@@
+// FUNCTION: 0x0067A8E0 ?$TypeList@PBVTerrainTypeClass@@::Save
+// FUNCTION: 0x0067A930 ?$DynamicVectorClass@PBVTerrainTypeClass@@::Clear
+// FUNCTION: 0x0067A960 ?$DynamicVectorClass@PBVTerrainTypeClass@@::ID
+// FUNCTION: 0x0067A980 ?$VectorClass@PBVTerrainTypeClass@@::GetItem
+template class TypeList<TerrainTypeClass const *>;

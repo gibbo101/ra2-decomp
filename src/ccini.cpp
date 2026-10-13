@@ -44,6 +44,8 @@ char const * __fastcall FUN_00751590(int index);
 char const * Name_From_BuildCat(int value);
 int BuildCat_From_Name(char const * name);
 VoxType Vox_From_Name(char const * name);
+char const * Name_From_Layer(LayerType layer);
+LayerType Layer_From_Name(char const * name);
 
 static inline int _Scale_To_256(int val)
 {
@@ -53,6 +55,8 @@ static inline int _Scale_To_256(int val)
 	val = MIN(val, MPH_LIGHT_SPEED);
 	return(val);
 }
+
+static char const * _vhpscan[3] = {"None", "Normal", "Strong"};
 
 static struct
 {
@@ -101,6 +105,7 @@ static struct
 	{ "0x0", BSIZE_00 }
 };
 
+// FUNCTION: 0x00476E20
 void CCINIClass::Calculate_Message_Digest(void)
 {
 	SHAPipe sha;
@@ -109,6 +114,7 @@ void CCINIClass::Calculate_Message_Digest(void)
 	IsDigestPresent = true;
 }
 
+// FUNCTION: 0x00476EA0
 void CCINIClass::Invalidate_Message_Digest(void)
 {
 	IsDigestPresent = false;
@@ -1091,6 +1097,53 @@ int CCINIClass::Get_Unique_ID(void) const
 	return(CRCEngine()(&Digest[0], sizeof(Digest)));
 }
 
+// FUNCTION: 0x00476EB0
+TechnoTypeClass * CCINIClass::Get_TechnoType(char const * section, char const * entry) const
+{
+	char buffer[128];
+
+	int type = -1;
+	TechnoTypeClass * target = NULL;
+
+	Get_String(section, entry, "<none>", buffer, sizeof(buffer));
+
+	if (type == -1) {
+		type = (int)InfantryTypeClass::From_Name(buffer);
+		if (type != -1) {
+			target = InfantryTypes[type];
+		}
+	}
+	if (type == -1) {
+		type = (int)UnitTypeClass::From_Name(buffer);
+		if (type != -1) {
+			target = UnitTypes[type];
+		}
+	}
+	if (type == -1) {
+		type = (int)AircraftTypeClass::From_Name(buffer);
+		if (type != -1) {
+			target = AircraftTypes[type];
+		}
+	}
+	if (type == -1) {
+		type = (int)BuildingTypeClass::From_Name(buffer);
+		if (type != -1) {
+			target = BuildingTypes[type];
+		}
+	}
+	return(target);
+}
+
+// FUNCTION: 0x00476F70
+bool CCINIClass::Put_Target(char const * section, char const * entry, TargetClass const & value)
+{
+	TechnoTypeClass *ttype = value.As_TechnoType();
+	if (ttype != NULL) {
+		return(Put_String(section, entry, ttype->Name()));
+	}
+	return(Put_String(section, entry, "<none>"));
+}
+
 // FUNCTION: 0x00476FC0
 SpeedType CCINIClass::Get_SpeedType(char const * section, char const * entry, SpeedType defvalue) const
 {
@@ -1106,6 +1159,116 @@ SpeedType CCINIClass::Get_SpeedType(char const * section, char const * entry, Sp
 bool CCINIClass::Put_SpeedType(char const * section, char const * entry, SpeedType value)
 {
 	return(Put_String(section, entry, Name_From_Speed(value)));
+}
+
+// FUNCTION: 0x00477050
+LayerType CCINIClass::Get_LayerType(char const * section, char const * entry, LayerType defvalue) const
+{
+	char buffer[128];
+
+	if (Get_String(section, entry, Name_From_Layer(defvalue), buffer, sizeof(buffer))) {
+		return(Layer_From_Name(buffer));
+	}
+	return(defvalue);
+}
+
+// FUNCTION: 0x004770B0
+bool CCINIClass::Put_LayerType(char const * section, char const * entry, LayerType value)
+{
+	return(Put_String(section, entry, Name_From_Layer(value)));
+}
+
+// FUNCTION: 0x004770E0
+TypeList<int> CCINIClass::Get_BuildingType_List(CCINIClass const & ini, char const * section, char const * entry, TypeList<int> defvalue)
+{
+	char buffer[128];
+
+	if (ini.Get_String(section, entry, "", buffer, sizeof(buffer))) {
+		TypeList<int> list;
+		char * token = strtok(buffer, ",");
+		while (token != NULL && *token != '\0') {
+
+			bool isgroup = false;
+			if (!strcmpi(token, "POWER")) {
+				list.Add(STRUCT_G_POWER);
+				isgroup = true;
+			}
+			if (!strcmpi(token, "FACTORY")) {
+				list.Add(STRUCT_G_FACTORY);
+				isgroup = true;
+			}
+			if (!strcmpi(token, "BARRACKS")) {
+				list.Add(STRUCT_G_BARRACKS);
+				isgroup = true;
+			}
+			if (!strcmpi(token, "RADAR")) {
+				list.Add(STRUCT_G_RADAR);
+				isgroup = true;
+			}
+			if (!strcmpi(token, "TECH")) {
+				list.Add(STRUCT_G_TECH);
+				isgroup = true;
+			}
+			if (!strcmpi(token, "PROC")) {
+				list.Add(STRUCT_G_GDIFACTORY);
+				isgroup = true;
+			}
+			if (!isgroup) {
+				int building = BuildingTypeClass::From_Name(token);
+				if (building != STRUCT_NONE) {
+					list.Add(building);
+				}
+			}
+
+			token = strtok(NULL, ",");
+		}
+		return(list);
+	}
+
+	return(defvalue);
+}
+
+// FUNCTION: 0x00477440
+void CCINIClass::Get_Int3(char const * section, char const * entry, int * first, int * second, int * third) const
+{
+	char buffer[512] = "";
+
+	if (Get_String(section, entry, "", buffer, sizeof(buffer))) {
+		char * token = strtok(buffer, ",");
+		if (token) *first = atoi(token);
+		token = strtok(NULL, ",");
+		if (token) *second = atoi(token);
+		token = strtok(NULL, ",");
+		if (token) *third = atoi(token);
+	}
+}
+
+// FUNCTION: 0x00477510
+bool CCINIClass::Put_Int3(char const * section, char const * entry, int first, int second, int third)
+{
+	char buffer[512] = "";
+
+	sprintf(buffer, "%d,%d,%d", first, second, third);
+	return(Put_String(section, entry, buffer));
+}
+
+// FUNCTION: 0x00477590
+int CCINIClass::Get_VHPScan(char const * section, char const * entry, int defvalue) const
+{
+	char buffer[128];
+
+	Get_String(section, entry, _vhpscan[defvalue], buffer, sizeof(buffer));
+	char * token = strtok(buffer, ",");
+	if (!strcmpi(token, "None")) {
+		return(0);
+	}
+	if (!strcmpi(token, "Normal")) {
+		return(1);
+	}
+	if (!strcmpi(token, "Strong")) {
+		return(2);
+	}
+	return(defvalue);
 }
 
 // FUNCTION: 0x00477640
@@ -1127,6 +1290,10 @@ AbilityFlagsType CCINIClass::Get_Abilities(char const * section, char const * en
 	}
 	return(defvalue);
 }
+
+// FUNCTION: 0x00477740 Pipe::End
+
+// FUNCTION: 0x00477750 SHAPipe::~SHAPipe
 
 // FUNCTION: 0x00477EC0 ?$DynamicVectorClass@H::Add
 template class DynamicVectorClass<int>;

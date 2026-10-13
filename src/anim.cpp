@@ -753,6 +753,30 @@ bool ObjectClass::IsStrange(void) const
 
 // FUNCTION: 0x004263C0 ObjectClass::Full_Name
 
+// FUNCTION: 0x004263D0 ObjectClass::Fire_Coord
+
+// FUNCTION: 0x00426410 ObjectClass::Occupies_Cells
+
+// FUNCTION: 0x00426420 ObjectClass::IsDisguised
+
+// FUNCTION: 0x00426430 ObjectClass::IsDisguisedAs
+
+// FUNCTION: 0x00426440 ObjectClass::Draw_Pre_Render
+
+// FUNCTION: 0x00426450 ObjectClass::Draw_Post_Render
+
+// FUNCTION: 0x00426460 ObjectClass::IronCurtain
+
+// FUNCTION: 0x00426470 ObjectClass::StopAirstrikeTimer
+
+// FUNCTION: 0x00426480 ObjectClass::StartAirstrikeTimer
+
+// FUNCTION: 0x00426490 ObjectClass::IsIronCurtained
+
+// FUNCTION: 0x004264A0 ObjectClass::Destroy
+
+// FUNCTION: 0x004264B0 ObjectClass::Per_Cell_Process
+
 // FUNCTION: 0x00426540
 HRESULT STDMETHODCALLTYPE AnimClass::GetClassID(CLSID * retval)
 {

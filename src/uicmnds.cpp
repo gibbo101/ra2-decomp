@@ -45,6 +45,8 @@
 #include "tactical.h"
 #include "scenario.h"
 #include <mmsystem.h>
+#include <string.h>
+#include "stringtable.h"
 
 class UICommandHolder
 {
@@ -476,4 +478,142 @@ void __fastcall FUN_00731A70(bool flag)
 	if (!Unsorted::MuteSWLaunches) {
 		FUN_0063A120(flag, false);
 	}
+}
+
+class InputManagerClass
+{
+	public:
+		static InputManagerClass * Instance;
+		bool IsKeyPressed(int key);
+};
+extern int DAT_00A8EC00;
+extern int DAT_00A8EC04;
+extern int DAT_00A8EC08;
+extern int DAT_00A8EC0C;
+extern bool DAT_00B0FE58;
+extern bool DAT_00B0FE64;
+namespace Unsorted { extern int NavCycleMode; }
+
+// FUNCTION: 0x00731A90
+bool FUN_00731A90(void)
+{
+	return FUN_00637AA0();
+}
+
+static inline bool All_Selected_Can_Attack_Move(void)
+{
+	int count = DAT_00A8ECB8.Count();
+	for (int i = 0; i < count; i++) {
+		ObjectClass * object = DAT_00A8ECB8[i];
+		if (object && object->Is_Techno()) {
+			if (!((TechnoClass *)object)->CanAttackOnTheMove()) {
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
+// FUNCTION: 0x00731AA0
+bool FUN_00731AA0(void)
+{
+	return All_Selected_Can_Attack_Move();
+}
+
+// FUNCTION: 0x00731AF0
+void FUN_00731AF0(void)
+{
+	if (DAT_00A8ECB8.Count() == 0) {
+		FUN_00730A90(StringTable::LoadString("MSG:NothingSelected", NULL, "D:\\ra2mdpost\\UICmnds.cpp", 0x358), -1);
+		DAT_00B0FE58 = true;
+		return;
+	}
+	if (!All_Selected_Can_Attack_Move()) {
+		FUN_00730A90(StringTable::LoadString("MSG:AttackMoveUnsupported", NULL, "D:\\ra2mdpost\\UICmnds.cpp", 0x35e), -1);
+		return;
+	}
+	DAT_00B0FE58 = true;
+}
+
+// FUNCTION: 0x00731BE0
+void FUN_00731BE0(void)
+{
+	DAT_00B0FE58 = false;
+}
+
+static inline bool Key_Down(int key)
+{
+	return InputManagerClass::Instance->IsKeyPressed(key);
+}
+
+// FUNCTION: 0x00731BF0
+bool FUN_00731BF0(void)
+{
+	if (DAT_00B0FE58) {
+		return true;
+	}
+	bool a = Key_Down(DAT_00A8EC00) || Key_Down(DAT_00A8EC04);
+	bool b = Key_Down(DAT_00A8EC08) || Key_Down(DAT_00A8EC0C);
+	if (a && b) {
+		int count = DAT_00A8ECB8.Count();
+		for (int i = 0; i < count; i++) {
+			ObjectClass * object = DAT_00A8ECB8[i];
+			if (object && object->Is_Techno()) {
+				if (!((TechnoClass *)object)->CanAttackOnTheMove()) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	return false;
+}
+
+// FUNCTION: 0x00731CB0
+int FUN_00731CB0(void)
+{
+	return 0x47;
+}
+
+// FUNCTION: 0x00731CC0
+int FUN_00731CC0(void)
+{
+	return 0x16;
+}
+
+// FUNCTION: 0x00731CD0
+int FUN_00731CD0(void)
+{
+	return Map.Get_Mouse_Current_Frame((MouseType)0x4d, false);
+}
+
+// FUNCTION: 0x00731CE0
+int FUN_00731CE0(void)
+{
+	return Map.Get_Mouse_Current_Frame((MouseType)0x4c, false);
+}
+
+// FUNCTION: 0x00731CF0
+void FUN_00731CF0(void)
+{
+	DAT_00B0FE58 = false;
+}
+
+// FUNCTION: 0x00731D00
+void __fastcall FUN_00731D00(int mode)
+{
+	Unsorted::NavCycleMode = mode;
+	DAT_00B0FE58 = false;
+}
+
+// FUNCTION: 0x00731D10
+wchar_t * __fastcall FUN_00731D10(wchar_t * buffer)
+{
+	if (DAT_00A8ECB8.Count() == 0) {
+		return wcscpy(buffer, StringTable::LoadString("MSG:NothingSelected", NULL, "D:\\ra2mdpost\\UICmnds.cpp", 0x3f1));
+	}
+	if (DAT_00B0FE64) {
+		return wcscpy(buffer, StringTable::LoadString("MSG:SelAcrossMap", NULL, "D:\\ra2mdpost\\UICmnds.cpp", 0x3f3));
+	}
+	return wcscpy(buffer, StringTable::LoadString("MSG:SelAcrossScreen", NULL, "D:\\ra2mdpost\\UICmnds.cpp", 0x3f5));
 }
