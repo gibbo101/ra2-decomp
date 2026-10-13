@@ -45,6 +45,7 @@ class RadioClass : public MissionClass
 		TechnoClass * FUN_0065AD30(int index);
 		TechnoClass * FUN_0065AD40(int index) const;
 		int FindLinkIndex(TechnoClass const * techno) const;
+		bool ContainsLink(TechnoClass const * techno) const;
 
 		virtual void Detach(AbstractClass const * target, bool all = true) override;
 		virtual void Compute_CRC(CRCEngine &) const override;

@@ -62,10 +62,15 @@
 #include "need.hh"
 #include <cstdio>
 
+void __fastcall FUN_00489280(Coord const & coord, int damage, TechnoClass * source, WarheadTypeClass const * warhead, bool affecttiberium, HouseClass * house);
+void __fastcall FUN_0048A620(int damage, WarheadTypeClass const * warhead, Coord coord, int a, int b);
 char const * __fastcall FUN_00751590(int index);
 int __fastcall FUN_00753250(char const * name);
 
 DynamicVectorClass<TActionClass *> Actions;
+
+extern DynamicVectorClass<TechnoClass *> DAT_00A8EC78;
+#define Technos DAT_00A8EC78
 
 // FUNCTION: 0x006DCD70 $E2
 // FUNCTION: 0x006DCDA0 $E5
@@ -354,10 +359,150 @@ bool TActionClass::TAction_PARTICLE_ANIM(HouseClass * , ObjectClass * , TriggerC
 	return(true);
 }
 
+Coord TActionClass::Waypoint_As_Coord(void)
+{
+	return(Scen->Get_Waypoint_Coord(Data.Value));
+}
+
+// FUNCTION: 0x006E01C0
+bool TActionClass::TAction_WAKEUP_SELF(HouseClass * , ObjectClass * , TriggerClass * trigger, Cell const & )
+{
+	for (int index = 0; index < Technos.Count(); index++) {
+		TechnoClass * techno = Technos[index];
+		if (techno->RTTI != RTTI_BUILDING && techno->IsActive && techno->IsDown && techno->Tag != NULL && techno->Tag->Is_Trigger_Attached(trigger)) {
+			if (techno->Mission == MISSION_SLEEP || techno->Mission == MISSION_HARMLESS) {
+				techno->QueueMission(MISSION_GUARD, false);
+			}
+		}
+	}
+	return(true);
+}
+
+// FUNCTION: 0x006E0250
+bool TActionClass::TAction_VEIN_GROWTH(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	Scen->IsVeinGrowth = Data.Bool;
+	return(true);
+}
+
+// FUNCTION: 0x006E0270
+bool TActionClass::TAction_TIB_GROWTH(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	Scen->IsTibGrowth = Data.Bool;
+	return(true);
+}
+
+// FUNCTION: 0x006E0290
+bool TActionClass::TAction_ICE_GROWTH(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	Scen->IsIceGrowth = Data.Bool;
+	return(true);
+}
+
+// FUNCTION: 0x006E02B0
+bool TActionClass::TAction_WAKEUP_ALL_SLEEP(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
+{
+	for (int index = 0; index < Feet.Count(); index++) {
+		FootClass * techno = Feet[index];
+		if (techno->Mission == MISSION_SLEEP && techno->Strength > 0 && techno->IsActive && techno->IsDown && !techno->IsInLimbo && house != techno->House ) {
+			techno->QueueMission(MISSION_GUARD, false);
+		}
+	}
+	return(true);
+}
+
+// FUNCTION: 0x006E0330
+bool TActionClass::TAction_WAKEUP_ALL_HARMLESS(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
+{
+	for (int index = 0; index < Feet.Count(); index++) {
+		FootClass * techno = Feet[index];
+		if (techno->Mission == MISSION_HARMLESS && techno->Strength > 0 && techno->IsActive && techno->IsDown && !techno->IsInLimbo && techno->House == house) {
+			techno->QueueMission(MISSION_GUARD, false);
+		}
+	}
+	return(true);
+}
+
+// FUNCTION: 0x006E03B0
+bool TActionClass::TAction_WAKEUP_GROUP(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	for (int index = 0; index < Technos.Count(); index++) {
+		TechnoClass * foot = Technos[index];
+		if (foot->Group == Data.Value &&
+				(foot->Mission == MISSION_SLEEP || foot->Mission == MISSION_HARMLESS) &&
+				foot->Strength > 0 &&
+				foot->IsActive &&
+				foot->IsDown &&
+				!foot->IsInLimbo) {
+			foot->QueueMission(MISSION_GUARD, false);
+		}
+	}
+	return(true);
+}
+
+// FUNCTION: 0x006E0440
+bool TActionClass::TAction_ANNOUNCE_WIN(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	PlayerPtr->Flag_To_Win(true);
+	return(true);
+}
+
+// FUNCTION: 0x006E0460
+bool TActionClass::TAction_ANNOUNCE_LOSE(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	PlayerPtr->Flag_To_Lose(true);
+	return(true);
+}
+
 // FUNCTION: 0x006E0480
 bool TActionClass::TAction_FORCE_END(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	PlayerPtr->Flag_To_End();
+	return(true);
+}
+
+// FUNCTION: 0x006E0490
+bool TActionClass::TAction_DAMAGE(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	int damage = 100;
+	FUN_00489280(Waypoint_As_Coord(), damage, NULL, Rule->C4Warhead, true, NULL);
+	damage = 100;
+	FUN_00489280(Waypoint_As_Coord() + Coord(CELL_LEPTON_W/3, CELL_LEPTON_H/3, 0), damage, NULL, Rule->C4Warhead, true, NULL);
+	damage = 100;
+	FUN_00489280(Waypoint_As_Coord() + Coord(-CELL_LEPTON_W/3, CELL_LEPTON_H/3, 0), damage, NULL, Rule->C4Warhead, true, NULL);
+	damage = 100;
+	FUN_00489280(Waypoint_As_Coord() + Coord(CELL_LEPTON_W/3, -CELL_LEPTON_H/3, 0), damage, NULL, Rule->C4Warhead, true, NULL);
+	damage = 100;
+	FUN_00489280(Waypoint_As_Coord() + Coord(-CELL_LEPTON_W/3, -CELL_LEPTON_H/3, 0), damage, NULL, Rule->C4Warhead, true, NULL);
+
+	if (Scen->Is_Valid_Waypoint(Data.Value)) {
+		Cell cell = Scen->Get_Waypoint_Cell(Data.Value);
+		int tries = 3;
+		while (Map.Damage_Bridge(cell) == false && tries-- > 0) {};
+		Point2D point;
+		Coord coord = Coord(cell);
+		coord.Z += BRIDGE_LEPTON_HEIGHT;
+		TacticalMap->Coord_To_Pixel(coord, point);
+		Rect dirty (point.X-128, point.Y-128, 256, 256);
+		TacticalMap->Register_Dirty_Area(dirty);
+	}
+
+	return(true);
+}
+
+// FUNCTION: 0x006E0790
+bool TActionClass::TAction_LIGHT_SMALL(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	WarheadTypeClass const * warhead = Rule->C4Warhead;
+	FUN_0048A620(50, warhead, Waypoint_As_Coord(), 0, 0);
+	return(true);
+}
+
+// FUNCTION: 0x006E07F0
+bool TActionClass::TAction_LIGHT_MEDIUM(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	WarheadTypeClass const * warhead = Rule->C4Warhead;
+	FUN_0048A620(100, warhead, Waypoint_As_Coord(), 0, 0);
 	return(true);
 }
 

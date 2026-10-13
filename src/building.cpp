@@ -1522,6 +1522,285 @@ void BuildingClass::FireLaser(Coord coords)
 	SupportingPrisms = 0;
 }
 
+namespace Unsorted { extern bool ArmageddonMode; }
+void __fastcall FUN_00660B80(Cell const & cell);
+
+// FUNCTION: 0x0044B760
+int BuildingClass::Do_MISSION_CAPTURE(void)
+{
+	return(MissionClass::Do_MISSION_CAPTURE());
+}
+
+// FUNCTION: 0x0044B770
+int BuildingClass::Do_MISSION_HARVEST(void)
+{
+	return(MissionClass::Do_MISSION_HARVEST());
+}
+
+// FUNCTION: 0x0044D5D0
+bool BuildingClass::Revealed(HouseClass * house)
+{
+	if (BASECLASS::Revealed(house)) {
+		if (!ScenarioInit) {
+			House->JustBuiltStructure = Class->HeapID;
+			House->IsBuiltSomething = true;
+		}
+		House->IsRecalcNeeded = true;
+		if (!HasAnyLink() && House->Is_Human_Player() && Get_Mission() != MISSION_CONSTRUCTION && MissionQueue != MISSION_CONSTRUCTION) {
+			Grand_Opening();
+		} else {
+			if (!HasAnyLink() && !House->Is_Human_Player() && house == House && Get_Mission() != MISSION_CONSTRUCTION) {
+				Grand_Opening();
+			}
+		}
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x0044D6A0
+bool BuildingClass::Enter_Idle_Mode(bool initial, bool)
+{
+	MissionType mission = MISSION_GUARD;
+	if (!initial || ScenarioInit || Unsorted::ArmageddonMode) {
+		Begin_Mode(BSTATE_IDLE);
+		mission = MISSION_GUARD;
+	} else {
+		Begin_Mode(BSTATE_CONSTRUCTION);
+		mission = MISSION_CONSTRUCTION;
+	}
+	QueueMission(mission, false);
+	return(false);
+}
+
+// FUNCTION: 0x0044D700
+int BuildingClass::Pip_Count(void) const
+{
+	switch (Class->PipScale) {
+		case PIPSCALE_TIBERIUM:
+			if (Class->IsWeeder) {
+				return(int(Class->Max_Pips() * House->Weed_Fraction()));
+			}
+			return(0);
+	}
+	return(BASECLASS::Pip_Count());
+}
+
+// FUNCTION: 0x0044D760
+void BuildingClass::Death_Announcement(TechnoClass const * source) const
+{
+	if (source != NULL && House->Is_Player_Control()) {
+		Cell cell = Destination_Coord().As_Cell();
+		FUN_00660B80(cell);
+	}
+}
+
+// FUNCTION: 0x0044E3A0
+bool BuildingClass::Is_Blocked_By_Occupier(void)
+{
+	Cell cell = Get_Cell();
+	Cell const * list = Occupy_List();
+	bool blocked = false;
+	while (*list != REFRESH_EOL) {
+		Cell newcell = cell + *list;
+		list++;
+		ObjectClass * optr = Map[newcell].Cell_Occupier();
+		while (optr != NULL) {
+			if (this != optr) {
+				blocked = true;
+				break;
+			}
+			optr = optr->Next;
+		}
+	}
+	return(blocked);
+}
+
+// FUNCTION: 0x0044E440
+int BuildingClass::Do_MISSION_OPEN(void)
+{
+	if (Class->IsGate) {
+		enum {
+			START_OPENING,
+			OPENING,
+			OPEN,
+			START_CLOSING,
+			CLOSING,
+			CLOSED
+		};
+		switch (Status) {
+			case START_OPENING:
+				if (Door.Is_Door_Open()) {
+					GateTimer = int(Class->GateCloseDelay * TICKS_PER_MINUTE);
+					Status = OPEN;
+					break;
+				}
+				if (!Door.Is_Door_Opening()) {
+					if (Door.Is_Door_Closing()) {
+						Door.Reverse();
+					} else {
+						Door.Open_Door(Class->DeployTime);
+						VocClass::PlayAt(Rule->GateDownSound, PositionCoord, NULL);
+						Rect redrawrect = Get_Render_Rect();
+						TacticalMap->Register_Dirty_Area(redrawrect, false);
+					}
+				}
+				Status = OPENING;
+				GateTimer = int(Class->GateCloseDelay * TICKS_PER_MINUTE);
+				return(0);
+
+			case START_CLOSING:
+				Door.Close_Door(Class->DeployTime);
+				Status = CLOSING;
+				VocClass::PlayAt(Rule->GateUpSound, PositionCoord, NULL);
+				return(0);
+
+			case OPEN:
+				if (!Is_Blocked_By_Occupier()) {
+					if (GateTimer.Progress() == 1.0) {
+						Status = START_CLOSING;
+					}
+				} else {
+					GateTimer = int(Class->GateCloseDelay * TICKS_PER_MINUTE);
+				}
+				break;
+
+			case OPENING:
+				if (Door.Is_Door_Open()) {
+					Status = OPEN;
+				}
+
+			case CLOSING:
+				if (Door.Is_Door_Closed()) {
+					Enter_Idle_Mode();
+					Status = CLOSED;
+					IsToDisplay = true;
+				}
+				if (!Door.Is_Ready_To_Open()) {
+					int stage = int(Door.Percent_Complete() * Class->GateStages);
+					if (stage != GateFrame) {
+						GateFrame = stage;
+						IsToDisplay = true;
+					}
+				}
+				return(0);
+		}
+
+		return(Current_Mission_Control().Normal_Delay() + Random_Pick(0, 2));
+	}
+
+	QueueMission(MISSION_GUARD, false);
+	return(1);
+}
+
+// FUNCTION: 0x0044E7B0
+int BuildingClass::Power_Output(void) const
+{
+	int power = Class->Power;
+	if (!IsBeingWarpedOut()) {
+		if (HasExtraPowerBonus) {
+			power += Class->ExtraPower;
+		}
+		if ((Class->UnitAbsorb || Class->InfantryAbsorb) && Class->ExtraPower > 0) {
+			int n = Cargo.How_Many();
+			if (n > 0) {
+				power += Class->ExtraPower * n;
+			}
+		}
+		if (UpgradeLevel != 0) {
+			for (int i = 0; i < BUILDING_UPGRADE_MAX; i++) {
+				if (Upgrades[i] != NULL) {
+					power += Upgrades[i]->Power;
+				}
+			}
+		}
+		if (power > 0 && IsOn) {
+			return(int(power * HealthRatio));
+		}
+	}
+	return(0);
+}
+
+// FUNCTION: 0x0044E880
+int BuildingClass::Power_Drain(void) const
+{
+	if (!IsBeingWarpedOut() && IsOn) {
+		int drain = Class->Drain;
+		if (HasExtraPowerDrain) {
+			drain += Class->ExtraDrain;
+		}
+		if (UpgradeLevel != 0) {
+			for (int i = 0; i < BUILDING_UPGRADE_MAX; i++) {
+				if (Upgrades[i] != NULL) {
+					drain += Upgrades[i]->Drain;
+				}
+			}
+		}
+		return(drain);
+	}
+	return(0);
+}
+
+static inline void Replay_Anim(BuildingClass * building, BAnimType anim, bool damaged)
+{
+	char const * name = damaged ? building->Class->AnimData[anim].AnimDamaged : building->Class->AnimData[anim].Anim;
+	if (name != NULL && *name) {
+		building->PlayAnim(name, anim, damaged, false, false);
+	}
+}
+
+// FUNCTION: 0x0044E8F0
+void BuildingClass::Detach(AbstractClass const * target, bool all)
+{
+	BASECLASS::Detach(target, all);
+
+	if (WhomToRepay == target) {
+		WhomToRepay = NULL;
+	}
+	if (AnimToTrack == target) {
+		AnimToTrack = NULL;
+	}
+	if (Factory == target) {
+		Factory = NULL;
+	}
+	if (BuildingLight == target) {
+		BuildingLight = NULL;
+	}
+	if (LightSource == target) {
+		LightSource = NULL;
+	}
+	if (Anims[BANIM_PRODUCTION] == target) {
+		Replay_Anim(this, BANIM_IDLE, HealthRatio <= Rule->ConditionYellow);
+	}
+	if (Class->Grinding && Anims[BANIM_SPECIAL_ONE] == target) {
+		Replay_Anim(this, BANIM_ACTIVE_ONE, HealthRatio <= Rule->ConditionYellow);
+	}
+	if (target != NULL && ((AbstractClass *)target)->What_Am_I() == RTTI_ANIM) {
+		for (int i = 0; i < 8; i++) {
+			if (DamageFireAnims[i] == target) {
+				DamageFireAnims[i] = NULL;
+				return;
+			}
+		}
+		if (((AnimClass *)target)->IsBuildingAnim) {
+			Detach_Anim((AnimClass *)target);
+			return;
+		}
+	}
+	if (Class == target) {
+		Class = NULL;
+	}
+	for (int j = 0; j < BUILDING_UPGRADE_MAX; j++) {
+		if (Upgrades[j] == target) {
+			Upgrades[j] = NULL;
+		}
+	}
+	Overpowerers.Delete((InfantryClass *)target);
+	if (ScenarioInit) {
+		Occupants.Delete((InfantryClass *)target);
+	}
+}
+
 // FUNCTION: 0x00459E80
 HRESULT STDMETHODCALLTYPE BuildingClass::GetClassID(CLSID * retval)
 {

@@ -19,5 +19,6 @@ class EBolt
 		bool AlternateColor;
 
 		EBolt(void);
+		void Fire(Coord start, Coord end, int zadjust);
 		~EBolt(void);
 };

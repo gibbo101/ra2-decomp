@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "widewstring.h"
 #include "wstring.h"
 #include "win.h"
 #include <cctype>
@@ -59,6 +60,11 @@ char* Wstring::get(void) const
 	if (!str)
 		return((char *)"");
 	return(str);
+}
+
+// FUNCTION: 0x007B4620
+Wstring::Wstring(void) :str(NULL)
+{
 }
 
 // FUNCTION: 0x007B4690
@@ -369,6 +375,6 @@ char Wstring::set(char c, unsigned int index)
 }
 
 // FUNCTION: 0x007B66C0
-Wstring::Wstring(void) :str(NULL)
+WideWstring::WideWstring(void) :str(NULL)
 {
 }

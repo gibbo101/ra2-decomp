@@ -50,6 +50,7 @@
 #include "scenario.h"
 #include "scheme.h"
 #include "session.h"
+#include "stringtable.h"
 #include "sun.h"
 #include "super.h"
 #include "suprtype.h"
@@ -77,6 +78,7 @@
 extern DynamicVectorClass<TechnoClass *> DAT_00A8EC78;
 #define Technos DAT_00A8EC78
 extern DynamicVectorClass<FactoryClass *> DAT_00A83E30;
+namespace Unsorted { extern int MuteSWLaunches; }
 #define Factories DAT_00A83E30
 
 // FUNCTION: 0x004F4EE0 $E2
@@ -645,11 +647,528 @@ bool HouseClass::CanOverpower(AbstractClass const * target) const
 	return(false);
 }
 
+// FUNCTION: 0x004F9B50
+void HouseClass::Make_Ally(HousesType house, bool announce)
+{
+	Make_Ally(Houses[house], announce);
+}
+
+inline void HouseClass::Clear_Anger(HouseClass const * house)
+{
+	for (int i = 0; i < AngerNodes.Count(); i++) {
+		if (AngerNodes[i].House == house) {
+			Add_Anger(-AngerNodes[i].Level, house);
+			break;
+		}
+	}
+}
+
+inline bool HouseClass::Is_Human_Player(void) const
+{
+	if (Session.Type == GAME_NORMAL) {
+		return(Is_Player_Control());
+	}
+	return(IsHuman);
+}
+
+// FUNCTION: 0x004F9B70
+void HouseClass::Make_Ally(HouseClass * house, bool announce)
+{
+	if (Is_Allowed_To_Ally(house)) {
+		Map.FUN_004ADEE0(false, false);
+
+		Allies |= (1L << house->HeapID);
+
+		Recalc_Threat_Regions();
+		Clear_Anger(house);
+
+		if (Enemy == house->HeapID) {
+			Enemy = HOUSE_NONE;
+		}
+
+		if (ScenarioInit) {
+			Control.Allies |= (1L << house->HeapID);
+		}
+
+		if (Session.Type == GAME_INTERNET || !ScenarioInit) {
+
+			if (Is_Human_Player() && Rule->IsComputerParanoid && !house->Class->IsMultiplayPassive && Session.Type != GAME_NORMAL) {
+				Computer_Paranoid();
+			}
+
+			wchar_t buffer[80];
+
+			for (int index = 0; index < Logic.Count(); index++) {
+				ObjectClass * object = Logic[index];
+
+				if (object != NULL && Dynamic_Cast<TechnoClass *>(object) && !object->IsInLimbo && object->Owner() == HeapID) {
+					TargetClass target = ((TechnoClass *)object)->TarCom;
+					if (target.Is_Valid() && target.As_Techno() != NULL) {
+						if (Is_Ally(target.As_Techno())) {
+							((TechnoClass *)object)->Assign_Target(NULL);
+						}
+					}
+				}
+			}
+
+			if (Is_Human_Player() && Session.Type != GAME_NORMAL && !house->Class->IsMultiplayPassive) {
+				swprintf(buffer, StringTable::LoadString("TXT_HAS_ALLIED", NULL, "D:\\ra2mdpost\\House.CPP", 3357), UIName, house->UIName);
+				Session.Messages.Add_Message(NULL, 0, buffer, Class->Scheme, TextPrintType(TPF_6PT_GRAD|TPF_USE_GRAD_PAL|TPF_FULLSHADOW), int(TICKS_PER_MINUTE * Rule->MessageDelay), false);
+
+				if (announce) {
+					if (house->Is_Ally(this)) {
+						if (!Unsorted::MuteSWLaunches) {
+							if (PlayerPtr->Is_Ally(house) && PlayerPtr->Is_Ally(this)) {
+								VoxClass::Play("EVA_AllianceFormed", -1, -1);
+							} else {
+								VoxClass::Play("EVA_EnemyAllianceFormed", -1, -1);
+							}
+						}
+					} else if (Is_Player_Control()) {
+						VoxClass::Play("EVA_RequestingAlliance", -1, -1);
+					} else if (house->Is_Player_Control()) {
+						VoxClass::Play("EVA_AllianceRequested", -1, -1);
+					}
+				}
+			}
+
+			Map.Flag_To_Redraw();
+		}
+
+		Map.FUN_004ADCD0(false, false);
+	}
+}
+
+// FUNCTION: 0x004F9F70
+void HouseClass::Make_Enemy(HousesType house, bool announce)
+{
+	Make_Enemy(Houses[house], announce);
+}
+
+// FUNCTION: 0x004F9F90
+void HouseClass::Make_Enemy(HouseClass * house, bool announce)
+{
+	bool broken = false;
+
+	if (Session.Type == GAME_NORMAL || (!house->Class->IsMultiplayPassive && !Class->IsMultiplayPassive)) {
+		Map.FUN_004ADEE0(false, false);
+		Add_Anger(1, house);
+
+		if (house != NULL && Is_Ally(house)) {
+			Allies &= ~(1L << house->HeapID);
+
+			if (ScenarioInit) {
+				Control.Allies &= !(1L << house->HeapID);
+			}
+
+			Recalc_Threat_Regions();
+
+			if (house->Is_Ally(this)) {
+				house->Allies &= ~(1L << HeapID);
+				broken = true;
+
+				if (ScenarioInit) {
+					Control.Allies &= ~(1L << HeapID);
+				}
+				house->Recalc_Threat_Regions();
+				house->Add_Anger(1, house);
+			}
+
+			if (Session.Type != GAME_NORMAL && !ScenarioInit && IsHuman) {
+				wchar_t buffer[80];
+
+				swprintf(buffer, StringTable::LoadString("TXT_AT_WAR", NULL, "D:\\ra2mdpost\\House.CPP", 3480), UIName, house->UIName);
+				Session.Messages.Add_Message(NULL, 0, buffer, Class->Scheme, TextPrintType(TPF_6PT_GRAD|TPF_USE_GRAD_PAL|TPF_FULLSHADOW), int(TICKS_PER_MINUTE * Rule->MessageDelay), false);
+				Map.Flag_To_Redraw();
+				if (announce && broken) {
+					if (Is_Player_Control() || house->Is_Player_Control()) {
+						VoxClass::Play("EVA_AllianceBroken", -1, -1);
+					}
+				}
+			}
+		}
+
+		Map.FUN_004ADCD0(false, false);
+	}
+}
+
 // FUNCTION: 0x004FA210
 SUGGESTED_TEAM_LIST HouseClass::Suggested_New_Team(bool alertcheck)
 {
 	SUGGESTED_TEAM_LIST teams = TeamTypeClass::Suggested_New_Team(this, alertcheck);
 	return(teams);
+}
+
+// FUNCTION: 0x004FA2E0
+void HouseClass::Adjust_Threat(int region, int threat)
+{
+	static int _val[] = {
+		-MAP_REGION_WIDTH - 1,	-MAP_REGION_WIDTH, -MAP_REGION_WIDTH + 1,
+		-1,							0,						 1,
+		MAP_REGION_WIDTH -1,		MAP_REGION_WIDTH,	 MAP_REGION_WIDTH +1
+	};
+	static int _thr[] = {
+		2, 1, 2,
+		1, 0, 1,
+		2, 1,	2
+	};
+	int neg;
+	int * val = &_val[0];
+	int * thr = &_thr[0];
+
+	if (threat < 0) {
+		threat = -threat;
+		neg = true;
+	} else {
+		neg = false;
+	}
+
+	for (int lp = 0; lp < 9; lp ++) {
+		Regions[region + *val].Adjust_Threat(threat >> *thr, neg);
+		val++;
+		thr++;
+	}
+}
+
+TechnoTypeClass const * Fetch_Techno_Type(RTTIType type, int id);
+
+static inline unsigned char Production_Flag(HouseClass const * house, RTTIType type, bool naval, int buildcat)
+{
+	switch (type) {
+		case RTTI_INFANTRY:
+		case RTTI_INFANTRYTYPE:
+			return(house->InfantryType_53D1);
+
+		case RTTI_UNIT:
+		case RTTI_UNITTYPE:
+			if (naval) {
+				return(house->ShipType_53D3);
+			}
+			return(house->VehicleType_53D2);
+
+		case RTTI_BUILDING:
+		case RTTI_BUILDINGTYPE:
+			if (buildcat == 5) {
+				return(house->DefenseType_53D8);
+			}
+			return(house->BuildingType_53D4);
+
+		case RTTI_AIRCRAFT:
+		case RTTI_AIRCRAFTTYPE:
+			return(house->AircraftType_53D0);
+	}
+	return(0);
+}
+
+static inline FactoryClass * Primary_Factory(HouseClass const * house, RTTIType type, bool naval, int buildcat)
+{
+	FactoryClass * factory;
+
+	switch (type) {
+		case RTTI_INFANTRY:
+		case RTTI_INFANTRYTYPE:
+			factory = house->InfantryFactory;
+			break;
+
+		case RTTI_UNIT:
+		case RTTI_UNITTYPE:
+			if (naval) {
+				factory = house->Primary_ForShips;
+			} else {
+				factory = house->UnitFactory;
+			}
+			break;
+
+		case RTTI_BUILDING:
+		case RTTI_BUILDINGTYPE:
+			if (buildcat == 5) {
+				factory = house->Primary_ForDefenses;
+			} else {
+				factory = house->BuildingFactory;
+			}
+			break;
+
+		case RTTI_AIRCRAFT:
+		case RTTI_AIRCRAFTTYPE:
+			factory = house->AircraftFactory;
+			break;
+
+		default:
+			factory = NULL;
+			break;
+	}
+	return(factory);
+}
+
+static inline void Assign_Primary_Factory(HouseClass * house, RTTIType type, bool naval, int buildcat, FactoryClass * factory)
+{
+	switch (type) {
+		case RTTI_UNIT:
+		case RTTI_UNITTYPE:
+			if (naval) {
+				house->Primary_ForShips = factory;
+			} else {
+				house->UnitFactory = factory;
+			}
+			break;
+
+		case RTTI_INFANTRY:
+		case RTTI_INFANTRYTYPE:
+			house->InfantryFactory = factory;
+			break;
+
+		case RTTI_BUILDING:
+		case RTTI_BUILDINGTYPE:
+			if (buildcat == 5) {
+				house->Primary_ForDefenses = factory;
+			} else {
+				house->BuildingFactory = factory;
+			}
+			break;
+
+		case RTTI_AIRCRAFT:
+		case RTTI_AIRCRAFTTYPE:
+			house->AircraftFactory = factory;
+			break;
+	}
+}
+
+// FUNCTION: 0x004FA350
+ProdFailType HouseClass::Begin_Production(RTTIType type, int id, bool naval, bool resume)
+{
+	int result = true;
+	FactoryClass * fptr;
+	TechnoTypeClass const * tech;
+	int buildcat;
+
+	if (id < 0) {
+		buildcat = 0;
+	} else {
+		tech = Fetch_Techno_Type(type, id);
+		if (type == RTTI_BUILDING || type == RTTI_BUILDINGTYPE) {
+			buildcat = ((BuildingTypeClass const *)tech)->BuildCat;
+		} else {
+			buildcat = 0;
+		}
+	}
+	unsigned char flag = Production_Flag(this, type, naval, buildcat);
+	FUN_005007A0(type, naval, buildcat, false);
+
+	tech = Fetch_Techno_Type(type, id);
+
+	BuildingClass * who = tech->Who_Can_Build_Me(false, true, true, this);
+	bool onhold = false;
+
+	if (who == NULL) {
+		if (resume) {
+			who = tech->Who_Can_Build_Me(true, false, true, this);
+		}
+		if (who != NULL) {
+			onhold = true;
+		} else {
+			DebugString("Request to Begin_Production of '%s' was rejected. No-one can build.\n", (const char *)tech->GivenName);
+			return(PROD_CANT);
+		}
+	}
+
+	fptr = Primary_Factory(this, type, naval, buildcat);
+
+	if (fptr == NULL) {
+		fptr = new FactoryClass;
+
+		if (fptr == NULL) {
+			DebugString("Request to Begin_Production of '%s' was rejected. Unable to create factory\n", (const char *)tech->GivenName);
+			return(PROD_CANT);
+		}
+	}
+
+	if (fptr != NULL) {
+		if (fptr->Is_Building() && type == RTTI_BUILDINGTYPE) {
+			DebugString("Request to Begin_Production of '%s' was rejected. Cannot queue buildings.\n", (const char *)tech->GivenName);
+			return(PROD_CANT);
+		}
+	}
+
+	Assign_Primary_Factory(this, type, naval, buildcat, fptr);
+
+	bool has_suspended = false;
+	if (fptr->IsSuspended) {
+		TechnoClass * object = fptr->Object;
+		if (object != NULL) {
+			if (object->Techno_Type_Class() == tech) {
+				has_suspended = true;
+			}
+		}
+	}
+
+	if (!has_suspended) {
+		result = fptr->Set(*tech, *this, resume);
+	}
+
+	if (result) {
+		if (fptr->QueuedObjects.Count() && !resume && !has_suspended) {
+			Map.RepaintSidebar(SidebarClass::GetObjectTabIdx(type, id, false));
+		} else {
+			bool wassuspended = fptr->IsSuspended;
+			fptr->Start(onhold);
+
+			if (!wassuspended && Session.Type != GAME_NORMAL && IsHuman) {
+				int steps = ((int)(Session.DesiredFrameRate * Session.MaxAhead / 60) * 54) / fptr->Object->Techno_Type_Class()->Time_To_Build();
+				if (steps >= 53) {
+					steps = 53;
+				}
+				if (flag) {
+					fptr->Production.Set_Stage(steps);
+				}
+			}
+
+			if (PlayerPtr == this) {
+				Map.Factory_Link(fptr, type, id);
+			}
+		}
+
+		return(PROD_OK);
+	}
+
+	DebugString("Request to Begin_Production of '%s' was rejected. Factory was unable to create the requested object\n", (char const *)tech->GivenName);
+
+	if (fptr->QueuedObjects.Count() == 0 && fptr->Object == NULL) {
+		DebugString("type=%d\n", type);
+		DebugString("Frame == %d\n", Frame);
+		DebugString("fptr->QueuedObjects.Count() == %d\n", fptr->QueuedObjects.Count());
+		DebugString("Object->RTTI == %d\n", fptr->Object != NULL ? fptr->Object->Fetch_RTTI() : -1);
+		DebugString("Object->HeapID == %d\n", fptr->Object != NULL ? fptr->Object->Fetch_Heap_ID() : -1);
+		DebugString("IsSuspended\t= %d\n", fptr->IsSuspended);
+
+		delete fptr;
+		Assign_Primary_Factory(this, type, naval, buildcat, NULL);
+	}
+
+	return(PROD_CANT);
+}
+
+static inline int Build_Category(RTTIType type, int id)
+{
+	if (id < 0) {
+		return(0);
+	}
+	TechnoTypeClass const * tech = Fetch_Techno_Type(type, id);
+	if (type == RTTI_BUILDING || type == RTTI_BUILDINGTYPE) {
+		return(((BuildingTypeClass const *)tech)->BuildCat);
+	}
+	return(0);
+}
+
+// FUNCTION: 0x004FA910
+ProdFailType HouseClass::Suspend_Production(RTTIType type, int id, bool naval)
+{
+	int buildcat;
+
+	if (id < 0) {
+		buildcat = 0;
+	} else {
+		TechnoTypeClass const * tech = Fetch_Techno_Type(type, id);
+		if (type == RTTI_BUILDING || type == RTTI_BUILDINGTYPE) {
+			buildcat = ((BuildingTypeClass const *)tech)->BuildCat;
+		} else {
+			buildcat = 0;
+		}
+	}
+
+	FactoryClass * fptr = Primary_Factory(this, type, naval, buildcat);
+
+	if (fptr == NULL) return(PROD_CANT);
+
+	fptr->Suspend(true);
+
+	if (PlayerPtr == this) {
+		Map.RepaintSidebar(SidebarClass::GetObjectTabIdx(type, id, false));
+	}
+
+	return(PROD_OK);
+}
+
+// FUNCTION: 0x004FAE50
+bool HouseClass::Place_Special_Blast(SuperWeaponType id, Cell const & cell)
+{
+	SuperClass * super = SuperWeapon[id];
+	SuperClass * linked = NULL;
+
+	if (super->Class->PostClick) {
+		linked = SuperWeapon[super->Class->PreDependent];
+		if (linked) {
+			super->ChronoMapCoords = linked->ChronoMapCoords;
+		}
+	}
+
+	super->Discharged(this == PlayerPtr, cell);
+
+	if (super->Class->PostClick && linked) {
+		linked->SetReadiness(false);
+		linked->StopPreclickAnim(this == PlayerPtr);
+	}
+
+	for (int index = Houses.Count() - 1; index >= 0; index--) {
+		HouseClass * house = Houses[index];
+		if (house) {
+			house->FUN_004FAF00(super, &cell);
+		}
+	}
+
+	return(true);
+}
+
+// FUNCTION: 0x004FB6B0
+void HouseClass::Just_Built(TechnoClass * product)
+{
+	int sound = -1;
+
+	IsBuiltSomething = true;
+
+	TechnoTypeClass const * ttype = product->Techno_Type_Class();
+
+	switch (product->Fetch_RTTI()) {
+		case RTTI_UNIT:
+			JustBuiltUnit = (UnitType)ttype->Fetch_Heap_ID();
+			if (!ttype->DontScore) {
+				PUQuantity.Increment(ttype->Fetch_Heap_ID());
+			}
+			sound = Rule->CreateUnitSound;
+			break;
+
+		case RTTI_INFANTRY:
+			JustBuiltInfantry = (InfantryType)ttype->Fetch_Heap_ID();
+			if (!ttype->DontScore) {
+				PIQuantity.Increment(ttype->Fetch_Heap_ID());
+			}
+			sound = Rule->CreateInfantrySound;
+			break;
+
+		case RTTI_BUILDING:
+			JustBuiltStructure = (StructType)ttype->Fetch_Heap_ID();
+			if (!ttype->DontScore) {
+				PBQuantity.Increment(ttype->Fetch_Heap_ID());
+			}
+			break;
+
+		case RTTI_AIRCRAFT:
+			JustBuiltAircraft = (AircraftType)ttype->Fetch_Heap_ID();
+			if (!ttype->DontScore) {
+				PAQuantity.Increment(ttype->Fetch_Heap_ID());
+			}
+			sound = Rule->CreateAircraftSound;
+			break;
+	}
+
+	int created = ttype->CreateSound;
+	if (created != -1) {
+		sound = created;
+	}
+	if (sound != -1) {
+		VocClass::PlayAt(sound, product->PositionCoord, NULL);
+	}
+
+	IsRecalcNeeded = true;
 }
 
 // FUNCTION: 0x004FD120

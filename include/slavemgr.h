@@ -49,4 +49,5 @@ class SlaveManagerClass : public AbstractClass
 		void AllGuard(void);
 		bool ShouldWakeUpNow(void);
 		void FUN_006B0CC0(void);
+		void Deploy2(void);
 };

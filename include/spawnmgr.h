@@ -41,6 +41,8 @@ class SpawnManagerClass : public AbstractClass
 		virtual void Compute_CRC(CRCEngine & crc) const override;
 		virtual void AI(void) override;
 
+		void KillNodes(void);
+		void SetTarget(AbstractClass * target);
 		void ResetTarget(void);
 		int CountLaunchingSpawns(void);
 };

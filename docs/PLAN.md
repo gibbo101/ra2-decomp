@@ -816,6 +816,22 @@ since the coordinator's files live in build/coord/, and the rule is now explicit
 recursive deletes. Cost: about 1.8M tokens, 47 minutes. Merge gate: 2,689 of 2,689
 (407.8 KB).
 
+### Batch 13 (13 October 2026)
+
+House, Techno, building, PlanMgr, TAction, aircraft, wonline, convert, UICmnds. **102
+of 108 matched**; five modules landed all 12. Sonnet 97, the header merge 15 (some
+of them Sonnet's, landed once the header changes were in), Opus 4. The merge adopted
+TibSun's blitter, blitblit, rlerle and factory headers, proved against the exe. It
+found that 0x7B4620, not 0x7B66C0, is Wstring's constructor: the other is
+WideWstring's, which YR's OwnerDraw cells use, so ownrdraw.h now lives in include/. The
+adopted blitblit.h and rlerle.h still held Westwood's inline asm and `#pragma optimize`,
+and the coordinator deleted those blocks before merging. Two misses are map faults:
+0x4912B0 counts 10 int3 padding bytes, and 0x4FAA10 swallows an unlisted
+Special_Weapon_AI at 0x4FAD20. Banked: four House, building and UI command functions
+(66% to 93%). Wstring::get has the same twin problem (0x7B5400 and 0x7B5440), still
+open. The project's delete hook had nothing to stop. Cost: about 2.4M tokens, 55
+minutes. Merge gate: 2,792 of 2,792 (430.3 KB).
+
 ### Decide before the first batch
 
 - **Module layout.** Which function lives in which source file, and the link order, decide

@@ -78,6 +78,10 @@ class DisplayClass: public MapClass
 		virtual void AI(KeyNumType &input, Point2D const & xy) override;
 
 		void All_To_Look(bool units_only=false, bool=false);
+		void FUN_004ADEE0(bool units_only, bool is_fog);
+		void FUN_004ADCD0(bool units_only, bool is_fog);
+		void FUN_004A8D50(Cell const * list);
+		bool ProcessClickCoords(Point2D * src, Cell * cell, Coord * coord, ObjectClass ** target, unsigned char * a5, unsigned char * a6);
 		void Constrained_Look(Coord const & coord, LEPTON distance);
 		void Shroud_Cell(Cell const & cell);
 		void Encroach_Shadow(void);

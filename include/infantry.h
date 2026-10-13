@@ -107,6 +107,7 @@ class InfantryClass : public FootClass
 		virtual int Do_MISSION_UNLOAD(void) override;
 		virtual void Rocking_AI(void) override;
 		int FUN_00521320(void);
+		bool FUN_00522CB0(void);
 		virtual void Berzerk(void) override;
 		virtual void Start_Fear(void) override;
 		virtual void Stop_Fear(void) override;

@@ -42,6 +42,7 @@ class VocClass
 
 		static void * PlayAt(int voc, Coord const & coord, AudioController * controller = NULL);
 		static void * PlayGlobal(int voc, float volume, int panning, AudioController * controller = NULL);
+		static void * PlayIndexAtPos(int voc, Coord const & coord, int flag);
 		static VocType From_Name(char const * name);
 		friend VocClass *VocClass_From_Name(char const * name);
 		friend char const * Voc_Name(VocType voc);

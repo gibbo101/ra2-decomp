@@ -45,3 +45,4 @@ address,name,symbol,evidence
 0x007258D0,Detach_This_From_All,,YRpp AbstractClass::AnnounceExpiredPointer; fastcall with the object in ecx and the bool in dl
 0x004739F0,CCFileClass::CCFileClass,??0CCFileClass@@QAE@PBD@Z,YRpp CCFileClass::CCFileClass; the char const * overload
 0x00473A30,CCFileClass::CCFileClass,??0CCFileClass@@QAE@ABVWstring@@@Z,same body as 0x004739F0 after passing its argument through Wstring's accessor 0x007B5440; called by 0x005CB590
+0x004C66C0,EventClass::EventClass,??0EventClass@@QAE@HE@Z,constructor taking (index, type) called by 0x00730F30

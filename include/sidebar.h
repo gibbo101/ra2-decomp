@@ -74,7 +74,7 @@ class SidebarClass : public PowerClass
 		virtual void DisposeOfArt(void) override;
 
 		void Zoom_Mode_Control(void);
-		bool Abandon_Production(RTTIType type, FactoryClass * factory);
+		bool Abandon_Production(RTTIType type, int id, FactoryClass * factory);
 		virtual bool Activate(int control);
 		bool Add(RTTIType type, int ID);
 		bool Sidebar_Click(KeyNumType & input, int x, int y);

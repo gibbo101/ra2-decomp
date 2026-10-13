@@ -524,7 +524,7 @@ class RulesClass
 		int AICaptureWoundedMark;
 		TypeList<int> AISuperDefenseProbability;
 		int AISuperDefenseFrames;
-		float AISuperDefenseDistance;
+		int AISuperDefenseDistance;
 		TypeList<int> OverloadCount;
 		TypeList<int> OverloadDamage;
 		TypeList<int> OverloadFrames;

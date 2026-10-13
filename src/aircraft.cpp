@@ -1437,3 +1437,418 @@ HRESULT STDMETHODCALLTYPE AircraftClass::GetClassID(CLSID * retval)
 	*retval = CLSID_AircraftClass;
 	return(S_OK);
 }
+
+// FUNCTION: 0x004196B0
+MoveType AircraftClass::Can_Enter_Cell(CellClass const * cell, FacingType, int cell_height, CellClass const *, bool) const
+{
+	if (Team && Team->Is_Leaving_Map() && !Map.In_Local_Radar(cell)) return(MOVE_OK);
+
+	ObjectClass const * occupier = cell->Cell_Occupier();
+
+	if (occupier == NULL ||
+		!occupier->Is_Techno() ||
+		((TechnoClass *)occupier)->House->Is_Ally(House) ||
+		(((TechnoClass *)occupier)->Cloak != CLOAKED &&
+			(ScenarioInit == 0 && (occupier->RTTI != RTTI_BUILDING || !((BuildingClass*)occupier)->Class->IsInvisible)) )
+		) {
+
+		if (!cell->Is_Clear_To_Move(SPEED_WINGED, false, false)) return(MOVE_NO);
+	}
+
+	if (Session.Type == GAME_NORMAL && IsOwnedByPlayer && !IsALoaner && Map.Is_Shrouded(cell->Center_Coord())) {
+		return(MOVE_NO);
+	}
+
+	return(MOVE_OK);
+}
+
+// FUNCTION: 0x004197C0
+AbstractClass * AircraftClass::Good_Fire_Location(AbstractClass * target) const
+{
+	if (target != NULL) {
+		if (((AircraftClass *)this)->Is_Strafe()) {
+			return(target);
+		}
+
+		int range = Weapon_Range(0);
+		Coord tcoord = target->Center_Coord();
+		Cell bestcell = CELL_NONE;
+		Cell best2cell = CELL_NONE;
+		int bestval = -1;
+		int best2val = -1;
+
+		Coord altcoord = COORD_NONE;
+		if (target->AbstractFlags & 4) {
+			AbstractClass * alttarg = ((FootClass *)target)->NavCom;
+			if (alttarg != NULL) {
+				altcoord = alttarg->Center_Coord();
+			}
+		}
+
+		for (int r = range-CELL_LEPTON; r > CELL_LEPTON; r -= CELL_LEPTON) {
+			for (int face = 0; face < DIR_MAX; face += DIR_STEP_16) {
+				Coord newcoord = Move_Coord(tcoord, (Dir256)face, r);
+				Cell newcell = newcoord.As_Cell();
+
+				if (Map.In_Local_Radar(newcell) && (Session.Type != GAME_NORMAL || IsALoaner || Map[newcell].IsAltUnknown) && Cell_Seems_Ok(newcell, true)) {
+					int dist;
+					if (altcoord != COORD_NONE) {
+						dist = Point2D(newcoord).Distance_To(Point2D(altcoord));
+					} else {
+						dist = Point2D(Center_Coord()).Distance_To(Point2D(newcoord));
+					}
+					if (bestval == -1 || dist < bestval) {
+						best2val = bestval;
+						best2cell = bestcell;
+						bestval = dist;
+						bestcell = newcell;
+					}
+				}
+			}
+			if (bestval != -1) break;
+		}
+
+		if (best2val == -1) {
+			best2cell = bestcell;
+		}
+
+		if (bestval != -1) {
+			if (Percent_Chance(50)) {
+				return(&Map[bestcell]);
+			} else {
+				return(&Map[best2cell]);
+			}
+		}
+	}
+	return(NULL);
+}
+
+// FUNCTION: 0x00419B00
+bool AircraftClass::Cell_Seems_Ok(Cell const & cell, bool strict) const
+{
+	if (!Map.In_Local_Radar(cell)) {
+		return(true);
+	}
+
+	if (Class->Spawned) {
+		TechnoClass * techno = Map[cell].Cell_Techno();
+		if (techno != NULL) {
+			if (techno->SpawnManager != NULL || techno->Techno_Type_Class()->Spawned) {
+				return(true);
+			}
+		}
+	}
+
+	if (Class->IsAirportBound) {
+		return(true);
+	}
+
+	bool is_toting = (Class->IsCarryall && NavCom != NULL && NavCom->Fetch_RTTI() == RTTI_UNIT);
+
+	AbstractClass * astarget = &Map[cell];
+	for (int index = 0; index < Feet.Count(); index++) {
+		AircraftClass * air = (AircraftClass *)Feet[index];
+		if (air && (!is_toting || NavCom != air) && (strict || air != this) && !air->IsInLimbo && air->IsDown) {
+			if (air->PositionCell == cell || air->NavCom == astarget) {
+				return(false);
+			}
+		}
+	}
+	return(true);
+}
+
+// FUNCTION: 0x0041A570
+DirType AircraftClass::Fire_Direction(void) const
+{
+	return(SecondaryFacing.Current());
+}
+
+// FUNCTION: 0x0041A590
+void AircraftClass::Scatter(Coord const & , bool, bool )
+{
+	if (!Current_Mission_Control().IsScatter) return;
+
+	Enter_Idle_Mode();
+}
+
+extern bool DAT_00889ECC;
+extern bool DAT_00889ECD;
+
+// FUNCTION: 0x0041A5C0
+int AircraftClass::Do_MISSION_GUARD(void)
+{
+	if (Get_Height_AGL() == Class->GetFlightLevel()) {
+		if (Team) {
+			if (NavCom != NULL) {
+				IsCarryallNotLanding = true;
+				QueueMission(MISSION_MOVE, false);
+			}
+			return(Current_Mission_Control().Normal_Delay());
+		}
+
+		if (Get_Class_Weapon_Data(0)->Weapon == NULL) {
+			Assign_Destination(&Map[(Coord const &)PositionCoord]);
+			QueueMission(MISSION_MOVE, false);
+			return(1);
+		}
+		if (Team == NULL) {
+			IsCarryallNotLanding = true;
+			Enter_Idle_Mode();
+		}
+		return(1);
+	}
+
+	bool rearm;
+	if (DAT_00889ECC) {
+		rearm = (Ammo == 0 && Is_Weapon_Equipped());
+	} else if (DAT_00889ECD) {
+		rearm = (Is_Weapon_Equipped() && Ammo < Class->MaxAmmo / 2);
+	} else {
+		rearm = (Is_Weapon_Equipped() && Ammo < Class->MaxAmmo);
+	}
+
+	if (rearm && !HasAnyLink()) {
+		BuildingClass * building = TryNearestDockBuilding((TypeList<BuildingTypeClass *> *)&Class->Dock, 0, 0);
+		if (building != NULL) {
+			QueueMission(MISSION_ENTER, false);
+			Assign_Destination(building);
+			Assign_Target(NULL);
+			return(1);
+		}
+	}
+
+	if (Ammo != -1 && Ammo < (Class->MaxAmmo / 2) && HasAnyLink()) {
+		if (FUN_0065AD30(0)->Fetch_RTTI() == RTTI_BUILDING && ((BuildingClass *)FUN_0065AD30(0))->Class->IsCanUnitReload) {
+			return(1);
+		}
+	}
+
+	if (TarCom != NULL) {
+		QueueMission(MISSION_ATTACK, false);
+		return(1);
+	}
+
+	if (!Is_Weapon_Equipped()) {
+		return(TICKS_PER_SECOND*3);
+	}
+
+	if (Get_Height_AGL() == 0 && !HasAnyLink()) {
+		return(TICKS_PER_SECOND*3);
+	}
+
+	if (!House->Is_Human_Player()) {
+		AbstractClass * target = House->Find_Juicy_Target(PositionCoord);
+
+		if (target != NULL) {
+			Assign_Target(target);
+			QueueMission(MISSION_ATTACK, false);
+		}
+	}
+
+	if (House->Is_Human_Player() && !In_Air()) {
+		return(Current_Mission_Control().Normal_Delay() + Random_Pick(0, 2));
+	}
+
+	return(BASECLASS::Do_MISSION_GUARD());
+}
+
+// FUNCTION: 0x0041A940
+int AircraftClass::Do_MISSION_GUARD_AREA(void)
+{
+	if (Get_Height_AGL() == Class->GetFlightLevel()) {
+		if (Team == NULL) Enter_Idle_Mode();
+		return(1);
+	}
+	if (Ammo == 0 && Is_Weapon_Equipped() && !HasAnyLink()) {
+		Enter_Idle_Mode();
+	}
+	if (TarCom != NULL) {
+		QueueMission(MISSION_ATTACK, false);
+		return(1);
+	}
+	return(BASECLASS::Do_MISSION_GUARD_AREA());
+}
+
+// FUNCTION: 0x0041A9E0
+FireErrorType AircraftClass::Can_Fire(AbstractClass * target, int which, bool ignoreRange) const
+{
+	FireErrorType fire = BASECLASS::Can_Fire(target, which, ignoreRange);
+	if (fire != FIRE_OK) {
+		return(fire);
+	}
+
+	if (Passenger && !Cargo.Is_Something_Attached()) {
+		return(FIRE_AMMO);
+	}
+
+	DirType dir = SecondaryFacing.Current();
+	if (!((AircraftClass *)this)->Is_Fighter()) {
+		dir -= GetTargetDirection(target);
+		if (DIR_STEP_32 < dir) {
+			return(FIRE_FACING);
+		}
+	}
+
+	return(FIRE_OK);
+}
+
+// FUNCTION: 0x0041AA80
+void AircraftClass::Assign_Destination(AbstractClass * dest, bool immediate)
+{
+	if (dest != NULL) {
+		if (dest->In_Air()) {
+			dest = NULL;
+		} else {
+			if (dest->What_Am_I() == RTTI_BUILDING && (Get_Mission() == MISSION_ENTER || MissionQueue == MISSION_ENTER)) {
+				BuildingClass * destination = (BuildingClass *)dest;
+
+				if (!HasAnyLink()) {
+					if (!destination->HasFreeLink(this)) {
+						Assign_Archive_Target(dest);
+
+						if (destination->Class->IsHelipad) {
+							dest = TryNearestDockBuilding((TypeList<BuildingTypeClass *> *)&Class->Dock, 0, 0);
+
+							Assign_Destination(NULL);
+
+							MissionType mission = MISSION_MOVE;
+							if (dest != NULL && Transmit_Message(RADIO_CAN_LOAD, (TechnoClass *)dest) == RADIO_ROGER) {
+								Transmit_Message(RADIO_HELLO, (TechnoClass *)dest);
+								mission = MISSION_ENTER;
+							} else {
+								dest = Good_LZ();
+							}
+							QueueMission(mission, false);
+							if (Ready_To_Next_Mission()) {
+								Commence();
+							}
+						}
+
+						if (destination->Class->IsCanUnitRepair) {
+							QueueUpToEnter = destination;
+							dest = NULL;
+						}
+					} else {
+						if (Transmit_Message(RADIO_DOCKING, (TechnoClass *)dest) != RADIO_ROGER) {
+							Transmit_Message(RADIO_OVER_OUT);
+							if (((BuildingClass *)dest)->Class->IsCanUnitRepair || ((BuildingClass *)dest)->Class->IsCanUnitReload) {
+								Assign_Archive_Target(dest);
+								dest = NULL;
+							}
+						}
+
+						if (destination->Class->IsCanUnitRepair || destination->Class->IsCanUnitReload) {
+							if (NavCom != NULL) {
+								Assign_Archive_Target(NavCom);
+							}
+						} else {
+							Assign_Archive_Target(dest);
+						}
+					}
+				} else {
+					TechnoClass * building = Dynamic_Cast<TechnoClass *>(dest);
+					if (building != NULL) {
+						if (!building->HasFreeLink(this)) {
+							Assign_Archive_Target(dest);
+						} else if (!building->ContainsLink(this)) {
+							if (Transmit_Message(RADIO_DOCKING) == RADIO_ROGER) {
+								return;
+							}
+							Transmit_Message(RADIO_OVER_OUT);
+							if (((BuildingClass *)dest)->Class->IsCanUnitRepair || ((BuildingClass *)dest)->Class->IsCanUnitReload) {
+								Assign_Archive_Target(dest);
+								dest = NULL;
+							}
+						}
+					}
+				}
+			}
+
+			CellClass * cellptr = Get_Cell_Ptr();
+			if (!cellptr->IsUnderBridge) {
+				BuildingClass * occupier = (BuildingClass *)cellptr->Cell_Occupier();
+
+				while (occupier != NULL) {
+					if (occupier != (BuildingClass *)this && occupier->Fetch_RTTI() == RTTI_BUILDING) {
+						break;
+					}
+					occupier = (BuildingClass *)occupier->Next;
+				}
+
+				if (occupier != NULL && (occupier->Class->IsCanUnitRepair || occupier->Class->IsCanUnitReload)) {
+					if (!Locomotion->Is_Powered() && !House->IonSensitivesShouldBeOffline()) {
+						Locomotion->Power_On();
+					}
+
+					if (FUN_0065AD30(0) == (TechnoClass *)occupier && dest != FUN_0065AD30(0)) {
+						Transmit_Message(RADIO_OVER_OUT);
+					}
+				}
+			}
+		}
+	}
+
+	BASECLASS::Assign_Destination(dest, immediate);
+}
+
+// FUNCTION: 0x0041ADC0
+LayerType AircraftClass::In_Which_Layer(void) const
+{
+	return(Locomotion->In_Which_Layer());
+}
+
+// FUNCTION: 0x0041ADF0
+void AircraftClass::Look(bool incremental, bool dont_map)
+{
+	Coord coord;
+	int sight_range = Class->SightRange;
+	if (Get_Height_AGL() == 0) {
+		sight_range = 1;
+	}
+
+	if (sight_range) {
+		coord = PositionCoord;
+		Map.RevealArea2(&coord, sight_range, House, incremental, dont_map, false, true, false);
+		coord = PositionCoord;
+		Map.RevealArea2(&coord, sight_range, House, incremental, dont_map, false, true, true);
+	} else {
+		if (Scen->Special.IsFogOfWar) {
+			sight_range = Rule->AircraftFogReveal;
+			coord = PositionCoord;
+			Map.RevealArea2(&coord, sight_range, House, false, false, true, Get_Height_AGL() < (Rule->FlightLevel / 2), false);
+			coord = PositionCoord;
+			Map.RevealArea2(&coord, sight_range, House, false, false, true, Get_Height_AGL() < (Rule->FlightLevel / 2), true);
+		}
+	}
+}
+
+// FUNCTION: 0x0041AF80
+void AircraftClass::Write_INI(CCINIClass & ini)
+{
+	ini.Clear(INI_NAME);
+
+	for (int index = 0; index < Aircraft.Count(); index++) {
+		AircraftClass * air = Aircraft[index];
+		if (air != NULL && !air->IsInLimbo && air->IsActive) {
+			char uname[10];
+			char buf[128];
+
+			sprintf(uname, "%d", index);
+			sprintf(buf, "%s,%s,%d,%d,%d,%d,%s,%s,%d,%d,%d,%d",
+				(char const *)air->House->IniName,
+				(char const *)air->Class->IniName,
+				(int)(air->HealthRatio * 256),
+				air->PositionCell.X,
+				air->PositionCell.Y,
+				air->PrimaryFacing.Current().As_Dir256(),
+				MissionClass::Mission_Name(air->Get_Mission()),
+				(air->Tag != NULL) ? (char const *)air->Tag->Class->IniName : "None",
+				air->Veterancy.To_Integer(),
+				air->Group,
+				air->IsTeamRecruitable,
+				air->IsAutocreateRecruitable
+				);
+			ini.Put_String(INI_NAME, uname, buf);
+		}
+	}
+}

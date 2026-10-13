@@ -37,6 +37,8 @@
 
 class ParticleSystemClass;
 class WaveClass;
+class LaserDrawClass;
+class EBolt;
 class WeaponTypeClass;
 class ShapeSet;
 struct WeaponDataStruct;
@@ -506,7 +508,11 @@ class TechnoClass : public RadioClass
 		virtual void UpdateAttackMove(void);
 		virtual bool RefreshMegaMission(void);
 
-		bool Is_Immobilized(void) const;
+		bool FUN_005F6C70(void) const;
+		EBolt * CreateEBolt(ObjectClass * target, WeaponTypeClass * weapon, Coord const & source_coord);
+		LaserDrawClass * CreateLaser(ObjectClass * target, int which, WeaponTypeClass * weapon, Coord const & source_coord);
+		FireErrorType FUN_006FC090(AbstractClass * target, int which) const;
+		bool Is_Immobilized(void) const {return(IsUnderEMP() || IsParalyzed() || IsBeingWarpedOut() || IsWarpingIn());}
 		void Scatter_Incoming_Infantry(void) const;
 		int Get_Collateral_Damage(void) const;
 		DirType Barrel_Pitch(AbstractClass * target) const;

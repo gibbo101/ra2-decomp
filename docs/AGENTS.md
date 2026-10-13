@@ -298,6 +298,13 @@ Each entry: what the diff showed, then the source change that fixed it.
   constructor and the size passed to `new` over data/layouts.csv.
 - Porting a stub-based match: drop the overlay and map stub members onto the real
   header by offset, keeping TS names. Most then match in one or two checks.
+- Byte-identical twins exist (Wstring and WideWstring's constructors, 0x7B4620 and
+  0x7B66C0): the neighbouring functions (char vs wchar_t) decide which class owns which.
+- YR made some TS text members wide: OwnerDraw's CellData holds `WideWstring`, so
+  `include/ownrdraw.h` overrides the TibSun copy.
+- An adopted TibSun header can carry Westwood's inline asm and `#pragma optimize`
+  (blitblit.h): delete those blocks; the repo rules ban them even when original.
+- The message list is `Session.Messages`, not a global; Add_Message takes YR's 7 arguments.
 
 ## Known dead ends
 
