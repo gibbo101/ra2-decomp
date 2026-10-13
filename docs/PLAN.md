@@ -62,7 +62,8 @@ Their agent guide (`AGENTS.md`) in short:
 - Stuck = no score gain in 30 runs or 60 minutes. At 90% or better, `tools/permute.py`
   tries 15 minutes of meaning-preserving rewrites.
 - Rules: touch only your issue's files; exact names from `data/symbols.csv`; no inline asm,
-  `#pragma optimize`, hard-coded addresses or `volatile` tricks; MATCH only when the checker
+  `#pragma optimize`, hard-coded addresses or `volatile` tricks (Westwood's own asm, copied
+  unchanged from the TibSun archive, excepted); MATCH only when the checker
   says so.
 - One PR per issue with a table: address, model, result, best %, check runs, notes.
 - Layout: `toolchain/msvc5-sp3/BIN/CL.EXE`, `orig/TotalA.exe`, `build/scratch/<addr>/`.

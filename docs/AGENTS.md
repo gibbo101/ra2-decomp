@@ -65,7 +65,8 @@ Every compile counts as a check, including those your own scripts run.
 ## Rules
 
 - The flags are fixed (`/O2 /Ob2 /Gr /GR /MT /DWIN32`). No inline assembly, `__emit`,
-  `#pragma optimize`, hard-coded addresses or `volatile` tricks.
+  `#pragma optimize`, hard-coded addresses or `volatile` tricks, except Westwood's own
+  inline asm and pragmas, copied unchanged from a TibSun archive header.
 - Name callees and globals as `tools/ctx.py` names them (YRpp or TibSun names); an
   unnamed one is `FUN_<ADDR>` / `DAT_<ADDR>`. `data/symbols.csv` labels several one-line
   UI functions `UI::GetResource`; 0x00622B50 is `UI::StandardWndProc`.
@@ -303,9 +304,8 @@ Each entry: what the diff showed, then the source change that fixed it.
 - YR made some TS text members wide: OwnerDraw's CellData holds `WideWstring`, so
   `include/ownrdraw.h` overrides the TibSun copy.
 - An adopted TibSun header can carry Westwood's inline asm and `#pragma optimize`
-  (blitblit.h): delete those blocks; the repo rules ban them even when original.
-- A function the original wrote in inline asm cannot land: log it in attempts.csv with
-  blocker `original inline asm` and move on. A match measured against an asm header is not one.
+  (blitblit.h's blitter specialisations): keep those blocks unchanged; they are the
+  original. Asm you write yourself, or edits to Westwood's, are still banned.
 - The message list is `Session.Messages`, not a global; Add_Message takes YR's 7 arguments.
 
 ## Known dead ends

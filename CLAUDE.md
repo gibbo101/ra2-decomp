@@ -17,7 +17,9 @@ that comes first.
 - v1 is the game as shipped: no fixes, features or enhancements in this repo, even
   obvious ones. Those go to the v2 repo (see "Scope" in `docs/PLAN.md`).
 - MATCH means the checker printed MATCH. No inline asm, `#pragma optimize`, hard-coded
-  addresses or `volatile` tricks to force one.
+  addresses or `volatile` tricks to force one. The one exception: inline asm and
+  `#pragma optimize` that Westwood's own source had, copied unchanged from the TibSun
+  archive (`reference/tibsun/code`), are the original and allowed.
 - Running agents in parallel (a workflow) needs the maintainer's explicit opt-in each time.
 
 ## Comments
