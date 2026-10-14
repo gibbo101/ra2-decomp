@@ -39,6 +39,14 @@ class TabClass: public SidebarClass, public INoticeSink
 	private:
 		void Set_Active(int select);
 
+	public:
+		void FUN_006D0FD0(void);
+		void FUN_006D1200(void);
+		void FUN_006D04A0(void);
+		void FUN_006D04D0(void);
+
+	private:
+
 		CDTimerClass<FrameTimerClass> MoneyFlashTimer;
 
 	public:

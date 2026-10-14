@@ -185,7 +185,7 @@ class ScoreFontClass
 		virtual int Char_Width(wchar_t ch);
 		virtual int String_Width(const wchar_t * string);
 		virtual void Print_String(Surface *surf, const wchar_t * string, int x, int y, int brightness_frame);
-		virtual void Print_Char(Surface *surf, char ch, int x, int y, int v, bool play_sound);
+		virtual void Print_Char(Surface *surf, wchar_t ch, int x, int y, int v, bool play_sound);
 
 		void Load_Sounds(void);
 		int Get_Width(void) { return(Width); }

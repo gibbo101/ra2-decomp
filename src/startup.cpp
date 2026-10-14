@@ -381,7 +381,23 @@ void Emergency_Exit(void)
 template class DynamicVectorClass<DWORD>;
 
 // FUNCTION: 0x006BEE40 ?$TClassFactory@VCStreamClass@@::?$TClassFactory@VCStreamClass@@
+// FUNCTION: 0x006BEE50 ?$TClassFactory@VCStreamClass@@::QueryInterface
+// FUNCTION: 0x006BEEC0 ?$TClassFactory@VCStreamClass@@::AddRef
+// FUNCTION: 0x006BEEE0 ?$TClassFactory@VCStreamClass@@::Release
+// FUNCTION: 0x006BEF10 ?$TClassFactory@VCStreamClass@@::CreateInstance
+// FUNCTION: 0x006BEF90 ?$TClassFactory@VCStreamClass@@::LockServer
 template class TClassFactory<CStreamClass>;
+
+// FUNCTION: 0x006BEFC0 ?$TClassFactory@VWaveClass@@::?$TClassFactory@VWaveClass@@
+// FUNCTION: 0x006BEFD0 ?$TClassFactory@VWaveClass@@::QueryInterface
+// FUNCTION: 0x006BF040 ?$TClassFactory@VWaveClass@@::AddRef
+// FUNCTION: 0x006BF060 ?$TClassFactory@VWaveClass@@::Release
+// FUNCTION: 0x006BF090 ?$TClassFactory@VWaveClass@@::CreateInstance
+// FUNCTION: 0x006BF110 ?$TClassFactory@VWaveClass@@::LockServer
+template class TClassFactory<WaveClass>;
+
+// FUNCTION: 0x006BF140 ?$TClassFactory@VTerrainTypeClass@@::?$TClassFactory@VTerrainTypeClass@@
+template class TClassFactory<TerrainTypeClass>;
 
 // FUNCTION: 0x006BEDB0 ?$_com_ptr_t@V?$_com_IIID@UIUnknown@@$1?_GUID_00000000_0000_0000_c000_000000000046@@3U__s_GUID@@A@@::CreateInstance
 template class _com_ptr_t<_com_IIID<IUnknown, &__uuidof(IUnknown)> >;

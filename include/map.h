@@ -132,6 +132,19 @@ class MapClass: public GScreenClass
 		void Repair_Train_Bridge(Cell const & cell);
 		void Repair_Bridge(Cell const & cell);
 		bool Can_Repair_Bridge(Cell const & cell);
+		void DestroyConcreteBridgeAt(Cell const & cell);
+		void DestroyWoodBridgeAt(Cell const & cell);
+		void FUN_00574780(Cell const & cell);
+		void FUN_005749C0(Cell const & cell);
+		void FUN_00575220(Cell const & cell);
+		void FUN_00575540(Cell const & cell);
+		void FUN_00575870(Cell const & cell);
+		void FUN_00575BA0(Cell const & cell);
+		bool FUN_00587180(Cell const & cell);
+		bool FUN_0057BAA0(Cell const & cell);
+		bool FUN_0057CCF0(Cell const & cell);
+		void FUN_00576770(Cell const & cell);
+		void Update_Pathfinding_1(void);
 
 	private:
 

@@ -273,6 +273,14 @@ class MapGeneratorClass
 		void Init_Map(bool full_init);
 		void Cleanup(void);
 		void Update_Progress(int percent_progress);
+		void Seed_Land(void);
+		int FUN_0059BBC0(int size, Rect const & bounds, Point2D const & seed, bool flag, Cell const & center, double ratio, bool flag2);
+		bool FUN_0059BAB0(Cell const & cell, Rect const & rect, bool flag, double scale_x, double scale_y);
+		void Partition_Rect(DynamicVectorClass<Rect> & rects, int count, Rect const & area);
+		static void Green_Shores(void);
+		void Seed_Land_Type0(void);
+		void Seed_Land_Type1(void);
+		void Seed_Land_Type2(void);
 
 		void Set_Cell_Data_Region(Cell const &cell, int region_id);
 		int Get_Cell_Data_Region(Cell const &cell);

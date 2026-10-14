@@ -71,7 +71,7 @@ class InfantryTypeClass : public TechnoTypeClass
 		virtual int Fetch_Heap_ID(void) const override;
 
 		static InfantryType From_Name(char const * name);
-		static void Init(TheaterType ) {};
+		static void Init(TheaterType);
 		static InfantryTypeClass * Find_Or_Make(char const * name);
 
 		void Read_Sequence_INI(void);

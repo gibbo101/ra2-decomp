@@ -62,19 +62,26 @@ int score_font_count;
 
 int FUN_00407000(void);
 
-inline void ScoreClass::DoSound(const char * name, int volume)
+class SHPStruct
 {
-	if (name != NULL && FUN_00407000()) {
+	public:
+		short Zero;
+		short Width;
+		short Height;
+		short Count;
+		Rect GetFrameBounds(int frame) const;
+};
 
-		for (int i = 0; i < ScoreSnds.Count(); i++) {
-			SfxEntry * snd = ScoreSnds[i];
+struct FileSystem {
+	static void const * LoadFile(char const * name, bool flag);
+};
 
-			if (stricmp(name, snd->Get_Name()) == 0) {
-				break;
-			}
-		}
-	}
-}
+void __cdecl FUN_004068E0(char const * format, ...);
+
+struct ScoreTextSoundStruct {
+	void * mSound;
+	bool mAllocated;
+} text_sounds[3];
 
 // FUNCTION: 0x0068EB90
 int ScoreClass::Alloc_Object(ScoreAnimClass *obj)
@@ -458,6 +465,21 @@ void ScoreClass::Timing(void)
 	}
 }
 
+// FUNCTION: 0x00690530
+void ScoreClass::DoSound(const char * name, int volume)
+{
+	if (name != NULL && FUN_00407000()) {
+
+		for (int i = 0; i < ScoreSnds.Count(); i++) {
+			SfxEntry * snd = ScoreSnds[i];
+
+			if (stricmp(name, snd->Get_Name()) == 0) {
+				break;
+			}
+		}
+	}
+}
+
 // FUNCTION: 0x00690580
 ScoreFontClass::ScoreFontClass(void) :
 	Width(0),
@@ -480,6 +502,137 @@ ScoreFontClass::ScoreFontClass(int w, int h, void const * data, ConvertClass * d
 	score_font_count++;
 }
 
+// FUNCTION: 0x006905F0
+ScoreFontClass::~ScoreFontClass(void)
+{
+	if (ShapePtr != NULL && IsShapeAllocated == true) {
+		delete (char *)ShapePtr;
+		ShapePtr = NULL;
+		IsShapeAllocated = false;
+	}
+
+	score_font_count--;
+	if (score_font_count == 0) {
+		for (int i = 0; i < 3; i++) {
+			text_sounds[i].mSound = NULL;
+			text_sounds[i].mAllocated = false;
+		}
+	}
+}
+
+// FUNCTION: 0x00690640
+void ScoreFontClass::Load_Sounds(void)
+{
+	if (FUN_00407000()) {
+		CCFileClass file;
+		text_sounds[0].mSound = (void *)FileSystem::LoadFile("TEXT1.AUD", false);
+		if (text_sounds[0].mSound == NULL) {
+			file.Open("TEXT1.AUD", FileClass::READ);
+			text_sounds[0].mSound = Load_Alloc_Data(file);
+			text_sounds[0].mAllocated = true;
+			file.Close();
+			FUN_004068E0("ScoreScreen: Loaded TEXT1.AUD\n");
+		}
+		text_sounds[1].mSound = (void *)FileSystem::LoadFile("TEXT2.AUD", false);
+		if (text_sounds[1].mSound == NULL) {
+			file.Open("TEXT2.AUD", FileClass::READ);
+			text_sounds[1].mSound = Load_Alloc_Data(file);
+			text_sounds[1].mAllocated = true;
+			file.Close();
+			FUN_004068E0("ScoreScreen: Loaded TEXT2.AUD\n");
+		}
+		text_sounds[2].mSound = (void *)FileSystem::LoadFile("TEXT3.AUD", false);
+		if (text_sounds[2].mSound == NULL) {
+			file.Open("TEXT3.AUD", FileClass::READ);
+			text_sounds[2].mSound = Load_Alloc_Data(file);
+			text_sounds[2].mAllocated = true;
+			file.Close();
+			FUN_004068E0("ScoreScreen: Loaded TEXT3.AUD\n");
+		}
+	}
+}
+
+// FUNCTION: 0x006907A0
+int ScoreFontClass::String_Width(const wchar_t * string)
+{
+	const wchar_t * str = string;
+	int w = 0;
+	while (*str) {
+		w += Char_Width(*str++) + 1;
+	}
+	return(w);
+}
+
+// FUNCTION: 0x006907E0
+int ScoreFontClass::Char_Width(wchar_t ch)
+{
+	char out[1];
+	char c = (char)ch;
+
+	if (ch == 32) {
+		return(8);
+	}
+
+	CharToOemBuff(&c, out, sizeof(out));
+
+	unsigned frame;
+	frame = MAX((unsigned)(out[0] - 33), 0u);
+	frame = 3 * MIN((int)frame, 216);
+
+	return(((SHPStruct const *)ShapePtr)->GetFrameBounds(frame + 2).Width);
+}
+
+// FUNCTION: 0x00690850
+void ScoreFontClass::Print_Char(Surface *surf, wchar_t ch, int x, int y, int v, bool play_sound)
+{
+	char c = (char)ch;
+	CharToOemBuff(&c, &c, sizeof(c));
+
+	if (c != 32) {
+		unsigned frame;
+		frame = MAX((unsigned)(c - 33), 0u);
+		frame = 3 * MIN((int)frame, 216);
+
+		Draw_Shape(*surf, *Drawer, ShapePtr, frame + v, Point2D(x - ((SHPStruct const *)ShapePtr)->GetFrameBounds(frame + 2).X, y), surf->Get_Rect(), SHAPE_WIN_REL);
+	}
+}
+
+// FUNCTION: 0x00690A10
+ScoreFullFontClass::ScoreFullFontClass(ConvertClass * drawer) :
+	ScoreFontClass()
+{
+	IsShapeAllocated = false;
+	ShapePtr = (const ShapeSet *)FileSystem::LoadFile("FULLFNT3.SHP", false);
+	if (ShapePtr == NULL) {
+		CCFileClass file("FULLFNT3.SHP");
+		ShapePtr = (ShapeSet const *)Load_Alloc_Data(file);
+		IsShapeAllocated = true;
+		file.Close();
+		FUN_004068E0("ScoreScreen: Loaded FULLFNT3.SHP\n");
+	}
+	Width = 11;
+	Drawer = drawer;
+	Height = 21;
+}
+
+// FUNCTION: 0x00690AE0
+ScoreBigFontClass::ScoreBigFontClass(ConvertClass * drawer) :
+	ScoreFontClass()
+{
+	IsShapeAllocated = false;
+	ShapePtr = (const ShapeSet *)FileSystem::LoadFile("BIGFONT.SHP", false);
+	if (ShapePtr == NULL) {
+		CCFileClass file("BIGFONT.SHP");
+		ShapePtr = (ShapeSet const *)Load_Alloc_Data(file);
+		IsShapeAllocated = true;
+		file.Close();
+		FUN_004068E0("ScoreScreen: Loaded BIGFONT.SHP\n");
+	}
+	Width = 20;
+	Drawer = drawer;
+	Height = 35;
+}
+
 // FUNCTION: 0x00690BB0
 ScoreTimeClass::ScoreTimeClass(int xpos, int ypos, void const * data, int maxval, int xtimer, ConvertClass * drawer) :
 	ScoreAnimClass(xpos, ypos, data),
@@ -490,6 +643,18 @@ ScoreTimeClass::ScoreTimeClass(int xpos, int ypos, void const * data, int maxval
 {
 }
 
+// FUNCTION: 0x00690C00
+bool ScoreTimeClass::Update(Surface * surf)
+{
+	if (!Timer) {
+		Timer = TimerReset;
+		if (++Stage >= MaxStage) Stage = 0;
+		Draw_Shape(*HiddenSurface, *Drawer, (ShapeSet *)DataPtr, Stage, Point2D(XPos, YPos), HiddenSurface->Get_Rect(), SHAPE_WIN_REL);
+		Draw_Shape(*AlternateSurface, *Drawer, (ShapeSet *)DataPtr, Stage, Point2D(XPos, YPos), AlternateSurface->Get_Rect(), SHAPE_WIN_REL);
+	}
+	return(false);
+}
+
 // FUNCTION: 0x00690D10
 ScorePrintClass::ScorePrintClass(void const * string, int xpos, int ypos, ScoreFontClass * font, bool is_fully_lit) :
 	ScoreAnimClass(xpos, ypos, string),
@@ -498,6 +663,66 @@ ScorePrintClass::ScorePrintClass(void const * string, int xpos, int ypos, ScoreF
 	State(is_fully_lit),
 	Font(font)
 {
+}
+
+// FUNCTION: 0x00690D60
+bool ScorePrintClass::Update(Surface * surf)
+{
+	StillUpdating = true;
+
+	if (!Timer) {
+		Timer = 2;
+
+		if ((unsigned)Pos > wcslen((const wchar_t *)DataPtr) && Stage > 2) {
+			return(true);
+		}
+
+		if (State == false) {
+			Rect rect;
+			int w = Font->String_Width((const wchar_t *)DataPtr);
+			rect.Set(XPos - 8 <= 0 ? 0 : XPos - 8, YPos, w + 10, Font->Get_Height());
+			HiddenSurface->Blit_From(rect, *AlternateSurface, rect);
+		}
+
+		int x = XPos;
+		for (int i = 0; i <= Pos; i++) {
+
+			char localstr;
+			localstr = ((wchar_t *)DataPtr)[i];
+			if (localstr == '\0') {
+				Stage++;
+				break;
+			}
+
+			int v;
+			if (State != true) {
+				v = (Pos - i >= 2) ? 2 : (Pos - i);
+			} else {
+				v = 2;
+			}
+
+			Font->Print_Char(HiddenSurface, localstr, x, YPos, v, true);
+			if (v == 2) {
+				Font->Print_Char(AlternateSurface, localstr, x, YPos, v, false);
+			}
+			x += Font->Char_Width(localstr) + 1;
+		}
+
+		Pos++;
+	}
+
+	return(false);
+}
+
+// FUNCTION: 0x00690EF0
+SfxEntry::SfxEntry(char const * name, char const *filename) :
+	Name(NULL),
+	Sample(NULL),
+	IsAllocated(false)
+{
+	if (FUN_00407000()) {
+		Name = strdup(name);
+	}
 }
 
 // FUNCTION: 0x00690F30

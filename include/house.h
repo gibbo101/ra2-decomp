@@ -444,6 +444,9 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 		void Destroy_All_Buildings(void);
 		void Destroy_All_Non_Buildings_Non_Naval(void);
 		void Destroy_All_Non_Buildings_Naval(void);
+		void Cheer(void);
+		void RespawnStartingForces(void);
+		void RespawnStartingBuildings(void);
 		void Make_Ally(HouseClass * house, bool announce);
 		void Make_Ally(HousesType house, bool announce);
 		void Make_Ally(ObjectClass * object, bool announce);

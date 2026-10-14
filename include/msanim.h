@@ -8,6 +8,8 @@
 #include "stimer.h"
 #include "timer.h"
 #include "vector.h"
+#include "wstring.h"
+#include "widewstring.h"
 
 #include "draw.hh"
 
@@ -143,7 +145,8 @@ class MSOverlayAnim : public MSFadeAnim
 class MSVQAnim : public MSAnim
 {
 	public:
-		MSVQAnim(char const * name, Surface * surface, MS_ANIM_LIST * vector, bool persistent=false);
+		MSVQAnim(Wstring const & name, Surface * surface, MS_ANIM_LIST * vector, bool persistent=false);
+		MSVQAnim(Wstring const & name, Surface * surface, MS_ANIM_LIST * vector, Rect const & rect, bool persistent=false);
 		virtual ~MSVQAnim(void) override;
 
 		virtual bool Advance(Surface * surface, Rect & rect) override;
@@ -239,6 +242,30 @@ class MSWordAnim : public MSPrintAnim
 		int LineYPos;
 
 		Rect LineRect;
+};
+
+class MSBitPrintAnim : public MSAnim
+{
+	public:
+		MSBitPrintAnim(WideWstring const & text, Rect const & rect, bool flag);
+		virtual ~MSBitPrintAnim(void) override;
+
+		virtual bool Advance(Surface * surface, Rect & rect) override;
+		virtual void Redraw(Surface * surface, Rect const * rect=NULL) override;
+		virtual Rect Get_Rect(void) const override;
+		virtual bool Has_Finished(void) const override;
+
+		void Set_Flag(bool flag);
+
+	protected:
+
+		WideWstring Text;
+
+		Rect Area;
+
+		bool FlagA;
+
+		bool FlagB;
 };
 
 class MSTextLayout

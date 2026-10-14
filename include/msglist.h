@@ -24,7 +24,7 @@ class MessageListClass {
 			int over_end, int width = 640);
 		TextLabelClass * Add_Message (wchar_t const * name, int id, wchar_t const * txt,
 			int color, TextPrintType style, int timeout, bool singleplayer);
-		int Concat_Message (char const * name, int id, char const * txt, int timeout);
+		int Concat_Message (wchar_t const * name, int id, wchar_t const * txt, int timeout);
 
 		char * Get_Message (int id);
 		TextLabelClass * Get_Label (int id);

@@ -51,7 +51,7 @@ class WinsockInterfaceClass {
 		virtual void Close_Socket(void);
 
 		virtual int  Read(void *buffer, int &buffer_len, void *address, int &address_len);
-		virtual void WriteTo (void *buffer, int buffer_len, void *address, int address_len);
+		virtual void WriteTo (void *buffer, int buffer_len, void *address, int address_len, bool alternate, bool flag, unsigned short port);
 		virtual void Broadcast (void *buffer, int buffer_len);
 
 		virtual void Discard_In_Buffers (void);
@@ -71,7 +71,7 @@ class WinsockInterfaceClass {
 			return(PROTOCOL_NONE);
 		};
 
-		virtual int Protocol_Event_Message (void) {
+		virtual int Protocol_Event_Message (SOCKET) {
 			return(0);
 		};
 

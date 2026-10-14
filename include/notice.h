@@ -5,12 +5,14 @@
 #include <windows.h>
 
 // Interfaces Yuri's Revenge adds to every AbstractClass; neither derives from IUnknown.
-struct __declspec(novtable) INoticeSink
+class INoticeSink
 {
-	virtual bool INoticeSink_Unknown(DWORD unknown, DWORD unknown2) = 0;
+	public:
+		virtual bool INoticeSink_Unknown(DWORD unknown, DWORD unknown2) = 0;
 };
 
-struct __declspec(novtable) INoticeSource
+class INoticeSource
 {
-	virtual void STDMETHODCALLTYPE INoticeSource_Unknown(void) = 0;
+	public:
+		virtual void STDMETHODCALLTYPE INoticeSource_Unknown(void) = 0;
 };

@@ -9,6 +9,12 @@
 #include "ccini.h"
 #include "session.h"
 #include "scenario.h"
+#include "house.h"
+#include "houstype.h"
+#include "rules.h"
+#include "_rules.h"
+#include "gadget.h"
+#include "display.h"
 #include <cstdio>
 #include <cstring>
 #include <windows.h>
@@ -24,7 +30,15 @@ class MPPlayerNode
 		int FUN_00696F10(void);
 		void FUN_00696F90(int slot);
 		int FUN_00696F30(void);
+		void FUN_00696FF0(int start);
+		void FUN_00697020(int flag);
+		int FUN_00696F70(void);
+		int FUN_00696F50(void);
 		wchar_t Name[1];
+		char Pad3[0x26];
+		IPXAddressClass Address;
+		char Pad2[0x6f - 0x34];
+		int HouseSlot;
 };
 #pragma pack(pop)
 
@@ -32,11 +46,40 @@ extern int DAT_008316A4;
 extern wchar_t DAT_00887734[];
 extern int DAT_00A8DA84;
 extern MPPlayerNode ** DAT_00A8DA78;
+extern DynamicVectorClass<MPPlayerNode *> DAT_00A8DA74;
 int __fastcall FUN_005E66D0(void);
 int __fastcall FUN_0049D9F0(char const * name);
 void __cdecl FUN_004068E0(char const * format, ...);
 void __fastcall FUN_005E3720(char const * text);
 void __fastcall FUN_005E7BF0(int slot);
+int __fastcall FUN_005E6520(int value);
+extern int DAT_00A8B254;
+extern int DAT_00A8B8D8;
+extern MultiMission ** DAT_00A8B8CC;
+extern IPXAddressClass DAT_00A8BB1C;
+extern int DAT_00A8B3AC;
+extern IPXAddressClass DAT_00A8DBCC[8];
+extern int DAT_00A8DC2C[8];
+extern int DAT_00A8E230[8];
+extern wchar_t DAT_00A8E258[];
+extern int DAT_00A8E2AC;
+extern char DAT_00A8E2B2[16];
+struct MPSessionTail
+{
+	int Array[0x34C / 4];
+	int Index;
+};
+extern MPSessionTail DAT_00A8D23C;
+extern int DAT_0088098C;
+extern int DAT_00880990;
+extern int DAT_00880994;
+extern int DAT_00A8B538;
+void __fastcall FUN_0049B930(CoopCamp_0049B610 * camp);
+struct Game {
+	static int TechLevel;
+	static int Seed;
+};
+
 HWND WS_Find_Dialog(int id);
 HWND GameoptWindow(void);
 int FUN_00775B20(void);
@@ -51,12 +94,15 @@ struct MPCountryEntry
 	wchar_t const * Name;
 };
 extern MPCountryEntry ** DAT_00A83C9C;
+char * __fastcall FUN_007350C0(wchar_t const * text);
 extern MPPlayerNode * DAT_00A8DA90[];
 extern int DAT_00ABF460[8];
 void __fastcall FUN_005EBC00(HWND dialog, int count);
 int __fastcall FUN_004E37D0(int index);
 void __fastcall FUN_004E3F70(HWND dialog, int slot, int value);
 bool __fastcall FUN_005E8760(void);
+
+DynamicVectorClass<Cell> __fastcall FUN_00688380(char arg);
 
 static inline char const * Scenario_Filename(MultiMission const * scenario)
 {
@@ -819,4 +865,408 @@ bool MPCooperative::UnfixAlliances(void)
 void MPCooperative::PopulateTeamDropdownForPlayer(HWND hwnd, int index)
 {
 	MPGameModeClass::PopulateTeamDropdownForPlayer(hwnd, index);
+}
+
+
+static inline int Find_Player_Node(int house)
+{
+	for (int k = 0; k < DAT_00A8DA74.Count(); k++) {
+		if (DAT_00A8DA74[k]->HouseSlot == house) {
+			return(k);
+		}
+	}
+	return(-1);
+}
+
+// FUNCTION: 0x005C2D00
+int MPCooperative::FUN_005C2D00(int house, DynamicVectorClass<Cell> * coords, unsigned char * satisfied)
+{
+	int usedCount = 0;
+	for (int i = 0; i < coords->Count(); i++) {
+		if (satisfied[i]) {
+			usedCount++;
+		}
+	}
+	int humans = 0;
+	for (int h = 0; h < Houses.Count(); h++) {
+		if (Houses[h] != NULL && Houses[h]->FUN_0050B730()) {
+			humans++;
+		}
+	}
+	int index;
+	if (usedCount < humans) {
+		int last = Scen->NumCoopHumanStartSpots - 1;
+		index = Scen->RandomNumber(0, last);
+		while (satisfied[index]) {
+			index = (index + 1) % Scen->NumCoopHumanStartSpots;
+		}
+	} else {
+		index = Scen->NumCoopHumanStartSpots;
+		while (satisfied[index] && index < coords->Count()) {
+			index++;
+		}
+	}
+	satisfied[index] = 1;
+	Scen->HouseIndices[index] = house;
+	return(index);
+}
+
+// FUNCTION: 0x005C2DE0
+Cell * MPCooperative::AssignStartingPositionsToHouse(Cell * result, int house, DynamicVectorClass<Cell> * coords, unsigned char * satisfied)
+{
+	int usedCount = 0;
+	for (int i = 0; i < coords->Count(); i++) {
+		if (satisfied[i]) {
+			usedCount++;
+		}
+	}
+	int humans = 0;
+	for (int h = 0; h < Houses.Count(); h++) {
+		if (Houses[h] != NULL && Houses[h]->FUN_0050B730()) {
+			humans++;
+		}
+	}
+	if (usedCount < humans) {
+		int last = Scen->NumCoopHumanStartSpots - 1;
+		int index = Scen->RandomNumber(0, last);
+		while (satisfied[index]) {
+			index = (index + 1) % Scen->NumCoopHumanStartSpots;
+		}
+		satisfied[index] = 1;
+		Scen->HouseIndices[index] = house;
+		*result = (*coords)[index];
+		return(result);
+	}
+	int index = Scen->NumCoopHumanStartSpots;
+	while (satisfied[index] && index < coords->Count()) {
+		index++;
+	}
+	satisfied[index] = 1;
+	Scen->HouseIndices[index] = house;
+	*result = (*coords)[index];
+	return(result);
+}
+
+// FUNCTION: 0x005C2EF0
+bool MPCooperative::StartingPositionsToHouseBaseCells2(bool arg)
+{
+	DynamicVectorClass<Cell> cells = FUN_00688380(arg);
+	unsigned char satisfied[16];
+	for (int i = 0; i < 16; i++) {
+		if (Scen->HouseIndices[i] == -1) {
+			satisfied[i] = 0;
+		} else {
+			satisfied[i] = 1;
+		}
+	}
+	for (int h = 0; h < Houses.Count(); h++) {
+		bool found = false;
+		int slot = -1;
+		HouseClass * house = Houses[h];
+		if (!house->Class->IsMultiplayPassive) {
+			for (int i = 0; i < 16; i++) {
+				if (Scen->HouseIndices[i] == h) {
+					found = true;
+					slot = i;
+				}
+			}
+			if (!found) {
+				FUN_004068E0("Assigning Starting Points for house %d (%s)\n", h, (char const *)house->Class->IniName);
+				int start = FUN_005C2D00(h, &cells, satisfied);
+				int node = Find_Player_Node(h);
+				if (node != -1) {
+					DAT_00A8DA74[node]->FUN_00696FF0(start);
+					DAT_00A8DA74[node]->FUN_00697020(0);
+					FUN_004068E0("Playernum %d:Starting position is %d, team is %d\n", node, DAT_00A8DA74[node]->FUN_00696F50(), DAT_00A8DA74[node]->FUN_00696F70());
+				} else {
+					int c = 0;
+					while ((Session.Options.AISlots.Countries[c] == -1 || Session.Options.AISlots.Starts[c] != -2) && c < 8) {
+						c++;
+					}
+					Session.Options.AISlots.Starts[c] = start;
+					Session.Options.AISlots.Allies[c] = 1;
+					FUN_004068E0("AI Playernum %d:Starting position is %d, team is %d\n", c, Session.Options.AISlots.Starts[c], 1);
+				}
+				house->Set_Base_Spawn_Cell(cells[start]);
+			} else {
+				house->Set_Base_Spawn_Cell(cells[slot]);
+			}
+		}
+	}
+	return(true);
+}
+
+// FUNCTION: 0x005C30C0
+bool MPCooperative::vt_entry_68(void)
+{
+	int aiCount = FUN_005E6520(DAT_00A8B254) - Scen->NumCoopHumanStartSpots;
+	FUN_004068E0("@@@@ Adding %d AI players\n", aiCount);
+	if (aiCount <= 0) {
+		return(false);
+	}
+	Session.Options.AIPlayers = aiCount;
+	CoopCampEntry * entry;
+	int added = 0;
+	int group = 0;
+	DAT_0089F518.FUN_0049E3B0(CampaignIndex, &entry);
+	if (entry == NULL) {
+		return(false);
+	}
+	if (entry->ListB.Count() == 0) {
+		return(false);
+	}
+	if (Current == NULL || !Current->FUN_0049BCC0(&group)) {
+		group = 0;
+	}
+	if (group >= entry->ListB.Count()) {
+		return(false);
+	}
+	for (int slot = Scen->NumCoopHumanStartSpots; slot < 8; slot++) {
+		if (added < aiCount) {
+			FUN_004068E0("@@@@ Setting slot %d for AI\n", slot);
+			if (DAT_00A8EB68 == 0) {
+				Session.Options.AISlots.Difficulties[slot] = 2;
+			} else {
+				Session.Options.AISlots.Difficulties[slot] = (DAT_00A8EB68 == 1);
+			}
+			FUN_004068E0("@@@@     AI difficulty: %d\n", Session.Options.AISlots.Difficulties[slot]);
+			Session.Options.AISlots.Countries[slot] = -2;
+			Session.Options.AISlots.Colors[slot] = -2;
+			Session.Options.AISlots.Starts[slot] = -2;
+			Session.Options.AISlots.Allies[slot] = -2;
+			added++;
+		} else {
+			Session.Options.AISlots.Difficulties[slot] = -1;
+			Session.Options.AISlots.Countries[slot] = -1;
+			Session.Options.AISlots.Colors[slot] = -1;
+			Session.Options.AISlots.Starts[slot] = -1;
+			Session.Options.AISlots.Allies[slot] = -1;
+		}
+	}
+	return(true);
+}
+
+// FUNCTION: 0x005C3220
+bool MPCooperative::AllyTeams(void)
+{
+	FUN_004068E0("@@@@ Making Alliances\n");
+	for (int i = 0; i < Houses.Count(); i++) {
+		HouseClass * first = Houses[i];
+		char * houseName = FUN_007350C0(first->UIName);
+		FUN_004068E0("@@@@     House1 = %s, team is %d\n", houseName, first->StartingAllies);
+		if (!first->Class->IsMultiplayPassive && first->IsHuman ) {
+			for (int j = i + 1; j < Houses.Count(); j++) {
+				HouseClass * second = Houses[j];
+				FUN_004068E0("@@@@         House2 = %s\n", FUN_007350C0(second->UIName));
+				if (!second->Class->IsMultiplayPassive && second->IsHuman ) {
+					char * secondName = FUN_007350C0(second->UIName);
+					char * firstName = FUN_007350C0(first->UIName);
+					FUN_004068E0("@@@@ Making Allies of %s(%d/%d/%d) and %s(%d/%d/%d)\n", firstName, first->Class->House, first->Class->Side, first->Class->Scheme, secondName, second->Class->House, second->Class->Side, second->Class->Scheme);
+					first->Make_Ally(second, false);
+					second->Make_Ally(first, false);
+				}
+			}
+		}
+	}
+	for (int m = 0; m < Houses.Count(); m++) {
+		HouseClass * first = Houses[m];
+		char * houseName = FUN_007350C0(first->UIName);
+		FUN_004068E0("@@@@     House1 = %s, team is %d\n", houseName, first->StartingAllies);
+		if (!first->Class->IsMultiplayPassive && !first->IsHuman) {
+			for (int n = m + 1; n < Houses.Count(); n++) {
+				HouseClass * second = Houses[n];
+				FUN_004068E0("@@@@         House2 = %s\n", FUN_007350C0(second->UIName));
+				if (!second->Class->IsMultiplayPassive && !second->IsHuman) {
+					char * secondName = FUN_007350C0(second->UIName);
+					char * firstName = FUN_007350C0(first->UIName);
+					FUN_004068E0("@@@@ Making Allies of %s(%d/%d/%d) and %s(%d/%d/%d)\n", firstName, first->Class->House, first->Class->Side, first->Class->Scheme, secondName, second->Class->House, second->Class->Side, second->Class->Scheme);
+					first->Make_Ally(second, false);
+					second->Make_Ally(first, false);
+				}
+			}
+		}
+	}
+	return(true);
+}
+
+// FUNCTION: 0x005C34F0
+int MPCooperative::FUN_005C34F0(void)
+{
+	int total = DAT_00A83CA8;
+	bool found = false;
+	int campaign = 0;
+	CoopCampEntry * entry;
+	Current->FUN_0049BC80(&campaign);
+	int group = 0;
+	DAT_0089F518.FUN_0049E3B0(campaign, &entry);
+	if (entry == NULL) {
+		return(0);
+	}
+	if (Current == NULL || !Current->FUN_0049BCC0(&group)) {
+		group = 0;
+	}
+	if (group >= entry->ListA.Count()) {
+		return(0);
+	}
+	int pick;
+	do {
+		pick = Scen->RandomNumber(0, total - 1);
+		for (int i = 0; i < entry->ListA[group]->Count(); i++) {
+			if (pick == FUN_0049D9F0((*entry->ListA[group])[i])) {
+				found = true;
+			}
+		}
+	} while (!found);
+	FUN_004068E0("@@@@ Choosing a random player house: %d(%s)\n", pick, FUN_007350C0(DAT_00A83C9C[pick]->Name));
+	return(pick);
+}
+
+// FUNCTION: 0x005C35F0
+int MPCooperative::FUN_005C35F0(void)
+{
+	int total = DAT_00A83CA8;
+	bool found = false;
+	int campaign = 0;
+	CoopCampEntry * entry;
+	Current->FUN_0049BC80(&campaign);
+	int group = 0;
+	DAT_0089F518.FUN_0049E3B0(campaign, &entry);
+	if (entry == NULL) {
+		return(0);
+	}
+	if (Current == NULL || !Current->FUN_0049BCC0(&group)) {
+		group = 0;
+	}
+	if (group >= entry->ListB.Count()) {
+		return(0);
+	}
+	int pick;
+	do {
+		pick = Scen->RandomNumber(0, total - 1);
+		for (int i = 0; i < entry->ListB[group]->Count(); i++) {
+			if (pick == FUN_0049D9F0((*entry->ListB[group])[i])) {
+				found = true;
+			}
+		}
+	} while (!found);
+	FUN_004068E0("@@@@ Choosing a random AI house: %d(%s)\n", pick, FUN_007350C0(DAT_00A83C9C[pick]->Name));
+	return(pick);
+}
+
+// FUNCTION: 0x005C36F0
+bool MPCooperative::vt_entry_8C(void)
+{
+	return(MPGameModeClass::vt_entry_8C());
+}
+
+// FUNCTION: 0x005C3700
+bool MPCooperative::IsAIAllowed(void)
+{
+	return(false);
+}
+
+// FUNCTION: 0x005C3710
+void MPCooperative::vt_entry_A0(unsigned a)
+{
+	bool playerWins = false;
+	for (int i = 0; i < Houses.Count(); i++) {
+		if (Houses[i] != NULL && Houses[i]->FUN_0050B730() && !Houses[i]->IsDefeated) {
+			playerWins = true;
+		}
+	}
+	FUN_004068E0("@@@@ End-of-Game: PlayerWins:%d, win:%d\n", (unsigned char)a, playerWins);
+	if (playerWins) {
+		int scheme = GadgetClass::Get_Color_Scheme();
+		if (Current != NULL) {
+			FUN_0049B930(Current);
+			if (Current->FUN_0049C5A0()) {
+				Session.Messages.Add_Message(NULL, 0, StringTable::LoadString("TXT_COOP_SAVE_SUCCESS", NULL, "D:\\ra2mdpost\\MPCoop.cpp", 0x5a8), scheme, TextPrintType(0x16), int(Rule->MessageDelay * TICKS_PER_MINUTE), false);
+			} else {
+				Session.Messages.Add_Message(NULL, 0, StringTable::LoadString("TXT_COOP_SAVE_FAILED", NULL, "D:\\ra2mdpost\\MPCoop.cpp", 0x5aa), scheme, TextPrintType(0x16), int(Rule->MessageDelay * TICKS_PER_MINUTE), false);
+			}
+		}
+	}
+	void * file;
+	Current->FUN_0049D070(&file, -1);
+	char mapname[_MAX_PATH];
+	sprintf(mapname, "%s.MAP", file);
+	strcpy(Scen->NextScenarioName, mapname);
+	Scen->Campaign = (CampaignType)-1;
+	Scen->IsSkipScore = true;
+	int total = DAT_00A8B8D8;
+	sprintf(mapname, "%s.MAP", file);
+	int index = 0;
+	for (; index < total; index++) {
+		if (strncmp(mapname, Scenario_Filename(DAT_00A8B8CC[index]), _MAX_PATH) == 0) {
+			DAT_00A8B254 = index;
+			break;
+		}
+	}
+	FUN_005E7BF0(DAT_00A8B254);
+	Scen->IsSkipScore = true;
+	Scen->IsEndOfGame = false;
+	Scen->IsNoMapSel = true;
+	Scen->IsOneTimeOnly = false;
+	Field54 = 0;
+	for (int k = 0; k < DAT_00A8DA84; k++) {
+		if (DAT_00A8BB1C == DAT_00A8DA78[k]->Address) {
+			Field54 = k;
+		}
+	}
+	memcpy(Addresses, DAT_00A8DBCC, sizeof(Addresses));
+	memcpy(Field124, DAT_00A8DC2C, sizeof(Field124));
+	memcpy(Field144, DAT_00A8E230, sizeof(Field144));
+	memcpy(Field194, DAT_00A8E2B2, sizeof(Field194));
+	wcscpy(Field164, DAT_00A8E258);
+	Field190 = DAT_00A8E2AC;
+	Field70 = DAT_00A8B3AC;
+	Seed = Game::Seed;
+	TechLevel = Game::TechLevel;
+	UnitCount = Session.Options.UnitCount;
+	Credits = Session.Options.Credits;
+	FogOfWar = Session.Options.FogOfWar;
+	BridgeDestruction = Session.Options.BridgeDestruction;
+	Goodies = Session.Options.Goodies;
+	MCVRedeploy = Session.Options.MCVRedeploy;
+	AlliesAllowed = Session.Options.AlliesAllowed;
+	HarvTruce = Session.Options.HarvTruce;
+	Bases = Session.Options.Bases;
+	CTF = Session.Options.CTF;
+	AIPlayers = Session.Options.AIPlayers;
+	AIDifficulty = Session.Options.AIDifficulty;
+	ShortGame = Session.Options.ShortGame;
+	SWAllowed = Session.Options.SWAllowed;
+	BuildOffAlly = Session.Options.BuildOffAlly;
+	CrapEngineers = Session.Options.CrapEngineers;
+	GameSpeed = Session.Options.GameSpeed;
+	DAT_00A8B538 = 0;
+	Map.SetActiveFoundation(NULL);
+	DAT_0088098C = 0;
+	DAT_00880990 = 0;
+	DAT_00880994 = -1;
+	for (int n = 0; n < 0x70; n += 0x1c) {
+		DAT_00A8D23C.Array[DAT_00A8D23C.Index + n] = -1;
+	}
+}
+
+// FUNCTION: 0x005C3EC0
+bool MPCooperative::FUN_005C3EC0(void)
+{
+	CoopCamp_0049B610 * old = Current;
+	if (old) {
+		old->FUN_0049B720();
+		operator delete(old);
+	}
+	Current = NULL;
+	CoopCamp_0049B610 * raw = (CoopCamp_0049B610 *)operator new(sizeof(CoopCamp_0049B610));
+	Current = raw ? raw->FUN_0049B610() : 0;
+	Current->FUN_0049CAF0(0);
+	if (DAT_00A8DA84 == 2) {
+		Current->FUN_0049B760(DAT_00A8DA78[0]->Name, DAT_00A8DA78[1]->Name);
+	}
+	if (0) {
+		Current->FUN_0049B720();
+		Current->FUN_0049B720();
+	}
+	return(Current ? true : false);
 }

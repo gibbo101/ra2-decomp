@@ -43,6 +43,8 @@
 #include "houstype.h"
 #include "multiplayer.h"
 #include <ctime>
+#include <stddef.h>
+#include "stringtable.h"
 #include <stdarg.h>
 #include <wchar.h>
 #include "widewstring.h"
@@ -52,7 +54,38 @@ void FUN_0060B350(HWND button);
 void FUN_00607FD0(HWND dialog);
 int FUN_007759E0(HWND window, bool (*callback)(void), int a, int b, int c);
 namespace UI { void RegisterWindow(HWND window, int id); }
-namespace Game { extern HWND hWnd; extern HINSTANCE hInstance; }
+namespace Game { extern HWND hWnd; extern HINSTANCE hInstance; extern int PlayerColor; }
+
+extern int DAT_00A8B8D8;
+extern MPMapEntry ** DAT_00A8B8CC;
+extern wchar_t DAT_00A8B322[];
+class GameModeOptionsClass { public: static int Instance; };
+extern MPGameModeClass * DAT_00A8B23C;
+MPGameModeClass * First_Game_Mode(void);
+HWND FUN_00775B10(void);
+int FUN_00775B20(void);
+
+void __fastcall FUN_0077E430(char * buffer);
+void __fastcall FUN_005DBB60(char * buffer);
+unsigned int __fastcall FUN_005DAC00(wchar_t const * name);
+int __fastcall FUN_0069B720(SessionClass * session);
+void FUN_007A2730(void);
+void FUN_007A2750(void);
+void FUN_007A27D0(void);
+void FUN_005E2340(void);
+void FUN_005E23A0(void);
+void __cdecl FUN_004068E0(char const * format, ...);
+extern bool DAT_00A8DAB0;
+
+struct NSTerritory { char Pad[0x3c]; unsigned int Flags; };
+class NSTerritoryHandle : public WorldDominationTour::YRHandleBase
+{
+	public:
+		NSTerritoryHandle(void) {}
+		virtual ~NSTerritoryHandle(void) {}
+		NSTerritoryHandle & operator=(NSTerritoryHandle const & that) { FUN_0065D480(that.Ptr); return(*this); }
+};
+NSTerritoryHandle __fastcall FUN_007B0390(int id);
 
 // FUNCTION: 0x005E2430 $E2
 // FUNCTION: 0x005E2460 $E5
@@ -441,5 +474,303 @@ void FUN_005E2EF0(HWND dialog, MPGameModeClass * mode)
 	if (mode != NULL) {
 		HWND item = GetDlgItem(dialog, 0x6ec);
 		SendMessage(item, 0x4b2, 0, (LPARAM)mode->UIName.text());
+	}
+}
+
+// FUNCTION: 0x005E2F20
+void __fastcall FUN_005E2F20(HWND dialog, int index)
+{
+	if (index >= 0 && index < DAT_00A8B8D8) {
+		MPMapEntry * map = DAT_00A8B8CC[index];
+		if (map != NULL) {
+			HWND item = GetDlgItem(dialog, 0x5a8);
+			SendMessage(item, 0x4b2, 0, (LPARAM)map);
+		}
+	}
+}
+
+// FUNCTION: 0x005E2F60
+void __fastcall FUN_005E2F60(HWND dialog)
+{
+	HWND item = GetDlgItem(dialog, 0x5a8);
+	SendMessage(item, 0x4b2, 0, (LPARAM)DAT_00A8B322);
+}
+
+// FUNCTION: 0x005E2F80
+MPGameModeClass * FUN_005E2F80(void)
+{
+	MPGameModeClass * mode = MPGameModeClass::Get(GameModeOptionsClass::Instance);
+	if (mode == NULL) {
+		mode = First_Game_Mode();
+	}
+	return(mode);
+}
+
+// FUNCTION: 0x005E2FA0
+void FUN_005E2FA0(void)
+{
+	if (FUN_00775B20() == 0x6b) {
+		HWND dialog = FUN_00775B10();
+		int sel = SendDlgItemMessage(dialog, 0x6eb, LB_GETCURSEL, 0, 0);
+		if (sel != -1) {
+			MPGameModeClass * mode = (MPGameModeClass *)SendDlgItemMessage(dialog, 0x6eb, LB_GETITEMDATA, sel, 0);
+			if (mode != NULL) {
+				mode->vt_entry_94();
+			}
+		}
+	} else if (DAT_00A8B23C != NULL) {
+		DAT_00A8B23C->vt_entry_94();
+	}
+}
+
+// FUNCTION: 0x005E3010
+void __fastcall DisplayGameopts(HWND window, BOOL initialize)
+{
+	int unit_count = Session.Options.UnitCount;
+	int credits = Session.Options.Credits;
+	int game_speed = Session.Options.GameSpeed;
+
+	if (initialize) {
+		NSTerritoryHandle handle;
+		if (Session.Type == GAME_INTERNET && Session.unknown_0C == 3) {
+			handle = FUN_007B0390(Session.unknown_08);
+		}
+		if (handle.Ptr != NULL) {
+			EnableWindow(GetDlgItem(window, 0x544), FALSE);
+			EnableWindow(GetDlgItem(window, 0x6d4), FALSE);
+			if (!(((NSTerritory *)handle.Ptr)->Flags & 0x20000)) {
+				EnableWindow(GetDlgItem(window, 0x402), FALSE);
+			}
+			if (!(((NSTerritory *)handle.Ptr)->Flags & 0x8000)) {
+				EnableWindow(GetDlgItem(window, 0x54f), FALSE);
+			}
+			if (!(((NSTerritory *)handle.Ptr)->Flags & 0x400)) {
+				EnableWindow(GetDlgItem(window, 0x54e), FALSE);
+			}
+			if (!(((NSTerritory *)handle.Ptr)->Flags & 0x20)) {
+				EnableWindow(GetDlgItem(window, 0x3e8), FALSE);
+			}
+			if (!(((NSTerritory *)handle.Ptr)->Flags & 0x100)) {
+				EnableWindow(GetDlgItem(window, 0x54d), FALSE);
+			}
+		}
+		SendDlgItemMessage(window, 0x529, TBM_SETRANGE, TRUE, MAKELONG(0, 6));
+		SendDlgItemMessage(window, 0x402, TBM_SETRANGE, TRUE, MAKELONG(Rule->MinMoney, Rule->MPMaxMoney));
+		SendDlgItemMessage(window, 0x402, OD_SETTRACKSTEP, 0, Rule->MoneyIncrement);
+		SendDlgItemMessage(window, 0x54f, TBM_SETRANGE, TRUE, MAKELONG(Rule->MinUnitCount, Rule->MaxUnitCount));
+	}
+
+	SendDlgItemMessage(window, 0x529, TBM_SETPOS, TRUE, 6 - game_speed);
+	SendDlgItemMessage(window, 0x402, TBM_SETPOS, TRUE, credits);
+	SendDlgItemMessage(window, 0x54f, TBM_SETPOS, TRUE, unit_count);
+
+	int button_state[] = { BST_UNCHECKED, BST_CHECKED };
+	SendDlgItemMessage(window, 0x54e, BM_SETCHECK, button_state[Session.Options.ShortGame], 0);
+	SendDlgItemMessage(window, 0x69a, BM_SETCHECK, button_state[Session.Options.SWAllowed], 0);
+	SendDlgItemMessage(window, 0x69d, BM_SETCHECK, button_state[Session.Options.BuildOffAlly], 0);
+	SendDlgItemMessage(window, 0x3e8, BM_SETCHECK, button_state[Session.Options.MCVRedeploy], 0);
+	SendDlgItemMessage(window, 0x54d, BM_SETCHECK, button_state[Session.Options.Goodies], 0);
+}
+
+// FUNCTION: 0x005E32D0
+void PumpGameopts(bool force, bool now)
+{
+	static int _last_pump_time;
+	static bool _need_to_pump;
+	static bool _last_short_game;
+	static bool _last_sw_allowed;
+	static bool _last_build_off_ally;
+	static bool _last_mcv_redeploy;
+	static bool _last_crates;
+	static int _last_game_speed = -1;
+	static int _last_credits = -1;
+	static int _last_unit_count = -1;
+	static bool _last_scenario_is_official = true;
+	static unsigned int _last_scenario_file_length = -1;
+	static wchar_t _last_scenario_description[45];
+	static char _last_scenario_file_name[14];
+	static char _last_scenario_digest[33];
+
+	bool do_pump = false;
+	bool it_is_time = false;
+
+	if (time(NULL) - _last_pump_time != 0) {
+		it_is_time = true;
+	}
+
+	if (!it_is_time) {
+		if (force) {
+			_need_to_pump = true;
+		}
+	}
+
+	if (it_is_time || now) {
+		if (_need_to_pump) {
+			force = true;
+		}
+		_need_to_pump = false;
+
+		if (g_pChat != NULL) {
+			if (time(NULL) - _last_pump_time >= 5) {
+				do_pump = true;
+			}
+		} else {
+			if (time(NULL) - _last_pump_time >= 2) {
+				do_pump = true;
+			}
+		}
+
+		if (force) {
+			do_pump = true;
+		}
+
+		if (_last_game_speed != Session.Options.GameSpeed) do_pump = true;
+		if (_last_credits != Session.Options.Credits) do_pump = true;
+		if (_last_unit_count != Session.Options.UnitCount) do_pump = true;
+		if (_last_short_game != Session.Options.ShortGame) do_pump = true;
+		if (_last_sw_allowed != Session.Options.SWAllowed) do_pump = true;
+		if (_last_build_off_ally != Session.Options.BuildOffAlly) do_pump = true;
+		if (_last_mcv_redeploy != Session.Options.MCVRedeploy) do_pump = true;
+		if (_last_crates != Session.Options.Goodies) do_pump = true;
+
+		_last_scenario_description[43] = 0;
+		if (wcsicmp(_last_scenario_description, Session.Options.ScenarioDescription)) do_pump = true;
+
+		_last_scenario_file_name[13] = 0;
+		if (stricmp(_last_scenario_file_name, Session.ScenarioFileName)) do_pump = true;
+
+		_last_scenario_digest[32] = 0;
+		if (stricmp(_last_scenario_digest, Session.ScenarioDigest)) do_pump = true;
+
+		if (_last_scenario_file_length != Session.ScenarioFileLength) do_pump = true;
+		if (_last_scenario_is_official != Session.ScenarioIsOfficial) do_pump = true;
+
+		if (do_pump) {
+			_last_pump_time = time(0);
+			_last_game_speed = Session.Options.GameSpeed;
+			_last_credits = Session.Options.Credits;
+			_last_unit_count = Session.Options.UnitCount;
+			_last_short_game = Session.Options.ShortGame;
+			_last_sw_allowed = Session.Options.SWAllowed;
+			_last_build_off_ally = Session.Options.BuildOffAlly;
+			_last_mcv_redeploy = Session.Options.MCVRedeploy;
+			_last_crates = Session.Options.Goodies;
+			wcscpy(_last_scenario_description, Session.Options.ScenarioDescription);
+			strcpy(_last_scenario_digest, Session.ScenarioDigest);
+			strcpy(_last_scenario_file_name, Session.ScenarioFileName);
+			_last_scenario_file_length = Session.ScenarioFileLength;
+			_last_scenario_is_official = Session.ScenarioIsOfficial;
+
+			char buffer[520];
+			memset(buffer, '\0', sizeof(buffer));
+
+			if (g_pChat != NULL) {
+				FUN_0077E430(buffer);
+				SendPublicGameopts(buffer);
+			} else {
+				FUN_005DBB60(buffer);
+				SendPublicGameopts(buffer);
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x005E35A0
+void FUN_005E35A0(void)
+{
+	GlobalPacketType packet;
+	memset(&packet, 0, sizeof(packet));
+	packet.Command = (NetCommandType)0x28;
+	strcpy(packet.Name, Session.Handle);
+	int count = Session.Players.Count();
+	for (int i = 1; i < count; i++) {
+		Ipx.Send_Global_Message(&packet, sizeof(packet), 1, &Session.Players[i]->Address);
+		Call_Back();
+	}
+}
+
+// FUNCTION: 0x005E3630
+void FUN_005E3630(void)
+{
+	switch (Session.Type) {
+		case GAME_IPX:
+			FUN_005E35A0();
+			break;
+
+		case GAME_INTERNET:
+			FUN_007A2730();
+			break;
+	}
+}
+
+// FUNCTION: 0x005E36E0
+void FUN_005E36E0(void)
+{
+	DAT_00A8DAB0 = true;
+	if (g_pChat != NULL) {
+		FUN_007A2750();
+	} else {
+		FUN_005E2340();
+	}
+}
+
+// FUNCTION: 0x005E3700
+void FUN_005E3700(void)
+{
+	DAT_00A8DAB0 = false;
+	if (g_pChat != NULL) {
+		FUN_007A27D0();
+	} else {
+		FUN_005E23A0();
+	}
+}
+
+// FUNCTION: 0x005E3720
+void SendPublicGameopts(char const * options)
+{
+	if (g_pChat != NULL) {
+		char buffer[0x400];
+		strncpy(buffer, options, 0x3ff);
+		g_pChat->RequestPublicGameOptions((LPCSTR)buffer);
+	} else {
+		GlobalPacketType packet;
+		memset(&packet, 0, sizeof(packet));
+		packet.Command = (NetCommandType)0x17;
+		strcpy(packet.Name, Session.Handle);
+		strcpy(packet.Options.Buf, options);
+		packet.Options.Color = Game::PlayerColor;
+		packet.Options.NameCRC = FUN_005DAC00(Session.GameName);
+		for (int i = 1; i < Session.Players.Count(); i++) {
+			NodeNameType * node = Session.Players[i];
+			FUN_004068E0("Sending public game options to %s\n", FUN_007350C0(node->Name));
+			Ipx.Send_Global_Message(&packet, sizeof(packet), 1, &node->Address, 0, 0);
+			Call_Back();
+		}
+	}
+}
+
+// FUNCTION: 0x005E3850
+void SendPrivateGameopts(char const * player, char const * options)
+{
+	if (g_pChat != NULL) {
+		User user;
+		memset(&user, '\0', sizeof(user));
+		strcpy((char *)user.name, player);
+		g_pChat->RequestPrivateGameOptions(&user, (LPCSTR)options);
+	} else {
+		GlobalPacketType packet;
+		memset(&packet, 0, sizeof(packet));
+		packet.Command = (NetCommandType)0x18;
+		strcpy(packet.Name, Session.Handle);
+		strcpy(packet.Options.Buf, options);
+		Session.GPacket.Options.Color = FUN_0069B720(&Session);
+		Session.GPacket.Options.NameCRC = FUN_005DAC00(Session.GameName);
+		for (int i = 1; i < Session.Players.Count(); i++) {
+			if (stricmp(FUN_007350C0(Session.Players[i]->Name), player) == 0) {
+				FUN_004068E0("Sending private game options to %ls\n", Session.Players[i]);
+				Ipx.Send_Global_Message(&packet, sizeof(packet), 1, &Session.Players[i]->Address, 0, 0);
+				Call_Back();
+			}
+		}
 	}
 }

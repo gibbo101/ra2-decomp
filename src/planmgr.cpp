@@ -222,10 +222,21 @@ class PlanBranch
 		char Data[0x70];
 		int Pending;
 		int Slot;
-		int Tail;
+
+		PlanBranch(void) { Data[0] = 0; Pending = 0; Slot = -1; }
+};
+
+class PlanOwn : public PlanBranch
+{
+	public:
+		int Slot2;
+		int Slot3;
+
+		PlanOwn(void) : Slot2(-1), Slot3(-1) {}
 };
 
 class PlanToken;
+void __cdecl FUN_004068E0(char const * format, ...);
 
 class PlanningNodeClass
 {
@@ -238,12 +249,7 @@ class PlanningNodeClass
 		int Id;
 		bool Queued;
 		DynamicVectorClass<PlanBranch *> Branches;
-		bool Flag;
-		char Gap[0x6f];
-		int ActiveCount;
-		int Slot1;
-		int Slot2;
-		int Slot3;
+		PlanOwn Own;
 
 		PlanningNodeClass(int id);
 		int Get_Id(void);
@@ -253,6 +259,7 @@ class PlanningNodeClass
 		PlanningNodeClass * Next_Node(TechnoClass * techno);
 		void Add_Member(TechnoClass * techno, EventClass const * event);
 		int Find_Member(TechnoClass * techno);
+		int FUN_00634290(TechnoClass * techno);
 		TechnoClass * Member_Owner(int index);
 		EventClass Get_Event(int index);
 		EventClass Get_Event_For(TechnoClass * techno);
@@ -277,9 +284,20 @@ class PlanningNodeClass
 		int Branch_Count(void);
 		int Has_Pending(void);
 		int Is_Pending(void);
-		void FUN_00635120(void);
+		Point2D Own_Pixel(void);
+		void Set_Queued(void);
+		bool Get_Queued(void);
+		void Rebuild(void);
+		void Update_Active(void);
+		int Find_Branch(TechnoClass * techno);
+		void Detach(PlanMember *);
+		bool Is_Loop_Start(TechnoClass * techno);
+		void Deactivate(PlanMember *);
+		void Clear(void);
 		void FUN_00635DB0(int);
 		void FUN_00634E10(PlanMember *);
+		void Locate_Own_Branch(void);
+		PlanMember * FUN_006346B0(TechnoClass * techno);
 };
 
 class PlanToken
@@ -294,6 +312,7 @@ class PlanToken
 		int LoopCount;
 		int LoopStart;
 
+		PlanningNodeClass * FUN_00636E60(int index);
 		PlanningNodeClass * Node_At(int index)
 		{
 			int count = Nodes.Count();
@@ -447,7 +466,7 @@ Point2D PlanEvent::Get_Pixel(void)
 }
 
 // FUNCTION: 0x00633CC0
-PlanningNodeClass::PlanningNodeClass(int id) : Id(id), Queued(false), Flag(false), ActiveCount(0), Slot1(-1), Slot2(-1), Slot3(-1)
+PlanningNodeClass::PlanningNodeClass(int id) : Id(id), Queued(false)
 {
 }
 
@@ -684,13 +703,13 @@ int PlanningNodeClass::Branch_Count(void)
 // FUNCTION: 0x00634710
 int PlanningNodeClass::Has_Pending(void)
 {
-	return ActiveCount > 0;
+	return Own.Pending > 0;
 }
 
 // FUNCTION: 0x00634720
 int PlanningNodeClass::Is_Pending(void)
 {
-	if (ActiveCount > 0 && Slot2 == -1) return 1;
+	if (Own.Pending > 0 && Own.Slot2 == -1) return 1;
 	return 0;
 }
 
@@ -736,7 +755,7 @@ PlanBranch * PlanningNodeClass::Branch_Of(TechnoClass * techno)
 // FUNCTION: 0x00634800
 EventClass * PlanningNodeClass::Own_Event(void)
 {
-	return (EventClass *)&Flag;
+	return (EventClass *)&Own;
 }
 
 // FUNCTION: 0x00634810
@@ -749,7 +768,7 @@ Coord PlanningNodeClass::Branch_Coord(int index)
 // FUNCTION: 0x00634850
 Coord PlanningNodeClass::Own_Coord(void)
 {
-	Coord coord = FUN_00633BC0(*(EventClass *)&Flag);
+	Coord coord = FUN_00633BC0(*(EventClass *)&Own);
 	return coord;
 }
 
@@ -757,4 +776,197 @@ Coord PlanningNodeClass::Own_Coord(void)
 Point2D PlanningNodeClass::Branch_Pixel(int index)
 {
 	return Coord_To_View(FUN_00633BC0(*(EventClass *)Branches[index]));
+}
+
+// FUNCTION: 0x006348F0
+Point2D PlanningNodeClass::Own_Pixel(void)
+{
+	return Coord_To_View(FUN_00633BC0(*(EventClass *)&Own));
+}
+
+// FUNCTION: 0x00634950
+void PlanningNodeClass::Set_Queued(void)
+{
+	Queued = true;
+}
+
+// FUNCTION: 0x00634960
+bool PlanningNodeClass::Get_Queued(void)
+{
+	return Queued;
+}
+
+// FUNCTION: 0x00634970
+void PlanningNodeClass::Rebuild(void)
+{
+	Clear();
+	int count = Members.Count();
+	for (int i = 0; i < count; i++) {
+		FUN_00634E10(Members[i]);
+	}
+	Update_Active();
+	Queued = false;
+}
+
+inline void PlanningNodeClass::Locate_Own_Branch(void)
+{
+	int * slot = &Own.Slot2;
+	*slot = -1;
+	if (Own.Pending != 0) {
+		EventClass self = *(EventClass *)&Own;
+		int branches = Branches.Count();
+		int b = 0;
+		if (branches > 0) {
+			do {
+				EventClass other = *(EventClass *)Branches[b];
+				Coord a = FUN_00633BC0(self);
+				Coord c = FUN_00633BC0(other);
+				if (a == c) {
+					Own.Slot2 = b;
+					return;
+				}
+				b++;
+			} while (b < branches);
+		}
+	}
+}
+
+static inline PlanningNodeClass * Last_Node(PlanToken * token)
+{
+	int index = token->Nodes.Count() - 1;
+	if (index < 0) return 0;
+	return token->Nodes[index];
+}
+
+// FUNCTION: 0x006349B0
+void PlanningNodeClass::Update_Active(void)
+{
+	int count = Members.Count();
+	for (int i = 0; i < count; i++) {
+		PlanMember * member = Members[i];
+		TechnoClass * owner = member->Owner;
+		PlanToken * token = FUN_00705D20(owner);
+		if (token->Nodes.ID(this) == token->LoopStart) {
+			member->Active = true;
+			PlanBranch * own = &Own;
+			if (++own->Pending == 1) {
+				token = FUN_00705D20(owner);
+				PlanningNodeClass * last = Last_Node(token);
+				int found = last->FUN_00634290(owner);
+				PlanMember * source = (found == -1) ? 0 : last->Members[found];
+				*(EventClass *)own = *source->Packet;
+			}
+		}
+	}
+	Locate_Own_Branch();
+}
+
+// FUNCTION: 0x00634CC0
+int PlanningNodeClass::Find_Branch(TechnoClass * techno)
+{
+	PlanToken * token = FUN_00705D20(techno);
+	PlanningNodeClass * prev;
+	int index = token->Nodes.ID(this);
+	if (index == -1) {
+		prev = 0;
+	} else {
+		int count = token->Nodes.Count();
+		if (count == 1) {
+			prev = this;
+		} else {
+			index--;
+			if (index < 0) index = count - 1;
+			prev = token->FUN_00636E60(index);
+		}
+	}
+	if (prev == Last_Node(FUN_00705D20(techno))) goto none;
+	{
+		int found = prev->FUN_00634290(techno);
+		PlanMember * member = (found == -1) ? 0 : prev->Members[found];
+		EventClass event = *member->Packet;
+		int count = Branches.Count();
+		if (count == 0) goto none;
+		{
+			Coord origin = FUN_00633BC0(event);
+			int i = 0;
+			if (count > 0) {
+				do {
+					PlanBranch * branch = Branches[i];
+					if (branch->Pending != 0) {
+						EventClass other = *(EventClass *)branch;
+						Coord c = FUN_00633BC0(other);
+						if (origin.X == c.X && origin.Y == c.Y && origin.Z == c.Z) return i;
+					}
+					i++;
+				} while (i < count);
+			}
+		}
+	}
+none:
+	return -1;
+}
+
+static inline void Queue_Node(PlanningNodeClass * node)
+{
+	if (node && !node->Queued) {
+		node->Queued = true;
+		PlanningNodeClass::Unknown3.Add(node);
+	}
+}
+
+// FUNCTION: 0x00635060
+void PlanningNodeClass::Detach(PlanMember * member)
+{
+	if (member->Active) {
+		member->Active = false;
+		if (--Own.Pending == 0) {
+			Own.Slot2 = -1;
+		}
+	}
+	int branch = member->Branch;
+	if (branch != -1) {
+		PlanBranch * entry = Branches[branch];
+		entry->Slot = -1;
+		Own.Slot3 = -1;
+		if (--entry->Pending == 0) {
+			Queue_Node(this);
+		}
+	}
+	member->Branch = -1;
+}
+
+// FUNCTION: 0x00635120
+void PlanningNodeClass::Clear(void)
+{
+	int branches = Branches.Count();
+	for (int i = 0; i < branches; i++) {
+		delete Branches[i];
+	}
+	Branches.Clear();
+	int members = Members.Count();
+	for (int j = 0; j < members; j++) {
+		PlanMember * member = Members[j];
+		member->Branch = -1;
+		member->Active = false;
+	}
+	Own.Pending = 0;
+	int * slot = &Own.Slot2;
+	*slot = -1;
+}
+
+
+// FUNCTION: 0x006351A0
+bool PlanningNodeClass::Is_Loop_Start(TechnoClass * techno)
+{
+	PlanToken * token = FUN_00705D20(techno);
+	return token->Nodes.ID(this) == token->LoopStart;
+}
+
+// FUNCTION: 0x006351E0
+void PlanningNodeClass::Deactivate(PlanMember * member)
+{
+	member->Active = false;
+	if (--Own.Pending == 0) {
+		Own.Slot2 = -1;
+	}
 }

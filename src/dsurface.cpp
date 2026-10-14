@@ -22,6 +22,10 @@ unsigned Get_Video_Hardware_Capabilities(void);
 void Process_DD_Result(HRESULT result, int display_ok_msg);
 void __cdecl DebugString(const char * string, ...);
 
+unsigned short DSurface::HalfbrightMask = 0;
+unsigned short DSurface::QuarterbrightMask = 0;
+unsigned short DSurface::EighthbrightMask = 0;
+
 // FUNCTION: 0x004BA3B0 $E2
 // FUNCTION: 0x004BA3E0 $E5
 // FUNCTION: 0x004BA400 $E8
@@ -433,6 +437,120 @@ bool DSurface::Blit_From(Rect const & dcliprect, Rect const & destrect, Surface 
 	return(false);
 }
 
+// FUNCTION: 0x004BB5F0
+bool DSurface::Fill_Rect(Rect const & fillrect, int color)
+{
+	return(DSurface::Fill_Rect(Get_Rect(), fillrect, color));
+}
+
+// FUNCTION: 0x004BB620
+bool DSurface::Fill_Rect(Rect const & cliprect, Rect const & fillrect, int color)
+{
+	if (SurfacePtr == NULL || !fillrect.Is_Valid()) return(false);
+
+	if (!AllowHWFill || Is_Locked() || !DSurface::Can_Blit()) {
+		return(BASECLASS::Fill_Rect(cliprect, fillrect, color));
+	}
+
+	if (!Restore_Check()) return(false);
+
+	Rect crect = Intersect(cliprect, Get_Rect());
+	Rect frect = fillrect.Bias_To(cliprect);
+
+	frect = Intersect(frect, crect);
+	if (!frect.Is_Valid()) return(false);
+
+	RECT rect;
+	rect.left = frect.X;
+	rect.top = frect.Y;
+	rect.right = rect.left + frect.Width;
+	rect.bottom = rect.top + frect.Height;
+
+	DDBLTFX fx;
+	memset(&fx, '\0', sizeof(fx));
+	fx.dwSize = sizeof(fx);
+	fx.dwFillColor = color;
+	HRESULT result = SurfacePtr->Blt(&rect, NULL, NULL, DDBLT_WAIT|DDBLT_COLORFILL, &fx);
+	return(result == DD_OK);
+}
+
+// FUNCTION: 0x004BB830
+bool DSurface::Fill_Rect_Trans(Rect const & xcliprect, const RGBClass & color, unsigned int opacity)
+{
+
+	if (Bytes_Per_Pixel() < 2) {
+		return(false);
+	}
+
+	if (!xcliprect.Is_Valid()) {
+		return(false);
+	}
+
+	
+	Rect cliprect = Intersect(Get_Rect(), xcliprect);
+
+	if (!cliprect.Is_Valid()) {
+		return(false);
+	}
+
+	unsigned short r_mask;
+	unsigned short g_mask;
+	unsigned short b_mask;
+
+	r_mask = 255;
+	g_mask = 255;
+	b_mask = 255;
+
+	r_mask >>= (unsigned short)RedLeft;
+	g_mask >>= (unsigned short)GreenLeft;
+	b_mask >>= (unsigned short)BlueLeft;
+
+	r_mask <<= (unsigned short)RedRight;
+	g_mask <<= (unsigned short)GreenRight;
+	b_mask <<= (unsigned short)BlueRight;
+
+	unsigned short *ptr = (unsigned short *)Lock(cliprect.Top_Left());
+	if (ptr == NULL) {
+		return(false);
+	}
+
+	if (opacity > 100) {
+		opacity = 100;
+	}
+
+	opacity = ((opacity * 255) / 100);
+	unsigned short s2 = (255 - opacity);
+
+	unsigned short c1 = Build_Hicolor_Pixel(color.Get_Red(), color.Get_Green(), color.Get_Blue());
+
+	for (int y = 0; y < cliprect.Height; y++) {
+		int pos = y * (Stride() / 2);
+
+		for (int x = 0; x < cliprect.Width; x++) {
+			unsigned short *p = &ptr[pos];
+			unsigned short c2 = *p;
+
+			unsigned int r1 = (c1 & r_mask) * opacity;
+			unsigned int g1 = (c1 & g_mask) * opacity;
+			unsigned int b1 = (c1 & b_mask) * opacity;
+
+			unsigned int r2 = (c2 & r_mask) * s2;
+			unsigned int g2 = (c2 & g_mask) * s2;
+			unsigned int b2 = (c2 & b_mask) * s2;
+
+			unsigned int r = ((r1 + r2) / 256);
+			unsigned int g = ((g1 + g2) / 256);
+			unsigned int b = ((b1 + b2) / 256);
+
+			*p = ((r & r_mask) | (g & g_mask) | b);
+			pos++;
+		}
+	}
+
+	Unlock();
+	return(true);
+}
+
 // FUNCTION: 0x004BBB00
 void DSurface::Build_Remap_Table(unsigned short * table, int count, PaletteClass const & palette)
 {
@@ -465,4 +583,102 @@ void DSurface::Build_Remap_Table(unsigned short * table, int count, PaletteClass
 			} while (i);
 		}
 	}
+}
+
+// FUNCTION: 0x004BBC30
+int DSurface::Get_Red_Right(void)
+{
+	return(RedRight);
+}
+
+// FUNCTION: 0x004BBC40
+int DSurface::Get_Red_Left(void)
+{
+	return(RedLeft);
+}
+
+// FUNCTION: 0x004BBC50
+int DSurface::Get_Green_Right(void)
+{
+	return(GreenRight);
+}
+
+// FUNCTION: 0x004BBC60
+int DSurface::Get_Green_Left(void)
+{
+	return(GreenLeft);
+}
+
+// FUNCTION: 0x004BBC70
+int DSurface::Get_Blue_Right(void)
+{
+	return(BlueRight);
+}
+
+// FUNCTION: 0x004BBC80
+int DSurface::Get_Blue_Left(void)
+{
+	return(BlueLeft);
+}
+
+// FUNCTION: 0x004BBC90
+int DSurface::Get_Primary_Color_Mode(void)
+{
+	return(PrimaryColorMode);
+}
+
+// FUNCTION: 0x004BE9D0
+int __fastcall Brighten_Hicolor_Pixel(RGBClass const * rgb, int red_add, int green_add, int blue_add)
+{
+	int red = rgb->Get_Red() + red_add;
+	int green = rgb->Get_Green() + green_add;
+	int blue = rgb->Get_Blue() + blue_add;
+	int excess = 0;
+	int full = 0;
+
+	if (red >= 255) {
+		full = 1;
+		excess = red - 255;
+	}
+	if (green >= 255) {
+		full++;
+		excess += green - 255;
+	}
+	if (blue >= 255) {
+		full++;
+		excess += blue - 255;
+	}
+	if (full != 0 && full < 3) {
+		if (full == 1) {
+			excess >>= 1;
+		}
+		if (red < 255) red += excess;
+		if (green < 255) green += excess;
+		if (blue < 255) blue += excess;
+	}
+	if (blue > 255) blue = 255;
+	if (green > 255) green = 255;
+	if (red > 255) red = 255;
+	return(DSurface::Build_Hicolor_Pixel(red, green, blue));
+}
+
+// FUNCTION: 0x004BF650
+unsigned short DSurface::Blend_Pixel(unsigned short src_color, unsigned short dst_color, int level)
+{
+	switch (level) {
+		case 100:
+			goto done;
+		case 75:
+			return(((src_color / 4) & DSurface::QuarterbrightMask) * 4);
+		case 50:
+			return(((src_color / 2) & HalfbrightMask) + ((dst_color / 2) & HalfbrightMask));
+		case 25:
+			return(((src_color / 4) & DSurface::QuarterbrightMask) * 4);
+		case 0:
+			return(dst_color);
+		default:
+			break;
+	}
+done:
+	return(src_color);
 }

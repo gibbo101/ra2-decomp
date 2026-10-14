@@ -2130,6 +2130,18 @@ wchar_t const * MapSeedClass::GetUIString_Save(void) const
 	return StringTable::LoadString("GUI:SaveMapMenu", NULL, "D:\\ra2mdpost\\MapGen.cpp", 5578);
 }
 
+// FUNCTION: 0x00597FC0
+wchar_t const * MapSeedClass::GetUIString_Delete(void) const
+{
+	return StringTable::LoadString("GUI:DeleteMapMenu", NULL, "D:\\ra2mdpost\\MapGen.cpp", 5584);
+}
+
+// FUNCTION: 0x00597FE0
+wchar_t const * MapSeedClass::GetUIString_GameSaved(void) const
+{
+	return StringTable::LoadString("GUI:MapSaved", NULL, "D:\\ra2mdpost\\MapGen.cpp", 5590);
+}
+
 // FUNCTION: 0x00598000
 double Random_Fraction(void)
 {
@@ -2176,10 +2188,233 @@ double NormalDistribution::operator ()(void)
 	} while (s >= 1.0 || s == 0.0);
 
 	double l = log(s);
-	s = fastmath::sqrt((-l - l) / s);
-	Spare = s * v;
+	double f = fastmath::sqrt((-l - l) / s);
+	double r1 = f * u;
+	double r2 = f * v;
+	Spare = r2;
 	HasSpare = true;
-	return(s * u);
+	return(r1);
+}
+
+// FUNCTION: 0x00598160
+double Sample_Normal(double mean, double standard_dev)
+{
+	return(standard_dev * RMGGaussian() + mean);
+}
+
+// FUNCTION: 0x00598180
+double Sample_Truncated_Normal(double mean, double scale, double lower_bound, double upper_bound)
+{
+	double value;
+
+	if (mean - scale > upper_bound || mean + scale < lower_bound) {
+		scale = (upper_bound - lower_bound) * 0.5;
+		mean = scale + lower_bound;
+	}
+	do {
+		do {
+			value = Sample_Normal(mean, scale);
+		}
+		while (value < lower_bound);
+	}
+	while (value > upper_bound);
+	return(value);
+}
+
+// FUNCTION: 0x00599530
+void MapGeneratorClass::Cleanup(void)
+{
+	SeededWaterAmount = 0;
+	WorkingRegionID = 0;
+
+	if (RMGCellData != NULL) {
+		delete [] RMGCellData;
+		RMGCellData = NULL;
+	}
+
+	for (int i = MapRegionClass::MapRegions.Count() - 1; i >= 0; i--) {
+		MapRegionClass * region = MapRegionClass::MapRegions[i];
+		if (region != NULL) {
+			delete region;
+		}
+	}
+
+	MapRegionClass::TotalCount = 0;
+	Map.Overpass(true);
+	DebugString("RMG: Compute Radar Image\n");
+	Map.Set_Local_Dimensions(Map.LocalRect);
+	Map.Compute_Radar_Image();
+}
+
+// FUNCTION: 0x0059A670
+void MapGeneratorClass::Update_Progress(int percent_progress)
+{
+	if (Scen->IsReadingScenario) {
+		Session.Update_Progress(percent_progress + 99);
+	} else {
+		Progress.Set_Progress_Percent(0, percent_progress);
+	}
+}
+
+// FUNCTION: 0x0059A6C0
+void MapGeneratorClass::Seed_Land(void)
+{
+	Map.Reset_Iterator();
+	CellClass * cptr = Map.Iterate();
+	while (cptr != NULL) {
+		cptr->ITType = IsometricTileTypeClass::WaterSet;
+		cptr = Map.Iterate();
+	}
+
+	switch (SeedData.MapType) {
+		case 0:
+			Seed_Land_Type0();
+			break;
+		case 1:
+			Seed_Land_Type1();
+			break;
+		case 2:
+			Seed_Land_Type2();
+			break;
+	}
+
+	Map.Reset_Iterator();
+	cptr = Map.Iterate();
+	while (cptr != NULL) {
+		if (cptr->ITType == IsometricTileTypeClass::WaterSet) {
+			bool inland = true;
+			for (int facing = FACING_N; facing < FACING_COUNT; facing += 2) {
+				if (!cptr->Adjacent_Cell((FacingType)facing).Is_Tile_Clear()) {
+					inland = false;
+				}
+			}
+			if (inland) {
+				cptr->ITType = ISOTILE_CLEAR;
+			}
+		}
+		cptr = Map.Iterate();
+	}
+
+	Map.Build_All_Cliffs(0, 0);
+
+	if (RMGCellData != NULL) {
+		int grid_size = MapCellStride * MapCellStride;
+		for (int i = 0; i < grid_size; i++) {
+			MapRegionClass::Get_Cell_Data(i).RegionID = -1;
+			MapRegionClass::Get_Cell_Data(i).SpreadID = -1;
+		}
+	}
+
+	for (int i = MapRegionClass::MapRegions.Count() - 1; i >= 0; i--) {
+		MapRegionClass * region = MapRegionClass::MapRegions[i];
+		if (region != NULL) {
+			delete region;
+		}
+	}
+
+	MapRegionClass::TotalCount = 0;
+
+	Green_Shores();
+}
+
+// FUNCTION: 0x0059A8F0
+void MapGeneratorClass::Partition_Rect(DynamicVectorClass<Rect> & rects, int count, Rect const & area)
+{
+	int root = (int)fastmath::sqrt((double)count);
+	int cols = (root * root == count) ? root : root + 1;
+	int rows = (cols * root >= count) ? root : cols;
+	int cell_w = area.Width / cols;
+	int cell_h = area.Height / cols;
+	int step_x = 0;
+	int step_y = 0;
+	int skip_x = 0;
+	int skip_y = 0;
+
+	if (Random_Fraction() < 0.5) {
+		cell_w = area.Width / rows;
+		skip_y = cell_h;
+		step_x = cell_w;
+	} else {
+		cell_h = area.Height / rows;
+		skip_x = cell_w;
+		step_y = cell_h;
+	}
+
+	int empty = rows * cols - count;
+	Point2D pos = area.Top_Left();
+
+	DynamicVectorClass<int> lengths;
+	DynamicVectorClass<int> open;
+	for (int i = 0; i < rows; i++) {
+		lengths.Add(cols);
+		open.Add(i);
+	}
+
+	for (int n = 0; n < empty; n++) {
+		unsigned int last = open.Count() - 1;
+		unsigned int pick;
+		do {
+			pick = (unsigned int)(RMG_RANDOM_DOUBLE(last + 1));
+		} while (pick > last);
+		lengths[open[pick]] = root;
+		open.Delete_Index(pick);
+	}
+
+	for (int row = 0; row < rows; row++) {
+		int length = lengths[row];
+		if (length < cols) {
+			if (skip_x > 0) {
+				pos.X += cell_w / 2;
+			} else {
+				pos.Y += cell_h / 2;
+			}
+		}
+		for (int j = 0; j < length; j++) {
+			rects.Add(Rect(pos.X + 2, pos.Y + 2, cell_w - 4, cell_h - 4));
+			pos.X += skip_x;
+			pos.Y += skip_y;
+		}
+		pos.X += step_x;
+		pos.Y += step_y;
+		if (skip_x > 0) {
+			pos.X = area.X;
+		} else {
+			pos.Y = area.Y;
+		}
+	}
+}
+
+static inline double Random_Scale(void)
+{
+	return RMG_RANDOM_DOUBLE2(0.05) + 0.45;
+}
+
+static inline int Double_Area(Rect const & rect)
+{
+	return rect.Width * rect.Height * 2;
+}
+
+static inline int Double_Area(int width, int height)
+{
+	return width * height * 2;
+}
+
+// FUNCTION: 0x0059B6D0
+void MapGeneratorClass::Green_Shores(void)
+{
+	Map.Reset_Iterator();
+	CellClass * cptr = Map.Iterate();
+	while (cptr != NULL) {
+		if (cptr->Is_Tile_Shore()) {
+			for (int facing = FACING_N; facing < FACING_COUNT; facing += 2) {
+				CellClass * adjacent = &cptr->Adjacent_Cell((FacingType)facing);
+				if (adjacent->Is_Tile_Clear()) {
+					adjacent->ITType = IsometricTileTypeClass::GreenTile;
+				}
+			}
+		}
+		cptr = Map.Iterate();
+	}
 }
 
 // FUNCTION: 0x0059D480

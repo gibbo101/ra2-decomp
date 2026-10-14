@@ -35,7 +35,7 @@ class IPXGlobalConnClass : public IPXConnClass
 			unsigned short product_id, unsigned short magicnum);
 		virtual ~IPXGlobalConnClass () override;
 
-		virtual int Send_Packet (void * buf, int buflen, int ack_req) override;
+		virtual int Send_Packet (void * buf, int buflen, int ack_req, int extra) override;
 		virtual int Receive_Packet (void * buf, int buflen) override;
 		virtual int Get_Packet (void * buf, int * buflen) override;
 

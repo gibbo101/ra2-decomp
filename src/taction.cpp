@@ -78,6 +78,7 @@ bool __fastcall FUN_0065D8E0(TeamTypeClass * team, int waypoint);
 void __fastcall FUN_00539EB0(int duration, int deferment, Cell target, bool a);
 HouseClass * __fastcall FUN_00726910(TriggerClass * trig);
 bool __fastcall FUN_00510F60(int index);
+void __fastcall FUN_0053B460(int duration);
 HouseClass * __fastcall FUN_00510ED0(int index);
 HouseClass * __fastcall FUN_00502D30(int index);
 void __fastcall FUN_004549B0(BuildingClass * building);
@@ -1633,6 +1634,112 @@ bool TActionClass::TAction_SET_AMBIENT_LIGHT(HouseClass * , ObjectClass * , Trig
 	Scen->AmbientLight = Data.Value;
 	if (!FUN_0053A100()) {
 		Scen->DesiredAmbientLight = Scen->AmbientLight;
+	}
+	return(true);
+}
+
+// FUNCTION: 0x006E2F90
+bool TActionClass::TAction_SET_CHRONO_SCREEN_EFFECT(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	FUN_0053B460(Data.Value);
+	return(true);
+}
+
+// FUNCTION: 0x006E2FA0
+bool TActionClass::TAction_BEGIN_AI_TRIGGERS(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
+{
+	HouseClass * hptr = Find_House(trig, Data.Value);
+	if (hptr == NULL) return(false);
+	hptr->IsAITriggersOn = true;
+	return(true);
+}
+
+// FUNCTION: 0x006E3000
+bool TActionClass::TAction_STOP_AI_TRIGGERS(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
+{
+	HouseClass * hptr = Find_House(trig, Data.Value);
+	if (hptr == NULL) return(false);
+	hptr->IsAITriggersOn = false;
+	return(true);
+}
+
+// FUNCTION: 0x006E3060
+bool TActionClass::TAction_CHEER(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
+{
+	HouseClass * hptr = Find_House(trig, Data.Value);
+	if (hptr == NULL) return(false);
+	hptr->Cheer();
+	return(true);
+}
+
+// FUNCTION: 0x006E30C0
+bool TActionClass::TAction_RESTORE_STARTING_UNITS(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
+{
+	HouseClass * hptr = Find_House(trig, Data.Value);
+	if (hptr == NULL) return(false);
+	hptr->RespawnStartingForces();
+	return(true);
+}
+
+// FUNCTION: 0x006E3120
+bool TActionClass::TAction_RESTORE_STARTING_BUILDINGS(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
+{
+	HouseClass * hptr = Find_House(trig, Data.Value);
+	if (hptr == NULL) return(false);
+	hptr->RespawnStartingBuildings();
+	return(true);
+}
+
+// FUNCTION: 0x006E3180
+bool TActionClass::TAction_DESTROY_ALL_OBJECTS(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
+{
+	HouseClass * hptr = Find_House(trig, Data.Value);
+	if (hptr == NULL) return(false);
+	hptr->Destroy_All();
+	return(true);
+}
+
+// FUNCTION: 0x006E31E0
+bool TActionClass::TAction_DESTROY_ALL_BUILDINGS(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
+{
+	HouseClass * hptr = Find_House(trig, Data.Value);
+	if (hptr == NULL) return(false);
+	hptr->Destroy_All_Buildings();
+	return(true);
+}
+
+// FUNCTION: 0x006E3240
+bool TActionClass::TAction_DESTROY_ALL_NON_NAVAL_UNITS(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
+{
+	HouseClass * hptr = Find_House(trig, Data.Value);
+	if (hptr == NULL) return(false);
+	hptr->Destroy_All_Non_Buildings_Non_Naval();
+	return(true);
+}
+
+// FUNCTION: 0x006E32A0
+bool TActionClass::TAction_DESTROY_ALL_NAVAL_UNITS(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
+{
+	HouseClass * hptr = Find_House(trig, Data.Value);
+	if (hptr == NULL) return(false);
+	hptr->Destroy_All_Non_Buildings_Naval();
+	return(true);
+}
+
+// FUNCTION: 0x006E3300
+bool TActionClass::TAction_SET_AI_TRIGGER_TEAM_RATIO(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
+{
+	if (house != NULL) {
+		house->RatioAITriggerTeam = Data.Value;
+	}
+	return(true);
+}
+
+// FUNCTION: 0x006E3320
+bool TActionClass::TAction_SET_TEAM_AIRCRAFT_RATIO(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
+{
+	if (house != NULL) {
+		house->RatioTeamAircraft = Data.Value;
 	}
 	return(true);
 }

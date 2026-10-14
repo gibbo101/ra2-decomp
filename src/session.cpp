@@ -10,6 +10,7 @@
 #include "_keyboar.h"
 #include "_map.h"
 #include "_rules.h"
+#include "_timer.h"
 #include "addon.h"
 #include "ccini.h"
 #include "conquer.h"
@@ -28,10 +29,14 @@
 #include "special.h"
 #include "wonline.h"
 #include "stringtable.h"
+#include "multiplayer.h"
 #include "xstraw.h"
 #include <ctime> // for station ID computation
 #include <dos.h> // for station ID computation
 #include <math.h>
+
+MPGameModeClass * First_Game_Mode(void);
+extern CCINIClass DAT_008870C0;
 
 // FUNCTION: 0x00696D00 $E2
 // FUNCTION: 0x00696D20 $E5
@@ -175,6 +180,377 @@ SessionClass::~SessionClass(void)
 		free((void *)CallWaitStrings[0]);
 		CallWaitStrings.Delete_Index(0);
 	}
+}
+
+// FUNCTION: 0x00697AD0
+void SessionClass::One_Time(void)
+{
+	Read_Scenario_Descriptions();
+
+	UniqueID = Compute_Unique_ID();
+	DebugString("Session one time init. UniqueID is %08x\n", UniqueID);
+}
+
+// FUNCTION: 0x00697B60
+void SessionClass::Init(void)
+{
+}
+
+struct Unknown_00B052D0 {
+	void FUN_00663B40(void);
+	bool FUN_00663DB0(int);
+	bool FUN_006639D0(void);
+};
+extern Unknown_00B052D0 DAT_00B052D0;
+
+// FUNCTION: 0x00697B70
+int SessionClass::Create_Connections(void)
+{
+	int i;
+	NetNumType net;
+	NetNodeType node;
+
+	DebugString("Entering Create_Connections\n");
+
+	if (Session.Type != GAME_IPX && Session.Type != GAME_INTERNET) {
+		return(0);
+	}
+
+	for (i = 0; i < Players.Count(); i++) {
+		DebugString("Player %d, Name: %s, ID %d\n", i, Players[i]->Name, Players[i]->Player.ID);
+
+		if (!wcsicmp(Players[i]->Name, Houses[Players[i]->Player.ID]->UIName)) {
+			if (wcsicmp(Players[i]->Name, MasterPlayerName) == 0) {
+				MasterPlayerID = Players[i]->Player.ID;
+				Session.Players[i]->Address.Get_Address(net, node);
+				Session.unknown_296C.Set_Address(net, node, 0);
+				Ipx.FUN_00543050(&Session.unknown_296C);
+			}
+
+			Houses[Players[i]->Player.ID]->SquadID = Players[i]->Player.SquadID;
+
+			Session.Players[i]->Address.Get_Address(net, node);
+
+			unsigned int ip = 0;
+			for (int k = 0; k < 4; k++) {
+				ip <<= 8;
+				ip |= node[k];
+			}
+
+			DebugString("House[%d] IP = %X  Clan=%d\n", Players[i]->Player.ID, ip, Players[i]->Player.SquadID);
+
+			Houses[Players[i]->Player.ID]->IPAddress = ip;
+			Houses[Players[i]->Player.ID]->LostConnection = false;
+
+			if (i > 0) {
+				Ipx.Create_Connection((int)Players[i]->Player.ID, Players[i]->Name, &(Players[i]->Address));
+				Players[i]->Player.ProcessTime = -1;
+			}
+		} else {
+			return(0);
+		}
+	}
+
+	for (i = 0; i < 8; i++) {
+		Session.unknown_304C[i] = TickCount;
+	}
+
+	if (Type == GAME_INTERNET && unknown_3090) {
+		NetNumType zero_net;
+		NetNodeType zero_node;
+		zero_net[0] = 0;
+		zero_net[1] = 0;
+		zero_net[2] = 0;
+		zero_net[3] = 0;
+		zero_node[0] = 0;
+		zero_node[1] = 0;
+		zero_node[2] = 0;
+		zero_node[3] = 0;
+		zero_node[4] = 0;
+		zero_node[5] = 0;
+		Session.unknown_2978.Set_Address(zero_net, zero_node, 0);
+		ViaPacketRouter = true;
+		unknown_308C = 0;
+		unknown_309C = 20;
+		unknown_3094 = -1;
+		Ipx.Create_Multicast_Connection();
+		DAT_00B052D0.FUN_00663B40();
+		if (Session.Am_I_Master(NULL)) {
+			bool r = DAT_00B052D0.FUN_00663DB0(0);
+			if (r) r = DAT_00B052D0.FUN_006639D0();
+			if (!r) {
+				Session.ViaPacketRouter = false;
+			}
+		}
+	} else {
+		Session.ViaPacketRouter = false;
+	}
+
+	DebugString("Session.ViaPacketRouter = %s\n", Session.ViaPacketRouter ? "true" : "false");
+	DebugString("Leaving Create_Connections\n");
+	return(1);
+}
+
+// FUNCTION: 0x00697E70
+bool SessionClass::Am_I_Master(HouseClass * who)
+{
+	int i;
+	HouseClass * hptr;
+
+	if (who == NULL) {
+		who = PlayerPtr;
+	}
+
+	if (Session.Type == GAME_INTERNET && who) {
+		if (MasterPlayerID != -1) {
+			return(who->HeapID == MasterPlayerID);
+		}
+
+		if (wcsicmp(who->UIName, MasterPlayerName) == 0) {
+			return(true);
+		}
+	}
+
+	for (i = 0; i < Houses.Count(); i++) {
+		hptr = Houses[i];
+		if (hptr->IsHuman && !hptr->IsDefeated) {
+			if (who == hptr) {
+				return(true);
+			} else {
+				return(false);
+			}
+		}
+	}
+
+	return(false);
+}
+
+// FUNCTION: 0x00697F10
+void SessionOptionsClass::Read(CCINIClass & ini, char const * section, int default_slot, int default_first_slot)
+{
+	char entry[16];
+
+	ini.Reset();
+	int mode = First_Game_Mode()->MPModeIndex;
+	MPGameMode = ini.Get_Int(section, "GameMode", mode);
+	ScenIndex = ini.Get_Int(section, "ScenIndex", 0);
+	GameSpeed = ini.Get_Int(section, "GameSpeed", Rule->GameSpeed);
+	Credits = ini.Get_Int(section, "Credits", Rule->MPMoney);
+	UnitCount = ini.Get_Int(section, "UnitCount", Rule->MPUnitCount);
+	ShortGame = ini.Get_Bool(section, "ShortGame", Rule->ShortGame);
+	SuperWeaponsAllowed = ini.Get_Bool(section, "SuperWeaponsAllowed", Rule->SuperWeaponsAllowed);
+	BuildOffAlly = ini.Get_Bool(section, "BuildOffAlly", Rule->BuildOffAlly);
+	MCVRepacks = ini.Get_Bool(section, "MCVRepacks", Rule->MCVRedeploys);
+	CratesAppear = ini.Get_Bool(section, "CratesAppear", Rule->IsMPCrates);
+
+	for (int i = 1; i < 8; i++) {
+		sprintf(entry, "Slot%02d", i);
+		int first = (i == 1) ? default_first_slot : default_slot;
+		int second = -2;
+		int third = -2;
+		ini.Get_Int3(section, entry, &first, &second, &third);
+		SlotData[i][0] = first;
+		SlotData[i][1] = second;
+		SlotData[i][2] = third;
+	}
+}
+
+// FUNCTION: 0x00698CB0
+bool SessionClass::Log_To_File(FILE * out)
+{
+	int i;
+	int j;
+	NetNumType net;
+	NetNodeType node;
+
+	if (Session.Options.ScenarioIndex < 0) {
+		fprintf(out, "BOGUS scenario index!?!\n");
+		Session.Options.ScenarioIndex = 0;
+	}
+
+	fprintf(out, "Scenario = %s\n", Session.Scenarios[Session.Options.ScenarioIndex]->Description());
+	fprintf(out, "Handle = %s\n", Handle);
+
+	for (i = 0; i < NumPlayers; i++) {
+		Session.Players[i]->Address.Get_Address(net, node);
+		fprintf(out, "Player Addr[%d] = ", i);
+		for (j = 0; j < sizeof(NetNumType); j++) {
+			fprintf(out, "%02X", net[j]);
+		}
+		fprintf(out, ":");
+		for (j = 0; j < sizeof(NetNodeType); j++) {
+			fprintf(out, "%02X", node[j]);
+		}
+		fprintf(out, "\n");
+	}
+	fprintf(out, "\n");
+
+	Session.HostAddress.Get_Address(net, node);
+	fprintf(out, "Address = ");
+	for (i = 0; i < sizeof(NetNumType); i++) {
+		fprintf(out, "%02X", net[i]);
+	}
+
+	fprintf(out, ":");
+	for (i = 0; i < sizeof(NetNodeType); i++) {
+		fprintf(out, "%02X", node[i]);
+	}
+
+	fprintf(out, "\n\n");
+	fprintf(out, "MaxAhead = %d\n", MaxAhead);
+	fprintf(out, "LoadGame = %d\n", LoadGame);
+	fprintf(out, "PrefColor = %d\n", Color);
+	fprintf(out, "ColorIdx = %d\n", PrefColor);
+	fprintf(out, "House = %d\n", House);
+	fprintf(out, "NumPlayers = %d\n", NumPlayers);
+	fprintf(out, "Options.Bases = %d\n", Options.Bases);
+	fprintf(out, "Options.Credits = %d\n", Options.Credits);
+	fprintf(out, "Options.BridgeDestruction = %d\n", Options.BridgeDestruction);
+	fprintf(out, "Options.Goodies = %d\n", Options.Goodies);
+	fprintf(out, "Options.Ghosts = %d\n", Options.Ghosts);
+	fprintf(out, "Options.UnitCount = %d\n", Options.UnitCount);
+	fprintf(out, "Options.AIPlayers = %d\n", Options.AIPlayers);
+	fprintf(out, "Options.AIDifficulty = %d\n", Options.AIDifficulty);
+	fprintf(out, "ObiWan = %d\n", MultiplayerObserver);
+
+	if (Session.Type == GAME_IPX) {
+		fprintf(out, "Type = IPX\n");
+	} else if (Session.Type == GAME_INTERNET) {
+		fprintf(out, "Type = INTERNET\n");
+	} else {
+		fprintf(out, "Type = !!Unknown!!\n");
+	}
+
+	return(true);
+}
+
+// FUNCTION: 0x00698F90
+void SessionOptionsClass::Write(CCINIClass & ini, char const * section)
+{
+	char entry[16];
+
+	ini.Put_Int(section, "GameMode", MPGameMode);
+	ini.Put_Int(section, "ScenIndex", ScenIndex);
+	ini.Put_Int(section, "GameSpeed", GameSpeed);
+	ini.Put_Int(section, "Credits", Credits);
+	ini.Put_Int(section, "UnitCount", UnitCount);
+	ini.Put_Bool(section, "ShortGame", ShortGame);
+	ini.Put_Bool(section, "SuperWeaponsAllowed", SuperWeaponsAllowed);
+	ini.Put_Bool(section, "BuildOffAlly", BuildOffAlly);
+	ini.Put_Bool(section, "MCVRepacks", MCVRepacks);
+	ini.Put_Bool(section, "CratesAppear", CratesAppear);
+
+	for (int i = 1; i < 8; i++) {
+		sprintf(entry, "Slot%02d", i);
+		ini.Put_Int3(section, entry, SlotData[i][0], SlotData[i][1], SlotData[i][2]);
+	}
+}
+
+// FUNCTION: 0x006990A0
+void SessionClass::Write_MultiPlayer_Settings(void)
+{
+	RawFileClass file("RA2MD.INI");
+
+	DAT_008870C0.Put_Int("MultiPlayer", "PhoneIndex", CurPhoneIdx);
+	DAT_008870C0.Put_Bool("MultiPlayer", "WOLLimitResolution", WOLLimitResolution);
+	DAT_008870C0.Put_Int("MultiPlayer", "LastNickSlot", LastNicknameSlot);
+	DAT_008870C0.Put_UnicodeString("MultiPlayer", "Handle", FUN_00735120(Handle));
+	DAT_008870C0.Put_Int("MultiPlayer", "Color", Color);
+	DAT_008870C0.Put_Int("MultiPlayer", "ColorEx", Color2);
+	DAT_008870C0.Put_HousesType("MultiPlayer", "Side", (HousesType)Side);
+	DAT_008870C0.Put_Int("MultiPlayer", "SideEx", Side2);
+	if (MPGameMode) {
+		DAT_008870C0.Put_Int("MultiPlayer", "GameMode", MPGameMode->MPModeIndex);
+	} else {
+		DAT_008870C0.Put_Int("MultiPlayer", "GameMode", 0);
+	}
+
+	Skirmish.Write(DAT_008870C0, "Skirmish");
+	LAN.Write(DAT_008870C0, "LAN");
+	WOL.Write(DAT_008870C0, "WonlinePref");
+
+	DAT_008870C0.Clear("SerialDefaults");
+	DAT_008870C0.Put_String("SerialDefaults", "CallWaitString", SerialDefaults.CallWaitString);
+	DAT_008870C0.Put_Int("SerialDefaults", "CallWaitStringIndex", SerialDefaults.CallWaitStringIndex);
+	DAT_008870C0.Put_Int("SerialDefaults", "InitStringIndex", SerialDefaults.InitStringIndex);
+	DAT_008870C0.Put_String("SerialDefaults", "DialMethod", DialMethodCheck[SerialDefaults.DialMethod]);
+	DAT_008870C0.Put_Int("SerialDefaults", "Baud", SerialDefaults.Baud);
+	DAT_008870C0.Put_Int("SerialDefaults", "IRQ", SerialDefaults.IRQ);
+	DAT_008870C0.Put_Int("SerialDefaults", "Port", SerialDefaults.Port, 1);
+	DAT_008870C0.Put_Int("SerialDefaults", "Compression", SerialDefaults.Compression);
+	DAT_008870C0.Put_Int("SerialDefaults", "ErrorCorrection", SerialDefaults.ErrorCorrection);
+	DAT_008870C0.Put_String("SerialDefaults", "ModemName", SerialDefaults.ModemName);
+
+	DAT_008870C0.Clear("InitStrings");
+
+	for (int index = 0; index < InitStrings.Count(); index++) {
+		char buf[10];
+		wsprintf(buf, "%03d", index);
+		DAT_008870C0.Put_String("InitStrings", buf, InitStrings[index]);
+	}
+
+	DAT_008870C0.Clear("PhoneBook");
+
+	for (int i = (PhoneBook.Count() - 1); i >= 0; i--) {
+		char buf[128];
+		char entrytext[10];
+		wsprintf(buf, "%s|%s|%x|%d|%d|%d|%d|%s|%d|%d|%s",
+			PhoneBook[i]->Name,
+			PhoneBook[i]->Number,
+			PhoneBook[i]->Settings.Port,
+			PhoneBook[i]->Settings.IRQ,
+			PhoneBook[i]->Settings.Baud,
+			PhoneBook[i]->Settings.Compression,
+			PhoneBook[i]->Settings.ErrorCorrection,
+			DialMethodCheck[PhoneBook[i]->Settings.DialMethod],
+			PhoneBook[i]->Settings.InitStringIndex,
+			PhoneBook[i]->Settings.CallWaitStringIndex,
+			PhoneBook[i]->Settings.CallWaitString);
+		wsprintf(entrytext, "%03d", i);
+		DAT_008870C0.Put_String("PhoneBook", entrytext, buf);
+	}
+
+	DAT_008870C0.Save(file, false);
+}
+
+// FUNCTION: 0x00699450
+void SessionClass::Write_Chat_Settings(void)
+{
+	RawFileClass file("RA2MD.INI");
+
+	DAT_008870C0.Put_Bool("MultiPlayer", "WOLTaunts", WOLTaunts);
+	DAT_008870C0.Put_Bool("MultiPlayer", "LANTaunts", LANTaunts);
+	DAT_008870C0.Put_Bool("MultiPlayer", "WOLScrollText", WOLScrollText);
+	DAT_008870C0.Put_Bool("MultiPlayer", "LANScrollText", LANScrollText);
+	DAT_008870C0.Save(file, false);
+}
+
+// FUNCTION: 0x0069A1F0
+void SessionClass::Free_Scenario_Descriptions(void)
+{
+	int i;
+
+	for (int index = 0; index < Scenarios.Count(); index++) {
+		delete Scenarios[index];
+	}
+	Scenarios.Clear();
+
+	for (i = 0; i < InitStrings.Count(); i++) {
+		delete [] InitStrings[i];
+	}
+	InitStrings.Clear();
+
+	for (i = 0; i < PhoneBook.Count(); i++) {
+		if (PhoneBook[i] != NULL) {
+			delete PhoneBook[i];
+		}
+	}
+	PhoneBook.Clear();
+}
+
+// FUNCTION: 0x0069A300
+void FUN_0069A300(void)
+{
 }
 
 // FUNCTION: 0x0069A340

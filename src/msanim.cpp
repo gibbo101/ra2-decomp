@@ -27,6 +27,11 @@
 
 extern ShapeFlags_Type FadeStages[4];
 
+struct Drawing {
+	static int RenderWidth;
+	static int RenderHeight;
+};
+
 SHPStruct * __fastcall FUN_004A3970(Wstring const & name, bool * loaded);
 
 // FUNCTION: 0x005CB590
@@ -492,6 +497,134 @@ void MSButtonAnim::Redraw(Surface * surface, Rect const * rect)
 	surface->Blit_From(Area, *AlternateSurface, Area);
 }
 
+// FUNCTION: 0x005CCA10
+void MSButtonAnim::Restore(Rect const & rect)
+{
+}
+
+// FUNCTION: 0x005CCA20
+MSVQAnim::MSVQAnim(Wstring const & name, Surface * surface, MS_ANIM_LIST * vector, Rect const & rect, bool persistent) :
+	MSAnim(0, 0, false),
+	Anims(vector),
+	Movie(NULL),
+	TargetSurface(surface),
+	Background(NULL),
+	Persistent(persistent),
+	Done(false)
+{
+	if (name != (char const *)NULL && surface != NULL) {
+		Movie = Movie_Create(name.text(), surface, Rect(0, 0, 0, 0), Rect(0, 0, 0, 0), int(Options.SoundVolume * 255.0), false);
+		if (Movie != NULL) {
+			Movie->InitialRect = Rect((surface->Get_Width() - Drawing::RenderWidth) / 2, (surface->Get_Height() - Drawing::RenderHeight) / 2, Drawing::RenderWidth, Drawing::RenderHeight);
+			Movie->StretchRect = rect;
+		}
+		Wstring token;
+		name.getToken(0, ".", token);
+		CCFileClass file(token + ".PCX");
+		if (file.Is_Available(0)) {
+			Background = Read_PCX_File(file);
+		}
+	}
+}
+
+// FUNCTION: 0x005CCC30
+MSVQAnim::MSVQAnim(Wstring const & name, Surface * surface, MS_ANIM_LIST * vector, bool persistent) :
+	MSAnim(0, 0, false),
+	Anims(vector),
+	Movie(NULL),
+	TargetSurface(surface),
+	Background(NULL),
+	Persistent(persistent),
+	Done(false)
+{
+	if (name != (char const *)NULL && surface != NULL) {
+		Movie = Movie_Create(name.text(), surface, Rect(0, 0, 0, 0), Rect(0, 0, 0, 0), int(Options.SoundVolume * 255.0), false);
+		if (Movie != NULL) {
+			Movie->InitialRect = Rect((surface->Get_Width() - 640) / 2, (surface->Get_Height() - 400) / 2, 640, 400);
+			Movie->StretchRect = Rect((HiddenSurface->Get_Width() - 640) / 2, (HiddenSurface->Get_Height() - 400) / 2, 640, 400);
+		}
+		Wstring token;
+		name.getToken(0, ".", token);
+		CCFileClass file(token + ".PCX");
+		if (file.Is_Available(0)) {
+			Background = Read_PCX_File(file);
+		}
+	}
+}
+
+// FUNCTION: 0x005CCE40
+MSVQAnim::~MSVQAnim(void)
+{
+	if (Background != NULL) {
+		delete Background;
+	}
+
+	if (Movie != NULL) {
+		Movie_Destroy(Movie);
+		delete Movie;
+	}
+}
+
+// FUNCTION: 0x005CCE90
+bool MSVQAnim::Advance(Surface * surface, Rect & rect)
+{
+	if (Movie != NULL) {
+		bool is_done = false;
+		if (!Done) {
+			bool advanced = Movie_Advance_Frame(Movie, is_done);
+			if (advanced == true) {
+				Redraw(surface);
+				rect = Movie->StretchRect;
+
+				int my_id = Anims->ID(this);
+				for (int i = 0; i < Anims->Count(); i++) {
+					if (i != my_id) {
+						(*Anims)[i]->Redraw(surface, &Movie->StretchRect);
+					}
+				}
+			}
+
+			if (is_done == true) {
+				if (Background != NULL) {
+					TargetSurface->Blit_From(Movie->InitialRect, *Background, Background->Get_Rect());
+					Redraw(surface);
+					rect = Movie->StretchRect;
+
+					int my_id = Anims->ID(this);
+					for (int i = 0; i < Anims->Count(); i++) {
+						if (i != my_id) {
+							(*Anims)[i]->Redraw(surface, &Movie->StretchRect);
+						}
+					}
+				}
+			}
+		}
+
+		if (is_done) {
+			Done = is_done;
+		}
+	} else {
+		if (!Done) {
+			if (Background != NULL) {
+				Rect backdrop_rect = Background->Get_Rect();
+				TargetSurface->Blit_From(backdrop_rect, *Background, backdrop_rect);
+				Redraw(surface);
+				rect = backdrop_rect;
+
+				int my_id = Anims->ID(this);
+				for (int i = 0; i < Anims->Count(); i++) {
+					if (i != my_id) {
+						(*Anims)[i]->Redraw(surface, &backdrop_rect);
+					}
+				}
+			}
+		}
+		Done = true;
+	}
+
+	return(Done && !Persistent);
+}
+
 // FUNCTION: 0x005CD0E0
 void MSVQAnim::Redraw(Surface * surface, const Rect * rect)
 {
@@ -502,11 +635,54 @@ void MSVQAnim::Redraw(Surface * surface, const Rect * rect)
 	}
 }
 
+// FUNCTION: 0x005CD240
+void MSVQAnim::Restore(const Rect & rect)
+{
+	if (Done && Movie != NULL && Background != NULL) {
+		TargetSurface->Blit_From(Movie->InitialRect, *Background, Background->Get_Rect());
+	}
+}
+
 // FUNCTION: 0x005CD290
 Rect MSVQAnim::Get_Rect(void) const
 {
 	static Rect _rect_none(0,0,0,0);
 	return(Movie != NULL ? Movie->StretchRect : _rect_none);
+}
+
+// FUNCTION: 0x005CD310 $E18
+
+// FUNCTION: 0x005CD320
+bool MSVQAnim::Has_Finished(void) const
+{
+	return(Done);
+}
+
+// FUNCTION: 0x005CD330
+MSBitPrintAnim::MSBitPrintAnim(WideWstring const & text, Rect const & rect, bool flag) :
+	MSAnim(rect.X, rect.Y, true),
+	Text(text),
+	Area(rect),
+	FlagA(false),
+	FlagB(flag)
+{
+}
+
+// FUNCTION: 0x005CD3A0
+MSBitPrintAnim::~MSBitPrintAnim(void)
+{
+}
+
+// FUNCTION: 0x005CD3C0
+void MSBitPrintAnim::Set_Flag(bool flag)
+{
+	FlagA = flag;
+}
+
+// FUNCTION: 0x005CD3D0
+Rect MSBitPrintAnim::Get_Rect(void) const
+{
+	return(Area);
 }
 
 // FUNCTION: 0x005CE2B0

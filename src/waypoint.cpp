@@ -147,6 +147,42 @@ void WaypointPathClass::Replace_Waypoint(int index, Coord const & coord)
 	}
 }
 
+// FUNCTION: 0x00763B30
+void WaypointPathClass::Delete_Waypoint(int index)
+{
+	if (index >= 0 && index < Waypoints.Count()) {
+		if (index == CurrentWaypoint || index == Waypoints.Count() - 1) {
+			CurrentWaypoint = -1;
+		}
+		Waypoints.Delete_Index(index);
+	}
+}
+
+// FUNCTION: 0x00763BA0
+WaypointClass * WaypointPathClass::Get_Next_Waypoint(WaypointClass * wp)
+{
+	int index = Waypoints.ID(wp) + 1;
+	if (CurrentWaypoint != -1 && index == Waypoints.Count()) {
+		index = CurrentWaypoint;
+	}
+	return(Get_Waypoint(index));
+}
+
+// FUNCTION: 0x00763BE0
+void WaypointPathClass::Clear(void)
+{
+	Waypoints.Clear();
+	CurrentWaypoint = -1;
+}
+
+// FUNCTION: 0x00763C00
+void WaypointPathClass::Compute_CRC(CRCEngine & crc) const
+{
+	BASECLASS::Compute_CRC(crc);
+	crc(CurrentWaypoint);
+	crc(Waypoints.Count());
+}
+
 // FUNCTION: 0x00763C30
 HRESULT STDMETHODCALLTYPE WaypointPathClass::GetClassID(CLSID * retval)
 {
@@ -154,3 +190,77 @@ HRESULT STDMETHODCALLTYPE WaypointPathClass::GetClassID(CLSID * retval)
 	*retval = CLSID_WaypointPath;
 	return(S_OK);
 }
+
+// FUNCTION: 0x00763C70
+HRESULT STDMETHODCALLTYPE WaypointPathClass::Load(IStream *stream)
+{
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		new (this) WaypointPathClass(NoInitClass());
+
+		int count;
+
+		result = stream->Read(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+
+		new (&Waypoints) DynamicVectorClass<WaypointClass>;
+
+		for (int index = 0; index < count; index++) {
+			WaypointClass obj;
+			result = stream->Read(&obj, sizeof(obj), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+			Waypoints.Add(obj);
+		}
+
+		result = S_OK;
+	}
+	return(result);
+}
+
+// FUNCTION: 0x00763D90
+HRESULT STDMETHODCALLTYPE WaypointPathClass::Save(IStream *stream, BOOL cleardirty)
+{
+	HRESULT result = BASECLASS::Save(stream, cleardirty);
+	if (SUCCEEDED(result)) {
+		int index;
+
+		int count = Waypoints.Count();
+		result = stream->Write(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+
+		for (index = 0; index < count; index++) {
+			result = stream->Write(&Waypoints[index], sizeof(Waypoints[index]), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+		}
+
+		result = S_OK;
+	}
+	return(result);
+}
+
+// FUNCTION: 0x00763E00
+int WaypointPathClass::Fetch_Object_Size(void) const
+{
+	return(sizeof(*this));
+}
+
+// FUNCTION: 0x00763E10
+RTTIType WaypointPathClass::Fetch_RTTI(void) const
+{
+	return(RTTI_WAYPOINT);
+}
+
+// FUNCTION: 0x00763E20 WaypointPathClass::~WaypointPathClass
+
+// FUNCTION: 0x00763EF0 ?$DynamicVectorClass@VWaypointClass@@::Clear
+// FUNCTION: 0x00763F30 ?$DynamicVectorClass@VWaypointClass@@::ID
+// FUNCTION: 0x00763F60 ?$VectorClass@VWaypointClass@@::GetItem
+template class DynamicVectorClass<WaypointClass>;

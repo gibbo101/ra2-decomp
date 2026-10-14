@@ -354,6 +354,173 @@ int XSurface::Get_Pixel(Point2D const & point) const
 	return(color);
 }
 
+// FUNCTION: 0x007BAEB0
+bool XSurface::Put_Pixel(Point2D const & point, int color)
+{
+	void * pointer = Lock(point);
+	if (pointer != NULL) {
+		if (Bytes_Per_Pixel() == 2) {
+			*((unsigned short*)pointer) = (unsigned short)color;
+		} else {
+			*((unsigned char*)pointer) = (unsigned char)color;
+		}
+		Unlock();
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x007BAF10
+int XSurface::Get_Pixel_Clip(Point2D const & point, Rect const & rect) const
+{
+	unsigned pixel = 0;
+
+	if (rect.Is_Point_Within(point)) {
+		void *buffptr = Lock(point);
+
+		if (buffptr != NULL) {
+			if (Bytes_Per_Pixel() == 2) {
+				pixel = *static_cast<unsigned short *>(buffptr);
+			} else {
+				pixel = *static_cast<unsigned char *>(buffptr);
+			}
+			Unlock();
+		}
+	}
+	return(pixel);
+}
+
+// FUNCTION: 0x007BAF90
+bool XSurface::Put_Pixel_Clip(Point2D const & point, int color, Rect const & rect)
+{
+	if (rect.Is_Point_Within(point)) {
+		void *buffptr = Lock(point);
+
+		if (buffptr != NULL) {
+			if (Bytes_Per_Pixel() == 2) {
+				*static_cast<unsigned short *>(buffptr) = color;
+			} else {
+				*static_cast<unsigned char *>(buffptr) = color;
+			}
+			Unlock();
+			return(true);
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x007BB020
+bool XSurface::Fill_Rect(Rect const & fillrect, int color)
+{
+	return(XSurface::Fill_Rect(fillrect, Get_Rect(), color));
+}
+
+#pragma warning(disable: 4035)
+static void *surface_quick_fill(void *buf, int count, int color)
+{
+	_asm {
+		push edi
+
+		mov ecx, [count]
+		mov edi, [buf]
+
+		cmp ecx, 0
+		jle short $end
+
+		mov eax, [color]
+		rep stosd
+
+	$end:
+		mov eax, edi
+		pop edi
+	}
+}
+#pragma warning(default: 4035)
+
+// FUNCTION: 0x007BB050
+bool XSurface::Fill_Rect(Rect const & cliprect, Rect const & fillrect, int color)
+{
+	if (!fillrect.Is_Valid()) return(false);
+
+	Rect wrect = Intersect(cliprect, Get_Rect());
+
+	Rect crect = Intersect(wrect, fillrect.Bias_To(cliprect));
+	if (!crect.Is_Valid()) return(false);
+
+	int height = crect.Height;
+	int width = crect.Width;
+	int pitch = Stride();
+
+	void * buffer = Lock(crect.Top_Left());
+	if (buffer != NULL) {
+		if (Bytes_Per_Pixel() == 1) {
+			for (int y = 0; y < crect.Height; y++) {
+				memset(buffer, color, crect.Width);
+				buffer = ((unsigned char *)buffer) + pitch;
+			}
+		} else {
+			switch ((unsigned int)buffer & 3) {
+				case 0: {
+					int odd_pixel = width & 1;
+					width >>= 1;
+					int doubled_color = (color << 16) | color;
+					for (int i = 0; i < height; i++) {
+						void *tail = surface_quick_fill(buffer, width, doubled_color);
+						if (odd_pixel) {
+							*(unsigned short *)tail = color;
+						}
+						buffer = (unsigned char *)buffer + pitch;
+					}
+					break;
+				}
+
+				case 2: {
+					if (width <= 1) {
+						if (width == 1) {
+							for (int i = 0; i < height; i++) {
+								*(unsigned short *)buffer = color;
+								buffer = (unsigned char *)buffer + pitch;
+							}
+						}
+					} else {
+						width--;
+						int odd_pixel = width & 1;
+						width >>= 1;
+						int doubled_color = (color << 16) | color;
+						for (int i = 0; i < height; i++) {
+							*(unsigned short *)buffer = color;
+							void * tail = surface_quick_fill((unsigned short *)buffer + 1, width, doubled_color);
+							if (odd_pixel) {
+								*(unsigned short *)tail = color;
+							}
+							buffer = (unsigned char *)buffer + pitch;
+						}
+					}
+					break;
+				}
+
+				default: {
+					for (int y = 0; y < height; y++) {
+						for (int x = 0; x < width; x++) {
+							((unsigned short*)buffer)[x] = (unsigned short)color;
+						}
+						buffer = ((unsigned char *)buffer) + pitch;
+					}
+					break;
+				}
+			}
+		}
+		Unlock();
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x007BB340
+bool XSurface::Fill_Rect_Trans(Rect const & rect, RGBClass const & color, unsigned int opacity)
+{
+	return(false);
+}
 
 // FUNCTION: 0x007BB920
 void XSurface::Draw_Circle(Point2D center, int radius, Rect rect, int color)
@@ -381,6 +548,65 @@ void XSurface::Draw_Circle(Point2D center, int radius, Rect rect, int color)
 		pt.Y++;
 
 	} while (pt.X >= pt.Y);
+}
+
+bool XSurface::Blit_Plain(Surface & dest, Rect const & destrect, Surface const & source, Rect const & sourcerect)
+{
+	if (dest.Bytes_Per_Pixel() == 1) {
+		return(Bit_Blit(dest, destrect, source, sourcerect, BlitPlain<unsigned char>()));
+	}
+	return(Bit_Blit(dest, destrect, source, sourcerect, BlitPlain<unsigned short>()));
+}
+
+bool XSurface::Blit_Trans(Surface & dest, Rect const & destrect, Surface const & source, Rect const & sourcerect)
+{
+	if (dest.Bytes_Per_Pixel() == 1) {
+		return(Bit_Blit(dest, destrect, source, sourcerect, BlitTrans<unsigned char>()));
+	}
+	return(Bit_Blit(dest, destrect, source, sourcerect, BlitTrans<unsigned short>()));
+}
+
+// FUNCTION: 0x007BBAB0
+bool XSurface::Fill(int color)
+{
+	return(Fill_Rect(Get_Rect(), Get_Rect(), color));
+}
+
+// FUNCTION: 0x007BBAF0
+bool XSurface::Blit_From(Surface const & source, bool trans, bool unknown)
+{
+	Rect drect = Get_Rect();
+	drect.X = 0;
+	drect.Y = 0;
+
+	Rect srect = source.Get_Rect();
+	srect.X = 0;
+	srect.Y = 0;
+	bool result = Blit_From(drect, source, srect, trans, unknown);
+
+	return(result);
+}
+
+// FUNCTION: 0x007BBB90
+bool XSurface::Blit_From(Rect const & destrect, Surface const & source, Rect const & sourcerect, bool trans, bool unknown)
+{
+	return(XSurface::Blit_From(Get_Rect(), destrect, source, source.Get_Rect(), sourcerect, trans, unknown));
+}
+
+// FUNCTION: 0x007BBCF0
+bool XSurface::Blit_From(Rect const & dcliprect, Rect const & destrect, Surface const & source, Rect const & scliprect, Rect const & sourcerect, bool trans, bool)
+{
+	Rect drect = destrect;
+	Rect srect = sourcerect;
+
+	if (Blit_Clip(drect, dcliprect, srect, scliprect)) {
+
+		if (trans) {
+			return(Blit_Trans(*this, drect, source, srect));
+		}
+		return(Blit_Plain(*this, drect, source, srect));
+	}
+	return(false);
 }
 
 // FUNCTION: 0x007BBE20
@@ -441,6 +667,12 @@ bool Blit_Clip(Rect & drect, Rect const & dwindow, Rect & srect, Rect const & sw
 	}
 
 	return(drect.Is_Valid() && srect.Is_Valid());
+}
+
+// FUNCTION: 0x007BBFF0
+bool XSurface::Prep_For_Blit(Surface & dest, Rect & drect, Surface const & source, Rect & srect, bool & overlapped, void * & dbuffer, void * & sbuffer)
+{
+	return(XSurface::Prep_For_Blit(dest, dest.Get_Rect(), drect, source, source.Get_Rect(), srect, overlapped, dbuffer, sbuffer));
 }
 
 // FUNCTION: 0x007BC2B0

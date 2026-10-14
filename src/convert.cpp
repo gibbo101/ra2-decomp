@@ -747,4 +747,22 @@ template class RLEBlitTransRemapDestZReadWrite<unsigned char>;
 template class RLEBlitTransRemapXlatZReadWrite<unsigned char>;
 
 // FUNCTION: 0x004924C0 ?$BlitPlainXlat@G::BlitForward
+// FUNCTION: 0x00492500 ?$BlitPlainXlat@G::BlitBackward
+// FUNCTION: 0x00492530 ?$BlitPlainXlat@G::Blit_Copy_Tinted
+// FUNCTION: 0x00492560 ?$BlitPlainXlat@G::Blit_Move_Tinted
 template class BlitPlainXlat<unsigned short>;
+
+// FUNCTION: 0x00492590 ?$BlitTransZRemapXlat@G::BlitForward
+// FUNCTION: 0x004925E0 ?$BlitTransZRemapXlat@G::BlitBackward
+// FUNCTION: 0x00492610 ?$BlitTransZRemapXlat@G::Blit_Copy_Tinted
+// FUNCTION: 0x00492640 ?$BlitTransZRemapXlat@G::Blit_Move_Tinted
+template class BlitTransZRemapXlat<unsigned short>;
+
+// FUNCTION: 0x00492670 ?$BlitTransDarken@G::BlitForward
+// FUNCTION: 0x004926B0 ?$BlitTransDarken@G::BlitBackward
+// FUNCTION: 0x004926E0 ?$BlitTransDarken@G::Blit_Copy_Tinted
+// FUNCTION: 0x00492710 ?$BlitTransDarken@G::Blit_Move_Tinted
+template class BlitTransDarken<unsigned short>;
+
+// FUNCTION: 0x00492740 ?$BlitTransLucent75@G::BlitForward
+template class BlitTransLucent75<unsigned short>;

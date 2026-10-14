@@ -11,7 +11,10 @@
 class MPCoopObject
 {
 	public:
+		MPCoopObject(void);
 		virtual ~MPCoopObject(void);
+
+		int Field4;
 };
 
 class MPCooperative : public MPGameModeClass
@@ -37,10 +40,20 @@ class MPCooperative : public MPGameModeClass
 		virtual void vt_entry_74(unsigned a, unsigned b) override;
 		virtual void vt_entry_78(unsigned a) override;
 		virtual bool UnfixAlliances(void) override;
+		virtual bool IsAIAllowed(void) override;
+		virtual bool vt_entry_68(void) override;
+		virtual bool StartingPositionsToHouseBaseCells2(bool arg) override;
+		virtual bool AllyTeams(void) override;
+		virtual bool vt_entry_8C(void) override;
+		virtual void vt_entry_A0(unsigned a) override;
+		virtual Cell * AssignStartingPositionsToHouse(Cell * result, int house, DynamicVectorClass<Cell> * coords, unsigned char * satisfied) override;
 
 		void FUN_005C2500(HWND dialog);
 		void FUN_005C21D0(HWND dialog, bool flag);
-		void FUN_005C3EC0(void);
+		bool FUN_005C3EC0(void);
+		int FUN_005C2D00(int house, DynamicVectorClass<Cell> * coords, unsigned char * satisfied);
+		int FUN_005C34F0(void);
+		int FUN_005C35F0(void);
 		void FUN_005C23B0(HWND dialog, int control);
 
 		CoopCamp_0049B610 * Current;
@@ -51,9 +64,33 @@ class MPCooperative : public MPGameModeClass
 		MPCoopObject * Field50;
 		int Field54;
 		DynamicVectorClass<char *> Names;
-		char Pad70[0xC4 - 0x70];
+		int Field70;
+		char Pad74[0x9C - 0x74];
+		int Seed;
+		int TechLevel;
+		int UnitCount;
+		int Credits;
+		bool FogOfWar;
+		bool BridgeDestruction;
+		bool Goodies;
+		bool MCVRedeploy;
+		bool AlliesAllowed;
+		bool HarvTruce;
+		bool Bases;
+		bool CTF;
+		int AIPlayers;
+		int AIDifficulty;
+		bool ShortGame;
+		bool SWAllowed;
+		bool BuildOffAlly;
+		bool CrapEngineers;
+		int GameSpeed;
 		IPXAddressClass Addresses[8];
-		char Pad124[0x1A4 - 0x124];
+		int Field124[8];
+		int Field144[8];
+		wchar_t Field164[22];
+		int Field190;
+		char Field194[16];
 		DynamicVectorClass<int> Lists[8];
 		DynamicVectorClass<int> Lists2[8];
 		DynamicVectorClass<CoopCamp_0049B610 *> Campaigns;

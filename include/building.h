@@ -256,6 +256,7 @@ class BuildingClass : public TechnoClass
 		virtual WeaponDataStruct const * Get_Class_Weapon_Data(int which=0) const override;
 		virtual bool Is_Turret_Equipped() const override;
 		bool IsBeingDrained(void) const;
+		int GetRadialIndicatorRange(void) const;
 		void FireLaser(Coord coords);
 		bool FUN_00448070(bool demote);
 		void FUN_0044EB60(FactoryClass * factory);
@@ -381,6 +382,7 @@ class BuildingClass : public TechnoClass
 		static char const * const INI_NAME;
 };
 
+void __fastcall DrawRadialIndicator(bool draw_line, bool adjust_color, Coord center, RGBClass color, float radius, bool in_pixels, bool whole);
 void Adjust_House_Power(HouseClass * house);
 BuildingClass * Find_Unit_Repair_Facility(HouseClass * house, TechnoClass * obj);
 

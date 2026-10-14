@@ -377,7 +377,7 @@ class TechnoClass : public RadioClass
 		virtual ZGradientType Get_Z_Gradient(void) const {return(ZGRAD_90DEG);}
 		virtual Cell GetLastFlightMapCoords(void) const;
 		virtual void SetLastFlightMapCoords(Cell coord);
-		virtual Cell Find_Exit_Cell(TechnoClass const * techno) const;
+		virtual Cell Find_Exit_Cell(TechnoClass const * techno, unsigned) const;
 		virtual Coord Turret_Coord(int which=0) const;
 		void Create_Planning_Token(void);
 		static void __stdcall FUN_00705860(Coord start, Coord end);
@@ -399,7 +399,7 @@ class TechnoClass : public RadioClass
 		void GattlingRateUp(int rate);
 		void ReleaseLocomotor(bool set_target);
 		void GattlingRateDown(int rate);
-		bool FUN_0070E240(WeaponDataStruct const * weapon);
+		bool FUN_0070E240(WeaponDataStruct const * weapon) const;
 		void Deactivate(void);
 		virtual FacingType Desired_Load_Dir(ObjectClass * , Cell & moveto) const;
 		virtual DirType Fire_Direction(void) const;
@@ -454,7 +454,7 @@ class TechnoClass : public RadioClass
 		virtual BulletClass * Fire_At(AbstractClass * target, int which=0);
 		virtual void Guard(void);
 		virtual bool Captured(HouseClass * newowner, bool announce = true);
-		virtual void vt_entry_3D8(unsigned, unsigned, unsigned);
+		virtual void vt_entry_3D8(Coord const & coord, float force, bool flag);
 		virtual bool Crash(ObjectClass * killer);
 		virtual bool IsAreaFire(void) const;
 		virtual int IsNotSprayAttack(void) const;
@@ -499,8 +499,8 @@ class TechnoClass : public RadioClass
 		virtual void Assign_Destination(AbstractClass * target, bool = true);
 		virtual bool Enter_Idle_Mode(bool initial=false, bool = true);
 		bool Is_Draining(void) const;
-		virtual void UpdateSight(unsigned, unsigned, unsigned, unsigned, unsigned);
-		virtual void vt_entry_48C(unsigned, unsigned, unsigned, unsigned);
+		virtual void UpdateSight(bool, bool, bool, HouseClass *, int);
+		virtual void vt_entry_48C(bool, bool, bool, HouseClass *);
 		virtual bool ForceCreate(Coord & coord, unsigned unk = 0);
 		virtual void Radar_Track(void);
 		virtual void Radar_Untrack(void);

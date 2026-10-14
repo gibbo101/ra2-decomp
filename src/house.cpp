@@ -2928,6 +2928,172 @@ WaypointPathClass * HouseClass::Ensure_Path(PathType path)
 	return(wp);
 }
 
+// FUNCTION: 0x00504790
+void HouseClass::Add_Anger(int level, HouseClass const * house)
+{
+	int i;
+
+	for (i = 0; i < AngerNodes.Count(); i++) {
+		if (AngerNodes[i].House == house) {
+			AngerNodes[i].Level += level;
+		}
+	}
+
+	int maxanger = 0;
+	HouseClass * mostangry = NULL;
+
+	for (i = 0; i < AngerNodes.Count(); i++) {
+		HouseClass * enemy = AngerNodes[i].House;
+		if (AngerNodes[i].Level > maxanger && !enemy->IsDefeated) {
+			if (!Is_Ally(enemy)) {
+				maxanger = AngerNodes[i].Level;
+				mostangry = AngerNodes[i].House;
+			}
+		}
+	}
+
+	if (mostangry != NULL) {
+		Enemy = mostangry->HeapID;
+	} else {
+		Enemy = HOUSE_NONE;
+	}
+}
+
+// FUNCTION: 0x00504860
+void HouseClass::Mark_Scouted(HouseClass const * house)
+{
+	for (int i = 0; i < ScoutNodes.Count(); i++) {
+		if (ScoutNodes[i].House == house) {
+			ScoutNodes[i].IsScouted = true;
+		}
+	}
+}
+
+// FUNCTION: 0x00505180
+void HouseClass::Begin_Construction(void)
+{
+	if (!Is_Human_Player() && Session.Type != GAME_NORMAL) {
+		Computer_Paranoid();
+	}
+	if (Base.Nodes.Count() == 0) {
+		int save_init = ScenarioInit;
+		ScenarioInit = false;
+		Make_Base_Nodes();
+		ScenarioInit = save_init;
+	}
+}
+
+// FUNCTION: 0x005051E0
+TechnoTypeClass const * HouseClass::FirstBuildableFromArray(DynamicVectorClass<BuildingTypeClass const *> const & list) const
+{
+	int owners = 1 << HouseTypeClass::From_Name(Class->ParentCountry);
+	for (int i = 0; i < list.Count(); i++) {
+		BuildingTypeClass const * b = list[i];
+		if (b->Ownable & owners) {
+			if (b->RequiredHouses == -1 || (b->RequiredHouses & (1 << Class->House))) {
+				if (b->ForbiddenHouses == -1 || !(b->ForbiddenHouses & (1 << Class->House))) {
+					if (b->AIBasePlanningSide == -1 || b->AIBasePlanningSide == Class->Side) {
+						if (Session.Options.SWAllowed || b->SuperWeapon == -1) {
+							return(b);
+						}
+						for (int j = 0; j < Rule->BuildTech.Count(); j++) {
+							if (Rule->BuildTech[j] == b) {
+								return(b);
+							}
+						}
+						if (!SuperWeapon[b->SuperWeapon]->Class->DisableableFromShell) {
+							return(b);
+						}
+					}
+				}
+			}
+		}
+	}
+	return(NULL);
+}
+
+// FUNCTION: 0x00505310
+BuildingTypeClass const * HouseClass::Get_First_Ownable(DynamicVectorClass<BuildingTypeClass const *> const & vector) const
+{
+	int owners = 1 << HouseTypeClass::From_Name(Class->ParentCountry);
+	for (int i = 0; i < vector.Count(); i++) {
+		if (owners & vector[i]->Ownable) {
+			return(vector[i]);
+		}
+	}
+
+	return(NULL);
+}
+
+// FUNCTION: 0x00505F80
+int HouseClass::Base_Cell_Weight_By_Distance(HouseClass const & house, Cell const & cell, int tie_breaker, int context)
+{
+	int x = cell.X - house.Base.PlacementCenter.X;
+	int y = cell.Y - house.Base.PlacementCenter.Y;
+
+	int size = MAX(abs(x), abs(y));
+	return(tie_breaker + size * 1000);
+}
+
+// FUNCTION: 0x00506B70
+void FUN_00506B70(void)
+{
+}
+
+// FUNCTION: 0x00506B80
+void FUN_00506B80(void)
+{
+}
+
+// FUNCTION: 0x00506B90
+Cell HouseClass::Where_To_Place_Upgrade(BuildingTypeClass const * upgrade) const
+{
+	StructType upgradee_id = BuildingTypeClass::From_Name(upgrade->PowersUpBuilding);
+	if (upgradee_id == STRUCT_NONE) {
+		return(Cell(0, 0));
+	}
+
+	BuildingTypeClass const * upgradee_type = BuildingTypes[upgradee_id];
+	BuildingClass * upgradee = NULL;
+	int upgrade_level = upgradee_type->Upgrades + 10;
+	bool anyslot = upgrade->PowersUpToLevel == -1;
+
+	for (int i = 0; i < ::Buildings.Count(); i++) {
+		BuildingClass * b = ::Buildings[i];
+		if (b->House == this && b->Class == upgradee_type && b->Can_Upgrade(upgrade, this)) {
+			if (anyslot && upgrade_level > b->UpgradeLevel || !anyslot && b->UpgradeLevel == 0) {
+				upgrade_level = b->UpgradeLevel;
+				upgradee = b;
+			}
+		}
+	}
+
+	if (upgradee != NULL) {
+		return(upgradee->PositionCoord.As_Cell());
+	}
+
+	return(Cell(0, 0));
+}
+
+// FUNCTION: 0x00506CD0
+Cell Clamp_Cell(Rect const & bounds, Cell const & cell)
+{
+	Cell result = cell;
+	if (result.X < bounds.X) {
+		result.X = bounds.X;
+	}
+	if (result.X >= bounds.Width + bounds.X) {
+		result.X = bounds.Width + bounds.X - 1;
+	}
+	if (result.Y < bounds.Y) {
+		result.Y = bounds.Y;
+	}
+	if (result.Y >= bounds.Height + bounds.Y) {
+		result.Y = bounds.Height + bounds.Y - 1;
+	}
+	return(result);
+}
+
 // FUNCTION: 0x0050B6F0
 bool HouseClass::Is_Player_Control(void) const
 {

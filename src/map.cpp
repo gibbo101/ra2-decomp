@@ -2151,6 +2151,394 @@ void MapClass::Internal_Destroy_High_Bridge_NS_TopRight(Cell const & cell, Facin
 }
 
 
+bool FUN_00574600(int tile, int dir, CellClass * cell);
+bool FUN_005746C0(int tile, CellClass * cell);
+
+inline bool MapClass::Is_Low_Bridge(Cell const & cell)
+{
+	OverlayType overlay = Map[cell].Overlay;
+	return(overlay >= 0x4A && overlay <= 0x65);
+}
+
+static inline bool Is_Concrete_Low_Bridge(Cell const & cell)
+{
+	OverlayType overlay = Map[cell].Overlay;
+	return(overlay >= 0xCD && overlay <= 0xE8);
+}
+
+// FUNCTION: 0x00574600
+bool FUN_00574600(int tile, int dir, CellClass * cell)
+{
+	if (dir == 2) {
+		if (tile == IsometricTileTypeClass::BridgeBottomRight1 && cell->SubTile == 4) {
+			return true;
+		}
+		if (tile == IsometricTileTypeClass::BridgeBottomRight2 && cell->SubTile == 4) {
+			return true;
+		}
+		if ((tile == IsometricTileTypeClass::BridgeMiddle1 || tile == IsometricTileTypeClass::BridgeMiddle1 + 3 || tile == IsometricTileTypeClass::BridgeMiddle1 + 1 || tile == IsometricTileTypeClass::BridgeMiddle1 + 2) && cell->SubTile == 4) {
+			return true;
+		}
+	} else if (dir == 4) {
+		if (tile == IsometricTileTypeClass::BridgeBottomLeft1 && cell->SubTile == 2) {
+			return true;
+		}
+		if (tile == IsometricTileTypeClass::BridgeBottomLeft2 && cell->SubTile == 2) {
+			return true;
+		}
+		if ((tile == IsometricTileTypeClass::BridgeMiddle2 || tile == IsometricTileTypeClass::BridgeMiddle2 + 3 || tile == IsometricTileTypeClass::BridgeMiddle2 + 1 || tile == IsometricTileTypeClass::BridgeMiddle2 + 2) && cell->SubTile == 2) {
+			return true;
+		}
+	}
+	return false;
+}
+
+// FUNCTION: 0x005746C0
+bool FUN_005746C0(int tile, CellClass * cell)
+{
+	if (tile == IsometricTileTypeClass::BridgeTopRight1 && cell->SubTile == 12) {
+		return true;
+	}
+	if (tile == IsometricTileTypeClass::BridgeTopRight2 && cell->SubTile == 12) {
+		return true;
+	}
+	if ((tile == IsometricTileTypeClass::BridgeMiddle1 || tile == IsometricTileTypeClass::BridgeMiddle1 + 3 || tile == IsometricTileTypeClass::BridgeMiddle1 + 1 || tile == IsometricTileTypeClass::BridgeMiddle1 + 2) && cell->SubTile == 4) {
+		return true;
+	}
+	if (tile == IsometricTileTypeClass::BridgeTopLeft1 && cell->SubTile == 8) {
+		return true;
+	}
+	if (tile == IsometricTileTypeClass::BridgeTopLeft2 && cell->SubTile == 8) {
+		return true;
+	}
+	if ((tile == IsometricTileTypeClass::BridgeMiddle2 || tile == IsometricTileTypeClass::BridgeMiddle2 + 3 || tile == IsometricTileTypeClass::BridgeMiddle2 + 1 || tile == IsometricTileTypeClass::BridgeMiddle2 + 2) && cell->SubTile == 2) {
+		return true;
+	}
+	return false;
+}
+
+// FUNCTION: 0x00574780
+void MapClass::FUN_00574780(Cell const & cell)
+{
+	int overlay = Map[cell].Overlay;
+	if (overlay >= 0x4A && overlay <= 0x52 || overlay >= 0x5C && overlay <= 0x5F || overlay == 0x64) {
+		if (!Is_Low_Bridge(cell + Cell(0, -1))) {
+			FUN_00575220(cell + Cell(0, 1));
+		} else if (!Is_Low_Bridge(cell + Cell(0, -2))) {
+			FUN_00575220(cell);
+		} else {
+			FUN_00575220(cell + Cell(0, -1));
+		}
+	} else if (overlay >= 0x53 && overlay <= 0x5B || overlay >= 0x60 && overlay <= 0x63 || overlay == 0x65) {
+		if (!Is_Low_Bridge(cell + Cell(-1, 0))) {
+			FUN_00575540(cell + Cell(1, 0));
+		} else if (!Is_Low_Bridge(cell + Cell(-2, 0))) {
+			FUN_00575540(cell);
+		} else {
+			FUN_00575540(cell - Cell(1, 0));
+		}
+	}
+}
+
+// FUNCTION: 0x005749C0
+void MapClass::FUN_005749C0(Cell const & cell)
+{
+	int overlay = Map[cell].Overlay;
+	if (overlay >= 0xCD && overlay <= 0xD5 || overlay >= 0xDF && overlay <= 0xE2 || overlay == 0xE7) {
+		if (!Is_Concrete_Low_Bridge(cell + Cell(0, -1))) {
+			FUN_00575870(cell + Cell(0, 1));
+		} else if (!Is_Concrete_Low_Bridge(cell + Cell(0, -2))) {
+			FUN_00575870(cell);
+		} else {
+			FUN_00575870(cell + Cell(0, -1));
+		}
+	} else if (overlay >= 0xD6 && overlay <= 0xDE || overlay >= 0xE3 && overlay <= 0xE6 || overlay == 0xE8) {
+		if (!Is_Concrete_Low_Bridge(cell + Cell(-1, 0))) {
+			FUN_00575BA0(cell + Cell(1, 0));
+		} else if (!Is_Concrete_Low_Bridge(cell + Cell(-2, 0))) {
+			FUN_00575BA0(cell);
+		} else {
+			FUN_00575BA0(cell - Cell(1, 0));
+		}
+	}
+}
+
+// FUNCTION: 0x00575220
+void MapClass::FUN_00575220(Cell const & cell)
+{
+	int back = 0;
+	Cell c = cell;
+	Cell start = c;
+	int step = 1;
+	int fwd = 0;
+	do {
+		c.X--;
+		back++;
+	} while (Is_Low_Bridge(c));
+	c = start;
+	do {
+		c.X++;
+		fwd++;
+	} while (Is_Low_Bridge(c));
+	if (fwd < back) {
+		step = -1;
+	}
+	c = start;
+	c.X = start.X - (back - fwd) / 2;
+	int count = 4;
+	while (true) {
+		if (count <= 0) {
+			break;
+		}
+		if (Map[c].Overlay != 0x64) {
+			Cell tmp = Cell(c.X, c.Y - 1);
+			for (int i = 0; i < 3; i++) {
+				CellClass * cellptr = &Map[tmp];
+				Coord coord = cellptr->Fetch_CellID();
+				coord.Z = LEVEL_LEPTON_H * cellptr->Height;
+				coord.X += Random_Double(-0.5, 0.5) * 50;
+				coord.Y += Random_Double(-0.5, 0.5) * 50;
+				new AnimClass(Rule->BridgeExplosions[Random_Pick(0, Rule->BridgeExplosions.Count() - 1)], coord, Random_Pick(1, 5));
+				tmp = Cell(tmp.X, tmp.Y + 1);
+			}
+		}
+		for (int j = 0; j < 3; j++) {
+			if (FUN_0057BAA0(c)) {
+				break;
+			}
+		}
+		c.X += step;
+		count--;
+		int overlay = Map[c].Overlay;
+		if (overlay < 0x4A || overlay > 0x65) {
+			break;
+		}
+	}
+	Update_Pathfinding_1();
+	TacticalMap->IsFirstRender = true;
+}
+
+// FUNCTION: 0x00575540
+void MapClass::FUN_00575540(Cell const & cell)
+{
+	int back = 0;
+	Cell c = cell;
+	Cell start = c;
+	int step = 1;
+	int fwd = 0;
+	do {
+		c.Y--;
+		back++;
+	} while (Is_Low_Bridge(c));
+	c = start;
+	do {
+		c.Y++;
+		fwd++;
+	} while (Is_Low_Bridge(c));
+	if (fwd < back) {
+		step = -1;
+	}
+	c = start;
+	c.Y = start.Y - (back - fwd) / 2;
+	int count = 4;
+	while (true) {
+		if (count <= 0) {
+			break;
+		}
+		if (Map[c].Overlay != 0x65) {
+			Cell tmp = Cell(c.X - 1, c.Y);
+			for (int i = 0; i < 3; i++) {
+				CellClass * cellptr = &Map[tmp];
+				Coord coord = cellptr->Fetch_CellID();
+				coord.Z = LEVEL_LEPTON_H * cellptr->Height;
+				coord.X += Random_Double(-0.5, 0.5) * 50;
+				coord.Y += Random_Double(-0.5, 0.5) * 50;
+				new AnimClass(Rule->BridgeExplosions[Random_Pick(0, Rule->BridgeExplosions.Count() - 1)], coord, Random_Pick(1, 5));
+				tmp = Cell(tmp.X + 1, tmp.Y);
+			}
+		}
+		for (int j = 0; j < 3; j++) {
+			if (FUN_0057BAA0(c)) {
+				break;
+			}
+		}
+		c.Y += step;
+		count--;
+		int overlay = Map[c].Overlay;
+		if (overlay < 0x4A || overlay > 0x65) {
+			break;
+		}
+	}
+	Update_Pathfinding_1();
+	TacticalMap->IsFirstRender = true;
+}
+
+// FUNCTION: 0x00575870
+void MapClass::FUN_00575870(Cell const & cell)
+{
+	int back = 0;
+	Cell c = cell;
+	Cell start = c;
+	int step = 1;
+	int fwd = 0;
+	do {
+		c.X--;
+		back++;
+	} while (Is_Concrete_Low_Bridge(c));
+	c = start;
+	do {
+		c.X++;
+		fwd++;
+	} while (Is_Concrete_Low_Bridge(c));
+	if (fwd < back) {
+		step = -1;
+	}
+	c = start;
+	c.X = start.X - (back - fwd) / 2;
+	int count = 4;
+	while (true) {
+		if (count <= 0) {
+			break;
+		}
+		if (Map[c].Overlay != 0xE7) {
+			Cell tmp = Cell(c.X, c.Y - 1);
+			for (int i = 0; i < 3; i++) {
+				CellClass * cellptr = &Map[tmp];
+				Coord coord = cellptr->Fetch_CellID();
+				coord.Z = LEVEL_LEPTON_H * cellptr->Height;
+				coord.X += Random_Double(-0.5, 0.5) * 50;
+				coord.Y += Random_Double(-0.5, 0.5) * 50;
+				new AnimClass(Rule->BridgeExplosions[Random_Pick(0, Rule->BridgeExplosions.Count() - 1)], coord, Random_Pick(1, 5));
+				tmp = Cell(tmp.X, tmp.Y + 1);
+			}
+		}
+		for (int j = 0; j < 3; j++) {
+			if (FUN_0057CCF0(c)) {
+				break;
+			}
+		}
+		c.X += step;
+		count--;
+		int overlay = Map[c].Overlay;
+		if (overlay < 0xCD || overlay > 0xE8) {
+			break;
+		}
+	}
+	Update_Pathfinding_1();
+	TacticalMap->IsFirstRender = true;
+}
+
+// FUNCTION: 0x00575BA0
+void MapClass::FUN_00575BA0(Cell const & cell)
+{
+	int back = 0;
+	Cell c = cell;
+	Cell start = c;
+	int step = 1;
+	int fwd = 0;
+	do {
+		c.Y--;
+		back++;
+	} while (Is_Concrete_Low_Bridge(c));
+	c = start;
+	do {
+		c.Y++;
+		fwd++;
+	} while (Is_Concrete_Low_Bridge(c));
+	if (fwd < back) {
+		step = -1;
+	}
+	c = start;
+	c.Y = start.Y - (back - fwd) / 2;
+	int count = 4;
+	while (true) {
+		if (count <= 0) {
+			break;
+		}
+		if (Map[c].Overlay != 0xE8) {
+			Cell tmp = Cell(c.X - 1, c.Y);
+			for (int i = 0; i < 3; i++) {
+				CellClass * cellptr = &Map[tmp];
+				Coord coord = cellptr->Fetch_CellID();
+				coord.Z = LEVEL_LEPTON_H * cellptr->Height;
+				coord.X += Random_Double(-0.5, 0.5) * 50;
+				coord.Y += Random_Double(-0.5, 0.5) * 50;
+				new AnimClass(Rule->BridgeExplosions[Random_Pick(0, Rule->BridgeExplosions.Count() - 1)], coord, Random_Pick(1, 5));
+				tmp = Cell(tmp.X + 1, tmp.Y);
+			}
+		}
+		for (int j = 0; j < 3; j++) {
+			if (FUN_0057CCF0(c)) {
+				break;
+			}
+		}
+		c.Y += step;
+		count--;
+		int overlay = Map[c].Overlay;
+		if (overlay < 0xCD || overlay > 0xE8) {
+			break;
+		}
+	}
+	Update_Pathfinding_1();
+	TacticalMap->IsFirstRender = true;
+}
+
+
+// FUNCTION: 0x00575EE0
+void MapClass::Spring_Bridge_Destruction_Triggers(Cell cell1, Cell cell2)
+{
+	bool is_east_west = false;
+	Cell current;
+	Cell end;
+	if (cell1.Y == cell2.Y) {
+		is_east_west = true;
+		if (cell1.X > cell2.X) {
+			swap(cell1, cell2);
+		}
+	} else if (cell1.Y > cell2.Y) {
+		swap(cell1, cell2);
+	}
+	current = cell1;
+	end = cell2;
+
+	while (current != end) {
+		CellClass * cptr = &Map[current];
+		if (cptr->Tag != NULL) {
+			cptr->Tag->Spring(TEVENT_BRIDGE_DESTROYED);
+		}
+
+		if (is_east_west) {
+			cptr = &Map[Adjacent_Cell(current, FACING_S)];
+			if (cptr->Tag != NULL) {
+				cptr->Tag->Spring(TEVENT_BRIDGE_DESTROYED);
+			}
+			cptr = &Map[Adjacent_Cell(current, FACING_N)];
+			if (cptr->Tag != NULL) {
+				cptr->Tag->Spring(TEVENT_BRIDGE_DESTROYED);
+			}
+			cptr = &Map[Adjacent_Cell(cptr->CellID, FACING_N)];
+			if (cptr->Tag != NULL) {
+				cptr->Tag->Spring(TEVENT_BRIDGE_DESTROYED);
+			}
+			current += Cell(1, 0);
+		} else {
+			cptr = &Map[Adjacent_Cell(current, FACING_E)];
+			if (cptr->Tag != NULL) {
+				cptr->Tag->Spring(TEVENT_BRIDGE_DESTROYED);
+			}
+			cptr = &Map[Adjacent_Cell(current, FACING_W)];
+			if (cptr->Tag != NULL) {
+				cptr->Tag->Spring(TEVENT_BRIDGE_DESTROYED);
+			}
+			cptr = &Map[Adjacent_Cell(cptr->CellID, FACING_W)];
+			if (cptr->Tag != NULL) {
+				cptr->Tag->Spring(TEVENT_BRIDGE_DESTROYED);
+			}
+			current.Y++;
+		}
+	}
+}
+
 // FUNCTION: 0x00577A50
 Cell MapClass::Pick_Random_Location(void) const
 {

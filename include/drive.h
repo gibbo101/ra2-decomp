@@ -35,6 +35,7 @@ class DriveLocomotionClass : public LocomotionClass, public IPiggyback
 		virtual CoordStruct STDMETHODCALLTYPE Destination(void) override;
 		virtual CoordStruct STDMETHODCALLTYPE Head_To_Coord(void) override;
 		virtual Matrix3DStruct STDMETHODCALLTYPE Draw_Matrix(int *key) override;
+		virtual Matrix3DStruct STDMETHODCALLTYPE Shadow_Matrix(int *key) override;
 		virtual int STDMETHODCALLTYPE Z_Adjust(void) override;
 		virtual ZGradientType STDMETHODCALLTYPE Z_Gradient(void) override;
 		virtual boolean STDMETHODCALLTYPE Process(void) override;

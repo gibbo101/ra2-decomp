@@ -20,6 +20,7 @@
 #include "_surface.h"
 #include "_tactica.h"
 #include "_tooltip.h"
+#include "_xmouse.h"
 #include "_zbuffer.h"
 #include "airctype.h"
 #include "animtype.h"
@@ -72,6 +73,18 @@
 #include "super.hh"
 
 #include <cmath>
+
+namespace Unsorted { extern bool MoveFeedback; }
+template<class T> inline T Bound2(T original, T minval, T maxval)
+{
+	T ret = original;
+	if (ret < minval) ret = minval;
+	if (ret >= maxval) ret = maxval-1;
+	return(ret);
+}
+
+extern bool DAT_00884D44;
+void __fastcall UnselectAll(void);
 
 // FUNCTION: 0x004A8420 $E2
 // FUNCTION: 0x004A8440 $E5
@@ -667,10 +680,334 @@ bool DisplayClass::Fog_Map_Cell(Cell const & cell, HouseClass * house)
 	return(changed);
 }
 
+// FUNCTION: 0x004AA050
+bool DisplayClass::Shadow_Map_Cell(Cell const & cell, HouseClass * house)
+{
+	CellClass * cellptr = &(*this)[cell];
+
+	bool changed = !cellptr->IsMapped;
+	bool newlymapped = changed;
+
+	cellptr->IsMapped = true;
+
+	signed char sframe = TacticalMap->Cell_Shadow(cell, false);
+	if (sframe != cellptr->ShadowFrame) {
+		changed = true;
+		cellptr->ShadowFrame = sframe;
+	}
+	if (cellptr->ShadowFrame == -1) {
+		cellptr->IsVisible = true;
+	}
+
+	if (changed) {
+		TacticalMap->Flag_Cell(*cellptr);
+	}
+
+	for (int dir = FACING_FIRST; dir < FACING_COUNT; dir++) {
+		int shadow;
+
+		Cell c = AdjacentCell[dir & 7] + cell;
+		CellClass * cptr = &(*this)[c];
+
+		if (c != cell && !cptr->IsVisible) {
+			shadow = TacticalMap->Cell_Shadow(c, false);
+
+			if (shadow == -1) {
+				if (!cptr->IsMapped) {
+					Shadow_Map_Cell(c, house);
+				} else {
+					cptr->IsVisible = true;
+					TacticalMap->Flag_Cell(*cptr);
+					for (int dir2 = FACING_FIRST; dir2 < FACING_COUNT; dir2++) {
+						Cell cc = Adjacent_Cell(c, (FacingType)dir2);
+						CellClass * scptr = &(*this)[cc];
+						signed char sframe = TacticalMap->Cell_Shadow(cc, false);
+						if (sframe != scptr->ShadowFrame) {
+							scptr->ShadowFrame = sframe;
+							TacticalMap->Flag_Cell(*scptr);
+						}
+					}
+				}
+			} else {
+				if (shadow != -2 && !cptr->IsMapped) {
+					Shadow_Map_Cell(c, house);
+				} else {
+					if (shadow >= 0 && shadow != cptr->ShadowFrame) {
+						cptr->ShadowFrame = shadow;
+						TacticalMap->Flag_Cell(*cptr);
+					}
+				}
+			}
+		}
+	}
+
+	if (changed) {
+		Map.Reveal_Nearby_Technos(cellptr, house, newlymapped);
+	}
+
+	return(changed);
+}
+
 // FUNCTION: 0x004AA290
 ObjectClass * DisplayClass::Cell_Object(Cell const & cell, Point2D const & point) const
 {
 	return(*this)[cell].Cell_Object(point);
+}
+
+// FUNCTION: 0x004AA2B0
+ObjectClass * DisplayClass::Next_Object(ObjectClass * object) const
+{
+	ObjectClass * firstobj = NULL;
+	bool foundmatch = false;
+
+	if (object == NULL) {
+		foundmatch = true;
+	}
+
+	static LayerType _layers[] = {
+		LAYER_GROUND,
+		LAYER_AIR,
+		LAYER_TOP
+	};
+
+	for (int lindex = 0; lindex < ARRAY_SIZE(_layers); lindex++) {
+		for (int uindex = 0; uindex < Layer[_layers[lindex]].Count(); uindex++) {
+			ObjectClass * obj = Layer[_layers[lindex]][uindex];
+
+			if (obj != NULL) {
+				TechnoClass * techno = (obj->AbstractFlags & 1) ? (TechnoClass *)obj : NULL;
+				if (obj->Is_Players_Army() && techno != NULL && techno->CanBeSelectedNow()) {
+					if (firstobj == NULL) firstobj = obj;
+					if (foundmatch) return(obj);
+					if (object == obj) foundmatch = true;
+				}
+			}
+		}
+	}
+	return(firstobj);
+}
+
+// FUNCTION: 0x004AA380
+ObjectClass * DisplayClass::Prev_Object(ObjectClass * object) const
+{
+	ObjectClass * firstobj = NULL;
+	bool foundmatch = false;
+
+	if (object == NULL) {
+		foundmatch = true;
+	}
+
+	static LayerType _layers[] = {
+		LAYER_TOP,
+		LAYER_AIR,
+		LAYER_GROUND
+	};
+
+	for (int lindex = 0; lindex < ARRAY_SIZE(_layers); lindex++) {
+		for (int uindex = Layer[_layers[lindex]].Count() - 1; uindex >= 0; uindex--) {
+			ObjectClass * obj = Layer[_layers[lindex]][uindex];
+
+			if (obj != NULL) {
+				TechnoClass * techno = (obj->AbstractFlags & 1) ? (TechnoClass *)obj : NULL;
+				if (obj->Is_Players_Army() && techno != NULL && techno->CanBeSelectedNow()) {
+					if (firstobj == NULL) firstobj = obj;
+					if (foundmatch) return(obj);
+					if (object == obj) foundmatch = true;
+				}
+			}
+		}
+	}
+	return(firstobj);
+}
+
+// FUNCTION: 0x004AAB30
+bool DisplayClass::Good_Reinforcement_Cell(Cell const & outcell, Cell const & incell, SpeedType loco, int zone, MZoneType mzone) const
+{
+	if (loco == SPEED_WINGED) {
+		return(true);
+	}
+
+	if (!(*this)[outcell].Is_Clear_To_Move(loco, true, true)) {
+		return(false);
+	}
+
+	if (!(*this)[incell].Is_Clear_To_Move(loco, true, true, zone, mzone)) {
+		return(false);
+	}
+
+	if ((*this)[outcell].Cell_Techno() != NULL) {
+		return(false);
+	}
+	if ((*this)[incell].Cell_Techno() != NULL) return(false);
+
+	return(true);
+}
+
+// FUNCTION: 0x004AAC10
+int DisplayClass::TacticalClass::Action(unsigned flags, KeyNumType & key, int modifier)
+{
+	int x, y;
+	unsigned char fog, shadow;
+	ObjectClass * object = NULL;
+	Point2D pixel(0, 0);
+
+	if (flags & (LEFTPRESS|LEFTRELEASE|RIGHTPRESS|RIGHTRELEASE)) {
+		x = Keyboard->MouseQX;
+		y = Keyboard->MouseQY;
+		pixel = Point2D(x, y);
+	} else {
+		x = Get_Mouse_X();
+		y = Get_Mouse_Y();
+		pixel = Get_Mouse_Point();
+	}
+
+	Coord coord;
+	Cell cell;
+	TacticalMap->Pixel_To_Coord(pixel);
+
+	pixel -= DSurface::ViewBounds.Top_Left();
+
+	Map.ProcessClickCoords(&pixel, &cell, &coord, &object, &fog, &shadow);
+
+	if (cell != Map.ZoneCell) {
+		Map.Set_Cursor_Pos(cell);
+	}
+
+	return(GadgetClass::Action(0, key, 0));
+}
+
+// FUNCTION: 0x004AAD20
+void DisplayClass::Mouse_Right_Press(Point2D const & point)
+{
+}
+
+// FUNCTION: 0x004AAD30
+void DisplayClass::Mouse_Right_Release(Point2D const & point)
+{
+	if (PendingObjectPtr && PendingObjectPtr->Is_Techno()) {
+		PendingObjectPtr = NULL;
+		PendingObject = NULL;
+		PendingHouse = HOUSE_NONE;
+		SetActiveFoundation(NULL);
+		Set_Default_Mouse(MOUSE_NORMAL, DAT_00884D44);
+		return;
+	}
+	if (IsRepairMode) {
+		Repair_Mode_Control(0);
+		Set_Default_Mouse(MOUSE_NORMAL, DAT_00884D44);
+		return;
+	}
+	if (IsSellMode) {
+		Sell_Mode_Control(0);
+		Set_Default_Mouse(MOUSE_NORMAL, DAT_00884D44);
+		return;
+	}
+	if (IsPowerMode) {
+		Power_Mode_Control(0);
+		Set_Default_Mouse(MOUSE_NORMAL, DAT_00884D44);
+		return;
+	}
+	if (IsTargettingMode != SUPER_NONE) {
+		IsTargettingMode = SUPER_NONE;
+		Set_Default_Mouse(MOUSE_NORMAL, DAT_00884D44);
+		return;
+	}
+	if (IsWaypointMode) {
+		Waypoint_Mode_Control(0);
+		Set_Default_Mouse(MOUSE_NORMAL, DAT_00884D44);
+		return;
+	}
+	if (PlaceBeaconMode) {
+		Place_Beacon_Mode_Control(0);
+		Set_Default_Mouse(MOUSE_NORMAL, DAT_00884D44);
+		return;
+	}
+	UnselectAll();
+	Set_Default_Mouse(MOUSE_NORMAL, DAT_00884D44);
+}
+
+// FUNCTION: 0x004AC2B0
+void __fastcall Bandbox_Selection_Callback(ObjectClass * object)
+{
+	HouseClass * owner = object->Owner_HouseClass();
+	if (owner && owner->Is_Player_Control() && object->CanBeSelected() && object->CanBeSelectedNow() && !object->IsInLimbo && object->Select()) {
+		Unsorted::MoveFeedback = false;
+	}
+}
+
+// FUNCTION: 0x004AC310
+void DisplayClass::Mouse_Left_Press(Point2D const & point)
+{
+	if (!IsRepairMode && !IsPowerMode && !IsSellMode && IsTargettingMode == SUPER_NONE && !PendingObject) {
+		IsTentative = true;
+		Band.BandX = point.X;
+		Band.BandY = point.Y;
+		NewX = point.X;
+		NewY = point.Y;
+	}
+}
+
+// FUNCTION: 0x004AC380
+void DisplayClass::Mouse_Left_Held(Point2D const & point)
+{
+	if (IsRubberBand && !IsWaypointMode && !PlaceBeaconMode) {
+		Rect rect = DSurface::ViewBounds;
+		Point2D npoint = point;
+		int x = Bound2(npoint.X, 0, rect.Width);
+		int y = Bound2(npoint.Y, 0, rect.Height);
+		npoint.X = x;
+		npoint.Y = y;
+		if (npoint != (Point2D &)NewX) {
+			TacticalMap->IsToRedraw = true;
+			TacticalMap->Modify_Rubber_Band(npoint);
+		}
+	} else {
+		if (IsTentative) {
+			if ((point - (Point2D &)Band).Length() > 4) {
+				IsRubberBand = true;
+				IsTentative = false;
+				if (!IsWaypointMode && !PlaceBeaconMode) {
+					TacticalMap->IsToRedraw = true;
+					TacticalMap->Start_Rubber_Band((Point2D &)Band);
+					Map.Override_Mouse_Shape(MOUSE_NORMAL);
+				}
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x004AC660
+void DisplayClass::Sell_Mode_Control(int control)
+{
+	bool mode = IsSellMode;
+	switch (control) {
+		case 0:
+			mode = false;
+			break;
+
+		case -1:
+			mode = (IsSellMode == false);
+			break;
+
+		case 1:
+			mode = true;
+			break;
+	}
+
+	if (mode != IsSellMode && !PendingObject) {
+		Set_Default_Mouse(MOUSE_NORMAL, false);
+		IsRepairMode = false;
+		IsPowerMode = false;
+		IsWaypointMode = false;
+		PlaceBeaconMode = false;
+		if (mode && PlayerPtr->CurBuildings > 0) {
+			IsSellMode = true;
+			UnselectAll();
+		} else {
+			IsSellMode = false;
+			Revert_Mouse_Shape();
+		}
+	}
 }
 
 // FUNCTION: 0x004ACA90

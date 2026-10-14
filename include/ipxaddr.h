@@ -11,13 +11,20 @@ class IPXAddressClass
 	public:
 		IPXAddressClass(void);
 		IPXAddressClass(NetNumType net, NetNodeType node);
+		IPXAddressClass(NetNumType net, NetNodeType node, unsigned short port);
 		IPXAddressClass(IPXHeaderType *header);
 
 		void Set_Address(NetNumType net, NetNodeType node);
+		void Set_Address(NetNumType net, NetNodeType node, unsigned short port);
 		void Set_Address(IPXHeaderType *header);
 
 		void Get_Address (NetNumType net, NetNodeType node);
+		void Get_Address(NetNumType net, NetNodeType node, unsigned short * port);
 		void Get_Address(IPXHeaderType *header);
+
+		void Get_Node(NetNodeType node);
+		void Set_Node(NetNodeType node);
+		void Set_Port(unsigned short port);
 
 		int Is_Broadcast(void);
 
@@ -28,7 +35,7 @@ class IPXAddressClass
 		bool operator >= (IPXAddressClass &addr);
 		bool operator <= (IPXAddressClass &addr);
 
-		const char *As_String(void);
+		const char *As_String(IPXAddressClass *address);
 
 	private:
 		NetNumType NetworkNumber;

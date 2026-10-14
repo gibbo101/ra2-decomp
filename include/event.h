@@ -83,7 +83,7 @@ class EventClass
 
 		unsigned char Type;
 
-		bool IsExecuted;
+		bool IsExecuted : 1;
 
 		char ID;
 

@@ -452,6 +452,12 @@ class BuildingTypeClass : public TechnoTypeClass
 		void Fetch_Building_Voxel_Image(void);
 		virtual void const * Get_Buildup_Data(void) const;
 		void Free_Buildup_Data(void);
+		void Free_Bib_Shape(void);
+		void Free_Deploying_Anim(void);
+		void Free_Under_Door_Anim(void);
+		void Free_Rubble(void);
+		void Free_Roof_Deploying_Anim(void);
+		void Free_Under_Roof_Door_Anim(void);
 		virtual bool Legal_Placement(Cell const & pos, HouseClass * house = NULL) const override;
 
 		bool Is_Factory(void) const {return(ToBuild != RTTI_NONE);}

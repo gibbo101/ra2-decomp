@@ -958,6 +958,21 @@ LoadOptionsClass's plain destructor (0x558790) got a names.csv row, which landed
 0x52D640. Cost: about 6.8M tokens plus the recovery. Merge gate: 5,099 of 5,099
 (779.2 KB).
 
+### Batches 31, 32 and 33 (14 October 2026)
+
+**402 of 432 functions** (124, 139, 139). Batch 31's merge gave WaveClass YR's layout
+(MagPoints for the magnetron wave, size 0x240); batch 32's dropped `novtable` from
+INoticeSink and INoticeSource, whose RTTI and constructors show real vtables, adopted
+connect.h and phone.h with YR's wide names, and fixed swapped ButtonA/ButtonB names that
+refaudit caught; batch 33's proved the event queue (DoList holds 0x4000 entries) and
+landed Queue_AI. New names.csv rows (the no-argument WaveClass constructor, DoList,
+OutList, the two command-bar buttons) exposed TabClass::Activate still using the swapped
+buttons, now fixed. check.py now removes an asm block before its ban only when the block
+appears verbatim, comments and whitespace aside, in reference/tibsun/code; Westwood's
+surface_quick_fill went into xsurface.cpp as it was and XSurface::Fill_Rect landed, and a
+one-instruction change to it is refused. Cost: about 7.8M tokens. Merge gate: 5,505 of
+5,505 (850.5 KB).
+
 ### Decide before the first batch
 
 - **Module layout.** Which function lives in which source file, and the link order, decide

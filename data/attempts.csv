@@ -1801,3 +1801,31 @@ date,address,function,model,result,best,checks,minutes,blocker,notes
 2026-10-14,0x005D7CE0,,sonnet-5.5 + opus-5.5,partial,57.1,0,,inline budget,Not re-run. The original leaves Game_Modes()[i] as a call to 0x5D5AC0.
 2026-10-14,0x006DA770,,sonnet-5.5 + opus-5.5,partial,60.9,0,,register allocation / branch shape,Not re-run. Still banked in build/batch/Tactical/.
 2026-10-14,0x007BAB90,,sonnet-5.5 + opus-5.5,partial,76.8,0,,register allocation,Not re-run. In Plot_Line's diagonal branch the original keeps start.X in a stack slot and end.X in edi.
+2026-10-14,0x00505360,,sonnet-5.5 + opus-5.5,partial,33.8,0,,register allocation,"Tier-one result, not retried"
+2026-10-14,0x00505FD0,,sonnet-5.5 + opus-5.5,partial,76.9,0,,stack frame,"Tier-one result, not retried"
+2026-10-14,0x0052F3F0,,sonnet-5.5 + opus-5.5,partial,35.8,0,,register allocation; header layout (WinsockInterfaceClass/UDPInterfaceClass size),Not retried. Waiting on the wsproto batch's WinsockInterfaceClass layout.
+2026-10-14,0x005312A0,,sonnet-5.5 + opus-5.5,partial,100,11,,Needs a header I don't own: SHPStruct in include/msanim.h has to declare ~SHPStruct(void) (0x0069E500). With that overla,"This is a match with the overlay, so it is banked rather than landed. It's saved in build/batch/Init/0x005312A0.cpp and goes between 0x005301A0 and 0x00531680. Three changes fixed the scheduling. First, the call is Draw_Shape from draw.h with its defaults. Its by-value Point2D z_off=Point2D(0,0) default is what gives the xor ecx/xor eax pushes. Second, the draw point is a block-scoped `Point2D pt("
+2026-10-14,0x00574000,,sonnet-5.5 + opus-5.5,partial,46.9,0,,register allocation and stack-slot layout,"Tier-one result, not retried"
+2026-10-14,0x00574C20,,sonnet-5.5 + opus-5.5,partial,46.9,0,,register allocation and stack-slot layout,"Tier-one result, not retried"
+2026-10-14,0x00576200,,sonnet-5.5 + opus-5.5,partial,34.8,0,,register allocation and frame layout,"Tier-one result, not retried"
+2026-10-14,0x0059AD10,,sonnet-5.5 + opus-5.5,partial,99.5,45,,x87/integer instruction scheduling,"Seed_Land_Type0 (MapType 0). I fixed the retry loop, which raised it from 97% to 99.5% (645/645 bytes), with TibSun's Seed_Water idiom: `int tries = 0; int seeded = 0; while (!seeded && tries < 10) { seeded = FUN_0059BBC0(...); if (!seeded) WorkingRegionID++; tries++; }`. VC6 folds the first !seeded test, which leaves the head `cmp esi,10` and the latch `test eax,eax; je head`. Only one difference"
+2026-10-14,0x0059AFA0,,sonnet-5.5 + opus-5.5,partial,63.6,0,,register allocation,"Tier-one result, not retried"
+2026-10-14,0x0059B200,,sonnet-5.5 + opus-5.5,partial,69.4,0,,register allocation and x87/statement scheduling,"Tier-one result, not retried"
+2026-10-14,0x0060A330,,sonnet-5.5 + opus-5.5,partial,51.3,0,,inline budget,"Tier-one result, not retried"
+2026-10-14,0x0060A5B0,,sonnet-5.5 + opus-5.5,partial,42.4,0,,inline budget,"Tier-one result, not retried"
+2026-10-14,0x0060AAB0,,sonnet-5.5 + opus-5.5,partial,39.6,0,,inline budget,"Tier-one result, not retried"
+2026-10-14,0x0060B000,,sonnet-5.5 + opus-5.5,partial,55.2,0,,register allocation and expression order,"Tier-one result, not retried"
+2026-10-14,0x0060B1D0,,sonnet-5.5 + opus-5.5,partial,77.3,0,,register allocation,"Tier-one result, not retried"
+2026-10-14,0x00634B20,,sonnet-5.5 + opus-5.5,partial,64.1,0,,register allocation,"Tier-one result, not retried"
+2026-10-14,0x00634E10,,sonnet-5.5 + opus-5.5,partial,79.4,0,,register allocation / immediate store form,"Tier-one result, not retried"
+2026-10-14,0x0070B280,,sonnet-5.5 + opus-5.5,partial,31.2,0,,x87 load order and frame size,"Tier-one result, not retried"
+2026-10-14,0x0070BCB0,,sonnet-5.5 + opus-5.5,partial,57.1,0,,register allocation,"Tier-one result, not retried"
+2026-10-14,0x004AC4F0,,sonnet-5.5 + opus-5.5,partial,44.4,0,,register allocation,Not retried; still banked.
+2026-10-14,0x00541680,,sonnet-5.5 + opus-5.5,partial,47.2,0,,register allocation (&peer->Ip held in ebx); declaration missing from ipxmgr.h,"Not retried. The banked source still uses `Instance`, which should become PacketTransport, and calls an Update_Peer_Address that ipxmgr.h does not declare. It can now use the real IPXAddressClass Get_Node, Set_Node, Set_Port and As_String, and the 7-argument WriteTo."
+2026-10-14,0x005C3B10,,sonnet-5.5 + opus-5.5,partial,62.7,0,,register allocation,Not retried; no header change was needed. Still banked in build/batch/MPCoop.
+2026-10-14,0x006994F0,,sonnet-5.5 + opus-5.5,partial,57.4,0,,"frame layout / block layout (shared exit tail, spilled counter)",Not retried; 92.6% normalised.
+2026-10-14,0x006D02B0,,sonnet-5.5 + opus-5.5,partial,78.6,0,,frame layout (dead store / unknown dead local),Not retried; still banked.
+2026-10-14,0x004AFF60,,sonnet-5.5 + opus-5.5,partial,66.7,1,,stack frame and inline budget,DriveLocomotionClass::Draw_Matrix. Rechecked and unchanged at 1153/1189 bytes. Left banked.
+2026-10-14,0x0064A0C0,,sonnet-5.5 + opus-5.5,partial,77,1,,register allocation,"Process_Receive_Packet. Rechecked with no overlay: 77% normalised (44.6% raw, 1378/1377 bytes). The session.h overlay is no longer needed, because Am_I_Master() now pushes 0 through the HouseClass* default. Left banked."
+2026-10-14,0x00690910,,sonnet-5.5 + opus-5.5,partial,74.7,1,,register allocation,ScoreFontClass::Print_String. Rechecked and unchanged at 248/248 bytes: the original keeps surf in EBX and one zero in EBP. Left banked.
+2026-10-14,0x007BB350,,sonnet-5.5 + opus-5.5,partial,21,1,,stack frame / register allocation,"XSurface::Draw_Ellipse. Rechecked and unchanged at 1443/1478 bytes, frame 0x44 against the original's 0x38. Left banked."

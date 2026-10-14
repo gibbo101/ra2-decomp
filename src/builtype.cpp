@@ -893,3 +893,149 @@ bool BuildingTypeClass::CanUseWaypoint(void) const
 {
 	return(false);
 }
+
+// FUNCTION: 0x00465920
+bool BuildingTypeClass::CanAttackMove(void) const
+{
+	return(false);
+}
+
+// FUNCTION: 0x00465930
+int BuildingTypeClass::Get_Max_Drain(DynamicVectorClass<BuildingTypeClass *> const & list)
+{
+	int maxdrain = 0;
+	for (int i = 0; i < list.Count(); i++) {
+		if (list[i]->Drain > maxdrain) {
+			maxdrain = list[i]->Drain;
+		}
+	}
+	return(maxdrain);
+}
+
+void FUN_005F96B0(char * name, TheaterType theater);
+
+// FUNCTION: 0x00465960
+void const * BuildingTypeClass::Get_Buildup_Data(void) const
+{
+	char fullname[MAX_PATH];
+
+	if (BuildupData == NULL && IsDemandLoadBuildup) {
+		if (strlen(BuildupFilename) != 0) {
+			_makepath(fullname, NULL, NULL, BuildupFilename, ".SHP");
+			FUN_005F96B0(fullname, Scen->Theater);
+			CCFileClass file(fullname);
+			ShapeSet * data = (ShapeSet *)Load_Alloc_Data(file);
+			if (data == NULL) {
+				FUN_005F9710(fullname);
+				CCFileClass file2(fullname);
+				data = (ShapeSet *)Load_Alloc_Data(file2);
+			}
+			((void const *&)BuildupData) = data;
+			if (BuildupData != NULL) {
+				((bool &)BuildupLoaded) = true;
+				int timedelay = 1;
+				int count = ((ShapeSet const *)BuildupData)->Get_Count()/2;
+				if (IsGate) {
+					count = GateStages + 1;
+				}
+				if (count > 0) {
+					timedelay = (Rule->BuildupTime * TICKS_PER_MINUTE) / count;
+				}
+				Init_Anim(BSTATE_CONSTRUCTION, 0, count, timedelay);
+			}
+		}
+		return(BuildupData);
+	}
+	return(BuildupData);
+}
+
+// FUNCTION: 0x00465AF0
+void BuildingTypeClass::Free_Buildup_Data(void)
+{
+	if (IsFreeBuildup && BuildupData != NULL) {
+		delete (ShapeSet *)BuildupData;
+		BuildupData = NULL;
+		BuildupLoaded = false;
+	}
+}
+
+// FUNCTION: 0x00465B30
+void BuildingTypeClass::Free_Bib_Shape(void)
+{
+	if (BibShapeLoaded && BibShape != NULL) {
+		delete (ShapeSet *)BibShape;
+		BibShape = NULL;
+		BibShapeLoaded = false;
+	}
+}
+
+// FUNCTION: 0x00465B70
+void BuildingTypeClass::Free_Deploying_Anim(void)
+{
+	if (DeployingAnimLoaded && DeployingAnim != NULL) {
+		delete (ShapeSet *)DeployingAnim;
+		DeployingAnim = NULL;
+		DeployingAnimLoaded = false;
+	}
+}
+
+// FUNCTION: 0x00465BB0
+void BuildingTypeClass::Free_Under_Door_Anim(void)
+{
+	if (UnderDoorAnimLoaded && UnderDoorAnim != NULL) {
+		delete (ShapeSet *)UnderDoorAnim;
+		UnderDoorAnim = NULL;
+		UnderDoorAnimLoaded = false;
+	}
+}
+
+// FUNCTION: 0x00465BF0
+void BuildingTypeClass::Free_Rubble(void)
+{
+	if (RubbleLoaded && Rubble != NULL) {
+		delete (ShapeSet *)Rubble;
+		Rubble = NULL;
+		RubbleLoaded = false;
+	}
+}
+
+// FUNCTION: 0x00465C30
+void BuildingTypeClass::Free_Roof_Deploying_Anim(void)
+{
+	if (RoofDeployingAnimLoaded && RoofDeployingAnim != NULL) {
+		delete (ShapeSet *)RoofDeployingAnim;
+		RoofDeployingAnim = NULL;
+		RoofDeployingAnimLoaded = false;
+	}
+}
+
+// FUNCTION: 0x00465C70
+void BuildingTypeClass::Free_Under_Roof_Door_Anim(void)
+{
+	if (UnderRoofDoorAnimLoaded && UnderRoofDoorAnim != NULL) {
+		delete (ShapeSet *)UnderRoofDoorAnim;
+		UnderRoofDoorAnim = NULL;
+		UnderRoofDoorAnimLoaded = false;
+	}
+}
+
+// FUNCTION: 0x00465CB0
+void BuildingTypeClass::Calculate_Base_Defense_Values(void)
+{
+}
+
+// FUNCTION: 0x00465CC0
+void BuildingTypeClass::Post_Read_Tile_Fixup(void)
+{
+	char buffer[60];
+
+	for (int i = 0; i < BuildingTypes.Count(); i++) {
+		BuildingTypeClass * building = BuildingTypes[i];
+		buffer[0] = '\0';
+		RuleINI->Get_String(building->Name(), "ToTile", NULL, buffer, sizeof(buffer));
+		IsometricTileType ittype = IsometricTileTypeClass::From_Name(buffer);
+		if (ittype >= ISOTILE_FIRST && ittype < IsometricTileTypes.Count()) {
+			building->ToTile = IsometricTileTypes[ittype];
+		}
+	}
+}

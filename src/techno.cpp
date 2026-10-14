@@ -83,6 +83,8 @@
 #include "vox.h"
 #include "voxdrsys.h"
 #include "stbuffer.h"
+#undef LoadString
+#include "stringtable.h"
 #include "_voxel.h"
 #include "voxlib.h"
 #include "warhead.h"
@@ -905,7 +907,7 @@ bool TechnoClass::Limbo(void)
 {
 	if (!IsInLimbo && TClass != NULL) {
 		if (TClass->RevealToAll) {
-			vt_entry_48C(0, 0, 1, (unsigned)PlayerPtr);
+			vt_entry_48C(0, 0, 1, PlayerPtr);
 		} else {
 			vt_entry_48C(0, 0, 0, 0);
 		}
@@ -3541,6 +3543,188 @@ bool TechnoClass::Is_Ready_To_Random_Animate(void) const
 // FUNCTION: 0x00709A20
 void TechnoClass::vt_entry_47C(unsigned)
 {
+}
+
+// FUNCTION: 0x00709A30
+void TechnoClass::Assign_Destination(AbstractClass *, bool)
+{
+}
+
+// FUNCTION: 0x00709A40
+bool TechnoClass::Enter_Idle_Mode(bool, bool)
+{
+	if (TemporalImUsing != NULL && TemporalImUsing->Target != NULL) {
+		TemporalImUsing->LetGo();
+	}
+	if (!RefreshMegaMission() && IsNotWarpingIn()) {
+		TryNextPlanningTokenNode();
+	}
+	return(false);
+}
+
+namespace FileSystem { extern ShapeSet * PIPS_SHP; extern ConvertClass * PALETTE_PAL; }
+
+// FUNCTION: 0x0070A990
+void TechnoClass::DrawVeterancyPips(Point2D const & point, Rect const & rect) const
+{
+	Class_Of();
+	ShapeSet * shapes = FileSystem::PIPS_SHP;
+	int frame = -1;
+	if (Veterancy.Is_Veteran()) {
+		frame = 14;
+	}
+	if (Veterancy.Is_Elite()) {
+		frame = 15;
+	}
+	if (Veterancy.Is_Dumbass()) {
+		frame = 19;
+	} else if (frame == -1) {
+		return;
+	}
+
+	Point2D xy = point + Point2D(5, 2);
+	if (RTTI != (RTTIType)15) {
+		xy.X += 5;
+		xy.Y += 4;
+	}
+	Draw_Shape(*DSurface::Temp, *FileSystem::PALETTE_PAL, shapes, frame, xy, rect, ShapeFlags_Type(0xE00), NULL, -2, ZGRAD_GROUND, 1000);
+}
+
+Point2D Simple_Text_Print_Wide(wchar_t const * text, Surface * surface, Rect const * bounds, Point2D const * pt, unsigned fore, unsigned back, TextPrintType flags, int unused);
+Rect Drawing_GetTextDimensions(wchar_t const * text, Point2D loc, unsigned short flags, int marginX, int marginY);
+
+// FUNCTION: 0x0070AA60
+void TechnoClass::Draw_Text_Overlay(Point2D const & point1, Point2D const & point2, Rect const & cliprect) const
+{
+	wchar_t buffer[128];
+	wchar_t const * text;
+
+	if (RTTI == RTTI_BUILDING && ((BuildingClass const *)this)->Class->Power > 0 && !IsLeader) {
+		swprintf(buffer, StringTable::LoadString("TXT_POWER_DRAIN2", NULL, "D:\\ra2mdpost\\Techno.CPP", 15483), House->Power_Output(), House->Power_Drain());
+		Rect box = Drawing_GetTextDimensions(buffer, point2, 0x149, 4, 2);
+		box = Intersect(box, cliprect);
+		int color = DSurface::Build_Hicolor_Pixel(House->RemapColorRGB);
+		DSurface::Temp->Fill_Rect(box, 0);
+		DSurface::Temp->Draw_Rect(box, color);
+		Simple_Text_Print_Wide(buffer, DSurface::Temp, &cliprect, &point2, color, 0, (TextPrintType)0x149, 1);
+	}
+
+	if (IsLeader) {
+		text = StringTable::LoadString("TXT_PRIMARY", NULL, "D:\\ra2mdpost\\Techno.CPP", 15502);
+		if (RTTI == RTTI_BUILDING && ((BuildingClass const *)this)->Class->Width() == 1) {
+			text = StringTable::LoadString("TXT_PRI", NULL, "D:\\ra2mdpost\\Techno.CPP", 15504);
+		}
+		Rect box = Drawing_GetTextDimensions(text, point2, 0x149, 4, 2);
+		box = Intersect(box, cliprect);
+		int color = DSurface::Build_Hicolor_Pixel(House->RemapColorRGB);
+		DSurface::Temp->Fill_Rect(box, 0);
+		DSurface::Temp->Draw_Rect(box, color);
+		Simple_Text_Print_Wide(text, DSurface::Temp, &cliprect, &point2, color, 0, (TextPrintType)0x149, 1);
+	}
+}
+
+// FUNCTION: 0x0070AD50
+Cell TechnoClass::Find_Exit_Cell(TechnoClass const * techno, unsigned) const
+{
+	return(Docking_Coord((TechnoClass *)techno).As_Cell());
+}
+
+// FUNCTION: 0x0070ADA0
+int TechnoClass::Refund_Amount(void) const
+{
+	return(Techno_Type_Class()->GetRefund(House, false));
+}
+
+// FUNCTION: 0x0070ADC0
+void TechnoClass::Look(bool incremental, bool dontmap)
+{
+	if (IsInPlayfield && (!House->Class->IsMultiplayPassive || Session.Type == GAME_NORMAL)) {
+		Coord position = PositionCoord;
+		int sight_increase = 10 * (position.Z / Rule->LeptonsPerSightIncrease);
+		if (sight_increase > SightIncrease) {
+			incremental = false;
+		}
+		SightIncrease = sight_increase;
+
+		int sight_range = Techno_Type_Class()->SightRange * (SightIncrease * 0.01 + 1.0);
+		if (Has_Ability(ABILITY_SIGHT) && Rule->VeteranSight != 0.0) {
+			sight_range *= Rule->VeteranSight;
+		}
+
+		if (sight_range) {
+			Coord reveal = PositionCoord;
+			Map.RevealArea1(&reveal, sight_range, House, incremental, dontmap, false, true, true);
+		}
+	}
+}
+
+// FUNCTION: 0x0070AF50
+void TechnoClass::UpdateSight(bool incremental, bool flag, bool use_house, HouseClass * house, int override_range)
+{
+	if (IsInPlayfield && !House->Class->IsMultiplayPassive) {
+		if (Techno_Type_Class()->SightRange != 0 || override_range != 0) {
+			Coord position = PositionCoord;
+			int sight_increase = 10 * (position.Z / Rule->LeptonsPerSightIncrease);
+			if (sight_increase > SightIncrease) {
+				incremental = false;
+			}
+			SightIncrease = sight_increase;
+
+			int sight_range = Techno_Type_Class()->SightRange * (SightIncrease * 0.01 + 1.0);
+			if (Has_Ability(ABILITY_SIGHT) && Rule->VeteranSight != 0.0) {
+				sight_range *= Rule->VeteranSight;
+			}
+			if (override_range != 0) {
+				sight_range = override_range;
+			}
+
+			if (!unknown_bool_250) {
+				unknown_bool_250 = true;
+				*(Coord *)LastSightCoords = PositionCoord;
+				LastSightRange = sight_range;
+				if (sight_range != 0) {
+					if (use_house && house != NULL) {
+						Coord reveal = PositionCoord;
+						Map.RevealArea2(&reveal, sight_range, house, incremental, flag, false, true, false);
+					} else {
+						Coord reveal = PositionCoord;
+						Map.RevealArea2(&reveal, sight_range, House, incremental, flag, false, true, false);
+					}
+				}
+			} else if (use_house && sight_range != 0 && house != NULL) {
+				Coord reveal = PositionCoord;
+				Map.RevealArea2(&reveal, sight_range, house, incremental, flag, false, true, false);
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x0070B1D0
+void TechnoClass::vt_entry_48C(bool incremental, bool flag, bool use_house, HouseClass * house)
+{
+	if (IsInPlayfield && !House->Class->IsMultiplayPassive) {
+		if (unknown_bool_250) {
+			int range = LastSightRange;
+			unknown_bool_250 = false;
+			if (range != 0) {
+				if (use_house && house != NULL) {
+					Map.RevealArea2((Coord *)LastSightCoords, range, house, incremental, flag, false, true, true);
+					return;
+				}
+				if (LastSightRange != 0) {
+					Map.RevealArea2((Coord *)LastSightCoords, range, House, incremental, flag, false, true, true);
+				}
+			}
+		} else if (use_house && LastSightRange != 0 && house != NULL) {
+			Map.RevealArea2((Coord *)LastSightCoords, LastSightRange, house, incremental, flag, false, true, true);
+		}
+	}
+}
+
+// FUNCTION: 0x0070BE50
+int TechnoClass::Get_Predator_Offset(void) const
+{
+	return((Fetch_ID() + (int)WarpFactor) % 400);
 }
 
 // FUNCTION: 0x0070D150

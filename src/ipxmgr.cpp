@@ -501,3 +501,160 @@ int IPXManagerClass::Global_Channel_Op(int a1, int a2, int a3, int a4, int a5, i
 
 	return GlobalChannel->vt_entry_38(a1, a2, a3, a4, a5, a6);
 }
+
+// FUNCTION: 0x005413F0
+void IPXManagerClass::Global_Channel_Op_3C(int a1)
+{
+	if (!IPXStatus || !Listening) return;
+
+	GlobalChannel->vt_entry_3C(a1);
+}
+
+// FUNCTION: 0x00541410
+int IPXManagerClass::Send_Lobby_Message(void *buf, int buflen, bool ack_req)
+{
+	int rc;
+
+	if (!IPXStatus || !Listening || !LobbyChannel) return 0;
+
+	rc = LobbyChannel->Send_Packet(buf, buflen, &LobbyChannel->Address, ack_req, 0, 0);
+	if (!rc) {
+		SendOverflows++;
+		FUN_004068E0("Send overflow %d\n", SendOverflows);
+	}
+	return rc;
+}
+
+// FUNCTION: 0x00541480
+int IPXManagerClass::Get_Lobby_Message(void *buf, int *buflen,
+	IPXAddressClass *address, unsigned short *product_id)
+{
+	if (!IPXStatus || !Listening) return 0;
+
+	return LobbyChannel->Get_Packet(buf, buflen, address, product_id);
+}
+
+extern bool DAT_00A8DBA0;
+
+// FUNCTION: 0x005414C0
+int IPXManagerClass::Send_Private_Message(void *buf, int buflen, int ack_req,
+	int conn_id)
+{
+	int i;
+	int connect_idx;
+
+	if (!IPXStatus || !Listening || (NumConnections == 0)) {
+		return 0;
+	}
+
+	if (conn_id == CONNECTION_NONE) {
+		if (Session.Type == GAME_INTERNET && DAT_00A8DBA0) {
+			if (MulticastChannel->Queue->Num_Send() >= MulticastChannel->Queue->Max_Send()) {
+				{ SendOverflows++; return 0; }
+			}
+			return MulticastChannel->Send_Packet(buf, buflen, ack_req, 0xff);
+		}
+
+		for (i = 0; i < NumConnections; i++) {
+			if (Connection[i]->Queue->Num_Send() == Connection[i]->Queue->Max_Send()) {
+				{ SendOverflows++; return 0; }
+			}
+		}
+
+		for (i = 0; i < NumConnections; i++) {
+			Connection[i]->Send_Packet(buf, buflen, ack_req, 0);
+		}
+		return 1;
+	}
+
+	connect_idx = Connection_Index(conn_id);
+	if (connect_idx == CONNECTION_NONE) {
+		{ SendOverflows++; return 0; }
+	}
+	if (Connection[connect_idx]->Queue->Num_Send() == Connection[connect_idx]->Queue->Max_Send()) {
+		{ SendOverflows++; return 0; }
+	}
+	Connection[connect_idx]->Send_Packet(buf, buflen, ack_req, 0);
+	return 1;
+}
+
+// FUNCTION: 0x005415F0
+int IPXManagerClass::Get_Private_Message(void *buf, int *buflen, int *conn_id)
+{
+	int i;
+	int rc;
+	int c_id;
+
+	if (!IPXStatus || !Listening || (NumConnections == 0)) {
+		return 0;
+	}
+
+	if (CurConnection >= NumConnections) {
+		CurConnection = 0;
+	}
+
+	for (i = 0; i < NumConnections; i++) {
+		rc = Connection[CurConnection]->Get_Packet(buf, buflen);
+		c_id = Connection[CurConnection]->ID;
+
+		CurConnection++;
+		if (CurConnection >= NumConnections) {
+			CurConnection = 0;
+		}
+
+		if (rc) {
+			(*conn_id) = c_id;
+			return 1;
+		}
+	}
+
+	return 0;
+}
+
+// FUNCTION: 0x00542280
+void IPXManagerClass::Set_Connection_Address(int id, IPXAddressClass *address)
+{
+	int index = Connection_Index(id);
+
+	if (index != CONNECTION_NONE && index < NumConnections) {
+		Connection[index]->Address = *address;
+	}
+}
+
+// FUNCTION: 0x005422C0
+int IPXManagerClass::Get_Bad_Connection(void)
+{
+	return BadConnection;
+}
+
+// FUNCTION: 0x005422D0
+int IPXManagerClass::Global_Num_Send(void)
+{
+	if (!IPXStatus || !Listening) return 0;
+
+	return GlobalChannel->Queue->Num_Send();
+}
+
+// FUNCTION: 0x005422F0
+int IPXManagerClass::Global_Num_Receive(void)
+{
+	if (!IPXStatus || !Listening) return 0;
+
+	return GlobalChannel->Queue->Num_Receive();
+}
+
+// FUNCTION: 0x00542310
+int IPXManagerClass::Lobby_Num_Send(void)
+{
+	if (!IPXStatus || !Listening || !LobbyChannel) return 0;
+
+	return LobbyChannel->Queue->Num_Send();
+}
+
+// FUNCTION: 0x00542330
+int IPXManagerClass::Lobby_Num_Receive(void)
+{
+	if (!IPXStatus || !Listening || !LobbyChannel) return 0;
+
+	return LobbyChannel->Queue->Num_Receive();
+}

@@ -42,14 +42,7 @@ class DropPodLocomotionClass : public LocomotionClass, public IPiggyback
 		virtual int Fetch_Object_Size(void) const override {return(sizeof(*this));}
 
 	private:
-		enum DropPodDirType {
-			DPOD_DIR_NE,
-			DPOD_DIR_NW,
-			DPOD_DIR_SE,
-			DPOD_DIR_SW,
-		};
-
-		int Direction;
+		bool Flipped;
 
 		Coord DestinationCoord;
 

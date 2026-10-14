@@ -14,6 +14,7 @@
 #include "sun.h"
 #include "typelist.h"
 #include "version.h"
+#include "wstring.h"
 #include "win.h"
 
 #include "dialog.hh"
@@ -207,7 +208,14 @@ struct NodeNameType {
 		struct {
 			char Serial[SERIAL_MAX];
 			int House;
+			int : 32;
 			int Color;
+			int : 32;
+			int : 32;
+			int : 32;
+			int : 32;
+			int : 32;
+			int : 32;
 			int ID;
 			int ProcessTime;
 			int Status;
@@ -413,7 +421,7 @@ class MultiMission
 		void Set_Filename(char const * filename);
 		void Set_Digest(char const * digest);
 		void Set_Official(bool official);
-		char const * Description(void) const {return(ScenarioDescription);}
+		wchar_t const * Description(void) const {return(ScenarioDescription);}
 		char const * Get_Filename(void) const {return(Filename);}
 		char const * Get_Digest(void) const {return(Digest);}
 		bool Get_Official(void) { return(IsOfficial); }
@@ -422,7 +430,7 @@ class MultiMission
 		DiskID On_Which_CD(void) const;
 
 	private:
-		char ScenarioDescription[DESCRIP_MAX];
+		wchar_t ScenarioDescription[DESCRIP_MAX];
 		char Filename[_MAX_PATH];
 		char Digest[32];
 		bool IsOfficial;
@@ -431,6 +439,7 @@ class MultiMission
 		int MaxPlayers;
 
 		TypeList<DiskID> Disks;
+		DynamicVectorClass<Wstring> GameModes;
 };
 
 // One computer player's setup in a skirmish or multiplayer game, by player slot.
@@ -473,6 +482,8 @@ struct GameOptionsType {
 
 struct SessionOptionsClass {
 	SessionOptionsClass(void);
+	void Read(CCINIClass & ini, char const * section, int default_slot, int default_first_slot);
+	void Write(CCINIClass & ini, char const * section);
 
 	int MPGameMode;
 	int ScenIndex;
@@ -512,12 +523,13 @@ class SessionClass
 
 		void Read_MultiPlayer_Settings (void);
 		void Write_MultiPlayer_Settings (void);
+		void Write_Chat_Settings(void);
 		void Read_Scenario_Descriptions (void);
 		void Free_Scenario_Descriptions(void);
 		void Load_Call_Wait_Strings(void);
 
 		int Create_Connections(void);
-		bool Am_I_Master(void);
+		bool Am_I_Master(HouseClass * who = NULL);
 		unsigned int Compute_Unique_ID(void);
 		void Update_Progress(int percent);
 		void Init_Fixed_Alliances(void);
@@ -618,8 +630,8 @@ class SessionClass
 
 		wchar_t LastMessage[MAX_MESSAGE_LENGTH];
 		unsigned WWChat		: 1;
-		bool unknown_1FC0;
-		bool unknown_1FC1;
+		bool LANScrollText;
+		bool WOLScrollText;
 
 		MPlayerScoreType Score[MAX_MULTI_NAMES];
 		int GamesPlayed;
@@ -673,11 +685,22 @@ class SessionClass
 		int PlayerLatency[MAX_PLAYERS];
 		int LatencyFudge;
 
-		unsigned char unknown_2968[0x6B8];
+		bool ViaPacketRouter;
+		unsigned char unknown_2969[3];
+		IPXAddressClass unknown_296C;
+		IPXAddressClass unknown_2978;
+		unsigned char unknown_2984[0x69C];
 		wchar_t MasterPlayerName[MPLAYER_NAME_MAX + 1];
-		unsigned char unknown_304A[0x2A];
+		unsigned int unknown_304C[8];
+		unsigned char unknown_306C[8];
 		int MasterPlayerID;
-		unsigned char unknown_3078[0x34];
+		unsigned char unknown_3078[0x14];
+		int unknown_308C;
+		bool unknown_3090;
+		int unknown_3094;
+		int unknown_3098;
+		int unknown_309C;
+		unsigned char unknown_30A0[0xC];
 
 		int TrapFrame;
 		RTTIType TrapObjType;

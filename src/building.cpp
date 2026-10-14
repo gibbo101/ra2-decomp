@@ -3688,6 +3688,298 @@ void BuildingClass::Assign_Destination(AbstractClass * target, bool immediate)
 	}
 }
 
+// FUNCTION: 0x00455DA0
+bool BuildingClass::Is_Move_Override(void) const
+{
+	if (Class->ToBuild != RTTI_UNITTYPE && Class->ToBuild != RTTI_INFANTRYTYPE && !Class->Cloning && !Class->IsCanUnitRepair) {
+		return(false);
+	}
+	return(true);
+}
+
+// FUNCTION: 0x00455DD0
+BuildingClass * Find_Unit_Repair_Facility(HouseClass * house, TechnoClass * obj)
+{
+	BuildingClass * best_bld = NULL;
+	int best_dist = 0x7FFFFFFF;
+
+	static int max_dist = int(CELL_LEPTON_DIAG * 20.0);
+
+	int count = house->UnitRepairStations.Count();
+	for (int i = 0; i < count; i++) {
+		BuildingClass * bld = house->UnitRepairStations[i];
+		if (obj->Transmit_Message(RADIO_CAN_LOAD, bld) != RADIO_STATIC) {
+			int dist = (bld->Get_Coord() - obj->Get_Coord()).Length();
+			if (dist < best_dist && dist < max_dist) {
+				best_bld = bld;
+				best_dist = dist;
+			}
+		}
+	}
+	return(best_bld);
+}
+
+// FUNCTION: 0x00455F10
+void BuildingClass::Reserve_Base_Area(bool skip_inner_cells)
+{
+	int spacing = Rule->AIBaseSpacing;
+	int width = 2 * spacing + Class->Width();
+	int height = 2 * spacing + Class->Height();
+
+	unsigned owner = 1 << House->HeapID;
+	Cell top_left = PositionCoord.As_Cell() - Cell(spacing, spacing);
+
+	for (int x = top_left.X; x < top_left.X + width; x++) {
+		for (int y = top_left.Y; y < top_left.Y + height; y++) {
+			Map[Cell(x, y)].OccupiedBy |= owner;
+		}
+	}
+
+	Rect & base_rect = House->Base.BaseAreaRect;
+	if (base_rect.X == 0) {
+		base_rect.X = top_left.X;
+	}
+	if (base_rect.Y == 0) {
+		base_rect.Y = top_left.Y;
+	}
+	if (top_left.X < base_rect.X) {
+		int old_x = base_rect.X;
+		base_rect.X = top_left.X;
+		base_rect.Width += old_x - top_left.X;
+	}
+	if (top_left.X + width > base_rect.Width + base_rect.X) {
+		base_rect.Width = top_left.X - base_rect.X + width;
+	}
+	if (top_left.Y < base_rect.Y) {
+		int old_y = base_rect.Y;
+		base_rect.Y = top_left.Y;
+		base_rect.Height += old_y - top_left.Y;
+	}
+	if (top_left.Y + height > base_rect.Height + base_rect.Y) {
+		base_rect.Height = top_left.Y - base_rect.Y + height;
+	}
+
+	if (!skip_inner_cells) {
+		for (int x = top_left.X - 1; x < top_left.X + width + 2; x++) {
+			for (int y = top_left.Y - 1; y < top_left.Y + height + 2; y++) {
+				Cell cell = Cell(x, y);
+				int mask = Map[cell].Occupation_Mask(House->HeapID);
+				if (mask == (1 << FACING_COUNT) - 1) {
+					House->Base.InnerCells.Delete(cell);
+				} else if (mask > 0) {
+					if (House->Base.InnerCells.ID(cell) == -1) {
+						House->Base.InnerCells.Add(cell);
+					}
+				}
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x004561F0
+void BuildingClass::Release_Base_Area(void)
+{
+	int spacing = Rule->AIBaseSpacing;
+	int width = 2 * spacing + Class->Width();
+	int height = 2 * spacing + Class->Height();
+
+	unsigned owner = 1 << House->HeapID;
+	Cell top_left = PositionCoord.As_Cell() - Cell(spacing, spacing);
+
+	int x, y;
+
+	for (x = top_left.X; x < top_left.X + width; x++) {
+		for (y = top_left.Y; y < top_left.Y + height; y++) {
+			Map[Cell(x, y)].OccupiedBy &= ~owner;
+		}
+	}
+
+	for (x = top_left.X - spacing; x < top_left.X + width + spacing * 2; x++) {
+		for (y = top_left.Y - spacing; y < top_left.Y + height + spacing * 2; y++) {
+			BuildingClass * building = Map[Cell(x, y)].Cell_Building();
+			if (building != NULL && building != this) {
+				if (building->Class->UndeploysInto == NULL || !building->Class->ResourceGatherer) {
+					if (!building->IsStrange()) {
+						building->Reserve_Base_Area(true);
+					}
+				}
+			}
+		}
+	}
+
+	for (x = top_left.X - 1; x < top_left.X + width + 2; x++) {
+		for (y = top_left.Y - 1; y < top_left.Y + height + 2; y++) {
+			Cell cell = Cell(x, y);
+			int mask = Map[cell].Occupation_Mask(House->HeapID);
+			if (mask == (1 << FACING_COUNT) - 1) {
+				House->Base.InnerCells.Delete(cell);
+			} else if (mask > 0) {
+				if (House->Base.InnerCells.ID(cell) == -1) {
+					House->Base.InnerCells.Add(cell);
+				}
+			} else {
+				House->Base.InnerCells.Delete(cell);
+				Map[cell].OccupiedBy &= ~owner;
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x00456580
+void BuildingClass::Radar_Track(void)
+{
+	const FOUNDATION_LIST & list = Map.Get_Foundation(Class);
+	for (int i = 0; i < list.Count(); i++) {
+		Point2D pt = list[i] + RadarPos;
+		Map.Radar_Track(this, pt);
+	}
+	IsRadarTracked = true;
+}
+
+// FUNCTION: 0x004565E0
+void BuildingClass::Radar_Untrack(void)
+{
+	const FOUNDATION_LIST & list = Map.Get_Foundation(Class);
+	for (int i = 0; i < list.Count(); i++) {
+		Point2D pt = list[i] + RadarPos;
+		Map.Radar_Untrack(this, pt);
+	}
+	IsRadarTracked = false;
+}
+
+// FUNCTION: 0x00456640
+void BuildingClass::Plot_On_Radar(void) const
+{
+	const FOUNDATION_LIST & list = Map.Get_Foundation(Class);
+	for (int i = 0; i < list.Count(); i++) {
+		Point2D pt = list[i] + RadarPos;
+		Map.Radar_Pixel(pt);
+	}
+}
+
+// FUNCTION: 0x004566B0
+int BuildingClass::GetRadialIndicatorRange(void) const
+{
+	int range = 0;
+	if (Class->PsychicDetectionRadius > 0) {
+		range = Class->PsychicDetectionRadius;
+	} else if (Class->GapGenerator) {
+		range = GapSuperCharged ? Class->SuperGapRadiusInCells : Class->GapRadiusInCells;
+	} else if (Class->IsSensorArray || Class->IsCloakGenerator) {
+		range = Class->CloakRadiusInCells;
+	} else {
+		WeaponDataStruct const * weapon = TechnoClass::GetTurretWeapon();
+		if (FUN_0070E240(weapon) && weapon->Weapon->Range > 0) {
+			range = weapon->Weapon->Range / 256;
+		}
+	}
+	return(range);
+}
+
+// FUNCTION: 0x00456750
+void BuildingClass::Draw_Radial_Indicator(DWORD which)
+{
+	int range = GetRadialIndicatorRange();
+	if (range > 0 && IsOn && House->Is_Player_Control()) {
+		if (Class->ConcentricRadialIndicator) {
+			static RGBClass white(255, 255, 255);
+			RGBClass color = House->RemapColorRGB;
+			unsigned pulse = (timeGetTime() >> 1) & 0x3ff;
+			if (!(pulse & 0x200)) {
+				if (!(pulse & 0x100)) {
+					color.Adjust(~pulse & 0xff, white);
+				}
+				DrawRadialIndicator(false, false, Center_Coord(), color, (float)range, false, true);
+			}
+			int radius = (int)(((double)range + 0.5) / fastmath::sqrt(2.0) * 60.0);
+			unsigned size = (radius * pulse) >> 10;
+			if (size > 32) {
+				DrawRadialIndicator(false, false, Center_Coord(), House->RemapColorRGB, (float)size, true, true);
+			}
+		} else {
+			DrawRadialIndicator(*(bool *)&which, true, Center_Coord(), House->RemapColorRGB, (float)range, false, true);
+		}
+	}
+}
+
+// FUNCTION: 0x00456970 $E243
+
+namespace Unsorted { extern int CurrentFrame; }
+
+// FUNCTION: 0x00456980
+void __fastcall DrawRadialIndicator(bool draw_line, bool adjust_color, Coord center, RGBClass color, float radius_in, bool in_pixels, bool whole)
+{
+	if (whole) {
+		radius_in = (float)(int)radius_in;
+	}
+	int radius;
+	if (in_pixels) {
+		radius = (int)radius_in;
+	} else {
+		radius = (int)(((double)radius_in + 0.5) / fastmath::sqrt(2.0) * 60.0);
+	}
+
+	Point2D point;
+	TacticalMap->Coord_To_Pixel(center, point);
+	point += DSurface::ViewBounds.TopLeft;
+
+	Rect bounds = Rect(point.X - radius, point.Y - radius / 2, radius * 2, radius);
+	Rect clipped = Intersect(bounds, DSurface::ViewBounds);
+	if (clipped.Width > 0 && clipped.Height > 0) {
+		RGBClass black;
+		RGBClass ring = color;
+		if (adjust_color) {
+			ring.Adjust(50, black);
+		}
+		DSurface::Temp->Draw_Ellipse(point, radius, radius / 2, DSurface::ViewBounds, DSurface::Build_Hicolor_Pixel(ring));
+		DSurface::Temp->Draw_Ellipse(point, radius - 1, radius / 2 - 1, DSurface::ViewBounds, DSurface::Build_Hicolor_Pixel(ring));
+
+		if (draw_line) {
+			static double intensities[4] = {0.05, 0.2, 0.4, 1.0};
+
+			double radius_x = radius;
+			double radius_y = radius / 2;
+
+			for (int i = 0; i < 4; i++) {
+				double angle = (double)(Unsorted::CurrentFrame + i) * 0.005;
+				angle = angle - (double)(int)(angle * 0.15915494309189535) * 6.283185307179586;
+				Point2D end;
+
+				if (fabs(angle - 1.5707963267948966) < 0.001) {
+					end = point + Point2D(0, -radius_y);
+				} else if (fabs(angle - 4.71238898038469) < 0.001) {
+					end = point + Point2D(0, radius_y);
+				} else {
+					double slope = fastmath::tan(angle);
+					double radius_y_sq = radius_y * radius_y;
+					double radius_x_sq = radius_x * radius_x;
+					double xdist = fastmath::sqrt(1.0 / (slope * slope / radius_y_sq + 1.0 / radius_x_sq));
+					double ydist = fastmath::sqrt((1.0 - xdist * xdist / radius_x_sq) * radius_y_sq);
+					double xoffset = angle > 1.5707963267948966 && angle < 4.71238898038469 ? -xdist : xdist;
+					if (angle < 3.141592653589793) {
+						ydist = -ydist;
+					}
+					end = point + Point2D(xoffset, ydist);
+				}
+
+				DSurface::Temp->Draw_Depth_Antialiased_Line(DSurface::ViewBounds, point - DSurface::ViewBounds.TopLeft, end - DSurface::ViewBounds.TopLeft, color, -500, -500, 0, 1, 1, 1, (float)intensities[i]);
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x00456E00
+void BuildingClass::Clicked_As_Target(int count)
+{
+	if (count) {
+		IsToDisplay = true;
+	}
+
+	BASECLASS::Clicked_As_Target(count);
+
+	Update_Anim_Appearance();
+}
+
 // FUNCTION: 0x00459E80
 HRESULT STDMETHODCALLTYPE BuildingClass::GetClassID(CLSID * retval)
 {

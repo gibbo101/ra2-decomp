@@ -316,3 +316,18 @@ template class VectorClass<MSTextEntry *>;
 // FUNCTION: 0x005D0D80 ?$VectorClass@PAVMapSelection@@::Resize
 // FUNCTION: 0x005D0E30 ?$VectorClass@PAVMapSelection@@::Clear
 template class VectorClass<MapSelection *>;
+
+// FUNCTION: 0x005D0E60 ?$VectorClass@PAVMapSelection@@::ID
+// FUNCTION: 0x005D0EA0 ?$VectorClass@PAVMapSelection@@::ID
+// FUNCTION: 0x005D0EC0 ?$DynamicVectorClass@PAVMapSelection@@::Resize
+// FUNCTION: 0x005D0F70 ?$DynamicVectorClass@PAVMapSelection@@::ID
+// FUNCTION: 0x005D0FA0 ?$VectorClass@PAVMSAnimEntry@@::operator==
+// FUNCTION: 0x005D0FE0 ?$VectorClass@PAVMSAnimEntry@@::Resize
+// FUNCTION: 0x005D1090 ?$VectorClass@PAVMSAnimEntry@@::Clear
+// FUNCTION: 0x005D10C0 ?$VectorClass@PAVMSAnimEntry@@::ID
+// FUNCTION: 0x005D1100 ?$VectorClass@PAVMSAnimEntry@@::ID
+// FUNCTION: 0x005D1120 ?$DynamicVectorClass@PAVMSAnimEntry@@::Resize
+// FUNCTION: 0x005D11D0 ?$DynamicVectorClass@PAVMSAnimEntry@@::ID
+// FUNCTION: 0x005D1200 ?$VectorClass@PAVMSSfxEntry@@::operator==
+template class VectorClass<MSAnimEntry *>;
+template class VectorClass<MSSfxEntry *>;

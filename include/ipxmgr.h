@@ -56,6 +56,14 @@ class IPXManagerClass : public ConnManClass
 		int Get_Global_Message (void *buf, int *buflen, IPXAddressClass *address,
 			unsigned short *product_id);
 		int Global_Channel_Op (int a1, int a2, int a3, int a4, int a5, int a6);
+		void Global_Channel_Op_3C (int a1);
+		int Send_Lobby_Message (void *buf, int buflen, bool ack_req);
+		int Get_Lobby_Message (void *buf, int *buflen, IPXAddressClass *address,
+			unsigned short *product_id);
+		int Lobby_Num_Send(void);
+		int Lobby_Num_Receive(void);
+		void Set_Connection_Address(int id, IPXAddressClass *address);
+		void FUN_00543050(IPXAddressClass *address);
 
 		virtual int Send_Private_Message (void *buf, int buflen,
 			int ack_req = 1, int conn_id = CONNECTION_NONE) override;

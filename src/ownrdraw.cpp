@@ -1044,6 +1044,12 @@ extern int DAT_00A8DAB4;
 bool __fastcall FUN_0055CBF0(void);
 void __fastcall FUN_005D4D50(void);
 bool __fastcall FUN_0069BBE0(SessionClass *session);
+bool __fastcall FUN_00602490(HWND parent, HWND child);
+namespace OwnerDraw {
+BOOL CALLBACK ClassifyLayoutBand(HWND window, LPARAM lparam);
+BOOL CALLBACK ResetControlDrawModeAndTimerProc(HWND window, LPARAM lparam);
+BOOL CALLBACK InitCompactDialogControlsProc(HWND window, LPARAM lparam);
+}
 
 inline OwnerDraw::WinData *Get_Data(HWND window)
 {
@@ -1450,6 +1456,87 @@ BOOL CALLBACK FUN_0060A250(HWND window, LPARAM lparam)
 		}
 	}
 	return TRUE;
+}
+
+// FUNCTION: 0x0060A300
+int __fastcall FUN_0060A300(HWND dialog)
+{
+	DAT_00AC4894 = 0;
+	EnumChildWindows(dialog, FUN_0060A250, 0);
+	return DAT_00AC4894 >= 1;
+}
+
+// FUNCTION: 0x0060A5A0
+void __fastcall FUN_0060A5A0(HWND dialog)
+{
+	EnumChildWindows(dialog, OwnerDraw::ClassifyLayoutBand, 0);
+}
+
+// FUNCTION: 0x0060AA50
+void __fastcall FUN_0060AA50(HWND dialog)
+{
+	EnumChildWindows(dialog, OwnerDraw::ResetControlDrawModeAndTimerProc, 0);
+}
+
+
+namespace OwnerDraw {
+// FUNCTION: 0x0060AA60 OwnerDraw::SendTransitionCompleteToCustomTextChildProc
+BOOL CALLBACK SendTransitionCompleteToCustomTextChildProc(HWND window, LPARAM lparam)
+{
+	HWND parent = GetParent(window);
+	if (FUN_00602490(parent, window)) {
+		SendMessage(window, 0x4ee, 0, 0);
+	}
+	return TRUE;
+}
+}
+
+// FUNCTION: 0x0060AAA0
+void __fastcall FUN_0060AAA0(HWND dialog)
+{
+	EnumChildWindows(dialog, OwnerDraw::SendTransitionCompleteToCustomTextChildProc, 0);
+}
+
+// FUNCTION: 0x0060AF40
+void __fastcall FUN_0060AF40(HWND dialog)
+{
+	EnumChildWindows(dialog, OwnerDraw::InitCompactDialogControlsProc, 0);
+}
+
+extern int DAT_007F5BE4;
+extern int DAT_007F5BF0;
+
+inline int Centre_X(int span, bool compact)
+{
+	int offset = 0;
+	if (!compact) {
+		int half = (span - DAT_007F5BE4) / 2;
+		offset = (((span - DAT_007F5BE4) / 2) < 0) ? 0 : half;
+	}
+	return offset;
+}
+
+inline int Centre_Y(int span, bool compact)
+{
+	int offset = 0;
+	if (!compact) {
+		int half = (span - DAT_007F5BF0) / 2;
+		offset = (((span - DAT_007F5BF0) / 2) < 0) ? 0 : half;
+	}
+	return offset;
+}
+
+// FUNCTION: 0x0060AF50
+void __fastcall FUN_0060AF50(HWND window, RECT *rect)
+{
+	HWND parent = GetParent(window);
+	bool compact = FUN_0069BBE0(&Session);
+	RECT frame;
+	GetWindowRect(parent, &frame);
+	int dx = Centre_X(frame.right - frame.left, compact);
+	int tmp0 = Centre_Y(frame.bottom - frame.top, compact);
+	MoveWindow(window, rect->left + dx, rect->top + tmp0, rect->right, rect->bottom, FALSE);
+	InvalidateRect(window, NULL, FALSE);
 }
 
 // FUNCTION: 0x0061F190

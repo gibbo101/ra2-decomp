@@ -22,6 +22,55 @@
 #include "tube.h"
 #include "unit.h"
 #include "layer.hh"
+#include "fastmath.h"
+#include "coord.h"
+
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007E1720;
+extern const double DAT_007E1728;
+extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
+extern const double DAT_007F69C0;
+extern const double DAT_007F69C8;
+
+// FUNCTION: 0x0075A8A0 $E85
+double DAT_00B45BD0 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x0075A8D0 $E88
+double DAT_00B45C20 = DAT_00B45BD0 / DAT_007F69C0;
+
+// FUNCTION: 0x0075A8F0 $E91
+double DAT_00B45C08 = DAT_007E1718 / DAT_00B45C20;
+
+// FUNCTION: 0x0075A910 $E94
+double DAT_00B45C00 = DAT_007E1720 * DAT_007F69C8;
+
+// FUNCTION: 0x0075A930 $E97
+double DAT_00B45BD8 = DAT_007E1728 * DAT_007F69C8;
+
+// FUNCTION: 0x0075A950 $E100
+double DAT_00B45BB0 = DAT_007E1730 * DAT_007F69C8;
+
+// FUNCTION: 0x0075A970 $E103
+int DAT_00B45C28 = (int)(fastmath::tan(DAT_00B45BB0 - DAT_00B45BD8) * DAT_007E1738 * DAT_00B45BD0);
+
+// FUNCTION: 0x0075A9B0 $E106
+double DAT_00B45BE0 = fastmath::atan(DAT_00B45C28 * DAT_007E1740);
+
+// FUNCTION: 0x0075A9E0 $E109
+double DAT_00B45BF8 = fastmath::atan((DAT_00B45C28 * 2) / DAT_00B45BD0);
+
+// FUNCTION: 0x0075AA10 $E112
+int DAT_00B45C1C = (int)(DAT_00B45C28 * 4 + DAT_007E1738);
+
+// FUNCTION: 0x0075AA40 $E115
+Cell DAT_00B45BC8(0, 0);
+
+// FUNCTION: 0x0075AA50 $E118
+Coord DAT_00B45BE8(0, 0, 0);
 
 // FUNCTION: 0x0075C640
 HRESULT STDMETHODCALLTYPE WalkLocomotionClass::GetClassID(CLSID * retval)

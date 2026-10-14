@@ -62,3 +62,8 @@ address,name,symbol,evidence
 0x00ABAD1C,IsometricTileTypeClass::TrainBridgeSet,,YR WoodBridgeSet; theater init stores it; CellClass::Is_Tile_Train_Bridge 0x00486770 reads it
 0x00577BB0,MapClass::Shroud_The_Map,,TibSun body; called by TeamClass::TMission_RESHROUD 0x006EE1B0
 0x00558790,LoadOptionsClass::~LoadOptionsClass,??1LoadOptionsClass@@UAE@XZ,plain destructor (vptr store, then the Files vector); 0x0055A0D0 is the deleting destructor that calls it
+0x0075EBE0,WaveClass::WaveClass,??0WaveClass@@QAE@XZ,no-argument constructor; called by TClassFactory<WaveClass>::CreateInstance 0x006BF090
+0x008B41F8,DoList,,EventClass queue of 0x4000 entries (YRpp EventClass::DoList); Queue_AI 0x00647260 adds to it
+0x00A802C8,OutList,,EventClass queue of 128 entries (YRpp EventClass::OutList)
+0x00B0CCB0,CommandBarStatics::ButtonA,,first initialiser $E96 0x006CFC00 constructs it; TabClass::Init_IO stores ID 0xF0 into it
+0x00B0CC40,CommandBarStatics::ButtonB,,constructed by initialiser 0x006CFC40

@@ -1996,6 +1996,140 @@ AbstractClass * InfantryClass::Approach_Target(bool force)
 	return(NULL);
 }
 
+// FUNCTION: 0x005224D0
+bool InfantryClass::Is_Renovator(void) const
+{
+	return(Class->IsEngineer);
+}
+
+// FUNCTION: 0x005224E0
+bool InfantryClass::FUN_005224E0(void) const
+{
+	return(Class->Deployer);
+}
+
+// FUNCTION: 0x005224F0
+bool InfantryClass::FUN_005224F0(void) const
+{
+	return(Class->UndeployDelay > -1);
+}
+
+// FUNCTION: 0x00522510
+bool InfantryClass::FUN_00522510(void) const
+{
+	return(Is_Deploy_Doing(Doing));
+}
+
+// FUNCTION: 0x00522540
+bool InfantryClass::FUN_00522540(void) const
+{
+	return(Class->DeployFire);
+}
+
+// FUNCTION: 0x00522550
+int InfantryClass::FUN_00522550(void)
+{
+	if (!Locomotion->Is_Moving()) {
+		Do_Action((DoType)0x1b, false, false);
+		return(Class->DoControls[0x1b].Count);
+	}
+	Locomotion->Stop_Moving();
+	ShouldDeploy = true;
+	return(Current_Mission_Control().Normal_Delay() + Random_Pick(0, 2));
+}
+
+// FUNCTION: 0x00522600
+int InfantryClass::IronCurtain(int duration, HouseClass * source, bool force_shield)
+{
+	int damage = Class->MaxStrength;
+	return(Take_Damage(damage, 0, Rule->C4Warhead, NULL, true, false, source));
+}
+
+// FUNCTION: 0x00522640
+ObjectTypeClass * InfantryClass::GetDisguise(bool against_allies) const
+{
+	if (House->Is_Ally(PlayerPtr) && !against_allies) {
+		return(Class);
+	}
+	if (Disguise == NULL) {
+		if (PlayerPtr != NULL) {
+			if (PlayerPtr->ActLike == 0) {
+				return((ObjectTypeClass *)Rule->AlliedDisguise);
+			}
+			if (PlayerPtr->ActLike == 1) {
+				return((ObjectTypeClass *)Rule->SovietDisguise);
+			}
+		}
+		return((ObjectTypeClass *)Rule->ThirdDisguise);
+	}
+	return(Disguise);
+}
+
+// FUNCTION: 0x005226C0
+HouseClass * InfantryClass::GetDisguiseHouse(bool against_allies) const
+{
+	if (House->Is_Ally(PlayerPtr) && !against_allies) {
+		return(House);
+	}
+	if (DisguisedAsHouse == NULL) {
+		return(PlayerPtr);
+	}
+	return(DisguisedAsHouse);
+}
+
+#pragma warning(push)
+#pragma warning(disable: 4716)
+// FUNCTION: 0x00522700
+unsigned InfantryClass::DisguiseAs(AbstractClass * target)
+{
+	if (target != NULL && target->Fetch_RTTI() == RTTI_INFANTRY) {
+		BASECLASS::DisguiseAs(target);
+		ObjectClass * object = (ObjectClass *)target;
+		if (object->IsDisguised()) {
+			Disguise = object->GetDisguise(true);
+			DisguisedAsHouse = object->GetDisguiseHouse(true);
+		} else {
+			Disguise = (ObjectTypeClass *)object->Class_Of();
+			DisguisedAsHouse = object->Owner_HouseClass();
+		}
+	}
+}
+
+#pragma warning(pop)
+
+// FUNCTION: 0x00522780
+void InfantryClass::ClearDisguise(void)
+{
+	if (Class->PermaDisguise) {
+		Disguised = true;
+		DisguisedAsHouse = House;
+		if (House->ActLike == 0) {
+			Disguise = (ObjectTypeClass *)Rule->AlliedDisguise;
+		} else if (House->ActLike == 1) {
+			Disguise = (ObjectTypeClass *)Rule->SovietDisguise;
+		} else {
+			Disguise = (ObjectTypeClass *)Rule->ThirdDisguise;
+		}
+	} else {
+		Disguised = false;
+	}
+}
+
+// FUNCTION: 0x005227F0
+bool InfantryClass::IsDisguisedAs(HouseClass * house) const
+{
+	if (IsDisguised()) {
+		CellClass * cell = &Map[Center_Coord().As_Cell()];
+		if (!House->Is_Ally(house) && !cell->Is_Disguise_Sensed(house->HeapID)) {
+			HouseClass * disguiser = DisguisedAsHouse;
+			if (disguiser == house || disguiser == NULL || house->Is_Ally(disguiser)) {
+				return(true);
+			}
+		}
+	}
+	return(false);
+}
+
 // FUNCTION: 0x00523300
 HRESULT STDMETHODCALLTYPE InfantryClass::GetClassID(CLSID * retval)
 {

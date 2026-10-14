@@ -5,6 +5,8 @@
 
 #define INCLUDE_COM
 #include "always.h"
+#include "rect.h"
+#include "geometry.h"
 #include "overtype.h"
 #include "_convert.h"
 #include "_map.h"
@@ -31,6 +33,18 @@
 #include "tracker.h"
 
 // FUNCTION: 0x005FE040 $E2
+// FUNCTION: 0x005FE060 $E5
+// FUNCTION: 0x005FE090 $E8
+// FUNCTION: 0x005FE0B0 $E11
+// FUNCTION: 0x005FE0D0 $E14
+// FUNCTION: 0x005FE0F0 $E17
+// FUNCTION: 0x005FE110 $E20
+// FUNCTION: 0x005FE130 $E23
+// FUNCTION: 0x005FE170 $E26
+// FUNCTION: 0x005FE1A0 $E29
+// FUNCTION: 0x005FE1D0 $E32
+// FUNCTION: 0x005FE200 $E35
+// FUNCTION: 0x005FE210 $E38
 
 // FUNCTION: 0x005FE4C0
 Cell const * OverlayTypeClass::Occupy_List(bool) const

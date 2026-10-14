@@ -98,6 +98,61 @@ class Original:
         return struct.unpack_from("<I", self.image, va - self.base)[0]
 
 
+ASM_START = re.compile(r"\b(__asm|_asm)\b")
+_archive_text: str | None = None
+
+
+def normalised(text: str) -> str:
+    """Code with comments removed and every run of whitespace made one space."""
+    text = re.sub(r"/\*.*?\*/", " ", text, flags=re.S)
+    text = re.sub(r"//[^\n]*", " ", text)
+    return re.sub(r"\s+", " ", text).strip()
+
+
+def archive_text() -> str:
+    global _archive_text
+    if _archive_text is None:
+        files = sorted(TIBSUN.glob("*.cpp")) + sorted(TIBSUN.glob("*.h")) if TIBSUN.exists() else []
+        _archive_text = "\n".join(normalised(f.read_text(errors="replace")) for f in files)
+    return _archive_text
+
+
+def asm_blocks(text: str) -> list[tuple[int, int]]:
+    """Spans of each `_asm { ... }` block, or of a one-line `_asm` statement."""
+    spans, pos = [], 0
+    while m := ASM_START.search(text, pos):
+        i = m.end()
+        while i < len(text) and text[i] in " \t":
+            i += 1
+        if i < len(text) and text[i] == "{":
+            depth, j = 0, i
+            while j < len(text):
+                depth += {"{": 1, "}": -1}.get(text[j], 0)
+                j += 1
+                if depth == 0:
+                    break
+        else:
+            j = text.find("\n", i)
+            j = len(text) if j < 0 else j
+        spans.append((m.start(), j))
+        pos = j
+    return spans
+
+
+def without_archived_asm(text: str) -> str:
+    """The source minus every asm block found unchanged in Westwood's TibSun archive, which
+    is the original's own code; asm written or altered here stays and is refused."""
+    archive, out, last = None, [], 0
+    for start, end in asm_blocks(text):
+        archive = archive or archive_text()
+        block = normalised(text[start:end])
+        if block and block in archive:
+            out.append(text[last:start])
+            last = end
+    out.append(text[last:])
+    return "".join(out)
+
+
 def winpath(p: Path) -> str:
     """The path as the compiler sees it: the checkout is drive Y: (tools/wineenv.sh)."""
     p = p.resolve()
@@ -191,7 +246,7 @@ def compile_source(src: Path, overlay: Path | None = None, headers: Path | None 
     """Compile src to an object. `headers` is a directory prepare_headers already filled,
     which the caller keeps; `out` is the object's path; `extra` adds compiler options."""
     text = src.read_text(errors="replace")
-    bad = FORBIDDEN.search(text)
+    bad = FORBIDDEN.search(without_archived_asm(text))
     if bad:
         return None, f"{src}: '{bad.group(0)}' is not allowed"
     if out is None:

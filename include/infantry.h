@@ -88,6 +88,12 @@ class InfantryClass : public FootClass
 		virtual void Set_Occupy_Bit(Coord const & coord) override;
 		virtual void Clear_Occupy_Bit(Coord const & coord) override;
 		virtual bool Is_Renovator(void) const override;
+		virtual int IronCurtain(int duration, HouseClass * source, bool force_shield) override;
+		virtual bool IsDisguisedAs(HouseClass * house) const override;
+		virtual ObjectTypeClass * GetDisguise(bool against_allies) const override;
+		virtual HouseClass * GetDisguiseHouse(bool against_allies) const override;
+		virtual unsigned DisguiseAs(AbstractClass * target) override;
+		virtual void ClearDisguise(void) override;
 
 		virtual void On_Movement_Blocked(void) override;
 		virtual bool JumpJet_To_Walk(void) override;
@@ -118,6 +124,8 @@ class InfantryClass : public FootClass
 		bool FUN_005224F0(void) const;
 		bool FUN_00522510(void) const;
 		bool FUN_005224E0(void) const;
+		bool FUN_00522540(void) const;
+		int FUN_00522550(void);
 		void Movement_AI(void);
 		void Tunnel_AI(void);
 		bool Theft_AI(void);

@@ -70,7 +70,7 @@ Every compile counts as a check, including those your own scripts run.
 
 - The flags are fixed (`/O2 /Ob2 /Gr /GR /MT /DWIN32`). No inline assembly, `__emit`,
   `#pragma optimize` or `auto_inline`, hard-coded addresses or `volatile` tricks, except
-  Westwood's own inline asm and pragmas, copied unchanged from a TibSun archive header.
+  Westwood's own inline asm, copied unchanged from the TibSun archive (header or .cpp).
 - Name callees and globals as `tools/ctx.py` names them (YRpp or TibSun names); an
   unnamed one is `FUN_<ADDR>` / `DAT_<ADDR>`. `data/symbols.csv` labels several one-line
   UI functions `UI::GetResource`; 0x00622B50 is `UI::StandardWndProc`.
@@ -328,9 +328,8 @@ Each entry: what the diff showed, then the source change that fixed it.
   0x7B66C0): the neighbouring functions (char vs wchar_t) decide which class owns which.
 - YR made some TS text members wide: OwnerDraw's CellData holds `WideWstring`, so
   `include/ownrdraw.h` overrides the TibSun copy.
-- An adopted TibSun header can carry Westwood's inline asm and `#pragma optimize`
-  (blitblit.h's blitter specialisations): keep those blocks unchanged; they are the
-  original. Asm you write yourself, or edits to Westwood's, are still banned.
+- Westwood's inline asm from the archive stays where Westwood put it, unchanged (blitblit.h,
+  xsurface.cpp's surface_quick_fill); check.py refuses any asm block not found verbatim there.
 - The message list is `Session.Messages`, not a global; Add_Message takes YR's 7 arguments.
 - A static member with a constructor added to a widely included header (`dsurface.h`)
   renumbers the `$E` markers of every file that includes it: declare it extern in the user.
