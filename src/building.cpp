@@ -3980,6 +3980,278 @@ void BuildingClass::Clicked_As_Target(int count)
 	Update_Anim_Appearance();
 }
 
+// FUNCTION: 0x00456F80
+int BuildingClass::Apparent_Brightness(int brightness) const
+{
+	if ((Flashing.FlashCount & 2) == 2) {
+		return(brightness > 1500 ? brightness - 500 : brightness + 500);
+	}
+	return(brightness);
+}
+
+// FUNCTION: 0x00456FB0
+int BuildingClass::Tinted_Brightness(int cellbrightness)
+{
+	int brightness = Apparent_Brightness(cellbrightness);
+	if (IsIronCurtained() || (Airstrike != NULL && Airstrike->Target == Building_Of(this))) {
+		brightness = GetEffectTintIntensity(brightness);
+	}
+	return(brightness);
+}
+
+// FUNCTION: 0x00457020
+bool BuildingClass::Is_Radar_Visible(DetectedType & detected) const
+{
+	if (!Class->IsInvisible && !IsInLimbo) {
+		if (House->Is_Player_Control()) {
+			return(IsDiscoveredByPlayer ? true : false);
+		}
+		if (!Map.In_Local_Radar(Center_Coord().As_Cell(), true)) {
+			return(false);
+		}
+
+		int height = Class->Height() * CELL_LEPTON_H - CELL_LEPTON;
+		int width = Class->Width() * CELL_LEPTON_W - CELL_LEPTON;
+		bool shrouded = Map.Is_Shrouded(PositionCoord) && Map.Is_Shrouded(PositionCoord + Coord(width, height)) && MainWindow;
+
+		if (Cloak != CLOAKED && TranslucencyLevel != 15 && !IsFogged && !shrouded) {
+			return(true);
+		}
+		if (!Is_Sensed_By_Player()) {
+			return(false);
+		}
+		if (!PlayerPtr->Is_Ally(House) && !IsFogged && !shrouded) {
+			detected = DETECTED_CLOAKED;
+		}
+		return(true);
+	}
+	return(false);
+}
+
+extern bool DAT_00884B8E;
+
+static inline bool Is_Tech_Building(BuildingTypeClass const * type)
+{
+	int count = Rule->BuildTech.Count();
+	for (int i = 0; i < count; i++) {
+		if (Rule->BuildTech[i] == type) {
+			return(true);
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x004571E0
+void BuildingClass::Infiltrate(HouseClass * house)
+{
+	bool announce = false;
+	if (House != house) {
+		if (House->Is_Player_Control() || house->Is_Player_Control()) {
+			if (RadarEventClass::Create(RADAREVENT_BUILDING_INFILTRATED, PositionCell)) {
+				announce = true;
+			}
+		}
+		if (Class->IsRadar) {
+			House->ReshroudMap();
+			if (House->Is_Player_Control() && !House->SpySatActive && announce) {
+				VoxClass::Play("EVA_RadarSabotaged", -1, -1);
+			}
+			if (house->Is_Player_Control() && !House->SpySatActive && announce) {
+				VoxClass::Play("EVA_BuildingInfRadarSabotaged", -1, -1);
+			}
+		} else if (Class->Power > 0) {
+			House->CreatePowerOutage(Rule->SpyPowerBlackout);
+			if (House->Is_Player_Control() && announce) {
+				VoxClass::Play("EVA_PowerSabotaged", -1, -1);
+			} else if (house->Is_Player_Control() && announce) {
+				VoxClass::Play("EVA_BuildingInfiltrated", -1, -1);
+				VoxClass::Play("EVA_EnemyBasePoweredDown", -1, -1);
+			}
+		} else if (Is_Tech_Building(Class)) {
+			if (Class->AIBasePlanningSide == 0) {
+				house->Side0TechInfiltrated = true;
+			} else if (Class->AIBasePlanningSide == 1) {
+				house->Side1TechInfiltrated = true;
+			} else {
+				house->Side2TechInfiltrated = true;
+			}
+			house->IsRecalcNeeded = true;
+			if (House->Is_Player_Control() && announce) {
+				VoxClass::Play("EVA_TechnologyStolen", -1, -1);
+			}
+			if (house->Is_Player_Control() && announce) {
+				VoxClass::Play("EVA_BuildingInfiltrated", -1, -1);
+				VoxClass::Play("EVA_NewTechnologyAcquired", -1, -1);
+			}
+		} else if (Class->SuperWeapon != SUPER_NONE) {
+			House->SuperWeapon[Class->SuperWeapon]->Reset();
+			if (House->Is_Player_Control() || (house->Is_Player_Control() && announce)) {
+				VoxClass::Play("EVA_BuildingInfiltrated", -1, -1);
+			}
+		} else if (Class->Capacity > 0) {
+			int stolen = (int)(House->Available_Money() * Rule->SpyMoneyStealPercent);
+			House->Spend_Money(stolen);
+			house->Refund_Money(stolen);
+			if (House->Is_Player_Control() && announce) {
+				VoxClass::Play("EVA_CashStolen", -1, -1);
+			}
+			if (house->Is_Player_Control() && announce) {
+				VoxClass::Play("EVA_BuildingInfCashStolen", -1, -1);
+			}
+		} else if (Class->ToBuild == RTTI_UNITTYPE) {
+			house->WarFactoryInfiltrated = true;
+			house->IsRecalcNeeded = true;
+			if (house->Is_Player_Control()) {
+				DAT_00884B8E = true;
+			}
+			if (House->Is_Player_Control() && announce) {
+				VoxClass::Play("EVA_TechnologyStolen", -1, -1);
+			}
+			if (house->Is_Player_Control() && announce) {
+				VoxClass::Play("EVA_BuildingInfiltrated", -1, -1);
+				VoxClass::Play("EVA_NewTechnologyAcquired", -1, -1);
+			}
+		} else if (Class->ToBuild == RTTI_INFANTRYTYPE) {
+			house->BarracksInfiltrated = true;
+			house->IsRecalcNeeded = true;
+			if (house->Is_Player_Control()) {
+				DAT_00884B8E = true;
+			}
+			if (House->Is_Player_Control() && announce) {
+				VoxClass::Play("EVA_TechnologyStolen", -1, -1);
+			}
+			if (house->Is_Player_Control() && announce) {
+				VoxClass::Play("EVA_BuildingInfiltrated", -1, -1);
+				VoxClass::Play("EVA_NewTechnologyAcquired", -1, -1);
+			}
+		}
+		Mark(MARK_CHANGE);
+	}
+}
+
+// FUNCTION: 0x004575B0
+void BuildingClass::Sell_All_Upgrades(void)
+{
+	char level = UpgradeLevel;
+	while (level > 0) {
+		int refund = Upgrades[level - 1]->GetRefund(House, true);
+		House->Refund_Money(refund);
+		Remove_Upgrade();
+		House->RecalcPower = true;
+		House->RecalcRadar = true;
+		level = UpgradeLevel;
+	}
+	Sell_Back(true);
+}
+
+// FUNCTION: 0x00457620
+bool BuildingClass::IsStrange(void) const
+{
+	return(Class->IsVehicle());
+}
+
+// FUNCTION: 0x00457630
+int BuildingClass::FirstActiveSWIdx(void) const
+{
+	if (Class->SuperWeapon != SUPER_NONE) {
+		BuildingTypeClass const * aux = SuperWeapons[Class->SuperWeapon]->Class->AuxBuilding;
+		if (aux != NULL && House->ABQuantity.Value(aux->HeapID) == 0) {
+			return(SUPER_NONE);
+		}
+	}
+	return(Class->SuperWeapon);
+}
+
+// FUNCTION: 0x00457690
+int BuildingClass::SecondActiveSWIdx(void) const
+{
+	if (Class->SuperWeapon2 != SUPER_NONE) {
+		BuildingTypeClass const * aux = SuperWeapons[Class->SuperWeapon2]->Class->AuxBuilding;
+		if (aux != NULL && House->ABQuantity.Value(aux->HeapID) == 0) {
+			return(SUPER_NONE);
+		}
+	}
+	return(Class->SuperWeapon2);
+}
+
+// FUNCTION: 0x004576F0
+void BuildingClass::GotHijacked(void)
+{
+	for (int i = 0; i < Infantry.Count(); i++) {
+		InfantryClass * infantry = Infantry[i];
+		BuildingClass * building = Map[infantry->Destination_Coord()].Cell_Building();
+		if (infantry->IsActive && building != NULL && building == this) {
+			if (infantry->NavCom == NULL || infantry->NavCom == building) {
+				infantry->Scatter((Coord const &)DAT_0089C848, true, true);
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x00457770
+bool BuildingClass::Is_Ready_To_Cloak(void) const
+{
+	if (BASECLASS::Is_Ready_To_Cloak()) {
+		Cell cell = PositionCell;
+		int width = Class->Width();
+		int height = Class->Height();
+		for (int x = -1; x <= width; x++) {
+			for (int y = -1; y <= height; y++) {
+				TechnoClass * tech = Map[cell + Cell(x, y)].Cell_Techno();
+				if (tech == (TechnoClass *)this) {
+					tech = Map[cell + Cell(x, y)].Cell_Infantry();
+				}
+				if (tech != NULL && tech->House != House) {
+					if (tech->TClass->IsScanner) {
+						return(false);
+					}
+				}
+			}
+		}
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x004578C0
+bool BuildingClass::Should_Uncloak(void) const
+{
+	if (!BASECLASS::Should_Uncloak()) {
+		Cell cell = PositionCell;
+		int width = Class->Width();
+		int height = Class->Height();
+		for (int x = -1; x <= width; x++) {
+			for (int y = -1; y <= height; y++) {
+				TechnoClass * tech = Map[cell + Cell(x, y)].Cell_Techno();
+				if (tech == (TechnoClass *)this) {
+					tech = Map[cell + Cell(x, y)].Cell_Infantry();
+				}
+				if (tech != NULL && tech->House != House) {
+					if (tech->TClass->IsScanner) {
+						return(true);
+					}
+				}
+			}
+		}
+		return(false);
+	}
+	return(true);
+}
+
+// FUNCTION: 0x00457A10
+bool BuildingClass::Should_Fog(void) const
+{
+	Cell cell = PositionCell;
+	Cell const * occupy = Class->Occupy_List();
+	while (*occupy != REFRESH_EOL) {
+		if (!Map[*occupy + cell].IsFogged) {
+			return(false);
+		}
+		occupy++;
+	}
+	return(true);
+}
+
 // FUNCTION: 0x00459E80
 HRESULT STDMETHODCALLTYPE BuildingClass::GetClassID(CLSID * retval)
 {

@@ -269,6 +269,12 @@ HRESULT STDMETHODCALLTYPE BulletClass::Save(IStream * stream, BOOL cleardirty)
 	return(BASECLASS::Save(stream, cleardirty));
 }
 
+// FUNCTION: 0x0046B260
+void BulletClass::Set_Weapon_Type(WeaponTypeClass * weapon)
+{
+	WeaponType = weapon;
+}
+
 // FUNCTION: 0x0046B560
 HRESULT STDMETHODCALLTYPE BulletClass::GetClassID(CLSID * retval)
 {

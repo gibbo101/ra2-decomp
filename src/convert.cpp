@@ -765,4 +765,21 @@ template class BlitTransZRemapXlat<unsigned short>;
 template class BlitTransDarken<unsigned short>;
 
 // FUNCTION: 0x00492740 ?$BlitTransLucent75@G::BlitForward
+// FUNCTION: 0x004927A0 ?$BlitTransLucent75@G::BlitBackward
+// FUNCTION: 0x004927D0 ?$BlitTransLucent75@G::Blit_Copy_Tinted
+// FUNCTION: 0x00492800 ?$BlitTransLucent75@G::Blit_Move_Tinted
 template class BlitTransLucent75<unsigned short>;
+
+// FUNCTION: 0x00492890 ?$BlitTransLucent50@G::BlitBackward
+// FUNCTION: 0x004928C0 ?$BlitTransLucent50@G::Blit_Copy_Tinted
+// FUNCTION: 0x004928F0 ?$BlitTransLucent50@G::Blit_Move_Tinted
+template class BlitTransLucent50<unsigned short>;
+
+// FUNCTION: 0x00492920 ?$BlitTransLucent25@G::BlitForward
+// FUNCTION: 0x00492980 ?$BlitTransLucent25@G::BlitBackward
+// FUNCTION: 0x004929B0 ?$BlitTransLucent25@G::Blit_Copy_Tinted
+// FUNCTION: 0x004929E0 ?$BlitTransLucent25@G::Blit_Move_Tinted
+template class BlitTransLucent25<unsigned short>;
+
+// FUNCTION: 0x00492A10 ?$BlitPlainXlatZRead@G::BlitForward
+template class BlitPlainXlatZRead<unsigned short>;

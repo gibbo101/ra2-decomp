@@ -8,6 +8,7 @@
 #include "always.h"
 #include "arraylist.h"
 #include "dict.h"
+#include "session.h"
 #include "wstring.h"
 
 #include <windows.h>
@@ -154,3 +155,45 @@ struct LadderC {
 // FUNCTION: 0x0077CC30
 // FUNCTION: 0x0077CCD0
 Dictionary<Wstring, LadderC> DAT_00B76608 HASH_ARG;
+
+extern int DAT_0084A1C4;
+extern int DAT_0084A1C8;
+extern int DAT_0084A1D4;
+extern int DAT_0084A1D8;
+
+// FUNCTION: 0x0077CE10
+int DAT_00B765F0 = DAT_0084A1C8 - DAT_0084A1C4 - 4;
+
+// FUNCTION: 0x0077CE30
+int DAT_00B73E3C = DAT_0084A1D8 - DAT_0084A1D4 - 4;
+
+// FUNCTION: 0x0077CE50
+// FUNCTION: 0x0077CE70
+ArrayList<Wstring> DAT_00B76AD0;
+
+// FUNCTION: 0x0077CEB0
+// FUNCTION: 0x0077CED0
+ArrayList<Wstring> DAT_00B76970;
+
+// FUNCTION: 0x0077CF10
+// FUNCTION: 0x0077CF30
+Wstring DAT_00B76AC4;
+
+// FUNCTION: 0x0077CF40
+int FUN_0077CF40(void)
+{
+	int t = Session.unknown_0C;
+	if (t == 3 || t == 1 || t == 2)
+		return 1;
+	return 0;
+}
+
+// FUNCTION: 0x0077CF60
+int FUN_0077CF60(void)
+{
+	return Session.unknown_0C == 2;
+}
+
+// FUNCTION: 0x0077CF70
+// FUNCTION: 0x0077CF90
+Wstring DAT_00B76E34;

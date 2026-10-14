@@ -67,3 +67,6 @@ address,name,symbol,evidence
 0x00A802C8,OutList,,EventClass queue of 128 entries (YRpp EventClass::OutList)
 0x00B0CCB0,CommandBarStatics::ButtonA,,first initialiser $E96 0x006CFC00 constructs it; TabClass::Init_IO stores ID 0xF0 into it
 0x00B0CC40,CommandBarStatics::ButtonB,,constructed by initialiser 0x006CFC40
+0x0071BDF0,TerrainClass::TerrainClass,??0TerrainClass@@QAE@XZ,no-argument constructor (plain ret); called by TClassFactory<TerrainClass>::CreateInstance 0x006BF390
+0x0071BB90,TerrainClass::TerrainClass,??0TerrainClass@@QAE@PBVTerrainTypeClass@@ABVCell@@@Z,YRpp TerrainClass(TerrainTypeClass*; CellStruct*); the (type; cell) overload with ret 8
+0x0071BDF0,TerrainClass::TerrainClass,??0TerrainClass@@QAE@XZ,no-argument constructor (calls ObjectClass default 0x005F3900); called by TClassFactory<TerrainClass>::CreateInstance 0x006BF390

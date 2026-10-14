@@ -2417,6 +2417,203 @@ void MapGeneratorClass::Green_Shores(void)
 	}
 }
 
+// FUNCTION: 0x0059B740
+void MapGeneratorClass::Scatter_Green_Tiles(void)
+{
+	DynamicVectorClass<CellClass *> candidates;
+	candidates.Set_Growth_Step(10000);
+
+	Map.Reset_Iterator();
+	CellClass * cptr = Map.Iterate();
+	while (cptr != NULL) {
+		if (cptr->Is_Tile_Clear_To_Green_LAT()) {
+			for (int facing = FACING_N; facing < FACING_COUNT; facing += 2) {
+				CellClass * adjacent = &cptr->Adjacent_Cell((FacingType)facing);
+				if (adjacent->Is_Tile_Clear()) {
+					candidates.Add(adjacent);
+				}
+			}
+		}
+		cptr = Map.Iterate();
+	}
+
+	int passes = candidates.Count() / 3;
+	if (passes > 1000) {
+		passes = 1000;
+	}
+	for (int pass = passes; pass > 0; pass--) {
+		int index = Pick_Random_UInt(0, candidates.Count() - 1);
+		CellClass * chosen = candidates[index];
+		candidates.Delete_Index(index);
+		chosen->ITType = IsometricTileTypeClass::GreenTile;
+		for (int facing = FACING_N; facing < FACING_COUNT; facing += 2) {
+			CellClass * adjacent = &chosen->Adjacent_Cell((FacingType)facing);
+			if (adjacent->Is_Tile_Clear()) {
+				candidates.Add(adjacent);
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x0059B940
+double MapGeneratorClass::FUN_0059B940(Cell const & from, Cell const & to, Rect const & rect, Cell const & center, float weight_x, float weight_y)
+{
+	if (!(rect == RECT_NONE)) {
+		int u = abs(((to.X - to.Y) >> 1) - ((center.X - center.Y) >> 1));
+		int v = abs(((to.X + to.Y) >> 1) - ((center.X + center.Y) >> 1));
+		if (u == 0 && v == 0) {
+			static const float zero = 0.0f;
+			return zero;
+		}
+		double length = fastmath::sqrt((double)(v * v + u * u));
+		double ratio_u = u / length;
+		double ratio_v = v / length;
+		int x = from.X - to.X;
+		int y = from.Y - to.Y;
+		double steps = MAX(abs(x), abs(y));
+		return (weight_x * ratio_u + ratio_v * weight_y) * steps;
+	}
+	int dx = from.X - to.X;
+	int dy = from.Y - to.Y;
+	return fastmath::sqrt((double)(dy * dy + dx * dx));
+}
+
+// FUNCTION: 0x0059BAB0
+bool MapGeneratorClass::FUN_0059BAB0(Cell const & cell, Rect const & rect, bool flag, double scale_x, double scale_y)
+{
+	if (rect == RECT_NONE) {
+		return true;
+	}
+	if (flag) {
+		int a = cell.X - rect.X * 2 - cell.Y + Map.PlayRect.Width - 1;
+		int b = cell.X - rect.Y * 2 - Map.PlayRect.Width + cell.Y - 1;
+		double u = a * 0.5 - rect.Width * 0.5;
+		double v = b * 0.5 - rect.Height * 0.5;
+		return (u * u) * scale_x + (v * v) * scale_y < 1.0;
+	}
+	return rect.Is_Point_Within(Point2D(cell.X, cell.Y));
+}
+
+// FUNCTION: 0x0059C530
+void MapGeneratorClass::Clear_Shore_Tiles(void)
+{
+	Map.Reset_Iterator();
+	CellClass * cptr = Map.Iterate();
+	while (cptr != NULL) {
+		if (cptr->ITType >= IsometricTileTypeClass::ShorePieces && cptr->ITType < IsometricTileTypeClass::ShorePieces + 42) {
+			cptr->ITType = ISOTILE_CLEAR;
+			cptr->SubTile = 0;
+		}
+		cptr = Map.Iterate();
+	}
+}
+
+// FUNCTION: 0x0059C580
+void MapGeneratorClass::Seed_Water(void)
+{
+	WorkingRegionID++;
+
+	bool river_seeded;
+	bool lake_seeded;
+	int i;
+	int j;
+
+	if ((SeedData.MapType == 3 || SeedData.MapType == 4) && SeedData.WaterAmount > 20) {
+		i = 0;
+		river_seeded = false;
+		while (!river_seeded && i < 10) {
+			river_seeded = Seed_River(Cell(0, 0), 0.0, 0);
+			i++;
+		}
+		if (river_seeded) {
+			WorkingRegionID++;
+		}
+	}
+
+	j = 0;
+	lake_seeded = false;
+	while (!lake_seeded && j < 10) {
+		lake_seeded = Seed_Lake(Cell(0, 0));
+		j++;
+	}
+	if (lake_seeded) {
+		WorkingRegionID++;
+	}
+}
+
+// FUNCTION: 0x0059C630
+void MapGeneratorClass::Vary_Water_Tiles(void)
+{
+	Map.Reset_Iterator();
+	CellClass * cptr = Map.Iterate();
+	while (cptr != NULL) {
+		if (cptr->ITType == IsometricTileTypeClass::WaterSet && cptr->SubTile == 0) {
+			CellClass * east = &cptr->Adjacent_Cell(FACING_E);
+			CellClass * south = &cptr->Adjacent_Cell(FACING_S);
+			CellClass * southeast = &cptr->Adjacent_Cell(FACING_SE);
+			if (east->ITType == IsometricTileTypeClass::WaterSet && east->SubTile == 0
+				&& south->ITType == IsometricTileTypeClass::WaterSet && south->SubTile == 0
+				&& southeast->ITType == IsometricTileTypeClass::WaterSet && southeast->SubTile == 0
+				&& Pick_Random_UInt(1, 10) != 1) {
+				int pick = Pick_Random_UInt(0, 241);
+				int tile_index;
+				if (pick >= 240) {
+					tile_index = 247 - pick;
+				} else {
+					tile_index = pick / 40;
+				}
+				MapGeneratorClass::Place_Tile((IsometricTileType)(IsometricTileTypeClass::WaterSet + tile_index), cptr->CellID, MapRegionClass::CellData::Get_Region(cptr->CellID), -1);
+			} else {
+				cptr->ITType = (IsometricTileType)(IsometricTileTypeClass::WaterSet + 8 + Pick_Random_UInt(0, 200) / 40);
+			}
+		}
+		cptr = Map.Iterate();
+	}
+}
+
+// FUNCTION: 0x0059C800
+bool MapGeneratorClass::Green_Region_Tiles(int region_id)
+{
+	Map.Reset_Iterator();
+	CellClass * cptr = Map.Iterate();
+	while (cptr != NULL) {
+		if (MapRegionClass::CellData::Get_Region(cptr->CellID) == region_id) {
+			if (cptr->ITType == ISOTILE_CLEAR || cptr->ITType == 0xFFFF) {
+				cptr->ITType = IsometricTileTypeClass::GreenTile;
+			}
+		}
+		cptr = Map.Iterate();
+	}
+	return true;
+}
+
+// FUNCTION: 0x0059C880
+void MapGeneratorClass::Clear_Region_Cells(int id, int new_id, int cell_height, IsometricTileType ittype)
+{
+	Map.Reset_Iterator();
+	CellClass * cptr = Map.Iterate();
+	while (cptr != NULL) {
+		MapRegionClass::CellData & data = MapRegionClass::Get_Cell_Data(cptr->Fetch_CellID());
+		if (data.RegionID == id) {
+			data.RegionID = new_id;
+			data.CanExpand = false;
+			cptr->ITType = ittype;
+			cptr->SubTile = 0;
+			cptr->Height = cell_height == -1 ? CellHeight : cell_height;
+		}
+		cptr = Map.Iterate();
+	}
+}
+
+// FUNCTION: 0x0059D440
+int MapGeneratorClass::Get_Target_Water_Amount(void)
+{
+	if (SeedData.WaterAmount == 0) {
+		return(0);
+	}
+	return(0.008 * SeedData.WaterAmount * LocalWidth * LocalHeight + 100.0);
+}
+
 // FUNCTION: 0x0059D480
 double MapGeneratorClass::Get_Spread_Score(const Cell & cell1, const Cell & cell2, int spread_step) const
 {
@@ -2435,6 +2632,32 @@ double MapGeneratorClass::Get_Spread_Score(const Cell & cell1, const Cell & cell
 	return(random_value + dist_term - step_term);
 }
 
+// FUNCTION: 0x0059E640
+void MapGeneratorClass::Set_Height_Of_ID(int id, char cell_height)
+{
+	Map.Reset_Iterator();
+	CellClass * cptr = Map.Iterate();
+	while (cptr != NULL) {
+		if (MapRegionClass::CellData::Get_Region(cptr->Fetch_CellID()) == id) {
+			cptr->Height = cell_height;
+		}
+		cptr = Map.Iterate();
+	}
+}
+
+// FUNCTION: 0x0059E6C0
+void MapGeneratorClass::Increase_Height_Of_ID(int id, char cell_height)
+{
+	Map.Reset_Iterator();
+	CellClass * cptr = Map.Iterate();
+	while (cptr != NULL) {
+		if (MapRegionClass::CellData::Get_Region(cptr->Fetch_CellID()) == id) {
+			cptr->Height += cell_height;
+		}
+		cptr = Map.Iterate();
+	}
+}
+
 // FUNCTION: 0x005A0090
 void MapGeneratorClass::Set_Cell_Data_Region(Cell const &cell, int region_id)
 {
@@ -2451,6 +2674,12 @@ int MapGeneratorClass::Get_Cell_Data_Region(Cell const &cell)
 void MapGeneratorClass::Set_Cell_Data_Spread(Cell const &cell, int patch_id)
 {
 	MapRegionClass::CellData::Set_Spread(cell, patch_id);
+}
+
+// FUNCTION: 0x005A0130
+int MapGeneratorClass::Get_Cell_Data_Spread(Cell const &cell)
+{
+	return(MapRegionClass::CellData::Get_Spread(cell));
 }
 
 // FUNCTION: 0x005A1190

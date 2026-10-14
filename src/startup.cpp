@@ -397,7 +397,23 @@ template class TClassFactory<CStreamClass>;
 template class TClassFactory<WaveClass>;
 
 // FUNCTION: 0x006BF140 ?$TClassFactory@VTerrainTypeClass@@::?$TClassFactory@VTerrainTypeClass@@
+// FUNCTION: 0x006BF150 ?$TClassFactory@VTerrainTypeClass@@::QueryInterface
+// FUNCTION: 0x006BF1C0 ?$TClassFactory@VTerrainTypeClass@@::AddRef
+// FUNCTION: 0x006BF1E0 ?$TClassFactory@VTerrainTypeClass@@::Release
+// FUNCTION: 0x006BF210 ?$TClassFactory@VTerrainTypeClass@@::CreateInstance
+// FUNCTION: 0x006BF290 ?$TClassFactory@VTerrainTypeClass@@::LockServer
 template class TClassFactory<TerrainTypeClass>;
+
+// FUNCTION: 0x006BF2C0 ?$TClassFactory@VTerrainClass@@::?$TClassFactory@VTerrainClass@@
+// FUNCTION: 0x006BF2D0 ?$TClassFactory@VTerrainClass@@::QueryInterface
+// FUNCTION: 0x006BF340 ?$TClassFactory@VTerrainClass@@::AddRef
+// FUNCTION: 0x006BF360 ?$TClassFactory@VTerrainClass@@::Release
+// FUNCTION: 0x006BF390 ?$TClassFactory@VTerrainClass@@::CreateInstance
+// FUNCTION: 0x006BF410 ?$TClassFactory@VTerrainClass@@::LockServer
+template class TClassFactory<TerrainClass>;
+
+// FUNCTION: 0x006BF440 ?$TClassFactory@VSuperWeaponTypeClass@@::?$TClassFactory@VSuperWeaponTypeClass@@
+template class TClassFactory<SuperWeaponTypeClass>;
 
 // FUNCTION: 0x006BEDB0 ?$_com_ptr_t@V?$_com_IIID@UIUnknown@@$1?_GUID_00000000_0000_0000_c000_000000000046@@3U__s_GUID@@A@@::CreateInstance
 template class _com_ptr_t<_com_IIID<IUnknown, &__uuidof(IUnknown)> >;

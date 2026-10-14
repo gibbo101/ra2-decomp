@@ -189,6 +189,7 @@ class BuildingClass : public TechnoClass
 		virtual bool CanOccupyFire(void) const override;
 		virtual int GetOccupyRangeBonus(void) const override;
 		virtual int GetOccupantCount(void) const override;
+		void KillOccupants(TechnoClass * killer);
 		virtual void UpdateRefinerySmokeSystems(void) override;
 		virtual bool Is_Radar_Visible(DetectedType & detected) const override;
 		int Set_Turret_Frame(void);
@@ -199,6 +200,7 @@ class BuildingClass : public TechnoClass
 		int Power_Drain(void) const;
 		Cell Check_Point(CheckPointType cp) const;
 		bool Is_Powered_On(void) const;
+		int Tinted_Brightness(int cellbrightness);
 		SuperWeaponType Fetch_Super_Weapon(void) const;
 		SuperWeaponType Fetch_Super_Weapon2(void) const;
 		bool Should_Fog(void) const;
@@ -266,6 +268,7 @@ class BuildingClass : public TechnoClass
 		void FUN_00457DE0(bool, bool);
 		void Update_Radar_Spied(void);
 		void Spied_By(HouseClass * house);
+		void Infiltrate(HouseClass * house);
 
 		void Update_FS_Wall_State(void);
 		bool Crossing_Firestorm(ObjectClass * object, bool do_damage);

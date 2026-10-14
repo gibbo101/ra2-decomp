@@ -11,6 +11,10 @@
 #include "voc.h"
 #include "audioctl.h"
 #include <windows.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdarg.h>
+#include <wchar.h>
 
 // FUNCTION: 0x005BBF90 $E2
 // FUNCTION: 0x005BBFC0 $E5
@@ -61,6 +65,14 @@ struct DebugPage {
 	bool Is_Dirty(void);
 	void Show(void);
 	void Set_Pad(int value);
+	void Fill(int x, int y, int w, int h, int attr);
+	void Scroll_Vertical(int amount);
+	void Scroll_Horizontal(int amount);
+	void Print_Raw(char const * text);
+	void Print_At(char const * text, int x, int y, int attr);
+	void Print_At(wchar_t const * text, int x, int y, int attr);
+	void Draw_Cell(HDC dc, int col, int row);
+	char Translate(char c);
 };
 
 struct DebugPoint {
@@ -69,6 +81,8 @@ struct DebugPoint {
 	DebugPoint * Cell_Origin(int col, int row);
 };
 
+extern int DAT_00ABF1D8;
+extern int DAT_00ABF1E0;
 extern int DAT_00ABF188;
 extern int DAT_00ABF18C;
 extern int DAT_00ABF190;
@@ -283,7 +297,7 @@ void FUN_005BC530(void)
 	rect.left = 0;
 	rect.top = 0;
 	rect.right = DAT_00ABF1C8.tmMaxCharWidth * 79 + 20;
-	rect.bottom = (DAT_00ABF1C8.tmHeight + DAT_00ABF1C8.tmExternalLeading) * 25 + 20;
+	rect.bottom = (DAT_00ABF1C8.tmExternalLeading + DAT_00ABF1C8.tmHeight) * 25 + 20;
 	AdjustWindowRect(&rect, WS_CAPTION, FALSE);
 	RECT parent;
 	GetWindowRect(DAT_00ABF234, &parent);
@@ -528,6 +542,239 @@ void DebugPage::Set_Pad(int value)
 	if (DAT_00ABF23A) {
 		Pad[0] = value;
 	}
+}
+
+// FUNCTION: 0x005BCD90
+void DebugPage::Fill(int x, int y, int w, int h, int attr)
+{
+	if (DAT_00ABF23A) {
+		int cx = Field2724 + x;
+		int cy = Field2728 + y;
+		int ex = cx + w;
+		int ey = cy + h;
+		for (int row = cy; row < ey; row++) {
+			for (int col = cx; col < ex; col++) {
+				Attr[col][row] = attr;
+			}
+		}
+		Refresh(cx, cy, w, h);
+	}
+}
+
+// FUNCTION: 0x005BCE10
+void DebugPage::Scroll_Vertical(int amount)
+{
+	if (DAT_00ABF23A) {
+		int x = Field2724;
+		int y = Field2728;
+		int w = Columns;
+		int h = Rows;
+		if (amount > 0) {
+			for (int col = x; col < x + w; col++) {
+				for (int row = y; row < y + h - 1; row++) {
+					Text[col][row] = Text[col][row + 1];
+					Attr[col][row] = Attr[col][row + 1];
+				}
+				Text[col][y + h - 1] = ' ';
+				Attr[col][y + h - 1] = 0;
+			}
+		} else if (amount < 0) {
+			for (int col = x; col < x + w; col++) {
+				for (int row = y + h - 1; row > y; row--) {
+					Text[col][row] = Text[col][row - 1];
+					Attr[col][row] = Attr[col][row - 1];
+				}
+				Text[col][y] = ' ';
+				Attr[col][y] = 0;
+			}
+		}
+		Refresh(0, 0, 80, 25);
+	}
+}
+
+// FUNCTION: 0x005BCF90
+void DebugPage::Scroll_Horizontal(int amount)
+{
+	if (DAT_00ABF23A) {
+		int x = Field2724;
+		int w = Columns;
+		int y = Field2728;
+		int h = Rows;
+		if (amount > 0) {
+			for (int row = y; row < y + h; row++) {
+				for (int col = x; col < x + w - 1; col++) {
+					Text[col][row] = Text[col + 1][row];
+					Attr[col][row] = Attr[col + 1][row];
+				}
+				Text[x + w - 1][row] = ' ';
+				Attr[x + w - 1][row] = 0;
+			}
+		} else if (amount < 0) {
+			for (int row = y; row < y + h; row++) {
+				for (int col = x + w - 1; col > x; col--) {
+					Text[col][row] = Text[col - 1][row];
+					Attr[col][row] = Attr[col - 1][row];
+				}
+				Text[x][row] = ' ';
+				Attr[x][row] = 0;
+			}
+		}
+		Refresh(0, 0, 80, 25);
+	}
+}
+
+// FUNCTION: 0x005BD0D0
+void DebugPage::Print_Raw(char const * text)
+{
+	if (DAT_00ABF23A) {
+		int cx = Field271C;
+		int start = Field2724 + cx;
+		int row = Field2728 + Field2720;
+		int limit = Columns + Field2724;
+		Dirty = false;
+		int end = (int)strlen(text) + start;
+		if (end > limit) {
+			end = limit;
+		}
+		for (int col = start, i = 0; col < end; col++, i++) {
+			char c = text[i];
+			Text[col][row] = Translate(c);
+			Attr[col][row] = Pad[0];
+			if (c == '\n') {
+				Field271C = 0;
+				Field2720++;
+			} else {
+				Field271C++;
+			}
+		}
+		Refresh(start, row, end - start, 1);
+	}
+}
+
+// FUNCTION: 0x005BD1F0
+void __cdecl FUN_005BD1F0(DebugPage * page, char const * format, ...)
+{
+	char buffer[256];
+	if (DAT_00ABF23A) {
+		va_list args;
+		va_start(args, format);
+		vsprintf(buffer, format, args);
+		buffer[255] = '\0';
+		page->Print_Raw(buffer);
+	}
+}
+
+// FUNCTION: 0x005BD240
+void __cdecl FUN_005BD240(DebugPage * page, wchar_t const * format, ...)
+{
+	char buffer[256];
+	wchar_t wide[256];
+	if (DAT_00ABF23A) {
+		va_list args;
+		va_start(args, format);
+		vswprintf(wide, format, args);
+		sprintf(buffer, "%S", wide);
+		page->Print_Raw(buffer);
+	}
+}
+
+// FUNCTION: 0x005BD2A0
+void DebugPage::Print_At(char const * text, int x, int y, int attr)
+{
+	if (DAT_00ABF23A) {
+		Field271C = x;
+		Field2720 = y;
+		Set_Pad(attr);
+		Print_Raw(text);
+	}
+}
+
+// FUNCTION: 0x005BD2E0
+void DebugPage::Print_At(wchar_t const * text, int x, int y, int attr)
+{
+	char buffer[1024];
+	if (DAT_00ABF23A) {
+		Field271C = x;
+		Field2720 = y;
+		Set_Pad(attr);
+		sprintf(buffer, "%S", text);
+		Print_Raw(buffer);
+	}
+}
+
+// FUNCTION: 0x005BD360
+char DebugPage::Translate(char c)
+{
+	if (c == '\n') {
+		return ' ';
+	}
+	if ((unsigned char)c == 0xB3) {
+		return '|';
+	}
+	if ((unsigned char)c == 0xC4) {
+		return '-';
+	}
+	if ((unsigned char)c == 0xCD) {
+		return '=';
+	}
+	if ((unsigned char)c == 0xDA || (unsigned char)c == 0xC2 || (unsigned char)c == 0xBF ||
+		(unsigned char)c == 0xC6 || (unsigned char)c == 0xC3 || (unsigned char)c == 0xD1 ||
+		(unsigned char)c == 0xC5 || (unsigned char)c == 0xD8 || (unsigned char)c == 0xB5 ||
+		(unsigned char)c == 0xC0 || (unsigned char)c == 0xC1 || (unsigned char)c == 0xD9 ||
+		(unsigned char)c == 0xD5 || (unsigned char)c == 0xB4) {
+		return '+';
+	}
+	return c;
+}
+
+// FUNCTION: 0x005BD3D0
+void DebugPage::Draw_Cell(HDC dc, int col, int row)
+{
+	int attr = Attr[col][row];
+	if (attr != Pad[1]) {
+		if (attr == 1) {
+			SetBkColor(dc, DAT_00ABF110);
+			SetTextColor(dc, DAT_00ABF128);
+		} else {
+			SetBkColor(dc, DAT_00ABF128);
+			SetTextColor(dc, DAT_00ABF110);
+		}
+		Pad[1] = attr;
+	}
+	char ch = Text[col][row];
+	DebugPoint origin;
+	origin.Cell_Origin(col, row);
+	TextOutA(dc, origin.X, origin.Y, &ch, 1);
+}
+
+// FUNCTION: 0x005BD490
+void DebugPage::Refresh(int x, int y, int w, int h)
+{
+	if (DAT_00ABF23A && this == DAT_00ABF23C) {
+		HDC dc = GetDC(DAT_00ABF240);
+		SetBkMode(dc, OPAQUE);
+		SetBkColor(dc, DAT_00ABF128);
+		SetTextColor(dc, DAT_00ABF110);
+		if (dc) {
+			HGDIOBJ old = SelectObject(dc, DAT_00ABF244);
+			for (int row = y; row < y + h; row++) {
+				for (int col = x; col < x + w; col++) {
+					Draw_Cell(dc, col, row);
+				}
+			}
+			SelectObject(dc, old);
+			ReleaseDC(DAT_00ABF240, dc);
+		}
+	}
+}
+
+// FUNCTION: 0x005BD560
+MotionLibrary::MotionLibrary() :
+	LoadFailed(false),
+	LayerCount(0),
+	FrameCount(0),
+	LayerMatrices(NULL)
+{
 }
 
 // FUNCTION: 0x005BD570

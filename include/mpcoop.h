@@ -13,8 +13,17 @@ class MPCoopObject
 	public:
 		MPCoopObject(void);
 		virtual ~MPCoopObject(void);
+		virtual void Send(DynamicVectorClass<CoopPlayerStats *> stats, unsigned time, bool partial, int side, wchar_t const * title);
 
 		int Field4;
+};
+
+class MPCoopReporter
+{
+	public:
+		MPCoopReporter(void);
+		virtual ~MPCoopReporter(void);
+		virtual void Send(DynamicVectorClass<CoopPlayerStats *> stats, int total, int duration, int campaign, wchar_t const * title);
 };
 
 class MPCooperative : public MPGameModeClass
@@ -23,6 +32,8 @@ class MPCooperative : public MPGameModeClass
 		MPCooperative(NoInitClass const & x) : MPGameModeClass(x) {}
 		MPCooperative(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex);
 		virtual ~MPCooperative(void);
+		virtual bool vt_entry_04(void) override;
+		virtual bool vt_entry_08(void) override;
 		virtual bool vt_entry_10(void) override;
 		virtual bool vt_entry_14(unsigned a) override;
 		virtual bool vt_entry_18(void) override;
@@ -45,7 +56,17 @@ class MPCooperative : public MPGameModeClass
 		virtual bool StartingPositionsToHouseBaseCells2(bool arg) override;
 		virtual bool AllyTeams(void) override;
 		virtual bool vt_entry_8C(void) override;
+		virtual void vt_entry_90(void) override;
+		virtual void vt_entry_94(void) override;
+		virtual int vt_entry_98(void) override;
+		virtual void vt_entry_9C(void) override;
 		virtual void vt_entry_A0(unsigned a) override;
+		virtual void vt_entry_A4(unsigned a) override;
+		virtual bool vt_entry_A8(void) override;
+		virtual void vt_entry_AC(void) override;
+		virtual void vt_entry_B0(void) override;
+		virtual bool vt_entry_B4(DynamicVectorClass<int> list, int * out) override;
+		virtual int vt_entry_B8(void) override;
 		virtual Cell * AssignStartingPositionsToHouse(Cell * result, int house, DynamicVectorClass<Cell> * coords, unsigned char * satisfied) override;
 
 		void FUN_005C2500(HWND dialog);

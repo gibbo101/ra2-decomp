@@ -75,7 +75,9 @@ bool __fastcall FUN_0053A100(void);
 void __fastcall FUN_00588AC0(MapClass * map);
 extern int DAT_00842AFC[];
 bool __fastcall FUN_0065D8E0(TeamTypeClass * team, int waypoint);
-void __fastcall FUN_00539EB0(int duration, int deferment, Cell target, bool a);
+void __fastcall FUN_00539EB0(int duration, int deferment, Cell target, HouseClass * house);
+bool __fastcall FUN_0065EC30(TeamTypeClass * team, int waypoint);
+BulletClass * __fastcall FUN_0046B050(BulletTypeClass const * type, AbstractClass * target, TechnoClass * owner, int damage, WarheadTypeClass const * warhead, int speed, bool bright);
 HouseClass * __fastcall FUN_00726910(TriggerClass * trig);
 bool __fastcall FUN_00510F60(int index);
 void __fastcall FUN_0053B460(int duration);
@@ -1330,7 +1332,7 @@ bool TActionClass::TAction_ION_STORM_START(HouseClass * , ObjectClass * , Trigge
 	if (IonStormClass::Is_Ion_Storm_Active()) {
 		return(false);
 	}
-	FUN_00539EB0(Data.Value, Rule->LightningDeferment, DAT_00B0E680, false);
+	FUN_00539EB0(Data.Value, Rule->LightningDeferment, DAT_00B0E680, NULL);
 	return(true);
 }
 
@@ -1741,6 +1743,125 @@ bool TActionClass::TAction_SET_TEAM_AIRCRAFT_RATIO(HouseClass * house, ObjectCla
 	if (house != NULL) {
 		house->RatioTeamAircraft = Data.Value;
 	}
+	return(true);
+}
+
+// FUNCTION: 0x006E3340
+bool TActionClass::TAction_SET_TEAM_INFANTRY_RATIO(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
+{
+	if (house != NULL) {
+		house->RatioTeamInfantry = Data.Value;
+	}
+	return(true);
+}
+
+// FUNCTION: 0x006E3360
+bool TActionClass::TAction_SET_TEAM_UNIT_RATIO(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
+{
+	if (house != NULL) {
+		house->RatioTeamUnits = Data.Value;
+	}
+	return(true);
+}
+
+// FUNCTION: 0x006E3380
+bool TActionClass::TAction_ION_CANNON(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	Cell waypoint = Scen->Get_Waypoint_Cell(EffectLocation);
+	Coord coord = Coord (waypoint);
+	coord.Z = Map.Get_Height_GL(coord);
+
+	new IonBlastClass(coord);
+	return(true);
+}
+
+// FUNCTION: 0x006E35F0
+bool TActionClass::TAction_LIGHTNING_STORM(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
+{
+	Cell waypoint = Scen->Get_Waypoint_Cell(EffectLocation);
+	Coord coord = Coord (waypoint);
+	coord.Z = Map.Get_Height_GL(coord);
+	if (Map[waypoint].IsUnderBridge) {
+		coord.Z += BRIDGE_LEPTON_HEIGHT;
+	}
+	Cell cell = coord.As_Cell();
+	if (!FUN_0053A100()) {
+		FUN_00539EB0(Rule->LightningStormDuration, Rule->LightningDeferment, cell, house);
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x006E37F0
+bool TActionClass::TAction_SET_TECH_LEVEL(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	for (int index = TechnoTypes.Count() - 1; index >= 0; index--) {
+		TechnoTypeClass * type = TechnoTypes[index];
+		if (TechnoID == type->IniName) {
+			type->Level = Data.Value;
+			break;
+		}
+	}
+	for (int house_index = Houses.Count() - 1; house_index >= 0; house_index--) {
+		Houses[house_index]->IsRecalcNeeded = true;
+	}
+	return(true);
+}
+
+// FUNCTION: 0x006E3890
+bool TActionClass::TAction_CHRONO_IN_TEAM(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	if (Team != NULL && EffectLocation != -1) {
+		return(FUN_0065EC30(Team, EffectLocation));
+	}
+	return(false);
+}
+
+// FUNCTION: 0x006E38B0
+bool TActionClass::TAction_CREATE_CRATE(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	Cell cell = Scen->Get_Waypoint_Cell(EffectLocation);
+	return(Map.PlacePowerupCrate(cell, Data.Value));
+}
+
+// FUNCTION: 0x006E38F0
+bool TActionClass::TAction_CHEM_MISSILE(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	Cell waypoint = Scen->Get_Waypoint_Cell(EffectLocation);
+	Coord coord = Coord (waypoint);
+	coord.Z = Map.Get_Height_GL(coord);
+	if (Map[waypoint].IsUnderBridge) {
+		coord.Z += BRIDGE_LEPTON_HEIGHT;
+	}
+
+	Cell closest = Map.Closest_Edge_Cell(coord.As_Cell());
+
+	WeaponTypeClass * weapon_type = Weapons[WeaponTypeClass::From_Name("ChemLauncher")];
+	BulletTypeClass const * bullet_type = weapon_type->Bullet;
+	BulletClass * bullet = FUN_0046B050(bullet_type, &Map[coord], NULL, weapon_type->Attack, weapon_type->WarheadPtr, 20, false);
+
+	if (bullet != NULL) {
+		TVelocity3D<double> velocity(DirType(DIR_N), DirType(DIR_E), 100);
+		bullet->Unlimbo(closest, velocity);
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x006E3B20
+bool TActionClass::TAction_TOGGLE_TRAIN_CARGO(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	Scen->IsTrainCargo = (Scen->IsTrainCargo == false);
+	return(true);
+}
+
+// FUNCTION: 0x006E3B40
+bool TActionClass::TAction_RADAR_BLACKOUT(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
+{
+	if (house == NULL) {
+		return(false);
+	}
+	house->Create_Radar_Outage(Data.Value);
 	return(true);
 }
 

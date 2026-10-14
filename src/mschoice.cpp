@@ -329,5 +329,19 @@ template class VectorClass<MapSelection *>;
 // FUNCTION: 0x005D1120 ?$DynamicVectorClass@PAVMSAnimEntry@@::Resize
 // FUNCTION: 0x005D11D0 ?$DynamicVectorClass@PAVMSAnimEntry@@::ID
 // FUNCTION: 0x005D1200 ?$VectorClass@PAVMSSfxEntry@@::operator==
+// FUNCTION: 0x005D1240 ?$VectorClass@PAVMSSfxEntry@@::Resize
+// FUNCTION: 0x005D12F0 ?$VectorClass@PAVMSSfxEntry@@::Clear
+// FUNCTION: 0x005D1320 ?$VectorClass@PAVMSSfxEntry@@::ID
+// FUNCTION: 0x005D1360 ?$VectorClass@PAVMSSfxEntry@@::ID
+// FUNCTION: 0x005D1380 ?$DynamicVectorClass@PAVMSSfxEntry@@::Resize
+// FUNCTION: 0x005D1430 ?$DynamicVectorClass@PAVMSSfxEntry@@::ID
 template class VectorClass<MSAnimEntry *>;
 template class VectorClass<MSSfxEntry *>;
+
+// FUNCTION: 0x005D1460 ?$VectorClass@PAVMapStage@@::operator==
+// FUNCTION: 0x005D14A0 ?$VectorClass@PAVMapStage@@::Resize
+// FUNCTION: 0x005D1550 ?$VectorClass@PAVMapStage@@::Clear
+// FUNCTION: 0x005D1580 ?$VectorClass@PAVMapStage@@::ID
+// FUNCTION: 0x005D15C0 ?$VectorClass@PAVMapStage@@::ID
+// FUNCTION: 0x005D15E0 ?$DynamicVectorClass@PAVMapStage@@::Resize
+template class VectorClass<MapStage *>;

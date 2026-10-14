@@ -37,6 +37,9 @@
 
 MPGameModeClass * First_Game_Mode(void);
 extern CCINIClass DAT_008870C0;
+extern signed char PlayerColorToColorSchemeLUT[9];
+extern char DAT_00889F64[];
+void __fastcall FUN_00735060(wchar_t * dest, char const * source, int length);
 
 // FUNCTION: 0x00696D00 $E2
 // FUNCTION: 0x00696D20 $E5
@@ -553,6 +556,18 @@ void FUN_0069A300(void)
 {
 }
 
+// FUNCTION: 0x0069A310
+int SessionClass::Color_Index_To_Scheme(int id)
+{
+	if (id == -2) {
+		id = 8;
+	}
+	if ((unsigned)id < 9) {
+		return PlayerColorToColorSchemeLUT[id];
+	}
+	return id;
+}
+
 // FUNCTION: 0x0069A340
 unsigned int SessionClass::Compute_Unique_ID(void)
 {
@@ -573,6 +588,195 @@ unsigned int SessionClass::Compute_Unique_ID(void)
 	}
 
 	return(id);
+}
+
+// FUNCTION: 0x0069A3B0
+MultiMission::MultiMission(CCINIClass const & ini, char const * name)
+{
+	char buffer[128];
+	char *token;
+
+	ScenarioDescription[0] = L'\0';
+	Filename[sizeof(Filename) - 1] = '\0';
+	Set_Digest(NULL);
+	IsOfficial = true;
+	MinPlayers = 2;
+	MaxPlayers = 4;
+	Disks.Clear();
+
+	if (name != NULL) {
+
+		strcpy(Filename, name);
+		strcat(Filename, ".MAP");
+
+		if (ini.Is_Present(name, "DescriptionText")) {
+			char text[ARRAY_SIZE(ScenarioDescription)];
+			ini.Get_String(name, "DescriptionText", DAT_00889F64, text, sizeof(text));
+			FUN_00735060(ScenarioDescription, text, -1);
+		} else {
+			ini.ReadStringtableEntry(name, "Description", ScenarioDescription, ARRAY_SIZE(ScenarioDescription));
+		}
+
+		MinPlayers = ini.Get_Int(name, "MinPlayers", MinPlayers);
+		MaxPlayers = ini.Get_Int(name, "MaxPlayers", MaxPlayers);
+
+		if (ini.Get_String(name, "CD", DAT_00889F64, buffer, sizeof(buffer))) {
+			token = strtok(buffer, ",");
+
+			while (token != NULL && *token != '\0') {
+				Disks.Add((DiskID)atoi(token));
+				token = strtok(NULL, ",");
+			}
+		}
+
+		Wstring modes;
+		if (ini.Get_String(name, "GameMode", DAT_00889F64, modes) > 0) {
+			Wstring mode;
+			int pos = 0;
+			while ((pos = modes.getToken(pos, ",", mode)) != -1) {
+				mode.trimLeading(" ");
+				mode.trimTrailing(" ");
+				GameModes.Add(mode);
+			}
+		}
+
+		CCFileClass file(Filename);
+
+		if (!file.Is_Available(0)) {
+			DebugString("Unable to locate scenario %s - No digest info will be loaded\n", Filename);
+		}else{
+			if (!file.Open(FileClass::READ)) {
+				return;
+			}
+			char digestbuf[128];
+
+			file.Seek(-((int)sizeof(digestbuf) - 28), SEEK_END);
+			memset(digestbuf, 0, sizeof(digestbuf));
+			file.Read(digestbuf, sizeof(digestbuf) - 28);
+			file.Close();
+
+			char *digest = strstr(digestbuf, "[Digest]");
+
+			if (digest != NULL) {
+				CCINIClass mapini;
+				BufferStraw straw(digestbuf, sizeof(digestbuf) - 28);
+				mapini.Load(straw, false, false);
+				mapini.Get_String("Digest", "1", NULL, digestbuf, sizeof(digestbuf));
+				Set_Digest(digestbuf);
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x0069A980
+MultiMission::MultiMission(char const * filename, wchar_t const * description, char const * digest, bool official, char const * game_modes, int min_players, int max_players)
+{
+	Set_Filename(filename);
+	Set_Description(description);
+	Set_Digest(digest);
+	IsOfficial = official;
+	MinPlayers = min_players;
+	MaxPlayers = max_players;
+	Disks.Clear();
+
+	Disks.Add(DISK_LOCAL);
+
+	if (game_modes != NULL) {
+		Wstring modes(game_modes);
+		if (modes.length() > 0) {
+			Wstring mode;
+			int pos = 0;
+			while ((pos = modes.getToken(pos, ",", mode)) != -1) {
+				mode.trimLeading(" ");
+				mode.trimTrailing(" ");
+				GameModes.Add(mode);
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x0069AC30
+bool MultiMission::Is_On_CD(DiskID cd) const
+{
+	if (cd == DISK_LOCAL) {
+		return RawFileClass(Filename).Is_Available();
+	}
+	if (Disks.Is_In_List(DISK_ANY) == true) {
+		return true;
+	}
+	return Disks.Is_In_List(cd);
+}
+
+// FUNCTION: 0x0069ACC0
+DiskID MultiMission::On_Which_CD(void) const
+{
+	return Disks[0];
+}
+
+// FUNCTION: 0x0069ACD0
+void MultiMission::Set_Description(wchar_t const * description)
+{
+	if (description != NULL) {
+		wcsncpy(ScenarioDescription, description, ARRAY_SIZE(ScenarioDescription));
+		ScenarioDescription[ARRAY_SIZE(ScenarioDescription) - 1] = L'\0';
+	} else {
+#line 2845 "D:\\ra2mdpost\\Session.CPP"
+		wcscpy(ScenarioDescription, StringTable::LoadString("MSG:NoDescription", NULL, __FILE__, __LINE__));
+	}
+}
+
+// FUNCTION: 0x0069AD20
+void MultiMission::Set_Filename(char const * filename)
+{
+	if (filename != NULL) {
+		strncpy(Filename, filename, ARRAY_SIZE(Filename));
+		Filename[ARRAY_SIZE(Filename) - 1] = '\0';
+	} else {
+		strcpy(Filename, "No File Name");
+	}
+}
+
+// FUNCTION: 0x0069AD80
+void MultiMission::Set_Digest(char const * digest)
+{
+	if (digest != NULL) {
+		strncpy(Digest, digest, ARRAY_SIZE(Digest));
+		Digest[ARRAY_SIZE(Digest) - 1] = '\0';
+	} else {
+		strcpy(Digest, "No Digest");
+	}
+}
+
+// FUNCTION: 0x0069ADE0
+void MultiMission::Set_Official(bool official)
+{
+	IsOfficial = official;
+}
+
+// FUNCTION: 0x0069ADF0
+bool MultiMission::Is_Random_Map(void) const
+{
+	return stricmp(Filename, "RandMap.Sed") == 0;
+}
+
+// FUNCTION: 0x0069AE10
+bool MultiMission::Supports_Game_Mode(Wstring & mode) const
+{
+	if (GameModes.Count() == 0) {
+		return mode == "standard";
+	}
+	for (int index = 0; index < GameModes.Count(); index++) {
+		if (mode == GameModes[index]) {
+			return true;
+		}
+	}
+	return false;
+}
+
+// FUNCTION: 0x0069AE70
+bool SessionClass::Is_Random_Map(void) const
+{
+	return stricmp(ScenarioFileName, "RandMap.Sed") == 0;
 }
 
 // FUNCTION: 0x0069B560

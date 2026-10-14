@@ -3094,6 +3094,348 @@ Cell Clamp_Cell(Rect const & bounds, Cell const & cell)
 	return(result);
 }
 
+// FUNCTION: 0x00506D50
+void HouseClass::Calculate_Defense_Values(BuildingClass const * building, int value, int * values, Rect const & area) const
+{
+	if (value <= 0) value = 1;
+
+	Cell center = building->PositionCoord.As_Cell();
+
+	int x_min = MAX(center.X - 6, area.X);
+	int x_max = MIN(area.X + area.Width, center.X + 6);
+	int y_min = MAX(center.Y - 6, area.Y);
+	int y_max = MIN(area.Y + area.Height, center.Y + 6);
+
+	for (int y = y_min; y < y_max; ++y) {
+		for (int x = x_min; x < x_max; ++x) {
+			int y_offset = y - center.Y;
+			double distance = fastmath::sqrt((double)((x - center.X) * (x - center.X) + y_offset * y_offset));
+			if (distance < 6.0) {
+				double adjusted_distance = distance;
+				int x_offset = x - area.X;
+				int area_y_offset = y - area.Y;
+				if (adjusted_distance < 1.0) {
+					adjusted_distance = 1.0;
+				}
+				int * cell_value = &values[x_offset + area.Width * area_y_offset];
+				*cell_value += ((double)value / ((adjusted_distance - 1.0) * 0.1 + 1.0));
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x00507B80
+DynamicVectorClass<BuildingTypeClass *> HouseClass::Get_Anti_Air_Defense_Buildings(DynamicVectorClass<BuildingTypeClass const *> & owned) const
+{
+	unsigned ownable = 1 << HouseTypeClass::From_Name(Class->ParentCountry);
+	DynamicVectorClass<BuildingTypeClass *> defenses;
+
+	TypeList<BuildingTypeClass const *> * list;
+	if (Class->Side == 0) {
+		list = &Rule->AlliedBaseDefenses;
+	} else if (Class->Side == 1) {
+		list = &Rule->SovietBaseDefenses;
+	} else {
+		list = &Rule->ThirdBaseDefenses;
+	}
+
+	for (int i = list->Count() - 1; i >= 0; i--) {
+		BuildingTypeClass * b = (BuildingTypeClass *)list->GetItem(i);
+		if (ownable & b->Ownable && b->Level <= Control.TechLevel && b->AntiAirValue > 0 && AI_Has_Prerequisites(b, owned, owned.Count())) {
+			defenses.Add(b);
+		}
+	}
+
+	return(defenses);
+}
+
+// FUNCTION: 0x00507D70
+DynamicVectorClass<BuildingTypeClass *> HouseClass::Get_Anti_Armor_Defense_Buildings(DynamicVectorClass<BuildingTypeClass const *> & owned) const
+{
+	unsigned ownable = 1 << HouseTypeClass::From_Name(Class->ParentCountry);
+	DynamicVectorClass<BuildingTypeClass *> defenses;
+
+	TypeList<BuildingTypeClass const *> * list;
+	if (Class->Side == 0) {
+		list = &Rule->AlliedBaseDefenses;
+	} else if (Class->Side == 1) {
+		list = &Rule->SovietBaseDefenses;
+	} else {
+		list = &Rule->ThirdBaseDefenses;
+	}
+
+	for (int i = list->Count() - 1; i >= 0; i--) {
+		BuildingTypeClass * b = (BuildingTypeClass *)list->GetItem(i);
+		if (ownable & b->Ownable && b->Level <= Control.TechLevel && b->AntiArmorValue > 0 && AI_Has_Prerequisites(b, owned, owned.Count())) {
+			defenses.Add(b);
+		}
+	}
+
+	return(defenses);
+}
+
+// FUNCTION: 0x00507F60
+DynamicVectorClass<BuildingTypeClass *> HouseClass::Get_Anti_Ground_Defense_Buildings(DynamicVectorClass<BuildingTypeClass const *> & owned) const
+{
+	unsigned ownable = 1 << HouseTypeClass::From_Name(Class->ParentCountry);
+	DynamicVectorClass<BuildingTypeClass *> defenses;
+
+	TypeList<BuildingTypeClass const *> * list;
+	if (Class->Side == 0) {
+		list = &Rule->AlliedBaseDefenses;
+	} else if (Class->Side == 1) {
+		list = &Rule->SovietBaseDefenses;
+	} else {
+		list = &Rule->ThirdBaseDefenses;
+	}
+
+	for (int i = list->Count() - 1; i >= 0; i--) {
+		BuildingTypeClass * b = (BuildingTypeClass *)list->GetItem(i);
+		if (ownable & b->Ownable && b->Level <= Control.TechLevel && b->AntiInfantryValue > 0 && AI_Has_Prerequisites(b, owned, owned.Count())) {
+			defenses.Add(b);
+		}
+	}
+
+	return(defenses);
+}
+
+// FUNCTION: 0x00508150
+void HouseClass::Calculate_Enemy_Predictions(void)
+{
+	HouseClass * enemy;
+	int infantry = 0;
+	int armor = 0;
+	int air = 0;
+	int range;
+	int range2;
+	int range3;
+	int total;
+
+	if (Enemy == HOUSE_NONE) goto fallback;
+
+	enemy = Houses[Enemy];
+	air = enemy->TotalOwnedAircraftCost + 3000;
+	armor = enemy->TotalOwnedVehicleCost + 3000;
+	infantry = enemy->TotalOwnedInfantryCost + 3000;
+
+	range = (int)((Rule->AIForcePredictionFudge[Difficulty] * 0.01f) * air);
+	air += Scen->RandomNumber(-range, range);
+	range2 = (int)((Rule->AIForcePredictionFudge[Difficulty] * 0.01f) * armor);
+	armor += Scen->RandomNumber(-range2, range2);
+	range3 = (int)((Rule->AIForcePredictionFudge[Difficulty] * 0.01f) * infantry);
+	infantry += Scen->RandomNumber(-range3, range3);
+	if ((total = air + armor + infantry) <= 0) {
+fallback:
+		EnemyInfantryForcePrediction = 0.33f;
+		EnemyAirForcePrediction = 0.33f;
+		EnemyArmorForcePrediction = 0.33f;
+	} else {
+		EnemyArmorForcePrediction = (float)armor / total;
+		EnemyAirForcePrediction = (float)air / total;
+		EnemyInfantryForcePrediction = (float)infantry / total;
+	}
+}
+
+void __fastcall FUN_00454CE0(HouseClass * house);
+
+// FUNCTION: 0x00508C30
+void HouseClass::Recalc_Power_Drain(void)
+{
+	bool was_low_power = Power_Fraction() < 1.0;
+	bool drained = false;
+
+	RecalcPower = false;
+	Power = 0;
+	Drain = 0;
+
+	int count = Buildings.Count();
+	for (int i = 0; i < count; i++) {
+		BuildingClass * b = Buildings[i];
+		if (b && !b->IsInLimbo && b->IsDown) {
+			if (Is_Player_Control() && !b->IsDiscoveredByPlayer && Session.Type == GAME_NORMAL) continue;
+			Power += b->Power_Output();
+			Drain += b->Power_Drain();
+			if (b->IsBeingDrained() && b->Power_Output() > 0) {
+				drained = true;
+			}
+		}
+	}
+
+	IsBeingDrained = drained;
+
+	if ((int)PowerBlackoutTimer != 0 || IsBeingDrained) {
+		Power = 0;
+	}
+
+	FUN_00454CE0(this);
+	Recalc_House_Factories(this);
+
+	if (was_low_power != (Power_Fraction() < 1.0)) {
+		Update_Present_Super_Weapons();
+	}
+
+	RecalcRadar = true;
+}
+
+// FUNCTION: 0x00508DF0
+void HouseClass::Recalc_Radar_Availability(void)
+{
+	RecalcRadar = false;
+
+	if (this == PlayerPtr) {
+		bool radar_on = false;
+
+		if ((int)RadarBlackoutTimer == 0) {
+			if (Scen->IsFreeRadar) {
+				radar_on = true;
+			} else if (Power_Fraction() >= 1.0) {
+				int count = Buildings.Count();
+				for (int i = 0; i < count; i++) {
+					BuildingClass * b = Buildings[i];
+					if (b && b->IsOn && b->Class->IsRadar && !b->IsInLimbo && b->IsDown) {
+						if (Is_Player_Control() && !b->IsDiscoveredByPlayer && Session.Type == GAME_NORMAL) continue;
+						if (b->CurrentMission != MISSION_DECONSTRUCTION && b->MissionQueue != MISSION_DECONSTRUCTION) {
+							if (b->EMPLockRemaining == 0 && !b->IsBeingWarpedOut()) {
+								radar_on = true;
+							}
+							break;
+						}
+					}
+				}
+			}
+		}
+
+		if (Map.Is_Radar_Existing() != radar_on) {
+			Map.Toggle_Radar(radar_on);
+		}
+	}
+}
+
+// FUNCTION: 0x00508F60
+void HouseClass::Recalc_Spy_Satellite(void)
+{
+	RecalcRadar = false;
+
+	int count = Buildings.Count();
+	for (int i = 0; i < count; i++) {
+		BuildingClass * b = Buildings[i];
+		if (b && b->Class->SpySat && !b->IsInLimbo && b->IsDown) {
+			if (Is_Player_Control() && !b->IsDiscoveredByPlayer && Session.Type == GAME_NORMAL) continue;
+			if (b->CurrentMission != MISSION_DECONSTRUCTION && b->MissionQueue != MISSION_DECONSTRUCTION) {
+				if (!b->IsBeingWarpedOut()) {
+					if (!SpySatActive) {
+						Map.Reveal(this);
+						SpySatActive = true;
+						if (this == PlayerPtr) {
+							VocClass::PlayGlobal(Rule->SpySatActivationSound, 1.0f, 0x2000);
+						}
+					}
+					return;
+				}
+				break;
+			}
+		}
+	}
+
+	if (SpySatActive) {
+		Map.Reshroud(this);
+		SpySatActive = false;
+		if (this == PlayerPtr) {
+			VocClass::PlayGlobal(Rule->SpySatDeactivationSound, 1.0f, 0x2000);
+		}
+	}
+}
+
+// FUNCTION: 0x005090A0
+PathType HouseClass::New_Waypoint_Path(void) const
+{
+	for (int i = 0; i < PATH_COUNT; i++) {
+		WaypointPathClass * path = Paths[i];
+		if (path == NULL) {
+			path = new WaypointPathClass();
+		}
+		if (path->Waypoint_Count() == 0) {
+			return((PathType)i);
+		}
+	}
+	return(PATH_NONE);
+}
+
+// FUNCTION: 0x005090F0
+bool HouseClass::Can_Add_Waypoint_To_Path(void) const
+{
+	if (SelectedPath < 0 || SelectedPath >= PATH_COUNT) return(false);
+	WaypointPathClass * path = Paths[SelectedPath];
+	return(path->Waypoint_Count() < Rule->MaxWaypointPathLength && path->Current_Waypoint() == -1);
+}
+
+// FUNCTION: 0x00509130
+void HouseClass::Activate_Threat_Node(void)
+{
+	IsThreatRatingNodeActive = true;
+}
+
+// FUNCTION: 0x00509140
+void HouseClass::Update_Factories(RTTIType rtti, bool naval, int buildcat)
+{
+	FactoryClass * factory = NULL;
+
+	switch (rtti) {
+		case RTTI_BUILDINGTYPE:
+			if (buildcat == 5) {
+				factory = Primary_ForDefenses;
+			} else {
+				factory = BuildingFactory;
+			}
+			break;
+
+		case RTTI_UNITTYPE:
+			if (naval) {
+				factory = Primary_ForShips;
+			} else {
+				factory = UnitFactory;
+			}
+			break;
+
+		case RTTI_INFANTRYTYPE:
+			factory = InfantryFactory;
+			break;
+
+		case RTTI_AIRCRAFTTYPE:
+			factory = AircraftFactory;
+			break;
+	}
+
+	if (factory != NULL) {
+		for (int i = factory->QueuedObjects.Count() - 1; i >= 0; i--) {
+			TechnoTypeClass const * ttype = factory->QueuedObjects[i];
+			if (ttype->Who_Can_Build_Me(true, false, true, this) == NULL) {
+				factory->QueuedObjects.Delete_Index(i);
+			}
+		}
+		if (factory->Object != NULL) {
+			if (factory->Object->Techno_Type_Class()->Who_Can_Build_Me(true, false, true, this) == NULL) {
+				factory->Abandon();
+				factory->Resume_Queue();
+			} else {
+				if (factory->Object->Techno_Type_Class()->Who_Can_Build_Me(true, true, true, this) == NULL) {
+					factory->Suspend(false);
+					if (PlayerPtr == this) {
+						Map.RepaintSidebar(SidebarClass::GetObjectTabIdxByCat(rtti, buildcat, naval));
+					}
+				} else {
+					if (factory->IsSuspended && !factory->IsOnHold) {
+						factory->Start(false);
+					}
+				}
+			}
+		}
+		if (factory->Object == NULL && factory->QueuedObjects.Count() == 0) {
+			delete factory;
+		}
+	}
+}
+
 // FUNCTION: 0x0050B6F0
 bool HouseClass::Is_Player_Control(void) const
 {

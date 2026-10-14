@@ -85,6 +85,12 @@ template<class T> inline T Bound2(T original, T minval, T maxval)
 
 extern bool DAT_00884D44;
 void __fastcall UnselectAll(void);
+class BeaconManagerClass
+{
+	public:
+		bool Can_Place_Beacon(int house);
+};
+extern BeaconManagerClass BeaconManager;
 
 // FUNCTION: 0x004A8420 $E2
 // FUNCTION: 0x004A8440 $E5
@@ -1010,10 +1016,492 @@ void DisplayClass::Sell_Mode_Control(int control)
 	}
 }
 
+// FUNCTION: 0x004AC700
+void DisplayClass::Waypoint_Mode_Control(int control, bool edit_selected_path)
+{
+	bool mode = IsWaypointMode;
+	switch (control) {
+		case 0:
+			mode = false;
+			break;
+
+		case -1:
+			mode = (mode == false);
+			break;
+
+		case 1:
+			mode = true;
+			break;
+	}
+
+	if (mode != IsWaypointMode && !PendingObject) {
+		IsRepairMode = false;
+		IsSellMode = false;
+		IsPowerMode = false;
+		PlaceBeaconMode = false;
+		PathType path = PlayerPtr->New_Waypoint_Path();
+		if (mode) {
+			if (path == PATH_NONE && (!edit_selected_path || PlayerPtr->SelectedPath == PATH_NONE)) {
+				IsWaypointMode = false;
+				Revert_Mouse_Shape();
+				DraggedWaypoint = NULL;
+			} else {
+				IsWaypointMode = true;
+				if (!edit_selected_path) {
+					PlayerPtr->SelectedPath = path;
+				}
+				UnselectAll();
+			}
+		} else {
+			IsWaypointMode = false;
+			Revert_Mouse_Shape();
+			WaypointClass *wptr = DraggedWaypoint;
+			if (wptr != NULL) {
+				DraggedWaypoint->Location = DraggedWaypointCoord;
+				DraggedWaypoint = NULL;
+				MouseCursor->Show_Mouse();
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x004AC820
+void DisplayClass::Power_Mode_Control(int control)
+{
+	bool mode = IsPowerMode;
+	switch (control) {
+		case 0:
+			mode = false;
+			break;
+
+		case -1:
+			mode = (IsPowerMode == false);
+			break;
+
+		case 1:
+			mode = true;
+			break;
+	}
+
+	if (mode != IsPowerMode && !PendingObject) {
+		Set_Default_Mouse(MOUSE_NORMAL, false);
+		IsRepairMode = false;
+		IsSellMode = false;
+		IsWaypointMode = false;
+		PlaceBeaconMode = false;
+		if (mode && PlayerPtr->CurBuildings > 0) {
+			IsPowerMode = true;
+			UnselectAll();
+		} else {
+			IsPowerMode = false;
+			Revert_Mouse_Shape();
+		}
+	}
+}
+
+// FUNCTION: 0x004AC8C0
+void DisplayClass::Repair_Mode_Control(int control)
+{
+	bool mode = IsRepairMode;
+	switch (control) {
+		case 0:
+			mode = false;
+			break;
+
+		case -1:
+			mode = (IsRepairMode == false);
+			break;
+
+		case 1:
+			mode = true;
+			break;
+	}
+
+	if (mode != IsRepairMode && !PendingObject) {
+		IsSellMode = false;
+		IsPowerMode = false;
+		IsWaypointMode = false;
+		PlaceBeaconMode = false;
+		Set_Default_Mouse(MOUSE_NORMAL, false);
+		if (mode && PlayerPtr->CurBuildings > 0) {
+			IsRepairMode = true;
+			UnselectAll();
+		} else {
+			IsRepairMode = false;
+			Revert_Mouse_Shape();
+		}
+	}
+}
+
+// FUNCTION: 0x004AC960
+void DisplayClass::Place_Beacon_Mode_Control(int control)
+{
+	bool mode = IsRepairMode;
+	switch (control) {
+		case 0:
+			mode = false;
+			break;
+
+		case -1:
+			mode = (mode == false);
+			break;
+
+		case 1:
+			mode = true;
+			break;
+	}
+
+	if (mode != PlaceBeaconMode && !PendingObject) {
+		if (mode && !BeaconManager.Can_Place_Beacon(PlayerPtr->HeapID)) {
+			mode = false;
+		}
+		IsSellMode = false;
+		IsPowerMode = false;
+		IsWaypointMode = false;
+		IsRepairMode = false;
+		Set_Default_Mouse(MOUSE_NORMAL, false);
+		if (mode) {
+			PlaceBeaconMode = true;
+			UnselectAll();
+		} else {
+			PlaceBeaconMode = false;
+			Revert_Mouse_Shape();
+		}
+	}
+}
+
+// FUNCTION: 0x004ACA10
+Coord DisplayClass::Closest_Free_Spot(Coord const & coord, bool any) const
+{
+	CellClass *cellptr = &Map[coord];
+	return(cellptr->Closest_Free_Spot(coord, any, (cellptr->IsUnderBridge && coord.Z >= LEVEL_LEPTON_H * (cellptr->Height + BRIDGE_CELL_HEIGHT))));
+}
+
 // FUNCTION: 0x004ACA90
 bool DisplayClass::Is_Spot_Free(Coord const & coord, bool bridge) const
 {
 	return(Map[coord].Is_Spot_Free(CellClass::Spot_Index(coord), bridge));
+}
+
+// FUNCTION: 0x004ACAC0
+void DisplayClass::Encroach_Shadow(void)
+{
+	int x;
+	int y;
+	Cell cell;
+
+	for (y = 0; y < MAP_CELL_H; y++) {
+		for (x = 0; x < MAP_CELL_W; x++) {
+			cell.X = x;
+			cell.Y = y;
+			if (!In_Radar(cell)) continue;
+			Cell c;
+			c.X = x;
+			c.Y = y;
+			CellClass * cellptr = &(*this)[c];
+			if (cellptr->IsVisible || !cellptr->IsMapped) continue;
+
+			cellptr->IsToShroud = true;
+		}
+	}
+
+	for (y = 0; y < MAP_CELL_H; y++) {
+		for (x = 0; x < MAP_CELL_W; x++) {
+			cell.X = x;
+			cell.Y = y;
+			if (!In_Radar(cell)) continue;
+
+			if ((*this)[cell].IsToShroud) {
+				(*this)[cell].IsToShroud = false;
+				Shroud_Cell(cell);
+			}
+		}
+	}
+
+	All_To_Look();
+
+	Flag_To_Redraw(GS_REDRAW_TACTICAL);
+}
+
+// FUNCTION: 0x004ACBC0
+void DisplayClass::Encroach_Fog(void)
+{
+	Reset_Iterator();
+	CellClass *cellptr = Iterate();
+	while (cellptr) {
+		if (!cellptr->IsFogVisible && cellptr->IsFogMapped) {
+			cellptr->IsToFog = true;
+		}
+		cellptr = Iterate();
+	}
+	All_To_Look(false, true);
+	Reset_Iterator();
+	cellptr = Iterate();
+	while (cellptr) {
+		if (cellptr->IsToFog) {
+			cellptr->IsToFog = false;
+			Fog_Cell(cellptr->Fetch_CellID());
+		}
+		cellptr = Iterate();
+	}
+}
+
+// FUNCTION: 0x004ACC50
+void DisplayClass::Fog_Cell(Cell const & cell)
+{
+	if (!In_Radar(cell)) return;
+
+	CellClass * cellptr = &(*this)[cell];
+	bool fog = false;
+
+	if (cellptr->IsFogMapped || cellptr->IsFogVisible) {
+		fog = true;
+	}
+
+	cellptr->IsFogMapped = false;
+	cellptr->IsFogVisible = false;
+	cellptr->FogFrame = -2;
+
+	if (cellptr->IsMapped) {
+		TacticalMap->Flag_Cell(*cellptr);
+	}
+
+	for (FacingType dir = FACING_FIRST; dir < FACING_COUNT; dir++) {
+		Cell c = Adjacent_Cell(cell, dir);
+		CellClass * cptr = &(*this)[c];
+		int fog = TacticalMap->Cell_Shadow(cptr->Fetch_CellID(), true);
+
+		if (fog == -2 && cptr->FogFrame != -2) {
+			Fog_Cell(c);
+		} else {
+			if ((cptr->IsFogVisible || fog != cptr->FogFrame) && fog >= 0 && cptr->FogFrame >= -1) {
+				cptr->FogFrame = fog;
+				cptr->IsFogMapped = true;
+				cptr->IsFogVisible = false;
+				TacticalMap->Flag_Cell(*cptr);
+			}
+		}
+	}
+	if (fog) {
+		cellptr->Fog_Cell();
+	}
+}
+
+// FUNCTION: 0x004ACDA0
+void DisplayClass::Shroud_Cell(Cell const & cell)
+{
+	if (!In_Radar(cell)) return;
+
+	CellClass * cellptr = &(*this)[cell];
+	if (cellptr->IsMapped) {
+		cellptr->IsMapped = false;
+		cellptr->IsVisible = false;
+		TacticalMap->Flag_Cell(*cellptr);
+
+		for (FacingType dir = FACING_FIRST; dir < FACING_COUNT; dir++) {
+			Cell c = Adjacent_Cell(cell, dir);
+			CellClass * cptr = &(*this)[c];
+			if (c != cell) {
+				cptr->IsVisible = false;
+				TacticalMap->Flag_Cell(*cptr);
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x004AD7E0
+void DisplayClass::Write_INI(CCINIClass & ini)
+{
+	char entry[20];
+
+	static char const * const NAME = "Map";
+	ini.Clear(NAME);
+	ini.Put_TheaterType(NAME, "Theater", Scen->Theater);
+	ini.Put_Rect(NAME, "Size", PlayRect);
+	ini.Put_Rect(NAME, "LocalSize", LocalRect);
+
+	Scen->Write_Waypoints(ini);
+
+	static char const * const CELLTRIG = "CellTags";
+	ini.Clear(CELLTRIG);
+	for (int y = 0; y < MAP_CELL_H; y++) {
+		for (int x = 0; x < MAP_CELL_W; x++) {
+			if ((*this)[Cell(x,y)].Tag != NULL) {
+				TagClass * tp = (*this)[Cell(x,y)].Tag;
+				if (tp != NULL && tp->Class != NULL) {
+					wsprintf(entry, "%d", x + (y * 1000));
+					ini.Put_String(CELLTRIG, entry, tp->Class->Name());
+				}
+			}
+		}
+	}
+
+	static char const * const MAPPACK1 = "IsoMapPack";
+	static char const * const MAPPACK2 = "IsoMapPack2";
+	static char const * const MAPPACK3 = "IsoMapPack3";
+	static char const * const MAPPACK4 = "IsoMapPack4";
+	static char const * const MAPPACK5 = "IsoMapPack5";
+	BufferPipe bpipe(AlternateSurface->Lock(), AlternateSurface->Get_Width() * AlternateSurface->Get_Height() * AlternateSurface->Bytes_Per_Pixel());
+	int len = Map.Write_Binary_5(bpipe);
+	ini.Clear(MAPPACK1);
+	ini.Clear(MAPPACK2);
+	ini.Clear(MAPPACK3);
+	ini.Clear(MAPPACK4);
+	ini.Clear(MAPPACK5);
+	if (len > 0) {
+		ini.Put_UUBlock(MAPPACK5, AlternateSurface->Lock(), len);
+		AlternateSurface->Unlock();
+	}
+	AlternateSurface->Unlock();
+}
+
+// FUNCTION: 0x004ADA30
+int DisplayClass::Stash_Map_State(void * stash, int)
+{
+	unsigned char *data = (unsigned char *)stash;
+
+	(*(unsigned int *)data) = Scen->Theater;
+	data += sizeof(Scen->Theater);
+
+	(*(Rect *)data) = PlayRect;
+	data += sizeof(PlayRect);
+
+	(*(Rect *)data) = LocalRect;
+	data += sizeof(LocalRect);
+
+	int *wcount = ((int *)data);
+	data += sizeof(*wcount);
+
+	int count = 0;
+
+	for (int i = 0; i < WAYPT_COUNT; i++) {
+		if (Scen->Is_Valid_Waypoint((WAYPOINT)i)) {
+			(*(int *)data) = i;
+			data += sizeof(i);
+
+			int val = Scen->Get_Waypoint_Cell((WAYPOINT)i).X + Scen->Get_Waypoint_Cell((WAYPOINT)i).Y * 1000;
+			(*(int *)data) = val;
+			data += sizeof(val);
+
+			count++;
+		}
+	}
+
+	int *nptr = (int *)data;
+
+	*wcount = count;
+
+	data += sizeof(*nptr);
+
+	int cnum = 0;
+	Reset_Iterator();
+	CellClass * cptr = Iterate();
+	while (cptr != NULL) {
+		(*(Cell *)data) = cptr->CellID;
+		data += sizeof(cptr->CellID);
+
+		(*(IsometricTileType *)data) = cptr->ITType;
+		data += sizeof(cptr->ITType);
+
+		(*(unsigned char *)data) = cptr->SubTile;
+		data += sizeof(cptr->SubTile);
+
+		(*(unsigned char *)data) = cptr->Height;
+		data += sizeof(cptr->Height);
+
+		(*(unsigned char *)data) = cptr->Ramp;
+		data += sizeof(cptr->Ramp);
+
+		(*(OverlayType *)data) = cptr->Overlay;
+		data += sizeof(cptr->Overlay);
+
+		(*(unsigned char *)data) = cptr->OverlayData;
+		data += sizeof(cptr->OverlayData);
+
+		(*(unsigned char *)data) = cptr->IsIceGrowthAllowed;
+		data += sizeof(cptr->IsIceGrowthAllowed);
+
+		unsigned int tag = 0;
+		if (cptr->Tag != NULL) {
+			if (cptr->Tag->Class != NULL) {
+				tag = (unsigned int)cptr->Tag->Class;
+			}
+		}
+
+		(*(unsigned int *)data) = tag;
+		data += sizeof(tag);
+
+		cnum++;
+		cptr = Iterate();
+	}
+	*nptr = cnum;
+
+	return(data - (unsigned char *)stash);
+}
+
+// FUNCTION: 0x004ADBA0
+void DisplayClass::Restore_Map_State(void * stash)
+{
+	unsigned char *data = (unsigned char *)stash;
+
+	Scen->Theater = (TheaterType)(*(unsigned int *)data);
+	data += sizeof(Scen->Theater);
+
+	PlayRect = (*(Rect *)data);
+	data += sizeof(PlayRect);
+
+	LocalRect = (*(Rect *)data);
+	data += sizeof(LocalRect);
+
+	int wcount = (*(int *)data);
+	data += sizeof(int);
+
+	while (wcount > 0) {
+		int wp = (*(int *)data);
+		data += sizeof(wp);
+
+		int val = (*(int *)data);
+		data += sizeof(val);
+
+		Cell cell(val % 1000, val / 1000);
+		Scen->Set_Waypoint(wp, cell);
+		wcount--;
+	}
+
+	int num = (*(int *)data);
+	data += sizeof(num);
+
+	Reset_Iterator();
+	CellClass * cptr = Iterate();
+	while (cptr != NULL) {
+		data += sizeof(cptr->CellID);
+
+		cptr->ITType = (*(IsometricTileType *)data);
+		data += sizeof(cptr->ITType);
+
+		cptr->SubTile = (*(unsigned char *)data);
+		data += sizeof(cptr->SubTile);
+
+		cptr->Height = (*(unsigned char *)data);
+		data += sizeof(cptr->Height);
+
+		cptr->Ramp = (*(unsigned char *)data);
+		data += sizeof(cptr->Ramp);
+
+		cptr->Overlay = (*(OverlayType *)data);
+		data += sizeof(cptr->Overlay);
+
+		cptr->OverlayData = (*(unsigned char *)data);
+		data += sizeof(cptr->OverlayData);
+
+		cptr->IsIceGrowthAllowed = (*(unsigned char *)data);
+		data += sizeof(cptr->IsIceGrowthAllowed);
+
+		int tag = (*(unsigned int *)data);
+		data += sizeof(tag);
+
+		cptr = Iterate();
+	}
 }
 
 // FUNCTION: 0x004AE4C0

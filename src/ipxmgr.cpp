@@ -36,6 +36,9 @@ struct IPXAddressRaw { int a, b, c; };
 extern IPXPlayerNode ** DAT_00A8DA78;
 extern int DAT_00A8DA84;
 extern unsigned short DAT_00A8E2B2[];
+namespace OwnerDraw {
+char * __fastcall WideToCharString(char * dest, wchar_t const * src, int count);
+}
 void __cdecl FUN_004068E0(char const * format, ...);
 
 // FUNCTION: 0x005408F0
@@ -657,4 +660,230 @@ int IPXManagerClass::Lobby_Num_Receive(void)
 	if (!IPXStatus || !Listening || !LobbyChannel) return 0;
 
 	return LobbyChannel->Queue->Num_Receive();
+}
+
+// FUNCTION: 0x00542350
+int IPXManagerClass::Private_Num_Send(int id)
+{
+	int i;
+	int maxnum;
+
+	if (!IPXStatus || !Listening || (NumConnections==0)) {
+		return(0);
+	}
+
+	if (id != CONNECTION_NONE) {
+		i = Connection_Index(id);
+		if (i != CONNECTION_NONE) {
+			return(Connection[i]->Queue->Num_Send());
+		}
+		else {
+			return(0);
+		}
+	}
+	else {
+		maxnum = 0;
+		for (i = 0; i < NumConnections; i++) {
+			if (Connection[i]->Queue->Num_Send() > maxnum) {
+				maxnum = Connection[i]->Queue->Num_Send();
+			}
+		}
+		return(maxnum);
+	}
+}
+
+// FUNCTION: 0x005423C0
+int IPXManagerClass::Private_Num_Receive(int id)
+{
+	int i;
+	int maxnum;
+
+	if (!IPXStatus || !Listening || (NumConnections==0)) {
+		return(0);
+	}
+
+	if (id != CONNECTION_NONE) {
+		i = Connection_Index(id);
+		if (i != CONNECTION_NONE) {
+			return(Connection[i]->Queue->Num_Receive());
+		}
+		else {
+			return(0);
+		}
+	}
+	else {
+		maxnum = 0;
+		for (i = 0; i < NumConnections; i++) {
+			if (Connection[i]->Queue->Num_Receive() > maxnum) {
+				maxnum = Connection[i]->Queue->Num_Receive();
+			}
+		}
+		return(maxnum);
+	}
+}
+
+// FUNCTION: 0x00542430
+void IPXManagerClass::Set_Socket(unsigned short socket)
+{
+	Socket = (unsigned short)( (((unsigned int)socket & 0x00ff) << 8) |
+		(((unsigned int)socket & 0xff00) >> 8));
+}
+
+// FUNCTION: 0x00542450
+unsigned int IPXManagerClass::Response_Time(void)
+{
+	unsigned int resp;
+	unsigned int maxresp = 0;
+	int i;
+
+	for (i = 0; i < NumConnections; i++) {
+		resp = Connection[i]->Queue->Avg_Response_Time();
+		if (resp > maxresp) {
+			maxresp = resp;
+		}
+	}
+
+	if (MulticastChannel) {
+		resp = MulticastChannel->Queue->Avg_Response_Time();
+		if (resp > maxresp) {
+			maxresp = resp;
+		}
+	}
+
+	return(maxresp);
+}
+
+// FUNCTION: 0x005424A0
+unsigned int IPXManagerClass::Avg_Response_Time(int index)
+{
+	return(Connection[index]->Queue->Avg_Response_Time());
+}
+
+// FUNCTION: 0x005424C0
+unsigned int IPXManagerClass::Global_Response_Time(void)
+{
+	if (GlobalChannel) {
+		return(GlobalChannel->Queue->Avg_Response_Time());
+	}
+	else {
+		return(0);
+	}
+}
+
+// FUNCTION: 0x005424E0
+unsigned int IPXManagerClass::Lobby_Response_Time(void)
+{
+	if (LobbyChannel) {
+		return(LobbyChannel->Queue->Avg_Response_Time());
+	}
+	else {
+		return(0);
+	}
+}
+
+// FUNCTION: 0x00542500
+unsigned int IPXManagerClass::Multicast_Response_Time(void)
+{
+	if (MulticastChannel) {
+		return(MulticastChannel->Queue->Avg_Response_Time());
+	}
+	else {
+		return(0);
+	}
+}
+
+// FUNCTION: 0x00542520
+void IPXManagerClass::Store_Stats(void)
+{
+	for (int i = 0; i < NumConnections; i++) {
+		HouseClass * house = Houses[Connection[i]->ID];
+
+		if (house != NULL && house != PlayerPtr) {
+			MPStatsType & stats = Session.ConnectionStats[i];
+			if (stats.Name[0] == '\0') {
+				OwnerDraw::WideToCharString(stats.Name, Connection[i]->Name, -1);
+				stats.Address = Connection[i]->Address;
+			}
+
+			int maxtime = Connection[i]->Queue->Max_Response_Time();
+			stats.MaxRoundTrip = MAX(Session.ConnectionStats[i].MaxRoundTrip, 1000 * maxtime / TIMER_SECOND);
+
+			unsigned int avgtime = Connection[i]->Queue->Avg_Response_Time();
+			stats.MaxAvgRoundTrip = MAX(int(1000 * avgtime / TIMER_SECOND), Session.ConnectionStats[i].MaxAvgRoundTrip);
+
+			stats.Resends = Connection[i]->Num_Resends();
+			stats.Lost = Connection[i]->Num_Lost();
+			stats.PercentLost = Connection[i]->Percent_Lost();
+		}
+	}
+}
+
+// FUNCTION: 0x00542EC0
+void IPXManagerClass::Reset_Response_Time(bool zero)
+{
+	int i;
+
+	for (i = 0; i < NumConnections; i++) {
+		Connection[i]->Queue->Reset_Response_Time(zero);
+	}
+
+	if (GlobalChannel) {
+		GlobalChannel->Queue->Reset_Response_Time(true);
+	}
+	if (LobbyChannel) {
+		LobbyChannel->Queue->Reset_Response_Time(true);
+	}
+	if (MulticastChannel) {
+		MulticastChannel->Queue->Reset_Response_Time(true);
+	}
+}
+
+// FUNCTION: 0x00542F30
+void * IPXManagerClass::Oldest_Send(void)
+{
+	int i,j;
+	unsigned int time;
+	unsigned int mintime = 0xffffffff;
+	SendQueueType *send_entry;
+	CommHeaderType *packet;
+	void *buf = NULL;
+
+	for (i = 0; i < NumConnections; i++) {
+
+		send_entry = NULL;
+
+		for (j = 0; j < Connection[i]->Queue->Num_Send(); j++) {
+			send_entry = Connection[i]->Queue->Get_Send(j);
+			if (send_entry) {
+				packet = (CommHeaderType *)send_entry->Buffer;
+				if (packet->Code == ConnectionClass::PACKET_DATA_ACK &&
+					send_entry->IsACK == 0) {
+					break;
+				}
+				else {
+					send_entry = NULL;
+				}
+			}
+		}
+
+		if (send_entry!=NULL) {
+
+			time = send_entry->FirstTime;
+
+			if (time < mintime) {
+				mintime = time;
+				buf = send_entry->Buffer;
+			}
+		}
+	}
+
+	return(buf);
+}
+
+// FUNCTION: 0x00542FC0
+void IPXManagerClass::Set_Bridge(NetNumType bridge)
+{
+	if (GlobalChannel) {
+		GlobalChannel->Set_Bridge(bridge);
+	}
 }

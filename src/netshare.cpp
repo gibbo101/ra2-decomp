@@ -3,6 +3,7 @@
 // Copyright 2025 Electronic Arts Inc.; 2026 OpenTS contributors
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
+#define NDEBUG
 #include "always.h"
 #include "geometry.h"
 #include "netshare.h"
@@ -773,4 +774,319 @@ void SendPrivateGameopts(char const * player, char const * options)
 			}
 		}
 	}
+}
+
+extern wchar_t DAT_00A8D610[];
+extern bool DAT_00AC11C2;
+int __fastcall FUN_0077EBA0(Wstring const & who);
+void __fastcall FUN_0077E900(Wstring const & who, int status);
+int __fastcall FUN_005DBEC0(char * who);
+void __fastcall FUN_005DBE20(char * who, int status);
+HWND __fastcall FUN_00775940(int id);
+
+// FUNCTION: 0x005E39C0
+void FUN_005E39C0(char * name, int status)
+{
+	if (name == NULL) {
+		name = Session.Handle;
+	}
+	if (wcscmp(FUN_00735120(name), DAT_00A8D610) == 0) {
+		status = 1;
+	}
+	for (int i = 0; i < Session.Players.Count(); i++) {
+		if (stricmp(FUN_007350C0(Session.Players[i]->Name), name) == 0) {
+			if (i != -1) {
+				Session.Players[i]->Slot.Unknown7F = status;
+				if (status == 0) {
+#line 1169 "D:\\ra2mdpost\\netshare.cpp"
+					PMessagePrintf(-1, StringTable::LoadString("GUI:HostNoMap", NULL, __FILE__, __LINE__), Session.Players[i], DAT_00A8B322);
+				} else if (status == 2) {
+#line 1173 "D:\\ra2mdpost\\netshare.cpp"
+					PMessagePrintf(-1, StringTable::LoadString("GUI:HostMapTransfer", NULL, __FILE__, __LINE__), Session.Players[i], DAT_00A8B322);
+				}
+			}
+			return;
+		}
+	}
+}
+
+// FUNCTION: 0x005E3AB0
+void FUN_005E3AB0(void)
+{
+	int accept;
+	if (g_pChat != NULL) {
+		accept = FUN_0077EBA0(NULL);
+	} else {
+		accept = FUN_005DBEC0(NULL);
+	}
+	FUN_005E3700();
+	if (accept == 1) {
+		char buffer[64];
+		if (g_pChat != NULL) {
+			FUN_0077E900(NULL, 0);
+		} else {
+			FUN_005DBE20(NULL, 0);
+		}
+		sprintf(buffer, "A0");
+		SendPublicGameopts(buffer);
+		if (DAT_00AC11C2) {
+			EnableWindow(GetDlgItem(GameoptWindow(), 0x59f), TRUE);
+		} else {
+			EnableWindow(GetDlgItem(GameoptWindow(), 0x59f), FALSE);
+		}
+		InvalidateRect(GetDlgItem(GameoptWindow(), 0x59f), NULL, FALSE);
+	} else {
+		if (!IsWindowEnabled(GetDlgItem(GameoptWindow(), 0x59f)) && DAT_00AC11C2) {
+			EnableWindow(GetDlgItem(GameoptWindow(), 0x59f), TRUE);
+			InvalidateRect(GetDlgItem(GameoptWindow(), 0x59f), NULL, FALSE);
+		}
+	}
+}
+
+void __fastcall FUN_00735060(wchar_t * dest, char const * source, int limit);
+
+static inline void LBGetText(HWND win, int index, wchar_t * wide, char * narrow)
+{
+	if (SendMessage(win, 0x4cf, index, 0) != 0) {
+		SendMessage(win, 0x4b6, index, (LPARAM)wide);
+	} else {
+		SendMessage(win, 0x4b7, index, (LPARAM)narrow);
+		FUN_00735060(wide, narrow, -1);
+	}
+}
+
+static inline void LBSelectText(HWND win, WideWstring & key, wchar_t * wide)
+{
+	wcscpy(wide, key.get());
+	int index = SendMessage(win, 0x4ca, -1, (LPARAM)wide);
+	if (index != LB_ERR) {
+		ListBox_SetCurSel(win, index);
+	}
+}
+
+// FUNCTION: 0x005E6230
+void LBRestoreSelections(HWND win, Dictionary<WideWstring,bool> & lbdict)
+{
+	int count = ListBox_GetCount(win);
+	WideWstring key;
+	wchar_t wide[0x400];
+	char narrow[0x400];
+	bool value;
+
+	if (count) {
+		int style = GetWindowLong(win, GWL_STYLE);
+		if (style & LBS_MULTIPLESEL) {
+			for (int i = 0; i < count; i++) {
+				LBGetText(win, i, wide, narrow);
+				key = wide;
+				if (lbdict.contains(key)) {
+					ListBox_SetSel(win, TRUE, i);
+				}
+			}
+		} else if (!(style & LBS_NOSEL)) {
+			if (lbdict.removeAny(key, value)) {
+				LBSelectText(win, key, wide);
+			}
+		}
+	}
+}
+
+bool __cdecl FUN_0077D940(void);
+bool __cdecl FUN_0077D970(void);
+class MPMapEntry { public: bool FUN_0069ADF0(void); char Pad[0x58]; char FileName[1]; };
+
+// FUNCTION: 0x005E6440
+int FUN_005E6440(void)
+{
+	if (Session.Type == GAME_INTERNET) {
+		if (FUN_0077D940() && !FUN_0077D970()) {
+			return(2);
+		}
+		return(6);
+	}
+	return(8);
+}
+
+// FUNCTION: 0x005E6470
+int FUN_005E6470(void)
+{
+	int count = FUN_005E6440();
+	if (Session.Type == GAME_INTERNET) {
+		if (count >= 6) {
+			return(count);
+		}
+	} else if (count >= 8) {
+		return(count);
+	}
+	return(count + 1);
+}
+
+// FUNCTION: 0x005E64C0
+int FUN_005E64C0(int index)
+{
+	if (index == -1) {
+		return(8);
+	}
+	int count = RandomMapWaypointCount(index);
+	if (DAT_00A8B23C != NULL) {
+		int limit = DAT_00A8B23C->vt_entry_98();
+		if (limit != -1 && limit < count) {
+			count = limit;
+		}
+	}
+	if (Session.Type == GAME_INTERNET) {
+		if (FUN_0077D970()) {
+			count &= ~1;
+		} else if (FUN_0077D940()) {
+			count = 2;
+		}
+	}
+	return(count);
+}
+
+// FUNCTION: 0x005E6520
+int RandomMapWaypointCount(int index)
+{
+	char wp[32];
+	char buf[132];
+	if (index >= 0 && index < DAT_00A8B8D8) {
+		strcpy(buf, DAT_00A8B8CC[index]->FileName);
+		CCFileClass file(buf);
+
+		INIClass ini;
+		if (!ini.Load(file)) {
+			return(0);
+		}
+
+		int count = 0;
+
+		for (int i = 0; i < 8; i++) {
+			sprintf(wp, "%d", i);
+			if (ini.Get_Int("Waypoints", wp, -1) != -1) {
+				count++;
+			}
+		}
+
+		if (count == 0) {
+			count = ini.Get_Int("RandomMap", "NumPlayers", 0);
+			if (count == 0) {
+				count = 8;
+			}
+		}
+
+		return(count);
+	}
+	return(0);
+}
+
+extern HWND DAT_00AC0D40;
+extern int DAT_00AC0D30;
+extern int DAT_00AC10E0;
+extern int DAT_00A8B254;
+extern wchar_t DAT_00AC0EC8[];
+void __fastcall FUN_005E7BF0(int slot);
+void __fastcall FUN_005E74E0(HWND dialog);
+void FUN_0058BB30(void);
+bool FUN_0077F900(void);
+int CALLBACK FUN_005E6920(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+void __fastcall FUN_0052FEC0(Surface * surface, bool flag);
+void FUN_0072D120(void);
+void FUN_0072D170(void);
+
+// FUNCTION: 0x005E66D0
+int FUN_005E66D0(void)
+{
+	return(SendDlgItemMessage(DAT_00AC0D40, 0x553, LB_GETCURSEL, 0, 0));
+}
+
+bool FUN_005DAF20(void);
+bool FUN_005BB260(void);
+
+// FUNCTION: 0x005E66F0
+bool FUN_005E66F0(void)
+{
+	int index = SendDlgItemMessage(DAT_00AC0D40, 0x553, LB_GETCURSEL, 0, 0);
+	if (index != -1) {
+		MPMapEntry * data = (MPMapEntry *)SendDlgItemMessage(DAT_00AC0D40, 0x553, 0x199, index, 0);
+		int found = -1;
+		for (int i = 0; i < DAT_00A8B8D8; i++) {
+			if (data == DAT_00A8B8CC[i]) {
+				found = i;
+				break;
+			}
+		}
+		if (found != -1 && found != DAT_00AC0D30) {
+			FUN_005E7BF0(found);
+			if (DAT_00A8B8CC[found]->FUN_0069ADF0()) {
+				delete MultiplayerMapPreview;
+				MultiplayerMapPreview = new MapPreviewClass;
+				MultiplayerMapPreview->Read_PCX_Preview("RandMap.img");
+				if (MultiplayerMapPreview->Get_Preview_Surface() == NULL) {
+					FUN_005E74E0(DAT_00AC0D40);
+				}
+				InvalidateRect(DAT_00AC0D40, NULL, FALSE);
+				FUN_0058BB30();
+			} else {
+				FUN_005E74E0(DAT_00AC0D40);
+			}
+			DAT_00AC0D30 = found;
+			DAT_00A8B254 = DAT_00AC10E0;
+			FUN_005E7BF0(DAT_00AC10E0);
+		}
+	}
+	HWND list = DAT_00AC0D40;
+	int sel = SendDlgItemMessage(DAT_00AC0D40, 0x553, LB_GETCURSEL, 0, 0);
+	if (sel != -1) {
+		wchar_t * title = (wchar_t *)SendDlgItemMessage(list, 0x553, 0x199, sel, 0);
+		if (title != NULL) {
+			wcscpy(DAT_00AC0EC8, title);
+		} else {
+			DAT_00AC0EC8[0] = 0;
+		}
+	} else {
+		DAT_00AC0EC8[0] = 0;
+	}
+	if (Session.Type == GAME_IPX) {
+		return(FUN_005DAF20());
+	}
+	if (Session.Type == GAME_INTERNET) {
+		return(FUN_0077F900());
+	}
+	if (Session.Type == GAME_MODEM || Session.Type == GAME_NULL_MODEM) {
+		return(FUN_005BB260());
+	}
+	Call_Back();
+	return(false);
+}
+
+// FUNCTION: 0x005E68A0
+int Scenario_Dialog(HWND top)
+{
+	FUN_0052FEC0(NULL, true);
+	FUN_0072D120();
+	DAT_00AC0D40 = WS_Create_Dialog(Game::hInstance, 0x6b, top, FUN_005E6920, FALSE);
+	UI::RegisterWindow(DAT_00AC0D40, 0x6b);
+	SendMessage(DAT_00AC0D40, 0x4a9, 0, 1);
+	ShowWindow(DAT_00AC0D40, SW_NORMAL);
+	int result = FUN_007759E0(DAT_00AC0D40, FUN_005E66F0, 0, 1, 1);
+	FUN_0072D170();
+	return(result);
+}
+
+// FUNCTION: 0x005E70D0
+int FUN_005E70D0(HWND dialog, MPMapEntry * map)
+{
+	if (map == NULL) {
+		return(-1);
+	}
+	int found = 0;
+	int count = SendDlgItemMessage(dialog, 0x553, LB_GETCOUNT, 0, 0);
+	for (int i = 0; i < count; i++) {
+		if (SendDlgItemMessage(dialog, 0x553, 0x199, i, 0) == (LRESULT)map) {
+			found = i;
+		}
+	}
+	SendDlgItemMessage(dialog, 0x553, LB_SETCURSEL, found, 0);
+	SendDlgItemMessage(dialog, 0x553, 0x197, found, 0);
+	return(found);
 }

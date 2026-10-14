@@ -59,6 +59,7 @@ extern int DAT_00ABDE88;
 
 #define IS_TILE_IN_SET(setname, setsize) (tile >= IsometricTileTypeClass::setname && tile < IsometricTileTypeClass::setname + setsize)
 
+void __cdecl FUN_004068E0(char const * format, ...);
 extern void FUN_00561910(void);
 extern void FUN_005638D0(void);
 
@@ -2539,12 +2540,227 @@ void MapClass::Spring_Bridge_Destruction_Triggers(Cell cell1, Cell cell2)
 	}
 }
 
+// FUNCTION: 0x00577920
+void MapClass::Detach(AbstractClass const * target, bool all)
+{
+	if (target->RTTI == RTTI_TAG) {
+		for (int index = 0; index < TaggedCells.Count(); index++) {
+			CellClass *cellptr = &(*this)[TaggedCells[index]];
+			if (cellptr != NULL && cellptr->Tag == (TagClass *)target) {
+				cellptr->Attach_Tag(NULL);
+				TaggedCells.Delete(cellptr->CellID);
+				index--;
+			}
+		}
+		InvalidCell.Detach(target);
+	}
+
+	if (target->RTTI == RTTI_TAG) {
+		MapTags.Delete((TagClass *)target);
+	}
+}
+
 // FUNCTION: 0x00577A50
 Cell MapClass::Pick_Random_Location(void) const
 {
 	int x = Map.MapRect.X + Random_Pick(0, Map.MapRect.Width-1);
 	int y = Map.MapRect.Y + Random_Pick(0, Map.MapRect.Height-1);
 	return(Cell(x, y));
+}
+
+// FUNCTION: 0x00577AB0
+void MapClass::Reshroud(HouseClass * house)
+{
+	if (house != NULL) {
+		Houses[house->HeapID]->MapIsClear = false;
+	}
+
+	if (house == PlayerPtr || house == NULL) {
+		if (house == NULL) {
+			FUN_004068E0("We tried to reset the shroud without an owner");
+		}
+		Map.FUN_004ADEE0(false, false);
+		Reset_Iterator();
+		CellClass * cellptr = Iterate();
+		while (cellptr != NULL) {
+			cellptr->IsMapped = false;
+			cellptr->IsVisible = false;
+			cellptr->ShroudCounter = 1;
+			cellptr->GapsCoveringThisCell = 0;
+			cellptr->IsFogMapped = false;
+			cellptr->IsFogVisible = false;
+			cellptr = Iterate();
+		}
+		Map.FUN_004ADCD0(false, false);
+		PlayerPtr->IsVisionary = false;
+		Map.sub_657CE0();
+		Flag_To_Redraw(GS_REDRAW_ALL);
+	}
+}
+
+// FUNCTION: 0x00577BB0
+void MapClass::Shroud_The_Map(HouseClass * house)
+{
+	if (house != NULL) {
+		Houses[house->HeapID]->MapIsClear = false;
+	}
+
+	if (house == PlayerPtr || house == NULL) {
+		if (house == NULL) {
+			FUN_004068E0("We tried to reset the shroud without an owner");
+		}
+		Reset_Iterator();
+		CellClass * cellptr = Iterate();
+		while (cellptr != NULL) {
+			cellptr->IsMapped = false;
+			cellptr->IsVisible = false;
+			cellptr->IsFogMapped = false;
+			cellptr->IsFogVisible = false;
+			cellptr = Iterate();
+		}
+		Map.FUN_004ADFF0(false, false);
+		PlayerPtr->IsVisionary = false;
+		Map.sub_657CE0();
+		Flag_To_Redraw(GS_REDRAW_ALL);
+	}
+}
+
+// FUNCTION: 0x00577C90
+void MapClass::FUN_00577C90(HouseClass * house)
+{
+	if (house != NULL) {
+		Houses[house->HeapID]->MapIsClear = false;
+	}
+
+	if (house == PlayerPtr || house == NULL) {
+		if (house == NULL) {
+			FUN_004068E0("We tried to reset the shroud without an owner");
+		}
+		Map.FUN_004ADEE0(false, false);
+		Reset_Iterator();
+		CellClass * cellptr = Iterate();
+		while (cellptr != NULL) {
+			cellptr->IncreaseShroudCounter();
+			if (cellptr->ShroudCounter >= 0) {
+				cellptr->IsMapped = false;
+				cellptr->IsVisible = false;
+				cellptr->IsFogMapped = false;
+				cellptr->IsFogVisible = false;
+			}
+			cellptr = Iterate();
+		}
+		Map.FUN_004ADCD0(false, false);
+		PlayerPtr->IsVisionary = false;
+		Map.sub_657CE0();
+		Flag_To_Redraw(GS_REDRAW_ALL);
+	}
+}
+
+// FUNCTION: 0x00577F30
+void MapClass::Reveal_The_Map(HouseClass * house)
+{
+	if (house != NULL) {
+		Houses[house->HeapID]->MapIsClear = true;
+	}
+
+	if (house == PlayerPtr || house == NULL) {
+		if (house == NULL) {
+			FUN_004068E0("We tried to clear the shroud without an owner");
+		}
+		bool edge = (Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) && Session.MPGameMode != NULL && !Session.MPGameMode->vt_entry_04();
+		if (!PlayerPtr->IsVisionary) {
+			PlayerPtr->IsVisionary = true;
+			Map.Reset_Iterator();
+			CellClass * cellptr = Map.Iterate();
+			while (cellptr != NULL) {
+				int x = cellptr->CellID.X;
+				int y = cellptr->CellID.Y;
+				if (!edge || !((x == 7 && y == PlayRect.Width + 5) ||
+					(x == 13 && y == PlayRect.Width + 11) ||
+					(x == PlayRect.Height + 13 && y == PlayRect.Width + PlayRect.Height - 15))) {
+					Map.Shadow_Map_Cell(cellptr->CellID, PlayerPtr);
+				}
+				cellptr = Map.Iterate();
+			}
+			Map.sub_657CE0();
+			Map.Flag_To_Redraw(GS_REDRAW_TACTICAL);
+		}
+	}
+}
+
+// FUNCTION: 0x00578080
+int MapClass::Get_Height_GL(Coord const & coord)
+{
+	return(Map[coord].Get_Height(coord));
+}
+
+// FUNCTION: 0x00578100
+void MapClass::FUN_00578100(void)
+{
+	Reset_Iterator();
+	CellClass * cellptr = Iterate();
+	while (cellptr != NULL) {
+		if (cellptr->IsToShroud) {
+			cellptr->IsMapped = false;
+			cellptr->IsVisible = false;
+			cellptr->IsFogMapped = false;
+			cellptr->IsFogVisible = false;
+			cellptr->IsToShroud = false;
+			cellptr->VisibilityChanged = true;
+			TacticalMap->Flag_Cell(*cellptr);
+			if (cellptr->ShadowFrame == -2) {
+				Map.Reveal_Nearby_Technos(cellptr, PlayerPtr, true);
+			}
+		}
+		cellptr = Iterate();
+	}
+
+	Reset_Iterator();
+	cellptr = Iterate();
+	while (cellptr != NULL) {
+		Cell cell = cellptr->Center_Coord().As_Cell();
+		char frame = TacticalMap->Cell_Shadow(cell, false);
+		if (frame != cellptr->ShadowFrame) {
+			cellptr->ShadowFrame = frame;
+			cellptr->VisibilityChanged = true;
+			TacticalMap->Flag_Cell(*cellptr);
+			if (cellptr->ShadowFrame == -2) {
+				Map.Reveal_Nearby_Technos(cellptr, PlayerPtr, true);
+			}
+		}
+		cellptr = Iterate();
+	}
+}
+
+// FUNCTION: 0x00578290
+CellClass * MapClass::Iterate(void)
+{
+	CellClass ** iter = IterCell;
+
+	if (IterColumn != 0) {
+		IterX++;
+		IterY--;
+		IterColumn--;
+		IterCell = iter - (MAP_CELL_W - 1);
+		return(*iter);
+	}
+
+	unsigned x = IterX;
+	unsigned y = IterY;
+	IterX = y;
+	IterY = x;
+
+	if (((IterX + IterY) - (PlayRect.Width + 1)) % 2) {
+		IterY++;
+		IterColumn = PlayRect.Width - 1;
+	} else {
+		IterX++;
+		IterColumn = PlayRect.Width - 2;
+	}
+
+	IterCell = &Array[IterX + (IterY * MAP_CELL_H)];
+
+	return(*iter);
 }
 
 // FUNCTION: 0x00578350
@@ -2563,6 +2779,53 @@ bool MapClass::In_Local_Radar(Rect const & rect, bool useheight) const
 		In_Local_Radar(Cell(rect.X + rect.Width - 1, rect.Y), useheight) &&
 		In_Local_Radar(Cell(rect.X, rect.Y + rect.Height - 1), useheight) &&
 		In_Local_Radar(Cell(rect.X + rect.Width - 1, rect.Y + rect.Height - 1), useheight) ? 1 : 0);
+}
+
+// FUNCTION: 0x00578460
+bool MapClass::In_Local_Radar(Cell const & cell, bool useheight) const
+{
+	int x = cell.X;
+	int y = cell.Y;
+	int cell_height = 0;
+
+	if (useheight) {
+		CellClass *cellptr = &Map[cell];
+
+		cell_height = cellptr->Height;
+		if (cellptr->Ramp && x + y < PlayRect.Width + 2*LocalRect.Y + 4 + cell_height) {
+			cell_height++;
+		}
+	}
+
+	if ((x + y > PlayRect.Width + 2*LocalRect.Y + cell_height) &&
+		(x + y <= PlayRect.Width + 2*(LocalRect.Y + LocalRect.Height + 1) + cell_height) &&
+		(x - y < 2*(LocalRect.X + LocalRect.Width) - PlayRect.Width) &&
+		(y - x < PlayRect.Width - 2*LocalRect.X)) {
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00578540
+bool MapClass::In_Local_Radar(CellClass const * cell, bool useheight) const
+{
+	int x = cell->CellID.X;
+	int y = cell->CellID.Y;
+	int cell_height = 0;
+	if (useheight) {
+		cell_height = cell->Height;
+		if (cell->Ramp && x + y < PlayRect.Width + 2*LocalRect.Y + 4 + cell_height) {
+			cell_height++;
+		}
+	}
+
+	if ((x + y > PlayRect.Width + 2*LocalRect.Y + cell_height) &&
+		(x + y <= PlayRect.Width + 2*(LocalRect.Y + LocalRect.Height + 1) + cell_height) &&
+		(x - y < 2*(LocalRect.X + LocalRect.Width) - PlayRect.Width) &&
+		(y - x < PlayRect.Width - 2*LocalRect.X)) {
+		return(true);
+	}
+	return(false);
 }
 
 // FUNCTION: 0x005785F0

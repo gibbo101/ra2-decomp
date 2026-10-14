@@ -31,6 +31,7 @@ class PhoneEntryClass;
 class CellClass;
 class INIClass;
 class MPGameModeClass;
+class CCINIClass;
 
 #define	MPLAYER_BUILD_LEVEL_MAX		10
 #define	MAX_MPLAYER_COLORS			8
@@ -414,10 +415,10 @@ struct TrapObjectType {
 class MultiMission
 {
 	public:
-		MultiMission(INIClass const & ini, char const * filename = NULL);
-		MultiMission(const char * filename = NULL, char const * description = NULL, char const *digest = NULL, bool official = true);
+		MultiMission(CCINIClass const & ini, char const * filename);
+		MultiMission(char const * filename, wchar_t const * description, char const * digest, bool official, char const * game_modes, int min_players, int max_players);
 
-		void Set_Description(char const * description);
+		void Set_Description(wchar_t const * description);
 		void Set_Filename(char const * filename);
 		void Set_Digest(char const * digest);
 		void Set_Official(bool official);
@@ -426,6 +427,8 @@ class MultiMission
 		char const * Get_Digest(void) const {return(Digest);}
 		bool Get_Official(void) { return(IsOfficial); }
 
+		bool Is_Random_Map(void) const;
+		bool Supports_Game_Mode(Wstring & mode) const;
 		bool Is_On_CD(DiskID cd) const;
 		DiskID On_Which_CD(void) const;
 
@@ -534,6 +537,7 @@ class SessionClass
 		void Update_Progress(int percent);
 		void Init_Fixed_Alliances(void);
 		int Color_Index_To_Scheme(int id);
+		bool Is_Random_Map(void) const;
 
 		void Trap_Object(void);
 		bool Log_To_File(FILE *out);

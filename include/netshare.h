@@ -48,8 +48,8 @@ void SendPublicGameopts(char const * options);
 void SendPrivateGameopts(char const * player, char const * options);
 void DisplayGameopts(HWND window, BOOL initialize);
 
-void LBSaveSelections(HWND win, Dictionary<Wstring,bool> & lbdict);
-void LBRestoreSelections(HWND win, Dictionary<Wstring,bool> & lbdict);
+void LBSaveSelections(HWND win, Dictionary<WideWstring,bool> & lbdict);
+void LBRestoreSelections(HWND win, Dictionary<WideWstring,bool> & lbdict);
 
 char * CalcRandomMapDigest(void);
 int CreateRandomMap(void);

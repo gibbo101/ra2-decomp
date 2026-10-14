@@ -1539,6 +1539,210 @@ void __fastcall FUN_0060AF50(HWND window, RECT *rect)
 	InvalidateRect(window, NULL, FALSE);
 }
 
+extern Rect *DAT_00B0FC28;
+extern Rect *DAT_00B0FC50;
+extern int DAT_007F5BF8;
+
+// FUNCTION: 0x0060B420
+void __fastcall FUN_0060B420(HWND window)
+{
+	HWND parent = GetParent(window);
+	bool compact = FUN_0069BBE0(&Session);
+	RECT client;
+	RECT own;
+	GetClientRect(parent, &client);
+	GetWindowRect(window, &own);
+	int span = client.right - client.left;
+	int dx = 0;
+	if (!compact) {
+		int hh = (span - DAT_007F5BE4) / 2;
+		dx = (((span - DAT_007F5BE4) / 2) < 0) ? 0 : hh;
+	}
+	int w = own.right - own.left;
+	int h = own.bottom - own.top;
+	OwnerDraw::WinData *data = Get_Data(window);
+	int half;
+	if (data != NULL && *(int *)((char *)data + 0xdc) != 0) {
+		half = *(int *)((char *)data + 0xdc);
+	} else {
+		half = (DAT_007F5BF8 - w) / 2;
+	}
+	int x = client.right - half - w - dx - client.left;
+	MoveWindow(window, x, compact ? DAT_00B0FC50->Y - h : DAT_00B0FC28->Y - h, w, h, FALSE);
+}
+
+// FUNCTION: 0x0060B550
+void __fastcall FUN_0060B550(HWND window)
+{
+	HWND parent = GetParent(window);
+	bool compact = FUN_0069BBE0(&Session);
+	RECT client;
+	RECT own;
+	GetClientRect(parent, &client);
+	GetWindowRect(window, &own);
+	int span = client.right - client.left;
+	int dx = 0;
+	if (!compact) {
+		int hh = (span - DAT_007F5BE4) / 2;
+		dx = (((span - DAT_007F5BE4) / 2) < 0) ? 0 : hh;
+	}
+	int spanY = client.bottom - client.top;
+	int dy = 0;
+	if (!compact) {
+		int hv = (spanY - DAT_007F5BF0) / 2;
+		dy = (((spanY - DAT_007F5BF0) / 2) < 0) ? 0 : hv;
+	}
+	int h = own.bottom - own.top;
+	int w = own.right - own.left;
+	MoveWindow(window, dx + client.left + 10, client.bottom - h - dy - 1, w, h, FALSE);
+}
+
+// FUNCTION: 0x0060B610
+void __fastcall FUN_0060B610(HWND window)
+{
+	HWND parent = GetParent(window);
+	bool compact = FUN_0069BBE0(&Session);
+	RECT client;
+	RECT own;
+	GetClientRect(parent, &client);
+	GetWindowRect(window, &own);
+	int span = client.right - client.left;
+	int dx = 0;
+	if (!compact) {
+		int hh = (span - DAT_007F5BE4) / 2;
+		dx = (((span - DAT_007F5BE4) / 2) < 0) ? 0 : hh;
+	}
+	int w = own.right - own.left;
+	int h = own.bottom - own.top;
+	OwnerDraw::WinData *data = Get_Data(window);
+	int half;
+	if (data != NULL && *(int *)((char *)data + 0xdc) != 0) {
+		half = *(int *)((char *)data + 0xdc);
+	} else {
+		half = (DAT_007F5BF8 - w) / 2;
+	}
+	int x = client.right - half - w - dx - client.left;
+	MoveWindow(window, x, compact ? DAT_00B0FC50->Height + DAT_00B0FC50->Y - h : DAT_00B0FC28->Height + DAT_00B0FC28->Y - h, w, h, FALSE);
+}
+
+namespace OwnerDraw {
+extern HWND CurrentDialogHwnd;
+}
+BOOL CALLBACK FUN_0060C0C0(HWND window, LPARAM lparam);
+
+// FUNCTION: 0x0060B740
+void __fastcall FUN_0060B740(HWND window)
+{
+	HWND parent = GetParent(window);
+	RECT frame;
+	RECT own;
+	GetWindowRect(parent, &frame);
+	GetWindowRect(window, &own);
+	MoveWindow(window, own.left - frame.left, own.top - frame.top, own.right - own.left, own.bottom - own.top, FALSE);
+}
+
+// FUNCTION: 0x0060B7A0
+void __fastcall FUN_0060B7A0(HWND window)
+{
+	HWND parent = GetParent(window);
+	if (FUN_0069BBE0(&Session)) {
+		RECT own;
+		RECT frame;
+		GetWindowRect(window, &own);
+		GetWindowRect(parent, &frame);
+		int spanX = frame.right - frame.left;
+		int dx = 0;
+		if (spanX > DAT_007F5BE4) {
+			int half = (spanX - DAT_007F5BE4) / 2;
+			dx = (half < 0) ? 0 : half;
+		} else if (spanX < DAT_007F5BE4) {
+			dx = (spanX - DAT_007F5BE4) / 2;
+		}
+		int spanY = frame.bottom - frame.top;
+		int dy = 0;
+		if (spanY > DAT_007F5BF0) {
+			int half = (spanY - DAT_007F5BF0) / 2;
+			dy = (half < 0) ? 0 : half;
+		} else if (spanY < DAT_007F5BF0) {
+			dy = (spanY - DAT_007F5BF0) / 2;
+		}
+		int x = own.left + dx;
+		int y = own.top + dy;
+		int w = own.right - own.left;
+		int h = own.bottom - own.top;
+		if (x < 0) {
+			x = 0;
+		}
+		if (y < 0) {
+			y = 0;
+		}
+		MoveWindow(window, x, y, w, h, FALSE);
+	}
+}
+
+// FUNCTION: 0x0060B880
+bool __fastcall FUN_0060B880(HWND dialog, HWND control)
+{
+	OwnerDraw::WinData *data = Get_Data(dialog);
+	int type = (data != NULL) ? *(int *)((char *)data + 0x6c) : 0;
+	GetDlgCtrlID(control);
+	if (type == 0xb7 || type == 0x2b4 || type == 0xbbb || type == 0xf5 || type == 0x2b5 || type == 0xb8 ||
+		type == 0xa3 || type == 0xb6 || type == 0x10c || type == 0x73 || type == 0xff || type == 0xea) {
+		return true;
+	}
+	return false;
+}
+
+bool __fastcall FUN_00608500(HWND parent, HWND child, RECT *rect);
+void __fastcall FUN_0060B000(HWND window, LPARAM lparam);
+void __fastcall FUN_0060B1D0(HWND window, LPARAM lparam);
+void __fastcall FUN_0060B950(HWND window);
+
+namespace Drawing {
+extern int RenderWidth;
+extern int RenderHeight;
+}
+
+namespace OwnerDraw {
+// FUNCTION: 0x0060C4A0 OwnerDraw::UpdateControlPosition
+void __fastcall UpdateControlPosition(HWND dialog, LPARAM lparam)
+{
+	MoveWindow(dialog, 0, 0, Drawing::RenderWidth, Drawing::RenderHeight, FALSE);
+	CurrentDialogHwnd = dialog;
+	EnumChildWindows(dialog, FUN_0060C0C0, lparam);
+}
+}
+
+// FUNCTION: 0x0060C4E0
+int __fastcall FUN_0060C4E0(HWND dialog)
+{
+	OwnerDraw::WinData *data = NULL;
+	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
+		return *(int *)((char *)data + 0x74);
+	}
+	return 0;
+}
+
+namespace OwnerDraw {
+// FUNCTION: 0x0060C7D0 OwnerDraw::TrySetDialogLayoutBand2
+bool __fastcall TrySetDialogLayoutBand2(HWND dialog)
+{
+	OwnerDraw::WinData *data = Get_Data(dialog);
+	if (data == NULL) {
+		return false;
+	}
+	int type = *(int *)((char *)data + 0x6c);
+	bool match = type == 0x10d || type == 0xd9 || type == 0xf0 || type == 0xce || type == 0x120 || type == 0x121 ||
+		type == 0x115 || type == 0xd3 || type == 0xcf || type == 0x11f || type == 0xc3 || type == 0x11b ||
+		type == 0xe1 || type == 0x11e || type == 0xc4 || type == 0x130 || type == 0xd0 || type == 0xfc ||
+		type == 0x126;
+	if (match) {
+		*(int *)((char *)data + 0xb0) = 2;
+	}
+	return match;
+}
+}
+
 // FUNCTION: 0x0061F190
 void ODInitMasks(void)
 {

@@ -33,6 +33,7 @@ struct Drawing {
 };
 
 SHPStruct * __fastcall FUN_004A3970(Wstring const & name, bool * loaded);
+void __fastcall FUN_00406670(char const * name, int volume);
 
 // FUNCTION: 0x005CB590
 ConvertClass * Create_Drawer(Wstring const & palette_name)
@@ -685,6 +686,318 @@ Rect MSBitPrintAnim::Get_Rect(void) const
 	return(Area);
 }
 
+// FUNCTION: 0x005CD400
+bool MSBitPrintAnim::Has_Finished(void) const
+{
+	return(FlagA);
+}
+
+// FUNCTION: 0x005CD570
+MSPrintAnim::MSPrintAnim(WideWstring const & text, int x, int y, MSFont * font, Rect const & rect, int start_delay, int print_delay, bool fade_effect, bool center) :
+	MSAnim(x, y, true),
+	Text(text),
+	LineStart(0),
+	PrintedCharCount(start_delay),
+	CompletionCount(0),
+	PrintDelay(print_delay),
+	FadeEffect(fade_effect),
+	Font(font),
+	Transient(false),
+	Centered(center),
+	Offset(0)
+{
+	Timer = start_delay;
+	Set_Dimensions(rect);
+	if (center) {
+		int font_width = Font->Get_Font_Width();
+		int width = 0;
+		for (int i = 0; Text.getChar(i) != 0 && Text.getChar(i) != '\n'; i++) {
+			width += Font->Get_Character_Width(Text.getChar(i));
+		}
+		Offset = (Area.Width - width - font_width) / 2;
+	}
+}
+
+// FUNCTION: 0x005CD690
+void MSPrintAnim::Set_Dimensions(Rect const & rect)
+{
+	if (rect.Is_Valid()) {
+		Font->Get_String_Rect(Text.get(), Area);
+
+		XPos += (rect.Width - Area.Width) / 2;
+		YPos += (rect.Height - (rect.Height / Font->Get_Font_Height() * Font->Get_Font_Height())) / 2;
+
+		Area.X += XPos;
+		Area.Y += YPos;
+
+		Area = Intersect(rect, Area);
+		XPos += Font->Get_Font_Width() / 2;
+	} else {
+		Font->Get_String_Rect(Text.get(), Area);
+		Area.X = XPos;
+		Area.Y = YPos;
+	}
+}
+
+// FUNCTION: 0x005CD850
+int MSPrintAnim::Word_Wrap(WideWstring & string, MSFont * font, int line_width)
+{
+	int max_width = 0;
+
+	if (string == (wchar_t const *)NULL || font == NULL || line_width <= font->Get_Font_Width()) {
+		return(0);
+	}
+
+	line_width -= font->Get_Font_Width();
+	unsigned index = 0;
+
+	while (string.getChar(index) != 0) {
+		int current_width = 0;
+		unsigned start = index;
+
+		while (current_width < line_width && string.getChar(index) != 0 && string.getChar(index) != '\n' && string.getChar(index) != '@') {
+			current_width += font->Get_Character_Width(string.getChar(index++));
+		}
+
+		if (current_width >= line_width) {
+			while (string.getChar(index) != 0 && string.getChar(index) != ' ' && string.getChar(index) != '\n' && index != start) {
+				index--;
+				current_width -= font->Get_Character_Width(string.getChar(index));
+			}
+		}
+
+		if (index == start) {
+			while (current_width < line_width && string.getChar(index) != 0 && string.getChar(index) != ' ' && string.getChar(index) != '\n' && string.getChar(index) != '@' && string.getChar(index) != '-') {
+				current_width += font->Get_Character_Width(string.getChar(index++));
+			}
+
+			if (current_width < line_width) {
+				WideWstring head(string);
+				head.truncate(++index);
+				WideWstring tail(string);
+				tail.remove(0, index);
+				string = head + WideWstring(L"\n") + tail;
+			} else {
+				current_width -= font->Get_Character_Width(string.getChar(index));
+				WideWstring head(string);
+				head.truncate(index);
+				WideWstring tail(string);
+				tail.remove(0, index);
+				string = head + WideWstring(L"\n") + tail;
+			}
+		}
+
+		if (current_width > max_width) {
+			max_width = current_width;
+		}
+
+		if (string.getChar(index) != 0) {
+			string.set('\n', index++);
+		}
+	}
+
+	return(max_width);
+}
+
+// FUNCTION: 0x005CDB90
+int MSPrintAnim::Paginate(WideWstring & string, MSFont * font, int page_height)
+{
+	if (string == (wchar_t const *)NULL || font == NULL || page_height < font->Get_Font_Height()) {
+		return(0);
+	}
+
+	unsigned index = 0;
+	int overflow_count = 0;
+	int current_height = 0;
+
+	while (string.getChar(index) != 0) {
+		while (string.getChar(index) != 0 && string.getChar(index) != '\n') {
+			index++;
+		}
+
+		if (string.getChar(index) != '\n') {
+			current_height += font->Get_Font_Height();
+			if (current_height >= page_height) {
+				current_height = 0;
+				overflow_count++;
+				string.set('\f', index);
+			}
+			index++;
+		}
+	}
+
+	return(overflow_count);
+}
+
+// FUNCTION: 0x005CDC50
+bool MSPrintAnim::Advance(Surface * surface, Rect & rect)
+{
+	rect.Set(0, 0, 0, 0);
+
+	if (Timer != 0) return(false);
+
+	if (Active != true) return(false);
+
+	Timer = PrintDelay;
+
+	if (PrintedCharCount > Text.length() && CompletionCount > 2) {
+		return(!Transient);
+	}
+
+	if (FadeEffect == true) {
+		surface->Blit_From(Area, *AlternateSurface, Area);
+	}
+
+	int x = XPos;
+	bool should_center = Centered;
+	int y = YPos;
+
+	for (unsigned char_index = LineStart; char_index <= PrintedCharCount; char_index++) {
+		wchar_t ch = Text.get(char_index);
+		if (ch == 0) {
+			CompletionCount++;
+			break;
+		}
+
+		if (should_center) {
+			WideWstring rest(Text);
+			rest.remove(0, char_index);
+			int font_width = Font->Get_Font_Width();
+			int i = 0;
+			int string_width = 0;
+			for (; rest.getChar(i) != 0 && rest.getChar(i) != '\n'; i++) {
+				string_width += Font->Get_Character_Width(rest.getChar(i));
+			}
+			Offset = (Area.Width - string_width - font_width) / 2;
+			x += Offset;
+			should_center = false;
+		}
+
+		if (ch == '\n') {
+			x = XPos;
+			should_center = Centered;
+			y += Font->Get_Font_Height();
+
+			if (y + Font->Get_Font_Height() - YPos > Area.Height) {
+				unsigned next_line_start = LineStart;
+				while (Text.getChar(next_line_start) != 0 && Text.getChar(next_line_start) != '\n') {
+					next_line_start++;
+				}
+				if (Text.getChar(next_line_start) == '\n') {
+					next_line_start++;
+				}
+				LineStart = next_line_start;
+				break;
+			}
+		} else {
+			Font->Draw_Character(surface, ch, x, y, (FadeEffect == false || PrintedCharCount - char_index >= 2) ? 2 : (PrintedCharCount - char_index), true);
+			x += Font->Get_Character_Width(ch);
+		}
+	}
+
+	rect = Area;
+	PrintedCharCount++;
+
+	return(false);
+}
+
+// FUNCTION: 0x005CDEE0
+void MSPrintAnim::Redraw(Surface * surface, Rect const * rect)
+{
+	if (rect == NULL || Intersect(*rect, Area).Is_Valid()) {
+		int x = XPos;
+		bool should_center = Centered;
+		int y = YPos;
+
+		unsigned printed = Get_Printed_Char_Count();
+		unsigned end = MIN(printed, Text.length());
+
+		for (unsigned char_index = LineStart; char_index < end; char_index++) {
+			if (Text.getChar(char_index) == '\n') {
+				x = XPos;
+				should_center = Centered;
+				y += Font->Get_Font_Height();
+				if (y + Font->Get_Font_Height() >= surface->Get_Height()) {
+					return;
+				}
+			} else {
+				if (should_center) {
+					WideWstring rest(Text);
+					rest.remove(0, char_index);
+					int i = 0;
+					int font_width = Font->Get_Font_Width();
+					int string_width = 0;
+					for (; rest.getChar(i) != 0 && rest.getChar(i) != '\n'; i++) {
+						string_width += Font->Get_Character_Width(rest.getChar(i));
+					}
+					Offset = (Area.Width - string_width - font_width) / 2;
+					x += Offset;
+					should_center = false;
+				}
+				Font->Draw_Character(surface, Text.getChar(char_index), x, y, 2, true);
+				x += Font->Get_Character_Width(Text.getChar(char_index));
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x005CE0C0
+bool MSWordAnim::Advance(Surface * surface, Rect & rect)
+{
+	if (Timer != 0 || Active != true) {
+		rect.Set(0, 0, 0, 0);
+		return(false);
+	}
+
+	Timer = PrintDelay;
+
+	if (LineStart >= Text.length()) {
+		FUN_00406670("bleep1", int(Options.SoundVolume * 64.0f));
+		return(true);
+	}
+
+	if (FadeEffect == true && LineRect.Is_Valid()) {
+		surface->Blit_From(LineRect, *AlternateSurface, LineRect);
+	}
+
+	int x = XPos;
+
+	if (Centered) {
+		x += Offset;
+	}
+
+	unsigned line_end_index = LineStart;
+	wchar_t character = Text.getChar(line_end_index++);
+	while (character != '\n' && character != 0) {
+		Font->Draw_Character(surface, character, x, LineYPos, PrintedCharCount, false);
+		x += Font->Get_Character_Width(character);
+		character = Text.getChar(line_end_index++);
+	}
+
+	rect.Set(Area.X, LineYPos, Area.Width, Font->Get_Font_Height());
+
+	if (PrintedCharCount == 2) {
+		LineRect.Set(0, 0, 0, 0);
+		LineStart = line_end_index;
+		if (character == '\n') {
+			FUN_00406670("bleep1", int(Options.SoundVolume * 64.0f));
+			LineYPos += Font->Get_Font_Height();
+		}
+	} else {
+		LineRect = rect;
+	}
+
+	if (FadeEffect == true) {
+		PrintedCharCount++;
+		if (PrintedCharCount > 2) {
+			PrintedCharCount = 0;
+		}
+		return(false);
+	}
+
+	return(false);
+}
+
 // FUNCTION: 0x005CE2B0
 Rect MSPrintAnim::Get_Rect(void) const
 {
@@ -697,6 +1010,23 @@ void MSPrintAnim::Set_Transient(bool transient)
 	if (transient != Transient) {
 		Transient = transient;
 	}
+}
+
+// FUNCTION: 0x005CE300
+bool MSPrintAnim::Has_Finished(void) const
+{
+	return(Transient && PrintedCharCount > Text.length() && CompletionCount > 2);
+}
+
+// FUNCTION: 0x005CE330
+int MSPrintAnim::Get_Line_Width(WideWstring const & str) const
+{
+	int i = 0;
+	int width = 0;
+	for (; str.getChar(i) != 0 && str.getChar(i) != '\n'; i++) {
+		width += Font->Get_Character_Width(str.getChar(i));
+	}
+	return(width);
 }
 
 // FUNCTION: 0x005CEA80

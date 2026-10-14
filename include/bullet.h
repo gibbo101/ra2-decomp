@@ -50,6 +50,7 @@ class BulletClass : public ObjectClass
 		void Construct(BulletTypeClass const *type, AbstractClass *target, TechnoClass *payback, int strength, WarheadTypeClass const *warhead, int max_speed, bool bright);
 		void LoseTarget(void);
 		bool Is_Forced_To_Explode(Coord & coord) const;
+		void Set_Weapon_Type(WeaponTypeClass * weapon);
 		void Bullet_Explodes(bool forced);
 		virtual int Shape_Number(void) const;
 		virtual void Assign_Target(AbstractClass * target);

@@ -482,7 +482,10 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 
 		void Recalc_Power_Drain(void);
 		void Recalc_Radar_Availability(void);
+		void Recalc_Spy_Satellite(void);
 		void Create_Radar_Outage(int duration);
+		void CreatePowerOutage(int duration);
+		void ReshroudMap(void);
 
 		void Update_Present_Super_Weapons(void);
 		void Enable_Available_Super_Weapons(void);

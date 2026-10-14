@@ -82,6 +82,8 @@ class IPXManagerClass : public ConnManClass
 
 		virtual unsigned int Response_Time(void) override;
 		unsigned int Global_Response_Time(void);
+		unsigned int Lobby_Response_Time(void);
+		unsigned int Multicast_Response_Time(void);
 		virtual void Reset_Response_Time(bool zero) override;
 
 		virtual unsigned int Avg_Response_Time(int index);

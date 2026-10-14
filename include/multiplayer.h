@@ -93,7 +93,7 @@ class MPGameModeClass
 		virtual bool vt_entry_A8(void);
 		virtual void vt_entry_AC(void);
 		virtual void vt_entry_B0(void);
-		virtual bool vt_entry_B4(int a1, void * ptr, int a3, short a4, int a5, int a6, int a7);
+		virtual bool vt_entry_B4(DynamicVectorClass<int> list, int * out);
 		virtual int vt_entry_B8(void);
 		virtual bool vt_entry_BC(void);
 		virtual void CreateMPTeams(DynamicVectorClass<MPTeam *> * teams);

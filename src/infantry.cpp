@@ -2130,6 +2130,128 @@ bool InfantryClass::IsDisguisedAs(HouseClass * house) const
 	return(false);
 }
 
+// FUNCTION: 0x005228B0
+bool InfantryClass::CanUseWaypoint(void) const
+{
+	return(TechnoClass::CanUseWaypoint());
+}
+
+// FUNCTION: 0x005228C0
+bool InfantryClass::CanAttackOnTheMove(void) const
+{
+	return(TechnoClass::CanAttackOnTheMove());
+}
+
+// FUNCTION: 0x005228D0
+bool InfantryClass::IsDeployed(void) const
+{
+	return(Class->Deployer && (Doing == 0x1b || Doing == 0x1c || Doing == 0x1d || Doing == 0x1e));
+}
+
+// FUNCTION: 0x00522910
+void InfantryClass::FUN_00522910(BuildingClass * building)
+{
+	if (Class->Occupier) {
+		Limbo();
+		building->Occupants.Add(this);
+		building->UpdateThreatInCell(building->Get_Cell_Ptr());
+		if (building->Occupants.Count() == 1) {
+			building->Mark(MARK_CHANGE);
+			if (House->Is_Player_Control()) {
+				VoxClass::Play("EVA_StructureGarrisoned");
+				VocClass::PlayAt(Rule->BuildingGarrisonedSound, Center_Coord(), 0);
+			}
+		}
+		if (House->IsHuman) {
+			ShouldGarrisonStructure = false;
+			ShouldEnterOccupiable = false;
+		}
+	} else if (Class->Assaulter) {
+		building->KillOccupants(this);
+		Assign_Destination(NULL, true);
+		Scatter(building->Center_Coord(), true, true);
+	}
+}
+
+// FUNCTION: 0x00522A50
+void InfantryClass::FUN_00522A50(int)
+{
+}
+
+// FUNCTION: 0x00522A60
+bool InfantryClass::INoticeSink_Unknown(DWORD unknown, DWORD unknown2)
+{
+	if ((Class->BalloonHover || Class->JumpJet) && unknown == 0x117b && HasAnyLink()) {
+		Transmit_Message((RadioMessageType)8);
+		if (ArchiveTarget != NULL && ArchiveTarget != NavCom) {
+			Assign_Destination(ArchiveTarget, true);
+			return(true);
+		}
+		AbortMotion();
+		Scatter(COORD_NONE, true, false);
+		return(true);
+	}
+	if (Class->Crashable && unknown == 0x117c) {
+		Cell cell(Center_Coord().As_Cell());
+		if (Map[cell].IsUnderBridge) {
+			Set_Height_AGL(BRIDGE_LEPTON_HEIGHT);
+		} else {
+			Set_Height_AGL(0);
+		}
+		Do_Action((DoType)0x24, true, false);
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00522BC0
+bool InfantryClass::CanCheer(void) const
+{
+	if (Get_Mission() == MISSION_GUARD || Get_Mission() == MISSION_GUARD_AREA) {
+		if (Doing == 0 || Doing == 9 || Doing == 0xa || Doing == 0x20) {
+			return(true);
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00522C00
+void InfantryClass::Cheer(bool force)
+{
+	if (force || CanCheer()) {
+		Do_Action((DoType)0x20, false, false);
+	}
+}
+
+// FUNCTION: 0x00522C30
+bool InfantryClass::FUN_00522C30(DoType doing) const
+{
+	if (doing == 9 || doing == 0xa || doing == 0x12 || doing == 0x13 || doing == 0x17 || doing == 0x20) {
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00522C60
+bool InfantryClass::FUN_00522C60(DoType doing) const
+{
+	return(doing == 0xb || doing == 0xc || doing == 0xd || doing == 0xe || doing == 0xf || doing == 0x22 || doing == 0x23 || doing == 0x24 || doing == 0x14 || doing == 0x15);
+}
+
+// FUNCTION: 0x00522CB0
+bool InfantryClass::FUN_00522CB0(void)
+{
+	return(Doing == 0xb || Doing == 0xc || Doing == 0xd || Doing == 0xe || Doing == 0xf || Doing == 0x22 || Doing == 0x23 || Doing == 0x24 || Doing == 0x14 || Doing == 0x15);
+}
+
+// FUNCTION: 0x00522D00
+void InfantryClass::FUN_00522D00(void)
+{
+	if (CurrentMission != MISSION_HARVEST) {
+		QueueMission(MISSION_HARVEST, false);
+	}
+}
+
 // FUNCTION: 0x00523300
 HRESULT STDMETHODCALLTYPE InfantryClass::GetClassID(CLSID * retval)
 {

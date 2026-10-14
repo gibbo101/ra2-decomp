@@ -1034,6 +1034,14 @@ wchar_t* WideWstring::get(void) const
 	return(str);
 }
 
+// FUNCTION: 0x007B7110
+wchar_t WideWstring::get(unsigned int index)
+{
+	if (index < wcslen(str))
+		return(str[index]);
+	return(0);
+}
+
 // FUNCTION: 0x007B7140
 wchar_t* WideWstring::text(void) const
 {
@@ -1042,12 +1050,31 @@ wchar_t* WideWstring::text(void) const
 	return(str);
 }
 
+// FUNCTION: 0x007B7150
+wchar_t WideWstring::operator[](unsigned int index) const
+{
+	if (index < wcslen(str))
+		return(str[index]);
+	return(0);
+}
+
 // FUNCTION: 0x007B71B0
 unsigned int WideWstring::length(void) const
 {
 	if (str == NULL)
 		return(0);
 	return((unsigned int)wcslen(str));
+}
+
+// FUNCTION: 0x007B7660
+char WideWstring::set(wchar_t c, unsigned int index)
+{
+	if (index >= (unsigned int)wcslen(str))
+		return(FALSE);
+
+	str[index] = c;
+
+	return(TRUE);
 }
 
 // FUNCTION: 0x007B7D80

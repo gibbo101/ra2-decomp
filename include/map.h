@@ -94,6 +94,9 @@ class MapClass: public GScreenClass
 		bool Remove_Crate(Cell const & cell);
 		void Shroud_The_Map(HouseClass * house);
 		void FUN_00577C90(HouseClass * house);
+		void FUN_00578100(void);
+		void Reshroud(HouseClass * house);
+		void Reveal(HouseClass * house);
 		void Reveal_The_Map(HouseClass * house);
 		virtual void Detach(AbstractClass const * , bool all = true);
 

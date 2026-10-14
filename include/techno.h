@@ -597,6 +597,7 @@ class TechnoClass : public RadioClass
 		bool Has_Ability(AbilityType ability) const;
 		bool Should_Use_High_Arc(int which) const;
 		HouseClass * GetOriginalOwner(void) const;
+		void UpdateThreatInCell(CellClass * cell);
 		double Target_Threat(TechnoClass * target, Coord const & firing_coord = COORD_NONE) const;
 
 		virtual ResultType Take_Damage(int & damage, int distance, WarheadTypeClass const * warhead, TechnoClass * source=0, bool forced=false, bool=false, HouseClass * = 0) override;

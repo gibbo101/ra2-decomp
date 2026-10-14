@@ -1039,3 +1039,53 @@ void BuildingTypeClass::Post_Read_Tile_Fixup(void)
 		}
 	}
 }
+
+// FUNCTION: 0x00465D30
+bool BuildingTypeClass::FUN_00465D30(void) const
+{
+	return(false);
+}
+
+// FUNCTION: 0x00465D40
+bool BuildingTypeClass::IsVehicle(void) const
+{
+	return(UndeploysInto != NULL && SizeWidth[Size] == 1 && SizeHeight[Size] == 1);
+}
+
+// FUNCTION: 0x00465D70
+Dir256 BuildingTypeClass::Deploy_Facing(void) const
+{
+	return(Dir256(DeployFacing));
+}
+
+// FUNCTION: 0x00465D80
+BuildingTypeClass * BuildingTypeClass::FUN_00465D80(void)
+{
+	return(this);
+}
+
+// FUNCTION: 0x00465D90
+RTTIType BuildingTypeClass::Fetch_RTTI(void) const
+{
+	return(RTTI_BUILDINGTYPE);
+}
+
+// FUNCTION: 0x00465DA0
+int BuildingTypeClass::Fetch_Object_Size(void) const
+{
+	return(sizeof(*this));
+}
+
+// FUNCTION: 0x00465DB0
+int BuildingTypeClass::Fetch_Heap_ID(void) const
+{
+	return(HeapID);
+}
+
+// FUNCTION: 0x00465DC0 BuildingTypeClass::~BuildingTypeClass
+
+// FUNCTION: 0x00465DE0 ?$VectorClass@V?$TPoint3D@H@@::GetItem
+// FUNCTION: 0x00465E10 ?$VectorClass@V?$TPoint3D@H@@::operator==
+// FUNCTION: 0x00465E70 ?$VectorClass@V?$TPoint3D@H@@::Resize
+// FUNCTION: 0x00465F50 ?$VectorClass@V?$TPoint3D@H@@::Clear
+template class VectorClass<Point3D>;

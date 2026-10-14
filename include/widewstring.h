@@ -16,6 +16,10 @@ class WideWstring
 
 		wchar_t *		get(void) const;
 		wchar_t *		text(void) const;
+		wchar_t			get(unsigned int index);
+		wchar_t			operator[](unsigned int index) const;
+		wchar_t			getChar(unsigned int index) const;
+		char			set(wchar_t c, unsigned int index);
 		unsigned int	length(void) const;
 		int				toInt(void) const;
 		int				getToken(int offset, wchar_t const * delim, WideWstring & out) const;

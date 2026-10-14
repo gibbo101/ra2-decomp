@@ -173,8 +173,7 @@ class MSVQAnim : public MSAnim
 class MSPrintAnim : public MSAnim
 {
 	public:
-		MSPrintAnim(int text, int x, int y, MSFont * font, Rect const & rect=RECT_NONE, int start_delay=0, int print_delay=4, bool fade_effect=true, bool center=false);
-		MSPrintAnim(char const * text, int x, int y, MSFont * font, Rect const & rect=RECT_NONE, int start_delay=0, int print_delay=4, bool fade_effect=true, bool center=false);
+		MSPrintAnim(WideWstring const & text, int x, int y, MSFont * font, Rect const & rect=RECT_NONE, int start_delay=0, int print_delay=4, bool fade_effect=true, bool center=false);
 		virtual ~MSPrintAnim(void) override {}
 
 		virtual bool Advance(Surface * surface, Rect & rect) override;
@@ -183,18 +182,17 @@ class MSPrintAnim : public MSAnim
 		virtual bool Has_Finished(void) const override;
 
 		void Set_Transient(bool transient);
-		static int Word_Wrap(char * string, MSFont * font, int line_width);
-		static int Word_Wrap(char * string, int length, MSFont * font, int line_width);
-		static int Paginate(char * string, MSFont * font, int page_height);
+		static int Word_Wrap(WideWstring & string, MSFont * font, int line_width);
+		static int Paginate(WideWstring & string, MSFont * font, int page_height);
 
 	protected:
 		void Set_Dimensions(Rect const & rect);
-		int Get_Line_Width(char const * str) const;
+		int Get_Line_Width(WideWstring const & str) const;
 		int Get_Printed_Char_Count(void) const { return(PrintedCharCount); }
 
 	protected:
 
-		char const * String;
+		WideWstring Text;
 
 		unsigned LineStart;
 
@@ -220,13 +218,7 @@ class MSPrintAnim : public MSAnim
 class MSWordAnim : public MSPrintAnim
 {
 	public:
-		MSWordAnim(int text, int x, int y, MSFont * font, Rect const & rect=RECT_NONE, int start_delay=0, int print_delay=4, bool fade_effect=true, bool center=false) :
-			MSPrintAnim(text, x, y, font, rect, start_delay, print_delay, fade_effect, center), LineYPos(YPos)
-		{
-			LineRect.Set(0, 0, 0, 0);
-		}
-
-		MSWordAnim(char const * text, int x, int y, MSFont * font, Rect const & rect=RECT_NONE, int start_delay=0, int print_delay=4, bool fade_effect=true, bool center=false) :
+		MSWordAnim(WideWstring const & text, int x, int y, MSFont * font, Rect const & rect=RECT_NONE, int start_delay=0, int print_delay=4, bool fade_effect=true, bool center=false) :
 			MSPrintAnim(text, x, y, font, rect, start_delay, print_delay, fade_effect, center), LineYPos(YPos)
 		{
 			LineRect.Set(0, 0, 0, 0);

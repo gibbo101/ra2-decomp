@@ -3727,6 +3727,206 @@ int TechnoClass::Get_Predator_Offset(void) const
 	return((Fetch_ID() + (int)WarpFactor) % 400);
 }
 
+// FUNCTION: 0x0070BE80
+bool TechnoClass::Should_Self_Heal_Now(void) const
+{
+	if (!TClass->IsSelfHealing) {
+		if (!Has_Ability(ABILITY_SELF_HEAL)) {
+			return(false);
+		}
+	}
+	if ((Unsorted::CurrentFrame % (int)(Rule->RepairRate * TICKS_PER_MINUTE)) != 0) {
+		return(false);
+	}
+	int health = Strength;
+	if (health == TClass->MaxStrength) {
+		return(false);
+	}
+	if (health != 0) {
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x0070BF50
+HRESULT STDMETHODCALLTYPE TechnoClass::Load(IStream * stream)
+{
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		PlanningToken = NULL;
+		Swizzle_Pointer(&House);
+		for (int i = 0; i < 8; i++) {
+			Swizzle_Pointer(&ParticleSystems[i]);
+		}
+		Swizzle_Pointer(&InitialOwner);
+		Swizzle_Pointer(&BunkerLinkedItem);
+		Swizzle_Pointer(&ArchivedTarget);
+		Swizzle_Pointer(&QueueUpToEnter);
+		Swizzle_Pointer(&TarCom);
+		Swizzle_Pointer(&SuspendedTarCom);
+		Swizzle_Pointer(&CaptureManager);
+		Swizzle_Pointer(&OldTeam);
+		Swizzle_Pointer(&SpawnManager);
+		Swizzle_Pointer(&SlaveManager);
+		Swizzle_Pointer(&SlaveOwner);
+		Swizzle_Pointer(&MindControlledBy);
+		Swizzle_Pointer(&MindControlledByHouse);
+		Swizzle_Pointer(&OriginallyOwnedByHouse);
+		Swizzle_Pointer(&SpawnOwner);
+		Swizzle_Pointer(&Disguise);
+		Swizzle_Pointer(&DisguisedAsHouse);
+		Swizzle_Pointer(&TemporalImUsing);
+		Swizzle_Pointer(&TemporalTargetingMe);
+		Swizzle_Pointer(&Airstrike);
+		Swizzle_Pointer(&DrainTarget);
+		Swizzle_Pointer(&DrainingMe);
+		Swizzle_Pointer(&Transporter);
+		Swizzle_Pointer(&DirectRockerLinkedUnit);
+		Swizzle_Pointer(&LocomotorTarget);
+		Swizzle_Pointer(&LocomotorSource);
+		Swizzle_Pointer(&BeingManipulatedBy);
+		Swizzle_Pointer(&ChronoWarpedByHouse);
+		Swizzle_Pointer(&Cargo.CargoHold);
+		Swizzle_Pointer(&Wave);
+		Swizzle_Pointer(&DeployAnim);
+		Swizzle_Pointer(&BehindAnim);
+		Swizzle_Pointer(&MindControlRingAnim);
+		Swizzle_Pointer(&DrainAnim);
+		TurretRotateSoundController.FUN_00405BE0();
+		IsTurretRotateSoundPlaying = 1;
+		TurretIsRotating = 0;
+		GattlingSoundController.FUN_00405BE0();
+		IsGattlingSoundPlaying = false;
+		unknown_4BC = 0;
+		UnusedGattlingSoundController.FUN_00405BE0();
+		IsUnusedGattlingSoundPlaying = false;
+		unknown_4D8 = 0;
+		QueuedVoiceSoundController.FUN_00405BE0();
+		QueuedVoiceIndex = -1;
+		unknown_4F4 = -1;
+		result = S_OK;
+	}
+	return(result);
+}
+
+// FUNCTION: 0x0070C250
+HRESULT STDMETHODCALLTYPE TechnoClass::Save(IStream * stream, BOOL cleardirty)
+{
+	BASECLASS::Save(stream, cleardirty);
+	return(S_OK);
+}
+
+// FUNCTION: 0x0070C270
+void TechnoClass::Compute_CRC(CRCEngine & crc) const
+{
+	BASECLASS::Compute_CRC(crc);
+	crc(Group);
+	crc(ArmorBias);
+	crc(FirepowerBias);
+	crc((int)IdleTimer);
+	crc((int)SpiedBy);
+	crc((int)Cloak);
+	crc((int)CloakDelay);
+	crc(WarpFactor);
+	crc(unknown_bool_250);
+	crc(LastSightRange);
+	crc(PitchAngle);
+	crc((int)Arm);
+	crc(Ammo);
+	crc((int)ReloadTimer);
+	crc(PurchasePrice);
+	crc(AngleRotatedSideways);
+	crc(AngleRotatedForwards);
+	crc(RockingSidewaysPerFrame);
+	crc(RockingForwardsPerFrame);
+	crc(IsSinking);
+	crc(unknown_bool_3CF);
+	crc(IsUseless);
+	crc(IsTickedOff);
+	crc(IsCloakable);
+	crc(IsLeader);
+	crc(IsALoaner);
+	crc(IsInPlayfield);
+	crc(IsTethered);
+	crc(IsAlternativeTether);
+	if (Session.Type == GAME_NORMAL || Session.Type == GAME_SKIRMISH) {
+		crc(IsOwnedByPlayer);
+		crc(IsDiscoveredByPlayer);
+		crc(IsDiscoveredByComputer);
+	}
+	crc(unknown_bool_41D);
+	crc((int)EMPLockRemaining);
+	crc((int)unknown_bool_41E);
+	crc((int)unknown_bool_41F);
+	crc(SightIncrease);
+	int count = CurrentTargets.Count();
+	crc(count);
+	for (int i = 0; i < count; i++) {
+		AbstractClass * target = CurrentTargets[i];
+		int threat = CurrentTargetThreatValues[i];
+		crc(target->Fetch_ID());
+		crc(threat);
+	}
+	count = AttackedTargets.Count();
+	crc(count);
+	for (int j = 0; j < count; j++) {
+		AbstractClass * attacked = AttackedTargets[j];
+		crc(attacked->Fetch_ID());
+	}
+}
+
+// FUNCTION: 0x0070C5A0
+bool TechnoClass::Is_Allowed_To_Recloak(void) const
+{
+	if (IsCloakable) {
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x0070C5B0
+bool TechnoClass::IsBeingWarpedOut(void) const
+{
+	return(BeingWarpedOut);
+}
+
+// FUNCTION: 0x0070C5C0
+bool TechnoClass::IsWarpingIn(void) const
+{
+	return(WarpingOut);
+}
+
+// FUNCTION: 0x0070C5D0
+bool TechnoClass::IsWarpingSomethingOut(void) const
+{
+	if (TemporalImUsing != NULL && TemporalImUsing->Target != NULL) {
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x0070C5F0
+bool TechnoClass::IsNotWarping(void) const
+{
+	if (!BeingWarpedOut && !WarpingOut) {
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x0070C610
+void TechnoClass::Assign_Archive_Target(AbstractClass * target)
+{
+	ArchivedTarget = target;
+}
+
+// FUNCTION: 0x0070C620
+bool TechnoClass::Is_On_Elevation(void) const
+{
+	Cell cell = TacticalMap->Coord_To_Cell(Get_Coord());
+	return(cell != Get_Cell());
+}
+
 // FUNCTION: 0x0070D150
 void TechnoClass::Reset_Action_Line_Timer(void)
 {

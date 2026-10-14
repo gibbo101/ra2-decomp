@@ -8,9 +8,17 @@
 #include "tab.h"
 #include "shapebtn.h"
 #include <string.h>
+#include <stdio.h>
 #include "rect.h"
 #include "shapeset.h"
 #include "tooltip.h"
+#include "xmouse.h"
+#include "draw.h"
+#include "dsurface.h"
+#include "_map.h"
+#include "_rules.h"
+#include "rules.h"
+#include "voc.h"
 
 #include <cmath>
 
@@ -34,16 +42,16 @@ struct CommandBarStatics {
 	static ShapeButtonClass ButtonB;
 };
 
-// FUNCTION: 0x006CFBA0 $E91
-// FUNCTION: 0x006CFBD0 $E88
+// FUNCTION: 0x006CFBA0 $E121
+// FUNCTION: 0x006CFBD0 $E118
 ShapeButtonClass CommandBarStatics::Buttons[25];
 
-// FUNCTION: 0x006CFC00 $E96
-// FUNCTION: 0x006CFC20 $E94
+// FUNCTION: 0x006CFC00 $E126
+// FUNCTION: 0x006CFC20 $E124
 ShapeButtonClass CommandBarStatics::ButtonA;
 
-// FUNCTION: 0x006CFC40 $E101
-// FUNCTION: 0x006CFC60 $E99
+// FUNCTION: 0x006CFC40 $E131
+// FUNCTION: 0x006CFC60 $E129
 ShapeButtonClass CommandBarStatics::ButtonB;
 
 extern void * DAT_00B0C148[];
@@ -92,7 +100,8 @@ ShapeButtonClass * __fastcall FUN_006CFD40(int button)
 	if (slot < 0 || slot >= 25) {
 		return NULL;
 	}
-	return &CommandBarStatics::Buttons[slot];
+	ShapeButtonClass * result = &CommandBarStatics::Buttons[slot];
+	return result;
 }
 
 extern Rect * DAT_00B0FC68;
@@ -247,20 +256,7 @@ struct CCToolTip {
 	static ToolTipManager * Instance;
 };
 
-static inline void Add_Button_Tip(ShapeButtonClass * button, char const * text)
-{
-	if (button) {
-		ToolTip tip;
-		tip.ID = button->ID;
-		tip.Text = (int)text;
-		tip.Region.X = button->X;
-		tip.Region.Y = button->Y;
-		tip.Region.Width = button->Width;
-		tip.Region.Height = button->Height;
-		CCToolTip::Instance->Remove(tip.ID);
-		CCToolTip::Instance->Add(&tip);
-	}
-}
+void __fastcall FUN_006D09C0(ShapeButtonClass * button, char const * text);
 
 // FUNCTION: 0x006D04F0
 bool TabClass::Activate(int control)
@@ -272,7 +268,7 @@ bool TabClass::Activate(int control)
 				FUN_006D1200();
 			} else {
 				Add_A_Button(CommandBarStatics::ButtonB);
-				Add_Button_Tip(&CommandBarStatics::ButtonB, "Tip:ThumbClosed");
+				FUN_006D09C0(&CommandBarStatics::ButtonB, "Tip:ThumbClosed");
 			}
 		} else if (ThumbActive) {
 			FUN_006D04D0();
@@ -294,9 +290,307 @@ bool TabClass::Activate(int control)
 }
 
 
+namespace Unsorted { extern int MuteSWLaunches; }
+
+extern Rect * DAT_00B0FC58;
+extern int DAT_00886FA8;
+extern int DAT_007F5BFC;
+extern int DAT_00B0CD24;
+extern int DAT_00B0CB3C;
+extern int DAT_00B0C1B8;
+extern int DAT_00B0CB20;
+extern int DAT_00B0CB68;
+extern int DAT_00B0CC1C;
+extern int DAT_00B0CB6C;
+extern int DAT_00B0CC20;
+extern int DAT_00B0CD28;
+extern int DAT_00B0CB38;
+
+void FUN_00731AF0(void);
+void FUN_00731A30(void);
+void FUN_00730F30(void);
+void FUN_00730AF0(void);
+void FUN_00730D60(void);
+void __fastcall FUN_00731A50(bool flag);
+void __fastcall FUN_00731A70(bool flag);
+void FUN_00730EA0(void);
+int __fastcall FUN_00730A10(int group);
+void __fastcall FUN_00731060(int group);
+bool __fastcall FUN_00730990(int group);
+void __fastcall FUN_007313A0(int group);
+void __fastcall FUN_007311C0(int group);
+void __fastcall FUN_00732950(void);
+void __fastcall FUN_007310D0(int group);
+
+inline void TabClass::Hide_Buttons(void)
+{
+	FUN_006D04D0();
+	Remove_A_Button(CommandBarStatics::ButtonA);
+	for (int i = 0; i < 25; i++) {
+		ShapeButtonClass * b = FUN_006CFD40(i);
+		if (b) {
+			CCToolTip::Instance->Remove(b->ID);
+		}
+	}
+	CCToolTip::Instance->Remove(0xF0);
+}
+
+inline void TabClass::Close_Thumb(void)
+{
+	if (ThumbActive) {
+		Hide_Buttons();
+		ThumbActive = false;
+		Add_A_Button(CommandBarStatics::ButtonB);
+		FUN_006D09C0(&CommandBarStatics::ButtonB, "Tip:ThumbClosed");
+		IsToRedraw = true;
+		Flag_To_Redraw();
+	}
+}
+
+inline void TabClass::Open_Thumb(void)
+{
+	if (!ThumbActive) {
+		Remove_A_Button(CommandBarStatics::ButtonB);
+		CCToolTip::Instance->Remove(0xF1);
+		ThumbActive = true;
+		FUN_006D1200();
+		IsToRedraw = true;
+		Flag_To_Redraw();
+	}
+}
+
+// FUNCTION: 0x006D0680
+void TabClass::AI(KeyNumType & input, Point2D const & xy)
+{
+	if (MoneyFlashTimer == 1) {
+		IsToRedraw = true;
+		Flag_To_Redraw();
+	}
+
+	Rect area(DAT_00B0FC58->X, DAT_00B0FC58->Y, DAT_00886FA8, DAT_007F5BFC - 2);
+	if (area.Is_Point_Within(xy)) {
+		Map.Override_Mouse_Shape(MOUSE_NORMAL, false);
+	}
+
+	int key = input;
+	if (key >= 0x80D6 && key < 0x80EF) {
+		int command = (key & ~0x8000) - 0xD6;
+		if (command == DAT_00B0CD24) {
+			FUN_00731AF0();
+		} else if (command == DAT_00B0CB3C) {
+			FUN_00731A30();
+		} else if (command == DAT_00B0C1B8) {
+			FUN_00730F30();
+		} else if (command == DAT_00B0CB20) {
+			FUN_00730AF0();
+		} else if (command == DAT_00B0CB68) {
+			FUN_00730D60();
+		} else if (command == DAT_00B0CC1C) {
+			if (FUN_006CFD40(DAT_00B0CC1C)->IsOn) {
+				FUN_00731A50(true);
+			} else {
+				FUN_00731A70(true);
+			}
+		} else if (command == DAT_00B0CB6C) {
+			FUN_00730EA0();
+		} else if (FUN_006CFDF0(command)) {
+			int group = FUN_006CFE10(command);
+			if (FUN_00730A10(group) == 0) {
+				FUN_00731060(group);
+			} else if (FUN_00730990(group)) {
+				FUN_007313A0(group);
+			} else {
+				FUN_007311C0(group);
+			}
+		} else if (command == DAT_00B0CB38) {
+			FUN_00732950();
+		}
+	} else if (key == 0x80F0) {
+		VocClass::PlayGlobal(Rule->GUICloseSound, 1.0f, 0x2000);
+		Close_Thumb();
+	} else if (key == 0x80F1) {
+		if (!Unsorted::MuteSWLaunches) {
+			VocClass::PlayGlobal(Rule->GUIOpenSound, 1.0f, 0x2000);
+			Open_Thumb();
+		}
+	} else if (key >= 0xC0D6 && key < 0xC0EF) {
+		int command = (key & ~0xC000) - 0xD6;
+		if (FUN_006CFDF0(command)) {
+			FUN_007310D0(FUN_006CFE10(command));
+		}
+	}
+
+	Credits.AI(false);
+	BASECLASS::AI(input, xy);
+}
+
+// FUNCTION: 0x006D09C0
+void __fastcall FUN_006D09C0(ShapeButtonClass * button, char const * text)
+{
+	if (button) {
+		ToolTip tip;
+		tip.ID = button->ID;
+		tip.Text = (int)text;
+		tip.Region.X = button->X;
+		tip.Region.Y = button->Y;
+		tip.Region.Width = button->Width;
+		tip.Region.Height = button->Height;
+		CCToolTip::Instance->Remove(tip.ID);
+		CCToolTip::Instance->Add(&tip);
+	}
+}
+
+extern DSurface * DAT_00887300;
+extern ShapeSet const * DAT_00B0FB08;
+extern bool DAT_00B0B518;
+
+// FUNCTION: 0x006D0E60
+void TabClass::Draw_Credits_Tab(void)
+{
+	ShapeSet const * shape = DAT_00B0FB08;
+	Draw_Shape(*DAT_00887300, *FileSystem::SIDEBAR_PAL, shape, 0, Point2D(0, 0), DAT_00887300->Get_Rect());
+	DAT_00B0B518 = true;
+}
+
+// FUNCTION: 0x006D0EC0
+void TabClass::Flash_Money(void)
+{
+	IsToRedraw = true;
+	Flag_To_Redraw();
+	MoneyFlashTimer = 7;
+}
+
 // FUNCTION: 0x006D0F00
 void TabClass::Redraw_Tab(void)
 {
 	IsToRedraw = true;
 	Flag_To_Redraw();
+}
+
+// FUNCTION: 0x006D0F10
+void __cdecl FUN_006D0F10(void)
+{
+	bool loaded = false;
+	for (int i = 0; i < 25; i++) {
+		char name[256];
+		sprintf(name, "Button%02d.SHP", i);
+		DAT_00B0C148[i] = FileSystem::LoadWholeFileEx(name, loaded);
+		DAT_00B0CBDC[i] = loaded;
+	}
+}
+
+// FUNCTION: 0x006D0F70
+void __cdecl FUN_006D0F70(void)
+{
+	for (int i = 0; i < 25; i++) {
+		if (DAT_00B0CBDC[i]) {
+			delete DAT_00B0C148[i];
+			DAT_00B0CBDC[i] = false;
+		}
+		DAT_00B0C148[i] = NULL;
+	}
+}
+
+// FUNCTION: 0x006D0FB0
+void __fastcall FUN_006D0FB0(ShapeButtonClass * button, int id, int flags)
+{
+	button->ID = id;
+	button->ShapeDrawer = FileSystem::SIDEBAR_PAL;
+	button->Set_Flags(flags);
+	button->IsOn = false;
+	button->IsToggleType = 0;
+}
+
+// FUNCTION: 0x006D0FD0
+void TabClass::FUN_006D0FD0(void)
+{
+	for (int p = (int)CommandBarStatics::Buttons; p < (int)(CommandBarStatics::Buttons + 25); p += sizeof(ShapeButtonClass)) {
+		((ShapeButtonClass *)p)->ShapeButtonClass::Set_Shape(NULL, 0, 0);
+	}
+
+	Rect r = *DAT_00B0FC64;
+	int limit = r.X + r.Width;
+	for (int i = 0; i < 25; i++) {
+		ShapeButtonClass * button = FUN_006CFD40(i);
+		if (button) {
+			r = FUN_006CFD60(i);
+			if (r.X + r.Width <= limit) {
+				button->ID = 0xD6 + i;
+				button->ShapeDrawer = FileSystem::SIDEBAR_PAL;
+				button->IsOn = false;
+				button->IsToggleType = 0;
+				button->Set_Flags(5);
+				button->Set_Position(r.X, r.Y);
+				button->Set_Shape((ShapeSet const *)DAT_00B0C148[i], 0, 0);
+			}
+		}
+	}
+
+	ShapeButtonClass * planning = FUN_006CFD40(DAT_00B0CC1C);
+	if (planning) {
+		planning->IsToggleType = 1;
+		planning->ReflectButtonState = true;
+	}
+
+	for (int t = DAT_00B0CC20; t <= DAT_00B0CD28; t++) {
+		ShapeButtonClass * button = FUN_006CFD40(t);
+		if (button) {
+			button->Set_Flags(0x55);
+		}
+	}
+}
+
+// FUNCTION: 0x006D1130
+void __cdecl FUN_006D1130(void)
+{
+	ShapeSet const * shape = DAT_00B0FA90;
+
+	CommandBarStatics::ButtonA.ID = 0xF0;
+	CommandBarStatics::ButtonA.ShapeDrawer = FileSystem::SIDEBAR_PAL;
+	CommandBarStatics::ButtonA.IsOn = false;
+	CommandBarStatics::ButtonA.IsToggleType = 0;
+	CommandBarStatics::ButtonA.Set_Flags(5);
+	Rect ra = *DAT_00B0FC60;
+	CommandBarStatics::ButtonA.Set_Position(ra.X, ra.Y);
+	CommandBarStatics::ButtonA.Set_Shape(shape, 0, 0);
+
+	CommandBarStatics::ButtonB.ID = 0xF1;
+	CommandBarStatics::ButtonB.ShapeDrawer = FileSystem::SIDEBAR_PAL;
+	CommandBarStatics::ButtonB.IsOn = false;
+	CommandBarStatics::ButtonB.IsToggleType = 0;
+	CommandBarStatics::ButtonB.Set_Flags(5);
+	Rect rb = *DAT_00B0FC64;
+	CommandBarStatics::ButtonB.Set_Position(rb.X, rb.Y);
+	CommandBarStatics::ButtonB.Set_Shape(shape, 0, 0);
+}
+
+// FUNCTION: 0x006D1200
+void TabClass::FUN_006D1200(void)
+{
+	FUN_006D04A0();
+	Add_A_Button(CommandBarStatics::ButtonA);
+
+	ShapeButtonClass * button = FUN_006CFD40(DAT_00B0CD24);
+	FUN_006D09C0(button, "Tip:AttackMove");
+	button = FUN_006CFD40(DAT_00B0CB3C);
+	FUN_006D09C0(button, "Tip:Beacon");
+	button = FUN_006CFD40(DAT_00B0C1B8);
+	FUN_006D09C0(button, "Tip:Cheer");
+	button = FUN_006CFD40(DAT_00B0CB20);
+	FUN_006D09C0(button, "Tip:Deploy");
+	button = FUN_006CFD40(DAT_00B0CB68);
+	FUN_006D09C0(button, "Tip:Guard");
+	button = FUN_006CFD40(DAT_00B0CC1C);
+	FUN_006D09C0(button, "Tip:PlanningMode");
+	button = FUN_006CFD40(DAT_00B0CB6C);
+	FUN_006D09C0(button, "Tip:Stop");
+	button = FUN_006CFD40(DAT_00B0CC20);
+	FUN_006D09C0(button, "Tip:Team01");
+	button = FUN_006CFD40(DAT_00B0CC28);
+	FUN_006D09C0(button, "Tip:Team02");
+	button = FUN_006CFD40(DAT_00B0CD28);
+	FUN_006D09C0(button, "Tip:Team03");
+	button = FUN_006CFD40(DAT_00B0CB38);
+	FUN_006D09C0(button, "Tip:TypeSelect");
+	FUN_006D09C0(&CommandBarStatics::ButtonA, "Tip:ThumbOpen");
 }

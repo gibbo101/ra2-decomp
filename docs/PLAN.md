@@ -973,6 +973,22 @@ surface_quick_fill went into xsurface.cpp as it was and XSurface::Fill_Rect land
 one-instruction change to it is refused. Cost: about 7.8M tokens. Merge gate: 5,505 of
 5,505 (850.5 KB).
 
+### Batches 34 and 35 (14 October 2026)
+
+The week's last pair, two batches instead of three to stop near 84% of the weekly
+allowance. **269 of 288** (131, 138). Batch 34's merge adopted CommandClass with YR's
+nine-slot vtable and landed Shroud_The_Map and BuildingClass::Infiltrate; batch 35's gave
+IonBlastClass its DisableIonBeam flag, made MSFont's API wide and filled in WideWstring's
+accessors, landing the whole MSPrintAnim family. The no-argument TerrainClass constructor
+got a names.csv row, landing its class factory.
+
+**This week:** batches 4 to 35, from 1,670 to 5,779 matched functions (900 KB, about 30%
+of game functions). Rounds of two and then three batches side by side, with the header
+merges coordinating through small edits, roughly tripled throughput, at about 1% of the
+weekly allowance per million agent tokens. Re-measured from the week, first matches for
+the whole game come to about 5-6 full weekly allowances, against the first estimate's 8-9.
+Merge gate: 5,779 of 5,779 (899.8 KB).
+
 ### Decide before the first batch
 
 - **Module layout.** Which function lives in which source file, and the link order, decide

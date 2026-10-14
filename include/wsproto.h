@@ -50,9 +50,9 @@ class WinsockInterfaceClass {
 
 		virtual void Close_Socket(void);
 
-		virtual int  Read(void *buffer, int &buffer_len, void *address, int &address_len);
+		virtual int  Read(void *buffer, int &buffer_len, void *address, int &address_len, unsigned short &port);
 		virtual void WriteTo (void *buffer, int buffer_len, void *address, int address_len, bool alternate, bool flag, unsigned short port);
-		virtual void Broadcast (void *buffer, int buffer_len);
+		virtual void Broadcast (void *buffer, int buffer_len, bool alternate);
 
 		virtual void Discard_In_Buffers (void);
 		virtual void Discard_Out_Buffers (void);
@@ -62,9 +62,9 @@ class WinsockInterfaceClass {
 
 		virtual void Clear_Socket_Error(SOCKET socket);
 
-		virtual bool Set_Socket_Options ( void );
+		virtual bool Set_Socket_Options ( SOCKET socket = INVALID_SOCKET );
 
-		virtual void Set_Broadcast_Address ( void * ) {};
+		virtual void Set_Broadcast_Address ( char const * address, unsigned short port ) {};
 		virtual void Clear_Broadcast_Addresses(void) {};
 
 		virtual ProtocolEnum Get_Protocol (void) {
@@ -120,7 +120,7 @@ class WinsockInterfaceClass {
 			unsigned char		Buffer[WS_INTERNET_BUFFER_LEN];
 		};
 
-		void *Get_New_Out_Buffer(void);
+		void *Get_New_Out_Buffer(bool alternate);
 		void *Get_New_In_Buffer(void);
 
 		virtual void Build_Packet_CRC(WinsockBufferType *packet);

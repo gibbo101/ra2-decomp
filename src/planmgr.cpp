@@ -294,7 +294,16 @@ class PlanningNodeClass
 		bool Is_Loop_Start(TechnoClass * techno);
 		void Deactivate(PlanMember *);
 		void Clear(void);
-		void FUN_00635DB0(int);
+		void Reset_Colors(bool);
+		void Select_All(void);
+		void Unselect_All(void);
+		void Draw_Lead_Box(int);
+		void Fill_Lead_Box(int);
+		void Frame_Lead_Box(int);
+		void Frame_Lead_Pixel(int);
+		int Node_Color(void);
+		int Branch_Color(int);
+		int Own_Color(void);
 		void FUN_00634E10(PlanMember *);
 		void Locate_Own_Branch(void);
 		PlanMember * FUN_006346B0(TechnoClass * techno);
@@ -311,6 +320,7 @@ class PlanToken
 		int F8C;
 		int LoopCount;
 		int LoopStart;
+		bool F98;
 
 		PlanningNodeClass * FUN_00636E60(int index);
 		PlanningNodeClass * Node_At(int index)
@@ -808,21 +818,21 @@ void PlanningNodeClass::Rebuild(void)
 	Queued = false;
 }
 
-inline void PlanningNodeClass::Locate_Own_Branch(void)
+static inline void Locate_Own_Branch_Of(PlanningNodeClass * node)
 {
-	int * slot = &Own.Slot2;
+	int * slot = &node->Own.Slot2;
 	*slot = -1;
-	if (Own.Pending != 0) {
-		EventClass self = *(EventClass *)&Own;
-		int branches = Branches.Count();
+	if (node->Own.Pending != 0) {
+		EventClass self = *(EventClass *)&node->Own;
+		int branches = node->Branches.Count();
 		int b = 0;
 		if (branches > 0) {
 			do {
-				EventClass other = *(EventClass *)Branches[b];
+				EventClass other = *(EventClass *)node->Branches[b];
 				Coord a = FUN_00633BC0(self);
 				Coord c = FUN_00633BC0(other);
 				if (a == c) {
-					Own.Slot2 = b;
+					node->Own.Slot2 = b;
 					return;
 				}
 				b++;
@@ -858,7 +868,7 @@ void PlanningNodeClass::Update_Active(void)
 			}
 		}
 	}
-	Locate_Own_Branch();
+	Locate_Own_Branch_Of(this);
 }
 
 // FUNCTION: 0x00634CC0
@@ -968,5 +978,181 @@ void PlanningNodeClass::Deactivate(PlanMember * member)
 	member->Active = false;
 	if (--Own.Pending == 0) {
 		Own.Slot2 = -1;
+	}
+}
+
+// FUNCTION: 0x00635210
+void PlanningNodeClass::Locate_Own_Branch(void)
+{
+	Locate_Own_Branch_Of(this);
+}
+
+// FUNCTION: 0x006352D0
+void PlanningNodeClass::Select_All(void)
+{
+	int count = Members.Count();
+	for (int i = 0; i < count; i++) {
+		TechnoClass * owner = Members[i]->Owner;
+		if (!owner->IsSelected) {
+			owner->Select();
+		}
+	}
+}
+
+// FUNCTION: 0x00635310
+void PlanningNodeClass::Unselect_All(void)
+{
+	int count = Members.Count();
+	for (int i = 0; i < count; i++) {
+		TechnoClass * owner = Members[i]->Owner;
+		if (owner->IsSelected) {
+			owner->Unselect();
+		}
+	}
+}
+
+// FUNCTION: 0x00635490
+void PlanningNodeClass::Fill_Lead_Box(int color)
+{
+	Rect rect;
+	Rect clip = FUN_0072AD20();
+	rect = FUN_00634510(8, Coord_To_View(Event_Coord(*Members[0]->Packet)));
+	rect.X += 1;
+	rect.Y += 1;
+	rect.Width -= 2;
+	rect.Height -= 2;
+	DSurface::Composite->Fill_Rect(clip, rect, color);
+}
+
+static inline Rect Inflated(Rect const & r, int n)
+{
+	Rect o = r;
+	o.X -= n;
+	o.Y -= n;
+	o.Width += 2 * n;
+	o.Height += 2 * n;
+	return o;
+}
+
+// FUNCTION: 0x00635560
+void PlanningNodeClass::Frame_Lead_Box(int color)
+{
+	Rect clip = FUN_0072AD20();
+	Rect rect = Inflated(Around(8, Pixel_Of(Event_Coord(*Members[0]->Packet))), 4);
+	for (int i = 0; i < 3; i++) {
+		DSurface::Composite->Draw_Rect(clip, rect, color);
+		Shrink_Rect(rect);
+	}
+}
+
+// FUNCTION: 0x006357D0
+void __fastcall FUN_006357D0(Rect * rect, int amount)
+{
+	int twice = amount * 2;
+	if (twice < 0 && (twice >= rect->Width || twice >= rect->Height)) {
+		rect->X = 0;
+		rect->Y = 0;
+		rect->Width = 0;
+		rect->Height = 0;
+		return;
+	}
+	rect->X -= amount;
+	rect->Y -= amount;
+	rect->Width += twice;
+	rect->Height += twice;
+}
+
+struct SchemeColor
+{
+	char Gap[0x56f9];
+	RGBClass Color;
+};
+
+extern SchemeColor ** DAT_00A8022C;
+extern RGBClass DAT_00A83CD9;
+extern RGBClass DAT_00A80220;
+struct Drawing {
+	static unsigned char RedShiftRight;
+	static unsigned char GreenShiftRight;
+	static unsigned char BlueShiftRight;
+	static int RedShiftLeft;
+	static int GreenShiftLeft;
+	static int BlueShiftLeft;
+};
+
+// FUNCTION: 0x0063D070
+int __fastcall FUN_0063D070(RGBClass const & color, RGBClass const & other, int ratio)
+{
+	RGBClass mixed = color;
+	mixed.Adjust(ratio, other);
+	return (mixed.Get_Red() >> Drawing::RedShiftRight << Drawing::RedShiftLeft)
+		| (mixed.Get_Green() >> Drawing::GreenShiftRight << Drawing::GreenShiftLeft)
+		| (mixed.Get_Blue() >> Drawing::BlueShiftRight << Drawing::BlueShiftLeft);
+}
+
+static inline int Owner_Slot(TechnoClass * techno)
+{
+	HouseClass * house = techno->House;
+	int index = house->HeapID;
+	if (house->Is_Player_Control() && PlayerPtr) {
+		index = PlayerPtr->HeapID;
+	}
+	return index;
+}
+
+static inline int Mix_0(RGBClass const & c, RGBClass const & o, int r) { return FUN_0063D070(c, o, r); }
+static inline int Mix_1(RGBClass const & c, RGBClass const & o, int r) { return Mix_0(c, o, r); }
+static inline int Mix_2(RGBClass const & c, RGBClass const & o, int r) { return Mix_1(c, o, r); }
+static inline int Mix_3(RGBClass const & c, RGBClass const & o, int r) { return Mix_2(c, o, r); }
+static inline int Mix_4(RGBClass const & c, RGBClass const & o, int r) { return Mix_3(c, o, r); }
+static inline int Mix_5(RGBClass const & c, RGBClass const & o, int r) { return Mix_4(c, o, r); }
+static inline int Mix_6(RGBClass const & c, RGBClass const & o, int r) { return Mix_5(c, o, r); }
+static inline int Mix_7(RGBClass const & c, RGBClass const & o, int r) { return Mix_6(c, o, r); }
+
+// FUNCTION: 0x00635830
+int PlanningNodeClass::Node_Color(void)
+{
+	int result = Own.Slot3;
+	if (result == -1) {
+		TechnoClass * owner = Members[0]->Owner;
+		int slot = Owner_Slot(owner);
+		result = Mix_7(RGBClass(DAT_00A8022C[slot]->Color), DAT_00A83CD9, 0x50);
+		Own.Slot3 = result;
+		int count = Branches.Count();
+		for (int i = 0; i < count; i++) {
+			if (Branches[i]->Slot == result) goto done;
+		}
+		if (count == 0) {
+			PlanToken * token = FUN_00705D20(owner);
+			int index = token->Nodes.ID(this);
+			int start = token->F8C;
+			bool past = false;
+			if (start != -1) past = index >= start;
+			if (past) {
+				slot = Owner_Slot(owner);
+				Own.Slot3 = FUN_0063D070(RGBClass(DAT_00A8022C[slot]->Color), DAT_00A80220, 0x64);
+			}
+		} else {
+			slot = Owner_Slot(owner);
+			Own.Slot3 = FUN_0063D070(RGBClass(DAT_00A8022C[slot]->Color), DAT_00A80220, 0x64);
+		}
+		result = Own.Slot3;
+	}
+done:
+	return result;
+}
+
+// FUNCTION: 0x00635DB0
+void PlanningNodeClass::Reset_Colors(bool all)
+{
+	Own.Slot3 = -1;
+	if (all) {
+		int count = Branches.Count();
+		int i = 0;
+		if (count > 0) do {
+			Branches[i]->Slot = -1;
+			i++;
+		} while (i < count);
+		Own.Slot = -1;
 	}
 }

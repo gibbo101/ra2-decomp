@@ -275,9 +275,14 @@ class MapGeneratorClass
 		void Update_Progress(int percent_progress);
 		void Seed_Land(void);
 		int FUN_0059BBC0(int size, Rect const & bounds, Point2D const & seed, bool flag, Cell const & center, double ratio, bool flag2);
+		double FUN_0059B940(Cell const & from, Cell const & to, Rect const & rect, Cell const & center, float weight_x, float weight_y);
 		bool FUN_0059BAB0(Cell const & cell, Rect const & rect, bool flag, double scale_x, double scale_y);
 		void Partition_Rect(DynamicVectorClass<Rect> & rects, int count, Rect const & area);
 		static void Green_Shores(void);
+		bool Green_Region_Tiles(int region_id);
+		void Vary_Water_Tiles(void);
+		static void Clear_Shore_Tiles(void);
+		static void Scatter_Green_Tiles(void);
 		void Seed_Land_Type0(void);
 		void Seed_Land_Type1(void);
 		void Seed_Land_Type2(void);
@@ -294,7 +299,7 @@ class MapGeneratorClass
 		bool Expand_All_High_Ground(void);
 		bool Grow_Region(int id, int rings, Rect rect, char set_height, char height);
 		bool Clear_Region_Border(int id, int rings, int new_id);
-		void Clear_Region_Cells(int id, int new_id, int cell_height);
+		void Clear_Region_Cells(int id, int new_id, int cell_height, IsometricTileType ittype);
 		DynamicVectorClass<Cell> *Build_Region_Border_Cell_List(int id);
 		static bool Region_Cell_Count_At_Least(Rect const & rect, int region_id, int, int count);
 		void Set_Height_Of_ID(int id, char cell_height);

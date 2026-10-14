@@ -66,6 +66,12 @@ double DAT_00B78068 = FUN_004CADE0((DAT_00B78098 * 2) / DAT_00B78040);
 // FUNCTION: 0x007B1940 $E32
 int DAT_00B7808C = (int)(DAT_00B78098 * 4 + 0.5);
 
+class InputManagerClass {
+public:
+	static InputManagerClass *Instance;
+	void FUN_0054F000(void);
+};
+
 struct ShortPair {
 	unsigned short A, B;
 	ShortPair() { A = 0; B = 0; }
@@ -76,10 +82,10 @@ struct IntTriple {
 	IntTriple() { A = 0; B = 0; C = 0; }
 };
 
-// FUNCTION: 0x007B1970 $E35
+// FUNCTION: 0x007B1970 $E36
 ShortPair DAT_00B78038;
 
-// FUNCTION: 0x007B1980 $E38
+// FUNCTION: 0x007B1980 $E39
 IntTriple DAT_00B78058;
 
 // FUNCTION: 0x007B19A0
@@ -355,6 +361,178 @@ bool __stdcall Passes_CRC_Check(WinsockBufferType *packet)
 	return(false);
 }
 
+// FUNCTION: 0x007B20E0
+void *WinsockInterfaceClass::Get_New_Out_Buffer(bool alternate)
+{
+	WinsockBufferType *buffer = NULL;
+	int pos;
+
+	if (!alternate) {
+		if (OutBuffersUsed == WS_MAX_STATIC_BUFFERS) {
+			buffer = new WinsockBufferType;
+			buffer->IsAllocated = true;
+			buffer->InUse = true;
+		} else {
+			for (int i = 0; i < WS_MAX_STATIC_BUFFERS; i++) {
+				pos = OutBufferArrayPos++;
+				if (OutBufferArrayPos > WS_MAX_STATIC_BUFFERS - 1) {
+					OutBufferArrayPos = 0;
+				}
+				if (StaticOutBuffers[pos].InUse == false) {
+					buffer = &StaticOutBuffers[pos];
+					buffer->InUse = true;
+					OutBuffersUsed++;
+					break;
+				}
+			}
+		}
+		if (buffer != NULL) {
+			buffer->Bool1 = false;
+			buffer->Bool2 = false;
+		}
+	} else {
+		if (AltOutBuffersUsed == WS_MAX_STATIC_BUFFERS) {
+			buffer = new WinsockBufferType;
+			buffer->IsAllocated = true;
+			buffer->InUse = true;
+		} else {
+			for (int i = 0; i < WS_MAX_STATIC_BUFFERS; i++) {
+				pos = AltOutBufferArrayPos++;
+				if (AltOutBufferArrayPos > WS_MAX_STATIC_BUFFERS - 1) {
+					AltOutBufferArrayPos = 0;
+				}
+				if (StaticAltOutBuffers[pos].InUse == false) {
+					buffer = &StaticAltOutBuffers[pos];
+					buffer->InUse = true;
+					AltOutBuffersUsed++;
+					break;
+				}
+			}
+		}
+		if (buffer != NULL) {
+			buffer->Bool1 = true;
+			buffer->Bool2 = false;
+		}
+	}
+	return(buffer);
+}
+
+// FUNCTION: 0x007B2240
+void *WinsockInterfaceClass::Get_New_In_Buffer(void)
+{
+	WinsockBufferType *buffer = NULL;
+	int pos;
+
+	if (InBuffersUsed == WS_MAX_STATIC_BUFFERS) {
+		buffer = new WinsockBufferType;
+		buffer->IsAllocated = true;
+		buffer->InUse = true;
+	} else {
+		for (int i = 0; i < WS_MAX_STATIC_BUFFERS; i++) {
+			pos = InBufferArrayPos++;
+			if (InBufferArrayPos > WS_MAX_STATIC_BUFFERS - 1) {
+				InBufferArrayPos = 0;
+			}
+			if (StaticInBuffers[pos].InUse == false) {
+				buffer = &StaticInBuffers[pos];
+				buffer->InUse = true;
+				InBuffersUsed++;
+				break;
+			}
+		}
+	}
+	if (buffer != NULL) {
+		buffer->Bool1 = false;
+		buffer->Bool2 = false;
+	}
+	return(buffer);
+}
+
+// FUNCTION: 0x007B22E0
+int WinsockInterfaceClass::Read(void *buffer, int &buffer_len, void *address, int &address_len, unsigned short &port)
+{
+	InputManagerClass::Instance->FUN_0054F000();
+
+	if (InBuffers.Count() == 0) return(0);
+
+	int packetnum = 0;
+	WinsockBufferType *packet = InBuffers[packetnum];
+
+	memcpy(buffer, packet->Buffer, packet->BufferLen);
+	unsigned int copy_len = address_len;
+	if (copy_len > sizeof(packet->Address)) {
+		copy_len = sizeof(packet->Address);
+	}
+	address_len = copy_len;
+	memcpy(address, packet->Address, copy_len);
+	port = packet->SrcPort;
+	buffer_len = packet->BufferLen;
+
+	InBuffers.Delete_Index(packetnum);
+	if (packet->IsAllocated) {
+		delete packet;
+	} else {
+		packet->InUse = false;
+		InBuffersUsed--;
+	}
+
+	return(buffer_len);
+}
+
+// FUNCTION: 0x007B23B0
+void WinsockInterfaceClass::WriteTo(void *buffer, int buffer_len, void *address, int address_len, bool alternate, bool flag, unsigned short port)
+{
+	WinsockBufferType *packet = (WinsockBufferType *)Get_New_Out_Buffer(alternate);
+
+	memcpy(packet->Buffer, buffer, buffer_len);
+	packet->BufferLen = buffer_len;
+	packet->IsBroadcast = false;
+	packet->Bool2 = flag;
+	memcpy(packet->Address, address, address_len);
+	packet->SrcPort = port;
+
+	Build_Packet_CRC(packet);
+
+	SOCKET sock;
+	if (alternate) {
+		AltOutBuffers.Add(packet);
+		sock = AlternateSocket;
+	} else {
+		OutBuffers.Add(packet);
+		sock = Socket;
+	}
+
+	SendMessage(Game::hWnd, Protocol_Event_Message(sock), 0, (LONG)FD_WRITE);
+
+	InputManagerClass::Instance->FUN_0054F000();
+}
+
+// FUNCTION: 0x007B24E0
+void WinsockInterfaceClass::Broadcast(void *buffer, int buffer_len, bool alternate)
+{
+	WinsockBufferType *packet = (WinsockBufferType *)Get_New_Out_Buffer(alternate);
+
+	memcpy(packet->Buffer, buffer, buffer_len);
+	packet->BufferLen = buffer_len;
+
+	Build_Packet_CRC(packet);
+
+	packet->IsBroadcast = true;
+
+	SOCKET sock;
+	if (alternate) {
+		AltOutBuffers.Add(packet);
+		sock = AlternateSocket;
+	} else {
+		OutBuffers.Add(packet);
+		sock = Socket;
+	}
+
+	SendMessage(Game::hWnd, Protocol_Event_Message(sock), 0, (LONG)FD_WRITE);
+
+	InputManagerClass::Instance->FUN_0054F000();
+}
+
 // FUNCTION: 0x007B25E0
 void WinsockInterfaceClass::Clear_Socket_Error(SOCKET socket)
 {
@@ -368,6 +546,33 @@ void WinsockInterfaceClass::Clear_Socket_Error(SOCKET socket)
 	}
 }
 
+// FUNCTION: 0x007B2630
+bool WinsockInterfaceClass::Set_Socket_Options(SOCKET socket)
+{
+	static int socket_transmit_buffer_size = SOCKET_BUFFER_SIZE;
+	static int socket_receive_buffer_size = SOCKET_BUFFER_SIZE;
+
+	if (socket == INVALID_SOCKET) {
+		socket = Socket;
+	}
+
+	int err = setsockopt(socket, SOL_SOCKET, SO_RCVBUF, (char *)&socket_receive_buffer_size, sizeof(socket_receive_buffer_size));
+	if (err == INVALID_SOCKET) {
+		DebugString("Failed to set socket option SO_RCVBUF - error code %d.\n", LAST_ERROR);
+	} else {
+		DebugString("Socket option SO_RCVBUF set OK\n");
+	}
+
+	err = setsockopt(socket, SOL_SOCKET, SO_SNDBUF, (char *)&socket_transmit_buffer_size, sizeof(socket_transmit_buffer_size));
+	if (err == INVALID_SOCKET) {
+		DebugString("Failed to set socket option SO_SNDBUF - error code %d.\n", LAST_ERROR);
+	} else {
+		DebugString("Socket option SO_SNDBUF set OK\n");
+	}
+
+	return(true);
+}
+
 // FUNCTION: 0x007B26D0
 bool WinsockInterfaceClass::Get_Host_Name(char *name, int len)
 {
@@ -379,3 +584,24 @@ bool WinsockInterfaceClass::Get_Host_Name(char *name, int len)
 	DebugString("WinsockInterface Host name is %s\n", name);
 	return(true);
 }
+
+
+// FUNCTION: 0x007B2720
+void __fastcall FUN_007B2720(int value)
+{
+	DAT_00B780A0 = value;
+}
+
+// FUNCTION: 0x007B2730
+int __cdecl FUN_007B2730(void)
+{
+	return DAT_00B780A0;
+}
+
+// FUNCTION: 0x007B2740 WinsockInterfaceClass::Get_Protocol
+
+// FUNCTION: 0x007B2750 WinsockInterfaceClass::Protocol_Event_Message
+
+// FUNCTION: 0x007B2760 WinsockInterfaceClass::Open_Socket
+
+// FUNCTION: 0x007B2770 WinsockInterfaceClass::Message_Handler

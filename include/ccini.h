@@ -75,6 +75,7 @@ class CCINIClass : public INIClass
 	public:
 		CCINIClass(void) : IsDigestPresent(false) {}
 
+		int ReadStringtableEntry(char const * section, char const * entry, wchar_t * buffer, int size) const;
 		int ReadCCFile(FileClass & file, bool withdigest, bool loadcomments);
 		int Load(FileClass & file, bool withdigest, bool loadcomments = false);
 		int Load(Straw & file, bool withdigest, bool loadcomments = false);

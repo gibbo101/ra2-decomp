@@ -1064,3 +1064,567 @@ BOOL CALLBACK Version_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPAR
 	return(FALSE);
 }
 
+
+namespace UI {
+	HWND __fastcall BeginDialog(int id, DLGPROC proc, int extra);
+	void __fastcall EndDialog(HWND window);
+}
+
+// FUNCTION: 0x00531C30
+void Version_Dialog(void)
+{
+	HWND dialog;
+	int res = 0;
+
+	dialog = UI::BeginDialog(0xD4, (DLGPROC)Version_Dialog_Proc, 0);
+	if (dialog != NULL) {
+		SetWindowLong(dialog, DWL_USER, (LONG)&res);
+		OwnerDraw::Display_Dialog(dialog);
+
+		while (res == 0) {
+			if (OwnerDraw::Dialog_Message_Handler() == true) {
+				break;
+			}
+			Title_Screen_Restore();
+		}
+		UI::EndDialog(dialog);
+	}
+}
+
+struct CheatEntryStruct {
+	bool * State;
+	const char * CheatString;
+	const char * VersionSuffix;
+	bool IsAllowedInMP;
+};
+
+extern CheatEntryStruct OriginalCheats[4];
+extern char DAT_00A8F7B8[32];
+void __fastcall FUN_004790B0(int disk);
+void __cdecl FUN_004A4AC0(const char * text);
+short __fastcall FUN_0054F000(void * input);
+short __fastcall FUN_0054F050(void * input);
+extern void * InputManagerInstance;
+void __fastcall FUN_0052B9B0(HWND dialog);
+
+static bool Cheat_Key_Process(char chr)
+{
+	if (!isalnum(chr) || chr == '~') {
+		memset(DAT_00A8F7B8, 0, sizeof(DAT_00A8F7B8));
+		return(false);
+	}
+
+	char tmp[2];
+	tmp[0] = chr;
+	tmp[1] = 0;
+	FUN_004A4AC0(tmp);
+
+	int len = strlen(DAT_00A8F7B8);
+	if (len >= (int)sizeof(DAT_00A8F7B8) - 1) {
+		len = 0;
+		DAT_00A8F7B8[0] = 0;
+	}
+	DAT_00A8F7B8[len] = toupper(chr);
+
+	for (int c = 0; c < 4; c++) {
+		if (strstr(DAT_00A8F7B8, OriginalCheats[c].CheatString) != NULL) {
+			*OriginalCheats[c].State = !(*OriginalCheats[c].State);
+			memset(DAT_00A8F7B8, 0, sizeof(DAT_00A8F7B8));
+			return(true);
+		}
+	}
+	return(false);
+}
+
+BOOL CALLBACK Main_Menu_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+
+// FUNCTION: 0x00531CC0
+int Main_Menu(unsigned int timeout)
+{
+	HWND dialog;
+	int retval = 0x12;
+
+	FUN_004790B0(-1);
+
+	dialog = UI::BeginDialog(0xE2, (DLGPROC)Main_Menu_Dialog_Proc, 0);
+	if (dialog != NULL) {
+		SetWindowLong(dialog, DWL_USER, (LONG)&retval);
+		Center_Window_Within_Window(dialog, MainWindow);
+		OwnerDraw::Display_Dialog(dialog);
+		SetFocus(MainWindow);
+
+		FUN_0052B9B0(dialog);
+
+		do {
+			if (OwnerDraw::Dialog_Message_Handler()) {
+				retval = 7;
+			}
+			Title_Screen_Restore();
+
+			if (FUN_0054F000(InputManagerInstance)) {
+				int input = (unsigned short)FUN_0054F050(InputManagerInstance);
+				if ((input & 0x800) == 0) {
+					if (Cheat_Key_Process((char)input) == true) {
+						VocClass::PlayGlobal(Rule->OptionsChanged, 1.0f, 0x2000);
+						Title_Screen_Restore(true);
+					}
+				}
+			}
+		} while (retval == 0x12);
+
+		UI::EndDialog(dialog);
+
+		SYSTEMTIME t;
+		GetSystemTime(&t);
+		CryptRandom.Seed_Byte(t.wMilliseconds);
+	} else {
+		retval = 7;
+	}
+
+	SetFocus(MainWindow);
+	return(retval);
+}
+
+// FUNCTION: 0x00531F60
+BOOL CALLBACK Main_Menu_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	int * res;
+
+	int rc = UI::StandardWndProc(window, message, wparam, lparam);
+	if (rc) {
+		return(rc);
+	}
+
+	res = (int *)GetWindowLong(window, DWL_USER);
+
+	switch (message) {
+		case 0x497: {
+			HWND control = GetDlgItem(window, 0x71D);
+			wchar_t text[128];
+			swprintf(text, L"%s %s", StringTable::LoadString("GUI:Version", NULL, "D:\\ra2mdpost\\Init.CPP", 0x1757), FUN_00735120(VerNum.Version_Name()));
+			SendMessage(control, 0x4B2, 0, (LPARAM)text);
+		}
+		break;
+		case WM_COMMAND:
+			switch (LOWORD(wparam)) {
+				case 0x683: *res = 1; break;
+				case 0x684: *res = 2; break;
+				case 0x578: *res = 3; break;
+				case 0x686: *res = 4; break;
+				case 0x55C: *res = 5; break;
+				case 0x3EE: *res = 6; break;
+			}
+			break;
+		case WM_PAINT:
+			HWND item = GetDlgItem(window, 0x71A);
+			SendMessage(item, 0x4F0, 0, 0);
+			break;
+	}
+	return(FALSE);
+}
+
+// FUNCTION: 0x00532100
+void Title_Screen_Restore(bool force)
+{
+	if (SurfacesRestored || force) {
+		SurfacesRestored = false;
+		FUN_0052FEC0(NULL, true);
+		Update_Visible_Surface(false, HiddenSurface);
+	}
+}
+
+// FUNCTION: 0x00532130
+void FUN_00532130(void)
+{
+}
+
+// FUNCTION: 0x00532140
+void FUN_00532140(void)
+{
+}
+
+// FUNCTION: 0x00533D20
+bool Init_Hotkeys(void)
+{
+	CCINIClass ini;
+	CCFileClass file("KEYBOARDMD.INI");
+
+	if (ini.Load(file, false)) {
+
+		HotkeyCommands.Clear();
+
+		for (int index = 0; index < ini.Entry_Count("Hotkey"); index++) {
+			const char *entry = ini.Get_Entry("Hotkey", index);
+			int id = ini.Get_Int("Hotkey", entry, 0);
+			const CommandClass *command = NULL;
+
+			for (int cindex = 0; cindex < AllCommands.Count(); cindex++) {
+				if (strcmp(AllCommands[cindex]->Get_Unique_Name(), entry) == 0) {
+					command = AllCommands[cindex];
+					break;
+				}
+			}
+
+			if ((command != NULL) && (id != 0)) {
+				HotkeyCommands.Add_Index(id, command);
+			}
+		}
+
+		return(true);
+	}
+
+	DebugString("Unable to load KEYBOARDMD.INI\n");
+	return(false);
+}
+
+// FUNCTION: 0x00533F50
+void Execute_Command(char const * name)
+{
+	for (int command = 0; command < AllCommands.Count(); command++) {
+		if (strcmp(AllCommands[command]->Get_Unique_Name(), name) == 0) {
+			AllCommands[command]->Execute(0);
+			break;
+		}
+	}
+}
+
+void __fastcall FUN_0069E210(void);
+void __fastcall FUN_004C29E0(void);
+void __fastcall FUN_00550000(void);
+void __fastcall FUN_00565B00(void * map);
+void __fastcall FUN_00430980(void * beacon);
+int __cdecl FUN_0041C610(const void * a, const void * b);
+extern int DAT_00A8E7AC;
+extern DynamicVectorClass<AbstractClass *> DAT_00B0F698;
+struct TargetEntryStruct {
+	int ID;
+	AbstractClass * Data;
+};
+extern TargetEntryStruct * DAT_00B0E840;
+extern int DAT_00B0E844;
+extern bool DAT_00B0E84C;
+extern int DAT_00B0E850;
+extern char DAT_0089C3B0[];
+void __fastcall FUN_00725C70(void);
+void __fastcall FUN_00556DF0(void);
+class SpotlightClass {
+	public:
+		~SpotlightClass(void);
+};
+extern DynamicVectorClass<AbstractClass *> DAT_00A8ED40;
+extern DynamicVectorClass<AbstractClass *> DAT_00A8E360;
+extern DynamicVectorClass<AbstractClass *> DAT_00B0E720;
+extern DynamicVectorClass<AbstractClass *> DAT_00A8EAE8;
+extern DynamicVectorClass<AbstractClass *> DAT_008B4138;
+extern DynamicVectorClass<AbstractClass *> DAT_008B4190;
+extern DynamicVectorClass<AbstractClass *> DAT_00A8EC50;
+extern DynamicVectorClass<AbstractClass *> DAT_00A80208;
+extern DynamicVectorClass<AbstractClass *> DAT_00A8EC38;
+extern DynamicVectorClass<AbstractClass *> DAT_00A83E30;
+extern DynamicVectorClass<AbstractClass *> DAT_008B4120;
+extern DynamicVectorClass<AbstractClass *> DAT_008B40E8;
+extern DynamicVectorClass<AbstractClass *> DAT_00A80228;
+extern DynamicVectorClass<AbstractClass *> DAT_00A8E9A8;
+extern DynamicVectorClass<AbstractClass *> DAT_008872B0;
+extern DynamicVectorClass<AbstractClass *> DAT_00B04BD0;
+extern DynamicVectorClass<AbstractClass *> DAT_00ABCA10;
+extern DynamicVectorClass<AbstractClass *> DAT_008A3870;
+extern DynamicVectorClass<AbstractClass *> DAT_0089E0F0;
+extern DynamicVectorClass<AbstractClass *> DAT_008A0208;
+extern DynamicVectorClass<AbstractClass *> DAT_00AC4910;
+extern DynamicVectorClass<AbstractClass *> DAT_00B0EC60;
+extern DynamicVectorClass<AbstractClass *> DAT_00889FB8;
+extern DynamicVectorClass<AbstractClass *> DAT_00B0B880;
+extern DynamicVectorClass<AbstractClass *> DAT_0089C668;
+extern DynamicVectorClass<AbstractClass *> DAT_008B3D10;
+extern DynamicVectorClass<AbstractClass *> DAT_0088A0F0;
+extern DynamicVectorClass<AbstractClass *> DAT_00A8E988;
+extern DynamicVectorClass<AbstractClass *> DAT_00A8E968;
+extern DynamicVectorClass<SpotlightClass *> DAT_00AC1678;
+
+// FUNCTION: 0x00534450
+void Delete_All_Objects(void)
+{
+	DAT_00A8E7AC++;
+	DAT_00B0F698.Reset_Active();
+	DAT_00B0F698.Clear();
+	FUN_0069E210();
+	while (DAT_00B0E844) {
+		if (!DAT_00B0E84C) {
+			qsort(DAT_00B0E840, DAT_00B0E844, 8, FUN_0041C610);
+			DAT_00B0E850 = 0;
+			DAT_00B0E84C = true;
+		}
+		delete DAT_00B0E840[0].Data;
+	}
+	FUN_00725C70();
+	while (DAT_00A8ED40.Count()) {
+		DAT_00A8ED40[0]->Release();
+	}
+	FUN_00725C70();
+	while (DAT_00A8E360.Count()) {
+		delete DAT_00A8E360[0];
+	}
+	FUN_00725C70();
+	while (DAT_00B0E720.Count()) {
+		delete DAT_00B0E720[0];
+	}
+	FUN_00725C70();
+	while (DAT_00A8EAE8.Count()) {
+		delete DAT_00A8EAE8[0];
+	}
+	FUN_00725C70();
+	while (DAT_008B4138.Count()) {
+		delete DAT_008B4138[0];
+	}
+	FUN_00725C70();
+	while (DAT_008B4190.Count()) {
+		delete DAT_008B4190[0];
+	}
+	FUN_00725C70();
+	while (DAT_00A8EC50.Count()) {
+		delete DAT_00A8EC50[0];
+	}
+	FUN_00725C70();
+	while (DAT_00A80208.Count()) {
+		delete DAT_00A80208[0];
+	}
+	FUN_00725C70();
+	while (DAT_00A8EC38.Count()) {
+		delete DAT_00A8EC38[0];
+	}
+	FUN_00725C70();
+	while (DAT_00A83E30.Count()) {
+		delete DAT_00A83E30[0];
+	}
+	FUN_00725C70();
+	while (DAT_008B4120.Count()) {
+		delete DAT_008B4120[0];
+	}
+	FUN_00725C70();
+	while (DAT_008B40E8.Count()) {
+		delete DAT_008B40E8[0];
+	}
+	FUN_00725C70();
+	while (DAT_00A80228.Count()) {
+		delete DAT_00A80228[0];
+	}
+	FUN_00725C70();
+	while (DAT_00A8E9A8.Count()) {
+		delete DAT_00A8E9A8[0];
+	}
+	FUN_00725C70();
+	while (DAT_008872B0.Count()) {
+		delete DAT_008872B0[0];
+	}
+	FUN_00725C70();
+	while (DAT_00B04BD0.Count()) {
+		delete DAT_00B04BD0[0];
+	}
+	FUN_00725C70();
+	while (DAT_00ABCA10.Count()) {
+		delete DAT_00ABCA10[0];
+	}
+	FUN_00725C70();
+	while (DAT_008A3870.Count()) {
+		delete DAT_008A3870[0];
+	}
+	FUN_00725C70();
+	while (DAT_0089E0F0.Count()) {
+		delete DAT_0089E0F0[0];
+	}
+	FUN_00725C70();
+	while (DAT_008A0208.Count()) {
+		delete DAT_008A0208[0];
+	}
+	FUN_00725C70();
+	while (DAT_00AC4910.Count()) {
+		delete DAT_00AC4910[0];
+	}
+	FUN_00725C70();
+	while (DAT_00B0EC60.Count()) {
+		delete DAT_00B0EC60[0];
+	}
+	FUN_00725C70();
+	while (DAT_00889FB8.Count()) {
+		delete DAT_00889FB8[0];
+	}
+	FUN_00725C70();
+	while (DAT_00B0B880.Count()) {
+		delete DAT_00B0B880[0];
+	}
+	FUN_00725C70();
+	while (DAT_0089C668.Count()) {
+		delete DAT_0089C668[0];
+	}
+	FUN_00725C70();
+	while (DAT_00AC1678.Count()) {
+		delete DAT_00AC1678[0];
+	}
+	FUN_00725C70();
+	while (DAT_008B3D10.Count()) {
+		delete DAT_008B3D10[0];
+	}
+	FUN_00725C70();
+	while (DAT_0088A0F0.Count()) {
+		delete DAT_0088A0F0[0];
+	}
+	FUN_00725C70();
+	while (DAT_00A8E988.Count()) {
+		delete DAT_00A8E988[0];
+	}
+	FUN_00725C70();
+	FUN_004C29E0();
+	FUN_00556DF0();
+	FUN_00550000();
+	while (DAT_00A8E968.Count()) {
+		delete DAT_00A8E968[0];
+	}
+	FUN_00725C70();
+	delete TacticalMap;
+	TacticalMap = NULL;
+	FUN_00565B00(&Map);
+	FUN_00725C70();
+	FUN_00430980(&DAT_0089C3B0);
+	DAT_00A8E7AC--;
+}
+
+extern MFCD * DAT_00884E0C;
+extern MFCD * DAT_00884E08;
+extern MFCD * DAT_00884E10;
+extern MFCD * DAT_00884E20;
+extern MFCD * DAT_00884E1C;
+extern PaletteClass DAT_00885A80;
+extern PaletteClass DAT_00886380;
+void const * __fastcall FUN_005B40B0(char const * name, bool flag);
+void __fastcall FUN_006267A0(TheaterType theater);
+void __fastcall FUN_00717840(void);
+
+// FUNCTION: 0x005349C0
+void __fastcall Init_Theater(TheaterType theater)
+{
+	struct {
+		char fullname[16];
+		char rootmd[16];
+		char shortname[16];
+		char palmd[16];
+		char isofullname[16];
+	} n;
+
+	wsprintf(n.fullname, "%s.MIX", Theaters[theater].Root);
+	wsprintf(n.isofullname, "%s.MIX", Theaters[theater].IsoRoot);
+	wsprintf(n.shortname, "%s.MIX", Theaters[theater].Suffix);
+	wsprintf(n.palmd, "%sMD.MIX", Theaters[theater].PaletteFileName);
+	wsprintf(n.rootmd, "%sMD.MIX", Theaters[theater].Root);
+
+	FUN_004068E0("Init theater %s\n", Theaters[theater].Name);
+
+	Scen->Theater = theater;
+	Session.Update_Progress(8);
+
+	if (Scen->Theater != LastTheater) {
+		if (DAT_00884E0C != NULL) {
+			delete DAT_00884E0C;
+		}
+		DAT_00884E0C = NULL;
+		if (Scen->Theater == THEATER_SNOW) {
+			DAT_00884E0C = new MFCD(n.rootmd, &FastKey);
+			DAT_00884E0C->Cache((Buffer const *)NULL);
+		}
+
+		if (DAT_00884E08 != NULL) {
+			delete DAT_00884E08;
+		}
+		DAT_00884E08 = new MFCD(n.fullname, &FastKey);
+
+		if (DAT_00884E10 != NULL) {
+			delete DAT_00884E10;
+		}
+		DAT_00884E10 = new MFCD(n.shortname, &FastKey);
+		DAT_00884E10->Cache((Buffer const *)NULL);
+
+		DAT_00884E08->Cache((Buffer const *)NULL);
+		Session.Update_Progress(6);
+
+		if (DAT_00884E20 != NULL) {
+			delete DAT_00884E20;
+		}
+		DAT_00884E20 = new MFCD(n.palmd, &FastKey);
+
+		if (DAT_00884E1C != NULL) {
+			delete DAT_00884E1C;
+		}
+		DAT_00884E1C = new MFCD(n.isofullname, &FastKey);
+
+		Session.Update_Progress(12);
+
+		wsprintf(n.fullname, "%s.PAL", Theaters[theater].Root);
+
+		unsigned char * ptr = (unsigned char *)FUN_005B40B0(n.fullname, false);
+		if (ptr != NULL) {
+			for (int color = 0; color < 256; color++) {
+				unsigned char r = (unsigned char)((*ptr++)<<2);
+				unsigned char g = (unsigned char)((*ptr++)<<2);
+				unsigned char b = (unsigned char)((*ptr++)<<2);
+				GamePalette[color] = RGBClass(r, g, b);
+			}
+		} else {
+			for (int color = 0; color < 256; color++) {
+				GamePalette[color] = RGBClass(color, 255 - color, ((color << 2) & 0xff));
+			}
+		}
+
+		DAT_00885A80 = GamePalette;
+
+		wsprintf(n.fullname, "UNIT%s.PAL", Theaters[theater].Suffix);
+		PaletteClass * unitpal = (PaletteClass *)FUN_005B40B0(n.fullname, false);
+
+		Game::CallBack();
+
+		if (unitpal != NULL) {
+			DAT_00886380 = *unitpal;
+		}
+
+		for (int index = 0; index < 256; index++) {
+			DAT_00886380[index] = RGBClass(
+				(unsigned char)(DAT_00886380[index].Get_Red()<<2),
+				(unsigned char)(DAT_00886380[index].Get_Green()<<2),
+				(unsigned char)(DAT_00886380[index].Get_Blue()<<2));
+		}
+
+		int last_percent = 12;
+		int prog_step = ColorSchemes.Count() / (25 - 12);
+		for (int s = 0; s < ColorSchemes.Count(); s++) {
+			ColorSchemes[s]->Build_Light_Converters(DAT_00886380, GamePalette);
+			int percent = (min(12 + (s / prog_step), 25));
+			if (percent != last_percent) {
+				Session.Update_Progress(percent);
+				last_percent = percent;
+			}
+			Game::CallBack();
+		}
+
+		FUN_006267A0(theater);
+		FUN_00717840();
+		Session.Update_Progress(25);
+	}
+}
+
+extern MFCD * DAT_00884E5C;
+extern MFCD * DAT_00884E58;
+
+// FUNCTION: 0x00534DE0
+bool FUN_00534DE0(void)
+{
+	if (DAT_00884E5C != NULL) {
+		FUN_004068E0("     Releasing %s\n", DAT_00884E5C->Filename);
+		delete DAT_00884E5C;
+		DAT_00884E5C = NULL;
+	}
+	if (DAT_00884E58 != NULL) {
+		FUN_004068E0("     Releasing %s\n", DAT_00884E58->Filename);
+		delete DAT_00884E58;
+		DAT_00884E58 = NULL;
+	}
+	return(true);
+}
