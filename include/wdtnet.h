@@ -1,0 +1,947 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright 2026 ra2-decomp contributors
+// Copyright 2025 Electronic Arts Inc.; 2026 OpenTS contributors
+// Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
+#pragma once
+
+#include "data.h"
+#include "wstring.h"
+#include "widewstring.h"
+#include "point.h"
+#include "vector.h"
+#include "msanim.h"
+#include "msengine.h"
+
+class MSFont;
+class MSAnimEntry;
+class MSSfxEntry;
+class INIClass;
+struct GameOptionsType;
+template<class T> class DynamicVectorClass;
+
+#define MAX_WDT_TERRITORIES 100
+
+void WDT_Game_Option_Append_Comma(char *str, int len);
+
+class WDTTerritory {
+	public:
+		WDTTerritory(void);
+		~WDTTerritory(void);
+
+		bool operator==(const WDTTerritory &that) const { return(Index == that.Index); }
+		bool operator!=(const WDTTerritory &that) const { return(Index != that.Index); }
+
+		GameOptionsType *Get_Game_Options(void);
+
+		char *To_String(void);
+
+	public:
+
+		int Index;
+
+		unsigned short Seed;
+
+		unsigned char UnitCount;
+
+		unsigned char TechLevel;
+
+		unsigned short StartingCredits;
+
+		unsigned char Width;
+		unsigned char Height;
+
+		unsigned char NumPlayers;
+
+		unsigned char Veinholes;
+
+		unsigned char Biome;
+
+		unsigned char Time;
+
+		unsigned char CliffsMin;
+		unsigned char CliffsMax;
+		unsigned char CliffsDefault;
+
+		unsigned char AccessibilityMin;
+		unsigned char AccessibilityMax;
+		unsigned char AccessibilityDefault;
+
+		unsigned char HillsMin;
+		unsigned char HillsMax;
+		unsigned char HillsDefault;
+
+		unsigned char WaterMin;
+		unsigned char WaterMax;
+		unsigned char WaterDefault;
+
+		unsigned char TiberiumAmountMin;
+		unsigned char TiberiumAmountMax;
+		unsigned char TiberiumAmountDefault;
+
+		unsigned char TiberiumFieldsMin;
+		unsigned char TiberiumFieldsMax;
+		unsigned char TiberiumFieldsDefault;
+
+		unsigned char VegetationMin;
+		unsigned char VegetationMax;
+		unsigned char VegetationDefault;
+
+		unsigned char CitiesMin;
+		unsigned char CitiesMax;
+		unsigned char CitiesDefault;
+		union {
+			struct {
+
+				unsigned int TimeTransitions : 1;
+
+				unsigned int TiberiumCreatures : 1;
+
+				unsigned int AlliesAllowed : 1;
+
+				unsigned int HarvTruce : 1;
+
+				unsigned int Bases : 1;
+
+				unsigned int MCVRedeploy : 1;
+
+				unsigned int FogOfWar : 1;
+
+				unsigned int BridgeDestruction : 1;
+
+				unsigned int Goodies : 1;
+
+				unsigned int BlueTiberium : 1;
+
+				unsigned int ShortGame : 1;
+
+				unsigned int CrapEngineer : 1;
+			};
+
+			unsigned int Booleans;
+		};
+		union {
+			struct {
+
+				unsigned int UserModTimeTransitions : 1;
+				unsigned int UserModTiberiumCreatures : 1;
+				unsigned int UserModAlliances : 1;
+				unsigned int UserModHarvesterTruce : 1;
+				unsigned int UserModBases : 1;
+				unsigned int UserModMCVRedeploy : 1;
+				unsigned int UserModFogOfWar : 1;
+				unsigned int UserModBridgeDestruction : 1;
+				unsigned int UserModCrates : 1;
+				unsigned int UserModBlueTiberium : 1;
+				unsigned int UserModShortGame : 1;
+				unsigned int UserModCrapEngineer : 1;
+				unsigned int UserModBiome : 1;
+				unsigned int UserModTime : 1;
+				unsigned int UserModNumPlayers : 1;
+				unsigned int UserModUnitCount : 1;
+				unsigned int UserModTechLevel : 1;
+				unsigned int UserModCredits : 1;
+				unsigned int UserModCliffs : 1;
+				unsigned int UserModAccessability : 1;
+				unsigned int UserModHills : 1;
+				unsigned int UserModTiberiumAmount : 1;
+				unsigned int UserModTiberiumFields : 1;
+				unsigned int UserModWater : 1;
+				unsigned int UserModVegetation : 1;
+				unsigned int UserModCities : 1;
+				unsigned int UserModWidth : 1;
+				unsigned int UserModHeight : 1;
+				unsigned int UserModSeed : 1;
+				unsigned int UserModVeinholeMonsters : 1;
+			};
+
+			unsigned int UserModBooleans;
+		};
+};
+
+enum {
+
+	MIN_TERRITORY_DATA_SIZE = size_of(WDTTerritory, Seed)
+							+ size_of(WDTTerritory, UnitCount)
+							+ size_of(WDTTerritory, TechLevel)
+							+ size_of(WDTTerritory, StartingCredits)
+							+ size_of(WDTTerritory, Biome)
+							+ size_of(WDTTerritory, Time)
+							+ size_of(WDTTerritory, Width)
+							+ size_of(WDTTerritory, Height)
+							+ size_of(WDTTerritory, NumPlayers)
+							+ size_of(WDTTerritory, Veinholes)
+							+ size_of(WDTTerritory, CliffsDefault)
+							+ size_of(WDTTerritory, AccessibilityDefault)
+							+ size_of(WDTTerritory, HillsDefault)
+							+ size_of(WDTTerritory, TiberiumAmountDefault)
+							+ size_of(WDTTerritory, TiberiumFieldsDefault)
+							+ size_of(WDTTerritory, WaterDefault)
+							+ size_of(WDTTerritory, VegetationDefault)
+							+ size_of(WDTTerritory, CitiesDefault)
+							+ size_of(WDTTerritory, Booleans)
+							+ size_of(WDTTerritory, UserModBooleans),
+};
+
+class WDTState {
+	public:
+		WDTState(void);
+		WDTState(void *data);
+		~WDTState(void);
+
+		bool Has_Owner_History(void);
+		bool Is_Previous_Cycle(void);
+
+		bool Create_History(void *data, int size);
+		bool Create_Territories(void *data, int size);
+
+		char *To_String(void);
+
+		enum State {
+			UNASSIGNED = -1,
+			CONTESTED,
+			GDI,
+			NOD,
+		};
+
+	public:
+
+		char *ShortDesc;
+
+		char *LongDesc;
+
+		char *WebURL;
+
+		unsigned char MapID;
+
+		unsigned int CycleID;
+
+		unsigned int CycleLength;
+
+		unsigned int NumTerritories;
+
+		unsigned int NumTicks;
+
+		unsigned int TickTime;
+
+		DynamicVectorClass<WDTTerritory *> Territories;
+
+		unsigned char **OwnerHistory;
+
+		bool IsPreviousCycle;
+};
+
+namespace WorldDominationTour
+{
+	enum Outcome {
+		OUTCOME_WIN,
+		OUTCOME_LOSE,
+		OUTCOME_DRAW,
+		OUTCOME_COUNT
+	};
+
+	class State {
+		public:
+			enum TerritoryState {
+				UNASSIGNED,
+				DISPUTED,
+				GDI,
+				NOD,
+			};
+
+			State(void);
+			~State(void);
+			State(WDTState * state, unsigned int tick);
+			State(State const & that);
+			State & operator=(State const & that);
+			bool operator==(State const & that);
+			TerritoryState Get_Territory_State(unsigned int terr);
+			int Count_Owned_Territories(int player_faction);
+		public:
+
+			WDTState *TourState;
+
+			unsigned char *Owners;
+	};
+
+	class History {
+		public:
+			History(WDTState * state);
+			~History(void);
+
+			bool Is_Tick_Valid(unsigned int tick);
+			State Get_State(unsigned int tick);
+
+		public:
+
+			WDTState *TourState;
+	};
+
+	class Conflict {
+		public:
+			Conflict(WDTTerritory * terr = NULL);
+			Conflict(Conflict const & that);
+			~Conflict(void);
+			Conflict & operator=(Conflict const & that);
+			bool operator==(Conflict const & that) const;
+
+			bool Is_Territory_Set(void) const;
+			int Get_Territory_Index(void) const;
+
+			void Init_Game_Options(void);
+			void Deinit_Game_Options(void);
+			void Process_Game_Options(char * str, int len);
+
+			bool operator!=(Conflict const & that) const { return(!(*this == that)); }
+
+		public:
+
+			WDTTerritory * Territory;
+	};
+
+	typedef DynamicVectorClass<Conflict> CONFLICT_LIST;
+	typedef VectorCursor<Conflict, CONFLICT_LIST> CONFLICT_ITER;
+
+	class CampaignProperties {
+		public:
+			CampaignProperties(WDTState * state);
+			CampaignProperties(CampaignProperties const & that);
+			~CampaignProperties(void);
+
+			bool operator==(CampaignProperties const & that) const;
+			CampaignProperties & operator = (CampaignProperties const & that);
+
+			int Get_Cycle_ID(void) const;
+			int Get_Layout(void) const;
+			int Get_Map_ID(void) const;
+			int Get_Current_Tick(void) const;
+			const char * Get_Short_Desc(void) const;
+			const char * Get_Long_Desc(void) const;
+			const char * Get_Web_URL(void) const;
+
+			WDTState *TourState;
+	};
+
+	class Campaign {
+		public:
+			Campaign(char const *name, CampaignProperties const &props);
+			~Campaign(void);
+
+			bool Is_Different_Cycle(void);
+			bool Is_Different(void);
+			void Write_INI(void);
+			void Reset_INI(void);
+			void Load_INI(INIClass & ini);
+			CONFLICT_ITER Get_Conflict_Iterator(int index);
+			void Set_Faction(int faction);
+			CampaignProperties & Get_Campaign_Properties(void) { return(Properties); }
+
+		public:
+
+			CampaignProperties Properties;
+
+			bool IsContinued;
+
+			History CycleHistory;
+
+			DynamicVectorClass<Conflict> Conflicts;
+
+			int CycleID;
+
+			int PreviousTick;
+
+			int PlayerFaction;
+
+			char Name[64];
+	};
+
+	class Territory {
+
+		public:
+			Territory(int id, const char * fname, INIClass const & ini, const char * name, int side, MSEngine & engine, ConvertClass * drawer, MS_ANIM_LIST * anims, Point2D const & pos);
+			~Territory(void);
+			void Set_Owner_State(int state, MSEngine & engine, bool wait);
+			void Set_Highlight(bool active, MSEngine & engine);
+			void Set_Target_Anim(MSAnim * anim);
+			MSAnim * Remove_Target_Anim(void);
+		public:
+
+			int ID;
+
+			char Name[64];
+
+			char Description[128];
+
+			Point2D Target;
+
+			MSOverlayAnim *OwnerAnim;
+
+			MSOverlayAnim *HighlightAnim;
+
+			MSAnim *TargetAnim;
+	};
+
+	typedef DynamicVectorClass<Territory *> TERR_LIST;
+	typedef VectorCursor<Territory *, TERR_LIST> TERR_ITER;
+
+	class Map {
+		public:
+			Map(int id);
+			virtual ~Map(void);
+			void Add_Territory(const char * fname, INIClass const & ini, const char * name, int side, MSEngine & engine, ConvertClass * drawer, MS_ANIM_LIST * anims, Point2D const & pos);
+
+		public:
+
+			int ID;
+
+			TERR_LIST Territories;
+	};
+
+	class Centroid {
+		public:
+			Centroid(void);
+			Centroid const & operator+=(Point2D const & pt);
+			Point2D Center_Point(void) const;
+			bool operator==(Centroid const & that) const;
+			bool operator!=(Centroid const & that) const { return(!(*this == that)); }
+
+		public:
+
+			Point2D Position;
+
+			int Count;
+	};
+
+	typedef VectorClass<Centroid> CENTROID_LIST;
+	typedef VectorCursor<Centroid, CENTROID_LIST> CENTROID_ITER;
+
+	enum GameOptionEnum {
+		WDT_GAME_OPT_PRIORITY,
+		WDT_GAME_OPT_NORMAL,
+		WDT_GAME_OPT_USER_MOD,
+	};
+
+	enum GameOptionRangeEnum {
+		WDT_GAME_OPT_RANGE_VERY_LOW,
+		WDT_GAME_OPT_RANGE_LOW,
+		WDT_GAME_OPT_RANGE_HIGH,
+		WDT_GAME_OPT_RANGE_VERY_HIGH,
+		WDT_GAME_OPT_RANGE_MIDDLE,
+	};
+
+	class GameOption {
+		public:
+			GameOption(unsigned int bitmask) :
+				Bitmask(bitmask)
+			{
+			}
+
+			virtual ~GameOption(void);
+			virtual int Get_Display_Priority(const WDTTerritory * territory) = 0;
+			virtual void Get_String(const WDTTerritory * territory, char * str, int len) = 0;
+			bool Is_User_Modifiable(const WDTTerritory * territory);
+
+		public:
+
+			unsigned int Bitmask;
+	};
+
+	class RangedGameOption : public GameOption {
+		public:
+			RangedGameOption(unsigned int bitmask, unsigned int offset, unsigned int string, unsigned int range0, unsigned int range1, unsigned int range2, unsigned int range3) :
+				GameOption(bitmask),
+				Offset(offset),
+				StringID(string),
+				Range0(range0),
+				Range1(range1),
+				Range2(range2),
+				Range3(range3)
+			{
+			}
+			virtual int Get_Display_Priority(const WDTTerritory * territory) override;
+			virtual void Get_String(const WDTTerritory * territory, char * str, int len) override;
+			virtual int Get_In_Range_Of(const WDTTerritory * territory) = 0;
+			int In_Range_Of(unsigned int number);
+
+		public:
+
+			unsigned int Offset;
+
+			unsigned int StringID;
+
+			unsigned int Range0;
+			unsigned int Range1;
+			unsigned int Range2;
+			unsigned int Range3;
+	};
+
+	template<typename T>
+	class RangedGameOptionT : public RangedGameOption {
+		public:
+			RangedGameOptionT(unsigned int bitmask, unsigned int offset, unsigned int string, unsigned int range0, unsigned int range1, unsigned int range2, unsigned int range3) :
+				RangedGameOption(bitmask, offset, string, range0, range1, range2, range3)
+			{
+			}
+			virtual int Get_In_Range_Of(const WDTTerritory * territory) override
+			{
+				T *ptr = (T *)((unsigned char *)territory + Offset);
+				return(RangedGameOption::In_Range_Of(*ptr));
+			}
+
+	};
+
+	class FlagGameOption : public GameOption {
+		public:
+			FlagGameOption(unsigned int bitmask, unsigned int off_string, unsigned int off_value, unsigned int on_string, unsigned int on_value) :
+				GameOption(bitmask),
+				OffValue(off_value),
+				OnValue(on_value),
+				OffString(off_string),
+				OnString(on_string)
+			{
+			}
+			virtual int Get_Display_Priority(const WDTTerritory * territory) override;
+			virtual void Get_String(const WDTTerritory * territory, char * str, int len) override;
+
+		public:
+
+			unsigned int OffValue;
+			unsigned int OnValue;
+
+			unsigned int OffString;
+			unsigned int OnString;
+	};
+
+	class NumberOfPlayersGameOption : public GameOption {
+		public:
+			NumberOfPlayersGameOption(unsigned int bitmask) :
+				GameOption(bitmask)
+			{
+			}
+			virtual int Get_Display_Priority(const WDTTerritory * territory) override;
+			virtual void Get_String(const WDTTerritory * territory, char * str, int len) override;
+
+	};
+
+	class MapSizeGameOption : public GameOption {
+		public:
+			MapSizeGameOption(unsigned int bitmask) :
+				GameOption(bitmask)
+			{
+			}
+			virtual int Get_Display_Priority(const WDTTerritory * territory) override;
+			virtual void Get_String(const WDTTerritory * territory, char * str, int len) override;
+	};
+
+	template<typename T>
+	class ValueGameOption : public GameOption {
+		public:
+			ValueGameOption(unsigned int bitmask, unsigned int fallback, unsigned int offset, unsigned int string) :
+				GameOption(bitmask),
+				Fallback(fallback),
+				Offset(offset),
+				StringID(string)
+			{
+			}
+
+			virtual int Get_Display_Priority(const WDTTerritory * territory) override
+			{
+				if (Is_User_Modifiable(territory)) {
+					return(WDT_GAME_OPT_USER_MOD);
+				}
+				return(Fallback);
+			}
+
+			virtual void Get_String(const WDTTerritory * territory, char * str, int len) override
+			{
+				char buffer[256];
+
+				WDT_Game_Option_Append_Comma(str, len);
+				T *ptr = (T *)((unsigned char *)territory + Offset);
+				sprintf(buffer, Fetch_String(StringID), *ptr);
+				strncat(str, buffer, len);
+			}
+
+		public:
+
+			unsigned int Fallback;
+
+			unsigned int Offset;
+
+			unsigned int StringID;
+	};
+
+	typedef DynamicVectorClass<unsigned int> VOICEINDEX_LIST;
+
+	class Voices
+	{
+		public:
+			class Anim : public MSAnim {
+				public:
+					Anim(Voices *voices);
+					virtual ~Anim(void);
+
+					virtual void Set_Active(bool active);
+					virtual void Pause(void);
+					virtual void Resume(void);
+					virtual bool Advance(Surface * surface, Rect & rect);
+					virtual void Redraw(Surface * surface, Rect const * rect=NULL);
+					virtual Rect Get_Rect(void) const;
+					virtual bool Has_Finished(void) const;
+					virtual void Restore(Rect const & rect);
+
+				public:
+
+					Voices * VoicePlayer;
+			};
+
+			class Sample {
+				public:
+					Sample(const char * name, int volume = 255);
+					~Sample(void);
+
+					bool Playing(void) const;
+					void Start(void);
+					void Stop(void);
+
+				public:
+
+					int Volume;
+
+					int SoundHandle;
+
+					void * File;
+
+					bool Allocated;
+			};
+
+			struct VoiceCategory {
+				public:
+					VoiceCategory(void);
+					void Set_Name(const char *name);
+					bool Pick_Standard_Sound(int side, Outcome outcome, char * buffer, int bufsize);
+					bool Pick_Emphasis_Sound(int side, Outcome outcome, char * buffer, int bufsize);
+					void Read(INIClass const & ini, const char * section, int side);
+					void Read_Voiceover(INIClass const & ini, const char * section, int side, Outcome outcome, const char * outcome_string);
+
+				public:
+
+					char Name[16];
+
+					VOICEINDEX_LIST VoiceIndexes[OUTCOME_COUNT][2];
+			};
+
+			enum VoiceCategoryType {
+				VOICECAT_OLD_CYCLE,
+				VOICECAT_HISTORY,
+				VOICECAT_STATUS,
+				VOICECAT_TERRITORY,
+				VOICECAT_GAME,
+				VOICECAT_EVACUATE,
+				VOICECAT_COUNT
+			};
+
+			enum StandaloneVoiceType {
+				VOICE_STARTUP,
+				VOICE_TERRITORY_SELECT,
+				VOICE_COUNT
+			};
+
+			Voices(void) {}
+			Voices(int side);
+			~Voices(void);
+
+			void Init(INIClass const & ini, const char * section);
+			void Init_Standalone(INIClass const & ini, const char * section, StandaloneVoiceType voice, const char * voice_name);
+			bool Pick_Standard_Voice(VoiceCategoryType category, Outcome outcome, char * buffer, int);
+			bool Pick_Emphasis_Voice(VoiceCategoryType category, Outcome outcome, char * buffer, int);
+			bool Pick_Standalone_Voice(StandaloneVoiceType voice, char * buffer, int);
+
+			void Queue(VoiceCategoryType category, Outcome outcome, bool emphasis, bool count_queued, int delay);
+			void Queue(StandaloneVoiceType voice, bool count_queued, int delay);
+			void Advance(void);
+			void Discard(void);
+			void Cleanup(void);
+			bool Playing(void);
+
+		public:
+
+			int Side;
+
+			VoiceCategory VoiceCategories[VOICECAT_COUNT];
+
+			VOICEINDEX_LIST StandaloneVoices[VOICE_COUNT];
+
+			CDTimerClass<SystemTimerClass> Timer;
+
+			bool IsIdle;
+
+			int QueuedSampleCount;
+
+			DynamicVectorClass<Sample *> QueuedSamples;
+	};
+
+	Wstring const * __fastcall FUN_007AF2A0(int faction);
+
+	class Selection;
+
+	class YRHandleBase {
+		public:
+			YRHandleBase(void);
+			virtual ~YRHandleBase(void);
+			void FUN_0065D480(void * ptr);
+
+		public:
+			void * Ptr;
+	};
+
+	class YRConflictImpl {
+		public:
+			int FUN_00766060(void);
+			WideWstring FUN_007665D0(void);
+	};
+
+	class YRConflictHandle : public YRHandleBase {
+		public:
+			YRConflictHandle(void) {}
+			virtual ~YRConflictHandle(void) {}
+			YRConflictImpl * Get(void) const { return((YRConflictImpl *)Ptr); }
+			bool operator==(YRConflictHandle const & that) const { return(Ptr == that.Ptr); }
+			bool operator!=(YRConflictHandle const & that) const { return(Ptr != that.Ptr); }
+	};
+
+	typedef DynamicVectorClass<YRConflictHandle> YRCONFLICT_LIST;
+	typedef VectorCursor<YRConflictHandle, YRCONFLICT_LIST> YRCONFLICT_ITER;
+
+	class YRPropsImpl {
+		public:
+			int FUN_0076BFE0(void);
+			int FUN_0076BFC0(void);
+			int FUN_0076BFB0(void);
+
+		public:
+			char Pad0[0x14];
+			WideWstring LongDesc;
+	};
+
+	class YRPropsHandle : public YRHandleBase {
+		public:
+			YRPropsHandle(void) {}
+			virtual ~YRPropsHandle(void) {}
+			YRPropsImpl * Get(void) const { return((YRPropsImpl *)Ptr); }
+			YRPropsImpl * FUN_0076F020(void) const;
+	};
+
+	class YRCampaignBase {
+		public:
+			virtual ~YRCampaignBase(void);
+			int RefCount;
+	};
+
+	class YRCampaignImpl : public YRCampaignBase, public YRPropsHandle {
+		public:
+			char Pad2[0x18 - 0x10];
+			YRCONFLICT_LIST Conflicts;
+			char Pad1[0x44 - 0x18 - sizeof(YRCONFLICT_LIST)];
+			int PlayerFaction;
+
+			int Get_Current_Tick(void) { return(Get()->FUN_0076BFE0()); }
+			int FUN_00764FC0(bool vq_anim);
+	};
+
+	class YRCampaignHandle : public YRHandleBase {
+		public:
+			YRCampaignHandle(void) {}
+			YRCampaignHandle(YRCampaignHandle const & that) { FUN_0065D480(that.Ptr); }
+			virtual ~YRCampaignHandle(void) {}
+			YRCampaignImpl * Get(void) const { return((YRCampaignImpl *)Ptr); }
+	};
+
+	class YRTerritoryImpl {
+		public:
+			void FUN_0076FEB0(bool active, Selection * engine);
+			MSShapeAnim * FUN_0076FF30(void);
+			void FUN_0076FF20(MSShapeAnim * anim);
+			void FUN_0076FD40(int state, Selection * engine, bool wait);
+
+		public:
+			char Pad0[8];
+			int ID;
+			WideWstring Name;
+			Point2D Target;
+			char Pad1[0x2c - 0x18];
+			MSShapeAnim * TargetAnim;
+	};
+
+	class YRTerritoryHandle : public YRHandleBase {
+		public:
+			YRTerritoryHandle(void) {}
+			YRTerritoryHandle(YRTerritoryHandle const & that);
+			YRTerritoryHandle & operator=(YRTerritoryHandle const & that) { FUN_0065D480(that.Ptr); return(*this); }
+			YRTerritoryHandle & operator=(YRTerritoryImpl * that) { FUN_0065D480(that); return(*this); }
+			virtual ~YRTerritoryHandle(void);
+			YRTerritoryImpl * Get(void) const { return((YRTerritoryImpl *)Ptr); }
+			YRTerritoryImpl * FUN_0076F070(void) const;
+			bool operator==(YRTerritoryHandle const & that) const { return(Ptr == that.Ptr); }
+			bool operator!=(YRTerritoryHandle const & that) const { return(Ptr != that.Ptr); }
+	};
+
+	class YRTerritoryHandleOut : public YRTerritoryHandle {
+		public:
+			virtual ~YRTerritoryHandleOut(void);
+	};
+
+	class YRTerritoryHandleCall : public YRTerritoryHandle {
+		public:
+			YRTerritoryHandleCall(void);
+			YRTerritoryHandleCall(YRTerritoryHandle const & that);
+	};
+
+	typedef DynamicVectorClass<YRTerritoryHandle> YRTERR_LIST;
+	typedef VectorCursor<YRTerritoryHandle, YRTERR_LIST> YRTERR_ITER_BASE;
+
+	class YRTERR_ITER : public YRTERR_ITER_BASE {
+		public:
+			YRTERR_ITER(YRTERR_LIST & list, int cursor);
+	};
+
+	YRTerritoryHandle __fastcall FUN_0076FF40(YRTERR_LIST * list, int id);
+
+	class YRMapImpl {
+		public:
+			int FUN_00769330(Point2D const & point);
+			bool FUN_00769440(Point2D const & point);
+			void FUN_007693A0(Selection * selection, bool hovered);
+			void FUN_007693F0(Selection * selection, bool hovered);
+			void FUN_007681E0(INIClass const & ini, Selection * selection, int value);
+			YRTerritoryHandle FUN_0076F000(int id);
+			YRTerritoryHandleOut FUN_0076F000_Out(int id);
+
+		public:
+			char Pad0[0x2c];
+			YRTERR_LIST Territories;
+			Point2D Origin;
+			char Pad1[0x68 - 0x44 - sizeof(Point2D)];
+			bool CancelHovered;
+			char Pad2[0x9c - 0x69];
+			Rect PlayRect;
+			Rect BackRect;
+	};
+
+	class YRMapHandle : public YRHandleBase {
+		public:
+			YRMapHandle(void) {}
+			YRMapHandle(YRMapHandle const & that) { FUN_0065D480(that.Ptr); }
+			virtual ~YRMapHandle(void) {}
+			YRMapImpl * Get(void) const { return((YRMapImpl *)Ptr); }
+	};
+
+	class YRStateImpl {
+		public:
+			int FUN_0076F600(int territory);
+	};
+
+	class YRStateHandle : public YRHandleBase {
+		public:
+			YRStateHandle(void);
+			virtual ~YRStateHandle(void) {}
+			YRStateImpl * Get(void) const { return((YRStateImpl *)Ptr); }
+	};
+
+	class YRVoices {
+		public:
+			YRVoices(int side);
+			~YRVoices(void);
+			void FUN_00770550(INIClass const & ini, Wstring const & section);
+			MSAnim * FUN_00771800(void);
+			void FUN_007714B0(int voice, bool count_queued, int delay);
+			void FUN_007712C0(int category, int outcome, bool emphasis, bool count_queued, int delay);
+
+		public:
+			char Data[0x3DC];
+	};
+
+	YRMapHandle __fastcall FUN_00767FB0(int map_id, bool vq_anim, int faction);
+
+	class YRTextAnim : public MSAnim {
+		public:
+			YRTextAnim(WideWstring const & text, Rect const & area, bool transient);
+			virtual ~YRTextAnim(void);
+			virtual bool Advance(Surface * surface, Rect & rect);
+			virtual void Redraw(Surface * surface, Rect const * rect = NULL);
+			virtual Rect Get_Rect(void) const;
+			void FUN_005CD3C0(bool value);
+
+		public:
+			WideWstring Text;
+			Rect Area;
+			bool Transient;
+			bool Drawn;
+	};
+
+	class Selection : public MSEngine {
+		typedef DynamicVectorClass<MSSfxEntry *> SFX_LIST;
+		typedef VectorCursor<MSSfxEntry *, SFX_LIST> SFX_ITER;
+
+		public:
+			Selection(YRCampaignHandle const & campaign, bool vq_anim);
+			~Selection(void);
+			void Init_Voices(INIClass const & ini, Wstring const & name);
+			void Init_Sounds(INIClass const & ini, Wstring const & name);
+			void Init_Target(INIClass const & ini, Wstring const & name);
+			void Update_Hovered_Territory(Point2D const & point);
+			bool Select_Territory_At(Point2D const & point);
+			bool Select_Territory(YRTerritoryHandle const & territory);
+			void Handle_Click(Point2D const & point, bool & selected);
+			YRTerritoryHandleCall Pick_Territory(void);
+
+			void Add_Sfx_Entry(MSSfxEntry * entry) { if (entry != NULL) SfxEntries.Add(entry); }
+
+			void Set_Text(WideWstring const & text, int start_delay);
+			void Set_Tooltip(WideWstring const & text);
+			void Play_SFX(Wstring const & name);
+			void Do_Target_Anim(YRStateHandle const & state, bool show_targets, bool silent);
+			void Check_For_Breakout(void);
+			void FUN_0076EBE0(Wstring const & name);
+			void FUN_0076E180(void);
+			void FUN_0076EEB0(void);
+
+		public:
+			YRCampaignHandle TourCampaign;
+			YRConflictHandle SelectedConflict;
+			YRVoices VoicePlayer;
+			int WinningThreshold;
+			int LosingThreshold;
+			int MegaWinningThreshold;
+			int MegaLosingThreshold;
+			bool Brokeout;
+			Point2D LastPoint;
+			int StartTick;
+			int LastHoverZone;
+			YRMapHandle WorldMap;
+			int HoveredTerritoryID;
+			YRTerritoryHandle MousedTerritory;
+			ConvertClass * TargetDrawer;
+			MSAnimEntry * ZoomingTarget;
+			MSAnimEntry * ThrobbingTarget;
+			int ThrobbingTargetDividingFrame;
+			MSAnim * TextAnim;
+			MSAnim * TooltipAnim;
+			MSFont * Font;
+			YRStateHandle CurrentState;
+			Wstring ThemeName;
+			SFX_LIST SfxEntries;
+			int TextColor;
+	};
+
+	Territory * Find_Territory_By_ID(TERR_LIST & terr, int id);
+	Voices::Anim * WDT_New_Voiced_Animation(Voices & voices);
+	void Write_Map_INI(char const * map_name, char const * pcx1_file_name, char const * pcx2_file_name);
+};
+
+void WDT_Review_Campaign(WorldDominationTour::Campaign * campaign);
+bool WDT_Select_Campaign(WorldDominationTour::Campaign * campaign, bool vq_anim);
+
+enum WDTStateRequestEnum {
+	WDT_REQ_STATE_EVERYTHING = 3,
+	WDT_REQ_STATE_LAST_CYCLE = 5,
+};

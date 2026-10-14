@@ -400,6 +400,7 @@ class TechnoClass : public RadioClass
 		void ReleaseLocomotor(bool set_target);
 		void GattlingRateDown(int rate);
 		bool FUN_0070E240(WeaponDataStruct const * weapon);
+		void Deactivate(void);
 		virtual FacingType Desired_Load_Dir(ObjectClass * , Cell & moveto) const;
 		virtual DirType Fire_Direction(void) const;
 		virtual InfantryTypeClass const * Crew_Type(void) const;
@@ -527,6 +528,14 @@ class TechnoClass : public RadioClass
 		int Estimate_Damage(TechnoClass * target, WeaponTypeClass const * weapon) const;
 		LaserDrawClass * CreateLaser(ObjectClass * target, int which, WeaponTypeClass * weapon, Coord const & source_coord);
 		FireErrorType FUN_006FC090(AbstractClass * target, int which) const;
+		bool CanPassiveAcquireTargets(void) const;
+		bool CanOpportunityFire(void) const;
+		int FUN_00709460(FireErrorType error) const;
+		bool FUN_00709480(void);
+		bool FUN_007094E0(void) const;
+		bool FUN_00709500(void) const;
+		void FUN_00709550(void);
+		int FUN_00709800(FireErrorType error) const;
 		bool Is_Immobilized(void) const {return(IsUnderEMP() || IsParalyzed() || IsBeingWarpedOut() || IsWarpingIn());}
 		void Scatter_Incoming_Infantry(void) const;
 		int Get_Collateral_Damage(void) const;

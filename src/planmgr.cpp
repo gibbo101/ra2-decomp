@@ -265,6 +265,18 @@ class PlanningNodeClass
 		Rect Lead_Rect(void);
 		bool Is_Past_Start(void);
 		void Promote_Events(void);
+		PlanMember * Get_Member(TechnoClass * techno);
+		TechnoClass * Owner_At_Branch(int branch);
+		TechnoClass * Active_Owner(void);
+		PlanBranch * Get_Branch(int index);
+		PlanBranch * Branch_Of(TechnoClass * techno);
+		EventClass * Own_Event(void);
+		Coord Branch_Coord(int index);
+		Coord Own_Coord(void);
+		Point2D Branch_Pixel(int index);
+		int Branch_Count(void);
+		int Has_Pending(void);
+		int Is_Pending(void);
 		void FUN_00635120(void);
 		void FUN_00635DB0(int);
 		void FUN_00634E10(PlanMember *);
@@ -654,4 +666,95 @@ void PlanningNodeClass::Promote_Events(void)
 		EventClass * packet = Members[i]->Packet;
 		if (packet->Data.MegaMission.Mission == 2) packet->Data.MegaMission.Mission = 0x1d;
 	}
+}
+
+// FUNCTION: 0x006346B0
+PlanMember * PlanningNodeClass::Get_Member(TechnoClass * techno)
+{
+	int index = Find_Member(techno);
+	return (index == -1) ? 0 : Members[index];
+}
+
+// FUNCTION: 0x00634700
+int PlanningNodeClass::Branch_Count(void)
+{
+	return Branches.Count();
+}
+
+// FUNCTION: 0x00634710
+int PlanningNodeClass::Has_Pending(void)
+{
+	return ActiveCount > 0;
+}
+
+// FUNCTION: 0x00634720
+int PlanningNodeClass::Is_Pending(void)
+{
+	if (ActiveCount > 0 && Slot2 == -1) return 1;
+	return 0;
+}
+
+// FUNCTION: 0x00634740
+TechnoClass * PlanningNodeClass::Owner_At_Branch(int branch)
+{
+	int count = Members.Count();
+	for (int i = 0; i < count; i++) {
+		PlanMember * m = Members[i];
+		if (m->Branch == branch) return m->Owner;
+	}
+	return 0;
+}
+
+// FUNCTION: 0x00634770
+TechnoClass * PlanningNodeClass::Active_Owner(void)
+{
+	int count = Members.Count();
+	for (int i = 0; i < count; i++) {
+		PlanMember * m = Members[i];
+		if (m->Active) return m->Owner;
+	}
+	return 0;
+}
+
+// FUNCTION: 0x006347A0
+PlanBranch * PlanningNodeClass::Get_Branch(int index)
+{
+	return Branches[index];
+}
+
+// FUNCTION: 0x006347B0
+PlanBranch * PlanningNodeClass::Branch_Of(TechnoClass * techno)
+{
+	int index = Find_Member(techno);
+	PlanMember * member = (index == -1) ? 0 : Members[index];
+	int branch = member->Branch;
+	PlanBranch * result = 0;
+	if (branch != -1) result = Branches[branch];
+	return result;
+}
+
+// FUNCTION: 0x00634800
+EventClass * PlanningNodeClass::Own_Event(void)
+{
+	return (EventClass *)&Flag;
+}
+
+// FUNCTION: 0x00634810
+Coord PlanningNodeClass::Branch_Coord(int index)
+{
+	Coord coord = FUN_00633BC0(*(EventClass *)Branches[index]);
+	return coord;
+}
+
+// FUNCTION: 0x00634850
+Coord PlanningNodeClass::Own_Coord(void)
+{
+	Coord coord = FUN_00633BC0(*(EventClass *)&Flag);
+	return coord;
+}
+
+// FUNCTION: 0x00634880
+Point2D PlanningNodeClass::Branch_Pixel(int index)
+{
+	return Coord_To_View(FUN_00633BC0(*(EventClass *)Branches[index]));
 }

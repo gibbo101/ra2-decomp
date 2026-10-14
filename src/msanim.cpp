@@ -319,10 +319,177 @@ MSOverlayAnim::MSOverlayAnim(Wstring const & name, int x, int y, ConvertClass * 
 	}
 }
 
+// FUNCTION: 0x005CC2F0
+MSOverlayAnim::~MSOverlayAnim(void)
+{
+}
+
+// FUNCTION: 0x005CC330
+bool MSOverlayAnim::Advance(Surface * surface, Rect & rect)
+{
+	if (Active == true && Timer == 0) {
+
+		Timer = Rate;
+
+		if (FadeStage < 4) {
+
+			rect = Shape->GetFrameBounds(CurFrame);
+			rect.X += XPos;
+			rect.Y += YPos;
+			if (ShapeFlags & SHAPE_CENTER) {
+				rect.X -= Shape->Get_Width() / 2;
+				rect.Y -= Shape->Get_Height() / 2;
+			}
+
+			surface->Blit_From(rect, *AlternateSurface, rect);
+
+			Draw_Shape(*surface, *Drawer, (ShapeSet *)Shape, CurFrame, Point2D(XPos, YPos), surface->Get_Rect(), ShapeFlags_Type(ShapeFlags | FadeStages[FadeStage < 3 ? FadeStage : 3]));
+
+			if (Anims != NULL) {
+				int my_id = Anims->ID(this);
+				for (int i = 0; i < Anims->Count(); i++) {
+					if (i != my_id) {
+						(*Anims)[i]->Redraw(surface, &rect);
+					}
+				}
+			}
+
+			if (++FadeStage >= 4) {
+				Draw_Shape(*AlternateSurface, *Drawer, (ShapeSet *)Shape, CurFrame, Point2D(XPos, YPos), surface->Get_Rect(), ShapeFlags_Type(ShapeFlags | SHAPE_WIN_REL));
+			}
+			return(!Persistent);
+		}
+
+		return(false);
+	}
+
+	rect.Set(0, 0, 0, 0);
+	return(false);
+}
+
+// FUNCTION: 0x005CC550
+void MSOverlayAnim::Redraw(Surface * surface, Rect const * rect)
+{
+	Rect shape_rect(0, 0, 0, 0);
+
+	if (Active) {
+
+		shape_rect = Shape->GetFrameBounds(CurFrame);
+		shape_rect.X += XPos;
+		shape_rect.Y += YPos;
+		if (ShapeFlags & SHAPE_CENTER) {
+			shape_rect.X -= Shape->Get_Width() / 2;
+			shape_rect.Y -= Shape->Get_Height() / 2;
+		}
+
+		if (rect != NULL) {
+			shape_rect = Intersect(*rect, shape_rect);
+			if (!shape_rect.Is_Valid()) {
+				return;
+			}
+		}
+
+		int fading_stage = FadeStage < 3 ? FadeStage : 3;
+		Draw_Shape(*surface, *Drawer, (ShapeSet *)Shape, CurFrame, Point2D(XPos, YPos), surface->Get_Rect(), ShapeFlags_Type(ShapeFlags | FadeStages[fading_stage]));
+	}
+}
+
+// FUNCTION: 0x005CC690
+void MSOverlayAnim::Restart(void)
+{
+	FadeStage = 0;
+}
+
+// FUNCTION: 0x005CC6A0
+void MSOverlayAnim::Set_Frame(int frame)
+{
+	FadeStage = 0;
+	CurFrame = frame;
+}
+
+// FUNCTION: 0x005CC6C0
+void MSOverlayAnim::Restore(Rect const & rect)
+{
+	int fading_stage = FadeStage < 3 ? FadeStage : 3;
+
+	if (Active) {
+		Draw_Shape(*AlternateSurface, *Drawer, (ShapeSet *)Shape, CurFrame, Point2D(XPos, YPos), AlternateSurface->Get_Rect(), ShapeFlags_Type(ShapeFlags | FadeStages[fading_stage]));
+	}
+}
+
+// FUNCTION: 0x005CC740
+bool MSOverlayAnim::Has_Finished(void) const
+{
+	return(!(Active && FadeStage < 4));
+}
+
+// FUNCTION: 0x005CC760
+MSButtonAnim::MSButtonAnim(Wstring const & text, int width, MS_ANIM_LIST * vector, Rect const & rect, bool persistent) :
+	MSAnim(rect.X, rect.Y),
+	Text(NULL),
+	Width(width),
+	Area(rect),
+	Anims(vector),
+	Persistent(persistent)
+{
+	if (text.length() > 0) {
+		Text = new MSTextLayout(text.text(), width);
+		Text->Set_Position(rect.X, rect.Y);
+	}
+}
+
+// FUNCTION: 0x005CC820
+MSButtonAnim::~MSButtonAnim(void)
+{
+	if (Text != NULL) {
+		delete Text;
+	}
+}
+
 // FUNCTION: 0x005CC850
 Rect MSButtonAnim::Get_Rect(void) const
 {
 	return(Area);
+}
+
+
+// FUNCTION: 0x005CC880
+bool MSButtonAnim::Has_Finished(void) const
+{
+	return(Text == NULL || Text->Is_Complete());
+}
+
+// FUNCTION: 0x005CC8A0
+bool MSButtonAnim::Advance(Surface * surface, Rect & rect)
+{
+	if (surface == NULL) {
+		return(false);
+	}
+	if (Text == NULL) {
+		return(true);
+	}
+
+	if (!Text->Is_Complete() && Text->Is_Dirty()) {
+		Redraw(surface, NULL);
+		rect = Area;
+		int my_id = Anims->ID(this);
+		for (int i = 0; i < Anims->Count(); i++) {
+			if (i != my_id) {
+				(*Anims)[i]->Redraw(surface, &Area);
+			}
+		}
+	}
+
+	return(Text->Is_Complete() && !Persistent);
+}
+
+// FUNCTION: 0x005CC970
+void MSButtonAnim::Redraw(Surface * surface, Rect const * rect)
+{
+	if (rect != NULL) {
+		Intersect(*rect, Area);
+	}
+	surface->Blit_From(Area, *AlternateSurface, Area);
 }
 
 // FUNCTION: 0x005CD0E0

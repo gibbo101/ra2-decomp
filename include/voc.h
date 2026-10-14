@@ -137,7 +137,7 @@ class VocEntry
 
 		bool Read_INI(INIClass & ini);
 
-		char const * Name(void) { return Voc != NULL ? Voc->FUN_00405170() : "Invalid Voc"; }
+		char const * Name(void);
 
 		VocClass * Voc;
 };

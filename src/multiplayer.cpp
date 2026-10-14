@@ -12,6 +12,8 @@
 #include "house.h"
 #include "houstype.h"
 #include "unittype.h"
+#include "unit.h"
+#include "techno.h"
 #include "infatype.h"
 #include "rules.h"
 #include "_rules.h"
@@ -77,7 +79,7 @@ DynamicVectorClass<MPGameModeClass *> & Game_Modes(void)
 	return(modes);
 }
 
-// FUNCTION: 0x005D5B20 $E79
+// FUNCTION: 0x005D5B20 $E89
 
 static int Game_Mode_Count(void)
 {
@@ -136,12 +138,17 @@ MPGameModeClass::MPGameModeClass(WideWstring const & title, WideWstring const & 
 	}
 }
 
+static inline void Delete_Teams(MPGameModeClass * mode)
+{
+	for (int i = 0; i < mode->MPTeams.Count(); i++) {
+		delete mode->MPTeams[i];
+	}
+}
+
 // FUNCTION: 0x005D5D20
 MPGameModeClass::~MPGameModeClass(void)
 {
-	for (int i = 0; i < MPTeams.Count(); i++) {
-		delete MPTeams[i];
-	}
+	Delete_Teams(this);
 	MPTeams.Clear();
 	delete INI;
 }
@@ -543,3 +550,143 @@ bool MPGameModeClass::FUN_005D6D80(void)
 	FUN_004068E0("Finished unit generation. Random number is %d\n", Scen->RandomNumber(0, 0xFFFF));
 	return(true);
 }
+
+class MPSpawnHouse
+{
+	public:
+		UnitTypeClass const * FUN_00505310(TypeList<UnitTypeClass const *> * list);
+		Cell FUN_0050DEF0(void);
+		Coord FUN_0050DF30(void);
+};
+
+int __fastcall FUN_00688ED0(ObjectClass * object, Cell const & cell, int flag);
+
+// FUNCTION: 0x005D7030
+bool MPGameModeClass::SpawnBaseUnits(HouseClass * house, unsigned unused)
+{
+	if (!Session.Options.Bases) {
+		return(true);
+	}
+	UnitTypeClass const * type = ((MPSpawnHouse *)house)->FUN_00505310(&Rule->BaseUnit);
+	if (type != NULL) {
+		UnitClass * unit = new UnitClass(type, house);
+		if (unit != NULL) {
+			if (unit->Unlimbo(((MPSpawnHouse *)house)->FUN_0050DF30())) {
+				return(true);
+			}
+			if (FUN_00688ED0(unit, ((MPSpawnHouse *)house)->FUN_0050DEF0(), 1)) {
+				return(true);
+			}
+			delete unit;
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x005D70F0
+bool MPGameModeClass::GenerateStartingUnits(HouseClass * house, int & amount)
+{
+	if (amount > 0) {
+		int total = amount;
+		DynamicVectorClass<UnitTypeClass *> units;
+		DynamicVectorClass<InfantryTypeClass *> infantry;
+		int owner = 1 << house->Class->HeapID;
+		for (int i = 0; i < UnitTypes.Count(); i++) {
+			UnitTypeClass * type = UnitTypes[i];
+			if (type->IsAllowedToStartInMultiplayer && (type->Ownable & owner) && type->Level <= house->Control.TechLevel) {
+				bool excluded = false;
+				for (int j = 0; j < Rule->BaseUnit.Count(); j++) {
+					if (Rule->BaseUnit[j] == type) {
+						excluded = true;
+						break;
+					}
+				}
+				if (!excluded) {
+					units.Add(type);
+				}
+			}
+		}
+		for (int n = 0; n < InfantryTypes.Count(); n++) {
+			InfantryTypeClass * type = InfantryTypes[n];
+			if (type->IsAllowedToStartInMultiplayer && (type->Ownable & owner) && type->Level <= house->Control.TechLevel) {
+				infantry.Add(type);
+			}
+		}
+		if (units.Count() == 0 && infantry.Count() == 0) {
+			return(false);
+		}
+		int tries = 20;
+		while (amount > 0 && tries > 0) {
+			TechnoTypeClass * type;
+			if (amount > total / 3 && units.Count() != 0) {
+				type = units[Scen->RandomNumber(0, units.Count() - 1)];
+			} else {
+				type = infantry[Scen->RandomNumber(0, infantry.Count() - 1)];
+			}
+			ObjectClass * object = type->Create_One_Of(house);
+			TechnoClass * techno = dynamic_cast<TechnoClass *>(object);
+			if (!FUN_00688ED0(techno, ((MPSpawnHouse *)house)->FUN_0050DEF0(), 4)) {
+				delete techno;
+				tries--;
+			} else {
+				amount -= type->Raw_Cost();
+				if (Scen->Special.IsInitialVeteran) {
+					techno->Veterancy.Set_Veteran(true);
+				}
+				if (house->FUN_0050B730()) {
+					techno->Set_Mission(MISSION_GUARD);
+				} else {
+					techno->Set_Mission(MISSION_GUARD_AREA);
+				}
+			}
+		}
+	}
+	return(true);
+}
+
+// FUNCTION: 0x005D7550
+int __stdcall House_Team(int index)
+{
+	return(Houses[index]->StartingAllies);
+}
+
+// FUNCTION: 0x005D7570
+bool MPGameModeClass::vt_entry_8C(void)
+{
+	return(true);
+}
+
+// FUNCTION: 0x005D7580
+MPGameModeClass::InitializerBase::InitializerBase(void)
+{
+}
+
+// FUNCTION: 0x005D7CD0
+MPGameModeClass::InitializerBase::~InitializerBase(void)
+{
+}
+
+class MPBattleInit : public MPGameModeClass::InitializerBase
+{
+	public:
+		MPBattleInit(void);
+		virtual void Allocate(void) {}
+};
+
+MPBattleInit::MPBattleInit(void)
+{
+}
+
+// FUNCTION: 0x005D7E50
+void Free_Game_Modes(void)
+{
+	for (int i = 0; i < Game_Modes().Count(); i++) {
+		delete Game_Modes()[i];
+	}
+}
+
+// FUNCTION: 0x005D7F20 MPGameModeClass::~MPGameModeClass
+
+// FUNCTION: 0x005D7FD0 MPGameModeClass::InitializerBase::~InitializerBase
+
+// FUNCTION: 0x005D7FF0 MPBattleInit::~MPBattleInit

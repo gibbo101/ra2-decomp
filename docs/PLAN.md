@@ -940,6 +940,24 @@ run through and re-test labels after each F round: six hidden functions found,
 their callers (byte-identical twins). Cost: about 5.8M tokens. Merge gate: 4,689 of
 4,689 (710.2 KB).
 
+### Batches 28, 29 and 30 (14 October 2026)
+
+**407 of 432 functions** (140, 128, 139), all three in new or nearly new ground:
+Startup, convert, wonline, Init, PlanMgr, netshare, TAction, MPCoop, Infantry, wsproto,
+msanim, tab, motlib, Session, MSChoice, LoadDlg, dsurface, Queue, Score and waypoint
+each landed all 12. The round nearly lost most of that: batch 28's House agent ran
+`git stash` mid-run against the no-git rule, and its pop failed, so every agent's
+uncommitted work at that moment sat in the stash while the gate passed on what was left
+(149 of 432). The coordinator restored the 27 files only the stash held and the 9 that
+merged cleanly; an Opus agent resolved the other 14 by hand (most conflicts were work
+redone after the stash), banking six functions that never matched. A hook to block git
+for subagents was blocked as self-modification and is left for the maintainer. The
+merges gave YR's wide LoadDlg file entries, YR's CellClass flag words (by bit, from the
+constructor and the generated copy), wide serial packets and Cell::As_Int's 74x stride.
+LoadOptionsClass's plain destructor (0x558790) got a names.csv row, which landed
+0x52D640. Cost: about 6.8M tokens plus the recovery. Merge gate: 5,099 of 5,099
+(779.2 KB).
+
 ### Decide before the first batch
 
 - **Module layout.** Which function lives in which source file, and the link order, decide

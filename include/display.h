@@ -101,6 +101,7 @@ class DisplayClass: public MapClass
 
 		virtual void Put_Place_Back(TechnoClass * ) {};
 		void Cursor_Mark(Cell const & pos, bool on);
+		void Mark_Foundation_Copy(Cell const & pos, bool on);
 		void Set_Cursor_Shape(Cell const * list);
 		void SetActiveFoundation(Cell const * list);
 		Cell Set_Cursor_Pos(Cell const & pos = CELL_NONE);

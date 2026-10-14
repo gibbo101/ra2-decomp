@@ -208,7 +208,7 @@ class MapSeedClass : public LoadOptionsClass
 		bool Delete(void);
 
 		virtual bool Load_File(const char * file_name) override;
-		virtual bool Save_File(const char * file_name, const char * descr) override;
+		virtual bool Save_File(const char * file_name, const wchar_t * descr) override;
 		virtual bool Delete_File(const char * file_name) override;
 		virtual bool Read_File(FileEntryClass * entry, WIN32_FIND_DATAA * ff) override;
 		virtual wchar_t const * GetUIString_Load(void) const override;
@@ -222,6 +222,7 @@ class MapSeedClass : public LoadOptionsClass
 		void Set_Checkbox(HWND handle, bool state, bool enable);
 
 		void Randomize(int map_type);
+		void Randomize(void);
 		void Fixup_Settings(void);
 		void Fixup_WDT_Settings(void);
 		void Clamp_Setting(int & setting, int min, int max, bool use_midpoint) const;

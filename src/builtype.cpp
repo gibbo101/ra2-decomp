@@ -5,6 +5,7 @@
 
 #define INCLUDE_COM
 #include "always.h"
+#include "geometry.h"
 #include "builtype.h"
 #include "_map.h"
 #include "_mixfile.h"
@@ -36,8 +37,8 @@
 #include "warhead.h"
 #include "weapon.h"
 
-// FUNCTION: 0x0045B1B0 $E177
-// FUNCTION: 0x0045B1C0 $E154
+// FUNCTION: 0x0045B1B0 $E222
+// FUNCTION: 0x0045B1C0 $E199
 Cell const BuildingTypeClass::OccupyLists[BSIZE_COUNT][30] = {
 	/* BSIZE_11 */ { Cell(0,0),REFRESH_EOL },
 	/* BSIZE_21 */ { Cell(0,0),Cell(1,0),REFRESH_EOL },
@@ -63,8 +64,8 @@ Cell const BuildingTypeClass::OccupyLists[BSIZE_COUNT][30] = {
 	/* BSIZE_00 */ { REFRESH_EOL }
 };
 
-// FUNCTION: 0x0045C2F0 $E202
-// FUNCTION: 0x0045C300 $E179
+// FUNCTION: 0x0045C2F0 $E247
+// FUNCTION: 0x0045C300 $E224
 Cell const BuildingTypeClass::ExitLists[BSIZE_COUNT][30] = {
 	/* BSIZE_11 */ { Cell(0,1),Cell(-1,1),Cell(1,1),Cell(-1,0),Cell(1,0),Cell(0,-1),Cell(-1,-1),Cell(1,-1),REFRESH_EOL },
 	/* BSIZE_21 */ { Cell(0,1),Cell(1,1),Cell(-1,1),Cell(2,1),Cell(-1,0),Cell(2,0),Cell(0,-1),Cell(1,-1),Cell(-1,-1),Cell(2,-1),REFRESH_EOL },
@@ -507,12 +508,120 @@ void const * BuildingTypeClass::Get_Image_Data(void) const
 	return(ImageData);
 }
 
+// FUNCTION: 0x0045F160
+bool BuildingTypeClass::FUN_0045F160(ShapeSet const ** shape, int * frame)
+{
+	if (LeaveRubble && shape != NULL) {
+		if (Rubble == NULL) {
+			*shape = (ShapeSet const *)Get_Image_Data();
+			if (*shape != NULL && (*shape)->Get_Count() / 2 > 3) {
+				*frame = 3;
+				return(true);
+			}
+		} else {
+			*shape = Rubble;
+			*frame = 0;
+			return(true);
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x0045F1D0
+bool BuildingTypeClass::FUN_0045F1D0(ShapeSet const ** shape, int * frame)
+{
+	if (LeaveRubble && shape != NULL) {
+		ShapeSet const * rubble = Rubble;
+		if (rubble == NULL) {
+			*shape = (ShapeSet const *)Get_Image_Data();
+			if (*shape != NULL && (*shape)->Get_Count() / 2 > 3) {
+				*frame = (*shape)->Get_Count() / 2 + 3;
+				return(true);
+			}
+		} else {
+			*shape = rubble;
+			*frame = rubble->Get_Count() / 2;
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x0045FA90
+void BuildingTypeClass::Fetch_Building_Voxel_Image(void)
+{
+	char buffer[128];
+	char fullname[256];
+
+	if (IsTurretAnimAVoxel || IsBarrelAnimAVoxel) {
+		strcpy(buffer, AnimData[BANIM_TURRET].Anim);
+		_makepath(fullname, NULL, NULL, buffer, ".VXL");
+
+		if (strstr(strupr(&fullname[4]), strupr("TUR"))) {
+			CCFileClass vxl(fullname);
+			if (vxl.Is_Available()) {
+				delete AuxVoxel.VoxLib;
+				AuxVoxel.VoxLib = new VoxelLibrary(vxl);
+
+				_makepath(fullname, NULL, NULL, buffer, ".HVA");
+				CCFileClass hva(fullname);
+				delete AuxVoxel.MotLib;
+				AuxVoxel.MotLib = new MotionLibrary(hva);
+
+				if (AuxVoxel.MotLib != NULL && !AuxVoxel.MotLib->Load_Failed()) {
+					AuxVoxel.MotLib->Scale(AuxVoxel.VoxLib->Get_Layer_Info(0, 0).Scale);
+				}
+			}
+
+			if (char * nameroot = strstr(strupr(&buffer[4]), strupr("TUR"))) {
+				*nameroot++ = 'B';
+				*nameroot++ = 'A';
+				*nameroot++ = 'R';
+				*nameroot++ = 'L';
+				*nameroot++ = '\0';
+			}
+		} else if (IsBarrelAnimAVoxel) {
+			strncpy(buffer, VoxelBarrelFile, sizeof(buffer));
+		}
+
+		_makepath(fullname, NULL, NULL, buffer, ".VXL");
+		CCFileClass turvxl(fullname);
+		if (turvxl.Is_Available()) {
+			delete AuxVoxel2.VoxLib;
+			AuxVoxel2.VoxLib = new VoxelLibrary(turvxl);
+
+			_makepath(fullname, NULL, NULL, buffer, ".HVA");
+			CCFileClass turhva(fullname);
+			delete AuxVoxel2.MotLib;
+			AuxVoxel2.MotLib = new MotionLibrary(turhva);
+
+			if (AuxVoxel2.MotLib != NULL && !AuxVoxel2.MotLib->Load_Failed()) {
+				AuxVoxel2.MotLib->Scale(AuxVoxel2.VoxLib->Get_Layer_Info(0, 0).Scale);
+			}
+		}
+	}
+}
+
 // FUNCTION: 0x00464A70
 Coord const BuildingTypeClass::Coord_Fixup(Coord const & coord) const
 {
 	Coord crd = coord;
 	crd.Z = Map.Get_Height_GL(crd);
 	return(crd);
+}
+
+// FUNCTION: 0x00464AC0
+bool BuildingTypeClass::Legal_Placement(Cell const & pos, HouseClass * house) const
+{
+	if (IsCanPlaceAnywhere) {
+		return(true);
+	}
+	return(TechnoTypeClass::Legal_Placement(pos, house));
+}
+
+// FUNCTION: 0x00464AF0
+Point3D BuildingTypeClass::Lepton_Dimensions(void) const
+{
+	return(Point3D(SizeWidth[Size] << 8, SizeHeight[Size] << 8, ZHeight * LEVEL_LEPTON_H));
 }
 
 // FUNCTION: 0x00464B30
@@ -606,10 +715,181 @@ void BuildingTypeClass::Compute_CRC(CRCEngine & crc) const
 	crc(ConcentricRadialIndicator);
 }
 
+// FUNCTION: 0x00465010
+HRESULT STDMETHODCALLTYPE BuildingTypeClass::Load(IStream * stream)
+{
+	if (IsFreeBuildup && BuildupData != NULL) {
+		delete (ShapeSet *)BuildupData;
+		BuildupData = NULL;
+		BuildupLoaded = false;
+	}
+	if (BibShapeLoaded && BibShape != NULL) {
+		delete (ShapeSet *)BibShape;
+		BibShape = NULL;
+		BibShapeLoaded = false;
+	}
+	if (DeployingAnimLoaded && DeployingAnim != NULL) {
+		delete (ShapeSet *)DeployingAnim;
+		DeployingAnim = NULL;
+		DeployingAnimLoaded = false;
+	}
+	if (UnderDoorAnimLoaded && UnderDoorAnim != NULL) {
+		delete (ShapeSet *)UnderDoorAnim;
+		UnderDoorAnim = NULL;
+		UnderDoorAnimLoaded = false;
+	}
+	if (RubbleLoaded && Rubble != NULL) {
+		delete (ShapeSet *)Rubble;
+		Rubble = NULL;
+		RubbleLoaded = false;
+	}
+	if (RoofDeployingAnimLoaded && RoofDeployingAnim != NULL) {
+		delete (ShapeSet *)RoofDeployingAnim;
+		RoofDeployingAnim = NULL;
+		RoofDeployingAnimLoaded = false;
+	}
+	if (UnderRoofDoorAnimLoaded && UnderRoofDoorAnim != NULL) {
+		delete (ShapeSet *)UnderRoofDoorAnim;
+		UnderRoofDoorAnim = NULL;
+		UnderRoofDoorAnimLoaded = false;
+	}
+
+	HRESULT result = TechnoTypeClass::Load(stream);
+	if (FAILED(result)) {
+		return(result);
+	}
+
+	{
+		new (this) BuildingTypeClass(NoInitClass());
+
+		int count;
+		result = stream->Read(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+
+		new (&DockingOffsets) VectorClass<Point3D>();
+		DockingOffsets.Resize(count, NULL);
+		for (int index = 0; index < count; index++) {
+			Point3D offset(0, 0, 0);
+			result = stream->Read(&offset, sizeof(offset), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+			DockingOffsets[index] = offset;
+		}
+	}
+
+	Fetch_Building_Voxel_Image();
+	Fetch_Normal_Image();
+
+	ToTile = NULL;
+	OccupyList = OccupyLists[Size];
+	ExitList = ExitLists[Size];
+
+	Swizzle_Pointer(&ToOverlay);
+	Swizzle_Pointer(&FreeUnit);
+	Swizzle_Pointer(&SecretInfantry);
+	Swizzle_Pointer(&SecretUnit);
+	Swizzle_Pointer(&SecretBuilding);
+
+	Fetch_Building_Voxel_Image();
+
+	BuildupData = NULL;
+	BuildupLoaded = false;
+	BibShape = NULL;
+	BibShapeLoaded = false;
+	DeployingAnim = NULL;
+	DeployingAnimLoaded = false;
+	UnderDoorAnim = NULL;
+	UnderDoorAnimLoaded = false;
+	Rubble = NULL;
+	RubbleLoaded = false;
+	RoofDeployingAnim = NULL;
+	RoofDeployingAnimLoaded = false;
+	UnderRoofDoorAnim = NULL;
+	UnderRoofDoorAnimLoaded = false;
+
+	Fetch_Building_Normal_Image(Scen->Theater);
+	return(S_OK);
+}
+
+// FUNCTION: 0x00465300
+HRESULT STDMETHODCALLTYPE BuildingTypeClass::Save(IStream * stream, BOOL cleardirty)
+{
+	HRESULT result = TechnoTypeClass::Save(stream, cleardirty);
+	if (FAILED(result)) {
+		return(result);
+	}
+
+	int count = DockingOffsets.Length();
+	result = stream->Write(&count, sizeof(count), NULL);
+	if (FAILED(result)) {
+		return(result);
+	}
+
+	for (int index = 0; index < count; index++) {
+		result = stream->Write(&DockingOffsets[index], sizeof(Point3D), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+	}
+	return(S_OK);
+}
+
 // FUNCTION: 0x00465380
 HRESULT STDMETHODCALLTYPE BuildingTypeClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
 	*retval = CLSID_BuildingTypeClass;
 	return(S_OK);
+}
+
+// FUNCTION: 0x004653C0
+BuildingTypeClass * BuildingTypeClass::Find_Or_Make(char const * name)
+{
+	return(TFind_Or_Make<BuildingTypeClass>(name, BuildingTypes));
+}
+
+// FUNCTION: 0x00465450
+void BuildingTypeClass::Post_Load_Game(void)
+{
+	int maxcloak = 0;
+
+	for (int sindex = 0; sindex < BuildingTypes.Count(); sindex++) {
+		BuildingTypeClass * classptr = BuildingTypes[sindex];
+		maxcloak = MAX(maxcloak, classptr->CloakRadiusInCells);
+	}
+
+	if (maxcloak != 0) {
+		delete CloakingSurface;
+		CloakingSurface = new BSurface(maxcloak + 16, maxcloak + 16, 1);
+	}
+
+	char buffer[60];
+	for (int i = 0; i < BuildingTypes.Count(); i++) {
+		BuildingTypeClass * building = BuildingTypes[i];
+		buffer[0] = '\0';
+		RuleINI->Get_String(building->Name(), "ToTile", NULL, buffer, sizeof(buffer));
+		IsometricTileType ittype = IsometricTileTypeClass::From_Name(buffer);
+		if (ittype >= ISOTILE_FIRST && ittype < IsometricTileTypes.Count()) {
+			building->ToTile = IsometricTileTypes[ittype];
+		}
+	}
+}
+
+// FUNCTION: 0x00465550
+Cell const * BuildingTypeClass::Exit_List(void) const
+{
+	BSizeType size = Size;
+	if (size == BSIZE_33_REF) {
+		size = BSIZE_33;
+	}
+	return(ExitLists[size]);
+}
+
+// FUNCTION: 0x00465910
+bool BuildingTypeClass::CanUseWaypoint(void) const
+{
+	return(false);
 }

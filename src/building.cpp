@@ -3494,6 +3494,200 @@ void BuildingClass::FUN_004549B0(void)
 	}
 }
 
+// FUNCTION: 0x00454CE0
+void __fastcall FUN_00454CE0(HouseClass * house)
+{
+}
+
+// FUNCTION: 0x00454CF0
+void BuildingClass::Enable_Cloak_Generator(void)
+{
+	if (Class->IsCloakGenerator) {
+		CloakGeneratorState = 1;
+		if (CurrentCloakRadius == Class->CloakRadiusInCells) {
+			CurrentCloakRadius = 0;
+		}
+		IsToDisplay = true;
+	}
+}
+
+// FUNCTION: 0x00454D30
+void BuildingClass::Disable_Cloak_Generator(void)
+{
+	if (Class->IsCloakGenerator) {
+		CloakGeneratorState = -1;
+		if (CurrentCloakRadius == 0) {
+			CurrentCloakRadius = Class->CloakRadiusInCells;
+		}
+		IsToDisplay = true;
+	}
+}
+
+// FUNCTION: 0x00454D70
+void __fastcall Cloak_Cell_Occupiers(CellClass * cellptr)
+{
+	ObjectClass * occupier = cellptr->Cell_Occupier();
+	while (occupier != NULL) {
+		RTTIType rtti = occupier->RTTI;
+		if (rtti == RTTI_UNIT || rtti == RTTI_INFANTRY || rtti == RTTI_AIRCRAFT) {
+			((FootClass *)occupier)->Sensed();
+		}
+		occupier = occupier->Next;
+	}
+}
+
+// FUNCTION: 0x004555D0
+bool BuildingClass::IsPowerOnline(void) const
+{
+	if (!IsOn && Overpowerers.Count() < 2) goto off;
+	if ((int)EMPLockRemaining > 0) goto off;
+	if (Strength == 0) goto off;
+	if (Class->IsPowered && Class->Drain > 0 && House->Power_Fraction() < 1.0 && Overpowerers.Count() < 2) goto off;
+	if (Class->PoweredSpecial) {
+		HouseClass * house = House;
+		if ((int)house->PowerBlackoutTimer != 0 || house->IsBeingDrained) goto off;
+	}
+	if (Class->NeedsEngineer && !HasEngineer) goto off;
+	if (Get_Mission() == MISSION_CONSTRUCTION) goto off;
+	if (Get_Mission() != MISSION_DECONSTRUCTION) return true;
+off:
+	return false;
+}
+
+// FUNCTION: 0x004556D0
+void BuildingClass::SensorArrayDeactivate(Cell cell)
+{
+	int radius = Class->CloakRadiusInCells;
+	int dist = radius * radius;
+	HousesType houseid = House->HeapID;
+	if (cell == CELL_NONE) {
+		cell = Center_Coord().As_Cell();
+	}
+	for (int y = -radius; y < radius; y++) {
+		for (int x = -radius; x < radius; x++) {
+			Cell newcell = Cell(cell.X + x, cell.Y + y);
+			if (x * x + y * y < dist) {
+				CellClass * cellptr = &Map[newcell];
+				cellptr->Unsensed_By(houseid);
+				Cloak_Cell_Occupiers(cellptr);
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x00455820
+void BuildingClass::FUN_00455820(Cell cell)
+{
+	if (IsPowerOnline()) {
+		int radius = Class->SensorsSight;
+		int dist = radius * radius;
+		HousesType houseid = House->HeapID;
+		if (cell == CELL_NONE) {
+			cell = Center_Coord().As_Cell();
+		}
+		for (int y = -radius; y < radius; y++) {
+			for (int x = -radius; x < radius; x++) {
+				Cell newcell = Cell(cell.X + x, cell.Y + y);
+				if (x * x + y * y < dist) {
+					CellClass * cellptr = &Map[newcell];
+					cellptr->Sensed_By(houseid);
+					Cloak_Cell_Occupiers(cellptr);
+				}
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x00455980
+void BuildingClass::DisguiseDetectorDeactivate(Cell cell)
+{
+	int radius = Class->DetectDisguiseRange;
+	int dist = radius * radius;
+	HousesType houseid = House->HeapID;
+	if (cell == CELL_NONE) {
+		cell = Center_Coord().As_Cell();
+	}
+	for (int y = -radius; y < radius; y++) {
+		for (int x = -radius; x < radius; x++) {
+			Cell newcell = Cell(cell.X + x, cell.Y + y);
+			if (x * x + y * y < dist) {
+				CellClass * cellptr = &Map[newcell];
+				cellptr->Disguise_Unsensed_By(houseid);
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x00455A80
+void BuildingClass::SensorArrayActivate(Cell cell)
+{
+	if (IsPowerOnline()) {
+		int radius = Class->DetectDisguiseRange;
+		int dist = radius * radius;
+		HousesType houseid = House->HeapID;
+		if (cell == CELL_NONE) {
+			cell = Center_Coord().As_Cell();
+		}
+		for (int y = -radius; y < radius; y++) {
+			for (int x = -radius; x < radius; x++) {
+				Cell newcell = Cell(cell.X + x, cell.Y + y);
+				if (x * x + y * y < dist) {
+					CellClass * cellptr = &Map[newcell];
+				cellptr->Disguise_Sensed_By(houseid);
+				}
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x00455B90
+int BuildingClass::Get_Firestorm_Wall_Frame(void)
+{
+	unsigned frame = 0;
+	CellClass * cellptr = &Map[Get_Coord()];
+	for (int i = FACING_N; i < FACING_COUNT; i += FACING_90) {
+		BuildingClass * building = cellptr->Adjacent_Cell((FacingType)i).Cell_Building();
+		if (building != NULL && building->Class->IsFirestormWall) {
+			if (!building->IsInLimbo && building->IsActive) {
+				frame |= 1 << (i >> 1);
+			}
+		}
+	}
+	return(frame);
+}
+
+// FUNCTION: 0x00455C20
+Rect BuildingClass::Get_Render_Rect(void)
+{
+	Coord render = Render_Coord();
+	Point2D tac(TacticalMap->TacPixelX, TacticalMap->TacPixelY);
+	Rect rect;
+
+	if (render == LastRenderCoord && tac == LastRenderOffset) {
+		rect = LastRenderRect;
+	} else {
+		Point2D pixel;
+		TacticalMap->Coord_To_Pixel(render, pixel);
+		rect = Class->Get_Draw_Rect() + pixel;
+		LastRenderCoord = render;
+		LastRenderOffset = tac;
+		LastRenderRect = rect;
+	}
+
+	return(rect);
+}
+
+// FUNCTION: 0x00455D50
+void BuildingClass::Assign_Destination(AbstractClass * target, bool immediate)
+{
+	if (CurrentMission != MISSION_DECONSTRUCTION) {
+		if (Is_Move_Override() || Class->IsConstructionYard) {
+			ArchiveTarget = target;
+		}
+		BASECLASS::Assign_Destination(target, immediate);
+	}
+}
+
 // FUNCTION: 0x00459E80
 HRESULT STDMETHODCALLTYPE BuildingClass::GetClassID(CLSID * retval)
 {

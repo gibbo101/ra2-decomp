@@ -63,6 +63,10 @@
 #include "fastmath.h"
 
 extern Rect TacticalDimensions;
+void __fastcall FUN_00731D00(int mode);
+extern ObjectClass const * DAT_00880978;
+extern int DAT_0088097C;
+extern int DAT_00880980;
 namespace Unsorted { extern bool ArmageddonMode; }
 namespace FileSystem { extern ShapeSet * GRFXTXT_SHP; extern ConvertClass * GRFXTXT_Convert; }
 Point2D Lerp(Point2D const & a, Point2D const & b, float t);
@@ -980,56 +984,56 @@ int Tactical::Cell_Shadow(Cell const & cell, bool fog)
 
 	if (fog) {
 		// Presume solid black if that is what is here already.
-		if (!cellptr->IsPlot && !cellptr->IsCursorHere) value = -2;
+		if (!cellptr->IsFogVisible && !cellptr->IsFogMapped) value = -2;
 
-		if (cellptr->IsCursorHere) {
+		if (cellptr->IsFogMapped) {
 			// Index the lookup table by which of the 8 surrounding cells are black; bit 0x80 is
 			// directly north and the bits run clockwise from the upper-right corner.
 			Cell c;
 			c = cell + Cell(-1, -1);
-			if (!Map[c].IsCursorHere) index |= 0x40;
+			if (!Map[c].IsFogMapped) index |= 0x40;
 			c = cell + Cell(+0, -1);
-			if (!Map[c].IsCursorHere) index |= 0x80;
+			if (!Map[c].IsFogMapped) index |= 0x80;
 			c = cell + Cell(+1, -1);
-			if (!Map[c].IsCursorHere) index |= 0x01;
+			if (!Map[c].IsFogMapped) index |= 0x01;
 			c = cell + Cell(-1, +0);
-			if (!Map[c].IsCursorHere) index |= 0x20;
+			if (!Map[c].IsFogMapped) index |= 0x20;
 			c = cell + Cell(+1, +0);
-			if (!Map[c].IsCursorHere) index |= 0x02;
+			if (!Map[c].IsFogMapped) index |= 0x02;
 			c = cell + Cell(-1, +1);
-			if (!Map[c].IsCursorHere) index |= 0x10;
+			if (!Map[c].IsFogMapped) index |= 0x10;
 			c = cell + Cell(+0, +1);
-			if (!Map[c].IsCursorHere) index |= 0x08;
+			if (!Map[c].IsFogMapped) index |= 0x08;
 			c = cell + Cell(+1, +1);
-			if (!Map[c].IsCursorHere) index |= 0x04;
+			if (!Map[c].IsFogMapped) index |= 0x04;
 
 			value = _shadow[index];
 		}
 	} else {
 
 		// Presume solid black if that is what is here already.
-		if (!cellptr->IsAltUnknown && !cellptr->IsFogVisible) value = -2;
+		if (!cellptr->IsVisible && !cellptr->IsMapped) value = -2;
 
-		if (cellptr->IsFogVisible) {
+		if (cellptr->IsMapped) {
 			// Index the lookup table by which of the 8 surrounding cells are black; bit 0x80 is
 			// directly north and the bits run clockwise from the upper-right corner.
 			Cell c;
 			c = cell + Cell(-1, -1);
-			if (!Map[c].IsFogVisible) index |= 0x40;
+			if (!Map[c].IsMapped) index |= 0x40;
 			c = cell + Cell(+0, -1);
-			if (!Map[c].IsFogVisible) index |= 0x80;
+			if (!Map[c].IsMapped) index |= 0x80;
 			c = cell + Cell(+1, -1);
-			if (!Map[c].IsFogVisible) index |= 0x01;
+			if (!Map[c].IsMapped) index |= 0x01;
 			c = cell + Cell(-1, +0);
-			if (!Map[c].IsFogVisible) index |= 0x20;
+			if (!Map[c].IsMapped) index |= 0x20;
 			c = cell + Cell(+1, +0);
-			if (!Map[c].IsFogVisible) index |= 0x02;
+			if (!Map[c].IsMapped) index |= 0x02;
 			c = cell + Cell(-1, +1);
-			if (!Map[c].IsFogVisible) index |= 0x10;
+			if (!Map[c].IsMapped) index |= 0x10;
 			c = cell + Cell(+0, +1);
-			if (!Map[c].IsFogVisible) index |= 0x08;
+			if (!Map[c].IsMapped) index |= 0x08;
 			c = cell + Cell(+1, +1);
-			if (!Map[c].IsFogVisible) index |= 0x04;
+			if (!Map[c].IsMapped) index |= 0x04;
 
 			value = _shadow[index];
 		}
@@ -1203,10 +1207,258 @@ void Tactical::Modify_Rubber_Band(Point2D const & point)
 	}
 }
 
+// FUNCTION: 0x006D9FF0
+void Tactical::Select_Rubber_Band(void (*select_callback)(ObjectClass * object))
+{
+	if (RubberBandStart != Point2D(0, 0)) {
+
+		Point2D start = RubberBandStart;
+		Point2D end = RubberBandEnd;
+
+		if (start.X > end.X) {
+			swap(start.X, end.X);
+		}
+		if (start.Y > end.Y) {
+			swap(start.Y, end.Y);
+		}
+
+		Select_These(Rect(start, end.X - start.X + 1, end.Y - start.Y + 1), select_callback);
+		RubberBandStart = Point2D(0, 0);
+	}
+}
+
+// FUNCTION: 0x006DA080
+int Tactical::Rubber_Band_Contains_Selectable(void)
+{
+	Point2D start = RubberBandStart;
+	Point2D end = RubberBandEnd;
+
+	if (start.X > end.X) {
+		swap(start.X, end.X);
+	}
+	if (start.Y > end.Y) {
+		swap(start.Y, end.Y);
+	}
+
+	Rect rect(start, end.X - start.X + 1, end.Y - start.Y + 1);
+	if (rect.Is_Valid()) {
+		for (int index = 0; index < SelectableCount; index++) {
+			if (SelectableObjects[index].Object != NULL && SelectableObjects[index].Object->IsActive) {
+				Point2D pos = SelectableObjects[index].Position - Point2D(TacPixelX, TacPixelY);
+				if (rect.Is_Point_Within(pos)) {
+					return(true);
+				}
+			}
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x006DA160
+void Tactical::End_Rubber_Band(void)
+{
+	RubberBandStart = Point2D(0, 0);
+	RubberBandEnd = Point2D(0, 0);
+}
+
+// FUNCTION: 0x006DA180
+void Tactical::Draw_Rubber_Band(void)
+{
+	if (RubberBandStart != Point2D(0, 0)) {
+
+		Point2D start = RubberBandStart;
+		Point2D end = RubberBandEnd;
+
+		if (end.X < start.X) {
+			swap(start.X, end.X);
+		}
+		if (end.Y < start.Y) {
+			swap(start.Y, end.Y);
+		}
+
+		int w = (end.X - start.X) + 1;
+		int h = (end.Y - start.Y) + 1;
+		int color = NormalDrawer->Convert_Pixel(15);
+		Rect rect(start, w, h);
+		LogicalSurface->Draw_Rect(TacticalRect, rect, color);
+	}
+}
+
+// FUNCTION: 0x006DA230
+FacingType Tactical::Scroll_Dir(FacingType dir)
+{
+	static Point2D _scroll[FACING_COUNT] = 	{
+		Point2D(0, -1),
+		Point2D(1, -1),
+		Point2D(1, 0),
+		Point2D(1, 1),
+		Point2D(0, 1),
+		Point2D(-1, 1),
+		Point2D(-1, 0),
+		Point2D(-1, -1)
+	};
+
+	static FacingType _newdir[9] = {
+		FACING_NW, FACING_N, FACING_NE,
+		FACING_W, FACING_NONE, FACING_E,
+		FACING_SW, FACING_S, FACING_SE
+	};
+
+	Point2D oldpos = TacticalCoord;
+	Point2D newpos = oldpos + _scroll[dir];
+
+	if (newpos != oldpos) {
+		Point2D diff = TacticalCoord - Clamp_Pixel_To_Tactical(newpos);
+		return(_newdir[(diff.Y + 1) * 3 + diff.X + 1]);
+	}
+	return(dir);
+}
+
+// FUNCTION: 0x006DA350 $E218
+
 // FUNCTION: 0x006DA360
 Cell Tactical::Clamp_Cursor_To_Tactical(Cell const & cell, Cell const * list)
 {
 	return(cell);
+}
+
+// FUNCTION: 0x006DA370
+void Tactical::Noop(int)
+{
+}
+
+// FUNCTION: 0x006DA380
+ObjectClass * Tactical::Get_Selectable_Object(Point2D const & point)
+{
+	ObjectClass * best = NULL;
+	unsigned int bestdist = -1;
+
+	int pixelx = point.X + TacPixelX;
+	int pixely = point.Y + TacPixelY;
+
+	for (int index = 0; index < SelectableCount; index++) {
+		Selectable & sel = SelectableObjects[index];
+		ObjectClass * obj = sel.Object;
+
+		if (obj != NULL) {
+
+			TechnoClass const * tech = Dynamic_Cast<TechnoClass const *>((AbstractClass const *)obj);
+			bool pass = false;
+
+			if (tech != NULL) {
+				if (obj->IsActive && !tech->IsInLimbo) {
+					if (tech->IsOwnedByPlayer || tech->Cloak != CLOAKED || Map[tech->Center_Coord()].Is_Sensed(PlayerPtr->HeapID)) {
+						pass = true;
+					}
+				}
+			}
+
+			if (tech == NULL) {
+				if (obj->Class_Of() != NULL && obj->Class_Of()->RTTI == RTTI_TERRAINTYPE) {
+					TerrainTypeClass * type = (TerrainTypeClass *)obj->Class_Of();
+					if (type->IsVeinhole) {
+						pass = true;
+					}
+				}
+			}
+
+			if (pass) {
+				Point2D pos = sel.Position - Point2D(pixelx, pixely);
+				unsigned int dist = int(double(pos.X * pos.X) + double(pos.Y * pos.Y) * 0.5);
+				if (dist < bestdist && dist < 200) {
+					bestdist = dist;
+					best = obj;
+				}
+			}
+		}
+	}
+	if (best != NULL) {
+		return(best);
+	}
+
+	return(Map[Cell(Pixel_To_Cell(TacticalRect.Top_Left() + point))].Cell_Occupier());
+}
+
+// FUNCTION: 0x006DA560
+void Tactical::Detach(AbstractClass const * target, bool all)
+{
+	for (int index = 0; index < MAX_SELECTABLE_OBJECTS; index++) {
+		Selectable & sel = SelectableObjects[index];
+		if (sel.Object == (ObjectClass *)target) {
+			sel.Object = NULL;
+		}
+	}
+
+	if (target == DAT_00880978) {
+		Map.FUN_004A8D50(NULL);
+		DAT_00880978 = NULL;
+		DAT_0088097C = 0;
+		DAT_00880980 = -1;
+	}
+}
+
+bool FUN_00732D00(void);
+namespace Game { void __fastcall UICommands_TypeSelect_7327D0(char const * name); }
+
+// FUNCTION: 0x006DA5C0
+void Tactical::Select_These(Rect const & rect, void (*select_callback)(ObjectClass * object))
+{
+	AllowVoice = true;
+
+	if (rect.Is_Valid()) {
+
+		for (int index = 0; index < SelectableCount; index++) {
+			ObjectClass * obj = SelectableObjects[index].Object;
+
+			if (obj == NULL || !obj->IsActive) {
+				continue;
+			}
+
+			Point2D pos = SelectableObjects[index].Position - Point2D(TacPixelX, TacPixelY);
+
+			if (!rect.Is_Point_Within(pos)) {
+				continue;
+			}
+
+			if (FUN_00732D00()) {
+				Game::UICommands_TypeSelect_7327D0(obj->Class_Of()->IniName);
+				continue;
+			}
+
+			if (select_callback == NULL) {
+
+				bool force = false;
+
+				if (obj->RTTI == RTTI_BUILDING) {
+					BuildingTypeClass * type = ((BuildingClass *)obj)->Class;
+					if (type->UndeploysInto && type->IsVehicle()) {
+						force = true;
+					}
+				}
+
+				HouseClass * hptr = obj->Owner_HouseClass();
+				if (hptr != NULL && hptr->Is_Player_Control() &&
+					obj->CanBeSelected() &&
+					(obj->RTTI != RTTI_BUILDING || force)) {
+					if (obj->Select()) {
+						AllowVoice = false;
+					}
+				}
+			} else {
+				select_callback(obj);
+			}
+		}
+	}
+	AllowVoice = true;
+}
+
+// FUNCTION: 0x006DA740
+void __fastcall FUN_006DA740(Tactical * tactical)
+{
+	while (CurrentObject.Count()) {
+		CurrentObject[0]->Unselect();
+	}
+	FUN_00731D00(0);
 }
 
 // FUNCTION: 0x006DA980

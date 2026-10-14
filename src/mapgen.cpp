@@ -153,6 +153,66 @@ extern int DAT_00ABEC90;
 extern int DAT_00ABECD0;
 extern Cell DAT_00ABE304[8];
 extern Point2D DAT_00ABE328[8];
+extern char const * DAT_0082B034[5];
+extern char const * DAT_0082B048[4];
+extern char const * DAT_0082B060[4];
+extern char const * DAT_0082B070[4];
+struct BiomeNameEntry {
+	char Name[0x70];
+};
+extern BiomeNameEntry DAT_007E1B88[2];
+extern char DAT_00ABECA0[];
+extern int DAT_0082B0A8[];
+extern int DAT_0082B0BC[];
+extern int DAT_0082B10C[];
+extern int DAT_0082B120[];
+extern int DAT_0082B0F8[];
+extern int DAT_00ABED40[];
+extern int DAT_0082B0D0[];
+extern int DAT_00ABED18[];
+extern int DAT_0082B080[];
+extern int DAT_0082B094[];
+extern int * DAT_00ABE260;
+extern int * DAT_00ABE27C;
+
+struct TerritoryData {
+	void * VTable;
+	int RefCount;
+	int Index;
+	unsigned short Seed;
+	unsigned char Pad0[0x12 - 0x0E];
+	unsigned char Width;
+	unsigned char Height;
+	unsigned char Pad1[0x18 - 0x14];
+	int Resources;
+	unsigned char MapType;
+	unsigned char Biome;
+	unsigned char Time;
+	unsigned char CliffsMin;
+	unsigned char CliffsMax;
+	unsigned char Cliffs;
+	unsigned char AccessibilityMin;
+	unsigned char AccessibilityMax;
+	unsigned char Accessibility;
+	unsigned char HillsMin;
+	unsigned char HillsMax;
+	unsigned char Hills;
+	unsigned char WaterMin;
+	unsigned char WaterMax;
+	unsigned char Water;
+	unsigned char TiberiumMin;
+	unsigned char TiberiumMax;
+	unsigned char Tiberium;
+	unsigned char LayoutMin;
+	unsigned char LayoutMax;
+	unsigned char Layout;
+	unsigned char VegetationMin;
+	unsigned char VegetationMax;
+	unsigned char Vegetation;
+	unsigned char CitiesMin;
+	unsigned char CitiesMax;
+	unsigned char Cities;
+};
 
 // FUNCTION: 0x0058B740 $E185
 // FUNCTION: 0x0058B760 $E183
@@ -1667,6 +1727,336 @@ done:
 	Fixup_Settings();
 }
 
+// FUNCTION: 0x00596E50
+void MapSeedClass::Set_Settings(HWND dialog)
+{
+	HWND handle;
+	LRESULT item;
+	int i;
+
+	Fixup_Settings();
+
+	handle = GetDlgItem(dialog, 0x3EA);
+	while (SendMessageA(handle, CB_GETCOUNT, 0, 0) > 0) {
+		SendMessageA(handle, CB_DELETESTRING, 0, 0);
+	}
+	for (i = 0; i < 4; i++) {
+		item = SendMessageA(handle, 0x4C2, 0, (LPARAM)StringTable::LoadString(DAT_0082B060[i], NULL, "D:\\ra2mdpost\\MapGen.cpp", 4883));
+		SendMessageA(handle, CB_SETITEMDATA, item, i);
+	}
+	item = SendMessageA(handle, 0x4BE, 0, (LPARAM)StringTable::LoadString(DAT_0082B060[Time], NULL, "D:\\ra2mdpost\\MapGen.cpp", 4887));
+	SendMessageA(handle, CB_SETCURSEL, item, 0);
+
+	handle = GetDlgItem(dialog, 0x406);
+	while (SendMessageA(handle, CB_GETCOUNT, 0, 0) > 0) {
+		SendMessageA(handle, CB_DELETESTRING, 0, 0);
+	}
+	for (i = 0; i < 4; i++) {
+		item = SendMessageA(handle, 0x4C2, 0, (LPARAM)StringTable::LoadString(DAT_0082B070[i], NULL, "D:\\ra2mdpost\\MapGen.cpp", 4898));
+		SendMessageA(handle, CB_SETITEMDATA, item, i);
+	}
+	item = SendMessageA(handle, 0x4BE, 0, (LPARAM)StringTable::LoadString(DAT_0082B070[Width], NULL, "D:\\ra2mdpost\\MapGen.cpp", 4902));
+	SendMessageA(handle, CB_SETCURSEL, item, 0);
+
+	handle = GetDlgItem(dialog, 0x405);
+	while (SendMessageA(handle, CB_GETCOUNT, 0, 0) > 0) {
+		SendMessageA(handle, CB_DELETESTRING, 0, 0);
+	}
+	for (i = 1; i < 5; i++) {
+		item = SendMessageA(handle, 0x4C2, 0, (LPARAM)StringTable::LoadString(DAT_0082B034[i], NULL, "D:\\ra2mdpost\\MapGen.cpp", 4914));
+		SendMessageA(handle, CB_SETITEMDATA, item, i);
+	}
+	item = SendMessageA(handle, 0x4BE, 0, (LPARAM)StringTable::LoadString(DAT_0082B034[MapType], NULL, "D:\\ra2mdpost\\MapGen.cpp", 4918));
+	SendMessageA(handle, CB_SETCURSEL, item, 0);
+
+	handle = GetDlgItem(dialog, 0x407);
+	while (SendMessageA(handle, CB_GETCOUNT, 0, 0) > 0) {
+		SendMessageA(handle, CB_DELETESTRING, 0, 0);
+	}
+	for (i = 0; i < 2; i++) {
+		item = SendMessageA(handle, 0x4C2, 0, (LPARAM)StringTable::LoadString(DAT_007E1B88[i].Name, NULL, "D:\\ra2mdpost\\MapGen.cpp", 4930));
+		SendMessageA(handle, CB_SETITEMDATA, item, i);
+	}
+	item = SendMessageA(handle, 0x4BE, 0, (LPARAM)StringTable::LoadString(DAT_007E1B88[Biome].Name, NULL, "D:\\ra2mdpost\\MapGen.cpp", 4934));
+	SendMessageA(handle, CB_SETCURSEL, item, 0);
+
+	handle = GetDlgItem(dialog, 0x408);
+	while (SendMessageA(handle, CB_GETCOUNT, 0, 0) > 0) {
+		SendMessageA(handle, CB_DELETESTRING, 0, 0);
+	}
+	for (i = 0; i < 4; i++) {
+		item = SendMessageA(handle, 0x4C2, 0, (LPARAM)StringTable::LoadString(DAT_0082B048[i], NULL, "D:\\ra2mdpost\\MapGen.cpp", 4945));
+		SendMessageA(handle, CB_SETITEMDATA, item, i);
+	}
+	item = SendMessageA(handle, 0x4BE, 0, (LPARAM)StringTable::LoadString(DAT_0082B048[Resources], NULL, "D:\\ra2mdpost\\MapGen.cpp", 4949));
+	SendMessageA(handle, CB_SETCURSEL, item, 0);
+
+	handle = GetDlgItem(dialog, 0x3FB);
+	sprintf(DAT_00ABECA0, "%d", Seed);
+	SendMessageA(handle, 0x4B4, 0, (LPARAM)DAT_00ABECA0);
+
+	handle = GetDlgItem(dialog, 0x3EB);
+	int players = NumPlayers;
+	SendMessageA(handle, 0x406, 1, 0x80002);
+	SendMessageA(handle, 0x405, 1, players);
+	NumPlayers = players;
+}
+
+// FUNCTION: 0x00597260
+void MapSeedClass::Randomize(int map_type)
+{
+	WaterAmount = Sim_Random_Pick(DAT_0082B0A8[map_type], DAT_0082B0BC[map_type]);
+	Hills = Sim_Random_Pick(DAT_0082B10C[map_type], DAT_0082B120[map_type]);
+	Cities = Sim_Random_Pick(DAT_00ABED40[map_type], DAT_0082B0F8[map_type]);
+	Accessibility = Sim_Random_Pick(DAT_00ABED18[map_type], DAT_0082B0D0[map_type]);
+	Cliffs = Sim_Random_Pick(DAT_0082B080[map_type], DAT_0082B094[map_type]);
+	Tiberium = Resources * 20;
+	TiberiumLayout = Sim_Random_Pick(0, 100);
+
+	int low = DAT_00ABE260[map_type];
+	int high = DAT_00ABE27C[map_type];
+	if (low < 0) {
+		low = 0;
+	} else if (low > 100) {
+		low = 100;
+	}
+	if (high < 0) {
+		high = 0;
+	} else if (high > 100) {
+		high = 100;
+	}
+	if (low > high) {
+		low = high;
+	}
+	Vegetation = Sim_Random_Pick(low, high);
+	Seed = Sim_Random_Pick(0, 65535);
+}
+
+// FUNCTION: 0x00597380
+void MapSeedClass::Randomize(void)
+{
+	Biome = Sim_Random_Pick(0U, 100U) >= 50;
+	MapType = Sim_Random_Pick(1, 4);
+	Time = Sim_Random_Pick(0, 3);
+	Resources = Sim_Random_Pick(0, 3);
+	Height = Width = Sim_Random_Pick(0, 3);
+	Randomize(MapType);
+	wcscpy(MapDescription, StringTable::LoadString("TXT_RANDOM_MAP_DESCRIPTION", NULL, "D:\\ra2mdpost\\MapGen.cpp", 3934));
+	Seed = Sim_Random_Pick(0, 65535);
+	Fixup_Settings();
+}
+
+#define WDT ((TerritoryData *)territory.Ptr)
+
+// FUNCTION: 0x00597430
+void MapSeedClass::Fixup_WDT_Settings(void)
+{
+	TerritoryRef territory;
+	if (Session.Type == GAME_INTERNET && Session.unknown_0C == 3) {
+		territory.Set(WDT_Get_Territory_Ref(Session.unknown_08).Ptr);
+	}
+
+	if (territory.Ptr != NULL) {
+		Seed = WDT->Seed == 0 ? Sim_Random_Pick(0U, 65535U) : WDT->Seed;
+
+		switch (WDT->Width) {
+			case 0:
+				Width = 0;
+				break;
+			case 1:
+				Width = 1;
+				break;
+			case 2:
+				Width = 2;
+				break;
+			case 3:
+				Width = 3;
+				break;
+			default:
+				Width = 1;
+				break;
+		}
+
+		switch (WDT->Height) {
+			case 0:
+				Height = 0;
+				break;
+			case 1:
+				Height = 1;
+				break;
+			case 2:
+				Height = 2;
+				break;
+			case 3:
+				Height = 3;
+				break;
+			default:
+				Height = 1;
+				break;
+		}
+
+		NumPlayers = 4;
+
+		switch (WDT->Time) {
+			case 2:
+				Time = 0;
+				break;
+			case 0:
+				Time = 1;
+				break;
+			case 1:
+				Time = 2;
+				break;
+			case 3:
+				Time = 3;
+				break;
+			default:
+				Time = 1;
+				break;
+		}
+
+		MapType = WDT->MapType;
+		Biome = WDT->Biome;
+		Cliffs = WDT->Cliffs;
+		Accessibility = WDT->Accessibility;
+		Hills = WDT->Hills;
+		WaterAmount = WDT->Water;
+		Tiberium = WDT->Tiberium;
+		TiberiumLayout = WDT->Layout;
+		Vegetation = WDT->Vegetation;
+		Cities = WDT->Cities;
+		Resources = WDT->Resources;
+	}
+}
+
+#undef WDT
+
+// FUNCTION: 0x005975E0
+void MapSeedClass::Fixup_Settings(void)
+{
+	if (Resources >= 4) {
+		Resources = 3;
+	} else if (Resources < 0) {
+		Resources = 0;
+	}
+	if (MapType >= 5) {
+		MapType = 4;
+	} else if (MapType < 0) {
+		MapType = 0;
+	}
+	if (Time >= 4) {
+		Time = 3;
+	} else if (Time < 0) {
+		Time = 0;
+	}
+	if (Hills > 100) {
+		Hills = 100;
+	} else if (Hills < 0) {
+		Hills = 0;
+	}
+	if (WaterAmount > 100) {
+		WaterAmount = 100;
+	} else if (WaterAmount < 0) {
+		WaterAmount = 0;
+	}
+	if (NumPlayers > 8) {
+		NumPlayers = 8;
+	} else if (NumPlayers < 2) {
+		NumPlayers = 2;
+	}
+	if (Tiberium > 100) {
+		Tiberium = 100;
+	} else if (Tiberium < 1) {
+		Tiberium = 1;
+	}
+	if (TiberiumLayout > 100) {
+		TiberiumLayout = 100;
+	} else if (TiberiumLayout < 0) {
+		TiberiumLayout = 0;
+	}
+	if (Vegetation > 100) {
+		Vegetation = 100;
+	} else if (Vegetation < 0) {
+		Vegetation = 0;
+	}
+	if (Cities > 100) {
+		Cities = 100;
+	} else if (Cities < 0) {
+		Cities = 0;
+	}
+	if (Width >= 4) {
+		Width = 3;
+	} else if (Width < 0) {
+		Width = 0;
+	}
+	if (Height >= 4) {
+		Height = 3;
+	} else if (Height < 0) {
+		Height = 0;
+	}
+	if (Accessibility > 100) {
+		Accessibility = 100;
+	} else if (Accessibility < 0) {
+		Accessibility = 0;
+	}
+	if (Cliffs > 100) {
+		Cliffs = 100;
+	} else if (Cliffs < 0) {
+		Cliffs = 0;
+	}
+	if (Seed > 65535) {
+		Seed = 65535;
+	} else if (Seed < 0) {
+		Seed = 0;
+	}
+}
+
+// FUNCTION: 0x00597730
+bool MapSeedClass::Save(const char * name)
+{
+	if (name) {
+		return(Save_File(name, MapDescription));
+	}
+
+	if (BASECLASS::Save(MapDescription)) {
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00597760
+bool MapSeedClass::Save_File(const char * file_name, const wchar_t * descr)
+{
+	if (file_name != NULL) {
+		DebugString("Saving random map: %s - %ls\n", file_name, descr);
+		CCFileClass file(file_name);
+		INIClass ini;
+		if (descr) {
+			wcscpy(MapDescription, descr);
+		}
+		ini.Put_UnicodeString("RandomMap", "Description", descr);
+		ini.Put_Int("RandomMap", "Width", Width, 0);
+		ini.Put_Int("RandomMap", "Height", Height, 0);
+		ini.Put_Int("RandomMap", "NumPlayers", NumPlayers, 0);
+		ini.Put_Int("RandomMap", "Seed", Seed, 0);
+		ini.Put_Int("RandomMap", "MapType", MapType, 0);
+		ini.Put_Int("RandomMap", "Theater", Biome, 0);
+		ini.Put_Int("RandomMap", "Time", Time, 0);
+		ini.Put_Int("RandomMap", "RegionSize", Cliffs, 0);
+		ini.Put_Int("RandomMap", "Ruggedness", Hills, 0);
+		ini.Put_Int("RandomMap", "Accessibility", Accessibility, 0);
+		ini.Put_Int("RandomMap", "WaterAmount", WaterAmount, 0);
+		ini.Put_Int("RandomMap", "Tiberium", Tiberium, 0);
+		ini.Put_Int("RandomMap", "TiberiumLayout", TiberiumLayout, 0);
+		ini.Put_Int("RandomMap", "Vegetation", Vegetation, 0);
+		ini.Put_Int("RandomMap", "UrbanPresence", Cities, 0);
+		ini.Put_Int("RandomMap", "Resources", Resources, 0);
+		ini.Save(file);
+		return(true);
+	}
+	return(false);
+}
+
 // FUNCTION: 0x00597A10
 bool MapSeedClass::Load(const char * name)
 {
@@ -1680,10 +2070,64 @@ bool MapSeedClass::Load(const char * name)
 	return(false);
 }
 
+// FUNCTION: 0x00597D40
+bool MapSeedClass::Delete(void)
+{
+	return(BASECLASS::Delete());
+}
+
 // FUNCTION: 0x00597D50
 bool MapSeedClass::Delete_File(const char * file_name)
 {
 	return(BASECLASS::Delete_File(file_name));
+}
+
+extern wchar_t DAT_00887734[];
+
+// FUNCTION: 0x00597D60
+bool MapSeedClass::Read_File(FileEntryClass * entry, WIN32_FIND_DATAA * ff)
+{
+	wchar_t buffer[128];
+
+	if (entry != NULL && ff != NULL) {
+		if (stricmp(ff->cFileName, RANDOM_MAP_FILE_NAME) && stricmp(ff->cFileName, "lastmap.sed")) {
+			CCFileClass file(ff->cFileName);
+			INIClass ini;
+			if (ini.Load(file, false)) {
+				if (ini.Get_UnicodeString("RandomMap", "Description", DAT_00887734, buffer, 128) > 0) {
+					wcsncpy(entry->Descr, buffer, 128);
+					entry->Old = false;
+					entry->Valid = true;
+				} else {
+					entry->Descr[0] = 0;
+					entry->Old = true;
+					entry->Valid = false;
+				}
+				entry->Scenario = 0;
+				entry->House = HOUSE_FIRST;
+				strncpy(entry->Filename, ff->cFileName, 32);
+				if (!strlen(entry->Filename)) {
+					strncpy(entry->Filename, ff->cAlternateFileName, 32);
+				}
+				entry->DateTime.dwHighDateTime = ff->ftLastWriteTime.dwHighDateTime;
+				entry->DateTime.dwLowDateTime = ff->ftLastWriteTime.dwLowDateTime;
+				return(true);
+			}
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00597F80
+wchar_t const * MapSeedClass::GetUIString_Load(void) const
+{
+	return StringTable::LoadString("GUI:LoadMapMenu", NULL, "D:\\ra2mdpost\\MapGen.cpp", 5572);
+}
+
+// FUNCTION: 0x00597FA0
+wchar_t const * MapSeedClass::GetUIString_Save(void) const
+{
+	return StringTable::LoadString("GUI:SaveMapMenu", NULL, "D:\\ra2mdpost\\MapGen.cpp", 5578);
 }
 
 // FUNCTION: 0x00598000
@@ -1825,7 +2269,7 @@ bool MapGeneratorClass::Region_Cell_Count_At_Least(Rect const & rect, int region
 bool MapGeneratorClass::Expand_All_High_Ground(void)
 {
 	bool success = true;
-	Map.Set_Cursor_Shape(NULL);
+	Map.SetActiveFoundation(NULL);
 	Map.Reset_Iterator();
 	CellClass *cptr = cptr = Map.Iterate();
 	while (cptr != NULL) {

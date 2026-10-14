@@ -61,3 +61,4 @@ address,name,symbol,evidence
 0x00AA0E28,IsometricTileTypeClass::BridgeSet,,theater init 0x00545150 stores BridgeSet here; CellClass::Is_Tile_Bridge 0x00486750 reads it
 0x00ABAD1C,IsometricTileTypeClass::TrainBridgeSet,,YR WoodBridgeSet; theater init stores it; CellClass::Is_Tile_Train_Bridge 0x00486770 reads it
 0x00577BB0,MapClass::Shroud_The_Map,,TibSun body; called by TeamClass::TMission_RESHROUD 0x006EE1B0
+0x00558790,LoadOptionsClass::~LoadOptionsClass,??1LoadOptionsClass@@UAE@XZ,plain destructor (vptr store, then the Files vector); 0x0055A0D0 is the deleting destructor that calls it

@@ -50,6 +50,180 @@
 // FUNCTION: 0x004D0700 $E32
 // FUNCTION: 0x004D0710 $E35
 
+// FUNCTION: 0x004D0730 $E38
+// FUNCTION: 0x004D0750 $E134
+// FUNCTION: 0x004D0790 $E131
+DynamicVectorClass<FoggedObjectClass *> FoggedObjectClass::FoggyObjects;
+
+// FUNCTION: 0x004D07F0 $E140
+// FUNCTION: 0x004D0820 $E137
+IndexClass<int, FoggedObjectClass *> FoggedObjectClass::FoggedObjectIndex;
+
+// FUNCTION: 0x004D0860
+FoggedObjectClass::FoggedObjectClass(NoInitClass const & x) :
+	BASECLASS(x)
+{
+}
+
+// FUNCTION: 0x004D08B0
+FoggedObjectClass::FoggedObjectClass(void) :
+	BASECLASS(),
+	Overlay(OVERLAY_NONE),
+	House(NULL),
+	OverlayData(0),
+	RTTI(RTTI_NONE),
+	Position(0,0,0),
+	BoundingRect(0,0,0,0),
+	CellHeight(0),
+	Smudge(SMUDGE_NONE),
+	SmudgeData(0),
+	Records(),
+	CanDraw(true)
+{
+	FoggyObjects.Add(this);
+}
+
+// FUNCTION: 0x004D0980
+FoggedObjectClass::FoggedObjectClass(Coord const & coord, OverlayType type, int data) :
+	BASECLASS(),
+	Overlay(type),
+	House(NULL),
+	OverlayData(data),
+	RTTI(RTTI_OVERLAY),
+	Position(coord),
+	CellHeight(Map[coord].Height),
+	Smudge(SMUDGE_NONE),
+	SmudgeData(0),
+	Records(),
+	CanDraw(true)
+{
+	CellClass * cellptr = &Map[coord];
+	BoundingRect = Union(cellptr->Overlay_Render_Rect(), cellptr->Overlay_Shadow_Render_Rect());
+	BoundingRect.X += TacticalMap->TacPixelX;
+	BoundingRect.Y += TacticalMap->TacPixelY;
+	BoundingRect -= TacticalRect.Top_Left();
+
+	FoggyObjects.Add(this);
+
+	Cell cell = Position.As_Cell();
+	int id = cell.As_Int() - RTTI + INT_MAX;
+	FoggedObjectIndex.Add_Index(id, this);
+}
+
+// FUNCTION: 0x004D0C40
+FoggedObjectClass::FoggedObjectClass(Coord const & coord, SmudgeType type, int data) :
+	BASECLASS(),
+	Overlay(OVERLAY_NONE),
+	House(NULL),
+	OverlayData(0),
+	RTTI(RTTI_SMUDGE),
+	CellHeight(Map[coord].Height),
+	Smudge(type),
+	SmudgeData(data),
+	Records(),
+	CanDraw(true)
+{
+	Coord crd;
+	Point2D point;
+	CellClass * cellptr = &Map[coord];
+	crd = Coord(coord);
+	crd.Z = LEVEL_LEPTON_H * cellptr->Height;
+	Position = crd;
+
+	TacticalMap->Coord_To_Pixel(crd, point);
+	point += Point2D(ISO_TILE_PIXEL_W / -2, ISO_TILE_PIXEL_H / -2);
+	BoundingRect = Rect(point.X, point.Y, ISO_TILE_PIXEL_W, ISO_TILE_PIXEL_H);
+	BoundingRect.X += TacticalMap->TacPixelX;
+	BoundingRect.Y += TacticalMap->TacPixelY;
+
+	FoggyObjects.Add(this);
+
+	Cell cell = Position.As_Cell();
+	int id = cell.As_Int() - RTTI + INT_MAX;
+	FoggedObjectIndex.Add_Index(id, this);
+}
+
+// FUNCTION: 0x004D0EF0
+FoggedObjectClass::FoggedObjectClass(BuildingClass * object, bool fade) :
+	BASECLASS(),
+	Overlay(OVERLAY_NONE),
+	House(object->House),
+	OverlayData(0),
+	RTTI(RTTI_BUILDING),
+	Position(object->PositionCoord),
+	CellHeight(Map[(Coord const &)object->PositionCoord].Height),
+	Smudge(SMUDGE_NONE),
+	SmudgeData(0),
+	Records(),
+	CanDraw(fade)
+{
+	BoundingRect = object->Get_Render_Rect();
+
+	FoggyObjects.Add(this);
+
+	Cell cell = Position.As_Cell();
+	int id = cell.As_Int() - RTTI + INT_MAX;
+	FoggedObjectIndex.Add_Index(id, this);
+
+	object->IsFogged = true;
+	int shapenum = object->Shape_Number();
+
+	DrawRecord record(object->Class, shapenum, 0, 0);
+	if (object->Class->IsLaserFence && (object->LaserFenceFrame == 12 || object->LaserFenceFrame == 8)) {
+		record.HeightAdjust = 1;
+	} else {
+		record.HeightAdjust = 0;
+		if (object->Class->IsFirestormWall) {
+			record.HeightAdjust = 1;
+		}
+	}
+	Records.Add(record);
+
+	for (int i = 0; i < BANIM_COUNT; i++) {
+		if (object->Anims[i] != NULL) {
+			object->Anims[i]->IsFogged = true;
+			AnimTypeClass *atype = object->Anims[i]->Type;
+			BoundingRect = Union(BoundingRect, object->Anims[i]->Get_Visual_Rect());
+			record.TypeClass = atype;
+			record.FrameNumber = atype->Start + object->Anims[i]->Animation.Fetch_Stage();
+			record.HeightAdjust = 0;
+			record.ZAdjust = object->Anims[i]->ZAdjust;
+			Records.Add(record);
+		}
+	}
+
+	TacticalMap->Register_Dirty_Area(BoundingRect);
+	BoundingRect.X += TacticalMap->TacPixelX;
+	BoundingRect.Y += TacticalMap->TacPixelY;
+}
+
+// FUNCTION: 0x004D1370
+FoggedObjectClass::FoggedObjectClass(TerrainClass * object) :
+	BASECLASS(),
+	Overlay(OVERLAY_NONE),
+	House(NULL),
+	OverlayData(0),
+	RTTI(RTTI_TERRAIN),
+	Position(object->PositionCoord),
+	CellHeight(Map[(Coord const &)object->PositionCoord].Height),
+	Smudge(SMUDGE_NONE),
+	SmudgeData(0),
+	Records(),
+	CanDraw(true)
+{
+	BoundingRect = object->Get_Render_Rect();
+	BoundingRect.X += TacticalMap->TacPixelX;
+	BoundingRect.Y += TacticalMap->TacPixelY;
+
+	FoggyObjects.Add(this);
+
+	Records.Add(DrawRecord(object->Class, 0, 0, 0));
+
+	Cell cell = Position.As_Cell();
+	int id = cell.As_Int() - RTTI + INT_MAX;
+	FoggedObjectIndex.Add_Index(id, this);
+}
+
 // FUNCTION: 0x004D27D0
 HRESULT STDMETHODCALLTYPE FoggedObjectClass::GetClassID(CLSID * retval)
 {

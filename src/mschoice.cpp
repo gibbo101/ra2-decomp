@@ -267,11 +267,15 @@ void MSSfxEntry::Play(void)
 // FUNCTION: 0x005D05A0 ?$DynamicVectorClass@VPoint2D@@::Clear
 // FUNCTION: 0x005D05D0 ?$DynamicVectorClass@VPoint2D@@::ID
 // FUNCTION: 0x005D05F0 ?$VectorClass@VPoint2D@@::GetItem
+// FUNCTION: 0x005D09C0 ?$DynamicVectorClass@VPoint2D@@::Resize
+// FUNCTION: 0x005D0AA0 ?$DynamicVectorClass@VPoint2D@@::ID
 template class DynamicVectorClass<Point2D>;
 
 // FUNCTION: 0x005D0610 ?$DynamicVectorClass@PAVMSTextEntry@@::Clear
 // FUNCTION: 0x005D0640 ?$DynamicVectorClass@PAVMSTextEntry@@::ID
 // FUNCTION: 0x005D0660 ?$VectorClass@PAVMSTextEntry@@::GetItem
+// FUNCTION: 0x005D0C60 ?$DynamicVectorClass@PAVMSTextEntry@@::Resize
+// FUNCTION: 0x005D0D10 ?$DynamicVectorClass@PAVMSTextEntry@@::ID
 template class DynamicVectorClass<MSTextEntry *>;
 
 // FUNCTION: 0x005D0670 ?$DynamicVectorClass@PAVMapSelection@@::Clear
@@ -300,3 +304,15 @@ template class DynamicVectorClass<MapStage *>;
 // FUNCTION: 0x005D0950 ?$VectorClass@VPoint2D@@::ID
 // FUNCTION: 0x005D09A0 ?$VectorClass@VPoint2D@@::ID
 template class VectorClass<Point2D>;
+
+// FUNCTION: 0x005D0AE0 ?$VectorClass@PAVMSTextEntry@@::operator==
+// FUNCTION: 0x005D0B20 ?$VectorClass@PAVMSTextEntry@@::Resize
+// FUNCTION: 0x005D0BD0 ?$VectorClass@PAVMSTextEntry@@::Clear
+// FUNCTION: 0x005D0C00 ?$VectorClass@PAVMSTextEntry@@::ID
+// FUNCTION: 0x005D0C40 ?$VectorClass@PAVMSTextEntry@@::ID
+template class VectorClass<MSTextEntry *>;
+
+// FUNCTION: 0x005D0D40 ?$VectorClass@PAVMapSelection@@::operator==
+// FUNCTION: 0x005D0D80 ?$VectorClass@PAVMapSelection@@::Resize
+// FUNCTION: 0x005D0E30 ?$VectorClass@PAVMapSelection@@::Clear
+template class VectorClass<MapSelection *>;

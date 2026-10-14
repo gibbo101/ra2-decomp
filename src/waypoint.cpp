@@ -12,6 +12,10 @@
 #include "tracker.h"
 #include "vector.h"
 
+// FUNCTION: 0x00763590 $E5
+// FUNCTION: 0x007635D0 $E3
+DynamicVectorClass<WaypointPathClass *> WaypointPaths;
+
 // FUNCTION: 0x00763610
 const char *Waypoint_To_Name(WAYPOINT wp)
 {
@@ -33,6 +37,24 @@ const char *Waypoint_To_Name(WAYPOINT wp)
 	return(_string);
 }
 
+// FUNCTION: 0x00763690
+WAYPOINT Waypoint_From_Name(const char *string)
+{
+	WAYPOINT wp = -1;
+
+	const int num_chars = ('Z' - 'A') + 1;
+
+	if (isalpha(string[0])) {
+		wp = toupper(string[0]) - 'A';
+
+		if (isalpha(string[1])) {
+			wp = toupper(string[1]) + (wp * num_chars) - ('A' - num_chars);
+		}
+	}
+
+	return(wp);
+}
+
 // FUNCTION: 0x007636F0
 WaypointClass::WaypointClass(void) :
 	Location(0,0,0)
@@ -43,6 +65,86 @@ WaypointClass::WaypointClass(void) :
 WaypointClass::WaypointClass(Coord const & coord) :
 	Location(coord)
 {
+}
+
+// FUNCTION: 0x00763720
+WaypointClass::~WaypointClass(void)
+{
+}
+
+// FUNCTION: 0x00763730
+WaypointPathClass::WaypointPathClass(void) :
+	BASECLASS(),
+	CurrentWaypoint(-1),
+	Waypoints()
+{
+	WaypointPaths.Add(this);
+}
+
+// FUNCTION: 0x007637D0
+WaypointPathClass::WaypointPathClass(NoInitClass const & x) :
+	BASECLASS(x),
+	Waypoints(x)
+{
+}
+
+// FUNCTION: 0x00763810
+WaypointPathClass::WaypointPathClass(int index) :
+	BASECLASS(),
+	CurrentWaypoint(-1),
+	Waypoints()
+{
+	if (index >= 0 && index < 12) {
+		WaypointPaths.Add(this);
+	}
+}
+
+// FUNCTION: 0x007638C0
+WaypointPathClass::~WaypointPathClass(void)
+{
+	Detach_This_From_All(this);
+	WaypointPaths.Delete(this);
+}
+
+// FUNCTION: 0x00763980
+WaypointClass * WaypointPathClass::Get_Waypoint(int index)
+{
+	if (index >= 0 && index < Waypoints.Count()) {
+		return(&Waypoints[index]);
+	}
+	return(NULL);
+}
+
+// FUNCTION: 0x007639A0
+bool WaypointPathClass::Add_Waypoint(Coord const & coord)
+{
+	Coord snapped = coord.As_Cell().As_Coord();
+	snapped.Z = coord.Z;
+	if (CurrentWaypoint == -1) {
+		Waypoints.Add(WaypointClass(snapped));
+	}
+	return(true);
+}
+
+// FUNCTION: 0x00763A50
+bool WaypointPathClass::Select_Waypoint(Coord const & coord)
+{
+	for (int i = 0; i < Waypoints.Count(); i++) {
+		if (Waypoints[i].Location.As_Cell() == coord.As_Cell()) {
+			CurrentWaypoint = i;
+			return(true);
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00763AF0
+void WaypointPathClass::Replace_Waypoint(int index, Coord const & coord)
+{
+	WaypointClass * wp = Get_Waypoint(index);
+	if (wp != NULL) {
+		wp->Location = coord;
+	}
 }
 
 // FUNCTION: 0x00763C30

@@ -22,6 +22,22 @@
 #include "wspipx.h"
 #include "wsproto.h"
 
+#pragma pack(push, 1)
+struct IPXPlayerNode {
+	wchar_t Name[20];
+	IPXAddressClass Address;
+	char pad[0x6f - 0x34];
+	int ID;
+};
+#pragma pack(pop)
+
+struct IPXAddressRaw { int a, b, c; };
+
+extern IPXPlayerNode ** DAT_00A8DA78;
+extern int DAT_00A8DA84;
+extern unsigned short DAT_00A8E2B2[];
+void __cdecl FUN_004068E0(char const * format, ...);
+
 // FUNCTION: 0x005408F0
 IPXManagerClass::IPXManagerClass (int glb_maxlen, int pvt_maxlen,
 	int glb_num_packets, int pvt_num_packets, unsigned short socket,
@@ -343,4 +359,145 @@ int IPXManagerClass::Delete_Connection(int id)
 	}
 
 	return(0);
+}
+
+// FUNCTION: 0x00540F90
+int IPXManagerClass::Num_Connections(void)
+{
+	return NumConnections;
+}
+
+// FUNCTION: 0x00540FA0
+int IPXManagerClass::Connection_ID(int index)
+{
+	if (index >= 0 && index < NumConnections) {
+		return Connection[index]->ID;
+	}
+	return CONNECTION_NONE;
+}
+
+// FUNCTION: 0x00540FC0
+wchar_t *IPXManagerClass::Connection_Name(int id)
+{
+	int i;
+
+	for (i = 0; i < NumConnections; i++) {
+		if (Connection[i]->ID == id) {
+			return Connection[i]->Name;
+		}
+	}
+	return NULL;
+}
+
+// FUNCTION: 0x00541000
+IPXAddressClass * IPXManagerClass::Connection_Address(int id)
+{
+	int i;
+
+	for (i = 0; i < NumConnections; i++) {
+		if (Connection[i]->ID == id) {
+			return &Connection[i]->Address;
+		}
+	}
+	return NULL;
+}
+
+// FUNCTION: 0x00541040
+int IPXManagerClass::Connection_Index(int id)
+{
+	int i;
+
+	for (i = 0; i < NumConnections; i++) {
+		if (Connection[i]->ID == id) {
+			return i;
+		}
+	}
+	return CONNECTION_NONE;
+}
+
+// FUNCTION: 0x005410C0
+void IPXManagerClass::Set_Connection_Parms(int index, int id, wchar_t *name)
+{
+	if (index >= NumConnections)
+		return;
+
+	Connection[index]->ID = id;
+	wcscpy(Connection[index]->Name, name);
+}
+
+// FUNCTION: 0x005410F0
+int IPXManagerClass::Send_Global_Message(void *buf, int buflen, int ack_req,
+	IPXAddressClass *address, unsigned short port, int packet_id)
+{
+	int rc;
+
+	if (!IPXStatus || !Listening) return 0;
+
+	if (ack_req != 0 && (address == NULL || address->Is_Broadcast())) {
+		ack_req = 0;
+	}
+
+	rc = GlobalChannel->Send_Packet(buf, buflen, address, ack_req, port, packet_id);
+	if (!rc) {
+		SendOverflows++;
+		FUN_004068E0("Send overflow %d\n", SendOverflows);
+	}
+	return rc;
+}
+
+// FUNCTION: 0x00541170
+int IPXManagerClass::Send_Global_Message_To_Player(void *buf, int buflen, int ack_req, int id)
+{
+	int i;
+	unsigned short port;
+	IPXAddressRaw address;
+	int count = DAT_00A8DA84;
+	IPXPlayerNode **players = DAT_00A8DA78;
+
+	if (count && players[0]->ID == id) return 0;
+	for (i = 1; i < count; i++) {
+		if (players[i]->ID == id) {
+			address = *(IPXAddressRaw *)&players[i]->Address;
+			port = DAT_00A8E2B2[i];
+
+			return Send_Global_Message(buf, buflen, ack_req, (IPXAddressClass *)&address, port, 0);
+		}
+	}
+	return 0;
+}
+
+// FUNCTION: 0x00541260
+int IPXManagerClass::Send_Global_Message_To_Name(void *buf, int buflen, int ack_req, wchar_t *name)
+{
+	int i;
+	unsigned short port;
+	IPXAddressRaw address;
+
+	if (DAT_00A8DA84 && wcsicmp(DAT_00A8DA78[0]->Name, name) == 0) return 0;
+	for (i = 1; i < DAT_00A8DA84; i++) {
+		if (wcsicmp(DAT_00A8DA78[i]->Name, name) == 0) {
+			address = *(IPXAddressRaw *)&DAT_00A8DA78[i]->Address;
+			port = DAT_00A8E2B2[i];
+
+			return Send_Global_Message(buf, buflen, ack_req, (IPXAddressClass *)&address, port, 0);
+		}
+	}
+	return 0;
+}
+
+// FUNCTION: 0x00541370
+int IPXManagerClass::Get_Global_Message(void *buf, int *buflen,
+	IPXAddressClass *address, unsigned short *product_id)
+{
+	if (!IPXStatus || !Listening) return 0;
+
+	return GlobalChannel->Get_Packet(buf, buflen, address, product_id);
+}
+
+// FUNCTION: 0x005413B0
+int IPXManagerClass::Global_Channel_Op(int a1, int a2, int a3, int a4, int a5, int a6)
+{
+	if (!IPXStatus || !Listening) return 0;
+
+	return GlobalChannel->vt_entry_38(a1, a2, a3, a4, a5, a6);
 }

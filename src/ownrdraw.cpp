@@ -1158,6 +1158,300 @@ void FUN_00608440(HWND dialog)
 	}
 }
 
+// FUNCTION: 0x006084A0
+void FUN_006084A0(HWND dialog)
+{
+	OwnerDraw::WinData *data = NULL;
+
+	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
+		*((char *)data + 0xd4) = 0;
+	}
+}
+
+bool __fastcall FUN_00608CD0(HWND parent, HWND child);
+
+// FUNCTION: 0x006096A0
+bool FUN_006096A0(HWND parent, HWND child)
+{
+	OwnerDraw::WinData *data = NULL;
+
+	if ((GetWindowLong(child, GWL_STYLE) & 0xb) == 0xb) {
+		HWND key = child;
+		if (OwnerDraw::Dialogs.getPointer(key, &data) && data != NULL && *(int *)((char *)data + 0x68) == 0) {
+			return FUN_00608CD0(parent, child);
+		}
+	}
+	return false;
+}
+
+// FUNCTION: 0x00609730
+bool FUN_00609730(HWND dialog, HWND control)
+{
+	OwnerDraw::WinData *data = NULL;
+	int type;
+
+	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
+		type = *(int *)((char *)data + 0x6c);
+	} else {
+		type = 0;
+	}
+	int id = GetDlgCtrlID(control);
+	if (type == 0xe2) {
+		return id == 0x3ee;
+	}
+	if (type == 0x73 || type == 0x10c || type == 0x103) {
+		return id == 0x423;
+	}
+	if (type == 0x108 || type == 0xbc7) {
+		return id == 0x6d1;
+	}
+	if (type == 0x94 || type == 0xb6 || type == 0xa3 || type == 0xd8 || type == 0xbbb ||
+		type == 0xf5 || type == 0xd5 || type == 0x2b5 || type == 0xb7 || type == 0x2b4 ||
+		type == 0x101 || type == 0x129 || type == 0xb5 || type == 0xbba || type == 0x100 ||
+		type == 0xb8 || type == 0xd6 || type == 0x125 || type == 0x116 || type == 0x11d ||
+		type == 0x11c || type == 0x113 || type == 0x109 || type == 0x10f || type == 0x114 ||
+		type == 0x10e) {
+		return id == 0x686;
+	}
+	if (type == 0x102 || type == 0x105 || type == 0x6b || type == 0xbb || type == 0x117 || type == 0xbc6) {
+		return id == 0x5c0;
+	}
+	if (type == 0xbc || type == 0xbd || type == 0xea || type == 0xd7 || type == 0xc2 ||
+		type == 0xc9 || type == 0x2bc || type == 0xe7 || type == 0xe6 || type == 0xf3 ||
+		type == 0xf4 || type == 0x122 || type == 0x112 || type == 0xfe || type == 0xfc) {
+		return id == 2;
+	}
+	if (type == 0xd4) {
+		return id == 1;
+	}
+	if (type == 0xfb) {
+		return id == 7;
+	}
+	if (type == 0xff) {
+		return id == 0x675;
+	}
+	return false;
+}
+
+// FUNCTION: 0x00609AA0
+bool FUN_00609AA0(HWND parent, HWND child)
+{
+	OwnerDraw::WinData *data = NULL;
+
+	if ((GetWindowLong(child, GWL_STYLE) & 0xb) == 0xb) {
+		HWND key = child;
+		if (OwnerDraw::Dialogs.getPointer(key, &data) && data != NULL && *(int *)((char *)data + 0x68) == 0) {
+			return FUN_00609730(parent, child);
+		}
+	}
+	return false;
+}
+
+// FUNCTION: 0x00609B30
+bool FUN_00609B30(HWND dialog, HWND control)
+{
+	OwnerDraw::WinData *data = NULL;
+	int type;
+
+	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
+		type = *(int *)((char *)data + 0x6c);
+	} else {
+		type = 0;
+	}
+	int id = GetDlgCtrlID(control);
+	if (Is_Owner_Draw_Message(type) && id == 0x695) {
+		return true;
+	}
+	return false;
+}
+
+inline bool Is_Plain_Control(HWND window)
+{
+	OwnerDraw::WinData *data = NULL;
+
+	if ((GetWindowLong(window, GWL_STYLE) & 0xb) == 0xb) {
+		HWND key = window;
+		if (OwnerDraw::Dialogs.getPointer(key, &data) && data != NULL && *(int *)((char *)data + 0x68) == 0) {
+			return true;
+		}
+	}
+	return false;
+}
+
+// FUNCTION: 0x00609BC0
+bool FUN_00609BC0(HWND parent, HWND child)
+{
+	if (FUN_0069BBE0(&Session)) {
+		return false;
+	}
+	if (Is_Plain_Control(child) && FUN_00608CD0(parent, child)) {
+		return true;
+	}
+	if (Is_Plain_Control(child) && FUN_00609730(parent, child)) {
+		return true;
+	}
+	return false;
+}
+
+// FUNCTION: 0x00609CF0
+bool FUN_00609CF0(HWND parent, HWND child)
+{
+	if (!FUN_0069BBE0(&Session)) {
+		return false;
+	}
+	if (Is_Plain_Control(child) && FUN_00608CD0(parent, child)) {
+		return true;
+	}
+	if (Is_Plain_Control(child) && FUN_00609730(parent, child)) {
+		return true;
+	}
+	return false;
+}
+
+// FUNCTION: 0x00609E20
+bool FUN_00609E20(HWND dialog, HWND control)
+{
+	OwnerDraw::WinData *data = NULL;
+	int type;
+
+	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
+		type = *(int *)((char *)data + 0x6c);
+	} else {
+		type = 0;
+	}
+	int id = GetDlgCtrlID(control);
+	if (type == 0x10d) {
+		return id == 0x5c1 || id == 0x5c0;
+	}
+	if (type == 0xd9) {
+		return id == 0x5c1 || id == 0x6ca;
+	}
+	if (type == 0xa3) {
+		return id == 0x4cf || id == 0x4d0;
+	}
+	if (type == 0x105) {
+		return id == 0x620 || id == 0x621;
+	}
+	if (type == 0xf0) {
+		return id == 0x5c0;
+	}
+	if (type == 0xce) {
+		return id == 0x5ae;
+	}
+	if (type == 0x120) {
+		return id == 0x5ae || id == 2;
+	}
+	if (type == 0x121) {
+		return id == 0x5ae || id == 0x5af || id == 2;
+	}
+	if (type == 0xea) {
+		return id == 0x640 || id == 0x642 || id == 0x641 || id == 0x643 || id == 0x644 || id == 0x645 || id == 0x646 || id == 0x647;
+	}
+	if (type == 0xb8) {
+		return id == 0x531 || id == 0x535;
+	}
+	if (type == 0x11f) {
+		return id == 0x5c0;
+	}
+	if (type == 0x115) {
+		return id == 0x702 || id == 0x686;
+	}
+	if (type == 0xd3) {
+		return id == 2;
+	}
+	if (type == 0xcf) {
+		return id == 0x5c2 || id == 2;
+	}
+	if (type == 0xc3) {
+		return id == 1 || id == 2;
+	}
+	if (type == 0x11b) {
+		return id == 0x5c2 || id == 0x686;
+	}
+	if (type == 0xe1) {
+		return id == 1 || id == 2;
+	}
+	if (type == 0x11e) {
+		return id == 0x5c2 || id == 0x686;
+	}
+	if (type == 0xc4) {
+		return id == 0x58d || id == 0x58e;
+	}
+	if (type == 0xd0) {
+		return id == 1;
+	}
+	if (type == 0xfc) {
+		return id == 1 || id == 2;
+	}
+	if (type == 0x126) {
+		return id == 6 || id == 7;
+	}
+	return false;
+}
+
+// FUNCTION: 0x0060A100
+bool FUN_0060A100(HWND dialog, HWND control)
+{
+	OwnerDraw::WinData *data = NULL;
+	int type;
+
+	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
+		type = *(int *)((char *)data + 0x6c);
+	} else {
+		type = 0;
+	}
+	int id = GetDlgCtrlID(control);
+	if (type == 0xe2) {
+		return id == 0x71d;
+	}
+	return false;
+}
+
+int DAT_00AC1CAC;
+int DAT_00AC4894;
+
+// FUNCTION: 0x0060A180
+BOOL CALLBACK FUN_0060A180(HWND window, LPARAM lparam)
+{
+	HWND parent = GetParent(window);
+	OwnerDraw::WinData *data = NULL;
+
+	if ((GetWindowLong(window, GWL_STYLE) & 0xb) == 0xb) {
+		HWND key = window;
+		if (OwnerDraw::Dialogs.getPointer(key, &data) && data != NULL && *(int *)((char *)data + 0x68) == 0) {
+			if (FUN_00608CD0(parent, window) && IsWindowVisible(window)) {
+				DAT_00AC1CAC++;
+			}
+		}
+	}
+	return TRUE;
+}
+
+// FUNCTION: 0x0060A230
+int __fastcall FUN_0060A230(HWND dialog)
+{
+	DAT_00AC1CAC = 0;
+	EnumChildWindows(dialog, FUN_0060A180, 0);
+	return DAT_00AC1CAC;
+}
+
+// FUNCTION: 0x0060A250
+BOOL CALLBACK FUN_0060A250(HWND window, LPARAM lparam)
+{
+	HWND parent = GetParent(window);
+	OwnerDraw::WinData *data = NULL;
+
+	if ((GetWindowLong(window, GWL_STYLE) & 0xb) == 0xb) {
+		HWND key = window;
+		if (OwnerDraw::Dialogs.getPointer(key, &data) && data != NULL && *(int *)((char *)data + 0x68) == 0) {
+			if (FUN_00609730(parent, window) && IsWindowVisible(window)) {
+				DAT_00AC4894++;
+			}
+		}
+	}
+	return TRUE;
+}
+
 // FUNCTION: 0x0061F190
 void ODInitMasks(void)
 {

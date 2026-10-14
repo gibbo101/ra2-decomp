@@ -25,6 +25,7 @@ class BuildingTypeClass : public TechnoTypeClass
 	public:
 
 		bool FUN_00465D30(void) const;
+		bool IsVehicle(void) const;
 		StructType HeapID;
 
 		Cell const * OccupyList;

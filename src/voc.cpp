@@ -17,6 +17,7 @@
 #include "tactical.h"
 #include "ini.h"
 #include "vector.h"
+#include <objidl.h>
 
 VocClass * __fastcall FUN_004063B0(char const * name);
 struct SoundLink
@@ -27,6 +28,7 @@ struct SoundLink
 
 	void FUN_004072C0(void);
 	void FUN_004072D0(void);
+	int FUN_004073B0(void);
 	SoundLink * FUN_004073C0(void);
 	SoundLink * FUN_004073E0(void);
 	void __fastcall FUN_00407420(SoundLink * node);
@@ -60,6 +62,7 @@ SoundPool * __fastcall FUN_004074D0(int a, int b);
 int __fastcall FUN_004067D0(char const * name, int * priority);
 int __fastcall FUN_00406820(int * control, char const * name);
 int __fastcall FUN_00406870(int * type, char const * name);
+void FUN_00406E80(void);
 
 bool DAT_008464AC = true;
 int DAT_008464B0 = 2;
@@ -505,6 +508,41 @@ int __fastcall FUN_007515C0(VocEntry * entry)
 	}
 	return -1;
 }
+
+// FUNCTION: 0x007515F0
+bool __fastcall FUN_007515F0(VocEntry * entry)
+{
+	return entry->Voc != NULL;
+}
+
+// FUNCTION: 0x00751600
+char const * VocEntry::Name(void)
+{
+	return Voc != NULL ? Voc->FUN_00405170() : "Invalid Voc";
+}
+
+// FUNCTION: 0x007518A0
+void __fastcall FUN_007518A0(AudioController * controller, int voc)
+{
+	if (voc >= 0 && voc < VocArray.Count()) {
+		controller->SetEvent(NULL, VocArray[voc]->Voc);
+	}
+}
+
+// FUNCTION: 0x007518C0
+void __fastcall FUN_007518C0(bool enabled)
+{
+	DAT_008464AC = enabled;
+}
+
+// FUNCTION: 0x007518D0 ?$DynamicVectorClass@PAVVocEntry@@::Clear
+// FUNCTION: 0x00751900 ?$DynamicVectorClass@PAVVocEntry@@::ID
+// FUNCTION: 0x00751920 ?$VectorClass@PAVVocEntry@@::GetItem
+template class DynamicVectorClass<VocEntry *>;
+
+// FUNCTION: 0x00751930 ?$VectorClass@PAVVocEntry@@::operator==
+// FUNCTION: 0x00751970 ?$VectorClass@PAVVocEntry@@::Resize
+template class VectorClass<VocEntry *>;
 
 // FUNCTION: 0x007532D0
 VocClass * VocClass_From_Name(char const * name)

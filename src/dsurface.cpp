@@ -13,6 +13,15 @@
 #include "swap.h"
 #include <math.h>
 
+extern LPDIRECTDRAW DirectDrawObject;
+extern LPDIRECTDRAWSURFACE PaletteSurface;
+extern bool WindowedMode;
+extern bool GameInFocus;
+namespace DirectDrawWrap { extern bool DoSmth; }
+unsigned Get_Video_Hardware_Capabilities(void);
+void Process_DD_Result(HRESULT result, int display_ok_msg);
+void __cdecl DebugString(const char * string, ...);
+
 // FUNCTION: 0x004BA3B0 $E2
 // FUNCTION: 0x004BA3E0 $E5
 // FUNCTION: 0x004BA400 $E8
@@ -25,6 +34,44 @@
 // FUNCTION: 0x004BA520 $E29
 // FUNCTION: 0x004BA550 $E32
 // FUNCTION: 0x004BA560 $E35
+// FUNCTION: 0x004BA580 $E38
+
+// FUNCTION: 0x004BA5A0
+DSurface::DSurface(int width, int height, bool system_memory, bool device_3d) :
+	BASECLASS(width, height),
+	BytesPerPixel(0),
+	LockPtr(NULL),
+	IsPrimary(false),
+	IsVideoRam(false),
+	SurfacePtr(NULL),
+	Description(NULL)
+{
+	Description = new DDSURFACEDESC;
+	if (Description != NULL) {
+		memset(Description, '\0', sizeof(DDSURFACEDESC));
+		Description->dwSize = sizeof(DDSURFACEDESC);
+		Description->dwFlags = DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH;
+		Description->dwWidth = width;
+		Description->dwHeight = height;
+
+		if (system_memory == true) {
+			Description->ddsCaps.dwCaps = DDSCAPS_SYSTEMMEMORY;
+		}
+		if (DirectDrawWrap::DoSmth && device_3d) {
+			Description->ddsCaps.dwCaps = DDSCAPS_3DDEVICE | DDSCAPS_OFFSCREENPLAIN;
+		}
+
+		DirectDrawObject->CreateSurface(Description, &SurfacePtr, NULL);
+
+		if (SurfacePtr != NULL) {
+			memset(Description, '\0', sizeof(DDSURFACEDESC));
+			Description->dwSize = sizeof(DDSURFACEDESC);
+			SurfacePtr->GetSurfaceDesc(Description);
+			BytesPerPixel = (Description->ddpfPixelFormat.dwRGBBitCount+7)/8;
+			IsVideoRam = ((Description->ddsCaps.dwCaps & DDSCAPS_VIDEOMEMORY) != 0);
+		}
+	}
+}
 
 // FUNCTION: 0x004BA6B0
 DSurface::~DSurface(void)
@@ -57,6 +104,128 @@ DSurface::DSurface(void) :
 	Description->dwSize = sizeof(DDSURFACEDESC);
 }
 
+// FUNCTION: 0x004BA770
+DSurface * DSurface::Create_Primary(DSurface ** backsurface1)
+{
+	DebugString("DSurface::Create_Primary\n");
+	unsigned video_capabilities = Get_Video_Hardware_Capabilities();
+	AllowStretchBlits = false;
+	if ((video_capabilities & VIDEO_BLIT_STRETCH) != 0) {
+		AllowStretchBlits = true;
+	}
+	DebugString("DSurface::AllowStretchBlits = %s\n", AllowStretchBlits ? "true" : "false");
+	if ((video_capabilities & VIDEO_COLOR_FILL) == 0) {
+		AllowHWFill = false;
+	}
+	DebugString("DSurface::AllowHWFill = %s\n", AllowHWFill == true ? "true" : "false");
+	DSurface * surface = new DSurface();
+	int backcount = (backsurface1 != NULL) ? 1 : 0;
+	surface->Description->dwFlags = DDSD_CAPS;
+	surface->Description->ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE;
+	if (backcount > 0) {
+		surface->Description->ddsCaps.dwCaps |= DDSCAPS_FLIP | DDSCAPS_COMPLEX;
+		surface->Description->dwFlags |= DDSD_BACKBUFFERCOUNT;
+		surface->Description->dwBackBufferCount = backcount;
+	}
+	DebugString("DSurface::Create_Primary - Creating surface\n");
+	HRESULT result = DirectDrawObject->CreateSurface(surface->Description, &surface->SurfacePtr, NULL);
+	if (result == DD_OK) {
+		DebugString("CreateSurface OK\n");
+		if (backcount > 0) {
+			LPDIRECTDRAWSURFACE back;
+			DDSCAPS caps;
+			caps.dwCaps = DDSCAPS_BACKBUFFER;
+			result = surface->SurfacePtr->GetAttachedSurface(&caps, &back);
+			if (result == DD_OK) {
+				*backsurface1 = new DSurface(back);
+			}
+		}
+		memset(surface->Description, '\0', sizeof(DDSURFACEDESC));
+		surface->Description->dwSize = sizeof(DDSURFACEDESC);
+		result = surface->SurfacePtr->GetSurfaceDesc(surface->Description);
+		if (result != DD_OK) {
+			DebugString("Failed to get description of primary surface\n");
+		}
+		surface->BytesPerPixel = (surface->Description->ddpfPixelFormat.dwRGBBitCount+7)/8;
+		surface->IsVideoRam = (surface->Description->ddsCaps.dwCaps & DDSCAPS_VIDEOMEMORY) != 0;
+		surface->IsPrimary = true;
+		surface->Width = surface->Description->dwWidth;
+		surface->Height = surface->Description->dwHeight;
+		PaletteSurface = surface->SurfacePtr;
+		if (DirectDrawObject->CreateClipper(0, &Clipper, NULL) == DD_OK) {
+			if (Clipper->SetHWnd(0, GetActiveWindow()) == DD_OK) {
+				surface->SurfacePtr->SetClipper(Clipper);
+			}
+		}
+		memcpy(&PixelFormat, &surface->Description->ddpfPixelFormat, sizeof(DDPIXELFORMAT));
+		if (surface->Bytes_Per_Pixel() == 2) {
+			int index;
+			int shift = PixelFormat.dwRBitMask;
+			RedRight = 0;
+			RedLeft = 0;
+			for (index = 0; index < 16; index++) {
+				if (shift & 0x01) break;
+				shift >>= 1;
+				RedRight++;
+			}
+			for (index = 0; index < 8; index++) {
+				if (shift & 0x80) break;
+				shift <<= 1;
+				RedLeft++;
+			}
+			shift = PixelFormat.dwGBitMask;
+			GreenRight = 0;
+			GreenLeft = 0;
+			for (index = 0; index < 16; index++) {
+				if (shift & 0x01) break;
+				GreenRight++;
+				shift >>= 1;
+			}
+			for (index = 0; index < 8; index++) {
+				if (shift & 0x80) break;
+				GreenLeft++;
+				shift <<= 1;
+			}
+			shift = PixelFormat.dwBBitMask;
+			BlueRight = 0;
+			BlueLeft = 0;
+			for (index = 0; index < 16; index++) {
+				if (shift & 0x01) break;
+				BlueRight++;
+				shift >>= 1;
+			}
+			for (index = 0; index < 8; index++) {
+				if (shift & 0x80) break;
+				BlueLeft++;
+				shift <<= 1;
+			}
+			PrimaryColorMode = COLORMODE_INVALID;
+			HalfbrightMask = (unsigned short)Build_Hicolor_Pixel(127, 127, 127);
+			QuarterbrightMask = (unsigned short)Build_Hicolor_Pixel(63, 63, 63);
+			EighthbrightMask = (unsigned short)Build_Hicolor_Pixel(31, 31, 31);
+			if (BlueRight == 0 && BlueLeft == 3 && GreenRight == 5 && GreenLeft == 3 && RedRight == 10 && RedLeft == 3) {
+				PrimaryColorMode = COLORMODE_555;
+			} else
+			if (BlueRight == 0 && BlueLeft == 2 && GreenRight == 6 && GreenLeft == 3 && RedRight == 11 && RedLeft == 3) {
+				PrimaryColorMode = COLORMODE_556;
+			} else
+			if (BlueRight == 0 && BlueLeft == 3 && GreenRight == 5 && GreenLeft == 2 && RedRight == 11 && RedLeft == 3) {
+				PrimaryColorMode = COLORMODE_565;
+			} else
+			if (BlueRight == 0 && BlueLeft == 3 && GreenRight == 5 && GreenLeft == 3 && RedRight == 11 && RedLeft == 2) {
+				PrimaryColorMode = COLORMODE_556;
+			}
+		}
+		DebugString("DSurface::Create_Primary done\n");
+	} else {
+		Process_DD_Result(result, TRUE);
+		DebugString("CreateSurface failed with error code %08x\n", result);
+		delete surface;
+		surface = NULL;
+	}
+	return(surface);
+}
+
 // FUNCTION: 0x004BAC60
 DSurface::DSurface(LPDIRECTDRAWSURFACE surfaceptr) :
 	BytesPerPixel(0),
@@ -80,6 +249,45 @@ DSurface::DSurface(LPDIRECTDRAWSURFACE surfaceptr) :
 	}
 }
 
+inline bool Restore_Surface(DSurface const * surface)
+{
+	if (!WindowedMode && !GameInFocus) {
+		return(false);
+	}
+
+	if (surface->SurfacePtr != NULL && surface->SurfacePtr->IsLost() == DDERR_SURFACELOST) {
+		if (surface->SurfacePtr->Restore() != DD_OK || surface->SurfacePtr->IsLost() != DD_OK) return(false);
+		int oldlockcount = surface->LockCount;
+		if (surface->LockCount > 0) {
+			surface->LockCount = 0;
+			surface->Lock();
+			surface->LockCount++;
+			surface->Unlock();
+			surface->LockCount = oldlockcount;
+		}
+	}
+
+	return(true);
+}
+
+// FUNCTION: 0x004BACF0
+HDC DSurface::GetDC(void)
+{
+	HDC hdc = NULL;
+	HRESULT hr;
+
+	if (!Is_Locked()) {
+		hr = SurfacePtr->GetDC(&hdc);
+		if (hr == DD_OK) {
+			LockCount++;
+		} else {
+			hdc = NULL;
+		}
+	}
+
+	return(hdc);
+}
+
 // FUNCTION: 0x004BAD30
 int DSurface::ReleaseDC(HDC hdc)
 {
@@ -92,6 +300,40 @@ int DSurface::ReleaseDC(HDC hdc)
 	}
 
 	return(1);
+}
+
+
+// FUNCTION: 0x004BAD60
+int DSurface::Bytes_Per_Pixel(void) const
+{
+	return(BytesPerPixel);
+}
+
+// FUNCTION: 0x004BAD70
+int DSurface::Stride(void) const
+{
+	return(Description->lPitch);
+}
+
+// FUNCTION: 0x004BAD80
+void * DSurface::Lock(Point2D point) const
+{
+	if (!Restore_Surface(this)) return(NULL);
+	if (point.X < 0 || point.Y < 0) return(NULL);
+
+	if (LockCount == 0) {
+		DDSURFACEDESC desc;
+		memset(&desc, '\0', sizeof(desc));
+		desc.dwSize = sizeof(desc);
+		HRESULT result = SurfacePtr->Lock(NULL, &desc, DDLOCK_SURFACEMEMORYPTR|DDLOCK_WAIT, NULL);
+		if (result != DD_OK) return(NULL);
+		memcpy(Description, &desc, sizeof(DDSURFACEDESC));
+		BytesPerPixel = (Description->ddpfPixelFormat.dwRGBBitCount+7)/8;
+		IsVideoRam = (Description->ddsCaps.dwCaps & DDSCAPS_VIDEOMEMORY) != 0;
+		LockPtr = Description->lpSurface;
+	}
+	BASECLASS::Lock();
+	return(((char*)LockPtr) + point.Y * Stride() + point.X * Bytes_Per_Pixel());
 }
 
 // FUNCTION: 0x004BAEC0
@@ -112,6 +354,83 @@ bool DSurface::Can_Lock(int x, int y) const
 bool DSurface::Can_Blit(void) const
 {
 	return(SurfacePtr->GetBltStatus(DDGBS_CANBLT) == DD_OK);
+}
+
+// FUNCTION: 0x004BAF40
+bool DSurface::Unlock(void) const
+{
+	Restore_Surface(this);
+	if (LockCount > 0) {
+		BASECLASS::Unlock();
+		if (LockCount == 0) {
+			SurfacePtr->Unlock(LockPtr);
+			LockPtr = NULL;
+		}
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x004BAFE0
+bool DSurface::Is_Lost(void) const
+{
+	return(SurfacePtr != NULL && SurfacePtr->IsLost() == DDERR_SURFACELOST);
+}
+
+// FUNCTION: 0x004BB000
+bool DSurface::Restore_Check(void) const
+{
+	return(Restore_Surface(this));
+}
+
+// FUNCTION: 0x004BB080
+bool DSurface::Blit_From(Rect const & destrect, Surface const & ssource, Rect const & sourcerect, bool trans, bool unknown)
+{
+	return(Blit_From(Get_Rect(), destrect, ssource, ssource.Get_Rect(), sourcerect, trans, unknown));
+}
+
+// FUNCTION: 0x004BB0D0
+bool DSurface::Blit_From(Rect const & dcliprect, Rect const & destrect, Surface const & ssource, Rect const & scliprect, Rect const & sourcerect, bool trans, bool unknown)
+{
+	if (!dcliprect.Is_Valid() || !scliprect.Is_Valid() || !destrect.Is_Valid() || !sourcerect.Is_Valid()) return(false);
+	bool use_xsurface = false;
+	DSurface & dsource = (DSurface &)ssource;
+	if (!ssource.Is_Direct_Draw() == true || dsource.Is_Locked() == true || trans == true || Bytes_Per_Pixel() != ssource.Bytes_Per_Pixel()) {
+		use_xsurface = true;
+	}
+	if (IsPrimary == true && WindowedMode == true) {
+		unknown = false;
+	}
+	if ((use_xsurface == false && unknown == true && (IsVideoRam == false || ((DSurface &)ssource).Is_Direct_Draw() == true && ((DSurface &)ssource).IsVideoRam == false) && sourcerect.Width == destrect.Width) &&
+		sourcerect.Height == destrect.Height) {
+		use_xsurface = true;
+	}
+	if (Restore_Surface(this) == false) {
+		return(false);
+	}
+	if (use_xsurface == true) {
+		return(BASECLASS::Blit_From(destrect, ssource, sourcerect, trans, true));
+	}
+	DSurface const & source = (DSurface const &)ssource;
+	Rect drect = destrect;
+	Rect srect = sourcerect;
+	Rect swindow(Intersect(scliprect, ssource.Get_Rect()));
+	Rect dwindow = Intersect(dcliprect, Get_Rect());
+	if (Blit_Clip(drect, dwindow, srect, swindow)) {
+		RECT xdestrect;
+		xdestrect.left = drect.X+dwindow.X;
+		xdestrect.top = drect.Y+dwindow.Y;
+		xdestrect.right = drect.X+dwindow.X+drect.Width;
+		xdestrect.bottom = drect.Y+dwindow.Y+drect.Height;
+		RECT xsrcrect;
+		xsrcrect.left = srect.X+swindow.X;
+		xsrcrect.top = srect.Y+swindow.Y;
+		xsrcrect.right = srect.X+swindow.X+srect.Width;
+		xsrcrect.bottom = srect.Y+swindow.Y+srect.Height;
+		HRESULT result = SurfacePtr->Blt(&xdestrect, source.SurfacePtr, &xsrcrect, DDBLT_WAIT, NULL);
+		return(result == DD_OK);
+	}
+	return(false);
 }
 
 // FUNCTION: 0x004BBB00

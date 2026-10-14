@@ -136,6 +136,7 @@ class Tactical : public AbstractClass
 		void Start_Rubber_Band(Point2D const & point);
 		void Modify_Rubber_Band(Point2D const & point);
 		void Select_Rubber_Band(void (*select_callback)(ObjectClass * object));
+		int Rubber_Band_Contains_Selectable(void);
 		void End_Rubber_Band(void);
 		void Draw_Rubber_Band(void);
 

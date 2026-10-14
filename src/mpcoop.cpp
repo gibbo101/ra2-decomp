@@ -8,10 +8,14 @@
 #include "ccfile.h"
 #include "ccini.h"
 #include "session.h"
+#include "scenario.h"
 #include <cstdio>
 #include <cstring>
 #include <windows.h>
 #undef LoadString
+#include <stddef.h>
+#include <stdlib.h>
+#include "stringtable.h"
 
 #pragma pack(push, 1)
 class MPPlayerNode
@@ -19,6 +23,7 @@ class MPPlayerNode
 	public:
 		int FUN_00696F10(void);
 		void FUN_00696F90(int slot);
+		int FUN_00696F30(void);
 		wchar_t Name[1];
 };
 #pragma pack(pop)
@@ -35,6 +40,23 @@ void __fastcall FUN_005E7BF0(int slot);
 HWND WS_Find_Dialog(int id);
 HWND GameoptWindow(void);
 int FUN_00775B20(void);
+extern char DAT_0082DC84[];
+extern char DAT_0081F1D4[];
+extern int DAT_00A8EB68;
+extern int DAT_00A83CA8;
+extern int DAT_00A8BB0C;
+struct MPCountryEntry
+{
+	char Pad0[0x60];
+	wchar_t const * Name;
+};
+extern MPCountryEntry ** DAT_00A83C9C;
+extern MPPlayerNode * DAT_00A8DA90[];
+extern int DAT_00ABF460[8];
+void __fastcall FUN_005EBC00(HWND dialog, int count);
+int __fastcall FUN_004E37D0(int index);
+void __fastcall FUN_004E3F70(HWND dialog, int slot, int value);
+bool __fastcall FUN_005E8760(void);
 
 static inline char const * Scenario_Filename(MultiMission const * scenario)
 {
@@ -452,4 +474,349 @@ bool MPCooperative::vt_entry_58(int index, DynamicVectorClass<int> picks, char c
 	Current->FUN_0049CCF0(index, picks, map, name);
 	CampaignIndex = index;
 	return(true);
+}
+
+// FUNCTION: 0x005C2100
+bool MPCooperative::vt_entry_5C(unsigned a, unsigned b, unsigned c)
+{
+	if (Current == NULL) {
+		return(false);
+	}
+	int index;
+	Current->FUN_0049BCC0(&index);
+	CoopPlayerStats * stats = (CoopPlayerStats *)c;
+	bool result = Current->FUN_0049CC50(a, b, stats[0], stats[1]);
+	if (index != (int)a || Field340) {
+		HWND dialog = GameoptWindow();
+		if (dialog) {
+			FUN_005C2500(dialog);
+			Field340 = false;
+		}
+	}
+	return(result);
+}
+
+// FUNCTION: 0x005C21A0
+void MPCooperative::vt_entry_78(unsigned a)
+{
+	HWND button = GetDlgItem((HWND)a, 0x732);
+	if (button) {
+		PostMessage(button, 0x405, 1, DAT_00A8EB68);
+	}
+}
+
+// FUNCTION: 0x005C21D0
+void MPCooperative::FUN_005C21D0(HWND dialog, bool show)
+{
+	bool ok = true;
+	if (show) {
+		FUN_005EBC00(dialog, 2);
+	}
+	if (Current) {
+		int campaign;
+		int index;
+		if (!Current->FUN_0049BC80(&campaign)) {
+			ok = false;
+		}
+		if (Current->FUN_0049BCC0(&index) && ok) {
+			char name[64];
+			sprintf(name, "NAME:COOPDESC%d%d", campaign + 1, index + 1);
+			HWND text = GetDlgItem(dialog, 0x72f);
+			if (text == NULL) {
+				return;
+			}
+			SendMessage(text, 0x4b2, 0, (LPARAM)StringTable::LoadString(name, NULL, "D:\\ra2mdpost\\MPCoop.cpp", 0x281));
+			if (show) {
+				ShowWindow(text, SW_SHOW);
+				InvalidateRect(text, NULL, FALSE);
+			} else {
+				ShowWindow(text, SW_HIDE);
+				InvalidateRect(text, NULL, FALSE);
+			}
+		}
+	}
+	HWND button = GetDlgItem(dialog, 0x732);
+	if (button) {
+		PostMessage(button, 0x4ac, 0, 0);
+		PostMessage(button, 0x406, 1, 0x20000);
+		PostMessage(button, 0x405, 1, DAT_00A8EB68);
+		if (show) {
+			ShowWindow(button, SW_SHOW);
+		} else {
+			ShowWindow(button, SW_HIDE);
+		}
+		if (FUN_005E8760()) {
+			EnableWindow(button, TRUE);
+		} else {
+			EnableWindow(button, FALSE);
+		}
+		InvalidateRect(button, NULL, TRUE);
+	}
+	HWND item = GetDlgItem(dialog, 0x78e);
+	if (item) {
+		if (show) {
+			ShowWindow(item, SW_SHOW);
+		} else {
+			ShowWindow(item, SW_HIDE);
+		}
+	}
+	item = GetDlgItem(dialog, 0x78d);
+	if (item) {
+		if (show) {
+			ShowWindow(item, SW_SHOW);
+		} else {
+			ShowWindow(item, SW_HIDE);
+		}
+	}
+	item = GetDlgItem(dialog, 0x78c);
+	if (item) {
+		if (show) {
+			ShowWindow(item, SW_SHOW);
+		} else {
+			ShowWindow(item, SW_HIDE);
+		}
+	}
+}
+
+// FUNCTION: 0x005C23B0
+void MPCooperative::FUN_005C23B0(HWND dialog, int control)
+{
+	int total = DAT_00A83CA8;
+	if (total == 0) {
+		return;
+	}
+	HWND list = GetDlgItem(dialog, control);
+	ShowWindow(list, SW_HIDE);
+	SendMessage(list, 0x14b, 0, 0);
+	CoopCampEntry * entry;
+	int index = 0;
+	DAT_0089F518.FUN_0049E3B0(CampaignIndex, &entry);
+	if (entry == NULL || entry->ListA.Count() == 0) {
+		return;
+	}
+	if (Current != NULL) {
+		if (!Current->FUN_0049BCC0(&index)) {
+			index = 0;
+		}
+	} else {
+		index = 0;
+	}
+	if (index >= entry->ListA.Count()) {
+		return;
+	}
+	int group = entry->ListA[index]->Count();
+	if (group > 1) {
+		LRESULT item = SendMessage(list, 0x4c2, 0, (LPARAM)StringTable::LoadString("GUI:Random", NULL, "D:\\ra2mdpost\\MPCoop.cpp", 0x2ed));
+		SendMessage(list, 0x151, item, -2);
+	}
+	for (int i = 0; i < group; i++) {
+		int value = FUN_0049D9F0((*entry->ListA[index])[i]);
+		if (value >= 0 && value < total) {
+			LPARAM name = (LPARAM)DAT_00A83C9C[value]->Name;
+			LRESULT item = SendMessage(list, 0x4c2, 0, name);
+			SendMessage(list, 0x151, item, value);
+		}
+	}
+	SendMessage(list, 0x14e, 0, 0);
+	ShowWindow(list, SW_SHOW);
+}
+
+// FUNCTION: 0x005C2500
+void MPCooperative::FUN_005C2500(HWND dialog)
+{
+	if (dialog == NULL) {
+		return;
+	}
+	int count = DAT_00A8BB0C;
+	CoopCampEntry * entry;
+	int index = 0;
+	DAT_0089F518.FUN_0049E3B0(CampaignIndex, &entry);
+	if (entry == NULL || entry->ListA.Count() == 0) {
+		return;
+	}
+	if (Current != NULL) {
+		if (!Current->FUN_0049BCC0(&index)) {
+			index = 0;
+		}
+	} else {
+		index = 0;
+	}
+	if (index >= entry->ListA.Count()) {
+		return;
+	}
+	int group = entry->ListA[index]->Count();
+	for (int i = 0; i < count; i++) {
+		int slot = FUN_004E37D0(i);
+		FUN_005C23B0(dialog, slot);
+		if (group > 1) {
+			FUN_004E3F70(dialog, slot, -2);
+			DAT_00A8DA90[i]->FUN_00696F90(-2);
+		} else {
+			int value = FUN_0049D9F0((*entry->ListA[index])[0]);
+			FUN_004E3F70(dialog, slot, value);
+			DAT_00A8DA90[i]->FUN_00696F90(value);
+		}
+	}
+	FUN_005EBC00(dialog, count);
+	HWND options = GameoptWindow();
+	if (options) {
+		FUN_005C21D0(options, true);
+	}
+}
+
+// FUNCTION: 0x005C2640
+void MPCooperative::vt_entry_38(unsigned a)
+{
+	HWND dialog = (HWND)a;
+	if (dialog) {
+		int count = DAT_00A8DA84;
+		for (int i = 0; i < count; i++) {
+			FUN_005C23B0(dialog, FUN_004E37D0(i));
+		}
+		FUN_005C21D0(dialog, true);
+	}
+}
+
+// FUNCTION: 0x005C2680
+bool MPCooperative::vt_entry_60(void)
+{
+	if (Current == NULL) {
+		return(false);
+	}
+	Current->FUN_0049BC80(&CampaignIndex);
+	HWND dialog = GameoptWindow();
+	if (dialog && Field340) {
+		FUN_005C2500(dialog);
+		Field340 = false;
+	}
+	return(Current->FUN_0049D680());
+}
+
+// FUNCTION: 0x005C26D0
+void FUN_005C26D0(void)
+{
+	for (int k = 0; k < 8; k++) {
+		DAT_00ABF460[k] = -2;
+	}
+	int count = DAT_00A8DA84;
+	for (int i = 0; i < count; i++) {
+		DAT_00ABF460[i] = DAT_00A8DA78[i]->FUN_00696F30();
+	}
+}
+
+static inline bool Slot_Taken(int value)
+{
+	for (int q = 0; q < 8; q++) {
+		if (DAT_00ABF460[q] == value) {
+			return(true);
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x005C2710
+bool MPCooperative::vt_entry_64(void)
+{
+	CoopCampEntry * entry;
+	char buffer[400];
+	char piece[16];
+	DAT_0089F518.FUN_0049E3B0(CampaignIndex, &entry);
+	sprintf(buffer, "C1,%d", entry->MapCount);
+	for (int i = 0; i < 8; i++) {
+		int max = Lists[i].Length();
+		Lists[i].Clear();
+		Lists[i].Resize(max, 0);
+		max = Lists2[i].Length();
+		Lists2[i].Clear();
+		Lists2[i].Resize(max, 0);
+	}
+	int count = DAT_00A8DA84;
+	for (int k = 0; k < entry->MapCount; k++) {
+		for (int m = 0; m < 8; m++) {
+			DAT_00ABF460[m] = -2;
+		}
+		int humans = DAT_00A8DA84;
+		for (int p = 0; p < humans; p++) {
+			DAT_00ABF460[p] = DAT_00A8DA78[p]->FUN_00696F30();
+		}
+		for (int j = 0; j < 8; j++) {
+			if (j < count) {
+				Lists[j].Add(RandomHumanCountryIndex());
+				Lists2[j].Add(DAT_00ABF460[j]);
+			} else {
+				Lists[j].Add(RandomAICountryIndex());
+				int pick;
+				do {
+					pick = Scen->RandomNumber(0, 7);
+				} while (pick != -2 && Slot_Taken(pick));
+				DAT_00ABF460[j] = pick;
+				Lists2[j].Add(pick);
+			}
+			sprintf(piece, ",%d,%d", Lists[j][k], Lists2[j][k]);
+			strcat(buffer, piece);
+		}
+	}
+	FUN_004068E0(DAT_0082DC84, buffer);
+	FUN_005E3720(buffer);
+	FUN_004068E0(DAT_0081F1D4);
+	return(true);
+}
+
+// FUNCTION: 0x005C2A60
+void MPCooperative::vt_entry_74(unsigned a, unsigned b)
+{
+	if (a != 1) {
+		return;
+	}
+	char * token = strtok((char *)b, ",");
+	if (token == NULL) {
+		return;
+	}
+	int rounds = atol(token);
+	if (rounds < 1) {
+		return;
+	}
+	for (int i = 0; i < 8; i++) {
+		int max = Lists[i].Length();
+		Lists[i].Clear();
+		Lists[i].Resize(max, 0);
+		max = Lists2[i].Length();
+		Lists2[i].Clear();
+		Lists2[i].Resize(max, 0);
+	}
+	for (int round = 0; round < rounds; round++) {
+		for (int j = 0; j < 8; j++) {
+			token = strtok(NULL, ",");
+			if (token) {
+				Lists[j].Add(atol(token));
+			} else {
+				Lists[j].Add(-1);
+			}
+			token = strtok(NULL, ",");
+			if (token) {
+				Lists2[j].Add(atol(token));
+			} else {
+				Lists2[j].Add(-1);
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x005C2CB0
+bool MPCooperative::UnfixAlliances(void)
+{
+	HWND dialog = GameoptWindow();
+	if (dialog == NULL) {
+		dialog = WS_Find_Dialog(0xbc6);
+	}
+	if (dialog) {
+		FUN_005C21D0(dialog, true);
+	}
+	return(true);
+}
+
+// FUNCTION: 0x005C2CE0
+void MPCooperative::PopulateTeamDropdownForPlayer(HWND hwnd, int index)
+{
+	MPGameModeClass::PopulateTeamDropdownForPlayer(hwnd, index);
 }

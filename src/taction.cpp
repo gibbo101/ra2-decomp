@@ -70,6 +70,10 @@ void __fastcall FUN_0048A620(Coord coord, int damage, WarheadTypeClass const * w
 char const * __fastcall FUN_00751590(int index);
 int __fastcall FUN_00753250(char const * name);
 
+void __fastcall FUN_0053AD00(int, int, int, int);
+bool __fastcall FUN_0053A100(void);
+void __fastcall FUN_00588AC0(MapClass * map);
+extern int DAT_00842AFC[];
 bool __fastcall FUN_0065D8E0(TeamTypeClass * team, int waypoint);
 void __fastcall FUN_00539EB0(int duration, int deferment, Cell target, bool a);
 HouseClass * __fastcall FUN_00726910(TriggerClass * trig);
@@ -1514,6 +1518,121 @@ bool TActionClass::TAction_ENABLE_TRIGGER(HouseClass * , ObjectClass * , Trigger
 				}
 			}
 		}
+	}
+	return(true);
+}
+
+// FUNCTION: 0x006E2B70
+bool TActionClass::TAction_DISABLE_TRIGGER(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	if (Trigger != NULL) {
+		for (int index = 0; index < Triggers.Count(); index++) {
+			if (Triggers[index]->Class == Trigger) {
+				Triggers[index]->Disable();
+			}
+		}
+	}
+	return(true);
+}
+
+// FUNCTION: 0x006E2BB0
+bool TActionClass::TAction_RADAR_EVENT(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	Submit_Radar_Event(Data.RadarEvent, Scen->Get_Waypoint_Cell(EffectLocation));
+	return(true);
+}
+
+// FUNCTION: 0x006E2BE0
+bool TActionClass::TAction_SET_LOCAL(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	Scen->Set_Local_To(Data.Value, true);
+	return(true);
+}
+
+// FUNCTION: 0x006E2C00
+bool TActionClass::TAction_CLEAR_LOCAL(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	Scen->Set_Local_To(Data.Value, false);
+	return(true);
+}
+
+// FUNCTION: 0x006E2C20
+bool TActionClass::TAction_CLEAR_SMUDGES(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	FUN_00588AC0(&Map);
+	Map.Flag_To_Redraw(GS_REDRAW_TACTICAL);
+	return(true);
+}
+
+// FUNCTION: 0x006E2C40
+bool TActionClass::TAction_METEOR_SHOWER(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	static const int _scale = 70;
+
+	Cell waypoint = Scen->Get_Waypoint_Cell(EffectLocation);
+	Coord coord = Coord (waypoint);
+	coord.Z = Map.Get_Height_GL(coord);
+	if ( Map[waypoint].IsUnderBridge || Map[waypoint].WasUnderBridge ) {
+		coord.Z += BRIDGE_LEPTON_HEIGHT;
+	}
+	int count = DAT_00842AFC[Data.MeteorShower] + abs(Scen->RandomNumber) % 3;
+	AnimType met_large = Anim_From_Name("METLARGE");
+	AnimType met_small = Anim_From_Name("METSMALL");
+
+	int distance = count * _scale;
+	for (int i = 0; i < count; i++) {
+		Coord meteor_coord = coord + Coord(Scen->RandomNumber % distance, Scen->RandomNumber % distance);
+		meteor_coord.Z = Map.Get_Height_GL(meteor_coord);
+
+		new AnimClass(AnimTypes[abs(Scen->RandomNumber) % 2 ? met_large : met_small], meteor_coord);
+	}
+	return(true);
+}
+
+// FUNCTION: 0x006E2E20
+bool TActionClass::TAction_SET_AMBIENT_STEP(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	Rule->AmbientLightChangeStep = (double)Data.Float;
+	return(true);
+}
+
+// FUNCTION: 0x006E2E40
+bool TActionClass::TAction_SET_AMBIENT_RATE(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	Rule->AmbientLightChangeRate = (double)Data.Float;
+	return(true);
+}
+
+// FUNCTION: 0x006E2E60
+bool TActionClass::TAction_SET_TINT_RED(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	FUN_0053AD00(Data.Value * 10, Scen->NormalLighting.GreenTint * 10, Scen->NormalLighting.BlueTint * 10, 0);
+	Scen->NormalLighting.RedTint = Data.Value;
+	return(true);
+}
+
+// FUNCTION: 0x006E2EB0
+bool TActionClass::TAction_SET_TINT_GREEN(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	FUN_0053AD00(Scen->NormalLighting.RedTint * 10, Data.Value * 10, Scen->NormalLighting.BlueTint * 10, 0);
+	Scen->NormalLighting.GreenTint = Data.Value;
+	return(true);
+}
+
+// FUNCTION: 0x006E2F00
+bool TActionClass::TAction_SET_TINT_BLUE(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	FUN_0053AD00(Scen->NormalLighting.RedTint * 10, Scen->NormalLighting.GreenTint * 10, Data.Value * 10, 0);
+	Scen->NormalLighting.BlueTint = Data.Value;
+	return(true);
+}
+
+// FUNCTION: 0x006E2F50
+bool TActionClass::TAction_SET_AMBIENT_LIGHT(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	Scen->AmbientLight = Data.Value;
+	if (!FUN_0053A100()) {
+		Scen->DesiredAmbientLight = Scen->AmbientLight;
 	}
 	return(true);
 }

@@ -132,6 +132,12 @@
 #include <io.h>
 #include <cfloat>
 
+struct SHPStruct
+{
+	char Data[0x24];
+	~SHPStruct();
+};
+
 // FUNCTION: 0x006BB070 $E2
 // FUNCTION: 0x006BB0A0 $E5
 // FUNCTION: 0x006BB0C0 $E8
@@ -144,6 +150,19 @@
 // FUNCTION: 0x006BB1E0 $E29
 // FUNCTION: 0x006BB210 $E32
 // FUNCTION: 0x006BB220 $E35
+// FUNCTION: 0x006BB240 $E38
+// FUNCTION: 0x006BB260 $E316
+// FUNCTION: 0x006BB2A0 $E314
+
+namespace DirectDrawWrap { extern bool DoSmth; void DisposeOfStuff(void); }
+void FUN_004C19B0(void);
+extern int ReadyToQuit;
+extern SHPStruct * DAT_00B0BCF0;
+extern bool DAT_00B0BCF4;
+
+DWORD dwRegisterMap = -1;
+
+DynamicVectorClass<DWORD> RegisteredClasses;
 
 // FUNCTION: 0x006BB2E0
 bool SetRegKeyValue(const LPCSTR pszKey, const LPCSTR pszSubkey, const LPCSTR pszValue)
@@ -175,6 +194,48 @@ bool SetRegKeyValue(const LPCSTR pszKey, const LPCSTR pszSubkey, const LPCSTR ps
 	}
 
 	return(bOk);
+}
+
+// FUNCTION: 0x006BB390
+HRESULT RegisterServer(void)
+{
+	HRESULT hr = NOERROR;
+	TCHAR szID[39 + 1];
+	TCHAR szCLSID[48];
+	TCHAR szLibID[39 + 1];
+	WCHAR temp[39 + 1];
+	TCHAR szModulePath[MAX_PATH];
+
+	GetModuleFileName(ProgramInstance, szModulePath, sizeof(szModulePath) / sizeof(TCHAR));
+	StringFromGUID2(CLSID_TiberianSun, temp, (sizeof(temp) / sizeof(WCHAR)) - 1);
+	WideCharToMultiByte(0, 0, temp, -1, szID, (sizeof(temp) / sizeof(WCHAR)) - 1, 0, 0);
+	StringFromGUID2(LIBID_TiberianSun, temp, (sizeof(temp) / sizeof(WCHAR)) - 1);
+	WideCharToMultiByte(0, 0, temp, -1, szLibID, (sizeof(temp) / sizeof(WCHAR)) - 1, 0, 0);
+
+	lstrcpy(szCLSID, TEXT("CLSID\\"));
+	lstrcat(szCLSID, szID);
+
+	SetRegKeyValue(TEXT(GAME_PROGID), NULL, GAME_VERNAME);
+	SetRegKeyValue(TEXT(GAME_PROGID), TEXT("CLSID"), szID);
+
+	SetRegKeyValue(TEXT(GAME_VPROGID), NULL, GAME_VERNAME);
+	SetRegKeyValue(TEXT(GAME_VPROGID), TEXT("CurVer"), TEXT(GAME_PROGID));
+	SetRegKeyValue(TEXT(GAME_VPROGID), TEXT("CLSID"), szID);
+
+	SetRegKeyValue(szCLSID, NULL, GAME_VERNAME);
+	SetRegKeyValue(szCLSID, TEXT("ProgID"), TEXT(GAME_PROGID));
+	SetRegKeyValue(szCLSID, TEXT("VersionIndependentProgID"), TEXT(GAME_VPROGID));
+	SetRegKeyValue(szCLSID, TEXT("NotInsertable"), NULL);
+	SetRegKeyValue(szCLSID, TEXT("InprocServer32"), szModulePath);
+	SetRegKeyValue(szCLSID, TEXT("Typelib"), szLibID);
+
+	ITypeLib * pITypeLib = NULL;
+	LoadTypeLib(L"RA2.TLB", &pITypeLib);
+	if (pITypeLib != NULL) {
+		pITypeLib->Release();
+	}
+
+	return(hr);
 }
 
 // FUNCTION: 0x006BB760
@@ -218,8 +279,109 @@ HRESULT UnregisterServer(void)
 	return(hr);
 }
 
+// FUNCTION: 0x006BB8E0 DirectDrawWrap::DisposeOfStuff
+void DirectDrawWrap::DisposeOfStuff(void)
+{
+	static bool surfaces_reset = false;
+
+	if (DirectDrawWrap::DoSmth) {
+		FUN_004C19B0();
+	}
+
+	if (!surfaces_reset) {
+		if (HiddenSurface) {
+			delete HiddenSurface;
+			HiddenSurface = NULL;
+		}
+		if (AlternateSurface) {
+			delete AlternateSurface;
+			AlternateSurface = NULL;
+		}
+		if (TileSurface) {
+			delete TileSurface;
+			TileSurface = NULL;
+		}
+		if (SidebarSurface) {
+			delete SidebarSurface;
+			SidebarSurface = NULL;
+		}
+		if (CompositeSurface) {
+			delete CompositeSurface;
+			CompositeSurface = NULL;
+		}
+		if (VisibleSurface) {
+			delete VisibleSurface;
+			VisibleSurface = NULL;
+		}
+
+		Reset_Video_Mode();
+
+		surfaces_reset = true;
+	}
+}
+
 // FUNCTION: 0x006BB990
 LONG Top_Level_Exception_Filter(EXCEPTION_POINTERS *e_info)
 {
 	return(Exception_Handler(e_info->ExceptionRecord->ExceptionCode, e_info));
 }
+
+// FUNCTION: 0x006BEC50
+void Exit_Process(int code)
+{
+	exit(code);
+}
+
+// FUNCTION: 0x006BEC60
+void Emergency_Exit(void)
+{
+	ReadyToQuit = 1;
+
+	PostMessage(MainWindow, WM_DESTROY, 0, 0);
+
+	while (MainWindow) {
+		Windows_Message_Handler();
+		if (ReadyToQuit != 1) {
+			break;
+		}
+	}
+
+	if (dwRegisterMap != -1) {
+		RevokeActiveObject(dwRegisterMap, NULL);
+		dwRegisterMap = -1;
+	}
+
+	CoDisconnectObject((LPUNKNOWN)&ApplicationInstance, 0);
+
+	OleUninitialize();
+
+	if (MouseCursor) {
+		MouseCursor->Release_Mouse();
+		delete MouseCursor;
+	}
+	MouseCursor = NULL;
+
+	if (DAT_00B0BCF4) {
+		if (DAT_00B0BCF0) {
+			delete [] DAT_00B0BCF0;
+		}
+		DAT_00B0BCF4 = false;
+	}
+
+	PostQuitMessage(EXIT_SUCCESS);
+
+	Shutdown_Network();
+
+	Prog_End();
+}
+
+// FUNCTION: 0x006BED50 ?$DynamicVectorClass@K::Clear
+// FUNCTION: 0x006BED80 ?$VectorClass@K::ID
+// FUNCTION: 0x006BEDA0 ?$VectorClass@K::GetItem
+template class DynamicVectorClass<DWORD>;
+
+// FUNCTION: 0x006BEE40 ?$TClassFactory@VCStreamClass@@::?$TClassFactory@VCStreamClass@@
+template class TClassFactory<CStreamClass>;
+
+// FUNCTION: 0x006BEDB0 ?$_com_ptr_t@V?$_com_IIID@UIUnknown@@$1?_GUID_00000000_0000_0000_c000_000000000046@@3U__s_GUID@@A@@::CreateInstance
+template class _com_ptr_t<_com_IIID<IUnknown, &__uuidof(IUnknown)> >;

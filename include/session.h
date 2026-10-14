@@ -218,7 +218,35 @@ struct NodeNameType {
 			unsigned char LastChance;
 			int Color;
 		} Chat;
+		struct {
+			char SerialPad[SERIAL_MAX];
+			int Country;
+			int InitialCountry;
+			int ColorIdx;
+			int InitialColor;
+			int Start;
+			int InitialStart;
+			int Team;
+			int InitialTeam;
+			int SpectatorFlag;
+			int HouseIndex;
+			int Time;
+			int Unknown77;
+			int Clan;
+			int Unknown7F;
+			char Unknown83[2];
+		} Slot;
 	};
+
+	int Get_Country(void);
+	int Get_Color(void);
+	int Get_Color_Or_Random(void);
+	int Get_Start(void);
+	int Get_Team(void);
+	void Set_Country(int value);
+	void Set_Color(int value);
+	void Set_Start(int value);
+	void Set_Team(int value);
 };
 
 struct SerialPacketType {
@@ -231,7 +259,7 @@ struct SerialPacketType {
 			char Color;
 			unsigned int MinVersion;
 			unsigned int MaxVersion;
-			char Scenario[DESCRIP_MAX];
+			wchar_t Scenario[DESCRIP_MAX];
 			unsigned int Credits;
 			unsigned int IsBases		: 1;
 			unsigned int IsBridgeDestruction : 1;
@@ -264,8 +292,8 @@ struct SerialPacketType {
 		} ScenarioInfo;
 
 		struct {
-			char Message[MAX_MESSAGE_LENGTH + 10];
-			int Color;
+			wchar_t Message[MAX_MESSAGE_LENGTH];
+			char Color;
 		} Message;
 		struct {
 			int Color;
@@ -444,6 +472,8 @@ struct GameOptionsType {
 };
 
 struct SessionOptionsClass {
+	SessionOptionsClass(void);
+
 	int MPGameMode;
 	int ScenIndex;
 	int GameSpeed;
@@ -484,6 +514,7 @@ class SessionClass
 		void Write_MultiPlayer_Settings (void);
 		void Read_Scenario_Descriptions (void);
 		void Free_Scenario_Descriptions(void);
+		void Load_Call_Wait_Strings(void);
 
 		int Create_Connections(void);
 		bool Am_I_Master(void);
@@ -637,7 +668,7 @@ class SessionClass
 		DynamicVectorClass <char *> InitStrings;
 		DynamicVectorClass <char const *> CallWaitStrings;
 		static char const * DialMethodCheck[ DIAL_METHODS ];
-		static const int CallWaitStringIDs[ CALL_WAIT_STRINGS_NUM ];
+		static char const * const CallWaitStringIDs[ CALL_WAIT_STRINGS_NUM ];
 
 		int PlayerLatency[MAX_PLAYERS];
 		int LatencyFudge;

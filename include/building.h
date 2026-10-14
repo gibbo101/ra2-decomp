@@ -287,7 +287,7 @@ class BuildingClass : public TechnoClass
 		virtual void Assign_Target(AbstractClass * target) override;
 		virtual void Do_Destruction(TechnoClass * last_contact, TechnoClass * source, bool forced, Cell const * offset);
 		virtual bool Toggle_Primary(void);
-		virtual void FUN_00455820(int arg);
+		virtual void FUN_00455820(Cell cell = Cell());
 		virtual void SensorArrayDeactivate(Cell cell = Cell());
 		virtual void SensorArrayActivate(Cell cell = Cell());
 		virtual void DisguiseDetectorDeactivate(Cell cell = Cell());

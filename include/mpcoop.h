@@ -29,10 +29,19 @@ class MPCooperative : public MPGameModeClass
 		virtual int vt_entry_28(void) override;
 		virtual int FirstValidMapIndex(void) override;
 		virtual bool vt_entry_58(int index, DynamicVectorClass<int> picks, char const * map, char const * name) override;
+		virtual void vt_entry_38(unsigned a) override;
+		virtual void PopulateTeamDropdownForPlayer(HWND hwnd, int index) override;
+		virtual bool vt_entry_5C(unsigned a, unsigned b, unsigned c) override;
+		virtual bool vt_entry_60(void) override;
+		virtual bool vt_entry_64(void) override;
+		virtual void vt_entry_74(unsigned a, unsigned b) override;
+		virtual void vt_entry_78(unsigned a) override;
+		virtual bool UnfixAlliances(void) override;
 
 		void FUN_005C2500(HWND dialog);
 		void FUN_005C21D0(HWND dialog, bool flag);
 		void FUN_005C3EC0(void);
+		void FUN_005C23B0(HWND dialog, int control);
 
 		CoopCamp_0049B610 * Current;
 		int Field44;

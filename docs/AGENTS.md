@@ -23,6 +23,8 @@ original compiler turns into that function's exact bytes. MATCH means
   (`.claude/hooks/no-recursive-delete.py`) blocks `rm -r`, `find -delete` (except
   `-type d -empty`), `find -exec rm`, `xargs rm`, `rmtree`, `git clean` and
   `rsync --delete`. A blocked delete is a stop sign: never route around it.
+- No git commands at all, not even read-only ones. The working tree is shared: `git stash`,
+  `checkout` or `restore` takes every running agent's uncommitted work with it.
 - Before you finish, delete the scratch you made that nobody needs (probes, logs, variant
   copies): `rm` on the files by name or by a glob in one directory, then `rmdir` the
   empty directory. Keep your best source and its header overlay.

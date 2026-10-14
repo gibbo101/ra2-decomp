@@ -2044,7 +2044,7 @@ AbstractClass * AircraftClass::Good_Fire_Location(AbstractClass * target) const
 				Coord newcoord = Move_Coord(tcoord, (Dir256)face, r);
 				Cell newcell = newcoord.As_Cell();
 
-				if (Map.In_Local_Radar(newcell) && (Session.Type != GAME_NORMAL || IsALoaner || Map[newcell].IsAltUnknown) && Cell_Seems_Ok(newcell, true)) {
+				if (Map.In_Local_Radar(newcell) && (Session.Type != GAME_NORMAL || IsALoaner || Map[newcell].IsVisible) && Cell_Seems_Ok(newcell, true)) {
 					int dist;
 					if (altcoord != COORD_NONE) {
 						dist = Point2D(newcoord).Distance_To(Point2D(altcoord));

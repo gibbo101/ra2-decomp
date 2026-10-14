@@ -10,6 +10,8 @@
 
 // Defined here, so every module including this header holds its own copy.
 const double ISO_TILE_SIZE = 60.0;
+const int ISO_TILE_PIXEL_W = 60;
+const int ISO_TILE_PIXEL_H = 30;
 const double ONE_RAD = M_PI / 180.0;
 
 const double CELL_LEPTON_DIAG = fastmath::sqrt(pow((double)CELL_LEPTON_H, 2) * 2);

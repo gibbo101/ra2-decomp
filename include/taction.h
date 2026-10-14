@@ -200,6 +200,10 @@ class TActionClass : public AbstractClass
 		bool TAction_SET_AMBIENT_STEP(HouseClass * house, ObjectClass * object, TriggerClass * trig, Cell const & cell);
 		bool TAction_SET_AMBIENT_RATE(HouseClass * house, ObjectClass * object, TriggerClass * trig, Cell const & cell);
 		bool TAction_SET_AMBIENT_LIGHT(HouseClass * house, ObjectClass * object, TriggerClass * trig, Cell const & cell);
+		bool TAction_CLEAR_SMUDGES(HouseClass * house, ObjectClass * object, TriggerClass * trig, Cell const & cell);
+		bool TAction_SET_TINT_RED(HouseClass * house, ObjectClass * object, TriggerClass * trig, Cell const & cell);
+		bool TAction_SET_TINT_GREEN(HouseClass * house, ObjectClass * object, TriggerClass * trig, Cell const & cell);
+		bool TAction_SET_TINT_BLUE(HouseClass * house, ObjectClass * object, TriggerClass * trig, Cell const & cell);
 		bool TAction_BEGIN_AI_TRIGGERS(HouseClass * house, ObjectClass * object, TriggerClass * trig, Cell const & cell);
 		bool TAction_STOP_AI_TRIGGERS(HouseClass * house, ObjectClass * object, TriggerClass * trig, Cell const & cell);
 		bool TAction_SET_AI_TRIGGER_TEAM_RATIO(HouseClass * house, ObjectClass * object, TriggerClass * trig, Cell const & cell);

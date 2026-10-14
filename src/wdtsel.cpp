@@ -79,3 +79,108 @@ WDTShortPair DAT_00B72A28;
 
 // FUNCTION: 0x0076C250 $E64
 WDTIntTriple DAT_00B72A48;
+
+struct WDTAnchor { int a; int b; int c; WDTAnchor(void) { c = 0; a = 0x80; b = 0x80; } };
+
+// FUNCTION: 0x0076C270 $E67
+WDTAnchor DAT_00B72A70;
+
+using namespace WorldDominationTour;
+
+// FUNCTION: 0x0076C970 WorldDominationTour::Selection::Init_Voices
+void Selection::Init_Voices(INIClass const & ini, Wstring const & section)
+{
+	VoicePlayer.FUN_00770550(ini, section);
+	{ Wstring key("WinningThreshold"); WinningThreshold = ini.Get_Int(section, key, WinningThreshold); }
+	{ Wstring key("MegaWinningThreshold"); MegaWinningThreshold = ini.Get_Int(section, key, MegaWinningThreshold); }
+	{ Wstring key("LosingThreshold"); LosingThreshold = ini.Get_Int(section, key, LosingThreshold); }
+	{ Wstring key("MegaLosingThreshold"); MegaLosingThreshold = ini.Get_Int(section, key, MegaLosingThreshold); }
+}
+
+// FUNCTION: 0x0076CA60 WorldDominationTour::Selection::Init_Sounds
+void Selection::Init_Sounds(INIClass const & ini, Wstring const & section)
+{
+	Wstring buffer;
+
+	int count = ini.Entry_Count(section);
+	for (int i = 0; i < count; i++) {
+		Wstring entry = ini.Get_Entry(section, i);
+		if (entry != (char const *)NULL) {
+			bool found;
+			{
+				Wstring none((char const *)NULL);
+				found = ini.Get_String(section, entry, none, buffer) > 0;
+			}
+			if (found) {
+				if (entry == "Theme") {
+					ThemeName = buffer;
+					break;
+				}
+				MSSfxEntry * sfx = new MSSfxEntry(entry, buffer);
+				if (sfx->Get_Name() == (char const *)NULL) {
+					delete sfx;
+				} else {
+					Add_Sfx_Entry(sfx);
+				}
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x0076CBF0 WorldDominationTour::Selection::Init_Target
+void Selection::Init_Target(INIClass const & ini, Wstring const & section)
+{
+	Wstring buffer;
+	int faction = TourCampaign.Get()->PlayerFaction;
+	Wstring faction_name = *FUN_007AF2A0(faction);
+
+	bool found;
+	{
+		Wstring none((char const *)NULL);
+		found = ini.Get_String(section, faction_name + "ZoomingTarget", none, buffer) > 0;
+	}
+	if (found) {
+		ZoomingTarget = new MSAnimEntry(buffer);
+	}
+
+	{
+		Wstring none((char const *)NULL);
+		ini.Get_String(section, faction_name + "TargetPalette", none, buffer);
+	}
+	TargetDrawer = Create_Drawer(buffer);
+
+	{
+		Wstring none((char const *)NULL);
+		ini.Get_String(section, faction_name + "Target", none, buffer);
+	}
+	ThrobbingTarget = new MSAnimEntry(buffer);
+
+	ThrobbingTargetDividingFrame = ini.Get_Int(section, faction_name + "TargetDividingFrame", 32);
+}
+
+// FUNCTION: 0x0076D470 WorldDominationTour::Selection::Update_Hovered_Territory
+void Selection::Update_Hovered_Territory(Point2D const & point)
+{
+	int id = WorldMap.Get()->FUN_00769330(point);
+	if (id != HoveredTerritoryID) {
+		HoveredTerritoryID = id;
+		Select_Territory(WorldMap.Get()->FUN_0076F000(id));
+	}
+}
+
+// FUNCTION: 0x0076F000 WorldDominationTour::YRMapImpl::FUN_0076F000
+YRTerritoryHandle YRMapImpl::FUN_0076F000(int id)
+{
+	return(FUN_0076FF40(&Territories, id));
+}
+
+// FUNCTION: 0x0076F030 WorldDominationTour::YRTerritoryHandle::YRTerritoryHandle
+YRTerritoryHandle::YRTerritoryHandle(YRTerritoryHandle const & that)
+{
+	FUN_0065D480(that.Ptr);
+}
+
+// FUNCTION: 0x0076F060 WorldDominationTour::YRTerritoryHandle::~YRTerritoryHandle
+YRTerritoryHandle::~YRTerritoryHandle(void)
+{
+}

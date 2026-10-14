@@ -162,7 +162,8 @@ InfantryClass::~InfantryClass(void)
 	IsActive = false;
 }
 
-inline bool InfantryClass::Is_JumpJet(void) const
+// FUNCTION: 0x00522100
+bool InfantryClass::Is_JumpJet(void) const
 {
 	if (!Class->JumpJet) {
 		return(false);
@@ -1807,6 +1808,192 @@ bool InfantryClass::Ready_To_Next_Mission(void) const
 		}
 	}
 	return(false);
+}
+
+// FUNCTION: 0x00521C10
+void InfantryClass::Start_Fear(void)
+{
+	if (!Class->IsFearless && !Has_Ability(ABILITY_FEARLESS)) {
+		Fear = (FearType)0x12c;
+	}
+}
+
+// FUNCTION: 0x00521C40
+void InfantryClass::Stop_Fear(void)
+{
+	if (!Class->IsFearless) {
+		Fear = FEAR_NONE;
+	}
+}
+
+// FUNCTION: 0x00521C60
+void InfantryClass::Do_Idle(int which)
+{
+	switch (which) {
+		case 0:
+		default:
+			Do_Action(DO_IDLE1);
+			break;
+		case 1:
+			Do_Action(DO_IDLE2);
+			break;
+	}
+}
+
+// FUNCTION: 0x00521C90
+void InfantryClass::Compute_CRC(CRCEngine & crc) const
+{
+	BASECLASS::Compute_CRC(crc);
+	crc(Doing);
+	crc((int)Comment);
+	crc(Fear);
+	crc(IsTechnician);
+	crc(IsStoked);
+	crc(IsProne);
+	crc(IsZoneCheat);
+	crc(WasSelected);
+}
+
+// FUNCTION: 0x00521D30
+Coord InfantryClass::Turret_Coord(int which) const
+{
+	return(Fire_Coord(which, Coord(0, 0, 0)));
+}
+
+// FUNCTION: 0x00521D80
+int InfantryClass::Current_Speed(void)
+{
+	int speed = BASECLASS::Current_Speed();
+	if (IsProne) {
+		if (Class->IsCrawling) {
+			speed -= speed / 3;
+		} else {
+			speed += speed / 2;
+		}
+	}
+	return(speed);
+}
+
+// FUNCTION: 0x00521DD0
+void InfantryClass::On_Movement_Blocked(void)
+{
+	BASECLASS::On_Movement_Blocked();
+	if (NavCom != NULL && Distance(NavCom) < CELL_LEPTON_W * 4 && Is_JumpJet()) {
+	}
+}
+
+// FUNCTION: 0x00521EB0
+bool InfantryClass::JumpJet_To_Walk(void)
+{
+	int path_length = 0;
+	if (NavCom != NULL) {
+		for (int i = 0; i < CONQUER_PATH_MAX; i++) {
+			if (Path[i] == FACING_NONE) break;
+			if (Path[i] == FACING_COUNT) break;
+			path_length++;
+		}
+	}
+	if (path_length >= 4) return(false);
+
+	if (Is_JumpJet()) {
+		IPiggybackPtr piggy(Locomotion);
+		if (piggy != NULL && !piggy->Is_Piggybacking()) {
+			ILocomotionPtr walk(CLSID_WalkLocomotion);
+			walk->Link_To_Object(this);
+			piggy = IPiggybackPtr(walk);
+			if (piggy != NULL) {
+				Path[0] = FACING_NONE;
+				piggy->Begin_Piggyback(Locomotion);
+				Locomotion = walk;
+				Locomotion->Move_To(NavCom->Center_Coord());
+				return(true);
+			}
+		}
+	}
+
+	return(false);
+}
+
+// FUNCTION: 0x005220F0
+void InfantryClass::Berzerk(void)
+{
+	IsBerzerk = true;
+}
+
+// FUNCTION: 0x005221D0
+bool InfantryClass::Should_JumpJet_Fly(Cell const & from, Cell const & to)
+{
+	int height = HeightAGL;
+	height = height;
+
+	if (House->IonSensitivesShouldBeOffline()) {
+		return(false);
+	}
+
+	if (HeightAGL > 0) {
+		return(true);
+	}
+
+	if (House->FUN_0050B730()) {
+		CellClass * startptr = &Map[from];
+		if (startptr != NULL && startptr->FUN_00484AE0()) {
+			return(false);
+		}
+	}
+
+	if (Map.Is_Same_Cell_Zone(from, to, MZONE_INFANTRY, IsOnBridge, Map[to].IsUnderBridge, false)) {
+		if (from == to) {
+			return(false);
+		}
+		int dist = MAX(abs(to.X - from.X), abs(to.Y - from.Y));
+		if (dist == 1) {
+			return(false);
+		}
+		if (dist >= 4 || !Map.In_Local_Radar(from) || !Map.In_Local_Radar(to)) {
+			return(true);
+		}
+		return(Search.Test_Cell_Walk(from, to, this, IsOnBridge, Map[to].IsUnderBridge, MZONE_INFANTRY) > 7);
+	}
+
+	return(true);
+}
+
+static inline bool Is_Deploy_Doing(int doing)
+{
+	return(doing == 0x1b || doing == 0x1c || doing == 0x1d || doing == 0x1e);
+}
+
+// FUNCTION: 0x00522340
+AbstractClass * InfantryClass::Approach_Target(bool force)
+{
+	if (TarCom != NULL) {
+		if (!Is_Deploy_Doing(Doing)) {
+			return(BASECLASS::Approach_Target(false));
+		}
+		if (!Owner_HouseClass()->FUN_0050B730() && Class->Deployer && Class->DeployFire) {
+			int weapon = Class->DeployFireWeapon;
+			bool inrange = In_Range(TarCom, weapon);
+			WeaponTypeClass const * wt = Get_Class_Weapon_Data(weapon)->Weapon;
+			if (wt != NULL && !wt->AreaFire) {
+				if (Is_Deploy_Doing(Doing)) {
+					if (!inrange && !force) {
+						Do_Action((DoType)0x1f);
+					}
+				} else if (inrange && !force) {
+					if (!Locomotion->Is_Moving()) {
+						Do_Action((DoType)0x1b);
+						return(NULL);
+					}
+					Locomotion->Stop_Moving();
+					ShouldDeploy = true;
+					Current_Mission_Control();
+					Random_Pick(0, 2);
+					return(NULL);
+				}
+			}
+		}
+	}
+	return(NULL);
 }
 
 // FUNCTION: 0x00523300

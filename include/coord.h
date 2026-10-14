@@ -42,7 +42,7 @@ class Cell : public TPoint2D<short>
 			return(cs);
 		}
 
-		int As_Int(void) const { return((Y - (MAP_CELL_W * (X + Y)) - X) << 6); }
+		int As_Int(void) const { return((Y - (MAP_CELL_W * (X + Y)) - X) * 74); }
 };
 
 class Coord : public Point3D

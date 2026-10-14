@@ -103,6 +103,106 @@
 
 void Add_CRC(unsigned int *crc, unsigned int val);
 
+struct QueueRecord {
+	char Data[0x2ec];
+	int Head;
+	char Gap[0x0c + 4];
+	int Tail;
+	int Rows[2][5];
+	int Extra1;
+	int Extra2;
+	char *Buffer;
+	int Capacity;
+
+	QueueRecord(void);
+	~QueueRecord(void);
+};
+
+// FUNCTION: 0x00646C90
+QueueRecord::QueueRecord(void)
+{
+	Tail = 0;
+	Head = 0;
+	for (int i = 0; i < 5; i++) {
+		Rows[1][i] = 0;
+		Rows[0][i] = 0;
+	}
+	Extra2 = 0;
+	Extra1 = 0;
+	Capacity = 0x20000;
+	Buffer = 0;
+}
+
+// FUNCTION: 0x00646CE0
+QueueRecord::~QueueRecord(void)
+{
+	if (Buffer) {
+		delete Buffer;
+	}
+}
+
+struct FrameSyncStruct {
+	int frame;
+	unsigned int sent;
+	unsigned int recv;
+	unsigned int unknown1;
+	unsigned int unknown2;
+	unsigned int timing;
+
+	FrameSyncStruct(void);
+};
+
+// FUNCTION: 0x00646D00
+FrameSyncStruct::FrameSyncStruct(void)
+{
+	frame = -1;
+	sent = 0;
+	recv = 0;
+	unknown1 = 0;
+	unknown2 = 0;
+	timing = 0;
+}
+
+// FUNCTION: 0x00646D20 $E163
+FrameSyncStruct SyncBarFrameSync[7];
+
+void __fastcall FUN_00543090(IPXManagerClass *ipx);
+void __fastcall FUN_00543080(IPXManagerClass *ipx);
+
+// FUNCTION: 0x00646D50
+void Queue_Ipx_Set(void)
+{
+	if (Session.Type == GAME_INTERNET) {
+		FUN_00543090(&Ipx);
+	}
+}
+
+// FUNCTION: 0x00646D70
+void Queue_Ipx_Clear(void)
+{
+	if (Session.Type == GAME_INTERNET) {
+		FUN_00543080(&Ipx);
+	}
+}
+
+// FUNCTION: 0x00646D90 $E168
+// FUNCTION: 0x00646DB0 $E166
+BasicTimerClass<SystemTimerClass> SentFrameSyncTimer;
+
+// FUNCTION: 0x00646DC0 $E171
+FrameSyncStruct TheirFrameSync[7];
+
+// FUNCTION: 0x00646DF0
+void __fastcall Stamp_Their_Timing(int index)
+{
+	TheirFrameSync[index].timing = timeGetTime();
+}
+
+// FUNCTION: 0x00646E10 $E176
+// FUNCTION: 0x00646E60 $E174
+QueueRecord QueueRecords[256];
+
+
 // FUNCTION: 0x0064AAA0
 void ListBox_Trim(HWND listbox)
 {

@@ -111,8 +111,8 @@ CellClass::~CellClass(void)
 CellClass::CellClass(void) :
 	BASECLASS(),
 	CellID(CELL_NONE),
-	IsPlot(false),
-	IsCursorHere(false),
+	IsFogVisible(false),
+	IsFogMapped(false),
 	IsWaypoint(false),
 	IsRadarCursor(false),
 	IsFlagged(false),
@@ -134,11 +134,11 @@ CellClass::CellClass(void) :
 	IsHorizontalLine(false),
 	IsVerticalLine(false),
 	IsFogged(false),
+	IsPlot(false),
+	IsCursorHere(false),
+	IsFoundationCopyHere(false),
 	IsMapped(false),
 	IsVisible(false),
-	IsFogMapped(false),
-	IsFogVisible(false),
-	IsAltUnknown(false),
 	ITType(TILE_NONE),
 	Overlay(OVERLAY_NONE),
 	OverlayData(0),
@@ -2640,14 +2640,14 @@ void CellClass::ReduceShroudCounter(void)
 		ShroudCounter = 0;
 	}
 	ShroudCounter--;
-	if (!IsFogVisible) {
+	if (!IsMapped) {
 		goto reveal;
 	}
-	if (!IsAltUnknown) {
+	if (!IsVisible) {
 reveal:
 		if (ShroudCounter <= 0) {
-			IsFogVisible = true;
-			IsAltUnknown = true;
+			IsMapped = true;
+			IsVisible = true;
 		}
 	} else {
 		if (ShroudCounter <= 0) {
@@ -2677,8 +2677,8 @@ void CellClass::IncreaseShroudCounter(void)
 // FUNCTION: 0x004876F0
 void CellClass::Unshroud(void)
 {
-	IsFogVisible = true;
-	IsAltUnknown = true;
+	IsMapped = true;
+	IsVisible = true;
 	if (ShroudCounter > 0) {
 		IsToShroud = true;
 	}

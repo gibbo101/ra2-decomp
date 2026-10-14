@@ -9,6 +9,7 @@
 #include "cd.h"
 #include "conquer.h"
 #include "data.h"
+#include "geometry.h"
 #include "globals.h"
 #include "houstype.h"
 #include "init.h"
@@ -20,6 +21,19 @@
 #include "scenario.h"
 #include "session.h"
 #include "win.h"
+
+// FUNCTION: 0x00558550 $E32
+// FUNCTION: 0x00558580 $E35
+// FUNCTION: 0x005585A0 $E38
+// FUNCTION: 0x005585C0 $E41
+// FUNCTION: 0x005585E0 $E44
+// FUNCTION: 0x00558600 $E47
+// FUNCTION: 0x00558620 $E50
+// FUNCTION: 0x00558660 $E53
+// FUNCTION: 0x00558690 $E56
+// FUNCTION: 0x005586C0 $E59
+// FUNCTION: 0x005586F0 $E62
+// FUNCTION: 0x00558700 $E65
 
 // FUNCTION: 0x005587F0
 bool LoadOptionsClass::Load(void)

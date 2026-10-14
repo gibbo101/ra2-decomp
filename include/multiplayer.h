@@ -31,6 +31,14 @@ class MPTeam
 class MPGameModeClass
 {
 	public:
+		class InitializerBase
+		{
+			public:
+				InitializerBase(void);
+				virtual ~InitializerBase(void);
+				virtual void Allocate(void) = 0;
+		};
+
 		static MPGameModeClass * __fastcall Get(int index);
 		CCINIClass * FUN_005D67B0(void);
 		bool FUN_005D63E0(MPMapEntry * map);

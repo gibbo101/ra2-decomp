@@ -241,42 +241,43 @@ class MSWordAnim : public MSPrintAnim
 		Rect LineRect;
 };
 
+class MSTextLayout
+{
+	public:
+		MSTextLayout(char const * text, int width);
+		~MSTextLayout(void);
+
+		void Set_Position(int x, int y);
+		bool Is_Complete(void) const;
+		bool Is_Dirty(void) const;
+
+	private:
+		char Data[0x34];
+};
+
 class MSButtonAnim : public MSAnim
 {
 	public:
-		MSButtonAnim(SurfaceCacheClass * image_cache, Rect const & rect, char const * string, int height, int left_cap_width, int right_cap_width);
+		MSButtonAnim(Wstring const & text, int width, MS_ANIM_LIST * vector, Rect const & rect, bool persistent);
 		virtual ~MSButtonAnim(void) override;
 
 		virtual bool Advance(Surface * surface, Rect & rect) override;
 		virtual void Redraw(Surface * surface, Rect const * rect=NULL) override;
 		virtual Rect Get_Rect(void) const override;
+		virtual bool Has_Finished(void) const override;
 		virtual void Restore(Rect const & rect) override;
 
-		void Set_Enabled(bool enabled);
-		void Set_Pressed(bool pressed);
+	protected:
 
-	private:
-		void Draw_Caption(Surface * surface);
-		void Render(Surface * surface);
+		MSTextLayout * Text;
 
-	public:
-
-		SurfaceCacheClass * ImageCache;
-
-		bool Pressed;
-
-		bool Enabled;
+		int Width;
 
 		Rect Area;
 
-		int Height;
+		MS_ANIM_LIST * Anims;
 
-		int LeftCapWidth;
-		int RightCapWidth;
-
-		char const * String;
-
-		bool NeedsRedraw;
+		bool Persistent;
 };
 
 class MSPCXAnim : public MSAnim

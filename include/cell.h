@@ -155,11 +155,11 @@ class CellClass : public AbstractClass
 			unsigned char Composite;
 		} BridgeFlag;
 
+		unsigned IsPlot:1;
+		unsigned IsCursorHere:1;
+		unsigned IsFoundationCopyHere:1;
 		unsigned IsMapped:1;
 		unsigned IsVisible:1;
-		unsigned IsFogMapped:1;
-		unsigned IsFogVisible:1;
-		unsigned IsAltUnknown:1;
 		unsigned : 27;
 
 		int ShroudCounter;
@@ -170,9 +170,9 @@ class CellClass : public AbstractClass
 
 		unsigned unknown_13C;
 
-		unsigned IsPlot:1;
+		unsigned IsFogVisible:1;
 
-		unsigned IsCursorHere:1;
+		unsigned IsFogMapped:1;
 
 		unsigned IsWaypoint:1;
 

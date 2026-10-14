@@ -275,6 +275,29 @@ void DisplayClass::SetActiveFoundation(Cell const * list)
 }
 
 // FUNCTION: 0x004A8D40 $E249
+// FUNCTION: 0x004A8D50
+void DisplayClass::FUN_004A8D50(Cell const * list)
+{
+	if (CurrentFoundationCopy_Data) {
+		Mark_Foundation_Copy(CurrentFoundationCopy_CenterCell+CurrentFoundationCopy_TopLeftOffset, false);
+	}
+	CurrentFoundationCopy_TopLeftOffset = CELL_NONE;
+
+	if (list) {
+		static Cell _list[50];
+
+		memcpy(_list, list, sizeof(_list));
+		CurrentFoundationCopy_Data = _list;
+		Cell dim = Get_Occupy_Dimensions(CurrentFoundationCopy_Data);
+		dim -= Cell(1,1);
+		CurrentFoundationCopy_TopLeftOffset = -dim / 2;
+		Mark_Foundation_Copy(CurrentFoundationCopy_CenterCell+CurrentFoundationCopy_TopLeftOffset, true);
+	} else {
+		CurrentFoundationCopy_Data = 0;
+	}
+}
+
+// FUNCTION: 0x004A8EA0 $E251
 // FUNCTION: 0x004A94F0
 Cell DisplayClass::Get_Occupy_Dimensions(Cell const * list) const
 {
@@ -305,10 +328,90 @@ Cell DisplayClass::Get_Occupy_Dimensions(Cell const * list) const
 	return(cell);
 }
 
+// FUNCTION: 0x004A95A0
+void DisplayClass::Cursor_Mark(Cell const & pos, bool on)
+{
+	Cell const * ptr;
+	CellClass * cellptr;
+
+	if (pos == CELL_NONE) return;
+
+	ptr = CursorSize;
+	while (*ptr != REFRESH_EOL) {
+		Cell cell = Cell(pos + *ptr++);
+		if (In_Radar(cell)) {
+			cellptr = &(*this)[cell];
+			if (on) {
+				cellptr->IsCursorHere = true;
+			} else {
+				cellptr->IsCursorHere = false;
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x004A9650
+void DisplayClass::Mark_Foundation_Copy(Cell const & pos, bool on)
+{
+	Cell const * ptr;
+	CellClass * cellptr;
+
+	if (pos == CELL_NONE) return;
+
+	ptr = CurrentFoundationCopy_Data;
+	while (*ptr != REFRESH_EOL) {
+		Cell cell = Cell(pos + *ptr++);
+		if (In_Radar(cell)) {
+			cellptr = &(*this)[cell];
+			if (on) {
+				cellptr->IsFoundationCopyHere = true;
+			} else {
+				cellptr->IsFoundationCopyHere = false;
+			}
+		}
+	}
+}
+
 // FUNCTION: 0x004A9700
 void DisplayClass::AI(KeyNumType & input, Point2D const & xy)
 {
 	BASECLASS::AI(input, xy);
+}
+
+// FUNCTION: 0x004A9720
+void DisplayClass::Submit(ObjectClass const * object)
+{
+	if (object) {
+		if (object->Layer != LAYER_NONE) {
+			void (DisplayClass::*remove)(ObjectClass const *) = &DisplayClass::Remove;
+			(this->*remove)(object);
+		}
+		LayerType layer = object->In_Which_Layer();
+		if (layer != LAYER_NONE) {
+			if (Layer[layer].Submit(object, (layer == LAYER_GROUND))) {
+				((ObjectClass *)object)->Layer = layer;
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x004A9770
+void DisplayClass::Remove(ObjectClass const * object)
+{
+	if (object) {
+		if (object->Layer != LAYER_NONE) {
+			if (Layer[object->Layer].Delete((ObjectClass *)object)) {
+				((ObjectClass *)object)->Layer = LAYER_NONE;
+			}
+
+			if (object->Layer != LAYER_NONE) {
+				for (int l = LAYER_FIRST; l < LAYER_COUNT; l++) {
+					while (Layer[l].Delete((ObjectClass *)object)) { }
+				}
+				((ObjectClass *)object)->Layer = LAYER_NONE;
+			}
+		}
+	}
 }
 
 // FUNCTION: 0x004A9840
@@ -322,6 +425,246 @@ bool DisplayClass::Scroll_Map(FacingType facing, int & distance, bool really)
 
 	TacticalMap->Scroll_Map(facing, distance);
 	return(true);
+}
+
+// FUNCTION: 0x004A9890
+bool DisplayClass::Map_Cell(Cell const & cell, HouseClass * house)
+{
+	CellClass * cellptr = &(*this)[cell];
+
+	bool wasfogged = cellptr->IsFogMapped == false;
+	bool changed = !cellptr->IsFogMapped || !cellptr->IsMapped;
+	bool newlymapped = changed;
+
+	cellptr->IsToFog = false;
+
+	cellptr->IsFogMapped = true;
+	cellptr->IsMapped = true;
+
+	signed char sframe = TacticalMap->Cell_Shadow(cell, false);
+	if (sframe != cellptr->ShadowFrame) {
+		changed = true;
+		cellptr->ShadowFrame = sframe;
+	}
+	if (cellptr->ShadowFrame == -1) {
+		cellptr->IsVisible = true;
+	}
+
+	signed char fframe = TacticalMap->Cell_Shadow(cell, true);
+	if (fframe != cellptr->FogFrame) {
+		changed = true;
+		cellptr->FogFrame = fframe;
+	}
+	if (cellptr->FogFrame == -1) {
+		cellptr->IsFogVisible = true;
+	}
+
+	if (changed) {
+		TacticalMap->Flag_Cell(*cellptr);
+	}
+
+	for (FacingType dir = FACING_FIRST; dir < FACING_COUNT; dir++) {
+		int	shadow;
+		int fog;
+
+		Cell c = AdjacentCell[(int)dir & 7] + cell;
+		CellClass * cptr = &(*this)[c];
+
+		if (c != cell && !cptr->IsVisible) {
+			shadow = TacticalMap->Cell_Shadow(c, false);
+
+			if (shadow == -1) {
+				if (!cptr->IsMapped) {
+					Map_Cell(c, house);
+				} else {
+					cptr->IsVisible = true;
+					TacticalMap->Flag_Cell(*cptr);
+					for (FacingType dir2 = FACING_FIRST; dir2 < FACING_COUNT; dir2++) {
+						Cell cc = AdjacentCell[(int)dir2 & 7] + c;
+						CellClass * scptr = &(*this)[cc];
+						signed char sframe = TacticalMap->Cell_Shadow(cc, false);
+						if (sframe != scptr->ShadowFrame) {
+							scptr->ShadowFrame = sframe;
+							TacticalMap->Flag_Cell(*scptr);
+						}
+					}
+				}
+			} else {
+				if (shadow != -2 && !cptr->IsMapped) {
+					Map_Cell(c, house);
+				} else {
+					if (shadow >= 0 && shadow != cptr->ShadowFrame) {
+						cptr->ShadowFrame = shadow;
+						TacticalMap->Flag_Cell(*cptr);
+					}
+				}
+			}
+		}
+
+		if (c != cell && !cptr->IsFogVisible) {
+			fog = TacticalMap->Cell_Shadow(c, true);
+
+			if (fog == -1) {
+				if (!cptr->IsFogMapped) {
+					Map_Cell(c, house);
+				} else {
+					cptr->IsFogVisible = true;
+					TacticalMap->Flag_Cell(*cptr);
+					for (FacingType dir2 = FACING_FIRST; dir2 < FACING_COUNT; dir2++) {
+						Cell cc = AdjacentCell[(int)dir2 & 7] + c;
+						CellClass * fcptr = &(*this)[cc];
+						signed char fframe = TacticalMap->Cell_Shadow(cc, true);
+						if (fframe != fcptr->FogFrame) {
+							fcptr->FogFrame = fframe;
+							TacticalMap->Flag_Cell(*fcptr);
+						}
+					}
+				}
+			} else {
+				if (fog != -2 && !cptr->IsFogMapped) {
+					Map_Cell(c, house);
+				} else {
+					if (fog >= 0 && fog != cptr->FogFrame) {
+						cptr->FogFrame = fog;
+						TacticalMap->Flag_Cell(*cptr);
+					}
+				}
+			}
+		}
+	}
+
+	if (changed) {
+		Map.Reveal_Nearby_Technos(cellptr, house, newlymapped);
+	}
+
+	if (cellptr->IsFogMapped && wasfogged && Scen->Special.IsFogOfWar) {
+		cellptr->Unfog_Cell();
+	}
+
+	return(changed);
+}
+
+// FUNCTION: 0x004A9CA0
+bool DisplayClass::RevealFogShroud(Cell const & cell, HouseClass * house, bool increase)
+{
+	CellClass * cellptr = &(*this)[cell];
+
+	bool wasfogged = cellptr->IsFogMapped == false;
+	bool changed = !cellptr->IsFogMapped || !cellptr->IsMapped;
+	bool newlymapped = changed;
+
+	cellptr->IsToFog = false;
+	cellptr->IsFogMapped = true;
+
+	if (increase) {
+		cellptr->IncreaseShroudCounter();
+	} else {
+		cellptr->ReduceShroudCounter();
+	}
+
+	signed char sframe = TacticalMap->Cell_Shadow(cell, false);
+	if (sframe != cellptr->ShadowFrame) {
+		changed = true;
+		cellptr->ShadowFrame = sframe;
+	}
+	if (cellptr->ShadowFrame == -1) {
+		cellptr->IsVisible = true;
+	}
+
+	signed char fframe = TacticalMap->Cell_Shadow(cell, true);
+	if (fframe != cellptr->FogFrame) {
+		changed = true;
+		cellptr->FogFrame = fframe;
+	}
+	if (cellptr->FogFrame == -1) {
+		cellptr->IsFogVisible = true;
+	}
+
+	if (changed) {
+		TacticalMap->Flag_Cell(*cellptr);
+		Map.Reveal_Nearby_Technos(cellptr, house, newlymapped);
+	}
+
+	if (cellptr->IsFogMapped && wasfogged && Scen->Special.IsFogOfWar) {
+		cellptr->Unfog_Cell();
+	}
+
+	return(changed);
+}
+
+// FUNCTION: 0x004A9DD0
+bool DisplayClass::Fog_Map_Cell(Cell const & cell, HouseClass * house)
+{
+	CellClass * cellptr = &(*this)[cell];
+
+	bool wasfogged = cellptr->IsFogMapped == false;
+	bool changed = !cellptr->IsFogMapped;
+	bool newlymapped = changed;
+
+	cellptr->IsToFog = false;
+
+	cellptr->IsFogMapped = true;
+
+	signed char fframe = TacticalMap->Cell_Shadow(cell, true);
+	if (fframe != cellptr->FogFrame) {
+		changed = true;
+		cellptr->FogFrame = fframe;
+	}
+	if (cellptr->FogFrame == -1) {
+		cellptr->IsFogVisible = true;
+	}
+
+	if (changed) {
+		TacticalMap->Flag_Cell(*cellptr);
+	}
+
+	for (int dir = FACING_FIRST; dir < FACING_COUNT; dir++) {
+		int fog;
+
+		Cell c = Adjacent_Cell(cell, (FacingType)dir);
+		CellClass * cptr = &(*this)[c];
+
+		if (c != cell && !cptr->IsFogVisible) {
+			fog = TacticalMap->Cell_Shadow(c, true);
+
+			if (fog == -1) {
+				if (!cptr->IsFogMapped) {
+					Fog_Map_Cell(c, house);
+				} else {
+					cptr->IsFogVisible = true;
+					TacticalMap->Flag_Cell(*cptr);
+					for (int dir2 = FACING_FIRST; dir2 < FACING_COUNT; dir2++) {
+						Cell cc = Adjacent_Cell(c, (FacingType)dir2);
+						CellClass * fcptr = &(*this)[cc];
+						signed char fframe = TacticalMap->Cell_Shadow(cc, true);
+						if (fframe != fcptr->FogFrame) {
+							fcptr->FogFrame = fframe;
+							TacticalMap->Flag_Cell(*fcptr);
+						}
+					}
+				}
+			} else {
+				if (fog != -2 && !cptr->IsFogMapped) {
+					Fog_Map_Cell(c, house);
+				} else {
+					if (fog >= 0 && fog != cptr->FogFrame) {
+						cptr->FogFrame = fog;
+						TacticalMap->Flag_Cell(*cptr);
+					}
+				}
+			}
+		}
+	}
+
+	if (changed) {
+		Map.Reveal_Nearby_Technos(cellptr, house, newlymapped);
+	}
+
+	if (cellptr->IsFogMapped && wasfogged && Scen->Special.IsFogOfWar) {
+		cellptr->Unfog_Cell();
+	}
+
+	return(changed);
 }
 
 // FUNCTION: 0x004AA290

@@ -12,11 +12,11 @@ template<class T> class DynamicVectorClass;
 
 class FileEntryClass {
 	public:
-		char Descr[128];
+		wchar_t Descr[128];
 		char Filename[32];
 		unsigned Scenario;
 		HousesType House;
-		char PlayerName[64];
+		wchar_t PlayerName[64];
 		int Num;
 		FILETIME DateTime;
 		bool Valid;
@@ -31,9 +31,9 @@ class FileEntryClass {
 			Old(false),
 			Type(GAME_NORMAL)
 		{
-			Descr[0] = '\0';
+			Descr[0] = L'\0';
 			Filename[0] = '\0';
-			PlayerName[0] = '\0';
+			PlayerName[0] = L'\0';
 			DateTime.dwHighDateTime = 0;
 			DateTime.dwLowDateTime = 0;
 		}
@@ -59,14 +59,14 @@ class LoadOptionsClass
 		virtual ~LoadOptionsClass (void);
 
 		bool Load(void);
-		bool Save(char * description);
+		bool Save(wchar_t const * description);
 		bool Delete(void);
 
 		void Pick_Filename(char * file_name);
 		bool Files_Present(void);
 
 		virtual bool Load_File(const char * file_name);
-		virtual bool Save_File(const char * file_name, const char * descr);
+		virtual bool Save_File(const char * file_name, const wchar_t * descr);
 		virtual bool Delete_File(const char * file_name);
 		virtual bool Read_File(FileEntryClass * entry, WIN32_FIND_DATAA * ff);
 		virtual wchar_t const * GetUIString_Load(void) const;

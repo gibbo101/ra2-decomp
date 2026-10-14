@@ -1776,3 +1776,28 @@ date,address,function,model,result,best,checks,minutes,blocker,notes
 2026-10-14,0x00594B50,,sonnet-5.5 + opus-5.5,partial,50.8,0,,register allocation,MapGen Generate_Starting_Points; the bank needs no overlay and none of this run's header changes affect it; best unchanged (994 of 998 bytes)
 2026-10-14,0x00594F40,,sonnet-5.5 + opus-5.5,partial,72.9,0,,register allocation,MapRegionClass::Pick_Spread_Cells; needs no overlay; best unchanged (1203 of 1204 bytes)
 2026-10-14,0x005958E0,,sonnet-5.5 + opus-5.5,partial,100,8,,symbol data: data/symbols.csv names the wrong address for LoadOptionsClass::~LoadOptionsClass,"MapGeneratorClass::~MapGeneratorClass. All 725 bytes are identical, but the checker prints WRONG TARGETS. The only mismatch is the call to the SeedData base destructor: the original calls 0x00558790, while symbols.csv row 757 gives LoadOptionsClass::~LoadOptionsClass as 0x0055A0D0. 0x0055A0D0 is the deleting destructor: it ends in ret 4, tests flags&1, and sits in slot 0 of vtable 0x7ED2E4. 0x0055"
+2026-10-14,0x00570AE0,,sonnet-5.5 + opus-5.5,partial,34.8,0,,register allocation,map; not retried in this merge. Best from the first tier.
+2026-10-14,0x00571050,,sonnet-5.5 + opus-5.5,partial,25.7,0,,register allocation,map; not retried in this merge. Best from the first tier.
+2026-10-14,0x00597A30,,sonnet-5.5 + opus-5.5,partial,59.8,0,,inline expansion of INIClass constructor,MapSeedClass::Load_File: 97.0% normalised (771/775). The original inlines GenericNode::GenericNode and ours calls it. Banked file kept; not retried.
+2026-10-14,0x00709550,,sonnet-5.5 + opus-5.5,partial,70.2,0,,register allocation,"Techno; the original keeps zero in EBX from the first statement (cmp [mem],ebx). Not retried."
+2026-10-14,0x00465570,,sonnet-5.5 + opus-5.5,partial,94.1,70,,"compiler CSE and register choice: in the bib union the original reloads rect2.Height and computes (Y2-Y1)+H2+1, but ours","Rose from 89.1% (918 bytes) to 94.1% (908/913 bytes) by binding the bib rect as `Rect const & bibrect = ((SHPStruct const *)BibShape)->GetFrameBounds(0);`. With that, VC6 builds the result in the 0x4c temp and copies it to the 0x3c local without storing X. Union's rect1-invalid path reads through the temp pointer kept at [esp+0x2c], as in the original. Everything before the bib height compare now "
+2026-10-14,0x004A8EB0,,sonnet-5.5 + opus-5.5,partial,46,0,,register allocation and frame size,Not re-attempted. Its overlay cell.h is kept.
+2026-10-14,0x004A9070,,sonnet-5.5 + opus-5.5,partial,55.3,0,,epilogue block order and frame size,Not re-attempted.
+2026-10-14,0x004A91B0,,sonnet-5.5 + opus-5.5,partial,51.9,0,,register allocation,Not re-attempted.
+2026-10-14,0x0053A300,,sonnet-5.5 + opus-5.5,partial,67.6,0,,register allocation,Not re-attempted.
+2026-10-14,0x00541070,,sonnet-5.5 + opus-5.5,partial,100,1,,,"Already MATCH in src (not annotated by me); it was the Connection_Index-like function at this address, covered by the same file check showing zero non-MATCH lines. Not separately verified by name."
+2026-10-14,0x00750FF0,,sonnet-5.5 + opus-5.5,partial,70,0,,instruction scheduling,Not re-attempted; the best is the first tier's. Banked in build/batch/voc.
+2026-10-14,0x00751620,,sonnet-5.5 + opus-5.5,partial,58,0,,register allocation,Not re-attempted; length 232 against 233.
+2026-10-14,0x00751710,,sonnet-5.5 + opus-5.5,partial,98.3,58,,store scheduling (needs volatile),"Went from 94.2% to 98.3%. Moving the check `VocArray[voc]->Voc != NULL && Voc->FUN_00406650()` into a helper that takes a VocEntry * (Entry_Playing) fixed the eax/edx choice and the load order. The only diff left is that `lea edx,[esi+0x20]` lands one slot above `xor eax,eax / mov [esi+0x30],eax` (the Retired=0 store). PlayIndexAtPos 0x00750E20 has the same leftover diff. The function MATCHes when"
+2026-10-14,0x0076C290,,sonnet-5.5 + opus-5.5,partial,39.4,0,,register allocation and inline forms,Not re-attempted.
+2026-10-14,0x0076C6E0,,sonnet-5.5 + opus-5.5,partial,43.4,0,,inline versus out-of-line,Not re-attempted.
+2026-10-14,0x0076CDA0,,sonnet-5.5 + opus-5.5,partial,29.5,0,,inline budget,Not re-attempted.
+2026-10-14,0x0076D180,,sonnet-5.5 + opus-5.5,partial,20.5,0,,inline budget,Not re-attempted.
+2026-10-14,0x0076D3A0,,sonnet-5.5 + opus-5.5,partial,65.3,0,,inline budget,Not re-attempted.
+2026-10-14,0x0076D4D0,,sonnet-5.5 + opus-5.5,partial,40.8,0,,unmodelled details,Not re-attempted.
+2026-10-14,0x0076DAD0,,sonnet-5.5 + opus-5.5,partial,77.2,0,,accessor fold and init order,Not re-attempted.
+2026-10-14,0x004D1650,,sonnet-5.5 + opus-5.5,partial,59.6,0,,inline budget,"Not re-run. IndexClass::Search_For_Node stays out of line, and no header edit makes it inline. The banked file still defines its own FOG_TILE_W, FOG_TILE_H and Cell_Key, which can become ISO_TILE_PIXEL_* and As_Int when it lands."
+2026-10-14,0x005D74A0,,sonnet-5.5 + opus-5.5,partial,36.8,0,,register allocation / inline accessor shape,"Not re-run. No header change is pending. data/layouts.csv has StartingAllies at 0x1605c, which the original uses as a team index (-2 and -1 mean none)."
+2026-10-14,0x005D7CE0,,sonnet-5.5 + opus-5.5,partial,57.1,0,,inline budget,Not re-run. The original leaves Game_Modes()[i] as a call to 0x5D5AC0.
+2026-10-14,0x006DA770,,sonnet-5.5 + opus-5.5,partial,60.9,0,,register allocation / branch shape,Not re-run. Still banked in build/batch/Tactical/.
+2026-10-14,0x007BAB90,,sonnet-5.5 + opus-5.5,partial,76.8,0,,register allocation,Not re-run. In Plot_Line's diagonal branch the original keeps start.X in a stack slot and end.X in edi.

@@ -24,6 +24,305 @@ const int CODE_TOP = 8;
 
 OutCode Compute_Code(double x, double y, Rect const & rect);
 
+// FUNCTION: 0x007BA5E0
+bool XSurface::Draw_Line(Point2D const & startpoint, Point2D const & endpoint, int color)
+{
+	return(XSurface::Draw_Line(Get_Rect(), startpoint, endpoint, color));
+}
+
+// FUNCTION: 0x007BA610
+bool XSurface::Draw_Line(Rect const & xcliprect, Point2D const & startpoint, Point2D const & endpoint, int color)
+{
+
+	// Ensure that the clipping rectangle is legal.
+	Rect cliprect = Intersect(xcliprect, Get_Rect());
+
+	// High-speed working variables for the clipping rectangle and clipping operation.
+	Point2D start = Bias_To(startpoint, cliprect);
+	Point2D end = Bias_To(endpoint, cliprect);
+
+	if (!Clip_Line_To_Rect(start, end, cliprect)) return(false);
+
+	if (start.X > end.X) {
+		swap(start, end);
+	}
+
+	int bpp = Bytes_Per_Pixel();
+	void * buffer = Lock(start);
+	if (buffer != NULL) {
+
+		if (start.Y == end.Y) {
+
+			// Simplest of the blits, straight horizontal line.
+			if (bpp == 1) {
+				memset(buffer, color, end.X - start.X + 1);
+			} else {
+				for (int i = 0; i <= end.X - start.X; i++) {
+					*((unsigned short *)buffer + i) = color;
+				}
+			}
+
+		} else if (start.X == end.X) {
+			int pitch = start.Y > end.Y ? -Stride() : Stride();
+
+			// Straight vertical line.
+			int dy = abs(end.Y - start.Y);
+			for (int i = 0; i <= dy; i++) {
+				if (bpp == 1) {
+					*(unsigned char *)buffer = color;
+				} else {
+					*(unsigned short *)buffer = color;
+				}
+				buffer = (unsigned char *)buffer + pitch;
+			}
+		} else {
+			// Distances to x and y.
+			int dx = end.X - start.X;
+			int dy = end.Y - start.Y;
+			// The line isn't straight so we need to do some maths.
+			int pitch = Stride();
+			if (dy < 0) {
+				pitch = -pitch;
+			}
+
+			dy = abs(dy);
+			int dx2 = 2 * dx;
+			int dy2 = 2 * dy;
+
+			if (dx > dy) {
+
+				// The slope is not steep.
+				int delta = dy2 - dx;
+
+				// Plot low line.
+				for (int i = 0; i < dx; i++) {
+					if (bpp == 1) {
+						*((unsigned char *)buffer + i) = color;
+					} else {
+						*((unsigned short *)buffer + i) = color;
+					}
+
+					if (delta > 0) {
+						buffer = (unsigned char *)buffer + pitch;
+						delta -= dx2;
+					}
+
+					delta += dy2;
+				}
+			} else {
+
+				// The slope is steep.
+				int delta = dx2 - dy;
+				int k = 0;
+
+				// Plot high line.
+				for (int i = 0; i < dy; i++) {
+					if (bpp == 1) {
+						*((unsigned char *)buffer + k) = color;
+					} else {
+						*((unsigned short *)buffer + k) = color;
+					}
+
+					if (delta > 0) {
+						k++;
+						delta -= dy2;
+					}
+
+					delta += dx2;
+					buffer = (unsigned char *)buffer + pitch;
+				}
+			}
+		}
+
+		Unlock();
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x007BA8C0
+int XSurface::Draw_Dashed_Line(Point2D const & startpoint, Point2D const & endpoint, unsigned color, bool pattern[], int offset)
+{
+	Point2D start = startpoint;
+	Point2D end = endpoint;
+
+	int initial_offset = 1;
+
+	if (start.X > end.X) {
+		swap(start, end);
+		int norm = abs(start.X - end.X);
+		if (norm < abs(start.Y - end.Y) + 1) {
+			norm = abs(start.Y - end.Y) + 1;
+		}
+		offset = (offset + norm) % 16;
+		initial_offset *= -1;
+	}
+
+	int bpp = Bytes_Per_Pixel();
+	void *ptr = Lock(start);
+
+	if (ptr != NULL) {
+		if (start.Y == end.Y) {
+			// Simplest of the blits, straight horizontal line.
+			for (int i = 0; i <= end.X - start.X; i++, offset += initial_offset) {
+				if (offset < 0) {
+					offset += 16;
+				}
+				if (offset >= 16) {
+					offset -= 16;
+				}
+				if (pattern[offset]) {
+						*((unsigned short *)ptr + i) = color;
+				}
+			}
+
+		} else if (start.X == end.X) {
+			int pitch = start.Y > end.Y ? -Stride() : Stride();
+			// Straight vertical line.
+			int dy = abs(end.Y - start.Y);
+			for (int i = 0; i <= dy; i++, offset += initial_offset) {
+				if (offset < 0) {
+					offset += 16;
+				}
+				if (offset >= 16) {
+					offset -= 16;
+				}
+				if (pattern[offset]) {
+					if (bpp == 1) {
+						*(unsigned char *)ptr = color;
+					} else {
+						*(unsigned short *)ptr = color;
+					}
+				}
+				ptr = (unsigned char *)ptr + pitch;
+			}
+
+		} else {
+			// Distances to x and y.
+			int dx = end.X - start.X;
+			int dy = end.Y - start.Y;
+			// The line isn't straight so we need to do some maths.
+			int pitch = Stride();
+			if (dy < 0) {
+				pitch = -pitch;
+			}
+
+			dy = abs(dy);
+			int dx2 = 2 * dx;
+			int dy2 = 2 * dy;
+
+			if (dx > dy) {
+
+				// The slope is not steep.
+				int delta = dy2 - dx;
+
+				// Plot low line.
+				for (int i = 0; i < dx; i++, offset += initial_offset) {
+
+					if (offset < 0) {
+						offset += 16;
+					}
+					if (offset >= 16) {
+						offset -= 16;
+					}
+					if (pattern[offset]) {
+						if (bpp == 1) {
+							*((unsigned char *)ptr + i) = color;
+						} else {
+							*((unsigned short *)ptr + i) = color;
+						}
+					}
+
+					if (delta > 0) {
+						ptr = (unsigned char *)ptr + pitch;
+						delta -= dx2;
+					}
+
+					delta += dy2;
+
+				}
+			} else {
+
+				// The slope is steep.
+				int delta = dx2 - dy;
+				int k = 0;
+
+				// Plot high line.
+				for (int i = 0; i < dy; i++, offset += initial_offset) {
+
+					if (offset < 0) {
+						offset += 16;
+					}
+					if (offset >= 16) {
+						offset -= 16;
+					}
+					if (pattern[offset]) {
+						if (bpp == 1) {
+							*((unsigned char *)ptr + k) = color;
+						} else {
+							*((unsigned short *)ptr + k) = color;
+						}
+					}
+
+					if (delta > 0) {
+						k++;
+						delta -= dy2;
+					}
+
+					delta += dx2;
+					ptr = (unsigned char *)ptr + pitch;
+				}
+			}
+		}
+
+		Unlock();
+	}
+
+	return(offset);
+}
+
+// FUNCTION: 0x007BAB30
+int XSurface::Draw_Masked_Dashed_Line(Point2D const & startpoint, Point2D const & endpoint, unsigned color, bool pattern[], int offset, bool draw_on_zero_alpha)
+{
+	return(false);
+}
+
+// FUNCTION: 0x007BAB40
+bool XSurface::Draw_Masked_Line(Point2D const & startpoint, Point2D const & endpoint, unsigned color, bool draw_on_zero_alpha)
+{
+	return(false);
+}
+
+// FUNCTION: 0x007BAB50
+bool XSurface::Draw_Depth_Shaded_Line(Rect const & cliprect, Point2D const & startpoint, Point2D const & endpoint, unsigned color, int start_depth, int end_depth, bool write_depth)
+{
+	return(false);
+}
+
+// FUNCTION: 0x007BAB60
+bool XSurface::Draw_Depth_Glow_Line(Rect const & cliprect, Point2D const & startpoint, Point2D const & endpoint, int glow_strength, int start_depth, int end_depth, bool write_depth)
+{
+	return(false);
+}
+
+// FUNCTION: 0x007BAB70
+bool XSurface::Draw_Depth_Antialiased_Line(Rect const & cliprect, Point2D const & startpoint, Point2D const & endpoint, RGBClass & color, int start_depth, int end_depth, bool write_depth, bool blend_red, bool blend_green, bool blend_blue, float intensity)
+{
+	return(false);
+}
+
+// FUNCTION: 0x007BAB80
+bool XSurface::DrawRGBMultiplyingLine(Rect const & cliprect, Point2D const & startpoint, Point2D const & endpoint, RGBClass const & color, float intensity, int start_depth, int end_depth)
+{
+	return(false);
+}
+
+// FUNCTION: 0x007BAD90
+bool XSurface::Draw_Rect(Rect const & crect, int color)
+{
+	return(XSurface::Draw_Rect(Get_Rect(), crect, color));
+}
+
 // FUNCTION: 0x007BADC0
 bool XSurface::Draw_Rect(Rect const & cliprect, Rect const & crect, int color)
 {
@@ -38,6 +337,23 @@ bool XSurface::Draw_Rect(Rect const & cliprect, Rect const & crect, int color)
 	Draw_Line(cliprect, ll, lr, color);
 	return(true);
 }
+
+// FUNCTION: 0x007BAE60
+int XSurface::Get_Pixel(Point2D const & point) const
+{
+	int color = 0;
+	void * pointer = ((Surface*)this)->Lock(point);
+	if (pointer != NULL) {
+		if (Bytes_Per_Pixel() == 2) {
+			color = *((unsigned short*)pointer);
+		} else {
+			color = *((unsigned char*)pointer);
+		}
+		((Surface*)this)->Unlock();
+	}
+	return(color);
+}
+
 
 // FUNCTION: 0x007BB920
 void XSurface::Draw_Circle(Point2D center, int radius, Rect rect, int color)

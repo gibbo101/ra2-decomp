@@ -91,6 +91,8 @@
 #include "bench.hh"
 #include "tube.hh"
 
+namespace Unsorted { extern int CurrentFrame; }
+
 
 
 // FUNCTION: 0x006F2AD0 $E225
@@ -854,7 +856,7 @@ void TechnoClass::Per_Cell_Process(PCPType why)
 			IsInPlayfield = true;
 		}
 
-		if (!IsDiscoveredByPlayer && Map[cell].IsAltUnknown) {
+		if (!IsDiscoveredByPlayer && Map[cell].IsVisible) {
 			Revealed(PlayerPtr);
 		}
 
@@ -1194,8 +1196,8 @@ void TechnoClass::CreateGap(void)
 						}
 						++Map[cell].GapsCoveringThisCell;
 						if (Map[cell].ShroudCounter >= 1) {
-							Map[cell].IsAltUnknown = false;
-							Map[cell].IsFogVisible = false;
+							Map[cell].IsVisible = false;
+							Map[cell].IsMapped = false;
 						}
 					}
 					if (Owner_HouseClass()->Is_Player_Control() || House->Is_Ally(PlayerPtr) || PlayerPtr->IsDefeated) {
@@ -1237,8 +1239,8 @@ void TechnoClass::DestroyGap(void)
 						if (PlayerPtr->SpySatActive && Map[cell].GapsCoveringThisCell <= 0) {
 							--Map[cell].ShroudCounter;
 							if (Map[cell].ShroudCounter <= 0) {
-								Map[cell].IsFogVisible = true;
-								Map[cell].IsAltUnknown = true;
+								Map[cell].IsMapped = true;
+								Map[cell].IsVisible = true;
 							}
 						}
 					}
@@ -3358,6 +3360,188 @@ int TechnoClass::VoiceHarvest(void)
 	}
 }
 #pragma warning(pop)
+
+// FUNCTION: 0x007091D0
+bool TechnoClass::CanPassiveAcquireTargets(void) const
+{
+	if (IsWarpingSomethingOut() || SlaveOwner != NULL) {
+		return(false);
+	}
+	if (!Techno_Type_Class()->CanPassiveAquire) {
+		return(false);
+	}
+	if (Fetch_RTTI() == RTTI_BUILDING && ((BuildingClass const *)this)->Class->CanBeOccupied && GetOccupantCount() == 0) {
+		return(false);
+	}
+	bool cannotControl = (CaptureManager != NULL && CaptureManager->CannotControlAnyMore());
+	if (Is_Renovator() && House->FUN_0050B730()) {
+		return(false);
+	}
+	if (!cannotControl) {
+		if (Is_Weapon_Equipped()) {
+			return(true);
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00709290
+bool TechnoClass::CanOpportunityFire(void) const
+{
+	if (TarCom == NULL && !House->FUN_0050B730() && Is_Foot() && ((FootClass const *)this)->Team != NULL
+		&& !((FootClass const *)this)->Team->Class->IsSuicide && ((FootClass const *)this)->Team->Class->IsAggressive
+		&& CurrentMission == MISSION_MOVE) {
+		return(true);
+	}
+	if (!CanPassiveAcquireTargets()) {
+		return(false);
+	}
+	if (CurrentMission == MISSION_MOVE) {
+		if (Techno_Type_Class()->BalloonHover) {
+			if (!Is_Foot()) {
+				return(false);
+			}
+			if (((FootClass const *)this)->NavCom == Get_Cell_Ptr()) {
+				if (PlanningToken == NULL || PlanningToken->FUN_00636DC0() <= 0) {
+					return(true);
+				}
+			}
+		}
+	}
+	if (CurrentMission == MISSION_MOVE && this != NULL && Fetch_RTTI() == RTTI_UNIT) {
+		UnitClass const * unit = (Fetch_RTTI() == RTTI_UNIT) ? (UnitClass const *)this : NULL;
+		if (unit->Class->IsSimpleDeployer) {
+			FootClass const * foot = (AbstractFlags & 4) ? (FootClass const *)this : NULL;
+			if (foot->NavCom == Get_Cell_Ptr()) {
+				if (PlanningToken == NULL || PlanningToken->FUN_00636DC0() <= 0) {
+					return(true);
+				}
+			}
+		}
+	}
+	if (Techno_Type_Class()->OpportunityFire) {
+		return(true);
+	}
+	if (CurrentMission != MISSION_GUARD) {
+		return(false);
+	}
+	int weapon = IsNotSprayAttack();
+	WeaponDataStruct const * data = Get_Class_Weapon_Data(weapon);
+	bool areaFire = (data != NULL && data->Weapon != NULL && data->Weapon->AreaFire);
+	bool current = (What_Weapon_Should_I_Use(TarCom) == weapon);
+	if (areaFire && current) {
+		return(false);
+	}
+	return(true);
+}
+
+// FUNCTION: 0x00709460
+int TechnoClass::FUN_00709460(FireErrorType error) const
+{
+	if (error == FIRE_ILLEGAL || error == FIRE_CANT || error == FIRE_RANGE) {
+		return(false);
+	}
+	return(true);
+}
+
+// FUNCTION: 0x00709480
+bool TechnoClass::FUN_00709480(void)
+{
+	bool result = false;
+	if (CanOpportunityFire()) {
+		AbstractClass * old = TarCom;
+		unknown_4FC = Unsorted::CurrentFrame;
+		if ((result = Target_Something_Nearby(Center_Coord(), THREAT_RANGE)) != false) {
+			if (TarCom != old) {
+				ShouldLoseTargetNow = true;
+			}
+		}
+	}
+	return(result);
+}
+
+// FUNCTION: 0x007094E0
+bool TechnoClass::FUN_007094E0(void) const
+{
+	return(CurrentMission == MISSION_MOVE || CurrentMission == MISSION_HARVEST || CurrentMission == MISSION_GUARD);
+}
+
+// FUNCTION: 0x00709500
+bool TechnoClass::FUN_00709500(void) const
+{
+	return(CurrentMission == MISSION_SLEEP || CurrentMission == MISSION_ENTER || CurrentMission == MISSION_STOP
+		|| CurrentMission == MISSION_AMBUSH || CurrentMission == MISSION_UNLOAD || CurrentMission == MISSION_CONSTRUCTION
+		|| CurrentMission == MISSION_DECONSTRUCTION || CurrentMission == MISSION_REPAIR || CurrentMission == MISSION_MISSILE
+		|| CurrentMission == MISSION_HARMLESS || CurrentMission == MISSION_WAIT || CurrentMission == MISSION_OPEN);
+}
+
+// FUNCTION: 0x00709800
+int TechnoClass::FUN_00709800(FireErrorType error) const
+{
+	if (error == FIRE_ILLEGAL || error == FIRE_CANT) {
+		return(false);
+	}
+	return(true);
+}
+
+// FUNCTION: 0x00709820
+bool TechnoClass::Target_Something_Nearby(Coord const & coord, ThreatType threat)
+{
+	unknown_4FC = Unsorted::CurrentFrame;
+	if (CurrentMission == MISSION_GUARD_AREA) {
+		int r = Scen->RandomNumber(0, 2);
+		TargetingTimer = Rule->GuardAreaTargetingDelay + r;
+	} else {
+		int r = Scen->RandomNumber(0, 2);
+		TargetingTimer = Rule->NormalTargetingDelay + r;
+	}
+	threat = ThreatType(threat & (THREAT_RANGE|THREAT_AREA));
+
+	if (TarCom != NULL && ShouldLoseTargetNow) {
+		int primary = What_Weapon_Should_I_Use(TarCom);
+		FireErrorType error = Can_Fire(TarCom, primary, true);
+		if (error == FIRE_CANT && SpawnManager != NULL) {
+			SpawnManager->ResetTarget();
+		} else if (error == FIRE_CANT || error == FIRE_ILLEGAL || error == FIRE_RANGE) {
+			Assign_Target(NULL);
+		}
+	}
+
+	if (TarCom == NULL) {
+		AbstractClass * found = Greatest_Threat(threat, coord, false);
+		if (Techno_Type_Class()->DistributedFire) {
+			FUN_00709550();
+		} else {
+			if (found != NULL) {
+				Assign_Target(found);
+			}
+			int weapon = What_Weapon_Should_I_Use(TarCom);
+			TechnoClass * target = (found == NULL) ? NULL : ((found->AbstractFlags & 1) ? (TechnoClass *)found : NULL);
+			WeaponTypeClass const * wp = Get_Class_Weapon_Data(weapon)->Weapon;
+			if (target != NULL && wp != NULL && !wp->Bullet->IsInaccurate) {
+				target->EstimatedHealth -= Estimate_Damage(target, wp);
+			}
+		}
+	}
+	return(TarCom != NULL);
+}
+
+// FUNCTION: 0x007099D0
+int TechnoClass::Exit_Object(TechnoClass *, Cell)
+{
+	return(0);
+}
+
+// FUNCTION: 0x007099E0
+bool TechnoClass::Is_Ready_To_Random_Animate(void) const
+{
+	return(IdleTimer == 0);
+}
+
+// FUNCTION: 0x00709A20
+void TechnoClass::vt_entry_47C(unsigned)
+{
+}
 
 // FUNCTION: 0x0070D150
 void TechnoClass::Reset_Action_Line_Timer(void)

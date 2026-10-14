@@ -96,6 +96,9 @@ class DSurface : public XSurface
 		static int Get_Primary_Color_Mode(void);
 
 		bool Restore_Check(void) const;
+		bool Is_Lost(void) const;
+
+		friend bool Restore_Surface(DSurface const * surface);
 
 	protected:
 

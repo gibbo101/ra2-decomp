@@ -396,6 +396,7 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 
 		Cell Random_Cell_In_Zone(ZoneType zone) const;
 		static void Computer_Paranoid(void);
+		static HouseClass * FindByCountryIndex(int index);
 		bool Is_Allowed_To_Ally(HouseClass * house) const;
 		void Super_Weapon_Handler(void);
 		int * Factory_Counter(RTTIType rtti, unsigned char naval);
@@ -478,6 +479,7 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 
 		void Recalc_Power_Drain(void);
 		void Recalc_Radar_Availability(void);
+		void Create_Radar_Outage(int duration);
 
 		void Update_Present_Super_Weapons(void);
 		void Enable_Available_Super_Weapons(void);

@@ -1943,6 +1943,7 @@ void HouseClass::Tracking_Remove(TechnoClass const * techno)
 	}
 }
 
+// FUNCTION: 0x004FF8F0
 int * HouseClass::Factory_Counter(RTTIType rtti, unsigned char naval)
 {
 	switch (rtti) {
@@ -2584,30 +2585,6 @@ void HouseClass::Make_Enemy(ObjectClass * object, bool announce)
 	}
 }
 
-inline bool HouseClass::Can_Place_Waypoint(Cell const & cell)
-{
-	for (PathType path = PATH_FIRST; path < PATH_COUNT; path++) {
-		Ensure_Path(path);
-		for (int index = 0; index < Paths[path]->Waypoint_Count(); index++) {
-			WaypointClass * wp = Paths[path]->Get_Waypoint(index);
-			if (wp->Location.As_Cell() == cell && path != SelectedPath) {
-				return(false);
-			}
-		}
-	}
-	return(true);
-}
-
-inline WaypointPathClass * HouseClass::Ensure_Path(PathType path)
-{
-	WaypointPathClass *wp = Paths[path];
-	if (wp == NULL) {
-		wp = new WaypointPathClass(path);
-		Paths[path] = wp;
-	}
-	return(wp);
-}
-
 // FUNCTION: 0x00502160
 void HouseClass::Place_Waypoint(Coord const & coord)
 {
@@ -2624,12 +2601,331 @@ bool HouseClass::Select_Waypoint(Coord const & coord)
 	return(Paths[SelectedPath]->Select_Waypoint(coord));
 }
 
+// FUNCTION: 0x005022F0
+bool HouseClass::Can_Place_Waypoint(Cell const & cell)
+{
+	for (PathType path = PATH_FIRST; path < PATH_COUNT; path++) {
+		Ensure_Path(path);
+		for (int index = 0; index < Paths[path]->Waypoint_Count(); index++) {
+			WaypointClass * wp = Paths[path]->Get_Waypoint(index);
+			if (wp->Location.As_Cell() == cell && path != SelectedPath) {
+				return(false);
+			}
+		}
+	}
+	return(true);
+}
+
+// FUNCTION: 0x005023B0
+WaypointClass * HouseClass::Waypoint_At(Cell const & cell)
+{
+	for (PathType path = PATH_FIRST; path < PATH_COUNT; path++) {
+		Ensure_Path(path);
+		for (int index = 0; index < Paths[path]->Waypoint_Count(); index++) {
+			WaypointClass * waypt = Paths[path]->Get_Waypoint(index);
+			if (waypt->Location.As_Cell() == cell) {
+				return(waypt);
+			}
+		}
+	}
+	return(NULL);
+}
+
+// FUNCTION: 0x00502460
+bool HouseClass::Fetch_Waypoint_Data(WaypointClass * waypt, PathType & xpath, char & waypt_id)
+{
+	for (PathType path = PATH_FIRST; path < PATH_COUNT; path++) {
+		Ensure_Path(path);
+		for (int index = 0; index < Paths[path]->Waypoint_Count(); index++) {
+			if (Paths[path]->Get_Waypoint(index) == waypt) {
+				xpath = path;
+				waypt_id = index;
+				return(true);
+			}
+		}
+	}
+	xpath = PATH_NONE;
+	waypt_id = 0;
+	return(false);
+}
+
+// FUNCTION: 0x005024F0
+HRESULT STDMETHODCALLTYPE HouseClass::EnumConnectionPoints(IEnumConnectionPoints **ppEnum)
+{
+	if (ppEnum == NULL) {
+		return(E_POINTER);
+	}
+
+	EnumConnectionPointsClass *cpoints = new EnumConnectionPointsClass(PowerEventConnectionPoints);
+
+	if (cpoints == NULL) {
+		return(E_OUTOFMEMORY);
+	}
+
+	cpoints->AddRef();
+	*ppEnum = cpoints;
+	return(S_OK);
+}
+
+// FUNCTION: 0x00502550
+HRESULT STDMETHODCALLTYPE HouseClass::FindConnectionPoint(REFIID riid, IConnectionPoint **ppCP)
+{
+	if (ppCP == NULL) {
+		return(E_POINTER);
+	}
+
+	*ppCP = NULL;
+
+	for (int i = 0; i < PowerEventConnectionPoints.Count(); i++) {
+		IConnectionPoint *cpoint = PowerEventConnectionPoints[i];
+		IID iid;
+		cpoint->GetConnectionInterface(&iid);
+		if (iid == riid) {
+			*ppCP = cpoint;
+			cpoint->AddRef();
+			return(S_OK);
+		}
+	}
+
+	return(CONNECT_E_CANNOTCONNECT);
+}
+
+inline BuildingClass * Building_Cast(TechnoClass * techno)
+{
+	return((techno->Fetch_RTTI() == RTTI_BUILDING) ? (BuildingClass *)techno : NULL);
+}
+
+// FUNCTION: 0x005025F0
+void HouseClass::RegisterLoss(TechnoClass * techno, bool keeptiberium)
+{
+	if (techno->Techno_Type_Class()->ResourceGatherer) {
+		CountResourceGatherers--;
+	}
+	if (techno->Techno_Type_Class()->ResourceDestination) {
+		CountResourceDestinations--;
+	}
+
+	Map.OnTechnoDestroyed(techno);
+
+	if (techno->Techno_Type_Class()->PowersUnit && techno != NULL && techno->Fetch_RTTI() == RTTI_BUILDING) {
+		BuildingClass * bptr = Building_Cast(techno);
+		if (bptr->RegisteredAsPoweredUnitSource) {
+			Building_Cast(techno)->RegisteredAsPoweredUnitSource = false;
+			UnitTypeClass const * powered = techno->Techno_Type_Class()->PowersUnit;
+			if (--PoweredUnitCenters == 0 && powered != NULL) {
+				bool found = false;
+				for (int index = Technos.Count() - 1; index >= 0; index--) {
+					TechnoClass * other = Technos[index];
+					if (other->House == this && other->Techno_Type_Class() == powered && !other->IsInLimbo) {
+						other->Deactivate();
+						found = true;
+					}
+				}
+				if (found && GameActive && Is_Player_Control() && !ScenarioInit) {
+					VoxClass::Play("EVA_RobotTanksOffline", -1, -1);
+				}
+			}
+		}
+	}
+
+	switch (techno->Fetch_RTTI()) {
+		case RTTI_BUILDING:
+			if (!techno->Techno_Type_Class()->DontScore) {
+				ABQuantity.Decrement(techno->Techno_Type_Class()->Fetch_Heap_ID());
+			}
+			if (techno != NULL) {
+				BuildingClass * bptr = (BuildingClass *)techno;
+				if (bptr->Class->IsWeaponsFactory && !bptr->Class->Naval) {
+					CountWarfactories--;
+				}
+				RecalcPower = true;
+				Capacity -= bptr->Class->Capacity;
+				if (keeptiberium) {
+					int slot = bptr->Storage.First_Used_Slot();
+					while (slot != -1) {
+						int amount = bptr->Storage.Decrease_Amount(2147483648.0f, slot);
+						Give_Tiberium(amount, slot);
+						slot = bptr->Storage.First_Used_Slot();
+					}
+				} else {
+					Tiberium -= bptr->Storage;
+				}
+			}
+			break;
+
+		case RTTI_AIRCRAFT:
+			TotalOwnedAircraftCost -= techno->Techno_Type_Class()->Cost_Of(this);
+			if (!techno->Techno_Type_Class()->DontScore) {
+				AAQuantity.Decrement(techno->Techno_Type_Class()->Fetch_Heap_ID());
+			}
+			break;
+
+		case RTTI_INFANTRY:
+			if (techno->Techno_Type_Class()->ConsideredAircraft) {
+				TotalOwnedAircraftCost -= techno->Techno_Type_Class()->Cost_Of(this);
+			} else {
+				TotalOwnedInfantryCost -= techno->Techno_Type_Class()->Cost_Of(this);
+			}
+			if (!techno->Techno_Type_Class()->DontScore) {
+				AIQuantity.Decrement(techno->Techno_Type_Class()->Fetch_Heap_ID());
+			}
+			break;
+
+		case RTTI_UNIT:
+			if (!techno->Techno_Type_Class()->ConsideredAircraft && !techno->Techno_Type_Class()->Spawns) {
+				TotalOwnedVehicleCost -= techno->Techno_Type_Class()->Cost_Of(this);
+			} else {
+				TotalOwnedAircraftCost -= techno->Techno_Type_Class()->Cost_Of(this);
+			}
+			if (!techno->Techno_Type_Class()->DontScore) {
+				AUQuantity.Decrement(techno->Techno_Type_Class()->Fetch_Heap_ID());
+			}
+			break;
+
+		default:
+			break;
+	}
+}
+
+// FUNCTION: 0x00502A80
+void HouseClass::RegisterGain(TechnoClass * techno, bool ownerchange)
+{
+	if (techno->Techno_Type_Class()->ResourceGatherer) {
+		CountResourceGatherers++;
+	}
+	if (techno->Techno_Type_Class()->ResourceDestination) {
+		CountResourceDestinations++;
+	}
+
+	switch (techno->Fetch_RTTI()) {
+		case RTTI_BUILDING:
+			if (!techno->Techno_Type_Class()->DontScore) {
+				ABQuantity.Increment(techno->Techno_Type_Class()->Fetch_Heap_ID());
+			}
+			if (techno != NULL && techno->Fetch_RTTI() == RTTI_BUILDING) {
+				BuildingClass * bptr = (BuildingClass *)techno;
+				if (bptr->Class->IsWeaponsFactory && !bptr->Class->Naval) {
+					CountWarfactories++;
+				}
+				Adjust_Drain(bptr->Power_Drain());
+				Capacity += bptr->Class->Capacity;
+				Tiberium += bptr->Storage;
+			}
+			break;
+
+		case RTTI_AIRCRAFT:
+			TotalOwnedAircraftCost += techno->Techno_Type_Class()->Cost_Of(this);
+			if (!techno->Techno_Type_Class()->DontScore) {
+				AAQuantity.Increment(techno->Techno_Type_Class()->Fetch_Heap_ID());
+			}
+			break;
+
+		case RTTI_INFANTRY:
+			if (techno->Techno_Type_Class()->ConsideredAircraft) {
+				TotalOwnedAircraftCost += techno->Techno_Type_Class()->Cost_Of(this);
+			} else {
+				TotalOwnedInfantryCost += techno->Techno_Type_Class()->Cost_Of(this);
+			}
+			if (!((InfantryClass *)techno)->IsTechnician && !techno->Techno_Type_Class()->DontScore) {
+				AIQuantity.Increment(techno->Techno_Type_Class()->Fetch_Heap_ID());
+			}
+			break;
+
+		case RTTI_UNIT:
+			if (!techno->Techno_Type_Class()->ConsideredAircraft && !techno->Techno_Type_Class()->Spawns) {
+				TotalOwnedVehicleCost += techno->Techno_Type_Class()->Cost_Of(this);
+			} else {
+				TotalOwnedAircraftCost += techno->Techno_Type_Class()->Cost_Of(this);
+			}
+			AUQuantity.Increment(techno->Techno_Type_Class()->Fetch_Heap_ID());
+			break;
+
+		default:
+			break;
+	}
+}
+
+// FUNCTION: 0x00502D30
+HouseClass * HouseClass::FindByCountryIndex(int index)
+{
+	for (int i = 0; i < Houses.Count(); i++) {
+		HouseClass * housep = Houses[i];
+		if (housep->Class->House == index) {
+			return(housep);
+		}
+	}
+	return(NULL);
+}
+
+// FUNCTION: 0x00502D60
+void HouseClass::Compute_CRC(CRCEngine & crc) const
+{
+	BASECLASS::Compute_CRC(crc);
+	crc(Difficulty);
+	crc(Class->House);
+	crc(FirepowerBias);
+	crc(GroundspeedBias);
+	crc(AirspeedBias);
+	crc(ArmorBias);
+	crc(ROFBias);
+	crc(CostBias);
+	crc(BuildSpeedBias);
+	crc(RepairDelay);
+	crc(BuildDelay);
+	crc(IsHuman);
+	crc(IsStarted);
+	crc(IsAlerted);
+	crc(IsAITriggersOn);
+	crc(IsDefeated);
+	crc(IQ);
+	crc(State);
+	crc(Blockage);
+	crc((int)RepairTimer);
+	crc((int)AlertTime);
+	crc((int)BorrowedTime);
+	crc(CurUnits);
+	crc(CurBuildings);
+	crc(CurInfantry);
+	crc(CurAircraft);
+	crc((int)Credits);
+	crc((int)Capacity);
+	crc(AircraftFactories);
+	crc(InfantryFactories);
+	crc(UnitFactories);
+	crc(NumShipyards);
+	crc(BuildingFactories);
+	crc(NumOrePurifiers);
+	crc(Power);
+	crc(Drain);
+	crc(MapIsClear);
+	crc(WhoLastHurtMe);
+	crc(Enemy);
+	Base.Compute_CRC(crc);
+}
+
 // FUNCTION: 0x005046F0
 HRESULT STDMETHODCALLTYPE HouseClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
 	*retval = CLSID_HouseClass;
 	return(S_OK);
+}
+
+// FUNCTION: 0x00504730
+int HouseClass::Fetch_Object_Size(void) const
+{
+	return(sizeof(*this));
+}
+
+// FUNCTION: 0x00504740
+WaypointPathClass * HouseClass::Ensure_Path(PathType path)
+{
+	WaypointPathClass *wp = Paths[path];
+	if (wp == NULL) {
+		wp = new WaypointPathClass(path);
+		Paths[path] = wp;
+	}
+	return(wp);
 }
 
 // FUNCTION: 0x0050B6F0

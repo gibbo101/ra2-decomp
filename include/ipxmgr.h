@@ -44,15 +44,18 @@ class IPXManagerClass : public ConnManClass
 		void Set_Lobby_Timing(unsigned int retrydelta, unsigned int maxretries, unsigned int timeout);
 		virtual int Num_Connections(void) override;
 		virtual int Connection_ID(int index) override;
-		char *Connection_Name(int id);
+		wchar_t *Connection_Name(int id);
 		IPXAddressClass * Connection_Address(int id);
 		virtual int Connection_Index(int id) override;
-		void Set_Connection_Parms(int index, int id, char *name);
+		void Set_Connection_Parms(int index, int id, wchar_t *name);
 
 		int Send_Global_Message (void *buf, int buflen, int ack_req = 0,
-			IPXAddressClass *address = NULL);
+			IPXAddressClass *address = NULL, unsigned short port = 0, int packet_id = 0);
+		int Send_Global_Message_To_Name (void *buf, int buflen, int ack_req, wchar_t *name);
+		int Send_Global_Message_To_Player (void *buf, int buflen, int ack_req, int id);
 		int Get_Global_Message (void *buf, int *buflen, IPXAddressClass *address,
 			unsigned short *product_id);
+		int Global_Channel_Op (int a1, int a2, int a3, int a4, int a5, int a6);
 
 		virtual int Send_Private_Message (void *buf, int buflen,
 			int ack_req = 1, int conn_id = CONNECTION_NONE) override;

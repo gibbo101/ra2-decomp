@@ -32,6 +32,7 @@ class OptionsClass {
 		int Get_Scroll_Method(void) const;
 
 		bool Hotkey_Dialog(void);
+		void FUN_005FC000(HWND list);
 
 		void Load_Settings(void);
 		void Save_Settings(void);
