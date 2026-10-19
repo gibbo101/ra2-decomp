@@ -1770,3 +1770,28 @@ bool MPCooperative::vt_entry_08(void)
 {
 	return(true);
 }
+
+// FUNCTION: 0x005C4F00
+bool MPCooperative::vt_entry_BC(void)
+{
+	return(false);
+}
+
+// FUNCTION: 0x005C4F10 MPCooperative::~MPCooperative
+
+// FUNCTION: 0x005C4F30 ?$DynamicVectorClass@PAUCoopPlayerStats@@::?$DynamicVectorClass@PAUCoopPlayerStats@@
+// FUNCTION: 0x005C4FC0 ?$DynamicVectorClass@PAUCoopPlayerStats@@::~?$DynamicVectorClass@PAUCoopPlayerStats@@
+// FUNCTION: 0x005C5010 ?$DynamicVectorClass@PAUCoopPlayerStats@@::Clear
+// FUNCTION: 0x005C5040 ?$VectorClass@PAUCoopPlayerStats@@::ID
+// FUNCTION: 0x005C5060 ?$VectorClass@PAUCoopPlayerStats@@::GetItem
+template class VectorClass<CoopPlayerStats *>;
+template class DynamicVectorClass<CoopPlayerStats *>;
+
+// FUNCTION: 0x005C5070 ?$DynamicVectorClass@PAVMPTeam@@::Clear
+// FUNCTION: 0x005C50A0 ?$VectorClass@PAVMPTeam@@::ID
+// FUNCTION: 0x005C50C0 ?$VectorClass@PAVMPTeam@@::GetItem
+template class DynamicVectorClass<MPTeam *>;
+
+// FUNCTION: 0x005C50D0 ?$DynamicVectorClass@PAVCoopCamp_0049B610@@::Clear
+// FUNCTION: 0x005C5100 ?$VectorClass@PAVCoopCamp_0049B610@@::ID
+template class DynamicVectorClass<CoopCamp_0049B610 *>;

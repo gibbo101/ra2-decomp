@@ -745,7 +745,7 @@ void UnitClass::Draw_It(Point2D const & point, Rect const & cliprect) const
 		int height = Get_Height_AGL();
 		CellClass * cptr = &Map[Get_Coord()];
 
-		int brightness = 0;
+		int brightness;
 		if (((!IsOnBridge && height >= BRIDGE_LEPTON_HEIGHT) || (IsOnBridge && height >= 0)) &&
 			(cptr->IsUnderBridge &&
 				(cptr->IsBridgeEastWest && cptr->Adjacent_Cell(FACING_N).IsUnderBridge ||

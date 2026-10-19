@@ -1438,7 +1438,9 @@ struct NSSlotName
 {
 	wchar_t Name[20];
 	IPXAddressClass Address;
-	char Pad[0x85 - 0x28 - sizeof(IPXAddressClass)];
+	char Pad[0x6b - 0x28 - sizeof(IPXAddressClass)];
+	int Id;
+	char Pad2[0x85 - 0x6f];
 };
 #pragma pack(pop)
 extern wchar_t const * DAT_00AC117C;
@@ -1505,3 +1507,324 @@ void FUN_005E87A0(void)
 	}
 }
 
+
+class MPPlayerNode;
+extern DynamicVectorClass<MPPlayerNode *> DAT_00A8DA74;
+void __fastcall FUN_005C6120(DynamicVectorClass<MPPlayerNode *> * vec);
+extern NSSlotName * DAT_00A8DA90[8];
+extern int DAT_00A8DA8C;
+extern int DAT_00A8B250;
+void __fastcall FUN_0069B540(int * options);
+extern short DAT_00AC0D44;
+extern short DAT_00AC0B94;
+extern char DAT_00AC0AC8;
+extern char DAT_00AC0AEC;
+extern char DAT_00AC0EA4;
+extern char DAT_00AC0B10;
+
+// FUNCTION: 0x005E8A20
+void FUN_005E8A20(void)
+{
+	if (DAT_00AC119C != NULL) {
+		delete DAT_00AC119C;
+		DAT_00AC119C = NULL;
+	}
+	if (DAT_00AC11A0 != NULL) {
+		delete DAT_00AC11A0;
+		DAT_00AC11A0 = NULL;
+	}
+	if (DAT_00AC11A4 != NULL) {
+		delete DAT_00AC11A4;
+		DAT_00AC11A4 = NULL;
+	}
+	if (DAT_00AC11A8 != NULL) {
+		delete DAT_00AC11A8;
+		DAT_00AC11A8 = NULL;
+	}
+	if (DAT_00AC11AC != NULL) {
+		delete DAT_00AC11AC;
+		DAT_00AC11AC = NULL;
+	}
+	if (DAT_00AC11B0 != NULL) {
+		delete DAT_00AC11B0;
+		DAT_00AC11B0 = NULL;
+	}
+	if (DAT_00AC11B4 != NULL) {
+		delete DAT_00AC11B4;
+		DAT_00AC11B4 = NULL;
+	}
+	FUN_005C6120(&DAT_00A8DA74);
+}
+
+// FUNCTION: 0x005E8AE0
+void FUN_005E8AE0(void)
+{
+	int count = FUN_005E6440();
+	int i;
+	for (i = 0; i < count; i++) {
+		DAT_00A8DA90[i] = DAT_00AC119C;
+	}
+	for (i = count; i < 8; i++) {
+		DAT_00A8DA90[i] = DAT_00AC11A0;
+	}
+}
+
+// FUNCTION: 0x005E8B40
+void FUN_005E8B40(void)
+{
+	DAT_00AC0AC8 = 0;
+	DAT_00AC0AEC = 0;
+	DAT_00AC0EA4 = 0;
+	DAT_00AC0B10 = 0;
+}
+
+// FUNCTION: 0x005E8B60
+void FUN_005E8B60(void)
+{
+	int count = FUN_005E6440();
+	int i;
+	for (i = 0; i < count; i++) {
+		DAT_00A8DA90[i] = DAT_00AC119C;
+	}
+	for (i = count; i < 8; i++) {
+		DAT_00A8DA90[i] = DAT_00AC11A0;
+	}
+	DAT_00A8DA8C = -1;
+	FUN_0069B540(&DAT_00A8B250);
+	DAT_00AC0D44 = 0;
+	DAT_00AC0B94 = 0;
+}
+
+// FUNCTION: 0x005E8BF0
+NSSlotName * __fastcall FUN_005E8BF0(wchar_t const * name)
+{
+	if (wcscmp(DAT_00AC119C->Name, name) == 0) {
+		return(DAT_00AC119C);
+	}
+	if (wcscmp(DAT_00AC11A0->Name, name) == 0) {
+		return(DAT_00AC11A0);
+	}
+	if (wcscmp(DAT_00AC11A4->Name, name) == 0) {
+		return(DAT_00AC11A4);
+	}
+	if (wcscmp(DAT_00AC11A8->Name, name) == 0) {
+		return(DAT_00AC11A8);
+	}
+	if (wcscmp(DAT_00AC11AC->Name, name) == 0) {
+		return(DAT_00AC11AC);
+	}
+	if (wcscmp(DAT_00AC11B0->Name, name) == 0) {
+		return(DAT_00AC11B0);
+	}
+	if (wcscmp(DAT_00AC11B4->Name, name) == 0) {
+		return(DAT_00AC11B4);
+	}
+	int count = DAT_00A8DA84;
+	for (int i = 0; i < count; i++) {
+		NSSlotName * node = ((NSSlotName **)DAT_00A8DA78)[i];
+		if (wcscmp(node->Name, name) == 0) {
+			return(node);
+		}
+	}
+	return(NULL);
+}
+
+// FUNCTION: 0x005E8D00
+int __fastcall FUN_005E8D00(wchar_t const * name)
+{
+	for (int i = 0; i < 8; i++) {
+		if (DAT_00A8DA90[i] != NULL && wcsicmp(name, DAT_00A8DA90[i]->Name) == 0) {
+			return(i);
+		}
+	}
+	return(-1);
+}
+
+// FUNCTION: 0x005E8D40
+int FUN_005E8D40(void)
+{
+	if (!DAT_00A8DA84) {
+		return(-1);
+	}
+	return(FUN_005E8D00(((NSSlotName **)DAT_00A8DA78)[0]->Name));
+}
+
+// FUNCTION: 0x005E8D90
+void __fastcall FUN_005E8D90(int slot, NSSlotName * name)
+{
+	DAT_00A8DA90[slot] = name;
+}
+
+// FUNCTION: 0x005E8DA0
+void __fastcall FUN_005E8DA0(int slot)
+{
+	DAT_00A8DA8C = slot;
+	DAT_00A8DA90[slot] = ((NSSlotName **)DAT_00A8DA78)[0];
+}
+
+extern wchar_t DAT_008304FC[];
+Wstring __fastcall FUN_005EDEF0(NSSlotName * slot);
+WideWstring __fastcall FUN_007B7ED0(Wstring const & text);
+
+// FUNCTION: 0x005E8DC0
+void __fastcall FUN_005E8DC0(wchar_t * buffer)
+{
+	buffer[0] = 0;
+	for (int i = 0; i < 8; i++) {
+		NSSlotName * slot = DAT_00A8DA90[i];
+		WideWstring name;
+		if (slot == NULL || slot == DAT_00AC119C || slot == DAT_00AC11A0 || slot == DAT_00AC11B0 || slot == DAT_00AC11B4 || slot == DAT_00AC11A4 || slot == DAT_00AC11A8 || slot == DAT_00AC11AC) {
+			Wstring raw = FUN_005EDEF0(slot);
+			name = FUN_007B7ED0(raw);
+		} else {
+			name = slot->Name;
+		}
+		wcscat(buffer, name.get());
+		wcscat(buffer, DAT_008304FC);
+	}
+}
+
+int __fastcall FUN_004E37D0(int side);
+int __fastcall FUN_004E41D0(int side);
+int __fastcall FUN_004E4170(HWND dialog, int id, int flag);
+void __fastcall FUN_004E3A00(HWND dialog, int id);
+void __fastcall FUN_004E3B00(HWND dialog, int id);
+void __fastcall FUN_004E45A0(HWND dialog, int id);
+void __fastcall FUN_004E4770(HWND dialog, int id);
+void __fastcall FUN_004E49A0(HWND dialog, int id, int flag);
+NSSlotName * __fastcall FUN_005EDFC0(WideWstring * name);
+
+// FUNCTION: 0x005E8EA0
+void __fastcall FUN_005E8EA0(wchar_t * list)
+{
+	wchar_t text[170];
+	bool observer[8];
+	int i;
+
+	if (list[0] == 0) {
+		return;
+	}
+	wcscpy(text, list);
+	NSSlotName * obs = DAT_00AC11B4;
+	NSSlotName * wait = DAT_00AC11B0;
+	NSSlotName * open = DAT_00AC119C;
+	NSSlotName * closed = DAT_00AC11A0;
+	for (i = 0; i < 8; i++) {
+		NSSlotName * slot = DAT_00A8DA90[i];
+		observer[i] = (slot == obs || (slot != NULL && slot != open && slot != closed && slot != wait && slot->Id == -1));
+	}
+	FUN_005E8AE0();
+
+	i = 0;
+	wchar_t * token = wcstok(text, DAT_008304FC);
+	while (token != NULL) {
+		NSSlotName * node;
+		{
+			WideWstring wide(token);
+			node = FUN_005EDFC0(&wide);
+		}
+		if (node == NULL) {
+			node = FUN_005E8BF0(token);
+			if (node == NULL) {
+				node = DAT_00AC11B0;
+			}
+		}
+		if (node == DAT_00AC11B4 || (node != NULL && node != DAT_00AC119C && node != DAT_00AC11A0 && node != DAT_00AC11B0 && node != DAT_00AC11A4 && node != DAT_00AC11A8 && node != DAT_00AC11AC && node->Id == -1)) {
+			HWND dialog = FUN_00775940(0xc2);
+			if (dialog == NULL) {
+				dialog = FUN_00775940(0xc9);
+				if (dialog == NULL) {
+					dialog = FUN_00775940(0xbc);
+					if (dialog == NULL) {
+						dialog = FUN_00775940(0xbd);
+					}
+				}
+			}
+			if (!observer[i]) {
+				DAT_00A8DA90[i] = node;
+				FUN_004E3B00(dialog, FUN_004E37D0(i));
+				int id;
+				if (i == 0) {
+					id = 0x411;
+				} else if (i == 1) {
+					id = 0x412;
+				} else if (i == 2) {
+					id = 0x413;
+				} else if (i == 3) {
+					id = 0x414;
+				} else if (i == 4) {
+					id = 0x415;
+				} else if (i == 5) {
+					id = 0x416;
+				} else if (i == 6) {
+					id = 0x417;
+				} else if (i == 7) {
+					id = 0x418;
+				} else {
+					id = -1;
+				}
+				SendMessage(GetDlgItem(dialog, id), 0x4f1, 0, 1);
+				int combo = FUN_004E41D0(i);
+				FUN_004E4770(dialog, combo);
+				FUN_004E49A0(dialog, combo, 8);
+			}
+		} else {
+			HWND dialog = FUN_00775940(0xc2);
+			if (dialog == NULL) {
+				dialog = FUN_00775940(0xc9);
+				if (dialog == NULL) {
+					dialog = FUN_00775940(0xbc);
+					if (dialog == NULL) {
+						dialog = FUN_00775940(0xbd);
+					}
+				}
+			}
+			if (observer[i]) {
+				int combo = FUN_004E37D0(i);
+				if (FUN_004E4170(dialog, combo, -1) == -3) {
+					FUN_004E3A00(dialog, combo);
+					int id;
+					if (i == 0) {
+						id = 0x411;
+					} else if (i == 1) {
+						id = 0x412;
+					} else if (i == 2) {
+						id = 0x413;
+					} else if (i == 3) {
+						id = 0x414;
+					} else if (i == 4) {
+						id = 0x415;
+					} else if (i == 5) {
+						id = 0x416;
+					} else if (i == 6) {
+						id = 0x417;
+					} else if (i == 7) {
+						id = 0x418;
+					} else {
+						id = -1;
+					}
+					SendMessage(GetDlgItem(dialog, id), 0x4f1, 0, 0);
+					combo = FUN_004E41D0(i);
+					FUN_004E45A0(dialog, combo);
+					FUN_004E49A0(dialog, combo, -2);
+				}
+			}
+		}
+		DAT_00A8DA90[i] = node;
+		i++;
+		token = wcstok(NULL, DAT_008304FC);
+	}
+}
+
+// FUNCTION: 0x005E9240
+int __fastcall FUN_005E9240(NSSlotName * node)
+{
+	for (int i = 0; i < 8; i++) {
+		NSSlotName * slot = DAT_00A8DA90[i];
+		if ((slot == DAT_00AC119C && node->Id != -1) || (slot == DAT_00AC11B4 && node->Id == -1)) {
+			DAT_00A8DA90[i] = node;
+			return(i);
+		}
+	}
+	return(-1);
+}

@@ -276,3 +276,31 @@ HRESULT STDMETHODCALLTYPE DropPodLocomotionClass::Piggyback_CLSID(GUID * classid
 	}
 	return(ptr->GetClassID(classid));
 }
+
+// FUNCTION: 0x004B65F0
+int STDMETHODCALLTYPE DropPodLocomotionClass::Drawing_Code(void)
+{
+	return(Flipped ? 1 : 0);
+}
+
+// FUNCTION: 0x004B6610 LocomotionClass::Is_Moving_Now
+
+// FUNCTION: 0x004B6620 LocomotionClass::Mark_All_Occupation_Bits
+
+// FUNCTION: 0x004B6630 LocomotionClass::Is_Moving_Here
+
+// FUNCTION: 0x004B6640 LocomotionClass::Will_Jump_Tracks
+
+// FUNCTION: 0x004B6650 LocomotionClass::Lock
+
+// FUNCTION: 0x004B6660 LocomotionClass::Unlock
+
+// FUNCTION: 0x004B6670 LocomotionClass::Get_Track_Number
+
+// FUNCTION: 0x004B6680 LocomotionClass::Get_Track_Index
+
+// FUNCTION: 0x004B6690 LocomotionClass::Get_Speed_Accum
+
+// FUNCTION: 0x004B66A0 DropPodLocomotionClass::AddRef
+
+// FUNCTION: 0x004B66B0 DropPodLocomotionClass::Release

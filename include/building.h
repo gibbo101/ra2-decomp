@@ -271,6 +271,13 @@ class BuildingClass : public TechnoClass
 		void FUN_00458750(void);
 		bool FUN_004587D0(ObjectTypeClass const * type);
 		int FUN_004589C0(void) const;
+		bool FUN_00458A00(CellClass const * cell);
+		bool FUN_00458A80(Coord const & coord, Dir256 dir);
+		void UpdateBunker(void);
+		void UnloadBunker(void);
+		void ClearBunker(void);
+		void EmptyBunker(void);
+		TechnoTypeClass const * FUN_00459840(void) const;
 		void Update_Radar_Spied(void);
 		void Spied_By(HouseClass * house);
 		void Infiltrate(HouseClass * house);

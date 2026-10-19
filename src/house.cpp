@@ -80,7 +80,7 @@
 extern DynamicVectorClass<TechnoClass *> DAT_00A8EC78;
 #define Technos DAT_00A8EC78
 extern DynamicVectorClass<FactoryClass *> DAT_00A83E30;
-namespace Unsorted { extern int CurrentFrame; extern int MuteSWLaunches; extern Cell CellSpreadTable[]; }
+namespace Unsorted { extern int CurrentFrame; extern int MuteSWLaunches; extern Cell CellSpreadTable[]; extern bool SWAllowed; }
 #define Factories DAT_00A83E30
 extern DynamicVectorClass<ObjectClass *> DAT_00A8ECB8;
 extern HouseClass * DAT_00AC1198;
@@ -3581,6 +3581,8 @@ void HouseClass::Update_Production_Mode(RTTIType type)
 	}
 }
 
+bool __fastcall FUN_0053A100(void);
+
 static inline void Fire_At_Preferred_Target(HouseClass * house, SuperClass * super)
 {
 	if (house->Enemy != HOUSE_NONE) {
@@ -3728,6 +3730,203 @@ void HouseClass::Fire_ParaDrop(SuperClass * super)
 	}
 }
 
+// FUNCTION: 0x00509E00
+void HouseClass::Fire_LightningStorm(SuperClass * super)
+{
+	if (!FUN_0053A100() && Enemy != HOUSE_NONE) {
+		Cell target = CELL_NONE;
+		if (PreferredTargetCell != CELL_NONE) {
+			target = PreferredTargetCell;
+		} else if (PreferredTarget == QUARRY_ANYTHING) {
+			target = PickIonCannonTarget();
+		} else {
+			target = PickTargetByType(PreferredTarget);
+		}
+		if (target != CELL_NONE) {
+			Place_Special_Blast((SuperWeaponType)SuperWeapon.ID(super), target);
+		}
+	}
+}
+
+// FUNCTION: 0x00509EC0
+void HouseClass::FUN_00509EC0(SuperClass * super)
+{
+	Cell target = CELL_NONE;
+	if (PreferredDefensiveCell2 != CELL_NONE) {
+		target = PreferredDefensiveCell2;
+	} else if (PreferredDefensiveCell != CELL_NONE && PreferredDefensiveCellStartTime + Rule->AISuperDefenseFrames > Unsorted::CurrentFrame) {
+		target = PreferredDefensiveCell;
+	} else {
+		return;
+	}
+	if (target != CELL_NONE) {
+		Place_Special_Blast((SuperWeaponType)SuperWeapon.ID(super), target);
+	}
+}
+
+// FUNCTION: 0x0050A350
+void HouseClass::FUN_0050A350(SuperClass * super)
+{
+	if (Enemy != HOUSE_NONE) {
+		HouseClass * enemy = Houses[Enemy];
+		BuildingClass * target = NULL;
+		int best = -1;
+		for (int i = ::Buildings.Count() - 1; i >= 0; i--) {
+			BuildingClass * building = ::Buildings[i];
+			if (building->House == enemy) {
+				int threat = Map.GetThreatPosed(building->Center_Coord().As_Cell(), this);
+				if (building->TranslucencyLevel == 15) {
+					threat = Random_Pick(0, 100);
+				}
+				if (threat > best) {
+					best = threat;
+					target = building;
+				}
+			}
+		}
+		if (target != NULL) {
+			Cell cell = target->Center_Coord().As_Cell();
+			Place_Special_Blast((SuperWeaponType)SuperWeapon.ID(super), cell);
+		}
+	}
+}
+
+// FUNCTION: 0x0050B1D0
+void HouseClass::AISupers(void)
+{
+	if (!IsDefeated) {
+		for (int s = 0; s < SuperWeapon.Count(); s++) {
+			if (!SuperWeapon[s]->Is_Present() || SuperWeapon[s]->Is_One_Time()) {
+				bool found = false;
+				for (int j = Buildings.Count() - 1; j >= 0; j--) {
+					BuildingClass * b = Buildings[j];
+					if (b->IsActive && !b->IsInLimbo) {
+						for (int k = 0; k < 3; k++) {
+							BuildingTypeClass const * upgrade = b->Upgrades[k];
+							if (upgrade != NULL && (upgrade->SuperWeapon == s || upgrade->SuperWeapon2 == s)) {
+								found = true;
+								break;
+							}
+						}
+						if (b->FirstActiveSWIdx() == s || b->SecondActiveSWIdx() == s) {
+							found = true;
+						}
+						if (found) break;
+					}
+				}
+				if (SuperWeapon[s]->Class->DisableableFromShell && !Unsorted::SWAllowed) continue;
+				if (found) {
+					SuperWeapon[s]->Grant(false, this == PlayerPtr, Power_Fraction() < 1.0);
+					if (this == PlayerPtr) {
+						Map.AddCameo(RTTI_SPECIAL, s);
+						int id = SuperWeapon[s]->Class->Fetch_Heap_ID();
+						Map.RepaintSidebar(SidebarClass::GetObjectTabIdx(RTTI_SUPERWEAPON, id, false));
+					}
+				}
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x0050B370
+bool HouseClass::FUN_0050B370(TechnoTypeClass const * type)
+{
+	if (type == NULL) {
+		return(true);
+	}
+
+	int queued = 0;
+	FactoryClass * factory = Primary_Factory(this, type->Fetch_RTTI(), type->Naval, 0);
+	if (factory != NULL) {
+		queued = factory->Total(type);
+	}
+
+	switch (type->Fetch_RTTI()) {
+		case RTTI_UNITTYPE:
+			if (type->BuildLimit <= 0) {
+				if (queued + PUQuantity.Value(type->Fetch_Heap_ID()) >= abs(type->BuildLimit)) {
+					return(true);
+				}
+			}
+			if (type->BuildLimit > 0) {
+				if (queued + UQuantity.Value(type->Fetch_Heap_ID()) >= type->BuildLimit) {
+					return(true);
+				}
+			}
+			break;
+
+		case RTTI_INFANTRYTYPE: {
+			if (type->BuildLimit <= 0) {
+				if (queued + PIQuantity.Value(type->Fetch_Heap_ID()) >= abs(type->BuildLimit)) {
+					return(true);
+				}
+			}
+			InfantryTypeClass const * inft = (InfantryTypeClass const *)type;
+			int owned = IQuantity.Value(type->Fetch_Heap_ID());
+			if (inft->IsVehicleThief) {
+				for (int i = 0; i < Units.Count(); i++) {
+					UnitClass * unit = Units[i];
+					if (unit->House == this && unit->EnteredByInfType == type->Fetch_Heap_ID()) {
+						owned++;
+					}
+				}
+			}
+			if (type->BuildLimit > 0) {
+				if (queued + owned >= type->BuildLimit) {
+					return(true);
+				}
+			}
+			break;
+		}
+
+		case RTTI_BUILDINGTYPE:
+			if (type->BuildLimit <= 0) {
+				if (queued + PBQuantity.Value(type->Fetch_Heap_ID()) >= abs(type->BuildLimit)) {
+					return(true);
+				}
+			}
+			if (type->BuildLimit > 0) {
+				if (queued + BQuantity.Value(type->Fetch_Heap_ID()) >= type->BuildLimit) {
+					return(true);
+				}
+			}
+			break;
+
+		case RTTI_AIRCRAFTTYPE: {
+			AircraftTypeClass const * airt = (AircraftTypeClass const *)type;
+			if (airt->IsAirportBound) {
+				int owned = 0;
+				int building = 0;
+				for (int i = 0; i < Rule->PadAircraft.Count(); i++) {
+					owned += AAQuantity.Value(Rule->PadAircraft[i]->Fetch_Heap_ID());
+					if (factory != NULL) {
+						building += factory->Total(Rule->PadAircraft[i]);
+					}
+				}
+				if (building + owned >= AirportDocks) {
+					return(true);
+				}
+			} else {
+				if (type->BuildLimit <= 0) {
+					if (queued + PAQuantity.Value(type->Fetch_Heap_ID()) >= abs(type->BuildLimit)) {
+						return(true);
+					}
+				}
+				if (type->BuildLimit > 0) {
+					if (queued + AQuantity.Value(type->Fetch_Heap_ID()) >= type->BuildLimit) {
+						return(true);
+					}
+				}
+			}
+			break;
+		}
+
+		default:
+			break;
+	}
+	return(false);
+}
+
 // FUNCTION: 0x0050B6F0
 bool HouseClass::Is_Player_Control(void) const
 {
@@ -3735,6 +3934,66 @@ bool HouseClass::Is_Player_Control(void) const
 		return(IsHuman || IsPlayerControl);
 	}
 	return(this == PlayerPtr) == true;
+}
+
+// FUNCTION: 0x0050B730
+bool HouseClass::FUN_0050B730(void) const
+{
+	if (Session.Type != GAME_NORMAL) {
+		return(IsHuman);
+	}
+	if (IsHuman || IsPlayerControl) {
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x0050B760
+bool HouseClass::FUN_0050B760(BuildingTypeClass const * type, Cell const & cell)
+{
+	if (Session.Type == GAME_NORMAL) {
+		return(true);
+	}
+
+	int spacing = Rule->AIBaseSpacing;
+	int width = type->Width() + 2 * spacing;
+	int height = type->Height(false) + 2 * spacing;
+	unsigned owner = 1 << HeapID;
+
+	for (int x = cell.X - spacing - 1; x < cell.X + width + 1; x++) {
+		for (int y = cell.Y - spacing - 1; y < cell.Y + height + 1; y++) {
+			if (Map[Cell(x, y)].OccupiedBy & owner) {
+				return(true);
+			}
+		}
+	}
+	return(false);
+}
+
+struct Drawing {
+	static unsigned short RedShiftLeft;
+	static int RedShiftRight;
+	static unsigned short GreenShiftLeft;
+	static int GreenShiftRight;
+	static unsigned short BlueShiftLeft;
+	static int BlueShiftRight;
+};
+
+// FUNCTION: 0x0050B840
+void HouseClass::FUN_0050B840(void)
+{
+	if (Scheme < 0) {
+		Scheme = 5;
+	}
+	ColorScheme * scheme = ColorSchemes[Scheme];
+	if (scheme == NULL) {
+		DebugString("********* Forcing House %s [%s] to color WHITE (from %d) because he biffed the initialization process!!!!", (char const *)IniName, (char const *)Class->GivenName, Scheme);
+		Scheme = 5;
+		scheme = ColorSchemes[5];
+	}
+	unsigned short pixel = scheme->Converter->Convert_Pixel(scheme->Bright);
+	RGBClass color((pixel >> Drawing::RedShiftLeft) << Drawing::RedShiftRight, (pixel >> Drawing::GreenShiftLeft) << Drawing::GreenShiftRight, (pixel >> Drawing::BlueShiftLeft) << Drawing::BlueShiftRight);
+	RemapColorRGB = color;
 }
 
 // FUNCTION: 0x0050E000

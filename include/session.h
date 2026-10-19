@@ -672,7 +672,8 @@ class SessionClass
 		DynamicVectorClass <NodeNameType *> Games;
 		DynamicVectorClass <NodeNameType *> Players;
 
-		int unknown_2854[9];
+		int unknown_2854;
+		NodeNameType * Slots[8];
 		bool unknown_2878;
 
 		int Suspended;

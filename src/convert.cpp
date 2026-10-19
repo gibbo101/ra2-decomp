@@ -798,4 +798,22 @@ template class BlitTransXlatZRead<unsigned short>;
 template class BlitTransZRemapXlatZRead<unsigned short>;
 
 // FUNCTION: 0x00492D20 ?$BlitTransDarkenZRead@G::BlitForward
+// FUNCTION: 0x00492D80 ?$BlitTransDarkenZRead@G::BlitBackward
+// FUNCTION: 0x00492DB0 ?$BlitTransDarkenZRead@G::Blit_Copy_Tinted
+// FUNCTION: 0x00492DE0 ?$BlitTransDarkenZRead@G::Blit_Move_Tinted
 template class BlitTransDarkenZRead<unsigned short>;
+
+// FUNCTION: 0x00492E10 ?$BlitTransLucent75ZRead@G::BlitForward
+// FUNCTION: 0x00492EA0 ?$BlitTransLucent75ZRead@G::BlitBackward
+// FUNCTION: 0x00492ED0 ?$BlitTransLucent75ZRead@G::Blit_Copy_Tinted
+// FUNCTION: 0x00492F00 ?$BlitTransLucent75ZRead@G::Blit_Move_Tinted
+template class BlitTransLucent75ZRead<unsigned short>;
+
+// FUNCTION: 0x00492F30 ?$BlitTransLucent50ZRead@G::BlitForward
+// FUNCTION: 0x00492FC0 ?$BlitTransLucent50ZRead@G::BlitBackward
+// FUNCTION: 0x00492FF0 ?$BlitTransLucent50ZRead@G::Blit_Copy_Tinted
+// FUNCTION: 0x00493020 ?$BlitTransLucent50ZRead@G::Blit_Move_Tinted
+template class BlitTransLucent50ZRead<unsigned short>;
+
+// FUNCTION: 0x00493050 ?$BlitTransLucent25ZRead@G::BlitForward
+template class BlitTransLucent25ZRead<unsigned short>;

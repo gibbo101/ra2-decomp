@@ -328,7 +328,7 @@ class MapGeneratorClass
 		void Seed_Arctic_Vegetation(void);
 		void Generate_Vegetation(void);
 		void Generate_Arctic_Vegetation(void);
-		void Place_Forest(CellClass const * cellptr, int count, double density);
+		int Place_Forest(CellClass const * cellptr, int count, double density);
 		void Place_Tile_Patch(CellClass * cellptr, IsometricTileType ittype, int count, int origin_id, bool on_pavement);
 		void Generate_Mold(void);
 		void Generate_Crystals(const Cell & cell);

@@ -3341,6 +3341,181 @@ done:
 	return(true);
 }
 
+// FUNCTION: 0x0057A0C0
+bool MapClass::FUN_0057A0C0(int region_id, bool flat_height)
+{
+	Map.Set_Cursor_Shape(NULL);
+
+	bool is_temp_data = false;
+	if (RMGCellData == NULL) {
+		RMGCellData = new MapRegionClass::CellData[MapCellStride * MapCellStride];
+		is_temp_data = true;
+	}
+
+	int r = MapCellStride;
+	int s = r * r;
+	for (int i = 0; i < s; i++) {
+		MapRegionClass::Get_Cell_Data(i).WaterMask = -1;
+	}
+
+	Map.Reset_Iterator();
+	CellClass * cptr = Map.Iterate();
+	bool expanded = true;
+	while (cptr != NULL && expanded) {
+		expanded = Expand_Water(cptr, region_id, flat_height);
+		cptr = Map.Iterate();
+	}
+
+	Map.Reset_Iterator();
+	cptr = Map.Iterate();
+	while (cptr != NULL && expanded) {
+		Prune_Water(cptr, region_id, flat_height);
+		cptr = Map.Iterate();
+	}
+
+	Map.Reset_Iterator();
+	cptr = Map.Iterate();
+	while (cptr != NULL && expanded) {
+		expanded = Place_Shore(cptr, 1, region_id, flat_height);
+		cptr = Map.Iterate();
+	}
+
+	Map.Reset_Iterator();
+	cptr = Map.Iterate();
+	while (cptr != NULL && expanded) {
+		expanded = Place_Shore(cptr, 2, region_id, flat_height);
+		cptr = Map.Iterate();
+	}
+
+	ObjectClass * obj = Map.PendingObjectPtr;
+	Map.PendingObject = NULL;
+	if (obj) {
+		delete obj;
+		Map.PendingObjectPtr = NULL;
+	}
+
+	if (is_temp_data) {
+		delete [] RMGCellData;
+		RMGCellData = NULL;
+	}
+
+	return(expanded);
+}
+
+// FUNCTION: 0x0057A320
+void MapClass::Prune_Water(CellClass * cellptr, int region_id, bool flat_height)
+{
+	IsometricTileType itype = cellptr->ITType;
+	if (itype >= IsometricTileTypeClass::WaterSet && itype < IsometricTileType(IsometricTileTypeClass::WaterSet + WATER_COUNT-2)) {
+		int mask = Get_Water_Mask(cellptr, 2);
+		if (mask == (MG_FACINGF_N | MG_FACINGF_NE | MG_FACINGF_E | MG_FACINGF_SE | MG_FACINGF_NW) ||
+			mask == (MG_FACINGF_SE | MG_FACINGF_S | MG_FACINGF_SW | MG_FACINGF_W | MG_FACINGF_NW) ||
+			mask == (MG_FACINGF_N | MG_FACINGF_NE | MG_FACINGF_SW | MG_FACINGF_W | MG_FACINGF_NW) ||
+			mask == (MG_FACINGF_NE | MG_FACINGF_E | MG_FACINGF_SE | MG_FACINGF_S | MG_FACINGF_SW) ||
+			mask == (MG_FACINGF_N | MG_FACINGF_E | MG_FACINGF_SE | MG_FACINGF_NW) ||
+			mask == (MG_FACINGF_SE | MG_FACINGF_S | MG_FACINGF_W | MG_FACINGF_NW) ||
+			mask == (MG_FACINGF_N | MG_FACINGF_NE | MG_FACINGF_SW | MG_FACINGF_W) ||
+			mask == (MG_FACINGF_NE | MG_FACINGF_E | MG_FACINGF_S | MG_FACINGF_SW)) {
+
+			cellptr->ITType = ISOTILE_NONE;
+			cellptr->SubTile = 0;
+			if (flat_height) {
+				MapRegionClass::Get_Cell_Data(cellptr->CellID).RegionID = region_id;
+			}
+			for (FacingType facing = FACING_N; facing < FACING_COUNT; facing++) {
+				CellClass * adjptr = &cellptr->Adjacent_Cell(facing);
+				if (My_In_Radar(adjptr->Fetch_CellID())) {
+					MapRegionClass::CellData & data = MapRegionClass::Get_Cell_Data(adjptr->Fetch_CellID());
+					data.WaterMask = -1;
+					data.WaterMask = Get_Water_Mask(adjptr, 2);
+				}
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x0057A430
+bool MapClass::Expand_Water(CellClass * cellptr, int region_id, bool flat_height)
+{
+	bool expand = false;
+
+	MapRegionClass::CellData & data = MapRegionClass::Get_Cell_Data(cellptr->Fetch_CellID());
+	data.WaterMask = Get_Water_Mask(cellptr, 2);
+
+	int mask = Get_Water_Mask(cellptr, 0);
+	if (mask > 0) {
+
+		if (mask == (MG_FACINGF_NE | MG_FACINGF_E | MG_FACINGF_S) ||
+			mask == (MG_FACINGF_E | MG_FACINGF_S | MG_FACINGF_SW)) {
+			expand = true;
+		}
+
+		if ((mask & (MG_FACINGF_W | MG_FACINGF_N)) == (MG_FACINGF_W | MG_FACINGF_N) && (mask & (MG_FACINGF_NE | MG_FACINGF_SW)) == 0 ||
+			(mask & (MG_FACINGF_E | MG_FACINGF_N)) == (MG_FACINGF_E | MG_FACINGF_N) && (mask & (MG_FACINGF_SE | MG_FACINGF_NW)) == 0 ||
+			(mask & (MG_FACINGF_E | MG_FACINGF_S)) == (MG_FACINGF_E | MG_FACINGF_S) && (mask & (MG_FACINGF_NE | MG_FACINGF_SW)) == 0 ||
+			(mask & (MG_FACINGF_S | MG_FACINGF_W)) == (MG_FACINGF_S | MG_FACINGF_W) && (mask & (MG_FACINGF_SE | MG_FACINGF_NW)) == 0) {
+			expand = true;
+		}
+
+		if ((mask & MG_FACINGF_W) != 0) {
+			int mask1 = Get_Water_Mask(&Map[cellptr->Fetch_CellID() + Cell(1, 0)], 0);
+			int mask2 = Get_Water_Mask(&Map[cellptr->Fetch_CellID() + Cell(2, 0)], 0);
+			if ((mask1 & MG_FACINGF_E) != 0 || (mask2 & MG_FACINGF_E) != 0) {
+				expand = true;
+			}
+		}
+
+		if ((mask & MG_FACINGF_E) != 0) {
+			int mask1 = Get_Water_Mask(&Map[cellptr->Fetch_CellID() + Cell(-1, 0)], 0);
+			int mask2 = Get_Water_Mask(&Map[cellptr->Fetch_CellID() + Cell(-2, 0)], 0);
+			if ((mask1 & MG_FACINGF_W) != 0 || (mask2 & MG_FACINGF_W) != 0) {
+				expand = true;
+			}
+		}
+
+		if ((mask & MG_FACINGF_S) != 0) {
+			int mask1 = Get_Water_Mask(&Map[cellptr->Fetch_CellID() + Cell(0, -1)], 0);
+			int mask2 = Get_Water_Mask(&Map[cellptr->Fetch_CellID() + Cell(0, -2)], 0);
+			if ((mask1 & MG_FACINGF_N) != 0 || (mask2 & MG_FACINGF_N) != 0) {
+				expand = true;
+			}
+		}
+
+		if ((mask & MG_FACINGF_N) != 0) {
+			int mask1 = Get_Water_Mask(&Map[cellptr->Fetch_CellID() + Cell(0, 1)], 0);
+			int mask2 = Get_Water_Mask(&Map[cellptr->Fetch_CellID() + Cell(0, 2)], 0);
+			if ((mask1 & MG_FACINGF_S) != 0 || (mask2 & MG_FACINGF_S) != 0) {
+				expand = true;
+			}
+		}
+
+		if ((mask & (MG_FACINGF_N | MG_FACINGF_S)) == (MG_FACINGF_N | MG_FACINGF_S) ||
+			(mask & (MG_FACINGF_E | MG_FACINGF_W)) == (MG_FACINGF_E | MG_FACINGF_W) ||
+			expand) {
+
+			int cell_region_id = RandomMapGen.Get_Cell_Data_Region(cellptr->Fetch_CellID());
+			if (cell_region_id > 0 && cell_region_id != region_id && !flat_height) {
+				return(false);
+			}
+			cellptr->ITType = IsometricTileType(IsometricTileTypeClass::WaterSet);
+			cellptr->SubTile = 0;
+			if (flat_height) {
+				RandomMapGen.Set_Cell_Data_Region(cellptr->Fetch_CellID(), 0);
+			} else {
+				RandomMapGen.Set_Cell_Data_Region(cellptr->Fetch_CellID(), region_id);
+			}
+			for (FacingType dir = FACING_FIRST; dir < FACING_COUNT; dir++) {
+				CellClass * adjptr = &cellptr->Adjacent_Cell(dir);
+				if (My_In_Radar(adjptr->Fetch_CellID())) {
+					MapRegionClass::Get_Cell_Data(adjptr->Fetch_CellID()).WaterMask = -1;
+					Expand_Water(adjptr, region_id, flat_height);
+				}
+			}
+		}
+	}
+	return(true);
+}
+
 // FUNCTION: 0x0057A900
 int MapClass::Straight_Shore_Length(CellClass * cellptr, FacingType direction)
 {
@@ -3367,6 +3542,450 @@ int MapClass::Straight_Shore_Length(CellClass * cellptr, FacingType direction)
 	}
 
 	return(count);
+}
+
+// FUNCTION: 0x0057A9C0 $E234
+Cell ShorePieceOffsets[] = {
+	Cell(0, -1),
+	Cell(0, -1),
+	Cell(0, -1),
+	Cell(0, -1),
+	Cell(0, -2),
+	Cell(-1, -2),
+	Cell(-1, -1),
+	Cell(-1, -1),
+	Cell(-1, 0),
+	Cell(-1, 0),
+	Cell(-1, 0),
+	Cell(-1, 0),
+	Cell(-2, -1),
+	Cell(-2, 0),
+	Cell(-1, 0),
+	Cell(-1, 0),
+	Cell(0, 0),
+	Cell(0, 0),
+	Cell(0, 0),
+	Cell(0, 0),
+	Cell(0, 0),
+	Cell(-1, 0),
+	Cell(0, 0),
+	Cell(0, 0),
+	Cell(0, 0),
+	Cell(0, 0),
+	Cell(0, 0),
+	Cell(0, 0),
+	Cell(0, -1),
+	Cell(0, 0),
+	Cell(0, -1),
+	Cell(0, -1),
+	Cell(-1, -1),
+	Cell(-1, -1),
+	Cell(-1, 0),
+	Cell(-1, 0),
+	Cell(0, 0),
+	Cell(0, 0),
+	Cell(0, -1),
+	Cell(0, -1),
+	Cell(0, 0),
+	Cell(0, 0)
+};
+
+// FUNCTION: 0x0057ACF0
+bool MapClass::Place_Shore(CellClass * cellptr, int pass, int region_id, bool flat_height)
+{
+	int random = Pick_Random_UInt(0, 5);
+
+	int mask;
+	if (pass == 2) {
+		mask = Get_Water_Mask(cellptr, 1);
+	} else {
+		mask = Get_Water_Mask(cellptr, 0);
+	}
+	if (mask == 0) {
+		return(true);
+	}
+
+	int index;
+	int count;
+	CellClass * adj1;
+	CellClass * adj2;
+	bool side_1_is_land;
+	bool side_2_is_water;
+
+	if (pass == 2) {
+
+		if ((mask & (MG_FACINGF_N | MG_FACINGF_W)) == (MG_FACINGF_N | MG_FACINGF_W)) {
+			if ((mask & (MG_FACINGF_NE | MG_FACINGF_SW)) == (MG_FACINGF_NE | MG_FACINGF_SW)) {
+				index = (random & 1) + 23;
+			} else {
+				if ((mask & MG_FACINGF_NE) != 0) {
+				index = 21;
+			} else {
+				index = 30;
+			}
+			}
+		} else if ((mask & (MG_FACINGF_N | MG_FACINGF_E)) == (MG_FACINGF_N | MG_FACINGF_E)) {
+			if ((mask & (MG_FACINGF_NW | MG_FACINGF_SE)) == (MG_FACINGF_NW | MG_FACINGF_SE)) {
+				index = (random & 1) + 15;
+			} else {
+				if ((mask & MG_FACINGF_SE) != 0) {
+				index = 14;
+			} else {
+				index = 22;
+			}
+			}
+		} else if ((mask & (MG_FACINGF_S | MG_FACINGF_E)) == (MG_FACINGF_S | MG_FACINGF_E)) {
+			if ((mask & (MG_FACINGF_NE | MG_FACINGF_SW)) == (MG_FACINGF_NE | MG_FACINGF_SW)) {
+				index = (random & 1) + 7;
+			} else {
+				if ((mask & MG_FACINGF_NE) != 0) {
+				index = 13;
+			} else {
+				index = 6;
+			}
+			}
+		} else {
+			if ((mask & (MG_FACINGF_W | MG_FACINGF_S)) != (MG_FACINGF_W | MG_FACINGF_S)) {
+				return(true);
+			}
+			if ((mask & (MG_FACINGF_NW | MG_FACINGF_SE)) == (MG_FACINGF_NW | MG_FACINGF_SE)) {
+				index = (random & 1) + 31;
+			} else {
+				if ((mask & MG_FACINGF_SE) != 0) {
+				index = 5;
+			} else {
+				index = 29;
+			}
+			}
+		}
+
+	} else {
+		index = -1;
+	if ((mask & MG_FACINGF_E) != 0) {
+		count = 1;
+		adj1 = &cellptr->Adjacent_Cell(FACING_S);
+		adj2 = &adj1->Adjacent_Cell(FACING_E);
+		side_1_is_land = adj1->Is_Tile_Water() == false;
+		side_2_is_water = adj2->Is_Tile_Water();
+		while (side_1_is_land && side_2_is_water) {
+			count++;
+			adj1 = &adj1->Adjacent_Cell(FACING_S);
+			adj2 = &adj2->Adjacent_Cell(FACING_S);
+			side_1_is_land = adj1->Is_Tile_Water() == false;
+			side_2_is_water = adj2->Is_Tile_Water();
+		}
+		if ((count & 1) != 0 && (mask & MG_FACINGF_N) == 0) {
+			index = 12;
+		} else if ((mask & MG_FACINGF_SE) == 0 || (mask & (MG_FACINGF_S | MG_FACINGF_SW)) != 0) {
+			index = 12;
+		} else {
+			index = abs(random % 3) + 9;
+		}
+	} else if ((mask & MG_FACINGF_W) != 0) {
+		count = 1;
+		adj1 = &cellptr->Adjacent_Cell(FACING_S);
+		adj2 = &adj1->Adjacent_Cell(FACING_W);
+		side_1_is_land = adj1->Is_Tile_Water() == false;
+		side_2_is_water = adj2->Is_Tile_Water();
+		while (side_1_is_land && side_2_is_water) {
+			count++;
+			adj1 = &adj1->Adjacent_Cell(FACING_S);
+			adj2 = &adj2->Adjacent_Cell(FACING_S);
+			side_1_is_land = adj1->Is_Tile_Water() == false;
+			side_2_is_water = adj2->Is_Tile_Water();
+		}
+		if ((count & 1) != 0 && (mask & MG_FACINGF_N) == 0) {
+			index = 28;
+		} else if ((mask & MG_FACINGF_SW) == 0 || (mask & (MG_FACINGF_SE | MG_FACINGF_S)) != 0) {
+			index = 28;
+		} else {
+			index = random % 3 + 25;
+		}
+	} else if ((mask & MG_FACINGF_S) != 0) {
+		count = 1;
+		adj1 = &cellptr->Adjacent_Cell(FACING_E);
+		adj2 = &adj1->Adjacent_Cell(FACING_S);
+		side_1_is_land = adj1->Is_Tile_Water() == false;
+		side_2_is_water = adj2->Is_Tile_Water();
+		while (side_1_is_land && side_2_is_water) {
+			count++;
+			adj1 = &adj1->Adjacent_Cell(FACING_E);
+			adj2 = &adj2->Adjacent_Cell(FACING_E);
+			side_1_is_land = adj1->Is_Tile_Water() == false;
+			side_2_is_water = adj2->Is_Tile_Water();
+		}
+		if ((count & 1) != 0) {
+			index = 4;
+		} else if ((mask & MG_FACINGF_SE) == 0 || (mask & (MG_FACINGF_NE | MG_FACINGF_E)) != 0) {
+			index = 4;
+		} else {
+			index = random % 3 + 1;
+		}
+	} else if ((mask & MG_FACINGF_N) != 0) {
+		count = 1;
+		adj1 = &cellptr->Adjacent_Cell(FACING_E);
+		adj2 = &adj1->Adjacent_Cell(FACING_N);
+		side_1_is_land = adj1->Is_Tile_Water() == false;
+		side_2_is_water = adj2->Is_Tile_Water();
+		while (side_1_is_land && side_2_is_water) {
+			count++;
+			adj1 = &adj1->Adjacent_Cell(FACING_E);
+			adj2 = &adj2->Adjacent_Cell(FACING_E);
+			side_1_is_land = adj1->Is_Tile_Water() == false;
+			side_2_is_water = adj2->Is_Tile_Water();
+		}
+		if ((count & 1) != 0) {
+			index = 20;
+		} else if ((mask & MG_FACINGF_NE) == 0 || (mask & (MG_FACINGF_E | MG_FACINGF_SE)) != 0) {
+			index = 20;
+		} else {
+			index = random % 3 + 17;
+		}
+	}
+
+	if (index == -1) {
+
+		if ((mask & MG_FACINGF_NE) != 0) {
+			index = (random & 1) + 35;
+		} else if ((mask & MG_FACINGF_SE) != 0) {
+			index = (random & 1) + 33;
+		} else if ((mask & MG_FACINGF_SW) != 0) {
+			index = (random & 1) + 39;
+		} else {
+			if ((mask & MG_FACINGF_NW) == 0) {
+				return(true);
+			}
+			index = (random & 1) + 37;
+		}
+	}
+	}
+
+	if (index > 0) {
+
+		Map.PendingObject = IsometricTileTypes[IsometricTileTypeClass::ShorePieces + index - 1];
+
+		Cell cellid = cellptr->Fetch_CellID();
+		Cell cursor = Map.Set_Cursor_Pos(cellid + ShorePieceOffsets[index - 1]);
+
+		bool result = true;
+		if (pass == 1) {
+			Pick_Random_Tile_Variant(ISOTILE_CLEAR, ISOTILE_CLEAR, cellptr->Height, region_id, result, flat_height);
+		} else {
+			if (pass != 2) {
+				return(true);
+			}
+			Pick_Random_Tile_Variant(IsometricTileTypeClass::ShorePieces, IsometricTileTypeClass::ShorePieces + SHORE_PIECES_COUNT - 1, cellptr->Height, region_id, result, flat_height);
+		}
+
+		if (!result) {
+			return(false);
+		}
+	}
+	return(true);
+}
+
+// FUNCTION: 0x0057B210
+int MapClass::Get_Water_Mask(CellClass * cellptr, int control)
+{
+	int mask = 0;
+	Cell cell = cellptr->Fetch_CellID();
+
+	IsometricTileType water_start = IsometricTileType(IsometricTileTypeClass::WaterSet);
+	IsometricTileType water_end = IsometricTileType(water_start + WATER_COUNT);
+
+	bool is_water = cellptr->Is_Tile_Water();
+	int x = cell.X;
+	int y = cell.Y;
+
+	if (!My_In_Radar(cell)) {
+		return(mask);
+	}
+
+	if (control == 0) {
+		if (!cellptr->CellClass::Is_Tile_Clear()) {
+			return(mask);
+		}
+	} else if (control == 1) {
+		if (cellptr->ITType >= water_start && cellptr->ITType < water_end) {
+			return(mask);
+		}
+	}
+
+	MapRegionClass::CellData & data = MapRegionClass::Get_Cell_Data(cellptr->Fetch_CellID());
+	if (!data.InFillReach) {
+		return(mask);
+	}
+	if (data.WaterMask >= 0) {
+		return(data.WaterMask);
+	}
+
+	CellClass ** cptr = &Array[x + y * MAP_CELL_H - MAP_CELL_W - 1];
+
+	CellClass * tptr = cptr[0];
+	if (tptr && tptr->Is_Tile_Water() || cptr[0] == NULL && is_water) {
+		mask |= MG_FACINGF_NW;
+	}
+	cptr += 1;
+	tptr = cptr[0];
+	if (tptr && tptr->Is_Tile_Water() || cptr[0] == NULL && is_water) {
+		mask |= MG_FACINGF_N;
+	}
+	cptr += 1;
+	tptr = cptr[0];
+	if (tptr && tptr->Is_Tile_Water() || cptr[0] == NULL && is_water) {
+		mask |= MG_FACINGF_NE;
+	}
+	cptr += MAP_CELL_W - 2;
+	tptr = cptr[0];
+	if (tptr && tptr->Is_Tile_Water() || cptr[0] == NULL && is_water) {
+		mask |= MG_FACINGF_W;
+	}
+	cptr += 2;
+	tptr = cptr[0];
+	if (tptr && tptr->Is_Tile_Water() || cptr[0] == NULL && is_water) {
+		mask |= MG_FACINGF_E;
+	}
+	cptr += MAP_CELL_W - 2;
+	tptr = cptr[0];
+	if (tptr && tptr->Is_Tile_Water() || cptr[0] == NULL && is_water) {
+		mask |= MG_FACINGF_SW;
+	}
+	cptr += 1;
+	tptr = cptr[0];
+	if (tptr && tptr->Is_Tile_Water() || cptr[0] == NULL && is_water) {
+		mask |= MG_FACINGF_S;
+	}
+	cptr += 1;
+	tptr = cptr[0];
+	if (tptr && tptr->Is_Tile_Water() || cptr[0] == NULL && is_water) {
+		mask |= MG_FACINGF_SE;
+	}
+	return(mask);
+}
+
+// FUNCTION: 0x0057B790
+void MapClass::Area_Reduce_Tiberium(Cell const & cell)
+{
+	for (int x = -5; x <= 5; x++) {
+		for (int y = -5; y <= 5; y++) {
+			Cell c1 = Cell(cell + Cell(x,y));
+			Cell c2 = (cell - c1);
+			if (c2.Length() <= 5) {
+				CellClass * cellptr = &Map[cell];
+				if (cellptr != NULL) {
+					cellptr->Reduce_Tiberium(1);
+				}
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x0057B870
+int MapClass::Get_Low_Bridge_EW_Neighbor_Mask(Cell const & cell)
+{
+	OverlayType o1 = Map[cell + Cell(-1, 0)].Overlay;
+	OverlayType o2 = Map[cell + Cell(1, 0)].Overlay;
+
+	int index = 0;
+	switch (o2) {
+		case OVERLAY_LOWBRIDGE_05:
+		case OVERLAY_LOWBRIDGE_07:
+		case OVERLAY_LOWBRIDGE_09:
+		case OVERLAY_LOWBRIDGE_20:
+			index |= 1;
+			break;
+		case OVERLAY_LOWBRIDGE_08:
+		case OVERLAY_LOWBRIDGE_27:
+			index |= 2;
+			break;
+		default:
+			break;
+	}
+
+	switch (o1) {
+		case OVERLAY_LOWBRIDGE_06:
+		case OVERLAY_LOWBRIDGE_07:
+		case OVERLAY_LOWBRIDGE_08:
+		case OVERLAY_LOWBRIDGE_22:
+			index |= 4;
+			break;
+		case OVERLAY_LOWBRIDGE_09:
+		case OVERLAY_LOWBRIDGE_27:
+			index |= 8;
+			break;
+		default:
+			break;
+	}
+
+	return(index);
+}
+
+// FUNCTION: 0x0057B990
+int MapClass::Get_Low_Bridge_NS_Neighbor_Mask(Cell const & cell)
+{
+	OverlayType o1 = Map[cell + Cell(0, -1)].Overlay;
+	OverlayType o2 = Map[cell + Cell(0, 1)].Overlay;
+
+	int index = 0;
+	switch (o1) {
+		case OVERLAY_LOWBRIDGE_14:
+		case OVERLAY_LOWBRIDGE_16:
+		case OVERLAY_LOWBRIDGE_18:
+		case OVERLAY_LOWBRIDGE_24:
+			index |= 1;
+			break;
+		case OVERLAY_LOWBRIDGE_17:
+		case OVERLAY_LOWBRIDGE_28:
+			index |= 2;
+			break;
+		default:
+			break;
+	}
+
+	switch (o2) {
+		case OVERLAY_LOWBRIDGE_15:
+		case OVERLAY_LOWBRIDGE_16:
+		case OVERLAY_LOWBRIDGE_17:
+		case OVERLAY_LOWBRIDGE_26:
+			index |= 4;
+			break;
+		case OVERLAY_LOWBRIDGE_18:
+		case OVERLAY_LOWBRIDGE_28:
+			index |= 8;
+			break;
+		default:
+			break;
+	}
+
+	return(index);
+}
+
+// FUNCTION: 0x0057BAA0
+bool MapClass::Damage_Low_Bridge(Cell const & cell)
+{
+	OverlayType otype = Map[cell].Overlay;
+	if (otype >= OVERLAY_LOWBRIDGE_01 && otype <= OVERLAY_LOWBRIDGE_09 || otype >= OVERLAY_LOWBRIDGE_19 && otype <= OVERLAY_LOWBRIDGE_22 || otype == OVERLAY_LOWBRIDGE_27) {
+		if (!Is_Low_Bridge(cell + Cell(0, -1))) {
+			return(Damage_Low_Bridge_EW(cell + Cell(0, 1)));
+		} else {
+			if (!Is_Low_Bridge(cell + Cell(0, -2))) {
+				return(Damage_Low_Bridge_EW(cell));
+			} else {
+				return(Damage_Low_Bridge_EW(cell - Cell(0, 1)));
+			}
+		}
+	} else if (otype >= OVERLAY_LOWBRIDGE_10 && otype <= OVERLAY_LOWBRIDGE_18 || otype >= OVERLAY_LOWBRIDGE_23 && otype <= OVERLAY_LOWBRIDGE_26 || otype == OVERLAY_LOWBRIDGE_28) {
+		if (!Is_Low_Bridge(cell + Cell(-1, 0))) {
+			return(Damage_Low_Bridge_NS(cell + Cell(1, 0)));
+		} else {
+			if (!Is_Low_Bridge(cell + Cell(-2, 0))) {
+				return(Damage_Low_Bridge_NS(cell));
+			} else {
+				return(Damage_Low_Bridge_NS(cell - Cell(1, 0)));
+			}
+		}
+	}
+	return(false);
 }
 
 // FUNCTION: 0x005868A0

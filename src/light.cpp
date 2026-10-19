@@ -19,6 +19,109 @@
 #include "tracker.h"
 #include "vector.h"
 
+// FUNCTION: 0x00554640 $E124
+// FUNCTION: 0x00554680 $E122
+DynamicVectorClass<LightSourceClass *> LightSources;
+// FUNCTION: 0x005546C0 $E130
+// FUNCTION: 0x00554700 $E127
+DynamicVectorClass<LightSourceClass::PendingCellClass *> LightSourceClass::PendingCells;
+
+bool LightSourceClass::Recalc = true;
+
+// FUNCTION: 0x00554760
+LightSourceClass::LightSourceClass(Coord coord, int visibility, int intensity, int red, int green, int blue) :
+	BASECLASS(),
+	Intensity(intensity),
+	RedTint(red),
+	GreenTint(green),
+	BlueTint(blue),
+	DetailLevel(2),
+	Position(coord),
+	Visibility(visibility),
+	IsEnabled(false)
+{
+	LightSources.Add(this);
+}
+
+// FUNCTION: 0x00554830
+LightSourceClass::LightSourceClass(void) :
+	BASECLASS(),
+	Intensity(0),
+	RedTint(0),
+	GreenTint(0),
+	BlueTint(0),
+	Position(COORD_NONE),
+	Visibility(0),
+	IsEnabled(false)
+{
+	LightSources.Add(this);
+}
+
+// FUNCTION: 0x005548E0
+LightSourceClass::LightSourceClass(NoInitClass const & x) :
+	BASECLASS(x)
+{
+}
+
+// FUNCTION: 0x00554910
+LightSourceClass::~LightSourceClass(void)
+{
+	Detach_This_From_All(this);
+	LightSources.Delete(this);
+
+	Disable();
+}
+
+// FUNCTION: 0x005549A0
+void LightSourceClass::Reset(void)
+{
+	Recalc = false;
+
+	while (LightSources.Count() != 0) {
+		delete LightSources[0];
+		LightSources.Delete_Index(0);
+	}
+
+	while (PendingCells.Count() != 0) {
+		delete PendingCells[0];
+		PendingCells.Delete_Index(0);
+	}
+
+	Recalc = true;
+}
+
+// FUNCTION: 0x00554A60
+void LightSourceClass::Enable(bool defer)
+{
+	if (!IsEnabled) {
+		IsEnabled = true;
+		Recalculate_Affected_Cells(defer);
+	}
+}
+
+// FUNCTION: 0x00554A80
+void LightSourceClass::Disable(bool defer)
+{
+	if (IsEnabled) {
+		IsEnabled = false;
+		Recalculate_Affected_Cells(defer);
+	}
+}
+
+// FUNCTION: 0x00554AA0
+void LightSourceClass::ChangeLevels(int intensity, int red, int green, int blue, bool defer)
+{
+	if (Intensity != intensity || RedTint != red || RedTint != blue) {
+		Intensity = intensity;
+		RedTint = red;
+		GreenTint = green;
+		BlueTint = blue;
+		if (IsEnabled) {
+			Recalculate_Affected_Cells(defer);
+		}
+	}
+}
+
 // FUNCTION: 0x00554D50
 void LightSourceClass::Process_Lighting(int time_budget_ms, bool force)
 {

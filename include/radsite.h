@@ -53,6 +53,16 @@ class RadSiteClass : public AbstractClass
 		virtual void Compute_CRC(CRCEngine & crc) const override;
 		virtual void AI(void) override;
 
+		void SetBaseCell(Cell * cell);
+		void SetSpread(int spread);
+		void SetRadLevel(int level);
 		int GetRadLevel(void);
+		void Add(int level);
+		void Activate(void);
+		void Deactivate(void);
+		double GetRadLevelAt(Cell const & cell);
+		void Radiate(void);
+		void DecreaseRadiation(void);
+		void DecreaseLight(void);
 		int GetSpread(void);
 };

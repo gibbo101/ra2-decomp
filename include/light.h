@@ -31,9 +31,10 @@ class LightSourceClass : public AbstractClass
 		virtual void Compute_CRC(CRCEngine &) const override;
 
 		bool Is_Enabled(void) const {return(IsEnabled);};
+		void Recalculate_Affected_Cells(bool defer = false);
 		void Enable(bool update = false);
 		void Disable(bool update = false);
-		void Recalculate_Affected_Cells(bool defer = false);
+		void ChangeLevels(int intensity, int red, int green, int blue, bool defer);
 
 	public:
 		class PendingCellClass

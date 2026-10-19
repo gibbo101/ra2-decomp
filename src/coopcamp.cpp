@@ -767,3 +767,19 @@ bool CoopCampSource_0049E4F0::FUN_0049E740(DynamicVectorClass<wchar_t *> * list)
 }
 
 // FUNCTION: 0x0049E8E0 ?$List@PAUINISection@INIClass@@::?$List@PAUINISection@INIClass@@
+
+template class DynamicVectorClass<char *>;
+template class DynamicVectorClass<CoopCampNameList *>;
+
+// FUNCTION: 0x0049E950 ?$DynamicVectorClass@PAD::Clear
+// FUNCTION: 0x0049E980 ?$DynamicVectorClass@PAD::ID
+// FUNCTION: 0x0049E9A0 ?$VectorClass@PAD::GetItem
+// FUNCTION: 0x0049E9B0 ?$DynamicVectorClass@PAV?$DynamicVectorClass@PAD@@::Clear
+// FUNCTION: 0x0049E9E0 ?$DynamicVectorClass@PAV?$DynamicVectorClass@PAD@@::ID
+// FUNCTION: 0x0049EA00 ?$VectorClass@PAV?$DynamicVectorClass@PAD@@::GetItem
+// FUNCTION: 0x0049EA10 ?$IndexClass@HPAUINISection@INIClass@@::?$IndexClass@HPAUINISection@INIClass@@
+// FUNCTION: 0x0049EA30 ?$VectorClass@PAD::operator==
+// FUNCTION: 0x0049EA70 ?$DynamicVectorClass@PAD::Resize
+// FUNCTION: 0x0049EB20 ?$DynamicVectorClass@PAD::ID
+// FUNCTION: 0x0049EB50 ?$VectorClass@PAV?$DynamicVectorClass@PAD@@::operator==
+// FUNCTION: 0x0049EB90 ?$VectorClass@PAV?$DynamicVectorClass@PAD@@::Resize

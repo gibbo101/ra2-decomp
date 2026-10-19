@@ -681,3 +681,49 @@ void Free_Game_Modes(void)
 // FUNCTION: 0x005D7FD0 MPGameModeClass::InitializerBase::~InitializerBase
 
 // FUNCTION: 0x005D7FF0 MPBattleInit::~MPBattleInit
+
+#define MP_INIT_CLASS(name) \
+class name : public MPGameModeClass::InitializerBase \
+{ \
+	public: \
+		name(void); \
+		virtual void Allocate(void) {} \
+}; \
+name::name(void) \
+{ \
+}
+
+MP_INIT_CLASS(MPManBattleInit)
+MP_INIT_CLASS(MPSiegeInit)
+MP_INIT_CLASS(MPUnholyAllianceInit)
+MP_INIT_CLASS(MPFreeForAllInit)
+MP_INIT_CLASS(MPMegawealthInit)
+
+// FUNCTION: 0x005D8010 MPManBattleInit::~MPManBattleInit
+// FUNCTION: 0x005D8030 MPSiegeInit::~MPSiegeInit
+// FUNCTION: 0x005D8050 MPUnholyAllianceInit::~MPUnholyAllianceInit
+// FUNCTION: 0x005D8070 MPFreeForAllInit::~MPFreeForAllInit
+// FUNCTION: 0x005D8090 MPMegawealthInit::~MPMegawealthInit
+
+// FUNCTION: 0x005D80B0 ?$DynamicVectorClass@PAVMPGameModeClass@@::Clear
+// FUNCTION: 0x005D80E0 ?$DynamicVectorClass@PAVMPGameModeClass@@::ID
+// FUNCTION: 0x005D8100 ?$VectorClass@PAVMPGameModeClass@@::GetItem
+template class DynamicVectorClass<MPGameModeClass *>;
+
+// FUNCTION: 0x005D8110 ?$DynamicVectorClass@PAVMPTeam@@::Clear
+// FUNCTION: 0x005D8140 ?$DynamicVectorClass@PAVMPTeam@@::ID
+// FUNCTION: 0x005D8160 ?$VectorClass@PAVMPTeam@@::GetItem
+template class DynamicVectorClass<MPTeam *>;
+
+class MPBattleClass : public MPGameModeClass
+{
+	public:
+		MPBattleClass * FUN_005C0DD0(wchar_t ** title, wchar_t ** tooltip, char ** inifile, char ** mapfilter, bool aiallowed, int modeindex);
+};
+
+// FUNCTION: 0x005D8170
+MPBattleClass * __stdcall Allocate_MPBattle(wchar_t ** title, wchar_t ** tooltip, char ** inifile, char ** mapfilter, bool aiallowed, int modeindex)
+{
+	MPBattleClass * mode = (MPBattleClass *)operator new(0x40);
+	return(mode ? mode->FUN_005C0DD0(title, tooltip, inifile, mapfilter, aiallowed, modeindex) : NULL);
+}

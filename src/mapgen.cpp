@@ -103,6 +103,8 @@ struct DirtRoadNode {
 	int BackLinkIndex;
 };
 
+extern DirtRoadTile DirtRoadTiles[];
+
 class NormalDistribution
 {
 	public:
@@ -2221,6 +2223,20 @@ double Sample_Truncated_Normal(double mean, double scale, double lower_bound, do
 	return(value);
 }
 
+inline double Sample_Truncated_Normal_Inline(double mean, double scale, double lower_bound, double upper_bound)
+{
+	double value;
+
+	if (mean - scale > upper_bound || mean + scale < lower_bound) {
+		scale = (upper_bound - lower_bound) * 0.5;
+		mean = scale + lower_bound;
+	}
+	do {
+		value = Sample_Normal(mean, scale);
+	} while (value < lower_bound || value > upper_bound);
+	return(value);
+}
+
 // FUNCTION: 0x00599530
 void MapGeneratorClass::Cleanup(void)
 {
@@ -3100,6 +3116,368 @@ bool MapGeneratorClass::Init_Start_Points(void)
 		} while (player_index < SeedData.NumPlayers);
 	}
 	return(true);
+}
+
+// FUNCTION: 0x005A2ED0
+double MapGeneratorClass::Get_Tiberium_Score(const Cell & cell1, const Cell & cell2) const
+{
+	static const double _random_range = 5.0;
+
+	int x = cell1.X - cell2.X;
+	int y = cell1.Y - cell2.Y;
+	double dist = fastmath::sqrt(x * x + y * y);
+	return(RMG_RANDOM_DOUBLE(_random_range) + dist);
+}
+
+// FUNCTION: 0x005A2F50
+void MapGeneratorClass::Seed_Hill_Heights(void)
+{
+	static const double scale = 0.025;
+
+	int i;
+	int grid_size = MapCellStride * MapCellStride;
+	double height_step = SeedData.Hills * 0.0001 + 0.1;
+	double min_volatility = SeedData.Hills * 0.0025;
+	double max_volatility = SeedData.Hills * 0.005;
+
+	if (min_volatility >= scale) {
+		for (i = 0; i < grid_size; i++) {
+			MapRegionClass::CellData * pdata = &MapRegionClass::Get_Cell_Data(i);
+			MapRegionClass::CellData & data = *pdata;
+			Cell cell = data.CellID;
+			if (cell.X != 0 || cell.Y != 0) {
+				data.HillVolatility = 0;
+				double up_height = 0.0;
+				double height_trend = 0.0;
+
+				if (My_In_Radar(cell - Cell(1, 1))) {
+					up_height = MapRegionClass::Get_Cell_Data(cell - Cell(1, 1)).HillHeight;
+				}
+
+				Cell newcell = cell - Cell(1, 0);
+				if (My_In_Radar(newcell)) {
+					MapRegionClass::CellData & data2 = MapRegionClass::Get_Cell_Data(newcell);
+					pdata->HillHeight += data2.HillHeight;
+					data.HillVolatility = data2.HillVolatility;
+					height_trend += data2.HillHeight - up_height;
+				} else {
+					pdata->HillHeight = data.HillHeight;
+					data.HillVolatility = min_volatility;
+				}
+
+				newcell = cell - Cell(0, 1);
+				if (My_In_Radar(newcell)) {
+					MapRegionClass::CellData & data2 = MapRegionClass::Get_Cell_Data(newcell);
+					double height2 = data2.HillHeight;
+					data.HillHeight = height2 + data.HillHeight;
+					data.HillVolatility = data2.HillVolatility + data.HillVolatility;
+					height_trend += data2.HillHeight - up_height;
+				} else {
+					pdata->HillHeight = data.HillHeight;
+					data.HillVolatility = min_volatility + data.HillVolatility;
+				}
+
+				data.HillHeight *= 0.5;
+				data.HillVolatility *= 0.5;
+				if (height_trend > 0.0) {
+					height_trend = height_step;
+				} else if (height_trend < 0.0) {
+					height_trend = -height_step;
+				}
+				if (data.Inviolate) {
+					data.HillHeight = (data.HillHeight <= 0.0) ? 0.0 : data.HillHeight;
+					data.HillVolatility = 0.0025;
+				}
+				const double mean = 0.0;
+				data.HillVolatility += Sample_Truncated_Normal_Inline(mean, scale, -data.HillVolatility, max_volatility - data.HillVolatility);
+
+				double min_height = -2.0 - data.HillHeight;
+				double max_height = 2.0 - data.HillHeight;
+				double trend;
+				if (height_trend < min_height) {
+					trend = min_height;
+				} else if (height_trend > max_height) {
+					trend = max_height;
+				} else {
+					trend = height_trend;
+				}
+				data.HillHeight += Sample_Truncated_Normal_Inline(trend, data.HillVolatility, min_height, max_height);
+			}
+		}
+
+		for (i = 0; i < grid_size; i++) {
+			MapRegionClass::CellData & data = MapRegionClass::Get_Cell_Data(i);
+			if (data.HillHeight < 0) {
+				data.HillHeight = (int)(data.HillHeight - 0.5);
+			} else if (data.HillHeight > 0) {
+				data.HillHeight = (int)(data.HillHeight + 0.5);
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x005A33F0
+void MapGeneratorClass::Seed_Hill_Anchors(void)
+{
+	Map.Reset_Iterator();
+
+	CellClass * cptr = Map.Iterate();
+	while (cptr != NULL) {
+		if (cptr->Is_Tile_Shore()) {
+			for (int dir = FACING_FIRST; dir < FACING_COUNT; dir++) {
+				Cell cell = Adjacent_Cell(cptr->Fetch_CellID(), (FacingType)dir);
+				if (My_In_Radar(cell) && Map[cell].Is_Tile_Clear()) {
+					MapRegionClass::Get_Cell_Data(cell).HillHeight = 0.5;
+					MapRegionClass::Get_Cell_Data(cell).Inviolate = true;
+					break;
+				}
+			}
+		} else if (cptr->Is_Tile_Cliff()) {
+			for (int dir = FACING_FIRST; dir < FACING_COUNT; dir++) {
+				Cell cell = Adjacent_Cell(cptr->Fetch_CellID(), (FacingType)dir);
+				if (My_In_Radar(cell) && Map[cell].Is_Tile_Clear()) {
+					MapRegionClass::Get_Cell_Data(cell).Inviolate = true;
+					break;
+				}
+			}
+		}
+		cptr = Map.Iterate();
+	}
+}
+
+// FUNCTION: 0x005A35F0
+void MapGeneratorClass::Generate_Hills(void)
+{
+	Seed_Hill_Anchors();
+	Seed_Hill_Heights();
+
+	Init_Deform_Grid_RMG();
+
+	int grid_size = MapCellStride * MapCellStride;
+	for (int i = 0; i < grid_size; i++) {
+		MapRegionClass::CellData & data = MapRegionClass::Get_Cell_Data(i);
+		if (data.CellID != Cell(0, 0)) {
+			CellClass * cellptr = &Map[data.CellID];
+			int change = cellptr->Height + data.HillHeight - Get_Deformed_Cell_Height(cellptr);
+			int steps = abs(change);
+			int direction = change < 0 ? -1 : 1;
+			while (steps > 0) {
+				Deform_Cell_RMG(data.CellID, direction, 0, Get_Deformable_Cell_Corners(cellptr, direction));
+				steps--;
+			}
+		}
+	}
+
+	Commit_Deform_Grid_RMG();
+
+	Map.Reset_Iterator();
+	CellClass * cptr = Map.Iterate();
+
+	Cell offsets[] = { Cell(0, 0), Cell(1, 0), Cell(1, 1), Cell(0, 1)};
+	RampType ramps[] = { RAMP_MID_SE, RAMP_MID_SW, RAMP_MID_NW, RAMP_MID_NE };
+
+	while (cptr != NULL) {
+		int height_step = 0;
+		bool raise = true;
+		if (cptr->Ramp == RAMP_CORNER_NW) {
+			for (int i = 0; i < ARRAY_SIZE(offsets); i++) {
+				if (Map[cptr->Fetch_CellID() + offsets[i]].Ramp != RAMP_CORNER_NW + i) {
+					raise = false;
+				}
+			}
+		} else if (cptr->Ramp == RAMP_MID_SE) {
+			height_step += 1;
+			for (int i = 0; i < ARRAY_SIZE(offsets); i++) {
+				if (Map[cptr->Fetch_CellID() + offsets[i]].Ramp != ramps[i]) {
+					raise = false;
+				}
+			}
+		} else {
+			raise = false;
+		}
+
+		if (raise) {
+			for (int i = 0; i < ARRAY_SIZE(offsets); i++) {
+				CellClass * cellptr = &Map[cptr->Fetch_CellID() + offsets[i]];
+				cellptr->ITType = ISOTILE_NONE;
+				cellptr->SubTile = 0;
+				cellptr->Ramp = RAMP_NONE;
+				cellptr->Height += height_step;
+			}
+		}
+
+		cptr = Map.Iterate();
+	}
+}
+
+// FUNCTION: 0x005A38C0
+void MapGeneratorClass::Seed_Vegetation(void)
+{
+	Map.Reset_Iterator();
+	CellClass * cptr = Map.Iterate();
+
+	static const double rough = 0.005;
+	static const double green = 0.02;
+	static const double sand = 0.005;
+	double density = SeedData.Vegetation * 0.01;
+
+	while (cptr != NULL) {
+		MapRegionClass::CellData & data = MapRegionClass::Get_Cell_Data(cptr->Fetch_CellID());
+		if (cptr->Is_Tile_Shore()) {
+			for (int x = cptr->Fetch_CellID().X - 2; x < cptr->Fetch_CellID().X + 3; x++) {
+				for (int y = cptr->Fetch_CellID().Y - 2; y < cptr->Fetch_CellID().Y + 3; y++) {
+					if (My_In_Radar(Cell(x, y))) {
+						data.RoughTileChance = rough;
+						data.GreenTileChance = density * green * 10.0;
+						data.SandTileChance = 0;
+					}
+				}
+			}
+		} else if (data.RoughTileChance == 0.0) {
+			data.RoughTileChance = rough;
+			data.GreenTileChance = density * green;
+			data.SandTileChance = sand;
+		}
+		cptr = Map.Iterate();
+	}
+}
+
+// FUNCTION: 0x005A3A60
+void MapGeneratorClass::Seed_Arctic_Vegetation(void)
+{
+	static const double rough = 0.005;
+	static const double sand = 0.001;
+
+	Map.Reset_Iterator();
+	CellClass * cptr = Map.Iterate();
+
+	while (cptr != NULL) {
+		MapRegionClass::CellData & data = MapRegionClass::Get_Cell_Data(cptr->Fetch_CellID());
+		data.RoughTileChance = rough;
+		data.SandTileChance = sand;
+		cptr = Map.Iterate();
+	}
+}
+
+// FUNCTION: 0x005A4280
+void MapGeneratorClass::Generate_Arctic_Vegetation(void)
+{
+	CellClass * cptr;
+
+	Clear_Cell_Data_Spreads();
+
+	Map.Reset_Iterator();
+	cptr = Map.Iterate();
+
+	while (cptr != NULL) {
+		MapRegionClass::CellData & data = MapRegionClass::Get_Cell_Data(cptr->Fetch_CellID());
+		if (cptr->Is_Tile_Clear() && cptr->Ramp == RAMP_NONE && !data.Inviolate) {
+			Cell cell = cptr->Fetch_CellID();
+			int origin_id = cell.X + cell.Y * MAP_CELL_W;
+			if ((unsigned int)RMGRandom() * (1.0 / UINT_MAX) < data.RoughTileChance) {
+				double patch_size = Sample_Truncated_Normal_Inline(20, 15, 4, 60);
+				Place_Tile_Patch(cptr, IsometricTileTypeClass::RoughTile, patch_size, origin_id, false);
+			}
+		}
+		cptr = Map.Iterate();
+	}
+
+	Map.Reset_Iterator();
+	cptr = Map.Iterate();
+	while (cptr != NULL) {
+		cptr->Fixup_LAT();
+		cptr = Map.Iterate();
+	}
+
+	int tree_count = (int)((SeedData.Width * 0.1 + 0.7) * (SeedData.Vegetation * 0.01) * MaxTrees);
+	for (int tries = 0; tree_count > 0 && tries < 100; tries++) {
+		Cell cell = MapRegionClass::Pick_Random_Clear_Map_Cell();
+		tree_count -= Place_Forest(&Map[cell], Sample_Truncated_Normal_Inline(25, 10, 10, 35), Sample_Truncated_Normal_Inline(0.2, 0.1, 0.05, 0.4));
+	}
+}
+
+// FUNCTION: 0x005A4AE0
+double MapGeneratorClass::Get_Forest_Score(const Cell & cell1, const Cell & cell2) const
+{
+	static const double _random_range = 5.0;
+
+	int x = cell1.X - cell2.X;
+	int y = cell1.Y - cell2.Y;
+	double dist = fastmath::sqrt(x * x + y * y);
+	return(RMG_RANDOM_DOUBLE(_random_range) + dist);
+}
+
+// FUNCTION: 0x005A4FA0
+double MapGeneratorClass::Get_Tile_Patch_Score(const Cell & cell1, const Cell & cell2) const
+{
+	static const double _random_range = 5.0;
+
+	int x = cell1.X - cell2.X;
+	int y = cell1.Y - cell2.Y;
+	double dist = fastmath::sqrt(x * x + y * y);
+	return(RMG_RANDOM_DOUBLE(_random_range) + dist);
+}
+
+static inline void Init_Dirt_Roads(void)
+{
+	int i;
+	for (i = 0; i < 101; i++) {
+		DirtRoadTiles[i].ITType = IsometricTileType(IsometricTileTypeClass::DirtRoadCurve + i);
+	}
+	for (i = 0; i < 8; i++) {
+		DirtRoadTiles[i + 101].ITType = IsometricTileType(IsometricTileTypeClass::DirtRoadSlopes + i);
+	}
+}
+
+// FUNCTION: 0x005A5020
+void MapGeneratorClass::Generate_Urban_Areas(void)
+{
+	int count = (SeedData.Cities + 0.32) * 3;
+	int tries = 0;
+	int placed = 0;
+
+	Init_Dirt_Roads();
+
+	while (true) {
+		if (placed >= count) {
+			break;
+		}
+		Cell cell(0, 0);
+		int tries_here = 0;
+		while (true) {
+			cell = MapRegionClass::Pick_Random_Clear_Map_Cell();
+			if (++tries_here >= 20) break;
+			if (MapRegionClass::CellData::Is_Not_Inviolate(cell) || Is_Area_Cliff_Free(cell)) {
+				break;
+			}
+		}
+
+		if (Random_Fraction() < (1.0 - SeedData.Cities)) {
+			if (Generate_Rural_Roads(cell)) {
+				Generate_Rural_Buildings(cell);
+				Generate_Rural_Units(cell);
+				placed++;
+			}
+		} else {
+			if (tries_here != 20) {
+				int size = Sample_Truncated_Normal_Inline(2 * Map.PlayRect.Width * Map.PlayRect.Height / 30, 300, 100, 2000);
+				DynamicVectorClass<Cell> * cells = Create_Urban_Area(cell, size);
+				if (cells != NULL) {
+					Generate_Urban_Roads(*cells);
+					Generate_Urban_Buildings(*cells);
+					Generate_Urban_Units(*cells);
+					Generate_Urban_Pavement(*cells);
+					placed++;
+					delete cells;
+				}
+			}
+			tries++;
+		}
+
+		if (tries >= 10) {
+			break;
+		}
+	}
 }
 
 // FUNCTION: 0x005A5AE0

@@ -4433,6 +4433,331 @@ int BuildingClass::FUN_004589C0(void) const
 	return((int)Storage.Get_Total_Amount() * 4 / Class->Capacity);
 }
 
+// FUNCTION: 0x00458A00
+bool BuildingClass::FUN_00458A00(CellClass const * cell)
+{
+	if (cell->Cell_Building() != this) {
+		return(false);
+	}
+	if (Class->NumberImpassableRows == -1) {
+		return(true);
+	}
+	if (Class->Bunker && BunkerLinkedItem != NULL) {
+		return(true);
+	}
+	int x = cell->CellID.X;
+	int cx = Get_Cell().X;
+	int rows = Class->NumberImpassableRows;
+	return(rows + cx > x ? true : false);
+}
+
+// FUNCTION: 0x00458A80
+bool BuildingClass::FUN_00458A80(Coord const & coord, Dir256 dir)
+{
+	Cell const * offset = Occupy_List(false);
+	Cell origin = coord.As_Cell();
+	DynamicVectorClass<TechnoClass *> displaced;
+	int a, b, c;
+
+	while (*offset != REFRESH_EOL) {
+		Cell cell = *offset++ + origin;
+		CellClass * cellptr = &Map[cell];
+		if (cellptr->Overlay != OVERLAY_NONE) {
+			cellptr->Overlay = OVERLAY_NONE;
+			cellptr->OverlayData = 0;
+			cellptr->Rubble = NULL;
+		}
+		ObjectClass * object = cellptr->Cell_Occupier();
+		while (object != NULL) {
+			if (!(object->AbstractFlags & 1) || object->Fetch_RTTI() == RTTI_BUILDING) {
+				for (a = displaced.Count() - 1; a >= 0; a--) {
+					TechnoClass * techno = displaced[a];
+					Coord loc = techno->PositionCoord;
+					if (!techno->Unlimbo(loc, DIR_N)) {
+						techno->Delete_Me();
+					}
+				}
+				goto failed;
+			}
+			displaced.Add((TechnoClass *)object);
+			object->Limbo();
+			object = cellptr->Cell_Occupier();
+		}
+	}
+
+	if (!Unlimbo(coord, dir)) {
+		Delete_Me();
+		for (b = displaced.Count() - 1; b >= 0; b--) {
+			TechnoClass * techno = displaced[b];
+			Coord loc = techno->PositionCoord;
+			if (!techno->Unlimbo(loc, DIR_N)) {
+				techno->Delete_Me();
+			}
+		}
+failed:
+		displaced.Clear();
+		return(false);
+	}
+
+	for (c = displaced.Count() - 1; c >= 0; c--) {
+		TechnoClass * techno = displaced[c];
+		Cell where = techno->Get_Cell();
+		Cell spot = Map.Nearby_Location(where, techno->Techno_Type_Class()->Speed);
+		if (!techno->Unlimbo(Map[spot].Center_Coord(), DIR_N)) {
+			techno->Delete_Me();
+		}
+	}
+	return(true);
+}
+
+// FUNCTION: 0x00458DB0
+bool BuildingClass::Is_Weapon_Equipped(void) const
+{
+	if (CanOccupyFire()) {
+		return(true);
+	}
+	return(TechnoClass::Is_Weapon_Equipped());
+}
+
+// FUNCTION: 0x00458DD0
+bool BuildingClass::CanOccupyFire(void) const
+{
+	return(Class->CanBeOccupied && Class->CanOccupyFire && GetOccupantCount() > 0);
+}
+
+// FUNCTION: 0x00458E00
+int BuildingClass::GetOccupyRangeBonus(void) const
+{
+	if (Class->Width() < Class->Height()) {
+		return(Class->Width() / 2);
+	}
+	return(Class->Height() / 2);
+}
+
+static inline DirType Direction_From(AbstractClass const * object, Coord const & coord)
+{
+	return(::Direction(object->Center_Coord(), coord));
+}
+
+// FUNCTION: 0x00458E50
+void BuildingClass::UpdateBunker(void)
+{
+	TechnoClass * unit = BunkerLinkedItem ? BunkerLinkedItem : FUN_0065AD30(0);
+	if (unit == NULL) {
+		TankBunkerState = 0;
+		QueueMission(MISSION_GUARD, false);
+		return;
+	}
+	if (unit->Fetch_RTTI() != RTTI_UNIT) {
+		TankBunkerState = 0;
+		QueueMission(MISSION_GUARD, false);
+		return;
+	}
+
+	switch (TankBunkerState) {
+		case 0: {
+			if (unit->Get_Cell_Ptr()->Cell_Building() != this) {
+				break;
+			}
+			if (((FootClass *)unit)->Locomotion->Is_Moving()) {
+				break;
+			}
+			Cell const * list = Occupy_List(false);
+			Cell cell = Get_Cell();
+			while (*list != REFRESH_EOL) {
+				CellClass * cellptr = &Map[*list + cell];
+				TechnoClass * other = cellptr->Cell_Techno(Point2D(128, 128), false, this);
+				if (other != NULL && other != unit) {
+					other->Scatter(Center_Coord(), true, false);
+				}
+				list++;
+			}
+			TankBunkerState = 1;
+			break;
+		}
+
+		case 1: {
+			bool blocked = false;
+			Cell const * list = Occupy_List(false);
+			Cell cell = Get_Cell();
+			while (*list != REFRESH_EOL) {
+				CellClass * cellptr = &Map[*list + cell];
+				TechnoClass * other = cellptr->Cell_Techno(Point2D(128, 128), false, this);
+				if (other != NULL && other != unit) {
+					blocked = true;
+					if ((other->AbstractFlags & 4) && ((FootClass *)other)->NavCom == NULL) {
+						TankBunkerState = 1;
+						return;
+					}
+				}
+				list++;
+			}
+			if (blocked) {
+				break;
+			}
+			DirType dir = Direction_From(this, unit->Center_Coord());
+			unit->PrimaryFacing.Set_Desired(dir.Right_180());
+			TankBunkerState = 2;
+			break;
+		}
+
+		case 2: {
+			if (unit->PrimaryFacing.Is_Rotating()) {
+				break;
+			}
+			unsigned v = ((unsigned)unit->PrimaryFacing.Current().Raw >> 7) + 1 & 0x1fe;
+			int track;
+			if (v == 0x40) {
+				track = 0x43;
+			} else if (v == 0x1c0) {
+				track = 0x46;
+			} else {
+				track = 0x44;
+				if (v != 0xc0) {
+					track = 0x45;
+				}
+			}
+			Coord center = Center_Coord();
+			((FootClass *)unit)->Locomotion->Force_Track(track, center);
+			((FootClass *)unit)->Set_Speed(1.0);
+			TankBunkerState = 3;
+			break;
+		}
+
+		case 3:
+			if (unit->Get_Cell_Ptr()->Cell_Building() != this) {
+				break;
+			}
+			if (((FootClass *)unit)->Locomotion->Is_Moving()) {
+				break;
+			}
+			unit->PrimaryFacing.Set_Desired(DirType(DIR_S));
+			TankBunkerState = 4;
+			break;
+
+		case 4:
+			if (unit->PrimaryFacing.Is_Rotating()) {
+				break;
+			}
+			Replay_Anim(this, BANIM_SPECIAL_ONE, HealthRatio <= Rule->ConditionYellow);
+			Replay_Anim(this, BANIM_SPECIAL_TWO, HealthRatio <= Rule->ConditionYellow);
+			TankBunkerState = 5;
+			break;
+
+		case 5:
+			BunkerLinkedItem = unit;
+			unit->BunkerLinkedItem = this;
+			unit->Group = -1;
+			unit->Unselect();
+			TankBunkerState = 6;
+			BunkerLinkedItem->QueueMission(MISSION_GUARD, true);
+			if (Rule->BunkerWallsUpSound != -1) {
+				VocClass::PlayAt(Rule->BunkerWallsUpSound, PositionCoord);
+			}
+			break;
+
+		default:
+			break;
+	}
+}
+
+// FUNCTION: 0x004593A0
+void BuildingClass::UnloadBunker(void)
+{
+	TechnoClass * unit = BunkerLinkedItem;
+	if (unit != NULL && unit->Fetch_RTTI() == RTTI_UNIT) {
+		((FootClass *)unit)->Locomotion->Power_On();
+		Coord center = Center_Coord() + Coord(-128, 128, 0);
+		((FootClass *)unit)->Locomotion->Force_Track(0x47, center);
+		((FootClass *)unit)->Set_Speed(1.0);
+		unit->BunkerLinkedItem = NULL;
+		BunkerLinkedItem = NULL;
+		Transmit_Message(RADIO_OVER_OUT);
+	}
+}
+
+// FUNCTION: 0x00459470
+void BuildingClass::ClearBunker(void)
+{
+	DestroyNthAnim(BANIM_SPECIAL_ONE);
+	DestroyNthAnim(BANIM_SPECIAL_TWO);
+	if (BunkerLinkedItem != NULL) {
+		if (Rule->BunkerWallsDownSound != -1) {
+			VocClass::PlayAt(Rule->BunkerWallsDownSound, PositionCoord);
+		}
+		Replay_Anim(this, BANIM_SPECIAL_THREE, HealthRatio <= Rule->ConditionYellow);
+		Replay_Anim(this, BANIM_SPECIAL_FOUR, HealthRatio <= Rule->ConditionYellow);
+		Transmit_Message(RADIO_OVER_OUT);
+		BunkerLinkedItem->BunkerLinkedItem = NULL;
+		BunkerLinkedItem = NULL;
+		TankBunkerState = 0;
+		QueueMission(MISSION_GUARD, false);
+	}
+}
+
+// FUNCTION: 0x004595C0
+void BuildingClass::EmptyBunker(void)
+{
+	DestroyNthAnim(BANIM_SPECIAL_ONE);
+	DestroyNthAnim(BANIM_SPECIAL_TWO);
+	if (Rule->BunkerWallsDownSound != -1) {
+		VocClass::PlayAt(Rule->BunkerWallsDownSound, PositionCoord);
+	}
+	Replay_Anim(this, BANIM_SPECIAL_THREE, HealthRatio <= Rule->ConditionYellow);
+	Replay_Anim(this, BANIM_SPECIAL_FOUR, HealthRatio <= Rule->ConditionYellow);
+	TechnoClass * unit = BunkerLinkedItem;
+	if (unit == NULL) {
+		unit = BunkerLinkedItem;
+	}
+	if (unit == NULL) {
+		TankBunkerState = 0;
+		QueueMission(MISSION_GUARD, false);
+		return;
+	}
+	if (unit->Fetch_RTTI() == RTTI_UNIT) {
+		unit->BunkerLinkedItem = NULL;
+		((FootClass *)unit)->Locomotion->Power_On();
+		Coord center = Center_Coord() + Coord(-128, 128, 0);
+		((FootClass *)unit)->Locomotion->Force_Track(0x47, center);
+		((FootClass *)unit)->Set_Speed(1.0);
+		Cell exit = Get_Cell() + Cell(-1, 1);
+		CellClass * dest = &Map[Map.Nearby_Location(exit, unit->Techno_Type_Class()->Speed)];
+		unit->Assign_Destination(dest, true);
+		unit->QueueMission(MISSION_MOVE, false);
+		BunkerLinkedItem = NULL;
+		TankBunkerState = 0;
+		QueueMission(MISSION_GUARD, false);
+		Transmit_Message(RADIO_OVER_OUT);
+	}
+}
+
+// FUNCTION: 0x00459840
+TechnoTypeClass const * BuildingClass::FUN_00459840(void) const
+{
+	if (Class->SecretInfantry != NULL) {
+		return(Class->SecretInfantry);
+	}
+	if (Class->SecretUnit != NULL) {
+		return(Class->SecretUnit);
+	}
+	if (Class->SecretBuilding != NULL) {
+		return(Class->SecretBuilding);
+	}
+	return(SecretProduction);
+}
+
+// FUNCTION: 0x00459870
+int BuildingClass::Anti_Air(void) const
+{
+	return(Class->AntiAirValue);
+}
+
+// FUNCTION: 0x00459880
+int BuildingClass::Anti_Armor(void) const
+{
+	return(Class->AntiArmorValue);
+}
+
 // FUNCTION: 0x00459E80
 HRESULT STDMETHODCALLTYPE BuildingClass::GetClassID(CLSID * retval)
 {

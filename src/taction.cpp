@@ -2123,3 +2123,157 @@ bool TActionClass::TAction_SWITCH_TAB(HouseClass * , ObjectClass * , TriggerClas
 	}
 	return(false);
 }
+
+// FUNCTION: 0x006E4150
+bool TActionClass::TAction_FlashCameo(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	int found = -1;
+	for (int index = TechnoTypes.Count() - 1; index >= 0; index--) {
+		if (TechnoID == TechnoTypes[index]->IniName) {
+			found = index;
+			break;
+		}
+	}
+	if (found < TechnoTypes.Count() && found >= 0) {
+		Map.FUN_006AC5F0(TechnoTypes[found], Data.Value);
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x006E4200
+bool TActionClass::TAction_CreateBuildingAt(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
+{
+	if (house != NULL) {
+		Cell cell = Scen->Get_Waypoint_Cell(EffectLocation);
+		Coord coord = Map[cell].Center_Coord();
+		int type = BuildingTypeClass::From_Name(TechnoID);
+		if (type >= 0 && type <= BuildingTypes.Count() && BuildingTypes[type] != NULL) {
+			BuildingClass * building = (BuildingClass *)BuildingTypes[type]->Create_One_Of(house);
+			if (building != NULL) {
+				if (!building->ForceCreate(coord, 0)) {
+					building->Delete_Me();
+				} else {
+					building->Grand_Opening(false);
+					return(true);
+				}
+			}
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x006E42D0
+bool TActionClass::TAction_SetSWChargeLevel(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
+{
+	if (house != NULL && Data.Value >= 0 && Data.Value <= house->SuperWeapon.Count()) {
+		SuperClass * super = house->SuperWeapon[Data.Value];
+		if (super->IsPresent && Value2 >= 0 && Value2 <= 100) {
+			super->SetCharge(Value2);
+			return(true);
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x006E4320
+bool TActionClass::TAction_SetSWRechargeTime(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
+{
+	if (house != NULL && Data.Value >= 0 && Data.Value <= house->SuperWeapon.Count()) {
+		house->SuperWeapon[Data.Value]->SetRechargeTime(Value2);
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x006E4360
+bool TActionClass::TAction_ResetSWRechargeTime(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
+{
+	if (house != NULL && Data.Value >= 0 && Data.Value <= house->SuperWeapon.Count()) {
+		house->SuperWeapon[Data.Value]->ResetRechargeTime();
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x006E43A0
+bool TActionClass::TAction_ResetSW(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
+{
+	if (house != NULL && Data.Value >= 0 && Data.Value <= house->SuperWeapon.Count()) {
+		house->SuperWeapon[Data.Value]->Reset();
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x006E43E0
+bool TActionClass::TAction_SetPreferredTargetCell(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
+{
+	if (house == NULL) {
+		return(false);
+	}
+	Cell cell = Scen->Get_Waypoint_Cell(EffectLocation);
+	if (cell == CELL_NONE) {
+		return(false);
+	}
+	house->FUN_0050DA00(cell);
+	return(true);
+}
+
+// FUNCTION: 0x006E4440
+bool TActionClass::TAction_ResetTargetCell(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
+{
+	if (house == NULL) {
+		return(false);
+	}
+	house->FUN_0050DA10();
+	return(true);
+}
+
+// FUNCTION: 0x006E4460
+bool TActionClass::TAction_SetDefenseCell(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
+{
+	if (house == NULL) {
+		return(false);
+	}
+	Cell cell = Scen->Get_Waypoint_Cell(EffectLocation);
+	if (cell == CELL_NONE) {
+		return(false);
+	}
+	house->FUN_0050DA20(cell);
+	return(true);
+}
+
+// FUNCTION: 0x006E44C0
+bool TActionClass::TAction_ResetDefenseCell(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
+{
+	if (house == NULL) {
+		return(false);
+	}
+	house->FUN_0050DA50();
+	return(true);
+}
+
+// FUNCTION: 0x006E44E0
+bool TActionClass::TAction_SetBaseCenter(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
+{
+	if (house == NULL) {
+		return(false);
+	}
+	Cell cell = Scen->Get_Waypoint_Cell(EffectLocation);
+	if (cell == CELL_NONE) {
+		return(false);
+	}
+	house->FUN_0050DFE0(cell);
+	return(true);
+}
+
+// FUNCTION: 0x006E4540
+bool TActionClass::TAction_ResetBaseCenter(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
+{
+	if (house == NULL) {
+		return(false);
+	}
+	house->FUN_0050DFF0();
+	return(true);
+}

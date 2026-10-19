@@ -1878,3 +1878,36 @@ date,address,function,model,result,best,checks,minutes,blocker,notes
 2026-10-19,0x00529CA0,,sonnet-5.5 + opus-5.5,partial,42.6,0,,inline depth of cached Find_Entry,Not re-attempted
 2026-10-19,0x00529E70,,sonnet-5.5 + opus-5.5,partial,39.1,0,,inline depth of cached Find_Entry,Its header declaration is now in include/ini.h
 2026-10-19,0x0052A110,,sonnet-5.5 + opus-5.5,partial,27.7,0,,inline depth of cached Find_Entry,Not re-attempted
+2026-10-19,0x00509F60,,sonnet-5.5 + opus-5.5,partial,67.1,15,,register allocation: outer index in edi spilled around the inner loop,HouseClass::Fire_GenMutator; banked in build/batch/House
+2026-10-19,0x0050A150,,sonnet-5.5 + opus-5.5,partial,47.1,9,,"register allocation: this in edi and i in ebp, spilled",HouseClass::Fire_PsyDom; techno.h gap closed by CanBePermaMindControlled
+2026-10-19,0x0050A490,,sonnet-5.5 + opus-5.5,partial,95.5,14,,address operand order [index*16 + items] vs ours [items + index*16],HouseClass::Invalidate_Base_Node_Position; 290/290 bytes
+2026-10-19,0x0050AF10,,sonnet-5.5 + opus-5.5,partial,85.0,54,,branch layout: original re-tests 'enabled' at the SetOnHold join,HouseClass::Update_Present_Super_Weapons; 700 of 699 bytes
+2026-10-19,0x00579B70,,sonnet-5.5 + opus-5.5,partial,36.7,22,,inline budget / stack frame,MapClass::Get_High_Ground_Mask; banked in build/batch/map
+2026-10-19,0x0057B440,,sonnet-5.5 + opus-5.5,partial,55.9,12,,block layout (code placement),Pick_Random_Tile_Variant; banked with the shore piece tables
+2026-10-19,0x005A45E0,,sonnet-5.5 + opus-5.5,partial,99.7,69,,scheduling: nodes Element/Score store order,MapGeneratorClass::Place_Forest; 1267/1267 bytes
+2026-10-19,0x005A4B60,,sonnet-5.5 + opus-5.5,partial,99.7,60,,scheduling: nodes Element/Score store order,MapGeneratorClass::Place_Tile_Patch; 1073/1073 bytes
+2026-10-19,0x00636B50,,sonnet-5.5 + opus-5.5,partial,79.2,24,,register allocation: ebx and ebp swapped,PlanToken::Remove_Node; 386/386 bytes
+2026-10-19,0x00636CE0,,sonnet-5.5 + opus-5.5,partial,60.2,18,,register allocation: -1 in ebx where the original has edi; loop bound spilled,PlanToken::Reset_Marks
+2026-10-19,0x0076DED0,,sonnet-5.5 + opus-5.5,partial,86.6,36,,inline handle accessor codegen: dead lea after loading ecx,Remove_Target_Anims; iterator RTTI says rc_ptr<Territory>
+2026-10-19,0x0076DF50,,sonnet-5.5 + opus-5.5,partial,86.6,2,,inline handle accessor codegen: same dead lea as 0x0076DED0,byte-identical twin of 0x0076DED0
+2026-10-19,0x0076E180,,sonnet-5.5 + opus-5.5,partial,37.5,6,,register allocation: WorldMap.Get() in eax and the flag via cl,On_Cancel_Enter
+2026-10-19,0x0076E290,,sonnet-5.5 + opus-5.5,partial,48.1,10,,register allocation: same eax/ecx choice as 0x0076E180,On_Cancel_Leave
+2026-10-19,0x0076E2F0,,sonnet-5.5 + opus-5.5,partial,42.9,4,,inline accessor folding of Properties and History,Do_Target_Selection; History handle at +0x10
+2026-10-19,0x0076E430,,sonnet-5.5 + opus-5.5,partial,69.7,14,,inline accessor folding of History; tick load order,Get_Outcome
+2026-10-19,0x0076E4F0,,sonnet-5.5 + opus-5.5,partial,83.7,24,,inline accessor folding of History; temp registers,Present_Ticks; needs FUN_007B7E40 and stringtable.h when it lands
+2026-10-19,0x0076E750,,sonnet-5.5 + opus-5.5,partial,63.4,6,,inline accessor folding,Presentation
+2026-10-19,0x0076E8B0,,sonnet-5.5 + opus-5.5,partial,62.8,2,,inline accessor folding,Present_History
+2026-10-19,0x0046D8B0,,sonnet-5.5 + opus-5.5,partial,77.8,19,,register allocation: index in edi and slot pointer in esi swapped; Get_Color compare form,builds against include/session.h now that Slots is there
+2026-10-19,0x0060F4B0,,sonnet-5.5 + opus-5.5,partial,38.7,6,,"mixed inline and out-of-line Dictionary<HWND,WinData>::getPointer and keyHash",needs dict.h and WinData header changes
+2026-10-19,0x00535C00,,sonnet-5.5 + opus-5.5,partial,100,1,,gated on Init_Commands 0x00532150,"command class constructor, destructor or virtual; emitted only where Init_Commands constructs it, so a MATCH without landing becomes partial"
+2026-10-19,0x00535C20,,sonnet-5.5 + opus-5.5,partial,100,1,,gated on Init_Commands 0x00532150,"command class constructor, destructor or virtual; emitted only where Init_Commands constructs it, so a MATCH without landing becomes partial"
+2026-10-19,0x00535C40,,sonnet-5.5 + opus-5.5,partial,100,1,,gated on Init_Commands 0x00532150,"command class constructor, destructor or virtual; emitted only where Init_Commands constructs it, so a MATCH without landing becomes partial"
+2026-10-19,0x00535C70,,sonnet-5.5 + opus-5.5,partial,100,1,,gated on Init_Commands 0x00532150,"command class constructor, destructor or virtual; emitted only where Init_Commands constructs it, so a MATCH without landing becomes partial"
+2026-10-19,0x00535C90,,sonnet-5.5 + opus-5.5,partial,100,1,,gated on Init_Commands 0x00532150,"command class constructor, destructor or virtual; emitted only where Init_Commands constructs it, so a MATCH without landing becomes partial"
+2026-10-19,0x00535CC0,,sonnet-5.5 + opus-5.5,partial,100,1,,gated on Init_Commands 0x00532150,"command class constructor, destructor or virtual; emitted only where Init_Commands constructs it, so a MATCH without landing becomes partial"
+2026-10-19,0x00535CD0,,sonnet-5.5 + opus-5.5,partial,100,1,,gated on Init_Commands 0x00532150,"command class constructor, destructor or virtual; emitted only where Init_Commands constructs it, so a MATCH without landing becomes partial"
+2026-10-19,0x00535CF0,,sonnet-5.5 + opus-5.5,partial,100,1,,gated on Init_Commands 0x00532150,"command class constructor, destructor or virtual; emitted only where Init_Commands constructs it, so a MATCH without landing becomes partial"
+2026-10-19,0x00535D00,,sonnet-5.5 + opus-5.5,partial,100,1,,gated on Init_Commands 0x00532150,"command class constructor, destructor or virtual; emitted only where Init_Commands constructs it, so a MATCH without landing becomes partial"
+2026-10-19,0x00535D20,,sonnet-5.5 + opus-5.5,partial,100,1,,gated on Init_Commands 0x00532150,"command class constructor, destructor or virtual; emitted only where Init_Commands constructs it, so a MATCH without landing becomes partial"
+2026-10-19,0x00535D30,,sonnet-5.5 + opus-5.5,partial,100,1,,gated on Init_Commands 0x00532150,"command class constructor, destructor or virtual; emitted only where Init_Commands constructs it, so a MATCH without landing becomes partial"
+2026-10-19,0x00535D50,,sonnet-5.5 + opus-5.5,partial,100,1,,gated on Init_Commands 0x00532150,"command class constructor, destructor or virtual; emitted only where Init_Commands constructs it, so a MATCH without landing becomes partial"

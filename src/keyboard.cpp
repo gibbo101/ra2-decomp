@@ -97,9 +97,190 @@ DatShorts DAT_00ABC6B0(0, 0);
 
 DatInts DAT_00ABC6D0(0, 0, 0);
 
+// FUNCTION: 0x0054EE30
+
+
+
+DatInts DAT_00ABC6F8(0x80, 0x80, 0);
+
+extern bool UserInputLocked;
+struct ChronoScreenEffect { static bool Active(void); };
+void __fastcall FUN_0053EC40(int key, bool release);
+short __fastcall FUN_0053EC70(int vk);
+
+// FUNCTION: 0x0054EE50
+void WWKeyboardClass::Noop(void) const
+{
+}
+
+// FUNCTION: 0x0054EE60
+WWKeyboardClass::WWKeyboardClass(void) :
+	MouseQX(0),
+	MouseQY(0),
+	MousePos(0,0),
+	Head(0),
+	Tail(0)
+{
+	memset(KeyState, '\0', sizeof(KeyState));
+}
+
+// FUNCTION: 0x0054EE90
+unsigned short WWKeyboardClass::Buff_Get(void)
+{
+	while (!Check()) {}
+
+	unsigned short temp = Fetch_Element();
+	if (Is_Mouse_Key(temp)) {
+		MouseQX = Fetch_Element();
+		MouseQY = Fetch_Element();
+		MousePos = Point2D(MouseQX, MouseQY);
+	} else if (Is_Wheel_Key(temp)) {
+		MouseWheel = Fetch_Element();
+	}
+	return(temp);
+}
+
 // FUNCTION: 0x0054EFC0
 bool WWKeyboardClass::Is_Mouse_Key(unsigned short key)
 {
 	key &= 0xFF;
 	return(key == VK_LBUTTON || key == VK_MBUTTON || key == VK_RBUTTON);
+}
+
+// FUNCTION: 0x0054EFF0
+bool WWKeyboardClass::Is_Wheel_Key(unsigned short key)
+{
+	key &= 0xFF;
+	return(key == 0xA);
+}
+
+// FUNCTION: 0x0054F000
+unsigned short WWKeyboardClass::Check(void) const
+{
+	((WWKeyboardClass *)this)->Fill_Buffer_From_System();
+	if (Is_Buffer_Empty()) return(false);
+	return(Peek_Element());
+}
+
+// FUNCTION: 0x0054F050
+unsigned short WWKeyboardClass::Get(void)
+{
+	while (!Check()) {}
+	return(Buff_Get());
+}
+
+// FUNCTION: 0x0054F1C0
+bool WWKeyboardClass::Put(unsigned short key)
+{
+	if (!Is_Buffer_Full()) {
+		Put_Element(key);
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x0054F200
+bool WWKeyboardClass::Put_Key_Message(unsigned short vk_key, bool release)
+{
+	if (!ChronoScreenEffect::Active()) {
+		if (!UserInputLocked || vk_key == VK_ESCAPE) {
+			FUN_0053EC40(vk_key, release);
+
+			if (!Is_Mouse_Key(vk_key) && !Is_Wheel_Key(vk_key)) {
+				if (FUN_0053EC70(VK_SHIFT) & 0x8000) {
+					vk_key |= WWKEY_SHIFT_BIT;
+				}
+				if (FUN_0053EC70(VK_CONTROL) & 0x8000) {
+					vk_key |= WWKEY_CTRL_BIT;
+				}
+				if (FUN_0053EC70(VK_MENU) & 0x8000) {
+					if (vk_key == VK_TAB) {
+						return(true);
+					}
+					vk_key |= WWKEY_ALT_BIT;
+				}
+			}
+
+			if (release) {
+				vk_key |= WWKEY_RLS_BIT;
+			}
+			return(Put(vk_key));
+		}
+	}
+	return(true);
+}
+
+// FUNCTION: 0x0054F2F0
+bool WWKeyboardClass::Put_Mouse_Message(unsigned short vk_key, int x, int y, bool release)
+{
+	if (UserInputLocked) {
+		return(true);
+	}
+	if (Available_Buffer_Room() >= 3 && Is_Mouse_Key(vk_key)) {
+		Put_Key_Message(vk_key, release);
+		Put((unsigned short)x);
+		Put((unsigned short)y);
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x0054F3D0
+bool WWKeyboardClass::Put_Wheel_Message(int delta)
+{
+	if (UserInputLocked) {
+		return(true);
+	}
+	if (Available_Buffer_Room() >= 2) {
+		Put_Key_Message(0xA, false);
+		Put(delta & 0xFF);
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x0054F450
+char WWKeyboardClass::To_ASCII(unsigned short key)
+{
+	if (key & WWKEY_RLS_BIT) {
+		return('\0');
+	}
+	if ((key & 0xFF) == VK_HOME) {
+		return('\b');
+	}
+	if ((key & 0xFF) == VK_END) {
+		return('\\');
+	}
+
+	if (key & WWKEY_SHIFT_BIT) {
+		KeyState[VK_SHIFT] = 0x80;
+	}
+	if (key & WWKEY_CTRL_BIT) {
+		KeyState[VK_CONTROL] = 0x80;
+	}
+	if (key & WWKEY_ALT_BIT) {
+		KeyState[VK_MENU] = 0x80;
+	}
+
+	char buffer[10];
+	int result;
+	int scancode;
+
+	scancode = MapVirtualKey(key, 0);
+	result = ToAscii((UINT)key, (UINT)scancode, (PBYTE)KeyState, (LPWORD)buffer, (UINT)0);
+
+	if (key & WWKEY_SHIFT_BIT) {
+		KeyState[VK_SHIFT] = 0;
+	}
+	if (key & WWKEY_CTRL_BIT) {
+		KeyState[VK_CONTROL] = 0;
+	}
+	if (key & WWKEY_ALT_BIT) {
+		KeyState[VK_MENU] = 0;
+	}
+
+	if (result != 1) {
+		return('\0');
+	}
+	return(buffer[0]);
 }

@@ -639,6 +639,65 @@ double DAT_00B1D490 = DAT_00B1D3E8 / DAT_007F68F0;
 // FUNCTION: 0x00752070 $E83
 double DAT_00B1D438 = DAT_007E1718 / DAT_00B1D490;
 
+extern const double DAT_007E1720;
+extern const double DAT_007E1728;
+extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
+extern const double DAT_007F68F8;
+extern double __cdecl FUN_004CAD50(double);
+extern double __cdecl FUN_004CADE0(double);
+
+// FUNCTION: 0x00752090 $E86
+double DAT_00B1D430 = DAT_007E1720 * DAT_007F68F8;
+
+// FUNCTION: 0x007520B0 $E89
+double DAT_00B1D400 = DAT_007E1728 * DAT_007F68F8;
+
+// FUNCTION: 0x007520D0 $E92
+double DAT_00B1D3C0 = DAT_007E1730 * DAT_007F68F8;
+
+// FUNCTION: 0x007520F0 $E95
+int DAT_00B1D498 = (int)(DAT_007E1738 * DAT_00B1D3E8 * FUN_004CAD50(DAT_00B1D3C0 - DAT_00B1D400));
+
+// FUNCTION: 0x00752130 $E98
+double DAT_00B1D408 = FUN_004CADE0(DAT_00B1D498 * DAT_007E1740);
+
+// FUNCTION: 0x00752160 $E101
+double DAT_00B1D420 = FUN_004CADE0((DAT_00B1D498 * 2) / DAT_00B1D3E8);
+
+// FUNCTION: 0x00752190 $E104
+int DAT_00B1D488 = (int)(DAT_00B1D498 * 4 + DAT_007E1738);
+
+struct ShortPair2 {
+	unsigned short A, B;
+	ShortPair2() { A = 0; B = 0; }
+};
+
+struct IntTriple2 {
+	int A, B, C;
+	IntTriple2() { A = 0; B = 0; C = 0; }
+};
+
+struct IntTriple3 {
+	int A, B, C;
+	IntTriple3() { A = 128; B = 128; C = 0; }
+};
+
+// FUNCTION: 0x007521C0 $E107
+ShortPair2 DAT_00B1D3D4;
+
+// FUNCTION: 0x007521D0 $E110
+IntTriple2 DAT_00B1D410;
+
+// FUNCTION: 0x007521F0 $E113
+IntTriple3 DAT_00B1D440;
+
+struct VoxEntry;
+// FUNCTION: 0x00752210 $E118
+// FUNCTION: 0x00752250 $E116
+DynamicVectorClass<VoxEntry *> VoxArray;
+
 // FUNCTION: 0x007532D0
 VocClass * VocClass_From_Name(char const * name)
 {

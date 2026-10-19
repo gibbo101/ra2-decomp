@@ -263,6 +263,8 @@ Each entry: what the diff showed, then the source change that fixed it.
   that is non-const: a const operand falls through to the free one (HashString).
 - A file-static helper the compiler emits only for its callers (team's `_Is_It_Breathing`)
   lands with its first caller, not before.
+- A class's constructor, destructors and virtuals are emitted where the class is built:
+  never write a function that `new`s it to emit them (the command classes wait on Init_Commands).
 - A run of about 13 small initialisers per file (CELL_LEPTON_DIAG through COORD_NONE)
   is `include/geometry.h`'s per-file constants: include it right after `always.h`
   (before any `extern` of the same names) and mark them; never write `Init_` stand-ins.
@@ -308,14 +310,12 @@ Each entry: what the diff showed, then the source change that fixed it.
 - An unverified reference proves nothing: a wrong offset into a global object whose
   address check.py does not know passes. Give each object you reach into a names.csv
   row; `uv run tools/refaudit.py` lists symbols whose references imply different bases.
-- UnitClass::Draw_It (0x0073CEC0) flips with the parity of declarations added to any
-  header it includes (cell.h, map.h): re-check it, and restore it with a second real one.
 - Code ported from TibSun brings Westwood's `/* ** */` comments and commented-out code:
   cut them to the comment rules (two `//` lines of behaviour) before landing.
 - `#define NDEBUG` before the includes is how a file whose original has its asserts
   compiled out is built (ownrdraw.cpp, wonline.cpp).
-- A match that flips after an unrelated header edit (enumerator counts alone moved
-  0x0073CEC0's block layout) is compiler-internal: change the header edit, not the function.
+- A match that flips with unrelated header declarations has an order VC6 settles by
+  symbol table: look for a dead store (Draw_It's `brightness = 0`), not header padding.
 - A TS layout can agree with YR's for a prefix only: run headercheck before porting a
   function that reaches past a class's proven part.
 - Where YRpp groups members into a struct and TS has flat fields, use a nested struct
@@ -329,7 +329,8 @@ Each entry: what the diff showed, then the source change that fixed it.
 - YR made some TS text members wide: OwnerDraw's CellData holds `WideWstring`, so
   `include/ownrdraw.h` overrides the TibSun copy.
 - A function that lands makes its callers' references to it checkable: re-run checkall
-  after `--record` (Seed_Land called 0x0057A0C0 under Build_All_Cliffs' name).
+  after `--record` (Seed_Land called 0x0057A0C0 under Build_All_Cliffs' name; Input_Name
+  calls 0x0054F530, not To_ASCII).
 - A new header with a static object renumbers another file's `$E` markers (empulse.h
   moved startup.cpp's by one): renumber the markers rather than undo the header.
 - Wide string literals are pooled across files (0x0082083C is `L" "`): a constant

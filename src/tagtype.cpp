@@ -172,12 +172,114 @@ bool TagTypeClass::Write_INI(CCINIClass & ini) const
 	return(true);
 }
 
+// FUNCTION: 0x006E61F0
+AttachType TagTypeClass::Attaches_To(void) const
+{
+	AttachType attach = ATTACH_NONE;
+	TriggerTypeClass * trigger = FirstTrigger;
+	while (trigger != NULL) {
+		attach = AttachType(attach | trigger->Attaches_To());
+		trigger = trigger->LinkedTo;
+	}
+	return(attach);
+}
+
+// FUNCTION: 0x006E6220
+bool TagTypeClass::Is_Allow_Win(void) const
+{
+	TriggerTypeClass * trigger = FirstTrigger;
+	while (trigger != NULL) {
+		if (trigger->Is_Allow_Win()) {
+			return(true);
+		}
+		trigger = trigger->LinkedTo;
+	}
+	return(false);
+}
+
+// FUNCTION: 0x006E6250
+bool TagTypeClass::Is_Cross_Horizontal(void) const
+{
+	TriggerTypeClass * trigger = FirstTrigger;
+	while (trigger != NULL) {
+		if (trigger->Is_Cross_Horizontal()) {
+			return(true);
+		}
+		trigger = trigger->LinkedTo;
+	}
+	return(false);
+}
+
+// FUNCTION: 0x006E6280
+bool TagTypeClass::Is_Cross_Vertical(void) const
+{
+	TriggerTypeClass * trigger = FirstTrigger;
+	while (trigger != NULL) {
+		if (trigger->Is_Cross_Vertical()) {
+			return(true);
+		}
+		trigger = trigger->LinkedTo;
+	}
+	return(false);
+}
+
+// FUNCTION: 0x006E62B0
+bool TagTypeClass::Is_Enters_Zone(void) const
+{
+	TriggerTypeClass * trigger = FirstTrigger;
+	while (trigger != NULL) {
+		if (trigger->Is_Enters_Zone()) {
+			return(true);
+		}
+		trigger = trigger->LinkedTo;
+	}
+	return(false);
+}
+
+// FUNCTION: 0x006E62E0
+bool TagTypeClass::Is_Linked(TriggerTypeClass *trigger) const
+{
+	TriggerTypeClass * trigtype = FirstTrigger;
+	while (trigtype != NULL) {
+		if (trigtype == trigger) {
+			return(true);
+		}
+		trigtype = trigtype->LinkedTo;
+	}
+	return(false);
+}
+
+// FUNCTION: 0x006E6310
+TagTypeClass * TagTypeClass::Find_Or_Make(char const * name)
+{
+	return(TFind_Or_Make<TagTypeClass>(name, TagTypes));
+}
+
 // FUNCTION: 0x006E63A0
 HRESULT STDMETHODCALLTYPE TagTypeClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
 	*retval = CLSID_TagTypeClass;
 	return(S_OK);
+}
+
+// FUNCTION: 0x006E63E0
+void TagTypeClass::Compute_CRC(CRCEngine & crc) const
+{
+	BASECLASS::Compute_CRC(crc);
+	crc(Persistence);
+}
+
+// FUNCTION: 0x006E6410
+HRESULT STDMETHODCALLTYPE TagTypeClass::Load(IStream * stream)
+{
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		new (this) TagTypeClass(NoInitClass());
+		Swizzle_Pointer(&FirstTrigger);
+		result = S_OK;
+	}
+	return(result);
 }
 
 // FUNCTION: 0x006E6470
@@ -189,3 +291,9 @@ HRESULT STDMETHODCALLTYPE TagTypeClass::Save(IStream * stream, BOOL cleardirty)
 	}
 	return(result);
 }
+
+// FUNCTION: 0x006E6490 TagTypeClass::Fetch_RTTI
+
+// FUNCTION: 0x006E64A0 TagTypeClass::Fetch_Object_Size
+
+// FUNCTION: 0x006E64B0 TagTypeClass::Fetch_Heap_ID

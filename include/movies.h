@@ -26,6 +26,20 @@ void Movie_Resume(VQHandle * handle);
 void Movie_Queue_Ingame(VQHandle * handle);
 void Movie_Update_Visible_Surface(void);
 
+class MovieSubtitles
+{
+	public:
+		~MovieSubtitles(void);
+
+		int Active;
+		int field_4;
+		int field_8;
+		int field_C;
+		Surface * SubSurface;
+};
+
+MovieSubtitles * __fastcall Subtitles_Open(char const * name);
+
 struct VQHandle
 {
 	VQHandle(void);
@@ -55,6 +69,7 @@ struct VQHandle
 
 	bool IsInitialized;
 
+	MovieSubtitles * Subtitles;
 };
 
 extern VQHandle *CurrentVQ;

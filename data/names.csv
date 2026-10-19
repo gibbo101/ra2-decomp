@@ -75,3 +75,4 @@ address,name,symbol,evidence
 0x00481A00,CellClass::Goodie_Check,,TS name (cell.h); returns bool in al with ret 4 as called by 0x0054C550
 0x00B0CEC8,Tactical::SelectableObjects,,TS name (tactical.h); the selectable-object array 0x006DC430 walks
 0x0057A0C0,MapClass::FUN_0057A0C0,,two-argument map function (ret 8) called by Seed_Land 0x0059A6C0; distinct from Build_All_Cliffs 0x00578E60
+0x0054F530,WWKeyboardClass::FUN_0054F530,,keyboard thiscall (ret 4) that ScoreClass::Input_Name 0x0068FBB0 calls on the key from Get; distinct from To_ASCII 0x0054F450

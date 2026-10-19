@@ -9,8 +9,69 @@
 #include "scenario.h"
 #include "vector.h"
 #include "win.h"
+#include <math.h>
 
 extern ULONG COMRefCount;
+
+extern double __cdecl FUN_004CAC40(double);
+extern double __cdecl FUN_004CAD50(double);
+extern double __cdecl FUN_004CADE0(double);
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007E1720;
+extern const double DAT_007E1728;
+extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
+extern const double DAT_007E5C70;
+extern const double DAT_007E5C78;
+
+struct ShortPair {
+	unsigned short A, B;
+	ShortPair() { A = 0; B = 0; }
+};
+
+struct IntTriple {
+	int A, B, C;
+	IntTriple() { A = 0; B = 0; C = 0; }
+};
+
+// FUNCTION: 0x0049FD50 $E4
+double DAT_0089F780 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2.0);
+
+// FUNCTION: 0x0049FD80 $E7
+double DAT_0089F7D0 = DAT_0089F780 / DAT_007E5C70;
+
+// FUNCTION: 0x0049FDA0 $E10
+double DAT_0089F7B8 = DAT_007E1718 / DAT_0089F7D0;
+
+// FUNCTION: 0x0049FDC0 $E13
+double DAT_0089F7B0 = DAT_007E1720 * DAT_007E5C78;
+
+// FUNCTION: 0x0049FDE0 $E16
+double DAT_0089F788 = DAT_007E1728 * DAT_007E5C78;
+
+// FUNCTION: 0x0049FE00 $E19
+double DAT_0089F760 = DAT_007E1730 * DAT_007E5C78;
+
+// FUNCTION: 0x0049FE20 $E22
+int DAT_0089F7D8 = (int)(FUN_004CAD50(DAT_0089F760 - DAT_0089F788) * DAT_007E1738 * DAT_0089F780);
+
+// FUNCTION: 0x0049FE60 $E25
+double DAT_0089F790 = FUN_004CADE0(DAT_0089F7D8 * DAT_007E1740);
+
+// FUNCTION: 0x0049FE90 $E28
+double DAT_0089F7A8 = FUN_004CADE0((DAT_0089F7D8 * 2) / DAT_0089F780);
+
+// FUNCTION: 0x0049FEC0 $E31
+int DAT_0089F7CC = (int)(DAT_0089F7D8 * 4 + DAT_007E1738);
+
+// FUNCTION: 0x0049FEF0 $E34
+ShortPair DAT_0089F778;
+
+// FUNCTION: 0x0049FF00 $E37
+IntTriple DAT_0089F798;
 
 // FUNCTION: 0x0049FF40
 bool operator!=(CONNECTDATA const &left, CONNECTDATA const &right)

@@ -429,7 +429,23 @@ template class TClassFactory<SuperWeaponTypeClass>;
 template class TClassFactory<SuperClass>;
 
 // FUNCTION: 0x006BF740 ?$TClassFactory@VTactical@@::?$TClassFactory@VTactical@@
+// FUNCTION: 0x006BF750 ?$TClassFactory@VTactical@@::QueryInterface
+// FUNCTION: 0x006BF7C0 ?$TClassFactory@VTactical@@::AddRef
+// FUNCTION: 0x006BF7E0 ?$TClassFactory@VTactical@@::Release
+// FUNCTION: 0x006BF810 ?$TClassFactory@VTactical@@::CreateInstance
+// FUNCTION: 0x006BF890 ?$TClassFactory@VTactical@@::LockServer
 template class TClassFactory<Tactical>;
+
+// FUNCTION: 0x006BF8C0 ?$TClassFactory@VCellClass@@::?$TClassFactory@VCellClass@@
+// FUNCTION: 0x006BF8D0 ?$TClassFactory@VCellClass@@::QueryInterface
+// FUNCTION: 0x006BF940 ?$TClassFactory@VCellClass@@::AddRef
+// FUNCTION: 0x006BF960 ?$TClassFactory@VCellClass@@::Release
+// FUNCTION: 0x006BF990 ?$TClassFactory@VCellClass@@::CreateInstance
+// FUNCTION: 0x006BFA10 ?$TClassFactory@VCellClass@@::LockServer
+template class TClassFactory<CellClass>;
+
+// FUNCTION: 0x006BFA40 ?$TClassFactory@VEMPulseClass@@::?$TClassFactory@VEMPulseClass@@
+template class TClassFactory<EMPulseClass>;
 
 // FUNCTION: 0x006BEDB0 ?$_com_ptr_t@V?$_com_IIID@UIUnknown@@$1?_GUID_00000000_0000_0000_c000_000000000046@@3U__s_GUID@@A@@::CreateInstance
 template class _com_ptr_t<_com_IIID<IUnknown, &__uuidof(IUnknown)> >;

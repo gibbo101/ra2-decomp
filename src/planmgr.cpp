@@ -207,7 +207,7 @@ template class VectorClass<EventClass *>;
 
 class PlanMember;
 class PlanBranch;
-struct TechnoVecOps { bool Add(TechnoClass * const &); };
+struct TechnoVecOps { bool Add(TechnoClass * const &); void Delete_Index(int); };
 struct TechnoSlotOps { int GetControllingHouse(void); };
 struct TokenVecOps { void Delete_Index(int); };
 struct MemberVecOps { bool Delete(PlanMember * const &); void Delete_Index(int); };
@@ -351,6 +351,18 @@ class PlanToken
 		bool Owner_Is_Mission(void);
 		bool Has_Started(void);
 		PlanningNodeClass * FUN_00636E60(int index);
+		PlanningNodeClass * Wrapped_Node_At(int index);
+		EventClass Pop_Front(void);
+		void Share_Range(TechnoClass * techno, int start, int count);
+		void Share_From(TechnoClass * techno, int start);
+		void Remove_Node(int index);
+		void Reset_Marks(void);
+		int Get_F8C(void);
+		bool Reached(int index);
+		int Node_Count(void);
+		int Current_Or_Count(void);
+		int Remaining(void);
+		void Add_Node(PlanningNodeClass * node);
 		PlanningNodeClass * Node_At(int index)
 		{
 			int count = Nodes.Count();
@@ -1466,4 +1478,165 @@ bool PlanToken::Owner_Is_Mission(void)
 bool PlanToken::Has_Started(void)
 {
 	return Nodes.Count() > 0 && (F8C == -1 || F8C > 0);
+}
+
+// FUNCTION: 0x00636590
+EventClass PlanToken::Pop_Front(void)
+{
+	PlanningNodeClass * node = Nodes[0];
+	PlanMember * first = Lookup_Member(node, Owner);
+	EventClass event = *first->Packet;
+	*(EventClass *)&F1D = event;
+	Nodes.Delete_Index(0);
+	if (LoopStart == 0) {
+		F99 = true;
+		Nodes.Add(node);
+		Queue_Node(node);
+	} else {
+		PlanMember * member = Lookup_Member(node, Owner);
+		if (member) {
+			node->FUN_00635060(member);
+			delete member->Packet;
+			DynamicVectorClass<PlanMember *> * members = &node->Members;
+			((MemberVecOps *)members)->Delete(member);
+			delete member;
+			if (node->Members.Count() == 0 && node) {
+				node->FUN_0063D9C0(1);
+			}
+		}
+		if (LoopStart > 0) {
+			LoopStart--;
+			LoopStart = (LoopStart <= 0) ? 0 : LoopStart;
+		}
+	}
+	int f = F8C - 1;
+	if (f < -1) f = -1;
+	F8C = f;
+	if (Nodes.Count() == 0) {
+		TechnoClass * owner = Owner;
+		int slot = Owner_Slot(owner);
+		if (slot >= 0 && slot < 24) {
+			int value = DAT_00AC4B84[slot] - 1;
+			DAT_00AC4B84[slot] = (value < 0) ? 0 : value;
+		}
+		DynamicVectorClass<TechnoClass *> * technos = &PlanTechnos::Technos;
+		int id = technos->ID(owner);
+		if (id != -1) {
+			((TechnoVecOps *)technos)->Delete_Index(id);
+		}
+	}
+	return event;
+}
+
+static inline void Add_Member_Inline(PlanningNodeClass * node, TechnoClass * techno, EventClass const * event)
+{
+	PlanMember * member = new PlanMember;
+	member->Owner = techno;
+	EventClass * packet = new EventClass;
+	*packet = *event;
+	member->Packet = packet;
+	node->Members.Add(member);
+	PlanToken * token = FUN_00705D20(techno);
+	token->Nodes.Add(node);
+	if (token->F8C == -1) {
+		token->F8C = token->Nodes.Count() - 1;
+	}
+	node->FUN_00634E10(member);
+}
+
+static inline PlanMember * Lookup_Member_Inline(PlanningNodeClass * node, TechnoClass * techno)
+{
+	int index = node->Find_Member(techno);
+	if (index == -1) {
+		return 0;
+	}
+	return node->Members[index];
+}
+
+// FUNCTION: 0x006367B0
+void PlanToken::Share_Range(TechnoClass * techno, int start, int count)
+{
+	if (FUN_00705D20(techno)) {
+		int end = start + count;
+		for (int i = start; i < end; i++) {
+			PlanningNodeClass * node = Nodes[i];
+			TechnoClass * owner = Owner;
+			PlanMember * member = Lookup_Member_Inline(node, owner);
+			EventClass event = *member->Packet;
+			event.Data.Target.Whom = TargetClass(techno);
+			Add_Member_Inline(node, techno, &event);
+		}
+	}
+}
+
+// FUNCTION: 0x00636980
+void PlanToken::Share_From(TechnoClass * techno, int start)
+{
+	int count = Nodes.Count() - start;
+	if (FUN_00705D20(techno)) {
+		for (int i = start; i < count + start; i++) {
+			PlanningNodeClass * node = Nodes[i];
+			TechnoClass * owner = Owner;
+			PlanMember * member = Lookup_Member_Inline(node, owner);
+			EventClass event = *member->Packet;
+			event.Data.Target.Whom = TargetClass(techno);
+			Add_Member_Inline(node, techno, &event);
+		}
+	}
+}
+
+// FUNCTION: 0x00636D90
+int PlanToken::Get_F8C(void)
+{
+	return F8C;
+}
+
+// FUNCTION: 0x00636DA0
+bool PlanToken::Reached(int index)
+{
+	if (F8C == -1) return false;
+	return index >= F8C;
+}
+
+// FUNCTION: 0x00636DC0
+int PlanToken::Node_Count(void)
+{
+	return Nodes.Count();
+}
+
+// FUNCTION: 0x00636DD0
+int PlanToken::Current_Or_Count(void)
+{
+	if (F8C == -1) return Nodes.Count();
+	return F8C;
+}
+
+// FUNCTION: 0x00636DE0
+int PlanToken::Remaining(void)
+{
+	if (F8C == -1) return 0;
+	return Nodes.Count() - F8C;
+}
+
+// FUNCTION: 0x00636E00
+void PlanToken::Add_Node(PlanningNodeClass * node)
+{
+	Nodes.Add(node);
+	if (F8C == -1) {
+		F8C = Nodes.Count() - 1;
+	}
+}
+
+// FUNCTION: 0x00636E60
+PlanningNodeClass * PlanToken::Wrapped_Node_At(int index)
+{
+	int count = Nodes.Count();
+	if (count == 0) return 0;
+	if (index >= count) {
+		int start = LoopStart;
+		if (start <= 0 && start != 0) return 0;
+		index = (index - start) % LoopCount + start;
+	}
+	if (index < 0 || index >= count) return 0;
+	return Nodes[index];
 }

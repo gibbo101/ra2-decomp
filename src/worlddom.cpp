@@ -17,6 +17,7 @@
 #include "ownrdraw.h"
 #include "wdtnet.h"
 #include "wonline.h"
+#include "wstring.h"
 
 #include <cmath>
 
@@ -70,3 +71,86 @@ WDTShortPair DAT_00B77EE0;
 
 // FUNCTION: 0x007AF260 $E68
 WDTIntTriple DAT_00B77F10;
+
+struct WDTCenter { int x; int y; int z; WDTCenter(void) { z = 0; x = 0x80; y = 0x80; } };
+
+// FUNCTION: 0x007AF280 $E71
+WDTCenter DAT_00B77F48;
+
+// FUNCTION: 0x007AF2A0
+Wstring & __fastcall WDT_Faction_Name(int side)
+{
+	static Wstring dis("DIS");
+	static Wstring all("ALL");
+	static Wstring sov("SOV");
+
+	switch (side) {
+		case 1: return dis;
+		case 2: return all;
+		case 3: return sov;
+	}
+	static Wstring xx("xx");
+	return xx;
+}
+
+// FUNCTION: 0x007AF390 $E77
+// FUNCTION: 0x007AF3A0 $E76
+// FUNCTION: 0x007AF3B0 $E75
+// FUNCTION: 0x007AF3C0 $E74
+
+// FUNCTION: 0x007AF3D0
+Wstring & __fastcall WDT_Country_Name(int side)
+{
+	static Wstring na("NA");
+	static Wstring eu("EU");
+	static Wstring as("AS");
+
+	switch (side) {
+		case 1: return na;
+		case 2: return eu;
+		case 3: return as;
+	}
+	static Wstring xx("XX");
+	return xx;
+}
+
+// FUNCTION: 0x007AF4C0 $E82
+// FUNCTION: 0x007AF4D0 $E81
+// FUNCTION: 0x007AF4E0 $E80
+// FUNCTION: 0x007AF4F0 $E79
+
+namespace OwnerDraw {
+	class DialogControl {
+	public:
+		virtual ~DialogControl(void);
+		virtual int F1(void) = 0;
+		virtual int F2(void) = 0;
+		virtual int F3(void) = 0;
+	};
+	class SimpleDialogControl : public DialogControl {
+	public:
+		virtual ~SimpleDialogControl(void);
+		int Field4;
+		char Field8;
+	};
+}
+
+namespace WorldDominationTour {
+	struct FactionImage { virtual ~FactionImage(void); };
+	class FactionSelectDialogControl : public OwnerDraw::SimpleDialogControl {
+	public:
+		virtual ~FactionSelectDialogControl(void);
+		int FieldC;
+		FactionImage * Image1;
+		FactionImage * Image2;
+		FactionImage * Image3;
+	};
+}
+
+// FUNCTION: 0x007AF500
+WorldDominationTour::FactionSelectDialogControl::~FactionSelectDialogControl(void)
+{
+	delete Image1;
+	delete Image2;
+	delete Image3;
+}

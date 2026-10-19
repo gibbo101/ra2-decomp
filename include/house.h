@@ -489,6 +489,7 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 		void ReshroudMap(void);
 
 		void Update_Present_Super_Weapons(void);
+		void AISupers(void);
 		void Enable_Available_Super_Weapons(void);
 
 		void Calculate_Enemy_Predictions(void);
@@ -570,6 +571,8 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 		void Fire_LightningStorm(SuperClass * super);
 		void Fire_PsyDom(SuperClass * super);
 		void Fire_GenMutator(SuperClass * super);
+		void FUN_00509EC0(SuperClass * super);
+		void FUN_0050A350(SuperClass * super);
 		Cell PickIonCannonTarget(void);
 		Cell PickTargetByType(QuarryType quarry);
 
@@ -593,6 +596,12 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 
 		bool Is_Player_Control(void) const;
 		SourceType FUN_0050DAA0(void) const;
+		void FUN_0050DA00(Cell cell);
+		void FUN_0050DA10(void);
+		void FUN_0050DA20(Cell cell);
+		void FUN_0050DA50(void);
+		void FUN_0050DFE0(Cell cell);
+		void FUN_0050DFF0(void);
 		bool Is_Human_Player(void) const;
 
 		bool Can_Build_Here(BuildingTypeClass *building,  Cell const & cell);
@@ -600,6 +609,7 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 		float FUN_0050BDF0(TechnoTypeClass const * type) const;
 		float FUN_0050BEB0(TechnoTypeClass const * type) const;
 		bool FUN_0050B730(void) const;
+		bool FUN_0050B760(BuildingTypeClass const * type, Cell const & cell);
 		float FUN_0050C160(void) const;
 
 		static void Read_All(CCINIClass const & ini);
@@ -618,6 +628,7 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 		RGBClass RemapColorRGB;
 		RGBClass LaserColor;
 		void Initialize_Radar_Color(void);
+		void FUN_0050B840(void);
 
 		BaseClass Base;
 

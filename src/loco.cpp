@@ -34,6 +34,116 @@
 // FUNCTION: 0x0055A670 $E32
 // FUNCTION: 0x0055A680 $E35
 
+extern ULONG COMRefCount;
+extern int DAT_00ABCCA0;
+extern int DAT_00ABCCA4;
+extern int DAT_00ABCCA8;
+
+// FUNCTION: 0x0055A6A0
+void FUN_0055A6A0(void)
+{
+	DAT_00ABCCA8 = 0;
+	DAT_00ABCCA0 = 128;
+	DAT_00ABCCA4 = 128;
+}
+
+// FUNCTION: 0x0055A6C0
+LocomotionClass::LocomotionClass(void) :
+	Owner(NULL),
+	LinkedTo(NULL),
+	IsPowered(true),
+	Dirty(true),
+	RefCount(0)
+{
+}
+
+// FUNCTION: 0x0055A6F0
+LocomotionClass::~LocomotionClass(void)
+{
+	LinkedTo = NULL;
+}
+
+// FUNCTION: 0x0055A710
+HRESULT STDMETHODCALLTYPE LocomotionClass::Link_To_Object(void *pointer)
+{
+	LinkedTo = (FootClass *)pointer;
+	Owner = (FootClass *)pointer;
+	return(S_OK);
+}
+
+// FUNCTION: 0x0055A730
+Matrix3DStruct STDMETHODCALLTYPE LocomotionClass::Draw_Matrix(int *key)
+{
+	Matrix3D draw_matrix(true);
+
+	draw_matrix.Rotate_Z(LinkedTo->PrimaryFacing.Current().As_Radian32());
+
+	if (key && *key != -1) {
+		*key *= 32;
+		*key |= LinkedTo->PrimaryFacing.Current().As_Dir32();
+	}
+	return((Matrix3DStruct &)draw_matrix);
+}
+
+// FUNCTION: 0x0055A7D0
+Matrix3DStruct STDMETHODCALLTYPE LocomotionClass::Shadow_Matrix(int *key)
+{
+	int ramp = Map[LinkedTo->Get_Coord()].Ramp;
+
+	Matrix3D draw_matrix(Get_Slope_Matrix(ramp));
+	draw_matrix.Rotate_Z(LinkedTo->PrimaryFacing.Current().As_Radian32());
+
+	if (key && *key != -1) {
+		*key = 32 * (ramp + (*key << 6));
+		*key |= LinkedTo->PrimaryFacing.Current().As_Dir32();
+	}
+	return((Matrix3DStruct &)draw_matrix);
+}
+
+// FUNCTION: 0x0055A8C0
+Point2DStruct STDMETHODCALLTYPE LocomotionClass::Shadow_Point(void)
+{
+	Point2DStruct pt;
+
+	pt.X = 0;
+	pt.Y = TacticalMap->Z_Lepton_To_Pixel(LinkedTo->HeightAGL);
+
+	return(pt);
+}
+
+// FUNCTION: 0x0055A8F0
+boolean STDMETHODCALLTYPE LocomotionClass::Power_On(void)
+{
+	IsPowered = true;
+	return(Is_Powered());
+}
+
+// FUNCTION: 0x0055A910
+boolean STDMETHODCALLTYPE LocomotionClass::Power_Off(void)
+{
+	IsPowered = false;
+	return(Is_Powered());
+}
+
+// FUNCTION: 0x0055A930
+boolean STDMETHODCALLTYPE LocomotionClass::Is_Powered(void)
+{
+	return(IsPowered);
+}
+
+// FUNCTION: 0x0055A940
+boolean STDMETHODCALLTYPE LocomotionClass::Is_Ion_Sensitive(void)
+{
+	return(false);
+}
+
+// FUNCTION: 0x0055A950
+ULONG STDMETHODCALLTYPE LocomotionClass::AddRef(void)
+{
+	++COMRefCount;
+	return(InterlockedIncrement(&RefCount));
+}
+
 // FUNCTION: 0x0055A9B0
 LONG STDMETHODCALLTYPE LocomotionClass::QueryInterface(REFIID riid, LPVOID *ppvObject)
 {

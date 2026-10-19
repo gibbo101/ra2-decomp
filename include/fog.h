@@ -54,7 +54,7 @@ class FoggedObjectClass : public AbstractClass
 
 		static IndexClass<int, FoggedObjectClass *> FoggedObjectIndex;
 
-	private:
+	public:
 
 		struct DrawRecord {
 

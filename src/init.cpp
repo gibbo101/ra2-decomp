@@ -1938,3 +1938,73 @@ int FUN_005355D0(void)
 
 // FUNCTION: 0x00535AA0 INIClass::INIClass
 
+
+extern char DAT_00A8F5B4[];
+extern wchar_t DAT_00A8F654[];
+void __fastcall FUN_00731060(int group);
+
+class CreateTeamCommandClass : public CommandClass
+{
+	public:
+		CreateTeamCommandClass(int team) : Team(team) {}
+
+		virtual char const * Get_Unique_Name(void) const
+		{
+			sprintf(DAT_00A8F5B4, "TeamCreate_%d", Team);
+			return DAT_00A8F5B4;
+		}
+		virtual char const * Get_Display_Name(void) const
+		{
+			swprintf(DAT_00A8F654, StringTable::LoadString("TXT_CREATE_TEAM", NULL, "D:\\ra2mdpost\\Init.CPP", 0x1815), Team);
+			return (char const *)DAT_00A8F654;
+		}
+		virtual char const * Get_Category(void) const
+		{
+			return (char const *)StringTable::LoadString("TXT_TEAM", NULL, "D:\\ra2mdpost\\Init.CPP", 0x1817);
+		}
+		virtual char const * Get_Description(void) const
+		{
+			swprintf(DAT_00A8F654, StringTable::LoadString("TXT_CREATE_TEAM_DESC", NULL, "D:\\ra2mdpost\\Init.CPP", 0x1819), Team);
+			return (char const *)DAT_00A8F654;
+		}
+		virtual void Execute(int key) const
+		{
+			FUN_00731060(Team);
+		}
+
+	private:
+		int Team;
+};
+
+BuildingClass * FUN_007342A0(void);
+
+class StructureTabCommandClass : public CommandClass
+{
+	public:
+		virtual char const * Get_Unique_Name(void) const
+		{
+			return "StructureTab";
+		}
+		virtual char const * Get_Display_Name(void) const
+		{
+			return (char const *)StringTable::LoadString("TXT_STRUCTURE_TAB", NULL, "D:\\ra2mdpost\\Init.CPP", 0x182A);
+		}
+		virtual char const * Get_Category(void) const
+		{
+			return (char const *)StringTable::LoadString("TXT_INTERFACE", NULL, "D:\\ra2mdpost\\Init.CPP", 0x182C);
+		}
+		virtual char const * Get_Description(void) const
+		{
+			return (char const *)StringTable::LoadString("TXT_STRUCTURE_TAB_DESC", NULL, "D:\\ra2mdpost\\Init.CPP", 0x182E);
+		}
+		virtual void Execute(int key) const
+		{
+			if (Map.Column[0].FUN_006ABAC0()) {
+				Map.SetTab(0);
+				BuildingClass * building = FUN_007342A0();
+				if (building != NULL) {
+					PlayerPtr->Manual_Place(building->Who_Can_Build_Me(false, false), building);
+				}
+			}
+		}
+};

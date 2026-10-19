@@ -67,6 +67,7 @@ class MPCooperative : public MPGameModeClass
 		virtual void vt_entry_B0(void) override;
 		virtual bool vt_entry_B4(DynamicVectorClass<int> list, int * out) override;
 		virtual int vt_entry_B8(void) override;
+		virtual bool vt_entry_BC(void) override;
 		virtual Cell * AssignStartingPositionsToHouse(Cell * result, int house, DynamicVectorClass<Cell> * coords, unsigned char * satisfied) override;
 
 		void FUN_005C2500(HWND dialog);

@@ -394,14 +394,17 @@ class TechnoClass : public RadioClass
 		int GetAirstrikeTintIntensity(int brightness) const;
 		int FUN_0070DDF0(void);
 		int FUN_007011A0(void);
+		bool FUN_0070DC50(void) const;
 		bool FUN_0070DC60(void) const;
+		bool FUN_0070DCE0(void) const;
+		int FUN_0070DCF0(void) const;
 		int FUN_0070DD20(void) const;
 		void GattlingRateUp(int rate);
 		void ReleaseLocomotor(bool set_target);
 		void GattlingRateDown(int rate);
 		bool FUN_0070E240(WeaponDataStruct const * weapon) const;
 		void Deactivate(void);
-		void FireDeathWeapon(int additional_damage);
+		int FireDeathWeapon(int additional_damage);
 		virtual FacingType Desired_Load_Dir(ObjectClass * , Cell & moveto) const;
 		virtual DirType Fire_Direction(void) const;
 		virtual InfantryTypeClass const * Crew_Type(void) const;
@@ -538,6 +541,7 @@ class TechnoClass : public RadioClass
 		void FUN_00709550(void);
 		int FUN_00709800(FireErrorType error) const;
 		bool IsMindControlled(void) const;
+		bool CanBePermaMindControlled(void) const;
 		bool Is_Immobilized(void) const {return(IsUnderEMP() || IsParalyzed() || IsBeingWarpedOut() || IsWarpingIn());}
 		void Scatter_Incoming_Infantry(void) const;
 		int Get_Collateral_Damage(void) const;

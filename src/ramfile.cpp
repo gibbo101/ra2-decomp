@@ -10,14 +10,19 @@
 #include "cell.h"
 #include "crc.h"
 #include "map.h"
+#include "_rules.h"
+#include "rules.h"
+#include "scenario.h"
 #include "swizzle.h"
 #include "tracker.h"
 #include <cstring>
 
+namespace Unsorted { extern int CurrentFrame; }
+
 DynamicVectorClass<RadSiteClass *> RadSites;
 
-// FUNCTION: 0x0065B160 $E49
-// FUNCTION: 0x0065B1A0 $E47
+// FUNCTION: 0x0065B160 $E56
+// FUNCTION: 0x0065B1A0 $E54
 
 // FUNCTION: 0x0065B1E0
 RadSiteClass::RadSiteClass(void) :
@@ -109,6 +114,224 @@ HRESULT STDMETHODCALLTYPE RadSiteClass::GetClassID(CLSID * retval)
 int RadSiteClass::GetSpread(void)
 {
 	return(Spread);
+}
+
+// FUNCTION: 0x0065B4C0
+void RadSiteClass::SetBaseCell(Cell * cell)
+{
+	BaseCell = *cell;
+}
+
+// FUNCTION: 0x0065B4D0
+void RadSiteClass::SetSpread(int spread)
+{
+	Spread = spread;
+	SpreadInLeptons = spread * 256 + 128;
+}
+
+// FUNCTION: 0x0065B4F0
+void RadSiteClass::SetRadLevel(int level)
+{
+	RadLevel = level;
+	RadDuration = Rule->RadDurationMultiple * level;
+	RadTimeLeft = RadDuration;
+}
+
+// FUNCTION: 0x0065B510
+int RadSiteClass::GetRadLevel(void)
+{
+	if (RadDuration <= 0) {
+		return(0);
+	}
+	return(RadTimeLeft * RadLevel / RadDuration);
+}
+
+// FUNCTION: 0x0065B530
+void RadSiteClass::Add(int level)
+{
+	double a = RadLevel;
+	double b = RadTimeLeft;
+	double c = RadDuration;
+	int current = (int)(a * b / c);
+	Deactivate();
+	RadLevel = current + level;
+	RadDuration = Rule->RadDurationMultiple * RadLevel;
+	RadTimeLeft = RadDuration;
+	Activate();
+}
+
+// FUNCTION: 0x0065B580
+void RadSiteClass::Activate(void)
+{
+	int leveldelay = Rule->RadLevelDelay;
+	int lightdelay = Rule->RadLightDelay;
+	RadLevelTimer = leveldelay;
+	RadLightTimer = lightdelay;
+
+	int green = Rule->RadColor.Get_Green();
+	int blue = Rule->RadColor.Get_Blue();
+	int red = Rule->RadColor.Get_Red();
+	if (Scen->Theater == THEATER_SNOW) {
+		red = blue = -128;
+	}
+	int r = red * 1000 / 255;
+	int g = green * 1000 / 255;
+	int b = blue * 1000 / 255;
+	int visibility = SpreadInLeptons;
+	double light = RadLevel;
+	light *= Rule->RadLightFactor;
+	light = (2000.0 < light) ? 2000.0 : light;
+	int intensity = (int)light;
+	double tr = r * Rule->RadTintFactor;
+	tr = (2000.0 < tr) ? 2000.0 : tr;
+	int tintr = (int)tr;
+	double tg = g * Rule->RadTintFactor;
+	tg = (2000.0 < tg) ? 2000.0 : tg;
+	int tintg = (int)tg;
+	double tb = b * Rule->RadTintFactor;
+	tb = (2000.0 < tb) ? 2000.0 : tb;
+	int tintb = (int)tb;
+
+	Tint.Red = tintr;
+	Tint.Green = tintg;
+	Tint.Blue = tintb;
+	Intensity = intensity;
+	LevelSteps = RadDuration / leveldelay;
+	IntensitySteps = RadDuration / lightdelay;
+	IntensityDecrement = intensity / IntensitySteps;
+
+	Coord coord = Map[BaseCell].Center_Coord();
+	if (LightSource == NULL) {
+		LightSource = new LightSourceClass(coord, visibility, intensity, tintr, tintg, tintb);
+		LightSource->DetailLevel = 0;
+		LightSource->Enable(false);
+	} else {
+		LightSource->ChangeLevels(intensity, tintr, tintg, tintb, false);
+	}
+	Radiate();
+}
+
+// FUNCTION: 0x0065B800
+void RadSiteClass::AI(void)
+{
+	RadTimeLeft--;
+	if (RadLevelTimer.Value() == 0) {
+		DecreaseRadiation();
+		RadLevelTimer = Rule->RadLevelDelay;
+	}
+	if (RadLightTimer.Value() == 0) {
+		DecreaseLight();
+		RadLightTimer = Rule->RadLightDelay;
+	}
+	if (RadTimeLeft <= 0) {
+		delete this;
+	}
+}
+
+// FUNCTION: 0x0065B8F0
+double RadSiteClass::GetRadLevelAt(Cell const & cell)
+{
+	CellClass & here = Map[BaseCell];
+	CellClass & there = Map[cell];
+	Coord a = here.Center_Coord();
+	Coord b = there.Center_Coord();
+	int distance = a.Distance_To(b);
+	int range = SpreadInLeptons;
+	double result = 0.0;
+	if (distance <= range) {
+		result = (double)(range - distance) / range * RadLevel;
+	}
+	return(result);
+}
+
+// FUNCTION: 0x0065B9C0
+void RadSiteClass::Radiate(void)
+{
+	int x0 = BaseCell.X - Spread;
+	int y0 = BaseCell.Y - Spread;
+	int xend = x0 + Spread * 2 + 1;
+	int yend = y0 + Spread * 2 + 1;
+	for (int y = y0; y < yend; y++) {
+		for (int x = x0; x < xend; x++) {
+			Cell cell(x, y);
+			CellClass & here = Map[BaseCell];
+			CellClass & there = Map[cell];
+			Coord a = here.Center_Coord();
+			Coord b = there.Center_Coord();
+			int distance = a.Distance_To(b);
+			int range = SpreadInLeptons;
+			double amount = 0.0;
+			if (distance <= range) {
+				amount = (double)(range - distance) / range * RadLevel;
+			}
+			CellClass & target = Map[cell];
+			double level = amount;
+			target.RadLevel_Increase(level);
+		}
+	}
+}
+
+// FUNCTION: 0x0065BB50
+void RadSiteClass::Deactivate(void)
+{
+	int steps = RadTimeLeft / Rule->RadLevelDelay + 1;
+	int x0 = BaseCell.X - Spread;
+	int y0 = BaseCell.Y - Spread;
+	int xend = x0 + Spread * 2 + 1;
+	int yend = y0 + Spread * 2 + 1;
+	for (int y = y0; y < yend; y++) {
+		for (int x = x0; x < xend; x++) {
+			Cell cell(x, y);
+			CellClass & here = Map[BaseCell];
+			CellClass & there = Map[cell];
+			Coord a = here.Center_Coord();
+			Coord b = there.Center_Coord();
+			int distance = a.Distance_To(b);
+			int range = SpreadInLeptons;
+			double amount = 0.0;
+			if (distance <= range) {
+				amount = (double)(range - distance) / range * RadLevel;
+			}
+			double level = amount;
+			level = level / LevelSteps * steps;
+			CellClass & target = Map[cell];
+			target.RadLevel_Decrease(level);
+		}
+	}
+}
+
+// FUNCTION: 0x0065BD00
+void RadSiteClass::DecreaseRadiation(void)
+{
+	int x0 = BaseCell.X - Spread;
+	int y0 = BaseCell.Y - Spread;
+	int xend = x0 + Spread * 2 + 1;
+	int yend = y0 + Spread * 2 + 1;
+	for (int y = y0; y < yend; y++) {
+		for (int x = x0; x < xend; x++) {
+			Cell cell(x, y);
+			CellClass & here = Map[BaseCell];
+			CellClass & there = Map[cell];
+			Coord a = here.Center_Coord();
+			Coord b = there.Center_Coord();
+			int distance = a.Distance_To(b);
+			int range = SpreadInLeptons;
+			double amount = 0.0;
+			if (distance <= range) {
+				amount = (double)(range - distance) / range * RadLevel;
+			}
+			double level = amount;
+			level /= LevelSteps;
+			CellClass & target = Map[cell];
+			target.RadLevel_Decrease(level);
+		}
+	}
+}
+
+// FUNCTION: 0x0065BE90
+void RadSiteClass::DecreaseLight(void)
+{
+	LightSource->ChangeLevels(LightSource->Intensity - IntensityDecrement, Tint.Red * RadTimeLeft / RadDuration, Tint.Green * RadTimeLeft / RadDuration, Tint.Blue * RadTimeLeft / RadDuration, false);
 }
 
 // FUNCTION: 0x0065C340

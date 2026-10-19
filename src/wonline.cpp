@@ -9,7 +9,9 @@
 #include "arraylist.h"
 #include "dict.h"
 #include "session.h"
+#include "timer.h"
 #include "wstring.h"
+#include "widewstring.h"
 
 #include <windows.h>
 #include <ole2.h>
@@ -222,3 +224,65 @@ Wstring DAT_00B778F4;
 // FUNCTION: 0x0077D090
 // FUNCTION: 0x0077D0B0
 Wstring DAT_00B778FC;
+
+// FUNCTION: 0x0077D0C0
+// FUNCTION: 0x0077D0E0
+Wstring DAT_00B765EC;
+
+// FUNCTION: 0x0077D0F0
+// FUNCTION: 0x0077D110
+Wstring DAT_00B76900;
+
+class FUN_007F094C_Class {
+public:
+	FUN_007F094C_Class(void);
+	virtual ~FUN_007F094C_Class(void);
+	void * Ptr;
+};
+
+class FUN_007F3F44_Class : public FUN_007F094C_Class {
+public:
+	FUN_007F3F44_Class(void) {}
+	virtual ~FUN_007F3F44_Class(void) {}
+};
+
+// FUNCTION: 0x0077D120
+// FUNCTION: 0x0077D140
+FUN_007F3F44_Class DAT_00B75E48;
+
+// FUNCTION: 0x0077D160
+// FUNCTION: 0x0077D190
+CDTimerClass<SystemTimerClass> DAT_00B76478;
+
+// FUNCTION: 0x0077D1A0
+// FUNCTION: 0x0077D1C0
+WideWstring DAT_00B76230;
+
+class FUN_007EF720_Class {
+public:
+	virtual ~FUN_007EF720_Class(void) {}
+};
+
+class FUN_007EF738_Class : public FUN_007EF720_Class {
+public:
+	FUN_007EF738_Class(void);
+	virtual ~FUN_007EF738_Class(void);
+	int A;
+	char B;
+};
+
+class FUN_007F7624_Class : public FUN_007EF738_Class {
+public:
+	FUN_007F7624_Class(void);
+	virtual ~FUN_007F7624_Class(void);
+};
+
+// FUNCTION: 0x0077D1D0
+FUN_007F7624_Class::FUN_007F7624_Class(void)
+{
+}
+
+// FUNCTION: 0x0077D1F0
+FUN_007F7624_Class::~FUN_007F7624_Class(void)
+{
+}

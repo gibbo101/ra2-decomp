@@ -1005,6 +1005,20 @@ vector renumbered startup.cpp's two `$E` markers. Ini's eight cached Find_Entry 
 stay near 30-50% on inline depth. Cost: about 6.6M tokens. Merge gate: 6,183 of 6,183
 (957.9 KB).
 
+### Batches 39, 40 and 41 (19 October 2026)
+
+**399 of 432 functions** (136, 121, 142). Batch 39's merge added six HouseClass target-cell
+setters and TechnoClass::CanBePermaMindControlled, and adopted tevent.h with YR's layout
+(String at 0x38, EventHouse at 0x54, a parameterless Fetch_Object_Size), which landed
+TriggerClass::Should_Spring. Batch 40 adopted vqa.h with YR's leading subtitles pointer and
+gave WDTNet its History handle at +0x10; WorldDomination's selection screen stays at 40-87%
+on how its handle accessors fold. Batch 41 gave SessionClass its eight player slots. Two
+functions that only `new`ed the command classes to emit their vtables were removed: those
+twelve functions wait on Init_Commands. RTTI renamed movies.cpp's `IngameVQ` to a
+`DynamicVectorClass<char const *>`. Recording exposed Input_Name calling 0x0054F530, not
+To_ASCII; declaring it flipped UnitClass::Draw_It, which a dead `= 0` had left at the
+mercy of VC6's symbol table, and removing that store holds it under any added declaration. Cost: about 6.35M tokens. Merge gate: 6,582 of 6,582 (986.6 KB).
+
 ### Decide before the first batch
 
 - **Module layout.** Which function lives in which source file, and the link order, decide

@@ -168,6 +168,57 @@ void Selection::Update_Hovered_Territory(Point2D const & point)
 	}
 }
 
+class InputManagerClass {
+public:
+	static InputManagerClass * Instance;
+	short FUN_0054F000(void);
+	short FUN_0054F050(void);
+};
+
+typedef VectorCursor<MSSfxEntry *, DynamicVectorClass<MSSfxEntry *> > WDT_SFX_ITER;
+
+static inline void Play_Sfx_Named(Selection * sel, char const * text)
+{
+	Wstring name(text);
+	if (name != (char const *)NULL) {
+		WDT_SFX_ITER it(sel->SfxEntries, 0);
+		for (; it; it++) {
+			if (!(name == it->Get_Name())) {
+				break;
+			}
+		}
+		if (it) {
+			it->Play();
+		}
+	}
+}
+
+// FUNCTION: 0x0076DFD0 WorldDominationTour::Selection::On_Map_Enter
+void Selection::On_Map_Enter(void)
+{
+	Play_Sfx_Named(this, "MapEnter");
+}
+
+// FUNCTION: 0x0076E090 WorldDominationTour::Selection::On_Map_Leave
+void Selection::On_Map_Leave(void)
+{
+	Play_Sfx_Named(this, "MapLeave");
+	HoveredTerritoryID = -1;
+	YRTerritoryHandle none;
+	Select_Territory(none);
+}
+
+// FUNCTION: 0x0076E9D0 WorldDominationTour::Selection::Check_For_Breakout
+void Selection::Check_For_Breakout(void)
+{
+	Wait_For_Focus();
+	while (InputManagerClass::Instance->FUN_0054F000()) {
+		if (InputManagerClass::Instance->FUN_0054F050() == VK_ESCAPE) {
+			Brokeout = true;
+		}
+	}
+}
+
 // FUNCTION: 0x0076F000 WorldDominationTour::YRMapImpl::FUN_0076F000
 YRTerritoryHandle YRMapImpl::FUN_0076F000(int id)
 {

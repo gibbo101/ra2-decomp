@@ -284,7 +284,7 @@ void ScoreClass::Input_Name(char str[], int xpos, int ypos)
 		Timing();
 
 		if (Keyboard->Check()) {
-			key = Keyboard->WWKeyboardClass::To_ASCII(Keyboard->WWKeyboardClass::Get()) & 0xFF;
+			key = Keyboard->WWKeyboardClass::FUN_0054F530(Keyboard->WWKeyboardClass::Get()) & 0xFF;
 			Call_Back();
 
 			if (x >= xpos + 90) {

@@ -224,6 +224,132 @@ FoggedObjectClass::FoggedObjectClass(TerrainClass * object) :
 	FoggedObjectIndex.Add_Index(id, this);
 }
 
+FoggedObjectClass::~FoggedObjectClass(void)
+{
+	FoggyObjects.Delete(this);
+
+	Cell cell = Get_Cell();
+	int id = cell.As_Int() - RTTI + INT_MAX;
+	FoggedObjectIndex.Remove_Index(id);
+
+	if (RTTI == RTTI_BUILDING) {
+		BuildingClass *bptr = Map[cell].Cell_Building();
+		if (bptr != NULL) {
+			bptr->IsFogged = false;
+			for (int i = 0; i < BANIM_COUNT; i++) {
+				if (bptr->Anims[i] != NULL) {
+					bptr->Anims[i]->IsFogged = false;
+				}
+			}
+		}
+	}
+
+	if (TacticalMap != NULL) {
+		Rect rect = BoundingRect;
+		rect -= Point2D(TacticalMap->TacPixelX, TacticalMap->TacPixelY);
+		TacticalMap->Register_Dirty_Area(rect);
+	}
+}
+
+// FUNCTION: 0x004D2370
+void Update_Fogged_Objects(void)
+{
+	for (int i = 0; i < FoggedObjectClass::FoggyObjects.Count(); i++) {
+		FoggedObjectClass *fptr = FoggedObjectClass::FoggyObjects[i];
+		if (fptr->Get_Head_Record_Occupy_List() != NULL) {
+			const Cell * list = fptr->Get_Head_Record_Occupy_List();
+			Cell cell = fptr->Get_Cell();
+			while (*list != REFRESH_EOL) {
+				Cell ncell = *list + cell;
+				Map[ncell].IsFogged = true;
+				list++;
+			}
+		} else {
+			Map[(Coord)fptr->Position].IsFogged = true;
+		}
+	}
+}
+
+// FUNCTION: 0x004D24A0
+HRESULT STDMETHODCALLTYPE FoggedObjectClass::Save(IStream * stream, BOOL cleardirty)
+{
+	HRESULT result = BASECLASS::Save(stream, cleardirty);
+	if (SUCCEEDED(result)) {
+		int index;
+
+		int count = Records.Count();
+		result = stream->Write(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+
+		for (index = 0; index < count; index++) {
+			result = stream->Write(&Records[index], sizeof(Records[index]), NULL);
+			if (FAILED(result)) {
+				return(S_OK);
+			}
+		}
+
+		result = S_OK;
+	}
+	return(result);
+}
+
+// FUNCTION: 0x004D2510
+HRESULT STDMETHODCALLTYPE FoggedObjectClass::Load(IStream * stream)
+{
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		new (this) FoggedObjectClass(NoInitClass());
+
+		Swizzle_Pointer(&House);
+
+		int count = 0;
+		result = stream->Read(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+
+		for (int i = 0; i < count; i++) {
+			DrawRecord record;
+
+			result = stream->Read(&record, sizeof(record), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+
+			Records.Add(record);
+			Swizzle_Pointer(&Records[Records.Count()-1].TypeClass);
+		}
+
+		Cell cell = Get_Cell();
+		int id = cell.As_Int() - RTTI + INT_MAX;
+		FoggedObjectIndex.Add_Index(id, this);
+	}
+	return(result);
+}
+
+// FUNCTION: 0x004D2790
+Cell const * FoggedObjectClass::Get_Head_Record_Occupy_List(void)
+{
+	if (RTTI == RTTI_BUILDING) {
+		return(Records[0].TypeClass->Occupy_List());
+	}
+	return(NULL);
+}
+
+// FUNCTION: 0x004D27B0
+RTTIType FoggedObjectClass::Fetch_RTTI(void) const
+{
+	return(RTTI_FOGGEDOBJECT);
+}
+
+// FUNCTION: 0x004D27C0
+int FoggedObjectClass::Fetch_Object_Size(void) const
+{
+	return(sizeof((*this)));
+}
+
 // FUNCTION: 0x004D27D0
 HRESULT STDMETHODCALLTYPE FoggedObjectClass::GetClassID(CLSID * retval)
 {
@@ -231,3 +357,44 @@ HRESULT STDMETHODCALLTYPE FoggedObjectClass::GetClassID(CLSID * retval)
 	*retval = CLSID_FoggedObjectClass;
 	return(S_OK);
 }
+
+// FUNCTION: 0x004D2810
+void FoggedObjectClass::Compute_CRC(CRCEngine &crc) const
+{
+	BASECLASS::Compute_CRC(crc);
+	crc(Overlay);
+	crc(OverlayData);
+	crc(RTTI);
+	crc(Position.X);
+	crc(Position.Y);
+	crc(Position.Z);
+	crc(BoundingRect.X);
+	crc(BoundingRect.Y);
+	crc(BoundingRect.Width);
+	crc(BoundingRect.Height);
+	crc(CellHeight);
+	crc(Smudge);
+	crc(SmudgeData);
+	crc(Records.Count());
+}
+
+// FUNCTION: 0x004D28C0
+ObjectTypeClass * FoggedObjectClass::Get_Head_Record_Object_Type(void)
+{
+	if (Records.Count() > 0) {
+		return(Records[0].TypeClass);
+	}
+	return(NULL);
+}
+
+// FUNCTION: 0x004D28D0
+Cell FoggedObjectClass::Get_Cell(void)
+{
+	return(Position.As_Cell());
+}
+
+// FUNCTION: 0x004D2910 FoggedObjectClass::~FoggedObjectClass
+
+// FUNCTION: 0x004D2930 ?$DynamicVectorClass@UDrawRecord@FoggedObjectClass@@::Clear
+// FUNCTION: 0x004D2960 ?$DynamicVectorClass@UDrawRecord@FoggedObjectClass@@::ID
+template class DynamicVectorClass<FoggedObjectClass::DrawRecord>;

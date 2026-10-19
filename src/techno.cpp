@@ -4156,6 +4156,226 @@ bool TechnoClass::Should_Use_High_Arc(int which) const
 	return(result);
 }
 
+// FUNCTION: 0x0070D670
+void TechnoClass::Reduce_Ammunition(void)
+{
+	if (Ammo > 0) {
+		Ammo--;
+	}
+}
+
+extern BulletClass * __fastcall FUN_0046B050(BulletTypeClass const * type, AbstractClass * target, TechnoClass * payback, int strength, WarheadTypeClass const * warhead, int max_speed, bool bright);
+extern const double DAT_007E1738;
+
+// FUNCTION: 0x0070D690
+int TechnoClass::FireDeathWeapon(int additional_damage)
+{
+	WeaponTypeClass const * weapon;
+	TechnoTypeClass const * type;
+	int damage;
+	if (Techno_Type_Class()->DeathWeapon) {
+		weapon = Techno_Type_Class()->DeathWeapon;
+		type = Techno_Type_Class();
+		damage = (int)(weapon->Attack * type->DeathWeaponDamageModifier);
+	} else {
+		WeaponDataStruct const * data = GetTurretWeapon();
+		if (data && data->Weapon) {
+			weapon = GetTurretWeapon()->Weapon;
+			type = Techno_Type_Class();
+			damage = (int)(weapon->Attack * type->DeathWeaponDamageModifier);
+		} else {
+			weapon = Rule->DeathWeapon;
+			damage = (int)(Techno_Type_Class()->MaxStrength * DAT_007E1738);
+		}
+	}
+	if (weapon == NULL) {
+		return(0);
+	}
+	damage += additional_damage;
+	BulletClass * bullet = FUN_0046B050(weapon->Bullet, this, this, damage, weapon->WarheadPtr, 0, weapon->IsBright);
+	if (bullet != NULL) {
+		bullet->Set_Weapon_Type((WeaponTypeClass *)weapon);
+		bullet->Limbo();
+		bullet->Detonate(Center_Coord());
+		bullet->Release();
+	}
+	return(damage);
+}
+
+// FUNCTION: 0x0070D7A0
+void TechnoClass::Remove_Damage_Particle(void)
+{
+	if (HealthRatio > Rule->ConditionYellow || HeightAGL < -10) {
+		if (ParticleSystems[3]) {
+			ParticleSystems[3]->Delete_Me();
+		}
+	}
+}
+
+static inline TechnoClass * AsTechno(AbstractClass * object)
+{
+	if (object == NULL) {
+		return(NULL);
+	}
+	if (object->AbstractFlags & 1) {
+		return((TechnoClass *)object);
+	}
+	return(NULL);
+}
+
+// FUNCTION: 0x0070D7E0
+bool TechnoClass::Enter_Object_Nearby(void)
+{
+	TechnoClass * techno = QueueUpToEnter;
+	if (techno != NULL) {
+		if (techno->IsActive) {
+			if (AsTechno(QueueUpToEnter) != NULL) {
+				if (Transmit_Message(RADIO_HELLO, techno) == RADIO_ROGER) {
+					if (Transmit_Message(RADIO_CAN_LOAD, techno) == RADIO_ROGER) {
+						QueueMission(MISSION_ENTER, true);
+						Assign_Destination(techno, true);
+						QueueUpToEnter = NULL;
+						return(true);
+					}
+					QueueMission(MISSION_NONE, false);
+					Assign_Destination(NULL, true);
+					QueueUpToEnter = NULL;
+					Transmit_Message(RADIO_OVER_OUT, techno);
+					return(true);
+				}
+				if (techno->Fetch_RTTI() == RTTI_BUILDING && Fetch_RTTI() == RTTI_AIRCRAFT) {
+					BuildingTypeClass const * type = ((BuildingClass *)techno)->Class;
+					if (type->IsCanUnitReload && !type->IsCanUnitRepair) {
+						Transmit_Message(RADIO_DOCKING, techno);
+						return(false);
+					}
+				}
+			}
+		} else {
+			QueueUpToEnter = NULL;
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x0070D8F0
+bool TechnoClass::Move_To_Object_Nearby(void)
+{
+	TechnoClass * techno = QueueUpToEnter;
+	if (techno != NULL) {
+		if ((techno->AbstractFlags & 1) && techno->IsActive) {
+			Cell cell = Nearby_Location(techno);
+			if (cell != CELL_NONE) {
+				Assign_Destination(&Map[cell], true);
+				QueueMission(MISSION_MOVE, false);
+				return(true);
+			}
+			return(false);
+		}
+		QueueUpToEnter = NULL;
+	}
+	return(false);
+}
+
+// FUNCTION: 0x0070D980
+void TechnoClass::Scatter_Incoming_Infantry(void) const
+{
+}
+
+// FUNCTION: 0x0070D990
+void TechnoClass::Update_Radar_Position(bool force_update)
+{
+	if (!IsDiscoveredByPlayer && Session.Type == GAME_NORMAL) {
+		IsDiscoveredByPlayer = !Map.Is_Shrouded(Center_Coord());
+	}
+
+	Point2D point;
+	if (Fetch_RTTI() == RTTI_BUILDING && !force_update) {
+		point = RadarPos;
+	} else {
+		point = Map.Coord_To_Radar_Pixel(PositionCoord, false);
+	}
+
+	DetectedType detected = DETECTED_NONE;
+	bool visible = Is_Radar_Visible(detected);
+	Rect radar_rect = Map.RadarSurface->Get_Rect();
+
+	if (detected != DETECTED_NONE && visible) {
+		if (!Is_Foot() || ((FootClass *)this)->CurrentTube < 0) {
+			Submit_Radar_Event(RADAREVENT_ENEMY_SENSED, Get_Coord().As_Cell());
+		}
+	}
+
+	if (!radar_rect.Is_Point_Within(point)) {
+		if (visible) {
+			visible = Map.In_Local_Radar(Get_Target_Cell_Ptr());
+			if (visible) {
+				point = Map.Coord_To_Radar_Pixel(PositionCoord, true);
+			}
+		}
+	}
+
+	if (IsInLimbo && visible) {
+		visible = false;
+	}
+
+	if (IsRadarTracked) {
+		if (point != RadarPos || !visible) {
+			Radar_Untrack();
+		}
+	}
+
+	RadarPos = point;
+
+	if (!IsRadarTracked && visible) {
+		Radar_Track();
+	}
+
+	if (House == PlayerPtr && RadarFlashTimer > 0) {
+		if (((int)RadarFlashTimer) % Rule->FlashFrameTime == 0) {
+			Plot_On_Radar();
+		}
+	}
+}
+
+// FUNCTION: 0x0070DC50
+bool TechnoClass::FUN_0070DC50(void) const
+{
+	return(Techno_Type_Class()->HasTurretTooltips);
+}
+
+// FUNCTION: 0x0070DC60
+bool TechnoClass::FUN_0070DC60(void) const
+{
+	return(Techno_Type_Class()->HasMultipleTurrets());
+}
+
+// FUNCTION: 0x0070DC70
+void TechnoClass::FUN_0070DC70(int which)
+{
+	if (!Techno_Type_Class()->IsChargeTurret) {
+		if (which >= 0 && which < 18) {
+			CurrentTurretNumber = Techno_Type_Class()->FUN_007178B0(which);
+			CurrentWeaponNumber = which;
+		} else {
+			CurrentTurretNumber = Techno_Type_Class()->FUN_007178B0(0);
+			CurrentWeaponNumber = 0;
+		}
+	}
+}
+
+// FUNCTION: 0x0070DCE0
+bool TechnoClass::FUN_0070DCE0(void) const
+{
+	return(CurrentTurretNumber != -1);
+}
+
+// FUNCTION: 0x0070DCF0
+int TechnoClass::FUN_0070DCF0(void) const
+{
+	return(CurrentTurretNumber);
+}
+
 // FUNCTION: 0x0070E140
 WeaponDataStruct const * TechnoClass::Get_Class_Weapon_Data(int which) const
 {

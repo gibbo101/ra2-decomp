@@ -53,9 +53,9 @@ class TriggerClass : public AbstractClass
 		bool Is_Enabled(void) const {return(IsActive);}
 		__declspec(property(get=Is_Enabled, put=Set_Enabled)) bool IsEnabled;
 
-		void Flag_Event_Tripped(int event);
-		void Flag_Event_Untripped(int event);
-		bool Is_Event_Tripped(int event);
+		void Flag_Event_Tripped(int event) {IsTripped |= (1 << event);}
+		void Flag_Event_Untripped(int event) {IsTripped &= ~(1 << event);}
+		bool Is_Event_Tripped(int event) {return((IsTripped & (1 << event)) != 0);}
 
 		bool Is_Linked_To_Global(int global) const;
 		void Reset_Global_Linked_Timed_Events(int global);
@@ -63,7 +63,7 @@ class TriggerClass : public AbstractClass
 		void Reset_All_Timed_Events(void);
 
 		void Mark_To_Delete(void);
-		bool Is_Marked_To_Delete(void) const;
+		bool Is_Marked_To_Delete(void) const {return(IsToDelete);}
 
 		bool Is_Enters_Zone(void) const;
 		bool Is_Cross_Horizontal(void) const;

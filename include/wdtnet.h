@@ -731,6 +731,31 @@ namespace WorldDominationTour
 			YRPropsImpl * FUN_0076F020(void) const;
 	};
 
+	class YRStateImpl {
+		public:
+			int FUN_0076F600(int territory);
+			int FUN_0076F670(int faction);
+	};
+
+	class YRStateHandle : public YRHandleBase {
+		public:
+			YRStateHandle(void);
+			virtual ~YRStateHandle(void) {}
+			YRStateImpl * Get(void) const { return((YRStateImpl *)Ptr); }
+	};
+
+	class YRHistoryImpl {
+		public:
+			YRStateHandle FUN_00767BB0(int tick);
+	};
+
+	class YRHistoryHandle : public YRHandleBase {
+		public:
+			YRHistoryHandle(void) {}
+			virtual ~YRHistoryHandle(void) {}
+			YRHistoryImpl * Get(void) const { return((YRHistoryImpl *)Ptr); }
+	};
+
 	class YRCampaignBase {
 		public:
 			virtual ~YRCampaignBase(void);
@@ -739,13 +764,15 @@ namespace WorldDominationTour
 
 	class YRCampaignImpl : public YRCampaignBase, public YRPropsHandle {
 		public:
-			char Pad2[0x18 - 0x10];
+			YRHistoryHandle History;
 			YRCONFLICT_LIST Conflicts;
 			char Pad1[0x44 - 0x18 - sizeof(YRCONFLICT_LIST)];
 			int PlayerFaction;
 
 			int Get_Current_Tick(void) { return(Get()->FUN_0076BFE0()); }
 			int FUN_00764FC0(bool vq_anim);
+			int FUN_00764FF0(int index);
+			void FUN_00765000(int index);
 	};
 
 	class YRCampaignHandle : public YRHandleBase {
@@ -835,29 +862,42 @@ namespace WorldDominationTour
 			YRMapImpl * Get(void) const { return((YRMapImpl *)Ptr); }
 	};
 
-	class YRStateImpl {
-		public:
-			int FUN_0076F600(int territory);
-	};
-
-	class YRStateHandle : public YRHandleBase {
-		public:
-			YRStateHandle(void);
-			virtual ~YRStateHandle(void) {}
-			YRStateImpl * Get(void) const { return((YRStateImpl *)Ptr); }
+	struct YRVoiceStream {
+		void FUN_00407A90(void);
 	};
 
 	class YRVoices {
 		public:
+			struct Category {
+				Category(void);
+				void Set_Name(Wstring const & name) { Name = name; }
+				void FUN_007710B0(INIClass const & ini, Wstring const & section, int side, int outcome, Wstring const & name);
+
+				Wstring Name;
+				VOICEINDEX_LIST VoiceIndexes[OUTCOME_COUNT][2];
+			};
+
 			YRVoices(int side);
 			~YRVoices(void);
 			void FUN_00770550(INIClass const & ini, Wstring const & section);
+			void Init_Standalone(INIClass const & ini, Wstring const & section, int voice, Wstring const & name);
+			bool Pick_Standard_Voice(int category, int outcome, Wstring & out);
+			bool Pick_Emphasis_Voice(int category, int outcome, Wstring & out);
+			bool Pick_Standalone_Voice(int voice, Wstring & out);
 			MSAnim * FUN_00771800(void);
 			void FUN_007714B0(int voice, bool count_queued, int delay);
 			void FUN_007712C0(int category, int outcome, bool emphasis, bool count_queued, int delay);
+			bool FUN_007717F0(void);
 
 		public:
-			char Data[0x3DC];
+			int Side;
+			Category Categories[6];
+			VOICEINDEX_LIST StandaloneVoices[2];
+			CDTimerClass<SystemTimerClass> Timer;
+			bool IsIdle;
+			int QueuedSampleCount;
+			DynamicVectorClass<Wstring> QueuedSamples;
+			YRVoiceStream * Stream;
 	};
 
 	YRMapHandle __fastcall FUN_00767FB0(int map_id, bool vq_anim, int faction);
@@ -901,6 +941,16 @@ namespace WorldDominationTour
 			void Play_SFX(Wstring const & name);
 			void Do_Target_Anim(YRStateHandle const & state, bool show_targets, bool silent);
 			void Check_For_Breakout(void);
+			void Remove_Target_Anims(void);
+			void Remove_Target_Anims2(void);
+			void On_Map_Enter(void);
+			void On_Map_Leave(void);
+			void On_Cancel_Leave(void);
+			void Do_Target_Selection(int index);
+			int Get_Outcome(int tick, bool & mega);
+			bool Present_Ticks(int tick_from, int tick_to);
+			void Presentation(int index);
+			bool Present_History(int tick_from, int tick_to);
 			void FUN_0076EBE0(Wstring const & name);
 			void FUN_0076E180(void);
 			void FUN_0076EEB0(void);

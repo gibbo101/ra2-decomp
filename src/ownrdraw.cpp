@@ -645,11 +645,11 @@ int Control_Volume(HWND dialog, HWND control)
 	return 0;
 }
 
-void FUN_0072E280(void);
+int FUN_0072E280(void);
 void FUN_0072E2A0(void);
 void FUN_0072DAC0(void);
 void FUN_0072DAD0(void);
-void FUN_0072D450(void);
+int FUN_0072D450(void);
 void FUN_0072CC80(void);
 
 // FUNCTION: 0x006035F0
@@ -1018,7 +1018,7 @@ BOOL FUN_006071D0(HWND window)
 	return EnumChildWindows(window, FUN_00606800, 0);
 }
 
-struct Game { static bool __cdecl CallBack(void); static bool __fastcall MainLoop(void); };
+struct Game { static HINSTANCE hInstance; static bool __cdecl CallBack(void); static bool __fastcall MainLoop(void); };
 void __fastcall DrawCampaignMenuTransition(HWND window, bool reverse);
 
 // FUNCTION: 0x00607FD0
@@ -1708,7 +1708,7 @@ namespace OwnerDraw {
 void __fastcall UpdateControlPosition(HWND dialog, LPARAM lparam)
 {
 	MoveWindow(dialog, 0, 0, Drawing::RenderWidth, Drawing::RenderHeight, FALSE);
-	CurrentDialogHwnd = dialog;
+	OwnerDraw::CurrentDialogHwnd = dialog;
 	EnumChildWindows(dialog, FUN_0060C0C0, lparam);
 }
 }
@@ -1889,6 +1889,302 @@ unsigned char __fastcall FUN_0060CDB0(HWND dialog)
 	}
 	*((unsigned char *)data + 216) = v;
 	return v;
+}
+
+// FUNCTION: 0x0060CE40
+int __fastcall FUN_0060CE40(HWND dialog)
+{
+	OwnerDraw::WinData *data = Get_Data(dialog);
+	if (data != NULL) {
+		return *(int *)((char *)data + 0xe0);
+	}
+	return 0;
+}
+
+// FUNCTION: 0x0060CEA0
+int __fastcall FUN_0060CEA0(HWND dialog)
+{
+	OwnerDraw::WinData *data = Get_Data(dialog);
+	if (data != NULL) {
+		return *(int *)((char *)data + 0xe4);
+	}
+	return 0;
+}
+
+int __cdecl FUN_0072B9D0(void);
+int __cdecl FUN_0072BBB0(void);
+int __cdecl FUN_0072BD90(void);
+int __cdecl FUN_0072BF70(void);
+int __cdecl FUN_0072C150(void);
+int __cdecl FUN_0072C330(void);
+int __cdecl FUN_0072C510(void);
+int __cdecl FUN_0072C6F0(void);
+int __cdecl FUN_0072C8D0(void);
+int __cdecl FUN_0072CAB0(void);
+int __cdecl FUN_0072CE50(void);
+int __cdecl FUN_0072D030(void);
+int __cdecl FUN_0072D210(void);
+int __cdecl FUN_0072D820(void);
+int __cdecl FUN_0072DAE0(void);
+extern int DAT_00B0F9E8;
+extern int DAT_00B0FA04;
+extern int DAT_00B0FA18;
+extern int DAT_00B0FA30;
+extern int DAT_00B0FA4C;
+extern int DAT_00B0FA60;
+extern int DAT_00B0FA64;
+extern int DAT_00B0FA6C;
+extern int DAT_00B0FA98;
+extern int DAT_00B0FA9C;
+extern int DAT_00B0FAAC;
+extern int DAT_00B0FAB8;
+extern int DAT_00B0FB0C;
+extern int DAT_00B0FB1C;
+extern int DAT_00B0FB2C;
+extern int DAT_00B0FB34;
+extern int DAT_00B0FB50;
+extern int DAT_00B0FB54;
+
+// FUNCTION: 0x0060CF00
+void __fastcall FUN_0060CF00(HWND dialog)
+{
+	OwnerDraw::WinData *data = Get_Data(dialog);
+	if (data == NULL) {
+		return;
+	}
+	char *p = (char *)data;
+	int type = *(int *)(p + 0x6c);
+	if (type == 0x94) {
+		*(int *)(p + 0x74) = FUN_0072DAE0();
+		*(int *)(p + 0xe0) = DAT_00B0FA6C;
+		*(int *)(p + 0xe4) = DAT_00B0FA6C;
+	} else if (type == 0x103) {
+		*(int *)(p + 0x74) = FUN_0072D450();
+		*(int *)(p + 0xe0) = DAT_00B0FB34;
+		*(int *)(p + 0xe4) = DAT_00B0FB34;
+	} else if (type == 0x108) {
+		*(int *)(p + 0x74) = FUN_0072D820();
+		*(int *)(p + 0xe0) = DAT_00B0FB1C;
+		*(int *)(p + 0xe4) = DAT_00B0FB1C;
+	} else if (type == 0xbc6) {
+		*(int *)(p + 0x74) = FUN_0072D450();
+		*(int *)(p + 0xe0) = DAT_00B0FB34;
+		*(int *)(p + 0xe4) = DAT_00B0FB34;
+	} else if (type == 0xbc7) {
+		*(int *)(p + 0x74) = FUN_0072D450();
+		*(int *)(p + 0xe0) = DAT_00B0FB34;
+		*(int *)(p + 0xe4) = DAT_00B0FB34;
+	} else if (type == 0x6b) {
+		*(int *)(p + 0x74) = FUN_0072D210();
+		*(int *)(p + 0xe0) = DAT_00B0FB50;
+		*(int *)(p + 0xe4) = DAT_00B0FAB8;
+	} else if (type == 0x102 || type == 0xbc || type == 0xbd || type == 0xc2 || type == 0xc9) {
+		*(int *)(p + 0x74) = FUN_0072D030();
+		*(int *)(p + 0xe0) = DAT_00B0FB50;
+		*(int *)(p + 0xe4) = DAT_00B0FA18;
+	} else if (type == 0x113) {
+		*(int *)(p + 0x74) = FUN_0072CE50();
+		*(int *)(p + 0xe0) = DAT_00B0FB50;
+		*(int *)(p + 0xe4) = DAT_00B0FAAC;
+	} else if (type == 0x114) {
+		*(int *)(p + 0x74) = FUN_0072CAB0();
+		*(int *)(p + 0xe0) = DAT_00B0FB50;
+		*(int *)(p + 0xe4) = DAT_00B0FA60;
+	} else if (type == 0x10e || type == 0x11c) {
+		*(int *)(p + 0x74) = FUN_0072C8D0();
+		*(int *)(p + 0xe0) = DAT_00B0FB50;
+		*(int *)(p + 0xe4) = DAT_00B0F9E8;
+	} else if (type == 0x10f || type == 0x11d) {
+		*(int *)(p + 0x74) = FUN_0072C6F0();
+		*(int *)(p + 0xe0) = DAT_00B0FB50;
+		*(int *)(p + 0xe4) = DAT_00B0FB0C;
+	} else if (type == 0xe6 || type == 0xf3 || type == 0xf4) {
+		*(int *)(p + 0x74) = FUN_0072C510();
+		*(int *)(p + 0xe0) = DAT_00B0FB50;
+		*(int *)(p + 0xe4) = DAT_00B0FA64;
+	} else if (type == 0xe7) {
+		*(int *)(p + 0x74) = FUN_0072C330();
+		*(int *)(p + 0xe0) = DAT_00B0FB50;
+		*(int *)(p + 0xe4) = DAT_00B0FA30;
+	} else if (type == 0x116) {
+		*(int *)(p + 0x74) = FUN_0072C150();
+		*(int *)(p + 0xe0) = DAT_00B0FB50;
+		*(int *)(p + 0xe4) = DAT_00B0FA4C;
+	} else if (type == 0x117) {
+		*(int *)(p + 0x74) = FUN_0072BF70();
+		*(int *)(p + 0xe0) = DAT_00B0FB50;
+		*(int *)(p + 0xe4) = DAT_00B0FA9C;
+	} else if (type == 0x112) {
+		*(int *)(p + 0x74) = FUN_0072BD90();
+		*(int *)(p + 0xe0) = DAT_00B0FB50;
+		*(int *)(p + 0xe4) = DAT_00B0FA98;
+	} else if (type == 0x2bc) {
+		*(int *)(p + 0x74) = FUN_0072BBB0();
+		*(int *)(p + 0xe0) = DAT_00B0FB50;
+		*(int *)(p + 0xe4) = DAT_00B0FB2C;
+	} else if (type == 0xd6) {
+		*(int *)(p + 0x74) = FUN_0072B9D0();
+		*(int *)(p + 0xe0) = DAT_00B0FB50;
+		*(int *)(p + 0xe4) = DAT_00B0FB54;
+	} else {
+		*(int *)(p + 0x74) = FUN_0072E280();
+		*(int *)(p + 0xe0) = DAT_00B0FB50;
+		*(int *)(p + 0xe4) = DAT_00B0FA04;
+	}
+}
+
+// FUNCTION: 0x0060D2C0
+void __fastcall FUN_0060D2C0(HWND dialog, int id)
+{
+	OwnerDraw::WinData *data = Get_Data(dialog);
+	if (data != NULL) {
+		*(int *)((char *)data + 0x6c) = id;
+	}
+}
+
+// FUNCTION: 0x0060D320
+int __fastcall FUN_0060D320(HWND dialog)
+{
+	OwnerDraw::WinData *data = Get_Data(dialog);
+	if (data != NULL) {
+		return *(int *)((char *)data + 0x6c);
+	}
+	return 0;
+}
+
+void __fastcall FUN_0052B9B0(HWND dialog);
+namespace UI {
+	HWND __fastcall BeginDialog(int resource, DLGPROC proc, int param);
+	void __fastcall EndDialog(HWND window);
+}
+class InputManagerClass {
+	public:
+		void DoSomething(void);
+		static InputManagerClass * Instance;
+};
+
+// FUNCTION: 0x0060D380
+int __fastcall FUN_0060D380(int resource, DLGPROC proc, bool focus)
+{
+	int result;
+	HWND dialog = UI::BeginDialog(resource, proc, 0);
+	result = 0;
+	if (dialog != NULL) {
+		SetWindowLong(dialog, 8, (LONG)&result);
+		ShowWindow(dialog, 1);
+		SetForegroundWindow(dialog);
+		InputManagerClass::Instance->DoSomething();
+		if (focus) {
+			FUN_0052B9B0(dialog);
+		}
+		while (result == 0) {
+			FUN_005D4D50();
+			if (Session.Type == GAME_NORMAL || Session.Type == GAME_SKIRMISH || DAT_00A8D60E || DAT_00A8DAB4) {
+				Game::CallBack();
+			} else if (!FUN_0055CBF0() && Game::MainLoop()) {
+				break;
+			}
+		}
+		UI::EndDialog(dialog);
+	}
+	return result;
+}
+
+// FUNCTION: 0x0060D430
+void FUN_0060D430(void)
+{
+}
+
+// FUNCTION: 0x0060D440
+void FUN_0060D440(void)
+{
+}
+
+extern int DAT_00AC48CC;
+LRESULT CALLBACK FUN_0060D540(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+LRESULT CALLBACK FUN_0060D520(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+namespace UI { void RegisterComboDropAndNewEditClasses(void); }
+
+// FUNCTION: 0x0060D450 UI::RegisterComboDropAndNewEditClasses
+void UI::RegisterComboDropAndNewEditClasses(void)
+{
+	if (DAT_00AC48CC == 1) {
+		return;
+	}
+	DAT_00AC48CC = 1;
+	WNDCLASS wc;
+	memset(&wc, 0, sizeof(wc));
+	wc.style = CS_HREDRAW | CS_VREDRAW;
+	wc.lpfnWndProc = FUN_0060D540;
+	wc.cbClsExtra = 0;
+	wc.cbWndExtra = 0;
+	wc.hInstance = Game::hInstance;
+	wc.hIcon = NULL;
+	wc.hCursor = NULL;
+	wc.hbrBackground = NULL;
+	wc.lpszMenuName = "ComboDropWin";
+	wc.lpszClassName = "ComboDropWin";
+	RegisterClass(&wc);
+	memset(&wc, 0, sizeof(wc));
+	wc.style = 0x83;
+	wc.lpfnWndProc = FUN_0060D520;
+	wc.cbClsExtra = 0;
+	wc.cbWndExtra = 0;
+	wc.hInstance = Game::hInstance;
+	wc.hIcon = NULL;
+	wc.hCursor = NULL;
+	wc.hbrBackground = NULL;
+	wc.lpszMenuName = NULL;
+	wc.lpszClassName = "NewEdit";
+	RegisterClass(&wc);
+}
+
+// FUNCTION: 0x0060D520
+LRESULT CALLBACK FUN_0060D520(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	return DefWindowProc(window, message, wparam, lparam);
+}
+
+struct NewEditLink {
+	const char *className;
+	LONG style;
+};
+
+// FUNCTION: 0x0060F320
+BOOL CALLBACK FUN_0060F320(HWND edit, LPARAM lparam)
+{
+	LONG style = GetWindowLong(edit, GWL_STYLE);
+	SetWindowLong(edit, GWL_USERDATA, 0);
+	if ((style & WS_VISIBLE) && !(style & WS_DISABLED)) {
+		char name[128];
+		GetClassName(edit, name, sizeof(name));
+		if (strcmp(name, "Edit") == 0) {
+			HWND parent = GetParent(edit);
+			RECT rect;
+			RECT parent_rect;
+			Get_Display_Rect(edit, &rect);
+			Get_Display_Rect(parent, &parent_rect);
+			int x = rect.left - parent_rect.left;
+			int y = rect.top - parent_rect.top;
+			DWORD flags = 0x40000110;
+			if (style & WS_TABSTOP) {
+				flags = 0x40010110;
+			}
+			HWND list = CreateWindowEx(0, "ListBox", NULL, flags, x, y, rect.right - rect.left, rect.bottom - rect.top, parent, NULL, Game::hInstance, NULL);
+			NewEditLink *link = new NewEditLink;
+			link->className = "NewEdit";
+			link->style = GetWindowLong(edit, GWL_STYLE);
+			SetWindowLong(list, GWL_USERDATA, (LONG)link);
+			EnableWindow(edit, FALSE);
+			ShowWindow(edit, SW_HIDE);
+			EnableWindow(list, TRUE);
+			ShowWindow(list, SW_SHOWNORMAL);
+			LONG id = GetWindowLong(edit, GWL_ID);
+			SetWindowLong(edit, GWL_ID, GetWindowLong(list, GWL_ID));
+			SetWindowLong(list, GWL_ID, id);
+		}
+	}
+	return TRUE;
 }
 
 // FUNCTION: 0x0061F190
