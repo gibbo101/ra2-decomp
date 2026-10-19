@@ -32,6 +32,8 @@ before it leaves the machine.
 - **Author or committer email** that is not a no-reply address.
 - **Home-directory paths** (`/home/<name>`, `/Users/<name>`, `C:\Users\<name>`), which leak
   user names. Write `~` or a path relative to the repo instead.
+- **Mount-point paths** (`/mnt/<x>`, `/media/<x>`, `/run/media/<x>`, `/Volumes/<x>`), which
+  describe one machine's disks. Name the location generically, such as "the Steam library".
 - **Secrets**: private-key blocks and GitHub, Anthropic, OpenAI, AWS, Slack and Google
   token shapes.
 - **Secret-looking file names**: `.env*`, `id_rsa` and friends, `credentials*`, `*.pem`,

@@ -17,6 +17,7 @@ secret_patterns=(
 email_pattern='[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}'
 email_allowed='(@users\.noreply\.github\.com|^noreply@[A-Za-z0-9.-]+|^git@github\.com)$'
 home_path_pattern='(/home/|/Users/|[A-Za-z]:\\Users\\)[A-Za-z0-9._-]+'
+mount_path_pattern='(/mnt/|/media/|/run/media/|/Volumes/)[A-Za-z0-9._-]+'
 blocked_name_pattern='(^|/)(\.env(\..*)?|id_(rsa|dsa|ecdsa|ed25519)(\.pub)?|credentials[^/]*|[^/]*\.(pem|key|p12|pfx|keystore))$'
 
 problems=0
@@ -39,6 +40,8 @@ scan_text() {  # $1: where the text came from; the text arrives on stdin
   [ -z "$hit" ] || report "$where: email address: $(tr '\n' ' ' <<<"$hit")"
   hit=$(grep -oE "$home_path_pattern" <<<"$text" | sort -u || true)
   [ -z "$hit" ] || report "$where: home-directory path: $(tr '\n' ' ' <<<"$hit")"
+  hit=$(grep -oE "$mount_path_pattern" <<<"$text" | sort -u || true)
+  [ -z "$hit" ] || report "$where: mount-point path: $(tr '\n' ' ' <<<"$hit")"
   local entries
   entries=$(private_entries)
   if [ -n "$entries" ]; then
