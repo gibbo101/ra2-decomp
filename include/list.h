@@ -21,24 +21,23 @@ class ListClass : public ControlClass
 		ListClass(ListClass const & list);
 		virtual ~ListClass(void) override;
 
-		virtual int Add_Item(char const * text);
-		virtual int Add_Item(int text);
+		virtual int Add_Item(wchar_t const * text);
 		virtual int Add_Scroll_Bar(void);
 		virtual void Bump(int up);
 		virtual int Count(void) const {return(List.Count());};
 		virtual int Current_Index(void) const;
-		virtual char const * Current_Item(void) const;
+		virtual wchar_t const * Current_Item(void) const;
 		virtual int Draw_Me(int forced) override;
-		virtual char const * Get_Item(int index) const;
+		virtual wchar_t const * Get_Item(int index) const;
 		virtual int Step_Selected_Index(int forward);
 		virtual void Flag_To_Redraw(void) override;
 
 		virtual void Peer_To_Peer(unsigned flags, KeyNumType & key, ControlClass & whom) override;
-		virtual void Remove_Item(char const * text);
+		virtual void Remove_Item(wchar_t const * text);
 		virtual void Remove_Item(int);
 		virtual int  Remove_Scroll_Bar(void);
 		virtual void Set_Selected_Index(int index);
-		virtual void Set_Selected_Index(char const * text);
+		virtual void Set_Selected_Index(wchar_t const * text);
 		virtual void Set_Tabs(int const * tabs);
 		virtual int  Set_View_Index(int index);
 		virtual void Step(int up);
@@ -57,7 +56,7 @@ class ListClass : public ControlClass
 
 		int const *Tabs;
 
-		DynamicVectorClass<char const *> List;
+		DynamicVectorClass<wchar_t const *> List;
 
 		int LineHeight;
 
@@ -157,8 +156,8 @@ TListClass<T>::TListClass(int id, int x, int y, int w, int h, TextPrintType flag
 	Tabs = 0;
 	SelectedIndex = 0;
 	CurrentTopIndex = 0;
-	FontClass *font = Font_From_TPF(TextFlags);
-	LineHeight = font->Get_Height()-1;
+	BitFont * font = Font_From_TPF(TextFlags);
+	LineHeight = font->field_1C-1;
 	LineCount = (h-1) / LineHeight;
 }
 

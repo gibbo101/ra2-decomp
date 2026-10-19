@@ -698,3 +698,259 @@ void FUN_0053B080(void)
 void FUN_0053B3F0(void)
 {
 }
+
+#include "dsurface.h"
+
+extern DSurface * DAT_00A9FA9C_Surface;
+extern float DAT_00A9FAA0;
+extern float DAT_00A9FAA4;
+
+extern bool DAT_00A9FA94;
+extern DSurface * DAT_00A9FAAC;
+extern int DAT_00A9FAA8;
+extern bool DAT_00A9FAD1;
+extern AudioController DAT_00A9F9B8;
+void __fastcall Hold_Scenario(int seconds);
+void Release_Scenario(void);
+void __fastcall FUN_007518C0(bool enabled);
+void __fastcall FUN_00753580(void);
+void __fastcall FUN_0053BBA0(bool forward);
+
+// FUNCTION: 0x0053B560
+void FUN_0053B560(void)
+{
+	switch (DAT_00A9FAB0) {
+	case 0:
+		goto done;
+	case 1:
+		FUN_0053BBA0(false);
+		if (--DAT_00A9FA98 == 0) {
+			DAT_00A9FAB0 = 2;
+			DAT_00A9FA98 = 45;
+		}
+		break;
+	case 2:
+		DSurface::Composite->Fill_Rect(DSurface::ViewBounds, DSurface::ViewBounds, DSurface::Build_Hicolor_Pixel(255, 255, 255));
+		DAT_00A9FA98--;
+		if (DAT_00A9FA98 == 1) {
+			Hold_Scenario(0);
+		}
+		if (DAT_00A9FA98 == 0) {
+			Map.Flag_To_Redraw(GS_REDRAW_ALL);
+			DAT_00A9FA9C_Surface->Fill(0);
+			DAT_00A9FAAC = DSurface::Composite;
+			DSurface::Composite = DAT_00A9FA9C_Surface;
+			DAT_00A9FAB0 = 0;
+			DAT_00A9FA94 = true;
+			Map.Render();
+			DAT_00A9FA94 = false;
+			DSurface::Composite = DAT_00A9FAAC;
+			DAT_00A9FA98 = DAT_00A9FAA8;
+			DAT_00A9FAB0 = 3;
+			FUN_007518C0(true);
+			DAT_00A9F9B8.EndLooping();
+			VocClass::PlayGlobal(Rule->LetsDoTheTimeWarpInAgain, 1.0f, 0x2000, &DAT_00A9F9B8);
+			FUN_007518C0(false);
+		}
+		break;
+	case 3:
+		FUN_0053BBA0(true);
+		if (--DAT_00A9FA98 == 0) {
+			Release_Scenario();
+			DAT_00A9F9B8.EndLooping();
+			DAT_00A9F9B8.SetEvent(NULL, NULL);
+			DAT_00A9F9B8.FUN_00405C00();
+			FUN_007518C0(true);
+			FUN_00753580();
+			if (!DAT_00A9FAD1) {
+				Unlock_Scenario_Input();
+			}
+			DAT_00A9FAB0 = 0;
+			DSurface::Composite->Blit_From(*DAT_00A9FA9C_Surface, false, true);
+			if (DAT_00A9FA9C_Surface != NULL) {
+				delete DAT_00A9FA9C_Surface;
+			}
+			DAT_00A9FA9C_Surface = NULL;
+			Map.Flag_To_Redraw(GS_REDRAW_ALL);
+		}
+		break;
+	}
+done:;
+}
+
+extern int DAT_007F5BFC;
+
+static inline void Fade_556(unsigned short * dest, int width, int height, int pad, unsigned short alpha)
+{
+	int row;
+	int col;
+	unsigned short * source = dest;
+	for (row = height; row > 0; row--) {
+		for (col = width; col > 0; col--) {
+			unsigned short pixel = *source;
+			unsigned short r = pixel >> 11;
+			unsigned short g = (pixel >> 6) & 0x1F;
+			unsigned short b = pixel & 0x3F;
+			r += ((0x1F - r) * alpha) >> 8;
+			g += ((0x1F - g) * alpha) >> 8;
+			b += ((0x3F - b) * alpha) >> 8;
+			*dest++ = (r << 11) | (g << 6) | b;
+			source++;
+		}
+		dest += pad;
+		source += pad;
+	}
+}
+
+static inline void Fade_565(unsigned short * dest, int width, int height, int pad, unsigned short alpha)
+{
+	int row;
+	int col;
+	unsigned short * source = dest;
+	for (row = height; row > 0; row--) {
+		for (col = width; col > 0; col--) {
+			unsigned short pixel = *source;
+			unsigned short r = pixel >> 11;
+			unsigned short g = (pixel >> 5) & 0x3F;
+			unsigned short b = pixel & 0x1F;
+			r += ((0x1F - r) * alpha) >> 8;
+			g += ((0x3F - g) * alpha) >> 8;
+			b += ((0x1F - b) * alpha) >> 8;
+			*dest++ = (r << 11) | (g << 5) | b;
+			source++;
+		}
+		dest += pad;
+		source += pad;
+	}
+}
+
+static inline void Fade_555(unsigned short * dest, int width, int height, int pad, unsigned short alpha)
+{
+	int row;
+	int col;
+	unsigned short * source = dest;
+	for (row = height; row > 0; row--) {
+		for (col = width; col > 0; col--) {
+			unsigned short pixel = *source;
+			unsigned short r = (pixel >> 10) & 0x1F;
+			unsigned short g = (pixel >> 5) & 0x1F;
+			unsigned short b = pixel & 0x1F;
+			r += ((0x1F - r) * alpha) >> 8;
+			g += ((0x1F - g) * alpha) >> 8;
+			b += ((0x1F - b) * alpha) >> 8;
+			*dest++ = (r << 10) | (g << 5) | b;
+			source++;
+		}
+		dest += pad;
+		source += pad;
+	}
+}
+
+// FUNCTION: 0x0053B780
+void __fastcall FUN_0053B780(DSurface * surface)
+{
+	if (DAT_00A9FAB0 != 3) {
+		return;
+	}
+	int width = surface->Get_Width();
+	int height = surface->Get_Height();
+	int pad = (surface->Stride() - width * 2) / 2;
+	height -= DAT_007F5BFC;
+	unsigned short * dest = (unsigned short *)surface->Lock(Point2D(0, 0));
+	unsigned short alpha = DAT_00A9FA98 * 255 / DAT_00A9FAA8;
+	switch (DSurface::Get_Primary_Color_Mode()) {
+	case 1:
+		Fade_556(dest, width, height, pad, alpha);
+		break;
+	case 2:
+		Fade_565(dest, width, height, pad, alpha);
+		break;
+	default:
+		Fade_555(dest, width, height, pad, alpha);
+		break;
+	}
+	surface->Unlock();
+}
+
+// FUNCTION: 0x0053BAD0
+bool FUN_0053BAD0(void)
+{
+	return DAT_00A9FAB0 != 0;
+}
+
+// FUNCTION: 0x0053BAE0
+bool FUN_0053BAE0(void)
+{
+	return DAT_00A9FAB0 != 0;
+}
+
+
+
+// FUNCTION: 0x0053BAF0
+void FUN_0053BAF0(void)
+{
+	if (DAT_00A9FA9C_Surface != NULL) {
+		delete DAT_00A9FA9C_Surface;
+		DAT_00A9FA9C_Surface = NULL;
+	}
+	DAT_00A9FA9C_Surface = new DSurface(DSurface::Composite->Get_Width(), DSurface::Composite->Get_Height(), true, false);
+	DAT_00A9FA9C_Surface->Blit_From(*DSurface::Composite, false, true);
+	DAT_00A9FAA0 = 0;
+	DAT_00A9FAA4 = 0;
+}
+
+// FUNCTION: 0x0053BB80
+void FUN_0053BB80(void)
+{
+	if (DAT_00A9FA9C_Surface != NULL) {
+		delete DAT_00A9FA9C_Surface;
+	}
+	DAT_00A9FA9C_Surface = NULL;
+}
+
+// FUNCTION: 0x0053C280
+void __fastcall FUN_0053C280(void)
+{
+	if (NukeFlash::Status != 1 && DAT_00A9FAB0 == 0) {
+		if (LightningStorm::Active) {
+			Scen->DesiredAmbientLight = Scen->IonAmbientLight;
+			FUN_0053AD00(Scen->IonLighting.RedTint * 1000 / 100, Scen->IonLighting.GreenTint * 1000 / 100, Scen->IonLighting.BlueTint * 1000 / 100, true);
+		} else if (PsyDom::Status != 0 && PsyDom::Status != 5) {
+			Scen->DesiredAmbientLight = Scen->DominatorAmbient;
+			FUN_0053AD00(Scen->DominatorLighting.RedTint * 1000 / 100, Scen->DominatorLighting.GreenTint * 1000 / 100, Scen->DominatorLighting.BlueTint * 1000 / 100, true);
+		} else {
+			Scen->DesiredAmbientLight = Scen->AmbientLight;
+			FUN_0053AD00(-1, -1, -1, false);
+		}
+	} else {
+		Scen->DesiredAmbientLight = Scen->NukeAmbient;
+		FUN_0053AD00(Scen->NukeLighting.RedTint * 1000 / 100, Scen->NukeLighting.GreenTint * 1000 / 100, Scen->NukeLighting.BlueTint * 1000 / 100, true);
+	}
+}
+
+// FUNCTION: 0x0053C450
+bool TechnoClass::CanBePermaMindControlled(void) const
+{
+	if (this == NULL) {
+		return false;
+	}
+	if (Fetch_RTTI() == RTTI_BUILDING) {
+		return false;
+	}
+	if (Techno_Type_Class()->ImmuneToPsionics) {
+		return false;
+	}
+	if (IsIronCurtained()) {
+		return false;
+	}
+	if (Techno_Type_Class()->BalloonHover) {
+		return false;
+	}
+	if (In_Air() != false) return false;
+	return true;
+}
+
+// FUNCTION: 0x0053C4C0 ?$DynamicVectorClass@PAVCellClass@@::Clear
+// FUNCTION: 0x0053C4F0 ?$DynamicVectorClass@PAVCellClass@@::ID
+// FUNCTION: 0x0053C510 ?$VectorClass@PAVCellClass@@::GetItem
+template class DynamicVectorClass<CellClass *>;

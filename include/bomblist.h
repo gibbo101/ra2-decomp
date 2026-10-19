@@ -17,6 +17,7 @@ class BombListClass
 		void AddDetector(TechnoClass * detector);
 		void RemoveDetector(TechnoClass * detector);
 		void PointerGotInvalid(AbstractClass * target);
+		void FUN_00439110(void);
 
 		static BombListClass Instance;
 

@@ -7,6 +7,8 @@
 #include <cstdio>
 #include <cstdlib>
 
+class WideWstring;
+
 class Wstring
 {
 public:
@@ -71,3 +73,4 @@ private:
 Wstring Wstring_FromInt(int value);
 Wstring Wstring_FromInt(int value, int width);
 Wstring operator+(char const* a, Wstring const& b);
+Wstring FUN_007B7F90(WideWstring const & string);

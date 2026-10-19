@@ -278,6 +278,9 @@ class BuildingClass : public TechnoClass
 		void ClearBunker(void);
 		void EmptyBunker(void);
 		TechnoTypeClass const * FUN_00459840(void) const;
+		int IsAbsorbAllowed(void) const;
+		bool FUN_004598D0(void) const;
+		bool FUN_00459CA0(void) const;
 		void Update_Radar_Spied(void);
 		void Spied_By(HouseClass * house);
 		void Infiltrate(HouseClass * house);

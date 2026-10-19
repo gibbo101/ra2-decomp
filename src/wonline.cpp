@@ -12,9 +12,17 @@
 #include "timer.h"
 #include "wstring.h"
 #include "widewstring.h"
+#include "ipxaddr.h"
 
 #include <windows.h>
+#undef LoadString
 #include <ole2.h>
+#include <stddef.h>
+#include <string.h>
+#include <wchar.h>
+#include "stringtable.h"
+
+HWND WS_Find_Dialog(int id);
 
 unsigned int __fastcall Wstring_Hash(Wstring & string);
 #define HASH_ARG (Wstring_Hash)
@@ -46,9 +54,15 @@ ArrayList<int> DAT_00B73E10;
 // FUNCTION: 0x0077B9A0
 ArrayList<int> DAT_00B76AE0;
 
+struct User {
+	char Pad[0x24];
+	char Nick[10];
+	char Login[0x6C - 0x2E];
+};
+
 // FUNCTION: 0x0077B9C0
 // FUNCTION: 0x0077B9E0
-ArrayList<int> DAT_00B77900;
+ArrayList<User> DAT_00B77900;
 
 // FUNCTION: 0x0077BA00
 // FUNCTION: 0x0077BA20
@@ -285,4 +299,174 @@ FUN_007F7624_Class::FUN_007F7624_Class(void)
 // FUNCTION: 0x0077D1F0
 FUN_007F7624_Class::~FUN_007F7624_Class(void)
 {
+}
+
+void FUN_0077F900(void);
+
+// FUNCTION: 0x0077D200
+void FUN_0077D200(void)
+{
+	FUN_0077F900();
+}
+
+// FUNCTION: 0x0077D210
+void __fastcall FUN_0077D210(char * text)
+{
+	char * p = strchr(text, ' ');
+	while (p) {
+		*p = '_';
+		p = strchr(p, ' ');
+	}
+}
+
+// FUNCTION: 0x0077D240
+int __fastcall FUN_0077D240(Wstring * name)
+{
+	User * user = NULL;
+	for (int i = 0; i < DAT_00B77900.length(); i++) {
+		DAT_00B77900.getPointer(&user, i);
+		if (strcmpi(name->text(), user->Nick) == 0)
+			return i;
+	}
+	return -1;
+}
+
+extern int DAT_00B779C0;
+extern int DAT_00B779DC;
+
+// FUNCTION: 0x0077D2A0
+bool __fastcall FUN_0077D2A0(User * user)
+{
+	if (!user)
+		return false;
+	if (user->Pad[0] & 1)
+		return true;
+	if (WS_Find_Dialog(0xC2))
+		return true;
+	if (WS_Find_Dialog(0xC9))
+		return true;
+	return DAT_00B779C0 != 0;
+}
+
+unsigned char __fastcall FUN_007B7D90(Wstring * text);
+
+// FUNCTION: 0x0077D2E0
+bool __fastcall FUN_0077D2E0(User * user, Wstring * text)
+{
+	if (!user)
+		return false;
+	if (user->Pad[0] & 1)
+		return true;
+	if (WS_Find_Dialog(0xC2))
+		return true;
+	if (WS_Find_Dialog(0xC9))
+		return true;
+	if (FUN_007B7D90(text))
+		return DAT_00B779C0 != 0;
+	return DAT_00B779DC != 0;
+}
+
+// FUNCTION: 0x0077D350
+int __fastcall FUN_0077D350(wchar_t const * text)
+{
+	wchar_t buffer[256];
+	swprintf(buffer, StringTable::LoadString("TXT_BUDDY_FILTER", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x369));
+	return wcsnicmp(text, buffer, wcslen(buffer)) == 0;
+}
+
+// FUNCTION: 0x0077D3A0
+int __fastcall FUN_0077D3A0(wchar_t const * text)
+{
+	wchar_t buffer[256];
+	swprintf(buffer, StringTable::LoadString("TXT_CLAN_FILTER", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x36F));
+	return wcsnicmp(text, buffer, wcslen(buffer)) == 0;
+}
+
+// FUNCTION: 0x0077D3F0
+bool __fastcall FUN_0077D3F0(User * user)
+{
+	if (!user)
+		return false;
+	int count = DAT_00B73AA8.length();
+	Wstring name;
+	for (int i = 0; i < count; i++) {
+		DAT_00B73AA8.get(name, i);
+		if (strcmp(name.get(), user->Nick) == 0)
+			return true;
+	}
+	return false;
+}
+
+// FUNCTION: 0x0077D490
+bool __fastcall FUN_0077D490(User * a, User * b)
+{
+	if (!a)
+		return false;
+	if (!b)
+		return false;
+	if (strcmpi(a->Login, b->Login) != 0)
+		return false;
+	else
+		return true;
+}
+
+extern char DAT_00B76AF0;
+extern char DAT_00B73AD0;
+extern Wstring DAT_00B73E40;
+
+// FUNCTION: 0x0077D4C0
+bool __fastcall FUN_0077D4C0(User * user)
+{
+	if (DAT_00B76AF0 || DAT_00B73AD0) {
+		if (WS_Find_Dialog(0x113)) {
+			int index = FUN_0077D240(&DAT_00B73E40);
+			User * host = NULL;
+			if (index >= 0) {
+				DAT_00B77900.getPointer(&host, index);
+				if (DAT_00B76AF0) {
+					if (DAT_00B73AD0) {
+						if (FUN_0077D490(host, user))
+							return true;
+						return FUN_0077D3F0(user);
+					}
+					return FUN_0077D3F0(user);
+				}
+				if (DAT_00B73AD0) {
+					if (FUN_0077D490(host, user))
+						return true;
+				}
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
+// FUNCTION: 0x0077D710
+void FUN_0077D710(void)
+{
+	FUN_0077F900();
+}
+
+struct HostEntry {
+	char Pad[0x18];
+	unsigned long Address;
+};
+
+unsigned long __stdcall FUN_007C896E(unsigned long value);
+
+// FUNCTION: 0x0077D720
+IPXAddressClass __fastcall FUN_0077D720(HostEntry * host)
+{
+	NetNumType netnum;
+	NetNodeType net;
+	memset(&netnum, 0, sizeof(netnum));
+	memset(&net, 0, sizeof(net));
+	unsigned int ip_addr = FUN_007C896E(host->Address);
+	net[3] = ip_addr & 0xff;
+	net[2] = (ip_addr >> 8) & 0xff;
+	net[1] = (ip_addr >> 16) & 0xff;
+	net[0] = (ip_addr >> 24) & 0xff;
+	IPXAddressClass address(netnum, net, 0);
+	return address;
 }

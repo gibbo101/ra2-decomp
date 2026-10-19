@@ -76,3 +76,26 @@ address,name,symbol,evidence
 0x00B0CEC8,Tactical::SelectableObjects,,TS name (tactical.h); the selectable-object array 0x006DC430 walks
 0x0057A0C0,MapClass::FUN_0057A0C0,,two-argument map function (ret 8) called by Seed_Land 0x0059A6C0; distinct from Build_All_Cliffs 0x00578E60
 0x0054F530,WWKeyboardClass::FUN_0054F530,,keyboard thiscall (ret 4) that ScoreClass::Input_Name 0x0068FBB0 calls on the key from Get; distinct from To_ASCII 0x0054F450
+0x0069DCF0,ShapeButtonClass::ShapeButtonClass,??0ShapeButtonClass@@QAE@XZ,no-argument constructor (plain ret); YRpp ShapeButtonClass.h JMP_THIS(0x69DCF0)
+0x0069DD30,ShapeButtonClass::ShapeButtonClass,??0ShapeButtonClass@@QAE@IPBVShapeSet@@HHHH_N@Z,seven-argument constructor (ret 0x1C); called by DropListClass::DropListClass 0x004B4E10
+0x004A60D0,Font_From_TPF,?Font_From_TPF@@YIPAVBitFont@@W4TextPrintType@@@Z,TibSun dialog Font_From_TPF; returns BitFont::Instance; called by DropListClass::DropListClass 0x004B4E10
+0x0046C840,BulletTypeClass::SetScaledSpawnDelay,,YRpp name; stores its argument to +0x2E8 (ScaledSpawnDelay) with ret 4; called by BulletClass::InitScalable 0x0046B280
+0x00886FB0,VisibleRect,,0x006842F0 Toggle_Display_Mode and 0x00683AB0 Start_Scenario compare Width/Height at +8/+0xC with Options.ScreenWidth (TibSun Toggle_Display_Mode)
+0x00560BF0,Change_Display_Mode,,0x006842F0 Toggle_Display_Mode matched with TibSun source (fastcall width,height)
+0x008A38E0,Environment,,0x00684C30 Fill_In_Data reads Globals[0]; 0x006863E0 Do_Restart calls Restore on it (TibSun Environment)
+0x004C6210,EnvironmentClass::Restore,,0x006863E0 Do_Restart matched with TibSun source; thiscall loops Globals[50] into Scen
+0x0087F778,Logic,,0x006851F0 Clear_Scenario Logic.Init() (LayerClass::Init inline calls Clear through vtable slot 3)
+0x00887324,TacticalMap,,0x006851F0 Clear_Scenario delete/new Tactical matched with TibSun source
+0x00829AE4,LightSourceClass::Recalc,,0x006851F0 Clear_Scenario clears it around object deletion; matched with TibSun source
+0x00887888,AircraftTracker,,0x006851F0 Clear_Scenario AircraftTracker.Clear(); YRpp AircraftTrackerClass::Instance
+0x00822CF4,BuildLevel,,0x00687F10 Assign_Houses sets the tech level from it; matched with TibSun source; YRpp Game::TechLevel
+0x005BDF50,MouseClass::Init_Clear,,0x006851F0 Clear_Scenario Map.Init_Clear() matched with TibSun source; module mouse
+0x005BDA80,MouseClass::Set_Default_Mouse,,0x006863E0 Do_Restart and 0x00686570 Do_Abort Map.Set_Default_Mouse(MOUSE_NORMAL; false) matched with TibSun source
+0x0062E650,ParticleSystemClass::Clear_System,,0x006851F0 Clear_Scenario GasSystem->Clear_System() matched with TibSun source
+0x0056D6E0,MapClass::Compute_Zone_Connections,,0x00684C30 Fill_In_Data matched with TibSun source
+0x00581F50,MapClass::Reset_All_Subzones,,0x00684C30 Fill_In_Data; body matches TibSun Reset_All_Subzones
+0x00586BF0,MapClass::Set_WasUnderBridge_Flags,,0x00684C30 Fill_In_Data matched with TibSun source
+0x006886B0,Create_Units,,0x00686890 Multiplayer_Last_Minute_Fixups matched with TibSun source
+0x0071CB90,TerrainClass::Write_INI,,0x00687CE0 Write_Scenario_INI matched with TibSun source
+0x006B4DD0,SmudgeClass::Write_INI,,0x00687CE0 Write_Scenario_INI matched with TibSun source
+0x00728280,TubeClass::Write_INI,,0x00687CE0 Write_Scenario_INI matched with TibSun source

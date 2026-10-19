@@ -35,3 +35,9 @@ HRESULT STDMETHODCALLTYPE ParticleSystemClass::GetClassID(CLSID * retval)
 	*retval = CLSID_ParticleSystemClass;
 	return(S_OK);
 }
+
+// FUNCTION: 0x006301F0
+void ParticleSystemClass::FUN_006301F0(int lifetime)
+{
+	Lifetime = lifetime;
+}

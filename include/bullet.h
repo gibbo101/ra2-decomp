@@ -66,6 +66,9 @@ class BulletClass : public ObjectClass
 		void Draw_Voxel(VoxelDataStruct const & voxeldata, Matrix3D const & transform, Point2D const & drawpoint, Rect const & cliprect, int frame, ShapeFlags_Type flags, int brightness) const;
 		void Detonate(Coord const & coord);
 		void InitScalable(void);
+		WeaponTypeClass * Get_Weapon_Type(void) const;
+		void NukeMaker(void);
+		void ApplyRadiationToCell(Cell cell, int radius, int amount);
 
 		bool IsInaccurate;
 
@@ -126,8 +129,6 @@ class BulletClass : public ObjectClass
 		static DynamicVectorClass<BulletClass *> Array;
 		static DynamicVectorClass<BulletClass *> ScalableBullets;
 
-	public:
-		friend BulletClass *Create_Bullet(BulletTypeClass const *type, TechnoClass *target, TechnoClass *payback, int strength, WarheadTypeClass const *warhead, int max_speed, int range, bool bright);
 };
 
-BulletClass * Create_Bullet(BulletTypeClass const *type, AbstractClass *target, TechnoClass *payback, int strength, WarheadTypeClass const *warhead, int max_speed, int range, bool bright);
+BulletClass * __fastcall Create_Bullet(BulletTypeClass const *type, AbstractClass *target, TechnoClass *payback, int strength, WarheadTypeClass const *warhead, int max_speed, bool bright);

@@ -23,4 +23,6 @@ class VoxClass
 {
 	public:
 		static void Play(char const * name, int a = -1, int b = -1);
+		static void PlayIndex(int index, int a = -1, int b = -1);
+		static void SilenceIndex(int index);
 };

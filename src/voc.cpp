@@ -17,8 +17,10 @@
 #include "tactical.h"
 #include "ini.h"
 #include "vector.h"
+#include "vox.h"
 #include <objidl.h>
 #include <math.h>
+#include <string.h>
 namespace fastmath { double __cdecl sqrt(double x); }
 
 VocClass * __fastcall FUN_004063B0(char const * name);
@@ -693,10 +695,313 @@ IntTriple2 DAT_00B1D410;
 // FUNCTION: 0x007521F0 $E113
 IntTriple3 DAT_00B1D440;
 
-struct VoxEntry;
+struct VoxEntry
+{
+	char Name[0x2c];
+	char Files[3][9];
+	int Priority;
+	int Type;
+	int State;
+};
 // FUNCTION: 0x00752210 $E118
 // FUNCTION: 0x00752250 $E116
 DynamicVectorClass<VoxEntry *> VoxArray;
+
+struct AudioStream
+{
+	void FUN_00407F40(void);
+	void FUN_00407A90(void);
+	int FUN_00408070(void);
+	unsigned __int64 FUN_00408140(void);
+};
+struct AudioSource
+{
+	AudioStream * FUN_00407860(int a, int b);
+};
+extern int FUN_00407000(void);
+extern AudioSource * FUN_00407010(void);
+extern void __fastcall FUN_00408080(AudioStream * stream, char const * name);
+extern void __fastcall FUN_00407B40(AudioStream * stream, int value);
+extern void __fastcall FUN_00407B50(AudioStream * stream, int value);
+extern int __fastcall FUN_00407B60(AudioStream * stream, char const * name, int flag);
+extern unsigned __int64 __fastcall FUN_004093B0(void);
+
+struct VoxNode : SoundLink
+{
+	VoxEntry * Vox;
+	int Unused;
+	int Priority;
+	int Type;
+	int Id;
+};
+
+extern int DAT_00B1D3D8;
+extern int DAT_00B1D428;
+extern SoundLink DAT_00B1D3C8;
+extern SoundLink DAT_00B1D3F0;
+extern SoundLink DAT_00B1D450[4];
+extern VoxNode * DAT_00B1D4B8;
+extern int DAT_00B1D4BC;
+extern int DAT_00B1D4C0;
+extern VoxEntry * DAT_00B1D4C4;
+extern int DAT_00B1D4C8;
+extern AudioStream * DAT_00B1D4CC;
+extern unsigned __int64 DAT_00B1D4D0;
+extern int DAT_00B1D3B8;
+extern int DAT_00B1D3E0;
+extern char DAT_00A8ED64;
+extern int DAT_0087E740;
+extern int DAT_0087E750;
+void FUN_00752370(void);
+VoxNode * __fastcall FUN_00752680(VoxEntry * vox);
+void __fastcall FUN_00752590(VoxEntry * vox, int type, int priority);
+void FUN_00752760(void);
+
+// FUNCTION: 0x00752290
+int FUN_00752290(void)
+{
+	DAT_00B1D3D8 = 0;
+	DAT_00B1D428 = 0;
+	for (int i = 0; i < 4; i++) {
+		DAT_00B1D450[i].FUN_004072C0();
+	}
+	DAT_00B1D3F0.FUN_004072C0();
+	DAT_00B1D3C8.FUN_004072C0();
+	DAT_00B1D4B8 = NULL;
+	DAT_00B1D4BC = 1;
+	if (!DAT_00B1D4CC) {
+		DAT_00B1D4CC = FUN_00407010()->FUN_00407860(3000, 0);
+		if (!DAT_00B1D4CC) {
+			return 0;
+		}
+	}
+	FUN_00408080(DAT_00B1D4CC, "EVA Stream");
+	FUN_00407B40(DAT_00B1D4CC, DAT_0087E740);
+	FUN_00407B50(DAT_00B1D4CC, DAT_0087E750);
+	return 1;
+}
+
+// FUNCTION: 0x00752340
+void FUN_00752340(void)
+{
+	FUN_00752370();
+	if (DAT_00B1D4CC) {
+		DAT_00B1D4CC->FUN_00407F40();
+		DAT_00B1D4CC->FUN_00407A90();
+		DAT_00B1D4CC = NULL;
+	}
+}
+
+// FUNCTION: 0x00752370
+void FUN_00752370(void)
+{
+	if (!DAT_00B1D4BC) {
+		return;
+	}
+	if (DAT_00B1D4B8) {
+		DAT_00B1D4B8->Vox->State = 2;
+		delete DAT_00B1D4B8;
+		DAT_00B1D4B8 = NULL;
+	}
+	VoxNode * node;
+	while ((node = (VoxNode *)DAT_00B1D3F0.FUN_004073C0()) != NULL) {
+		node->FUN_00407450();
+		node->Vox->State = 2;
+		delete node;
+	}
+	while ((node = (VoxNode *)DAT_00B1D3C8.FUN_004073C0()) != NULL) {
+		node->FUN_00407450();
+		node->Vox->State = 2;
+		delete node;
+	}
+	for (int i = 0; i < 4; i++) {
+		while ((node = (VoxNode *)DAT_00B1D450[i].FUN_004073C0()) != NULL) {
+			node->FUN_00407450();
+			node->Vox->State = 2;
+			delete node;
+		}
+	}
+}
+
+// FUNCTION: 0x00752460
+char const * __fastcall FUN_00752460(int index)
+{
+	if (index != -1 && index >= 0 && index < VoxArray.Count()) {
+		return (char const *)VoxArray[index];
+	}
+	return "none";
+}
+
+// FUNCTION: 0x00752480
+void VoxClass::PlayIndex(int index, int a, int b)
+{
+	if (DAT_00B1D4CC && index >= 0 && index < VoxArray.Count() && !DAT_00B1D3D8) {
+		VoxEntry * vox = VoxArray[index];
+		if (vox != DAT_00B1D4C4) {
+			if (a == -1) {
+				a = vox->Type;
+			}
+			if (b == -1) {
+				b = vox->Priority;
+			}
+			if (DAT_00B1D4C4 && a == 2) {
+				VoxNode * node;
+				while ((node = (VoxNode *)DAT_00B1D3C8.FUN_004073C0()) != NULL) {
+					node->FUN_00407450();
+					node->Vox->State = 2;
+					delete node;
+				}
+				if (DAT_00B1D4C4) {
+					DAT_00B1D4C4->State = 2;
+					DAT_00B1D4C4 = NULL;
+				}
+				if (DAT_00B1D4CC) {
+					DAT_00B1D4CC->FUN_00407F40();
+				}
+				FUN_00752370();
+				DAT_00B1D4D0 = 0;
+			}
+			VoxNode * found = FUN_00752680(vox);
+			if (!found || found->Type != a) {
+				FUN_00752590(vox, a, b);
+			}
+			FUN_00752760();
+		}
+	}
+}
+
+// FUNCTION: 0x00752590
+void __fastcall FUN_00752590(VoxEntry * vox, int type, int priority)
+{
+	VoxNode * node = (VoxNode *)operator new(0x20);
+	node->FUN_004072D0();
+	node->Vox = vox;
+	node->Priority = priority;
+	node->Type = type;
+	node->Id = DAT_00B1D4C0 % 100;
+	DAT_00B1D4C0++;
+	vox->State = 1;
+	if (type == 3) {
+		DAT_00B1D3C8.FUN_00407420(node);
+		return;
+	}
+	if (type == 1) {
+		DAT_00B1D450[priority].FUN_00407420(node);
+		return;
+	}
+	if (priority == 3) {
+		DAT_00B1D3F0.FUN_00407420(node);
+		return;
+	}
+	if (DAT_00B1D3C8.Prev == &DAT_00B1D3C8 && DAT_00B1D3F0.Prev == &DAT_00B1D3F0) {
+		if (!DAT_00B1D4B8 || DAT_00B1D4B8->Priority < priority) {
+			DAT_00B1D4B8 = node;
+			return;
+		}
+	}
+	vox->State = 2;
+	delete node;
+}
+
+// FUNCTION: 0x00752680
+VoxNode * __fastcall FUN_00752680(VoxEntry * vox)
+{
+	VoxNode * node;
+	for (node = (VoxNode *)DAT_00B1D3F0.FUN_004073C0(); node; node = (VoxNode *)node->FUN_004073E0()) {
+		if (node->Vox == vox) {
+			return node;
+		}
+	}
+	if (DAT_00B1D4B8 && DAT_00B1D4B8->Vox == vox) {
+		return DAT_00B1D4B8;
+	}
+	for (int i = 3; i >= 0; i--) {
+		for (node = (VoxNode *)DAT_00B1D450[i].FUN_004073C0(); node; node = (VoxNode *)node->FUN_004073E0()) {
+			if (node->Vox == vox) {
+				return node;
+			}
+		}
+	}
+	for (node = (VoxNode *)DAT_00B1D3C8.FUN_004073C0(); node; node = (VoxNode *)node->FUN_004073E0()) {
+		if (node->Vox == vox) {
+			return node;
+		}
+	}
+	return NULL;
+}
+
+static int FindVox(char const * name)
+{
+	for (int i = 0; i < VoxArray.Count(); i++) {
+		if (strcmpi(name, (char const *)VoxArray[i]) == 0) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+// FUNCTION: 0x00752700
+void VoxClass::Play(char const * name, int a, int b)
+{
+	if (name) {
+		PlayIndex(FindVox(name), a, b);
+	}
+}
+
+// FUNCTION: 0x007529A0
+void __fastcall FUN_007529A0(bool clear)
+{
+	if (DAT_00B1D4C4) {
+		DAT_00B1D4C4->State = 2;
+		DAT_00B1D4C4 = NULL;
+	}
+	if (DAT_00B1D4CC) {
+		DAT_00B1D4CC->FUN_00407F40();
+	}
+	if (clear) {
+		FUN_00752370();
+	}
+}
+
+// FUNCTION: 0x007529E0
+int FUN_007529E0(void)
+{
+	FUN_00752760();
+	if (DAT_00B1D4CC) {
+		if (DAT_00B1D4CC->FUN_00408070()) {
+			goto busy;
+		}
+		if (DAT_00B1D3C8.Prev != &DAT_00B1D3C8 || DAT_00B1D3F0.Prev != &DAT_00B1D3F0 || DAT_00B1D4B8) {
+			goto busy;
+		}
+		for (int i = 0; i < 4; i++) {
+			if (DAT_00B1D450[i].Prev != &DAT_00B1D450[i]) {
+				goto busy;
+			}
+		}
+	}
+	return 0;
+busy:
+	return 1;
+}
+
+// FUNCTION: 0x00752A40
+void VoxClass::SilenceIndex(int index)
+{
+	if (index >= 0 && index < VoxArray.Count()) {
+		VoxNode * node;
+		while ((node = FUN_00752680(VoxArray[index])) != NULL) {
+			if (node->Prev != node) {
+				node->FUN_00407450();
+			}
+			if (node == DAT_00B1D4B8) {
+				DAT_00B1D4B8 = NULL;
+			}
+			node->Vox->State = 2;
+			delete node;
+		}
+	}
+}
 
 // FUNCTION: 0x007532D0
 VocClass * VocClass_From_Name(char const * name)

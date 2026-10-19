@@ -209,3 +209,198 @@ YRVoices::Category::Category(void)
 {
 	Name = "";
 }
+
+// FUNCTION: 0x00770E60 WorldDominationTour::YRVoices::Category::Set_Name
+void YRVoices::Category::Set_Name(Wstring const & name)
+{
+	Name = name;
+}
+
+// FUNCTION: 0x00770E70 WorldDominationTour::YRVoices::Category::Read
+void YRVoices::Category::Read(INIClass const & ini, Wstring const & section, int side)
+{
+	{ Wstring name("Win"); FUN_007710B0(ini, section, side, OUTCOME_WIN, name); }
+	{ Wstring name("Lose"); FUN_007710B0(ini, section, side, OUTCOME_LOSE, name); }
+	{ Wstring name("Draw"); FUN_007710B0(ini, section, side, OUTCOME_DRAW, name); }
+}
+
+static inline bool Make_Inline(int side, int index, Wstring & out)
+{
+	if (side == 3) {
+		out = "WWD-Soviet" + Wstring_FromInt(index, 2);
+	} else {
+		out = "WWD_Allied" + Wstring_FromInt(index, 2);
+	}
+	return(true);
+}
+
+static inline bool Pick_Inline(int side, VOICEINDEX_LIST & list, Wstring & out)
+{
+	out.clear();
+	int count = list.Count();
+	if (count <= 0) {
+		return(false);
+	}
+	return(Make_Inline(side, list[count == 1 ? 0 : NonCriticalRandomNumber(0, count - 1)], out));
+}
+
+// FUNCTION: 0x00770F10 WorldDominationTour::YRVoices::Category::Pick_Standard_Sound
+bool YRVoices::Category::Pick_Standard_Sound(int side, int outcome, Wstring & out)
+{
+	return(Pick_Inline(side, VoiceIndexes[outcome][0], out));
+}
+
+// FUNCTION: 0x00770FE0 WorldDominationTour::YRVoices::Category::Pick_Emphasis_Sound
+bool YRVoices::Category::Pick_Emphasis_Sound(int side, int outcome, Wstring & out)
+{
+	return(Pick_Inline(side, VoiceIndexes[outcome][1], out));
+}
+
+extern bool FUN_007529E0(void);
+extern int __fastcall FUN_00753250(char const * name);
+extern void __fastcall FUN_00752480(int index, int position, int flags);
+
+extern char DAT_00889F64[];
+
+static inline void Parse_Inline(Wstring const & text, VOICEINDEX_LIST & list)
+{
+	list.Clear();
+	Wstring token;
+	int pos = text.getToken(0, ",", token);
+	while (pos != -1) {
+		list.Add(token.toInt());
+		pos = text.getToken(pos, ",", token);
+	}
+}
+
+// FUNCTION: 0x007710B0 WorldDominationTour::YRVoices::Category::FUN_007710B0
+void YRVoices::Category::FUN_007710B0(INIClass const & ini, Wstring const & section, int side, int outcome, Wstring const & name)
+{
+	Wstring entry = operator+(*FUN_007AF2A0(side), Name).operator+(name);
+	Wstring result;
+	{
+		Wstring none(DAT_00889F64);
+		ini.Get_String(section, entry, none, result);
+	}
+	Parse_Inline(result, VoiceIndexes[outcome][0]);
+	entry += "Emphasis";
+	{
+		Wstring none(DAT_00889F64);
+		ini.Get_String(section, entry, none, result);
+	}
+	Parse_Inline(result, VoiceIndexes[outcome][1]);
+}
+
+extern bool __fastcall FUN_00770CE0(int side, int index, Wstring & out);
+
+extern bool __fastcall FUN_00770C10(int side, VOICEINDEX_LIST & list, Wstring & out);
+
+static inline bool Pick_Extern(int side, VOICEINDEX_LIST & list, Wstring & out)
+{
+	out.clear();
+	int count = list.Count();
+	if (count <= 0) {
+		return(false);
+	}
+	return(FUN_00770CE0(side, list[count == 1 ? 0 : NonCriticalRandomNumber(0, count - 1)], out));
+}
+
+// FUNCTION: 0x007712C0 WorldDominationTour::YRVoices::FUN_007712C0
+void YRVoices::FUN_007712C0(int category, int outcome, bool emphasis, bool count_queued, int delay)
+{
+	Discard();
+	Wstring name;
+	int side = Side;
+	if (FUN_00770C10(side, Categories[category].VoiceIndexes[outcome][0], name)) {
+		if (!FUN_007529E0()) {
+			Timer = delay;
+		}
+		QueuedSamples.Add(name);
+		if (count_queued) {
+			QueuedSampleCount++;
+		}
+		if (emphasis) {
+			side = Side;
+			if (Pick_Extern(side, Categories[category].VoiceIndexes[outcome][1], name)) {
+				QueuedSamples.Add(name);
+				if (count_queued) {
+					QueuedSampleCount++;
+				}
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x007714B0 WorldDominationTour::YRVoices::FUN_007714B0
+void YRVoices::FUN_007714B0(int voice, bool count_queued, int delay)
+{
+	Discard();
+	Wstring name;
+	int side = Side;
+	VOICEINDEX_LIST & list = StandaloneVoices[voice];
+	name.clear();
+	int count = list.Count();
+	if (count > 0) {
+		if (FUN_00770CE0(side, list[count == 1 ? 0 : NonCriticalRandomNumber(0, count - 1)], name)) {
+			if (!FUN_007529E0()) {
+				Timer = delay;
+			}
+			QueuedSamples.Add(name);
+			if (count_queued) {
+				QueuedSampleCount++;
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x00771620 WorldDominationTour::YRVoices::Advance
+void YRVoices::Advance(void)
+{
+	if (Timer == 0 && QueuedSamples.Count() > 0 && !FUN_007529E0()) {
+		if (!IsIdle) {
+			QueuedSamples.Delete_Index(0);
+			if (QueuedSampleCount > 0) {
+				QueuedSampleCount--;
+			}
+		}
+		if (QueuedSamples.Count() > 0) {
+			FUN_00752480(FUN_00753250(QueuedSamples[0].get()), -1, -1);
+			IsIdle = false;
+		} else {
+			QueuedSampleCount = 0;
+			IsIdle = true;
+		}
+	}
+}
+
+// FUNCTION: 0x00771710 WorldDominationTour::YRVoices::Discard
+void YRVoices::Discard(void)
+{
+	int last = QueuedSamples.Count();
+	while (last-- > QueuedSampleCount) {
+		QueuedSamples.Delete_Index(last);
+	}
+	if (QueuedSampleCount == 0) {
+		IsIdle = true;
+	}
+}
+
+// FUNCTION: 0x00771780
+void FUN_00771780(void)
+{
+}
+
+// FUNCTION: 0x00771790
+void FUN_00771790(void)
+{
+}
+
+// FUNCTION: 0x007717A0 WorldDominationTour::YRVoices::Cleanup
+void YRVoices::Cleanup(void)
+{
+	if (QueuedSamples.Count() > 0) {
+		FUN_007529A0(true);
+		QueuedSamples.Clear();
+	}
+	Timer = 0;
+}

@@ -21,6 +21,7 @@ class AircraftTrackerClass
 		void Remove(FootClass * foot);
 		void Update(FootClass * foot, Cell oldcell, Cell newcell);
 		bool IsJumpjet(FootClass * foot);
+		void Clear(void);
 };
 
 class ParasiteClass;

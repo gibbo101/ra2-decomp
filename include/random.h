@@ -39,8 +39,10 @@ class Random2Class {
 			SIGNIFICANT_BITS=32
 		};
 
-	protected:
+		// While set, the generator yields zero without advancing its table.
 		bool unknown_00;
+
+	protected:
 		int Index1;
 		int Index2;
 		int Table[TABLE_SIZE];

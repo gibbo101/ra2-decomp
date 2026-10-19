@@ -398,7 +398,17 @@ class TechnoClass : public RadioClass
 		bool FUN_0070DC60(void) const;
 		bool FUN_0070DCE0(void) const;
 		int FUN_0070DCF0(void) const;
+		int FUN_0070DD00(void);
 		int FUN_0070DD20(void) const;
+		bool FUN_0070DD50(void) const;
+		int FUN_0070DD70(void) const;
+		int FUN_0070DD90(void) const;
+		int FUN_0070DDA0(void) const;
+		int FUN_0070DDC0(void) const;
+		void SetCurrentWeaponStage(int stage);
+		void sub_70DE00(int value);
+		void FUN_0070DE20(int amount);
+		void FUN_0070DE40(int amount);
 		void GattlingRateUp(int rate);
 		void ReleaseLocomotor(bool set_target);
 		void GattlingRateDown(int rate);

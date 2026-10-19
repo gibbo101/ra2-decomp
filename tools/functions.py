@@ -67,13 +67,13 @@ def sweep(code: bytes, base: int, starts: set, padded: set, calls: set, tables: 
 
 def reached_end(md, code: bytes, base: int, lo: int, hi: int, roots: set,
                 seen: set | None = None, code_only: bool = False,
-                data_ends: set | None = None) -> int:
+                data: set | None = None) -> int:
     """The end of the furthest instruction or switch table in [lo, hi) that flow from
     `lo` and `roots` reaches: jumps, branches, calls returning, switch tables, and offsets
     taken as operands. A switch table is data, never decoded as code; a byte index table
     runs while its entries index the function's jump tables. A pushed offset is a callback
     argument (atexit), not flow. With `code_only`, tables do not extend the end. `seen`
-    collects every instruction reached, `data_ends` the end of each table."""
+    collects every instruction reached, `data` the (start, end) of each table."""
     seen = set() if seen is None else seen
     todo, far = [lo, *roots], lo
     jump_tables, index_tables = {}, set()
@@ -104,15 +104,16 @@ def reached_end(md, code: bytes, base: int, lo: int, hi: int, roots: set,
             at += size
     if code_only:
         return far
-    ends = set(jump_tables.values())
-    cases = max(((e - s) // 4 for s, e in jump_tables.items()), default=0)
-    for entry in index_tables:
+    spans = set(jump_tables.items())
+    cases = max(((e - s) // 4 for s, e in spans), default=0)
+    for start in index_tables:
+        entry = start
         while entry < hi and code[entry - base] < cases:
             entry += 1
-        ends.add(entry)
-    if data_ends is not None:
-        data_ends |= ends
-    return max(far, *ends) if ends else far
+        spans.add((start, entry))
+    if data is not None:
+        data |= spans
+    return max(far, *(e for _, e in spans)) if spans else far
 
 
 def pointers(pe: pefile.PE, lo: int, hi: int):
@@ -181,7 +182,7 @@ def main() -> None:
         def after_table(a: int) -> bool:
             i = bisect.bisect_left(table_list, a) - 1
             j = bisect.bisect_left(known, a) - 1
-            return i >= 0 and (j < 0 or table_list[i] > known[j])
+            return i >= 0 and (j < 0 or table_list[i] >= known[j])
 
         def table_ends_at(a: int) -> bool:
             lo = known[bisect.bisect_left(known, a) - 1] if known and known[0] < a else base
@@ -204,7 +205,7 @@ def main() -> None:
     def after_table(a: int) -> bool:
         i = bisect.bisect_left(table_list, a) - 1
         j = bisect.bisect_left(known, a) - 1
-        return i >= 0 and (j < 0 or table_list[i] > known[j])
+        return i >= 0 and (j < 0 or table_list[i] >= known[j])
 
     evidence: dict[int, str] = {}
     for letter, addrs in (("P", padded), ("C", calls), ("V", ptrs), ("Y", yrpp), ("G", ghidra),
@@ -258,14 +259,15 @@ def main() -> None:
             i = bisect.bisect_right(ordered, a)
             nxt = ordered[i] if i < len(ordered) else end
             # Data pointers into the code before a candidate (unwind funclets) extend the
-            # flow; those past it point into the second function.
-            roots, data_ends = set(), set()
+            # flow; those past it point into the second function, those into a table at nothing.
+            roots, data = set(), set()
             while True:
-                at = reached_end(md, code, base, a, nxt, roots, data_ends=data_ends)
-                after_data = at in data_ends
+                at = reached_end(md, code, base, a, nxt, roots, data=data)
+                after_data = any(e == at for _, e in data)
                 while at < nxt and code[at - base] == NOP:
                     at += 1
-                more = {p for p in ptrs if a < p < at} - roots
+                more = {p for p in ptrs if a < p < at
+                        and not any(s <= p < e for s, e in data)} - roots
                 if not more:
                     break
                 roots |= more

@@ -68,6 +68,7 @@ DatShorts DAT_00ABF378(0, 0);
 DatInts DAT_00ABF3B0(0, 0, 0);
 
 int MovieInt1 = 0;
+extern MovieHandle * DAT_00ABF3F8;
 
 extern int FUN_00407000(void);
 
@@ -378,4 +379,109 @@ VQHandle::VQHandle(void) :
 	IsInitialized(false),
 	Subtitles(NULL)
 {
+}
+
+// FUNCTION: 0x005C01F0
+VQHandle::~VQHandle(void)
+{
+	if (VQA != NULL) {
+		VQA->Close_And_Free_VQA();
+		VQAClass * vqa = VQA;
+		if (vqa != NULL) {
+			delete vqa;
+		}
+	}
+	MovieSubtitles * subs = Subtitles;
+	if (subs != NULL) {
+		delete subs;
+		Subtitles = NULL;
+	}
+}
+
+// FUNCTION: 0x005C0240
+VQMovieHandle::VQMovieHandle(VQHandle * player) :
+	Finished(false)
+{
+	Player = player;
+	Width = player->VQA->Get_VQA_Width();
+	Height = Player->VQA->Get_VQA_Height();
+}
+
+// FUNCTION: 0x005C0280
+void VQMovieHandle::Pause(bool pause)
+{
+	if (pause) {
+		if (Player != NULL && Player->VQA != NULL) {
+			Player->VQA->Pause_VQA();
+		}
+	} else {
+		if (Player != NULL && Player->VQA != NULL) {
+			Player->VQA->Resume_VQA();
+		}
+	}
+}
+
+// FUNCTION: 0x005C02C0
+void VQMovieHandle::Stop(void)
+{
+	DAT_00ABF3F8 = this;
+	Movie_Play(Player, true, THEME_NONE, false);
+	DAT_00ABF3F8 = NULL;
+}
+
+// FUNCTION: 0x005C02E0
+bool VQMovieHandle::FramesLeft(void)
+{
+	return(Finished);
+}
+
+// FUNCTION: 0x005C02F0
+bool VQMovieHandle::AdvanceFrame(void)
+{
+	VQHandle * p = Player;
+	if (!p->VQA->Is_Paused() && p->IsInitialized && CurrentVQ == NULL) {
+		CurrentVQ = p;
+		bool res = p->VQA->Advance_Frame(Finished);
+		CurrentVQ = NULL;
+		return(res);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x005C0330
+void VQMovieHandle::Waiting(void)
+{
+}
+
+// FUNCTION: 0x005C0340
+void VQMovieHandle::SetPosition(int x, int y)
+{
+	Player->InitialRect.X = x;
+	Player->InitialRect.Y = y;
+	Player->StretchRect = Player->InitialRect;
+}
+
+// FUNCTION: 0x005C0380
+void VQMovieHandle::InitSubtitles(void (__fastcall * callback)(void *))
+{
+	Player->Subtitles->SetCallback(callback);
+}
+
+// FUNCTION: 0x005C03A0
+void VQMovieHandle::SeekToFrame(int frame)
+{
+	Player->VQA->Reset_VQA();
+	Player->VQA->Seek_To_Frame(frame);
+}
+
+// FUNCTION: 0x005C03C0
+int VQMovieHandle::Timing(void)
+{
+	return(33);
+}
+
+// FUNCTION: 0x005C03D0
+void VQMovieHandle::Blit(void)
+{
+	Movie_Update_Visible_Surface();
 }

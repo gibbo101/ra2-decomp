@@ -78,6 +78,8 @@ class BulletTypeClass : public ObjectTypeClass
 
 		virtual void Compute_CRC(CRCEngine & crc) const override;
 
+		void SetScaledSpawnDelay(int delay);
+
 		static BulletTypeClass *Find_Or_Make(const char * name);
 
 		static BulletType From_Name(char const * name);

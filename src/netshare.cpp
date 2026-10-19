@@ -1441,6 +1441,7 @@ struct NSSlotName
 	char Pad[0x6b - 0x28 - sizeof(IPXAddressClass)];
 	int Id;
 	char Pad2[0x85 - 0x6f];
+	int FUN_00696F20(void);
 };
 #pragma pack(pop)
 extern wchar_t const * DAT_00AC117C;
@@ -1827,4 +1828,214 @@ int __fastcall FUN_005E9240(NSSlotName * node)
 		}
 	}
 	return(-1);
+}
+
+extern int DAT_008316A4;
+extern int DAT_00A8B548;
+extern int DAT_00A8BB0C;
+extern int DAT_00A8B2BC[8];
+
+// FUNCTION: 0x005E9290
+void __fastcall FUN_005E9290(IPXAddressClass * address)
+{
+	int limit;
+
+	if (Session.Type == GAME_INTERNET) {
+		if (FUN_0077D940() && !FUN_0077D970()) {
+			limit = 2;
+		} else {
+			limit = 6;
+		}
+	} else {
+		limit = 8;
+	}
+	if (!DAT_008316A4 && limit < 7) {
+		limit++;
+	}
+	for (int i = 0; i < 8; i++) {
+		NSSlotName * slot = DAT_00A8DA90[i];
+		if (slot->Address == *address) {
+			if (DAT_00A8DA90[i]->Id == -1) {
+				DAT_00A8DA90[i] = DAT_00AC11B4;
+			} else {
+				NSSlotName * open = DAT_00AC119C;
+				if (i >= limit) {
+					open = DAT_00AC11A0;
+				}
+				DAT_00A8DA90[i] = open;
+			}
+			return;
+		}
+	}
+}
+
+// FUNCTION: 0x005E9340
+void __fastcall FUN_005E9340(char const * name)
+{
+	int limit;
+
+	if (Session.Type == GAME_INTERNET) {
+		if (FUN_0077D940() && !FUN_0077D970()) {
+			limit = 2;
+		} else {
+			limit = 6;
+		}
+	} else {
+		limit = 8;
+	}
+	if (!DAT_008316A4 && limit < 7) {
+		limit++;
+	}
+	for (int i = 0; i < 8; i++) {
+		if (DAT_00A8DA90[i] && stricmp(name, FUN_007350C0(DAT_00A8DA90[i]->Name)) == 0) {
+			if (DAT_00A8DA90[i]->Id == -1) {
+				DAT_00A8DA90[i] = DAT_00AC11B4;
+			} else {
+				NSSlotName * open = DAT_00AC119C;
+				if (i >= limit) {
+					open = DAT_00AC11A0;
+				}
+				DAT_00A8DA90[i] = open;
+			}
+			return;
+		}
+	}
+}
+
+// FUNCTION: 0x005E93F0
+int __fastcall FUN_005E93F0(NSSlotName * slot)
+{
+	if (slot == NULL || slot == DAT_00AC119C || slot == DAT_00AC11A0 || slot == DAT_00AC11B0 || slot == DAT_00AC11B4 || slot == DAT_00AC11A4 || slot == DAT_00AC11A8 || slot == DAT_00AC11AC) {
+		return(0);
+	}
+	return(1);
+}
+
+// FUNCTION: 0x005E9440
+int __fastcall FUN_005E9440(NSSlotName * slot)
+{
+	if (slot != NULL && (slot == DAT_00AC11A4 || slot == DAT_00AC11A8 || slot == DAT_00AC11AC)) {
+		return(1);
+	}
+	return(0);
+}
+
+// FUNCTION: 0x005E9470
+int __fastcall FUN_005E9470(NSSlotName * slot)
+{
+	if (slot == NULL || slot == DAT_00AC119C || slot == DAT_00AC11A0 || slot == DAT_00AC11B4 || slot == DAT_00AC11B0) {
+		return(0);
+	}
+	return(1);
+}
+
+// FUNCTION: 0x005E94A0
+int __fastcall FUN_005E94A0(NSSlotName * slot)
+{
+	int result = -1;
+
+	if (slot == DAT_00AC11A4) {
+		return(2);
+	}
+	if (slot == DAT_00AC11A8) {
+		return(1);
+	}
+	if (slot == DAT_00AC11AC) {
+		result = 0;
+	}
+	return(result);
+}
+
+// FUNCTION: 0x005E94D0
+int FUN_005E94D0(void)
+{
+	NSSlotName * ai0 = DAT_00AC11A4;
+	NSSlotName * ai1 = DAT_00AC11A8;
+	NSSlotName * ai2 = DAT_00AC11AC;
+	int count = 0;
+
+	for (int i = 0; i < 8; i++) {
+		NSSlotName * slot = DAT_00A8DA90[i];
+		if (slot && (slot == ai0 || slot == ai1 || slot == ai2)) {
+			count++;
+		}
+	}
+	return(count);
+}
+
+// FUNCTION: 0x005E9510
+bool FUN_005E9510(void)
+{
+	int count = (DAT_00A8B548 < DAT_00A8BB0C) ? DAT_00A8B548 : DAT_00A8BB0C;
+	int i;
+
+	for (i = 0; i < count; i++) {
+		if (DAT_00A8DA90[i] == DAT_00AC119C) {
+			return(false);
+		}
+	}
+	if (!DAT_008316A4 && count < 8 && DAT_00A8DA90[count] == DAT_00AC119C) {
+		return(false);
+	}
+	return(true);
+}
+
+// FUNCTION: 0x005E9560
+bool FUN_005E9560(void)
+{
+	for (int i = 0; i < 8; i++) {
+		if (DAT_00A8DA90[i] == DAT_00AC11B4) {
+			return(false);
+		}
+	}
+	return(true);
+}
+
+// FUNCTION: 0x005E9580
+bool FUN_005E9580(void)
+{
+	int index = DAT_008316A4;
+	NSSlotName * open = DAT_00AC119C;
+	NSSlotName * closed = DAT_00AC11A0;
+
+	for (int i = 0; i < 8; i++) {
+		NSSlotName * slot = DAT_00A8DA90[i];
+		if (slot && slot != open && slot != closed && slot != DAT_00AC11B4 && slot != DAT_00AC11B0 && i == index && slot->Id == -1) {
+			return(true);
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x005E95E0
+bool FUN_005E95E0(void)
+{
+	int count = (DAT_00A8B548 < DAT_00A8BB0C) ? DAT_00A8B548 : DAT_00A8BB0C;
+
+	int players = DAT_00A8DA84;
+
+	if (players - FUN_005E9580() > count) {
+		FUN_004068E0("Channel full - Session.ScenarioMaxPlayers = %d\n", DAT_00A8BB0C);
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x005E96A0
+bool __fastcall FUN_005E96A0(int id)
+{
+	if (id != -2) {
+		for (int i = 0; i < 8; i++) {
+			NSSlotName * slot = DAT_00A8DA90[i];
+			if (slot && slot != DAT_00AC119C && slot != DAT_00AC11A0 && slot != DAT_00AC11B0 && slot != DAT_00AC11B4 && slot != DAT_00AC11A4 && slot != DAT_00AC11A8 && slot != DAT_00AC11AC && slot->FUN_00696F20() == id) {
+				return(true);
+			}
+		}
+		for (int j = 0; j < 8; j++) {
+			if (DAT_00A8B2BC[j] == id) {
+				return(true);
+			}
+		}
+	}
+	return(false);
 }

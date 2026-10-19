@@ -37,6 +37,7 @@
 #include "voc.h"
 #include "vox.h"
 #include "windlg.h"
+#include "bitfont.h"
 #include <commctrl.h>
 #include <ctime>
 #include <sys\timeb.h>
@@ -68,53 +69,53 @@ extern const double DAT_007E1740;
 extern const double DAT_007EF700;
 extern const double DAT_007EF708;
 
-// FUNCTION: 0x00600340 $E54
+// FUNCTION: 0x00600340 $E56
 double DAT_00AC1B40 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x00600370 $E57
+// FUNCTION: 0x00600370 $E59
 double DAT_00AC48A0 = DAT_00AC1B40 / DAT_007EF700;
 
-// FUNCTION: 0x00600390 $E60
+// FUNCTION: 0x00600390 $E62
 double DAT_00AC4838 = DAT_007E1718 / DAT_00AC48A0;
 
-// FUNCTION: 0x006003B0 $E63
+// FUNCTION: 0x006003B0 $E65
 double DAT_00AC4830 = DAT_007E1720 * DAT_007EF708;
 
-// FUNCTION: 0x006003D0 $E66
+// FUNCTION: 0x006003D0 $E68
 double DAT_00AC1B88 = DAT_007E1728 * DAT_007EF708;
 
-// FUNCTION: 0x006003F0 $E69
+// FUNCTION: 0x006003F0 $E71
 double DAT_00AC1898 = DAT_007E1730 * DAT_007EF708;
 
-// FUNCTION: 0x00600410 $E72
+// FUNCTION: 0x00600410 $E74
 int DAT_00AC48AC = (int)(fastmath::tan(DAT_00AC1898 - DAT_00AC1B88) * DAT_007E1738 * DAT_00AC1B40);
 
-// FUNCTION: 0x00600450 $E75
+// FUNCTION: 0x00600450 $E77
 double DAT_00AC1CA0 = fastmath::atan(DAT_00AC48AC * DAT_007E1740);
 
-// FUNCTION: 0x00600480 $E78
+// FUNCTION: 0x00600480 $E80
 double DAT_00AC4610 = fastmath::atan((DAT_00AC48AC * 2) / DAT_00AC1B40);
 
-// FUNCTION: 0x006004B0 $E81
+// FUNCTION: 0x006004B0 $E83
 int DAT_00AC489C = (int)(DAT_00AC48AC * 4 + DAT_007E1738);
 
 struct ODShortPair { short a; short b; ODShortPair(void) { a = 0; b = 0; } };
 struct ODIntTriple { int a; int b; int c; ODIntTriple(void) { a = 0; b = 0; c = 0; } };
 
-// FUNCTION: 0x006004E0 $E84
+// FUNCTION: 0x006004E0 $E86
 ODShortPair DAT_00AC1B38;
 
-// FUNCTION: 0x006004F0 $E87
+// FUNCTION: 0x006004F0 $E89
 ODIntTriple DAT_00AC1DF8;
 
 
 struct ODCenterTriple { int a; int b; int c; ODCenterTriple(void) { c = 0; a = 128; b = 128; } };
 
-// FUNCTION: 0x00600510 $E90
+// FUNCTION: 0x00600510 $E92
 ODCenterTriple DAT_00AC4888;
 
-// FUNCTION: 0x00600530 $E95
-// FUNCTION: 0x00600550 $E93
+// FUNCTION: 0x00600530 $E97
+// FUNCTION: 0x00600550 $E95
 SurfaceCacheClass SurfaceCache;
 
 namespace OwnerDraw {
@@ -198,15 +199,15 @@ bool OwnerDraw::CtrlMsgData::operator ==(CtrlMsgData const & that) const
 }
 
 
-// FUNCTION: 0x006006B0 $E100
-// FUNCTION: 0x00600750 $E98
+// FUNCTION: 0x006006B0 $E102
+// FUNCTION: 0x00600750 $E100
 namespace OwnerDraw { Dictionary<HWND, WNDPROC> DialogProcs(Hash_HWND); }
 
-// FUNCTION: 0x00600880 $E105
-// FUNCTION: 0x00600920 $E103
+// FUNCTION: 0x00600880 $E107
+// FUNCTION: 0x00600920 $E105
 namespace OwnerDraw { Dictionary<HWND, WNDPROC> SubclassProcs(Hash_HWND); }
 
-// FUNCTION: 0x00600A50 $E110
+// FUNCTION: 0x00600A50 $E112
 namespace OwnerDraw { Dictionary<HWND, OwnerDraw::WinData> Dialogs(Hash_HWND); }
 
 // FUNCTION: 0x00600C70
@@ -2187,6 +2188,203 @@ BOOL CALLBACK FUN_0060F320(HWND edit, LPARAM lparam)
 	return TRUE;
 }
 
+extern DSurface * DAT_00887308;
+extern int DAT_00AC48D8;
+void __fastcall FUN_006219D0(Rect const & rect, Surface & surface, int xpos, int ypos);
+namespace OwnerDraw {
+int PrintTextFixedLength(COLORREF color, HFONT font, Rect const & rect, wchar_t const * text, int length, int x_alignment, int y_alignment, Surface * surface, int unknown);
+void DrawBeveledBorder(Surface & surface, Rect const & rect, int offset, int color);
+}
+
+void __fastcall FUN_0053E420(HWND window);
+BOOL CALLBACK FUN_00610570(HWND window, LPARAM lparam);
+
+static inline BOOL RemoveFromDicts(HWND window)
+{
+	OwnerDraw::DialogProcs.remove(window);
+	OwnerDraw::Dialogs.remove(window);
+	OwnerDraw::SubclassProcs.remove(window);
+
+	void *userdata = (void *)GetWindowLong(window, GWL_USERDATA);
+	if (userdata != NULL) {
+		delete userdata;
+	}
+	SetWindowLong(window, GWL_USERDATA, 0);
+	FUN_0053E420(window);
+	return TRUE;
+}
+
+// FUNCTION: 0x00610360
+BOOL __fastcall FUN_00610360(HWND window)
+{
+	EnumChildWindows(window, FUN_00610570, 0);
+	RemoveFromDicts(window);
+	return TRUE;
+}
+
+union ODColorBits {
+	struct {
+		unsigned int red : 8;
+		unsigned int green : 8;
+		unsigned int blue : 8;
+		unsigned int a : 8;
+	};
+	int v;
+};
+
+// FUNCTION: 0x006107A0 $E117
+OwnerDraw::Tooltip ODTooltip;
+
+// FUNCTION: 0x006107E0
+OwnerDraw::Tooltip::Tooltip(void)
+{
+	bounds.Set(0, 0, 0, 0);
+	background = NULL;
+	text[0] = L'\0';
+	isActive = false;
+	isHidden = false;
+	window = (HWND)NULL;
+}
+
+// FUNCTION: 0x00610810
+bool OwnerDraw::Start_Tooltip(Rect const & rect, wchar_t const * text, HWND window)
+{
+	OwnerDraw::End_Tooltip();
+
+	DAT_00AC48D8 = time(NULL);
+
+	swprintf(ODTooltip.text, StringTable::LoadString("GUI:ToolTip", NULL, "D:\\ra2mdpost\\ownrdraw.cpp", 0x1d21));
+
+	if (text != NULL) {
+		wcscpy(ODTooltip.text, text);
+	}
+
+	ODTooltip.bounds = rect;
+	ODTooltip.isActive = true;
+	ODTooltip.window = window;
+
+	return OwnerDraw::DrawTooltip(true);
+}
+
+// FUNCTION: 0x00610950 OwnerDraw::DrawTooltip
+bool OwnerDraw::DrawTooltip(bool save_background)
+{
+	if (ODTooltip.isActive == false) {
+		return false;
+	}
+
+	if (save_background) {
+		if (ODTooltip.background != NULL) {
+			delete ODTooltip.background;
+		}
+		ODTooltip.background = NULL;
+
+		Surface * backgd = new BSurface(ODTooltip.bounds.Width, ODTooltip.bounds.Height, 2);
+		ODTooltip.background = backgd;
+
+		Rect drect(0, 0, ODTooltip.bounds.Width, ODTooltip.bounds.Height);
+		backgd->Blit_From(drect, *DAT_00887308, ODTooltip.bounds, false, true);
+	}
+
+	ODTooltip.isHidden = false;
+
+	Rect rect = ODTooltip.bounds;
+
+	int color;
+	if (OwnerDraw::TooltipBackgroundColor == -1) {
+		color = -1;
+	} else {
+		ODColorBits *c = (ODColorBits *)&OwnerDraw::TooltipBackgroundColor;
+		color = DSurface::Build_Hicolor_Pixel(c->red, c->green, c->blue);
+	}
+
+	DAT_00887308->Lock();
+	DAT_00887308->Fill_Rect(rect, color);
+	DAT_00887308->Unlock();
+
+	FUN_006219D0(rect, *DAT_00887308, 8, 4);
+
+	OwnerDraw::PrintTextFixedLength(OwnerDraw::PrimaryTextColor, 0, rect, ODTooltip.text, wcslen(ODTooltip.text), 1, 1, DAT_00887308, 0);
+	rect.X += 1;
+	rect.Y += 1;
+	rect.Width -= 2;
+	rect.Height -= 2;
+	OwnerDraw::DrawBeveledBorder(*DAT_00887308, rect, 1, -1);
+
+	return true;
+}
+
+// FUNCTION: 0x00610B50 OwnerDraw::RestoreTooltipBackground
+bool OwnerDraw::RestoreTooltipBackground(void)
+{
+	if (ODTooltip.isActive == false) {
+		return false;
+	}
+
+	if (ODTooltip.isHidden == (int)true) {
+		return false;
+	}
+
+	if (ODTooltip.background == NULL) {
+		return false;
+	}
+
+	Rect drect = ODTooltip.bounds;
+	Rect srect(0, 0, ODTooltip.bounds.Width, ODTooltip.bounds.Height);
+	DAT_00887308->Blit_From(drect, *ODTooltip.background, srect, false, true);
+	ODTooltip.isHidden = true;
+	return true;
+}
+
+// FUNCTION: 0x00610BF0
+bool OwnerDraw::End_Tooltip(void)
+{
+	if (ODTooltip.isActive == false) {
+		return false;
+	}
+
+	OwnerDraw::RestoreTooltipBackground();
+
+	if (ODTooltip.background != NULL) {
+		delete ODTooltip.background;
+	}
+	ODTooltip.background = NULL;
+
+	ODTooltip.isActive = false;
+	ODTooltip.isHidden = false;
+	return true;
+}
+
+// FUNCTION: 0x00612910 $E120
+static ArrayList<HWND> ActiveWindows;
+
+// FUNCTION: 0x00612930 $E125
+static Dictionary<OwnerDraw::CtrlMsgData, bool> ProcessedMessages(Hash_CtrlMsg);
+
+// FUNCTION: 0x00612A60 OwnerDraw::SysListViewHandler
+LRESULT CALLBACK OwnerDraw::SysListViewHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	WNDPROC original = NULL;
+	WNDPROC *found = NULL;
+	OwnerDraw::WinData *data = NULL;
+	RECT display;
+	RECT client;
+
+	if (OwnerDraw::DialogProcs.getPointer(window, &found) && found) {
+		original = *found;
+	}
+	Get_Display_Rect(window, &display);
+	GetClientRect(window, &client);
+	OwnerDraw::Dialogs.getPointer(window, &data);
+
+	if (message == WM_CTLCOLOREDIT) {
+		SetTextColor((HDC)wparam, OwnerDraw::PrimaryTextColor);
+		SetBkMode((HDC)wparam, TRANSPARENT);
+		return (LRESULT)GetStockObject(NULL_BRUSH);
+	}
+	return CallWindowProc(original, window, message, wparam, lparam);
+}
+
 // FUNCTION: 0x0061F190
 void ODInitMasks(void)
 {
@@ -2369,4 +2567,16 @@ int OwnerDraw::Move_Dialog(HWND window, int x, int y)
 	rect2.top = ypos;
 
 	return(MoveWindow(window, rect2.left, rect2.top, rect2.right, rect2.bottom, FALSE));
+}
+
+// FUNCTION: 0x00623340
+OwnerDraw::WinData::WinData(void)
+{
+	memset(this, 0, sizeof(*this));
+	*(int *)((char *)this + 0x68) = 0xb;
+	*(BitFont **)((char *)this + 0x64) = BitFont::Instance;
+	Wide.editText = new WideWstring();
+	*(int *)((char *)this + 0x40) = 0;
+	*(int *)((char *)this + 0x5c) = 0;
+	*(int *)((char *)this + 0x90) = -1;
 }

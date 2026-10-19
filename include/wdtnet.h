@@ -870,7 +870,10 @@ namespace WorldDominationTour
 		public:
 			struct Category {
 				Category(void);
-				void Set_Name(Wstring const & name) { Name = name; }
+				void Set_Name(Wstring const & name);
+				void Read(INIClass const & ini, Wstring const & section, int side);
+				bool Pick_Standard_Sound(int side, int outcome, Wstring & out);
+				bool Pick_Emphasis_Sound(int side, int outcome, Wstring & out);
 				void FUN_007710B0(INIClass const & ini, Wstring const & section, int side, int outcome, Wstring const & name);
 
 				Wstring Name;
@@ -888,6 +891,9 @@ namespace WorldDominationTour
 			void FUN_007714B0(int voice, bool count_queued, int delay);
 			void FUN_007712C0(int category, int outcome, bool emphasis, bool count_queued, int delay);
 			bool FUN_007717F0(void);
+			void Advance(void);
+			void Discard(void);
+			void Cleanup(void);
 
 		public:
 			int Side;

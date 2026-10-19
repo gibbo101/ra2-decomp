@@ -445,7 +445,23 @@ template class TClassFactory<Tactical>;
 template class TClassFactory<CellClass>;
 
 // FUNCTION: 0x006BFA40 ?$TClassFactory@VEMPulseClass@@::?$TClassFactory@VEMPulseClass@@
+// FUNCTION: 0x006BFA50 ?$TClassFactory@VEMPulseClass@@::QueryInterface
+// FUNCTION: 0x006BFAC0 ?$TClassFactory@VEMPulseClass@@::AddRef
+// FUNCTION: 0x006BFAE0 ?$TClassFactory@VEMPulseClass@@::Release
+// FUNCTION: 0x006BFB10 ?$TClassFactory@VEMPulseClass@@::CreateInstance
+// FUNCTION: 0x006BFB90 ?$TClassFactory@VEMPulseClass@@::LockServer
 template class TClassFactory<EMPulseClass>;
+
+// FUNCTION: 0x006BFBC0 ?$TClassFactory@VLightSourceClass@@::?$TClassFactory@VLightSourceClass@@
+// FUNCTION: 0x006BFBD0 ?$TClassFactory@VLightSourceClass@@::QueryInterface
+// FUNCTION: 0x006BFC40 ?$TClassFactory@VLightSourceClass@@::AddRef
+// FUNCTION: 0x006BFC60 ?$TClassFactory@VLightSourceClass@@::Release
+// FUNCTION: 0x006BFC90 ?$TClassFactory@VLightSourceClass@@::CreateInstance
+// FUNCTION: 0x006BFD10 ?$TClassFactory@VLightSourceClass@@::LockServer
+template class TClassFactory<LightSourceClass>;
+
+// FUNCTION: 0x006BFD40 ?$TClassFactory@VSideClass@@::?$TClassFactory@VSideClass@@
+template class TClassFactory<SideClass>;
 
 // FUNCTION: 0x006BEDB0 ?$_com_ptr_t@V?$_com_IIID@UIUnknown@@$1?_GUID_00000000_0000_0000_c000_000000000046@@3U__s_GUID@@A@@::CreateInstance
 template class _com_ptr_t<_com_IIID<IUnknown, &__uuidof(IUnknown)> >;

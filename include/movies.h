@@ -30,6 +30,7 @@ class MovieSubtitles
 {
 	public:
 		~MovieSubtitles(void);
+		void SetCallback(void (__fastcall * callback)(void *));
 
 		int Active;
 		int field_4;
@@ -79,7 +80,7 @@ class MovieHandle
 	public:
 		virtual ~MovieHandle(void) = 0;
 		virtual bool AdvanceFrame(void) = 0;
-		virtual bool Waiting(void) = 0;
+		virtual void Waiting(void) = 0;
 		virtual void Pause(bool pause) = 0;
 		virtual void Stop(void) = 0;
 		virtual bool FramesLeft(void) = 0;
@@ -92,9 +93,28 @@ class MovieHandle
 		bool State;
 		int Width;
 		int Height;
-		void * Player;
+		VQHandle * Player;
 };
 
 inline MovieHandle::~MovieHandle(void) {}
+
+class VQMovieHandle : public MovieHandle
+{
+	public:
+		VQMovieHandle(VQHandle * player);
+		virtual ~VQMovieHandle(void);
+		virtual bool AdvanceFrame(void);
+		virtual void Waiting(void);
+		virtual void Pause(bool pause);
+		virtual void Stop(void);
+		virtual bool FramesLeft(void);
+		virtual void SetPosition(int x, int y);
+		virtual void SeekToFrame(int frame);
+		virtual void InitSubtitles(void (__fastcall * callback)(void *));
+		virtual int Timing(void);
+		virtual void Blit(void);
+
+		bool Finished;
+};
 
 extern DynamicVectorClass<MovieHandle *> IngameVQ;

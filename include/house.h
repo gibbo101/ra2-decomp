@@ -629,6 +629,7 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 		RGBClass LaserColor;
 		void Initialize_Radar_Color(void);
 		void FUN_0050B840(void);
+		void FUN_0050BA00(void);
 
 		BaseClass Base;
 

@@ -94,6 +94,7 @@ class AircraftClass : public FootClass, public IFlyControl
 		virtual void Look(bool incremental=false, bool=false) override;
 		void Draw_Rotors(Point2D const & xy, Rect const & cliprect) const;
 		bool FUN_00414A20(MissionType mission) const;
+		AbstractClass * FUN_0041A160(void);
 		virtual int Exit_Object(TechnoClass * techno, Cell cell) override;
 		virtual void Draw_It(Point2D const & point, Rect const & cliprect) const override;
 

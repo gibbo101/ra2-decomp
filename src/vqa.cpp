@@ -26,6 +26,9 @@
 #include <cmath>
 #include "fastmath.h"
 
+long __cdecl VQAMixFileHandler(VQAHandle * vqa, long action, void * buffer, long nbytes);
+long __cdecl VQACCFileHandler(VQAHandle * vqa, long action, void * buffer, long nbytes);
+long __cdecl VQAEventHandler(VQAHandle * vqa, long action, void * buffer, long nbytes);
 long __cdecl VQAMemoryHandler(VQAHandle * vqa, long action, void * buffer, long nbytes);
 
 extern const double DAT_007E1708;
@@ -87,6 +90,292 @@ VQAShortPair DAT_00B45B28;
 
 // FUNCTION: 0x00759140 $E69
 VQAIntTriple DAT_00B45B48;
+
+struct VQAColorInit {
+	int A;
+	int B;
+	int C;
+	VQAColorInit() { C = 0; A = 0x80; B = 0x80; }
+};
+
+// FUNCTION: 0x00759160 $E72
+VQAColorInit DAT_00B45B88;
+
+// FUNCTION: 0x00759180 $E77
+// FUNCTION: 0x007591C0 $E75
+DynamicVectorClass<MovieHandle *> IngameVQ;
+
+extern int DAT_00AA0430;
+int __fastcall FUN_0053E770(MSG *msg, HWND wnd, UINT min, UINT max, UINT flags);
+int __fastcall FUN_0053E730(MSG *msg, HWND wnd, UINT min, UINT max);
+
+// FUNCTION: 0x00759200
+bool VQA_Message_Handler(void)
+{
+	MSG msg;
+
+	DAT_00AA0430++;
+	if (FUN_0053E770(&msg, NULL, 0, 0, 0)) {
+		if (FUN_0053E730(&msg, NULL, 0, 0)) {
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		} else {
+			return(false);
+		}
+	}
+	return(true);
+}
+
+// FUNCTION: 0x00759260
+VQAClass::VQAClass(char const * filename, int flags, VQA_SURF_LOCK_CALLBACK surface_lock, VQA_SURF_UNLOCK_CALLBACK surface_unlock, VQA_SURF_DRAW_CALLBACK surface_draw, int frame_rate, int draw_rate)
+{
+	unsigned char buffer;
+	VQA_DefaultConfig(&Config);
+
+	Flags = flags;
+	Config.Owner = this;
+	Config.ImageBuf  = (unsigned char *)&buffer;
+	Config.DrawFlags = 0;
+	if (Get_Option(OPTION_NO_BUFFER) == false) {
+		Config.DrawFlags |= VQACFGF_BUFFER;
+	}
+
+	if (Get_Option(OPTION_1) == false) {
+		Config.DrawFlags |= VQACFGF_NOSKIP;
+	}
+
+	if (Get_Option(OPTION_10) == true) {
+		Config.DrawFlags |= VQACFGF_HALFSIZE;
+	}
+
+	if (Get_Option(OPTION_12) == true) {
+		Config.DrawFlags |= VQACFGF_NOTRANS;
+	}
+
+	Config.OptionFlags |= VQAOPTF_PALOFF;
+
+	if ((Flags & VQACF_2)) {
+		Config.OptionFlags |= VQAOPTF_LOOPS;
+		if ((Flags & VQACF_4)) {
+			Config.OptionFlags |= VQAOPTF_LOOPCACHE;
+		}
+	} else {
+		Config.OptionFlags &= ~VQAOPTF_LOOPS;
+	}
+
+	if (Get_Option(OPTION_17) == true) {
+		Config.OptionFlags |= VQAOPTF_MONO;
+	} else {
+		Config.OptionFlags &= ~VQAOPTF_MONO;
+	}
+
+	if (Get_Option(OPTION_NO_AUDIO) == true) {
+		Config.OptionFlags &= ~VQAOPTF_AUDIO;
+	} else {
+		Config.OptionFlags |= VQAOPTF_AUDIO;
+	}
+
+	Config.ImageWidth = -1;
+	Config.ImageHeight = -1;
+	Config.X1 = 0;
+	Config.Y1 = 0;
+	Config.DrawerCallback = NULL;
+	Config.FrameRate = frame_rate;
+	Config.DrawRate = draw_rate;
+
+	if (Get_Option(OPTION_NO_AUDIO) == true) {
+		Config.NumFrameBufs = 1;
+	} else {
+		Config.NumFrameBufs = 14;
+	}
+
+	Config.NumCBBufs = -1;
+
+	if (Flags & VQACF_PLAY_FROM_MIXFILE) {
+		Config.StreamHandler = VQAMixFileHandler;
+	} else {
+		Config.StreamHandler = VQACCFileHandler;
+	}
+
+	Config.MemoryHandler = VQAMemoryHandler;
+	Config.EventHandler = VQAEventHandler;
+
+	if (Get_Option(OPTION_SIMPLE_TIMER_CALLBACK) == true) {
+		Config.TimerCallback = Simple_Timer_Callback_Audio_Handler;
+		Config.RefreshRate = 60;
+	} else {
+		Config.TimerCallback = Timer_Callback_Audio_Handler;
+		Config.RefreshRate = 60;
+		Config.LatencyAdjustment = Options.SoundLatency;
+	}
+
+	Config.AudioHandler = Stream_Audio_Handler;
+	Config.HMIBufSize = 8192;
+	CurrentFrame = 0;
+
+	Event3Frame = 0;
+	TotalFrames = 0;
+	strcpy(Filename, filename);
+
+	Width = 0;
+	Height = 0;
+	DrawBufferWidth = 0;
+	DrawBufferHeight = 0;
+	PrimaryColorMode = -1;
+	HasPaletteChanged = false;
+	SurfaceLockCallback = surface_lock;
+	SurfaceUnlockCallback = surface_unlock;
+	SurfaceDrawCallback = surface_draw;
+	IsFileOpen = false;
+	IsOpen = false;
+
+	IsPaused = false;
+	IsAdvanceReady = false;
+	Subtitles = NULL;
+}
+
+// FUNCTION: 0x00759510
+VQAClass::~VQAClass(void)
+{
+	Hicolor_Clear_Table();
+}
+
+// FUNCTION: 0x00759540
+long VQAClass::Cache_VQA(unsigned long bytes_to_cache)
+{
+	if (!IsFileOpen) {
+		IsFileOpen = FileHandle.Open(Filename, FileClass::READ) != 0;
+		if (!IsFileOpen) {
+			return(CACHE_OPEN_FILE_ERROR);
+		}
+		int size = FileHandle.Size();
+		Cache.file_size = size;
+		Cache.file_buffer_pos = 0;
+		Cache.file_offset = 0;
+		Cache.file_buffer = (unsigned char *)malloc(size);
+		if (Cache.file_buffer == NULL) {
+			FileHandle.Close();
+			IsFileOpen = false;
+			return(CACHE_FAILED_MEM_ALLOC);
+		}
+	}
+
+	if (bytes_to_cache == CACHE_REST_OF_FILE) {
+		bytes_to_cache = Cache.file_size - Cache.file_offset;
+	} else {
+		if (Cache.file_offset + bytes_to_cache > Cache.file_size) {
+			bytes_to_cache = Cache.file_size - Cache.file_offset;
+		}
+	}
+
+	if ((unsigned)FileHandle.Read(Cache.file_buffer + Cache.file_offset, bytes_to_cache) != bytes_to_cache) {
+		FileHandle.Close();
+		IsFileOpen = false;
+		Cache.file_buffer_pos = 0;
+		Cache.file_offset = 0;
+		return(CACHE_READ_ERROR);
+	}
+
+	Cache.file_offset += bytes_to_cache;
+	if (Cache.file_offset >= Cache.file_size) {
+		FileHandle.Close();
+		IsFileOpen = false;
+		return(CACHE_EOF);
+	}
+	return(CACHE_NO_ERROR);
+}
+
+// FUNCTION: 0x00759670
+long VQAClass::CacheHandler(long action, void * buffer, long nbytes)
+{
+	long rc = 1;
+
+	switch (action) {
+		case VQACMD_INIT:
+		case VQACMD_CLEANUP:
+		case VQACMD_OPEN:
+		case VQACMD_CLOSE:
+			rc = 0;
+			break;
+
+		case VQACMD_READ:
+			if (Cache.file_buffer_pos + nbytes > Cache.file_size) {
+				rc = 1;
+				return(rc);
+			} else {
+				memcpy(buffer, Cache.file_buffer + Cache.file_buffer_pos, nbytes);
+				Cache.file_buffer_pos += nbytes;
+				rc = 0;
+			}
+			break;
+
+		case VQACMD_SEEK:
+			switch ((int)buffer) {
+				case 1:
+					Cache.file_buffer_pos += nbytes;
+					rc = 0;
+					break;
+				case 0:
+					Cache.file_buffer_pos = nbytes;
+					rc = 0;
+					break;
+				case 2:
+					Cache.file_buffer_pos = Cache.file_size - nbytes - 1;
+					rc = 0;
+					break;
+
+				default:
+					rc = 1;
+					break;
+			}
+			break;
+
+		default:
+			rc = 1;
+			break;
+	}
+	return(rc);
+}
+
+// FUNCTION: 0x00759760
+void VQAClass::Handle_Palette_Event(void *buffer)
+{
+	memcpy(Palette, buffer, sizeof(Palette));
+	HasPaletteChanged = true;
+}
+
+// FUNCTION: 0x00759790
+void VQAClass::Set_DirectDraw_Palette(void)
+{
+	Set_Palette(Palette);
+}
+
+// FUNCTION: 0x007597A0
+bool VQAClass::Open_And_Load_Buffers(void)
+{
+	if (VQA_Open(Filename, &Config, &Handle) != VQAERR_NONE) {
+		IsOpen = false;
+		return(false);
+	}
+	VQAHandleP *vqap = (VQAHandleP *)Handle;
+	TotalFrames = vqap->NumFrames;
+	DesiredColorMode = vqap->ColorMode;
+	Width = vqap->ImageWidth;
+	Height = vqap->ImageHeight;
+
+	IsOpen = true;
+
+	return(true);
+}
+
+// FUNCTION: 0x00759810
+int VQAClass::Get_VQA_Version(void) const
+{
+	if (Handle != NULL) {
+		return((VQAHandleP *)Handle)->Version;
+	}
+	return(-1);
+}
 
 // FUNCTION: 0x0075A2D0
 long             VQACacheHandler(VQAHandle * vqa, long action, void * buffer, long nbytes)

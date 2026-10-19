@@ -5,6 +5,12 @@
 
 #include "always.h"
 #include "geometry.h"
+#include "progress.h"
+#include "gscreen.h"
+#include "scheme.h"
+#include "surface.h"
+#include <string.h>
+#include "session.h"
 
 // FUNCTION: 0x00642790 $E2
 // FUNCTION: 0x006427C0 $E5
@@ -18,3 +24,99 @@
 // FUNCTION: 0x00642900 $E29
 // FUNCTION: 0x00642930 $E32
 // FUNCTION: 0x00642940 $E35
+
+ProgressScreenClass Progress;
+
+// FUNCTION: 0x00642960 $E38
+// FUNCTION: 0x00642980 $E78
+// FUNCTION: 0x006429A0 $E76
+// FUNCTION: 0x006429E0 ProgressScreenClass::ProgressScreenClass
+ProgressScreenClass::ProgressScreenClass(void) :
+	MainProgress(0), Field50(0), Buffer(0), BufferOwned(false), Field5C(0), IsActive(false),
+	PlayerCount(0), Field62(false), Dialog(0), Pos(0, 0), Field70(false),
+	Field78(-1), Percentage(0), Side(-1)
+{
+	int count = MAX_PLAYERS;
+	for (int i = 0; i < count; i++) {
+		PlayerProgress[i] = 0;
+	}
+}
+
+// FUNCTION: 0x00642A30 ProgressScreenClass::~ProgressScreenClass
+ProgressScreenClass::~ProgressScreenClass(void)
+{
+	if (BufferOwned) {
+		delete Buffer;
+		BufferOwned = false;
+	}
+	Buffer = 0;
+}
+
+// FUNCTION: 0x00642A60 ProgressScreenClass::Initialize
+void ProgressScreenClass::Initialize(double progress, char count, void * dialog)
+{
+	MainProgress = progress;
+	PlayerCount = count;
+	for (int i = 0; i < PlayerCount; i++) {
+		PlayerProgress[i] = 0;
+	}
+	IsActive = true;
+	if (dialog != 0) {
+		Dialog = dialog;
+	} else {
+		HiddenSurface->Fill(0);
+	}
+	Field50 = 0;
+	Percentage = -1;
+}
+
+// FUNCTION: 0x00642AD0 ProgressScreenClass::End
+void ProgressScreenClass::End(void)
+{
+	IsActive = false;
+}
+
+// FUNCTION: 0x00642AE0 ProgressScreenClass::Free_Buffer
+void ProgressScreenClass::Free_Buffer(void)
+{
+	if (BufferOwned) {
+		delete Buffer;
+		BufferOwned = false;
+	}
+	Buffer = 0;
+}
+
+// FUNCTION: 0x00642B10 ProgressScreenClass::Set_Side
+void ProgressScreenClass::Set_Side(int side)
+{
+	Side = side;
+}
+
+// FUNCTION: 0x00642B20 ProgressScreenClass::Get_Side
+int ProgressScreenClass::Get_Side(void) const
+{
+	return Side;
+}
+
+// FUNCTION: 0x00642B30 ProgressScreenClass::Side_Scheme
+ColorScheme * ProgressScreenClass::Side_Scheme(void) const
+{
+	if (Side == 0) {
+		return Fetch_Scheme_By_Name("AlliedLoad");
+	}
+	return Fetch_Scheme_By_Name("SovietLoad");
+}
+
+// FUNCTION: 0x00642B60 ProgressScreenClass::Loading_Scheme
+ColorScheme * ProgressScreenClass::Loading_Scheme(void) const
+{
+	if (Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) {
+		if (Session.Players[0]->Slot.SpectatorFlag == -1) {
+			return Fetch_Scheme_By_Name("LightGrey");
+		}
+	}
+	if (Side == 0) {
+		return Fetch_Scheme_By_Name("AlliedLoad");
+	}
+	return Fetch_Scheme_By_Name("SovietLoad");
+}

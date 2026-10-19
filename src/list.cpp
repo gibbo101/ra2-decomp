@@ -19,7 +19,7 @@
 #include "wwmouse.h"
 
 // FUNCTION: 0x00557AC0
-char const * ListClass::Get_Item(int index) const
+wchar_t const * ListClass::Get_Item(int index) const
 {
 	if (List.Count() == 0) {
 		return(NULL);

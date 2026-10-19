@@ -11,6 +11,7 @@
 #include "color.hh"
 #include "dialog.hh"
 
+class BitFont;
 class FontClass;
 class Surface;
 class ColorScheme;
@@ -35,5 +36,5 @@ Point2D * __cdecl Fancy_Text_Print_Wide(Point2D * ret, wchar_t const * text, Sur
 Point2D Conquer_Clip_Text_Print_Wide(wchar_t const * text, Surface * surface, Rect const * rect, Point2D const * pt, unsigned fore, unsigned back, TextPrintType flag, int width, int const * tabs);
 Point2D Conquer_Clip_Text_Print_Wide(wchar_t const * text, Surface * surface, Rect const * rect, Point2D const * pt, ColorScheme * scheme, unsigned back, TextPrintType flag, int width, int const * tabs);
 
-FontClass *Font_From_TPF(TextPrintType flags);
+BitFont * Font_From_TPF(TextPrintType flags);
 unsigned char * Font_Palette(int color);

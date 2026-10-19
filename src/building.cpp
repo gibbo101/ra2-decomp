@@ -85,6 +85,7 @@
 
 extern Point2D DAT_0089C848;
 extern Cell DAT_0089C818;
+extern TPoint3D<int> DAT_0089C870;
 SideType FUN_006A46D0(char const * name);
 void __fastcall FUN_00750D40(Coord const & coord, AudioController * controller);
 
@@ -4756,6 +4757,138 @@ int BuildingClass::Anti_Air(void) const
 int BuildingClass::Anti_Armor(void) const
 {
 	return(Class->AntiArmorValue);
+}
+
+// FUNCTION: 0x00459890
+int BuildingClass::Anti_Infantry(void) const
+{
+	return(Class->AntiInfantryValue);
+}
+
+// FUNCTION: 0x004598A0
+int BuildingClass::IsAbsorbAllowed(void) const
+{
+	if (Class->UnitAbsorb || Class->InfantryAbsorb) {
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x004598D0
+bool BuildingClass::FUN_004598D0(void) const
+{
+	if (Class->UndeploysInto != NULL && Class->ResourceGatherer) {
+		return(false);
+	}
+	return(IsStrange() ? false : true);
+}
+
+static inline bool _Same(Coord const & a, TPoint3D<int> const & b) {return(a == b);}
+static inline bool _Usable(Coord const & a) {return(a != (Coord const &)DAT_0089C848 && !(a == DAT_0089C870));}
+
+// FUNCTION: 0x00459900
+void BuildingClass::UpdateRefinerySmokeSystems(void)
+{
+	ParticleSystemTypeClass const * type = Class->RefinerySmokeParticleSystem;
+	if (type != NULL) {
+		int frames = Class->RefinerySmokeFrames;
+		{
+		Coord offset = Class->RefinerySmokeOffsetOne;
+		if (offset != (Coord const &)DAT_0089C848 && !_Same(offset, DAT_0089C870)) {
+			ParticleSystemClass * psys = new ParticleSystemClass(type, PositionCoord + offset, NULL, this, (Coord const &)DAT_0089C848, NULL);
+			psys->FUN_006301F0(frames);
+		}
+		}
+		{
+		Coord offset = Class->RefinerySmokeOffsetTwo;
+		if (_Usable(offset)) {
+			ParticleSystemClass * psys = new ParticleSystemClass(type, PositionCoord + offset, NULL, this, (Coord const &)DAT_0089C848, NULL);
+			psys->FUN_006301F0(frames);
+		}
+		}
+		{
+		Coord offset = Class->RefinerySmokeOffsetThree;
+		if (_Usable(offset)) {
+			ParticleSystemClass * psys = new ParticleSystemClass(type, PositionCoord + offset, NULL, this, (Coord const &)DAT_0089C848, NULL);
+			psys->FUN_006301F0(frames);
+		}
+		}
+		{
+		Coord offset = Class->RefinerySmokeOffsetFour;
+		if (_Usable(offset)) {
+			ParticleSystemClass * psys = new ParticleSystemClass(type, PositionCoord + offset, NULL, this, (Coord const &)DAT_0089C848, NULL);
+			psys->FUN_006301F0(frames);
+		}
+		}
+	}
+}
+
+// FUNCTION: 0x00459C00
+bool BuildingClass::CanBeSelectedNow(void) const
+{
+	if (!Class->IsVehicle()) {
+		return(false);
+	}
+	return(TechnoClass::CanBeSelectedNow());
+}
+
+static inline CellClass * _As_Cell(AbstractClass * target)
+{
+	return((target == NULL) ? NULL : ((target->RTTI == RTTI_CELL) ? (CellClass *)target : NULL));
+}
+
+#pragma warning(push)
+#pragma warning(disable : 4716)
+// FUNCTION: 0x00459C20
+int BuildingClass::VoiceDeploy(void)
+{
+	if (Is_Target_Cell(ArchiveTarget)) {
+		if (_As_Cell(ArchiveTarget)->Land_Type() == LAND_TIBERIUM && Class->ResourceDestination && Class->ResourceGatherer && Class->VoiceHarvest != -1) {
+			QueueVoice(Class->VoiceHarvest);
+		} else {
+			return(TechnoClass::VoiceDeploy());
+		}
+	} else {
+		return(TechnoClass::VoiceDeploy());
+	}
+}
+#pragma warning(pop)
+
+static inline bool _Exit_Free(Cell const & cell)
+{
+	return(Map.In_Radar(cell) && Map[cell].Cell_Occupier() == NULL && Map[cell].Is_Clear_To_Move(SPEED_FOOT, false, false));
+}
+
+// FUNCTION: 0x00459CA0
+bool BuildingClass::FUN_00459CA0(void) const
+{
+	Cell const * list = Class->ExitList;
+	Cell origin = Get_Cell();
+	if (list != NULL) {
+		while (*list != REFRESH_EOL) {
+			if (_Exit_Free(origin + *list++)) {
+				return(true);
+			}
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00459D80 TechnoClass::Is_In_Team
+
+// FUNCTION: 0x00459D90 TechnoClass::Is_In_Same_Zone_As
+
+// FUNCTION: 0x00459DA0 TechnoClass::Get_Z_Gradient
+
+// FUNCTION: 0x00459DB0
+Cell TechnoClass::GetLastFlightMapCoords(void) const
+{
+	return(DAT_0089C818);
+}
+
+// FUNCTION: 0x00459DC0
+void TechnoClass::SetLastFlightMapCoords(Cell coord)
+{
 }
 
 // FUNCTION: 0x00459E80

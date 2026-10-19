@@ -27,6 +27,7 @@ class FlyLocomotionClass : public LocomotionClass
 
 		virtual HRESULT STDMETHODCALLTYPE GetClassID(CLSID * retval) override;
 		virtual HRESULT STDMETHODCALLTYPE Load(IStream * stream) override;
+		virtual HRESULT STDMETHODCALLTYPE Link_To_Object(void * object) override;
 
 		virtual boolean STDMETHODCALLTYPE Is_Moving(void) override;
 		virtual boolean STDMETHODCALLTYPE Is_Moving_Now(void) override;

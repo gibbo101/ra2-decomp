@@ -66,7 +66,7 @@ namespace OwnerDraw {
 
 		Surface * background;
 
-		char text[128];
+		wchar_t text[128];
 
 		int isActive;
 
@@ -207,6 +207,7 @@ namespace OwnerDraw {
 		int animState;
 		unsigned char reserved[0xC0];
 
+		WinData(void);
 		~WinData(void)
 		{
 			if (Wide.text) {
@@ -225,6 +226,7 @@ namespace OwnerDraw {
 	};
 
 	void Initialize(void);
+	LRESULT CALLBACK SysListViewHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 	void Register_Control_Classes(void);
 	bool Subclass_Dialog(HWND window, LPARAM lParam);
 
@@ -242,9 +244,9 @@ namespace OwnerDraw {
 	int Default_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 	bool Dialog_Message_Handler(void);
 
-	bool Start_Tooltip(Rect const & rect, char const * text, HWND window);
-	bool Show_Tooltip(bool save_background);
-	bool Hide_Tooltip(void);
+	bool Start_Tooltip(Rect const & rect, wchar_t const * text, HWND window);
+	bool DrawTooltip(bool save_background);
+	bool RestoreTooltipBackground(void);
 	bool End_Tooltip(void);
 
 	HWND Custom_Message_Box(const char * btn1txt, const char * btn2txt = NULL, bool * cancelled = NULL);

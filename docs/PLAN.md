@@ -1019,6 +1019,20 @@ twelve functions wait on Init_Commands. RTTI renamed movies.cpp's `IngameVQ` to 
 To_ASCII; declaring it flipped UnitClass::Draw_It, which a dead `= 0` had left at the
 mercy of VC6's symbol table, and removing that store holds it under any added declaration. Cost: about 6.35M tokens. Merge gate: 6,582 of 6,582 (986.6 KB).
 
+### Batches 42, 43 and 44 (19 October 2026)
+
+**408 of 432 functions** (138, 133, 137), plus three found along the way. Batch 43's
+merge made ListClass, DropListClass, CheckListClass and EditClass wide, each proved
+against the exe's vtables. Batch 44 found ChronoScreenEffect::Update's extent wrong,
+which exposed two bugs in `tools/functions.py`: numeric data inside a switch table was
+taken for a code pointer, and a table starting on a padded boundary failed the after-table
+test. Fixing them added four missed functions. Scenario's seven functions first landed
+behind local structs cast over Map and other real objects; they now use real
+declarations (MapClass's zone functions, Kamikaze, the Write_INI statics). Both batch
+merges declined point.h changes that would have regressed 15 and 229 matched functions.
+Five unvq routines are Westwood's hand-written assembly. Cost: about 7.7M tokens. Merge
+gate: 6,993 of 6,993 (1,054.5 KB), about 36% of game functions.
+
 ### Decide before the first batch
 
 - **Module layout.** Which function lives in which source file, and the link order, decide

@@ -26,14 +26,14 @@ CheckListClass::~CheckListClass(void)
 }
 
 // FUNCTION: 0x00488310
-int CheckListClass::Add_Item(char const * text)
+int CheckListClass::Add_Item(wchar_t const * text)
 {
 	CheckObject * obj = new CheckObject(text, false);
-	return(BASECLASS::Add_Item((char const *)obj));
+	return(BASECLASS::Add_Item((wchar_t const *)obj));
 }
 
 // FUNCTION: 0x00488350
-char const * CheckListClass::Current_Item(void) const
+wchar_t const * CheckListClass::Current_Item(void) const
 {
 	CheckObject * obj = (CheckObject *)BASECLASS::Current_Item();
 	if (obj) {
@@ -43,7 +43,7 @@ char const * CheckListClass::Current_Item(void) const
 }
 
 // FUNCTION: 0x00488360
-char const * CheckListClass::Get_Item(int index) const
+wchar_t const * CheckListClass::Get_Item(int index) const
 {
 	CheckObject * obj = (CheckObject *)BASECLASS::Get_Item(index);
 	if (obj) {

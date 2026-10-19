@@ -3996,6 +3996,190 @@ void HouseClass::FUN_0050B840(void)
 	RemapColorRGB = color;
 }
 
+extern double __cdecl FUN_004CAC40(double);
+extern float DAT_007E2AC8;
+
+// FUNCTION: 0x0050B920
+void __fastcall FUN_0050B920(double * r, double * g, double * b)
+{
+	double len = FUN_004CAC40(*r * *r + *b * *b + *g * *g);
+	if (len == 0.0) {
+		*b = 255.0;
+		*g = 255.0;
+		*r = 255.0;
+		return;
+	}
+	*r = *r * 240.0 / len;
+	if (*r > 255.0) {
+		*r = 255.0;
+	}
+	*g = *g * 240.0 / len;
+	if (*g > 255.0) {
+		*g = 255.0;
+	}
+	*b = 240.0 * *b / len;
+	if (*b > 255.0) {
+		*b = 255.0;
+	}
+}
+
+// FUNCTION: 0x0050BA00
+void HouseClass::FUN_0050BA00(void)
+{
+	double r = RemapColorRGB.Get_Red();
+	double g = RemapColorRGB.Get_Green();
+	double b = RemapColorRGB.Get_Blue();
+	FUN_0050B920(&r, &g, &b);
+	if (r < 96.0) {
+		r = 0.0;
+	}
+	if (g < 96.0) {
+		g = 0.0;
+	}
+	if (b < 96.0) {
+		b = 0.0;
+	}
+	FUN_0050B920(&r, &g, &b);
+	LaserColor.Set_Red((unsigned char)(int)r);
+	LaserColor.Set_Green((unsigned char)(int)g);
+	LaserColor.Set_Blue((unsigned char)(int)b);
+}
+
+// FUNCTION: 0x0050BC90
+void HouseClass::CreatePowerOutage(int duration)
+{
+	PowerBlackoutTimer = duration;
+	RecalcPower = true;
+}
+
+// FUNCTION: 0x0050BCD0
+void HouseClass::Create_Radar_Outage(int duration)
+{
+	RadarBlackoutTimer = duration;
+	RecalcRadar = true;
+}
+
+// FUNCTION: 0x0050BD10
+void HouseClass::ReshroudMap(void)
+{
+	if (!SpySatActive) {
+		Map.Reshroud(this);
+	}
+}
+
+// FUNCTION: 0x0050BD30
+double HouseClass::GetArmorMultiplier(TechnoTypeClass const * type) const
+{
+	switch (type->Fetch_RTTI()) {
+	case RTTI_INFANTRYTYPE:
+		return Class->ArmorInfantryMult;
+	case RTTI_UNITTYPE:
+		return Class->ArmorUnitsMult;
+	case RTTI_AIRCRAFTTYPE:
+		return Class->ArmorAircraftMult;
+	case RTTI_BUILDINGTYPE:
+		if (((BuildingTypeClass const *)type)->BuildCat == 5) {
+			return Class->ArmorDefensesMult;
+		}
+		return Class->ArmorBuildingsMult;
+	}
+	return DAT_007E2AC8;
+}
+
+// FUNCTION: 0x0050BDF0
+float HouseClass::FUN_0050BDF0(TechnoTypeClass const * type) const
+{
+	switch (type->Fetch_RTTI()) {
+	case RTTI_INFANTRYTYPE:
+		return Class->CostInfantryMult;
+	case RTTI_UNITTYPE:
+		return Class->CostUnitsMult;
+	case RTTI_AIRCRAFTTYPE:
+		return Class->CostAircraftMult;
+	case RTTI_BUILDINGTYPE:
+		if (((BuildingTypeClass const *)type)->BuildCat == 5) {
+			return Class->CostDefensesMult;
+		}
+		return Class->CostBuildingsMult;
+	}
+	return 1.0f;
+}
+
+// FUNCTION: 0x0050BEB0
+float HouseClass::FUN_0050BEB0(TechnoTypeClass const * type) const
+{
+	switch (type->Fetch_RTTI()) {
+	case RTTI_INFANTRYTYPE:
+		return CostInfantryMult;
+	case RTTI_UNITTYPE:
+		return CostUnitsMult;
+	case RTTI_AIRCRAFTTYPE:
+		return CostAircraftMult;
+	case RTTI_BUILDINGTYPE:
+		if (((BuildingTypeClass const *)type)->BuildCat == 5) {
+			return CostDefensesMult;
+		}
+		return CostBuildingsMult;
+	}
+	return 1.0f;
+}
+
+// FUNCTION: 0x0050BF60
+void HouseClass::CalculateCostMultipliers(void)
+{
+	CostInfantryMult = 1.0f;
+	CostUnitsMult = 1.0f;
+	CostAircraftMult = 1.0f;
+	CostBuildingsMult = 1.0f;
+	CostDefensesMult = 1.0f;
+	for (int index = 0; index < FactoryPlants.Count(); index++) {
+		CostInfantryMult = FactoryPlants[index]->Class->InfantryCostBonus * CostInfantryMult;
+		CostUnitsMult = FactoryPlants[index]->Class->UnitsCostBonus * CostUnitsMult;
+		CostAircraftMult = FactoryPlants[index]->Class->AircraftCostBonus * CostAircraftMult;
+		CostBuildingsMult = FactoryPlants[index]->Class->BuildingsCostBonus * CostBuildingsMult;
+		CostDefensesMult = FactoryPlants[index]->Class->DefensesCostBonus * CostDefensesMult;
+	}
+}
+
+// FUNCTION: 0x0050C050
+double HouseClass::FUN_0050C050(TechnoTypeClass const * type) const
+{
+	switch (type->Fetch_RTTI()) {
+	case RTTI_AIRCRAFTTYPE:
+		return Class->SpeedAircraftMult;
+	case RTTI_INFANTRYTYPE:
+		return Class->SpeedInfantryMult;
+	case RTTI_UNITTYPE:
+		return Class->SpeedUnitsMult;
+	}
+	return DAT_007E2AC8;
+}
+
+// FUNCTION: 0x0050C0A0
+double HouseClass::FUN_0050C0A0(TechnoTypeClass const * type) const
+{
+	switch (type->Fetch_RTTI()) {
+	case RTTI_INFANTRYTYPE:
+		return Class->BuildtimeInfantryMult;
+	case RTTI_UNITTYPE:
+		return Class->BuildtimeUnitsMult;
+	case RTTI_AIRCRAFTTYPE:
+		return Class->BuildtimeAircraftMult;
+	case RTTI_BUILDINGTYPE:
+		if (((BuildingTypeClass const *)type)->BuildCat == 5) {
+			return Class->BuildtimeDefensesMult;
+		}
+		return Class->BuildtimeBuildingsMult;
+	}
+	return DAT_007E2AC8;
+}
+
+// FUNCTION: 0x0050C160
+float HouseClass::FUN_0050C160(void) const
+{
+	return Class->IncomeMult;
+}
+
 // FUNCTION: 0x0050E000
 void HouseClass::Set_Base_Spawn_Cell(Cell cell)
 {

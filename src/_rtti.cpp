@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
 #include "_rtti.h"
 #include "object.h"
 
@@ -110,3 +111,54 @@ RTTIType RTTI_From_Name(char const *name)
 	}
 	return(RTTI_NONE);
 }
+
+// FUNCTION: 0x0040DD20 Dynamic_Cast@@YIPBVTechnoClass
+template <>
+TechnoClass const * Dynamic_Cast<TechnoClass const *>(AbstractClass const * target)
+{
+	if (target != NULL) {
+		RTTIType rtti = target->Fetch_RTTI();
+		switch (rtti) {
+			case RTTI_INFANTRY:
+				return((TechnoClass *)target);
+			case RTTI_UNIT:
+				return((TechnoClass *)target);
+			case RTTI_BUILDING:
+				return((TechnoClass *)target);
+			case RTTI_AIRCRAFT:
+				return((TechnoClass *)target);
+		}
+	}
+	return(NULL);
+}
+
+// FUNCTION: 0x0040DD70 Dynamic_Cast@@YIPAVTechnoClass
+template <>
+TechnoClass * Dynamic_Cast<TechnoClass *>(AbstractClass * target)
+{
+	if (target != NULL) {
+		RTTIType rtti = target->Fetch_RTTI();
+		switch (rtti) {
+			case RTTI_INFANTRY:
+				return((TechnoClass *)target);
+			case RTTI_UNIT:
+				return((TechnoClass *)target);
+			case RTTI_BUILDING:
+				return((TechnoClass *)target);
+			case RTTI_AIRCRAFT:
+				return((TechnoClass *)target);
+		}
+	}
+	return(NULL);
+}
+
+// FUNCTION: 0x0040DDC0 $E2
+// FUNCTION: 0x0040DDF0 $E5
+// FUNCTION: 0x0040DE10 $E8
+// FUNCTION: 0x0040DE30 $E11
+// FUNCTION: 0x0040DE50 $E14
+// FUNCTION: 0x0040DE70 $E17
+// FUNCTION: 0x0040DE90 $E20
+// FUNCTION: 0x0040DED0 $E23
+// FUNCTION: 0x0040DF00 $E26
+// FUNCTION: 0x0040DF30 $E29

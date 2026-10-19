@@ -11,12 +11,12 @@ class ShapeSet;
 class CheckObject
 {
 	public:
-		CheckObject(char const * text = 0, bool checked=false) :
+		CheckObject(wchar_t const * text = 0, bool checked=false) :
 			Text(text),
 			IsChecked(checked)
 		{};
 
-		char const * Text;
+		wchar_t const * Text;
 		bool IsChecked;
 };
 
@@ -30,13 +30,12 @@ class CheckListClass : public ListClass
 			ShapeSet const * up, ShapeSet const * down);
 		~CheckListClass(void);
 
-		virtual int Add_Item(int text) override {return(BASECLASS::Add_Item(text));}
-		virtual int Add_Item(char const * text) override;
-		virtual char const * Current_Item(void) const override;
-		virtual char const * Get_Item(int index) const override;
-		virtual void Remove_Item(char const * text) override;
+		virtual int Add_Item(wchar_t const * text) override;
+		virtual wchar_t const * Current_Item(void) const override;
+		virtual wchar_t const * Get_Item(int index) const override;
+		virtual void Remove_Item(wchar_t const * text) override;
 		virtual void Remove_Item(int text) override {BASECLASS::Remove_Item(text);}
-		virtual void Set_Selected_Index(char const * text) override;
+		virtual void Set_Selected_Index(wchar_t const * text) override;
 		virtual void Set_Selected_Index(int index) override {BASECLASS::Set_Selected_Index(index);};
 
 		void Check_Item(int index, bool checked);

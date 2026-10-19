@@ -265,6 +265,12 @@ Each entry: what the diff showed, then the source change that fixed it.
   lands with its first caller, not before.
 - A class's constructor, destructors and virtuals are emitted where the class is built:
   never write a function that `new`s it to emit them (the command classes wait on Init_Commands).
+- A local struct cast over a real object (`((ScenMapOps *)&Map)->...`) is a stand-in too:
+  declare the member in its own class's header, with TibSun's name where TibSun has it.
+- An inline call the original leaves out of line goes out of line when wrapped in a file-local
+  inline helper one level deeper (bullet's Coord_Dist, building's _Usable).
+- A function start missing from data/functions.csv is fixed in tools/functions.py, then the
+  CSV regenerated; never edit the CSV by hand.
 - A run of about 13 small initialisers per file (CELL_LEPTON_DIAG through COORD_NONE)
   is `include/geometry.h`'s per-file constants: include it right after `always.h`
   (before any `extern` of the same names) and mark them; never write `Init_` stand-ins.

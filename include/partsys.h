@@ -59,6 +59,7 @@ class ParticleSystemClass : public ObjectClass
 		ParticleClass * Spawn_Particle(ParticleTypeClass *type, Coord const & coord);
 		void Clear_System(void);
 		bool Delete_Particle(int index);
+		void FUN_006301F0(int lifetime);
 
 	private:
 		void Gas_AI(void);

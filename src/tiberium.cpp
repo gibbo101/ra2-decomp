@@ -211,6 +211,7 @@ HRESULT STDMETHODCALLTYPE TiberiumClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
+// FUNCTION: 0x00723510
 void TiberiumClass::Clear_Growth(void)
 {
 	if (GrowthQueue) {
@@ -527,6 +528,7 @@ void TiberiumClass::Growth_AI(void)
 	}
 }
 
+// FUNCTION: 0x00723260
 void TiberiumClass::Init_Growth(void)
 {
 	Clear_Growth();
@@ -537,3 +539,57 @@ void TiberiumClass::Init_Growth(void)
 
 	Recalc_Growth();
 }
+
+// FUNCTION: 0x007233A0
+void TiberiumClass::Recalc_Growth(void)
+{
+	GrowthCount = 0;
+	GrowthQueue->Clear();
+
+	for (int i = Map_Cell_Count() - 1; i >= 0; i--) {
+		GrowthState[i] = false;
+	}
+
+	Map.Reset_Iterator();
+	CellClass * iter = Map.Iterate();
+	while (iter) {
+		if (iter->Tiberium_Type_Here() == HeapID && iter->Can_Tiberium_Grow()) {
+			GrowthNodes[GrowthCount].Element = iter->CellID;
+			GrowthNodes[GrowthCount].Score = 0.0;
+			GrowthQueue->Insert(GrowthNodes[GrowthCount++]);
+			GrowthState[Map_Cell_Index(iter->CellID)] = true;
+		}
+		iter = Map.Iterate();
+	}
+}
+
+// FUNCTION: 0x007235A0
+void TiberiumClass::Queue_Growth(Cell const & cell)
+{
+	int cellindex = Map_Cell_Index(cell);
+	if (Map[cell].OverlayData < MAX_GROWTH_STAGE) {
+		if (GrowthCount > Map_Cell_Count() - 10) {
+			Recalc_Growth();
+		}
+
+		GrowthNodes[GrowthCount].Element = cell;
+		GrowthNodes[GrowthCount].Score = float(Frame + abs(Scen->RandomNumber()) % MAX_GROWTH_DELAY);
+		GrowthQueue->Insert(GrowthNodes[GrowthCount++]);
+		GrowthState[cellindex] = true;
+	}
+}
+
+// FUNCTION: 0x007236D0
+void TiberiumClass::Post_Load_Game(void)
+{
+}
+
+// FUNCTION: 0x007236E0 TiberiumClass::Fetch_Object_Size
+// FUNCTION: 0x007236F0 TiberiumClass::Fetch_RTTI
+// FUNCTION: 0x00723700 TiberiumClass::Fetch_Heap_ID
+// FUNCTION: 0x00723710 TiberiumClass::~TiberiumClass
+
+// FUNCTION: 0x00723730 ?$DynamicVectorClass@PAVTiberiumClass@@::Clear
+// FUNCTION: 0x00723760 ?$DynamicVectorClass@PAVTiberiumClass@@::ID
+// FUNCTION: 0x00723780 ?$VectorClass@PAVTiberiumClass@@::GetItem
+template class DynamicVectorClass<TiberiumClass *>;

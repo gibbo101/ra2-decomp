@@ -32,6 +32,7 @@
 #include "notify.h"
 #include "overtype.h"
 #include "partsys.h"
+#include "radsite.h"
 #include "rules.h"
 #include "scheme.h"
 #include "stimer.h"
@@ -40,6 +41,7 @@
 #include "tactical.h"
 #include "techno.h"
 #include "tracker.h"
+#include "trajhelp.h"
 #include "unit.h"
 #include "voxdrsys.h"
 #include "warhead.h"
@@ -48,9 +50,13 @@
 DynamicVectorClass<BulletClass *> BulletClass::ScalableBullets;
 
 extern Cell DAT_0089DDF0;
+extern int DAT_0089DE70;
+extern int DAT_0081AF00;
+extern ULONG COMRefCount;
 
-// FUNCTION: 0x004662E0 $E107
-// FUNCTION: 0x00466320 $E104
+
+// FUNCTION: 0x004662E0 $E109
+// FUNCTION: 0x00466320 $E106
 
 // FUNCTION: 0x00466380
 BulletClass::BulletClass(void) :
@@ -136,7 +142,7 @@ Cell const * BulletClass::Occupy_List(bool) const
 	return(_list);
 }
 
-// FUNCTION: 0x004666B0 $E110
+// FUNCTION: 0x004666B0 $E112
 
 // FUNCTION: 0x004666C0
 bool BulletClass::Mark(MarkType mark)
@@ -263,16 +269,237 @@ LayerType BulletClass::In_Which_Layer(void) const
 	return(Class->Flat ? LAYER_SURFACE : LAYER_AIR);
 }
 
+// FUNCTION: 0x00468BB0
+bool BulletClass::Is_Forced_To_Explode(Coord & coord) const
+{
+	coord = PositionCoord;
+	CellClass * cell = &Map[coord];
+
+	if (Class->SubjectToCliffs || Class->SubjectToWalls) {
+		CellClass * source = &Map[SourceCoords];
+		CellClass * target = &Map[TargetCoords];
+		CellClass * current = &Map[LastMapCoords];
+		HouseClass * owner = (HouseClass *)Payback;
+		if (Payback != NULL) {
+			owner = Payback->House;
+		}
+		if (TrajectoryHelper::GetObstacle(source, target, current, coord, Class, owner)) {
+			return(true);
+		}
+	}
+
+	if (HeightAGL <= -DAT_0089DE70 * 4) {
+		return(true);
+	}
+
+	if (TarCom != NULL && Class->FlakScatter) {
+		Coord pos = PositionCoord;
+		if (pos.Z < TarCom->As_Coord().Z && HeightAGL < 0) {
+			return(true);
+		}
+	}
+
+	if (Class->Level && cell->On_Ground()) {
+		return(true);
+	}
+
+	if (Class->IsAntiAircraft && TarCom != NULL && TarCom->In_Air() && Distance(TarCom) < 128) {
+		return(true);
+	}
+
+	return(false);
+}
+
+static inline int Coord_Dist(Coord const & a, Coord const & b)
+{
+	Coord c = a - b;
+	return(c.Length());
+}
+
+// FUNCTION: 0x00468D80
+void BulletClass::Bullet_Explodes(bool forced)
+{
+	Coord coord = PositionCoord;
+	TechnoClass * target = NULL;
+	if (TarCom != NULL && TarCom->In_Air()) {
+		target = (TechnoClass *)TarCom;
+	}
+
+	if (!Class->IsInaccurate) {
+		if (TarCom != NULL) {
+			if (Coord_Dist(coord, TarCom->Center_Coord()) < 32 && !Class->IsAirburst && !Class->IsInaccurate) {
+				coord = TarCom->Center_Coord();
+			}
+		}
+
+		if (!Warhead->IsEMEffect && !Class->IsAirburst) {
+			if (!forced && !Class->IsArcing && !Is_Homing() && Fuse.Fuse_Target() != COORD_NONE) {
+				coord = Fuse.Fuse_Target();
+			}
+
+			if (target != NULL && target->In_Which_Layer() != LAYER_GROUND) {
+				if (Distance(TarCom) < 128) {
+					coord = target->Target_Coord();
+				}
+			} else if (TarCom != NULL && Distance(TarCom) < 42) {
+				coord = TarCom->As_Coord();
+				if (TarCom->Fetch_RTTI() == RTTI_BUILDING) {
+					Point3D const & offset = ((BuildingClass *)TarCom)->Class->TargetCoordOffset;
+					if (offset.X != 0 || offset.Y != 0 || offset.Z != 0) {
+						coord = ((ObjectClass *)TarCom)->Target_Coord();
+					}
+				}
+			}
+		}
+	}
+
+	if (!Class->IsAirburst) {
+		Coord newcoord = coord;
+		for (int i = 0; i < Class->Cluster; i++) {
+			Detonate(coord);
+			if (!IsActive) {
+				break;
+			}
+			coord = Coord_Scatter(newcoord, Random_Pick(CELL_LEPTON, CELL_LEPTON * 2));
+		}
+	} else {
+		Detonate(coord);
+	}
+}
+
+// FUNCTION: 0x0046ADE0
+void BulletClass::ApplyRadiationToCell(Cell cell, int radius, int amount)
+{
+	CellClass * cptr = &Map[cell];
+	RadSiteClass * site = cptr->FUN_00487C80();
+	if (site == NULL) {
+		site = new RadSiteClass();
+		site->SetBaseCell(&cell);
+		site->SetSpread(radius);
+		site->SetRadLevel(amount);
+		site->Activate();
+		cptr->FUN_00487C70(site);
+	} else {
+		site->Add(amount);
+	}
+}
+
+// FUNCTION: 0x0046AE70
+HRESULT STDMETHODCALLTYPE BulletClass::Load(IStream * stream)
+{
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		new (this) BulletClass(NoInitClass());
+		if (NextAnim != NULL) {
+			PointerExpiredNotification::NotifyInvalidAnim.Add(this);
+		}
+
+		Swizzle_Pointer(&Class);
+		Swizzle_Pointer(&Payback);
+		Swizzle_Pointer(&Warhead);
+		Swizzle_Pointer(&TarCom);
+		Swizzle_Pointer(&WeaponType);
+		Swizzle_Pointer(&NextAnim);
+	}
+	return(result);
+}
+
 // FUNCTION: 0x0046AFB0
 HRESULT STDMETHODCALLTYPE BulletClass::Save(IStream * stream, BOOL cleardirty)
 {
 	return(BASECLASS::Save(stream, cleardirty));
 }
 
+// FUNCTION: 0x0046AFD0
+ULONG STDMETHODCALLTYPE BulletClass::AddRef(void)
+{
+	COMRefCount++;
+	return(InterlockedIncrement(&RefCount));
+}
+
+// FUNCTION: 0x0046AFF0
+ULONG STDMETHODCALLTYPE BulletClass::Release(void)
+{
+	COMRefCount--;
+	ULONG count = InterlockedDecrement(&RefCount);
+	if (count == 0) {
+		delete this;
+	}
+	return(count);
+}
+
+// FUNCTION: 0x0046B030
+bool BulletClass::Is_Homing(void) const
+{
+	if (Class->ROT > 0) {
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x0046B050
+BulletClass * __fastcall Create_Bullet(BulletTypeClass const * type, AbstractClass * target, TechnoClass * payback, int strength, WarheadTypeClass const * warhead, int max_speed, bool bright)
+{
+	LPVOID unk = NULL;
+	if (FAILED(CoCreateInstance(CLSID_BulletClass, NULL, CLSCTX_INPROC_SERVER | CLSCTX_INPROC_HANDLER | CLSCTX_LOCAL_SERVER, IID_IUnknown, &unk))) {
+		return(NULL);
+	}
+
+	BulletClass * bullet = (BulletClass *)unk;
+	bullet->Construct(type, target, payback, strength, warhead, max_speed, bright);
+	return(bullet);
+}
+
+// FUNCTION: 0x0046B0C0
+void BulletClass::Draw_Voxel(VoxelDataStruct const & voxeldata, Matrix3D const & transform, Point2D const & drawpoint, Rect const & cliprect, int frame, ShapeFlags_Type flags, int brightness) const
+{
+	VoxelLibrary * voxlib = voxeldata.VoxLib;
+	MotionLibrary * motlib = voxeldata.MotLib;
+
+	VoxelDrawSystem::Precalculate_Light(voxlib, 0, 0, transform, VoxelLightSource);
+	VoxelDrawSystem::Reset();
+
+	for (unsigned int i = 0; i < voxlib->Get_Layer_Count(); i++) {
+		Matrix3D matrix;
+		if (motlib != NULL) {
+			Matrix3D hva_transform = motlib->Get_Layer_Matrix(i, frame);
+			matrix = transform * hva_transform;
+		}
+		VoxelDrawSystem::Prep_For_Object(voxlib, i, 0, VoxelCameraMatrix * matrix);
+	}
+
+	SurfaceRegion region = VoxelDrawSystem::Render();
+	int extra = 0;
+	ShapeFlags_Type f = ShapeFlags_Type(flags & ~SHAPE_REMAP);
+	if (Class->Flat) {
+		extra = DAT_0081AF00;
+		f = ShapeFlags_Type(f | 0x2000);
+	}
+
+	Blit_Block(*LogicalSurface, *ColorSchemes[Class->Color]->Converter, *VoxelDrawSystem::Get_Surface(), region.Bounds, region.Point + drawpoint, cliprect, NULL, ColorSchemes[Class->Color]->Converter->Blitter_From_Flags(f), extra, Class->Flat ? ZGRAD_GROUND : ZGRAD_90DEG, brightness, 0, 0);
+}
+
 // FUNCTION: 0x0046B260
 void BulletClass::Set_Weapon_Type(WeaponTypeClass * weapon)
 {
 	WeaponType = weapon;
+}
+
+// FUNCTION: 0x0046B270
+WeaponTypeClass * BulletClass::Get_Weapon_Type(void) const
+{
+	return(WeaponType);
+}
+
+// FUNCTION: 0x0046B280
+void BulletClass::InitScalable(void)
+{
+	ScalableBullets.Add(this);
+	int extra = ScalableBullets.Count() - 5;
+	if (extra < 0) {
+		extra = 0;
+	}
+	Class->SetScaledSpawnDelay(Class->SpawnDelay + extra / 3);
 }
 
 // FUNCTION: 0x0046B560

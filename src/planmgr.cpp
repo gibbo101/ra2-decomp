@@ -352,6 +352,18 @@ class PlanToken
 		bool Has_Started(void);
 		PlanningNodeClass * FUN_00636E60(int index);
 		PlanningNodeClass * Wrapped_Node_At(int index);
+		PlanningNodeClass * Last_Node(void);
+		bool Has_Node(PlanningNodeClass * node);
+		int Node_Index(PlanningNodeClass * node);
+		EventClass Event_At(int index);
+		EventClass Last_Popped(void);
+		PlanningNodeClass * Loop_Node(void);
+		void Set_Loop(int count, int start);
+		int Get_Loop_Count(void);
+		int Get_Loop_Start(void);
+		bool Loop_Start_Valid(void);
+		bool Loop_Start_Positive(void);
+		bool Loop_Start_Zero(void);
 		EventClass Pop_Front(void);
 		void Share_Range(TechnoClass * techno, int start, int count);
 		void Share_From(TechnoClass * techno, int start);
@@ -1639,4 +1651,92 @@ PlanningNodeClass * PlanToken::Wrapped_Node_At(int index)
 	}
 	if (index < 0 || index >= count) return 0;
 	return Nodes[index];
+}
+
+// FUNCTION: 0x00636EB0
+PlanningNodeClass * PlanToken::Last_Node(void)
+{
+	int index = Nodes.Count() - 1;
+	if (index < 0) return 0;
+	return Nodes[index];
+}
+
+// FUNCTION: 0x00636EC0
+bool PlanToken::Has_Node(PlanningNodeClass * node)
+{
+	return Nodes.ID(node) != -1;
+}
+
+// FUNCTION: 0x00636EE0
+int PlanToken::Node_Index(PlanningNodeClass * node)
+{
+	return Nodes.ID(node);
+}
+
+// FUNCTION: 0x00636F00
+EventClass PlanToken::Event_At(int index)
+{
+	PlanningNodeClass * node = Nodes[index];
+	TechnoClass * owner = Owner;
+	int found = -1;
+	int count = node->Members.Count();
+	for (int i = 0; i < count; i++) {
+		if (node->Members[i]->Owner == owner) {
+			found = i;
+			break;
+		}
+	}
+	PlanMember * member = (found == -1) ? 0 : node->Members[found];
+	return *member->Packet;
+}
+
+// FUNCTION: 0x00636F60
+EventClass PlanToken::Last_Popped(void)
+{
+	return *(EventClass *)&F1D;
+}
+
+// FUNCTION: 0x00636F80
+PlanningNodeClass * PlanToken::Loop_Node(void)
+{
+	if (LoopStart == -1) return 0;
+	return Nodes[LoopStart];
+}
+
+// FUNCTION: 0x00636FA0
+void PlanToken::Set_Loop(int count, int start)
+{
+	LoopCount = count;
+	LoopStart = start;
+	F98 = true;
+}
+
+// FUNCTION: 0x00636FC0
+int PlanToken::Get_Loop_Count(void)
+{
+	return LoopCount;
+}
+
+// FUNCTION: 0x00636FD0
+int PlanToken::Get_Loop_Start(void)
+{
+	return LoopStart;
+}
+
+// FUNCTION: 0x00636FE0
+bool PlanToken::Loop_Start_Valid(void)
+{
+	return LoopStart > 0 || LoopStart == 0;
+}
+
+// FUNCTION: 0x00637000
+bool PlanToken::Loop_Start_Positive(void)
+{
+	return LoopStart > 0;
+}
+
+// FUNCTION: 0x00637010
+bool PlanToken::Loop_Start_Zero(void)
+{
+	return LoopStart == 0;
 }

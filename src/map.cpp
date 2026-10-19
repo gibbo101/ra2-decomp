@@ -3988,6 +3988,277 @@ bool MapClass::Damage_Low_Bridge(Cell const & cell)
 	return(false);
 }
 
+#define LB2(n) ((OverlayType)(204 + (n)))
+
+static inline bool Is_Low_Bridge2(Cell const & cell)
+{
+	OverlayType overlay = Map[cell].Overlay;
+	return(overlay >= LB2(1) && overlay <= LB2(28));
+}
+
+// FUNCTION: 0x0057C870
+void MapClass::Spring_Low_Bridge_Destroyed_NS(Cell cell)
+{
+	Cell tmp = cell;
+	do {
+		tmp = Adjacent_Cell(tmp, FACING_N);
+	} while (Is_Low_Bridge(tmp));
+
+	Cell start = Adjacent_Cell(tmp, FACING_S);
+
+	tmp = cell;
+	do {
+		tmp = Adjacent_Cell(tmp, FACING_S);
+	} while (Is_Low_Bridge(tmp));
+
+	Cell end = Adjacent_Cell(tmp, FACING_N);
+
+	Spring_Bridge_Destruction_Triggers(start, end);
+}
+
+// FUNCTION: 0x0057C990
+void MapClass::Spring_Low_Bridge_Destroyed_EW(Cell cell)
+{
+	Cell tmp = cell;
+	do {
+		tmp = Adjacent_Cell(tmp, FACING_W);
+	} while (Is_Low_Bridge(tmp));
+
+	Cell start = Adjacent_Cell(tmp, FACING_E);
+
+	tmp = cell;
+	do {
+		tmp = Adjacent_Cell(tmp, FACING_E);
+	} while (Is_Low_Bridge(tmp));
+
+	Cell end = Adjacent_Cell(tmp, FACING_W);
+
+	Spring_Bridge_Destruction_Triggers(start, end);
+}
+
+// FUNCTION: 0x0057CAB0
+int MapClass::FUN_0057CAB0(Cell const & cell)
+{
+	OverlayType o1 = Map[cell + Cell(-1, 0)].Overlay;
+	OverlayType o2 = Map[cell + Cell(1, 0)].Overlay;
+
+	int index = 0;
+	switch (o2) {
+		case LB2(5):
+		case LB2(7):
+		case LB2(9):
+		case LB2(20):
+			index |= 1;
+			break;
+		case LB2(8):
+		case LB2(27):
+			index |= 2;
+			break;
+		default:
+			break;
+	}
+
+	switch (o1) {
+		case LB2(6):
+		case LB2(7):
+		case LB2(8):
+		case LB2(22):
+			index |= 4;
+			break;
+		case LB2(9):
+		case LB2(27):
+			index |= 8;
+			break;
+		default:
+			break;
+	}
+
+	return(index);
+}
+
+// FUNCTION: 0x0057CBE0
+int MapClass::FUN_0057CBE0(Cell const & cell)
+{
+	OverlayType o1 = Map[cell + Cell(0, -1)].Overlay;
+	OverlayType o2 = Map[cell + Cell(0, 1)].Overlay;
+
+	int index = 0;
+	switch (o1) {
+		case LB2(14):
+		case LB2(16):
+		case LB2(18):
+		case LB2(24):
+			index |= 1;
+			break;
+		case LB2(17):
+		case LB2(28):
+			index |= 2;
+			break;
+		default:
+			break;
+	}
+
+	switch (o2) {
+		case LB2(15):
+		case LB2(16):
+		case LB2(17):
+		case LB2(26):
+			index |= 4;
+			break;
+		case LB2(18):
+		case LB2(28):
+			index |= 8;
+			break;
+		default:
+			break;
+	}
+
+	return(index);
+}
+
+// FUNCTION: 0x0057CCF0
+bool MapClass::FUN_0057CCF0(Cell const & cell)
+{
+	OverlayType otype = Map[cell].Overlay;
+	if (otype >= LB2(1) && otype <= LB2(9) || otype >= LB2(19) && otype <= LB2(22) || otype == LB2(27)) {
+		if (!Is_Low_Bridge2(cell + Cell(0, -1))) {
+			return(FUN_0057CF60(cell + Cell(0, 1)));
+		} else {
+			if (!Is_Low_Bridge2(cell + Cell(0, -2))) {
+				return(FUN_0057CF60(cell));
+			} else {
+				return(FUN_0057CF60(cell - Cell(0, 1)));
+			}
+		}
+	} else if (otype >= LB2(10) && otype <= LB2(18) || otype >= LB2(23) && otype <= LB2(26) || otype == LB2(28)) {
+		if (!Is_Low_Bridge2(cell + Cell(-1, 0))) {
+			return(FUN_0057D530(cell + Cell(1, 0)));
+		} else {
+			if (!Is_Low_Bridge2(cell + Cell(-2, 0))) {
+				return(FUN_0057D530(cell));
+			} else {
+				return(FUN_0057D530(cell - Cell(1, 0)));
+			}
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x0057DAF0
+void MapClass::FUN_0057DAF0(Cell cell)
+{
+	Cell tmp = cell;
+	do {
+		tmp = Adjacent_Cell(tmp, FACING_N);
+	} while (Is_Low_Bridge2(tmp));
+
+	Cell start = Adjacent_Cell(tmp, FACING_S);
+
+	tmp = cell;
+	do {
+		tmp = Adjacent_Cell(tmp, FACING_S);
+	} while (Is_Low_Bridge2(tmp));
+
+	Cell end = Adjacent_Cell(tmp, FACING_N);
+
+	Spring_Bridge_Destruction_Triggers(start, end);
+}
+
+// FUNCTION: 0x0057DC20
+void MapClass::FUN_0057DC20(Cell cell)
+{
+	Cell tmp = cell;
+	do {
+		tmp = Adjacent_Cell(tmp, FACING_W);
+	} while (Is_Low_Bridge2(tmp));
+
+	Cell start = Adjacent_Cell(tmp, FACING_E);
+
+	tmp = cell;
+	do {
+		tmp = Adjacent_Cell(tmp, FACING_E);
+	} while (Is_Low_Bridge2(tmp));
+
+	Cell end = Adjacent_Cell(tmp, FACING_W);
+
+	Spring_Bridge_Destruction_Triggers(start, end);
+}
+
+// FUNCTION: 0x0057DD50
+void MapClass::Damage_Low_Bridge_Piece_EW(Cell const & cell)
+{
+	if (!Is_Low_Bridge(cell)) {
+		return;
+	}
+
+	CellClass * cellptr1 = &Map[cell];
+	CellClass * cellptr2 = &Map[cell - Cell(0, 1)];
+	CellClass * cellptr3 = &Map[cell + Cell(0, 1)];
+
+	bool kill = false;
+	Rect draw_rect = Union(cellptr1->Overlay_Render_Rect(), cellptr1->Overlay_Shadow_Render_Rect());
+
+	OverlayType lookup[16] = {
+		OVERLAY_NONE,
+		OVERLAY_LOWBRIDGE_06,
+		OVERLAY_LOWBRIDGE_09,
+		OVERLAY_NONE,
+		OVERLAY_LOWBRIDGE_05,
+		OVERLAY_LOWBRIDGE_07,
+		OVERLAY_LOWBRIDGE_09,
+		OVERLAY_NONE,
+		OVERLAY_LOWBRIDGE_08,
+		OVERLAY_LOWBRIDGE_08,
+		OVERLAY_LOWBRIDGE_27,
+		OVERLAY_NONE,
+		OVERLAY_NONE,
+		OVERLAY_NONE,
+		OVERLAY_NONE,
+		OVERLAY_NONE
+	};
+
+	int mask = Get_Low_Bridge_EW_Neighbor_Mask(cell);
+	OverlayType current = Map[cell].Overlay;
+
+	if (mask > 0) {
+		OverlayType newoverlay;
+
+		if (current >= OVERLAY_LOWBRIDGE_19) {
+			if (current == OVERLAY_LOWBRIDGE_19) {
+				newoverlay = OVERLAY_LOWBRIDGE_20;
+			} else if (current == OVERLAY_LOWBRIDGE_21) {
+				newoverlay = OVERLAY_LOWBRIDGE_22;
+			} else {
+				return;
+			}
+		} else {
+			newoverlay = lookup[mask];
+			if (current == newoverlay) {
+				return;
+			}
+		}
+
+		cellptr3->Overlay = cellptr2->Overlay = cellptr1->Overlay = newoverlay;
+
+		draw_rect = Union(draw_rect, Union(cellptr1->Overlay_Render_Rect(), cellptr1->Overlay_Shadow_Render_Rect())) - TacticalRect.TopLeft;
+		TacticalMap->Register_Dirty_Area(draw_rect, false);
+
+		if (newoverlay == OVERLAY_LOWBRIDGE_27) {
+			kill = true;
+			Map.Radar_Background(cell);
+			Map.Radar_Background(cell + Cell(0, 1));
+			Map.Radar_Background(cell - Cell(0, 1));
+		}
+
+		cellptr1->Recalc_Attributes(-1);
+		cellptr2->Recalc_Attributes(-1);
+		cellptr3->Recalc_Attributes(-1);
+		cellptr1->Kill_Illegal_Occupiers(kill);
+		cellptr2->Kill_Illegal_Occupiers(kill);
+		cellptr3->Kill_Illegal_Occupiers(kill);
+	}
+}
+
 // FUNCTION: 0x005868A0
 void MapClass::Recalc_Cells_In_Rect(Rect const & rect)
 {

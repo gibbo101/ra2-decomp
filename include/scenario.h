@@ -111,6 +111,8 @@ class ScenarioClass {
 		void Clear_Waypoint(WAYPOINT waypoint);
 		void Clear_All_Waypoints(void);
 
+		void FUN_0068C050(void);
+
 	public:
 
 		SpecialClass Special;
@@ -133,10 +135,7 @@ class ScenarioClass {
 		int unknown_62C;
 		bool IsGamePaused;
 
-	private:
-
 		Cell Waypoint[WAYPT_COUNT];
-	public:
 
 		int StartX;
 		int StartY;

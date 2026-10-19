@@ -4376,6 +4376,94 @@ int TechnoClass::FUN_0070DCF0(void) const
 	return(CurrentTurretNumber);
 }
 
+// FUNCTION: 0x0070DD00
+int TechnoClass::FUN_0070DD00(void)
+{
+	int changed = CurrentTurretNumber != unknown_int_128;
+	unknown_int_128 = CurrentTurretNumber;
+	return(changed);
+}
+
+// FUNCTION: 0x0070DD20
+int TechnoClass::FUN_0070DD20(void) const
+{
+	if (Techno_Type_Class()->HasMultipleTurrets()) {
+		return(CurrentWeaponNumber);
+	}
+	return(0);
+}
+
+// FUNCTION: 0x0070DD50
+bool TechnoClass::FUN_0070DD50(void) const
+{
+	WeaponDataStruct const * weapon = GetDeployWeapon();
+	if (weapon != NULL && weapon->Weapon != NULL) {
+		return(weapon->Weapon->AreaFire);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x0070DD70
+int TechnoClass::FUN_0070DD70(void) const
+{
+	return(!Techno_Type_Class()->SprayAttack);
+}
+
+// FUNCTION: 0x0070DD90
+int TechnoClass::FUN_0070DD90(void) const
+{
+	return(1);
+}
+
+// FUNCTION: 0x0070DDA0
+int TechnoClass::FUN_0070DDA0(void) const
+{
+	return(!Techno_Type_Class()->SprayAttack);
+}
+
+// FUNCTION: 0x0070DDC0
+int TechnoClass::FUN_0070DDC0(void) const
+{
+	return(CurrentGattlingStage);
+}
+
+// FUNCTION: 0x0070DDD0
+void TechnoClass::SetCurrentWeaponStage(int stage)
+{
+	if (stage >= 0) {
+		CurrentGattlingStage = stage;
+	}
+}
+
+// FUNCTION: 0x0070DDF0
+int TechnoClass::FUN_0070DDF0(void)
+{
+	return(GattlingValue);
+}
+
+// FUNCTION: 0x0070DE00
+void TechnoClass::sub_70DE00(int value)
+{
+	if (value >= 0) {
+		GattlingValue = value;
+	}
+}
+
+// FUNCTION: 0x0070DE20
+void TechnoClass::FUN_0070DE20(int amount)
+{
+	GattlingValue += amount;
+}
+
+// FUNCTION: 0x0070DE40
+void TechnoClass::FUN_0070DE40(int amount)
+{
+	GattlingValue -= amount;
+	if (GattlingValue < 0 || amount == 0) {
+		GattlingValue = 0;
+	}
+}
+
 // FUNCTION: 0x0070E140
 WeaponDataStruct const * TechnoClass::Get_Class_Weapon_Data(int which) const
 {

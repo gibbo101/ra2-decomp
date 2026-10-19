@@ -62,6 +62,8 @@ double Random_Fraction(void);
 
 unsigned int Pick_Random_UInt(unsigned int minval, unsigned int maxval);
 
+extern char const * DAT_0082B180[7];
+
 MapGeneratorClass RandomMapGen;
 
 Random2Class RMGRandom;
@@ -3491,6 +3493,60 @@ double MapGeneratorClass::Get_Urban_Score(const Cell & cell1, const Cell & cell2
 	return(RMG_RANDOM_DOUBLE(_random_range) + dist);
 }
 
+// FUNCTION: 0x005A6920
+void MapGeneratorClass::Generate_Urban_Units(const DynamicVectorClass<Cell> & cells)
+{
+	HouseClass * neutral = House_From_HousesType(HouseTypeClass::From_Name("Neutral"));
+	int count = Pick_Random_UInt(1, 5);
+
+	int tries = 0;
+	int placed = 0;
+
+	if (count > 0) {
+		while (true) {
+			if (tries >= 2 * count) {
+				break;
+			}
+
+			int unit_index = Pick_Random_UInt(0, ARRAY_SIZE(DAT_0082B180) - 1);
+			FootClass * foot = NULL;
+			if (unit_index <= 2) {
+				foot = new InfantryClass(InfantryTypes[InfantryTypeClass::From_Name(DAT_0082B180[unit_index])], neutral);
+			} else {
+				foot = new UnitClass(UnitTypes[UnitTypeClass::From_Name(DAT_0082B180[unit_index])], neutral);
+			}
+
+			int tries_here = 0;
+			bool was_placed = false;
+			while (!was_placed) {
+				if (tries_here >= 60) {
+					break;
+				}
+				Cell unit_cell = cells[Pick_Random_UInt(0, cells.Count() - 1)];
+				if (Map.In_Local_Radar(unit_cell) && Map[unit_cell].Cell_Occupier() == NULL) {
+					if (foot->Unlimbo(Coord(unit_cell), (Dir256)(Pick_Random_UInt(0, 7) * 32))) {
+						foot->Strength = foot->Techno_Type_Class()->MaxStrength;
+						foot->EstimatedHealth = foot->Strength;
+						foot->Mark(MARK_CHANGE);
+						was_placed = true;
+						placed++;
+					}
+				}
+				tries_here++;
+			}
+
+			if (!was_placed) {
+				delete foot;
+			}
+
+			tries++;
+			if (placed >= count) {
+				break;
+			}
+		}
+	}
+}
+
 // FUNCTION: 0x005A6BA0
 bool MapGeneratorClass::Is_Area_Cliff_Free(const Cell & cell)
 {
@@ -3510,6 +3566,132 @@ bool MapGeneratorClass::Is_Area_Cliff_Free(const Cell & cell)
 		}
 	}
 	return(true);
+}
+
+// FUNCTION: 0x005A6C10
+void MapGeneratorClass::Place_Tile(IsometricTileType ittype, const Cell & cell, int region, int height)
+{
+	IsometricTileTypeClass * itype = IsometricTileTypes[ittype];
+	IsoTileSet * set = (IsoTileSet *)itype->Get_Image_Data();
+	if (set != NULL) {
+		for (int y = 0; y < itype->Height; y++) {
+			for (int x = 0; x < itype->Width; x++) {
+				Cell ncell = cell + Cell(x, y);
+				if (My_In_Radar(ncell)) {
+					CellClass * cptr = &Map[ncell];
+					int subtile = itype->SubTile_Index(x, y);
+					IsoTileRecord const * record = set->Fetch_Record_Pointer_Unsafe(subtile);
+					if (record != NULL) {
+						cptr->ITType = itype->HeapID;
+						cptr->SubTile = subtile;
+						if (height != -1) {
+							cptr->Height = height + record->Height - 4;
+						}
+						cptr->Ramp = record->RampType;
+						MapRegionClass::CellData::Set_Region(ncell, region);
+					}
+				}
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x005A6D80
+Cell MapGeneratorClass::Plan_Paved_Road_Junction(Cell const & cell, Rect const & rect, FacingType dir)
+{
+	Cell wcell = cell;
+
+	int margin_x = 0;
+	int margin_y = 0;
+	int margin_width = 0;
+	int margin_height = 0;
+	Rect tile_size;
+
+	bool south = dir == FACING_S;
+
+	if (dir == FACING_E) {
+		tile_size = Rect(0, 0, 1, 3);
+		margin_y = -3;
+		margin_height = 6;
+	} else {
+		tile_size = Rect(0, 0, 3, 1);
+		margin_x = -3;
+		margin_width = 6;
+	}
+
+	while (true) {
+		if (!(wcell.X < rect.X + rect.Width && wcell.Y < rect.Y + rect.Height)) return(Cell(0, 0));
+		if (Map[wcell].ITType == IsometricTileTypeClass::PaveTile) {
+			break;
+		}
+		wcell = Adjacent_Cell(wcell, dir);
+	}
+
+	while (true) {
+		if (!(wcell.X < rect.X + rect.Width && wcell.Y < rect.Y + rect.Height)) return(Cell(0, 0));
+		if (Can_Place_Paved_Road(Rect(margin_x + wcell.X, margin_y + wcell.Y, margin_width + tile_size.Width, margin_height + tile_size.Height), south, south)) {
+			break;
+		}
+		wcell = Adjacent_Cell(wcell, dir);
+	}
+
+	int length = MAX(wcell.Y - cell.Y, wcell.X - cell.X);
+	if (length > 0) {
+		int shorten = Pick_Random_UInt(0, length);
+		while (shorten > 0) {
+			Cell back = Adjacent_Cell(wcell, Facing_Sub(dir, FACING_180));
+			if (!Can_Place_Paved_Road(Rect(margin_x + back.X, margin_y + back.Y, margin_width + tile_size.Width, margin_height + tile_size.Height), false, false)) break;
+			wcell = back;
+			shorten--;
+		}
+	}
+
+	return(wcell);
+}
+
+// FUNCTION: 0x005A7070
+Cell MapGeneratorClass::Plan_Paved_Road(Cell const & cell, Rect const & rect, FacingType dir)
+{
+	bool south = dir == FACING_S;
+	Cell wcell = cell;
+
+	int margin_x = 0;
+	int margin_y = 0;
+	int margin_width = 0;
+	int margin_height = 0;
+	Rect tile_size;
+
+	if (dir == FACING_E) {
+		tile_size = Rect(0, 0, 1, 3);
+		margin_y = -3;
+		margin_height = 6;
+	} else {
+		tile_size = Rect(0, 0, 3, 1);
+		margin_x = -3;
+		margin_width = 6;
+	}
+
+	while (true) {
+		if (!(wcell.X < rect.X + rect.Width + 1 && wcell.Y < rect.Y + rect.Height + 1)) break;
+		if (!Can_Place_Paved_Road(Rect(margin_x + wcell.X, margin_y + wcell.Y, margin_width + tile_size.Width, margin_height + tile_size.Height), south, south)) {
+			break;
+		}
+		{ Cell next = Adjacent_Cell(wcell, dir); wcell = next; }
+	}
+
+	wcell = Adjacent_Cell(wcell, Facing_Sub(dir, FACING_180));
+
+	int length = MAX(wcell.X - cell.X, wcell.Y - cell.Y);
+	if (length > 6) {
+		int shorten = Pick_Random_UInt(0, 3);
+		while (shorten > 0) {
+			Cell back = Adjacent_Cell(wcell, Facing_Sub(dir, FACING_180));
+			shorten--;
+			wcell = back;
+		}
+	}
+
+	return(wcell);
 }
 
 // FUNCTION: 0x005A7250
@@ -3540,6 +3722,36 @@ bool MapGeneratorClass::Can_Place_Paved_Road(Rect const & rect, bool overlap_roa
 	return(false);
 }
 
+// FUNCTION: 0x005A7440
+bool MapGeneratorClass::Can_Place_Paved_Road_End(Rect const & rect, bool overlap_road)
+{
+	if (My_In_Radar(Cell(rect.X, rect.Y)) &&
+		My_In_Radar(Cell(rect.X + rect.Width - 1, rect.Y)) &&
+		My_In_Radar(Cell(rect.X, rect.Y + rect.Height - 1)) &&
+		My_In_Radar(Cell(rect.X + rect.Width - 1, rect.Y + rect.Height - 1))) {
+
+		int height = Map[Cell(rect.X, rect.Y)].Height;
+
+		for (int y = rect.Y; y < rect.Y + rect.Height; y++) {
+			for (int x = rect.X; x < rect.X + rect.Width; x++) {
+				CellClass * cptr = &Map[Cell(x, y)];
+				if (cptr->Height != height) {
+					return(false);
+				}
+				if (cptr->Is_Tile_Paved_Road() || cptr->Is_Tile_Paved_Road_End()) {
+					if (!overlap_road) {
+						return(false);
+					}
+				} else if (!cptr->Is_Tile_Clear() && !cptr->Is_Tile_Misc_Pavement() && !cptr->Is_Tile_Pavement()) {
+					return(false);
+				}
+			}
+		}
+		return(true);
+	}
+	return(false);
+}
+
 // FUNCTION: 0x005A7640
 Rect MapGeneratorClass::Get_Cell_Bounding_Rect(const DynamicVectorClass<Cell> & cells)
 {
@@ -3557,6 +3769,129 @@ Rect MapGeneratorClass::Get_Cell_Bounding_Rect(const DynamicVectorClass<Cell> & 
 		cmax.Y = MAX(cell.Y, cmax.Y);
 	}
 	return(Rect(cmin.X, cmin.Y, (cmax.X - cmin.X) + 1, (cmax.Y - cmin.Y) + 1));
+}
+
+// FUNCTION: 0x005A76E0
+bool MapGeneratorClass::Can_Place_Paved_Road_Junction(Rect & rect)
+{
+	if (My_In_Radar(Cell(rect.X, rect.Y)) &&
+		My_In_Radar(Cell(rect.X + rect.Width - 1, rect.Y)) &&
+		My_In_Radar(Cell(rect.X, rect.Y + rect.Height - 1)) &&
+		My_In_Radar(Cell(rect.X + rect.Width - 1,rect.Y + rect.Height - 1))) {
+
+		for (int y = rect.Y; y < rect.Y + 3; y++) {
+			for (int x = rect.X; x < rect.X + 3; x++) {
+				CellClass * cptr = &Map[Cell(x, y)];
+				if ((cptr->ITType < IsometricTileTypeClass::PavedRoads || cptr->ITType > IsometricTileTypeClass::PavedRoads + 1) && !cptr->Is_Tile_Road_Median()) {
+					return(false);
+				}
+			}
+		}
+		for (int x = rect.X; x < rect.X + 3; x++) {
+			CellClass * cptr = &Map[Cell(x, rect.Y + 3)];
+			if (!cptr->Is_Tile_Pavement() && !cptr->Is_Tile_Clear() && !cptr->Is_Tile_Misc_Pavement()) {
+				return(false);
+			}
+		}
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x005A7B40
+bool MapGeneratorClass::Can_Place_Misc_Pavement(Rect const & rect)
+{
+	if (My_In_Radar(Cell(rect.X, rect.Y)) &&
+		My_In_Radar(Cell((rect.X - 1) + rect.Width, rect.Y)) &&
+		My_In_Radar(Cell(rect.X, (rect.Y - 1) + rect.Height)) &&
+		My_In_Radar(Cell((rect.X - 1) + rect.Width, (rect.Y - 1) + rect.Height))) {
+
+		for (int y = rect.Y; y < rect.Y + rect.Height; y++) {
+			for (int x = rect.X; x < rect.X + rect.Width; x++) {
+				CellClass *cptr = &Map[Cell(x,y)];
+				IsometricTileType itype = cptr->ITType;
+				if (!cptr->Is_Tile_Pavement() && (itype < IsometricTileTypeClass::MiscPaveTile || itype > IsometricTileTypeClass::MiscPaveTile + 7)) {
+					return(false);
+				}
+				if (cptr->Cell_Occupier() != NULL) {
+					return(false);
+				}
+			}
+		}
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x005A7D00
+bool MapGeneratorClass::Can_Place_Tile(IsometricTileType ittype, Cell const & cell, bool collision, bool in_map)
+{
+	IsometricTileTypeClass * itype = IsometricTileTypes[ittype];
+	IsoTileSet * set = (IsoTileSet *)itype->Get_Image_Data();
+	if (set != NULL) {
+		for (int y = 0; y < itype->Height; y++) {
+			for (int x = 0; x < itype->Width; x++) {
+				Cell ncell = cell + Cell(x, y);
+				if (My_In_Radar(ncell)) {
+					CellClass * cptr = &Map[ncell];
+					int subtile = itype->SubTile_Index(x, y);
+					IsoTileRecord const * record = set->Fetch_Record_Pointer_Unsafe(subtile);
+					if (record != NULL) {
+						if ((!cptr->Is_Tile_Clear() && !cptr->Is_Tile_Ramp()) || cptr->Ramp != record->RampType || collision && MapRegionClass::Get_Cell_Data(ncell).TilePlaced) {
+							return(false);
+						}
+					}
+				} else if (in_map) {
+					return(false);
+				}
+			}
+		}
+	}
+	return(true);
+}
+
+// FUNCTION: 0x005A7E90
+void MapGeneratorClass::Remove_Tile(IsometricTileType ittype, Cell const & cell)
+{
+	IsometricTileTypeClass * itype = IsometricTileTypes[ittype];
+	IsoTileSet * set = (IsoTileSet *)itype->Get_Image_Data();
+	if (set != NULL) {
+		for (int y = 0; y < itype->Height; y++) {
+			for (int x = 0; x < itype->Width; x++) {
+				Cell ncell = cell + Cell(x, y);
+				if (My_In_Radar(ncell)) {
+					CellClass * cptr = &Map[ncell];
+					int subtile = itype->SubTile_Index(x, y);
+					IsoTileRecord const * record = set->Fetch_Record_Pointer_Unsafe(subtile);
+					if (record != NULL) {
+						cptr->ITType = TILE_NONE;
+						cptr->SubTile = 0;
+					}
+				}
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x005A7FA0
+void MapGeneratorClass::Mark_Tile(IsometricTileType ittype, Cell const & cell, bool placed)
+{
+	IsometricTileTypeClass * itype = IsometricTileTypes[ittype];
+	IsoTileSet * set = (IsoTileSet *)itype->Get_Image_Data();
+	if (set != NULL) {
+		for (int y = 0; y < itype->Height; y++) {
+			for (int x = 0; x < itype->Width; x++) {
+				Cell ncell = cell + Cell(x, y);
+				if (My_In_Radar(ncell)) {
+					int subtile = itype->SubTile_Index(x, y);
+					IsoTileRecord const * record = set->Fetch_Record_Pointer_Unsafe(subtile);
+					if (record != NULL) {
+						MapRegionClass::Get_Cell_Data(ncell).TilePlaced = placed;
+					}
+				}
+			}
+		}
+	}
 }
 
 // FUNCTION: 0x005A9920

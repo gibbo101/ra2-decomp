@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
 #include "combat.h"
 #include "_map.h"
 #include "_rtti.h"
@@ -41,6 +42,19 @@
 #include "warhead.h"
 #include "mph.hh"
 #include <windef.h>
+
+// FUNCTION: 0x00488F90 $E2
+// FUNCTION: 0x00488FC0 $E5
+// FUNCTION: 0x00488FE0 $E8
+// FUNCTION: 0x00489000 $E11
+// FUNCTION: 0x00489020 $E14
+// FUNCTION: 0x00489040 $E17
+// FUNCTION: 0x00489060 $E20
+// FUNCTION: 0x004890A0 $E23
+// FUNCTION: 0x004890D0 $E26
+// FUNCTION: 0x00489100 $E29
+// FUNCTION: 0x00489130 $E32
+// FUNCTION: 0x00489140 $E35
 
 // FUNCTION: 0x0048A8D0
 bool Calculate_Projectile_Pitch(bool high_arc, int speed, int distance, int height, double gravity, DirType & pitch)

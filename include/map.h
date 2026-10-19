@@ -146,6 +146,14 @@ class MapClass: public GScreenClass
 		bool FUN_00587180(Cell const & cell);
 		bool FUN_0057BAA0(Cell const & cell);
 		bool FUN_0057CCF0(Cell const & cell);
+		bool FUN_0057CF60(Cell const & cell);
+		bool FUN_0057D530(Cell const & cell);
+		void FUN_0057E7A0(Cell const & cell);
+		void FUN_0057ED00(Cell const & cell);
+		void FUN_0057DAF0(Cell cell);
+		void FUN_0057DC20(Cell cell);
+		static int FUN_0057CAB0(Cell const & cell);
+		static int FUN_0057CBE0(Cell const & cell);
 		void FUN_00576770(Cell const & cell);
 		void Update_Pathfinding_1(void);
 
@@ -197,6 +205,10 @@ class MapClass: public GScreenClass
 		void Repair_Low_Bridge_EW(Cell const & cell);
 		void Repair_Low_Bridge_NS(Cell const & cell);
 		static bool Is_Low_Bridge(Cell const & cell);
+		void Spring_Low_Bridge_EW_Call(Cell cell) { Spring_Low_Bridge_Destroyed_EW(cell); }
+		void Spring_Low_Bridge_NS_Call(Cell cell) { Spring_Low_Bridge_Destroyed_NS(cell); }
+		void Spring_Low_Bridge_EW2_Call(Cell cell) { FUN_0057DC20(cell); }
+		void Spring_Low_Bridge_NS2_Call(Cell cell) { FUN_0057DAF0(cell); }
 
 	public:
 
