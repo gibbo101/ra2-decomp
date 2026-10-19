@@ -328,6 +328,12 @@ Each entry: what the diff showed, then the source change that fixed it.
   0x7B66C0): the neighbouring functions (char vs wchar_t) decide which class owns which.
 - YR made some TS text members wide: OwnerDraw's CellData holds `WideWstring`, so
   `include/ownrdraw.h` overrides the TibSun copy.
+- A function that lands makes its callers' references to it checkable: re-run checkall
+  after `--record` (Seed_Land called 0x0057A0C0 under Build_All_Cliffs' name).
+- A new header with a static object renumbers another file's `$E` markers (empulse.h
+  moved startup.cpp's by one): renumber the markers rather than undo the header.
+- Wide string literals are pooled across files (0x0082083C is `L" "`): a constant
+  stored into a temporary is not necessarily a vtable.
 - Westwood's inline asm from the archive stays where Westwood put it, unchanged (blitblit.h,
   xsurface.cpp's surface_quick_fill); check.py refuses any asm block not found verbatim there.
 - The message list is `Session.Messages`, not a global; Add_Message takes YR's 7 arguments.

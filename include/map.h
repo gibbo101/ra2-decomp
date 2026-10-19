@@ -214,6 +214,7 @@ class MapClass: public GScreenClass
 		void Mark_Fill_Area(Cell const & origin, bool on_water);
 		bool Rebuild_Cliffs_At(Cell const & cell);
 		bool Build_All_Cliffs(int, int region_id);
+		bool FUN_0057A0C0(int, int);
 		bool Expand_High_Ground(CellClass * cellptr, int region_id);
 		bool Place_Cliff(CellClass * cellptr, int region_id);
 		int Get_High_Ground_Mask(CellClass * cellptr);
@@ -224,7 +225,7 @@ class MapClass: public GScreenClass
 		bool Place_Shore(CellClass * cellptr, int pass, int region_id);
 		int Get_Water_Mask(CellClass * cellptr, int control);
 		static int Straight_Shore_Length(CellClass * cellptr, FacingType direction);
-		bool Pick_Random_Tile_Variant(IsometricTileType tile, int max_tile, int base_height, int seed, bool & success);
+		bool Pick_Random_Tile_Variant(IsometricTileType tile, int max_tile, int base_height, int seed, bool & success, bool flat_height);
 		static bool Is_Tile_Shore(IsometricTileType tile);
 		static bool Is_Tile_Cliff(IsometricTileType tile, int subtile);
 

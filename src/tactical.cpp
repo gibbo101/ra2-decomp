@@ -1461,12 +1461,113 @@ void __fastcall FUN_006DA740(Tactical * tactical)
 	FUN_00731D00(0);
 }
 
+// FUNCTION: 0x006DA7D0
+void Tactical::Flag_Cell(CellClass & cell)
+{
+	if (Map.DrawFlags == GS_REDRAW_DIRTY && cell.LastRedrawFrame != Frame && (cell.IsMapped || cell.VisibilityChanged)) {
+		cell.LastRedrawFrame = Frame;
+
+		Coord coord = cell.Cell_Coord();
+
+		Coord ground = Coord(coord.X, coord.Y, 0);
+
+		Point2D pixel;
+		if (cell.IsMapped && cell.IsVisible) {
+			Coord_To_Pixel(ground, pixel);
+		} else {
+			Coord_To_Pixel(ground, pixel);
+		}
+
+		if (pixel.X >= DSurface::ViewBounds.X - 30
+			&& pixel.Y >= -30
+			&& pixel.X <= DSurface::ViewBounds.X + DSurface::ViewBounds.Width + 30
+			&& pixel.Y <= DSurface::ViewBounds.Y + DSurface::ViewBounds.Height + 15) {
+
+			if (CellRedrawCount < 799) {
+				CellRedraw[CellRedrawCount] = &cell;
+				CellRedrawCount++;
+			}
+			cell.VisibilityChanged = false;
+			IsToRedraw = true;
+		}
+	}
+}
+
 // FUNCTION: 0x006DA980
 void Tactical::Reset_Dirty_Rectangles(void)
 {
 	while (DirtyAreas.Count() > 0) {
 		DirtyAreas.Delete_Index(0);
 	}
+}
+
+extern DynamicVectorClass<ObjectClass *> DAT_00A8E360;
+
+// FUNCTION: 0x006DB210
+void Tactical::Debug_Draw_Occupier_Links(void)
+{
+	Map.Reset_Iterator();
+	CellClass * cellptr = Map.Iterate();
+	int ocolor1 = DSurface::Build_Hicolor_Pixel(255, 255, 0);
+	int lcolor = DSurface::Build_Hicolor_Pixel(255, 0, 255);
+	int ocolor2 = DSurface::Build_Hicolor_Pixel(0, 255, 255);
+	while (cellptr != NULL) {
+		ObjectClass * object;
+
+		object = cellptr->Cell_Occupier(false);
+		if (object != NULL) {
+			Coord coord1 = cellptr->Cell_Coord();
+			Point2D start;
+			Coord_To_Pixel(coord1, start);
+			Coord coord2 = object->Center_Coord();
+			Point2D end;
+			Coord_To_Pixel(coord2, end);
+			Rect rect(start.X - 1, start.Y - 1, 3, 3);
+			DSurface::Temp->Fill_Rect(DSurface::ViewBounds, rect, ocolor1);
+			DSurface::Temp->Draw_Line(DSurface::ViewBounds, start, end, ocolor1);
+		}
+
+		object = cellptr->Cell_Occupier(true);
+		if (object != NULL) {
+			Coord coord1 = cellptr->Cell_Coord();
+			Point2D start;
+			Coord_To_Pixel(coord1, start);
+			start += Point2D(0, -60);
+			Coord coord2 = object->Center_Coord();
+			Point2D end;
+			Coord_To_Pixel(coord2, end);
+			Rect rect(start.X - 1, start.Y - 1, 3, 3);
+			DSurface::Temp->Fill_Rect(DSurface::ViewBounds, rect, ocolor2);
+			DSurface::Temp->Draw_Line(DSurface::ViewBounds, start, end, ocolor2);
+		}
+		cellptr = Map.Iterate();
+	}
+
+	for (int i = DAT_00A8E360.Count() - 1; i >= 0; i--) {
+		ObjectClass * object = DAT_00A8E360[i];
+		if (object->Next != NULL) {
+			Coord coord1 = object->Center_Coord();
+			Point2D start;
+			Coord_To_Pixel(coord1, start);
+			Coord coord2 = object->Next->Center_Coord();
+			Point2D end;
+			Coord_To_Pixel(coord2, end);
+			DSurface::Temp->Draw_Line(DSurface::ViewBounds, start, end, lcolor);
+		}
+	}
+}
+
+// FUNCTION: 0x006DBB60
+bool Tactical::Draw_3D_Line(Coord const & coord1, Coord const & coord2, int color, bool write_depth)
+{
+	Point2D start;
+	Coord_To_Pixel(coord1, start);
+	Point2D end;
+	Coord_To_Pixel(coord2, end);
+
+	DSurface::Temp->Draw_Depth_Shaded_Line(DSurface::ViewBounds, start, end, color,
+		14 - Z_Lepton_To_Pixel(coord1.Z), 14 - Z_Lepton_To_Pixel(coord2.Z), write_depth);
+	return(true);
 }
 
 // FUNCTION: 0x006DBCE0
@@ -1477,6 +1578,24 @@ HRESULT STDMETHODCALLTYPE Tactical::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
+// FUNCTION: 0x006DBD20
+HRESULT STDMETHODCALLTYPE Tactical::Load(IStream * stream)
+{
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		new (this) Tactical(NoInitClass());
+
+		SelectableCount = 0;
+		for (int i = 0; i < CellRedrawCount; i++) {
+			Swizzle_Pointer(&CellRedraw[i]);
+		}
+
+		Set_Tactical_Position(TacticalCoord);
+		result = S_OK;
+	}
+	return(result);
+}
+
 // FUNCTION: 0x006DBE00
 HRESULT STDMETHODCALLTYPE Tactical::Save(IStream * stream, BOOL cleardirty)
 {
@@ -1485,4 +1604,26 @@ HRESULT STDMETHODCALLTYPE Tactical::Save(IStream * stream, BOOL cleardirty)
 		result = S_OK;
 	}
 	return(result);
+}
+
+// FUNCTION: 0x006DC400
+void Tactical_noop2(void)
+{
+}
+
+// FUNCTION: 0x006DC410
+void Tactical_noop3(void)
+{
+}
+
+// FUNCTION: 0x006DC420
+int Tactical::Selectable_Count(void)
+{
+	return(SelectableCount);
+}
+
+// FUNCTION: 0x006DC430
+ObjectClass * __stdcall Tactical::Selectable_Object(int index)
+{
+	return(SelectableObjects[index].Object);
 }

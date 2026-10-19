@@ -62,20 +62,7 @@ class ToolTipManager
 
 		bool Find(unsigned id, ToolTip * tooltip);
 
-		ToolTip const * Find_From_Pos(Point2D &xy)
-		{
-			for (int i = 0; i < ToolTips.Count(); i++) {
-				Rect const & region = ToolTips[i]->Region;
-				if (xy.X >= region.X &&
-					xy.X <= region.X + region.Width &&
-					xy.Y >= region.Y &&
-					xy.Y <= region.Y + region.Height) {
-
-					return(ToolTips[i]);
-				}
-			}
-			return(NULL);
-		}
+		ToolTip const * Find_From_Pos(Point2D &xy);
 
 		virtual bool Update(ToolTipText *text);
 		virtual void Reset(ToolTipText const *text);
@@ -85,6 +72,9 @@ class ToolTipManager
 		virtual void Draw_Current(bool refresh = false);
 		virtual void Draw(const ToolTipText *text);
 		virtual const char *ToolTip_Text(int id);
+
+		void Hide(void);
+		bool IsToolTipShowing(void);
 
 		void Reset_Current(void)
 		{

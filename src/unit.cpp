@@ -1586,6 +1586,252 @@ int UnitClass::Do_MISSION_GUARD_AREA(void)
 	return(BASECLASS::Do_MISSION_GUARD_AREA());
 }
 
+// FUNCTION: 0x00744180
+bool UnitClass::Is_Ready_To_Move(void) const
+{
+	if (Door.Is_Ready_To_Open()) {
+		return(true);
+	}
+
+	return(false);
+}
+
+// FUNCTION: 0x007441B0
+void UnitClass::Set_Occupy_Bit(Coord const & coord)
+{
+	CellClass &cell = Map[coord];
+	if (Map.Get_Height_GL(coord) + BRIDGE_LEPTON_HEIGHT <= coord.Z && cell.IsUnderBridge) {
+		cell.BridgeFlag.Occupy.Vehicle = true;
+	} else {
+		cell.Flag.Occupy.Vehicle = true;
+	}
+}
+
+// FUNCTION: 0x00744210
+void UnitClass::Clear_Occupy_Bit(Coord const & coord)
+{
+	CellClass &cell = Map[coord];
+	if (Map.Get_Height_GL(coord) + BRIDGE_LEPTON_HEIGHT <= coord.Z) {
+		cell.BridgeFlag.Occupy.Vehicle = false;
+	} else {
+		cell.Flag.Occupy.Vehicle = false;
+	}
+}
+
+static inline bool Is_Cell_Below(Cell const & a, Cell const & b)
+{
+	Cell diff = a - b;
+	return(diff.X == 0 && diff.Y == 1);
+}
+
+// FUNCTION: 0x00744270
+bool UnitClass::Ready_To_Next_Mission(void) const
+{
+	if (CurrentMission == MISSION_STICKY || CurrentMission == MISSION_RESCUE) {
+		return(false);
+	}
+
+	if (Deploying || Undeploying || IsDumping) {
+		return(false);
+	}
+
+	if (MissionQueue != MISSION_ENTER) {
+		if (Locomotion->Is_Moving_Now() && HeightAGL >= 0 &&
+			Get_Mission() != MISSION_GUARD && (Get_Mission() != MISSION_ATTACK || TarCom != NULL) && !IsMissionUnloadStandby) {
+
+			return(false);
+		}
+	}
+
+	if (!Door.Is_Door_Closed()) {
+		return(false);
+	}
+
+	RadioClass * radio = FUN_0065AD40(0);
+	if (radio != NULL) {
+		if (radio->Fetch_RTTI() == RTTI_BUILDING && ((BuildingClass *)radio)->Class->IsWeaponsFactory && MissionQueue != MISSION_MOVE && MissionQueue != MISSION_ENTER) {
+			return(false);
+		}
+	} else {
+		BuildingClass * building = Map[Get_Coord()].Cell_Building();
+		if (building != NULL && building->Class->IsWeaponsFactory && Is_Cell_Below(PositionCoord.As_Cell(), building->PositionCoord.As_Cell())) {
+			return(false);
+		}
+	}
+
+	return(true);
+}
+
+// FUNCTION: 0x00744470
+HRESULT STDMETHODCALLTYPE UnitClass::Load(IStream * stream)
+{
+	TargetTracker.Remove_Index(Fetch_ID());
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		ILocomotion * locomotion = Locomotion;
+
+		new (this) UnitClass(NoInitClass());
+
+		Locomotion = locomotion;
+		locomotion->Release();
+
+		TargetTracker.Add_Index(Fetch_ID(), this);
+
+		Swizzle_Pointer(&Class);
+		Swizzle_Pointer(&FollowingMe);
+
+		ElectricBolt = NULL;
+		result = S_OK;
+	}
+	return(result);
+}
+
+// FUNCTION: 0x00744600
+HRESULT STDMETHODCALLTYPE UnitClass::Save(IStream * stream, BOOL cleardirty)
+{
+	if (ElectricBolt != NULL) {
+		ElectricBolt->~EBolt();
+		ElectricBolt = NULL;
+	}
+	return(BASECLASS::Save(stream, cleardirty));
+}
+
+// FUNCTION: 0x00744640
+void UnitClass::Compute_CRC(CRCEngine & crc) const
+{
+	BASECLASS::Compute_CRC(crc);
+
+	crc(Class->Fetch_RTTI());
+	crc(Class->Fetch_ID());
+	if (FollowingMe != NULL) {
+		crc(FollowingMe->Fetch_ID());
+	}
+	crc(Flagged);
+	crc(IsFollowing);
+	crc(IsDumping);
+	crc(IsHarvesting);
+	crc(IsToScatter);
+}
+
+// FUNCTION: 0x007446E0
+void UnitClass::Detach(AbstractClass const * target, bool all)
+{
+	BASECLASS::Detach(target, all);
+	if (FollowingMe == target) {
+		FollowingMe = NULL;
+	}
+	if (Class == target) {
+		Class = NULL;
+	}
+}
+
+// FUNCTION: 0x00744720
+void UnitClass::RegisterDestruction(TechnoClass * source)
+{
+	if (Tag != NULL) {
+		if (EnteredByInfType == INFANTRY_NONE || !Tag->Is_To_Inherit()) {
+			if (source != NULL) {
+				Tag->Spring(TEVENT_DESTROYED, this);
+			}
+			if (Tag != NULL) {
+				Tag->Spring(TEVENT_DESTROYED_ANY, this);
+			}
+			if (Tag != NULL) {
+				Tag->Spring(TEVENT_DESTROYED_ANY_X, this);
+			}
+		}
+	}
+	BASECLASS::RegisterDestruction(source);
+}
+
+// FUNCTION: 0x007447A0
+int UnitClass::Do_MISSION_ATTACK(void)
+{
+	return(BASECLASS::Do_MISSION_ATTACK());
+}
+
+// FUNCTION: 0x00746000
+bool UnitClass::AStarAttempt(Cell const * from, Cell const * to)
+{
+	if (Get_Height_AGL() >= 0 && Map.Is_Same_Cell_Zone(*from, *to, MZONE_NORMAL, false, false, false)) {
+		if (*from == *to) {
+			return(false);
+		}
+		int distance = MAX(abs(to->X - from->X), abs(to->Y - from->Y));
+		if (distance == 1) {
+			return(false);
+		}
+		if (distance < 12 && Map.In_Local_Radar(*from, true) && Map.In_Local_Radar(*to, true)) {
+			return(Search.Test_Cell_Walk(*from, *to, this, false, Map[*to].IsUnderBridge, MZONE_NORMAL) > 15);
+		}
+	}
+	return(true);
+}
+
+extern BulletClass * __fastcall FUN_0046B050(BulletTypeClass const * type, AbstractClass * target, TechnoClass * payback, int strength, WarheadTypeClass const * warhead, int max_speed, bool bright);
+
+// FUNCTION: 0x00746100
+bool UnitClass::INoticeSink_Unknown(DWORD unknown, DWORD unknown2)
+{
+	if ((Class->BalloonHover || Class->JumpJet) && unknown == 0x117b && HasAnyLink()) {
+		Transmit_Message((RadioMessageType)8);
+		if (ArchiveTarget != NULL && ArchiveTarget != NavCom) {
+			Assign_Destination(ArchiveTarget, true);
+			return(true);
+		}
+		AbortMotion();
+		Scatter(COORD_NONE, true, false);
+		return(true);
+	}
+	if (Class->Crashable && unknown == 0x117c) {
+		Set_Height_AGL(0);
+		if (!Class->BalloonHover) {
+			Explode();
+		} else {
+			FireDeathWeapon(0);
+		}
+		Delete_Me();
+		return(true);
+	}
+	if (IsAttackedByLocomotor) {
+		int strength = Rule->CurrentStrengthDamage ? Strength : Class->MaxStrength;
+		int damage = (int)(strength * Rule->FallingDamageMultiplier);
+		if (damage < 0) damage = 0;
+
+		TechnoClass * payback = this;
+		if (BeingManipulatedBy != NULL) {
+			payback = BeingManipulatedBy;
+		}
+
+		BulletClass * bullet = FUN_0046B050(Rule->DeathWeapon->Bullet, this, payback, damage, Rule->CrushWarhead, 0, true);
+		Coord coord = Center_Coord();
+		coord.Z -= Get_Height_AGL();
+		if (bullet != NULL) {
+			bullet->Limbo();
+			bullet->Detonate(coord);
+			bullet->Release();
+		}
+
+		if (BeingManipulatedBy != NULL) {
+			RegisterDestruction(BeingManipulatedBy);
+		} else if (ChronoWarpedByHouse != NULL) {
+			Record_The_Kill(ChronoWarpedByHouse);
+		}
+
+		coord = Center_Coord();
+		bullet = FUN_0046B050(Rule->DeathWeapon->Bullet, this, payback, damage, Rule->C4Warhead, 0, true);
+		if (bullet != NULL) {
+			bullet->Limbo();
+			bullet->Detonate(coord);
+			bullet->Release();
+		}
+
+		Delete_Me();
+		return(true);
+	}
+	return(false);
+}
+
 // FUNCTION: 0x00746DE0
 HRESULT STDMETHODCALLTYPE UnitClass::GetClassID(CLSID * retval)
 {

@@ -97,7 +97,7 @@ namespace Unsorted { extern int CurrentFrame; }
 
 
 
-// FUNCTION: 0x006F2AD0 $E225
+// FUNCTION: 0x006F2AD0 $E226
 CDTimerClass<FrameTimerClass> TechnoClass::ActionLineTimer;
 
 // FUNCTION: 0x006F2AF0
@@ -1261,10 +1261,11 @@ void TechnoClass::DestroyGap(void)
 	}
 }
 
-inline bool TechnoClass::Has_Ability(AbilityType ability) const
+// FUNCTION: 0x0070D0D0
+bool TechnoClass::Has_Ability(AbilityType ability) const
 {
 	if (Veterancy.Is_Veteran() || Veterancy.Is_Elite()) {
-		TechnoTypeClass const * ttype = TClass;
+		TechnoTypeClass const * ttype = Techno_Type_Class();
 		if (Veterancy.Is_Veteran() && ttype->VeteranAbilities[ability]) {
 			return(true);
 		}
@@ -3927,10 +3928,232 @@ bool TechnoClass::Is_On_Elevation(void) const
 	return(cell != Get_Cell());
 }
 
+// FUNCTION: 0x0070CC90
+void TechnoClass::Radar_Track(void)
+{
+	Map.Radar_Track(this, RadarPos);
+	IsRadarTracked = true;
+}
+
+// FUNCTION: 0x0070CCC0
+void TechnoClass::Radar_Untrack(void)
+{
+	Map.Radar_Untrack(this, RadarPos);
+	IsRadarTracked = false;
+}
+
+// FUNCTION: 0x0070CCF0
+void TechnoClass::Plot_On_Radar(void) const
+{
+	Map.Radar_Pixel(RadarPos);
+}
+
+// FUNCTION: 0x0070CD10
+double TechnoClass::Target_Threat(TechnoClass * target, Coord const & firing_coord) const
+{
+	double target_effectiveness_coefficient;
+	double target_special_threat_coefficient;
+	double my_effectiveness_coefficient;
+	double target_strength_coefficient;
+	double target_distance_coefficient;
+
+	TechnoTypeClass const * ttype = Techno_Type_Class();
+
+	if (target->Class_Of() == NULL) {
+		return(0);
+	}
+
+	if (House->IsThreatRatingNodeActive) {
+		my_effectiveness_coefficient = ttype->MyEffectivenessCoefficient;
+		target_effectiveness_coefficient = ttype->TargetEffectivenessCoefficient;
+		target_special_threat_coefficient = ttype->TargetSpecialThreatCoefficient;
+		target_strength_coefficient = ttype->TargetStrengthCoefficient;
+		target_distance_coefficient = ttype->TargetDistanceCoefficient;
+	} else {
+		my_effectiveness_coefficient = Rule->DumbMyEffectivenessCoefficient;
+		target_effectiveness_coefficient = Rule->DumbTargetEffectivenessCoefficient;
+		target_special_threat_coefficient = Rule->DumbTargetSpecialThreatCoefficient;
+		target_strength_coefficient = Rule->DumbTargetStrengthCoefficient;
+		target_distance_coefficient = Rule->DumbTargetDistanceCoefficient;
+	}
+
+	int my_weapon_index = What_Weapon_Should_I_Use(target);
+	WeaponTypeClass const * my_weapon = Get_Class_Weapon_Data(my_weapon_index)->Weapon;
+	double threat = 0.0;
+	RTTIType target_rtti = target->RTTI;
+
+	if (target_rtti == RTTI_BUILDING || target_rtti == RTTI_INFANTRY || target_rtti == RTTI_UNIT || target_rtti == RTTI_AIRCRAFT) {
+		if (target != NULL) {
+			int target_weapon_index = target->What_Weapon_Should_I_Use((AbstractClass *)this);
+			WeaponTypeClass const * target_weapon = target->Get_Class_Weapon_Data(target_weapon_index)->Weapon;
+			WarheadTypeClass const * target_warhead = target_weapon != NULL ? target_weapon->WarheadPtr : NULL;
+			if (target_warhead != NULL) {
+				if (target->TarCom == (AbstractClass *)this) {
+					threat = -target_effectiveness_coefficient * target_warhead->Modifier[ttype->Armor];
+				} else {
+					threat = target_effectiveness_coefficient * target_warhead->Modifier[ttype->Armor];
+				}
+			}
+
+			threat += target_special_threat_coefficient * target->Techno_Type_Class()->SpecialThreatValue;
+
+			if (House->Enemy != HOUSE_NONE && House->Enemy == target->House->HeapID) {
+				threat += Rule->EnemyHouseThreatBonus;
+			}
+		}
+	}
+
+	if (my_weapon && my_weapon->WarheadPtr) {
+		threat += my_effectiveness_coefficient * my_weapon->WarheadPtr->Modifier[target->Class_Of()->Armor];
+	}
+
+	threat += target->HealthRatio * target_strength_coefficient;
+
+	int range = my_weapon != NULL ? my_weapon->Range : Techno_Type_Class()->ThreatRange;
+	range /= CELL_LEPTON;
+
+	int dist;
+	if (firing_coord != COORD_NONE) {
+		dist = firing_coord.Distance_To(target->Center_Coord());
+	} else {
+		dist = Center_Coord().Distance_To(target->Center_Coord()) / CELL_LEPTON;
+	}
+
+	threat += MAX(0, dist - range) * target_distance_coefficient;
+
+	return(threat + 100000.0);
+}
+
 // FUNCTION: 0x0070D150
 void TechnoClass::Reset_Action_Line_Timer(void)
 {
 	ActionLineTimer = 25;
+}
+
+// FUNCTION: 0x0070D180
+void TechnoClass::Set_Action_Lines(bool on)
+{
+	ActionLines = on;
+}
+
+// FUNCTION: 0x0070D190
+int TechnoClass::Apparent_Brightness(int brightness) const
+{
+	if ((Flashing.FlashCount & 2) == 2) {
+		return(brightness > 1500 ? 500 : 2000);
+	}
+	return(brightness);
+}
+
+// FUNCTION: 0x0070D1D0
+bool TechnoClass::Is_Radar_Visible(DetectedType & detected) const
+{
+	TechnoTypeClass const * ttype = Techno_Type_Class();
+	if (ttype->IsInvisible || IsSinking || !IsActive || IsInLimbo) {
+		return(false);
+	}
+
+	if (House->Is_Player_Control()) {
+		return(IsDiscoveredByPlayer ? true : false);
+	}
+
+	if (!Map.In_Local_Radar(Cell(Center_Coord()), true)) {
+		return(false);
+	}
+
+	int height = HeightAGL;
+	bool ability_radar_invisible = Has_Ability(ABILITY_RADAR_INVISIBLE);
+	bool is_shrouded = Map.Is_Shrouded(Get_Coord()) && MainWindow;
+	bool is_fogged = Scen->Special.IsFogOfWar && Map.Is_Fogged(Get_Coord());
+
+	if (!is_fogged && Cloak != CLOAKED && height >= -20 && !ability_radar_invisible && !is_shrouded) {
+		return(true);
+	}
+
+	if (!Is_Sensed_By_Player()) {
+		return(false);
+	}
+
+	if (!PlayerPtr->Is_Ally(House) && !ability_radar_invisible && !is_fogged && !is_shrouded) {
+		detected = (height < -20) ? DETECTED_SUBTERRANEAN : DETECTED_CLOAKED;
+	}
+	return(true);
+}
+
+// FUNCTION: 0x0070D420
+bool TechnoClass::Is_Sensed_By_Player(void) const
+{
+	if (PlayerPtr != NULL) {
+		CellClass * cptr = &Map[Center_Coord()];
+		return(cptr->Is_Sensed(PlayerPtr->HeapID));
+	}
+	return(false);
+}
+
+// FUNCTION: 0x0070D460
+bool TechnoClass::Is_Sensed_By_House(HouseClass const * house) const
+{
+	if (house != NULL) {
+		CellClass * cptr = &Map[Center_Coord()];
+		return(cptr->Is_Sensed(house->HeapID));
+	}
+	return(false);
+}
+
+// FUNCTION: 0x0070D4A0
+void AbstractClass::BecomeUntargetable(void)
+{
+	TechnoClass * self = this == NULL ? NULL : ((AbstractFlags & 1) ? (TechnoClass *)this : NULL);
+	for (int i = Technos.Count() - 1; i >= 0; i--) {
+		TechnoClass * techno = Technos[i];
+		bool allowed = true;
+		if (self != NULL && techno->Airstrike != NULL && techno->Airstrike->Target == this && self->Strength > 0 && self->IsActive) {
+			allowed = false;
+		}
+		if (techno->TarCom == this && allowed) {
+			techno->Restore_Mission();
+			if (techno->Fetch_RTTI() == RTTI_AIRCRAFT && techno->CurrentMission == MISSION_PATROL) {
+				techno->Status = 0;
+				((AircraftClass *)techno)->IsLockedStraight = false;
+			}
+			if (techno->TarCom == this) {
+				techno->Assign_Target(NULL);
+			}
+		}
+	}
+	for (int j = Teams.Count() - 1; j >= 0; j--) {
+		TeamClass * team = Teams[j];
+		if (team->MissionTarget == this) {
+			team->MissionTarget = NULL;
+		}
+		if (team->Target == this) {
+			team->Target = NULL;
+		}
+	}
+}
+
+// FUNCTION: 0x0070D590
+bool TechnoClass::Should_Use_High_Arc(int which) const
+{
+	WeaponTypeClass const * weapon = Get_Class_Weapon_Data(which)->Weapon;
+	if (weapon == NULL) {
+		return(true);
+	}
+
+	bool result = weapon->IsLobber;
+
+	if (!result) {
+		if (TarCom != NULL) {
+			int dz = TarCom->Center_Coord().Z - Get_Coord().Z;
+			if (dz > 0) {
+				if (Point2D(Get_Coord()).Distance_To(Point2D(TarCom->Center_Coord())) < dz) {
+					result = true;
+				}
+			}
+		}
+	}
+
+	return(result);
 }
 
 // FUNCTION: 0x0070E140

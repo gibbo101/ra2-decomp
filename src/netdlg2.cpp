@@ -770,6 +770,57 @@ static void Get_Join_Responses(void)
 	}
 }
 
+namespace fastmath { double __cdecl sqrt(double x); double __cdecl tan(double x); double __cdecl atan(double x); }
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007E1720;
+extern const double DAT_007E1728;
+extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
+extern const double DAT_007EEF08;
+extern const double DAT_007EEF10;
+
+// FUNCTION: 0x005DACF0 $E89
+double DAT_00AC01C0 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x005DAD20 $E92
+double DAT_00AC0250 = DAT_00AC01C0 / DAT_007EEF08;
+
+// FUNCTION: 0x005DAD40 $E95
+double DAT_00AC0218 = DAT_007E1718 / DAT_00AC0250;
+
+// FUNCTION: 0x005DAD60 $E98
+double DAT_00AC0210 = DAT_007E1720 * DAT_007EEF10;
+
+// FUNCTION: 0x005DAD80 $E101
+double DAT_00AC01C8 = DAT_007E1728 * DAT_007EEF10;
+
+// FUNCTION: 0x005DADA0 $E104
+double DAT_00AC0198 = DAT_007E1730 * DAT_007EEF10;
+
+// FUNCTION: 0x005DADC0 $E107
+int DAT_00AC0258 = (int)(fastmath::tan(DAT_00AC0198 - DAT_00AC01C8) * DAT_007E1738 * DAT_00AC01C0);
+
+// FUNCTION: 0x005DAE00 $E110
+double DAT_00AC01D8 = fastmath::atan(DAT_00AC0258 * DAT_007E1740);
+
+// FUNCTION: 0x005DAE30 $E113
+double DAT_00AC01F8 = fastmath::atan((DAT_00AC0258 * 2) / DAT_00AC01C0);
+
+// FUNCTION: 0x005DAE60 $E116
+int DAT_00AC024C = (int)(DAT_00AC0258 * 4 + DAT_007E1738);
+
+struct Net2ShortPair { short a; short b; Net2ShortPair(void) { a = 0; b = 0; } };
+struct Net2IntTriple { int a; int b; int c; Net2IntTriple(void) { a = 0; b = 0; c = 0; } };
+
+// FUNCTION: 0x005DAE90 $E119
+Net2ShortPair DAT_00AC01B8;
+
+// FUNCTION: 0x005DAEA0 $E122
+Net2IntTriple DAT_00AC01E8;
+
 // FUNCTION: 0x005DAF20
 bool Net2Callback(void)
 {

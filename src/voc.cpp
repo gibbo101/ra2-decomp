@@ -18,6 +18,8 @@
 #include "ini.h"
 #include "vector.h"
 #include <objidl.h>
+#include <math.h>
+namespace fastmath { double __cdecl sqrt(double x); }
 
 VocClass * __fastcall FUN_004063B0(char const * name);
 struct SoundLink
@@ -543,6 +545,99 @@ template class DynamicVectorClass<VocEntry *>;
 // FUNCTION: 0x00751930 ?$VectorClass@PAVVocEntry@@::operator==
 // FUNCTION: 0x00751970 ?$VectorClass@PAVVocEntry@@::Resize
 template class VectorClass<VocEntry *>;
+
+// FUNCTION: 0x00751A20 ?$VectorClass@PAVVocClass@@::Clear
+// FUNCTION: 0x00751A50 ?$VectorClass@PAVVocClass@@::ID
+// FUNCTION: 0x00751A90 ?$VectorClass@PAVVocClass@@::ID
+// FUNCTION: 0x00751AB0 ?$DynamicVectorClass@PAVVocClass@@::Resize
+// FUNCTION: 0x00751B60 ?$DynamicVectorClass@PAVVocClass@@::ID
+// FUNCTION: 0x00751B90 ?$DynamicVectorClass@PAVVocClass@@::~?$DynamicVectorClass@PAVVocClass@@
+// FUNCTION: 0x00751BE0 ?$VectorClass@PAVVocClass@@::~?$VectorClass@PAVVocClass@@
+template class VectorClass<VocClass *>;
+template class DynamicVectorClass<VocClass *>;
+
+struct DiskInfo
+{
+	int DriveType;
+	char VolumeName[64];
+	DWORD Serial;
+	char FileSystem[64];
+	unsigned FreeBytes;
+	unsigned TotalBytes;
+};
+
+void __cdecl FUN_004068E0(char const * format, ...);
+
+// FUNCTION: 0x00751DD0
+bool __fastcall FUN_00751DD0(char const * root, DiskInfo * info)
+{
+	DWORD sectorsPerCluster;
+	DWORD bytesPerSector;
+	DWORD freeClusters;
+	DWORD totalClusters;
+	DWORD flags;
+	DWORD maxComponent;
+
+	memset(info, 0, sizeof(DiskInfo));
+	info->DriveType = GetDriveType(root);
+
+	if (!GetDiskFreeSpace(root, &sectorsPerCluster, &bytesPerSector, &freeClusters, &totalClusters)) {
+		FUN_004068E0("GetDiskFreeSpace() failed: %s\n", 0);
+		return false;
+	}
+	info->FreeBytes = sectorsPerCluster * bytesPerSector * freeClusters;
+	if (freeClusters) {
+		return false;
+	}
+	info->TotalBytes = sectorsPerCluster * bytesPerSector * totalClusters;
+
+	if (!GetVolumeInformation(root, info->VolumeName, sizeof(info->VolumeName), &info->Serial, &maxComponent, &flags, info->FileSystem, sizeof(info->FileSystem))) {
+		FUN_004068E0("GetVolumeInformation() - failed: %s\n", 0);
+		return false;
+	}
+	return true;
+}
+
+// FUNCTION: 0x00751EA0
+void __fastcall FUN_00751EA0(char const * path, int * dirCount, int * fileCount, unsigned long * totalSize)
+{
+	WIN32_FIND_DATA ff;
+	char buffer[260];
+
+	HANDLE handle = FindFirstFile(path, &ff);
+	if (handle != INVALID_HANDLE_VALUE) {
+		do {
+			if (ff.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+				if (strcmpi(ff.cFileName, ".") != 0 && strcmpi(ff.cFileName, "..") != 0) {
+					(*dirCount)++;
+					strcpy(buffer, path);
+					buffer[strlen(buffer) - 1] = '\0';
+					strcat(buffer, ff.cFileName);
+					strcat(buffer, "\\*");
+					FUN_00751EA0(buffer, dirCount, fileCount, totalSize);
+				}
+			} else {
+				(*fileCount)++;
+				*totalSize += ff.nFileSizeLow;
+			}
+		} while (FindNextFile(handle, &ff));
+		FindClose(handle);
+	}
+}
+
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007F68F0;
+
+// FUNCTION: 0x00752020 $E77
+double DAT_00B1D3E8 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x00752050 $E80
+double DAT_00B1D490 = DAT_00B1D3E8 / DAT_007F68F0;
+
+// FUNCTION: 0x00752070 $E83
+double DAT_00B1D438 = DAT_007E1718 / DAT_00B1D490;
 
 // FUNCTION: 0x007532D0
 VocClass * VocClass_From_Name(char const * name)

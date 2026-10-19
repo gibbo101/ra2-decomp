@@ -80,7 +80,7 @@
 extern DynamicVectorClass<TechnoClass *> DAT_00A8EC78;
 #define Technos DAT_00A8EC78
 extern DynamicVectorClass<FactoryClass *> DAT_00A83E30;
-namespace Unsorted { extern int MuteSWLaunches; extern Cell CellSpreadTable[]; }
+namespace Unsorted { extern int CurrentFrame; extern int MuteSWLaunches; extern Cell CellSpreadTable[]; }
 #define Factories DAT_00A83E30
 extern DynamicVectorClass<ObjectClass *> DAT_00A8ECB8;
 extern HouseClass * DAT_00AC1198;
@@ -656,16 +656,6 @@ bool HouseClass::CanOverpower(AbstractClass const * target) const
 void HouseClass::Make_Ally(HousesType house, bool announce)
 {
 	Make_Ally(Houses[house], announce);
-}
-
-inline void HouseClass::Clear_Anger(HouseClass const * house)
-{
-	for (int i = 0; i < AngerNodes.Count(); i++) {
-		if (AngerNodes[i].House == house) {
-			Add_Anger(-AngerNodes[i].Level, house);
-			break;
-		}
-	}
 }
 
 inline bool HouseClass::Is_Human_Player(void) const
@@ -3433,6 +3423,308 @@ void HouseClass::Update_Factories(RTTIType rtti, bool naval, int buildcat)
 		if (factory->Object == NULL && factory->QueuedObjects.Count() == 0) {
 			delete factory;
 		}
+	}
+}
+
+// FUNCTION: 0x005092F0
+void HouseClass::Update_Spied_Radar(HouseClass * house)
+{
+	RadarSpied |= 1 << house->Class->House;
+	if (house == PlayerPtr) {
+		for (int index = 0; index < Technos.Count(); index++) {
+			TechnoClass * obj = Technos[index];
+			if (obj && !obj->IsInLimbo && obj->House == this) {
+				Coord reveal = obj->PositionCoord;
+				Map.RevealArea1(&reveal, obj->Techno_Type_Class()->SightRange, this, false, false, false, true, true);
+			}
+		}
+		Map.Flag_To_Redraw(GS_REDRAW_ALL);
+	}
+}
+
+// FUNCTION: 0x005093C0
+void HouseClass::Clear_Anger(HouseClass const * house)
+{
+	for (int i = 0; i < AngerNodes.Count(); i++) {
+		if (AngerNodes[i].House == house) {
+			Add_Anger(-AngerNodes[i].Level, house);
+			break;
+		}
+	}
+}
+
+// FUNCTION: 0x00509400
+void HouseClass::Recalc_Threat_Regions(void)
+{
+	int i;
+
+	for (i = 0; i < MAP_TOTAL_REGIONS; i++) {
+		Regions[i].Reset_Threat();
+	}
+
+	for (i = Technos.Count() - 1; i >= 0; i--) {
+		TechnoClass * techno = Technos[i];
+		if (techno->IsInLimbo || !techno->IsActive) continue;
+		int risk = techno->Risk();
+
+		if (risk > 0) {
+			if ((techno->RTTI == RTTI_INFANTRY || techno->RTTI == RTTI_UNIT || techno->RTTI == RTTI_AIRCRAFT) && techno != NULL) {
+				FootClass * foot = (FootClass *)techno;
+				if (foot->LastAdjacencyCell != CELL_NONE) {
+					int region = Map.Cell_Region(foot->LastAdjacencyCell);
+					if (foot->House != this && (!Is_Human_Player() || !Is_Ally(foot->House))) {
+						Adjust_Threat(region, risk);
+					}
+				}
+			} else {
+				int region = Map.Cell_Region(techno->Get_Cell_Ptr()->CellID);
+				Adjust_Threat(region, risk);
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x005095D0
+int HouseClass::Owned_Team_Count(TeamTypeClass const * teamtype) const
+{
+	int count = 0;
+	for (int i = Teams.Count() - 1; i >= 0; i--) {
+		TeamClass * team = Teams[i];
+		if (team && team->House == this && teamtype == team->Class) {
+			count++;
+		}
+	}
+	return(count);
+}
+
+// FUNCTION: 0x00509610
+bool HouseClass::Can_Create_Team(TeamTypeClass const * teamtype)
+{
+	if (teamtype != NULL && teamtype->TaskForce != NULL) {
+		for (int i = 0; i < teamtype->TaskForce->ClassCount; i++) {
+			TechnoTypeClass const * ttype = teamtype->TaskForce->Members[i].Class;
+			if (ttype == NULL || ttype->Who_Can_Build_Me(true, true, false, this) == NULL) {
+				if (Session.Type != GAME_NORMAL) return(false);
+				bool found = false;
+				for (int j = Feet.Count() - 1; j >= 0; j--) {
+					FootClass * foot = Feet[j];
+					if (foot->House == this && ttype == foot->Techno_Type_Class() && teamtype->Can_Recruit(foot, this)) {
+						found = true;
+						break;
+					}
+				}
+				if (!found) return(false);
+			}
+		}
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00509700
+void HouseClass::Update_Production_Mode(RTTIType type)
+{
+	if (Is_Human_Player() || Session.Type == GAME_NORMAL) return;
+
+	switch (ProductionMode) {
+		case BUILDINGS:
+			if (Available_Money() < Rule->AIAlternateProductionCreditCutoff) {
+				if (type == RTTI_BUILDING) {
+					ProductionMode = UNITS;
+				}
+			} else {
+				ProductionMode = EVERYTHING;
+			}
+			break;
+
+		case UNITS:
+			if (Available_Money() < Rule->AIAlternateProductionCreditCutoff) {
+				bool hasbarracks = false;
+				for (int i = 0; i < Rule->BuildBarracks.Count(); i++) {
+					if (!hasbarracks && ABQuantity.Value(Rule->BuildBarracks[i]->HeapID) <= 0) {
+						hasbarracks = false;
+					} else {
+						hasbarracks = true;
+					}
+				}
+
+				bool hasweapons = false;
+				for (int j = 0; j < Rule->BuildWeapons.Count(); j++) {
+					if (!hasweapons && ABQuantity.Value(Rule->BuildWeapons[j]->HeapID) <= 0) {
+						hasweapons = false;
+					} else {
+						hasweapons = true;
+					}
+				}
+
+				if (!hasweapons || !hasbarracks || Drain > Power || Random_Pick(0, 1) == 0) {
+					if (type != RTTI_BUILDING) {
+						ProductionMode = BUILDINGS;
+					}
+				}
+			} else {
+				ProductionMode = EVERYTHING;
+			}
+			break;
+
+		case NOTHING:
+			if (Available_Money() > Rule->AIAlternateProductionCreditCutoff) {
+				ProductionMode = EVERYTHING;
+			}
+			break;
+
+		case EVERYTHING:
+			if (Available_Money() < Rule->AIAlternateProductionCreditCutoff) {
+				ProductionMode = (type == RTTI_BUILDING) ? UNITS : BUILDINGS;
+			}
+			break;
+	}
+}
+
+static inline void Fire_At_Preferred_Target(HouseClass * house, SuperClass * super)
+{
+	if (house->Enemy != HOUSE_NONE) {
+		Cell target = CELL_NONE;
+		if (house->PreferredTargetCell != CELL_NONE) {
+			target = house->PreferredTargetCell;
+		} else if (house->PreferredTarget == QUARRY_ANYTHING) {
+			target = house->PickIonCannonTarget();
+		} else {
+			target = house->PickTargetByType(house->PreferredTarget);
+		}
+		if (target != CELL_NONE) {
+			house->Place_Special_Blast((SuperWeaponType)house->SuperWeapon.ID(super), target);
+		}
+	}
+}
+
+static inline void Fire_At_Defensive_Cell(HouseClass * house, SuperClass * super)
+{
+	Cell target = CELL_NONE;
+	if (house->PreferredDefensiveCell2 != CELL_NONE) {
+		target = house->PreferredDefensiveCell2;
+	} else if (house->PreferredDefensiveCell != CELL_NONE && house->PreferredDefensiveCellStartTime + Rule->AISuperDefenseFrames > Unsorted::CurrentFrame) {
+		target = house->PreferredDefensiveCell;
+	} else {
+		return;
+	}
+	if (target != CELL_NONE) {
+		house->Place_Special_Blast((SuperWeaponType)house->SuperWeapon.ID(super), target);
+	}
+}
+
+// FUNCTION: 0x005098F0
+void HouseClass::AI_TryFireSW(void)
+{
+	if (!Is_Human_Player()) {
+		for (int i = 0; i < SuperWeapon.Count(); i++) {
+			SuperClass * super = SuperWeapon[i];
+
+			if (super != NULL && super->IsReady) {
+				switch (super->Class->Type) {
+					case SUPER_MULTI_MISSILE:
+						Fire_At_Preferred_Target(this, super);
+						break;
+
+					case SUPER_LIGHTNING_STORM:
+						Fire_LightningStorm(super);
+						break;
+
+					case SUPER_PSYCHIC_DOMINATOR:
+						Fire_PsyDom(super);
+						break;
+
+					case SUPER_GENETIC_CONVERTER:
+						Fire_GenMutator(super);
+						break;
+
+					case SUPER_PARA_DROP:
+					case SUPER_AMER_PARA_DROP:
+					case SUPER_SPY_PLANE:
+					case SUPER_PSYCHIC_REVEAL:
+						Fire_ParaDrop(super);
+						break;
+
+					case SUPER_FORCE_SHIELD:
+						Fire_At_Defensive_Cell(this, super);
+						break;
+
+					default:
+						break;
+				}
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x00509B20
+void HouseClass::AI_Multi_Missile(SuperClass * super)
+{
+	if (Enemy != HOUSE_NONE) {
+		Cell target = CELL_NONE;
+		if (PreferredTargetCell != CELL_NONE) {
+			target = PreferredTargetCell;
+		} else if (PreferredTarget == QUARRY_ANYTHING) {
+			target = PickIonCannonTarget();
+		} else {
+			target = PickTargetByType(PreferredTarget);
+		}
+		if (target != CELL_NONE) {
+			Place_Special_Blast((SuperWeaponType)SuperWeapon.ID(super), target);
+		}
+	}
+}
+
+// FUNCTION: 0x00509BD0
+void HouseClass::AI_Hunter_Seeker(SuperClass * super)
+{
+	if (Enemy != HOUSE_NONE) {
+		Place_Special_Blast((SuperWeaponType)SuperWeapon.ID(super), CELL_NONE);
+	}
+}
+
+// FUNCTION: 0x00509C10
+void HouseClass::AI_Chem_Missile(SuperClass * super)
+{
+	if (Enemy != HOUSE_NONE) {
+		Cell target = CELL_NONE;
+		if (PreferredTargetCell != CELL_NONE) {
+			target = PreferredTargetCell;
+		} else if (PreferredTarget == QUARRY_ANYTHING) {
+			target = PickIonCannonTarget();
+		} else {
+			target = PickTargetByType(PreferredTarget);
+		}
+		if (target != CELL_NONE) {
+			Place_Special_Blast((SuperWeaponType)SuperWeapon.ID(super), target);
+		}
+	}
+}
+
+// FUNCTION: 0x00509CC0
+void HouseClass::AI_Drop_Pods(SuperClass * super)
+{
+}
+
+// FUNCTION: 0x00509CD0
+void HouseClass::Fire_ParaDrop(SuperClass * super)
+{
+	HouseClass * enemy = (Enemy != HOUSE_NONE) ? Houses[Enemy] : this;
+	Cell target = CELL_NONE;
+
+	if (PreferredTargetCell != CELL_NONE) {
+		target = PreferredTargetCell;
+	} else if (PreferredTarget != QUARRY_ANYTHING) {
+		target = PickTargetByType(PreferredTarget);
+	} else {
+		target = enemy->Get_Base_Center();
+		target = Map.Nearby_Location(target, SPEED_FOOT, -1, MZONE_NORMAL, false, Point2D(5, 5), false, false, false, true, Cell(0, 0), false, false);
+		target.X += 2;
+		target.Y += 2;
+	}
+
+	if (target != CELL_NONE) {
+		Place_Special_Blast((SuperWeaponType)SuperWeapon.ID(super), target);
 	}
 }
 

@@ -2295,7 +2295,7 @@ void MapGeneratorClass::Seed_Land(void)
 		cptr = Map.Iterate();
 	}
 
-	Map.Build_All_Cliffs(0, 0);
+	Map.FUN_0057A0C0(0, 0);
 
 	if (RMGCellData != NULL) {
 		int grid_size = MapCellStride * MapCellStride;
@@ -2682,6 +2682,142 @@ int MapGeneratorClass::Get_Cell_Data_Spread(Cell const &cell)
 	return(MapRegionClass::CellData::Get_Spread(cell));
 }
 
+// FUNCTION: 0x005A0160
+bool MapGeneratorClass::Grow_Region(int id, int rings, Rect rect, char set_height, char height)
+{
+	DynamicVectorClass<Cell> * cells = Build_Region_Border_Cell_List(id);
+
+	DynamicVectorClass<Cell> * ncells;
+	for (int i = 0; i < rings; i++) {
+		ncells = new DynamicVectorClass<Cell>;
+		ncells->Set_Growth_Step(3 * cells->Count());
+
+		for (int j = 0; j < cells->Count(); j++) {
+			for (int dir = 0; dir < FACING_COUNT; dir++) {
+				Cell ncell = Adjacent_Cell((*cells)[j], (FacingType)dir);
+				if (My_In_Radar(ncell) && rect.Is_Point_Within(Point2D(ncell.X, ncell.Y))) {
+					MapRegionClass::CellData & data = MapRegionClass::Get_Cell_Data(ncell);
+					int rid = data.RegionID;
+					bool reclaim = set_height && rid == id - 1;
+					CellClass * cptr = &Map[ncell];
+					if ((rid == 0 || reclaim) && (cptr->Is_Tile_Clear() || (reclaim && cptr->Is_Tile_With_Water()))) {
+						ncells->Add(ncell);
+						data.RegionID = id;
+						if (set_height && cptr->Is_Tile_Clear()) {
+							Map[ncell].Height = height;
+						}
+					} else if (rid != id) {
+						delete cells;
+						delete ncells;
+						return(false);
+					}
+				}
+			}
+		}
+
+		delete cells;
+		cells = ncells;
+	}
+
+	delete cells;
+	return(true);
+}
+
+// FUNCTION: 0x005A0410
+bool MapGeneratorClass::Clear_Region_Border(int id, int rings, int new_id)
+{
+	int i;
+	int j;
+
+	DynamicVectorClass<Cell> * cells = Build_Region_Border_Cell_List(id);
+
+	if (rings > 1) {
+		Map.Reset_Iterator();
+		CellClass *cptr = Map.Iterate();
+		while (cptr != NULL) {
+			MapRegionClass::Get_Cell_Data(cptr->Fetch_CellID()).SpreadID = 0;
+			cptr = Map.Iterate();
+		}
+	}
+
+	for (i = 0; i < rings; i++) {
+
+		for (j = cells->Count() - 1; j >= 0; j--) {
+			Cell c = (*cells)[j];
+			MapRegionClass::CellData::Set_Region(c, new_id);
+			CellClass *cptr = &Map[c];
+			cptr->ITType = ISOTILE_CLEAR;
+			cptr->SubTile = 0;
+			cptr->Height = CellHeight;
+		}
+
+		if (i < rings - 1) {
+			DynamicVectorClass<Cell> * ncells = new DynamicVectorClass<Cell>;
+			ncells->Set_Growth_Step(cells->Count());
+
+			for (j = cells->Count() - 1; j >= 0; j--) {
+				Cell c = (*cells)[j];
+				for (int dir = 0; dir < FACING_COUNT; dir++) {
+					Cell ncell = Adjacent_Cell(c, (FacingType)dir);
+					if (My_In_Radar(ncell)) {
+						MapRegionClass::CellData & data = MapRegionClass::Get_Cell_Data(ncell);
+						if (data.RegionID == id && data.SpreadID != i + 1) {
+							ncells->Add(ncell);
+							data.SpreadID = i + 1;
+						}
+					}
+				}
+			}
+
+			delete cells;
+			cells = ncells;
+		}
+	}
+
+	delete cells;
+
+	if (rings > 1) {
+		Map.Reset_Iterator();
+		CellClass *cptr = Map.Iterate();
+		while (cptr != NULL) {
+			MapRegionClass::Get_Cell_Data(cptr->Fetch_CellID()).SpreadID = 0;
+			cptr = Map.Iterate();
+		}
+	}
+
+	return(true);
+}
+
+// FUNCTION: 0x005A0700
+DynamicVectorClass<Cell> *MapGeneratorClass::Build_Region_Border_Cell_List(int id)
+{
+	DynamicVectorClass<Cell> *cells = new DynamicVectorClass<Cell>;
+	cells->Set_Growth_Step(LocalWidth * LocalHeight);
+
+	int grid_size = MapCellStride * MapCellStride;
+	for (int i = 0; i < grid_size; i++) {
+		Cell cell = RMGCellData[i].CellID;
+		if (cell != Cell(0, 0) && MapRegionClass::CellData::Get_Region(cell) == id) {
+			bool add = false;
+			for (FacingType facing = FACING_FIRST; facing < FACING_COUNT; facing++) {
+				Cell ncell = Adjacent_Cell(cell, facing);
+				if (My_In_Radar(ncell)) {
+					if (MapRegionClass::CellData::Get_Region(ncell) != id) {
+						add = true;
+						break;
+					}
+				}
+			}
+
+			if (add) {
+				cells->Add(cell);
+			}
+		}
+	}
+
+	return(cells);
+}
+
 // FUNCTION: 0x005A1190
 double MapGeneratorClass::Get_Angle_Score(const Cell & cell1, const Cell & cell2, double ref_angle)
 {
@@ -2705,6 +2841,170 @@ double MapGeneratorClass::Get_Angle_Score(const Cell & cell1, const Cell & cell2
 	}
 
 	return(RMG_RANDOM_DOUBLE2(_random_weight) + _angle_weight * angle_diff);
+}
+
+// FUNCTION: 0x005A1270
+void MapGeneratorClass::Clear_Cell_Data_Spreads(void)
+{
+	Map.Reset_Iterator();
+	CellClass *cptr = Map.Iterate();
+	while (cptr != NULL) {
+		Set_Cell_Data_Spread(cptr->Fetch_CellID(), 0);
+		cptr = Map.Iterate();
+	}
+}
+
+// FUNCTION: 0x005A12D0
+void MapGeneratorClass::Increase_Height_Except_ID(int cell_height, int id)
+{
+	Map.Reset_Iterator();
+	CellClass *cptr = Map.Iterate();
+	while (cptr != NULL) {
+		int rid = Get_Cell_Data_Region(cptr->Fetch_CellID());
+		if (rid != id) {
+			cptr->Height += cell_height;
+		}
+		cptr = Map.Iterate();
+	}
+}
+
+// FUNCTION: 0x005A1350
+IsometricTileType MapGeneratorClass::Pick_Alternate_Cliff(IsometricTileType type)
+{
+	int cliff = type - IsometricTileTypeClass::CliffSet;
+	switch (cliff) {
+		case 4:
+			cliff = 4 + Pick_Random_UInt(1, 2);
+			break;
+		case 5:
+			cliff = 4 + Pick_Random_UInt(0, 1) * 2;
+			break;
+		case 6:
+			cliff = 4 + Pick_Random_UInt(0, 1);
+			break;
+		case 8:
+			cliff = 8 + Pick_Random_UInt(1, 2);
+			break;
+		case 9:
+			cliff = 8 + Pick_Random_UInt(0, 1) * 2;
+			break;
+		case 10:
+			cliff = 8 + Pick_Random_UInt(0, 1);
+			break;
+		case 11:
+			cliff = 11 + Pick_Random_UInt(1, 2);
+			break;
+		case 12:
+			cliff = 11 + Pick_Random_UInt(0, 1) * 2;
+			break;
+		case 13:
+			cliff = 11 + Pick_Random_UInt(0, 1);
+			break;
+		case 14:
+			cliff = 14 + Pick_Random_UInt(1, 2);
+			break;
+		case 15:
+			cliff = 14 + Pick_Random_UInt(0, 1) * 2;
+			break;
+		case 16:
+			cliff = 14 + Pick_Random_UInt(0, 1);
+			break;
+		case 22:
+			cliff = 22 + Pick_Random_UInt(1, 2);
+			break;
+		case 23:
+			cliff = 22 + Pick_Random_UInt(0, 1) * 2;
+			break;
+		case 24:
+			cliff = 22 + Pick_Random_UInt(0, 1);
+			break;
+		case 28:
+			cliff = 29;
+			break;
+		case 29:
+			cliff = 28;
+			break;
+		case 34:
+			cliff = 34 + Pick_Random_UInt(1, 2);
+			break;
+		case 35:
+			cliff = 34 + Pick_Random_UInt(0, 1) * 2;
+			break;
+		case 36:
+			cliff = 34 + Pick_Random_UInt(0, 1);
+			break;
+	}
+	return (IsometricTileType)(IsometricTileTypeClass::CliffSet + cliff);
+}
+
+// FUNCTION: 0x005A19E0
+void MapGeneratorClass::Fixup_Cliff_Corners(void)
+{
+	Map.Reset_Iterator();
+	CellClass *cptr = Map.Iterate();
+	while (cptr != NULL) {
+		CellClass *c5 = &cptr->Adjacent_Cell((FacingType)5);
+		CellClass *c1 = &cptr->Adjacent_Cell((FacingType)1);
+		CellClass *c3 = &cptr->Adjacent_Cell((FacingType)3);
+		CellClass *c2 = &cptr->Adjacent_Cell((FacingType)2);
+		CellClass *c6 = &cptr->Adjacent_Cell((FacingType)6);
+
+		int mask = Map.Get_High_Ground_Mask(cptr);
+		if (mask == 0x83) {
+			if (Map.Get_High_Ground_Mask(c3) == 0x83 && c2->Is_Tile_Clear() && Pick_Random_UInt(0, 1) == 0) {
+				c2->Height -= 4;
+				Set_Cell_Data_Region(c2->CellID, Get_Cell_Data_Region(cptr->CellID));
+			}
+		} else if (mask == 0x38) {
+			if (Map.Get_High_Ground_Mask(c3) == 0x38 && c6->Is_Tile_Clear() && Pick_Random_UInt(0, 1) == 0) {
+				c6->Height -= 4;
+				Set_Cell_Data_Region(c6->CellID, Get_Cell_Data_Region(cptr->CellID));
+			}
+		} else if (mask == 0xe0) {
+			if (Map.Get_High_Ground_Mask(c5) == 0xe0 && Map.Get_High_Ground_Mask(c1) == 0xe0 && cptr->Is_Tile_Clear()) {
+				cptr->Height += 4;
+				Set_Cell_Data_Region(cptr->CellID, Get_Cell_Data_Region(c6->CellID));
+			}
+		}
+
+		cptr = Map.Iterate();
+	}
+}
+
+static inline bool Is_Special_Map_Type(MapSeedClass const & seed)
+{
+	return(seed.MapType == 3 || seed.MapType == 4);
+}
+
+// FUNCTION: 0x005A1C70
+void MapGeneratorClass::Init_Regions(void)
+{
+	int i;
+
+	MapRegionClass::Destroy_Cell_Regions();
+	MapRegionClass::Create_Water_Regions();
+
+	for (i = 0; i < MapRegionClass::MapRegions.Count(); i++) {
+		MapRegionClass *ptr = MapRegionClass::MapRegions[i];
+		if (ptr->ContainsWater) {
+			ptr->Grow(4 + (ptr->CellCount > 8000) + (!Is_Special_Map_Type(SeedData)));
+			ptr->Claim_Expandable_Cells();
+		}
+	}
+
+	MapRegionClass::Create_Land_Regions(false);
+}
+
+// FUNCTION: 0x005A1E10
+void MapGeneratorClass::Make_Regions(void)
+{
+	if (SeedData.MapType == 4 || SeedData.MapType == 3) {
+		MapRegionClass::Make_Ice_Regions();
+		MapRegionClass::Make_Regions();
+		Fixup_Cliff_Corners();
+		Map.Build_All_Cliffs(0, -1);
+		Fixup_Cliff_Edges();
+	}
 }
 
 // FUNCTION: 0x005A1E50
@@ -2744,6 +3044,62 @@ bool MapGeneratorClass::Expand_All_High_Ground(void)
 		cptr = Map.Iterate();
 	}
 	return(success);
+}
+
+// FUNCTION: 0x005A1FB0
+bool MapGeneratorClass::Init_Start_Points(void)
+{
+	int player_index = 0;
+
+	if (SeedData.NumPlayers > 0) {
+		do {
+			Cell seed = Scen->Get_Waypoint_Cell((WAYPOINT)player_index);
+
+			CellNode * nodes = new CellNode[800];
+			PriorityQueueClass<CellNode> * queue = new PriorityQueueClass<CellNode>(800);
+
+			Clear_Cell_Data_Spreads();
+			int spread_count = 0;
+			player_index++;
+			queue->Clear();
+
+			int node_count = 1;
+			nodes[0].Element = seed;
+			nodes[0].Score = 0.0f;
+			MapRegionClass::Get_Cell_Data(seed).SpreadID = player_index;
+			queue->Insert(nodes[0]);
+
+			CellNode * node = queue->Extract_Min();
+			while (node != NULL && spread_count < 400) {
+				MapRegionClass::Get_Cell_Data(node->Element).Inviolate = true;
+
+				FacingType dir = FACING_FIRST;
+				CellNode * newnode = &nodes[node_count];
+				for (; dir < FACING_COUNT; dir++) {
+					Cell ncell = Adjacent_Cell(node->Element, dir);
+					if (My_In_Radar(ncell) && MapRegionClass::Get_Cell_Data(ncell).SpreadID == 0) {
+						if (Map[ncell].Is_Tile_Clear()) {
+							newnode->Element = ncell;
+							int dx = ncell.X - seed.X;
+							int dy = ncell.Y - seed.Y;
+							newnode->Score = fastmath::sqrt((double)(dx * dx + dy * dy));
+							MapRegionClass::Get_Cell_Data(ncell).SpreadID = player_index;
+							node_count++;
+							queue->Insert(*newnode++);
+						}
+					}
+				}
+
+				spread_count++;
+				node = queue->Extract_Min();
+			}
+
+			delete[] nodes;
+			delete queue;
+
+		} while (player_index < SeedData.NumPlayers);
+	}
+	return(true);
 }
 
 // FUNCTION: 0x005A5AE0

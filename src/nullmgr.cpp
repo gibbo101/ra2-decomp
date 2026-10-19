@@ -28,6 +28,68 @@
 
 #define DEFAULT_TIMEOUT		90
 
+#include <math.h>
+
+extern double __cdecl FUN_004CAC40(double);
+extern double __cdecl FUN_004CAD50(double);
+extern double __cdecl FUN_004CADE0(double);
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007E1720;
+extern const double DAT_007E1728;
+extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
+extern const double DAT_007EEFC8;
+extern const double DAT_007EEFD0;
+
+// FUNCTION: 0x005F13D0 $E33
+double DAT_00AC12E0 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x005F1400 $E36
+double DAT_00AC1338 = DAT_00AC12E0 / DAT_007EEFC8;
+
+// FUNCTION: 0x005F1420 $E39
+double DAT_00AC1320 = DAT_007E1718 / DAT_00AC1338;
+
+// FUNCTION: 0x005F1440 $E42
+double DAT_00AC1318 = DAT_007E1720 * DAT_007EEFD0;
+
+// FUNCTION: 0x005F1460 $E45
+double DAT_00AC12F0 = DAT_007E1728 * DAT_007EEFD0;
+
+// FUNCTION: 0x005F1480 $E48
+double DAT_00AC1270 = DAT_007E1730 * DAT_007EEFD0;
+
+// FUNCTION: 0x005F14A0 $E51
+int DAT_00AC1340 = (int)(FUN_004CAD50(DAT_00AC1270 - DAT_00AC12F0) * DAT_007E1738 * DAT_00AC12E0);
+
+// FUNCTION: 0x005F14E0 $E54
+double DAT_00AC12F8 = FUN_004CADE0(DAT_00AC1340 * DAT_007E1740);
+
+// FUNCTION: 0x005F1510 $E57
+double DAT_00AC1310 = FUN_004CADE0((DAT_00AC1340 * 2) / DAT_00AC12E0);
+
+// FUNCTION: 0x005F1540 $E60
+int DAT_00AC1334 = (int)(DAT_00AC1340 * 4 + DAT_007E1738);
+
+struct ShortPair {
+	unsigned short A, B;
+	ShortPair() { A = 0; B = 0; }
+};
+
+struct IntTriple {
+	int A, B, C;
+	IntTriple() { A = 0; B = 0; C = 0; }
+};
+
+// FUNCTION: 0x005F1570 $E63
+ShortPair DAT_00AC12D8;
+
+// FUNCTION: 0x005F1580 $E66
+IntTriple DAT_00AC1300;
+
 // FUNCTION: 0x005F15C0
 NullModemClass::NullModemClass (int numsend, int numreceive, int maxlen,
 	unsigned short magicnum) :

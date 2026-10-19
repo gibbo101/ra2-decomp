@@ -257,6 +257,7 @@ class CellClass : public AbstractClass
 		TerrainClass * Cell_Terrain(bool bridge=false) const;
 		UnitClass * Cell_Unit(bool bridge=false) const;
 		bool Goodie_Check(FootClass * object);
+		bool TryAssignJumpjet(FootClass * foot);
 		bool Is_Clear_To_Build(SpeedType loco = SPEED_TRACK, BuildingTypeClass * what = NULL, HouseClass * who = NULL) const;
 		bool Is_Clear_To_Move(SpeedType loco, bool ignoreinfantry, bool ignorevehicles, int zone=-1, MZoneType check=MZONE_NORMAL, int cell_height=-1, bool checkbridge=true) const;
 		bool Is_Spot_Free(int spot_index, bool bridge=false) const;

@@ -28,6 +28,7 @@ class CaptureManagerClass : public AbstractClass
 		virtual ~CaptureManagerClass(void) override;
 
 		void FreeAll(void);
+		bool FreeUnit(TechnoClass * techno);
 		bool FUN_00472330(TechnoClass * techno);
 		bool CannotControlAnyMore(void);
 		bool FUN_00471F90(AbstractClass * ptr);

@@ -69,6 +69,8 @@ void __fastcall FUN_00489280(Coord const & coord, int damage, TechnoClass * sour
 void __fastcall FUN_0048A620(Coord coord, int damage, WarheadTypeClass const * warhead, bool forced, int flags);
 char const * __fastcall FUN_00751590(int index);
 int __fastcall FUN_00753250(char const * name);
+void __fastcall FUN_0070F120(FootClass * unit, TalkType bubble);
+void __fastcall Hold_Scenario(int seconds);
 
 void __fastcall FUN_0053AD00(int, int, int, int);
 bool __fastcall FUN_0053A100(void);
@@ -418,11 +420,6 @@ bool TActionClass::TAction_PARTICLE_ANIM(HouseClass * , ObjectClass * , TriggerC
 	coord.Z = Map.Get_Height_GL(cell2);
 	new ParticleSystemClass(ParticleSystemTypes[Data.PAnim], coord, NULL);
 	return(true);
-}
-
-Coord TActionClass::Waypoint_As_Coord(void)
-{
-	return(Scen->Get_Waypoint_Coord(Data.Value));
 }
 
 // FUNCTION: 0x006E01C0
@@ -1865,12 +1862,141 @@ bool TActionClass::TAction_RADAR_BLACKOUT(HouseClass * house, ObjectClass * , Tr
 	return(true);
 }
 
+// FUNCTION: 0x006E3B60
+int TActionClass::GetMode(TActionType action)
+{
+	switch (action) {
+		case 11: case 103:
+			return(0x27);
+
+		case 33: case 34: case 134:
+			return(0x11);
+
+		case 1: case 2: case 3: case 6: case 9: case 13: case 14: case 36: case 37: case 38: case 74: case 75: case 113: case 119: case 120: case 121: case 122: case 123: case 124: case 126: case 130:
+			return(0xd);
+
+		case 30: case 85: case 86: case 87:
+			return(0x10);
+
+		case 4: case 5: case 7: case 105:
+			return(0xc);
+
+		case 104:
+			return(0x28);
+
+		case 80: case 107:
+			return(0x22);
+
+		case 88:
+			return(0x23);
+
+		case 12: case 22: case 53: case 54:
+			return(0xb);
+
+		case 20:
+			return(0x1);
+
+		case 10: case 100: case 117:
+			return(0x2);
+
+		case 19: case 98:
+			return(0x3);
+
+		case 21:
+			return(0x4);
+
+		case 70:
+			return(0x1a);
+
+		case 106: case 115:
+			return(0x2b);
+
+		case 129: case 132: case 133:
+			return(0x2e);
+
+		case 28: case 29:
+			return(0x16);
+
+		case 56: case 57:
+			return(0x1d);
+
+		case 35:
+			return(0xf);
+
+		case 40:
+			return(0x15);
+
+		case 41:
+			return(0x17);
+
+		case 99:
+			return(0x26);
+
+		case 8: case 17: case 18: case 59: case 63: case 64: case 65: case 66: case 89: case 90: case 94: case 95: case 96: case 101: case 102: case 109: case 112: case 116: case 128: case 135: case 137: case 140:
+			return(0x9);
+
+		case 42:
+			return(0x18);
+
+		case 43:
+			return(0x1b);
+
+		case 48:
+			return(0x1e);
+
+		case 25: case 26: case 27: case 39: case 44: case 73: case 76: case 77: case 78: case 79: case 84: case 110: case 114: case 127: case 139: case 142: case 143: case 144:
+			return(0xa);
+
+		case 52:
+			return(0x19);
+
+		case 55:
+			return(0x1c);
+
+		case 58:
+			return(0x1f);
+
+		case 71: case 72:
+			return(0x21);
+
+		case 108:
+			return(0x2c);
+
+		case 125:
+			return(0x2d);
+
+		case 131:
+			return(0x2f);
+
+		default:
+			break;
+	}
+	return(0);
+}
+
 // FUNCTION: 0x006E3D70
 HRESULT STDMETHODCALLTYPE TActionClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
 	*retval = CLSID_ActionClass;
 	return(S_OK);
+}
+
+// FUNCTION: 0x006E3DB0
+HRESULT STDMETHODCALLTYPE TActionClass::Load(IStream * stream)
+{
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		new (this) TActionClass(NoInitClass());
+
+		Swizzle_Pointer(&Next);
+		Swizzle_Pointer(&Team);
+		Swizzle_Pointer(&Tag);
+		Swizzle_Pointer(&Trigger);
+
+		result = S_OK;
+	}
+	return(result);
 }
 
 // FUNCTION: 0x006E3E30
@@ -1881,4 +2007,119 @@ HRESULT STDMETHODCALLTYPE TActionClass::Save(IStream * stream, BOOL cleardirty)
 		result = S_OK;
 	}
 	return(result);
+}
+
+// FUNCTION: 0x006E3E50
+void TActionClass::Compute_CRC(CRCEngine & crc) const
+{
+	BASECLASS::Compute_CRC(crc);
+
+	if (Next != NULL) crc(Next->Fetch_ID());
+	crc(Action);
+	if (Team != NULL) crc(Team->Fetch_ID());
+	if (Tag != NULL) crc(Tag->Fetch_ID());
+	if (Trigger != NULL) crc(Trigger->Fetch_ID());
+	crc((int)Data.Value);
+}
+
+// FUNCTION: 0x006E3EE0
+int __fastcall Action_Flags(int action)
+{
+	int flags = 0;
+	switch (action) {
+		case 14: case 32: case 60: case 61: case 62: case 91: case 111:
+			flags = 2;
+			break;
+		default:
+			break;
+	}
+	return(flags);
+}
+
+// FUNCTION: 0x006E3F70
+Coord TActionClass::Waypoint_As_Coord(void)
+{
+	return(Scen->Get_Waypoint_Coord(Data.Value));
+}
+
+// FUNCTION: 0x006E3FB0
+void TActionClass::Set_Text(char const * text)
+{
+	Text[0] = '\0';
+	if (text != NULL) {
+		while (*text != '\0' && (unsigned char)*text <= ' ') {
+			text++;
+		}
+		if (*text != '\0') {
+			strncpy(Text, text, sizeof(Text) - 1);
+			Text[sizeof(Text) - 1] = '\0';
+			int length = strlen(Text);
+			while (length != 0 && (unsigned char)Text[length - 1] <= ' ') {
+				length--;
+			}
+			Text[length] = '\0';
+		}
+	}
+}
+
+// FUNCTION: 0x006E4010
+char * TActionClass::Get_Text(void)
+{
+	return(Text[0] != '\0' ? Text : NULL);
+}
+
+// FUNCTION: 0x006E4020
+bool TActionClass::TAction_FLASH_TEAM(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	if (Team != NULL) {
+		Team->Flash(Data.Value);
+	}
+	return(true);
+}
+
+// FUNCTION: 0x006E4040
+bool TActionClass::TAction_TALK_BUBBLE(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	if (Team != NULL) {
+		TeamClass * team = Team->Find_First_Of_Type();
+		if (team != NULL) {
+			FUN_0070F120(team->Member, (TalkType)Data.Value);
+		}
+	} else {
+		FUN_0070F120(NULL, TALK_NONE);
+	}
+	return(true);
+}
+
+// FUNCTION: 0x006E4080
+bool TActionClass::TAction_PAUSE_SCENARIO(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	Hold_Scenario(Data.Value);
+	return(true);
+}
+
+// FUNCTION: 0x006E4090
+bool TActionClass::TAction_EJECT_OCCUPANTS(HouseClass * , ObjectClass * , TriggerClass * trigger, Cell const & )
+{
+	bool result = false;
+	for (int index = 0; index < Buildings.Count(); index++) {
+		BuildingClass * building = Buildings[index];
+		if (building->IsActive && building->IsDown && !building->IsInLimbo && building->Tag != NULL && building->Tag->Is_Trigger_Attached(trigger)) {
+			building->FUN_00457DE0(false, false);
+			result = true;
+			break;
+		}
+	}
+	return(result);
+}
+
+// FUNCTION: 0x006E4100
+bool TActionClass::TAction_SWITCH_TAB(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	int tab = Data.Value;
+	if (tab < 4 && tab >= 0 && Map.Column[tab].FUN_006ABAC0()) {
+		Map.SetTab(tab);
+		return(true);
+	}
+	return(false);
 }

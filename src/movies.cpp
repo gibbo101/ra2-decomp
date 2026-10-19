@@ -14,6 +14,58 @@
 #include "vqa.h"
 #include "vqoption.h"
 #include "win.h"
+#include <cmath>
+
+namespace fastmath { double __cdecl sqrt(double x); double __cdecl tan(double x); double __cdecl atan(double x); }
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007E1720;
+extern const double DAT_007E1728;
+extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
+extern const double DAT_007EE0A0;
+extern const double DAT_007EE0A8;
+
+struct DatShorts { short X; short Y; DatShorts(short x, short y) : X(x), Y(y) {} };
+struct DatInts { int X; int Y; int Z; DatInts(int x, int y, int z) : X(x), Y(y), Z(z) {} };
+
+// FUNCTION: 0x005BF5E0 $E66
+double DAT_00ABF380 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x005BF610 $E69
+double DAT_00ABF3E8 = DAT_00ABF380 / DAT_007EE0A0;
+
+// FUNCTION: 0x005BF630 $E72
+double DAT_00ABF3D0 = DAT_007E1718 / DAT_00ABF3E8;
+
+// FUNCTION: 0x005BF650 $E75
+double DAT_00ABF3C8 = DAT_007E1720 * DAT_007EE0A8;
+
+// FUNCTION: 0x005BF670 $E78
+double DAT_00ABF388 = DAT_007E1728 * DAT_007EE0A8;
+
+// FUNCTION: 0x005BF690 $E81
+double DAT_00ABF360 = DAT_007E1730 * DAT_007EE0A8;
+
+// FUNCTION: 0x005BF6B0 $E84
+int DAT_00ABF3F0 = (int)(DAT_007E1738 * (DAT_00ABF380 * fastmath::tan(DAT_00ABF360 - DAT_00ABF388)));
+
+// FUNCTION: 0x005BF6F0 $E87
+double DAT_00ABF3A8 = fastmath::atan(DAT_00ABF3F0 * DAT_007E1740);
+
+// FUNCTION: 0x005BF720 $E90
+double DAT_00ABF3C0 = fastmath::atan((DAT_00ABF3F0 * 2) / DAT_00ABF380);
+
+// FUNCTION: 0x005BF750 $E93
+int DAT_00ABF3E4 = (int)((DAT_00ABF3F0 * 4) + DAT_007E1738);
+
+// FUNCTION: 0x005BF780 $E96
+DatShorts DAT_00ABF378(0, 0);
+
+// FUNCTION: 0x005BF790 $E99
+DatInts DAT_00ABF3B0(0, 0, 0);
 
 // FUNCTION: 0x005BF8C0
 void Movie_Blit_To_Screen(void)

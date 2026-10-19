@@ -109,6 +109,8 @@ class TActionClass : public AbstractClass
 		void Build_INI_Entry(char * buffer) const;
 
 		Coord Waypoint_As_Coord(void);
+		void Set_Text(char const * text);
+		char * Get_Text(void);
 		static int GetMode(TActionType action);
 
 		bool operator() (HouseClass * house, ObjectClass * object, TriggerClass * trigger, Cell const & cell);
@@ -253,8 +255,12 @@ class TActionClass : public AbstractClass
 		bool TAction_DESTROY_ALL_NON_NAVAL_UNITS(HouseClass * house, ObjectClass * object, TriggerClass * trig, Cell const & cell);
 		bool TAction_DESTROY_ALL_NAVAL_UNITS(HouseClass * house, ObjectClass * object, TriggerClass * trig, Cell const & cell);
 		bool TAction_TALK_BUBBLE(HouseClass * house, ObjectClass * object, TriggerClass * trig, Cell const & cell);
+		bool TAction_PAUSE_SCENARIO(HouseClass * house, ObjectClass * object, TriggerClass * trig, Cell const & cell);
+		bool TAction_EJECT_OCCUPANTS(HouseClass * house, ObjectClass * object, TriggerClass * trig, Cell const & cell);
+		bool TAction_SWITCH_TAB(HouseClass * house, ObjectClass * object, TriggerClass * trig, Cell const & cell);
 };
 
 AttachType Attaches_To(TActionType event);
+int __fastcall Action_Flags(int action);
 
 extern DynamicVectorClass<TActionClass *> Actions;

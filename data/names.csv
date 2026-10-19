@@ -70,3 +70,8 @@ address,name,symbol,evidence
 0x0071BDF0,TerrainClass::TerrainClass,??0TerrainClass@@QAE@XZ,no-argument constructor (plain ret); called by TClassFactory<TerrainClass>::CreateInstance 0x006BF390
 0x0071BB90,TerrainClass::TerrainClass,??0TerrainClass@@QAE@PBVTerrainTypeClass@@ABVCell@@@Z,YRpp TerrainClass(TerrainTypeClass*; CellStruct*); the (type; cell) overload with ret 8
 0x0071BDF0,TerrainClass::TerrainClass,??0TerrainClass@@QAE@XZ,no-argument constructor (calls ObjectClass default 0x005F3900); called by TClassFactory<TerrainClass>::CreateInstance 0x006BF390
+0x0087E8B8,Search,,TS global (_astar.h); 0x00746000 and 0x005221D0 match calling Search.Test_Cell_Walk
+0x0042D170,AStarClass::Test_Cell_Walk,,TS name (astar.h); six arguments and ret 0x18 as called by 0x00746000 and 0x005221D0
+0x00481A00,CellClass::Goodie_Check,,TS name (cell.h); returns bool in al with ret 4 as called by 0x0054C550
+0x00B0CEC8,Tactical::SelectableObjects,,TS name (tactical.h); the selectable-object array 0x006DC430 walks
+0x0057A0C0,MapClass::FUN_0057A0C0,,two-argument map function (ret 8) called by Seed_Land 0x0059A6C0; distinct from Build_All_Cliffs 0x00578E60

@@ -587,12 +587,36 @@ bool INIClass::Put_Bool(char const * section, char const * entry, bool value)
 	}
 }
 
+// FUNCTION: 0x005295A0
+bool INIClass::Put_Bool(Wstring const & section, Wstring const & entry, bool value)
+{
+	char * entrystr = entry.text();
+	char * sectionstr = section.text();
+
+	if (value) {
+		return(Put_String(sectionstr, entrystr, "yes"));
+	} else {
+		return(Put_String(sectionstr, entrystr, "no"));
+	}
+}
+
 // FUNCTION: 0x005297E0
 bool INIClass::Put_Point(char const * section, char const * entry, TPoint2D<int> const & value)
 {
 	char buffer[54];
 	sprintf(buffer, "%d,%d", value.X, value.Y);
 	return(Put_String(section, entry, buffer));
+}
+
+// FUNCTION: 0x00529820
+bool INIClass::Put_Point(Wstring const & section, Wstring const & entry, TPoint2D<int> const & value)
+{
+	char buffer[54];
+	char * entrystr = entry.text();
+	char * sectionstr = section.text();
+
+	sprintf(buffer, "%d,%d", value.X, value.Y);
+	return(Put_String(sectionstr, entrystr, buffer));
 }
 
 // FUNCTION: 0x00529BF0
@@ -603,12 +627,34 @@ bool INIClass::Put_Point(char const * section, char const * entry, TPoint3D<int>
 	return(Put_String(section, entry, buffer));
 }
 
+// FUNCTION: 0x00529C40
+bool INIClass::Put_Point(Wstring const & section, Wstring const & entry, TPoint3D<int> const & value)
+{
+	char buffer[54];
+	char * entrystr = entry.text();
+	char * sectionstr = section.text();
+
+	sprintf(buffer, "%d,%d,%d", value.X, value.Y, value.Z);
+	return(Put_String(sectionstr, entrystr, buffer));
+}
+
 // FUNCTION: 0x0052A040
 bool INIClass::Put_Point(char const * section, char const * entry, TPoint3D<float> const & value)
 {
 	char buffer[54];
 	sprintf(buffer, "%f,%f,%f", (float)value.X, (float)value.Y, (float)value.Z);
 	return(Put_String(section, entry, buffer));
+}
+
+// FUNCTION: 0x0052A0A0
+bool INIClass::Put_Point(Wstring const & section, Wstring const & entry, TPoint3D<float> const & value)
+{
+	char buffer[54];
+	char * entrystr = entry.text();
+	char * sectionstr = section.text();
+
+	sprintf(buffer, "%f,%f,%f", (float)value.X, (float)value.Y, (float)value.Z);
+	return(Put_String(sectionstr, entrystr, buffer));
 }
 
 // FUNCTION: 0x0052A4D0

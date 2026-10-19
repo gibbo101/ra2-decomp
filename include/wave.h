@@ -43,6 +43,8 @@ class WaveClass : public ObjectClass
 
 		static void Init_Statics(void);
 
+		static DynamicVectorClass<WaveClass *> Array;
+
 	private:
 		void Set_Sonic_Pixel(int x, int xoff, int y, unsigned short * buffer) const;
 		void Set_Laser_Pixel(unsigned short * buffer, int mult) const;
@@ -52,6 +54,9 @@ class WaveClass : public ObjectClass
 		void Sonic_AI(void);
 		void Wave_Recalc_Affected_Cells(void);
 		void Build_Wave_Shape(Coord const & coord1, Coord const & coord2);
+		void Draw_Magnetic(Coord const & coord1, Coord const & coord2);
+		void Draw_NonMagnetic(Coord const & coord1, Coord const & coord2);
+		void Update_Wave(void);
 		void Wave_Shape_AI(void);
 		void Sonic_Damage(Coord const & coord);
 		void Sonic_Add_Cell(Cell const & cell);
@@ -102,7 +107,10 @@ class WaveClass : public ObjectClass
 			Point2D StartRight;
 		} ActiveWave;
 
-		Point2D MagPoints[4];
+		struct MagPointStruct {
+			int X;
+			int Y;
+		} MagPoints[4];
 
 		mutable PolygonRasterStruct DrawData;
 

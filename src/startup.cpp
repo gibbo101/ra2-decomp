@@ -151,8 +151,8 @@ struct SHPStruct
 // FUNCTION: 0x006BB210 $E32
 // FUNCTION: 0x006BB220 $E35
 // FUNCTION: 0x006BB240 $E38
-// FUNCTION: 0x006BB260 $E316
-// FUNCTION: 0x006BB2A0 $E314
+// FUNCTION: 0x006BB260 $E317
+// FUNCTION: 0x006BB2A0 $E315
 
 namespace DirectDrawWrap { extern bool DoSmth; void DisposeOfStuff(void); }
 void FUN_004C19B0(void);
@@ -413,7 +413,23 @@ template class TClassFactory<TerrainTypeClass>;
 template class TClassFactory<TerrainClass>;
 
 // FUNCTION: 0x006BF440 ?$TClassFactory@VSuperWeaponTypeClass@@::?$TClassFactory@VSuperWeaponTypeClass@@
+// FUNCTION: 0x006BF450 ?$TClassFactory@VSuperWeaponTypeClass@@::QueryInterface
+// FUNCTION: 0x006BF4C0 ?$TClassFactory@VSuperWeaponTypeClass@@::AddRef
+// FUNCTION: 0x006BF4E0 ?$TClassFactory@VSuperWeaponTypeClass@@::Release
+// FUNCTION: 0x006BF510 ?$TClassFactory@VSuperWeaponTypeClass@@::CreateInstance
+// FUNCTION: 0x006BF590 ?$TClassFactory@VSuperWeaponTypeClass@@::LockServer
 template class TClassFactory<SuperWeaponTypeClass>;
+
+// FUNCTION: 0x006BF5C0 ?$TClassFactory@VSuperClass@@::?$TClassFactory@VSuperClass@@
+// FUNCTION: 0x006BF5D0 ?$TClassFactory@VSuperClass@@::QueryInterface
+// FUNCTION: 0x006BF640 ?$TClassFactory@VSuperClass@@::AddRef
+// FUNCTION: 0x006BF660 ?$TClassFactory@VSuperClass@@::Release
+// FUNCTION: 0x006BF690 ?$TClassFactory@VSuperClass@@::CreateInstance
+// FUNCTION: 0x006BF710 ?$TClassFactory@VSuperClass@@::LockServer
+template class TClassFactory<SuperClass>;
+
+// FUNCTION: 0x006BF740 ?$TClassFactory@VTactical@@::?$TClassFactory@VTactical@@
+template class TClassFactory<Tactical>;
 
 // FUNCTION: 0x006BEDB0 ?$_com_ptr_t@V?$_com_IIID@UIUnknown@@$1?_GUID_00000000_0000_0000_c000_000000000046@@3U__s_GUID@@A@@::CreateInstance
 template class _com_ptr_t<_com_IIID<IUnknown, &__uuidof(IUnknown)> >;

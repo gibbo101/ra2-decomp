@@ -33,6 +33,10 @@
 #include "vox.h"
 #include "swizzle.h"
 #include "vector.h"
+#include "hashtable.h"
+#include "scheme.h"
+#include "capmgr.h"
+#include "lightcon.h"
 #include <objidl.h>
 
 extern Cell DAT_00A9F9F8;
@@ -44,7 +48,7 @@ struct ScreenEffect {
 extern ScreenEffect * DAT_00A9FA9C;
 extern int DAT_00A9FA98;
 extern int DAT_00A9FAB0;
-void __fastcall FUN_0053AD00(int, int, int, int);
+void __fastcall FUN_0053AD00(int, int, int, bool);
 void __fastcall FUN_0053C280(void);
 void __fastcall FUN_0053AF40(void);
 void __fastcall FUN_0053B560(void);
@@ -52,11 +56,23 @@ void __fastcall FUN_00539EB0(int, int, Cell, HouseClass *);
 void __fastcall FUN_0053A300(Coord);
 int __fastcall FUN_006D2120(int);
 void __fastcall FUN_0065FA70(int, Cell);
+DynamicVectorClass<ColorScheme *> * __fastcall GetPaletteSchemesFromIterator(HashIterator * it);
+int __fastcall SchemeLibrary_Count(void);
 extern int DAT_00A9FA84;
 extern int DAT_00A9FA90;
 extern Coord DAT_00A9FA30;
-namespace Unsorted { extern int CurrentFrame; extern int MuteSWLaunches; }
+extern int DAT_007ED3D0[];
+namespace Unsorted { extern Cell CellSpreadTable[]; extern int CurrentFrame; extern int MuteSWLaunches; }
 extern MessageListClass DAT_00A8BC60;
+
+class IonBlastClass
+{
+	public:
+		IonBlastClass(Coord coord);
+
+		unsigned char Before[0x10];
+		BOOL DisableIonBeam;
+};
 
 class LightningStorm
 {
@@ -528,4 +544,157 @@ void FUN_0053AB50(void)
 {
 	FUN_0053C280();
 	PlayerPtr->RecalcRadar = true;
+}
+
+// FUNCTION: 0x0053AB70
+void FUN_0053AB70(void)
+{
+	NukeFlash::Status = 1;
+	NukeFlash::Duration = 30;
+	NukeFlash::StartTime = Frame;
+	Scen->AmbientChangeTimer = 1;
+	Scen->DesiredAmbientLight = Scen->NukeAmbient;
+	FUN_0053AD00(NORMAL_LIGHT * Scen->NukeLighting.RedTint / 100, NORMAL_LIGHT * Scen->NukeLighting.GreenTint / 100, NORMAL_LIGHT * Scen->NukeLighting.BlueTint / 100, 1);
+	Map.Flag_To_Redraw(GS_REDRAW_TACTICAL);
+}
+
+// FUNCTION: 0x0053AC50
+void FUN_0053AC50(void)
+{
+	NukeFlash::Status = 2;
+	NukeFlash::Duration = 15;
+	NukeFlash::StartTime = Unsorted::CurrentFrame;
+	FUN_0053C280();
+	Map.Flag_To_Redraw(GS_REDRAW_TACTICAL);
+}
+
+// FUNCTION: 0x0053AC80
+void __fastcall FUN_0053AC80(int r, int g, int b, bool tint)
+{
+	HashIterator it = {0, 0, false};
+	DynamicVectorClass<ColorScheme *> * schemes;
+	while ((schemes = GetPaletteSchemesFromIterator(&it)) != NULL) {
+		int count = SchemeLibrary_Count();
+		for (int i = 0; i < count; i++) {
+			(*schemes)[i]->Converter->Apply_Tint(r, g, b, tint);
+		}
+	}
+}
+
+// FUNCTION: 0x0053AD00
+void __fastcall FUN_0053AD00(int r, int g, int b, bool tint)
+{
+	int i;
+	for (i = 0; i < TileDrawers.Count(); i++) {
+		TileDrawers[i]->Apply_Tint(r, g, b, tint);
+	}
+	for (i = 0; i < ColorSchemes.Count(); i++) {
+		ColorScheme * scheme = ColorSchemes[i];
+		if (scheme->IntensityLevels > 1) {
+			scheme->Converter->Apply_Tint(r, g, b, tint);
+		}
+	}
+	FUN_0053AC80(r, g, b, tint);
+	Map.Update_Cell_Colors();
+	Map.Flag_To_Redraw(GS_REDRAW_TACTICAL);
+}
+
+// FUNCTION: 0x0053AE00
+void FUN_0053AE00(void)
+{
+	wchar_t const * text = StringTable::LoadString("Msg:LightningStormActive", NULL, "D:\\ra2mdpost\\Ion.cpp", 0x463);
+	int scheme = 3;
+	if (PlayerPtr) {
+		scheme = PlayerPtr->Scheme;
+	}
+	DAT_00A8BC60.Add_Message(NULL, 0, text, scheme, TextPrintType(0x4046), 150, false);
+}
+
+// FUNCTION: 0x0053B400
+bool FUN_0053B400(void)
+{
+	return PsyDom::Status ? true : false;
+}
+
+// FUNCTION: 0x0053B410
+void FUN_0053B410(void)
+{
+	wchar_t const * text = StringTable::LoadString("Msg:DominatorActive", NULL, "D:\\ra2mdpost\\Ion.cpp", 0x53b);
+	int scheme = 3;
+	if (PlayerPtr) {
+		scheme = PlayerPtr->Scheme;
+	}
+	DAT_00A8BC60.Add_Message(NULL, 0, text, scheme, TextPrintType(0x4046), 150, false);
+}
+
+// FUNCTION: 0x0053AE50
+void __fastcall FUN_0053AE50(HouseClass * owner, Cell cell)
+{
+	if (Rule->DominatorFirstAnim == NULL || Rule->DominatorSecondAnim == NULL) {
+		return;
+	}
+	PsyDom::Coords = cell;
+	PsyDom::Owner = owner;
+	AnimTypeClass const * type = Rule->DominatorFirstAnim;
+	Coord coord = Map[PsyDom::Coords].Center_Coord();
+	coord.Z += 750;
+	PsyDom::Anim = new AnimClass(type, coord, 0, 1, ShapeFlags_Type(0x600), 0, false);
+	PsyDom::Status = 1;
+	Scen->AmbientChangeTimer = 1;
+	FUN_0053C280();
+}
+
+static inline TechnoClass * Cast_Techno(ObjectClass * object)
+{
+	if (object == NULL) return NULL;
+	return (object->AbstractFlags & 1) ? (TechnoClass *)object : NULL;
+}
+
+// FUNCTION: 0x0053B080
+void FUN_0053B080(void)
+{
+	IonBlastClass * blast = new IonBlastClass(Map[PsyDom::Coords].Center_Coord());
+	blast->DisableIonBeam = 1;
+	AnimTypeClass const * type = Rule->DominatorSecondAnim;
+	Coord coord = Map[PsyDom::Coords].Center_Coord();
+	PsyDom::Anim = new AnimClass(type, coord, 0, 1, ShapeFlags_Type(0x600), 0, false);
+	MapClass::DamageArea(coord, Rule->DominatorDamage, NULL, Rule->DominatorWarhead, true, LightningStorm::Owner);
+	int count = DAT_007ED3D0[Rule->DominatorCaptureRange < 10 ? Rule->DominatorCaptureRange : 10];
+	DynamicVectorClass<TechnoClass *> victims;
+	for (int n = 0; n < count; n++) {
+		Cell const * ptr = &Unsorted::CellSpreadTable[n];
+		Cell entry = *ptr;
+		TechnoClass * techno = Map[entry + PsyDom::Coords].Cell_Techno(Point2D(0, 0), false, NULL);
+		while (techno != NULL) {
+			if (techno->Fetch_RTTI() != RTTI_BUILDING && !techno->Techno_Type_Class()->ImmuneToPsionics && !techno->IsIronCurtained() && !techno->Techno_Type_Class()->BalloonHover && !techno->In_Air()) {
+				if (techno->MindControlledBy != NULL) {
+					techno->MindControlledBy->CaptureManager->FreeUnit(techno);
+				}
+				techno->Captured(PsyDom::Owner, true);
+				techno->MindControlledByAUnit = true;
+				int ring = techno->Techno_Type_Class()->MindControlRingOffset;
+				Coord center = techno->Center_Coord() + Coord(0, 0, ring);
+				AnimClass * anim = new AnimClass(Rule->PermaControlledAnimationType, center, 0, 1, ShapeFlags_Type(0x600), 0, false);
+				techno->MindControlRingAnim = anim;
+				if (anim != NULL) {
+					anim->SetOwnerObject(techno);
+				}
+				victims.Add(techno);
+			}
+			if (techno->Next == NULL) {
+				break;
+			}
+			techno = Cast_Techno(techno->Next);
+		}
+	}
+	if (!PsyDom::Owner->FUN_0050B730()) {
+		for (int i = victims.Count() - 1; i >= 0; i--) {
+			victims[i]->QueueMission(MISSION_HUNT, false);
+		}
+	}
+}
+
+// FUNCTION: 0x0053B3F0
+void FUN_0053B3F0(void)
+{
 }

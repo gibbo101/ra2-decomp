@@ -15,10 +15,11 @@ class AudioStream;
 
 struct ThemeControl {
 	ThemeControl(void);
-	bool Fill_In(CCINIClass const & ini);
+	bool Fill_In(CCINIClass & ini);
 
 	char Name[256];
-	char Fullname[64];
+	char Sound[256];
+	wchar_t UIName[64];
 	int Scenario;
 	float Duration;
 	bool Normal;
@@ -59,7 +60,7 @@ class ThemeClass
 		bool Is_Allowed(ThemeType index) const;
 		bool Is_Regular(ThemeType theme) const {return(theme != THEME_NONE && Themes[theme]->Normal);}
 		char const * Base_Name(ThemeType index) const;
-		char const * Full_Name(ThemeType index) const;
+		wchar_t const * Full_Name(ThemeType index) const;
 		char const * GetID(ThemeType index) const;
 		int Max_Themes(void) const {return(Themes.Count());}
 		int Play_Song(ThemeType index);
@@ -78,7 +79,7 @@ class ThemeClass
 
 		void Set_Volume(int volume);
 
-		void Init_Themes(CCINIClass const & ini);
+		void Init_Themes(CCINIClass & ini);
 		void Free_Themes(void);
 };
 

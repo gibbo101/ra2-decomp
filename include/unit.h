@@ -55,6 +55,7 @@ class UnitClass : public FootClass
 
 		bool Goto_Clear_Spot(void);
 		bool Try_To_Deploy(void);
+		bool AStarAttempt(Cell const * from, Cell const * to);
 		void Deploy(void);
 		void Undeploy(void);
 		virtual void Scatter(Coord const &, bool forced=false, bool nokidding=false) override;
@@ -138,6 +139,7 @@ class UnitClass : public FootClass
 		virtual bool Enter_Idle_Mode(bool initial=false, bool=true) override;
 		virtual MoveType Can_Enter_Cell(CellClass const * cell, FacingType dir = FACING_NONE, int cell_height = -1, CellClass const * = 0, bool = true) const override;
 		virtual void Per_Cell_Process(PCPType why) override;
+		virtual bool INoticeSink_Unknown(DWORD unknown, DWORD unknown2) override;
 
 		static void Read_INI(CCINIClass & ini);
 		static void Write_INI(CCINIClass & ini);

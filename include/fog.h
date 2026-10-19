@@ -43,7 +43,7 @@ class FoggedObjectClass : public AbstractClass
 
 		virtual RTTIType Fetch_RTTI(void) const override;
 
-		virtual int Fetch_Object_Size(bool oldsave) const override;
+		virtual int Fetch_Object_Size(void) const override;
 		virtual void Compute_CRC(CRCEngine &) const override;
 
 		Cell const *Get_Head_Record_Occupy_List(void);

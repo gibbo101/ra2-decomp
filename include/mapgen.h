@@ -295,7 +295,9 @@ class MapGeneratorClass
 
 		void Load_Settings(void);
 		void Init_Regions(void);
-		bool Make_Regions(void);
+		void Make_Regions(void);
+		void Fixup_Cliff_Corners(void);
+		void Fixup_Cliff_Edges(void);
 		bool Expand_All_High_Ground(void);
 		bool Grow_Region(int id, int rings, Rect rect, char set_height, char height);
 		bool Clear_Region_Border(int id, int rings, int new_id);
@@ -332,7 +334,7 @@ class MapGeneratorClass
 		void Generate_Crystals(const Cell & cell);
 
 		void Create_Tiberium(void);
-		void Create_Tiberium_Patch(Cell const &cell, int count, int patch_id, bool use_primary_tiberium, bool place_tree, bool spawn_wildlife);
+		void Create_Tiberium_Patch(Cell const &cell, int count, int patch_id, bool flag);
 
 		void Generate_Urban_Areas(void);
 		DynamicVectorClass<Cell> * Create_Urban_Area(Cell const & cell, int size);
@@ -361,6 +363,8 @@ class MapGeneratorClass
 		static bool Is_Area_Cliff_Free(const Cell & cell);
 		static bool Is_Cell_Area_Clear(Rect const & rect, bool check_data);
 		static Rect Get_Cell_Bounding_Rect(const DynamicVectorClass<Cell> & cells);
+
+		IsometricTileType Pick_Alternate_Cliff(IsometricTileType type);
 
 		double Get_Angle_Score(const Cell & cell1, const Cell & cell2, double ref_angle);
 		double Get_Ice_Score(const Cell & cell1, const Cell & cell2, double random_range) const;

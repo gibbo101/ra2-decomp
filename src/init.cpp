@@ -3,6 +3,8 @@
 // Copyright 2025 Electronic Arts Inc.; 2026 OpenTS contributors
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
+#define NDEBUG
+
 #include "always.h"
 #include "init.h"
 #include "_bench.h"
@@ -1628,3 +1630,311 @@ bool FUN_00534DE0(void)
 	}
 	return(true);
 }
+
+extern MFCD * DAT_00884E68;
+extern MFCD * DAT_00884E70;
+extern MFCD * DAT_00884E74;
+extern MFCD * DAT_00884E78;
+extern int DAT_0089E414;
+extern CCINIClass DAT_00887208;
+void FUN_007534E0(void);
+void FUN_0072F350(void);
+void __fastcall FUN_0072F440(int side);
+void __fastcall FUN_006D02B0(void * map);
+int __fastcall FUN_004A80D0(int drive, int arg);
+
+// FUNCTION: 0x00534FA0
+bool __fastcall FUN_00534FA0(int side)
+{
+	char name[64];
+
+	FUN_007534E0();
+	if (side == 2) {
+		side = 1;
+	}
+	int disk = side;
+	if (side == -1) {
+		int cd = FUN_004A80D0(DAT_0089E414, 0x3C);
+		if (cd != 0 && cd != 1) {
+			FUN_004068E0("     FAILED!  This was not disk one or two!!!\n");
+			return(false);
+		}
+		disk = cd;
+	}
+	FUN_004068E0("Preparing Mixfiles for Side %02d.\n", disk);
+
+	if (DAT_00884E68 != NULL) {
+		FUN_004068E0("     Releasing %s\n", DAT_00884E68->Filename);
+		delete DAT_00884E68;
+		DAT_00884E68 = NULL;
+	}
+	if (DAT_00884E74 != NULL) {
+		FUN_004068E0("     Releasing %s\n", DAT_00884E74->Filename);
+		delete DAT_00884E74;
+		DAT_00884E74 = NULL;
+	}
+	if (DAT_00884E70 != NULL) {
+		FUN_004068E0("     Releasing %s\n", DAT_00884E70->Filename);
+		delete DAT_00884E70;
+		DAT_00884E70 = NULL;
+	}
+	if (DAT_00884E78 != NULL) {
+		FUN_004068E0("     Releasing %s\n", DAT_00884E78->Filename);
+		delete DAT_00884E78;
+		DAT_00884E78 = NULL;
+	}
+
+	sprintf(name, "SIDEC%02dMD.MIX", disk + 1);
+	FUN_004068E0("     Initilizing %s\n", name);
+	if (CCFileClass(name).Is_Available()) {
+		DAT_00884E70 = new MFCD(name, &FastKey);
+	}
+	DAT_00884E70->Cache();
+
+	sprintf(name, "SIDEC%02d.MIX", disk + 1);
+	FUN_004068E0("     Initilizing %s\n", name);
+	if (CCFileClass(name).Is_Available()) {
+		DAT_00884E74 = new MFCD(name, &FastKey);
+		if (DAT_00884E74 == NULL) {
+			FUN_004068E0("     FAILED!\n");
+			return(false);
+		}
+	}
+	if (DAT_00884E74 == NULL) {
+		FUN_004068E0("     FAILED!\n");
+		return(false);
+	}
+	DAT_00884E74->Cache();
+
+	sprintf(name, "SIDENC%02d.MIX", disk + 1);
+	FUN_004068E0("     Initilizing %s\n", name);
+	if (CCFileClass(name).Is_Available()) {
+		DAT_00884E78 = new MFCD(name, &FastKey);
+	}
+
+	FUN_0072F350();
+	FUN_0072F440(disk);
+
+	CCFileClass uimd("UIMD.INI");
+	if (DAT_00887208.ReadCCFile(uimd, false, false)) {
+		Rule->Read_AdvancedCommandBar(DAT_00887208, Session.Type != GAME_NORMAL && Session.Type != GAME_SKIRMISH);
+		FUN_006D02B0(&Map);
+		return(true);
+	}
+	FUN_004068E0("Failed to load UIMD.INI!\n");
+	return(false);
+}
+
+// FUNCTION: 0x005353D0
+ObjectClass * __fastcall FUN_005353D0(Cell const * cell, ObjectClass const * target)
+{
+	ObjectClass * best_obj = NULL;
+	int best_value = -1;
+	int best_distance = 0x7FFFFFFF;
+
+	if (CurrentObject.Count() > 0) {
+		for (int index = 0; index < CurrentObject.Count(); index++) {
+			ObjectClass * obj = CurrentObject[index];
+			int value = 0;
+
+			if (obj->Is_Techno()) {
+				value = 2;
+				TechnoClass * tech = (TechnoClass *)obj;
+				if (tech->Berzerk) {
+					value = 0;
+				} else if (tech->IsUnderEMP()) {
+					value = 1;
+				} else if (tech->Is_Weapon_Equipped()) {
+					value = 3;
+					if (tech->RTTI != RTTI_BUILDING) {
+						value = 4;
+						if (tech->Combat_Damage() > 0) {
+							value = 5;
+						}
+					}
+				}
+			}
+
+			if (value >= best_value) {
+				int distance = 0x7FFFFFFF;
+				bool has_cell = cell != NULL;
+				if (has_cell || target != NULL) {
+					Coord here = obj->Center_Coord();
+					Coord there;
+					if (has_cell) {
+						there = cell->As_Coord(0);
+					} else {
+						there = target->Center_Coord();
+					}
+					distance = here.Distance_To(there);
+				}
+				if (value > best_value) {
+					best_value = value;
+					best_obj = obj;
+					best_distance = distance;
+				} else if (distance < best_distance) {
+					best_obj = obj;
+					best_distance = distance;
+				}
+			}
+		}
+	}
+	return(best_obj);
+}
+
+// FUNCTION: 0x005355C0
+ThemeType FUN_005355C0(void)
+{
+	return(Theme.From_Name("INTRO"));
+}
+
+extern char DAT_00A8F394[];
+extern char DAT_00A8F314[];
+extern char DAT_00A8F4A0[];
+extern char DAT_00A8F420[];
+extern char DAT_00A8F520[];
+extern IDirectDraw * DAT_008A0094;
+int DAT_00825C8C = -1;
+int FUN_004E6190(void);
+int FUN_005CAFC0(void);
+char const * FUN_004E62B0(void);
+
+// FUNCTION: 0x005355D0
+int FUN_005355D0(void)
+{
+	if (DAT_00825C8C == -1) {
+		DAT_00A8F394[0] = 0;
+		DAT_00A8F314[0] = 0;
+		DAT_00A8F4A0[0] = 0;
+		DAT_00A8F420[0] = 0;
+		DAT_00A8F520[0] = 0;
+
+		int cpu_type = FUN_004E6190();
+		int mhz = FUN_005CAFC0();
+		int cpu_rating;
+		int ram_rating;
+		int vram_rating;
+		cpu_rating = 5;
+		switch (cpu_type) {
+			case -1:
+				break;
+			case 3:
+			case 5:
+				cpu_rating = mhz / 100 + 1;
+				break;
+			case 4:
+			case 7:
+				cpu_rating = mhz / 100 + 2;
+				break;
+			case 6:
+				cpu_rating = mhz / 100 + 3;
+				break;
+			default:
+				cpu_rating = 1;
+				break;
+		}
+		FUN_004068E0("Profile: CPU:%d (%dMhz %s)\n", cpu_rating, mhz, FUN_004E62B0());
+		sprintf(DAT_00A8F314, "CPU: %d Mhz %s", mhz, FUN_004E62B0());
+
+		MEMORYSTATUS memory;
+		memory.dwLength = sizeof(memory);
+		GlobalMemoryStatus(&memory);
+		unsigned int ram = (memory.dwTotalPhys + 0xA0000) >> 20;
+		ram_rating = 2;
+		if (ram >= 64) {
+			ram_rating = 5;
+		}
+		if (ram >= 128) {
+			ram_rating += 2;
+		}
+		if (ram == 256) {
+			ram_rating += 2;
+		} else if (ram > 256) {
+			ram_rating = 10;
+		}
+		FUN_004068E0("Profile: RAM:%d (%dMb)\n", ram_rating, ram);
+		sprintf(DAT_00A8F4A0, "RAM reported: %d Mb", ram);
+
+		unsigned int vram = 4;
+		vram_rating = 5;
+		if (DAT_008A0094 != NULL) {
+			DDCAPS_DX3 caps;
+			caps.dwSize = 0x13C;
+			if (DAT_008A0094->GetCaps((LPDDCAPS)&caps, NULL) == 0) {
+				DWORD total = caps.dwVidMemTotal;
+				if (total <= caps.dwVidMemFree) {
+					total = caps.dwVidMemFree;
+				}
+				vram = (total + 0xFFFFF) >> 20;
+			}
+		}
+		if (vram >= 32) {
+			vram_rating = 10;
+		} else if (vram >= 16) {
+			vram_rating = 9;
+		} else if (vram >= 8) {
+			vram_rating = 7;
+		} else if (vram >= 4) {
+			vram_rating = 5;
+		} else if (vram <= 2) {
+			vram_rating = 3;
+		}
+		FUN_004068E0("Profile: VRAM:%d (%dMb)\n", vram_rating, vram);
+		sprintf(DAT_00A8F420, "VRAM reported: %d Mb", vram);
+
+		int blits = 0;
+		int speed_rating = 5;
+		if (TileSurface != NULL && ((DSurface *)TileSurface)->In_Video_Ram() && !((DSurface *)AlternateSurface)->In_Video_Ram()) {
+			Rect area = TileSurface->Get_Rect();
+			Rect other = AlternateSurface->Get_Rect();
+			if (area.Width >= other.Width) {
+				area.Width = other.Width;
+			}
+			if (area.Height >= other.Height) {
+				area.Height = other.Height;
+			}
+			if (area.Width >= 480) {
+				area.Width = 480;
+			}
+			if (area.Height >= 400) {
+				area.Height = 400;
+			}
+			for (int pass = 0; pass < 4; pass++) {
+				TileSurface->Blit_From(area, *AlternateSurface, area);
+				AlternateSurface->Blit_From(area, *TileSurface, area);
+				Sleep(0);
+			}
+			DWORD start = timeGetTime();
+			if ((start & 0xFF000000) != 0xFF) {
+				TileSurface->Blit_From(area, *AlternateSurface, area);
+				AlternateSurface->Blit_From(area, *TileSurface, area);
+				blits = 1;
+				while (timeGetTime() - start <= 1000 && blits <= 5000) {
+					TileSurface->Blit_From(area, *AlternateSurface, area);
+					AlternateSurface->Blit_From(area, *TileSurface, area);
+					blits++;
+				}
+				speed_rating = MAX(1, blits / 4);
+			}
+		}
+		FUN_004068E0("Profile: VRAM speed:%d (%d blits per second)\n", speed_rating, blits * 2);
+		sprintf(DAT_00A8F520, "%d blits per second\n", blits * 2);
+
+		DAT_00825C8C = cpu_rating;
+		if (DAT_00825C8C >= ram_rating) {
+			DAT_00825C8C = ram_rating;
+		}
+		if (DAT_00825C8C >= vram_rating) {
+			DAT_00825C8C = vram_rating;
+		}
+		if (DAT_00825C8C >= speed_rating) {
+			DAT_00825C8C = speed_rating;
+		}
+		FUN_004068E0("Overall performance profile = %d\n", DAT_00825C8C);
+		sprintf(DAT_00A8F394, "Profile: %d\n", DAT_00825C8C);
+	}
+	return(DAT_00825C8C);
+}
+
+// FUNCTION: 0x00535AA0 INIClass::INIClass
+

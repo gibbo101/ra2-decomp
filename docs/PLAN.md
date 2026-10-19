@@ -162,7 +162,7 @@ compiler era). Many RA2 classes are the RA classes grown up: same names, same pa
 
 ## The binary (measured 6 October 2026)
 
-Steam install: `~/.steam/steam/steamapps/common/Command & Conquer Red Alert II/`
+Steam install: `steamapps/common/Command & Conquer Red Alert II/` in the Steam library
 (app 2229850).
 
 | | `gamemd.exe` (YR) | `game.exe` (RA2) |
@@ -988,6 +988,22 @@ merges coordinating through small edits, roughly tripled throughput, at about 1%
 weekly allowance per million agent tokens. Re-measured from the week, first matches for
 the whole game come to about 5-6 full weekly allowances, against the first estimate's 8-9.
 Merge gate: 5,779 of 5,779 (899.8 KB).
+
+### Batches 36, 37 and 38 (19 October 2026)
+
+**402 of 432 functions** (133, 144, 125). Batch 37 took twelve new front-end and online
+modules whose first functions are static initializers, and matched all 144 in the Sonnet
+phase. Batch 36's merge fixed FoggedObjectClass's vtable (Fetch_Object_Size takes no
+argument and overrides slot 12), added TechnoClass::IsMindControlled and FireDeathWeapon,
+and landed the jumpjet ascent, cruise and descent states by using TS's Goodie_Check and
+Search.Test_Cell_Walk instead of new YRpp names. Batch 38's merge proved INIClass's
+Get_Point overloads and the five-argument ReadStringtableEntry, gave NetCommandType the
+0x16 value from the IPX jump table, wrote YR's WWMessageBox into msgbox.h, and moved
+netshare and multiplayer onto MultiMission. Recording the round exposed Seed_Land calling
+0x0057A0C0 under Build_All_Cliffs' name, now its own declaration; empulse.h's static
+vector renumbered startup.cpp's two `$E` markers. Ini's eight cached Find_Entry readers
+stay near 30-50% on inline depth. Cost: about 6.6M tokens. Merge gate: 6,183 of 6,183
+(957.9 KB).
 
 ### Decide before the first batch
 

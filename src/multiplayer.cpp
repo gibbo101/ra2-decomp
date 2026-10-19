@@ -40,19 +40,10 @@ class MPHouse
 		bool FUN_0050B730(void);
 };
 
-class MPMapEntry
-{
-	public:
-		bool FUN_0069ADF0(void);
-		bool FUN_0069AE10(Wstring * filter);
-		char pad[0x17c];
-		bool Official;
-};
-
 extern int DAT_00A8DA84;
 extern MPPlayerNode ** DAT_00A8DA78;
 extern int DAT_00A8B8D8;
-extern MPMapEntry ** DAT_00A8B8CC;
+extern MultiMission ** DAT_00A8B8CC;
 bool __cdecl FUN_0077D940(void);
 void __fastcall FUN_00623840(HWND hwnd);
 int __fastcall FUN_0069B670(SessionClass * session);
@@ -261,15 +252,15 @@ int MPGameModeClass::FirstValidMapIndex(void)
 {
 	int count = DAT_00A8B8D8;
 	for (int i = 0; i < count; i++) {
-		MPMapEntry * map = DAT_00A8B8CC[i];
+		MultiMission * map = DAT_00A8B8CC[i];
 		bool valid;
-		if (map->FUN_0069ADF0()) {
+		if (map->Is_Random_Map()) {
 			valid = IsAIAllowed();
 		} else {
-			if (!map->Official && FUN_0077D940()) {
+			if (!map->Get_Official() && FUN_0077D940()) {
 				continue;
 			}
-			valid = map->FUN_0069AE10(&MapFilter);
+			valid = map->Supports_Game_Mode(MapFilter);
 		}
 		if (valid) {
 			return(i);
@@ -279,15 +270,15 @@ int MPGameModeClass::FirstValidMapIndex(void)
 }
 
 // FUNCTION: 0x005D63E0
-bool MPGameModeClass::FUN_005D63E0(MPMapEntry * map)
+bool MPGameModeClass::FUN_005D63E0(MultiMission * map)
 {
-	if (map->FUN_0069ADF0()) {
+	if (map->Is_Random_Map()) {
 		return(IsAIAllowed());
 	}
-	if (!map->Official && FUN_0077D940()) {
+	if (!map->Get_Official() && FUN_0077D940()) {
 		return(false);
 	}
-	return(map->FUN_0069AE10(&MapFilter));
+	return(map->Supports_Game_Mode(MapFilter));
 }
 
 // FUNCTION: 0x005D6430

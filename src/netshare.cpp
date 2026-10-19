@@ -21,7 +21,6 @@
 #include "lzostraw.h"
 #include "mapgen.h"
 #include "modemhst.h"
-#include "msgbox.h"
 #include "netdlg.h"
 #include "netdlg2.h"
 #include "newmenu.h"
@@ -43,6 +42,7 @@
 #include "xstraw.h"
 #include "houstype.h"
 #include "multiplayer.h"
+#include "msgbox.h"
 #include <ctime>
 #include <stddef.h>
 #include "stringtable.h"
@@ -58,7 +58,7 @@ namespace UI { void RegisterWindow(HWND window, int id); }
 namespace Game { extern HWND hWnd; extern HINSTANCE hInstance; extern int PlayerColor; }
 
 extern int DAT_00A8B8D8;
-extern MPMapEntry ** DAT_00A8B8CC;
+extern MultiMission ** DAT_00A8B8CC;
 extern wchar_t DAT_00A8B322[];
 class GameModeOptionsClass { public: static int Instance; };
 extern MPGameModeClass * DAT_00A8B23C;
@@ -482,7 +482,7 @@ void FUN_005E2EF0(HWND dialog, MPGameModeClass * mode)
 void __fastcall FUN_005E2F20(HWND dialog, int index)
 {
 	if (index >= 0 && index < DAT_00A8B8D8) {
-		MPMapEntry * map = DAT_00A8B8CC[index];
+		MultiMission * map = DAT_00A8B8CC[index];
 		if (map != NULL) {
 			HWND item = GetDlgItem(dialog, 0x5a8);
 			SendMessage(item, 0x4b2, 0, (LPARAM)map);
@@ -736,7 +736,7 @@ void SendPublicGameopts(char const * options)
 	} else {
 		GlobalPacketType packet;
 		memset(&packet, 0, sizeof(packet));
-		packet.Command = (NetCommandType)0x17;
+		packet.Command = NET_PUB_GAMEOPT;
 		strcpy(packet.Name, Session.Handle);
 		strcpy(packet.Options.Buf, options);
 		packet.Options.Color = Game::PlayerColor;
@@ -761,7 +761,7 @@ void SendPrivateGameopts(char const * player, char const * options)
 	} else {
 		GlobalPacketType packet;
 		memset(&packet, 0, sizeof(packet));
-		packet.Command = (NetCommandType)0x18;
+		packet.Command = NET_PRIV_GAMEOPT;
 		strcpy(packet.Name, Session.Handle);
 		strcpy(packet.Options.Buf, options);
 		Session.GPacket.Options.Color = FUN_0069B720(&Session);
@@ -893,8 +893,6 @@ void LBRestoreSelections(HWND win, Dictionary<WideWstring,bool> & lbdict)
 
 bool __cdecl FUN_0077D940(void);
 bool __cdecl FUN_0077D970(void);
-class MPMapEntry { public: bool FUN_0069ADF0(void); char Pad[0x58]; char FileName[1]; };
-
 // FUNCTION: 0x005E6440
 int FUN_005E6440(void)
 {
@@ -950,7 +948,7 @@ int RandomMapWaypointCount(int index)
 	char wp[32];
 	char buf[132];
 	if (index >= 0 && index < DAT_00A8B8D8) {
-		strcpy(buf, DAT_00A8B8CC[index]->FileName);
+		strcpy(buf, DAT_00A8B8CC[index]->Get_Filename());
 		CCFileClass file(buf);
 
 		INIClass ini;
@@ -1007,7 +1005,7 @@ bool FUN_005E66F0(void)
 {
 	int index = SendDlgItemMessage(DAT_00AC0D40, 0x553, LB_GETCURSEL, 0, 0);
 	if (index != -1) {
-		MPMapEntry * data = (MPMapEntry *)SendDlgItemMessage(DAT_00AC0D40, 0x553, 0x199, index, 0);
+		MultiMission * data = (MultiMission *)SendDlgItemMessage(DAT_00AC0D40, 0x553, 0x199, index, 0);
 		int found = -1;
 		for (int i = 0; i < DAT_00A8B8D8; i++) {
 			if (data == DAT_00A8B8CC[i]) {
@@ -1017,7 +1015,7 @@ bool FUN_005E66F0(void)
 		}
 		if (found != -1 && found != DAT_00AC0D30) {
 			FUN_005E7BF0(found);
-			if (DAT_00A8B8CC[found]->FUN_0069ADF0()) {
+			if (DAT_00A8B8CC[found]->Is_Random_Map()) {
 				delete MultiplayerMapPreview;
 				MultiplayerMapPreview = new MapPreviewClass;
 				MultiplayerMapPreview->Read_PCX_Preview("RandMap.img");
@@ -1074,7 +1072,7 @@ int Scenario_Dialog(HWND top)
 }
 
 // FUNCTION: 0x005E70D0
-int FUN_005E70D0(HWND dialog, MPMapEntry * map)
+int FUN_005E70D0(HWND dialog, MultiMission * map)
 {
 	if (map == NULL) {
 		return(-1);
@@ -1090,3 +1088,420 @@ int FUN_005E70D0(HWND dialog, MPMapEntry * map)
 	SendDlgItemMessage(dialog, 0x553, 0x197, found, 0);
 	return(found);
 }
+
+extern DynamicVectorClass<MultiMission *> DAT_00A8B8C8;
+bool FUN_0048D1D0(void);
+extern wchar_t DAT_00A8D610[];
+extern wchar_t ** DAT_00A8DA78;
+extern wchar_t DAT_00A8B380[];
+wchar_t * __fastcall FUN_00735120(char const * narrow);
+extern int DAT_00A8DA84;
+
+void __fastcall FUN_007757E0(HWND window, int flag);
+bool __fastcall FUN_005DB650(int count, bool full, bool ai);
+bool __fastcall FUN_007A2800(int count, bool full, bool ai);
+bool __fastcall FUN_006ACCA0(int count);
+wchar_t * __fastcall FUN_007B7140(WideWstring * text);
+
+static inline int Find_Map_Index(MultiMission * data)
+{
+	for (int i = 0; i < DAT_00A8B8D8; i++) {
+		if (data == DAT_00A8B8CC[i]) {
+			return(i);
+		}
+	}
+	return(-1);
+}
+
+// FUNCTION: 0x005E7160
+bool FUN_005E7160(HWND dialog)
+{
+	int index = -1;
+	int selected = SendDlgItemMessage(DAT_00AC0D40, 0x553, LB_GETCURSEL, 0, 0);
+	if (selected != -1) {
+		MultiMission * data = (MultiMission *)SendDlgItemMessage(DAT_00AC0D40, 0x553, 0x199, selected, 0);
+		index = Find_Map_Index(data);
+	}
+	if (index == -1) {
+		return(false);
+	}
+
+	HWND list = DAT_00AC0D40;
+	MPGameModeClass * previous = DAT_00A8B23C;
+	MPGameModeClass * mode = NULL;
+	int modeindex = SendDlgItemMessage(DAT_00AC0D40, 0x6eb, LB_GETCURSEL, 0, 0);
+	if (modeindex != -1) {
+		mode = (MPGameModeClass *)SendDlgItemMessage(list, 0x6eb, 0x199, modeindex, 0);
+	}
+	DAT_00A8B23C = mode;
+	bool first = mode->vt_entry_40();
+	bool second = mode->vt_entry_BC();
+	int count = RandomMapWaypointCount(index);
+	if (DAT_00A8B23C != NULL) {
+		int limit = DAT_00A8B23C->vt_entry_98();
+		if (limit != -1 && limit < count) {
+			count = limit;
+		}
+	}
+	if (Session.Type == GAME_INTERNET) {
+		if (FUN_0077D970()) {
+			count &= ~1;
+		} else if (FUN_0077D940()) {
+			count = 2;
+		}
+	}
+
+	DAT_00A8B23C = previous;
+	bool ai = false;
+	bool eject;
+	switch (Session.Type) {
+		case GAME_IPX:
+			eject = FUN_005DB650(count, first, second);
+			break;
+		case GAME_INTERNET:
+			eject = FUN_007A2800(count, first, second);
+			break;
+		case GAME_SKIRMISH:
+			eject = FUN_006ACCA0(count);
+			ai = true;
+			break;
+		default:
+			goto apply;
+	}
+	if (eject) {
+#line 2963 "D:\\ra2mdpost\\netshare.cpp"
+		wchar_t const * message = StringTable::LoadString(!ai ? "GUI:EjectPlayers" : "GUI:EjectAIPlayers", NULL, __FILE__, __LINE__);
+		wchar_t const * ok = StringTable::LoadString("GUI:Ok", NULL, __FILE__, __LINE__);
+		wchar_t const * cancel = StringTable::LoadString("GUI:Cancel", NULL, __FILE__, __LINE__);
+		if (WWMessageBox().Process(message, ok, cancel, NULL) != 0) {
+			return(false);
+		}
+	}
+apply:
+	if (mode != DAT_00A8B23C) {
+		if (DAT_00A8B23C != NULL) {
+			DAT_00A8B23C->vt_entry_9C();
+		}
+		if (mode != NULL) {
+			DAT_00A8B23C = mode;
+			GameModeOptionsClass::Instance = mode->MPModeIndex;
+			DAT_00A8B254 = index;
+			mode->vt_entry_20();
+		}
+	}
+	DAT_00A8B254 = index;
+	if (mode != NULL) {
+		mode->vt_entry_24();
+	}
+	mode->vt_entry_18();
+	mode->UnfixAlliances();
+
+	FUN_007757E0(dialog, 1);
+	HWND window = FUN_00775940(0xc2);
+	if (window == NULL) {
+		window = FUN_00775940(0xc9);
+		if (window == NULL) {
+			window = FUN_00775940(0xbc);
+			if (window == NULL) {
+				window = FUN_00775940(0xbd);
+			}
+		}
+	}
+
+	if (mode != NULL) {
+		HWND item = GetDlgItem(window, 0x6ec);
+		SendMessage(item, 0x4b2, 0, (LPARAM)FUN_007B7140(&mode->UIName));
+	}
+	if (DAT_00A8B254 >= 0 && DAT_00A8B254 < DAT_00A8B8D8) {
+		MultiMission * map = DAT_00A8B8CC[DAT_00A8B254];
+		if (map != NULL) {
+			HWND item = GetDlgItem(window, 0x5a8);
+			SendMessage(item, 0x4b2, 0, (LPARAM)map);
+		}
+	}
+	mode->vt_entry_60();
+	return(true);
+}
+
+// FUNCTION: 0x005E7460
+void PregameSetup(void)
+{
+	Scen->Scenario = Session.Options.ScenarioIndex;
+	Frame = 0;
+	Session.NumPlayers = DAT_00A8DA84;
+	FUN_004068E0("Pregame setup for %d players.\n", Session.NumPlayers);
+	Options.GameSpeed = Session.Options.GameSpeed;
+	Session.CommProtocol = (CommProtocolType)2;
+	Special.IsHarvesterImmune = Session.Options.HarvTruce;
+	Special.IsDestroyBridges = Session.Options.BridgeDestruction;
+	Special.IsTGrowth = true;
+	Special.IsTSpread = true;
+	Special.Apply_To_Game();
+}
+
+bool __fastcall FUN_006951F0(char const * name, unsigned int length, char const * digest, bool official, bool flag);
+void FUN_0058BB30(void);
+void * FUN_007931A0(void);
+
+static inline int Send_To_Host(void * packet, int size, int sent)
+{
+	if (Session.Type == GAME_IPX) {
+		sent = Ipx.Send_Global_Message(packet, size, 1, &Session.HostAddress);
+	} else {
+		void * owner = FUN_007931A0();
+		if (owner != NULL) {
+			sent = Ipx.Send_Global_Message_To_Name(packet, size, 1, FUN_00735120((char *)owner + 0x24));
+		}
+	}
+	return(sent);
+}
+
+bool __fastcall FUN_00693B70(char * name, int type, bool flag);
+
+// FUNCTION: 0x005E7920
+void Receive_Random_Map_Preview(void)
+{
+	Ipx.Set_Timing(50, -1, 5000);
+	FUN_004068E0("Starting map preview download\n");
+
+	GlobalPacketType packet;
+	memset(&packet, 0, sizeof(packet));
+	packet.Command = NET_PREVIEW_ACK;
+	FUN_004068E0("Sending preview mode acks\n");
+	while (true) {
+		if (Send_To_Host(&packet, sizeof(packet), 1)) {
+			break;
+		}
+		Call_Back();
+	}
+	while (Ipx.Global_Num_Send() != 0) {
+		Call_Back();
+	}
+	FUN_004068E0("Preview mode acks sent\n");
+
+	Session.GAddress = Session.HostAddress;
+	FUN_004068E0("Calling Get_File_From_Host to receive the file download\n");
+	char preview_name[256];
+	bool got_file = FUN_00693B70(preview_name, GAME_IPX, false);
+	if (!got_file) {
+		FUN_004068E0("got_file is false. Download failed\n");
+		Ipx.Set_Timing(30, -1, 600);
+		return;
+	}
+
+	FUN_004068E0("Loading the compressed preview image\n");
+	RawFileClass file(preview_name);
+	int size = file.Size();
+	char * buffer = new char[size];
+	file.Read(buffer, size);
+	int preview_size = ((int *)buffer)[0];
+
+	FUN_004068E0("Decompressing the preview image\n");
+
+	BufferStraw bstraw(&((int *)buffer)[1], size);
+	LZOStraw lzostraw(LZOStraw::DECOMPRESS);
+	lzostraw.Get_From(&bstraw);
+	char * preview = new char[2 * preview_size];
+	lzostraw.Get(preview, preview_size);
+
+	FUN_004068E0("Creating the new preview surface\n");
+	if (MultiplayerMapPreview) {
+		delete MultiplayerMapPreview;
+	}
+	MultiplayerMapPreview = new MapPreviewClass;
+	MultiplayerMapPreview->Create_Preview_Surface(preview);
+	InvalidateRect(FUN_00775B10(), NULL, FALSE);
+
+	FUN_004068E0("Cleaning up the temporary decompression buffers\n");
+	delete [] preview;
+	delete [] buffer;
+
+	Ipx.Set_Timing(30, -1, 600);
+}
+
+extern int DAT_0081C1D0;
+int __fastcall FUN_004790A0(int timeout);
+
+// FUNCTION: 0x005E7BF0
+bool Set_Scenario_Info_From_Index(int index)
+{
+	if (index == -1) {
+		Session.ScenarioFileName[0] = '\0';
+		Session.ScenarioDigest[0] = '\0';
+		Session.ScenarioFileLength = 0;
+		Session.ScenarioIsOfficial = 0;
+		Session.unknown_8D4 = 0;
+		Session.Options.ScenarioDescription[0] = L'\0';
+		return(false);
+	}
+
+	bool unavailable = CCFileClass(Session.Scenarios[index]->Get_Filename()).Is_Available() == false;
+
+	if (unavailable) {
+		if (DAT_0081C1D0 != -2) {
+			if (!Session.Scenarios[index]->Is_On_CD((DiskID)FUN_004790A0(60)) && !CD().Force_Available(Session.Scenarios[index]->On_Which_CD())) {
+				return(false);
+			}
+		} else {
+#line 3627 "D:\\ra2mdpost\\netshare.cpp"
+			WWMessageBox().Process(StringTable::LoadString("TXT_UNABLE_READ_SCENARIO", NULL, __FILE__, __LINE__), StringTable::LoadString("TXT_OK", NULL, __FILE__, __LINE__), NULL, NULL);
+			return(false);
+		}
+	}
+
+	wcscpy(Session.Options.ScenarioDescription, Session.Scenarios[index]->Description());
+	strcpy(Session.ScenarioDigest, Session.Scenarios[index]->Get_Digest());
+	strcpy(Session.ScenarioFileName, Session.Scenarios[index]->Get_Filename());
+	strcpy(Scen->ScenarioName, Session.ScenarioFileName);
+	Session.ScenarioIsOfficial = Session.Scenarios[index]->Get_Official();
+	Session.unknown_8D4 = FUN_005E64C0(index);
+	Session.ScenarioFileLength = CCFileClass(Session.ScenarioFileName).Size();
+	Session.ScenarioFileLength = CCFileClass(Session.ScenarioFileName).Size();
+	return(true);
+}
+
+// FUNCTION: 0x005E8590
+int CreateRandomMap(void)
+{
+	int result;
+	if (Session.Type == GAME_IPX) {
+		result = Do_Random_Map_Dialog(FUN_005DAF20);
+	} else if (Session.Type == GAME_INTERNET) {
+		result = Do_Random_Map_Dialog(FUN_0077F900);
+	} else if (Session.Type == GAME_MODEM || Session.Type == GAME_NULL_MODEM) {
+		result = Do_Random_Map_Dialog(FUN_005BB260);
+	} else {
+		result = Do_Random_Map_Dialog(FUN_0048D1D0);
+	}
+
+	if (result != 1) {
+		return(-1);
+	}
+
+	IsRandomMap = true;
+	RandomMapGen.SeedData.Save("RandMap.Sed");
+
+	delete MultiplayerMapPreview;
+	MultiplayerMapPreview = new MapPreviewClass;
+	MultiplayerMapPreview->Read_PCX_Preview("RandMap.img");
+
+	int index;
+	bool found = false;
+	for (index = 0; index < DAT_00A8B8D8; index++) {
+		if (DAT_00A8B8CC[index]->Is_Random_Map()) {
+			found = true;
+			break;
+		}
+	}
+
+	if (!found) {
+		char * digest = CalcRandomMapDigest();
+		MultiMission * map = new MultiMission("RandMap.Sed", RandomMapGen.SeedData.MapDescription, digest, true, NULL, 2, 4);
+		DAT_00A8B8C8.Add(map);
+		delete digest;
+	} else {
+		DAT_00A8B8CC[index]->Set_Description(RandomMapGen.SeedData.MapDescription);
+		MultiMission ** entry = &DAT_00A8B8CC[index];
+		(*entry)->Set_Digest(CalcRandomMapDigest());
+	}
+
+	return(index);
+}
+
+// FUNCTION: 0x005E8720
+int __fastcall FUN_005E8720(wchar_t const * name)
+{
+	return(wcscmp(name, DAT_00A8D610) == 0);
+}
+
+// FUNCTION: 0x005E8740
+int __fastcall FUN_005E8740(int index)
+{
+	return(wcscmp(DAT_00A8DA78[index], DAT_00A8D610) == 0);
+}
+
+// FUNCTION: 0x005E8760
+int FUN_005E8760(void)
+{
+	wchar_t * name = FUN_00735120(Session.Handle);
+	return(wcscmp(name, DAT_00A8D610) == 0);
+}
+
+// FUNCTION: 0x005E8780
+int __fastcall FUN_005E8780(wchar_t const * name)
+{
+	return(wcscmp(name, FUN_00735120(Session.Handle)) == 0);
+}
+
+#pragma pack(push, 1)
+struct NSSlotName
+{
+	wchar_t Name[20];
+	IPXAddressClass Address;
+	char Pad[0x85 - 0x28 - sizeof(IPXAddressClass)];
+};
+#pragma pack(pop)
+extern wchar_t const * DAT_00AC117C;
+extern wchar_t const * DAT_00AC1180;
+extern wchar_t const * DAT_00AC1184;
+extern wchar_t const * DAT_00AC1188;
+extern wchar_t const * DAT_00AC118C;
+extern wchar_t const * DAT_00AC1190;
+extern wchar_t const * DAT_00AC1194;
+extern NSSlotName * DAT_00AC119C;
+extern NSSlotName * DAT_00AC11A0;
+extern NSSlotName * DAT_00AC11A4;
+extern NSSlotName * DAT_00AC11A8;
+extern NSSlotName * DAT_00AC11AC;
+extern NSSlotName * DAT_00AC11B0;
+extern NSSlotName * DAT_00AC11B4;
+
+// FUNCTION: 0x005E87A0
+void FUN_005E87A0(void)
+{
+	if (DAT_00AC117C == NULL) {
+#line 4078 "D:\\ra2mdpost\\netshare.cpp"
+		DAT_00AC117C = StringTable::LoadString("GUI:Open", NULL, __FILE__, __LINE__);
+#line 4079 "D:\\ra2mdpost\\netshare.cpp"
+		DAT_00AC1180 = StringTable::LoadString("GUI:Closed", NULL, __FILE__, __LINE__);
+#line 4080 "D:\\ra2mdpost\\netshare.cpp"
+		DAT_00AC1184 = StringTable::LoadString("GUI:AIEasy", NULL, __FILE__, __LINE__);
+#line 4081 "D:\\ra2mdpost\\netshare.cpp"
+		DAT_00AC1188 = StringTable::LoadString("GUI:AINormal", NULL, __FILE__, __LINE__);
+#line 4082 "D:\\ra2mdpost\\netshare.cpp"
+		DAT_00AC118C = StringTable::LoadString("GUI:AIHard", NULL, __FILE__, __LINE__);
+#line 4083 "D:\\ra2mdpost\\netshare.cpp"
+		DAT_00AC1190 = StringTable::LoadString("GUI:Waiting", NULL, __FILE__, __LINE__);
+#line 4084 "D:\\ra2mdpost\\netshare.cpp"
+		DAT_00AC1194 = StringTable::LoadString("GUI:OpenObserver", NULL, __FILE__, __LINE__);
+	}
+	if (DAT_00AC119C == NULL) {
+		DAT_00AC119C = new NSSlotName;
+		wcscpy(DAT_00AC119C->Name, DAT_00AC117C);
+	}
+	if (DAT_00AC11A0 == NULL) {
+		DAT_00AC11A0 = new NSSlotName;
+		wcscpy(DAT_00AC11A0->Name, DAT_00AC1180);
+	}
+	if (DAT_00AC11A4 == NULL) {
+		DAT_00AC11A4 = new NSSlotName;
+		wcscpy(DAT_00AC11A4->Name, DAT_00AC1184);
+	}
+	if (DAT_00AC11A8 == NULL) {
+		DAT_00AC11A8 = new NSSlotName;
+		wcscpy(DAT_00AC11A8->Name, DAT_00AC1188);
+	}
+	if (DAT_00AC11AC == NULL) {
+		DAT_00AC11AC = new NSSlotName;
+		wcscpy(DAT_00AC11AC->Name, DAT_00AC118C);
+	}
+	if (DAT_00AC11B0 == NULL) {
+		DAT_00AC11B0 = new NSSlotName;
+		wcscpy(DAT_00AC11B0->Name, DAT_00AC1190);
+	}
+	if (DAT_00AC11B4 == NULL) {
+		DAT_00AC11B4 = new NSSlotName;
+		wcscpy(DAT_00AC11B4->Name, DAT_00AC1194);
+	}
+}
+

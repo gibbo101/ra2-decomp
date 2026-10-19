@@ -570,10 +570,8 @@ RLEBlitter const * ConvertClass::RLEBlitter_From_Flags(ShapeFlags_Type flags) co
 		return(RLEShadowBlitter);
 	}
 
-	// This should be fixed to return the RLEPlainBlitter when one is available
-	// but if you need to use this in the mean time just don't RLE compress the
-	// shape (since it only compresses transparent pixels and the reason we compress
-	// them is so we can skip them easily.)
+	// No plain RLE blitter is returned here: shapes drawn through this path must not
+	// be RLE compressed.
 	if (flags & SHAPE_NOTRANS) {
 
 		if (flags & SHAPE_ZWRITE) {
@@ -782,4 +780,22 @@ template class BlitTransLucent50<unsigned short>;
 template class BlitTransLucent25<unsigned short>;
 
 // FUNCTION: 0x00492A10 ?$BlitPlainXlatZRead@G::BlitForward
+// FUNCTION: 0x00492A70 ?$BlitPlainXlatZRead@G::BlitBackward
+// FUNCTION: 0x00492AA0 ?$BlitPlainXlatZRead@G::Blit_Copy_Tinted
+// FUNCTION: 0x00492AD0 ?$BlitPlainXlatZRead@G::Blit_Move_Tinted
 template class BlitPlainXlatZRead<unsigned short>;
+
+// FUNCTION: 0x00492B00 ?$BlitTransXlatZRead@G::BlitForward
+// FUNCTION: 0x00492B70 ?$BlitTransXlatZRead@G::BlitBackward
+// FUNCTION: 0x00492BA0 ?$BlitTransXlatZRead@G::Blit_Copy_Tinted
+// FUNCTION: 0x00492BD0 ?$BlitTransXlatZRead@G::Blit_Move_Tinted
+template class BlitTransXlatZRead<unsigned short>;
+
+// FUNCTION: 0x00492C00 ?$BlitTransZRemapXlatZRead@G::BlitForward
+// FUNCTION: 0x00492C90 ?$BlitTransZRemapXlatZRead@G::BlitBackward
+// FUNCTION: 0x00492CC0 ?$BlitTransZRemapXlatZRead@G::Blit_Copy_Tinted
+// FUNCTION: 0x00492CF0 ?$BlitTransZRemapXlatZRead@G::Blit_Move_Tinted
+template class BlitTransZRemapXlatZRead<unsigned short>;
+
+// FUNCTION: 0x00492D20 ?$BlitTransDarkenZRead@G::BlitForward
+template class BlitTransDarkenZRead<unsigned short>;

@@ -84,6 +84,8 @@
 #include "color.hh"
 
 extern Point2D DAT_0089C848;
+extern Cell DAT_0089C818;
+SideType FUN_006A46D0(char const * name);
 void __fastcall FUN_00750D40(Coord const & coord, AudioController * controller);
 
 
@@ -4250,6 +4252,185 @@ bool BuildingClass::Should_Fog(void) const
 		occupy++;
 	}
 	return(true);
+}
+
+// FUNCTION: 0x00457AA0
+void BuildingClass::Make_Fogged(DynamicVectorClass<FoggedObjectClass *> * fogged_objects, CellClass * cellptr, bool fade)
+{
+	Cell const * occupy = Class->Occupy_List();
+
+	Unselect();
+	FoggedObjectClass * fogged_object = new FoggedObjectClass(this, fade);
+
+	Cell cell = PositionCell;
+	while (*occupy != REFRESH_EOL) {
+		CellClass * cptr = &Map[cell + *occupy];
+		if (cellptr != NULL && cptr == cellptr) {
+			fogged_objects->Add(fogged_object);
+		} else {
+			DynamicVectorClass<FoggedObjectClass *> * new_fogged_objects = cptr->FoggedObjects;
+			if (new_fogged_objects != NULL) {
+				new_fogged_objects->Add(fogged_object);
+			} else {
+				cptr->FoggedObjects = new DynamicVectorClass<FoggedObjectClass *>;
+				cptr->FoggedObjects->Resize(1);
+				cptr->FoggedObjects->Set_Growth_Step(1);
+				cptr->FoggedObjects->Add(fogged_object);
+			}
+		}
+		occupy++;
+	}
+}
+
+// FUNCTION: 0x00457C90
+int BuildingClass::IronCurtain(int duration, HouseClass * source, bool force_shield)
+{
+	if (IsGoingToBlow) {
+		IsGoingToBlow = false;
+		CountDown = 0;
+		WhomToRepay = NULL;
+	}
+	return(TechnoClass::IronCurtain(duration, source, force_shield));
+}
+
+// FUNCTION: 0x00457CE0
+bool BuildingClass::CanBeOccupiedBy(InfantryClass * infantry) const
+{
+	if (infantry == NULL || !Class->CanBeOccupied) return(false);
+	if (CurrentMission == MISSION_CONSTRUCTION || CurrentMission == MISSION_DECONSTRUCTION) return(false);
+	if (!Map.In_Local_Radar(Center_Coord())) return(false);
+	if (IsBeingWarpedOut()) return(false);
+
+	if (infantry->Class->Occupier) {
+		if (House != infantry->House && !House->Class->IsMultiplayPassive) return(false);
+		if (GetOccupantCount() == Class->MaxNumberOccupants) return(false);
+		if (Is_Red_HP()) return(false);
+		if (infantry->IsMindControlled()) return(false);
+	} else {
+		if (!infantry->Class->Assaulter) return(false);
+		if (House->Is_Ally(infantry)) return(false);
+		if (GetOccupantCount() == 0) return(false);
+	}
+	return(true);
+}
+
+// FUNCTION: 0x004581F0
+int BuildingClass::GetOccupantCount(void) const
+{
+	return(Occupants.Count());
+}
+
+// FUNCTION: 0x00458200
+void BuildingClass::FUN_00458200(void)
+{
+	if (Class->Level == -1) {
+		if (Is_Red_HP()) {
+			FUN_00457DE0(false, false);
+		}
+		HouseClass * civilian = NULL;
+		int count = Houses.Count();
+		SideType side = FUN_006A46D0("Civilian");
+		for (int i = 0; i < count; i++) {
+			if (Houses[i]->Class->Side == side) {
+				civilian = Houses[i];
+				break;
+			}
+		}
+		if (GetOccupantCount() == 0 && House != civilian) {
+			if (House->Is_Player_Control()) {
+				VocClass::PlayGlobal(Rule->BuildingAbandonedSound, 1.0f, 0x2000);
+				if (RadarEventClass::Create(RADAREVENT_GARRISON_ABANDONED, Get_Cell())) {
+					VoxClass::Play("EVA_StructureAbandoned", -1, -1);
+				}
+			}
+			FUN_00458330();
+			Captured(civilian, false);
+		}
+		if (GetOccupantCount() > 0 && House == civilian) {
+			FUN_00458330();
+			Captured(Occupants[0]->House, false);
+		}
+	}
+}
+
+// FUNCTION: 0x00458330
+void BuildingClass::FUN_00458330(void)
+{
+	if (Anims[BANIM_IDLE] != NULL) {
+		Begin_Anim(BANIM_IDLE, HealthRatio <= Rule->ConditionYellow);
+	}
+	if (Anims[BANIM_ACTIVE_ONE] != NULL) {
+		Begin_Anim(BANIM_ACTIVE_ONE, HealthRatio <= Rule->ConditionYellow);
+	}
+	if (Anims[BANIM_ACTIVE_TWO] != NULL) {
+		Begin_Anim(BANIM_ACTIVE_TWO, HealthRatio <= Rule->ConditionYellow);
+	}
+	if (Anims[BANIM_ACTIVE_THREE] != NULL) {
+		Begin_Anim(BANIM_ACTIVE_THREE, HealthRatio <= Rule->ConditionYellow);
+	}
+	if (Anims[BANIM_ACTIVE_FOUR] != NULL) {
+		Begin_Anim(BANIM_ACTIVE_FOUR, HealthRatio <= Rule->ConditionYellow);
+	}
+}
+
+// FUNCTION: 0x00458750
+void BuildingClass::FUN_00458750(void)
+{
+	CashProductionTimer = Class->ProduceCashDelay;
+	if (!House->Class->IsMultiplayPassive && IsPowerOnline()) {
+		int amount = Class->ProduceCashAmount;
+		if (amount > 0) {
+			House->Refund_Money(amount);
+		} else {
+			House->Spend_Money(-amount);
+		}
+	}
+}
+
+// FUNCTION: 0x004587D0
+bool BuildingClass::FUN_004587D0(ObjectTypeClass const * type)
+{
+	TechnoClass * object = (TechnoClass *)type->Create_One_Of(House);
+	return(Exit_Object(object, DAT_0089C818) ? true : false);
+}
+
+// FUNCTION: 0x00458810
+Matrix3D BuildingClass::Get_Barrel_Matrix(void) const
+{
+	Matrix3D matrix;
+	matrix.Make_Identity();
+
+	matrix.Translate_X(Class->VoxelBarrelOffsetToBuildingPivotPoint.X);
+	matrix.Translate_Y(Class->VoxelBarrelOffsetToBuildingPivotPoint.Y);
+	matrix.Translate_Z(Class->VoxelBarrelOffsetToBuildingPivotPoint.Z);
+
+	matrix.Rotate_Z(PrimaryFacing.Current().As_Radian32());
+
+	matrix.Translate_X(Class->VoxelBarrelOffsetToRotatePivotPoint.X);
+	matrix.Translate_Y(Class->VoxelBarrelOffsetToRotatePivotPoint.Y);
+	matrix.Translate_Z(Class->VoxelBarrelOffsetToRotatePivotPoint.Z);
+
+	matrix.Rotate_Y(-(BarrelPitch.Current().As_Radian32()));
+
+	matrix.Translate_X(Class->VoxelBarrelOffsetToPitchPivotPoint.X);
+	matrix.Translate_Y(Class->VoxelBarrelOffsetToPitchPivotPoint.Y);
+	matrix.Translate_Z(Class->VoxelBarrelOffsetToPitchPivotPoint.Z);
+
+	float scale = Class->VoxelBarrelScale;
+	matrix.Scale_X(scale);
+	matrix.Scale_Y(scale);
+	matrix.Scale_Z(scale);
+
+	return(matrix);
+}
+
+// FUNCTION: 0x004589C0
+int BuildingClass::FUN_004589C0(void) const
+{
+	if ((int)Storage.Get_Total_Amount() == 0) {
+		return(0);
+	}
+	return((int)Storage.Get_Total_Amount() * 4 / Class->Capacity);
 }
 
 // FUNCTION: 0x00459E80

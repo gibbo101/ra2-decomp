@@ -1743,6 +1743,154 @@ bool __fastcall TrySetDialogLayoutBand2(HWND dialog)
 }
 }
 
+// FUNCTION: 0x0060C8D0
+unsigned char __fastcall FUN_0060C8D0(HWND dialog)
+{
+	OwnerDraw::WinData *data = Get_Data(dialog);
+	if (data != NULL) {
+		return *((unsigned char *)data + 0xd6);
+	}
+	return 0;
+}
+
+// FUNCTION: 0x0060C930
+unsigned char __fastcall FUN_0060C930(HWND dialog)
+{
+	OwnerDraw::WinData *data = Get_Data(dialog);
+	if (data == NULL) {
+		return false;
+	}
+	int type = *(int *)((char *)data + 0x6c);
+	int v;
+	if (type == 0xbc || type == 0xbd || type == 0x102 || type == 0xc2 || type == 0xc9 || type == 0xbc6) {
+		v = 1;
+	} else {
+		v = 0;
+	}
+	*((unsigned char *)data + 214) = v;
+	return v;
+}
+
+// FUNCTION: 0x0060C9D0
+void __fastcall FUN_0060C9D0(HWND dialog)
+{
+	OwnerDraw::WinData *data = Get_Data(dialog);
+	if (data != NULL) {
+		*((unsigned char *)data + 0xd6) = 1;
+	}
+}
+
+// FUNCTION: 0x0060CA30
+void __fastcall FUN_0060CA30(HWND dialog)
+{
+	OwnerDraw::WinData *data = Get_Data(dialog);
+	if (data != NULL) {
+		*((unsigned char *)data + 0xd6) = 0;
+	}
+}
+
+// FUNCTION: 0x0060CA90
+unsigned char __fastcall FUN_0060CA90(HWND dialog)
+{
+	OwnerDraw::WinData *data = Get_Data(dialog);
+	if (data != NULL) {
+		return *((unsigned char *)data + 0xd5);
+	}
+	return 0;
+}
+
+// FUNCTION: 0x0060CAF0
+unsigned char __fastcall FUN_0060CAF0(HWND dialog)
+{
+	OwnerDraw::WinData *data = Get_Data(dialog);
+	if (data == NULL) {
+		return false;
+	}
+	int type = *(int *)((char *)data + 0x6c);
+	int v;
+	if (type == 0xbc || type == 0xbd || type == 0x102 || type == 0xc2 || type == 0xc9 || type == 0xbc6 || type == 0x105 || type == 0x6b || type == 0x113) {
+		v = 1;
+	} else {
+		v = 0;
+	}
+	*((unsigned char *)data + 213) = v;
+	return v;
+}
+
+// FUNCTION: 0x0060CBA0
+void __fastcall FUN_0060CBA0(HWND dialog)
+{
+	OwnerDraw::WinData *data = Get_Data(dialog);
+	if (data != NULL) {
+		*((unsigned char *)data + 0xd5) = 1;
+	}
+}
+
+// FUNCTION: 0x0060CC00
+void __fastcall FUN_0060CC00(HWND dialog)
+{
+	OwnerDraw::WinData *data = Get_Data(dialog);
+	if (data != NULL) {
+		*((unsigned char *)data + 0xd5) = 0;
+	}
+}
+
+// FUNCTION: 0x0060CC60
+unsigned char __fastcall FUN_0060CC60(HWND dialog)
+{
+	OwnerDraw::WinData *data = Get_Data(dialog);
+	if (data != NULL) {
+		return *((unsigned char *)data + 0xd7);
+	}
+	return 0;
+}
+
+// FUNCTION: 0x0060CCC0
+unsigned char __fastcall FUN_0060CCC0(HWND dialog)
+{
+	OwnerDraw::WinData *data = Get_Data(dialog);
+	if (data == NULL) {
+		return false;
+	}
+	int type = *(int *)((char *)data + 0x6c);
+	int v;
+	if (type == 0x103 || type == 0xbc7) {
+		v = 1;
+	} else {
+		v = 0;
+	}
+	*((unsigned char *)data + 215) = v;
+	return v;
+}
+
+// FUNCTION: 0x0060CD50
+unsigned char __fastcall FUN_0060CD50(HWND dialog)
+{
+	OwnerDraw::WinData *data = Get_Data(dialog);
+	if (data != NULL) {
+		return *((unsigned char *)data + 0xd8);
+	}
+	return 0;
+}
+
+// FUNCTION: 0x0060CDB0
+unsigned char __fastcall FUN_0060CDB0(HWND dialog)
+{
+	OwnerDraw::WinData *data = Get_Data(dialog);
+	if (data == NULL) {
+		return false;
+	}
+	int type = *(int *)((char *)data + 0x6c);
+	int v;
+	if (type == 0x108 || type == 0xbc6) {
+		v = 1;
+	} else {
+		v = 0;
+	}
+	*((unsigned char *)data + 216) = v;
+	return v;
+}
+
 // FUNCTION: 0x0061F190
 void ODInitMasks(void)
 {

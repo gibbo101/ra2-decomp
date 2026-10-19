@@ -63,6 +63,8 @@ void __cdecl FUN_004068E0(char const * format, ...);
 extern void FUN_00561910(void);
 extern void FUN_005638D0(void);
 
+unsigned int Pick_Random_UInt(unsigned int minval, unsigned int maxval);
+
 extern int DAT_007ED3CC[];
 extern int DAT_007ED3D0[];
 namespace Unsorted { extern Cell CellSpreadTable[]; }
@@ -2834,6 +2836,192 @@ bool MapClass::In_Local_Radar(Coord const & coord) const
 	return(In_Local_Radar(coord.As_Cell()));
 }
 
+// FUNCTION: 0x00578640
+bool MapClass::In_Area_Radar(Rect const & rect, Cell const & cell, bool useheight) const
+{
+	int x = cell.X;
+	int y = cell.Y;
+	int cell_height = 0;
+	if (useheight) {
+		CellClass *cellptr = &Map[cell];
+
+		cell_height = cellptr->Height;
+		if (cellptr->Ramp && x + y < PlayRect.Width + 2*rect.Y + 4 + cell_height) {
+			cell_height++;
+		}
+	}
+
+	if ((x + y > PlayRect.Width + 2*rect.Y + cell_height) &&
+		(x + y <= PlayRect.Width + 2*(rect.Y + rect.Height + 1) + cell_height) &&
+		(x - y < 2*(rect.X + rect.Width) - PlayRect.Width) &&
+		(y - x < PlayRect.Width - 2*rect.X)) {
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00578710
+CellClass * MapClass::Local_Iterate(void)
+{
+	while (LocalIterX + LocalIterY <= PlayRect.Width + 2 * (LocalRect.Height + LocalRect.Y) + 12) {
+
+		int x = LocalIterX;
+		int y = LocalIterY;
+
+		Cell cell(x, y);
+
+		if (x - y >= 2 * (LocalRect.X + LocalRect.Width) - PlayRect.Width - 2) {
+			int t = ((LocalIterX - PlayRect.Width) + LocalIterY - 1) & 1;
+			bool odd = (t == 1);
+
+			int delta = odd ? 2 : 1;
+
+			int w = LocalRect.Width;
+			w -= delta;
+
+			LocalIterX -= w;
+			LocalIterY += w;
+
+			if (odd) {
+				LocalIterY++;
+			} else {
+				LocalIterX++;
+			}
+		} else {
+			LocalIterX++;
+			LocalIterY--;
+		}
+
+		if (In_Local_Radar(cell, true)) {
+			return(&(*this)[cell]);
+		}
+	}
+
+	return(NULL);
+}
+
+// FUNCTION: 0x00578850
+void MapClass::Reset_Local_Iterator(void)
+{
+	LocalIterX = LocalRect.X + LocalRect.Y + 1;
+	LocalIterY = PlayRect.Width - LocalRect.X + LocalRect.Y;
+}
+
+// FUNCTION: 0x00578880
+CellClass * MapClass::Get_Local_Grid_Cell(Cell const & cell, int spacing, bool unbiased)
+{
+	if (spacing == 1) {
+		return(&Map[cell]);
+	}
+
+	int x = cell.X;
+	int y = cell.Y;
+	Cell local(LocalRect.X + LocalRect.Y + 1, PlayRect.Width - LocalRect.X + LocalRect.Y);
+	int xx = (6000 * spacing + local.X - x) % spacing;
+	int yy = (6000 * spacing + local.Y - y) % spacing;
+
+	if (xx > 0) {
+		x += spacing - xx;
+	}
+	if (yy > 0) {
+		y += spacing - yy;
+	}
+
+	int dsum = local.X + local.Y;
+	if (unbiased || (y + x < dsum + 2 * LocalRect.Height / 3)) {
+		return(&Map[Cell(x, y)]);
+	} else if (y + x < dsum + 4 * LocalRect.Height / 3 && spacing > 2) {
+		return(&Map[Cell(x, y) - Cell((spacing / 2), (spacing / 2))]);
+	} else {
+		return(&Map[Cell(x, y) - Cell((spacing - 1), (spacing - 1))]);
+	}
+}
+
+// FUNCTION: 0x00578AC0
+void MapClass::Increment_Redraw_Counter(void)
+{
+	Redraws++;
+}
+
+// FUNCTION: 0x00578AD0
+bool MapClass::Try_Open_Gate(FootClass * foot, Cell const & cell)
+{
+	FootClass * optr = (FootClass *)Map[cell].Cell_Occupier();
+	while (optr != NULL) {
+
+		if (foot != optr) {
+
+			BuildingClass * bptr = (BuildingClass *)optr;
+			if (bptr->RTTI == RTTI_BUILDING && bptr->Class->IsGate) {
+
+				if (bptr->House->Is_Ally(foot)) {
+					return(bptr->Open_Gate());
+				}
+
+				if (bptr->Is_Gate_Open()) {
+					return(true);
+				}
+			}
+		}
+
+		optr = (FootClass *)optr->Next;
+	}
+	return(true);
+}
+
+// FUNCTION: 0x00578B70
+int MapClass::Cell_To_Local_Sector_Index(Cell const & cell)
+{
+	int w1 = (2 * LocalRect.Width - 1) % 3;
+	int w2 = (2 * LocalRect.Width - 1) / 3;
+
+	int h1 = (2 * LocalRect.Height - 1) % 3;
+	int h2 = (2 * LocalRect.Height - 1) / 3;
+
+	int x1 = LocalRect.X + LocalRect.Y + 1;
+	int y1 = PlayRect.Width - LocalRect.X + LocalRect.Y;
+
+	Cell pos = Cell(x1, y1);
+
+	int x2 = (cell.X + (pos.Y - (w1 ? 1 : 0) - pos.X - cell.Y)) / w2;
+	int y2 = (cell.X + (cell.Y - (h1 ? 1 : 0) - pos.X - pos.Y)) / h2;
+
+	if (x2 == 3) {
+		x2 = 2;
+	}
+	if (y2 == 3) {
+		y2 = 2;
+	}
+
+	return(x2 + 3 * y2 + 1);
+}
+
+// FUNCTION: 0x00578C50
+Cell MapClass::Local_Sector_Index_To_Cell(int index)
+{
+	int w1 = (2 * LocalRect.Width - 1) % 3;
+	int w2 = (2 * LocalRect.Width - 1) / 3;
+
+	int h1 = (2 * LocalRect.Height - 1) % 3;
+	int h2 = (2 * LocalRect.Height - 1) / 3;
+
+	int x = (index - 1) % 3;
+	int y = (index - 1) / 3;
+
+	int sector_x1 = (w1 ? 1 : 0) + (x * w2);
+	int sector_y1 = (h1 ? 1 : 0) + (y * h2);
+
+	Cell pos = Cell(LocalRect.X + LocalRect.Y + 1, PlayRect.Width - LocalRect.X + LocalRect.Y);
+
+	int sector_x2 = sector_x1 + ((sector_x1 & 1) ? 1 : 0);
+	int sector_y2 = sector_y1 + ((sector_y1 & 1) ? 1 : 0);
+
+	int x2 = (sector_y2 + sector_x2) / 2;
+	int y2 = (sector_y1 - sector_x1) / 2;
+
+	return(Cell(x2,y2) + pos);
+}
+
 // FUNCTION: 0x00578D60
 bool MapClass::Is_Tile_Shore(IsometricTileType tile)
 {
@@ -2886,6 +3074,271 @@ bool MapClass::Is_Tile_Cliff(IsometricTileType tile, int subtile)
 	if (IS_TILE_IN_SET(CliffRamps, CLIFF_RAMPS_COUNT)) return(true);
 
 	return(false);
+}
+
+// FUNCTION: 0x00578E60
+bool MapClass::Build_All_Cliffs(int, int region_id)
+{
+	bool expanded = true;
+
+	bool is_temp_data = false;
+	if (RMGCellData == NULL) {
+		RMGCellData = new MapRegionClass::CellData[MapCellStride * MapCellStride];
+		is_temp_data = true;
+	}
+
+	int r = MapCellStride;
+	int s = r * r;
+	for (int i = 0; i < s; i++) {
+		MapRegionClass::Get_Cell_Data(i).InFillReach = true;
+	}
+
+	Map.Set_Cursor_Shape(NULL);
+
+	Map.Reset_Iterator();
+	CellClass * cptr = Map.Iterate();
+	while (cptr != NULL && expanded) {
+		expanded = Expand_High_Ground(cptr, region_id);
+		cptr = Map.Iterate();
+	}
+
+	Map.Reset_Iterator();
+	cptr = Map.Iterate();
+	while (cptr != NULL && expanded) {
+		if (cptr->Ramp == 0 && cptr->Is_Tile_Clear()) {
+			expanded = Place_Cliff(cptr, region_id);
+		}
+		cptr = Map.Iterate();
+	}
+
+	ObjectClass * obj = Map.PendingObjectPtr;
+	Map.PendingObject = NULL;
+	if (obj) {
+		delete obj;
+		Map.PendingObjectPtr = NULL;
+	}
+
+	if (is_temp_data) {
+		delete [] RMGCellData;
+		RMGCellData = NULL;
+	}
+
+	return(expanded);
+}
+
+// FUNCTION: 0x00579010
+bool MapClass::Expand_High_Ground(CellClass * cellptr, int region_id)
+{
+	bool expand = false;
+	int mask = Get_High_Ground_Mask(cellptr);
+
+	if ((mask & (MG_FACINGF_N | MG_FACINGF_W)) == (MG_FACINGF_N | MG_FACINGF_W) &&
+		(mask & (MG_FACINGF_SW | MG_FACINGF_NE)) == (MG_FACINGF_SW | MG_FACINGF_NE)) {
+		expand = true;
+	}
+
+	if ((mask & MG_FACINGF_W) != 0) {
+		if ((Get_High_Ground_Mask(&Map[cellptr->Fetch_CellID() + Cell(1, 0)]) & MG_FACINGF_E) != 0) {
+			expand = true;
+		}
+	}
+
+	if ((mask & MG_FACINGF_E) != 0) {
+		if ((Get_High_Ground_Mask(&Map[cellptr->Fetch_CellID() + Cell(-1, 0)]) & MG_FACINGF_W) != 0) {
+			expand = true;
+		}
+	}
+
+	if ((mask & MG_FACINGF_S) != 0) {
+		if ((Get_High_Ground_Mask(&Map[cellptr->Fetch_CellID() + Cell(0, -1)]) & MG_FACINGF_N) != 0) {
+			expand = true;
+		}
+	}
+
+	if ((mask & MG_FACINGF_N) != 0) {
+		if ((Get_High_Ground_Mask(&Map[cellptr->Fetch_CellID() + Cell(0, 1)]) & MG_FACINGF_S) != 0) {
+			expand = true;
+		}
+	}
+
+	if ((mask & (MG_FACINGF_SW | MG_FACINGF_NE)) == (MG_FACINGF_SW | MG_FACINGF_NE) &&
+		((mask & (MG_FACINGF_S | MG_FACINGF_E)) != (MG_FACINGF_S | MG_FACINGF_E) ||
+		 (mask & (MG_FACINGF_N | MG_FACINGF_NW | MG_FACINGF_W)) != 0) &&
+		((mask & (MG_FACINGF_N | MG_FACINGF_W)) != (MG_FACINGF_N | MG_FACINGF_W) ||
+		 (mask & (MG_FACINGF_S | MG_FACINGF_SE | MG_FACINGF_E)) != 0)) {
+		expand = true;
+	}
+
+	if ((mask & (MG_FACINGF_NW | MG_FACINGF_SE)) == (MG_FACINGF_NW | MG_FACINGF_SE) &&
+		((mask & (MG_FACINGF_W | MG_FACINGF_S)) != (MG_FACINGF_W | MG_FACINGF_S) ||
+		 (mask & (MG_FACINGF_N | MG_FACINGF_E | MG_FACINGF_NE)) != 0) &&
+		((mask & (MG_FACINGF_N | MG_FACINGF_E)) != (MG_FACINGF_N | MG_FACINGF_E) ||
+		 (mask & (MG_FACINGF_W | MG_FACINGF_SW | MG_FACINGF_S)) != 0)) {
+		expand = true;
+	}
+
+	if ((mask & (MG_FACINGF_W | MG_FACINGF_S | MG_FACINGF_SE)) == (MG_FACINGF_W | MG_FACINGF_SE) ||
+		(mask & (MG_FACINGF_N | MG_FACINGF_W | MG_FACINGF_NE)) == (MG_FACINGF_W | MG_FACINGF_NE) ||
+		(mask & (MG_FACINGF_SW | MG_FACINGF_S | MG_FACINGF_E)) == (MG_FACINGF_SW | MG_FACINGF_E) ||
+		(mask & (MG_FACINGF_N | MG_FACINGF_NW | MG_FACINGF_E)) == (MG_FACINGF_NW | MG_FACINGF_E) ||
+		(mask & (MG_FACINGF_S | MG_FACINGF_E | MG_FACINGF_NE)) == (MG_FACINGF_S | MG_FACINGF_NE) ||
+		(mask & (MG_FACINGF_NW | MG_FACINGF_W | MG_FACINGF_S)) == (MG_FACINGF_NW | MG_FACINGF_S) ||
+		(mask & (MG_FACINGF_N | MG_FACINGF_SE | MG_FACINGF_E)) == (MG_FACINGF_N | MG_FACINGF_SE) ||
+		(mask & (MG_FACINGF_N | MG_FACINGF_W | MG_FACINGF_SW)) == (MG_FACINGF_N | MG_FACINGF_SW)) {
+		expand = true;
+	}
+
+	if ((mask & (MG_FACINGF_N | MG_FACINGF_S)) == (MG_FACINGF_N | MG_FACINGF_S) ||
+		(mask & (MG_FACINGF_W | MG_FACINGF_E)) == (MG_FACINGF_W | MG_FACINGF_E)) {
+		expand = true;
+	}
+
+	if (expand) {
+		int cell_region_id = RandomMapGen.Get_Cell_Data_Region(cellptr->Fetch_CellID());
+		if (cell_region_id > 0 && cell_region_id != region_id && region_id != -1) {
+			return(false);
+		}
+		cellptr->Height += 4;
+		RandomMapGen.Set_Cell_Data_Region(cellptr->Fetch_CellID(), region_id);
+		for (FacingType dir = FACING_FIRST; dir < FACING_COUNT; dir++) {
+			Expand_High_Ground(&cellptr->Adjacent_Cell(dir), region_id);
+		}
+	}
+	return(true);
+}
+
+// FUNCTION: 0x00579320 $E230
+const Cell CliffVariantOffsets[] = {
+	Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0),
+	Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0),
+	Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0),
+	Cell(0, 0), Cell(1, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0),
+};
+
+// FUNCTION: 0x00579620
+bool MapClass::Place_Cliff(CellClass * cellptr, int region_id)
+{
+	int random6 = Pick_Random_UInt(0, 5);
+	int mask = Get_High_Ground_Mask(cellptr);
+
+	int variant = -1;
+	int south;
+	int east;
+	int southeast;
+
+	if ((mask & (MG_FACINGF_N | MG_FACINGF_W)) == (MG_FACINGF_N | MG_FACINGF_W)) {
+
+		south = Get_High_Ground_Mask(&Map[cellptr->Fetch_CellID() + Cell(0, 1)]);
+		east = Get_High_Ground_Mask(&Map[cellptr->Fetch_CellID() + Cell(1, 0)]);
+
+		if ((south & MG_FACINGF_W) != 0 || (east & MG_FACINGF_N) != 0) {
+			variant = 34;
+		} else {
+			variant = random6 % 3 + 9;
+		}
+
+	} else if ((mask & (MG_FACINGF_N | MG_FACINGF_E)) == (MG_FACINGF_N | MG_FACINGF_E)) {
+		variant = 39;
+
+	} else if ((mask & (MG_FACINGF_E | MG_FACINGF_S)) == (MG_FACINGF_E | MG_FACINGF_S)) {
+		variant = 33;
+
+	} else if ((mask & (MG_FACINGF_S | MG_FACINGF_W)) == (MG_FACINGF_S | MG_FACINGF_W)) {
+		variant = 40;
+	}
+
+	if (variant == -1) {
+
+		if ((mask & MG_FACINGF_E) != 0) {
+
+			south = Get_High_Ground_Mask(&Map[cellptr->Fetch_CellID() + Cell(0, 1)]);
+			southeast = Get_High_Ground_Mask(&Map[cellptr->Fetch_CellID() + Cell(1, 1)]);
+
+			if ((mask & MG_FACINGF_SE) != 0 && (mask & (MG_FACINGF_SW | MG_FACINGF_S)) == 0 && (south & (MG_FACINGF_E | MG_FACINGF_S)) != (MG_FACINGF_E | MG_FACINGF_S)) {
+				variant = random6 % 3 + 35;
+			} else if ((mask & (MG_FACINGF_SE | MG_FACINGF_S)) != 0 || (southeast & MG_FACINGF_E) != 0 || (random6 & 1) == 0) {
+				variant = 38;
+			} else {
+				variant = 1;
+			}
+
+		} else if ((mask & MG_FACINGF_W) != 0) {
+
+			south = Get_High_Ground_Mask(&Map[cellptr->Fetch_CellID() + Cell(0, 1)]);
+
+			if ((mask & MG_FACINGF_SW) == 0 || (mask & (MG_FACINGF_SE | MG_FACINGF_S)) != 0 || (south & (MG_FACINGF_S | MG_FACINGF_W)) == (MG_FACINGF_S | MG_FACINGF_W)) {
+				variant = 18;
+			} else {
+				variant = random6 % 3 + 15;
+			}
+
+		} else if ((mask & MG_FACINGF_S) != 0) {
+
+			east = Get_High_Ground_Mask(&Map[cellptr->Fetch_CellID() + Cell(1, 0)]);
+			southeast = Get_High_Ground_Mask(&Map[cellptr->Fetch_CellID() + Cell(1, 1)]);
+
+			if ((mask & MG_FACINGF_SE) == 0 || (mask & (MG_FACINGF_NE | MG_FACINGF_E)) != 0 || (east & (MG_FACINGF_E | MG_FACINGF_S)) == (MG_FACINGF_E | MG_FACINGF_S)) {
+				if ((mask & (MG_FACINGF_E | MG_FACINGF_SE)) != 0 || (southeast & MG_FACINGF_S) != 0 || (random6 & 1) == 0) {
+					variant = 26;
+				} else {
+					variant = 21;
+				}
+			} else {
+				variant = random6 % 3 + 23;
+			}
+
+		} else if ((mask & MG_FACINGF_N) != 0) {
+
+			east = Get_High_Ground_Mask(&Map[cellptr->Fetch_CellID() + Cell(1, 0)]);
+
+			if ((mask & MG_FACINGF_NE) == 0 || (mask & (MG_FACINGF_E | MG_FACINGF_SE)) != 0 || (east & (MG_FACINGF_N | MG_FACINGF_E)) == (MG_FACINGF_N | MG_FACINGF_E)) {
+				variant = 8;
+			} else {
+				variant = random6 % 3 + 5;
+			}
+		}
+	}
+
+	if (variant == -1) {
+
+		if ((mask & MG_FACINGF_NE) != 0) {
+			variant = 2;
+
+		} else if ((mask & MG_FACINGF_SE) != 0) {
+			variant = (random6 & 1) + 29;
+
+		} else if ((mask & MG_FACINGF_SW) != 0) {
+			variant = 22;
+
+		} else if ((mask & MG_FACINGF_NW) != 0) {
+			variant = random6 % 3 + 12;
+
+		} else {
+			goto done;
+		}
+	}
+
+	if (variant <= 0) {
+		goto done;
+	}
+
+	Map.PendingObject = IsometricTileTypes[IsometricTileTypeClass::CliffSet + variant - 1];
+
+	{
+		Cell target = cellptr->Fetch_CellID();
+		target = CliffVariantOffsets[variant - 1] + target;
+		Map.Set_Cursor_Pos(target);
+
+		bool success = true;
+		bool picked = Pick_Random_Tile_Variant(ISOTILE_CLEAR, 0, cellptr->Height, region_id, success, false);
+
+		if (!picked && !success) {
+			return(false);
+		}
+	}
+
+done:
+	return(true);
 }
 
 // FUNCTION: 0x0057A900

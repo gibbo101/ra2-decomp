@@ -266,6 +266,11 @@ class BuildingClass : public TechnoClass
 		void FUN_004504F0(int stage, CoordStruct const & coords);
 		void FUN_00450590(void);
 		void FUN_00457DE0(bool, bool);
+		void FUN_00458200(void);
+		void FUN_00458330(void);
+		void FUN_00458750(void);
+		bool FUN_004587D0(ObjectTypeClass const * type);
+		int FUN_004589C0(void) const;
 		void Update_Radar_Spied(void);
 		void Spied_By(HouseClass * house);
 		void Infiltrate(HouseClass * house);

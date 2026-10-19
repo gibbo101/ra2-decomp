@@ -26,6 +26,49 @@
 #include "unit.h"
 #include "unittype.h"
 
+// FUNCTION: 0x004C5210 $E91
+// FUNCTION: 0x004C5250 $E88
+DynamicVectorClass<EMPulseClass *> EMPulseClass::EMPulses;
+
+// FUNCTION: 0x004C52B0
+EMPulseClass::EMPulseClass(Cell cell, int spread, int duration, TechnoClass * source) :
+	BASECLASS(),
+	CellID(cell),
+	Spread(spread),
+	CreationFrame(Frame),
+	Duration(duration)
+{
+	Create_ID();
+	EMPulses.Add(this);
+	Create(source);
+}
+
+// FUNCTION: 0x004C5370
+EMPulseClass::EMPulseClass(void) :
+	BASECLASS(),
+	CellID(CELL_NONE),
+	Spread(0),
+	CreationFrame(0),
+	Duration(0)
+{
+}
+
+// FUNCTION: 0x004C53B0
+EMPulseClass::EMPulseClass(NoInitClass const & x) :
+	BASECLASS(x)
+{
+}
+
+// FUNCTION: 0x004C53E0
+EMPulseClass::~EMPulseClass(void)
+{
+	if (GameActive) {
+		Destroy();
+	}
+	Detach_This_From_All(this, true);
+	EMPulses.Delete(this);
+}
+
 // FUNCTION: 0x004C5470
 void EMPulseClass::Reset(void)
 {
@@ -34,12 +77,132 @@ void EMPulseClass::Reset(void)
 	}
 }
 
+// FUNCTION: 0x004C54A0
+void EMPulseClass::Update_All(void)
+{
+	for (int i = EMPulses.Count() - 1; i >= 0; i--) {
+		EMPulseClass * pulse = EMPulses[i];
+		if (Frame >= pulse->CreationFrame + pulse->Duration) {
+			delete pulse;
+		}
+	}
+}
+
+// FUNCTION: 0x004C54E0
+void EMPulseClass::Create(TechnoClass * source)
+{
+	if (Duration + CreationFrame > Frame) {
+		int spread_sq = Spread * Spread;
+
+		for (int i = 0; i < Aircraft.Count(); i++) {
+			AircraftClass * aircraft = Aircraft[i];
+			if (aircraft->IsDown && !aircraft->IsInLimbo && !aircraft->In_Air() && aircraft->Strength > 0) {
+				if (aircraft->Center_Coord().Distance_To(CellID.As_Coord()) < Spread * CELL_LEPTON) {
+					aircraft->Crash(source);
+				}
+			}
+		}
+
+		for (int y = -Spread; y <= Spread; y++) {
+			for (int x = -Spread; x <= Spread; x++) {
+				Cell cell = Cell(x, y) + CellID;
+				if (cell.X >= 0 && cell.X < MAP_CELL_W && cell.Y >= 0 && cell.Y < MAP_CELL_H) {
+					if (Map.Is_Valid(cell)) {
+						int dx = cell.X - CellID.X;
+						int dy = cell.Y - CellID.Y;
+						if (dx * dx + dy * dy <= spread_sq) {
+							CellClass & cellptr = Map[cell];
+
+							BuildingClass * building = cellptr.Cell_Building();
+							if (building != NULL) {
+								if (building->Center_Coord().As_Cell() == cell) {
+									if (!building->Class->IsInvisibleInGame) {
+										building->DisableStuff();
+										building->EMPLockRemaining = Duration;
+										if (building->Class->IsRadar) {
+											building->House->RecalcRadar = true;
+										}
+									}
+								}
+							} else {
+								TechnoClass * techno = cellptr.Cell_Techno();
+								if (techno != NULL) {
+									if (techno->RTTI == RTTI_UNIT || techno->RTTI == RTTI_AIRCRAFT) {
+										if (techno->Is_Foot() && ((FootClass *)techno)->Locomotion != NULL) {
+											if (techno->RTTI != RTTI_UNIT || !((UnitClass *)techno)->Class->LargeVisceroid || !((UnitClass *)techno)->Class->SmallVisceroid) {
+												FootClass * foot = (FootClass *)techno;
+												foot->Locomotion->Power_Off();
+												if (foot->Locomotion->Is_Moving()) {
+													foot->Locomotion->Stop_Moving();
+												}
+												foot->EMPLockRemaining = Duration;
+												AnimClass * sparks = new AnimClass(Rule->EMPulseSparkles, foot->Center_Coord(), Random_Pick(0, 25));
+												if (sparks != NULL) {
+													sparks->SetOwnerObject(foot);
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x004C58C0
+void EMPulseClass::Destroy(void)
+{
+	int spread_sq = Spread * Spread;
+	for (int y = -Spread; y <= Spread; y++) {
+		for (int x = -Spread; x <= Spread; x++) {
+			Cell cell = Cell(x, y) + CellID;
+			if (cell.X >= 0 && cell.X < MAP_CELL_W && cell.Y >= 0 && cell.Y < MAP_CELL_H) {
+				if (Map.Is_Valid(cell)) {
+					int dx = cell.X - CellID.X;
+					int dy = cell.Y - CellID.Y;
+					if (dx * dx + dy * dy <= spread_sq) {
+						CellClass & cellptr = Map[cell];
+						cellptr.IsAffectedByEMP = false;
+					}
+				}
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x004C59A0
+void EMPulseClass::Compute_CRC(CRCEngine &crc) const
+{
+	BASECLASS::Compute_CRC(crc);
+	crc(CellID.X);
+	crc(CellID.Y);
+	crc(Spread);
+	crc(CreationFrame);
+	crc(Duration);
+}
+
 // FUNCTION: 0x004C59F0
 HRESULT STDMETHODCALLTYPE EMPulseClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
 	*retval = CLSID_EMPulseClass;
 	return(S_OK);
+}
+
+// FUNCTION: 0x004C5A30
+HRESULT STDMETHODCALLTYPE EMPulseClass::Load(IStream * stream)
+{
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		new (this) EMPulseClass(NoInitClass());
+
+		result = S_OK;
+	}
+	return(result);
 }
 
 // FUNCTION: 0x004C5A80
@@ -51,3 +214,5 @@ HRESULT STDMETHODCALLTYPE EMPulseClass::Save(IStream * stream, BOOL cleardirty)
 	}
 	return(result);
 }
+
+// FUNCTION: 0x004C5AA0 EMPulseClass::Fetch_Object_Size

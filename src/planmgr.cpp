@@ -205,6 +205,13 @@ template class DynamicVectorClass<PlanningNodeClass *>;
 // FUNCTION: 0x0063EE30 ?$VectorClass@PAVEventClass@@::~?$VectorClass@PAVEventClass@@
 template class VectorClass<EventClass *>;
 
+class PlanMember;
+class PlanBranch;
+struct TechnoVecOps { bool Add(TechnoClass * const &); };
+struct TechnoSlotOps { int GetControllingHouse(void); };
+struct TokenVecOps { void Delete_Index(int); };
+struct MemberVecOps { bool Delete(PlanMember * const &); void Delete_Index(int); };
+
 class PlanMember
 {
 	public:
@@ -252,6 +259,7 @@ class PlanningNodeClass
 		PlanOwn Own;
 
 		PlanningNodeClass(int id);
+		~PlanningNodeClass() { Clear(); FUN_00637640(); }
 		int Get_Id(void);
 		int Get_Count(void);
 		int Index_In(TechnoClass * techno);
@@ -270,6 +278,8 @@ class PlanningNodeClass
 		bool Hit_Test(int x, int y);
 		bool Lead_At(Coord coord);
 		Rect Lead_Rect(void);
+		Rect Lead_Box_Rect(void);
+		Rect Lead_Box_Rect2(void);
 		bool Is_Past_Start(void);
 		void Promote_Events(void);
 		PlanMember * Get_Member(TechnoClass * techno);
@@ -305,6 +315,13 @@ class PlanningNodeClass
 		int Branch_Color(int);
 		int Own_Color(void);
 		void FUN_00634E10(PlanMember *);
+		void FUN_0063D9C0(int);
+		void FUN_00635060(PlanMember *);
+		void FUN_006351E0(PlanMember *);
+		void FUN_00635DB0(bool);
+		void FUN_006378B0(void);
+		void FUN_00637640(void);
+		void FUN_006340B0(TechnoClass *);
 		void Locate_Own_Branch(void);
 		PlanMember * FUN_006346B0(TechnoClass * techno);
 };
@@ -321,7 +338,18 @@ class PlanToken
 		int LoopCount;
 		int LoopStart;
 		bool F98;
+		bool F99;
 
+		PlanToken(TechnoClass * owner);
+		TechnoClass * Get_Owner(void);
+		void Cancel_Owner(void);
+		~PlanToken();
+		void Destroy(void);
+		void Set_F1C(void);
+		void Clear_F1C(void);
+		bool Get_F1C(void);
+		bool Owner_Is_Mission(void);
+		bool Has_Started(void);
 		PlanningNodeClass * FUN_00636E60(int index);
 		PlanningNodeClass * Node_At(int index)
 		{
@@ -337,6 +365,8 @@ class PlanToken
 		}
 };
 
+template class DynamicVectorClass<PlanMember *>;
+template class DynamicVectorClass<PlanBranch *>;
 extern PlanningNodeClass * DAT_00AC4CCC;
 extern PlanningNodeClass * DAT_00AC4C38;
 extern PlanningNodeClass * DAT_00AC4BF0;
@@ -1155,4 +1185,285 @@ void PlanningNodeClass::Reset_Colors(bool all)
 		} while (i < count);
 		Own.Slot = -1;
 	}
+}
+
+static inline Rect Box_Inline(int size, Point2D center)
+{
+	int offset = -(size / 2);
+	Point2D corner = center;
+	corner.X += offset;
+	corner.Y += offset;
+	return Rect(corner, size, size);
+}
+
+// FUNCTION: 0x00635DF0
+Rect PlanningNodeClass::Lead_Box_Rect(void)
+{
+	Coord coord = FUN_00633BC0(*Members[0]->Packet);
+	Point2D pixel;
+	TacticalMap->Coord_To_Pixel(coord, pixel);
+	pixel.X += DSurface::ViewBounds.X;
+	pixel.Y += DSurface::ViewBounds.Y;
+	return Inflated(Box_Inline(8, pixel), 4);
+}
+
+// FUNCTION: 0x00635E90
+Rect PlanningNodeClass::Lead_Box_Rect2(void)
+{
+	return Inflated(Inflated(Around(8, Pixel_Of(Event_Coord(*Members[0]->Packet))), 4), 4);
+}
+
+// FUNCTION: 0x00635F20
+PlanToken::PlanToken(TechnoClass * owner) : F8C(-1), LoopCount(-1), LoopStart(-1)
+{
+	F1C = false;
+	F1D = false;
+	F98 = false;
+	F99 = false;
+	Owner = owner;
+}
+
+extern bool DAT_00AC4CF5;
+void __fastcall FUN_00639F80(int slot);
+
+static inline PlanMember * Lookup_Member(PlanningNodeClass * node, TechnoClass * techno)
+{
+	int index = node->FUN_00634290(techno);
+	if (index == -1) {
+		return 0;
+	}
+	return node->Members[index];
+}
+
+static inline void Unregister_Token(PlanningTokenClass * token)
+{
+	if (!DAT_00AC4CF5) {
+		DynamicVectorClass<PlanningTokenClass *> * array = &PlanTokens::Array;
+		int id = array->ID(token);
+		if (id != -1) {
+			array->Delete_Index(id);
+		}
+	}
+}
+
+// FUNCTION: 0x00635F80
+PlanToken::~PlanToken()
+{
+	if (Owner) {
+		Owner->FUN_00705D10(0);
+	}
+	Unregister_Token((PlanningTokenClass *)this);
+	int count = Nodes.Count();
+	bool none = (count == 0);
+	for (int i = 0; i < count; i++) {
+		PlanningNodeClass * node = Nodes[i];
+		PlanMember * member = Lookup_Member(node, Owner);
+		if (member) {
+			node->FUN_00635060(member);
+			delete member->Packet;
+			((MemberVecOps *)&node->Members)->Delete(member);
+			delete member;
+			if (node->Members.Count() == 0 && node) {
+				node->FUN_0063D9C0(1);
+			}
+		}
+	}
+	if (!none) {
+		TechnoClass * owner = Owner;
+		int slot = Owner_Slot(owner);
+		FUN_00639F80(slot);
+		((TechnoVecOps *)&PlanTechnos::Technos)->Add(owner);
+	}
+	Nodes.Clear();
+	F8C = -1;
+	LoopCount = -1;
+	LoopStart = -1;
+	F98 = false;
+	F99 = false;
+}
+
+extern int DAT_00AC4B84[24];
+
+// FUNCTION: 0x00636110
+TechnoClass * PlanToken::Get_Owner(void)
+{
+	return Owner;
+}
+
+static inline void Release_Owner(PlanningNodeClass * node, TechnoClass * owner)
+{
+	PlanMember * member = Lookup_Member(node, owner);
+	PlanMember * key = member;
+	if (member) {
+		if (member->Active) {
+			node->FUN_006351E0(member);
+		}
+		if (member->Branch != -1) {
+			PlanBranch * branch = node->Branches[member->Branch];
+			branch->Slot = -1;
+			node->FUN_00635DB0(false);
+			if (--branch->Pending == 0) {
+				node->FUN_006378B0();
+			}
+		}
+		member->Branch = -1;
+		delete key->Packet;
+		DynamicVectorClass<PlanMember *> * members = &node->Members;
+		int id = members->ID(key);
+		if (id != -1) {
+			((MemberVecOps *)members)->Delete_Index(id);
+		}
+		delete key;
+		if (node->Members.Count() == 0 && node) {
+			delete node;
+		}
+	}
+}
+
+// FUNCTION: 0x00636120
+void PlanToken::Cancel_Owner(void)
+{
+	int count = Nodes.Count();
+	bool none = (count == 0);
+	for (int i = 0; i < count; i++) {
+		PlanningNodeClass * node = Nodes[i];
+		Release_Owner(node, Owner);
+	}
+	if (!none) {
+		TechnoClass * owner = Owner;
+		int slot = Owner_Slot(owner);
+		if (slot >= 0 && slot < 24) {
+			int value = DAT_00AC4B84[slot] - 1;
+			DAT_00AC4B84[slot] = (value < 0) ? 0 : value;
+		}
+		DynamicVectorClass<TechnoClass *> * technos = &PlanTechnos::Technos;
+		int id = technos->ID(owner);
+		if (id != -1) {
+			technos->Delete_Index(id);
+		}
+	}
+	Nodes.Clear();
+	F8C = -1;
+	LoopCount = -1;
+	LoopStart = -1;
+	F98 = false;
+	F99 = false;
+}
+
+static inline void Unregister_Token_B(PlanningTokenClass * token)
+{
+	if (!DAT_00AC4CF5) {
+		DynamicVectorClass<PlanningTokenClass *> * array = &PlanTokens::Array;
+		int id = array->ID(token);
+		if (id != -1) {
+			((TokenVecOps *)array)->Delete_Index(id);
+		}
+	}
+}
+
+struct PlanTokenB
+{
+	TechnoClass * Owner;
+	DynamicVectorClass<PlanningNodeClass *> Nodes;
+	bool F1C;
+	bool F1D;
+	char Gap[0x6c];
+	int F8C;
+	int LoopCount;
+	int LoopStart;
+	bool F98;
+	bool F99;
+
+	~PlanTokenB()
+	{
+		if (Owner) {
+			Owner->FUN_00705D10(0);
+		}
+		Unregister_Token_B((PlanningTokenClass *)this);
+		int count = Nodes.Count();
+		bool none = (count == 0);
+		for (int i = 0; i < count; i++) {
+			Nodes[i]->FUN_006340B0(Owner);
+		}
+		if (!none) {
+			TechnoClass * owner = Owner;
+			FUN_00639F80(((TechnoSlotOps *)owner)->GetControllingHouse());
+			((TechnoVecOps *)&PlanTechnos::Technos)->Add(owner);
+		}
+		Nodes.Clear();
+		F98 = false;
+		F8C = -1;
+		LoopCount = -1;
+		LoopStart = -1;
+		F99 = false;
+	}
+};
+
+// FUNCTION: 0x00636310
+void PlanToken::Destroy(void)
+{
+	int count = Nodes.Count();
+	bool none = (count == 0);
+	for (int i = 0; i < count; i++) {
+		PlanningNodeClass * node = Nodes[i];
+		PlanMember * member = Lookup_Member(node, Owner);
+		if (member) {
+			node->FUN_00635060(member);
+			delete member->Packet;
+			DynamicVectorClass<PlanMember *> * members = &node->Members;
+			int id = members->ID(member);
+			if (id != -1) {
+				((MemberVecOps *)members)->Delete_Index(id);
+			}
+			delete member;
+			if (node->Members.Count() == 0 && node) {
+				node->FUN_0063D9C0(1);
+			}
+		}
+	}
+	if (!none) {
+		TechnoClass * owner = Owner;
+		int slot = Owner_Slot(owner);
+		FUN_00639F80(slot);
+		((TechnoVecOps *)&PlanTechnos::Technos)->Add(owner);
+	}
+	Nodes.Clear();
+	F98 = false;
+	F8C = -1;
+	LoopCount = -1;
+	LoopStart = -1;
+	F99 = false;
+	Owner = 0;
+	PlanTokenB * self = (PlanTokenB *)this;
+	delete self;
+}
+
+// FUNCTION: 0x00636520
+void PlanToken::Set_F1C(void)
+{
+	F1C = true;
+}
+
+// FUNCTION: 0x00636530
+void PlanToken::Clear_F1C(void)
+{
+	F1C = false;
+}
+
+// FUNCTION: 0x00636540
+bool PlanToken::Get_F1C(void)
+{
+	return F1C;
+}
+
+// FUNCTION: 0x00636550
+bool PlanToken::Owner_Is_Mission(void)
+{
+	return Owner->CurrentMission == 0x1c || Owner->MissionQueue == 0x1c;
+}
+
+// FUNCTION: 0x00636570
+bool PlanToken::Has_Started(void)
+{
+	return Nodes.Count() > 0 && (F8C == -1 || F8C > 0);
 }

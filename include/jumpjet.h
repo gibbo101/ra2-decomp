@@ -52,6 +52,7 @@ class JumpjetLocomotionClass : public LocomotionClass, public IPiggyback
 		void Process_Cruise(void);
 		void Process_Descent(void);
 		void Process_Crashing(void);
+		void Process_Unknown(void);
 		void Movement_AI(void);
 		Coord Closest_Free_Spot(Coord const & to) const;
 		int Desired_Flight_Level(void) const;

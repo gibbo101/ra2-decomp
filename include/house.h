@@ -407,6 +407,7 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 		bool FUN_0050B370(TechnoTypeClass const * type);
 		void FUN_0050E010(UnitTypeClass * type);
 		void LostPoweredCenter(UnitTypeClass * type);
+		bool GainedPoweredCenter(TechnoTypeClass const * type);
 		int FUN_00500910(RTTIType rtti, bool naval) const;
 		DiffType Assign_Handicap(DiffType handicap);
 		AbstractClass * Find_Juicy_Target(Coord const & coord) const;
@@ -560,12 +561,17 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 		bool AI_Fire_Sale(UrgencyType urgency);
 		bool AI_Raise_Money(UrgencyType urgency);
 
-		void AI_Super_Weapons(void);
-		void AI_Ion_Cannon(SuperClass * super);
+		void AI_TryFireSW(void);
 		void AI_Hunter_Seeker(SuperClass * super);
 		void AI_Multi_Missile(SuperClass * super);
 		void AI_Chem_Missile(SuperClass * super);
 		void AI_Drop_Pods(SuperClass * super);
+		void Fire_ParaDrop(SuperClass * super);
+		void Fire_LightningStorm(SuperClass * super);
+		void Fire_PsyDom(SuperClass * super);
+		void Fire_GenMutator(SuperClass * super);
+		Cell PickIonCannonTarget(void);
+		Cell PickTargetByType(QuarryType quarry);
 
 		void AI_Takeover(void);
 
