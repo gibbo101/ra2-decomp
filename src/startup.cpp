@@ -655,3 +655,19 @@ template class TClassFactory<ScriptClass>;
 // FUNCTION: 0x006C1F10 ?$TClassFactory@VScriptTypeClass@@::CreateInstance
 // FUNCTION: 0x006C1F90 ?$TClassFactory@VScriptTypeClass@@::LockServer
 template class TClassFactory<ScriptTypeClass>;
+
+// FUNCTION: 0x006C1FC0 ?$TClassFactory@VTagClass@@::?$TClassFactory@VTagClass@@
+// FUNCTION: 0x006C1FD0 ?$TClassFactory@VTagClass@@::QueryInterface
+// FUNCTION: 0x006C2040 ?$TClassFactory@VTagClass@@::AddRef
+// FUNCTION: 0x006C2060 ?$TClassFactory@VTagClass@@::Release
+// FUNCTION: 0x006C2090 ?$TClassFactory@VTagClass@@::CreateInstance
+// FUNCTION: 0x006C2110 ?$TClassFactory@VTagClass@@::LockServer
+template class TClassFactory<TagClass>;
+
+// FUNCTION: 0x006C2140 ?$TClassFactory@VTagTypeClass@@::?$TClassFactory@VTagTypeClass@@
+// FUNCTION: 0x006C2150 ?$TClassFactory@VTagTypeClass@@::QueryInterface
+// FUNCTION: 0x006C21C0 ?$TClassFactory@VTagTypeClass@@::AddRef
+// FUNCTION: 0x006C21E0 ?$TClassFactory@VTagTypeClass@@::Release
+// FUNCTION: 0x006C2210 ?$TClassFactory@VTagTypeClass@@::CreateInstance
+// FUNCTION: 0x006C2290 ?$TClassFactory@VTagTypeClass@@::LockServer
+template class TClassFactory<TagTypeClass>;

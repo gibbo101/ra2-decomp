@@ -163,3 +163,4 @@ address,name,symbol,evidence
 0x00775700,WS_Create_Dialog,,"windlg WS_Create_Dialog (TibSun windlg.h), called by wonline"
 0x00887628,PacketTransport,,YRpp WinsockInterfaceClass::Instance (UDPInterfaceClass); wonline and ipxgconn Send_To use it
 0x0053F0E0,IPXAddressClass::As_String,,called by wonline; not yet defined in src/ipxaddr.cpp
+0x00887300,SidebarSurface,,TibSun SidebarSurface (_surface.h); YRpp DSurface::Sidebar; read by 0x0069DEB0

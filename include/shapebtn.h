@@ -26,6 +26,8 @@ class ShapeButtonClass : public ToggleClass
 		bool StopFlashing(void);
 		bool StartFlashing(int delay, int initdelay, bool start);
 		bool AI(void);
+		bool IsFlashing(void);
+		bool IsFlashOn(void);
 
 		enum ShapeButtonClassEnums {
 			UP_SHAPE,

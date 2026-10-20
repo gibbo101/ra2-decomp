@@ -30,6 +30,8 @@ class VeterancyClass
 		void Set_Veteran(bool set);
 		void Set_Elite(bool set);
 
+		int Remaining_Levels(void) const;
+
 		int To_Integer(void) const;
 		void From_Integer(int value);
 

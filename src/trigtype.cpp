@@ -309,12 +309,187 @@ bool TriggerTypeClass::Read_INI(CCINIClass & ini)
 	return(false);
 }
 
+// FUNCTION: 0x007275D0
+void TriggerTypeClass::Read_All(CCINIClass & ini)
+{
+	int len = ini.Entry_Count(INI_NAME);
+	for (int index = 0; index < len; index++) {
+		char const * entry = ini.Get_Entry(INI_NAME, index);
+		TriggerTypeClass * trigger = Find_Or_Make(entry);
+		trigger->Read_INI(ini);
+	}
+}
+
+// FUNCTION: 0x007276A0
+bool TriggerTypeClass::Write_INI(CCINIClass & ini) const
+{
+	char buffer[INIClass::MAX_LINE_LENGTH];
+
+	sprintf(buffer, "%s,%s,%s,%d,%d,%d,%d,%d",
+		(House != NULL) ? (char const *)House->IniName : "<none>",
+		(LinkedTo != NULL) ? (char const *)LinkedTo->IniName : "<none>",
+		(char const *)GivenName,
+		IsEnabled ? 0 : 1,
+		Difficulty.IsEnabledOnEasy ? 1 : 0,
+		Difficulty.IsEnabledOnMedium ? 1 : 0,
+		Difficulty.IsEnabledOnHard ? 1 : 0,
+		IsToInherit ? 1 : 0);
+
+	ini.Put_String(INI_NAME, IniName, buffer);
+
+	TEventClass const * tevent = FirstEvent;
+	int count = 0;
+	while (tevent != NULL) {
+		count++;
+		tevent = tevent->Next;
+	}
+	sprintf(buffer, "%d", count);
+
+	tevent = FirstEvent;
+	while (tevent != NULL) {
+		strcat(buffer, ",");
+		tevent->Build_INI_Entry(buffer);
+		tevent = tevent->Next;
+	}
+	ini.Put_String(INI_EVENT_NAME, IniName, buffer);
+
+	TActionClass const * taction = FirstAction;
+	count = 0;
+	while (taction != NULL) {
+		count++;
+		taction = taction->Next;
+	}
+	sprintf(buffer, "%d", count);
+
+	taction = FirstAction;
+	while (taction != NULL) {
+		strcat(buffer, ",");
+		taction->Build_INI_Entry(buffer);
+		taction = taction->Next;
+	}
+	ini.Put_String(INI_ACTION_NAME, IniName, buffer);
+	return(true);
+}
+
+// FUNCTION: 0x00727880
+void TriggerTypeClass::Write_All(CCINIClass & ini)
+{
+	int index;
+
+	int numtypes = ini.Entry_Count(INI_NAME);
+	for (index = 0; index < numtypes; index++) {
+		char const * entry = ini.Get_Entry(INI_NAME, index);
+		char buffer[32];
+		ini.Get_String(INI_NAME, entry, "", buffer, sizeof(buffer));
+		ini.Clear(buffer);
+	}
+	ini.Clear(INI_NAME);
+
+	numtypes = ini.Entry_Count(INI_EVENT_NAME);
+	for (index = 0; index < numtypes; index++) {
+		char const * entry = ini.Get_Entry(INI_EVENT_NAME, index);
+		char buffer[32];
+		ini.Get_String(INI_NAME, entry, "", buffer, sizeof(buffer));
+		ini.Clear(buffer);
+	}
+	ini.Clear(INI_EVENT_NAME);
+
+	numtypes = ini.Entry_Count(INI_ACTION_NAME);
+	for (index = 0; index < numtypes; index++) {
+		char const * entry = ini.Get_Entry(INI_ACTION_NAME, index);
+		char buffer[32];
+		ini.Get_String(INI_NAME, entry, "", buffer, sizeof(buffer));
+		ini.Clear(buffer);
+	}
+	ini.Clear(INI_ACTION_NAME);
+
+	for (index = 0; index < TriggerTypes.Count(); index++) {
+		TriggerTypes[index]->Write_INI(ini);
+	}
+}
+
+// FUNCTION: 0x007279E0
+bool TriggerTypeClass::Delete_Action(TActionClass const * taction)
+{
+	if (FirstAction == taction) {
+		FirstAction = taction->Next;
+		delete taction;
+		return(true);
+	}
+
+	TActionClass * tptr = FirstAction;
+	while (tptr != NULL) {
+		if (tptr->Next == taction) {
+			tptr->Next = tptr->Next->Next;
+			delete taction;
+			return(true);
+		}
+		tptr = tptr->Next;
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00727A40
+bool TriggerTypeClass::Delete_Event(TEventClass const * tevent)
+{
+	if (FirstEvent == tevent) {
+		FirstEvent = tevent->Next;
+		delete tevent;
+		return(true);
+	}
+
+	TEventClass * tptr = FirstEvent;
+	while (tptr != NULL) {
+		if (tptr->Next == tevent) {
+			tptr->Next = tptr->Next->Next;
+			delete tevent;
+			return(true);
+		}
+		tptr = tptr->Next;
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00727AA0
+TriggerTypeClass * TriggerTypeClass::Find_Or_Make(char const * name)
+{
+	return(TFind_Or_Make<TriggerTypeClass>(name, TriggerTypes));
+}
+
+// FUNCTION: 0x00727B30
+void TriggerTypeClass::Compute_CRC(CRCEngine & crc) const
+{
+	BASECLASS::Compute_CRC(crc);
+
+	crc(House->Fetch_ID());
+	if (LinkedTo != NULL) crc(LinkedTo->Fetch_ID());
+	if (FirstEvent != NULL) crc(FirstEvent->Fetch_ID());
+	if (FirstAction != NULL) crc(FirstAction->Fetch_ID());
+}
+
 // FUNCTION: 0x00727BB0
 HRESULT STDMETHODCALLTYPE TriggerTypeClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
 	*retval = CLSID_TriggerTypeClass;
 	return(S_OK);
+}
+
+// FUNCTION: 0x00727BF0
+HRESULT STDMETHODCALLTYPE TriggerTypeClass::Load(IStream * stream)
+{
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		new (this) TriggerTypeClass(NoInitClass());
+
+		Swizzle_Pointer(&LinkedTo);
+		Swizzle_Pointer(&FirstEvent);
+		Swizzle_Pointer(&FirstAction);
+		Swizzle_Pointer(&House);
+
+		result = S_OK;
+	}
+	return(result);
 }
 
 // FUNCTION: 0x00727C80
@@ -326,3 +501,8 @@ HRESULT STDMETHODCALLTYPE TriggerTypeClass::Save(IStream * stream, BOOL cleardir
 	}
 	return(result);
 }
+
+// FUNCTION: 0x00727CA0 TriggerTypeClass::Fetch_RTTI
+// FUNCTION: 0x00727CB0 TriggerTypeClass::Fetch_Object_Size
+// FUNCTION: 0x00727CC0 TriggerTypeClass::Fetch_Heap_ID
+// FUNCTION: 0x00727CD0 TriggerTypeClass::~TriggerTypeClass

@@ -15,6 +15,7 @@
 #include "refcount.h"
 
 class MSFont;
+class ConvertClass;
 class MSAnimEntry;
 class MSSfxEntry;
 class INIClass;
@@ -276,6 +277,10 @@ namespace WorldDominationTour
 
 	class Territory : public ReferenceCounted {
 		public:
+			Territory(int id, INIClass const & ini, Wstring const & section, Wstring const & fileprefix, Wstring const & labelprefix);
+			virtual ~Territory(void);
+			void FUN_0076FB90(Selection * engine, ConvertClass * drawer, Point2D const & pos);
+			void FUN_0076FC50(Selection * engine, ConvertClass * drawer, Point2D const & pos);
 			void FUN_0076FEB0(bool active, Selection * engine);
 			MSShapeAnim * FUN_0076FF30(void);
 			void FUN_0076FF20(MSShapeAnim * anim);
@@ -285,13 +290,17 @@ namespace WorldDominationTour
 			int ID;
 			WideWstring Name;
 			Point2D Target;
-			char Pad1[0x2c - 0x18];
+			Point2D Origin;
+			Wstring FileName;
+			MSOverlayAnim * OwnerAnim;
+			MSOverlayAnim * HighlightAnim;
 			MSShapeAnim * TargetAnim;
 	};
 
 	typedef DynamicVectorClass<rc_ptr<Territory> > TERR_LIST;
 	typedef VectorCursor<rc_ptr<Territory>, TERR_LIST> TERR_ITER;
 
+	rc_ptr<Territory> __fastcall FUN_0076F910(int id, INIClass const & ini, Wstring const & section, Wstring const & fileprefix, Wstring const & labelprefix);
 	rc_ptr<Territory> __fastcall FUN_0076FF40(TERR_LIST * list, int id);
 
 	class Map : public ReferenceCounted {

@@ -4,9 +4,9 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "_map.h"
 #include "astar.h"
 #include "_astar.h"
-#include "_map.h"
 #include "cell.h"
 #include "dbgprint.h"
 #include "foot.h"

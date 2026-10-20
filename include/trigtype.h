@@ -31,7 +31,7 @@ class TriggerTypeClass : public AbstractTypeClass
 		virtual HRESULT STDMETHODCALLTYPE Load(IStream * stream) override;
 		virtual HRESULT STDMETHODCALLTYPE Save(IStream * stream, BOOL cleardirty) override;
 
-		static void Read_All(CCINIClass const & ini);
+		static void Read_All(CCINIClass & ini);
 		static void Write_All(CCINIClass & ini);
 		virtual bool Read_INI(CCINIClass & ini) override;
 		virtual bool Write_INI(CCINIClass & ini) const override;

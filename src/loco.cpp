@@ -302,6 +302,37 @@ void STDMETHODCALLTYPE LocomotionClass::Force_Immediate_Destination(CoordStruct 
 {
 }
 
+// FUNCTION: 0x0055AC10
+void STDMETHODCALLTYPE LocomotionClass::Force_Track(int track, CoordStruct coord)
+{
+}
+
+// FUNCTION: 0x0055AC20
+void STDMETHODCALLTYPE LocomotionClass::Unlimbo(void)
+{
+}
+
+// FUNCTION: 0x0055AC30
+void STDMETHODCALLTYPE LocomotionClass::Do_Turn(DirStruct coord)
+{
+}
+
+// FUNCTION: 0x0055AC40
+void STDMETHODCALLTYPE LocomotionClass::Stop_Moving(void)
+{
+}
+
+// FUNCTION: 0x0055AC50
+void STDMETHODCALLTYPE LocomotionClass::Move_To(CoordStruct to)
+{
+}
+
+// FUNCTION: 0x0055AC60
+boolean STDMETHODCALLTYPE LocomotionClass::Process(void)
+{
+	return(true);
+}
+
 // FUNCTION: 0x0055AC70
 CoordStruct STDMETHODCALLTYPE LocomotionClass::Destination(void)
 {
@@ -310,4 +341,39 @@ CoordStruct STDMETHODCALLTYPE LocomotionClass::Destination(void)
 	coord.Y = COORD_NONE.Y;
 	coord.Z = COORD_NONE.Z;
 	return(coord);
+}
+
+// FUNCTION: 0x0055ACA0
+CoordStruct STDMETHODCALLTYPE LocomotionClass::Head_To_Coord(void)
+{
+	return(LinkedTo->PositionCoord);
+}
+
+// FUNCTION: 0x0055ACD0
+boolean STDMETHODCALLTYPE LocomotionClass::Is_Moving(void)
+{
+	return(false);
+}
+
+// FUNCTION: 0x0055ACE0
+void STDMETHODCALLTYPE LocomotionClass::Force_New_Slope(int ramp)
+{
+}
+
+// FUNCTION: 0x0055ACF0
+int STDMETHODCALLTYPE LocomotionClass::Drawing_Code(void)
+{
+	return(0);
+}
+
+// FUNCTION: 0x0055AD00
+FireErrorType STDMETHODCALLTYPE LocomotionClass::Can_Fire(void)
+{
+	return(FIRE_OK);
+}
+
+// FUNCTION: 0x0055AD10
+int STDMETHODCALLTYPE LocomotionClass::Apparent_Speed(void)
+{
+	return(LinkedTo->Current_Speed());
 }

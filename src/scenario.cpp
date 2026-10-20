@@ -1385,6 +1385,26 @@ bool ScenarioClass::Set_Local_To(char const * variable_name, bool value)
 	return(true);
 }
 
+// FUNCTION: 0x00689A00
+bool ScenarioClass::Fetch_Local_Value(int index, bool & value)
+{
+	if (index >= 0 && index < ARRAY_SIZE(LocalFlags)) {
+		value = LocalFlags[index].Value;
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00689A30
+bool ScenarioClass::Fetch_Local_Value(char const * variable_name, bool & value)
+{
+	int index = Local_From_Name(variable_name);
+	if (index != -1) {
+		return(Fetch_Local_Value(index, value));
+	}
+	return(false);
+}
+
 // FUNCTION: 0x00689AC0
 int ScenarioClass::Local_From_Name(char const * variable_name)
 {
@@ -1394,6 +1414,106 @@ int ScenarioClass::Local_From_Name(char const * variable_name)
 		}
 	}
 	return(-1);
+}
+
+// FUNCTION: 0x00689B20
+bool ScenarioClass::Read_Local_INI(CCINIClass const & ini)
+{
+	char buffer[128];
+	int index;
+
+	for (index = 0; index < ARRAY_SIZE(LocalFlags); index++) {
+		LocalFlags[index].VariableName[0] = '\0';
+	}
+
+	char const * const SECTION = "VariableNames";
+	int length = MIN(ini.Entry_Count(SECTION), ARRAY_SIZE(LocalFlags));
+	for (index = 0; index < length; index++) {
+		char const * entry = ini.Get_Entry(SECTION, index);
+		int index = atoi(entry);
+
+		ini.Get_String(SECTION, entry, NULL, buffer, sizeof(buffer));
+		char * token = strtok(buffer, ",");
+		strcpy(LocalFlags[index].VariableName, token);
+
+		token = strtok(NULL, ",");
+		if (token != NULL) {
+			LocalFlags[index].Value = (atoi(token) == 0) ? false : true;
+		}
+	}
+
+	return(true);
+}
+
+// FUNCTION: 0x00689C60
+bool ScenarioClass::Write_Local_INI(CCINIClass & ini) const
+{
+	static char const * const SECTION = "VariableNames";
+	char index_buffer[10];
+	char buffer[128];
+
+	ini.Clear(SECTION);
+	int length = ARRAY_SIZE(LocalFlags);
+	for (int index = 0; index < length; index++) {
+		if (LocalFlags[index].VariableName[0] != '\0') {
+			wsprintf(index_buffer, "%d", index);
+			wsprintf(buffer, "%s,%d", LocalFlags[index].VariableName, LocalFlags[index].Value ? 1 : 0);
+			ini.Put_String(SECTION, index_buffer, buffer);
+		}
+	}
+	return(true);
+}
+
+// FUNCTION: 0x00689CF0
+int ScenarioClass::Used_Local_Count(void)
+{
+	int count = 0;
+	for (int i = 0; i < ARRAY_SIZE(LocalFlags); i++) {
+		if (LocalFlags[i].VariableName[0] != '\0') {
+			count++;
+		}
+	}
+	return(count);
+}
+
+// FUNCTION: 0x00689D10
+int ScenarioClass::First_Unused_Local(void) const
+{
+	for (int index = 0; index < ARRAY_SIZE(LocalFlags); index++) {
+		if (LocalFlags[index].VariableName[0] == '\0') {
+			return(index);
+		}
+	}
+	return(-1);
+}
+
+// FUNCTION: 0x00689D30
+bool ScenarioClass::ReadStartPoints(CCINIClass const & ini)
+{
+	char const * const SECTION = "Header";
+	char buffer[12];
+
+	StartX = -1;
+	StartY = -1;
+	Width = -1;
+	Height = -1;
+	NumberStartingPoints = -1;
+	int j;
+	for (j = 0; j < ARRAY_SIZE(StartingPoints); j++) {
+		StartingPoints[j] = Point2D(0, 0);
+	}
+
+	StartX = ini.Get_Int(SECTION, "StartX", StartX);
+	StartY = ini.Get_Int(SECTION, "StartY", StartY);
+	Width = ini.Get_Int(SECTION, "Width", Width);
+	Height = ini.Get_Int(SECTION, "Height", Height);
+	NumberStartingPoints = ini.Get_Int(SECTION, "NumberStartingPoints", NumberStartingPoints);
+	NumCoopHumanStartSpots = ini.Get_Int(SECTION, "NumCoopHumanStartSpots", NumCoopHumanStartSpots);
+	for (int i = 0; i < NumberStartingPoints; i++) {
+		sprintf(buffer, "Waypoint%d", i + 1);
+		StartingPoints[i] = ini.Get_Point(SECTION, buffer, StartingPoints[i]);
+	}
+	return(true);
 }
 
 // FUNCTION: 0x0068B8A0
@@ -1427,12 +1547,96 @@ int Adjust_To_CPU_Timing(int time)
 	return(time);
 }
 
+// FUNCTION: 0x0068B940
+void ScenarioClass::Compute_CRC(CRCEngine & crc) const
+{
+	crc(UIName);
+	crc(IntroMovie);
+	crc(BriefMovie);
+	crc(WinMovie);
+	crc(LoseMovie);
+	crc(ActionMovie);
+	crc(PostScoreMovie);
+	crc(PreMapSelectMovie);
+	crc(PlayerHouse);
+	crc(Percent);
+	crc(TransitTheme);
+	crc(CarryOverPercent);
+	crc(IsMultiplayerOnly);
+	crc(IsInheritTimer);
+	crc(CarryOverCap / 100);
+	crc(BridgeCount);
+	crc(IsEndOfGame);
+	crc(Campaign);
+	crc(IsSkipScore);
+	crc(IsOneTimeOnly);
+	crc(IsNoMapSel);
+	crc(IsMoneyTiberium);
+	crc(IsIgnoreGlobalAITriggers);
+	crc(IsTruckCrate);
+	crc(Percent);
+	crc(StartingDropships);
+	crc((int)MissionTimer);
+	crc((int)ShroudTimer);
+	crc((int)FogTimer);
+	crc((int)IceGrowthTimer);
+	crc((int)VeinGrowthTimer);
+	crc((int)ElapsedTimer);
+	crc(Difficulty);
+	crc(CDifficulty);
+	crc(Theater);
+	crc(NormalLighting.GroundLight);
+	crc(NormalLighting.LevelLight);
+	crc(IsFreeRadar);
+	crc(IonAmbientLight);
+	crc(IonLighting.RedTint);
+	crc(IonLighting.GreenTint);
+	crc(IonLighting.BlueTint);
+	crc(IonLighting.GroundLight);
+	crc(IonLighting.LevelLight);
+	crc(AmbientLight);
+	crc(CurrentAmbientLight);
+	crc(DesiredAmbientLight);
+}
+
 // FUNCTION: 0x0068BCB0
 int ScenarioClass::Get_Unique_ID(void)
 {
 	UniqueID++;
 
 	return(UniqueID);
+}
+
+// FUNCTION: 0x0068BCC0
+Cell ScenarioClass::Get_Waypoint_Cell(WAYPOINT waypoint) const
+{
+	return(Waypoint[waypoint]);
+}
+
+// FUNCTION: 0x0068BCE0
+AbstractClass * ScenarioClass::Get_Waypoint_Target(WAYPOINT waypoint) const
+{
+	return(&Map[Waypoint[waypoint]]);
+}
+
+// FUNCTION: 0x0068BD00
+Coord ScenarioClass::Get_Waypoint_Coord(WAYPOINT waypoint) const
+{
+	CellClass const * cell = &Map[Waypoint[waypoint]];
+	Coord coord = cell->Center_Coord();
+
+	if (cell->IsUnderBridge || cell->WasUnderBridge) {
+		coord.Z += BRIDGE_LEPTON_HEIGHT;
+	}
+	return(coord);
+}
+
+// FUNCTION: 0x0068BD60
+void ScenarioClass::Clear_All_Waypoints(void)
+{
+	for (int index = 0; index < ARRAY_SIZE(Waypoint); index++) {
+		Waypoint[index] = CELL_NONE;
+	}
 }
 
 // FUNCTION: 0x0068BD80
@@ -1445,16 +1649,4 @@ bool ScenarioClass::Is_Valid_Waypoint(WAYPOINT waypoint) const
 		return(true);
 	}
 	return(false);
-}
-
-void ScenarioClass::Clear_All_Waypoints(void)
-{
-	for (int i = 0; i < ARRAY_SIZE(Waypoint); i++) {
-		Waypoint[i] = CELL_NONE;
-	}
-}
-
-Cell ScenarioClass::Get_Waypoint_Cell(WAYPOINT waypoint) const
-{
-	return(Waypoint[waypoint]);
 }

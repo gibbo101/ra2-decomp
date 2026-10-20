@@ -662,6 +662,232 @@ void VQAClass::Reset_VQA(void)
 	}
 }
 
+// FUNCTION: 0x00759EA0
+int VQAClass::Get_Desired_Color_Mode(void)
+{
+	return(DesiredColorMode);
+}
+
+
+// FUNCTION: 0x00759EB0
+bool VQAClass::Set_Draw_Buffer(void * buffer, int buffer_width, int buffer_height, int x_offset, int y_offset)
+{
+	if (buffer_width == -1) {
+		buffer_width = DrawBufferWidth;
+	} else {
+		DrawBufferWidth = buffer_width;
+	}
+	if (buffer_height == -1) {
+		buffer_height = DrawBufferHeight;
+	} else {
+		DrawBufferHeight = buffer_height;
+	}
+	if (x_offset == -1) {
+		x_offset = 0;
+	}
+	if (y_offset == -1) {
+		y_offset = 0;
+	}
+	long rc = VQA_Set_DrawBuffer(Handle, (unsigned char *)buffer, buffer_width, buffer_height, x_offset, y_offset);
+	if (rc == VQAERR_NONE) {
+		return(true);
+	}
+	return(false);
+}
+
+
+// FUNCTION: 0x00759F20
+void VQAClass::Set_Primary_Color_Mode(int mode)
+{
+	PrimaryColorMode = mode;
+}
+
+
+// FUNCTION: 0x00759F30
+void VQAClass::Handle_Codebook_Event(void *buf, unsigned int num)
+{
+	if (PrimaryColorMode != -1) {
+		Hicolor_Translate(buf, num >> 1);
+	}
+	Event3Frame = CurrentFrame;
+}
+
+
+// FUNCTION: 0x00759F70
+int VQAClass::Get_VQA_Width(void) const
+{
+	return(Width);
+}
+
+
+// FUNCTION: 0x00759F80
+int VQAClass::Get_VQA_Height(void) const
+{
+	return(Height);
+}
+
+
+// FUNCTION: 0x00759F90
+void *VQAClass::Handle_Lock_Event(void)
+{
+	return(SurfaceLockCallback());
+}
+
+
+// FUNCTION: 0x00759FA0
+bool VQAClass::Handle_Unlock_Event(void)
+{
+	return(SurfaceUnlockCallback());
+}
+
+
+// FUNCTION: 0x00759FB0
+long VQAClass::CCFileHandler(long action, void * buffer, long nbytes)
+{
+	long error = 1;
+	unsigned char tmp;
+	switch (action) {
+		case VQACMD_OPEN:
+			IsFileOpen = FileHandle.Open((char *)buffer, FileClass::READ) != 0;
+			error = IsFileOpen == false;
+			break;
+		case VQACMD_READ:
+			if (FileHandle.Read(buffer, nbytes) != nbytes) {
+				error = 1;
+			} else {
+				error = 0;
+			}
+			break;
+		case VQACMD_WRITE:
+			error = 1;
+			break;
+		case VQACMD_SEEK:
+			error = (FileHandle.Seek(nbytes, (int)buffer) == 0);
+			break;
+		case VQACMD_SEEKPEEK:
+			if (nbytes > 0) {
+				error = FileHandle.Seek(nbytes - sizeof(tmp), (int)buffer) == 0;
+				if (error == 0) {
+					error = FileHandle.Read(&tmp, sizeof(tmp)) != sizeof(tmp);
+				}
+			} else {
+				error = FileHandle.Seek(nbytes, (int)buffer) == 0;
+				if (error == 0) {
+					error = FileHandle.Read(&tmp, sizeof(tmp)) != sizeof(tmp);
+					if (error == 0) {
+						error = FileHandle.Seek(-((int)sizeof(tmp)), SEEK_CUR) == 0;
+					}
+				}
+			}
+			break;
+		case VQACMD_SIZE:
+			*((int *)buffer) = FileHandle.Size();
+			error = 0;
+			break;
+		case VQACMD_CLOSE:
+			FileHandle.Close();
+			IsFileOpen = false;
+			error = 0;
+			break;
+		case VQACMD_INIT:
+		case VQACMD_CLEANUP:
+			error = 0;
+			break;
+		default:
+			//error = 1;
+			break;
+	}
+	return(error);
+}
+
+
+// FUNCTION: 0x0075A100
+long __cdecl VQACCFileHandler(VQAHandle * vqa, long action, void * buffer, long nbytes)
+{
+	VQAHandleP *vqap = (VQAHandleP *)vqa;
+	VQAConfig *config = &vqap->Config;
+	VQAClass *_this = config->Owner;
+
+	return(_this->CCFileHandler(action, buffer, nbytes));
+}
+
+// FUNCTION: 0x0075A120
+long VQAClass::MixFileHandler(long action, void * buffer, long nbytes)
+{
+	long error = 1;
+	unsigned char tmp;
+	switch (action) {
+		case VQACMD_OPEN: {
+			int offset = 0;
+			MixFileClass * mixfile = NULL;
+			if (MixFileClass::Offset(Filename, NULL, &mixfile, &offset)) {
+				IsFileOpen = FileHandle.Open(mixfile->Filename, FileClass::READ) != 0;
+				error = FileHandle.Seek(offset, SEEK_CUR) == 0;
+			} else {
+				error = 1;
+			}
+			break;
+		}
+		case VQACMD_READ:
+			if (FileHandle.Read(buffer, nbytes) != nbytes) {
+				error = 1;
+			} else {
+				error = 0;
+			}
+			break;
+		case VQACMD_WRITE:
+			error = 1;
+			break;
+		case VQACMD_SEEK:
+			error = (FileHandle.Seek(nbytes, (int)buffer) == 0);
+			break;
+		case VQACMD_SEEKPEEK:
+			if (nbytes > 0) {
+				error = FileHandle.Seek(nbytes - sizeof(tmp), (int)buffer) == 0;
+				if (error == 0) {
+					error = FileHandle.Read(&tmp, sizeof(tmp)) != sizeof(tmp);
+				}
+			} else {
+				error = FileHandle.Seek(nbytes, (int)buffer) == 0;
+				if (error == 0) {
+					error = FileHandle.Read(&tmp, sizeof(tmp)) != sizeof(tmp);
+					if (error == 0) {
+						error = FileHandle.Seek(-((int)sizeof(tmp)), SEEK_CUR) == 0;
+					}
+				}
+			}
+			break;
+		case VQACMD_SIZE:
+			*((int *)buffer) = FileHandle.Size();
+			error = 0;
+			break;
+		case VQACMD_CLOSE:
+			FileHandle.Close();
+			IsFileOpen = false;
+			error = 0;
+			break;
+		case VQACMD_INIT:
+		case VQACMD_CLEANUP:
+			error = 0;
+			break;
+		default:
+			//error = 1;
+			break;
+	}
+	return(error);
+}
+
+
+// FUNCTION: 0x0075A2B0
+long __cdecl VQAMixFileHandler(VQAHandle * vqa, long action, void * buffer, long nbytes)
+{
+	VQAHandleP *vqap = (VQAHandleP *)vqa;
+	VQAConfig *config = &vqap->Config;
+	VQAClass *_this = config->Owner;
+
+	return(_this->MixFileHandler(action, buffer, nbytes));
+}
+
 // FUNCTION: 0x0075A2D0
 long             VQACacheHandler(VQAHandle * vqa, long action, void * buffer, long nbytes)
 {

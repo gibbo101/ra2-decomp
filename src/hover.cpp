@@ -189,6 +189,7 @@ CoordStruct STDMETHODCALLTYPE HoverLocomotionClass::Head_To_Coord(void)
 	return(LinkedTo->PositionCoord);
 }
 
+// FUNCTION: 0x00517110
 void HoverLocomotionClass::Start(void)
 {
 	bool anew = HeadToCoord == COORD_NONE || LinkedTo->PositionCell == HeadToCoord.As_Cell();
@@ -249,11 +250,149 @@ void HoverLocomotionClass::Stop_Driver(void)
 	}
 }
 
+// FUNCTION: 0x00516320
+void STDMETHODCALLTYPE HoverLocomotionClass::Stop_Moving(void)
+{
+	if (DestinationCoord != HeadToCoord) {
+		DestinationCoord = COORD_NONE;
+		LinkedTo->Path[0] = FACING_NONE;
+	}
+}
+
+// FUNCTION: 0x00516370
+void HoverLocomotionClass::Do_Turn(DirStruct coord)
+{
+	DirType dir = (DirType &)coord;
+
+	LinkedTo->PrimaryFacing.Set_Desired(dir);
+}
+
 // FUNCTION: 0x005163A0
 bool HoverLocomotionClass::Is_Moving1(void)
 {
 	if (Is_Moving()) {
 		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x005163B0
+bool HoverLocomotionClass::Reduce_Path_Length(void)
+{
+	if (Is_Moving()) {
+		if (LinkedTo->Path[0] != FACING_NONE) {
+			int dist;
+
+			if ((LinkedTo->NavCom != NULL && LinkedTo->NavCom->Fetch_RTTI() == RTTI_UNIT) || (LinkedTo->NavCom != NULL && LinkedTo->NavCom->Fetch_RTTI() == RTTI_INFANTRY)) {
+				dist = Lepton_To_Cell((LEPTON)LinkedTo->Distance(DestinationCoord));
+
+				if (dist < ARRAY_SIZE(LinkedTo->Path)) {
+					LinkedTo->Path[dist] = FACING_NONE;
+					return(true);
+				}
+			}
+
+			if (LinkedTo->TarCom != NULL && LinkedTo->IsCloseEnoughToAttack(LinkedTo->TarCom)) {
+				LinkedTo->Path[0] = FACING_NONE;
+				return(true);
+			}
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00516BF0
+boolean STDMETHODCALLTYPE HoverLocomotionClass::Power_Off(void)
+{
+	if (Is_Powered() && LinkedTo->CurrentMission != MISSION_SLEEP && LinkedTo->CurrentMission != MISSION_ENTER) {
+		Do_Shove();
+	}
+	if (Is_Moving()) {
+		Stop_Moving();
+	}
+
+	return(BASECLASS::Power_Off());
+}
+
+// FUNCTION: 0x00516C70
+boolean STDMETHODCALLTYPE HoverLocomotionClass::Is_Powered(void)
+{
+	if (!BASECLASS::Is_Powered() && LinkedTo->HeightAGL <= 0) {
+		return(false);
+	}
+	return(true);
+}
+
+// FUNCTION: 0x00516CA0
+boolean STDMETHODCALLTYPE HoverLocomotionClass::Is_Ion_Sensitive(void)
+{
+	BuildingClass *bptr;
+	if (LinkedTo->HasAnyLink()) {
+		BuildingClass * ptr = (BuildingClass *)LinkedTo->FUN_0065AD30(0);
+
+		if (ptr->Fetch_RTTI() == RTTI_BUILDING) {
+			ptr = (BuildingClass *)LinkedTo->FUN_0065AD30(0);
+			if (ptr->Class->IsWeaponsFactory) {
+				return(false);
+			}
+		}
+	}
+
+	bptr = Map[(Coord const &)LinkedTo->PositionCoord].Cell_Building();
+
+	if (bptr != NULL && bptr->Class->IsWeaponsFactory) {
+
+		Cell diff = LinkedTo->PositionCoord.As_Cell() - bptr->PositionCoord.As_Cell();
+
+		if (diff.X == 0 && diff.Y == 1) {
+			return(false);
+		} else
+		if (diff.X == 2 && diff.Y == 1) {
+			return(false);
+		} else
+		if (diff.X == 3 && diff.Y == 1) {
+			return(false);
+		}
+
+	}
+
+	return(true);
+}
+
+// FUNCTION: 0x00516E10
+boolean STDMETHODCALLTYPE HoverLocomotionClass::Push(DirStruct dir)
+{
+	if (Is_Powered() && !WasPushed) {
+
+		FacingType face = ((DirType &)dir).As_Facing();
+		Cell cell = Adjacent_Cell(LinkedTo->PositionCell, face);
+
+		FootClass * link = LinkedTo;
+
+		if (link->Can_Enter_Cell(&Map[cell]) == MOVE_OK) {
+			WasPushed = true;
+
+			if (Is_Moving()) {
+
+				LinkedTo->Path[0] = FACING_NONE;
+				if (HeadToCoord != COORD_NONE) {
+					LinkedTo->Clear_Occupy_Bit(HeadToCoord);
+				}
+
+				HeadToCoord = cell;
+				HeadToCoord.Z = Map.Get_Height_GL(HeadToCoord);
+
+				if (LinkedTo->PositionCoord.Z >= HeadToCoord.Z + 2 * LEVEL_LEPTON_H + LEVEL_LEPTON_H) {
+					HeadToCoord.Z += BRIDGE_LEPTON_HEIGHT;
+				}
+
+				LinkedTo->Set_Occupy_Bit(HeadToCoord);
+
+			} else {
+				Move_To((CoordStruct const &)(Coord)cell);
+			}
+			return(true);
+		}
 	}
 	return(false);
 }
@@ -286,10 +425,29 @@ HRESULT STDMETHODCALLTYPE HoverLocomotionClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
+// FUNCTION: 0x005170B0
+HRESULT STDMETHODCALLTYPE HoverLocomotionClass::Load(IStream * stream)
+{
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		new (this) HoverLocomotionClass(NoInitClass());
+	}
+	return(result);
+}
+
 // FUNCTION: 0x00517100
 LayerType STDMETHODCALLTYPE HoverLocomotionClass::In_Which_Layer(void)
 {
 	return(LAYER_GROUND);
+}
+
+// FUNCTION: 0x005171C0
+void STDMETHODCALLTYPE HoverLocomotionClass::Mark_All_Occupation_Bits(int mark)
+{
+	if (mark == MARK_UP) {
+		Coord coord = Head_To_Coord();
+		LinkedTo->Clear_Occupy_Bit(coord);
+	}
 }
 
 // FUNCTION: 0x00517210
@@ -304,6 +462,8 @@ boolean STDMETHODCALLTYPE HoverLocomotionClass::Is_Moving_Here(CoordStruct to)
 }
 
 // FUNCTION: 0x005172B0 HoverLocomotionClass::Fetch_Object_Size
+
+// FUNCTION: 0x005172C0 HoverLocomotionClass::~HoverLocomotionClass
 
 // FUNCTION: 0x00517310 ?$TPoint2D@H::operator==
 template<class T>

@@ -21,6 +21,7 @@
 #include "rcptr.h"
 #include "rules.h"
 #include "netshare.h"
+#include "ipxmgr.h"
 #include "_rules.h"
 #include "gadget.h"
 
@@ -717,7 +718,7 @@ struct ChatSink {
 	virtual void V11(void);
 	virtual void V12(void);
 	virtual long __stdcall V13(void);
-	virtual void V14(void);
+	virtual long __stdcall V14(User * user, char * text);
 	virtual long __stdcall V15(char * text);
 	virtual void V16(void);
 	virtual void V17(void);
@@ -3871,6 +3872,318 @@ void FUN_00793250(void)
 	if (dialog) {
 		UI::RegisterWindow(dialog, 0x130);
 	}
+}
+
+extern char DAT_00B757EB[];
+
+// FUNCTION: 0x00793280
+BOOL CALLBACK FUN_00793280(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	switch (message) {
+		case WM_DRAWITEM:
+			OwnerDraw::DrawItem((LPDRAWITEMSTRUCT)lparam);
+			return TRUE;
+
+		case WM_ERASEBKGND:
+			return TRUE;
+
+		case WM_PAINT:
+			OwnerDraw::Paint(window);
+			ValidateRect(window, NULL);
+			return FALSE;
+
+		case WM_COMMAND:
+			{
+				int id = LOWORD(wparam);
+				switch (id) {
+					case 0x761:
+					case 0x762:
+					case 0x764:
+					case 0x765:
+					case 0x766:
+					case 0x767:
+					case 0x768:
+					case 0x769:
+						if (DAT_00B757EB[id]) {
+							if (SendDlgItemMessage(window, id, 0xF0, 0, 0) == 0) {
+								SendDlgItemMessage(window, id, 0xF1, 1, 0);
+							}
+						} else {
+							if (SendDlgItemMessage(window, id, 0xF0, 0, 0) == 1) {
+								SendDlgItemMessage(window, id, 0xF1, 0, 0);
+							}
+							return FALSE;
+						}
+						break;
+				}
+			}
+			return FALSE;
+
+		case WM_CTLCOLORMSGBOX:
+		case WM_CTLCOLOREDIT:
+		case WM_CTLCOLORLISTBOX:
+		case WM_CTLCOLORBTN:
+		case WM_CTLCOLORDLG:
+		case WM_CTLCOLORSCROLLBAR:
+		case WM_CTLCOLORSTATIC:
+			return (BOOL)GetStockObject(BLACK_BRUSH);
+
+		case 0x497:
+			{
+				for (int i = 0; i < 8; i++) {
+					HWND item = GetDlgItem(window, DAT_0084A1F0[i]);
+					memset(DAT_00B75F54, 0, 8);
+					if (i > Session.Players.Count() - 1) {
+						DestroyWindow(item);
+					}
+				}
+				for (int j = 0; j < Session.Players.Count(); j++) {
+					HWND item = GetDlgItem(window, DAT_0084A1F0[j]);
+					SendMessage(item, 0x4B2, 0, (LPARAM)Session.Players[j]);
+					SendMessage(item, 0xF1, 0, 0);
+				}
+				SendMessage(window, 0x4A9, 0, 1);
+				FUN_00608440(window);
+				ShowWindow(window, SW_SHOW);
+			}
+			return FALSE;
+	}
+	return FALSE;
+}
+
+// FUNCTION: 0x00793440
+void FUN_00793440(void)
+{
+	HWND dialog = FUN_00775940(0x130);
+	if (dialog) {
+		FUN_007757E0(dialog, 0);
+	}
+}
+
+extern int DAT_00B73BB4[];
+extern int DAT_0084A1E0[];
+
+// FUNCTION: 0x00793460
+void __fastcall FUN_00793460(int index, int value)
+{
+	if (index < Session.Players.Count()) {
+		if (DAT_00B73BB4[index] < DAT_0084A1E0[index]) {
+			DAT_00B73BB4[index] = value;
+		}
+	}
+}
+
+// FUNCTION: 0x00793490
+void FUN_00793490(void)
+{
+	wchar_t message[256];
+
+	User * host = FUN_007931A0();
+	if (!host) {
+		return;
+	}
+	int host_slot = -1;
+	for (int i = 0; i < Session.Players.Count(); i++) {
+		if (stricmp(FUN_007350C0(Session.Players[i]->Name), host->Nick) == 0) {
+			host_slot = i;
+			break;
+		}
+	}
+	bool reported = false;
+	for (int slot = 0; slot < Session.Players.Count(); slot++) {
+		switch (DAT_00B73BB4[slot]) {
+			case 0:
+				reported = true;
+				FUN_004068E0("Player %s was unable to establish a connection\n", FUN_007350C0(Session.Players[slot]->Name));
+				swprintf(message, StringTable::LoadString("TXT_TALK_REPORTED_PROBLEM", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x4998), Session.Players[slot]->Name);
+				FUN_005E2700(DAT_007EEF28, message);
+				break;
+
+			case 1:
+				reported = true;
+				FUN_004068E0("Unable to connect to player %s\n", FUN_007350C0(Session.Players[slot]->Name));
+				swprintf(message, StringTable::LoadString("TXT_TALK_LOCAL_PROBLEM", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x49A2), Session.Players[slot]->Name);
+				FUN_005E2700(DAT_007EEF28, message);
+				break;
+
+			case 2:
+				reported = true;
+				if (slot == host_slot) {
+					FUN_004068E0("Unable to talk to the pserver port\n");
+					FUN_005E2700(DAT_007EEF28, StringTable::LoadString("TXT_TALK_FORWARDER_PROBLEM_GUES", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x49AD));
+				} else {
+					FUN_004068E0("Player %s was unable to connect to the pserver port\n", FUN_007350C0(Session.Players[slot]->Name));
+					swprintf(message, StringTable::LoadString("TXT_TALK_FORWARDER_PROBLEM_HOST", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x49B0), Session.Players[slot]->Name);
+					FUN_005E2700(DAT_007EEF28, message);
+				}
+				break;
+
+			case 3:
+				reported = true;
+				FUN_004068E0("The game host reported a connection problem between players\n");
+				FUN_005E2700(DAT_007EEF28, StringTable::LoadString("TXT_TALK_HOST_ABORTED", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x49BB));
+				break;
+		}
+	}
+	if (!reported) {
+		FUN_005E2700(DAT_007EEF28, StringTable::LoadString("TXT_FAILED_TO_TALK", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x49C8));
+	}
+}
+
+// FUNCTION: 0x00793710
+unsigned short __fastcall FUN_00793710(int send_port, int mangled_port, int unused, int port_spread)
+{
+	int port = send_port + mangled_port;
+	if (port_spread == 1) {
+	} else if (port_spread == 2) {
+		port = mangled_port + send_port * 2;
+	} else if (port_spread > 1) {
+		port = mangled_port + send_port / 2 * port_spread + send_port % 2;
+	} else if (port_spread < 0) {
+		if (port_spread == -100) {
+			port = mangled_port + send_port * 100;
+		} else {
+			port = send_port % 2 - send_port / 2 * port_spread + mangled_port;
+		}
+	}
+	FUN_004068E0("Get_Port_Blitz_Port_Number - send port = %d, mangled_port = %d, port_spread = %d, port = %d\n", send_port, mangled_port, port_spread, port);
+	unsigned short result = port;
+	if (result < 0x400) {
+		result = 0x400;
+	}
+	return result;
+}
+
+struct ConnectionRanker {
+	int FUN_005DA040(int flags);
+};
+extern ConnectionRanker DAT_00ABFEC8;
+
+// FUNCTION: 0x007937B0
+int __fastcall FUN_007937B0(int (*pairs)[2])
+{
+	int order[8];
+	memset(order, 0, sizeof(order));
+	int i = 0;
+	int * out = order;
+	for (; i < 8; i++) {
+		if (FUN_005E93F0(Session.Slots[i])) {
+			*out++ = i;
+		}
+	}
+	for (int a = 0; a < Session.Players.Count(); a++) {
+		for (int b = 0; b < Session.Players.Count() - 1; b++) {
+			int cur_value = Session.unknown_29F4[order[b]];
+			int next_value = Session.unknown_29F4[order[b + 1]];
+			if (DAT_00ABFEC8.FUN_005DA040(cur_value) < DAT_00ABFEC8.FUN_005DA040(next_value)) {
+				int temp = order[b];
+				order[b] = order[b + 1];
+				order[b + 1] = temp;
+			}
+		}
+	}
+	FUN_004068E0("Connection order = %d, %d, %d, %d, %d, %d\n", order[0], order[1], order[2], order[3], order[4], order[5]);
+	int n = 0;
+	FUN_004068E0("Connection pairs....\n");
+	for (int x = 0; x < Session.Players.Count(); x++) {
+		for (int y = x + 1; y < Session.Players.Count(); y++) {
+			pairs[n][0] = order[x];
+			pairs[n][1] = order[y];
+			FUN_004068E0("\t%d & %d\n", order[x], order[y]);
+			n++;
+		}
+	}
+	return n;
+}
+
+
+
+// FUNCTION: 0x00793930
+void __fastcall FUN_00793930(char const * from, char const * to, int state)
+{
+	int from_slot = -1;
+	int to_slot = -1;
+	FUN_004068E0("Registering connection state from %s to %s. conn_state = %d\n", from, to, state);
+	for (int i = 0; i < 8; i++) {
+		if (stricmp(FUN_007350C0(Session.Slots[i]->Name), from) == 0) {
+			from_slot = i;
+		}
+		if (stricmp(FUN_007350C0(Session.Slots[i]->Name), to) == 0) {
+			to_slot = i;
+		}
+	}
+	for (int j = 0; j < Session.unknown_2E14; j++) {
+		if (Session.unknown_2A14[j][0] == from_slot && Session.unknown_2A14[j][1] == to_slot) {
+			Session.unknown_2C14[j][0] = state;
+			return;
+		}
+		if (Session.unknown_2A14[j][0] == to_slot && Session.unknown_2A14[j][1] == from_slot) {
+			Session.unknown_2C14[j][1] = state;
+			return;
+		}
+	}
+}
+
+extern unsigned short DAT_00A8E050[];
+
+// FUNCTION: 0x00793A10
+void __fastcall FUN_00793A10(char const * name, unsigned short port)
+{
+	FUN_004068E0("Player %s is telling us we should send to port %d\n", name, port);
+	for (int i = 0; i < 8; i++) {
+		if (stricmp(FUN_007350C0(Session.Slots[i]->Name), name) == 0) {
+			DAT_00A8E050[i] = port;
+			return;
+		}
+	}
+}
+
+// FUNCTION: 0x00793A70
+void __fastcall FUN_00793A70(char const * name, unsigned short port)
+{
+	char text[256];
+	User * user = NULL;
+	for (int i = 0; i < DAT_00B77900.length(); i++) {
+		DAT_00B77900.getPointer(&user, i);
+		if (stricmp(name, user->Nick) == 0) {
+			text[0] = 'Z';
+			text[1] = '4';
+			sprintf(text + 2, "%d", port);
+			FUN_004068E0("Sending string %s to user %s\n", text, name);
+			DAT_00AC116C->V14(user, text);
+		}
+	}
+}
+
+// FUNCTION: 0x00793B30
+void __fastcall FUN_00793B30(int mode, char const * options)
+{
+	char text[256];
+	text[0] = 'Z';
+	text[1] = '1';
+	text[2] = (char)(mode + '0');
+	if (options) {
+		strcpy(text + 3, options);
+	} else {
+		text[3] = 0;
+	}
+	FUN_004068E0("Sending public options string %s\n", text);
+	DAT_00AC116C->V15(text);
+}
+
+struct KeepaliveState {
+	int Slot[8];
+	CDTimerClass<SystemTimerClass> Timer[8];
+	int Count;
+};
+extern KeepaliveState DAT_00A8E1A4;
+
+// FUNCTION: 0x00793CD0
+void __fastcall FUN_00793CD0(int slot)
+{
+	DAT_00A8E1A4.Slot[DAT_00A8E1A4.Count] = slot;
+	DAT_00A8E1A4.Timer[DAT_00A8E1A4.Count] = 1200;
+	DAT_00A8E1A4.Count++;
 }
 
 // FUNCTION: 0x007A2E70 SimpleWonlineDialogControl::~SimpleWonlineDialogControl

@@ -397,3 +397,43 @@ double DAT_008B3B20 = DAT_008B3AD0 / DAT_007E8890;
 
 // FUNCTION: 0x004C96F0 $E54
 double DAT_008B3B08 = DAT_007E1718 / DAT_008B3B20;
+
+extern const double DAT_007E8898;
+
+// FUNCTION: 0x004C9710 $E57
+double DAT_008B3B00 = DAT_007E1720 * DAT_007E8898;
+
+// FUNCTION: 0x004C9730 $E60
+double DAT_008B3AD8 = DAT_007E1728 * DAT_007E8898;
+
+// FUNCTION: 0x004C9750 $E63
+double DAT_008B3AB0 = DAT_007E1730 * DAT_007E8898;
+
+// FUNCTION: 0x004C9770 $E66
+int DAT_008B3B28 = (int)(fastmath::tan(DAT_008B3AB0 - DAT_008B3AD8) * DAT_007E1738 * DAT_008B3AD0);
+
+// FUNCTION: 0x004C97B0 $E69
+double DAT_008B3AE0 = fastmath::atan(DAT_008B3B28 * DAT_007E1740);
+
+// FUNCTION: 0x004C97E0 $E72
+double DAT_008B3AF8 = fastmath::atan((DAT_008B3B28 * 2) / DAT_008B3AD0);
+
+// FUNCTION: 0x004C9810 $E75
+int DAT_008B3B1C = (int)(DAT_008B3B28 * 4 + DAT_007E1738);
+
+struct FacingShortPair2 { short a; short b; FacingShortPair2(void) { a = 0; b = 0; } };
+struct FacingIntTriple2 { int a; int b; int c; FacingIntTriple2(void) { a = 0; b = 0; c = 0; } };
+struct FacingIntQuad { int a; int b; int c; int d; FacingIntQuad(void) { a = 0; b = 0; c = 0; d = 0; } };
+struct FacingInit80 { int a; int b; int c; FacingInit80(void) { c = 0; a = 0x80; b = 0x80; } };
+
+// FUNCTION: 0x004C9840 $E78
+FacingShortPair2 DAT_008B3AC8;
+
+// FUNCTION: 0x004C9850 $E81
+FacingIntTriple2 DAT_008B3AE8;
+
+// FUNCTION: 0x004C9870 $E84
+FacingInit80 DAT_008B3B10;
+
+// FUNCTION: 0x004C9890 $E87
+FacingIntQuad DAT_008B3AB8;

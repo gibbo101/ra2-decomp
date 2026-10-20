@@ -20,6 +20,11 @@ void __fastcall FUN_00735060(wchar_t * dest, char const * source, int limit);
 extern wchar_t DAT_00887734[];
 extern char DAT_00889F64[];
 
+struct ZeroQuad {
+	int A, B, C, D;
+	ZeroQuad() { A = 0; B = 0; C = 0; D = 0; }
+};
+
 // FUNCTION: 0x0046CB60
 CampaignClass::CampaignClass(char const * name) :
 	BASECLASS(name),
@@ -153,3 +158,18 @@ RTTIType CampaignClass::Fetch_RTTI(void) const
 
 // FUNCTION: 0x0046D120 $E2
 // FUNCTION: 0x0046D150 $E5
+
+// FUNCTION: 0x0046D170 $E8
+// FUNCTION: 0x0046D190 $E11
+// FUNCTION: 0x0046D1B0 $E14
+// FUNCTION: 0x0046D1D0 $E17
+// FUNCTION: 0x0046D1F0 $E20
+// FUNCTION: 0x0046D230 $E23
+// FUNCTION: 0x0046D260 $E26
+// FUNCTION: 0x0046D290 $E29
+// FUNCTION: 0x0046D2C0 $E32
+// FUNCTION: 0x0046D2D0 $E35
+// FUNCTION: 0x0046D2F0 $E38
+
+// FUNCTION: 0x0046D310 $E55
+ZeroQuad DAT_0089DF70;

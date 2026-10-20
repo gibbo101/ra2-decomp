@@ -712,7 +712,10 @@ class SessionClass
 		unsigned char unknown_2984[0x10];
 		IPXAddressClass unknown_2994[MAX_PLAYERS];
 		int unknown_29F4[MAX_PLAYERS];
-		unsigned char unknown_2A14[0x5E4];
+		int unknown_2A14[64][2];
+		int unknown_2C14[64][2];
+		int unknown_2E14;
+		unsigned char unknown_2E18[0x1E0];
 		int unknown_2FF8[MAX_PLAYERS];
 		unsigned char unknown_3018[8];
 		wchar_t MasterPlayerName[MPLAYER_NAME_MAX + 1];
@@ -726,7 +729,7 @@ class SessionClass
 		bool unknown_3090;
 		int unknown_3094;
 		int unknown_3098;
-		int unknown_309C;
+		unsigned int unknown_309C;
 		unsigned char unknown_30A0[0xC];
 
 		int TrapFrame;

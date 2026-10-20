@@ -32,6 +32,15 @@ extern double __cdecl FUN_004CAC40(double);
 extern const double DAT_007E1708;
 extern const double DAT_007E1710;
 extern const double DAT_007E8678;
+extern const double DAT_007E8680;
+extern const double DAT_007E1718;
+extern const double DAT_007E1720;
+extern const double DAT_007E1728;
+extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
+extern double __cdecl FUN_004CAD50(double);
+extern double __cdecl FUN_004CADE0(double);
 extern double DAT_008A0E38;
 extern double DAT_008A0EA8;
 
@@ -1062,3 +1071,59 @@ double DAT_008A0E38 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
 // FUNCTION: 0x004C1BB0 $E66
 double DAT_008A0EA8 = DAT_008A0E38 / DAT_007E8678;
+
+// FUNCTION: 0x004C1BD0 $E69
+double DAT_008A0E70 = DAT_007E1718 / DAT_008A0EA8;
+
+// FUNCTION: 0x004C1BF0 $E72
+double DAT_008A0E68 = DAT_007E1720 * DAT_007E8680;
+
+// FUNCTION: 0x004C1C10 $E75
+double DAT_008A0E40 = DAT_007E1728 * DAT_007E8680;
+
+// FUNCTION: 0x004C1C30 $E78
+double DAT_008A0E18 = DAT_007E1730 * DAT_007E8680;
+
+// FUNCTION: 0x004C1C50 $E81
+int DAT_008A0EB0 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_008A0E18 - DAT_008A0E40) * DAT_008A0E38));
+
+// FUNCTION: 0x004C1C90 $E84
+double DAT_008A0E48 = FUN_004CADE0(DAT_008A0EB0 * DAT_007E1740);
+
+// FUNCTION: 0x004C1CC0 $E87
+double DAT_008A0E60 = FUN_004CADE0((DAT_008A0EB0 * 2) / DAT_008A0E38);
+
+// FUNCTION: 0x004C1CF0 $E90
+int DAT_008A0EA0 = (int)(DAT_008A0EB0 * 4 + DAT_007E1738);
+
+struct ShortPair {
+	unsigned short A, B;
+	ShortPair() { A = 0; B = 0; }
+};
+
+// FUNCTION: 0x004C1D20 $E93
+ShortPair DAT_008A0E30;
+
+struct IntTriple {
+	int A, B, C;
+	IntTriple() { A = 0; B = 0; C = 0; }
+};
+
+// FUNCTION: 0x004C1D30 $E96
+IntTriple DAT_008A0E50;
+
+struct IntSeed {
+	int X, Y, Z;
+	IntSeed() { Z = 0; X = 0x80; Y = 0x80; }
+};
+
+// FUNCTION: 0x004C1D50 $E99
+IntSeed DAT_008A0E78;
+
+struct IntQuad {
+	int A, B, C, D;
+	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
+};
+
+// FUNCTION: 0x004C1D70 $E102
+IntQuad DAT_008A0E20;

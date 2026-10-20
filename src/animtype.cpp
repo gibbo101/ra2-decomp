@@ -356,3 +356,68 @@ void AnimTypeClass::Detach(AbstractClass const * target, bool all)
 		Next = NULL;
 	}
 }
+
+// FUNCTION: 0x00428C30
+void const * AnimTypeClass::Get_Image_Data(void) const
+{
+	void const * data = ImageData;
+	if (data == NULL && DemandLoad) {
+		DebugString("Demand loading image for %s\n", Full_Name());
+
+		char fullname[_MAX_FNAME+_MAX_EXT];
+		_makepath(fullname, NULL, NULL, *GraphicName != '\0' ? Graphic_Name() : IniName, ".SHP");
+
+		if (IsTheater) {
+			_makepath(fullname, NULL, NULL, IniName, Theaters[Scen->Theater].Suffix);
+		} else if (IsNewTheater) {
+			FUN_005F96B0(fullname, Scen->Theater);
+		}
+
+		CCFileClass file(fullname);
+		((void const *&)ImageData) = Load_Alloc_Data(file);
+		if (ImageData != NULL) {
+			((bool &)ImageAllocated) = true;
+		} else {
+			FUN_005F9710(fullname);
+			CCFileClass file2(fullname);
+			((void const *&)ImageData) = Load_Alloc_Data(file2);
+			if (ImageData != NULL) {
+				((bool &)ImageAllocated) = true;
+			}
+		}
+		((AnimTypeClass *)this)->Load_Image(Scen->Theater);
+
+		data = ImageData;
+	}
+	return(data);
+}
+
+// FUNCTION: 0x00428DE0
+void AnimTypeClass::Free_Image(void)
+{
+	if (DemandLoad && ImageData != NULL && FreeLoad) {
+		DebugString("Freeing loaded image for %s\n", Full_Name());
+		delete (char *)ImageData;
+		ImageData = NULL;
+		ImageAllocated = false;
+	}
+}
+
+// FUNCTION: 0x00428E40 ObjectTypeClass::Get_Ownable
+
+// FUNCTION: 0x00428E50 AnimTypeClass::Fetch_RTTI
+
+// FUNCTION: 0x00428E60 AnimTypeClass::Fetch_Heap_ID
+
+// FUNCTION: 0x00428E70 AnimTypeClass::Fetch_Object_Size
+
+// FUNCTION: 0x00428E80 AnimTypeClass::Create_And_Place
+
+// FUNCTION: 0x00428E90 AnimTypeClass::Create_One_Of
+
+// FUNCTION: 0x00428EA0 AnimTypeClass::~AnimTypeClass
+
+// FUNCTION: 0x00428F70 TFind_Or_Make
+template AnimTypeClass * TFind_Or_Make<AnimTypeClass>(char const *, DynamicVectorClass<AnimTypeClass *> const &);
+
+// FUNCTION: 0x00428FF0 $E2

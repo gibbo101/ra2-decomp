@@ -86,6 +86,7 @@ class ScenarioClass {
 		int First_Unused_Local(void) const;
 		int Local_From_Name(char const * variable_name);
 		bool Read_Local_INI(CCINIClass const & ini);
+		bool ReadStartPoints(CCINIClass const & ini);
 		bool Write_Local_INI(CCINIClass & ini) const;
 
 		bool Read_INI(CCINIClass const & ini);

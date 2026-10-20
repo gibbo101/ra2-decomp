@@ -803,7 +803,21 @@ OutCode Compute_Code(double x, double y, Rect const & rect)
 // FUNCTION: 0x007BC6F0 ?$BlitTrans@E::Blit_Copy_Tinted
 // FUNCTION: 0x007BC720 ?$BlitTrans@E::Blit_Move_Tinted
 // FUNCTION: 0x007BC750 ?$BlitPlain@E::BlitForward
+// FUNCTION: 0x007BC780 ?$BlitPlain@E::BlitBackward
+// FUNCTION: 0x007BC7A0 ?$BlitPlain@E::Blit_Copy_Tinted
+// FUNCTION: 0x007BC7D0 ?$BlitPlain@E::Blit_Move_Tinted
+// FUNCTION: 0x007BC7F0 ?$BlitPlain@G::BlitForward
+// FUNCTION: 0x007BC820 ?$BlitPlain@G::BlitBackward
+// FUNCTION: 0x007BC840 ?$BlitPlain@G::Blit_Copy_Tinted
+// FUNCTION: 0x007BC870 ?$BlitPlain@G::Blit_Move_Tinted
+// FUNCTION: 0x007BC890 ?$BlitTrans@G::BlitForward
+// FUNCTION: 0x007BC8C0 ?$BlitTrans@G::BlitBackward
+// FUNCTION: 0x007BC8F0 ?$BlitTrans@G::Blit_Copy_Tinted
+// FUNCTION: 0x007BC920 ?$BlitTrans@G::Blit_Move_Tinted
 template class BlitPlain<unsigned char>;
 template class BlitPlain<unsigned short>;
 template class BlitTrans<unsigned char>;
 template class BlitTrans<unsigned short>;
+
+// FUNCTION: 0x007BC950 $E24
+Rect DAT_00B78188(0, 0, 0, 0);

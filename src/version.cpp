@@ -9,6 +9,8 @@
 #include "rawfile.h"
 #include "winstub.h"
 #include "veteran.h"
+#include "_rules.h"
+#include "rules.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -262,4 +264,80 @@ VeterancyClass::VeterancyClass(void) :
 // FUNCTION: 0x0074FF40
 VeterancyClass::~VeterancyClass(void)
 {
+}
+
+// FUNCTION: 0x0074FF50
+void VeterancyClass::Made_A_Kill(int cost, int value)
+{
+	Experience += value / (cost * Rule->VeteranRatio);
+	Experience = MIN(Experience, Rule->VeteranCap);
+}
+
+// FUNCTION: 0x0074FF90
+bool VeterancyClass::Is_Veteran(void) const
+{
+	return Experience >= 1.0f && Experience < 2.0f;
+}
+
+// FUNCTION: 0x0074FFC0
+bool VeterancyClass::Is_Rookie(void) const
+{
+	return Experience >= 0.0f && Experience < 1.0f;
+}
+
+// FUNCTION: 0x0074FFF0
+bool VeterancyClass::Is_Dumbass(void) const
+{
+	return Experience < 0.0f;
+}
+
+// FUNCTION: 0x00750010
+bool VeterancyClass::Is_Elite(void) const
+{
+	return Experience >= 2.0f;
+}
+
+// FUNCTION: 0x00750030
+int VeterancyClass::Remaining_Levels(void) const
+{
+	if (Experience >= 2.0f) {
+		return 0;
+	}
+	return Experience >= 1.0f ? 1 : 2;
+}
+
+// FUNCTION: 0x00750060
+void VeterancyClass::Set_Dumbass(bool set)
+{
+	Experience = set ? -0.25f : 0.0f;
+}
+
+// FUNCTION: 0x00750080
+void VeterancyClass::Set_Rookie(bool set)
+{
+	Experience = 0.0f;
+}
+
+// FUNCTION: 0x00750090
+void VeterancyClass::Set_Veteran(bool set)
+{
+	Experience = set ? 1.0f : 0.0f;
+}
+
+// FUNCTION: 0x007500B0
+void VeterancyClass::Set_Elite(bool set)
+{
+	Experience = set ? 2.0f : 0.0f;
+}
+
+// FUNCTION: 0x007500D0
+int VeterancyClass::To_Integer(void) const
+{
+	return (int)(Experience * 100.0f);
+}
+
+// FUNCTION: 0x007500E0
+void VeterancyClass::From_Integer(int value)
+{
+	Experience = value * 0.01;
 }

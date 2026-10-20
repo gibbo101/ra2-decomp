@@ -2867,3 +2867,167 @@ bool FootClass::ChronoWarpTo(Coord dest)
 	Assign_Destination(&Map[dest], true);
 	return(true);
 }
+
+// FUNCTION: 0x004DFA50
+bool FootClass::CanBeSelected(void) const
+{
+	if (IsAttackedByLocomotor) {
+		return(false);
+	}
+	return(BASECLASS::CanBeSelected());
+}
+
+// FUNCTION: 0x004DFA70
+bool FootClass::EnterGrinder(void)
+{
+	BuildingClass * best = NULL;
+	int bestdist = 0x7FFFFFFF;
+	for (int index = House->Grinders.Count() - 1; index >= 0; index--) {
+		BuildingClass * building = House->Grinders[index];
+		int dist = (Center_Coord() - building->Center_Coord()).Length();
+		if (dist < bestdist) {
+			bestdist = dist;
+			best = building;
+		}
+	}
+	if (best == NULL) {
+		return(false);
+	}
+	Assign_Destination(best, true);
+	QueueMission(MISSION_EATEN, false);
+	return(true);
+}
+
+// FUNCTION: 0x004DFB70
+bool FootClass::EnterBioReactor(void)
+{
+	BuildingClass * best = NULL;
+	int bestdist = 0x7FFFFFFF;
+	for (int index = House->Absorbers.Count() - 1; index >= 0; index--) {
+		BuildingClass * building = House->Absorbers[index];
+		if (Transmit_Message(RADIO_CAN_LOAD, building) == RADIO_ROGER) {
+			int dist = (Center_Coord() - building->Center_Coord()).Length();
+			if (dist < bestdist) {
+				bestdist = dist;
+				best = building;
+			}
+		}
+	}
+	if (best == NULL) {
+		ShouldEnterAbsorber = false;
+		return(false);
+	}
+	ShouldEnterAbsorber = true;
+	if (FUN_0065AD30(0) != best && QueueUpToEnter != best) {
+		QueueMission(MISSION_ENTER, false);
+		Assign_Destination(best, true);
+	}
+	return(true);
+}
+
+// FUNCTION: 0x004DFCB0
+bool FootClass::EnterBattleBunker(void)
+{
+	BuildingClass * best = NULL;
+	int bestdist = 0x7FFFFFFF;
+	for (int index = House->Occupiables.Count() - 1; index >= 0; index--) {
+		BuildingClass * building = House->Occupiables[index];
+		Coord diff = Center_Coord() - building->Center_Coord();
+		int dist = int(fastmath::sqrt((double)diff.X*(double)diff.X + (double)diff.Y*(double)diff.Y + (double)diff.Z*(double)diff.Z));
+		if (dist < bestdist && building->CanBeOccupiedBy((this == NULL) ? NULL : (RTTI == RTTI_INFANTRY) ? (InfantryClass *)this : NULL)) {
+			bestdist = dist;
+			best = building;
+		}
+	}
+	if (best == NULL) {
+		ShouldEnterOccupiable = false;
+		return(false);
+	}
+	ShouldEnterOccupiable = true;
+	if (NavCom != best || CurrentMission != MISSION_CAPTURE) {
+		Assign_Destination(best, true);
+		QueueMission(MISSION_CAPTURE, true);
+	}
+	return(true);
+}
+
+// FUNCTION: 0x004DFE00
+bool FootClass::GarrisonStructure(void)
+{
+	BuildingClass * best = NULL;
+	int bestdist = 0x7FFFFFFF;
+	for (int index = ::Buildings.Count() - 1; index >= 0; index--) {
+		BuildingClass * building = ::Buildings[index];
+		if (building->CanBeOccupiedBy((this == NULL) ? NULL : (RTTI == RTTI_INFANTRY) ? (InfantryClass *)this : NULL)) {
+			int dist = (Center_Coord() - building->Center_Coord()).Length();
+			if (dist < bestdist) {
+				bestdist = dist;
+				best = building;
+			}
+		}
+	}
+	if (best == NULL) {
+		ShouldGarrisonStructure = false;
+		return(false);
+	}
+	ShouldGarrisonStructure = true;
+	if (NavCom != best || CurrentMission != MISSION_CAPTURE) {
+		Assign_Destination(best, true);
+		QueueMission(MISSION_CAPTURE, true);
+	}
+	return(true);
+}
+
+// FUNCTION: 0x004DFF40
+bool FootClass::EnterTankBunker(void)
+{
+	if (!FUN_0070FB50()) {
+		return(false);
+	}
+	BuildingClass * best = NULL;
+	int bestdist = 0x7FFFFFFF;
+	for (int index = House->Bunkers.Count() - 1; index >= 0; index--) {
+		BuildingClass * building = House->Bunkers[index];
+		int dist = (Center_Coord() - building->Center_Coord()).Length();
+		if (dist < bestdist && !building->FUN_0065AD30(0) && !building->BunkerLinkedItem) {
+			bestdist = dist;
+			best = building;
+		}
+	}
+	if (best == NULL) {
+		return(false);
+	}
+	Assign_Destination(best, true);
+	Transmit_Message(RADIO_HELLO, best);
+	QueueMission(MISSION_ENTER, true);
+	return(true);
+}
+
+// FUNCTION: 0x004E0080
+bool FootClass::Is_Entering_Structure(void) const
+{
+	return(ShouldEnterAbsorber || ShouldEnterOccupiable || ShouldGarrisonStructure);
+}
+
+// FUNCTION: 0x004E00B0
+void FootClass::Jumpjet_OccupyCell(Cell cell)
+{
+	if (CurrentJumpjetMapCoords != CELL_NONE && cell != CELL_NONE) {
+		if (Map[CurrentJumpjetMapCoords].Jumpjet == this) {
+			Map[CurrentJumpjetMapCoords].Jumpjet = NULL;
+		}
+	}
+	CurrentJumpjetMapCoords = cell;
+}
+
+// FUNCTION: 0x004E0130 ObjectClass::Class_Of
+
+// FUNCTION: 0x004E0140
+bool MissionClass::Ready_To_Next_Mission(void) const
+{
+	return(true);
+}
+
+// FUNCTION: 0x004E0150 TechnoClass::Turret_Facing
+
+// FUNCTION: 0x004E0170 FootClass::~FootClass

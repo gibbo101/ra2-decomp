@@ -5038,4 +5038,16 @@ template class VectorClass<bool>;
 template class VectorClass<BUILDING_DIST_OBJ>;
 // FUNCTION: 0x0050FE20 ?$DynamicVectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@::Resize
 // FUNCTION: 0x0050FF40 ?$DiscreteDistributionClass@VBuildingTypeClass@@::?$DistributionObject@PAVBuildingTypeClass@@::~?$DistributionObject@PAVBuildingTypeClass@@
+// FUNCTION: 0x0050FF50 ?$DynamicVectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@::Add
+// FUNCTION: 0x0050FFB0 ?$DynamicVectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@::ID
+// FUNCTION: 0x0050FFF0 ?$VectorClass@PBVBuildingTypeClass@@::~?$VectorClass@PBVBuildingTypeClass@@
+// FUNCTION: 0x00510040 ?$DynamicVectorClass@PBVBuildingTypeClass@@::~?$DynamicVectorClass@PBVBuildingTypeClass@@
+// FUNCTION: 0x00510090 ?$VectorClass@PAUStartingTechnoStruct@@::~?$VectorClass@PAUStartingTechnoStruct@@
+// FUNCTION: 0x005100E0 ?$DynamicVectorClass@PAUStartingTechnoStruct@@::~?$DynamicVectorClass@PAUStartingTechnoStruct@@
+// FUNCTION: 0x00510130 ?$VectorClass@UAngerStruct@@::~?$VectorClass@UAngerStruct@@
+// FUNCTION: 0x00510180 ?$DynamicVectorClass@UAngerStruct@@::~?$DynamicVectorClass@UAngerStruct@@
+// FUNCTION: 0x005101D0 ?$VectorClass@UScoutStruct@@::~?$VectorClass@UScoutStruct@@
+// FUNCTION: 0x00510220 ?$DynamicVectorClass@UScoutStruct@@::~?$DynamicVectorClass@UScoutStruct@@
+// FUNCTION: 0x00510270 ?$VectorClass@PAUBuildChoiceClass@HouseClass@@::~?$VectorClass@PAUBuildChoiceClass@HouseClass@@
+// FUNCTION: 0x005102C0 ?$DynamicVectorClass@PAUBuildChoiceClass@HouseClass@@::~?$DynamicVectorClass@PAUBuildChoiceClass@HouseClass@@
 

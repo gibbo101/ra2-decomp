@@ -17,6 +17,42 @@
 #include "tracker.h"
 #include "vector.h"
 
+// FUNCTION: 0x00543780
+IsometricTileClass::IsometricTileClass(IsometricTileType type, Cell const & cell) :
+	BASECLASS(),
+	Class(IsometricTileTypes[type])
+{
+	if (cell != CELL_NONE) {
+		Unlimbo(Coord(cell));
+	}
+
+	IsometricTiles.Add(this);
+}
+
+// FUNCTION: 0x00543880
+IsometricTileClass::~IsometricTileClass(void)
+{
+	Detach_This_From_All(this, true);
+	Limbo();
+	Class = NULL;
+	IsometricTiles.Delete(this);
+	AbstractTypePtrTracker.Delete(this);
+}
+
+// FUNCTION: 0x00543B10 IsometricTileClass::~IsometricTileClass
+
+// FUNCTION: 0x00543990
+HRESULT STDMETHODCALLTYPE IsometricTileClass::Load(IStream * stream)
+{
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		new (this) IsometricTileClass(NoInitClass());
+
+		Swizzle_Pointer(&Class);
+	}
+	return(result);
+}
+
 // FUNCTION: 0x005439F0
 HRESULT STDMETHODCALLTYPE IsometricTileClass::Save(IStream * stream, BOOL cleardirty)
 {
@@ -27,6 +63,40 @@ HRESULT STDMETHODCALLTYPE IsometricTileClass::Save(IStream * stream, BOOL cleard
 	return(result);
 }
 
+// FUNCTION: 0x00543A10
+bool IsometricTileClass::Unlimbo(Coord const & coord, Dir256 dir)
+{
+	IsInLimbo = false;
+	PositionCoord = coord;
+	return(Mark(MARK_DOWN));
+}
+
+// FUNCTION: 0x00543A40
+bool IsometricTileClass::Limbo(void)
+{
+	if (!GameActive || IsInLimbo) {
+		return(false);
+	}
+	Unselect();
+	Detach_All(true);
+	Mark(MARK_UP);
+	IsInLimbo = true;
+	IsToDisplay = false;
+	return(true);
+}
+
+// FUNCTION: 0x00543A90
+int IsometricTileClass::Fetch_Object_Size(void) const
+{
+	return(sizeof(*this));
+}
+
+// FUNCTION: 0x00543AA0
+RTTIType IsometricTileClass::Fetch_RTTI(void) const
+{
+	return(RTTI_ISOTILE);
+}
+
 // FUNCTION: 0x00543AB0
 HRESULT STDMETHODCALLTYPE IsometricTileClass::GetClassID(CLSID * retval)
 {
@@ -34,3 +104,16 @@ HRESULT STDMETHODCALLTYPE IsometricTileClass::GetClassID(CLSID * retval)
 	*retval = CLSID_IsometricTileClass;
 	return(S_OK);
 }
+
+// FUNCTION: 0x00543AF0
+ObjectTypeClass const * IsometricTileClass::Class_Of(void) const
+{
+	return(Class);
+}
+
+// FUNCTION: 0x00543B00
+void IsometricTileClass::Draw_It(Point2D const & point, Rect const & cliprect) const
+{
+}
+
+// FUNCTION: 0x00543C40 $E2

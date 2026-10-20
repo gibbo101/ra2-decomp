@@ -27,6 +27,8 @@ class QueueClass
 
 		int Add(T const &);
 
+		int Add_Head(T const &);
+
 		int Get_Head(void);
 		int Get_Tail(void);
 		T * Get_Array(void);
@@ -61,6 +63,23 @@ inline int QueueClass<T,size>::Add(T const &q)
 		Array[Tail] = q;
 		Timings[Tail] = timeGetTime();
 		Tail = (Tail + 1) & (size-1);
+		((int &)Count) = Count + 1;
+		return(true);
+	}
+	return(false);
+}
+
+template<class T, int size>
+inline int QueueClass<T,size>::Add_Head(T const &q)
+{
+	if (Count < size) {
+		if (Head == 0) {
+			Head = size - 1;
+		} else {
+			Head--;
+		}
+		Array[Head] = q;
+		Timings[Head] = timeGetTime();
 		((int &)Count) = Count + 1;
 		return(true);
 	}

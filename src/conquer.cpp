@@ -177,6 +177,7 @@ extern bool ConnectionLost;
 extern unsigned char DAT_008175B0;
 extern PaletteClass DAT_00884E80;
 bool __fastcall FUN_0055CFD0(void);
+void __fastcall FUN_0072DFB0(void);
 void Print_MP_Stats(void);
 
 // FUNCTION: 0x0048C8B0
@@ -379,7 +380,7 @@ ret_addr:
 				break;
 			}
 		}
-		Stop_Ingame_Movie();
+		FUN_0072DFB0();
 		Session.FUN_0069BB40();
 		Unsorted::ScenarioStarted = false;
 		Unsorted::TacticalActive = false;

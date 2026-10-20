@@ -1241,6 +1241,58 @@ void __fastcall Queue_Record(void)
 	}
 }
 
+extern unsigned int DAT_00AC51FC;
+void __fastcall FUN_00650A90(int frame);
+
+// FUNCTION: 0x0064DAB0
+void Compute_Game_CRC(void)
+{
+	int i, j;
+	ObjectClass *objp;
+
+	DAT_00AC51FC = 0;
+	for (i = 0; i < Infantry.Count(); i++) {
+		InfantryClass *infp = Infantry[i];
+		Add_CRC(&DAT_00AC51FC, (int)infp->PositionCoord.As_Int() + (int)infp->PrimaryFacing.Current().As_Dir256());
+	}
+
+	for (i = 0; i < Units.Count(); i++) {
+		UnitClass *unitp = Units[i];
+		Add_CRC(&DAT_00AC51FC, (int)unitp->PositionCoord.As_Int() + (int)unitp->PrimaryFacing.Current().As_Dir256() +
+			(int)unitp->SecondaryFacing.Current().As_Dir256());
+	}
+
+	for (i = 0; i < Buildings.Count(); i++) {
+		BuildingClass *bldgp = Buildings[i];
+		Add_CRC(&DAT_00AC51FC, (int)bldgp->PositionCoord.As_Int() + (int)bldgp->PrimaryFacing.Current().As_Dir256());
+	}
+
+	for (i = 0; i < Houses.Count(); i++) {
+		Add_CRC(&DAT_00AC51FC, Houses[i]->MapIsClear);
+	}
+
+	for (i = 0; i < LAYER_COUNT; i++) {
+		for (j = 0; j < Map.Layer[i].Count(); j++) {
+			objp = Map.Layer[i][j];
+			if (objp->RTTI == RTTI_ANIM && objp->Fetch_ID() == -2) {
+				continue;
+			}
+			Add_CRC(&DAT_00AC51FC, (int)objp->PositionCoord.As_Int() + (int)objp->RTTI);
+		}
+	}
+
+	for (i = 0; i < Logic.Count(); i++) {
+		objp = Logic[i];
+		if (objp->RTTI == RTTI_ANIM && objp->Fetch_ID() == -2) {
+			continue;
+		}
+		Add_CRC(&DAT_00AC51FC, (int)objp->PositionCoord.As_Int() + (int)objp->RTTI);
+	}
+
+	Add_CRC(&DAT_00AC51FC, Scen->RandomNumber());
+	FUN_00650A90(Frame % 256);
+}
+
 // FUNCTION: 0x0064DE80
 void Add_CRC(unsigned int *crc, unsigned int val)
 {
@@ -1256,4 +1308,165 @@ void Add_CRC(unsigned int *crc, unsigned int val)
 	(*crc) <<= 1;
 	(*crc) += val;
 	(*crc) += hibit;
+}
+
+// FUNCTION: 0x00652070
+void __fastcall Dump_Packet_Too_Late_Stuff(EventClass *event)
+{
+	DebugString("Packet received too late!\n");
+	DebugString("--------- Event data: -------------------\n");
+	DebugString("Type:       %s\n", EventClass::EventNames[event->Type]);
+	DebugString("Frame:      %d\n", event->Frame);
+	DebugString("ID:         %d\n", event->ID);
+	DebugString("MaxAhead=%d\n", Session.MaxAhead);
+	DebugString("Frame=%d\n", Frame);
+	DebugString("FrameSendRate=%d\n", Session.FrameSendRate);
+}
+
+// FUNCTION: 0x00652100
+void FUN_00652100(void)
+{
+}
+
+namespace FPSCounter { extern unsigned CurrentFrameRate; }
+
+// FUNCTION: 0x00652110
+void __fastcall FUN_00652110(FrameSyncStruct *their, int index)
+{
+	if (Session.Type != GAME_INTERNET) {
+		Session.PlayerLatency[index] = 0;
+	} else {
+		FrameSyncStruct *t = &their[index];
+		int frame = t->frame;
+		unsigned int rtt;
+		if (Session.ViaPacketRouter) {
+			rtt = (t->unknown2 >> 1) - (int)(-60.0f / (float)((double)Session.DesiredFrameRate / (double)Session.FrameSendRate)) / 2 + (Session.unknown_309C >> 1);
+		} else {
+			rtt = Ipx.Avg_Response_Time(index) >> 1;
+		}
+		Session.PlayerLatency[index] = Frame - (FPSCounter::CurrentFrameRate * rtt) / 60 - frame;
+	}
+}
+
+// FUNCTION: 0x006521C0
+bool __fastcall FUN_006521C0(EventClass event)
+{
+	event.Frame = Frame;
+	if (!OutList.Add(event)) {
+		return false;
+	}
+	return true;
+}
+
+extern int DAT_00B04874;
+void __fastcall FUN_0072DDB0(void);
+void FUN_005BC400(void);
+
+static inline void Stop_Game(bool is_cancelled)
+{
+	Session.LoadGame = 0;
+	Session.EmergencySave = 0;
+	GameActive = false;
+	if (DAT_00B04874) {
+		FUN_005BC400();
+	}
+	if (Session.Type == GAME_INTERNET) {
+		ConnectionLost = true;
+		if (!is_cancelled) Session.SawGameCompletion = true;
+		Session.OutOfSync = true;
+		Register_Game_End_Time();
+		Send_Statistics_Packet(false);
+	}
+}
+
+// FUNCTION: 0x00652230
+void __fastcall FUN_00652230(EventClass *event)
+{
+	unsigned int next = ::Frame + 1;
+	if (Session.CommProtocol == COMM_PROTOCOL_MULTI_E_COMP) {
+		next = (::Frame + Session.FrameSendRate) / Session.FrameSendRate * Session.FrameSendRate;
+	}
+	event->Frame = next;
+
+	if (!DoList.Add_Head(*event)) {
+		if (Session.Type != GAME_NORMAL && Session.Type != GAME_SKIRMISH) {
+			if (Session.Type == GAME_INTERNET) {
+				Register_Game_End_Time();
+			}
+			Session.Suspended++;
+			WWMessageBox().Process(StringTable::LoadString("TXT_QUEUE_FULL", NULL, "D:\\ra2mdpost\\Queue.CPP", 0x22ae), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\Queue.CPP", 0x22ae), NULL, NULL);
+			Session.Suspended--;
+			Stop_Game(false);
+			FUN_0072DDB0();
+			Toggle_Display_Mode(false);
+		}
+	}
+}
+
+struct Unknown_00B052D0 {
+	char Gap[0x10];
+	int Count;
+
+	char * FUN_006643E0(int index);
+	IPXAddressClass * FUN_006642A0(char const * name);
+	unsigned short FUN_00664390(char const * name);
+};
+extern Unknown_00B052D0 DAT_00B052D0;
+int __fastcall FUN_005422D0(IPXManagerClass *ipx);
+
+// FUNCTION: 0x006523A0
+void FUN_006523A0(void)
+{
+	DebugString("Sending NET_PORT_UNREACHABLE packets\n");
+	if (Session.Type == GAME_INTERNET) {
+		FUN_00543080(&Ipx);
+		int pending = FUN_005422D0(&Ipx);
+		for (int i = 0; i < DAT_00B052D0.Count; i++) {
+			GlobalPacketType packet;
+			memset(&packet, 0, 0x2f);
+			packet.Command = (NetCommandType)0x2f;
+			strcpy(packet.Name, FUN_007350C0(Session.Players[0]->Name));
+			char * name = DAT_00B052D0.FUN_006643E0(i);
+			if (name && stricmp(name, FUN_007350C0(Session.Players[0]->Name)) != 0) {
+				DebugString("Sending NET_PORT_UNREACHABLE to %s\n", name);
+				IPXAddressClass address = *DAT_00B052D0.FUN_006642A0(name);
+				Ipx.Send_Global_Message(&packet, 0x2f, 1, &address, DAT_00B052D0.FUN_00664390(name));
+			}
+		}
+		CDTimerClass<SystemTimerClass> timer(300);
+		while (FUN_005422D0(&Ipx) > pending) {
+			if (!timer()) {
+				break;
+			}
+			Call_Back();
+		}
+		if (Session.Type == GAME_INTERNET) {
+			FUN_00543090(&Ipx);
+		}
+	}
+}
+
+// FUNCTION: 0x00652540 ?$QueueClass@VEventClass@@$0IA@::Next
+template class QueueClass<EventClass, 128>;
+
+// FUNCTION: 0x00652560 ?$DynamicVectorClass@PAUGlobalPacketType@@::Delete_Index
+template class DynamicVectorClass<GlobalPacketType *>;
+
+// FUNCTION: 0x006525A0 ?$IndexClass@HPAVObjectClass@@::Increase_Table_Size
+template class IndexClass<int, ObjectClass *>;
+
+// FUNCTION: 0x00652630 ?$IndexClass@HPAVObjectClass@@::search_compfunc
+
+extern int DAT_00B048B0;
+extern int DAT_00B048B4;
+extern int DAT_00B048B8;
+extern int DAT_00B048BC;
+
+// FUNCTION: 0x00652660
+void FUN_00652660(void)
+{
+	DAT_00B048B0 = 0;
+	DAT_00B048B4 = 0;
+	DAT_00B048B8 = 0;
+	DAT_00B048BC = 0;
 }

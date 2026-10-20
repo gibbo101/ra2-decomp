@@ -295,3 +295,28 @@ template class DynamicVectorClass<CrossDissolveEffect *>;
 // FUNCTION: 0x004B9FF0 ?$VectorClass@PAUCrossDissolveEffect@@::Clear
 
 // FUNCTION: 0x004BA020 ?$VectorClass@PAUCrossDissolveEffect@@::ID
+
+// FUNCTION: 0x004BA060 ?$VectorClass@PAUCrossDissolveEffect@@::ID
+
+// FUNCTION: 0x004BA080 ?$DynamicVectorClass@PAUCrossDissolveEffect@@::Resize
+
+// FUNCTION: 0x004BA130 ?$DynamicVectorClass@PAUCrossDissolveEffect@@::ID
+
+// FUNCTION: 0x004BA160 ?$VectorClass@PAVTechnoTypeClass@@::~?$VectorClass@PAVTechnoTypeClass@@
+template class VectorClass<TechnoTypeClass *>;
+
+// FUNCTION: 0x004BA1B0 ?$VectorClass@PAUButtonFadeEffect@@::~?$VectorClass@PAUButtonFadeEffect@@
+template class VectorClass<ButtonFadeEffect *>;
+
+// FUNCTION: 0x004BA200 ?$DynamicVectorClass@PAUButtonFadeEffect@@::~?$DynamicVectorClass@PAUButtonFadeEffect@@
+
+// FUNCTION: 0x004BA250 ?$VectorClass@PAUCrossDissolveEffect@@::~?$VectorClass@PAUCrossDissolveEffect@@
+template class VectorClass<CrossDissolveEffect *>;
+
+// FUNCTION: 0x004BA2A0 ?$DynamicVectorClass@PAUCrossDissolveEffect@@::~?$DynamicVectorClass@PAUCrossDissolveEffect@@
+
+// FUNCTION: 0x004BA2F0 ?$VectorClass@PAUButtonFadeEffect@@::?$VectorClass@PAUButtonFadeEffect@@
+
+// FUNCTION: 0x004BA340 ?$VectorClass@PAUCrossDissolveEffect@@::?$VectorClass@PAUCrossDissolveEffect@@
+
+// FUNCTION: 0x004BA390

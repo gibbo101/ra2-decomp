@@ -312,3 +312,17 @@ double Get_Floater_Gravity(void)
 template class DynamicVectorClass<DamageGroup *>;
 
 // FUNCTION: 0x0048AD60 ?$VectorClass@PAUDamageGroup@@::GetItem
+
+// FUNCTION: 0x0048AD70 ?$VectorClass@PAUDamageGroup@@::operator==
+// FUNCTION: 0x0048ADB0 ?$VectorClass@PAUDamageGroup@@::Resize
+// FUNCTION: 0x0048AE60 ?$VectorClass@PAUDamageGroup@@::Clear
+// FUNCTION: 0x0048AE90 ?$VectorClass@PAUDamageGroup@@::ID
+// FUNCTION: 0x0048AED0 ?$VectorClass@PAUDamageGroup@@::ID
+// FUNCTION: 0x0048AEF0 ?$DynamicVectorClass@PAUDamageGroup@@::Resize
+// FUNCTION: 0x0048AFA0 ?$DynamicVectorClass@PAUDamageGroup@@::ID
+// FUNCTION: 0x0048AFD0 ?$DynamicVectorClass@PAUDamageGroup@@::~?$DynamicVectorClass@PAUDamageGroup@@
+// FUNCTION: 0x0048B020 ?$VectorClass@PAUDamageGroup@@::~?$VectorClass@PAUDamageGroup@@
+// FUNCTION: 0x0048B070 ?$VectorClass@PAUDamageGroup@@::?$VectorClass@PAUDamageGroup@@
+template class VectorClass<DamageGroup *>;
+
+// FUNCTION: 0x0048B0C0 $E41

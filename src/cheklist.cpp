@@ -14,6 +14,14 @@
 #include "vector.h"
 #include <cstdio>
 
+// FUNCTION: 0x00488280
+CheckListClass::CheckListClass(int id, int x, int y, int w, int h, TextPrintType flags,
+	ShapeSet const * up, ShapeSet const * down) :
+	BASECLASS (id, x, y, w, h, flags, up, down),
+	IsReadOnly(false)
+{
+}
+
 // FUNCTION: 0x004882D0
 CheckListClass::~CheckListClass(void)
 {
@@ -52,6 +60,31 @@ wchar_t const * CheckListClass::Get_Item(int index) const
 	return(0);
 }
 
+// FUNCTION: 0x00488380
+void CheckListClass::Remove_Item(wchar_t const * text)
+{
+	for (int index = 0; index < Count(); index++) {
+		CheckObject * obj = (CheckObject *)BASECLASS::Get_Item(index);
+		if (obj && wcsicmp(obj->Text, text) == 0) {
+			BASECLASS::Remove_Item(index);
+			delete obj;
+			break;
+		}
+	}
+}
+
+// FUNCTION: 0x004883F0
+void CheckListClass::Set_Selected_Index(wchar_t const * text)
+{
+	for (int index = 0; index < Count(); index++) {
+		CheckObject * obj = (CheckObject *)BASECLASS::Get_Item(index);
+		if (obj && wcsicmp(obj->Text, text) == 0) {
+			Set_Selected_Index(index);
+			break;
+		}
+	}
+}
+
 // FUNCTION: 0x00488450
 void CheckListClass::Check_Item(int index, bool checked)
 {
@@ -71,3 +104,69 @@ bool CheckListClass::Is_Checked(int index) const
 	}
 	return(false);
 }
+
+// FUNCTION: 0x004884A0
+int CheckListClass::Action(unsigned flags, KeyNumType &key, int modifier)
+{
+	int rc;
+
+	if (IsReadOnly) {
+		return(false);
+	}
+
+	rc = BASECLASS::Action(flags, key, 0);
+
+	if (flags & LEFTPRESS) {
+		Check_Item(SelectedIndex, !Is_Checked(SelectedIndex));
+	}
+
+	return(rc);
+}
+
+// FUNCTION: 0x00488520
+void CheckListClass::Draw_Entry(int index, int x, int y, int width, int selected)
+{
+	if (index >= Count()) return;
+
+	CheckObject * obj = (CheckObject *)BASECLASS::Get_Item(index);
+
+	if (obj) {
+		wchar_t buffer[100] = L"";
+
+		if (obj->IsChecked) {
+			buffer[0] = CHECK_CHAR;
+		} else {
+			buffer[0] = UNCHECK_CHAR;
+		}
+		buffer[1] = L' ';
+		swprintf(&buffer[2], obj->Text);
+
+		TextPrintType flags = TextFlags;
+		int scheme = GadgetClass::Get_Color_Scheme();
+
+		if (selected) {
+			flags = TextPrintType(flags | TPF_BRIGHT_COLOR);
+			DSurface::Temp->Fill_Rect(Rect(x, y, width, LineHeight), NormalDrawer->Convert_Pixel(ColorSchemes[scheme]->Shadow));
+		} else {
+			if (!(flags & TPF_USE_GRAD_PAL)) {
+				flags = TextPrintType(flags | TPF_MEDIUM_COLOR);
+			}
+		}
+
+		Conquer_Clip_Text_Print_Wide(buffer, DSurface::Temp, &DSurface::Temp->Get_Rect(), &Point2D(x, y), ColorSchemes[scheme], TBLACK, flags, width, Tabs);
+	}
+}
+
+// FUNCTION: 0x00488690 GadgetClass::Flag_List_To_Redraw
+
+// FUNCTION: 0x004886A0 GadgetClass::Is_To_Redraw
+
+// FUNCTION: 0x004886B0 ListClass::Count
+
+// FUNCTION: 0x004886C0 CheckListClass::Remove_Item
+
+// FUNCTION: 0x004886D0 CheckListClass::Set_Selected_Index
+
+// FUNCTION: 0x004886E0 CheckListClass::~CheckListClass
+
+// FUNCTION: 0x00488740 $E2

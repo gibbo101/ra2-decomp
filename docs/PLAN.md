@@ -1161,6 +1161,18 @@ ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; 
 fixed them. Cost: about 5.6M tokens. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
 
+### Batches 78, 79 and 80 (20 October 2026)
+
+**422 of 425 functions** (142, 143, 137). Batch 78's merge turned down a static data member
+in dsurface.h, which would have renumbered `$E` in 45 files, and used TibSun's
+SidebarSurface instead; it moved one real include in astar.cpp to keep
+Build_Final_Path in its heap-order band. Batch 79 landed Queue's IndexClass<int,
+ObjectClass *> instance, typed from the exe's RTTI. The non-record re-run caught Main_Game
+calling 0x0072DFB0 under the name Stop_Ingame_Movie, exposed once the real one landed.
+Landing split Session's 0x2A14 blob into the arrays wonline reads, which retired four
+aliases into Session. Cost: about 4.5M tokens. Merge gate: 12,386 of 12,386 (1,627.9 KB),
+about 64% of game functions.
+
 ### Batches 75, 76 and 77 (20 October 2026)
 
 **419 of 432 functions** (138, 142, 139), plus two found along the way. A system crash cut

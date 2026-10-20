@@ -27,7 +27,7 @@ class SmudgeClass : public ObjectClass
 		virtual int Fetch_Object_Size(void) const override;
 		virtual RTTIType Fetch_RTTI(void) const override;
 
-		static void Read_INI(CCINIClass const & ini);
+		static void Read_INI(CCINIClass & ini);
 		static void Write_INI(CCINIClass & ini);
 
 		virtual ObjectTypeClass const * Class_Of(void) const override;

@@ -6188,6 +6188,7 @@ template class VectorClass<ZoneConnectionClass>;
 template class DynamicVectorClass<ZoneConnectionClass>;
 template class VectorClass<SubzoneTrackingStruct>;
 template class DynamicVectorClass<SubzoneTrackingStruct>;
+template class VectorClass<SubzoneConnectionStruct>;
 template class DynamicVectorClass<SubzoneConnectionStruct>;
 template class VectorClass<CellClass *>;
 template class VectorClass<PassabilityType>;
@@ -6366,4 +6367,29 @@ SubzoneTrackingStruct & SubzoneTrackingStruct::operator=(const SubzoneTrackingSt
 
 // FUNCTION: 0x0058A9F0 ?$VectorClass@U?$HashObject@IUSubzoneConnectionStruct@@@@::Clear
 
+// FUNCTION: 0x0058AA20 ?$VectorClass@U?$HashObject@IUSubzoneConnectionStruct@@@@::ID
+
+// FUNCTION: 0x0058AA60 ?$VectorClass@U?$HashObject@IUSubzoneConnectionStruct@@@@::ID
+
+// FUNCTION: 0x0058AA90 ?$VectorClass@W4PassabilityType@@::~?$VectorClass@W4PassabilityType@@
+
+// FUNCTION: 0x0058AAE0 ?$DynamicVectorClass@W4PassabilityType@@::~?$DynamicVectorClass@W4PassabilityType@@
+
+// FUNCTION: 0x0058AB30 ?$VectorClass@U?$HashObject@II@@::~?$VectorClass@U?$HashObject@II@@
+
 // FUNCTION: 0x0058AB80 ?$VectorClass@U?$HashObject@IUSubzoneConnectionStruct@@@@::~?$VectorClass@U?$HashObject@IUSubzoneConnectionStruct@@@@
+
+// FUNCTION: 0x0058ABD0 ?$DynamicVectorClass@USubzoneConnectionStruct@@::operator=
+
+// FUNCTION: 0x0058AC70 ?$VectorClass@USubzoneConnectionStruct@@::?$VectorClass@USubzoneConnectionStruct@@
+
+// FUNCTION: 0x0058AD10 ?$VectorClass@USubzoneConnectionStruct@@::operator=
+
+// FUNCTION: 0x0058ADB0 ?$VectorClass@UZoneConnectionClass@@::?$VectorClass@UZoneConnectionClass@@
+
+// FUNCTION: 0x0058AE60 ?$VectorClass@USubzoneTrackingStruct@@::?$VectorClass@USubzoneTrackingStruct@@
+
+// FUNCTION: 0x0058AF80 ?$DynamicVectorClass@U?$HashObject@IUSubzoneConnectionStruct@@@@::Add
+
+// FUNCTION: 0x0058AFF0 ?$VectorClass@U?$HashObject@II@@::?$VectorClass@U?$HashObject@II@@
+
