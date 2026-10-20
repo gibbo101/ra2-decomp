@@ -22,20 +22,8 @@
 #include "wspipx.h"
 #include "wsproto.h"
 
-#pragma pack(push, 1)
-struct IPXPlayerNode {
-	wchar_t Name[20];
-	IPXAddressClass Address;
-	char pad[0x6f - 0x34];
-	int ID;
-};
-#pragma pack(pop)
-
 struct IPXAddressRaw { int a, b, c; };
 
-extern IPXPlayerNode ** DAT_00A8DA78;
-extern int DAT_00A8DA84;
-extern unsigned short DAT_00A8E2B2[];
 namespace OwnerDraw {
 char * __fastcall WideToCharString(char * dest, wchar_t const * src, int count);
 }
@@ -454,14 +442,14 @@ int IPXManagerClass::Send_Global_Message_To_Player(void *buf, int buflen, int ac
 	int i;
 	unsigned short port;
 	IPXAddressRaw address;
-	int count = DAT_00A8DA84;
-	IPXPlayerNode **players = DAT_00A8DA78;
+	int count = Session.Players.Count();
+	NodeNameType **players = &Session.Players[0];
 
-	if (count && players[0]->ID == id) return 0;
+	if (count && players[0]->Player.ID == id) return 0;
 	for (i = 1; i < count; i++) {
-		if (players[i]->ID == id) {
+		if (players[i]->Player.ID == id) {
 			address = *(IPXAddressRaw *)&players[i]->Address;
-			port = DAT_00A8E2B2[i];
+			port = Session.PlayerPorts[i];
 
 			return Send_Global_Message(buf, buflen, ack_req, (IPXAddressClass *)&address, port, 0);
 		}
@@ -476,11 +464,11 @@ int IPXManagerClass::Send_Global_Message_To_Name(void *buf, int buflen, int ack_
 	unsigned short port;
 	IPXAddressRaw address;
 
-	if (DAT_00A8DA84 && wcsicmp(DAT_00A8DA78[0]->Name, name) == 0) return 0;
-	for (i = 1; i < DAT_00A8DA84; i++) {
-		if (wcsicmp(DAT_00A8DA78[i]->Name, name) == 0) {
-			address = *(IPXAddressRaw *)&DAT_00A8DA78[i]->Address;
-			port = DAT_00A8E2B2[i];
+	if (Session.Players.Count() && wcsicmp(Session.Players[0]->Name, name) == 0) return 0;
+	for (i = 1; i < Session.Players.Count(); i++) {
+		if (wcsicmp(Session.Players[i]->Name, name) == 0) {
+			address = *(IPXAddressRaw *)&Session.Players[i]->Address;
+			port = Session.PlayerPorts[i];
 
 			return Send_Global_Message(buf, buflen, ack_req, (IPXAddressClass *)&address, port, 0);
 		}
@@ -537,8 +525,6 @@ int IPXManagerClass::Get_Lobby_Message(void *buf, int *buflen,
 	return LobbyChannel->Get_Packet(buf, buflen, address, product_id);
 }
 
-extern bool DAT_00A8DBA0;
-
 // FUNCTION: 0x005414C0
 int IPXManagerClass::Send_Private_Message(void *buf, int buflen, int ack_req,
 	int conn_id)
@@ -551,7 +537,7 @@ int IPXManagerClass::Send_Private_Message(void *buf, int buflen, int ack_req,
 	}
 
 	if (conn_id == CONNECTION_NONE) {
-		if (Session.Type == GAME_INTERNET && DAT_00A8DBA0) {
+		if (Session.Type == GAME_INTERNET && Session.ViaPacketRouter) {
 			if (MulticastChannel->Queue->Num_Send() >= MulticastChannel->Queue->Max_Send()) {
 				{ SendOverflows++; return 0; }
 			}

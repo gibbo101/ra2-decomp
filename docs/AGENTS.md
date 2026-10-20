@@ -271,6 +271,8 @@ Each entry: what the diff showed, then the source change that fixed it.
   reach it through the object's members.
 - Label every template instance from the RTTI of the vtable that holds it: two addresses
   under one symbol (`VectorClass<int>::Clear`) mean one label has the wrong element type.
+- VC6 spends the inline budget from the end of a function backwards, and every inlined call
+  costs the same: write the accessor calls the original made (planmgr's Get_Count, Set_Event).
 - An inline call the original leaves out of line goes out of line when wrapped in a file-local
   inline helper one level deeper (bullet's Coord_Dist, building's _Usable).
 - A function start missing from data/functions.csv is fixed in tools/functions.py, then the

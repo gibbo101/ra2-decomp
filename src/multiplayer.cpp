@@ -23,32 +23,16 @@
 
 extern char const * DAT_007EED18;
 
-#pragma pack(push, 1)
-class MPPlayerNode
-{
-	public:
-		int FUN_00696F10(void);
-		bool IsObserver(void) { return(Slot == -1); }
-		char pad[0x6b];
-		int Slot;
-};
-#pragma pack(pop)
-
 class MPHouse
 {
 	public:
 		bool FUN_0050B730(void);
 };
 
-extern int DAT_00A8DA84;
-extern MPPlayerNode ** DAT_00A8DA78;
-extern int DAT_00A8B8D8;
-extern MultiMission ** DAT_00A8B8CC;
 bool __cdecl FUN_0077D940(void);
 void __fastcall FUN_00623840(HWND hwnd);
 int __fastcall FUN_0069B670(SessionClass * session);
-MPTeam * __fastcall FUN_005C1030(int index);
-extern int DAT_00A8B548;
+MultiplayerTeam * __fastcall FUN_005C1030(int index);
 extern int DAT_00822CF4;
 extern bool DAT_00ABFDD4;
 extern bool DAT_00ABFDD5;
@@ -56,10 +40,10 @@ void __cdecl FUN_004068E0(char const * format, ...);
 double __cdecl FUN_004CAC40(double);
 DynamicVectorClass<Cell> __fastcall FUN_00688380(char arg);
 
-class MPObserverTeam : public MPTeam
+class MultiplayerObserverTeam : public MultiplayerTeam
 {
 	public:
-		MPObserverTeam(void);
+		MultiplayerObserverTeam(void);
 };
 
 
@@ -201,11 +185,11 @@ MPGameModeClass * __fastcall MPGameModeClass::Get(int index)
 // FUNCTION: 0x005D62C0
 bool MPGameModeClass::vt_entry_10(void)
 {
-	for (int i = 0; i < DAT_00A8DA84; i++) {
-		if (DAT_00A8DA78[i]->FUN_00696F10() == -3) {
-			DAT_00A8DA78[i]->Slot = -1;
+	for (int i = 0; i < Session.Players.Count(); i++) {
+		if (Session.Players[i]->Get_Country() == -3) {
+			Session.Players[i]->Slot.SpectatorFlag = -1;
 		} else {
-			DAT_00A8DA78[i]->Slot = i;
+			Session.Players[i]->Slot.SpectatorFlag = i;
 		}
 	}
 	return(true);
@@ -250,9 +234,9 @@ bool MPGameModeClass::vt_entry_40(void)
 // FUNCTION: 0x005D6370
 int MPGameModeClass::FirstValidMapIndex(void)
 {
-	int count = DAT_00A8B8D8;
+	int count = Session.Scenarios.Count();
 	for (int i = 0; i < count; i++) {
-		MultiMission * map = DAT_00A8B8CC[i];
+		MultiMission * map = Session.Scenarios[i];
 		bool valid;
 		if (map->Is_Random_Map()) {
 			valid = IsAIAllowed();
@@ -294,11 +278,11 @@ int MPGameModeClass::RandomAICountryIndex(void)
 }
 
 // FUNCTION: 0x005D6450
-void MPGameModeClass::PopulateTeamDropdown(HWND hwnd, DynamicVectorClass<MPTeam *> * teams, MPTeam * team)
+void MPGameModeClass::PopulateTeamDropdown(HWND hwnd, DynamicVectorClass<MultiplayerTeam *> * teams, MultiplayerTeam * team)
 {
 	FUN_00623840(hwnd);
 	for (int i = 0; i < teams->Count(); i++) {
-		MPTeam * entry = (*teams)[i];
+		MultiplayerTeam * entry = (*teams)[i];
 		int item = SendMessage(hwnd, CB_ADDSTRING, 0, (LPARAM)entry);
 		if (entry == team) {
 			SendMessage(hwnd, CB_SETCURSEL, item, 0);
@@ -308,11 +292,11 @@ void MPGameModeClass::PopulateTeamDropdown(HWND hwnd, DynamicVectorClass<MPTeam 
 }
 
 // FUNCTION: 0x005D64C0
-void MPGameModeClass::DrawTeamDropdown(HWND hwnd, DynamicVectorClass<MPTeam *> * teams, MPTeam * team)
+void MPGameModeClass::DrawTeamDropdown(HWND hwnd, DynamicVectorClass<MultiplayerTeam *> * teams, MultiplayerTeam * team)
 {
 	SendMessage(hwnd, LB_RESETCONTENT, 0, 0);
 	for (int i = 0; i < teams->Count(); i++) {
-		MPTeam * entry = (*teams)[i];
+		MultiplayerTeam * entry = (*teams)[i];
 		int item = SendMessage(hwnd, 0x4CD, 0, (LPARAM)entry);
 		if (entry == team) {
 			SendMessage(hwnd, LB_SETCURSEL, item, 0);
@@ -330,10 +314,10 @@ void MPGameModeClass::PopulateTeamDropdownForPlayer(HWND hwnd, int index)
 	}
 	MPTeams.Clear();
 	CreateMPTeams(&MPTeams);
-	if (index >= 0 && index < DAT_00A8DA84) {
-		int slot = DAT_00A8DA78[index]->Slot;
+	if (index >= 0 && index < Session.Players.Count()) {
+		int slot = Session.Players[index]->Slot.SpectatorFlag;
 		for (int i = 0; i < MPTeams.Count(); i++) {
-			MPTeam * entry = MPTeams[i];
+			MultiplayerTeam * entry = MPTeams[i];
 			int item = SendMessage(hwnd, CB_ADDSTRING, 0, (LPARAM)entry->Title.text());
 			if (entry->Index == slot) {
 				SendMessage(hwnd, CB_SETCURSEL, item, 0);
@@ -344,7 +328,7 @@ void MPGameModeClass::PopulateTeamDropdownForPlayer(HWND hwnd, int index)
 }
 
 // FUNCTION: 0x005D6620
-MPTeam * MPGameModeClass::FUN_005D6620(int index)
+MultiplayerTeam * MPGameModeClass::FUN_005D6620(int index)
 {
 	if (MPTeams.Count() < 3) {
 		for (int i = 0; i < MPTeams.Count(); i++) {
@@ -354,7 +338,7 @@ MPTeam * MPGameModeClass::FUN_005D6620(int index)
 		CreateMPTeams(&MPTeams);
 	}
 	for (int i = 0; i < MPTeams.Count(); i++) {
-		MPTeam * team = MPTeams[i];
+		MultiplayerTeam * team = MPTeams[i];
 		if (team && team->Index == index) {
 			return(team);
 		}
@@ -363,10 +347,10 @@ MPTeam * MPGameModeClass::FUN_005D6620(int index)
 }
 
 // FUNCTION: 0x005D6690
-void MPGameModeClass::CreateMPTeams(DynamicVectorClass<MPTeam *> * teams)
+void MPGameModeClass::CreateMPTeams(DynamicVectorClass<MultiplayerTeam *> * teams)
 {
-	teams->Add(new MPObserverTeam);
-	for (int i = 1; i <= DAT_00A8B548; i++) {
+	teams->Add(new MultiplayerObserverTeam);
+	for (int i = 1; i <= Session.MaxPlayers; i++) {
 		teams->Add(FUN_005C1030(i));
 	}
 }
@@ -513,9 +497,9 @@ bool MPGameModeClass::FUN_005D6D80(void)
 		if (!house->Class->IsMultiplayPassive) {
 			bool skip = false;
 			if (house) {
-				for (int k = 0; k < DAT_00A8DA84; k++) {
-					if (((MPHouse *)house)->FUN_0050B730() && wcscmp(house->UIName, (wchar_t *)DAT_00A8DA78[k]) == 0) {
-						skip = DAT_00A8DA78[k]->IsObserver();
+				for (int k = 0; k < Session.Players.Count(); k++) {
+					if (((MPHouse *)house)->FUN_0050B730() && wcscmp(house->UIName, Session.Players[k]->Name) == 0) {
+						skip = Session.Players[k]->Slot.SpectatorFlag == -1;
 						break;
 					}
 				}
@@ -705,15 +689,13 @@ MP_INIT_CLASS(MPMegawealthInit)
 // FUNCTION: 0x005D8070 MPFreeForAllInit::~MPFreeForAllInit
 // FUNCTION: 0x005D8090 MPMegawealthInit::~MPMegawealthInit
 
-// FUNCTION: 0x005D80B0 ?$DynamicVectorClass@PAVMPGameModeClass@@::Clear
-// FUNCTION: 0x005D80E0 ?$DynamicVectorClass@PAVMPGameModeClass@@::ID
-// FUNCTION: 0x005D8100 ?$VectorClass@PAVMPGameModeClass@@::GetItem
+// FUNCTION: 0x005D80B0 ?$DynamicVectorClass@PAVMultiplayerTeam@@::Clear
+// FUNCTION: 0x005D80E0 ?$DynamicVectorClass@PAVMultiplayerTeam@@::ID
+// FUNCTION: 0x005D8100 ?$VectorClass@PAVMultiplayerTeam@@::GetItem
+// FUNCTION: 0x005D8110 ?$DynamicVectorClass@PAVMPGameModeClass@@::Clear
+// FUNCTION: 0x005D8140 ?$DynamicVectorClass@PAVMPGameModeClass@@::ID
+// FUNCTION: 0x005D8160 ?$VectorClass@PAVMPGameModeClass@@::GetItem
 template class DynamicVectorClass<MPGameModeClass *>;
-
-// FUNCTION: 0x005D8110 ?$DynamicVectorClass@PAVMPTeam@@::Clear
-// FUNCTION: 0x005D8140 ?$DynamicVectorClass@PAVMPTeam@@::ID
-// FUNCTION: 0x005D8160 ?$VectorClass@PAVMPTeam@@::GetItem
-template class DynamicVectorClass<MPTeam *>;
 
 class MPBattleClass : public MPGameModeClass
 {
@@ -792,8 +774,6 @@ MPCoopMode * __stdcall Allocate_MPCoop(wchar_t ** title, wchar_t ** tooltip, cha
 	MPCoopMode * mode = (MPCoopMode *)operator new(0x344);
 	return(mode ? mode->FUN_005C1470(title, tooltip, inifile, mapfilter, aiallowed, modeindex) : NULL);
 }
-
-class MultiplayerTeam;
 
 // FUNCTION: 0x005D82F0 ?$VectorClass@PAVMultiplayerTeam@@::operator==
 // FUNCTION: 0x005D8330 ?$VectorClass@PAVMultiplayerTeam@@::Resize

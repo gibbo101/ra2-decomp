@@ -725,6 +725,14 @@ SfxEntry::SfxEntry(char const * name, char const *filename) :
 	}
 }
 
+// FUNCTION: 0x00690F20
+SfxEntry::~SfxEntry(void)
+{
+	if (Name != NULL) {
+		free(Name);
+	}
+}
+
 // FUNCTION: 0x00690F30
 ScoreAnimClass::ScoreAnimClass(int x, int y, void const * data) :
 	XPos(x),
@@ -733,3 +741,33 @@ ScoreAnimClass::ScoreAnimClass(int x, int y, void const * data) :
 	DataPtr(data)
 {
 }
+
+// FUNCTION: 0x00690F70 ScoreAnimClass::Stop
+
+// FUNCTION: 0x00690FC0 ScoreAnimClass::Start
+
+// FUNCTION: 0x00690FE0 ScoreAnimClass::~ScoreAnimClass
+
+// FUNCTION: 0x00691000 ScoreTimeClass::~ScoreTimeClass
+
+// FUNCTION: 0x00691020 ScorePrintClass::~ScorePrintClass
+
+// FUNCTION: 0x00691040 ScoreFontClass::~ScoreFontClass
+
+// FUNCTION: 0x006910A0 ScoreFullFontClass::~ScoreFullFontClass
+
+// FUNCTION: 0x00691100 ScoreBigFontClass::~ScoreBigFontClass
+
+// FUNCTION: 0x00691160 ?$DynamicVectorClass@PAVSfxEntry@@::Add
+template class DynamicVectorClass<SfxEntry *>;
+
+extern double __cdecl FUN_004CAC40(double);
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007F0F38;
+
+// FUNCTION: 0x006911B0 $E109
+double DAT_00B055C8 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2.0);
+
+// FUNCTION: 0x006911E0 $E112
+double DAT_00B05618 = DAT_00B055C8 / DAT_007F0F38;

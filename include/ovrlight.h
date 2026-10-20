@@ -15,6 +15,7 @@ class SpotLightClass
 		~SpotLightClass(void);
 
 		void Set_Radius(int radius) {Radius=radius;}
+		void Disable(unsigned int flags) {DisableFlags |= flags;}
 		void AI(void);
 		void Draw_It(void);
 

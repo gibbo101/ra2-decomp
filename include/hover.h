@@ -33,6 +33,7 @@ class HoverLocomotionClass : public LocomotionClass
 		virtual CoordStruct STDMETHODCALLTYPE Destination(void) override;
 		virtual CoordStruct STDMETHODCALLTYPE Head_To_Coord(void) override;
 		virtual Matrix3DStruct STDMETHODCALLTYPE Draw_Matrix(int *key) override;
+		virtual Matrix3DStruct STDMETHODCALLTYPE Shadow_Matrix(int *key) override;
 		virtual boolean STDMETHODCALLTYPE Process(void) override;
 		virtual void STDMETHODCALLTYPE Move_To(CoordStruct to) override;
 		virtual void STDMETHODCALLTYPE Stop_Moving(void) override;

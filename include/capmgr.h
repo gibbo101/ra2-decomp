@@ -24,6 +24,7 @@ class CaptureManagerClass : public AbstractClass
 		TechnoClass * Owner;
 		int OverloadDamageDelay;
 
+		CaptureManagerClass(void);
 		CaptureManagerClass(TechnoClass * owner, int damage, bool infinite);
 		CaptureManagerClass(NoInitClass const & x);
 		virtual ~CaptureManagerClass(void) override;

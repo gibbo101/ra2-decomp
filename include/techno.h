@@ -51,12 +51,7 @@ class SpawnManagerClass;
 class SlaveManagerClass;
 class TeamClass;
 class RadBeam;
-class PlanningTokenClass
-{
-	public:
-		void FUN_00636310(void);
-		int FUN_00636DC0(void);
-};
+class PlanningTokenClass;
 class ObjectTypeClass;
 class Surface;
 
@@ -420,6 +415,12 @@ class TechnoClass : public RadioClass
 		int FUN_0070E1E0(int which) const;
 		bool FUN_0070E240(WeaponDataStruct const * weapon) const;
 		bool FUN_0070E260(void) const;
+		bool FUN_0070FB50(void) const;
+		void FUN_0070FD70(BuildingClass * building);
+		void FUN_0070FE40(TechnoClass * drainer);
+		void FUN_0070FE50(void);
+		bool FUN_0070FED0(void) const;
+		void ImbueLocomotor(FootClass * target, CLSID clsid);
 		void Reactivate();
 		void Deactivate(void);
 		int FireDeathWeapon(int additional_damage);

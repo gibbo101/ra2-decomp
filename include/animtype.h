@@ -9,14 +9,17 @@
 #include "anim.hh"
 #include "layer.hh"
 
-class WarheadTypeClass;
-class OverlayTypeClass;
-
 struct AnimRandomRange
 {
 	int Min;
 	int Max;
+
+	AnimRandomRange(void) : Min(0), Max(0) {}
+	AnimRandomRange(NoInitClass const &) {}
 };
+
+class WarheadTypeClass;
+class OverlayTypeClass;
 
 class AnimTypeClass : public ObjectTypeClass
 {

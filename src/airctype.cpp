@@ -17,10 +17,17 @@
 #include "sun.h"
 #include "tracker.h"
 #include "animtype.h"
+#include "swizzle.h"
 #include "ccini.h"
 #include "techtype.h"
+#include <math.h>
 
 extern char DAT_00889F64[];
+extern double __cdecl FUN_004CAC40(double);
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007E2928;
 
 struct FileSystem {
 	static void const * LoadFile(char const * name, bool flag);
@@ -160,6 +167,35 @@ bool AircraftTypeClass::Read_INI(CCINIClass & ini)
 }
 
 
+// FUNCTION: 0x0041CDB0
+void AircraftTypeClass::Compute_CRC(CRCEngine & crc) const
+{
+	BASECLASS::Compute_CRC(crc);
+	crc(IsRotorEquipped);
+	crc(IsRotorCustom);
+	crc(IsLandable);
+	crc(IsAirportBound);
+	crc(IsFighter);
+	crc(HeapID);
+}
+
+// FUNCTION: 0x0041CE20
+HRESULT STDMETHODCALLTYPE AircraftTypeClass::Load(IStream * stream)
+{
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		new (this) AircraftTypeClass(NoInitClass());
+
+		Swizzle_Pointer(&Trailer);
+
+		Fetch_Voxel_Image();
+		Fetch_Normal_Image();
+
+		result = S_OK;
+	}
+	return(result);
+}
+
 // FUNCTION: 0x0041CE90
 HRESULT STDMETHODCALLTYPE AircraftTypeClass::Save(IStream *stream, BOOL cleardirty)
 {
@@ -177,3 +213,34 @@ HRESULT STDMETHODCALLTYPE AircraftTypeClass::GetClassID(CLSID * retval)
 	*retval = CLSID_AircraftTypeClass;
 	return(S_OK);
 }
+
+// FUNCTION: 0x0041CEF0
+AircraftTypeClass * AircraftTypeClass::Find_Or_Make(char const * name)
+{
+	return(TFind_Or_Make<AircraftTypeClass>(name, AircraftTypes));
+}
+
+// FUNCTION: 0x0041CF80 ObjectTypeClass::Coord_Fixup
+
+// FUNCTION: 0x0041CFA0 ObjectTypeClass::Get_Image_Data
+
+// FUNCTION: 0x0041CFB0 AircraftTypeClass::Fetch_RTTI
+
+// FUNCTION: 0x0041CFC0
+int AircraftTypeClass::Fetch_Object_Size(void) const
+{
+	return(sizeof(AircraftTypeClass));
+}
+
+// FUNCTION: 0x0041CFD0 AircraftTypeClass::Fetch_Heap_ID
+
+// FUNCTION: 0x0041CFE0 AircraftTypeClass::~AircraftTypeClass
+
+// FUNCTION: 0x0041D070 $E36
+double DAT_00889F88 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x0041D0A0 $E39
+double DAT_00889FF0 = DAT_00889F88 / DAT_007E2928;
+
+// FUNCTION: 0x0041D0C0 $E42
+double DAT_00889FD8 = DAT_007E1718 / DAT_00889FF0;

@@ -22,6 +22,7 @@
 #include "weapon.h"
 #include "layer.hh"
 #include <new.h>
+#include <math.h>
 
 // FUNCTION: 0x004B5AB0
 DropPodLocomotionClass::DropPodLocomotionClass(void) :
@@ -304,3 +305,36 @@ int STDMETHODCALLTYPE DropPodLocomotionClass::Drawing_Code(void)
 // FUNCTION: 0x004B66A0 DropPodLocomotionClass::AddRef
 
 // FUNCTION: 0x004B66B0 DropPodLocomotionClass::Release
+
+// FUNCTION: 0x004B66C0 DropPodLocomotionClass::Is_Piggybacking
+
+// FUNCTION: 0x004B66E0 DropPodLocomotionClass::Fetch_Object_Size
+
+// FUNCTION: 0x004B66F0 DropPodLocomotionClass::~DropPodLocomotionClass
+
+// FUNCTION: 0x004B6740 DropPodLocomotionClass::QueryInterface
+
+// FUNCTION: 0x004B6750 DropPodLocomotionClass::AddRef
+
+// FUNCTION: 0x004B6760 DropPodLocomotionClass::Release
+
+// FUNCTION: 0x004B6770 DropPodLocomotionClass::QueryInterface
+
+// FUNCTION: 0x004B6780 DropPodLocomotionClass::AddRef
+
+// FUNCTION: 0x004B6790 DropPodLocomotionClass::Release
+
+extern double __cdecl FUN_004CAC40(double);
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007E8370;
+
+// FUNCTION: 0x004B67A0 $E81
+double DAT_008A08A8 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x004B67D0 $E84
+double DAT_008A0918 = DAT_008A08A8 / DAT_007E8370;
+
+// FUNCTION: 0x004B67F0 $E87
+double DAT_008A0900 = DAT_007E1718 / DAT_008A0918;

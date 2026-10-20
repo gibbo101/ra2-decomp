@@ -34,6 +34,7 @@
 #include "bullet.h"
 #include "bullettype.h"
 #include "campaign.h"
+#include "capmgr.h"
 #include "cd.h"
 #include "cdcntrl.h"
 #include "cell.h"
@@ -90,6 +91,7 @@
 #include "shapeset.h"
 #include "side.h"
 #include "sidebar.h"
+#include "slavemgr.h"
 #include "smudge.h"
 #include "smudtype.h"
 #include "spawnmgr.h"
@@ -537,3 +539,19 @@ template class TClassFactory<AirstrikeClass>;
 // FUNCTION: 0x006C0A10 ?$TClassFactory@VSpawnManagerClass@@::CreateInstance
 // FUNCTION: 0x006C0A90 ?$TClassFactory@VSpawnManagerClass@@::LockServer
 template class TClassFactory<SpawnManagerClass>;
+
+// FUNCTION: 0x006C0AC0 ?$TClassFactory@VSlaveManagerClass@@::?$TClassFactory@VSlaveManagerClass@@
+// FUNCTION: 0x006C0AD0 ?$TClassFactory@VSlaveManagerClass@@::QueryInterface
+// FUNCTION: 0x006C0B40 ?$TClassFactory@VSlaveManagerClass@@::AddRef
+// FUNCTION: 0x006C0B60 ?$TClassFactory@VSlaveManagerClass@@::Release
+// FUNCTION: 0x006C0B90 ?$TClassFactory@VSlaveManagerClass@@::CreateInstance
+// FUNCTION: 0x006C0C10 ?$TClassFactory@VSlaveManagerClass@@::LockServer
+template class TClassFactory<SlaveManagerClass>;
+
+// FUNCTION: 0x006C0C40 ?$TClassFactory@VCaptureManagerClass@@::?$TClassFactory@VCaptureManagerClass@@
+// FUNCTION: 0x006C0C50 ?$TClassFactory@VCaptureManagerClass@@::QueryInterface
+// FUNCTION: 0x006C0CC0 ?$TClassFactory@VCaptureManagerClass@@::AddRef
+// FUNCTION: 0x006C0CE0 ?$TClassFactory@VCaptureManagerClass@@::Release
+// FUNCTION: 0x006C0D10 ?$TClassFactory@VCaptureManagerClass@@::CreateInstance
+// FUNCTION: 0x006C0D90 ?$TClassFactory@VCaptureManagerClass@@::LockServer
+template class TClassFactory<CaptureManagerClass>;

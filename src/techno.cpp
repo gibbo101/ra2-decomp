@@ -45,6 +45,7 @@
 #include "infantry.h"
 #include "infatype.h"
 #include "inline.h"
+#include "ipiggy.h"
 #include "ion.h"
 #include "isotile.h"
 #include "isotype.h"
@@ -56,6 +57,7 @@
 #include "notify.h"
 #include "parasite.h"
 #include "partsys.h"
+#include "planning.h"
 #include "psystype.h"
 #include "queue.h"
 #include "radbeam.h"
@@ -95,9 +97,11 @@
 
 namespace Unsorted { extern int CurrentFrame; }
 
+// FUNCTION: 0x006CE270 ?$_com_ptr_t@V?$_com_IIID@UILocomotion@@$1?_GUID_070f3290_9841_11d1_b709_00a024ddafd1@@3U__s_GUID@@A@@::_AddRef
+template class _com_ptr_t<_com_IIID<ILocomotion, &__uuidof(ILocomotion)> >;
 
 
-// FUNCTION: 0x006F2AD0 $E226
+// FUNCTION: 0x006F2AD0 $E233
 CDTimerClass<FrameTimerClass> TechnoClass::ActionLineTimer;
 
 // FUNCTION: 0x006F2AF0
@@ -517,7 +521,7 @@ TechnoClass::TechnoClass(NoInitClass const & x) :
 TechnoClass::~TechnoClass(void)
 {
 	if (PlanningToken != NULL) {
-		PlanningToken->FUN_00636310();
+		PlanningToken->Destroy();
 		PlanningToken = NULL;
 	}
 
@@ -2699,7 +2703,7 @@ bool TechnoClass::FUN_00705D30(void)
 	if (PlanningToken == NULL) {
 		return(false);
 	}
-	return(PlanningToken->FUN_00636DC0() > 0 ? true : false);
+	return(PlanningToken->Node_Count() > 0 ? true : false);
 }
 
 // FUNCTION: 0x00705D50
@@ -3405,7 +3409,7 @@ bool TechnoClass::CanOpportunityFire(void) const
 				return(false);
 			}
 			if (((FootClass const *)this)->NavCom == Get_Cell_Ptr()) {
-				if (PlanningToken == NULL || PlanningToken->FUN_00636DC0() <= 0) {
+				if (PlanningToken == NULL || PlanningToken->Node_Count() <= 0) {
 					return(true);
 				}
 			}
@@ -3416,7 +3420,7 @@ bool TechnoClass::CanOpportunityFire(void) const
 		if (unit->Class->IsSimpleDeployer) {
 			FootClass const * foot = (AbstractFlags & 4) ? (FootClass const *)this : NULL;
 			if (foot->NavCom == Get_Cell_Ptr()) {
-				if (PlanningToken == NULL || PlanningToken->FUN_00636DC0() <= 0) {
+				if (PlanningToken == NULL || PlanningToken->Node_Count() <= 0) {
 					return(true);
 				}
 			}
@@ -5253,4 +5257,220 @@ Cell TechnoClass::FUN_0070F8F0(int rad, unsigned unused)
 		}
 	}
 	return(bestcell);
+}
+
+// FUNCTION: 0x0070FB50
+bool TechnoClass::FUN_0070FB50(void) const
+{
+	if (!TClass->Bunkerable) {
+		return(false);
+	}
+	if (!TClass->IsTurretEquipped) {
+		return(false);
+	}
+	WeaponDataStruct const * weapon = GetTurretWeapon();
+	if (weapon == NULL ? true : weapon->Weapon == NULL) {
+		return(false);
+	}
+	if (TClass->Speed == SPEED_HOVER) {
+		return(false);
+	}
+	if (this != NULL && (AbstractFlags & 4)) {
+		if (((FootClass const *)this)->ParasiteEatingMe != NULL) {
+			return(false);
+		}
+	}
+	return(true);
+}
+
+// FUNCTION: 0x0070FBD0
+bool UnitClass::IsDeactivated(void) const
+{
+	return(Deactivated);
+}
+
+// FUNCTION: 0x0070FBE0
+void TechnoClass::Reactivate()
+{
+	Guard();
+	if (this != NULL && (AbstractFlags & 4)) {
+		((FootClass *)this)->Locomotion->Power_On();
+	}
+	if (Deactivated && Techno_Type_Class()->ActivateSound != -1) {
+		VocClass::PlayAt(Techno_Type_Class()->ActivateSound, PositionCoord, NULL);
+	}
+	Deactivated = false;
+}
+
+// FUNCTION: 0x0070FC90
+void TechnoClass::Deactivate(void)
+{
+	if (IsTethered && FUN_0065AD30(0) != NULL) {
+		if (Get_Cell_Ptr()->Cell_Building() == FUN_0065AD30(0)) {
+			return;
+		}
+	}
+	Guard();
+	Unselect();
+	if (this != NULL && (AbstractFlags & 4)) {
+		((FootClass *)this)->Locomotion->Power_Off();
+	}
+	if (!Deactivated && Techno_Type_Class()->DeactivateSound != -1) {
+		VocClass::PlayAt(Techno_Type_Class()->DeactivateSound, PositionCoord, NULL);
+	}
+	Deactivated = true;
+}
+
+// FUNCTION: 0x0070FD70
+void TechnoClass::FUN_0070FD70(BuildingClass * building)
+{
+	if (building != NULL && Get_Cell_Ptr()->Cell_Building() == building) {
+		building->DrainingMe = this;
+		DrainTarget = building;
+		building->House->RecalcPower = true;
+		if (building->CaptureManager != NULL) {
+			building->CaptureManager->FreeAll();
+		}
+		AnimClass * anim = new AnimClass(Rule->DrainAnimationType, Center_Coord(), 0, 1, ShapeFlags_Type(0x600));
+		DrainAnim = anim;
+		if (anim != NULL) {
+			anim->SetOwnerObject(this);
+		}
+		if (this != NULL && (AbstractFlags & 4) && ((FootClass *)this)->Team != NULL) {
+			((FootClass *)this)->Team->Remove((FootClass *)this, -1, true);
+		}
+	}
+}
+
+// FUNCTION: 0x0070FE40
+void TechnoClass::FUN_0070FE40(TechnoClass * drainer)
+{
+	DrainingMe = drainer;
+}
+
+// FUNCTION: 0x0070FE50
+void TechnoClass::FUN_0070FE50(void)
+{
+	Stop_Drain(this);
+}
+
+// FUNCTION: 0x0070FEB0
+bool TechnoClass::Is_Draining(void) const
+{
+	return(DrainTarget != NULL);
+}
+
+// FUNCTION: 0x0070FEC0
+bool BuildingClass::IsBeingDrained(void) const
+{
+	return(DrainingMe != NULL);
+}
+
+// FUNCTION: 0x0070FED0
+bool TechnoClass::FUN_0070FED0(void) const
+{
+	return(Techno_Type_Class()->Drainable);
+}
+
+// FUNCTION: 0x0070FEE0
+void TechnoClass::ReleaseLocomotor(bool set_target)
+{
+	if (LocomotorTarget != NULL) {
+		LocomotorTarget->LocomotorSource = NULL;
+		if (LocomotorTarget != NULL && (LocomotorTarget->AbstractFlags & 4)) {
+			if (LocomotorTarget->Get_Height_AGL() > 0) {
+				LocomotorTarget->IsCrashing = true;
+				LocomotorTarget->IsBeingManipulated = true;
+				LocomotorTarget->BeingManipulatedBy = this;
+				LocomotorTarget->ChronoWarpedByHouse = House;
+				LocomotorTarget->Stun();
+				LocomotorTarget->Assign_Destination(NULL, true);
+				LocomotorTarget = NULL;
+				if (set_target) {
+					Assign_Target(NULL);
+				}
+				return;
+			}
+			LocomotorTarget->Assign_Destination(NULL, true);
+			FootClass * foot = LocomotorTarget;
+			if (foot != NULL) {
+				foot = (foot->AbstractFlags & 4) ? foot : NULL;
+			}
+			foot->IsLetGoByLocomotor = true;
+			LocomotorTarget->Assign_Destination(NULL, true);
+		}
+		LocomotorTarget = NULL;
+		if (set_target) {
+			Assign_Target(NULL);
+		}
+	}
+}
+
+static inline FootClass * Cast_Techno(FootClass * object)
+{
+	if (object != NULL && (object->AbstractFlags & 1)) {
+		return(object);
+	}
+	return(NULL);
+}
+
+// FUNCTION: 0x00710000
+void TechnoClass::ImbueLocomotor(FootClass * target, CLSID clsid)
+{
+	if (target != NULL) {
+		if (target->SpawnManager != NULL) {
+			target->SpawnManager->KillNodes();
+		}
+		if (target->ParasiteEatingMe != NULL && target->ParasiteEatingMe->ParasiteImUsing != NULL && target->ParasiteEatingMe->Techno_Type_Class()->Naval) {
+			target->ParasiteEatingMe->ParasiteImUsing->ExitUnit();
+		}
+
+		IPiggybackPtr piggy(target->Locomotion);
+		if (target->Techno_Type_Class()->ResourceGatherer && piggy != NULL && target->LocomotorSource == NULL && piggy->Is_Piggybacking()) {
+			if (piggy->Is_Ok_To_End()) {
+				piggy->End_Piggyback(&target->Locomotion);
+			} else {
+				target->Locomotion->Stop_Moving();
+				target->Set_Mission(MISSION_NONE);
+				target->QueueMission(MISSION_STOP, false);
+			}
+		} else {
+			target->Locomotion->Mark_All_Occupation_Bits(0);
+			target->Locomotion->Force_Track(-1, COORD_NONE);
+			target->Clear_Occupy_Bit(target->Center_Coord());
+			target->IsOccupyingCell = true;
+			target->Guard();
+
+			IPiggybackPtr other(target->Locomotion);
+			ILocomotionPtr locomotion(clsid);
+			locomotion->Link_To_Object(target);
+			other = IPiggybackPtr(locomotion);
+			if (other != NULL) {
+				if (LocomotorTarget != NULL) {
+					ReleaseLocomotor(false);
+				}
+				if (target->LocomotorTarget != NULL) {
+					target->ReleaseLocomotor(true);
+				}
+				other->Begin_Piggyback(target->Locomotion);
+				target->Locomotion = locomotion;
+				LocomotorTarget = Cast_Techno(target);
+				Cast_Techno(target)->LocomotorSource = (FootClass *)this;
+				LocomotorTarget->Assign_Destination(this, true);
+				LocomotorTarget->Unselect();
+				if (target->Team != NULL) {
+					target->Team->Remove(target, -1, false);
+				}
+				target->IsAttackedByLocomotor = true;
+				TechnoClass * contact = target->FUN_0065AD30(0);
+				if (contact != NULL && contact->Fetch_RTTI() == RTTI_BUILDING) {
+					target->SendToEachLink(RADIO_OVER_OUT);
+				}
+				LocomotorTarget->QueueMission(MISSION_GUARD, true);
+				if (!LocomotorTarget->House->IsHuman && !LocomotorTarget->Techno_Type_Class()->ResourceGatherer && !LocomotorTarget->House->Class->IsMultiplayPassive) {
+					LocomotorTarget->QueueMission(MISSION_HUNT, false);
+				}
+			}
+		}
+	}
 }

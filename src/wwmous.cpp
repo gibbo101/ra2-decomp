@@ -208,7 +208,7 @@ void WWMouseClass::FUN_007B8960(void)
 }
 
 // FUNCTION: 0x007B89F0
-unsigned long WWMouseClass::GetRefCount(void)
+int WWMouseClass::Get_Mouse_State(void) const
 {
 	return RefCount;
 }

@@ -550,22 +550,6 @@ void XSurface::Draw_Circle(Point2D center, int radius, Rect rect, int color)
 	} while (pt.X >= pt.Y);
 }
 
-bool XSurface::Blit_Plain(Surface & dest, Rect const & destrect, Surface const & source, Rect const & sourcerect)
-{
-	if (dest.Bytes_Per_Pixel() == 1) {
-		return(Bit_Blit(dest, destrect, source, sourcerect, BlitPlain<unsigned char>()));
-	}
-	return(Bit_Blit(dest, destrect, source, sourcerect, BlitPlain<unsigned short>()));
-}
-
-bool XSurface::Blit_Trans(Surface & dest, Rect const & destrect, Surface const & source, Rect const & sourcerect)
-{
-	if (dest.Bytes_Per_Pixel() == 1) {
-		return(Bit_Blit(dest, destrect, source, sourcerect, BlitTrans<unsigned char>()));
-	}
-	return(Bit_Blit(dest, destrect, source, sourcerect, BlitTrans<unsigned short>()));
-}
-
 // FUNCTION: 0x007BBAB0
 bool XSurface::Fill(int color)
 {
@@ -675,6 +659,55 @@ bool XSurface::Prep_For_Blit(Surface & dest, Rect & drect, Surface const & sourc
 	return(XSurface::Prep_For_Blit(dest, dest.Get_Rect(), drect, source, source.Get_Rect(), srect, overlapped, dbuffer, sbuffer));
 }
 
+// FUNCTION: 0x007BC040
+bool XSurface::Prep_For_Blit(Surface & dest, Rect const & dcliprect, Rect & drect, Surface const & source, Rect const & scliprect, Rect & srect, bool & overlapped, void * & dbuffer, void * & sbuffer)
+{
+	overlapped = false;
+	dbuffer = NULL;
+	sbuffer = NULL;
+
+	if (!drect.Is_Valid() || !dcliprect.Is_Valid() || !srect.Is_Valid() || !scliprect.Is_Valid()) return(false);
+
+	if (!Blit_Clip(drect, dcliprect, srect, scliprect)) {
+		return(false);
+	}
+
+	overlapped = false;
+	if (&source == &dest && srect.Is_Overlapping(drect)) {
+		if (srect.Y < drect.Y || (srect.Y == drect.Y && srect.X < drect.X)) {
+			overlapped = true;
+		}
+	}
+
+	dbuffer = dest.Lock(dcliprect.Top_Left() + drect.Top_Left());
+	if (dbuffer == NULL) return(false);
+	sbuffer = source.Lock(scliprect.Top_Left() + srect.Top_Left());
+	if (sbuffer == NULL) {
+		dest.Unlock();
+		return(false);
+	}
+
+	return(true);
+}
+
+// FUNCTION: 0x007BC1F0
+bool XSurface::Blit_Plain(Surface & dest, Rect const & destrect, Surface const & source, Rect const & sourcerect)
+{
+	if (dest.Bytes_Per_Pixel() == 1) {
+		return(Bit_Blit(dest, destrect, source, sourcerect, BlitPlain<unsigned char>()));
+	}
+	return(Bit_Blit(dest, destrect, source, sourcerect, BlitPlain<unsigned short>()));
+}
+
+// FUNCTION: 0x007BC250
+bool XSurface::Blit_Trans(Surface & dest, Rect const & destrect, Surface const & source, Rect const & sourcerect)
+{
+	if (dest.Bytes_Per_Pixel() == 1) {
+		return(Bit_Blit(dest, destrect, source, sourcerect, BlitTrans<unsigned char>()));
+	}
+	return(Bit_Blit(dest, destrect, source, sourcerect, BlitTrans<unsigned short>()));
+}
+
 // FUNCTION: 0x007BC2B0
 bool Clip_Line_To_Rect(Point2D & point1, Point2D & point2, Rect const & rect)
 {
@@ -760,3 +793,17 @@ OutCode Compute_Code(double x, double y, Rect const & rect)
 
 	return(code);
 }
+
+// FUNCTION: 0x007BC610 ?$BlitTrans@E::BlitForward
+// FUNCTION: 0x007BC640 ?$BlitPlain@E::~?$BlitPlain@E
+// FUNCTION: 0x007BC660 ?$BlitPlain@G::~?$BlitPlain@G
+// FUNCTION: 0x007BC680 ?$BlitTrans@E::~?$BlitTrans@E
+// FUNCTION: 0x007BC6A0 ?$BlitTrans@G::~?$BlitTrans@G
+// FUNCTION: 0x007BC6C0 ?$BlitTrans@E::BlitBackward
+// FUNCTION: 0x007BC6F0 ?$BlitTrans@E::Blit_Copy_Tinted
+// FUNCTION: 0x007BC720 ?$BlitTrans@E::Blit_Move_Tinted
+// FUNCTION: 0x007BC750 ?$BlitPlain@E::BlitForward
+template class BlitPlain<unsigned char>;
+template class BlitPlain<unsigned short>;
+template class BlitTrans<unsigned char>;
+template class BlitTrans<unsigned short>;

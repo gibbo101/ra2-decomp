@@ -82,6 +82,7 @@ class UnitClass : public FootClass
 		virtual bool CanUseWaypoint(void) const override;
 		virtual bool CanAttackOnTheMove(void) const override;
 
+		bool IsDeactivated(void) const;
 		bool Is_Route_Broken(Cell const & from, Cell const & to) const;
 		AbstractClass * Plan_Route(AbstractClass const & object) const;
 

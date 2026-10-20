@@ -906,4 +906,22 @@ template class BlitTransZRemapXlatAlpha<unsigned short>;
 template class BlitTransLucent75Alpha<unsigned short>;
 
 // FUNCTION: 0x004941E0 ?$BlitTransLucent50Alpha@G::BlitForward
+// FUNCTION: 0x004942A0 ?$BlitTransLucent50Alpha@G::BlitBackward
+// FUNCTION: 0x004942D0 ?$BlitTransLucent50Alpha@G::Blit_Copy_Tinted
+// FUNCTION: 0x00494300 ?$BlitTransLucent50Alpha@G::Blit_Move_Tinted
 template class BlitTransLucent50Alpha<unsigned short>;
+
+// FUNCTION: 0x00494330 ?$BlitTransLucent25Alpha@G::BlitForward
+// FUNCTION: 0x00494400 ?$BlitTransLucent25Alpha@G::BlitBackward
+// FUNCTION: 0x00494430 ?$BlitTransLucent25Alpha@G::Blit_Copy_Tinted
+// FUNCTION: 0x00494460 ?$BlitTransLucent25Alpha@G::Blit_Move_Tinted
+template class BlitTransLucent25Alpha<unsigned short>;
+
+// FUNCTION: 0x00494490 ?$BlitTransXlatWriteAlpha@G::BlitForward
+// FUNCTION: 0x00494500 ?$BlitTransXlatWriteAlpha@G::BlitBackward
+// FUNCTION: 0x00494530 ?$BlitTransXlatWriteAlpha@G::Blit_Copy_Tinted
+// FUNCTION: 0x00494560 ?$BlitTransXlatWriteAlpha@G::Blit_Move_Tinted
+template class BlitTransXlatWriteAlpha<unsigned short>;
+
+// FUNCTION: 0x00494590 ?$BlitTransXlatMultWriteAlpha@G::BlitForward
+template class BlitTransXlatMultWriteAlpha<unsigned short>;

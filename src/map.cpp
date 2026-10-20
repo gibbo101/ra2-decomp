@@ -41,6 +41,7 @@
 #include "psystype.h"
 #include "rules.h"
 #include "smartdeform.h"
+#include "smudtype.h"
 #include "swap.h"
 #include "tactical.h"
 #include "tag.h"
@@ -1658,7 +1659,7 @@ void MapClass::Internal_Destroy_Train_Bridge_EW_BottomRight(Cell const & cell, F
 		if (adjacentptr->OverlayData > OVERLAYDATA_BRIDGE_EW_DAMAGED) {
 			if (adjacentptr->OverlayData == OVERLAYDATA_BRIDGE_EW_END2) {
 				Internal_Destroy_Train_Bridge_EW_BottomRight(adjacent, dir);
-				adjacentptr->Set_Under_Bridge(FACING_N, false);
+				adjacentptr->Set_Under_Rail_Bridge(FACING_N, false);
 				adjacentptr->OverlayData = 0;
 				adjacentptr->Overlay = OVERLAY_NONE;
 				Map.Radar_Background(adjacentptr->CellID);
@@ -1700,7 +1701,7 @@ void MapClass::Internal_Destroy_Train_Bridge_EW_TopLeft(Cell const & cell, Facin
 		if (adjacentptr->OverlayData > OVERLAYDATA_BRIDGE_EW_DAMAGED) {
 			if (adjacentptr->OverlayData == OVERLAYDATA_BRIDGE_EW_END1) {
 				Internal_Destroy_Train_Bridge_EW_TopLeft(adjacent, dir);
-				adjacentptr->Set_Under_Bridge(FACING_N, false);
+				adjacentptr->Set_Under_Rail_Bridge(FACING_N, false);
 				adjacentptr->OverlayData = 0;
 				adjacentptr->Overlay = OVERLAY_NONE;
 				Map.Radar_Background(adjacentptr->CellID);
@@ -5961,3 +5962,224 @@ bool MapClass::Check_Map_Integrity(void)
 	fclose(file);
 	return(passed);
 }
+
+// FUNCTION: 0x005880A0
+Coord MapClass::Firestorm_On_Path(Coord const & from, Coord const & to, HouseClass * house)
+{
+	if (from != to) {
+
+		if ((short)(from.X / CELL_LEPTON_W) == (short)(to.X / CELL_LEPTON_W)) {
+			Cell current_cell(from);
+			Cell target_cell(to);
+			int step = current_cell.Y < target_cell.Y ? 1 : -1;
+
+			while (current_cell != target_cell) {
+				BuildingClass * building = Map[current_cell].Cell_Building();
+				if (building != NULL && building->Class->IsFirestormWall) {
+					HouseClass * owner = building->House;
+					if (owner->FirestormDefenseActivated && owner != house) {
+						return(Coord(current_cell));
+					}
+				}
+
+				current_cell.Y += step;
+			}
+
+		} else if ((short)(from.Y / CELL_LEPTON_H) == (short)(to.Y / CELL_LEPTON_H)) {
+			Cell current_cell(from);
+			Cell target_cell(to);
+			int step = current_cell.X < target_cell.X ? 1 : -1;
+
+			while (current_cell != target_cell) {
+				BuildingClass * building = Map[current_cell].Cell_Building();
+				if (building != NULL && building->Class->IsFirestormWall) {
+					HouseClass * owner = building->House;
+					if (owner->FirestormDefenseActivated && owner != house) {
+						return(Coord(current_cell));
+					}
+				}
+
+				current_cell.X += step;
+			}
+
+		} else {
+			int x_step = from.X < to.X ? CELL_LEPTON_W : -CELL_LEPTON_W;
+			int y_step = from.Y < to.Y ? CELL_LEPTON_H : -CELL_LEPTON_H;
+			int current_x = x_step < 0 ? from.X - from.X % CELL_LEPTON_W : from.X - from.X % CELL_LEPTON_W + CELL_LEPTON_W;
+			int current_y = y_step < 0 ? from.Y - from.Y % CELL_LEPTON_H : from.Y - from.Y % CELL_LEPTON_H + CELL_LEPTON_H;
+			int delta_x = to.X - from.X;
+			double x_progress = (double)(current_x - from.X) / (double)delta_x;
+			int delta_y = to.Y - from.Y;
+			double y_progress = (double)(current_y - from.Y) / (double)delta_y;
+			double inv_delta_x = 1.0 / (double)delta_x;
+			double inv_delta_y = 1.0 / (double)delta_y;
+
+			while ((x_progress <= 1.0 || y_progress <= 1.0) && x_progress >= 0.0 && y_progress >= 0.0) {
+				BuildingClass * building = Map[Coord(current_x, current_y)].Cell_Building();
+				if (building != NULL && building->Class->IsFirestormWall) {
+					HouseClass * owner = building->House;
+					if (owner->FirestormDefenseActivated && owner != house) {
+						return(Coord(current_x, current_y, 0));
+					}
+				}
+
+				if (x_progress < y_progress) {
+					current_x += x_step;
+					x_progress = (double)(current_x - from.X) * inv_delta_x;
+				} else {
+					current_y += y_step;
+					y_progress = (double)(current_y - from.Y) * inv_delta_y;
+				}
+			}
+		}
+	}
+
+	return(COORD_NONE);
+}
+
+// FUNCTION: 0x00588570
+void MapClass::Place_Firestorm_Wall(Cell const & cell, HouseClass * owner, BuildingTypeClass * type)
+{
+	for (FacingType dir = FACING_FIRST; dir < FACING_COUNT; dir = FacingType(dir + FACING_90)) {
+
+		Cell current_cell = cell;
+		int radius = type->ThreatRange >> 8;
+
+		for (int distance = 0; distance < radius; distance++) {
+			current_cell = (Cell)Adjacent_Cell(current_cell, dir);
+
+			BuildingClass * building = Map[current_cell].Cell_Building();
+			if (building != NULL && building->Class->IsFirestormWall && building->House == owner) {
+				if (distance > 0) {
+					Cell place_cell = (Cell)Adjacent_Cell(cell, dir);
+					for (int i = 0; i < distance; i++) {
+						ObjectClass * building = type->Create_One_Of(owner);
+						building->Unlimbo(place_cell);
+						place_cell = (Cell)Adjacent_Cell(place_cell, dir);
+					}
+				}
+				break;
+			}
+
+			if (!Map[current_cell].Is_Clear_To_Build(type->Speed, type, owner)) {
+				break;
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x00588750
+void MapClass::Place_Wall(Cell const & cell, HouseClass * owner, BuildingTypeClass * type)
+{
+	OverlayTypeClass const * overtype = type->ToOverlay;
+	if (overtype == NULL) {
+		return;
+	}
+
+	for (FacingType dir = FACING_FIRST; dir < FACING_COUNT; dir = FacingType(dir + FACING_90)) {
+
+		Cell current_cell = cell;
+		int radius = type->ThreatRange >> 8;
+
+		for (int distance = 0; distance < radius; distance++) {
+			current_cell = (Cell)Adjacent_Cell(current_cell, dir);
+
+			OverlayType overlay = Map[current_cell].Overlay;
+			if (overlay != OVERLAY_NONE && overtype->HeapID == overlay && owner->HeapID == Map[current_cell].Owner) {
+				if (distance > 0) {
+					Cell place_cell = (Cell)Adjacent_Cell(cell, dir);
+					for (int i = 0; i < distance; i++) {
+						ObjectClass * building = type->Create_One_Of(owner);
+						building->Unlimbo(place_cell);
+						place_cell = (Cell)Adjacent_Cell((Cell)place_cell, dir);
+					}
+				}
+				break;
+			}
+
+			if (!Map[current_cell].Is_Clear_To_Build(type->Speed, type, owner)) {
+				break;
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x00588960
+void MapClass::FUN_00588960(int level)
+{
+	MaxLevel = MIN(MaxLevel, level);
+	MaxLevel = MAX(MaxLevel, 0);
+}
+
+// FUNCTION: 0x00588990
+int MapClass::FUN_00588990(void)
+{
+	if (MaxLevel >= 13) {
+		int count = Array.Length();
+		for (int index = 0; index < count; index++) {
+			CellClass * cell = Array[index];
+			if (cell != NULL) {
+				FUN_00588960(cell->Height);
+			}
+		}
+	}
+	return(MaxLevel);
+}
+
+// FUNCTION: 0x005889F0
+int __fastcall FUN_005889F0(int zone, int other)
+{
+	int best = -1;
+	int best_count = 0;
+
+	for (int index = 0; index < MZONE_COUNT; index++) {
+		bool usable = true;
+		int count = 0;
+
+		for (int pass = 0; pass < PASSABLE_COUNT; pass++) {
+			int a = MZonePassability[zone][pass];
+			int b = MZonePassability[other][pass];
+			int c = MZonePassability[index][pass];
+			if ((a == 2 || b == 2) && c == 1) {
+				usable = false;
+			}
+			if (a == c && b == c && c == 1) {
+				count++;
+			}
+		}
+
+		if (usable && count > best_count) {
+			best_count = count;
+			best = index;
+		}
+	}
+
+	return(best);
+}
+
+// FUNCTION: 0x00588AC0
+void __fastcall FUN_00588AC0(MapClass * map)
+{
+	map->Reset_Iterator();
+
+	CellClass * cellptr = map->Iterate();
+	while (cellptr != NULL) {
+		if (cellptr->Smudge != SMUDGE_NONE) {
+			SmudgeTypeClass * smudge_type = SmudgeTypes[cellptr->Smudge];
+			Cell smudge_cell = cellptr->CellID;
+			smudge_cell -= Cell(cellptr->SmudgeData % smudge_type->Width, cellptr->SmudgeData / smudge_type->Width);
+			for (int y = 0; y < smudge_type->Height; y++) {
+				for (int x = 0; x < smudge_type->Width; x++) {
+					Map[smudge_cell + Cell(x, y)].Smudge = SMUDGE_NONE;
+				}
+			}
+		}
+		cellptr = map->Iterate();
+	}
+}
+
+// FUNCTION: 0x00588BF0 MapClass::~MapClass
+
+// FUNCTION: 0x00588C60 ?$TPoint2D@F::operator-
+
+// FUNCTION: 0x00588C90 ?$DynamicVectorClass@USubzoneConnectionStruct@@::Clear

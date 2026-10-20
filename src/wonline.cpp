@@ -683,10 +683,8 @@ LadderA * __fastcall FUN_0077DA50(wchar_t const * name)
 	return result;
 }
 
-typedef NodeNameType NSSlotName;
-extern NSSlotName * DAT_00A8DA90[8];
-bool __fastcall FUN_005E93F0(NSSlotName * slot);
-Wstring __fastcall FUN_005EDEF0(NSSlotName * slot);
+bool __fastcall FUN_005E93F0(NodeNameType * slot);
+Wstring __fastcall FUN_005EDEF0(NodeNameType * slot);
 
 struct ChatSink {
 	virtual void V00(void);
@@ -760,7 +758,7 @@ void FUN_0077DB90(void)
 	char list[256];
 	strcpy(list, "L");
 	for (int i = 0; i < 8; i++) {
-		NSSlotName * slot = DAT_00A8DA90[i];
+		NodeNameType * slot = Session.Slots[i];
 		Wstring name;
 		if (FUN_005E93F0(slot)) {
 			WideWstring wide((wchar_t *)slot);
@@ -994,11 +992,6 @@ int __fastcall FUN_0077E300(WideWstring const & msg)
 #include "goptions.h"
 namespace Game { extern int Seed; }
 extern char DAT_00889F64[];
-extern int DAT_00A8DA84;
-extern NodeNameType ** DAT_00A8DA78;
-extern IPXAddressClass DAT_00A8DBCC[8];
-extern int DAT_00A8DC2C[8];
-extern int DAT_00A8E230[8];
 Wstring __fastcall FUN_007B82E0(WideWstring const & string);
 
 extern int DAT_00B77E00;
@@ -1074,7 +1067,6 @@ HWND __fastcall FUN_00775940(int id);
 void __fastcall FUN_005EDDE0(HWND window, char flag);
 void __fastcall FUN_00783C80(int arg, bool flag);
 
-extern wchar_t DAT_00A8D610[];
 WideWstring __fastcall FUN_007B7ED0(Wstring const & text);
 
 // FUNCTION: 0x0077EBA0
@@ -1082,18 +1074,18 @@ int __fastcall FUN_0077EBA0(Wstring const & who)
 {
 	Wstring name(who.length() > 0 ? who : DAT_00B73E40);
 	Wstring lower = ((Wstring const &)name).toLower();
-	if (FUN_007B7ED0(lower) == ((WideWstring const &)WideWstring(DAT_00A8D610)).toLower()) {
+	if (FUN_007B7ED0(lower) == ((WideWstring const &)WideWstring(Session.GameName)).toLower()) {
 		return 1;
 	}
 	int found = -1;
-	for (int i = 0; i < DAT_00A8DA84; i++) {
-		Wstring slot_name = FUN_007B7F90(DAT_00A8DA78[i]->Name);
+	for (int i = 0; i < Session.Players.Count(); i++) {
+		Wstring slot_name = FUN_007B7F90(Session.Players[i]->Name);
 		if (((Wstring const &)slot_name).toLower() == lower) {
 			found = i;
 		}
 	}
 	if (found != -1) {
-		return DAT_00A8DA78[found]->Slot.Unknown77;
+		return Session.Players[found]->Slot.Unknown77;
 	}
 	return -1;
 }
@@ -1121,7 +1113,7 @@ int __fastcall FUN_0077ED00(Wstring const & who, int country, int color, int sta
 	int index = -1;
 	Wstring lower = who.toLower();
 	for (int j = 0; j < 8; j++) {
-		Wstring slot_name = FUN_007B7F90(DAT_00A8DA90[j]->Name);
+		Wstring slot_name = FUN_007B7F90(Session.Slots[j]->Name);
 		if (lower == ((Wstring const &)slot_name).toLower()) {
 			index = j;
 			break;
@@ -1135,16 +1127,16 @@ int __fastcall FUN_0077ED00(Wstring const & who, int country, int color, int sta
 	if (dialog == NULL) {
 		dialog = FUN_00775940(0xC9);
 	}
-	NodeNameType * slot = DAT_00A8DA90[index];
+	NodeNameType * slot = Session.Slots[index];
 	if (slot->Get_Start() != start) {
 		result = 1;
 		slot->Set_Start(start);
 	}
-	if (DAT_00A8DA90[index]->Get_Team() != team) {
+	if (Session.Slots[index]->Get_Team() != team) {
 		result = 1;
 		slot->Set_Team(team);
 	}
-	if (DAT_00A8DA90[index]->Get_Country() != country) {
+	if (Session.Slots[index]->Get_Country() != country) {
 		result = 1;
 		slot->Set_Country(country);
 		int combo = FUN_004E37D0(index);
@@ -1174,10 +1166,10 @@ int __fastcall FUN_0077ED00(Wstring const & who, int country, int color, int sta
 			slot->Slot.SpectatorFlag = -1;
 		}
 	}
-	if (DAT_00A8DA90[index]->Get_Color() != color) {
+	if (Session.Slots[index]->Get_Color() != color) {
 		slot->Set_Color(color);
 	}
-	if (DAT_00A8DA90[index] == DAT_00A8DA78[0]) {
+	if (Session.Slots[index] == Session.Players[0]) {
 		Game::PlayerColor = color;
 	}
 	FUN_00783C80(0, false);

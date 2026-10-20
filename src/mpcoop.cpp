@@ -30,38 +30,8 @@
 #include <stdlib.h>
 #include "stringtable.h"
 
-#pragma pack(push, 1)
-class MPPlayerNode
-{
-	public:
-		int FUN_00696F10(void);
-		void FUN_00696F90(int slot);
-		int FUN_00696F30(void);
-		void FUN_00696FF0(int start);
-		void FUN_00697020(int flag);
-		int FUN_00696F70(void);
-		int FUN_00696F50(void);
-		wchar_t Name[1];
-		char Pad3[0x26];
-		IPXAddressClass Address;
-		char Text[0x17];
-		int Field4B;
-		int Field4F;
-		int Field53;
-		int Field57;
-		char Pad5B[0x10];
-		int Slot;
-		int HouseSlot;
-		int Field73;
-		int Field77;
-		int Field7B;
-		char Pad7F[6];
-};
-#pragma pack(pop)
-
 extern int DAT_008316A4;
 extern wchar_t DAT_00887734[];
-extern int DAT_00A8DA84;
 struct MPLobbyEntry
 {
 	char Pad0[0x1602a];
@@ -74,38 +44,17 @@ void __fastcall FUN_005E74E0(HWND dialog);
 void __fastcall FUN_005E2EF0(HWND dialog, MPGameModeClass * mode);
 void __fastcall FUN_005E2F60(HWND dialog);
 void __fastcall FUN_005E32D0(bool force, bool now);
-void __fastcall FUN_005C6120(DynamicVectorClass<MPPlayerNode *> * vec);
-extern int DAT_00A8B54C;
+void __fastcall FUN_005C6120(DynamicVectorClass<NodeNameType *> * vec);
 extern bool DAT_0089E04C;
-extern MPPlayerNode ** DAT_00A8DA78;
-extern DynamicVectorClass<MPPlayerNode *> DAT_00A8DA74;
 int __fastcall FUN_005E66D0(void);
 int __fastcall FUN_0049D9F0(char const * name);
 void __cdecl FUN_004068E0(char const * format, ...);
 void __fastcall FUN_005E3720(char const * text);
 void __fastcall FUN_005E7BF0(int slot);
 int __fastcall FUN_005E6520(int value);
-extern int DAT_00A8B254;
-extern int DAT_00A8B8D8;
-extern MultiMission ** DAT_00A8B8CC;
-extern IPXAddressClass DAT_00A8BB1C;
-extern int DAT_00A8B3AC;
-extern IPXAddressClass DAT_00A8DBCC[8];
-extern int DAT_00A8DC2C[8];
-extern int DAT_00A8E230[8];
-extern wchar_t DAT_00A8E258[];
-extern int DAT_00A8E2AC;
-extern char DAT_00A8E2B2[16];
-struct MPSessionTail
-{
-	int Array[0x34C / 4];
-	int Index;
-};
-extern MPSessionTail DAT_00A8D23C;
 extern int DAT_0088098C;
 extern int DAT_00880990;
 extern int DAT_00880994;
-extern int DAT_00A8B538;
 void __fastcall FUN_0049B930(CoopCamp_0049B610 * camp);
 struct Game {
 	static int TechLevel;
@@ -122,7 +71,6 @@ extern char DAT_0082DC84[];
 extern char DAT_0081F1D4[];
 extern int DAT_00A8EB68;
 extern int DAT_00A83CA8;
-extern int DAT_00A8BB0C;
 struct MPCountryEntry
 {
 	char Pad0[0x60];
@@ -130,7 +78,6 @@ struct MPCountryEntry
 };
 extern MPCountryEntry ** DAT_00A83C9C;
 char * __fastcall FUN_007350C0(wchar_t const * text);
-extern MPPlayerNode * DAT_00A8DA90[];
 extern int DAT_00ABF460[8];
 void __fastcall FUN_005EBC00(HWND dialog, int count);
 int __fastcall FUN_004E37D0(int index);
@@ -348,8 +295,8 @@ void MPCooperative::vt_entry_20(void)
 			}
 		}
 		if (Current != NULL) {
-			if (DAT_00A8DA84 == 2) {
-				Current->FUN_0049B760(DAT_00A8DA78[0]->Name, DAT_00A8DA78[1]->Name);
+			if (Session.Players.Count() == 2) {
+				Current->FUN_0049B760(Session.Players[0]->Name, Session.Players[1]->Name);
 			} else {
 				Current->FUN_0049B760(DAT_00887734, DAT_00887734);
 			}
@@ -436,10 +383,15 @@ int MPCooperative::FirstValidMapIndex(void)
 // FUNCTION: 0x005C1D80
 bool MPCooperative::vt_entry_14(unsigned a)
 {
-	if (DAT_00A8DA84 == 2 && Current != NULL) {
-		Current->FUN_0049B760(DAT_00A8DA78[0]->Name, DAT_00A8DA78[1]->Name);
+	if (Session.Players.Count() == 2 && Current != NULL) {
+		Current->FUN_0049B760(Session.Players[0]->Name, Session.Players[1]->Name);
 	}
 	return(MPGameModeClass::vt_entry_14(a));
+}
+
+static inline void Set_Player_Country(int index, int country)
+{
+	Session.Players[index]->Set_Country(country);
 }
 
 // FUNCTION: 0x005C1DC0
@@ -452,8 +404,8 @@ bool MPCooperative::vt_entry_18(void)
 	DAT_0089F518.FUN_0049E4F0(&count);
 	int selected = FUN_005E66D0();
 	if (selected >= count) {
-		if (DAT_00A8DA84 == 2) {
-			Current->FUN_0049B760(DAT_00A8DA78[0]->Name, DAT_00A8DA78[1]->Name);
+		if (Session.Players.Count() == 2) {
+			Current->FUN_0049B760(Session.Players[0]->Name, Session.Players[1]->Name);
 		}
 		if (!Current->FUN_0049C0D0()) {
 			return(false);
@@ -470,8 +422,8 @@ bool MPCooperative::vt_entry_18(void)
 		Campaigns[selected] = raw ? raw->FUN_0049B610() : 0;
 		Campaigns[selected]->FUN_0049CAF0(selected);
 		Field4C = selected;
-		if (DAT_00A8DA84 == 2) {
-			Current->FUN_0049B760(DAT_00A8DA78[0]->Name, DAT_00A8DA78[1]->Name);
+		if (Session.Players.Count() == 2) {
+			Current->FUN_0049B760(Session.Players[0]->Name, Session.Players[1]->Name);
 		}
 	}
 	CoopCampEntry * entry;
@@ -495,13 +447,13 @@ bool MPCooperative::vt_entry_18(void)
 	}
 	int group = entry->ListA[index]->Count();
 	FUN_005C2500(GameoptWindow());
-	for (int i = 0; i < DAT_00A8DA84; i++) {
-		MPPlayerNode * player = DAT_00A8DA78[i];
-		if (!vt_entry_1C(player->FUN_00696F10())) {
+	for (int i = 0; i < Session.Players.Count(); i++) {
+		NodeNameType * player = Session.Players[i];
+		if (!vt_entry_1C(player->Get_Country())) {
 			if (group > 1) {
-				DAT_00A8DA78[i]->FUN_00696F90(-2);
+				Set_Player_Country(i, -2);
 			} else {
-				DAT_00A8DA78[i]->FUN_00696F90(FUN_0049D9F0((*entry->ListA[index])[0]));
+				Set_Player_Country(i, FUN_0049D9F0((*entry->ListA[index])[0]));
 			}
 		}
 	}
@@ -708,7 +660,7 @@ void MPCooperative::FUN_005C2500(HWND dialog)
 	if (dialog == NULL) {
 		return;
 	}
-	int count = DAT_00A8BB0C;
+	int count = Session.unknown_8D4;
 	CoopCampEntry * entry;
 	int index = 0;
 	DAT_0089F518.FUN_0049E3B0(CampaignIndex, &entry);
@@ -731,11 +683,11 @@ void MPCooperative::FUN_005C2500(HWND dialog)
 		FUN_005C23B0(dialog, slot);
 		if (group > 1) {
 			FUN_004E3F70(dialog, slot, -2);
-			DAT_00A8DA90[i]->FUN_00696F90(-2);
+			Session.Slots[i]->Set_Country(-2);
 		} else {
 			int value = FUN_0049D9F0((*entry->ListA[index])[0]);
 			FUN_004E3F70(dialog, slot, value);
-			DAT_00A8DA90[i]->FUN_00696F90(value);
+			Session.Slots[i]->Set_Country(value);
 		}
 	}
 	FUN_005EBC00(dialog, count);
@@ -750,7 +702,7 @@ void MPCooperative::vt_entry_38(unsigned a)
 {
 	HWND dialog = (HWND)a;
 	if (dialog) {
-		int count = DAT_00A8DA84;
+		int count = Session.Players.Count();
 		for (int i = 0; i < count; i++) {
 			FUN_005C23B0(dialog, FUN_004E37D0(i));
 		}
@@ -779,9 +731,9 @@ void FUN_005C26D0(void)
 	for (int k = 0; k < 8; k++) {
 		DAT_00ABF460[k] = -2;
 	}
-	int count = DAT_00A8DA84;
+	int count = Session.Players.Count();
 	for (int i = 0; i < count; i++) {
-		DAT_00ABF460[i] = DAT_00A8DA78[i]->FUN_00696F30();
+		DAT_00ABF460[i] = Session.Players[i]->Get_Color_Or_Random();
 	}
 }
 
@@ -811,14 +763,14 @@ bool MPCooperative::vt_entry_64(void)
 		Lists2[i].Clear();
 		Lists2[i].Resize(max, 0);
 	}
-	int count = DAT_00A8DA84;
+	int count = Session.Players.Count();
 	for (int k = 0; k < entry->MapCount; k++) {
 		for (int m = 0; m < 8; m++) {
 			DAT_00ABF460[m] = -2;
 		}
-		int humans = DAT_00A8DA84;
+		int humans = Session.Players.Count();
 		for (int p = 0; p < humans; p++) {
-			DAT_00ABF460[p] = DAT_00A8DA78[p]->FUN_00696F30();
+			DAT_00ABF460[p] = Session.Players[p]->Get_Color_Or_Random();
 		}
 		for (int j = 0; j < 8; j++) {
 			if (j < count) {
@@ -905,8 +857,8 @@ void MPCooperative::PopulateTeamDropdownForPlayer(HWND hwnd, int index)
 
 static inline int Find_Player_Node(int house)
 {
-	for (int k = 0; k < DAT_00A8DA74.Count(); k++) {
-		if (DAT_00A8DA74[k]->HouseSlot == house) {
+	for (int k = 0; k < Session.Players.Count(); k++) {
+		if (Session.Players[k]->Slot.HouseIndex == house) {
 			return(k);
 		}
 	}
@@ -1010,9 +962,9 @@ bool MPCooperative::StartingPositionsToHouseBaseCells2(bool arg)
 				int start = FUN_005C2D00(h, &cells, satisfied);
 				int node = Find_Player_Node(h);
 				if (node != -1) {
-					DAT_00A8DA74[node]->FUN_00696FF0(start);
-					DAT_00A8DA74[node]->FUN_00697020(0);
-					FUN_004068E0("Playernum %d:Starting position is %d, team is %d\n", node, DAT_00A8DA74[node]->FUN_00696F50(), DAT_00A8DA74[node]->FUN_00696F70());
+					Session.Players[node]->Set_Start(start);
+					Session.Players[node]->Set_Team(0);
+					FUN_004068E0("Playernum %d:Starting position is %d, team is %d\n", node, Session.Players[node]->Get_Start(), Session.Players[node]->Get_Team());
 				} else {
 					int c = 0;
 					while ((Session.Options.AISlots.Countries[c] == -1 || Session.Options.AISlots.Starts[c] != -2) && c < 8) {
@@ -1034,7 +986,7 @@ bool MPCooperative::StartingPositionsToHouseBaseCells2(bool arg)
 // FUNCTION: 0x005C30C0
 bool MPCooperative::vt_entry_68(void)
 {
-	int aiCount = FUN_005E6520(DAT_00A8B254) - Scen->NumCoopHumanStartSpots;
+	int aiCount = FUN_005E6520(Session.Options.ScenarioIndex) - Scen->NumCoopHumanStartSpots;
 	FUN_004068E0("@@@@ Adding %d AI players\n", aiCount);
 	if (aiCount <= 0) {
 		return(false);
@@ -1228,33 +1180,33 @@ void MPCooperative::vt_entry_A0(unsigned a)
 	strcpy(Scen->NextScenarioName, mapname);
 	Scen->Campaign = (CampaignType)-1;
 	Scen->IsSkipScore = true;
-	int total = DAT_00A8B8D8;
+	int total = Session.Scenarios.Count();
 	sprintf(mapname, "%s.MAP", file);
 	int index = 0;
 	for (; index < total; index++) {
-		if (strncmp(mapname, Scenario_Filename(DAT_00A8B8CC[index]), _MAX_PATH) == 0) {
-			DAT_00A8B254 = index;
+		if (strncmp(mapname, Scenario_Filename(Session.Scenarios[index]), _MAX_PATH) == 0) {
+			Session.Options.ScenarioIndex = index;
 			break;
 		}
 	}
-	FUN_005E7BF0(DAT_00A8B254);
+	FUN_005E7BF0(Session.Options.ScenarioIndex);
 	Scen->IsSkipScore = true;
 	Scen->IsEndOfGame = false;
 	Scen->IsNoMapSel = true;
 	Scen->IsOneTimeOnly = false;
 	Field54 = 0;
-	for (int k = 0; k < DAT_00A8DA84; k++) {
-		if (DAT_00A8BB1C == DAT_00A8DA78[k]->Address) {
+	for (int k = 0; k < Session.Players.Count(); k++) {
+		if (Session.HostAddress == Session.Players[k]->Address) {
 			Field54 = k;
 		}
 	}
-	memcpy(Addresses, DAT_00A8DBCC, sizeof(Addresses));
-	memcpy(Field124, DAT_00A8DC2C, sizeof(Field124));
-	memcpy(Field144, DAT_00A8E230, sizeof(Field144));
-	memcpy(Field194, DAT_00A8E2B2, sizeof(Field194));
-	wcscpy(Field164, DAT_00A8E258);
-	Field190 = DAT_00A8E2AC;
-	Field70 = DAT_00A8B3AC;
+	memcpy(Addresses, Session.unknown_2994, sizeof(Addresses));
+	memcpy(Field124, Session.unknown_29F4, sizeof(Field124));
+	memcpy(Field144, Session.unknown_2FF8, sizeof(Field144));
+	memcpy(Field194, Session.PlayerPorts, sizeof(Field194));
+	wcscpy(Field164, Session.MasterPlayerName);
+	Field190 = Session.MasterPlayerID;
+	Field70 = Session.House;
 	Seed = Game::Seed;
 	TechLevel = Game::TechLevel;
 	UnitCount = Session.Options.UnitCount;
@@ -1274,13 +1226,13 @@ void MPCooperative::vt_entry_A0(unsigned a)
 	BuildOffAlly = Session.Options.BuildOffAlly;
 	CrapEngineers = Session.Options.CrapEngineers;
 	GameSpeed = Session.Options.GameSpeed;
-	DAT_00A8B538 = 0;
+	Session.MultiplayerObserver = 0;
 	Map.SetActiveFoundation(NULL);
 	DAT_0088098C = 0;
 	DAT_00880990 = 0;
 	DAT_00880994 = -1;
-	for (int n = 0; n < 0x70; n += 0x1c) {
-		DAT_00A8D23C.Array[DAT_00A8D23C.Index + n] = -1;
+	for (int n = 0; n < 4; n++) {
+		Session.Score[n].Kills[Session.CurGame] = -1;
 	}
 }
 
@@ -1296,8 +1248,8 @@ bool MPCooperative::FUN_005C3EC0(void)
 	CoopCamp_0049B610 * raw = (CoopCamp_0049B610 *)operator new(sizeof(CoopCamp_0049B610));
 	Current = raw ? raw->FUN_0049B610() : 0;
 	Current->FUN_0049CAF0(0);
-	if (DAT_00A8DA84 == 2) {
-		Current->FUN_0049B760(DAT_00A8DA78[0]->Name, DAT_00A8DA78[1]->Name);
+	if (Session.Players.Count() == 2) {
+		Current->FUN_0049B760(Session.Players[0]->Name, Session.Players[1]->Name);
 	}
 	if (0) {
 		Current->FUN_0049B720();
@@ -1314,8 +1266,8 @@ void MPCooperative::vt_entry_9C(void)
 		FUN_005C21D0(dialog, false);
 		FUN_004E3B90(dialog);
 	}
-	for (int i = 0; i < DAT_00A8DA84; i++) {
-		DAT_00A8DA78[i]->Slot = i;
+	for (int i = 0; i < Session.Players.Count(); i++) {
+		Session.Players[i]->Slot.SpectatorFlag = i;
 	}
 }
 
@@ -1350,11 +1302,11 @@ void MPCooperative::vt_entry_90(void)
 			void * name;
 			char buffer[_MAX_PATH];
 			Current->FUN_0049D070(&name, -1);
-			int n = DAT_00A8B8D8;
+			int n = Session.Scenarios.Count();
 			sprintf(buffer, "%s.MAP", name);
 			int i;
 			for (i = 0; i < n; i++) {
-				char const * file = Scenario_Filename(DAT_00A8B8CC[i]);
+				char const * file = Scenario_Filename(Session.Scenarios[i]);
 				if (strcmpi(file, buffer) == 0) {
 					break;
 				}
@@ -1387,8 +1339,8 @@ void MPCooperative::vt_entry_94(void)
 	if (Current == NULL) {
 		return;
 	}
-	if (DAT_00A8DA84 == 2) {
-		Current->FUN_0049B760(DAT_00A8DA78[0]->Name, DAT_00A8DA78[1]->Name);
+	if (Session.Players.Count() == 2) {
+		Current->FUN_0049B760(Session.Players[0]->Name, Session.Players[1]->Name);
 	}
 	vt_entry_60();
 	if (!Current->FUN_0049D120()) {
@@ -1400,14 +1352,14 @@ void MPCooperative::vt_entry_94(void)
 			Current->FUN_0049D390(buffer);
 			strcat(buffer, ".MAP");
 			MultiMission * found = NULL;
-			int n = DAT_00A8B8D8;
+			int n = Session.Scenarios.Count();
 			for (int i = 0; i < n; i++) {
 				if (found) {
 					break;
 				}
-				char const * file = Scenario_Filename(DAT_00A8B8CC[i]);
+				char const * file = Scenario_Filename(Session.Scenarios[i]);
 				if (strcmpi(file, buffer) == 0) {
-					found = DAT_00A8B8CC[i];
+					found = Session.Scenarios[i];
 				}
 			}
 			if (!found) {
@@ -1553,7 +1505,6 @@ extern WinsockInterfaceClass * DAT_00887628;
 extern int DAT_00B7790C[];
 extern unsigned char DAT_00B77A04;
 extern unsigned char DAT_00B76568;
-extern unsigned char DAT_00A8DBA0;
 extern int DAT_00A8EA0C;
 extern int DAT_00B052D0;
 void __fastcall FUN_00664530(int * object);
@@ -1570,25 +1521,25 @@ void MPCooperative::vt_entry_AC(void)
 	DAT_00B779C4 = 0;
 	DAT_00A8F900 = 0;
 	strcpy(DAT_00B77830, DAT_00B73E40.get());
-	DAT_00A8BB1C = DAT_00A8DA78[Field54]->Address;
-	wcscpy(DAT_00A8E258, DAT_00A8DA78[Field54]->Name);
-	DAT_00A8E2AC = -1;
-	DAT_00A8B3AC = Field70;
+	Session.HostAddress = Session.Players[Field54]->Address;
+	wcscpy(Session.MasterPlayerName, Session.Players[Field54]->Name);
+	Session.MasterPlayerID = -1;
+	Session.House = Field70;
 	DAT_00887628->Clear_Broadcast_Addresses();
 	char ip[32] = "xxx.xxx.xxx.xxx";
-	for (int i = 1; i < DAT_00A8DA84; i++) {
+	for (int i = 1; i < Session.Players.Count(); i++) {
 		NetNumType net;
 		NetNodeType node;
 		int port;
-		DAT_00A8DA78[i]->Address.Get_Address(net, node, (unsigned short *)&port);
+		Session.Players[i]->Address.Get_Address(net, node, (unsigned short *)&port);
 		DAT_00887628->Set_Broadcast_Address(ip, port);
 	}
-	memcpy(DAT_00A8DBCC, Addresses, sizeof(Addresses));
-	memcpy(DAT_00A8DC2C, Field124, sizeof(Field124));
-	memcpy(DAT_00A8E230, Field144, sizeof(Field144));
-	memcpy(DAT_00A8E2B2, Field194, sizeof(Field194));
-	wcscpy(DAT_00A8E258, Field164);
-	DAT_00A8E2AC = Field190;
+	memcpy(Session.unknown_2994, Addresses, sizeof(Addresses));
+	memcpy(Session.unknown_29F4, Field124, sizeof(Field124));
+	memcpy(Session.unknown_2FF8, Field144, sizeof(Field144));
+	memcpy(Session.PlayerPorts, Field194, sizeof(Field194));
+	wcscpy(Session.MasterPlayerName, Field164);
+	Session.MasterPlayerID = Field190;
 	Game::Seed = Seed;
 	Game::InitRandom();
 	FUN_004068E0("Setup Rematch: Random Seed = %d\n", Game::Seed);
@@ -1649,7 +1600,7 @@ void MPCooperative::vt_entry_AC(void)
 		Session.PrecalcDesiredFrameRate = 0;
 	}
 	int worst = 0;
-	for (int p = 0; p < DAT_00A8DA84; p++) {
+	for (int p = 0; p < Session.Players.Count(); p++) {
 		if (DAT_00B7790C[p] > worst) {
 			worst = DAT_00B7790C[p];
 		}
@@ -1701,47 +1652,47 @@ void MPCooperative::vt_entry_AC(void)
 	DoList.Init();
 	OutList.Init();
 	CCToolTip::Instance->Activate(false);
-	FUN_004068E0("@@@@ Before destroying connections players.count() = %d\n", DAT_00A8DA74.Count());
+	FUN_004068E0("@@@@ Before destroying connections players.count() = %d\n", Session.Players.Count());
 	while (Ipx.Num_Connections()) {
 		Ipx.Delete_Connection(Ipx.Connection_ID(0));
 	}
-	if (DAT_00A8DBA0) {
+	if (Session.ViaPacketRouter) {
 		if (DAT_00A8EA0C) {
 			FUN_00664530(&DAT_00B052D0);
 		}
-		DAT_00A8DBA0 = 0;
+		Session.ViaPacketRouter = 0;
 	}
-	FUN_004068E0("@@@@ After destroying connections players.count() = %d\n", DAT_00A8DA74.Count());
+	FUN_004068E0("@@@@ After destroying connections players.count() = %d\n", Session.Players.Count());
 }
 
 // FUNCTION: 0x005C4CA0
 void MPCooperative::vt_entry_B0(void)
 {
-	FUN_005C6120(&DAT_00A8DA74);
-	DAT_00A8B54C = 0;
+	FUN_005C6120(&Session.Players);
+	Session.NumPlayers = 0;
 	for (int n = 0; n < Names.Count(); n++) {
 		for (int i = 0; i < DAT_00A80238; i++) {
-			if (wcsicmp(DAT_00A8022C[i]->Name, ((MPPlayerNode *)Names[n])->Name) == 0) {
-				((MPPlayerNode *)Names[n])->HouseSlot = i;
-				MPPlayerNode * node = new MPPlayerNode;
-				wcscpy(node->Name, ((MPPlayerNode *)Names[n])->Name);
-				node->Field7B = ((MPPlayerNode *)Names[n])->Field7B;
-				node->Field4B = ((MPPlayerNode *)Names[n])->Field4B;
-				node->Field53 = ((MPPlayerNode *)Names[n])->Field53;
-				strcpy(node->Text, ((MPPlayerNode *)Names[n])->Text);
-				node->Field4F = ((MPPlayerNode *)Names[n])->Field4F;
-				node->Field57 = ((MPPlayerNode *)Names[n])->Field57;
-				node->Slot = ((MPPlayerNode *)Names[n])->Slot;
-				node->Field73 = ((MPPlayerNode *)Names[n])->Field73;
-				node->Field77 = ((MPPlayerNode *)Names[n])->Field77;
-				node->Field7B = ((MPPlayerNode *)Names[n])->Field7B;
+			if (wcsicmp(DAT_00A8022C[i]->Name, Names[n]->Name) == 0) {
+				Names[n]->Slot.HouseIndex = i;
+				NodeNameType * node = new NodeNameType;
+				wcscpy(node->Name, Names[n]->Name);
+				node->Slot.Clan = Names[n]->Slot.Clan;
+				node->Slot.Country = Names[n]->Slot.Country;
+				node->Slot.ColorIdx = Names[n]->Slot.ColorIdx;
+				strcpy(node->Player.Serial, Names[n]->Player.Serial);
+				node->Slot.InitialCountry = Names[n]->Slot.InitialCountry;
+				node->Slot.InitialColor = Names[n]->Slot.InitialColor;
+				node->Slot.SpectatorFlag = Names[n]->Slot.SpectatorFlag;
+				node->Slot.Time = Names[n]->Slot.Time;
+				node->Slot.Unknown77 = Names[n]->Slot.Unknown77;
+				node->Slot.Clan = Names[n]->Slot.Clan;
 				NetNumType net;
 				NetNodeType host;
 				unsigned short port;
-				((MPPlayerNode *)Names[n])->Address.Get_Address(net, host, &port);
+				Names[n]->Address.Get_Address(net, host, &port);
 				node->Address.Set_Address(net, host, port);
-				DAT_00A8DA74.Add(node);
-				DAT_00A8B54C++;
+				Session.Players.Add(node);
+				Session.NumPlayers++;
 				break;
 			}
 		}
@@ -1787,13 +1738,13 @@ bool MPCooperative::vt_entry_BC(void)
 template class VectorClass<CoopPlayerStats *>;
 template class DynamicVectorClass<CoopPlayerStats *>;
 
-// FUNCTION: 0x005C5070 ?$DynamicVectorClass@PAVMPTeam@@::Clear
-// FUNCTION: 0x005C50A0 ?$VectorClass@PAVMPTeam@@::ID
-// FUNCTION: 0x005C50C0 ?$VectorClass@PAVMPTeam@@::GetItem
-template class DynamicVectorClass<MPTeam *>;
+// FUNCTION: 0x005C5070 ?$DynamicVectorClass@PAUNodeNameType@@::Clear
+// FUNCTION: 0x005C50A0 ?$DynamicVectorClass@PAUNodeNameType@@::ID
+// FUNCTION: 0x005C50C0 ?$VectorClass@PAUNodeNameType@@::GetItem
+template class DynamicVectorClass<NodeNameType *>;
 
 // FUNCTION: 0x005C50D0 ?$DynamicVectorClass@PAVCoopCamp_0049B610@@::Clear
-// FUNCTION: 0x005C5100 ?$VectorClass@PAVCoopCamp_0049B610@@::ID
+// FUNCTION: 0x005C5100 ?$DynamicVectorClass@PAVCoopCamp_0049B610@@::ID
 // FUNCTION: 0x005C5120 ?$VectorClass@PAVCoopCamp_0049B610@@::GetItem
 // FUNCTION: 0x005C5130 ?$VectorClass@PAUCoopPlayerStats@@::operator==
 // FUNCTION: 0x005C5170 ?$VectorClass@PAUCoopPlayerStats@@::Resize
@@ -1805,8 +1756,8 @@ template class DynamicVectorClass<MPTeam *>;
 template class VectorClass<CoopCamp_0049B610 *>;
 template class DynamicVectorClass<CoopCamp_0049B610 *>;
 
-// FUNCTION: 0x005C5390 ?$VectorClass@PAD::operator==
-// FUNCTION: 0x005C53D0 ?$VectorClass@PAD::Resize
-// FUNCTION: 0x005C5480 ?$VectorClass@PAD::Clear
-// FUNCTION: 0x005C54B0 ?$VectorClass@PAD::ID
-template class VectorClass<char *>;
+// FUNCTION: 0x005C5390 ?$VectorClass@PAUNodeNameType@@::operator==
+// FUNCTION: 0x005C53D0 ?$VectorClass@PAUNodeNameType@@::Resize
+// FUNCTION: 0x005C5480 ?$VectorClass@PAUNodeNameType@@::Clear
+// FUNCTION: 0x005C54B0 ?$VectorClass@PAUNodeNameType@@::ID
+template class VectorClass<NodeNameType *>;

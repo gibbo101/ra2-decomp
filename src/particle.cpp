@@ -5,6 +5,7 @@
 
 #define INCLUDE_COM
 #include "always.h"
+#include "geometry.h"
 #include "particle.h"
 #include "_alpha.h"
 #include "_convert.h"
@@ -448,6 +449,25 @@ void ParticleClass::Fire_Motion_AI(void)
 	Set_Coord(coord);
 }
 
+// FUNCTION: 0x0062D5E0
+void ParticleClass::Motion_AI(void)
+{
+	switch (Class->BehavesLike)
+	{
+		case BEHAVIOR_GAS:
+			Smoke_Motion_AI();
+			break;
+		case BEHAVIOR_SMOKE:
+			Gas_Motion_AI();
+			break;
+		case BEHAVIOR_FIRE:
+			Fire_Motion_AI();
+			break;
+		default:
+			break;
+	}
+}
+
 // FUNCTION: 0x0062D6F0
 bool ParticleClass::Mark(MarkType mark)
 {
@@ -464,10 +484,77 @@ Cell const * ParticleClass::Occupy_List(bool placement) const
 	return(_list);
 }
 
+// FUNCTION: 0x0062D760 $E155
+
+// FUNCTION: 0x0062D770
+LayerType ParticleClass::In_Which_Layer(void) const
+{
+	return(LAYER_AIR);
+}
+
 // FUNCTION: 0x0062D780
 int Approximate_Distance(Point2D & pt)
 {
 	return((int)(abs(pt.X) + abs(pt.Y)) >> 1);
+}
+
+// FUNCTION: 0x0062D7A0
+HRESULT STDMETHODCALLTYPE ParticleClass::Load(IStream * stream)
+{
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		new (this) ParticleClass(NoInitClass());
+
+		Swizzle_Pointer(&Class);
+		Swizzle_Pointer(&System);
+
+		result = S_OK;
+	}
+	return(result);
+}
+
+// FUNCTION: 0x0062D810
+HRESULT STDMETHODCALLTYPE ParticleClass::Save(IStream * stream, BOOL cleardirty)
+{
+	HRESULT result = BASECLASS::Save(stream, cleardirty);
+	WasSaved = true;
+	return(result);
+}
+
+// FUNCTION: 0x0062D830
+int ParticleClass::Shape_Number(void) const
+{
+	Point2D fire_start;
+	Point2D fire_end;
+	FacingType face;
+
+	int behavior = Class->BehavesLike;
+	if (behavior >= BEHAVIOR_GAS) {
+		if (behavior <= BEHAVIOR_SMOKE) {
+			goto state;
+		}
+		if (behavior == BEHAVIOR_FIRE) {
+			TacticalMap->Coord_To_Pixel(FireOrigin, fire_start);
+			TacticalMap->Coord_To_Pixel(FireTarget, fire_end);
+			face = Facing_Between_Points(fire_start, fire_end);
+			if (face == FACING_E || face == FACING_W) {
+				return(StateAI + 2 * Class->EndStateAI);
+			}
+			if (face == FACING_S || face == FACING_N) {
+				goto state;
+			}
+			if (face == FACING_NE || face == FACING_SW) {
+				return(StateAI + Class->EndStateAI);
+			}
+			if (face == FACING_SE || face == FACING_NW) {
+				return(StateAI + 3 * Class->EndStateAI);
+			}
+		}
+	}
+
+	return(0);
+state:
+	return(StateAI);
 }
 
 // FUNCTION: 0x0062D930
@@ -477,3 +564,26 @@ HRESULT STDMETHODCALLTYPE ParticleClass::GetClassID(CLSID * retval)
 	*retval = CLSID_ParticleClass;
 	return(S_OK);
 }
+
+// FUNCTION: 0x0062D970
+int ParticleClass::Fetch_Object_Size(void) const
+{
+	return(sizeof(*this));
+}
+
+// FUNCTION: 0x0062D980
+RTTIType ParticleClass::Fetch_RTTI(void) const
+{
+	return(RTTI_PARTICLE);
+}
+
+// FUNCTION: 0x0062D990
+ObjectTypeClass const * ParticleClass::Class_Of(void) const
+{
+	return(Class);
+}
+
+// FUNCTION: 0x0062D9A0 ParticleClass::~ParticleClass
+
+// FUNCTION: 0x0062DA40 $E2
+// FUNCTION: 0x0062DA70 $E5

@@ -11,12 +11,14 @@ class UnitTrackerClass
 	public:
 		UnitTrackerClass(void);
 		UnitTrackerClass(NoInitClass const &) {}
+		~UnitTrackerClass(void);
 
 		void Increment_Unit_Total(int unit_type);
 		void Decrement_Unit_Total(int unit_type);
 		void Clear_Unit_Total(void);
+		void Populate_Unit_Count(int count);
 
-		int Get_Unit_Total(int unit_type);
+		int Get_Unit_Total(void);
 		int * Get_All_Totals(void);
 		int Get_Unit_Count(void) { return(UnitCount); };
 

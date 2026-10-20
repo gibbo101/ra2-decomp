@@ -85,7 +85,6 @@ extern int DAT_00ABC9A0;
 extern int DAT_00ABC9A4;
 extern int DAT_00ABC9A8;
 extern PKey DAT_00886980;
-extern NodeNameType ** DAT_00A8DA78;
 
 void __cdecl FUN_004A4AC0(const char * text);
 Point2D __fastcall FUN_0072A9C0(Rect const * rect);
@@ -196,7 +195,7 @@ void LoadProgressManager::Load_Mixes(void)
 	if (Session.Type == GAME_NORMAL) {
 		FUN_0072B3E0(Scen->PlayerSideIndex);
 	} else {
-		FUN_0072B530(DAT_00A8DA78[0]->Get_Country());
+		FUN_0072B530(Session.Players[0]->Get_Country());
 	}
 }
 

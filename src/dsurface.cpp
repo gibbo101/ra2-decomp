@@ -3,7 +3,9 @@
 // Copyright 2025 Electronic Arts Inc.; 2026 OpenTS contributors
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
+#define DIRECTDRAW_VERSION 0x0300
 #include "always.h"
+#include <d3d.h>
 #include "geometry.h"
 #include "dsurface.h"
 #include "blit.h"
@@ -17,7 +19,43 @@ extern LPDIRECTDRAW DirectDrawObject;
 extern LPDIRECTDRAWSURFACE PaletteSurface;
 extern bool WindowedMode;
 extern bool GameInFocus;
-namespace DirectDrawWrap { extern bool DoSmth; }
+namespace DirectDrawWrap { extern bool DoSmth; extern LPDIRECTDRAW lpDD; }
+extern LPDIRECTDRAW2 DAT_008A0E00;
+extern LPDIRECT3D2 DAT_008A0DF4;
+extern LPDIRECT3DDEVICE2 DAT_008A0DF8;
+extern LPDIRECT3DVIEWPORT2 DAT_008A0DFC;
+extern const GUID DAT_007F7D50;
+extern const GUID DAT_007F8070;
+extern const GUID DAT_007F80B0;
+extern const double DAT_007E3D90;
+extern double __cdecl FUN_004CAC40(double);
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E8678;
+extern double DAT_008A0E38;
+extern double DAT_008A0EA8;
+
+class Texture3D {
+	public:
+		Texture3D(int width, int height, int flag);
+		int FUN_004A33A0(unsigned short * pixels);
+		void FUN_004A3370(void);
+	private:
+		char Data[0x78];
+};
+
+class Texture3DCache {
+	public:
+		Texture3DCache(void);
+		void FUN_004A3640(void);
+	private:
+		char Data[0x18004];
+};
+
+extern Texture3D * DAT_008A0E04;
+extern Texture3D * DAT_008A0E08;
+extern Texture3D * DAT_008A0E0C;
+extern Texture3DCache * DAT_008A0E10;
 unsigned Get_Video_Hardware_Capabilities(void);
 void Process_DD_Result(HRESULT result, int display_ok_msg);
 void __cdecl DebugString(const char * string, ...);
@@ -682,3 +720,345 @@ unsigned short DSurface::Blend_Pixel(unsigned short src_color, unsigned short ds
 done:
 	return(src_color);
 }
+
+// FUNCTION: 0x004BF750
+bool DSurface::Draw_Ping_Pong_Gradient_Line(Rect const & cliprect, Point2D const & startpoint, Point2D const & endpoint, RGBClass const & start_color, RGBClass const & end_color, float & gradient_step, float & gradient_position) const
+{
+	Rect clipped_rect = Intersect(cliprect, Get_Rect());
+
+	Point2D start = Bias_To(startpoint, clipped_rect);
+	Point2D end = Bias_To(endpoint, clipped_rect);
+
+	if (!Clip_Line_To_Rect(start, end, clipped_rect)) return(false);
+
+	if (start.X > end.X) {
+		swap(start, end);
+	}
+
+	if (Bytes_Per_Pixel() == 2) {
+
+		void * buffer = Lock(start);
+		if (buffer != NULL) {
+
+			if (start.Y == end.Y) {
+				for (int i = 0; i <= end.X - start.X; i++) {
+					RGBClass gradient_color = RGBClass(NoInitClass()).Lerp(start_color, end_color, gradient_position);
+
+					*((unsigned short *)buffer + i) = (unsigned short)DSurface::Build_Hicolor_Pixel(gradient_color);
+
+					gradient_position += gradient_step;
+					if (gradient_position < 0.0f && gradient_step < 0.0f) {
+						gradient_position = 0.0f;
+						gradient_step = -gradient_step;
+					} else if (gradient_position > 1.0f && gradient_step > 0.0f) {
+						gradient_position = 1.0f;
+						gradient_step = -gradient_step;
+					}
+				}
+
+			} else if (start.X == end.X) {
+				int pitch = start.Y > end.Y ? -Stride() : Stride();
+
+				int dy = abs(end.Y - start.Y);
+				for (int i = 0; i <= dy; i++) {
+					RGBClass gradient_color = RGBClass(NoInitClass()).Lerp(start_color, end_color, gradient_position);
+
+					*(unsigned short *)buffer = (unsigned short)DSurface::Build_Hicolor_Pixel(gradient_color);
+
+					gradient_position += gradient_step;
+					if (gradient_position < 0.0f && gradient_step < 0.0f) {
+						gradient_position = 0.0f;
+						gradient_step = -gradient_step;
+					} else if (gradient_position > 1.0f && gradient_step > 0.0f) {
+						gradient_position = 1.0f;
+						gradient_step = -gradient_step;
+					}
+
+					buffer = (unsigned char *)buffer + pitch;
+				}
+			} else {
+				int dx = end.X - start.X;
+				int dy = end.Y - start.Y;
+				int pitch = Stride();
+				if (dy < 0) {
+					pitch = -pitch;
+				}
+
+				dy = abs(dy);
+				int dx2 = 2 * dx;
+				int dy2 = 2 * dy;
+
+				if (dx > dy) {
+					int delta = dy2 - dx;
+
+					for (int i = 0; i <= dx; i++) {
+						RGBClass gradient_color = RGBClass(NoInitClass()).Lerp(start_color, end_color, gradient_position);
+
+						*((unsigned short *)buffer + i) = (unsigned short)DSurface::Build_Hicolor_Pixel(gradient_color);
+
+						gradient_position += gradient_step;
+						if (gradient_position < 0.0f && gradient_step < 0.0f) {
+							gradient_position = 0.0f;
+							gradient_step = -gradient_step;
+						} else if (gradient_position > 1.0f && gradient_step > 0.0f) {
+							gradient_position = 1.0f;
+							gradient_step = -gradient_step;
+						}
+
+						if (delta > 0) {
+							buffer = (unsigned char *)buffer + pitch;
+							delta -= dx2;
+						}
+
+						delta += dy2;
+
+					}
+				} else {
+					int delta = dx2 - dy;
+					int k = 0;
+
+					for (int i = 0; i <= dy; i++) {
+						RGBClass gradient_color = RGBClass(NoInitClass()).Lerp(start_color, end_color, gradient_position);
+
+						*((unsigned short *)buffer + k) = (unsigned short)DSurface::Build_Hicolor_Pixel(gradient_color);
+
+						gradient_position += gradient_step;
+						if (gradient_position < 0.0f && gradient_step < 0.0f) {
+							gradient_position = 0.0f;
+							gradient_step = -gradient_step;
+						} else if (gradient_position > 1.0f && gradient_step > 0.0f) {
+							gradient_position = 1.0f;
+							gradient_step = -gradient_step;
+						}
+
+						if (delta > 0) {
+							k++;
+							delta -= dy2;
+						}
+
+						delta += dx2;
+						buffer = (unsigned char *)buffer + pitch;
+					}
+				}
+			}
+
+			Unlock();
+			return(true);
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x004C1440
+int FUN_004C1440(void)
+{
+	DDCAPS caps;
+	memset(&caps, 0, sizeof(caps));
+	caps.dwSize = sizeof(caps);
+
+	HRESULT result = DAT_008A0E00->GetCaps(&caps, NULL);
+	if (result != DD_OK) return(result);
+
+	if (!(caps.dwCaps & DDCAPS_3D)) return(-1);
+	if (!(caps.dwZBufferBitDepths & DDBD_16)) return(-1);
+	if (!(caps.ddsCaps.dwCaps & DDSCAPS_3DDEVICE)) return(-1);
+	if (!(caps.ddsCaps.dwCaps & DDSCAPS_TEXTURE)) return(-1);
+	if (caps.ddsCaps.dwCaps & DDSCAPS_ZBUFFER) return(0);
+	return(-1);
+}
+
+struct DeviceDesc : D3DDEVICEDESC {
+	DWORD dx6_fields[12];
+};
+
+static inline void Clear_Desc(DeviceDesc * desc)
+{
+	memset(desc, 0, sizeof(DeviceDesc));
+	desc->dwSize = sizeof(DeviceDesc);
+}
+
+// FUNCTION: 0x004C14D0
+int FUN_004C14D0(void)
+{
+	DeviceDesc hardware;
+	DeviceDesc software;
+	Clear_Desc(&hardware);
+	Clear_Desc(&software);
+
+	HRESULT result = DAT_008A0DF8->GetCaps(&hardware, &software);
+	if (result != D3D_OK) return(result);
+
+	if ((hardware.dwFlags & 0x1C3) != 0x1C3) return(-1);
+	if (!(hardware.dcmColorModel & D3DCOLOR_RGB)) return(-1);
+	if (!(hardware.dwDevCaps & 0x400)) return(-1);
+	if (!(hardware.dwDevCaps & 0x200)) return(-1);
+	if (!(hardware.dwDeviceRenderBitDepth & DDBD_16)) return(-1);
+	if (!(hardware.dwDeviceZBufferBitDepth & DDBD_16)) return(-1);
+	if (!(hardware.dpcTriCaps.dwZCmpCaps & 0xA)) return(-1);
+	if (!(hardware.dpcTriCaps.dwSrcBlendCaps & 2)) return(-1);
+	if (!(hardware.dpcTriCaps.dwDestBlendCaps & 2)) return(-1);
+	if (hardware.dwMaxTextureWidth < 256) return(-1);
+	if (hardware.dwMaxTextureHeight < 256) return(-1);
+	return(0);
+}
+
+// FUNCTION: 0x004C1600
+int FUN_004C1600(void)
+{
+	HRESULT result = DirectDrawWrap::lpDD->QueryInterface(DAT_007F7D50, (void **)&DAT_008A0E00);
+	if (result == DD_OK) {
+		result = DAT_008A0E00->QueryInterface(DAT_007F8070, (void **)&DAT_008A0DF4);
+		if (result == DD_OK) {
+			if (FUN_004C1440() != 0) return(-1);
+			result = 0;
+		}
+	}
+	return(result);
+}
+
+struct SurfaceDesc : DDSURFACEDESC {
+	SurfaceDesc(void) { memset(this, 0, sizeof(DDSURFACEDESC)); dwSize = sizeof(DDSURFACEDESC); }
+};
+
+// FUNCTION: 0x004C16A0
+int FUN_004C16A0(void)
+{
+	LPDIRECTDRAWSURFACE surface = DSurface::Composite->Get_DD_Surface();
+	HRESULT result;
+	D3DVIEWPORT2 viewport;
+	unsigned short * pixels;
+	unsigned short * out;
+	int i;
+	int j;
+	int x;
+	int y;
+	int value;
+
+	result = DAT_008A0DF4->CreateDevice(DAT_007F80B0, surface, &DAT_008A0DF8);
+	if (result != D3D_OK) goto done;
+
+	if (FUN_004C14D0() != 0) return(-1);
+
+	result = DAT_008A0DF4->CreateViewport(&DAT_008A0DFC, NULL);
+	if (result != D3D_OK) goto done;
+
+	result = DAT_008A0DF8->AddViewport(DAT_008A0DFC);
+	if (result != D3D_OK) goto done;
+
+	{
+		SurfaceDesc desc;
+		result = surface->GetSurfaceDesc(&desc);
+		if (result != DD_OK) goto done;
+
+		memset(&viewport, 0, sizeof(viewport));
+		viewport.dwSize = sizeof(viewport);
+		viewport.dwWidth = desc.dwWidth;
+		viewport.dwHeight = desc.dwHeight;
+		viewport.dvClipWidth = (float)desc.dwWidth;
+		viewport.dvClipHeight = (float)desc.dwHeight;
+		viewport.dvMaxZ = 1.0f;
+	}
+	result = DAT_008A0DFC->SetViewport2(&viewport);
+	if (result != D3D_OK) goto done;
+
+	result = DAT_008A0DF8->SetCurrentViewport(DAT_008A0DFC);
+	if (result != D3D_OK) goto done;
+
+	DAT_008A0E04 = new Texture3D(256, 256, 0);
+	if (DAT_008A0E04 != NULL) {
+		pixels = (unsigned short *)malloc(0x20000);
+		if (pixels != NULL) {
+			out = pixels;
+			for (j = 0; j < 256; j++) {
+				y = j - 128;
+				for (i = 0; i < 256; i++) {
+					x = i - 128;
+					value = 400 - (int)(FUN_004CAC40((double)(x * x + y * y)) * DAT_007E3D90);
+					if (value < 0) {
+						value = 0;
+					} else if (value > 255) {
+						value = 255;
+					}
+					*out++ = (unsigned short)DSurface::Build_Hicolor_Pixel(value, value, value);
+				}
+			}
+
+			if (DAT_008A0E04->FUN_004A33A0(pixels) != 0) return(3);
+
+			SurfaceDesc desc;
+			result = surface->GetSurfaceDesc(&desc);
+			if (result == DD_OK) {
+				DAT_008A0E08 = new Texture3D(desc.dwWidth, desc.dwHeight, 1);
+				DAT_008A0E10 = new Texture3DCache;
+
+				if (DAT_008A0E08 == NULL || DAT_008A0E10 == NULL) return(-1);
+				return(0);
+			}
+			goto done;
+		}
+		return(2);
+	}
+	return(1);
+done:
+	return(result);
+}
+
+// FUNCTION: 0x004C19B0
+void FUN_004C19B0(void)
+{
+	Texture3DCache * cache = DAT_008A0E10;
+	if (cache != NULL) {
+		cache->FUN_004A3640();
+		operator delete(cache);
+		DAT_008A0E10 = NULL;
+	}
+	Texture3D * texture = DAT_008A0E0C;
+	if (texture != NULL) {
+		texture->FUN_004A3370();
+		operator delete(texture);
+		DAT_008A0E0C = NULL;
+	}
+	texture = DAT_008A0E08;
+	if (texture != NULL) {
+		texture->FUN_004A3370();
+		operator delete(texture);
+		DAT_008A0E08 = NULL;
+	}
+	texture = DAT_008A0E04;
+	if (texture != NULL) {
+		texture->FUN_004A3370();
+		operator delete(texture);
+		DAT_008A0E04 = NULL;
+	}
+	if (DAT_008A0DFC != NULL) {
+		DAT_008A0DFC->Release();
+		DAT_008A0DFC = NULL;
+	}
+	if (DAT_008A0DF8 != NULL) {
+		DAT_008A0DF8->Release();
+		DAT_008A0DF8 = NULL;
+	}
+	if (DAT_008A0DF4 != NULL) {
+		DAT_008A0DF4->Release();
+		DAT_008A0DF4 = NULL;
+	}
+	if (DAT_008A0E00 != NULL) {
+		DAT_008A0E00->Release();
+		DAT_008A0E00 = NULL;
+	}
+}
+
+// FUNCTION: 0x004C1A90 DSurface::Blit_From
+
+// FUNCTION: 0x004C1AB0 DSurface::Is_Direct_Draw
+
+// FUNCTION: 0x004C1AC0 DSurface::~DSurface
+
+// FUNCTION: 0x004C1B50 ?$TPoint2D@H::Length
+template class TPoint2D<int>;
+
+// FUNCTION: 0x004C1B80 $E63
+double DAT_008A0E38 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x004C1BB0 $E66
+double DAT_008A0EA8 = DAT_008A0E38 / DAT_007E8678;

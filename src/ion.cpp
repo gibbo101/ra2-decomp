@@ -954,3 +954,32 @@ bool TechnoClass::CanBePermaMindControlled(void) const
 // FUNCTION: 0x0053C4F0 ?$DynamicVectorClass@PAVCellClass@@::ID
 // FUNCTION: 0x0053C510 ?$VectorClass@PAVCellClass@@::GetItem
 template class DynamicVectorClass<CellClass *>;
+
+// FUNCTION: 0x0053C520 ?$VectorClass@PBVAnimClass@@::operator==
+// FUNCTION: 0x0053C560 ?$VectorClass@PBVAnimClass@@::Resize
+// FUNCTION: 0x0053C610 ?$VectorClass@PBVAnimClass@@::Clear
+// FUNCTION: 0x0053C640 ?$VectorClass@PBVAnimClass@@::ID
+// FUNCTION: 0x0053C680 ?$VectorClass@PBVAnimClass@@::ID
+// FUNCTION: 0x0053C6A0 ?$DynamicVectorClass@PBVAnimClass@@::Resize
+// FUNCTION: 0x0053C750 ?$DynamicVectorClass@PBVAnimClass@@::ID
+// FUNCTION: 0x0053C780 ?$DynamicVectorClass@PBVAnimClass@@::~?$DynamicVectorClass@PBVAnimClass@@
+// FUNCTION: 0x0053C7D0 ?$VectorClass@PBVAnimClass@@::~?$VectorClass@PBVAnimClass@@
+template class DynamicVectorClass<AnimClass const *>;
+template class VectorClass<AnimClass const *>;
+
+#include <math.h>
+
+extern double __cdecl FUN_004CAC40(double);
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007EC010;
+
+// FUNCTION: 0x0053C820 $E144
+double DAT_00A9FF90 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x0053C850 $E147
+double DAT_00AA0140 = DAT_00A9FF90 / DAT_007EC010;
+
+// FUNCTION: 0x0053C870 $E150
+double DAT_00AA0110 = DAT_007E1718 / DAT_00AA0140;

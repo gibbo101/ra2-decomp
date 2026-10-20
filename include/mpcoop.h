@@ -8,6 +8,8 @@
 #include "ipxaddr.h"
 #include "multiplayer.h"
 
+struct NodeNameType;
+
 class MPCoopObject
 {
 	public:
@@ -85,7 +87,7 @@ class MPCooperative : public MPGameModeClass
 		int Field4C;
 		MPCoopObject * Field50;
 		int Field54;
-		DynamicVectorClass<char *> Names;
+		DynamicVectorClass<NodeNameType *> Names;
 		int Field70;
 		char Pad74[0x9C - 0x74];
 		int Seed;

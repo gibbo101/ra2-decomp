@@ -74,14 +74,6 @@ class AbstractClass : public IPersistStream, public IRTTITypeInfo, public INotic
 		virtual bool INoticeSink_Unknown(DWORD unknown, DWORD unknown2) override;
 		virtual void STDMETHODCALLTYPE INoticeSource_Unknown(void) override;
 
-		AbstractClass & operator = (const AbstractClass & that)
-		{
-			ID = that.ID;
-			RefCount = that.RefCount;
-			Dirty = that.Dirty;
-			return(*this);
-		}
-
 		virtual void Init(void);
 		void BecomeUntargetable(void);
 		virtual void Detach(AbstractClass const * target, bool all = true);

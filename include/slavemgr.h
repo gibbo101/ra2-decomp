@@ -30,6 +30,7 @@ class SlaveManagerClass : public AbstractClass
 		int State;
 		int LastScanFrame;
 
+		SlaveManagerClass(void);
 		SlaveManagerClass(TechnoClass * owner, InfantryTypeClass * type, int number, int regen, int reload);
 		SlaveManagerClass(NoInitClass const & x);
 		virtual ~SlaveManagerClass(void) override;

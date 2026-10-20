@@ -592,4 +592,32 @@ void TiberiumClass::Post_Load_Game(void)
 // FUNCTION: 0x00723730 ?$DynamicVectorClass@PAVTiberiumClass@@::Clear
 // FUNCTION: 0x00723760 ?$DynamicVectorClass@PAVTiberiumClass@@::ID
 // FUNCTION: 0x00723780 ?$VectorClass@PAVTiberiumClass@@::GetItem
+
+// FUNCTION: 0x00723790 ?$VectorClass@PAVTiberiumClass@@::operator==
+// FUNCTION: 0x007237D0 ?$VectorClass@PAVTiberiumClass@@::Resize
+// FUNCTION: 0x00723880 ?$VectorClass@PAVTiberiumClass@@::Clear
+// FUNCTION: 0x007238B0 ?$VectorClass@PAVTiberiumClass@@::ID
+// FUNCTION: 0x007238F0 ?$VectorClass@PAVTiberiumClass@@::ID
+template class VectorClass<TiberiumClass *>;
+
+// FUNCTION: 0x00723910 ?$DynamicVectorClass@PAVTiberiumClass@@::Resize
+// FUNCTION: 0x007239C0 ?$DynamicVectorClass@PAVTiberiumClass@@::ID
 template class DynamicVectorClass<TiberiumClass *>;
+
+// FUNCTION: 0x007239F0 ?$DynamicVectorClass@PAVTiberiumClass@@::~?$DynamicVectorClass@PAVTiberiumClass@@
+// FUNCTION: 0x00723A40 ?$VectorClass@PAVTiberiumClass@@::~?$VectorClass@PAVTiberiumClass@@
+
+namespace fastmath { double __cdecl sqrt(double x); }
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007F5798;
+
+// FUNCTION: 0x00723A90 $E64
+double DAT_00B0F538 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x00723AC0 $E67
+double DAT_00B0F588 = DAT_00B0F538 / DAT_007F5798;
+
+// FUNCTION: 0x00723AE0 $E70
+double DAT_00B0F570 = DAT_007E1718 / DAT_00B0F588;

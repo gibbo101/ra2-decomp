@@ -4901,3 +4901,31 @@ bool TPoint2D<T>::operator == (TPoint2D<T> const & rvalue) const
 {
 	return(X==rvalue.X && Y==rvalue.Y);
 }
+
+// FUNCTION: 0x0050E4A0 ?$DynamicVectorClass@PBVBuildingTypeClass@@::Clear
+template class DynamicVectorClass<BuildingTypeClass const *>;
+
+// FUNCTION: 0x0050E4D0 ?$DynamicVectorClass@PBVBuildingTypeClass@@::ID
+
+// FUNCTION: 0x0050E4F0 ?$VectorClass@PBVBuildingTypeClass@@::GetItem
+
+// FUNCTION: 0x0050E500 ?$DynamicVectorClass@PBVTeamTypeClass@@::Clear
+template class DynamicVectorClass<TeamTypeClass const *>;
+
+// FUNCTION: 0x0050E530 ?$DynamicVectorClass@PBVTeamTypeClass@@::ID
+
+// FUNCTION: 0x0050E550 ?$VectorClass@PBVTeamTypeClass@@::GetItem
+
+// FUNCTION: 0x0050E560 ?$DynamicVectorClass@UAngerStruct@@::Clear
+template class DynamicVectorClass<AngerStruct>;
+
+// FUNCTION: 0x0050E590 ?$DynamicVectorClass@UAngerStruct@@::ID
+
+// FUNCTION: 0x0050E5B0 ?$VectorClass@UAngerStruct@@::GetItem
+
+// FUNCTION: 0x0050E5D0 ?$DynamicVectorClass@UScoutStruct@@::Clear
+template class DynamicVectorClass<ScoutStruct>;
+
+// FUNCTION: 0x0050E600 ?$DynamicVectorClass@UScoutStruct@@::ID
+
+// FUNCTION: 0x0050E620 ?$VectorClass@UScoutStruct@@::GetItem

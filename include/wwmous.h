@@ -9,32 +9,10 @@
 #include "rect.h"
 #include "win.h"
 #include "msanim.h"
+#include "xmouse.h"
 
 class DSurface;
 class BSurface;
-
-class Mouse {
-	public:
-		virtual ~Mouse(void) {}
-
-		virtual void Draw(Point2D const & coords, SHPStruct const * image, int frame) = 0;
-		virtual bool IsRefCountNegative(void) = 0;
-		virtual void HideCursor(void) = 0;
-		virtual void ShowCursor(void) = 0;
-		virtual void ReleaseMouse(void) = 0;
-		virtual void CaptureMouse(void) = 0;
-		virtual unsigned char IsCaptured(void) = 0;
-		virtual void func_20(Rect useless) = 0;
-		virtual void CallFunc10(void) = 0;
-		virtual unsigned long GetRefCount(void) = 0;
-		virtual int GetX(void) = 0;
-		virtual int GetY(void) = 0;
-		virtual Point2D * GetCoords(Point2D * buffer) = 0;
-		virtual void SetCoords(Point2D coords) = 0;
-		virtual void func_3C(DSurface * surface, bool flag) = 0;
-		virtual void func_40(DSurface * surface, bool flag) = 0;
-		virtual void func_44(int * arg1, int * arg2) = 0;
-};
 
 class WWMouseClass : public Mouse {
 	public:
@@ -42,23 +20,23 @@ class WWMouseClass : public Mouse {
 		WWMouseClass(NoInitClass const &) {}
 		virtual ~WWMouseClass(void) override;
 
-		virtual void Draw(Point2D const & coords, SHPStruct const * image, int frame) override;
-		virtual bool IsRefCountNegative(void) override;
-		virtual void HideCursor(void) override;
-		virtual void ShowCursor(void) override;
-		virtual void ReleaseMouse(void) override;
-		virtual void CaptureMouse(void) override;
-		virtual unsigned char IsCaptured(void) override;
-		virtual void func_20(Rect useless) override;
-		virtual void CallFunc10(void) override;
-		virtual unsigned long GetRefCount(void) override;
-		virtual int GetX(void) override;
-		virtual int GetY(void) override;
-		virtual Point2D * GetCoords(Point2D * buffer) override;
-		virtual void SetCoords(Point2D coords) override;
-		virtual void func_3C(DSurface * surface, bool flag) override;
-		virtual void func_40(DSurface * surface, bool flag) override;
-		virtual void func_44(int * arg1, int * arg2) override;
+		virtual void Set_Cursor(Point2D const & hotspot, ShapeSet const * cursor, int shape) override;
+		virtual bool Is_Hidden(void) const override;
+		virtual void Hide_Mouse(void) override;
+		virtual void Show_Mouse(void) override;
+		virtual void Release_Mouse(void) override;
+		virtual void Capture_Mouse(void) override;
+		virtual bool Is_Captured(void) const override;
+		virtual void Conditional_Hide_Mouse(Rect region) override;
+		virtual void Conditional_Show_Mouse(void) override;
+		virtual int Get_Mouse_State(void) const override;
+		virtual int Get_Mouse_X(void) const override;
+		virtual int Get_Mouse_Y(void) const override;
+		virtual Point2D Get_Mouse_Point(void) const override;
+		virtual void Set_Mouse_Point(Point2D point) override;
+		virtual void Draw_Mouse(Surface * scr, bool issidebarsurface = false) override;
+		virtual void Erase_Mouse(Surface * scr, bool issidebarsurface = false) override;
+		virtual void Convert_Coordinate(int & x, int & y) const override;
 
 		void FUN_007B8960(void);
 		bool FUN_007B8C50(void);

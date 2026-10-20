@@ -21,7 +21,8 @@ class HSVClass
 			{};
 		operator RGBClass (void) const;
 
-		bool operator!=(const HSVClass &that) const;
+		bool operator==(HSVClass &that);
+		bool operator!=(const HSVClass &that);
 
 		enum {
 			MAX_VALUE=255
@@ -43,3 +44,4 @@ class HSVClass
 };
 
 bool operator==(HSVClass const & a, HSVClass const & b);
+bool operator!=(HSVClass const & a, HSVClass const & b);

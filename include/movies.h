@@ -31,6 +31,8 @@ class MovieSubtitles
 	public:
 		~MovieSubtitles(void);
 		void SetCallback(void (__fastcall * callback)(void *));
+		bool FUN_006C9C60(unsigned int time);
+		void FUN_006C9D20(void);
 
 		int Active;
 		int field_4;

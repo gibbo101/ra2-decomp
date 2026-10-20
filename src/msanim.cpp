@@ -1029,8 +1029,154 @@ int MSPrintAnim::Get_Line_Width(WideWstring const & str) const
 	return(width);
 }
 
+// FUNCTION: 0x005CE3A0
+void MSWordAnim::Redraw(Surface * surface, Rect const * rect)
+{
+	if (rect == NULL || Intersect(*rect, Area).Is_Valid()) {
+		int x = XPos;
+		int y = YPos;
+
+		unsigned end = LineStart;
+
+		for (unsigned char_index = 0; char_index < end; char_index++) {
+			if (Text.getChar(char_index) == '\n') {
+				x = XPos;
+				y += Font->Get_Font_Height();
+				if (y + Font->Get_Font_Height() >= surface->Get_Height()) {
+					return;
+				}
+			} else {
+				Font->Draw_Character(surface, Text.getChar(char_index), x, y, 2, true);
+				x += Font->Get_Character_Width(Text.getChar(char_index));
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x005CE4A0
+MSPCXAnim::MSPCXAnim(Wstring const & name, MS_ANIM_LIST * vector, bool transient) :
+	MSAnim(0, 0, false),
+	TargetSurface(AlternateSurface),
+	Anims(vector),
+	Image(NULL),
+	Transient(transient),
+	Drawn(false),
+	Area(0, 0, 0, 0)
+{
+	Active = true;
+
+	if (name != (char const *)NULL) {
+		Wstring token;
+		name.getToken(0, ".", token);
+		CCFileClass file(token + ".PCX");
+		if (file.Is_Available(0)) {
+			Image = Read_PCX_File(file);
+			if (Image != NULL) {
+				Area = Image->Get_Rect();
+				Rect surface_rect = TargetSurface->Get_Rect();
+				Area.X += (surface_rect.Width - Area.Width) / 2;
+				Area.Y += (surface_rect.Height - Area.Height) / 2;
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x005CE640
+MSPCXAnim::MSPCXAnim(Wstring const & name, MS_ANIM_LIST * vector, Point2D const & position, bool transient) :
+	MSAnim(0, 0, false),
+	TargetSurface(AlternateSurface),
+	Anims(vector),
+	Image(NULL),
+	Transient(transient),
+	Drawn(false),
+	Area(0, 0, 0, 0)
+{
+	Active = true;
+
+	if (name != (char const *)NULL) {
+		Wstring token;
+		name.getToken(0, ".", token);
+		CCFileClass file(token + ".PCX");
+		if (file.Is_Available(0)) {
+			Image = Read_PCX_File(file);
+			if (Image != NULL) {
+				Area = Image->Get_Rect();
+				Area.X = position.X;
+				Area.Y = position.Y;
+				TargetSurface->Get_Rect();
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x005CE7B0
+MSPCXAnim::~MSPCXAnim(void)
+{
+	if (Image) {
+		delete Image;
+	}
+}
+
+// FUNCTION: 0x005CE7D0
+bool MSPCXAnim::Advance(Surface * surface, Rect & rect)
+{
+	if (!Drawn) {
+		if (Active) {
+			if (Image != NULL) {
+				TargetSurface->Blit_From(Area, *Image, Image->Get_Rect());
+				Redraw(surface);
+
+				Rect rect2 = Area;
+				rect = rect2;
+
+				int my_id = Anims->ID(this);
+				for (int i = 0; i < Anims->Count(); i++) {
+					if (i != my_id) {
+						(*Anims)[i]->Redraw(surface, &rect2);
+					}
+				}
+			}
+			Drawn = true;
+		}
+	}
+
+	return(Drawn && !Transient);
+}
+
+// FUNCTION: 0x005CE8C0
+void MSPCXAnim::Redraw(Surface * surface, Rect const * rect)
+{
+	if (Image != NULL && !Drawn && Active) {
+		if (rect == NULL || Intersect(*rect, Area).Is_Valid()) {
+			surface->Blit_From(Area, *Image, Image->Get_Rect());
+		}
+	}
+}
+
+// FUNCTION: 0x005CEA40
+void MSPCXAnim::Restore(Rect const & rect)
+{
+	if (Image != NULL && Active) {
+		TargetSurface->Blit_From(Area, *Image, Image->Get_Rect());
+	}
+}
+
 // FUNCTION: 0x005CEA80
 Rect MSPCXAnim::Get_Rect(void) const
 {
 	return(Area);
 }
+
+// FUNCTION: 0x005CEAB0
+bool MSPCXAnim::Has_Finished(void) const
+{
+	return(Drawn);
+}
+
+// FUNCTION: 0x005CEAC0 MSAnim::Set_Active
+
+// FUNCTION: 0x005CEAD0 MSAnim::Pause
+
+// FUNCTION: 0x005CEB20 MSAnim::Resume
+
+// FUNCTION: 0x005CEB40 MSAnim::Has_Finished

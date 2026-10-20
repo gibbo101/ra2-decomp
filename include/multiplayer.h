@@ -17,10 +17,10 @@ class NoInitClass;
 class HouseClass;
 class MultiMission;
 
-class MPTeam
+class MultiplayerTeam
 {
 	public:
-		virtual ~MPTeam(void);
+		virtual ~MultiplayerTeam(void);
 		virtual bool IsTeamIncluded(int index);
 		virtual bool SetPlayerTeam(int player);
 
@@ -42,7 +42,7 @@ class MPGameModeClass
 		static MPGameModeClass * __fastcall Get(int index);
 		CCINIClass * FUN_005D67B0(void);
 		bool FUN_005D63E0(MultiMission * map);
-		MPTeam * FUN_005D6620(int index);
+		MultiplayerTeam * FUN_005D6620(int index);
 		void FUN_005D6750(void);
 		bool FUN_005D6D80(void);
 
@@ -66,8 +66,8 @@ class MPGameModeClass
 		virtual bool IsAIAllowed(void);
 		virtual bool vt_entry_40(void);
 		virtual int FirstValidMapIndex(void);
-		virtual void PopulateTeamDropdown(HWND hwnd, DynamicVectorClass<MPTeam *> * teams, MPTeam * team);
-		virtual void DrawTeamDropdown(HWND hwnd, DynamicVectorClass<MPTeam *> * teams, MPTeam * team);
+		virtual void PopulateTeamDropdown(HWND hwnd, DynamicVectorClass<MultiplayerTeam *> * teams, MultiplayerTeam * team);
+		virtual void DrawTeamDropdown(HWND hwnd, DynamicVectorClass<MultiplayerTeam *> * teams, MultiplayerTeam * team);
 		virtual void PopulateTeamDropdownForPlayer(HWND hwnd, int index);
 		virtual bool vt_entry_54(int index, DynamicVectorClass<int> picks);
 		virtual bool vt_entry_58(int index, DynamicVectorClass<int> picks, char const * map, char const * name);
@@ -96,13 +96,13 @@ class MPGameModeClass
 		virtual bool vt_entry_B4(DynamicVectorClass<int> list, int * out);
 		virtual int vt_entry_B8(void);
 		virtual bool vt_entry_BC(void);
-		virtual void CreateMPTeams(DynamicVectorClass<MPTeam *> * teams);
+		virtual void CreateMPTeams(DynamicVectorClass<MultiplayerTeam *> * teams);
 		virtual Cell * AssignStartingPositionsToHouse(Cell * result, int house, DynamicVectorClass<Cell> * coords, unsigned char * satisfied);
 		virtual bool SpawnBaseUnits(HouseClass * house, unsigned unused);
 		virtual bool GenerateStartingUnits(HouseClass * house, int & amount);
 
 		bool unknown_4;
-		DynamicVectorClass<MPTeam *> MPTeams;
+		DynamicVectorClass<MultiplayerTeam *> MPTeams;
 		WideWstring UIName;
 		WideWstring CSFTooltip;
 		int MPModeIndex;

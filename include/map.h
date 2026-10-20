@@ -85,6 +85,7 @@ class MapClass: public GScreenClass
 		bool Base_Region(Cell const & cell, HousesType & house, ZoneType & zone) const;
 		int Cell_Region(Cell const & cell);
 		Cell Region_To_Cell(int region) const;
+		void FUN_00588960(int level);
 		int FUN_00588990(void);
 		int GetThreatPosed(Cell const & cell, HouseClass * house) const;
 		int Cell_Threat(Cell const & cell, HouseClass const & house);

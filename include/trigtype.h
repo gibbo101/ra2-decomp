@@ -77,6 +77,8 @@ class TriggerTypeClass : public AbstractTypeClass
 			bool IsEnabledOnEasy;
 			bool IsEnabledOnMedium;
 			bool IsEnabledOnHard;
+			DifficultyStruct(void) {}
+			DifficultyStruct(bool easy, bool medium, bool hard) : IsEnabledOnEasy(easy), IsEnabledOnMedium(medium), IsEnabledOnHard(hard) {}
 		};
 
 		DifficultyStruct Difficulty;

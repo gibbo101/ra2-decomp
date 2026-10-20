@@ -268,3 +268,30 @@ template class DynamicVectorClass<TechnoTypeClass *>;
 template class DynamicVectorClass<ButtonFadeEffect *>;
 
 // FUNCTION: 0x004B9C70 ?$DynamicVectorClass@PAUButtonFadeEffect@@::ID
+
+// FUNCTION: 0x004B9C90 ?$VectorClass@PAUButtonFadeEffect@@::GetItem
+
+// FUNCTION: 0x004B9CA0 ?$VectorClass@PAUButtonFadeEffect@@::operator==
+
+// FUNCTION: 0x004B9CE0 ?$VectorClass@PAUButtonFadeEffect@@::Resize
+
+// FUNCTION: 0x004B9D90 ?$VectorClass@PAUButtonFadeEffect@@::Clear
+
+// FUNCTION: 0x004B9DC0 ?$VectorClass@PAUButtonFadeEffect@@::ID
+
+// FUNCTION: 0x004B9E00 ?$VectorClass@PAUButtonFadeEffect@@::ID
+
+// FUNCTION: 0x004B9E20 ?$DynamicVectorClass@PAUButtonFadeEffect@@::Resize
+
+// FUNCTION: 0x004B9ED0 ?$DynamicVectorClass@PAUButtonFadeEffect@@::ID
+
+struct CrossDissolveEffect;
+template class DynamicVectorClass<CrossDissolveEffect *>;
+
+// FUNCTION: 0x004B9F00 ?$VectorClass@PAUCrossDissolveEffect@@::operator==
+
+// FUNCTION: 0x004B9F40 ?$VectorClass@PAUCrossDissolveEffect@@::Resize
+
+// FUNCTION: 0x004B9FF0 ?$VectorClass@PAUCrossDissolveEffect@@::Clear
+
+// FUNCTION: 0x004BA020 ?$VectorClass@PAUCrossDissolveEffect@@::ID

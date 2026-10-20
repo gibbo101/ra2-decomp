@@ -1088,6 +1088,20 @@ A named CellClass reference pinned Generate_Rural_Buildings against declaration-
 flips. Cost: about 5.9M tokens. Merge gate: 8,676 of 8,676 (1,260.2 KB), about 45% of
 game functions.
 
+### Batches 57, 58 and 59, and the first cleanup round (20 October 2026)
+
+**419 of 432 functions** (137, 143, 139), with three cleanup agents alongside. planmgr shed
+every stand-in: one real PlanningTokenClass, member, branch and node class in
+include/planning.h, real vector instances by RTTI, and `delete` where a call to the
+deleting destructor stood in; it now has 165 honest matches against 150 before, with
+Pop_Front banked. The two Mouse classes became one (YR's extra slot is Set_Mouse_Point),
+which landed the keyboard's Message_Handler; seven files lost their Session DAT_ aliases;
+MPTeam became MultiplayerTeam by RTTI. Batch 58's merge refused to run, reading an
+unrelated question as its trigger, so its headers and four functions were landed by hand.
+Landing also fixed two train-bridge functions that called Set_Under_Bridge where the exe
+calls its byte-identical twin Set_Under_Rail_Bridge. Cost: about 6.3M tokens. Merge gate:
+9,113 of 9,113 (1,311.8 KB), about 47% of game functions.
+
 ### Decide before the first batch
 
 - **Module layout.** Which function lives in which source file, and the link order, decide

@@ -5045,3 +5045,20 @@ template class DynamicVectorClass<InfantryClass *>;
 // FUNCTION: 0x0045A640 ?$VectorClass@PAVFoggedObjectClass@@::operator==
 template class VectorClass<FoggedObjectClass *>;
 
+
+// FUNCTION: 0x0045A680 ?$DynamicVectorClass@PAVFoggedObjectClass@@::Resize
+// FUNCTION: 0x0045A730 ?$DynamicVectorClass@PAVFoggedObjectClass@@::ID
+
+// FUNCTION: 0x0045A760 ?$VectorClass@PAVBuildingClass@@::operator==
+// FUNCTION: 0x0045A7A0 ?$VectorClass@PAVBuildingClass@@::Resize
+// FUNCTION: 0x0045A850 ?$VectorClass@PAVBuildingClass@@::Clear
+// FUNCTION: 0x0045A880 ?$VectorClass@PAVBuildingClass@@::ID
+// FUNCTION: 0x0045A8C0 ?$VectorClass@PAVBuildingClass@@::ID
+template class VectorClass<BuildingClass *>;
+
+// FUNCTION: 0x0045A8E0 ?$DynamicVectorClass@PAVBuildingClass@@::Resize
+// FUNCTION: 0x0045A990 ?$DynamicVectorClass@PAVBuildingClass@@::ID
+
+// FUNCTION: 0x0045A9C0 ?$DynamicVectorClass@PBVParticleSystemTypeClass@@::~?$DynamicVectorClass@PBVParticleSystemTypeClass@@
+// FUNCTION: 0x0045AA10 ?$VectorClass@PBVParticleSystemTypeClass@@::~?$VectorClass@PBVParticleSystemTypeClass@@
+// FUNCTION: 0x0045AA60 ?$VectorClass@PAVInfantryClass@@::~?$VectorClass@PAVInfantryClass@@

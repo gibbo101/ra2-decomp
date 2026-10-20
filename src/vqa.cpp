@@ -377,6 +377,291 @@ int VQAClass::Get_VQA_Version(void) const
 	return(-1);
 }
 
+// FUNCTION: 0x00759830
+int VQAClass::Set_VQA_Volume(int vol)
+{
+	int old = Config.Volume;
+	if (vol != -1) {
+		Config.Volume = vol;
+	}
+	return(old);
+}
+
+// FUNCTION: 0x00759850
+bool VQAClass::Set_Loop(int loop_id, int iterations)
+{
+	if (iterations < 0) {
+		iterations = -1;
+	}
+	long rc = VQA_SetLoop(Handle, loop_id, iterations, 1);
+	if (rc == VQAERR_NONE) {
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00759880
+bool VQAClass::Set_Loop(int start, int end, int iterations)
+{
+	if (start < 0 || start >= TotalFrames) {
+		start = 0;
+	}
+
+	if (end < 0 || end >= TotalFrames) {
+		end = TotalFrames - 1;
+	}
+
+	if (iterations < 0) {
+		iterations = -1;
+	}
+
+	long rc = VQA_SetLoop_Internal(Handle, start, end, iterations, 0);
+	if (rc == VQAERR_NONE) {
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x007598D0
+void VQAClass::Seek_To_Frame(int frame)
+{
+	if (frame == (int)CurrentFrame) {
+		return;
+	}
+
+	if (VQA_SeekFrame(Handle, frame, SEEK_SET) != VQAERR_SEEK) {
+		CurrentFrame = frame;
+	}
+}
+
+unsigned long __fastcall FUN_007C3990(VQAHandle *vqa);
+
+// FUNCTION: 0x00759900
+bool VQAClass::Seek_To_Stored_Frame(void)
+{
+	if (IsOpen) {
+		if (VQA_SeekFrame(Handle, Event3Frame, 0) != VQAERR_SEEK) {
+			CurrentFrame = Event3Frame;
+			return(true);
+		}
+		return(false);
+	}
+	return(true);
+}
+
+// FUNCTION: 0x00759940
+int VQAClass::Play_VQA(int last_frame_to_play, bool nobreakout)
+{
+	long errval;
+
+	bool brokeout = false;
+	bool sleeping = false;
+
+	if (last_frame_to_play < 0 || last_frame_to_play >= TotalFrames) {
+		last_frame_to_play = TotalFrames - 1;
+	}
+	VQA_SetStop(Handle, last_frame_to_play);
+
+	if (PrimaryColorMode != -1) {
+		long blockw;
+		long blockh;
+		long cmode;
+		VQA_GetBlockInfo(Handle, blockw, blockh, cmode);
+		if (cmode == 1) {
+			Hicolor_Init_Table(PrimaryColorMode);
+			if (Get_Option(OPTION_ALTERNATE_UNVQ)) {
+				VQA_SetUnVQ(Handle, ASM_UnVQ1_C1_TABLE_ALT, UnVQ2_4x2_Table);
+			} else {
+				VQA_SetUnVQ(Handle, ASM_UnVQ1_C1_TABLE, UnVQ2_4x4_Table);
+			}
+		} else if (cmode == 4) {
+			Hicolor_Init_Table(PrimaryColorMode);
+			if (Get_Option(OPTION_ALTERNATE_UNVQ)) {
+				VQA_SetUnVQ(Handle, UnVQ1_4x4_Table, UnVQ1_4x2_Table);
+			}
+		}
+	}
+
+	errval = 0;
+
+	while (errval >= VQAERR_OK || errval == VQAERR_NOT_TIME || errval == VQAERR_NOBUFFER || errval == VQAERR_SLEEPING || errval == VQAERR_NONE) {
+		if (brokeout) {
+			break;
+		}
+
+		VQA_Message_Handler();
+
+		if (sleeping == true) {
+			if (!GameInFocus) {
+				Sleep((1000/30));
+				continue;
+			} else {
+				sleeping = false;
+				IsPaused = false;
+				DebugString("Movie is awake\n");
+			}
+		}
+
+		if (GameInFocus == true && !IsPaused) {
+			errval = VQA_Play(Handle, VQAMODE_WALK, 0);
+
+			if (errval >= VQAERR_OK) {
+				if (HasPaletteChanged) {
+					Set_DirectDraw_Palette();
+					HasPaletteChanged = false;
+				}
+				if (Subtitles != NULL) {
+					Subtitles->FUN_006C9C60(FUN_007C3990(Handle));
+				}
+				if (SurfaceDrawCallback) {
+					SurfaceDrawCallback();
+				}
+			}
+
+			if (errval >= VQAERR_OK) {
+				CurrentFrame = errval;
+				CurrentFrame++;
+			}
+		} else {
+			if (sleeping == false) {
+				sleeping = true;
+				if (IsOpen && !IsPaused) {
+					VQA_Play(Handle, VQAMODE_PAUSE, 0);
+				}
+				IsPaused = true;
+				DebugString("Movie is sleeping\n");
+			}
+		}
+
+		if (!nobreakout && Keyboard->Check() && Keyboard->Get() == (KN_ESC|WWKEY_RLS_BIT)) {
+			brokeout = true;
+		}
+	}
+
+	if (brokeout) {
+		return(VQA_PLAY_USER_BREAK);
+	}
+	return(VQA_PLAY_NO_ERROR);
+}
+
+// FUNCTION: 0x00759BC0
+void VQAClass::Play_VQA_Frame(int frame_number)
+{
+	if (frame_number == PLAY_LAST_FRAME) {
+		frame_number = TotalFrames - 1;
+	}
+
+	if ((unsigned)CurrentFrame != (unsigned)frame_number) {
+		Seek_To_Frame(frame_number);
+		CurrentFrame = frame_number;
+	}
+
+	Play_VQA(frame_number, 0);
+
+	if ((unsigned)CurrentFrame >= (unsigned)TotalFrames) {
+		CurrentFrame = 0;
+	}
+}
+
+// FUNCTION: 0x00759C30
+bool VQAClass::Advance_Frame(bool & finished)
+{
+	static bool _state = false;
+	finished = false;
+
+	if (!IsAdvanceReady) {
+		VQA_SetStop(Handle, TotalFrames);
+		if (PrimaryColorMode != -1) {
+			long blockw;
+			long blockh;
+			long cmode;
+			VQA_GetBlockInfo(Handle, blockw, blockh, cmode);
+			if (cmode == 1 || cmode == 4) {
+				Hicolor_Init_Table(PrimaryColorMode);
+				if (cmode == 1) {
+					VQA_SetUnVQ(Handle, ASM_UnVQ1_C1_TABLE, UnVQ2_4x4_Table);
+				}
+			}
+		}
+		DebugString("VQAClass::Advance_Frame() - Ready\n");
+		IsAdvanceReady = true;
+	}
+
+	if (IsPaused == true) {
+		if (!Session.Play && SpecialDialog == SDLG_NONE && GameInFocus == true) {
+			IsPaused = false;
+			DebugString("VQAClass::Advance_Frame() - Unpause\n");
+		}
+	}
+
+	if (GameInFocus == true && !IsPaused) {
+		int res = VQA_Play(Handle, VQAMODE_WALK, 0);
+		if (res >= VQAERR_OK) {
+			if (HasPaletteChanged) {
+				Set_DirectDraw_Palette();
+				HasPaletteChanged = false;
+			}
+			if (Subtitles != NULL) {
+				Subtitles->FUN_006C9C60(FUN_007C3990(Handle));
+			}
+			if (SurfaceDrawCallback) {
+				SurfaceDrawCallback();
+			}
+			CurrentFrame = res + 1;
+			return(true);
+		}
+
+		if (res >= VQAERR_SLEEPING && (res <= VQAERR_NOT_TIME || res == VQAERR_NONE)) {
+			finished = false;
+		} else {
+			finished = true;
+		}
+
+		return(false);
+	}
+
+	if (!_state) {
+		Pause_VQA();
+		_state = true;
+		DebugString("VQAClass::Advance_Frame() - Pause\n");
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00759E10
+void VQAClass::Pause_VQA(void)
+{
+	if (IsOpen) {
+		if (!IsPaused) {
+			VQA_Play(Handle, VQAMODE_PAUSE, 0);
+		}
+	}
+	IsPaused = true;
+}
+
+// FUNCTION: 0x00759E50
+void VQAClass::Resume_VQA(void)
+{
+	IsPaused = false;
+}
+
+// FUNCTION: 0x00759E60
+void VQAClass::Close_And_Free_VQA(void)
+{
+	if (IsOpen) {
+		VQA_Close(Handle);
+	}
+}
+
+// FUNCTION: 0x00759E80
+void VQAClass::Reset_VQA(void)
+{
+	VQA_Reset(Handle);
+	if (Subtitles != NULL) {
+		Subtitles->FUN_006C9D20();
+	}
+}
+
 // FUNCTION: 0x0075A2D0
 long             VQACacheHandler(VQAHandle * vqa, long action, void * buffer, long nbytes)
 {

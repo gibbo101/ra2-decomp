@@ -172,6 +172,8 @@ def best_monotone(points):
 
 
 def main() -> None:
+    if len(sys.argv) > 1 and (sys.argv[1].startswith("-") or not Path(sys.argv[1]).is_dir()):
+        raise SystemExit(__doc__)
     code_dir = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / "../cnc-remastered-mods/reference/OpenTS/code"
     pe = pefile.PE(str(ROOT / "orig/gamemd.exe"), fast_load=True)
     with (ROOT / "data/functions.csv").open() as f:

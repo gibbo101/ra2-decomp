@@ -7,6 +7,7 @@
 #include "keyboard.h"
 #include "_xmouse.h"
 #include "msgloop.h"
+#include "session.h"
 #include <cmath>
 #define	ARRAY_SIZE(x)		int(sizeof(x)/sizeof(x[0]))
 
@@ -392,6 +393,106 @@ void WWKeyboardClass::Clear(void)
 	Head = Tail;
 	Fill_Buffer_From_System();
 	Head = Tail;
+}
+
+static inline bool Is_Chat_Editing(void)
+{
+	return(Session.Messages.Is_Edit());
+}
+
+// FUNCTION: 0x0054F790
+int WWKeyboardClass::Message_Handler(HWND window, UINT message, UINT wParam, LONG lParam)
+{
+	bool processed = false;
+
+	POINT point;
+	point.x = LOWORD(lParam);
+	point.y = HIWORD(lParam);
+	ClientToScreen(window, &point);
+	LONG x = point.x;
+	LONG y = point.y;
+	if (MouseCursor != NULL) MouseCursor->Convert_Coordinate((int &)x, (int &)y);
+
+	switch (message) {
+		case WM_SYSKEYDOWN:
+		case WM_KEYDOWN:
+			if (wParam == VK_SCROLL) {
+			} else if (!(lParam & (1 << 30))) {
+				Put_Key_Message((unsigned short)wParam);
+			}
+			processed = true;
+			break;
+
+		case WM_SYSKEYUP:
+		case WM_KEYUP:
+			Put_Key_Message((unsigned short)wParam, true);
+			processed = true;
+			break;
+
+		case WM_LBUTTONUP:
+			Put_Mouse_Message(VK_LBUTTON, x, y, true);
+			processed = true;
+			break;
+
+		case WM_LBUTTONDOWN:
+			Put_Mouse_Message(VK_LBUTTON, x, y);
+			processed = true;
+			break;
+
+		case WM_LBUTTONDBLCLK:
+			Put_Mouse_Message(VK_LBUTTON, x, y);
+			Put_Mouse_Message(VK_LBUTTON, x, y, true);
+			processed = true;
+			break;
+
+		case WM_CHAR:
+			if (Is_Chat_Editing()) {
+				Put_Wheel_Message(wParam);
+			}
+			processed = true;
+			break;
+
+		case WM_MBUTTONDOWN:
+			Put_Mouse_Message(VK_MBUTTON, x, y);
+			processed = true;
+			break;
+
+		case WM_MBUTTONUP:
+			Put_Mouse_Message(VK_MBUTTON, x, y, true);
+			processed = true;
+			break;
+
+		case WM_MBUTTONDBLCLK:
+			Put_Mouse_Message(VK_MBUTTON, x, y);
+			Put_Mouse_Message(VK_MBUTTON, x, y, true);
+			processed = true;
+			break;
+
+		case WM_RBUTTONDOWN:
+			Put_Mouse_Message(VK_RBUTTON, x, y);
+			processed = true;
+			break;
+
+		case WM_RBUTTONUP:
+			Put_Mouse_Message(VK_RBUTTON, x, y, true);
+			processed = true;
+			break;
+
+		case WM_RBUTTONDBLCLK:
+			Put_Mouse_Message(VK_RBUTTON, x, y);
+			Put_Mouse_Message(VK_RBUTTON, x, y, true);
+			processed = true;
+			break;
+
+		default:
+			break;
+	}
+
+	if (processed) {
+		DefWindowProc(window, message, wParam, lParam);
+		return(true);
+	}
+	return(false);
 }
 
 // FUNCTION: 0x0054FB90

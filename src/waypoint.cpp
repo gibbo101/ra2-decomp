@@ -264,3 +264,18 @@ RTTIType WaypointPathClass::Fetch_RTTI(void) const
 // FUNCTION: 0x00763F30 ?$DynamicVectorClass@VWaypointClass@@::ID
 // FUNCTION: 0x00763F60 ?$VectorClass@VWaypointClass@@::GetItem
 template class DynamicVectorClass<WaypointClass>;
+
+// FUNCTION: 0x00763F90 ?$DynamicVectorClass@PAVWaypointPathClass@@::Clear
+// FUNCTION: 0x00763FC0 ?$DynamicVectorClass@PAVWaypointPathClass@@::ID
+// FUNCTION: 0x00763FE0 ?$VectorClass@PAVWaypointPathClass@@::GetItem
+// FUNCTION: 0x00763FF0 ?$DynamicVectorClass@VWaypointClass@@::~?$DynamicVectorClass@VWaypointClass@@
+// FUNCTION: 0x00764050 ?$VectorClass@VWaypointClass@@::~?$VectorClass@VWaypointClass@@
+// FUNCTION: 0x007640B0 ?$VectorClass@VWaypointClass@@::operator==
+// FUNCTION: 0x00764110 ?$VectorClass@VWaypointClass@@::Resize
+// FUNCTION: 0x00764220 ?$VectorClass@VWaypointClass@@::Clear
+// FUNCTION: 0x00764260 ?$VectorClass@VWaypointClass@@::ID
+// FUNCTION: 0x007642B0 ?$VectorClass@VWaypointClass@@::ID
+// FUNCTION: 0x007642E0 ?$DynamicVectorClass@VWaypointClass@@::Resize
+// FUNCTION: 0x00764420 ?$DynamicVectorClass@VWaypointClass@@::ID
+template class DynamicVectorClass<WaypointPathClass *>;
+template class VectorClass<WaypointClass>;

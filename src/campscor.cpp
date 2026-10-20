@@ -59,33 +59,8 @@ void __fastcall FUN_0046D360(wchar_t * buffer, int seconds)
 	}
 }
 
-class CampScorePlayer
-{
-	public:
-		bool FUN_005E93F0(void);
-		bool FUN_005E9440(void);
-		char * FUN_007350C0(void);
-		int FUN_00696F10(void);
-		int FUN_00696F20(void);
-		int FUN_00696F50(void);
-		void FUN_00696F90(int country);
-		void FUN_00696FC0(int color);
-		void FUN_00696FF0(int start);
-
-		wchar_t Name[1];
-};
-
-struct CampScoreTables
-{
-	int AIDifficulty[8];
-	int AICountry[8];
-	int AIColor[8];
-	int AIStart[8];
-	int AIAlly[8];
-	char Gap[0x2814 - 0xa0];
-	CampScorePlayer * Players[8];
-};
-extern CampScoreTables DAT_00A8B27C;
+bool __fastcall FUN_005E93F0(NodeNameType * slot);
+bool __fastcall FUN_005E9440(NodeNameType * slot);
 extern bool DAT_0089E000[8];
 
 // FUNCTION: 0x0046D400
@@ -101,7 +76,7 @@ void __fastcall FUN_0046D400(int count)
 void FUN_0046D430(void)
 {
 	for (int i = 0; i < 8; i++) {
-		if (DAT_00A8B27C.Players[i]->FUN_005E93F0()) {
+		if (FUN_005E93F0(Session.Slots[i])) {
 			DAT_0089E000[i] = false;
 		}
 	}
@@ -160,11 +135,10 @@ struct CampScoreSlot
 #pragma pack(pop)
 
 extern int DAT_00A8EB68;
-extern CampScorePlayer * DAT_00AC119C;
-extern CampScorePlayer * DAT_00AC11A0;
-extern CampScorePlayer ** DAT_00A8DA78;
-extern CampScorePlayer * DAT_00AC11B0;
-extern CampScorePlayer * DAT_00AC11B4;
+extern NodeNameType * DAT_00AC119C;
+extern NodeNameType * DAT_00AC11A0;
+extern NodeNameType * DAT_00AC11B0;
+extern NodeNameType * DAT_00AC11B4;
 
 bool FUN_005E8760(void);
 void __cdecl FUN_004068E0(char const * format, ...);
@@ -181,25 +155,25 @@ void FUN_0046D4A0(void)
 		FUN_004068E0("Sending Campaign Options...\n");
 		packet.Difficulty = (char)DAT_00A8EB68;
 		for (int i = 0; i < 8; i++) {
-			if (DAT_00A8B27C.Players[i] != NULL && DAT_00A8B27C.Players[i] != DAT_00AC119C && DAT_00A8B27C.Players[i] != DAT_00AC11A0) {
-				packet.Start[i] = DAT_00A8B27C.Players[i]->FUN_00696F50();
-				packet.Country[i] = DAT_00A8B27C.Players[i]->FUN_00696F10();
-				packet.Color[i] = DAT_00A8B27C.Players[i]->FUN_00696F20();
+			if (Session.Slots[i] != NULL && Session.Slots[i] != DAT_00AC119C && Session.Slots[i] != DAT_00AC11A0) {
+				packet.Start[i] = Session.Slots[i]->Get_Start();
+				packet.Country[i] = Session.Slots[i]->Get_Country();
+				packet.Color[i] = Session.Slots[i]->Get_Color();
 			} else {
 				packet.Color[i] = packet.Country[i] = packet.Start[i] = -1;
 			}
-			char * name = DAT_00A8B27C.Players[i]->FUN_007350C0();
+			char * name = FUN_007350C0(Session.Slots[i]->Name);
 			FUN_004068E0("Player %i %s: Start %i, Country %i, Color %i\n", i, name, packet.Start[i], packet.Country[i], packet.Color[i]);
-			packet.AICountry[i] = DAT_00A8B27C.AICountry[i];
-			packet.AIColor[i] = DAT_00A8B27C.AIColor[i];
-			packet.AIDifficulty[i] = DAT_00A8B27C.AIDifficulty[i];
-			packet.AIStart[i] = DAT_00A8B27C.AIStart[i];
-			packet.AIAlly[i] = DAT_00A8B27C.AIAlly[i];
+			packet.AICountry[i] = Session.Options.AISlots.Countries[i];
+			packet.AIColor[i] = Session.Options.AISlots.Colors[i];
+			packet.AIDifficulty[i] = Session.Options.AISlots.Difficulties[i];
+			packet.AIStart[i] = Session.Options.AISlots.Starts[i];
+			packet.AIAlly[i] = Session.Options.AISlots.Allies[i];
 			FUN_004068E0("AI %i: Difficulty %i, Country %i, Color %i, Start %i, Ally %i\n", i, packet.AIDifficulty[i], packet.AICountry[i], packet.AIColor[i], packet.AIStart[i], packet.AIAlly[i]);
 		}
 		for (int j = 1; j < 8; j++) {
-			if (DAT_00A8B27C.Players[j] != NULL && DAT_00A8B27C.Players[j]->FUN_005E93F0()) {
-				Ipx.Send_Global_Message_To_Name(&packet, 0x1c7, 1, DAT_00A8B27C.Players[j]->Name);
+			if (Session.Slots[j] != NULL && FUN_005E93F0(Session.Slots[j])) {
+				Ipx.Send_Global_Message_To_Name(&packet, 0x1c7, 1, Session.Slots[j]->Name);
 				Ipx.Service();
 			}
 		}
@@ -226,7 +200,7 @@ bool FUN_0046D650(void)
 			}
 		}
 		for (int i = 0; i < 8; i++) {
-			if (Session.Slots[i] != NULL && Session.Slots[i] != (NodeNameType *)DAT_00AC119C && Session.Slots[i] != (NodeNameType *)DAT_00AC11A0) {
+			if (Session.Slots[i] != NULL && Session.Slots[i] != DAT_00AC119C && Session.Slots[i] != DAT_00AC11A0) {
 				int start = received.Start[i];
 				if (Session.Slots[i]->Get_Start() != start) {
 					changed = true;
@@ -277,25 +251,15 @@ void FUN_0046D810(void)
 	CampScoreSlot packet;
 	packet.Type = 0x33;
 	strcpy(packet.Name, Session.Handle);
-	packet.Start = DAT_00A8DA78[0]->FUN_00696F50();
-	packet.Country = DAT_00A8DA78[0]->FUN_00696F10();
-	packet.Color = DAT_00A8DA78[0]->FUN_00696F20();
-	if (DAT_00A8B27C.Players[0] != NULL) {
-		Ipx.Send_Global_Message_To_Name(&packet, 0x1c7, 1, DAT_00A8B27C.Players[0]->Name);
+	packet.Start = Session.Players[0]->Get_Start();
+	packet.Country = Session.Players[0]->Get_Country();
+	packet.Color = Session.Players[0]->Get_Color();
+	if (Session.Slots[0] != NULL) {
+		Ipx.Send_Global_Message_To_Name(&packet, 0x1c7, 1, Session.Slots[0]->Name);
 		Ipx.Service();
 	}
 }
 
-struct CampScoreTable
-{
-	CoopPlayerStats Players[8];
-	int Field380;
-	int Count;
-	int Winner;
-};
-
-extern CampScoreTable DAT_00A8D1FC;
-extern int DAT_00A8DA8C;
 int __fastcall FUN_0046F5E0(int index);
 int __fastcall FUN_004E37D0(int index);
 int __fastcall FUN_004E41D0(int index);
@@ -315,22 +279,22 @@ void __fastcall FUN_0046DA20(HWND dialog, int id, int value)
 // FUNCTION: 0x0046DA70
 void FUN_0046DA70(void)
 {
-	DAT_00A8D1FC.Count = 0;
+	Session.NumScores = 0;
 	int count = DAT_00A80228.Count();
 	for (int i = 0; i < count; i++) {
 		HouseClass * house = DAT_00A80228[i];
 		if (house && house->Class->IsMultiplayPassive != true && house->FUN_0050B730()) {
-			int index = DAT_00A8D1FC.Count++;
-			DAT_00A8D1FC.Players[index].Alive = 0;
-			wcscpy(DAT_00A8D1FC.Players[index].Name, house->UIName);
-			DAT_00A8D1FC.Players[index].Lost = 0;
-			DAT_00A8D1FC.Players[index].Kills = 0;
-			DAT_00A8D1FC.Players[index].Built = 0;
-			DAT_00A8D1FC.Players[index].Score = 0;
-			DAT_00A8D1FC.Players[index].Scheme = house->Scheme;
+			int index = Session.NumScores++;
+			Session.Score[index].Wins = 0;
+			wcscpy(Session.Score[index].Name, house->UIName);
+			Session.Score[index].Lost[0] = 0;
+			Session.Score[index].Kills[0] = 0;
+			Session.Score[index].Built[0] = 0;
+			Session.Score[index].Score[0] = 0;
+			Session.Score[index].Scheme = house->Scheme;
 			if (!house->IsDefeated) {
-				DAT_00A8D1FC.Players[index].Alive = DAT_00A8D1FC.Players[index].Alive + 1;
-				DAT_00A8D1FC.Winner = index;
+				Session.Score[index].Wins = Session.Score[index].Wins + 1;
+				Session.Winner = index;
 			}
 			int kills = 0;
 			int k;
@@ -340,33 +304,33 @@ void FUN_0046DA70(void)
 			for (k = 0; k < 20; k++) {
 				kills += house->BuildingsKilled[k];
 			}
-			DAT_00A8D1FC.Players[index].Kills = kills;
-			DAT_00A8D1FC.Players[index].Lost = house->UnitsLost + house->BuildingsLost;
+			Session.Score[index].Kills[0] = kills;
+			Session.Score[index].Lost[0] = house->UnitsLost + house->BuildingsLost;
 			int built = house->ABQuantity.Total();
 			built += house->AUQuantity.Total();
 			built += house->AIQuantity.Total();
 			built += house->AAQuantity.Total();
-			DAT_00A8D1FC.Players[index].Built = house->UnitsLost + built + house->BuildingsLost;
+			Session.Score[index].Built[0] = house->UnitsLost + built + house->BuildingsLost;
 			if (house->PointTotal > 0) {
-				DAT_00A8D1FC.Players[index].Score += house->PointTotal;
+				Session.Score[index].Score[0] += house->PointTotal;
 			}
-			char const * result = DAT_00A8D1FC.Players[index].Alive > 0 ? "Winner" : "Loser";
+			char const * result = Session.Score[index].Wins > 0 ? "Winner" : "Loser";
 			FUN_004068E0("%s: %s\n Scheme: %d\n Lost = %d\n Kills = %d\n Built = %d\n Score = %d\n",
-				DAT_00A8D1FC.Players[index].Name, result, DAT_00A8D1FC.Players[index].Scheme, DAT_00A8D1FC.Players[index].Lost, DAT_00A8D1FC.Players[index].Kills, DAT_00A8D1FC.Players[index].Built, DAT_00A8D1FC.Players[index].Score);
+				Session.Score[index].Name, result, Session.Score[index].Scheme, Session.Score[index].Lost[0], Session.Score[index].Kills[0], Session.Score[index].Built[0], Session.Score[index].Score[0]);
 		}
 	}
 }
 
-extern CoopPlayerStats * DAT_0089DF80[];
+extern MPlayerScoreType * DAT_0089DF80[];
 
 int __cdecl FUN_0046DC90(void const * a, void const * b);
 
 // FUNCTION: 0x0046DC50
 void FUN_0046DC50(void)
 {
-	int count = DAT_00A8D1FC.Count;
+	int count = Session.NumScores;
 	for (int i = 0; i < count; i++) {
-		DAT_0089DF80[i] = &DAT_00A8D1FC.Players[i];
+		DAT_0089DF80[i] = &Session.Score[i];
 	}
 	if (count > 1) {
 		qsort(DAT_0089DF80, count, 4, FUN_0046DC90);
@@ -376,12 +340,12 @@ void FUN_0046DC50(void)
 // FUNCTION: 0x0046DC90
 int __cdecl FUN_0046DC90(void const * a, void const * b)
 {
-	CoopPlayerStats * first = *(CoopPlayerStats * const *)a;
-	CoopPlayerStats * second = *(CoopPlayerStats * const *)b;
-	if (first->Score == second->Score) {
+	MPlayerScoreType * first = *(MPlayerScoreType * const *)a;
+	MPlayerScoreType * second = *(MPlayerScoreType * const *)b;
+	if (first->Score[0] == second->Score[0]) {
 		return 0;
 	}
-	return first->Score > second->Score ? -1 : 1;
+	return first->Score[0] > second->Score[0] ? -1 : 1;
 }
 
 // FUNCTION: 0x0046DCC0
@@ -389,7 +353,7 @@ void __fastcall FUN_0046DCC0(HWND dialog, bool enable)
 {
 	HWND item;
 	for (int i = 0; i < 8; i++) {
-		if (DAT_00A8B27C.Players[i]->FUN_005E93F0() && i != DAT_00A8DA8C) {
+		if (FUN_005E93F0(Session.Slots[i]) && i != Session.unknown_2854) {
 			item = GetDlgItem(dialog, FUN_0046F5E0(i));
 			EnableWindow(item, enable);
 			item = GetDlgItem(dialog, FUN_004E37D0(i));
@@ -406,13 +370,13 @@ void __fastcall FUN_0046DCC0(HWND dialog, bool enable)
 void __fastcall FUN_0046DD70(HWND dialog, bool enable)
 {
 	HWND item;
-	item = GetDlgItem(dialog, FUN_0046F5E0(DAT_00A8DA8C));
+	item = GetDlgItem(dialog, FUN_0046F5E0(Session.unknown_2854));
 	EnableWindow(item, enable);
-	item = GetDlgItem(dialog, FUN_004E37D0(DAT_00A8DA8C));
+	item = GetDlgItem(dialog, FUN_004E37D0(Session.unknown_2854));
 	EnableWindow(item, enable);
-	item = GetDlgItem(dialog, FUN_004E41D0(DAT_00A8DA8C));
+	item = GetDlgItem(dialog, FUN_004E41D0(Session.unknown_2854));
 	EnableWindow(item, enable);
-	item = GetDlgItem(dialog, FUN_004E4E60(DAT_00A8DA8C));
+	item = GetDlgItem(dialog, FUN_004E4E60(Session.unknown_2854));
 	EnableWindow(item, enable);
 	if (FUN_005E8760()) {
 		item = GetDlgItem(dialog, 0x732);
@@ -549,7 +513,7 @@ void __fastcall FUN_0046F600(HWND dialog)
 		if (ShowWindow(item, 0)) {
 			if (id != -1) {
 				HWND combo = GetDlgItem(dialog, id);
-				CampScorePlayer * player = DAT_00A8B27C.Players[i];
+				NodeNameType * player = Session.Slots[i];
 				if (player == NULL) {
 					continue;
 				}
@@ -570,7 +534,7 @@ void __fastcall FUN_0046F6D0(HWND dialog)
 		int combo = FUN_004E37D0(i);
 		HWND item = GetDlgItem(dialog, combo);
 		if (ShowWindow(item, 0)) {
-			CampScorePlayer * player = DAT_00A8B27C.Players[i];
+			NodeNameType * player = Session.Slots[i];
 			int fallback = -2;
 			if (Session.MPGameMode != NULL) {
 				if (Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) {
@@ -578,8 +542,8 @@ void __fastcall FUN_0046F6D0(HWND dialog)
 				}
 			}
 			int country;
-			if (player->FUN_005E9440()) {
-				country = DAT_00A8B27C.AICountry[i];
+			if (FUN_005E9440(player)) {
+				country = Session.Options.AISlots.Countries[i];
 			} else if (player == DAT_00AC119C) {
 				country = fallback;
 			} else if (player == DAT_00AC11A0) {
@@ -589,15 +553,15 @@ void __fastcall FUN_0046F6D0(HWND dialog)
 			} else if (player == DAT_00AC11B4) {
 				country = -3;
 			} else {
-				country = player->FUN_00696F10();
+				country = player->Get_Country();
 			}
 			if (Session.MPGameMode != NULL) {
 				if (!Session.MPGameMode->vt_entry_1C(country)) {
 					country = fallback;
-					if (player->FUN_005E9440()) {
-						DAT_00A8B27C.AICountry[i] = fallback;
-					} else if (player->FUN_005E93F0()) {
-						DAT_00A8B27C.Players[i]->FUN_00696F90(fallback);
+					if (FUN_005E9440(player)) {
+						Session.Options.AISlots.Countries[i] = fallback;
+					} else if (FUN_005E93F0(player)) {
+						Session.Slots[i]->Set_Country(fallback);
 					}
 				}
 			}
@@ -609,9 +573,9 @@ void __fastcall FUN_0046F6D0(HWND dialog)
 
 inline int _Player_Color(int index)
 {
-	CampScorePlayer * player = DAT_00A8B27C.Players[index];
-	if (player->FUN_005E9440()) {
-		return DAT_00A8B27C.AIColor[index];
+	NodeNameType * player = Session.Slots[index];
+	if (FUN_005E9440(player)) {
+		return Session.Options.AISlots.Colors[index];
 	}
 	if (player == DAT_00AC119C) {
 		return -2;
@@ -625,14 +589,14 @@ inline int _Player_Color(int index)
 	if (player == DAT_00AC11B4) {
 		return -2;
 	}
-	return player->FUN_00696F20();
+	return player->Get_Color();
 }
 
 inline int _Player_Start(int index)
 {
-	CampScorePlayer * player = DAT_00A8B27C.Players[index];
-	if (player->FUN_005E9440()) {
-		return DAT_00A8B27C.AIStart[index];
+	NodeNameType * player = Session.Slots[index];
+	if (FUN_005E9440(player)) {
+		return Session.Options.AISlots.Starts[index];
 	}
 	if (player == DAT_00AC119C) {
 		return -2;
@@ -646,7 +610,7 @@ inline int _Player_Start(int index)
 	if (player == DAT_00AC11B4) {
 		return -2;
 	}
-	return player->FUN_00696F50();
+	return player->Get_Start();
 }
 
 // FUNCTION: 0x0046F810
@@ -668,8 +632,6 @@ struct PCX
 };
 extern char * DAT_0081B1E0;
 extern char * DAT_0081B1E4;
-extern int DAT_00A8D580;
-extern int DAT_00A8DA84;
 void __fastcall FUN_004E49A0(HWND dialog, int combo, int value);
 void __fastcall FUN_004E5480(HWND dialog, int combo, int value);
 void __fastcall FUN_00603D30(HWND item, int surface);
@@ -683,7 +645,7 @@ struct Game
 // FUNCTION: 0x0046F8F0
 void __fastcall FUN_0046F8F0(HWND dialog)
 {
-	int own = DAT_00A8DA8C;
+	int own = Session.unknown_2854;
 	if (own != -1) {
 		int combo = FUN_004E41D0(own);
 		FUN_004E49A0(dialog, combo, _Player_Color(own));
@@ -717,7 +679,7 @@ void __fastcall FUN_0046FA20(HWND dialog)
 	int first = PCX::Instance.GetSurface(DAT_0081B1E0, NULL);
 	int second = PCX::Instance.GetSurface(DAT_0081B1E4, NULL);
 	for (int i = 0; i < 8; i++) {
-		if (DAT_00A8B27C.Players[i] != NULL && DAT_00A8B27C.Players[i]->FUN_005E93F0()) {
+		if (Session.Slots[i] != NULL && FUN_005E93F0(Session.Slots[i])) {
 			int id;
 			if (i == 0) {
 				id = 0x6d2;
@@ -746,12 +708,12 @@ void __fastcall FUN_0046FB50(HWND dialog)
 	HWND item = GetDlgItem(dialog, 0x6d1);
 	HWND other = GetDlgItem(dialog, 0x5c0);
 	if (item != NULL) {
-		if (DAT_00A8DA84 < DAT_00A8D580) {
+		if (Session.Players.Count() < Session.NumScores) {
 			EnableWindow(item, 0);
 			if (other != NULL) {
 				EnableWindow(other, 1);
 			}
-		} else if (DAT_0089E000[DAT_00A8DA8C]) {
+		} else if (DAT_0089E000[Session.unknown_2854]) {
 			EnableWindow(item, 0);
 		} else {
 			EnableWindow(item, 1);

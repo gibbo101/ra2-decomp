@@ -118,3 +118,25 @@ address,name,symbol,evidence
 0x006B6C90,SpawnManagerClass::SpawnManagerClass,??0SpawnManagerClass@@QAE@PAVTechnoClass@@PAVAircraftTypeClass@@HHH@Z,"YRpp SpawnManagerClass(TechnoClass* pOwner, AircraftTypeClass* pSpawnType, int nMaxNodes, int RegenRate, int ReloadRate); the owner overload"
 0x005581A0,GaugeClass::GaugeClass,??0GaugeClass@@QAE@ABV0@@Z,copy constructor: stores vtable 0x7E9384 (RTTI .?AVGaugeClass@@) and copies ControlClass and +0x2C..+0x38 with ret 4; YRpp calls it SliderClass::SliderClass
 0x006B1B20,SliderClass::SliderClass,??0SliderClass@@QAE@IHHHHH@Z,stores SliderClass vtable 0x007ED21C and ends ret 0x18; 0x00557230 ListClass::ListClass matched with TibSun source
+0x00887640,MouseCursor,?MouseCursor@@3PAVMouse@@A,_xmouse.h's MouseCursor; WWKeyboardClass::Message_Handler 0x0054F790 calls its +0x44 Convert_Coordinate; YRpp WWMouseClass::Instance
+0x00A8ED9C,UserInputLocked,,YRpp Unsorted::UserInputLocked; read by WWKeyboardClass Put_Mouse_Message and Put_Wheel_Message
+0x006AF360,SlaveManagerClass::SlaveManagerClass,??0SlaveManagerClass@@QAE@XZ,no-argument constructor (plain ret); called by TClassFactory<SlaveManagerClass>::CreateInstance 0x006C0B90
+0x00471890,CaptureManagerClass::CaptureManagerClass,??0CaptureManagerClass@@QAE@XZ,no-argument constructor (plain ret); called by TClassFactory<CaptureManagerClass>::CreateInstance 0x006C0D10
+0x006AF1A0,SlaveManagerClass::SlaveManagerClass,??0SlaveManagerClass@@QAE@PAVTechnoClass@@PAVInfantryTypeClass@@HHH@Z,YRpp SlaveManagerClass(owner; type; number; regen; reload) with ret 0x14; called by TechnoClass::Init 0x006F3F40
+0x004717D0,CaptureManagerClass::CaptureManagerClass,??0CaptureManagerClass@@QAE@PAVTechnoClass@@H_N@Z,YRpp CaptureManagerClass(owner; damage; infinite) with ret 0xC; called by TechnoClass::Init 0x006F3F40
+0x0047E040,CellClass::Set_Under_Bridge,,TS name; byte-identical twin of Set_Under_Rail_Bridge 0x0047E470; the road-bridge destroy paths in map.cpp call this one
+0x0047E470,CellClass::Set_Under_Rail_Bridge,,byte-identical twin of Set_Under_Bridge 0x0047E040; called from the train-bridge destroy paths 0x0056EF50 and 0x0056F2F0
+0x0063D9C0,PlanningNodeClass::~PlanningNodeClass,??_GPlanningNodeClass@@QAEPAXI@Z,scalar deleting destructor; delete in the inlined Remove_Member calls it
+0x0063DFD0,?$DynamicVectorClass@PAVPlanningMemberClass@@::Delete,?Delete@?$DynamicVectorClass@PAVPlanningMemberClass@@@@QAE_NABQAVPlanningMemberClass@@@Z,called on node+0 (vtable 0x007EFEE4 RTTI)
+0x0063E900,?$DynamicVectorClass@PAVTechnoClass@@::Delete,?Delete@?$DynamicVectorClass@PAVTechnoClass@@@@QAE_NABQAVTechnoClass@@@Z,called on 0x00AC4C40 whose initialiser stores vtable 0x007E17AC (RTTI DynamicVectorClass<TechnoClass*>)
+0x0063EBD0,?$DynamicVectorClass@PAVPlanningTokenClass@@::Delete,?Delete@?$DynamicVectorClass@PAVPlanningTokenClass@@@@QAE_NABQAVPlanningTokenClass@@@Z,called on PlanningTokenClass::Array in 0x006370B0
+0x0063E5D0,?$DynamicVectorClass@PAVPlanningNodeClass@@::Delete,?Delete@?$DynamicVectorClass@PAVPlanningNodeClass@@@@QAE_NABQAVPlanningNodeClass@@@Z,Unknown1/Unknown2 in Remove_Member
+0x0063E590,?$DynamicVectorClass@PAVPlanningNodeClass@@::Delete_Index,?Delete_Index@?$DynamicVectorClass@PAVPlanningNodeClass@@@@QAE_NH@Z,Unknown3 in ~PlanningNodeClass
+0x0063EF70,?$DynamicVectorClass@PAVPlanningMemberClass@@::Delete_Index,?Delete_Index@?$DynamicVectorClass@PAVPlanningMemberClass@@@@QAE_NH@Z,members in Cancel_Owner
+0x0063F000,?$DynamicVectorClass@PAVTechnoClass@@::Delete_Index,?Delete_Index@?$DynamicVectorClass@PAVTechnoClass@@@@QAE_NH@Z,0x00AC4C40 in Pop_Front
+0x0063F040,?$DynamicVectorClass@PAVPlanningTokenClass@@::Delete_Index,?Delete_Index@?$DynamicVectorClass@PAVPlanningTokenClass@@@@QAE_NH@Z,Array in Destroy
+0x0063DE30,?$VectorClass@PAVPlanningMemberClass@@::Clear,?Clear@?$VectorClass@PAVPlanningMemberClass@@@@UAEXXZ,vtable 0x007EFF04 slot 3
+0x0063E140,?$VectorClass@PAVPlanningBranchClass@@::Clear,?Clear@?$VectorClass@PAVPlanningBranchClass@@@@UAEXXZ,vtable 0x007EFF24 slot 3
+0x00AC4B48,PlanningTokenClass::Events,,class static (guarded atexit 0x00633620); name invented
+0x00AC4C40,PlanningTokenClass::Technos,,class static (guarded atexit 0x00633760); name invented
+0x00A80228,Houses,,YRpp HouseClass::Array; Node_Color reads [slot]->RemapColorRGB

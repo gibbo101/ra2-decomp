@@ -257,14 +257,11 @@ bool Queue_PageUser(void)
 	}
 }
 
-extern unsigned char DAT_00A8DBA0;
-extern int DAT_00A8DA84;
-
 // FUNCTION: 0x006471A0
 bool Queue_Exit(void)
 {
 	unsigned char type = EventClass::EXIT;
-	if (Session.Type == GAME_INTERNET && DAT_00A8DBA0 && DAT_00A8DA84 > 2 && Session.Am_I_Master()) {
+	if (Session.Type == GAME_INTERNET && Session.ViaPacketRouter && Session.Players.Count() > 2 && Session.Am_I_Master()) {
 		type = EventClass::ABOUT_TO_EXIT;
 	}
 	if (! OutList.Add(EventClass(PlayerPtr->HeapID, type))) {
@@ -736,8 +733,6 @@ void __fastcall Send_FrameSync(ConnManClass *net, int cmd_count)
 
 void Destroy_Null_Connection(int id, int error);
 void __fastcall FUN_00752B70(unsigned char code);
-extern unsigned char DAT_00A8D110;
-extern unsigned char DAT_00A8D111;
 
 // FUNCTION: 0x0064A630
 RetcodeType __fastcall Process_Serial_Packet(char *multi_packet_buf, int first_time)
@@ -787,7 +782,7 @@ RetcodeType __fastcall Process_Serial_Packet(char *multi_packet_buf, int first_t
 	}
 
 	if (serial_packet->Command == 0x78) {
-		if ((DAT_00A8D110 && Session.Type == GAME_IPX) || (DAT_00A8D111 && Session.Type == GAME_INTERNET)) {
+		if ((Session.LANTaunts && Session.Type == GAME_IPX) || (Session.WOLTaunts && Session.Type == GAME_INTERNET)) {
 			FUN_00752B70(*(unsigned char *)&serial_packet->Message.Message[0]);
 			return(RC_SERIAL_PROCESSED);
 		}

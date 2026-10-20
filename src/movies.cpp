@@ -699,6 +699,17 @@ class MPBattleClass : public MPGameModeClass
 		virtual void vt_entry_74(unsigned a, unsigned b) override;
 		virtual void vt_entry_78(unsigned a) override;
 		virtual void vt_entry_90(void) override;
+		virtual void vt_entry_94(void) override;
+		virtual int vt_entry_98(void) override;
+		virtual void vt_entry_9C(void) override;
+		virtual void vt_entry_A0(unsigned a) override;
+		virtual void vt_entry_A4(unsigned a) override;
+		virtual bool vt_entry_A8(void) override;
+		virtual void vt_entry_AC(void) override;
+		virtual void vt_entry_B0(void) override;
+		virtual bool vt_entry_B4(DynamicVectorClass<int> list, int * out) override;
+		virtual int vt_entry_B8(void) override;
+		virtual bool vt_entry_BC(void) override;
 };
 
 // FUNCTION: 0x005C0DD0
@@ -789,3 +800,65 @@ void MPBattleClass::vt_entry_78(unsigned a)
 void MPBattleClass::vt_entry_90(void)
 {
 }
+
+// FUNCTION: 0x005C0F20
+void MPBattleClass::vt_entry_94(void)
+{
+}
+
+// FUNCTION: 0x005C0F30
+int MPBattleClass::vt_entry_98(void)
+{
+	return(-1);
+}
+
+// FUNCTION: 0x005C0F40
+void MPBattleClass::vt_entry_9C(void)
+{
+}
+
+// FUNCTION: 0x005C0F50
+void MPBattleClass::vt_entry_A0(unsigned a)
+{
+}
+
+// FUNCTION: 0x005C0F60
+void MPBattleClass::vt_entry_A4(unsigned a)
+{
+}
+
+// FUNCTION: 0x005C0F70
+bool MPBattleClass::vt_entry_A8(void)
+{
+	return(false);
+}
+
+// FUNCTION: 0x005C0F80
+void MPBattleClass::vt_entry_AC(void)
+{
+}
+
+// FUNCTION: 0x005C0F90
+void MPBattleClass::vt_entry_B0(void)
+{
+}
+
+// FUNCTION: 0x005C0FA0
+bool MPBattleClass::vt_entry_B4(DynamicVectorClass<int> list, int * out)
+{
+	return(false);
+}
+
+// FUNCTION: 0x005C0FC0
+int MPBattleClass::vt_entry_B8(void)
+{
+	return(0);
+}
+
+// FUNCTION: 0x005C0FD0
+bool MPBattleClass::vt_entry_BC(void)
+{
+	return(true);
+}
+
+// FUNCTION: 0x005C0FE0 MPBattleClass::~MPBattleClass
