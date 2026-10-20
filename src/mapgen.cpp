@@ -4534,5 +4534,17 @@ template class VectorClass<Rect>;
 // FUNCTION: 0x005AD0C0 ?$DynamicVectorClass@PAVCellClass@@::ID
 // FUNCTION: 0x005AD0F0 ?$VectorClass@N::operator==
 // FUNCTION: 0x005AD130 ?$VectorClass@N::Resize
+// FUNCTION: 0x005AD1F0 ?$VectorClass@N::Clear
+// FUNCTION: 0x005AD220 ?$VectorClass@N::ID
+// FUNCTION: 0x005AD270 ?$VectorClass@N::ID
+// FUNCTION: 0x005AD290 ?$DynamicVectorClass@N::Resize
+// FUNCTION: 0x005AD350 ?$DynamicVectorClass@N::ID
+// FUNCTION: 0x005AD390 ?$VectorClass@PAVMapRegionClass@@::~?$VectorClass@PAVMapRegionClass@@
+// FUNCTION: 0x005AD3E0 ?$DynamicVectorClass@PAVMapRegionClass@@::~?$DynamicVectorClass@PAVMapRegionClass@@
+// FUNCTION: 0x005AD430 ?$VectorClass@PAU_WIN32_FIND_DATAA@@::~?$VectorClass@PAU_WIN32_FIND_DATAA@@
+// FUNCTION: 0x005AD480 ?$DynamicVectorClass@PAU_WIN32_FIND_DATAA@@::~?$DynamicVectorClass@PAU_WIN32_FIND_DATAA@@
+// FUNCTION: 0x005AD4D0 ?$VectorClass@V?$TRect@H@@::~?$VectorClass@V?$TRect@H@@
+// FUNCTION: 0x005AD520 ?$DynamicVectorClass@V?$TRect@H@@::~?$DynamicVectorClass@V?$TRect@H@@
+// FUNCTION: 0x005AD570 ?$VectorClass@N::~?$VectorClass@N
 template class VectorClass<CellClass *>;
 template class VectorClass<double>;

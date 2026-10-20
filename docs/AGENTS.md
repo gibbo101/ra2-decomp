@@ -263,6 +263,8 @@ Each entry: what the diff showed, then the source change that fixed it.
   that is non-const: a const operand falls through to the free one (HashString).
 - A file-static helper the compiler emits only for its callers (team's `_Is_It_Breathing`)
   lands with its first caller, not before.
+- A large function that many small ones wait on is worth a dedicated attempt: Init_Commands
+  matched first time and brought 298 emitted command-class functions with it.
 - A class's constructor, destructors and virtuals are emitted where the class is built:
   never write a function that `new`s it to emit them (the command classes wait on Init_Commands).
 - A local struct cast over a real object (`((ScenMapOps *)&Map)->...`) is a stand-in too:

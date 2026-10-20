@@ -74,15 +74,7 @@ void FUN_005E2340(void);
 void FUN_005E23A0(void);
 void __cdecl FUN_004068E0(char const * format, ...);
 
-struct NSTerritory { char Pad[0x3c]; unsigned int Flags; };
-class NSTerritoryHandle : public WorldDominationTour::YRHandleBase
-{
-	public:
-		NSTerritoryHandle(void) {}
-		virtual ~NSTerritoryHandle(void) {}
-		NSTerritoryHandle & operator=(NSTerritoryHandle const & that) { FUN_0065D480(that.Ptr); return(*this); }
-};
-NSTerritoryHandle __fastcall FUN_007B0390(int id);
+rc_ptr<WDTTerritory> __fastcall FUN_007B0390(int id);
 
 // FUNCTION: 0x005E2430 $E2
 // FUNCTION: 0x005E2460 $E5
@@ -528,26 +520,26 @@ void __fastcall DisplayGameopts(HWND window, BOOL initialize)
 	int game_speed = Session.Options.GameSpeed;
 
 	if (initialize) {
-		NSTerritoryHandle handle;
+		rc_ptr<WDTTerritory> handle;
 		if (Session.Type == GAME_INTERNET && Session.unknown_0C == 3) {
 			handle = FUN_007B0390(Session.unknown_08);
 		}
-		if (handle.Ptr != NULL) {
+		if (handle.Get() != NULL) {
 			EnableWindow(GetDlgItem(window, 0x544), FALSE);
 			EnableWindow(GetDlgItem(window, 0x6d4), FALSE);
-			if (!(((NSTerritory *)handle.Ptr)->Flags & 0x20000)) {
+			if (!(handle->UserModBooleans & 0x20000)) {
 				EnableWindow(GetDlgItem(window, 0x402), FALSE);
 			}
-			if (!(((NSTerritory *)handle.Ptr)->Flags & 0x8000)) {
+			if (!(handle->UserModBooleans & 0x8000)) {
 				EnableWindow(GetDlgItem(window, 0x54f), FALSE);
 			}
-			if (!(((NSTerritory *)handle.Ptr)->Flags & 0x400)) {
+			if (!(handle->UserModBooleans & 0x400)) {
 				EnableWindow(GetDlgItem(window, 0x54e), FALSE);
 			}
-			if (!(((NSTerritory *)handle.Ptr)->Flags & 0x20)) {
+			if (!(handle->UserModBooleans & 0x20)) {
 				EnableWindow(GetDlgItem(window, 0x3e8), FALSE);
 			}
-			if (!(((NSTerritory *)handle.Ptr)->Flags & 0x100)) {
+			if (!(handle->UserModBooleans & 0x100)) {
 				EnableWindow(GetDlgItem(window, 0x54d), FALSE);
 			}
 		}

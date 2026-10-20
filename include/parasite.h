@@ -24,7 +24,8 @@ class ParasiteClass : public AbstractClass
 		int GrappleAnimDelay;
 		bool GrappleAnimGotInvalid;
 
-		ParasiteClass(FootClass * owner = NULL);
+		ParasiteClass(void);
+		ParasiteClass(FootClass * owner);
 		virtual ~ParasiteClass(void) override;
 
 		virtual HRESULT STDMETHODCALLTYPE GetClassID(CLSID * retval) override;

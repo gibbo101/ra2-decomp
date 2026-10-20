@@ -223,161 +223,98 @@ namespace WorldDominationTour
 		OUTCOME_COUNT
 	};
 
-	class State {
+	class Selection;
+	class YRVoices;
+
+	class State : public ReferenceCounted {
 		public:
-			enum TerritoryState {
-				UNASSIGNED,
-				DISPUTED,
-				GDI,
-				NOD,
-			};
-
-			State(void);
-			~State(void);
-			State(WDTState * state, unsigned int tick);
-			State(State const & that);
-			State & operator=(State const & that);
-			bool operator==(State const & that);
-			TerritoryState Get_Territory_State(unsigned int terr);
-			int Count_Owned_Territories(int player_faction);
-		public:
-
-			WDTState *TourState;
-
-			unsigned char *Owners;
+			int FUN_0076F600(int territory);
+			int FUN_0076F670(int faction);
 	};
 
-	class History {
+	class History : public ReferenceCounted {
 		public:
-			History(WDTState * state);
-			~History(void);
-
-			bool Is_Tick_Valid(unsigned int tick);
-			State Get_State(unsigned int tick);
-
-		public:
-
-			WDTState *TourState;
+			rc_ptr<State> FUN_00767BB0(int tick);
 	};
 
-	class Conflict {
+	class Conflict : public ReferenceCounted {
 		public:
-			Conflict(WDTTerritory * terr = NULL);
-			Conflict(Conflict const & that);
-			~Conflict(void);
-			Conflict & operator=(Conflict const & that);
-			bool operator==(Conflict const & that) const;
-
-			bool Is_Territory_Set(void) const;
-			int Get_Territory_Index(void) const;
-
-			void Init_Game_Options(void);
-			void Deinit_Game_Options(void);
-			void Process_Game_Options(char * str, int len);
-
-			bool operator!=(Conflict const & that) const { return(!(*this == that)); }
-
-		public:
-
-			WDTTerritory * Territory;
+			int FUN_00766060(void);
+			WideWstring FUN_007665D0(void);
 	};
 
-	typedef DynamicVectorClass<Conflict> CONFLICT_LIST;
-	typedef VectorCursor<Conflict, CONFLICT_LIST> CONFLICT_ITER;
+	typedef DynamicVectorClass<rc_ptr<Conflict> > CONFLICT_LIST;
+	typedef VectorCursor<rc_ptr<Conflict>, CONFLICT_LIST> CONFLICT_ITER;
 
-	class CampaignProperties {
+	class CampaignProperties : public ReferenceCounted {
 		public:
-			CampaignProperties(WDTState * state);
-			CampaignProperties(CampaignProperties const & that);
-			~CampaignProperties(void);
+			int FUN_0076BFE0(void);
+			int FUN_0076BFC0(void);
+			int FUN_0076BFB0(void);
 
-			bool operator==(CampaignProperties const & that) const;
-			CampaignProperties & operator = (CampaignProperties const & that);
-
-			int Get_Cycle_ID(void) const;
-			int Get_Layout(void) const;
-			int Get_Map_ID(void) const;
-			int Get_Current_Tick(void) const;
-			const char * Get_Short_Desc(void) const;
-			const char * Get_Long_Desc(void) const;
-			const char * Get_Web_URL(void) const;
-
-			WDTState *TourState;
+		public:
+			char Pad0[0x14 - 0x8];
+			WideWstring LongDesc;
 	};
 
-	class Campaign {
+	class Campaign : public ReferenceCounted {
 		public:
-			Campaign(char const *name, CampaignProperties const &props);
-			~Campaign(void);
-
-			bool Is_Different_Cycle(void);
-			bool Is_Different(void);
-			void Write_INI(void);
-			void Reset_INI(void);
-			void Load_INI(INIClass & ini);
-			CONFLICT_ITER Get_Conflict_Iterator(int index);
-			void Set_Faction(int faction);
-			CampaignProperties & Get_Campaign_Properties(void) { return(Properties); }
+			int Get_Current_Tick(void) { return(Properties.Get()->FUN_0076BFE0()); }
+			int FUN_00764FC0(bool vq_anim);
+			int FUN_00764FF0(int index);
+			void FUN_00765000(int index);
+			bool FUN_00764FA0(void);
+			void FUN_00765410(int faction);
 
 		public:
-
-			CampaignProperties Properties;
-
-			bool IsContinued;
-
-			History CycleHistory;
-
-			DynamicVectorClass<Conflict> Conflicts;
-
-			int CycleID;
-
-			int PreviousTick;
-
+			rc_ptr<CampaignProperties> Properties;
+			rc_ptr<History> CycleHistory;
+			CONFLICT_LIST Conflicts;
+			char Pad1[0x44 - 0x18 - sizeof(CONFLICT_LIST)];
 			int PlayerFaction;
-
-			char Name[64];
 	};
 
-	class Territory {
+	class Territory : public ReferenceCounted {
+		public:
+			void FUN_0076FEB0(bool active, Selection * engine);
+			MSShapeAnim * FUN_0076FF30(void);
+			void FUN_0076FF20(MSShapeAnim * anim);
+			void FUN_0076FD40(int state, Selection * engine, bool wait);
 
 		public:
-			Territory(int id, const char * fname, INIClass const & ini, const char * name, int side, MSEngine & engine, ConvertClass * drawer, MS_ANIM_LIST * anims, Point2D const & pos);
-			~Territory(void);
-			void Set_Owner_State(int state, MSEngine & engine, bool wait);
-			void Set_Highlight(bool active, MSEngine & engine);
-			void Set_Target_Anim(MSAnim * anim);
-			MSAnim * Remove_Target_Anim(void);
-		public:
-
 			int ID;
-
-			char Name[64];
-
-			char Description[128];
-
+			WideWstring Name;
 			Point2D Target;
-
-			MSOverlayAnim *OwnerAnim;
-
-			MSOverlayAnim *HighlightAnim;
-
-			MSAnim *TargetAnim;
+			char Pad1[0x2c - 0x18];
+			MSShapeAnim * TargetAnim;
 	};
 
-	typedef DynamicVectorClass<Territory *> TERR_LIST;
-	typedef VectorCursor<Territory *, TERR_LIST> TERR_ITER;
+	typedef DynamicVectorClass<rc_ptr<Territory> > TERR_LIST;
+	typedef VectorCursor<rc_ptr<Territory>, TERR_LIST> TERR_ITER;
 
-	class Map {
+	rc_ptr<Territory> __fastcall FUN_0076FF40(TERR_LIST * list, int id);
+
+	class Map : public ReferenceCounted {
 		public:
-			Map(int id);
-			virtual ~Map(void);
-			void Add_Territory(const char * fname, INIClass const & ini, const char * name, int side, MSEngine & engine, ConvertClass * drawer, MS_ANIM_LIST * anims, Point2D const & pos);
+			int FUN_00769330(Point2D const & point);
+			bool FUN_00769440(Point2D const & point);
+			void FUN_007693A0(Selection * selection, bool hovered);
+			void FUN_007693F0(Selection * selection, bool hovered);
+			void FUN_007681E0(INIClass const & ini, Selection * selection, int value);
+			void FUN_007692F0(Selection * selection, YRVoices * voices);
+			rc_ptr<Territory> FUN_0076F000(int id);
 
 		public:
-
-			int ID;
-
+			char Pad0[0x2c - 0x8];
 			TERR_LIST Territories;
+			Point2D Origin;
+			char Pad1[0x68 - 0x44 - sizeof(Point2D)];
+			bool CancelHovered;
+			char Pad2[0x7c - 0x69];
+			Rect TextRect;
+			Rect TooltipRect;
+			Rect PlayRect;
+			Rect BackRect;
 	};
 
 	class Centroid {
@@ -412,7 +349,7 @@ namespace WorldDominationTour
 		WDT_GAME_OPT_RANGE_MIDDLE,
 	};
 
-	class GameOption {
+	class GameOption : public ReferenceCounted {
 		public:
 			GameOption(unsigned int bitmask) :
 				Bitmask(bitmask)
@@ -666,193 +603,6 @@ namespace WorldDominationTour
 
 	Wstring const * __fastcall FUN_007AF2A0(int faction);
 
-	class Selection;
-	class YRVoices;
-
-	class YRHandleBase {
-		public:
-			YRHandleBase(void);
-			virtual ~YRHandleBase(void);
-			void FUN_0065D480(void * ptr);
-
-		public:
-			void * Ptr;
-	};
-
-	class YRConflictImpl {
-		public:
-			int FUN_00766060(void);
-			WideWstring FUN_007665D0(void);
-	};
-
-	class YRConflictHandle : public YRHandleBase {
-		public:
-			YRConflictHandle(void) {}
-			virtual ~YRConflictHandle(void) {}
-			YRConflictImpl * Get(void) const { return((YRConflictImpl *)Ptr); }
-			bool operator==(YRConflictHandle const & that) const { return(Ptr == that.Ptr); }
-			bool operator!=(YRConflictHandle const & that) const { return(Ptr != that.Ptr); }
-	};
-
-	typedef DynamicVectorClass<YRConflictHandle> YRCONFLICT_LIST;
-	typedef VectorCursor<YRConflictHandle, YRCONFLICT_LIST> YRCONFLICT_ITER;
-
-	class YRPropsImpl {
-		public:
-			int FUN_0076BFE0(void);
-			int FUN_0076BFC0(void);
-			int FUN_0076BFB0(void);
-
-		public:
-			char Pad0[0x14];
-			WideWstring LongDesc;
-	};
-
-	class YRPropsHandle : public YRHandleBase {
-		public:
-			YRPropsHandle(void) {}
-			virtual ~YRPropsHandle(void) {}
-			YRPropsImpl * Get(void) const { return((YRPropsImpl *)Ptr); }
-			YRPropsImpl * FUN_0076F020(void) const;
-	};
-
-	class YRStateImpl {
-		public:
-			int FUN_0076F600(int territory);
-			int FUN_0076F670(int faction);
-	};
-
-	class YRStateHandle : public YRHandleBase {
-		public:
-			YRStateHandle(void);
-			virtual ~YRStateHandle(void) {}
-			YRStateImpl * Get(void) const { return((YRStateImpl *)Ptr); }
-	};
-
-	class YRHistoryImpl {
-		public:
-			YRStateHandle FUN_00767BB0(int tick);
-	};
-
-	class YRHistoryHandle : public YRHandleBase {
-		public:
-			YRHistoryHandle(void) {}
-			virtual ~YRHistoryHandle(void) {}
-			YRHistoryImpl * Get(void) const { return((YRHistoryImpl *)Ptr); }
-	};
-
-	class YRCampaignBase {
-		public:
-			virtual ~YRCampaignBase(void);
-			int RefCount;
-	};
-
-	class YRCampaignImpl : public YRCampaignBase, public YRPropsHandle {
-		public:
-			YRHistoryHandle History;
-			YRCONFLICT_LIST Conflicts;
-			char Pad1[0x44 - 0x18 - sizeof(YRCONFLICT_LIST)];
-			int PlayerFaction;
-
-			int Get_Current_Tick(void) { return(Get()->FUN_0076BFE0()); }
-			int FUN_00764FC0(bool vq_anim);
-			int FUN_00764FF0(int index);
-			void FUN_00765000(int index);
-			bool FUN_00764FA0(void);
-			void FUN_00765410(int faction);
-	};
-
-	class YRCampaignHandle : public YRHandleBase {
-		public:
-			YRCampaignHandle(void) {}
-			YRCampaignHandle(YRCampaignHandle const & that) { FUN_0065D480(that.Ptr); }
-			virtual ~YRCampaignHandle(void) {}
-			YRCampaignImpl * Get(void) const { return((YRCampaignImpl *)Ptr); }
-	};
-
-	class YRTerritoryImpl {
-		public:
-			void FUN_0076FEB0(bool active, Selection * engine);
-			MSShapeAnim * FUN_0076FF30(void);
-			void FUN_0076FF20(MSShapeAnim * anim);
-			void FUN_0076FD40(int state, Selection * engine, bool wait);
-
-		public:
-			char Pad0[8];
-			int ID;
-			WideWstring Name;
-			Point2D Target;
-			char Pad1[0x2c - 0x18];
-			MSShapeAnim * TargetAnim;
-	};
-
-	class YRTerritoryHandle : public YRHandleBase {
-		public:
-			YRTerritoryHandle(void) {}
-			YRTerritoryHandle(YRTerritoryHandle const & that);
-			YRTerritoryHandle & operator=(YRTerritoryHandle const & that) { FUN_0065D480(that.Ptr); return(*this); }
-			YRTerritoryHandle & operator=(YRTerritoryImpl * that) { FUN_0065D480(that); return(*this); }
-			virtual ~YRTerritoryHandle(void);
-			YRTerritoryImpl * Get(void) const { return((YRTerritoryImpl *)Ptr); }
-			YRTerritoryImpl * FUN_0076F070(void) const;
-			bool operator==(YRTerritoryHandle const & that) const { return(Ptr == that.Ptr); }
-			bool operator!=(YRTerritoryHandle const & that) const { return(Ptr != that.Ptr); }
-	};
-
-	class YRTerritoryHandleOut : public YRTerritoryHandle {
-		public:
-			virtual ~YRTerritoryHandleOut(void);
-	};
-
-	class YRTerritoryHandleCall : public YRTerritoryHandle {
-		public:
-			YRTerritoryHandleCall(void);
-			YRTerritoryHandleCall(YRTerritoryHandle const & that);
-	};
-
-	typedef DynamicVectorClass<YRTerritoryHandle> YRTERR_LIST;
-	typedef VectorCursor<YRTerritoryHandle, YRTERR_LIST> YRTERR_ITER_BASE;
-
-	class YRTERR_ITER : public YRTERR_ITER_BASE {
-		public:
-			YRTERR_ITER(YRTERR_LIST & list, int cursor);
-	};
-
-	YRTerritoryHandle __fastcall FUN_0076FF40(YRTERR_LIST * list, int id);
-
-	class YRMapImpl {
-		public:
-			int FUN_00769330(Point2D const & point);
-			bool FUN_00769440(Point2D const & point);
-			void FUN_007693A0(Selection * selection, bool hovered);
-			void FUN_007693F0(Selection * selection, bool hovered);
-			void FUN_007681E0(INIClass const & ini, Selection * selection, int value);
-			void FUN_007692F0(Selection * selection, YRVoices * voices);
-			YRTerritoryHandle FUN_0076F000(int id);
-			YRTerritoryHandleOut FUN_0076F000_Out(int id);
-
-		public:
-			char Pad0[0x2c];
-			YRTERR_LIST Territories;
-			Point2D Origin;
-			char Pad1[0x68 - 0x44 - sizeof(Point2D)];
-			bool CancelHovered;
-			char Pad2[0x7c - 0x69];
-			Rect TextRect;
-			Rect TooltipRect;
-			Rect PlayRect;
-			Rect BackRect;
-	};
-
-	class YRMapHandle : public YRHandleBase {
-		public:
-			YRMapHandle(void) {}
-			YRMapHandle(YRMapHandle const & that) { FUN_0065D480(that.Ptr); }
-			virtual ~YRMapHandle(void) {}
-			YRMapImpl * Get(void) const { return((YRMapImpl *)Ptr); }
-			YRMapImpl * FUN_0076F080(void) const;
-	};
-
 	struct YRVoiceStream {
 		void FUN_00407A90(void);
 	};
@@ -916,7 +666,7 @@ namespace WorldDominationTour
 			YRVoiceStream * Stream;
 	};
 
-	YRMapHandle __fastcall FUN_00767FB0(int map_id, bool vq_anim, int faction);
+	rc_ptr<Map> __fastcall FUN_00767FB0(int map_id, bool vq_anim, int faction);
 
 	class YRTextAnim : public MSAnim {
 		public:
@@ -939,16 +689,16 @@ namespace WorldDominationTour
 		typedef VectorCursor<MSSfxEntry *, SFX_LIST> SFX_ITER;
 
 		public:
-			Selection(YRCampaignHandle const & campaign, int theater);
+			Selection(rc_ptr<Campaign> const & campaign, int theater);
 			~Selection(void);
 			void Init_Voices(INIClass const & ini, Wstring const & name);
 			void Init_Sounds(INIClass const & ini, Wstring const & name);
 			void Init_Target(INIClass const & ini, Wstring const & name);
 			void Update_Hovered_Territory(Point2D const & point);
 			bool Select_Territory_At(Point2D const & point);
-			bool Select_Territory(YRTerritoryHandle const & territory);
+			bool Select_Territory(rc_ptr<Territory> const & territory);
 			void Handle_Click(Point2D const & point, bool & selected);
-			YRTerritoryHandleCall Pick_Territory(void);
+			rc_ptr<Territory> Pick_Territory(void);
 
 			void Add_Sfx_Entry(MSSfxEntry * entry) { if (entry != NULL) SfxEntries.Add(entry); }
 
@@ -957,7 +707,7 @@ namespace WorldDominationTour
 			void Play_SFX(Wstring const & name);
 			void Set_Long_Description(void);
 			void End(void);
-			void Do_Target_Anim(YRStateHandle const & state, bool show_targets, bool silent);
+			void Do_Target_Anim(rc_ptr<State> const & state, bool show_targets, bool silent);
 			void Check_For_Breakout(void);
 			void Remove_Target_Anims(void);
 			void Remove_Target_Anims2(void);
@@ -974,8 +724,8 @@ namespace WorldDominationTour
 			void FUN_0076EEB0(void);
 
 		public:
-			YRCampaignHandle TourCampaign;
-			YRConflictHandle SelectedConflict;
+			rc_ptr<Campaign> TourCampaign;
+			rc_ptr<Conflict> SelectedConflict;
 			YRVoices VoicePlayer;
 			int WinningThreshold;
 			int LosingThreshold;
@@ -985,9 +735,9 @@ namespace WorldDominationTour
 			Point2D LastPoint;
 			int StartTick;
 			int LastHoverZone;
-			YRMapHandle WorldMap;
+			rc_ptr<Map> WorldMap;
 			int HoveredTerritoryID;
-			YRTerritoryHandle MousedTerritory;
+			rc_ptr<Territory> MousedTerritory;
 			ConvertClass * TargetDrawer;
 			MSAnimEntry * ZoomingTarget;
 			MSAnimEntry * ThrobbingTarget;
@@ -995,7 +745,7 @@ namespace WorldDominationTour
 			YRTextAnim * TextAnim;
 			YRTextAnim * TooltipAnim;
 			MSFont * Font;
-			YRStateHandle CurrentState;
+			rc_ptr<State> CurrentState;
 			Wstring ThemeName;
 			SFX_LIST SfxEntries;
 			int TextColor;
@@ -1008,8 +758,8 @@ namespace WorldDominationTour
 
 void WDT_Review_Campaign(WorldDominationTour::Campaign * campaign);
 bool WDT_Select_Campaign(WorldDominationTour::Campaign * campaign, bool vq_anim);
-void __fastcall FUN_0076ECD0(WorldDominationTour::YRCampaignHandle * campaign, int theater);
-bool __fastcall FUN_0076ED10(WorldDominationTour::YRCampaignHandle * campaign, int theater);
+void __fastcall FUN_0076ECD0(rc_ptr<WorldDominationTour::Campaign> * campaign, int theater);
+bool __fastcall FUN_0076ED10(rc_ptr<WorldDominationTour::Campaign> * campaign, int theater);
 
 enum WDTStateRequestEnum {
 	WDT_REQ_STATE_EVERYTHING = 3,

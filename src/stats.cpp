@@ -4,6 +4,8 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "playerprofile.h"
+#include "rcptr.h"
 #include "stimer.h"
 #include "timer.h"
 #include "wolapi\wolapi.h"
@@ -44,17 +46,6 @@ struct StatsCounters {
 	int D;
 
 	StatsCounters(void) : A(0), B(0), C(0), D(0) {}
-};
-
-class StatsBase {
-public:
-	virtual ~StatsBase(void);
-	IUnknown *Object;
-};
-
-class StatsHandle : public StatsBase {
-public:
-	virtual ~StatsHandle(void);
 };
 
 // FUNCTION: 0x006C6AD0
@@ -119,10 +110,8 @@ void Register_Game_End_Time(void)
 	GameTimerInUse = false;
 }
 
-// FUNCTION: 0x006C8840
-StatsHandle::~StatsHandle(void)
-{
-}
+// FUNCTION: 0x006C8840 ?$rc_ptr@VPlayerProfile@@::~?$rc_ptr@VPlayerProfile@@
+template class rc_ptr<PlayerProfile>;
 
 // FUNCTION: 0x006C8870
 bool PacketQueue::Shrink(void)

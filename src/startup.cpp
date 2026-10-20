@@ -76,6 +76,8 @@
 #include "msgloop.h"
 #include "netdlg.h"
 #include "overlay.h"
+#include "parasite.h"
+#include "disklaser.h"
 #include "overtype.h"
 #include "ovrlight.h"
 #include "particle.h"
@@ -555,3 +557,19 @@ template class TClassFactory<SlaveManagerClass>;
 // FUNCTION: 0x006C0D10 ?$TClassFactory@VCaptureManagerClass@@::CreateInstance
 // FUNCTION: 0x006C0D90 ?$TClassFactory@VCaptureManagerClass@@::LockServer
 template class TClassFactory<CaptureManagerClass>;
+
+// FUNCTION: 0x006C0DC0 ?$TClassFactory@VDiskLaserClass@@::?$TClassFactory@VDiskLaserClass@@
+// FUNCTION: 0x006C0DD0 ?$TClassFactory@VDiskLaserClass@@::QueryInterface
+// FUNCTION: 0x006C0E40 ?$TClassFactory@VDiskLaserClass@@::AddRef
+// FUNCTION: 0x006C0E60 ?$TClassFactory@VDiskLaserClass@@::Release
+// FUNCTION: 0x006C0E90 ?$TClassFactory@VDiskLaserClass@@::CreateInstance
+// FUNCTION: 0x006C0F10 ?$TClassFactory@VDiskLaserClass@@::LockServer
+template class TClassFactory<DiskLaserClass>;
+
+// FUNCTION: 0x006C0F40 ?$TClassFactory@VParasiteClass@@::?$TClassFactory@VParasiteClass@@
+// FUNCTION: 0x006C0F50 ?$TClassFactory@VParasiteClass@@::QueryInterface
+// FUNCTION: 0x006C0FC0 ?$TClassFactory@VParasiteClass@@::AddRef
+// FUNCTION: 0x006C0FE0 ?$TClassFactory@VParasiteClass@@::Release
+// FUNCTION: 0x006C1010 ?$TClassFactory@VParasiteClass@@::CreateInstance
+// FUNCTION: 0x006C1090 ?$TClassFactory@VParasiteClass@@::LockServer
+template class TClassFactory<ParasiteClass>;

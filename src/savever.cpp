@@ -8,6 +8,8 @@
 #include "dbgprint.h"
 #include "session.h"
 #include <comdef.h>
+#include "geometry.h"
+#include "fastmath.h"
 
 // FUNCTION: 0x00682150
 HRESULT SaveVersionInfo::Load_String(IStorage *storage, int id, char *string)
@@ -39,6 +41,31 @@ HRESULT SaveVersionInfo::Load_String(IStorage *storage, int id, char *string)
 	return(S_OK);
 }
 
+// FUNCTION: 0x00682240
+HRESULT SaveVersionInfo::Load_String(IStorage *storage, int id, wchar_t *string)
+{
+	*string = '\0';
+
+	HRESULT res;
+	IStreamPtr stm;
+
+	res = storage->OpenStream(Stream_Name_From_ID(id), NULL, STGM_SHARE_EXCLUSIVE, 0, &stm);
+	if (FAILED(res)) {
+		return(res);
+	}
+
+	while (true) {
+		res = stm->Read(string, sizeof(*string), NULL);
+		if (FAILED(res)) {
+			return(res);
+		}
+		if (*string == '\0') {
+			return(res);
+		}
+		string++;
+	}
+}
+
 // FUNCTION: 0x006822F0
 HRESULT SaveVersionInfo::Load_String_Set(IPropertySetStorage *storageset, int id, char *string)
 {
@@ -64,6 +91,36 @@ HRESULT SaveVersionInfo::Load_String_Set(IPropertySetStorage *storageset, int id
 
 	if (propvar.vt == VT_LPWSTR) {
 		WideCharToMultiByte(CP_ACP, 0, propvar.pwszVal, -1, string, 128, 0, 0);
+	}
+
+	return(res);
+}
+
+// FUNCTION: 0x006823D0
+HRESULT SaveVersionInfo::Load_String_Set(IPropertySetStorage *storageset, int id, wchar_t *string)
+{
+	*string = '\0';
+
+	HRESULT res;
+	IPropertyStoragePtr storage;
+
+	res = storageset->Open(FMTID_SummaryInformation, STGM_SHARE_EXCLUSIVE|STGM_READWRITE, &storage);
+	if (FAILED(res)) {
+		return(res);
+	}
+
+	PROPSPEC propsec;
+	propsec.ulKind = PRSPEC_PROPID;
+	propsec.propid = id;
+	PROPVARIANT propvar;
+
+	res = storage->ReadMultiple(1, &propsec, &propvar);
+	if (FAILED(res)) {
+		return(res);
+	}
+
+	if (propvar.vt == VT_LPWSTR) {
+		wcsncpy(string, propvar.pwszVal, 128);
 	}
 
 	return(res);
@@ -146,6 +203,28 @@ HRESULT SaveVersionInfo::Save_String(IStorage *storage, int id, char *string)
 	return(res);
 }
 
+// FUNCTION: 0x00682780
+HRESULT SaveVersionInfo::Save_String(IStorage *storage, int id, const wchar_t *string)
+{
+	IStreamPtr stm(NULL);
+
+	HRESULT res = storage->CreateStream(Stream_Name_From_ID(id), STGM_SHARE_EXCLUSIVE|STGM_READWRITE, 0, 0, &stm);
+	if (FAILED(res)) {
+		return(res);
+	}
+
+	res = stm->Write(string, sizeof(WCHAR) * wcslen(string) + 2, NULL);
+	if (FAILED(res)) {
+		return(res);
+	}
+	res = stm->Commit(0);
+	if (FAILED(res)) {
+		return(res);
+	}
+
+	return(res);
+}
+
 // FUNCTION: 0x00682880
 HRESULT SaveVersionInfo::Save_String_Set(IPropertySetStorage *storageset, int id, const char *string)
 {
@@ -171,6 +250,36 @@ HRESULT SaveVersionInfo::Save_String_Set(IPropertySetStorage *storageset, int id
 
 	propvar.vt = VT_LPWSTR;
 	propvar.pwszVal = buf;
+
+	res = storage->WriteMultiple(1, &propsec, &propvar, PID_FIRST_USABLE);
+	if (FAILED(res)) {
+		return(res);
+	}
+
+	return(res);
+}
+
+// FUNCTION: 0x006829A0
+HRESULT SaveVersionInfo::Save_String_Set(IPropertySetStorage *storageset, int id, const wchar_t *string)
+{
+	HRESULT res;
+	IPropertyStoragePtr storage;
+
+	res = storageset->Open(FMTID_SummaryInformation, STGM_SHARE_EXCLUSIVE|STGM_READWRITE, &storage);
+	if (FAILED(res)) {
+		res = storageset->Create(FMTID_SummaryInformation, NULL, PROPSETFLAG_DEFAULT, STGM_SHARE_EXCLUSIVE|STGM_READWRITE|STGM_CREATE, &storage);
+		if (FAILED(res)) {
+			return(res);
+		}
+	}
+
+	PROPSPEC propsec;
+	propsec.ulKind = PRSPEC_PROPID;
+	propsec.propid = id;
+	PROPVARIANT propvar;
+
+	propvar.vt = VT_LPWSTR;
+	propvar.pwszVal = (wchar_t *)string;
 
 	res = storage->WriteMultiple(1, &propsec, &propvar, PID_FIRST_USABLE);
 	if (FAILED(res)) {
@@ -367,3 +476,16 @@ const WCHAR *Stream_Name_From_ID(int id)
 
 	return(NULL);
 }
+
+// FUNCTION: 0x00683030 ?C?$_com_ptr_t@V?$_com_IIID@UIStream@@$1?_GUID_0000000c_0000_0000_c000_000000000046@@3U__s_GUID@@A@@
+// FUNCTION: 0x00683050 ?$_com_ptr_t@V?$_com_IIID@UIStream@@$1?_GUID_0000000c_0000_0000_c000_000000000046@@3U__s_GUID@@A@@::_Release
+template class _com_ptr_t<_com_IIID<IStream, &__uuidof(IStream)> >;
+
+// FUNCTION: 0x00683060 ?$_com_ptr_t@V?$_com_IIID@UIPropertyStorage@@$1?_GUID_00000138_0000_0000_c000_000000000046@@3U__s_GUID@@A@@::_Release
+template class _com_ptr_t<_com_IIID<IPropertyStorage, &__uuidof(IPropertyStorage)> >;
+
+// FUNCTION: 0x00683070 $E30
+// FUNCTION: 0x006830A0 $E33
+// FUNCTION: 0x006830C0 $E36
+// FUNCTION: 0x006830E0 $E39
+// FUNCTION: 0x00683100 $E42

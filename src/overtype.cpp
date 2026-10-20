@@ -274,3 +274,120 @@ HRESULT STDMETHODCALLTYPE OverlayTypeClass::GetClassID(CLSID * retval)
 	*retval = CLSID_OverlayTypeClass;
 	return(S_OK);
 }
+
+// FUNCTION: 0x005FEAF0
+HRESULT STDMETHODCALLTYPE OverlayTypeClass::Load(IStream * stream)
+{
+	char fullname[_MAX_FNAME+_MAX_EXT];
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		new (this) OverlayTypeClass(NoInitClass());
+
+		Fetch_Voxel_Image();
+		Fetch_Normal_Image();
+
+		Swizzle_Pointer(&CellAnim);
+
+		if (!DemandLoad) {
+			if (IsTheater) {
+				_makepath(fullname, NULL, NULL, GraphicName, Theaters[Scen->Theater].Suffix);
+			} else {
+				_makepath(fullname, NULL, NULL, GraphicName, ".SHP");
+				FUN_005F96B0(fullname, Scen->Theater);
+			}
+
+			if (ImageData == NULL) {
+				ImageData = FileSystem::LoadFile(fullname, true);
+			}
+		}
+		result = S_OK;
+	}
+	return(result);
+}
+
+// FUNCTION: 0x005FEC70
+OverlayTypeClass * OverlayTypeClass::Find_Or_Make(char const * name)
+{
+	return(TFind_Or_Make<OverlayTypeClass>(name, OverlayTypes));
+}
+
+// FUNCTION: 0x005FED00
+RGBClass OverlayTypeClass::Get_Radar_Color(int shape) const
+{
+	ShapeSet const *image = (const ShapeSet *) Get_Image_Data();
+
+	if (image == NULL && CellAnim != NULL) {
+		image = (const ShapeSet *)CellAnim->Get_Image_Data();
+	}
+
+	if (image != NULL) {
+		if ((HeapID >= OVERLAY_TIBERIUM2_01 && HeapID <= OVERLAY_TIBERIUM2_12) ||
+			(HeapID >= OVERLAY_TIBERIUM3_01 && HeapID <= OVERLAY_TIBERIUM3_12)) {
+
+			RGBClass color = image->Get_Color(shape);
+			return(RGBClass (color.Get_Red(), color.Get_Blue(), color.Get_Green()));
+		}
+		return(image->Get_Color(shape));
+	}
+
+	return(RGBClass(0, 0, 0));
+}
+
+// FUNCTION: 0x005FEDE0
+void const * OverlayTypeClass::Get_Image_Data(void) const
+{
+	char fullname[_MAX_FNAME+_MAX_EXT];
+
+	if (ImageData != NULL || DemandLoad == false) {
+		return(ImageData);
+	}
+
+	OverlayTypeClass * _this = (OverlayTypeClass *)this;
+
+	DebugString("Demand loading image for %s\n", (char const *)GivenName);
+	if (IsTheater) {
+		_makepath(fullname, NULL, NULL, GraphicName, Theaters[Scen->Theater].Suffix);
+
+	} else {
+		if (IsNewTheater) {
+			_makepath(fullname, NULL, NULL, GraphicName, ".SHP");
+			FUN_005F96B0(fullname, Scen->Theater);
+		}
+	}
+
+	CCFileClass file (fullname);
+
+	_this->ImageData = Load_Alloc_Data(file);
+	if (ImageData != NULL) {
+		_this->ImageAllocated = true;
+	}
+
+	return(ImageData);
+}
+
+// FUNCTION: 0x005FEF00 OverlayTypeClass::Fetch_RTTI
+
+// FUNCTION: 0x005FEF10 OverlayTypeClass::Fetch_Object_Size
+
+// FUNCTION: 0x005FEF20 OverlayTypeClass::Fetch_Heap_ID
+
+// FUNCTION: 0x005FEF30 OverlayTypeClass::~OverlayTypeClass
+
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007E1720;
+extern const double DAT_007EF6A8;
+extern const double DAT_007EF6B0;
+
+// FUNCTION: 0x005FEFC0 $E131
+double DAT_00AC17D8 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x005FEFF0 $E134
+double DAT_00AC1828 = DAT_00AC17D8 / DAT_007EF6A8;
+
+// FUNCTION: 0x005FF010 $E137
+double DAT_00AC1810 = DAT_007E1718 / DAT_00AC1828;
+
+// FUNCTION: 0x005FF030 $E140
+double DAT_00AC1808 = DAT_007E1720 * DAT_007EF6B0;

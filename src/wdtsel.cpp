@@ -207,7 +207,7 @@ void Selection::On_Map_Leave(void)
 {
 	Play_Sfx_Named(this, "MapLeave");
 	HoveredTerritoryID = -1;
-	YRTerritoryHandle none;
+	rc_ptr<Territory> none;
 	Select_Territory(none);
 }
 
@@ -258,7 +258,7 @@ void Selection::Play_SFX(Wstring const & name)
 }
 
 // FUNCTION: 0x0076ECD0
-void __fastcall FUN_0076ECD0(YRCampaignHandle * campaign, int theater)
+void __fastcall FUN_0076ECD0(rc_ptr<Campaign> * campaign, int theater)
 {
 	InputManagerClass::Instance->FUN_0054F720();
 	Selection sel(*campaign, theater);
@@ -296,37 +296,19 @@ void Selection::End(void)
 	}
 }
 
-// FUNCTION: 0x0076F000 WorldDominationTour::YRMapImpl::FUN_0076F000
-YRTerritoryHandle YRMapImpl::FUN_0076F000(int id)
+// FUNCTION: 0x0076F000 WorldDominationTour::Map::FUN_0076F000
+rc_ptr<Territory> Map::FUN_0076F000(int id)
 {
 	return(FUN_0076FF40(&Territories, id));
 }
 
-// FUNCTION: 0x0076F020 WorldDominationTour::YRPropsHandle::FUN_0076F020
-YRPropsImpl * YRPropsHandle::FUN_0076F020(void) const
-{
-	return((YRPropsImpl *)Ptr);
-}
+// FUNCTION: 0x0076F020 ?$rc_ptr@VCampaignProperties@WorldDominationTour@@::Get
+template class rc_ptr<CampaignProperties>;
 
-// FUNCTION: 0x0076F030 WorldDominationTour::YRTerritoryHandle::YRTerritoryHandle
-YRTerritoryHandle::YRTerritoryHandle(YRTerritoryHandle const & that)
-{
-	FUN_0065D480(that.Ptr);
-}
+// FUNCTION: 0x0076F030 ?$rc_ptr@VTerritory@WorldDominationTour@@::?$rc_ptr@VTerritory@WorldDominationTour@@
+// FUNCTION: 0x0076F060 ?$rc_ptr@VTerritory@WorldDominationTour@@::~?$rc_ptr@VTerritory@WorldDominationTour@@
+// FUNCTION: 0x0076F070 ?$rc_ptr@VTerritory@WorldDominationTour@@::Get
+template class rc_ptr<Territory>;
 
-// FUNCTION: 0x0076F060 WorldDominationTour::YRTerritoryHandle::~YRTerritoryHandle
-YRTerritoryHandle::~YRTerritoryHandle(void)
-{
-}
-
-// FUNCTION: 0x0076F070 WorldDominationTour::YRTerritoryHandle::FUN_0076F070
-YRTerritoryImpl * YRTerritoryHandle::FUN_0076F070(void) const
-{
-	return(Get());
-}
-
-// FUNCTION: 0x0076F080 WorldDominationTour::YRMapHandle::FUN_0076F080
-YRMapImpl * YRMapHandle::FUN_0076F080(void) const
-{
-	return(Get());
-}
+// FUNCTION: 0x0076F080 ?$rc_ptr@VMap@WorldDominationTour@@::Get
+template class rc_ptr<Map>;

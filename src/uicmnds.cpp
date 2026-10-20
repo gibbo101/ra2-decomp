@@ -588,13 +588,13 @@ int FUN_00731CC0(void)
 // FUNCTION: 0x00731CD0
 int FUN_00731CD0(void)
 {
-	return Map.Get_Mouse_Current_Frame((MouseType)0x4d, false);
+	return Map.Get_Mouse_Start_Frame((MouseType)0x4d, false);
 }
 
 // FUNCTION: 0x00731CE0
 int FUN_00731CE0(void)
 {
-	return Map.Get_Mouse_Current_Frame((MouseType)0x4c, false);
+	return Map.Get_Mouse_Start_Frame((MouseType)0x4c, false);
 }
 
 // FUNCTION: 0x00731CF0

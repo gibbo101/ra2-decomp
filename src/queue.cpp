@@ -104,6 +104,8 @@
 #include <ctime>
 
 void Add_CRC(unsigned int *crc, unsigned int val);
+HWND FUN_00775B10(void);
+extern int DAT_00B779C4;
 
 struct QueueRecord {
 	char Data[0x2ec];
@@ -276,8 +278,41 @@ extern unsigned int DAT_00AC51FC;
 extern unsigned int DAT_00B04474[256];
 
 int __fastcall FUN_0064C380(int max_houses, HousesType base_house, void *net, void *skip_crc, void *their);
-void __fastcall FUN_0064D990(void *net);
-void __fastcall FUN_0064D9E0(void);
+void __fastcall Clean_DoList(ConnManClass *net);
+
+static inline void _Clean_DoList1(ConnManClass *net)
+{
+	Clean_DoList(net);
+}
+static inline void _Clean_DoList2(ConnManClass *net)
+{
+	_Clean_DoList1(net);
+}
+static inline void _Clean_DoList3(ConnManClass *net)
+{
+	_Clean_DoList2(net);
+}
+static inline void _Clean_DoList4(ConnManClass *net)
+{
+	_Clean_DoList3(net);
+}
+static inline void _Clean_DoList5(ConnManClass *net)
+{
+	_Clean_DoList4(net);
+}
+static inline void _Clean_DoList6(ConnManClass *net)
+{
+	_Clean_DoList5(net);
+}
+static inline void _Clean_DoList7(ConnManClass *net)
+{
+	_Clean_DoList6(net);
+}
+static inline void _Clean_DoList8(ConnManClass *net)
+{
+	_Clean_DoList7(net);
+}
+void __fastcall Queue_Record(void);
 void __fastcall FUN_006475F0(void);
 void __fastcall FUN_00652540(void *list);
 void __fastcall FUN_0064DAB0(void);
@@ -377,7 +412,7 @@ void Queue_AI(void)
 			return;
 		}
 
-		FUN_0064D990(NULL);
+		_Clean_DoList8(NULL);
 	}
 	else {
 		switch (Session.Type) {
@@ -389,13 +424,13 @@ void Queue_AI(void)
 					FUN_00652540(&OutList);
 				}
 				if (Session.Record) {
-					FUN_0064D9E0();
+					Queue_Record();
 				}
 				if (!FUN_0064C380(1, PlayerPtr->Class->House, NULL, NULL, NULL)) {
 					GameActive = 0;
 					return;
 				}
-				FUN_0064D990(NULL);
+				_Clean_DoList8(NULL);
 				break;
 
 			case GAME_MODEM:
@@ -808,6 +843,24 @@ RetcodeType __fastcall Process_Serial_Packet(char *multi_packet_buf, int first_t
 	return(RC_NORMAL);
 }
 
+static int SyncNameButtonControlsIDs[MAX_PLAYERS] = {
+	0x640, 0x642, 0x641, 0x643, 0x644, 0x645, 0x646, 0x647
+};
+static int SyncBarControlIDs[MAX_PLAYERS] = {
+	0x648, 0x649, 0x64a, 0x64b, 0x64c, 0x64d, 0x64e, 0x64f
+};
+
+extern unsigned int DAT_00AFA418;
+extern RGBClass DAT_00A8EAE4;
+extern int DAT_00B04884;
+extern int DAT_00B04888;
+extern unsigned char DAT_00B0488C;
+extern unsigned char DAT_00B0488D;
+extern unsigned char DAT_00B04878;
+extern DSurface * DAT_00887310;
+
+void __fastcall Draw_Sync_Bars(HWND window);
+
 // FUNCTION: 0x0064AAA0
 void ListBox_Trim(HWND listbox)
 {
@@ -819,12 +872,373 @@ void ListBox_Trim(HWND listbox)
 	ListBox_SetTopIndex(listbox, string_count - 1);
 }
 
+void __fastcall Cast_Kick_Vote(int kicker, int kickee);
+char * __fastcall FUN_007350C0(wchar_t const * text);
+
+// FUNCTION: 0x0064AAE0
+void __fastcall Propose_Kick_Player(HWND window, int id)
+{
+	if (id < 0 || id >= Session.Players.Count()) {
+		return;
+	}
+
+	DebugString("Propose_Kick_Player %d - %s. Local id is %d\n", id, Session.Players[id]->Name, Session.Players[0]->Player.ID);
+	HWND listbox = GetDlgItem(window, 0x651);
+
+	if (id == 0) {
+		_DrawMessage(-1, StringTable::LoadString("TXT_RECONNECT_KICK_SELF", NULL, "D:\\ra2mdpost\\Queue.CPP", 0xd2f), listbox);
+		ListBox_Trim(listbox);
+		return;
+	}
+
+	if (Session.Type == GAME_INTERNET && DAT_00B779C4) {
+		_DrawMessage(-1, StringTable::LoadString("TXT_CANT_KICK", NULL, "D:\\ra2mdpost\\Queue.CPP", 0xd39), listbox);
+		ListBox_Trim(listbox);
+		return;
+	}
+
+	GlobalPacketType gpacket;
+	gpacket.Command = NET_PROPOSE_KICK;
+	strncpy(gpacket.Name, FUN_007350C0(Session.Players[0]->Name), 20);
+	gpacket.Kick.KickerID = Session.Players[0]->Player.ID;
+	gpacket.Kick.KickeeID = Session.Players[id]->Player.ID;
+
+	for (int i = 1; i < Session.Players.Count(); i++) {
+		DebugString("Sending kick proposal to %s\n", Session.Players[i]->Name);
+		Ipx.Send_Global_Message(&gpacket, sizeof(gpacket), 1, &Session.Players[i]->Address);
+	}
+
+	Cast_Kick_Vote(Session.Players[0]->Player.ID, Session.Players[id]->Player.ID);
+}
+
 // FUNCTION: 0x0064AC90
 void Kick_Packet_Received(GlobalPacketType & packet, IPXAddressClass & address)
 {
 	GlobalPacketType *newpacket = new GlobalPacketType;
 	memcpy(newpacket, &packet, sizeof(*newpacket));
 	Session.KickProposals.Add(newpacket);
+}
+
+// FUNCTION: 0x0064AD10
+void __fastcall Cast_Kick_Vote(int kicker, int kickee)
+{
+	wchar_t buffer[256];
+
+	int votes = Session.KickVoteCount[kickee];
+	for (int i = 0; i < votes; i++) {
+		if (Session.KickVoteWho[kickee][i] == kicker) {
+			return;
+		}
+	}
+
+	Session.KickVoteWho[kickee][votes] = kicker;
+	Session.KickVoteCount[kickee]++;
+
+	if (Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) {
+		wchar_t * kicker_name = Ipx.Connection_Name(kicker);
+		if (kicker_name == NULL) {
+			kicker_name = Session.Players[0]->Name;
+		}
+
+		DebugString("Player %s votes to kick player %s from the game\n", kicker_name, Ipx.Connection_Name(kickee));
+		swprintf(buffer, StringTable::LoadString("TXT_RECONNECT_KICK_RECEIVED", NULL, "D:\\ra2mdpost\\Queue.CPP", 0xd9d), kicker_name, Ipx.Connection_Name(kickee));
+
+		HWND topwindow = FUN_00775B10();
+		HWND listbox = GetDlgItem(topwindow, 0x651);
+		_DrawMessage(-1, buffer, listbox);
+		ListBox_Trim(listbox);
+	}
+}
+
+
+// FUNCTION: 0x0064AE30
+void Reset_Ping_Counters(void)
+{
+	DAT_00B04884 = 0;
+	DAT_00B04888 = 0;
+	DAT_00B0488C = 0;
+	DAT_00B0488D = 0;
+	DAT_00B04878 = 0;
+}
+
+extern unsigned char DAT_00A8F900;
+extern bool ConnectionLost;
+void __fastcall Send_Statistics_Packet(bool arg);
+void __fastcall FUN_005DA750(int id, int error);
+
+extern INetUtil * DAT_00AC1170;
+extern int DAT_00B77780;
+extern int DAT_00B77CE0;
+extern int DAT_00B04890;
+extern char DAT_00B77930[];
+
+// FUNCTION: 0x0064AE50
+BOOL CALLBACK Reconnect_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	int * rc = (int *)GetWindowLong(window, DWL_USER);
+
+	switch (message) {
+		case WM_DESTROY:
+			Remove_Modeless_Dialog(window);
+			break;
+
+		case WM_DRAWITEM:
+			OwnerDraw::Draw_Item((DRAWITEMSTRUCT *)lparam);
+			return(TRUE);
+
+		case WM_ERASEBKGND:
+			return(TRUE);
+
+		case WM_PAINT:
+			OwnerDraw::Draw_Dialog_Back(window);
+			Draw_Sync_Bars(window);
+			ValidateRect(window, NULL);
+			break;
+
+		case WM_COMMAND:
+			switch (LOWORD(wparam)) {
+				case 0x640:
+					Propose_Kick_Player(window, 0);
+					break;
+
+				case 0x642:
+					Propose_Kick_Player(window, 1);
+					break;
+
+				case 0x641:
+					Propose_Kick_Player(window, 2);
+					break;
+
+				case 0x643:
+					Propose_Kick_Player(window, 3);
+					break;
+
+				case 0x644:
+					Propose_Kick_Player(window, 4);
+					break;
+
+				case 0x645:
+					Propose_Kick_Player(window, 5);
+					break;
+
+				case 0x646:
+					Propose_Kick_Player(window, 6);
+					break;
+
+				case 0x647:
+					Propose_Kick_Player(window, 7);
+					break;
+
+				case IDCANCEL:
+					*rc = IDCANCEL;
+					break;
+			}
+			break;
+
+		case WM_TIMER:
+			if (Session.Type == GAME_INTERNET && wparam == 1 && DAT_00AC1170 != NULL) {
+				int handle;
+				if (DAT_00B77780 < 5) {
+					DAT_00AC1170->RequestPing(DAT_00B77930, 1000, &handle);
+					DAT_00B77780++;
+				}
+				DAT_00B04890++;
+				if (DAT_00B779C4) {
+					if (!DAT_00B0488C && DAT_00B04890 > 5 && !DAT_00B77CE0) {
+						DAT_00B0488C = 1;
+						DAT_00B04884++;
+					}
+					else if (!DAT_00B0488D && DAT_00B04890 > 10 && !DAT_00B77CE0) {
+						DAT_00B0488D = 1;
+						DAT_00B04888++;
+					}
+					if (DAT_00B04884 > 5 || DAT_00B04888 > 2) {
+						DAT_00B04878 = 1;
+						*rc = IDCANCEL;
+						return(FALSE);
+					}
+				}
+				SetTimer(window, 1, 1000, NULL);
+			}
+			break;
+
+		case WM_CTLCOLORMSGBOX:
+		case WM_CTLCOLOREDIT:
+		case WM_CTLCOLORLISTBOX:
+		case WM_CTLCOLORBTN:
+		case WM_CTLCOLORDLG:
+		case WM_CTLCOLORSCROLLBAR:
+		case WM_CTLCOLORSTATIC:
+			return((BOOL)GetStockObject(BLACK_BRUSH));
+
+		case 0x497: {
+			Add_Modeless_Dialog(window);
+
+			int i;
+			for (i = 0; i < MAX_PLAYERS; i++) {
+				HWND button = GetDlgItem(window, SyncNameButtonControlsIDs[i]);
+				EnableWindow(button, FALSE);
+				HWND bar = GetDlgItem(window, SyncBarControlIDs[i]);
+				EnableWindow(bar, FALSE);
+			}
+
+			for (i = 0; i < MAX_PLAYERS; i++) {
+				HWND button = GetDlgItem(window, SyncNameButtonControlsIDs[i]);
+				HWND bar = GetDlgItem(window, SyncBarControlIDs[i]);
+				if (i < Session.Players.Count()) {
+					SendMessage(button, 0x4b2, 0, (LPARAM)Session.Players[i]->Name);
+					EnableWindow(button, TRUE);
+					EnableWindow(bar, TRUE);
+				} else {
+					DestroyWindow(button);
+					DestroyWindow(bar);
+				}
+			}
+
+			if (Session.Type == GAME_INTERNET) {
+				DAT_00B77780 = 0;
+				DAT_00B77CE0 = 0;
+				DAT_00B0488C = 0;
+				DAT_00B0488D = 0;
+				DAT_00B04890 = 0;
+				DAT_00B04878 = 0;
+				SetTimer(window, 1, 1000, NULL);
+			}
+			MouseCursor->Show_Mouse();
+			break;
+		}
+	}
+
+	return(FALSE);
+}
+
+// FUNCTION: 0x0064B240
+void __fastcall Kick_Player_Now(ConnManClass *net, int kickee, FrameSyncStruct * their, bool error)
+{
+	static int last_kick_time;
+	bool spamkick = false;
+	if (time(NULL) - last_kick_time >= 60) {
+		last_kick_time = time(NULL);
+	} else {
+		spamkick = true;
+		last_kick_time = time(NULL);
+	}
+
+	int id = net->Connection_ID(kickee);
+	DebugString("Kicking player %d from the game - Frame is %d\n", id, Frame);
+
+	if (id == -1) {
+		DebugString("Kick_Player_Now bailing - bad house ID\n");
+		return;
+	}
+
+	Houses[id]->LostConnection = true;
+
+	if (CountAliveTeams(Houses[id]) == 1 && Session.Type == GAME_INTERNET && !DAT_00A8F900) {
+		Register_Game_End_Time();
+		ConnectionLost = true;
+		if (!spamkick) {
+			Session.SawGameCompletion = true;
+		}
+		for (int i = 0; i < Houses.Count(); i++) {
+			HouseClass * house = Houses[i];
+			if (house != NULL && !house->IsDefeated && house->IsHuman) {
+				house->LostConnection = true;
+			}
+		}
+		Send_Statistics_Packet(false);
+	}
+
+	if (CountAliveTeams(Houses[id]) > 1 && !spamkick) {
+		Houses[id]->IsResigner = true;
+	}
+
+	for (int i = kickee; i < net->Num_Connections() - 1; i++) {
+		their[i] = their[i+1];
+		Session.KickVoteCount[i] = Session.KickVoteCount[i+1];
+		memcpy(Session.KickVoteWho[i], Session.KickVoteWho[i+1], sizeof(Session.KickVoteWho[i]));
+	}
+
+	FUN_005DA750(id, error);
+}
+
+bool Reconnect_Modem(void);
+
+// FUNCTION: 0x0064B410
+int __fastcall Handle_Timeout(ConnManClass *net, FrameSyncStruct *their)
+{
+	if (Session.Type == GAME_MODEM || Session.Type == GAME_NULL_MODEM) {
+		if (net->Num_Connections()) {
+			Session.Suspended++;
+			if (!Reconnect_Modem()) {
+				Session.Suspended--;
+				return(0);
+			} else {
+				Session.Suspended--;
+				return(1);
+			}
+		}
+	}
+	else if (Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) {
+		int j = 0x7fffffff;
+		int oldest_index = 0;
+		for (int i = 0; i < net->Num_Connections(); i++) {
+			if (their[i].frame < j) {
+				j = their[i].frame;
+				oldest_index = i;
+			}
+		}
+		Kick_Player_Now(net, oldest_index, their, true);
+	}
+
+	return(1);
+}
+
+extern QueueClass<EventClass, 256> MegaMissionList;
+
+// FUNCTION: 0x0064CD30
+void __fastcall FUN_0064CD30(int start, int count, xTargetClass whom, xTargetClass * destination)
+{
+	for (int i = start; i <= start + count; i++) {
+		if (whom == MegaMissionList[i].Data.MegaMission.Whom) {
+			MegaMissionList[i].Data.MegaMission.Destination = *destination;
+			return;
+		}
+	}
+}
+
+// FUNCTION: 0x0064D990
+void __fastcall Clean_DoList(ConnManClass *net)
+{
+	while (DoList.Count) {
+		if (DoList.First().IsExecuted || Frame > DoList.First().Frame) {
+			DoList.Next();
+		} else {
+			break;
+		}
+	}
+}
+
+// FUNCTION: 0x0064D9E0
+void __fastcall Queue_Record(void)
+{
+	if (Frame == 0 && Session.Type != GAME_NORMAL) return;
+
+	int i, j;
+	j = 0;
+	for (i = 0; i < DoList.Count; i++) {
+		if (Frame == DoList[i].Frame && !DoList[i].IsExecuted) {
+			j++;
+		}
+	}
+
+	Session.RecordFile.Write(&j, sizeof(j));
+	for (i = 0; i < DoList.Count; i++) {
+		if (Frame == DoList[i].Frame && !DoList[i].IsExecuted) {
+			Session.RecordFile.Write(&DoList[i], sizeof(EventClass));
+			j--;
+		}
+	}
 }
 
 // FUNCTION: 0x0064DE80

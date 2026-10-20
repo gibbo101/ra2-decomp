@@ -65,12 +65,13 @@ class ScriptTypeClass : public AbstractTypeClass
 		virtual HRESULT STDMETHODCALLTYPE Load(IStream * stream) override;
 		virtual HRESULT STDMETHODCALLTYPE Save(IStream * stream, BOOL cleardirty) override;
 
-		static void Read_All(CCINIClass const & ini, INIScopeType scope);
+		static void Read_All(CCINIClass & ini, INIScopeType scope);
 		static void Write_All(CCINIClass & ini, INIScopeType scope);
 
-		virtual bool Read_INI(CCINIClass const & ini) override;
+		virtual bool Read_INI(CCINIClass & ini) override;
 		virtual bool Write_INI(CCINIClass & ini) const override;
 
+		virtual void Detach(AbstractClass const * target, bool all = true) override;
 		virtual void Compute_CRC(CRCEngine & crc) const override;
 
 		virtual RTTIType Fetch_RTTI(void) const override {return(RTTI_SCRIPTTYPE);}

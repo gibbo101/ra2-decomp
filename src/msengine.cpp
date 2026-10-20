@@ -302,3 +302,27 @@ template class DynamicVectorClass<MSAnim *>;
 
 // FUNCTION: 0x005D2780 ?$DynamicVectorClass@PAVMSSfx@@::Clear
 template class DynamicVectorClass<MSSfx *>;
+
+// FUNCTION: 0x005D27B0 ?$DynamicVectorClass@PAVMSSfx@@::ID
+
+// FUNCTION: 0x005D27D0 ?$VectorClass@PAVMSSfx@@::GetItem
+
+// FUNCTION: 0x005D27E0 ?$VectorClass@PAVMSAnim@@::operator==
+
+// FUNCTION: 0x005D2820 ?$VectorClass@PAVMSAnim@@::Resize
+
+// FUNCTION: 0x005D28D0 ?$VectorClass@PAVMSAnim@@::Clear
+
+// FUNCTION: 0x005D2900 ?$VectorClass@PAVMSAnim@@::ID
+
+// FUNCTION: 0x005D2940 ?$VectorClass@PAVMSSfx@@::ID
+
+// FUNCTION: 0x005D2960 ?$DynamicVectorClass@PAVMSAnim@@::Resize
+
+// FUNCTION: 0x005D2A10 ?$DynamicVectorClass@PAVMSAnim@@::ID
+
+// FUNCTION: 0x005D2A40 ?$VectorClass@PAVMSSfx@@::operator==
+
+// FUNCTION: 0x005D2A80 ?$VectorClass@PAVMSSfx@@::Resize
+
+// FUNCTION: 0x005D2B30 ?$VectorClass@PAVMSSfx@@::Clear

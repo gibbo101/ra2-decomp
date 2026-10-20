@@ -509,3 +509,42 @@ HRESULT STDMETHODCALLTYPE BulletClass::GetClassID(CLSID * retval)
 	*retval = CLSID_BulletClass;
 	return(S_OK);
 }
+
+// FUNCTION: 0x0046B540
+int BulletClass::Fetch_Object_Size(void) const
+{
+	return(sizeof(*this));
+}
+
+// FUNCTION: 0x0046B550
+RTTIType BulletClass::Fetch_RTTI(void) const
+{
+	return(RTTI_BULLET);
+}
+
+// FUNCTION: 0x0046B5A0
+void BulletClass::Assign_Target(AbstractClass * target)
+{
+	TarCom = target;
+}
+
+// FUNCTION: 0x0046B5B0
+ObjectTypeClass const * BulletClass::Class_Of(void) const
+{
+	return(Class);
+}
+
+// FUNCTION: 0x0046B5C0 BulletClass::~BulletClass
+
+// FUNCTION: 0x0046B5E0 ?$DynamicVectorClass@PAVBulletClass@@::Clear
+// FUNCTION: 0x0046B610 ?$DynamicVectorClass@PAVBulletClass@@::ID
+// FUNCTION: 0x0046B630 ?$VectorClass@PAVBulletClass@@::GetItem
+template class DynamicVectorClass<BulletClass *>;
+
+// FUNCTION: 0x0046B640 ?$CDTimerClass@VFrameTimerClass@@::?$CDTimerClass@VFrameTimerClass@@
+template class CDTimerClass<FrameTimerClass>;
+
+// FUNCTION: 0x0046B660 ?$VectorClass@PAVBulletClass@@::operator==
+// FUNCTION: 0x0046B6A0 ?$VectorClass@PAVBulletClass@@::Resize
+// FUNCTION: 0x0046B750 ?$VectorClass@PAVBulletClass@@::Clear
+template class VectorClass<BulletClass *>;

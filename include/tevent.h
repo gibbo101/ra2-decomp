@@ -57,6 +57,7 @@ class TEventClass : public AbstractClass
 		HouseClass * EventHouse;
 
 		HouseClass * Get_Event_House(void) const;
+		void Set_Event_House(HouseClass * house);
 
 		TEventClass(void);
 		TEventClass(NoInitClass const & x);

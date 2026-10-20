@@ -45,6 +45,7 @@ class WalkLocomotionClass : public LocomotionClass, public IPiggyback
 		virtual boolean STDMETHODCALLTYPE Is_Moving_Here(CoordStruct to) override;
 		virtual boolean STDMETHODCALLTYPE Is_Really_Moving_Now(void) override;
 		virtual void STDMETHODCALLTYPE Stop_Movement_Animation(void) override {IsReallyMoving = false;};
+		virtual void STDMETHODCALLTYPE Limbo(void) override;
 
 		virtual int Fetch_Object_Size(void) const override {return(sizeof(*this));}
 

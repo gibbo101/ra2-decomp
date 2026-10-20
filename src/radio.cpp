@@ -12,6 +12,7 @@
 #include "swizzle.h"
 #include "techno.h"
 #include <new.h>
+#include <cmath>
 
 static inline int Index_Of(VectorClass<TechnoClass *> const & links, TechnoClass * link)
 {
@@ -214,3 +215,87 @@ TechnoClass * RadioClass::FUN_0065AD30(int index)
 {
 	return RadioLinks[index];
 }
+
+// FUNCTION: 0x0065AD40
+TechnoClass * RadioClass::FUN_0065AD40(int index) const
+{
+	return RadioLinks[index];
+}
+
+// FUNCTION: 0x0065AD50
+bool RadioClass::ContainsLink(TechnoClass const * techno) const
+{
+	return FindLinkIndex(techno) != -1;
+}
+
+// FUNCTION: 0x0065AD90
+int RadioClass::FindLinkIndex(TechnoClass const * techno) const
+{
+	if (techno != NULL) {
+		for (int i = 0; i < RadioLinks.Length(); i++) {
+			if (RadioLinks[i] == techno) return i;
+		}
+	}
+	return -1;
+}
+
+// FUNCTION: 0x0065ADC0
+bool RadioClass::HasFreeLink(void) const
+{
+	for (int i = 0; i < RadioLinks.Length(); i++) {
+		if (RadioLinks[i] == NULL) return true;
+	}
+	return false;
+}
+
+// FUNCTION: 0x0065ADF0
+bool RadioClass::HasFreeLink(TechnoClass const * ignore) const
+{
+	for (int i = 0; i < RadioLinks.Length(); i++) {
+		if (RadioLinks[i] == NULL || RadioLinks[i] == ignore) return true;
+	}
+	return false;
+}
+
+// FUNCTION: 0x0065AE30
+bool RadioClass::HasAnyLink(void) const
+{
+	for (int i = 0; i < RadioLinks.Length(); i++) {
+		if (RadioLinks[i] != NULL) return true;
+	}
+	return false;
+}
+
+// FUNCTION: 0x0065AE60
+void RadioClass::SetLinkCount(int count)
+{
+	int old = RadioLinks.Length();
+	if (count > old) {
+		RadioLinks.Resize(count, NULL);
+		for (int i = old; i < count; i++) {
+			RadioLinks[i] = NULL;
+		}
+	}
+}
+
+// FUNCTION: 0x0065AEB0 RadioClass::~RadioClass
+
+extern double __cdecl FUN_004CAC40(double);
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007E1720;
+extern const double DAT_007F0790;
+extern const double DAT_007F0798;
+
+// FUNCTION: 0x0065AF50 $E32
+double DAT_00B04B78 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x0065AF80 $E35
+double DAT_00B04BC8 = DAT_00B04B78 / DAT_007F0790;
+
+// FUNCTION: 0x0065AFA0 $E38
+double DAT_00B04BB0 = DAT_007E1718 / DAT_00B04BC8;
+
+// FUNCTION: 0x0065AFC0 $E41
+double DAT_00B04BA8 = DAT_007E1720 * DAT_007F0798;

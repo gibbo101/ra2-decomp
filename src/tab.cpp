@@ -594,3 +594,110 @@ void TabClass::FUN_006D1200(void)
 	FUN_006D09C0(button, "Tip:TypeSelect");
 	FUN_006D09C0(&CommandBarStatics::ButtonA, "Tip:ThumbOpen");
 }
+
+// FUNCTION: 0x006D14F0
+void TabClass::FUN_006D14F0(void)
+{
+	for (int p = (int)CommandBarStatics::Buttons; p < (int)(CommandBarStatics::Buttons + 25); p += sizeof(ShapeButtonClass)) {
+		Remove_A_Button(*(ShapeButtonClass *)p);
+	}
+	Remove_A_Button(CommandBarStatics::ButtonA);
+	for (int i = 0; i < 25; i++) {
+		ShapeButtonClass * b = FUN_006CFD40(i);
+		if (b) {
+			CCToolTip::Instance->Remove(b->ID);
+		}
+	}
+	CCToolTip::Instance->Remove(0xF0);
+}
+
+// FUNCTION: 0x006D1570
+void TabClass::FUN_006D1570(void)
+{
+	Add_A_Button(CommandBarStatics::ButtonB);
+	FUN_006D09C0(&CommandBarStatics::ButtonB, "Tip:ThumbClosed");
+}
+
+// FUNCTION: 0x006D15F0
+void TabClass::FUN_006D15F0(void)
+{
+	Remove_A_Button(CommandBarStatics::ButtonB);
+	CCToolTip::Instance->Remove(0xF1);
+}
+
+// FUNCTION: 0x006D1610
+void TabClass::FUN_006D1610(void)
+{
+	if (!ThumbActive) {
+		Remove_A_Button(CommandBarStatics::ButtonB);
+		CCToolTip::Instance->Remove(0xF1);
+		ThumbActive = true;
+		FUN_006D1200();
+		IsToRedraw = true;
+		Flag_To_Redraw();
+	}
+}
+
+// FUNCTION: 0x006D1660
+void TabClass::FUN_006D1660(void)
+{
+	if (ThumbActive) {
+		FUN_006D14F0();
+		ThumbActive = false;
+		Add_A_Button(CommandBarStatics::ButtonB);
+		FUN_006D09C0(&CommandBarStatics::ButtonB, "Tip:ThumbClosed");
+		IsToRedraw = true;
+		Flag_To_Redraw();
+	}
+}
+
+void __fastcall FUN_00723EA0(ShapeButtonClass * button);
+void __fastcall FUN_00723EB0(ShapeButtonClass * button);
+
+// FUNCTION: 0x006D1770
+bool TabClass::INoticeSink_Unknown(DWORD unknown, DWORD unknown2)
+{
+	if (unknown == 0x11C7) {
+		ShapeButtonClass * b = FUN_006CFD40(DAT_00B0CC1C);
+		if (b && !b->IsOn) {
+			FUN_00723EA0(b);
+		}
+		return true;
+	}
+	if (unknown == 0x11C8) {
+		ShapeButtonClass * b = FUN_006CFD40(DAT_00B0CC1C);
+		if (b && b->IsOn) {
+			FUN_00723EB0(b);
+		}
+		return true;
+	}
+	return false;
+}
+
+// FUNCTION: 0x006D1800
+char const * TabClass::Help_Text(int id)
+{
+	return BASECLASS::Help_Text(id);
+}
+
+// FUNCTION: 0x006D1810 ToolTip::ToolTip
+
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007E1720;
+extern const double DAT_007F4180;
+extern const double DAT_007F4188;
+extern double __cdecl FUN_004CAC40(double);
+
+// FUNCTION: 0x006D1830 $E136
+double DAT_00B0CD78 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x006D1860 $E139
+double DAT_00B0CEB8 = DAT_00B0CD78 / DAT_007F4180;
+
+// FUNCTION: 0x006D1880 $E142
+double DAT_00B0CEA0 = DAT_007E1718 / DAT_00B0CEB8;
+
+// FUNCTION: 0x006D18A0 $E145
+double DAT_00B0CE98 = DAT_007E1720 * DAT_007F4188;

@@ -6,6 +6,7 @@ from dataclasses import dataclass, field
 REL_DIR32 = 0x06
 REL_REL32 = 0x14
 CODE = 0x00000020
+STORAGE_EXTERNAL = 2
 
 
 @dataclass
@@ -76,11 +77,13 @@ class CoffObject:
             i += 1 + naux
 
     def functions(self):
-        """(symbol, section, start, end) for every function defined in a code section."""
+        """(symbol, section, start, end) for every function defined in a code section: a
+        symbol typed as a function, or any public one (an assembler's PROC)."""
         for sec in self.sections:
             if not sec.is_code:
                 continue
-            defs = sorted((s for s in self.symbols if s.section == sec.number and s.type == 0x20),
+            defs = sorted((s for s in self.symbols if s.section == sec.number
+                           and (s.type == 0x20 or s.storage == STORAGE_EXTERNAL)),
                           key=lambda s: s.value)
             for k, s in enumerate(defs):
                 end = defs[k + 1].value if k + 1 < len(defs) else len(sec.data)

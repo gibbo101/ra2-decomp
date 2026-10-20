@@ -5,6 +5,7 @@
 
 #define INCLUDE_COM
 #include "always.h"
+#include "geometry.h"
 #include "tag.h"
 #include "_map.h"
 #include "cell.h"
@@ -21,9 +22,24 @@
 #include "trigtype.h"
 #include "vector.h"
 
-// FUNCTION: 0x006E4D60 $E62
+// FUNCTION: 0x006E4B50 $E2
+// FUNCTION: 0x006E4B80 $E5
+// FUNCTION: 0x006E4BA0 $E8
+// FUNCTION: 0x006E4BC0 $E11
+// FUNCTION: 0x006E4BE0 $E14
+// FUNCTION: 0x006E4C00 $E17
+// FUNCTION: 0x006E4C20 $E20
+// FUNCTION: 0x006E4C60 $E23
+// FUNCTION: 0x006E4C90 $E26
+// FUNCTION: 0x006E4CC0 $E29
+// FUNCTION: 0x006E4CF0 $E32
+// FUNCTION: 0x006E4D00 $E35
+// FUNCTION: 0x006E4D20 $E38
+// FUNCTION: 0x006E4D40 $E47
 
-// FUNCTION: 0x006E4DA0 $E60
+// FUNCTION: 0x006E4D60 $E107
+
+// FUNCTION: 0x006E4DA0 $E105
 DynamicVectorClass<TagClass *> Tags;
 
 // FUNCTION: 0x006E4DE0

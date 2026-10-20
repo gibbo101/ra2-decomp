@@ -1102,6 +1102,19 @@ Landing also fixed two train-bridge functions that called Set_Under_Bridge where
 calls its byte-identical twin Set_Under_Rail_Bridge. Cost: about 6.3M tokens. Merge gate:
 9,113 of 9,113 (1,311.8 KB), about 47% of game functions.
 
+### Batches 60, 61 and 62, and the second cleanup round (20 October 2026)
+
+**426 of 432 functions** (140, 142, 144), plus 310 found along the way, the largest round
+yet. Init_Commands (0x00532150, 7,118 bytes) matched on its first compile in TibSun's form,
+and with the 45 command classes it builds, named by RTTI and sized by their `new`, the
+compiler emitted 298 more functions that had waited on it: constructors, destructors and
+every overridden virtual. rc_ptr's stand-ins became rcptr.h's template across stats, wdtnet,
+wdtsel and netshare, the World Domination handles now rc_ptr<T> of their RTTI types. The
+checker can assemble Westwood's .asm files and refuses any that is not a verbatim archive
+copy; no assembler is installed yet. Landing found two UI functions calling the mouse's
+Get_Mouse_Current_Frame where the exe calls Get_Mouse_Start_Frame. Cost: about 4.8M tokens.
+Merge gate: 9,849 of 9,849 (1,360.0 KB), about 51% of game functions.
+
 ### Decide before the first batch
 
 - **Module layout.** Which function lives in which source file, and the link order, decide

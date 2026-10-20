@@ -1,4 +1,4 @@
-"""Re-check every annotated function under src/: the merge gate.
+"""Re-check every annotated function under src/, C++ and assembly: the merge gate.
 
 Usage: uv run tools/checkall.py [--record]
 
@@ -26,7 +26,7 @@ def main() -> None:
     if PROGRESS.exists():
         with PROGRESS.open() as f:
             before = {r["address"]: r["result"] for r in csv.DictReader(f)}
-    sources = sorted((ROOT / "src").rglob("*.cpp")) if (ROOT / "src").exists() else []
+    sources = sorted(f for ext in ("*.cpp", "*.asm") for f in (ROOT / "src").rglob(ext))
     rows, broken = [], []
     for src in sources:
         proc = subprocess.run([sys.executable, str(ROOT / "tools/check.py"), str(src)],

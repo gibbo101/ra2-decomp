@@ -560,6 +560,13 @@ class TechnoClass : public RadioClass
 		void FUN_00709550(void);
 		int FUN_00709800(FireErrorType error) const;
 		bool IsMindControlled(void) const;
+		void FUN_00710460(void);
+		void EnteredOpenTopped(TechnoClass * who);
+		void ExitedOpenTopped(TechnoClass * who);
+		void SetTargetForPassengers(AbstractClass * target);
+		int FUN_00710590(void);
+		int FUN_00710600(void) const;
+		int FUN_00710630(void) const;
 		bool CanBePermaMindControlled(void) const;
 		bool Is_Immobilized(void) const {return(IsUnderEMP() || IsParalyzed() || IsBeingWarpedOut() || IsWarpingIn());}
 		void Scatter_Incoming_Infantry(void) const;

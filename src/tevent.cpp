@@ -352,3 +352,50 @@ HRESULT STDMETHODCALLTYPE TEventClass::Save(IStream * stream, BOOL cleardirty)
 	}
 	return(result);
 }
+
+// FUNCTION: 0x0071F950
+bool TEventClass::Is_Time_Based(void) const
+{
+	switch (Event) {
+		case 1: case 2: case 3: case 4: case 6: case 7:
+		case 18: case 19: case 20: case 21: case 22: case 23: case 24: case 25: case 26:
+		case 29: case 31: case 33: case 34: case 35:
+		case 38: case 39: case 40: case 41: case 42: case 43: case 44:
+		case 48: case 49: case 50: case 53: case 54: case 59:
+			return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x0071F9C0
+bool TEventClass::Is_To_Flag_As_Tripped(void) const
+{
+	switch (Event) {
+		case 1: case 6: case 31: case 44: case 59:
+			return(false);
+	}
+	return(true);
+}
+
+// FUNCTION: 0x0071FA30
+HouseClass * TEventClass::Get_Event_House(void) const
+{
+	return(EventHouse);
+}
+
+// FUNCTION: 0x0071FA40
+void TEventClass::Set_Event_House(HouseClass * house)
+{
+	EventHouse = house;
+}
+
+// FUNCTION: 0x0071FA50 TEventClass::Fetch_Object_Size
+// FUNCTION: 0x0071FA60 TEventClass::Fetch_RTTI
+// FUNCTION: 0x0071FA70 TEventClass::Fetch_Heap_ID
+// FUNCTION: 0x0071FA80 TEventClass::~TEventClass
+
+// FUNCTION: 0x0071FBA0 ?$DynamicVectorClass@PAVTEventClass@@::Clear
+// FUNCTION: 0x0071FBD0 ?$DynamicVectorClass@PAVTEventClass@@::ID
+// FUNCTION: 0x0071FBF0 ?$VectorClass@PAVTEventClass@@::GetItem
+// FUNCTION: 0x0071FC00 ?$VectorClass@PAVTEventClass@@::operator==
+template class DynamicVectorClass<TEventClass *>;

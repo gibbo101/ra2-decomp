@@ -51,6 +51,8 @@
 #include "isotype.h"
 #include "language\language.h"
 #include "laser.h"
+#include "_logic.h"
+#include "logic.h"
 #include "lightcon.h"
 #include "mono.h"
 #include "overtype.h"
@@ -5472,5 +5474,124 @@ void TechnoClass::ImbueLocomotor(FootClass * target, CLSID clsid)
 				}
 			}
 		}
+	}
+}
+
+// FUNCTION: 0x00710410
+void TechnoClass::AnimPointerExpired(AnimClass * anim)
+{
+	if (anim == BehindAnim) {
+		BehindAnim = NULL;
+	}
+	if (anim == DrainAnim) {
+		DrainAnim = NULL;
+	}
+	if (anim == MindControlRingAnim) {
+		MindControlRingAnim = NULL;
+	}
+	if (anim == DeployAnim) {
+		DeployAnim = NULL;
+	}
+	ObjectClass::AnimPointerExpired(anim);
+}
+
+// FUNCTION: 0x00710460
+void TechnoClass::FUN_00710460(void)
+{
+	if (CaptureManager != NULL) {
+		CaptureManager->FreeAll();
+	}
+}
+
+// FUNCTION: 0x00710470
+void TechnoClass::EnteredOpenTopped(TechnoClass * who)
+{
+	if (who != NULL) {
+		who->InOpenToppedTransport = true;
+		who->Guard();
+		Logic.Submit(who, false);
+	}
+}
+
+// FUNCTION: 0x007104A0
+void TechnoClass::ExitedOpenTopped(TechnoClass * who)
+{
+	if (who != NULL) {
+		who->InOpenToppedTransport = false;
+	}
+}
+
+// FUNCTION: 0x007104F0
+void FootClass::UpdatePassengerCoords(void)
+{
+	TechnoClass * passenger = Cargo.Attached_Object();
+	Coord coord = Position;
+	if (passenger != NULL) {
+		do {
+			passenger->Set_Coord(coord);
+			passenger = (TechnoClass *)passenger->Next;
+		} while (passenger != NULL && (passenger->AbstractFlags & 4));
+	}
+}
+
+// FUNCTION: 0x00710550
+void TechnoClass::SetTargetForPassengers(AbstractClass * target)
+{
+	for (TechnoClass * passenger = Cargo.Attached_Object(); passenger != NULL; ) {
+		passenger->Assign_Target(target);
+		passenger = (TechnoClass *)passenger->Next;
+		if (passenger == NULL || !(passenger->AbstractFlags & 4)) {
+			break;
+		}
+	}
+}
+
+// FUNCTION: 0x00710590
+int TechnoClass::FUN_00710590(void)
+{
+	int result = 0x7FFFFFFF;
+	TechnoClass * passenger = Cargo.Attached_Object();
+	if (passenger != NULL) {
+		do {
+			WeaponDataStruct const * weapon = passenger->GetTurretWeapon();
+			if (weapon->Weapon != NULL && weapon->Weapon->Range < result) {
+				result = weapon->Weapon->Range;
+			}
+			passenger = (TechnoClass *)passenger->Next;
+		} while (passenger != NULL && (passenger->AbstractFlags & 4));
+	}
+	return(result);
+}
+
+// FUNCTION: 0x007105E0
+bool TechnoClass::IsMindControlled(void) const
+{
+	return(MindControlledBy != NULL || MindControlledByAUnit);
+}
+
+// FUNCTION: 0x00710600
+int TechnoClass::FUN_00710600(void) const
+{
+	if (Fetch_RTTI() == RTTI_UNIT && !Techno_Type_Class()->Organic) {
+		return(1);
+	}
+	return(0);
+}
+
+// FUNCTION: 0x00710630
+int TechnoClass::FUN_00710630(void) const
+{
+	if (Fetch_RTTI() == RTTI_INFANTRY || (Fetch_RTTI() == RTTI_UNIT && Techno_Type_Class()->Organic)) {
+		return(1);
+	}
+	return(0);
+}
+
+// FUNCTION: 0x00710670
+void TechnoClass::AddPassenger(FootClass * passenger)
+{
+	Cargo.Attach(passenger);
+	if (passenger != NULL && Techno_Type_Class()->EnterTransportSound != -1) {
+		VocClass::PlayIndexAtPos(Techno_Type_Class()->EnterTransportSound, PositionCoord, 0);
 	}
 }

@@ -140,3 +140,13 @@ address,name,symbol,evidence
 0x00AC4B48,PlanningTokenClass::Events,,class static (guarded atexit 0x00633620); name invented
 0x00AC4C40,PlanningTokenClass::Technos,,class static (guarded atexit 0x00633760); name invented
 0x00A80228,Houses,,YRpp HouseClass::Array; Node_Color reads [slot]->RemapColorRGB
+0x0082D028,MouseClass::MouseControl,,mouse.cpp 0x005BDB90 Get_Mouse_Start_Frame indexes the 28-byte cursor table; symbols.csv calls it MouseCursor::Cursors
+0x00ABF294,MouseClass::MouseShapes,,mouse.cpp 0x005BDF30 One_Time stores the loaded MOUSE.SHA
+0x00ABF2A0,MouseClass::Timer,,mouse.cpp 0x005BDDC0 AI animation timer; static initialiser 0x005BD9F0
+0x00ABF2DC,MouseShapesLoaded,,mouse.cpp 0x005BDF30 One_Time out flag for LoadWholeFileEx
+0x004A38D0,FileSystem_LoadWholeFileEx,,mouse.cpp 0x005BDF30 One_Time loads MOUSE.SHA
+0x007B0390,FUN_007B0390,?FUN_007B0390@@YI?AV?$rc_ptr@VWDTTerritory@@@@H@Z,returns rc_ptr<WDTTerritory> (stores vtable 0x007EBFA4 RTTI .?AV?$rc_ptr@VWDTTerritory@@@@); called by netshare DisplayGameopts and mapgen Do_Random_Map
+0x0087F658,AllCommands,,DynamicVectorClass<CommandClass const *>; Init_Commands 0x00532150 adds every command through its inline Add (+4..+0x14)
+0x0087F680,HotkeyCommands,,IndexClass<int, CommandClass const *>; Init_Commands calls Is_Present/Remove_Index/Add_Index on it
+0x00629210,ParasiteClass::ParasiteClass,??0ParasiteClass@@QAE@XZ,no-argument constructor ending in plain ret; the call target of new ParasiteClass in TClassFactory<ParasiteClass>::CreateInstance 0x006C1010
+0x006292B0,ParasiteClass::ParasiteClass,??0ParasiteClass@@QAE@PAVFootClass@@@Z,constructor taking the owner FootClass * (ret 4); called by TechnoClass::Init 0x006F3F40

@@ -873,3 +873,80 @@ void IPXManagerClass::Set_Bridge(NetNumType bridge)
 		GlobalChannel->Set_Bridge(bridge);
 	}
 }
+
+// FUNCTION: 0x00542FE0
+void IPXManagerClass::Configure_Debug(int index, int type_offset, int type_size,
+	char **names, int namestart, int namecount)
+{
+	if (index == CONNECTION_NONE) {
+		GlobalChannel->Queue->Configure_Debug(type_offset, type_size, names,
+			namestart, namecount);
+	} else if (Connection[index]) {
+		Connection[index]->Queue->Configure_Debug(type_offset, type_size, names,
+			namestart, namecount);
+	}
+}
+
+// FUNCTION: 0x00543040
+void IPXManagerClass::Mono_Debug_Print(int, int)
+{
+}
+
+// FUNCTION: 0x00543050
+void IPXManagerClass::FUN_00543050(IPXAddressClass *address)
+{
+	if (LobbyChannel) {
+		*(IPXAddressRaw *)((char *)LobbyChannel + 0x4c) = *(IPXAddressRaw *)address;
+	}
+}
+
+// FUNCTION: 0x00543080
+void IPXManagerClass::Global_Channel_Clear_FieldC8(void)
+{
+	if (GlobalChannel) {
+		GlobalChannel->FieldC8 = false;
+	}
+}
+
+// FUNCTION: 0x00543090
+void IPXManagerClass::Global_Channel_Set_FieldC8(void)
+{
+	if (GlobalChannel) {
+		GlobalChannel->FieldC8 = true;
+	}
+}
+
+// FUNCTION: 0x005430A0
+void IPXManagerClass::Global_Channel_Op_40(int a1, int a2)
+{
+	if (GlobalChannel) {
+		GlobalChannel->vt_entry_40(a1, a2);
+	}
+}
+
+// FUNCTION: 0x005430C0
+void IPXManagerClass::Global_Channel_Op_44(unsigned a1)
+{
+	if (GlobalChannel) {
+		GlobalChannel->vt_entry_44(a1);
+	}
+}
+
+// FUNCTION: 0x005430E0 IPXManagerClass::~IPXManagerClass
+
+// FUNCTION: 0x00543100 ConnManClass::~ConnManClass
+
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007EC218;
+extern double __cdecl FUN_004CAC40(double);
+
+// FUNCTION: 0x00543120 $E40
+double DAT_00AA06D8 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x00543150 $E43
+double DAT_00AA0728 = DAT_00AA06D8 / DAT_007EC218;
+
+// FUNCTION: 0x00543170 $E46
+double DAT_00AA0710 = DAT_007E1718 / DAT_00AA0728;

@@ -15,6 +15,10 @@ marker instead: `// FUNCTION: 0x005FE020 XSurface::XSurface`. A template instanc
 mangled class name: `// FUNCTION: 0x0063E540 ?$DynamicVectorClass@H::Add` (an explicit
 `template class DynamicVectorClass<int>;` makes the object emit it).
 
+An .asm file is assembled with MASM instead, and must be a file of Westwood's TibSun
+archive copied unchanged but for its markers, `; FUNCTION: 0x007C5DB0` on the line before
+a PROC (the PROC's name is the function's).
+
 A function MATCHES when it is as long as the original (data/functions.csv), every byte
 the compiler emits is identical, and every field the linker fills in points at the
 right target:
@@ -53,6 +57,9 @@ from coff import REL_DIR32, REL_REL32, CoffObject  # noqa: E402
 ROOT = Path(__file__).resolve().parent.parent
 FLAGS = ["/c", "/O2", "/Ob2", "/Gr", "/GR", "/MT", "/DWIN32"]
 ANNOTATION = re.compile(r"^\s*//\s*FUNCTION:\s*(0x[0-9A-Fa-f]+)(?:\s+((?:[\w?$@]+::)*(?:operator\S+|~?[\w?$@]+)))?\s*$")
+ASM_ANNOTATION = re.compile(r"^\s*;\s*FUNCTION:\s*(0x[0-9A-Fa-f]+)(?:\s+([\w?$@]+))?\s*$")
+PROC = re.compile(r"^\s*([\w?$@]+)\s+PROC\b", re.I | re.M)
+ASM_FLAGS = ["/c", "/coff", "/Cx"]
 FORBIDDEN = re.compile(r"\b(__asm|_asm|__emit|_emit)\b|#\s*pragma\s+(optimize|code_seg)")
 PADDING = (0x90, 0xCC)
 TIBSUN = ROOT / "reference/tibsun/code"
@@ -153,6 +160,25 @@ def without_archived_asm(text: str) -> str:
     return "".join(out)
 
 
+def unmarked(text: str) -> str:
+    """Assembly source with its marker lines removed, LF line endings and none at the end."""
+    lines = text.replace("\r\n", "\n").splitlines(keepends=True)
+    return "".join(line for line in lines if not ASM_ANNOTATION.match(line)).rstrip("\n")
+
+
+def archived_asm(src: Path) -> Path | None:
+    """The TibSun archive's .asm file that `src`, markers aside, copies byte for byte."""
+    text = unmarked(src.read_text(encoding="latin-1"))
+    for f in sorted(TIBSUN.rglob("*.asm")) if TIBSUN.exists() else []:
+        if unmarked(f.read_text(encoding="latin-1")) == text:
+            return f
+    return None
+
+
+def is_asm(src: Path) -> bool:
+    return src.suffix.lower() == ".asm"
+
+
 def winpath(p: Path) -> str:
     """The path as the compiler sees it: the checkout is drive Y: (tools/wineenv.sh)."""
     p = p.resolve()
@@ -164,13 +190,18 @@ def winpath(p: Path) -> str:
 def annotations(src: Path) -> list[tuple[int, str]]:
     """(address, qualified name) for each annotated definition in a source file."""
     lines = src.read_text(errors="replace").splitlines()
+    asm = is_asm(src)
     out = []
     for i, line in enumerate(lines):
-        m = ANNOTATION.match(line)
+        m = (ASM_ANNOTATION if asm else ANNOTATION).match(line)
         if not m:
             continue
         if m.group(2):
             out.append((int(m.group(1), 16), m.group(2)))
+            continue
+        if asm:
+            n = PROC.search("\n".join(lines[i + 1:i + 4]))
+            out.append((int(m.group(1), 16), n.group(1) if n else ""))
             continue
         decl = " ".join(lines[i + 1:i + 4])
         n = re.search(r"((?:\w+::)*(?:operator\s*\S+?|~?\w+))\s*\(", decl)
@@ -244,14 +275,17 @@ def prepare_headers(overlay: Path | None) -> Path:
 def compile_source(src: Path, overlay: Path | None = None, headers: Path | None = None,
                    out: Path | None = None, extra: tuple[str, ...] = ()) -> tuple[Path | None, str]:
     """Compile src to an object. `headers` is a directory prepare_headers already filled,
-    which the caller keeps; `out` is the object's path; `extra` adds compiler options."""
+    which the caller keeps; `out` is the object's path; `extra` adds compiler options.
+    An .asm file is assembled, only if it is a copy of an archive file."""
+    if out is None:
+        rel = src.resolve().relative_to(ROOT) if ROOT in src.resolve().parents else Path(src.name)
+        out = ROOT / "build/obj" / rel.with_suffix(".obj")
+    if is_asm(src):
+        return assemble_source(src, out)
     text = src.read_text(errors="replace")
     bad = FORBIDDEN.search(without_archived_asm(text))
     if bad:
         return None, f"{src}: '{bad.group(0)}' is not allowed"
-    if out is None:
-        rel = src.resolve().relative_to(ROOT) if ROOT in src.resolve().parents else Path(src.name)
-        out = ROOT / "build/obj" / rel.with_suffix(".obj")
     out.parent.mkdir(parents=True, exist_ok=True)
     out.unlink(missing_ok=True)
     own = headers is None
@@ -262,6 +296,18 @@ def compile_source(src: Path, overlay: Path | None = None, headers: Path | None 
     finally:
         if own:
             shutil.rmtree(headers, ignore_errors=True)
+    log = proc.stdout + proc.stderr
+    return (out if proc.returncode == 0 and out.exists() else None), log
+
+
+def assemble_source(src: Path, out: Path) -> tuple[Path | None, str]:
+    """Assemble src to `out` with MASM, if it copies a file of the TibSun archive."""
+    if archived_asm(src) is None:
+        return None, f"{src}: not a copy of an .asm file in {TIBSUN.relative_to(ROOT)}"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.unlink(missing_ok=True)
+    cmd = [str(ROOT / "tools/wml"), *ASM_FLAGS, f"/Fo{winpath(out)}", winpath(src)]
+    proc = subprocess.run(cmd, capture_output=True, text=True, cwd=ROOT)
     log = proc.stdout + proc.stderr
     return (out if proc.returncode == 0 and out.exists() else None), log
 
@@ -296,6 +342,13 @@ class Result:
 def disasm(code: bytes, va: int) -> list[str]:
     md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_32)
     return [f"{ins.mnemonic} {ins.op_str}".strip() for ins in md.disasm(code, va)]
+
+
+def encoding_diff(theirs: bytes, ours: bytes, va: int) -> list[str]:
+    """The instructions that read the same but are encoded differently, as hex."""
+    md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_32)
+    return [f"0x{x.address:08X} {x.mnemonic} {x.op_str}: original {x.bytes.hex()}, ours {y.bytes.hex()}"
+            for x, y in zip(md.disasm(theirs, va), md.disasm(ours, va)) if x.bytes != y.bytes]
 
 
 HEX = re.compile(r"0x[0-9a-f]+")
@@ -420,6 +473,8 @@ def compare_one(orig, obj, raw, address, name, names, local, pick, score=False) 
         res.ratio = difflib.SequenceMatcher(None, a, b, autojunk=False).ratio()
         for line in difflib.unified_diff(a, b, "original", "ours", n=2, lineterm=""):
             res.diff.append(line)
+        if a == b:
+            res.diff += encoding_diff(theirs, bytes(shown), address)
         if score:
             res.norm_ratio = similarity(*normalised_listings(orig, obj, sec, start, ours, address, theirs))
     else:
@@ -474,7 +529,7 @@ def check_ref(orig, obj, raw, target, sec, start, address, got, names, local):
 
 OPERATORS = {"==": "8", "!=": "9", "=": "4", "[]": "A", "()": "R", "<": "M", ">": "O",
              "<=": "N", ">=": "P", "+": "H", "-": "G", "*": "D", "/": "K", "new": "2",
-             "delete": "3"}
+             "delete": "3", "->": "C", "+=": "Y", "-=": "Z"}
 
 
 def mangled(name: str) -> tuple[str, ...]:

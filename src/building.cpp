@@ -5062,3 +5062,17 @@ template class VectorClass<BuildingClass *>;
 // FUNCTION: 0x0045A9C0 ?$DynamicVectorClass@PBVParticleSystemTypeClass@@::~?$DynamicVectorClass@PBVParticleSystemTypeClass@@
 // FUNCTION: 0x0045AA10 ?$VectorClass@PBVParticleSystemTypeClass@@::~?$VectorClass@PBVParticleSystemTypeClass@@
 // FUNCTION: 0x0045AA60 ?$VectorClass@PAVInfantryClass@@::~?$VectorClass@PAVInfantryClass@@
+// FUNCTION: 0x0045AAB0 ?$DynamicVectorClass@PAVInfantryClass@@::~?$DynamicVectorClass@PAVInfantryClass@@
+// FUNCTION: 0x0045AB00 ?$VectorClass@PAVFoggedObjectClass@@::~?$VectorClass@PAVFoggedObjectClass@@
+// FUNCTION: 0x0045AB50 ?$VectorClass@PAVFoggedObjectClass@@::Resize
+// FUNCTION: 0x0045AC00 ?$VectorClass@PAVFoggedObjectClass@@::Clear
+// FUNCTION: 0x0045AC30 ?$VectorClass@PAVFoggedObjectClass@@::ID
+// FUNCTION: 0x0045AC70 ?$VectorClass@PAVFoggedObjectClass@@::ID
+// FUNCTION: 0x0045AC90 ?$DynamicVectorClass@PAVFoggedObjectClass@@::~?$DynamicVectorClass@PAVFoggedObjectClass@@
+// FUNCTION: 0x0045ACE0 ?$VectorClass@PAVReestablish@@::~?$VectorClass@PAVReestablish@@
+// FUNCTION: 0x0045AD30 ?$DynamicVectorClass@PAVReestablish@@::~?$DynamicVectorClass@PAVReestablish@@
+// FUNCTION: 0x0045AD80 ?$VectorClass@PBVParticleSystemTypeClass@@::?$VectorClass@PBVParticleSystemTypeClass@@
+// FUNCTION: 0x0045ADD0 ?$DynamicVectorClass@PAVAbstractClass@@::Delete_Index
+// FUNCTION: 0x0045AE10 ?$DynamicVectorClass@PAVBuildingClass@@::Delete_Index
+template class VectorClass<Reestablish *>;
+template class DynamicVectorClass<AbstractClass *>;

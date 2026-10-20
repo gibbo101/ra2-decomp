@@ -9,6 +9,67 @@
 #include "globals.h"
 #include "scenario.h"
 #include "swizzle.h"
+#include <math.h>
+
+extern double __cdecl FUN_004CAC40(double);
+extern double __cdecl FUN_004CAD50(double);
+extern double __cdecl FUN_004CADE0(double);
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007E1720;
+extern const double DAT_007E1728;
+extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
+extern const double DAT_007E36B0;
+extern const double DAT_007E36B8;
+
+struct ShortPair {
+	unsigned short A, B;
+	ShortPair() { A = 0; B = 0; }
+};
+
+struct IntTriple {
+	int A, B, C;
+	IntTriple() { A = 0; B = 0; C = 0; }
+};
+
+// FUNCTION: 0x00429010 $E46
+double DAT_0089A278 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x00429040 $E49
+double DAT_0089A2C8 = DAT_0089A278 / DAT_007E36B0;
+
+// FUNCTION: 0x00429060 $E52
+double DAT_0089A2B0 = DAT_007E1718 / DAT_0089A2C8;
+
+// FUNCTION: 0x00429080 $E55
+double DAT_0089A2A8 = DAT_007E1720 * DAT_007E36B8;
+
+// FUNCTION: 0x004290A0 $E58
+double DAT_0089A280 = DAT_007E1728 * DAT_007E36B8;
+
+// FUNCTION: 0x004290C0 $E61
+double DAT_0089A258 = DAT_007E1730 * DAT_007E36B8;
+
+// FUNCTION: 0x004290E0 $E64
+int DAT_0089A2D0 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_0089A258 - DAT_0089A280) * DAT_0089A278));
+
+// FUNCTION: 0x00429120 $E67
+double DAT_0089A288 = FUN_004CADE0(DAT_0089A2D0 * DAT_007E1740);
+
+// FUNCTION: 0x00429150 $E70
+double DAT_0089A2A0 = FUN_004CADE0((DAT_0089A2D0 * 2) / DAT_0089A278);
+
+// FUNCTION: 0x00429180 $E73
+int DAT_0089A2C4 = (int)(DAT_0089A2D0 * 4 + DAT_007E1738);
+
+// FUNCTION: 0x004291B0 $E76
+ShortPair DAT_0089A270;
+
+// FUNCTION: 0x004291C0 $E79
+IntTriple DAT_0089A290;
 
 // FUNCTION: 0x00429210
 LONG STDMETHODCALLTYPE TiberianSunClassFactory::QueryInterface(REFIID riid, LPVOID *ppvObject)

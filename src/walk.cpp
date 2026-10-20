@@ -24,6 +24,8 @@
 #include "layer.hh"
 #include "fastmath.h"
 #include "coord.h"
+#include "slavemgr.h"
+#include <new.h>
 
 extern const double DAT_007E1708;
 extern const double DAT_007E1710;
@@ -186,6 +188,73 @@ void STDMETHODCALLTYPE WalkLocomotionClass::Force_Immediate_Destination(CoordStr
 	}
 }
 
+static inline FootClass * Cast_Infantry(FootClass * foot)
+{
+	return (!foot) ? NULL : ((foot->Fetch_RTTI() == RTTI_INFANTRY) ? foot : NULL);
+}
+
+// FUNCTION: 0x0075C240
+bool WalkLocomotionClass::Mark_Head_To(Coord const & coord)
+{
+	if (HeadToCoord != COORD_NONE) {
+		LinkedTo->Clear_Occupy_Bit(HeadToCoord);
+	} else {
+		LinkedTo->Clear_Occupy_Bit(LinkedTo->PositionCoord);
+	}
+
+	Coord crd = coord;
+	bool any_spot = false;
+
+	if (coord != COORD_NONE) {
+		if (LinkedTo->Get_Mission() == MISSION_CAPTURE || LinkedTo->Get_Mission() == MISSION_EATEN || LinkedTo->Get_Mission() == MISSION_ENTER || LinkedTo->Get_Mission() == MISSION_GUARD_AREA || LinkedTo->Get_Mission() == MISSION_PATROL) {
+			UnitClass * unit = (UnitClass *)LinkedTo->NavCom;
+			unit = (unit != NULL && ((AbstractClass *)unit)->Fetch_RTTI() == RTTI_UNIT) ? unit : NULL;
+			if (unit != NULL && unit->PositionCell == coord.As_Cell()) {
+				any_spot = true;
+			}
+			AircraftClass * aircraft = (AircraftClass *)LinkedTo->NavCom;
+			aircraft = (aircraft != NULL && ((AbstractClass *)aircraft)->Fetch_RTTI() == RTTI_AIRCRAFT) ? aircraft : NULL;
+			if (aircraft != NULL && aircraft->PositionCell == coord.As_Cell()) {
+				any_spot = true;
+			}
+			BuildingClass * building = (BuildingClass *)LinkedTo->NavCom;
+			building = (building != NULL && ((AbstractClass *)building)->Fetch_RTTI() == RTTI_BUILDING) ? building : NULL;
+			if (building != NULL && Map[coord].Cell_Building() == building) {
+				any_spot = true;
+			}
+		}
+
+		if (LinkedTo->SlaveOwner != NULL && LinkedTo->SlaveOwner->SlaveManager != NULL) {
+			if (Map[coord].Cell_Techno() == LinkedTo->SlaveOwner) {
+				FootClass * infantry = Cast_Infantry(LinkedTo);
+				if (LinkedTo->SlaveOwner->SlaveManager->FUN_006B0880(infantry, &Map[coord])) {
+					any_spot = true;
+				}
+			}
+		}
+
+		bool isbridge = Map[crd].IsUnderBridge && LinkedTo->PositionCoord.Z > 3 * LEVEL_LEPTON_H + Map.Get_Height_GL(crd);
+		HeadToCoord = Map[crd].Closest_Free_Spot(crd, any_spot, isbridge);
+
+		if (!Map[HeadToCoord].Goodie_Check(LinkedTo) && !LinkedTo->IsInLimbo) {
+			HeadToCoord = COORD_NONE;
+			if (!LinkedTo->IsActive) {
+				return(false);
+			}
+		}
+	} else {
+		HeadToCoord = coord;
+	}
+
+	if (HeadToCoord != COORD_NONE) {
+		LinkedTo->Set_Occupy_Bit(HeadToCoord);
+		return(true);
+	}
+
+	LinkedTo->Set_Occupy_Bit(LinkedTo->PositionCoord);
+	return(false);
+}
+
 // FUNCTION: 0x0075C640
 HRESULT STDMETHODCALLTYPE WalkLocomotionClass::GetClassID(CLSID * retval)
 {
@@ -194,10 +263,65 @@ HRESULT STDMETHODCALLTYPE WalkLocomotionClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
+// FUNCTION: 0x0075C680
+HRESULT STDMETHODCALLTYPE WalkLocomotionClass::Load(IStream * stream)
+{
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		new (this) WalkLocomotionClass(NoInitClass());
+
+		bool haspiggy;
+		stream->Read(&haspiggy, sizeof(haspiggy), NULL);
+
+		if (haspiggy) {
+			result = OleLoadFromStream(stream, IID_ILocomotion, (void**)&Piggybacker);
+		}
+	}
+	return(result);
+}
+
+// FUNCTION: 0x0075C700
+HRESULT STDMETHODCALLTYPE WalkLocomotionClass::Save(IStream * stream, BOOL cleardirty)
+{
+	HRESULT result = BASECLASS::Save(stream, cleardirty);
+	if (SUCCEEDED(result)) {
+		bool haspiggy;
+		if (Piggybacker != NULL) {
+			haspiggy = true;
+			stream->Write(&haspiggy, sizeof(haspiggy), NULL);
+			IPersistStreamPtr ptr(Piggybacker);
+			result = OleSaveToStream(ptr, stream);
+		} else {
+			haspiggy = false;
+			stream->Write(&haspiggy, sizeof(haspiggy), NULL);
+		}
+	}
+	return(result);
+}
+
 // FUNCTION: 0x0075C7E0
 LayerType STDMETHODCALLTYPE WalkLocomotionClass::In_Which_Layer(void)
 {
 	return(LAYER_GROUND);
+}
+
+// FUNCTION: 0x0075C7F0
+HRESULT STDMETHODCALLTYPE WalkLocomotionClass::QueryInterface(REFIID riid, LPVOID * ppvObject)
+{
+	HRESULT result = BASECLASS::QueryInterface(riid, ppvObject);
+
+	if (result == E_NOINTERFACE) {
+		if (riid == IID_IPiggyback) {
+			*ppvObject = (IPiggyback*)this;
+		}
+		if (*ppvObject == NULL) {
+			result = E_NOINTERFACE;
+		} else {
+			AddRef();
+			result = S_OK;
+		}
+	}
+	return(result);
 }
 
 // FUNCTION: 0x0075C850
@@ -227,6 +351,45 @@ HRESULT STDMETHODCALLTYPE WalkLocomotionClass::End_Piggyback(ILocomotion ** poin
 	return(S_FALSE);
 }
 
+// FUNCTION: 0x0075C8E0
+boolean STDMETHODCALLTYPE WalkLocomotionClass::Is_Ok_To_End(void)
+{
+	if (!Is_Moving() && Piggybacker != NULL && !IsProcessingMovement && !LinkedTo->IsAttackedByLocomotor) {
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x0075C920
+HRESULT STDMETHODCALLTYPE WalkLocomotionClass::Piggyback_CLSID(GUID * classid)
+{
+	if (classid == NULL) {
+		return(E_POINTER);
+	}
+
+	if (Piggybacker != NULL) {
+		IPersistPtr ptr(Piggybacker);
+		if (ptr == NULL) {
+			return(E_FAIL);
+		}
+		return(ptr->GetClassID(classid));
+	}
+
+	IPersistPtr ptr(this);
+	if (ptr == NULL) {
+		return(E_FAIL);
+	}
+	return(ptr->GetClassID(classid));
+}
+
+// FUNCTION: 0x0075CA30
+void STDMETHODCALLTYPE WalkLocomotionClass::Mark_All_Occupation_Bits(int mark)
+{
+	if (mark == MARK_UP) {
+		LinkedTo->Clear_Occupy_Bit((Coord)Head_To_Coord());
+	}
+}
+
 // FUNCTION: 0x0075CA80
 boolean STDMETHODCALLTYPE WalkLocomotionClass::Is_Moving_Here(CoordStruct to)
 {
@@ -236,3 +399,22 @@ boolean STDMETHODCALLTYPE WalkLocomotionClass::Is_Moving_Here(CoordStruct to)
 	}
 	return(false);
 }
+
+// FUNCTION: 0x0075CB20
+boolean STDMETHODCALLTYPE WalkLocomotionClass::Is_Really_Moving_Now(void)
+{
+	return(IsReallyMoving);
+}
+
+// FUNCTION: 0x0075CB30
+void STDMETHODCALLTYPE WalkLocomotionClass::Limbo(void)
+{
+	DestinationCoord = COORD_NONE;
+	HeadToCoord = COORD_NONE;
+}
+
+// FUNCTION: 0x0075CB80 WalkLocomotionClass::AddRef
+
+// FUNCTION: 0x0075CB90 WalkLocomotionClass::Release
+
+// FUNCTION: 0x0075CBA0 WalkLocomotionClass::Is_Piggybacking

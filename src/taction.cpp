@@ -2322,4 +2322,16 @@ template struct TStringID<31>;
 // FUNCTION: 0x006E47F0 ?$DynamicVectorClass@PAVTActionClass@@::Clear
 // FUNCTION: 0x006E4820 ?$DynamicVectorClass@PAVTActionClass@@::ID
 // FUNCTION: 0x006E4840 ?$VectorClass@PAVTActionClass@@::GetItem
+// FUNCTION: 0x006E4850 ?$VectorClass@PAVTActionClass@@::operator==
+// FUNCTION: 0x006E4890 ?$VectorClass@PAVTActionClass@@::Resize
+// FUNCTION: 0x006E4940 ?$VectorClass@PAVTActionClass@@::Clear
+// FUNCTION: 0x006E4970 ?$VectorClass@PAVTActionClass@@::ID
+// FUNCTION: 0x006E49B0 ?$VectorClass@PAVTActionClass@@::ID
+template class VectorClass<TActionClass *>;
+
+// FUNCTION: 0x006E49D0 ?$DynamicVectorClass@PAVTActionClass@@::Resize
+// FUNCTION: 0x006E4A80 ?$DynamicVectorClass@PAVTActionClass@@::ID
 template class DynamicVectorClass<TActionClass *>;
+
+// FUNCTION: 0x006E4AB0 ?$VectorClass@PAVTActionClass@@::~?$VectorClass@PAVTActionClass@@
+// FUNCTION: 0x006E4B00 ?$DynamicVectorClass@PAVTActionClass@@::~?$DynamicVectorClass@PAVTActionClass@@

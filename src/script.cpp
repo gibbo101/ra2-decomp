@@ -121,3 +121,156 @@ HRESULT STDMETHODCALLTYPE ScriptClass::Save(IStream *stream, BOOL cleardirty)
 	}
 	return(result);
 }
+
+// FUNCTION: 0x006916B0
+ScriptTypeClass::ScriptTypeClass(char const *name) :
+	BASECLASS(name),
+	Scope(SCOPE_LOCAL),
+	MissionCount(0)
+{
+	ScriptTypes.Add(this);
+	HeapID = ScriptTypes.ID(this);
+}
+
+// FUNCTION: 0x00691770
+ScriptTypeClass::~ScriptTypeClass(void)
+{
+	Detach_This_From_All(this, true);
+	ScriptTypes.Delete(this);
+}
+
+// FUNCTION: 0x006917F0
+bool ScriptTypeClass::Write_INI(CCINIClass & ini) const
+{
+	if (BASECLASS::Write_INI(ini)) {
+		char buf[128];
+		char entry[16];
+
+		for (int index = 0; index < MAX_TEAM_MISSIONS; index++) {
+			sprintf(entry, "%d", index);
+			strtrim(entry);
+			if (index < MissionCount) {
+				MissionList[index].Build_INI_Entry(buf);
+				ini.Put_String(Name(), entry, buf);
+			} else {
+				ini.Clear(Name(), entry);
+			}
+		}
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x006918A0
+bool ScriptTypeClass::Read_INI(CCINIClass & ini)
+{
+	ini.Reset();
+	if (BASECLASS::Read_INI(ini)) {
+		char buf[128];
+		char entry[16];
+
+		MissionCount = 0;
+
+		for (int index = 0; index < MAX_TEAM_MISSIONS; index++) {
+			TeamMissionClass tmission;
+
+			sprintf(entry, "%d", index);
+			strtrim(entry);
+
+			if (ini.Get_String(Name(), entry, "", buf, sizeof(buf)) > 0) {
+				tmission.Fill_In(buf);
+				if (MissionCount < MAX_TEAM_MISSIONS) {
+					MissionList[MissionCount] = tmission;
+					MissionCount++;
+				}
+			}
+		}
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00691970
+void ScriptTypeClass::Read_All(CCINIClass & ini, INIScopeType scope)
+{
+	int len = ini.Entry_Count("ScriptTypes");
+	for (int index = 0; index < len; index++) {
+		char const * entry = ini.Get_Entry("ScriptTypes", index);
+		char name[24];
+		if (ini.Get_String("ScriptTypes", entry, "", name, sizeof(name)) <= 0) {
+			continue;
+		}
+
+		ScriptTypeClass * script = Find_Or_Make(name);
+		script->Read_INI(ini);
+		script->Scope = scope;
+	}
+}
+
+// FUNCTION: 0x00691B30
+void ScriptTypeClass::Write_All(CCINIClass & ini, INIScopeType scope)
+{
+}
+
+// FUNCTION: 0x00691B40
+ScriptTypeClass * ScriptTypeClass::From_Name(char const * name)
+{
+	if (name != NULL) {
+		for (int index = 0; index < ScriptTypes.Count(); index++) {
+			if (stricmp(name, ScriptTypes[index]->IniName) == 0 || stricmp(name, ScriptTypes[index]->GivenName) == 0) {
+				return(ScriptTypes[index]);
+			}
+		}
+	}
+	return(NULL);
+}
+
+// FUNCTION: 0x00691BB0
+ScriptTypeClass * ScriptTypeClass::From_Given_Name(char const * name)
+{
+	if (name != NULL) {
+		for (int index = 0; index < ScriptTypes.Count(); index++) {
+			if (stricmp(name, ScriptTypes[index]->GivenName) == 0) {
+				return(ScriptTypes[index]);
+			}
+		}
+	}
+	return(NULL);
+}
+
+// FUNCTION: 0x00691C00
+ScriptTypeClass * ScriptTypeClass::Find_Or_Make(char const * name)
+{
+	return(TFind_Or_Make<ScriptTypeClass>(name, ScriptTypes));
+}
+
+// FUNCTION: 0x00691D50
+HRESULT STDMETHODCALLTYPE ScriptTypeClass::GetClassID(CLSID * retval)
+{
+	if (retval == NULL) return(E_POINTER);
+	*retval = CLSID_ScriptTypeClass;
+	return(S_OK);
+}
+
+// FUNCTION: 0x00691D90
+HRESULT STDMETHODCALLTYPE ScriptTypeClass::Load(IStream * stream)
+{
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		new (this) ScriptTypeClass(NoInitClass());
+
+		result = S_OK;
+	}
+	return(result);
+}
+
+// FUNCTION: 0x00691DE0
+HRESULT STDMETHODCALLTYPE ScriptTypeClass::Save(IStream * stream, BOOL cleardirty)
+{
+	HRESULT result = BASECLASS::Save(stream, cleardirty);
+	if (SUCCEEDED(result)) {
+
+		result = S_OK;
+	}
+	return(result);
+}

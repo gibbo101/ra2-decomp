@@ -6183,3 +6183,37 @@ void __fastcall FUN_00588AC0(MapClass * map)
 // FUNCTION: 0x00588C60 ?$TPoint2D@F::operator-
 
 // FUNCTION: 0x00588C90 ?$DynamicVectorClass@USubzoneConnectionStruct@@::Clear
+
+template class VectorClass<ZoneConnectionClass>;
+template class DynamicVectorClass<ZoneConnectionClass>;
+template class VectorClass<SubzoneTrackingStruct>;
+template class DynamicVectorClass<SubzoneTrackingStruct>;
+template class DynamicVectorClass<SubzoneConnectionStruct>;
+template class VectorClass<CellClass *>;
+template class VectorClass<PassabilityType>;
+template class DynamicVectorClass<PassabilityType>;
+template class DynamicVectorClass<HashObject<unsigned int, unsigned int> >;
+
+// FUNCTION: 0x00588CC0 ?$DynamicVectorClass@USubzoneConnectionStruct@@::ID
+
+// FUNCTION: 0x00588CE0 ?$DynamicVectorClass@UZoneConnectionClass@@::Clear
+
+// FUNCTION: 0x00588D10 ?$DynamicVectorClass@UZoneConnectionClass@@::ID
+
+// FUNCTION: 0x00588D30 ?$VectorClass@UZoneConnectionClass@@::GetItem
+
+// FUNCTION: 0x00588D60 ?$DynamicVectorClass@USubzoneTrackingStruct@@::Clear
+
+// FUNCTION: 0x00588DE0 ?$DynamicVectorClass@USubzoneTrackingStruct@@::ID
+
+// FUNCTION: 0x00588E10 ?$VectorClass@USubzoneTrackingStruct@@::GetItem
+
+// FUNCTION: 0x00588EF0 ?$VectorClass@PAVCellClass@@::GetItem
+
+// FUNCTION: 0x00588F00 ?$DynamicVectorClass@W4PassabilityType@@::Clear
+
+// FUNCTION: 0x00588F30 ?$DynamicVectorClass@W4PassabilityType@@::ID
+
+// FUNCTION: 0x00588F50 ?$VectorClass@W4PassabilityType@@::GetItem
+
+// FUNCTION: 0x00588F60 ?$DynamicVectorClass@U?$HashObject@II@@::Clear

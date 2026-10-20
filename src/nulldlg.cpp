@@ -10,6 +10,7 @@
 #include "_timer.h"
 #include "data.h"
 #include "dbgprint.h"
+#include "geometry.h"
 #include "globals.h"
 #include "house.h"
 #include "houstype.h"
@@ -27,6 +28,19 @@
 #include "stimer.h"
 #include "wincomm.h"
 #include <ctime>
+
+// FUNCTION: 0x005EF2F0 $E69
+// FUNCTION: 0x005EF320 $E72
+// FUNCTION: 0x005EF340 $E75
+// FUNCTION: 0x005EF360 $E78
+// FUNCTION: 0x005EF380 $E81
+// FUNCTION: 0x005EF3A0 $E84
+// FUNCTION: 0x005EF3C0 $E87
+// FUNCTION: 0x005EF400 $E90
+// FUNCTION: 0x005EF430 $E93
+// FUNCTION: 0x005EF460 $E96
+// FUNCTION: 0x005EF490 $E99
+// FUNCTION: 0x005EF4A0 $E102
 
 void Select_Serial_On_INITDIALOG(HWND window);
 

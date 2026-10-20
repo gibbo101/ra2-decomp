@@ -76,12 +76,16 @@ class SaveVersionInfo
 	private:
 		HRESULT Load_String(IStorage *storage, int id, char *string);
 		HRESULT Load_String_Set(IPropertySetStorage *storageset, int id, char *string);
+		HRESULT Load_String(IStorage *storage, int id, wchar_t *string);
+		HRESULT Load_String_Set(IPropertySetStorage *storageset, int id, wchar_t *string);
 
 		HRESULT Load_Int(IStorage *storage, int id, int *integer);
 		HRESULT Load_Int_Set(IPropertySetStorage *storageset, int id, int *integer);
 
 		HRESULT Save_String(IStorage *storage, int id, char *string);
 		HRESULT Save_String_Set(IPropertySetStorage *storageset, int id, const char *string);
+		HRESULT Save_String(IStorage *storage, int id, const wchar_t *string);
+		HRESULT Save_String_Set(IPropertySetStorage *storageset, int id, const wchar_t *string);
 
 		HRESULT Save_Int(IStorage *storage, int id, int integer);
 		HRESULT Save_Int_Set(IPropertySetStorage *storageset, int id, int integer);

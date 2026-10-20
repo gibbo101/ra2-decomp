@@ -8,15 +8,26 @@
 #include "taskforc.h"
 #include "ahtoi.h"
 #include "ccini.h"
+#include "crc.h"
 #include "findmake.h"
 #include "globals.h"
 #include "sun.h"
+#include "session.h"
 #include "swizzle.h"
 #include "techtype.h"
 #include "tracker.h"
 #include "trim.h"
 #include "vector.h"
 #include <cstdio>
+#include <math.h>
+
+extern double __cdecl FUN_004CAC40(double);
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007E1720;
+extern const double DAT_007F46F0;
+extern const double DAT_007F46F8;
 
 // FUNCTION: 0x006E7E80
 TaskForceClass::TaskForceClass(char const *name) :
@@ -197,11 +208,44 @@ bool TaskForceClass::Write_INI(CCINIClass & ini) const
 	return(false);
 }
 
+// FUNCTION: 0x006E85B0
+bool TaskForceClass::Has_Only_Infantry(void) const
+{
+	for (int i = 0; i < ClassCount; i++) {
+		if (Members[i].Class->Fetch_RTTI() != RTTI_INFANTRYTYPE) {
+			return(false);
+		}
+	}
+	return(true);
+}
+
+// FUNCTION: 0x006E85F0
+TaskForceClass * TaskForceClass::Find_Or_Make(char const * name)
+{
+	return(TFind_Or_Make<TaskForceClass>(name, TaskForces));
+}
+
 // FUNCTION: 0x006E8680
 HRESULT STDMETHODCALLTYPE TaskForceClass::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
 	if (SUCCEEDED(result)) {
+		result = S_OK;
+	}
+	return(result);
+}
+
+// FUNCTION: 0x006E86A0
+HRESULT STDMETHODCALLTYPE TaskForceClass::Load(IStream * stream)
+{
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		new (this) TaskForceClass(NoInitClass());
+
+		for (int i = 0; i < MAX_TEAM_CLASSCOUNT; i++) {
+			Swizzle_Pointer(&Members[i].Class);
+		}
+
 		result = S_OK;
 	}
 	return(result);
@@ -214,3 +258,48 @@ HRESULT STDMETHODCALLTYPE TaskForceClass::GetClassID(CLSID * retval)
 	*retval = CLSID_TaskForceClass;
 	return(S_OK);
 }
+
+// FUNCTION: 0x006E8750
+void TaskForceClass::Compute_CRC(CRCEngine & crc) const
+{
+	BASECLASS::Compute_CRC(crc);
+
+	crc(Group);
+	crc(ClassCount);
+}
+
+// FUNCTION: 0x006E8780
+int TaskForceClass::Needed_Tech_Level(void) const
+{
+	int needed = 0;
+
+	for (int i = 0; i < ClassCount; i++) {
+		int level = Members[i].Class->Level;
+		if (level > needed) {
+			needed = level;
+		} else {
+			if (level == -1 && Session.Type != GAME_NORMAL) {
+				needed = 11;
+			}
+		}
+	}
+	return(needed);
+}
+
+// FUNCTION: 0x006E87D0 TaskForceClass::Fetch_RTTI
+
+// FUNCTION: 0x006E87E0 TaskForceClass::Fetch_Object_Size
+
+// FUNCTION: 0x006E87F0 TaskForceClass::~TaskForceClass
+
+// FUNCTION: 0x006E8880 $E37
+double DAT_00B0E950 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x006E88B0 $E40
+double DAT_00B0E9A0 = DAT_00B0E950 / DAT_007F46F0;
+
+// FUNCTION: 0x006E88D0 $E43
+double DAT_00B0E988 = DAT_007E1718 / DAT_00B0E9A0;
+
+// FUNCTION: 0x006E88F0 $E46
+double DAT_00B0E980 = DAT_007E1720 * DAT_007F46F8;

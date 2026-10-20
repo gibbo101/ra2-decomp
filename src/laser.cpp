@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
 #include "laser.h"
 #include "_map.h"
 #include "_rect.h"
@@ -19,11 +20,15 @@
 #include "rgb.h"
 #include "scenario.h"
 #include "tactical.h"
+#include <windows.h>
+#include <shellapi.h>
+#include <stdio.h>
+#include <string.h>
 
 DynamicVectorClass<LaserDrawClass *> LaserDrawClass::LaserDraws;
 
-// FUNCTION: 0x0054FDC0 $E72
-// FUNCTION: 0x0054FE00 $E69
+// FUNCTION: 0x0054FDC0 $E117
+// FUNCTION: 0x0054FE00 $E114
 
 // FUNCTION: 0x0054FE60
 LaserDrawClass::LaserDrawClass(Coord start, Coord end, int zadjust, bool unknown, RGBClass inner_color, RGBClass outer_color, RGBClass outer_spread, int duration, bool blinks, bool fades, float start_intensity, float end_intensity) :
@@ -105,3 +110,50 @@ template class DynamicVectorClass<LaserDrawClass *>;
 // FUNCTION: 0x00551320 ?$VectorClass@PAVLaserDrawClass@@::GetItem
 // FUNCTION: 0x00551330 ?$VectorClass@PAVLaserDrawClass@@::operator==
 // FUNCTION: 0x00551370 ?$VectorClass@PAVLaserDrawClass@@::Resize
+
+// FUNCTION: 0x00551420 ?$VectorClass@PAVLaserDrawClass@@::Clear
+// FUNCTION: 0x00551450 ?$VectorClass@PAVLaserDrawClass@@::ID
+// FUNCTION: 0x00551490 ?$DynamicVectorClass@PAVLaserDrawClass@@::ID
+// FUNCTION: 0x005514B0 ?$DynamicVectorClass@PAVLaserDrawClass@@::Resize
+// FUNCTION: 0x00551560 ?$DynamicVectorClass@PAVLaserDrawClass@@::ID
+// FUNCTION: 0x00551590 ?$VectorClass@PAVLaserDrawClass@@::~?$VectorClass@PAVLaserDrawClass@@
+// FUNCTION: 0x005515E0 ?$DynamicVectorClass@PAVLaserDrawClass@@::~?$DynamicVectorClass@PAVLaserDrawClass@@
+
+// FUNCTION: 0x00551630
+bool ViewHTML(char const * name)
+{
+	char windir[MAX_PATH];
+	char tempfile[MAX_PATH];
+	char exename[MAX_PATH];
+	char command[MAX_PATH];
+	STARTUPINFO startup;
+	PROCESS_INFORMATION process;
+	DWORD written;
+
+	if (name && strlen(name)) {
+		GetWindowsDirectory(windir, MAX_PATH);
+		GetTempFileName(windir, "WWS", 0, tempfile);
+		strcpy(strrchr(tempfile, '.'), ".html");
+
+		HANDLE file = CreateFile(tempfile, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+		if (file != INVALID_HANDLE_VALUE) {
+			WriteFile(file, "<title>ViewHTML</title>", strlen("<title>ViewHTML</title>"), &written, NULL);
+			CloseHandle(file);
+
+			int result = (int)FindExecutable(tempfile, NULL, exename);
+			DeleteFile(tempfile);
+			if (result > 32) {
+				sprintf(command, "[open] %s", name);
+				memset(&startup, 0, sizeof(startup));
+				startup.cb = sizeof(startup);
+				return CreateProcess(exename, command, NULL, NULL, FALSE, 0, NULL, NULL, &startup, &process) == TRUE;
+			}
+		}
+	}
+	return false;
+}
+
+// FUNCTION: 0x005517A0 $E2
+// FUNCTION: 0x005517D0 $E5
+// FUNCTION: 0x005517F0 $E8
+// FUNCTION: 0x00551810 $E11

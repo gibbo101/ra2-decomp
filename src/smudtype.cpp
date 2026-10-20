@@ -11,9 +11,11 @@
 #include "_surface.h"
 #include "_tactica.h"
 #include "_theater.h"
+#include "ccfile.h"
 #include "ccini.h"
 #include "ccrand.h"
 #include "cell.h"
+#include "data.h"
 #include "draw.h"
 #include "findmake.h"
 #include "globals.h"
@@ -43,6 +45,10 @@ extern const double DAT_007E1740;
 extern const double DAT_007F34E8;
 extern const double DAT_007F34F0;
 
+struct FileSystem {
+	static void const * LoadFile(char const * name, bool flag);
+};
+
 struct ShortPair {
 	unsigned short A, B;
 	ShortPair() { A = 0; B = 0; }
@@ -53,41 +59,197 @@ struct IntTriple {
 	IntTriple() { A = 0; B = 0; C = 0; }
 };
 
-// FUNCTION: 0x006B5070 $E133
+// FUNCTION: 0x006B5070 $E137
 double DAT_00B0B790 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x006B50A0 $E136
+// FUNCTION: 0x006B50A0 $E140
 double DAT_00B0B7E0 = DAT_00B0B790 / DAT_007F34E8;
 
-// FUNCTION: 0x006B50C0 $E139
+// FUNCTION: 0x006B50C0 $E143
 double DAT_00B0B7C8 = DAT_007E1718 / DAT_00B0B7E0;
 
-// FUNCTION: 0x006B50E0 $E142
+// FUNCTION: 0x006B50E0 $E146
 double DAT_00B0B7C0 = DAT_007E1720 * DAT_007F34F0;
 
-// FUNCTION: 0x006B5100 $E145
+// FUNCTION: 0x006B5100 $E149
 double DAT_00B0B798 = DAT_007E1728 * DAT_007F34F0;
 
-// FUNCTION: 0x006B5120 $E148
+// FUNCTION: 0x006B5120 $E152
 double DAT_00B0B770 = DAT_007E1730 * DAT_007F34F0;
 
-// FUNCTION: 0x006B5140 $E151
+// FUNCTION: 0x006B5140 $E155
 int DAT_00B0B7E8 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B0B770 - DAT_00B0B798) * DAT_00B0B790));
 
-// FUNCTION: 0x006B5180 $E154
+// FUNCTION: 0x006B5180 $E158
 double DAT_00B0B7A0 = FUN_004CADE0(DAT_00B0B7E8 * DAT_007E1740);
 
-// FUNCTION: 0x006B51B0 $E157
+// FUNCTION: 0x006B51B0 $E161
 double DAT_00B0B7B8 = FUN_004CADE0((DAT_00B0B7E8 * 2) / DAT_00B0B790);
 
-// FUNCTION: 0x006B51E0 $E160
+// FUNCTION: 0x006B51E0 $E164
 int DAT_00B0B7DC = (int)(DAT_00B0B7E8 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x006B5210 $E163
+// FUNCTION: 0x006B5210 $E167
 ShortPair DAT_00B0B788;
 
-// FUNCTION: 0x006B5220 $E166
+// FUNCTION: 0x006B5220 $E170
 IntTriple DAT_00B0B7A8;
+
+struct SmudgeTypeInit {
+	int A, B, C;
+	SmudgeTypeInit() { C = 0; A = 128; B = 128; }
+};
+
+// FUNCTION: 0x006B5240 $E173
+SmudgeTypeInit DAT_00B0B7D0;
+
+// FUNCTION: 0x006B5260
+SmudgeTypeClass::SmudgeTypeClass(char const * ini) :
+	BASECLASS(ini),
+	HeapID(SMUDGE_NONE),
+	Width(1),
+	Height(1),
+	IsCrater(false),
+	IsScorch(false)
+{
+	Create_ID();
+
+	IsStealthy = true;
+	IsSelectable = false;
+	IsLegalTarget = false;
+	IsInsignificant = true;
+	IsImmune = true;
+	IsFootprint = false;
+
+	SmudgeTypes.Add(this);
+	HeapID = (SmudgeType)SmudgeTypes.ID(this);
+}
+
+// FUNCTION: 0x006B5370
+SmudgeTypeClass::SmudgeTypeClass(NoInitClass const & x) :
+	BASECLASS(x)
+{
+}
+
+// FUNCTION: 0x006B53A0
+SmudgeTypeClass::~SmudgeTypeClass(void)
+{
+	if (ImageData != NULL) {
+		delete (void *)ImageData;
+		ImageData = NULL;
+	}
+	Detach_This_From_All(this, true);
+	SmudgeTypes.Delete(this);
+}
+
+// FUNCTION: 0x006B5440
+SmudgeType SmudgeTypeClass::From_Name(char const * name)
+{
+	if (name != NULL) {
+		for (int index = SMUDGE_FIRST; index < SmudgeTypes.Count(); index++) {
+			if (stricmp(SmudgeTypes[index]->Name(), name) == 0) {
+				return(SmudgeType(index));
+			}
+		}
+	}
+	return(SMUDGE_NONE);
+}
+
+// FUNCTION: 0x006B5490
+void SmudgeTypeClass::Init(TheaterType theater)
+{
+	for (int index = SMUDGE_FIRST; index < SmudgeTypes.Count(); index++) {
+		SmudgeTypeClass * smudge = SmudgeTypes[index];
+		char fullname[_MAX_FNAME+_MAX_EXT];
+		if (smudge->IsTheater) {
+			_makepath(fullname, NULL, NULL, smudge->Name(), Theaters[theater].Suffix);
+			CCFileClass file(fullname);
+			smudge->ImageData = Load_Alloc_Data(file);
+		}
+	}
+}
+
+// FUNCTION: 0x006B5550
+bool SmudgeTypeClass::Create_And_Place(Cell const & cell, HouseClass * house) const
+{
+	if (new SmudgeClass(this, cell)) {
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x006B55C0
+ObjectClass * SmudgeTypeClass::Create_One_Of(HouseClass *) const
+{
+	return(new SmudgeClass(this));
+}
+
+// FUNCTION: 0x006B55F0
+void SmudgeTypeClass::Draw_It(Point2D const & point, Rect const & cliprect, int size, int z, Cell const & cell) const
+{
+	ShapeSet const * ptr = (ShapeSet const *)Get_Image_Data();
+	if (ptr != NULL) {
+		Point2D drawpoint = point;
+		if (size != 0) {
+			int width = size % Width;
+			int height = size / Width;
+			drawpoint.Y -= 15 * (height + width);
+			drawpoint.X += 60 * (height - width) / 2;
+		}
+		CellClass * cellptr = &Map[cell];
+		int brightness = cellptr->TileBrightness;
+		Draw_Shape(*LogicalSurface, *cellptr->Drawer, ptr, 0, drawpoint, cliprect, ShapeFlags_Type(SHAPE_CENTER|SHAPE_WIN_REL|SHAPE_ALPHA), NULL, -1 - TacticalMap->Z_Lepton_To_Pixel(z), ZGRAD_GROUND, brightness);
+	}
+}
+
+// FUNCTION: 0x006B56D0
+bool SmudgeTypeClass::Read_INI(CCINIClass & ini)
+{
+	ini.Reset();
+	if (BASECLASS::Read_INI(ini)) {
+		IsCrater = ini.Get_Bool(Name(), "Crater", IsCrater);
+		IsScorch = ini.Get_Bool(Name(), "Burn", IsScorch);
+		Width = ini.Get_Int(Name(), "Width", Width);
+		Height = ini.Get_Int(Name(), "Height", Height);
+
+		char fullname[_MAX_FNAME+_MAX_EXT];
+		if (!IsTheater) {
+			_makepath(fullname, NULL, NULL, (char const *)Graphic_Name(), ".SHP");
+			ImageData = FileSystem::LoadFile(fullname, false);
+		} else {
+			_makepath(fullname, NULL, NULL, (char const *)Graphic_Name(), Theaters[Scen->Theater].Suffix);
+			ImageData = FileSystem::LoadFile(fullname, false);
+		}
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x006B57F0
+void SmudgeTypeClass::Compute_CRC(CRCEngine &crc) const
+{
+	BASECLASS::Compute_CRC(crc);
+	crc(HeapID);
+	crc(IsCrater);
+	crc(IsScorch);
+	crc(Width);
+	crc(Height);
+}
+
+// FUNCTION: 0x006B5850
+HRESULT STDMETHODCALLTYPE SmudgeTypeClass::Load(IStream * stream)
+{
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		new (this) SmudgeTypeClass(NoInitClass());
+
+		Fetch_Voxel_Image();
+		Fetch_Normal_Image();
+
+		result = S_OK;
+	}
+	return(result);
+}
 
 // FUNCTION: 0x006B58B0
 HRESULT STDMETHODCALLTYPE SmudgeTypeClass::Save(IStream * stream, BOOL cleardirty)

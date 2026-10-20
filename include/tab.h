@@ -47,6 +47,11 @@ class TabClass: public SidebarClass, public INoticeSink
 		void Close_Thumb(void);
 		void Hide_Buttons(void);
 		void Open_Thumb(void);
+		void FUN_006D14F0(void);
+		void FUN_006D1610(void);
+		void FUN_006D1660(void);
+		void FUN_006D1570(void);
+		void FUN_006D15F0(void);
 
 	private:
 

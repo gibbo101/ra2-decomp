@@ -4929,3 +4929,33 @@ template class DynamicVectorClass<ScoutStruct>;
 // FUNCTION: 0x0050E600 ?$DynamicVectorClass@UScoutStruct@@::ID
 
 // FUNCTION: 0x0050E620 ?$VectorClass@UScoutStruct@@::GetItem
+
+// FUNCTION: 0x0050E640 ?$DynamicVectorClass@PAVBuildingTypeClass@@::Clear
+template class DynamicVectorClass<BuildingTypeClass *>;
+
+// FUNCTION: 0x0050E670 ?$DynamicVectorClass@PAVBuildingTypeClass@@::ID
+
+// FUNCTION: 0x0050E690 ?$VectorClass@PAVBuildingTypeClass@@::GetItem
+
+// FUNCTION: 0x0050E6A0 ?$DynamicVectorClass@PAVAbstractClass@@::Clear
+template class DynamicVectorClass<AbstractClass *>;
+
+// FUNCTION: 0x0050E6D0 ?$DynamicVectorClass@PAVAbstractClass@@::ID
+
+// FUNCTION: 0x0050E6F0 ?$VectorClass@PAVAbstractClass@@::GetItem
+
+// FUNCTION: 0x0050E700 ?$DynamicVectorClass@_N::Clear
+template class DynamicVectorClass<bool>;
+
+// FUNCTION: 0x0050E730 ?$DynamicVectorClass@_N::ID
+
+// FUNCTION: 0x0050E750 ?$VectorClass@_N::GetItem
+
+typedef DiscreteDistributionClass<BuildingTypeClass>::DIST_OBJ BUILDING_DIST_OBJ;
+
+// FUNCTION: 0x0050E760 ?$DynamicVectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@::Clear
+template class DynamicVectorClass<BUILDING_DIST_OBJ>;
+
+// FUNCTION: 0x0050E7A0 ?$DynamicVectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@::ID
+
+// FUNCTION: 0x0050E7C0 ?$VectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@::GetItem

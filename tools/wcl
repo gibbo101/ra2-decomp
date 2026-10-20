@@ -1,17 +1,18 @@
 #!/usr/bin/env bash
-# Runs the VC6 SP3 compiler under Wine; invoked as wlink or wlib, the linker or librarian.
-# Usage: tools/wcl [cl.exe args...]
+# Runs the VC6 SP3 compiler under Wine; invoked as wlink, wlib or wml, the linker,
+# librarian or assembler. Usage: tools/wcl [cl.exe args...]
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 . "$ROOT/tools/wineenv.sh"
-[ -f "$TC/BIN/CL.EXE" ] || { echo "toolchain missing: run tools/setup_toolchain.sh" >&2; exit 1; }
 
 case "$(basename "$0")" in
     wlink) exe=LINK.EXE ;;
     wlib) exe=LIB.EXE ;;
+    wml) exe=ML.EXE ;;
     *) exe=CL.EXE ;;
 esac
+[ -f "$TC/BIN/$exe" ] || { echo "toolchain missing BIN/$exe: run tools/setup_toolchain.sh" >&2; exit 1; }
 
 # Wine's helper processes hold an inherited pipe open after the tool exits, so the
 # output goes to a file and is printed once the tool has finished.

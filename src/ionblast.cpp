@@ -32,11 +32,38 @@ int BlastSurfaceStride = 0;
 
 BSurface * BlastSurfaces[80];
 
+const double WaveStartDistance = 0.0;
+const double WaveBandWidth = 57.0;
+const double WaveFrequency = 0.11;
+const double WaveAmplitudeFalloff = 25.0;
+const double WaveRockScale = DEG_TO_RAD(360);
+const double WaveSpeedScale = 0.0125;
+const double WaveRange = 256.0;
+
+// FUNCTION: 0x0053CA30 $E89
+double WaveSpeed = ((WaveRange - WaveStartDistance) + WaveBandWidth) * WaveSpeedScale;
+// FUNCTION: 0x0053CA50 $E92
+double WavePhaseSpeed = WaveSpeed;
+
+// FUNCTION: 0x0053CA70 $E98
+DynamicVectorClass<IonBlastClass *> IonBlastClass::IonBlasts;
+
 int Point_To_Spiral_Index(Point2D point);
 
 void Calculate_Index_To_Surface_LUT(int stride);
 
 Point2D Spiral_Index_To_Point(int index);
+
+// FUNCTION: 0x0053CAB0 $E95
+
+// FUNCTION: 0x0053CB10
+IonBlastClass::IonBlastClass(Coord coord) :
+	Lifetime(0),
+	Position(coord),
+	DisableIonBeam(0)
+{
+	IonBlasts.Add(this);
+}
 
 // FUNCTION: 0x0053CB90
 IonBlastClass::~IonBlastClass(void)
@@ -58,6 +85,17 @@ void IonBlastClass::Clear_All(void)
 	for (int i = 0; i < ARRAY_SIZE(BlastSurfaces); i++) {
 		delete BlastSurfaces[i];
 		BlastSurfaces[i] = NULL;
+	}
+}
+
+// FUNCTION: 0x0053D850
+void IonBlastClass::Draw_All(void)
+{
+	if (LogicalSurface->Stride() != BlastSurfaceStride) {
+		Calculate_Index_To_Surface_LUT(LogicalSurface->Stride());
+	}
+	for (int i = IonBlasts.Count() - 1; i >= 0; i--) {
+		IonBlasts[i]->Draw_It();
 	}
 }
 
@@ -126,3 +164,10 @@ void Calculate_Index_To_Surface_LUT(int stride)
 		SpiralIndexToSurfaceLUT[index] = point.X + point.Y * stride;
 	}
 }
+
+// FUNCTION: 0x0053DA40 ?$DynamicVectorClass@PAVIonBlastClass@@::Clear
+template class DynamicVectorClass<IonBlastClass *>;
+
+// FUNCTION: 0x0053DA70 ?$VectorClass@PAVIonBlastClass@@::ID
+// FUNCTION: 0x0053DA90 ?$VectorClass@PAVIonBlastClass@@::GetItem
+// FUNCTION: 0x0053DAA0 ?$VectorClass@PAVIonBlastClass@@::operator==
