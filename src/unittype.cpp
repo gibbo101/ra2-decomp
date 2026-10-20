@@ -43,15 +43,154 @@
 // FUNCTION: 0x00747080 $E32
 // FUNCTION: 0x00747090 $E35
 
+struct FileSystem {
+	static void const * LoadFile(char const * name, bool flag);
+	static char TEMPERAT_PAL[];
+};
+
+// FUNCTION: 0x007470B0 $E38
+
+// FUNCTION: 0x007470D0
+UnitTypeClass::UnitTypeClass(char const * ininame) :
+	BASECLASS(ininame, SPEED_NONE),
+	MovementRestrictedTo((LandType)-1),
+	HalfDamageSmokeLocation(0, 0, 0),
+	Passive(false),
+	CrateGoodie(false),
+	Harvester(false),
+	Weeder(false),
+	unknown_E10(false),
+	HasTurret(false),
+	DeployToFire(false),
+	IsSimpleDeployer(false),
+	IsTilter(true),
+	UseTurretShadow(false),
+	TooBigToFitUnderBridge(false),
+	CanBeach(false),
+	SmallVisceroid(false),
+	LargeVisceroid(false),
+	CarriesCrate(false),
+	NonVehicle(false),
+	StandingFrames(0),
+	DeathFrames(0),
+	DeathFrameRate(1),
+	StartStandFrame(-1),
+	StartWalkFrame(-1),
+	StartFiringFrame(-1),
+	StartDeathFrame(-1),
+	MaxDeathCounter(-1),
+	Facings(8),
+	WalkFrames(12),
+	FiringFrames(0),
+	HeapID((UnitType)-1),
+	AltImage(NULL)
+{
+	Create_ID();
+	Rotation = 32;
+	UnitTypes.Add(this);
+	HeapID = (UnitType)UnitTypes.ID(this);
+	for (int i = 0; i < 2; i++) FiringSyncFrame[i] = -1;
+	for (int j = 0; j < 4; j++) BurstDelay[j] = -1;
+	ImmuneToPsionics = false;
+	ImmuneToPsionicWeapons = false;
+	ImmuneToPoison = false;
+	Parasiteable = true;
+	Organic = false;
+	ConsideredAircraft = false;
+	Bunkerable = true;
+}
+
+// FUNCTION: 0x007472C0
+UnitTypeClass::UnitTypeClass(NoInitClass const & x) :
+	BASECLASS(x),
+	AltImageFile(x)
+{
+}
+
+// FUNCTION: 0x007472F0
+UnitTypeClass::~UnitTypeClass(void)
+{
+	Detach_This_From_All(this, true);
+	UnitTypes.Delete(this);
+}
+
+// FUNCTION: 0x00747370
+UnitType UnitTypeClass::From_Name(char const * name)
+{
+	if (name != NULL) {
+		for (int classid = 0; classid < UnitTypes.Count(); classid++) {
+			if (stricmp(UnitTypes[classid]->Name(), name) == 0) {
+				return(UnitType(classid));
+			}
+		}
+	}
+	return(UNIT_NONE);
+}
+
+// FUNCTION: 0x007473C0
+bool UnitTypeClass::CanUseWaypoint(void) const
+{
+	return(BASECLASS::CanUseWaypoint());
+}
+
+// FUNCTION: 0x007473D0
+bool UnitTypeClass::CanAttackMove(void) const
+{
+	return(BASECLASS::CanAttackMove());
+}
+
+// FUNCTION: 0x007473E0
+void UnitTypeClass::One_Time(void)
+{
+	if (EightBitSurface == NULL) {
+		EightBitSurface = new BSurface(256, 256, 1);
+		EightBitSurface->Fill(0);
+	}
+	if (EightBitDrawer == NULL) {
+		EightBitDrawer = new ConvertClass(*(PaletteClass *)FileSystem::TEMPERAT_PAL, *(PaletteClass *)FileSystem::TEMPERAT_PAL, *EightBitSurface, 1, false);
+	}
+	SmallVisceroidShapes = FileSystem::LoadFile("VISC_SML.SHP", false);
+	LargeVisceroidShapes = FileSystem::LoadFile("VISC_LRG.SHP", false);
+}
+
+// FUNCTION: 0x007474B0
+bool UnitTypeClass::Create_And_Place(Cell const & cell, HouseClass * house) const
+{
+	UnitClass * unit = new UnitClass(this, house);
+	if (unit != NULL) {
+		DirType dir = Random_Dir(DIR_N, DIR_MAX);
+		return(unit->Unlimbo(cell, dir.As_Dir256()));
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00747560
+ObjectClass * UnitTypeClass::Create_One_Of(HouseClass * house) const
+{
+	return(new UnitClass(this, house));
+}
+
+// FUNCTION: 0x00747590
+Point3D UnitTypeClass::Pixel_Dimensions(void) const
+{
+	int width = MaxSize - (MaxSize / 4);
+	width = min(width, 60);
+	int height = MaxSize - (MaxSize / 4);
+	height = min(height, 60);
+	return(Point3D(width, width, height));
+}
+
+// FUNCTION: 0x007475D0
+Point3D UnitTypeClass::Lepton_Dimensions(void) const
+{
+	return(Point3D(CELL_LEPTON_W, CELL_LEPTON_H, LEVEL_LEPTON_H * 2));
+}
+
 // FUNCTION: 0x00747600
 TPoint2D<int> UnitTypeClass::Turret_Adjust(Dir256 dir, TPoint2D<int> const & xy) const
 {
 	return(xy);
 }
-
-struct FileSystem {
-	static void const * LoadFile(char const * name, bool flag);
-};
 
 // FUNCTION: 0x00747620
 bool UnitTypeClass::Read_INI(CCINIClass & ini)

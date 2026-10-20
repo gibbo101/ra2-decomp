@@ -917,10 +917,10 @@ void IPXManagerClass::Global_Channel_Set_FieldC8(void)
 }
 
 // FUNCTION: 0x005430A0
-void IPXManagerClass::Global_Channel_Op_40(int a1, int a2)
+void IPXManagerClass::Global_Channel_Op_40(IPXAddressClass *address, unsigned short port)
 {
 	if (GlobalChannel) {
-		GlobalChannel->vt_entry_40(a1, a2);
+		GlobalChannel->vt_entry_40(address, port);
 	}
 }
 

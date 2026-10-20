@@ -3745,3 +3745,21 @@ int FUN_005355D0(void)
 // FUNCTION: 0x00538460 PageUserCommandClass::~PageUserCommandClass
 // FUNCTION: 0x00538480 CursorPositionCommandClass::~CursorPositionCommandClass
 // FUNCTION: 0x005384A0 DeleteCommandClass::~DeleteCommandClass
+
+// FUNCTION: 0x005384C0 ?$DynamicVectorClass@PAVCCINIClass@@::Clear
+template class DynamicVectorClass<CCINIClass *>;
+
+// FUNCTION: 0x005384F0 ?$DynamicVectorClass@PAVCCINIClass@@::ID
+// FUNCTION: 0x00538510 ?$VectorClass@PAVCCINIClass@@::GetItem
+// FUNCTION: 0x00538520 ?$VectorClass@PAVCCINIClass@@::operator==
+// FUNCTION: 0x00538560 ?$VectorClass@PAVCCINIClass@@::Resize
+// FUNCTION: 0x00538610 ?$VectorClass@PAVCCINIClass@@::Clear
+// FUNCTION: 0x00538640 ?$VectorClass@PAVCCINIClass@@::ID
+// FUNCTION: 0x00538680 ?$VectorClass@PAVCCINIClass@@::ID
+// FUNCTION: 0x005386A0 ?$DynamicVectorClass@PAVCCINIClass@@::Resize
+// FUNCTION: 0x00538750 ?$DynamicVectorClass@PAVCCINIClass@@::ID
+// FUNCTION: 0x00538780 ?$DynamicVectorClass@PBVCommandClass@@::Add
+template class DynamicVectorClass<CommandClass const *>;
+
+// FUNCTION: 0x005387D0 ?$IndexClass@HPBVCommandClass@@::Add_Index
+template class IndexClass<int, CommandClass const *>;

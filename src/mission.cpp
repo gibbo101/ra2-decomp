@@ -14,6 +14,8 @@
 #include "mono.h"
 #include "bench.hh"
 
+namespace Unsorted { extern int CurrentFrame; }
+
 // FUNCTION: 0x005B2DA0
 MissionClass::MissionClass(void) :
 	BASECLASS(),
@@ -164,6 +166,178 @@ int MissionClass::Do_MISSION_RESCUE(void)
 int MissionClass::Do_MISSION_PATROL(void)
 {
 	return(TICKS_PER_SECOND*30);
+}
+
+// FUNCTION: 0x005B2F80
+int MissionClass::Do_MISSION_PARADROP_APPROACH(void)
+{
+	return(TICKS_PER_SECOND*30);
+}
+
+// FUNCTION: 0x005B2F90
+int MissionClass::Do_MISSION_PARADROP_OVERFLY(void)
+{
+	return(TICKS_PER_SECOND*30);
+}
+
+// FUNCTION: 0x005B2FA0
+int MissionClass::Do_MISSION_WAIT(void)
+{
+	return(TICKS_PER_SECOND*30);
+}
+
+// FUNCTION: 0x005B2FB0
+int MissionClass::Do_MISSION_SPYPLANE_APPROACH(void)
+{
+	return(TICKS_PER_SECOND*30);
+}
+
+// FUNCTION: 0x005B2FC0
+int MissionClass::Do_MISSION_SPYPLANE_OVERFLY(void)
+{
+	return(TICKS_PER_SECOND*30);
+}
+
+// FUNCTION: 0x005B2FD0
+void MissionClass::Set_Mission(MissionType mission)
+{
+	if (CurrentMission == MISSION_WAIT && mission == MISSION_GUARD) {
+		return;
+	}
+	CurrentMission = mission;
+	MissionQueue = MISSION_NONE;
+	IsMissionUnloadStandby = false;
+	Status = 0;
+	CurrentMissionStartTime = Unsorted::CurrentFrame;
+	MissionAccumulateTime = 0;
+	Timer = 0;
+}
+
+// FUNCTION: 0x005B3040
+MissionType MissionClass::Get_Mission(void) const
+{
+	return(CurrentMission == MISSION_NONE ? MissionQueue : CurrentMission);
+}
+
+// FUNCTION: 0x005B3060
+void MissionClass::AI(void)
+{
+	BASECLASS::AI();
+
+	if (!IsActive) {
+		return;
+	}
+
+#define INVOKE(e) case MISSION_ ## e: Timer = Do_MISSION_ ## e (); break;
+
+	if (Timer == 0 && Strength > 0) {
+		switch (CurrentMission) {
+			default:
+				Timer = Do_MISSION_SLEEP();
+				break;
+
+			INVOKE(SLEEP);
+			INVOKE(HARMLESS);
+			INVOKE(ENTER);
+			INVOKE(CONSTRUCTION);
+			INVOKE(DECONSTRUCTION);
+			INVOKE(ATTACK);
+			INVOKE(RETREAT);
+			INVOKE(HARVEST);
+			INVOKE(GUARD_AREA);
+			INVOKE(RETURN);
+			INVOKE(STOP);
+			INVOKE(AMBUSH);
+			INVOKE(UNLOAD);
+			INVOKE(REPAIR);
+			INVOKE(OPEN);
+			INVOKE(MISSILE);
+			INVOKE(GUARD);
+			INVOKE(CAPTURE);
+			INVOKE(EATEN);
+			INVOKE(MOVE);
+			INVOKE(HUNT);
+			INVOKE(RESCUE);
+			INVOKE(PATROL);
+			INVOKE(PARADROP_APPROACH);
+			INVOKE(PARADROP_OVERFLY);
+			INVOKE(SPYPLANE_APPROACH);
+			INVOKE(SPYPLANE_OVERFLY);
+			INVOKE(WAIT);
+
+			case MISSION_STICKY:
+				Timer = Do_MISSION_GUARD();
+				break;
+
+			case MISSION_SABOTAGE:
+				Timer = Do_MISSION_CAPTURE();
+				break;
+		}
+	}
+}
+
+// FUNCTION: 0x005B3570
+bool MissionClass::Commence(void)
+{
+	if (MissionQueue != MISSION_NONE) {
+		CurrentMission = MissionQueue;
+		MissionQueue = MISSION_NONE;
+		Timer = 0;
+		Status = 0;
+		CurrentMissionStartTime = Unsorted::CurrentFrame;
+		MissionAccumulateTime = 0;
+		IsMissionUnloadStandby = false;
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x005B35E0
+void MissionClass::QueueMission(MissionType mission, bool start)
+{
+	if (CurrentMission == MISSION_WAIT && mission == MISSION_GUARD) {
+		return;
+	}
+	if (CurrentMission == MISSION_DECONSTRUCTION) {
+		return;
+	}
+	if (mission != MISSION_NONE && (CurrentMission != mission || MissionQueue != mission && MissionQueue != MISSION_NONE)) {
+		MissionQueue = mission;
+		IsMissionUnloadStandby = false;
+	}
+	if (start && Ready_To_Next_Mission()) {
+		Commence();
+	}
+}
+
+// FUNCTION: 0x005B3650
+void MissionClass::Override_Mission(MissionType mission, AbstractClass *, AbstractClass *)
+{
+	if (CurrentMission == MISSION_WAIT && mission == MISSION_GUARD) {
+		return;
+	}
+	if (CurrentMission == MISSION_DECONSTRUCTION) {
+		return;
+	}
+	if (MissionQueue != MISSION_NONE) {
+		SuspendedMission = MissionQueue;
+	} else {
+		SuspendedMission = CurrentMission;
+	}
+	CurrentMission = mission;
+	IsMissionUnloadStandby = false;
+}
+
+// FUNCTION: 0x005B36B0
+bool MissionClass::Restore_Mission(void)
+{
+	if (SuspendedMission != MISSION_NONE) {
+		CurrentMission = SuspendedMission;
+		SuspendedMission = MISSION_NONE;
+		IsMissionUnloadStandby = false;
+		return(true);
+	}
+	return(false);
 }
 
 // FUNCTION: 0x005B36E0

@@ -56,6 +56,15 @@ template class TVelocity3D<double>;
 template class IndexClass<int, AbstractClass *>;
 
 extern int __fastcall FUN_0050C170(char const * name);
+extern double __cdecl FUN_004CAC40(double);
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007E1720;
+extern const double DAT_007E1728;
+extern const double DAT_007E1730;
+extern const double DAT_007E2828;
+extern const double DAT_007E2830;
 
 // FUNCTION: 0x00413CD0
 bool Counts_As_Civ_Evac(ObjectClass const * candidate)
@@ -2013,6 +2022,36 @@ ObjectTypeClass const * AircraftClass::Class_Of(void) const
 // FUNCTION: 0x0041C590 ?$IndexClass@HPAVAbstractClass@@::Search_For_Node
 
 // FUNCTION: 0x0041C610 ?$IndexClass@HPAVAbstractClass@@::search_compfunc
+
+// FUNCTION: 0x0041C640 AircraftClass::QueryInterface
+
+// FUNCTION: 0x0041C650 AircraftClass::AddRef
+
+// FUNCTION: 0x0041C660 AircraftClass::Release
+
+// FUNCTION: 0x0041C670 AircraftClass::QueryInterface
+
+// FUNCTION: 0x0041C680 AircraftClass::AddRef
+
+// FUNCTION: 0x0041C690 AircraftClass::Release
+
+// FUNCTION: 0x0041C6A0 $E116
+double DAT_00889EF0 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x0041C6D0 $E119
+double DAT_00889F50 = DAT_00889EF0 / DAT_007E2828;
+
+// FUNCTION: 0x0041C6F0 $E122
+double DAT_00889F30 = DAT_007E1718 / DAT_00889F50;
+
+// FUNCTION: 0x0041C710 $E125
+double DAT_00889F28 = DAT_007E1720 * DAT_007E2830;
+
+// FUNCTION: 0x0041C730 $E128
+double DAT_00889EF8 = DAT_007E1728 * DAT_007E2830;
+
+// FUNCTION: 0x0041C750 $E131
+double DAT_00889ED0 = DAT_007E1730 * DAT_007E2830;
 
 // FUNCTION: 0x004196B0
 MoveType AircraftClass::Can_Enter_Cell(CellClass const * cell, FacingType, int cell_height, CellClass const *, bool) const

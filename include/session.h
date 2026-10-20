@@ -285,8 +285,9 @@ struct SerialPacketType {
 			unsigned int IsMCVRedeploy : 1;
 			unsigned int IsFogOfWar : 1;
 			unsigned int IsShortGame : 1;
+			unsigned int IsSWAllowed : 1;
+			unsigned int IsBuildOffAlly : 1;
 			unsigned int IsCrapEngineers : 1;
-			unsigned int IsFirestorm : 1;
 			int Seed;
 			SpecialClass Special;
 			unsigned int ResponseTime;

@@ -20,6 +20,7 @@ class MultiMission;
 class MultiplayerTeam
 {
 	public:
+		MultiplayerTeam(WideWstring const & title, int index);
 		virtual ~MultiplayerTeam(void);
 		virtual bool IsTeamIncluded(int index);
 		virtual bool SetPlayerTeam(int player);

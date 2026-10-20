@@ -351,8 +351,197 @@ template class DynamicVectorClass<RadSiteClass *>;
 // FUNCTION: 0x0065C1B0 ?$VectorClass@PAVRadSiteClass@@::~?$VectorClass@PAVRadSiteClass@@
 template class VectorClass<RadSiteClass *>;
 
+// FUNCTION: 0x0065C200 ?$DynamicVectorClass@PAVRadSiteClass@@::~?$DynamicVectorClass@PAVRadSiteClass@@
+
+// FUNCTION: 0x0065C250
+RAMFileClass::RAMFileClass(void * buffer, int len) :
+	Buffer((char *)buffer),
+	MaxLength(len),
+	Length(len),
+	Offset(0),
+	Access(READ),
+	IsOpen(false),
+	IsAllocated(false)
+{
+	if (buffer == NULL && len > 0) {
+		Buffer = new char[len];
+		IsAllocated = true;
+	}
+}
+
+// FUNCTION: 0x0065C2A0
+RAMFileClass::~RAMFileClass(void)
+{
+	Close();
+	if (IsAllocated) {
+		delete [] Buffer;
+		Buffer = NULL;
+		IsAllocated = false;
+	}
+}
+
+// FUNCTION: 0x0065C2E0
+int RAMFileClass::Create(void)
+{
+	if (!Is_Open()) {
+		Length = 0;
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x0065C300
+int RAMFileClass::Delete(void)
+{
+	if (!Is_Open()) {
+		Length = 0;
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x0065C320
+bool RAMFileClass::Is_Available(int )
+{
+	return(true);
+}
+
+// FUNCTION: 0x0065C330
+bool RAMFileClass::Is_Open(void) const
+{
+	return(IsOpen);
+}
+
 // FUNCTION: 0x0065C340
 int RAMFileClass::Open(char const *, int access)
 {
 	return(Open(access));
+}
+
+// FUNCTION: 0x0065C350
+int RAMFileClass::Open(int access)
+{
+	if (Buffer == NULL || Is_Open()) {
+		return(false);
+	}
+
+	Offset = 0;
+	Access = access;
+	IsOpen = true;
+
+	switch (access) {
+		default:
+		case READ:
+			break;
+
+		case WRITE:
+			Length = 0;
+			break;
+
+		case READ|WRITE:
+			break;
+	}
+
+	return(Is_Open());
+}
+
+// FUNCTION: 0x0065C3A0
+int RAMFileClass::Read(void * buffer, int size)
+{
+	if (Buffer == NULL || buffer == NULL || size == 0) {
+		return(0);
+	}
+
+	bool hasopened = false;
+	if (!Is_Open()) {
+		Open(READ);
+		hasopened = true;
+	} else {
+		if ((Access & READ) == 0) {
+			return(0);
+		}
+	}
+
+	int tocopy = (size < (Length-Offset)) ? size : (Length-Offset);
+	memmove(buffer, &Buffer[Offset], tocopy);
+	Offset += tocopy;
+
+	if (hasopened) {
+		Close();
+	}
+
+	return(tocopy);
+}
+
+// FUNCTION: 0x0065C420
+int RAMFileClass::Seek(int pos, int dir)
+{
+	if (Buffer == NULL || !Is_Open()) {
+		return(Offset);
+	}
+
+	int maxoffset = Length;
+	if ((Access & WRITE) != 0) {
+		maxoffset = MaxLength;
+	}
+
+	switch (dir) {
+		case SEEK_CUR:
+			Offset += pos;
+			break;
+
+		case SEEK_SET:
+			Offset = 0 + pos;
+			break;
+
+		case SEEK_END:
+			Offset = maxoffset + pos;
+			break;
+	}
+
+	if (Offset < 0) Offset = 0;
+	if (Offset > maxoffset) Offset = maxoffset;
+
+	if (Offset > Length) {
+		Length = Offset;
+	}
+
+	return(Offset);
+}
+
+// FUNCTION: 0x0065C4A0
+int RAMFileClass::Size(void)
+{
+	return(Length);
+}
+
+// FUNCTION: 0x0065C4B0
+int RAMFileClass::Write(void const * buffer, int size)
+{
+	if (Buffer == NULL || buffer == NULL || size == 0) {
+		return(0);
+	}
+
+	bool hasopened = false;
+	if (!Is_Open()) {
+		Open(WRITE);
+		hasopened = true;
+	} else {
+		if ((Access & WRITE) == 0) {
+			return(0);
+		}
+	}
+
+	int tocopy = (size < (MaxLength-Offset)) ? size : (MaxLength-Offset);
+	memmove(&Buffer[Offset], buffer, tocopy);
+	Offset += tocopy;
+	if (Offset > Length) {
+		Length = Offset;
+	}
+
+	if (hasopened) {
+		Close();
+	}
+
+	return(tocopy);
 }

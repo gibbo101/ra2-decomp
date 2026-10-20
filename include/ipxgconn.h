@@ -52,7 +52,7 @@ class IPXGlobalConnClass : public IPXConnClass
 			IPXAddressClass *address, unsigned short *product_id);
 		virtual int vt_entry_38(int a1, int a2, int a3, int a4, int a5, int a6);
 		virtual void vt_entry_3C(int a1);
-		virtual int vt_entry_40(int a1, int a2);
+		virtual int vt_entry_40(IPXAddressClass *address, unsigned short port);
 		virtual void vt_entry_44(unsigned a1);
 
 		virtual int Discard_Undeliverable_Packets(void) override;

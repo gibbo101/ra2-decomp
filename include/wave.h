@@ -53,6 +53,8 @@ class WaveClass : public ObjectClass
 
 		void Laser_AI(void);
 		void FUN_007610A0(void);
+		void FUN_00762060(void);
+		void FUN_00762AE0(void);
 
 		void Sonic_AI(void);
 		void Wave_Recalc_Affected_Cells(void);

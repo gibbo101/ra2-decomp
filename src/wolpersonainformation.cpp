@@ -11,6 +11,8 @@
 #include "rcptr.h"
 #undef LoadString
 #include "stringtable.h"
+#include <time.h>
+#include <stdlib.h>
 
 namespace fastmath { double __cdecl sqrt(double x); double __cdecl tan(double x); double __cdecl atan(double x); }
 extern const double DAT_007E1708;
@@ -273,7 +275,7 @@ char __fastcall FUN_00779670(WideWstring const * from, Wstring * to)
 }
 
 // FUNCTION: 0x00779690
-PlayerProfile::PlayerProfile(Wstring const & name, int a, char b, int c, int d, int e, int f, int g, int h, int i, int j, char k, WideWstring const & l, WideWstring const & m) :
+PlayerProfile::PlayerProfile(Wstring const & name, int a, bool b, int c, int d, int e, int f, int g, int h, int i, int j, bool k, WideWstring const & l, WideWstring const & m) :
 	Field8(0),
 	Name(name),
 	Field10(a),
@@ -333,4 +335,274 @@ bool FUN_00779940(void)
 	ini.Load(file, false);
 	file.Close();
 	return ini.Get_Bool("Ask", "AddMatchBuddies", true);
+}
+
+// FUNCTION: 0x00779A40
+void __fastcall FUN_00779A40(bool value)
+{
+	CDFileClass file("wolinfoMD.ini");
+	if (!file.Is_Available()) {
+		file.Create();
+		file.Close();
+		file.Open("wolinfoMD.ini", 1);
+	}
+	INIClass ini;
+	if (file.Is_Available()) {
+		ini.Load(file, false);
+		ini.Put_Bool("Ask", "AddMatchBuddies", value);
+		ini.Save(file);
+	}
+}
+
+// FUNCTION: 0x00779B50
+Wstring __fastcall FUN_00779B50(void)
+{
+	CDFileClass file("wolinfoMD.ini");
+	if (!file.Is_Available()) {
+		return Wstring((char const *)0);
+	}
+	INIClass ini;
+	ini.Load(file, false);
+	file.Close();
+	Wstring result;
+	{
+		Wstring key("AutoLogin");
+		Wstring section("DefaultPersona");
+		ini.Get_String(section, key, result, result);
+	}
+	return result;
+}
+
+// FUNCTION: 0x00779C90
+void __fastcall FUN_00779C90(Wstring const * value)
+{
+	CDFileClass file("wolinfoMD.ini");
+	if (!file.Is_Available()) {
+		file.Create();
+		file.Close();
+		file.Open("wolinfoMD.ini", 1);
+	}
+	INIClass ini;
+	if (file.Is_Available()) {
+		ini.Load(file, false);
+		{
+			Wstring key("AutoLogin");
+			Wstring section("DefaultPersona");
+			ini.Put_String(section, key, *value);
+		}
+		ini.Save(file);
+	}
+}
+
+// FUNCTION: 0x00779DD0
+Wstring __fastcall FUN_00779DD0(void)
+{
+	CDFileClass file("wolinfoMD.ini");
+	if (!file.Is_Available()) {
+		return Wstring((char const *)0);
+	}
+	INIClass ini;
+	ini.Load(file, false);
+	file.Close();
+	Wstring result;
+	{
+		Wstring key("LastValid");
+		Wstring section("DefaultPersona");
+		ini.Get_String(section, key, result, result);
+	}
+	return result;
+}
+
+// FUNCTION: 0x00779F10
+void __fastcall FUN_00779F10(Wstring const * value)
+{
+	CDFileClass file("wolinfoMD.ini");
+	if (!file.Is_Available()) {
+		file.Create();
+		file.Close();
+		file.Open("wolinfoMD.ini", 1);
+	}
+	INIClass ini;
+	if (file.Is_Available()) {
+		ini.Load(file, false);
+		{
+			Wstring key("LastValid");
+			Wstring section("DefaultPersona");
+			ini.Put_String(section, key, *value);
+		}
+		ini.Save(file);
+	}
+}
+
+// FUNCTION: 0x0077A050
+PlayerProfile::~PlayerProfile(void)
+{
+}
+
+struct WOLOptions
+{
+	int Flags;
+	char Loaded;
+	WOLOptions(void) { Flags = 0; Loaded = 0; FUN_005175F0(); }
+	void FUN_005175F0(void);
+	unsigned char FUN_005176B0(void);
+};
+
+static inline void WOL_PutInt(INIClass & ini, Wstring const & section, char const * key, int value)
+{
+	Wstring k(key);
+	ini.Put_Int(section, k, value, 0);
+}
+
+// FUNCTION: 0x0077A080
+void PlayerProfile::Save(Wstring const * name)
+{
+	WOLOptions options;
+	if (Field8) {
+		Wstring section(*name);
+		if (!name->length()) {
+			section = DAT_00B73590;
+		} else {
+			section.toLower();
+			if (!options.FUN_005176B0()) {
+				return;
+			}
+		}
+		CDFileClass file("wolinfoMD.ini");
+		if (!file.Is_Available()) {
+			file.Create();
+			file.Close();
+			file.Open("wolinfoMD.ini", 1);
+		}
+		if (file.Is_Available()) {
+			INIClass ini;
+			ini.Load(file, false);
+			{ Wstring k("Server"); ini.Put_String(section, k, Name); }
+			{ Wstring k("Locale"); ini.Put_Int(section, k, Field10, 0); }
+			{ Wstring k("LocaleVerified"); ini.Put_Bool(section, k, Field14); }
+			{ Wstring k("Country"); ini.Put_Int(section, k, Field1C, 0); }
+			{ Wstring k("Color"); ini.Put_Int(section, k, Field20, 0); }
+			{ Wstring k("Rank"); ini.Put_Int(section, k, Field24, 0); }
+			{ Wstring k("Points"); ini.Put_Int(section, k, Field28, 0); }
+			{ Wstring k("Wins"); ini.Put_Int(section, k, Field2C, 0); }
+			{ Wstring k("Losses"); ini.Put_Int(section, k, Field30, 0); }
+			{ Wstring k("Disconnects"); ini.Put_Int(section, k, Field34, 0); }
+			{ Wstring k("MatchByRes"); ini.Put_Bool(section, k, Field38); }
+			Wstring text;
+			FUN_00779230(&Wide3C, &text);
+			{ Wstring k("UpdateTime"); ini.Put_String(section, k, text); }
+			text.clear();
+			text.set(FUN_007350C0(Wide40.text()));
+			{ Wstring k("UpdateDate"); ini.Put_String(section, k, text); }
+			ini.Save(file);
+			file.Close();
+			Field8 = 0;
+			char const * unused0 = Name.c_str();
+			char const * unused1 = Name.c_str();
+			char const * unused2 = Name.c_str();
+		}
+	}
+}
+
+// FUNCTION: 0x0077A4A0
+void PlayerProfile::SetName(Wstring const * name)
+{
+	if (!(*name == Name)) {
+		Name = *name;
+		Field8 = 1;
+	}
+}
+
+// FUNCTION: 0x0077A4D0
+void PlayerProfile::SetUpdateStamp(void)
+{
+	time_t now = time(0);
+	struct tm * local = localtime(&now);
+	Wide40.clear();
+	char buf[16];
+	strftime(buf, 16, "%m", local);
+	int month = atoi(buf);
+	strftime(buf, 16, "%d", local);
+	if (month == 1) {
+		Wide40.set(StringTable::LoadString("TXT_JANUARY", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x261));
+	} else if (month == 2) {
+		Wide40.set(StringTable::LoadString("TXT_FEBRUARY", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x263));
+	} else if (month == 3) {
+		Wide40.set(StringTable::LoadString("TXT_MARCH", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x265));
+	} else if (month == 4) {
+		Wide40.set(StringTable::LoadString("TXT_APRIL", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x267));
+	} else if (month == 5) {
+		Wide40.set(StringTable::LoadString("TXT_MAY", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x269));
+	} else if (month == 6) {
+		Wide40.set(StringTable::LoadString("TXT_JUNE", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x26B));
+	} else if (month == 7) {
+		Wide40.set(StringTable::LoadString("TXT_JULY", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x26D));
+	} else if (month == 8) {
+		Wide40.set(StringTable::LoadString("TXT_AUGUST", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x26F));
+	} else if (month == 9) {
+		Wide40.set(StringTable::LoadString("TXT_SEPTEMBER", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x271));
+	} else if (month == 10) {
+		Wide40.set(StringTable::LoadString("TXT_OCTOBER", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x273));
+	} else if (month == 11) {
+		Wide40.set(StringTable::LoadString("TXT_NOVEMBER", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x275));
+	} else if (month == 12) {
+		Wide40.set(StringTable::LoadString("TXT_DECEMBER", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x277));
+	} else {
+		Wide40.set(StringTable::LoadString("TXT_JANUARY", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x279));
+	}
+	Wide40.cat(L" ");
+	Wide40.cat(FUN_00735120(buf));
+	Wide40.cat(L" ");
+	strftime(buf, 16, "%Y", local);
+	Wide40.cat(FUN_00735120(buf));
+	char timeBuf[64];
+	timeBuf[0] = 0;
+	strftime(timeBuf, 64, "%H:%M:%S", local);
+	Wide3C.set(FUN_00735120(timeBuf));
+	Field8 = 1;
+}
+
+// FUNCTION: 0x0077A700
+void PlayerProfile::SetLocale(int locale, int state)
+{
+	if (locale == Field10) {
+		if (state == 2 && !Field14) {
+			Field14 = 1;
+			Field8 = 1;
+		}
+		return;
+	}
+	bool newer = state >= Field18;
+	if (Field10 == 0) {
+		newer = true;
+	} else if (!newer) {
+		return;
+	}
+	if (locale == 0 || !newer) {
+		return;
+	}
+	if (state == 3) {
+		Field14 = 0;
+	}
+	Field10 = locale;
+	Field18 = state;
+	Field8 = 1;
+}
+
+// FUNCTION: 0x0077A760
+void PlayerProfile::SetMatchByRes(bool value)
+{
+	if (value != Field38) {
+		Field38 = value;
+		Field8 = 1;
+	}
+}
+
+// FUNCTION: 0x0077A780
+void PlayerProfile::SetCountry(int country)
+{
+	if (country != Field1C) {
+		Field1C = country;
+		Field8 = 1;
+	}
 }

@@ -31,6 +31,7 @@ class FileClass
 			WRITE = 2,
 		};
 
+		FileClass(void) : SkipCDCheck(false) {}
 		virtual ~FileClass(void) {};
 		virtual char const * File_Name(void) const = 0;
 		virtual char const * Set_Name(char const *filename) = 0;

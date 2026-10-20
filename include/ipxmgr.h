@@ -66,7 +66,7 @@ class IPXManagerClass : public ConnManClass
 		void FUN_00543050(IPXAddressClass *address);
 		void Global_Channel_Clear_FieldC8(void);
 		void Global_Channel_Set_FieldC8(void);
-		void Global_Channel_Op_40(int a1, int a2);
+		void Global_Channel_Op_40(IPXAddressClass *address, unsigned short port);
 		void Global_Channel_Op_44(unsigned a1);
 
 		virtual int Send_Private_Message (void *buf, int buflen,

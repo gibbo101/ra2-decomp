@@ -1115,6 +1115,17 @@ copy; no assembler is installed yet. Landing found two UI functions calling the 
 Get_Mouse_Current_Frame where the exe calls Get_Mouse_Start_Frame. Cost: about 4.8M tokens.
 Merge gate: 9,849 of 9,849 (1,360.0 KB), about 51% of game functions.
 
+### Batches 63, 64 and 65 (20 October 2026)
+
+**423 of 432 functions** (139, 143, 141), plus two found along the way. Batch 65's merge
+gave FileClass its default constructor (proved by RAMFileClass's and RawFileClass's stores),
+YR's scenario-info flags, a MultiplayerTeam constructor and TibSun's priority queue, and
+landed RAMFileClass, MixFileClass's constructor and the modem guest dialog; batch 64's gave
+the IPX global connection its real Send_To and fixed the manager's signature its header
+change had broken; batch 63's settled the mouse's Set_Mouse_Point as two ints from its call
+sites. Cost: about 5.2M tokens. Merge gate: 10,274 of 10,274 (1,406.8 KB), about 53% of
+game functions.
+
 ### Decide before the first batch
 
 - **Module layout.** Which function lives in which source file, and the link order, decide

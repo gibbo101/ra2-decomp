@@ -166,6 +166,7 @@ class PlanningTokenClass
 		bool Get_F98(void);
 		bool Get_F99(void);
 		void Dec_Loop_Start(void);
+		void FUN_00636CE0(void);
 
 		TechnoClass * OwnerUnit;
 		DynamicVectorClass<PlanningNodeClass *> PlanningNodes;

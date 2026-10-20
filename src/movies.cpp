@@ -862,3 +862,72 @@ bool MPBattleClass::vt_entry_BC(void)
 }
 
 // FUNCTION: 0x005C0FE0 MPBattleClass::~MPBattleClass
+
+unsigned char __stdcall FUN_005D8C90(int index);
+unsigned char __stdcall FUN_005D8CB0(int index);
+WideWstring __fastcall FUN_007B7DD0(int value);
+
+class MultiplayerBattleTeam : public MultiplayerTeam
+{
+	public:
+		MultiplayerBattleTeam(WideWstring const & title, int index);
+		virtual bool IsTeamIncluded(int index);
+		virtual bool SetPlayerTeam(int player);
+};
+
+// FUNCTION: 0x005C1010
+MultiplayerBattleTeam::MultiplayerBattleTeam(WideWstring const & title, int index) :
+	MultiplayerTeam(title, index)
+{
+}
+
+// FUNCTION: 0x005C1030
+MultiplayerTeam * __fastcall FUN_005C1030(int index)
+{
+	return(new MultiplayerBattleTeam(FUN_007B7DD0(index), index));
+}
+
+// FUNCTION: 0x005C1090
+bool MultiplayerBattleTeam::IsTeamIncluded(int index)
+{
+	return(FUN_005D8C90(index) ? true : false);
+}
+
+// FUNCTION: 0x005C10B0
+bool MultiplayerBattleTeam::SetPlayerTeam(int player)
+{
+	return(FUN_005D8CB0(player) ? true : false);
+}
+
+// FUNCTION: 0x005C10D0 MultiplayerBattleTeam::~MultiplayerBattleTeam
+
+extern const double DAT_007EE268;
+extern const double DAT_007EE270;
+extern double DAT_00ABF420;
+extern double DAT_00ABF490;
+extern double DAT_00ABF458;
+extern double DAT_00ABF450;
+extern double DAT_00ABF428;
+extern double DAT_00ABF400;
+extern int DAT_00ABF498;
+
+// FUNCTION: 0x005C10F0 $E111
+double DAT_00ABF420 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x005C1120 $E114
+double DAT_00ABF490 = DAT_00ABF420 / DAT_007EE268;
+
+// FUNCTION: 0x005C1140 $E117
+double DAT_00ABF458 = DAT_007E1718 / DAT_00ABF490;
+
+// FUNCTION: 0x005C1160 $E120
+double DAT_00ABF450 = DAT_007E1720 * DAT_007EE270;
+
+// FUNCTION: 0x005C1180 $E123
+double DAT_00ABF428 = DAT_007E1728 * DAT_007EE270;
+
+// FUNCTION: 0x005C11A0 $E126
+double DAT_00ABF400 = DAT_007E1730 * DAT_007EE270;
+
+// FUNCTION: 0x005C11C0 $E129
+int DAT_00ABF498 = (int)(DAT_007E1738 * (fastmath::tan(DAT_00ABF400 - DAT_00ABF428) * DAT_00ABF420));

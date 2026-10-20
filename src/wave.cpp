@@ -5,6 +5,7 @@
 
 #define INCLUDE_COM
 #include "always.h"
+#include "geometry.h"
 #include "wave.h"
 #include "_logic.h"
 #include "_map.h"
@@ -46,6 +47,8 @@ extern short SineTable[_SINE_TABLE_SIZE];
 extern short SineTable2[496];
 extern int IntensityTable[_INTENSITY_TABLE_SIZE];
 extern bool _tables_calculated;
+
+const float WaveStep = 0.05f;
 
 FacingType Facing_Between_Points(Point2D const & pt1, Point2D const & pt2);
 
@@ -561,3 +564,95 @@ void WaveClass::Laser_AI(void)
 		Delete_Me();
 	}
 }
+
+static inline bool _Differs(Cell const & a, Cell const & b)
+{
+	return a != b;
+}
+
+static inline void _Set(Cell & c, Coord const & coord)
+{
+	c = coord.As_Cell();
+}
+
+static inline bool _Differs(Cell const & a, Coord const & c)
+{
+	return a != c.As_Cell();
+}
+
+// FUNCTION: 0x007610F0
+void WaveClass::Wave_Recalc_Affected_Cells(void)
+{
+	AffectedCells.Clear();
+
+	if (IsWaveActive) {
+		Cell start = StartCoord.As_Cell();
+
+		for (double t = WaveStep; t <= ((WaveStep / 2.0) + WaveProgress); t += WaveStep) {
+			Coord coord = Lerp(StartCoord, EndCoord, t);
+			Cell cell = coord.As_Cell();
+			if (start != cell) {
+				start = coord.As_Cell();
+				Sonic_Add_Cell(start);
+			}
+		}
+	} else {
+		Cell left = WaveEndLeftCoord.As_Cell();
+		Cell right = WaveEndRightCoord.As_Cell();
+		Cell middle = EndCoord.As_Cell();
+
+		for (double t = FadeProgress; t <= ((WaveStep / 2.0) + WaveProgress); t += WaveStep) {
+			Coord coord = COORD_NONE;
+
+			if (Direction < FACING_S) {
+				coord = Lerp(WaveStartLeftCoord, WaveEndLeftCoord, t);
+				if (left != coord.As_Cell()) {
+					left = coord.As_Cell();
+					Sonic_Add_Cell(left);
+				}
+			}
+
+			coord = Lerp(StartCoord, EndCoord, t);
+			if (_Differs(middle, coord.As_Cell())) {
+				_Set(middle, coord);
+				Sonic_Add_Cell(middle);
+			}
+
+			if (Direction >= FACING_S) {
+				coord = Lerp(WaveStartRightCoord, WaveEndRightCoord, t);
+				if (_Differs(right, coord)) {
+					_Set(right, coord);
+					Sonic_Add_Cell(right);
+				}
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x00762060
+void WaveClass::FUN_00762060(void)
+{
+}
+
+// FUNCTION: 0x00762AE0
+void WaveClass::FUN_00762AE0(void)
+{
+}
+
+// FUNCTION: 0x007631F0
+RTTIType WaveClass::Fetch_RTTI(void) const
+{
+	return RTTI_WAVE;
+}
+
+// FUNCTION: 0x00763200 WaveClass::~WaveClass
+
+// FUNCTION: 0x007632D0 ?$DynamicVectorClass@PAVCellClass@@::?$DynamicVectorClass@PAVCellClass@@
+// FUNCTION: 0x00763330 ?$DynamicVectorClass@PAVCellClass@@::Add
+template class DynamicVectorClass<CellClass *>;
+
+// FUNCTION: 0x00763380 $E2
+// FUNCTION: 0x007633B0 $E5
+// FUNCTION: 0x007633D0 $E8
+// FUNCTION: 0x007633F0 $E11
+// FUNCTION: 0x00763410 $E14

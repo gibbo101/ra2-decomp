@@ -33,7 +33,7 @@ class WWMouseClass : public Mouse {
 		virtual int Get_Mouse_X(void) const override;
 		virtual int Get_Mouse_Y(void) const override;
 		virtual Point2D Get_Mouse_Point(void) const override;
-		virtual void Set_Mouse_Point(Point2D point) override;
+		virtual void Set_Mouse_Point(int x, int y) override;
 		virtual void Draw_Mouse(Surface * scr, bool issidebarsurface = false) override;
 		virtual void Erase_Mouse(Surface * scr, bool issidebarsurface = false) override;
 		virtual void Convert_Coordinate(int & x, int & y) const override;

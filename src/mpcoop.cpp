@@ -1760,4 +1760,16 @@ template class DynamicVectorClass<CoopCamp_0049B610 *>;
 // FUNCTION: 0x005C53D0 ?$VectorClass@PAUNodeNameType@@::Resize
 // FUNCTION: 0x005C5480 ?$VectorClass@PAUNodeNameType@@::Clear
 // FUNCTION: 0x005C54B0 ?$VectorClass@PAUNodeNameType@@::ID
+// FUNCTION: 0x005C54F0 ?$VectorClass@PAUNodeNameType@@::ID
+// FUNCTION: 0x005C5510 ?$DynamicVectorClass@PAUNodeNameType@@::Resize
+// FUNCTION: 0x005C55C0 ?$DynamicVectorClass@PAUNodeNameType@@::ID
+// FUNCTION: 0x005C55F0 ?$VectorClass@PAVCoopCamp_0049B610@@::operator==
+// FUNCTION: 0x005C5630 ?$VectorClass@PAVCoopCamp_0049B610@@::Resize
+// FUNCTION: 0x005C56E0 ?$VectorClass@PAVCoopCamp_0049B610@@::Clear
+// FUNCTION: 0x005C5710 ?$VectorClass@PAVCoopCamp_0049B610@@::ID
+// FUNCTION: 0x005C5750 ?$VectorClass@PAVCoopCamp_0049B610@@::ID
+// FUNCTION: 0x005C5770 ?$DynamicVectorClass@PAVCoopCamp_0049B610@@::Resize
+// FUNCTION: 0x005C5820 ?$DynamicVectorClass@PAVCoopCamp_0049B610@@::ID
+// FUNCTION: 0x005C5850 ?$VectorClass@PAUCoopPlayerStats@@::~?$VectorClass@PAUCoopPlayerStats@@
+// FUNCTION: 0x005C58A0 ?$VectorClass@PAUNodeNameType@@::~?$VectorClass@PAUNodeNameType@@
 template class VectorClass<NodeNameType *>;

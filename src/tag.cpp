@@ -21,6 +21,19 @@
 #include "trigger.h"
 #include "trigtype.h"
 #include "vector.h"
+#include <math.h>
+
+extern double __cdecl FUN_004CAC40(double);
+extern double __cdecl FUN_004CAD50(double);
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007E1720;
+extern const double DAT_007E1728;
+extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007F4540;
+extern const double DAT_007F4548;
 
 // FUNCTION: 0x006E4B50 $E2
 // FUNCTION: 0x006E4B80 $E5
@@ -392,3 +405,48 @@ void TagClass::All_Timer_Global_Reset(int global)
 		Tags[index]->Timer_Global_Reset(global);
 	}
 }
+
+// FUNCTION: 0x006E5820
+void TagClass::All_Timer_Local_Reset(int local)
+{
+	for (int index = 0; index < Tags.Count(); index++) {
+		Tags[index]->Timer_Local_Reset(local);
+	}
+}
+
+// FUNCTION: 0x006E5850
+bool TagClass::Is_One_Of_A_Kind(void)
+{
+	for (int i = 0; i < Tags.Count(); i++) {
+		TagClass *tag = Tags[i];
+		if (tag != this && tag->Class == Class) {
+			return(false);
+		}
+	}
+	return(true);
+}
+
+// FUNCTION: 0x006E5890 TagClass::Fetch_Object_Size
+// FUNCTION: 0x006E58A0 TagClass::Fetch_RTTI
+// FUNCTION: 0x006E58B0 TagClass::~TagClass
+
+// FUNCTION: 0x006E58D0 $E110
+double DAT_00B0E7B8 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x006E5900 $E113
+double DAT_00B0E808 = DAT_00B0E7B8 / DAT_007F4540;
+
+// FUNCTION: 0x006E5920 $E116
+double DAT_00B0E7F0 = DAT_007E1718 / DAT_00B0E808;
+
+// FUNCTION: 0x006E5940 $E119
+double DAT_00B0E7E8 = DAT_007E1720 * DAT_007F4548;
+
+// FUNCTION: 0x006E5960 $E122
+double DAT_00B0E7C0 = DAT_007E1728 * DAT_007F4548;
+
+// FUNCTION: 0x006E5980 $E125
+double DAT_00B0E798 = DAT_007E1730 * DAT_007F4548;
+
+// FUNCTION: 0x006E59A0 $E128
+int DAT_00B0E810 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B0E798 - DAT_00B0E7C0) * DAT_00B0E7B8));

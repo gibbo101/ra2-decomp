@@ -99,6 +99,9 @@
 
 namespace Unsorted { extern int CurrentFrame; }
 
+template class TPoint3D<int>;
+template class IndexClass<int, StaticBufferClass::Entry *>;
+
 // FUNCTION: 0x006CE270 ?$_com_ptr_t@V?$_com_IIID@UILocomotion@@$1?_GUID_070f3290_9841_11d1_b709_00a024ddafd1@@3U__s_GUID@@A@@::_AddRef
 template class _com_ptr_t<_com_IIID<ILocomotion, &__uuidof(ILocomotion)> >;
 
@@ -5595,3 +5598,43 @@ void TechnoClass::AddPassenger(FootClass * passenger)
 		VocClass::PlayIndexAtPos(Techno_Type_Class()->EnterTransportSound, PositionCoord, 0);
 	}
 }
+
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007E1720;
+extern const double DAT_007E1728;
+extern const double DAT_007E1730;
+extern const double DAT_007F4E98;
+extern const double DAT_007F4EA0;
+extern double __cdecl FUN_004CAC40(double);
+
+// FUNCTION: 0x007106E0 TechnoClass::~TechnoClass
+
+// FUNCTION: 0x00710700 ?$TPoint3D@H::operator/
+
+// FUNCTION: 0x00710750 ?$IndexClass@HPAUEntry@StaticBufferClass@@::Increase_Table_Size
+
+// FUNCTION: 0x007107E0 ?$IndexClass@HPAUEntry@StaticBufferClass@@::Search_For_Node
+
+// FUNCTION: 0x00710860 ?$IndexClass@HPAUEntry@StaticBufferClass@@::search_compfunc
+
+// FUNCTION: 0x00710890 Binary_Search
+
+// FUNCTION: 0x007108E0 $E244
+double DAT_00B0EB60 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x00710910 $E247
+double DAT_00B0EBB0 = DAT_00B0EB60 / DAT_007F4E98;
+
+// FUNCTION: 0x00710930 $E250
+double DAT_00B0EB98 = DAT_007E1718 / DAT_00B0EBB0;
+
+// FUNCTION: 0x00710950 $E253
+double DAT_00B0EB90 = DAT_007E1720 * DAT_007F4EA0;
+
+// FUNCTION: 0x00710970 $E256
+double DAT_00B0EB68 = DAT_007E1728 * DAT_007F4EA0;
+
+// FUNCTION: 0x00710990 $E259
+double DAT_00B0EB40 = DAT_007E1730 * DAT_007F4EA0;

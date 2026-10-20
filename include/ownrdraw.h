@@ -249,7 +249,7 @@ namespace OwnerDraw {
 	int Capture_Mouse(void);
 	int Release_Mouse(void);
 
-	HWND Begin_Dialog(int id, DLGPROC proc);
+	HWND Begin_Dialog(int id, DLGPROC proc, LPARAM lparam);
 	void Display_Dialog(HWND window);
 	int Move_Dialog(HWND window, int x, int y);
 	void End_Dialog(HWND window);

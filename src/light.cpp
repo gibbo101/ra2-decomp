@@ -292,3 +292,21 @@ template class DynamicVectorClass<LightSourceClass::PendingCellClass *>;
 // FUNCTION: 0x00555290 ?$DynamicVectorClass@PAVPendingCellClass@LightSourceClass@@::ID
 
 // FUNCTION: 0x005552B0 ?$VectorClass@PAVPendingCellClass@LightSourceClass@@::GetItem
+
+// FUNCTION: 0x005552C0 ?$VectorClass@PAVLightSourceClass@@::operator==
+// FUNCTION: 0x00555300 ?$VectorClass@PAVLightSourceClass@@::Resize
+// FUNCTION: 0x005553B0 ?$VectorClass@PAVLightSourceClass@@::Clear
+// FUNCTION: 0x005553E0 ?$VectorClass@PAVLightSourceClass@@::ID
+// FUNCTION: 0x00555420 ?$VectorClass@PAVLightSourceClass@@::ID
+template class VectorClass<LightSourceClass *>;
+
+// FUNCTION: 0x00555440 ?$DynamicVectorClass@PAVLightSourceClass@@::Resize
+// FUNCTION: 0x005554F0 ?$DynamicVectorClass@PAVLightSourceClass@@::ID
+template class DynamicVectorClass<LightSourceClass *>;
+
+// FUNCTION: 0x00555520 ?$VectorClass@PAVPendingCellClass@LightSourceClass@@::operator==
+// FUNCTION: 0x00555560 ?$VectorClass@PAVPendingCellClass@LightSourceClass@@::Resize
+// FUNCTION: 0x00555610 ?$VectorClass@PAVPendingCellClass@LightSourceClass@@::Clear
+// FUNCTION: 0x00555640 ?$VectorClass@PAVPendingCellClass@LightSourceClass@@::ID
+// FUNCTION: 0x00555680 ?$VectorClass@PAVPendingCellClass@LightSourceClass@@::ID
+template class VectorClass<LightSourceClass::PendingCellClass *>;

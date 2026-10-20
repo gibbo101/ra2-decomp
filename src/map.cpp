@@ -6193,6 +6193,8 @@ template class VectorClass<CellClass *>;
 template class VectorClass<PassabilityType>;
 template class DynamicVectorClass<PassabilityType>;
 template class DynamicVectorClass<HashObject<unsigned int, unsigned int> >;
+template class VectorClass<HashObject<unsigned int, SubzoneConnectionStruct> >;
+template class DynamicVectorClass<HashObject<unsigned int, SubzoneConnectionStruct> >;
 
 // FUNCTION: 0x00588CC0 ?$DynamicVectorClass@USubzoneConnectionStruct@@::ID
 
@@ -6217,3 +6219,27 @@ template class DynamicVectorClass<HashObject<unsigned int, unsigned int> >;
 // FUNCTION: 0x00588F50 ?$VectorClass@W4PassabilityType@@::GetItem
 
 // FUNCTION: 0x00588F60 ?$DynamicVectorClass@U?$HashObject@II@@::Clear
+
+// FUNCTION: 0x00588F90 ?$DynamicVectorClass@U?$HashObject@II@@::ID
+
+// FUNCTION: 0x00588FB0 ?$VectorClass@U?$HashObject@II@@::GetItem
+
+// FUNCTION: 0x00588FD0 ?$DynamicVectorClass@U?$HashObject@IUSubzoneConnectionStruct@@@@::Clear
+
+// FUNCTION: 0x00589000 ?$DynamicVectorClass@U?$HashObject@IUSubzoneConnectionStruct@@@@::ID
+
+// FUNCTION: 0x00589030 ?$VectorClass@U?$HashObject@IUSubzoneConnectionStruct@@@@::GetItem
+
+// FUNCTION: 0x00589060 ?$VectorClass@PAVCellClass@@::~?$VectorClass@PAVCellClass@@
+
+// FUNCTION: 0x005890B0 ?$DynamicVectorClass@USubzoneConnectionStruct@@::~?$DynamicVectorClass@USubzoneConnectionStruct@@
+
+// FUNCTION: 0x00589100 ?$DynamicVectorClass@USubzoneConnectionStruct@@::?$DynamicVectorClass@USubzoneConnectionStruct@@
+
+// FUNCTION: 0x00589190 ?$DynamicVectorClass@USubzoneConnectionStruct@@::Resize
+
+// FUNCTION: 0x00589290 ?$DynamicVectorClass@USubzoneConnectionStruct@@::Delete_Index
+
+// FUNCTION: 0x005892D0 ?$DynamicVectorClass@USubzoneConnectionStruct@@::ID
+
+// FUNCTION: 0x00589300 ?$VectorClass@UZoneConnectionClass@@::operator==

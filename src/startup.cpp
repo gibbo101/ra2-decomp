@@ -77,6 +77,8 @@
 #include "netdlg.h"
 #include "overlay.h"
 #include "parasite.h"
+#include "bomb.h"
+#include "radsite.h"
 #include "disklaser.h"
 #include "overtype.h"
 #include "ovrlight.h"
@@ -573,3 +575,19 @@ template class TClassFactory<DiskLaserClass>;
 // FUNCTION: 0x006C1010 ?$TClassFactory@VParasiteClass@@::CreateInstance
 // FUNCTION: 0x006C1090 ?$TClassFactory@VParasiteClass@@::LockServer
 template class TClassFactory<ParasiteClass>;
+
+// FUNCTION: 0x006C10C0 ?$TClassFactory@VBombClass@@::?$TClassFactory@VBombClass@@
+// FUNCTION: 0x006C10D0 ?$TClassFactory@VBombClass@@::QueryInterface
+// FUNCTION: 0x006C1140 ?$TClassFactory@VBombClass@@::AddRef
+// FUNCTION: 0x006C1160 ?$TClassFactory@VBombClass@@::Release
+// FUNCTION: 0x006C1190 ?$TClassFactory@VBombClass@@::CreateInstance
+// FUNCTION: 0x006C1210 ?$TClassFactory@VBombClass@@::LockServer
+template class TClassFactory<BombClass>;
+
+// FUNCTION: 0x006C1240 ?$TClassFactory@VRadSiteClass@@::?$TClassFactory@VRadSiteClass@@
+// FUNCTION: 0x006C1250 ?$TClassFactory@VRadSiteClass@@::QueryInterface
+// FUNCTION: 0x006C12C0 ?$TClassFactory@VRadSiteClass@@::AddRef
+// FUNCTION: 0x006C12E0 ?$TClassFactory@VRadSiteClass@@::Release
+// FUNCTION: 0x006C1310 ?$TClassFactory@VRadSiteClass@@::CreateInstance
+// FUNCTION: 0x006C1390 ?$TClassFactory@VRadSiteClass@@::LockServer
+template class TClassFactory<RadSiteClass>;

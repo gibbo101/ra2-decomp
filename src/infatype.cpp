@@ -369,5 +369,31 @@ char const * __fastcall FUN_00524EC0(char const * string)
 
 // FUNCTION: 0x00524ED0 ?$DynamicVectorClass@PAVAnimTypeClass@@::Clear
 template class DynamicVectorClass<AnimTypeClass *>;
+template class VectorClass<AnimTypeClass *>;
+template class TypeList<AnimTypeClass *>;
 
 // FUNCTION: 0x00524F00 ?$DynamicVectorClass@PAVAnimTypeClass@@::ID
+
+// FUNCTION: 0x00524F20 ?$DynamicVectorClass@PAVAnimTypeClass@@::operator=
+
+// FUNCTION: 0x00524FB0 ?$VectorClass@PAVAnimTypeClass@@::GetItem
+
+// FUNCTION: 0x00524FC0 ?$DynamicVectorClass@PAVAnimTypeClass@@::~?$DynamicVectorClass@PAVAnimTypeClass@@
+
+// FUNCTION: 0x00525010 ?$VectorClass@PAVAnimTypeClass@@::~?$VectorClass@PAVAnimTypeClass@@
+
+// FUNCTION: 0x00525060 ?$VectorClass@PAVAnimTypeClass@@::operator=
+
+// FUNCTION: 0x005250D0 ?$VectorClass@PAVAnimTypeClass@@::operator==
+
+// FUNCTION: 0x00525110 ?$VectorClass@PAVAnimTypeClass@@::Resize
+
+// FUNCTION: 0x005251C0 ?$VectorClass@PAVAnimTypeClass@@::Clear
+
+// FUNCTION: 0x005251F0 ?$VectorClass@PAVAnimTypeClass@@::ID
+
+// FUNCTION: 0x00525230 ?$VectorClass@PAVAnimTypeClass@@::ID
+
+// FUNCTION: 0x00525250 ?$DynamicVectorClass@PAVAnimTypeClass@@::?$DynamicVectorClass@PAVAnimTypeClass@@
+
+// FUNCTION: 0x005252B0 ?$TypeList@PAVAnimTypeClass@@::~?$TypeList@PAVAnimTypeClass@@

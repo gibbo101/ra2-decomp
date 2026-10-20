@@ -1107,3 +1107,36 @@ int NullModemClass::Verify_And_Convert_To_Int( char *buffer )
 // FUNCTION: 0x005F3540 NullModemClass::Set_External_Timing
 
 // FUNCTION: 0x005F3560 NullModemClass::Send_Private_Message
+
+// FUNCTION: 0x005F35A0 NullModemClass::Get_Private_Message
+
+// FUNCTION: 0x005F35D0 NullModemClass::Global_Num_Send
+
+// FUNCTION: 0x005F35F0 NullModemClass::Global_Num_Receive
+
+// FUNCTION: 0x005F3610 NullModemClass::Private_Num_Send
+
+// FUNCTION: 0x005F3630 NullModemClass::Private_Num_Receive
+
+// FUNCTION: 0x005F3650 NullModemClass::~NullModemClass
+
+extern const double DAT_007EF020;
+extern const double DAT_007EF028;
+
+// FUNCTION: 0x005F36F0 $E72
+double DAT_00AC1368 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x005F3720 $E75
+double DAT_00AC13C0 = DAT_00AC1368 / DAT_007EF020;
+
+// FUNCTION: 0x005F3740 $E78
+double DAT_00AC13A8 = DAT_007E1718 / DAT_00AC13C0;
+
+// FUNCTION: 0x005F3760 $E81
+double DAT_00AC13A0 = DAT_007E1720 * DAT_007EF028;
+
+// FUNCTION: 0x005F3780 $E84
+double DAT_00AC1370 = DAT_007E1728 * DAT_007EF028;
+
+// FUNCTION: 0x005F37A0 $E87
+double DAT_00AC1348 = DAT_007E1730 * DAT_007EF028;

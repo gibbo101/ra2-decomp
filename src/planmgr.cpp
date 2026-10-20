@@ -20,6 +20,14 @@
 #include "event.h"
 #include "target.h"
 #include "planning.h"
+#include <stddef.h>
+#include "stringtable.h"
+#include "voc.h"
+#include "_rules.h"
+#include "rules.h"
+#include "notice.h"
+#include "queue.h"
+#include "mission.h"
 
 extern double __cdecl FUN_004CAC40(double);
 extern Rect __fastcall FUN_0072AD20(void);
@@ -197,6 +205,7 @@ template class VectorClass<EventClass *>;
 template class DynamicVectorClass<PlanningMemberClass *>;
 template class DynamicVectorClass<PlanningBranchClass *>;
 
+extern INoticeSink * DAT_00AC4B80;
 extern PlanningNodeClass * DAT_00AC4CCC;
 extern PlanningNodeClass * DAT_00AC4C38;
 extern PlanningNodeClass * DAT_00AC4BF0;
@@ -1204,12 +1213,11 @@ void PlanningTokenClass::Dec_Loop_Start(void)
 	StepsToClosedLoop = (StepsToClosedLoop <= 0) ? 0 : StepsToClosedLoop;
 }
 
-extern void * DAT_00AC4B80;
 extern bool DAT_00AC4CB0;
 extern Point2D DAT_00AC4C68;
 
 // FUNCTION: 0x00637060
-void __fastcall FUN_00637060(void * value)
+void __fastcall FUN_00637060(INoticeSink * value)
 {
 	DAT_00AC4B80 = value;
 }
@@ -1323,6 +1331,30 @@ void __fastcall FUN_006377B0(TechnoClass * techno)
 	PlanningTokenClass::Technos.Delete(techno);
 }
 
+// FUNCTION: 0x00637840
+void __fastcall FUN_00637840(TechnoClass * techno)
+{
+	if (!DAT_00AC4CF6) {
+		DAT_00AC4CF6 = true;
+		if (PlanningNodeClass::PlanningModeActive) {
+			PlanningTokenClass * token = techno->FUN_00705D20();
+			if (token) {
+				PlanningNodeClass * node = token->Last_Node();
+				if (node) {
+					int count = node->PlanningMembers.Count();
+					for (int i = 0; i < count; i++) {
+						TechnoClass * owner = node->PlanningMembers[i]->Owner;
+						if (!owner->IsSelected) {
+							owner->Select();
+						}
+					}
+				}
+			}
+		}
+		DAT_00AC4CF6 = false;
+	}
+}
+
 // FUNCTION: 0x006378B0
 void __fastcall FUN_006378B0(PlanningNodeClass * node)
 {
@@ -1330,6 +1362,114 @@ void __fastcall FUN_006378B0(PlanningNodeClass * node)
 		node->Set_Queued();
 		PlanningNodeClass::Unknown3.Add(node);
 	}
+}
+
+
+void __fastcall FUN_006521C0(EventClass event);
+
+// FUNCTION: 0x00637920
+void __fastcall FUN_00637920(void)
+{
+	int count = PlanningNodeClass::Unknown3.Count();
+	for (int i = 0; i < count; i++) {
+		PlanningNodeClass * node = PlanningNodeClass::Unknown3[i];
+		node->Clear();
+		int members = node->PlanningMembers.Count();
+		for (int j = 0; j < members; j++) {
+			node->FUN_00634E10(node->PlanningMembers[j]);
+		}
+		node->Update_Active();
+		node->Queued = false;
+	}
+	PlanningNodeClass::Unknown3.Clear();
+}
+
+// FUNCTION: 0x006379C0
+void __fastcall FUN_006379C0(void)
+{
+	if (!PlanningNodeClass::PlanningModeActive) {
+		PlanningNodeClass::PlanningModeActive = true;
+		VocClass::PlayGlobal(Rule->StartPlanningModeSound, 1.0f, 0x2000);
+		if (DAT_00AC4B80) {
+			DAT_00AC4B80->INoticeSink_Unknown(0x11c7, 0);
+		}
+	}
+}
+
+// FUNCTION: 0x00637A10
+void __fastcall FUN_00637A10(void)
+{
+	if (PlanningNodeClass::PlanningModeActive) {
+		EventClass event(PlayerPtr->HeapID, EventClass::PLAN_COMMIT);
+		FUN_006521C0(event);
+		DAT_00AC4CCC = 0;
+		DAT_00AC4C38 = 0;
+		DAT_00AC4BF0 = 0;
+		PlanningNodeClass::PlanningModeActive = false;
+		VocClass::PlayGlobal(Rule->EndPlanningModeSound, 1.0f, 0x2000);
+		if (DAT_00AC4B80) {
+			DAT_00AC4B80->INoticeSink_Unknown(0x11c8, 0);
+		}
+	}
+}
+
+// FUNCTION: 0x00637AA0
+bool __fastcall FUN_00637AA0(void)
+{
+	return PlanningNodeClass::PlanningModeActive;
+}
+
+// FUNCTION: 0x00637D00
+void __fastcall FUN_00637D00(PlanningNodeClass * node)
+{
+	EventClass event = *node->PlanningMembers[0]->Packet;
+	xTargetClass * target;
+	if (event.Data.MegaMission.Target.Is_Valid()) {
+		target = &event.Data.MegaMission.Target;
+	} else if (event.Data.MegaMission.Follow.Is_Valid()) {
+		target = &event.Data.MegaMission.Follow;
+	} else if (event.Data.MegaMission.Destination.Is_Valid()) {
+		target = &event.Data.MegaMission.Destination;
+	} else {
+		return;
+	}
+	AbstractClass * object = target->As_Abstract();
+	if (object) {
+		EventClass remove(PlayerPtr->HeapID, EventClass::PLAN_NODE_DELETE, TargetClass(object));
+		FUN_006521C0(remove);
+	}
+}
+
+// FUNCTION: 0x00637DB0
+bool __fastcall FUN_00637DB0(int type)
+{
+	if (PlanningNodeClass::PlanningModeActive && type == 4) {
+		return false;
+	}
+	return true;
+}
+
+// FUNCTION: 0x00637DD0
+void __fastcall FUN_00637DD0(EventClass event)
+{
+	if (event.Type == EventClass::MEGAMISSION) {
+		event.Data.MegaMission.IsPlanningEvent = true;
+		FUN_006521C0(event);
+	}
+}
+
+// FUNCTION: 0x006385C0
+bool TechnoClass::TryNextPlanningTokenNode(void)
+{
+	PlanningTokenClass * token = FUN_00705D20();
+	if (token && token->PlanningNodes.Count() > 0 && (token->F8C == -1 || token->F8C > 0) && !token->F1C) {
+		QueueMission(MISSION_WAIT, true);
+		EventClass popped = token->Pop_Front();
+		FUN_006375B0(popped);
+		token->F1C = true;
+		return true;
+	}
+	return false;
 }
 
 // FUNCTION: 0x00639F80

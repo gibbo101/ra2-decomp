@@ -85,7 +85,8 @@ ArrayList<WolChannel> DAT_00B73E10;
 ArrayList<WolChannel> DAT_00B76AE0;
 
 struct User {
-	char Pad[0x20];
+	unsigned int Flags;
+	char Pad[0x1C];
 	User * Next;
 	char Nick[10];
 	char Login[0x6C - 0x2E];
@@ -359,7 +360,7 @@ bool __fastcall FUN_0077D2A0(User * user)
 {
 	if (!user)
 		return false;
-	if (user->Pad[0] & 1)
+	if (user->Flags & 1)
 		return true;
 	if (WS_Find_Dialog(0xC2))
 		return true;
@@ -375,7 +376,7 @@ bool __fastcall FUN_0077D2E0(User * user, Wstring * text)
 {
 	if (!user)
 		return false;
-	if (user->Pad[0] & 1)
+	if (user->Flags & 1)
 		return true;
 	if (WS_Find_Dialog(0xC2))
 		return true;
@@ -1744,3 +1745,275 @@ int __cdecl FUN_007813B0(SortEntry const * a, SortEntry const * b)
 	return 0;
 }
 
+
+typedef int (__cdecl * CompareFn)(const void *, const void *);
+
+struct UserSort {
+	int Index;
+	char * Name;
+	int Flag;
+};
+
+// FUNCTION: 0x00781CC0
+int __cdecl FUN_00781CC0(UserSort const * a, UserSort const * b)
+{
+	if (a->Flag != b->Flag) {
+		return a->Flag ? -1 : 1;
+	}
+	return strcmpi(a->Name, b->Name);
+}
+
+// FUNCTION: 0x00781CF0
+int __cdecl FUN_00781CF0(UserSort const * a, UserSort const * b)
+{
+	if (a->Flag != b->Flag) {
+		return a->Flag ? -1 : 1;
+	}
+	return strcmpi(b->Name, a->Name);
+}
+
+// FUNCTION: 0x00781FB0
+void __fastcall FUN_00781FB0(User * user, bool ascending)
+{
+	User temp;
+	memset(&temp, 0, sizeof(temp));
+	int count = DAT_00B77900.length();
+	if (count == 0) {
+		DAT_00B77900.addTail(*user);
+		return;
+	}
+	int owners = 0;
+	DAT_00B77900.get(temp, 0);
+	while (temp.Flags & 1) {
+		if (owners >= count) {
+			break;
+		}
+		owners++;
+		DAT_00B77900.get(temp, owners);
+	}
+	int pos;
+	if (user->Flags & 1) {
+		pos = 0;
+		DAT_00B77900.get(temp, 0);
+		if (ascending) {
+			while (pos < owners) {
+				if (strcmpi(temp.Nick, user->Nick) >= 0) {
+					break;
+				}
+				pos++;
+				DAT_00B77900.get(temp, pos);
+			}
+		} else {
+			while (pos < owners) {
+				if (strcmpi(temp.Nick, user->Nick) <= 0) {
+					break;
+				}
+				pos++;
+				DAT_00B77900.get(temp, pos);
+			}
+		}
+		DAT_00B77900.add(*user, pos);
+	} else {
+		pos = owners;
+		DAT_00B77900.get(temp, owners);
+		if (ascending) {
+			while (pos < count) {
+				if (strcmpi(temp.Nick, user->Nick) >= 0) {
+					break;
+				}
+				pos++;
+				DAT_00B77900.get(temp, pos);
+			}
+		} else {
+			while (pos < count) {
+				if (strcmpi(temp.Nick, user->Nick) <= 0) {
+					break;
+				}
+				pos++;
+				DAT_00B77900.get(temp, pos);
+			}
+		}
+		DAT_00B77900.add(*user, pos);
+	}
+}
+
+// FUNCTION: 0x00781D20
+void __fastcall FUN_00781D20(bool ascending)
+{
+	ArrayList<User> copy;
+	int count = DAT_00B77900.length();
+	UserSort * sorted = new UserSort[count];
+	if (!sorted) {
+		return;
+	}
+	User temp;
+	memset(&temp, 0, sizeof(temp));
+	for (int i = 0; i < count; i++) {
+		DAT_00B77900.get(temp, i);
+		sorted[i].Index = i;
+		sorted[i].Name = new char[10];
+		if (!sorted[i].Name) {
+			return;
+		}
+		strcpy(sorted[i].Name, temp.Nick);
+		sorted[i].Flag = temp.Flags & 1;
+		copy.addTail(temp);
+	}
+	DAT_00B77900.clear();
+	if (ascending) {
+		qsort(sorted, count, sizeof(UserSort), (CompareFn)FUN_00781CC0);
+	} else {
+		qsort(sorted, count, sizeof(UserSort), (CompareFn)FUN_00781CF0);
+	}
+	int k;
+	for (k = 0; k < count; k++) {
+		copy.get(temp, sorted[k].Index);
+		DAT_00B77900.addTail(temp);
+	}
+	copy.clear();
+	for (k = 0; k < count; k++) {
+		if (sorted[k].Name) {
+			delete sorted[k].Name;
+		}
+	}
+	delete sorted;
+}
+
+void __fastcall FUN_00782BB0(User * user, bool ascending);
+extern int DAT_00B77E48;
+void __fastcall FUN_00782320(User * user, bool ascending);
+
+// FUNCTION: 0x00783070
+void __fastcall FUN_00783070(User * user)
+{
+	int mode = DAT_00B77E48;
+	if (mode == 1) {
+		FUN_00781FB0(user, false);
+	} else if (mode == 2) {
+		FUN_00782320(user, true);
+	} else if (mode == 3) {
+		FUN_00782320(user, false);
+	} else if (mode == 4) {
+		FUN_00782BB0(user, true);
+	} else if (mode == 5) {
+		FUN_00782BB0(user, false);
+	} else {
+		FUN_00781FB0(user, true);
+	}
+}
+
+struct UserRank {
+	int Index;
+	int Key;
+	int Flag;
+};
+
+// FUNCTION: 0x007830C0
+int __cdecl FUN_007830C0(UserRank const * a, UserRank const * b)
+{
+	if (a->Flag != b->Flag) {
+		return a->Flag ? -1 : 1;
+	}
+	if (a->Key < b->Key) {
+		return a->Key == -1 ? 1 : -1;
+	}
+	if (a->Key > b->Key) {
+		return b->Key == -1 ? -1 : 1;
+	}
+	User first;
+	User second;
+	memset(&first, 0, sizeof(first));
+	memset(&second, 0, sizeof(second));
+	DAT_00B77900.get(first, a->Index);
+	DAT_00B77900.get(second, b->Index);
+	return strcmpi(first.Nick, second.Nick);
+}
+
+// FUNCTION: 0x007831A0
+int __cdecl FUN_007831A0(UserRank const * a, UserRank const * b)
+{
+	if (a->Flag != b->Flag) {
+		return a->Flag ? -1 : 1;
+	}
+	if (a->Key > b->Key) {
+		return -1;
+	}
+	if (a->Key < b->Key) {
+		return 1;
+	}
+	User first;
+	User second;
+	memset(&first, 0, sizeof(first));
+	memset(&second, 0, sizeof(second));
+	DAT_00B77900.get(first, a->Index);
+	DAT_00B77900.get(second, b->Index);
+	return strcmpi(first.Nick, second.Nick);
+}
+
+// FUNCTION: 0x00783270
+void __fastcall FUN_00783270(bool ascending)
+{
+	ArrayList<User> copy;
+	int count = DAT_00B77900.length();
+	UserRank * sorted = new UserRank[count];
+	if (!sorted) {
+		return;
+	}
+	User temp;
+	memset(&temp, 0, sizeof(temp));
+	for (int i = 0; i < count; i++) {
+		DAT_00B77900.get(temp, i);
+		sorted[i].Index = i;
+		sorted[i].Key = -1;
+		Wstring name;
+		LadderA info;
+		memset(&info, 0, sizeof(info));
+		name.set(temp.Nick);
+		name.toLower();
+		if (DAT_00B77E0C && DAT_00B77E0C->getValue(name, info)) {
+			sorted[i].Key = info.Rung;
+		}
+		sorted[i].Flag = temp.Flags & 1;
+		copy.addTail(temp);
+	}
+	if (ascending) {
+		qsort(sorted, count, sizeof(UserRank), (CompareFn)FUN_007830C0);
+	} else {
+		qsort(sorted, count, sizeof(UserRank), (CompareFn)FUN_007831A0);
+	}
+	DAT_00B77900.clear();
+	for (int k = 0; k < count; k++) {
+		copy.get(temp, sorted[k].Index);
+		DAT_00B77900.addTail(temp);
+	}
+	copy.clear();
+	delete sorted;
+}
+
+// FUNCTION: 0x00783520
+int __cdecl FUN_00783520(const char * a, const char * b)
+{
+	int la = strlen(a);
+	int lb = strlen(b);
+	if (la && lb) {
+		return strcmpi(a, b);
+	}
+	if (la > 0) {
+		return -1;
+	}
+	return lb > 0;
+}
+
+// FUNCTION: 0x00783570
+int __cdecl FUN_00783570(const char * a, const char * b)
+{
+	int la = strlen(a);
+	int lb = strlen(b);
+	if (la && lb) {
+		return strcmpi(b, a);
+	}
+	if (la > 0) {
+		return -1;
+	}
+	return lb > 0;
+}

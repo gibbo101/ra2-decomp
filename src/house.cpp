@@ -4959,3 +4959,20 @@ template class DynamicVectorClass<BUILDING_DIST_OBJ>;
 // FUNCTION: 0x0050E7A0 ?$DynamicVectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@::ID
 
 // FUNCTION: 0x0050E7C0 ?$VectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@::GetItem
+
+// FUNCTION: 0x0050E7E0 ?$VectorClass@PBVTeamTypeClass@@::~?$VectorClass@PBVTeamTypeClass@@
+// FUNCTION: 0x0050E830 ?$DynamicVectorClass@PBVTeamTypeClass@@::?$DynamicVectorClass@PBVTeamTypeClass@@
+// FUNCTION: 0x0050E8C0 ?$DynamicVectorClass@PBVTeamTypeClass@@::~?$DynamicVectorClass@PBVTeamTypeClass@@
+// FUNCTION: 0x0050E910 ?$VectorClass@PBVTeamTypeClass@@::operator==
+// FUNCTION: 0x0050E950 ?$VectorClass@PBVTeamTypeClass@@::Resize
+// FUNCTION: 0x0050EA00 ?$VectorClass@PBVTeamTypeClass@@::Clear
+// FUNCTION: 0x0050EA30 ?$VectorClass@PBVTeamTypeClass@@::ID
+// FUNCTION: 0x0050EA70 ?$VectorClass@PBVTeamTypeClass@@::ID
+// FUNCTION: 0x0050EA90 ?$DynamicVectorClass@PBVTeamTypeClass@@::Resize
+// FUNCTION: 0x0050EB40 ?$DynamicVectorClass@PBVTeamTypeClass@@::ID
+template class VectorClass<TeamTypeClass const *>;
+
+// FUNCTION: 0x0050EB70 ?$DynamicVectorClass@VBaseNodeClass@@::Insert_After
+template class DynamicVectorClass<BaseNodeClass>;
+
+// FUNCTION: 0x0050EC20 ?$VectorClass@PBVBuildingTypeClass@@::operator==

@@ -154,6 +154,44 @@ void VoxelDrawSystem::Reset(void)
 	MaxVoxelBounds = Vector3(-10000, -10000, -10000);
 }
 
+// FUNCTION: 0x00753F90
+void VoxelDrawSystem::Prep_For_Shadow(VoxelLibrary * voxlib, int layer, int info, Matrix3D const & camera, Matrix3D const & motion, Vector3 const & light, Surface * surface, int shadow_x, int shadow_y)
+{
+	VoxelLibrary::LayerInfoStruct const & layer_info = voxlib->Get_Layer_Info(layer, info);
+
+	VoxelShadowRenderStruct & data = VoxelShadowRenderData[VoxelShadowRenderDataCount];
+
+	data.VoxLib = voxlib;
+	data.Layer = layer;
+	data.Info = info;
+	data.ShadowSurface = surface;
+	data.ShadowX = shadow_x;
+	data.ShadowY = shadow_y;
+
+	for (int i = 0; i < 4; i++) {
+		data.ShadowCorner[i] = motion * layer_info.BoxCorner[i];
+		data.ShadowCorner[i].Z = 0;
+		data.ShadowCorner[i] = camera * data.ShadowCorner[i];
+		data.ShadowCorner[i] = data.ShadowCorner[i] + light;
+		data.ShadowCorner[i].Y = -data.ShadowCorner[i].Y;
+
+		if (data.ShadowCorner[i].X < MinVoxelBounds.X) {
+			MinVoxelBounds.X = data.ShadowCorner[i].X;
+		}
+		if (data.ShadowCorner[i].Y < MinVoxelBounds.Y) {
+			MinVoxelBounds.Y = data.ShadowCorner[i].Y;
+		}
+		if (data.ShadowCorner[i].X > MaxVoxelBounds.X) {
+			MaxVoxelBounds.X = data.ShadowCorner[i].X;
+		}
+		if (data.ShadowCorner[i].Y > MaxVoxelBounds.Y) {
+			MaxVoxelBounds.Y = data.ShadowCorner[i].Y;
+		}
+	}
+
+	VoxelShadowRenderDataCount++;
+}
+
 // FUNCTION: 0x007540F0
 void VoxelDrawSystem::Prep_For_Object(VoxelLibrary * voxlib, int layer, int info, Matrix3D const & transform)
 {
@@ -213,6 +251,85 @@ void VoxelDrawSystem::Prep_For_Object(VoxelLibrary * voxlib, int layer, int info
 	VoxelRenderDataCount++;
 }
 
+static inline void _Render(VoxelRenderStruct ** render_data, Rect & rect, int & x, int & y)
+{
+	Vector3 center;
+	center.X = (MaxVoxelBounds.X + MinVoxelBounds.X) * 0.5f;
+	center.Y = (MaxVoxelBounds.Y + MinVoxelBounds.Y) * 0.5f;
+	center.Z = (MaxVoxelBounds.Z + MinVoxelBounds.Z) * 0.5f;
+
+	int index;
+	for (index = 0; index < VoxelShadowRenderDataCount; index++) {
+		VoxelShadowRenderData[index].VoxLib->Render_Shadow(VoxelShadowRenderData[index], center);
+	}
+
+	for (index = 0; index < VoxelRenderDataCount; index++) {
+		render_data[index] = &VoxelRenderData[index];
+	}
+
+	for (int i = 0; i < VoxelRenderDataCount - 1; i++) {
+		for (int index2 = i + 1; index2 < VoxelRenderDataCount; index2++) {
+			VoxelRenderStruct * first = render_data[i];
+			VoxelRenderStruct * second = render_data[index2];
+
+			if (first->MaxBounds.Z > second->MaxBounds.Z) {
+				render_data[i] = second;
+				render_data[index2] = first;
+			}
+		}
+	}
+
+	if (VoxelDrawSystem::EnableZBuffer) {
+		for (index = VoxelRenderDataCount - 1; index >= 0; index--) {
+			render_data[index]->VoxLib->Render_Object(*render_data[index], center);
+		}
+	} else {
+		for (index = 0; index < VoxelRenderDataCount; index++) {
+			render_data[index]->VoxLib->Render_Object(*render_data[index], center);
+		}
+	}
+
+	rect.Width = MaxVoxelBounds.X - MinVoxelBounds.X;
+
+	rect.Height = MaxVoxelBounds.Y - MinVoxelBounds.Y;
+
+	rect.Set(VOXEL_BITMAP_WIDTH / 2 - rect.Width / 2, VOXEL_BITMAP_HEIGHT / 2 - rect.Height / 2, rect.Width + 8, rect.Height + 8);
+
+	rect.X -= 4;
+	rect.Y -= 4;
+	LastRenderRect = rect;
+
+	x = (int)center.X - rect.Width / 2;
+	y = (int)center.Y - rect.Height / 2;
+}
+
+// FUNCTION: 0x007542F0
+void VoxelDrawSystem::Render(Rect & rect, int & x, int & y)
+{
+	static VoxelRenderStruct * render_data[64];
+	_Render(render_data, rect, x, y);
+}
+
+// FUNCTION: 0x00754510
+SurfaceRegion VoxelDrawSystem::Render(void)
+{
+	static VoxelRenderStruct * render_data[64];
+	Rect rect;
+	int x;
+	int y;
+	_Render(render_data, rect, x, y);
+	SurfaceRegion region;
+	region.Point = Point2D(x, y);
+	region.Bounds = rect;
+	return(region);
+}
+
+// FUNCTION: 0x00754720
+void VoxelDrawSystem::Clear_Buffer(void)
+{
+	memset(VoxelDrawBuffer, 0, sizeof(VoxelDrawBuffer));
+}
+
 // FUNCTION: 0x00754740
 void VoxelDrawSystem::Clear_Buffer(int x, int y, int width, int height)
 {
@@ -237,6 +354,12 @@ void VoxelDrawSystem::Clear_Buffer(SurfaceRegion & region)
 	}
 }
 
+// FUNCTION: 0x00754840
+void VoxelDrawSystem::Clear_Z_Buffer(void)
+{
+	memset(VoxelDrawZBuffer, 0, sizeof(VoxelDrawZBuffer));
+}
+
 // FUNCTION: 0x00754860
 void VoxelDrawSystem::Clear_Z_Buffer(int x, int y, int width, int height)
 {
@@ -252,3 +375,14 @@ void VoxelDrawSystem::Clear_Z_Buffer(SurfaceRegion & region)
 		memset(&VoxelDrawZBuffer[VOXEL_BITMAP_HEIGHT * i + region.Point.X], 0, region.Bounds.X+1);
 	}
 }
+
+#include "geometry.h"
+
+// FUNCTION: 0x00754900 Vector3::Vector3
+
+// FUNCTION: 0x00754910 $E30
+// FUNCTION: 0x00754940 $E33
+// FUNCTION: 0x00754960 $E36
+// FUNCTION: 0x00754980 $E39
+// FUNCTION: 0x007549A0 $E42
+// FUNCTION: 0x007549C0 $E45

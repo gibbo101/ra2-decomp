@@ -7,20 +7,6 @@
 #include "swizzle.h"
 #include "vector.h"
 
-int __cdecl ptr_compare_func(const void *ptr1, const void *ptr2)
-{
-	const SwizzlePointerClass *p1 = static_cast<const SwizzlePointerClass *>(ptr1);
-	const SwizzlePointerClass *p2 = static_cast<const SwizzlePointerClass *>(ptr2);
-
-	if (p1->ID == p2->ID) {
-		return(0);
-	}
-	if (p1->ID < p2->ID) {
-		return(-1);
-	}
-	return(1);
-}
-
 // FUNCTION: 0x006CF180
 SwizzleManagerClass::SwizzleManagerClass(void)
 {
@@ -71,6 +57,21 @@ HRESULT STDMETHODCALLTYPE SwizzleManagerClass::Here_I_Am(LONG id, void *pointer)
 	PointerTable.Add(pair);
 
 	return(S_OK);
+}
+
+// FUNCTION: 0x006CF320
+int __cdecl ptr_compare_func(const void *ptr1, const void *ptr2)
+{
+	const SwizzlePointerClass *p1 = static_cast<const SwizzlePointerClass *>(ptr1);
+	const SwizzlePointerClass *p2 = static_cast<const SwizzlePointerClass *>(ptr2);
+
+	if (p1->ID == p2->ID) {
+		return(0);
+	}
+	if (p1->ID < p2->ID) {
+		return(-1);
+	}
+	return(1);
 }
 
 // FUNCTION: 0x006CF350
@@ -160,3 +161,19 @@ HRESULT STDMETHODCALLTYPE SwizzleManagerClass::Fetch_Swizzle_ID(void *pointer, L
 
 	return(E_POINTER);
 }
+
+// FUNCTION: 0x006CF4B0 SwizzleManagerClass::AddRef
+// FUNCTION: 0x006CF4C0 SwizzleManagerClass::Release
+// FUNCTION: 0x006CF4D0 SwizzleManagerClass::Save_Interface
+// FUNCTION: 0x006CF4E0 SwizzleManagerClass::Load_Interface
+
+// FUNCTION: 0x006CF4F0 ?$DynamicVectorClass@VSwizzlePointerClass@@::Clear
+// FUNCTION: 0x006CF520 ?$DynamicVectorClass@VSwizzlePointerClass@@::ID
+// FUNCTION: 0x006CF540 ?$VectorClass@VSwizzlePointerClass@@::GetItem
+template class DynamicVectorClass<SwizzlePointerClass>;
+
+// FUNCTION: 0x006CF560 ?$VectorClass@VSwizzlePointerClass@@::operator==
+// FUNCTION: 0x006CF5A0 ?$VectorClass@VSwizzlePointerClass@@::Resize
+// FUNCTION: 0x006CF690 ?$VectorClass@VSwizzlePointerClass@@::Clear
+// FUNCTION: 0x006CF6C0 ?$VectorClass@VSwizzlePointerClass@@::ID
+template class VectorClass<SwizzlePointerClass>;

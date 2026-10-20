@@ -3,6 +3,7 @@
 // Copyright 2025 Electronic Arts Inc.; 2026 OpenTS contributors
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
+#define NDEBUG
 #include "always.h"
 #include "ini.h"
 #include "b64pipe.h"
@@ -844,3 +845,31 @@ INIClass::INISection::~INISection(void)
 // FUNCTION: 0x0052AEE0 Pipe::~Pipe
 
 // FUNCTION: 0x0052AF00 INIClass::INIEntry::INIEntry
+
+// FUNCTION: 0x0052AF50 ?$List@PAUINIEntry@INIClass@@::?$List@PAUINIEntry@INIClass@@
+
+// FUNCTION: 0x0052AFC0 ?$List@PAUINIEntry@INIClass@@::~?$List@PAUINIEntry@INIClass@@
+
+// FUNCTION: 0x0052B080 ?$IndexClass@HPAUINIEntry@INIClass@@::?$IndexClass@HPAUINIEntry@INIClass@@
+
+// FUNCTION: 0x0052B0A0 ?$IndexClass@HPAUINIEntry@INIClass@@::Add_Index
+
+// FUNCTION: 0x0052B170 ?$IndexClass@HPAUINIEntry@INIClass@@::Is_Present
+
+// FUNCTION: 0x0052B210 ?$IndexClass@HPAUINIEntry@INIClass@@::operator[]
+
+// FUNCTION: 0x0052B2B0 ?$IndexClass@HPAUINISection@INIClass@@::Remove_Index
+
+// FUNCTION: 0x0052B390 ?$IndexClass@HPAUINISection@INIClass@@::Is_Present
+
+// FUNCTION: 0x0052B430 ?$IndexClass@HPAUINISection@INIClass@@::operator[]
+
+// FUNCTION: 0x0052B4D0 ?$IndexClass@HPAUINIEntry@INIClass@@::Is_Archive_Same
+
+// FUNCTION: 0x0052B4F0 ?$IndexClass@HPAUINIEntry@INIClass@@::Search_For_Node
+
+// FUNCTION: 0x0052B570 ?$IndexClass@HPAUINIEntry@INIClass@@::Increase_Table_Size
+
+template class List<INIClass::INIEntry *>;
+template class IndexClass<int, INIClass::INIEntry *>;
+template class IndexClass<int, INIClass::INISection *>;

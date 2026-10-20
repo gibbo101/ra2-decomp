@@ -35,6 +35,9 @@ class IPXAddressClass
 		bool operator >= (IPXAddressClass &addr);
 		bool operator <= (IPXAddressClass &addr);
 
+		// Compares node addresses only: the first 4 bytes when DAT_00828140 is 2, else all 6.
+		bool FUN_0053EF30(IPXAddressClass & addr);
+
 		const char *As_String(IPXAddressClass *address);
 
 	private:

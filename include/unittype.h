@@ -59,7 +59,16 @@ class UnitTypeClass : public TechnoTypeClass
 
 		char WalkFrames;
 		char FiringFrames;
-		char AltImageFile[25];
+		struct AltName
+		{
+			char Buffer[25];
+			AltName(void) { Buffer[0] = '\0'; }
+			AltName(NoInitClass const &) {}
+			operator char const *(void) const { return(Buffer); }
+			operator char *(void) { return(Buffer); }
+		};
+
+		AltName AltImageFile;
 
 		UnitTypeClass(NoInitClass const & x);
 		UnitTypeClass(char const * ininame = NULL);

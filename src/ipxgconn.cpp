@@ -13,6 +13,7 @@
 #include "_timer.h"
 #include "globals.h"
 #include "session.h"
+#include "wsproto.h"
 
 namespace fastmath { double __cdecl sqrt(double x); double __cdecl tan(double x); double __cdecl atan(double x); }
 extern const double DAT_007E1708;
@@ -25,7 +26,15 @@ extern const double DAT_007E1738;
 extern const double DAT_007E1740;
 extern const double DAT_007EC0F8;
 extern const double DAT_007EC100;
+extern const double DAT_007EC158;
+extern const double DAT_007EC160;
 void __cdecl FUN_004068E0(char const * format, ...);
+extern int DAT_00841F3C;
+extern WinsockInterfaceClass * DAT_00887628;
+struct Unknown_00B052D0 {
+	unsigned char FUN_00663D60(int);
+};
+extern Unknown_00B052D0 DAT_00B052D0;
 
 // FUNCTION: 0x0053F8A0 $E40
 double DAT_00AA05D0 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
@@ -86,6 +95,7 @@ IPXGlobalConnClass::IPXGlobalConnClass (int numsend, int numreceive, int maxlen,
 }
 
 // FUNCTION: 0x0053FB70
+// FUNCTION: 0x00540670
 IPXGlobalConnClass::~IPXGlobalConnClass(void)
 {
 	if (LastPacketID) {
@@ -301,3 +311,124 @@ int IPXGlobalConnClass::Discard_Undeliverable_Packets(void)
 
 	return(num);
 }
+
+// FUNCTION: 0x00540340
+int IPXGlobalConnClass::vt_entry_40(IPXAddressClass *address, unsigned short port)
+{
+	int num = 0;
+
+	for (int i = 0; i < Queue->Num_Send(); i++) {
+		SendQueueType *send_entry = Queue->Get_Send(i);
+
+		if (!send_entry->IsACK && send_entry->ExtraLen &&
+			((IPXAddressClass *)send_entry->ExtraBuffer)->FUN_0053EF30(*address) &&
+			send_entry->Port == port) {
+			IPXAddressClass dest;
+			char buf[1024];
+			int buflen;
+			int address_size = sizeof(dest);
+
+			Queue->UnQueue_Send(buf, &buflen, i, &dest, &address_size, NULL);
+			i--;
+			num++;
+		}
+	}
+
+	return(num);
+}
+
+// FUNCTION: 0x005403F0
+int IPXGlobalConnClass::Send_To(char *buf, int buflen, IPXAddressClass *address,
+	NetNodeType immed, bool flag, unsigned short port)
+{
+	NetNumType net;
+	NetNodeType node;
+	IPXAddressClass dest;
+	unsigned short dest_port;
+
+	dest = *address;
+	if (immed) {
+		address->Get_Address(net, node);
+		memcpy(net, immed, 4);
+		dest.Set_Address(net, node, 0);
+	}
+
+	if (Session.Type == GAME_INTERNET && !flag && Session.ViaPacketRouter && FieldC8) {
+		if (!((GlobalHeaderType *)buf)->Field3) {
+			IPXAddressClass target = dest;
+
+			target.Get_Address(net, node);
+			target.Set_Address(net, node, port);
+			int id = -1;
+			for (int i = 0; i < Session.Players.Count(); i++) {
+				if (Session.Players[i]->Address == target) {
+					id = Session.Players[i]->Player.ID;
+					break;
+				}
+			}
+			unsigned char result = DAT_00B052D0.FUN_00663D60(id);
+			if (!result) {
+				result = 1;
+			}
+			((GlobalHeaderType *)buf)->Field3 = result;
+		}
+
+		dest = Session.unknown_296C;
+		dest_port = DAT_00841F3C;
+		if (Session.unknown_2978 == Session.Players[0]->Address && dest.FUN_0053EF30(Session.Players[0]->Address)) {
+			((GlobalHeaderType *)buf)->FieldC = 0;
+			memset(&((GlobalHeaderType *)buf)->Field8, 0, 4);
+		}
+		else {
+			dest_port = *(unsigned short *)Session.unknown_2984;
+			((GlobalHeaderType *)buf)->FieldC = DAT_00841F3C;
+			memset(&((GlobalHeaderType *)buf)->Field8, 0, 4);
+		}
+	}
+	else {
+		((GlobalHeaderType *)buf)->FieldC = 0;
+		memset(&((GlobalHeaderType *)buf)->Field8, 0, 4);
+		dest_port = port;
+	}
+
+	if (DAT_00887628) {
+		DAT_00887628->WriteTo(buf, buflen, &dest, sizeof(dest), flag, FieldC8 == 0, dest_port);
+	}
+	return(1);
+}
+
+// FUNCTION: 0x00540610
+int IPXGlobalConnClass::Send_Packet (void * buf, int buflen, int ack_req, int extra)
+{
+	return BASECLASS::Send_Packet(buf, buflen, ack_req, extra);
+}
+
+// FUNCTION: 0x00540630
+int IPXGlobalConnClass::Receive_Packet (void * buf, int buflen)
+{
+	return BASECLASS::Receive_Packet(buf, buflen);
+}
+
+// FUNCTION: 0x00540650
+int IPXGlobalConnClass::Get_Packet (void * buf, int * buflen)
+{
+	return BASECLASS::Get_Packet(buf, buflen);
+}
+
+// FUNCTION: 0x005406E0 $E80
+double DAT_00AA0650 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x00540710 $E83
+double DAT_00AA06A0 = DAT_00AA0650 / DAT_007EC158;
+
+// FUNCTION: 0x00540730 $E86
+double DAT_00AA0688 = DAT_007E1718 / DAT_00AA06A0;
+
+// FUNCTION: 0x00540750 $E89
+double DAT_00AA0680 = DAT_007E1720 * DAT_007EC160;
+
+// FUNCTION: 0x00540770 $E92
+double DAT_00AA0658 = DAT_007E1728 * DAT_007EC160;
+
+// FUNCTION: 0x00540790 $E95
+double DAT_00AA0630 = DAT_007E1730 * DAT_007EC160;

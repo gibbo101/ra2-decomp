@@ -34,7 +34,7 @@ class PowerClass : public RadarClass
 			POWER_X=8,
 			POWER_Y=25,
 			POWER_WIDTH=12,
-			POWER_PIP_HEIGHT=4,
+			POWER_PIP_HEIGHT=3,
 			POWER_PIP_EMPTY=0,
 			POWER_PIP_GREEN=1,
 			POWER_PIP_YELLOW=2,
@@ -45,8 +45,8 @@ class PowerClass : public RadarClass
 		};
 
 	private:
-		int Max_Power_Height(void);
-		int Desired_Power_Height(void);
+		static int Max_Power_Height(void);
+		static int Desired_Power_Height(void);
 		int Desired_Levels(int & green, int & yellow, int & red);
 		int Update_Delay(void);
 		void Remove_Pip(void);

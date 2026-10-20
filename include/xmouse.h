@@ -30,7 +30,7 @@ class Mouse {
 		virtual int Get_Mouse_X(void) const = 0;
 		virtual int Get_Mouse_Y(void) const = 0;
 		virtual Point2D Get_Mouse_Point(void) const = 0;
-		virtual void Set_Mouse_Point(Point2D point) = 0;
+		virtual void Set_Mouse_Point(int x, int y) = 0;
 
 		virtual void Draw_Mouse(Surface * scr, bool issidebarsurface = false) = 0;
 		virtual void Erase_Mouse(Surface * scr, bool issidebarsurface = false) = 0;

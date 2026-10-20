@@ -71,6 +71,8 @@
 #include "zbuffer.h"
 #include "color.hh"
 #include "super.hh"
+#undef LoadString
+#include "stringtable.h"
 
 #include <cmath>
 
@@ -1504,6 +1506,157 @@ void DisplayClass::Restore_Map_State(void * stash)
 	}
 }
 
+extern DynamicVectorClass<TechnoClass *> DAT_00A8EC78;
+
+// FUNCTION: 0x004ADCD0
+void DisplayClass::FUN_004ADCD0(bool units_only, bool is_fog)
+{
+	int count = DAT_00A8EC78.Count();
+	for (int index = 0; index < count; index++) {
+		TechnoClass * tech = DAT_00A8EC78[index];
+		if (tech != NULL && !tech->IsInLimbo) {
+			if (tech->Fetch_RTTI() == RTTI_BUILDING && units_only) continue;
+
+			if (tech->House->Is_Player_Control()) {
+				if (tech->IsDiscoveredByPlayer) {
+					tech->UpdateSight(false, false, false, NULL, 0);
+					Coord c = tech->Position;
+					Map.RevealArea3(c, 0, tech->LastSightRange + 3, 0);
+					if (tech->Techno_Type_Class()->GapGenerator) {
+						tech->CreateGap();
+					}
+				}
+			} else if (tech->Fetch_RTTI() == RTTI_BUILDING && Rule->IsAllyReveal && tech->House->Is_Ally(PlayerPtr)) {
+				tech->UpdateSight(false, is_fog, false, NULL, 0);
+				Coord c = tech->Position;
+					Map.RevealArea3(c, 0, tech->LastSightRange + 3, 0);
+			} else if (tech->Fetch_RTTI() == RTTI_BUILDING && tech->Techno_Type_Class()->RevealToAll && !tech->House->Is_Player_Control()) {
+				tech->UpdateSight(false, false, true, PlayerPtr, 0);
+				Coord c = tech->Position;
+					Map.RevealArea3(c, 0, tech->LastSightRange + 3, 0);
+			} else if (tech->Techno_Type_Class()->GapGenerator) {
+				tech->CreateGap();
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x004ADEE0
+void DisplayClass::FUN_004ADEE0(bool units_only, bool is_fog)
+{
+	int count = DAT_00A8EC78.Count();
+	for (int index = 0; index < count; index++) {
+		TechnoClass * tech = DAT_00A8EC78[index];
+		if (tech != NULL && !tech->IsInLimbo) {
+			if (tech->Fetch_RTTI() == RTTI_BUILDING && units_only) continue;
+
+			if (tech->House->Is_Player_Control()) {
+				if (tech->IsDiscoveredByPlayer) {
+					tech->vt_entry_48C(false, false, false, NULL);
+					if (tech->Techno_Type_Class()->GapGenerator) {
+						tech->DestroyGap();
+					}
+				}
+			} else if (tech->Fetch_RTTI() == RTTI_BUILDING && Rule->IsAllyReveal && tech->House->Is_Ally(PlayerPtr)) {
+				tech->vt_entry_48C(false, is_fog, false, NULL);
+			} else if (tech->Techno_Type_Class()->GapGenerator) {
+				tech->DestroyGap();
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x004ADFF0
+void DisplayClass::FUN_004ADFF0(bool units_only, bool is_fog)
+{
+	for (int index = 0; index < Layer[LAYER_GROUND].Count(); index++) {
+		ObjectClass * object = Layer[LAYER_GROUND][index];
+		if (object != NULL && (object->AbstractFlags & 1)) {
+			TechnoClass * tech = (TechnoClass *)object;
+			if (tech->Fetch_RTTI() == RTTI_BUILDING && units_only) continue;
+
+			if (tech->House->Is_Player_Control()) {
+				if (tech->IsDiscoveredByPlayer) {
+					tech->Look(false, is_fog);
+				}
+			} else if (tech->Fetch_RTTI() == RTTI_BUILDING && Rule->IsAllyReveal && tech->House->Is_Ally(PlayerPtr)) {
+				tech->Look(is_fog, false);
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x004AE0B0
+void DisplayClass::Constrained_Look(Coord const & center, LEPTON distance)
+{
+	for (int index = 0; index < Layer[LAYER_GROUND].Count(); index++) {
+		TechnoClass * tech = Dynamic_Cast<TechnoClass *>(Layer[LAYER_GROUND][index]);
+		if (tech != NULL) {
+			if (tech->House->Is_Player_Control()) {
+				if (tech->IsDiscoveredByPlayer && Distance(center, tech->Center_Coord()) <= (tech->Techno_Type_Class()->SightRange * CELL_LEPTON_W) + distance) {
+					tech->Look();
+				}
+			} else {
+				if (tech->Fetch_RTTI() == RTTI_BUILDING && Rule->IsAllyReveal && tech->House->Is_Ally(PlayerPtr) &&
+					Distance(tech->Center_Coord(), center) <= (tech->Techno_Type_Class()->SightRange * CELL_LEPTON_W) + distance) {
+					tech->Look();
+				}
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x004AE290
+void DisplayClass::Center_Map(void)
+{
+	int index;
+
+	if (CurrentObject.Count() > 0) {
+
+		Coord center(0,0,0);
+		for (index = 0; index < CurrentObject.Count(); index++) {
+			Coord pos = CurrentObject[index]->Position;
+			center += pos;
+		}
+
+		Coord coord = center;
+
+		center /= CurrentObject.Count();
+
+		if (CurrentObject.Count() > 2) {
+			Coord bestc(0,0,0);
+			int bestd = 0;
+			for (index = 0; index < CurrentObject.Count(); index++) {
+				Coord pos = CurrentObject[index]->Position;
+				int d = center.Distance_To(pos);
+				if (d > bestd) {
+					bestc = CurrentObject[index]->Position;
+					bestd = d;
+				}
+			}
+
+			coord -= bestc;
+			center = coord / (CurrentObject.Count() - 1);
+		}
+
+		TacticalMap->Set_Tactical_Position(center);
+	}
+}
+
+// FUNCTION: 0x004AE450
+void DisplayClass::Reinit_Cell_Drawers(void)
+{
+	IsometricTileTypeClass::Init_Drawers();
+	Map.Reset_Iterator();
+	CellClass * cptr = Map.Iterate();
+	BlubCell.Drawer = NULL;
+	while (cptr != NULL) {
+		cptr->Init_Drawer();
+		cptr = Map.Iterate();
+	}
+	Flag_To_Redraw(GS_REDRAW_TACTICAL);
+}
+
 // FUNCTION: 0x004AE4C0
 void DisplayClass::Update_Cell_Colors(void)
 {
@@ -1513,6 +1666,63 @@ void DisplayClass::Update_Cell_Colors(void)
 		cptr->Recalc_Light();
 		cptr = Map.Iterate();
 	}
+}
+
+extern bool DAT_00A8F7D8;
+extern wchar_t DAT_008A0630[];
+
+static inline TechnoClass * Help_Cast(ObjectClass * object)
+{
+	if (object->AbstractFlags & 1) return((TechnoClass *)object);
+	return(NULL);
+}
+
+// FUNCTION: 0x004AE4F0
+char const * DisplayClass::Help_Text(int id)
+{
+	if (id < 500 || id > 900 || Is_Scrolling()) {
+		return(NULL);
+	}
+
+	Cell cell;
+	Coord coord;
+	ObjectClass * object;
+	unsigned char fog, shadow;
+
+	int bx = DSurface::ViewBounds.X;
+	int by = DSurface::ViewBounds.Y;
+	Point2D const & mp = MouseCursor->Get_Mouse_Point();
+	Point2D point(mp.X - bx, mp.Y - by);
+	Map.ProcessClickCoords(&point, &cell, &coord, &object, &fog, &shadow);
+
+	if (DAT_00A8F7D8) {
+		swprintf(DAT_008A0630, L"(%d,%d)", coord.X / 256, coord.Y / 256);
+		return((char const *)DAT_008A0630);
+	}
+
+	if (!Map[coord].IsMapped && MainWindow) {
+		return((char const *)StringTable::LoadString("TXT_SHADOW", NULL, "D:\\ra2mdpost\\Display.CPP", 0x13B8));
+	}
+
+	if (object == NULL) {
+		return(NULL);
+	}
+	TechnoClass * techno = Help_Cast(object);
+	if (techno != NULL && !techno->IsOwnedByPlayer) {
+		if (techno->Cloak == CLOAKED && !Map[techno->Center_Coord()].Is_Sensed(PlayerPtr->HeapID)) {
+			return(NULL);
+		}
+		if (techno->Techno_Type_Class()->IsInvisible) {
+			return(NULL);
+		}
+	}
+
+	if (object != NULL) {
+		wchar_t const * text = object->Full_Name();
+		if (techno != NULL) return((char const *)text);
+		return((char const *)(*this)[cell].Tiberium_Name());
+	}
+	return(NULL);
 }
 
 // FUNCTION: 0x004AE6B0
@@ -1549,4 +1759,66 @@ HRESULT DisplayClass::Save(IStream * stream)
 		if (FAILED(result)) break;
 	}
 	return(result);
+}
+
+// FUNCTION: 0x004AE9B0
+ActionType DisplayClass::Action_To_Waypoint_Action(ActionType action, Cell const & cell)
+{
+	if (PlayerPtr->Waypoint_At(cell) != NULL) {
+		switch (action) {
+			case ACTION_MOVE:
+			case ACTION_NOMOVE:
+				return(ACTION_FOLLOW_WAYPOINT);
+			case ACTION_ATTACK:
+			case ACTION_HARVEST:
+				return(ACTION_ATTACK_WAYPOINT);
+			case ACTION_ENTER:
+			case ACTION_CAPTURE:
+			case ACTION_REPAIR:
+				return(ACTION_ENTER_WAYPOINT);
+			default:
+				return(action);
+		}
+	}
+	return(action);
+}
+
+// FUNCTION: 0x004AEA20
+void DisplayClass::Update_Waypoint_Color(int index)
+{
+	int offset;
+	if (index == -1) {
+		offset = 0;
+	} else {
+		offset = 8 * (index % 12);
+	}
+	unsigned short * table = (unsigned short *)MouseDrawer->Get_Translate_Table();
+	for (int i = 0; i < 8; i++) {
+		const RGBClass rgb = WaypointPalette[i + offset];
+		table[i + 1] = DSurface::Build_Hicolor_Pixel(rgb.Get_Red(), rgb.Get_Green(), rgb.Get_Blue());
+	}
+}
+
+extern bool DAT_00A8ED9D;
+
+// FUNCTION: 0x004AEAD0
+void DisplayClass::Abort_Drag_Select(void)
+{
+	if (TacticalMap != NULL) {
+		TacticalMap->End_Rubber_Band();
+	}
+
+	IsRubberBand = false;
+	IsTentative = false;
+	DAT_00A8ED9D = true;
+	Set_Default_Mouse(MOUSE_NORMAL, false);
+}
+
+// FUNCTION: 0x004AEB10
+ObjectClass * DisplayClass::Object_To_Follow(void) const
+{
+	if (FollowingObject && FollowingObjectPtr != NULL) {
+		return(FollowingObjectPtr);
+	}
+	return(NULL);
 }

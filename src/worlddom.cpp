@@ -238,3 +238,62 @@ WDTPointer<void> g_WDTUnusedPointer2;
 // FUNCTION: 0x007B0110 $E96
 // FUNCTION: 0x007B0130 $E94
 rc_ptr<WDTState> DAT_00B77F58;
+
+// FUNCTION: 0x007B0150 $E101
+// FUNCTION: 0x007B0170 $E99
+rc_ptr<WDTState> DAT_00B77F70;
+
+// FUNCTION: 0x007B0190 $E106
+// FUNCTION: 0x007B01B0 $E104
+rc_ptr<WorldDominationTour::History> DAT_00B77F68;
+
+// FUNCTION: 0x007B01D0 $E111
+// FUNCTION: 0x007B01F0 $E109
+rc_ptr<WorldDominationTour::History> DAT_00B77F78;
+
+extern Wstring DAT_00B73E40;
+rc_ptr<WorldDominationTour::CampaignProperties> __fastcall FUN_0076BE90(rc_ptr<WDTState> const & state);
+rc_ptr<WorldDominationTour::History> __fastcall FUN_00764B30(Wstring const & name, rc_ptr<WorldDominationTour::CampaignProperties> const & props);
+
+// FUNCTION: 0x007B0210
+rc_ptr<WDTState> * __cdecl FUN_007B0210(void)
+{
+	return &DAT_00B77F58;
+}
+
+// FUNCTION: 0x007B0220
+void __fastcall FUN_007B0220(rc_ptr<WDTState> const & state)
+{
+	DAT_00B77F58 = state;
+	DAT_00B77F68 = FUN_00764B30(DAT_00B73E40, FUN_0076BE90(state));
+}
+
+// FUNCTION: 0x007B0290
+rc_ptr<WDTState> * __cdecl FUN_007B0290(void)
+{
+	return &DAT_00B77F70;
+}
+
+// FUNCTION: 0x007B02A0
+void __fastcall FUN_007B02A0(rc_ptr<WDTState> const & state)
+{
+	DAT_00B77F70 = state;
+	DAT_00B77F78 = FUN_00764B30(DAT_00B73E40, FUN_0076BE90(state));
+}
+
+char * DAT_00B77F54;
+
+// FUNCTION: 0x007B0310
+char * __cdecl FUN_007B0310(void)
+{
+	return DAT_00B77F54;
+}
+
+// FUNCTION: 0x007B0320
+void __fastcall FUN_007B0320(char * state)
+{
+	if (DAT_00B77F54 != NULL) {
+		delete DAT_00B77F54;
+	}
+	DAT_00B77F54 = state;
+}

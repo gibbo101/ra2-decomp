@@ -942,4 +942,45 @@ template class BlitTranslucentWriteAlpha<unsigned short>;
 template class BlitTranslucent50NonzeroAlpha<unsigned short>;
 
 // FUNCTION: 0x00494A40 ?$BlitTranslucent50ZeroAlpha@G::BlitForward
+// FUNCTION: 0x00494AD0 ?$BlitTranslucent50ZeroAlpha@G::BlitBackward
+// FUNCTION: 0x00494B00 ?$BlitTranslucent50ZeroAlpha@G::Blit_Copy_Tinted
+// FUNCTION: 0x00494B30 ?$BlitTranslucent50ZeroAlpha@G::Blit_Move_Tinted
 template class BlitTranslucent50ZeroAlpha<unsigned short>;
+
+// FUNCTION: 0x00494B60 ?$BlitTransXlatAlphaZRead@G::BlitForward
+// FUNCTION: 0x00494C40 ?$BlitTransXlatAlphaZRead@G::Blit_Copy_Tinted
+template<class T>
+void BlitTransXlatAlphaZRead<T>::Blit_Copy_Tinted(void * dest, void const * source, int length, int z_min, void * z_buff, void * a_buff, int alpha_level, int warp_offset, unsigned short tint) const
+{
+	unsigned short *zb = (unsigned short *)z_buff;
+	unsigned short *ap = (unsigned short *)a_buff;
+	const unsigned short* aLUT = AlphaLightingRemap->Get_Table(alpha_level);
+
+	for (int index = 0; index < length; index++) {
+		if (z_min < *zb++) {
+			unsigned char color = *(unsigned char const *)source;
+			if (color != 0) {
+				*((T *)dest) = TranslateTable[color | aLUT[*ap]] | tint;
+			}
+		}
+		source = ((unsigned char *)source) + 1;
+		dest = ((T *)dest) + 1;
+
+		zb = Blit_Wrap_Z_Buffer(zb);
+		ap++;
+		ap = Blit_Wrap_A_Buffer(ap);
+	}
+}
+
+// FUNCTION: 0x00494D20 ?$BlitTransXlatAlphaZRead@G::BlitBackward
+// FUNCTION: 0x00494D50 ?$BlitTransXlatAlphaZRead@G::Blit_Move_Tinted
+template class BlitTransXlatAlphaZRead<unsigned short>;
+
+// FUNCTION: 0x00494D90 ?$BlitTransZRemapXlatAlphaZRead@G::BlitForward
+// FUNCTION: 0x00494E90 ?$BlitTransZRemapXlatAlphaZRead@G::BlitBackward
+// FUNCTION: 0x00494EC0 ?$BlitTransZRemapXlatAlphaZRead@G::Blit_Copy_Tinted
+// FUNCTION: 0x00494EF0 ?$BlitTransZRemapXlatAlphaZRead@G::Blit_Move_Tinted
+template class BlitTransZRemapXlatAlphaZRead<unsigned short>;
+
+// FUNCTION: 0x00494F20 ?$BlitTransLucent75AlphaZRead@G::BlitForward
+template class BlitTransLucent75AlphaZRead<unsigned short>;
