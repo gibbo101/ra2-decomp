@@ -4959,5 +4959,45 @@ RTTIType BuildingClass::Fetch_RTTI(void) const
 	return(RTTI_BUILDING);
 }
 
+// FUNCTION: 0x00459ED0
+wchar_t const * BuildingClass::Full_Name(void) const
+{
+	return(Class->UIName);
+}
+
+// FUNCTION: 0x00459EE0
+ObjectTypeClass const * BuildingClass::Class_Of(void) const
+{
+	return(Class);
+}
+
+// FUNCTION: 0x00459EF0
+Coord BuildingClass::Render_Coord(void) const
+{
+	return(PositionCoord - Coord(CELL_LEPTON/2, CELL_LEPTON/2, 0));
+}
+
+// FUNCTION: 0x00459F20 BuildingClass::~BuildingClass
+
+// FUNCTION: 0x00459F40
+BuildingClass * __fastcall FUN_00459F40(AbstractClass * object)
+{
+	if (object == NULL) return(NULL);
+	return(object->Fetch_RTTI() == RTTI_BUILDING ? (BuildingClass *)object : NULL);
+}
+
+// FUNCTION: 0x00459F60 ?$TPoint3D@H::operator==
+template class TPoint3D<int>;
+
+// FUNCTION: 0x00459F90 ?$DynamicVectorClass@PAVInfantryClass@@::Clear
+// FUNCTION: 0x00459FC0 ?$DynamicVectorClass@PAVInfantryClass@@::ID
+// FUNCTION: 0x00459FE0 ?$VectorClass@PAVInfantryClass@@::GetItem
+template class DynamicVectorClass<InfantryClass *>;
+
+// FUNCTION: 0x00459FF0 ?$DynamicVectorClass@PAVBuildingClass@@::Clear
+// FUNCTION: 0x0045A020 ?$DynamicVectorClass@PAVBuildingClass@@::ID
+// FUNCTION: 0x0045A040 ?$VectorClass@PAVBuildingClass@@::GetItem
+template class DynamicVectorClass<BuildingClass *>;
+
 // FUNCTION: 0x0045A130 ?$TRect@H::?$TRect@H
 template class TRect<int>;

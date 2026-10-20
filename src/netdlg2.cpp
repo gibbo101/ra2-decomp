@@ -212,7 +212,6 @@ static void Get_Join_Responses(void)
 				wcscpy(who->Name, FUN_00735120(Session.GPacket.Name));
 				who->Address = Session.GAddress;
 				who->Game.IsOpen = Session.GPacket.GameInfo.IsOpen;
-				who->Game.Addon = Session.GPacket.GameInfo.IsFirestorm;
 				who->Game.LastTime = TickCount;
 				Session.Games.Add (who);
 
@@ -812,8 +811,17 @@ double DAT_00AC01F8 = fastmath::atan((DAT_00AC0258 * 2) / DAT_00AC01C0);
 // FUNCTION: 0x005DAE60 $E116
 int DAT_00AC024C = (int)(DAT_00AC0258 * 4 + DAT_007E1738);
 
+void __fastcall FUN_005E8DC0(wchar_t * buffer);
+void __fastcall FUN_005DAFE0(bool x);
+bool __fastcall FUN_005EC880(HWND dialog, int count, bool full, bool ai);
+void FUN_005E87A0(void);
+void FUN_005E8B40(void);
+void FUN_005E8B60(void);
+void FUN_005E8A20(void);
+
 struct Net2ShortPair { short a; short b; Net2ShortPair(void) { a = 0; b = 0; } };
 struct Net2IntTriple { int a; int b; int c; Net2IntTriple(void) { a = 0; b = 0; c = 0; } };
+struct Net2Center { int a; int b; int c; Net2Center(void) { c = 0; a = 128; b = 128; } };
 
 // FUNCTION: 0x005DAE90 $E119
 Net2ShortPair DAT_00AC01B8;
@@ -821,10 +829,177 @@ Net2ShortPair DAT_00AC01B8;
 // FUNCTION: 0x005DAEA0 $E122
 Net2IntTriple DAT_00AC01E8;
 
+// FUNCTION: 0x005DAEC0 $E125
+Net2Center DAT_00AC0240;
+
+// FUNCTION: 0x005DAEE0 $E130
+TTimerClass<SystemTimerClass> DAT_00AC0230;
+
+// FUNCTION: 0x005DAF10 $E128
+
 // FUNCTION: 0x005DAF20
 bool Net2Callback(void)
 {
 	Call_Back();
 	Get_Join_Responses();
 	return(false);
+}
+
+// FUNCTION: 0x005DAF30
+void FUN_005DAF30(void)
+{
+	GlobalPacketType packet;
+	memset(&packet, 0, sizeof(GlobalPacketType));
+	packet.Command = NET_COMMAND_16;
+	strcpy(packet.Name, Session.Handle);
+	FUN_005E8DC0((wchar_t *)packet.Options.Buf);
+	int count = Session.Players.Count();
+	for (int i = 1; i < count; i++) {
+		Ipx.Send_Global_Message(&packet, sizeof(GlobalPacketType), 1, &Session.Players[i]->Address);
+		Call_Back();
+	}
+}
+
+// FUNCTION: 0x005DAFD0
+void Net2DisplayUsers(void)
+{
+	FUN_005DAFE0(false);
+}
+
+// FUNCTION: 0x005DB600
+void __fastcall FUN_005DB600(NodeNameType * node)
+{
+	memset(&Session.GPacket, 0, sizeof(GlobalPacketType));
+	Session.GPacket.Command = NET_REJECT_JOIN;
+	Session.GPacket.Reject.Why = 4;
+	Ipx.Send_Global_Message(&Session.GPacket, sizeof(GlobalPacketType), 1, &node->Address);
+}
+
+// FUNCTION: 0x005DB650
+bool __fastcall FUN_005DB650(int count, bool full, bool ai)
+{
+	HWND dialog = WS_Find_Dialog(0xbc);
+	return(FUN_005EC880(dialog, count, full, ai));
+}
+
+// FUNCTION: 0x005DB680
+bool Net2Init_Network(void)
+{
+	NetNumType net;
+	NetNodeType node;
+
+	if (!Ipx.Init()) {
+		return(false);
+	}
+
+	if (Session.Type != GAME_INTERNET) {
+		if (Session.IsBridge) {
+			Session.BridgeNet.Get_Address(net, node);
+			Ipx.Set_Bridge(net);
+		}
+	}
+
+	FUN_005E87A0();
+	FUN_005E8B40();
+	FUN_005E8B60();
+	return(true);
+}
+
+// FUNCTION: 0x005DB6F0
+void Net2Shutdown_Network(void)
+{
+	FUN_005E8A20();
+	Session.GameName[0] = 0;
+
+	if (PacketTransport) {
+		delete PacketTransport;
+	}
+	PacketTransport = NULL;
+}
+
+// FUNCTION: 0x005DB720
+void Net2ServiceGameList(void)
+{
+	int i;
+
+	for (i = 1; i < Session.Games.Count(); i++) {
+		if (wcscmp(Session.Games[i]->Name, Session.GameName) != 0) {
+			if (TickCount - Session.Games[i]->Game.LastTime > 5 * TIMER_SECOND) {
+				DebugString("Game '%ls' has timed out\n", Session.Games[i]->Name);
+				delete Session.Games[i];
+				Session.Games.Delete(Session.Games[i]);
+
+				Net2DisplayGameList();
+				if (i <= CurGame) {
+					Net2DisplayUsers();
+					Send_Join_Queries(0, 1, 0, 0);
+				}
+			}
+		}
+	}
+
+	for (i = 1; i < Session.Chat.Count(); i++) {
+		if (Session.Chat[i]->Chat.LastTime == 0) {
+			Session.Chat[i]->Chat.LastTime = TickCount;
+		}
+		if (TickCount - Session.Chat[i]->Chat.LastTime > 6 * TIMER_SECOND) {
+			delete Session.Chat[i];
+			Session.Chat.Delete(Session.Chat[i]);
+			Net2DisplayUsers();
+		} else if (TickCount - Session.Chat[i]->Chat.LastTime > 5 * TIMER_SECOND &&
+			Session.Chat[i]->Chat.LastChance == 0) {
+			GlobalPacketType packet;
+			memset(&packet, 0, sizeof(GlobalPacketType));
+			strcpy(packet.Name, Session.Handle);
+			packet.Command = NET_CHAT_REQUEST;
+			Ipx.Send_Global_Message(&packet, sizeof(GlobalPacketType), 0, &(Session.Chat[i]->Address));
+			Call_Back();
+			Session.Chat[i]->Chat.LastChance = 1;
+		}
+	}
+}
+
+// FUNCTION: 0x005DB9B0
+void Net2DisplayGameList(void)
+{
+	wchar_t buffer[80];
+
+	if (WS_Top_Window_ID() == IDD_MPLAYER_GAME_LIST) {
+		HWND window = WS_Top_Window();
+		HWND list = GetDlgItem(window, IDC_GAMELIST);
+
+		int count = Session.Games.Count();
+		if (CurGame >= count) {
+			CurGame = count - 1;
+			Send_Join_Queries(0, 1, 0, 0);
+		}
+
+		if (CurGame < 0) {
+			CurGame = 0;
+		}
+
+		int top = SendDlgItemMessage(window, IDC_GAMELIST, LB_GETTOPINDEX, 0, 0);
+
+		SendDlgItemMessage(window, IDC_GAMELIST, OD_DISABLEPAINT, 0, 1);
+		SendMessage(list, LB_RESETCONTENT, 0, 0);
+		SendMessage(list, WM_USER + 205, 0, (LPARAM)StringTable::LoadString("TXT_LOBBY", NULL, "D:\\ra2mdpost\\netdlg2.cpp", 508));
+
+		for (int i = 1; i < Session.Games.Count(); i++) {
+			NodeNameType *node = Session.Games[i];
+			if (node->Game.IsOpen) {
+				swprintf(buffer, StringTable::LoadString("TXT_THATGUYS_GAME", NULL, "D:\\ra2mdpost\\netdlg2.cpp", 514), node);
+			} else {
+				swprintf(buffer, StringTable::LoadString("TXT_THATGUYS_GAME_BRACKET", NULL, "D:\\ra2mdpost\\netdlg2.cpp", 516), node);
+			}
+			SendMessage(list, WM_USER + 205, 0, (LPARAM)buffer);
+		}
+
+		SendDlgItemMessage(window, IDC_GAMELIST, LB_SETCURSEL, CurGame, 0);
+		SendDlgItemMessage(window, IDC_GAMELIST, LB_SETTOPINDEX, top, 0);
+		SendDlgItemMessage(window, IDC_GAMELIST, OD_DISABLEPAINT, 0, 0);
+
+		HWND handle = GetDlgItem(window, IDC_GAMELIST);
+		InvalidateRect(handle, NULL, FALSE);
+		UpdateWindow(handle);
+	}
 }

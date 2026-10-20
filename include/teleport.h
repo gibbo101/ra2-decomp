@@ -16,15 +16,14 @@ class TeleportLocomotionClass : public LocomotionClass, public IPiggyback
 	public:
 		TeleportLocomotionClass(void);
 		TeleportLocomotionClass(const NoInitClass & x) : BASECLASS(x), Timer(), Piggybacker(NULL) {}
-		virtual ~TeleportLocomotionClass(void) override;
 
 		virtual HRESULT STDMETHODCALLTYPE GetClassID(CLSID * retval) override;
 		virtual HRESULT STDMETHODCALLTYPE Load(IStream * stream) override;
 		virtual HRESULT STDMETHODCALLTYPE Save(IStream * stream, BOOL cleardirty) override;
 
 		virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, LPVOID * ppvObject) override;
-		virtual ULONG STDMETHODCALLTYPE AddRef(void) override;
-		virtual ULONG STDMETHODCALLTYPE Release(void) override;
+		virtual ULONG STDMETHODCALLTYPE AddRef(void) override {return(BASECLASS::AddRef());}
+		virtual ULONG STDMETHODCALLTYPE Release(void) override {return(BASECLASS::Release());}
 
 		virtual boolean STDMETHODCALLTYPE Is_Moving(void) override;
 		virtual CoordStruct STDMETHODCALLTYPE Destination(void) override;
@@ -41,6 +40,8 @@ class TeleportLocomotionClass : public LocomotionClass, public IPiggyback
 		virtual boolean STDMETHODCALLTYPE Is_Piggybacking(void) override {return(Piggybacker != NULL);}
 
 		virtual int Fetch_Object_Size(void) const override {return(sizeof(*this));}
+
+		virtual void STDMETHODCALLTYPE Mark_All_Occupation_Bits(int mark) override;
 
 		virtual void STDMETHODCALLTYPE Process_Delay(void);
 		virtual boolean Is_Stationary(void);

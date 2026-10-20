@@ -196,7 +196,11 @@ class RadarClass: public DisplayClass
 
 		int RadarY;
 
+	public:
+
 		Rect RadarRect;
+
+	private:
 
 		enum RadarStateType {
 			RSTATE_INACTIVE,

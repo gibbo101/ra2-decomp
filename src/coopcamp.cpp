@@ -783,3 +783,15 @@ template class DynamicVectorClass<CoopCampNameList *>;
 // FUNCTION: 0x0049EB20 ?$DynamicVectorClass@PAD::ID
 // FUNCTION: 0x0049EB50 ?$VectorClass@PAV?$DynamicVectorClass@PAD@@::operator==
 // FUNCTION: 0x0049EB90 ?$VectorClass@PAV?$DynamicVectorClass@PAD@@::Resize
+// FUNCTION: 0x0049EC40 ?$VectorClass@PAV?$DynamicVectorClass@PAD@@::Clear
+// FUNCTION: 0x0049EC70 ?$VectorClass@PAV?$DynamicVectorClass@PAD@@::ID
+// FUNCTION: 0x0049ECB0 ?$VectorClass@PAV?$DynamicVectorClass@PAD@@::ID
+// FUNCTION: 0x0049ECD0 ?$DynamicVectorClass@PAV?$DynamicVectorClass@PAD@@::?$DynamicVectorClass@PAV?$DynamicVectorClass@PAD@@
+// FUNCTION: 0x0049ED30 ?$DynamicVectorClass@PAV?$DynamicVectorClass@PAD@@::Resize
+// FUNCTION: 0x0049EDE0 ?$DynamicVectorClass@PAV?$DynamicVectorClass@PAD@@::ID
+// FUNCTION: 0x0049EE10 ?$VectorClass@PAV?$DynamicVectorClass@PAD@@::~?$VectorClass@PAV?$DynamicVectorClass@PAD@@
+// FUNCTION: 0x0049EE60 ?$VectorClass@PAD::Resize
+// FUNCTION: 0x0049EF10 ?$VectorClass@PAD::Clear
+// FUNCTION: 0x0049EF40 ?$VectorClass@PAD::ID
+// FUNCTION: 0x0049EF80 ?$VectorClass@PAD::ID
+// FUNCTION: 0x0049EFA0 ?$VectorClass@PAD::~?$VectorClass@PAD

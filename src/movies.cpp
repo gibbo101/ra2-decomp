@@ -14,6 +14,10 @@
 #include "vqa.h"
 #include "vqoption.h"
 #include "win.h"
+#include "ccfile.h"
+#include "goptions.h"
+#include "globals.h"
+#include <string.h>
 #include <cmath>
 
 namespace fastmath { double __cdecl sqrt(double x); double __cdecl tan(double x); double __cdecl atan(double x); }
@@ -31,54 +35,55 @@ extern const double DAT_007EE0A8;
 struct DatShorts { short X; short Y; DatShorts(short x, short y) : X(x), Y(y) {} };
 struct DatInts { int X; int Y; int Z; DatInts(int x, int y, int z) : X(x), Y(y), Z(z) {} };
 
-// FUNCTION: 0x005BF5E0 $E66
+// FUNCTION: 0x005BF5E0 $E67
 double DAT_00ABF380 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x005BF610 $E69
+// FUNCTION: 0x005BF610 $E70
 double DAT_00ABF3E8 = DAT_00ABF380 / DAT_007EE0A0;
 
-// FUNCTION: 0x005BF630 $E72
+// FUNCTION: 0x005BF630 $E73
 double DAT_00ABF3D0 = DAT_007E1718 / DAT_00ABF3E8;
 
-// FUNCTION: 0x005BF650 $E75
+// FUNCTION: 0x005BF650 $E76
 double DAT_00ABF3C8 = DAT_007E1720 * DAT_007EE0A8;
 
-// FUNCTION: 0x005BF670 $E78
+// FUNCTION: 0x005BF670 $E79
 double DAT_00ABF388 = DAT_007E1728 * DAT_007EE0A8;
 
-// FUNCTION: 0x005BF690 $E81
+// FUNCTION: 0x005BF690 $E82
 double DAT_00ABF360 = DAT_007E1730 * DAT_007EE0A8;
 
-// FUNCTION: 0x005BF6B0 $E84
+// FUNCTION: 0x005BF6B0 $E85
 int DAT_00ABF3F0 = (int)(DAT_007E1738 * (DAT_00ABF380 * fastmath::tan(DAT_00ABF360 - DAT_00ABF388)));
 
-// FUNCTION: 0x005BF6F0 $E87
+// FUNCTION: 0x005BF6F0 $E88
 double DAT_00ABF3A8 = fastmath::atan(DAT_00ABF3F0 * DAT_007E1740);
 
-// FUNCTION: 0x005BF720 $E90
+// FUNCTION: 0x005BF720 $E91
 double DAT_00ABF3C0 = fastmath::atan((DAT_00ABF3F0 * 2) / DAT_00ABF380);
 
-// FUNCTION: 0x005BF750 $E93
+// FUNCTION: 0x005BF750 $E94
 int DAT_00ABF3E4 = (int)((DAT_00ABF3F0 * 4) + DAT_007E1738);
 
-// FUNCTION: 0x005BF780 $E96
+// FUNCTION: 0x005BF780 $E97
 DatShorts DAT_00ABF378(0, 0);
 
-// FUNCTION: 0x005BF790 $E99
+// FUNCTION: 0x005BF790 $E100
 DatInts DAT_00ABF3B0(0, 0, 0);
 
 int MovieInt1 = 0;
 extern MovieHandle * DAT_00ABF3F8;
+namespace Game { bool __fastcall IsMoviePlaying(void); void __fastcall BlitMovie(void); }
 
 extern int FUN_00407000(void);
 
 struct DatInts3 { int X; int Y; int Z; DatInts3(int x, int y, int z) : Z(z), X(x), Y(y) {} };
 
-// FUNCTION: 0x005BF7B0 $E102
+// FUNCTION: 0x005BF7B0 $E103
 DatInts3 DAT_00ABF3D8(0x80, 0x80, 0);
 
-// FUNCTION: 0x005BF7D0 $E107
-// FUNCTION: 0x005BF810 $E105
+// FUNCTION: 0x005BF7D0 $E108
+// FUNCTION: 0x005BF810 $E106
 DynamicVectorClass<char const *> DAT_00ABF390;
 
 // FUNCTION: 0x005BF850
@@ -563,3 +568,101 @@ void BinkMovieHandle::Blit(void)
 {
 	((BinkHandle *)Player)->FUN_00433060();
 }
+
+// FUNCTION: 0x005C0600 BinkMovieHandle::~BinkMovieHandle
+// FUNCTION: 0x005C0A30 BinkMovieHandle::~BinkMovieHandle
+BinkMovieHandle::~BinkMovieHandle(void)
+{
+	if (Player != NULL) {
+		delete (BinkHandle *)Player;
+	}
+}
+
+// FUNCTION: 0x005C0630
+MovieHandle::~MovieHandle(void)
+{
+}
+
+// FUNCTION: 0x005C0640
+bool __fastcall FUN_005C0640(char const * name, char * out, bool unused)
+{
+	char buffer[200];
+	strcpy(buffer, name);
+	char * ext = buffer;
+	while (*ext != '\0' && *ext != '.') {
+		ext++;
+	}
+	*ext = '\0';
+	Options.FUN_005FBF80(buffer);
+	strcpy(ext, ".BIK");
+	if (CCFileClass(buffer).Is_Available()) {
+		if (out != NULL) {
+			strcpy(out, buffer);
+		}
+		return(true);
+	}
+	strcpy(ext, ".VQA");
+	if (CCFileClass(buffer).Is_Available()) {
+		if (out != NULL) {
+			strcpy(out, buffer);
+		}
+		return(true);
+	}
+	return(false);
+}
+
+void __cdecl FUN_004068E0(char const *, ...);
+
+// FUNCTION: 0x005C07D0
+MovieHandle * __fastcall OwnerDraw_InitMovieHandle(char const * name, Surface * surface, Rect * bounds)
+{
+	char buffer[200];
+	if (surface == NULL || !FUN_005C0640(name, buffer, true)) {
+		return(NULL);
+	}
+	Rect r;
+	if (bounds != NULL) {
+		r = *bounds;
+	} else {
+		r = surface->Get_Rect();
+	}
+	char * ext = strrchr(buffer, '.');
+	if (ext != NULL && strcmpi(ext, ".bik") == 0) {
+		FUN_004068E0("Play_Movie() as Bink!\n");
+		BinkHandle * bink = new BinkHandle(buffer, surface);
+		return(new BinkMovieHandle(bink));
+	}
+	VQHandle * handle = Movie_Create(buffer, surface, Rect(0, 0, 0, 0), r, 255, false);
+	if (handle == NULL) {
+		return(NULL);
+	}
+	VQMovieHandle * movie = new VQMovieHandle(handle);
+	return(movie);
+}
+
+
+extern int DAT_00ABF3F4;
+
+// FUNCTION: 0x005C0980
+bool __fastcall Game::IsMoviePlaying(void)
+{
+	return(DAT_00ABF3F4 != 0 || DAT_00ABF3F8 != NULL);
+}
+
+// FUNCTION: 0x005C09A0
+void __fastcall Game::BlitMovie(void)
+{
+	if (DAT_00ABF3F8 != NULL) {
+		DAT_00ABF3F8->Blit();
+	}
+}
+
+// FUNCTION: 0x005C09B0 VQMovieHandle::~VQMovieHandle
+
+// FUNCTION: 0x005C0A70 ?$DynamicVectorClass@PAVMovieHandle@@::Clear
+// FUNCTION: 0x005C0AA0 ?$DynamicVectorClass@PAVMovieHandle@@::ID
+// FUNCTION: 0x005C0AC0 ?$VectorClass@PAVMovieHandle@@::GetItem
+template class DynamicVectorClass<MovieHandle *>;
+
+// FUNCTION: 0x005C0AD0 ?$VectorClass@PAVMovieHandle@@::operator==
+template class VectorClass<MovieHandle *>;

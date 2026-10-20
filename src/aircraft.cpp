@@ -2171,8 +2171,8 @@ AbstractClass * AircraftClass::Good_LZ(void) const
 	}
 
 	if (bestdist == -1) {
-		for (index = 0; index < Technos.Count(); index++) {
-			TechnoClass * techno = Dynamic_Cast<TechnoClass *>(Technos[index]);
+		for (index = 0; index < Objects.Count(); index++) {
+			TechnoClass * techno = Dynamic_Cast<TechnoClass *>(Objects[index]);
 			if (techno && !techno->IsInLimbo && techno->House == House && techno != (AircraftClass *)this) {
 				int dist = Distance_To(techno);
 				if (bestdist == -1 || dist < bestdist) {

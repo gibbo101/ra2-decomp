@@ -78,7 +78,7 @@ extern VQHandle *CurrentVQ;
 class MovieHandle
 {
 	public:
-		virtual ~MovieHandle(void) = 0;
+		virtual ~MovieHandle(void);
 		virtual bool AdvanceFrame(void) = 0;
 		virtual void Waiting(void) = 0;
 		virtual void Pause(bool pause) = 0;
@@ -96,7 +96,6 @@ class MovieHandle
 		VQHandle * Player;
 };
 
-inline MovieHandle::~MovieHandle(void) {}
 
 class VQMovieHandle : public MovieHandle
 {
@@ -126,6 +125,8 @@ struct BinkInfo
 class BinkHandle
 {
 	public:
+		BinkHandle(char const * name, Surface * surface);
+		~BinkHandle(void);
 		void FUN_00432C30(bool pause);
 		void FUN_00432C70(void);
 		bool FUN_00432C50(void);
@@ -139,6 +140,7 @@ class BinkHandle
 
 		int field_0;
 		BinkInfo * Bink;
+		char field_8[0x2C];
 };
 
 class BinkMovieHandle : public MovieHandle

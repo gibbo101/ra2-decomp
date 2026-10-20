@@ -459,6 +459,13 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 		void FUN_0050D290(HouseClass * other);
 		void FUN_0050D2D0(HouseClass * other);
 		void RespawnStartingForces(void);
+		void FUN_0050D560(TechnoTypeClass const * type, Cell cell);
+		void FUN_0050D5D0(void);
+		void FUN_0050D610(void);
+		bool FUN_0050D9C0(void) const;
+		bool FUN_0050D9D0(void) const;
+		int GetInfSelfHealStep(void) const;
+		int GetUnitSelfHealStep(void) const;
 		void RespawnStartingBuildings(void);
 		void Make_Ally(HouseClass * house, bool announce);
 		void Make_Ally(HousesType house, bool announce);

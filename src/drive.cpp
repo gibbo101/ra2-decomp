@@ -463,6 +463,49 @@ void DriveLocomotionClass::Mark_Track(Coord const & headto, MarkType type)
 }
 
 
+// FUNCTION: 0x004B0C40
+void STDMETHODCALLTYPE DriveLocomotionClass::Force_Track(int track, CoordStruct coord)
+{
+	TrackNumber = track;
+	TrackIndex = 0;
+	if ((Coord)coord != COORD_NONE) {
+		if (Start_Driver(coord)) {
+			DestinationCoord = coord;
+			TargetSpeed = 1.0;
+		}
+	}
+}
+
+
+// FUNCTION: 0x004B0DF0
+bool DriveLocomotionClass::Start_Driver(Coord const & headto)
+{
+	Stop_Driver();
+	if (headto != COORD_NONE) {
+		HeadToCoord = headto;
+		IsDriving = true;
+
+		if (Map[headto].Goodie_Check(LinkedTo) && !LinkedTo->IsInLimbo) {
+			Mark_Track(headto, MARK_DOWN);
+			return(true);
+		}
+		if (!LinkedTo->IsActive) return(false);
+
+		HeadToCoord = COORD_NONE;
+		IsDriving = false;
+	}
+	return(false);
+}
+
+
+// FUNCTION: 0x004B0EF0
+void STDMETHODCALLTYPE DriveLocomotionClass::Do_Turn(DirStruct coord)
+{
+	DirType dir = (DirType &)coord;
+	LinkedTo->PrimaryFacing.Set_Desired(dir);
+}
+
+
 // FUNCTION: 0x004B4820
 LayerType STDMETHODCALLTYPE DriveLocomotionClass::In_Which_Layer(void)
 {
@@ -477,11 +520,149 @@ HRESULT STDMETHODCALLTYPE DriveLocomotionClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
+// FUNCTION: 0x004B4770
+void DriveLocomotionClass::Lay_Track(void)
+{
+}
+
+
+// FUNCTION: 0x004B4780
+Point2D DriveLocomotionClass::Smooth_Turn(Point2D const & adj, Dir256 & dir)
+{
+	Dir256 workdir = dir;
+	int x,y;
+	int temp;
+	TrackControlType flags = TrackControl[TrackNumber].Flag;
+
+	x = adj.X;
+	y = adj.Y;
+
+	if (flags & F_T) {
+		temp	= x;
+		x		= y;
+		y 		= temp;
+		workdir = (Dir256)((DIR_W - workdir) & DIR_MAX);
+	}
+
+	if (flags & F_X) {
+		x 		 = -x;
+		workdir = (Dir256)(-workdir & DIR_MAX);
+	}
+
+	if (flags & F_Y) {
+		y = -y;
+		workdir = (Dir256)((DIR_S - workdir) & DIR_MAX);
+	}
+
+	dir = workdir;
+
+	return(Point2D(HeadToCoord.X + x, HeadToCoord.Y + y));
+}
+
+
+// FUNCTION: 0x004B4800
+bool DriveLocomotionClass::Incoming(Cell cell)
+{
+	return(Map.Try_Open_Gate(LinkedTo, cell));
+}
+
+
 // FUNCTION: 0x004B4880
 ZGradientType STDMETHODCALLTYPE DriveLocomotionClass::Z_Gradient(void)
 {
 	return(BASECLASS::Z_Gradient());
 }
+
+// FUNCTION: 0x004B4870
+int STDMETHODCALLTYPE DriveLocomotionClass::Z_Adjust(void)
+{
+	return(0);
+}
+
+
+// FUNCTION: 0x004B48D0
+void STDMETHODCALLTYPE DriveLocomotionClass::Mark_All_Occupation_Bits(int mark)
+{
+	if (HeadToCoord != COORD_NONE) {
+		Mark_Track(HeadToCoord, (MarkType)mark);
+	}
+}
+
+
+// FUNCTION: 0x004B4920
+boolean STDMETHODCALLTYPE DriveLocomotionClass::Is_Moving_Here(CoordStruct to)
+{
+	Coord coord = Head_To_Coord();
+
+	if (coord != COORD_NONE) {
+		if (!IsOnShortTrack && TrackNumber != -1) {
+			int tracknum = TrackControl[TrackNumber].Track;
+			if (tracknum) {
+				TrackType const * ptr = RawTracks[tracknum - 1].Track;
+				int cellidx = RawTracks[tracknum - 1].Cell;
+				if (cellidx > -1) {
+					Dir256 dir = ptr[cellidx].Facing;
+
+					if (TrackIndex < cellidx && cellidx != -1) {
+						Point2D pt = Smooth_Turn(ptr[cellidx].Offset, dir);
+						Coord coord = LinkedTo->PositionCoord;
+						coord.X = pt.X;
+						coord.Y = pt.Y;
+						if (coord.As_Cell() == ((Coord &)to).As_Cell() && abs(coord.Z - to.Z) <= LEVEL_LEPTON_H) {
+							return(true);
+						}
+					}
+				}
+			}
+		}
+
+		if (coord.As_Cell() == ((Coord &)to).As_Cell() && abs(coord.Z - to.Z) <= LEVEL_LEPTON_H) {
+			return(true);
+		}
+	}
+
+	return(false);
+}
+
+
+// FUNCTION: 0x004B4B00
+boolean STDMETHODCALLTYPE DriveLocomotionClass::Will_Jump_Tracks(void)
+{
+	TurnTrackType	const * track;
+	int				tracknum;
+	FacingType		nextface;
+	bool				adj;
+
+	nextface = LinkedTo->Path[0];
+
+	if (nextface >= FACING_NONE && nextface <= FACING_COUNT) {
+
+		track = &TrackControl[TrackNumber];
+		if (IsOnShortTrack) {
+			tracknum = track->StartTrack;
+		} else {
+			tracknum = track->Track;
+		}
+
+		adj = false;
+		if (nextface != FACING_COUNT && nextface != FACING_NONE && Dir_Facing(track->Facing) != nextface) {
+			adj = true;
+		}
+
+		if (nextface != FACING_COUNT && nextface != FACING_NONE && adj && RawTracks[tracknum-1].Jump == TrackIndex && TrackIndex) {
+			TurnTrackType const * newtrack;
+			int	tnum;
+
+			tnum = (int)(Dir_Facing(track->Facing) * FACING_COUNT) + (int)nextface;
+			newtrack = &TrackControl[tnum];
+			if (newtrack->Track && RawTracks[newtrack->Track-1].Entry) {
+				return(true);
+			}
+		}
+	}
+	return(false);
+}
+
 
 // FUNCTION: 0x004B4BE0
 void STDMETHODCALLTYPE DriveLocomotionClass::Lock(void)
@@ -506,6 +687,14 @@ int STDMETHODCALLTYPE DriveLocomotionClass::Get_Track_Index(void)
 {
 	return(TrackIndex);
 }
+
+// FUNCTION: 0x004B4C20
+int STDMETHODCALLTYPE DriveLocomotionClass::Get_Speed_Accum(void)
+{
+	return(SpeedAccum);
+}
+
+// FUNCTION: 0x004B4C30 LocomotionClass::IsDirty
 
 // FUNCTION: 0x004B4CB0
 ULONG STDMETHODCALLTYPE DriveLocomotionClass::AddRef(void)

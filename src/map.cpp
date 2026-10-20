@@ -4965,6 +4965,263 @@ CellClass * MapClass::Find_Nearby_Shroud(FootClass * foot)
 	return(&Map[center]);
 }
 
+// FUNCTION: 0x00581090
+void MapClass::Shutdown(void)
+{
+	int index;
+
+	for (index = 0; index < MZONE_COUNT; index++) {
+		if (Zones[index] != NULL) {
+			delete Zones[index];
+			Zones[index] = NULL;
+		}
+	}
+
+	if (ZoneAdjacency != NULL) {
+		delete ZoneAdjacency;
+		ZoneAdjacency = NULL;
+	}
+
+	for (index = 0; index < SUBZONE_COUNT; index++) {
+		SubzoneTracking[index].Clear();
+		if (SubzoneConnectionHashTable[index] != NULL) {
+			delete SubzoneConnectionHashTable[index];
+			SubzoneConnectionHashTable[index] = NULL;
+		}
+	}
+
+	VeinholeMonsterClass::Reset();
+	VeinholeMonsterClass::Clear_Global_Data();
+	TiberiumClass::Deinit_Tiberium_Spread_System();
+	TiberiumClass::Deinit_Tiberium_Growth_System();
+}
+
+// FUNCTION: 0x00581F50
+void MapClass::Reset_All_Subzones(void)
+{
+	for (int index = SUBZONE_COUNT-1; index >= 0; index--) {
+		SubzoneTracking[index].Clear();
+		Reset_Subzone(index);
+	}
+	Search.Reset();
+}
+
+// FUNCTION: 0x00582D30
+void MapClass::Register_Subzone_Zone_Connections(int subzone)
+{
+	for (int i = 0; i < ZoneConnections.Count(); i++) {
+		ZoneConnectionClass & connection = ZoneConnections[i];
+		if (connection.IsPassable) {
+			Register_Zone_Connection_Entries(connection, subzone);
+		}
+	}
+}
+
+// FUNCTION: 0x00583180
+Cell MapClass::Get_Bridge_Zone_Connection_Cell(CellClass * cptr, bool isbridge)
+{
+	Cell ncell;
+
+	if (isbridge && cptr->IsUnderBridge) {
+		int cidx = Map.Zone_Connection_Index(cptr->CellID, 2, 0);
+		bool none = cidx == -1;
+		if (none) {
+			ncell = Find_Bridge_Span_End_Cell(cptr->CellID, cptr->CellID);
+			if (ncell != CELL_NONE) {
+				return(ncell);
+			}
+		}
+
+		ZoneConnectionClass *zcon = &Map.ZoneConnections[cidx];
+		if (cptr->IsBridgeEastWest) {
+			ncell = Cell(0, cptr->CellID.Y - zcon->From.Y);
+		} else {
+			ncell = Cell(cptr->CellID.X - zcon->From.X, 0);
+		}
+
+		if (zcon->IsPassable) {
+			if ((zcon->From + ncell - cptr->CellID).Length() < (zcon->To + ncell - cptr->CellID).Length()) {
+				return(zcon->From + ncell);
+			} else {
+				return(zcon->To + ncell);
+			}
+		} else {
+			FacingType facing = zcon->From.X != zcon->To.X ? FACING_E : FACING_S;
+			while (cptr->IsUnderBridge) {
+				CellClass * next = &cptr->Adjacent_Cell(facing);
+				cptr = next;
+			}
+			if ((cptr->Is_Tile_Bridge() || cptr->Is_Tile_Train_Bridge()) && cptr->Land_Type() != LAND_ROCK) {
+				return(ncell + zcon->To);
+			} else {
+				return(ncell + zcon->From);
+			}
+		}
+	}
+
+	return(cptr->CellID);
+}
+
+// FUNCTION: 0x005833F0
+Cell MapClass::Get_Zone_Connection_Destination(Cell const & cell, Cell const & reference)
+{
+	Cell ncell;
+
+	int cidx = Map.Zone_Connection_Index(cell, 1, 0);
+	if (cidx != -1) {
+
+		ZoneConnectionClass *zcon = &Map.ZoneConnections[cidx];
+
+		if (zcon->IsPassable) {
+			if ((reference - zcon->From).Length() < (reference - zcon->To).Length()) {
+				return(zcon->From);
+			} else {
+				return(zcon->To);
+			}
+		} else {
+			FacingType facing = zcon->From.X != zcon->To.X ? FACING_E : FACING_S;
+			CellClass *cptr = &Map[cell];
+			while (cptr->IsUnderBridge) {
+				cptr = &cptr->Adjacent_Cell(facing);
+			}
+			if ((cptr->Is_Tile_Bridge() || cptr->Is_Tile_Train_Bridge()) && cptr->Land_Type() != LAND_ROCK) {
+				return(zcon->To);
+			} else {
+				return(zcon->From);
+			}
+		}
+	}
+
+	ncell = Find_Bridge_Span_End_Cell(cell, reference);
+	if (ncell != CELL_NONE) {
+		return(ncell);
+	}
+
+	return(cell);
+}
+
+static inline CellSubzoneStruct * Subzone_Of(MapClass * map, Cell const & cell)
+{
+	int index = map->Get_Cell_Subzone_Index(cell);
+	if (index < 0) {
+		index = 0;
+	} else if (index >= map->CellZoneCount) {
+		index = map->CellZoneCount - 1;
+	}
+	return(&map->CellSubzones[index]);
+}
+
+// FUNCTION: 0x00583820
+Cell MapClass::Find_Bridge_End_Cell_For_Subzone(Cell const & cell, int subzone_level, int subzone_id)
+{
+	CellClass * cellptr = &Map[cell];
+	if (!cellptr->IsUnderBridge) {
+		return(cellptr->CellID);
+	}
+
+	FacingType facing = cellptr->IsBridgeEastWest ? FACING_E : FACING_S;
+	FacingType reverse = Facing_Sub(facing, FACING_180);
+
+	CellClass * cptr1 = cellptr;
+	CellClass * cptr2 = cellptr;
+
+	Cell bridge_start = CELL_NONE;
+	Cell bridge_end = CELL_NONE;
+
+	while (true) {
+		if (cptr1->IsUnderBridge) {
+			CellClass * next = &cptr1->Adjacent_Cell(facing);
+			cptr1 = next;
+			if (!cptr1->IsUnderBridge && (cptr1->Is_Tile_Bridge() || cptr1->Is_Tile_Train_Bridge()) && cptr1->Land_Type() != LAND_ROCK) {
+				bridge_start = cptr1->CellID;
+			}
+		}
+		if (cptr2->IsUnderBridge) {
+			cptr2 = &cptr2->Adjacent_Cell(reverse);
+			if (!cptr2->IsUnderBridge && (cptr2->Is_Tile_Bridge() || cptr2->Is_Tile_Train_Bridge()) && cptr2->Land_Type() != LAND_ROCK) {
+				bridge_end = cptr2->CellID;
+			}
+		}
+		if (!cptr2->IsUnderBridge && !cptr1->IsUnderBridge) {
+			break;
+		}
+	}
+
+	Cell cells[6];
+	cells[0] = bridge_start;
+	cells[1] = Adjacent_Cell(bridge_start, Facing_Add(facing, FACING_90));
+	cells[2] = Adjacent_Cell(bridge_start, Facing_Sub(facing, FACING_90));
+	cells[3] = bridge_end;
+	cells[4] = bridge_end + AdjacentCell[(facing + FACING_90) & 7];
+	cells[5] = bridge_end + AdjacentCell[(facing - FACING_90) & 7];
+
+	for (int i = 0; i < ARRAY_SIZE(cells); i++) {
+		Cell c = cells[i];
+		if (Map.In_Local_Radar(c, true)) {
+			if (Subzone_Of(this, c)->SubzoneID[subzone_level] == subzone_id) {
+				return(c);
+			}
+		}
+	}
+
+	return(CELL_NONE);
+}
+
+
+// FUNCTION: 0x00583AD0
+int MapClass::Find_Largest_Water_Zone(int * zone)
+{
+	DynamicVectorClass<int> counts;
+
+	Map.Reset_Local_Iterator();
+	CellClass * cptr = Map.Local_Iterate();
+	while (cptr != NULL) {
+		if (cptr->Passability == PASSABLE_WATER) {
+			int id = Get_Cell_Zone(cptr->CellID, MZONE_WATER, false);
+			if (id >= 0) {
+				if (id >= counts.Count()) {
+					for (int n = id - counts.Count() + 1; n > 0; n--) {
+						counts.Add(0);
+					}
+				}
+				counts[id]++;
+			}
+		}
+		cptr = Map.Local_Iterate();
+	}
+
+	int best = -1;
+	int best_count = 0;
+	for (int index = 0; index < counts.Count(); index++) {
+		if (counts[index] > best_count) {
+			best = index;
+			best_count = counts[index];
+		}
+	}
+
+	*zone = best;
+	if (best >= 0) {
+		return(counts[best]);
+	}
+	return(0);
+}
+
+// FUNCTION: 0x00584030
+bool MapClass::Is_Area_Shore_Or_Water(Rect const & rect)
+{
+	int width = rect.Width;
+	int height = rect.Height;
+	for (int y = 0; y < height; y++) {
+		for (int x = 0; x < width; x++) {
+			CellClass * cptr = &Map[Cell(rect.X + x, rect.Y + y)];
+			if (cptr->Passability != PASSABLE_WATER && cptr->Passability != PASSABLE_BEACH) {
+				return(false);
+			}
+		}
+	}
+	return(true);
+}
+
 // FUNCTION: 0x005868A0
 void MapClass::Recalc_Cells_In_Rect(Rect const & rect)
 {

@@ -83,12 +83,107 @@ ShortPair DAT_0088A0B8;
 // FUNCTION: 0x004208A0 $E49
 IntTriple DAT_0088A0D8;
 
+// FUNCTION: 0x004208C0 $E52
+struct IntTriple2 {
+	int A, B, C;
+	IntTriple2() { C = 0; A = 0x80; B = 0x80; }
+};
+IntTriple2 DAT_0089A118;
+
+// FUNCTION: 0x004208E0 $E57
+// FUNCTION: 0x00420920 $E55
+DynamicVectorClass<AlphaShapeClass *> AlphaShapes;
+
+unsigned char AlphaShapeClass::BrightnessTable[256][256];
+
+// FUNCTION: 0x00420960
+AlphaShapeClass::AlphaShapeClass(ObjectClass * owner, int x, int y) :
+	BASECLASS(),
+	Owner(owner),
+	ImageData(NULL),
+	IsToDelete(false)
+{
+	ShapeSet const * image = (ShapeSet const *)owner->Class_Of()->AlphaImageData;
+	ImageData = image;
+	DrawRect = Rect(x, y, image->Get_Width(), image->Get_Height());
+	AlphaShapes.Add(this);
+	ObjectPtrTracker.Add(this);
+
+	if (!BrightnessCalculated) {
+		Calculate_Brightness_Table();
+	}
+}
+
+// FUNCTION: 0x00420AF0
+AlphaShapeClass::AlphaShapeClass(void) :
+	BASECLASS(),
+	Owner(NULL),
+	DrawRect(0, 0, 0, 0),
+	ImageData(NULL),
+	IsToDelete(false)
+{
+	AlphaShapes.Add(this);
+	ObjectPtrTracker.Add(this);
+
+	if (!BrightnessCalculated) {
+		Calculate_Brightness_Table();
+	}
+}
+
+// FUNCTION: 0x00420C50
+AlphaShapeClass::AlphaShapeClass(NoInitClass const & x) :
+	BASECLASS(x)
+{
+}
+
+// FUNCTION: 0x00420C80
+AlphaShapeClass::~AlphaShapeClass(void)
+{
+	AlphaShapes.Delete(this);
+	ObjectPtrTracker.Delete(this);
+}
+
 // FUNCTION: 0x00420D40
 HRESULT STDMETHODCALLTYPE AlphaShapeClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
 	*retval = CLSID_AlphaShapeClass;
 	return(S_OK);
+}
+
+// FUNCTION: 0x00420D80
+RTTIType AlphaShapeClass::Fetch_RTTI(void) const
+{
+	return(RTTI_ALPHASHAPE);
+}
+
+// FUNCTION: 0x00420D90
+int AlphaShapeClass::Fetch_Object_Size(void) const
+{
+	return(sizeof(*this));
+}
+
+// FUNCTION: 0x00420DA0
+void AlphaShapeClass::Compute_CRC(CRCEngine & crc) const
+{
+	BASECLASS::Compute_CRC(crc);
+	crc(DrawRect.X);
+	crc(DrawRect.Y);
+	crc(DrawRect.Width);
+	crc(DrawRect.Height);
+}
+
+// FUNCTION: 0x00420DE0
+HRESULT STDMETHODCALLTYPE AlphaShapeClass::Load(IStream * stream)
+{
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		new (this) AlphaShapeClass(NoInitClass());
+
+		Swizzle_Pointer(&Owner);
+		ImageData = NULL;
+	}
+	return(result);
 }
 
 // FUNCTION: 0x00420E40
@@ -99,6 +194,14 @@ HRESULT STDMETHODCALLTYPE AlphaShapeClass::Save(IStream * stream, BOOL cleardirt
 		return(S_OK);
 	}
 	return(result);
+}
+
+// FUNCTION: 0x00420E70
+void AlphaShapeClass::Detach(AbstractClass const * target, bool all)
+{
+	if (target == Owner) {
+		IsToDelete = true;
+	}
 }
 
 // FUNCTION: 0x004216C0

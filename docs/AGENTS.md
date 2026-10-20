@@ -323,6 +323,9 @@ Each entry: what the diff showed, then the source change that fixed it.
 - A match that flips with unrelated header declarations can be VC6 ordering spill reloads
   by heap address (Draw_It): no form pins it, so keep the one failing fewest offsets.
 - Never remove a function data/progress.csv records from src/: report the stand-in instead.
+- An unverified global can be the wrong object: give each vector a function reads a
+  names.csv row (Good_LZ read `Technos` where the exe walks `Objects`, 0x00A8E360).
+- One class, one definition: include the header that defines it (SHPStruct is msanim.h's).
 - A TS layout can agree with YR's for a prefix only: run headercheck before porting a
   function that reaches past a class's proven part.
 - Where YRpp groups members into a struct and TS has flat fields, use a nested struct

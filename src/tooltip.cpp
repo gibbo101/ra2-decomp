@@ -150,6 +150,22 @@ int ToolTipManager::Get_Count(void)
 	return(ToolTips.Count());
 }
 
+// FUNCTION: 0x00724580
+bool ToolTipManager::Add(ToolTip const * tooltip)
+{
+	if (!Find(tooltip->ID, NULL)) {
+		ToolTip * tt = new ToolTip(*tooltip);
+		if (tt != NULL) {
+			if (ToolTips.Add(tt)) {
+				ToolTipIndex.Add_Index(tt->ID, tt);
+				return(true);
+			}
+			delete tt;
+		}
+	}
+	return(false);
+}
+
 // FUNCTION: 0x00724730
 void ToolTipManager::Remove(unsigned id)
 {
@@ -290,3 +306,21 @@ bool ToolTipManager::IsToolTipShowing(void)
 // FUNCTION: 0x00724C10 ToolTipManager::~ToolTipManager
 
 // FUNCTION: 0x00724C30 ?$DynamicVectorClass@PBVToolTip@@::Clear
+
+// FUNCTION: 0x00724C60 ?$VectorClass@PBVToolTip@@::ID
+// FUNCTION: 0x00724C80 ?$VectorClass@PBVToolTip@@::GetItem
+// FUNCTION: 0x00724C90 ?$VectorClass@PBVToolTip@@::operator==
+// FUNCTION: 0x00724CD0 ?$VectorClass@PBVToolTip@@::Resize
+// FUNCTION: 0x00724D80 ?$VectorClass@PBVToolTip@@::Clear
+// FUNCTION: 0x00724DB0 ?$VectorClass@PBVToolTip@@::ID
+template class VectorClass<ToolTip const *>;
+
+// FUNCTION: 0x00724DF0 ?$DynamicVectorClass@PBVToolTip@@::ID
+// FUNCTION: 0x00724E10 ?$DynamicVectorClass@PBVToolTip@@::Resize
+// FUNCTION: 0x00724EC0 ?$DynamicVectorClass@PBVToolTip@@::ID
+// FUNCTION: 0x00724EF0 ?$DynamicVectorClass@PBVToolTip@@::~?$DynamicVectorClass@PBVToolTip@@
+template class DynamicVectorClass<ToolTip const *>;
+
+// FUNCTION: 0x00724F40 ?$VectorClass@PBVToolTip@@::~?$VectorClass@PBVToolTip@@
+
+// FUNCTION: 0x00724F90 ?$IndexClass@IPBVToolTip@@::NodeElement::NodeElement

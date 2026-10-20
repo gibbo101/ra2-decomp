@@ -242,3 +242,87 @@ HRESULT STDMETHODCALLTYPE TeleportLocomotionClass::QueryInterface(REFIID riid, L
 	}
 	return(result);
 }
+
+// FUNCTION: 0x00719E90
+HRESULT STDMETHODCALLTYPE TeleportLocomotionClass::Begin_Piggyback(ILocomotion * pointer)
+{
+	if (pointer == NULL) {
+		return(E_POINTER);
+	}
+	if (Piggybacker == NULL) {
+		Piggybacker = pointer;
+		return(S_OK);
+	}
+	return(E_FAIL);
+}
+
+// FUNCTION: 0x00719EE0
+HRESULT STDMETHODCALLTYPE TeleportLocomotionClass::End_Piggyback(ILocomotion ** pointer)
+{
+	if (pointer == NULL) {
+		return(E_POINTER);
+	}
+	if (LinkedTo != NULL) {
+		LinkedTo->BeingManipulatedBy = NULL;
+		LinkedTo->ChronoWarpedByHouse = NULL;
+	}
+	if (Piggybacker != NULL) {
+		*pointer = Piggybacker;
+		Piggybacker.Detach();
+		return(S_OK);
+	}
+	return(S_FALSE);
+}
+
+// FUNCTION: 0x00719F30
+boolean STDMETHODCALLTYPE TeleportLocomotionClass::Is_Ok_To_End(void)
+{
+	if (!Is_Moving() && Piggybacker != NULL && !Unknown35 && !LinkedTo->IsImmobilized && State == 0 && !LinkedTo->IsAttackedByLocomotor) {
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00719F80
+HRESULT STDMETHODCALLTYPE TeleportLocomotionClass::Piggyback_CLSID(GUID * classid)
+{
+	if (classid == NULL) {
+		return(E_POINTER);
+	}
+
+	if (Piggybacker != NULL) {
+		IPersistPtr ptr(Piggybacker);
+		if (ptr == NULL) {
+			return(E_FAIL);
+		}
+		return(ptr->GetClassID(classid));
+	}
+
+	IPersistPtr ptr(this);
+	if (ptr == NULL) {
+		return(E_FAIL);
+	}
+	return(ptr->GetClassID(classid));
+}
+
+// FUNCTION: 0x0071A090
+void STDMETHODCALLTYPE TeleportLocomotionClass::Mark_All_Occupation_Bits(int mark)
+{
+	if (mark == MARK_UP) {
+		LinkedTo->Clear_Occupy_Bit((Coord)Head_To_Coord());
+	}
+}
+
+// FUNCTION: 0x0071A0E0 TeleportLocomotionClass::AddRef
+
+// FUNCTION: 0x0071A0F0 TeleportLocomotionClass::Release
+
+// FUNCTION: 0x0071A100 TeleportLocomotionClass::Is_Piggybacking
+
+// FUNCTION: 0x0071A120 TeleportLocomotionClass::Fetch_Object_Size
+
+// FUNCTION: 0x0071A130 TeleportLocomotionClass::~TeleportLocomotionClass
+
+// FUNCTION: 0x0071A160 TeleportLocomotionClass::QueryInterface
+
+// FUNCTION: 0x0071A170 TeleportLocomotionClass::AddRef

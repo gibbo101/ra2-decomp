@@ -1782,7 +1782,7 @@ bool MPCooperative::vt_entry_BC(void)
 // FUNCTION: 0x005C4F30 ?$DynamicVectorClass@PAUCoopPlayerStats@@::?$DynamicVectorClass@PAUCoopPlayerStats@@
 // FUNCTION: 0x005C4FC0 ?$DynamicVectorClass@PAUCoopPlayerStats@@::~?$DynamicVectorClass@PAUCoopPlayerStats@@
 // FUNCTION: 0x005C5010 ?$DynamicVectorClass@PAUCoopPlayerStats@@::Clear
-// FUNCTION: 0x005C5040 ?$VectorClass@PAUCoopPlayerStats@@::ID
+// FUNCTION: 0x005C5040 ?$DynamicVectorClass@PAUCoopPlayerStats@@::ID
 // FUNCTION: 0x005C5060 ?$VectorClass@PAUCoopPlayerStats@@::GetItem
 template class VectorClass<CoopPlayerStats *>;
 template class DynamicVectorClass<CoopPlayerStats *>;
@@ -1794,4 +1794,19 @@ template class DynamicVectorClass<MPTeam *>;
 
 // FUNCTION: 0x005C50D0 ?$DynamicVectorClass@PAVCoopCamp_0049B610@@::Clear
 // FUNCTION: 0x005C5100 ?$VectorClass@PAVCoopCamp_0049B610@@::ID
+// FUNCTION: 0x005C5120 ?$VectorClass@PAVCoopCamp_0049B610@@::GetItem
+// FUNCTION: 0x005C5130 ?$VectorClass@PAUCoopPlayerStats@@::operator==
+// FUNCTION: 0x005C5170 ?$VectorClass@PAUCoopPlayerStats@@::Resize
+// FUNCTION: 0x005C5220 ?$VectorClass@PAUCoopPlayerStats@@::Clear
+// FUNCTION: 0x005C5250 ?$VectorClass@PAUCoopPlayerStats@@::ID
+// FUNCTION: 0x005C5290 ?$VectorClass@PAUCoopPlayerStats@@::ID
+// FUNCTION: 0x005C52B0 ?$DynamicVectorClass@PAUCoopPlayerStats@@::Resize
+// FUNCTION: 0x005C5360 ?$DynamicVectorClass@PAUCoopPlayerStats@@::ID
+template class VectorClass<CoopCamp_0049B610 *>;
 template class DynamicVectorClass<CoopCamp_0049B610 *>;
+
+// FUNCTION: 0x005C5390 ?$VectorClass@PAD::operator==
+// FUNCTION: 0x005C53D0 ?$VectorClass@PAD::Resize
+// FUNCTION: 0x005C5480 ?$VectorClass@PAD::Clear
+// FUNCTION: 0x005C54B0 ?$VectorClass@PAD::ID
+template class VectorClass<char *>;

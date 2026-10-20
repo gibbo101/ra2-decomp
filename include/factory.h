@@ -41,6 +41,7 @@ class FactoryClass : public AbstractClass
 		bool Completed(void);
 		bool Has_Changed(void);
 		bool Has_Completed(void);
+		bool Is_On_Hold(void) const;
 		bool Is_Building(void) const {return(Production.Fetch_Rate() != 0 && !IsSuspended);};
 		bool Is_Suspended(void) const {return(Object != NULL && IsSuspended);}
 		bool Set(TechnoTypeClass const & object, HouseClass & house, bool resume);
@@ -82,7 +83,28 @@ class FactoryClass : public AbstractClass
 		};
 	protected:
 
-		int Cost_Per_Tick(void);
+		bool Is_Finished(void)
+		{
+			if (Object && Production.Fetch_Stage() == STEP_COUNT) {
+				return(true);
+			}
+			if (SpecialItem != SUPER_NONE && Production.Fetch_Stage() == STEP_COUNT) {
+				return(true);
+			}
+			return(false);
+		}
+
+		int Cost_Per_Tick(void)
+		{
+			if (Object) {
+				int steps = STEP_COUNT - Production.Fetch_Stage();
+				if (steps) {
+					return(Balance / steps);
+				}
+				return(Balance);
+			}
+			return(0);
+		}
 
 	private:
 

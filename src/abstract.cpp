@@ -15,10 +15,43 @@
 #include "swizzle.h"
 #include "vector.h"
 
+// FUNCTION: 0x00410170
+AbstractClass::AbstractClass(void) :
+	ID(-1),
+	unknown_18(0),
+	RefCount(0),
+	Dirty(false)
+{
+	AbstractFlags &= 0xF8;
+}
+
+// FUNCTION: 0x004101C0
+AbstractClass::AbstractClass(NoInitClass const & x)
+{
+	x();
+}
+
+// FUNCTION: 0x004101F0
+AbstractClass::~AbstractClass(void)
+{
+}
+
 // FUNCTION: 0x00410210
 int STDMETHODCALLTYPE AbstractClass::What_Am_I(void) const
 {
 	return(RTTI);
+}
+
+// FUNCTION: 0x00410220
+int STDMETHODCALLTYPE AbstractClass::Fetch_ID(void) const
+{
+	return(ID);
+}
+
+// FUNCTION: 0x00410230
+VOID STDMETHODCALLTYPE AbstractClass::Create_ID(void)
+{
+	ID = (Scen == NULL ? 0 : Scen->Get_Unique_ID());
 }
 
 // FUNCTION: 0x00410260
@@ -48,4 +81,84 @@ HRESULT STDMETHODCALLTYPE AbstractClass::QueryInterface(REFIID riid, LPVOID * pp
 
 	AddRef();
 	return(S_OK);
+}
+
+// FUNCTION: 0x00410300
+ULONG STDMETHODCALLTYPE AbstractClass::AddRef(void)
+{
+	return(1);
+}
+
+// FUNCTION: 0x00410310
+ULONG STDMETHODCALLTYPE AbstractClass::Release(void)
+{
+	return(1);
+}
+
+// FUNCTION: 0x00410320
+HRESULT STDMETHODCALLTYPE AbstractClass::Save(IStream * stream, BOOL cleardirty)
+{
+	if (stream == NULL) {
+		return(E_POINTER);
+	}
+
+	ULONG id = (ULONG)this;
+
+	HRESULT result = stream->Write(&id, sizeof(id), NULL);
+	if (SUCCEEDED(result)) {
+		result = stream->Write(this, Fetch_Object_Size(), NULL);
+		if (SUCCEEDED(result)) {
+
+			if (cleardirty) {
+				Dirty = false;
+			}
+		}
+		return(result);
+	}
+	return(result);
+}
+
+// FUNCTION: 0x00410380
+HRESULT STDMETHODCALLTYPE AbstractClass::Load(IStream * stream)
+{
+	if (stream == NULL) {
+		return(E_POINTER);
+	}
+
+	ULONG id;
+
+	HRESULT result = stream->Read(&id, sizeof(id), NULL);
+	if (SUCCEEDED(result)) {
+		Swizzle_Here_I_Am(id, this);
+		int ref = RefCount;
+
+		result = stream->Read(this, Fetch_Object_Size(), NULL);
+
+		RefCount = ref;
+	}
+	return(result);
+}
+
+// FUNCTION: 0x004103E0
+HRESULT STDMETHODCALLTYPE AbstractClass::GetSizeMax(ULARGE_INTEGER *pcbSize)
+{
+	if (pcbSize == NULL) {
+		return(E_POINTER);
+	}
+
+	pcbSize->QuadPart = sizeof(int) + Fetch_Object_Size();
+	return(S_OK);
+}
+
+// FUNCTION: 0x00410410
+void AbstractClass::Compute_CRC(CRCEngine & crc) const
+{
+	crc(ID);
+	crc(Dirty);
+}
+
+// FUNCTION: 0x00410440
+bool AbstractClass::Is_Inactive(void) const
+{
+	return(true);
 }

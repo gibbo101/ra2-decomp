@@ -1047,6 +1047,19 @@ VC6 orders its two reloads by heap address, so no form pins it, and the chosen f
 at about 3% of offsets against 16% before. Cost: about 7.3M tokens. Merge gate: 7,414
 of 7,414 (1,112.5 KB), about 38% of game functions.
 
+### Batches 48, 49 and 50 (20 October 2026)
+
+**417 of 432 functions** (137, 140, 140), plus one found along the way. Batch 48's merge
+built YR's CampaignClass from its constructor and Read_INI (CD, Scenario[512], FinalMovie,
+a wide Description, size 0x3A0) and proved all 27 vtable slots; it declined a
+SubzoneTrackingStruct::operator= that regressed the map generator. Batch 50 removed a
+phantom Addon byte from the game-list node, proved by the join code's stores. Batch 49 made
+RadarRect public, which retired two absolute-address externs in beacon.cpp. Landing found
+that last round's AircraftClass::Good_LZ read `Technos` where the exe walks `Objects`
+(0x00A8E360): both vectors now have names rows and Good_LZ uses Objects. Three mouse-thread
+functions match only with volatile fields and wait for a ruling. Cost: about 5.3M tokens.
+Merge gate: 7,832 of 7,832 (1,153.4 KB), about 40% of game functions.
+
 ### Decide before the first batch
 
 - **Module layout.** Which function lives in which source file, and the link order, decide

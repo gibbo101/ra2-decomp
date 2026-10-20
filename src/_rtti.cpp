@@ -3,11 +3,13 @@
 // Copyright 2025 Electronic Arts Inc.; 2026 OpenTS contributors
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
+#define NDEBUG
 #include "always.h"
 #include "geometry.h"
 #include "_rtti.h"
 #include "object.h"
 #include "ccini.h"
+#include <cmath>
 
 struct {
 	char const *Name;
@@ -182,3 +184,34 @@ CCINIClass RA2MDINI;
 // FUNCTION: 0x0040E1C0 $E75
 // FUNCTION: 0x0040E260 $E73
 // FUNCTION: 0x0040E270 $E80
+// FUNCTION: 0x0040E310 $E78
+// FUNCTION: 0x0040E320 GenericNode::GenericNode
+// FUNCTION: 0x0040E340 GenericNode::Link
+// FUNCTION: 0x0040E390 ~GenericNode
+// FUNCTION: 0x0040E3E0 ~GenericList
+// FUNCTION: 0x0040E4A0 ~CCINIClass
+// FUNCTION: 0x0040E4C0 ~?$List@PAUINISection@INIClass@@
+
+namespace fastmath { double __cdecl sqrt(double x); }
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007E1720;
+extern const double DAT_007E1728;
+extern const double DAT_007E1B10;
+extern const double DAT_007E1B18;
+
+// FUNCTION: 0x0040E580 $E83
+double DAT_00887288 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x0040E5B0 $E86
+double DAT_008872F0 = DAT_00887288 / DAT_007E1B10;
+
+// FUNCTION: 0x0040E5D0 $E89
+double DAT_008872D8 = DAT_007E1718 / DAT_008872F0;
+
+// FUNCTION: 0x0040E5F0 $E92
+double DAT_008872D0 = DAT_007E1720 * DAT_007E1B18;
+
+// FUNCTION: 0x0040E610 $E95
+double DAT_00887290 = DAT_007E1728 * DAT_007E1B18;

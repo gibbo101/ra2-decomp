@@ -334,6 +334,23 @@ void RadSiteClass::DecreaseLight(void)
 	LightSource->ChangeLevels(LightSource->Intensity - IntensityDecrement, Tint.Red * RadTimeLeft / RadDuration, Tint.Green * RadTimeLeft / RadDuration, Tint.Blue * RadTimeLeft / RadDuration, false);
 }
 
+// FUNCTION: 0x0065BED0 RadSiteClass::~RadSiteClass
+
+// FUNCTION: 0x0065BEF0 ?$DynamicVectorClass@PAVRadSiteClass@@::Clear
+template class DynamicVectorClass<RadSiteClass *>;
+
+// FUNCTION: 0x0065BF20 ?$DynamicVectorClass@PAVRadSiteClass@@::ID
+// FUNCTION: 0x0065BF40 ?$VectorClass@PAVRadSiteClass@@::GetItem
+// FUNCTION: 0x0065BF50 ?$VectorClass@PAVRadSiteClass@@::operator==
+// FUNCTION: 0x0065BF90 ?$VectorClass@PAVRadSiteClass@@::Resize
+// FUNCTION: 0x0065C040 ?$VectorClass@PAVRadSiteClass@@::Clear
+// FUNCTION: 0x0065C070 ?$VectorClass@PAVRadSiteClass@@::ID
+// FUNCTION: 0x0065C0B0 ?$VectorClass@PAVRadSiteClass@@::ID
+// FUNCTION: 0x0065C0D0 ?$DynamicVectorClass@PAVRadSiteClass@@::Resize
+// FUNCTION: 0x0065C180 ?$DynamicVectorClass@PAVRadSiteClass@@::ID
+// FUNCTION: 0x0065C1B0 ?$VectorClass@PAVRadSiteClass@@::~?$VectorClass@PAVRadSiteClass@@
+template class VectorClass<RadSiteClass *>;
+
 // FUNCTION: 0x0065C340
 int RAMFileClass::Open(char const *, int access)
 {

@@ -216,3 +216,19 @@ HRESULT STDMETHODCALLTYPE EMPulseClass::Save(IStream * stream, BOOL cleardirty)
 }
 
 // FUNCTION: 0x004C5AA0 EMPulseClass::Fetch_Object_Size
+
+// FUNCTION: 0x004C5AB0 EMPulseClass::Fetch_RTTI
+
+// FUNCTION: 0x004C5AC0 EMPulseClass::~EMPulseClass
+
+// FUNCTION: 0x004C5B60 ?$DynamicVectorClass@PAVEMPulseClass@@::Clear
+// FUNCTION: 0x004C5B90 ?$DynamicVectorClass@PAVEMPulseClass@@::ID
+// FUNCTION: 0x004C5BB0 ?$VectorClass@PAVEMPulseClass@@::GetItem
+// FUNCTION: 0x004C5BC0 ?$VectorClass@PAVEMPulseClass@@::operator==
+// FUNCTION: 0x004C5C00 ?$VectorClass@PAVEMPulseClass@@::Resize
+// FUNCTION: 0x004C5CB0 ?$VectorClass@PAVEMPulseClass@@::Clear
+// FUNCTION: 0x004C5CE0 ?$VectorClass@PAVEMPulseClass@@::ID
+// FUNCTION: 0x004C5D20 ?$VectorClass@PAVEMPulseClass@@::ID
+// FUNCTION: 0x004C5D40 ?$DynamicVectorClass@PAVEMPulseClass@@::Resize
+// FUNCTION: 0x004C5DF0 ?$DynamicVectorClass@PAVEMPulseClass@@::ID
+template class DynamicVectorClass<EMPulseClass *>;

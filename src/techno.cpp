@@ -4641,3 +4641,382 @@ int TechnoClass::GetEffectTintIntensity(int brightness) const
 {
 	return(GetAirstrikeTintIntensity(GetInvulnerabilityTintIntensity(brightness)));
 }
+
+// FUNCTION: 0x0070E380
+int TechnoClass::GetInvulnerabilityTintIntensity(int brightness) const
+{
+	int t = IronTintTimer.Value();
+	int level;
+
+	switch (IronTintStage) {
+	case 1:
+		level = ((12 - t) << 8) / 6;
+		break;
+	case 2:
+	case 8:
+		level = 512;
+		break;
+	case 3:
+		level = (t + 1020 + 460 * t) / 20;
+		break;
+	case 4:
+		level = (1024 - t * 77) / 8;
+		break;
+	case 5:
+		level = (t * 77 + 816) / 16;
+		break;
+	case 6:
+		level = 51;
+		break;
+	case 7:
+		level = (3072 - t * 461) / 6;
+		break;
+	case 9:
+		level = ((t + 20) << 8) / 20;
+		break;
+	default:
+		return brightness;
+	}
+	level = (level * brightness) >> 8;
+	if (level > 2000) level = 2000;
+	return level;
+}
+
+// FUNCTION: 0x0070E4B0
+int TechnoClass::GetAirstrikeTintIntensity(int brightness) const
+{
+	int level;
+	int t = AirstrikeTintTimer;
+
+	switch (AirstrikeTintStage) {
+	case 1:
+		level = ((12 - t) << 8) / 6;
+		break;
+	case 2:
+		level = 512;
+		break;
+	case 3:
+		level = ((t + 20) << 8) / 20;
+		break;
+	case 7:
+		level = ((12 - t) << 8) / 6;
+		break;
+	case 8:
+		level = 512;
+		break;
+	case 4:
+		level = ((128 - t) << 8) / 64;
+		break;
+	case 5:
+		level = ((t + 64) << 8) / 64;
+		break;
+	case 6:
+		level = 256;
+		break;
+	case 9:
+		level = ((t + 20) << 8) / 20;
+		break;
+	default:
+		return brightness;
+	}
+	level = (level * brightness) >> 8;
+	if (level > 2000) level = 2000;
+	return level;
+}
+
+static inline int Timer_Left(CDTimerClass<FrameTimerClass> const & timer)
+{
+	return timer();
+}
+
+// FUNCTION: 0x0070E5A0
+void TechnoClass::FUN_0070E5A0(void)
+{
+	if (IsIronCurtained()) {
+	switch (IronTintStage) {
+	case 0:
+		IronTintStage = 1;
+		IronTintTimer = 6;
+		break;
+	case 1:
+		if (IronTintTimer.Value() == 0) {
+			IronTintStage = 2;
+			IronTintTimer = 4;
+		}
+		break;
+	case 2:
+		if (IronTintTimer.Value() == 0) {
+			IronTintStage = 3;
+			IronTintTimer = Scen->RandomNumber(-5, 5) + 20;
+		}
+		break;
+	case 3:
+		if (IronTintTimer.Value() == 0) {
+			IronTintStage = 4;
+			IronTintTimer = 8;
+		}
+		break;
+	case 4:
+		if (IronTintTimer.Value() == 0) {
+			IronTintStage = 5;
+			IronTintTimer = 16;
+		}
+		break;
+	case 5:
+		if (IronTintTimer.Value() == 0) {
+			if (Timer_Left(IronCurtainTimer) < 54) {
+				IronTintStage = 6;
+			} else {
+				IronTintStage = 4;
+				IronTintTimer = 8;
+			}
+		}
+		break;
+	case 6:
+		if (Timer_Left(IronCurtainTimer) <= 30) {
+			IronTintStage = 7;
+			IronTintTimer = 6;
+		}
+		break;
+	case 7:
+		if (IronTintTimer.Value() == 0) {
+			IronTintStage = 8;
+			IronTintTimer = 4;
+		}
+		break;
+	case 8:
+		if (IronTintTimer.Value() == 0) {
+			IronTintStage = 9;
+			IronTintTimer = 20;
+		}
+		break;
+	case 9:
+		if (IronTintTimer.Value() == 0) {
+			IronTintStage = 10;
+		}
+		break;
+	default:
+		IronTintStage = 10;
+		break;
+	}
+	} else {
+		IronTintStage = 0;
+	}
+}
+
+// FUNCTION: 0x0070E920
+void TechnoClass::FUN_0070E920(void)
+{
+	if (this != NULL && RTTI == RTTI_BUILDING && Airstrike != NULL && Airstrike->Target == ((RTTI == RTTI_BUILDING) ? this : NULL)) {
+	switch (AirstrikeTintStage) {
+	case 0:
+		AirstrikeTintStage = 1;
+		AirstrikeTintTimer = 6;
+		break;
+	case 1:
+		if (AirstrikeTintTimer.Value() == 0) {
+			AirstrikeTintStage = 2;
+			AirstrikeTintTimer = 4;
+		}
+		break;
+	case 2:
+		if (AirstrikeTintTimer.Value() == 0) {
+			AirstrikeTintStage = 3;
+			AirstrikeTintTimer = Scen->RandomNumber(-5, 5) + 20;
+		}
+		break;
+	case 3:
+		if (AirstrikeTintTimer.Value() == 0) {
+			AirstrikeTintStage = 4;
+			AirstrikeTintTimer = 64;
+		}
+		break;
+	case 4:
+		if (AirstrikeTintTimer.Value() == 0) {
+			AirstrikeTintStage = 5;
+			AirstrikeTintTimer = 64;
+		}
+		break;
+	case 5:
+		if (AirstrikeTintTimer.Value() == 0) {
+			if (Timer_Left(AirstrikeTimer) < 158) {
+				AirstrikeTintStage = 6;
+			} else {
+				AirstrikeTintStage = 4;
+				AirstrikeTintTimer = 64;
+			}
+		}
+		break;
+	case 6:
+		if (Timer_Left(AirstrikeTimer) <= 30) {
+			AirstrikeTintStage = 7;
+			AirstrikeTintTimer = 6;
+		}
+		break;
+	case 7:
+		if (AirstrikeTintTimer.Value() == 0) {
+			AirstrikeTintStage = 8;
+			AirstrikeTintTimer = 4;
+		}
+		break;
+	case 8:
+		if (AirstrikeTintTimer.Value() == 0) {
+			AirstrikeTintStage = 9;
+			AirstrikeTintTimer = 20;
+		}
+		break;
+	case 9:
+		if (AirstrikeTintTimer.Value() == 0) {
+			AirstrikeTintStage = 10;
+		}
+		break;
+	default:
+		AirstrikeTintStage = 10;
+		break;
+	}
+	} else {
+		AirstrikeTintStage = 0;
+	}
+}
+
+// FUNCTION: 0x0070ECE0
+void RecoilData::Fire(void)
+{
+	int travel = Turret.Travel;
+	if (travel != 0) {
+		State = 1;
+		TravelFramesLeft = Turret.CompressFrames;
+		if (TravelFramesLeft < 1) {
+			TravelFramesLeft = 1;
+		}
+		TravelPerFrame = (float)travel / TravelFramesLeft;
+	}
+}
+
+// FUNCTION: 0x0070ED10
+void RecoilData::Update(void)
+{
+	if (State != 0) {
+		TravelSoFar += TravelPerFrame;
+		TravelFramesLeft--;
+		if (TravelFramesLeft <= 0) {
+			switch (State) {
+			case 1:
+				State = 2;
+				TravelFramesLeft = Turret.HoldFrames;
+				TravelPerFrame = 0;
+				if (TravelFramesLeft > 1) {
+					break;
+				}
+			case 2:
+				State = 3;
+				TravelFramesLeft = Turret.RecoverFrames;
+				if (TravelFramesLeft < 1) {
+					TravelFramesLeft = 1;
+				}
+				TravelPerFrame = -((float)Turret.Travel / TravelFramesLeft);
+				break;
+			case 3:
+				State = 0;
+				TravelSoFar = 0;
+				break;
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x0070EFD0
+bool TechnoClass::IsUnderEMP(void) const
+{
+	return((int)EMPLockRemaining > 0);
+}
+
+// FUNCTION: 0x0070EFE0
+int TechnoClass::Get_Max_Speed(void) const
+{
+	TechnoTypeClass const * type = Techno_Type_Class();
+	if (type != NULL) {
+		return(type->MaxSpeed);
+	}
+	return(0);
+}
+
+// FUNCTION: 0x0070F000
+int TechnoClass::RespondMegaEventMission(void * event)
+{
+	return(((signed char *)event)[12]);
+}
+
+// FUNCTION: 0x0070ED80
+unsigned TechnoClass::GetDisguiseFlags(unsigned flags) const
+{
+	unsigned result = flags;
+	if (DisguiseBlinkTimer.Value() == 0 || House->Is_Player_Control()) {
+		int phase = (Frame - (int)DisguiseCreationFrame + 64) % 256;
+		if (phase >= 64) {
+			if (phase < 68) {
+				result |= 2;
+			} else if (phase < 76) {
+				result |= 4;
+			} else if (phase < 80) {
+				result |= 2;
+			} else if (phase >= 112) {
+				if (phase < 116) {
+					result |= 2;
+				} else if (phase < 124) {
+					result |= 4;
+				} else if (phase < 128) {
+					result |= 2;
+				}
+			}
+		}
+	}
+	return(result);
+}
+
+// FUNCTION: 0x0070EE30
+bool TechnoClass::IsClearlyVisibleTo(HouseClass * house) const
+{
+	if (DisguiseBlinkTimer.Value() != 0 && !House->Is_Player_Control()) {
+		return(true);
+	}
+	if (House->Is_Player_Control() && IsDisguised()) {
+		int phase = (Frame - (int)DisguiseCreationFrame + 64) % 256;
+		if (phase >= 72 && phase <= 119) {
+			return(false);
+		}
+	} else {
+		CellClass * cell = Get_Cell_Ptr();
+		if (IsDisguised() && cell != NULL && !cell->Is_Disguise_Sensed(house->HeapID)) {
+			return(false);
+		}
+	}
+	return(true);
+}
+
+// FUNCTION: 0x0070EF00
+bool TechnoClass::CanDisguiseAs(AbstractClass * target) const
+{
+	WeaponTypeClass * weapon = Get_Class_Weapon_Data(What_Weapon_Should_I_Use(target))->Weapon;
+	if (weapon != NULL) {
+		if (target->RTTI == RTTI_TERRAIN) {
+			if (Rule->IsTreeTarget || weapon->TerrainFire) {
+				return(true);
+			}
+		} else if (weapon->TerrainFire) {
+			if (target->RTTI == RTTI_CELL) {
+				int overlay = ((CellClass *)target)->Overlay;
+				if (overlay != -1 && OverlayTypes[overlay]->IsARock) {
+					return(true);
+				}
+			}
+			if (target != NULL && (target->AbstractFlags & 2)) {
+				ObjectClass * object = (ObjectClass *)target;
+				if (object->IsDisguised() && object->GetDisguiseHouse(true) == NULL) {
+					return(true);
+				}
+			}
+		}
+	}
+	return(false);
+}

@@ -633,4 +633,160 @@ CoordStruct STDMETHODCALLTYPE JumpjetLocomotionClass::Head_To_Coord(void)
 	}
 }
 
+// FUNCTION: 0x0054DA00
+HRESULT STDMETHODCALLTYPE JumpjetLocomotionClass::Begin_Piggyback(ILocomotion * pointer)
+{
+	if (pointer == NULL) {
+		return(E_POINTER);
+	}
+	if (Piggybacker == NULL) {
+		Piggybacker = pointer;
+		return(S_OK);
+	}
+	return(E_FAIL);
+}
+
+// FUNCTION: 0x0054DA50
+HRESULT STDMETHODCALLTYPE JumpjetLocomotionClass::End_Piggyback(ILocomotion ** pointer)
+{
+	if (pointer == NULL) {
+		return(E_POINTER);
+	}
+	if (LinkedTo != NULL) {
+		if (LinkedTo->IsAttackedByLocomotor || LinkedTo->IsLetGoByLocomotor) {
+			LinkedTo->IsAttackedByLocomotor = false;
+			LinkedTo->IsLetGoByLocomotor = false;
+			if (!LinkedTo->House->IsHuman) {
+				if (LinkedTo->Techno_Type_Class()->ResourceGatherer) {
+					LinkedTo->QueueMission(MISSION_HARVEST, false);
+				}
+			}
+		}
+		LinkedTo->BeingManipulatedBy = NULL;
+		LinkedTo->ChronoWarpedByHouse = NULL;
+	}
+	if (Piggybacker != NULL) {
+		*pointer = Piggybacker;
+		Piggybacker.Detach();
+		return(S_OK);
+	}
+	return(S_FALSE);
+}
+
+// FUNCTION: 0x0054DB00
+boolean STDMETHODCALLTYPE JumpjetLocomotionClass::Is_Ok_To_End(void)
+{
+	if (!Is_Moving() && Piggybacker != NULL && !IsPiggyReady) {
+		if (!LinkedTo->IsAttackedByLocomotor || LinkedTo->IsLetGoByLocomotor) {
+			return(true);
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x0054DB50
+HRESULT STDMETHODCALLTYPE JumpjetLocomotionClass::Piggyback_CLSID(GUID * classid)
+{
+	if (classid == NULL) {
+		return(E_POINTER);
+	}
+
+	if (Piggybacker != NULL) {
+		IPersistPtr ptr(Piggybacker);
+		if (ptr == NULL) {
+			return(E_FAIL);
+		}
+		return(ptr->GetClassID(classid));
+	}
+
+	IPersistPtr ptr(this);
+	if (ptr == NULL) {
+		return(E_FAIL);
+	}
+	return(ptr->GetClassID(classid));
+}
+
+// FUNCTION: 0x0054DC60
+HRESULT STDMETHODCALLTYPE JumpjetLocomotionClass::QueryInterface(REFIID riid, LPVOID * ppvObject)
+{
+	HRESULT result = BASECLASS::QueryInterface(riid, ppvObject);
+
+	if (result == E_NOINTERFACE) {
+		if (riid == IID_IPiggyback) {
+			*ppvObject = (IPiggyback*)this;
+		}
+		if (*ppvObject == NULL) {
+			result = E_NOINTERFACE;
+		} else {
+			AddRef();
+			result = S_OK;
+		}
+	}
+	return(result);
+}
+
+// FUNCTION: 0x0054DCC0
+Matrix3DStruct STDMETHODCALLTYPE JumpjetLocomotionClass::Draw_Matrix(int * key)
+{
+	if (LinkedTo->TClass->TiltCrashJumpjet && ((float)fabs(LinkedTo->AngleRotatedSideways) >= 0.005 || (float)fabs(LinkedTo->AngleRotatedForwards) >= 0.005)) {
+		if (key) {
+			*key = -1;
+		}
+
+		Matrix3D m1(true), m2(true);
+		Matrix3D basemtx;
+
+		float val = LinkedTo->TClass->VoxelCenterY;
+		float val2 = LinkedTo->TClass->VoxelCenterX;
+
+		float scos, fcos, fsin;
+		fcos = fastmath::cos(LinkedTo->AngleRotatedForwards);
+		fsin = fastmath::sin(LinkedTo->AngleRotatedForwards);
+
+		scos = fastmath::cos(LinkedTo->AngleRotatedSideways);
+		float ssin = fastmath::sin(LinkedTo->AngleRotatedSideways);
+
+		int num = fabs(ssin) * val + fabs(fsin) * val2;
+
+		int x_offset = (int)(val2 - (float)(int)(fcos * val2));
+		int y_offset = (int)(val - (float)(int)(scos * val));
+		if (LinkedTo->AngleRotatedForwards < 0.0f) {
+			x_offset = -x_offset;
+		}
+		if (LinkedTo->AngleRotatedSideways > 0.0f) {
+			y_offset = -y_offset;
+		}
+
+		m1.Translate_Z(num);
+		m2.Translate_X(x_offset);
+		m2.Translate_Y(y_offset);
+		m2.Rotate_X(LinkedTo->AngleRotatedSideways);
+		m2.Rotate_Y(LinkedTo->AngleRotatedForwards);
+
+		return(basemtx.Matrix3D::Matrix3D(BASECLASS::Draw_Matrix(key)), (Matrix3DStruct &)((m1 * basemtx) * m2));
+	}
+
+	return(BASECLASS::Draw_Matrix(key));
+}
+
+// FUNCTION: 0x0054DF50
+ULONG STDMETHODCALLTYPE JumpjetLocomotionClass::AddRef(void)
+{
+	return(BASECLASS::AddRef());
+}
+
+// FUNCTION: 0x0054DF60
+ULONG STDMETHODCALLTYPE JumpjetLocomotionClass::Release(void)
+{
+	return(BASECLASS::Release());
+}
+
+// FUNCTION: 0x0054DF70 JumpjetLocomotionClass::Is_Piggybacking
+
 // FUNCTION: 0x0054DF90 JumpjetLocomotionClass::Fetch_Object_Size
+
+// FUNCTION: 0x0054DFA0 JumpjetLocomotionClass::~JumpjetLocomotionClass
+
+// FUNCTION: 0x0054DFF0 JumpjetLocomotionClass::QueryInterface
+
+// FUNCTION: 0x0054E000 JumpjetLocomotionClass::AddRef

@@ -484,5 +484,21 @@ template class TClassFactory<TiberiumClass>;
 // FUNCTION: 0x006C0190 ?$TClassFactory@VTubeClass@@::LockServer
 template class TClassFactory<TubeClass>;
 
+// FUNCTION: 0x006C01C0 ?$TClassFactory@VCampaignClass@@::?$TClassFactory@VCampaignClass@@
+// FUNCTION: 0x006C01D0 ?$TClassFactory@VCampaignClass@@::QueryInterface
+// FUNCTION: 0x006C0240 ?$TClassFactory@VCampaignClass@@::AddRef
+// FUNCTION: 0x006C0260 ?$TClassFactory@VCampaignClass@@::Release
+// FUNCTION: 0x006C0290 ?$TClassFactory@VCampaignClass@@::CreateInstance
+// FUNCTION: 0x006C0310 ?$TClassFactory@VCampaignClass@@::LockServer
+template class TClassFactory<CampaignClass>;
+
+// FUNCTION: 0x006C0340 ?$TClassFactory@VBuildingLightClass@@::?$TClassFactory@VBuildingLightClass@@
+// FUNCTION: 0x006C0350 ?$TClassFactory@VBuildingLightClass@@::QueryInterface
+// FUNCTION: 0x006C03C0 ?$TClassFactory@VBuildingLightClass@@::AddRef
+// FUNCTION: 0x006C03E0 ?$TClassFactory@VBuildingLightClass@@::Release
+// FUNCTION: 0x006C0410 ?$TClassFactory@VBuildingLightClass@@::CreateInstance
+// FUNCTION: 0x006C0490 ?$TClassFactory@VBuildingLightClass@@::LockServer
+template class TClassFactory<BuildingLightClass>;
+
 // FUNCTION: 0x006BEDB0 ?$_com_ptr_t@V?$_com_IIID@UIUnknown@@$1?_GUID_00000000_0000_0000_c000_000000000046@@3U__s_GUID@@A@@::CreateInstance
 template class _com_ptr_t<_com_IIID<IUnknown, &__uuidof(IUnknown)> >;

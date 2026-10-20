@@ -4460,3 +4460,27 @@ void Init_Dirt_Roads(void)
 		DirtRoadTiles[i + 101].ITType = IsometricTileType(IsometricTileTypeClass::DirtRoadSlopes + i);
 	}
 }
+
+// FUNCTION: 0x005AC270 MapSeedClass::~MapSeedClass
+
+// FUNCTION: 0x005AC340 ?$PriorityQueueClass@UCellNode@@::~?$PriorityQueueClass@UCellNode@@
+template class PriorityQueueClass<CellNode>;
+
+// FUNCTION: 0x005AC370 ?$TPoint2D@F::operator!=
+template class TPoint2D<short>;
+
+// FUNCTION: 0x005AC3A0 ?$DynamicVectorClass@PAVMapRegionClass@@::Clear
+// FUNCTION: 0x005AC3D0 ?$DynamicVectorClass@PAVMapRegionClass@@::ID
+// FUNCTION: 0x005AC3F0 ?$VectorClass@PAVMapRegionClass@@::GetItem
+template class DynamicVectorClass<MapRegionClass *>;
+
+// FUNCTION: 0x005AC400 ?$TypeList@PBVBuildingTypeClass@@::?$TypeList@PBVBuildingTypeClass@@
+template class TypeList<BuildingTypeClass const *>;
+
+// FUNCTION: 0x005AC430 ?$DynamicVectorClass@PBVBuildingTypeClass@@::operator=
+template class DynamicVectorClass<BuildingTypeClass const *>;
+
+// FUNCTION: 0x005AC4C0 ?$DynamicVectorClass@PAU_WIN32_FIND_DATAA@@::Clear
+// FUNCTION: 0x005AC4F0 ?$DynamicVectorClass@PAU_WIN32_FIND_DATAA@@::ID
+// FUNCTION: 0x005AC510 ?$VectorClass@PAU_WIN32_FIND_DATAA@@::GetItem
+template class DynamicVectorClass<WIN32_FIND_DATAA *>;

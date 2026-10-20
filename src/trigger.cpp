@@ -201,12 +201,103 @@ bool TriggerClass::Spring(ObjectClass * object, Cell cell)
 	return(done);
 }
 
+// FUNCTION: 0x00726630
+TriggerClass * Find_Or_Make(TriggerTypeClass * trigtype)
+{
+	if (trigtype == NULL) return(NULL);
+
+	for (int index = 0; index < Triggers.Count(); index++) {
+		if (trigtype == Triggers[index]->Class) {
+			return(Triggers[index]);
+		}
+	}
+
+	TriggerClass * trig = new TriggerClass(trigtype);
+	return(trig);
+}
+
+// FUNCTION: 0x00726690
+void TriggerClass::Detach(AbstractClass const * target, bool all)
+{
+	if (Class == target) {
+		Class = NULL;
+	}
+	if (LinkedTo == target) {
+		LinkedTo = LinkedTo->LinkedTo;
+	}
+	if (House == target) {
+		House = NULL;
+	}
+}
+
+// FUNCTION: 0x007266C0
+void TriggerClass::Flag_Event_Tripped(int event)
+{
+	IsTripped |= (1 << event);
+}
+
+// FUNCTION: 0x007266E0
+void TriggerClass::Flag_Event_Untripped(int event)
+{
+	IsTripped &= ~(1 << event);
+}
+
+// FUNCTION: 0x00726700
+bool TriggerClass::Is_Event_Tripped(int event)
+{
+	return((IsTripped & (1 << event)) != 0);
+}
+
+// FUNCTION: 0x00726720
+void TriggerClass::Mark_To_Delete(void)
+{
+	IsToDelete = true;
+	ObjectsToDelete.Add(this);
+}
+
+// FUNCTION: 0x00726780
+bool TriggerClass::Is_Marked_To_Delete(void) const
+{
+	return(IsToDelete);
+}
+
+// FUNCTION: 0x00726790
+void TriggerClass::Compute_CRC(CRCEngine & crc) const
+{
+	BASECLASS::Compute_CRC(crc);
+
+	crc(Class->Fetch_ID());
+	if (LinkedTo != NULL) crc(LinkedTo->Fetch_ID());
+
+	crc(IsToDelete);
+	crc(IsActive);
+
+	crc((int)Timer);
+	crc(IsTripped);
+}
+
 // FUNCTION: 0x00726820
 HRESULT STDMETHODCALLTYPE TriggerClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
 	*retval = CLSID_TriggerClass;
 	return(S_OK);
+}
+
+// FUNCTION: 0x00726860
+HRESULT STDMETHODCALLTYPE TriggerClass::Load(IStream * stream)
+{
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		new (this) TriggerClass(NoInitClass());
+
+		Swizzle_Pointer(&Class);
+		Swizzle_Pointer(&LinkedTo);
+		Swizzle_Pointer(&House);
+
+		result = S_OK;
+	}
+	return(result);
 }
 
 // FUNCTION: 0x007268D0
@@ -217,4 +308,23 @@ HRESULT STDMETHODCALLTYPE TriggerClass::Save(IStream * stream, BOOL cleardirty)
 		result = S_OK;
 	}
 	return(result);
+}
+
+// FUNCTION: 0x007268F0
+void TriggerClass::Enable(void)
+{
+	IsActive = true;
+	Reset_All_Timed_Events();
+}
+
+// FUNCTION: 0x00726900
+void TriggerClass::Disable(void)
+{
+	IsActive = false;
+}
+
+// FUNCTION: 0x00726910
+HouseClass * TriggerClass::Get_House(void) const
+{
+	return(House);
 }

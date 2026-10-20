@@ -204,7 +204,6 @@ struct NodeNameType {
 	union {
 		struct {
 			unsigned char IsOpen;
-			unsigned char Addon;
 			unsigned int LastTime;
 		} Game;
 		struct {

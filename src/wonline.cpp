@@ -13,10 +13,14 @@
 #include "wstring.h"
 #include "widewstring.h"
 #include "ipxaddr.h"
+#include "ccini.h"
+#include "rawfile.h"
+#include "theme.h"
 
 #include <windows.h>
 #undef LoadString
 #include <ole2.h>
+#include <shellapi.h>
 #include <stddef.h>
 #include <string.h>
 #include <wchar.h>
@@ -410,8 +414,8 @@ bool __fastcall FUN_0077D490(User * a, User * b)
 		return true;
 }
 
-extern char DAT_00B76AF0;
-extern char DAT_00B73AD0;
+extern bool DAT_00B76AF0;
+extern bool DAT_00B73AD0;
 extern Wstring DAT_00B73E40;
 
 // FUNCTION: 0x0077D4C0
@@ -573,7 +577,10 @@ struct WolChannel {
 	char Pad2[8];
 	unsigned int Reserved : 8;
 	unsigned int Clan : 1;
-	unsigned int Rest : 23;
+	unsigned int Pad3 : 2;
+	unsigned int FlagB : 1;
+	unsigned int FlagC : 1;
+	unsigned int Rest : 20;
 };
 
 extern WolChannel DAT_00B76B10;
@@ -618,4 +625,264 @@ bool __fastcall FUN_0077D990(WolChannel * chan)
 		return false;
 	}
 	return chan->Clan;
+}
+
+// FUNCTION: 0x0077D9B0
+bool __fastcall FUN_0077D9B0(WolChannel * chan)
+{
+	if (Session.Type != GAME_INTERNET) {
+		return false;
+	}
+	return chan->FlagB;
+}
+
+// FUNCTION: 0x0077D9D0
+bool __fastcall FUN_0077D9D0(WolChannel * chan)
+{
+	if (Session.Type != GAME_INTERNET) {
+		return false;
+	}
+	return chan->FlagC;
+}
+
+// FUNCTION: 0x0077D9F0
+// FUNCTION: 0x0077DA10
+Wstring DAT_00B73E40;
+
+// FUNCTION: 0x0077DA20
+// FUNCTION: 0x0077DA40
+Wstring DAT_00B7778C;
+
+extern int DAT_00B779C4;
+char * __fastcall FUN_007350C0(wchar_t const * text);
+
+// FUNCTION: 0x0077DA50
+LadderA * __fastcall FUN_0077DA50(wchar_t const * name)
+{
+	Wstring key(FUN_007350C0(name));
+	key.toLower();
+	LadderA * result = new LadderA;
+	if (!result) {
+		return NULL;
+	}
+	memset(result, 0, sizeof(LadderA));
+	LadderA * found = NULL;
+	if (DAT_00B779C4 != 2) {
+		if (DAT_00B77D80.getPointer(key, &found) && found) {
+			*result = *found;
+		}
+	} else {
+		if (DAT_00B768C0.getPointer(key, &found) && found) {
+			*result = *found;
+		}
+	}
+	return result;
+}
+
+struct NSSlotName;
+extern NSSlotName * DAT_00A8DA90[8];
+bool __fastcall FUN_005E93F0(NSSlotName * slot);
+Wstring __fastcall FUN_005EDEF0(NSSlotName * slot);
+
+struct ChatSink {
+	virtual void V00(void);
+	virtual void V01(void);
+	virtual void V02(void);
+	virtual void V03(void);
+	virtual void V04(void);
+	virtual void V05(void);
+	virtual void V06(void);
+	virtual void V07(void);
+	virtual void V08(void);
+	virtual void V09(void);
+	virtual void V10(void);
+	virtual void V11(void);
+	virtual void V12(void);
+	virtual void V13(void);
+	virtual void V14(void);
+	virtual long __stdcall V15(char * text);
+	virtual void V16(void);
+	virtual void V17(void);
+	virtual void V18(void);
+	virtual void V19(void);
+	virtual void V20(void);
+	virtual void V21(void);
+	virtual void V22(void);
+	virtual void V23(void);
+	virtual void V24(void);
+	virtual void V25(void);
+	virtual long __stdcall V26(int find, int page);
+	virtual void V27(void);
+	virtual void V28(void);
+	virtual void V29(void);
+	virtual void V30(void);
+	virtual long __stdcall V31(int filter);
+};
+extern ChatSink * DAT_00AC116C;
+
+// FUNCTION: 0x0077DB90
+void FUN_0077DB90(void)
+{
+	char list[256];
+	strcpy(list, "L");
+	for (int i = 0; i < 8; i++) {
+		NSSlotName * slot = DAT_00A8DA90[i];
+		Wstring name;
+		if (FUN_005E93F0(slot)) {
+			WideWstring wide((wchar_t *)slot);
+			name = FUN_007B7F90(wide);
+		} else {
+			name = FUN_005EDEF0(slot);
+		}
+		strncat(list, name.get(), 0x100);
+		strncat(list, ",", 0x100);
+	}
+	DAT_00AC116C->V15(list);
+}
+
+int ODMessageBox(const wchar_t * text, int type, void (*callback)(void), bool large);
+extern char DAT_00A8ED80;
+extern HWND DAT_00B73550;
+int __cdecl FUN_007CD455(const char * path);
+
+// FUNCTION: 0x0077DC90
+void __fastcall FUN_0077DC90(const char * name, int no_ask)
+{
+	char filename[160];
+	tmpnam(filename);
+	strcat(filename, ".html");
+
+	FILE * file = fopen(filename, "w");
+	fprintf(file, "<title>Hi there.</title>");
+	fclose(file);
+
+	char exeName[MAX_PATH + 1];
+	int result = (int)FindExecutable(filename, NULL, exeName);
+
+	FUN_007CD455(filename);
+
+	if ((result > 32) && (no_ask || (ODMessageBox(StringTable::LoadString("TXT_LAUNCHBROWSER", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x576), 4, FUN_0077D710, 0) == IDYES))) {
+		char commandLine[MAX_PATH + 10];
+		sprintf(commandLine, "[open] %s", name);
+
+		STARTUPINFO startupInfo;
+		memset(&startupInfo, 0, sizeof(startupInfo));
+		startupInfo.cb = sizeof(startupInfo);
+
+		PROCESS_INFORMATION processInfo;
+
+		BOOL createSuccess = CreateProcess(exeName, commandLine, NULL, NULL, FALSE, 0, NULL, NULL, &startupInfo, &processInfo);
+
+		if (createSuccess) {
+			HANDLE process = processInfo.hProcess;
+			if (process) {
+				int done_waiting = FALSE;
+
+				FUN_0077F900();
+
+				WaitForInputIdle(process, 5000);
+
+				while (!done_waiting) {
+					FUN_0077F900();
+					Sleep(500);
+
+					DWORD exitCode;
+					GetExitCodeProcess(process, &exitCode);
+					if (exitCode != STILL_ACTIVE) {
+						done_waiting = TRUE;
+					}
+
+					if (DAT_00A8ED80 || GetTopWindow(NULL) == DAT_00B73550 || GetForegroundWindow() == DAT_00B73550) {
+						done_waiting = TRUE;
+					}
+					FUN_0077F900();
+				}
+
+				FUN_0077F900();
+
+				if (GetTopWindow(NULL) != DAT_00B73550) {
+					FUN_0077F900();
+					SetForegroundWindow(DAT_00B73550);
+					ShowWindow(DAT_00B73550, SW_RESTORE);
+					FUN_0077F900();
+				}
+
+				int waits = 10;
+				while (waits) {
+					Sleep(100);
+					FUN_0077F900();
+					waits--;
+				};
+			}
+			return;
+		}
+	} else if (result <= 32) {
+		ODMessageBox(StringTable::LoadString("TXT_NOBROWSER", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x5BA), 0, FUN_0077D710, 0);
+	}
+}
+
+extern CCINIClass DAT_008870C0;
+extern int DAT_00B76234;
+extern int DAT_00B779F0;
+extern int DAT_00B779BC;
+extern int DAT_00B7690C;
+extern int DAT_00B77784;
+extern int DAT_00B779DC;
+extern int DAT_00B779C0;
+void FUN_005EE190(void);
+void FUN_005EE1B0(void);
+void __fastcall FUN_005EE350(int arg);
+
+// FUNCTION: 0x0077DED0
+void FUN_0077DED0(void)
+{
+	DAT_00B76234 = DAT_008870C0.Get_Int("WOnline", "AllowPage", 1);
+	DAT_00B779F0 = DAT_008870C0.Get_Int("WOnline", "AllowFind", 1);
+	DAT_00B779BC = DAT_008870C0.Get_Int("WOnline", "LangFilter", 1);
+	DAT_00B7690C = DAT_008870C0.Get_Int("WOnline", "LobMusic", 1);
+	DAT_00B77784 = DAT_008870C0.Get_Int("WOnline", "ShowAll", 1);
+	DAT_00B779DC = DAT_008870C0.Get_Int("WOnline", "DisplayAsian", 1);
+	DAT_00B779C0 = DAT_008870C0.Get_Int("WOnline", "DisplayLatin", 1);
+	DAT_00B76AF0 = DAT_008870C0.Get_Bool("WOnline", "DisplayBuddies", false);
+	DAT_00B73AD0 = DAT_008870C0.Get_Bool("WOnline", "DisplayClan", false);
+	FUN_005EE190();
+}
+
+// FUNCTION: 0x0077DFD0
+void FUN_0077DFD0(void)
+{
+	RawFileClass file("RA2MD.INI");
+	DAT_008870C0.Put_Int("WOnline", "AllowPage", DAT_00B76234);
+	DAT_008870C0.Put_Int("WOnline", "AllowFind", DAT_00B779F0);
+	DAT_008870C0.Put_Int("WOnline", "LangFilter", DAT_00B779BC);
+	DAT_008870C0.Put_Int("WOnline", "LobMusic", DAT_00B7690C);
+	DAT_008870C0.Put_Int("WOnline", "ShowAll", DAT_00B77784);
+	DAT_008870C0.Put_Int("WOnline", "DisplayAsian", DAT_00B779DC);
+	DAT_008870C0.Put_Int("WOnline", "DisplayLatin", DAT_00B779C0);
+	DAT_008870C0.Put_Bool("WOnline", "DisplayBuddies", DAT_00B76AF0);
+	DAT_008870C0.Put_Bool("WOnline", "DisplayClan", DAT_00B73AD0);
+	DAT_008870C0.Save(file, false);
+	FUN_005EE1B0();
+}
+
+// FUNCTION: 0x0077E110
+void FUN_0077E110(void)
+{
+	if (DAT_00AC116C) {
+		DAT_00AC116C->V31(DAT_00B779BC);
+		DAT_00AC116C->V26(DAT_00B779F0, DAT_00B76234);
+	}
+	FUN_005EE350(0);
+	bool music = DAT_00B7690C != 0;
+	if (music && Theme.Still_Playing() == false) {
+		Theme.Stop();
+		Theme.Queue_Song(THEME_PICK_ANOTHER);
+	} else if (music) {
+		if (Theme.What_Is_Playing() == Theme.From_Name("INTRO")) {
+			Theme.Stop();
+			Theme.Queue_Song(THEME_PICK_ANOTHER);
+		}
+	} else {
+		Theme.Fade_Out();
+	}
 }

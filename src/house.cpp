@@ -79,6 +79,8 @@
 
 extern DynamicVectorClass<TechnoClass *> DAT_00A8EC78;
 #define Technos DAT_00A8EC78
+extern DynamicVectorClass<FootClass *> DAT_008B3DC0;
+#define Foots DAT_008B3DC0
 extern DynamicVectorClass<FactoryClass *> DAT_00A83E30;
 namespace Unsorted { extern int CurrentFrame; extern int MuteSWLaunches; extern Cell CellSpreadTable[]; extern bool SWAllowed; }
 #define Factories DAT_00A83E30
@@ -4542,6 +4544,125 @@ void HouseClass::RespawnStartingBuildings(void)
 			}
 		}
 	}
+}
+
+// FUNCTION: 0x0050D560
+void HouseClass::FUN_0050D560(TechnoTypeClass const * type, Cell cell)
+{
+	StartingTechnoStruct * entry = new StartingTechnoStruct;
+	entry->CellID = cell;
+	entry->Type = type;
+	StartingUnits.Add(entry);
+}
+
+// FUNCTION: 0x0050D5D0
+void HouseClass::FUN_0050D5D0(void)
+{
+	for (int index = StartingUnits.Count() - 1; index >= 0; index--) {
+		delete StartingUnits[index];
+	}
+	StartingUnits.Clear();
+}
+
+// FUNCTION: 0x0050D610
+void HouseClass::FUN_0050D610(void)
+{
+	for (int index = Technos.Count() - 1; index >= 0; index--) {
+		TechnoClass * techno = Technos[index];
+		if (techno->House == this) {
+			Cell cell = techno->Get_Cell();
+			TechnoTypeClass const * type = techno->Techno_Type_Class();
+			StartingTechnoStruct * entry = new StartingTechnoStruct;
+			entry->Type = type;
+			entry->CellID = cell;
+			StartingUnits.Add(entry);
+		}
+	}
+}
+
+// FUNCTION: 0x0050D6D0
+void HouseClass::FUN_0050D6D0(Cell cell)
+{
+	if (cell == CELL_NONE) {
+		return;
+	}
+	int spread = 0;
+	for (int index = Foots.Count() - 1; index >= 0; index--) {
+		FootClass * foot = Foots[index];
+		Cell trycell = cell + Unsorted::CellSpreadTable[spread];
+		if (foot->House == this && foot != NULL && foot->Fetch_RTTI() == RTTI_UNIT && foot->Transporter == NULL) {
+			while (foot->Can_Enter_Cell(&Map[trycell]) != MOVE_OK) {
+				spread++;
+				if (spread > 0x15E) {
+					return;
+				}
+				trycell = cell + Unsorted::CellSpreadTable[spread];
+			}
+			if (foot->ChronoWarpTo(Map[trycell].Center_Coord())) {
+				spread++;
+				if (spread > 0x15E) {
+					return;
+				}
+			}
+		} else if (foot->House == this && foot != NULL && foot->Fetch_RTTI() == RTTI_INFANTRY && foot->Transporter == NULL) {
+			while (foot->Can_Enter_Cell(&Map[trycell]) != MOVE_OK) {
+				spread++;
+				if (spread > 0x15E) {
+					return;
+				}
+				trycell = cell + Unsorted::CellSpreadTable[spread];
+			}
+			if (foot->ChronoWarpTo(Map[trycell].Closest_Free_Spot(Map[trycell].Center_Coord(), false, false, false))) {
+				spread++;
+				if (spread > 0x15E) {
+					return;
+				}
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x0050D9C0
+bool HouseClass::FUN_0050D9C0(void) const
+{
+	return InfantrySelfHeal > 0;
+}
+
+// FUNCTION: 0x0050D9D0
+bool HouseClass::FUN_0050D9D0(void) const
+{
+	return UnitsSelfHeal > 0;
+}
+
+// FUNCTION: 0x0050D9E0
+int HouseClass::GetInfSelfHealStep(void) const
+{
+	return Rule->SelfHealInfantryAmount * InfantrySelfHeal;
+}
+
+// FUNCTION: 0x0050D9F0
+int HouseClass::GetUnitSelfHealStep(void) const
+{
+	return Rule->SelfHealUnitAmount * UnitsSelfHeal;
+}
+
+// FUNCTION: 0x0050DA00
+void HouseClass::FUN_0050DA00(Cell cell)
+{
+	PreferredTargetCell = cell;
+}
+
+// FUNCTION: 0x0050DA10
+void HouseClass::FUN_0050DA10(void)
+{
+	PreferredTargetCell = CELL_NONE;
+}
+
+// FUNCTION: 0x0050DA20
+void HouseClass::FUN_0050DA20(Cell cell)
+{
+	PreferredDefensiveCell = cell;
+	PreferredDefensiveCellStartTime = Unsorted::CurrentFrame;
 }
 
 // FUNCTION: 0x0050E000

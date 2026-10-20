@@ -22,3 +22,194 @@
 // FUNCTION: 0x00430150 $E38
 // FUNCTION: 0x00430170 $E41
 
+#include "_convert.h"
+#include "mouse.h"
+#include <windows.h>
+#include <mmsystem.h>
+#include <wchar.h>
+#include "beacon.h"
+#include "bitfont.h"
+#include "convert.h"
+#include "draw.h"
+#include "dsurface.h"
+#include "globals.h"
+#include "house.h"
+#include "scheme.h"
+#include "shapeset.h"
+#include "surface.h"
+#include "tactical.h"
+
+namespace Drawing { Rect __fastcall Intersect(Rect const & a, Rect const & b, int * x, int * y); }
+extern Tactical * TacticalMap;
+extern MouseClass Map;
+extern bool DAT_00A8BC79;
+extern ShapeSet * BeaconArt;
+extern ShapeSet * RadarBeaconArt;
+namespace Unsorted { extern int CurrentFrame; }
+
+// FUNCTION: 0x00430190 $E126
+// FUNCTION: 0x004301C0 $E124
+BeaconManagerClass BeaconManager;
+
+BeaconManagerClass::BeaconManagerClass(void)
+{
+	memset(Beacons, 0, sizeof(Beacons));
+	AllocatedCount = 0;
+	RadarBeaconAnimPeriod = 0;
+}
+
+void BeaconManagerClass::Reset(void)
+{
+	if (AllocatedCount) {
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 3; j++) {
+				if (Beacons[i][j]) {
+					delete Beacons[i][j];
+					Beacons[i][j] = 0;
+				}
+			}
+		}
+		AllocatedCount = 0;
+	}
+}
+
+// FUNCTION: 0x00430210
+BeaconClass::BeaconClass(void)
+{
+	BeaconCoord = COORD_NONE;
+	IsActive = 0;
+	IsFlashing = 0;
+	memset(Text, 0, sizeof(Text));
+}
+
+// FUNCTION: 0x00430250
+void BeaconClass::Draw(Surface * surface, Rect bounds)
+{
+	ColorScheme * scheme = ColorSchemes[Houses[HouseID]->Scheme];
+	Point2D pt;
+	if (!TacticalMap->Coord_To_Pixel(BeaconCoord, pt)) {
+		return;
+	}
+
+	int half = BeaconManager.BeaconFrameCount / 2;
+	Draw_Shape(*surface, *(ConvertClass *)scheme->Converter, BeaconArt, Unsorted::CurrentFrame % half + (IsFlashing ? half : 0), pt, bounds, (ShapeFlags_Type)0x600, 0, 0, ZGRAD_GROUND, 1000, 0, 0, 0, Point2D(0, 0));
+
+	if (wcslen(Text) == 0) {
+		return;
+	}
+	wchar_t text[128];
+	memcpy(text, Text, sizeof(text));
+
+	if (IsFlashing) {
+		if (DAT_00A8BC79 && timeGetTime() % 500 < 250) {
+			wchar_t * cursor = wcsrchr(text, L'_');
+			if (cursor && wcslen(cursor) == 1) {
+				*cursor = L' ';
+			}
+		}
+	}
+	if (!IsFlashing || !DAT_00A8BC79) {
+		wchar_t * cursor = wcsrchr(text, L'_');
+		if (!cursor || wcslen(cursor) != 1) {
+			cursor = wcsrchr(text, L' ');
+			if (cursor && wcslen(cursor) == 1) {
+				*cursor = 0;
+			}
+		} else {
+			*cursor = 0;
+		}
+	}
+
+	BitFont * font = BitFont::Instance;
+	int width = 0;
+	int height = 0;
+	font->GetTextDimension(text, &width, &height, 200);
+	Rect box(pt.X - width / 2 - 4, pt.Y + 32, width + 8, height + 8);
+	RGBClass rgb = scheme->HSV;
+	Rect clip = Drawing::Intersect(box, bounds, 0, 0);
+	int color = DSurface::Build_Hicolor_Pixel(rgb);
+	surface->Fill_Rect(clip, 0);
+	surface->Draw_Rect(clip, color);
+	font->SetClipMode(true);
+	LTRBStruct ltrb = { bounds.X, bounds.Y, bounds.X + bounds.Width - 1, bounds.Y + bounds.Height - 1 };
+	font->SetBounds(&ltrb);
+	font->SetColor(color);
+	BitText::Instance->DrawText(font, surface, text, box.X + 4, box.Y + 4, 200, box.Height, false, 0, 0);
+}
+
+// FUNCTION: 0x00430580
+void __stdcall FUN_00430580(int, int, int, int, int, int, int)
+{
+}
+
+// FUNCTION: 0x00430590
+void BeaconClass::SetCoordAndHouse(Coord coord, int house)
+{
+	if (!(coord == COORD_NONE)) {
+		BeaconCoord = coord;
+	}
+	if (house < 8) {
+		HouseID = house;
+		IsActive = 1;
+	}
+}
+
+// FUNCTION: 0x004305E0
+void BeaconClass::SetFlashing(bool flashing)
+{
+	IsFlashing = flashing;
+}
+
+// FUNCTION: 0x00430600
+void FUN_00430600(void)
+{
+}
+
+// FUNCTION: 0x00430610
+void BeaconClass::ClearActive(void)
+{
+	IsActive = 0;
+}
+
+// FUNCTION: 0x00430620
+void BeaconClass::SetText(wchar_t const * text)
+{
+	memset(Text, 0, sizeof(Text));
+	if (text) {
+		wcsncpy(Text, text, 127);
+	}
+}
+
+// FUNCTION: 0x00430650
+void BeaconClass::DrawRadar(Surface * surface, Rect bounds, bool toclear)
+{
+	int frame = Unsorted::CurrentFrame % BeaconManager.RadarBeaconAnimPeriod;
+	if (frame >= BeaconManager.RadarBeaconFrameCount + 1 && !toclear) {
+		return;
+	}
+
+	Point2D pt = Map.Coord_To_Radar_Pixel(BeaconCoord, true);
+	if (frame < BeaconManager.RadarBeaconFrameCount && !toclear) {
+		Draw_Shape(*surface, *(ConvertClass *)ColorSchemes[Houses[HouseID]->Scheme]->Converter, RadarBeaconArt, frame, pt, bounds, (ShapeFlags_Type)0x600, 0, 0, ZGRAD_GROUND, 1000, 0, 0, 0, Point2D(0, 0));
+	}
+
+	int w = BeaconManager.RadarBeaconSize.X;
+	int h = BeaconManager.RadarBeaconSize.Y;
+	Rect box(pt.X - w / 2, pt.Y - h / 2, w, h);
+	Map.LastDrawRect = Drawing::Intersect(Union(Map.LastDrawRect, box.Bias_To(Map.RadarRect)), Map.RadarRect, 0, 0);
+
+	for (int y = box.Y; y < box.Y + h; y++) {
+		for (int x = box.X; x < box.X + w; x++) {
+			Map.Radar_Pixel(Point2D(x, y));
+		}
+	}
+}
+
+// FUNCTION: 0x004308B0
+bool BeaconClass::VisibleToPlayer(void) const
+{
+	if (IsActive && PlayerPtr->Is_Ally((HousesType)HouseID) && Houses[HouseID]->Is_Ally(PlayerPtr) && !Houses[HouseID]->IsDefeated) {
+		return true;
+	}
+	return false;
+}

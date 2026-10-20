@@ -77,6 +77,9 @@ struct RecoilData
 		TravelSoFar = 0;
 		State = 0;
 	}
+
+	void Fire(void);
+	void Update(void);
 };
 
 struct YRVectorData
@@ -392,6 +395,8 @@ class TechnoClass : public RadioClass
 		int GetEffectTintIntensity(int brightness) const;
 		int GetInvulnerabilityTintIntensity(int brightness) const;
 		int GetAirstrikeTintIntensity(int brightness) const;
+		void FUN_0070E5A0(void);
+		void FUN_0070E920(void);
 		int FUN_0070DDF0(void);
 		int FUN_007011A0(void);
 		bool FUN_0070DC50(void) const;

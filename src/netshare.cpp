@@ -1448,6 +1448,9 @@ struct NSSlotName
 	void FUN_00696F90(int country);
 	void FUN_00696FC0(int color);
 	void FUN_00696FF0(int start);
+	void FUN_00697020(int value);
+	int FUN_00696F10(void);
+	int FUN_00696F70(void);
 };
 #pragma pack(pop)
 extern wchar_t const * DAT_00AC117C;
@@ -1522,12 +1525,12 @@ extern NSSlotName * DAT_00A8DA90[8];
 extern int DAT_00A8DA8C;
 extern int DAT_00A8B250;
 void __fastcall FUN_0069B540(int * options);
-extern short DAT_00AC0D44;
-extern short DAT_00AC0B94;
-extern char DAT_00AC0AC8;
-extern char DAT_00AC0AEC;
-extern char DAT_00AC0EA4;
-extern char DAT_00AC0B10;
+extern wchar_t DAT_00AC0D44[];
+extern wchar_t DAT_00AC0B94[];
+extern char DAT_00AC0AC8[];
+extern char DAT_00AC0AEC[];
+extern char DAT_00AC0EA4[];
+extern char DAT_00AC0B10[];
 
 // FUNCTION: 0x005E8A20
 void FUN_005E8A20(void)
@@ -1579,10 +1582,10 @@ void FUN_005E8AE0(void)
 // FUNCTION: 0x005E8B40
 void FUN_005E8B40(void)
 {
-	DAT_00AC0AC8 = 0;
-	DAT_00AC0AEC = 0;
-	DAT_00AC0EA4 = 0;
-	DAT_00AC0B10 = 0;
+	DAT_00AC0AC8[0] = 0;
+	DAT_00AC0AEC[0] = 0;
+	DAT_00AC0EA4[0] = 0;
+	DAT_00AC0B10[0] = 0;
 }
 
 // FUNCTION: 0x005E8B60
@@ -1598,8 +1601,8 @@ void FUN_005E8B60(void)
 	}
 	DAT_00A8DA8C = -1;
 	FUN_0069B540(&DAT_00A8B250);
-	DAT_00AC0D44 = 0;
-	DAT_00AC0B94 = 0;
+	DAT_00AC0D44[0] = 0;
+	DAT_00AC0B94[0] = 0;
 }
 
 // FUNCTION: 0x005E8BF0
@@ -2268,3 +2271,260 @@ void __fastcall FUN_005E9CE0(HWND dialog, int combo)
 	}
 	DAT_00A8B2DC[slot] = start;
 }
+
+void __fastcall FUN_005EB060(HWND dialog);
+void FUN_007A0E50(void);
+void __fastcall FUN_005EAB30(char * buffer);
+void __fastcall FUN_005EAC00(char * buffer);
+void __fastcall FUN_005EACD0(char * buffer);
+void __fastcall FUN_005EAEE0(HWND dialog);
+void __fastcall FUN_005EADA0(HWND dialog);
+void __fastcall FUN_005EAE40(HWND dialog);
+extern char DAT_00AC0B6C[];
+extern char DAT_00AC0A9C[];
+extern char DAT_00AC0B48[];
+extern char DAT_00AC0278[];
+int __fastcall FUN_004E3320(int index);
+int __fastcall FUN_004E3560(int index);
+int __fastcall FUN_005EA920(int index);
+int __fastcall FUN_005EA9B0(int index);
+int __fastcall FUN_005EAA10(int index);
+int __fastcall FUN_005EAA70(int index);
+int __fastcall FUN_004E6030(HWND dialog, int id, int flag);
+int __fastcall FUN_004E59A0(int id);
+void __fastcall FUN_004E5ED0(HWND dialog, int id, int value);
+int __fastcall FUN_004E5940(int id);
+int __fastcall FUN_004E4E60(int id);
+void __fastcall FUN_004E3F70(HWND dialog, int id, int value);
+void __fastcall FUN_004E5480(HWND dialog, int id, int value);
+extern int DAT_00A8B2FC[8];
+
+// FUNCTION: 0x005E9DB0
+void __fastcall FUN_005E9DB0(HWND dialog, int combo)
+{
+	int value = FUN_004E6030(dialog, combo, -1);
+	int slot = FUN_004E59A0(combo);
+	if (slot == DAT_00A8DA8C) {
+		FUN_004E5ED0(dialog, combo, value);
+		if (DAT_00A8DA84) {
+			((NSSlotName **)DAT_00A8DA78)[0]->FUN_00697020(value);
+		}
+		return;
+	}
+	DAT_00A8B2FC[slot] = value;
+}
+
+// FUNCTION: 0x005E9E00
+void __fastcall FUN_005E9E00(HWND dialog)
+{
+	for (int i = 0; i < 8; i++) {
+		int combo = FUN_004E5940(i);
+		int value = FUN_004E6030(dialog, combo, -1);
+		int slot = FUN_004E59A0(combo);
+		if (slot == DAT_00A8DA8C) {
+			FUN_004E5ED0(dialog, combo, value);
+			if (DAT_00A8DA84) {
+				((NSSlotName **)DAT_00A8DA78)[0]->FUN_00697020(value);
+			}
+		} else {
+			DAT_00A8B2FC[slot] = value;
+		}
+	}
+}
+
+// FUNCTION: 0x005E9E70
+void __fastcall FUN_005E9E70(HWND dialog, int slot, bool enable)
+{
+	int country = FUN_004E37D0(slot);
+	int color = FUN_004E41D0(slot);
+	int start = FUN_004E4E60(slot);
+	int team = FUN_004E5940(slot);
+
+	if (DAT_008316A4 >= 0 && slot == DAT_008316A4 && (DAT_00A8DA90[slot] == DAT_00AC11B4 || slot == 0 || DAT_00A8DA90[slot]->Id == -1)) {
+		FUN_004E3F70(dialog, country, -3);
+		FUN_004E49A0(dialog, color, -2);
+		FUN_004E5480(dialog, start, -2);
+		FUN_004E5ED0(dialog, team, -2);
+		HWND item = GetDlgItem(dialog, country);
+		EnableWindow(item, 0);
+		item = GetDlgItem(dialog, color);
+		EnableWindow(item, 0);
+		ShowWindow(item, SW_HIDE);
+		item = GetDlgItem(dialog, start);
+		EnableWindow(item, 0);
+		ShowWindow(item, SW_HIDE);
+		item = GetDlgItem(dialog, team);
+		EnableWindow(item, 0);
+		ShowWindow(item, SW_HIDE);
+		return;
+	}
+	if (!enable) {
+		FUN_004E3F70(dialog, country, -2);
+		FUN_004E49A0(dialog, color, -2);
+		FUN_004E5480(dialog, start, -2);
+		FUN_004E5ED0(dialog, team, -2);
+	}
+	HWND countryItem = GetDlgItem(dialog, country);
+	EnableWindow(countryItem, enable);
+	HWND colorItem = GetDlgItem(dialog, color);
+	EnableWindow(colorItem, enable);
+	HWND startItem = GetDlgItem(dialog, start);
+	EnableWindow(startItem, enable);
+	HWND teamItem = GetDlgItem(dialog, team);
+	if (enable && DAT_00A8B23C && !DAT_00A8B23C->AlliesAllowed) {
+		EnableWindow(teamItem, 0);
+	} else {
+		EnableWindow(teamItem, enable);
+	}
+
+	int limit = FUN_005E64C0(DAT_00A8B254);
+	if (!DAT_008316A4 && limit < 7) {
+		limit++;
+	}
+	if (slot < limit || slot == DAT_008316A4) {
+		ShowWindow(colorItem, SW_SHOW);
+		ShowWindow(startItem, SW_SHOW);
+		if (Session.Type != GAME_INTERNET || !FUN_0077D970()) {
+			ShowWindow(teamItem, SW_SHOW);
+		}
+	}
+}
+
+static inline int Slot_Ctrl(int i)
+{
+	return(FUN_005E98F0(i));
+}
+
+// FUNCTION: 0x005EA0D0
+void __fastcall FUN_005EA0D0(HWND dialog, int arg)
+{
+	for (int i = 0; i < 8; i++) {
+		HWND item = GetDlgItem(dialog, FUN_005E98F0(i));
+		EnableWindow(item, 1);
+		FUN_005E9E70(dialog, i, false);
+	}
+	FUN_005E9E70(dialog, arg, true);
+}
+
+// FUNCTION: 0x005EA180
+void __fastcall FUN_005EA180(HWND dialog, int arg)
+{
+	for (int i = 0; i < 8; i++) {
+		HWND item = GetDlgItem(dialog, FUN_005E98F0(i));
+		EnableWindow(item, 0);
+		FUN_005E9E70(dialog, i, false);
+	}
+	HWND last = GetDlgItem(dialog, FUN_005E98F0(arg));
+	EnableWindow(last, 1);
+	FUN_005E9E70(dialog, arg, true);
+}
+
+struct PCX
+{
+	static PCX Instance;
+	int GetSurface(char const * name, void * palette);
+};
+extern char * DAT_008316CC;
+extern char * DAT_008316D0;
+void __fastcall FUN_00603D30(HWND item, int surface);
+int __fastcall FUN_005EAAD0(int index)
+{
+	if (index == 0) return(0x6d2);
+	if (index == 1) return(0x6d3);
+	if (index == 2) return(0x6d4);
+	if (index == 3) return(0x6d5);
+	if (index == 4) return(0x6d6);
+	if (index == 5) return(0x6d7);
+	if (index == 6) return(0x6d8);
+	if (index == 7) return(0x6d9);
+	return(-1);
+}
+int __fastcall FUN_005EA8E0(int index);
+
+// FUNCTION: 0x005EA2A0
+void __fastcall FUN_005EA2A0(HWND dialog)
+{
+	for (int i = 0; i < 8; i++) {
+		HWND item = GetDlgItem(dialog, FUN_005EAAD0(i));
+		int surface = 0;
+		NSSlotName * node = DAT_00A8DA90[i];
+		if (FUN_005E93F0(node) && wcscmp(node->Name, DAT_00A8D610) == 0) {
+			surface = PCX::Instance.GetSurface(DAT_008316CC, NULL);
+		} else if (FUN_005EA8E0(i) == 1) {
+			surface = PCX::Instance.GetSurface(DAT_008316D0, NULL);
+		}
+		FUN_00603D30(item, surface);
+	}
+}
+
+// FUNCTION: 0x005EA8E0
+int __fastcall FUN_005EA8E0(int index)
+{
+	int result = 0;
+	NSSlotName * node = DAT_00A8DA90[index];
+	if ((node && (node == DAT_00AC11A4 || node == DAT_00AC11A8 || node == DAT_00AC11AC)) || node->Flag77 == 1) {
+		result = 1;
+	}
+	return(result);
+}
+
+// FUNCTION: 0x005EA920
+int __fastcall FUN_005EA920(int index)
+{
+	int result = -2;
+	NSSlotName * node = DAT_00A8DA90[index];
+	if (DAT_00A8B23C && (Session.Type == 3 || Session.Type == GAME_INTERNET)) {
+		result = DAT_00A8B23C->vt_entry_28();
+	}
+	if (node && (node == DAT_00AC11A4 || node == DAT_00AC11A8 || node == DAT_00AC11AC)) {
+		return(DAT_00A8B29C[index]);
+	}
+	if (node == DAT_00AC119C || node == DAT_00AC11A0 || node == DAT_00AC11B0) {
+		return(result);
+	}
+	if (node == DAT_00AC11B4) {
+		return(-3);
+	}
+	return(node->FUN_00696F10());
+}
+
+// FUNCTION: 0x005EA9B0
+int __fastcall FUN_005EA9B0(int index)
+{
+	NSSlotName * node = DAT_00A8DA90[index];
+	if (node && (node == DAT_00AC11A4 || node == DAT_00AC11A8 || node == DAT_00AC11AC)) {
+		return(DAT_00A8B2BC[index]);
+	}
+	if (node == DAT_00AC119C || node == DAT_00AC11A0 || node == DAT_00AC11B0 || node == DAT_00AC11B4) {
+		return(-2);
+	}
+	return(node->FUN_00696F20());
+}
+
+// FUNCTION: 0x005EAA10
+int __fastcall FUN_005EAA10(int index)
+{
+	NSSlotName * node = DAT_00A8DA90[index];
+	if (node && (node == DAT_00AC11A4 || node == DAT_00AC11A8 || node == DAT_00AC11AC)) {
+		return(DAT_00A8B2DC[index]);
+	}
+	if (node == DAT_00AC119C || node == DAT_00AC11A0 || node == DAT_00AC11B0 || node == DAT_00AC11B4) {
+		return(-2);
+	}
+	return(node->FUN_00696F50());
+}
+
+// FUNCTION: 0x005EAA70
+int __fastcall FUN_005EAA70(int index)
+{
+	NSSlotName * node = DAT_00A8DA90[index];
+	if (node && (node == DAT_00AC11A4 || node == DAT_00AC11A8 || node == DAT_00AC11AC)) {
+		return(DAT_00A8B2FC[index]);
+	}
+	if (node == DAT_00AC119C || node == DAT_00AC11A0 || node == DAT_00AC11B0 || node == DAT_00AC11B4) {
+		return(-2);
+	}
+	return(node->FUN_00696F70());
+}
+
+

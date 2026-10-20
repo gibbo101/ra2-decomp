@@ -22,6 +22,7 @@
 #include "vector.h"
 
 // FUNCTION: 0x006E4D60 $E62
+
 // FUNCTION: 0x006E4DA0 $E60
 DynamicVectorClass<TagClass *> Tags;
 
@@ -157,11 +158,157 @@ bool TagClass::Is_Allow_Win(void) const
 	return((Class != NULL && Class->Is_Allow_Win()) ? 1 : 0);
 }
 
+namespace Unsorted { extern bool ArmageddonMode; }
+
+// FUNCTION: 0x006E5380
+bool TagClass::Is_Trigger_Attached(TriggerClass *trigger) const
+{
+	TriggerClass * trigptr = Trigger;
+	while (trigptr != NULL) {
+		if (trigptr == trigger) {
+			return(true);
+		}
+		trigptr = trigptr->LinkedTo;
+	}
+	return(false);
+}
+
+// FUNCTION: 0x006E53A0
+bool TagClass::Spring(TEventType event, ObjectClass * object, Cell cell, bool forced, TechnoClass *source)
+{
+	bool res = false; /// was handled
+	bool die = false; /// to delete
+	bool det = false; /// to detach
+
+	if (Unsorted::ArmageddonMode || IsCurrentlySprung || IsToDie || Class == NULL) {
+		return(false);
+	}
+
+	TriggerClass *trigger = Trigger;
+
+	IsCurrentlySprung = true;
+
+	while (trigger != NULL) {
+		if (trigger->Should_Spring(event, object, forced, Class->Persistence == PERSISTENT, source)) {
+			switch (Class->Persistence) {
+
+				case VOLATILE:
+					trigger->Spring(object, cell);
+					trigger->Mark_To_Delete();
+					res = true;
+					die = true;
+					det = true;
+					break;
+
+				case SEMIPERSISTENT:
+					if (AttachCount == 1) {
+						trigger->Spring(object, cell);
+						trigger->Mark_To_Delete();
+						die = true;
+						res = true;
+						break;
+					}
+					det = true;
+					break;
+
+				case PERSISTENT:
+					trigger->Spring(object, cell);
+					res = true;
+					break;
+
+				default:
+					break;
+			}
+		}
+		trigger = trigger->LinkedTo;
+	}
+
+	IsCurrentlySprung = false;
+
+	if (det) {
+		if (object != NULL && object->Tag == this) {
+			object->Attach_Tag(NULL);
+		}
+		if (cell != CELL_NONE) {
+			Map[cell].Attach_Tag(NULL);
+		}
+	}
+
+	if (die) {
+		Detach_This_From_All(this, true);
+		ObjectsToDelete.Add(this);
+	}
+
+	return(res);
+}
+
+// FUNCTION: 0x006E5560
+void TagClass::Set_Position(Cell cell)
+{
+	CellID = cell;
+}
+
 // FUNCTION: 0x006E5570
 void TagClass::Init(void)
 {
 	while (Tags.Count() > 0) {
 		delete Tags[0];
+	}
+}
+
+// FUNCTION: 0x006E55A0
+void TagClass::Timer_Global_Reset(int global)
+{
+	Trigger->Reset_Global_Linked_Timed_Events(global);
+}
+
+// FUNCTION: 0x006E55B0
+void TagClass::Timer_Local_Reset(int local)
+{
+	Trigger->Reset_Local_Linked_Timed_Events(local);
+}
+
+// FUNCTION: 0x006E55C0
+void TagClass::Link(TriggerClass *trigger)
+{
+	trigger->LinkedTo = Trigger;
+	Trigger = trigger;
+}
+
+// FUNCTION: 0x006E55D0
+bool TagClass::Unlink(TriggerClass *trigger)
+{
+	if (trigger != NULL) {
+		if (Trigger == trigger) {
+			Trigger = trigger->LinkedTo;
+			return(true);
+		}
+		TriggerClass *trigptr = Trigger;
+		while (trigptr != NULL) {
+			if (trigptr->LinkedTo == trigger) {
+				trigptr->LinkedTo = trigger->LinkedTo;
+				return(true);
+			}
+			trigptr = trigptr->LinkedTo;
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x006E5610
+void TagClass::Detach(AbstractClass const * target, bool all)
+{
+
+	if (Class == target) {
+		Class = NULL;
+	}
+
+	if (Trigger == target) {
+		Trigger = Trigger->LinkedTo;
+	}
+
+	if (Class == NULL) {
+		Mark_To_Delete();
 	}
 }
 
@@ -173,6 +320,32 @@ HRESULT STDMETHODCALLTYPE TagClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
+// FUNCTION: 0x006E56E0
+void TagClass::Compute_CRC(CRCEngine & crc) const
+{
+	BASECLASS::Compute_CRC(crc);
+
+	crc(Class->Fetch_ID());
+	if (Trigger != NULL) crc(Trigger->Fetch_ID());
+
+	crc(IsToDie);
+}
+
+// FUNCTION: 0x006E5730
+HRESULT STDMETHODCALLTYPE TagClass::Load(IStream * stream)
+{
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		new (this) TagClass(NoInitClass());
+
+		Swizzle_Pointer(&Class);
+		Swizzle_Pointer(&Trigger);
+
+		result = S_OK;
+	}
+	return(result);
+}
+
 // FUNCTION: 0x006E57A0
 HRESULT STDMETHODCALLTYPE TagClass::Save(IStream * stream, BOOL cleardirty)
 {
@@ -181,4 +354,25 @@ HRESULT STDMETHODCALLTYPE TagClass::Save(IStream * stream, BOOL cleardirty)
 		result = S_OK;
 	}
 	return(result);
+}
+
+// FUNCTION: 0x006E57C0
+bool TagClass::Is_To_Inherit(void) const
+{
+	TriggerClass *trigger = Trigger;
+	while (trigger != NULL) {
+		if (trigger->Class->Is_To_Inherit()) {
+			return(true);
+		}
+		trigger = trigger->LinkedTo;
+	}
+	return(false);
+}
+
+// FUNCTION: 0x006E57F0
+void TagClass::All_Timer_Global_Reset(int global)
+{
+	for (int index = 0; index < Tags.Count(); index++) {
+		Tags[index]->Timer_Global_Reset(global);
+	}
 }

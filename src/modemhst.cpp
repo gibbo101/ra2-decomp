@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
 #include "modemhst.h"
 #include "_rules.h"
 #include "_timer.h"
@@ -34,6 +35,20 @@
 #include "trim.h"
 #include "winstub.h"
 #include "xpipe.h"
+
+// Initialisers of geometry.h constants.
+// FUNCTION: 0x005B75F0 $E2
+// FUNCTION: 0x005B7620 $E5
+// FUNCTION: 0x005B7640 $E8
+// FUNCTION: 0x005B7660 $E11
+// FUNCTION: 0x005B7680 $E14
+// FUNCTION: 0x005B76A0 $E17
+// FUNCTION: 0x005B76C0 $E20
+// FUNCTION: 0x005B7700 $E23
+// FUNCTION: 0x005B7730 $E26
+// FUNCTION: 0x005B7760 $E29
+// FUNCTION: 0x005B7790 $E32
+// FUNCTION: 0x005B77A0 $E35
 
 ModemHost * _ModemHost;
 
