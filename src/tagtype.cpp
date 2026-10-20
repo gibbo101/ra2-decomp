@@ -297,3 +297,20 @@ HRESULT STDMETHODCALLTYPE TagTypeClass::Save(IStream * stream, BOOL cleardirty)
 // FUNCTION: 0x006E64A0 TagTypeClass::Fetch_Object_Size
 
 // FUNCTION: 0x006E64B0 TagTypeClass::Fetch_Heap_ID
+
+// FUNCTION: 0x006E64C0 TagTypeClass::~TagTypeClass
+
+// FUNCTION: 0x006E64E0 ?$DynamicVectorClass@PAVTagTypeClass@@::Clear
+template class DynamicVectorClass<TagTypeClass *>;
+
+// FUNCTION: 0x006E6510 ?$DynamicVectorClass@PAVTagTypeClass@@::ID
+// FUNCTION: 0x006E6530 ?$VectorClass@PAVTagTypeClass@@::GetItem
+// FUNCTION: 0x006E6540 ?$VectorClass@PAVTagTypeClass@@::operator==
+// FUNCTION: 0x006E6580 ?$VectorClass@PAVTagTypeClass@@::Resize
+// FUNCTION: 0x006E6630 ?$VectorClass@PAVTagTypeClass@@::Clear
+// FUNCTION: 0x006E6660 ?$VectorClass@PAVTagTypeClass@@::ID
+// FUNCTION: 0x006E66A0 ?$VectorClass@PAVTagTypeClass@@::ID
+// FUNCTION: 0x006E66C0 ?$DynamicVectorClass@PAVTagTypeClass@@::Resize
+// FUNCTION: 0x006E6770 ?$DynamicVectorClass@PAVTagTypeClass@@::ID
+// FUNCTION: 0x006E67A0 ?$VectorClass@PAVTagTypeClass@@::~?$VectorClass@PAVTagTypeClass@@
+template class VectorClass<TagTypeClass *>;

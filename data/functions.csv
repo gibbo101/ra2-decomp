@@ -8115,8 +8115,7 @@ address,size,evidence,name
 0x00559C20,259,PCG,
 0x00559D30,34,P,
 0x00559D60,209,PVY,LoadOptionsClass::LoadMission
-0x00559E40,59,PV,
-0x00559E7B,46,Y,LoadOptionsClass::SaveMission
+0x00559E40,105,PV,
 0x00559EB0,20,PCVYG,LoadOptionsClass::DeleteMission
 0x00559ED0,379,PVY,LoadOptionsClass::GetFileEntry
 0x0055A050,23,PVY,LoadOptionsClass::GetUIString_Load

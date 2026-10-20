@@ -324,8 +324,10 @@ Each entry: what the diff showed, then the source change that fixed it.
   cut them to the comment rules (two `//` lines of behaviour) before landing.
 - `#define NDEBUG` before the includes is how a file whose original has its asserts
   compiled out is built (ownrdraw.cpp, wonline.cpp).
-- A match that flips with unrelated header declarations can be VC6 ordering spill reloads
-  by heap address (Draw_It): no form pins it, so keep the one failing fewest offsets.
+- A match that flips with unrelated header declarations is VC6 ordering spill reloads by
+  heap address: sweep dummy declarations and keep the form that fails at fewest offsets.
+- A named reference to an object indexed more than once (`CellClass & center = Map[cell]`)
+  can pin the order: it took Generate_Rural_Buildings from 24 of 64 failing offsets to 0.
 - Never remove a function data/progress.csv records from src/: report the stand-in instead.
 - An unverified global can be the wrong object: give each vector a function reads a
   names.csv row (Good_LZ read `Technos` where the exe walks `Objects`, 0x00A8E360).
@@ -349,6 +351,8 @@ Each entry: what the diff showed, then the source change that fixed it.
   moved startup.cpp's by one): renumber the markers rather than undo the header.
 - Wide string literals are pooled across files (0x0082083C is `L" "`): a constant
   stored into a temporary is not necessarily a vtable.
+- `volatile` is allowed only on data another thread writes (the mouse thread's flags), where
+  the exe re-reads it; never on a local or to force a match (CLAUDE.md lists the exceptions).
 - Westwood's inline asm from the archive stays where Westwood put it, unchanged (blitblit.h,
   xsurface.cpp's surface_quick_fill); check.py refuses any asm block not found verbatim there.
 - The message list is `Session.Messages`, not a global; Add_Message takes YR's 7 arguments.

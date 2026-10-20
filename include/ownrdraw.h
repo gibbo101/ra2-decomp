@@ -12,6 +12,8 @@
 #include "widewstring.h"
 #include "wstring.h"
 
+class BitFont;
+
 namespace OwnerDraw {
 
 	struct CellData {
@@ -118,6 +120,8 @@ namespace OwnerDraw {
 				WinNode *nodes;
 				int hasFocus;
 				WideWstring *editText;
+				unsigned char reserved40[0x24];
+				BitFont *font;
 			} Wide;
 
 			struct {
@@ -169,6 +173,10 @@ namespace OwnerDraw {
 			} Button;
 
 			struct {
+				unsigned char reserved28[0xB1];
+				unsigned char skinned;
+				unsigned char variant;
+				unsigned char reservedDB[13];
 				int checkState;
 			} CheckBox;
 
@@ -191,6 +199,7 @@ namespace OwnerDraw {
 			} DrawItem;
 
 			struct {
+				unsigned char reserved28[0xC0];
 				int minimum;
 				int maximum;
 				int position;
@@ -227,6 +236,10 @@ namespace OwnerDraw {
 
 	void Initialize(void);
 	LRESULT CALLBACK SysListViewHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+	LRESULT CALLBACK CheckBoxButtonHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+	LRESULT CALLBACK ProgressHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+	LRESULT CALLBACK GroupBoxButtonHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+	LRESULT CALLBACK HotkeyHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 	void Register_Control_Classes(void);
 	bool Subclass_Dialog(HWND window, LPARAM lParam);
 
@@ -249,7 +262,7 @@ namespace OwnerDraw {
 	bool RestoreTooltipBackground(void);
 	bool End_Tooltip(void);
 
-	HWND Custom_Message_Box(const char * btn1txt, const char * btn2txt = NULL, bool * cancelled = NULL);
+	HWND Custom_Message_Box(wchar_t const * btn1txt, wchar_t const * btn2txt = NULL, bool * cancelled = NULL);
 	void Set_Custom_Message_Box_Text(HWND window, wchar_t const * text);
 };
 

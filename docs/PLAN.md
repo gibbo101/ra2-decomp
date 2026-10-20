@@ -1073,6 +1073,21 @@ broke an older caller's reference, and that netshare and gdlgsupp reached Sessio
 raw addresses and byte offsets; both now use Session's members. Cost: about 6.2M tokens.
 Merge gate: 8,251 of 8,251 (1,210.0 KB), about 42% of game functions.
 
+### Batches 54, 55 and 56 (20 October 2026)
+
+**418 of 432 functions** (135, 141, 142), plus seven found along the way. Batch 56's merge
+adopted YR's save headers (wide scenario and house names, float veterancy) and found a
+wrong row in data/exe_patches.csv: EA's "TUC" sits at 0x00846370, not 0x00846378, and with
+it fixed Version_Name lands. Batch 54's gave the Airstrike and SpawnManager factories their
+no-argument constructors and made TalkBubbleTime unsigned. Landing replaced skirmish.cpp's
+local copies of RulesClass and SessionClass with the real headers, took a function that
+called through a fake mouse vtable back out until the two Mouse classes become one, and
+dropped a YRpp-only function start that was the tail of Save_File. The maintainer allowed
+volatile on data another thread writes, which landed the mouse thread's three functions.
+A named CellClass reference pinned Generate_Rural_Buildings against declaration-order
+flips. Cost: about 5.9M tokens. Merge gate: 8,676 of 8,676 (1,260.2 KB), about 45% of
+game functions.
+
 ### Decide before the first batch
 
 - **Module layout.** Which function lives in which source file, and the link order, decide

@@ -15,12 +15,12 @@
 void __cdecl FUN_004068E0(char const * format, ...);
 
 struct MouseThreadInfo {
-	int Stop;
-	int Count;
-	int Done;
+	volatile int Stop;
+	volatile int Count;
+	volatile int Done;
 	int Pad;
-	__int64 Delay;
-	int Running;
+	volatile __int64 Delay;
+	volatile int Running;
 
 	void Reset(void)
 	{
@@ -67,6 +67,71 @@ void __cdecl FUN_007B84D0(void)
 
 
 DWORD WINAPI FUN_007B8610(void * param);
+
+// FUNCTION: 0x007B84F0
+void __cdecl FUN_007B84F0(void)
+{
+	char message[1024];
+	if (DAT_00B78168 == 0) {
+		DAT_00B78168 = CreateMutexA(0, 0, 0);
+	}
+	if (DAT_00B7816C == 0 && DAT_00B78168 != 0) {
+		DAT_00B78138.Reset();
+		DAT_00B78154 = CreateThread(0, 0x1000, FUN_007B8610, &DAT_00B78138, 0, &DAT_00B78158);
+		if (DAT_00B78154 != 0) {
+			DAT_00B7816C = 1;
+			if (SetThreadPriority(DAT_00B78154, 15) == 0) {
+				FormatMessageA(0x1000, 0, GetLastError(), 0, message, 0x400, 0);
+				FUN_004068E0("Unable to change the priority of the mouse thread - %s\n", message);
+				while (DAT_00B78138.Done == 0) {
+					Sleep(0);
+				}
+				WaitForSingleObject(DAT_00B78154, 5000);
+				CloseHandle(DAT_00B78154);
+				DAT_00B7816C = 0;
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x007B8610
+DWORD WINAPI FUN_007B8610(void * param)
+{
+	MouseThreadInfo * info = (MouseThreadInfo *)param;
+	info->Running = 1;
+	info->Done = 0;
+	if (info->Stop == 0) {
+		do {
+			Block_Mouse();
+			if (DAT_00B78164 != 0) {
+				DAT_00B78164->FUN_007BA090();
+			}
+			Unblock_Mouse();
+			Sleep((DWORD)info->Delay);
+			info->Count++;
+		} while (info->Stop == 0);
+	}
+	info->Done = 1;
+	return 0;
+}
+
+// FUNCTION: 0x007B86B0
+void __cdecl FUN_007B86B0(void)
+{
+	if (DAT_00B7816C != 0) {
+		DAT_00B78138.Stop = 1;
+		while (DAT_00B78138.Done == 0) {
+			Sleep(0);
+		}
+		WaitForSingleObject(DAT_00B78154, 5000);
+		CloseHandle(DAT_00B78154);
+		DAT_00B7816C = 0;
+	}
+	if (DAT_00B78168 != 0) {
+		CloseHandle(DAT_00B78168);
+		DAT_00B78168 = 0;
+	}
+}
 
 // FUNCTION: 0x007B8730
 WWMouseClass::WWMouseClass(DSurface * surface, HWND window) :

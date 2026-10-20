@@ -20,6 +20,7 @@
 #include "_zbuffer.h"
 #include "aircraft.h"
 #include "airctype.h"
+#include "airstrike.h"
 #include "aitrig.h"
 #include "alphashp.h"
 #include "anim.h"
@@ -91,6 +92,7 @@
 #include "sidebar.h"
 #include "smudge.h"
 #include "smudtype.h"
+#include "spawnmgr.h"
 #include "sun.h"
 #include "super.h"
 #include "suprtype.h"
@@ -519,3 +521,19 @@ template class TClassFactory<WaypointPathClass>;
 // FUNCTION: 0x006C0710 ?$TClassFactory@VTemporalClass@@::CreateInstance
 // FUNCTION: 0x006C0790 ?$TClassFactory@VTemporalClass@@::LockServer
 template class TClassFactory<TemporalClass>;
+
+// FUNCTION: 0x006C07C0 ?$TClassFactory@VAirstrikeClass@@::?$TClassFactory@VAirstrikeClass@@
+// FUNCTION: 0x006C07D0 ?$TClassFactory@VAirstrikeClass@@::QueryInterface
+// FUNCTION: 0x006C0840 ?$TClassFactory@VAirstrikeClass@@::AddRef
+// FUNCTION: 0x006C0860 ?$TClassFactory@VAirstrikeClass@@::Release
+// FUNCTION: 0x006C0890 ?$TClassFactory@VAirstrikeClass@@::CreateInstance
+// FUNCTION: 0x006C0910 ?$TClassFactory@VAirstrikeClass@@::LockServer
+template class TClassFactory<AirstrikeClass>;
+
+// FUNCTION: 0x006C0940 ?$TClassFactory@VSpawnManagerClass@@::?$TClassFactory@VSpawnManagerClass@@
+// FUNCTION: 0x006C0950 ?$TClassFactory@VSpawnManagerClass@@::QueryInterface
+// FUNCTION: 0x006C09C0 ?$TClassFactory@VSpawnManagerClass@@::AddRef
+// FUNCTION: 0x006C09E0 ?$TClassFactory@VSpawnManagerClass@@::Release
+// FUNCTION: 0x006C0A10 ?$TClassFactory@VSpawnManagerClass@@::CreateInstance
+// FUNCTION: 0x006C0A90 ?$TClassFactory@VSpawnManagerClass@@::LockServer
+template class TClassFactory<SpawnManagerClass>;

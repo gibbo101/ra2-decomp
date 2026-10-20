@@ -109,3 +109,12 @@ address,name,symbol,evidence
 0x0071A4E0,TemporalClass::TemporalClass,??0TemporalClass@@QAE@PAVTechnoClass@@@Z,YRpp TemporalClass(TechnoClass*); the owner overload
 0x00AC1678,SpotLights,,YRpp SpotlightClass::Array; SpotLightClass's constructor 0x005FF250 adds itself through it (vtable call, Count at 0xAC1688)
 0x00473500,CargoClass::IndexOf,?IndexOf@CargoClass@@QBEHPBVObjectClass@@@Z,YRpp PassengersClass::IndexOf (TS CargoClass); called by InfantryClass::Fire_Coord 0x00523250
+0x008871E0,Rule,,YRpp RulesClass::Instance; read by 0x006AE2C0 (TibSun Skirmish_Mode_Dialog)
+0x00887048,RuleINI,,YRpp CCINIClass::INI_Rules; read by 0x006AE2C0 (TibSun Skirmish_Mode_Dialog)
+0x00AC1154,MultiplayerMapPreview,,deleted through MapPreviewClass::~MapPreviewClass 0x006406F0 in 0x006AE2C0 (TibSun Skirmish_Mode_Dialog)
+0x0041D300,AirstrikeClass::AirstrikeClass,??0AirstrikeClass@@QAE@XZ,"no-argument constructor (plain ret, this only, stores vtable 0x7E29A8 and adds itself to Array); called by TClassFactory<AirstrikeClass>::CreateInstance 0x006C0890"
+0x0041D380,AirstrikeClass::AirstrikeClass,??0AirstrikeClass@@QAE@PAVTechnoClass@@@Z,YRpp AirstrikeClass(TechnoClass* pOwner); the owner overload
+0x006B6EA0,SpawnManagerClass::SpawnManagerClass,??0SpawnManagerClass@@QAE@XZ,"no-argument constructor (plain ret, stores vtable 0x7F3650 and adds itself to Array); called by TClassFactory<SpawnManagerClass>::CreateInstance 0x006C0A10"
+0x006B6C90,SpawnManagerClass::SpawnManagerClass,??0SpawnManagerClass@@QAE@PAVTechnoClass@@PAVAircraftTypeClass@@HHH@Z,"YRpp SpawnManagerClass(TechnoClass* pOwner, AircraftTypeClass* pSpawnType, int nMaxNodes, int RegenRate, int ReloadRate); the owner overload"
+0x005581A0,GaugeClass::GaugeClass,??0GaugeClass@@QAE@ABV0@@Z,copy constructor: stores vtable 0x7E9384 (RTTI .?AVGaugeClass@@) and copies ControlClass and +0x2C..+0x38 with ret 4; YRpp calls it SliderClass::SliderClass
+0x006B1B20,SliderClass::SliderClass,??0SliderClass@@QAE@IHHHHH@Z,stores SliderClass vtable 0x007ED21C and ends ret 0x18; 0x00557230 ListClass::ListClass matched with TibSun source

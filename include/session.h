@@ -540,6 +540,7 @@ class SessionClass
 		bool Is_Random_Map(void) const;
 		void FUN_0069B760(int side, bool random);
 		void FUN_0069B7E0(int color, bool random);
+		void FUN_0069BB40(void);
 
 		void Trap_Object(void);
 		bool Log_To_File(FILE *out);

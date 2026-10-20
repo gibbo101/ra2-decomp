@@ -687,6 +687,18 @@ class MPBattleClass : public MPGameModeClass
 		virtual ~MPBattleClass(void);
 		virtual bool vt_entry_04(void) override;
 		virtual bool vt_entry_40(void) override;
+		virtual bool vt_entry_08(void) override;
+		virtual bool vt_entry_0C(unsigned a) override;
+		virtual void vt_entry_20(void) override;
+		virtual void vt_entry_24(void) override;
+		virtual void vt_entry_38(unsigned a) override;
+		virtual bool vt_entry_54(int index, DynamicVectorClass<int> picks) override;
+		virtual bool vt_entry_58(int index, DynamicVectorClass<int> picks, char const * map, char const * name) override;
+		virtual bool vt_entry_5C(unsigned a, unsigned b, unsigned c) override;
+		virtual bool vt_entry_68(void) override;
+		virtual void vt_entry_74(unsigned a, unsigned b) override;
+		virtual void vt_entry_78(unsigned a) override;
+		virtual void vt_entry_90(void) override;
 };
 
 // FUNCTION: 0x005C0DD0
@@ -710,4 +722,70 @@ bool MPBattleClass::vt_entry_40(void)
 bool MPBattleClass::vt_entry_04(void)
 {
 	return(false);
+}
+
+// FUNCTION: 0x005C0E40
+bool MPBattleClass::vt_entry_08(void)
+{
+	return(false);
+}
+
+// FUNCTION: 0x005C0E50
+bool MPBattleClass::vt_entry_0C(unsigned a)
+{
+	return(true);
+}
+
+// FUNCTION: 0x005C0E60
+void MPBattleClass::vt_entry_20(void)
+{
+}
+
+// FUNCTION: 0x005C0E70
+void MPBattleClass::vt_entry_24(void)
+{
+}
+
+// FUNCTION: 0x005C0E80
+void MPBattleClass::vt_entry_38(unsigned a)
+{
+}
+
+// FUNCTION: 0x005C0E90
+bool MPBattleClass::vt_entry_58(int index, DynamicVectorClass<int> picks, char const * map, char const * name)
+{
+	return(false);
+}
+
+// FUNCTION: 0x005C0EB0
+bool MPBattleClass::vt_entry_54(int index, DynamicVectorClass<int> picks)
+{
+	return(false);
+}
+
+// FUNCTION: 0x005C0ED0
+bool MPBattleClass::vt_entry_5C(unsigned a, unsigned b, unsigned c)
+{
+	return(true);
+}
+
+// FUNCTION: 0x005C0EE0
+bool MPBattleClass::vt_entry_68(void)
+{
+	return(true);
+}
+
+// FUNCTION: 0x005C0EF0
+void MPBattleClass::vt_entry_74(unsigned a, unsigned b)
+{
+}
+
+// FUNCTION: 0x005C0F00
+void MPBattleClass::vt_entry_78(unsigned a)
+{
+}
+
+// FUNCTION: 0x005C0F10
+void MPBattleClass::vt_entry_90(void)
+{
 }

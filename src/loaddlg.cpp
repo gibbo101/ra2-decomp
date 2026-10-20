@@ -23,6 +23,9 @@
 #include "win.h"
 #include "ccfile.h"
 #include "vector.h"
+#include "stringtable.h"
+#include "_xmouse.h"
+
 
 
 namespace UI {
@@ -294,6 +297,221 @@ void LoadOptionsClass::Clear_List(void)
 	Files.Clear();
 }
 
+// FUNCTION: 0x005596A0
+void LoadOptionsClass::Fill_List(HWND window)
+{
+	OwnerDraw::CellData thecell;
+	FileEntryClass * fdata = NULL;
+	WIN32_FIND_DATAA ff;
+
+	Clear_List();
+
+	if (Style == SAVE) {
+		fdata = new FileEntryClass;
+		swprintf(fdata->Descr, StringTable::LoadString("TXT_EMPTY_SLOT", NULL, "D:\\ra2mdpost\\LoadDlg.CPP", 0x306));
+		if (PlayerPtr != NULL) {
+			fdata->Scenario = Scen->Scenario;
+			fdata->House = Scen->PlayerHouse;
+			fdata->Num = Scen->Campaign;
+			wcscpy(fdata->PlayerName, PlayerPtr->Class->UIName);
+		} else {
+			fdata->Scenario = 0;
+			fdata->House = (HousesType)Session.House;
+			fdata->Num = -1;
+			swprintf(fdata->PlayerName, L"%s", FUN_00735120(Session.Handle));
+		}
+		SYSTEMTIME time;
+		GetSystemTime(&time);
+		SystemTimeToFileTime(&time, &fdata->DateTime);
+		fdata->Type = Session.Type;
+		fdata->Valid = false;
+		Files.Add(fdata);
+	}
+
+	char buffer[128];
+	sprintf(buffer, "*.%3s", Extension);
+
+	HANDLE hFind = FindFirstFile(buffer, &ff);
+	fdata = NULL;
+
+	if (hFind != INVALID_HANDLE_VALUE) {
+		while (true) {
+			if ((ff.dwFileAttributes & (FILE_ATTRIBUTE_TEMPORARY|FILE_ATTRIBUTE_DIRECTORY|FILE_ATTRIBUTE_SYSTEM|FILE_ATTRIBUTE_HIDDEN)) == 0) {
+				if (fdata == NULL) {
+					fdata = new FileEntryClass;
+				}
+
+				if (Read_File(fdata, &ff) == true) {
+					Files.Add(fdata);
+					fdata = NULL;
+				}
+			}
+
+			if (!FindNextFile(hFind, &ff)) {
+				break;
+			}
+		}
+
+		if (fdata != NULL) {
+			delete fdata;
+		}
+
+		FindClose(hFind);
+	}
+
+	if (Files.Count() > 0) {
+
+		qsort((void *)(&Files[0]), Files.Count(), sizeof(class FileEntryClass *), LoadOptionsClass::Compare);
+
+		ListBox_ResetContent(window);
+
+		for (int i = 0; i < Files.Count(); i++) {
+			fdata = Files[i];
+
+			if (!fdata->Old) {
+
+				int row = SendMessage(window, 0x4CD, 0, (LPARAM)fdata);
+
+				if (fdata->Type != GAME_NORMAL) {
+					thecell.type = OwnerDraw::CellData::TEXT;
+					thecell.string.set(L"*");
+					SendMessage(window, OD_SETCELL, MAKEWPARAM(200, row), (LPARAM)&thecell);
+				}
+
+				if (fdata->DateTime.dwHighDateTime != -1 && fdata->DateTime.dwLowDateTime != -1) {
+					FILETIME ft;
+					SYSTEMTIME time;
+					wchar_t wbuffer[128];
+					FileTimeToLocalFileTime(&fdata->DateTime, &ft);
+					FileTimeToSystemTime(&ft, &time);
+					GetDateFormat(LANG_USER_DEFAULT, TIME_NOMINUTESORSECONDS, &time, NULL, buffer, sizeof(buffer));
+					thecell.type = OwnerDraw::CellData::TEXT;
+					int length = MultiByteToWideChar(0, 0, buffer, -1, wbuffer, 128);
+					wbuffer[127] = 0;
+					wbuffer[length] = 0;
+					thecell.string.set(wbuffer);
+					SendMessage(window, OD_SETCELL, MAKEWPARAM(255, row), (LPARAM)&thecell);
+					GetTimeFormat(LANG_USER_DEFAULT, 0, &time, NULL, buffer, sizeof(buffer));
+					thecell.type = OwnerDraw::CellData::TEXT;
+					length = MultiByteToWideChar(0, 0, buffer, -1, wbuffer, 128);
+					wbuffer[127] = 0;
+					wbuffer[length] = 0;
+					thecell.string.set(wbuffer);
+					SendMessage(window, OD_SETCELL, MAKEWPARAM(315, row), (LPARAM)&thecell);
+				}
+
+				ListBox_SetItemData(window, row, (LPARAM)fdata);
+			}
+		}
+
+		switch (Style) {
+			case LOAD: {
+					for (int i = 0; i < Files.Count(); i++) {
+						if (Files[i]->Valid && !Files[i]->Old) {
+							ListBox_SetCurSel(window, i);
+							ListBox_SetTopIndex(window, i);
+							break;
+						}
+					}
+				}
+				break;
+
+			case SAVE:
+			case WWDELETE:
+				ListBox_SetCurSel(window, 0);
+				ListBox_SetTopIndex(window, 0);
+				break;
+		}
+	}
+}
+
+// FUNCTION: 0x00559C20
+bool LoadOptionsClass::Files_Present(void)
+{
+	bool files_found = false;
+	char pattern[64];
+	WIN32_FIND_DATAA find_data;
+	FileEntryClass entry;
+
+	sprintf(pattern, "*.%3s", Extension);
+
+	HANDLE hFind = FindFirstFile(pattern, &find_data);
+
+	if (hFind != INVALID_HANDLE_VALUE) {
+		while (true) {
+			if ((find_data.dwFileAttributes & (FILE_ATTRIBUTE_TEMPORARY|FILE_ATTRIBUTE_DIRECTORY|FILE_ATTRIBUTE_SYSTEM|FILE_ATTRIBUTE_HIDDEN)) == 0) {
+				if (_stricmp(find_data.cFileName, NET_SAVE_FILE_NAME) != 0) {
+					if (Read_File(&entry, &find_data) == true && !entry.Old) {
+						files_found = true;
+						break;
+					}
+				}
+			}
+
+			if (!FindNextFile(hFind, &find_data)) {
+				break;
+			}
+		}
+	}
+
+	FindClose(hFind);
+
+	return(files_found);
+}
+
+// FUNCTION: 0x00559D30
+int __cdecl LoadOptionsClass::Compare(const void * p1, const void * p2)
+{
+	FileEntryClass * fe1, * fe2;
+
+	fe1 = *((FileEntryClass **)p1);
+	fe2 = *((FileEntryClass **)p2);
+
+	int res = CompareFileTime(&fe1->DateTime, &fe2->DateTime);
+	return(-res);
+}
+
+// FUNCTION: 0x00559D60
+bool LoadOptionsClass::Load_File(const char * file_name)
+{
+	int hidden = Get_Mouse_State();
+	HWND dialog = OwnerDraw::Custom_Message_Box(StringTable::LoadString("TXT_LOADING", NULL, "D:\\ra2mdpost\\LoadDlg.CPP", 0x41C), NULL, NULL);
+	Hide_Mouse();
+	if (dialog != 0) {
+		OwnerDraw::Display_Dialog(dialog);
+	}
+	ScenarioActive = false;
+	TacticalActive = false;
+	Session.FUN_0069BB40();
+	bool loaded = Load_Game(file_name);
+	while (Get_Mouse_State() < hidden) {
+		Show_Mouse();
+	}
+	while (Get_Mouse_State() > hidden) {
+		Hide_Mouse();
+	}
+	if (dialog != 0) {
+		OwnerDraw::End_Dialog(dialog);
+	}
+	return(loaded);
+}
+
+// FUNCTION: 0x00559E40
+bool LoadOptionsClass::Save_File(const char * file_name, const wchar_t * descr)
+{
+	HWND dialog = OwnerDraw::Custom_Message_Box(StringTable::LoadString("TXT_SAVING_GAME", NULL, "D:\\ra2mdpost\\LoadDlg.CPP", 0x453), NULL, NULL);
+	Hide_Mouse();
+	if (dialog != 0) {
+		OwnerDraw::Display_Dialog(dialog);
+	}
+	bool saved = Save_Game(file_name, descr);
+	Show_Mouse();
+	if (dialog != 0) {
+		OwnerDraw::End_Dialog(dialog);
+	}
+	return(saved);
+}
+
 // FUNCTION: 0x00559EB0
 bool LoadOptionsClass::Delete_File(const char * file_name)
 {
@@ -302,3 +520,69 @@ bool LoadOptionsClass::Delete_File(const char * file_name)
 	}
 	return(false);
 }
+
+// FUNCTION: 0x00559ED0
+bool LoadOptionsClass::Read_File(FileEntryClass * fdata, WIN32_FIND_DATAA * ff)
+{
+	if (fdata == NULL && ff == NULL) {
+		return(false);
+	}
+
+	if (stricmp(ff->cFileName, NET_SAVE_FILE_NAME) != 0) {
+
+		SaveVersionInfo savever;
+
+		bool ok = Get_Savefile_Info(ff->cFileName, &savever);
+		if (!ok) {
+			return(false);
+		}
+
+		if (savever.Get_Internal_Version() != ExpectedGameVersion) {
+			wcscpy(fdata->Descr, savever.Get_Scenario_Description());
+			fdata->Old = true;
+		} else {
+			wcscpy(fdata->Descr, savever.Get_Scenario_Description());
+			fdata->Old = false;
+		}
+
+		fdata->Valid = ok;
+		fdata->Scenario = savever.Get_Scenario_Number();
+		fdata->Num = savever.Get_Campaign_Number();
+		fdata->Type = (GameType)savever.Get_Game_Type();
+		strcpy(fdata->Filename, ff->cFileName);
+		wcscpy(fdata->PlayerName, savever.Get_Player_House());
+		if (strlen(fdata->Filename) == 0) {
+			strcpy(fdata->Filename, ff->cAlternateFileName);
+		}
+		fdata->DateTime.dwHighDateTime = ff->ftLastWriteTime.dwHighDateTime;
+		fdata->DateTime.dwLowDateTime = ff->ftLastWriteTime.dwLowDateTime;
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x0055A050
+wchar_t const * LoadOptionsClass::GetUIString_Load(void) const
+{
+	return(StringTable::LoadString("GUI:LoadMissionMenu", NULL, "D:\\ra2mdpost\\LoadDlg.CPP", 0x4C0));
+}
+
+// FUNCTION: 0x0055A070
+wchar_t const * LoadOptionsClass::GetUIString_Save(void) const
+{
+	return(StringTable::LoadString("GUI:SaveMissionMenu", NULL, "D:\\ra2mdpost\\LoadDlg.CPP", 0x4C6));
+}
+
+// FUNCTION: 0x0055A090
+wchar_t const * LoadOptionsClass::GetUIString_Delete(void) const
+{
+	return(StringTable::LoadString("GUI:DeleteMissionMenu", NULL, "D:\\ra2mdpost\\LoadDlg.CPP", 0x4CC));
+}
+
+// FUNCTION: 0x0055A0B0
+wchar_t const * LoadOptionsClass::GetUIString_GameSaved(void) const
+{
+	return(StringTable::LoadString("TXT_GAME_WAS_SAVED", NULL, "D:\\ra2mdpost\\LoadDlg.CPP", 0x4D2));
+}
+
+// FUNCTION: 0x0055A0D0 LoadOptionsClass::~LoadOptionsClass

@@ -7,6 +7,7 @@
 #include "timer.h"
 #include "vector.h"
 
+class HouseClass;
 class TechnoClass;
 struct ControlNode;
 
@@ -33,6 +34,7 @@ class CaptureManagerClass : public AbstractClass
 		bool CannotControlAnyMore(void);
 		bool FUN_00471F90(AbstractClass * ptr);
 		int GetControlledCount(void) const;
+		HouseClass * GetOriginalOwner(TechnoClass * techno) const;
 
 		virtual HRESULT STDMETHODCALLTYPE GetClassID(CLSID * retval) override;
 		virtual HRESULT STDMETHODCALLTYPE Load(IStream * stream) override;

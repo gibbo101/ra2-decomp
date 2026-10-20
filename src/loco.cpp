@@ -144,6 +144,18 @@ ULONG STDMETHODCALLTYPE LocomotionClass::AddRef(void)
 	return(InterlockedIncrement(&RefCount));
 }
 
+// FUNCTION: 0x0055A970
+ULONG STDMETHODCALLTYPE LocomotionClass::Release(void)
+{
+	--COMRefCount;
+
+	ULONG count = InterlockedDecrement(&RefCount);
+	if (count == 0) {
+		delete this;
+	}
+	return(count);
+}
+
 // FUNCTION: 0x0055A9B0
 LONG STDMETHODCALLTYPE LocomotionClass::QueryInterface(REFIID riid, LPVOID *ppvObject)
 {
@@ -173,10 +185,95 @@ LONG STDMETHODCALLTYPE LocomotionClass::QueryInterface(REFIID riid, LPVOID *ppvO
 	return(S_OK);
 }
 
+// FUNCTION: 0x0055AA60
+HRESULT STDMETHODCALLTYPE LocomotionClass::Save(IStream * stream, BOOL cleardirty)
+{
+	if (stream == NULL) {
+		return(E_POINTER);
+	}
+
+	ULONG id = (ULONG)(this);
+
+	HRESULT result = stream->Write(&id, sizeof(id), NULL);
+	if (SUCCEEDED(result)) {
+		result = stream->Write(this, Fetch_Object_Size(), NULL);
+		if (SUCCEEDED(result)) {
+			if (cleardirty) {
+				Dirty = false;
+			}
+		}
+		return(result);
+	}
+	return(result);
+}
+
+// FUNCTION: 0x0055AAC0
+HRESULT STDMETHODCALLTYPE LocomotionClass::Load(IStream * stream)
+{
+	if (stream == NULL) {
+		return(E_POINTER);
+	}
+
+	ULONG id;
+	HRESULT result = stream->Read(&id, sizeof(id), NULL);
+	if (SUCCEEDED(result)) {
+		Swizzle_Here_I_Am(id, this);
+
+		LONG prev_refcount = RefCount;
+
+		result = stream->Read((void *)this, Fetch_Object_Size(), NULL);
+
+		RefCount = prev_refcount;
+		Swizzle_Pointer(&LinkedTo);
+		Swizzle_Pointer(&Owner);
+		return(result);
+	}
+	return(result);
+}
+
+// FUNCTION: 0x0055AB40
+LONG STDMETHODCALLTYPE LocomotionClass::GetSizeMax(ULARGE_INTEGER *pcbSize)
+{
+	if (pcbSize == NULL) {
+		return(E_POINTER);
+	}
+	pcbSize->QuadPart = Fetch_Object_Size() + sizeof(FootClass *);
+	return(S_OK);
+}
+
+// FUNCTION: 0x0055AB70
+boolean STDMETHODCALLTYPE LocomotionClass::Push(DirStruct dir)
+{
+	return(false);
+}
+
+// FUNCTION: 0x0055AB80
+boolean STDMETHODCALLTYPE LocomotionClass::Shove(DirStruct dir)
+{
+	return(false);
+}
+
+// FUNCTION: 0x0055AB90
+void STDMETHODCALLTYPE LocomotionClass::Tilt_Pitch_AI(void)
+{
+}
+
+// FUNCTION: 0x0055ABA0
+int STDMETHODCALLTYPE LocomotionClass::Z_Adjust(void)
+{
+	return(0);
+}
+
 // FUNCTION: 0x0055ABB0
 ZGradientType STDMETHODCALLTYPE LocomotionClass::Z_Gradient(void)
 {
 	return(ZGRAD_90DEG);
+}
+
+// FUNCTION: 0x0055ABC0
+VisualType STDMETHODCALLTYPE LocomotionClass::Visual_Character(boolean flag)
+{
+	return(VISUAL_NORMAL);
 }
 
 // FUNCTION: 0x0055ABD0
@@ -186,6 +283,23 @@ Point2DStruct STDMETHODCALLTYPE LocomotionClass::Draw_Point(void)
 	pt.X = 0;
 	pt.Y = 0;
 	return(pt);
+}
+
+// FUNCTION: 0x0055ABE0
+boolean STDMETHODCALLTYPE LocomotionClass::Is_To_Have_Shadow(void)
+{
+	return(true);
+}
+
+// FUNCTION: 0x0055ABF0
+MoveType STDMETHODCALLTYPE LocomotionClass::Can_Enter_Cell(CellStruct cell)
+{
+	return(MOVE_OK);
+}
+
+// FUNCTION: 0x0055AC00
+void STDMETHODCALLTYPE LocomotionClass::Force_Immediate_Destination(CoordStruct coord)
+{
 }
 
 // FUNCTION: 0x0055AC70

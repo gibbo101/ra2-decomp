@@ -46,4 +46,4 @@ class CampaignClass : public AbstractTypeClass
 		wchar_t Description[128];
 };
 
-void Read_Battle_INI(CCINIClass const & ini);
+void __fastcall Read_Battle_INI(CCINIClass & ini);

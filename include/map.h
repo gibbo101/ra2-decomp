@@ -145,7 +145,6 @@ class MapClass: public GScreenClass
 		void FUN_00575540(Cell const & cell);
 		void FUN_00575870(Cell const & cell);
 		void FUN_00575BA0(Cell const & cell);
-		bool FUN_00587180(Cell const & cell);
 		bool FUN_0057BAA0(Cell const & cell);
 		bool FUN_0057CCF0(Cell const & cell);
 		bool FUN_0057CF60(Cell const & cell);
@@ -270,6 +269,7 @@ class MapClass: public GScreenClass
 		bool Is_Shrouded(Coord const & coord);
 		bool Is_Fogged(Coord const & coord);
 		bool FUN_005864A0(Coord const & coord);
+		bool IsLocationFogged(Coord const & coord);
 		void Init_Fog_System(void);
 		void Deinit_Fog_System(void);
 		void Reveal_Nearby_Technos(CellClass * cptr, HouseClass * house, bool onradar);
@@ -280,7 +280,7 @@ class MapClass: public GScreenClass
 		bool Try_Open_Gate(FootClass * foot, Cell const & cell);
 		bool Is_Something_Nearby(Cell const & cell, int radius);
 		int Region_Threat(HouseClass * house, int level, int from_subzone, int to_subzone);
-		bool Is_Area_Available(Rect const & rect, int house);
+		bool IsAreaFree(Rect const & rect, int house);
 		bool Is_Area_Shore_Or_Water(Rect const & rect);
 		int Find_Largest_Water_Zone(int * zone);
 		void Find_Water_Cells_Around(Cell const * center, int max_radius, int max_cells, MZoneType mzone, int zone, DynamicVectorClass<Cell> * found, int width, int height);

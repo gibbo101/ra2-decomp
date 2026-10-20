@@ -69,7 +69,7 @@ class MPGameModeClass
 		virtual void PopulateTeamDropdown(HWND hwnd, DynamicVectorClass<MPTeam *> * teams, MPTeam * team);
 		virtual void DrawTeamDropdown(HWND hwnd, DynamicVectorClass<MPTeam *> * teams, MPTeam * team);
 		virtual void PopulateTeamDropdownForPlayer(HWND hwnd, int index);
-		virtual bool vt_entry_54(int a1, int a2, void * ptr, int a4, short a5, int a6, int a7);
+		virtual bool vt_entry_54(int index, DynamicVectorClass<int> picks);
 		virtual bool vt_entry_58(int index, DynamicVectorClass<int> picks, char const * map, char const * name);
 		virtual bool vt_entry_5C(unsigned a, unsigned b, unsigned c);
 		virtual bool vt_entry_60(void);

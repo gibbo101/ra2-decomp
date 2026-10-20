@@ -414,6 +414,8 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 		bool FUN_0050B370(TechnoTypeClass const * type);
 		void FUN_0050E010(UnitTypeClass * type);
 		void LostPoweredCenter(UnitTypeClass * type);
+		void FUN_0050E1C0(UnitTypeClass * type);
+		void FUN_0050E280(UnitTypeClass * type);
 		bool GainedPoweredCenter(TechnoTypeClass const * type);
 		int FUN_00500910(RTTIType rtti, bool naval) const;
 		DiffType Assign_Handicap(DiffType handicap);

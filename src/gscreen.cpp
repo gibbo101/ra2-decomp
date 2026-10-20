@@ -4,6 +4,21 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
+
+// FUNCTION: 0x004F4030 $E2
+// FUNCTION: 0x004F4060 $E5
+// FUNCTION: 0x004F4080 $E8
+// FUNCTION: 0x004F40A0 $E11
+// FUNCTION: 0x004F40C0 $E14
+// FUNCTION: 0x004F40E0 $E17
+// FUNCTION: 0x004F4100 $E20
+// FUNCTION: 0x004F4140 $E23
+// FUNCTION: 0x004F4170 $E26
+// FUNCTION: 0x004F41A0 $E29
+// FUNCTION: 0x004F41D0 $E32
+// FUNCTION: 0x004F41E0 $E35
+
 #include "gscreen.h"
 #include "_bench.h"
 #include "_keyboar.h"

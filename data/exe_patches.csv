@@ -21,4 +21,4 @@ address,original,patched,note
 0x00751D68,74,eb,"Steam CD-check removal; TFD (1.001 TFD, CRC 0xEB903080) holds compiler-shaped code here"
 0x00751DB0,0f95c0,33c040,"Steam CD-check removal; TFD (1.001 TFD, CRC 0xEB903080) holds compiler-shaped code here"
 0x007E1629,7049,8050,post-link size field in .rdata differs from TFD
-0x00846378,696e6746,696e6746,"Steam adds ""TUC"" after the version format string; TFD has zeros"
+0x00846370,000000,545543,"Steam adds ""TUC"" after the version format string; TFD has zeros"

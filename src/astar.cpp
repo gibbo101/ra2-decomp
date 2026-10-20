@@ -28,6 +28,68 @@
 
 #define	EMPTY		(FacingType)-2
 
+#include <math.h>
+
+extern double __cdecl FUN_004CAC40(double);
+extern double __cdecl FUN_004CAD50(double);
+extern double __cdecl FUN_004CADE0(double);
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007E1720;
+extern const double DAT_007E1728;
+extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
+extern const double DAT_007E3700;
+extern const double DAT_007E3708;
+
+struct ShortPair {
+	unsigned short A, B;
+	ShortPair() { A = 0; B = 0; }
+};
+
+struct IntTriple {
+	int A, B, C;
+	IntTriple() { A = 0; B = 0; C = 0; }
+};
+
+// FUNCTION: 0x00429590 $E78
+double DAT_0089C280 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x004295C0 $E81
+double DAT_0089C2D0 = DAT_0089C280 / DAT_007E3700;
+
+// FUNCTION: 0x004295E0 $E84
+double DAT_0089C2B8 = DAT_007E1718 / DAT_0089C2D0;
+
+// FUNCTION: 0x00429600 $E87
+double DAT_0089C2B0 = DAT_007E1720 * DAT_007E3708;
+
+// FUNCTION: 0x00429620 $E90
+double DAT_0089C288 = DAT_007E1728 * DAT_007E3708;
+
+// FUNCTION: 0x00429640 $E93
+double DAT_0089A2F8 = DAT_007E1730 * DAT_007E3708;
+
+// FUNCTION: 0x00429660 $E96
+int DAT_0089C2D8 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_0089A2F8 - DAT_0089C288) * DAT_0089C280));
+
+// FUNCTION: 0x004296A0 $E99
+double DAT_0089C290 = FUN_004CADE0(DAT_0089C2D8 * DAT_007E1740);
+
+// FUNCTION: 0x004296D0 $E102
+double DAT_0089C2A8 = FUN_004CADE0((DAT_0089C2D8 * 2) / DAT_0089C280);
+
+// FUNCTION: 0x00429700 $E105
+int DAT_0089C2CC = (int)(DAT_0089C2D8 * 4 + DAT_007E1738);
+
+// FUNCTION: 0x00429730 $E108
+ShortPair DAT_0089C278;
+
+// FUNCTION: 0x00429740 $E111
+IntTriple DAT_0089C298;
+
 unsigned int MapCellStride;
 
 // FUNCTION: 0x0042A5B0

@@ -49,61 +49,18 @@ class WWKeyboardClass
 		unsigned short Buffer[256];
 
 		unsigned short Buff_Get(void);
-		unsigned short Fetch_Element(void)
-		{
-			unsigned short val = 0;
-			if (Head != Tail) {
-				val = Buffer[Head];
-				Head = (Head + 1) % 256;
-			}
-			return(val);
-		}
-		unsigned short Peek_Element(void) const
-		{
-			if (!Is_Buffer_Empty()) {
-				return(Buffer[Head]);
-			}
-			return(0);
-		}
-		bool Put_Element(unsigned short val)
-		{
-			if (!Is_Buffer_Full()) {
-				int temp = (Tail+1) % 256;
-				Buffer[Tail] = val;
-				Tail = temp;
-				return(true);
-			}
-			return(false);
-		}
-		bool Is_Buffer_Full(void) const
-		{
-			if ((Tail + 1) % 256 == Head) {
-				return(true);
-			}
-			return(false);
-		}
-		bool Is_Buffer_Empty(void) const
-		{
-			if (Head == Tail) {
-				return(true);
-			}
-			return(false);
-		}
+		unsigned short Fetch_Element(void);
+		unsigned short Peek_Element(void) const;
+		bool Put_Element(unsigned short val);
+		bool Is_Buffer_Full(void) const;
+		bool Is_Buffer_Empty(void) const;
 		static bool Is_Mouse_Key(unsigned short key);
 		static bool Is_Wheel_Key(unsigned short key);
-		void Fill_Buffer_From_System(void)
-		{
-			if (!Is_Buffer_Full()) {
-				Windows_Message_Handler();
-			}
-		}
+		void Fill_Buffer_From_System(void);
 		bool Put_Key_Message(unsigned short vk_key, bool release = false);
 		bool Put_Mouse_Message(unsigned short vk_key, int x, int y, bool release = false);
 		bool Put_Wheel_Message(int delta);
-		int Available_Buffer_Room(void) const
-		{
-			return(256 - abs(Tail - Head));
-		}
+		int Available_Buffer_Room(void) const;
 		void Noop(void) const;
 
 		int Head;

@@ -5100,3 +5100,157 @@ int __fastcall FUN_0070F0B0(int action, int unused, int extra)
 	}
 	return(action);
 }
+
+// FUNCTION: 0x0070F120
+void TechnoClass::Set_Talker(TechnoClass * techno, TalkType bubble)
+{
+	if (techno != NULL && bubble != TALK_NONE) {
+		TalkBubbleType = bubble;
+		TalkBubbleOwner = techno;
+		TalkBubbleTimer = Rule->TalkBubbleTime;
+		Map.RevealArea1(&techno->Center_Coord(), 2, PlayerPtr, false, false, false, true, true);
+	} else {
+		TalkBubbleType = TALK_NONE;
+		TalkBubbleOwner = NULL;
+		TalkBubbleTimer = 0;
+	}
+}
+
+// FUNCTION: 0x0070F670
+void TechnoClass::FUN_0070F670(CellClass * cell)
+{
+	if (cell != NULL) {
+		ThreatPosed = Risk();
+		cell->Adjust_Threat(Owner(), ThreatPosed);
+	}
+}
+
+// FUNCTION: 0x0070F6A0
+void TechnoClass::FUN_0070F6A0(CellClass * cell)
+{
+	if (cell != NULL) {
+		cell->Adjust_Threat(Owner(), -(int)ThreatPosed);
+		ThreatPosed = 0;
+	}
+}
+
+// FUNCTION: 0x0070F6E0
+void TechnoClass::UpdateThreatInCell(CellClass * cell)
+{
+	if (cell != NULL) {
+		cell->Adjust_Threat(Owner(), -(int)ThreatPosed);
+		ThreatPosed = 0;
+		ThreatPosed = Risk();
+		cell->Adjust_Threat(Owner(), ThreatPosed);
+	}
+}
+
+// FUNCTION: 0x0070F740
+void TechnoClass::FUN_0070F740(int delay)
+{
+	TargetingTimer = delay;
+}
+
+// FUNCTION: 0x0070F770
+void TechnoClass::FUN_0070F770(void)
+{
+	if (TargetingTimer > 10 && !ScenarioInit) {
+		TargetingTimer = Scen->RandomNumber(4, 8);
+	}
+}
+
+// FUNCTION: 0x0070F7E0
+bool TechnoClass::TargetingTimerFinished(void)
+{
+	return(TargetingTimer == 0);
+}
+
+// FUNCTION: 0x0070F820
+HouseClass * TechnoClass::GetOriginalOwner(void) const
+{
+	if (MindControlledBy != NULL) {
+		return(MindControlledBy->CaptureManager->GetOriginalOwner((TechnoClass *)this));
+	}
+	if (MindControlledByHouse != NULL) {
+		return(OriginallyOwnedByHouse);
+	}
+	return(House);
+}
+
+// FUNCTION: 0x0070F850
+void TechnoClass::FUN_0070F850(void)
+{
+	Assign_Destination(NULL, true);
+	Assign_Target(NULL);
+	ArchiveTarget = NULL;
+	Set_Mission(MISSION_GUARD);
+}
+
+// FUNCTION: 0x0070F890
+void TechnoClass::FUN_0070F890(int duration)
+{
+	BerzerkDurationLeft = duration;
+	if (!Berzerk) {
+		Berzerk = true;
+		if (this != NULL && (AbstractFlags & 4) && ((FootClass *)this)->Team != NULL) {
+			((FootClass *)this)->Team->Remove((FootClass *)this);
+		}
+		Assign_Target(NULL);
+		QueueMission(MISSION_HUNT, false);
+	}
+}
+
+// FUNCTION: 0x0070F8F0
+Cell TechnoClass::FUN_0070F8F0(int rad, unsigned unused)
+{
+	Cell bestcell = CELL_NONE;
+
+	Cell center = Center_Coord().As_Cell();
+	if (Map[center].Land_Type() == LAND_TIBERIUM) {
+		return(center);
+	} else {
+		Cell cell(0, 0);
+		int bestvalue = -1;
+		for (int radius = 1; radius < rad; radius++) {
+			for (int x = -radius; x <= radius; x++) {
+				cell = center + Cell(x, -radius);
+				if (Map[cell].FUN_00487DF0()) {
+					int value = Map[cell].Tiberium_Value();
+					if (value > bestvalue) {
+						bestvalue = value;
+						bestcell = cell;
+					}
+				}
+
+				cell = center + Cell(x, +radius);
+				if (Map[cell].FUN_00487DF0()) {
+					int value = Map[cell].Tiberium_Value();
+					if (value > bestvalue) {
+						bestvalue = value;
+						bestcell = cell;
+					}
+				}
+
+				cell = center + Cell(-radius, x);
+				if (Map[cell].FUN_00487DF0()) {
+					int value = Map[cell].Tiberium_Value();
+					if (value > bestvalue) {
+						bestvalue = value;
+						bestcell = cell;
+					}
+				}
+
+				cell = center + Cell(+radius, x);
+				if (Map[cell].FUN_00487DF0()) {
+					int value = Map[cell].Tiberium_Value();
+					if (value > bestvalue) {
+						bestvalue = value;
+						bestcell = cell;
+					}
+				}
+			}
+			if (bestvalue != -1) break;
+		}
+	}
+	return(bestcell);
+}

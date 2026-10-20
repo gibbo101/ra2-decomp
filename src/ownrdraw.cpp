@@ -40,6 +40,7 @@
 #include "bitfont.h"
 #include <commctrl.h>
 #include <ctime>
+#include <mbstring.h>
 #include <sys\timeb.h>
 #undef LoadString
 #include "stringtable.h"
@@ -2385,6 +2386,319 @@ LRESULT CALLBACK OwnerDraw::SysListViewHandler(HWND window, UINT message, WPARAM
 	return CallWindowProc(original, window, message, wparam, lparam);
 }
 
+inline OwnerDraw::WinData *Find_Data(HWND window)
+{
+	OwnerDraw::WinData *data = NULL;
+	OwnerDraw::Dialogs.getPointer(window, &data);
+	return data;
+}
+
+extern DSurface * DAT_00887310;
+namespace OwnerDraw {
+extern int CachedSurfaceCount;
+void __fastcall BlendGradientRect(Rect const & rect, Surface & surface, int color, int amount);
+}
+
+void __fastcall FUN_00621B80(Rect * rect, Surface * surface, unsigned short color, int alpha);
+namespace OwnerDraw {
+void __fastcall DrawWideText(Surface * surface, wchar_t const * text, LTRBStruct * rect, BitFont * font, unsigned color, int a, int flags, int b, int c, int d);
+}
+
+inline Rect Rect_From_RECT(RECT const & r)
+{
+	return Rect(r.left, r.top, r.right - r.left, r.bottom - r.top);
+}
+
+// FUNCTION: 0x006163A0 OwnerDraw::CheckBoxButtonHandler
+LRESULT CALLBACK OwnerDraw::CheckBoxButtonHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	OwnerDraw::WinData *data = Find_Data(window);
+
+	if (data != NULL) {
+	switch (message) {
+	case BM_GETCHECK:
+		return data->CheckBox.checkState;
+
+	case BM_SETCHECK:
+		data->CheckBox.checkState = wparam;
+		InvalidateRect(window, NULL, FALSE);
+		return 0;
+
+	case WM_PAINT:
+		if (data->paintDisabled == 0) {
+			RECT client;
+			GetClientRect(window, &client);
+			RECT disprect;
+			LTRBStruct trect;
+			Get_Display_Rect(window, (RECT *)&trect);
+			Get_Display_Rect(window, &disprect);
+			Rect drect = Rect_From_RECT(disprect);
+			drect.Width = 18;
+			drect.Height = 18;
+			int style = GetWindowLong(window, GWL_STYLE);
+			int state = data->CheckBox.checkState;
+			unsigned char skinned = data->CheckBox.skinned;
+			unsigned char variant = data->CheckBox.variant;
+			bool checked = state == 1;
+			char name[64];
+			if (skinned) {
+				if (checked) {
+					if (variant) {
+						strcpy(name, "cce_i.pcx");
+					} else {
+						strcpy(name, "cce_il.pcx");
+					}
+				} else {
+					if (variant) {
+						strcpy(name, "cce_ir.pcx");
+					} else {
+						strcpy(name, "cue_i.pcx");
+					}
+				}
+			} else {
+				char letter = 'u';
+				if (checked) {
+					letter = 'c';
+				}
+				sprintf(name, "c%ce_i.pcx", letter);
+			}
+			Surface *image = SurfaceCache.GetSurface(name, NULL);
+			int image_height = image->Get_Height();
+			Rect srect(0, 0, image->Get_Width(), image_height);
+			DAT_00887310->Blit_From(drect, *image, srect, false, true);
+			if (style & WS_DISABLED) {
+				FUN_00621B80(&drect, DAT_00887310, 0, OwnerDraw::DisabledOverlayAlpha);
+			}
+			trect.Left += 26;
+			if (data->Wide.text) {
+				int color = OwnerDraw::PrimaryTextColor;
+				if (style & WS_DISABLED) {
+					color = OwnerDraw::DisabledTextColor;
+				}
+				OwnerDraw::DrawWideText(DAT_00887310, data->Wide.text, (LTRBStruct *)&trect, data->Wide.font, color, 4, 0xc, 0, 0, 0);
+			}
+			ValidateRect(window, NULL);
+			return 0;
+		}
+		break;
+
+	case WM_LBUTTONDOWN:
+	case WM_LBUTTONDBLCLK: {
+		POINT pt;
+		pt.x = lparam & 0xffff;
+		pt.y = (unsigned int)lparam >> 16;
+		if (pt.x < 18 && pt.y < 18) {
+			int checked = data->CheckBox.checkState != 1;
+			data->CheckBox.checkState = checked;
+			InvalidateRect(window, NULL, FALSE);
+			VocClass::PlayGlobal(Rule->GUICheckboxSound, 1.0f, 0x2000);
+			HWND parent = GetParent(window);
+			SendMessage(parent, WM_COMMAND, MAKEWPARAM(GetWindowLong(window, GWL_ID), checked), (LPARAM)window);
+			return(0);
+		} else {
+			return(0);
+		}
+	}
+
+	case OD_SUBCLASSED: {
+		WNDPROC proc = NULL;
+		WNDPROC *found = NULL;
+		if (OwnerDraw::DialogProcs.getPointer(window, &found) && found) {
+			proc = *found;
+		}
+		data->CheckBox.checkState = CallWindowProc(proc, window, BM_GETCHECK, 0, 0);
+		break;
+	}
+
+	case WM_USER + 229: {
+		unsigned char value = lparam != 0;
+		unsigned char old = data->CheckBox.variant;
+		data->CheckBox.skinned = value;
+		if (old != value) {
+			InvalidateRect(window, NULL, FALSE);
+		}
+		break;
+	}
+
+	case WM_SETFOCUS:
+	case WM_KILLFOCUS:
+		InvalidateRect(window, NULL, FALSE);
+		break;
+
+	case WM_USER + 230: {
+		unsigned char value = lparam != 0;
+		unsigned char old = data->CheckBox.variant;
+		data->CheckBox.variant = value;
+		if (old != value) {
+			InvalidateRect(window, NULL, FALSE);
+		}
+		break;
+	}
+
+	case WM_USER + 231:
+		return data->CheckBox.variant;
+	}
+
+	WNDPROC proc = NULL;
+	WNDPROC *found = NULL;
+	if (OwnerDraw::DialogProcs.getPointer(window, &found) && found) {
+		proc = *found;
+	}
+	return CallWindowProc(proc, window, message, wparam, lparam);
+	}
+	return 0;
+}
+
+// FUNCTION: 0x0061D6D0 OwnerDraw::ProgressHandler
+LRESULT CALLBACK OwnerDraw::ProgressHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	RECT rect;
+	Get_Display_Rect(window, &rect);
+
+	OwnerDraw::WinData *data = Find_Data(window);
+	if (data != NULL) {
+		switch (message) {
+		case OD_SUBCLASSED:
+			data->ProgressBar.maximum = 100;
+			break;
+
+		case 0x401:
+			data->ProgressBar.minimum = LOWORD(lparam);
+			data->ProgressBar.maximum = HIWORD(lparam);
+			break;
+
+		case 0x402: {
+			int pos = (int)wparam;
+			if (pos < data->ProgressBar.minimum) {
+				pos = data->ProgressBar.minimum;
+			}
+			if (pos > data->ProgressBar.maximum) {
+				pos = data->ProgressBar.maximum;
+			}
+			data->ProgressBar.position = pos;
+			InvalidateRect(window, NULL, FALSE);
+			break;
+		}
+
+		case WM_PAINT: {
+			Rect sourcerect(0, 0, rect.right - rect.left + 1, rect.bottom - rect.top + 1);
+			Rect destrect(rect.left, rect.top, rect.right - rect.left + 1, rect.bottom - rect.top + 1);
+
+			if (data->cachedSurface == NULL) {
+				Surface *surf = new BSurface(rect.right - rect.left + 1, rect.bottom - rect.top + 1, 2);
+				data->cachedSurface = surf;
+				OwnerDraw::CachedSurfaceCount++;
+				surf->Blit_From(sourcerect, *DAT_00887310, destrect);
+			}
+
+			DAT_00887310->Blit_From(destrect, *data->cachedSurface, sourcerect);
+			int pos = (data->ProgressBar.position << 16) / (data->ProgressBar.maximum - data->ProgressBar.minimum);
+			int color = ODColorToHiColor(0x000000FF);
+			OwnerDraw::BlendGradientRect(destrect, *DAT_00887310, color, pos);
+			ValidateRect(window, NULL);
+			break;
+		}
+		}
+	}
+	return 0;
+}
+
+namespace UI {
+void __fastcall GetKeyboardKeyString(unsigned short key, wchar_t *buffer);
+}
+void __fastcall FUN_00620F60(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, int color, int flags);
+namespace OwnerDraw {
+void __fastcall DrawBeveledBorder(Surface & surface, Rect const & rect, int offset, int color);
+}
+
+// FUNCTION: 0x0061ECA0 OwnerDraw::HotkeyHandler
+LRESULT CALLBACK OwnerDraw::HotkeyHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	switch (message) {
+	case WM_PAINT: {
+		RECT rect;
+		Get_Display_Rect(window, &rect);
+		Rect alt_rect(rect.left, rect.top, rect.right - rect.left + 1, rect.bottom - rect.top + 1);
+		Rect win_rect(0, 0, alt_rect.Width, alt_rect.Height);
+		OwnerDraw::WinData *data = Find_Data(window);
+		if (data != NULL) {
+			if (data->cachedSurface == NULL) {
+				Surface *surf = new BSurface(alt_rect.Width, alt_rect.Height, 2);
+				data->cachedSurface = surf;
+				OwnerDraw::CachedSurfaceCount++;
+				surf->Blit_From(win_rect, *DAT_00887310, alt_rect);
+			}
+			wchar_t text[64];
+			int key = SendMessage(window, 0x402, 0, 0);
+			UI::GetKeyboardKeyString(key, text);
+			if (data->cachedSurface != NULL) {
+				DAT_00887310->Blit_From(alt_rect, *data->cachedSurface, win_rect);
+			}
+			OwnerDraw::DrawBeveledBorder(*DAT_00887310, alt_rect, 2, -1);
+			if (wcslen(text) > 0) {
+				rect.left += 4;
+				rect.top += 4;
+				rect.right -= 4;
+				rect.bottom -= 4;
+				FUN_00620F60(DAT_00887310, text, &rect, data->Wide.font, OwnerDraw::PrimaryTextColor, DT_SINGLELINE | DT_VCENTER);
+			}
+			ValidateRect(window, NULL);
+		}
+		return 0;
+	}
+
+	case WM_ERASEBKGND:
+		return 1;
+
+	case WM_NCPAINT:
+		return 0;
+	}
+
+	WNDPROC proc = NULL;
+	WNDPROC *found = NULL;
+	if (OwnerDraw::DialogProcs.getPointer(window, &found) && found) {
+		proc = *found;
+	}
+	return CallWindowProc(proc, window, message, wparam, lparam);
+}
+
+// FUNCTION: 0x0061EF70 UI::GetKeyboardKeyString
+void __fastcall UI::GetKeyboardKeyString(unsigned short key, wchar_t *buffer)
+{
+	char key_name[32];
+	char text[500];
+	unsigned char modifier = key >> 8;
+
+	text[0] = 0;
+	buffer[0] = 0;
+	if ((modifier & 8) == 0) {
+		UINT lparam;
+
+		if (modifier & 4) {
+			lparam = (MapVirtualKey(VK_MENU, 0) << 16) | 0x2000001;
+			GetKeyNameText(lparam, key_name, sizeof(key_name));
+			strcat(text, key_name);
+			strcat(text, "+");
+		}
+		if (modifier & 2) {
+			lparam = (MapVirtualKey(VK_CONTROL, 0) << 16) | 0x2000001;
+			GetKeyNameText(lparam, key_name, sizeof(key_name));
+			strcat(text, key_name);
+			strcat(text, "+");
+		}
+		if (modifier & 1) {
+			lparam = (MapVirtualKey(VK_SHIFT, 0) << 16) | 0x2000001;
+			GetKeyNameText(lparam, key_name, sizeof(key_name));
+			strcat(text, key_name);
+			strcat(text, "+");
+		}
+		lparam = (MapVirtualKey(key & 0xff, 0) << 16) | 0x2000001;
+		GetKeyNameText(lparam, key_name, sizeof(key_name));
+		strcat(text, key_name);
+		swprintf(buffer, L"%hs", text);
+	}
+}
+
 // FUNCTION: 0x0061F190
 void ODInitMasks(void)
 {
@@ -2399,6 +2713,48 @@ void ODInitMasks(void)
 	ODBComponentMask = 255;
 	ODBComponentMask = ODBComponentMask >> DSurface::Get_Blue_Left();
 	ODBComponentMask <<= DSurface::Get_Blue_Right();
+}
+
+// FUNCTION: 0x00620720
+void ODDrawArrowBitmap(Surface * surface, Rect const & rect, BOOL upward, BOOL pressed, bool dark)
+{
+	if (surface != NULL) {
+		char fname[32];
+		Rect destrect;
+		Rect srcrect;
+
+		char state = 'r';
+		if (pressed) {
+			state = 'p';
+		}
+
+		if (upward) {
+			sprintf(fname, "guparrow%c.pcx", state);
+		} else {
+			sprintf(fname, "gdnarrow%c.pcx", state);
+		}
+
+		Surface * arrow = SurfaceCache.GetSurface(&fname[dark == false], NULL);
+		if (arrow != NULL) {
+			destrect = rect;
+			destrect.Width = arrow->Get_Width();
+			destrect.Height = arrow->Get_Height();
+
+			srcrect.Y = 0;
+			srcrect.X = 0;
+			srcrect.Width = arrow->Get_Width();
+			srcrect.Height = arrow->Get_Height();
+
+			surface->Blit_From(destrect, *arrow, srcrect);
+		}
+	}
+}
+
+// FUNCTION: 0x00620870
+COLORREF ODPixelToPaletteColor(unsigned short pixel)
+{
+	RGBClass color = DSurface::Deconstruct_Hicolor_Pixel(pixel);
+	return PALETTERGB(color.Get_Red(), color.Get_Green(), color.Get_Blue());
 }
 
 // FUNCTION: 0x00620810
@@ -2420,6 +2776,46 @@ int ODColorToHiColor(COLORREF color)
 	c.v = color;
 
 	return(DSurface::Build_Hicolor_Pixel(c.red, c.green, c.blue));
+}
+
+// FUNCTION: 0x00620CD0
+void ODDrawButtonRect(Surface & surf, Rect const & rect, int offset)
+{
+	Rect work = rect;
+
+	int color1 = DSurface::Build_Hicolor_Pixel(39, 248, 116);
+	int color2 = DSurface::Build_Hicolor_Pixel(19, 123, 57);
+	int color3 = DSurface::Build_Hicolor_Pixel(30, 186, 87);
+	int color4 = DSurface::Build_Hicolor_Pixel(24, 153, 71);
+
+	work.X += -1 - offset;
+	work.Y += -1 - offset;
+	work.Width += 2 * offset + 2;
+	work.Height += 2 * offset + 2;
+
+	for (int i = 0; i < offset; i++) {
+
+		Point2D end1;
+		Point2D start1;
+		Point2D end4;
+		Point2D start4;
+
+		end1.X = work.Width - i + work.X - 2;
+		start1.X = i + work.X;
+		end1.Y = i + work.Y;
+		start1.Y = i + work.Y;
+		surf.Draw_Line(start1, end1, color1);
+
+		surf.Draw_Line(Point2D(i + work.X, work.Y - i + work.Height - 1), Point2D(work.Width - i + work.X - 1, work.Y - i + work.Height - 1), color2);
+
+		surf.Draw_Line(Point2D(work.X + i, work.Y + i + 1), Point2D(work.X + i, work.Y - i + work.Height - 1), color3);
+
+		end4.Y = work.Y - i + work.Height - 2;
+		end4.X = work.X - i + work.Width - 1;
+		start4.X = end4.X;
+		start4.Y = i + work.Y;
+		surf.Draw_Line(start4, end4, color4);
+	}
 }
 
 // FUNCTION: 0x00621150

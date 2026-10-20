@@ -39,25 +39,25 @@ class TunnelLocomotionClass : public LocomotionClass
 
 		virtual int Fetch_Object_Size(void) const override {return(sizeof(*this));}
 
-		void Process_Turning(void);
-		void Process_Digging_In(void);
-		void Process_Descending(void);
-		void Process_Tunneling(void);
-		void Process_Ascending(void);
-		void Process_Emerging(void);
-		void Process_Aborting(void);
+		void ProcessPreDigIn(void);
+		void ProcessDiggingIn(void);
+		void ProcessDugIn(void);
+		void ProcessDigging(void);
+		void ProcessPreDigOut(void);
+		void ProcessDiggingOut(void);
+		void ProcessDugOut(void);
 
 	private:
 
 		enum {
 			STATE_IDLE,
-			STATE_TURNING,
+			STATE_PRE_DIG_IN,
 			STATE_DIGGING_IN,
-			STATE_DESCENDING,
-			STATE_TUNNELING,
-			STATE_ASCENDING,
-			STATE_EMERGING,
-			STATE_ABORTING,
+			STATE_DUG_IN,
+			STATE_DIGGING,
+			STATE_PRE_DIG_OUT,
+			STATE_DIGGING_OUT,
+			STATE_DUG_OUT,
 		} State;
 
 		Coord DestinationCoord;

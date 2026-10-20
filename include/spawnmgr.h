@@ -28,6 +28,7 @@ class SpawnManagerClass : public AbstractClass
 		AbstractClass * NewTarget;
 		int Status;
 
+		SpawnManagerClass(void);
 		SpawnManagerClass(TechnoClass * owner, AircraftTypeClass * type, int number, int regen, int reload);
 		SpawnManagerClass(NoInitClass const & x);
 		virtual ~SpawnManagerClass(void) override;

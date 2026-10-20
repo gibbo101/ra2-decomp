@@ -16,6 +16,10 @@
 #include "ccini.h"
 #include "rawfile.h"
 #include "theme.h"
+#include "playerprofile.h"
+#include "ownrdraw.h"
+#include "rcptr.h"
+#include "rules.h"
 
 #include <windows.h>
 #undef LoadString
@@ -28,9 +32,30 @@
 #include "stringtable.h"
 
 HWND WS_Find_Dialog(int id);
+rc_ptr<PlayerProfile> __fastcall FUN_00778710(void);
 
 unsigned int __fastcall Wstring_Hash(Wstring & string);
 #define HASH_ARG (Wstring_Hash)
+
+struct WolChannel {
+	char Pad[0xC];
+	int CurrentUsers;
+	char Pad1[4];
+	int Tournament;
+	char Pad2[4];
+	unsigned int Squad;
+	unsigned int Reserved : 8;
+	unsigned int Clan : 1;
+	unsigned int Kind : 2;
+	unsigned int FlagB : 1;
+	unsigned int FlagC : 1;
+	unsigned int Rest : 19;
+	char Pad4[4];
+	int Ping;
+	char Pad5[0x34 - 0x2C];
+	char Name[0xE0 - 0x34];
+	char Info[0x10C - 0xE0];
+};
 
 class OLEInitializer
 {
@@ -53,11 +78,11 @@ ArrayList<int> DAT_00B778D8;
 
 // FUNCTION: 0x0077B940
 // FUNCTION: 0x0077B960
-ArrayList<int> DAT_00B73E10;
+ArrayList<WolChannel> DAT_00B73E10;
 
 // FUNCTION: 0x0077B980
 // FUNCTION: 0x0077B9A0
-ArrayList<int> DAT_00B76AE0;
+ArrayList<WolChannel> DAT_00B76AE0;
 
 struct User {
 	char Pad[0x20];
@@ -75,7 +100,9 @@ ArrayList<User> DAT_00B77900;
 ArrayList<int> DAT_00B76520;
 
 struct LadderA {
-	char Data[0x6C];
+	char Pad[0x1C];
+	int Rung;
+	char Data[0x6C - 0x20];
 };
 
 struct LadderB {
@@ -253,22 +280,9 @@ Wstring DAT_00B765EC;
 // FUNCTION: 0x0077D110
 Wstring DAT_00B76900;
 
-class FUN_007F094C_Class {
-public:
-	FUN_007F094C_Class(void);
-	virtual ~FUN_007F094C_Class(void);
-	void * Ptr;
-};
-
-class FUN_007F3F44_Class : public FUN_007F094C_Class {
-public:
-	FUN_007F3F44_Class(void) {}
-	virtual ~FUN_007F3F44_Class(void) {}
-};
-
 // FUNCTION: 0x0077D120
 // FUNCTION: 0x0077D140
-FUN_007F3F44_Class DAT_00B75E48;
+rc_ptr<PlayerProfile> DAT_00B75E48;
 
 // FUNCTION: 0x0077D160
 // FUNCTION: 0x0077D190
@@ -572,18 +586,6 @@ void FUN_0077D900(void)
 {
 	FUN_00773E90("Manage");
 }
-
-struct WolChannel {
-	char Pad[0x14];
-	int Tournament;
-	char Pad2[8];
-	unsigned int Reserved : 8;
-	unsigned int Clan : 1;
-	unsigned int Pad3 : 2;
-	unsigned int FlagB : 1;
-	unsigned int FlagC : 1;
-	unsigned int Rest : 20;
-};
 
 extern WolChannel DAT_00B76B10;
 
@@ -1285,5 +1287,468 @@ bool __fastcall FUN_0077F320(int type, unsigned char ping, bool wait)
 		return FUN_0077F120();
 	}
 	return true;
+}
+
+// FUNCTION: 0x0077F520
+bool __fastcall FUN_0077F520(bool wait)
+{
+	if (DAT_00B76520.length() != 0) {
+		if (!FUN_0077F120()) {
+			return false;
+		}
+	}
+	for (int i = 0; i < 18; i++) {
+		ResetEvent(DAT_00B73684[i]);
+	}
+	if (!FUN_0077EF90(0, 0)) {
+		SetEvent(DAT_00B73684[0]);
+		return false;
+	}
+	if (wait) {
+		return FUN_0077F120();
+	}
+	return true;
+}
+
+// FUNCTION: 0x0077F710
+bool __fastcall FUN_0077F710(unsigned char ping, bool wait)
+{
+	if (DAT_00B76520.length() != 0) {
+		if (!FUN_0077F120()) {
+			return false;
+		}
+	}
+	for (int i = 0; i < 18; i++) {
+		ResetEvent(DAT_00B73684[i]);
+	}
+	if (!FUN_0077EF90(0x29, ping)) {
+		SetEvent(DAT_00B73684[0]);
+		return false;
+	}
+	if (wait) {
+		return FUN_0077F120();
+	}
+	return true;
+}
+
+extern int DAT_00B7646C;
+extern int DAT_00B7617C;
+extern int DAT_00B76180;
+extern Dictionary<Wstring, LadderA> * DAT_00B77E0C;
+extern int DAT_00B779C8;
+extern int DAT_00B736F0;
+extern int DAT_0084A234;
+extern char DAT_00B73BE8[0x10C];
+extern char DAT_00B75E58[0xF8];
+extern char DAT_00B769C8[0xF8];
+extern int DAT_00B736CC[8];
+extern char DAT_00B77A94[0x29];
+extern int DAT_00B76468;
+extern int DAT_00B779CC;
+extern char DAT_00B77DC0;
+extern char DAT_00B77DC1;
+extern char DAT_00B77DC2;
+extern char DAT_0084A1B8;
+extern int DAT_0084A1BC;
+extern int DAT_00B77DCC;
+extern int DAT_00B77DB8;
+extern int DAT_00B77DBC;
+extern wchar_t const * DAT_00B73E1C[8];
+extern int DAT_00AC1170;
+extern int DAT_00AC1174;
+extern int DAT_00B77E54;
+extern int DAT_00B77E58;
+extern int DAT_00B77E5C;
+extern int DAT_00B77DDC;
+extern int DAT_00B77DE0;
+extern int DAT_00B77DE4;
+extern int DAT_00B77DD0;
+extern int DAT_00B76E38;
+extern int DAT_00B77DD8;
+extern int DAT_00B77E28;
+extern int DAT_00B77E60;
+extern int DAT_00B77E64;
+extern int DAT_00B77E20;
+
+
+// FUNCTION: 0x00780110
+void FUN_00780110(void)
+{
+	DAT_00B75E48 = FUN_00778710();
+	DAT_00B73E10.clear();
+	DAT_00B76AE0.clear();
+	DAT_00B77900.clear();
+	DAT_00B777A0.clear();
+	DAT_00B76680.clear();
+	DAT_00B765F8.clear();
+	DAT_00B76530.clear();
+	DAT_00B7646C = time(NULL) + 86400;
+	DAT_00B7617C = 0;
+	DAT_00B76180 = 0;
+	DAT_00B768C0.clear();
+	DAT_00B73AF8.clear();
+	DAT_00B76608.clear();
+	DAT_00B73AA8.clear();
+	DAT_00B76980.clear();
+	DAT_00B76990.clear();
+	if (Session.Type == GAME_INTERNET && Session.unknown_0C == 3) {
+		int sku = 0x2300;
+		DAT_00B779C8 = sku;
+		DAT_00B736F0 = sku;
+		DAT_00B77E0C = &DAT_00B73AF8;
+	} else {
+		int sku = DAT_0084A234;
+		DAT_00B779C8 = sku;
+		DAT_00B736F0 = sku;
+		DAT_00B77E0C = &DAT_00B77D80;
+	}
+	memset(&DAT_00B76B10, 0, 0x10C);
+	memset(DAT_00B73BE8, 0, 0x10C);
+	memset(DAT_00B75E58, 0, 0xF8);
+	memset(DAT_00B769C8, 0, 0xF8);
+	DAT_00B77AD0[0] = 0;
+	DAT_00B77E14 = 0;
+	DAT_00B73A20 = 1;
+	DAT_00B77D70 = -1;
+	DAT_00B77A88 = time(NULL);
+	DAT_00B76468 = 0;
+	DAT_00B779CC = 0;
+	DAT_00B77E4C = 0;
+	DAT_00B77DC8 = 0;
+	DAT_00B77DEC = 0;
+	DAT_00B77DC0 = 0;
+	DAT_0084A1B8 = 1;
+	DAT_00B73AE0.clear();
+	memset(DAT_00B73684, 0, sizeof(DAT_00B73684));
+	DAT_00B77DC1 = 0;
+	DAT_00B77DC2 = 0;
+	DAT_0084A1BC = -1;
+	DAT_00B77DCC = 0;
+	DAT_00B77DB8 = -1;
+	DAT_00B77DBC = -1;
+	DAT_00B73E1C[0] = StringTable::LoadString("TXT_LOB_1", NULL, "D:\\ra2mdpost\\wonline.cpp", 0xAC0);
+	DAT_00B73E1C[1] = StringTable::LoadString("TXT_LOB_2", NULL, "D:\\ra2mdpost\\wonline.cpp", 0xAC1);
+	DAT_00B73E1C[2] = StringTable::LoadString("TXT_LOB_3", NULL, "D:\\ra2mdpost\\wonline.cpp", 0xAC2);
+	DAT_00B73E1C[3] = StringTable::LoadString("TXT_LOB_4", NULL, "D:\\ra2mdpost\\wonline.cpp", 0xAC3);
+	DAT_00B73E1C[4] = StringTable::LoadString("TXT_LOB_5", NULL, "D:\\ra2mdpost\\wonline.cpp", 0xAC4);
+	DAT_00B73E1C[5] = StringTable::LoadString("TXT_LOB_6", NULL, "D:\\ra2mdpost\\wonline.cpp", 0xAC5);
+	DAT_00B73E1C[6] = StringTable::LoadString("TXT_LOB_7", NULL, "D:\\ra2mdpost\\wonline.cpp", 0xAC6);
+	DAT_00B73E1C[7] = StringTable::LoadString("TXT_LOB_8", NULL, "D:\\ra2mdpost\\wonline.cpp", 0xAC7);
+	memset(DAT_00B736CC, -1, sizeof(DAT_00B736CC));
+	DAT_00AC116C = NULL;
+	DAT_00AC1170 = 0;
+	DAT_00AC1174 = 0;
+	DAT_00B77E54 = 0;
+	DAT_00B77E58 = 0;
+	DAT_00B77E5C = 0;
+	DAT_00B77DDC = 0;
+	DAT_00B77DE0 = 0;
+	memset(DAT_00B77A94, 0, sizeof(DAT_00B77A94));
+	DAT_00B77DE4 = 0;
+	DAT_00B77DD0 = 0;
+	DAT_00B76E38 = 1;
+	DAT_00B77DD8 = 0;
+	DAT_00B76520.clear();
+	DAT_00B77E28 = 0;
+	DAT_00B77E60 = 0;
+	DAT_00B77E64 = 0;
+	DAT_00B77E00 = RulesClass::Get_Rule_Unique_ID();
+	RulesClass::Load_Art_INI();
+	DAT_00B77E04 = RulesClass::Get_Art_Unique_ID();
+	DAT_00B77E08 = RulesClass::Get_AI_Unique_ID();
+	DAT_00B77E20 = 0;
+}
+
+int __fastcall FUN_00623F00(HWND list, int index, Wstring * text);
+int __fastcall FUN_00623E00(HWND list);
+extern int DAT_00B76C1C;
+extern wchar_t DAT_00887734[];
+
+// FUNCTION: 0x007806C0
+void FUN_007806C0(void)
+{
+	HWND dialog = FUN_00775940(0x113);
+	if (!dialog) {
+		return;
+	}
+	HWND list = GetDlgItem(dialog, 0x53D);
+	if (!list) {
+		return;
+	}
+	Wstring top;
+	int topIndex = SendMessage(list, LB_GETTOPINDEX, 0, 0);
+	if (topIndex != -1) {
+		FUN_00623F00(list, topIndex, &top);
+	}
+	SendMessage(list, 0x49D, 0, 1);
+	FUN_00623E00(list);
+	int count = DAT_00B73E10.length();
+	for (int i = 0; i < count; i++) {
+		WolChannel chan;
+		DAT_00B73E10.get(chan, i);
+		if (strncmp(chan.Name, "Lob_41_", strlen("Lob_41_")) == 0) {
+			int number = atol(chan.Name + strlen("Lob_41_"));
+			bool current = strcmp(chan.Name, DAT_00B76B10.Name) == 0;
+			int copy = number / 8;
+			int slot = number % 8;
+			wchar_t info[80];
+			if (copy == 0) {
+				swprintf(info, L"%s  (%d)", DAT_00B73E1C[slot], chan.CurrentUsers);
+			} else {
+				swprintf(info, L"%s_%d  (%d)", DAT_00B73E1C[slot], copy + 1, chan.CurrentUsers);
+			}
+			int entries = SendMessage(list, LB_GETCOUNT, 0, 0);
+			int pos;
+			for (pos = 0; pos < entries; pos++) {
+				int item = SendMessage(list, LB_GETITEMDATA, pos, 0);
+				WolChannel other;
+				DAT_00B73E10.get(other, item);
+				if (atol(other.Name + strlen("Lob_41_")) > number) {
+					break;
+				}
+			}
+			int row = SendMessage(list, 0x4C7, pos, (LPARAM)chan.Name);
+			SendMessage(list, LB_SETITEMDATA, row, i);
+			OwnerDraw::CellData cell;
+			cell.type = OwnerDraw::CellData::TEXT;
+			cell.string.set(info);
+			cell.hint.set(DAT_00887734);
+			SendMessage(list, 0x4A8, MAKEWPARAM(DAT_00B76C1C, row), (LPARAM)&cell);
+			if (current) {
+				SendMessage(list, LB_SETCURSEL, row, 0);
+			}
+		}
+	}
+	int found = SendMessage(list, 0x4C5, 0, (LPARAM)top.text());
+	if (found != -1) {
+		SendMessage(list, LB_SETTOPINDEX, found, 0);
+	}
+	SendMessage(list, 0x49D, 0, 0);
+	InvalidateRect(list, NULL, 0);
+}
+
+// FUNCTION: 0x00780A00
+WideWstring __fastcall FUN_00780A00(int locale)
+{
+	Wstring key = "WOL:Locale" + Wstring_FromInt(locale, 2);
+	WideWstring name(StringTable::LoadString(key.get(), NULL, "D:\\ra2mdpost\\wonline.cpp", 0xB5D));
+	if (locale < 0x25) {
+		return name;
+	}
+	return name;
+}
+
+WideWstring __fastcall FUN_007B8090(wchar_t const * prefix, WideWstring const & text);
+WideWstring __fastcall FUN_007B7DD0(int value);
+
+// FUNCTION: 0x00780A90
+WideWstring __fastcall FUN_00780A90(User * user)
+{
+	Wstring name(user->Nick);
+	WideWstring text = FUN_007B7ED0(name) + L" : ";
+	name.toLower();
+	LadderA ladder;
+	memset(&ladder, 0, sizeof(ladder));
+	if (DAT_00B77E0C && DAT_00B77E0C->getValue(name, ladder)) {
+		text += WideWstring(StringTable::LoadString("TXT_RANK", NULL, "D:\\ra2mdpost\\wonline.cpp", 0xB79)) + WideWstring(L" ") + FUN_007B7DD0(ladder.Rung);
+	} else {
+		text += StringTable::LoadString("TXT_UNRANKED", NULL, "D:\\ra2mdpost\\wonline.cpp", 0xB7B);
+	}
+	Wstring login(user->Login);
+	if (login.length() == 0) {
+		login = (char *)user + 0x57;
+	}
+	if (login.length() > 0) {
+		text += FUN_007B8090(L": ", FUN_007B7ED0(login));
+	}
+	if (DAT_00B76530.contains(name)) {
+		if (DAT_00AC116C) {
+			int locale = 0;
+			DAT_00B76530.getValue(name, locale);
+			if (locale) {
+				text += FUN_007B8090(L" : ", FUN_00780A00(locale));
+			}
+		}
+	}
+	return text;
+}
+
+// FUNCTION: 0x00780D90
+WideWstring __fastcall FUN_00780D90(Wstring * file)
+{
+	if (strcmpi(file->text(), "RandMap.Sed") == 0) {
+		return WideWstring(StringTable::LoadString("TXT_RANDOM_MAP_DESCRIPTION", NULL, "D:\\ra2mdpost\\wonline.cpp", 0xB9A));
+	}
+	for (int i = 0; i < Session.Scenarios.Count(); i++) {
+		MultiMission * map = Session.Scenarios[i];
+		if (strcmpi(file->text(), map->Get_Filename()) == 0) {
+			return WideWstring(map->Description());
+		}
+	}
+	return WideWstring(DAT_00887734);
+}
+
+// FUNCTION: 0x00780E30
+WideWstring __fastcall FUN_00780E30(HWND list, int index)
+{
+	if (index == -1) {
+		return WideWstring(StringTable::LoadString("STT:LobbyListGames", NULL, "D:\\ra2mdpost\\wonline.cpp", 0xBAB));
+	}
+	WolChannel chan;
+	memset(&chan, 0, sizeof(chan));
+	int item = SendMessage(list, LB_GETITEMDATA, index, 0);
+	if (item >= 0 && item < DAT_00B76AE0.length()) {
+		DAT_00B76AE0.get(chan, item);
+		Wstring name(chan.Name);
+		name.truncate((char)0x27);
+		User user;
+		memset(&user, 0, sizeof(user));
+		strncpy(user.Nick, name.get(), 10);
+		WideWstring text = FUN_00780A90(&user);
+		text += WideWstring(L", ");
+		if (chan.Ping != -1) {
+			wchar_t ping[64];
+			swprintf(ping, StringTable::LoadString("MSG:PingInfo", NULL, "D:\\ra2mdpost\\wonline.cpp", 0xBCD), chan.Ping);
+			text += ping;
+		} else {
+			text += StringTable::LoadString("TXT_UNKNOWN_PING", NULL, "D:\\ra2mdpost\\wonline.cpp", 0xBD0);
+		}
+		char details[0x84];
+		strncpy(details, chan.Info, 0x80);
+		int first = 0;
+		int second = 0;
+		int third = 0;
+		int fourth = 0;
+		int fifth = 0;
+		Wstring file;
+		FUN_0077E820(details, &first, &second, &third, &fourth, &fifth, &file);
+		if (file.length() > 0) {
+			WideWstring description = FUN_00780D90(&file);
+			if (description.length() > 0) {
+				text += L", ";
+				text += description;
+			}
+		}
+		return text;
+	}
+	return WideWstring(StringTable::LoadString("STT:LobbyListGames", NULL, "D:\\ra2mdpost\\wonline.cpp", 0xBB2));
+}
+
+// FUNCTION: 0x00781090
+WideWstring __fastcall FUN_00781090(HWND list, int index)
+{
+	if (index == -1) {
+		return WideWstring(StringTable::LoadString("STT:LobbyListUsers", NULL, "D:\\ra2mdpost\\wonline.cpp", 0xBEA));
+	}
+	int item = SendMessage(list, LB_GETITEMDATA, index, 0);
+	if (item >= 0 && item < DAT_00B77900.length()) {
+		User user;
+		memset(&user, 0, sizeof(user));
+		DAT_00B77900.get(user, item);
+		return FUN_00780A90(&user);
+	}
+	return WideWstring(StringTable::LoadString("STT:LobbyListUsers", NULL, "D:\\ra2mdpost\\wonline.cpp", 0xBEF));
+}
+
+extern int DAT_00B77E44;
+
+// FUNCTION: 0x00781130
+bool __fastcall FUN_00781130(WolChannel * chan, int mode, int a, int b)
+{
+	int filter = DAT_00B77E44;
+	if ((filter == 2 && mode == 1) || (filter == 3 && mode == 0)) {
+		if (chan->Squad & 0x100) {
+			return true;
+		}
+	}
+	if ((filter == 2 && mode == 0) || (filter == 3 && mode == 1)) {
+		if (!(chan->Squad & 0x100)) {
+			return true;
+		}
+	}
+	if ((filter == 4 && mode == 1) || (filter == 5 && mode == 0)) {
+		if (a || b) {
+			return true;
+		}
+	}
+	if ((filter == 4 && mode == 0) || (filter == 5 && mode == 1)) {
+		if (!a && !b) {
+			return true;
+		}
+	}
+	if ((filter == 6 && mode == 1) || (filter == 7 && mode == 0)) {
+		if (chan->Kind) {
+			return true;
+		}
+	}
+	if ((filter == 6 && mode == 0) || (filter == 7 && mode == 1)) {
+		if (!chan->Kind) {
+			return true;
+		}
+	}
+	if ((filter == 8 && mode == 1) || (filter == 9 && mode == 0)) {
+		if (chan->Tournament) {
+			return true;
+		}
+	}
+	if ((filter == 8 && mode == 0) || (filter == 9 && mode == 1)) {
+		if (!chan->Tournament) {
+			return true;
+		}
+	}
+	if ((filter == 10 && mode == 1) || (filter == 11 && mode == 0)) {
+		if (FUN_0077D990(chan)) {
+			return true;
+		}
+	}
+	if ((filter == 10 && mode == 0) || (filter == 11 && mode == 1)) {
+		if (!FUN_0077D990(chan)) {
+			return true;
+		}
+	}
+	if ((filter == 12 && mode == 1) || (filter == 13 && mode == 0)) {
+		if (!FUN_0077D910(chan)) {
+			return true;
+		}
+	}
+	if ((filter == 12 && mode == 0) || (filter == 13 && mode == 1)) {
+		if (FUN_0077D910(chan)) {
+			return true;
+		}
+	}
+	return false;
+}
+
+struct SortEntry {
+	int Pad;
+	int Key;
+};
+
+// FUNCTION: 0x00781380
+int __cdecl FUN_00781380(SortEntry const * a, SortEntry const * b)
+{
+	int x = a->Key;
+	int y = b->Key;
+	if (x < y) {
+		return x == -1 ? 1 : -1;
+	}
+	if (x > y) {
+		return y == -1 ? -1 : 1;
+	}
+	return 0;
+}
+
+// FUNCTION: 0x007813B0
+int __cdecl FUN_007813B0(SortEntry const * a, SortEntry const * b)
+{
+	int x = a->Key;
+	int y = b->Key;
+	if (x < y) {
+		return 1;
+	}
+	if (x > y) {
+		return -1;
+	}
+	return 0;
 }
 

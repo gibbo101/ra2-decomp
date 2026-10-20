@@ -53,9 +53,11 @@
 #include "ramp.hh"
 #include <new>
 #include <cmath>
+#include <stdio.h>
 
 int SubzoneHash(unsigned int const & key);
 extern int DAT_00ABDE88;
+extern const char * _mzones[MZONE_COUNT];
 
 #define IS_TILE_IN_SET(setname, setsize) (tile >= IsometricTileTypeClass::setname && tile < IsometricTileTypeClass::setname + setsize)
 
@@ -5597,6 +5599,72 @@ not_fogged:
 	return(false);
 }
 
+// FUNCTION: 0x005865E0
+bool MapClass::IsLocationFogged(Coord const & coord)
+{
+	return(false);
+}
+
+// FUNCTION: 0x005865F0
+void MapClass::Reveal_Nearby_Technos(CellClass * cptr, HouseClass * house, bool onradar)
+{
+	Cell cell = cptr->CellID;
+
+	for (int i = 1; i < 15; i += 2) {
+		CellClass * cellptr = &Map[cell];
+		int cell_height = cellptr->Height;
+		if (cell_height >= i - 2 && cell_height <= i) {
+			if (onradar) {
+				Map.Radar_Cell(cellptr->CellID);
+			}
+			TechnoClass * t = cellptr->Cell_Techno();
+			if (t != NULL) {
+				t->Revealed(house);
+			}
+		}
+		cell += Cell(1,1);
+	}
+}
+
+// FUNCTION: 0x005866C0
+void MapClass::Init_Fog_System(void)
+{
+	Reset_Iterator();
+	CellClass * cellptr = Iterate();
+	while (cellptr != NULL) {
+		if (!cellptr->IsFogMapped) {
+			cellptr->Fog_Cell();
+		}
+		cellptr = Iterate();
+	}
+}
+
+// FUNCTION: 0x00586720
+void MapClass::Deinit_Fog_System(void)
+{
+	Reset_Iterator();
+	CellClass * cellptr = Iterate();
+	while (cellptr != NULL) {
+		cellptr->Unfog_Cell();
+		cellptr = Iterate();
+	}
+}
+
+// FUNCTION: 0x00586780
+bool MapClass::IsAreaFree(Rect const & rect, int house)
+{
+	int mask = (house != -1) ? (1 << house) : 0;
+	for (int x = rect.X; x < rect.X + rect.Width; x++) {
+		for (int y = rect.Y; y < rect.Y + rect.Height; y++) {
+			CellClass * cptr = &Map[Cell(x,y)];
+			if (cptr->Cell_Terrain() != NULL || (cptr->OccupiedBy & mask) || cptr->Overlay != -1 || cptr->Passability != 0 || cptr->Ramp != 0 || cptr->Cell_Building() != NULL) {
+				return(false);
+			}
+		}
+	}
+	return(In_Local_Radar(rect));
+}
+
 // FUNCTION: 0x005868A0
 void MapClass::Recalc_Cells_In_Rect(Rect const & rect)
 {
@@ -5607,4 +5675,289 @@ void MapClass::Recalc_Cells_In_Rect(Rect const & rect)
 		}
 	}
 	Recalc_Cells_In_List(cells);
+}
+
+// FUNCTION: 0x00586990
+void MapClass::Recalc_Cells_In_List(DynamicVectorClass<Cell> const & vec)
+{
+	int i;
+	for (i = vec.Count() - 1; i >= 0; i--) {
+		if (In_Local_Radar(vec[i])) {
+			CellSubzones[Get_Cell_Zone_Index(vec[i])].SubzoneID[0] = 0;
+			CellClass * cptr = &Map[vec[i]];
+			cptr->Recalc_Attributes();
+		}
+	}
+	for (i = vec.Count() - 1; i >= 0; i--) {
+		Cell cell = vec[i];
+		if (In_Local_Radar(cell)) {
+			if (CellSubzones[Get_Cell_Zone_Index(cell)].SubzoneID[0] == 0) {
+				Update_Cell_Subzones(cell);
+			}
+		}
+	}
+}
+
+static inline Cell Bridge_Start_Cell(Cell const & cell, FacingType facing)
+{
+	return(Adjacent_Cell(cell, facing));
+}
+
+// FUNCTION: 0x00586BF0
+void MapClass::Set_WasUnderBridge_Flags(void)
+{
+	for (int index = ZoneConnections.Count() - 1; index >= 0; index--) {
+		ZoneConnectionClass * con = &ZoneConnections[index];
+
+		if (con->Type == 0 && !con->IsPassable) {
+			if (con->From.X == con->To.X) {
+				FacingType facing = con->From.Y < con->To.Y ? FACING_S : FACING_N;
+				Cell cell = Adjacent_Cell(con->From, facing);
+				for (; cell != con->To; cell = cell + AdjacentCell[(int)facing & 7]) {
+					if (!Map[cell].IsUnderBridge) {
+						for (int offset = -2; offset <= 1; offset++) {
+							CellClass & cptr = Map[cell + Cell(offset, 0)];
+							cptr.IsBridgeEastWest = false;
+							cptr.WasUnderBridge = true;
+						}
+					}
+				}
+			} else {
+				FacingType facing = con->From.X < con->To.X ? FACING_E : FACING_W;
+				Cell cell = Bridge_Start_Cell(con->From, facing);
+				for (; cell != con->To; cell = AdjacentCell[(int)facing & 7] + cell) {
+					if (!Map[cell].IsUnderBridge) {
+						for (int offset = -2; offset <= 1; offset++) {
+							CellClass & cptr = Map[cell + Cell(0, offset)];
+							cptr.IsBridgeEastWest = true;
+							cptr.WasUnderBridge = true;
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x00586E50
+Cell MapClass::Clip_To_Map(Cell const & cell)
+{
+	int x = cell.X;
+	int y = cell.Y;
+
+	if (x - y >= 2 * (LocalRect.X + LocalRect.Width) - PlayRect.Width) {
+		int tmp = (x + PlayRect.Width + 2 * (1 - LocalRect.X - LocalRect.Width) - y);
+		x -= tmp / 2;
+		y += tmp / 2;
+	} else if (y - x >= PlayRect.Width - 2 * LocalRect.X) {
+		int tmp = (y + 2 * LocalRect.X + 2 - PlayRect.Width - x);
+		y -= tmp / 2;
+		x += tmp / 2;
+	}
+
+	CellClass *cptr = &Map[Cell(x,y)];
+	int cell_height = cptr->Height;
+	int ramp = cptr->Ramp;
+
+	if (ramp != 0) {
+		if (x + y < cell_height + PlayRect.Width + 2 * LocalRect.Y + 4) {
+			cell_height++;
+		}
+	}
+
+	if (x + y <= cell_height + PlayRect.Width + 2 * LocalRect.Y) {
+		do {
+			x++;
+			y++;
+		} while (!In_Local_Radar(Cell(x,y)));
+	} else if (x + y > cell_height + PlayRect.Width + 2 * (LocalRect.Y + LocalRect.Height) + 2) {
+		do {
+			x--;
+			y--;
+		} while (!In_Local_Radar(Cell(x,y)));
+	}
+
+	return(Cell(x,y));
+}
+
+// FUNCTION: 0x00586FC0
+Cell MapClass::Closest_Passable_Cell(Cell const & tarcell, Cell const & objcell)
+{
+	Cell best_cell = CELL_NONE;
+	double best_dist = 10000.0;
+	CellClass *cptr = &Map[tarcell];
+
+	if (cptr->ITType < ISOTILE_FIRST) {
+		return(tarcell);
+	}
+
+	IsometricTileTypeClass *iptr = IsometricTileTypes[cptr->ITType];
+	IsoTileSet *set = (IsoTileSet*)iptr->Get_Image_Data();
+
+	int w = iptr->Width;
+	int h = iptr->Height;
+	int s = cptr->SubTile;
+
+	Cell d = tarcell - Cell(s % w, s / w);
+
+	for (int y = 0; y < h; y++) {
+		for (int x = 0; x < w; x++) {
+			Cell cell = d + Cell(x, y);
+			if (set->Fetch_Record_Pointer_Unsafe(x + y * iptr->Width) != NULL && In_Local_Radar(cell)) {
+				int xdiff = cell.X - objcell.X;
+				int ydiff = cell.Y - objcell.Y;
+				double dist = fastmath::sqrt(double(xdiff * xdiff + ydiff * ydiff));
+				if (dist < best_dist) {
+					best_dist = dist;
+					best_cell = cell;
+				}
+			}
+		}
+	}
+
+	return(best_cell);
+}
+
+// FUNCTION: 0x00587180
+bool MapClass::Damage_Bridge(Cell const & cell)
+{
+	bool result = false;
+	PendingBridgeCells.Clear();
+	CellClass *cptr = &Map[cell];
+
+	if (cptr->Overlay >= OVERLAY_LOWBRIDGE_01 && cptr->Overlay <= OVERLAY_LOWBRIDGE_26) {
+		result = Damage_Low_Bridge(cell);
+	} else if (cptr->Overlay >= 0xCD && cptr->Overlay <= 0xE6) {
+		result = FUN_0057CCF0(cell);
+	} else {
+		IsometricTileType ittype = IsometricTileType(cptr->ITType - IsometricTileTypeClass::BridgeSet + 1);
+		CellClass * bcptr = cptr->Get_Bridge_Deck_CellClass();
+
+		if (
+			(bcptr != NULL && (bcptr->Overlay == OVERLAY_BRIDGE1 || bcptr->Overlay == OVERLAY_BRIDGE2)) ||
+			(
+				ittype == IsometricTileTypeClass::BridgeMiddle1 + 0 ||
+				ittype == IsometricTileTypeClass::BridgeMiddle1 + 1 ||
+				ittype == IsometricTileTypeClass::BridgeMiddle1 + 2 ||
+				ittype == IsometricTileTypeClass::BridgeMiddle1 + 3 ||
+				ittype == IsometricTileTypeClass::BridgeMiddle2 + 0 ||
+				ittype == IsometricTileTypeClass::BridgeMiddle2 + 1 ||
+				ittype == IsometricTileTypeClass::BridgeMiddle2 + 2 ||
+				ittype == IsometricTileTypeClass::BridgeMiddle2 + 3
+			)
+		) {
+			result = Damage_High_Bridge(cell);
+		} else {
+			ittype = IsometricTileType(cptr->ITType - IsometricTileTypeClass::TrainBridgeSet + 1);
+			if (
+				(bcptr != NULL && (bcptr->Overlay == OVERLAY_BRIDGEHEAD21 || bcptr->Overlay == OVERLAY_BRIDGEHEAD22)) ||
+				(
+					ittype == IsometricTileTypeClass::BridgeMiddle1 + 0 ||
+					ittype == IsometricTileTypeClass::BridgeMiddle1 + 1 ||
+					ittype == IsometricTileTypeClass::BridgeMiddle1 + 2 ||
+					ittype == IsometricTileTypeClass::BridgeMiddle1 + 3 ||
+					ittype == IsometricTileTypeClass::BridgeMiddle2 + 0 ||
+					ittype == IsometricTileTypeClass::BridgeMiddle2 + 1 ||
+					ittype == IsometricTileTypeClass::BridgeMiddle2 + 2 ||
+					ittype == IsometricTileTypeClass::BridgeMiddle2 + 3
+				)
+			) {
+				result = Damage_Train_Bridge(cell);
+			}
+		}
+	}
+
+	for (int i = 0; i < PendingBridgeCells.Count(); i++) {
+		Map[PendingBridgeCells[i]].On_Bridge_Collapse();
+	}
+
+	PendingBridgeCells.Clear();
+	return(result);
+}
+
+// FUNCTION: 0x00587C50
+bool MapClass::Check_Map_Integrity(void)
+{
+	bool from_ground;
+	bool from_bridge;
+	bool to_ground;
+	bool to_bridge;
+	CellClass * from;
+	CellClass * to;
+	CellClass *bcptr;
+
+	bool passed = true;
+
+	FILE * file = fopen("MapCheck.txt", "w");
+
+	Reset_Iterator();
+	from = Iterate();
+	while (from != NULL) {
+		if (In_Local_Radar(from)) {
+
+			for (MZoneType mzone = MZONE_NORMAL; mzone < MZONE_COUNT; mzone++) {
+				if (mzone != MZONE_FLYER && mzone != MZONE_SUBTERANNEAN) {
+
+					from_ground = MZonePassability[mzone][from->Passability] == TRAVERSAL_PASSABLE;
+
+					from_bridge = from->IsUnderBridge
+						&& ((from->IsBridgeEastWest && ((bcptr = from->BridgeDeckCell) == NULL || bcptr->CellID.Y - from->CellID.Y != 2))
+							|| (!from->IsBridgeEastWest && ((bcptr = from->BridgeDeckCell) == NULL || bcptr->CellID.X - from->CellID.X != 2)));
+
+					if (from_ground || from_bridge) {
+						Reset_Local_Iterator();
+						to = Local_Iterate();
+						while (to != NULL) {
+
+							if ((to->CellID.X + to->CellID.Y > from->CellID.X + from->CellID.Y) || (to->CellID.X + to->CellID.Y == from->CellID.X + from->CellID.Y && to->CellID.X - to->CellID.Y > from->CellID.X - from->CellID.Y)) {
+								to_ground = MZonePassability[mzone][to->Passability] == TRAVERSAL_PASSABLE;
+								to_bridge = to->IsUnderBridge
+									&& ((to->IsBridgeEastWest && ((bcptr = to->BridgeDeckCell) == NULL || bcptr->CellID.Y - to->CellID.Y != 2))
+										|| (!to->IsBridgeEastWest && ((bcptr = to->BridgeDeckCell) == NULL || bcptr->CellID.X - to->CellID.X != 2)));
+
+								if (to_ground
+									&& from_ground
+									&& Is_Same_Cell_Zone(from->CellID, to->CellID, mzone, false, false, false)
+									&& Search.Test_Cell_Walk(from->CellID, to->CellID, NULL, false, false, mzone) == 0x7FFFFFFF) {
+									passed = false;
+									fprintf(file, "Failure: (%d,%d)->(%d,%d) ; (ground->ground) ; MZONE %s\n", from->CellID.X, from->CellID.Y, to->CellID.X, to->CellID.Y, _mzones[mzone]);
+								}
+
+								if (to_bridge) {
+									if (from_bridge
+										&& Is_Same_Cell_Zone(from->CellID, to->CellID, mzone, true, true, false)
+										&& Search.Test_Cell_Walk(from->CellID, to->CellID, NULL, true, true, mzone) == 0x7FFFFFFF) {
+										passed = false;
+										fprintf(file, "Failure: (%d,%d)->(%d,%d) ; (bridge->bridge) ; MZONE %s\n", from->CellID.X, from->CellID.Y, to->CellID.X, to->CellID.Y, _mzones[mzone]);
+									}
+
+									if (from_ground
+										&& Is_Same_Cell_Zone(from->CellID, to->CellID, mzone, false, true, false)
+										&& Search.Test_Cell_Walk(from->CellID, to->CellID, NULL, false, true, mzone) == 0x7FFFFFFF) {
+										passed = false;
+										fprintf(file, "Failure: (%d,%d)->(%d,%d) ; (ground->bridge) ; MZONE %s\n", from->CellID.X, from->CellID.Y, to->CellID.X, to->CellID.Y, _mzones[mzone]);
+									}
+								}
+
+								if (to_ground
+									&& from_bridge
+									&& Is_Same_Cell_Zone(from->CellID, to->CellID, mzone, true, false, false)
+									&& Search.Test_Cell_Walk(from->CellID, to->CellID, NULL, true, false, mzone) == 0x7FFFFFFF) {
+									passed = false;
+									fprintf(file, "Failure: (%d,%d)->(%d,%d) ; (bridge->ground) ; MZONE %s\n", from->CellID.X, from->CellID.Y, to->CellID.X, to->CellID.Y, _mzones[mzone]);
+								}
+							}
+
+							to = Local_Iterate();
+						}
+					}
+				}
+			}
+		}
+
+		from = Iterate();
+	}
+
+	fclose(file);
+	return(passed);
 }

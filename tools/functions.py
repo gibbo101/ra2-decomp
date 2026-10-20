@@ -228,13 +228,13 @@ def main() -> None:
     md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_32)
 
     def labels(after: set | None) -> list[int]:
-        """Starts that only a data pointer or Ghidra names, which flow from the start
+        """Starts that only a data pointer, YRpp or Ghidra names, which flow from the start
         before them reaches: labels or tails inside that function. `after` limits the
         check to starts whose previous start is in it."""
         ordered = sorted(evidence)
         found = []
         for i, a in enumerate(ordered[1:-1], 1):
-            if set(evidence[a]) <= {"V", "G"} and (after is None or ordered[i - 1] in after):
+            if set(evidence[a]) <= {"V", "Y", "G"} and (after is None or ordered[i - 1] in after):
                 reached: set = set()
                 reached_end(md, code, base, ordered[i - 1], ordered[i + 1], set(), reached, True)
                 if a in reached:
@@ -297,7 +297,7 @@ def main() -> None:
             w.writerow([f"0x{a:08X}", stop - a, evidence[a], yrpp.get(a) or library.get(a, "")])
 
     print(f"{len(ordered)} functions -> {out}")
-    print("labels named only by a data pointer or Ghidra, dropped:", " ".join(f"0x{a:08X}" for a in case_labels))
+    print("labels named only by a data pointer, YRpp or Ghidra, dropped:", " ".join(f"0x{a:08X}" for a in case_labels))
     by = {}
     for a, e in mid.items():
         by[e] = by.get(e, 0) + 1

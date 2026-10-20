@@ -33,6 +33,7 @@ class AirstrikeClass : public AbstractClass
 		AircraftTypeClass * EliteAirstrikeTeamType;
 		FootClass * FirstObject;
 
+		AirstrikeClass(void);
 		AirstrikeClass(TechnoClass * owner);
 		AirstrikeClass(NoInitClass const & x);
 		virtual ~AirstrikeClass(void) override;

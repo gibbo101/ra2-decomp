@@ -626,3 +626,20 @@ int Get_Deformable_Cell_Corners(CellClass * cellptr, int direction)
 
 	return(mask);
 }
+
+// FUNCTION: 0x006B43B0 ?$DynamicVectorClass@UDeformUndoStruct@@::Clear
+// FUNCTION: 0x006B43E0 ?$DynamicVectorClass@UDeformUndoStruct@@::ID
+// FUNCTION: 0x006B4410 ?$VectorClass@UDeformUndoStruct@@::GetItem
+// FUNCTION: 0x006B4440 ?$VectorClass@UDeformUndoStruct@@::operator==
+// FUNCTION: 0x006B44A0 ?$VectorClass@UDeformUndoStruct@@::Resize
+// FUNCTION: 0x006B45A0 ?$VectorClass@UDeformUndoStruct@@::Clear
+// FUNCTION: 0x006B45D0 ?$VectorClass@UDeformUndoStruct@@::ID
+// FUNCTION: 0x006B4620 ?$VectorClass@UDeformUndoStruct@@::ID
+template class VectorClass<DeformUndoStruct>;
+
+// FUNCTION: 0x006B4650 ?$DynamicVectorClass@UDeformUndoStruct@@::Resize
+// FUNCTION: 0x006B4760 ?$DynamicVectorClass@UDeformUndoStruct@@::ID
+template class DynamicVectorClass<DeformUndoStruct>;
+
+// FUNCTION: 0x006B47A0 ?$VectorClass@UDeformUndoStruct@@::~?$VectorClass@UDeformUndoStruct@@
+// FUNCTION: 0x006B47F0 ?$DynamicVectorClass@UDeformUndoStruct@@::~?$DynamicVectorClass@UDeformUndoStruct@@

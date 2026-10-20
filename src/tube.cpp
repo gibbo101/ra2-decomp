@@ -16,6 +16,56 @@
 #include "tracker.h"
 #include <cstdio>
 
+char const * TubeClass::INI_NAME = "Tubes";
+
+// FUNCTION: 0x00727FD0
+TubeClass::TubeClass(Cell const &cell, FacingType dir) :
+	Enter(cell),
+	Exit(cell),
+	EnterDir(dir),
+	Count(0)
+{
+	Create_ID();
+
+	for (int i = 0; i < 100; i++) {
+		Dirs[i] = FACING_NONE;
+	}
+
+	Tubes.Add(this);
+
+	if (cell != Cell(0, 0)) {
+		CellClass *cptr = &Map[cell];
+		cptr->Tube = Tubes.ID(this);
+	}
+}
+
+// FUNCTION: 0x007280D0
+TubeClass::~TubeClass(void)
+{
+	Detach_This_From_All(this, true);
+
+	CellClass *cptr = &Map[Enter];
+	if (cptr) {
+		if (cptr->Tube == Tubes.ID(this)) {
+			cptr->Tube = -1;
+		}
+	}
+
+	Tubes.Delete(this);
+}
+
+// FUNCTION: 0x007281A0
+HRESULT STDMETHODCALLTYPE TubeClass::Load(IStream * stream)
+{
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		new (this) TubeClass(NoInitClass());
+
+		result = S_OK;
+	}
+	return(result);
+}
+
 // FUNCTION: 0x007281E0
 HRESULT STDMETHODCALLTYPE TubeClass::Save(IStream * stream, BOOL cleardirty)
 {
@@ -26,6 +76,141 @@ HRESULT STDMETHODCALLTYPE TubeClass::Save(IStream * stream, BOOL cleardirty)
 	return(result);
 }
 
+// FUNCTION: 0x00728200
+void TubeClass::Assign_Tubes(void)
+{
+	int tube_count = Tubes.Count();
+	int current_tube = -1;
+	for (int index = 0; index < tube_count; index++) {
+		TubeClass * tube = Tubes[index];
+		CellClass * cptr = &Map[tube->Enter];
+
+		if (!cptr->Has_Tunnel()) {
+			delete tube;
+			tube_count--;
+			cptr->Tube = -1;
+			index--;
+		} else {
+			cptr->Tube = ++current_tube;
+		}
+	}
+}
+
+// FUNCTION: 0x00728280
+void TubeClass::Write_INI(CCINIClass & ini)
+{
+	char key[12];
+	char buffer[550];
+
+	ini.Clear(INI_NAME);
+	Assign_Tubes();
+
+	for (int index = 0; index < Tubes.Count(); index++) {
+
+		TubeClass * tube = Tubes[index];
+		if (tube != NULL) {
+
+			sprintf(key, "%d", index);
+			sprintf(buffer, "%d,%d,%d,%d,%d", tube->Enter.X, tube->Enter.Y, tube->EnterDir, tube->Exit.X, tube->Exit.Y);
+			for (int dir = 0; dir < 100; dir++) {
+				sprintf(buffer + strlen(buffer), ",%d", tube->Dirs[dir]);
+			}
+			ini.Put_String(INI_NAME, key, buffer);
+		}
+	}
+}
+
+// FUNCTION: 0x007283C0
+void TubeClass::Read_INI(CCINIClass const & ini)
+{
+	char buffer[INIClass::MAX_LINE_LENGTH];
+
+	const_cast<CCINIClass &>(ini).Reset();
+	int count = ini.Entry_Count(INI_NAME);
+
+	for (int index = 0; index < count; index++) {
+
+		char const * entry = ini.Get_Entry(INI_NAME, index);
+		ini.Get_String(INI_NAME, entry, NULL, buffer, sizeof(buffer));
+
+		TubeClass * tube = new TubeClass(Cell(0,0));
+
+		tube->Enter.X = atoi(strtok(buffer, ","));
+		tube->Enter.Y = atoi(strtok(NULL, ","));
+		tube->EnterDir = (FacingType)atoi(strtok(NULL, ","));
+		tube->Exit.X = atoi(strtok(NULL, ","));
+		tube->Exit.Y = atoi(strtok(NULL, ","));
+
+		tube->Count = -1;
+		for (int dir = 0; dir < 100; dir++) {
+			tube->Dirs[dir] = (FacingType)atoi(strtok(NULL, ","));
+			tube->Count++;
+			if (tube->Dirs[dir] == FACING_NONE) break;
+		}
+
+		Map[tube->Enter].Tube = index;
+	}
+}
+
+// FUNCTION: 0x00728540
+bool TubeClass::Not_In_Tube(Cell const & cell) const
+{
+	Cell tubecell = Enter;
+
+	if (tubecell == cell) {
+		return(true);
+	}
+
+	int dir = 0;
+	while (Dirs[dir] != FACING_NONE) {
+		tubecell = Adjacent_Cell(tubecell, Dirs[dir++]);
+		if (tubecell == cell) {
+			return(false);
+		}
+	}
+
+	return(true);
+}
+
+// FUNCTION: 0x007285D0
+void TubeClass::Add_Direction(FacingType dir)
+{
+	if (Count < 99) {
+		Dirs[Count] = dir;
+		Dirs[++Count] = FACING_NONE;
+	}
+
+	Exit = Adjacent_Cell(Exit, dir);
+}
+
+// FUNCTION: 0x00728630
+void TubeClass::Compute_CRC(CRCEngine & crc) const
+{
+	BASECLASS::Compute_CRC(crc);
+
+	crc(Enter.X);
+	crc(Enter.Y);
+	crc(Exit.X);
+	crc(Exit.Y);
+	crc(EnterDir);
+	for (int i = 0; i < 100; i++) {
+		crc(Dirs[i]);
+	}
+	crc(Count);
+}
+
+// FUNCTION: 0x007286B0
+int TubeClass::Fetch_Object_Size(void) const
+{
+	return(sizeof(*this));
+}
+
+// FUNCTION: 0x007286C0
+RTTIType TubeClass::Fetch_RTTI(void) const
+{
+	return(RTTI_TUBE);
+}
+
 // FUNCTION: 0x007286D0
 HRESULT STDMETHODCALLTYPE TubeClass::GetClassID(CLSID * retval)
 {
@@ -33,3 +218,5 @@ HRESULT STDMETHODCALLTYPE TubeClass::GetClassID(CLSID * retval)
 	*retval = CLSID_TubeClass;
 	return(S_OK);
 }
+
+// FUNCTION: 0x00728710 TubeClass::~TubeClass

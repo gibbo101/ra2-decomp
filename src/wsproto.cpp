@@ -605,3 +605,28 @@ int __cdecl FUN_007B2730(void)
 // FUNCTION: 0x007B2760 WinsockInterfaceClass::Open_Socket
 
 // FUNCTION: 0x007B2770 WinsockInterfaceClass::Message_Handler
+
+// FUNCTION: 0x007B2780 WinsockInterfaceClass::~WinsockInterfaceClass
+
+// FUNCTION: 0x007B2840 ?$DynamicVectorClass@PAUWinsockBufferType@WinsockInterfaceClass@@::Clear
+template class DynamicVectorClass<WinsockInterfaceClass::WinsockBufferType *>;
+
+// FUNCTION: 0x007B2870 ?$VectorClass@PAUWinsockBufferType@WinsockInterfaceClass@@::ID
+
+// FUNCTION: 0x007B2890 ?$VectorClass@PAUWinsockBufferType@WinsockInterfaceClass@@::GetItem
+
+// FUNCTION: 0x007B28A0 ?$VectorClass@PAUWinsockBufferType@WinsockInterfaceClass@@::operator==
+
+// FUNCTION: 0x007B28E0 ?$VectorClass@PAUWinsockBufferType@WinsockInterfaceClass@@::Resize
+
+// FUNCTION: 0x007B2990 ?$VectorClass@PAUWinsockBufferType@WinsockInterfaceClass@@::Clear
+
+// FUNCTION: 0x007B29C0 ?$VectorClass@PAUWinsockBufferType@WinsockInterfaceClass@@::ID
+
+// FUNCTION: 0x007B2A00 ?$DynamicVectorClass@PAUWinsockBufferType@WinsockInterfaceClass@@::ID
+
+// FUNCTION: 0x007B2A20 ?$DynamicVectorClass@PAUWinsockBufferType@WinsockInterfaceClass@@::Resize
+
+// FUNCTION: 0x007B2AD0 ?$DynamicVectorClass@PAUWinsockBufferType@WinsockInterfaceClass@@::ID
+
+// FUNCTION: 0x007B2B00 ~?$VectorClass@PAUWinsockBufferType@WinsockInterfaceClass@@

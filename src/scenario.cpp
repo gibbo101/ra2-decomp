@@ -1195,6 +1195,207 @@ void Assign_Houses(void)
 	special_house->FUN_0050B840();
 }
 
+// FUNCTION: 0x00688380
+DynamicVectorClass<Cell> Build_Start_Waypoint_List(void)
+{
+	DynamicVectorClass<Cell> waypts;
+
+	int num_waypts = 0;
+	for (int i = 0; i < 8; i++) {
+		if (Scen->Is_Valid_Waypoint(i)) {
+			num_waypts++;
+		} else {
+			break;
+		}
+	}
+
+	int spectators = 0;
+	for (int s = 0; s < Session.Players.Count(); s++) {
+		if (Session.Players[s]->Slot.SpectatorFlag == -1) {
+			spectators++;
+		}
+	}
+
+	int look_for = MAX(num_waypts, Session.Players.Count() - spectators + Session.Options.AIPlayers);
+
+	for (int waycount = 0; waycount < look_for; waycount++) {
+		if (Scen->Is_Valid_Waypoint(waycount)) {
+			waypts.Add(Scen->Get_Waypoint_Cell(waycount));
+			DebugString("Multiplayer start waypoint found at cell %d,%d\n", Scen->Get_Waypoint_Cell(waycount).X, Scen->Get_Waypoint_Cell(waycount).Y);
+		}
+	}
+
+	int deficiency = look_for - waypts.Count();
+	if (deficiency > 0) {
+		DebugString("Multiplayer start waypoint deficiency - looking for more start positions\n");
+
+		while (waypts.Count() < look_for) {
+			Cell trycell = Cell(Map.MapRect.X + Random_Pick(10, Map.MapRect.Width - 10), Map.MapRect.Y + 10 + Random_Pick(0, Map.MapRect.Height - 10));
+
+			trycell = Map.Nearby_Location(trycell, SPEED_TRACK, -1, MZONE_NORMAL, false, Point2D(8, 8));
+			if (trycell != CELL_NONE) {
+				waypts.Add(trycell);
+				DebugString("Random multiplayer start waypoint added at cell %d,%d\n", trycell.X, trycell.Y);
+			}
+		}
+	}
+
+	return(waypts);
+}
+
+// FUNCTION: 0x00689310
+void ScenarioClass::Save(IStream * stream) const
+{
+	DebugString("Scenario Save: ElapsedTimer = %ld\n", ElapsedTimer);
+	bool was_stopped = !ElapsedTimer.Is_Active();
+	if (!was_stopped) {
+		ElapsedTimer.Stop();
+	}
+
+	stream->Write(this, sizeof(*this), NULL);
+
+	AllowableUnits.Save(stream);
+	AllowableUnitMaximums.Save(stream);
+	AllowableUnitCounts.Save(stream);
+
+	if (!was_stopped) {
+		ElapsedTimer.Start();
+	}
+}
+
+// FUNCTION: 0x00689470
+void ScenarioClass::Load(IStream * stream)
+{
+	ElapsedTimer.Stop();
+
+	stream->Read(this, sizeof(*this), NULL);
+
+	new (this) ScenarioClass(NoInitClass());
+
+	AllowableUnits.Load(stream);
+	AllowableUnitMaximums.Load(stream);
+	AllowableUnitCounts.Load(stream);
+
+	for (int i = 0; i < AllowableUnits.Count(); i++) {
+		Swizzle_Pointer(&AllowableUnits[i]);
+	}
+
+	if (MissionTimerText[0]) {
+		MissionTimerTextCSF = StringTable::LoadString(MissionTimerText, NULL, "D:\\ra2mdpost\\Scenario.CPP", 6608);
+	} else {
+		MissionTimerTextCSF = L"";
+	}
+
+	ElapsedTimer.Start();
+	DebugString("Scenario Load: ElapsedTimer = %ld\n", ElapsedTimer);
+}
+
+// FUNCTION: 0x00689670
+bool ScenarioClass::Set_Global_To(int global, bool value)
+{
+	if ((unsigned)global < ARRAY_SIZE(Scen->GlobalFlags)) {
+		bool previous = GlobalFlags[global].Value;
+		if (previous != value) {
+			GlobalFlags[global].Value = value;
+			IsGlobalChanged = true;
+			TagClass::All_Timer_Global_Reset(global);
+		}
+		return(previous);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x006896C0
+bool ScenarioClass::Set_Global_To(char const * variable_name, bool value)
+{
+	int index = Global_From_Name(variable_name);
+	if (index != -1) {
+		return(Set_Global_To(index, value));
+	}
+	return(true);
+}
+
+// FUNCTION: 0x00689760
+bool ScenarioClass::Fetch_Global_Value(int global, bool & value)
+{
+	if (global >= 0 && global < ARRAY_SIZE(GlobalFlags)) {
+		value = GlobalFlags[global].Value;
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00689790
+bool ScenarioClass::Fetch_Global_Value(char const * variable_name, bool & value)
+{
+	int index = Global_From_Name(variable_name);
+	if (index != -1) {
+		return(Fetch_Global_Value(index, value));
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00689820
+int ScenarioClass::Global_From_Name(char const * variable_name)
+{
+	for (int i = 0; i < ARRAY_SIZE(GlobalFlags); i++) {
+		if (!strcmp(variable_name, GlobalFlags[i].VariableName)) {
+			return(i);
+		}
+	}
+	return(-1);
+}
+
+// FUNCTION: 0x00689880
+bool ScenarioClass::Read_Global_INI(CCINIClass const & ini)
+{
+	char const * const SECTION = "VariableNames";
+	int length = MIN(ini.Entry_Count(SECTION), ARRAY_SIZE(GlobalFlags));
+	for (int i = 0; i < length; i++) {
+		char const * entry = ini.Get_Entry(SECTION, i);
+		int index = atoi(entry);
+
+		ini.Get_String(SECTION, entry, NULL, GlobalFlags[index].VariableName, sizeof(GlobalFlags[index].VariableName));
+	}
+	return(true);
+}
+
+// FUNCTION: 0x00689910
+bool ScenarioClass::Set_Local_To(int index, bool value)
+{
+	if ((unsigned)index < ARRAY_SIZE(Scen->LocalFlags)) {
+		bool previous = LocalFlags[index].Value;
+		if (previous != value) {
+			LocalFlags[index].Value = value;
+			IsGlobalChanged = true;
+			TagClass::All_Timer_Local_Reset(index);
+		}
+		return(previous);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00689960
+bool ScenarioClass::Set_Local_To(char const * variable_name, bool value)
+{
+	int index = Local_From_Name(variable_name);
+	if (index != -1) {
+		return(Set_Local_To(index, value));
+	}
+	return(true);
+}
+
+// FUNCTION: 0x00689AC0
+int ScenarioClass::Local_From_Name(char const * variable_name)
+{
+	for (int i = 0; i < ARRAY_SIZE(LocalFlags); i++) {
+		if (strcmp(variable_name, LocalFlags[i].VariableName) == 0) {
+			return(i);
+		}
+	}
+	return(-1);
+}
+
 // FUNCTION: 0x0068B8A0
 int Adjust_To_CPU_Timing(int time)
 {
@@ -1234,30 +1435,14 @@ int ScenarioClass::Get_Unique_ID(void)
 	return(UniqueID);
 }
 
-bool ScenarioClass::Set_Global_To(int global, bool value)
+// FUNCTION: 0x0068BD80
+bool ScenarioClass::Is_Valid_Waypoint(WAYPOINT waypoint) const
 {
-	if ((unsigned)global < ARRAY_SIZE(Scen->GlobalFlags)) {
-		bool previous = GlobalFlags[global].Value;
-		if (previous != value) {
-			GlobalFlags[global].Value = value;
-			IsGlobalChanged = true;
-			TagClass::All_Timer_Global_Reset(global);
-		}
-		return(previous);
-	}
-	return(false);
-}
+	if (waypoint < ARRAY_SIZE(Waypoint) &&
+		waypoint >= 0 &&
+		Waypoint[waypoint] != CELL_NONE) {
 
-bool ScenarioClass::Set_Local_To(int index, bool value)
-{
-	if ((unsigned)index < ARRAY_SIZE(Scen->LocalFlags)) {
-		bool previous = LocalFlags[index].Value;
-		if (previous != value) {
-			LocalFlags[index].Value = value;
-			IsGlobalChanged = true;
-			TagClass::All_Timer_Local_Reset(index);
-		}
-		return(previous);
+		return(true);
 	}
 	return(false);
 }
@@ -1267,4 +1452,9 @@ void ScenarioClass::Clear_All_Waypoints(void)
 	for (int i = 0; i < ARRAY_SIZE(Waypoint); i++) {
 		Waypoint[i] = CELL_NONE;
 	}
+}
+
+Cell ScenarioClass::Get_Waypoint_Cell(WAYPOINT waypoint) const
+{
+	return(Waypoint[waypoint]);
 }

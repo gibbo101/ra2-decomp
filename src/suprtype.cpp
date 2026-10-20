@@ -5,6 +5,7 @@
 
 #define INCLUDE_COM
 #include "always.h"
+#include "geometry.h"
 #include "suprtype.h"
 #include "_map.h"
 #include "_mixfile.h"
@@ -19,6 +20,19 @@
 #include "sun.h"
 #include "swizzle.h"
 #include "weapon.h"
+
+// FUNCTION: 0x006CE380 $E2
+// FUNCTION: 0x006CE3B0 $E5
+// FUNCTION: 0x006CE3D0 $E8
+// FUNCTION: 0x006CE3F0 $E11
+// FUNCTION: 0x006CE410 $E14
+// FUNCTION: 0x006CE430 $E17
+// FUNCTION: 0x006CE450 $E20
+// FUNCTION: 0x006CE490 $E23
+// FUNCTION: 0x006CE4C0 $E26
+// FUNCTION: 0x006CE4F0 $E29
+// FUNCTION: 0x006CE520 $E32
+// FUNCTION: 0x006CE530 $E35
 
 // FUNCTION: 0x006CE570
 SuperWeaponType Special_From_Name(char const * name)

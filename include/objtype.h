@@ -110,6 +110,7 @@ class ObjectTypeClass : public AbstractTypeClass
 		void Fetch_Voxel_Image(void);
 		void Fetch_Aux_Voxel_Image(void);
 		void Fetch_Normal_Image(void);
+		void Free_Voxels(void);
 
 		void Theater_Naming_Convention(char * name, TheaterType theater) const;
 

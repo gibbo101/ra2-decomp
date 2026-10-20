@@ -822,7 +822,7 @@ class RulesClass
 		AnimTypeClass const * EMPulseSparkles;
 		float EngineerCaptureLevel;
 		float EngineerCaptureLevel_;
-		float TalkBubbleTime;
+		unsigned int TalkBubbleTime;
 		int RadDurationMultiple;
 		int RadApplicationDelay;
 		int RadLevelMax;

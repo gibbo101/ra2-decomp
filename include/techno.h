@@ -566,7 +566,15 @@ class TechnoClass : public RadioClass
 		DirType Barrel_Pitch(AbstractClass * target) const;
 		void Laser_Zap(AbstractClass * target, int which, WeaponTypeClass const * weapon, Coord const & source_coord);
 		void Rock(Coord const & coord, float force);
+		void FUN_0070F670(CellClass * cell);
+		void FUN_0070F6A0(CellClass * cell);
+		void FUN_0070F740(int delay);
 		void FUN_0070F770(void);
+		bool TargetingTimerFinished(void);
+		void FUN_0070F850(void);
+		void FUN_0070F890(int duration);
+		Cell FUN_0070F8F0(int rad, unsigned unused);
+		void FUN_0070F1D0(Point2D const & point, Rect const & rect);
 
 
 		bool Is_Z_Fudge_Bridge(void) const;

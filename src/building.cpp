@@ -5023,5 +5023,25 @@ template class _com_ptr_t<_com_IIID<ILocomotion, &__uuidof(ILocomotion)> >;
 // FUNCTION: 0x0045A180 ?$VectorClass@PBVParticleSystemTypeClass@@::operator==
 // FUNCTION: 0x0045A1C0 ?$VectorClass@PBVParticleSystemTypeClass@@::Resize
 // FUNCTION: 0x0045A270 ?$VectorClass@PBVParticleSystemTypeClass@@::Clear
+// FUNCTION: 0x0045A2A0 ?$VectorClass@PBVParticleSystemTypeClass@@::ID
+// FUNCTION: 0x0045A2E0 ?$VectorClass@PBVParticleSystemTypeClass@@::ID
 template class VectorClass<ParticleSystemTypeClass const *>;
+
+// FUNCTION: 0x0045A300 ?$DynamicVectorClass@PBVParticleSystemTypeClass@@::Resize
+// FUNCTION: 0x0045A3B0 ?$DynamicVectorClass@PBVParticleSystemTypeClass@@::ID
+template class DynamicVectorClass<ParticleSystemTypeClass const *>;
+
+// FUNCTION: 0x0045A3E0 ?$VectorClass@PAVInfantryClass@@::operator==
+// FUNCTION: 0x0045A420 ?$VectorClass@PAVInfantryClass@@::Resize
+// FUNCTION: 0x0045A4D0 ?$VectorClass@PAVInfantryClass@@::Clear
+// FUNCTION: 0x0045A500 ?$VectorClass@PAVInfantryClass@@::ID
+// FUNCTION: 0x0045A540 ?$VectorClass@PAVInfantryClass@@::ID
+template class VectorClass<InfantryClass *>;
+
+// FUNCTION: 0x0045A560 ?$DynamicVectorClass@PAVInfantryClass@@::Resize
+// FUNCTION: 0x0045A610 ?$DynamicVectorClass@PAVInfantryClass@@::ID
+template class DynamicVectorClass<InfantryClass *>;
+
+// FUNCTION: 0x0045A640 ?$VectorClass@PAVFoggedObjectClass@@::operator==
+template class VectorClass<FoggedObjectClass *>;
 

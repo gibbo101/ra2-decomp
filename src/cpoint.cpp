@@ -73,6 +73,14 @@ ShortPair DAT_0089F778;
 // FUNCTION: 0x0049FF00 $E37
 IntTriple DAT_0089F798;
 
+struct InitPair {
+	int A, B, C;
+	InitPair() { C = 0; A = 0x80; B = 0x80; }
+};
+
+// FUNCTION: 0x0049FF20 $E40
+InitPair DAT_0089F7C0;
+
 // FUNCTION: 0x0049FF40
 bool operator!=(CONNECTDATA const &left, CONNECTDATA const &right)
 {
@@ -498,3 +506,19 @@ EnumConnectionPointsClass::~EnumConnectionPointsClass(void)
 
 	List.Clear();
 }
+
+// FUNCTION: 0x004A0E10 ?$VectorClass@UtagCONNECTDATA@@::~?$VectorClass@UtagCONNECTDATA@@
+// FUNCTION: 0x004A0E60 ?$VectorClass@PAUIConnectionPoint@@::~?$VectorClass@PAUIConnectionPoint@@
+// FUNCTION: 0x004A0EB0 ?$DynamicVectorClass@UtagCONNECTDATA@@::Clear
+// FUNCTION: 0x004A0EE0 ?$DynamicVectorClass@UtagCONNECTDATA@@::ID
+// FUNCTION: 0x004A0F00 ?$VectorClass@UtagCONNECTDATA@@::GetItem
+// FUNCTION: 0x004A0F20 ?$DynamicVectorClass@PAUIConnectionPoint@@::Clear
+// FUNCTION: 0x004A0F50 ?$DynamicVectorClass@PAUIConnectionPoint@@::ID
+// FUNCTION: 0x004A0F70 ?$VectorClass@PAUIConnectionPoint@@::GetItem
+// FUNCTION: 0x004A0F80 ?$VectorClass@UtagCONNECTDATA@@::operator==
+// FUNCTION: 0x004A0FE0 ?$VectorClass@UtagCONNECTDATA@@::Resize
+// FUNCTION: 0x004A10A0 ?$VectorClass@UtagCONNECTDATA@@::Clear
+template class VectorClass<CONNECTDATA>;
+template class DynamicVectorClass<CONNECTDATA>;
+template class VectorClass<IConnectionPoint *>;
+template class DynamicVectorClass<IConnectionPoint *>;

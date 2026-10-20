@@ -1982,29 +1982,16 @@ void HouseClass::Active_Add(TechnoClass const * techno)
 	}
 }
 
-static inline Cell Base_Cell_Wide(HouseClass const * house)
-{
-	if ((TPoint2D<short> const &)house->BaseCenter == CELL_NONE) {
-		return(house->BaseSpawnCell);
-	}
-	return(house->BaseCenter);
-}
-
-static inline Coord Base_Center_Coord(HouseClass const * house)
-{
-	return(Base_Coord(Base_Cell_Wide(house)));
-}
-
 // FUNCTION: 0x004FFB20
 ZoneType HouseClass::Which_Zone(Coord const & coord) const
 {
 	if (coord == COORD_NONE) return(ZONE_NONE);
 
-	int distance = Distance(Base_Coord(Get_Base_Center()), coord);
+	int distance = Distance(FUN_0050DF30(), coord);
 	if (distance <= Radius) return(ZONE_CORE);
 	if (distance > Radius*4) return(ZONE_NONE);
 
-	Dir256 facing = Direction(Base_Center_Coord(this), coord).As_Dir256();
+	Dir256 facing = Direction(FUN_0050DF30(), coord).As_Dir256();
 	if (facing > DIR_NE && facing < DIR_NW) return(ZONE_NORTH);
 	if (facing > DIR_SW && facing < DIR_SE) return(ZONE_SOUTH);
 	if (facing > DIR_NE || facing >= DIR_SE) return(ZONE_WEST);
@@ -4766,7 +4753,7 @@ SourceType HouseClass::FUN_0050DB00(BuildingClass * building)
 // FUNCTION: 0x0050DEF0
 Cell HouseClass::Get_Base_Center(void) const
 {
-	if (BaseCenter == CELL_NONE) {
+	if ((TPoint2D<short> const &)BaseCenter == CELL_NONE) {
 		return(BaseSpawnCell);
 	}
 	return(BaseCenter);
@@ -4836,4 +4823,81 @@ void HouseClass::LostPoweredCenter(UnitTypeClass * type)
 			VoxClass::Play("EVA_RobotTanksOffline", -1, -1);
 		}
 	}
+}
+
+// FUNCTION: 0x0050E1B0
+bool HouseClass::GainedPoweredCenter(TechnoTypeClass const *)
+{
+	return(PoweredUnitCenters > 0);
+}
+
+// FUNCTION: 0x0050E1C0
+void HouseClass::FUN_0050E1C0(UnitTypeClass * type)
+{
+	if (type) {
+		bool found = false;
+		for (int index = Technos.Count() - 1; index >= 0; index--) {
+			TechnoClass * techno = Technos[index];
+			if (techno->House == this && techno->Techno_Type_Class() == type && !techno->IsInLimbo) {
+				techno->Deactivate();
+				found = true;
+			}
+		}
+		if (found && Game::IsActive && Is_Player_Control() && !ScenarioInit) {
+			VoxClass::Play("EVA_RobotTanksOffline", -1, -1);
+		}
+	}
+}
+
+// FUNCTION: 0x0050E280
+void HouseClass::FUN_0050E280(UnitTypeClass * type)
+{
+	if (type) {
+		bool found = false;
+		for (int index = Technos.Count() - 1; index >= 0; index--) {
+			TechnoClass * techno = Technos[index];
+			if (techno->House == this && techno->Techno_Type_Class() == type && !techno->IsInLimbo) {
+				techno->Reactivate();
+				found = true;
+			}
+		}
+		if (found && Game::IsActive && Is_Player_Control() && !ScenarioInit) {
+			VoxClass::Play("EVA_RobotTanksBackOnline", -1, -1);
+		}
+	}
+}
+
+// FUNCTION: 0x0050E340
+ULONG STDMETHODCALLTYPE HouseClass::AddRef(void)
+{
+	return(1);
+}
+
+// FUNCTION: 0x0050E350
+ULONG STDMETHODCALLTYPE HouseClass::Release(void)
+{
+	return(1);
+}
+
+// FUNCTION: 0x0050E360
+RTTIType HouseClass::Fetch_RTTI(void) const
+{
+	return(RTTI_HOUSE);
+}
+
+// FUNCTION: 0x0050E370
+int HouseClass::Fetch_Heap_ID(void) const
+{
+	return(HeapID);
+}
+
+// FUNCTION: 0x0050E380 HouseClass::~HouseClass
+
+// FUNCTION: 0x0050E450 BaseNodeClass::BaseNodeClass
+
+// FUNCTION: 0x0050E470 ?$TPoint2D@F::operator==
+template<class T>
+bool TPoint2D<T>::operator == (TPoint2D<T> const & rvalue) const
+{
+	return(X==rvalue.X && Y==rvalue.Y);
 }

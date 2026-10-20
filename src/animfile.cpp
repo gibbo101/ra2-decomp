@@ -9,6 +9,12 @@
 #include "bsurface.h"
 #include "palette.h"
 #include "wwfile.h"
+#include <math.h>
+
+extern double __cdecl FUN_004CAC40(double);
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+
 #define LP_HEADER_SIZE(nRecords) ( (sizeof(LPDescriptor) + sizeof(unsigned short)) + (nRecords) * sizeof(unsigned short) )
 
 #define LP_HEADER_SIZE(nRecords) ( (sizeof(LPDescriptor) + sizeof(unsigned short)) + (nRecords) * sizeof(unsigned short) )
@@ -33,6 +39,26 @@ AnimFile::~AnimFile(void)
 	Reset();
 }
 
+// FUNCTION: 0x00426740
+int AnimFile::Get_Header_Size(void) const
+{
+	return(sizeof(Header) + sizeof(Cycles) + sizeof(FilePalette) + sizeof(LPFTable));
+}
+
+// FUNCTION: 0x00426750
+bool AnimFile::Load(FileClass *file)
+{
+	File = file;
+	if (File != NULL) {
+		if (!File->Is_Open()) {
+			File->Open();
+			FileOpen = true;
+		}
+		return(Process());
+	}
+	return(false);
+}
+
 // FUNCTION: 0x00426790
 void AnimFile::Reset(void)
 {
@@ -52,6 +78,33 @@ void AnimFile::Reset(void)
 	}
 
 	Processed = false;
+}
+
+// FUNCTION: 0x004267F0
+bool AnimFile::Process(void)
+{
+	if (!Processed && File != NULL) {
+		Processed = true;
+		memset(&Header, 0, sizeof(Header));
+		File->Read(&Header, sizeof(Header));
+		memset(Cycles, 0, sizeof(Cycles));
+		File->Read(Cycles, sizeof(Cycles));
+		File->Seek(0, SEEK_CUR);
+		File->Read(FilePalette, sizeof(FilePalette));
+		for (int i = 0; i < PaletteClass::COLOR_COUNT; i++) {
+			Palette[i] = RGBClass(FilePalette[i][2], FilePalette[i][1], FilePalette[i][0]);
+		}
+		memset(&LPFTable, 0, sizeof(LPFTable));
+		File->Read(&LPFTable, sizeof(LPFTable));
+		if (!Is_Valid()) {
+			Reset();
+			return(false);
+		}
+		SurfacePtr = new BSurface(Header.width, Header.height, 1);
+		BufferPtr = new unsigned char[MAX_LARGE_PAGE_SIZE];
+		memset(BufferPtr, 0, MAX_LARGE_PAGE_SIZE);
+	}
+	return(Processed);
 }
 
 // FUNCTION: 0x00426990
@@ -110,10 +163,65 @@ int AnimFile::Get_Height(void) const
 	return(Header.height);
 }
 
+// FUNCTION: 0x00426A90
+Surface *AnimFile::Load_Frame(int frame)
+{
+	void *dest;
+	int dlength;
+	void *source;
+	if (!Processed) {
+		return(NULL);
+	}
+	if (LastFrame > frame) {
+		if (Header.hasLastDelta && Header.lastDeltaValid) {
+			if (LastFrame != (int)Header.nRecords || frame != 0) {
+				SurfacePtr->Fill(0);
+				LastFrame = -1;
+			}
+		} else {
+			SurfacePtr->Fill(0);
+			LastFrame = -1;
+		}
+	}
+	if (LastFrame != frame) {
+		dest = SurfacePtr->Lock();
+		dlength = SurfacePtr->Get_Width() * SurfacePtr->Get_Height() * SurfacePtr->Bytes_Per_Pixel();
+		while (LastFrame != frame) {
+			LastFrame++;
+			source = Get_Large_Page_Pointer_For_Record(LastFrame);
+			if (source != NULL) {
+				Decode_Frame(source, Get_Large_Page_Size_For_Record(LastFrame), dest, dlength);
+			}
+			if (LastFrame > int(Header.FrameCount)) {
+				LastFrame = 0;
+			}
+		}
+		SurfacePtr->Unlock();
+	}
+	return(SurfacePtr);
+}
+
 // FUNCTION: 0x00426DD0
 int AnimFile::Large_Page_Size_In_File(int nLp) const
 {
 	return(LP_HEADER_SIZE(LPFTable[nLp].nRecords) + LPFTable[nLp].nBytes);
+}
+
+// FUNCTION: 0x00426E00
+bool AnimFile::Load_Large_Page(int nLp)
+{
+	if (Processed) {
+		if (LastLargePage != nLp) {
+			LastLargePage = nLp;
+			File->Seek(Get_Header_Size() + (MAX_LARGE_PAGE_SIZE * nLp), SEEK_SET);
+			if (File->Read(BufferPtr, Large_Page_Size_In_File(nLp)) == Large_Page_Size_In_File(nLp)) {
+				return(true);
+			}
+		} else {
+			return(true);
+		}
+	}
+	return(false);
 }
 
 // FUNCTION: 0x00426E80
@@ -132,3 +240,167 @@ int AnimFile::Find_Large_Page_For_Record(int nRecord) const
 
 	return(-1);
 }
+
+// FUNCTION: 0x00426ED0
+void *AnimFile::Get_Large_Page_Pointer_For_Record(int nRecord)
+{
+	int nLp = Find_Large_Page_For_Record(nRecord);
+	if (nLp != -1) {
+		bool ok = Load_Large_Page(nLp);
+		int offset = LP_HEADER_SIZE(LPFTable[nLp].nRecords);
+		unsigned short *sizes = ((LPStruct *)BufferPtr)->RecordSizes;
+		nRecord -= LPFTable[nLp].baseRecord;
+		int length = 0;
+		while (nRecord > 0) {
+			length = sizes[0];
+			sizes++;
+			offset += length;
+			nRecord--;
+		}
+		unsigned char *ptr = (unsigned char *)BufferPtr + offset;
+		return((void *)(ptr + sizeof(ptr[0]) + sizeof(ptr[1])));
+	}
+	return(NULL);
+}
+
+// FUNCTION: 0x00426FD0
+int AnimFile::Get_Large_Page_Size_For_Record(int nRecord)
+{
+	int size = 0;
+	int nLp = Find_Large_Page_For_Record(nRecord);
+	if (nLp != -1) {
+		bool ok = Load_Large_Page(nLp);
+		unsigned short *sizes = ((LPStruct *)BufferPtr)->RecordSizes;
+		nRecord -= LPFTable[nLp].baseRecord;
+		while (nRecord >= 0) {
+			size = sizes[0];
+			sizes++;
+			if (size >= sizeof(unsigned short)) {
+				size -= sizeof(unsigned short);
+			}
+			nRecord--;
+		}
+	}
+	return(size);
+}
+
+// FUNCTION: 0x004270D0
+bool AnimFile::Decode_Frame(void *source, int nBytes, void *dest, int dlength)
+{
+	int bodyType;
+	unsigned char *dst;
+	bool decoded;
+	if (nBytes == 0) {
+		return(true);
+	}
+	unsigned char *src;
+	signed char cnt;
+	int wordCnt;
+	int pixel;
+	bodyType = *(short *)source;
+	nBytes -= sizeof(short);
+	source = (unsigned char *)source + sizeof(short);
+	dst = (unsigned char *)dest;
+	if (nBytes == 0) {
+		return(true);
+	}
+	decoded = true;
+	enum {
+		BMBODY_UNCOMPRESSED	= 0,
+		BMBODY_RUNSKIPDUMP = 1,
+		BMBODY_STOP_CODE_LEN = 3,
+		BBSTOP0	= 0x80,
+		BBSTOP1 = 0,
+		BBSTOP2	= 0,
+	};
+	switch (bodyType) {
+		case BMBODY_UNCOMPRESSED: {
+			if (nBytes != dlength) {
+				decoded = false;
+			} else {
+				memcpy(dst, source, nBytes);
+			}
+			break;
+		}
+		case BMBODY_RUNSKIPDUMP: {
+			src = (unsigned char *)source + nBytes - BMBODY_STOP_CODE_LEN;
+			if (nBytes < BMBODY_STOP_CODE_LEN || src[0] != BBSTOP0 || src[1] != BBSTOP1 || src[2] != BBSTOP2) {
+				decoded = false;
+				break;
+			}
+			src = (unsigned char *)source;
+			{
+			next_op:
+				cnt = *src++;
+				if (cnt > 0) {
+					goto short_dump;
+				}
+				if (cnt == 0) {
+					goto short_run;
+				}
+				cnt -= (signed char)0x80;
+				if (cnt == 0) {
+					goto long_op;
+				}
+				dst += cnt;
+				goto next_op;
+			short_dump:
+				memcpy(dst, src, cnt);
+				dst += cnt;
+				src += cnt;
+				goto next_op;
+			short_run:
+				wordCnt = *(unsigned char *)src;
+				src += sizeof(unsigned char);
+				pixel = *src;
+				src += sizeof(unsigned char);
+				memset(dst, pixel, wordCnt);
+				dst += wordCnt;
+				goto next_op;
+			long_op:
+				wordCnt = *(unsigned short *)src;
+				src += sizeof(unsigned short);
+				if ((signed short)wordCnt <= 0) {
+					goto not_long_skip;
+				}
+				dst += wordCnt;
+				goto next_op;
+			not_long_skip:
+				if (wordCnt == 0) {
+					goto stop;
+				}
+				wordCnt -= 0x8000;
+				if (wordCnt >= 0x4000) {
+					goto long_run;
+				}
+				memcpy(dst, src, wordCnt);
+				dst += wordCnt;
+				src += wordCnt;
+				goto next_op;
+			long_run:
+				wordCnt -= 0x4000;
+				pixel = *src;
+				src += sizeof(unsigned char);
+				memset(dst, pixel, wordCnt);
+				dst += wordCnt;
+				goto next_op;
+			stop:
+			;
+			}
+			break;
+		}
+		default:
+			decoded = false;
+			break;
+	}
+	return(decoded);
+}
+
+// FUNCTION: 0x00427270 Animate::~Animate
+
+// FUNCTION: 0x00427290 AnimFile::Get_Palette
+
+// FUNCTION: 0x004272A0 AnimFile::~AnimFile
+
+// FUNCTION: 0x00427320 $E5
+double DAT_0089A1F8 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);

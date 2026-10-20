@@ -284,3 +284,124 @@ char WWKeyboardClass::To_ASCII(unsigned short key)
 	}
 	return(buffer[0]);
 }
+
+// FUNCTION: 0x0054F530
+char WWKeyboardClass::FUN_0054F530(unsigned short key)
+{
+	if (key & WWKEY_RLS_BIT) {
+		return('\0');
+	}
+	int k = key & 0xFF;
+	switch ((unsigned short)k) {
+		case VK_HOME:
+			return('\b');
+		case VK_END:
+			return('\\');
+		case 0xA: {
+			char c = (char)MouseWheel;
+			if (c == 0xD) {
+				c = 0;
+			}
+			MouseWheel = 0;
+			return(c);
+		}
+		case VK_BACK:
+		case VK_RETURN:
+		case VK_ESCAPE:
+			return((char)k);
+	}
+	return('\0');
+}
+
+short __fastcall FUN_0053EC90(int key);
+
+// FUNCTION: 0x0054F5C0
+bool WWKeyboardClass::Down(unsigned short key)
+{
+	key &= 0xFF;
+
+	if ((key == VK_LBUTTON || key == VK_RBUTTON) && GetSystemMetrics(SM_SWAPBUTTON) == TRUE) {
+		key = (key != VK_LBUTTON) ? VK_LBUTTON : VK_RBUTTON;
+	}
+
+	return(FUN_0053EC90(key) != 0);
+}
+
+// FUNCTION: 0x0054F610
+unsigned short WWKeyboardClass::Fetch_Element(void)
+{
+	unsigned short val = 0;
+	if (Head != Tail) {
+		val = Buffer[Head];
+		Head = (Head + 1) % ARRAY_SIZE(Buffer);
+	}
+	return(val);
+}
+
+// FUNCTION: 0x0054F650
+unsigned short WWKeyboardClass::Peek_Element(void) const
+{
+	if (!Is_Buffer_Empty()) {
+		return(Buffer[Head]);
+	}
+	return(0);
+}
+
+// FUNCTION: 0x0054F670
+bool WWKeyboardClass::Put_Element(unsigned short val)
+{
+	if (!Is_Buffer_Full()) {
+		int temp = (Tail+1) % ARRAY_SIZE(Buffer);
+		Buffer[Tail] = val;
+		Tail = temp;
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x0054F6B0
+bool WWKeyboardClass::Is_Buffer_Full(void) const
+{
+	if ((Tail + 1) % ARRAY_SIZE(Buffer) == Head) {
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x0054F6D0
+bool WWKeyboardClass::Is_Buffer_Empty(void) const
+{
+	if (Head == Tail) {
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x0054F6F0
+void WWKeyboardClass::Fill_Buffer_From_System(void)
+{
+	if (!Is_Buffer_Full()) {
+		Windows_Message_Handler();
+	}
+}
+
+// FUNCTION: 0x0054F720
+void WWKeyboardClass::Clear(void)
+{
+	Fill_Buffer_From_System();
+	Head = Tail;
+	Fill_Buffer_From_System();
+	Head = Tail;
+}
+
+// FUNCTION: 0x0054FB90
+int WWKeyboardClass::Available_Buffer_Room(void) const
+{
+	return(ARRAY_SIZE(Buffer) - abs(Tail - Head));
+}
+
+// FUNCTION: 0x0054FBB0
+
+
+
+double DAT_00ABC7C0 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);

@@ -3970,7 +3970,8 @@ void MapGeneratorClass::Generate_Rural_Buildings(const Cell & cell)
 	int tries = 0;
 	int placed = 0;
 
-	int height = Map[cell].Height;
+	CellClass & center = Map[cell];
+	int height = center.Height;
 
 	int min_building = 0;
 	int max_building = ARRAY_SIZE(_names) - 1;
@@ -4503,4 +4504,18 @@ template class DynamicVectorClass<double>;
 // FUNCTION: 0x005AC6A0 ?$VectorClass@PAVMapRegionClass@@::operator==
 // FUNCTION: 0x005AC6E0 ?$VectorClass@PAVMapRegionClass@@::Resize
 // FUNCTION: 0x005AC790 ?$VectorClass@PAVMapRegionClass@@::Clear
+// FUNCTION: 0x005AC7C0 ?$VectorClass@PAVMapRegionClass@@::ID
+// FUNCTION: 0x005AC800 ?$VectorClass@PAVMapRegionClass@@::ID
 template class VectorClass<MapRegionClass *>;
+
+// FUNCTION: 0x005AC820 ?$DynamicVectorClass@PAVMapRegionClass@@::Resize
+// FUNCTION: 0x005AC8D0 ?$DynamicVectorClass@PAVMapRegionClass@@::ID
+// FUNCTION: 0x005AC900 ?$DynamicVectorClass@PBVBuildingTypeClass@@::?$DynamicVectorClass@PBVBuildingTypeClass@@
+// FUNCTION: 0x005AC960 ?$PriorityQueueClass@UCellNode@@::Extract_Min
+// FUNCTION: 0x005ACA60 ?$VectorClass@PAU_WIN32_FIND_DATAA@@::operator==
+// FUNCTION: 0x005ACAA0 ?$VectorClass@PAU_WIN32_FIND_DATAA@@::Resize
+// FUNCTION: 0x005ACB50 ?$VectorClass@PAU_WIN32_FIND_DATAA@@::Clear
+// FUNCTION: 0x005ACB80 ?$VectorClass@PAU_WIN32_FIND_DATAA@@::ID
+// FUNCTION: 0x005ACBC0 ?$VectorClass@PAU_WIN32_FIND_DATAA@@::ID
+// FUNCTION: 0x005ACBE0 ?$DynamicVectorClass@PAU_WIN32_FIND_DATAA@@::Resize
+template class VectorClass<WIN32_FIND_DATAA *>;

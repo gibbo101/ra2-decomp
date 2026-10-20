@@ -622,7 +622,7 @@ bool MPGameModeClass::GenerateStartingUnits(HouseClass * house, int & amount)
 			} else {
 				amount -= type->Raw_Cost();
 				if (Scen->Special.IsInitialVeteran) {
-					techno->Veterancy.Set_Veteran(true);
+					techno->Veterancy.Set_Elite(true);
 				}
 				if (house->FUN_0050B730()) {
 					techno->Set_Mission(MISSION_GUARD);
