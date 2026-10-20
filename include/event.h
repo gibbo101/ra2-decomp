@@ -141,9 +141,12 @@ class EventClass
 			struct {
 				RTTIType		Type;
 				int			ID;
+				BOOL			IsNaval;
 			} Specific;
 			struct {
 				RTTIType		Type;
+				int			ID;
+				BOOL			IsNaval;
 				xCell			Where;
 			} Place;
 			struct {
@@ -186,7 +189,7 @@ class EventClass
 
 		EventClass(int index, TargetClass src, MissionType mission, TargetClass target, TargetClass destination, SpeedType speed, MPHType maxspeed);
 
-		EventClass(int index, unsigned char type, RTTIType object, int id);
+		EventClass(int index, unsigned char type, RTTIType object, int id, BOOL naval);
 		EventClass(int index, unsigned char type, RTTIType object, Cell const & cell);
 		EventClass(int index, unsigned char type, int id, Cell const & cell);
 		EventClass(int index, AnimType anim, HousesType owner, Coord const & coord);

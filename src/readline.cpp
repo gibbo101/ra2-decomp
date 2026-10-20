@@ -8,6 +8,22 @@
 #include "wwfile.h"
 #include "xstraw.h"
 #include <cstring>
+#include <math.h>
+#include "refcount.h"
+
+extern double __cdecl FUN_004CAC40(double);
+extern double __cdecl FUN_004CAD50(double);
+extern double __cdecl FUN_004CADE0(double);
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007E1720;
+extern const double DAT_007E1728;
+extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
+extern const double DAT_007F0960;
+extern const double DAT_007F0968;
 
 // FUNCTION: 0x0065D510
 int Read_Line(FileClass & file, char * buffer, int len, bool & eof)
@@ -39,3 +55,46 @@ int Read_Line(Straw & file, char * buffer, int len, bool & eof)
 
 	return(strlen(buffer));
 }
+
+// FUNCTION: 0x0065D660
+ReferenceCounted::~ReferenceCounted(void)
+{
+}
+
+// FUNCTION: 0x0065D670
+void ReferenceCounted::FUN_0065D670(void)
+{
+	if (--Count == 0) delete this;
+}
+
+// FUNCTION: 0x0065D690
+bool ReferenceCounted::FUN_0065D690(int)
+{
+	return false;
+}
+
+// FUNCTION: 0x0065D6A0 ReferenceCounted::~ReferenceCounted
+
+// FUNCTION: 0x0065D6C0 $E2
+double DAT_00B04C40 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x0065D6F0 $E5
+double DAT_00B04C90 = DAT_00B04C40 / DAT_007F0960;
+
+// FUNCTION: 0x0065D710 $E8
+double DAT_00B04C78 = DAT_007E1718 / DAT_00B04C90;
+
+// FUNCTION: 0x0065D730 $E11
+double DAT_00B04C70 = DAT_007E1720 * DAT_007F0968;
+
+// FUNCTION: 0x0065D750 $E14
+double DAT_00B04C48 = DAT_007E1728 * DAT_007F0968;
+
+// FUNCTION: 0x0065D770 $E17
+double DAT_00B04C20 = DAT_007E1730 * DAT_007F0968;
+
+// FUNCTION: 0x0065D790 $E20
+int DAT_00B04C98 = (int)(FUN_004CAD50(DAT_00B04C20 - DAT_00B04C48) * DAT_007E1738 * DAT_00B04C40);
+
+// FUNCTION: 0x0065D7D0 $E23
+double DAT_00B04C50 = FUN_004CADE0(DAT_00B04C98 * DAT_007E1740);

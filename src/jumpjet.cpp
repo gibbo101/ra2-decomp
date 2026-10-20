@@ -22,6 +22,21 @@
 #include "layer.hh"
 #include <new.h>
 #include "ccrand.h"
+#include <math.h>
+
+extern double __cdecl FUN_004CAC40(double);
+extern double __cdecl FUN_004CAD50(double);
+extern double __cdecl FUN_004CADE0(double);
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007E1720;
+extern const double DAT_007E1728;
+extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
+extern const double DAT_007ECE68;
+extern const double DAT_007ECE70;
 
 // FUNCTION: 0x0054AC40
 JumpjetLocomotionClass::JumpjetLocomotionClass(void) :
@@ -790,3 +805,35 @@ ULONG STDMETHODCALLTYPE JumpjetLocomotionClass::Release(void)
 // FUNCTION: 0x0054DFF0 JumpjetLocomotionClass::QueryInterface
 
 // FUNCTION: 0x0054E000 JumpjetLocomotionClass::AddRef
+
+// FUNCTION: 0x0054E010 JumpjetLocomotionClass::Release
+
+// FUNCTION: 0x0054E020 JumpjetLocomotionClass::QueryInterface
+
+// FUNCTION: 0x0054E030 JumpjetLocomotionClass::AddRef
+
+// FUNCTION: 0x0054E040 JumpjetLocomotionClass::Release
+
+// FUNCTION: 0x0054E050 $E102
+double DAT_00ABC638 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x0054E080 $E105
+double DAT_00ABC688 = DAT_00ABC638 / DAT_007ECE68;
+
+// FUNCTION: 0x0054E0A0 $E108
+double DAT_00ABC670 = DAT_007E1718 / DAT_00ABC688;
+
+// FUNCTION: 0x0054E0C0 $E111
+double DAT_00ABC668 = DAT_007E1720 * DAT_007ECE70;
+
+// FUNCTION: 0x0054E0E0 $E114
+double DAT_00ABC640 = DAT_007E1728 * DAT_007ECE70;
+
+// FUNCTION: 0x0054E100 $E117
+double DAT_00ABC5F0 = DAT_007E1730 * DAT_007ECE70;
+
+// FUNCTION: 0x0054E120 $E120
+int DAT_00ABC690 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00ABC5F0 - DAT_00ABC640) * DAT_00ABC638));
+
+// FUNCTION: 0x0054E160 $E123
+double DAT_00ABC648 = FUN_004CADE0(DAT_00ABC690 * DAT_007E1740);

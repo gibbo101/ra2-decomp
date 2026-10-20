@@ -37,8 +37,9 @@
 #include "winstub.h"
 #include "wonline.h"
 #include "wsproto.h"
+#include "wstring.h"
 
-static void Send_Join_Queries(int gamenow, int playernow, int chatnow, int init = 0);
+void Send_Join_Queries(int gamenow, int playernow, int chatnow, int init = 0);
 
 static void Get_Join_Responses(void);
 
@@ -61,82 +62,6 @@ int RulesID;
 int ArtID;
 
 int AIID;
-
-static void Send_Join_Queries(int gamenow, int playernow, int chatnow, int init)
-{
-	GlobalPacketType packet;
-
-	enum {
-		GAME_QUERY_TIME = 2 * TIMER_SECOND,
-		PLAYER_QUERY_TIME = 35,
-		CHAT_ANNOUNCE_TIME = 83,
-	};
-	static CDTimerClass<SystemTimerClass> game_timer;
-	static CDTimerClass<SystemTimerClass> player_timer;
-	static CDTimerClass<SystemTimerClass> chat_timer;
-
-	if (init) {
-		game_timer = GAME_QUERY_TIME;
-		player_timer = PLAYER_QUERY_TIME;
-		chat_timer = CHAT_ANNOUNCE_TIME;
-	}
-
-	if (!game_timer || gamenow) {
-		game_timer = GAME_QUERY_TIME;
-		if ((WS_Top_Window_ID() != IDD_MPLAYER_HOST) || gamenow) {
-			memset (&packet, 0, sizeof(GlobalPacketType));
-
-			packet.Command = NET_QUERY_GAME;
-
-			strcpy (packet.Name, Session.Handle);
-
-			Ipx.Send_Global_Message (&packet,
-				sizeof(GlobalPacketType), 0, NULL);
-
-			if (Session.IsBridge) {
-				Ipx.Send_Global_Message (&packet,
-					sizeof(GlobalPacketType), 0, &Session.BridgeNet);
-			}
-		}
-	}
-
-	if ( ((CurGame > 0) && (CurGame < Session.Games.Count()) &&
-		!player_timer) || playernow) {
-		player_timer = PLAYER_QUERY_TIME;
-
-		memset (&packet, 0, sizeof(GlobalPacketType));
-
-		packet.Command = NET_QUERY_PLAYER;
-		strcpy (packet.Name, FUN_007350C0(Session.Games[CurGame]->Name));
-
-		Ipx.Send_Global_Message (&packet,
-			sizeof(GlobalPacketType), 0, NULL);
-
-		if (Session.IsBridge) {
-			Ipx.Send_Global_Message (&packet,
-				sizeof(GlobalPacketType), 0, &Session.BridgeNet);
-		}
-	}
-
-	if ((!chat_timer && JoinState<JOIN_CONFIRMED) || chatnow) {
-		chat_timer = CHAT_ANNOUNCE_TIME;
-
-		memset (&packet, 0, sizeof(GlobalPacketType));
-
-		packet.Command = NET_CHAT_ANNOUNCE;
-		strcpy (packet.Name, Session.Handle);
-		packet.Chat.ID = Session.UniqueID;
-		packet.Chat.Color = Session.ColorIdx;
-
-		Ipx.Send_Global_Message (&packet,
-			sizeof(GlobalPacketType), 0, NULL);
-
-		if (Session.IsBridge) {
-			Ipx.Send_Global_Message (&packet,
-				sizeof(GlobalPacketType), 0, &Session.BridgeNet);
-		}
-	}
-}
 
 static void Get_Join_Responses(void)
 {
@@ -781,40 +706,82 @@ extern const double DAT_007E1740;
 extern const double DAT_007EEF08;
 extern const double DAT_007EEF10;
 
-// FUNCTION: 0x005DACF0 $E89
+// FUNCTION: 0x005DACF0 $E85
 double DAT_00AC01C0 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x005DAD20 $E92
+// FUNCTION: 0x005DAD20 $E88
 double DAT_00AC0250 = DAT_00AC01C0 / DAT_007EEF08;
 
-// FUNCTION: 0x005DAD40 $E95
+// FUNCTION: 0x005DAD40 $E91
 double DAT_00AC0218 = DAT_007E1718 / DAT_00AC0250;
 
-// FUNCTION: 0x005DAD60 $E98
+// FUNCTION: 0x005DAD60 $E94
 double DAT_00AC0210 = DAT_007E1720 * DAT_007EEF10;
 
-// FUNCTION: 0x005DAD80 $E101
+// FUNCTION: 0x005DAD80 $E97
 double DAT_00AC01C8 = DAT_007E1728 * DAT_007EEF10;
 
-// FUNCTION: 0x005DADA0 $E104
+// FUNCTION: 0x005DADA0 $E100
 double DAT_00AC0198 = DAT_007E1730 * DAT_007EEF10;
 
-// FUNCTION: 0x005DADC0 $E107
+// FUNCTION: 0x005DADC0 $E103
 int DAT_00AC0258 = (int)(fastmath::tan(DAT_00AC0198 - DAT_00AC01C8) * DAT_007E1738 * DAT_00AC01C0);
 
-// FUNCTION: 0x005DAE00 $E110
+// FUNCTION: 0x005DAE00 $E106
 double DAT_00AC01D8 = fastmath::atan(DAT_00AC0258 * DAT_007E1740);
 
-// FUNCTION: 0x005DAE30 $E113
+// FUNCTION: 0x005DAE30 $E109
 double DAT_00AC01F8 = fastmath::atan((DAT_00AC0258 * 2) / DAT_00AC01C0);
 
-// FUNCTION: 0x005DAE60 $E116
+// FUNCTION: 0x005DAE60 $E112
 int DAT_00AC024C = (int)(DAT_00AC0258 * 4 + DAT_007E1738);
 
 void __fastcall FUN_005E8DC0(wchar_t * buffer);
 void __fastcall FUN_005DAFE0(bool x);
 bool __fastcall FUN_005EC880(HWND dialog, int count, bool full, bool ai);
 void FUN_005E87A0(void);
+void FUN_005E8AE0(void);
+
+void __fastcall FUN_005E3010(HWND window, int init);
+
+unsigned int __fastcall FUN_005DAC00(wchar_t const * name);
+extern wchar_t const DAT_00887734[];
+
+bool __fastcall FUN_006951F0(char const * name, unsigned int length, char const * digest, bool official, bool flag);
+bool __fastcall FUN_00693B70(char * name, int type, bool flag);
+void FUN_0058BC20(void);
+
+int __fastcall FUN_004E37D0(int index);
+int __fastcall FUN_004E41D0(int index);
+int __fastcall FUN_004E4E60(int index);
+int __fastcall FUN_004E5940(int index);
+int __fastcall FUN_005E98F0(int index);
+int __fastcall FUN_004E4170(HWND dialog, int id, int flag);
+void __fastcall FUN_004E3B00(HWND dialog, int id);
+void __fastcall FUN_004E3A00(HWND dialog, int id);
+void __fastcall FUN_004E4770(HWND dialog, int id);
+void __fastcall FUN_004E45A0(HWND dialog, int id);
+void __fastcall FUN_004E49A0(HWND dialog, int id, int value);
+void __fastcall FUN_004E5260(HWND dialog, int id);
+void __fastcall FUN_004E5CB0(HWND dialog, int id);
+void __fastcall FUN_004E50C0(HWND dialog, int id);
+void __fastcall FUN_004E5B60(HWND dialog, int id);
+
+void __fastcall FUN_005EDDE0(HWND window, char flag);
+wchar_t * __fastcall FUN_00735120(char const * text);
+char * __fastcall FUN_007350C0(wchar_t const * text);
+bool __fastcall FUN_005EE100(Wstring const & name);
+int __fastcall FUN_0069B700(SessionClass * session);
+int __fastcall FUN_0069B720(SessionClass * session);
+extern char DAT_00ABFF7C[];
+extern wchar_t const * DAT_00AC117C;
+extern wchar_t const * DAT_00AC1180;
+extern wchar_t const * DAT_00AC1184;
+extern wchar_t const * DAT_00AC1188;
+extern wchar_t const * DAT_00AC118C;
+extern wchar_t const * DAT_00AC1190;
+extern wchar_t const * DAT_00AC1194;
+
 void FUN_005E8B40(void);
 void FUN_005E8B60(void);
 void FUN_005E8A20(void);
@@ -823,19 +790,19 @@ struct Net2ShortPair { short a; short b; Net2ShortPair(void) { a = 0; b = 0; } }
 struct Net2IntTriple { int a; int b; int c; Net2IntTriple(void) { a = 0; b = 0; c = 0; } };
 struct Net2Center { int a; int b; int c; Net2Center(void) { c = 0; a = 128; b = 128; } };
 
-// FUNCTION: 0x005DAE90 $E119
+// FUNCTION: 0x005DAE90 $E115
 Net2ShortPair DAT_00AC01B8;
 
-// FUNCTION: 0x005DAEA0 $E122
+// FUNCTION: 0x005DAEA0 $E118
 Net2IntTriple DAT_00AC01E8;
 
-// FUNCTION: 0x005DAEC0 $E125
+// FUNCTION: 0x005DAEC0 $E121
 Net2Center DAT_00AC0240;
 
-// FUNCTION: 0x005DAEE0 $E130
-TTimerClass<SystemTimerClass> DAT_00AC0230;
+// FUNCTION: 0x005DAEE0 $E126
+CDTimerClass<SystemTimerClass> DAT_00AC0230;
 
-// FUNCTION: 0x005DAF10 $E128
+// FUNCTION: 0x005DAF10 $E124
 
 // FUNCTION: 0x005DAF20
 bool Net2Callback(void)
@@ -1003,3 +970,558 @@ void Net2DisplayGameList(void)
 		UpdateWindow(handle);
 	}
 }
+
+// FUNCTION: 0x005DBE20
+void __fastcall Net2SetAccept(char * who, int status)
+{
+	if (who == NULL) {
+		who = Session.Handle;
+		if (status == 0) {
+			HWND dialog = WS_Find_Dialog(0xbd);
+			FUN_005EDDE0(dialog, 1);
+		}
+	}
+
+	if (wcscmp(FUN_00735120(who), Session.GameName) == 0) {
+		status = 1;
+	}
+
+	int offset = -1;
+	for (int i = 0; i < Session.Players.Count(); i++) {
+		if (strcmpi(FUN_007350C0(Session.Players[i]->Name), who) == 0) {
+			offset = i;
+			break;
+		}
+	}
+
+	if (offset != -1) {
+		Session.Players[offset]->Player.Status = status;
+	}
+	FUN_005DAFE0(false);
+}
+
+// FUNCTION: 0x005DBEC0
+int __fastcall Net2GetAccept(char * who)
+{
+	if (who == NULL) {
+		who = Session.Handle;
+	}
+
+	if (wcscmp(FUN_00735120(who), Session.GameName) == 0) {
+		return(1);
+	}
+
+	int offset = -1;
+	for (int i = 0; i < Session.Players.Count(); i++) {
+		if (strcmpi(FUN_007350C0(Session.Players[i]->Name), who) == 0) {
+			offset = i;
+		}
+	}
+
+	if (offset != -1) {
+		return(Session.Players[offset]->Player.Status);
+	}
+	return(-1);
+}
+
+// FUNCTION: 0x005DBF50
+int __fastcall Net2SetHouseAndColor(char * who, int house, int color, int start, int team)
+{
+	int offset = -1;
+	for (int i = 0; i < 8; i++) {
+		char * name = FUN_007350C0(Session.Slots[i]->Name);
+		if (strcmpi(name, who) == 0) {
+			offset = i;
+			break;
+		}
+	}
+
+	int retval = 0;
+	if (offset == -1) {
+		return(0);
+	}
+
+	HWND dialog = WS_Find_Dialog(0xbc);
+	if (dialog == NULL) {
+		dialog = WS_Find_Dialog(0xbd);
+	}
+
+	NodeNameType * node = Session.Slots[offset];
+	if (node->Get_Country() != house) {
+		retval = 1;
+		node->Set_Country(house);
+	}
+	if (Session.Slots[offset]->Get_Start() != start) {
+		retval = 1;
+		node->Set_Start(start);
+	}
+	if (Session.Slots[offset]->Get_Team() != team) {
+		retval = 1;
+		node->Set_Team(team);
+	}
+
+	int id = FUN_004E37D0(offset);
+	bool random = FUN_004E4170(dialog, id, -1) == -3;
+	if (house == -3) {
+		if (!random) {
+			FUN_004E3B00(dialog, id);
+			FUN_004E5260(dialog, FUN_004E4E60(offset));
+			FUN_004E5CB0(dialog, FUN_004E5940(offset));
+			int box = FUN_005E98F0(offset);
+			SendMessage(GetDlgItem(dialog, box), 0x4f1, 0, 1);
+			id = FUN_004E41D0(offset);
+			FUN_004E4770(dialog, id);
+			FUN_004E49A0(dialog, id, 8);
+		}
+	} else if (random) {
+		FUN_004E3A00(dialog, id);
+		FUN_004E50C0(dialog, FUN_004E4E60(offset));
+		FUN_004E5B60(dialog, FUN_004E5940(offset));
+		int box = FUN_005E98F0(offset);
+		SendMessage(GetDlgItem(dialog, box), 0x4f1, 0, 0);
+		id = FUN_004E41D0(offset);
+		FUN_004E45A0(dialog, id);
+		FUN_004E49A0(dialog, id, -2);
+	}
+
+	if (Session.Slots[offset]->Get_Color() != color) {
+		node->Set_Color(color);
+	}
+	if (Session.Slots[offset] == Session.Players[0]) {
+		Session.PrefColor = color;
+	}
+	FUN_005DAFE0(false);
+	return(retval);
+}
+
+static void Get_Serial_From_Registry(char * serial, char const * reg_key)
+{
+	if (reg_key && strlen(reg_key) != 0) {
+		HKEY rKey;
+		char keyname[256];
+		strcpy(keyname, reg_key);
+		if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, keyname, 0, KEY_READ, &rKey) == ERROR_SUCCESS) {
+			DWORD type;
+			DWORD sizeOfBuffer = ENCRYPTION_STRING_LENGTH;
+			RegQueryValueEx(rKey, "Serial", NULL, &type, (BYTE *)serial, &sizeOfBuffer);
+			RegCloseKey(rKey);
+		}
+	}
+	serial[SERIAL_MAX-1] = 0;
+}
+
+// FUNCTION: 0x005DC170
+bool Decrypt_Serial(char * buffer)
+{
+	char serial[ENCRYPTION_STRING_LENGTH];
+
+	bool encrypt = false;
+
+	memset(serial, '0', SERIAL_MAX-1);
+	serial[SERIAL_MAX-1] = 0;
+	strcpy(buffer, serial);
+	memset(serial, 0, sizeof(serial));
+
+	Get_Serial_From_Registry(serial, "SOFTWARE\\Westwood\\Yuri's Revenge");
+
+	strcpy(buffer, serial);
+
+	int sign = encrypt ? 1 : -1;
+
+	int number;
+	int temp;
+	int pos = 0;
+
+	FILE *in = fopen("woldata.key", "r");
+
+	if (in == NULL) {
+		return(false);
+	}
+
+	while ((number = fgetc(in)) != EOF) {
+		temp = serial[pos] - '0';
+		temp %= 10;
+		number *= sign;
+		temp += number;
+		temp += 1000;
+		temp %= 10;
+		temp += '0';
+		serial[pos] = temp;
+
+		pos++;
+		if (pos == (int)strlen(serial)) {
+			pos = 0;
+		}
+	}
+
+	fclose(in);
+
+	strcpy(buffer, serial);
+
+	return(true);
+}
+
+// FUNCTION: 0x005DD8A0
+bool Net2ReadyToGo(int load_game)
+{
+	GlobalPacketType packet;
+	int i;
+
+	Ipx.Set_Timing(Ipx.Global_Response_Time() + 2 > 30 ? Ipx.Global_Response_Time() + 2 : 30, (unsigned int)-1, 1000);
+
+	if (FUN_006951F0(Session.ScenarioFileName, Session.ScenarioFileLength, Session.ScenarioDigest, Session.ScenarioIsOfficial, true) == true) {
+		DebugString("Found local scenario, file name is %d\n", Session.ScenarioFileName);
+
+		memset(&packet, 0, sizeof(packet));
+		packet.Command = NET_READY_TO_GO;
+		Ipx.Send_Global_Message(&packet, sizeof(packet), 1, &Session.HostAddress);
+		while (Ipx.Global_Num_Send() > 0 && Ipx.Service() != 0) {
+			Call_Back();
+		}
+	} else {
+		DebugString("Failed to find local scenario, file name is %d\n", Session.ScenarioFileName);
+
+		char preview_name[16];
+		bool failed = false;
+		if (Session.ScenarioIsOfficial && !Session.Is_Random_Map()) {
+			failed = true;
+		} else {
+			FUN_0058BC20();
+			if (!FUN_00693B70(Session.ScenarioFileName, 3, true)) {
+				failed = true;
+			} else if (Session.Is_Random_Map() && !FUN_00693B70(preview_name, 3, true)) {
+				failed = true;
+			}
+		}
+		if (failed) {
+			Session.Options.ScenarioIndex = -1;
+			WWMessageBox().Process(StringTable::LoadString("TXT_UNABLE_PLAY_WAAUGH", NULL, "D:\\ra2mdpost\\netdlg2.cpp", 710), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\netdlg2.cpp", 710), NULL, NULL);
+			memset(&packet, 0, sizeof(packet));
+
+			packet.Command = NET_SIGN_OFF;
+			strcpy(packet.Name, Session.Handle);
+
+			for (i = 1; i < Session.Chat.Count(); i++) {
+				Ipx.Send_Global_Message(&packet, sizeof(packet), 1, &(Session.Chat[i]->Address));
+				Call_Back();
+			}
+
+			Ipx.Send_Global_Message(&packet, sizeof(packet), 0, NULL);
+			if (Session.IsBridge) {
+				Ipx.Send_Global_Message(&packet, sizeof(packet), 0, &Session.BridgeNet);
+			}
+			while (Ipx.Global_Num_Send() > 0 && Ipx.Service() != 0) {
+				Call_Back();
+			}
+			return(false);
+		}
+	}
+
+	strcpy(Scen->ScenarioName, Session.ScenarioFileName);
+	int retrydelta = Ipx.Global_Response_Time();
+	if (retrydelta < 20) {
+		DebugString("IPX.Global_Response_Time() == %d. Adjusting to 20\n", retrydelta);
+		retrydelta = 20;
+	}
+
+	Ipx.Set_Timing(retrydelta, (unsigned int)-1, max(2 * TIMER_SECOND, (int)retrydelta * 8));
+	Ipx.Set_External_Timing(TIMER_SECOND, -1, 10 * TIMER_SECOND);
+
+	return(true);
+}
+
+// FUNCTION: 0x005DE360
+void __fastcall FUN_005DE360(HWND window, int printcolor, int color)
+{
+	wchar_t text[112];
+
+	HWND input = GetDlgItem(window, 0x540);
+	SendMessage(input, 0x4b3, 0x6f, (LPARAM)text);
+	text[111] = 0;
+	int len = wcslen(text);
+	input = GetDlgItem(window, 0x540);
+	SendMessage(input, 0x4b2, 0, (LPARAM)DAT_00887734);
+	InvalidateRect(window, NULL, TRUE);
+
+	if (len > 2) {
+		PMessagePrintf(printcolor, L"[%s] %s", FUN_00735120(Session.Handle), text);
+
+		GlobalPacketType gpacket;
+		memset(&gpacket, 0, sizeof(gpacket));
+
+		gpacket.Command = NET_MESSAGE;
+		strcpy(gpacket.Name, Session.Handle);
+		wcscpy((wchar_t *)gpacket.Message.Buf, text);
+		gpacket.Message.Color = color;
+		gpacket.Message.NameCRC = FUN_005DAC00(Session.GameName);
+
+		if (JoinState == JOIN_CONFIRMED) {
+			int count = Session.Players.Count();
+			for (int i = 1; i < count; ++i) {
+				Ipx.Send_Global_Message(&gpacket, sizeof(gpacket), 1, &Session.Players[i]->Address);
+				Call_Back();
+			}
+		} else {
+			int count = Session.Chat.Count();
+			for (int i = 1; i < count; ++i) {
+				Ipx.Send_Global_Message(&gpacket, sizeof(gpacket), 1, &Session.Chat[i]->Address);
+				Call_Back();
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x005DF180
+BOOL CALLBACK FUN_005DF180(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	if (!Net2GameStarted) {
+		switch (message) {
+		case WM_COMMAND:
+			switch (LOWORD(wparam)) {
+			case 0x54e:
+				Session.Options.ShortGame = false;
+				if (SendDlgItemMessage(window, 0x54e, BM_GETCHECK, 0, 0) == BST_CHECKED) {
+					Session.Options.ShortGame = true;
+					if (!Session.Options.Bases) {
+						Session.Options.Bases = true;
+						SendDlgItemMessage(window, 0x54b, BM_SETCHECK, 1, 0);
+					}
+				}
+				break;
+
+			case 0x54d:
+				Session.Options.Goodies = false;
+				if (SendDlgItemMessage(window, 0x54d, BM_GETCHECK, 0, 0) == BST_CHECKED) {
+					Session.Options.Goodies = true;
+				}
+				break;
+
+			case 0x3e8:
+				Session.Options.MCVRedeploy = false;
+				if (SendDlgItemMessage(window, 0x3e8, BM_GETCHECK, 0, 0) == BST_CHECKED) {
+					Session.Options.MCVRedeploy = true;
+				}
+				break;
+
+			case 0x624:
+				Session.Options.BridgeDestruction = false;
+				if (SendDlgItemMessage(window, 0x624, BM_GETCHECK, 0, 0) == BST_CHECKED) {
+					Session.Options.BridgeDestruction = true;
+				}
+				break;
+
+			case 0x69d:
+				Session.Options.BuildOffAlly = false;
+				if (SendDlgItemMessage(window, 0x69d, BM_GETCHECK, 0, 0) == BST_CHECKED) {
+					Session.Options.BuildOffAlly = true;
+				}
+				break;
+
+			case 0x69a:
+				Session.Options.SWAllowed = false;
+				if (SendDlgItemMessage(window, 0x69a, BM_GETCHECK, 0, 0) == BST_CHECKED) {
+					Session.Options.SWAllowed = true;
+				}
+				break;
+			}
+			break;
+
+		case WM_HSCROLL:
+			if (GetDlgItem(window, 0x529) == (HWND)lparam) {
+				Session.Options.GameSpeed = 6 - SendDlgItemMessage(window, 0x529, WM_USER, 0, 0);
+			}
+			if (GetDlgItem(window, 0x402) == (HWND)lparam) {
+				Session.Options.Credits = SendDlgItemMessage(window, 0x402, WM_USER, 0, 0);
+			}
+			if (GetDlgItem(window, 0x54f) == (HWND)lparam) {
+				Session.Options.UnitCount = SendDlgItemMessage(window, 0x54f, WM_USER, 0, 0);
+			}
+			break;
+
+		case 0x497:
+			FUN_005E3010(window, 1);
+			break;
+		}
+	}
+
+	return(0);
+}
+
+static inline bool Net2_Name_Is_Reserved(char const * text)
+{
+	Wstring name(text);
+	return(FUN_005EE100(name));
+}
+
+// FUNCTION: 0x005DF410
+int __fastcall FUN_005DF410(int index, char flag)
+{
+	if (index < 1) {
+		PMessagePrintf(ColorSystem, StringTable::LoadString("TXT_MUST_SELECT_GAME", NULL, "D:\\ra2mdpost\\netdlg2.cpp", 0xe80));
+		VocClass::PlayGlobal(Rule->SystemError, 1.0f, 0x2000);
+		return(false);
+	}
+	if (Session.Games.Count() <= 1 || index > Session.Games.Count()) {
+		PMessagePrintf(ColorSystem, StringTable::LoadString("TXT_NOTHING_TO_JOIN", NULL, "D:\\ra2mdpost\\netdlg2.cpp", 0xe87));
+		VocClass::PlayGlobal(Rule->SystemError, 1.0f, 0x2000);
+		return(false);
+	}
+
+	if (strlen(Session.Handle) == 0) {
+		PMessagePrintf(ColorSystem, StringTable::LoadString("TXT_NAME_ERROR", NULL, "D:\\ra2mdpost\\netdlg2.cpp", 0xe8f));
+		VocClass::PlayGlobal(Rule->SystemError, 1.0f, 0x2000);
+		return(false);
+	}
+
+	if (strcmp(Session.Handle, FUN_007350C0(DAT_00AC117C)) == 0 ||
+		strcmp(Session.Handle, FUN_007350C0(DAT_00AC1180)) == 0 ||
+		strcmp(Session.Handle, FUN_007350C0(DAT_00AC1184)) == 0 ||
+		strcmp(Session.Handle, FUN_007350C0(DAT_00AC1188)) == 0 ||
+		strcmp(Session.Handle, FUN_007350C0(DAT_00AC118C)) == 0 ||
+		strcmp(Session.Handle, FUN_007350C0(DAT_00AC1190)) == 0 ||
+		strcmp(Session.Handle, FUN_007350C0(DAT_00AC1194)) == 0 ||
+		Net2_Name_Is_Reserved(Session.Handle)) {
+		PMessagePrintf(ColorSystem, StringTable::LoadString("ERROR:NameIsReservedWord", NULL, "D:\\ra2mdpost\\netdlg2.cpp", 0xe9e));
+		VocClass::PlayGlobal(Rule->SystemError, 1.0f, 0x2000);
+		return(false);
+	}
+
+	if (!Session.Games[index]->Game.IsOpen) {
+		PMessagePrintf(ColorSystem, StringTable::LoadString("TXT_GAME_IS_CLOSED", NULL, "D:\\ra2mdpost\\netdlg2.cpp", 0xea6));
+		VocClass::PlayGlobal(Rule->SystemError, 1.0f, 0x2000);
+		return(false);
+	}
+
+	GlobalPacketType packet;
+	memset(&packet, 0, sizeof(GlobalPacketType));
+	packet.Command = NET_QUERY_JOIN;
+	strcpy(packet.Name, Session.Handle);
+	strcpy(packet.Serial, DAT_00ABFF7C);
+	packet.PlayerInfo.House = FUN_0069B700(&Session);
+	packet.PlayerInfo.Color = FUN_0069B720(&Session);
+	packet.PlayerInfo.MinVersion = VerNum.Min_Version();
+	packet.PlayerInfo.MaxVersion = VerNum.Max_Version();
+	packet.PlayerInfo.CheatCheck = RulesID;
+	packet.PlayerInfo.ArtCheatCheck = ArtID;
+	packet.PlayerInfo.AICheatCheck = AIID;
+	packet.PlayerInfo.BuildNumber = Build_Number();
+	packet.PlayerInfo.Flag = (unsigned char)flag;
+
+	Ipx.Send_Global_Message(&packet, sizeof(GlobalPacketType), 1, &(Session.Games[index]->Address));
+
+	DAT_00AC0230 = 600;
+	return(true);
+}
+
+// FUNCTION: 0x005DF8C0
+void __fastcall Unjoin_Game(int game_index)
+{
+	int i;
+	GlobalPacketType packet;
+
+	memset(&packet, 0, sizeof(GlobalPacketType));
+	packet.Command = NET_SIGN_OFF;
+	strcpy(packet.Name, Session.Handle);
+
+	for (i = 1; i < Session.Players.Count(); i++) {
+		Ipx.Send_Global_Message(&packet, sizeof(packet), 1, &(Session.Players[i]->Address));
+		Call_Back();
+	}
+
+	if (JoinState == JOIN_WAIT_CONFIRM || JoinState == JOIN_CONFIRMED) {
+		if (!Session.Games[game_index]->Address.Is_Broadcast()) {
+			Ipx.Send_Global_Message(&packet, sizeof(packet), 1, &(Session.Games[game_index]->Address));
+		}
+	}
+
+	Ipx.Send_Global_Message(&packet, sizeof(packet), 0, NULL);
+
+	FUN_005E8B40();
+	FUN_005E8AE0();
+	Clear_Vector(&Session.Players);
+
+	Session.GameName[0] = 0;
+}
+
+// FUNCTION: 0x005DF9E0
+void Send_Join_Queries(int gamenow, int playernow, int chatnow, int init)
+{
+	GlobalPacketType packet;
+
+	enum {
+		GAME_QUERY_TIME = 2 * TIMER_SECOND,
+		PLAYER_QUERY_TIME = 35,
+		CHAT_ANNOUNCE_TIME = 83,
+	};
+	static CDTimerClass<SystemTimerClass> game_timer;
+	static CDTimerClass<SystemTimerClass> player_timer;
+	static CDTimerClass<SystemTimerClass> chat_timer;
+
+	if (init) {
+		game_timer = GAME_QUERY_TIME;
+		player_timer = PLAYER_QUERY_TIME;
+		chat_timer = CHAT_ANNOUNCE_TIME;
+	}
+
+	if (!game_timer || gamenow) {
+		game_timer = GAME_QUERY_TIME;
+		if ((WS_Top_Window_ID() != 0xbc) || gamenow) {
+			memset (&packet, 0, sizeof(GlobalPacketType));
+
+			packet.Command = NET_QUERY_GAME;
+
+			strcpy (packet.Name, Session.Handle);
+
+			Ipx.Send_Global_Message (&packet,
+				sizeof(GlobalPacketType), 0, NULL);
+
+			if (Session.IsBridge) {
+				Ipx.Send_Global_Message (&packet,
+					sizeof(GlobalPacketType), 0, &Session.BridgeNet);
+			}
+		}
+	}
+
+	if ( ((CurGame > 0) && (CurGame < Session.Games.Count()) &&
+		!player_timer) || playernow) {
+		player_timer = PLAYER_QUERY_TIME;
+
+		memset (&packet, 0, sizeof(GlobalPacketType));
+
+		packet.Command = NET_QUERY_PLAYER;
+		strcpy (packet.Name, FUN_007350C0(Session.Games[CurGame]->Name));
+
+		Ipx.Send_Global_Message (&packet,
+			sizeof(GlobalPacketType), 0, NULL);
+
+		if (Session.IsBridge) {
+			Ipx.Send_Global_Message (&packet,
+				sizeof(GlobalPacketType), 0, &Session.BridgeNet);
+		}
+	}
+
+	if ((!chat_timer && JoinState<JOIN_CONFIRMED) || chatnow) {
+		chat_timer = CHAT_ANNOUNCE_TIME;
+
+		memset (&packet, 0, sizeof(GlobalPacketType));
+
+		packet.Command = NET_CHAT_ANNOUNCE;
+		strcpy (packet.Name, Session.Handle);
+		packet.Chat.ID = Session.UniqueID;
+		packet.Chat.Color = Session.PrefColor;
+
+		Ipx.Send_Global_Message (&packet,
+			sizeof(GlobalPacketType), 0, NULL);
+
+		if (Session.IsBridge) {
+			Ipx.Send_Global_Message (&packet,
+				sizeof(GlobalPacketType), 0, &Session.BridgeNet);
+		}
+	}
+}
+
+// FUNCTION: 0x005DFDD0 $E131
+
+// FUNCTION: 0x005DFDE0 $E130
+
+// FUNCTION: 0x005DFDF0 $E129

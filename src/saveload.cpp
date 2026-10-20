@@ -86,6 +86,68 @@
 #include "wave.h"
 #include "waypoint.h"
 #include "weapon.h"
+#include <math.h>
+
+extern double __cdecl FUN_004CAC40(double);
+extern double __cdecl FUN_004CAD50(double);
+extern double __cdecl FUN_004CADE0(double);
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007E1720;
+extern const double DAT_007E1728;
+extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
+extern const double DAT_007F0E28;
+extern const double DAT_007F0E30;
+
+struct ShortPair {
+	unsigned short A, B;
+	ShortPair() { A = 0; B = 0; }
+};
+
+struct IntTriple {
+	int A, B, C;
+	IntTriple() { A = 0; B = 0; C = 0; }
+};
+
+// FUNCTION: 0x0067C4A0 $E156
+double DAT_00B053E0 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x0067C4D0 $E159
+double DAT_00B05430 = DAT_00B053E0 / DAT_007F0E28;
+
+// FUNCTION: 0x0067C4F0 $E162
+double DAT_00B05418 = DAT_007E1718 / DAT_00B05430;
+
+// FUNCTION: 0x0067C510 $E165
+double DAT_00B05410 = DAT_007E1720 * DAT_007F0E30;
+
+// FUNCTION: 0x0067C530 $E168
+double DAT_00B053E8 = DAT_007E1728 * DAT_007F0E30;
+
+// FUNCTION: 0x0067C550 $E171
+double DAT_00B053C0 = DAT_007E1730 * DAT_007F0E30;
+
+// FUNCTION: 0x0067C570 $E174
+int DAT_00B05438 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B053C0 - DAT_00B053E8) * DAT_00B053E0));
+
+// FUNCTION: 0x0067C5B0 $E177
+double DAT_00B053F0 = FUN_004CADE0(DAT_00B05438 * DAT_007E1740);
+
+// FUNCTION: 0x0067C5E0 $E180
+double DAT_00B05408 = FUN_004CADE0((DAT_00B05438 * 2) / DAT_00B053E0);
+
+// FUNCTION: 0x0067C610 $E183
+int DAT_00B0542C = (int)(DAT_00B05438 * 4 + DAT_007E1738);
+
+// FUNCTION: 0x0067C640 $E186
+ShortPair DAT_00B053D8;
+
+// FUNCTION: 0x0067C650 $E189
+IntTriple DAT_00B053F8;
+
 #define	SAVE_BLOCK_SIZE	4096
 #define	SAVEGAME_VERSION		(DESCRIP_MAX + 0x01000006)
 

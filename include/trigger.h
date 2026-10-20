@@ -63,6 +63,7 @@ class TriggerClass : public AbstractClass
 		void Reset_All_Timed_Events(void);
 
 		HouseClass * Get_House(void) const;
+		void Set_House(HouseClass * house);
 
 		void Mark_To_Delete(void);
 		bool Is_Marked_To_Delete(void) const;

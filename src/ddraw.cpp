@@ -20,44 +20,40 @@ static PALETTEENTRY PaletteEntries[256];
 static LPDIRECTDRAWPALETTE	PalettePtr;
 
 static bool CanVblankSync = true;
+static bool FirstPaletteSet = false;
 
 int (*DirectDrawErrorHandler)(HRESULT error) = NULL;
 
-void Check_Overlapped_Blit_Capability(void)
+// FUNCTION: 0x004A3C30
+void Set_Palette(PaletteClass const & pal, int time, void (* callback)(void))
 {
-	DSurface test_buffer(64, 64, false);
+	if (VisibleSurface->Bytes_Per_Pixel() != 1) return;
 
-	DebugString("Checking hardware region fill capability...");
+	CDTimerClass<SystemTimerClass> timer = time;
+	PaletteClass original;
+	memcpy(&original, CurrentPalette, sizeof(CurrentPalette));
+	PaletteClass newpal = pal;
 
-	DSurface::AllowHWFill = true;
+	while (timer) {
+		PaletteClass palette = original;
+		int adjust = ((time - timer) * 256) / time;
+		adjust = MIN(adjust, 255);
+		palette.Adjust(adjust, newpal);
 
-	test_buffer.Fill(0);
-	if (test_buffer.Get_Pixel(Point2D(5,5)) != 0) {
-		DSurface::AllowHWFill = false;
-	} else {
-		test_buffer.Fill(1);
-		if (test_buffer.Get_Pixel(Point2D(5,5)) != 1) {
-			DSurface::AllowHWFill = false;
+		int holdtime = timer;
+
+		Set_Palette((void*)&palette[0]);
+
+		if (callback) {
+			callback();
+		}
+
+		while (timer == holdtime && holdtime != 0) {
+			if (callback) callback();
 		}
 	}
-	DebugStringNoPrefix("%s\n", DSurface::AllowHWFill ? "OK" : "Failed!");
 
-	DebugString("Checking overlapped blit capability...");
-
-	DSurface::OverlappedVideoBlits = true;
-
-	test_buffer.Fill(0);
-
-	test_buffer.Put_Pixel(Point2D(0, 0), 255);
-
-	test_buffer.Blit_From(Rect(0, 1, 64, 64-1), test_buffer, Rect(0, 0, 64, 64-1), false, false);
-
-	if (test_buffer.Get_Pixel(Point2D(0 ,5)) != 0) {
-		DebugStringNoPrefix("Failed!\n");
-		DSurface::OverlappedVideoBlits = false;
-	} else {
-		DebugStringNoPrefix("OK\n");
-	}
+	Set_Palette((void*)&newpal[0]);
 }
 
 // FUNCTION: 0x004A3DD0
@@ -186,6 +182,44 @@ void Process_DD_Result(HRESULT result, int display_ok_msg)
 	char str[80];
 	sprintf(str, "DDRAW.DLL Error code = %08X", result);
 	MessageBox(MainWindow, str, "Direct X", MB_ICONEXCLAMATION|MB_OK);
+}
+
+// FUNCTION: 0x004A3E40
+void Check_Overlapped_Blit_Capability(void)
+{
+	DSurface test_buffer(64, 64, false);
+
+	DebugString("Checking hardware region fill capability...");
+
+	DSurface::AllowHWFill = true;
+
+	test_buffer.Fill(0);
+	if (test_buffer.Get_Pixel(Point2D(5,5)) != 0) {
+		DSurface::AllowHWFill = false;
+	} else {
+		test_buffer.Fill(1);
+		if (test_buffer.Get_Pixel(Point2D(5,5)) != 1) {
+			DSurface::AllowHWFill = false;
+		}
+	}
+	DebugStringNoPrefix("%s\n", DSurface::AllowHWFill ? "OK" : "Failed!");
+
+	DebugString("Checking overlapped blit capability...");
+
+	DSurface::OverlappedVideoBlits = true;
+
+	test_buffer.Fill(0);
+
+	test_buffer.Put_Pixel(Point2D(0, 0), 255);
+
+	test_buffer.Blit_From(Rect(0, 1, 64, 64-1), test_buffer, Rect(0, 0, 64, 64-1), false, false);
+
+	if (test_buffer.Get_Pixel(Point2D(0 ,5)) != 0) {
+		DebugStringNoPrefix("Failed!\n");
+		DSurface::OverlappedVideoBlits = false;
+	} else {
+		DebugStringNoPrefix("OK\n");
+	}
 }
 
 // FUNCTION: 0x004A3FD0
@@ -362,6 +396,36 @@ void Wait_Vert_Blank(void)
 	}
 }
 
+// FUNCTION: 0x004A4780
+void Set_Palette(void const * palette)
+{
+	if (&CurrentPalette[0] != palette) {
+		memmove(CurrentPalette, palette, sizeof(CurrentPalette));
+	}
+
+	if (DirectDrawObject != NULL && PaletteSurface != NULL) {
+		unsigned char * palette_get = (unsigned char*)palette;
+		for (int index = 0; index < 256; index++) {
+
+			int red = *palette_get++;
+			int green = *palette_get++;
+			int blue = *palette_get++;
+
+			PaletteEntries[index].peRed = (unsigned char)red;
+			PaletteEntries[index].peGreen = (unsigned char)green;
+			PaletteEntries[index].peBlue = (unsigned char)blue;
+		}
+
+		if (PalettePtr != NULL) {
+			if (!FirstPaletteSet) {
+				PaletteSurface->SetPalette(PalettePtr);
+				FirstPaletteSet = true;
+			}
+			PalettePtr->SetEntries(0, 0, 256, &PaletteEntries[0]);
+		}
+	}
+}
+
 // FUNCTION: 0x004A4830
 void Wait_Blit (void)
 {
@@ -440,3 +504,20 @@ int * EnumDisplayModes(DWORD minw, DWORD minh, DWORD maxw, DWORD maxh, DWORD bit
 	}
 	return(NULL);
 }
+
+// FUNCTION: 0x004A4AC0 DebugStringNoPrefix
+
+// FUNCTION: 0x004A4AD0 ?$DynamicVectorClass@PAU_DDSURFACEDESC@@::Clear
+template class DynamicVectorClass<DDSURFACEDESC *>;
+
+// FUNCTION: 0x004A4B00 ?$DynamicVectorClass@PAU_DDSURFACEDESC@@::ID
+
+// FUNCTION: 0x004A4B20 ?$VectorClass@PAU_DDSURFACEDESC@@::GetItem
+
+// FUNCTION: 0x004A4B30 ?$VectorClass@PAU_DDSURFACEDESC@@::operator==
+
+// FUNCTION: 0x004A4B70 ?$VectorClass@PAU_DDSURFACEDESC@@::Resize
+
+// FUNCTION: 0x004A4C20 ?$VectorClass@PAU_DDSURFACEDESC@@::Clear
+
+// FUNCTION: 0x004A4C50 ?$VectorClass@PAU_DDSURFACEDESC@@::ID

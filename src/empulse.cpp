@@ -5,6 +5,7 @@
 
 #define INCLUDE_COM
 #include "always.h"
+#include <math.h>
 #include "empulse.h"
 #include "_map.h"
 #include "_rules.h"
@@ -231,4 +232,44 @@ HRESULT STDMETHODCALLTYPE EMPulseClass::Save(IStream * stream, BOOL cleardirty)
 // FUNCTION: 0x004C5D20 ?$VectorClass@PAVEMPulseClass@@::ID
 // FUNCTION: 0x004C5D40 ?$DynamicVectorClass@PAVEMPulseClass@@::Resize
 // FUNCTION: 0x004C5DF0 ?$DynamicVectorClass@PAVEMPulseClass@@::ID
+// FUNCTION: 0x004C5E20 ?$VectorClass@PAVEMPulseClass@@::~?$VectorClass@PAVEMPulseClass@@
+// FUNCTION: 0x004C5E70 ?$DynamicVectorClass@PAVEMPulseClass@@::~?$DynamicVectorClass@PAVEMPulseClass@@
 template class DynamicVectorClass<EMPulseClass *>;
+
+extern double __cdecl FUN_004CAC40(double);
+extern double __cdecl FUN_004CAD50(double);
+extern double __cdecl FUN_004CADE0(double);
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007E1720;
+extern const double DAT_007E1728;
+extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
+extern const double DAT_007E8808;
+extern const double DAT_007E8810;
+
+// FUNCTION: 0x004C5EE0 $E94
+double DAT_008A38D8 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x004C5F10 $E97
+double DAT_008A3970 = DAT_008A38D8 / DAT_007E8808;
+
+// FUNCTION: 0x004C5F30 $E100
+double DAT_008A3958 = DAT_007E1718 / DAT_008A3970;
+
+// FUNCTION: 0x004C5F50 $E103
+double DAT_008A3950 = DAT_007E1720 * DAT_007E8810;
+
+// FUNCTION: 0x004C5F70 $E106
+double DAT_008A3928 = DAT_007E1728 * DAT_007E8810;
+
+// FUNCTION: 0x004C5F90 $E109
+double DAT_008A38B8 = DAT_007E1730 * DAT_007E8810;
+
+// FUNCTION: 0x004C5FB0 $E112
+int DAT_008A3978 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_008A38B8 - DAT_008A3928) * DAT_008A38D8));
+
+// FUNCTION: 0x004C5FF0 $E115
+double DAT_008A3930 = FUN_004CADE0(DAT_008A3978 * DAT_007E1740);

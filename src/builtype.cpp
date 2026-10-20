@@ -26,6 +26,7 @@
 #include "incdec.h"
 #include "isotype.h"
 #include "mixfile.h"
+#include "msanim.h"
 #include "overtype.h"
 #include "rules.h"
 #include "scenario.h"
@@ -238,17 +239,6 @@ struct FileSystem {
 	static void const * LoadFile(char const * name, bool flag);
 };
 
-class SHPStruct
-{
-	public:
-		short Zero;
-		short Width;
-		short Height;
-		short Count;
-		Rect GetFrameBounds(int frame) const;
-		void * GetPixels(int frame) const;
-};
-
 // FUNCTION: 0x0045E8F0
 void BuildingTypeClass::Fetch_Z_Data(void)
 {
@@ -256,8 +246,8 @@ void BuildingTypeClass::Fetch_Z_Data(void)
 		BuildingZShape = FileSystem::LoadFile("BUILDNGZ.SHA", false);
 		((SHPStruct const *)BuildingZShape)->GetFrameBounds(0);
 		char * data = (char *)((SHPStruct const *)BuildingZShape)->GetPixels(0);
-		int width = ((SHPStruct const *)BuildingZShape)->Width;
-		int height = ((SHPStruct const *)BuildingZShape)->Height;
+		int width = ((SHPStruct const *)BuildingZShape)->Get_Width();
+		int height = ((SHPStruct const *)BuildingZShape)->Get_Height();
 
 		for (int h = 0; h < height; h++) {
 			for (int w = 0; w < width; w++) {
@@ -310,7 +300,7 @@ void BuildingTypeClass::Init(TheaterType theater)
 
 			if (classptr->BuildupData) {
 				int timedelay = 1;
-				int count = ((SHPStruct const *)classptr->BuildupData)->Count;
+				int count = ((SHPStruct const *)classptr->BuildupData)->Get_Count();
 				if (count != 0) {
 					timedelay = (5 * TICKS_PER_SECOND) / count;
 				}
@@ -1088,4 +1078,51 @@ int BuildingTypeClass::Fetch_Heap_ID(void) const
 // FUNCTION: 0x00465E10 ?$VectorClass@V?$TPoint3D@H@@::operator==
 // FUNCTION: 0x00465E70 ?$VectorClass@V?$TPoint3D@H@@::Resize
 // FUNCTION: 0x00465F50 ?$VectorClass@V?$TPoint3D@H@@::Clear
+// FUNCTION: 0x00465F80 ?$VectorClass@V?$TPoint3D@H@@::ID
+// FUNCTION: 0x00465FD0 ?$VectorClass@V?$TPoint3D@H@@::ID
 template class VectorClass<Point3D>;
+
+// FUNCTION: 0x00466000 TFind_Or_Make
+template BuildingTypeClass * TFind_Or_Make<BuildingTypeClass>(char const *, DynamicVectorClass<BuildingTypeClass *> const &);
+
+// FUNCTION: 0x00466080 ?$VectorClass@V?$TPoint3D@H@@::~?$VectorClass@V?$TPoint3D@H@@
+
+#include <math.h>
+
+extern double __cdecl FUN_004CAC40(double);
+extern double __cdecl FUN_004CAD50(double);
+extern double __cdecl FUN_004CADE0(double);
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007E1720;
+extern const double DAT_007E1728;
+extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
+extern const double DAT_007E4660;
+extern const double DAT_007E4668;
+
+// FUNCTION: 0x004660D0 $E252
+double DAT_0089DDF8 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x00466100 $E255
+double DAT_0089DE68 = DAT_0089DDF8 / DAT_007E4660;
+
+// FUNCTION: 0x00466120 $E258
+double DAT_0089DE50 = DAT_007E1718 / DAT_0089DE68;
+
+// FUNCTION: 0x00466140 $E261
+double DAT_0089DE48 = DAT_007E1720 * DAT_007E4668;
+
+// FUNCTION: 0x00466160 $E264
+double DAT_0089DE00 = DAT_007E1728 * DAT_007E4668;
+
+// FUNCTION: 0x00466180 $E267
+double DAT_0089DDD8 = DAT_007E1730 * DAT_007E4668;
+
+// FUNCTION: 0x004661A0 $E270
+int DAT_0089DE70 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_0089DDD8 - DAT_0089DE00) * DAT_0089DDF8));
+
+// FUNCTION: 0x004661E0 $E273
+double DAT_0089DE08 = FUN_004CADE0(DAT_0089DE70 * DAT_007E1740);

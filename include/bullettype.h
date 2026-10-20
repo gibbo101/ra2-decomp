@@ -81,6 +81,7 @@ class BulletTypeClass : public ObjectTypeClass
 		void SetScaledSpawnDelay(int delay);
 
 		static BulletTypeClass *Find_Or_Make(const char * name);
+		static BulletTypeClass * FindOrAllocate(const char * name);
 
 		static BulletType From_Name(char const * name);
 		static const char * Name_From(BulletType bullet);

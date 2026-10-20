@@ -1126,6 +1126,17 @@ change had broken; batch 63's settled the mouse's Set_Mouse_Point as two ints fr
 sites. Cost: about 5.2M tokens. Merge gate: 10,274 of 10,274 (1,406.8 KB), about 53% of
 game functions.
 
+### Batches 66, 67 and 68 (20 October 2026)
+
+**417 of 432 functions** (135, 140, 142), plus three found along the way. Batch 67's merge
+pinned two GlobalPacketType layouts byte by byte from the exe (the chat message's recipient
+bitmask, the player-info flag), which landed two network dialog functions; batch 66's gave
+SHPStruct its GetPixels; batch 68's corrected two World Domination return types and found
+by RTTI that _rtti.cpp's vector was Scripts, a ScriptClass vector. Landing replaced
+builtype.cpp's local copy of SHPStruct with msanim.h's and init.cpp's alias with Scripts.
+Cost: about 4.5M tokens. Merge gate: 10,694 of 10,694 (1,449.1 KB), about 55% of game
+functions.
+
 ### Decide before the first batch
 
 - **Module layout.** Which function lives in which source file, and the link order, decide

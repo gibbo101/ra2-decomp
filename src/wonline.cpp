@@ -20,10 +20,12 @@
 #include "ownrdraw.h"
 #include "rcptr.h"
 #include "rules.h"
+#include "netshare.h"
 
 #include <windows.h>
 #undef LoadString
 #include <ole2.h>
+#include <ocidl.h>
 #include <shellapi.h>
 #include <stddef.h>
 #include <string.h>
@@ -72,9 +74,13 @@ OLEInitializer g_OLEInitializer;
 // FUNCTION: 0x0077B8F0
 Wstring DAT_00B73AE0;
 
+struct Server {
+	char Data[0xF8];
+};
+
 // FUNCTION: 0x0077B900
 // FUNCTION: 0x0077B920
-ArrayList<int> DAT_00B778D8;
+ArrayList<Server> DAT_00B778D8;
 
 // FUNCTION: 0x0077B940
 // FUNCTION: 0x0077B960
@@ -89,7 +95,9 @@ struct User {
 	char Pad[0x1C];
 	User * Next;
 	char Nick[10];
-	char Login[0x6C - 0x2E];
+	char Login[0x57 - 0x2E];
+	char Abbrev[10];
+	char Rest[0x6C - 0x61];
 };
 
 // FUNCTION: 0x0077B9C0
@@ -688,9 +696,9 @@ bool __fastcall FUN_005E93F0(NodeNameType * slot);
 Wstring __fastcall FUN_005EDEF0(NodeNameType * slot);
 
 struct ChatSink {
-	virtual void V00(void);
+	virtual long __stdcall V00(IID const & iid, void ** object);
 	virtual void V01(void);
-	virtual void V02(void);
+	virtual unsigned long __stdcall V02(void);
 	virtual void V03(void);
 	virtual void V04(void);
 	virtual void V05(void);
@@ -701,14 +709,14 @@ struct ChatSink {
 	virtual void V10(void);
 	virtual void V11(void);
 	virtual void V12(void);
-	virtual void V13(void);
+	virtual long __stdcall V13(void);
 	virtual void V14(void);
 	virtual long __stdcall V15(char * text);
 	virtual void V16(void);
 	virtual void V17(void);
 	virtual long __stdcall V18(User * users);
 	virtual void V19(void);
-	virtual void V20(void);
+	virtual long __stdcall V20(unsigned long * version);
 	virtual void V21(void);
 	virtual void V22(void);
 	virtual void V23(void);
@@ -723,13 +731,13 @@ struct ChatSink {
 	virtual void V32(void);
 	virtual void V33(void);
 	virtual void V34(void);
-	virtual void V35(void);
+	virtual long __stdcall V35(unsigned long sku);
 	virtual void V36(void);
 	virtual void V37(void);
 	virtual void V38(void);
 	virtual void V39(void);
 	virtual void V40(void);
-	virtual void V41(void);
+	virtual long __stdcall V41(char const * name, char const * value);
 	virtual void V42(void);
 	virtual void V43(void);
 	virtual void V44(void);
@@ -1347,11 +1355,25 @@ extern int DAT_00B77DCC;
 extern int DAT_00B77DB8;
 extern int DAT_00B77DBC;
 extern wchar_t const * DAT_00B73E1C[8];
-extern int DAT_00AC1170;
-extern int DAT_00AC1174;
-extern int DAT_00B77E54;
-extern int DAT_00B77E58;
-extern int DAT_00B77E5C;
+struct NetUtilSink {
+	virtual long __stdcall V00(IID const & iid, void ** object);
+	virtual unsigned long __stdcall V01(void);
+	virtual unsigned long __stdcall V02(void);
+	virtual void V03(void);
+	virtual void V04(void);
+	virtual void V05(void);
+	virtual void V06(void);
+	virtual void V07(void);
+	virtual void V08(void);
+	virtual void V09(void);
+	virtual void V10(void);
+	virtual long __stdcall V11(char const * host, int port, int mode);
+};
+extern NetUtilSink * DAT_00AC1170;
+extern IUnknown * DAT_00AC1174;
+extern DWORD DAT_00B77E54;
+extern DWORD DAT_00B77E58;
+extern DWORD DAT_00B77E5C;
 extern int DAT_00B77DDC;
 extern int DAT_00B77DE0;
 extern int DAT_00B77DE4;
@@ -1429,8 +1451,8 @@ void FUN_00780110(void)
 	DAT_00B73E1C[7] = StringTable::LoadString("TXT_LOB_8", NULL, "D:\\ra2mdpost\\wonline.cpp", 0xAC7);
 	memset(DAT_00B736CC, -1, sizeof(DAT_00B736CC));
 	DAT_00AC116C = NULL;
-	DAT_00AC1170 = 0;
-	DAT_00AC1174 = 0;
+	DAT_00AC1170 = NULL;
+	DAT_00AC1174 = NULL;
 	DAT_00B77E54 = 0;
 	DAT_00B77E58 = 0;
 	DAT_00B77E5C = 0;
@@ -2016,4 +2038,359 @@ int __cdecl FUN_00783570(const char * a, const char * b)
 		return -1;
 	}
 	return lb > 0;
+}
+
+int __cdecl FUN_007835C0(UserSort const * a, UserSort const * b);
+int __cdecl FUN_007836E0(UserSort const * a, UserSort const * b);
+
+// FUNCTION: 0x00783800
+void __fastcall FUN_00783800(bool ascending)
+{
+	ArrayList<User> copy;
+	int count = DAT_00B77900.length();
+	UserSort * sorted = new UserSort[count];
+	if (!sorted) {
+		return;
+	}
+	User temp;
+	memset(&temp, 0, sizeof(temp));
+	for (int i = 0; i < count; i++) {
+		DAT_00B77900.get(temp, i);
+		sorted[i].Index = i;
+		sorted[i].Name = new char[10];
+		if (!sorted[i].Name) {
+			return;
+		}
+		strcpy(sorted[i].Name, temp.Abbrev);
+		sorted[i].Flag = temp.Flags & 1;
+		copy.addTail(temp);
+	}
+	if (ascending) {
+		qsort(sorted, count, sizeof(UserSort), (CompareFn)FUN_007835C0);
+	} else {
+		qsort(sorted, count, sizeof(UserSort), (CompareFn)FUN_007836E0);
+	}
+	DAT_00B77900.clear();
+	int k;
+	for (k = 0; k < count; k++) {
+		copy.get(temp, sorted[k].Index);
+		DAT_00B77900.addTail(temp);
+	}
+	copy.clear();
+	for (k = 0; k < count; k++) {
+		if (sorted[k].Name) {
+			delete sorted[k].Name;
+		}
+	}
+	delete sorted;
+}
+
+struct PCX {
+	static PCX Instance;
+	int GetSurface(char const * name, void * palette);
+};
+
+// FUNCTION: 0x00783A90
+int __fastcall FUN_00783A90(int digit)
+{
+	switch (digit) {
+		case 0:
+			return PCX::Instance.GetSurface("number0.pcx", NULL);
+		case 1:
+			return PCX::Instance.GetSurface("number1.pcx", NULL);
+		case 2:
+			return PCX::Instance.GetSurface("number2.pcx", NULL);
+		case 3:
+			return PCX::Instance.GetSurface("number3.pcx", NULL);
+		case 4:
+			return PCX::Instance.GetSurface("number4.pcx", NULL);
+		case 5:
+			return PCX::Instance.GetSurface("number5.pcx", NULL);
+		case 6:
+			return PCX::Instance.GetSurface("number6.pcx", NULL);
+		case 7:
+			return PCX::Instance.GetSurface("number7.pcx", NULL);
+		case 8:
+			return PCX::Instance.GetSurface("number8.pcx", NULL);
+		case 9:
+			return PCX::Instance.GetSurface("number9.pcx", NULL);
+	}
+	return 0;
+}
+
+struct RankedUser {
+	char Pad[0xC];
+	unsigned int Points;
+};
+
+// FUNCTION: 0x00783B80
+int __fastcall FUN_00783B80(RankedUser * user)
+{
+	if (!user) {
+		return 0;
+	}
+	unsigned int points = user->Points;
+	if (points > 2000) {
+		return PCX::Instance.GetSurface("comchief.pcx", NULL);
+	}
+	if (points > 1500) {
+		return PCX::Instance.GetSurface("stargen.pcx", NULL);
+	}
+	if (points > 1000) {
+		return PCX::Instance.GetSurface("general.pcx", NULL);
+	}
+	if (points > 500) {
+		return PCX::Instance.GetSurface("briggenr.pcx", NULL);
+	}
+	if (points > 250) {
+		return PCX::Instance.GetSurface("colonel.pcx", NULL);
+	}
+	if (points > 150) {
+		return PCX::Instance.GetSurface("major.pcx", NULL);
+	}
+	if (points > 80) {
+		return PCX::Instance.GetSurface("lieutena.pcx", NULL);
+	}
+	if (points > 60) {
+		return PCX::Instance.GetSurface("sergeant.pcx", NULL);
+	}
+	if (points > 31) {
+		return PCX::Instance.GetSurface("corporal.pcx", NULL);
+	}
+	return PCX::Instance.GetSurface("private.pcx", NULL);
+}
+
+// FUNCTION: 0x00785360
+void FUN_00785360(void)
+{
+	FUN_00783C80(0, false);
+}
+
+struct AtlModule {
+	unsigned int cbSize;
+	char Pad0[0x10];
+	long LockCount;
+	char Pad1[0x64 - 0x18];
+	unsigned int BuildVersion;
+	char Pad2[4];
+	char Pad3[4];
+	GUID const * VersionGuid;
+	char Pad4[0x84 - 0x74];
+};
+
+extern AtlModule DAT_00B76488;
+void __stdcall FUN_007AC500(AtlModule * module);
+
+struct PointContainerPtr {
+	IConnectionPointContainer * p;
+	PointContainerPtr(void) { p = NULL; }
+	~PointContainerPtr(void)
+	{
+		if (p) {
+			p->Release();
+		}
+	}
+};
+
+struct PointPtr {
+	IConnectionPoint * p;
+	PointPtr(void) { p = NULL; }
+	~PointPtr(void)
+	{
+		if (p) {
+			p->Release();
+		}
+	}
+};
+
+static inline HRESULT Unadvise_Sink(IUnknown * source, IID const & iid, DWORD cookie)
+{
+	PointContainerPtr container;
+	PointPtr point;
+	HRESULT result = source->QueryInterface(IID_IConnectionPointContainer, (void **)&container.p);
+	if (SUCCEEDED(result)) {
+		result = container.p->FindConnectionPoint(iid, &point.p);
+	}
+	if (SUCCEEDED(result)) {
+		result = point.p->Unadvise(cookie);
+	}
+	return result;
+}
+
+#define APP_REG_KEY "SOFTWARE\\Westwood\\Yuri's Revenge"
+
+static inline void Close_Logout_Wait(unsigned int event)
+{
+	HWND window = FUN_00775940(0x11E);
+	if (window) {
+		FUN_007757E0(window, 0);
+	}
+	window = FUN_00775940(0xC4);
+	if (window) {
+		DAT_00B77DC8 &= ~event;
+		if (DAT_00B77DC8 == 0) {
+			FUN_007757E0(window, 0);
+		}
+	}
+	HWND top = FUN_00775B10();
+	HWND input = GetDlgItem(top, 0x540);
+	if (input) {
+		SetFocus(input);
+	}
+}
+
+// FUNCTION: 0x00785EA0
+void FUN_00785EA0(void)
+{
+	DAT_00B77DC0 = 1;
+	if (Session.Type == GAME_INTERNET && Session.unknown_0C == 3) {
+		DAT_00B76680.clear();
+	}
+	if (DAT_00AC116C) {
+		for (int i = 0; i < 18; i++) {
+			ResetEvent(DAT_00B73684[i]);
+		}
+		FUN_0077F900();
+		if (DAT_00AC116C->V13() == 0) {
+			FUN_00792BE0(0x20, StringTable::LoadString("TXT_WOL_LOGGING_OUT", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2537), 0);
+			for (int tries = 0; tries < 5; tries++) {
+				DWORD index;
+				while ((index = WaitForMultipleObjects(18, DAT_00B73684, FALSE, 100)) == WAIT_TIMEOUT) {
+					FUN_0077F900();
+				}
+				ResetEvent(DAT_00B73684[index]);
+				if (index == 0 || index == 9) {
+					break;
+				}
+			}
+		}
+		Close_Logout_Wait(0x20);
+	}
+	int budget = DAT_00B77900.length();
+}
+
+extern IID const DAT_007F7550;
+extern IID const DAT_007F7590;
+extern IID const DAT_007F7570;
+extern char DAT_00B77E75;
+void FUN_005E8A20(void);
+
+// FUNCTION: 0x00786080
+void FUN_00786080(void)
+{
+	if (MultiplayerMapPreview) {
+		delete MultiplayerMapPreview;
+		MultiplayerMapPreview = NULL;
+	}
+	HWND window = FUN_00775940(0x11E);
+	if (window) {
+		FUN_007757E0(window, 0);
+	}
+	if (DAT_00B77E75) {
+		FUN_005E8A20();
+		if (DAT_00AC116C) {
+			Unadvise_Sink((IUnknown *)DAT_00AC116C, DAT_007F7550, DAT_00B77E54);
+			DAT_00AC116C->V02();
+		}
+		if (DAT_00AC1170) {
+			Unadvise_Sink((IUnknown *)DAT_00AC1170, DAT_007F7590, DAT_00B77E58);
+			DAT_00AC1170->V02();
+		}
+		if (DAT_00AC1174) {
+			Unadvise_Sink(DAT_00AC1174, DAT_007F7570, DAT_00B77E5C);
+			DAT_00AC1174->Release();
+		}
+		DAT_00AC116C = NULL;
+		DAT_00AC1170 = NULL;
+		DAT_00AC1174 = NULL;
+		for (int i = 0; i < 18; i++) {
+			CloseHandle(DAT_00B73684[i]);
+		}
+		FUN_007AC500(&DAT_00B76488);
+		DAT_00B77E75 = 0;
+	}
+}
+
+extern char DAT_00B73B34[];
+extern int DAT_00B76B0C;
+extern int DAT_00B77E50;
+
+// FUNCTION: 0x00786270
+bool FUN_00786270(void)
+{
+	DWORD value = 0;
+	HKEY key;
+	char path[256];
+	if (APP_REG_KEY != NULL && strlen(APP_REG_KEY)) {
+		strcpy(path, APP_REG_KEY);
+		if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, path, 0, KEY_READ, &key) == ERROR_SUCCESS) {
+			DWORD type;
+			DWORD size = sizeof(value);
+			RegQueryValueEx(key, "SKU", NULL, &type, (LPBYTE)&value, &size);
+			RegCloseKey(key);
+		}
+	}
+	DAT_00B77E50 = value & 0xFF;
+	if (DAT_00AC116C != NULL) {
+		DAT_00AC116C->V35(value);
+	}
+	if (DAT_00AC1170 != NULL) {
+		FUN_004068E0("Get_WDT_State_Silent: WDTHost is %s, port is %d\n", DAT_00B73B34, DAT_00B76B0C);
+		DAT_00AC1170->V11(DAT_00B73B34, DAT_00B76B0C, 3);
+		return true;
+	}
+	return false;
+}
+
+extern char DAT_00B77E75;
+void FUN_005E87A0(void);
+void FUN_005E8B40(void);
+void FUN_005E8B60(void);
+namespace Game { extern HINSTANCE hInstance; }
+int __fastcall FUN_00785370(HINSTANCE instance);
+
+// FUNCTION: 0x00786390
+int FUN_00786390(void)
+{
+	if (DAT_00B77E75) {
+		return 1;
+	}
+	DAT_00B77E75 = 1;
+	FUN_005E87A0();
+	FUN_005E8B40();
+	FUN_005E8B60();
+	DWORD value = 0;
+	HKEY key;
+	char path[256];
+	if (APP_REG_KEY != NULL && strlen(APP_REG_KEY)) {
+		strcpy(path, APP_REG_KEY);
+		if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, path, 0, KEY_READ, &key) == ERROR_SUCCESS) {
+			DWORD type;
+			DWORD size = sizeof(value);
+			RegQueryValueEx(key, "SKU", NULL, &type, (LPBYTE)&value, &size);
+			RegCloseKey(key);
+		}
+	}
+	value &= 0xFF;
+	DAT_00B77E50 = value;
+	DAT_0084A234 = value + 0x2900;
+	FUN_00780110();
+	DAT_00B77DC0 = 1;
+	for (int i = 0; i < 18; i++) {
+		DAT_00B73684[i] = CreateEvent(NULL, FALSE, FALSE, NULL);
+	}
+	return FUN_00785370(Game::hInstance);
+}
+
+bool __fastcall FUN_007864C0(Server * server);
+
+// FUNCTION: 0x00786D90
+bool FUN_00786D90(void)
+{
+	if (DAT_00B76468 >= 1 && DAT_00B76468 < DAT_00B778D8.length()) {
+		Server * server = NULL;
+		DAT_00B778D8.getPointer(&server, DAT_00B76468);
+		return FUN_007864C0(server);
+	}
+	return false;
 }

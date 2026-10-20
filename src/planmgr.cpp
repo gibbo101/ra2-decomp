@@ -1472,6 +1472,113 @@ bool TechnoClass::TryNextPlanningTokenNode(void)
 	return false;
 }
 
+// FUNCTION: 0x00638A20
+void __fastcall FUN_00638A20(PlanningNodeClass * node)
+{
+	PlanningNodeClass::Unknown2.Add(node);
+}
+
+// FUNCTION: 0x00638A80
+PlanningTokenClass * __fastcall FUN_00638A80(TechnoClass * techno)
+{
+	PlanningTokenClass * token = new PlanningTokenClass(techno);
+	PlanningTokenClass::Array.Add(token);
+	techno->FUN_00705D10(token);
+	return token;
+}
+
+// FUNCTION: 0x00638B50
+bool __fastcall FUN_00638B50(char type)
+{
+	return type == 9 || type == 6 || type == 7;
+}
+
+#include "cell.h"
+
+// FUNCTION: 0x00638B70
+bool __fastcall FUN_00638B70(TechnoClass * techno, int mission, TargetClass target)
+{
+	if (mission == 0xb) {
+		if (!target.Is_Valid()) {
+			return true;
+		}
+		if (techno) {
+			Cell here = techno->Get_Cell();
+			Cell there = techno->Get_Cell();
+			CellClass * cell = target.As_Cell();
+			if (cell) {
+				there = cell->CellID;
+			} else {
+				TechnoClass * other = target.As_Techno();
+				if (other) {
+					there = other->Get_Cell();
+				}
+			}
+			if (here.X == there.X && here.Y == there.Y) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+// FUNCTION: 0x00638C20
+bool __fastcall FUN_00638C20(int mission)
+{
+	return mission == 7 || mission == 8 || mission == 9;
+}
+
+// FUNCTION: 0x00638C40
+bool __fastcall FUN_00638C40(int mission, TargetClass target)
+{
+	if (mission == 1 || mission == 0xb) {
+		if ((RTTIType)target == RTTI_CELL) {
+			return true;
+		}
+		if (mission == 0xb && (RTTIType)target == RTTI_NONE) {
+			return true;
+		}
+	}
+	return false;
+}
+
+static inline bool Mission_Fits(int mission, TargetClass target)
+{
+	if (mission == 1 || mission == 0xb) {
+		if ((RTTIType)target == RTTI_CELL) goto fits;
+		if (mission == 0xb && (RTTIType)target == RTTI_NONE) {
+fits:
+			return true;
+		}
+	}
+	return false;
+}
+
+// FUNCTION: 0x00638C70
+bool __fastcall FUN_00638C70(TechnoClass * techno)
+{
+	if (techno) {
+		int mission = techno->Get_Mission();
+		if (mission == 5) {
+			return true;
+		}
+		return Mission_Fits(mission, TargetClass(techno->TarCom));
+	}
+	return false;
+}
+
+// FUNCTION: 0x00638DC0
+void __fastcall FUN_00638DC0(PlanningNodeClass * node)
+{
+	PlanningNodeClass::Unknown1.Add(node);
+}
+
+// FUNCTION: 0x00638E20
+void __fastcall FUN_00638E20(void)
+{
+	PlanningNodeClass::Unknown2.Clear();
+}
+
 // FUNCTION: 0x00639F80
 void __fastcall FUN_00639F80(int slot)
 {

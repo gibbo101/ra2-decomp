@@ -204,6 +204,20 @@ void AlphaShapeClass::Detach(AbstractClass const * target, bool all)
 	}
 }
 
+// FUNCTION: 0x00420E90
+void AlphaShapeClass::Update_All(void)
+{
+	if (!BrightnessCalculated) {
+		Calculate_Brightness_Table();
+	}
+
+	for (int i = AlphaShapes.Count() - 1; i >= 0; i--) {
+		if (AlphaShapes[i]->IsToDelete) {
+			delete AlphaShapes[i];
+		}
+	}
+}
+
 // FUNCTION: 0x004216C0
 void AlphaShapeClass::Calculate_Brightness_Table(void)
 {
@@ -215,3 +229,22 @@ void AlphaShapeClass::Calculate_Brightness_Table(void)
 		BrightnessTable[0][i] = brightness;
 	}
 }
+
+// FUNCTION: 0x00421730 AlphaShapeClass::~AlphaShapeClass
+
+// FUNCTION: 0x00421800 ?$DynamicVectorClass@PAVAlphaShapeClass@@::Clear
+template class DynamicVectorClass<AlphaShapeClass *>;
+
+// FUNCTION: 0x00421830 ?$DynamicVectorClass@PAVAlphaShapeClass@@::ID
+
+// FUNCTION: 0x00421850 ?$VectorClass@PAVAlphaShapeClass@@::GetItem
+
+// FUNCTION: 0x00421860 ?$VectorClass@PAVAlphaShapeClass@@::operator==
+
+// FUNCTION: 0x004218A0 ?$VectorClass@PAVAlphaShapeClass@@::Resize
+
+// FUNCTION: 0x00421950 ?$VectorClass@PAVAlphaShapeClass@@::Clear
+
+// FUNCTION: 0x00421980 ?$VectorClass@PAVAlphaShapeClass@@::ID
+
+// FUNCTION: 0x004219C0 ?$VectorClass@PAVAlphaShapeClass@@::ID

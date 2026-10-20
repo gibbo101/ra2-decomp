@@ -27,6 +27,7 @@ class SHPStruct
 {
 	public:
 		Rect GetFrameBounds(int frame) const;
+		void * GetPixels(int frame) const;
 		int Get_Width(void) const {return(Width);}
 		int Get_Height(void) const {return(Height);}
 		int Get_Count(void) const {return(Count);}

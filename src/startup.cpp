@@ -591,3 +591,19 @@ template class TClassFactory<BombClass>;
 // FUNCTION: 0x006C1310 ?$TClassFactory@VRadSiteClass@@::CreateInstance
 // FUNCTION: 0x006C1390 ?$TClassFactory@VRadSiteClass@@::LockServer
 template class TClassFactory<RadSiteClass>;
+
+// FUNCTION: 0x006C13C0 ?$TClassFactory@VTEventClass@@::?$TClassFactory@VTEventClass@@
+// FUNCTION: 0x006C13D0 ?$TClassFactory@VTEventClass@@::QueryInterface
+// FUNCTION: 0x006C1440 ?$TClassFactory@VTEventClass@@::AddRef
+// FUNCTION: 0x006C1460 ?$TClassFactory@VTEventClass@@::Release
+// FUNCTION: 0x006C1490 ?$TClassFactory@VTEventClass@@::CreateInstance
+// FUNCTION: 0x006C1510 ?$TClassFactory@VTEventClass@@::LockServer
+template class TClassFactory<TEventClass>;
+
+// FUNCTION: 0x006C1540 ?$TClassFactory@VVoxelAnimTypeClass@@::?$TClassFactory@VVoxelAnimTypeClass@@
+// FUNCTION: 0x006C1550 ?$TClassFactory@VVoxelAnimTypeClass@@::QueryInterface
+// FUNCTION: 0x006C15C0 ?$TClassFactory@VVoxelAnimTypeClass@@::AddRef
+// FUNCTION: 0x006C15E0 ?$TClassFactory@VVoxelAnimTypeClass@@::Release
+// FUNCTION: 0x006C1610 ?$TClassFactory@VVoxelAnimTypeClass@@::CreateInstance
+// FUNCTION: 0x006C1690 ?$TClassFactory@VVoxelAnimTypeClass@@::LockServer
+template class TClassFactory<VoxelAnimTypeClass>;

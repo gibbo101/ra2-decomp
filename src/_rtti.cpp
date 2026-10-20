@@ -8,7 +8,10 @@
 #include "geometry.h"
 #include "_rtti.h"
 #include "object.h"
+#include "_script.h"
 #include "ccini.h"
+#include "stimer.h"
+#include "timer.h"
 #include <cmath>
 
 struct {
@@ -246,11 +249,26 @@ Coord DAT_008872A0(0, 0, 0);
 Coord DAT_008872E0(128, 128, 0);
 
 // FUNCTION: 0x0040E770 $E124
-DynamicVectorClass<AbstractClass *> DAT_008872B0;
+DynamicVectorClass<ScriptClass *> Scripts;
 
 // FUNCTION: 0x0040E7B0 $E122
 
-// FUNCTION: 0x0040E7F0 ?$DynamicVectorClass@PAVAbstractClass@@::Clear
-template class DynamicVectorClass<AbstractClass *>;
+// FUNCTION: 0x0040E7F0 ?$DynamicVectorClass@PAVScriptClass@@::Clear
+template class DynamicVectorClass<ScriptClass *>;
 
-// FUNCTION: 0x0040E820 ?$DynamicVectorClass@PAVAbstractClass@@::ID
+// FUNCTION: 0x0040E820 ?$DynamicVectorClass@PAVScriptClass@@::ID
+
+// FUNCTION: 0x0040E840 ?$VectorClass@PAVScriptClass@@::GetItem
+// FUNCTION: 0x0040E850 ?$VectorClass@PAVScriptClass@@::operator==
+// FUNCTION: 0x0040E890 ?$VectorClass@PAVScriptClass@@::Resize
+// FUNCTION: 0x0040E940 ?$VectorClass@PAVScriptClass@@::Clear
+// FUNCTION: 0x0040E970 ?$VectorClass@PAVScriptClass@@::ID
+// FUNCTION: 0x0040E9B0 ?$VectorClass@PAVScriptClass@@::ID
+// FUNCTION: 0x0040E9D0 ?$DynamicVectorClass@PAVScriptClass@@::Resize
+// FUNCTION: 0x0040EA80 ?$DynamicVectorClass@PAVScriptClass@@::ID
+// FUNCTION: 0x0040EAB0 ~?$VectorClass@PAVScriptClass@@
+// FUNCTION: 0x0040EB00 ~?$DynamicVectorClass@PAVScriptClass@@
+
+// FUNCTION: 0x0040EB50 $E129
+// FUNCTION: 0x0040EB80 $E127
+CDTimerClass<SystemTimerClass> DAT_00887348;

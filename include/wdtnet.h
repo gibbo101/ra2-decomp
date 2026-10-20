@@ -357,9 +357,9 @@ namespace WorldDominationTour
 			}
 
 			virtual ~GameOption(void);
-			virtual int Get_Display_Priority(const WDTTerritory * territory) = 0;
-			virtual void Get_String(const WDTTerritory * territory, char * str, int len) = 0;
-			bool Is_User_Modifiable(const WDTTerritory * territory);
+			virtual int Get_Display_Priority(const rc_ptr<WDTTerritory> & territory) = 0;
+			virtual WideWstring Get_String(const rc_ptr<WDTTerritory> & territory, const WideWstring & prefix) = 0;
+			bool Is_User_Modifiable(const rc_ptr<WDTTerritory> & territory);
 
 		public:
 
@@ -368,7 +368,7 @@ namespace WorldDominationTour
 
 	class RangedGameOption : public GameOption {
 		public:
-			RangedGameOption(unsigned int bitmask, unsigned int offset, unsigned int string, unsigned int range0, unsigned int range1, unsigned int range2, unsigned int range3) :
+			RangedGameOption(unsigned int bitmask, unsigned int offset, Wstring string, unsigned int range0, unsigned int range1, unsigned int range2, unsigned int range3) :
 				GameOption(bitmask),
 				Offset(offset),
 				StringID(string),
@@ -378,16 +378,16 @@ namespace WorldDominationTour
 				Range3(range3)
 			{
 			}
-			virtual int Get_Display_Priority(const WDTTerritory * territory) override;
-			virtual void Get_String(const WDTTerritory * territory, char * str, int len) override;
-			virtual int Get_In_Range_Of(const WDTTerritory * territory) = 0;
+			virtual int Get_Display_Priority(const rc_ptr<WDTTerritory> & territory);
+			virtual WideWstring Get_String(const rc_ptr<WDTTerritory> & territory, const WideWstring & prefix);
+			virtual int Get_In_Range_Of(const rc_ptr<WDTTerritory> & territory) = 0;
 			int In_Range_Of(unsigned int number);
 
 		public:
 
 			unsigned int Offset;
 
-			unsigned int StringID;
+			Wstring StringID;
 
 			unsigned int Range0;
 			unsigned int Range1;
@@ -398,13 +398,13 @@ namespace WorldDominationTour
 	template<typename T>
 	class RangedGameOptionT : public RangedGameOption {
 		public:
-			RangedGameOptionT(unsigned int bitmask, unsigned int offset, unsigned int string, unsigned int range0, unsigned int range1, unsigned int range2, unsigned int range3) :
+			RangedGameOptionT(unsigned int bitmask, unsigned int offset, Wstring string, unsigned int range0, unsigned int range1, unsigned int range2, unsigned int range3) :
 				RangedGameOption(bitmask, offset, string, range0, range1, range2, range3)
 			{
 			}
-			virtual int Get_In_Range_Of(const WDTTerritory * territory) override
+			virtual int Get_In_Range_Of(const rc_ptr<WDTTerritory> & territory)
 			{
-				T *ptr = (T *)((unsigned char *)territory + Offset);
+				T *ptr = (T *)((unsigned char *)territory.Get() + Offset);
 				return(RangedGameOption::In_Range_Of(*ptr));
 			}
 
@@ -412,24 +412,24 @@ namespace WorldDominationTour
 
 	class FlagGameOption : public GameOption {
 		public:
-			FlagGameOption(unsigned int bitmask, unsigned int off_string, unsigned int off_value, unsigned int on_string, unsigned int on_value) :
+			FlagGameOption(unsigned int bitmask, Wstring off_string, unsigned int off_value, Wstring on_string, unsigned int on_value) :
 				GameOption(bitmask),
 				OffValue(off_value),
 				OnValue(on_value),
-				OffString(off_string),
-				OnString(on_string)
+				OnString(on_string),
+				OffString(off_string)
 			{
 			}
-			virtual int Get_Display_Priority(const WDTTerritory * territory) override;
-			virtual void Get_String(const WDTTerritory * territory, char * str, int len) override;
+			virtual int Get_Display_Priority(const rc_ptr<WDTTerritory> & territory);
+			virtual WideWstring Get_String(const rc_ptr<WDTTerritory> & territory, const WideWstring & prefix);
 
 		public:
 
 			unsigned int OffValue;
 			unsigned int OnValue;
 
-			unsigned int OffString;
-			unsigned int OnString;
+			Wstring OnString;
+			Wstring OffString;
 	};
 
 	class NumberOfPlayersGameOption : public GameOption {
@@ -438,8 +438,8 @@ namespace WorldDominationTour
 				GameOption(bitmask)
 			{
 			}
-			virtual int Get_Display_Priority(const WDTTerritory * territory) override;
-			virtual void Get_String(const WDTTerritory * territory, char * str, int len) override;
+			virtual int Get_Display_Priority(const rc_ptr<WDTTerritory> & territory);
+			virtual WideWstring Get_String(const rc_ptr<WDTTerritory> & territory, const WideWstring & prefix);
 
 	};
 
@@ -449,46 +449,8 @@ namespace WorldDominationTour
 				GameOption(bitmask)
 			{
 			}
-			virtual int Get_Display_Priority(const WDTTerritory * territory) override;
-			virtual void Get_String(const WDTTerritory * territory, char * str, int len) override;
-	};
-
-	template<typename T>
-	class ValueGameOption : public GameOption {
-		public:
-			ValueGameOption(unsigned int bitmask, unsigned int fallback, unsigned int offset, unsigned int string) :
-				GameOption(bitmask),
-				Fallback(fallback),
-				Offset(offset),
-				StringID(string)
-			{
-			}
-
-			virtual int Get_Display_Priority(const WDTTerritory * territory) override
-			{
-				if (Is_User_Modifiable(territory)) {
-					return(WDT_GAME_OPT_USER_MOD);
-				}
-				return(Fallback);
-			}
-
-			virtual void Get_String(const WDTTerritory * territory, char * str, int len) override
-			{
-				char buffer[256];
-
-				WDT_Game_Option_Append_Comma(str, len);
-				T *ptr = (T *)((unsigned char *)territory + Offset);
-				sprintf(buffer, Fetch_String(StringID), *ptr);
-				strncat(str, buffer, len);
-			}
-
-		public:
-
-			unsigned int Fallback;
-
-			unsigned int Offset;
-
-			unsigned int StringID;
+			virtual int Get_Display_Priority(const rc_ptr<WDTTerritory> & territory);
+			virtual WideWstring Get_String(const rc_ptr<WDTTerritory> & territory, const WideWstring & prefix);
 	};
 
 	typedef DynamicVectorClass<unsigned int> VOICEINDEX_LIST;

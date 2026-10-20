@@ -343,6 +343,8 @@ struct GlobalPacketType {
 			int AICheatCheck;
 			int ArtCheatCheck;
 			unsigned int BuildNumber;
+			unsigned int : 32;
+			unsigned int Flag;
 		} PlayerInfo;
 		struct {
 			#if 0
@@ -368,7 +370,8 @@ struct GlobalPacketType {
 
 		} ScenarioInfo;
 		struct {
-			char Buf[MAX_MESSAGE_LENGTH];
+			unsigned char Recipients;
+			char Buf[(MAX_MESSAGE_LENGTH) * sizeof(wchar_t)];
 			int Color;
 			unsigned int NameCRC;
 		} Message;

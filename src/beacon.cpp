@@ -51,6 +51,7 @@ namespace Unsorted { extern int CurrentFrame; }
 // FUNCTION: 0x004301C0 $E124
 BeaconManagerClass BeaconManager;
 
+// FUNCTION: 0x00430910
 BeaconManagerClass::BeaconManagerClass(void)
 {
 	memset(Beacons, 0, sizeof(Beacons));
@@ -58,6 +59,13 @@ BeaconManagerClass::BeaconManagerClass(void)
 	RadarBeaconAnimPeriod = 0;
 }
 
+// FUNCTION: 0x00430930
+BeaconManagerClass::~BeaconManagerClass(void)
+{
+	Reset();
+}
+
+// FUNCTION: 0x00430980
 void BeaconManagerClass::Reset(void)
 {
 	if (AllocatedCount) {
@@ -212,4 +220,163 @@ bool BeaconClass::VisibleToPlayer(void) const
 		return true;
 	}
 	return false;
+}
+
+#include "rawfile.h"
+struct FileSystem {
+	static void const * LoadFile(char const * name, bool flag);
+};
+void * Load_Alloc_Data(FileClass & file);
+extern double __cdecl FUN_004CAC40(double);
+void __cdecl FUN_004068E0(char const * format, ...);
+void __fastcall UnselectAll(void);
+
+// FUNCTION: 0x004309D0
+void BeaconManagerClass::LoadArt(void)
+{
+	RawFileClass file("PBEACON.SHP");
+	BeaconArt = (ShapeSet *)Load_Alloc_Data(file);
+	if (!BeaconArt) {
+		BeaconArt = (ShapeSet *)FileSystem::LoadFile("PBEACON.SHP", false);
+	}
+	if (BeaconArt) {
+		BeaconSize.X = BeaconArt->Get_Width();
+		BeaconSize.Y = BeaconArt->Get_Height();
+		BeaconFrameCount = BeaconArt->Get_Count();
+	} else {
+		FUN_004068E0("Failed to load BeaconArt");
+	}
+
+	RawFileClass radarfile("RDRBEACN.SHP");
+	RadarBeaconArt = (ShapeSet *)Load_Alloc_Data(radarfile);
+	if (!RadarBeaconArt) {
+		RadarBeaconArt = (ShapeSet *)FileSystem::LoadFile("RDRBEACN.SHP", false);
+	}
+	if (RadarBeaconArt) {
+		RadarBeaconSize.X = RadarBeaconArt->Get_Width();
+		RadarBeaconSize.Y = RadarBeaconArt->Get_Height();
+		RadarBeaconFrameCount = RadarBeaconArt->Get_Count();
+		RadarBeaconAnimPeriod = RadarBeaconFrameCount * 4;
+	} else {
+		FUN_004068E0("Failed to load RadarBeaconArt");
+	}
+}
+
+// FUNCTION: 0x00430AC0
+void BeaconManagerClass::Draw(Surface * surface, Rect bounds)
+{
+	if (AllocatedCount) {
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 3; j++) {
+				BeaconClass * beacon = Beacons[i][j];
+				if (beacon && beacon->VisibleToPlayer()) {
+					beacon->Draw(surface, bounds);
+				}
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x00430F30
+bool BeaconManagerClass::CanPlaceBeacon(int house)
+{
+	for (int i = 0; i < 3; i++) {
+		if (!Beacons[house][i]) {
+			return true;
+		}
+	}
+	return false;
+}
+
+// FUNCTION: 0x00430F60
+Point2D __stdcall FUN_00430F60(void)
+{
+	return Point2D(0, 0);
+}
+
+static inline int Coord_Dist(Coord const & a, Coord const & b)
+{
+	Coord c = a - b;
+	return c.Length();
+}
+static inline int Coord_Dist2(int x, int y, int z, Coord const & b)
+{
+	Coord c = Coord(x, y, z) - b;
+	return c.Length();
+}
+static inline int Coord_Dist3(Coord a, Coord b)
+{
+	return (a - b).Length();
+}
+
+// FUNCTION: 0x00430F70
+bool BeaconManagerClass::SelectBeacon(int x, int y, int z)
+{
+	int i;
+	int j;
+	if (AllocatedCount) {
+		for (i = 0; i < 8; i++) {
+			for (j = 0; j < 3; j++) {
+				if (Beacons[i][j] && Coord_Dist3(Coord(x, y, z), Beacons[i][j]->BeaconCoord) < 128) {
+					goto found;
+				}
+			}
+		}
+	}
+	return false;
+found:
+	BeaconClass * beacon = Beacons[i][j];
+	if (!beacon) {
+		return false;
+	}
+	UnselectAll();
+	beacon->IsFlashing = 1;
+	return true;
+}
+
+// FUNCTION: 0x00431060
+void BeaconManagerClass::ClearSelection(void)
+{
+	if (AllocatedCount) {
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 3; j++) {
+				if (Beacons[i][j]) {
+					Beacons[i][j]->IsFlashing = 0;
+				}
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x00431090
+BeaconClass * BeaconManagerClass::FindBeaconAt(int x, int y, int z)
+{
+	if (AllocatedCount) {
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 3; j++) {
+				if (Beacons[i][j] && Coord_Dist3(Coord(x, y, z), Beacons[i][j]->BeaconCoord) < 128) {
+					return Beacons[i][j];
+				}
+			}
+		}
+	}
+	return 0;
+}
+
+// FUNCTION: 0x00431170
+BeaconClass * BeaconManagerClass::FindSelected(int house)
+{
+	if (AllocatedCount) {
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 3; j++) {
+				BeaconClass * beacon = Beacons[i][j];
+				if (beacon && beacon->IsFlashing) {
+					if (house == -1 || house == beacon->HouseID) {
+						return beacon;
+					}
+				}
+			}
+		}
+	}
+	return 0;
 }

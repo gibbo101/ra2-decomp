@@ -5074,5 +5074,47 @@ template class VectorClass<BuildingClass *>;
 // FUNCTION: 0x0045AD80 ?$VectorClass@PBVParticleSystemTypeClass@@::?$VectorClass@PBVParticleSystemTypeClass@@
 // FUNCTION: 0x0045ADD0 ?$DynamicVectorClass@PAVAbstractClass@@::Delete_Index
 // FUNCTION: 0x0045AE10 ?$DynamicVectorClass@PAVBuildingClass@@::Delete_Index
+// FUNCTION: 0x0045AE50 ?$VectorClass@PAVReestablish@@::?$VectorClass@PAVReestablish@@
 template class VectorClass<Reestablish *>;
 template class DynamicVectorClass<AbstractClass *>;
+
+extern double __cdecl FUN_004CAC40(double);
+extern double __cdecl FUN_004CAD50(double);
+extern double __cdecl FUN_004CADE0(double);
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007E1720;
+extern const double DAT_007E1728;
+extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
+extern const double DAT_007E4530;
+extern const double DAT_007E4538;
+
+// FUNCTION: 0x0045AFA0 $E256
+double DAT_0089C8B8 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x0045AFD0 $E259
+double DAT_0089D360 = DAT_0089C8B8 / DAT_007E4530;
+
+// FUNCTION: 0x0045AFF0 $E262
+double DAT_0089C8F8 = DAT_007E1718 / DAT_0089D360;
+
+// FUNCTION: 0x0045B010 $E265
+double DAT_0089C8F0 = DAT_007E1720 * DAT_007E4538;
+
+// FUNCTION: 0x0045B030 $E268
+double DAT_0089C8C0 = DAT_007E1728 * DAT_007E4538;
+
+// FUNCTION: 0x0045B050 $E271
+double DAT_0089C898 = DAT_007E1730 * DAT_007E4538;
+
+// FUNCTION: 0x0045B070 $E274
+int DAT_0089DDB8 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_0089C898 - DAT_0089C8C0) * DAT_0089C8B8));
+
+// FUNCTION: 0x0045B0B0 $E277
+double DAT_0089C8C8 = FUN_004CADE0(DAT_0089DDB8 * DAT_007E1740);
+
+// FUNCTION: 0x0045B0E0 $E280
+double DAT_0089C8E0 = FUN_004CADE0((DAT_0089DDB8 * 2) / DAT_0089C8B8);

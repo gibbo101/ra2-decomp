@@ -162,3 +162,75 @@ bool AbstractClass::Is_Inactive(void) const
 {
 	return(true);
 }
+
+// FUNCTION: 0x00410450
+HRESULT AbstractClass::IsDirty(void)
+{
+	if (Dirty) {
+		return(S_OK);
+	}
+	return(S_FALSE);
+}
+
+// FUNCTION: 0x00410470
+void AbstractClass::Init(void)
+{
+}
+
+// FUNCTION: 0x00410480
+void AbstractClass::Detach(AbstractClass const * target, bool all)
+{
+}
+
+// FUNCTION: 0x00410490
+HousesType AbstractClass::Owner(void) const
+{
+	return(HOUSE_NONE);
+}
+
+// FUNCTION: 0x004104A0
+HouseClass *AbstractClass::Owner_HouseClass(void) const
+{
+	return(NULL);
+}
+
+// FUNCTION: 0x004104B0
+int AbstractClass::Fetch_Heap_ID(void) const
+{
+	return(0);
+}
+
+// FUNCTION: 0x004104C0
+Coord AbstractClass::Center_Coord(void) const
+{
+	return(COORD_NONE);
+}
+
+// FUNCTION: 0x004104F0
+Coord AbstractClass::Destination_Coord(TechnoClass * docker) const
+{
+	return(Center_Coord());
+}
+
+// FUNCTION: 0x00410520
+bool AbstractClass::On_Ground(void) const
+{
+	return(false);
+}
+
+// FUNCTION: 0x00410530
+bool AbstractClass::In_Air(void) const
+{
+	return(false);
+}
+
+// FUNCTION: 0x00410540
+Coord AbstractClass::As_Coord(void) const
+{
+	return(Center_Coord());
+}
+
+// FUNCTION: 0x00410570
+void AbstractClass::AI(void)
+{
+}

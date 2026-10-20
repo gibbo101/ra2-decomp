@@ -4976,3 +4976,18 @@ template class VectorClass<TeamTypeClass const *>;
 template class DynamicVectorClass<BaseNodeClass>;
 
 // FUNCTION: 0x0050EC20 ?$VectorClass@PBVBuildingTypeClass@@::operator==
+// FUNCTION: 0x0050EC60 ?$VectorClass@PBVBuildingTypeClass@@::Resize
+// FUNCTION: 0x0050ED10 ?$VectorClass@PBVBuildingTypeClass@@::Clear
+// FUNCTION: 0x0050ED40 ?$VectorClass@PBVBuildingTypeClass@@::ID
+// FUNCTION: 0x0050ED80 ?$VectorClass@PBVBuildingTypeClass@@::ID
+// FUNCTION: 0x0050EDA0 ?$DynamicVectorClass@PBVBuildingTypeClass@@::Resize
+// FUNCTION: 0x0050EE50 ?$DynamicVectorClass@PBVBuildingTypeClass@@::ID
+template class VectorClass<BuildingTypeClass const *>;
+
+// FUNCTION: 0x0050EE80 ?$VectorClass@UAngerStruct@@::operator==
+// FUNCTION: 0x0050EEE0 ?$VectorClass@UAngerStruct@@::Resize
+// FUNCTION: 0x0050EFD0 ?$VectorClass@UAngerStruct@@::Clear
+// FUNCTION: 0x0050F000 ?$VectorClass@UAngerStruct@@::ID
+// FUNCTION: 0x0050F050 ?$VectorClass@UAngerStruct@@::ID
+// FUNCTION: 0x0050F070 ?$DynamicVectorClass@UAngerStruct@@::Resize
+template class VectorClass<AngerStruct>;

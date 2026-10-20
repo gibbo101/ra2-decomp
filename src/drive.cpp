@@ -696,6 +696,18 @@ int STDMETHODCALLTYPE DriveLocomotionClass::Get_Speed_Accum(void)
 
 // FUNCTION: 0x004B4C30 LocomotionClass::IsDirty
 
+// FUNCTION: 0x004B4C50 LocomotionClass::Is_Really_Moving_Now
+
+// FUNCTION: 0x004B4C60 LocomotionClass::Get_Status
+
+// FUNCTION: 0x004B4C70 LocomotionClass::Acquire_Hunter_Seeker_Target
+
+// FUNCTION: 0x004B4C80 LocomotionClass::Is_Surfacing
+
+// FUNCTION: 0x004B4C90 LocomotionClass::Stop_Movement_Animation
+
+// FUNCTION: 0x004B4CA0 LocomotionClass::Limbo
+
 // FUNCTION: 0x004B4CB0
 ULONG STDMETHODCALLTYPE DriveLocomotionClass::AddRef(void)
 {
@@ -708,4 +720,20 @@ ULONG STDMETHODCALLTYPE DriveLocomotionClass::Release(void)
 	return(BASECLASS::Release());
 }
 
+// FUNCTION: 0x004B4CD0 DriveLocomotionClass::Is_Piggybacking
+
 // FUNCTION: 0x004B4CF0 DriveLocomotionClass::Fetch_Object_Size
+
+// FUNCTION: 0x004B4D00 DriveLocomotionClass::~DriveLocomotionClass
+
+
+// FUNCTION: 0x004B4D50 ?$_com_ptr_t@V?$_com_IIID@UIPersist@@$1?_GUID_0000010c_0000_0000_c000_000000000046@@3U__s_GUID@@A@@::_Release
+template class _com_ptr_t<_com_IIID<IPersist, &__uuidof(IPersist)> >;
+
+// FUNCTION: 0x004B4D60 ?$_com_ptr_t@V?$_com_IIID@UIPersistStream@@$1?_GUID_00000109_0000_0000_c000_000000000046@@3U__s_GUID@@A@@::_Release
+template class _com_ptr_t<_com_IIID<IPersistStream, &__uuidof(IPersistStream)> >;
+
+// FUNCTION: 0x004B4D70 ?$CDTimerClass@VFrameTimerClass@@::Value
+template class CDTimerClass<FrameTimerClass>;
+
+// FUNCTION: 0x004B4D90 DriveLocomotionClass::QueryInterface

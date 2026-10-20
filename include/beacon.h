@@ -36,9 +36,17 @@ class BeaconManagerClass
 {
 	public:
 		BeaconManagerClass(void);
-		~BeaconManagerClass(void) { Reset(); }
+		~BeaconManagerClass(void);
 
 		void Reset(void);
+		void LoadArt(void);
+		void Draw(Surface * surface, Rect bounds);
+		void PlaceBeacon(int house, Coord coord, int id = -1);
+		bool CanPlaceBeacon(int house);
+		bool SelectBeacon(int x, int y, int z);
+		void ClearSelection(void);
+		BeaconClass * FindBeaconAt(int x, int y, int z);
+		BeaconClass * FindSelected(int house);
 
 		BeaconClass * Beacons[8][3];
 		int AllocatedCount;

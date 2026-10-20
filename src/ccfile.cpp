@@ -14,6 +14,7 @@
 #include "wstring.h"
 
 #include <new>
+#include <math.h>
 
 // FUNCTION: 0x004739F0
 CCFileClass::CCFileClass(char const * filename) :
@@ -191,3 +192,83 @@ int CCFileClass::Open(int rights)
 	}
 	return(true);
 }
+
+// FUNCTION: 0x00473E50
+unsigned int CCFileClass::Get_Date_Time(void)
+{
+	unsigned int datetime;
+	MFCD * mixfile = NULL;
+
+	datetime = BASECLASS::Get_Date_Time();
+
+	if (!datetime) {
+		if (MFCD::Offset(File_Name(), NULL, &mixfile, NULL, NULL)) {
+			return(CCFileClass(mixfile->Filename).Get_Date_Time());
+		}
+	}
+
+	return(datetime);
+}
+
+// FUNCTION: 0x00473F00
+bool CCFileClass::Set_Date_Time(unsigned int datetime)
+{
+	bool status;
+	MFCD * mixfile = NULL;
+
+	status = BASECLASS::Set_Date_Time(datetime);
+
+	if (!status) {
+		if (MFCD::Offset(File_Name(), NULL, &mixfile, NULL, NULL)) {
+			return(CCFileClass(mixfile->Filename).Set_Date_Time(datetime));
+		}
+	}
+
+	return(status);
+}
+
+// FUNCTION: 0x00473FC0
+char const * CCFileClass::Set_Name(char const * filename)
+{
+	Availability = 0;
+	return(CDFileClass::Set_Name(filename));
+}
+
+namespace fastmath { double __cdecl sqrt(double x); double __cdecl tan(double x); double __cdecl atan(double x); }
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007E1720;
+extern const double DAT_007E1728;
+extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
+extern const double DAT_007E4C40;
+extern const double DAT_007E4C48;
+
+// FUNCTION: 0x00473FE0 $E9
+double DAT_0089E2B0 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x00474010 $E12
+double DAT_0089E300 = DAT_0089E2B0 / DAT_007E4C40;
+
+// FUNCTION: 0x00474030 $E15
+double DAT_0089E2E8 = DAT_007E1718 / DAT_0089E300;
+
+// FUNCTION: 0x00474050 $E18
+double DAT_0089E2E0 = DAT_007E1720 * DAT_007E4C48;
+
+// FUNCTION: 0x00474070 $E21
+double DAT_0089E2B8 = DAT_007E1728 * DAT_007E4C48;
+
+// FUNCTION: 0x00474090 $E24
+double DAT_0089E290 = DAT_007E1730 * DAT_007E4C48;
+
+// FUNCTION: 0x004740B0 $E27
+int DAT_0089E308 = (int)(fastmath::tan(DAT_0089E290 - DAT_0089E2B8) * DAT_007E1738 * DAT_0089E2B0);
+
+// FUNCTION: 0x004740F0 $E30
+double DAT_0089E2C0 = fastmath::atan(DAT_0089E308 * DAT_007E1740);
+
+// FUNCTION: 0x00474120 $E33
+double DAT_0089E2D8 = fastmath::atan((DAT_0089E308 * 2) / DAT_0089E2B0);

@@ -151,3 +151,4 @@ address,name,symbol,evidence
 0x00629210,ParasiteClass::ParasiteClass,??0ParasiteClass@@QAE@XZ,no-argument constructor ending in plain ret; the call target of new ParasiteClass in TClassFactory<ParasiteClass>::CreateInstance 0x006C1010
 0x006292B0,ParasiteClass::ParasiteClass,??0ParasiteClass@@QAE@PAVFootClass@@@Z,constructor taking the owner FootClass * (ret 4); called by TechnoClass::Init 0x006F3F40
 0x0053EE70,IPXAddressClass::operator==,??8IPXAddressClass@@QAE_NAAV0@@Z,TibSun full address compare; called by IPXGlobalConnClass::Send_To 0x005403F0 at +0x107 and +0x174
+0x008872B0,Scripts,,DynamicVectorClass<ScriptClass *>: its initialiser stores vtable 0x007E1B24 (RTTI .?AV?$DynamicVectorClass@PAVScriptClass@@@@); TibSun _script.cpp

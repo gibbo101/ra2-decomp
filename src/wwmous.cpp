@@ -8,6 +8,10 @@
 #include "wwmous.h"
 
 #include "bsurface.h"
+#include "convert.h"
+#include "draw.h"
+#include "globals.h"
+#include "goptions.h"
 #include "dsurface.h"
 #include "surface.h"
 #include "win.h"
@@ -38,6 +42,9 @@ extern HANDLE DAT_00B78168;
 extern int DAT_00B7816C;
 extern HANDLE DAT_00B78154;
 extern DWORD DAT_00B78158;
+extern DSurface * DAT_00887300;
+extern int DAT_00886FB8;
+extern ConvertClass * FileSystem_MOUSE_PAL;
 
 #line 1274 "D:\\ra2mdpost\\wwmous.cpp"
 static inline void Block_Mouse(void)
@@ -269,4 +276,202 @@ Rect WWMouseClass::FUN_007B8E80(void)
 		Unblock_Mouse();
 	}
 	return rect;
+}
+
+// FUNCTION: 0x007B8F30
+void WWMouseClass::Save_Background(void)
+{
+	if (FUN_007B8C60() && Surface != 0) {
+		Rect1 = FUN_007B8E80();
+		Rect rect = Rect1;
+		rect.X += Rect0.X;
+		rect.Y += Rect0.Y;
+		field_44->Blit_From(Rect(0, 0, rect.Width, rect.Height), *Surface, rect, false, true);
+	}
+}
+
+// FUNCTION: 0x007B9040
+void WWMouseClass::Restore_Background(void)
+{
+	if (Rect1.Is_Valid() && Surface != 0 && field_44 != 0) {
+		Rect rect = Rect1;
+		rect.X += Rect0.X;
+		rect.Y += Rect0.Y;
+		Surface->Blit_From(rect, *field_44, Rect(0, 0, rect.Width, rect.Height), false, true);
+	}
+}
+
+// FUNCTION: 0x007B90C0
+void WWMouseClass::Draw_Mouse(::Surface * surface, bool issidebarsurface)
+{
+	BSurface * savesurface;
+	Rect * savedregion;
+	int xoffset;
+
+	if (!Is_Hidden() && Is_Captured() && surface != 0 && surface != Surface) {
+		if (issidebarsurface) {
+			if (Options.IsSidebarOnRight) {
+				xoffset = -DSurface::ViewBounds.Width;
+			} else {
+				xoffset = 0;
+			}
+			savesurface = field_6C;
+			savedregion = &Rect3;
+		} else {
+			if (!Options.IsSidebarOnRight) {
+				if (-DAT_00887300->Get_Width() > surface->Get_Width() - DAT_00886FB8) {
+					xoffset = -DAT_00887300->Get_Width();
+				} else {
+					xoffset = surface->Get_Width() - DAT_00886FB8;
+				}
+			} else {
+				xoffset = 0;
+			}
+			savesurface = field_58;
+			savedregion = &Rect2;
+		}
+
+		if (savesurface != 0 && field_44 != 0) {
+			Block_Mouse();
+			*savedregion = Rect1;
+			savedregion->X += xoffset;
+			savesurface->Blit_From(Rect(0, 0, savedregion->Width, savedregion->Height), *surface, *savedregion, false, true);
+			if (issidebarsurface && savedregion->X < 0 && -savedregion->X < field_44->Get_Width()) {
+				field_44->Blit_From(Rect(-savedregion->X, 0, savedregion->Width, savedregion->Height), *surface, Rect(0, savedregion->Y, savedregion->Width, savedregion->Height), false, true);
+			} else {
+				field_44->Blit_From(Rect(0, 0, savedregion->Width, savedregion->Height), *surface, *savedregion, false, true);
+			}
+			Raw_Draw_Mouse((DSurface *)surface, xoffset, 0);
+			Unblock_Mouse();
+		} else {
+			savedregion->Width = 0;
+		}
+	}
+}
+
+// FUNCTION: 0x007B92D0
+void WWMouseClass::Erase_Mouse(::Surface * surface, bool issidebarsurface)
+{
+	if (!Is_Hidden() && Is_Captured() && surface != 0 && surface != Surface && field_58 != 0 && field_6C != 0) {
+		BSurface * savesurface;
+		Rect savedregion;
+
+		if (issidebarsurface) {
+			savesurface = field_6C;
+			savedregion = Rect3;
+		} else {
+			savesurface = field_58;
+			savedregion = Rect2;
+		}
+
+		if (savesurface != 0) {
+			Block_Mouse();
+			surface->Blit_From(savedregion, *savesurface, Rect(0, 0, savedregion.Width, savedregion.Height), false, true);
+			Unblock_Mouse();
+		}
+	}
+}
+
+// FUNCTION: 0x007B93F0
+void WWMouseClass::Raw_Draw_Mouse(DSurface * surface, int xoffset, int yoffset)
+{
+	if (Image != 0 && surface != 0 && FileSystem_MOUSE_PAL != 0) {
+		Rect rect = Rect1;
+		rect.X += xoffset;
+		rect.Y += yoffset;
+		BSurface mdata(rect.Width, rect.Height, 1, Image->GetPixels(ImageFrameIndex));
+		if (surface == Surface) {
+			Blit_Block(*surface, *FileSystem_MOUSE_PAL, mdata, Rect(0, 0, rect.Width, rect.Height), Point2D(rect.X, rect.Y), Rect0);
+		} else {
+			Blit_Block(*surface, *FileSystem_MOUSE_PAL, mdata, Rect(0, 0, rect.Width, rect.Height), Point2D(rect.X, rect.Y), surface->Get_Rect());
+		}
+	}
+}
+
+// FUNCTION: 0x007B9530
+void WWMouseClass::Low_Show_Mouse(void)
+{
+	Block_Mouse();
+	Save_Background();
+	Raw_Draw_Mouse(Surface, 0, 0);
+	Unblock_Mouse();
+}
+
+// FUNCTION: 0x007B9690
+void WWMouseClass::Low_Hide_Mouse(void)
+{
+	Block_Mouse();
+	Restore_Background();
+	Unblock_Mouse();
+}
+
+// FUNCTION: 0x007B9750
+void WWMouseClass::Show_Mouse(void)
+{
+	if (RefCount != 0) {
+		Block_Mouse();
+		RefCount++;
+		if (RefCount == 0) {
+			if (Is_Captured()) {
+				Low_Show_Mouse();
+			} else {
+				while (::ShowCursor(TRUE) < 0) {}
+			}
+		}
+		if (RefCount > 0) {
+			RefCount = 0;
+		}
+		Unblock_Mouse();
+	}
+}
+
+// FUNCTION: 0x007B9930
+void WWMouseClass::Hide_Mouse(void)
+{
+	Block_Mouse();
+	if (RefCount == 0) {
+		if (Is_Captured()) {
+			Low_Hide_Mouse();
+		} else {
+			while (::ShowCursor(FALSE) >= 0) {}
+		}
+	}
+	RefCount--;
+	Unblock_Mouse();
+}
+
+// FUNCTION: 0x007B9A60
+void WWMouseClass::Capture_Mouse(void)
+{
+	if (this != 0 && !Is_Captured()) {
+		FUN_004068E0("Capture_Mouse()\n");
+		Block_Mouse();
+		field_10 = true;
+		if (!Is_Hidden()) {
+			Low_Show_Mouse();
+		}
+		::ShowCursor(FALSE);
+		Unblock_Mouse();
+	}
+}
+
+// FUNCTION: 0x007B9C30
+void WWMouseClass::Release_Mouse(void)
+{
+	if (this != 0 && Is_Captured()) {
+		FUN_004068E0("Release_Mouse()\n");
+		Block_Mouse();
+		field_10 = false;
+		if (!Is_Hidden()) {
+			Low_Hide_Mouse();
+			while (::ShowCursor(TRUE) < 0) {}
+		}
+		Unblock_Mouse();
+	}
+}
+
+// FUNCTION: 0x007B9D70
+void WWMouseClass::Conditional_Hide_Mouse(Rect region)
+{
+	Hide_Mouse();
 }

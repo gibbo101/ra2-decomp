@@ -10,6 +10,22 @@
 #undef LoadString
 #include <stddef.h>
 #include "stringtable.h"
+#include "bsearch.h"
+#include <math.h>
+
+extern double __cdecl FUN_004CAC40(double);
+extern double __cdecl FUN_004CAD50(double);
+extern double __cdecl FUN_004CADE0(double);
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007E1720;
+extern const double DAT_007E1728;
+extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
+extern const double DAT_007F5808;
+extern const double DAT_007F5810;
 
 extern bool DAT_00A8F7D8;
 
@@ -324,3 +340,36 @@ template class DynamicVectorClass<ToolTip const *>;
 // FUNCTION: 0x00724F40 ?$VectorClass@PBVToolTip@@::~?$VectorClass@PBVToolTip@@
 
 // FUNCTION: 0x00724F90 ?$IndexClass@IPBVToolTip@@::NodeElement::NodeElement
+
+// FUNCTION: 0x00724FA0 ?$IndexClass@IPBVToolTip@@::Is_Archive_Same
+
+// FUNCTION: 0x00724FC0 ?$IndexClass@IPBVToolTip@@::Search_For_Node
+
+// FUNCTION: 0x00725040 ?$IndexClass@IPBVToolTip@@::search_compfunc
+
+// FUNCTION: 0x00725070 Binary_Search
+template class IndexClass<unsigned, ToolTip const *>;
+
+// FUNCTION: 0x007250C0 $E5
+double DAT_00B0F638 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x007250F0 $E8
+double DAT_00B0F748 = DAT_00B0F638 / DAT_007F5808;
+
+// FUNCTION: 0x00725110 $E11
+double DAT_00B0F6E8 = DAT_007E1718 / DAT_00B0F748;
+
+// FUNCTION: 0x00725130 $E14
+double DAT_00B0F6E0 = DAT_007E1720 * DAT_007F5810;
+
+// FUNCTION: 0x00725150 $E17
+double DAT_00B0F688 = DAT_007E1728 * DAT_007F5810;
+
+// FUNCTION: 0x00725170 $E20
+double DAT_00B0F5D0 = DAT_007E1730 * DAT_007F5810;
+
+// FUNCTION: 0x00725190 $E23
+int DAT_00B0F750 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B0F5D0 - DAT_00B0F688) * DAT_00B0F638));
+
+// FUNCTION: 0x007251D0 $E26
+double DAT_00B0F690 = FUN_004CADE0(DAT_00B0F750 * DAT_007E1740);

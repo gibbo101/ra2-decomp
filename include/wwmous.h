@@ -42,7 +42,11 @@ class WWMouseClass : public Mouse {
 		bool FUN_007B8C50(void);
 		bool FUN_007B8C60(void);
 		Rect FUN_007B8E80(void);
-		void FUN_007B93F0(DSurface * surface, int a, int b);
+		void Save_Background(void);
+		void Restore_Background(void);
+		void Raw_Draw_Mouse(DSurface * surface, int xoffset, int yoffset);
+		void Low_Show_Mouse(void);
+		void Low_Hide_Mouse(void);
 		void FUN_007BA090(void);
 
 		SHPStruct * Image;

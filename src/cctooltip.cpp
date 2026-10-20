@@ -15,6 +15,67 @@
 #include "scheme.h"
 #include "wwfont.h"
 #include "color.hh"
+#include <math.h>
+
+extern double __cdecl FUN_004CAC40(double);
+extern double __cdecl FUN_004CAD50(double);
+extern double __cdecl FUN_004CADE0(double);
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007E1720;
+extern const double DAT_007E1728;
+extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
+extern const double DAT_007E4E98;
+extern const double DAT_007E4EA0;
+
+struct ShortPair {
+	unsigned short A, B;
+	ShortPair() { A = 0; B = 0; }
+};
+
+struct IntTriple {
+	int A, B, C;
+	IntTriple() { A = 0; B = 0; C = 0; }
+};
+
+// FUNCTION: 0x004789B0 $E64
+double DAT_0089E330 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x004789E0 $E67
+double DAT_0089E380 = DAT_0089E330 / DAT_007E4E98;
+
+// FUNCTION: 0x00478A00 $E70
+double DAT_0089E368 = DAT_007E1718 / DAT_0089E380;
+
+// FUNCTION: 0x00478A20 $E73
+double DAT_0089E360 = DAT_007E1720 * DAT_007E4EA0;
+
+// FUNCTION: 0x00478A40 $E76
+double DAT_0089E338 = DAT_007E1728 * DAT_007E4EA0;
+
+// FUNCTION: 0x00478A60 $E79
+double DAT_0089E310 = DAT_007E1730 * DAT_007E4EA0;
+
+// FUNCTION: 0x00478A80 $E82
+int DAT_0089E388 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_0089E310 - DAT_0089E338) * DAT_0089E330));
+
+// FUNCTION: 0x00478AC0 $E85
+double DAT_0089E340 = FUN_004CADE0(DAT_0089E388 * DAT_007E1740);
+
+// FUNCTION: 0x00478AF0 $E88
+double DAT_0089E358 = FUN_004CADE0((DAT_0089E388 * 2) / DAT_0089E330);
+
+// FUNCTION: 0x00478B20 $E91
+int DAT_0089E37C = (int)(DAT_0089E388 * 4 + DAT_007E1738);
+
+// FUNCTION: 0x00478B50 $E94
+ShortPair DAT_0089E328;
+
+// FUNCTION: 0x00478B60 $E97
+IntTriple DAT_0089E348;
 
 // FUNCTION: 0x00478DB0
 void CCToolTip::Reset(const ToolTipText * text)

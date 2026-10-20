@@ -6243,3 +6243,27 @@ template class DynamicVectorClass<HashObject<unsigned int, SubzoneConnectionStru
 // FUNCTION: 0x005892D0 ?$DynamicVectorClass@USubzoneConnectionStruct@@::ID
 
 // FUNCTION: 0x00589300 ?$VectorClass@UZoneConnectionClass@@::operator==
+
+// FUNCTION: 0x00589370 ?$VectorClass@UZoneConnectionClass@@::Resize
+
+// FUNCTION: 0x005894A0 ?$VectorClass@UZoneConnectionClass@@::Clear
+
+// FUNCTION: 0x005894D0 ?$VectorClass@UZoneConnectionClass@@::ID
+
+// FUNCTION: 0x00589530 ?$VectorClass@UZoneConnectionClass@@::ID
+
+// FUNCTION: 0x00589550 ?$DynamicVectorClass@UZoneConnectionClass@@::Resize
+
+// FUNCTION: 0x00589680 ZoneConnectionClass::ZoneConnectionClass
+
+// FUNCTION: 0x005896A0 ?$DynamicVectorClass@UZoneConnectionClass@@::ID
+
+// FUNCTION: 0x005896F0 ?$VectorClass@USubzoneTrackingStruct@@::operator==
+
+// FUNCTION: 0x00589740 ?$VectorClass@USubzoneTrackingStruct@@::Resize
+
+// FUNCTION: 0x00589960 ?$VectorClass@USubzoneTrackingStruct@@::Clear
+
+// FUNCTION: 0x005899E0 ?$VectorClass@USubzoneTrackingStruct@@::ID
+
+// FUNCTION: 0x00589A30 ?$VectorClass@USubzoneTrackingStruct@@::ID

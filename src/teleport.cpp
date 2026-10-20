@@ -19,6 +19,21 @@
 #include "globals.h"
 #include "noinit.h"
 #include <new.h>
+#include <math.h>
+
+extern double __cdecl FUN_004CAC40(double);
+extern double __cdecl FUN_004CAD50(double);
+extern double __cdecl FUN_004CADE0(double);
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007E1720;
+extern const double DAT_007E1728;
+extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
+extern const double DAT_007F5100;
+extern const double DAT_007F5108;
 
 // FUNCTION: 0x00718000
 TeleportLocomotionClass::TeleportLocomotionClass(void) :
@@ -326,3 +341,35 @@ void STDMETHODCALLTYPE TeleportLocomotionClass::Mark_All_Occupation_Bits(int mar
 // FUNCTION: 0x0071A160 TeleportLocomotionClass::QueryInterface
 
 // FUNCTION: 0x0071A170 TeleportLocomotionClass::AddRef
+
+// FUNCTION: 0x0071A180 TeleportLocomotionClass::Release
+
+// FUNCTION: 0x0071A190 TeleportLocomotionClass::QueryInterface
+
+// FUNCTION: 0x0071A1A0 TeleportLocomotionClass::AddRef
+
+// FUNCTION: 0x0071A1B0 TeleportLocomotionClass::Release
+
+// FUNCTION: 0x0071A1C0 $E80
+double DAT_00B0EC78 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x0071A1F0 $E83
+double DAT_00B0ECC8 = DAT_00B0EC78 / DAT_007F5100;
+
+// FUNCTION: 0x0071A210 $E86
+double DAT_00B0ECB0 = DAT_007E1718 / DAT_00B0ECC8;
+
+// FUNCTION: 0x0071A230 $E89
+double DAT_00B0ECA8 = DAT_007E1720 * DAT_007F5108;
+
+// FUNCTION: 0x0071A250 $E92
+double DAT_00B0EC80 = DAT_007E1728 * DAT_007F5108;
+
+// FUNCTION: 0x0071A270 $E95
+double DAT_00B0EC40 = DAT_007E1730 * DAT_007F5108;
+
+// FUNCTION: 0x0071A290 $E98
+int DAT_00B0ECD0 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B0EC40 - DAT_00B0EC80) * DAT_00B0EC78));
+
+// FUNCTION: 0x0071A2D0 $E101
+double DAT_00B0EC88 = FUN_004CADE0(DAT_00B0ECD0 * DAT_007E1740);

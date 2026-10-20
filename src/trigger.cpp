@@ -5,6 +5,7 @@
 
 #define INCLUDE_COM
 #include "always.h"
+#include "geometry.h"
 #include "trigger.h"
 #include "ccrand.h"
 #include "crc.h"
@@ -328,3 +329,24 @@ HouseClass * TriggerClass::Get_House(void) const
 {
 	return(House);
 }
+
+// FUNCTION: 0x00726920
+void TriggerClass::Set_House(HouseClass * house)
+{
+	House = house;
+}
+
+// FUNCTION: 0x00726930 TriggerClass::Fetch_Object_Size
+
+// FUNCTION: 0x00726940 TriggerClass::Fetch_RTTI
+
+// FUNCTION: 0x00726950 TriggerClass::~TriggerClass
+
+// FUNCTION: 0x00726A70 $E2
+// FUNCTION: 0x00726AA0 $E5
+// FUNCTION: 0x00726AC0 $E8
+// FUNCTION: 0x00726AE0 $E11
+// FUNCTION: 0x00726B00 $E14
+// FUNCTION: 0x00726B20 $E17
+// FUNCTION: 0x00726B40 $E20
+// FUNCTION: 0x00726B80 $E23

@@ -2836,7 +2836,6 @@ extern DynamicVectorClass<AbstractClass *> DAT_008B4120;
 extern DynamicVectorClass<AbstractClass *> DAT_008B40E8;
 extern DynamicVectorClass<AbstractClass *> DAT_00A80228;
 extern DynamicVectorClass<AbstractClass *> DAT_00A8E9A8;
-extern DynamicVectorClass<AbstractClass *> DAT_008872B0;
 extern DynamicVectorClass<AbstractClass *> DAT_00B04BD0;
 extern DynamicVectorClass<AbstractClass *> DAT_00ABCA10;
 extern DynamicVectorClass<AbstractClass *> DAT_008A3870;
@@ -2925,8 +2924,8 @@ void Delete_All_Objects(void)
 		delete DAT_00A8E9A8[0];
 	}
 	FUN_00725C70();
-	while (DAT_008872B0.Count()) {
-		delete DAT_008872B0[0];
+	while (Scripts.Count()) {
+		delete Scripts[0];
 	}
 	FUN_00725C70();
 	while (DAT_00B04BD0.Count()) {
