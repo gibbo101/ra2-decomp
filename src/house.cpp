@@ -4990,4 +4990,20 @@ template class VectorClass<BuildingTypeClass const *>;
 // FUNCTION: 0x0050F000 ?$VectorClass@UAngerStruct@@::ID
 // FUNCTION: 0x0050F050 ?$VectorClass@UAngerStruct@@::ID
 // FUNCTION: 0x0050F070 ?$DynamicVectorClass@UAngerStruct@@::Resize
+// FUNCTION: 0x0050F170 ?$DynamicVectorClass@UAngerStruct@@::ID
 template class VectorClass<AngerStruct>;
+
+// FUNCTION: 0x0050F1B0 ?$VectorClass@UScoutStruct@@::operator==
+// FUNCTION: 0x0050F210 ?$VectorClass@UScoutStruct@@::Resize
+// FUNCTION: 0x0050F300 ?$VectorClass@UScoutStruct@@::Clear
+// FUNCTION: 0x0050F330 ?$VectorClass@UScoutStruct@@::ID
+// FUNCTION: 0x0050F380 ?$VectorClass@UScoutStruct@@::ID
+// FUNCTION: 0x0050F3A0 ?$DynamicVectorClass@UScoutStruct@@::Resize
+// FUNCTION: 0x0050F4A0 ?$DynamicVectorClass@UScoutStruct@@::ID
+template class VectorClass<ScoutStruct>;
+
+// FUNCTION: 0x0050F4E0 ?$VectorClass@PAUBuildChoiceClass@HouseClass@@::operator==
+// FUNCTION: 0x0050F520 ?$VectorClass@PAUBuildChoiceClass@HouseClass@@::Resize
+// FUNCTION: 0x0050F5D0 ?$VectorClass@PAUBuildChoiceClass@HouseClass@@::Clear
+// FUNCTION: 0x0050F600 ?$VectorClass@PAUBuildChoiceClass@HouseClass@@::ID
+template class VectorClass<HouseClass::BuildChoiceClass *>;

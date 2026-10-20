@@ -12,6 +12,16 @@ extern double __cdecl FUN_004CAD50(double);
 extern double __cdecl FUN_004CADE0(double);
 extern const double DAT_007ECF50;
 extern const double DAT_007ECF58;
+extern const double DAT_007ECF68;
+extern const double DAT_007ECF70;
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007E1720;
+extern const double DAT_007E1728;
+extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
 
 // FUNCTION: 0x00552850 $E2
 double DAT_00ABC960 = FUN_004CAC40(pow(256.0, 2.0) * 2);
@@ -65,6 +75,8 @@ IntTriple DAT_00ABC978;
 #include "scenario.h"
 #include "bitfont.h"
 #include "surface.h"
+#include "dsurface.h"
+#include "_surface.h"
 
 struct Drawing {
 	static int RenderWidth;
@@ -86,6 +98,8 @@ extern int DAT_00ABC9A4;
 extern int DAT_00ABC9A8;
 extern PKey DAT_00886980;
 
+void __cdecl FUN_0072B460(void);
+void __cdecl FUN_0072B870(void);
 void __cdecl FUN_004A4AC0(const char * text);
 Point2D __fastcall FUN_0072A9C0(Rect const * rect);
 void __fastcall FUN_0072A9E0(Rect * rect, int amount);
@@ -237,3 +251,79 @@ void __fastcall FUN_00554280(wchar_t const * text, Surface * surface, Rect * rec
 	c.B = color >> Drawing::BlueShiftLeft << Drawing::BlueShiftRight;
 	OwnerDraw::DrawWideText(surface, text, &bounds, BitFont::Instance, c.Packed(), a, 0xc, 0, 0, 0);
 }
+
+// FUNCTION: 0x00554350
+void LoadProgressManager::FUN_00554350(Surface * target)
+{
+	if (ProgressSurface != NULL) {
+		target->Blit_From(*ProgressSurface, false, true);
+	}
+}
+
+// FUNCTION: 0x00554370
+void LoadProgressManager::FUN_00554370(void)
+{
+	if (TitleBarSHP_loaded && TitleBarSHP != NULL) {
+		operator delete(TitleBarSHP);
+	}
+	TitleBarSHP = NULL;
+	if (LoadScreenSHP_loaded && LoadScreenSHP != NULL) {
+		operator delete(LoadScreenSHP);
+	}
+	LoadScreenSHP = NULL;
+	if (LoadBarSHP_loaded && LoadBarSHP != NULL) {
+		operator delete(LoadBarSHP);
+	}
+	LoadBarSHP = NULL;
+	FUN_0072B460();
+	FUN_0072B870();
+	if (LoadMix != NULL) {
+		delete LoadMix;
+		LoadMix = NULL;
+	}
+	if (LoadMDMix != NULL) {
+		delete LoadMDMix;
+		LoadMDMix = NULL;
+	}
+	if (ProgressSurface != NULL) {
+		delete ProgressSurface;
+	}
+	ProgressSurface = NULL;
+}
+
+// FUNCTION: 0x00554400
+bool LoadProgressManager::FUN_00554400(int message, int extra)
+{
+	if (message == 0x11ae) {
+		FUN_00554350(HiddenSurface);
+		return true;
+	}
+	return false;
+}
+
+// FUNCTION: 0x00554430 $E96
+double DAT_00ABC9E8 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x00554460 $E99
+double DAT_00ABCA68 = DAT_00ABC9E8 / DAT_007ECF68;
+
+// FUNCTION: 0x00554480 $E102
+double DAT_00ABCA38 = DAT_007E1718 / DAT_00ABCA68;
+
+// FUNCTION: 0x005544A0 $E105
+double DAT_00ABCA30 = DAT_007E1720 * DAT_007ECF70;
+
+// FUNCTION: 0x005544C0 $E108
+double DAT_00ABC9F0 = DAT_007E1728 * DAT_007ECF70;
+
+// FUNCTION: 0x005544E0 $E111
+double DAT_00ABC9C8 = DAT_007E1730 * DAT_007ECF70;
+
+// FUNCTION: 0x00554500 $E114
+int DAT_00ABCA70 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00ABC9C8 - DAT_00ABC9F0) * DAT_00ABC9E8));
+
+// FUNCTION: 0x00554540 $E117
+double DAT_00ABC9F8 = FUN_004CADE0(DAT_00ABCA70 * DAT_007E1740);
+
+// FUNCTION: 0x00554570 $E120
+double DAT_00ABCA28 = FUN_004CADE0((DAT_00ABCA70 * 2) / DAT_00ABC9E8);

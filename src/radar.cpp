@@ -1546,7 +1546,7 @@ extern bool UserInputLocked;
 LRESULT CALLBACK FUN_00657DA0(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 
 // FUNCTION: 0x006586D0
-void FUN_006586D0(void)
+void RadarClass::FUN_006586D0(void)
 {
 	int result;
 

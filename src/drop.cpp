@@ -8,6 +8,8 @@
 #include "font.h"
 #include "shapeset.h"
 #include "bitfont.h"
+#include "geometry.h"
+#include "fastmath.h"
 
 // FUNCTION: 0x004B4E10
 DropListClass::DropListClass(int id, wchar_t * text, int max_len, TextPrintType flags, int x, int y, int w, int h, ShapeSet const * up, ShapeSet const * down) :
@@ -208,3 +210,27 @@ void DropListClass::Set_Selected_Index(wchar_t const * text)
 // FUNCTION: 0x004B57D0 EditClass::~EditClass
 
 // FUNCTION: 0x004B57F0 ShapeButtonClass::~ShapeButtonClass
+
+// FUNCTION: 0x004B5810 ToggleClass::~ToggleClass
+
+// FUNCTION: 0x004B5830 ?$VectorClass@PBG::operator=
+
+// FUNCTION: 0x004B58A0 $E11
+
+// FUNCTION: 0x004B58D0 $E14
+
+// FUNCTION: 0x004B58F0 $E17
+
+// FUNCTION: 0x004B5910 $E20
+
+// FUNCTION: 0x004B5930 $E23
+
+// FUNCTION: 0x004B5950 $E26
+
+// FUNCTION: 0x004B5970 $E29
+
+// FUNCTION: 0x004B59B0 $E32
+
+// FUNCTION: 0x004B59E0 $E35
+
+// FUNCTION: 0x004B5A10 $E38

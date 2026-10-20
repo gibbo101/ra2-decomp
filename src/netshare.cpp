@@ -2930,3 +2930,427 @@ void __fastcall FUN_005EBC00(HWND dialog, int start)
 		}
 	}
 }
+
+// FUNCTION: 0x005EBDD0
+void __fastcall FUN_005EBDD0(HWND dialog, int start, int end, MPGameModeClass * mode)
+{
+	if (Session.MPGameMode != NULL && !Session.MPGameMode->vt_entry_40() && !FUN_0077D940()) {
+		int limit = FUN_005E6440();
+		if (start > limit) {
+			start = limit;
+		}
+	}
+	if ((mode != NULL && !mode->vt_entry_40()) || FUN_0077D940()) {
+		int limit = FUN_005E6440();
+		if (end > limit) {
+			end = limit;
+		}
+	}
+	int count = end - start;
+	if (count > 0) {
+		FUN_005EB7B0(dialog, start, count);
+	} else if (count < 0) {
+		FUN_005EBC00(dialog, end);
+	}
+	FUN_005EBA00(dialog);
+}
+
+void __fastcall FUN_005EC9F0(HWND dialog, int id, NodeNameType * node, bool flag);
+void FUN_005DAFD0(void);
+
+// FUNCTION: 0x005EBEC0
+void __fastcall FUN_005EBEC0(HWND dialog, int start, int count)
+{
+	int end = start + count;
+	int limit = FUN_005E6440();
+	for (int i = start; i < end; i++) {
+		int id = FUN_005E98F0(i);
+		int selected = SendDlgItemMessage(dialog, id, CB_GETCURSEL, 0, 0);
+		NodeNameType * node = (NodeNameType *)SendDlgItemMessage(dialog, id, CB_GETITEMDATA, selected, 0);
+		if ((int)node != -1 && node && node != DAT_00AC119C && node != DAT_00AC11A0 && node != DAT_00AC11B4 && node != DAT_00AC11B0) {
+			FUN_005EC9F0(dialog, id, node, false);
+		} else if (i != DAT_008316A4) {
+			if (i < limit) {
+				FUN_005EC9F0(dialog, id, DAT_00AC119C, false);
+			} else {
+				FUN_005EC9F0(dialog, id, DAT_00AC11A0, false);
+			}
+		}
+	}
+	FUN_005EB7B0(dialog, start, count);
+	FUN_005DAFD0();
+	PumpGameopts(true, false);
+}
+
+// FUNCTION: 0x005EC030
+void __fastcall FUN_005EC030(HWND dialog)
+{
+	bool changed = false;
+	if (DAT_008316A4 < 1) {
+		int limit = FUN_005E6440();
+		for (int i = 1; i < 8; i++) {
+			int id = FUN_005E98F0(i);
+			NodeNameType * node = Session.Slots[i];
+			if (i < limit) {
+				if (node == DAT_00AC11B4 || node->Slot.SpectatorFlag == -1) {
+					FUN_005EC9F0(dialog, id, DAT_00AC119C, true);
+					changed = true;
+				}
+			} else {
+				if (node == DAT_00AC11B4 || node->Slot.SpectatorFlag == -1) {
+					FUN_005EC9F0(dialog, id, DAT_00AC11A0, true);
+					changed = true;
+				}
+			}
+		}
+	} else {
+		NodeNameType * node = Session.Slots[DAT_008316A4];
+		int limit = FUN_005E64C0(Session.Options.ScenarioIndex);
+		if (DAT_008316A4 > limit) {
+			bool replace = false;
+			if (node) {
+				if (node != DAT_00AC119C && node != DAT_00AC11A0 && node != DAT_00AC11B4 && node != DAT_00AC11B0 && node->Slot.SpectatorFlag != -1) {
+					replace = true;
+				} else if (node == DAT_00AC11A4 || node == DAT_00AC11A8 || node == DAT_00AC11AC) {
+					replace = true;
+				}
+			}
+			if (replace || node == DAT_00AC119C) {
+				node = DAT_00AC11A0;
+				changed = true;
+			}
+		}
+		FUN_005EBA00(dialog);
+		FUN_005EC9F0(dialog, FUN_005E98F0(DAT_008316A4), node, true);
+	}
+	if (changed) {
+		FUN_005E9B60(dialog, FUN_004E37D0(DAT_008316A4));
+	}
+	FUN_005DAFD0();
+	PumpGameopts(true, false);
+}
+
+void FUN_00785360(void);
+extern int DAT_00AC116C;
+
+// FUNCTION: 0x005EC290
+void __fastcall FUN_005EC290(HWND dialog, int start)
+{
+	int limit = FUN_005E6440();
+	for (int i = start; i < 8; i++) {
+		int id = FUN_005E98F0(i);
+		if (i < limit) {
+			if (i != DAT_008316A4) {
+				FUN_005EC9F0(dialog, id, DAT_00AC119C, true);
+			}
+		} else if (i != DAT_008316A4) {
+			FUN_005EC9F0(dialog, id, DAT_00AC11A0, true);
+		}
+	}
+	FUN_005EBC00(dialog, start);
+	if (DAT_00AC116C) {
+		FUN_00785360();
+	} else {
+		FUN_005DAFD0();
+	}
+	PumpGameopts(true, false);
+}
+
+extern int DAT_00831700;
+extern int DAT_00AC11CC;
+
+inline void Format_Slot(char * buffer, Wstring const & narrow) { sprintf(buffer, "O%d%s", DAT_008316A4, narrow.c_str()); }
+
+// FUNCTION: 0x005EC3A0
+void __fastcall FUN_005EC3A0(HWND dialog, int sel, int scenario)
+{
+	int maxslots = FUN_005E64C0(scenario);
+	bool unlimited;
+	if ((Session.MPGameMode == NULL || Session.MPGameMode->vt_entry_40()) && !FUN_0077D940()) {
+		unlimited = true;
+	} else {
+		unlimited = false;
+		int limit = FUN_005E6440();
+		if (maxslots > limit) {
+			maxslots = limit;
+		}
+	}
+	if (sel == -1) {
+		DAT_00831700 = 8;
+		DAT_00AC11CC = 0;
+	}
+	int delta = maxslots - DAT_00831700;
+	int flag = 0;
+	if (DAT_008316A4 == 0) {
+		if (unlimited || maxslots < FUN_005E6470()) {
+			flag = 1;
+			if (DAT_00AC11CC == 0 && delta + maxslots < 7) {
+				delta++;
+			}
+		}
+	}
+	if (sel == -1 && DAT_008316A4 == 0) {
+		int id = FUN_004E37D0(0);
+		FUN_004E3B00(dialog, id);
+		FUN_004E3F70(dialog, id, -3);
+		SendMessage(GetDlgItem(dialog, 0x411), 0x4f1, 0, 1);
+		id = FUN_004E41D0(0);
+		FUN_004E4770(dialog, id);
+		FUN_004E49A0(dialog, id, 8);
+	}
+	if (delta > 0) {
+		FUN_005EBEC0(dialog, DAT_00AC11CC + DAT_00831700, delta);
+	} else if (delta < 0) {
+		FUN_005EC290(dialog, flag + maxslots);
+	} else if (flag + maxslots >= 7) {
+		FUN_005EBEC0(dialog, 7, 1);
+	}
+	FUN_005EC030(dialog);
+	if (DAT_008316A4 == -1 && Session.MPGameMode != NULL && Session.MPGameMode->vt_entry_BC()) {
+		DAT_008316A4 = 7;
+		FUN_005EC030(dialog);
+		FUN_004068E0("Sending observer slot of 7\n");
+		NodeNameType * node = Session.Slots[DAT_008316A4];
+		WideWstring name;
+		if (FUN_005E93F0(node)) {
+			name = node->Name;
+		} else {
+			Wstring raw = FUN_005EDEF0(node);
+			name = FUN_007B7ED0(raw);
+		}
+		char buffer[0x100];
+		Format_Slot(buffer, FUN_007B7F90(name.get()));
+		SendPublicGameopts(buffer);
+	}
+	DAT_00831700 = maxslots;
+	DAT_00AC11CC = flag;
+}
+
+// FUNCTION: 0x005EC880
+bool __fastcall FUN_005EC880(HWND dialog, int limit, bool arg1, bool arg2)
+{
+	if (DAT_008316A4 == 0) {
+		limit++;
+	}
+	for (int i = 0; i < 8; i++) {
+		int id = FUN_005E98F0(i);
+		int selected = SendDlgItemMessage(dialog, id, CB_GETCURSEL, 0, 0);
+		int data = SendDlgItemMessage(dialog, id, CB_GETITEMDATA, selected, 0);
+		NodeNameType * node;
+		if (data == -1) {
+			node = NULL;
+		} else {
+			node = (NodeNameType *)data;
+		}
+		if (node && (node == DAT_00AC11A4 || node == DAT_00AC11A8 || node == DAT_00AC11AC)) {
+			if (Session.MPGameMode && !arg1) {
+				return(true);
+			}
+		}
+		if (i >= limit) {
+			bool real = node != NULL && node != DAT_00AC119C && node != DAT_00AC11A0 && node != DAT_00AC11B4 && node != DAT_00AC11B0;
+			if (real && node->Get_Country() != -3) {
+				return(true);
+			}
+			if (Session.MPGameMode && !arg2 && real && node->Get_Country() == -3) {
+				return(true);
+			}
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x005ED270
+void __fastcall FUN_005ED270(HWND dialog, int id, int kind)
+{
+	NodeNameType * node;
+	if (kind == 2) {
+		node = DAT_00AC119C;
+	} else if (kind == 3) {
+		node = DAT_00AC11A0;
+	} else if (kind == 4) {
+		node = DAT_00AC11A4;
+	} else if (kind == 5) {
+		node = DAT_00AC11A8;
+	} else if (kind == 6) {
+		node = DAT_00AC11AC;
+	} else if (kind == 7) {
+		node = DAT_00AC11B4;
+	} else {
+		node = NULL;
+	}
+	HWND item = GetDlgItem(dialog, id);
+	ShowWindow(item, SW_HIDE);
+	int count = SendDlgItemMessage(dialog, id, CB_GETCOUNT, 0, 0);
+	for (int i = 0; i < count; i++) {
+		if ((NodeNameType *)SendDlgItemMessage(dialog, id, CB_GETITEMDATA, i, 0) == node) {
+			SendDlgItemMessage(dialog, id, CB_SETCURSEL, i, 0);
+			break;
+		}
+	}
+	ShowWindow(item, SW_SHOW);
+	FUN_005EC9F0(dialog, id, node, false);
+}
+
+// FUNCTION: 0x005ED370
+void __fastcall FUN_005ED370(HWND dialog)
+{
+	if (Session.Scenarios[Session.Options.ScenarioIndex]->Is_Random_Map()) {
+		delete MultiplayerMapPreview;
+		MultiplayerMapPreview = new MapPreviewClass;
+		MultiplayerMapPreview->Read_PCX_Preview("RandMap.img");
+		if (MultiplayerMapPreview->Get_Preview_Surface() == NULL) {
+			FUN_005E74E0(dialog);
+		}
+		InvalidateRect(dialog, NULL, FALSE);
+	} else {
+		FUN_005E74E0(dialog);
+	}
+}
+
+// FUNCTION: 0x005ED400
+void __fastcall FUN_005ED400(HWND dialog, SessionOptionsClass * out)
+{
+	out->MPGameMode = GameModeOptionsClass::Instance;
+	out->ScenIndex = Session.Options.ScenarioIndex;
+	for (int i = 1; i < 8; i++) {
+		int id = FUN_005E98F0(i);
+		int selected = SendDlgItemMessage(dialog, id, CB_GETCURSEL, 0, 0);
+		int data = SendDlgItemMessage(dialog, id, CB_GETITEMDATA, selected, 0);
+		NodeNameType * node;
+		if (data == -1) {
+			node = NULL;
+		} else {
+			node = (NodeNameType *)data;
+		}
+		int kind;
+		if (node == DAT_00AC119C) {
+			kind = 2;
+		} else if (node == DAT_00AC11A0) {
+			kind = 3;
+		} else if (node == DAT_00AC11A4) {
+			kind = 4;
+		} else if (node == DAT_00AC11A8) {
+			kind = 5;
+		} else if (node == DAT_00AC11AC) {
+			kind = 6;
+		} else if (node == DAT_00AC11B4) {
+			kind = 7;
+		} else {
+			kind = 2;
+		}
+		out->SlotData[i][0] = kind;
+		int countryId = FUN_004E37D0(i);
+		out->SlotData[i][1] = FUN_004E4170(dialog, countryId, -1);
+		int colorId = FUN_004E41D0(i);
+		out->SlotData[i][2] = FUN_004E4E20(dialog, colorId, -1);
+	}
+	out->GameSpeed = Session.Options.GameSpeed;
+	out->Credits = Session.Options.Credits;
+	out->UnitCount = Session.Options.UnitCount;
+	out->ShortGame = Session.Options.ShortGame;
+	out->SuperWeaponsAllowed = Session.Options.SWAllowed;
+	out->BuildOffAlly = Session.Options.BuildOffAlly;
+	out->MCVRepacks = Session.Options.MCVRedeploy;
+	out->CratesAppear = Session.Options.Goodies;
+}
+
+int __fastcall FUN_00623EA0(HWND window, WideWstring * text);
+unsigned char __fastcall FUN_007B7D90(WideWstring * text);
+
+// FUNCTION: 0x005EDD00
+WideWstring __fastcall FUN_005EDD00(HWND edit)
+{
+	WideWstring text;
+	FUN_00623EA0(edit, &text);
+	unsigned int limit = 0x78;
+	if (!FUN_007B7D90(&text)) {
+		for (limit = 0; limit < text.length(); limit++) {
+			if (text.getChar(limit) > 0x100) {
+				break;
+			}
+		}
+		limit--;
+		if (limit <= 0x28) {
+			limit = 0x28;
+		}
+	}
+	if (text.length() > limit) {
+		text.truncate(limit);
+		SendMessage(edit, 0x4b2, 0, (LPARAM)text.text());
+	}
+	{
+		WideWstring delim(L"\n\r");
+		text.trimTrailing(delim);
+	}
+	return(text);
+}
+
+static inline void Enable_Item(HWND dialog, int id, bool enable)
+{
+	HWND item = GetDlgItem(dialog, id);
+	if (item) {
+		EnableWindow(item, enable);
+	}
+}
+
+static inline void Enable_Team(HWND dialog, int id, bool enable)
+{
+	HWND item = GetDlgItem(dialog, id);
+	if (item) {
+		if (enable == 1 && Session.MPGameMode && !Session.MPGameMode->AlliesAllowed) {
+			EnableWindow(item, 0);
+		} else {
+			EnableWindow(item, enable);
+		}
+	}
+}
+
+// FUNCTION: 0x005EDDE0
+void __fastcall FUN_005EDDE0(HWND dialog, bool enable)
+{
+	if (dialog) {
+		int self = FUN_005E8D40();
+		if (self != DAT_008316A4) {
+			Enable_Item(dialog, FUN_004E37D0(self), enable);
+			Enable_Item(dialog, FUN_004E41D0(self), enable);
+			Enable_Item(dialog, FUN_004E4E60(self), enable);
+			Enable_Team(dialog, FUN_004E5940(self), enable);
+		}
+	}
+}
+
+extern char const * DAT_00831704;
+extern char const * DAT_00831708;
+extern char const * DAT_0083170C;
+extern char const * DAT_00831710;
+extern char const * DAT_00831714;
+extern char const * DAT_00831718;
+extern char const * DAT_0083171C;
+
+// FUNCTION: 0x005EDEF0
+Wstring __fastcall FUN_005EDEF0(NodeNameType * slot)
+{
+	if (slot == DAT_00AC119C) {
+		return(Wstring(DAT_00831704));
+	}
+	if (slot == DAT_00AC11A0) {
+		return(Wstring(DAT_00831708));
+	}
+	if (slot == DAT_00AC11B0) {
+		return(Wstring(DAT_0083170C));
+	}
+	if (slot == DAT_00AC11A4) {
+		return(Wstring(DAT_00831710));
+	}
+	if (slot == DAT_00AC11A8) {
+		return(Wstring(DAT_00831714));
+	}
+	if (slot == DAT_00AC11AC) {
+		return(Wstring(DAT_00831718));
+	}
+	if (slot == DAT_00AC11B4) {
+		return(Wstring(DAT_0083171C));
+	}
+	return(Wstring(DAT_0083170C));
+}

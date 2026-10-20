@@ -240,6 +240,7 @@ class CellClass : public AbstractClass
 		BuildingClass * Cell_Building(void) const;
 		bool FUN_00484AE0(void) const;
 		bool FUN_00487DF0(void) const;
+		bool FUN_00487E00(void) const;
 		Cell Fetch_CellID(void) const {return(CellID);}
 		void Set_CellID(Cell const & cell);
 		Coord Cell_Coord(void) const;
@@ -268,6 +269,7 @@ class CellClass : public AbstractClass
 		static int Spot_Index(Coord const & coord);
 		void FUN_00487C70(RadSiteClass * site);
 		RadSiteClass * FUN_00487C80(void);
+		bool IsRadiated(void) const;
 		int GetRadLevel(void) const;
 		void RadLevel_Increase(double amount);
 		void RadLevel_Decrease(double amount);

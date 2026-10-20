@@ -94,17 +94,7 @@ class FactoryClass : public AbstractClass
 			return(false);
 		}
 
-		int Cost_Per_Tick(void)
-		{
-			if (Object) {
-				int steps = STEP_COUNT - Production.Fetch_Stage();
-				if (steps) {
-					return(Balance / steps);
-				}
-				return(Balance);
-			}
-			return(0);
-		}
+		int Cost_Per_Tick(void);
 
 	private:
 

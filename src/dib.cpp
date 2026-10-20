@@ -75,3 +75,63 @@ DIB8Class::DIB8Class(HWND hwnd,int width,int height,PaletteClass & pal):
 		return;
 	}
 }
+
+// FUNCTION: 0x004A69F0
+DIB8Class::~DIB8Class(void)
+{
+	if (Info) delete [] Info;
+	if (Handle) DeleteObject(Handle);
+	if (Surface) delete Surface;
+}
+
+// FUNCTION: 0x004A6A20
+void DIB8Class::Clear(unsigned char color)
+{
+	if (Pixels) {
+		memset(Pixels, color, Width*Height);
+	}
+}
+
+extern double __cdecl FUN_004CAC40(double);
+extern double __cdecl FUN_004CAD50(double);
+extern double __cdecl FUN_004CADE0(double);
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007E1720;
+extern const double DAT_007E1728;
+extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
+extern const double DAT_007E5EC8;
+extern const double DAT_007E5ED0;
+
+// FUNCTION: 0x004A6A60 $E5
+double DAT_008A0238 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x004A6A90 $E8
+double DAT_008A0288 = DAT_008A0238 / DAT_007E5EC8;
+
+// FUNCTION: 0x004A6AB0 $E11
+double DAT_008A0270 = DAT_007E1718 / DAT_008A0288;
+
+// FUNCTION: 0x004A6AD0 $E14
+double DAT_008A0268 = DAT_007E1720 * DAT_007E5ED0;
+
+// FUNCTION: 0x004A6AF0 $E17
+double DAT_008A0240 = DAT_007E1728 * DAT_007E5ED0;
+
+// FUNCTION: 0x004A6B10 $E20
+double DAT_008A0200 = DAT_007E1730 * DAT_007E5ED0;
+
+// FUNCTION: 0x004A6B30 $E23
+int DAT_008A0290 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_008A0200 - DAT_008A0240) * DAT_008A0238));
+
+// FUNCTION: 0x004A6B70 $E26
+double DAT_008A0248 = FUN_004CADE0(DAT_008A0290 * DAT_007E1740);
+
+// FUNCTION: 0x004A6BA0 $E29
+double DAT_008A0260 = FUN_004CADE0((DAT_008A0290 * 2) / DAT_008A0238);
+
+// FUNCTION: 0x004A6BD0 $E32
+int DAT_008A0284 = (int)(DAT_008A0290 * 4 + DAT_007E1738);

@@ -1579,6 +1579,341 @@ void __fastcall FUN_00638E20(void)
 	PlanningNodeClass::Unknown2.Clear();
 }
 
+extern bool DAT_00AC4CB0;
+extern int DAT_00AC4C3C;
+extern bool DAT_00AC4C08;
+int __fastcall FUN_0063AC70(PlanningNodeClass * node);
+void __fastcall FUN_00634B20(PlanningNodeClass * node);
+
+// FUNCTION: 0x00638E60
+void __fastcall FUN_00638E60(void)
+{
+	if (!DAT_00AC4CB0) {
+		int x = MouseCursor->Get_Mouse_X();
+		int y = MouseCursor->Get_Mouse_Y();
+		int count = PlanningNodeClass::Unknown2.Count();
+		PlanningNodeClass * node;
+		int i = 0;
+		if (count > 0) {
+			do {
+				node = PlanningNodeClass::Unknown2[i];
+				if (node->Hit_Test(x, y)) goto found;
+				i++;
+			} while (i < count);
+		}
+		node = 0;
+found:
+		if (node != DAT_00AC4CCC) {
+			DAT_00AC4C3C = 0;
+			if (node) {
+				if (node->PlanningMembers[0]->Owner->House == PlayerPtr
+					&& (DAT_00AC4C38 == 0 || DAT_00AC4C38 == node)
+					&& FUN_0063AC70(node) == -1) {
+				} else {
+					DAT_00AC4C3C = (int)node;
+					node = 0;
+				}
+			}
+			DAT_00AC4CCC = node;
+			if (node) {
+				FUN_00634B20(node);
+			}
+		}
+	}
+}
+
+
+
+
+
+
+
+bool __fastcall FUN_00639E30(PlanningTokenClass * a, PlanningTokenClass * b);
+void __fastcall FUN_00730A90(wchar_t const * text, int timeout);
+
+// FUNCTION: 0x00639040
+bool __fastcall FUN_00639040(void)
+{
+	if (!PlanningNodeClass::PlanningModeActive) {
+		return true;
+	}
+	int count = CurrentObject.Count();
+	if (count == 0) {
+		return true;
+	}
+	int i;
+	for (i = 0; i < count; i++) {
+		ObjectClass * object = CurrentObject[i];
+		if (object->Is_Techno()) {
+			PlanningTokenClass * first = ((TechnoClass *)object)->FUN_00705D20();
+			for (i = 0; i < count; i++) {
+				ObjectClass * other = CurrentObject[i];
+				if (!other->Is_Techno()) goto fail;
+				PlanningTokenClass * t = ((TechnoClass *)other)->FUN_00705D20();
+				if (!FUN_00639E30(first, t)) goto fail;
+			}
+			return true;
+		}
+	}
+	return false;
+fail:
+	if (!DAT_00AC4C08) {
+		DAT_00AC4C08 = true;
+		wchar_t const * text = StringTable::LoadString("MSG:PlanningModeHeteroSel", NULL, "D:\\ra2mdpost\\PlanMgr.cpp", 0xca1);
+		FUN_00730A90(text, 0x1e0);
+		VocClass::PlayGlobal(Rule->ScoldSound, 1.0f, 0x2000);
+	}
+	return false;
+}
+
+static inline bool Slot_Valid(int slot)
+{
+	return slot >= 0 && slot < 24;
+}
+
+static inline int Used_Count(HouseClass * house)
+{
+	int slot = house->HeapID;
+	bool valid = Slot_Valid(slot);
+	int used = 0;
+	if (valid) {
+		used = DAT_00AC4B84[slot];
+	}
+	return used;
+}
+
+// FUNCTION: 0x00639130
+bool __fastcall FUN_00639130(void)
+{
+	if (PlanningNodeClass::PlanningModeActive) {
+		int used = Used_Count(PlayerPtr);
+		int count = CurrentObject.Count();
+		int fresh = 0;
+		for (int i = 0; i < count; i++) {
+			ObjectClass * object = CurrentObject[i];
+			if (object->Is_Techno()) {
+				PlanningTokenClass * token = ((TechnoClass *)object)->FUN_00705D20();
+				if (!token) {
+					fresh++;
+				} else if (token->PlanningNodes.Count() == 0) {
+					fresh++;
+				}
+			}
+		}
+		if (used + fresh > 128) {
+			if (!DAT_00AC4C08) {
+				DAT_00AC4C08 = true;
+				wchar_t const * text = StringTable::LoadString("MSG:PlannerMaximum", NULL, "D:\\ra2mdpost\\PlanMgr.cpp", 0xca1);
+				FUN_00730A90(text, 0x1e0);
+				VocClass::PlayGlobal(Rule->ScoldSound, 1.0f, 0x2000);
+			}
+			return false;
+		}
+	}
+	return true;
+}
+
+// FUNCTION: 0x00639210
+PlanningNodeClass * __fastcall FUN_00639210(int house, int id, Coord coord)
+{
+	int count = PlanningNodeClass::Unknown1.Count();
+	for (int i = 0; i < count; i++) {
+		PlanningNodeClass * node = PlanningNodeClass::Unknown1[i];
+		Coord at = FUN_00633BC0(*node->PlanningMembers[0]->Packet);
+		if (at.X == coord.X && at.Y == coord.Y && at.Z == coord.Z) {
+			if (id == -1 || id == node->Id) {
+				int owner = FUN_006339B0(node->PlanningMembers[0]->Owner);
+				if (house == -1 || house == owner) {
+					return node;
+				}
+			}
+		}
+	}
+	return 0;
+}
+
+static inline Coord Node_Lead_0(PlanningNodeClass * n) { return n->Lead_Coord(); }
+static inline Coord Node_Lead_1(PlanningNodeClass * n) { return Node_Lead_0(n); }
+static inline Coord Node_Lead_2(PlanningNodeClass * n) { return Node_Lead_1(n); }
+static inline Coord Node_Lead_3(PlanningNodeClass * n) { return Node_Lead_2(n); }
+static inline Coord Node_Lead_4(PlanningNodeClass * n) { return Node_Lead_3(n); }
+static inline Coord Node_Lead_5(PlanningNodeClass * n) { return Node_Lead_4(n); }
+static inline Coord Node_Lead_6(PlanningNodeClass * n) { return Node_Lead_5(n); }
+static inline Coord Node_Lead_7(PlanningNodeClass * n) { return Node_Lead_6(n); }
+static inline void Box_Into_0(Rect * r, int x, int y, int w, int h) { r->TRect<int>::TRect(x, y, w, h); }
+static inline void Box_Into_1(Rect * r, int x, int y, int w, int h) { Box_Into_0(r, x, y, w, h); }
+static inline void Box_Into_2(Rect * r, int x, int y, int w, int h) { Box_Into_1(r, x, y, w, h); }
+static inline void Box_Into_3(Rect * r, int x, int y, int w, int h) { Box_Into_2(r, x, y, w, h); }
+static inline void Box_Into_4(Rect * r, int x, int y, int w, int h) { Box_Into_3(r, x, y, w, h); }
+static inline void Box_Into_5(Rect * r, int x, int y, int w, int h) { Box_Into_4(r, x, y, w, h); }
+static inline void Box_Into_6(Rect * r, int x, int y, int w, int h) { Box_Into_5(r, x, y, w, h); }
+static inline void Box_Into_7(Rect * r, int x, int y, int w, int h) { Box_Into_6(r, x, y, w, h); }
+
+static inline void Grow(Rect * rect, int amount)
+{
+	int twice = amount * 2;
+	if (twice < 0 && (twice >= rect->Width || twice >= rect->Height)) {
+		rect->X = 0;
+		rect->Y = 0;
+		rect->Width = 0;
+		rect->Height = 0;
+		return;
+	}
+	rect->X -= amount;
+	rect->Y -= amount;
+	rect->Width += twice;
+	rect->Height += twice;
+}
+
+static inline Rect Boxed(Rect r) { Rect b = r; Grow(&b, 4); return b; }
+
+// FUNCTION: 0x006392D0
+PlanningNodeClass * __fastcall FUN_006392D0(Point2D point)
+{
+	int count = PlanningNodeClass::Unknown1.Count();
+	int i = 0;
+	if (count > 0) {
+		do {
+			PlanningNodeClass * node = PlanningNodeClass::Unknown1[i];
+			Coord coord = Node_Lead_7(node);
+			Point2D corner = Pixel_Of(coord);
+			corner.X -= 4;
+			corner.Y -= 4;
+			Rect rect;
+			Box_Into_7(&rect, corner.X, corner.Y, 8, 8);
+			Rect box = Boxed(rect);
+			if (box.Is_Point_Within(point)) {
+				return node;
+			}
+			i++;
+		} while (i < count);
+	}
+	return 0;
+}
+
+// FUNCTION: 0x006393A0
+PlanningNodeClass * __fastcall FUN_006393A0(Point2D point)
+{
+	int count = PlanningNodeClass::Unknown2.Count();
+	int i = 0;
+	if (count > 0) {
+		do {
+			PlanningNodeClass * node = PlanningNodeClass::Unknown2[i];
+			Coord coord = Node_Lead_7(node);
+			Point2D corner = Pixel_Of(coord);
+			corner.X -= 4;
+			corner.Y -= 4;
+			Rect rect;
+			Box_Into_7(&rect, corner.X, corner.Y, 8, 8);
+			Rect box = Boxed(rect);
+			if (box.Is_Point_Within(point)) {
+				return node;
+			}
+			i++;
+		} while (i < count);
+	}
+	return 0;
+}
+
+// FUNCTION: 0x00639470
+PlanningNodeClass * __fastcall FUN_00639470(Coord coord)
+{
+	int count = PlanningNodeClass::Unknown2.Count();
+	int i = 0;
+	if (count > 0) {
+		do {
+			PlanningNodeClass * node = PlanningNodeClass::Unknown2[i];
+			Coord at = FUN_00633BC0(*node->PlanningMembers[0]->Packet);
+			if (at.X == coord.X && at.Y == coord.Y && at.Z == coord.Z) {
+				return node;
+			}
+			i++;
+		} while (i < count);
+	}
+	return 0;
+}
+
+// FUNCTION: 0x006394E0
+void __fastcall FUN_006394E0(AbstractClass * source, PlanningNodeClass * node)
+{
+	EventClass event = *node->PlanningMembers[0]->Packet;
+	xTargetClass * target;
+	if (event.Data.MegaMission.Target.Is_Valid()) {
+		target = &event.Data.MegaMission.Target;
+	} else if (event.Data.MegaMission.Follow.Is_Valid()) {
+		target = &event.Data.MegaMission.Follow;
+	} else if (event.Data.MegaMission.Destination.Is_Valid()) {
+		target = &event.Data.MegaMission.Destination;
+	} else {
+		return;
+	}
+	AbstractClass * object = target->As_Abstract();
+	if (object) {
+		EventClass connect(PlayerPtr->HeapID, EventClass::PLAN_CONNECT, TargetClass(source), TargetClass(object));
+		FUN_006521C0(connect);
+	}
+}
+
+void __fastcall FUN_00639800(TechnoClass * techno, PlanningNodeClass * node);
+extern bool DAT_00AC4CD0;
+void __fastcall FUN_00639CB0(TechnoClass * techno);
+
+static inline void Token_Add_0(PlanningTokenClass * const & token) { PlanningTokenClass::Array.Add(token); }
+static inline void Token_Add_1(PlanningTokenClass * const & token) { Token_Add_0(token); }
+static inline void Token_Add_2(PlanningTokenClass * const & token) { Token_Add_1(token); }
+static inline void Token_Add_3(PlanningTokenClass * const & token) { Token_Add_2(token); }
+static inline void Token_Add_4(PlanningTokenClass * const & token) { Token_Add_3(token); }
+static inline void Token_Add_5(PlanningTokenClass * const & token) { Token_Add_4(token); }
+static inline void Token_Add_6(PlanningTokenClass * const & token) { Token_Add_5(token); }
+static inline void Token_Add_7(PlanningTokenClass * const & token) { Token_Add_6(token); }
+
+static inline void Close_Loop(TechnoClass * techno, PlanningNodeClass * node)
+{
+	PlanningTokenClass * token = techno->FUN_00705D20();
+	int index = token->Node_Index(node);
+	token = techno->FUN_00705D20();
+	token->Set_Loop(token->Node_Count() - index, index);
+	if (!DAT_00AC4CC8) {
+		if (techno->House->Is_Player_Control()) {
+			DAT_00AC4CC8 = true;
+			PlanningNodeClass * last = token->Last_Node();
+			int count = last->Get_Count();
+			for (int i = 0; i < count; i++) {
+				TechnoClass * owner = last->Member_Owner(i);
+				if (owner->IsSelected) {
+					owner->Unselect();
+				}
+			}
+		}
+		FUN_00639CB0(techno);
+	}
+	node->Update_Active();
+}
+
+// FUNCTION: 0x006395B0
+void __fastcall FUN_006395B0(TechnoClass * techno, PlanningNodeClass * node)
+{
+	PlanningTokenClass * token = techno->FUN_00705D20();
+	if (!token) {
+		PlanningTokenClass * created = new PlanningTokenClass(techno);
+		Token_Add_7(created);
+		techno->FUN_00705D10(created);
+		token = created;
+	}
+	if (token->Has_Node(node)) {
+		Close_Loop(techno, node);
+	} else {
+		FUN_00639800(techno, node);
+	}
+}
+
+// FUNCTION: 0x00639740
+void __fastcall FUN_00639740(TechnoClass * techno, PlanningNodeClass * node)
+{
+	Close_Loop(techno, node);
+}
+
+
 // FUNCTION: 0x00639F80
 void __fastcall FUN_00639F80(int slot)
 {

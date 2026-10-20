@@ -15,6 +15,7 @@
 #include <string.h>
 #include <stdarg.h>
 #include <wchar.h>
+#include <math.h>
 
 // FUNCTION: 0x005BBF90 $E2
 // FUNCTION: 0x005BBFC0 $E5
@@ -789,6 +790,59 @@ MotionLibrary::MotionLibrary(FileClass & file) :
 	}
 }
 
+// FUNCTION: 0x005BD5A0
+MotionLibrary::~MotionLibrary()
+{
+	Clear();
+}
+
+// FUNCTION: 0x005BD5C0
+BOOL MotionLibrary::Read_File(FileClass & file)
+{
+	Clear();
+
+	bool result = file.Open(FileClass::READ) != 0;
+	if (!result) {
+		return(false);
+	}
+
+	VoxelAnimFileHeaderStruct header;
+
+	file.Read(&header, sizeof(header));
+	LayerCount = header.LayerCount;
+	FrameCount = header.FrameCount;
+	if (LayerMatrices != NULL) {
+		delete [] LayerMatrices;
+	}
+
+	int count = LayerCount * FrameCount;
+	LayerMatrices = new Matrix3D[count];
+
+	if (LayerMatrices == NULL) {
+		LayerMatrices = NULL;
+		file.Close();
+		return(false);
+	}
+
+	file.Seek(MAX_VOXEL_NAME_LENGTH * LayerCount);
+
+	for (unsigned frame = 0; frame < FrameCount; frame++) {
+		for (unsigned layer = 0; layer < LayerCount; layer++) {
+			float m[12];
+			if (file.Read(&m, sizeof(m)) == sizeof(m)) {
+				LayerMatrices[layer + frame * LayerCount] = Matrix3D(m);
+			} else {
+				file.Close();
+				Clear();
+				return(false);
+			}
+		}
+	}
+
+	file.Close();
+	return(true);
+}
+
 // FUNCTION: 0x005BD730
 void MotionLibrary::Scale(float scale)
 {
@@ -800,3 +854,53 @@ void MotionLibrary::Scale(float scale)
 		}
 	}
 }
+
+// FUNCTION: 0x005BD7C0
+void MotionLibrary::Clear()
+{
+	if (LayerMatrices != NULL) {
+		delete [] LayerMatrices;
+	}
+	LayerMatrices = NULL;
+}
+
+extern double __cdecl FUN_004CAC40(double);
+extern double __cdecl FUN_004CAD50(double);
+extern double __cdecl FUN_004CADE0(double);
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007E1720;
+extern const double DAT_007E1728;
+extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
+extern const double DAT_007EDF98;
+extern const double DAT_007EDFA0;
+
+// FUNCTION: 0x005BD7E0 $E42
+double DAT_00ABF270 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x005BD810 $E45
+double DAT_00ABF2D0 = DAT_00ABF270 / DAT_007EDF98;
+
+// FUNCTION: 0x005BD830 $E48
+double DAT_00ABF2B8 = DAT_007E1718 / DAT_00ABF2D0;
+
+// FUNCTION: 0x005BD850 $E51
+double DAT_00ABF2B0 = DAT_007E1720 * DAT_007EDFA0;
+
+// FUNCTION: 0x005BD870 $E54
+double DAT_00ABF278 = DAT_007E1728 * DAT_007EDFA0;
+
+// FUNCTION: 0x005BD890 $E57
+double DAT_00ABF248 = DAT_007E1730 * DAT_007EDFA0;
+
+// FUNCTION: 0x005BD8B0 $E60
+int DAT_00ABF2D8 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00ABF248 - DAT_00ABF278) * DAT_00ABF270));
+
+// FUNCTION: 0x005BD8F0 $E63
+double DAT_00ABF280 = FUN_004CADE0(DAT_00ABF2D8 * DAT_007E1740);
+
+// FUNCTION: 0x005BD920 $E66
+double DAT_00ABF298 = FUN_004CADE0((DAT_00ABF2D8 * 2) / DAT_00ABF270);

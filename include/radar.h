@@ -135,6 +135,7 @@ class RadarClass: public DisplayClass
 
 		void FUN_00658330(HWND dialog, int index, HouseClass * house);
 		void FUN_00658640(HWND dialog);
+		void FUN_006586D0(void);
 
 		void Queue_Next_Movie(void);
 		void Set_Buttons(bool on);

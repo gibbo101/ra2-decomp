@@ -45,7 +45,7 @@ class BeaconManagerClass
 		bool CanPlaceBeacon(int house);
 		bool SelectBeacon(int x, int y, int z);
 		void ClearSelection(void);
-		BeaconClass * FindBeaconAt(int x, int y, int z);
+		BeaconClass * FindBeaconAt(Coord coord);
 		BeaconClass * FindSelected(int house);
 
 		BeaconClass * Beacons[8][3];

@@ -444,4 +444,51 @@ template class DynamicVectorClass<ThemeControl *>;
 
 // FUNCTION: 0x007212E0 ?$VectorClass@PAUThemeControl@@::ID
 
+// FUNCTION: 0x00721300 ?$DynamicVectorClass@PAUThemeControl@@::Resize
+
+// FUNCTION: 0x007213B0 ?$DynamicVectorClass@PAUThemeControl@@::ID
+
+// FUNCTION: 0x007213E0 ?$VectorClass@PAUThemeControl@@::~?$VectorClass@PAUThemeControl@@
+
 template class VectorClass<ThemeControl *>;
+
+extern double __cdecl FUN_004CAC40(double);
+extern double __cdecl FUN_004CAD50(double);
+extern double __cdecl FUN_004CADE0(double);
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007E1720;
+extern const double DAT_007E1728;
+extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
+extern const double DAT_007F56A8;
+extern const double DAT_007F56B0;
+
+// FUNCTION: 0x00721430 $E31
+double DAT_00B0F498 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x00721460 $E34
+double DAT_00B0F508 = DAT_00B0F498 / DAT_007F56A8;
+
+// FUNCTION: 0x00721480 $E37
+double DAT_00B0F4D0 = DAT_007E1718 / DAT_00B0F508;
+
+// FUNCTION: 0x007214A0 $E40
+double DAT_00B0F4C8 = DAT_007E1720 * DAT_007F56B0;
+
+// FUNCTION: 0x007214C0 $E43
+double DAT_00B0F4A0 = DAT_007E1728 * DAT_007F56B0;
+
+// FUNCTION: 0x007214E0 $E46
+double DAT_00B0F478 = DAT_007E1730 * DAT_007F56B0;
+
+// FUNCTION: 0x00721500 $E49
+int DAT_00B0F510 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B0F478 - DAT_00B0F4A0) * DAT_00B0F498));
+
+// FUNCTION: 0x00721540 $E52
+double DAT_00B0F4A8 = FUN_004CADE0(DAT_00B0F510 * DAT_007E1740);
+
+// FUNCTION: 0x00721570 $E55
+double DAT_00B0F4C0 = FUN_004CADE0((DAT_00B0F510 * 2) / DAT_00B0F498);

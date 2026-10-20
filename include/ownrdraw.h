@@ -234,6 +234,27 @@ namespace OwnerDraw {
 		void Remove_Node(WinNode *node);
 	};
 
+	class DialogControl {
+		public:
+			virtual ~DialogControl(void);
+			virtual void F1(HWND window, int value) = 0;
+			virtual bool F2(void) = 0;
+			virtual int F3(void) = 0;
+			virtual bool F4(void) = 0;
+	};
+
+	class SimpleDialogControl : public DialogControl {
+		public:
+			SimpleDialogControl(void);
+			virtual void F1(HWND window, int value);
+			virtual bool F2(void);
+			virtual int F3(void);
+			virtual bool F4(void);
+
+			int Field4;
+			bool Field8;
+	};
+
 	void Initialize(void);
 	LRESULT CALLBACK SysListViewHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 	LRESULT CALLBACK CheckBoxButtonHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam);

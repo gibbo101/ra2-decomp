@@ -249,3 +249,50 @@ RTTIType WarheadTypeClass::Fetch_RTTI(void) const
 }
 
 // FUNCTION: 0x0075E510 WarheadTypeClass::~WarheadTypeClass
+
+// FUNCTION: 0x0075E690 ?$TypeList@PAVVoxelAnimTypeClass@@::?$TypeList@PAVVoxelAnimTypeClass@@
+
+// FUNCTION: 0x0075E6A0 ?$TypeList@H::?$TypeList@H
+
+#include <math.h>
+
+extern double __cdecl FUN_004CAC40(double);
+extern double __cdecl FUN_004CAD50(double);
+extern double __cdecl FUN_004CADE0(double);
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007E1720;
+extern const double DAT_007E1728;
+extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
+extern const double DAT_007F6BA0;
+extern const double DAT_007F6BA8;
+
+// FUNCTION: 0x0075E740 $E35
+double DAT_00B45D80 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x0075E770 $E38
+double DAT_00B725C0 = DAT_00B45D80 / DAT_007F6BA0;
+
+// FUNCTION: 0x0075E790 $E41
+double DAT_00B46688 = DAT_007E1718 / DAT_00B725C0;
+
+// FUNCTION: 0x0075E7B0 $E44
+double DAT_00B46680 = DAT_007E1720 * DAT_007F6BA8;
+
+// FUNCTION: 0x0075E7D0 $E47
+double DAT_00B45D90 = DAT_007E1728 * DAT_007F6BA8;
+
+// FUNCTION: 0x0075E7F0 $E50
+double DAT_00B45D60 = DAT_007E1730 * DAT_007F6BA8;
+
+// FUNCTION: 0x0075E810 $E53
+int DAT_00B725C8 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B45D60 - DAT_00B45D90) * DAT_00B45D80));
+
+// FUNCTION: 0x0075E850 $E56
+double DAT_00B45D98 = FUN_004CADE0(DAT_00B725C8 * DAT_007E1740);
+
+// FUNCTION: 0x0075E880 $E59
+double DAT_00B46640 = FUN_004CADE0((DAT_00B725C8 * 2) / DAT_00B45D80);

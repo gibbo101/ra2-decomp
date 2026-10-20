@@ -4,15 +4,65 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
 #include "interpal.h"
 #include "ccfile.h"
 #include "hsv.h"
 #include "misc.h"
 #include "surface.h"
+#include <cmath>
 
+bool	InterpolationPaletteChanged = false;
+extern "C" {
+extern void __cdecl Asm_Interpolate (unsigned char* src_ptr ,
+						 						unsigned char* dest_ptr ,
+												int				lines ,
+												int				src_width ,
+												int				dest_width);
+
+extern void __cdecl Asm_Interpolate_Line_Double (unsigned char* src_ptr ,
+						 						unsigned char* dest_ptr ,
+												int				lines ,
+												int				src_width ,
+												int				dest_width);
+
+extern void __cdecl Asm_Interpolate_Line_Interpolate (unsigned char* src_ptr ,
+						 						unsigned char* dest_ptr ,
+												int				lines ,
+												int				src_width ,
+												int				dest_width);
+
+}
+
+int	CopyType	=0;
 extern "C"{
 	unsigned char PaletteInterpolationTable[SIZE_OF_PALETTE][SIZE_OF_PALETTE];
 	unsigned char * InterpolationPalette;
+}
+
+// FUNCTION: 0x00538C40
+void Read_Interpolation_Palette (char const * palette_file_name)
+{
+	CCFileClass palette_file(palette_file_name);
+
+	if (palette_file.Is_Available()) {
+		palette_file.Open(FileClass::READ);
+		palette_file.Read(&PaletteInterpolationTable[0][0], SIZE_OF_PALETTE * SIZE_OF_PALETTE);
+		palette_file.Close();
+		InterpolationPaletteChanged = FALSE;
+	}
+}
+
+// FUNCTION: 0x00538CC0
+void Write_Interpolation_Palette (char const * palette_file_name)
+{
+	CCFileClass palette_file(palette_file_name);
+
+	if (!palette_file.Is_Available()) {
+		palette_file.Open(FileClass::WRITE);
+		palette_file.Write(&PaletteInterpolationTable[0][0], SIZE_OF_PALETTE * SIZE_OF_PALETTE);
+		palette_file.Close();
+	}
 }
 
 // FUNCTION: 0x00538D40
@@ -104,3 +154,71 @@ void Increase_Palette_Luminance (PaletteClass & palette , double percentage)
 		palette[i] = hsv;
 	}
 }
+
+// FUNCTION: 0x00538F20
+void Interpolate_2X_Scale( Surface * source, Surface * dest , char const * palette_file_name)
+{
+	unsigned char	* src_ptr;
+	unsigned char	* dest_ptr;
+	int	src_width;
+	int	dest_width;
+	bool	source_locked = FALSE;
+	bool	dest_locked = FALSE;
+
+	if (InterpolationPaletteChanged) {
+		if (palette_file_name) {
+			Read_Interpolation_Palette(palette_file_name);
+		}
+		if (InterpolationPaletteChanged) {
+			Create_Palette_Interpolation_Table();
+		}
+	}
+
+	if (palette_file_name) {
+		Write_Interpolation_Palette(palette_file_name);
+	}
+
+	Wait_Blit();
+
+	src_ptr = (unsigned char *)source->Lock();
+	if (src_ptr != NULL) {
+		source_locked = true;
+	}
+
+	dest_ptr = (unsigned char *)dest->Lock();
+	if (dest_ptr != NULL) {
+		dest_locked = true;
+	}
+
+	if (dest_locked && source_locked) {
+		src_width = source->Get_Width();
+		dest_width = 2*(dest->Stride());
+
+		switch (CopyType) {
+			case 0:
+				Asm_Interpolate ( src_ptr , dest_ptr , source->Get_Height() , src_width , dest_width);
+				break;
+
+			case 1:
+				Asm_Interpolate_Line_Double( src_ptr , dest_ptr , source->Get_Height() , src_width , dest_width);
+				break;
+
+			case 2:
+				Asm_Interpolate_Line_Interpolate( src_ptr , dest_ptr , source->Get_Height() , src_width , dest_width);
+				break;
+		}
+	}
+
+	if (source_locked) source->Unlock();
+	if (dest_locked) dest->Unlock();
+}
+
+// FUNCTION: 0x00539110 $E2
+// FUNCTION: 0x00539140 $E5
+// FUNCTION: 0x00539160 $E8
+// FUNCTION: 0x00539180 $E11
+// FUNCTION: 0x005391A0 $E14
+// FUNCTION: 0x005391C0 $E17
+// FUNCTION: 0x005391E0 $E20
+// FUNCTION: 0x00539220 $E23
+// FUNCTION: 0x00539250 $E26

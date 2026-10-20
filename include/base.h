@@ -48,13 +48,14 @@ class BaseClass
 
 		void Init(void) {Nodes.Clear();}
 
-		void Read_INI(CCINIClass const & ini, char const * hname);
+		void Read_INI(CCINIClass & ini, char const * hname);
 		void Write_INI(CCINIClass & ini, char const * hname);
 		virtual HRESULT STDMETHODCALLTYPE Load(IStream * stream);
 		virtual HRESULT STDMETHODCALLTYPE Save(IStream * stream);
 		virtual void Compute_CRC(CRCEngine &) const;
 
 		bool Is_Built(int index) const;
+		bool FUN_0042E800(int index) const;
 
 		BuildingClass * Get_Building(int index) const;
 

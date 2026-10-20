@@ -15,6 +15,7 @@
 #include "_theater.h"
 #include "_tooltip.h"
 #include "_wsproto.h"
+#include "beacon.h"
 #include "cctooltip.h"
 #include "data.h"
 #include "dbgprint.h"
@@ -56,6 +57,9 @@
 #include "wonline.h"
 #include "wsproto.h"
 #include "special.hh"
+#include "goptions.h"
+#undef LoadString
+#include "stringtable.h"
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -79,6 +83,19 @@ extern const double DAT_007E1738;
 extern const double DAT_007E1740;
 extern const double DAT_007E51E0;
 extern const double DAT_007E51E8;
+
+void __fastcall FUN_00731D00(int mode);
+extern BeaconManagerClass BeaconManager;
+
+void __fastcall FUN_00406F70(void);
+struct CallBackObject { virtual void V0(); virtual void V1(); virtual void V2(); };
+extern CallBackObject ** DAT_00B45B5C;
+extern int DAT_00B45B68;
+extern bool DAT_00B77DC2;
+extern int g_SuspendChatPump;
+extern time_t DAT_0089E9B0;
+
+
 
 struct ShortPair {
 	unsigned short A, B;
@@ -126,11 +143,360 @@ ShortPair DAT_0089E940;
 // FUNCTION: 0x0048C860 $E120
 IntTriple DAT_0089E968;
 
+int DAT_0089E998;
+int DAT_0089E990;
+int DAT_0089E994;
+
+// FUNCTION: 0x0048C880
+void Reset_Conquer_Globals(void)
+{
+	DAT_0089E998 = 0;
+	DAT_0089E990 = 128;
+	DAT_0089E994 = 128;
+}
+
+// FUNCTION: 0x0048C8A0
+void Conquer_Nop(void)
+{
+}
+
+namespace Game { extern int SpecialDialog; extern int ObserverMode; extern HWND hWnd; extern HINSTANCE hInstance; }
+void __fastcall FUN_0065F520(ScenarioClass * scen);
+struct FileSystem
+{
+	static char TEMPERAT_PAL[];
+};
+namespace Unsorted { extern int ScenarioInit; extern bool ScenarioStarted; extern bool TacticalActive; }
+namespace FPSCounter { extern unsigned TotalTimeElapsed; extern unsigned TotalFramesElapsed; }
+extern bool UserInputLocked;
+extern int DAT_00ABCDFC;
+extern int DAT_00ABCE00;
+extern unsigned char DAT_00A8F900;
+extern int DAT_00B0BDB8;
+extern bool ConnectionLost;
+extern unsigned char DAT_008175B0;
+extern PaletteClass DAT_00884E80;
+bool __fastcall FUN_0055CFD0(void);
+void Print_MP_Stats(void);
+
+// FUNCTION: 0x0048C8B0
+void Ingame_Menu_Dialog(void)
+{
+	if (Game::SpecialDialog != SDLG_NONE) {
+		if (Session.Type != GAME_NORMAL) {
+			if (PlayerPtr->IsToLose || PlayerPtr->IsToWin || PlayerPtr->IsToDie) {
+				Game::SpecialDialog = SDLG_NONE;
+				return;
+			}
+			if (!_special_dialog_flag) {
+				if (PlayerPtr->IsDefeated) {
+					_special_dialog_flag = true;
+				} else {
+					Game::SpecialDialog = SDLG_NONE;
+					return;
+				}
+			}
+		}
+
+		Pause_Scenario();
+		MouseCursor->Release_Mouse();
+		while (MouseCursor->Get_Mouse_State()) {
+			MouseCursor->Show_Mouse();
+		}
+
+		while (Game::SpecialDialog != SDLG_NONE) {
+			switch (Game::SpecialDialog) {
+				case 9:
+					FUN_0065F520(Scen);
+					if (Game::SpecialDialog == 9) {
+						Game::SpecialDialog = SDLG_NONE;
+					}
+					break;
+
+				case 8:
+					Map.FUN_006586D0();
+					if (Game::SpecialDialog == 8) {
+						Game::SpecialDialog = SDLG_NONE;
+					}
+					break;
+
+				case 1:
+					Game_Options_Dialog();
+					if (Game::SpecialDialog != 1) {
+						break;
+					}
+					Game::SpecialDialog = SDLG_NONE;
+					break;
+
+				case 5:
+					GameControlsClass().Dialog();
+					if (Game::SpecialDialog != 5) {
+						break;
+					}
+					Game::SpecialDialog = 1;
+					break;
+
+				case 6:
+					SoundControlsClass().Dialog();
+					Game::SpecialDialog = 5;
+					break;
+
+				case 4:
+					Options.Hotkey_Dialog();
+					Game::SpecialDialog = 5;
+					break;
+
+				case 3:
+					switch (Abort_Dialog()) {
+						case 2:
+							Queue_Exit();
+							break;
+
+						case 3:
+							OutList.Add(EventClass(PlayerPtr->HeapID, (unsigned char)EventClass::DESTRUCT));
+							_special_dialog_flag = false;
+							Queue_Exit();
+							break;
+
+						case 4:
+							OutList.Add(EventClass(PlayerPtr->HeapID, (unsigned char)EventClass::DESTRUCT));
+							_special_dialog_flag = false;
+							break;
+
+						case 5:
+							PlayerRestarts = true;
+							break;
+					}
+					Game::SpecialDialog = SDLG_NONE;
+					break;
+
+				case 2:
+					if (Game::ObserverMode) {
+						Queue_Exit();
+					} else if (!PlayerPtr->IsDefeated && !PlayerPtr->IsToWin && !PlayerPtr->IsToLose && !PlayerPtr->IsToDie && Surrender_Dialog(StringTable::LoadString("TXT_SURRENDER", NULL, "D:\\ra2mdpost\\Conquer.CPP", 0x1e7))) {
+						OutList.Add(EventClass(PlayerPtr->HeapID, (unsigned char)EventClass::DESTRUCT));
+						Queue_Exit();
+						_special_dialog_flag = false;
+					}
+					Game::SpecialDialog = SDLG_NONE;
+					break;
+
+				case 7:
+					DoFindPage();
+					Game::SpecialDialog = SDLG_NONE;
+					break;
+
+				default:
+					break;
+			}
+		}
+
+		UpdateWindow(Game::hWnd);
+		if (Scen->IsInputLocked) {
+			MouseCursor->Hide_Mouse();
+		}
+		MouseCursor->Capture_Mouse();
+		Session.Resume();
+		Resume_Scenario();
+	}
+}
+
+// FUNCTION: 0x0048CCC0
+void Main_Game(int argc, char * argv[])
+{
+	static bool fade = true;
+
+	int ret = Init_Game(argc, argv);
+	if (ret) {
+		if (ret < 0) {
+			char text[0x1400];
+			char caption[0x800];
+			MSGBOXPARAMS params;
+			WideCharToMultiByte(0, 0, StringTable::LoadString("TXT_INITGAME_FAILED", NULL, "D:\\ra2mdpost\\Conquer.CPP", 0x236), -1, text, sizeof(text), 0, 0);
+			WideCharToMultiByte(0, 0, StringTable::LoadString("TXT_SHORT_TITLE", NULL, "D:\\ra2mdpost\\Conquer.CPP", 0x237), -1, caption, sizeof(caption), 0, 0);
+			params.cbSize = sizeof(MSGBOXPARAMS);
+			params.hwndOwner = Game::hWnd;
+			params.hInstance = Game::hInstance;
+			params.lpszText = text;
+			params.lpszCaption = caption;
+			params.dwStyle = (MB_OK | MB_ICONSTOP | MB_SETFOREGROUND | MB_TOPMOST);
+			params.lpszIcon = NULL;
+			params.dwContextHelpId = NULL;
+			params.lpfnMsgBoxCallback = NULL;
+			params.dwLanguageId = MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT);
+			MessageBoxIndirect(&params);
+		}
+		return;
+	}
+
+	__asm {
+		mov ExceptionReturnStack, esp
+		mov ExceptionReturnFrame, ebp
+		lea eax, ret_addr
+		mov ExceptionReturnAddress, eax
+	}
+
+ret_addr:
+	DebugString("ExceptionReturnStack = %08X\n", ExceptionReturnStack);
+	DebugString("ExceptionReturnAddress = %08X\n", ExceptionReturnAddress);
+
+	while (Select_Game(fade)) {
+		Unsorted::ScenarioInit = 0;
+		fade = true;
+
+		Set_Palette(*(PaletteClass const *)FileSystem::TEMPERAT_PAL, 15, NULL);
+		Keyboard->Clear();
+		if (Session.Play) {
+			MouseCursor->Hide_Mouse();
+			DAT_00ABCDFC = 0;
+			DAT_00ABCE00 = 0;
+		}
+
+		if (Session.Type == GAME_INTERNET) {
+			Register_Game_Start_Time();
+			DAT_00A8F900 = 0;
+			DAT_00B0BDB8 = 0;
+			ConnectionLost = false;
+		}
+
+		if (ToolTips != NULL) {
+			ToolTips->Activate(Options.ToolTips);
+		}
+
+		UserInputLocked = Scen->IsInputLocked;
+		Game::SpecialDialog = SDLG_NONE;
+		_special_dialog_flag = true;
+		Session.Resume();
+
+		for (;;) {
+			if (Main_Loop()) {
+				if (FUN_0055CFD0()) {
+					break;
+				}
+			}
+			Ingame_Menu_Dialog();
+			if (FUN_0055CFD0()) {
+				break;
+			}
+		}
+		Stop_Ingame_Movie();
+		Session.FUN_0069BB40();
+		Unsorted::ScenarioStarted = false;
+		Unsorted::TacticalActive = false;
+
+		DebugString("Game loop finished. Average FPS = %d\n", FPSCounter::TotalTimeElapsed ? FPSCounter::TotalFramesElapsed / FPSCounter::TotalTimeElapsed : 0);
+
+		Print_MP_Stats();
+
+		if (!DAT_008175B0) {
+			Set_Palette(DAT_00884E80, 30, NULL);
+		}
+		Title_Screen_Restore(true);
+
+		if (Session.Record || Session.Play) {
+			Session.RecordFile.Close();
+		}
+
+		if (Session.Type == GAME_NULL_MODEM || Session.Type == GAME_MODEM) {
+			if (!Session.Play) {
+				Modem_Signoff();
+			}
+		} else {
+			if (Session.Type == GAME_IPX) {
+				if (!Session.Play) {
+					Shutdown_Network();
+				}
+			}
+		}
+
+		if (Session.Type == GAME_IPX || Session.Type == GAME_INTERNET || Session.Type == GAME_NULL_MODEM || Session.Type == GAME_MODEM) {
+			if (!Session.Play) {
+				Session.Write_Chat_Settings();
+			}
+		}
+
+		if (Session.Play) {
+			Session.Type = GAME_NORMAL;
+			Session.Play = 0;
+			MouseCursor->Show_Mouse();
+		}
+	}
+
+	if (MouseCursor != NULL) {
+		MouseCursor->Release_Mouse();
+	}
+}
+
+// FUNCTION: 0x0048CFD0
+void Serial_Call_Back(void)
+{
+	int packetlen;
+	SerialPacketType packet;
+
+	if (Session.Type == GAME_NULL_MODEM || Session.ModemService) {
+		NullModem.Service();
+		if (Scen->IsReadingScenario) {
+			while (NullModem.Get_Message(&packet, &packetlen) > 0) {
+				if (packet.Command == SERIAL_PROGRESS_REPORT && packet.ID != Session.ModemType) {
+					Progress.Set_Progress_Percent(1, packet.Progress.Percent);
+				}
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x0048D080
+void Call_Back(void)
+{
+	FUN_00406F70();
+	if (DAT_00B45B68 > 0 && DAT_00B45B5C[0] != NULL) {
+		DAT_00B45B5C[0]->V2();
+	}
+
+	if (Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) {
+		IPX_Call_Back();
+	}
+
+	if (Session.Type == GAME_MODEM || Session.Type == GAME_NULL_MODEM) {
+		Serial_Call_Back();
+	}
+
+	if (Session.Type == GAME_INTERNET) {
+		if (!DAT_00B77DC2 && time(0) != DAT_0089E9B0) {
+			if (g_pChat != NULL && !g_SuspendChatPump) {
+				g_pChat->PumpMessages();
+			}
+			if (g_pNetUtil != NULL) {
+				g_pNetUtil->PumpMessages();
+			}
+			DAT_0089E9B0 = time(0);
+		}
+	}
+}
+
 // FUNCTION: 0x0048D1D0
 bool MapGen_Call_Back(void)
 {
 	Call_Back();
 	return(false);
+}
+
+// FUNCTION: 0x0048DB70
+void Conquer_Nop2(void)
+{
+}
+
+// FUNCTION: 0x0048DB80
+SourceType Source_From_Name(char const * name)
+{
+	if (name) {
+		for (SourceType source = SOURCE_FIRST; source < SOURCE_COUNT; source++) {
+			if (stricmp(SourceName[source], name) == 0) {
+				return(source);
+			}
+		}
+	}
+	return(SOURCE_NONE);
 }
 
 // FUNCTION: 0x0048DBC0
@@ -140,6 +506,17 @@ char const * Name_From_Source(SourceType source)
 		return(SourceName[source]);
 	}
 	return("None");
+}
+
+// FUNCTION: 0x0048DBE0
+TheaterType Theater_From_Name(char const * name)
+{
+	for (TheaterType index = THEATER_FIRST; index < THEATER_COUNT; index++) {
+		if (stricmp(name, Theaters[index].Name) == 0) {
+			return(index);
+		}
+	}
+	return(THEATER_NONE);
 }
 
 // FUNCTION: 0x0048DC20
@@ -175,6 +552,16 @@ FacingType KN_To_Facing(int input)
 			break;
 	}
 	return(FACING_NONE);
+}
+
+// FUNCTION: 0x0048DC90
+void Unselect_All(void)
+{
+	while (CurrentObject.Count()) {
+		CurrentObject[0]->Unselect();
+	}
+	FUN_00731D00(0);
+	BeaconManager.ClearSelection();
 }
 
 // FUNCTION: 0x0048DCD0
@@ -268,6 +655,11 @@ int Owner_From_Name(char const * text)
 	return(ownable);
 }
 
+// FUNCTION: 0x0048DED0
+void Conquer_Nop3(void)
+{
+}
+
 // FUNCTION: 0x0048DEE0
 void List_Copy(Cell const * source, int len, Cell * dest)
 {
@@ -315,6 +707,17 @@ char const * Name_From_Land(LandType land)
 		return(LandName[land]);
 	}
 	return("<none>");
+}
+
+// FUNCTION: 0x0048DFF0
+SpeedType Speed_From_Name(char const * name)
+{
+	if (name != NULL) {
+		for (SpeedType speed = SPEED_FIRST; speed < SPEED_COUNT; speed++) {
+			if (stricmp(SpeedName[speed], name) == 0) return(speed);
+		}
+	}
+	return(SPEED_NONE);
 }
 
 // FUNCTION: 0x0048E030

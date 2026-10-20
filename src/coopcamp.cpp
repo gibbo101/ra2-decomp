@@ -12,6 +12,7 @@
 #include "houstype.h"
 #include <cstring>
 #include <cctype>
+#include <math.h>
 
 extern char DAT_0089ED18[];
 extern char DAT_0089F118[];
@@ -770,6 +771,7 @@ bool CoopCampSource_0049E4F0::FUN_0049E740(DynamicVectorClass<wchar_t *> * list)
 
 template class DynamicVectorClass<char *>;
 template class DynamicVectorClass<CoopCampNameList *>;
+template class VectorClass<CoopCampNameList *>;
 
 // FUNCTION: 0x0049E950 ?$DynamicVectorClass@PAD::Clear
 // FUNCTION: 0x0049E980 ?$DynamicVectorClass@PAD::ID
@@ -795,3 +797,47 @@ template class DynamicVectorClass<CoopCampNameList *>;
 // FUNCTION: 0x0049EF40 ?$VectorClass@PAD::ID
 // FUNCTION: 0x0049EF80 ?$VectorClass@PAD::ID
 // FUNCTION: 0x0049EFA0 ?$VectorClass@PAD::~?$VectorClass@PAD
+// FUNCTION: 0x0049EFF0 ?$DynamicVectorClass@PAD::~?$DynamicVectorClass@PAD
+// FUNCTION: 0x0049F040 ?$DynamicVectorClass@PAV?$DynamicVectorClass@PAD@@::~?$DynamicVectorClass@PAV?$DynamicVectorClass@PAD@@
+// FUNCTION: 0x0049F090 ?$VectorClass@PAV?$DynamicVectorClass@PAD@@::?$VectorClass@PAV?$DynamicVectorClass@PAD@@
+
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007E1720;
+extern const double DAT_007E1728;
+extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
+extern const double DAT_007E5C40;
+extern const double DAT_007E5C48;
+extern double __cdecl FUN_004CAC40(double);
+extern double __cdecl FUN_004CAD50(double);
+extern double __cdecl FUN_004CADE0(double);
+
+// FUNCTION: 0x0049F0E0 $E26
+double DAT_0089F6C0 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x0049F110 $E29
+double DAT_0089F750 = DAT_0089F6C0 / DAT_007E5C40;
+
+// FUNCTION: 0x0049F130 $E32
+double DAT_0089F738 = DAT_007E1718 / DAT_0089F750;
+
+// FUNCTION: 0x0049F150 $E35
+double DAT_0089F730 = DAT_007E1720 * DAT_007E5C48;
+
+// FUNCTION: 0x0049F170 $E38
+double DAT_0089F6C8 = DAT_007E1728 * DAT_007E5C48;
+
+// FUNCTION: 0x0049F190 $E41
+double DAT_0089F680 = DAT_007E1730 * DAT_007E5C48;
+
+// FUNCTION: 0x0049F1B0 $E44
+int DAT_0089F758 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_0089F680 - DAT_0089F6C8) * DAT_0089F6C0));
+
+// FUNCTION: 0x0049F1F0 $E47
+double DAT_0089F6D0 = FUN_004CADE0(DAT_0089F758 * DAT_007E1740);
+
+// FUNCTION: 0x0049F220 $E50
+double DAT_0089F728 = FUN_004CADE0((DAT_0089F758 * 2) / DAT_0089F6C0);

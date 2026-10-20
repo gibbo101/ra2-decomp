@@ -231,6 +231,7 @@ class FootClass : public TechnoClass
 		void UpdatePassengerCoords(void);
 		void RemovePassenger(FootClass * passenger);
 		FootClass * RemoveFirstPassenger(void);
+		void Jumpjet_OccupyCell(Cell cell);
 
 		virtual VisualType Visual_Character(bool raw = false, HouseClass const * = NULL) const override;
 		virtual bool Limbo(void) override;

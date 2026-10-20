@@ -121,32 +121,12 @@ Wstring & __fastcall WDT_Country_Name(int side)
 // FUNCTION: 0x007AF4E0 $E80
 // FUNCTION: 0x007AF4F0 $E79
 
-namespace OwnerDraw {
-	class DialogControl {
-	public:
-		virtual ~DialogControl(void);
-		virtual void F1(HWND window, int value) = 0;
-		virtual bool F2(void) = 0;
-		virtual int F3(void) = 0;
-	};
-	class SimpleDialogControl : public DialogControl {
-	public:
-		SimpleDialogControl(void);
-		virtual ~SimpleDialogControl(void);
-		int Field4;
-		char Field8;
-	};
-}
-
 namespace WorldDominationTour {
 	typedef Surface FactionImage;
 	class FactionSelectDialogControl : public OwnerDraw::SimpleDialogControl {
 	public:
 		FactionSelectDialogControl(void);
 		virtual ~FactionSelectDialogControl(void);
-		virtual void F1(HWND window, int value);
-		virtual bool F2(void);
-		virtual int F3(void);
 		int FieldC;
 		FactionImage * Image1;
 		FactionImage * Image2;

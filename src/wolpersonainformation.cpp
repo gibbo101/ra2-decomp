@@ -9,6 +9,7 @@
 #include "ini.h"
 #include "playerprofile.h"
 #include "rcptr.h"
+#include "wolopt.h"
 #undef LoadString
 #include "stringtable.h"
 #include <time.h>
@@ -439,15 +440,6 @@ PlayerProfile::~PlayerProfile(void)
 {
 }
 
-struct WOLOptions
-{
-	int Flags;
-	char Loaded;
-	WOLOptions(void) { Flags = 0; Loaded = 0; FUN_005175F0(); }
-	void FUN_005175F0(void);
-	unsigned char FUN_005176B0(void);
-};
-
 static inline void WOL_PutInt(INIClass & ini, Wstring const & section, char const * key, int value)
 {
 	Wstring k(key);
@@ -457,14 +449,14 @@ static inline void WOL_PutInt(INIClass & ini, Wstring const & section, char cons
 // FUNCTION: 0x0077A080
 void PlayerProfile::Save(Wstring const * name)
 {
-	WOLOptions options;
+	WOLOptionsClass options;
 	if (Field8) {
 		Wstring section(*name);
 		if (!name->length()) {
 			section = DAT_00B73590;
 		} else {
 			section.toLower();
-			if (!options.FUN_005176B0()) {
+			if (!options.Is_Bit1_Clear()) {
 				return;
 			}
 		}

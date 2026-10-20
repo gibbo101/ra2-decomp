@@ -7,6 +7,9 @@
 #include "hsv.h"
 #include "rgb.h"
 #include <math.h>
+#include <windows.h>
+#include <string.h>
+#include "wolopt.h"
 
 extern double __cdecl FUN_004CAC40(double);
 extern const double DAT_007E1708;
@@ -108,6 +111,71 @@ bool operator==(HSVClass const & a, HSVClass const & b)
 bool operator!=(HSVClass const & a, HSVClass const & b)
 {
 	return(!(a == b));
+}
+
+// FUNCTION: 0x005175F0
+bool WOLOptionsClass::Load(void)
+{
+	DWORD size = REG_DWORD;
+	IsValid = false;
+	char path[128];
+	strcpy(path, "SOFTWARE\\Westwood\\WOLAPI\\");
+	DWORD type;
+	HKEY key;
+	if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, path, 0, KEY_ALL_ACCESS, &key) == ERROR_SUCCESS) {
+		DWORD value = 0;
+		if (RegQueryValueEx(key, "Options", 0, &type, (LPBYTE)&value, &size) == ERROR_SUCCESS) {
+			if (type == REG_DWORD) {
+				IsValid = true;
+				Options = value;
+			}
+		}
+		RegCloseKey(key);
+	}
+	return IsValid;
+}
+
+// FUNCTION: 0x005176A0
+bool WOLOptionsClass::Is_Bit0_Clear(void)
+{
+	if (Options & 1) return false;
+	return true;
+}
+
+// FUNCTION: 0x005176B0
+bool WOLOptionsClass::Is_Bit1_Clear(void)
+{
+	if (Options & 2) return false;
+	return true;
+}
+
+// FUNCTION: 0x005176C0
+bool WOLOptionsClass::Is_Bit2_Clear(void)
+{
+	if (Options & 4) return false;
+	return true;
+}
+
+// FUNCTION: 0x005176D0
+bool WOLOptionsClass::Save(unsigned long value)
+{
+	bool ok = false;
+	char path[128];
+	strcpy(path, "SOFTWARE\\Westwood\\WOLAPI\\");
+	HKEY key;
+	DWORD disposition;
+	if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, path, 0, KEY_ALL_ACCESS, &key) != ERROR_SUCCESS) {
+		if (RegCreateKeyEx(HKEY_LOCAL_MACHINE, path, 0, 0, 0, KEY_ALL_ACCESS, 0, &key, &disposition) != ERROR_SUCCESS) {
+			return false;
+		}
+	}
+	if (RegSetValueEx(key, "Options", 0, REG_DWORD, (CONST BYTE *)&value, sizeof(value)) == ERROR_SUCCESS) {
+		ok = true;
+	}
+	RegCloseKey(key);
+
+	Load();
+	return ok;
 }
 
 // FUNCTION: 0x00517840 $E3

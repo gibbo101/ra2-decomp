@@ -312,3 +312,19 @@ template class rc_ptr<Territory>;
 
 // FUNCTION: 0x0076F080 ?$rc_ptr@VMap@WorldDominationTour@@::Get
 template class rc_ptr<Map>;
+
+// FUNCTION: 0x0076F090 ?$VectorCursor@V?$TRect@H@@V?$DynamicVectorClass@V?$TRect@H@@@@::?$VectorCursor@V?$TRect@H@@V?$DynamicVectorClass@V?$TRect@H@@@@
+// FUNCTION: 0x0076F0B0 ?B?$VectorCursor@V?$TRect@H@@V?$DynamicVectorClass@V?$TRect@H@@@@
+// FUNCTION: 0x0076F0C0 ?$VectorCursor@VPoint2D@@V?$DynamicVectorClass@VPoint2D@@@@::?$VectorCursor@VPoint2D@@V?$DynamicVectorClass@VPoint2D@@@@
+// FUNCTION: 0x0076F0E0 ?B?$VectorCursor@VPoint2D@@V?$DynamicVectorClass@VPoint2D@@@@
+// FUNCTION: 0x0076F0F0 ?B?$VectorCursor@PAVMSSfxEntry@@V?$DynamicVectorClass@PAVMSSfxEntry@@@@
+// FUNCTION: 0x0076F100 ?$VectorCursor@V?$TRect@H@@V?$DynamicVectorClass@V?$TRect@H@@@@::~?$VectorCursor@V?$TRect@H@@V?$DynamicVectorClass@V?$TRect@H@@@@
+// FUNCTION: 0x0076F120 ?$VectorCursor@VPoint2D@@V?$DynamicVectorClass@VPoint2D@@@@::~?$VectorCursor@VPoint2D@@V?$DynamicVectorClass@VPoint2D@@@@
+// FUNCTION: 0x0076F140 ?$VectorCursor@PAVMSSfxEntry@@V?$DynamicVectorClass@PAVMSSfxEntry@@@@::~?$VectorCursor@PAVMSSfxEntry@@V?$DynamicVectorClass@PAVMSSfxEntry@@@@
+// FUNCTION: 0x0076F160 ?E?$VectorCursor@V?$TRect@H@@V?$DynamicVectorClass@V?$TRect@H@@@@
+// FUNCTION: 0x0076F170 ?F?$VectorCursor@V?$TRect@H@@V?$DynamicVectorClass@V?$TRect@H@@@@
+// FUNCTION: 0x0076F180 ?E?$VectorCursor@VPoint2D@@V?$DynamicVectorClass@VPoint2D@@@@
+// FUNCTION: 0x0076F190 ?F?$VectorCursor@VPoint2D@@V?$DynamicVectorClass@VPoint2D@@@@
+template class VectorCursor<Rect, DynamicVectorClass<Rect> >;
+template class VectorCursor<Point2D, DynamicVectorClass<Point2D> >;
+template class VectorCursor<MSSfxEntry *, DynamicVectorClass<MSSfxEntry *> >;

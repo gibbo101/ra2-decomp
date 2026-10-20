@@ -9,6 +9,8 @@
 #include "pcx.h"
 #include <math.h>
 
+#include "wsproto.h"
+
 static void Write_Pcx_ScanLine(FileClass & file, int scansize, char * ptr);
 static int Write_Pcx_ScanLine_Buf(int scansize, char * ptr, char * file_ptr);
 
@@ -254,3 +256,32 @@ double DAT_00B77FE8 = FUN_004CADE0((DAT_00B78018 * 2) / DAT_00B77FC0);
 
 // FUNCTION: 0x007B0D10 $E50
 int DAT_00B7800C = (int)(DAT_00B78018 * 4 + DAT_007E1738);
+
+struct WritePcxShortPair {
+	short A;
+	short B;
+	WritePcxShortPair(void) : A(0), B(0) {}
+};
+
+struct WritePcxZeroTriple {
+	int A;
+	int B;
+	int C;
+	WritePcxZeroTriple(void) : A(0), B(0), C(0) {}
+};
+
+struct WritePcxHalfTriple {
+	int A;
+	int B;
+	int C;
+	WritePcxHalfTriple(void) : A(0x80), B(0x80), C(0) {}
+};
+
+// FUNCTION: 0x007B0D40 $E53
+WritePcxShortPair DAT_00B77FB8;
+
+// FUNCTION: 0x007B0D50 $E56
+WritePcxZeroTriple DAT_00B77FD8;
+
+// FUNCTION: 0x007B0D70 $E59
+WritePcxHalfTriple DAT_00B78000;

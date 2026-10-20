@@ -273,6 +273,10 @@ Each entry: what the diff showed, then the source change that fixed it.
   reach it through the object's members.
 - Label every template instance from the RTTI of the vtable that holds it: two addresses
   under one symbol (`VectorClass<int>::Clear`) mean one label has the wrong element type.
+- YRpp's enum values can be wrong for 1.001 (ACTION_REPAIR is 10, EATEN 11): prove an enum
+  value from a switch or compare in the exe before trusting it.
+- An early `return` that the original tail-merges with a real branch: assign the result in
+  each branch and keep one `return(action);` after the if/else, as TibSun writes it.
 - VC6 spends the inline budget from the end of a function backwards, and every inlined call
   costs the same: write the accessor calls the original made (planmgr's Get_Count, Set_Event).
 - An inline call the original leaves out of line goes out of line when wrapped in a file-local

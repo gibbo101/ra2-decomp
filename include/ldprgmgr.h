@@ -10,15 +10,18 @@
 class MixFileClass;
 class DSurface;
 class SHPStruct;
+class Surface;
 
 class LoadProgressManager
 {
 	public:
 		LoadProgressManager(void);
 
+		void FUN_00554350(Surface * target);
 		void FUN_00554370(void);
 
-		virtual void FUN_00554400(void);
+		virtual bool FUN_00554400(int message, int extra);
+
 
 		static void Create(void);
 		static void Destroy(void);

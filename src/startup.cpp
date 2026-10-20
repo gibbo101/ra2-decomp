@@ -607,3 +607,19 @@ template class TClassFactory<TEventClass>;
 // FUNCTION: 0x006C1610 ?$TClassFactory@VVoxelAnimTypeClass@@::CreateInstance
 // FUNCTION: 0x006C1690 ?$TClassFactory@VVoxelAnimTypeClass@@::LockServer
 template class TClassFactory<VoxelAnimTypeClass>;
+
+// FUNCTION: 0x006C16C0 ?$TClassFactory@VVoxelAnimClass@@::?$TClassFactory@VVoxelAnimClass@@
+// FUNCTION: 0x006C16D0 ?$TClassFactory@VVoxelAnimClass@@::QueryInterface
+// FUNCTION: 0x006C1740 ?$TClassFactory@VVoxelAnimClass@@::AddRef
+// FUNCTION: 0x006C1760 ?$TClassFactory@VVoxelAnimClass@@::Release
+// FUNCTION: 0x006C1790 ?$TClassFactory@VVoxelAnimClass@@::CreateInstance
+// FUNCTION: 0x006C1810 ?$TClassFactory@VVoxelAnimClass@@::LockServer
+template class TClassFactory<VoxelAnimClass>;
+
+// FUNCTION: 0x006C1840 ?$TClassFactory@VTActionClass@@::?$TClassFactory@VTActionClass@@
+// FUNCTION: 0x006C1850 ?$TClassFactory@VTActionClass@@::QueryInterface
+// FUNCTION: 0x006C18C0 ?$TClassFactory@VTActionClass@@::AddRef
+// FUNCTION: 0x006C18E0 ?$TClassFactory@VTActionClass@@::Release
+// FUNCTION: 0x006C1910 ?$TClassFactory@VTActionClass@@::CreateInstance
+// FUNCTION: 0x006C1990 ?$TClassFactory@VTActionClass@@::LockServer
+template class TClassFactory<TActionClass>;

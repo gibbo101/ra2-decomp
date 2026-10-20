@@ -30,6 +30,8 @@
 
 #include <math.h>
 
+extern char const * DAT_00818114;
+extern char const * DAT_00818118;
 extern SideType FUN_006A46D0(char const * name);
 extern double __cdecl FUN_004CAC40(double);
 extern double __cdecl FUN_004CAD50(double);
@@ -612,4 +614,486 @@ bool AITriggerTypeClass::IronCurtainCharged(HouseClass *house, HouseClass *enemy
 		}
 	}
 	return(false);
+}
+
+// FUNCTION: 0x0041F180
+bool AITriggerTypeClass::ChronoSphereCharged(HouseClass *house, HouseClass *enemy) const
+{
+	if (house != NULL) {
+		for (int i = 0; i < house->SuperWeapon.Count(); i++) {
+			if (house->SuperWeapon[i]->Class->Type == SUPER_CHRONO_SPHERE) {
+				SuperClass *super = house->SuperWeapon[i];
+				if (super != NULL && super->IsPresent) {
+					int remaining = super->Control.Value();
+					double total = super->GetRechargeTime();
+					if (remaining / total <= 1.0f - Rule->AIMinorSuperReadyPercent) {
+						return(true);
+					}
+				}
+				break;
+			}
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x0041F230
+bool AITriggerTypeClass::HouseCredits(HouseClass *house, HouseClass *enemy) const
+{
+	bool res = false;
+
+	if (enemy != NULL) {
+		int money = enemy->Available_Money();
+		switch (Params.Condition) {
+			case COND_LT:
+				res = money < Params.Number;
+				break;
+
+			case COND_LE:
+				res = money <= Params.Number;
+				break;
+
+			case COND_EQ:
+				res = money == Params.Number;
+				break;
+
+			case COND_GE:
+				res = money >= Params.Number;
+				break;
+
+			case COND_GT:
+				res = money > Params.Number;
+				break;
+
+			case COND_NE:
+				res = money != Params.Number;
+				break;
+		}
+	}
+	return(res);
+}
+
+// FUNCTION: 0x0041F2E0
+void AITriggerTypeClass::Read_All(CCINIClass const & ini, INIScopeType scope)
+{
+	int i;
+	int count;
+
+	count = ini.Entry_Count(INI_NAME);
+
+	for (i = 0; i < count; i++) {
+		const char *entry = ini.Get_Entry(INI_NAME, i);
+
+		AITriggerTypeClass *ptr = TFind_Or_Make<AITriggerTypeClass>(entry, AITriggerTypes);
+		if (ptr != NULL) {
+			ptr->Read_INI((CCINIClass &)ini);
+			ptr->Scope = scope;
+		}
+
+		if (scope == SCOPE_GLOBAL) {
+			ptr->IsEnabled = true;
+		}
+	}
+
+	if (scope == SCOPE_LOCAL) {
+		count = ini.Entry_Count(INI_NAME_ENABLE);
+		for (i = 0; i < count; i++) {
+			const char *entry = ini.Get_Entry(INI_NAME_ENABLE, i);
+
+			for (int k = 0; k < AITriggerTypes.Count(); k++) {
+				if (strcmpi((const char *)AITriggerTypes[k]->IniName, entry) == 0) {
+					AITriggerTypeClass *ptr = AITriggerTypes[k];
+					if (ptr != NULL) {
+						if (ini.Get_Bool(INI_NAME_ENABLE, entry) || Session.Type != GAME_NORMAL) {
+							ptr->IsEnabled = true;
+						} else {
+							ptr->IsEnabled = false;
+						}
+					}
+					break;
+				}
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x0041F490
+void AITriggerTypeClass::Write_All(CCINIClass & ini, INIScopeType scope)
+{
+	int i;
+	char buf[32];
+
+	int count = ini.Entry_Count(INI_NAME);
+
+	for (i = 0; i < count; i++) {
+		const char *entry = ini.Get_Entry(INI_NAME, i);
+		ini.Get_String(INI_NAME, entry, "", buf, sizeof(buf));
+		ini.Clear(buf);
+	}
+
+	ini.Clear(INI_NAME);
+
+	for (i = 0; i < AITriggerTypes.Count(); i++) {
+		AITriggerTypeClass *ptr = AITriggerTypes[i];
+		if (ptr->Scope == scope) {
+			ptr->Write_INI(ini);
+		}
+	}
+
+	if (scope == SCOPE_LOCAL) {
+		ini.Clear(INI_NAME_ENABLE);
+		for (i = 0; i < AITriggerTypes.Count(); i++) {
+			ini.Put_Bool(INI_NAME_ENABLE, (const char *)AITriggerTypes[i]->IniName, AITriggerTypes[i]->IsEnabled);
+		}
+	}
+}
+
+// FUNCTION: 0x0041F580
+bool AITriggerTypeClass::Read_INI(CCINIClass & ini)
+{
+	unsigned int i;
+	char *paramstr;
+	char *tok;
+	char objname[24];
+	char teamname[24];
+	char buf[INIClass::MAX_LINE_LENGTH];
+
+	ini.Reset();
+	if (ini.Get_String(INI_NAME, (const char *)IniName, "", buf, sizeof(buf))) {
+
+		tok = strtok(buf, ",");
+		if (tok == NULL) {
+			return(false);
+		}
+
+		GivenName = TStringID<48>(tok);
+
+		tok = strtok(NULL, ",");
+		if (tok == NULL) {
+			return(false);
+		}
+		strncpy(objname, tok, sizeof(objname));
+		objname[sizeof(objname)-1] = 0;
+		strtrim(objname);
+		TeamTypeOne = NULL;
+		if (strcmpi(objname, DAT_00818114) != 0) {
+			TeamTypeOne = TeamTypeClass::From_Name(objname);
+		}
+
+		tok = strtok(NULL, ",");
+		if (tok == NULL) {
+			return(false);
+		}
+		strncpy(objname, tok, sizeof(objname));
+		objname[sizeof(objname)-1] = 0;
+		strtrim(objname);
+		TrigHouse = AITRIG_HOUSE_NONE;
+		House = HOUSE_NONE;
+
+		if (strcmpi(objname, DAT_00818118) == 0) {
+			TrigHouse = AITRIG_HOUSE_ALL;
+		} else if (strcmpi(objname, DAT_00818114) != 0) {
+			House = HouseTypeClass::From_Name(objname);
+			if (House != HOUSE_NONE) {
+				TrigHouse = AITRIG_HOUSE_INDEX;
+			}
+		}
+
+		tok = strtok(NULL, ",");
+		if (tok == NULL) {
+			return(false);
+		}
+
+		TechLevelNeeded = 0;
+		tok = strtok(NULL, ",");
+		if (tok == NULL) {
+			return(false);
+		}
+
+		Type = (AITriggerEnum)atoi(tok);
+		tok = strtok(NULL, ",");
+		if (tok == NULL) {
+			return(false);
+		}
+
+		strncpy(objname, tok, sizeof(objname));
+		objname[sizeof(objname)-1] = 0;
+		strtrim(objname);
+
+		int type = -1;
+		TechnoTypeClass * conobj = NULL;
+
+		if (type == -1) {
+			type = (int)InfantryTypeClass::From_Name(objname);
+			if (type != -1) {
+				conobj = InfantryTypes[type];
+			}
+		}
+
+		if (type == -1) {
+			type = (int)UnitTypeClass::From_Name(objname);
+			if (type != -1) {
+				conobj = UnitTypes[type];
+			}
+		}
+
+		if (type == -1) {
+			type = (int)AircraftTypeClass::From_Name(objname);
+			if (type != -1) {
+				conobj = AircraftTypes[type];
+			}
+		}
+
+		if (type == -1) {
+			type = (int)BuildingTypeClass::From_Name(objname);
+			if (type != -1) {
+				conobj = BuildingTypes[type];
+			}
+		}
+
+		ConditionObject = conobj;
+
+		tok = strtok(NULL, ",");
+		if (tok == NULL) {
+			return(false);
+		}
+		paramstr = tok;
+		{
+			char tmp;
+			char *endptr;
+			char nptr[] = "00";
+			endptr = 0;
+			i = 0;
+			while (*paramstr != '\0') {
+				while (isspace(*paramstr)) {
+					paramstr++;
+				}
+				nptr[0] = *paramstr;
+				paramstr++;
+				tmp = *paramstr;
+				if (tmp) {
+					nptr[1] = tmp;
+					paramstr++;
+				} else {
+					nptr[1] = '\0';
+				}
+				if (i >= ARRAY_SIZE(Params.Data)) {
+					break;
+				}
+
+				Params.Data[i] = strtol(nptr, &endptr, 16);
+				i++;
+			}
+		}
+
+		tok = strtok(NULL, ",");
+		if (tok != NULL) {
+			CurWeight = (unsigned int)atof(tok);
+		}
+
+		tok = strtok(NULL, ",");
+		if (tok != NULL) {
+			MinWeight = (unsigned int)atof(tok);
+		}
+
+		tok = strtok(NULL, ",");
+		if (tok != NULL) {
+			MaxWeight = (unsigned int)atof(tok);
+		}
+
+		tok = strtok(NULL, ",");
+		if (tok != NULL) {
+			IsAvailableInSkirmish = atoi(tok) != 0;
+		}
+
+		tok = strtok(NULL, ",");
+
+		tok = strtok(NULL, ",");
+		if (tok != NULL) {
+			MultiSide = atoi(tok);
+		}
+
+		tok = strtok(NULL, ",");
+		if (tok != NULL) {
+			IsForBaseDefense = atoi(tok) != 0;
+		}
+
+		tok = strtok(NULL, ",");
+		if (tok != NULL) {
+			strncpy(teamname, tok, sizeof(teamname));
+			teamname[sizeof(teamname)-1] = 0;
+			strtrim(teamname);
+			TeamTypeTwo = NULL;
+			if (strcmpi(teamname, DAT_00818114) != 0) {
+				TeamTypeTwo = TeamTypeClass::From_Name(teamname);
+			}
+		}
+
+		tok = strtok(NULL, ",");
+		if (tok != NULL) {
+			IsEnabledInEasy = atoi(tok) != 0;
+		}
+
+		tok = strtok(NULL, ",");
+		if (tok != NULL) {
+			IsEnabledInMedium = atoi(tok) != 0;
+		}
+
+		tok = strtok(NULL, ",");
+		if (tok != NULL) {
+			IsEnabledInHard = atoi(tok) != 0;
+		}
+
+		if (TeamTypeOne != NULL) {
+			TechLevelNeeded = MAX(TechLevelNeeded, TeamTypeOne->TaskForce->Needed_Tech_Level());
+		}
+
+		if (TeamTypeTwo != NULL) {
+			TechLevelNeeded = MAX(TechLevelNeeded, TeamTypeTwo->TaskForce->Needed_Tech_Level());
+		}
+
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x0041FB10
+bool AITriggerTypeClass::Write_INI(CCINIClass & ini) const
+{
+	char paramstr[INIClass::MAX_LINE_LENGTH];
+	char buf[INIClass::MAX_LINE_LENGTH];
+
+	const char *ininame1 = DAT_00818114;
+	const char *ininame2 = DAT_00818114;
+	const char *housname = DAT_00818114;
+	const char *condname = DAT_00818114;
+
+	if (TeamTypeOne != NULL) {
+		ininame1 = (const char *)TeamTypeOne->IniName;
+	}
+
+	if (TeamTypeTwo != NULL) {
+		ininame2 = (const char *)TeamTypeTwo->IniName;
+	}
+
+	switch (TrigHouse) {
+		case AITRIG_HOUSE_INDEX:
+			if (House != HOUSE_NONE) {
+				housname = (const char *)HouseTypes[House]->IniName;
+			}
+			break;
+
+		case AITRIG_HOUSE_ALL: {
+			housname = DAT_00818118;
+			break;
+		}
+	}
+
+	if (ConditionObject != NULL) {
+		condname = (const char *)ConditionObject->IniName;
+	}
+
+	unsigned int i = 0;
+	char *ptr = paramstr;
+	while (i < ARRAY_SIZE(Params.Data)) {
+		sprintf(ptr, "%02x", (unsigned char)Params.Data[i]);
+		i++;
+		ptr += 2;
+	}
+	*ptr = 0;
+
+	sprintf(
+		buf,
+		"%s,%s,%s,%d,%d,%s,%s,%lf,%lf,%lf,%d,%d,%d,%d,%s,%d,%d,%d",
+		(const char *)GivenName,
+		ininame1,
+		housname,
+		TechLevelNeeded,
+		Type,
+		condname,
+		paramstr,
+		CurWeight,
+		MinWeight,
+		MaxWeight,
+		IsAvailableInSkirmish != 0,
+		0,
+		MultiSide,
+		IsForBaseDefense != 0,
+		ininame2,
+		IsEnabledInEasy != 0,
+		IsEnabledInMedium != 0,
+		IsEnabledInHard != 0);
+
+	return(ini.Put_String(INI_NAME, IniName, buf));
+}
+
+// FUNCTION: 0x0041FCA0
+AITriggerTypeClass * AITriggerTypeClass::Find_Or_Make(char const * name)
+{
+	return(TFind_Or_Make<AITriggerTypeClass>(name, AITriggerTypes));
+}
+
+// FUNCTION: 0x0041FD30
+void AITriggerTypeClass::Set_Condition_Object(TechnoTypeClass *obj)
+{
+	ConditionObject = obj;
+}
+
+// FUNCTION: 0x0041FD40
+void AITriggerTypeClass::Set_First_TeamType(TeamTypeClass *team)
+{
+	TeamTypeOne = team;
+}
+
+// FUNCTION: 0x0041FD50
+void AITriggerTypeClass::Set_Second_TeamType(TeamTypeClass *team)
+{
+	TeamTypeTwo = team;
+}
+
+// FUNCTION: 0x0041FD60
+void AITriggerTypeClass::Record_Success(void)
+{
+	double weight = 0;
+	if (TimesExecuted > 0) {
+		weight = (double)TimesExecuted * ((double)TimesSucceded / (double)TimesExecuted - 0.5);
+		if (weight < 0.0) {
+			weight = 0.0;
+		}
+	}
+	CurWeight = CurWeight + weight + Rule->AITriggerSuccessWeightDelta;
+
+	if (CurWeight < MinWeight) {
+		CurWeight = MinWeight;
+	}
+
+	if (CurWeight > MaxWeight) {
+		CurWeight = MaxWeight;
+	}
+
+	TimesSucceded++;
+	TimesExecuted++;
+}
+
+// FUNCTION: 0x0041FE20
+void AITriggerTypeClass::Record_Failure(void)
+{
+	double weight = 0;
+	if (TimesExecuted > 0) {
+		weight = (double)TimesExecuted * ((double)TimesSucceded / (double)TimesExecuted - 0.5) * Rule->AITriggerTrackRecordCoefficient;
+		if (weight > 0.0) {
+			weight = 0.0;
+		}
+	}
+	CurWeight = CurWeight + weight + Rule->AITriggerFailureWeightDelta;
+
+	if (CurWeight < MinWeight) {
+		CurWeight = MinWeight;
+	}
+
+	if (CurWeight > MaxWeight) {
+		CurWeight = MaxWeight;
+	}
+
+	TimesExecuted++;
 }

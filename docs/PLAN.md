@@ -1137,6 +1137,17 @@ builtype.cpp's local copy of SHPStruct with msanim.h's and init.cpp's alias with
 Cost: about 4.5M tokens. Merge gate: 10,694 of 10,694 (1,449.1 KB), about 55% of game
 functions.
 
+### Batches 69, 70 and 71 (20 October 2026)
+
+**424 of 432 functions** (138, 143, 143), plus eleven found along the way. Batch 70's merge
+found YRpp has ACTION_REPAIR and ACTION_EATEN swapped (the exe's mouse code shows REPAIR
+is 10), which landed ScrollClass::What_Action; batch 71's adopted TibSun's IPX interface into
+a new wspipx.cpp (link order puts it between writepcx and wsproto) and gave Main_Game its
+argc/argv, landing it with Westwood's own exception-return asm; batch 69's named the
+owner-draw dialog controls and WOLOptionsClass by RTTI and call sites, retiring three local
+copies, and WOLAPI's real channel layout landed the last wonline near-miss. Cost: about
+5.3M tokens. Merge gate: 11,129 of 11,129 (1,496.4 KB), about 57% of game functions.
+
 ### Decide before the first batch
 
 - **Module layout.** Which function lives in which source file, and the link order, decide

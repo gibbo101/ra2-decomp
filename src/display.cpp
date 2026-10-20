@@ -1774,7 +1774,7 @@ ActionType DisplayClass::Action_To_Waypoint_Action(ActionType action, Cell const
 				return(ACTION_ATTACK_WAYPOINT);
 			case ACTION_ENTER:
 			case ACTION_CAPTURE:
-			case ACTION_REPAIR:
+			case ACTION_EATEN:
 				return(ACTION_ENTER_WAYPOINT);
 			default:
 				return(action);

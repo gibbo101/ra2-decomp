@@ -2804,10 +2804,69 @@ RadSiteClass * CellClass::FUN_00487C80(void)
 	return(RadSite);
 }
 
+// FUNCTION: 0x00487C90
+bool CellClass::IsRadiated(void) const
+{
+	return(RadLevel > 1.0);
+}
+
+// FUNCTION: 0x00487CB0
+int CellClass::GetRadLevel(void) const
+{
+	return((int)MIN(RadLevel, (double)Rule->RadLevelMax));
+}
+
+// FUNCTION: 0x00487CE0
+void CellClass::RadLevel_Increase(double amount)
+{
+	RadLevel += amount;
+}
+
+// FUNCTION: 0x00487D00
+void CellClass::RadLevel_Decrease(double amount)
+{
+	double level = RadLevel - amount;
+	RadLevel = level;
+	if (0.0 > level) {
+		level = 0.0;
+	}
+	RadLevel = level;
+}
+
 // FUNCTION: 0x00487D50
 int CellClass::GetLevel(void) const
 {
 	return(Height + (IsBridgeDeck ? BRIDGE_CELL_HEIGHT : 0));
+}
+
+inline bool Is_Foot_Object(AbstractClass * const & p)
+{
+	return(p != NULL && (p->AbstractFlags & 4) != 0);
+}
+
+inline FootClass * As_Foot_Object(AbstractClass * const & p)
+{
+	return(!p ? NULL : ((p->AbstractFlags & 4) ? (FootClass *)p : NULL));
+}
+
+// FUNCTION: 0x00487D70
+bool CellClass::TryAssignJumpjet(FootClass * foot)
+{
+	if (foot == NULL) {
+		if (Is_Foot_Object(Jumpjet)) {
+			As_Foot_Object(Jumpjet)->Jumpjet_OccupyCell(CELL_NONE);
+		}
+		Jumpjet = NULL;
+		return(true);
+	}
+	if (Jumpjet != NULL && Jumpjet != foot) {
+		return(false);
+	}
+	Jumpjet = foot;
+	if (FootClass * f = As_Foot_Object(foot)) {
+		f->Jumpjet_OccupyCell(CellID);
+	}
+	return(true);
 }
 
 // FUNCTION: 0x00487DF0
@@ -2819,8 +2878,44 @@ bool CellClass::FUN_00487DF0(void) const
 	return(false);
 }
 
+// FUNCTION: 0x00487E00
+bool CellClass::FUN_00487E00(void) const
+{
+	if (GameActive) {
+		ObjectClass * object = Cell_Occupier();
+		while (object != NULL) {
+			if (object->Fetch_RTTI() == RTTI_BUILDING) {
+				break;
+			}
+			object = object->Next;
+		}
+		if (object != NULL && OccupyHeightsCoveringMe == 1) {
+			return(false);
+		}
+	}
+	return(OccupyHeightsCoveringMe != 0);
+}
+
 // FUNCTION: 0x00487E50
 int STDMETHODCALLTYPE CellClass::What_Am_I(void) const
 {
 	return(RTTI_CELL);
 }
+
+// FUNCTION: 0x00487E60
+RTTIType CellClass::Fetch_RTTI(void) const
+{
+	return(RTTI_CELL);
+}
+
+// FUNCTION: 0x00487E70
+int CellClass::Fetch_Object_Size(void) const
+{
+	return(sizeof(*this));
+}
+
+// FUNCTION: 0x00487E80 CellClass::~CellClass
+
+// FUNCTION: 0x00487EE0 ?$TRect@H::operator-
+
+// FUNCTION: 0x00487F20 ?$TPoint2D@H::operator-

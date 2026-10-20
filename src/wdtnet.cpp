@@ -281,3 +281,18 @@ bool WDTState::Create_History(void *data, int count)
 }
 
 // FUNCTION: 0x0076B6C0 WDTTerritory::~WDTTerritory
+
+// FUNCTION: 0x0076B6F0 WDTState::~WDTState
+// FUNCTION: 0x0076B710 ?$DynamicVectorClass@V?$rc_ptr@VWDTTerritory@@@@::Clear
+// FUNCTION: 0x0076B740 ?$DynamicVectorClass@V?$rc_ptr@VWDTTerritory@@@@::ID
+// FUNCTION: 0x0076B760 ?$VectorClass@V?$rc_ptr@VWDTTerritory@@@@::GetItem
+// FUNCTION: 0x0076B790 ?$rc_ptr@VWDTTerritory@@::?$rc_ptr@VWDTTerritory@@
+// FUNCTION: 0x0076B7B0 ?$VectorClass@V?$rc_ptr@VWDTTerritory@@@@::operator=
+// FUNCTION: 0x0076B870 ?$VectorClass@V?$rc_ptr@VWDTTerritory@@@@::operator==
+// FUNCTION: 0x0076B8C0 ?$VectorClass@V?$rc_ptr@VWDTTerritory@@@@::Resize
+// FUNCTION: 0x0076B9E0 ?$VectorClass@V?$rc_ptr@VWDTTerritory@@@@::Clear
+// FUNCTION: 0x0076BA10 ?$VectorClass@V?$rc_ptr@VWDTTerritory@@@@::ID
+// FUNCTION: 0x0076BA50 ?$VectorClass@V?$rc_ptr@VWDTTerritory@@@@::ID
+// FUNCTION: 0x0076BA70 ?$DynamicVectorClass@V?$rc_ptr@VWDTTerritory@@@@::Resize
+template class DynamicVectorClass<rc_ptr<WDTTerritory> >;
+template class rc_ptr<WDTTerritory>;

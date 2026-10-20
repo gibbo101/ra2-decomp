@@ -55,6 +55,7 @@
 #include "shapeset.h"
 #include "slavemgr.h"
 #include "spawnmgr.h"
+#include "stringtable.h"
 #include "sun.h"
 #include "swizzle.h"
 #include "tactical.h"
@@ -2060,6 +2061,123 @@ update:
 clear:
 	ClearDisguise();
 	goto update;
+}
+
+// FUNCTION: 0x00746B20
+wchar_t const * UnitClass::Full_Name(void) const
+{
+	if (IsDisguisedAs(PlayerPtr)) {
+		if (GetDisguise(true) != NULL) {
+			if (GetDisguiseHouse(true) == NULL) {
+				return(NULL);
+			}
+			return(GetDisguise(true)->UIName);
+		}
+	}
+
+	if (FUN_0070DC60() && FUN_0070DC50()) {
+		wchar_t const * tip = NULL;
+		FootClass * passenger = Cargo.Attached_Object();
+		if (passenger != NULL && passenger->Fetch_RTTI() == RTTI_INFANTRY) {
+			bool own_name = false;
+			if (((InfantryClass *)passenger)->Class->UseOwnName) {
+				own_name = true;
+			}
+			int kind = FUN_0070DCF0();
+			if (kind == 0) {
+				tip = StringTable::LoadString("Tip:Rocket", NULL, "D:\\ra2mdpost\\Unit.CPP", 0x2c90);
+			} else if (kind == 1 && !own_name) {
+				tip = StringTable::LoadString("Tip:MachineGun", NULL, "D:\\ra2mdpost\\Unit.CPP", 0x2c94);
+			} else if (kind == 2) {
+				tip = StringTable::LoadString("Tip:Repair", NULL, "D:\\ra2mdpost\\Unit.CPP", 0x2c98);
+			} else if (kind == 3 || own_name) {
+				tip = passenger->Class_Of()->UIName;
+			}
+		}
+		if (tip == NULL) {
+			tip = StringTable::LoadString("Tip:Rocket", NULL, "D:\\ra2mdpost\\Unit.CPP", 0x2cbe);
+		}
+		swprintf((wchar_t *)ToolTipText, L"%s %s", tip, Class->UIName);
+		return(ToolTipText);
+	}
+
+	return(Class->UIName);
+}
+
+// FUNCTION: 0x00746C90
+bool UnitClass::IsUnderEMP(void) const
+{
+	return((DeathCounter != -1 || TechnoClass::IsUnderEMP()) ? 1 : 0);
+}
+
+// FUNCTION: 0x00746CB0
+bool UnitClass::CanUseWaypoint(void) const
+{
+	return(TechnoClass::CanUseWaypoint());
+}
+
+// FUNCTION: 0x00746CC0
+bool UnitClass::CanAttackOnTheMove(void) const
+{
+	return(TechnoClass::CanAttackOnTheMove());
+}
+
+// FUNCTION: 0x00746CD0
+int UnitClass::What_Weapon_Should_I_Use(AbstractClass * target) const
+{
+	if (Deployed && Class->DeployFire) {
+		return(Class->DeployFireWeapon);
+	}
+	return(TechnoClass::What_Weapon_Should_I_Use(target));
+}
+
+// FUNCTION: 0x00746D00
+bool UnitClass::FUN_00746D00(void) const
+{
+	return(Class->DeployFire);
+}
+
+// FUNCTION: 0x00746D10
+bool UnitClass::FUN_00746D10(void) const
+{
+	if (!Class->IsSimpleDeployer) {
+		return(false);
+	}
+	if (Get_Height_AGL() > 0 && !((UnitTypeClass const *)Techno_Type_Class())->DeployToLand) {
+		return(false);
+	}
+	return(true);
+}
+
+// FUNCTION: 0x00746D60
+void UnitClass::Destroy(void)
+{
+	Explode();
+	FUN_00710460();
+}
+
+// FUNCTION: 0x00746D80
+bool UnitClass::FUN_00746D80(void) const
+{
+	return(Deployed);
+}
+
+// FUNCTION: 0x00746D90
+bool UnitClass::FUN_00746D90(void) const
+{
+	return(Deployed || Deploying);
+}
+
+// FUNCTION: 0x00746DB0
+bool UnitClass::FUN_00746DB0(void) const
+{
+	return(Deploying || Undeploying);
+}
+
+// FUNCTION: 0x00746DD0
+int UnitClass::Fetch_Object_Size(void) const
+{
+	return(sizeof(*this));
 }
 
 // FUNCTION: 0x00746DE0

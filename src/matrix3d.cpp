@@ -579,3 +579,41 @@ Matrix3D Matrix3D::Orthogonal_Inverse(Matrix3D const & src)
 
 	return(inv);
 }
+
+extern const double DAT_007EDB58;
+extern const double DAT_007EDB60;
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007E1720;
+extern const double DAT_007E1728;
+extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
+
+// FUNCTION: 0x005AFCE0 $E2
+double DAT_00ABEDF8 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x005AFD10 $E5
+double DAT_00ABEE48 = DAT_00ABEDF8 / DAT_007EDB58;
+
+// FUNCTION: 0x005AFD30 $E8
+double DAT_00ABEE30 = DAT_007E1718 / DAT_00ABEE48;
+
+// FUNCTION: 0x005AFD50 $E11
+double DAT_00ABEE28 = DAT_007E1720 * DAT_007EDB60;
+
+// FUNCTION: 0x005AFD70 $E14
+double DAT_00ABEE00 = DAT_007E1728 * DAT_007EDB60;
+
+// FUNCTION: 0x005AFD90 $E17
+double DAT_00ABEDD8 = DAT_007E1730 * DAT_007EDB60;
+
+// FUNCTION: 0x005AFDB0 $E20
+int DAT_00ABEE50 = (int)(fastmath::tan(DAT_00ABEDD8 - DAT_00ABEE00) * DAT_007E1738 * DAT_00ABEDF8);
+
+// FUNCTION: 0x005AFDF0 $E23
+double DAT_00ABEE08 = fastmath::atan(DAT_00ABEE50 * DAT_007E1740);
+
+// FUNCTION: 0x005AFE20 $E26
+double DAT_00ABEE20 = fastmath::atan((DAT_00ABEE50 * 2) / DAT_00ABEDF8);

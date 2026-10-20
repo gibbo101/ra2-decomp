@@ -223,10 +223,205 @@ int FactoryClass::Completion(void)
 	return(Production.Fetch_Stage());
 }
 
+// FUNCTION: 0x004CA130
+bool FactoryClass::Has_Completed(void)
+{
+	if (Object && Production.Fetch_Stage() == STEP_COUNT) {
+		return(true);
+	}
+	if (SpecialItem != SUPER_NONE && Production.Fetch_Stage() == STEP_COUNT) {
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x004CA160
+TechnoClass * FactoryClass::Get_Object(void) const
+{
+	return(Object);
+}
+
+// FUNCTION: 0x004CA170
+int FactoryClass::Get_Special_Item(void) const
+{
+	return(SpecialItem);
+}
+
+// FUNCTION: 0x004CA180
+int FactoryClass::Cost_Per_Tick(void)
+{
+	if (Object) {
+		int steps = STEP_COUNT - Production.Fetch_Stage();
+		if (steps) {
+			return(Balance / steps);
+		}
+		return(Balance);
+	}
+	return(0);
+}
+
+// FUNCTION: 0x004CA1A0
+bool FactoryClass::Completed(void)
+{
+	if (Object && Production.Fetch_Stage() == STEP_COUNT) {
+		Object = NULL;
+		IsSuspended = true;
+		IsDifferent = true;
+		Production.Set_Stage(0);
+		Production.Set_Rate(0);
+		return(true);
+	}
+	if (SpecialItem && Production.Fetch_Stage() == STEP_COUNT) {
+		SpecialItem = SUPER_NONE;
+		IsSuspended = true;
+		IsDifferent = true;
+		Production.Set_Stage(0);
+		Production.Set_Rate(0);
+		return(true);
+	}
+	return(false);
+}
+
 // FUNCTION: 0x004CA230
 HRESULT STDMETHODCALLTYPE FactoryClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
 	*retval = CLSID_FactoryClass;
 	return(S_OK);
+}
+
+// FUNCTION: 0x004CA270
+HRESULT STDMETHODCALLTYPE FactoryClass::Load(IStream * stream)
+{
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		new (this) FactoryClass(NoInitClass());
+
+		int index;
+		int count = 0;
+
+		result = stream->Read(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+
+		for (index = 0; index < count; index++) {
+			TechnoTypeClass const * obj = NULL;
+			result = stream->Read(&obj, sizeof(obj), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+			QueuedObjects.Add(obj);
+		}
+
+		for (index = 0; index < count; index++) {
+			Swizzle_Pointer(&QueuedObjects[index]);
+		}
+
+		Swizzle_Pointer(&House);
+		Swizzle_Pointer(&Object);
+
+		result = S_OK;
+	}
+	return(result);
+}
+
+// FUNCTION: 0x004CA3C0
+HRESULT STDMETHODCALLTYPE FactoryClass::Save(IStream * stream, BOOL cleardirty)
+{
+	HRESULT result = BASECLASS::Save(stream, cleardirty);
+	if (SUCCEEDED(result)) {
+		int index;
+
+		int count = QueuedObjects.Count();
+		result = stream->Write(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+
+		for (index = 0; index < count; index++) {
+			result = stream->Write(&QueuedObjects[index], sizeof(QueuedObjects[index]), NULL);
+			if (FAILED(result)) {
+				return(S_OK);
+			}
+		}
+
+		result = S_OK;
+	}
+	return(result);
+}
+
+// FUNCTION: 0x004CA430
+void FactoryClass::Compute_CRC(CRCEngine &crc) const
+{
+	DebugString("Frame == %d\n", Frame);
+	DebugString("QueuedObjects.Count() == %d\n", QueuedObjects.Count());
+	DebugString("Object->RTTI == %d\n", Object->RTTI);
+	DebugString("Object->HeapID == %d\n", Object->Fetch_Heap_ID());
+	DebugString("IsSuspended\t= %d\n", IsSuspended);
+	DebugString("IsDifferent\t= %d\n", IsDifferent);
+	DebugString("Balance\t= %d\n", Balance);
+	DebugString("OriginalBalance = %d\n", OriginalBalance);
+	DebugString("SpecialItem\t= %d\n", SpecialItem);
+	DebugString("House->Fetch_ID()\t= %d\n", House->Fetch_ID());
+	DebugString("ID\t= %d\n", Fetch_ID());
+
+	BASECLASS::Compute_CRC(crc);
+
+	crc(IsSuspended);
+	crc(IsDifferent);
+	crc(Balance);
+	crc(OriginalBalance);
+
+	if (Object != NULL) crc(Object->Fetch_ID());
+	crc(SpecialItem);
+
+	crc(House->Fetch_ID());
+}
+
+// FUNCTION: 0x004CA580
+void FactoryClass::Detach(AbstractClass const * target, bool all)
+{
+	if (target == (AbstractClass *)Object) {
+		Object = NULL;
+	}
+}
+
+// FUNCTION: 0x004CA5A0
+void FactoryClass::Resume_Queue(void)
+{
+	if (QueuedObjects.Count()) {
+		if (Object == NULL && (!Production.Fetch_Rate() || IsSuspended)) {
+			const TechnoTypeClass *object = QueuedObjects[0];
+			QueuedObjects.Delete_Index(0);
+			int id = object->Fetch_Heap_ID();
+			if (id >= 0) {
+				House->Begin_Production(object->Fetch_RTTI(), id, object->Naval, true);
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x004CA620
+bool FactoryClass::Remove_From_Queue(const TechnoTypeClass *type)
+{
+	return(QueuedObjects.Delete(type));
+}
+
+// FUNCTION: 0x004CA670
+int FactoryClass::Total(const TechnoTypeClass *type)
+{
+	int total = 0;
+	if (Object != NULL) {
+		if (Object->TClass == type) {
+			total++;
+		}
+	}
+
+	for (int i = 0; i < QueuedObjects.Count(); i++) {
+		if (QueuedObjects[i] == type) {
+			total++;
+		}
+	}
+	return(total);
 }

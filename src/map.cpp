@@ -6267,3 +6267,41 @@ template class DynamicVectorClass<HashObject<unsigned int, SubzoneConnectionStru
 // FUNCTION: 0x005899E0 ?$VectorClass@USubzoneTrackingStruct@@::ID
 
 // FUNCTION: 0x00589A30 ?$VectorClass@USubzoneTrackingStruct@@::ID
+
+// FUNCTION: 0x00589A60 ?$DynamicVectorClass@USubzoneTrackingStruct@@::Resize
+
+// FUNCTION: 0x00589BD0 SubzoneTrackingStruct::SubzoneTrackingStruct
+
+// FUNCTION: 0x00589C10 ?$DynamicVectorClass@USubzoneTrackingStruct@@::ID
+
+// FUNCTION: 0x00589C50 ?$DynamicVectorClass@W4PassabilityType@@::Add
+
+// FUNCTION: 0x00589CA0 ?$VectorClass@W4PassabilityType@@::operator==
+
+// FUNCTION: 0x00589CE0 ?$VectorClass@W4PassabilityType@@::Resize
+
+// FUNCTION: 0x00589D90 ?$VectorClass@W4PassabilityType@@::Clear
+
+// FUNCTION: 0x00589DC0 ?$VectorClass@W4PassabilityType@@::ID
+
+// FUNCTION: 0x00589E00 ?$VectorClass@W4PassabilityType@@::ID
+
+// FUNCTION: 0x00589E20 ?$HashTableClass@IUSubzoneConnectionStruct@@::Add_Object
+bool HashTableClass<unsigned int, SubzoneConnectionStruct>::Add_Object(int bucket_index, ObjectType const & object)
+{
+	BucketType & bucket = Buckets[bucket_index];
+
+	ObjectType * obj = &bucket[0];
+	for (int index = bucket.Count() - 1; index >= 0; index--) {
+		if ((unsigned int &)object == (unsigned int &)*obj) {
+			return(false);
+		}
+		obj++;
+	}
+	bucket.Add(object);
+	return(true);
+}
+
+// FUNCTION: 0x00589EB0 ?$VectorClass@PAVCellClass@@::operator==
+
+// FUNCTION: 0x00589EF0 ?$VectorClass@PAVCellClass@@::Resize

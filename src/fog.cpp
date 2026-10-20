@@ -36,6 +36,21 @@
 #include "tactical.h"
 #include "terrain.h"
 #include "vector.h"
+#include <math.h>
+
+extern double __cdecl FUN_004CAC40(double);
+extern double __cdecl FUN_004CAD50(double);
+extern double __cdecl FUN_004CADE0(double);
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007E1720;
+extern const double DAT_007E1728;
+extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
+extern const double DAT_007E8BE0;
+extern const double DAT_007E8BE8;
 
 // FUNCTION: 0x004D0560 $E2
 // FUNCTION: 0x004D0590 $E5
@@ -415,3 +430,39 @@ template class DynamicVectorClass<FoggedObjectClass::DrawRecord>;
 // FUNCTION: 0x004D2D60 ?$DynamicVectorClass@UDrawRecord@FoggedObjectClass@@::~?$DynamicVectorClass@UDrawRecord@FoggedObjectClass@@
 // FUNCTION: 0x004D2DB0 ?$VectorClass@UDrawRecord@FoggedObjectClass@@::?$VectorClass@UDrawRecord@FoggedObjectClass@@
 // FUNCTION: 0x004D2E40 ?$IndexClass@HPAVFoggedObjectClass@@::Increase_Table_Size
+template class IndexClass<int, FoggedObjectClass *>;
+
+// FUNCTION: 0x004D2ED0 ?$IndexClass@HPAVFoggedObjectClass@@::search_compfunc
+
+// FUNCTION: 0x004D2F00 Binary_Search
+template IndexClass<int, FoggedObjectClass *>::NodeElement * Binary_Search(IndexClass<int, FoggedObjectClass *>::NodeElement *, int, IndexClass<int, FoggedObjectClass *>::NodeElement const &);
+
+// FUNCTION: 0x004D2F50 $E143
+double DAT_008B3D90 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x004D2F80 $E146
+double DAT_008B3DF8 = DAT_008B3D90 / DAT_007E8BE0;
+
+// FUNCTION: 0x004D2FA0 $E149
+double DAT_008B3DE0 = DAT_007E1718 / DAT_008B3DF8;
+
+// FUNCTION: 0x004D2FC0 $E152
+double DAT_008B3DD8 = DAT_007E1720 * DAT_007E8BE8;
+
+// FUNCTION: 0x004D2FE0 $E155
+double DAT_008B3D98 = DAT_007E1728 * DAT_007E8BE8;
+
+// FUNCTION: 0x004D3000 $E158
+double DAT_008B3D70 = DAT_007E1730 * DAT_007E8BE8;
+
+// FUNCTION: 0x004D3020 $E161
+int DAT_008B3E00 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_008B3D70 - DAT_008B3D98) * DAT_008B3D90));
+
+// FUNCTION: 0x004D3060 $E164
+double DAT_008B3DA0 = FUN_004CADE0(DAT_008B3E00 * DAT_007E1740);
+
+// FUNCTION: 0x004D3090 $E167
+double DAT_008B3DB8 = FUN_004CADE0((DAT_008B3E00 * 2) / DAT_008B3D90);
+
+// FUNCTION: 0x004D30C0 $E170
+int DAT_008B3DF4 = (int)(DAT_008B3E00 * 4 + DAT_007E1738);

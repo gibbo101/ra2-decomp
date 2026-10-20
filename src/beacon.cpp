@@ -349,12 +349,12 @@ void BeaconManagerClass::ClearSelection(void)
 }
 
 // FUNCTION: 0x00431090
-BeaconClass * BeaconManagerClass::FindBeaconAt(int x, int y, int z)
+BeaconClass * BeaconManagerClass::FindBeaconAt(Coord coord)
 {
 	if (AllocatedCount) {
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 3; j++) {
-				if (Beacons[i][j] && Coord_Dist3(Coord(x, y, z), Beacons[i][j]->BeaconCoord) < 128) {
+				if (Beacons[i][j] && Coord_Dist3(coord, Beacons[i][j]->BeaconCoord) < 128) {
 					return Beacons[i][j];
 				}
 			}
