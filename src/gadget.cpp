@@ -9,6 +9,29 @@
 #include "globals.h"
 #include "keyboard.h"
 #include "scheme.h"
+#include "xmouse.h"
+#include "rect.h"
+
+class InputManagerClass
+{
+	public:
+		static InputManagerClass * Instance;
+		int MouseQX;
+		int MouseQY;
+		short Check(void);
+		short Get(void);
+		bool IsKeyPressed(int key);
+};
+
+extern int DAT_007F5BE8;
+extern int DAT_007F5BF4;
+extern int DAT_00A8EC08;
+extern int DAT_00A8EC0C;
+extern int DAT_00A8EC00;
+extern int DAT_00A8EC04;
+extern int DAT_00A8EBF8;
+extern int DAT_00A8EBFC;
+extern GadgetClass * DAT_008B3E94;
 
 // FUNCTION: 0x004E12D0
 int GadgetClass::Get_Color_Scheme(void)
@@ -64,6 +87,20 @@ GadgetClass::~GadgetClass(void)
 	}
 }
 
+// FUNCTION: 0x004E13F0
+int GadgetClass::Clicked_On(KeyNumType & key, unsigned flags, int mousex, int mousey, int modifier)
+{
+	flags &= Flags;
+
+	if (this == StuckOn ||
+		(flags & KEYBOARD) ||
+		(flags && (unsigned)(mousex - X) < (unsigned)Width  && (unsigned)(mousey - Y) < (unsigned)Height)) {
+
+		return(Action(flags, key, modifier));
+	}
+	return(false);
+}
+
 // FUNCTION: 0x004E1450
 void GadgetClass::Enable(void)
 {
@@ -80,11 +117,29 @@ void GadgetClass::Disable(void)
 	Clear_Focus();
 }
 
+// FUNCTION: 0x004E1470
+bool GadgetClass::Is_Enabled(void) const
+{
+	return(!IsDisabled);
+}
+
 // FUNCTION: 0x004E1480
 LinkClass * GadgetClass::Remove(void)
 {
 	Clear_Focus();
 	return(BASECLASS::Remove());
+}
+
+// FUNCTION: 0x004E14A0
+LinkClass * GadgetClass::Get_Next(void) const
+{
+	return(BASECLASS::Get_Next());
+}
+
+// FUNCTION: 0x004E14B0
+LinkClass * GadgetClass::Get_Prev(void) const
+{
+	return(BASECLASS::Get_Prev());
 }
 
 // FUNCTION: 0x004E14C0
@@ -103,6 +158,27 @@ void GadgetClass::Delete_List(void)
 		g = (GadgetClass *)g->Get_Next();
 		delete temp;
 	}
+}
+
+// FUNCTION: 0x004E1510
+void GadgetClass::OnMouseEnter(void)
+{
+}
+
+// FUNCTION: 0x004E1520
+void GadgetClass::OnMouseLeave(void)
+{
+}
+
+// FUNCTION: 0x004E1530
+int GadgetClass::Action(unsigned flags, KeyNumType &, int)
+{
+	if (flags) {
+		IsToRepaint = true;
+		Sticky_Process(flags);
+		return(true);
+	}
+	return(false);
 }
 
 // FUNCTION: 0x004E1550
@@ -126,6 +202,127 @@ void GadgetClass::Draw_All(bool forced)
 	}
 }
 
+static inline bool Key_Down(int key)
+{
+	return InputManagerClass::Instance->IsKeyPressed(key);
+}
+
+// FUNCTION: 0x004E1640
+KeyNumType GadgetClass::Input(void)
+{
+	int mousex, mousey;
+	KeyNumType key;
+	unsigned flags;
+	int modifier;
+	int forced = false;
+
+	if (LastList != this) {
+		LastList = this;
+		forced = true;
+		StuckOn = NULL;
+		Focused = NULL;
+	}
+
+	key = (KeyNumType)(unsigned short)InputManagerClass::Instance->Check();
+	if (key != 0) {
+		key = (KeyNumType)(unsigned short)InputManagerClass::Instance->Get();
+	}
+
+	if (((key&0xFF) == KN_LMOUSE) || ((key&0xFF) == KN_RMOUSE)) {
+		mousex = InputManagerClass::Instance->MouseQX;
+		mousey = InputManagerClass::Instance->MouseQY;
+	} else {
+		mousex = MouseCursor->Get_Mouse_X();
+		mousey = MouseCursor->Get_Mouse_Y();
+	}
+
+	GadgetClass * over = Extract_Gadget_At(mousex, mousey);
+	if (over != DAT_008B3E94) {
+		if (DAT_008B3E94) {
+			DAT_008B3E94->OnMouseLeave();
+		}
+		DAT_008B3E94 = over;
+		if (over) {
+			over->OnMouseEnter();
+		}
+	}
+
+	flags = 0;
+	if (key) {
+		if (key == KN_LMOUSE) {
+			flags |= LEFTPRESS;
+		} else if (key == KN_RMOUSE) {
+			flags |= RIGHTPRESS;
+		} else if (key == (KN_LMOUSE | KN_RLSE_BIT)) {
+			flags |= LEFTRELEASE;
+		} else if (key == (KN_RMOUSE | KN_RLSE_BIT)) {
+			flags |= RIGHTRELEASE;
+		}
+	}
+
+	modifier = 0;
+	if (Key_Down(DAT_00A8EC08) || Key_Down(DAT_00A8EC0C)) {
+		modifier |= 1;
+	}
+	if (Key_Down(DAT_00A8EC00) || Key_Down(DAT_00A8EC04)) {
+		modifier |= 2;
+	}
+	if (Key_Down(DAT_00A8EBF8) || Key_Down(DAT_00A8EBFC)) {
+		modifier |= 4;
+	}
+
+	if (key) {
+		if (!flags) {
+			flags |= KEYBOARD;
+		}
+	} else {
+		if (Key_Down(KN_LMOUSE)) {
+			flags |= LEFTHELD;
+		} else {
+			flags |= LEFTUP;
+		}
+		if (Key_Down(KN_RMOUSE)) {
+			flags |= RIGHTHELD;
+		} else {
+			flags |= RIGHTUP;
+		}
+	}
+
+	if (StuckOn) {
+		StuckOn->Draw_Me(false);
+		GadgetClass * oldstuck = StuckOn;
+		StuckOn->Clicked_On(key, flags, mousex, mousey, 0);
+		if (StuckOn) {
+			StuckOn->Draw_Me(false);
+		} else {
+			oldstuck->Draw_Me(false);
+		}
+	} else {
+		if (Focused && (flags & KEYBOARD)) {
+			Focused->Draw_Me(false);
+			Focused->Clicked_On(key, flags, mousex, mousey, 0);
+			if (Focused) {
+				Focused->Draw_Me(false);
+			}
+		} else {
+			GadgetClass * next_button = this;
+			while (next_button != NULL) {
+				next_button->Draw_Me(forced);
+
+				if (!next_button->IsDisabled) {
+					if (next_button->Clicked_On(key, flags, mousex, mousey, modifier)) {
+						next_button->Draw_Me(false);
+						break;
+					}
+				}
+
+				next_button = (GadgetClass *)next_button->Get_Next();
+			}
+		}
+	}
+	return(key);
+}
+
 // FUNCTION: 0x004E1920
 ControlClass * GadgetClass::Extract_Gadget(unsigned id)
 {
@@ -140,6 +337,12 @@ ControlClass * GadgetClass::Extract_Gadget(unsigned id)
 		}
 	}
 	return(0);
+}
+
+// FUNCTION: 0x004E1960
+void GadgetClass::Flag_To_Redraw(void)
+{
+	IsToRepaint = true;
 }
 
 // FUNCTION: 0x004E1970
@@ -206,3 +409,7 @@ void GadgetClass::Set_Size(int w, int h)
 	Width = w;
 	Height = h;
 }
+
+// FUNCTION: 0x004E1A60 GadgetClass::~GadgetClass
+
+// FUNCTION: 0x004E1AD0 LinkClass::~LinkClass

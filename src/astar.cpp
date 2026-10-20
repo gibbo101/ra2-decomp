@@ -90,7 +90,203 @@ ShortPair DAT_0089C278;
 // FUNCTION: 0x00429740 $E111
 IntTriple DAT_0089C298;
 
+static unsigned int CellHeights[2000];
+
 unsigned int MapCellStride;
+
+struct PlayfieldDefaults {
+	int A, B, C;
+	PlayfieldDefaults() { C = 0; A = 128; B = 128; }
+};
+
+// FUNCTION: 0x00429760 $E114
+PlayfieldDefaults DAT_0089C2C0;
+
+inline Cell Next_Cell(Cell const & cell, FacingType facing)
+{
+	if (facing == TUNNEL) {
+		TubeType tube = (TubeType)Map[cell].Tube;
+		if (tube != TUBE_NONE) {
+			return(Cell(Tubes[tube]->Exit));
+		}
+		return(Cell(0,0));
+	}
+	return(cell + (AdjacentCell[facing]));
+}
+
+// FUNCTION: 0x00429780
+Cell Follow_Path(Cell const & cell, int count, FacingType const * path)
+{
+	Cell result = cell;
+	for (int i = 0; ; i++) {
+		if (i >= count) {
+			return(result);
+		}
+		result = Next_Cell(result, path[i]);
+	}
+}
+
+
+// FUNCTION: 0x00429830
+double AStarClass::Get_Movement_Cost(CellClass **from, CellClass **to, bool bridge, MoveType move, FootClass * foot)
+{
+	static float _costs[MOVE_COUNT] = {
+		1.0,
+		1000.0,
+		1.0,
+		1.0,
+		60.0,
+		20.0,
+		8.0,
+		10000.0
+	};
+
+	CellClass ** from_cells = from;
+	CellClass ** to_cells = to;
+	CellClass * from_cell = from_cells[0];
+	CellClass * to_cell = to_cells[0];
+
+	float cost = _costs[move];
+
+	FootClass *next_occupier;
+	FootClass * occupier;
+	CellClass * cellptr = to_cell;
+
+	bool on_bridge = bridge;
+
+	if (move == MOVE_MOVING_BLOCK) {
+		ObjectClass * object = cellptr->Cell_Occupier(on_bridge);
+		occupier = (FootClass *)object;
+		int depth = 0;
+		bool clear = false;
+		if (Avoidance == AVOIDANCE_NONE) {
+			for (; depth < 10; depth++) {
+				if (occupier == NULL) {
+					clear = true;
+					break;
+				}
+
+				if (!occupier->Is_Foot()) {
+					clear = false;
+					break;
+				}
+
+				FacingType facing;
+
+				if (occupier->Speed == 0.0) {
+					facing = occupier->Path[0];
+					if (facing == FACING_NONE) {
+						clear = true;
+						break;
+					}
+				} else {
+					facing = occupier->PrimaryFacing.Current().As_Dir8();
+				}
+
+				cellptr = &Map[::Adjacent_Cell(occupier->Get_Cell(), facing)];
+				on_bridge = cellptr->IsUnderBridge && (occupier->IsOnBridge || occupier->Get_Cell_Ptr()->Height - cellptr->Height > 2);
+				next_occupier = (FootClass *)cellptr->Cell_Occupier(on_bridge);
+				occupier = (FootClass *)next_occupier;
+			}
+		}
+
+		if (!clear || Avoidance != AVOIDANCE_NONE) {
+			cost = 4.0f;
+		}
+		if (Avoidance == AVOIDANCE_HARD) {
+			cost = 1000.0f;
+		}
+	}
+
+	if (to_cell->IsPredictedPath) {
+		cost = cost * 4.0f;
+	}
+
+	if (bridge && IsAvoidBridges) {
+
+		static const int _bridge_cell_offset1[FACING_COUNT] =  { -2,    -2,     0,     1, 1,   1,   0,  -2 };
+		static const int _bridge_cell_offset2[FACING_COUNT] =  {  0, -2 * MAP_CELL_W, -2 * MAP_CELL_W, -2 * MAP_CELL_W, 0, MAP_CELL_W, MAP_CELL_W, MAP_CELL_W };
+
+		static const FacingType _bridge_facings[3][3] = {
+			{ FACING_NW, FACING_N, FACING_NE },
+			{ FACING_W, FACING_NONE, FACING_E },
+			{ FACING_SW, FACING_S, FACING_SE }
+		};
+
+		float multiplier = 1.0f;
+
+		Cell step(to_cell->CellID - from_cell->CellID);
+
+		unsigned int dir = _bridge_facings[step.Y + 1][step.X + 1];
+
+		CellClass *cell1;
+		CellClass *cell2;
+		int cell2_offset;
+
+		if (to_cell->IsBridgeEastWest) {
+			cell2_offset = _bridge_cell_offset2[(dir - FACING_S) % FACING_COUNT];
+			cell1 = to[_bridge_cell_offset2[dir]];
+			cell2 = to[cell2_offset];
+		} else {
+			cell2_offset = _bridge_cell_offset1[(dir - FACING_S) % FACING_COUNT];
+			cell1 = to[_bridge_cell_offset1[dir]];
+			cell2 = to[cell2_offset];
+		}
+
+		if (!cell1->IsUnderBridge) {
+			multiplier = 10.0f;
+		} else if (cell2->IsUnderBridge) {
+			multiplier = 2.0f;
+		}
+
+		float result = cost * multiplier;
+		return(result);
+
+	}
+	return(cost);
+}
+
+// FUNCTION: 0x0042A460
+AStarClass::RegularOpenNode * AStarClass::Create_Node(RegularOpenNode * parent, CellClass ** cell, Cell const & to, float movement_cost)
+{
+	RegularOpenNode * open_node = &RegularOpenNodes->Nodes[RegularOpenNodes->ActiveCount++];
+	RegularNode * node_data = &RegularNodes->Nodes[RegularNodes->ActiveCount++];
+	node_data->CellSlot = cell;
+
+	if (parent != NULL) {
+		node_data->Parent = parent->Node;
+		CellClass * current_cell = *node_data->CellSlot;
+		CellClass * parent_cell = *parent->Node->CellSlot;
+		node_data->CellHeight = current_cell->Height;
+		RegularNode * parent_node_data = parent->Node;
+		if (current_cell->IsUnderBridge) {
+			if (parent_cell->IsUnderBridge && (parent_node_data->CellHeight == parent_cell->Height + BRIDGE_CELL_HEIGHT)) {
+				node_data->CellHeight += BRIDGE_CELL_HEIGHT;
+			} else if (!parent_cell->IsUnderBridge && abs((current_cell->Height - parent->Node->CellHeight) + BRIDGE_CELL_HEIGHT - 1) <= 1) {
+				node_data->CellHeight += BRIDGE_CELL_HEIGHT;
+			}
+		}
+	} else {
+		node_data->Parent = NULL;
+		node_data->CellHeight = CurrentCellHeight;
+	}
+
+	open_node->Node = node_data;
+	if (parent != NULL) {
+		open_node->MovementCost = movement_cost + parent->MovementCost;
+		open_node->PathLength = parent->PathLength + 1;
+	} else {
+		open_node->MovementCost = 0.0;
+		open_node->PathLength = 1;
+	}
+
+	Cell & cell_id = (*cell)->CellID;
+	int dx = abs(cell_id.X - to.X);
+	int dy = abs(cell_id.Y - to.Y);
+
+	open_node->Score = open_node->MovementCost + fastmath::sqrt(dx * dx + dy * dy);
+	return(open_node);
+}
 
 // FUNCTION: 0x0042A5B0
 void AStarClass::Clear(void)
@@ -255,6 +451,43 @@ FacingType Facing_Between(Cell const & cell1, Cell const & cell2)
 	return(FACING_COUNT);
 }
 
+// FUNCTION: 0x0042AA90
+PathStruct * AStarClass::Build_Final_Path(RegularOpenNode *final_node, FacingType *moves)
+{
+	static PathStruct path;
+
+	path.Cost			= int(final_node->Score);
+	path.Length 		= final_node->PathLength;
+	path.Overlap		= 0;
+	path.LastOverlap.X	= 0;
+	path.LastOverlap.Y	= 0;
+	path.Command 		= moves;
+	path.Height			= CellHeights;
+
+	RegularNode * current = final_node->Node;
+	RegularNode * parent = current->Parent;
+
+	for (int i = (final_node->PathLength - 2); i >= 0; i--) {
+		if (parent != NULL) {
+			CellHeights[i] = parent->CellHeight;
+			moves[i] = Facing_Between((*current->CellSlot)->CellID, (*parent->CellSlot)->CellID);
+		}
+		current = current->Parent;
+		parent = parent->Parent;
+	}
+
+	moves[final_node->PathLength - 1] = FACING_NONE;
+
+	path.Start = (*current->CellSlot)->CellID;
+
+	if (path.Cost == 0) {
+		path.Cost = 1;
+	}
+	return(&path);
+}
+
+// FUNCTION: 0x0042ABF0 $E117
+
 // FUNCTION: 0x0042AC00
 void AStarClass::Update_Map_Dimensions(Rect const & dimensions)
 {
@@ -292,6 +525,28 @@ void AStarClass::Update_Map_Dimensions(Rect const & dimensions)
 	AStarFacingToOffset[FACING_NW]	= -1 - MapCellStride;
 }
 
+// FUNCTION: 0x0042B080
+FootClass * AStarClass::Find_Moving_Blocker(Cell const & cell, int cell_height)
+{
+	Coord coord = Coord(cell, 0);
+	coord.Z = cell_height * LEVEL_LEPTON_H;
+	for (int y = -2; y < 3; y++) {
+		for (int x = -2; x < 3; x++) {
+			CellClass & neighbor = Map[Cell(x,y) + cell];
+			FootClass * occupier = (FootClass *)neighbor.Cell_Occupier(neighbor.IsUnderBridge && abs(neighbor.Height - cell_height) > 2);
+			while (occupier != NULL) {
+				if (occupier->Is_Foot()) {
+					if (occupier->Locomotion->Is_Moving_Here(coord)) {
+						return(occupier);
+					}
+				}
+				occupier = (FootClass *)occupier->Next;
+			}
+		}
+	}
+	return(NULL);
+}
+
 // FUNCTION: 0x0042B1C0
 int Map_Cell_Index(Cell const & cell)
 {
@@ -302,6 +557,155 @@ int Map_Cell_Index(Cell const & cell)
 int Map_Cell_Count(void)
 {
 	return((2 * Map.PlayRect.Width) * (Map.PlayRect.Height + 4));
+}
+
+// FUNCTION: 0x0042B210
+void AStarClass::Cut_Corners(PathStruct * path, FootClass * foot)
+{
+	int max_len = path->Length;
+
+	max_len--;
+
+	FacingType leg2_dir = FACING_NONE;
+
+	unsigned int * heights = path->Height;
+	FacingType * moves = path->Command;
+	Cell source = path->Start;
+
+	int leg1_start = 0;
+	int leg2_start = 0;
+
+	bool found_corner = false;
+
+	int leg1_len = 0;
+	int leg2_len = 0;
+
+	Cell start_cell = source;
+	Cell cursor_cell = source;
+
+	FacingType leg1_dir = FACING_NONE;
+
+	while (leg1_start + leg1_len < max_len && leg2_start + leg2_len < max_len) {
+
+		if (!found_corner) {
+			FacingType move_dir = moves[leg1_start + leg1_len];
+			FacingType turn = Facing_Sub(move_dir, leg1_dir);
+
+			if (move_dir == leg1_dir) {
+				leg1_len++;
+
+			} else if ((turn == FACING_90 || turn == FACING_270) && leg1_dir != FACING_NONE && leg1_dir != TUNNEL && move_dir != TUNNEL) {
+				found_corner = true;
+				leg2_dir = move_dir;
+				leg2_len = 1;
+				leg2_start = leg1_start + leg1_len;
+
+			} else {
+				leg1_start += leg1_len;
+				leg1_len = 1;
+
+				leg1_dir = (move_dir & 1) ? move_dir : FACING_NONE;
+				start_cell = cursor_cell;
+			}
+
+			cursor_cell = Next_Cell(cursor_cell, move_dir);
+
+		} else if (moves[leg2_len + leg2_start] == leg2_dir) {
+			leg2_len++;
+
+		} else {
+			leg1_start += Try_Diagonal_Shortcut(foot, &moves[leg1_start], &heights[leg1_start], leg1_len, leg2_len, start_cell);
+			leg1_len = 1;
+			found_corner = false;
+
+			cursor_cell = start_cell + AdjacentCell[(int)moves[leg1_start] & 0x07];
+			leg1_dir = moves[leg1_start];
+		}
+	}
+
+	if (found_corner) {
+		Try_Diagonal_Shortcut(foot, &moves[leg1_start], &heights[leg1_start], leg1_len, leg2_len, start_cell);
+	}
+}
+
+static Cell Follow_Path2(Cell const & cell, int count, FacingType const * path)
+{
+	return(Follow_Path(cell, count, path));
+}
+
+// FUNCTION: 0x0042B420
+int AStarClass::Try_Diagonal_Shortcut(FootClass * foot, FacingType * moves, unsigned int * heights, int initial_first_leg_length, int initial_second_leg_length, Cell & cell)
+{
+	int first_leg_length = initial_first_leg_length;
+	int second_leg_length = initial_second_leg_length;
+	bool is_blocked;
+	FacingType second_leg_direction = moves[first_leg_length];
+	FacingType first_leg_direction = moves[0];
+	FacingType diagonal_direction = FacingType((first_leg_direction + second_leg_direction) >> 1);
+
+	if (diagonal_direction + FACING_45 != second_leg_direction
+	&& diagonal_direction + FACING_45 != first_leg_direction) {
+		diagonal_direction = FACING_N;
+	}
+
+	if (first_leg_direction == TUNNEL || second_leg_direction == TUNNEL) {
+		int total_length = first_leg_length + second_leg_length;
+		cell = Follow_Path2(cell, total_length, moves);
+		return(total_length);
+	}
+
+	Cell diagonal_start_cell = cell;
+
+	int max_diagonal_length = second_leg_length;
+	second_leg_length = first_leg_length < max_diagonal_length ? first_leg_length : max_diagonal_length;
+	if (second_leg_length < first_leg_length) {
+		diagonal_start_cell = Follow_Path(diagonal_start_cell, first_leg_length - second_leg_length, moves);
+	}
+
+	double threat_avoidance = foot->Threat_Avoidance_Value();
+	HouseClass * house = foot->House;
+
+	while (second_leg_length > 0) {
+		int moves_remaining = second_leg_length * 2;
+		is_blocked = false;
+		Cell scan_cell = Adjacent_Cell(diagonal_start_cell, diagonal_direction);
+		int leg_total = first_leg_length + second_leg_length;
+		int scan_height = heights[leg_total - moves_remaining];
+		CellClass * scan_cell_ptr = &Map[scan_cell];
+
+		while (!is_blocked && moves_remaining > 0) {
+			is_blocked = foot->Can_Enter_Cell(scan_cell_ptr, diagonal_direction, scan_height) != MOVE_OK
+			|| scan_cell_ptr->IsPredictedPath
+			|| Map.Cell_Threat(diagonal_start_cell, *house) * threat_avoidance >= 1.0;
+
+			moves_remaining--;
+
+			scan_cell = Adjacent_Cell(scan_cell, diagonal_direction);
+			scan_cell_ptr = &Map[scan_cell];
+
+			scan_height = (scan_height - scan_cell_ptr->Height == BRIDGE_CELL_HEIGHT && scan_cell_ptr->IsUnderBridge)
+			? scan_cell_ptr->Height + BRIDGE_CELL_HEIGHT
+			: scan_cell_ptr->Height;
+
+		}
+
+		if (!is_blocked) {
+			FacingType * diagonal_moves = &moves[first_leg_length - second_leg_length];
+			int diagonal_count = 2 * second_leg_length;
+			for (int move_index = 0; move_index < diagonal_count; move_index++) {
+				diagonal_moves[move_index] = diagonal_direction;
+			}
+
+			cell = Follow_Path(cell, first_leg_length - second_leg_length, moves);
+			return(first_leg_length - second_leg_length);
+		}
+
+		diagonal_start_cell = Adjacent_Cell(diagonal_start_cell, first_leg_direction);
+		second_leg_length--;
+	}
+
+	cell = Follow_Path2(cell, first_leg_length, moves);
+	return(first_leg_length);
 }
 
 // FUNCTION: 0x0042BCA0

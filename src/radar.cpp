@@ -202,7 +202,6 @@ extern int DAT_00B04A1C;
 extern int DAT_00B04A38;
 
 namespace Game { extern int SpecialDialog; }
-extern bool DAT_00A8EB7C;
 extern int DAT_00886FA8;
 extern int DAT_00B45B68;
 bool __fastcall FUN_0053BAE0(void);
@@ -427,7 +426,7 @@ void RadarClass::AI(KeyNumType & input, Point2D const & xy)
 {
 	BASECLASS::AI(input, xy);
 
-	int offset = DAT_00A8EB7C ? DAT_00886FA8 : 0;
+	int offset = Options.IsSidebarOnRight ? DAT_00886FA8 : 0;
 
 	Rect r1 = DAT_00B04A00;
 	r1.X += offset;
@@ -555,7 +554,7 @@ void RadarClass::Reposition_Sidebar(void)
 {
 	BASECLASS::Reposition_Sidebar();
 
-	int offset = DAT_00A8EB7C ? DAT_00886FA8 : 0;
+	int offset = Options.IsSidebarOnRight ? DAT_00886FA8 : 0;
 
 	RadarStatics::DAT_00B04978.DrawOffset.X = -offset;
 	RadarStatics::DAT_00B04978.Set_Position(DAT_00B04A00.X + offset, DAT_00B04A00.Y);

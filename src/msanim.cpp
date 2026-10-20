@@ -89,7 +89,7 @@ MSShapeAnim::MSShapeAnim(Wstring const & name, int x, int y, ConvertClass * draw
 MSShapeAnim::~MSShapeAnim(void)
 {
 	if (Shape != NULL && AllocLoaded) {
-		delete Shape;
+		delete (ShapeSet *)Shape;
 		Shape = NULL;
 		AllocLoaded = false;
 	}

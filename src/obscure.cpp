@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
 #include "crc.h"
 #include <cctype>
 #include <cstring>
@@ -107,3 +108,16 @@ int Obfuscate(char const * string)
 
 	return(code);
 }
+
+// FUNCTION: 0x005FA0D0 $E2
+// FUNCTION: 0x005FA100 $E5
+// FUNCTION: 0x005FA120 $E8
+// FUNCTION: 0x005FA140 $E11
+// FUNCTION: 0x005FA160 $E14
+// FUNCTION: 0x005FA180 $E17
+// FUNCTION: 0x005FA1A0 $E20
+// FUNCTION: 0x005FA1E0 $E23
+// FUNCTION: 0x005FA210 $E26
+// FUNCTION: 0x005FA240 $E29
+// FUNCTION: 0x005FA270 $E32
+// FUNCTION: 0x005FA280 $E35

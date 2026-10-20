@@ -275,6 +275,38 @@ void TunnelLocomotionClass::ProcessDugIn(void)
 	}
 }
 
+// FUNCTION: 0x007298F0
+void TunnelLocomotionClass::ProcessPreDigOut(void)
+{
+	Coord coord = LinkedTo->PositionCoord;
+
+	int mheight = Map.Get_Height_GL(coord);
+
+	if (coord.Z < mheight) {
+		int height = LinkedTo->HeightAGL;
+
+		int speed = int(LinkedTo->Current_Speed() * Rule->TunnelSpeed);
+		if (speed <= 5) {
+			speed = 5;
+		}
+		coord.Z += speed;
+		if (coord.Z > mheight) {
+			coord.Z = mheight;
+		}
+		LinkedTo->PositionCoord = coord;
+
+		if (height <= -50 && LinkedTo->HeightAGL > -50) {
+			VocClass::PlayAt(Rule->DigSound, LinkedTo->PositionCoord, NULL);
+			new AnimClass(Rule->Dig, LinkedTo->PositionCoord);
+		}
+	} else {
+		LinkedTo->Look();
+		DigTimer = int(64.0 / LinkedTo->TClass->ROT);
+		LinkedTo->Set_Speed(0);
+		State = STATE_DIGGING_OUT;
+	}
+}
+
 // FUNCTION: 0x00729AA0
 void TunnelLocomotionClass::ProcessDiggingOut(void)
 {
@@ -288,6 +320,136 @@ void TunnelLocomotionClass::ProcessDiggingOut(void)
 	}
 }
 
+// FUNCTION: 0x00729B40
+Matrix3DStruct STDMETHODCALLTYPE TunnelLocomotionClass::Draw_Matrix(int * key)
+{
+	if (State == STATE_IDLE) {
+		int ramp = Map[(Coord const &)(LinkedTo->PositionCoord)].Ramp;
+		Matrix3D mtx;
+		if (key != NULL && *key != -1) {
+			*key = ramp + (*key << 6);
+		}
+		mtx.Make_Identity();
+		if (ramp != 0) {
+			mtx = Get_Slope_Matrix(ramp) * BASECLASS::Draw_Matrix(key);
+		} else {
+			mtx = BASECLASS::Draw_Matrix(key);
+		}
+		return((Matrix3DStruct &)mtx);
+	}
+	double theta;
+
+	switch (State) {
+
+		case STATE_DUG_IN:
+			theta = DEG_TO_RAD(90);
+			break;
+
+		case STATE_PRE_DIG_OUT:
+			theta = DEG_TO_RAD(-90);
+			break;
+
+		case STATE_DIGGING_IN:
+			if (key != NULL) {
+				*key = -1;
+			}
+			theta = DigTimer.Progress() * DEG_TO_RAD(90);
+			break;
+
+		case STATE_DIGGING_OUT:
+			if (key != NULL) {
+				*key = -1;
+			}
+			theta = (1.0 - DigTimer.Progress()) * -DEG_TO_RAD(90);
+			break;
+
+		case STATE_DUG_OUT:
+			if (key != NULL) {
+				*key = -1;
+			}
+			theta = (1.0 - DigTimer.Progress()) * DEG_TO_RAD(90);
+			break;
+
+		default:
+			theta = 0.0;
+			break;
+	}
+	Matrix3D mtx = BASECLASS::Draw_Matrix(key);
+	if (key != NULL && *key != -1) {
+		*key = *key << 8;
+		*key |= (int(theta * 32.0) & 64-1);
+	}
+	mtx.Rotate_Y(theta);
+	return((Matrix3DStruct &)mtx);
+}
+
+// FUNCTION: 0x00729E50
+int STDMETHODCALLTYPE TunnelLocomotionClass::Z_Adjust(void)
+{
+	static int tunnel_Z_Adjust[] = {45, 45};
+
+	Coord coord = LinkedTo->PositionCoord;
+	Point2D point1;
+	TacticalMap->Coord_To_Pixel(coord, point1);
+
+	coord.Z = Map.Get_Height_GL(coord);
+
+	Point2D point2;
+	TacticalMap->Coord_To_Pixel(coord, point2);
+
+	int zadjust = point1.Y - point2.Y;
+
+	double progress = DigTimer.Progress();
+
+	Dir256 face = LinkedTo->PrimaryFacing.Current().As_Dir256();
+
+	switch (State) {
+
+		case STATE_DIGGING:
+			return(tunnel_Z_Adjust[1] + zadjust);
+
+		case STATE_DIGGING_OUT:
+			return(tunnel_Z_Adjust[0] * (1.0 - progress) + zadjust);
+
+		case STATE_DIGGING_IN:
+			if (progress > 0.4 && !IsUnderground) {
+				IsUnderground = true;
+			}
+			if (face > Dir256(70) && face < Dir256(140)) {
+				zadjust = tunnel_Z_Adjust[1] + zadjust;
+			} else {
+				zadjust = tunnel_Z_Adjust[1] * progress + zadjust;
+			}
+			return(zadjust);
+
+		case STATE_DUG_IN:
+			return(tunnel_Z_Adjust[1] + zadjust);
+
+		case STATE_PRE_DIG_OUT:
+			return(tunnel_Z_Adjust[0] + zadjust);
+	}
+
+	return(BASECLASS::Z_Adjust());
+}
+
+// FUNCTION: 0x0072A020
+ZGradientType STDMETHODCALLTYPE TunnelLocomotionClass::Z_Gradient(void)
+{
+	if (State == STATE_DUG_IN || State == STATE_DIGGING_IN || State == STATE_DUG_OUT || State == STATE_DIGGING_OUT || State == STATE_PRE_DIG_OUT) {
+		return(ZGRAD_90DEG);
+	}
+	return(BASECLASS::Z_Gradient());
+}
+
+// FUNCTION: 0x0072A060
+boolean STDMETHODCALLTYPE TunnelLocomotionClass::Is_To_Have_Shadow(void)
+{
+	if (State == STATE_IDLE || State == STATE_PRE_DIG_IN || State == STATE_DUG_OUT || State == STATE_DIGGING_IN || State == STATE_DIGGING_OUT) {
+		return(true);
+	}
+	return(false);
+}
+
 // FUNCTION: 0x0072A090
 MoveType STDMETHODCALLTYPE TunnelLocomotionClass::Can_Enter_Cell(CellStruct cell)
 {
@@ -297,6 +459,13 @@ MoveType STDMETHODCALLTYPE TunnelLocomotionClass::Can_Enter_Cell(CellStruct cell
 	return(MOVE_OK);
 }
 
+// FUNCTION: 0x0072A0E0
+void STDMETHODCALLTYPE TunnelLocomotionClass::Do_Turn(DirStruct coord)
+{
+	DirType dir = (DirType &)coord;
+	LinkedTo->PrimaryFacing.Set_Desired(dir);
+}
+
 // FUNCTION: 0x0072A110
 HRESULT STDMETHODCALLTYPE TunnelLocomotionClass::GetClassID(CLSID * retval)
 {
@@ -304,3 +473,42 @@ HRESULT STDMETHODCALLTYPE TunnelLocomotionClass::GetClassID(CLSID * retval)
 	*retval = CLSID_TunnelLocomotion;
 	return(S_OK);
 }
+
+// FUNCTION: 0x0072A150
+HRESULT STDMETHODCALLTYPE TunnelLocomotionClass::Load(IStream * stream)
+{
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		new (this) TunnelLocomotionClass(NoInitClass());
+	}
+	return(result);
+}
+
+// FUNCTION: 0x0072A1A0
+LayerType STDMETHODCALLTYPE TunnelLocomotionClass::In_Which_Layer(void)
+{
+	if (State != STATE_DIGGING) {
+		return(LAYER_GROUND);
+	}
+	return(LAYER_UNDERGROUND);
+}
+
+// FUNCTION: 0x0072A1C0
+FireErrorType STDMETHODCALLTYPE TunnelLocomotionClass::Can_Fire(void)
+{
+	FireErrorType fire = BASECLASS::Can_Fire();
+
+	if (fire == FIRE_OK && State != STATE_IDLE) {
+		fire = FIRE_MOVING;
+	}
+
+	return(fire);
+}
+
+// FUNCTION: 0x0072A1E0
+boolean STDMETHODCALLTYPE TunnelLocomotionClass::Is_Surfacing(void)
+{
+	return(State == STATE_PRE_DIG_OUT || State == STATE_DIGGING_OUT);
+}
+
+// FUNCTION: 0x0072A200 TunnelLocomotionClass::Fetch_Object_Size

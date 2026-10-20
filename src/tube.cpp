@@ -220,3 +220,65 @@ HRESULT STDMETHODCALLTYPE TubeClass::GetClassID(CLSID * retval)
 }
 
 // FUNCTION: 0x00728710 TubeClass::~TubeClass
+
+#include <math.h>
+
+extern double __cdecl FUN_004CAC40(double);
+extern double __cdecl FUN_004CAD50(double);
+extern double __cdecl FUN_004CADE0(double);
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007E1720;
+extern const double DAT_007E1728;
+extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
+extern const double DAT_007F5A10;
+extern const double DAT_007F5A18;
+
+struct ShortPair {
+	unsigned short A, B;
+	ShortPair() { A = 0; B = 0; }
+};
+
+struct IntTriple {
+	int A, B, C;
+	IntTriple() { A = 0; B = 0; C = 0; }
+};
+
+// FUNCTION: 0x007287F0 $E53
+double DAT_00B0F8F8 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x00728820 $E56
+double DAT_00B0F948 = DAT_00B0F8F8 / DAT_007F5A10;
+
+// FUNCTION: 0x00728840 $E59
+double DAT_00B0F930 = DAT_007E1718 / DAT_00B0F948;
+
+// FUNCTION: 0x00728860 $E62
+double DAT_00B0F928 = DAT_007E1720 * DAT_007F5A18;
+
+// FUNCTION: 0x00728880 $E65
+double DAT_00B0F900 = DAT_007E1728 * DAT_007F5A18;
+
+// FUNCTION: 0x007288A0 $E68
+double DAT_00B0F8D8 = DAT_007E1730 * DAT_007F5A18;
+
+// FUNCTION: 0x007288C0 $E71
+int DAT_00B0F950 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B0F8D8 - DAT_00B0F900) * DAT_00B0F8F8));
+
+// FUNCTION: 0x00728900 $E74
+double DAT_00B0F908 = FUN_004CADE0(DAT_00B0F950 * DAT_007E1740);
+
+// FUNCTION: 0x00728930 $E77
+double DAT_00B0F920 = FUN_004CADE0((DAT_00B0F950 * 2) / DAT_00B0F8F8);
+
+// FUNCTION: 0x00728960 $E80
+int DAT_00B0F944 = (int)(DAT_00B0F950 * 4 + DAT_007E1738);
+
+// FUNCTION: 0x00728990 $E83
+ShortPair DAT_00B0F8F0;
+
+// FUNCTION: 0x007289A0 $E86
+IntTriple DAT_00B0F910;

@@ -344,4 +344,16 @@ template class VectorClass<MSSfxEntry *>;
 // FUNCTION: 0x005D1580 ?$VectorClass@PAVMapStage@@::ID
 // FUNCTION: 0x005D15C0 ?$VectorClass@PAVMapStage@@::ID
 // FUNCTION: 0x005D15E0 ?$DynamicVectorClass@PAVMapStage@@::Resize
+// FUNCTION: 0x005D1690 ?$DynamicVectorClass@PAVMapStage@@::ID
+// FUNCTION: 0x005D16C0 ?$VectorClass@VPoint2D@@::~?$VectorClass@VPoint2D@@
+// FUNCTION: 0x005D1710 ?$DynamicVectorClass@VPoint2D@@::~?$DynamicVectorClass@VPoint2D@@
+// FUNCTION: 0x005D1760 ?$VectorClass@PAVMSTextEntry@@::~?$VectorClass@PAVMSTextEntry@@
+// FUNCTION: 0x005D17B0 ?$DynamicVectorClass@PAVMSTextEntry@@::~?$DynamicVectorClass@PAVMSTextEntry@@
+// FUNCTION: 0x005D1800 ?$VectorClass@PAVMapSelection@@::~?$VectorClass@PAVMapSelection@@
+// FUNCTION: 0x005D1850 ?$DynamicVectorClass@PAVMapSelection@@::~?$DynamicVectorClass@PAVMapSelection@@
+// FUNCTION: 0x005D18A0 ?$VectorClass@PAVMapStage@@::~?$VectorClass@PAVMapStage@@
+// FUNCTION: 0x005D18F0 ?$DynamicVectorClass@PAVMapStage@@::~?$DynamicVectorClass@PAVMapStage@@
+// FUNCTION: 0x005D1940 ?$VectorClass@PAVMSAnimEntry@@::~?$VectorClass@PAVMSAnimEntry@@
+// FUNCTION: 0x005D1990 ?$DynamicVectorClass@PAVMSAnimEntry@@::~?$DynamicVectorClass@PAVMSAnimEntry@@
+// FUNCTION: 0x005D19E0 ?$VectorClass@PAVMSSfxEntry@@::~?$VectorClass@PAVMSSfxEntry@@
 template class VectorClass<MapStage *>;

@@ -586,3 +586,20 @@ wchar_t const * LoadOptionsClass::GetUIString_GameSaved(void) const
 }
 
 // FUNCTION: 0x0055A0D0 LoadOptionsClass::~LoadOptionsClass
+
+// FUNCTION: 0x0055A150 ?$DynamicVectorClass@PAVFileEntryClass@@::Clear
+template class DynamicVectorClass<FileEntryClass *>;
+
+// FUNCTION: 0x0055A180 ?$DynamicVectorClass@PAVFileEntryClass@@::ID
+// FUNCTION: 0x0055A1A0 ?$VectorClass@PAVFileEntryClass@@::GetItem
+// FUNCTION: 0x0055A1B0 ?$VectorClass@PAVFileEntryClass@@::operator==
+// FUNCTION: 0x0055A1F0 ?$VectorClass@PAVFileEntryClass@@::Resize
+// FUNCTION: 0x0055A2A0 ?$VectorClass@PAVFileEntryClass@@::Clear
+// FUNCTION: 0x0055A2D0 ?$VectorClass@PAVFileEntryClass@@::ID
+// FUNCTION: 0x0055A310 ?$VectorClass@PAVFileEntryClass@@::ID
+// FUNCTION: 0x0055A330 ?$DynamicVectorClass@PAVFileEntryClass@@::Resize
+// FUNCTION: 0x0055A3E0 ?$DynamicVectorClass@PAVFileEntryClass@@::ID
+// FUNCTION: 0x0055A410 ?$VectorClass@PAVFileEntryClass@@::~?$VectorClass@PAVFileEntryClass@@
+template class VectorClass<FileEntryClass *>;
+
+// FUNCTION: 0x0055A460 ?$DynamicVectorClass@PAVFileEntryClass@@::~?$DynamicVectorClass@PAVFileEntryClass@@

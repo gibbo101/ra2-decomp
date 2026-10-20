@@ -62,6 +62,9 @@ class GadgetClass : public LinkClass
 
 		void Set_Flags(unsigned flags) { Flags = flags; }
 
+		bool Is_Enabled(void) const;
+		GadgetClass * Extract_Gadget_At(int x, int y);
+
 		virtual int Draw_Me(int forced=false);
 		virtual void OnMouseEnter(void);
 		virtual void OnMouseLeave(void);

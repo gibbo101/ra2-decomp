@@ -17,6 +17,31 @@
 #include "smudtype.h"
 #include "tactical.h"
 #include "ramp.hh"
+#include <math.h>
+
+extern double __cdecl FUN_004CAC40(double);
+extern double __cdecl FUN_004CAD50(double);
+extern double __cdecl FUN_004CADE0(double);
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007E1720;
+extern const double DAT_007E1728;
+extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
+extern const double DAT_007F32B8;
+extern const double DAT_007F32C0;
+
+struct ShortPair {
+	unsigned short A, B;
+	ShortPair() { A = 0; B = 0; }
+};
+
+struct IntTriple {
+	int A, B, C;
+	IntTriple() { A = 0; B = 0; C = 0; }
+};
 #define MAX_TERRAIN_HEIGHT (12)
 #define NUM_CORNERS 4
 #define RAMP_FULL_HEIGHT (30)
@@ -643,3 +668,39 @@ template class DynamicVectorClass<DeformUndoStruct>;
 
 // FUNCTION: 0x006B47A0 ?$VectorClass@UDeformUndoStruct@@::~?$VectorClass@UDeformUndoStruct@@
 // FUNCTION: 0x006B47F0 ?$DynamicVectorClass@UDeformUndoStruct@@::~?$DynamicVectorClass@UDeformUndoStruct@@
+
+// FUNCTION: 0x006B4840 $E157
+double DAT_00B0B710 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x006B4870 $E160
+double DAT_00B0B760 = DAT_00B0B710 / DAT_007F32B8;
+
+// FUNCTION: 0x006B4890 $E163
+double DAT_00B0B748 = DAT_007E1718 / DAT_00B0B760;
+
+// FUNCTION: 0x006B48B0 $E166
+double DAT_00B0B740 = DAT_007E1720 * DAT_007F32C0;
+
+// FUNCTION: 0x006B48D0 $E169
+double DAT_00B0B718 = DAT_007E1728 * DAT_007F32C0;
+
+// FUNCTION: 0x006B48F0 $E172
+double DAT_00B0B6F0 = DAT_007E1730 * DAT_007F32C0;
+
+// FUNCTION: 0x006B4910 $E175
+int DAT_00B0B768 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B0B6F0 - DAT_00B0B718) * DAT_00B0B710));
+
+// FUNCTION: 0x006B4950 $E178
+double DAT_00B0B720 = FUN_004CADE0(DAT_00B0B768 * DAT_007E1740);
+
+// FUNCTION: 0x006B4980 $E181
+double DAT_00B0B738 = FUN_004CADE0((DAT_00B0B768 * 2) / DAT_00B0B710);
+
+// FUNCTION: 0x006B49B0 $E184
+int DAT_00B0B75C = (int)(DAT_00B0B768 * 4 + DAT_007E1738);
+
+// FUNCTION: 0x006B49E0 $E187
+ShortPair DAT_00B0B708;
+
+// FUNCTION: 0x006B49F0 $E190
+IntTriple DAT_00B0B728;

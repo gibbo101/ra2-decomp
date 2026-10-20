@@ -1161,6 +1161,19 @@ ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; 
 fixed them. Cost: about 5.6M tokens. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
 
+### Batches 75, 76 and 77 (20 October 2026)
+
+**419 of 432 functions** (138, 142, 139), plus two found along the way. A system crash cut
+batches 75 and 77 short after their Sonnet phase; resuming the workflows replayed the
+finished agents from cache and ran only the merges again. Batch 77's merge laid out YR's SHP
+classes (SHPStruct, SHPFrame, SHPFile, SHPReference) and landed the shape pipeline; batch
+76's made TextLabelClass and the message list wide; batch 75's adopted TibSun's zone.hh with
+SubzoneTrackingStruct's operator=, and moved one of wonline's real declarations to keep
+0x00788180 in its heap-order band. Landing shifted two files' `$E` markers down by one and
+replaced aliases into Session and Options (EnableMultiplayerDebug, IsSidebarOnRight) in
+gscreen, init and radar. Cost: about 5.5M tokens. Merge gate: 11,964 of 11,964 (1,589.1 KB),
+about 61% of game functions.
+
 ### Decide before the first batch
 
 - **Module layout.** Which function lives in which source file, and the link order, decide

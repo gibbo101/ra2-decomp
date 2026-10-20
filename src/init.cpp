@@ -523,7 +523,6 @@ extern unsigned char DAT_0089E3A0;
 extern int DAT_00A8D5FC;
 extern IPXAddressClass DAT_00A8D600;
 extern unsigned char DAT_00B04880;
-extern unsigned char DAT_00A8B8B4;
 extern unsigned char DAT_00A8EDDC;
 extern int DAT_00B77E18;
 extern unsigned char DAT_00A8E2C8;
@@ -634,7 +633,7 @@ bool Parse_Command_Line(int argc, char * argv[])
 
 		if (strstr(string, "-MPDEBUG")) {
 			DAT_00B04880 = true;
-			DAT_00A8B8B4 = true;
+			Session.EnableMultiplayerDebug = true;
 		}
 
 		if (strstr(string, "-DROP=")) {
@@ -2445,7 +2444,7 @@ class MultiplayerDebugCommandClass : public CommandClass
 		}
 		virtual void Execute(int key) const
 		{
-			if (DAT_00A8B8B4) {
+			if (Session.EnableMultiplayerDebug) {
 				DAT_00A8B8B5 = !DAT_00A8B8B5;
 			}
 		}
@@ -2627,7 +2626,7 @@ class DeleteCommandClass : public CommandClass
 // FUNCTION: 0x00532150
 void Init_Commands(void)
 {
-	if (DAT_00A8B8B4) {
+	if (Session.EnableMultiplayerDebug) {
 		AllCommands.Add(new MultiplayerDebugCommandClass);
 		AllCommands.Add(new MultiplayerSyncCommandClass);
 	}

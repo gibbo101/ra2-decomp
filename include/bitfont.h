@@ -37,6 +37,7 @@ class BitFont
 
 		bool GetTextDimension(wchar_t const * text, int * width, int * height, int maxwidth);
 		int FUN_00433ED0(wchar_t const * text, int maxwidth);
+		int FUN_00433F50(wchar_t const * text, int maxwidth, int unknown1, int unknown2);
 		int FUN_004349B0(wchar_t ch);
 		unsigned short SetColor(unsigned short color);
 		bool SetClipMode(bool clipped);

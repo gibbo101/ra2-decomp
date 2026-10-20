@@ -154,3 +154,12 @@ address,name,symbol,evidence
 0x008872B0,Scripts,,DynamicVectorClass<ScriptClass *>: its initialiser stores vtable 0x007E1B24 (RTTI .?AV?$DynamicVectorClass@PAVScriptClass@@@@); TibSun _script.cpp
 0x0088730C,HiddenSurface,,TibSun HiddenSurface (gscreen.h, _surface.h); YRpp DSurface::Hidden; read by 0x00642A60 and 0x00554400
 0x00643E90,ProgressScreenClass::Get_Current_Progress,,thiscall ret 4: PlayerProgress[i]/MainProgress, or MainProgress when index >= PlayerCount; called by SessionClass::Update_Progress 0x0069AE90
+0x00B077B0,SHPHead,,head of the SHPReference list: the constructor 0x0069E430 links each new reference here; 0x0069E500/0x0069E180/0x0069E930 read it
+0x00B077B4,SHPCache,,"0x0069E210 tests, deletes (inline ~SHPStruct) and zeroes it"
+0x00B077B8,SHPCacheSize,,0x0069E210 zeroes it with the cache
+0x00B077BC,SHPCacheIndex,,0x0069E210 zeroes it with the cache
+0x0083F870,SHPReferenceCount,,0x0069E430 copies it into Index (+0x14) then increments it; .data initial value 1
+0x007C8D20,stricmp,,"CRT stricmp, called by the wonline functions"
+0x00775700,WS_Create_Dialog,,"windlg WS_Create_Dialog (TibSun windlg.h), called by wonline"
+0x00887628,PacketTransport,,YRpp WinsockInterfaceClass::Instance (UDPInterfaceClass); wonline and ipxgconn Send_To use it
+0x0053F0E0,IPXAddressClass::As_String,,called by wonline; not yet defined in src/ipxaddr.cpp

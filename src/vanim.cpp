@@ -38,6 +38,27 @@
 #include "voxdrsys.h"
 #include "_voxel.h"
 
+#include <math.h>
+
+extern double __cdecl FUN_004CAC40(double);
+extern double __cdecl FUN_004CAD50(double);
+extern double __cdecl FUN_004CADE0(double);
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007E1720;
+extern const double DAT_007E1728;
+extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
+extern const double DAT_007F6508;
+extern const double DAT_007F6510;
+
+struct ShortPair {
+	unsigned short A, B;
+	ShortPair() { A = 0; B = 0; }
+};
+
 // FUNCTION: 0x007498D0
 VoxelAnimClass::VoxelAnimClass(void) :
 	BASECLASS(),
@@ -166,3 +187,38 @@ Cell const * VoxelAnimClass::Occupy_List(bool placement) const
 {
 	return(NULL);
 }
+
+// FUNCTION: 0x0074AB50 VoxelAnimClass::~VoxelAnimClass
+
+// FUNCTION: 0x0074AB70 $E88
+double DAT_00B1D1F0 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x0074ABA0 $E91
+double DAT_00B1D240 = DAT_00B1D1F0 / DAT_007F6508;
+
+// FUNCTION: 0x0074ABC0 $E94
+double DAT_00B1D228 = DAT_007E1718 / DAT_00B1D240;
+
+// FUNCTION: 0x0074ABE0 $E97
+double DAT_00B1D220 = DAT_007E1720 * DAT_007F6510;
+
+// FUNCTION: 0x0074AC00 $E100
+double DAT_00B1D1F8 = DAT_007E1728 * DAT_007F6510;
+
+// FUNCTION: 0x0074AC20 $E103
+double DAT_00B1D1D0 = DAT_007E1730 * DAT_007F6510;
+
+// FUNCTION: 0x0074AC40 $E106
+int DAT_00B1D248 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B1D1D0 - DAT_00B1D1F8) * DAT_00B1D1F0));
+
+// FUNCTION: 0x0074AC80 $E109
+double DAT_00B1D200 = FUN_004CADE0(DAT_00B1D248 * DAT_007E1740);
+
+// FUNCTION: 0x0074ACB0 $E112
+double DAT_00B1D218 = FUN_004CADE0((DAT_00B1D248 * 2) / DAT_00B1D1F0);
+
+// FUNCTION: 0x0074ACE0 $E115
+int DAT_00B1D23C = (int)(DAT_00B1D248 * 4 + DAT_007E1738);
+
+// FUNCTION: 0x0074AD10 $E118
+ShortPair DAT_00B1D1E8;

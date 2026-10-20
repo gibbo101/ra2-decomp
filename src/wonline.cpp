@@ -96,7 +96,10 @@ ArrayList<WolChannel> DAT_00B76AE0;
 
 struct User {
 	unsigned int Flags;
-	char Pad[0x1C];
+	char Pad[0x10];
+	unsigned long Squad;
+	unsigned long IPAddr;
+	char Pad2[4];
 	User * Next;
 	char Nick[10];
 	char Login[0x57 - 0x2E];
@@ -1207,7 +1210,7 @@ extern HANDLE DAT_00B73684[18];
 extern unsigned int DAT_00B77DC8;
 extern wchar_t DAT_00B77AD0[];
 extern char DAT_0084A584[];
-void __fastcall FUN_00792BE0(int id, WideWstring const & text, int flag);
+void __fastcall FUN_00792BE0(int id, WideWstring const & text, char flag);
 void __fastcall FUN_007757E0(HWND window, int flag);
 HWND FUN_00775B10(void);
 
@@ -1369,7 +1372,7 @@ struct NetUtilSink {
 	virtual void V05(void);
 	virtual void V06(void);
 	virtual void V07(void);
-	virtual void V08(void);
+	virtual long __stdcall V08(unsigned long address, int * ping);
 	virtual void V09(void);
 	virtual void V10(void);
 	virtual long __stdcall V11(char const * host, int port, int mode);
@@ -2502,6 +2505,7 @@ void __cdecl FUN_005E2700(int color, wchar_t const * text);
 void __cdecl FUN_005E2790(int color, wchar_t const * text);
 extern int DAT_00B76C20;
 extern int DAT_00B77E90;
+bool __fastcall FUN_0079BA60(WolChannel * chan, bool flag, int extra);
 
 static inline void Set_Lobby_Number(WolChannel & chan)
 {
@@ -2638,7 +2642,7 @@ bool __fastcall FUN_00788710(int id, int flag)
 	return DAT_00B77DD0 == 0;
 }
 
-void __fastcall FUN_00792BE0(int id, WideWstring const & text, int flag);
+void __fastcall FUN_00792BE0(int id, WideWstring const & text, char flag);
 
 // FUNCTION: 0x00788800
 long __fastcall FUN_00788800(WolChannel * chan, Wstring & key, WideWstring text)
@@ -2824,8 +2828,6 @@ class WonlineStringDialogControl : public SimpleWonlineDialogControl
 
 		Wstring Text;
 };
-
-bool __fastcall FUN_0079BA60(WolChannel * chan, bool flag, int extra);
 
 // FUNCTION: 0x00789960
 bool __fastcall FUN_00789960(WolChannel * chan, int extra)
@@ -3602,6 +3604,273 @@ int __fastcall FUN_0078F6B0(int id)
 		return 6;
 	}
 	return id == 0x75B ? 7 : -1;
+}
+
+// FUNCTION: 0x0078F720
+void __fastcall FUN_0078F720(HWND window)
+{
+	if (FUN_0077D940()) {
+		EnableWindow(GetDlgItem(window, 0x552), FALSE);
+		EnableWindow(GetDlgItem(window, 0x553), FALSE);
+		EnableWindow(GetDlgItem(window, 0x597), FALSE);
+		Session.Options.AIPlayers = 0;
+		Session.Options.AlliesAllowed = false;
+		HWND item = GetDlgItem(window, 0x54E);
+		SendMessage(item, 0xF1, 1, 0);
+		EnableWindow(item, FALSE);
+		item = GetDlgItem(window, 0x54B);
+		SendMessage(item, 0xF1, 1, 0);
+		EnableWindow(item, FALSE);
+		Session.Options.ShortGame = true;
+		Session.Options.Bases = true;
+	}
+}
+
+namespace Game { extern int ObserverMode; }
+
+// FUNCTION: 0x00791AA0
+void __fastcall FUN_00791AA0(HWND window)
+{
+	if (window) {
+		if (!Game::ObserverMode) {
+			ODMessageBox(StringTable::LoadString("TXT_CHANNEL_FULL", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x4351), 0, FUN_0077D710, 0);
+		} else {
+			ODMessageBox(StringTable::LoadString("TXT_OBSERVER_FULL", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x4353), 0, FUN_0077D710, 0);
+		}
+		if (DAT_00AC116C->V09() < 0) {
+			FUN_007757E0(window, 2);
+		}
+	}
+}
+
+namespace Game { extern HWND hWnd; }
+HWND WS_Create_Dialog(HINSTANCE instance, int id, HWND parent, DLGPROC proc, BOOL force_show);
+void FUN_0072CBA0(void);
+namespace UI { void __fastcall RegisterWindow(HWND window, int id); }
+BOOL CALLBACK FUN_00792CF0(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+
+// FUNCTION: 0x00792BE0
+void __fastcall FUN_00792BE0(int id, WideWstring const & text, char flag)
+{
+	HWND dialog = FUN_00775940(0xC4);
+	if (dialog) {
+		DAT_00B77DC8 |= id;
+		if (text.length() > 0) {
+			HWND list = GetDlgItem(dialog, 0x5B2);
+			SendMessage(list, 0x4B2, 0, (LPARAM)text.text());
+		}
+	} else if (id) {
+		HWND top = FUN_00775B10();
+		HWND input = GetDlgItem(top, 0x540);
+		FUN_0072CBA0();
+		dialog = WS_Create_Dialog(Game::hInstance, 0xC4, Game::hWnd, FUN_00792CF0, FALSE);
+		UI::RegisterWindow(dialog, 0xC4);
+		HWND list = GetDlgItem(dialog, 0x5B2);
+		SendMessage(list, 0x4B2, 0, (LPARAM)text.text());
+		DAT_00B77DC8 = id;
+		if (input) {
+			SetFocus(input);
+		}
+	}
+	if (flag && DAT_00B77DC8) {
+		FUN_007759E0(dialog, (bool (*)(void))FUN_0077D710, 0, 1, 0);
+	}
+}
+
+extern int DAT_0084A248;
+void __fastcall FUN_00608440(HWND window);
+
+// FUNCTION: 0x00792CF0
+BOOL CALLBACK FUN_00792CF0(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	switch (message) {
+		case WM_INITDIALOG:
+			return FALSE;
+
+		case WM_DESTROY:
+			KillTimer(window, 0x45);
+			return FALSE;
+
+		case WM_ERASEBKGND:
+			return TRUE;
+
+		case WM_DRAWITEM:
+			OwnerDraw::DrawItem((LPDRAWITEMSTRUCT)lparam);
+			return TRUE;
+
+		case WM_PAINT:
+			OwnerDraw::Paint(window);
+			FUN_00607FD0(window);
+			ValidateRect(window, NULL);
+			return FALSE;
+
+		case WM_COMMAND:
+			switch (LOWORD(wparam)) {
+				case 0x58E:
+					FUN_00773E90("NetStatus");
+					return FALSE;
+
+				case 0x58D:
+					SetEvent(DAT_00B73684[0]);
+					FUN_007757E0(window, 1);
+					break;
+			}
+			break;
+
+		case WM_TIMER:
+			if (wparam == 0x45) {
+				ShowWindow(window, SW_SHOW);
+				KillTimer(window, 0x45);
+				return FALSE;
+			}
+			break;
+
+		case 0x497:
+			SendMessage(window, 0x4A9, 0, 1);
+			SetTimer(window, 0x45, DAT_0084A248, NULL);
+			FUN_00608440(window);
+			HWND item = GetDlgItem(window, 0x7A9);
+			PostMessage(item, 0x4D5, 0, 0);
+			PostMessage(item, 0x4D3, 0, 0);
+			return FALSE;
+	}
+	return FALSE;
+}
+
+// FUNCTION: 0x00792E90
+void __fastcall FUN_00792E90(wchar_t const * text)
+{
+	HWND dialog = FUN_00775940(0xC4);
+	if (dialog) {
+		SendDlgItemMessage(dialog, 0x5B2, 0x4B2, 0, (LPARAM)text);
+	}
+}
+
+// FUNCTION: 0x00792EC0
+void __fastcall FUN_00792EC0(unsigned int mask)
+{
+	HWND dialog = FUN_00775940(0xC4);
+	if (dialog) {
+		DAT_00B77DC8 &= ~mask;
+		if (DAT_00B77DC8 == 0) {
+			FUN_007757E0(dialog, 0);
+		}
+	}
+	HWND top = FUN_00775B10();
+	HWND input = GetDlgItem(top, 0x540);
+	if (input) {
+		SetFocus(input);
+	}
+}
+
+#include "wsproto.h"
+
+extern int DAT_00B7790C[];
+extern WinsockInterfaceClass * PacketTransport;
+extern User DAT_00B777B0;
+NodeNameType * __fastcall FUN_005E8BF0(wchar_t const * name);
+User * FUN_007931A0(void);
+
+// FUNCTION: 0x00792F10
+void FUN_00792F10(void)
+{
+	Session.NumPlayers = 1;
+	for (int i = 0; i < DAT_00B77900.length(); i++) {
+		User user;
+		DAT_00B77900.get(user, i);
+		NodeNameType * node = FUN_005E8BF0(FUN_00735120(user.Nick));
+		if (node && FUN_005E93F0(node)) {
+			node->Player.SquadID = user.Squad;
+		}
+		if (strcmpi(user.Nick, DAT_00B73E40.get()) != 0) {
+			if (user.Flags & 1) {
+				NodeNameType * host = FUN_005E8BF0(FUN_00735120(user.Nick));
+				NetNumType net;
+				NetNodeType addr;
+				host->Address.Get_Address(net, addr);
+				Session.HostAddress.Set_Address(net, addr, 0);
+			}
+			int ping = 0;
+			DAT_00AC1170->V08(user.IPAddr, &ping);
+			if (ping < 0) {
+				ping = 0;
+			}
+			DAT_00B7790C[Session.NumPlayers] = ping;
+			Session.NumPlayers++;
+		}
+	}
+	PacketTransport->Clear_Broadcast_Addresses();
+	for (int p = 1; p < Session.Players.Count(); p++) {
+		FUN_004068E0("Adding broadcast address %s\n", Session.Players[p]->Address.As_String(NULL));
+		PacketTransport->Set_Broadcast_Address((char const *)&Session.Players[p]->Address, 0);
+	}
+	FUN_004068E0("User_List_To_Session_Players: Session.HostAddress = %s\n", Session.HostAddress.As_String(NULL));
+}
+
+// FUNCTION: 0x007930A0
+bool FUN_007930A0(void)
+{
+	User * host = FUN_007931A0();
+	if (!host) {
+		return false;
+	}
+	if (strcmpi(host->Nick, DAT_00B73E40.text()) != 0) {
+		return false;
+	}
+	return true;
+}
+
+// FUNCTION: 0x00793120
+bool __fastcall FUN_00793120(Wstring & name)
+{
+	User * host = FUN_007931A0();
+	if (!host) {
+		return false;
+	}
+	if (strcmpi(host->Nick, name.text()) != 0) {
+		return false;
+	}
+	return true;
+}
+
+// FUNCTION: 0x007931A0
+User * FUN_007931A0(void)
+{
+	for (int i = 0; i < DAT_00B77900.length(); i++) {
+		DAT_00B77900.get(DAT_00B777B0, i);
+		if (DAT_00B777B0.Flags & 1) {
+			return &DAT_00B777B0;
+		}
+	}
+	return NULL;
+}
+
+extern int DAT_0084A1F0[];
+extern char DAT_00B75F54[];
+
+// FUNCTION: 0x007931F0
+void __fastcall FUN_007931F0(int index)
+{
+	if (index >= 0 && index < Session.Players.Count()) {
+		HWND dialog = FUN_00775940(0x130);
+		if (dialog) {
+			HWND item = GetDlgItem(dialog, DAT_0084A1F0[index]);
+			DAT_00B75F54[index] = 1;
+			SendMessage(item, 0xF1, 1, 0);
+			PostMessage(dialog, 0xF, 0, 0);
+		}
+	}
+}
+
+BOOL CALLBACK FUN_00793280(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+
+// FUNCTION: 0x00793250
+void FUN_00793250(void)
+{
+	HWND dialog = WS_Create_Dialog(Game::hInstance, 0x130, Game::hWnd, FUN_00793280, FALSE);
+	if (dialog) {
+		UI::RegisterWindow(dialog, 0x130);
+	}
 }
 
 // FUNCTION: 0x007A2E70 SimpleWonlineDialogControl::~SimpleWonlineDialogControl

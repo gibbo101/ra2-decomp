@@ -22,62 +22,80 @@ extern const double DAT_007E1738;
 extern const double DAT_007E1740;
 extern const double DAT_007ECEB8;
 extern const double DAT_007ECEC0;
+extern const double DAT_007ECEC8;
+extern const double DAT_007ECED0;
 
-// FUNCTION: 0x0054EC60
+struct ShortPair {
+	unsigned short A, B;
+	ShortPair() { A = 0; B = 0; }
+};
+
+struct IntTriple {
+	int A, B, C;
+	IntTriple() { A = 0; B = 0; C = 0; }
+};
+
+struct IntTriple128 {
+	int A, B, C;
+	IntTriple128() { C = 0; A = 128; B = 128; }
+};
+
+
+// FUNCTION: 0x0054EC60 $E30
 
 
 
 double DAT_00ABC6B8 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x0054EC90
+// FUNCTION: 0x0054EC90 $E33
 
 
 
 double DAT_00ABC708 = DAT_00ABC6B8 / DAT_007ECEB8;
 
-// FUNCTION: 0x0054ECB0
+// FUNCTION: 0x0054ECB0 $E36
 
 
 
 double DAT_00ABC6F0 = DAT_007E1718 / DAT_00ABC708;
 
-// FUNCTION: 0x0054ECD0
+// FUNCTION: 0x0054ECD0 $E39
 
 
 
 double DAT_00ABC6E8 = DAT_007E1720 * DAT_007ECEC0;
 
-// FUNCTION: 0x0054ECF0
+// FUNCTION: 0x0054ECF0 $E42
 
 
 
 double DAT_00ABC6C0 = DAT_007E1728 * DAT_007ECEC0;
 
-// FUNCTION: 0x0054ED10
+// FUNCTION: 0x0054ED10 $E45
 
 
 
 double DAT_00ABC698 = DAT_007E1730 * DAT_007ECEC0;
 
-// FUNCTION: 0x0054ED30
+// FUNCTION: 0x0054ED30 $E48
 
 
 
 int DAT_00ABC710 = (int)(DAT_007E1738 * (DAT_00ABC6B8 * fastmath::tan(DAT_00ABC698 - DAT_00ABC6C0)));
 
-// FUNCTION: 0x0054ED70
+// FUNCTION: 0x0054ED70 $E51
 
 
 
 double DAT_00ABC6C8 = fastmath::atan(DAT_00ABC710 * DAT_007E1740);
 
-// FUNCTION: 0x0054EDA0
+// FUNCTION: 0x0054EDA0 $E54
 
 
 
 double DAT_00ABC6E0 = fastmath::atan((DAT_00ABC710 * 2) / DAT_00ABC6B8);
 
-// FUNCTION: 0x0054EDD0
+// FUNCTION: 0x0054EDD0 $E57
 
 
 
@@ -86,19 +104,19 @@ int DAT_00ABC704 = (int)((DAT_00ABC710 * 4) + DAT_007E1738);
 struct DatShorts { short X; short Y; DatShorts(short x, short y) : X(x), Y(y) {} };
 struct DatInts { int X; int Y; int Z; DatInts(int x, int y, int z) : X(x), Y(y), Z(z) {} };
 
-// FUNCTION: 0x0054EE00
+// FUNCTION: 0x0054EE00 $E60
 
 
 
 DatShorts DAT_00ABC6B0(0, 0);
 
-// FUNCTION: 0x0054EE10
+// FUNCTION: 0x0054EE10 $E63
 
 
 
 DatInts DAT_00ABC6D0(0, 0, 0);
 
-// FUNCTION: 0x0054EE30
+// FUNCTION: 0x0054EE30 $E66
 
 
 
@@ -501,8 +519,44 @@ int WWKeyboardClass::Available_Buffer_Room(void) const
 	return(ARRAY_SIZE(Buffer) - abs(Tail - Head));
 }
 
-// FUNCTION: 0x0054FBB0
+// FUNCTION: 0x0054FBB0 $E69
 
 
 
 double DAT_00ABC7C0 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x0054FBE0 $E72
+double DAT_00ABC8B0 = DAT_00ABC7C0 / DAT_007ECEC8;
+
+// FUNCTION: 0x0054FC00 $E75
+double DAT_00ABC898 = DAT_007E1718 / DAT_00ABC8B0;
+
+// FUNCTION: 0x0054FC20 $E78
+double DAT_00ABC890 = DAT_007E1720 * DAT_007ECED0;
+
+// FUNCTION: 0x0054FC40 $E81
+double DAT_00ABC7D0 = DAT_007E1728 * DAT_007ECED0;
+
+// FUNCTION: 0x0054FC60 $E84
+double DAT_00ABC720 = DAT_007E1730 * DAT_007ECED0;
+
+// FUNCTION: 0x0054FC80 $E87
+int DAT_00ABC8BC = (int)(DAT_007E1738 * (fastmath::tan(DAT_00ABC720 - DAT_00ABC7D0) * DAT_00ABC7C0));
+
+// FUNCTION: 0x0054FCC0 $E90
+double DAT_00ABC7D8 = fastmath::atan(DAT_00ABC8BC * DAT_007E1740);
+
+// FUNCTION: 0x0054FCF0 $E93
+double DAT_00ABC7F0 = fastmath::atan((DAT_00ABC8BC * 2) / DAT_00ABC7C0);
+
+// FUNCTION: 0x0054FD20 $E96
+int DAT_00ABC8AC = (int)(DAT_00ABC8BC * 4 + DAT_007E1738);
+
+// FUNCTION: 0x0054FD50 $E99
+ShortPair DAT_00ABC7B8;
+
+// FUNCTION: 0x0054FD60 $E102
+IntTriple DAT_00ABC7E0;
+
+// FUNCTION: 0x0054FD80 $E105
+IntTriple128 DAT_00ABC8A0;

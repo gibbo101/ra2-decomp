@@ -26,20 +26,20 @@ class MessageListClass {
 			int color, TextPrintType style, int timeout, bool singleplayer);
 		int Concat_Message (wchar_t const * name, int id, wchar_t const * txt, int timeout);
 
-		char * Get_Message (int id);
+		wchar_t * Get_Message (int id);
 		TextLabelClass * Get_Label (int id);
 
 		TextLabelClass * Add_Edit(int color, TextPrintType style,
-			char *to, char cursor = 0, int width = 640);
+			wchar_t *to, char cursor = 0, int width = 640);
 		void Remove_Edit (void);
-		char * Get_Edit_Buf (void);
+		wchar_t * Get_Edit_Buf (void);
 		wchar_t * Get_Overflow_Buf (void) {return(OverflowBuf);}
 		void Clear_Overflow_Buf (void) {OverflowBuf[0] = 0;}
 		int Is_Edit(void) {return(IsEdit);}
 		void Set_Edit_Color(int color);
 
 		int Manage (void);
-		int Input (KeyNumType &input);
+		int Input (KeyNumType &input, wchar_t definput = 0);
 		void Draw(void);
 		int Num_Messages(void);
 		void Set_Width(int width);
@@ -47,7 +47,7 @@ class MessageListClass {
 		bool Has_Edit_Focus(void);
 
 	private:
-		int Trim_Message(char *dest, char *src, int min_chars, int max_chars,
+		int Trim_Message(wchar_t *dest, wchar_t *src, int min_chars, int max_chars,
 			int scandir);
 
 		void Compute_Y(void);

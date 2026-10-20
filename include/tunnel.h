@@ -39,6 +39,8 @@ class TunnelLocomotionClass : public LocomotionClass
 
 		virtual int Fetch_Object_Size(void) const override {return(sizeof(*this));}
 
+		static double TunnelMovementSpeed;
+
 		void ProcessPreDigIn(void);
 		void ProcessDiggingIn(void);
 		void ProcessDugIn(void);

@@ -235,6 +235,74 @@ wchar_t const * ListClass::Current_Item(void) const
 	return(List[SelectedIndex]);
 }
 
+// FUNCTION: 0x00557B00
+int ListClass::Current_Index(void) const
+{
+	return(SelectedIndex);
+}
+
+// FUNCTION: 0x00557B10
+void ListClass::Peer_To_Peer(unsigned flags, KeyNumType &, ControlClass & whom)
+{
+	if (flags & LEFTRELEASE) {
+		if (&whom == &UpGadget) {
+			Step(true);
+		}
+		if (&whom == &DownGadget) {
+			Step(false);
+		}
+	}
+
+	if (&whom == &ScrollGadget) {
+		Set_View_Index(ScrollGadget.Get_Value());
+	}
+}
+
+// FUNCTION: 0x00557B70
+int ListClass::Set_View_Index(int index)
+{
+	index = Bound(index, 0, MAX(0, List.Count() - LineCount));
+	if (index != CurrentTopIndex) {
+		CurrentTopIndex = index;
+		Flag_To_Redraw();
+		if (IsScrollActive) {
+			ScrollGadget.Set_Value(CurrentTopIndex);
+		}
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00557BE0
+int ListClass::Add_Scroll_Bar(void)
+{
+	if (!IsScrollActive) {
+		IsScrollActive = true;
+
+		Flag_To_Redraw();
+		Width -= ScrollGadget.Width;
+
+		UpGadget.Make_Peer(*this);
+		DownGadget.Make_Peer(*this);
+		ScrollGadget.Make_Peer(*this);
+
+		UpGadget.Add(*this);
+		DownGadget.Add(*this);
+		ScrollGadget.Add(*this);
+
+		UpGadget.Flag_To_Redraw();
+		DownGadget.Flag_To_Redraw();
+		ScrollGadget.Flag_To_Redraw();
+
+		ScrollGadget.Set_Maximum(List.Count());
+		ScrollGadget.Set_Thumb_Size(LineCount);
+		ScrollGadget.Set_Value(CurrentTopIndex);
+
+		return(true);
+	}
+	return(false);
+}
+
 // FUNCTION: 0x00557CB0
 int ListClass::Remove_Scroll_Bar(void)
 {
@@ -254,4 +322,104 @@ int ListClass::Remove_Scroll_Bar(void)
 void ListClass::Set_Tabs(int const * tabs)
 {
 	Tabs = tabs;
+}
+
+// FUNCTION: 0x00557D20
+void ListClass::Draw_Entry(int index, int x, int y, int width, int selected)
+{
+	TextPrintType flags = TextFlags;
+	int scheme = GadgetClass::Get_Color_Scheme();
+
+	if (selected) {
+		flags = TextPrintType(flags | TPF_BRIGHT_COLOR);
+		int shadow = ColorSchemes[scheme]->Shadow;
+		DSurface::Temp->Fill_Rect(Rect(x, y, width, LineHeight), NormalDrawer->Convert_Pixel(shadow));
+	} else {
+		if (!(flags & TPF_USE_GRAD_PAL)) {
+			flags = TextPrintType(flags | TPF_MEDIUM_COLOR);
+		}
+	}
+
+	Conquer_Clip_Text_Print_Wide(List[index], DSurface::Temp, &DSurface::Temp->Get_Rect(), &Point2D(x, y), ColorSchemes[scheme], TBLACK, flags, width, Tabs);
+}
+
+// FUNCTION: 0x00557E10
+LinkClass & ListClass::Add(LinkClass & list)
+{
+	if (IsScrollActive) {
+		ScrollGadget.Add(list);
+		DownGadget.Add(list);
+		UpGadget.Add(list);
+	}
+	return(BASECLASS::Add(list));
+}
+
+// FUNCTION: 0x00557E60
+LinkClass & ListClass::Add_Head(LinkClass & list)
+{
+	if (IsScrollActive) {
+		ScrollGadget.Add_Head(list);
+		DownGadget.Add_Head(list);
+		UpGadget.Add_Head(list);
+	}
+	return(BASECLASS::Add_Head(list));
+}
+
+// FUNCTION: 0x00557EB0
+LinkClass & ListClass::Add_Tail(LinkClass & list)
+{
+	BASECLASS::Add_Tail(list);
+	if (IsScrollActive) {
+		UpGadget.Add_Tail(list);
+		DownGadget.Add_Tail(list);
+		ScrollGadget.Add_Tail(list);
+	}
+	return(Head_Of_List());
+}
+
+// FUNCTION: 0x00557F00
+LinkClass * ListClass::Remove(void)
+{
+	if (IsScrollActive) {
+		ScrollGadget.Remove();
+		DownGadget.Remove();
+		UpGadget.Remove();
+	}
+	return(BASECLASS::Remove());
+}
+
+// FUNCTION: 0x00557F40
+void ListClass::Set_Selected_Index(int index)
+{
+	if ((unsigned)index < (unsigned)List.Count()) {
+		SelectedIndex = index;
+		Flag_To_Redraw();
+		if (SelectedIndex < CurrentTopIndex) {
+			Set_View_Index(SelectedIndex);
+		}
+		if (SelectedIndex >= CurrentTopIndex+LineCount) {
+			Set_View_Index(SelectedIndex-(LineCount-1));
+		}
+	} else {
+		SelectedIndex = 0;
+	}
+}
+
+// FUNCTION: 0x00557FB0
+int ListClass::Step_Selected_Index(int step)
+{
+	int old = SelectedIndex;
+	Set_Selected_Index(old + step);
+	return(old);
+}
+
+// FUNCTION: 0x00557FD0
+void ListClass::Flag_To_Redraw(void)
+{
+	if (IsScrollActive) {
+		UpGadget.Flag_To_Redraw();
+		DownGadget.Flag_To_Redraw();
+		ScrollGadget.Flag_To_Redraw();
+	}
+	BASECLASS::Flag_To_Redraw();
 }

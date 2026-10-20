@@ -6332,4 +6332,38 @@ template class VectorClass<HashObject<unsigned int, unsigned int> >;
 
 // FUNCTION: 0x0058A3A0 ?$DynamicVectorClass@U?$HashObject@IUSubzoneConnectionStruct@@@@::ID
 
-// FUNCTION: 0x0058A3D0 ?$VectorClass@U?$HashObject@IUSubzoneConnectionStruct@@@@::~?$VectorClass@U?$HashObject@IUSubzoneConnectionStruct@@@@
+// FUNCTION: 0x0058A3D0 ?$VectorClass@UZoneConnectionClass@@::~?$VectorClass@UZoneConnectionClass@@
+
+// FUNCTION: 0x0058A420 ?$DynamicVectorClass@UZoneConnectionClass@@::~?$DynamicVectorClass@UZoneConnectionClass@@
+
+// FUNCTION: 0x0058A470 ?$VectorClass@USubzoneTrackingStruct@@::~?$VectorClass@USubzoneTrackingStruct@@
+
+// FUNCTION: 0x0058A500
+SubzoneTrackingStruct & SubzoneTrackingStruct::operator=(const SubzoneTrackingStruct & that)
+{
+	Connections = that.Connections;
+	ParentSubzoneID = that.ParentSubzoneID;
+	Passability = that.Passability;
+	ThreatRegion = that.ThreatRegion;
+	return(*this);
+}
+
+// FUNCTION: 0x0058A5B0 ?$DynamicVectorClass@USubzoneTrackingStruct@@::~?$DynamicVectorClass@USubzoneTrackingStruct@@
+
+// FUNCTION: 0x0058A630 ?$DynamicVectorClass@U?$HashObject@II@@::~?$DynamicVectorClass@U?$HashObject@II@@
+
+// FUNCTION: 0x0058A6E0 ?$VectorClass@U?$HashObject@II@@::Resize
+
+// FUNCTION: 0x0058A7B0 ?$VectorClass@U?$HashObject@II@@::Clear
+
+// FUNCTION: 0x0058A7E0 ?$VectorClass@U?$HashObject@II@@::ID
+
+// FUNCTION: 0x0058A820 ?$VectorClass@U?$HashObject@II@@::ID
+
+// FUNCTION: 0x0058A840 ?$DynamicVectorClass@U?$HashObject@IUSubzoneConnectionStruct@@@@::~?$DynamicVectorClass@U?$HashObject@IUSubzoneConnectionStruct@@@@
+
+// FUNCTION: 0x0058A8F0 ?$VectorClass@U?$HashObject@IUSubzoneConnectionStruct@@@@::Resize
+
+// FUNCTION: 0x0058A9F0 ?$VectorClass@U?$HashObject@IUSubzoneConnectionStruct@@@@::Clear
+
+// FUNCTION: 0x0058AB80 ?$VectorClass@U?$HashObject@IUSubzoneConnectionStruct@@@@::~?$VectorClass@U?$HashObject@IUSubzoneConnectionStruct@@@@

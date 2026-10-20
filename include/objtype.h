@@ -111,6 +111,8 @@ class ObjectTypeClass : public AbstractTypeClass
 		void Fetch_Aux_Voxel_Image(void);
 		void Fetch_Normal_Image(void);
 		void Free_Voxels(void);
+		bool Fetch_Charger_Turret(char const * graphic, int index);
+		bool Fetch_Charger_Barrel(char const * graphic, int index);
 
 		void Theater_Naming_Convention(char * name, TheaterType theater) const;
 

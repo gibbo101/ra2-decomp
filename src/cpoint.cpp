@@ -518,6 +518,18 @@ EnumConnectionPointsClass::~EnumConnectionPointsClass(void)
 // FUNCTION: 0x004A0F80 ?$VectorClass@UtagCONNECTDATA@@::operator==
 // FUNCTION: 0x004A0FE0 ?$VectorClass@UtagCONNECTDATA@@::Resize
 // FUNCTION: 0x004A10A0 ?$VectorClass@UtagCONNECTDATA@@::Clear
+// FUNCTION: 0x004A10D0 ?$VectorClass@UtagCONNECTDATA@@::ID
+// FUNCTION: 0x004A1120 ?$VectorClass@UtagCONNECTDATA@@::ID
+// FUNCTION: 0x004A1140 ?$DynamicVectorClass@UtagCONNECTDATA@@::Resize
+// FUNCTION: 0x004A1200 ?$DynamicVectorClass@UtagCONNECTDATA@@::ID
+// FUNCTION: 0x004A1240 ?$VectorClass@PAUIConnectionPoint@@::operator==
+// FUNCTION: 0x004A1280 ?$VectorClass@PAUIConnectionPoint@@::Resize
+// FUNCTION: 0x004A1330 ?$VectorClass@PAUIConnectionPoint@@::Clear
+// FUNCTION: 0x004A1360 ?$VectorClass@PAUIConnectionPoint@@::ID
+// FUNCTION: 0x004A13A0 ?$VectorClass@PAUIConnectionPoint@@::ID
+// FUNCTION: 0x004A13C0 ?$DynamicVectorClass@PAUIConnectionPoint@@::Resize
+// FUNCTION: 0x004A1470 ?$DynamicVectorClass@PAUIConnectionPoint@@::ID
+// FUNCTION: 0x004A14A0 ?$DynamicVectorClass@UtagCONNECTDATA@@::~?$DynamicVectorClass@UtagCONNECTDATA@@
 template class VectorClass<CONNECTDATA>;
 template class DynamicVectorClass<CONNECTDATA>;
 template class VectorClass<IConnectionPoint *>;

@@ -34,6 +34,7 @@ class ParticleSystemTypeClass : public ObjectTypeClass
 
 		static ParticleSystemType From_Name(char const * name);
 		static char const * Name_From(ParticleSystemType partsys);
+		static ParticleSystemTypeClass * FindOrAllocate(char const * name);
 		static ParticleSystemTypeClass * Find_Or_Make(char const * name);
 
 		ParticleSystemBehaviorType Behaves_Like(void) const { return(BehavesLike); }

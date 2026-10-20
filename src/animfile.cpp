@@ -12,8 +12,18 @@
 #include <math.h>
 
 extern double __cdecl FUN_004CAC40(double);
+extern double __cdecl FUN_004CAD50(double);
+extern double __cdecl FUN_004CADE0(double);
 extern const double DAT_007E1708;
 extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007E1720;
+extern const double DAT_007E1728;
+extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
+extern const double DAT_007E35C8;
+extern const double DAT_007E35D0;
 
 #define LP_HEADER_SIZE(nRecords) ( (sizeof(LPDescriptor) + sizeof(unsigned short)) + (nRecords) * sizeof(unsigned short) )
 
@@ -404,3 +414,43 @@ bool AnimFile::Decode_Frame(void *source, int nBytes, void *dest, int dlength)
 
 // FUNCTION: 0x00427320 $E5
 double DAT_0089A1F8 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x00427350 $E8
+double DAT_0089A248 = DAT_0089A1F8 / DAT_007E35C8;
+
+// FUNCTION: 0x00427370 $E11
+double DAT_0089A230 = DAT_007E1718 / DAT_0089A248;
+
+// FUNCTION: 0x00427390 $E14
+double DAT_0089A228 = DAT_007E1720 * DAT_007E35D0;
+
+// FUNCTION: 0x004273B0 $E17
+double DAT_0089A200 = DAT_007E1728 * DAT_007E35D0;
+
+// FUNCTION: 0x004273D0 $E20
+double DAT_0089A1D8 = DAT_007E1730 * DAT_007E35D0;
+
+// FUNCTION: 0x004273F0 $E23
+int DAT_0089A250 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_0089A1D8 - DAT_0089A200) * DAT_0089A1F8));
+
+// FUNCTION: 0x00427430 $E26
+double DAT_0089A208 = FUN_004CADE0(DAT_0089A250 * DAT_007E1740);
+
+// FUNCTION: 0x00427460 $E29
+double DAT_0089A220 = FUN_004CADE0((DAT_0089A250 * 2) / DAT_0089A1F8);
+
+// FUNCTION: 0x00427490 $E32
+int DAT_0089A244 = (int)(DAT_0089A250 * 4 + DAT_007E1738);
+
+struct S35 { short a; short b; S35() : a(0), b(0) {} };
+struct S38 { int a; int b; int c; S38() : a(0), b(0), c(0) {} };
+struct S41 { int x; int y; int z; S41() : z(0) { x = 128; y = 128; } };
+
+// FUNCTION: 0x004274C0 $E35
+S35 DAT_0089A1F0;
+
+// FUNCTION: 0x004274D0 $E38
+S38 DAT_0089A210;
+
+// FUNCTION: 0x004274F0 $E41
+S41 DAT_0089A238;

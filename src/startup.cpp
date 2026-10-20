@@ -160,8 +160,8 @@ struct SHPStruct
 // FUNCTION: 0x006BB210 $E32
 // FUNCTION: 0x006BB220 $E35
 // FUNCTION: 0x006BB240 $E38
-// FUNCTION: 0x006BB260 $E328
-// FUNCTION: 0x006BB2A0 $E326
+// FUNCTION: 0x006BB260 $E329
+// FUNCTION: 0x006BB2A0 $E327
 
 namespace DirectDrawWrap { extern bool DoSmth; void DisposeOfStuff(void); }
 void FUN_004C19B0(void);
@@ -639,3 +639,19 @@ template class TClassFactory<TriggerClass>;
 // FUNCTION: 0x006C1C10 ?$TClassFactory@VTriggerTypeClass@@::CreateInstance
 // FUNCTION: 0x006C1C90 ?$TClassFactory@VTriggerTypeClass@@::LockServer
 template class TClassFactory<TriggerTypeClass>;
+
+// FUNCTION: 0x006C1CC0 ?$TClassFactory@VScriptClass@@::?$TClassFactory@VScriptClass@@
+// FUNCTION: 0x006C1CD0 ?$TClassFactory@VScriptClass@@::QueryInterface
+// FUNCTION: 0x006C1D40 ?$TClassFactory@VScriptClass@@::AddRef
+// FUNCTION: 0x006C1D60 ?$TClassFactory@VScriptClass@@::Release
+// FUNCTION: 0x006C1D90 ?$TClassFactory@VScriptClass@@::CreateInstance
+// FUNCTION: 0x006C1E10 ?$TClassFactory@VScriptClass@@::LockServer
+template class TClassFactory<ScriptClass>;
+
+// FUNCTION: 0x006C1E40 ?$TClassFactory@VScriptTypeClass@@::?$TClassFactory@VScriptTypeClass@@
+// FUNCTION: 0x006C1E50 ?$TClassFactory@VScriptTypeClass@@::QueryInterface
+// FUNCTION: 0x006C1EC0 ?$TClassFactory@VScriptTypeClass@@::AddRef
+// FUNCTION: 0x006C1EE0 ?$TClassFactory@VScriptTypeClass@@::Release
+// FUNCTION: 0x006C1F10 ?$TClassFactory@VScriptTypeClass@@::CreateInstance
+// FUNCTION: 0x006C1F90 ?$TClassFactory@VScriptTypeClass@@::LockServer
+template class TClassFactory<ScriptTypeClass>;

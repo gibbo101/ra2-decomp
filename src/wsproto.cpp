@@ -630,3 +630,40 @@ template class DynamicVectorClass<WinsockInterfaceClass::WinsockBufferType *>;
 // FUNCTION: 0x007B2AD0 ?$DynamicVectorClass@PAUWinsockBufferType@WinsockInterfaceClass@@::ID
 
 // FUNCTION: 0x007B2B00 ~?$VectorClass@PAUWinsockBufferType@WinsockInterfaceClass@@
+// FUNCTION: 0x007B2B50 ?$DynamicVectorClass@PAUWinsockBufferType@WinsockInterfaceClass@@::~?$DynamicVectorClass@PAUWinsockBufferType@WinsockInterfaceClass@@
+
+extern const double DAT_007F7A58;
+extern const double DAT_007F7A60;
+
+// FUNCTION: 0x007B2BA0 $E42
+double DAT_00B780C8 = FUN_004CAC40(pow(256.0, 2.0) * 2);
+
+// FUNCTION: 0x007B2BD0 $E45
+double DAT_00B78118 = DAT_00B780C8 / DAT_007F7A58;
+
+// FUNCTION: 0x007B2BF0 $E48
+double DAT_00B78100 = 1.0 / DAT_00B78118;
+
+// FUNCTION: 0x007B2C10 $E51
+double DAT_00B780F8 = DAT_007F7A60 * 45.0;
+
+// FUNCTION: 0x007B2C30 $E54
+double DAT_00B780D0 = DAT_007F7A60 * 60.0;
+
+// FUNCTION: 0x007B2C50 $E57
+double DAT_00B780A8 = DAT_007F7A60 * 90.0;
+
+// FUNCTION: 0x007B2C70 $E60
+int DAT_00B78120 = (int)(FUN_004CAD50(DAT_00B780A8 - DAT_00B780D0) * DAT_00B780C8 * 0.5);
+
+// FUNCTION: 0x007B2CB0 $E63
+double DAT_00B780D8 = FUN_004CADE0(DAT_00B78120 * 0.00390625);
+
+// FUNCTION: 0x007B2CE0 $E66
+double DAT_00B780F0 = FUN_004CADE0((DAT_00B78120 * 2) / DAT_00B780C8);
+
+// FUNCTION: 0x007B2D10 $E69
+int DAT_00B78114 = (int)(DAT_00B78120 * 4 + 0.5);
+
+// FUNCTION: 0x007B2D40 $E72
+ShortPair DAT_00B780C0;

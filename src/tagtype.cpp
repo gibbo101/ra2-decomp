@@ -17,6 +17,26 @@
 #include "tracker.h"
 #include "trigtype.h"
 #include "vector.h"
+#include <math.h>
+
+extern double __cdecl FUN_004CAC40(double);
+extern double __cdecl FUN_004CAD50(double);
+extern double __cdecl FUN_004CADE0(double);
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007E1720;
+extern const double DAT_007E1728;
+extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
+extern const double DAT_007F4630;
+extern const double DAT_007F4638;
+
+struct ShortPair {
+	unsigned short A, B;
+	ShortPair() { A = 0; B = 0; }
+};
 
 // FUNCTION: 0x006E5AE0 $E16
 // FUNCTION: 0x006E5B20 $E14
@@ -314,3 +334,38 @@ template class DynamicVectorClass<TagTypeClass *>;
 // FUNCTION: 0x006E6770 ?$DynamicVectorClass@PAVTagTypeClass@@::ID
 // FUNCTION: 0x006E67A0 ?$VectorClass@PAVTagTypeClass@@::~?$VectorClass@PAVTagTypeClass@@
 template class VectorClass<TagTypeClass *>;
+
+// FUNCTION: 0x006E67F0 ?$DynamicVectorClass@PAVTagTypeClass@@::~?$DynamicVectorClass@PAVTagTypeClass@@
+
+// FUNCTION: 0x006E6840 $E19
+double DAT_00B0E838 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x006E6870 $E22
+double DAT_00B0E8A0 = DAT_00B0E838 / DAT_007F4630;
+
+// FUNCTION: 0x006E6890 $E25
+double DAT_00B0E888 = DAT_007E1718 / DAT_00B0E8A0;
+
+// FUNCTION: 0x006E68B0 $E28
+double DAT_00B0E880 = DAT_007E1720 * DAT_007F4638;
+
+// FUNCTION: 0x006E68D0 $E31
+double DAT_00B0E858 = DAT_007E1728 * DAT_007F4638;
+
+// FUNCTION: 0x006E68F0 $E34
+double DAT_00B0E818 = DAT_007E1730 * DAT_007F4638;
+
+// FUNCTION: 0x006E6910 $E37
+int DAT_00B0E8A8 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B0E818 - DAT_00B0E858) * DAT_00B0E838));
+
+// FUNCTION: 0x006E6950 $E40
+double DAT_00B0E860 = FUN_004CADE0(DAT_00B0E8A8 * DAT_007E1740);
+
+// FUNCTION: 0x006E6980 $E43
+double DAT_00B0E878 = FUN_004CADE0((DAT_00B0E8A8 * 2) / DAT_00B0E838);
+
+// FUNCTION: 0x006E69B0 $E46
+int DAT_00B0E89C = (int)(DAT_00B0E8A8 * 4 + DAT_007E1738);
+
+// FUNCTION: 0x006E69E0 $E49
+ShortPair DAT_00B0E830;

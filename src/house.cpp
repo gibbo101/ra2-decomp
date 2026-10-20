@@ -5023,4 +5023,19 @@ template class VectorClass<BuildingTypeClass *>;
 
 // FUNCTION: 0x0050F9A0 ?$VectorClass@_N::operator==
 // FUNCTION: 0x0050F9E0 ?$VectorClass@_N::Resize
+// FUNCTION: 0x0050FA90 ?$VectorClass@_N::Clear
+// FUNCTION: 0x0050FAC0 ?$VectorClass@_N::ID
+// FUNCTION: 0x0050FB00 ?$VectorClass@_N::ID
+// FUNCTION: 0x0050FB20 ?$DynamicVectorClass@_N::Resize
+// FUNCTION: 0x0050FBD0 ?$DynamicVectorClass@_N::ID
 template class VectorClass<bool>;
+
+// FUNCTION: 0x0050FC00 ?$VectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@::operator==
+// FUNCTION: 0x0050FC60 ?$VectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@::Resize
+// FUNCTION: 0x0050FD70 ?$VectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@::Clear
+// FUNCTION: 0x0050FDB0 ?$VectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@::ID
+// FUNCTION: 0x0050FE00 ?$VectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@::ID
+template class VectorClass<BUILDING_DIST_OBJ>;
+// FUNCTION: 0x0050FE20 ?$DynamicVectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@::Resize
+// FUNCTION: 0x0050FF40 ?$DiscreteDistributionClass@VBuildingTypeClass@@::?$DistributionObject@PAVBuildingTypeClass@@::~?$DistributionObject@PAVBuildingTypeClass@@
+

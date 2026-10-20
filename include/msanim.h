@@ -10,6 +10,7 @@
 #include "vector.h"
 #include "wstring.h"
 #include "widewstring.h"
+#include "rgb.h"
 
 #include "draw.hh"
 
@@ -26,18 +27,64 @@ struct VQHandle;
 class SHPStruct
 {
 	public:
+		~SHPStruct(void);
+		void Load(void);
+		void Unload(void);
+		SHPStruct * GetData(void);
 		Rect GetFrameBounds(int frame) const;
+		RGBClass GetColor(int frame) const;
 		void * GetPixels(int frame) const;
+		bool HasCompression(int frame) const;
+		bool HasTransparency(int frame) const;
 		int Get_Width(void) const {return(Width);}
 		int Get_Height(void) const {return(Height);}
 		int Get_Count(void) const {return(Count);}
 
-	private:
 		short Flags;
 		short Width;
 		short Height;
 		short Count;
 };
+
+class SHPFrame
+{
+	public:
+		short Left;
+		short Top;
+		short Width;
+		short Height;
+		unsigned char Flags;
+		unsigned char : 8;
+		unsigned char : 8;
+		unsigned char : 8;
+		RGBStruct Color;
+		unsigned int Reserved;
+		int Offset;
+};
+
+class SHPFile : public SHPStruct
+{
+	public:
+		SHPFrame Frames[1];
+};
+
+class SHPReference : public SHPStruct
+{
+	public:
+		SHPReference(char const * filename);
+
+		char * Filename;
+		SHPStruct * Data;
+		bool Loaded;
+		int Index;
+		SHPReference * Next;
+		SHPReference * Prev;
+		int Reserved;
+};
+
+void __fastcall SHPFreeAll(void);
+void __fastcall SHPUnloadAll(void);
+void __fastcall SHPUnloadFrom(unsigned int level);
 
 typedef DynamicVectorClass<MSAnim *> MS_ANIM_LIST;
 typedef VectorCursor<MSAnim *, MS_ANIM_LIST> MS_ANIM_ITER;

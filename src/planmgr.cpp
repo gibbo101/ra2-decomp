@@ -1248,6 +1248,7 @@ extern bool DAT_00AC4CD0;
 extern bool DAT_00AC4CC8;
 extern int DAT_00AC4C3C;
 extern bool DAT_00AC4C08;
+void __fastcall FUN_006DA740(Tactical * tactical);
 extern int DAT_00AC4C90;
 
 // FUNCTION: 0x006370B0
@@ -2088,4 +2089,126 @@ void __fastcall FUN_0063A210(char const * name)
 {
 	wchar_t const * text = StringTable::LoadString(name, NULL, "D:\\ra2mdpost\\PlanMgr.cpp", 0xca1);
 	FUN_00730A90(text, 0x1e0);
+}
+
+// FUNCTION: 0x0063A230
+void __fastcall FUN_0063A230(char const * name)
+{
+	if (!DAT_00AC4C08) {
+		DAT_00AC4C08 = true;
+		wchar_t const * text = StringTable::LoadString(name, NULL, "D:\\ra2mdpost\\PlanMgr.cpp", 0xca1);
+		FUN_00730A90(text, 0x1e0);
+		VocClass::PlayGlobal(Rule->ScoldSound, 1.0f, 0x2000);
+	}
+}
+
+// FUNCTION: 0x0063A280
+void __fastcall FUN_0063A280(char const * type)
+{
+	if (*type == 9) {
+		FUN_0063A230("MSG:PlanningModeNoDeploy");
+	} else if (*type == 6) {
+		FUN_0063A230("MSG:PlanningModeNoStop");
+	} else if (*type == 7) {
+		FUN_0063A230("MSG:PlanningModeNoScatter");
+	}
+}
+
+// FUNCTION: 0x0063A360
+void __fastcall FUN_0063A360(int kind)
+{
+	if (kind == 0) {
+		FUN_0063A230("MSG:PlanningModeNoAircraft");
+	} else if (kind == 1) {
+		FUN_0063A230("MSG:PlanningModeNoBuildings");
+	} else if (kind == 2) {
+		FUN_0063A230("MSG:PlanningModeNoUnknowns");
+	}
+}
+
+// FUNCTION: 0x0063A4A0
+void __fastcall FUN_0063A4A0(int value)
+{
+	DAT_00AC4C90 = value;
+}
+
+// FUNCTION: 0x0063A4B0
+void __fastcall FUN_0063A4B0(int kind)
+{
+	FUN_006DA740(TacticalMap);
+	if (kind == 0) {
+		FUN_0063A230("MSG:PostTerminatingCommand");
+	} else if (kind == 1) {
+		FUN_0063A230("MSG:PostContinualCommand");
+	} else if (kind == 2) {
+		FUN_0063A230("MSG:NodeMaximum");
+	}
+}
+
+extern int DAT_00A8ECC8;
+
+// FUNCTION: 0x0063AAC0
+void __stdcall FUN_0063AAC0(Point2D xy)
+{
+	DAT_00AC4CB0 = true;
+	DAT_00AC4C68 = Point2D(-1, -1);
+	if (PlanningNodeClass::PlanningModeActive && DAT_00A8ECC8 <= 0) {
+		DAT_00AC4C68 = xy;
+	}
+}
+
+// FUNCTION: 0x0063AB00
+void __stdcall FUN_0063AB00(Point2D xy)
+{
+	DAT_00AC4CB0 = false;
+	if (PlanningNodeClass::PlanningModeActive && DAT_00A8ECC8 <= 0 && DAT_00AC4BF0 != 0
+		&& abs(xy.X - DAT_00AC4C68.X) <= 3 && abs(xy.Y - DAT_00AC4C68.Y) <= 3) {
+		DAT_00AC4BF0 = 0;
+	}
+}
+
+// FUNCTION: 0x0063AB60
+bool __stdcall FUN_0063AB60(Point2D xy)
+{
+	if (!PlanningNodeClass::PlanningModeActive) {
+		return false;
+	}
+	if (DAT_00AC4CB0) {
+		return false;
+	}
+	PlanningNodeClass * hover = DAT_00AC4CCC;
+	PlanningNodeClass * sel = DAT_00AC4C38;
+	PlanningNodeClass * hit;
+	if (hover != 0) {
+		Point2D corner = Pixel_Of(Node_Lead_7(hover));
+		corner.X -= 4;
+		corner.Y -= 4;
+		Rect rect;
+		Box_Into_7(&rect, corner.X, corner.Y, 8, 8);
+		Rect box = Boxed(rect);
+		if (box.Is_Point_Within(xy)) {
+			hit = DAT_00AC4CCC;
+		} else {
+			hit = 0;
+		}
+	} else {
+		hit = 0;
+	}
+	if (sel == 0) {
+		if (hit == 0) {
+			return false;
+		}
+		Map.Set_Default_Mouse(MOUSE_NORMAL, true);
+	} else if (hit != sel) {
+		Map.Set_Default_Mouse(MOUSE_NORMAL, false);
+	} else {
+		Map.Set_Default_Mouse(MOUSE_NORMAL, true);
+	}
+	return true;
+}
+
+// FUNCTION: 0x0063AC60
+PlanningNodeClass * __fastcall FUN_0063AC60(void)
+{
+	return DAT_00AC4BF0;
 }
