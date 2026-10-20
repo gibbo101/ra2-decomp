@@ -46,6 +46,7 @@ struct TurretControl
 	void FUN_00717A80(int frames);
 	int FUN_00717AA0(void) const;
 	void FUN_00717AB0(int frames);
+	int FUN_00717AD0(void) const;
 };
 
 class TechnoTypeClass : public ObjectTypeClass

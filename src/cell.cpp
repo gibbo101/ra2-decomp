@@ -2810,6 +2810,15 @@ int CellClass::GetLevel(void) const
 	return(Height + (IsBridgeDeck ? BRIDGE_CELL_HEIGHT : 0));
 }
 
+// FUNCTION: 0x00487DF0
+bool CellClass::FUN_00487DF0(void) const
+{
+	if (Land == LAND_TIBERIUM) {
+		return(true);
+	}
+	return(false);
+}
+
 // FUNCTION: 0x00487E50
 int STDMETHODCALLTYPE CellClass::What_Am_I(void) const
 {

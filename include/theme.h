@@ -78,6 +78,9 @@ class ThemeClass
 		bool Is_Shuffle(void) const {return(IsShuffle);}
 
 		void Set_Volume(int volume);
+		bool IsNormal(ThemeType index) const;
+		long Save(struct IStream * stream);
+		void Fade_Stream(void);
 
 		void Init_Themes(CCINIClass & ini);
 		void Free_Themes(void);

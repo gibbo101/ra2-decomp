@@ -267,6 +267,10 @@ Each entry: what the diff showed, then the source change that fixed it.
   never write a function that `new`s it to emit them (the command classes wait on Init_Commands).
 - A local struct cast over a real object (`((ScenMapOps *)&Map)->...`) is a stand-in too:
   declare the member in its own class's header, with TibSun's name where TibSun has it.
+- So is a `DAT_` alias or byte offset into a known object (`DAT_00A8DA90` for Session.Slots):
+  reach it through the object's members.
+- Label every template instance from the RTTI of the vtable that holds it: two addresses
+  under one symbol (`VectorClass<int>::Clear`) mean one label has the wrong element type.
 - An inline call the original leaves out of line goes out of line when wrapped in a file-local
   inline helper one level deeper (bullet's Coord_Dist, building's _Usable).
 - A function start missing from data/functions.csv is fixed in tools/functions.py, then the

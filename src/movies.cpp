@@ -5,6 +5,7 @@
 
 #include "always.h"
 #include "movies.h"
+#include "multiplayer.h"
 #include "_map.h"
 #include "_surface.h"
 #include "dsaudio.h"
@@ -666,3 +667,47 @@ template class DynamicVectorClass<MovieHandle *>;
 
 // FUNCTION: 0x005C0AD0 ?$VectorClass@PAVMovieHandle@@::operator==
 template class VectorClass<MovieHandle *>;
+
+// FUNCTION: 0x005C0B10 ?$VectorClass@PBD::Resize
+// FUNCTION: 0x005C0BC0 ?$VectorClass@PBD::Clear
+// FUNCTION: 0x005C0BF0 ?$VectorClass@PBD::ID
+// FUNCTION: 0x005C0C30 ?$VectorClass@PBD::ID
+template class VectorClass<char const *>;
+
+// FUNCTION: 0x005C0C50 ?$DynamicVectorClass@PBD::Resize
+// FUNCTION: 0x005C0D00 ?$DynamicVectorClass@PBD::ID
+// FUNCTION: 0x005C0D30 ?$DynamicVectorClass@PBD::~?$DynamicVectorClass@PBD
+// FUNCTION: 0x005C0D80 ?$VectorClass@PBD::~?$VectorClass@PBD
+template class DynamicVectorClass<char const *>;
+
+class MPBattleClass : public MPGameModeClass
+{
+	public:
+		MPBattleClass(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex);
+		virtual ~MPBattleClass(void);
+		virtual bool vt_entry_04(void) override;
+		virtual bool vt_entry_40(void) override;
+};
+
+// FUNCTION: 0x005C0DD0
+MPBattleClass::MPBattleClass(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex) :
+	MPGameModeClass(title, tooltip, inifile, mapfilter, aiallowed, modeindex)
+{
+}
+
+// FUNCTION: 0x005C0E10
+MPBattleClass::~MPBattleClass(void)
+{
+}
+
+// FUNCTION: 0x005C0E20
+bool MPBattleClass::vt_entry_40(void)
+{
+	return(true);
+}
+
+// FUNCTION: 0x005C0E30
+bool MPBattleClass::vt_entry_04(void)
+{
+	return(false);
+}

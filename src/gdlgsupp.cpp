@@ -10,6 +10,8 @@
 #include <stddef.h>
 #include "stringtable.h"
 #include "houstype.h"
+#include "multiplayer.h"
+#include "session.h"
 
 namespace fastmath { double __cdecl sqrt(double x); double __cdecl tan(double x); double __cdecl atan(double x); }
 extern const double DAT_007E1708;
@@ -23,43 +25,43 @@ extern const double DAT_007E1740;
 extern const double DAT_007E94E0;
 extern const double DAT_007E94E8;
 
-// FUNCTION: 0x004E3130 $E5
+// FUNCTION: 0x004E3130 $E70
 double DAT_008B3FA8 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x004E3160 $E8
+// FUNCTION: 0x004E3160 $E73
 double DAT_008B40B8 = DAT_008B3FA8 / DAT_007E94E0;
 
-// FUNCTION: 0x004E3180 $E11
+// FUNCTION: 0x004E3180 $E76
 double DAT_008B40A0 = DAT_007E1718 / DAT_008B40B8;
 
-// FUNCTION: 0x004E31A0 $E14
+// FUNCTION: 0x004E31A0 $E79
 double DAT_008B4098 = DAT_007E1720 * DAT_007E94E8;
 
-// FUNCTION: 0x004E31C0 $E17
+// FUNCTION: 0x004E31C0 $E82
 double DAT_008B3FB0 = DAT_007E1728 * DAT_007E94E8;
 
-// FUNCTION: 0x004E31E0 $E20
+// FUNCTION: 0x004E31E0 $E85
 double DAT_008B3F28 = DAT_007E1730 * DAT_007E94E8;
 
-// FUNCTION: 0x004E3200 $E23
+// FUNCTION: 0x004E3200 $E88
 int DAT_008B40C0 = (int)(fastmath::tan(DAT_008B3F28 - DAT_008B3FB0) * DAT_007E1738 * DAT_008B3FA8);
 
-// FUNCTION: 0x004E3240 $E26
+// FUNCTION: 0x004E3240 $E91
 double DAT_008B3FB8 = fastmath::atan(DAT_008B40C0 * DAT_007E1740);
 
-// FUNCTION: 0x004E3270 $E29
+// FUNCTION: 0x004E3270 $E94
 double DAT_008B4030 = fastmath::atan((DAT_008B40C0 * 2) / DAT_008B3FA8);
 
-// FUNCTION: 0x004E32A0 $E32
+// FUNCTION: 0x004E32A0 $E97
 int DAT_008B40B4 = (int)(DAT_008B40C0 * 4 + DAT_007E1738);
 
 struct GDShortPair { short a; short b; GDShortPair(void) { a = 0; b = 0; } };
 struct GDIntTriple { int a; int b; int c; GDIntTriple(void) { a = 0; b = 0; c = 0; } };
 
-// FUNCTION: 0x004E32D0 $E35
+// FUNCTION: 0x004E32D0 $E100
 GDShortPair DAT_008B3FA0;
 
-// FUNCTION: 0x004E32E0 $E38
+// FUNCTION: 0x004E32E0 $E103
 GDIntTriple DAT_008B4020;
 
 struct PCX
@@ -68,26 +70,9 @@ struct PCX
 	int GetSurface(char const *name, void *palette);
 };
 
-class GDVirtuals
-{
-	public:
-		virtual void Slot0(void);
-		virtual void Slot1(void);
-		virtual void Slot2(void);
-		virtual void Slot3(void);
-		virtual void Slot4(void);
-		virtual void Slot5(void);
-		virtual void Slot6(void);
-		virtual void Slot7(void);
-		virtual void Slot8(void);
-		virtual void Slot9(void);
-		virtual int Selected(void);
-};
-
 extern int DAT_008B40B0;
 extern int DAT_008B40A8;
 extern int DAT_008B40AC;
-extern GDVirtuals *DAT_00A8B23C;
 extern char *DAT_00844AE8;
 extern char *DAT_00844AEC;
 extern char *DAT_00844AF0;
@@ -221,8 +206,8 @@ void __fastcall FUN_004E3690(HWND dialog, int side)
 	int selection = SendDlgItemMessage(dialog, combo, CB_GETCURSEL, 0, 0);
 	selection = SendDlgItemMessage(dialog, combo, CB_GETITEMDATA, selection, 0);
 	if (selection < -3 || selection > 9) {
-		if (DAT_00A8B23C) {
-			selection = DAT_00A8B23C->Selected();
+		if (Session.MPGameMode) {
+			selection = Session.MPGameMode->vt_entry_28();
 		} else {
 			selection = -2;
 		}
@@ -316,14 +301,14 @@ void __fastcall FUN_004E3B00(HWND dialog, int id)
 	}
 }
 
-extern int DAT_00AC11B4;
+extern NodeNameType * DAT_00AC11B4;
 int __fastcall FUN_005E9B20(HWND dialog, int slot, int arg);
 
 // FUNCTION: 0x004E3B90
 void __fastcall FUN_004E3B90(HWND dialog)
 {
 	for (int i = 0; i < 8; i++) {
-		int owner = FUN_005E9B20(dialog, i, -1);
+		NodeNameType * owner = (NodeNameType *)FUN_005E9B20(dialog, i, -1);
 		bool mine = false;
 		if (DAT_00AC11B4 && owner == DAT_00AC11B4) {
 			mine = true;
@@ -337,17 +322,15 @@ void __fastcall FUN_004E3B90(HWND dialog)
 	}
 }
 
-extern int DAT_00A8B3BC;
-extern int DAT_00A8B3C0;
 
 // FUNCTION: 0x004E3CE0
 void __fastcall FUN_004E3CE0(HWND dialog, int side)
 {
-	int wanted = DAT_00A8B3BC;
-	if (DAT_00A8B3C0 == -2) {
-		wanted = DAT_00A8B3C0;
-	} else if (DAT_00A8B3C0 == -3) {
-		wanted = DAT_00A8B3C0;
+	int wanted = Session.Side;
+	if (Session.Side2 == -2) {
+		wanted = Session.Side2;
+	} else if (Session.Side2 == -3) {
+		wanted = Session.Side2;
 	}
 	int combo = FUN_004E37D0(side);
 	HWND item = GetDlgItem(dialog, combo);
@@ -391,8 +374,8 @@ int __fastcall FUN_004E4170(HWND dialog, int combo, int selection)
 	}
 	selection = SendDlgItemMessage(dialog, combo, CB_GETITEMDATA, selection, 0);
 	if (selection < -3 || selection > 9) {
-		if (DAT_00A8B23C) {
-			selection = DAT_00A8B23C->Selected();
+		if (Session.MPGameMode) {
+			selection = Session.MPGameMode->vt_entry_28();
 		} else {
 			selection = -2;
 		}
@@ -511,4 +494,180 @@ void __fastcall FUN_004E45A0(HWND dialog, int id)
 	if (!was_hidden) {
 		ShowWindow(item, SW_SHOW);
 	}
+}
+
+
+// FUNCTION: 0x004E4770
+void __fastcall FUN_004E4770(HWND dialog, int id)
+{
+	HWND item = GetDlgItem(dialog, id);
+	bool was_hidden = !ShowWindow(item, SW_HIDE);
+	SendMessage(item, CB_RESETCONTENT, 0, 0);
+	SendMessage(item, 0x4dd, 0, 1);
+	SendMessage(item, 0x4de, 0, 9);
+	int index = SendMessage(item, 0x4c2, 0, (LPARAM)StringTable::LoadString("GUI:RandomAsSymbols", NULL, "D:\\ra2mdpost\\GDlgSupp.cpp", 0x237));
+	SendMessage(item, CB_SETITEMDATA, index, -2);
+	SendMessage(item, 0x498, index, -1);
+	SendMessage(item, CB_SETCURSEL, 0, 0);
+	SendMessage(item, 0x4f1, 0, 1);
+	if (!was_hidden) {
+		ShowWindow(item, SW_SHOW);
+	}
+}
+
+// FUNCTION: 0x004E4820
+void __fastcall FUN_004E4820(HWND dialog)
+{
+	for (int i = 0; i < 8; i++) {
+		int id = FUN_004E41D0(i);
+		if ((Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) && (Session.Slots[i] == DAT_00AC11B4 || Session.Slots[i]->Slot.SpectatorFlag == -1)) {
+			FUN_004E4770(dialog, id);
+		} else {
+			FUN_004E45A0(dialog, id);
+		}
+	}
+}
+
+void __fastcall FUN_004E49A0(HWND dialog, int id, int wanted);
+
+// FUNCTION: 0x004E48E0
+void __fastcall FUN_004E48E0(HWND dialog, int side)
+{
+	int wanted = Session.Color;
+	if (Session.Color2 == -2) {
+		wanted = -2;
+	}
+	int id = FUN_004E41D0(side);
+	if (Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) {
+		if (Session.Slots[side] == DAT_00AC11B4 && Session.Slots[side]->Slot.SpectatorFlag == -1) {
+			wanted = 8;
+		}
+	}
+	FUN_004E49A0(dialog, id, wanted);
+}
+
+// FUNCTION: 0x004E49A0
+void __fastcall FUN_004E49A0(HWND dialog, int id, int wanted)
+{
+	HWND item = GetDlgItem(dialog, id);
+	bool was_hidden = !ShowWindow(item, SW_HIDE);
+	int owned = FUN_004E44E0(id);
+	if (owned != -1) {
+		DAT_008B4038[owned].Owner = -1;
+	}
+	int count = SendDlgItemMessage(dialog, id, CB_GETCOUNT, 0, 0);
+	for (int i = 0; i < count; i++) {
+		int data = SendDlgItemMessage(dialog, id, CB_GETITEMDATA, i, 0);
+		if (data == wanted) {
+			SendDlgItemMessage(dialog, id, CB_SETCURSEL, i, 0);
+			if (data != -2) {
+				DAT_008B4038[data].Owner = FUN_004E4230(id);
+			}
+			break;
+		}
+	}
+	if (!was_hidden) {
+		ShowWindow(item, SW_SHOW);
+	}
+	FUN_004E4820(dialog);
+}
+
+// FUNCTION: 0x004E4C20
+void __fastcall FUN_004E4C20(HWND dialog, int id)
+{
+	int owned = FUN_004E44E0(id);
+	if (owned != -1) {
+		DAT_008B4038[owned].Owner = -1;
+	}
+	int index = SendDlgItemMessage(dialog, id, CB_GETCURSEL, 0, 0);
+	int data = SendDlgItemMessage(dialog, id, CB_GETITEMDATA, index, 0);
+	int color = FUN_004E4230(id);
+	if (data != -2) {
+		DAT_008B4038[data].Owner = color;
+	}
+	FUN_004E4820(dialog);
+}
+
+// FUNCTION: 0x004E4E20
+int __fastcall FUN_004E4E20(HWND dialog, int id, int index)
+{
+	if (index == -1) {
+		index = SendDlgItemMessage(dialog, id, CB_GETCURSEL, 0, 0);
+	}
+	return SendDlgItemMessage(dialog, id, CB_GETITEMDATA, index, 0);
+}
+
+// FUNCTION: 0x004E4E60
+int __fastcall FUN_004E4E60(int slot)
+{
+	if (slot == 0) return 0x6a3;
+	if (slot == 1) return 0x6a4;
+	if (slot == 2) return 0x6a5;
+	if (slot == 3) return 0x6a6;
+	if (slot == 4) return 0x6a7;
+	if (slot == 5) return 0x6a8;
+	if (slot == 6) return 0x6aa;
+	if (slot == 7) return 0x6ab;
+	return -1;
+}
+
+// FUNCTION: 0x004E4EC0
+int __fastcall FUN_004E4EC0(int id)
+{
+	if (id == 0x6a3) return 0;
+	if (id == 0x6a4) return 1;
+	if (id == 0x6a5) return 2;
+	if (id == 0x6a6) return 3;
+	if (id == 0x6a7) return 4;
+	if (id == 0x6a8) return 5;
+	if (id == 0x6aa) return 6;
+	if (id == 0x6ab) return 7;
+	return -1;
+}
+
+// FUNCTION: 0x004E4F30
+wchar_t const * FUN_004E4F30(void)
+{
+	return StringTable::LoadString("STT:HostComboStart", NULL, "D:\\ra2mdpost\\GDlgSupp.cpp", 0x2eb);
+}
+
+struct GDNameEntry { char const *Name; int Value; int Owner; };
+extern GDNameEntry DAT_008B3F30[9];
+
+// FUNCTION: 0x004E4F50
+void FUN_004E4F50(void)
+{
+	DAT_008B3F30[0].Name = "1";
+	DAT_008B3F30[1].Name = "2";
+	DAT_008B3F30[2].Name = "3";
+	DAT_008B3F30[3].Name = "4";
+	DAT_008B3F30[4].Name = "5";
+	DAT_008B3F30[5].Name = "6";
+	DAT_008B3F30[6].Name = "7";
+	DAT_008B3F30[7].Name = "8";
+	DAT_008B3F30[8].Name = "0";
+	for (int i = 0; i < 9; i++) {
+		DAT_008B3F30[i].Owner = -1;
+	}
+}
+
+// FUNCTION: 0x004E4FC0
+void __fastcall FUN_004E4FC0(int count)
+{
+	for (int i = 0; i < count; i++) {
+		DAT_008B3F30[i].Owner = -1;
+	}
+	for (int j = count; j < 9; j++) {
+		DAT_008B3F30[j].Owner = -2;
+	}
+}
+
+// FUNCTION: 0x004E5000
+int __fastcall FUN_004E5000(int id)
+{
+	int slot = FUN_004E4EC0(id);
+	for (int i = 0; i < 9; i++) {
+		if (DAT_008B3F30[i].Owner == slot) return i;
+	}
+	return -1;
 }

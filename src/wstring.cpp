@@ -979,43 +979,12 @@ void WideWstring::trimTrailing(WideWstring const& delim)
 	truncate(i + 1);
 }
 
+// FUNCTION: 0x007B7040
 void WideWstring::clear(void)
 {
 	if (str)
 		delete[](str);
 	str = NULL;
-}
-
-char WideWstring::set(wchar_t const* s)
-{
-	unsigned int len;
-
-	clear();
-
-	len = s ? (unsigned int)wcslen(s) + 1 : 1;
-
-	str = new wchar_t[len];
-	str[0] = 0;
-	if (s)
-		wcscpy(str, s);
-
-	return(TRUE);
-}
-
-char WideWstring::set(unsigned int size, wchar_t const* string)
-{
-	unsigned int len;
-
-	clear();
-	len = size + 1;
-
-	str = new wchar_t[len];
-	str[0] = 0;
-	if (string)
-		wcsncpy(str, string, size);
-	str[size] = 0;
-
-	return(TRUE);
 }
 
 char WideWstring::truncate(unsigned int len)
@@ -1024,6 +993,27 @@ char WideWstring::truncate(unsigned int len)
 	if (!tmp.set(len, get()) || !set(tmp.get()))
 		return(FALSE);
 	return(TRUE);
+}
+
+// FUNCTION: 0x007B7060
+void WideWstring::setSize(int size)
+{
+	clear();
+	if (size < 0)
+		return;
+	str = new wchar_t[size];
+	memset(str, 0, size * sizeof(wchar_t));
+}
+
+// FUNCTION: 0x007B70B0
+void WideWstring::cellCopy(wchar_t* dest, unsigned int len) const
+{
+	unsigned int i;
+
+	wcsncpy(dest, str, len);
+	for (i = (unsigned int)wcslen(str); i < len; i++)
+		dest[i] = ' ';
+	dest[len] = 0;
 }
 
 // FUNCTION: 0x007B7100
@@ -1058,12 +1048,71 @@ wchar_t WideWstring::operator[](unsigned int index) const
 	return(0);
 }
 
+// FUNCTION: 0x007B7180
+wchar_t WideWstring::getChar(unsigned int index) const
+{
+	return((*this)[index]);
+}
+
 // FUNCTION: 0x007B71B0
 unsigned int WideWstring::length(void) const
 {
 	if (str == NULL)
 		return(0);
 	return((unsigned int)wcslen(str));
+}
+
+// FUNCTION: 0x007B71D0
+char WideWstring::insert(wchar_t const* instring, unsigned int pos)
+{
+	if (str == NULL)
+		return(set(instring));
+	if (pos > wcslen(str))
+		pos = wcslen(str);
+	wchar_t* newstr = new wchar_t[wcslen(str) + wcslen(instring) + 1];
+	memset(newstr, 0, (wcslen(str) + wcslen(instring) + 1) * sizeof(wchar_t));
+	wcscpy(newstr, str);
+	int bytes = wcslen(str) + 1 - pos;
+	memmove(newstr + pos + wcslen(instring), newstr + pos, bytes * sizeof(wchar_t));
+	memmove(newstr + pos, instring, wcslen(instring) * sizeof(wchar_t));
+	delete[](str);
+	str = newstr;
+	return(TRUE);
+}
+
+// FUNCTION: 0x007B72F0
+char WideWstring::insert(wchar_t k, unsigned int pos)
+{
+	wchar_t* s;
+	unsigned int   len;
+	wchar_t     c[2];
+
+	if (!str)
+	{
+		c[0] = k;
+		c[1] = 0;
+		return(set(c));
+	}
+
+	len = (unsigned int)wcslen(str);
+
+	if (pos > len)
+		pos = len;
+
+	s = new wchar_t[(len + 2)];
+
+	c[0] = str[pos];
+	str[pos] = 0;
+	c[1] = 0;
+	wcscpy(s, str);
+	str[pos] = c[0];
+	c[0] = k;
+	wcscat(s, c);
+	wcscat(s, &(str[pos]));
+	delete[](str);
+	str = s;
+
+	return(TRUE);
 }
 
 // FUNCTION: 0x007B73F0
@@ -1100,6 +1149,23 @@ char WideWstring::replace(wchar_t const* replaceThis, wchar_t const* withThis)
 	return(set(dest.get()));
 }
 
+// FUNCTION: 0x007B7600
+wchar_t WideWstring::set(wchar_t const* s)
+{
+	unsigned int len;
+
+	clear();
+
+	len = s ? (unsigned int)wcslen(s) + 1 : 1;
+
+	str = new wchar_t[len];
+	str[0] = 0;
+	if (s)
+		wcscpy(str, s);
+
+	return(TRUE);
+}
+
 // FUNCTION: 0x007B7660
 char WideWstring::set(wchar_t c, unsigned int index)
 {
@@ -1109,6 +1175,63 @@ char WideWstring::set(wchar_t c, unsigned int index)
 	str[index] = c;
 
 	return(TRUE);
+}
+
+// FUNCTION: 0x007B7690
+wchar_t WideWstring::set(unsigned int size, wchar_t const* string)
+{
+	unsigned int len;
+
+	clear();
+	len = size + 1;
+
+	str = new wchar_t[len];
+	str[0] = 0;
+	if (string)
+		wcsncpy(str, string, size);
+	str[size] = 0;
+
+	return(TRUE);
+}
+
+// FUNCTION: 0x007B76F0
+void WideWstring::toLower(void)
+{
+	unsigned int i;
+
+	for (i = 0; i < length(); i++)
+	{
+		if ((str[i] >= 'A') && (str[i] <= 'Z'))
+			str[i] = tolower(str[i]);
+	}
+}
+
+// FUNCTION: 0x007B7740
+WideWstring WideWstring::toLower(void) const
+{
+	WideWstring tmp = *this;
+	tmp.toLower();
+	return(tmp);
+}
+
+// FUNCTION: 0x007B77E0
+void WideWstring::toUpper(void)
+{
+	unsigned int i;
+
+	for (i = 0; i < length(); i++)
+	{
+		if ((str[i] >= 'a') && (str[i] <= 'z'))
+			str[i] = toupper(str[i]);
+	}
+}
+
+// FUNCTION: 0x007B7830
+WideWstring WideWstring::toUpper(void) const
+{
+	WideWstring tmp = *this;
+	tmp.toUpper();
+	return(tmp);
 }
 
 // FUNCTION: 0x007B7D80

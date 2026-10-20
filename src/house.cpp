@@ -82,6 +82,7 @@ extern DynamicVectorClass<TechnoClass *> DAT_00A8EC78;
 extern DynamicVectorClass<FootClass *> DAT_008B3DC0;
 #define Foots DAT_008B3DC0
 extern DynamicVectorClass<FactoryClass *> DAT_00A83E30;
+namespace Game { extern bool IsActive; }
 namespace Unsorted { extern int CurrentFrame; extern int MuteSWLaunches; extern Cell CellSpreadTable[]; extern bool SWAllowed; }
 #define Factories DAT_00A83E30
 extern DynamicVectorClass<ObjectClass *> DAT_00A8ECB8;
@@ -377,14 +378,6 @@ LONG STDMETHODCALLTYPE HouseClass::Apparent_Category_Power(CategoryType category
 	}
 
 	return(quantity);
-}
-
-Cell HouseClass::Get_Base_Center(void) const
-{
-	if (BaseCenter == CELL_NONE) {
-		return(BaseSpawnCell);
-	}
-	return(BaseCenter);
 }
 
 static inline Coord Base_Coord(Cell base)
@@ -4665,8 +4658,182 @@ void HouseClass::FUN_0050DA20(Cell cell)
 	PreferredDefensiveCellStartTime = Unsorted::CurrentFrame;
 }
 
+// FUNCTION: 0x0050DA40
+void HouseClass::FUN_0050DA40(Cell cell)
+{
+	PreferredDefensiveCell2 = cell;
+}
+
+// FUNCTION: 0x0050DA50
+void HouseClass::FUN_0050DA50(void)
+{
+	PreferredDefensiveCell = CELL_NONE;
+	PreferredDefensiveCellStartTime = -100;
+	PreferredDefensiveCell2 = CELL_NONE;
+}
+
+// FUNCTION: 0x0050DA80
+SourceType HouseClass::FUN_0050DA80(void) const
+{
+	if (Edge < SOURCE_NORTH || Edge > SOURCE_WEST) {
+		return(SOURCE_NORTH);
+	}
+	return(Edge);
+}
+
+// FUNCTION: 0x0050DAA0
+SourceType HouseClass::FUN_0050DAA0(void) const
+{
+	if (Control.Edge < SOURCE_NORTH || Control.Edge > SOURCE_WEST) {
+		return(SOURCE_NORTH);
+	}
+	return(Control.Edge);
+}
+
+// FUNCTION: 0x0050DAC0
+SourceType HouseClass::FUN_0050DAC0(void) const
+{
+	switch (Edge) {
+		case SOURCE_NORTH:
+			return(SOURCE_SOUTH);
+
+		case SOURCE_EAST:
+			return(SOURCE_WEST);
+
+		case SOURCE_SOUTH:
+			return(SOURCE_NORTH);
+
+		case SOURCE_WEST:
+			return(SOURCE_EAST);
+	}
+	return(SOURCE_NORTH);
+}
+
+// FUNCTION: 0x0050DB00
+SourceType HouseClass::FUN_0050DB00(BuildingClass * building)
+{
+	Coord center = COORD_NONE;
+	Coord fallback = COORD_NONE;
+
+	if (building && building->IsLeader && building->Class->ToBuild == RTTI_BUILDINGTYPE) {
+		center = building->Center_Coord();
+	} else if (CurBuildings) {
+		for (int index = 0; index < Buildings.Count(); index++) {
+			BuildingClass * b = Buildings[index];
+			if (b && !b->IsInLimbo) {
+				if (b->Class->IsConstructionYard) {
+					center = b->Center_Coord();
+					if (b->IsLeader) {
+						break;
+					}
+				} else if (fallback == COORD_NONE) {
+					fallback = b->Center_Coord();
+				}
+			}
+		}
+	}
+
+	if (center == COORD_NONE) {
+		center = fallback;
+	}
+	if (center == COORD_NONE) {
+		return(FUN_0050DA80());
+	}
+	{
+		CellClass & target = Map[center];
+		Point2D cellpt(target.CellID.X, target.CellID.Y);
+		Point2D p1 = Map.LocalRect_To_Cell_Point(Point2D(Map.LocalRect.Width / 2, 1));
+		int north = (cellpt - p1).Length();
+		Point2D p2 = Map.LocalRect_To_Cell_Point(Point2D(Map.LocalRect.Width, Map.LocalRect.Height));
+		int east = (cellpt - p2).Length();
+		Point2D p3 = Map.LocalRect_To_Cell_Point(Point2D(Map.LocalRect.Width / 2, Map.LocalRect.Height * 2));
+		int south = (cellpt - p3).Length();
+		Point2D p4 = Map.LocalRect_To_Cell_Point(Point2D(0, Map.LocalRect.Height));
+		int west = (cellpt - p4).Length();
+		if (north <= east && north <= south && north <= west) {
+			Edge = SOURCE_NORTH;
+		} else if (east <= south && east <= west) {
+			Edge = SOURCE_EAST;
+		} else if (south <= west) {
+			Edge = SOURCE_SOUTH;
+		} else {
+			Edge = SOURCE_WEST;
+		}
+	}
+	return(FUN_0050DA80());
+}
+
+// FUNCTION: 0x0050DEF0
+Cell HouseClass::Get_Base_Center(void) const
+{
+	if (BaseCenter == CELL_NONE) {
+		return(BaseSpawnCell);
+	}
+	return(BaseCenter);
+}
+
+// FUNCTION: 0x0050DF30
+Coord HouseClass::FUN_0050DF30(void) const
+{
+	Cell base = Get_Base_Center();
+	if (base == CELL_NONE) {
+		return(COORD_NONE);
+	}
+	return(Map[base].Center_Coord());
+}
+
+// FUNCTION: 0x0050DFE0
+void HouseClass::FUN_0050DFE0(Cell cell)
+{
+	BaseCenter = cell;
+}
+
+// FUNCTION: 0x0050DFF0
+void HouseClass::FUN_0050DFF0(void)
+{
+	BaseCenter = CELL_NONE;
+}
+
 // FUNCTION: 0x0050E000
 void HouseClass::Set_Base_Spawn_Cell(Cell cell)
 {
 	BaseSpawnCell = cell;
+}
+
+// FUNCTION: 0x0050E010
+void HouseClass::FUN_0050E010(UnitTypeClass * type)
+{
+	PoweredUnitCenters++;
+	if (PoweredUnitCenters == 1 && type) {
+		bool found = false;
+		for (int index = Technos.Count() - 1; index >= 0; index--) {
+			TechnoClass * techno = Technos[index];
+			if (techno->House == this && techno->Techno_Type_Class() == type && !techno->IsInLimbo) {
+				techno->Reactivate();
+				found = true;
+			}
+		}
+		if (found && Game::IsActive && Is_Player_Control() && !ScenarioInit) {
+			VoxClass::Play("EVA_RobotTanksBackOnline", -1, -1);
+		}
+	}
+}
+
+// FUNCTION: 0x0050E0E0
+void HouseClass::LostPoweredCenter(UnitTypeClass * type)
+{
+	PoweredUnitCenters--;
+	if (PoweredUnitCenters == 0 && type) {
+		bool found = false;
+		for (int index = Technos.Count() - 1; index >= 0; index--) {
+			TechnoClass * techno = Technos[index];
+			if (techno->House == this && techno->Techno_Type_Class() == type && !techno->IsInLimbo) {
+				techno->Deactivate();
+				found = true;
+			}
+		}
+		if (found && Game::IsActive && Is_Player_Control() && !ScenarioInit) {
+			VoxClass::Play("EVA_RobotTanksOffline", -1, -1);
+		}
+	}
 }

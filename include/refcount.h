@@ -7,9 +7,10 @@
 class ReferenceCounted
 {
 	public:
-		ReferenceCounted(void) : Count(0), Flag(0) {}
+		ReferenceCounted(void) : Count(0) {}
 		virtual ~ReferenceCounted(void);
+		virtual bool FUN_0065D690(int);
+		virtual void FUN_0065D670(void);
 
 		int Count;
-		char Flag;
 };

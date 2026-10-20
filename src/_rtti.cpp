@@ -215,3 +215,42 @@ double DAT_008872D0 = DAT_007E1720 * DAT_007E1B18;
 
 // FUNCTION: 0x0040E610 $E95
 double DAT_00887290 = DAT_007E1728 * DAT_007E1B18;
+
+extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
+namespace fastmath { double __cdecl tan(double x); double __cdecl atan(double x); }
+
+// FUNCTION: 0x0040E630 $E98
+double DAT_00887278 = DAT_007E1730 * DAT_007E1B18;
+
+// FUNCTION: 0x0040E650 $E101
+int DAT_008872F8 = (int)(DAT_007E1738 * fastmath::tan(DAT_00887278 - DAT_00887290) * DAT_00887288);
+
+// FUNCTION: 0x0040E690 $E104
+double DAT_00887298 = fastmath::atan(DAT_008872F8 * DAT_007E1740);
+
+// FUNCTION: 0x0040E6C0 $E107
+double DAT_008872C8 = fastmath::atan((DAT_008872F8 * 2) / DAT_00887288);
+
+// FUNCTION: 0x0040E6F0 $E110
+int DAT_008872EC = (int)((DAT_008872F8 * 4) + DAT_007E1738);
+
+// FUNCTION: 0x0040E720 $E113
+Cell DAT_00887280(0, 0);
+
+// FUNCTION: 0x0040E730 $E116
+Coord DAT_008872A0(0, 0, 0);
+
+// FUNCTION: 0x0040E750 $E119
+Coord DAT_008872E0(128, 128, 0);
+
+// FUNCTION: 0x0040E770 $E124
+DynamicVectorClass<AbstractClass *> DAT_008872B0;
+
+// FUNCTION: 0x0040E7B0 $E122
+
+// FUNCTION: 0x0040E7F0 ?$DynamicVectorClass@PAVAbstractClass@@::Clear
+template class DynamicVectorClass<AbstractClass *>;
+
+// FUNCTION: 0x0040E820 ?$DynamicVectorClass@PAVAbstractClass@@::ID

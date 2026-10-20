@@ -55,8 +55,8 @@ extern int DAT_0081AF00;
 extern ULONG COMRefCount;
 
 
-// FUNCTION: 0x004662E0 $E109
-// FUNCTION: 0x00466320 $E106
+// FUNCTION: 0x004662E0 $E120
+// FUNCTION: 0x00466320 $E117
 
 // FUNCTION: 0x00466380
 BulletClass::BulletClass(void) :
@@ -142,7 +142,7 @@ Cell const * BulletClass::Occupy_List(bool) const
 	return(_list);
 }
 
-// FUNCTION: 0x004666B0 $E112
+// FUNCTION: 0x004666B0 $E123
 
 // FUNCTION: 0x004666C0
 bool BulletClass::Mark(MarkType mark)

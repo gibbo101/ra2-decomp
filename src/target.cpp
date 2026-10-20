@@ -132,3 +132,111 @@ FootClass * xTargetClass::As_Foot(void) const
 	}
 	return(NULL);
 }
+
+// FUNCTION: 0x006E7190
+TriggerClass * xTargetClass::As_Trigger(void) const
+{
+	if (RTTI == RTTI_ABSTRACT) {
+		return(dynamic_cast<TriggerClass *>(TargetTracker[ID]));
+	}
+	return(NULL);
+}
+
+// FUNCTION: 0x006E7260
+HouseClass * xTargetClass::As_House(void) const
+{
+	if (RTTI == RTTI_ABSTRACT) {
+		return(dynamic_cast<HouseClass *>(TargetTracker[ID]));
+	}
+	return(NULL);
+}
+
+// FUNCTION: 0x006E7330
+TechnoTypeClass * xTargetClass::As_TechnoType(void) const
+{
+	if (RTTI == RTTI_ABSTRACT) {
+		return(dynamic_cast<TechnoTypeClass *>(TargetTracker[ID]));
+	}
+	return(NULL);
+}
+
+// FUNCTION: 0x006E7400
+TriggerTypeClass * xTargetClass::As_TriggerType(void) const
+{
+	if (RTTI == RTTI_ABSTRACT) {
+		return(dynamic_cast<TriggerTypeClass *>(TargetTracker[ID]));
+	}
+	return(NULL);
+}
+
+// FUNCTION: 0x006E74D0
+TeamTypeClass * xTargetClass::As_TeamType(void) const
+{
+	if (RTTI == RTTI_ABSTRACT) {
+		return(dynamic_cast<TeamTypeClass *>(TargetTracker[ID]));
+	}
+	return(NULL);
+}
+
+// FUNCTION: 0x006E75A0
+TerrainClass * xTargetClass::As_Terrain(void) const
+{
+	if (RTTI == RTTI_ABSTRACT) {
+		return(dynamic_cast<TerrainClass *>(TargetTracker[ID]));
+	}
+	return(NULL);
+}
+
+// FUNCTION: 0x006E7670
+BulletClass * xTargetClass::As_Bullet(void) const
+{
+	if (RTTI == RTTI_ABSTRACT) {
+		return(dynamic_cast<BulletClass *>(TargetTracker[ID]));
+	}
+	return(NULL);
+}
+
+// FUNCTION: 0x006E7740
+AnimClass * xTargetClass::As_Anim(void) const
+{
+	if (RTTI == RTTI_ABSTRACT) {
+		return(dynamic_cast<AnimClass *>(TargetTracker[ID]));
+	}
+	return(NULL);
+}
+
+// FUNCTION: 0x006E7810
+TeamClass * xTargetClass::As_Team(void) const
+{
+	if (RTTI == RTTI_ABSTRACT) {
+		return(dynamic_cast<TeamClass *>(TargetTracker[ID]));
+	}
+	return(NULL);
+}
+
+// FUNCTION: 0x006E78E0
+InfantryClass * xTargetClass::As_Infantry(void) const
+{
+	if (RTTI == RTTI_ABSTRACT) {
+		return(dynamic_cast<InfantryClass *>(TargetTracker[ID]));
+	}
+	return(NULL);
+}
+
+// FUNCTION: 0x006E79B0
+UnitClass * xTargetClass::As_Unit(void) const
+{
+	if (RTTI == RTTI_ABSTRACT) {
+		return(dynamic_cast<UnitClass *>(TargetTracker[ID]));
+	}
+	return(NULL);
+}
+
+// FUNCTION: 0x006E7A80
+BuildingClass * xTargetClass::As_Building(void) const
+{
+	if (RTTI == RTTI_ABSTRACT) {
+		return(dynamic_cast<BuildingClass *>(TargetTracker[ID]));
+	}
+	return(NULL);
+}

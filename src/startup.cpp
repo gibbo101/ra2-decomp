@@ -106,6 +106,7 @@
 #include "terrain.h"
 #include "terrtype.h"
 #include "tevent.h"
+#include "temporal.h"
 #include "theme.h"
 #include "tiberium.h"
 #include "trigger.h"
@@ -151,8 +152,8 @@ struct SHPStruct
 // FUNCTION: 0x006BB210 $E32
 // FUNCTION: 0x006BB220 $E35
 // FUNCTION: 0x006BB240 $E38
-// FUNCTION: 0x006BB260 $E317
-// FUNCTION: 0x006BB2A0 $E315
+// FUNCTION: 0x006BB260 $E328
+// FUNCTION: 0x006BB2A0 $E326
 
 namespace DirectDrawWrap { extern bool DoSmth; void DisposeOfStuff(void); }
 void FUN_004C19B0(void);
@@ -502,3 +503,19 @@ template class TClassFactory<BuildingLightClass>;
 
 // FUNCTION: 0x006BEDB0 ?$_com_ptr_t@V?$_com_IIID@UIUnknown@@$1?_GUID_00000000_0000_0000_c000_000000000046@@3U__s_GUID@@A@@::CreateInstance
 template class _com_ptr_t<_com_IIID<IUnknown, &__uuidof(IUnknown)> >;
+
+// FUNCTION: 0x006C04C0 ?$TClassFactory@VWaypointPathClass@@::?$TClassFactory@VWaypointPathClass@@
+// FUNCTION: 0x006C04D0 ?$TClassFactory@VWaypointPathClass@@::QueryInterface
+// FUNCTION: 0x006C0540 ?$TClassFactory@VWaypointPathClass@@::AddRef
+// FUNCTION: 0x006C0560 ?$TClassFactory@VWaypointPathClass@@::Release
+// FUNCTION: 0x006C0590 ?$TClassFactory@VWaypointPathClass@@::CreateInstance
+// FUNCTION: 0x006C0610 ?$TClassFactory@VWaypointPathClass@@::LockServer
+template class TClassFactory<WaypointPathClass>;
+
+// FUNCTION: 0x006C0640 ?$TClassFactory@VTemporalClass@@::?$TClassFactory@VTemporalClass@@
+// FUNCTION: 0x006C0650 ?$TClassFactory@VTemporalClass@@::QueryInterface
+// FUNCTION: 0x006C06C0 ?$TClassFactory@VTemporalClass@@::AddRef
+// FUNCTION: 0x006C06E0 ?$TClassFactory@VTemporalClass@@::Release
+// FUNCTION: 0x006C0710 ?$TClassFactory@VTemporalClass@@::CreateInstance
+// FUNCTION: 0x006C0790 ?$TClassFactory@VTemporalClass@@::LockServer
+template class TClassFactory<TemporalClass>;

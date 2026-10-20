@@ -168,11 +168,14 @@ void Selection::Update_Hovered_Territory(Point2D const & point)
 	}
 }
 
+extern bool UserInputLocked;
+
 class InputManagerClass {
 public:
 	static InputManagerClass * Instance;
 	short FUN_0054F000(void);
 	short FUN_0054F050(void);
+	void FUN_0054F720(void);
 };
 
 typedef VectorCursor<MSSfxEntry *, DynamicVectorClass<MSSfxEntry *> > WDT_SFX_ITER;
@@ -219,10 +222,90 @@ void Selection::Check_For_Breakout(void)
 	}
 }
 
+// FUNCTION: 0x0076EAF0 WorldDominationTour::Selection::Set_Tooltip
+void Selection::Set_Tooltip(WideWstring const & text)
+{
+	Rect rect = WorldMap.Get()->TooltipRect;
+	if (TooltipAnim != NULL) {
+		Remove_Anim(TooltipAnim);
+		HiddenSurface->Blit_From(rect, *AlternateSurface, rect);
+		Add_Update_Rect(rect);
+		TooltipAnim = NULL;
+	}
+
+	if (text.length() > 0) {
+		WideWstring copy(text);
+		TooltipAnim = new YRTextAnim(copy, rect, false);
+		TooltipAnim->FUN_005CD3C0(true);
+		Add_Animation(TooltipAnim);
+	}
+}
+
+// FUNCTION: 0x0076EBE0 WorldDominationTour::Selection::Play_SFX
+void Selection::Play_SFX(Wstring const & name)
+{
+	if (name != (char const *)NULL) {
+		SFX_ITER it(SfxEntries, 0);
+		for (; it; it++) {
+			if (!(name == it->Get_Name())) {
+				break;
+			}
+		}
+		if (it) {
+			it->Play();
+		}
+	}
+}
+
+// FUNCTION: 0x0076ECD0
+void __fastcall FUN_0076ECD0(YRCampaignHandle * campaign, int theater)
+{
+	InputManagerClass::Instance->FUN_0054F720();
+	Selection sel(*campaign, theater);
+	sel.Presentation(theater);
+}
+
+// FUNCTION: 0x0076EEB0 WorldDominationTour::Selection::FUN_0076EEB0
+void Selection::FUN_0076EEB0(void)
+{
+	UserInputLocked = false;
+	if (ThemeName != (char const *)NULL) {
+		Theme.Play_Song(Theme.From_Name(ThemeName.get()));
+		Theme.Set_Repeat(true);
+	}
+	MouseCursor->Hide_Mouse();
+	AlternateSurface->Fill(0);
+	HiddenSurface->Fill(0);
+	VisibleSurface->Blit_From(*HiddenSurface);
+	InputManagerClass::Instance->FUN_0054F720();
+	WorldMap.Get()->FUN_007692F0(this, &VoicePlayer);
+	while (MouseCursor->Get_Mouse_State() < 0) {
+		MouseCursor->Show_Mouse();
+	}
+}
+
+// FUNCTION: 0x0076EF80 WorldDominationTour::Selection::End
+void Selection::End(void)
+{
+	MouseCursor->Hide_Mouse();
+	Theme.Queue_Song((ThemeType)-3);
+	AlternateSurface->Fill(0);
+	HiddenSurface->Fill(0);
+	while (MouseCursor->Get_Mouse_State() < 0) {
+		MouseCursor->Show_Mouse();
+	}
+}
+
 // FUNCTION: 0x0076F000 WorldDominationTour::YRMapImpl::FUN_0076F000
 YRTerritoryHandle YRMapImpl::FUN_0076F000(int id)
 {
 	return(FUN_0076FF40(&Territories, id));
+}
+
+// FUNCTION: 0x0076F020 WorldDominationTour::YRPropsHandle::FUN_0076F020
+YRPropsImpl * YRPropsHandle::FUN_0076F020(void) const
+{
+	return((YRPropsImpl *)Ptr);
 }
 
 // FUNCTION: 0x0076F030 WorldDominationTour::YRTerritoryHandle::YRTerritoryHandle
@@ -234,4 +317,16 @@ YRTerritoryHandle::YRTerritoryHandle(YRTerritoryHandle const & that)
 // FUNCTION: 0x0076F060 WorldDominationTour::YRTerritoryHandle::~YRTerritoryHandle
 YRTerritoryHandle::~YRTerritoryHandle(void)
 {
+}
+
+// FUNCTION: 0x0076F070 WorldDominationTour::YRTerritoryHandle::FUN_0076F070
+YRTerritoryImpl * YRTerritoryHandle::FUN_0076F070(void) const
+{
+	return(Get());
+}
+
+// FUNCTION: 0x0076F080 WorldDominationTour::YRMapHandle::FUN_0076F080
+YRMapImpl * YRMapHandle::FUN_0076F080(void) const
+{
+	return(Get());
 }

@@ -36,10 +36,18 @@ class WideWstring
 		void			trimLeading(WideWstring const & delim);
 		void			trimTrailing(WideWstring const & delim);
 		char			truncate(unsigned int len);
-		char			set(unsigned int size, wchar_t const * string);
+		wchar_t			set(unsigned int size, wchar_t const * string);
 		char			replace(wchar_t const * replaceThis, wchar_t const * withThis);
-		char			set(wchar_t const * s);
+		wchar_t			set(wchar_t const * s);
 		void			clear(void);
+		void			setSize(int size);
+		void			cellCopy(wchar_t * dest, unsigned int len) const;
+		char			insert(wchar_t const * instring, unsigned int pos);
+		char			insert(wchar_t k, unsigned int pos);
+		void			toLower(void);
+		WideWstring		toLower(void) const;
+		void			toUpper(void);
+		WideWstring		toUpper(void) const;
 
 		bool			operator==(wchar_t const * other) const;
 		bool			operator==(WideWstring const & other) const;

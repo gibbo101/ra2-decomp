@@ -2709,9 +2709,9 @@ bool TechnoClass::IsNotWarpingIn(void) const
 }
 
 // FUNCTION: 0x00705D60
-void TechnoClass::FUN_00705D60(void)
+bool TechnoClass::FUN_00705D60(void)
 {
-	TryNextPlanningTokenNode();
+	return(TryNextPlanningTokenNode());
 }
 
 // FUNCTION: 0x00705D70
@@ -5019,4 +5019,84 @@ bool TechnoClass::CanDisguiseAs(AbstractClass * target) const
 		}
 	}
 	return(false);
+}
+
+// FUNCTION: 0x0070F010
+void TechnoClass::ClearMegaMissionData(void)
+{
+}
+
+// FUNCTION: 0x0070F020
+bool TechnoClass::HaveMegaMission(void) const
+{
+	return(false);
+}
+
+// FUNCTION: 0x0070F030
+bool TechnoClass::HaveAttackMoveTarget(void) const
+{
+	return(false);
+}
+
+// FUNCTION: 0x0070F040
+int TechnoClass::GetMegaMission(void) const
+{
+	return(-1);
+}
+
+// FUNCTION: 0x0070F050
+Coord TechnoClass::GetAttackMoveCoords(void)
+{
+	return(Coord(-1, -1, -1));
+}
+
+// FUNCTION: 0x0070F070
+bool TechnoClass::CanUseWaypoint(void) const
+{
+	return(Techno_Type_Class()->CanUseWaypoint());
+}
+
+// FUNCTION: 0x0070F090
+bool TechnoClass::CanAttackOnTheMove(void) const
+{
+	return(Techno_Type_Class()->CanAttackMove());
+}
+
+// FUNCTION: 0x0070F0E0
+bool TechnoClass::MegaMissionIsAttackMove(void) const
+{
+	return(false);
+}
+
+// FUNCTION: 0x0070F0F0
+bool TechnoClass::ContinueMegaMission(void)
+{
+	return(false);
+}
+
+// FUNCTION: 0x0070F100
+void TechnoClass::UpdateAttackMove(void)
+{
+}
+
+// FUNCTION: 0x0070F110
+bool TechnoClass::RefreshMegaMission(void)
+{
+	return(false);
+}
+
+// FUNCTION: 0x0070F0B0
+int __fastcall FUN_0070F0B0(int action, int unused, int extra)
+{
+	bool held = FUN_00731BF0();
+	if (action == 1) {
+		if (held) {
+			return(62);
+		}
+	} else if (action == 5) {
+		if (held) {
+			return(63);
+		}
+	}
+	return(action);
 }

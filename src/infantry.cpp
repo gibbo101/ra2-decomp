@@ -2252,6 +2252,133 @@ void InfantryClass::FUN_00522D00(void)
 	}
 }
 
+// FUNCTION: 0x00522D20
+void InfantryClass::FUN_00522D20(void)
+{
+	QueueMission(MISSION_GUARD, false);
+}
+
+// FUNCTION: 0x00522D30
+bool InfantryClass::FUN_00522D30(void)
+{
+	if (Tiberium_Load() == 1.0) {
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00522D50
+void InfantryClass::FUN_00522D50(TechnoClass * building)
+{
+	bool unloaded = false;
+	int slot = Storage.First_Used_Slot();
+	while (slot != -1) {
+		HouseClass * house = building->House;
+		int purifiers = house->NumOrePurifiers;
+		if (!house->IsHuman && Session.Type != GAME_NORMAL) {
+			purifiers += Rule->AIVirtualPurifiers[house->Difficulty];
+		}
+		float amount;
+		if (slot != -1) {
+			amount = Storage.Get_Amount(slot);
+		} else {
+			amount = 0;
+		}
+		float bonus = purifiers * Rule->PurifierBonus * amount;
+		if (slot != -1) {
+			float removed = Storage.Decrease_Amount(amount, slot);
+			if (removed > 0) {
+				unloaded = true;
+				house->Give_Tiberium(removed, slot);
+				if (bonus > 0) {
+					house->Give_Tiberium(bonus, slot);
+				}
+			}
+		}
+		slot = Storage.First_Used_Slot();
+	}
+	if (unloaded) {
+		building->UpdateRefinerySmokeSystems();
+	}
+}
+
+// FUNCTION: 0x00522E70
+int InfantryClass::Do_MISSION_HARVEST(void)
+{
+	if (Class->Capacity == 0) {
+		Do_Action(DO_STAND_READY, false, false);
+		QueueMission(MISSION_GUARD, false);
+		return(1);
+	}
+	CellClass * cell = Get_Cell_Ptr();
+	if (cell->FUN_00487DF0() && Tiberium_Load() != 1.0) {
+		if (Doing != 0x26) {
+			Do_Action((DoType)0x26, false, false);
+		}
+		TiberiumType tib = cell->Tiberium_Type_Here();
+		int reduced = cell->Reduce_Tiberium((int)((Class->Capacity - Storage.Get_Total_Amount() > 1.0f) ? 1.0f : (Class->Capacity - Storage.Get_Total_Amount())));
+		if (reduced > 0) {
+			Storage.Increase_Amount((float)reduced, tib);
+		}
+		return(Class->HarvestRate);
+	}
+	Do_Action(DO_STAND_READY, false, false);
+	QueueMission(MISSION_GUARD, false);
+	return(1);
+}
+
+// FUNCTION: 0x00522FC0
+bool InfantryClass::FUN_00522FC0(void)
+{
+	return(Get_Mission() == MISSION_HARVEST);
+}
+
+extern int DAT_00A8F234;
+
+// FUNCTION: 0x00522FE0
+bool InfantryClass::ChronoWarpTo(Coord dest)
+{
+	if (In_Air() || IsIronCurtained() || IsImmobilized || IsBeingWarpedOut() || IsWarpingIn()) {
+		return(false);
+	}
+	Locomotion->Mark_All_Occupation_Bits(0);
+	Clear_Occupy_Bit(dest);
+	IsOccupyingCell = true;
+	Assign_Destination(&Map[dest]);
+	Locomotion->Force_Immediate_Destination(dest);
+	ILocomotionPtr teleport(LocomotionClass::CLSIDs::Teleport);
+	IPiggybackPtr piggy(teleport);
+	if (Map[dest].IsUnderBridge) {
+		dest.Z += DAT_00A8F234;
+	}
+	teleport->Link_To_Object(this);
+	piggy->Begin_Piggyback(Locomotion);
+	Locomotion = teleport;
+	IsImmobilized = true;
+	(Coord &)ChronoDestCoords = dest;
+	Assign_Destination(&Map[dest]);
+	Locomotion->Mark_All_Occupation_Bits(0);
+	return(true);
+}
+
+// FUNCTION: 0x00523250
+Coord InfantryClass::Fire_Coord(int which, Coord base) const
+{
+	if (InOpenToppedTransport && Transporter != NULL) {
+		int index = Transporter->Cargo.IndexOf(this);
+		if (index != 0) {
+			return(Transporter->Fire_Coord(-index, Coord(0, 0, 0)));
+		}
+	}
+	return(TechnoClass::Fire_Coord(which, Coord(0, 0, 0)));
+}
+
+// FUNCTION: 0x005232F0
+int InfantryClass::Fetch_Object_Size(void) const
+{
+	return(sizeof(*this));
+}
+
 // FUNCTION: 0x00523300
 HRESULT STDMETHODCALLTYPE InfantryClass::GetClassID(CLSID * retval)
 {
@@ -2259,3 +2386,15 @@ HRESULT STDMETHODCALLTYPE InfantryClass::GetClassID(CLSID * retval)
 	*retval = CLSID_InfantryClass;
 	return(S_OK);
 }
+
+// FUNCTION: 0x00523340
+RTTIType InfantryClass::Fetch_RTTI(void) const
+{
+	return(RTTI_INFANTRY);
+}
+
+// FUNCTION: 0x00523350 InfantryClass::~InfantryClass
+
+// FUNCTION: 0x00523370 ?$_com_ptr_t@V?$_com_IIID@UILocomotion@@$1?_GUID_070f3290_9841_11d1_b709_00a024ddafd1@@3U__s_GUID@@A@@::operator=
+
+// FUNCTION: 0x005233A0 ?$_com_ptr_t@V?$_com_IIID@UIPiggyback@@$1?_GUID_92fea800_a184_11d1_b70a_00a024ddafd1@@3U__s_GUID@@A@@::operator=

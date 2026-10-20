@@ -133,6 +133,8 @@ class UnitClass : public FootClass
 		virtual void RemoveGunner(FootClass * gunner) override;
 		virtual bool Deploy_To_Fire(void) const override;
 		bool FUN_00746D00(void) const;
+		void FUN_00746630(ObjectTypeClass * type);
+		void UpdateDisguise(void);
 		virtual void Overrun_Square(Cell const & cell, bool threaten=true) override;
 		virtual AbstractClass * Approach_Target(bool = false) override;
 		virtual void Assign_Destination(AbstractClass * target, bool = true) override;

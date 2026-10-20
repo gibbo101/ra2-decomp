@@ -1060,6 +1060,19 @@ that last round's AircraftClass::Good_LZ read `Technos` where the exe walks `Obj
 functions match only with volatile fields and wait for a ruling. Cost: about 5.3M tokens.
 Merge gate: 7,832 of 7,832 (1,153.4 KB), about 40% of game functions.
 
+### Batches 51, 52 and 53 (20 October 2026)
+
+**417 of 432 functions** (139, 138, 140), plus two found along the way. Batch 52's merge
+replaced the network code's ref-counting stand-in with YR's ReferenceCounted base (proved
+from its RTTI and vtable), named LocomotionClass's eleven CLSIDs, and adopted cargo.h;
+batch 53's made WideWstring's set return wchar_t and adopted TibSun's spotlight header,
+proving its 0x18 layout by landing the constructor; batch 51's added TemporalClass's
+default constructor. Landing found two batches had labelled template instances
+`VectorClass<int>` where the RTTI says MultiplayerTeam and MapRegionClass pointers, which
+broke an older caller's reference, and that netshare and gdlgsupp reached Session through
+raw addresses and byte offsets; both now use Session's members. Cost: about 6.2M tokens.
+Merge gate: 8,251 of 8,251 (1,210.0 KB), about 42% of game functions.
+
 ### Decide before the first batch
 
 - **Module layout.** Which function lives in which source file, and the link order, decide

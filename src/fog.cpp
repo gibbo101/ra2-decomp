@@ -398,3 +398,20 @@ Cell FoggedObjectClass::Get_Cell(void)
 // FUNCTION: 0x004D2930 ?$DynamicVectorClass@UDrawRecord@FoggedObjectClass@@::Clear
 // FUNCTION: 0x004D2960 ?$DynamicVectorClass@UDrawRecord@FoggedObjectClass@@::ID
 template class DynamicVectorClass<FoggedObjectClass::DrawRecord>;
+
+// FUNCTION: 0x004D2980 ?$VectorClass@UDrawRecord@FoggedObjectClass@@::GetItem
+// FUNCTION: 0x004D29B0 ?$VectorClass@UDrawRecord@FoggedObjectClass@@::operator==
+// FUNCTION: 0x004D2A10 ?$VectorClass@UDrawRecord@FoggedObjectClass@@::Resize
+// FUNCTION: 0x004D2B20 ?$VectorClass@UDrawRecord@FoggedObjectClass@@::Clear
+// FUNCTION: 0x004D2B50 ?$VectorClass@UDrawRecord@FoggedObjectClass@@::ID
+// FUNCTION: 0x004D2BA0 ?$VectorClass@UDrawRecord@FoggedObjectClass@@::ID
+template class VectorClass<FoggedObjectClass::DrawRecord>;
+
+// FUNCTION: 0x004D2BC0 ?$DynamicVectorClass@UDrawRecord@FoggedObjectClass@@::Resize
+// FUNCTION: 0x004D2CD0 ?$DynamicVectorClass@UDrawRecord@FoggedObjectClass@@::ID
+template class DynamicVectorClass<FoggedObjectClass::DrawRecord>;
+
+// FUNCTION: 0x004D2D10 ?$VectorClass@UDrawRecord@FoggedObjectClass@@::~?$VectorClass@UDrawRecord@FoggedObjectClass@@
+// FUNCTION: 0x004D2D60 ?$DynamicVectorClass@UDrawRecord@FoggedObjectClass@@::~?$DynamicVectorClass@UDrawRecord@FoggedObjectClass@@
+// FUNCTION: 0x004D2DB0 ?$VectorClass@UDrawRecord@FoggedObjectClass@@::?$VectorClass@UDrawRecord@FoggedObjectClass@@
+// FUNCTION: 0x004D2E40 ?$IndexClass@HPAVFoggedObjectClass@@::Increase_Table_Size

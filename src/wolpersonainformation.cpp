@@ -8,6 +8,7 @@
 #include "cdfile.h"
 #include "ini.h"
 #include "playerprofile.h"
+#include "rcptr.h"
 #undef LoadString
 #include "stringtable.h"
 
@@ -26,21 +27,6 @@ wchar_t * __fastcall FUN_00735120(char const * text);
 char * __fastcall FUN_007350C0(wchar_t const * text);
 extern "C" wchar_t * __cdecl wcsstr(wchar_t const *, wchar_t const *);
 void __fastcall FUN_00778F30(Wstring * from, WideWstring * to);
-
-class rc_ptr_base {
-public:
-	rc_ptr_base(void);
-	virtual ~rc_ptr_base(void);
-	void FUN_0065D480(void * ptr);
-	void * Ptr;
-};
-
-template<class T>
-class rc_ptr : public rc_ptr_base {
-public:
-	rc_ptr(T * ptr) { FUN_0065D480(ptr); }
-	virtual ~rc_ptr(void) {}
-};
 
 static inline int WOL_Int(INIClass & ini, Wstring const & section, char const * key, int def)
 {
@@ -288,6 +274,7 @@ char __fastcall FUN_00779670(WideWstring const * from, Wstring * to)
 
 // FUNCTION: 0x00779690
 PlayerProfile::PlayerProfile(Wstring const & name, int a, char b, int c, int d, int e, int f, int g, int h, int i, int j, char k, WideWstring const & l, WideWstring const & m) :
+	Field8(0),
 	Name(name),
 	Field10(a),
 	Field14(b),

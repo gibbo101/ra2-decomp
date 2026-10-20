@@ -23,6 +23,16 @@ int *SpotLightMMXBuffer;
 
 BSurface *SpotLightSurfaces[SpotLightClass::SPOTLIGHT_SURFACE_COUNT + SpotLightClass::SPOTLIGHT_EXTRA_SURFACE_COUNT];
 
+// FUNCTION: 0x005FF250
+SpotLightClass::SpotLightClass(Coord pos, int size) :
+	Radius(0),
+	Position(pos),
+	Size(size),
+	DisableFlags(0)
+{
+	SpotLights.Add(this);
+}
+
 // FUNCTION: 0x005FF2D0
 SpotLightClass::~SpotLightClass(void)
 {

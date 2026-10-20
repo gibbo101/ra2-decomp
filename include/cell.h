@@ -239,6 +239,7 @@ class CellClass : public AbstractClass
 		int GetLevel(void) const;
 		BuildingClass * Cell_Building(void) const;
 		bool FUN_00484AE0(void) const;
+		bool FUN_00487DF0(void) const;
 		Cell Fetch_CellID(void) const {return(CellID);}
 		void Set_CellID(Cell const & cell);
 		Coord Cell_Coord(void) const;

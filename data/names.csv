@@ -105,3 +105,7 @@ address,name,symbol,evidence
 0x0065D4D0,rc_ptr_base::`scalar deleting destructor',??_Grc_ptr_base@@UAEPAXI@Z,slot 0 of vtable 0x007F094C (RTTI rc_ptr_base)
 0x00A8E360,Objects,,ObjectClass::ObjectClass 0x005F3900 adds this to it with an inline DynamicVectorClass Add (fields +4 to +0x14); the destructor 0x005F3B80 removes it
 0x00A8EC78,Technos,,YRpp TechnoClass::Array; read by 0x00567230 and 0x0070D4A0
+0x0071A450,TemporalClass::TemporalClass,??0TemporalClass@@QAE@XZ,no-argument constructor (plain ret); called by TClassFactory<TemporalClass>::CreateInstance 0x006C0710
+0x0071A4E0,TemporalClass::TemporalClass,??0TemporalClass@@QAE@PAVTechnoClass@@@Z,YRpp TemporalClass(TechnoClass*); the owner overload
+0x00AC1678,SpotLights,,YRpp SpotlightClass::Array; SpotLightClass's constructor 0x005FF250 adds itself through it (vtable call, Count at 0xAC1688)
+0x00473500,CargoClass::IndexOf,?IndexOf@CargoClass@@QBEHPBVObjectClass@@@Z,YRpp PassengersClass::IndexOf (TS CargoClass); called by InfantryClass::Fire_Coord 0x00523250

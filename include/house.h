@@ -618,7 +618,11 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 		void FUN_0050DA00(Cell cell);
 		void FUN_0050DA10(void);
 		void FUN_0050DA20(Cell cell);
+		void FUN_0050DA40(Cell cell);
 		void FUN_0050DA50(void);
+		SourceType FUN_0050DA80(void) const;
+		SourceType FUN_0050DAC0(void) const;
+		Coord FUN_0050DF30(void) const;
 		void FUN_0050DFE0(Cell cell);
 		void FUN_0050DFF0(void);
 		bool Is_Human_Player(void) const;

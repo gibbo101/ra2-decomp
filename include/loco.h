@@ -13,6 +13,20 @@ class FootClass;
 class LocomotionClass : public IPersistStream, public ILocomotion
 {
 	public:
+		struct CLSIDs {
+			static const CLSID Drive;
+			static const CLSID Hover;
+			static const CLSID Tunnel;
+			static const CLSID Walk;
+			static const CLSID Droppod;
+			static const CLSID Fly;
+			static const CLSID Teleport;
+			static const CLSID Mech;
+			static const CLSID Ship;
+			static const CLSID Jumpjet;
+			static const CLSID Rocket;
+		};
+
 		LocomotionClass(void);
 		LocomotionClass(const NoInitClass &x) {}
 		virtual ~LocomotionClass(void);

@@ -11,6 +11,8 @@
 #include "vector.h"
 #include "msanim.h"
 #include "msengine.h"
+#include "rcptr.h"
+#include "refcount.h"
 
 class MSFont;
 class MSAnimEntry;
@@ -23,10 +25,10 @@ template<class T> class DynamicVectorClass;
 
 void WDT_Game_Option_Append_Comma(char *str, int len);
 
-class WDTTerritory {
+class WDTTerritory : public ReferenceCounted {
 	public:
 		WDTTerritory(void);
-		~WDTTerritory(void);
+		virtual ~WDTTerritory(void);
 
 		bool operator==(const WDTTerritory &that) const { return(Index == that.Index); }
 		bool operator!=(const WDTTerritory &that) const { return(Index != that.Index); }
@@ -36,27 +38,18 @@ class WDTTerritory {
 		char *To_String(void);
 
 	public:
-
 		int Index;
-
 		unsigned short Seed;
-
 		unsigned char UnitCount;
-
 		unsigned char TechLevel;
-
 		unsigned short StartingCredits;
-
 		unsigned char Width;
 		unsigned char Height;
-
 		unsigned char NumPlayers;
-
-		unsigned char Veinholes;
-
+		int Veinholes;
 		unsigned char Biome;
-
 		unsigned char Time;
+		unsigned char Field1E;
 
 		unsigned char CliffsMin;
 		unsigned char CliffsMax;
@@ -165,11 +158,11 @@ enum {
 							+ size_of(WDTTerritory, TechLevel)
 							+ size_of(WDTTerritory, StartingCredits)
 							+ size_of(WDTTerritory, Biome)
-							+ size_of(WDTTerritory, Time)
+							+ size_of(WDTTerritory, Field1E)
 							+ size_of(WDTTerritory, Width)
 							+ size_of(WDTTerritory, Height)
 							+ size_of(WDTTerritory, NumPlayers)
-							+ size_of(WDTTerritory, Veinholes)
+							+ sizeof(unsigned char)
 							+ size_of(WDTTerritory, CliffsDefault)
 							+ size_of(WDTTerritory, AccessibilityDefault)
 							+ size_of(WDTTerritory, HillsDefault)
@@ -182,11 +175,11 @@ enum {
 							+ size_of(WDTTerritory, UserModBooleans),
 };
 
-class WDTState {
+class WDTState : public ReferenceCounted {
 	public:
 		WDTState(void);
 		WDTState(void *data);
-		~WDTState(void);
+		virtual ~WDTState(void);
 
 		bool Has_Owner_History(void);
 		bool Is_Previous_Cycle(void);
@@ -204,31 +197,22 @@ class WDTState {
 		};
 
 	public:
-
 		char *ShortDesc;
-
 		char *LongDesc;
-
 		char *WebURL;
-
 		unsigned char MapID;
-
 		unsigned int CycleID;
-
 		unsigned int CycleLength;
-
 		unsigned int NumTerritories;
-
 		unsigned int NumTicks;
-
 		unsigned int TickTime;
-
-		DynamicVectorClass<WDTTerritory *> Territories;
-
+		DynamicVectorClass<rc_ptr<WDTTerritory> > Territories;
 		unsigned char **OwnerHistory;
-
 		bool IsPreviousCycle;
 };
+
+rc_ptr<WDTTerritory> FUN_0076AAB0(void);
+rc_ptr<WDTState> FUN_0076ABA0(void *data);
 
 namespace WorldDominationTour
 {
@@ -683,6 +667,7 @@ namespace WorldDominationTour
 	Wstring const * __fastcall FUN_007AF2A0(int faction);
 
 	class Selection;
+	class YRVoices;
 
 	class YRHandleBase {
 		public:
@@ -842,6 +827,7 @@ namespace WorldDominationTour
 			void FUN_007693A0(Selection * selection, bool hovered);
 			void FUN_007693F0(Selection * selection, bool hovered);
 			void FUN_007681E0(INIClass const & ini, Selection * selection, int value);
+			void FUN_007692F0(Selection * selection, YRVoices * voices);
 			YRTerritoryHandle FUN_0076F000(int id);
 			YRTerritoryHandleOut FUN_0076F000_Out(int id);
 
@@ -851,7 +837,9 @@ namespace WorldDominationTour
 			Point2D Origin;
 			char Pad1[0x68 - 0x44 - sizeof(Point2D)];
 			bool CancelHovered;
-			char Pad2[0x9c - 0x69];
+			char Pad2[0x7c - 0x69];
+			Rect TextRect;
+			Rect TooltipRect;
 			Rect PlayRect;
 			Rect BackRect;
 	};
@@ -862,6 +850,7 @@ namespace WorldDominationTour
 			YRMapHandle(YRMapHandle const & that) { FUN_0065D480(that.Ptr); }
 			virtual ~YRMapHandle(void) {}
 			YRMapImpl * Get(void) const { return((YRMapImpl *)Ptr); }
+			YRMapImpl * FUN_0076F080(void) const;
 	};
 
 	struct YRVoiceStream {
@@ -870,6 +859,25 @@ namespace WorldDominationTour
 
 	class YRVoices {
 		public:
+			class Anim : public MSAnim {
+				public:
+					Anim(YRVoices * voices);
+					virtual ~Anim(void);
+
+					virtual void Set_Active(bool active);
+					virtual void Pause(void);
+					virtual void Resume(void);
+					virtual bool Advance(Surface * surface, Rect & rect);
+					virtual void Redraw(Surface * surface, Rect const * rect=NULL);
+					virtual Rect Get_Rect(void) const;
+					virtual bool Has_Finished(void) const;
+					virtual void Restore(Rect const & rect);
+
+				public:
+
+					YRVoices * VoicePlayer;
+			};
+
 			struct Category {
 				Category(void);
 				void Set_Name(Wstring const & name);
@@ -931,7 +939,7 @@ namespace WorldDominationTour
 		typedef VectorCursor<MSSfxEntry *, SFX_LIST> SFX_ITER;
 
 		public:
-			Selection(YRCampaignHandle const & campaign, bool vq_anim);
+			Selection(YRCampaignHandle const & campaign, int theater);
 			~Selection(void);
 			void Init_Voices(INIClass const & ini, Wstring const & name);
 			void Init_Sounds(INIClass const & ini, Wstring const & name);
@@ -947,6 +955,8 @@ namespace WorldDominationTour
 			void Set_Text(WideWstring const & text, int start_delay);
 			void Set_Tooltip(WideWstring const & text);
 			void Play_SFX(Wstring const & name);
+			void Set_Long_Description(void);
+			void End(void);
 			void Do_Target_Anim(YRStateHandle const & state, bool show_targets, bool silent);
 			void Check_For_Breakout(void);
 			void Remove_Target_Anims(void);
@@ -959,8 +969,8 @@ namespace WorldDominationTour
 			bool Present_Ticks(int tick_from, int tick_to);
 			void Presentation(int index);
 			bool Present_History(int tick_from, int tick_to);
-			void FUN_0076EBE0(Wstring const & name);
 			void FUN_0076E180(void);
+			void FUN_0076EBE0(Wstring const & name);
 			void FUN_0076EEB0(void);
 
 		public:
@@ -982,8 +992,8 @@ namespace WorldDominationTour
 			MSAnimEntry * ZoomingTarget;
 			MSAnimEntry * ThrobbingTarget;
 			int ThrobbingTargetDividingFrame;
-			MSAnim * TextAnim;
-			MSAnim * TooltipAnim;
+			YRTextAnim * TextAnim;
+			YRTextAnim * TooltipAnim;
 			MSFont * Font;
 			YRStateHandle CurrentState;
 			Wstring ThemeName;

@@ -447,3 +447,33 @@ void TurretControl::FUN_00717AB0(int frames)
 {
 	HoldFrames = (frames > 0) ? frames : 1;
 }
+
+// FUNCTION: 0x00717AD0
+int TurretControl::FUN_00717AD0(void) const
+{
+	return(HoldFrames);
+}
+
+// FUNCTION: 0x00717AE0
+bool FUN_00717AE0(VoxelLibrary * library)
+{
+	return(!library->Load_Failed());
+}
+
+// FUNCTION: 0x00717AF0 ?$TypeList@PBVParticleSystemTypeClass@@::?$TypeList@PBVParticleSystemTypeClass@@
+// FUNCTION: 0x00717B20 ?$TypeList@PBVParticleSystemTypeClass@@::Save
+// FUNCTION: 0x00717B70 ?$VectorClass@PBVParticleSystemTypeClass@@::~?$VectorClass@PBVParticleSystemTypeClass@@
+// FUNCTION: 0x00717BC0 ?$DynamicVectorClass@PBVVoxelAnimTypeClass@@::?$DynamicVectorClass@PBVVoxelAnimTypeClass@@
+// FUNCTION: 0x00717BD0 ?$DynamicVectorClass@H::?$DynamicVectorClass@H
+// FUNCTION: 0x00717BE0 ?$DynamicVectorClass@PBVBuildingTypeClass@@::?$DynamicVectorClass@PBVBuildingTypeClass@@
+// FUNCTION: 0x00717BF0 ?$DynamicVectorClass@PBVAnimTypeClass@@::?$DynamicVectorClass@PBVAnimTypeClass@@
+// FUNCTION: 0x00717C00 ?$VectorClass@PBVParticleSystemTypeClass@@::operator=
+// FUNCTION: 0x00717C70 ?$DynamicVectorClass@PBVParticleSystemTypeClass@@::?$DynamicVectorClass@PBVParticleSystemTypeClass@@
+// FUNCTION: 0x00717CD0 ?$DynamicVectorClass@PBVParticleSystemTypeClass@@::Add
+template class TypeList<ParticleSystemTypeClass const *>;
+template class DynamicVectorClass<VoxelAnimTypeClass const *>;
+template class DynamicVectorClass<int>;
+template class DynamicVectorClass<BuildingTypeClass const *>;
+template class DynamicVectorClass<AnimTypeClass const *>;
+template class VectorClass<ParticleSystemTypeClass const *>;
+template class DynamicVectorClass<ParticleSystemTypeClass const *>;

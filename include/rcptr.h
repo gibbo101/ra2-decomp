@@ -19,4 +19,11 @@ class rc_ptr : public rc_ptr_base
 		rc_ptr(void) {}
 		rc_ptr(T * ptr) { FUN_0065D480(ptr); }
 		virtual ~rc_ptr(void) {}
+		rc_ptr & operator=(rc_ptr const & that) { FUN_0065D480(that.Ptr); return(*this); }
+		T * operator->(void) const { return((T *)Ptr); }
 };
+
+template<class T>
+inline bool operator==(rc_ptr<T> const & a, rc_ptr<T> const & b) { return(a.Ptr == b.Ptr); }
+template<class T>
+inline bool operator!=(rc_ptr<T> const & a, rc_ptr<T> const & b) { return(a.Ptr != b.Ptr); }

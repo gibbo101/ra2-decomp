@@ -14,6 +14,8 @@
 #include "houstype.h"
 #include "incdec.h"
 #include "session.h"
+#include "house.h"
+#include "scenario.h"
 #include "vector.h"
 #include <string.h>
 #include <stdlib.h>
@@ -47,6 +49,7 @@ extern void __cdecl FUN_004068E0(char const * format, ...);
 extern char DAT_00889F64[];
 extern char DAT_00B0F1F8[];
 extern bool DAT_00A8ED64;
+extern bool DAT_00A8EBA5;
 extern bool DAT_0089E3A0;
 extern int DAT_0087E744;
 extern int DAT_0087E754;
@@ -301,6 +304,22 @@ char const * ThemeClass::Theme_File_Name(ThemeType theme)
 	return(DAT_00889F64);
 }
 
+// FUNCTION: 0x00720E50
+int ThemeClass::Track_Length(ThemeType theme) const
+{
+	if ((unsigned)theme < (unsigned)Themes.Count()) {
+		return (int)Themes[theme]->Duration;
+	}
+	return 0;
+}
+
+// FUNCTION: 0x00720E80
+void ThemeClass::Fade_Stream(void)
+{
+	if (Stream) Stream->FUN_004080C0();
+	IsFading = true;
+}
+
 // FUNCTION: 0x00720EA0
 void ThemeClass::Stop(bool fade)
 {
@@ -319,6 +338,19 @@ void ThemeClass::Stop(bool fade)
 	}
 }
 
+// FUNCTION: 0x00720F70
+void ThemeClass::Suspend(void)
+{
+	if (ScoresPresent && FUN_00407000() && !DAT_00A8ED64 && Current != -1) {
+		FUN_004068E0("Theme::Suspend(%d)\n", Score);
+		if (Stream) Stream->FUN_00407F40();
+		Current = -1;
+		Pending = Score;
+		Score = THEME_NONE;
+	}
+}
+
+// FUNCTION: 0x00720FD0
 bool ThemeClass::Still_Playing(void) const
 {
 	if (Stream) {
@@ -328,6 +360,54 @@ bool ThemeClass::Still_Playing(void) const
 		return(Stream->FUN_00408070() != 0);
 	}
 	return(false);
+}
+
+// FUNCTION: 0x00721010
+long ThemeClass::Save(IStream * stream)
+{
+	long hr = stream->Write(&Score, 4, 0);
+	if (hr >= 0) {
+		hr = stream->Write(&Pending, 4, 0);
+	}
+	return hr;
+}
+
+// FUNCTION: 0x00721040
+long __stdcall Theme_Load(IStream * stream)
+{
+	int score;
+	int pending;
+	long hr = stream->Read(&score, 4, 0);
+	if (hr >= 0) {
+		hr = stream->Read(&pending, 4, 0);
+		if (hr >= 0 && DAT_00A8EBA5) {
+			Theme.Play_Song((ThemeType)score);
+			Theme.Queue_Song((ThemeType)pending);
+		}
+	}
+	return hr;
+}
+
+// FUNCTION: 0x00721140
+bool ThemeClass::Is_Allowed(ThemeType index) const
+{
+	if (index == THEME_QUIET || index == THEME_PICK_ANOTHER) return true;
+	if ((unsigned)index >= (unsigned)Themes.Count()) return false;
+	if (!Themes[index]->Available) return false;
+	if (!Themes[index]->Normal) return false;
+	if (PlayerPtr != NULL && Themes[index]->Owner != -1 && PlayerPtr->Class->Side != Themes[index]->Owner) return false;
+	if (Session.Type == GAME_NORMAL && Scen->Scenario < Themes[index]->Scenario) return false;
+	return true;
+}
+
+// FUNCTION: 0x007211E0
+bool ThemeClass::IsNormal(ThemeType index) const
+{
+	if (index != THEME_QUIET && index != THEME_PICK_ANOTHER && (unsigned)index < (unsigned)Themes.Count()) {
+		if (Themes[index]->Normal) return true;
+		return false;
+	}
+	return false;
 }
 
 // FUNCTION: 0x00721210
@@ -343,3 +423,25 @@ ThemeType ThemeClass::From_Name(char const * name) const
 	}
 	return(THEME_NONE);
 }
+
+// FUNCTION: 0x00721270
+char const * ThemeClass::GetID(ThemeType index) const
+{
+	if (index >= 0 && index < Themes.Count()) {
+		return Themes[index]->Name;
+	}
+	return "none";
+}
+
+// FUNCTION: 0x00721290
+void ThemeClass::Set_Volume(int volume)
+{
+	Volume = MIN(volume, 255);
+}
+
+// FUNCTION: 0x007212B0 ?$DynamicVectorClass@PAUThemeControl@@::Clear
+template class DynamicVectorClass<ThemeControl *>;
+
+// FUNCTION: 0x007212E0 ?$VectorClass@PAUThemeControl@@::ID
+
+template class VectorClass<ThemeControl *>;

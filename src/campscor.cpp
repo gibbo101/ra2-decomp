@@ -7,6 +7,7 @@
 #include "coopcamp.h"
 #include "globals.h"
 #include "house.h"
+#include "scenario.h"
 #include "houstype.h"
 #include "ipxmgr.h"
 #include "multiplayer.h"
@@ -606,8 +607,7 @@ void __fastcall FUN_0046F6D0(HWND dialog)
 	}
 }
 
-// FUNCTION: 0x0046F810
-int __fastcall FUN_0046F810(int index)
+inline int _Player_Color(int index)
 {
 	CampScorePlayer * player = DAT_00A8B27C.Players[index];
 	if (player->FUN_005E9440()) {
@@ -628,8 +628,7 @@ int __fastcall FUN_0046F810(int index)
 	return player->FUN_00696F20();
 }
 
-// FUNCTION: 0x0046F880
-int __fastcall FUN_0046F880(int index)
+inline int _Player_Start(int index)
 {
 	CampScorePlayer * player = DAT_00A8B27C.Players[index];
 	if (player->FUN_005E9440()) {
@@ -649,3 +648,221 @@ int __fastcall FUN_0046F880(int index)
 	}
 	return player->FUN_00696F50();
 }
+
+// FUNCTION: 0x0046F810
+int __fastcall FUN_0046F810(int index)
+{
+	return _Player_Color(index);
+}
+
+// FUNCTION: 0x0046F880
+int __fastcall FUN_0046F880(int index)
+{
+	return _Player_Start(index);
+}
+
+struct PCX
+{
+	static PCX Instance;
+	int GetSurface(char const * name, void * palette);
+};
+extern char * DAT_0081B1E0;
+extern char * DAT_0081B1E4;
+extern int DAT_00A8D580;
+extern int DAT_00A8DA84;
+void __fastcall FUN_004E49A0(HWND dialog, int combo, int value);
+void __fastcall FUN_004E5480(HWND dialog, int combo, int value);
+void __fastcall FUN_00603D30(HWND item, int surface);
+void __fastcall FUN_0052FEC0(Surface * surface, bool flag);
+int __fastcall FUN_0060D380(int resource, DLGPROC proc, bool focus);
+struct Game
+{
+	static bool __cdecl CallBack(void);
+};
+
+// FUNCTION: 0x0046F8F0
+void __fastcall FUN_0046F8F0(HWND dialog)
+{
+	int own = DAT_00A8DA8C;
+	if (own != -1) {
+		int combo = FUN_004E41D0(own);
+		FUN_004E49A0(dialog, combo, _Player_Color(own));
+	}
+	for (int i = 0; i < 8; i++) {
+		if (i != own) {
+			int combo = FUN_004E41D0(i);
+			FUN_004E49A0(dialog, combo, _Player_Color(i));
+		}
+	}
+}
+
+inline void _Set_Image(HWND item, int i, int first, int second)
+{
+	if (item != NULL) {
+		if (DAT_0089E000[i]) {
+			if (i == 0) {
+				FUN_00603D30(item, first);
+			} else {
+				FUN_00603D30(item, second);
+			}
+		} else {
+			FUN_00603D30(item, 0);
+		}
+	}
+}
+
+// FUNCTION: 0x0046FA20
+void __fastcall FUN_0046FA20(HWND dialog)
+{
+	int first = PCX::Instance.GetSurface(DAT_0081B1E0, NULL);
+	int second = PCX::Instance.GetSurface(DAT_0081B1E4, NULL);
+	for (int i = 0; i < 8; i++) {
+		if (DAT_00A8B27C.Players[i] != NULL && DAT_00A8B27C.Players[i]->FUN_005E93F0()) {
+			int id;
+			if (i == 0) {
+				id = 0x6d2;
+			} else if (i == 1) {
+				id = 0x6d3;
+			} else {
+				continue;
+			}
+			_Set_Image(GetDlgItem(dialog, id), i, first, second);
+		}
+	}
+}
+
+// FUNCTION: 0x0046FAC0
+void __fastcall FUN_0046FAC0(HWND dialog)
+{
+	for (int i = 0; i < 8; i++) {
+		int combo = FUN_004E4E60(i);
+		FUN_004E5480(dialog, combo, _Player_Start(i));
+	}
+}
+
+// FUNCTION: 0x0046FB50
+void __fastcall FUN_0046FB50(HWND dialog)
+{
+	HWND item = GetDlgItem(dialog, 0x6d1);
+	HWND other = GetDlgItem(dialog, 0x5c0);
+	if (item != NULL) {
+		if (DAT_00A8DA84 < DAT_00A8D580) {
+			EnableWindow(item, 0);
+			if (other != NULL) {
+				EnableWindow(other, 1);
+			}
+		} else if (DAT_0089E000[DAT_00A8DA8C]) {
+			EnableWindow(item, 0);
+		} else {
+			EnableWindow(item, 1);
+		}
+	}
+}
+
+bool FUN_005DAF20(void);
+bool FUN_0077F900(void);
+
+// FUNCTION: 0x0046FBD0
+bool FUN_0046FBD0(void)
+{
+	if (Session.Type == GAME_IPX) {
+		return FUN_005DAF20();
+	}
+	if (Session.Type == GAME_INTERNET) {
+		return FUN_0077F900();
+	}
+	Game::CallBack();
+	return false;
+}
+
+extern CoopPlayerStats * DAT_0089DFE0[];
+extern int DAT_0089E008;
+extern int DAT_0089E020;
+extern int DAT_0089DFD4;
+
+class CampScoreResults
+{
+	public:
+		CampScoreResults(void);
+		virtual ~CampScoreResults(void);
+		virtual void Show(DynamicVectorClass<CoopPlayerStats *> list, int a6, int a7, int a8, wchar_t const * name);
+};
+
+// FUNCTION: 0x00470C00
+CampScoreResults::CampScoreResults(void)
+{
+	DAT_0089E008 = -1;
+	DAT_0089E020 = 0;
+	DAT_0089DFD4 = 0;
+}
+
+// FUNCTION: 0x00470C30
+CampScoreResults::~CampScoreResults(void)
+{
+}
+
+// FUNCTION: 0x00470C40
+void __fastcall FUN_00470C40(HWND dialog, int id, int value)
+{
+	wchar_t text[32];
+	swprintf(text, L"%d", value);
+	HWND item = GetDlgItem(dialog, id);
+	SendMessage(item, 0x4b2, 0, (LPARAM)text);
+}
+
+// FUNCTION: 0x00470C90
+void __fastcall FUN_00470C90(wchar_t * buffer, int seconds)
+{
+	if (buffer != NULL) {
+		if (seconds / 3600 > 99) {
+			seconds = 359999;
+		}
+		int hours = seconds / 3600;
+		seconds -= hours * 3600;
+		int minutes = seconds / 60;
+		seconds -= minutes * 60;
+		swprintf(buffer, StringTable::LoadString("TXT_TIME_FORMAT_HOURS", NULL, "D:\\ra2mdpost\\CampScor.cpp", 0x6ea), hours, minutes, seconds);
+	}
+}
+
+// FUNCTION: 0x00471400
+void FUN_00471400(void)
+{
+	int count = DAT_0089E020;
+	if (count > 1) {
+		qsort(DAT_0089DFE0, count, 4, FUN_0046DC90);
+	}
+}
+
+void __fastcall FUN_0072D300(int side);
+void __fastcall FUN_0072D730(int side);
+void FUN_0072D780(void);
+void FUN_0072D350(void);
+extern wchar_t DAT_0089E0A4[];
+extern int DAT_0089DFC0;
+int CALLBACK FUN_00470D30(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+
+// FUNCTION: 0x00471420
+void CampScoreResults::Show(DynamicVectorClass<CoopPlayerStats *> list, int a6, int a7, int a8, wchar_t const * name)
+{
+	DAT_0089E020 = list.Count();
+	wcscpy(DAT_0089E0A4, name);
+	for (int i = 0; i < DAT_0089E020; i++) {
+		DAT_0089DFE0[i] = list[i];
+	}
+	if (DAT_0089E020 > 1) {
+		qsort(DAT_0089DFE0, DAT_0089E020, 4, FUN_0046DC90);
+	}
+	DAT_0089DFC0 = a8;
+	DAT_0089E008 = a7;
+	DAT_0089DFD4 = a6;
+	int side = Scen->PlayerSideIndex;
+	FUN_0072D300(side);
+	FUN_0072D730(side);
+	FUN_0052FEC0(NULL, true);
+	FUN_0060D380(0xbc7, FUN_00470D30, 0);
+	FUN_0072D780();
+	FUN_0072D350();
+}
+
+// FUNCTION: 0x00471500 CampScoreLink::~CampScoreLink

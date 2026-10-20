@@ -385,10 +385,190 @@ void FlyLocomotionClass::Rotation_AI(void)
 	}
 }
 
+// FUNCTION: 0x004CE680
+bool FlyLocomotionClass::Process_Take_Off(void)
+{
+	int height = LinkedTo->HeightAGL;
+	if (!LinkedTo->IsOnBridge && Map[(Coord const &)LinkedTo->PositionCoord].IsUnderBridge && height >= BRIDGE_LEPTON_HEIGHT) {
+		height -= BRIDGE_LEPTON_HEIGHT;
+	}
+
+	IFlyControlPtr flyctrl(LinkedTo);
+	int landing_altitude = 0;
+	if (flyctrl) {
+		landing_altitude = flyctrl->Landing_Altitude();
+	}
+
+	IsTakingOff = false;
+	IsLanding = false;
+
+	int relative_height = height - landing_altitude;
+	int relative_flight_level = FlightLevel - landing_altitude;
+
+	if (relative_height > relative_flight_level - (relative_flight_level / 3)) {
+		LinkedTo->SecondaryFacing.Set_Desired(LinkedTo->PrimaryFacing.Desired());
+	} else if (relative_height > relative_flight_level / 2) {
+		DirType dir = Direction(LinkedTo->Center_Coord(), DestinationCoord);
+		LinkedTo->PrimaryFacing.Set_Desired(dir);
+		TargetSpeed = 1;
+	}
+
+	return(true);
+}
+
+// FUNCTION: 0x004CF610
+Matrix3DStruct STDMETHODCALLTYPE FlyLocomotionClass::Draw_Matrix(int * key)
+{
+	Matrix3D mtx;
+	mtx.Make_Identity();
+
+	if (key) {
+		*key |= LinkedTo->SecondaryFacing.Current().As_Dir32() << 3;
+	}
+
+	mtx.Rotate_Z(LinkedTo->SecondaryFacing.Current().As_Radian32());
+
+	if (LinkedTo->HeightAGL > 0) {
+		if (LinkedTo->IsCrashing) {
+			mtx.Rotate_X(LinkedTo->AngleRotatedSideways);
+
+			if (CurrentSpeed > LinkedTo->TClass->PitchSpeed) {
+				mtx.Rotate_Y(float(LinkedTo->AngleRotatedForwards + LinkedTo->TClass->PitchAngle));
+			} else {
+				mtx.Rotate_Y(LinkedTo->AngleRotatedForwards);
+			}
+			if (key) {
+				*key = -1;
+			}
+			return((Matrix3DStruct &)mtx);
+		}
+
+		if (CurrentSpeed > LinkedTo->TClass->PitchSpeed) {
+			if (LinkedTo->TClass->PitchAngle != 0.0) {
+				if (key) {
+					*key |= 4;
+				}
+				mtx.Rotate_Y(float(LinkedTo->TClass->PitchAngle));
+			}
+
+			if (LinkedTo->TClass->RollAngle != 0.0) {
+				if (LinkedTo->SecondaryFacing.Is_Rotating_CW()) {
+					if (key) {
+						*key |= 1;
+					}
+					mtx.Rotate_X(float(LinkedTo->TClass->RollAngle));
+				} else if (LinkedTo->SecondaryFacing.Is_Rotating_CCW()) {
+					if (key) {
+						*key |= 2;
+					}
+					mtx.Rotate_X(float(-LinkedTo->TClass->RollAngle));
+				}
+			}
+		}
+	}
+
+	return((Matrix3DStruct &)mtx);
+}
+
+// FUNCTION: 0x004CF830
+Point2DStruct STDMETHODCALLTYPE FlyLocomotionClass::Draw_Point(void)
+{
+	int y = 0;
+	IFlyControlPtr flyctrl(LinkedTo);
+
+	int landing_altitude = 0;
+	if (flyctrl) {
+		landing_altitude = flyctrl->Landing_Altitude();
+	}
+
+	if (!LinkedTo->TClass->IsDropship && !IsLanding && !IsTakingOff && LinkedTo->HeightAGL > landing_altitude) {
+		y = (fastmath::sin((Frame % 20) * M_PI / 10)) * 1.5 + 0.5;
+	}
+
+	return(Point2D(0, y));
+}
+
 // FUNCTION: 0x004CF940
 Point2DStruct STDMETHODCALLTYPE FlyLocomotionClass::Shadow_Point(void)
 {
 	return(Point2D(0, 0));
+}
+
+// FUNCTION: 0x004CF950
+void FlyLocomotionClass::Take_Off(void)
+{
+	if (!LinkedTo->IsUnderEMP() && !LinkedTo->IsParalyzed() && !LinkedTo->IsBeingWarpedOut() && !LinkedTo->IsWarpingIn()) {
+		IsLanding = false;
+		IsTakingOff = true;
+
+		if (LinkedTo->GetLastFlightMapCoords() == CELL_NONE) {
+			AircraftTracker.Add(LinkedTo);
+		}
+
+		FlightLevel = LinkedTo->TClass->GetFlightLevel();
+
+		if (LinkedTo->HeightAGL == 0) {
+			LinkedTo->PrimaryFacing.Set(LinkedTo->SecondaryFacing.Desired());
+		}
+
+		VocClass::PlayAt(LinkedTo->TClass->AuxSound1, LinkedTo->PositionCoord, NULL);
+	}
+}
+
+// FUNCTION: 0x004CFA70
+void FlyLocomotionClass::Land(void)
+{
+	if (LinkedTo->Get_Mission() != MISSION_ENTER && LinkedTo->FUN_00705D60()) {
+		return;
+	}
+
+	if (LinkedTo->Fetch_RTTI() == RTTI_AIRCRAFT) {
+		FootClass * foot = LinkedTo;
+		if (((AircraftClass *)foot)->Class->IsAirportBound) {
+			if (!LinkedTo->ContainsLink(foot->Get_Cell_Ptr()->Cell_Building())) {
+				foot->Enter_Idle_Mode(false, true);
+				return;
+			}
+		}
+	}
+
+	IsTakingOff = false;
+	IsLanding = true;
+	CommencedLanding = false;
+	FlightLevel = 0;
+}
+
+// FUNCTION: 0x004CFB00
+Matrix3DStruct STDMETHODCALLTYPE FlyLocomotionClass::Shadow_Matrix(int * key)
+{
+	int ramp = Map[(Coord const &)LinkedTo->PositionCoord].Ramp;
+	if (LinkedTo->TClass->IsDropship) {
+		ramp = 0;
+	}
+
+	Matrix3D matrix = Get_Slope_Matrix(ramp);
+	matrix.Rotate_Z(LinkedTo->SecondaryFacing.Current().As_Radian32());
+
+	if (key != NULL && *key != -1) {
+		*key = 32 * (ramp + (*key << 6));
+		*key |= LinkedTo->SecondaryFacing.Current().As_Dir32();
+	}
+	return((Matrix3DStruct &)matrix);
+}
+
+// FUNCTION: 0x004CFC10
+void STDMETHODCALLTYPE FlyLocomotionClass::Do_Turn(DirStruct coord)
+{
+	LinkedTo->SecondaryFacing.Set(coord);
+}
+
+// FUNCTION: 0x004CFC40
+bool FlyLocomotionClass::Is_In_Flight(void)
+{
+	if (!IsLanding && (!IsTakingOff || LinkedTo->HeightAGL >= FlightLevel / 2)) {
+		return(true);
+	}
+	return(false);
 }
 
 // FUNCTION: 0x004CFC80
@@ -409,10 +589,43 @@ HRESULT STDMETHODCALLTYPE FlyLocomotionClass::Load(IStream * stream)
 	return(result);
 }
 
+// FUNCTION: 0x004CFCF0
+LayerType STDMETHODCALLTYPE FlyLocomotionClass::In_Which_Layer(void)
+{
+	return(LinkedTo->HeightAGL <= 0 ? LAYER_GROUND : LAYER_TOP);
+}
+
+// FUNCTION: 0x004CFD20
+boolean STDMETHODCALLTYPE FlyLocomotionClass::Power_Off(void)
+{
+	if (Is_Moving()) {
+		Tumble();
+		Stop_Moving();
+		Riser = 0;
+	}
+	return(BASECLASS::Power_Off());
+}
+
 // FUNCTION: 0x004CFD90
 boolean STDMETHODCALLTYPE FlyLocomotionClass::Is_Powered(void)
 {
 	return(BASECLASS::Is_Powered());
+}
+
+// FUNCTION: 0x004CFDA0
+boolean STDMETHODCALLTYPE FlyLocomotionClass::Is_Ion_Sensitive(void)
+{
+	return(!LinkedTo->TClass->IsHunterSeeker);
+}
+
+// FUNCTION: 0x004CFDD0
+void FlyLocomotionClass::Tumble(void)
+{
+	IsTumbling = true;
+	CurrentROT = Random_Pick(20, 30);
+	if (Percent_Chance(50)) {
+		CurrentROT = -CurrentROT;
+	}
 }
 
 // FUNCTION: 0x004D0390 FlyLocomotionClass::Fetch_Object_Size

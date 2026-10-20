@@ -24,6 +24,7 @@ class TemporalClass : public AbstractClass
 		int WarpRemaining;
 		int WarpPerStep;
 
+		TemporalClass(void);
 		TemporalClass(TechnoClass * owner);
 		TemporalClass(NoInitClass const & x);
 		virtual ~TemporalClass(void) override;

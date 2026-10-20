@@ -66,7 +66,7 @@ class AITriggerTypeClass : public AbstractTypeClass
 		static void Read_All(CCINIClass const & ini, INIScopeType scope);
 		static void Write_All(CCINIClass & ini, INIScopeType scope);
 
-		bool Process(HouseClass *house, HouseClass *enemy, bool skip_base_defense);
+		bool ConditionMet(HouseClass *house, HouseClass *enemy, bool skip_base_defense) const;
 
 		double Get_Current_Weight(void) const { return(CurWeight); }
 
@@ -82,11 +82,15 @@ class AITriggerTypeClass : public AbstractTypeClass
 		void Record_Failure(void);
 
 	private:
-		bool Check_Enemy_Owns(HouseClass *house, HouseClass *enemy);
-		bool Check_House_Owns(HouseClass *house, HouseClass *enemy);
-		bool Check_Enemy_Yellow_Power(HouseClass *house, HouseClass *enemy);
-		bool Check_Enemy_Red_Power(HouseClass *house, HouseClass *enemy);
-		bool Check_Enemy_Money(HouseClass *house, HouseClass *enemy);
+		bool EnemyHouseOwns(HouseClass *house, HouseClass *enemy) const;
+		bool OwnerHouseOwns(HouseClass *house, HouseClass *enemy) const;
+		bool CivilianHouseOwns(HouseClass *house, HouseClass *enemy) const;
+		bool Check_Enemy_Yellow_Power(HouseClass *house, HouseClass *enemy) const;
+		bool Check_Enemy_Red_Power(HouseClass *house, HouseClass *enemy) const;
+		bool IronCurtainCharged(HouseClass *house, HouseClass *enemy) const;
+		bool ChronoSphereCharged(HouseClass *house, HouseClass *enemy) const;
+		bool HouseCredits(HouseClass *house, HouseClass *enemy) const;
+		bool FUN_0041FEE0(TeamTypeClass *team, HouseClass *house, HouseClass *enemy) const;
 
 	private:
 

@@ -157,3 +157,54 @@ DropListClass & DropListClass::operator = (DropListClass const & list)
 	DropButton.Make_Peer(*this);
 	return(*this);
 }
+
+// FUNCTION: 0x004B53E0
+DropListClass::DropListClass(DropListClass const & list) :
+	BASECLASS(list),
+	IsDropped(list.IsDropped),
+	ListHeight(list.ListHeight),
+	DropButton(list.DropButton),
+	List(list.List)
+{
+	List.Make_Peer(*this);
+	DropButton.Make_Peer(*this);
+}
+
+// FUNCTION: 0x004B54E0
+void DropListClass::Set_Position(int x, int y)
+{
+	BASECLASS::Set_Position(x, y);
+	List.Set_Position(x, y + DropButton.Get_Shape_Data()->Get_Height());
+	DropButton.Set_Position(x + Width, y);
+}
+
+// FUNCTION: 0x004B5530
+void DropListClass::Set_Selected_Index(wchar_t const * text)
+{
+	if (text) {
+		for (int index = 0; index < Count(); index++) {
+			if (wcsicmp(text, List.Get_Item(index)) == 0) {
+				Set_Selected_Index(index);
+				break;
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x004B55A0 EditClass::Get_Text
+
+// FUNCTION: 0x004B55B0 DropListClass::Count
+
+// FUNCTION: 0x004B55D0 DropListClass::Get_Item
+
+// FUNCTION: 0x004B55F0 DropListClass::~DropListClass
+
+// FUNCTION: 0x004B5630 ShapeButtonClass::operator=
+
+// FUNCTION: 0x004B56E0 SliderClass::operator=
+
+// FUNCTION: 0x004B5780 GadgetClass::operator=
+
+// FUNCTION: 0x004B57D0 EditClass::~EditClass
+
+// FUNCTION: 0x004B57F0 ShapeButtonClass::~ShapeButtonClass

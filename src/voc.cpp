@@ -701,6 +701,7 @@ struct VoxEntry
 	VoxEntry(char const * name);
 	~VoxEntry(void);
 	bool LoadFromINI(INIClass & ini);
+	char const * GetFilename(void) const;
 
 	char Name[0x28];
 	float Volume;
@@ -718,6 +719,8 @@ struct AudioStream
 	void FUN_00407F40(void);
 	void FUN_00407A90(void);
 	int FUN_00408070(void);
+	void FUN_00407FB0(void);
+	void FUN_00408000(void);
 	unsigned __int64 FUN_00408140(void);
 };
 struct AudioSource
@@ -1255,4 +1258,119 @@ char const * Voc_Name(VocType voc)
 		return((char const *)Vocs[voc]);
 	}
 	return("<none>");
+}
+
+// FUNCTION: 0x00753350
+int __fastcall FUN_00753350(VoxEntry * vox)
+{
+	return VoxArray.ID(vox);
+}
+
+// FUNCTION: 0x00753380
+char const * VoxEntry::GetFilename(void) const
+{
+	if (DAT_00B1D4C8 == 0) {
+		return Files[2];
+	}
+	if (DAT_00B1D4C8 == 1) {
+		return Files[1];
+	}
+	return Files[0];
+}
+
+// FUNCTION: 0x007533A0
+bool FUN_007533A0(void)
+{
+	return true;
+}
+
+// FUNCTION: 0x007533B0
+HRESULT __fastcall FUN_007533B0(IStream * stream)
+{
+	unsigned tag = 0x566f7853;
+	HRESULT hr = stream->Write(&tag, 4, NULL);
+	if (hr >= 0) {
+		tag = 0x566f7845;
+		hr = stream->Write(&tag, 4, NULL);
+	}
+	return hr;
+}
+
+// FUNCTION: 0x007533F0
+HRESULT __fastcall FUN_007533F0(IStream * stream)
+{
+	unsigned tag;
+	int buf[3];
+
+	if (DAT_00B1D4C4) {
+		DAT_00B1D4C4->State = 2;
+		DAT_00B1D4C4 = NULL;
+	}
+	if (DAT_00B1D4CC) {
+		DAT_00B1D4CC->FUN_00407F40();
+	}
+	FUN_00752370();
+	HRESULT hr = stream->Read(&tag, 4, NULL);
+	if (hr >= 0 && tag == 0x566f7853) {
+		hr = stream->Read(&tag, 4, NULL);
+		while (hr >= 0) {
+			if (tag == 0x566f7845) {
+				break;
+			}
+			if (tag != 0x566f7849) {
+				hr = E_FAIL;
+				break;
+			}
+			hr = stream->Read(buf, 12, NULL);
+			if (hr < 0) {
+				break;
+			}
+			if (DAT_00B1D4CC && buf[0] >= 0 && buf[0] < VoxArray.Count()) {
+				FUN_00752590(VoxArray[buf[0]], buf[1], buf[2]);
+			}
+			hr = stream->Read(&tag, 4, NULL);
+		}
+	}
+	return hr;
+}
+
+// FUNCTION: 0x00753500
+void FUN_00753500(void)
+{
+	if (DAT_00B1D4D8) {
+		DAT_00B1D4D8->FUN_00407FB0();
+	}
+}
+
+// FUNCTION: 0x00753510
+void FUN_00753510(void)
+{
+	if (DAT_00B1D4D8) {
+		DAT_00B1D4D8->FUN_00408000();
+	}
+}
+
+// FUNCTION: 0x00753520
+int FUN_00753520(void)
+{
+	if (DAT_00B1D4D8) {
+		return ++DAT_00B1D480;
+	}
+}
+
+// FUNCTION: 0x00753540
+void FUN_00753540(void)
+{
+	if (DAT_00B1D4D8) {
+		DAT_00B1D480--;
+		if (DAT_00B1D480 < 0) {
+			DAT_00B1D480 = 0;
+		}
+	}
+}
+
+// FUNCTION: 0x00753570
+int FUN_00753570(void)
+{
+	return ++DAT_00B1D3D8;
 }

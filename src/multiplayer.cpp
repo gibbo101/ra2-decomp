@@ -727,3 +727,79 @@ MPBattleClass * __stdcall Allocate_MPBattle(wchar_t ** title, wchar_t ** tooltip
 	MPBattleClass * mode = (MPBattleClass *)operator new(0x40);
 	return(mode ? mode->FUN_005C0DD0(title, tooltip, inifile, mapfilter, aiallowed, modeindex) : NULL);
 }
+
+class MPManBattleClass : public MPGameModeClass
+{
+	public:
+		MPManBattleClass * FUN_005C6150(wchar_t ** title, wchar_t ** tooltip, char ** inifile, char ** mapfilter, bool aiallowed, int modeindex);
+};
+
+// FUNCTION: 0x005D81B0
+MPManBattleClass * __stdcall Allocate_MPManBattle(wchar_t ** title, wchar_t ** tooltip, char ** inifile, char ** mapfilter, bool aiallowed, int modeindex)
+{
+	MPManBattleClass * mode = (MPManBattleClass *)operator new(0x40);
+	return(mode ? mode->FUN_005C6150(title, tooltip, inifile, mapfilter, aiallowed, modeindex) : NULL);
+}
+
+class MPSiegeClass : public MPGameModeClass
+{
+	public:
+		MPSiegeClass * FUN_005CA630(wchar_t ** title, wchar_t ** tooltip, char ** inifile, char ** mapfilter, bool aiallowed, int modeindex);
+};
+
+// FUNCTION: 0x005D81F0
+MPSiegeClass * __stdcall Allocate_MPSiege(wchar_t ** title, wchar_t ** tooltip, char ** inifile, char ** mapfilter, bool aiallowed, int modeindex)
+{
+	MPSiegeClass * mode = (MPSiegeClass *)operator new(0x40);
+	return(mode ? mode->FUN_005CA630(title, tooltip, inifile, mapfilter, aiallowed, modeindex) : NULL);
+}
+
+class MPUnholyAllianceClass : public MPGameModeClass
+{
+	public:
+		MPUnholyAllianceClass * FUN_005CB3A0(wchar_t ** title, wchar_t ** tooltip, char ** inifile, char ** mapfilter, bool aiallowed, int modeindex);
+};
+
+// FUNCTION: 0x005D8230
+MPUnholyAllianceClass * __stdcall Allocate_MPUnholyAlliance(wchar_t ** title, wchar_t ** tooltip, char ** inifile, char ** mapfilter, bool aiallowed, int modeindex)
+{
+	MPUnholyAllianceClass * mode = (MPUnholyAllianceClass *)operator new(0x40);
+	return(mode ? mode->FUN_005CB3A0(title, tooltip, inifile, mapfilter, aiallowed, modeindex) : NULL);
+}
+
+class MPFreeForAllClass : public MPGameModeClass
+{
+	public:
+		MPFreeForAllClass * FUN_005C5CE0(wchar_t ** title, wchar_t ** tooltip, char ** inifile, char ** mapfilter, bool aiallowed, int modeindex);
+};
+
+// FUNCTION: 0x005D8270
+MPFreeForAllClass * __stdcall Allocate_MPFreeForAll(wchar_t ** title, wchar_t ** tooltip, char ** inifile, char ** mapfilter, bool aiallowed, int modeindex)
+{
+	MPFreeForAllClass * mode = (MPFreeForAllClass *)operator new(0x40);
+	return(mode ? mode->FUN_005C5CE0(title, tooltip, inifile, mapfilter, aiallowed, modeindex) : NULL);
+}
+
+class MPCoopMode : public MPGameModeClass
+{
+	public:
+		MPCoopMode * FUN_005C1470(wchar_t ** title, wchar_t ** tooltip, char ** inifile, char ** mapfilter, bool aiallowed, int modeindex);
+};
+
+// FUNCTION: 0x005D82B0
+MPCoopMode * __stdcall Allocate_MPCoop(wchar_t ** title, wchar_t ** tooltip, char ** inifile, char ** mapfilter, bool aiallowed, int modeindex)
+{
+	MPCoopMode * mode = (MPCoopMode *)operator new(0x344);
+	return(mode ? mode->FUN_005C1470(title, tooltip, inifile, mapfilter, aiallowed, modeindex) : NULL);
+}
+
+class MultiplayerTeam;
+
+// FUNCTION: 0x005D82F0 ?$VectorClass@PAVMultiplayerTeam@@::operator==
+// FUNCTION: 0x005D8330 ?$VectorClass@PAVMultiplayerTeam@@::Resize
+// FUNCTION: 0x005D83E0 ?$VectorClass@PAVMultiplayerTeam@@::Clear
+// FUNCTION: 0x005D8410 ?$VectorClass@PAVMultiplayerTeam@@::ID
+// FUNCTION: 0x005D8450 ?$VectorClass@PAVMultiplayerTeam@@::ID
+// FUNCTION: 0x005D8470 ?$DynamicVectorClass@PAVMultiplayerTeam@@::Resize
+// FUNCTION: 0x005D8520 ?$DynamicVectorClass@PAVMultiplayerTeam@@::ID
+template class DynamicVectorClass<MultiplayerTeam *>;

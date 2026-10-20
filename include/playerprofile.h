@@ -15,6 +15,7 @@ class PlayerProfile : public ReferenceCounted
 		PlayerProfile(Wstring const & name, int a, char b, int c, int d, int e, int f, int g, int h, int i, int j, char k, WideWstring const & l, WideWstring const & m);
 		virtual ~PlayerProfile(void);
 
+		char Field8;
 		Wstring Name;
 		int Field10;
 		char Field14;

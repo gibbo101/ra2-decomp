@@ -5222,6 +5222,381 @@ bool MapClass::Is_Area_Shore_Or_Water(Rect const & rect)
 	return(true);
 }
 
+extern FacingType DAT_0082A944[];
+
+static inline CellSubzoneStruct * Zone_Entry(MapClass * map, Cell const & cell)
+{
+	return(&map->CellSubzones[map->FUN_0056D3F0(cell)]);
+}
+
+// FUNCTION: 0x005851B0
+void MapClass::Register_Subzone_Connection(ZoneConnectionClass * connection)
+{
+	Cell from = connection->From;
+	Cell to = connection->To;
+
+	CellClass * from_cptr = &Map[from];
+	Cell from_adj1;
+	Cell from_adj2;
+	Cell to_adj1;
+	Cell to_adj2 = CELL_NONE;
+
+	if (from_cptr->Is_Tile_Bridge() || from_cptr->Is_Tile_Train_Bridge()) {
+		int faceindex;
+		if (from_cptr->Is_Tile_Bridge()) {
+			faceindex = from_cptr->ITType - IsometricTileTypeClass::BridgeSet;
+		} else {
+			faceindex = from_cptr->ITType - IsometricTileTypeClass::TrainBridgeSet;
+		}
+		FacingType facing = DAT_0082A944[faceindex];
+		from_adj1 = Adjacent_Cell(from, facing);
+		from_adj2 = Adjacent_Cell(from, Facing_Sub(facing, FACING_180));
+		to_adj1 = Adjacent_Cell(to, facing);
+		to_adj2 = Adjacent_Cell(to, Facing_Sub(facing, FACING_180));
+	}
+
+	int sidx1;
+	int sidx2;
+	for (int i = 0; i < ARRAY_SIZE(SubzoneTracking); i++) {
+		{
+			sidx1 = Zone_Entry(this, from)->SubzoneID[i];
+			sidx2 = Zone_Entry(this, to)->SubzoneID[i];
+
+			SubzoneConnectionStruct conn1;
+			conn1.SubzoneID = sidx2;
+			conn1.IsCrossBlock = false;
+			SubzoneTracking[i][sidx1].Connections.Add(conn1);
+
+			SubzoneConnectionStruct conn2;
+			conn2.SubzoneID = sidx1;
+			conn2.IsCrossBlock = false;
+			SubzoneTracking[i][sidx2].Connections.Add(conn2);
+		}
+
+		{
+			sidx1 = Zone_Entry(this, from_adj1)->SubzoneID[i];
+			sidx2 = Zone_Entry(this, to_adj1)->SubzoneID[i];
+
+			SubzoneConnectionStruct conn1;
+			conn1.SubzoneID = sidx2;
+			conn1.IsCrossBlock = false;
+			SubzoneTracking[i][sidx1].Connections.Add(conn1);
+
+			SubzoneConnectionStruct conn2;
+			conn2.SubzoneID = sidx1;
+			conn2.IsCrossBlock = false;
+			SubzoneTracking[i][sidx2].Connections.Add(conn2);
+		}
+
+		{
+			sidx1 = Zone_Entry(this, from_adj2)->SubzoneID[i];
+			sidx2 = Zone_Entry(this, to_adj2)->SubzoneID[i];
+
+			SubzoneConnectionStruct conn1;
+			conn1.SubzoneID = sidx2;
+			conn1.IsCrossBlock = false;
+			SubzoneTracking[i][sidx1].Connections.Add(conn1);
+
+			SubzoneConnectionStruct conn2;
+			conn2.SubzoneID = sidx1;
+			conn2.IsCrossBlock = false;
+			SubzoneTracking[i][sidx2].Connections.Add(conn2);
+		}
+	}
+}
+
+// FUNCTION: 0x005855A0
+void MapClass::Initialize_Wall_Ownership(void)
+{
+	Reset_Iterator();
+	CellClass * cellptr = MapClass::Iterate();
+
+	while (cellptr != NULL) {
+		if (cellptr->Overlay != OVERLAY_NONE) {
+			if (OverlayTypes[cellptr->Overlay]->IsWall) {
+				int bestindex = -1;
+				int index = 0;
+				int bestdist = 0x7FFFFFFF;
+
+				for (index = 0; index < Buildings.Count(); index++) {
+					BuildingClass * bptr = Buildings[index];
+					int dist = bptr->Distance(cellptr);
+					if (bptr->IsActive && bptr->IsDown && bptr->House->Class->IsWallOwner) {
+						if (bestindex == -1 || dist < bestdist) {
+							bestdist = dist;
+							bestindex = index;
+						}
+					}
+				}
+
+				if (bestindex != -1) {
+					cellptr->Owner = Buildings[bestindex]->House->HeapID;
+				}
+			}
+		}
+		cellptr = Iterate();
+	}
+}
+
+// FUNCTION: 0x005856B0
+bool MapClass::Rebuild_Shores_At(Cell const & origin)
+{
+	Map.Set_Cursor_Shape(NULL);
+
+	bool is_temp_data = false;
+	if (RMGCellData == NULL) {
+		RMGCellData = new MapRegionClass::CellData[MapCellStride * MapCellStride];
+		is_temp_data = true;
+	}
+
+	int r = MapCellStride;
+	int s = r * r;
+	for (int i = 0; i < s; i++) {
+		MapRegionClass::Get_Cell_Data(i).InFillReach = true;
+		MapRegionClass::Get_Cell_Data(i).WaterMask = -1;
+	}
+
+	Map.Reset_Iterator();
+	CellClass * cptr = Map.Iterate();
+	bool expanded = true;
+	while (cptr != NULL && expanded) {
+		expanded = Expand_Water(cptr, 0, false);
+		cptr = Map.Iterate();
+	}
+
+	Map.Reset_Iterator();
+	cptr = Map.Iterate();
+	while (cptr != NULL && expanded) {
+		Prune_Water(cptr, 0, false);
+		cptr = Map.Iterate();
+	}
+
+	Mark_Fill_Area(origin, true);
+
+	Map.Reset_Iterator();
+	cptr = Map.Iterate();
+	while (cptr != NULL && expanded) {
+		expanded = Place_Shore(cptr, 1, 0, false);
+		cptr = Map.Iterate();
+	}
+
+	Map.Reset_Iterator();
+	cptr = Map.Iterate();
+	while (cptr != NULL && expanded) {
+		expanded = Place_Shore(cptr, 2, 0, false);
+		cptr = Map.Iterate();
+	}
+
+	ObjectClass * obj = Map.PendingObjectPtr;
+	Map.PendingObject = NULL;
+	if (obj) {
+		delete obj;
+		Map.PendingObjectPtr = NULL;
+	}
+
+	for (int j = 0; j < s; j++) {
+		MapRegionClass::Get_Cell_Data(j).InFillReach = true;
+	}
+
+	if (is_temp_data) {
+		delete [] RMGCellData;
+		RMGCellData = NULL;
+	}
+
+	return(expanded);
+}
+
+// FUNCTION: 0x00585930
+void MapClass::Mark_Fill_Area(Cell const & origin, bool on_water)
+{
+	DynamicVectorClass<Cell> region_cells;
+	region_cells.Clear();
+	region_cells.Set_Growth_Step(100);
+
+	DynamicVectorClass<Cell> frontier_cells;
+	frontier_cells.Clear();
+	frontier_cells.Set_Growth_Step(1000);
+
+	for (int i = MapCellStride * MapCellStride - 1; i >= 0; i--) {
+		MapRegionClass::CellData & data = MapRegionClass::Get_Cell_Data(i);
+		data.InFillArea = false;
+		data.InFillReach = false;
+	}
+
+	frontier_cells.Add(origin);
+	region_cells.Add(origin);
+
+	if (In_Radar(origin)) {
+		MapRegionClass::Get_Cell_Data(origin).InFillArea = true;
+	}
+
+	int height = Map[origin].Height;
+
+	while (frontier_cells.Count()) {
+		Cell cell = frontier_cells[frontier_cells.Count() - 1];
+		frontier_cells.Delete_Index(frontier_cells.Count() - 1);
+
+		for (int dir = FACING_FIRST; dir < FACING_COUNT; dir++) {
+			Cell adjacent = Adjacent_Cell(cell, (FacingType)dir);
+			if (In_Radar(adjacent)) {
+				MapRegionClass::CellData & data = MapRegionClass::Get_Cell_Data(adjacent);
+				CellClass * adjptr = &Map[adjacent];
+				if (!data.InFillArea) {
+					if (on_water && adjptr->Is_Tile_With_Water() || !on_water && adjptr->Height == height && adjptr->Is_Tile_Clear()) {
+						frontier_cells.Add(adjacent);
+						bool legal = In_Radar(adjacent);
+						bool legal2 = In_Radar(cell);
+						region_cells.Add(adjacent);
+						data.InFillArea = true;
+					}
+				}
+			}
+		}
+	}
+
+	for (int j = 0; j < region_cells.Count(); j++) {
+		Cell cell = region_cells[j];
+		for (int y = cell.Y - 1; y < cell.Y + 2; y++) {
+			for (int x = cell.X - 1; x < cell.X + 2; x++) {
+				Cell influence;
+				influence.X = x;
+				influence.Y = y;
+				if (In_Radar(influence)) {
+					Cell c;
+					c.X = x;
+					c.Y = y;
+					MapRegionClass::Get_Cell_Data(c).InFillReach = true;
+				}
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x00585D00
+bool MapClass::Rebuild_Cliffs_At(Cell const & cell)
+{
+	int s = MapCellStride * MapCellStride;
+	bool expanded = true;
+
+	bool is_temp_data = false;
+	if (RMGCellData == NULL) {
+		RMGCellData = new MapRegionClass::CellData[s];
+		is_temp_data = true;
+	} else {
+		for (int i = 0; i < s; i++) {
+			MapRegionClass::Get_Cell_Data(i).InFillReach = true;
+		}
+	}
+
+	Map.Set_Cursor_Shape(NULL);
+
+	Map.Reset_Iterator();
+	CellClass * cptr = Map.Iterate();
+	while (cptr != NULL && expanded) {
+		expanded = Expand_High_Ground(cptr, 0);
+		cptr = Map.Iterate();
+	}
+
+	Mark_Fill_Area(cell, false);
+
+	Map.Reset_Iterator();
+	cptr = Map.Iterate();
+	while (cptr != NULL && expanded) {
+		if (cptr->Ramp == RAMP_NONE && cptr->Is_Tile_Clear()) {
+			expanded = Place_Cliff(cptr, 0);
+		}
+		cptr = Map.Iterate();
+	}
+
+	ObjectClass * obj = Map.PendingObjectPtr;
+	Map.PendingObject = NULL;
+	if (obj) {
+		delete obj;
+		Map.PendingObjectPtr = NULL;
+	}
+
+	for (int i = 0; i < s; i++) {
+		MapRegionClass::Get_Cell_Data(i).InFillReach = true;
+	}
+
+	if (is_temp_data) {
+		delete [] RMGCellData;
+		RMGCellData = NULL;
+	}
+
+	return(expanded);
+}
+
+// FUNCTION: 0x00585EE0 $E239
+Cell RegionQuadrantOffsets[4] = {
+	Cell(0, 0), Cell(REGION_WIDTH, 0), Cell(0, REGION_HEIGHT), Cell(REGION_WIDTH, REGION_HEIGHT),
+};
+
+// FUNCTION: 0x005862C0
+bool MapClass::Is_Something_Nearby(Cell const & cell, int radius)
+{
+	for (int y = cell.Y - radius; y <= cell.Y + radius; y++) {
+		for (int x = cell.X - radius; x <= cell.X + radius; x++) {
+			CellClass * cptr = &Map[Cell(x,y)];
+			if (cptr->Cell_Occupier() != NULL) {
+				return(true);
+			}
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00586360
+bool MapClass::Is_Shrouded(Coord const & coord)
+{
+	int level_height = coord.Z / DAT_00ABDE88;
+	if ((level_height & 1) != 0) {
+		int offset = level_height / 2 + 1;
+		Cell cell = coord.As_Cell();
+		CellClass * cptr = &Map[Cell(cell.X - offset, cell.Y - offset)];
+		if (cptr->IsMapped) {
+			return(false);
+		}
+		cptr = &cptr->Adjacent_Cell(FACING_SE);
+		if (!cptr->IsMapped) {
+			return(true);
+		}
+	} else {
+		int offset = level_height / 2;
+		Cell cell = coord.As_Cell();
+		CellClass * cptr = &Map[Cell(cell.X - offset, cell.Y - offset)];
+		if (!cptr->IsMapped) {
+			return(true);
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x005864A0
+bool MapClass::FUN_005864A0(Coord const & coord)
+{
+	CellClass * cptr;
+	int level_height = coord.Z / DAT_00ABDE88;
+	if ((level_height & 1) != 0) {
+		int offset = level_height / 2 + 1;
+		Cell cell = coord.As_Cell();
+		cptr = &Map[Cell(cell.X - offset, cell.Y - offset)];
+		if ((int)cptr->unknown_13C <= 0) {
+			goto not_fogged;
+		}
+		cptr = &cptr->Adjacent_Cell(FACING_SE);
+	} else {
+		int offset = level_height / 2;
+		Cell cell = coord.As_Cell();
+		cptr = &Map[Cell(cell.X - offset, cell.Y - offset)];
+	}
+	if ((int)cptr->unknown_13C > 0) {
+		return(true);
+	}
+not_fogged:
+	return(false);
+}
+
 // FUNCTION: 0x005868A0
 void MapClass::Recalc_Cells_In_Rect(Rect const & rect)
 {

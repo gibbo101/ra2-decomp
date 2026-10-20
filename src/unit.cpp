@@ -59,6 +59,7 @@
 #include "swizzle.h"
 #include "tactical.h"
 #include "tag.h"
+#include "temporal.h"
 #include "tagtype.h"
 #include "team.h"
 #include "tiberium.h"
@@ -69,6 +70,7 @@
 #include "vox.h"
 #include "warhead.h"
 #include "weapon.h"
+namespace Unsorted { extern int CurrentFrame; }
 #include "bench.hh"
 #include "color.hh"
 #include "tube.hh"
@@ -1834,6 +1836,230 @@ bool UnitClass::INoticeSink_Unknown(DWORD unknown, DWORD unknown2)
 		return(true);
 	}
 	return(false);
+}
+
+// FUNCTION: 0x007463A0 UnitClass::Captured
+bool UnitClass::Captured(HouseClass * newowner, bool announce)
+{
+	if (newowner != House) {
+		UnitClass * follower = FollowingMe;
+		IsFollowing = false;
+		if (follower != NULL) {
+			follower->Captured(newowner, true);
+			FollowingMe = follower;
+			follower->IsFollowing = true;
+		}
+		return(BASECLASS::Captured(newowner, true));
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00746400
+bool UnitClass::IsStrange(void) const
+{
+	return(!Class->NonVehicle);
+}
+
+// FUNCTION: 0x00746420
+void UnitClass::ReceiveGunner(FootClass * gunner)
+{
+	TemporalClass * temporal = gunner->TemporalImUsing;
+	if (temporal != NULL) {
+		int rearming = 0;
+		if (gunner->Arm != 0) {
+			rearming = 1;
+		}
+		TemporalImUsing = temporal;
+		temporal->Owner = this;
+		gunner->TemporalImUsing = NULL;
+		FUN_0070DC70(7);
+		if (rearming) {
+			BurstIndex++;
+			Arm = Rearm_Delay(7);
+		}
+	}
+	FUN_0070DC70(gunner->Techno_Type_Class()->IFVMode);
+}
+
+// FUNCTION: 0x007464E0
+void UnitClass::RemoveGunner(FootClass * gunner)
+{
+	if (gunner != NULL) {
+		TemporalClass * temporal = TemporalImUsing;
+		if (temporal != NULL) {
+			int rearming = 0;
+			if (Arm != 0) {
+				rearming = 1;
+			}
+			gunner->TemporalImUsing = temporal;
+			TemporalImUsing->Owner = gunner;
+			TemporalImUsing = NULL;
+			if (gunner->TemporalImUsing != NULL && gunner->TemporalImUsing->Target != NULL) {
+				gunner->TemporalImUsing->LetGo();
+			}
+			if (rearming) {
+				gunner->BurstIndex++;
+				gunner->Arm = gunner->Rearm_Delay(0);
+			}
+		}
+	}
+	FUN_0070DC70(0);
+}
+
+// FUNCTION: 0x007465B0
+ObjectTypeClass * UnitClass::GetDisguise(bool against_allies) const
+{
+	if (House->Is_Ally(PlayerPtr) && !against_allies) {
+		return(Class);
+	}
+	return(Disguise);
+}
+
+// FUNCTION: 0x007465F0
+HouseClass * UnitClass::GetDisguiseHouse(bool against_allies) const
+{
+	if (House->Is_Ally(PlayerPtr) && !against_allies) {
+		return(House);
+	}
+	return(DisguisedAsHouse);
+}
+
+// FUNCTION: 0x00746630
+void UnitClass::FUN_00746630(ObjectTypeClass * type)
+{
+	if (type != NULL) {
+		Disguise = type;
+		DisguisedAsHouse = NULL;
+		Disguised = true;
+		DisguiseCreationFrame = Unsorted::CurrentFrame;
+		Plot_On_Radar();
+	}
+}
+
+#pragma warning(push)
+#pragma warning(disable: 4716)
+// FUNCTION: 0x00746670
+unsigned UnitClass::DisguiseAs(AbstractClass * target)
+{
+	if (target != NULL) {
+		ObjectClass * object = (ObjectClass *)target;
+		switch (target->Fetch_RTTI()) {
+			case RTTI_TERRAIN:
+				Disguise = (ObjectTypeClass *)object->Class_Of();
+				DisguisedAsHouse = NULL;
+				return(TechnoClass::DisguiseAs(target));
+
+			case RTTI_CELL:
+				if (CanDisguiseAs(target)) {
+					Disguise = OverlayTypes[((CellClass *)target)->Overlay];
+					DisguisedAsHouse = NULL;
+					return(TechnoClass::DisguiseAs(target));
+				}
+				break;
+
+			case RTTI_UNIT:
+				if (object->IsDisguised()) {
+					Disguise = object->GetDisguise(true);
+					DisguisedAsHouse = object->GetDisguiseHouse(true);
+					TechnoClass::DisguiseAs(target);
+				}
+				break;
+		}
+	}
+}
+#pragma warning(pop)
+
+// FUNCTION: 0x00746720
+void UnitClass::ClearDisguise(void)
+{
+	Disguised = false;
+	Plot_On_Radar();
+	Disguise = NULL;
+	DisguisedAsHouse = NULL;
+}
+
+// FUNCTION: 0x00746750
+bool UnitClass::IsDisguisedAs(HouseClass * house) const
+{
+	if (IsDisguised()) {
+		CellClass * cell = &Map[Center_Coord().As_Cell()];
+		if (!House->Is_Ally(house) && !cell->Is_Disguise_Sensed(house->HeapID)) {
+			HouseClass * disguiser = DisguisedAsHouse;
+			if (disguiser == house || disguiser == NULL || house->Is_Ally(disguiser)) {
+				return(true);
+			}
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x00746810
+void UnitClass::Init(void)
+{
+	TechnoClass::Init();
+	if (Class != NULL) {
+		if (House != NULL) {
+			TypeList<UnitTypeClass *> & list = House->Class->VeteranUnits;
+			for (int i = 0; i < list.Count(); i++) {
+				if (list[i] == Class) {
+					Veterancy.Set_Veteran(true);
+					break;
+				}
+			}
+		}
+		if (House != NULL && House->WarFactoryInfiltrated && !Class->Naval && Class->IsTrainable) {
+			Veterancy.Set_Veteran(true);
+		}
+		if (Class->Gunner) {
+			FUN_0070DC70(0);
+		}
+	}
+}
+
+// FUNCTION: 0x007468C0
+void UnitClass::UpdateDisguise(void)
+{
+	bool still = false;
+	if (!IsDisguised()) {
+		if (!Locomotion->Is_Moving() && Class->DisguiseWhenStill && FUN_0065AD30(0) == NULL) {
+			still = true;
+		}
+	}
+
+	if (Locomotion->Is_Moving()) {
+		goto clear;
+	}
+
+	if (Frame % 8 != 0) {
+		Cell cell = Get_Cell();
+		bool bridge = Get_Cell_Ptr()->Is_Tile_Bridge();
+		for (int face = FACING_FIRST; face < FACING_COUNT; face++) {
+			CellClass * adjacent = &Map[Adjacent_Cell_By_Value(cell, FacingType(face))];
+			InfantryClass * infantry = adjacent->Cell_Infantry(bridge);
+			if (infantry != NULL && !House->Is_Ally(infantry)) {
+				InfantryBlinkTimer = Rule->InfantryBlinkDisguiseTime;
+				goto clear;
+			}
+		}
+	}
+
+	if (still) {
+		if (InfantryBlinkTimer.Value() == 0) {
+			int index = Random_Pick(0, Rule->DefaultMirageDisguises.Count() - 1);
+			index = MIN(index, Rule->DefaultMirageDisguises.Count() - 1);
+			FUN_00746630((ObjectTypeClass *)Rule->DefaultMirageDisguises[index]);
+		}
+	}
+
+update:
+	if (MindControlRingAnim != NULL) {
+		MindControlRingAnim->Invisible = IsDisguised() && !House->Is_Player_Control();
+	}
+	return;
+
+clear:
+	ClearDisguise();
+	goto update;
 }
 
 // FUNCTION: 0x00746DE0

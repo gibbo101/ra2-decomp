@@ -404,3 +404,79 @@ void YRVoices::Cleanup(void)
 	}
 	Timer = 0;
 }
+
+// FUNCTION: 0x007717F0 WorldDominationTour::YRVoices::FUN_007717F0
+bool YRVoices::FUN_007717F0(void)
+{
+	return(FUN_007529E0());
+}
+
+// FUNCTION: 0x00771800 WorldDominationTour::YRVoices::FUN_00771800
+MSAnim * YRVoices::FUN_00771800(void)
+{
+	return(new Anim(this));
+}
+
+// FUNCTION: 0x00771850 WorldDominationTour::YRVoices::Anim::Anim
+YRVoices::Anim::Anim(YRVoices * voices) :
+	MSAnim(0, 0, false),
+	VoicePlayer(voices)
+{
+}
+
+// FUNCTION: 0x00771890 WorldDominationTour::YRVoices::Anim::~Anim
+YRVoices::Anim::~Anim(void)
+{
+}
+
+// FUNCTION: 0x007718A0 WorldDominationTour::YRVoices::Anim::Set_Active
+void YRVoices::Anim::Set_Active(bool active)
+{
+	Active = active;
+	if (!Active) {
+		VoicePlayer->Cleanup();
+	}
+}
+
+// FUNCTION: 0x00771900 WorldDominationTour::YRVoices::Anim::Pause
+void YRVoices::Anim::Pause(void)
+{
+	Timer.Stop();
+}
+
+// FUNCTION: 0x00771950 WorldDominationTour::YRVoices::Anim::Resume
+void YRVoices::Anim::Resume(void)
+{
+	Timer.Start();
+}
+
+// FUNCTION: 0x00771970 WorldDominationTour::YRVoices::Anim::Advance
+bool YRVoices::Anim::Advance(Surface * surface, Rect & rect)
+{
+	VoicePlayer->Advance();
+	return(false);
+}
+
+// FUNCTION: 0x00771980 WorldDominationTour::YRVoices::Anim::Redraw
+void YRVoices::Anim::Redraw(Surface * surface, Rect const * rect)
+{
+	VoicePlayer->Advance();
+}
+
+// FUNCTION: 0x00771990 WorldDominationTour::YRVoices::Anim::Get_Rect
+Rect YRVoices::Anim::Get_Rect(void) const
+{
+	return(Rect());
+}
+
+// FUNCTION: 0x007719C0 WorldDominationTour::YRVoices::Anim::Has_Finished
+bool YRVoices::Anim::Has_Finished(void) const
+{
+	return(VoicePlayer->FUN_007717F0() == false);
+}
+
+// FUNCTION: 0x007719D0 WorldDominationTour::YRVoices::Anim::Restore
+void YRVoices::Anim::Restore(Rect const & rect)
+{
+	VoicePlayer->Advance();
+}

@@ -66,6 +66,66 @@
 #include <io.h>
 #include <share.h>
 
+extern double __cdecl FUN_004CAC40(double);
+extern double __cdecl FUN_004CAD50(double);
+extern double __cdecl FUN_004CADE0(double);
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007E1720;
+extern const double DAT_007E1728;
+extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
+extern const double DAT_007E51E0;
+extern const double DAT_007E51E8;
+
+struct ShortPair {
+	unsigned short A, B;
+	ShortPair() { A = 0; B = 0; }
+};
+
+struct IntTriple {
+	int A, B, C;
+	IntTriple() { A = 0; B = 0; C = 0; }
+};
+
+// FUNCTION: 0x0048C6B0 $E87
+double DAT_0089E948 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2.0);
+
+// FUNCTION: 0x0048C6E0 $E90
+double DAT_0089E9A0 = DAT_0089E948 / DAT_007E51E0;
+
+// FUNCTION: 0x0048C700 $E93
+double DAT_0089E988 = DAT_007E1718 / DAT_0089E9A0;
+
+// FUNCTION: 0x0048C720 $E96
+double DAT_0089E980 = DAT_007E1720 * DAT_007E51E8;
+
+// FUNCTION: 0x0048C740 $E99
+double DAT_0089E958 = DAT_007E1728 * DAT_007E51E8;
+
+// FUNCTION: 0x0048C760 $E102
+double DAT_0089E918 = DAT_007E1730 * DAT_007E51E8;
+
+// FUNCTION: 0x0048C780 $E105
+int DAT_0089E9A8 = (int)(FUN_004CAD50(DAT_0089E918 - DAT_0089E958) * DAT_007E1738 * DAT_0089E948);
+
+// FUNCTION: 0x0048C7C0 $E108
+double DAT_0089E960 = FUN_004CADE0(DAT_0089E9A8 * DAT_007E1740);
+
+// FUNCTION: 0x0048C7F0 $E111
+double DAT_0089E978 = FUN_004CADE0((DAT_0089E9A8 * 2) / DAT_0089E948);
+
+// FUNCTION: 0x0048C820 $E114
+int DAT_0089E99C = (int)(DAT_0089E9A8 * 4 + DAT_007E1738);
+
+// FUNCTION: 0x0048C850 $E117
+ShortPair DAT_0089E940;
+
+// FUNCTION: 0x0048C860 $E120
+IntTriple DAT_0089E968;
+
 // FUNCTION: 0x0048D1D0
 bool MapGen_Call_Back(void)
 {

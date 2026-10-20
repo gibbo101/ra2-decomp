@@ -1627,3 +1627,30 @@ ObjectClass * __stdcall Tactical::Selectable_Object(int index)
 {
 	return(SelectableObjects[index].Object);
 }
+
+// FUNCTION: 0x006DC450 Tactical::Fetch_RTTI
+
+// FUNCTION: 0x006DC460 Tactical::Fetch_Object_Size
+
+// FUNCTION: 0x006DC470 Tactical::~Tactical
+
+// FUNCTION: 0x006DC4C0 ?Z?$TPoint2D@H
+template class TPoint2D<int>;
+
+// FUNCTION: 0x006DC4E0 ?$DynamicVectorClass@UDirtyAreaStruct@@::Clear
+template class DynamicVectorClass<DirtyAreaStruct>;
+
+// FUNCTION: 0x006DC510 ?$DynamicVectorClass@UDirtyAreaStruct@@::ID
+
+// FUNCTION: 0x006DC540 ?$VectorClass@UDirtyAreaStruct@@::GetItem
+
+// FUNCTION: 0x006DC580 ?$DynamicVectorClass@PAVShadowControlClass@@::Clear
+template class DynamicVectorClass<ShadowControlClass *>;
+
+// FUNCTION: 0x006DC5B0 ?$DynamicVectorClass@PAVShadowControlClass@@::ID
+
+// FUNCTION: 0x006DC5D0 ?$VectorClass@PAVShadowControlClass@@::GetItem
+
+// FUNCTION: 0x006DC5E0 ?$VectorClass@UDirtyAreaStruct@@::operator==
+// FUNCTION: 0x006DC660 ?$VectorClass@UDirtyAreaStruct@@::Resize
+template class VectorClass<DirtyAreaStruct>;

@@ -23,6 +23,7 @@
 #include <shellapi.h>
 #include <stddef.h>
 #include <string.h>
+#include <time.h>
 #include <wchar.h>
 #include "stringtable.h"
 
@@ -59,7 +60,8 @@ ArrayList<int> DAT_00B73E10;
 ArrayList<int> DAT_00B76AE0;
 
 struct User {
-	char Pad[0x24];
+	char Pad[0x20];
+	User * Next;
 	char Nick[10];
 	char Login[0x6C - 0x2E];
 };
@@ -679,7 +681,7 @@ LadderA * __fastcall FUN_0077DA50(wchar_t const * name)
 	return result;
 }
 
-struct NSSlotName;
+typedef NodeNameType NSSlotName;
 extern NSSlotName * DAT_00A8DA90[8];
 bool __fastcall FUN_005E93F0(NSSlotName * slot);
 Wstring __fastcall FUN_005EDEF0(NSSlotName * slot);
@@ -691,7 +693,7 @@ struct ChatSink {
 	virtual void V03(void);
 	virtual void V04(void);
 	virtual void V05(void);
-	virtual void V06(void);
+	virtual long __stdcall V06(int type, int ping);
 	virtual void V07(void);
 	virtual void V08(void);
 	virtual void V09(void);
@@ -703,7 +705,7 @@ struct ChatSink {
 	virtual long __stdcall V15(char * text);
 	virtual void V16(void);
 	virtual void V17(void);
-	virtual void V18(void);
+	virtual long __stdcall V18(User * users);
 	virtual void V19(void);
 	virtual void V20(void);
 	virtual void V21(void);
@@ -717,6 +719,36 @@ struct ChatSink {
 	virtual void V29(void);
 	virtual void V30(void);
 	virtual long __stdcall V31(int filter);
+	virtual void V32(void);
+	virtual void V33(void);
+	virtual void V34(void);
+	virtual void V35(void);
+	virtual void V36(void);
+	virtual void V37(void);
+	virtual void V38(void);
+	virtual void V39(void);
+	virtual void V40(void);
+	virtual void V41(void);
+	virtual void V42(void);
+	virtual void V43(void);
+	virtual void V44(void);
+	virtual void V45(void);
+	virtual void V46(void);
+	virtual void V47(void);
+	virtual void V48(void);
+	virtual void V49(void);
+	virtual void V50(void);
+	virtual void V51(void);
+	virtual void V52(void);
+	virtual void V53(void);
+	virtual void V54(void);
+	virtual void V55(void);
+	virtual void V56(void);
+	virtual void V57(void);
+	virtual long __stdcall V58(wchar_t * text);
+	virtual long __stdcall V59(User * users, wchar_t * text);
+	virtual long __stdcall V60(wchar_t * text);
+	virtual long __stdcall V61(User * users, wchar_t * text);
 };
 extern ChatSink * DAT_00AC116C;
 
@@ -886,3 +918,372 @@ void FUN_0077E110(void)
 		Theme.Fade_Out();
 	}
 }
+
+HWND FUN_00775B10(void);
+
+// FUNCTION: 0x0077E1D0
+int __fastcall FUN_0077E1D0(WideWstring const & msg)
+{
+	static int sel_user_indexes[128];
+	HWND users = GetDlgItem(FUN_00775B10(), 0x53E);
+	int count = SendMessage(users, LB_GETSELITEMS, 32, (LPARAM)sel_user_indexes);
+
+	if (count == 0) {
+		DAT_00AC116C->V58(msg.text());
+		return 0;
+	}
+	User * last = NULL;
+	User * head = NULL;
+	User * item = NULL;
+	User source;
+	memset(&source, 0, sizeof(source));
+	for (int i = 0; i < count; i++) {
+		DAT_00B77900.get(source, sel_user_indexes[i]);
+		item = new User;
+		*item = source;
+		item->Next = NULL;
+		if (i == 0) head = item;
+		if (last) last->Next = item;
+		last = item;
+	}
+	if (head) DAT_00AC116C->V59(head, msg.text());
+	while (head) {
+		item = head;
+		head = head->Next;
+		delete item;
+	}
+	return 1;
+}
+
+// FUNCTION: 0x0077E300
+int __fastcall FUN_0077E300(WideWstring const & msg)
+{
+	static int sel_user_indexes[128];
+	HWND users = GetDlgItem(FUN_00775B10(), 0x53E);
+	int count = SendMessage(users, LB_GETSELITEMS, 32, (LPARAM)sel_user_indexes);
+
+	if (count == 0) {
+		DAT_00AC116C->V60(msg.text());
+		return 0;
+	}
+	User * last = NULL;
+	User * head = NULL;
+	User * item = NULL;
+	User source;
+	memset(&source, 0, sizeof(source));
+	for (int i = 0; i < count; i++) {
+		DAT_00B77900.get(source, sel_user_indexes[i]);
+		item = new User;
+		*item = source;
+		item->Next = NULL;
+		if (i == 0) head = item;
+		if (last) last->Next = item;
+		last = item;
+	}
+	if (head) DAT_00AC116C->V61(head, msg.text());
+	while (head) {
+		item = head;
+		head = head->Next;
+		delete item;
+	}
+	return 1;
+}
+
+#include "goptions.h"
+namespace Game { extern int Seed; }
+extern char DAT_00889F64[];
+extern int DAT_00A8DA84;
+extern NodeNameType ** DAT_00A8DA78;
+extern IPXAddressClass DAT_00A8DBCC[8];
+extern int DAT_00A8DC2C[8];
+extern int DAT_00A8E230[8];
+Wstring __fastcall FUN_007B82E0(WideWstring const & string);
+
+extern int DAT_00B77E00;
+extern int DAT_00B77E04;
+extern int DAT_00B77E08;
+
+// FUNCTION: 0x0077E780
+int FUN_0077E780(void)
+{
+	return DAT_00B77E00 ^ DAT_00B77E08 ^ DAT_00B77E04;
+}
+
+extern int DAT_00B76B1C;
+extern int DAT_00B76B14;
+struct ChannelUserInfo {
+	int House;
+	char Pad[4];
+	int Accepted;
+	char Rest[0x88];
+};
+extern ChannelUserInfo DAT_00B76E58[];
+int FUN_00777B50(void);
+int FUN_005E94D0(void);
+bool FUN_005E9560(void);
+bool FUN_005E9580(void);
+
+// FUNCTION: 0x0077E7A0
+void __fastcall FUN_0077E7A0(char * out)
+{
+	int i = 0;
+	int house1_count = 0;
+	int house0_count = 0;
+	for (int j = 0; j < DAT_00B76B1C; j++) {
+		int house = DAT_00B76E58[j].House;
+		if (house == 0) {
+			house0_count++;
+		} else if (house == 1) {
+			house1_count++;
+		}
+	}
+	if (house1_count < DAT_00B76B14 / 2) {
+		i = 2;
+	}
+	if (house0_count < DAT_00B76B14 / 2) {
+		i++;
+	}
+	sprintf(out, "%d,%d,%d,%d,%d,%s", FUN_00777B50(), FUN_0077E780(), FUN_005E94D0(), FUN_005E9580(), !FUN_005E9560(), Session.ScenarioFileName);
+}
+
+// FUNCTION: 0x0077E820
+void __fastcall FUN_0077E820(char * text, int * first, int * second, int * third, int * fourth, int * fifth, Wstring * rest)
+{
+	char * token = strtok(text, ",");
+	*first = token ? atol(token) : 0;
+	token = strtok(NULL, ",");
+	*second = token ? atol(token) : 0;
+	token = strtok(NULL, ",");
+	*third = token ? atol(token) : 0;
+	token = strtok(NULL, ",");
+	*fourth = token ? atol(token) : 0;
+	token = strtok(NULL, ",");
+	*fifth = token ? atol(token) : 0;
+	*rest = strtok(NULL, ",");
+}
+
+extern bool DAT_00B77DEC;
+extern int DAT_00B77E4C;
+extern int DAT_00B77E14;
+extern int DAT_00B73A20;
+extern int DAT_00B77D70;
+extern int DAT_00B77A88;
+HWND __fastcall FUN_00775940(int id);
+void __fastcall FUN_005EDDE0(HWND window, char flag);
+void __fastcall FUN_00783C80(int arg, bool flag);
+
+extern wchar_t DAT_00A8D610[];
+WideWstring __fastcall FUN_007B7ED0(Wstring const & text);
+
+// FUNCTION: 0x0077EBA0
+int __fastcall FUN_0077EBA0(Wstring const & who)
+{
+	Wstring name(who.length() > 0 ? who : DAT_00B73E40);
+	Wstring lower = ((Wstring const &)name).toLower();
+	if (FUN_007B7ED0(lower) == ((WideWstring const &)WideWstring(DAT_00A8D610)).toLower()) {
+		return 1;
+	}
+	int found = -1;
+	for (int i = 0; i < DAT_00A8DA84; i++) {
+		Wstring slot_name = FUN_007B7F90(DAT_00A8DA78[i]->Name);
+		if (((Wstring const &)slot_name).toLower() == lower) {
+			found = i;
+		}
+	}
+	if (found != -1) {
+		return DAT_00A8DA78[found]->Slot.Unknown77;
+	}
+	return -1;
+}
+
+namespace Game { extern int PlayerColor; }
+int __fastcall FUN_004E37D0(int side);
+int __fastcall FUN_004E41D0(int side);
+int __fastcall FUN_004E4170(HWND dialog, int id, int flag);
+void __fastcall FUN_004E3A00(HWND dialog, int id);
+void __fastcall FUN_004E3B00(HWND dialog, int id);
+void __fastcall FUN_004E45A0(HWND dialog, int id);
+void __fastcall FUN_004E4770(HWND dialog, int id);
+void __fastcall FUN_004E49A0(HWND dialog, int id, int flag);
+int __fastcall FUN_004E4E60(int slot);
+int __fastcall FUN_004E5940(int id);
+void __fastcall FUN_004E5260(HWND dialog, int id);
+void __fastcall FUN_004E5CB0(HWND dialog, int id);
+void __fastcall FUN_004E50C0(HWND dialog, int id);
+void __fastcall FUN_004E5B60(HWND dialog, int id);
+int __fastcall FUN_005E98F0(int kind);
+
+// FUNCTION: 0x0077ED00
+int __fastcall FUN_0077ED00(Wstring const & who, int country, int color, int start, int team)
+{
+	int index = -1;
+	Wstring lower = who.toLower();
+	for (int j = 0; j < 8; j++) {
+		Wstring slot_name = FUN_007B7F90(DAT_00A8DA90[j]->Name);
+		if (lower == ((Wstring const &)slot_name).toLower()) {
+			index = j;
+			break;
+		}
+	}
+	int result = 0;
+	if (index == -1) {
+		return 0;
+	}
+	HWND dialog = FUN_00775940(0xC2);
+	if (dialog == NULL) {
+		dialog = FUN_00775940(0xC9);
+	}
+	NodeNameType * slot = DAT_00A8DA90[index];
+	if (slot->Get_Start() != start) {
+		result = 1;
+		slot->Set_Start(start);
+	}
+	if (DAT_00A8DA90[index]->Get_Team() != team) {
+		result = 1;
+		slot->Set_Team(team);
+	}
+	if (DAT_00A8DA90[index]->Get_Country() != country) {
+		result = 1;
+		slot->Set_Country(country);
+		int combo = FUN_004E37D0(index);
+		int selection = FUN_004E4170(dialog, combo, -1);
+		if (country == -3) {
+			if (selection != -3) {
+				FUN_004E3B00(dialog, combo);
+				FUN_004E5260(dialog, FUN_004E4E60(index));
+				FUN_004E5CB0(dialog, FUN_004E5940(index));
+				int item = FUN_005E98F0(index);
+				SendMessage(GetDlgItem(dialog, item), 0x4F1, 0, 1);
+				combo = FUN_004E41D0(index);
+				FUN_004E4770(dialog, combo);
+				FUN_004E49A0(dialog, combo, 8);
+			}
+		} else if (selection == -3) {
+			FUN_004E3A00(dialog, combo);
+			FUN_004E50C0(dialog, FUN_004E4E60(index));
+			FUN_004E5B60(dialog, FUN_004E5940(index));
+			int item = FUN_005E98F0(index);
+			SendMessage(GetDlgItem(dialog, item), 0x4F1, 0, 0);
+			combo = FUN_004E41D0(index);
+			FUN_004E45A0(dialog, combo);
+			FUN_004E49A0(dialog, combo, -2);
+		}
+		if (slot->Get_Country() == -3) {
+			slot->Slot.SpectatorFlag = -1;
+		}
+	}
+	if (DAT_00A8DA90[index]->Get_Color() != color) {
+		slot->Set_Color(color);
+	}
+	if (DAT_00A8DA90[index] == DAT_00A8DA78[0]) {
+		Game::PlayerColor = color;
+	}
+	FUN_00783C80(0, false);
+	return result;
+}
+
+void __cdecl FUN_004068E0(char const * format, ...);
+
+// FUNCTION: 0x0077EF90
+bool __fastcall FUN_0077EF90(int type, unsigned char ping)
+{
+	FUN_004068E0("Requesting channel list type = %d, ping = %d\n", type, ping);
+	if (DAT_00AC116C->V06(type, ping) != 0) {
+		return false;
+	}
+	DAT_00B76520.addTail(type);
+	return true;
+}
+
+extern HANDLE DAT_00B73684[18];
+extern unsigned int DAT_00B77DC8;
+extern wchar_t DAT_00B77AD0[];
+extern char DAT_0084A584[];
+void __fastcall FUN_00792BE0(int id, WideWstring const & text, int flag);
+void __fastcall FUN_007757E0(HWND window, int flag);
+HWND FUN_00775B10(void);
+
+static inline void Focus_Chat_Input(void)
+{
+	HWND dialog = FUN_00775940(0xC4);
+	if (dialog) {
+		DAT_00B77DC8 &= ~1;
+		if (DAT_00B77DC8 == 0) {
+			FUN_007757E0(dialog, 0);
+		}
+	}
+	HWND top = FUN_00775B10();
+	HWND input = GetDlgItem(top, 0x540);
+	if (input) {
+		SetFocus(input);
+	}
+}
+
+// FUNCTION: 0x0077F120
+bool FUN_0077F120(void)
+{
+	FUN_00792BE0(1, StringTable::LoadString("TXT_REQ_CHANLIST", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x8FA), 0);
+	int timeout = 0;
+	DWORD index;
+	bool ok;
+	do {
+		while ((index = WaitForMultipleObjects(18, DAT_00B73684, FALSE, 100)) == WAIT_TIMEOUT) {
+			timeout += 100;
+			if (timeout > 30000) {
+				swprintf(DAT_00B77AD0, StringTable::LoadString("TXT_CANT_CONNECT", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x903));
+				SetEvent(DAT_00B73684[0]);
+				return false;
+			}
+			FUN_0077F900();
+		}
+		if (index == (DWORD)-1) {
+			Focus_Chat_Input();
+			FUN_004068E0(DAT_0084A584);
+			return false;
+		}
+		if (index & 0x80) {
+			index -= 0x80;
+		}
+		if (index >= 18) {
+			return false;
+		}
+		ResetEvent(DAT_00B73684[index]);
+		if (index == 5 || index == 0) {
+			ok = false;
+			break;
+		}
+		if (index == 3) {
+			ok = true;
+			break;
+		}
+	} while (true);
+	if (!ok) {
+		Focus_Chat_Input();
+		return false;
+	}
+	Focus_Chat_Input();
+	return true;
+}
+
+
+// FUNCTION: 0x0077F320
+bool __fastcall FUN_0077F320(int type, unsigned char ping, bool wait)
+{
+	if (DAT_00B76520.length() != 0) {
+		if (!FUN_0077F120()) {
+			return false;
+		}
+	}
+	for (int i = 0; i < 18; i++) {
+		ResetEvent(DAT_00B73684[i]);
+	}
+	if (!FUN_0077EF90(type, ping)) {
+		SetEvent(DAT_00B73684[0]);
+		return false;
+	}
+	if (wait) {
+		return FUN_0077F120();
+	}
+	return true;
+}
+

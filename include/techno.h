@@ -389,8 +389,8 @@ class TechnoClass : public RadioClass
 		void FUN_00705D10(PlanningTokenClass * token);
 		PlanningTokenClass * FUN_00705D20(void);
 		bool FUN_00705D30(void);
-		void FUN_00705D60(void);
-		void TryNextPlanningTokenNode(void);
+		bool FUN_00705D60(void);
+		bool TryNextPlanningTokenNode(void);
 		void FUN_0070DC70(int which);
 		int GetEffectTintIntensity(int brightness) const;
 		int GetInvulnerabilityTintIntensity(int brightness) const;
@@ -420,6 +420,7 @@ class TechnoClass : public RadioClass
 		int FUN_0070E1E0(int which) const;
 		bool FUN_0070E240(WeaponDataStruct const * weapon) const;
 		bool FUN_0070E260(void) const;
+		void Reactivate();
 		void Deactivate(void);
 		int FireDeathWeapon(int additional_damage);
 		virtual FacingType Desired_Load_Dir(ObjectClass * , Cell & moveto) const;

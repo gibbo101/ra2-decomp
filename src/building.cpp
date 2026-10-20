@@ -83,6 +83,7 @@
 #include "weapon.h"
 #include "color.hh"
 
+class Reestablish;
 extern Point2D DAT_0089C848;
 extern Cell DAT_0089C818;
 extern TPoint3D<int> DAT_0089C870;
@@ -3905,7 +3906,7 @@ void BuildingClass::Draw_Radial_Indicator(DWORD which)
 	}
 }
 
-// FUNCTION: 0x00456970 $E243
+// FUNCTION: 0x00456970 $E254
 
 namespace Unsorted { extern int CurrentFrame; }
 
@@ -4999,5 +5000,28 @@ template class DynamicVectorClass<InfantryClass *>;
 // FUNCTION: 0x0045A040 ?$VectorClass@PAVBuildingClass@@::GetItem
 template class DynamicVectorClass<BuildingClass *>;
 
+// FUNCTION: 0x0045A050 ?C?$_com_ptr_t@V?$_com_IIID@UILocomotion@@$1?_GUID_070f3290_9841_11d1_b709_00a024ddafd1@@3U__s_GUID@@A@@
+
+// FUNCTION: 0x0045A070 ?$DynamicVectorClass@PAVFoggedObjectClass@@::Clear
+// FUNCTION: 0x0045A0A0 ?$DynamicVectorClass@PAVFoggedObjectClass@@::ID
+// FUNCTION: 0x0045A0C0 ?$VectorClass@PAVFoggedObjectClass@@::GetItem
+template class DynamicVectorClass<FoggedObjectClass *>;
+
+// FUNCTION: 0x0045A0D0 ?$DynamicVectorClass@PAVReestablish@@::Clear
+// FUNCTION: 0x0045A100 ?$DynamicVectorClass@PAVReestablish@@::ID
+// FUNCTION: 0x0045A120 ?$VectorClass@PAVReestablish@@::GetItem
+template class DynamicVectorClass<Reestablish *>;
+
 // FUNCTION: 0x0045A130 ?$TRect@H::?$TRect@H
 template class TRect<int>;
+
+// FUNCTION: 0x0045A160 ?$_com_ptr_t@V?$_com_IIID@UILocomotion@@$1?_GUID_070f3290_9841_11d1_b709_00a024ddafd1@@3U__s_GUID@@A@@::_Release
+
+// FUNCTION: 0x0045A170 ?$_com_ptr_t@V?$_com_IIID@UILocomotion@@$1?_GUID_070f3290_9841_11d1_b709_00a024ddafd1@@3U__s_GUID@@A@@::_AddRef
+template class _com_ptr_t<_com_IIID<ILocomotion, &__uuidof(ILocomotion)> >;
+
+// FUNCTION: 0x0045A180 ?$VectorClass@PBVParticleSystemTypeClass@@::operator==
+// FUNCTION: 0x0045A1C0 ?$VectorClass@PBVParticleSystemTypeClass@@::Resize
+// FUNCTION: 0x0045A270 ?$VectorClass@PBVParticleSystemTypeClass@@::Clear
+template class VectorClass<ParticleSystemTypeClass const *>;
+

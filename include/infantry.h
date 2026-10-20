@@ -124,6 +124,13 @@ class InfantryClass : public FootClass
 		bool FUN_00522C30(DoType) const;
 		bool FUN_00522C60(DoType) const;
 		void FUN_00522D00(void);
+		void FUN_00522D20(void);
+		bool FUN_00522D30(void);
+		void FUN_00522D50(TechnoClass * building);
+		virtual int Do_MISSION_HARVEST(void) override;
+		bool FUN_00522FC0(void);
+		virtual bool ChronoWarpTo(Coord dest) override;
+		virtual Coord Fire_Coord(int which, Coord base) const override;
 		virtual void Berzerk(void) override;
 		virtual void Start_Fear(void) override;
 		virtual void Stop_Fear(void) override;

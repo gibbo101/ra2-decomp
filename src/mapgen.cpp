@@ -4484,3 +4484,23 @@ template class DynamicVectorClass<BuildingTypeClass const *>;
 // FUNCTION: 0x005AC4F0 ?$DynamicVectorClass@PAU_WIN32_FIND_DATAA@@::ID
 // FUNCTION: 0x005AC510 ?$VectorClass@PAU_WIN32_FIND_DATAA@@::GetItem
 template class DynamicVectorClass<WIN32_FIND_DATAA *>;
+
+// FUNCTION: 0x005AC520 ?$DynamicVectorClass@V?$TRect@H@@::Clear
+// FUNCTION: 0x005AC550 ?$DynamicVectorClass@V?$TRect@H@@::ID
+// FUNCTION: 0x005AC570 ?$VectorClass@V?$TRect@H@@::GetItem
+template class DynamicVectorClass<Rect>;
+
+// FUNCTION: 0x005AC5A0 ?$DynamicVectorClass@PAVCellClass@@::Clear
+// FUNCTION: 0x005AC5D0 ?$DynamicVectorClass@PAVCellClass@@::ID
+template class DynamicVectorClass<CellClass *>;
+
+// FUNCTION: 0x005AC5F0 ?$DynamicVectorClass@N::Clear
+// FUNCTION: 0x005AC620 ?$DynamicVectorClass@N::ID
+// FUNCTION: 0x005AC640 ?$VectorClass@N::GetItem
+template class DynamicVectorClass<double>;
+
+// FUNCTION: 0x005AC650 ?$TypeList@PBVBuildingTypeClass@@::~?$TypeList@PBVBuildingTypeClass@@
+// FUNCTION: 0x005AC6A0 ?$VectorClass@PAVMapRegionClass@@::operator==
+// FUNCTION: 0x005AC6E0 ?$VectorClass@PAVMapRegionClass@@::Resize
+// FUNCTION: 0x005AC790 ?$VectorClass@PAVMapRegionClass@@::Clear
+template class VectorClass<MapRegionClass *>;
