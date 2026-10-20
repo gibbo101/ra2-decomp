@@ -48,6 +48,9 @@ double WavePhaseSpeed = WaveSpeed;
 // FUNCTION: 0x0053CA70 $E98
 DynamicVectorClass<IonBlastClass *> IonBlastClass::IonBlasts;
 
+// FUNCTION: 0x0053DDE0 $E101
+Rect BlastBounds(0, 0, 0, 0);
+
 int Point_To_Spiral_Index(Point2D point);
 
 void Calculate_Index_To_Surface_LUT(int stride);
@@ -168,6 +171,15 @@ void Calculate_Index_To_Surface_LUT(int stride)
 // FUNCTION: 0x0053DA40 ?$DynamicVectorClass@PAVIonBlastClass@@::Clear
 template class DynamicVectorClass<IonBlastClass *>;
 
-// FUNCTION: 0x0053DA70 ?$VectorClass@PAVIonBlastClass@@::ID
+// FUNCTION: 0x0053DA70 ?$DynamicVectorClass@PAVIonBlastClass@@::ID
 // FUNCTION: 0x0053DA90 ?$VectorClass@PAVIonBlastClass@@::GetItem
 // FUNCTION: 0x0053DAA0 ?$VectorClass@PAVIonBlastClass@@::operator==
+// FUNCTION: 0x0053DAE0 ?$VectorClass@PAVIonBlastClass@@::Resize
+// FUNCTION: 0x0053DB90 ?$VectorClass@PAVIonBlastClass@@::Clear
+// FUNCTION: 0x0053DBC0 ?$VectorClass@PAVIonBlastClass@@::ID
+// FUNCTION: 0x0053DC00 ?$VectorClass@PAVIonBlastClass@@::ID
+// FUNCTION: 0x0053DC20 ?$DynamicVectorClass@PAVIonBlastClass@@::Resize
+// FUNCTION: 0x0053DCD0 ?$DynamicVectorClass@PAVIonBlastClass@@::ID
+// FUNCTION: 0x0053DD00 ?$VectorClass@PAVIonBlastClass@@::~?$VectorClass@PAVIonBlastClass@@
+// FUNCTION: 0x0053DD50 ?$DynamicVectorClass@PAVIonBlastClass@@::~?$DynamicVectorClass@PAVIonBlastClass@@
+// FUNCTION: 0x0053DDA0 ?$DynamicVectorClass@PAVIonBlastClass@@::Delete_Index

@@ -1161,6 +1161,20 @@ ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; 
 fixed them. Cost: about 5.6M tokens. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
 
+### Batches 81, 82 and 83 (20 to 21 October 2026)
+
+**377 of 382 functions** (132, 126, 119): the long tail now leaves fewer than 12 untried
+functions in most modules. Before the round, one agent retired all 31 raw-address aliases
+into Session and Options, splitting Session's tail blob into the per-slot ports, slots,
+timers and count the online code reads. The progress module turned out to be two
+translation units (the second half calls helpers a single file would inline), so it is
+now src/progress.cpp and src/progress2.cpp; the second name is provisional. Batch 82's
+merge typed the blitters' tint parameters as unsigned short, as the exe tests them. The
+non-record re-run caught the rules batch labelling VectorClass<TerrainTypeClass const *>
+as AnimTypeClass; reading the vtable slots also showed 0x0067AA30 is TypeList's
+destructor, not VectorClass's. Cost: about 4.9M tokens. Merge gate: 12,764 of 12,764
+(1,674.9 KB), about 66% of game functions.
+
 ### Batches 78, 79 and 80 (20 October 2026)
 
 **422 of 425 functions** (142, 143, 137). Batch 78's merge turned down a static data member

@@ -13,12 +13,27 @@
 class ShapeSet;
 class ColorScheme;
 class Surface;
+class ConvertClass;
 
-class ProgressScreenClass
+class ProgressCallback
+{
+	public:
+		virtual void Notify(int message, int * data) = 0;
+};
+
+class ProgressNotifier
+{
+	public:
+		virtual void Set_Callback(ProgressCallback * callback);
+
+		ProgressCallback * Callback;
+};
+
+class ProgressScreenClass : public ProgressNotifier
 {
 	public:
 		ProgressScreenClass(void);
-		virtual ~ProgressScreenClass(void);
+		~ProgressScreenClass(void);
 
 		void Initialize(double progress, char count, void * dialog);
 		void End(void);
@@ -40,12 +55,21 @@ class ProgressScreenClass
 		int Label_Y_Offset(bool usedialog);
 		int Label_X_Offset(bool usedialog);
 		void Set_Progress_Percent(int index, double value, Point2D pt=Point2D(-1,-1));
+		void Add_Progress_Percent(int index, double value, Point2D pt=Point2D(-1,-1));
+		double Get_Current_Progress(void) const;
 		double Get_Current_Progress(int index) const;
+		void Display_Progress(Point2D pt = Point2D(-1,-1));
+		void Draw_Bar(Point2D pos, double ratio, Surface * surface, ColorScheme * scheme);
+		void Draw_Flag(int x, int y, Surface * flag);
+		void Draw_Label(Point2D pt, wchar_t const * name, ColorScheme * scheme, int width);
+		void Draw_Player(ColorScheme * scheme, wchar_t const * name, Point2D * pos, int index, bool usedialog);
+		bool Has_Dialog(void) const;
+		void Clear_Dialog(void);
 
 	public:
 		double PlayerProgress[MAX_PLAYERS];
 		double MainProgress;
-		int Field50;
+		wchar_t const * Field50;
 		void * Buffer;
 		bool BufferOwned;
 		int Field5C;

@@ -11,6 +11,7 @@
 #include "_script.h"
 #include "ccini.h"
 #include "crc.h"
+#include "rect.h"
 #include "findmake.h"
 #include "globals.h"
 #include "sun.h"
@@ -274,3 +275,50 @@ HRESULT STDMETHODCALLTYPE ScriptTypeClass::Save(IStream * stream, BOOL cleardirt
 	}
 	return(result);
 }
+
+// FUNCTION: 0x00691E00
+void ScriptTypeClass::Compute_CRC(CRCEngine & crc) const
+{
+	BASECLASS::Compute_CRC(crc);
+
+	crc(MissionCount);
+}
+
+// FUNCTION: 0x00691E30
+void ScriptTypeClass::Detach(AbstractClass const * target, bool all)
+{
+	if (target != NULL && target->Fetch_RTTI() == RTTI_TEAMTYPE) {
+		int id = -1;
+		for (int index = 0; index < MissionCount; index++) {
+			if (MissionList[index].Mission == TMISSION_TEAMCHANGE) {
+				if (id == -1) {
+					id = TeamTypes.ID((TeamTypeClass *)target);
+					if (id == -1) {
+						return;
+					}
+				}
+				if (MissionList[index].Data.Value > id) {
+					MissionList[index].Data.Value--;
+				} else if (MissionList[index].Data.Value == id) {
+					MissionList[index].Data.Value = 0;
+				}
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x00691EC0 ScriptClass::Fetch_RTTI
+
+// FUNCTION: 0x00691ED0 ScriptClass::Fetch_Object_Size
+
+// FUNCTION: 0x00691EE0 ScriptClass::~ScriptClass
+
+// FUNCTION: 0x00691F70 ScriptTypeClass::Fetch_RTTI
+
+// FUNCTION: 0x00691F80 ScriptTypeClass::Fetch_Object_Size
+
+// FUNCTION: 0x00691F90 ScriptTypeClass::Fetch_Heap_ID
+
+// FUNCTION: 0x00691FA0 ScriptTypeClass::~ScriptTypeClass
+
+// FUNCTION: 0x00692030 $E11

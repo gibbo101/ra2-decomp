@@ -225,3 +225,24 @@ unsigned int ABuffer::Get_Buffer_Offset(Point2D pos)
 // FUNCTION: 0x00411550 Surface::Get_Height
 // FUNCTION: 0x00411560 XSurface::Lock
 // FUNCTION: 0x00411570 XSurface::Unlock
+// FUNCTION: 0x00411580 XSurface::Is_Locked
+// FUNCTION: 0x00411590 XSurface::Is_Direct_Draw
+// FUNCTION: 0x004115A0 XSurface::~XSurface
+// FUNCTION: 0x004115C0 Surface::Is_Direct_Draw
+// FUNCTION: 0x004115D0 Surface::~Surface
+// FUNCTION: 0x004115F0 BSurface::Lock
+// FUNCTION: 0x00411630 BSurface::Bytes_Per_Pixel
+// FUNCTION: 0x00411640 BSurface::Stride
+// FUNCTION: 0x00411650 BSurface::~BSurface
+
+struct Dat4 { int a, b, c, d; };
+extern Dat4 DAT_00887748;
+
+// FUNCTION: 0x00411680
+void FUN_00411680(void)
+{
+	DAT_00887748.a = 0;
+	DAT_00887748.b = 0;
+	DAT_00887748.c = 0;
+	DAT_00887748.d = 0;
+}

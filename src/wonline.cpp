@@ -708,7 +708,7 @@ struct ChatSink {
 	virtual void V01(void);
 	virtual unsigned long __stdcall V02(void);
 	virtual void V03(void);
-	virtual void V04(void);
+	virtual long __stdcall V04(unsigned long sku, unsigned long version, char const * name, char const * password, int timeout);
 	virtual void V05(void);
 	virtual long __stdcall V06(int type, int ping);
 	virtual void V07(void);
@@ -756,7 +756,7 @@ struct ChatSink {
 	virtual void V49(void);
 	virtual long __stdcall V50(int slot, int locale);
 	virtual void V51(void);
-	virtual void V52(void);
+	virtual long __stdcall V52(int * count);
 	virtual void V53(void);
 	virtual void V54(void);
 	virtual void V55(void);
@@ -3772,7 +3772,7 @@ NodeNameType * __fastcall FUN_005E8BF0(wchar_t const * name);
 User * FUN_007931A0(void);
 
 // FUNCTION: 0x00792F10
-void FUN_00792F10(void)
+void __fastcall FUN_00792F10(User * unused)
 {
 	Session.NumPlayers = 1;
 	for (int i = 0; i < DAT_00B77900.length(); i++) {
@@ -4055,6 +4055,7 @@ unsigned short __fastcall FUN_00793710(int send_port, int mangled_port, int unus
 
 struct ConnectionRanker {
 	int FUN_005DA040(int flags);
+	int FUN_005DA080(int flags);
 };
 extern ConnectionRanker DAT_00ABFEC8;
 
@@ -4174,6 +4175,543 @@ void __fastcall FUN_00793CD0(int slot)
 	Session.unknown_2F6C[Session.unknown_2FEC] = slot;
 	Session.unknown_2F8C[Session.unknown_2FEC] = 1200;
 	Session.unknown_2FEC++;
+}
+
+#include "conquer.h"
+#include "globals.h"
+#include "wspudp.h"
+
+extern bool DAT_00B77E2C;
+
+// FUNCTION: 0x00796710
+bool FUN_00796710(void)
+{
+	GlobalPacketType packet;
+	int packet_len;
+	unsigned short product_id;
+	IPXAddressClass sender_address;
+
+	if (DAT_00B76B10.Type != 0 && DAT_00B77900.length() >= 2 && !FUN_007930A0() && !DAT_00B77E28 && Ipx.Global_Num_Receive()) {
+		Call_Back();
+		packet_len = sizeof(packet);
+		if (Ipx.Global_Channel_Op(0, (int)&packet, (int)&packet_len, (int)&sender_address, (int)&product_id, 0) && packet.Command == NET_PREVIEW_MODE) {
+			HWND dialog = FUN_00775940(0xC9);
+			if (dialog) {
+				ShowWindow(GetDlgItem(dialog, 0x468), SW_SHOWNORMAL);
+			}
+			User user;
+			DAT_00B77900.get(user, 0);
+			user.Next = NULL;
+			FUN_00792F10(&user);
+			if (Ipx.Get_Global_Message(&packet, &packet_len, &sender_address, &product_id) && packet.Command == NET_PREVIEW_MODE && sender_address.FUN_0053EF30(Session.HostAddress) && product_id == IPXGlobalConnClass::COMMAND_AND_CONQUER4) {
+				User * host = FUN_007931A0();
+				if (host && stricmp(packet.Name, host->Nick) == 0) {
+					FUN_004068E0("Received NET_PREVIEW_MODE packet from host\n");
+					Ipx.Set_Timing(50, -1, 5000);
+					DAT_00B77E2C = true;
+					Receive_Random_Map_Preview();
+					DAT_00B77E2C = false;
+					Ipx.Set_Timing(30, -1, 600);
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}
+
+namespace OwnerDraw {
+char * __fastcall WideToCharString(char * dest, wchar_t const * src, int count);
+}
+
+static inline bool Is_Local_Host(void)
+{
+	return FUN_007930A0();
+}
+
+static inline int Current_Channel_Type(void)
+{
+	return DAT_00B76B10.Type;
+}
+
+// FUNCTION: 0x00796960
+void FUN_00796960(void)
+{
+	if (Session.Type != GAME_INTERNET) {
+		IPXAddressClass address;
+		if (DAT_00B77900.length() >= 2 && !Is_Local_Host() && !DAT_00B77E28 && Current_Channel_Type() != 0) {
+			User user;
+			DAT_00B77900.get(user, 0);
+			user.Next = NULL;
+			FUN_00792F10(&user);
+			Call_Back();
+			Ipx.Set_Timing(50, -1, 5000);
+			FUN_004068E0("Poke_The_Host - Host address is %s\n", Session.HostAddress.As_String(NULL));
+			GlobalPacketType packet;
+			memset(&packet, 0, sizeof(packet));
+			packet.Command = NET_PING;
+			OwnerDraw::WideToCharString(packet.Name, Session.Players[0]->Name, -1);
+			User * host = FUN_007931A0();
+			if (host) {
+				Ipx.Send_Global_Message_To_Name(&packet, sizeof(packet), 1, FUN_00735120(host->Nick));
+			}
+			Call_Back();
+		}
+	}
+}
+
+// FUNCTION: 0x00796B20
+void FUN_00796B20(void)
+{
+}
+
+BOOL CALLBACK FUN_00796B90(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+
+// FUNCTION: 0x00796B30
+int FUN_00796B30(void)
+{
+	SimpleWonlineDialogControl dialog;
+	int result = FUN_006241F0(0xFE, FUN_00796B90, &dialog);
+	if (result < 0) {
+		return 0;
+	}
+	return result;
+}
+
+void __fastcall FUN_006223C0(HWND window);
+
+// FUNCTION: 0x00796B90
+BOOL CALLBACK FUN_00796B90(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	if (message == WM_INITDIALOG && lparam) {
+		do SetWindowLong(window, 8, ((int *)lparam)[1]); while (0);
+	}
+	int rc = UI::StandardWndProc(window, message, wparam, lparam);
+	if (rc) {
+		return rc;
+	}
+	int count;
+	SimpleWonlineDialogControl * control = (SimpleWonlineDialogControl *)GetWindowLong(window, 8);
+	switch (message) {
+		case WM_DRAWITEM:
+			OwnerDraw::DrawItem((LPDRAWITEMSTRUCT)lparam);
+			return TRUE;
+
+		case WM_ERASEBKGND:
+			return TRUE;
+
+		case WM_PAINT:
+			OwnerDraw::Paint(window);
+			FUN_00607FD0(window);
+			ValidateRect(window, NULL);
+			return FALSE;
+
+		case WM_NCDESTROY:
+			FUN_006223C0(window);
+			return FALSE;
+
+		case 0x497:
+			{
+				SendDlgItemMessage(window, 0x3F0, LB_RESETCONTENT, 0, 0);
+				count = 0;
+				DAT_00AC116C->V52(&count);
+				if (count > 0) {
+					HWND list = GetDlgItem(window, 0x3F0);
+					for (int i = count - 1; i >= 0; i--) {
+						WideWstring name(FUN_00780A00(i));
+						FUN_004068E0("Adding country: %hs\n", name.get());
+						int item;
+						if (i < 2) {
+							item = SendMessage(list, 0x4CC, 0, (LPARAM)name.get());
+						} else {
+							item = SendMessage(list, 0x4CD, 0, (LPARAM)name.get());
+						}
+						SendMessage(list, LB_SETITEMDATA, item, i);
+					}
+					SendMessage(list, LB_SETCURSEL, -1, 0);
+				}
+			}
+			break;
+
+		case WM_COMMAND:
+			switch (LOWORD(wparam)) {
+				case IDOK:
+					{
+						HWND list = GetDlgItem(window, 0x3F0);
+						int data = 0;
+						int index = SendMessage(list, LB_GETCURSEL, 0, 0);
+						if (index != -1) {
+							data = SendMessage(list, LB_GETITEMDATA, index, 0);
+						}
+						control->F1(window, data);
+					}
+					return FALSE;
+
+				case IDCANCEL:
+					control->F1(window, 0);
+					return FALSE;
+
+				case 0x3F0:
+					if (HIWORD(wparam) == LBN_SELCHANGE) {
+						EnableWindow(GetDlgItem(window, LOWORD(wparam) - 0x3EF), SendMessage((HWND)lparam, LB_GETCURSEL, 0, 0) != -1);
+					}
+					return FALSE;
+			}
+			break;
+	}
+	return FALSE;
+}
+
+// FUNCTION: 0x00796DE0
+void FUN_00796DE0(void)
+{
+	NodeNameType * who = new NodeNameType;
+	FUN_00735060(who->Name, "Ol Cruddy", -1);
+	who->Player.SquadID = -1;
+	who->Player.House = 0;
+	who->Player.Color = 3;
+	NetNumType netnum;
+	NetNodeType net;
+	memset(&netnum, 0, sizeof(netnum));
+	net[5] = 0;
+	net[4] = 0;
+	net[3] = 0x52;
+	net[2] = 0x51;
+	net[1] = 2;
+	net[0] = 10;
+	who->Address.Set_Address(netnum, net, 0);
+	Session.Players.Add(who);
+	DAT_00B7790C[Session.NumPlayers] = 100;
+	Session.NumPlayers++;
+}
+
+// FUNCTION: 0x00796ED0
+void FUN_00796ED0(void)
+{
+	NodeNameType * who = new NodeNameType;
+	FUN_00735060(who->Name, "Potato", -1);
+	who->Player.SquadID = -1;
+	who->Player.House = 0;
+	who->Player.Color = 0;
+	NetNumType netnum;
+	NetNodeType net;
+	memset(&netnum, 0, sizeof(netnum));
+	net[5] = 0;
+	net[4] = 0;
+	net[3] = 0x61;
+	net[2] = 0x14;
+	net[1] = 2;
+	net[0] = 10;
+	who->Address.Set_Address(netnum, net, 0);
+	Session.Players.Add(who);
+	DAT_00B7790C[Session.NumPlayers] = 100;
+	Session.NumPlayers++;
+}
+
+// FUNCTION: 0x00796FC0
+void FUN_00796FC0(void)
+{
+	NodeNameType * who = new NodeNameType;
+	FUN_00735060(who->Name, "PotatoToo", -1);
+	who->Player.SquadID = -1;
+	who->Player.House = 1;
+	who->Player.Color = 2;
+	NetNumType netnum;
+	NetNodeType net;
+	memset(&netnum, 0, sizeof(netnum));
+	net[5] = 0;
+	net[4] = 0;
+	net[3] = 0xFA;
+	net[2] = 0x50;
+	net[1] = 2;
+	net[0] = 10;
+	who->Address.Set_Address(netnum, net, 0);
+	Session.Players.Add(who);
+	DAT_00B7790C[Session.NumPlayers] = 100;
+	Session.NumPlayers++;
+	Session.HostAddress = who->Address;
+}
+
+namespace Game {
+	namespace Network {
+		extern int WOLGameID;
+		extern int Tournament;
+	}
+	extern int Seed;
+	extern int TechLevel;
+}
+extern int DAT_00B77D6C;
+extern char DAT_00B77830[];
+extern unsigned char DAT_00B77A04;
+extern unsigned char DAT_00B76568;
+extern int DAT_00841F34;
+extern int DAT_00841F38;
+extern int DAT_00841F3C;
+void __fastcall FUN_005C6120(DynamicVectorClass<NodeNameType *> * vec);
+void __fastcall FUN_005E7BF0(int slot);
+void __fastcall FUN_005E7460(void);
+
+// FUNCTION: 0x007970D0
+void FUN_007970D0(void)
+{
+	char computer[0x3F8];
+	unsigned long size;
+	bool flag;
+
+	Game::Network::WOLGameID = 0;
+	DAT_00B77D6C = DAT_0084A234;
+	Game::Network::Tournament = 0;
+	strcpy(DAT_00B77830, DAT_00B73E40.get());
+	FUN_005C6120(&Session.Players);
+	size = 0x3F7;
+	GetComputerName(computer, &size);
+	flag = false;
+	if (stricmp(computer, "STEVE-T3") == 0) {
+		FUN_00796FC0();
+		FUN_00796DE0();
+		FUN_00796ED0();
+		flag = true;
+	} else if (stricmp(computer, "STEVE-T2") == 0) {
+		FUN_00796ED0();
+		FUN_00796DE0();
+		FUN_00796FC0();
+	} else {
+		FUN_00796DE0();
+		FUN_00796ED0();
+		FUN_00796FC0();
+	}
+	PacketTransport->Clear_Broadcast_Addresses();
+	char address[32] = {"xxx.xxx.xxx.xxx"};
+	NetNumType dummy;
+	NetNodeType ipaddr;
+	for (int p = 1; p < Session.Players.Count(); p++) {
+		Session.Players[p]->Address.Get_Address(dummy, ipaddr);
+		PacketTransport->Set_Broadcast_Address(address, 0);
+	}
+	DAT_00B77E28 = 2;
+	FUN_004068E0("Starting a %d player game.\n", Session.NumPlayers);
+	FUN_00735060(Session.MasterPlayerName, "PotatoToo", -1);
+	Session.MasterPlayerID = -1;
+	Session.House = 0;
+	Game::Seed = 1;
+	Game::TechLevel = 10;
+	Session.Options.UnitCount = 10;
+	Session.Options.Credits = 10000;
+	Session.Options.FogOfWar = 0;
+	Session.Options.BridgeDestruction = 1;
+	Session.Options.Goodies = 1;
+	Session.Options.MCVRedeploy = 1;
+	Session.Options.AlliesAllowed = 1;
+	Session.Options.HarvTruce = 0;
+	Session.Options.Bases = 1;
+	Session.Options.CTF = 0;
+	Session.Options.AIPlayers = 0;
+	Session.Options.AIDifficulty = (DiffType)0;
+	Session.Options.ShortGame = 1;
+	Session.Options.SWAllowed = 1;
+	Session.Options.BuildOffAlly = 0;
+	Session.Options.CrapEngineers = 1;
+	Session.Options.ScenarioIndex = 1;
+	Session.Options.GameSpeed = 0;
+	FUN_005E7BF0(Session.Options.ScenarioIndex);
+	Session.Options.GameSpeed = 2;
+	Options.GameSpeed = 2;
+	Scen->Scenario = Session.Options.ScenarioIndex;
+	Session.FrameSendRate = 5;
+	switch (Session.Options.GameSpeed) {
+		case 0:
+			Session.MaxAhead = 40;
+			Session.PrecalcDesiredFrameRate = 60;
+			Session.FrameSendRate = 10;
+			break;
+		case 1:
+			Session.MaxAhead = 40;
+			Session.PrecalcDesiredFrameRate = 45;
+			Session.FrameSendRate = 10;
+			break;
+		case 2:
+			Session.MaxAhead = 30;
+			Session.PrecalcDesiredFrameRate = 30;
+			break;
+		case 3:
+			Session.MaxAhead = 20;
+			Session.PrecalcDesiredFrameRate = 20;
+			break;
+		case 4:
+			Session.MaxAhead = 20;
+			Session.PrecalcDesiredFrameRate = 15;
+			break;
+		case 5:
+			Session.MaxAhead = 20;
+			Session.PrecalcDesiredFrameRate = 12;
+			break;
+		default:
+			Session.MaxAhead = 10;
+			Session.PrecalcDesiredFrameRate = 10;
+			break;
+	}
+	Session.PrecalcMaxAhead = 0;
+	if (!flag) {
+		Session.PrecalcDesiredFrameRate = 0;
+	}
+	int worst = 0;
+	for (int q = 0; q < Session.Players.Count(); q++) {
+		if (DAT_00B7790C[q] > worst) {
+			worst = DAT_00B7790C[q];
+		}
+	}
+	Session.LatencyFudge = 1;
+	if (worst != 0 && worst != 1000) {
+		FUN_004068E0("Max ping is %d ms\n", worst);
+		if (worst > 1000) {
+			Session.LatencyFudge = 2;
+		} else if (worst < 600) {
+			Session.LatencyFudge = 1;
+		}
+		int ticks = 60 * worst / 1000;
+		ticks += 120 * ticks / 100;
+		Ipx.Set_Timing(ticks, (unsigned int)-1, ticks * 8);
+		if (flag) {
+			Ipx.Set_Lobby_Timing(5, (unsigned int)-1, 0x78);
+		}
+		if (flag) {
+			unsigned ahead;
+			switch (Session.LatencyFudge) {
+				case 0:
+				case 1:
+					ahead = Session.MaxAhead;
+					break;
+				case 2:
+					ahead = (Session.MaxAhead / 2) + Session.MaxAhead;
+					break;
+				case 3:
+					ahead = Session.MaxAhead * 2;
+					break;
+				default:
+					ahead = Session.PrecalcMaxAhead;
+					break;
+			}
+			ahead = 10 * (ahead / 10);
+			Session.PrecalcMaxAhead = ahead;
+		}
+	} else {
+		Session.PrecalcDesiredFrameRate = 0;
+		FUN_004068E0("Ping times not available\n");
+	}
+	FUN_004068E0("PrecalcMaxAhead is %d\n", Session.PrecalcMaxAhead);
+	FUN_004068E0("PrecalcDesiredFrameRate is %d\n", Session.PrecalcDesiredFrameRate);
+	FUN_004068E0("LatencyFudge is %d\n", Session.LatencyFudge);
+	FUN_004068E0("FrameSendRate is %d\n", Session.FrameSendRate);
+	Session.MaxMaxAhead = Session.MaxAhead;
+	memset(Session.ConnectionStats, 0, sizeof(Session.ConnectionStats));
+	UDPInterfaceClass::UDPListenPort = 1234;
+	Options.GameSpeed = Session.Options.GameSpeed;
+	DAT_00841F34 = 1235;
+	DAT_00841F38 = 1236;
+	DAT_00841F3C = 1237;
+	Frame = 0;
+	DAT_00B77A04 = 0;
+	DAT_00B76568 = 0;
+	FUN_005E7460();
+}
+
+int __fastcall FUN_00797640(int sku);
+
+// FUNCTION: 0x007975E0
+void FUN_007975E0(void)
+{
+	{
+		WideWstring text(StringTable::LoadString("TXT_FETCHING_SERVLIST", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x5EEC));
+		FUN_00792BE0(0x10, text, 0);
+	}
+	int sku = 0x2300;
+	if (Session.unknown_0C != 3) {
+		sku = 0x2900;
+	}
+	FUN_00797640(sku);
+}
+
+extern int DAT_00B77DE8;
+
+// FUNCTION: 0x00797640
+int __fastcall FUN_00797640(int sku)
+{
+	char saved = DAT_00B77DC0;
+	bool servers;
+	bool done;
+	DWORD index;
+	int result;
+
+	int version = DAT_00B77E50 | sku;
+	DAT_00B77DC0 = 1;
+	DAT_00B778D8.setEmpty();
+	DAT_00B76468 = 0;
+	DAT_00B779CC = 0;
+	DAT_00AC116C->V04(version, 0x10001, "TibSun", "TibPass99", 0x1E);
+	DAT_00AC116C->V35(DAT_0084A234);
+	done = false;
+	servers = false;
+	while (true) {
+		while ((index = WaitForMultipleObjects(18, DAT_00B73684, FALSE, 50)) == WAIT_TIMEOUT) {
+			FUN_0077F900();
+		}
+		ResetEvent(DAT_00B73684[index]);
+		if (index == 0) {
+			result = 1;
+			break;
+		}
+		if (index == 8) {
+			result = 2;
+			break;
+		}
+		if (index == 1) {
+			done = true;
+			if (servers) {
+				result = 0;
+				break;
+			}
+		} else if (index == 9) {
+			bool fail = false;
+			bool ok = false;
+			switch (DAT_00B77DE8) {
+				case 0x80040067:
+				case 0x80040068:
+				case 0x80040069:
+				case 0x8004006A:
+				case 0x8004006C:
+				case 0x8004006D:
+					ODMessageBox(StringTable::LoadString("TXT_CANT_CONNECT", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x5F45), 0, FUN_0077D710, 0);
+					fail = true;
+					break;
+				case 0x4012F:
+					servers = true;
+					if (done) {
+						ok = true;
+					}
+					break;
+			}
+			if (fail) {
+				result = 1;
+				break;
+			}
+			if (ok) {
+				result = 0;
+				break;
+			}
+		}
+	}
+	HWND dialog = FUN_00775940(0xC4);
+	if (dialog) {
+		DAT_00B77DC8 = 0;
+		FUN_007757E0(dialog, 0);
+	}
+	HWND top = FUN_00775B10();
+	HWND item = GetDlgItem(top, 0x540);
+	if (item) {
+		SetFocus(item);
+	}
+	DAT_00B77DC0 = saved;
+	return result;
 }
 
 // FUNCTION: 0x007A2E70 SimpleWonlineDialogControl::~SimpleWonlineDialogControl

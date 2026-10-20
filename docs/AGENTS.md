@@ -273,6 +273,8 @@ Each entry: what the diff showed, then the source change that fixed it.
   reach it through the object's members.
 - Label every template instance from the RTTI of the vtable that holds it: two addresses
   under one symbol (`VectorClass<int>::Clear`) mean one label has the wrong element type.
+  For a virtual, that is the vtable whose slot points at it: a derived template's deleting
+  destructor stores only the base vptr (TypeList's is byte-identical to VectorClass's).
 - YRpp's enum values can be wrong for 1.001 (ACTION_REPAIR is 10, EATEN 11): prove an enum
   value from a switch or compare in the exe before trusting it.
 - An early `return` that the original tail-merges with a real branch: assign the result in

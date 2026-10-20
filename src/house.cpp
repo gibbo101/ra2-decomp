@@ -5051,3 +5051,22 @@ template class VectorClass<BUILDING_DIST_OBJ>;
 // FUNCTION: 0x00510270 ?$VectorClass@PAUBuildChoiceClass@HouseClass@@::~?$VectorClass@PAUBuildChoiceClass@HouseClass@@
 // FUNCTION: 0x005102C0 ?$DynamicVectorClass@PAUBuildChoiceClass@HouseClass@@::~?$DynamicVectorClass@PAUBuildChoiceClass@HouseClass@@
 
+
+// FUNCTION: 0x00510310 ?$VectorClass@PAVAbstractClass@@::~?$VectorClass@PAVAbstractClass@@
+template class VectorClass<AbstractClass *>;
+// FUNCTION: 0x00510360 ?$VectorClass@_N::~?$VectorClass@_N
+// FUNCTION: 0x005103B0 ?$DynamicVectorClass@_N::~?$DynamicVectorClass@_N
+// FUNCTION: 0x00510400 ?$VectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@::~?$VectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@
+// FUNCTION: 0x00510460 ?$DiscreteDistributionClass@VBuildingTypeClass@@::?$DistributionObject@PAVBuildingTypeClass@@::~?$DistributionObject@PAVBuildingTypeClass@@
+// FUNCTION: 0x005104A0 ?$DynamicVectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@::~?$DynamicVectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@
+// FUNCTION: 0x00510500 ?$VectorClass@PAVSuperClass@@::?$VectorClass@PAVSuperClass@@
+template class VectorClass<SuperClass *>;
+// FUNCTION: 0x00510550 ?$VectorClass@PAVBuildingClass@@::?$VectorClass@PAVBuildingClass@@
+template class VectorClass<BuildingClass *>;
+// FUNCTION: 0x005105A0 ?$VectorClass@PBVBuildingTypeClass@@::?$VectorClass@PBVBuildingTypeClass@@
+// FUNCTION: 0x005105F0 ?$VectorClass@PAUIConnectionPoint@@::?$VectorClass@PAUIConnectionPoint@@
+template class VectorClass<IConnectionPoint *>;
+// FUNCTION: 0x00510640 ?$VectorClass@PAVTagClass@@::?$VectorClass@PAVTagClass@@
+template class VectorClass<TagClass *>;
+// FUNCTION: 0x00510690 ?$VectorClass@PAUStartingTechnoStruct@@::?$VectorClass@PAUStartingTechnoStruct@@
+template class VectorClass<StartingTechnoStruct *>;

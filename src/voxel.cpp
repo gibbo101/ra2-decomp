@@ -14,8 +14,6 @@
 
 int SomeNumbers[17] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 5, 6, 7, 8, 9, 10, 11, 12 };
 
-Vector3 LightTiltVectors[256];
-
 float ExtraLightTiltAngles[6] = { 0.0, 0.08726389, 0.17452778, 0.26179168, 0.17452778, 0.08726389 };
 
 #pragma warning(disable : 4305)
@@ -33,6 +31,27 @@ Matrix3D BounceMatrices[4];
 Matrix3D IsometricViewMatrix;
 
 Vector3 LightDirectionVectors[256];
+
+Vector3 LightTiltVectors[256];
+
+// FUNCTION: 0x00754B20 $E12
+// FUNCTION: 0x00754B30 $E15
+// FUNCTION: 0x00754B40 $E18
+// FUNCTION: 0x00754B70 $E21
+// FUNCTION: 0x00754BA0 $E24
+// FUNCTION: 0x00754BB0 $E27
+// FUNCTION: 0x00754BC0 $E30
+// FUNCTION: 0x00754BD0 $E33
+
+// FUNCTION: 0x00754C00
+void Set_Voxel_Light_Angle(float angle)
+{
+	Matrix3D mtx(true);
+	VoxelLightAngle = angle;
+	mtx.Rotate_Y(angle);
+	VoxelLightSource = mtx * Vector3(-0.707106f, -0.707106f, 0);
+	VoxelShadowLightVector = Vector3(-6 * VoxelLightSource.X, 0, 0);
+}
 
 // FUNCTION: 0x00754BE0
 Matrix3D Get_Isometric_View_Matrix(void)
@@ -102,6 +121,12 @@ Vector3 Get_Light_Vector(Dir256 dir, int)
 	return(Vector3(vec.X * 1.5f, vec.Y * 1.5f, vec.Z * 1.5f));
 }
 
+// FUNCTION: 0x00755C50
+void __fastcall Game_DestroyVoxelCaches(void)
+{
+	ObjectTypeClass::Clear_Voxel_Indexes();
+}
+
 // FUNCTION: 0x00755C60
 Matrix3D Get_Bounce_Matrix(FacingType facing)
 {
@@ -110,3 +135,15 @@ Matrix3D Get_Bounce_Matrix(FacingType facing)
 	}
 	return(BounceMatrices[facing]);
 }
+
+struct VoxelZeroed {
+	int A;
+	int B;
+	int C;
+	int D;
+	VoxelZeroed(void) : A(0), B(0), C(0), D(0) {}
+};
+
+VoxelZeroed DAT_00B45580;
+
+// FUNCTION: 0x00755C90 $E36

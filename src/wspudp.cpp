@@ -322,3 +322,99 @@ void UDPInterfaceClass::Broadcast (void *buffer, int buffer_len, bool alternate)
 		Windows_Message_Handler();
 	}
 }
+
+// FUNCTION: 0x007B3890
+bool UDPInterfaceClass::Start_Listening (void)
+{
+	if (BASECLASS::Start_Listening()) {
+		for (int i = 0; i < PortCount; i++) {
+			if (WSAAsyncSelect(PortSockets[i], Game::hWnd, Protocol_Event_Message(INVALID_SOCKET), FD_READ | FD_WRITE) == SOCKET_ERROR) {
+				DebugString("Async select failed on spare socket.\n");
+				return(false);
+			}
+		}
+	}
+	Windows_Message_Handler();
+	return(true);
+}
+
+// FUNCTION: 0x007B3900
+void UDPInterfaceClass::Stop_Listening (void)
+{
+	BASECLASS::Stop_Listening();
+	Close_All_Port_Sockets();
+}
+
+// FUNCTION: 0x007B3920
+void UDPInterfaceClass::Add_Peer (unsigned char *address, unsigned short port)
+{
+	if (PeerCount < 16) {
+		for (int i = 0; i < PeerCount; i++) {
+			if (port == PeerPorts[i] && *(unsigned int *)address == PeerAddresses[i]) {
+				return;
+			}
+		}
+		DebugString("Marking address %d.%d.%d.%d ; %d as unreachable\n", address[0], address[1], address[2], address[3], port);
+		PeerAddresses[PeerCount] = *(unsigned int *)address;
+		PeerPorts[PeerCount] = port;
+		PeerCount++;
+	}
+}
+
+// FUNCTION: 0x007B39D0
+bool UDPInterfaceClass::Is_Reachable (unsigned char *address, unsigned short port)
+{
+	for (int i = 0; i < PeerCount; i++) {
+		if (port == PeerPorts[i] && *(unsigned int *)address == PeerAddresses[i]) {
+			return(false);
+		}
+	}
+	return(true);
+}
+
+// FUNCTION: 0x007B3A20
+void UDPInterfaceClass::Close_All_Port_Sockets (void)
+{
+	for (int i = 0; i < PortCount; i++) {
+		DebugString("Closing spare socket %d\n", PortSockets[i]);
+		WSAAsyncSelect(PortSockets[i], Game::hWnd, 0, 0);
+		closesocket(PortSockets[i]);
+	}
+	PortCount = 0;
+	SelectedSocket = INVALID_SOCKET;
+}
+
+// FUNCTION: 0x007B40F0
+ProtocolEnum UDPInterfaceClass::Get_Protocol (void)
+{
+	return(PROTOCOL_UDP);
+}
+
+// FUNCTION: 0x007B4100
+int UDPInterfaceClass::Protocol_Event_Message (SOCKET socketnum)
+{
+	if (socketnum == Socket || socketnum == INVALID_SOCKET) {
+		return(WM_UDPASYNCEVENT);
+	}
+	return(socketnum == AlternateSocket ? WM_UDPASYNCEVENT + 1 : 0);
+}
+
+// FUNCTION: 0x007B4140
+int UDPInterfaceClass::Get_Num_Local_Addresses (void)
+{
+	return(LocalAddresses.Count());
+}
+
+// FUNCTION: 0x007B4150
+unsigned char *UDPInterfaceClass::Get_Local_Address (int index)
+{
+	return(LocalAddresses[index]);
+}
+
+// FUNCTION: 0x007B4160
+unsigned short UDPInterfaceClass::Get_Port (void)
+{
+	return(Port);
+}
+
+// FUNCTION: 0x007B4170 UDPInterfaceClass::~UDPInterfaceClass

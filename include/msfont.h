@@ -8,7 +8,7 @@
 
 class Surface;
 class ConvertClass;
-class ShapeSet;
+class SHPStruct;
 template<class T> class TRect;
 typedef TRect<int> Rect;
 
@@ -16,8 +16,6 @@ class MSFont
 {
 	public:
 		MSFont(bool use_side_palette = true);
-		MSFont(char const * file_name);
-		MSFont(char const * file_name, char const * palette_name);
 		virtual ~MSFont(void);
 
 		int Get_Font_Width(void) {return(FontWidth);}
@@ -28,7 +26,7 @@ class MSFont
 		unsigned char Get_Blue(void) {return(Blue);}
 		int Get_Color(void) {return(Color);}
 
-		bool Init(char const * file_name, char const * palette_name);
+		bool Init(bool use_side_palette);
 
 		void Get_String_Rect(wchar_t const * string, Rect & rect);
 
@@ -52,7 +50,7 @@ class MSFont
 		int Color;
 
 		// Glyph shapes: three frames per printable character, the last one measured for width.
-		ShapeSet * FontFile;
+		SHPStruct * FontFile;
 
 		// Remaps the glyphs from the font's palette into the visible surface's colours.
 		ConvertClass * Drawer;

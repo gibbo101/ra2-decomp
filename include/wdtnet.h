@@ -249,12 +249,17 @@ namespace WorldDominationTour
 
 	class CampaignProperties : public ReferenceCounted {
 		public:
+			CampaignProperties(rc_ptr<WDTState> const & state);
+			virtual ~CampaignProperties(void);
+			int FUN_0076BFA0(void);
 			int FUN_0076BFE0(void);
 			int FUN_0076BFC0(void);
 			int FUN_0076BFB0(void);
+			Wstring FUN_0076BFF0(void);
 
 		public:
-			char Pad0[0x14 - 0x8];
+			rc_ptr<WDTState> State;
+			WideWstring ShortDesc;
 			WideWstring LongDesc;
 	};
 

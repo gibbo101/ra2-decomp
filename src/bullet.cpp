@@ -548,3 +548,17 @@ template class CDTimerClass<FrameTimerClass>;
 // FUNCTION: 0x0046B6A0 ?$VectorClass@PAVBulletClass@@::Resize
 // FUNCTION: 0x0046B750 ?$VectorClass@PAVBulletClass@@::Clear
 template class VectorClass<BulletClass *>;
+
+// FUNCTION: 0x0046B780 ?$VectorClass@PAVBulletClass@@::ID
+// FUNCTION: 0x0046B7C0 ?$VectorClass@PAVBulletClass@@::ID
+// FUNCTION: 0x0046B7E0 ?$DynamicVectorClass@PAVBulletClass@@::Resize
+// FUNCTION: 0x0046B890 ?$DynamicVectorClass@PAVBulletClass@@::ID
+// FUNCTION: 0x0046B8C0 ?$DynamicVectorClass@PAVBulletClass@@::~?$DynamicVectorClass@PAVBulletClass@@
+// FUNCTION: 0x0046B910 ?$VectorClass@PAVBulletClass@@::~?$VectorClass@PAVBulletClass@@
+
+// FUNCTION: 0x0046B960 ?$TVelocity3D@N::operator+=
+template class TVelocity3D<double>;
+
+// FUNCTION: 0x0046B990 BulletClass::AddRef
+
+// FUNCTION: 0x0046B9A0 BulletClass::Release

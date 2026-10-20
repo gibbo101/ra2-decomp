@@ -66,3 +66,97 @@ ShortPair DAT_00B729A8;
 
 // FUNCTION: 0x0076BE50 $E35
 IntTriple DAT_00B729C8;
+
+#include <windows.h>
+#undef LoadString
+#include <stddef.h>
+#include "always.h"
+#include "stringtable.h"
+#include "wdtnet.h"
+
+using namespace WorldDominationTour;
+extern char DAT_00889F64[];
+extern int DAT_00B729F0, DAT_00B729F4, DAT_00B729F8, DAT_00B72A18, DAT_00B72A1C, DAT_00B72A20, DAT_00B72A24;
+
+// FUNCTION: 0x0076BE70
+void FUN_0076BE70(void)
+{
+	DAT_00B729F8 = 0;
+	DAT_00B729F0 = 0x80;
+	DAT_00B729F4 = 0x80;
+}
+
+// FUNCTION: 0x0076BE90
+rc_ptr<WorldDominationTour::CampaignProperties> __fastcall FUN_0076BE90(rc_ptr<WDTState> const & state)
+{
+	return rc_ptr<WorldDominationTour::CampaignProperties>(new WorldDominationTour::CampaignProperties(state));
+}
+
+// FUNCTION: 0x0076BED0
+WorldDominationTour::CampaignProperties::~CampaignProperties(void)
+{
+}
+
+// FUNCTION: 0x0076BF00
+WorldDominationTour::CampaignProperties::CampaignProperties(rc_ptr<WDTState> const & state) :
+	State(state),
+	ShortDesc(state.Get() ? StringTable::LoadString(state->ShortDesc, NULL, "D:\\ra2mdpost\\WDTProps.cpp", 0x14) : StringTable::LoadString("\"WDT:DefaultShortDescription\"", NULL, "D:\\ra2mdpost\\WDTProps.cpp", 0x14)),
+	LongDesc(state.Get() ? StringTable::LoadString(state->LongDesc, NULL, "D:\\ra2mdpost\\WDTProps.cpp", 0x15) : StringTable::LoadString("\"WDT:DefaultLongDescription\"", NULL, "D:\\ra2mdpost\\WDTProps.cpp", 0x15))
+{
+}
+
+// FUNCTION: 0x0076BFA0
+int WorldDominationTour::CampaignProperties::FUN_0076BFA0(void)
+{
+	if (State.Get()) {
+		return State->CycleID;
+	}
+	return 0;
+}
+
+// FUNCTION: 0x0076BFB0
+int WorldDominationTour::CampaignProperties::FUN_0076BFB0(void)
+{
+	return 1;
+}
+
+// FUNCTION: 0x0076BFC0
+int WorldDominationTour::CampaignProperties::FUN_0076BFC0(void)
+{
+	if (State.Get()) {
+		return State->MapID;
+	}
+	return 1;
+}
+
+// FUNCTION: 0x0076BFE0
+int WorldDominationTour::CampaignProperties::FUN_0076BFE0(void)
+{
+	if (State.Get()) {
+		return State->NumTicks - 1;
+	}
+	return 0;
+}
+
+// FUNCTION: 0x0076BFF0
+Wstring WorldDominationTour::CampaignProperties::FUN_0076BFF0(void)
+{
+	char const * url;
+	if (State.Get()) {
+		url = State->WebURL;
+	} else {
+		url = DAT_00889F64;
+	}
+	return Wstring(url);
+}
+
+// FUNCTION: 0x0076C030 WorldDominationTour::CampaignProperties::~CampaignProperties
+
+// FUNCTION: 0x0076C080
+void FUN_0076C080(void)
+{
+	DAT_00B72A18 = 0;
+	DAT_00B72A1C = 0;
+	DAT_00B72A20 = 0;
+	DAT_00B72A24 = 0;
+}

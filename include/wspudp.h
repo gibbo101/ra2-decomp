@@ -38,6 +38,7 @@ class UDPInterfaceClass : public WinsockInterfaceClass {
 		virtual void Close_All_Port_Sockets (void);
 		virtual void Select_Port_Socket (unsigned short port);
 		virtual void Add_Peer (unsigned char *address, unsigned short port);
+		bool Is_Reachable (unsigned char *address, unsigned short port);
 
 		static int UDPListenPort;
 

@@ -268,3 +268,152 @@ HRESULT STDMETHODCALLTYPE SmudgeTypeClass::GetClassID(CLSID * retval)
 	*retval = CLSID_SmudgeTypeClass;
 	return(S_OK);
 }
+
+// FUNCTION: 0x006B5910
+SmudgeTypeClass * SmudgeTypeClass::Find_Or_Make(const char *name)
+{
+	return(TFind_Or_Make<SmudgeTypeClass>(name, SmudgeTypes));
+}
+
+// FUNCTION: 0x006B59A0
+bool SmudgeTypeClass::Scorch_The_Ground(Coord const & coord, int width, int height, bool large)
+{
+	int i;
+
+	if (coord.As_Cell() == CELL_NONE) {
+		return(false);
+	}
+
+	DynamicVectorClass<SmudgeTypeClass const *> list;
+	for (i = 0; i < SmudgeTypes.Count(); i++) {
+		SmudgeTypeClass const * smudge = SmudgeTypes[i];
+		if (smudge->IsScorch) {
+			if (smudge->Can_Place_Here(coord.As_Cell(), large)) {
+				list.Add(smudge);
+			}
+		}
+	}
+
+	DynamicVectorClass<SmudgeTypeClass const *> largelist;
+	for (i = 0; i < list.Count(); i++) {
+		SmudgeTypeClass const * scorch = list[i];
+		if (!large) {
+			if (scorch->Width == 1 && scorch->Height == 1 || width > 60 && height > 50) {
+				largelist.Add(scorch);
+			}
+		} else {
+			if (scorch->Width > 1 && scorch->Height > 1) {
+				largelist.Add(scorch);
+			}
+		}
+	}
+
+	if (largelist.Count() > 0) {
+		new SmudgeClass(largelist[Random_Pick(0, largelist.Count() - 1)], coord);
+	} else if (list.Count() > 0) {
+		new SmudgeClass(list[Random_Pick(0, list.Count() - 1)], coord);
+	}
+
+	return(false);
+}
+// FUNCTION: 0x006B5C90
+bool SmudgeTypeClass::Crater_The_Ground(Coord const & coord, int width, int height, bool large)
+{
+	int i;
+
+	if (coord.As_Cell() == CELL_NONE) {
+		return(false);
+	}
+
+	DynamicVectorClass<SmudgeTypeClass const *> list;
+	for (i = 0; i < SmudgeTypes.Count(); i++) {
+		SmudgeTypeClass const * smudge = SmudgeTypes[i];
+		if (smudge->IsCrater) {
+			if (smudge->Can_Place_Here(coord.As_Cell(), large)) {
+				list.Add(smudge);
+			}
+		}
+	}
+
+	DynamicVectorClass<SmudgeTypeClass const *> largelist;
+	for (i = 0; i < list.Count(); i++) {
+		SmudgeTypeClass const * scorch = list[i];
+		if (!large) {
+			if (scorch->Width == 1 && scorch->Height == 1 || width > 60 && height > 50) {
+				largelist.Add(scorch);
+			}
+		} else {
+			if (scorch->Width > 1 && scorch->Height > 1) {
+				largelist.Add(scorch);
+			}
+		}
+	}
+
+	if (largelist.Count() > 0) {
+		new SmudgeClass(largelist[Random_Pick(0, largelist.Count() - 1)], coord);
+	} else if (list.Count() > 0) {
+		new SmudgeClass(list[Random_Pick(0, list.Count() - 1)], coord);
+	}
+
+	return(false);
+}
+
+// FUNCTION: 0x006B5F80
+bool SmudgeTypeClass::Can_Place_Here(Cell const & origin, bool underbuildings) const
+{
+	for (int h = 0; h < Height; h++) {
+		for (int w = 0; w < Width; w++) {
+			CellClass * cell = &Map[origin + Cell(w, h)];
+			if (!Map.In_Radar(origin)) {
+				return(false);
+			}
+			if (cell->Ramp != 0) {
+				return(false);
+			}
+			if (cell->Smudge != SMUDGE_NONE) {
+				return(false);
+			}
+			if (cell->Overlay != OVERLAY_NONE) {
+				return(false);
+			}
+			if (!underbuildings && cell->Cell_Building() != NULL) {
+				return(false);
+			}
+			IsometricTileType ittype = cell->ITType;
+			if (cell->ITType < ISOTILE_FIRST || cell->ITType >= IsometricTileTypes.Count()) {
+				ittype = ISOTILE_FIRST;
+			}
+			if (!IsometricTileTypes[ittype]->IsMorphable) {
+				return(false);
+			}
+		}
+	}
+	return(true);
+}
+
+// FUNCTION: 0x006B6080
+void SmudgeTypeClass::Place(Cell const & origin) const
+{
+	for (int h = 0; h < Height; h++) {
+		for (int w = 0; w < Width; w++) {
+			Cell newcell = origin + Cell(w, h);
+			CellClass * cell = &Map[newcell];
+			cell->Smudge = HeapID;
+			cell->SmudgeData = w + (h*Width);
+			cell->Register_For_Redraw();
+		}
+	}
+}
+
+// FUNCTION: 0x006B6130 SmudgeTypeClass::Fetch_RTTI
+// FUNCTION: 0x006B6140 SmudgeTypeClass::Fetch_Object_Size
+// FUNCTION: 0x006B6150 SmudgeTypeClass::Fetch_Heap_ID
+// FUNCTION: 0x006B6160 SmudgeTypeClass::~SmudgeTypeClass
+
+struct SmudgeTypeZero {
+	int A, B, C, D;
+	SmudgeTypeZero() { A = 0; B = 0; C = 0; D = 0; }
+};
+
+// FUNCTION: 0x006B6210 $E176
+SmudgeTypeZero DAT_00B0B7F0;

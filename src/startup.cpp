@@ -671,3 +671,19 @@ template class TClassFactory<TagClass>;
 // FUNCTION: 0x006C2210 ?$TClassFactory@VTagTypeClass@@::CreateInstance
 // FUNCTION: 0x006C2290 ?$TClassFactory@VTagTypeClass@@::LockServer
 template class TClassFactory<TagTypeClass>;
+
+// FUNCTION: 0x006C22C0 ?$TClassFactory@VTeamClass@@::?$TClassFactory@VTeamClass@@
+// FUNCTION: 0x006C22D0 ?$TClassFactory@VTeamClass@@::QueryInterface
+// FUNCTION: 0x006C2340 ?$TClassFactory@VTeamClass@@::AddRef
+// FUNCTION: 0x006C2360 ?$TClassFactory@VTeamClass@@::Release
+// FUNCTION: 0x006C2390 ?$TClassFactory@VTeamClass@@::CreateInstance
+// FUNCTION: 0x006C2410 ?$TClassFactory@VTeamClass@@::LockServer
+template class TClassFactory<TeamClass>;
+
+// FUNCTION: 0x006C2440 ?$TClassFactory@VTeamTypeClass@@::?$TClassFactory@VTeamTypeClass@@
+// FUNCTION: 0x006C2450 ?$TClassFactory@VTeamTypeClass@@::QueryInterface
+// FUNCTION: 0x006C24C0 ?$TClassFactory@VTeamTypeClass@@::AddRef
+// FUNCTION: 0x006C24E0 ?$TClassFactory@VTeamTypeClass@@::Release
+// FUNCTION: 0x006C2510 ?$TClassFactory@VTeamTypeClass@@::CreateInstance
+// FUNCTION: 0x006C2590 ?$TClassFactory@VTeamTypeClass@@::LockServer
+template class TClassFactory<TeamTypeClass>;

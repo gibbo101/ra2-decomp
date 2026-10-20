@@ -277,5 +277,22 @@ template class DynamicVectorClass<WaypointClass>;
 // FUNCTION: 0x007642B0 ?$VectorClass@VWaypointClass@@::ID
 // FUNCTION: 0x007642E0 ?$DynamicVectorClass@VWaypointClass@@::Resize
 // FUNCTION: 0x00764420 ?$DynamicVectorClass@VWaypointClass@@::ID
+// FUNCTION: 0x00764460 ?$VectorClass@PAVWaypointPathClass@@::operator==
+// FUNCTION: 0x007644A0 ?$VectorClass@PAVWaypointPathClass@@::Resize
+// FUNCTION: 0x00764550 ?$VectorClass@PAVWaypointPathClass@@::Clear
+// FUNCTION: 0x00764580 ?$VectorClass@PAVWaypointPathClass@@::ID
+// FUNCTION: 0x007645C0 ?$VectorClass@PAVWaypointPathClass@@::ID
+// FUNCTION: 0x007645E0 ?$DynamicVectorClass@PAVWaypointPathClass@@::Resize
+// FUNCTION: 0x00764690 ?$DynamicVectorClass@PAVWaypointPathClass@@::ID
+// FUNCTION: 0x007646C0 ?$VectorClass@PAVWaypointPathClass@@::~?$VectorClass@PAVWaypointPathClass@@
+// FUNCTION: 0x00764710 ?$DynamicVectorClass@PAVWaypointPathClass@@::~?$DynamicVectorClass@PAVWaypointPathClass@@
+// FUNCTION: 0x00764760 ?$VectorClass@VWaypointClass@@::?$VectorClass@VWaypointClass@@
 template class DynamicVectorClass<WaypointPathClass *>;
+template class VectorClass<WaypointPathClass *>;
 template class VectorClass<WaypointClass>;
+
+
+struct WaypointIntQuad { int A; int B; int C; int D; WaypointIntQuad(int a, int b, int c, int d) { A = a; B = b; C = c; D = d; } };
+
+// FUNCTION: 0x00764810 $E8
+WaypointIntQuad DAT_00B72678(0, 0, 0, 0);

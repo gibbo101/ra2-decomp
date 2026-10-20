@@ -35,6 +35,16 @@ struct IntTriple {
 	IntTriple() { A = 0; B = 0; C = 0; }
 };
 
+struct Int3Pad {
+	int A, B, C;
+	Int3Pad() { C = 0; A = 128; B = 128; }
+};
+
+struct Int4Zero {
+	int A, B, C, D;
+	Int4Zero() { A = 0; B = 0; C = 0; D = 0; }
+};
+
 // FUNCTION: 0x00429010 $E46
 double DAT_0089A278 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
@@ -70,6 +80,12 @@ ShortPair DAT_0089A270;
 
 // FUNCTION: 0x004291C0 $E79
 IntTriple DAT_0089A290;
+
+// FUNCTION: 0x004291E0 $E82
+Int3Pad DAT_0089A2B8;
+
+// FUNCTION: 0x00429200 $E85
+ApplicationClass ApplicationInstance;
 
 // FUNCTION: 0x00429210
 LONG STDMETHODCALLTYPE TiberianSunClassFactory::QueryInterface(REFIID riid, LPVOID *ppvObject)
@@ -148,6 +164,24 @@ LONG STDMETHODCALLTYPE ApplicationClass::QueryInterface(REFIID riid, LPVOID *ppv
 	return(E_NOINTERFACE);
 }
 
+// FUNCTION: 0x004293E0
+ULONG STDMETHODCALLTYPE ApplicationClass::AddRef(void)
+{
+	return(1);
+}
+
+// FUNCTION: 0x004293F0
+ULONG STDMETHODCALLTYPE ApplicationClass::Release(void)
+{
+	return(1);
+}
+
+// FUNCTION: 0x00429400
+HRESULT STDMETHODCALLTYPE ApplicationClass::App_Interface(IApplication **pVal)
+{
+	return(QueryInterface(IID_IApplication, (void **)pVal));
+}
+
 // FUNCTION: 0x00429420
 HRESULT STDMETHODCALLTYPE ApplicationClass::get_FullName(BSTR *retval)
 {
@@ -172,8 +206,50 @@ HRESULT STDMETHODCALLTYPE ApplicationClass::get_Name(BSTR *retval)
 	return(S_OK);
 }
 
+// FUNCTION: 0x00429480
+HRESULT STDMETHODCALLTYPE ApplicationClass::Application_Interface(IApplication **pVal)
+{
+	return(QueryInterface(IID_IApplication, (void **)pVal));
+}
+
+// FUNCTION: 0x004294A0
+HRESULT STDMETHODCALLTYPE ApplicationClass::Quit(void)
+{
+	return(S_OK);
+}
+
+// FUNCTION: 0x004294B0
+HRESULT STDMETHODCALLTYPE ApplicationClass::get_ScenarioName(BSTR *retval)
+{
+	wchar_t psz[32];
+
+	if (retval == NULL) {
+		return(E_POINTER);
+	}
+
+	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, Scen->ScenarioName, -1, psz, sizeof(psz)/2);
+	*retval = SysAllocString(psz);
+
+	return(S_OK);
+}
+
+// FUNCTION: 0x00429500
+HRESULT STDMETHODCALLTYPE ApplicationClass::get_FrameCount(LONG *retval)
+{
+	if (retval == NULL) {
+		return(E_POINTER);
+	}
+
+	*retval = Scen->ElapsedTimer();
+
+	return(S_OK);
+}
+
 // FUNCTION: 0x00429550
 HRESULT STDMETHODCALLTYPE ApplicationClass::get_Swizzle_Interface(ISwizzle **pVal)
 {
 	return(Swizzler.QueryInterface(IID_ISwizzle, (void**)pVal));
 }
+
+// FUNCTION: 0x00429570 $E88
+Int4Zero DAT_0089C268;

@@ -40,6 +40,8 @@ struct IntTriple {
 	IntTriple() { A = 0; B = 0; C = 0; }
 };
 
+// FUNCTION: 0x0046B9B0 $E2
+
 // FUNCTION: 0x0046B9D0 $E57
 double DAT_0089DE98 = FUN_004CAC40(pow(256.0, 2.0) * 2);
 

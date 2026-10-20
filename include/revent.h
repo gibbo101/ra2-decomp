@@ -13,6 +13,15 @@
 
 #include "revent.hh"
 
+struct RadarEventInfo {
+	int SuppressionDistance;
+	int VisibilityDuration;
+	int Duration;
+	bool CanSuppress;
+};
+
+extern const RadarEventInfo RadarEventTable[RADAREVENT_COUNT];
+
 struct IStream;
 template<class T> class DynamicVectorClass;
 
@@ -30,9 +39,9 @@ class RadarEventClass
 		void Process(void);
 		void Draw(void);
 		void Plot(void);
-		int Get_Visibility_Duration(void);
-		int Get_Duration(void);
-		int Get_Suppression_Distance(void);
+		int Get_Visibility_Duration(void) {return(RadarEventTable[Type].VisibilityDuration);}
+		int Get_Duration(void) {return(RadarEventTable[Type].Duration);}
+		int Get_Suppression_Distance(void) {return(RadarEventTable[Type].SuppressionDistance);}
 		RGBClass Get_Max_Color(void) const;
 		RGBClass Get_Min_Color(void) const;
 		void Get_Event_Rect(Point2D (& event_rect)[4]) const;

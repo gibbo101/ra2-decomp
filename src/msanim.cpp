@@ -1180,3 +1180,26 @@ bool MSPCXAnim::Has_Finished(void) const
 // FUNCTION: 0x005CEB20 MSAnim::Resume
 
 // FUNCTION: 0x005CEB40 MSAnim::Has_Finished
+
+// FUNCTION: 0x005CEB50 MSAnim::Restore
+
+// FUNCTION: 0x005CEB60 MSAnim::~MSAnim
+
+// FUNCTION: 0x005CEB80 MSShapeAnim::~MSShapeAnim
+
+// FUNCTION: 0x005CEBD0 MSFadeAnim::~MSFadeAnim
+
+// FUNCTION: 0x005CEC20 MSOverlayAnim::~MSOverlayAnim
+
+// FUNCTION: 0x005CEC70 MSButtonAnim::~MSButtonAnim
+
+// FUNCTION: 0x005CECB0 MSVQAnim::~MSVQAnim
+
+// FUNCTION: 0x005CED10 MSBitPrintAnim::~MSBitPrintAnim
+
+// FUNCTION: 0x005CED40 MSPrintAnim::~MSPrintAnim
+
+// FUNCTION: 0x005CED70 MSPCXAnim::~MSPCXAnim
+
+// FUNCTION: 0x005CEDB0 $E20
+Rect DAT_00ABFBB0(0, 0, 0, 0);

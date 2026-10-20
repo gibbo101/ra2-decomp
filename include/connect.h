@@ -12,7 +12,10 @@
 struct CommHeaderType {
 	unsigned short MagicNumber;
 	unsigned char Code;
+	unsigned char Field3;
 	unsigned int PacketID;
+	unsigned int Field8;
+	unsigned short FieldC;
 };
 #pragma pack(pop)
 
