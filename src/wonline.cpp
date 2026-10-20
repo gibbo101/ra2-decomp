@@ -2405,7 +2405,6 @@ bool FUN_00786D90(void)
 }
 
 extern char DAT_0084A238;
-extern Wstring DAT_00B7778C;
 
 // FUNCTION: 0x00786DC0
 bool __fastcall FUN_00786DC0(Wstring & name)
@@ -4124,15 +4123,13 @@ void __fastcall FUN_00793930(char const * from, char const * to, int state)
 	}
 }
 
-extern unsigned short DAT_00A8E050[];
-
 // FUNCTION: 0x00793A10
 void __fastcall FUN_00793A10(char const * name, unsigned short port)
 {
 	FUN_004068E0("Player %s is telling us we should send to port %d\n", name, port);
 	for (int i = 0; i < 8; i++) {
 		if (stricmp(FUN_007350C0(Session.Slots[i]->Name), name) == 0) {
-			DAT_00A8E050[i] = port;
+			Session.unknown_2E18[i] = port;
 			return;
 		}
 	}
@@ -4171,19 +4168,12 @@ void __fastcall FUN_00793B30(int mode, char const * options)
 	DAT_00AC116C->V15(text);
 }
 
-struct KeepaliveState {
-	int Slot[8];
-	CDTimerClass<SystemTimerClass> Timer[8];
-	int Count;
-};
-extern KeepaliveState DAT_00A8E1A4;
-
 // FUNCTION: 0x00793CD0
 void __fastcall FUN_00793CD0(int slot)
 {
-	DAT_00A8E1A4.Slot[DAT_00A8E1A4.Count] = slot;
-	DAT_00A8E1A4.Timer[DAT_00A8E1A4.Count] = 1200;
-	DAT_00A8E1A4.Count++;
+	Session.unknown_2F6C[Session.unknown_2FEC] = slot;
+	Session.unknown_2F8C[Session.unknown_2FEC] = 1200;
+	Session.unknown_2FEC++;
 }
 
 // FUNCTION: 0x007A2E70 SimpleWonlineDialogControl::~SimpleWonlineDialogControl

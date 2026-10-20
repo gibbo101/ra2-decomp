@@ -520,20 +520,12 @@ extern unsigned char DAT_00A8ED6B;
 extern int DAT_00840A70;
 extern int DAT_00A8F784;
 extern unsigned char DAT_0089E3A0;
-extern int DAT_00A8D5FC;
-extern IPXAddressClass DAT_00A8D600;
 extern unsigned char DAT_00B04880;
 extern unsigned char DAT_00A8EDDC;
 extern int DAT_00B77E18;
-extern unsigned char DAT_00A8E2C8;
-extern unsigned char DAT_00A8D60C;
-extern unsigned char DAT_00A8D60D;
-extern int DAT_00A8EB84;
-extern int DAT_00A8EB88;
 extern unsigned char DAT_008175B0;
 extern unsigned char DAT_0089F978;
 extern unsigned char DAT_00A8ED64;
-extern unsigned int DAT_00A8D5F8;
 void __fastcall FUN_00734F50(int value);
 void __fastcall FUN_00734F80(int value);
 void __fastcall FUN_007B2720(int value);
@@ -612,9 +604,9 @@ bool Parse_Command_Line(int argc, char * argv[])
 			}
 
 			if (i >= 4) {
-				DAT_00A8D5FC = 1;
+				Session.IsBridge = 1;
 				memset(node, 0xff, 6);
-				DAT_00A8D600 = IPXAddressClass(net, node, 0);
+				Session.BridgeNet = IPXAddressClass(net, node, 0);
 			}
 			continue;
 		}
@@ -651,28 +643,28 @@ bool Parse_Command_Line(int argc, char * argv[])
 			DAT_00B77E18 = 2;
 		}
 		if (strstr(string, "-NOROUTER")) {
-			DAT_00A8E2C8 = false;
+			Session.unknown_3090 = false;
 		}
 
 		if (strstr(string, "-STEALTH")) {
-			DAT_00A8D60C = true;
+			Session.NetStealth = true;
 			continue;
 		}
 		if (strstr(string, "-MESSAGES")) {
-			DAT_00A8D60D = false;
+			Session.NetProtect = false;
 			continue;
 		}
 		if (strstr(string, "-ATTRACT")) {
-			DAT_00A8D5F8 |= 4;
+			Session.Attract = true;
 			continue;
 		}
 
 		if (isdigit(string[1])) {
-			sscanf(string, "-%dX%d", &DAT_00A8EB84, &DAT_00A8EB88);
+			sscanf(string, "-%dX%d", &Options.ScreenWidth, &Options.ScreenHeight);
 			continue;
 		}
 		if (strcmp(string, "-480") == 0) {
-			DAT_00A8EB88 = 480;
+			Options.ScreenHeight = 480;
 			continue;
 		}
 		if (strcmp(string, "-16") == 0) {
@@ -705,7 +697,6 @@ bool Parse_Command_Line(int argc, char * argv[])
 
 void __fastcall FUN_0072E820(BSurface * image, Rect * rect, int flag);
 
-extern int DAT_00A8B8B8;
 extern int DAT_00A8ED98;
 extern RandomStraw CryptRandom;
 int __cdecl FUN_0053E720(void);
@@ -714,7 +705,7 @@ int __cdecl FUN_0053E720(void);
 void Game::InitRandom(void)
 {
 	FUN_004068E0("Init random number\n");
-	if (DAT_00A8B8B8 || (RecordingFlag & 2) || FUN_0053E720()) {
+	if (Session.LoadGame || (RecordingFlag & 2) || FUN_0053E720()) {
 		Scen->RandomNumber = Seed;
 		NonCriticalRandomNumber = Seed;
 		FUN_004068E0("Seed is %08x\n", Seed);
@@ -1246,7 +1237,6 @@ void FUN_00532140(void)
 
 extern char DAT_00A8F5B4[];
 extern wchar_t DAT_00A8F654[];
-extern unsigned char DAT_00A8B8B5;
 extern unsigned char DAT_00A8F7D8;
 void __fastcall FUN_00731060(int group);
 void __fastcall FUN_007311C0(int group);
@@ -2445,7 +2435,7 @@ class MultiplayerDebugCommandClass : public CommandClass
 		virtual void Execute(int key) const
 		{
 			if (Session.EnableMultiplayerDebug) {
-				DAT_00A8B8B5 = !DAT_00A8B8B5;
+				Session.DrawMPDebugStats = !Session.DrawMPDebugStats;
 			}
 		}
 };

@@ -715,7 +715,12 @@ class SessionClass
 		int unknown_2A14[64][2];
 		int unknown_2C14[64][2];
 		int unknown_2E14;
-		unsigned char unknown_2E18[0x1E0];
+		unsigned short unknown_2E18[MAX_PLAYERS];
+		unsigned char unknown_2E28[0x144];
+		int unknown_2F6C[MAX_PLAYERS];
+		CDTimerClass<SystemTimerClass> unknown_2F8C[MAX_PLAYERS];
+		int unknown_2FEC;
+		unsigned char unknown_2FF0[8];
 		int unknown_2FF8[MAX_PLAYERS];
 		unsigned char unknown_3018[8];
 		wchar_t MasterPlayerName[MPLAYER_NAME_MAX + 1];

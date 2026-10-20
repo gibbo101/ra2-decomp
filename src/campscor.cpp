@@ -6,6 +6,7 @@
 #include "always.h"
 #include "coopcamp.h"
 #include "globals.h"
+#include "goptions.h"
 #include "house.h"
 #include "scenario.h"
 #include "houstype.h"
@@ -134,7 +135,6 @@ struct CampScoreSlot
 };
 #pragma pack(pop)
 
-extern int DAT_00A8EB68;
 extern NodeNameType * DAT_00AC119C;
 extern NodeNameType * DAT_00AC11A0;
 extern NodeNameType * DAT_00AC11B0;
@@ -153,7 +153,7 @@ void FUN_0046D4A0(void)
 	strcpy(packet.Name, Session.Handle);
 	if (FUN_005E8760()) {
 		FUN_004068E0("Sending Campaign Options...\n");
-		packet.Difficulty = (char)DAT_00A8EB68;
+		packet.Difficulty = (char)Options.CampDifficulty;
 		for (int i = 0; i < 8; i++) {
 			if (Session.Slots[i] != NULL && Session.Slots[i] != DAT_00AC119C && Session.Slots[i] != DAT_00AC11A0) {
 				packet.Start[i] = Session.Slots[i]->Get_Start();
@@ -188,15 +188,15 @@ bool FUN_0046D650(void)
 	if (received.Type == 0x32) {
 		FUN_004068E0("Decoding Campaign Options...\n");
 		int difficulty = received.Difficulty;
-		if (DAT_00A8EB68 != difficulty) {
+		if (Options.CampDifficulty != difficulty) {
 			changed = true;
 		}
-		DAT_00A8EB68 = difficulty;
+		Options.CampDifficulty = difficulty;
 		HWND dialog = WS_Find_Dialog(0xbc6);
 		if (dialog != NULL) {
 			HWND item = GetDlgItem(dialog, 0x732);
 			if (item != NULL) {
-				PostMessage(item, 0x405, 1, DAT_00A8EB68);
+				PostMessage(item, 0x405, 1, Options.CampDifficulty);
 			}
 		}
 		for (int i = 0; i < 8; i++) {
@@ -850,35 +850,35 @@ struct ShortPair {
 	ShortPair() { A = 0; B = 0; }
 };
 
-// FUNCTION: 0x00471540 $E81
+// FUNCTION: 0x00471540 $E82
 double DAT_0089E120 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x00471570 $E84
+// FUNCTION: 0x00471570 $E85
 double DAT_0089E170 = DAT_0089E120 / DAT_007E4AC0;
 
-// FUNCTION: 0x00471590 $E87
+// FUNCTION: 0x00471590 $E88
 double DAT_0089E158 = DAT_007E1718 / DAT_0089E170;
 
-// FUNCTION: 0x004715B0 $E90
+// FUNCTION: 0x004715B0 $E91
 double DAT_0089E150 = DAT_007E1720 * DAT_007E4AC8;
 
-// FUNCTION: 0x004715D0 $E93
+// FUNCTION: 0x004715D0 $E94
 double DAT_0089E128 = DAT_007E1728 * DAT_007E4AC8;
 
-// FUNCTION: 0x004715F0 $E96
+// FUNCTION: 0x004715F0 $E97
 double DAT_0089E0E8 = DAT_007E1730 * DAT_007E4AC8;
 
-// FUNCTION: 0x00471610 $E99
+// FUNCTION: 0x00471610 $E100
 int DAT_0089E178 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_0089E0E8 - DAT_0089E128) * DAT_0089E120));
 
-// FUNCTION: 0x00471650 $E102
+// FUNCTION: 0x00471650 $E103
 double DAT_0089E130 = FUN_004CADE0(DAT_0089E178 * DAT_007E1740);
 
-// FUNCTION: 0x00471680 $E105
+// FUNCTION: 0x00471680 $E106
 double DAT_0089E148 = FUN_004CADE0((DAT_0089E178 * 2) / DAT_0089E120);
 
-// FUNCTION: 0x004716B0 $E108
+// FUNCTION: 0x004716B0 $E109
 int DAT_0089E16C = (int)(DAT_0089E178 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x004716E0 $E111
+// FUNCTION: 0x004716E0 $E112
 ShortPair DAT_0089E118;

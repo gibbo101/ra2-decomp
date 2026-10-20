@@ -11,6 +11,7 @@
 #include "dbgprint.h"
 #include "dsaudio.h"
 #include "globals.h"
+#include "goptions.h"
 #include "houstype.h"
 #include "incdec.h"
 #include "session.h"
@@ -49,7 +50,6 @@ extern void __cdecl FUN_004068E0(char const * format, ...);
 extern char DAT_00889F64[];
 extern char DAT_00B0F1F8[];
 extern bool DAT_00A8ED64;
-extern bool DAT_00A8EBA5;
 extern bool DAT_0089E3A0;
 extern int DAT_0087E744;
 extern int DAT_0087E754;
@@ -380,7 +380,7 @@ long __stdcall Theme_Load(IStream * stream)
 	long hr = stream->Read(&score, 4, 0);
 	if (hr >= 0) {
 		hr = stream->Read(&pending, 4, 0);
-		if (hr >= 0 && DAT_00A8EBA5) {
+		if (hr >= 0 && Options.InGameMusic) {
 			Theme.Play_Song((ThemeType)score);
 			Theme.Queue_Song((ThemeType)pending);
 		}
@@ -466,29 +466,29 @@ extern const double DAT_007E1740;
 extern const double DAT_007F56A8;
 extern const double DAT_007F56B0;
 
-// FUNCTION: 0x00721430 $E31
+// FUNCTION: 0x00721430 $E36
 double DAT_00B0F498 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x00721460 $E34
+// FUNCTION: 0x00721460 $E39
 double DAT_00B0F508 = DAT_00B0F498 / DAT_007F56A8;
 
-// FUNCTION: 0x00721480 $E37
+// FUNCTION: 0x00721480 $E42
 double DAT_00B0F4D0 = DAT_007E1718 / DAT_00B0F508;
 
-// FUNCTION: 0x007214A0 $E40
+// FUNCTION: 0x007214A0 $E45
 double DAT_00B0F4C8 = DAT_007E1720 * DAT_007F56B0;
 
-// FUNCTION: 0x007214C0 $E43
+// FUNCTION: 0x007214C0 $E48
 double DAT_00B0F4A0 = DAT_007E1728 * DAT_007F56B0;
 
-// FUNCTION: 0x007214E0 $E46
+// FUNCTION: 0x007214E0 $E51
 double DAT_00B0F478 = DAT_007E1730 * DAT_007F56B0;
 
-// FUNCTION: 0x00721500 $E49
+// FUNCTION: 0x00721500 $E54
 int DAT_00B0F510 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B0F478 - DAT_00B0F4A0) * DAT_00B0F498));
 
-// FUNCTION: 0x00721540 $E52
+// FUNCTION: 0x00721540 $E57
 double DAT_00B0F4A8 = FUN_004CADE0(DAT_00B0F510 * DAT_007E1740);
 
-// FUNCTION: 0x00721570 $E55
+// FUNCTION: 0x00721570 $E60
 double DAT_00B0F4C0 = FUN_004CADE0((DAT_00B0F510 * 2) / DAT_00B0F498);

@@ -26,6 +26,7 @@
 #include "_rules.h"
 #include "building.h"
 #include "event.h"
+#include "goptions.h"
 #include "house.h"
 #include "infantry.h"
 #include "msglist.h"
@@ -490,10 +491,6 @@ class InputManagerClass
 		static InputManagerClass * Instance;
 		bool IsKeyPressed(int key);
 };
-extern int DAT_00A8EC00;
-extern int DAT_00A8EC04;
-extern int DAT_00A8EC08;
-extern int DAT_00A8EC0C;
 extern bool DAT_00B0FE58;
 extern bool DAT_00B0FE64;
 namespace Unsorted { extern int NavCycleMode; }
@@ -556,8 +553,8 @@ bool FUN_00731BF0(void)
 	if (DAT_00B0FE58) {
 		return true;
 	}
-	bool a = Key_Down(DAT_00A8EC00) || Key_Down(DAT_00A8EC04);
-	bool b = Key_Down(DAT_00A8EC08) || Key_Down(DAT_00A8EC0C);
+	bool a = Key_Down(Options.KeyForceAttack1) || Key_Down(Options.KeyForceAttack2);
+	bool b = Key_Down(Options.KeySelect1) || Key_Down(Options.KeySelect2);
 	if (a && b) {
 		int count = DAT_00A8ECB8.Count();
 		for (int i = 0; i < count; i++) {
@@ -1456,9 +1453,9 @@ template class DynamicVectorClass<char const *>;
 // FUNCTION: 0x007343E0 ?$VectorClass@PBD::?$VectorClass@PBD
 template class VectorClass<char const *>;
 
-// FUNCTION: 0x00734430 $E148
-// FUNCTION: 0x00734460 $E151
-// FUNCTION: 0x00734480 $E154
+// FUNCTION: 0x00734430 $E149
+// FUNCTION: 0x00734460 $E152
+// FUNCTION: 0x00734480 $E155
 extern double __cdecl FUN_004CAC40(double);
 double DAT_00B11E98 = FUN_004CAC40(pow(256.0, 2.0) * 2);
 extern const double DAT_007F5C18;

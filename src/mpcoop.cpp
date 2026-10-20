@@ -69,7 +69,6 @@ void __cdecl PMessagePrintf(int color, const wchar_t * fmt, ...);
 int FUN_00775B20(void);
 extern char DAT_0082DC84[];
 extern char DAT_0081F1D4[];
-extern int DAT_00A8EB68;
 extern int DAT_00A83CA8;
 struct MPCountryEntry
 {
@@ -534,7 +533,7 @@ void MPCooperative::vt_entry_78(unsigned a)
 {
 	HWND button = GetDlgItem((HWND)a, 0x732);
 	if (button) {
-		PostMessage(button, 0x405, 1, DAT_00A8EB68);
+		PostMessage(button, 0x405, 1, Options.CampDifficulty);
 	}
 }
 
@@ -572,7 +571,7 @@ void MPCooperative::FUN_005C21D0(HWND dialog, bool show)
 	if (button) {
 		PostMessage(button, 0x4ac, 0, 0);
 		PostMessage(button, 0x406, 1, 0x20000);
-		PostMessage(button, 0x405, 1, DAT_00A8EB68);
+		PostMessage(button, 0x405, 1, Options.CampDifficulty);
 		if (show) {
 			ShowWindow(button, SW_SHOW);
 		} else {
@@ -1011,10 +1010,10 @@ bool MPCooperative::vt_entry_68(void)
 	for (int slot = Scen->NumCoopHumanStartSpots; slot < 8; slot++) {
 		if (added < aiCount) {
 			FUN_004068E0("@@@@ Setting slot %d for AI\n", slot);
-			if (DAT_00A8EB68 == 0) {
+			if (Options.CampDifficulty == 0) {
 				Session.Options.AISlots.Difficulties[slot] = 2;
 			} else {
-				Session.Options.AISlots.Difficulties[slot] = (DAT_00A8EB68 == 1);
+				Session.Options.AISlots.Difficulties[slot] = (Options.CampDifficulty == 1);
 			}
 			FUN_004068E0("@@@@     AI difficulty: %d\n", Session.Options.AISlots.Difficulties[slot]);
 			Session.Options.AISlots.Countries[slot] = -2;
@@ -1463,7 +1462,7 @@ void MPCooperative::vt_entry_A4(unsigned a)
 	} else {
 		DAT_0089F518.FUN_0049E3B0(campaign, &entry);
 	}
-	reporter->Send(stats, unused, DAT_00A8EB68, campaign + 1, entry->Title);
+	reporter->Send(stats, unused, Options.CampDifficulty, campaign + 1, entry->Title);
 	delete reporter;
 	while (stats.Count()) {
 		if (stats[0]) {

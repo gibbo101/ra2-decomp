@@ -23,7 +23,6 @@
 #include <climits>
 
 extern int FUN_00407000(void);
-extern float DAT_00A8EB98;
 
 // FUNCTION: 0x005D1AA0
 MSEngine::MSEngine(void)
@@ -275,7 +274,7 @@ void MSEngine::Play_Sound_Effect(char const * name, int volume)
 	for (int i = 0; i < Sounds.Count(); i++) {
 		MSSfx * sfx = Sounds[i];
 		if (stricmp(name, sfx->Get_Name()) == 0) {
-			sfx->Play(int(volume * DAT_00A8EB98));
+			sfx->Play(int(volume * Options.SoundVolume));
 			break;
 		}
 	}

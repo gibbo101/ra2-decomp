@@ -1041,8 +1041,6 @@ void FUN_00607FD0(HWND dialog)
 	}
 }
 
-extern bool DAT_00A8D60E;
-extern int DAT_00A8DAB4;
 bool __fastcall FUN_0055CBF0(void);
 void __fastcall FUN_005D4D50(void);
 bool __fastcall FUN_0069BBE0(SessionClass *session);
@@ -1090,7 +1088,7 @@ bool FUN_00608070(HWND dialog)
 	DWORD start = GetTickCount();
 	do {
 		FUN_005D4D50();
-		if (Session.Type == GAME_NORMAL || Session.Type == GAME_SKIRMISH || DAT_00A8D60E || DAT_00A8DAB4) {
+		if (Session.Type == GAME_NORMAL || Session.Type == GAME_SKIRMISH || Session.NetOpen || Session.Suspended) {
 			Game::CallBack();
 		} else if (!FUN_0055CBF0() && Game::MainLoop()) {
 			break;
@@ -2087,7 +2085,7 @@ int __fastcall FUN_0060D380(int resource, DLGPROC proc, bool focus)
 		}
 		while (result == 0) {
 			FUN_005D4D50();
-			if (Session.Type == GAME_NORMAL || Session.Type == GAME_SKIRMISH || DAT_00A8D60E || DAT_00A8DAB4) {
+			if (Session.Type == GAME_NORMAL || Session.Type == GAME_SKIRMISH || Session.NetOpen || Session.Suspended) {
 				Game::CallBack();
 			} else if (!FUN_0055CBF0() && Game::MainLoop()) {
 				break;

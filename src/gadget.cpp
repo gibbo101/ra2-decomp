@@ -7,6 +7,7 @@
 #include "gadget.h"
 #include "_keyboar.h"
 #include "globals.h"
+#include "goptions.h"
 #include "keyboard.h"
 #include "scheme.h"
 #include "xmouse.h"
@@ -25,12 +26,6 @@ class InputManagerClass
 
 extern int DAT_007F5BE8;
 extern int DAT_007F5BF4;
-extern int DAT_00A8EC08;
-extern int DAT_00A8EC0C;
-extern int DAT_00A8EC00;
-extern int DAT_00A8EC04;
-extern int DAT_00A8EBF8;
-extern int DAT_00A8EBFC;
 extern GadgetClass * DAT_008B3E94;
 
 // FUNCTION: 0x004E12D0
@@ -261,13 +256,13 @@ KeyNumType GadgetClass::Input(void)
 	}
 
 	modifier = 0;
-	if (Key_Down(DAT_00A8EC08) || Key_Down(DAT_00A8EC0C)) {
+	if (Key_Down(Options.KeySelect1) || Key_Down(Options.KeySelect2)) {
 		modifier |= 1;
 	}
-	if (Key_Down(DAT_00A8EC00) || Key_Down(DAT_00A8EC04)) {
+	if (Key_Down(Options.KeyForceAttack1) || Key_Down(Options.KeyForceAttack2)) {
 		modifier |= 2;
 	}
-	if (Key_Down(DAT_00A8EBF8) || Key_Down(DAT_00A8EBFC)) {
+	if (Key_Down(Options.KeyForceMove1) || Key_Down(Options.KeyForceMove2)) {
 		modifier |= 4;
 	}
 

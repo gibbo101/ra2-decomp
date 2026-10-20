@@ -28,6 +28,7 @@
 #include "msglist.h"
 #include "rules.h"
 #include "scenario.h"
+#include "session.h"
 #include "stringtable.h"
 #include "voc.h"
 #include "vox.h"
@@ -63,7 +64,6 @@ extern int DAT_00A9FA90;
 extern Coord DAT_00A9FA30;
 extern int DAT_007ED3D0[];
 namespace Unsorted { extern Cell CellSpreadTable[]; extern int CurrentFrame; extern int MuteSWLaunches; }
-extern MessageListClass DAT_00A8BC60;
 
 class IonBlastClass
 {
@@ -113,14 +113,14 @@ DynamicVectorClass<CellClass *> LightningStorm::CloudsManifesting;
 DynamicVectorClass<CellClass *> LightningStorm::CloudsPresent;
 DynamicVectorClass<CellClass *> LightningStorm::BoltsPresent;
 
-// FUNCTION: 0x00539560 $E103
-// FUNCTION: 0x00539570 $E106
-// FUNCTION: 0x00539580 $E112
-// FUNCTION: 0x005395C0 $E109
-// FUNCTION: 0x00539620 $E118
-// FUNCTION: 0x00539660 $E115
-// FUNCTION: 0x005396C0 $E123
-// FUNCTION: 0x00539700 $E121
+// FUNCTION: 0x00539560 $E117
+// FUNCTION: 0x00539570 $E120
+// FUNCTION: 0x00539580 $E126
+// FUNCTION: 0x005395C0 $E123
+// FUNCTION: 0x00539620 $E132
+// FUNCTION: 0x00539660 $E129
+// FUNCTION: 0x005396C0 $E137
+// FUNCTION: 0x00539700 $E135
 
 // FUNCTION: 0x00539760
 void FUN_00539760(void)
@@ -366,7 +366,7 @@ void __fastcall FUN_00539EB0(int duration, int deferment, Cell cell, HouseClass 
 			scheme = PlayerPtr->Scheme;
 		}
 		VocClass::PlayGlobal(Rule->StormSound, 1.0f, 0x2000);
-		DAT_00A8BC60.Add_Message(NULL, 0, StringTable::LoadString("TXT_LIGHTNING_STORM", NULL, "D:\\ra2mdpost\\Ion.cpp", 0x213), scheme, TextPrintType(0x4046), 150, false);
+		Session.Messages.Add_Message(NULL, 0, StringTable::LoadString("TXT_LIGHTNING_STORM", NULL, "D:\\ra2mdpost\\Ion.cpp", 0x213), scheme, TextPrintType(0x4046), 150, false);
 	}
 	Map.Flag_To_Redraw(GS_REDRAW_TACTICAL);
 }
@@ -534,7 +534,7 @@ void FUN_0053A6C0(void)
 				scheme = PlayerPtr->Scheme;
 			}
 			VoxClass::Play("EVA_LightningStormCreated", -1, -1);
-			DAT_00A8BC60.Add_Message(NULL, 0, StringTable::LoadString("TXT_LIGHTNING_STORM_APPROACHING", NULL, "D:\\ra2mdpost\\Ion.cpp", 0x3ce), scheme, TextPrintType(0x46), 150, false);
+			Session.Messages.Add_Message(NULL, 0, StringTable::LoadString("TXT_LIGHTNING_STORM_APPROACHING", NULL, "D:\\ra2mdpost\\Ion.cpp", 0x3ce), scheme, TextPrintType(0x46), 150, false);
 		}
 	}
 }
@@ -607,7 +607,7 @@ void FUN_0053AE00(void)
 	if (PlayerPtr) {
 		scheme = PlayerPtr->Scheme;
 	}
-	DAT_00A8BC60.Add_Message(NULL, 0, text, scheme, TextPrintType(0x4046), 150, false);
+	Session.Messages.Add_Message(NULL, 0, text, scheme, TextPrintType(0x4046), 150, false);
 }
 
 // FUNCTION: 0x0053B400
@@ -624,7 +624,7 @@ void FUN_0053B410(void)
 	if (PlayerPtr) {
 		scheme = PlayerPtr->Scheme;
 	}
-	DAT_00A8BC60.Add_Message(NULL, 0, text, scheme, TextPrintType(0x4046), 150, false);
+	Session.Messages.Add_Message(NULL, 0, text, scheme, TextPrintType(0x4046), 150, false);
 }
 
 // FUNCTION: 0x0053AE50
@@ -975,11 +975,11 @@ extern const double DAT_007E1710;
 extern const double DAT_007E1718;
 extern const double DAT_007EC010;
 
-// FUNCTION: 0x0053C820 $E144
+// FUNCTION: 0x0053C820 $E158
 double DAT_00A9FF90 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x0053C850 $E147
+// FUNCTION: 0x0053C850 $E161
 double DAT_00AA0140 = DAT_00A9FF90 / DAT_007EC010;
 
-// FUNCTION: 0x0053C870 $E150
+// FUNCTION: 0x0053C870 $E164
 double DAT_00AA0110 = DAT_007E1718 / DAT_00AA0140;

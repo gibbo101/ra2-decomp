@@ -35,6 +35,7 @@
 #include "globals.h"
 #include "house.h"
 #include "scheme.h"
+#include "session.h"
 #include "shapeset.h"
 #include "surface.h"
 #include "tactical.h"
@@ -42,13 +43,12 @@
 namespace Drawing { Rect __fastcall Intersect(Rect const & a, Rect const & b, int * x, int * y); }
 extern Tactical * TacticalMap;
 extern MouseClass Map;
-extern bool DAT_00A8BC79;
 extern ShapeSet * BeaconArt;
 extern ShapeSet * RadarBeaconArt;
 namespace Unsorted { extern int CurrentFrame; }
 
-// FUNCTION: 0x00430190 $E126
-// FUNCTION: 0x004301C0 $E124
+// FUNCTION: 0x00430190 $E140
+// FUNCTION: 0x004301C0 $E138
 BeaconManagerClass BeaconManager;
 
 // FUNCTION: 0x00430910
@@ -109,14 +109,14 @@ void BeaconClass::Draw(Surface * surface, Rect bounds)
 	memcpy(text, Text, sizeof(text));
 
 	if (IsFlashing) {
-		if (DAT_00A8BC79 && timeGetTime() % 500 < 250) {
+		if (Session.Messages.Is_Edit() && timeGetTime() % 500 < 250) {
 			wchar_t * cursor = wcsrchr(text, L'_');
 			if (cursor && wcslen(cursor) == 1) {
 				*cursor = L' ';
 			}
 		}
 	}
-	if (!IsFlashing || !DAT_00A8BC79) {
+	if (!IsFlashing || !Session.Messages.Is_Edit()) {
 		wchar_t * cursor = wcsrchr(text, L'_');
 		if (!cursor || wcslen(cursor) != 1) {
 			cursor = wcsrchr(text, L' ');
