@@ -7,6 +7,21 @@
 #include "blwstraw.h"
 #include "assert.h"
 #include <cstring>
+#include <math.h>
+
+extern double __cdecl FUN_004CAC40(double);
+extern double __cdecl FUN_004CAD50(double);
+extern double __cdecl FUN_004CADE0(double);
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007E1720;
+extern const double DAT_007E1728;
+extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
+extern const double DAT_007E3CD0;
+extern const double DAT_007E3CD8;
 
 // FUNCTION: 0x00438210
 int BlowStraw::Get(void * source, int slen)
@@ -49,3 +64,54 @@ int BlowStraw::Get(void * source, int slen)
 
 	return(total);
 }
+
+// FUNCTION: 0x00438300
+void BlowStraw::Key(void const * key, int length)
+{
+	if (BF == NULL) {
+		BF = new BlowfishEngine;
+	}
+
+	if (BF != NULL) {
+		BF->Submit_Key(key, length);
+	}
+}
+
+// FUNCTION: 0x00438340 $E2
+double DAT_0089C6A0 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x00438370 $E5
+double DAT_0089C6F0 = DAT_0089C6A0 / DAT_007E3CD0;
+
+// FUNCTION: 0x00438390 $E8
+double DAT_0089C6D8 = DAT_007E1718 / DAT_0089C6F0;
+
+// FUNCTION: 0x004383B0 $E11
+double DAT_0089C6D0 = DAT_007E1720 * DAT_007E3CD8;
+
+// FUNCTION: 0x004383D0 $E14
+double DAT_0089C6A8 = DAT_007E1728 * DAT_007E3CD8;
+
+// FUNCTION: 0x004383F0 $E17
+double DAT_0089C680 = DAT_007E1730 * DAT_007E3CD8;
+
+// FUNCTION: 0x00438410 $E20
+int DAT_0089C6F8 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_0089C680 - DAT_0089C6A8) * DAT_0089C6A0));
+
+// FUNCTION: 0x00438450 $E23
+double DAT_0089C6B0 = FUN_004CADE0(DAT_0089C6F8 * DAT_007E1740);
+
+// FUNCTION: 0x00438480 $E26
+double DAT_0089C6C8 = FUN_004CADE0((DAT_0089C6F8 * 2) / DAT_0089C6A0);
+
+// FUNCTION: 0x004384B0 $E29
+int DAT_0089C6EC = (int)(DAT_0089C6F8 * 4 + DAT_007E1738);
+
+struct ShortPair_89C698 {
+	short X;
+	short Y;
+	ShortPair_89C698(void) : X(0), Y(0) {}
+};
+
+// FUNCTION: 0x004384E0 $E32
+ShortPair_89C698 DAT_0089C698;

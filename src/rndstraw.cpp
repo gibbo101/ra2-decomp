@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
 #include "rndstraw.h"
 #include "sha.h"
 #include <climits>
@@ -103,3 +104,21 @@ int RandomStraw::Get(void * source, int slen)
 	}
 	return(total);
 }
+
+// FUNCTION: 0x00661C70 ~RandomStraw
+RandomStraw::~RandomStraw(void)
+{
+	Reset();
+}
+
+// FUNCTION: 0x00661CB0 $E2
+// FUNCTION: 0x00661CE0 $E5
+// FUNCTION: 0x00661D00 $E8
+// FUNCTION: 0x00661D20 $E11
+// FUNCTION: 0x00661D40 $E14
+// FUNCTION: 0x00661D60 $E17
+// FUNCTION: 0x00661D80 $E20
+// FUNCTION: 0x00661DC0 $E23
+// FUNCTION: 0x00661DF0 $E26
+// FUNCTION: 0x00661E20 $E29
+// FUNCTION: 0x00661E50 $E32

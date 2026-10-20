@@ -1654,3 +1654,28 @@ template class DynamicVectorClass<ShadowControlClass *>;
 // FUNCTION: 0x006DC5E0 ?$VectorClass@UDirtyAreaStruct@@::operator==
 // FUNCTION: 0x006DC660 ?$VectorClass@UDirtyAreaStruct@@::Resize
 template class VectorClass<DirtyAreaStruct>;
+
+// FUNCTION: 0x006DC780 ?$VectorClass@UDirtyAreaStruct@@::Clear
+
+// FUNCTION: 0x006DC7B0 ?$VectorClass@UDirtyAreaStruct@@::ID
+
+// FUNCTION: 0x006DC820 ?$VectorClass@UDirtyAreaStruct@@::ID
+
+// FUNCTION: 0x006DC850 ?$DynamicVectorClass@UDirtyAreaStruct@@::Resize
+
+// FUNCTION: 0x006DC970 ?$DynamicVectorClass@UDirtyAreaStruct@@::ID
+
+// FUNCTION: 0x006DC9D0 ?$VectorClass@PAVShadowControlClass@@::operator==
+
+// FUNCTION: 0x006DCA10 ?$VectorClass@PAVShadowControlClass@@::Resize
+
+// FUNCTION: 0x006DCAC0 ?$VectorClass@PAVShadowControlClass@@::Clear
+
+// FUNCTION: 0x006DCAF0 ?$VectorClass@PAVShadowControlClass@@::ID
+
+// FUNCTION: 0x006DCB30 ?$VectorClass@PAVShadowControlClass@@::ID
+
+// FUNCTION: 0x006DCB50 ?$DynamicVectorClass@PAVShadowControlClass@@::Resize
+
+// FUNCTION: 0x006DCC00 ?$DynamicVectorClass@PAVShadowControlClass@@::ID
+template class VectorClass<ShadowControlClass *>;

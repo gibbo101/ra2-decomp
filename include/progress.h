@@ -40,6 +40,7 @@ class ProgressScreenClass
 		int Label_Y_Offset(bool usedialog);
 		int Label_X_Offset(bool usedialog);
 		void Set_Progress_Percent(int index, double value, Point2D pt=Point2D(-1,-1));
+		double Get_Current_Progress(int index) const;
 
 	public:
 		double PlayerProgress[MAX_PLAYERS];

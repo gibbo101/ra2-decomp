@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include <math.h>
 
 #include "techtype.h"
 
@@ -35,6 +36,20 @@
 #include "unittype.h"
 #include "vanimtype.h"
 #include "weapon.h"
+
+extern double __cdecl FUN_004CAC40(double);
+extern double __cdecl FUN_004CAD50(double);
+extern double __cdecl FUN_004CADE0(double);
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007E1720;
+extern const double DAT_007E1728;
+extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
+extern const double DAT_007F4FC8;
+extern const double DAT_007F4FD0;
 
 DynamicVectorClass<TechnoTypeClass *> TechnoTypeClass::Array;
 
@@ -477,3 +492,36 @@ template class DynamicVectorClass<BuildingTypeClass const *>;
 template class DynamicVectorClass<AnimTypeClass const *>;
 template class VectorClass<ParticleSystemTypeClass const *>;
 template class DynamicVectorClass<ParticleSystemTypeClass const *>;
+// FUNCTION: 0x00717D20 ?$TypeList@PBVParticleSystemTypeClass@@::?$TypeList@PBVParticleSystemTypeClass@@
+// FUNCTION: 0x00717DB0 ?$DynamicVectorClass@PAVTechnoTypeClass@@::Delete_Index
+template class DynamicVectorClass<TechnoTypeClass *>;
+
+// FUNCTION: 0x00717DF0 $E116
+double DAT_00B0EBE0 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x00717E20 $E119
+double DAT_00B0EC30 = DAT_00B0EBE0 / DAT_007F4FC8;
+
+// FUNCTION: 0x00717E40 $E122
+double DAT_00B0EC18 = DAT_007E1718 / DAT_00B0EC30;
+
+// FUNCTION: 0x00717E60 $E125
+double DAT_00B0EC10 = DAT_007E1720 * DAT_007F4FD0;
+
+// FUNCTION: 0x00717E80 $E128
+double DAT_00B0EBE8 = DAT_007E1728 * DAT_007F4FD0;
+
+// FUNCTION: 0x00717EA0 $E131
+double DAT_00B0EBC0 = DAT_007E1730 * DAT_007F4FD0;
+
+// FUNCTION: 0x00717EC0 $E134
+int DAT_00B0EC38 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B0EBC0 - DAT_00B0EBE8) * DAT_00B0EBE0));
+
+// FUNCTION: 0x00717F00 $E137
+double DAT_00B0EBF0 = FUN_004CADE0(DAT_00B0EC38 * DAT_007E1740);
+
+// FUNCTION: 0x00717F30 $E140
+double DAT_00B0EC08 = FUN_004CADE0((DAT_00B0EC38 * 2) / DAT_00B0EBE0);
+
+// FUNCTION: 0x00717F60 $E143
+int DAT_00B0EC2C = (int)(DAT_00B0EC38 * 4 + DAT_007E1738);

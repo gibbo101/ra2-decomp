@@ -1703,6 +1703,12 @@ void __fastcall FUN_0060B950(HWND window);
 namespace Drawing {
 extern int RenderWidth;
 extern int RenderHeight;
+extern unsigned char RedShiftRight;
+extern unsigned char GreenShiftRight;
+extern unsigned char BlueShiftRight;
+extern int RedShiftLeft;
+extern int GreenShiftLeft;
+extern int BlueShiftLeft;
 }
 
 namespace OwnerDraw {
@@ -2193,18 +2199,30 @@ extern DSurface * DAT_00887308;
 extern int DAT_00AC48D8;
 void __fastcall FUN_006219D0(Rect const & rect, Surface & surface, int xpos, int ypos);
 namespace OwnerDraw {
-int PrintTextFixedLength(COLORREF color, HFONT font, Rect const & rect, wchar_t const * text, int length, int x_alignment, int y_alignment, Surface * surface, int unknown);
+int __fastcall PrintTextFixedLength(unsigned color, BitFont * font, Rect const & rect, wchar_t const * text, int length, int x_alignment, int y_alignment, Surface * surface, int unknown);
 void DrawBeveledBorder(Surface & surface, Rect const & rect, int offset, int color);
 }
 
 void __fastcall FUN_0053E420(HWND window);
 BOOL CALLBACK FUN_00610570(HWND window, LPARAM lparam);
 
+static inline char Remove_Entry(Dictionary<HWND, WNDPROC> & dict, HWND & window)
+{
+	WNDPROC proc;
+	return(dict.remove(window, proc));
+}
+
+static inline char Remove_Entry(Dictionary<HWND, OwnerDraw::WinData> & dict, HWND & window)
+{
+	OwnerDraw::WinData data;
+	return(dict.remove(window, data));
+}
+
 static inline BOOL RemoveFromDicts(HWND window)
 {
-	OwnerDraw::DialogProcs.remove(window);
-	OwnerDraw::Dialogs.remove(window);
-	OwnerDraw::SubclassProcs.remove(window);
+	Remove_Entry(OwnerDraw::DialogProcs, window);
+	Remove_Entry(OwnerDraw::Dialogs, window);
+	Remove_Entry(OwnerDraw::SubclassProcs, window);
 
 	void *userdata = (void *)GetWindowLong(window, GWL_USERDATA);
 	if (userdata != NULL) {
@@ -2397,11 +2415,12 @@ extern DSurface * DAT_00887310;
 namespace OwnerDraw {
 extern int CachedSurfaceCount;
 void __fastcall BlendGradientRect(Rect const & rect, Surface & surface, int color, int amount);
+void __fastcall CopyDimmedBackground(Rect const & rect, HWND hWnd, int alpha);
 }
 
 void __fastcall FUN_00621B80(Rect * rect, Surface * surface, unsigned short color, int alpha);
 namespace OwnerDraw {
-void __fastcall DrawWideText(Surface * surface, wchar_t const * text, LTRBStruct * rect, BitFont * font, unsigned color, int a, int flags, int b, int c, int d);
+int __fastcall DrawWideText(Surface * surface, wchar_t const * text, LTRBStruct * rect, BitFont * font, unsigned color, int style, int p5, int p6, int p7, int p8);
 }
 
 inline Rect Rect_From_RECT(RECT const & r)
@@ -2606,7 +2625,15 @@ LRESULT CALLBACK OwnerDraw::ProgressHandler(HWND window, UINT message, WPARAM wp
 namespace UI {
 void __fastcall GetKeyboardKeyString(unsigned short key, wchar_t *buffer);
 }
-void __fastcall FUN_00620F60(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, int color, int flags);
+int __fastcall FUN_00620F60(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, unsigned color, int flags);
+inline int Draw_Hotkey_Text0(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, unsigned color, int flags) { return FUN_00620F60(surface, text, rect, font, color, flags); }
+inline int Draw_Hotkey_Text1(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, unsigned color, int flags) { return Draw_Hotkey_Text0(surface, text, rect, font, color, flags); }
+inline int Draw_Hotkey_Text2(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, unsigned color, int flags) { return Draw_Hotkey_Text1(surface, text, rect, font, color, flags); }
+inline int Draw_Hotkey_Text3(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, unsigned color, int flags) { return Draw_Hotkey_Text2(surface, text, rect, font, color, flags); }
+inline int Draw_Hotkey_Text4(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, unsigned color, int flags) { return Draw_Hotkey_Text3(surface, text, rect, font, color, flags); }
+inline int Draw_Hotkey_Text5(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, unsigned color, int flags) { return Draw_Hotkey_Text4(surface, text, rect, font, color, flags); }
+inline int Draw_Hotkey_Text6(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, unsigned color, int flags) { return Draw_Hotkey_Text5(surface, text, rect, font, color, flags); }
+inline int Draw_Hotkey_Text7(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, unsigned color, int flags) { return Draw_Hotkey_Text6(surface, text, rect, font, color, flags); }
 namespace OwnerDraw {
 void __fastcall DrawBeveledBorder(Surface & surface, Rect const & rect, int offset, int color);
 }
@@ -2640,7 +2667,7 @@ LRESULT CALLBACK OwnerDraw::HotkeyHandler(HWND window, UINT message, WPARAM wpar
 				rect.top += 4;
 				rect.right -= 4;
 				rect.bottom -= 4;
-				FUN_00620F60(DAT_00887310, text, &rect, data->Wide.font, OwnerDraw::PrimaryTextColor, DT_SINGLELINE | DT_VCENTER);
+				Draw_Hotkey_Text7(DAT_00887310, text, &rect, data->Wide.font, OwnerDraw::PrimaryTextColor, DT_SINGLELINE | DT_VCENTER);
 			}
 			ValidateRect(window, NULL);
 		}
@@ -2698,6 +2725,9 @@ void __fastcall UI::GetKeyboardKeyString(unsigned short key, wchar_t *buffer)
 		swprintf(buffer, L"%hs", text);
 	}
 }
+
+ODComponentMasks ODMasks;
+unsigned short ODBComponentMask;
 
 // FUNCTION: 0x0061F190
 void ODInitMasks(void)
@@ -2818,6 +2848,56 @@ void ODDrawButtonRect(Surface & surf, Rect const & rect, int offset)
 	}
 }
 
+inline unsigned Color_To_Pixel(unsigned color)
+{
+	return (GetGValue(color) >> Drawing::GreenShiftRight << Drawing::GreenShiftLeft)
+		| (GetBValue(color) >> Drawing::BlueShiftRight << Drawing::BlueShiftLeft)
+		| (GetRValue(color) >> Drawing::RedShiftRight << Drawing::RedShiftLeft);
+}
+
+// FUNCTION: 0x00620F60
+int __fastcall FUN_00620F60(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, unsigned color, int flags)
+{
+	unsigned pixel = Color_To_Pixel(color);
+	int x = rect->left;
+	int y = rect->top;
+	int width = rect->right - x;
+	int height = rect->bottom - y;
+	if (font == NULL) {
+		font = BitFont::Instance;
+	}
+	font->SetClipMode(true);
+	font->SetBounds((LTRBStruct *)rect);
+	font->SetColor(pixel);
+	BitText::Instance->DrawText(font, surface, text, x, y, width, height, false, 0, 0);
+	return 0;
+}
+
+namespace OwnerDraw {
+int __fastcall DrawWideText(Surface * surface, wchar_t const * text, LTRBStruct * rect, BitFont * font, unsigned color, int style, int p5, int p6, int p7, int p8);
+}
+
+// FUNCTION: 0x00621040 OwnerDraw::DrawWideText
+int __fastcall OwnerDraw::DrawWideText(Surface * surface, wchar_t const * text, LTRBStruct * rect, BitFont * font, unsigned color, int style, int p5, int p6, int p7, int p8)
+{
+	unsigned pixel = Color_To_Pixel(color);
+	int x = rect->Left;
+	int y = rect->Top;
+	int width = rect->Right - rect->Left;
+	int height = rect->Bottom - rect->Top;
+	if (style & 4) {
+		int tw;
+		int th;
+		font->GetTextDimension(text, &tw, &th, width);
+		y += (height - th) / 2;
+	}
+	font->SetClipMode(true);
+	font->SetBounds(rect);
+	font->SetColor(pixel);
+	BitText::Instance->DrawText(font, surface, text, x, y, width, height, style, p7, p8);
+	return 0;
+}
+
 // FUNCTION: 0x00621150
 float ODCalcTextRemapFactor(int hue)
 {
@@ -2846,6 +2926,147 @@ float ODCalcTextRemapFactor(int hue)
 	return(val);
 }
 
+// FUNCTION: 0x006213A0
+void OwnerDraw::Draw_Item(LPDRAWITEMSTRUCT drawit)
+{
+	if (DAT_00887308 != NULL && DAT_00887310 != NULL) {
+		RECT rect1;
+		Get_Display_Rect(drawit->hwndItem, &rect1);
+		RECT rect2;
+		GetClientRect(drawit->hwndItem, &rect2);
+
+		if (GetWindowLong(drawit->hwndItem, GWL_STYLE) & WS_BORDER) {
+			int x = GetSystemMetrics(SM_CXBORDER);
+			int y = GetSystemMetrics(SM_CYBORDER);
+			rect1.left += x;
+			rect1.right -= x;
+			rect1.top += y;
+			rect1.bottom -= y;
+		}
+
+		if (drawit->CtlType == ODT_BUTTON) {
+			WinData * data = NULL;
+			HWND window = drawit->hwndItem;
+			HWND key = window;
+			if (Dialogs.getPointer(key, &data) && data != NULL) {
+				data->DrawItem.itemState = drawit->itemState;
+				InvalidateRect(window, &drawit->rcItem, FALSE);
+				UpdateWindow(window);
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x006214B0
+void __fastcall OwnerDraw::CopyDimmedBackground(Rect const & rect, HWND hWnd, int alpha)
+{
+	OwnerDraw::WinData * winData = NULL;
+	OwnerDraw::WinData * parentWinData = NULL;
+
+	OwnerDraw::Dialogs.getPointer(hWnd, &winData);
+
+	RECT rcClient;
+	GetClientRect(hWnd, &rcClient);
+
+	RECT dispChild;
+	Get_Display_Rect(hWnd, &dispChild);
+
+	Surface * surface = winData->cachedSurface;
+	if (!surface) {
+		surface = new BSurface(rcClient.right + 1, rcClient.bottom + 1, 2);
+		winData->cachedSurface = surface;
+		OwnerDraw::CachedSurfaceCount++;
+
+		Rect dstFull(0, 0, rcClient.right + 1, rcClient.bottom + 1);
+
+		HWND parent = GetParent(hWnd);
+		OwnerDraw::Dialogs.getPointer(parent, &parentWinData);
+
+		Surface * parentSurf = parentWinData->cachedSurface;
+		if (parentSurf) {
+			RECT dispParent;
+			Get_Display_Rect(parent, &dispParent);
+
+			Rect srcRel;
+			srcRel.X = dispChild.left - dispParent.left;
+			srcRel.Y = dispChild.top - dispParent.top;
+			srcRel.Width = dispChild.right - dispChild.left + 1;
+			srcRel.Height = dispChild.bottom - dispChild.top + 1;
+
+			surface->Blit_From(dstFull, *parentSurf, srcRel, false, true);
+		} else {
+			Surface * srcSurf = DAT_00887308;
+
+			Rect srcAbs;
+			srcAbs.X = dispChild.left;
+			srcAbs.Y = dispChild.top;
+			srcAbs.Width = dispChild.right - dispChild.left + 1;
+			srcAbs.Height = dispChild.bottom - dispChild.top + 1;
+			if (srcSurf) {
+				surface->Blit_From(dstFull, *srcSurf, srcAbs, false, true);
+			}
+		}
+
+		unsigned short * surfptr = (unsigned short *)surface->Lock();
+		if (surfptr) {
+			for (int i = 0; i < surface->Get_Width() * surface->Get_Height(); ++i) {
+				surfptr[i] = OD_Blend_Color(surfptr[i], 0, alpha);
+			}
+			surface->Unlock();
+		}
+	}
+
+	Rect src;
+	src.X = rect.X;
+	src.Y = rect.Y;
+	src.Width = rect.Width;
+	src.Height = rect.Height;
+	src.X -= dispChild.left;
+	src.Y -= dispChild.top;
+
+	DAT_00887310->Blit_From(rect, *surface, src, false, true);
+}
+
+// FUNCTION: 0x006217E0
+void __fastcall OwnerDraw::BlendGradientRect(Rect const & rect, Surface & surface, int color, int amount)
+{
+	int fade = 1;
+	int run = (rect.Width * amount) >> 16;
+
+	if (run < 0) return;
+	if (run == 0) run = 1;
+
+	unsigned short * surfptr = (unsigned short *)surface.Lock();
+	if (!surfptr) return;
+
+	for (int row = 0; row < rect.Height; row++) {
+		int idx = rect.X + (rect.Y + row) * (surface.Stride() / 2);
+
+		int q_div4 = rect.Height / 4;
+		if (row == (q_div4 * 3)) {
+			fade = 1;
+		}
+		if (row == q_div4) {
+			fade = 0;
+		}
+
+		if (run > 0) {
+			unsigned short * pixptr = &surfptr[idx];
+			for (int i = 0; i < run; i++) {
+				if (fade) {
+					int alpha = (255 * (i + 1)) / rect.Width;
+					*pixptr = OD_Blend_Color(*pixptr, color, alpha);
+				} else {
+					*pixptr = color;
+				}
+				pixptr++;
+			}
+		}
+	}
+
+	surface.Unlock();
+}
+
 // FUNCTION: 0x00621D30
 void ODDrawBitsStrand(Rect const & rect, Surface & surface)
 {
@@ -2870,6 +3091,19 @@ void ODDrawBitsStrand(Rect const & rect, Surface & surface)
 
 		if ((index % 6) == 0) {
 			x += 10;
+		}
+	}
+}
+
+// FUNCTION: 0x006223C0
+void On_WM_NCDESTROY(HWND window)
+{
+	OwnerDraw::WinData * data;
+	if (OwnerDraw::Dialogs.getPointer(window, &data)) {
+		if (data != NULL && data->cachedSurface != NULL) {
+			delete data->cachedSurface;
+			data->cachedSurface = NULL;
+			OwnerDraw::CachedSurfaceCount--;
 		}
 	}
 }
@@ -2917,6 +3151,89 @@ int OwnerDraw::Release_Mouse(void)
 		}
 	}
 	return(_mouse_counter);
+}
+
+struct DialogStackEntry {
+	HWND handle;
+	int id;
+};
+extern DialogStackEntry DAT_00B72D28[];
+extern int DAT_00B72F50;
+extern HWND DAT_00B72F44;
+extern int DAT_00B72F48;
+extern HWND DAT_00B73550;
+extern HINSTANCE DAT_00B732F0;
+void __fastcall Add_Modeless_Dialog(HWND dialog);
+
+// FUNCTION: 0x00622650
+HWND __fastcall UI::BeginDialog(int resource, DLGPROC proc, int param)
+{
+	unsigned short id = resource;
+	LPCDLGTEMPLATE templ = (LPCDLGTEMPLATE)Fetch_Resource((LPCSTR)id, RT_DIALOG);
+	if (templ == NULL) {
+		return NULL;
+	}
+
+	int index = DAT_00B72F50;
+	DAT_00B72D28[index].handle = NULL;
+	DAT_00B72D28[index].id = 0;
+	DAT_00B72F50++;
+
+	struct {
+		unsigned short id;
+		int param;
+	} init;
+	init.id = (unsigned short)resource;
+	init.param = param;
+
+	HWND dialog = CreateDialogIndirectParam(DAT_00B732F0, templ, DAT_00B73550, proc, (LPARAM)&init);
+	if (dialog == NULL) {
+		DAT_00B72F50--;
+		return NULL;
+	}
+
+	DAT_00B72D28[index].handle = dialog;
+	DAT_00B72D28[index].id = id;
+
+	Add_Modeless_Dialog(dialog);
+
+	DAT_00B72F44 = dialog;
+	DAT_00B72F48 = id;
+	return dialog;
+}
+
+// FUNCTION: 0x00622720
+void __fastcall UI::EndDialog(HWND window)
+{
+	InputManagerClass::Instance->DoSomething();
+	FUN_00608070(window);
+	DestroyWindow(window);
+
+	for (int index = 0; index < DAT_00B72F50; index++) {
+		if (DAT_00B72D28[index].handle == window) {
+			memmove(&DAT_00B72D28[index], &DAT_00B72D28[index + 1], sizeof(DialogStackEntry) * (DAT_00B72F50 - (index + 1)));
+
+			DAT_00B72D28[DAT_00B72F50 - 1].handle = NULL;
+			DAT_00B72D28[DAT_00B72F50 - 1].id = 0;
+
+			--DAT_00B72F50;
+
+			if (DAT_00B72F50 > 0) {
+				DAT_00B72F44 = DAT_00B72D28[DAT_00B72F50 - 1].handle;
+				DAT_00B72F48 = DAT_00B72D28[DAT_00B72F50 - 1].id;
+
+				SetForegroundWindow(DAT_00B72F44);
+				SetFocus(DAT_00B72F44);
+			} else {
+				DAT_00B72F44 = NULL;
+				DAT_00B72F48 = 0;
+
+				SetForegroundWindow(DAT_00B73550);
+				SetFocus(DAT_00B73550);
+			}
+			break;
+		}
+	}
 }
 
 // FUNCTION: 0x00622800

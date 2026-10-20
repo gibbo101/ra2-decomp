@@ -135,24 +135,6 @@ boolean STDMETHODCALLTYPE FlyLocomotionClass::Process(void)
 	return(Is_Moving());
 }
 
-bool FlyLocomotionClass::Is_Locked_To_Straight_Flight(void)
-{
-	if (DestinationCoord.Z > Map.Get_Height_GL(DestinationCoord) + 120) {
-		return(true);
-	}
-	if (LinkedTo->TarCom != NULL && LinkedTo->Ammo) {
-		return(true);
-	}
-
-	IFlyControlPtr flyctrl(LinkedTo);
-	if (flyctrl != NULL) {
-		if (flyctrl->Is_Locked()) {
-			return(true);
-		}
-	}
-	return(false);
-}
-
 // FUNCTION: 0x004CCC80
 void STDMETHODCALLTYPE FlyLocomotionClass::Move_To(CoordStruct to)
 {
@@ -628,4 +610,103 @@ void FlyLocomotionClass::Tumble(void)
 	}
 }
 
+// FUNCTION: 0x004CFE20
+int STDMETHODCALLTYPE FlyLocomotionClass::Apparent_Speed(void)
+{
+	return(LinkedTo->TClass->MaxSpeed * CurrentSpeed);
+}
+
+// FUNCTION: 0x004CFE50
+int STDMETHODCALLTYPE FlyLocomotionClass::Get_Status(void)
+{
+	if (IsLanding) {
+		return(1);
+	}
+	if (IsTakingOff) {
+		return(0);
+	}
+	if (Is_Moving()) {
+		return(2);
+	}
+	return(3);
+}
+
+// FUNCTION: 0x004CFE80
+void STDMETHODCALLTYPE FlyLocomotionClass::Acquire_Hunter_Seeker_Target(void)
+{
+	if (LinkedTo->TarCom == NULL) {
+
+		DynamicVectorClass<ObjectClass *> aitargets;
+		DynamicVectorClass<ObjectClass *> humantargets;
+
+		bool atenemy = Session.Type != GAME_NORMAL && LinkedTo->House->Enemy != HOUSE_NONE && !LinkedTo->House->Is_Human_Player();
+
+		for (int i = Technos.Count() - 1; i >= 0; i--) {
+			TechnoClass * techno = Technos[i];
+
+			bool enemy = true;
+			if (!atenemy) {
+				if (LinkedTo->House->Is_Ally(techno->House)) {
+					enemy = false;
+				}
+			} else {
+				if (techno->House != Houses[LinkedTo->House->Enemy]) {
+					enemy = false;
+				}
+			}
+
+			if (enemy && techno->Strength > 0 && !techno->IsInLimbo && techno->IsActive &&
+				!techno->TClass->IsInvisible && techno->TClass->IsLegalTarget &&
+				!(Scen->Special.IsHarvesterImmune && techno->Fetch_RTTI() == RTTI_UNIT && ((UnitClass*)techno)->Class->Harvester)) {
+
+				if (Session.Type != GAME_NORMAL && LinkedTo->House->Is_Human_Player() && !techno->House->Class->IsMultiplayPassive &&
+					(techno->Fetch_RTTI() == RTTI_UNIT || techno->Fetch_RTTI() == RTTI_BUILDING || techno->Fetch_RTTI() == RTTI_INFANTRY || techno->Fetch_RTTI() == RTTI_AIRCRAFT)) {
+					humantargets.Add(techno);
+				} else {
+					aitargets.Add(techno);
+				}
+			}
+		}
+
+		if (humantargets.Count() > 0) {
+			LinkedTo->Assign_Target(humantargets[Scen->RandomNumber(0, humantargets.Count() - 1)]);
+		} else if (aitargets.Count() > 0) {
+			LinkedTo->Assign_Target(aitargets[Scen->RandomNumber(0, aitargets.Count() - 1)]);
+		}
+	}
+}
+
+// FUNCTION: 0x004D02B0
+bool FlyLocomotionClass::Is_Locked_To_Straight_Flight(void)
+{
+	if (DestinationCoord.Z > Map.Get_Height_GL(DestinationCoord) + 120) {
+		return(true);
+	}
+	if (LinkedTo->TarCom != NULL && LinkedTo->Ammo) {
+		return(true);
+	}
+
+	IFlyControlPtr flyctrl(LinkedTo);
+	if (flyctrl != NULL) {
+		if (flyctrl->Is_Locked()) {
+			return(true);
+		}
+	}
+	return(false);
+}
+
 // FUNCTION: 0x004D0390 FlyLocomotionClass::Fetch_Object_Size
+
+// FUNCTION: 0x004D03A0 FlyLocomotionClass::~FlyLocomotionClass
+
+// FUNCTION: 0x004D0400 ?$_com_ptr_t@V?$_com_IIID@UIFlyControl@@$1?_GUID_820f501c_4f39_11d2_9b70_00104b972fe8@@3U__s_GUID@@A@@::operator==
+
+// FUNCTION: 0x004D0430 ?$_com_ptr_t@V?$_com_IIID@UIFlyControl@@$1?_GUID_820f501c_4f39_11d2_9b70_00104b972fe8@@3U__s_GUID@@A@@::_Release
+
+// FUNCTION: 0x004D0440 ?$VectorClass@PAVObjectClass@@::?$VectorClass@PAVObjectClass@@
+
+// FUNCTION: 0x004D0490 ?$_com_ptr_t@V?$_com_IIID@UIFlyControl@@$1?_GUID_820f501c_4f39_11d2_9b70_00104b972fe8@@3U__s_GUID@@A@@::_QueryInterface
+
+template class _com_ptr_t<_com_IIID<IFlyControl, &__uuidof(IFlyControl)> >;
+
+// FUNCTION: 0x004D0510 LocomotionClass::QueryInterface

@@ -25,6 +25,22 @@
 #include "trigtype.h"
 #include "unit.h"
 
+#include <math.h>
+
+extern double __cdecl FUN_004CAC40(double);
+extern double __cdecl FUN_004CAD50(double);
+extern double __cdecl FUN_004CADE0(double);
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007E1720;
+extern const double DAT_007E1728;
+extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
+extern const double DAT_007F4640;
+extern const double DAT_007F4648;
+
 // FUNCTION: 0x006E6A50 $E94
 // FUNCTION: 0x006E6A80 $E92
 IndexClass<int, AbstractClass *> TargetTracker;
@@ -240,3 +256,52 @@ BuildingClass * xTargetClass::As_Building(void) const
 	}
 	return(NULL);
 }
+
+// FUNCTION: 0x006E7B50
+AircraftClass * xTargetClass::As_Aircraft(void) const
+{
+	if (RTTI == RTTI_ABSTRACT) {
+		return(dynamic_cast<AircraftClass *>(TargetTracker[ID]));
+	}
+	return(NULL);
+}
+
+// FUNCTION: 0x006E7C20
+CellClass * xTargetClass::As_Cell(void) const
+{
+	if (RTTI == RTTI_CELL) {
+		Cell cell(ID % 1000, ID / 1000);
+		return(&Map[cell]);
+	}
+	return(NULL);
+}
+
+// FUNCTION: 0x006E7C70 $E97
+double DAT_00B0E8D0 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x006E7CA0 $E100
+double DAT_00B0E920 = DAT_00B0E8D0 / DAT_007F4640;
+
+// FUNCTION: 0x006E7CC0 $E103
+double DAT_00B0E908 = DAT_007E1718 / DAT_00B0E920;
+
+// FUNCTION: 0x006E7CE0 $E106
+double DAT_00B0E900 = DAT_007E1720 * DAT_007F4648;
+
+// FUNCTION: 0x006E7D00 $E109
+double DAT_00B0E8D8 = DAT_007E1728 * DAT_007F4648;
+
+// FUNCTION: 0x006E7D20 $E112
+double DAT_00B0E8B0 = DAT_007E1730 * DAT_007F4648;
+
+// FUNCTION: 0x006E7D40 $E115
+int DAT_00B0E928 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B0E8B0 - DAT_00B0E8D8) * DAT_00B0E8D0));
+
+// FUNCTION: 0x006E7D80 $E118
+double DAT_00B0E8E0 = FUN_004CADE0(DAT_00B0E928 * DAT_007E1740);
+
+// FUNCTION: 0x006E7DB0 $E121
+double DAT_00B0E8F8 = FUN_004CADE0((DAT_00B0E928 * 2) / DAT_00B0E8D0);
+
+// FUNCTION: 0x006E7DE0 $E124
+int DAT_00B0E91C = (int)(DAT_00B0E928 * 4 + DAT_007E1738);

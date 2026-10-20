@@ -19,6 +19,11 @@
 #include "surface.h"
 #include "tactical.h"
 
+// FUNCTION: 0x005FF1D0 $E75
+DynamicVectorClass<SpotLightClass *> SpotLights;
+
+// FUNCTION: 0x005FF210 $E73
+
 int *SpotLightMMXBuffer;
 
 BSurface *SpotLightSurfaces[SpotLightClass::SPOTLIGHT_SURFACE_COUNT + SpotLightClass::SPOTLIGHT_EXTRA_SURFACE_COUNT];
@@ -76,3 +81,22 @@ void SpotLightClass::Draw_All(void)
 		SpotLights[i]->Draw_It();
 	}
 }
+
+// FUNCTION: 0x005FFFC0 ?$DynamicVectorClass@PAVSpotLightClass@@::Clear
+template class DynamicVectorClass<SpotLightClass *>;
+
+// FUNCTION: 0x005FFFF0 ?$DynamicVectorClass@PAVSpotLightClass@@::ID
+
+// FUNCTION: 0x00600010 ?$VectorClass@PAVSpotLightClass@@::GetItem
+
+// FUNCTION: 0x00600020 ?$VectorClass@PAVSpotLightClass@@::operator==
+
+// FUNCTION: 0x00600060 ?$VectorClass@PAVSpotLightClass@@::Resize
+
+// FUNCTION: 0x00600110 ?$VectorClass@PAVSpotLightClass@@::Clear
+
+// FUNCTION: 0x00600140 ?$VectorClass@PAVSpotLightClass@@::ID
+
+// FUNCTION: 0x00600180 ?$VectorClass@PAVSpotLightClass@@::ID
+
+// FUNCTION: 0x006001A0 ?$DynamicVectorClass@PAVSpotLightClass@@::Resize

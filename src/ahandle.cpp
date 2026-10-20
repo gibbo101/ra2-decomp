@@ -5,6 +5,8 @@
 
 #include "always.h"
 #include "ahandle.h"
+#include <ctype.h>
+#include <math.h>
 #include "dsaudio.h"
 #include "assert.h"
 #include "globals.h"
@@ -18,6 +20,25 @@
 
 LPDIRECTSOUND FUN_0040A7A0(void);
 int FUN_00407000(void);
+
+extern double __cdecl FUN_004CAC40(double);
+extern double __cdecl FUN_004CAD50(double);
+extern double __cdecl FUN_004CADE0(double);
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007E1720;
+extern const double DAT_007E1728;
+extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
+extern const double DAT_007E2228;
+extern const double DAT_007E2230;
+
+struct ShortPair {
+	unsigned short A, B;
+	ShortPair() { A = 0; B = 0; }
+};
 
 Ahandle _handles[Ahandle::MAX_HANDLES];
 
@@ -618,3 +639,58 @@ long __cdecl Unlock_Audio_Handler(void)
 	return(1);
 }
 
+
+// FUNCTION: 0x00412610
+int ahtoi(const char *str)
+{
+	int integer = 0;
+	while (str) {
+		if (!isxdigit(*str)) {
+			break;
+		}
+		char ch = *str;
+
+		integer *= 16;
+		str++;
+
+		if (ch >= '0' && ch <= '9') {
+			integer += ch - '0';
+		} else {
+			integer += toupper(ch) - ('A' - 10);
+		}
+	}
+	return(integer);
+}
+
+// FUNCTION: 0x00412660 $E10
+double DAT_00887858 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x00412690 $E13
+double DAT_00889E40 = DAT_00887858 / DAT_007E2228;
+
+// FUNCTION: 0x004126B0 $E16
+double DAT_00889E28 = DAT_007E1718 / DAT_00889E40;
+
+// FUNCTION: 0x004126D0 $E19
+double DAT_00889E20 = DAT_007E1720 * DAT_007E2230;
+
+// FUNCTION: 0x004126F0 $E22
+double DAT_00887860 = DAT_007E1728 * DAT_007E2230;
+
+// FUNCTION: 0x00412710 $E25
+double DAT_00887838 = DAT_007E1730 * DAT_007E2230;
+
+// FUNCTION: 0x00412730 $E28
+int DAT_00889E48 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00887838 - DAT_00887860) * DAT_00887858));
+
+// FUNCTION: 0x00412770 $E31
+double DAT_00887868 = FUN_004CADE0(DAT_00889E48 * DAT_007E1740);
+
+// FUNCTION: 0x004127A0 $E34
+double DAT_00887880 = FUN_004CADE0((DAT_00889E48 * 2) / DAT_00887858);
+
+// FUNCTION: 0x004127D0 $E37
+int DAT_00889E3C = (int)(DAT_00889E48 * 4 + DAT_007E1738);
+
+// FUNCTION: 0x00412800 $E40
+ShortPair DAT_00887850;

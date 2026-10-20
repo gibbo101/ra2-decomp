@@ -40,6 +40,7 @@ extern CCINIClass DAT_008870C0;
 extern signed char PlayerColorToColorSchemeLUT[9];
 extern char DAT_00889F64[];
 void __fastcall FUN_00735060(wchar_t * dest, char const * source, int length);
+char * __fastcall FUN_007350C0(wchar_t const * text);
 
 // FUNCTION: 0x00696D00 $E2
 // FUNCTION: 0x00696D20 $E5
@@ -779,6 +780,180 @@ bool SessionClass::Is_Random_Map(void) const
 	return stricmp(ScenarioFileName, "RandMap.Sed") == 0;
 }
 
+extern char DAT_00B77A04[];
+extern char DAT_00B76568[];
+
+// FUNCTION: 0x0069AE90
+void SessionClass::Update_Progress(int percent)
+{
+	if (Debug_Map) {
+		return;
+	}
+
+	int new_percent = percent;
+	if (Scen->IsRandom) {
+		new_percent = new_percent / 2;
+	}
+
+	if (Progress.Get_Current_Progress(0) * 100.0 < new_percent) {
+		Progress.Set_Progress_Percent(0, new_percent);
+	}
+
+	if (Players.Count() == 1) {
+		return;
+	}
+
+	CDTimerClass<SystemTimerClass> timer = 240;
+
+	switch (Type) {
+		case GAME_IPX:
+		case GAME_INTERNET: {
+				GlobalPacketType prog_packet;
+				memset((void *)&prog_packet, 0, sizeof(prog_packet));
+
+				prog_packet.Command = NET_PROGRESS_REPORT;
+				prog_packet.Progress.Percent = int(100.0 * Progress.Get_Current_Progress(0));
+
+				strcpy(prog_packet.Name, FUN_007350C0(Session.Players[0]->Name));
+
+				if (prog_packet.Progress.Percent < 99.95) {
+					Ipx.Send_Global_Message(&prog_packet, 0x33, 0, NULL);
+				} else {
+					for (int p = 1; p < Session.Players.Count(); p++) {
+						DebugString("Sending guarenteed progress message to all players\n");
+						Ipx.Send_Global_Message_To_Name(&prog_packet, 0x33, 1, Session.Players[p]->Name);
+					}
+				}
+
+				Call_Back();
+
+				while (Ipx.Global_Num_Send() > 5 && timer > 0) {
+					Sleep(20);
+					Windows_Message_Handler();
+					Call_Back();
+				}
+			}
+			break;
+
+		case GAME_MODEM:
+		case GAME_NULL_MODEM: {
+				SerialPacketType send_packet;
+				memset((void *)&send_packet, 0, sizeof(send_packet));
+
+				send_packet.Command = SERIAL_PROGRESS_REPORT;
+				send_packet.Progress.Percent = int(100.0 * Progress.Get_Current_Progress(0));
+				send_packet.ID = Session.ModemType;
+
+				NullModem.Send_Message(&send_packet, sizeof(send_packet), 0);
+				NullModem.Service();
+
+				while (NullModem.Num_Send() > 5 && timer > 0) {
+					Sleep(20);
+					Keyboard->Check();
+					NullModem.Service();
+				}
+			}
+			break;
+
+		default:
+			break;
+	}
+
+	Call_Back();
+}
+
+// FUNCTION: 0x0069B170
+void SessionClass::Init_Fixed_Alliances(void)
+{
+	HouseClass * hptr;
+	int i;
+	int j;
+
+	SquadAlliances = false;
+
+	if (Type != GAME_INTERNET) {
+		return;
+	}
+
+	Scen->Special.IsAllianceFixed = false;
+
+	char * names1 = DAT_00B77A04;
+	char * names2 = DAT_00B76568;
+
+	DebugString("Squad 1 = %s\n", names1);
+	DebugString("Squad 2 = %s\n", names2);
+
+	if (strlen(names1) == 0 || strlen(names2) == 0) {
+		return;
+	}
+
+	DynamicVectorClass<HouseClass *> squad1;
+	DynamicVectorClass<HouseClass *> squad2;
+
+	char * buffer = new char [MAX(strlen(names1), strlen(names2)) + 32];
+
+	strcpy(buffer, names1);
+	char * token = strtok(buffer, ",");
+
+	while (token != NULL && *token != '\0') {
+		for (i = 0; i < Houses.Count(); i++) {
+			hptr = Houses[i];
+			if (hptr->IsHuman && (stricmp(hptr->IniName, token) == 0)) {
+				squad1.Add(hptr);
+			}
+		}
+		token = strtok(NULL, ",");
+	}
+
+	strcpy(buffer, names2);
+	token = strtok(buffer, ",");
+
+	while (token != NULL && *token != '\0') {
+		for (i = 0; i < Houses.Count(); i++) {
+			hptr = Houses[i];
+			if (hptr->IsHuman && (stricmp(hptr->IniName, token) == 0)) {
+				squad2.Add(hptr);
+			}
+		}
+		token = strtok(NULL, ",");
+	}
+
+	if (squad1.Count() > 1) {
+		for (i = 0; i < squad1.Count(); i++) {
+			for (j = 0; j < squad1.Count(); j++) {
+				if (squad1[i]->HeapID != squad1[j]->HeapID) {
+					squad1[i]->Make_Ally(squad1[j], false);
+				}
+			}
+		}
+	}
+
+	if (squad2.Count() > 1) {
+		for (i = 0; i < squad2.Count(); i++) {
+			for (j = 0; j < squad2.Count(); j++) {
+				if (squad2[i]->HeapID != squad2[j]->HeapID) {
+					squad2[i]->Make_Ally(squad2[j], false);
+				}
+			}
+		}
+	}
+
+	delete [] buffer;
+
+	SquadAlliances = true;
+	Scen->Special.IsAllianceFixed = true;
+}
+
+// FUNCTION: 0x0069B540
+void GameOptionsType::FUN_0069B540(void)
+{
+	AIPlayers = 0;
+	for (int index = 0; index < 8; index++) {
+		AISlots.Countries[index] = -1;
+		AISlots.Colors[index] = -1;
+	}
+}
+
 // FUNCTION: 0x0069B560
 bool GameOptionsType::Save(IStream * stream) const
 {
@@ -794,4 +969,117 @@ bool GameOptionsType::Save(IStream * stream) const
 	}
 
 	return(false);
+}
+
+// FUNCTION: 0x0069B5B0
+bool GameOptionsType::Load(IStream * stream)
+{
+	if (stream != NULL) {
+		unsigned int size;
+		HRESULT res = stream->Read(&size, sizeof(size), NULL);
+		if (SUCCEEDED(res)) {
+			if (size == sizeof(*this)) {
+				res = stream->Read(this, size, NULL);
+				ScenarioIndex = -1;
+				if (SUCCEEDED(res)) {
+					return(true);
+				}
+			}
+		}
+	}
+
+	return(false);
+}
+
+// FUNCTION: 0x0069B600
+bool SessionClass::FUN_0069B600(int color) const
+{
+	if (color == -2) {
+		return false;
+	}
+	for (int index = 0; index < Players.Count(); index++) {
+		if (Players[index]->Get_Color_Or_Random() == color) {
+			return true;
+		}
+	}
+	for (int slot = 0; slot < 8; slot++) {
+		if (Options.AISlots.Colors[slot] == color) {
+			return true;
+		}
+	}
+	return false;
+}
+
+// FUNCTION: 0x0069B670
+int SessionClass::FUN_0069B670(void)
+{
+	return Scen->RandomNumber(0, 9);
+}
+
+// FUNCTION: 0x0069B690
+int SessionClass::FUN_0069B690(void)
+{
+	int color;
+	do {
+		color = Scen->RandomNumber(0, 7);
+	} while (FUN_0069B600(color));
+	return color;
+}
+
+// FUNCTION: 0x0069B700
+int SessionClass::FUN_0069B700(void) const
+{
+	return (idxSide2 == -2) ? -2 : House;
+}
+
+// FUNCTION: 0x0069B720
+int SessionClass::FUN_0069B720(void) const
+{
+	return (ColorIdx == -2) ? -2 : PrefColor;
+}
+
+// FUNCTION: 0x0069B740
+int SessionClass::FUN_0069B740(void) const
+{
+	return (unknown_168 == -2) ? -2 : unknown_164;
+}
+
+// FUNCTION: 0x0069B760
+void SessionClass::FUN_0069B760(int side, bool random)
+{
+	if (side == -2) {
+		if (random) {
+			Side = Scen->RandomNumber(0, 9);
+		} else {
+			Side = 0;
+		}
+		Side2 = -2;
+	} else {
+		Side = side;
+		Side2 = -1;
+	}
+	House = Side;
+	idxSide2 = Side2;
+}
+
+// FUNCTION: 0x0069B7E0
+void SessionClass::FUN_0069B7E0(int color, bool random)
+{
+	if (color == -2) {
+		if (random) {
+			int pick;
+			do {
+				pick = Scen->RandomNumber(0, 7);
+			} while (FUN_0069B600(pick));
+			Color = pick;
+		} else {
+			Color = 0;
+		}
+		Color2 = -2;
+	} else {
+		Color = color;
+		Color2 = -1;
+	}
+	PrefColor = Color;
+	ColorIdx = Color2;
 }

@@ -1148,6 +1148,19 @@ owner-draw dialog controls and WOLOptionsClass by RTTI and call sites, retiring 
 copies, and WOLAPI's real channel layout landed the last wonline near-miss. Cost: about
 5.3M tokens. Merge gate: 11,129 of 11,129 (1,496.4 KB), about 57% of game functions.
 
+### Batches 72, 73 and 74 (20 October 2026)
+
+**414 of 432 functions** (140, 137, 137). Batch 73's merge adopted TibSun's Dictionary (YR's
+remove(K&) needs no value copy), landing the surface cache's Remove; batch 74's adopted
+preview.h and face.h and held back ScenarioClass::WasGameSaved, whose static renumbers the
+`$E` markers of 64 files. The round's header growth flipped a committed wonline function
+(0x00788180) by heap order; moving real declarations the file already had to before it put
+it back in its passing band, and batch 72's new Session aliases in the same file became
+Session.Players. Recording then exposed three UI-command functions building char * and
+ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; their RTTI
+fixed them. Cost: about 5.6M tokens. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
+of game functions.
+
 ### Decide before the first batch
 
 - **Module layout.** Which function lives in which source file, and the link order, decide

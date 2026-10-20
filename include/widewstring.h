@@ -23,6 +23,8 @@ class WideWstring
 		unsigned int	length(void) const;
 		int				toInt(void) const;
 		int				getToken(int offset, wchar_t const * delim, WideWstring & out) const;
+		bool			containsAny(wchar_t const * chars) const;
+		int				getLine(int offset, WideWstring & out) const;
 		char			cat(wchar_t const * s);
 		char			cat(unsigned int size, wchar_t const * s);
 		char			cat(WideWstring const & other);
@@ -36,6 +38,7 @@ class WideWstring
 		void			trimLeading(WideWstring const & delim);
 		void			trimTrailing(WideWstring const & delim);
 		char			truncate(unsigned int len);
+		char			truncate(wchar_t c);
 		wchar_t			set(unsigned int size, wchar_t const * string);
 		char			replace(wchar_t const * replaceThis, wchar_t const * withThis);
 		wchar_t			set(wchar_t const * s);

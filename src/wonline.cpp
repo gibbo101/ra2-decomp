@@ -21,6 +21,8 @@
 #include "rcptr.h"
 #include "rules.h"
 #include "netshare.h"
+#include "_rules.h"
+#include "gadget.h"
 
 #include <windows.h>
 #undef LoadString
@@ -522,7 +524,7 @@ namespace UI {
 // FUNCTION: 0x0077D7A0
 void FUN_0077D7A0(bool play)
 {
-	if (play) {
+					if (play != 0) {
 		if (!Theme.Still_Playing()) {
 			Theme.Stop();
 			Theme.Queue_Song(THEME_PICK_ANOTHER);
@@ -760,6 +762,7 @@ struct ChatSink {
 	virtual long __stdcall V59(User * users, wchar_t * text);
 	virtual long __stdcall V60(wchar_t * text);
 	virtual long __stdcall V61(User * users, wchar_t * text);
+	virtual long __stdcall V62(User * user, wchar_t * text);
 };
 extern ChatSink * DAT_00AC116C;
 
@@ -2487,6 +2490,18 @@ extern wchar_t * DAT_00B75E50;
 extern int DAT_00B77DD4;
 rc_ptr<WDTState> * __cdecl FUN_007B0210(void);
 void __fastcall FUN_00735060(wchar_t * dest, char const * source, int limit);
+void __fastcall FUN_0052FEC0(Surface * surface, bool flag);
+int __fastcall FUN_006241F0(int id, DLGPROC proc, OwnerDraw::DialogControl * control);
+BOOL CALLBACK FUN_0078E030(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+namespace Unsorted { extern int MuteSWLaunches; }
+extern int DAT_007EEF28;
+extern char DAT_00B77E30[];
+bool __fastcall FUN_0069BBE0(SessionClass * session);
+wchar_t * __fastcall FUN_00735120(char const * text);
+void __cdecl FUN_005E2700(int color, wchar_t const * text);
+void __cdecl FUN_005E2790(int color, wchar_t const * text);
+extern int DAT_00B76C20;
+extern int DAT_00B77E90;
 
 static inline void Set_Lobby_Number(WolChannel & chan)
 {
@@ -2810,9 +2825,6 @@ class WonlineStringDialogControl : public SimpleWonlineDialogControl
 		Wstring Text;
 };
 
-void __fastcall FUN_0052FEC0(Surface * surface, bool flag);
-int __fastcall FUN_006241F0(int id, DLGPROC proc, OwnerDraw::DialogControl * control);
-BOOL CALLBACK FUN_0078E030(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 bool __fastcall FUN_0079BA60(WolChannel * chan, bool flag, int extra);
 
 // FUNCTION: 0x00789960
@@ -2860,6 +2872,736 @@ bool __fastcall FUN_00789960(WolChannel * chan, int extra)
 		name.replace(" ", "_");
 	}
 	return FUN_00788800(chan, name, WideWstring(StringTable::LoadString("TXT_JOINLOB", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2D1B))) == 0;
+}
+
+// FUNCTION: 0x0078A6B0
+int __fastcall FUN_0078A6B0(wchar_t * input)
+{
+	struct { wchar_t prefix[64]; wchar_t message[64]; } buf;
+	User user;
+	wchar_t name[16];
+	int result = 0;
+
+	wcscpy(buf.prefix, StringTable::LoadString("TXT_PAGE_COMMAND", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2E8E));
+	if (wcsnicmp(input, buf.prefix, wcslen(buf.prefix)) == 0) {
+		int length = 0;
+		int size = wcslen(input) + 1;
+		wchar_t * copy = (wchar_t *)operator new(size * 2);
+		if (!copy) {
+			return 0;
+		}
+		copy = wcsncpy(copy, input, size);
+		if (!copy) {
+			return 0;
+		}
+		wchar_t * cursor = copy + wcslen(buf.prefix);
+		while (*cursor && wcsncmp(cursor, L" ", 1) == 0) {
+			cursor++;
+		}
+		while (*cursor && wcsncmp(cursor, L" ", 1) != 0 && length <= 10) {
+			name[length++] = *cursor++;
+		}
+		name[length] = 0;
+		while (*cursor && wcsncmp(cursor, L" ", 1) == 0) {
+			cursor++;
+		}
+		if (length > 10) {
+			result = 1;
+		} else if (length == 0) {
+			result = 1;
+		} else {
+			bool muted = false;
+			if (Unsorted::MuteSWLaunches != 0) {
+				for (int i = 0; i < Session.Players.Count(); i++) {
+					if (wcsicmp(Session.Players[i]->Name, name) == 0) {
+						muted = true;
+						break;
+					}
+				}
+			}
+			if (!muted) {
+				if (wcslen(cursor) > 0) {
+					strcpy(user.Nick, FUN_007350C0(name));
+					DAT_00AC116C->V62(&user, cursor);
+				}
+				result = 1;
+			} else {
+				int scheme = GadgetClass::Get_Color_Scheme();
+				Session.Messages.Add_Message(NULL, 0, StringTable::LoadString("TXT_OBSERVER_CANT_PAGE", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2ECA), scheme, TextPrintType(0x16), int(Rule->MessageDelay * TICKS_PER_MINUTE), false);
+				result = 2;
+			}
+		}
+		delete copy;
+	}
+	return result;
+}
+
+// FUNCTION: 0x0078A8F0
+int __fastcall FUN_0078A8F0(wchar_t * input)
+{
+	wchar_t message[128];
+	wchar_t shortcmd[128];
+	User user;
+	wchar_t cmd[128];
+	int result = 0;
+
+	wcscpy(cmd, StringTable::LoadString("TXT_REPLY_COMMAND", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2EDE));
+	wcscpy(shortcmd, StringTable::LoadString("TXT_REPLY_COMMAND_SHORT", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2EDF));
+	if (wcsnicmp(input, cmd, wcslen(cmd)) == 0 || wcsncmp(input, shortcmd, wcslen(shortcmd)) == 0) {
+		int size = wcslen(input) + 1;
+		wchar_t * copy = (wchar_t *)operator new(size * 2);
+		if (!copy) {
+			return 0;
+		}
+		copy = wcsncpy(copy, input, size);
+		if (!copy) {
+			return 0;
+		}
+		wchar_t * cursor;
+		if (wcsncmp(input, cmd, wcslen(cmd)) == 0) {
+			cursor = copy + wcslen(cmd);
+		} else {
+			cursor = copy + wcslen(shortcmd);
+		}
+		while (*cursor && wcsncmp(cursor, L" ", 1) == 0) {
+			cursor++;
+		}
+		bool muted = false;
+		if (Unsorted::MuteSWLaunches != 0) {
+			for (int i = 0; i < Session.Players.Count(); i++) {
+				if (wcsicmp(Session.Players[i]->Name, FUN_00735120(DAT_00B77E30)) == 0) {
+					muted = true;
+					break;
+				}
+			}
+		}
+		if (!muted) {
+			if (strlen(DAT_00B77E30) != 0) {
+				if (wcslen(cursor) > 0) {
+					strcpy(user.Nick, DAT_00B77E30);
+					DAT_00AC116C->V62(&user, cursor);
+				}
+				result = 1;
+			} else {
+				wcscpy(message, StringTable::LoadString("TXT_NO_ONE_WHOM_TO_REPLY", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2F12));
+				HWND top = FUN_00775B10();
+				if (top) {
+					if (GetDlgItem(top, 0x53F)) {
+						FUN_005E2700(DAT_007EEF28, message);
+					}
+					if (GetDlgItem(top, 0x5B5)) {
+						FUN_005E2790(DAT_007EEF28, message);
+					}
+				}
+				if (FUN_0069BBE0(&Session)) {
+					int scheme = GadgetClass::Get_Color_Scheme();
+					Session.Messages.Add_Message(NULL, 0, message, scheme, TextPrintType(0x16), int(Rule->MessageDelay * TICKS_PER_MINUTE), false);
+				}
+				result = 2;
+			}
+		} else {
+			int scheme = GadgetClass::Get_Color_Scheme();
+			Session.Messages.Add_Message(NULL, 0, StringTable::LoadString("TXT_OBSERVER_CANT_PAGE", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2F2A), scheme, TextPrintType(0x16), int(Rule->MessageDelay * TICKS_PER_MINUTE), false);
+			result = 2;
+		}
+		delete copy;
+	}
+	return result;
+}
+
+extern bool DAT_00B77E40;
+
+// FUNCTION: 0x0078ABF0
+void __fastcall FUN_0078ABF0(bool flag, wchar_t const * text)
+{
+	DAT_00B77E40 = flag;
+	DAT_00B76230.set(text);
+}
+
+namespace UI {
+	int __fastcall StandardWndProc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+}
+namespace OwnerDraw {
+	void DrawItem(LPDRAWITEMSTRUCT item);
+	void Paint(HWND window);
+}
+void __fastcall FUN_00607FD0(HWND window);
+
+struct DownloadObject : IUnknown {
+	virtual long __stdcall V03(void) = 0;
+	virtual long __stdcall Abort(void) = 0;
+};
+
+// FUNCTION: 0x0078DA30
+BOOL CALLBACK FUN_0078DA30(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	if (message == WM_INITDIALOG && lparam) {
+		SetWindowLong(window, 8, ((int *)lparam)[1]);
+	}
+	int rc = UI::StandardWndProc(window, message, wparam, lparam);
+	if (rc) {
+		return rc;
+	}
+	switch (message) {
+		case WM_COMMAND:
+			switch (LOWORD(wparam)) {
+				case IDCANCEL:
+					((DownloadObject *)DAT_00AC1174)->Abort();
+					FUN_007757E0(window, 2);
+					break;
+
+				default:
+					return FALSE;
+			}
+			break;
+
+		case WM_INITDIALOG:
+			break;
+
+		case 0x5F4:
+			FUN_007757E0(window, 1);
+			break;
+
+		case 0x5F5:
+			ODMessageBox(StringTable::LoadString("TXT_DOWNLOAD_FAILED", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x3959), 0, FUN_0077D710, 0);
+			((DownloadObject *)DAT_00AC1174)->Abort();
+			FUN_007757E0(window, 2);
+			break;
+
+		case WM_DRAWITEM:
+			OwnerDraw::DrawItem((LPDRAWITEMSTRUCT)lparam);
+			return TRUE;
+
+		case WM_ERASEBKGND:
+			break;
+
+		case WM_PAINT:
+			OwnerDraw::Paint(window);
+			FUN_00607FD0(window);
+			ValidateRect(window, NULL);
+			return FALSE;
+
+		default:
+			return FALSE;
+	}
+	return TRUE;
+}
+
+void __fastcall FUN_00623E40(HWND window, Wstring & text);
+extern char DAT_00889F64[];
+extern int DAT_00B77DC4;
+
+class WonlineGameControl : public SimpleWonlineDialogControl
+{
+	public:
+		Wstring Text;
+		bool Flag10;
+		bool Flag11;
+		bool Flag12;
+		bool Flag13;
+};
+
+// FUNCTION: 0x0078DB70
+BOOL CALLBACK FUN_0078DB70(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	if (message == WM_INITDIALOG && lparam) {
+		SetWindowLong(window, 8, ((int *)lparam)[1]);
+	}
+	int rc = UI::StandardWndProc(window, message, wparam, lparam);
+	if (rc) {
+		return rc;
+	}
+	WonlineGameControl * control = (WonlineGameControl *)GetWindowLong(window, 8);
+	switch (message) {
+		case WM_ERASEBKGND:
+			return TRUE;
+
+		case WM_DRAWITEM:
+			OwnerDraw::DrawItem((LPDRAWITEMSTRUCT)lparam);
+			return TRUE;
+
+		case WM_PAINT:
+			OwnerDraw::Paint(window);
+			FUN_00607FD0(window);
+			ValidateRect(window, NULL);
+			return FALSE;
+
+		case WM_COMMAND:
+			switch (LOWORD(wparam)) {
+				case IDCANCEL:
+					control->F1(window, 2);
+					return FALSE;
+
+				case IDOK:
+					{
+						DAT_00B77DC4 = 7;
+						Wstring text;
+						FUN_00623E40(GetDlgItem(window, 0x72C), text);
+						control->Text = text;
+						control->F1(window, 1);
+					}
+					return FALSE;
+
+				case 0x629:
+					if (SendDlgItemMessage(window, 0x629, 0xF0, 0, 0) == 1) {
+						SendDlgItemMessage(window, 0x66C, 0xF1, 0, 0);
+						control->Flag11 = false;
+						control->Flag10 = true;
+					} else {
+						control->Flag10 = false;
+					}
+					return FALSE;
+
+				case 0x66C:
+					if (SendDlgItemMessage(window, 0x66C, 0xF0, 0, 0) == 1) {
+						SendDlgItemMessage(window, 0x629, 0xF1, 0, 0);
+						control->Flag11 = true;
+						control->Flag10 = false;
+					} else {
+						control->Flag11 = false;
+					}
+					return FALSE;
+
+				case 0x6DF:
+					if (IsDlgButtonChecked(window, 0x6E0)) {
+						CheckDlgButton(window, 0x6E0, 0);
+					} else {
+						CheckDlgButton(window, 0x6DF, 1);
+					}
+					return FALSE;
+
+				case 0x72C:
+					if (lparam) {
+						Wstring text;
+						FUN_00623E40((HWND)lparam, text);
+						EnableWindow(GetDlgItem(window, 1), !text.containsAny(" ,;"));
+					}
+					return FALSE;
+				case 0x6E0:
+					if (IsDlgButtonChecked(window, 0x6DF)) {
+						CheckDlgButton(window, 0x6DF, 0);
+					} else {
+						CheckDlgButton(window, 0x6E0, 1);
+					}
+					return FALSE;
+
+				case 0x71E:
+					control->Flag12 = SendMessage((HWND)lparam, 0xF0, 0, 0) == 1;
+					return FALSE;
+
+				case 0x71F:
+					control->Flag13 = SendMessage((HWND)lparam, 0xF0, 0, 0) == 1;
+					return FALSE;
+
+			}
+			break;
+
+		case 0x497:
+			{
+				HWND edit = GetDlgItem(window, 0x72C);
+				SendMessage(edit, 0x4D1, 1, 0);
+				edit = GetDlgItem(window, 0x72C);
+				SendMessage(edit, 0x4B4, 0, (LPARAM)DAT_00889F64);
+				SendDlgItemMessage(window, 0x72C, 0xC5, 8, 0);
+				SetFocus(GetDlgItem(window, 0x72C));
+				CheckDlgButton(window, 0x629, control->Flag10 != 0);
+				CheckDlgButton(window, 0x66C, control->Flag11 != 0);
+				if (!(Session.Type == GAME_INTERNET && Session.unknown_0C == 3) && DAT_00B77DE4 < 1) {
+					EnableWindow(GetDlgItem(window, 0x66C), FALSE);
+				}
+				HWND box = GetDlgItem(window, 0x71E);
+				bool big = Options.ScreenWidth >= 0x400;
+				EnableWindow(box, !big);
+				SendMessage(box, 0xF1, (control->Flag12 && !big) ? 1 : 0, 0);
+				HWND box2 = GetDlgItem(window, 0x71F);
+				SendMessage(box2, 0xF1, control->Flag13 != 0, 0);
+			}
+			break;
+
+		case 0x4DA:
+			PostMessage(GetDlgItem(window, 1), 0xF5, 0, 0);
+			break;
+	}
+	return FALSE;
+}
+
+// FUNCTION: 0x0078E030
+BOOL CALLBACK FUN_0078E030(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	if (message == WM_INITDIALOG && lparam) {
+		SetWindowLong(window, 8, ((int *)lparam)[1]);
+	}
+	int rc = UI::StandardWndProc(window, message, wparam, lparam);
+	if (rc) {
+		return rc;
+	}
+	WonlineStringDialogControl * control = (WonlineStringDialogControl *)GetWindowLong(window, 8);
+	switch (message) {
+		case WM_DRAWITEM:
+			OwnerDraw::DrawItem((LPDRAWITEMSTRUCT)lparam);
+			return TRUE;
+
+		case WM_PAINT:
+			OwnerDraw::Paint(window);
+			FUN_00607FD0(window);
+			ValidateRect(window, NULL);
+			return FALSE;
+
+		case WM_COMMAND:
+			switch (LOWORD(wparam)) {
+				case 0x72C:
+					if (lparam) {
+						Wstring text;
+						FUN_00623E40((HWND)lparam, text);
+						EnableWindow(GetDlgItem(window, 1), !text.containsAny(" ,;"));
+					}
+					return FALSE;
+
+				case IDCANCEL:
+					control->F1(window, 2);
+					return FALSE;
+
+				case IDOK:
+					{
+						Wstring text;
+						FUN_00623E40(GetDlgItem(window, 0x72C), text);
+						control->Text = text;
+						control->F1(window, 1);
+					}
+					return FALSE;
+			}
+			break;
+
+		case 0x497:
+			{
+				HWND edit = GetDlgItem(window, 0x72C);
+				SendMessage(edit, 0x4D1, 1, 0);
+				edit = GetDlgItem(window, 0x72C);
+				SendMessage(edit, 0x4B4, 0, (LPARAM)DAT_00889F64);
+				SendDlgItemMessage(window, 0x72C, 0xC5, 8, 0);
+				SetFocus(GetDlgItem(window, 0x72C));
+			}
+			break;
+
+		case 0x4DA:
+			PostMessage(GetDlgItem(window, 1), 0xF5, 0, 0);
+			break;
+	}
+	return FALSE;
+}
+
+int __fastcall FUN_0060D320(HWND dialog);
+bool __fastcall Focus_Next_Tab_Item(HWND window, bool previous);
+
+// FUNCTION: 0x0078E950
+BOOL CALLBACK FUN_0078E950(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	switch (message) {
+		case WM_DRAWITEM:
+			OwnerDraw::DrawItem((LPDRAWITEMSTRUCT)lparam);
+			return TRUE;
+
+		case WM_PAINT:
+			OwnerDraw::Paint(window);
+			FUN_00607FD0(window);
+			ValidateRect(window, NULL);
+			return FALSE;
+
+		case WM_COMMAND:
+			switch (LOWORD(wparam)) {
+				case IDOK:
+					{
+						int mode = FUN_0060D320(window);
+						DAT_00B77794.clear();
+						HWND item = GetDlgItem(window, 0x628);
+						if (item) {
+							FUN_00623E40(item, DAT_00B77794);
+						}
+						DAT_00B778F4.clear();
+						item = GetDlgItem(window, 0x72C);
+						if (item) {
+							FUN_00623E40(item, DAT_00B778F4);
+						}
+						DAT_00B778FC.clear();
+						item = GetDlgItem(window, 0x627);
+						if (item) {
+							FUN_00623E40(item, DAT_00B778FC);
+						}
+						if (mode == 0xF3) {
+							DAT_00B765EC.clear();
+							item = GetDlgItem(window, 0x5E5);
+							if (item) {
+								FUN_00623E40(item, DAT_00B765EC);
+								FUN_007757E0(window, 1);
+								return FALSE;
+							}
+						} else if (mode == 0xF4) {
+							DAT_00B76C20 = 0;
+							item = GetDlgItem(window, 0x66B);
+							if (item) {
+								DAT_00B76C20 = SendMessage(item, 0xF0, 0, 0);
+							}
+						}
+						FUN_007757E0(window, 1);
+					}
+					return FALSE;
+
+				case IDCANCEL:
+					FUN_007757E0(window, 2);
+					return FALSE;
+			}
+			break;
+
+		case 0x497:
+			{
+				HWND item = GetDlgItem(window, 0x628);
+				SendMessage(item, 0x4D1, 1, 0);
+				item = GetDlgItem(window, 0x72C);
+				SendMessage(item, 0x4D1, 1, 0);
+				item = GetDlgItem(window, 0x627);
+				SendMessage(item, 0x4D1, 1, 0);
+				item = GetDlgItem(window, 0x5E5);
+				SendMessage(item, 0x4D1, 1, 0);
+				SendMessage(GetDlgItem(window, 0x628), 0xC5, 9, 0);
+				SendMessage(GetDlgItem(window, 0x72C), 0xC5, 8, 0);
+				SendMessage(GetDlgItem(window, 0x627), 0xC5, 8, 0);
+				SetFocus(GetDlgItem(window, 0x628));
+			}
+			break;
+
+		case 0x4DB:
+			DAT_00B77E90++;
+			Focus_Next_Tab_Item((HWND)lparam, wparam != 0);
+			return FALSE;
+	}
+	return FALSE;
+}
+
+extern int DAT_00B76474;
+extern int DAT_00B766B8;
+extern int DAT_00B76958;
+extern int DAT_00B76910;
+extern int DAT_00B77798;
+extern int DAT_00B768F8;
+extern int DAT_00B76AC0;
+extern int DAT_00B73680;
+extern int DAT_00B77790;
+extern int * DAT_00B77E98;
+namespace Game { extern bool IsActive; }
+namespace OwnerDraw {
+	void __fastcall DrawCampaignMenuTransition(HWND window, bool reverse);
+	void __stdcall SetNeedsControlImage(HWND window, int value);
+}
+void __fastcall FUN_0052FEC0(Surface * surface, bool flag);
+void FUN_0072B8E0(void);
+void FUN_0072B930(void);
+void __fastcall FUN_006B6230(void * unused);
+
+// FUNCTION: 0x0078EBC0
+BOOL CALLBACK FUN_0078EBC0(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	bool play;
+	int rc = UI::StandardWndProc(window, message, wparam, lparam);
+	if (rc) {
+		return rc;
+	}
+	switch (message) {
+		case WM_DRAWITEM:
+			OwnerDraw::DrawItem((LPDRAWITEMSTRUCT)lparam);
+			return TRUE;
+
+		case WM_PAINT:
+			OwnerDraw::Paint(window);
+			FUN_00607FD0(window);
+			ValidateRect(window, NULL);
+			return FALSE;
+
+		case WM_DESTROY:
+			Game::IsActive = true;
+			return FALSE;
+
+		case WM_COMMAND:
+			switch (LOWORD(wparam)) {
+				case IDCANCEL:
+					delete DAT_00B77E98;
+					DAT_00B77E98 = NULL;
+					FUN_007757E0(window, 2);
+					return FALSE;
+
+				case IDOK:
+					{
+						HWND item;
+						DAT_00B76474 = 0;
+						item = GetDlgItem(window, 0x5F5);
+						if (item) {
+							DAT_00B76474 = SendMessage(item, 0xF0, 0, 0);
+						}
+						DAT_00B766B8 = 0;
+						item = GetDlgItem(window, 0x5F7);
+						if (item) {
+							DAT_00B766B8 = SendMessage(item, 0xF0, 0, 0);
+						}
+						DAT_00B76958 = 0;
+						item = GetDlgItem(window, 0x5F6);
+						if (item) {
+							DAT_00B76958 = SendMessage(item, 0xF0, 0, 0);
+						}
+						DAT_00B76910 = 0;
+						item = GetDlgItem(window, 0x5F8);
+						if (item) {
+							DAT_00B76910 = SendMessage(item, 0xF0, 0, 0);
+						}
+						item = GetDlgItem(window, 0x5F9);
+						if (item) {
+							DAT_00B77798 = SendMessage(item, 0xF0, 0, 0);
+						}
+						DAT_00B768F8 = 0;
+						item = GetDlgItem(window, 0x5FA);
+						if (item) {
+							DAT_00B768F8 = SendMessage(item, 0xF0, 0, 0);
+						}
+						DAT_00B76AC0 = 0;
+						item = GetDlgItem(window, 0x5FB);
+						if (item) {
+							DAT_00B76AC0 = SendMessage(item, 0xF0, 0, 0);
+						}
+						DAT_00B73680 = 0;
+						item = GetDlgItem(window, 0x774);
+						if (item) {
+							DAT_00B73680 = SendMessage(item, 0xF0, 0, 0);
+						}
+						DAT_00B77790 = 0;
+						item = GetDlgItem(window, 0x775);
+						if (item) {
+							DAT_00B77790 = SendMessage(item, 0xF0, 0, 0);
+						}
+						delete DAT_00B77E98;
+						DAT_00B77E98 = NULL;
+						FUN_007757E0(window, 1);
+					}
+					return FALSE;
+
+				case 0x5F8:
+					if (HIWORD(wparam) != 1 && HIWORD(wparam) != 0) {
+						return FALSE;
+					}
+					play = false;
+					if (rc == 0) {
+						play = SendMessage((HWND)lparam, 0xF0, 0, 0) == 1;
+					}
+					if (play) {
+						if (!Theme.Still_Playing()) {
+							Theme.Stop();
+							Theme.Queue_Song(THEME_PICK_ANOTHER);
+							return FALSE;
+						}
+						if (Theme.What_Is_Playing() == Theme.From_Name("INTRO")) {
+							Theme.Stop();
+							Theme.Queue_Song(THEME_PICK_ANOTHER);
+							return FALSE;
+						}
+					} else {
+						Theme.Queue_Song(THEME_QUIET);
+						return FALSE;
+					}
+					return FALSE;
+
+				case 0x63A:
+					OwnerDraw::DrawCampaignMenuTransition(window, false);
+					FUN_0052FEC0(NULL, true);
+					Game::IsActive = false;
+					FUN_0072B8E0();
+					FUN_006B6230(&lparam);
+					ShowWindow(window, SW_SHOW);
+					OwnerDraw::SetNeedsControlImage(window, 0);
+					FUN_0072B930();
+					return FALSE;
+			}
+			break;
+
+		case 0x4ED:
+			ShowWindow(window, SW_HIDE);
+			OwnerDraw::SetNeedsControlImage(window, 1);
+			return FALSE;
+
+		case 0x497:
+				if (DAT_00B76234) {
+					SendDlgItemMessage(window, 0x5F5, 0xF1, 1, 0);
+				}
+				if (DAT_00B779F0) {
+					SendDlgItemMessage(window, 0x5F7, 0xF1, 1, 0);
+				}
+				if (DAT_00B779BC) {
+					SendDlgItemMessage(window, 0x5F6, 0xF1, 1, 0);
+				}
+				if (DAT_00B7690C) {
+					SendDlgItemMessage(window, 0x5F8, 0xF1, 1, 0);
+				}
+				if (DAT_00B77784) {
+					SendDlgItemMessage(window, 0x5F9, 0xF1, 1, 0);
+				}
+				if (DAT_00B779DC) {
+					SendDlgItemMessage(window, 0x5FA, 0xF1, 1, 0);
+				}
+				if (DAT_00B779C0) {
+					SendDlgItemMessage(window, 0x5FB, 0xF1, 1, 0);
+				}
+				if (DAT_00B76AF0) {
+					SendDlgItemMessage(window, 0x774, 0xF1, 1, 0);
+				}
+				if (DAT_00B73AD0) {
+					SendDlgItemMessage(window, 0x775, 0xF1, 1, 0);
+				}
+			break;
+	}
+	return FALSE;
+}
+
+int __fastcall FUN_005E8D00(wchar_t const * name);
+extern int DAT_00B76440[];
+extern wchar_t DAT_00B75F6C[];
+
+// FUNCTION: 0x0078F5C0
+wchar_t * __fastcall FUN_0078F5C0(wchar_t const * name)
+{
+	int ping = DAT_00B76440[FUN_005E8D00(name)];
+	if (ping < 0) {
+		swprintf(DAT_00B75F6C, StringTable::LoadString("TXT_LATENCY_ICON_TOOLTIP_NOPING", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x3D7D), name, StringTable::LoadString("TXT_UNKNOWN", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x3D7D), StringTable::LoadString("TXT_UNKNOWN_PING", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x3D7D));
+	} else if (ping < 300) {
+		swprintf(DAT_00B75F6C, StringTable::LoadString("TXT_LATENCY_ICON_TOOLTIP_PING", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x3D7F), name, StringTable::LoadString("TXT_GOOD", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x3D7F), ping);
+	} else if (ping < 500) {
+		swprintf(DAT_00B75F6C, StringTable::LoadString("TXT_LATENCY_ICON_TOOLTIP_PING", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x3D81), name, StringTable::LoadString("TXT_FAIR", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x3D81), ping);
+	} else {
+		swprintf(DAT_00B75F6C, StringTable::LoadString("TXT_LATENCY_ICON_TOOLTIP_PING", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x3D83), name, StringTable::LoadString("TXT_POOR", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x3D83), ping);
+	}
+	return DAT_00B75F6C;
+}
+
+// FUNCTION: 0x0078F6B0
+int __fastcall FUN_0078F6B0(int id)
+{
+	if (id == 0x754) {
+		return 0;
+	}
+	if (id == 0x755) {
+		return 1;
+	}
+	if (id == 0x756) {
+		return 2;
+	}
+	if (id == 0x757) {
+		return 3;
+	}
+	if (id == 0x758) {
+		return 4;
+	}
+	if (id == 0x759) {
+		return 5;
+	}
+	if (id == 0x75A) {
+		return 6;
+	}
+	return id == 0x75B ? 7 : -1;
 }
 
 // FUNCTION: 0x007A2E70 SimpleWonlineDialogControl::~SimpleWonlineDialogControl

@@ -21,6 +21,9 @@
 #include "incdec.h"
 #include "inline.h"
 #include "lightcon.h"
+#include "msanim.h"
+#include "overlay.h"
+#include "overtype.h"
 #include "rect.h"
 #include "rules.h"
 #include "scenario.h"
@@ -33,16 +36,6 @@
 #include "warhead.h"
 #include "draw.hh"
 #include <cstdio>
-
-void TerrainClass::Start_To_Crumble(void)
-{
-	if (!IsCrumbling) {
-		IsCrumbling = true;
-		Set_Rate(2);
-		Set_Stage(0);
-	}
-}
-
 
 // FUNCTION: 0x0071B7B0
 TerrainClass::~TerrainClass(void)
@@ -361,11 +354,246 @@ void TerrainClass::Fire_Out(void)
 }
 
 
+// FUNCTION: 0x0071C730
+void TerrainClass::AI(void)
+{
+	BASECLASS::AI();
+
+	if (Class->IsAnimated) {
+		if (Fetch_Rate() == 0) {
+			double r = (abs(Scen->RandomNumber()) % 1000000) / 1000000.0;
+			if (r < Class->AnimationProbability) {
+				Set_Stage(0);
+				Set_Rate(Class->AnimationRate);
+			}
+		}
+	}
+
+	if (StageClass::Graphic_Logic()) {
+		if (IsCrumbling && Fetch_Stage() == (((ShapeSet const *)Class->Get_Image_Data())->Get_Count())-1) {
+			Delete_Me();
+			return;
+		}
+
+		if (Class->IsTiberiumSpawn && Class->IsAnimated && Fetch_Stage() == (((ShapeSet const *)Class->Get_Image_Data())->Get_Count() / 2)) {
+			Set_Stage(0);
+			Set_Rate(0);
+			Map[Get_Coord()].Spread_Tiberium(true);
+		}
+	}
+}
+
+
+// FUNCTION: 0x0071C8E0
+void TerrainClass::Start_To_Crumble(void)
+{
+	if (!IsCrumbling) {
+		IsCrumbling = true;
+		Set_Rate(2);
+		Set_Stage(0);
+	}
+}
+
+
+// FUNCTION: 0x0071C930
+bool TerrainClass::Limbo(void)
+{
+	if (!IsInLimbo) {
+		Cell cell = Get_Cell();
+		FacingType facing = FACING_FIRST;
+		while (facing < FACING_COUNT) {
+			CellClass & c = Map[Adjacent_Cell(cell, facing)];
+			c.AdjacentObjectCount--;
+			facing++;
+		}
+		Map[Get_Coord()].Flag.Occupy.Monolith = false;
+	}
+	Cell cell = Get_Cell();
+	bool result = BASECLASS::Limbo();
+	Map[cell].Recalc_Attributes();
+	if (!ScenarioInit) {
+		Map.Update_Cell_Zone(cell);
+		Map.Update_Cell_Subzones(cell);
+		Map.Radar_Background(cell);
+	}
+	return(result);
+}
+
+
+// FUNCTION: 0x0071CA70
+void TerrainClass::Read_INI(CCINIClass const & ini)
+{
+	TerrainClass * tptr;
+
+	const_cast<CCINIClass &>(ini).Reset();
+	int len = ini.Entry_Count(INI_NAME);
+
+	for (int index = 0; index < len; index++) {
+		char const * entry = ini.Get_Entry(INI_NAME, index);
+		TerrainTypeClass const * terrain = TGet_Class<TerrainTypeClass>(ini, INI_NAME, entry, NULL);
+
+		Cell cell;
+		if (NewINIFormat >= 4) {
+			int val = atoi(entry);
+			cell = Cell(val % 1000, val / 1000);
+		} else {
+			int val = atoi(entry);
+			cell = Cell(val % 128, val / 128);
+		}
+
+		if (terrain != NULL) {
+			tptr = new TerrainClass(terrain, cell);
+		}
+	}
+}
+
+
+// FUNCTION: 0x0071CB90
+void TerrainClass::Write_INI(CCINIClass & ini)
+{
+	ini.Clear(INI_NAME);
+
+	for (int index = 0; index < Terrains.Count(); index++) {
+		TerrainClass * terrain;
+
+		terrain = Terrains[index];
+		if (terrain != NULL && !terrain->IsInLimbo && terrain->IsActive) {
+			char	uname[10];
+			Cell cell = terrain->Get_Cell();
+			sprintf(uname, "%d", cell.X + cell.Y * 1000);
+			TPut_Class<TerrainTypeClass>(ini, INI_NAME, uname, terrain->Class);
+		}
+	}
+}
+
+
+// FUNCTION: 0x0071CC50
+bool TerrainClass::Render(Rect & cliprect, bool forced, bool extras_only) const
+{
+	if (Debug_Map || !MainWindow || ((forced || IsToDisplay) && IsDown && !IsInLimbo)) {
+		IsToDisplay = false;
+
+		Point2D point;
+
+		cliprect = Intersect(cliprect, TacticalRect);
+
+		Rect rect = ((TerrainClass *)this)->Get_Render_Rect() + TacticalRect.Top_Left();
+
+		if (cliprect.Is_Overlapping(rect)) {
+
+			TacticalMap->Coord_To_Pixel(Render_Coord(), point);
+
+			if (cliprect.X > TacticalRect.X) {
+				point.X += TacticalRect.X - cliprect.X;
+			}
+			if (cliprect.Y > TacticalRect.Y) {
+				point.Y += TacticalRect.Y - cliprect.Y;
+			}
+
+			Draw_It(point, cliprect);
+
+			return(true);
+		}
+	}
+
+	return(false);
+}
+
+
+// FUNCTION: 0x0071CDA0
+HRESULT STDMETHODCALLTYPE TerrainClass::Load(IStream * stream)
+{
+	TargetTracker.Remove_Index(Fetch_ID());
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		new (this) TerrainClass(NoInitClass());
+
+		TargetTracker.Add_Index(Fetch_ID(), this);
+		Swizzle_Pointer(&Class);
+	}
+	return(result);
+}
+
+
 // FUNCTION: 0x0071CF30
 HRESULT STDMETHODCALLTYPE TerrainClass::Save(IStream * stream, BOOL cleardirty)
 {
 	return(BASECLASS::Save(stream, cleardirty));
 }
+
+// FUNCTION: 0x0071CF50
+void TerrainClass::Compute_CRC(CRCEngine &crc) const
+{
+	BASECLASS::Compute_CRC(crc);
+
+	crc((RTTIType)Class->RTTI);
+	crc(Class->Fetch_ID());
+	crc(IsOnFire);
+	crc(IsCrumbling);
+	crc(Unused1);
+	crc(Unused2);
+}
+
+
+// FUNCTION: 0x0071CFD0
+void TerrainClass::Detach(AbstractClass const * target, bool all)
+{
+	BASECLASS::Detach(target, all);
+	if (Class == target) {
+		Class = NULL;
+	}
+}
+
+
+// FUNCTION: 0x0071D000
+bool TerrainClass::Unlimbo(Coord const & coord, Dir256 dir)
+{
+	if (BASECLASS::Unlimbo(coord, dir)) {
+		Cell cell = coord.As_Cell();
+		for (FacingType facing = FACING_FIRST; facing < FACING_COUNT; facing++) {
+			CellClass * cptr = &Map[Adjacent_Cell(cell, facing)];
+			cptr->AdjacentObjectCount++;
+		}
+
+		TacticalMap->Coord_To_Pixel(Render_Coord(), RenderPixelPos);
+		RenderPixelPos += Point2D(TacticalMap->TacPixelX, TacticalMap->TacPixelY);
+
+		if (Map[coord].Overlay != OVERLAY_NONE && OverlayTypes[Map[coord].Overlay]->IsTiberium) {
+			Map[coord].Overlay = OVERLAY_NONE;
+			Map[coord].OverlayData = 0;
+		}
+		return(true);
+	}
+	return(false);
+}
+
+
+// FUNCTION: 0x0071D150
+ObjectTypeClass const * TerrainClass::Class_Of(void) const
+{
+	return(Class);
+}
+
+
+// FUNCTION: 0x0071D160
+Rect TerrainClass::Get_Render_Rect(void)
+{
+	Point2D drawpoint = RenderPixelPos - Point2D(TacticalMap->TacPixelX, TacticalMap->TacPixelY);
+	SHPStruct const * sdata = (SHPStruct const *)TerrainClass::Get_Image_Data();
+	if (sdata == NULL) {
+		return(RECT_NONE);
+	}
+
+	Rect rect1 = sdata->GetFrameBounds(0);
+	Rect rect2 = sdata->GetFrameBounds(sdata->Get_Count() / 2);
+
+	int width = sdata->Get_Width();
+	int height = sdata->Get_Height();
+
+	Rect a = Union(rect1, rect2);
+	return(Rect(drawpoint.X + a.X - width / 2, drawpoint.Y + a.Y - height / 2, a.Width, a.Height));
+}
+
 
 // FUNCTION: 0x0071D310
 HRESULT STDMETHODCALLTYPE TerrainClass::GetClassID(CLSID * retval)

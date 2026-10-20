@@ -671,3 +671,194 @@ int __fastcall FUN_004E5000(int id)
 	}
 	return -1;
 }
+
+// FUNCTION: 0x004E50A0
+bool __fastcall FUN_004E50A0(int slot)
+{
+	return DAT_008B3F30[slot].Owner != -1;
+}
+
+static inline int Add_Item(HWND item, char const *name, int data)
+{
+	int index = SendMessage(item, 0x4c2, 0, (LPARAM)name);
+	SendMessage(item, CB_SETITEMDATA, index, data);
+	return index;
+}
+
+// FUNCTION: 0x004E50C0
+void __fastcall FUN_004E50C0(HWND dialog, int id)
+{
+	HWND item = GetDlgItem(dialog, id);
+	bool was_hidden = !ShowWindow(item, SW_HIDE);
+	SendMessage(item, CB_RESETCONTENT, 0, 0);
+	SendMessage(item, 0x4dd, 0, 1);
+	SendMessage(item, 0x4de, 0, 9);
+	int index = SendMessage(item, 0x4c2, 0, (LPARAM)StringTable::LoadString("GUI:RandomAsSymbols", NULL, "D:\\ra2mdpost\\GDlgSupp.cpp", 0x341));
+	SendMessage(item, CB_SETITEMDATA, index, -2);
+	int owner = FUN_004E4EC0(id);
+	int selected = 0;
+	for (int i = 0; i < 8; i++) {
+		bool mine = DAT_008B3F30[i].Owner == owner;
+		if (mine || DAT_008B3F30[i].Owner == -1) {
+			int pos = Add_Item(item, DAT_008B3F30[i].Name, i);
+			if (mine) {
+				selected = pos;
+			}
+		}
+	}
+	SendMessage(item, CB_SETCURSEL, selected, 0);
+	SendMessage(item, 0x4f1, 0, 0);
+	if (!was_hidden) {
+		ShowWindow(item, SW_SHOW);
+	}
+}
+
+// FUNCTION: 0x004E5260
+void __fastcall FUN_004E5260(HWND dialog, int id)
+{
+	HWND item = GetDlgItem(dialog, id);
+	bool was_hidden = !ShowWindow(item, SW_HIDE);
+	SendMessage(item, CB_RESETCONTENT, 0, 0);
+	SendMessage(item, 0x4dd, 0, 1);
+	SendMessage(item, 0x4de, 0, 9);
+	int index = SendMessage(item, 0x4c2, 0, (LPARAM)StringTable::LoadString("GUI:RandomAsSymbols", NULL, "D:\\ra2mdpost\\GDlgSupp.cpp", 0x36c));
+	SendMessage(item, CB_SETITEMDATA, index, -2);
+	SendMessage(item, 0x498, index, -1);
+	SendMessage(item, CB_SETCURSEL, 0, 0);
+	SendMessage(item, 0x4f1, 0, 1);
+	if (!was_hidden) {
+		ShowWindow(item, SW_SHOW);
+	}
+}
+
+// FUNCTION: 0x004E5310
+void __fastcall FUN_004E5310(HWND dialog)
+{
+	for (int i = 0; i < 8; i++) {
+		int id = FUN_004E4E60(i);
+		if ((Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) && (Session.Slots[i] == DAT_00AC11B4 || Session.Slots[i]->Slot.SpectatorFlag == -1)) {
+			FUN_004E5260(dialog, id);
+		} else {
+			FUN_004E50C0(dialog, id);
+		}
+	}
+}
+
+void __fastcall FUN_004E5480(HWND dialog, int id, int wanted);
+
+// FUNCTION: 0x004E53D0
+void __fastcall FUN_004E53D0(HWND dialog, int slot)
+{
+	int wanted = -2;
+	int id = FUN_004E4E60(slot);
+	if (Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) {
+		if (Session.Slots[slot] == DAT_00AC11B4 && Session.Slots[slot]->Slot.SpectatorFlag == -1) {
+			wanted = 8;
+		}
+	}
+	FUN_004E5480(dialog, id, wanted);
+}
+
+// FUNCTION: 0x004E5480
+void __fastcall FUN_004E5480(HWND dialog, int id, int wanted)
+{
+	HWND item = GetDlgItem(dialog, id);
+	bool was_hidden = !ShowWindow(item, SW_HIDE);
+	int owned = FUN_004E5000(id);
+	if (owned != -1) {
+		DAT_008B3F30[owned].Owner = -1;
+	}
+	int count = SendDlgItemMessage(dialog, id, CB_GETCOUNT, 0, 0);
+	for (int i = 0; i < count; i++) {
+		int data = SendDlgItemMessage(dialog, id, CB_GETITEMDATA, i, 0);
+		if (data == wanted) {
+			SendDlgItemMessage(dialog, id, CB_SETCURSEL, i, 0);
+			if (data != -2) {
+				DAT_008B3F30[data].Owner = FUN_004E4EC0(id);
+			}
+			break;
+		}
+	}
+	if (!was_hidden) {
+		ShowWindow(item, SW_SHOW);
+	}
+	FUN_004E5310(dialog);
+}
+
+// FUNCTION: 0x004E5700
+void __fastcall FUN_004E5700(HWND dialog, int id)
+{
+	int owned = FUN_004E5000(id);
+	if (owned != -1) {
+		DAT_008B3F30[owned].Owner = -1;
+	}
+	int index = SendDlgItemMessage(dialog, id, CB_GETCURSEL, 0, 0);
+	int data = SendDlgItemMessage(dialog, id, CB_GETITEMDATA, index, 0);
+	int slot = FUN_004E4EC0(id);
+	if (data != -2) {
+		DAT_008B3F30[data].Owner = slot;
+	}
+	FUN_004E5310(dialog);
+}
+
+// FUNCTION: 0x004E5900
+int __fastcall FUN_004E5900(HWND dialog, int id, int index)
+{
+	if (index == -1) {
+		index = SendDlgItemMessage(dialog, id, CB_GETCURSEL, 0, 0);
+	}
+	return SendDlgItemMessage(dialog, id, CB_GETITEMDATA, index, 0);
+}
+
+// FUNCTION: 0x004E5940
+int __fastcall FUN_004E5940(int slot)
+{
+	if (slot == 0) return 0x76d;
+	if (slot == 1) return 0x76e;
+	if (slot == 2) return 0x76f;
+	if (slot == 3) return 0x770;
+	if (slot == 4) return 0x771;
+	if (slot == 5) return 0x772;
+	if (slot == 6) return 0x773;
+	if (slot == 7) return 0x774;
+	return -1;
+}
+
+// FUNCTION: 0x004E59A0
+int __fastcall FUN_004E59A0(int id)
+{
+	if (id == 0x76d) return 0;
+	if (id == 0x76e) return 1;
+	if (id == 0x76f) return 2;
+	if (id == 0x770) return 3;
+	if (id == 0x771) return 4;
+	if (id == 0x772) return 5;
+	if (id == 0x773) return 6;
+	if (id == 0x774) return 7;
+	return -1;
+}
+
+// FUNCTION: 0x004E5A10
+wchar_t const * __fastcall FUN_004E5A10(int color)
+{
+	if (color == -2) return StringTable::LoadString("STT:PlayerColorRandom", NULL, "D:\\ra2mdpost\\GDlgSupp.cpp", 0x422);
+	if (color == 0) return StringTable::LoadString("STT:PlayerColorGold", NULL, "D:\\ra2mdpost\\GDlgSupp.cpp", 0x424);
+	if (color == 1) return StringTable::LoadString("STT:PlayerColorRed", NULL, "D:\\ra2mdpost\\GDlgSupp.cpp", 0x426);
+	if (color == 2) return StringTable::LoadString("STT:PlayerColorBlue", NULL, "D:\\ra2mdpost\\GDlgSupp.cpp", 0x428);
+	if (color == 3) return StringTable::LoadString("STT:PlayerColorGreen", NULL, "D:\\ra2mdpost\\GDlgSupp.cpp", 0x42a);
+	if (color == 4) return StringTable::LoadString("STT:PlayerColorObserver", NULL, "D:\\ra2mdpost\\GDlgSupp.cpp", 0x42c);
+	return NULL;
+}
+
+struct GDLetterEntry { void const *Text; int Value; int Owner; };
+extern GDLetterEntry DAT_008B3FC0[5];
+
+// FUNCTION: 0x004E5AC0
+void FUN_004E5AC0(void)
+{
+	DAT_008B3FC0[0].Text = StringTable::LoadString("LETTER_A", NULL, "D:\\ra2mdpost\\GDlgSupp.cpp", 0x437);
+	DAT_008B3FC0[1].Text = StringTable::LoadString("LETTER_B", NULL, "D:\\ra2mdpost\\GDlgSupp.cpp", 0x438);
+	DAT_008B3FC0[2].Text = StringTable::LoadString("LETTER_C", NULL, "D:\\ra2mdpost\\GDlgSupp.cpp", 0x439);
+	DAT_008B3FC0[3].Text = StringTable::LoadString("LETTER_D", NULL, "D:\\ra2mdpost\\GDlgSupp.cpp", 0x43a);
+	DAT_008B3FC0[4].Text = "0";
+}

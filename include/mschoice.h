@@ -23,7 +23,7 @@ class MapChoice
 		MapChoice(void);
 		~MapChoice(void);
 
-		bool Initialize(char const * house_name);
+		bool Initialize(Wstring const & side_name);
 		void Deinit(void);
 
 		MapStage * Find_Stage_By_Name(Wstring const & name);

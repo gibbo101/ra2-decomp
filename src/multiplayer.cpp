@@ -783,3 +783,21 @@ MPCoopMode * __stdcall Allocate_MPCoop(wchar_t ** title, wchar_t ** tooltip, cha
 // FUNCTION: 0x005D8470 ?$DynamicVectorClass@PAVMultiplayerTeam@@::Resize
 // FUNCTION: 0x005D8520 ?$DynamicVectorClass@PAVMultiplayerTeam@@::ID
 template class DynamicVectorClass<MultiplayerTeam *>;
+
+class AircraftTypeClass;
+class BuildingTypeClass;
+
+// FUNCTION: 0x005D8550 ?$VectorClass@PAVAircraftTypeClass@@::operator==
+// FUNCTION: 0x005D8590 ?$VectorClass@PAVAircraftTypeClass@@::Resize
+// FUNCTION: 0x005D8640 ?$VectorClass@PAVAircraftTypeClass@@::Clear
+// FUNCTION: 0x005D8670 ?$VectorClass@PAVAircraftTypeClass@@::ID
+// FUNCTION: 0x005D86B0 ?$VectorClass@PAVAircraftTypeClass@@::ID
+// FUNCTION: 0x005D86D0 ?$DynamicVectorClass@PAVAircraftTypeClass@@::?$DynamicVectorClass@PAVAircraftTypeClass@@
+// FUNCTION: 0x005D8730 ?$DynamicVectorClass@PAVAircraftTypeClass@@::Resize
+// FUNCTION: 0x005D87E0 ?$DynamicVectorClass@PAVAircraftTypeClass@@::ID
+// FUNCTION: 0x005D8810 ?$VectorClass@PAVBuildingTypeClass@@::~?$VectorClass@PAVBuildingTypeClass@@
+// FUNCTION: 0x005D8860 ?$DynamicVectorClass@PAVBuildingTypeClass@@::~?$DynamicVectorClass@PAVBuildingTypeClass@@
+// FUNCTION: 0x005D88B0 ?$VectorClass@PAVAircraftTypeClass@@::~?$VectorClass@PAVAircraftTypeClass@@
+// FUNCTION: 0x005D8900 ?$DynamicVectorClass@PAVAircraftTypeClass@@::~?$DynamicVectorClass@PAVAircraftTypeClass@@
+template class DynamicVectorClass<AircraftTypeClass *>;
+template class DynamicVectorClass<BuildingTypeClass *>;

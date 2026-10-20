@@ -987,14 +987,6 @@ void WideWstring::clear(void)
 	str = NULL;
 }
 
-char WideWstring::truncate(unsigned int len)
-{
-	WideWstring tmp;
-	if (!tmp.set(len, get()) || !set(tmp.get()))
-		return(FALSE);
-	return(TRUE);
-}
-
 // FUNCTION: 0x007B7060
 void WideWstring::setSize(int size)
 {
@@ -1234,8 +1226,168 @@ WideWstring WideWstring::toUpper(void) const
 	return(tmp);
 }
 
+// FUNCTION: 0x007B78D0
+char WideWstring::truncate(unsigned int len)
+{
+	WideWstring tmp;
+	if (!tmp.set(len, get()) || !set(tmp.get()))
+		return(FALSE);
+	return(TRUE);
+}
+
+// FUNCTION: 0x007B7980
+char WideWstring::truncate(wchar_t c)
+{
+	int  len;
+
+	if (str == NULL)
+		return(FALSE);
+
+	wchar_t* cptr = wcschr(str, c);
+	if (cptr == NULL)
+		return(FALSE);
+	len = (int)(cptr - str);
+	truncate((unsigned int)len);
+	return(TRUE);
+}
+
+// FUNCTION: 0x007B7A60
+int WideWstring::getToken(int offset, wchar_t const* delim, WideWstring& out) const
+{
+	int i;
+	int start;
+	int stop;
+
+	if (offset < 0)
+		return(-1);
+
+	for (i = offset; i < (int)length(); i++) {
+		if (wcschr(delim, str[i]) == NULL)
+			break;
+	}
+	if (i >= (int)length())
+		return(-1);
+	start = i;
+
+	for (; i < (int)length(); i++) {
+		if (wcschr(delim, str[i]) != NULL)
+			break;
+	}
+	stop = i - 1;
+	out.set(str + start);
+	out.truncate((unsigned int)stop - start + 1);
+	return(stop + 1);
+}
+
+// FUNCTION: 0x007B7C00
+int WideWstring::getLine(int offset, WideWstring& out) const
+{
+	int i;
+	int start;
+	int stop;
+
+	start = i = offset;
+	if (start >= (int)length())
+		return(-1);
+
+	for (; i < (int)length(); i++) {
+		if (strchr("\r\n", str[i]) != NULL)
+			break;
+	}
+	stop = i;
+	if ((str[stop] == '\r') && (str[stop + 1] == '\n'))
+		stop++;
+
+	out.set(str + start);
+	out.truncate((unsigned int)stop - start + 1);
+	return(stop + 1);
+}
+
 // FUNCTION: 0x007B7D80
 int WideWstring::toInt(void) const
 {
 	return(wcstol(str, NULL, 10));
+}
+
+// FUNCTION: 0x007B7D90
+unsigned char __fastcall FUN_007B7D90(WideWstring * text)
+{
+	if (text->str) {
+		int len = wcslen(text->str);
+		int i;
+
+		for (i = 0; i < len; i++) {
+			if (text->str[i] >= 0x100)
+				return(0);
+		}
+	}
+	return(1);
+}
+
+// FUNCTION: 0x007B7DD0
+WideWstring __fastcall FUN_007B7DD0(int value)
+{
+	wchar_t buf[32];
+	swprintf(buf, L"%d", value);
+	return(WideWstring(buf));
+}
+
+// FUNCTION: 0x007B7E40
+WideWstring __fastcall FUN_007B7E40(int value, int width)
+{
+	wchar_t buf[32];
+	swprintf(buf, L"%%0%dd", width);
+	swprintf(buf, buf, value);
+	return(WideWstring(buf));
+}
+
+void __fastcall FUN_00735060(wchar_t * dest, char const * source, int length);
+
+// FUNCTION: 0x007B7ED0
+WideWstring __fastcall FUN_007B7ED0(Wstring const & text)
+{
+	int len = text.length();
+	wchar_t * wide = new wchar_t[len + 1];
+	FUN_00735060(wide, text.get(), len);
+	WideWstring tmp(wide);
+	delete[](wide);
+	return(tmp);
+}
+
+namespace OwnerDraw {
+char * __fastcall WideToCharString(char * dest, wchar_t const * src, int count);
+}
+
+// FUNCTION: 0x007B7F90
+Wstring __fastcall FUN_007B7F90(WideWstring const & string)
+{
+	int len = string.length();
+	char * narrow = new char[len + 1];
+	OwnerDraw::WideToCharString(narrow, string.get(), len);
+	Wstring tmp(narrow);
+	delete[](narrow);
+	return(tmp);
+}
+
+// FUNCTION: 0x007B8090
+WideWstring __fastcall FUN_007B8090(wchar_t const * prefix, WideWstring const & text)
+{
+	return(WideWstring(prefix) + text);
+}
+
+// FUNCTION: 0x007B8170
+WideWstring __fastcall FUN_007B8170(WideWstring const & a, WideWstring const & b)
+{
+	WideWstring tmp = a;
+	tmp.cat(b);
+	return(tmp);
+}
+
+// FUNCTION: 0x007B8250
+bool WideWstring::containsAny(wchar_t const* chars) const
+{
+	if (chars == NULL || str == NULL)
+		return(false);
+	unsigned int len = wcslen(str);
+	return(wcscspn(str, chars) < len);
 }

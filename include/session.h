@@ -482,6 +482,7 @@ struct GameOptionsType {
 	bool		MCVRedeploy;
 	wchar_t		ScenarioDescription [45];
 
+	void FUN_0069B540(void);
 	bool Save(IStream * stream) const;
 	bool Load(IStream * stream);
 
@@ -542,6 +543,12 @@ class SessionClass
 		void Init_Fixed_Alliances(void);
 		int Color_Index_To_Scheme(int id);
 		bool Is_Random_Map(void) const;
+		bool FUN_0069B600(int color) const;
+		int FUN_0069B670(void);
+		int FUN_0069B690(void);
+		int FUN_0069B700(void) const;
+		int FUN_0069B720(void) const;
+		int FUN_0069B740(void) const;
 		void FUN_0069B760(int side, bool random);
 		void FUN_0069B7E0(int color, bool random);
 		void Resume(void);

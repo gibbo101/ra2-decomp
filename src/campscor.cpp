@@ -828,3 +828,57 @@ void CampScoreResults::Show(DynamicVectorClass<CoopPlayerStats *> list, int a6, 
 }
 
 // FUNCTION: 0x00471500 CampScoreLink::~CampScoreLink
+
+// FUNCTION: 0x00471520 CampScoreResults::~CampScoreResults
+
+extern double __cdecl FUN_004CAC40(double);
+extern double __cdecl FUN_004CAD50(double);
+extern double __cdecl FUN_004CADE0(double);
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007E1720;
+extern const double DAT_007E1728;
+extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
+extern const double DAT_007E4AC0;
+extern const double DAT_007E4AC8;
+
+struct ShortPair {
+	unsigned short A, B;
+	ShortPair() { A = 0; B = 0; }
+};
+
+// FUNCTION: 0x00471540 $E81
+double DAT_0089E120 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x00471570 $E84
+double DAT_0089E170 = DAT_0089E120 / DAT_007E4AC0;
+
+// FUNCTION: 0x00471590 $E87
+double DAT_0089E158 = DAT_007E1718 / DAT_0089E170;
+
+// FUNCTION: 0x004715B0 $E90
+double DAT_0089E150 = DAT_007E1720 * DAT_007E4AC8;
+
+// FUNCTION: 0x004715D0 $E93
+double DAT_0089E128 = DAT_007E1728 * DAT_007E4AC8;
+
+// FUNCTION: 0x004715F0 $E96
+double DAT_0089E0E8 = DAT_007E1730 * DAT_007E4AC8;
+
+// FUNCTION: 0x00471610 $E99
+int DAT_0089E178 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_0089E0E8 - DAT_0089E128) * DAT_0089E120));
+
+// FUNCTION: 0x00471650 $E102
+double DAT_0089E130 = FUN_004CADE0(DAT_0089E178 * DAT_007E1740);
+
+// FUNCTION: 0x00471680 $E105
+double DAT_0089E148 = FUN_004CADE0((DAT_0089E178 * 2) / DAT_0089E120);
+
+// FUNCTION: 0x004716B0 $E108
+int DAT_0089E16C = (int)(DAT_0089E178 * 4 + DAT_007E1738);
+
+// FUNCTION: 0x004716E0 $E111
+ShortPair DAT_0089E118;

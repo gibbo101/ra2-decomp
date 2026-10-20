@@ -5007,3 +5007,20 @@ template class VectorClass<ScoutStruct>;
 // FUNCTION: 0x0050F5D0 ?$VectorClass@PAUBuildChoiceClass@HouseClass@@::Clear
 // FUNCTION: 0x0050F600 ?$VectorClass@PAUBuildChoiceClass@HouseClass@@::ID
 template class VectorClass<HouseClass::BuildChoiceClass *>;
+// FUNCTION: 0x0050F640 ?$VectorClass@PAUBuildChoiceClass@HouseClass@@::ID
+// FUNCTION: 0x0050F660 ?$DynamicVectorClass@PAUBuildChoiceClass@HouseClass@@::Resize
+// FUNCTION: 0x0050F710 ?$DynamicVectorClass@PAUBuildChoiceClass@HouseClass@@::ID
+template class DynamicVectorClass<HouseClass::BuildChoiceClass *>;
+
+// FUNCTION: 0x0050F740 ?$VectorClass@PAVBuildingTypeClass@@::operator==
+// FUNCTION: 0x0050F780 ?$VectorClass@PAVBuildingTypeClass@@::Resize
+// FUNCTION: 0x0050F830 ?$VectorClass@PAVBuildingTypeClass@@::Clear
+// FUNCTION: 0x0050F860 ?$VectorClass@PAVBuildingTypeClass@@::ID
+// FUNCTION: 0x0050F8A0 ?$VectorClass@PAVBuildingTypeClass@@::ID
+// FUNCTION: 0x0050F8C0 ?$DynamicVectorClass@PAVBuildingTypeClass@@::Resize
+// FUNCTION: 0x0050F970 ?$DynamicVectorClass@PAVBuildingTypeClass@@::ID
+template class VectorClass<BuildingTypeClass *>;
+
+// FUNCTION: 0x0050F9A0 ?$VectorClass@_N::operator==
+// FUNCTION: 0x0050F9E0 ?$VectorClass@_N::Resize
+template class VectorClass<bool>;

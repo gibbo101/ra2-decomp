@@ -260,6 +260,207 @@ void ParticleSystemClass::Gas_AI(void)
 	}
 }
 
+namespace Unsorted { extern int CurrentFrame; }
+extern short SineTable[];
+
+static int _FireStepX[FACING_COUNT] = { 1,  1,  0, -1, -1, -1,  0,  1 };
+static int _FireStepY[FACING_COUNT] = { 0,  1,  1,  1,  0, -1, -1, -1 };
+
+// FUNCTION: 0x0062F9A0
+void ParticleSystemClass::Fire_AI(void)
+{
+	int i;
+
+	for (i = SystemParticles.Count()-1; i >= 0; i--) {
+		ParticleClass *spart = SystemParticles[i];
+		spart->Behavior_AI();
+		spart->Motion_AI();
+	}
+
+	for (i = SystemParticles.Count()-1; i >= 0; i--) {
+		ParticleClass *spart = SystemParticles[i];
+		if (spart->IsToDie) {
+			spart->Delete_Me();
+		}
+	}
+
+	bool reaimed = false;
+	TechnoClass *source = Dynamic_Cast<TechnoClass *>(Source);
+	if (source != NULL) {
+		if (source->IsActive) {
+			if (source->TarCom != NULL && source->PrimaryFacing.Is_Rotating()) {
+				Coord cc = source->TarCom->Center_Coord();
+				Coord delta = cc - source->Get_Coord();
+				int dist = (int)fastmath::sqrt((double)delta.X * (double)delta.X + (double)delta.Y * (double)delta.Y + (double)delta.Z * (double)delta.Z);
+				Coord aim = Move_Coord(source->Get_Coord(), source->PrimaryFacing.Current(), dist);
+				SpawnCoord = aim;
+				Set_Coord(source->Fire_Coord(0, Coord(0, 0, 0)));
+				reaimed = true;
+			}
+		}
+		if (!source->IsActive) {
+			Delete_Me();
+		}
+	} else {
+		Delete_Me();
+	}
+
+	if (!IsMarkedForDeletion && (!(Unsorted::CurrentFrame % Class->SpawnFrames) || (!(Unsorted::CurrentFrame % 3) && reaimed))) {
+		int index = Unsorted::CurrentFrame % 500;
+
+		Coord delta = Get_Coord() - SpawnCoord;
+		int distsq = delta.Dot_Product(delta);
+
+		int divisor;
+		if ((float)fastmath::sqrt((double)distsq) < 200.0f) {
+			divisor = 3;
+		} else {
+			divisor = 1;
+		}
+
+		int offset = (int)((double)(12 * SineTable[index]) / ((float)divisor * 3.0f));
+
+		FacingType face = Facing_Between_Points(Get_Coord(), SpawnCoord);
+
+		Spawn_Held_Particle_Random(Get_Coord() + Coord(0, 0, 1), SpawnCoord + Coord(offset * _FireStepX[face], offset * _FireStepY[face], 0), 4);
+	}
+}
+
+// FUNCTION: 0x0062FD60
+void ParticleSystemClass::AI(void)
+{
+	switch (Class->BehavesLike) {
+		case PSYS_BEHAVIOR_SMOKE:
+			Smoke_AI();
+			break;
+		case PSYS_BEHAVIOR_GAS:
+			Gas_AI();
+			break;
+		case PSYS_BEHAVIOR_FIRE:
+			Fire_AI();
+			break;
+		case PSYS_BEHAVIOR_SPARK:
+			Spark_AI();
+			break;
+		case PSYS_BEHAVIOR_RAILGUN:
+			Railgun_AI();
+			break;
+	}
+
+	Lifetime--;
+	if (Lifetime == 0) {
+		Delete_Me();
+	}
+	if (IsActive && (IsMarkedForDeletion && SystemParticles.Count() == 0)) {
+		Limbo();
+		IsActive = false;
+		ObjectsToDelete.Add(this);
+	}
+}
+
+// FUNCTION: 0x0062FE60
+bool ParticleSystemClass::Is_Inactive(void) const
+{
+	return(IsMarkedForDeletion && SystemParticles.Count() == 0);
+}
+
+// FUNCTION: 0x0062FE80
+LayerType ParticleSystemClass::In_Which_Layer(void) const
+{
+	return(LAYER_GROUND);
+}
+
+// FUNCTION: 0x0062FE90
+void ParticleSystemClass::Detach(AbstractClass const * target, bool all)
+{
+	BASECLASS::Detach(target, all);
+	SystemParticles.Delete((ParticleClass *)target);
+	if (target == Class) {
+		Class = NULL;
+	}
+	if (target == Target) {
+		Target = NULL;
+	}
+	if (target == Source) {
+		IsMarkedForDeletion = true;
+		Source = NULL;
+	}
+}
+
+// FUNCTION: 0x0062FF20
+HRESULT STDMETHODCALLTYPE ParticleSystemClass::Load(IStream * stream)
+{
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		new (this) ParticleSystemClass(NoInitClass());
+
+		Swizzle_Pointer(&Class);
+		Swizzle_Pointer(&Target);
+		Swizzle_Pointer(&Source);
+
+		int count = 0;
+		result = stream->Read(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+
+		while (count--) {
+			ULONG pcbRead;
+			ParticleClass *pptr = NULL;
+			result = stream->Read(&pptr, sizeof(pptr), &pcbRead);
+			if (FAILED(result)) {
+				return(result);
+			}
+			SystemParticles.Add(pptr);
+		}
+
+		for (int index = 0; index < SystemParticles.Count(); index++) {
+			Swizzle_Pointer(&SystemParticles[index]);
+		}
+
+		result = S_OK;
+	}
+	return(result);
+}
+
+// FUNCTION: 0x00630090
+HRESULT STDMETHODCALLTYPE ParticleSystemClass::Save(IStream * stream, BOOL cleardirty)
+{
+	HRESULT result = BASECLASS::Save(stream, cleardirty);
+	if (SUCCEEDED(result)) {
+		int count = SystemParticles.Count();
+		result = stream->Write(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+
+		for (int index = 0; index < count; index++) {
+			result = stream->Write(&SystemParticles[index], sizeof(SystemParticles[index]), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+		}
+	}
+	return(result);
+}
+
+// FUNCTION: 0x00630100
+void ParticleSystemClass::Compute_CRC(CRCEngine & crc) const
+{
+	BASECLASS::Compute_CRC(crc);
+	for (int i = 0; i < SystemParticles.Count(); i++) {
+		crc(SystemParticles[i]->Fetch_ID());
+	}
+	if (Source != NULL) {
+		crc(Source->Fetch_ID());
+	}
+	if (Target != NULL) {
+		crc(Target->Fetch_ID());
+	}
+	crc(SpawnFrames);
+	crc(Lifetime);
+}
+
 // FUNCTION: 0x006301A0
 HRESULT STDMETHODCALLTYPE ParticleSystemClass::GetClassID(CLSID * retval)
 {
@@ -268,8 +469,28 @@ HRESULT STDMETHODCALLTYPE ParticleSystemClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
+// FUNCTION: 0x006301E0 ParticleSystemClass::Delete_Me
+
 // FUNCTION: 0x006301F0
 void ParticleSystemClass::FUN_006301F0(int lifetime)
 {
 	Lifetime = lifetime;
+}
+
+// FUNCTION: 0x00630200
+int ParticleSystemClass::Fetch_Object_Size(void) const
+{
+	return(sizeof(*this));
+}
+
+// FUNCTION: 0x00630210
+RTTIType ParticleSystemClass::Fetch_RTTI(void) const
+{
+	return(RTTI_PARTICLESYSTEM);
+}
+
+// FUNCTION: 0x00630220
+ObjectTypeClass const * ParticleSystemClass::Class_Of(void) const
+{
+	return(Class);
 }

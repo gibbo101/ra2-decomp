@@ -71,8 +71,8 @@ class BitText
 		BitText(void);
 		virtual ~BitText(void);
 
-		void Print(BitFont * font, Surface * surface, wchar_t const * text, int x, int y, int w, int h);
-		void DrawText(BitFont * font, Surface * surface, wchar_t const * text, int x, int y, int w, int h, bool a8, int a9, int a10);
+		int Print(BitFont * font, Surface * surface, wchar_t const * text, int x, int y, int w, int h);
+		void DrawText(BitFont * font, Surface * surface, wchar_t const * text, int x, int y, int w, int h, int a8, int a9, int a10);
 
 		static BitText * Instance;
 };

@@ -754,7 +754,7 @@ bool __fastcall FUN_007321D0(ObjectList * list, bool (__fastcall * test)(ObjectC
 }
 
 // FUNCTION: 0x00732210
-int __fastcall FUN_00732210(DynamicVectorClass<char *> * list, char const * name)
+int __fastcall FUN_00732210(DynamicVectorClass<char const *> * list, char const * name)
 {
 	for (int i = 0; i < list->Count(); i++) {
 		if (strcmp(name, (*list)[i]) == 0) {
@@ -792,15 +792,15 @@ int __fastcall Is_Selectable_Combatant(TechnoClass * techno, int unused)
 
 bool __fastcall FUN_00732770(TechnoClass * techno, char const * name);
 
-static inline ObjectList * Visible_Of_Name(char const * name)
+static inline TechnoList * Visible_Of_Name(char const * name)
 {
-	ObjectList * list = new ObjectList(0, NULL);
+	TechnoList * list = new TechnoList(0, NULL);
 	int count = TacticalSelectionInstance->Count();
 	for (int i = 0; i < count; i++) {
 		ObjectClass * object = TacticalSelectionInstance->Get(i);
 		if (object && object->Is_Techno()) {
-			ObjectClass * item = object;
-			if (FUN_00732770((TechnoClass *)item, name)) {
+			TechnoClass * item = (TechnoClass *)object;
+			if (FUN_00732770(item, name)) {
 				list->Add(item);
 			}
 		}
@@ -821,12 +821,12 @@ namespace Unsorted { extern bool TypeSelecting; }
 extern unsigned DAT_00B0FE68;
 void __fastcall FUN_00732950(void);
 
-typedef DynamicVectorClass<char *> NameList;
+typedef DynamicVectorClass<char const *> NameList;
 NameList * FUN_00732D10(void);
 bool __fastcall FUN_00732C30(TechnoClass * techno, NameList * names);
 
 // FUNCTION: 0x00732C30
-bool __fastcall Is_Named_Selectable(TechnoClass * techno, DynamicVectorClass<char *> * names)
+bool __fastcall Is_Named_Selectable(TechnoClass * techno, DynamicVectorClass<char const *> * names)
 {
 	int count = names->Count();
 	for (int i = 0; i < count; i++) {
@@ -870,7 +870,7 @@ bool FUN_00732D00(void)
 	return Unsorted::TypeSelecting;
 }
 
-typedef DynamicVectorClass<char *> NameList;
+typedef DynamicVectorClass<char const *> NameList;
 
 static inline bool Add_Name(NameList * list, char const * name)
 {
@@ -910,9 +910,9 @@ NameList * FUN_00732D10(void)
 // FUNCTION: 0x00732FF0
 void __fastcall FUN_00732FF0(char const * name, void (__fastcall * fn)(ObjectClass *, int), int arg)
 {
-	ObjectList * list;
+	TechnoList * list;
 	if (DAT_00B0FE64) {
-		list = new ObjectList(0, NULL);
+		list = new TechnoList(0, NULL);
 		int count = DAT_00A8EC78.Count();
 		for (int i = 0; i < count; i++) {
 			TechnoClass * techno = DAT_00A8EC78[i];
@@ -937,6 +937,11 @@ static inline ObjectList * New_Object_List(void)
 	return new ObjectList(0, NULL);
 }
 
+static inline TechnoList * New_Techno_List(void)
+{
+	return new TechnoList(0, NULL);
+}
+
 // FUNCTION: 0x007331B0
 void FUN_007331B0(void)
 {
@@ -945,12 +950,12 @@ void FUN_007331B0(void)
 		DAT_00B0FE6C = NULL;
 	}
 	int i = 0;
-	ObjectList * list = new ObjectList(0, NULL);
+	TechnoList * list = new TechnoList(0, NULL);
 	int count = DAT_00A8ECC8;
 	for (; i < count; i++) {
 		ObjectClass * object = DAT_00A8ECB8[i];
 		if (object && object->Is_Techno()) {
-			list->Add(object);
+			list->Add((TechnoClass *)object);
 		}
 	}
 	DAT_00B0FE6C = (UICommandHolder *)list;
@@ -959,12 +964,12 @@ void FUN_007331B0(void)
 			delete list;
 		}
 		DAT_00B0FE6C = NULL;
-		list = New_Object_List();
+		list = New_Techno_List();
 		int visible = TacticalSelectionInstance->Count();
 		for (i = 0; i < visible; i++) {
 			ObjectClass * object = TacticalSelectionInstance->Get(i);
 			if (object && object->Is_Techno() && object->IsActive && Player_Owned((TechnoClass *)object) && object->Fetch_RTTI() != RTTI_BUILDING) {
-				list->Add(object);
+				list->Add((TechnoClass *)object);
 			}
 		}
 		DAT_00B0FE6C = (UICommandHolder *)list;

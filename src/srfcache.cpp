@@ -3,6 +3,7 @@
 // Copyright 2025 Electronic Arts Inc.; 2026 OpenTS contributors
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
+#define NDEBUG
 #include "always.h"
 #include "srfcache.h"
 #include "ccfile.h"
@@ -10,7 +11,6 @@
 #include "ownrdraw.h"
 #include "pcx.h"
 #include <new>
-#pragma pack(push, 2)
 
 // FUNCTION: 0x006B9370
 int SurfaceCacheConvertPixel(int red, int green, int blue)
@@ -36,8 +36,83 @@ void SurfaceCacheConvertPalette(unsigned char *pal)
 	}
 }
 
+static unsigned int SurfaceCache_Wstring_Hash(Wstring & string);
+
+// FUNCTION: 0x006B9450
+SurfaceCacheClass::SurfaceCacheClass(void) :
+	Dictionary<Wstring, SurfaceCacheEntry>(SurfaceCache_Wstring_Hash)
+{
+
+}
+
+// FUNCTION: 0x006B94E0
+static unsigned int SurfaceCache_Wstring_Hash(Wstring & string)
+{
+	unsigned int hash = 0;
+
+	hash = string.length();
+
+	for (unsigned int i = 0; i < string.length(); i++) {
+		hash += *(string.get() + i);
+		hash += i;
+		hash = (hash << 8) ^ (hash >> 24);
+	}
+	return(hash);
+}
+
+// FUNCTION: 0x006B9530
+SurfaceCacheClass::~SurfaceCacheClass(void)
+{
+	Wstring key;
+	SurfaceCacheEntry value;
+	while (removeAny(key, value)) {
+		delete value.surf;
+	}
+}
+
 // FUNCTION: 0x006BA120
 bool SurfaceCacheClass::CachePalettedPCX(char const *name)
 {
 	return(CachePCX(name, 1, true));
+}
+
+// FUNCTION: 0x006BA140
+Surface * SurfaceCacheClass::GetSurface(char const * name, void * palette)
+{
+	Wstring n(name);
+	static SurfaceCacheEntry _x;
+
+	_x.surf = NULL;
+
+	SurfaceCacheEntry *p = &_x;
+	if (getPointer(n, &p)) {
+		if (p != NULL) {
+			_x = *p;
+		}
+		if (palette != NULL) {
+			memcpy(palette, _x.palette, sizeof(_x.palette));
+		}
+		return(_x.surf);
+	}
+	return(NULL);
+}
+
+// FUNCTION: 0x006BA220 $E27
+
+// FUNCTION: 0x006BA230
+void SurfaceCacheClass::Remove(char const *name)
+{
+	Wstring key(name);
+	SurfaceCacheEntry entry;
+	if (getValue(key, entry)) {
+		remove(key);
+		delete entry.surf;
+	}
+	getEntries();
+}
+
+// FUNCTION: 0x006BA680
+bool SurfaceCacheClass::DrawNullsub(Rect const & rect, Surface & tosurface, Surface & fromsurface)
+{
+	return(false);
 }

@@ -536,7 +536,9 @@ def mangled(name: str) -> tuple[str, ...]:
     parts = name.split("::")
     last, scopes = parts[-1], parts[:-1]
     if last.startswith("operator"):
-        code = OPERATORS.get(last[len("operator"):])
+        rest = last[len("operator"):].strip()
+        # A name after "operator" that is no operator symbol is a conversion operator (??B).
+        code = OPERATORS.get(rest) or ("B" if rest[:1].isalpha() else None)
         return (f"??{code}{''.join(s + '@' for s in reversed(scopes))}@",) if code else (last,)
     if scopes and last == scopes[-1]:
         return (f"??0{last}@{''.join(s + '@' for s in reversed(scopes[:-1]))}@",)

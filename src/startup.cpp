@@ -623,3 +623,19 @@ template class TClassFactory<VoxelAnimClass>;
 // FUNCTION: 0x006C1910 ?$TClassFactory@VTActionClass@@::CreateInstance
 // FUNCTION: 0x006C1990 ?$TClassFactory@VTActionClass@@::LockServer
 template class TClassFactory<TActionClass>;
+
+// FUNCTION: 0x006C19C0 ?$TClassFactory@VTriggerClass@@::?$TClassFactory@VTriggerClass@@
+// FUNCTION: 0x006C19D0 ?$TClassFactory@VTriggerClass@@::QueryInterface
+// FUNCTION: 0x006C1A40 ?$TClassFactory@VTriggerClass@@::AddRef
+// FUNCTION: 0x006C1A60 ?$TClassFactory@VTriggerClass@@::Release
+// FUNCTION: 0x006C1A90 ?$TClassFactory@VTriggerClass@@::CreateInstance
+// FUNCTION: 0x006C1B10 ?$TClassFactory@VTriggerClass@@::LockServer
+template class TClassFactory<TriggerClass>;
+
+// FUNCTION: 0x006C1B40 ?$TClassFactory@VTriggerTypeClass@@::?$TClassFactory@VTriggerTypeClass@@
+// FUNCTION: 0x006C1B50 ?$TClassFactory@VTriggerTypeClass@@::QueryInterface
+// FUNCTION: 0x006C1BC0 ?$TClassFactory@VTriggerTypeClass@@::AddRef
+// FUNCTION: 0x006C1BE0 ?$TClassFactory@VTriggerTypeClass@@::Release
+// FUNCTION: 0x006C1C10 ?$TClassFactory@VTriggerTypeClass@@::CreateInstance
+// FUNCTION: 0x006C1C90 ?$TClassFactory@VTriggerTypeClass@@::LockServer
+template class TClassFactory<TriggerTypeClass>;

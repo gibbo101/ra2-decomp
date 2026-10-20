@@ -195,6 +195,20 @@ void GraphicMenu::Set_Background_Name(Wstring const & name)
 
 // FUNCTION: 0x004F2850 ?$DynamicVectorClass@PAVGraphicMenuItem@@::Clear
 
-// FUNCTION: 0x004F2880 ?$VectorClass@PAVGraphicMenuItem@@::ID
+// FUNCTION: 0x004F2880 ?$DynamicVectorClass@PAVGraphicMenuItem@@::ID
 
+// FUNCTION: 0x004F28A0 ?$VectorClass@PAVGraphicMenuItem@@::GetItem
+// FUNCTION: 0x004F28B0 ?B?$VectorCursor@PAVGraphicMenuItem@@V?$DynamicVectorClass@PAVGraphicMenuItem@@@@
+// FUNCTION: 0x004F28C0 ?$VectorCursor@PAVGraphicMenuItem@@V?$DynamicVectorClass@PAVGraphicMenuItem@@@@::~?$VectorCursor@PAVGraphicMenuItem@@V?$DynamicVectorClass@PAVGraphicMenuItem@@@@
+// FUNCTION: 0x004F28E0 ?$VectorClass@PAVGraphicMenuItem@@::operator==
+// FUNCTION: 0x004F2920 ?$VectorClass@PAVGraphicMenuItem@@::Resize
+// FUNCTION: 0x004F29D0 ?$VectorClass@PAVGraphicMenuItem@@::Clear
+// FUNCTION: 0x004F2A00 ?$VectorClass@PAVGraphicMenuItem@@::ID
+// FUNCTION: 0x004F2A40 ?$VectorClass@PAVGraphicMenuItem@@::ID
+// FUNCTION: 0x004F2A60 ?$DynamicVectorClass@PAVGraphicMenuItem@@::Resize
+// FUNCTION: 0x004F2B10 ?$DynamicVectorClass@PAVGraphicMenuItem@@::ID
+// FUNCTION: 0x004F2B40 ?E?$VectorCursor@PAVGraphicMenuItem@@V?$DynamicVectorClass@PAVGraphicMenuItem@@@@
+// FUNCTION: 0x004F2B50 ?F?$VectorCursor@PAVGraphicMenuItem@@V?$DynamicVectorClass@PAVGraphicMenuItem@@@@
+template class VectorClass<GraphicMenuItem *>;
+template class VectorCursor<GraphicMenuItem *, DynamicVectorClass<GraphicMenuItem *> >;
 template class DynamicVectorClass<GraphicMenuItem *>;

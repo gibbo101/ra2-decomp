@@ -1914,6 +1914,80 @@ void __fastcall FUN_00639740(TechnoClass * techno, PlanningNodeClass * node)
 }
 
 
+// FUNCTION: 0x00639A50
+void __fastcall FUN_00639A50(PlanningNodeClass * node, PlanningNodeClass * last, EventClass event)
+{
+	int count = last->PlanningMembers.Count();
+	for (int i = 0; i < count; i++) {
+		TechnoClass * owner = last->Member_Owner(i);
+		event.Data.Target.Whom = TargetClass(owner);
+		node->Add_Member(owner, &event);
+	}
+}
+
+// FUNCTION: 0x00639BC0
+void __fastcall FUN_00639BC0(PlanningNodeClass * node)
+{
+	if (node) {
+		PlanningNodeClass * next = node->Next_Node(node->Member_Owner(0));
+		for (int i = node->PlanningMembers.Count() - 1; i >= 0; i--) {
+			TechnoClass * owner = node->Member_Owner(i);
+			PlanningTokenClass * token = owner->FUN_00705D20();
+			token->FUN_00636B50(token->Node_Index(node));
+		}
+		if (next && next != node) {
+			next->Clear();
+			int count = next->PlanningMembers.Count();
+			for (int i = 0; i < count; i++) {
+				next->FUN_00634E10(next->PlanningMembers[i]);
+			}
+			next->Update_Active();
+			next->Queued = false;
+		}
+	}
+}
+
+// FUNCTION: 0x00639E30
+bool __fastcall FUN_00639E30(PlanningTokenClass * a, PlanningTokenClass * b)
+{
+	if (!a && !b) {
+		return true;
+	}
+	int countA = 0;
+	if (a) {
+		countA = a->PlanningNodes.Count();
+	}
+	int countB = 0;
+	if (b) {
+		countB = b->PlanningNodes.Count();
+	}
+	if (countA == 0 && countB == 0) {
+		return true;
+	}
+	if (countA == 0 || countB == 0) {
+		return false;
+	}
+	PlanningNodeClass * nodeA = a->Node_At(countA - 1);
+	PlanningNodeClass * nodeB = b->Node_At(countB - 1);
+	TechnoClass * ownerA = a->OwnerUnit;
+	TechnoClass * ownerB = b->OwnerUnit;
+	if (nodeA->Find_Member(ownerB) == -1) {
+		return false;
+	}
+	if (nodeB->Find_Member(ownerA) == -1) {
+		return false;
+	}
+	return true;
+}
+
+// FUNCTION: 0x00639F60
+void __fastcall FUN_00639F60(int slot)
+{
+	if (slot >= 0 && slot < 24) {
+		DAT_00AC4B84[slot]++;
+	}
+}
+
 // FUNCTION: 0x00639F80
 void __fastcall FUN_00639F80(int slot)
 {
@@ -1921,4 +1995,97 @@ void __fastcall FUN_00639F80(int slot)
 		int value = DAT_00AC4B84[slot] - 1;
 		DAT_00AC4B84[slot] = (value < 0) ? 0 : value;
 	}
+}
+
+// FUNCTION: 0x00639FB0
+int __fastcall FUN_00639FB0(int slot)
+{
+	bool valid = slot >= 0 && slot < 24;
+	int value = 0;
+	if (valid) {
+		value = DAT_00AC4B84[slot];
+	}
+	return value;
+}
+
+// FUNCTION: 0x00639FD0
+void __fastcall FUN_00639FD0(EventClass * event)
+{
+	if (event->Type == EventClass::DEPLOY) {
+		if (!DAT_00AC4C08) {
+			DAT_00AC4C08 = true;
+			wchar_t const * text = StringTable::LoadString("MSG:PlanningModeNoDeploy", NULL, "D:\\ra2mdpost\\PlanMgr.cpp", 0xca1);
+			FUN_00730A90(text, 0x1e0);
+			VocClass::PlayGlobal(Rule->ScoldSound, 1.0f, 0x2000);
+		}
+	} else if (event->Type == EventClass::IDLE) {
+		if (!DAT_00AC4C08) {
+			DAT_00AC4C08 = true;
+			wchar_t const * text = StringTable::LoadString("MSG:PlanningModeNoStop", NULL, "D:\\ra2mdpost\\PlanMgr.cpp", 0xca1);
+			FUN_00730A90(text, 0x1e0);
+			VocClass::PlayGlobal(Rule->ScoldSound, 1.0f, 0x2000);
+		}
+	} else if (event->Type == EventClass::SCATTER) {
+		if (!DAT_00AC4C08) {
+			DAT_00AC4C08 = true;
+			wchar_t const * text = StringTable::LoadString("MSG:PlanningModeNoScatter", NULL, "D:\\ra2mdpost\\PlanMgr.cpp", 0xca1);
+			FUN_00730A90(text, 0x1e0);
+			VocClass::PlayGlobal(Rule->ScoldSound, 1.0f, 0x2000);
+		}
+	}
+	VocClass::PlayGlobal(Rule->ScoldSound, 1.0f, 0x2000);
+}
+
+// FUNCTION: 0x0063A0D0
+void __fastcall FUN_0063A0D0(void)
+{
+	if (!DAT_00AC4C08) {
+		DAT_00AC4C08 = true;
+		wchar_t const * text = StringTable::LoadString("MSG:PlanningModeNoGuardArea", NULL, "D:\\ra2mdpost\\PlanMgr.cpp", 0xca1);
+		FUN_00730A90(text, 0x1e0);
+		VocClass::PlayGlobal(Rule->ScoldSound, 1.0f, 0x2000);
+	}
+}
+
+// FUNCTION: 0x0063A120
+void __fastcall FUN_0063A120(bool button, bool intro)
+{
+	int slot = intro ? (button == 0) : 2;
+	int limit = button ? DAT_00AC4BF4[slot] + 1 : 1;
+	if (DAT_00AC4BF4[slot] < limit) {
+		wchar_t const * text;
+		if (intro) {
+			if (button) {
+				text = StringTable::LoadString("MSG:PlanningModeIntro1Button", NULL, "D:\\ra2mdpost\\PlanMgr.cpp", 0xca1);
+			} else {
+				text = StringTable::LoadString("MSG:PlanningModeIntro1Key", NULL, "D:\\ra2mdpost\\PlanMgr.cpp", 0xca1);
+			}
+		} else {
+			text = StringTable::LoadString("MSG:PlanningModeIntro3", NULL, "D:\\ra2mdpost\\PlanMgr.cpp", 0xca1);
+		}
+		FUN_00730A90(text, 0x1e0);
+		DAT_00AC4BF4[slot]++;
+	}
+}
+
+// FUNCTION: 0x0063A1B0
+void __fastcall FUN_0063A1B0(int slot)
+{
+	if (DAT_00AC4BF4[slot] < 1) {
+		if (slot == 3) {
+			wchar_t const * text = StringTable::LoadString("MSG:PlanningModeLoopHelp", NULL, "D:\\ra2mdpost\\PlanMgr.cpp", 0xca1);
+			FUN_00730A90(text, 0x1e0);
+		} else if (slot == 4) {
+			wchar_t const * text = StringTable::LoadString("MSG:PlanningModeDeleteHelp", NULL, "D:\\ra2mdpost\\PlanMgr.cpp", 0xca1);
+			FUN_00730A90(text, 0x1e0);
+		}
+		DAT_00AC4BF4[slot]++;
+	}
+}
+
+// FUNCTION: 0x0063A210
+void __fastcall FUN_0063A210(char const * name)
+{
+	wchar_t const * text = StringTable::LoadString(name, NULL, "D:\\ra2mdpost\\PlanMgr.cpp", 0xca1);
+	FUN_00730A90(text, 0x1e0);
 }

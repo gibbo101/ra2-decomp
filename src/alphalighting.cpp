@@ -23,6 +23,19 @@ AlphaLightingRemapClass *AlphaLightingRemapInitClass::Init(int count)
 	return(ptr);
 }
 
+// FUNCTION: 0x00420270
+void AlphaLightingRemapInitClass::Deinit(AlphaLightingRemapClass *ptr)
+{
+	if (ptr != NULL) {
+		AlphaLightingRemapClass *remap = ptr;
+		remap->RefCount--;
+		if (remap->RefCount == 0) {
+			AlphaLightingRemapClass::AlphaLightingRemaps.Delete(remap);
+			delete remap;
+		}
+	}
+}
+
 // FUNCTION: 0x004202F0
 AlphaLightingRemapClass::AlphaLightingRemapClass(int count)
 {
@@ -37,3 +50,29 @@ AlphaLightingRemapClass::AlphaLightingRemapClass(int count)
 		Buffer[0][i] = (unsigned char)n2 << 8;
 	}
 }
+
+// FUNCTION: 0x00420360
+AlphaLightingRemapInitClass::~AlphaLightingRemapInitClass(void)
+{
+}
+
+// FUNCTION: 0x00420370 ?$DynamicVectorClass@PAVAlphaLightingRemapClass@@::Clear
+template class DynamicVectorClass<AlphaLightingRemapClass *>;
+
+// FUNCTION: 0x004203A0 ?$DynamicVectorClass@PAVAlphaLightingRemapClass@@::ID
+
+// FUNCTION: 0x004203C0 ?$VectorClass@PAVAlphaLightingRemapClass@@::GetItem
+
+// FUNCTION: 0x004203D0 ?$VectorClass@PAVAlphaLightingRemapClass@@::operator==
+
+// FUNCTION: 0x00420410 ?$VectorClass@PAVAlphaLightingRemapClass@@::Resize
+
+// FUNCTION: 0x004204C0 ?$VectorClass@PAVAlphaLightingRemapClass@@::Clear
+
+// FUNCTION: 0x004204F0 ?$VectorClass@PAVAlphaLightingRemapClass@@::ID
+
+// FUNCTION: 0x00420530 ?$VectorClass@PAVAlphaLightingRemapClass@@::ID
+
+// FUNCTION: 0x00420550 ?$DynamicVectorClass@PAVAlphaLightingRemapClass@@::Resize
+
+// FUNCTION: 0x00420600 ?$DynamicVectorClass@PAVAlphaLightingRemapClass@@::ID

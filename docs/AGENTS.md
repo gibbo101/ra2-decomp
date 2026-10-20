@@ -334,6 +334,8 @@ Each entry: what the diff showed, then the source change that fixed it.
   compiled out is built (ownrdraw.cpp, wonline.cpp).
 - A match that flips with unrelated header declarations is VC6 ordering spill reloads by
   heap address: sweep dummy declarations and keep the form that fails at fewest offsets.
+- When no body form helps, moving real declarations the file already uses to before the
+  function shifts its heap offsets too (wonline 0x00788180); never add unused declarations.
 - A named reference to an object indexed more than once (`CellClass & center = Map[cell]`)
   can pin the order: it took Generate_Rural_Buildings from 24 of 64 failing offsets to 0.
 - Never remove a function data/progress.csv records from src/: report the stand-in instead.

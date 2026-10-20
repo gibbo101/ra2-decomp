@@ -195,6 +195,7 @@ namespace OwnerDraw {
 			} ComboDrop;
 
 			struct {
+				unsigned char reserved28[0xC0];
 				int itemState;
 			} DrawItem;
 
@@ -310,9 +311,15 @@ extern COLORREF ODColorUnused1;
 #define OD_DRAW_CHAR_ALIGN_FLAG_RIGHT 2
 #define OD_DRAW_CHAR_FLAG_VERTICAL_CENTER 4
 
-extern unsigned short ODRComponentMask;
-extern unsigned short ODGComponentMask;
+struct ODComponentMasks
+{
+	unsigned short R;
+	unsigned short G;
+};
+extern ODComponentMasks ODMasks;
 extern unsigned short ODBComponentMask;
+#define ODRComponentMask (ODMasks.R)
+#define ODGComponentMask (ODMasks.G)
 
 inline unsigned short OD_Blend_Color(unsigned short pixel, unsigned short color, unsigned char alpha)
 {

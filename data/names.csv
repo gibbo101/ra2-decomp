@@ -153,3 +153,4 @@ address,name,symbol,evidence
 0x0053EE70,IPXAddressClass::operator==,??8IPXAddressClass@@QAE_NAAV0@@Z,TibSun full address compare; called by IPXGlobalConnClass::Send_To 0x005403F0 at +0x107 and +0x174
 0x008872B0,Scripts,,DynamicVectorClass<ScriptClass *>: its initialiser stores vtable 0x007E1B24 (RTTI .?AV?$DynamicVectorClass@PAVScriptClass@@@@); TibSun _script.cpp
 0x0088730C,HiddenSurface,,TibSun HiddenSurface (gscreen.h, _surface.h); YRpp DSurface::Hidden; read by 0x00642A60 and 0x00554400
+0x00643E90,ProgressScreenClass::Get_Current_Progress,,thiscall ret 4: PlayerProgress[i]/MainProgress, or MainProgress when index >= PlayerCount; called by SessionClass::Update_Progress 0x0069AE90

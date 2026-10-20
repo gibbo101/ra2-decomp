@@ -4545,6 +4545,36 @@ template class VectorClass<Rect>;
 // FUNCTION: 0x005AD480 ?$DynamicVectorClass@PAU_WIN32_FIND_DATAA@@::~?$DynamicVectorClass@PAU_WIN32_FIND_DATAA@@
 // FUNCTION: 0x005AD4D0 ?$VectorClass@V?$TRect@H@@::~?$VectorClass@V?$TRect@H@@
 // FUNCTION: 0x005AD520 ?$DynamicVectorClass@V?$TRect@H@@::~?$DynamicVectorClass@V?$TRect@H@@
-// FUNCTION: 0x005AD570 ?$VectorClass@N::~?$VectorClass@N
+// FUNCTION: 0x005AD570 ?$VectorClass@PAVCellClass@@::~?$VectorClass@PAVCellClass@@
 template class VectorClass<CellClass *>;
 template class VectorClass<double>;
+
+// FUNCTION: 0x005AD5C0 ?$VectorClass@N::~?$VectorClass@N
+// FUNCTION: 0x005AD610 ?$DynamicVectorClass@N::~?$DynamicVectorClass@N
+template class DynamicVectorClass<double>;
+
+// FUNCTION: 0x005AD660 ?$TypeList@PBVBuildingTypeClass@@::?$TypeList@PBVBuildingTypeClass@@
+template class TypeList<BuildingTypeClass const *>;
+
+// FUNCTION: 0x005AD6F0 ?$VectorClass@PAD::?$VectorClass@PAD
+template class VectorClass<char *>;
+
+// FUNCTION: 0x005AD740 ?$VectorClass@PAVMapRegionClass@@::?$VectorClass@PAVMapRegionClass@@
+// FUNCTION: 0x005AD790 ?$DynamicVectorClass@PAVMapRegionClass@@::Delete_Index
+template class DynamicVectorClass<MapRegionClass *>;
+
+// FUNCTION: 0x005AD7D0 ?$DynamicVectorClass@PBVBuildingTypeClass@@::Add
+template class DynamicVectorClass<BuildingTypeClass const *>;
+
+// FUNCTION: 0x005AD820 ?$VectorClass@PAVCellClass@@::?$VectorClass@PAVCellClass@@
+template class VectorClass<CellClass *>;
+
+// FUNCTION: 0x005AD870 ?$PriorityQueueClass@UCellNode@@::Heapify
+template class PriorityQueueClass<CellNode>;
+
+// FUNCTION: 0x005AD930 ?$IndexClass@HPAVMapRegionClass@@::Increase_Table_Size
+// FUNCTION: 0x005AD9C0 ?$IndexClass@HPAVMapRegionClass@@::search_compfunc
+template class IndexClass<int, MapRegionClass *>;
+
+// FUNCTION: 0x005AD9F0 ?$VectorClass@PAU_WIN32_FIND_DATAA@@::?$VectorClass@PAU_WIN32_FIND_DATAA@@
+template class VectorClass<WIN32_FIND_DATAA *>;

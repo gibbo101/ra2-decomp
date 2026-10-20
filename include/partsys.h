@@ -67,7 +67,6 @@ class ParticleSystemClass : public ObjectClass
 		void Smoke_AI(void);
 		void Spark_AI(void);
 		void Fire_AI(void);
-		void Web_AI(void);
 
 	public:
 

@@ -393,3 +393,140 @@ bool FUN_006AE2C0(void)
 	if (result == 0x617) return true;
 	return false;
 }
+
+extern const double DAT_007E1708;
+extern const double DAT_007E1710;
+extern const double DAT_007E1718;
+extern const double DAT_007E1720;
+extern const double DAT_007E1728;
+extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
+extern const double DAT_007F3148;
+extern const double DAT_007F3150;
+
+namespace UI {
+	int __fastcall StandardWndProc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+}
+
+struct TooltipRequest {
+	HWND Window;
+	int Index;
+	WideWstring Text;
+};
+
+int __fastcall FUN_006ACEE0(HWND window, int id, LPARAM lparam, int code);
+int __fastcall FUN_006AE6E0(HWND window, WPARAM wparam, LPARAM lparam);
+char FUN_006067A0(HWND dialog);
+int __fastcall FUN_004E3830(int id);
+int __fastcall FUN_004E4230(int id);
+int __fastcall FUN_004E4EC0(int id);
+int __fastcall FUN_004E5900(HWND dialog, int id, int index);
+int __fastcall FUN_004E4170(HWND dialog, int id, int index);
+int __fastcall FUN_004E4E20(HWND dialog, int id, int index);
+wchar_t const * __fastcall FUN_004E4F30(int slot);
+wchar_t const * __fastcall FUN_004E38A0(int side);
+wchar_t const * __fastcall FUN_004E42A0(int color);
+
+// FUNCTION: 0x006AE3F0
+BOOL CALLBACK FUN_006AE3F0(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	BOOL result = UI::StandardWndProc(window, message, wparam, lparam);
+	if (result) {
+		return result;
+	}
+
+	switch (message) {
+		case WM_COMMAND:
+			FUN_006ACEE0(window, LOWORD(wparam), lparam, HIWORD(wparam));
+			return TRUE;
+
+		case WM_PAINT:
+			if (MultiplayerMapPreview) {
+				if (!FUN_006067A0(GetDlgItem(window, 0x468))) {
+					MultiplayerMapPreview->DrawStartPoints(window);
+				}
+			}
+			ValidateRect(window, NULL);
+			return FALSE;
+
+		case 0x497:
+			return FUN_006AE6E0(window, wparam, lparam);
+
+		case 0x4e9: {
+			TooltipRequest *request = (TooltipRequest *)lparam;
+			request->Text = (wchar_t const *)NULL;
+			if (request->Window && request->Index != -1) {
+				int id = GetDlgCtrlID(request->Window);
+				if (id == 0x50b || id == 0x50e || id == 0x516 || id == 0x51a || id == 0x51b || id == 0x51c || id == 0x51d) {
+					int level = request->Index;
+					if (level == -1) {
+						level = SendDlgItemMessage(window, id, CB_GETCURSEL, 0, 0);
+					}
+					level = SendDlgItemMessage(window, id, CB_GETITEMDATA, level, 0);
+					wchar_t const * text;
+					if (level == -1) {
+						text = StringTable::LoadString("STT:PlayerNone", NULL, "D:\\ra2mdpost\\Skirmish.cpp", 0x87);
+					} else if (level == 2) {
+						text = StringTable::LoadString("STT:PlayerDumbAI", NULL, "D:\\ra2mdpost\\Skirmish.cpp", 0x89);
+					} else if (level == 1) {
+						text = StringTable::LoadString("STT:PlayerSmartAI", NULL, "D:\\ra2mdpost\\Skirmish.cpp", 0x8b);
+					} else if (level == 0) {
+						text = StringTable::LoadString("STT:PlayerGeniusAI", NULL, "D:\\ra2mdpost\\Skirmish.cpp", 0x8d);
+					} else {
+						text = NULL;
+					}
+					request->Text = text;
+				} else if (FUN_004E3830(id) == -1) {
+					if (FUN_004E4230(id) == -1) {
+						if (FUN_004E4EC0(id) != -1) {
+							request->Text = FUN_004E4F30(FUN_004E5900(window, id, request->Index));
+						}
+					} else {
+						request->Text = FUN_004E42A0(FUN_004E4E20(window, id, request->Index));
+					}
+				} else {
+					int side = FUN_004E4170(window, id, request->Index);
+					if (side != -1) {
+						request->Text = FUN_004E38A0(side);
+					}
+				}
+			}
+			return TRUE;
+		}
+	}
+	return FALSE;
+}
+
+// FUNCTION: 0x006AEF10 $E106
+double DAT_00B0B5C0 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
+
+// FUNCTION: 0x006AEF40 $E109
+double DAT_00B0B628 = DAT_00B0B5C0 / DAT_007F3148;
+
+// FUNCTION: 0x006AEF60 $E112
+double DAT_00B0B610 = DAT_007E1718 / DAT_00B0B628;
+
+// FUNCTION: 0x006AEF80 $E115
+double DAT_00B0B608 = DAT_007E1720 * DAT_007F3150;
+
+// FUNCTION: 0x006AEFA0 $E118
+double DAT_00B0B5C8 = DAT_007E1728 * DAT_007F3150;
+
+// FUNCTION: 0x006AEFC0 $E121
+double DAT_00B0B5A0 = DAT_007E1730 * DAT_007F3150;
+
+// FUNCTION: 0x006AEFE0 $E124
+int DAT_00B0B630 = (int)(FUN_004CAD50(DAT_00B0B5A0 - DAT_00B0B5C8) * DAT_007E1738 * DAT_00B0B5C0);
+
+// FUNCTION: 0x006AF020 $E127
+double DAT_00B0B5D0 = FUN_004CADE0(DAT_00B0B630 * DAT_007E1740);
+
+// FUNCTION: 0x006AF050 $E130
+double DAT_00B0B5E8 = FUN_004CADE0((DAT_00B0B630 * 2) / DAT_00B0B5C0);
+
+// FUNCTION: 0x006AF080 $E133
+int DAT_00B0B624 = (int)(DAT_00B0B630 * 4 + DAT_007E1738);
+
+// FUNCTION: 0x006AF0B0 $E136
+ShortPair DAT_00B0B5B8;

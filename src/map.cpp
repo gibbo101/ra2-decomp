@@ -6305,3 +6305,31 @@ bool HashTableClass<unsigned int, SubzoneConnectionStruct>::Add_Object(int bucke
 // FUNCTION: 0x00589EB0 ?$VectorClass@PAVCellClass@@::operator==
 
 // FUNCTION: 0x00589EF0 ?$VectorClass@PAVCellClass@@::Resize
+
+// FUNCTION: 0x00589FA0 ?$VectorClass@PAVCellClass@@::Clear
+
+// FUNCTION: 0x00589FD0 ?$VectorClass@PAVCellClass@@::ID
+
+// FUNCTION: 0x0058A010 ?$VectorClass@PAVCellClass@@::ID
+
+template class DynamicVectorClass<int>;
+
+// FUNCTION: 0x0058A030 ?$DynamicVectorClass@H::Resize
+
+// FUNCTION: 0x0058A0E0 ?$DynamicVectorClass@H::ID
+
+template class VectorClass<HashObject<unsigned int, unsigned int> >;
+
+// FUNCTION: 0x0058A110 ?$VectorClass@U?$HashObject@II@@::operator==
+
+// FUNCTION: 0x0058A150 ?$DynamicVectorClass@U?$HashObject@II@@::Resize
+
+// FUNCTION: 0x0058A230 ?$DynamicVectorClass@U?$HashObject@II@@::ID
+
+// FUNCTION: 0x0058A260 ?$VectorClass@U?$HashObject@IUSubzoneConnectionStruct@@@@::operator==
+
+// FUNCTION: 0x0058A2A0 ?$DynamicVectorClass@U?$HashObject@IUSubzoneConnectionStruct@@@@::Resize
+
+// FUNCTION: 0x0058A3A0 ?$DynamicVectorClass@U?$HashObject@IUSubzoneConnectionStruct@@@@::ID
+
+// FUNCTION: 0x0058A3D0 ?$VectorClass@U?$HashObject@IUSubzoneConnectionStruct@@@@::~?$VectorClass@U?$HashObject@IUSubzoneConnectionStruct@@@@

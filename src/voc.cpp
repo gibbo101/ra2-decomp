@@ -1374,3 +1374,42 @@ int FUN_00753570(void)
 {
 	return ++DAT_00B1D3D8;
 }
+
+// FUNCTION: 0x007535B0
+int FUN_007535B0(void)
+{
+	if (DAT_00B1D4CC) {
+		DAT_00B1D4CC->FUN_00407FB0();
+	}
+	return ++DAT_00B1D428;
+}
+
+// FUNCTION: 0x007535D0
+void FUN_007535D0(void)
+{
+	if (DAT_00B1D4C4) {
+		DAT_00B1D4C4->State = 2;
+		DAT_00B1D4C4 = NULL;
+	}
+	if (DAT_00B1D4CC) {
+		DAT_00B1D4CC->FUN_00407F40();
+	}
+	FUN_00752370();
+	DAT_00B1D428 = 0;
+	DAT_00B1D3D8 = 0;
+}
+
+// FUNCTION: 0x00753650 ?$DynamicVectorClass@PAUVoxEntry@@::Clear
+// FUNCTION: 0x00753680 ?$VectorClass@PAUVoxEntry@@::ID
+// FUNCTION: 0x007536A0 ?$VectorClass@PAUVoxEntry@@::GetItem
+// FUNCTION: 0x007536B0 ?$VectorClass@PAUVoxEntry@@::operator==
+// FUNCTION: 0x007536F0 ?$VectorClass@PAUVoxEntry@@::Resize
+template class VectorClass<VoxEntry *>;
+template class DynamicVectorClass<VoxEntry *>;
+
+// FUNCTION: 0x007537A0 ?$VectorClass@PAUVoxNode@@::Clear
+// FUNCTION: 0x007537D0 ?$VectorClass@PAUVoxNode@@::ID
+// FUNCTION: 0x00753810 ?$VectorClass@PAUVoxNode@@::ID
+// FUNCTION: 0x00753830 ?$DynamicVectorClass@PAUVoxNode@@::Resize
+template class VectorClass<VoxNode *>;
+template class DynamicVectorClass<VoxNode *>;
