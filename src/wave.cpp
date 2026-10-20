@@ -392,3 +392,172 @@ HRESULT STDMETHODCALLTYPE WaveClass::GetClassID(CLSID * retval)
 	*retval = CLSID_WaveClass;
 	return(S_OK);
 }
+
+// FUNCTION: 0x0075F880
+int WaveClass::Fetch_Object_Size(void) const
+{
+	return sizeof(*this);
+}
+
+// FUNCTION: 0x0075F890
+LayerType WaveClass::In_Which_Layer(void) const
+{
+	return LAYER_AIR;
+}
+
+// FUNCTION: 0x0075F8A0
+ObjectTypeClass const * WaveClass::Class_Of(void) const
+{
+	return NULL;
+}
+
+// FUNCTION: 0x0075F8B0
+bool WaveClass::Unlimbo(Coord const & coord, Dir256 facing)
+{
+	if (GameActive && IsInLimbo && !IsDown) {
+		if (ScenarioInit || Can_Enter_Cell(&Map[coord], FACING_NONE, coord.Z) == MOVE_OK) {
+			IsInLimbo = false;
+			IsToDisplay = false;
+			PositionCoord = coord;
+
+			if (Mark(MARK_DOWN)) {
+				if (IsActive) {
+					if (In_Which_Layer() != LAYER_NONE) {
+						Map.Submit(this);
+					}
+					Logic.Submit(this);
+				}
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+// FUNCTION: 0x0075F980
+bool WaveClass::Limbo(void)
+{
+	if (GameActive && !IsInLimbo) {
+		Detach_All();
+		Mark(MARK_UP);
+
+		Map.Remove(this);
+		Logic.Remove(this);
+
+		Hidden();
+		IsInLimbo = true;
+		IsToDisplay = false;
+		return true;
+	}
+	return false;
+}
+
+// FUNCTION: 0x0075F9F0
+void WaveClass::Draw_It(Point2D const & point, Rect const & cliprect) const
+{
+	if (Scen->Special.IsFogOfWar && Map.Is_Fogged(StartCoord) && Map.Is_Fogged(EndCoord)) return;
+
+	switch (Type) {
+		case WAVE_SONIC:
+			((WaveClass *)this)->Draw_Sonic(point, cliprect);
+			break;
+		case 3:
+			((WaveClass *)this)->FUN_007602E0(point, cliprect);
+			break;
+		case WAVE_BIG_LASER:
+		case WAVE_LASER:
+			((WaveClass *)this)->Draw_Laser(point, cliprect);
+			break;
+	}
+}
+
+// FUNCTION: 0x00760190
+void WaveClass::FUN_00760190(int x, int xoff, int y, unsigned short * buffer) const
+{
+	int radius = RadiusTable[y][abs(x - WaveStartMiddle.X - xoff)];
+	int amplitude = abs(SineTable2[WaveEC + radius]);
+	if (amplitude >= 9) amplitude = 9;
+	unsigned short color = buffer[WaveIntensityTable[amplitude]];
+	int mult = IntensityTable[amplitude];
+
+	RGBClass rgb = DSurface::Deconstruct_Hicolor_Pixel(color);
+	int red = rgb.Get_Red();
+	int green = rgb.Get_Green();
+	int blue = rgb.Get_Blue();
+	red += ((red * (mult / 2)) >> 8);
+	blue += ((blue * mult * 4) >> 8);
+
+	*buffer = DSurface::Build_Hicolor_Pixel(MIN(255, red), green, MIN(255, blue));
+}
+
+// FUNCTION: 0x00760F50
+void WaveClass::AI(void)
+{
+	int i;
+	switch (Type) {
+		case 3:
+			Update_Wave();
+			WaveEC -= 1;
+			if (WaveEC < 0) {
+				Delete_Me();
+				return;
+			}
+			BASECLASS::AI();
+			return;
+		case WAVE_SONIC:
+			Update_Wave();
+			for (i = 0; i < AffectedCells.Count(); i++) {
+				Sonic_Damage(AffectedCells[i]->Cell_Coord());
+			}
+			WaveEC -= 1;
+			if (WaveEC < 0) {
+				Delete_Me();
+				return;
+			}
+			BASECLASS::AI();
+			return;
+		case WAVE_BIG_LASER:
+		case WAVE_LASER:
+			LaserEC -= 6;
+			if (LaserEC < 32) {
+				Delete_Me();
+			}
+			return;
+	}
+}
+
+// FUNCTION: 0x00761030
+void WaveClass::Sonic_AI(void)
+{
+	Update_Wave();
+	for (int i = 0; i < AffectedCells.Count(); i++) {
+		Sonic_Damage(AffectedCells[i]->Cell_Coord());
+	}
+	WaveEC -= 1;
+	if (WaveEC < 0) {
+		Delete_Me();
+	} else {
+		BASECLASS::AI();
+	}
+}
+
+// FUNCTION: 0x007610A0
+void WaveClass::FUN_007610A0(void)
+{
+	Update_Wave();
+	WaveEC -= 1;
+	if (WaveEC < 0) {
+		Delete_Me();
+	} else {
+		BASECLASS::AI();
+	}
+}
+
+// FUNCTION: 0x007610D0
+void WaveClass::Laser_AI(void)
+{
+	LaserEC -= 6;
+	if (LaserEC < 32) {
+		Delete_Me();
+	}
+}

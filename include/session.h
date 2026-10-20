@@ -539,6 +539,8 @@ class SessionClass
 		void Init_Fixed_Alliances(void);
 		int Color_Index_To_Scheme(int id);
 		bool Is_Random_Map(void) const;
+		void FUN_0069B760(int side, bool random);
+		void FUN_0069B7E0(int color, bool random);
 
 		void Trap_Object(void);
 		bool Log_To_File(FILE *out);

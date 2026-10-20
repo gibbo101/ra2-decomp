@@ -63,6 +63,7 @@ class INIClass {
 		TPoint3D<int> const Get_Point(char const * section, char const * entry, TPoint3D<int> const & defvalue) const;
 		TPoint2D<int> const Get_Point(char const * section, char const * entry, TPoint2D<int> const & defvalue) const;
 		TPoint3D<float> const Get_Point(char const * section, char const * entry, TPoint3D<float> const & defvalue) const;
+		TPoint3D<float> const Get_Point(Wstring const & section, Wstring const & entry, TPoint3D<float> const & defvalue) const;
 		TPoint2D<int> const Get_Point(Wstring const & section, Wstring const & entry, TPoint2D<int> const & defvalue) const;
 		TPoint3D<int> const Get_Point(Wstring const & section, Wstring const & entry, TPoint3D<int> const & defvalue) const;
 		CLSID const Get_CLSID(char const * section, char const * entry, CLSID defvalue) const;
@@ -89,6 +90,8 @@ class INIClass {
 		bool Put_Point(Wstring const & section, Wstring const & entry, TPoint2D<int> const & value);
 		bool Put_Point(Wstring const & section, Wstring const & entry, TPoint3D<int> const & value);
 		bool Put_Point(Wstring const & section, Wstring const & entry, TPoint3D<float> const & value);
+		int ReadTime(char const * section, char const * entry, int defvalue) const;
+		bool WriteTime(char const * section, char const * entry, int value);
 		bool Put_CLSID(char const * section, char const * entry, CLSID const & value);
 		bool Put_UnicodeString(char const * section, char const * entry, wchar_t const * string);
 		bool Put_UnicodeString(Wstring const & section, Wstring const & entry, WideWstring const & string);

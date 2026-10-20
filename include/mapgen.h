@@ -347,6 +347,7 @@ class MapGeneratorClass
 		void Generate_Rural_Units(const Cell & cell);
 		bool Generate_Rural_Roads(const Cell & cell);
 		void Generate_Lights(void);
+		void Generate_Neutral_Buildings(void);
 		void Generate_Veinholes(void);
 
 		Cell Plan_Paved_Road_Junction(Cell const & cell, Rect const & rect, FacingType dir);

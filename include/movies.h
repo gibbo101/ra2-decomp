@@ -117,4 +117,45 @@ class VQMovieHandle : public MovieHandle
 		bool Finished;
 };
 
+struct BinkInfo
+{
+	int Width;
+	int Height;
+};
+
+class BinkHandle
+{
+	public:
+		void FUN_00432C30(bool pause);
+		void FUN_00432C70(void);
+		bool FUN_00432C50(void);
+		bool FUN_00433040(void);
+		void FUN_00433020(void);
+		void FUN_00432AB0(int x, int y);
+		void FUN_00432C10(void (__fastcall * callback)(void *));
+		void FUN_00432BD0(int frame);
+		int FUN_00432BF0(void);
+		void FUN_00433060(void);
+
+		int field_0;
+		BinkInfo * Bink;
+};
+
+class BinkMovieHandle : public MovieHandle
+{
+	public:
+		BinkMovieHandle(BinkHandle * player);
+		virtual ~BinkMovieHandle(void);
+		virtual bool AdvanceFrame(void);
+		virtual void Waiting(void);
+		virtual void Pause(bool pause);
+		virtual void Stop(void);
+		virtual bool FramesLeft(void);
+		virtual void SetPosition(int x, int y);
+		virtual void SeekToFrame(int frame);
+		virtual void InitSubtitles(void (__fastcall * callback)(void *));
+		virtual int Timing(void);
+		virtual void Blit(void);
+};
+
 extern DynamicVectorClass<MovieHandle *> IngameVQ;

@@ -10,6 +10,9 @@
 #include <cstdio>
 #include <cstring>
 #include <cmath>
+#include "_timer.h"
+#include "globals.h"
+#include "session.h"
 
 namespace fastmath { double __cdecl sqrt(double x); double __cdecl tan(double x); double __cdecl atan(double x); }
 extern const double DAT_007E1708;
@@ -22,42 +25,197 @@ extern const double DAT_007E1738;
 extern const double DAT_007E1740;
 extern const double DAT_007EC0F8;
 extern const double DAT_007EC100;
+void __cdecl FUN_004068E0(char const * format, ...);
 
-// FUNCTION: 0x0053F8A0 $E13
+// FUNCTION: 0x0053F8A0 $E40
 double DAT_00AA05D0 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x0053F8D0 $E16
+// FUNCTION: 0x0053F8D0 $E43
 double DAT_00AA0620 = DAT_00AA05D0 / DAT_007EC0F8;
 
-// FUNCTION: 0x0053F8F0 $E19
+// FUNCTION: 0x0053F8F0 $E46
 double DAT_00AA0608 = DAT_007E1718 / DAT_00AA0620;
 
-// FUNCTION: 0x0053F910 $E22
+// FUNCTION: 0x0053F910 $E49
 double DAT_00AA0600 = DAT_007E1720 * DAT_007EC100;
 
-// FUNCTION: 0x0053F930 $E25
+// FUNCTION: 0x0053F930 $E52
 double DAT_00AA05D8 = DAT_007E1728 * DAT_007EC100;
 
-// FUNCTION: 0x0053F950 $E28
+// FUNCTION: 0x0053F950 $E55
 double DAT_00AA05B0 = DAT_007E1730 * DAT_007EC100;
 
-// FUNCTION: 0x0053F970 $E31
+// FUNCTION: 0x0053F970 $E58
 int DAT_00AA0628 = (int)(DAT_007E1738 * (fastmath::tan(DAT_00AA05B0 - DAT_00AA05D8) * DAT_00AA05D0));
 
-// FUNCTION: 0x0053F9B0 $E34
+// FUNCTION: 0x0053F9B0 $E61
 double DAT_00AA05E0 = fastmath::atan(DAT_00AA0628 * DAT_007E1740);
 
-// FUNCTION: 0x0053F9E0 $E37
+// FUNCTION: 0x0053F9E0 $E64
 double DAT_00AA05F8 = fastmath::atan((DAT_00AA0628 * 2) / DAT_00AA05D0);
 
-// FUNCTION: 0x0053FA10 $E40
+// FUNCTION: 0x0053FA10 $E67
 int DAT_00AA061C = (int)((DAT_00AA0628 * 4) + DAT_007E1738);
 
-// FUNCTION: 0x0053FA40 $E43
+// FUNCTION: 0x0053FA40 $E70
 Cell DAT_00AA05C8(0, 0);
 
-// FUNCTION: 0x0053FA50 $E46
+// FUNCTION: 0x0053FA50 $E73
 Coord DAT_00AA05E8(0, 0, 0);
+
+// FUNCTION: 0x0053FA70 $E76
+Coord DAT_00AA0610(128, 128, 0);
+
+// FUNCTION: 0x0053FA90
+IPXGlobalConnClass::IPXGlobalConnClass (int numsend, int numreceive, int maxlen,
+	unsigned short product_id, unsigned short magicnum) :
+	BASECLASS (numsend, numreceive, maxlen + 2, magicnum, NULL, 0, L"", sizeof (IPXAddressClass))
+{
+	ProductID = product_id;
+	IsBridge = 0;
+	FieldC8 = true;
+	MaxRXIndex = numreceive;
+	LastPacketID = new unsigned int[MaxRXIndex];
+	LastAddress = new IPXAddressClass[MaxRXIndex];
+
+	for (int i = 0; i < MaxRXIndex; i++) {
+		LastPacketID[i] = 0xffffffff;
+	}
+
+	LastRXIndex = 0;
+}
+
+// FUNCTION: 0x0053FB70
+IPXGlobalConnClass::~IPXGlobalConnClass(void)
+{
+	if (LastPacketID) {
+		delete [] LastPacketID;
+		LastPacketID = NULL;
+	}
+	if (LastAddress) {
+		delete [] LastAddress;
+		LastAddress = NULL;
+	}
+}
+
+// FUNCTION: 0x0053FBD0
+int IPXGlobalConnClass::Send_Packet (void * buf, int buflen,
+	IPXAddressClass *address, int ack_req, unsigned short port, int packet_id)
+{
+	IPXAddressClass dest_addr;
+
+	((GlobalHeaderType *)PacketBuf)->Field8 = 0;
+	((GlobalHeaderType *)PacketBuf)->FieldC = 0;
+	((GlobalHeaderType *)PacketBuf)->MagicNumber = MagicNum;
+
+	if (ack_req && address != NULL) {
+		((GlobalHeaderType *)PacketBuf)->Code = PACKET_DATA_ACK;
+	}
+	else {
+		((GlobalHeaderType *)PacketBuf)->Code = PACKET_DATA_NOACK;
+	}
+
+	((GlobalHeaderType *)PacketBuf)->PacketID = Queue->Send_Total();
+	if (packet_id != 0) {
+		((GlobalHeaderType *)PacketBuf)->PacketID = packet_id;
+	}
+
+	((GlobalHeaderType *)PacketBuf)->ProductID = ProductID;
+	((GlobalHeaderType *)PacketBuf)->Field3 = 0;
+
+	if (address != NULL) {
+		dest_addr = (*address);
+	}
+
+	memcpy(PacketBuf + sizeof(GlobalHeaderType), buf, buflen);
+
+	return(Queue->Queue_Send(PacketBuf, buflen + sizeof(GlobalHeaderType),
+		&dest_addr, sizeof (IPXAddressClass), port));
+}
+
+// FUNCTION: 0x0053FF10
+int IPXGlobalConnClass::Get_Packet (void * buf, int *buflen,
+	IPXAddressClass *address, unsigned short *product_id)
+{
+	ReceiveQueueType *rec_entry;
+	GlobalHeaderType *packet;
+	int packetlen;
+
+	if (Queue->Num_Receive() == 0) {
+		return(0);
+	}
+
+	rec_entry = Queue->Get_Receive(0);
+
+	if (rec_entry != NULL && rec_entry->IsRead == 0) {
+		rec_entry->IsRead = 1;
+
+		packet = (GlobalHeaderType *)(rec_entry->Buffer);
+		packetlen = rec_entry->BufLen - sizeof(GlobalHeaderType);
+		if (packetlen > 0) {
+			memcpy(buf, rec_entry->Buffer + sizeof(GlobalHeaderType), packetlen);
+		}
+		(*buflen) = packetlen;
+		(*product_id) = packet->ProductID;
+		(*address) = (*((IPXAddressClass *)(rec_entry->ExtraBuffer)));
+
+		return(1);
+	}
+
+	return(0);
+}
+
+// FUNCTION: 0x0053FFA0
+int IPXGlobalConnClass::vt_entry_38(int index, int buf, int buflen, int address, int product_id, int packet_id)
+{
+	ReceiveQueueType *rec_entry;
+	GlobalHeaderType *packet;
+	int packetlen;
+
+	if (Queue->Num_Receive() >= index) {
+		rec_entry = Queue->Get_Receive(index);
+
+		if (rec_entry != NULL && rec_entry->IsRead == 0) {
+			packet = (GlobalHeaderType *)(rec_entry->Buffer);
+			packetlen = rec_entry->BufLen - sizeof(GlobalHeaderType);
+			if (packetlen > 0) {
+				memcpy((void *)buf, rec_entry->Buffer + sizeof(GlobalHeaderType), packetlen);
+			}
+			*(int *)buflen = packetlen;
+			*(unsigned short *)product_id = packet->ProductID;
+			*(IPXAddressClass *)address = *((IPXAddressClass *)(rec_entry->ExtraBuffer));
+			if (packet_id != 0) {
+				*(unsigned int *)packet_id = packet->PacketID;
+			}
+			return(1);
+		}
+	}
+
+	return(0);
+}
+
+// FUNCTION: 0x00540030
+void IPXGlobalConnClass::vt_entry_3C(int index)
+{
+	if (index < Queue->Num_Receive()) {
+		Queue->Get_Receive(index)->IsRead = 1;
+	}
+}
+
+// FUNCTION: 0x00540050
+int IPXGlobalConnClass::Send(char *buf, int buflen, void *extrabuf, int extralen, bool flag, unsigned short port)
+{
+	IPXAddressClass *addr = (IPXAddressClass *)extrabuf;
+
+	if (addr->Is_Broadcast()) {
+		return(Broadcast (buf, buflen));
+	}
+
+	if (Session.Type == GAME_IPX && IsBridge && !memcmp (addr, BridgeNet, 4)) {
+		return(Send_To (buf, buflen, addr, BridgeNode, flag, 0));
+	}
+	return(Send_To (buf, buflen, addr, NULL, flag, port));
+}
 
 // FUNCTION: 0x005400D0
 int IPXGlobalConnClass::Service_Receive_Queue (void)
@@ -75,4 +233,71 @@ int IPXGlobalConnClass::Service_Receive_Queue (void)
 	}
 
 	return(1);
+}
+
+// FUNCTION: 0x00540110
+void IPXGlobalConnClass::vt_entry_44(unsigned age)
+{
+	FUN_004068E0("Stripping queue entries older than %d seconds. Num receive = %d\n", age / 60, Queue->Num_Receive());
+
+	for (int i = 0; i < Queue->Num_Receive(); i++) {
+		ReceiveQueueType *entry = Queue->Get_Receive(i);
+
+		FUN_004068E0("i = %d\n", i);
+		if (entry != NULL) {
+			FUN_004068E0("Checking packet %d\n", i);
+
+			if ((int)(entry->ReceiveTime + age) < (int)TickCount) {
+				FUN_004068E0("Stripping global packet due to age of %d seconds\n",
+					((int)TickCount - (int)entry->ReceiveTime) / 60);
+
+				unsigned int id = ((GlobalHeaderType *)entry->Buffer)->PacketID;
+				for (int j = 0; j < MaxRXIndex; j++) {
+					if (LastPacketID[j] == id) {
+						LastPacketID[j] = 0xffffffff;
+						break;
+					}
+				}
+				Queue->UnQueue_Receive(NULL, NULL, i, NULL, NULL);
+				i--;
+			}
+			else {
+				FUN_004068E0("Leaving global packet due to age of %d seconds\n",
+					((int)TickCount - (int)entry->ReceiveTime) / 60);
+			}
+		}
+	}
+
+	FUN_004068E0("Done stripping. Num receive = %d\n", Queue->Num_Receive());
+}
+
+// FUNCTION: 0x005402B0
+void IPXGlobalConnClass::Set_Bridge(NetNumType bridge)
+{
+	if (Configured) {
+		IsBridge = 0;
+	}
+}
+
+// FUNCTION: 0x005402D0
+int IPXGlobalConnClass::Discard_Undeliverable_Packets(void)
+{
+	int num = 0;
+
+	for (int i = 0; i < Queue->Num_Send(); i++) {
+		SendQueueType *send_entry = Queue->Get_Send(i);
+
+		if (send_entry->IsUndeliverable && !send_entry->IsACK) {
+			IPXAddressClass address;
+			char buf[1024];
+			int buflen;
+			int address_size = sizeof(address);
+
+			Queue->UnQueue_Send(buf, &buflen, i, &address, &address_size, NULL);
+			i--;
+			num++;
+		}
+	}
+
+	return(num);
 }

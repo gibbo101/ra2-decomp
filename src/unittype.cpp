@@ -5,6 +5,7 @@
 
 #define INCLUDE_COM
 #include "always.h"
+#include "geometry.h"
 #include "unittype.h"
 #include "_map.h"
 #include "_mixfile.h"
@@ -28,6 +29,19 @@
 #include <cstdio>
 #include <cstring>
 #include <stdlib.h>
+
+// FUNCTION: 0x00746EE0 $E2
+// FUNCTION: 0x00746F10 $E5
+// FUNCTION: 0x00746F30 $E8
+// FUNCTION: 0x00746F50 $E11
+// FUNCTION: 0x00746F70 $E14
+// FUNCTION: 0x00746F90 $E17
+// FUNCTION: 0x00746FB0 $E20
+// FUNCTION: 0x00746FF0 $E23
+// FUNCTION: 0x00747020 $E26
+// FUNCTION: 0x00747050 $E29
+// FUNCTION: 0x00747080 $E32
+// FUNCTION: 0x00747090 $E35
 
 // FUNCTION: 0x00747600
 TPoint2D<int> UnitTypeClass::Turret_Adjust(Dir256 dir, TPoint2D<int> const & xy) const

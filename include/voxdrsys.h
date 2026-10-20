@@ -81,6 +81,7 @@ struct VoxelShadowRenderStruct {
 	int Info;
 
 	Vector3 ShadowCorner[4];
+	int Reserved[3];
 };
 
 struct VoxelRenderOrientation {

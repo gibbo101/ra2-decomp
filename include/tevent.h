@@ -6,6 +6,7 @@
 
 #include "abstract.h"
 #include "ftimer.h"
+#include "stringid.h"
 #include "timer.h"
 #include "types.h"
 
@@ -52,13 +53,13 @@ class TEventClass : public AbstractClass
 			int	Value;
 		} Data;
 
-		char String[28];
+		TStringID<24> String;
 		HouseClass * EventHouse;
 
 		HouseClass * Get_Event_House(void) const;
 
 		TEventClass(void);
-		TEventClass(NoInitClass const & x): BASECLASS(x) {}
+		TEventClass(NoInitClass const & x);
 		virtual ~TEventClass(void) override;
 
 		virtual HRESULT STDMETHODCALLTYPE GetClassID(CLSID * retval) override;

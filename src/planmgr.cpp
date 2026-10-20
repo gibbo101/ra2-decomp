@@ -259,7 +259,7 @@ class PlanningNodeClass
 		PlanOwn Own;
 
 		PlanningNodeClass(int id);
-		~PlanningNodeClass() { Clear(); FUN_00637640(); }
+		~PlanningNodeClass() { Clear(); FUN_00637640(this); }
 		int Get_Id(void);
 		int Get_Count(void);
 		int Index_In(TechnoClass * techno);
@@ -320,7 +320,7 @@ class PlanningNodeClass
 		void FUN_006351E0(PlanMember *);
 		void FUN_00635DB0(bool);
 		void FUN_006378B0(void);
-		void FUN_00637640(void);
+		static void FUN_00637640(PlanningNodeClass * node);
 		void FUN_006340B0(TechnoClass *);
 		void Locate_Own_Branch(void);
 		PlanMember * FUN_006346B0(TechnoClass * techno);
@@ -364,6 +364,9 @@ class PlanToken
 		bool Loop_Start_Valid(void);
 		bool Loop_Start_Positive(void);
 		bool Loop_Start_Zero(void);
+		bool Get_F98(void);
+		bool Get_F99(void);
+		void Dec_Loop_Start(void);
 		EventClass Pop_Front(void);
 		void Share_Range(TechnoClass * techno, int start, int count);
 		void Share_From(TechnoClass * techno, int start);
@@ -1739,4 +1742,107 @@ bool PlanToken::Loop_Start_Positive(void)
 bool PlanToken::Loop_Start_Zero(void)
 {
 	return LoopStart == 0;
+}
+
+// FUNCTION: 0x00637020
+bool PlanToken::Get_F98(void)
+{
+	return F98;
+}
+
+// FUNCTION: 0x00637030
+bool PlanToken::Get_F99(void)
+{
+	return F99;
+}
+
+// FUNCTION: 0x00637040
+void PlanToken::Dec_Loop_Start(void)
+{
+	LoopStart--;
+	LoopStart = (LoopStart <= 0) ? 0 : LoopStart;
+}
+
+extern void * DAT_00AC4B80;
+extern bool DAT_00AC4CF4;
+extern bool DAT_00AC4CB0;
+extern Point2D DAT_00AC4C68;
+
+// FUNCTION: 0x00637060
+void __fastcall FUN_00637060(void * value)
+{
+	DAT_00AC4B80 = value;
+}
+
+// FUNCTION: 0x00637070
+void __fastcall FUN_00637070(void)
+{
+	DAT_00AC4CF4 = false;
+	DAT_00AC4CF5 = false;
+	DAT_00AC4CCC = 0;
+	DAT_00AC4C38 = 0;
+	DAT_00AC4BF0 = 0;
+	DAT_00AC4C68 = Point2D(0, 0);
+	DAT_00AC4CB0 = false;
+}
+
+void __fastcall FUN_006370B0(void);
+
+// FUNCTION: 0x006370A0
+void __fastcall FUN_006370A0(void)
+{
+	FUN_006370B0();
+}
+
+// FUNCTION: 0x00637550
+void __fastcall FUN_00637550(void)
+{
+	for (int i = PlanEvents::Events.Count() - 1; i >= 0; i--) {
+		EventClass * event = PlanEvents::Events[i];
+		event->FUN_00652230();
+		PlanEvents::Events.Delete_Index(i);
+		delete event;
+	}
+}
+
+// FUNCTION: 0x006375B0
+void __fastcall FUN_006375B0(EventClass const & source)
+{
+	EventClass * event = new EventClass;
+	*event = source;
+	if (event->Type == EventClass::MEGAMISSION) {
+		*(unsigned char *)&event->Data.MegaMission.IsPlanningEvent = 2;
+	}
+	PlanEvents::Events.Add(event);
+}
+
+static inline void Unlink_From(DynamicVectorClass<PlanningNodeClass *> * list, PlanningNodeClass * const & self)
+{
+	int id = list->ID(self);
+	if (id != -1) {
+		list->Delete_Index(id);
+	}
+}
+
+// FUNCTION: 0x00637640
+void PlanningNodeClass::FUN_00637640(PlanningNodeClass * node)
+{
+	Unlink_From(&PlanningNodeClass::Unknown3, node);
+	Unlink_From(&PlanningNodeClass::Unknown1, node);
+	Unlink_From(&PlanningNodeClass::Unknown2, node);
+	if (DAT_00AC4CCC == node) {
+		DAT_00AC4CCC = 0;
+	}
+	if (DAT_00AC4C38 == node) {
+		DAT_00AC4C38 = 0;
+	}
+	if (DAT_00AC4BF0 == node) {
+		DAT_00AC4BF0 = 0;
+	}
+}
+
+// FUNCTION: 0x00637750
+void __fastcall FUN_00637750(PlanningTokenClass * token)
+{
+	Unregister_Token(token);
 }

@@ -320,8 +320,9 @@ Each entry: what the diff showed, then the source change that fixed it.
   cut them to the comment rules (two `//` lines of behaviour) before landing.
 - `#define NDEBUG` before the includes is how a file whose original has its asserts
   compiled out is built (ownrdraw.cpp, wonline.cpp).
-- A match that flips with unrelated header declarations has an order VC6 settles by
-  symbol table: look for a dead store (Draw_It's `brightness = 0`), not header padding.
+- A match that flips with unrelated header declarations can be VC6 ordering spill reloads
+  by heap address (Draw_It): no form pins it, so keep the one failing fewest offsets.
+- Never remove a function data/progress.csv records from src/: report the stand-in instead.
 - A TS layout can agree with YR's for a prefix only: run headercheck before porting a
   function that reaches past a class's proven part.
 - Where YRpp groups members into a struct and TS has flat fields, use a nested struct

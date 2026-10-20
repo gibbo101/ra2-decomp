@@ -43,7 +43,7 @@ class IPXConnClass : public ConnectionClass
 
 	protected:
 
-		virtual int Send (char *buf, int buflen, void *extrabuf, int extralen) override;
+		virtual int Send (char *buf, int buflen, void *extrabuf, int extralen, bool flag, unsigned short port) override;
 
 		static int Open_Socket(unsigned short socket);
 		static void Close_Socket(unsigned short socket);

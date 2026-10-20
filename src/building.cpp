@@ -4891,12 +4891,72 @@ void TechnoClass::SetLastFlightMapCoords(Cell coord)
 {
 }
 
+// FUNCTION: 0x00459DD0 TechnoClass::Is_Allowed_To_Leave_Map
+
+// FUNCTION: 0x00459DE0 TechnoClass::Advance_Waypoint_Path
+
+// FUNCTION: 0x00459DF0
+bool TechnoClass::EnterGrinder(void)
+{
+	return(false);
+}
+
+// FUNCTION: 0x00459E00
+bool TechnoClass::EnterBioReactor(void)
+{
+	return(false);
+}
+
+// FUNCTION: 0x00459E10
+bool TechnoClass::EnterTankBunker(void)
+{
+	return(false);
+}
+
+// FUNCTION: 0x00459E20
+bool TechnoClass::EnterBattleBunker(void)
+{
+	return(false);
+}
+
+// FUNCTION: 0x00459E30
+bool TechnoClass::GarrisonStructure(void)
+{
+	return(false);
+}
+
+// FUNCTION: 0x00459E40
+bool TechnoClass::IsParalyzed(void) const
+{
+	return(false);
+}
+
+// FUNCTION: 0x00459E50
+bool TechnoClass::Crash(ObjectClass * killer)
+{
+	return(false);
+}
+
+// FUNCTION: 0x00459E60 TechnoClass::Draw_Action_Line
+
+// FUNCTION: 0x00459E70
+int BuildingClass::Fetch_Object_Size(void) const
+{
+	return(sizeof(BuildingClass));
+}
+
 // FUNCTION: 0x00459E80
 HRESULT STDMETHODCALLTYPE BuildingClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
 	*retval = CLSID_BuildingClass;
 	return(S_OK);
+}
+
+// FUNCTION: 0x00459EC0
+RTTIType BuildingClass::Fetch_RTTI(void) const
+{
+	return(RTTI_BUILDING);
 }
 
 // FUNCTION: 0x0045A130 ?$TRect@H::?$TRect@H

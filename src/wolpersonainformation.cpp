@@ -5,7 +5,11 @@
 
 #include "always.h"
 #include <math.h>
+#include "cdfile.h"
+#include "ini.h"
 #include "playerprofile.h"
+#undef LoadString
+#include "stringtable.h"
 
 namespace fastmath { double __cdecl sqrt(double x); double __cdecl tan(double x); double __cdecl atan(double x); }
 extern const double DAT_007E1708;
@@ -18,45 +22,269 @@ extern const double DAT_007E1738;
 extern const double DAT_007E1740;
 extern const double DAT_007F74E0;
 extern const double DAT_007F74E8;
+wchar_t * __fastcall FUN_00735120(char const * text);
+char * __fastcall FUN_007350C0(wchar_t const * text);
+extern "C" wchar_t * __cdecl wcsstr(wchar_t const *, wchar_t const *);
+void __fastcall FUN_00778F30(Wstring * from, WideWstring * to);
 
-// FUNCTION: 0x007784F0 $E2
+class rc_ptr_base {
+public:
+	rc_ptr_base(void);
+	virtual ~rc_ptr_base(void);
+	void FUN_0065D480(void * ptr);
+	void * Ptr;
+};
+
+template<class T>
+class rc_ptr : public rc_ptr_base {
+public:
+	rc_ptr(T * ptr) { FUN_0065D480(ptr); }
+	virtual ~rc_ptr(void) {}
+};
+
+static inline int WOL_Int(INIClass & ini, Wstring const & section, char const * key, int def)
+{
+	return ini.Get_Int(section, key, def);
+}
+
+
+// FUNCTION: 0x007784F0 $E7
 double DAT_00B73598 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x00778520 $E5
+// FUNCTION: 0x00778520 $E10
 double DAT_00B735E8 = DAT_00B73598 / DAT_007F74E0;
 
-// FUNCTION: 0x00778540 $E8
+// FUNCTION: 0x00778540 $E13
 double DAT_00B735D0 = DAT_007E1718 / DAT_00B735E8;
 
-// FUNCTION: 0x00778560 $E11
+// FUNCTION: 0x00778560 $E16
 double DAT_00B735C8 = DAT_007E1720 * DAT_007F74E8;
 
-// FUNCTION: 0x00778580 $E14
+// FUNCTION: 0x00778580 $E19
 double DAT_00B735A0 = DAT_007E1728 * DAT_007F74E8;
 
-// FUNCTION: 0x007785A0 $E17
+// FUNCTION: 0x007785A0 $E22
 double DAT_00B73578 = DAT_007E1730 * DAT_007F74E8;
 
-// FUNCTION: 0x007785C0 $E20
+// FUNCTION: 0x007785C0 $E25
 int DAT_00B735F0 = (int)(fastmath::tan(DAT_00B73578 - DAT_00B735A0) * DAT_007E1738 * DAT_00B73598);
 
-// FUNCTION: 0x00778600 $E23
+// FUNCTION: 0x00778600 $E28
 double DAT_00B735A8 = fastmath::atan(DAT_00B735F0 * DAT_007E1740);
 
-// FUNCTION: 0x00778630 $E26
+// FUNCTION: 0x00778630 $E31
 double DAT_00B735C0 = fastmath::atan((DAT_00B735F0 * 2) / DAT_00B73598);
 
-// FUNCTION: 0x00778660 $E29
+// FUNCTION: 0x00778660 $E34
 int DAT_00B735E4 = (int)(DAT_00B735F0 * 4 + DAT_007E1738);
 
 struct WOLShortPair { short a; short b; WOLShortPair(void) { a = 0; b = 0; } };
 struct WOLIntTriple { int a; int b; int c; WOLIntTriple(void) { a = 0; b = 0; c = 0; } };
 
-// FUNCTION: 0x00778690 $E32
+// FUNCTION: 0x00778690 $E37
 WOLShortPair DAT_00B73594;
 
-// FUNCTION: 0x007786A0 $E35
+// FUNCTION: 0x007786A0 $E40
 WOLIntTriple DAT_00B735B0;
+
+struct WOLWindowSize { int W; int H; int Z; WOLWindowSize(void) { Z = 0; W = 0x80; H = 0x80; } };
+
+// FUNCTION: 0x007786C0 $E43
+WOLWindowSize DAT_00B735D8;
+
+// FUNCTION: 0x007786E0 $E48
+// FUNCTION: 0x00778700 $E46
+Wstring DAT_00B73590("_Default_");
+
+// FUNCTION: 0x00778710
+rc_ptr<PlayerProfile> __fastcall FUN_00778710(void)
+{
+	Wstring server;
+	int locale = 0;
+	int country = -2;
+	int color = -2;
+	Wstring text;
+	WideWstring timeText;
+	WideWstring dateText;
+	CDFileClass file("wolinfoMD.ini");
+	if (!file.Is_Available()) {
+		file.Create();
+		file.Close();
+		file.Open("wolinfoMD.ini", 1);
+	}
+	if (file.Is_Available()) {
+		INIClass ini;
+		ini.Load(file, false);
+		file.Close();
+		if (ini.GetSection(DAT_00B73590.text())) {
+			ini.Get_String(DAT_00B73590, "Server", server, server);
+			locale = WOL_Int(ini, DAT_00B73590, "Locale", 0);
+			country = ini.Get_Int(DAT_00B73590, "Country", -2);
+			color = ini.Get_Int(DAT_00B73590, "Color", -2);
+			ini.Get_String(DAT_00B73590, "UpdateTime", text, text);
+			FUN_00778F30(&text, &timeText);
+			text.clear();
+			ini.Get_String(DAT_00B73590, "UpdateDate", text, text);
+			dateText.set(FUN_00735120(text.text()));
+		}
+	}
+	PlayerProfile * profile = new PlayerProfile(server, locale, 0, 0, country, color, -1, -1, -1, -1, -1, 1, dateText, timeText);
+	return rc_ptr<PlayerProfile>(profile);
+}
+
+// FUNCTION: 0x00778A20
+rc_ptr<PlayerProfile> __fastcall FUN_00778A20(Wstring const * name)
+{
+	CDFileClass file("wolinfoMD.ini");
+	if (!file.Is_Available()) {
+		file.Create();
+		file.Close();
+		file.Open("wolinfoMD.ini", 1);
+	}
+	if (!file.Is_Available()) {
+		return FUN_00778710();
+	}
+	INIClass ini;
+	ini.Load(file, false);
+	file.Close();
+	Wstring section(*name);
+	section.toLower();
+	if (!ini.GetSection(section.text())) {
+		return FUN_00778710();
+	}
+	Wstring server;
+	ini.Get_String(section, "Server", server, server);
+	int locale = WOL_Int(ini, section, "Locale", 0);
+	bool localeVerified = ini.Get_Bool(section.get(), "LocaleVerified", false);
+	int country = ini.Get_Int(section, "Country", -2);
+	int color = ini.Get_Int(section, "Color", -2);
+	int rank = ini.Get_Int(section, "Rank", -1);
+	int points = ini.Get_Int(section, "Points", -1);
+	int wins = ini.Get_Int(section, "Wins", -1);
+	int losses = ini.Get_Int(section, "Losses", -1);
+	int disconnects = ini.Get_Int(section, "Disconnects", -1);
+	bool matchByRes = ini.Get_Bool(section.get(), "MatchByRes", true);
+	Wstring text;
+	WideWstring timeText;
+	ini.Get_String(section, "UpdateTime", text, text);
+	FUN_00778F30(&text, &timeText);
+	text.clear();
+	WideWstring dateText;
+	ini.Get_String(section, "UpdateDate", text, text);
+	dateText.set(FUN_00735120(text.text()));
+	PlayerProfile * profile = new PlayerProfile(server, locale, localeVerified, localeVerified ? 1 : 3, country, color, rank, points, wins, losses, disconnects, matchByRes, dateText, timeText);
+	return rc_ptr<PlayerProfile>(profile);
+}
+
+// FUNCTION: 0x00778F30
+void __fastcall FUN_00778F30(Wstring * from, WideWstring * to)
+{
+	to->set(FUN_00735120(from->text()));
+	if (wcsstr(to->get(), L"Jan")) {
+		to->replace(L"Jan", StringTable::LoadString("TXT_JANUARY", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 127));
+		return;
+	}
+	if (wcsstr(to->get(), L"Feb")) {
+		to->replace(L"Feb", StringTable::LoadString("TXT_FEBRUARY", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 132));
+		return;
+	}
+	if (wcsstr(to->get(), L"Mar")) {
+		to->replace(L"Mar", StringTable::LoadString("TXT_MARCH", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 137));
+		return;
+	}
+	if (wcsstr(to->get(), L"Apr")) {
+		to->replace(L"Apr", StringTable::LoadString("TXT_APRIL", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 142));
+		return;
+	}
+	if (wcsstr(to->get(), L"May")) {
+		to->replace(L"May", StringTable::LoadString("TXT_MAY", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 147));
+		return;
+	}
+	if (wcsstr(to->get(), L"Jun")) {
+		to->replace(L"Jun", StringTable::LoadString("TXT_JUNE", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 152));
+		return;
+	}
+	if (wcsstr(to->get(), L"Jul")) {
+		to->replace(L"Jul", StringTable::LoadString("TXT_JULY", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 157));
+		return;
+	}
+	if (wcsstr(to->get(), L"Aug")) {
+		to->replace(L"Aug", StringTable::LoadString("TXT_AUGUST", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 162));
+		return;
+	}
+	if (wcsstr(to->get(), L"Sep")) {
+		to->replace(L"Sep", StringTable::LoadString("TXT_SEPTEMBER", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 167));
+		return;
+	}
+	if (wcsstr(to->get(), L"Oct")) {
+		to->replace(L"Oct", StringTable::LoadString("TXT_OCTOBER", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 172));
+		return;
+	}
+	if (wcsstr(to->get(), L"Nov")) {
+		to->replace(L"Nov", StringTable::LoadString("TXT_NOVEMBER", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 177));
+		return;
+	}
+	if (wcsstr(to->get(), L"Dec")) {
+		to->replace(L"Dec", StringTable::LoadString("TXT_DECEMBER", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 182));
+		return;
+	}
+}
+
+// FUNCTION: 0x00779230
+void __fastcall FUN_00779230(WideWstring const * from, Wstring * to)
+{
+	WideWstring text;
+	text.set(from->text());
+	if (wcsstr(text.get(), StringTable::LoadString("TXT_JANUARY", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 191))) {
+		text.replace(StringTable::LoadString("TXT_JANUARY", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 192), L"Jan");
+	}
+	if (wcsstr(text.get(), StringTable::LoadString("TXT_FEBRUARY", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 194))) {
+		text.replace(StringTable::LoadString("TXT_FEBRUARY", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 195), L"Feb");
+	}
+	if (wcsstr(text.get(), StringTable::LoadString("TXT_MARCH", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 197))) {
+		text.replace(StringTable::LoadString("TXT_MARCH", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 198), L"Mar");
+	}
+	if (wcsstr(text.get(), StringTable::LoadString("TXT_APRIL", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 200))) {
+		text.replace(StringTable::LoadString("TXT_APRIL", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 201), L"Apr");
+	}
+	if (wcsstr(text.get(), StringTable::LoadString("TXT_MAY", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 203))) {
+		text.replace(StringTable::LoadString("TXT_MAY", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 204), L"May");
+	}
+	if (wcsstr(text.get(), StringTable::LoadString("TXT_JUNE", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 206))) {
+		text.replace(StringTable::LoadString("TXT_JUNE", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 207), L"Jun");
+	}
+	if (wcsstr(text.get(), StringTable::LoadString("TXT_JULY", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 209))) {
+		text.replace(StringTable::LoadString("TXT_JULY", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 210), L"Jul");
+	}
+	if (wcsstr(text.get(), StringTable::LoadString("TXT_AUGUST", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 212))) {
+		text.replace(StringTable::LoadString("TXT_AUGUST", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 213), L"Aug");
+	}
+	if (wcsstr(text.get(), StringTable::LoadString("TXT_SEPTEMBER", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 215))) {
+		text.replace(StringTable::LoadString("TXT_SEPTEMBER", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 216), L"Sep");
+	}
+	if (wcsstr(text.get(), StringTable::LoadString("TXT_OCTOBER", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 218))) {
+		text.replace(StringTable::LoadString("TXT_OCTOBER", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 219), L"Oct");
+	}
+	if (wcsstr(text.get(), StringTable::LoadString("TXT_NOVEMBER", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 221))) {
+		text.replace(StringTable::LoadString("TXT_NOVEMBER", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 222), L"Nov");
+	}
+	if (wcsstr(text.get(), StringTable::LoadString("TXT_DECEMBER", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 224))) {
+		text.replace(StringTable::LoadString("TXT_DECEMBER", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 225), L"Dec");
+	}
+	to->set(FUN_007350C0(text.get()));
+}
+
+// FUNCTION: 0x00779650
+char __fastcall FUN_00779650(Wstring const * from, WideWstring * to)
+{
+	return to->set(FUN_00735120(from->text()));
+}
+
+// FUNCTION: 0x00779670
+char __fastcall FUN_00779670(WideWstring const * from, Wstring * to)
+{
+	return to->set(FUN_007350C0(from->text()));
+}
 
 // FUNCTION: 0x00779690
 PlayerProfile::PlayerProfile(Wstring const & name, int a, char b, int c, int d, int e, int f, int g, int h, int i, int j, char k, WideWstring const & l, WideWstring const & m) :
@@ -75,4 +303,47 @@ PlayerProfile::PlayerProfile(Wstring const & name, int a, char b, int c, int d, 
 	Wide3C(m),
 	Wide40(l)
 {
+}
+
+// FUNCTION: 0x00779730
+bool FUN_00779730(void)
+{
+	CDFileClass file("wolinfoMD.ini");
+	if (!file.Is_Available()) {
+		return false;
+	}
+	INIClass ini;
+	ini.Load(file, false);
+	file.Close();
+	return ini.Get_Bool("Ask", "AutoLogin", true);
+}
+
+// FUNCTION: 0x00779830
+void __fastcall FUN_00779830(bool value)
+{
+	CDFileClass file("wolinfoMD.ini");
+	if (!file.Is_Available()) {
+		file.Create();
+		file.Close();
+		file.Open("wolinfoMD.ini", 1);
+	}
+	INIClass ini;
+	if (file.Is_Available()) {
+		ini.Load(file, false);
+		ini.Put_Bool("Ask", "AutoLogin", value);
+		ini.Save(file);
+	}
+}
+
+// FUNCTION: 0x00779940
+bool FUN_00779940(void)
+{
+	CDFileClass file("wolinfoMD.ini");
+	if (!file.Is_Available()) {
+		return false;
+	}
+	INIClass ini;
+	ini.Load(file, false);
+	file.Close();
+	return ini.Get_Bool("Ask", "AddMatchBuddies", true);
 }

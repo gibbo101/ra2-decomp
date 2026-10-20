@@ -412,7 +412,9 @@ class TechnoClass : public RadioClass
 		void GattlingRateUp(int rate);
 		void ReleaseLocomotor(bool set_target);
 		void GattlingRateDown(int rate);
+		int FUN_0070E1E0(int which) const;
 		bool FUN_0070E240(WeaponDataStruct const * weapon) const;
+		bool FUN_0070E260(void) const;
 		void Deactivate(void);
 		int FireDeathWeapon(int additional_damage);
 		virtual FacingType Desired_Load_Dir(ObjectClass * , Cell & moveto) const;

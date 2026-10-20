@@ -37,6 +37,7 @@ class WideWstring
 		void			trimTrailing(WideWstring const & delim);
 		char			truncate(unsigned int len);
 		char			set(unsigned int size, wchar_t const * string);
+		char			replace(wchar_t const * replaceThis, wchar_t const * withThis);
 		char			set(wchar_t const * s);
 		void			clear(void);
 

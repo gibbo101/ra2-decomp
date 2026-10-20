@@ -250,7 +250,7 @@ namespace OwnerDraw {
 	bool End_Tooltip(void);
 
 	HWND Custom_Message_Box(const char * btn1txt, const char * btn2txt = NULL, bool * cancelled = NULL);
-	void Set_Custom_Message_Box_Text(HWND window, LPCSTR text);
+	void Set_Custom_Message_Box_Text(HWND window, wchar_t const * text);
 };
 
 #define OD_TEXT_ALIGN_MIN 1

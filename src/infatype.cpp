@@ -258,6 +258,12 @@ bool InfantryTypeClass::CanUseWaypoint(void) const
 	return(BASECLASS::CanUseWaypoint());
 }
 
+// FUNCTION: 0x005247C0
+bool InfantryTypeClass::CanAttackMove(void) const
+{
+	return(BASECLASS::CanAttackMove());
+}
+
 // FUNCTION: 0x005247D0
 Coord const InfantryTypeClass::Coord_Fixup(Coord const & coord) const
 {
@@ -268,6 +274,59 @@ Coord const InfantryTypeClass::Coord_Fixup(Coord const & coord) const
 	return(fix);
 }
 
+// FUNCTION: 0x00524840
+void InfantryTypeClass::Compute_CRC(CRCEngine & crc) const
+{
+	BASECLASS::Compute_CRC(crc);
+	crc(Pip);
+	crc(DoControls, sizeof(*DoControls) * DOINFO_COUNT);
+	crc(FireLaunch);
+	crc(ProneLaunch);
+	crc(VoiceComment.Count());
+	crc(DeadBodies.Count());
+	crc(DeathAnims.Count());
+	crc(IsFearless);
+	crc(IsCrawling);
+	crc(IsCapture);
+	crc(IsFraidyCat);
+	crc(IsTiberiumProof);
+	crc(IsCivilian);
+	crc(IsBomber);
+	crc(IsEngineer);
+	crc(IsAgent);
+	crc(IsThief);
+	crc(IsVehicleThief);
+}
+
+// FUNCTION: 0x00524B60
+HRESULT STDMETHODCALLTYPE InfantryTypeClass::Save(IStream * stream, BOOL cleardirty)
+{
+	HRESULT result = BASECLASS::Save(stream, cleardirty);
+	if (SUCCEEDED(result)) {
+		int index;
+		int count = VoiceComment.Count();
+		stream->Write(&count, sizeof(count), NULL);
+		for (index = 0; index < count; index++) {
+			stream->Write(&VoiceComment[index], sizeof(int), NULL);
+		}
+
+		count = DeadBodies.Count();
+		stream->Write(&count, sizeof(count), NULL);
+		for (index = 0; index < count; index++) {
+			stream->Write(&DeadBodies[index], sizeof(AnimTypeClass *), NULL);
+		}
+
+		count = DeathAnims.Count();
+		stream->Write(&count, sizeof(count), NULL);
+		for (index = 0; index < count; index++) {
+			stream->Write(&DeathAnims[index], sizeof(AnimTypeClass *), NULL);
+		}
+
+		stream->Write((void *)DoControls, sizeof(DoInfoStruct) * DOINFO_COUNT, NULL);
+	}
+	return(result);
+}
+
 // FUNCTION: 0x00524C70
 HRESULT STDMETHODCALLTYPE InfantryTypeClass::GetClassID(CLSID * retval)
 {
@@ -275,3 +334,40 @@ HRESULT STDMETHODCALLTYPE InfantryTypeClass::GetClassID(CLSID * retval)
 	*retval = CLSID_InfantryTypeClass;
 	return(S_OK);
 }
+
+// FUNCTION: 0x00524CB0
+InfantryTypeClass * InfantryTypeClass::Find_Or_Make(char const * name)
+{
+	return(TFind_Or_Make<InfantryTypeClass>(name, InfantryTypes));
+}
+
+// FUNCTION: 0x00524D40
+RTTIType InfantryTypeClass::Fetch_RTTI(void) const
+{
+	return(RTTI_INFANTRYTYPE);
+}
+
+// FUNCTION: 0x00524D50
+int InfantryTypeClass::Fetch_Object_Size(void) const
+{
+	return(sizeof(*this));
+}
+
+// FUNCTION: 0x00524D60
+int InfantryTypeClass::Fetch_Heap_ID(void) const
+{
+	return(HeapID);
+}
+
+// FUNCTION: 0x00524D70 InfantryTypeClass::~InfantryTypeClass
+
+// FUNCTION: 0x00524EC0
+char const * __fastcall FUN_00524EC0(char const * string)
+{
+	return(string);
+}
+
+// FUNCTION: 0x00524ED0 ?$DynamicVectorClass@PAVAnimTypeClass@@::Clear
+template class DynamicVectorClass<AnimTypeClass *>;
+
+// FUNCTION: 0x00524F00 ?$DynamicVectorClass@PAVAnimTypeClass@@::ID

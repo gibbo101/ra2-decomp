@@ -51,7 +51,9 @@
 #include "velocity.h"
 
 template class TPoint3D<int>;
+template class TVelocity2D<double>;
 template class TVelocity3D<double>;
+template class IndexClass<int, AbstractClass *>;
 
 extern int __fastcall FUN_0050C170(char const * name);
 
@@ -1992,6 +1994,26 @@ ObjectTypeClass const * AircraftClass::Class_Of(void) const
 
 // FUNCTION: 0x0041C2E0 ?$TVelocity3D@N::Get_Pitch
 
+// FUNCTION: 0x0041C350 ?$TVelocity2D@N::Speed
+
+// FUNCTION: 0x0041C380 ?$TPoint3D@H::Length
+
+// FUNCTION: 0x0041C3C0 ?$TVelocity3D@N::Speed
+
+// FUNCTION: 0x0041C3F0 ?$TVelocity3D@N::Nonzero_Check
+
+// FUNCTION: 0x0041C430 ?$TVelocity3D@N::Horizontal_Speed
+
+// FUNCTION: 0x0041C460 ?$TVelocity2D@N::Nonzero_Check
+
+// FUNCTION: 0x0041C490 WaypointClass::~WaypointClass
+
+// FUNCTION: 0x0041C500 ?$IndexClass@HPAVAbstractClass@@::Increase_Table_Size
+
+// FUNCTION: 0x0041C590 ?$IndexClass@HPAVAbstractClass@@::Search_For_Node
+
+// FUNCTION: 0x0041C610 ?$IndexClass@HPAVAbstractClass@@::search_compfunc
+
 // FUNCTION: 0x004196B0
 MoveType AircraftClass::Can_Enter_Cell(CellClass const * cell, FacingType, int cell_height, CellClass const *, bool) const
 {
@@ -2109,6 +2131,67 @@ bool AircraftClass::Cell_Seems_Ok(Cell const & cell, bool strict) const
 		}
 	}
 	return(true);
+}
+
+// FUNCTION: 0x0041A160
+AbstractClass * AircraftClass::Good_LZ(void) const
+{
+	Cell bestcell = Cell(0, 0);
+	int bestdist = -1;
+	int index;
+
+	if (Class->Dock.Count() > 0) {
+		int count = House->Buildings.Count();
+		for (index = 0; index < count; index++) {
+			BuildingClass * building = House->Buildings[index];
+
+			if (building && !building->IsInLimbo) {
+				int dist = Distance(building->Center_Coord());
+				if (building->Class == Class->Dock[0]) {
+					dist /= 4;
+				}
+				if (bestdist == -1 || dist < bestdist) {
+					Cell cell = building->Get_Cell();
+					cell = Map.Nearby_Location(cell, SPEED_FOOT, Map.Get_Cell_Zone(cell), MZONE_NORMAL, false, Point2D(3, 3));
+					if (cell != CELL_NONE) {
+						bestdist = dist;
+						bestcell = cell;
+					}
+				}
+			}
+		}
+	}
+
+	if (bestdist != -1) {
+		if (bestdist < CELL_LEPTON) {
+			Cell cell = Map.Nearby_Location(Get_Cell(), SPEED_FOOT, Map.Get_Cell_Zone(Get_Cell()));
+			return(&Map[cell]);
+		}
+		return(&Map[bestcell]);
+	}
+
+	if (bestdist == -1) {
+		for (index = 0; index < Technos.Count(); index++) {
+			TechnoClass * techno = Dynamic_Cast<TechnoClass *>(Technos[index]);
+			if (techno && !techno->IsInLimbo && techno->House == House && techno != (AircraftClass *)this) {
+				int dist = Distance_To(techno);
+				if (bestdist == -1 || dist < bestdist) {
+					Cell cell = techno->Get_Cell();
+					cell = Map.Nearby_Location(cell, SPEED_FOOT, Map.Get_Cell_Zone(cell));
+					if (cell != CELL_NONE) {
+						bestdist = dist;
+						bestcell = cell;
+					}
+				}
+			}
+		}
+	}
+
+	if (bestdist != -1) {
+		return(&Map[bestcell]);
+	}
+
+	return(&Map[(Coord const &)PositionCoord]);
 }
 
 // FUNCTION: 0x0041A570

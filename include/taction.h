@@ -270,6 +270,10 @@ class TActionClass : public AbstractClass
 		bool TAction_ResetDefenseCell(HouseClass * house, ObjectClass * object, TriggerClass * trig, Cell const & cell);
 		bool TAction_SetBaseCenter(HouseClass * house, ObjectClass * object, TriggerClass * trig, Cell const & cell);
 		bool TAction_ResetBaseCenter(HouseClass * house, ObjectClass * object, TriggerClass * trig, Cell const & cell);
+		bool TAction_FUN_006E0030(HouseClass * house, ObjectClass * object, TriggerClass * trig, Cell const & cell);
+		bool TAction_FlashBuildingsOfType(HouseClass * house, ObjectClass * object, TriggerClass * trig, Cell const & cell);
+	public:
+		HouseClass * FindHouseByIndex(TriggerClass * trig, int index) const;
 };
 
 AttachType Attaches_To(TActionType event);

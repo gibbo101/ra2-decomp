@@ -485,3 +485,81 @@ void VQMovieHandle::Blit(void)
 {
 	Movie_Update_Visible_Surface();
 }
+
+// FUNCTION: 0x005C0490
+VQMovieHandle::~VQMovieHandle(void)
+{
+	Movie_Destroy(Player);
+}
+
+// FUNCTION: 0x005C0510
+BinkMovieHandle::BinkMovieHandle(BinkHandle * player)
+{
+	Player = (VQHandle *)player;
+	if (player != NULL) {
+		Width = player->Bink->Width;
+		Height = player->Bink->Height;
+	}
+}
+
+// FUNCTION: 0x005C0540
+void BinkMovieHandle::Pause(bool pause)
+{
+	((BinkHandle *)Player)->FUN_00432C30(pause);
+}
+
+// FUNCTION: 0x005C0550
+void BinkMovieHandle::Stop(void)
+{
+	DAT_00ABF3F8 = this;
+	((BinkHandle *)Player)->FUN_00432C70();
+	DAT_00ABF3F8 = NULL;
+}
+
+// FUNCTION: 0x005C0570
+bool BinkMovieHandle::FramesLeft(void)
+{
+	return(((BinkHandle *)Player)->FUN_00432C50());
+}
+
+// FUNCTION: 0x005C0580
+bool BinkMovieHandle::AdvanceFrame(void)
+{
+	return(((BinkHandle *)Player)->FUN_00433040());
+}
+
+// FUNCTION: 0x005C0590
+void BinkMovieHandle::Waiting(void)
+{
+	((BinkHandle *)Player)->FUN_00433020();
+}
+
+// FUNCTION: 0x005C05A0
+void BinkMovieHandle::SetPosition(int x, int y)
+{
+	((BinkHandle *)Player)->FUN_00432AB0(x, y);
+}
+
+// FUNCTION: 0x005C05C0
+void BinkMovieHandle::InitSubtitles(void (__fastcall * callback)(void *))
+{
+	((BinkHandle *)Player)->FUN_00432C10(callback);
+}
+
+// FUNCTION: 0x005C05D0
+void BinkMovieHandle::SeekToFrame(int frame)
+{
+	((BinkHandle *)Player)->FUN_00432BD0(frame);
+}
+
+// FUNCTION: 0x005C05E0
+int BinkMovieHandle::Timing(void)
+{
+	return(((BinkHandle *)Player)->FUN_00432BF0());
+}
+
+// FUNCTION: 0x005C05F0
+void BinkMovieHandle::Blit(void)
+{
+	((BinkHandle *)Player)->FUN_00433060();
+}

@@ -29,6 +29,7 @@ public:
 	void			removeSpaces(void);
 	void			trimLeading(Wstring const& delim);
 	void			trimTrailing(Wstring const& delim);
+	char const *	c_str(void) const { return str; }
 	char*			get(void) const;
 	char			get(unsigned int index);
 	char*			text(void) const;

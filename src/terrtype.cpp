@@ -5,11 +5,15 @@
 
 #define INCLUDE_COM
 #include "always.h"
+#include "geometry.h"
 #include "terrtype.h"
 #include "_map.h"
 #include "_mixfile.h"
 #include "_rules.h"
 #include "_theater.h"
+#include "ccfile.h"
+#include "ccini.h"
+#include "data.h"
 #include "findmake.h"
 #include "globals.h"
 #include "incdec.h"
@@ -23,57 +27,193 @@
 
 #include <math.h>
 
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007F5418;
-extern const double DAT_007F5420;
+// FUNCTION: 0x0071D390 $E2
+// FUNCTION: 0x0071D3C0 $E5
+// FUNCTION: 0x0071D3E0 $E8
+// FUNCTION: 0x0071D400 $E11
+// FUNCTION: 0x0071D420 $E14
+// FUNCTION: 0x0071D440 $E17
+// FUNCTION: 0x0071D460 $E20
+// FUNCTION: 0x0071D4A0 $E23
+// FUNCTION: 0x0071D4D0 $E26
+// FUNCTION: 0x0071D500 $E29
+// FUNCTION: 0x0071D530 $E32
+// FUNCTION: 0x0071D540 $E35
+// FUNCTION: 0x0071D560 $E38
 
-// FUNCTION: 0x0071D390 $E59
-double DAT_00B0ED80 = FUN_004CAC40(pow(256.0, 2.0) * 2);
-
-// FUNCTION: 0x0071D3C0 $E62
-double DAT_00B0F140 = DAT_00B0ED80 / DAT_007F5418;
-
-// FUNCTION: 0x0071D3E0 $E65
-double DAT_00B0EDB8 = 1.0 / DAT_00B0F140;
-
-// FUNCTION: 0x0071D400 $E68
-double DAT_00B0EDB0 = DAT_007F5420 * 45.0;
-
-// FUNCTION: 0x0071D420 $E71
-double DAT_00B0ED88 = DAT_007F5420 * 60.0;
-
-// FUNCTION: 0x0071D440 $E74
-double DAT_00B0ED58 = DAT_007F5420 * 90.0;
-
-// FUNCTION: 0x0071D460 $E77
-int DAT_00B0F148 = (int)(FUN_004CAD50(DAT_00B0ED58 - DAT_00B0ED88) * DAT_00B0ED80 * 0.5);
-
-// FUNCTION: 0x0071D4A0 $E80
-double DAT_00B0ED90 = FUN_004CADE0(DAT_00B0F148 * 0.00390625);
-
-// FUNCTION: 0x0071D4D0 $E83
-double DAT_00B0EDA8 = FUN_004CADE0((DAT_00B0F148 * 2) / DAT_00B0ED80);
-
-// FUNCTION: 0x0071D500 $E86
-int DAT_00B0F13C = (int)(DAT_00B0F148 * 4 + 0.5);
-
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
+// FUNCTION: 0x0071D580 $E115
+static Cell const _OccupyLists[BSIZE_COUNT][10] = {
+	{ Cell(0, 0), REFRESH_EOL },
+	{ Cell(0, 0), Cell(1, 0), REFRESH_EOL },
+	{ Cell(0, 0), Cell(0, 1), REFRESH_EOL },
+	{ Cell(0, 0), Cell(1, 0), Cell(0, 1), Cell(1, 1), REFRESH_EOL },
+	{ Cell(0, 0), Cell(1, 0), Cell(0, 1), Cell(1, 1), Cell(0, 2), Cell(1, 2), REFRESH_EOL },
+	{ Cell(0, 0), Cell(1, 0), Cell(2, 0), Cell(0, 1), Cell(1, 1), Cell(2, 1), REFRESH_EOL },
+	{ Cell(0, 0), Cell(1, 0), Cell(2, 0), Cell(0, 1), Cell(1, 1), Cell(2, 1), Cell(0, 2), Cell(1, 2), Cell(2, 2), REFRESH_EOL },
+	{ Cell(0, 0), Cell(1, 0), Cell(2, 0), Cell(3, 0), Cell(0, 1), Cell(1, 1), Cell(2, 1), Cell(3, 1), REFRESH_EOL },
 };
 
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
+struct FileSystem {
+	static void const * LoadFile(char const * name, bool flag);
 };
 
-// FUNCTION: 0x0071D530 $E89
-ShortPair DAT_00B0ED7C;
+// FUNCTION: 0x0071DA80
+TerrainTypeClass::TerrainTypeClass(char const * ininame) :
+	BASECLASS(ininame),
+	HeapID(TERRAIN_NONE),
+	Foundation(BSIZE_FIRST),
+	RadarColor(0, 0, 0),
+	TemperateOccupationBits(7),
+	SnowOccupationBits(7),
+	AnimationRate(0),
+	AnimationProbability(0),
+	IsWaterBased(false),
+	IsTiberiumSpawn(false),
+	IsFlammable(false),
+	IsAnimated(false),
+	IsVeinhole(false),
+	Occupy(NULL)
+{
+	Create_ID();
+	IsSentient = true;
+	IsStealthy = true;
+	IsSelectable = false;
+	IsLegalTarget = false;
+	IsInsignificant = true;
 
-// FUNCTION: 0x0071D540 $E92
-IntTriple DAT_00B0ED98;
+	TerrainTypes.Add(this);
+
+	HeapID = (TerrainType)TerrainTypes.ID(this);
+
+	MaxStrength = -1;
+	Armor = ARMOR_WOOD;
+}
+
+// FUNCTION: 0x0071DBD0
+TerrainTypeClass::TerrainTypeClass(NoInitClass const & x) :
+	BASECLASS(x),
+	RadarColor(x)
+{
+}
+
+// FUNCTION: 0x0071DC00
+TerrainTypeClass::~TerrainTypeClass(void)
+{
+	if (ImageData != NULL) {
+		delete (ShapeSet *)ImageData;
+		ImageData = NULL;
+	}
+	Detach_This_From_All(this, true);
+	TerrainTypes.Delete(this);
+}
+
+// FUNCTION: 0x0071DCA0
+void TerrainTypeClass::Init(TheaterType theater)
+{
+	for (TerrainType index = TERRAIN_FIRST; index < TerrainTypes.Count(); index++) {
+		TerrainTypeClass * terrain = TerrainTypes[index];
+		char fullname[_MAX_FNAME + _MAX_EXT];
+
+		if (terrain->IsTheater) {
+			_makepath(fullname, NULL, NULL, terrain->Name(), Theaters[theater].Suffix);
+			if (terrain->ImageAllocated && terrain->ImageData != NULL) {
+				delete (ShapeSet *)terrain->ImageData;
+			}
+			terrain->ImageData = NULL;
+			terrain->ImageAllocated = false;
+			CCFileClass file(fullname);
+			terrain->ImageData = Load_Alloc_Data(file);
+		}
+	}
+}
+
+// FUNCTION: 0x0071DD80
+TerrainType TerrainTypeClass::From_Name(char const * name)
+{
+	TerrainType index;
+
+	if (name != NULL) {
+		for (index = TERRAIN_FIRST; index < TerrainTypes.Count(); index++) {
+			if (stricmp(name, TerrainTypes[index]->Name()) == 0) {
+				return(index);
+			}
+		}
+	}
+	return(TERRAIN_NONE);
+}
+
+// FUNCTION: 0x0071DDD0
+bool TerrainTypeClass::Create_And_Place(Cell const & cell, HouseClass *) const
+{
+	if (new TerrainClass(this, cell)) {
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x0071DE10
+ObjectClass * TerrainTypeClass::Create_One_Of(HouseClass *) const
+{
+	return(new TerrainClass(this, CELL_NONE));
+}
+
+// FUNCTION: 0x0071DE40
+Cell const * TerrainTypeClass::Occupy_List(bool) const
+{
+	if (Occupy != NULL) return(Occupy);
+
+	static Cell const _simple[1] = {
+		REFRESH_EOL
+	};
+	return(&_simple[0]);
+}
+
+// FUNCTION: 0x0071DE90 $E118
+// FUNCTION: 0x0071DEA0
+bool TerrainTypeClass::Read_INI(CCINIClass & ini)
+{
+	ini.Reset();
+	if (BASECLASS::Read_INI(ini)) {
+
+		if (MaxStrength == -1) {
+			MaxStrength = Rule->TreeStrength;
+		}
+
+		IsVeinhole = ini.Get_Bool(Name(), "IsVeinhole", IsVeinhole);
+		if (IsVeinhole) {
+			IsSentient = false;
+			IsLegalTarget = true;
+		}
+
+		IsWaterBased = ini.Get_Bool(Name(), "WaterBound", IsWaterBased);
+		IsTiberiumSpawn = ini.Get_Bool(Name(), "SpawnsTiberium", IsTiberiumSpawn);
+		IsFlammable = ini.Get_Bool(Name(), "IsFlammable", IsFlammable);
+
+		Foundation = ArtINI.Get_BSizeType(Graphic_Name(), "Foundation", Foundation);
+		Occupy = _OccupyLists[Foundation];
+
+		if (!IsTheater) {
+			char filename[512];
+			_makepath(filename, 0, 0, Graphic_Name(), ".SHP");
+			ImageData = FileSystem::LoadFile(filename, false);
+		}
+
+		ShapeSet const * image = (ShapeSet const *)Get_Image_Data();
+		if (image) {
+			RadarColor = image->Get_Color(0);
+		}
+
+		RadarColor = ini.Get_RGBClass(Name(), "RadarColor", RadarColor);
+		IsAnimated = ini.Get_Bool(Name(), "IsAnimated", IsAnimated);
+		AnimationRate = ini.Get_Int(Name(), "AnimationRate", AnimationRate);
+		AnimationProbability = ini.Get_Float(Name(), "AnimationProbability", AnimationProbability);
+		TemperateOccupationBits = ini.Get_Int(Name(), "TemperateOccupationBits", TemperateOccupationBits);
+		SnowOccupationBits = ini.Get_Int(Name(), "SnowOccupationBits", SnowOccupationBits);
+
+		return(true);
+	}
+	return(false);
+}
 
 // FUNCTION: 0x0071E0D0
 Coord const TerrainTypeClass::Coord_Fixup(Coord const & coord) const

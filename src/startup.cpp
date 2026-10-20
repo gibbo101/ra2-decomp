@@ -461,7 +461,28 @@ template class TClassFactory<EMPulseClass>;
 template class TClassFactory<LightSourceClass>;
 
 // FUNCTION: 0x006BFD40 ?$TClassFactory@VSideClass@@::?$TClassFactory@VSideClass@@
+// FUNCTION: 0x006BFD50 ?$TClassFactory@VSideClass@@::QueryInterface
+// FUNCTION: 0x006BFDC0 ?$TClassFactory@VSideClass@@::AddRef
+// FUNCTION: 0x006BFDE0 ?$TClassFactory@VSideClass@@::Release
+// FUNCTION: 0x006BFE10 ?$TClassFactory@VSideClass@@::CreateInstance
+// FUNCTION: 0x006BFE90 ?$TClassFactory@VSideClass@@::LockServer
 template class TClassFactory<SideClass>;
+
+// FUNCTION: 0x006BFEC0 ?$TClassFactory@VTiberiumClass@@::?$TClassFactory@VTiberiumClass@@
+// FUNCTION: 0x006BFED0 ?$TClassFactory@VTiberiumClass@@::QueryInterface
+// FUNCTION: 0x006BFF40 ?$TClassFactory@VTiberiumClass@@::AddRef
+// FUNCTION: 0x006BFF60 ?$TClassFactory@VTiberiumClass@@::Release
+// FUNCTION: 0x006BFF90 ?$TClassFactory@VTiberiumClass@@::CreateInstance
+// FUNCTION: 0x006C0010 ?$TClassFactory@VTiberiumClass@@::LockServer
+template class TClassFactory<TiberiumClass>;
+
+// FUNCTION: 0x006C0040 ?$TClassFactory@VTubeClass@@::?$TClassFactory@VTubeClass@@
+// FUNCTION: 0x006C0050 ?$TClassFactory@VTubeClass@@::QueryInterface
+// FUNCTION: 0x006C00C0 ?$TClassFactory@VTubeClass@@::AddRef
+// FUNCTION: 0x006C00E0 ?$TClassFactory@VTubeClass@@::Release
+// FUNCTION: 0x006C0110 ?$TClassFactory@VTubeClass@@::CreateInstance
+// FUNCTION: 0x006C0190 ?$TClassFactory@VTubeClass@@::LockServer
+template class TClassFactory<TubeClass>;
 
 // FUNCTION: 0x006BEDB0 ?$_com_ptr_t@V?$_com_IIID@UIUnknown@@$1?_GUID_00000000_0000_0000_c000_000000000046@@3U__s_GUID@@A@@::CreateInstance
 template class _com_ptr_t<_com_IIID<IUnknown, &__uuidof(IUnknown)> >;

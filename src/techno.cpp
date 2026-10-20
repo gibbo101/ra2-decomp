@@ -4464,6 +4464,95 @@ void TechnoClass::FUN_0070DE40(int amount)
 	}
 }
 
+// FUNCTION: 0x0070DE70
+void TechnoClass::GattlingRateUp(int rate)
+{
+	TechnoTypeClass const * type = Techno_Type_Class();
+	int stages = type->WeaponStages;
+	int threshold;
+	if (Veterancy.Is_Elite()) {
+		threshold = Techno_Type_Class()->EliteStage[stages - 1];
+	} else {
+		threshold = Techno_Type_Class()->WeaponStage[stages - 1];
+	}
+	int value = FUN_0070DDF0();
+	if (value < threshold) {
+		FUN_0070DE20(Techno_Type_Class()->RateUp * rate);
+	}
+	int stage = FUN_0070DDC0();
+	WeaponTypeClass * weapon = Get_Class_Weapon_Data(stage * 2)->Weapon;
+	UnusedGattlingSoundController.Stop();
+	IsUnusedGattlingSoundPlaying = false;
+	if (stage >= 0 && stage < stages - 1) {
+		int next;
+		if (Veterancy.Is_Elite()) {
+			next = Techno_Type_Class()->EliteStage[stage];
+		} else {
+			next = Techno_Type_Class()->WeaponStage[stage];
+		}
+		if (value >= next) {
+			stage++;
+			SetCurrentWeaponStage(stage);
+			weapon = Get_Class_Weapon_Data(stage * 2)->Weapon;
+			GattlingSoundController.Stop();
+			IsGattlingSoundPlaying = false;
+		}
+	}
+	if (!IsGattlingSoundPlaying && weapon->Sound.Count() > 0) {
+		GattlingSoundController.Stop();
+		Coord coord = Position;
+		VocClass::PlayAt(weapon->Sound.Pick(NonCriticalRandomNumber()), coord, &GattlingSoundController);
+		IsGattlingSoundPlaying = true;
+	}
+}
+
+// FUNCTION: 0x0070E000
+void TechnoClass::GattlingRateDown(int rate)
+{
+	GattlingSoundController.EndLooping();
+	IsGattlingSoundPlaying = false;
+	int amount = Techno_Type_Class()->RateDown * rate;
+	GattlingValue -= amount;
+	if (GattlingValue < 0 || amount == 0) {
+		GattlingValue = 0;
+	}
+	int value = GattlingValue;
+	int stage = CurrentGattlingStage;
+	if (value == 0 && stage == 0) {
+		if (IsUnusedGattlingSoundPlaying || IsGattlingSoundPlaying) {
+			GattlingSoundController.Stop();
+			UnusedGattlingSoundController.Stop();
+			IsUnusedGattlingSoundPlaying = false;
+			IsGattlingSoundPlaying = false;
+		}
+		return;
+	}
+	Get_Class_Weapon_Data(stage * 2);
+	if (stage > 0) {
+		int threshold;
+		if (Veterancy.Is_Elite()) {
+			threshold = Techno_Type_Class()->EliteStage[stage - 1];
+		} else {
+			threshold = Techno_Type_Class()->WeaponStage[stage - 1];
+		}
+		if (value < threshold) {
+			stage--;
+			if (stage >= 0) {
+				CurrentGattlingStage = stage;
+			}
+			Get_Class_Weapon_Data(stage * 2);
+			UnusedGattlingSoundController.Stop();
+			IsUnusedGattlingSoundPlaying = false;
+		}
+	}
+}
+
+// FUNCTION: 0x0070E120
+WeaponDataStruct const * TechnoClass::GetDeployWeapon(void) const
+{
+	return(Get_Class_Weapon_Data(IsNotSprayAttack()));
+}
+
 // FUNCTION: 0x0070E140
 WeaponDataStruct const * TechnoClass::Get_Class_Weapon_Data(int which) const
 {
@@ -4474,4 +4563,81 @@ WeaponDataStruct const * TechnoClass::Get_Class_Weapon_Data(int which) const
 		if (weapon != NULL && weapon->Weapon != NULL) return(weapon);
 	}
 	return(((TechnoTypeClass *)Techno_Type_Class())->GetWeapon(which));
+}
+
+// FUNCTION: 0x0070E1A0
+WeaponDataStruct const * TechnoClass::GetTurretWeapon(void) const
+{
+	return(Get_Class_Weapon_Data(Techno_Type_Class()->HasMultipleTurrets() ? CurrentWeaponNumber : 0));
+}
+
+// FUNCTION: 0x0070E1E0
+int TechnoClass::FUN_0070E1E0(int which) const
+{
+	bool low = which < 2;
+	bool valid = Techno_Type_Class()->HasMultipleTurrets() && which < Techno_Type_Class()->WeaponCount;
+	if (which >= -1 && (low || valid)) {
+		return(1);
+	}
+	return(0);
+}
+
+// FUNCTION: 0x0070E240
+bool TechnoClass::FUN_0070E240(WeaponDataStruct const * weapon) const
+{
+	return(weapon != NULL && weapon->Weapon != NULL);
+}
+
+// FUNCTION: 0x0070E260
+bool TechnoClass::FUN_0070E260(void) const
+{
+	WeaponDataStruct const * weapon = GetTurretWeapon();
+	return(weapon != NULL && weapon->Weapon != NULL);
+}
+
+#pragma warning(push)
+#pragma warning(disable : 4716)
+// FUNCTION: 0x0070E280
+unsigned TechnoClass::DisguiseAs(AbstractClass * target)
+{
+	if (target != NULL) {
+		Disguised = true;
+		DisguiseCreationFrame = Unsorted::CurrentFrame;
+	}
+	Plot_On_Radar();
+}
+#pragma warning(pop)
+
+#pragma warning(push)
+#pragma warning(disable : 4716)
+// FUNCTION: 0x0070E2B0
+int TechnoClass::IronCurtain(int duration, HouseClass * source, bool force_shield)
+{
+	IronCurtainTimer = duration;
+	IronTintStage = 0;
+	if (force_shield) {
+		ForceShielded = 1;
+	} else {
+		ForceShielded = 0;
+	}
+}
+#pragma warning(pop)
+
+// FUNCTION: 0x0070E300
+void TechnoClass::StartAirstrikeTimer(int duration)
+{
+	AirstrikeTimer = duration;
+	AirstrikeTintStage = 0;
+}
+
+// FUNCTION: 0x0070E340
+void TechnoClass::StopAirstrikeTimer(void)
+{
+	AirstrikeTimer = 0;
+}
+
+// FUNCTION: 0x0070E360
+int TechnoClass::GetEffectTintIntensity(int brightness) const
+{
+	return(GetAirstrikeTintIntensity(GetInvulnerabilityTintIntensity(brightness)));
 }

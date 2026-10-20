@@ -34,6 +34,60 @@
 #include "mainopt.h"
 #include "conquer.h"
 #include <commctrl.h>
+#include <math.h>
+
+extern double __cdecl FUN_004CAC40(double);
+extern double __cdecl FUN_004CAD50(double);
+extern double __cdecl FUN_004CADE0(double);
+extern const double DAT_007E1718;
+extern const double DAT_007F74B0;
+extern const double DAT_007F74B8;
+
+// FUNCTION: 0x007771D0 $E67
+double DAT_00B730D0 = FUN_004CAC40(pow(256.0, 2.0) * 2);
+
+// FUNCTION: 0x00777200 $E70
+double DAT_00B73538 = DAT_00B730D0 / DAT_007F74B0;
+
+// FUNCTION: 0x00777220 $E73
+double DAT_00B73520 = DAT_007E1718 / DAT_00B73538;
+
+// FUNCTION: 0x00777240 $E76
+double DAT_00B73310 = DAT_007F74B8 * 45.0;
+
+// FUNCTION: 0x00777260 $E79
+double DAT_00B730D8 = DAT_007F74B8 * 60.0;
+
+// FUNCTION: 0x00777280 $E82
+double DAT_00B730B0 = DAT_007F74B8 * 90.0;
+
+// FUNCTION: 0x007772A0 $E85
+int DAT_00B73540 = (int)(FUN_004CAD50(DAT_00B730B0 - DAT_00B730D8) * DAT_00B730D0 * 0.5);
+
+// FUNCTION: 0x007772E0 $E88
+double DAT_00B730E0 = FUN_004CADE0(DAT_00B73540 * 0.00390625);
+
+// FUNCTION: 0x00777310 $E91
+double DAT_00B73308 = FUN_004CADE0((DAT_00B73540 * 2) / DAT_00B730D0);
+
+// FUNCTION: 0x00777340 $E94
+int DAT_00B73534 = (int)(DAT_00B73540 * 4 + 0.5);
+
+struct ShortPair {
+	unsigned short A, B;
+	ShortPair() { A = 0; B = 0; }
+};
+
+struct IntTriple {
+	int A, B, C;
+	IntTriple() { A = 0; B = 0; C = 0; }
+};
+
+// FUNCTION: 0x00777370 $E97
+ShortPair DAT_00B730C8;
+
+// FUNCTION: 0x00777380 $E100
+IntTriple DAT_00B732F8;
 
 // FUNCTION: 0x00777AC0
 void Build_Date_String(char * buffer, int buflen)

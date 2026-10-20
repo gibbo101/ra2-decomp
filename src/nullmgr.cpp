@@ -90,6 +90,14 @@ ShortPair DAT_00AC12D8;
 // FUNCTION: 0x005F1580 $E66
 IntTriple DAT_00AC1300;
 
+struct IntTriple128 {
+	int A, B, C;
+	IntTriple128() { A = 128; B = 128; C = 0; }
+};
+
+// FUNCTION: 0x005F15A0 $E69
+IntTriple128 DAT_00AC1328;
+
 // FUNCTION: 0x005F15C0
 NullModemClass::NullModemClass (int numsend, int numreceive, int maxlen,
 	unsigned short magicnum) :
@@ -288,6 +296,12 @@ int NullModemClass::Init (int port, int irq, char *dev_name, int baud, char pari
 	return(true);
 }
 
+// FUNCTION: 0x005F1950
+int NullModemClass::Num_Connections( void )
+{
+	return(NumConnections);
+}
+
 // FUNCTION: 0x005F1960
 int NullModemClass::Delete_Connection( void )
 {
@@ -429,6 +443,22 @@ void NullModemClass::Set_Timing (unsigned int retrydelta,
 	Connection->Set_TimeOut (Timeout);
 }
 
+// FUNCTION: 0x005F1BF0
+int NullModemClass::Send_Message (void *buf, int buflen, int ack_req)
+{
+	int rc;
+
+	if (NumConnections == 0) {
+		return( false );
+	}
+
+	rc = Connection->Send_Packet(buf, buflen, ack_req, 0);
+	if (!rc)
+		SendOverflows++;
+
+	return(rc);
+}
+
 // FUNCTION: 0x005F1C30
 int NullModemClass::Get_Message (void *buf, int *buflen)
 {
@@ -558,6 +588,24 @@ int NullModemClass::Service (void)
 	RXCount -= pos;
 
 	return(Connection->Service());
+}
+
+// FUNCTION: 0x005F1EA0
+int NullModemClass::Num_Send(void)
+{
+	if (Connection)
+		return( Connection->Queue->Num_Send() );
+	else
+		return(0);
+}
+
+// FUNCTION: 0x005F1EC0
+int NullModemClass::Num_Receive(void)
+{
+	if (Connection)
+		return( Connection->Queue->Num_Receive() );
+	else
+		return(0);
 }
 
 // FUNCTION: 0x005F1EE0
@@ -733,6 +781,136 @@ DialStatusType NullModemClass::Dial_Modem(char * string, DialMethodType method, 
 	return( dialstatus );
 }
 
+// FUNCTION: 0x005F2CE0
+DialStatusType NullModemClass::Answer_Modem( bool reconnect )
+{
+	bool process;
+	int delay;
+	DialStatusType dialstatus;
+	bool ring = false;
+	wchar_t const * text_buffer;
+	char comm_buffer[80*3];
+
+	dialstatus = DIAL_ERROR;
+
+	if (reconnect == true) {
+#line 1580 "D:\\ra2mdpost\\NullMgr.CPP"
+		text_buffer = StringTable::LoadString("TXT_MODEM_CONNERR_WAITING", NULL, __FILE__, __LINE__);
+	} else {
+#line 1582 "D:\\ra2mdpost\\NullMgr.CPP"
+		text_buffer = StringTable::LoadString("TXT_WAITING_FOR_CALL", NULL, __FILE__, __LINE__);
+	}
+
+	DebugString("Waiting for ring\n");
+
+	process = true;
+	ModemDialogIsOpen = false;
+#line 1589 "D:\\ra2mdpost\\NullMgr.CPP"
+	HWND dialog = OwnerDraw::Custom_Message_Box(text_buffer, StringTable::LoadString("TXT_CANCEL", NULL, __FILE__, __LINE__), &ModemDialogIsOpen);
+	if (dialog) {
+
+		OwnerDraw::Display_Dialog(dialog);
+
+		Setup_Abort_Modem();
+
+		delay = TIMER_MINUTE;
+		while (process == true) {
+			if (OwnerDraw::Dialog_Message_Handler() == true || ModemDialogIsOpen) {
+				dialstatus = DIAL_CANCELED;
+				DebugString("Answering cancelled\n");
+				if (SerialPort != NULL) {
+					char escape[3] = "\r";
+					SerialPort->Write_To_Serial_Port((unsigned char*)escape, sizeof(escape)-1);
+				}
+				process = false;
+				break;
+			}
+
+			Title_Screen_Restore();
+
+			memset(comm_buffer, 0, sizeof(comm_buffer));
+			delay = SerialPort->Get_Modem_Result(delay, comm_buffer, 81, ring != NULL ? TIMER_SECOND / 4 : -1);
+			DebugString("Get_Modem_Result returned %d\n", delay);
+
+			if (delay == -1000) {
+				dialstatus = DIAL_CANCELED;
+				DebugString("Answering cancelled\n");
+				if (SerialPort != NULL) {
+					char escape[3] = "\r";
+					SerialPort->Write_To_Serial_Port((unsigned char*)escape, sizeof(escape)-1);
+				}
+				process = false;
+				break;
+			}
+
+			strupr(comm_buffer);
+			if (strlen(comm_buffer)) {
+				DebugString("Get_Modem_Result returned string:%s\n", comm_buffer);
+			}
+
+			if (process) {
+				if ( strncmp( comm_buffer, "RING", 4 ) == 0 ) {
+					DebugString("RING\n");
+#line 1647 "D:\\ra2mdpost\\NullMgr.CPP"
+					OwnerDraw::Set_Custom_Message_Box_Text(dialog, StringTable::LoadString("TXT_ANSWERING", NULL, __FILE__, __LINE__));
+					DebugString("Answering with ATA\n");
+					SerialPort->Write_To_Serial_Port ((unsigned char*)"ATA\r", strlen("ATA\r"));
+
+					ring = true;
+					delay = ModemWaitCarrier;
+				} else if ( strstr( comm_buffer, "CONNECT" ) != 0 ) {
+					memset (ModemRXString, 0, sizeof(ModemRXString));
+					strncpy (ModemRXString, comm_buffer, sizeof(ModemRXString)-1);
+					dialstatus = DIAL_CONNECTED;
+					DebugString("Result is %s\n", comm_buffer);
+					process = false;
+				} else if ( strncmp( comm_buffer, "BUSY", 4 ) == 0 ) {
+					dialstatus = DIAL_BUSY;
+					DebugString("Result is %s\n", comm_buffer);
+					process = false;
+				} else if ( strncmp( comm_buffer, "NO C", 4 ) == 0 ) {
+					dialstatus = DIAL_NO_CARRIER;
+					DebugString("Result is %s\n", comm_buffer);
+					process = false;
+				} else if ( strncmp( comm_buffer, "ERRO", 4 ) == 0 ) {
+					dialstatus = DIAL_ERROR;
+					DebugString("Result is %s\n", comm_buffer);
+#line 1671 "D:\\ra2mdpost\\NullMgr.CPP"
+					WWMessageBox().Process(StringTable::LoadString("TXT_ERROR_ERROR", NULL, __FILE__, __LINE__), StringTable::LoadString("TXT_OK", NULL, __FILE__, __LINE__), NULL, NULL);
+					process = false;
+				}
+			}
+
+			if (delay <= 0) {
+				if (ring) {
+					if (SerialPort->Get_Modem_Status() & WinModemClass::CD_SET) {
+						sprintf(ModemRXString, "%s", "Connected");
+						dialstatus = DIAL_CONNECTED;
+						DebugString("Connected\n");
+					} else {
+						DebugString("NullModemClass::Answer_Modem has timed out\n");
+						if (strlen(comm_buffer)) {
+							DebugString("Answer result is %s\n", comm_buffer);
+						}
+#line 1687 "D:\\ra2mdpost\\NullMgr.CPP"
+						WWMessageBox().Process(StringTable::LoadString("TXT_ERROR_TIMEOUT", NULL, __FILE__, __LINE__), StringTable::LoadString("TXT_OK", NULL, __FILE__, __LINE__), NULL, NULL);
+						DebugString("Not connected\n");
+						dialstatus = DIAL_TIMEOUT;
+					}
+					process = false;
+				} else {
+					delay = TIMER_MINUTE;
+				}
+			}
+		}
+
+		Remove_Abort_Modem();
+		OwnerDraw::End_Dialog(dialog);
+	}
+
+	return( dialstatus );
+}
+
 // FUNCTION: 0x005F3170
 bool NullModemClass::Hangup_Modem( void )
 {
@@ -811,6 +989,11 @@ void NullModemClass::Setup_Modem_Echo( void ( *func )( char c) )
 	SerialPort->Set_Echo_Function(func);
 }
 
+// FUNCTION: 0x005F3340
+void NullModemClass::Remove_Modem_Echo( void )
+{
+}
+
 // FUNCTION: 0x005F3350
 void NullModemClass::Print_EchoBuf( void )
 {
@@ -866,6 +1049,13 @@ void NullModemClass::Remove_Abort_Modem( void )
 	ModemDialogIsOpen = false;
 }
 
+// FUNCTION: 0x005F3440
+int NullModemClass::Change_IRQ_Priority( int irq )
+{
+	irq = irq;
+	return( COMMSUCCESS );
+}
+
 // FUNCTION: 0x005F3450
 int NullModemClass::Get_Modem_Status( void )
 {
@@ -909,3 +1099,11 @@ int NullModemClass::Verify_And_Convert_To_Int( char *buffer )
 
 	return( value );
 }
+
+// FUNCTION: 0x005F3520 NullModemClass::Connection_ID
+
+// FUNCTION: 0x005F3530 NullModemClass::Connection_Index
+
+// FUNCTION: 0x005F3540 NullModemClass::Set_External_Timing
+
+// FUNCTION: 0x005F3560 NullModemClass::Send_Private_Message

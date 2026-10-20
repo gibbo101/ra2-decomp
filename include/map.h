@@ -150,6 +150,10 @@ class MapClass: public GScreenClass
 		bool FUN_0057D530(Cell const & cell);
 		void FUN_0057E7A0(Cell const & cell);
 		void FUN_0057ED00(Cell const & cell);
+		void FUN_0057F440(Cell const & cell);
+		void FUN_005800D0(Cell const & cell);
+		void FUN_00580600(Cell const & cell);
+		static bool Is_Low_Bridge2(Cell const & cell);
 		void FUN_0057DAF0(Cell cell);
 		void FUN_0057DC20(Cell cell);
 		static int FUN_0057CAB0(Cell const & cell);

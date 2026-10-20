@@ -1033,6 +1033,20 @@ merges declined point.h changes that would have regressed 15 and 229 matched fun
 Five unvq routines are Westwood's hand-written assembly. Cost: about 7.7M tokens. Merge
 gate: 6,993 of 6,993 (1,054.5 KB), about 36% of game functions.
 
+### Batches 45, 46 and 47 (20 October 2026)
+
+**409 of 432 functions** (140, 142, 127), plus eight found along the way. Batch 47's
+merge gave YR's connection classes a port argument on Send, proved through the queue
+functions and the vtables, and adopted combuf.h and nullconn.h; batch 45's adopted tube.h
+and BaseNodeClass's Placed and Attempts. Landing found more stand-ins: structs cast over
+Session and the planning-token vector, and a local DSurface class, now real declarations,
+plus a new include/rcptr.h from RTTI. The planning-token cleanup reaches PlanToken::Destroy,
+committed earlier behind such casts; it stays until that decision is made, and the new
+0x006370B0 waits. UnitClass::Draw_It flipped again: a sweep of dummy declarations shows
+VC6 orders its two reloads by heap address, so no form pins it, and the chosen form fails
+at about 3% of offsets against 16% before. Cost: about 7.3M tokens. Merge gate: 7,414
+of 7,414 (1,112.5 KB), about 38% of game functions.
+
 ### Decide before the first batch
 
 - **Module layout.** Which function lives in which source file, and the link order, decide

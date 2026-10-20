@@ -56,7 +56,7 @@ class ThemeClass
 
 		ThemeType From_Name(char const * name) const;
 		ThemeType Next_Song(ThemeType index) const;
-		ThemeType What_Is_Playing(void) const {return(Score);}
+		ThemeType What_Is_Playing(void) const {return(Score == THEME_NONE ? Pending : Score);}
 		bool Is_Allowed(ThemeType index) const;
 		bool Is_Regular(ThemeType theme) const {return(theme != THEME_NONE && Themes[theme]->Normal);}
 		char const * Base_Name(ThemeType index) const;

@@ -1440,8 +1440,14 @@ struct NSSlotName
 	IPXAddressClass Address;
 	char Pad[0x6b - 0x28 - sizeof(IPXAddressClass)];
 	int Id;
-	char Pad2[0x85 - 0x6f];
+	char Pad2[0x77 - 0x6f];
+	int Flag77;
+	char Pad3[0x85 - 0x7b];
 	int FUN_00696F20(void);
+	int FUN_00696F50(void);
+	void FUN_00696F90(int country);
+	void FUN_00696FC0(int color);
+	void FUN_00696FF0(int start);
 };
 #pragma pack(pop)
 extern wchar_t const * DAT_00AC117C;
@@ -2038,4 +2044,227 @@ bool __fastcall FUN_005E96A0(int id)
 		}
 	}
 	return(false);
+}
+
+extern int DAT_00A8B2DC[8];
+extern int DAT_00A8B29C[8];
+extern int DAT_00A8B27C[8];
+extern int DAT_00A8DA84;
+
+// FUNCTION: 0x005E9720
+bool __fastcall FUN_005E9720(int id)
+{
+	if (id != -2) {
+		for (int i = 0; i < 8; i++) {
+			NSSlotName * slot = DAT_00A8DA90[i];
+			if (slot && slot != DAT_00AC119C && slot != DAT_00AC11A0 && slot != DAT_00AC11B0 && slot != DAT_00AC11B4 && slot != DAT_00AC11A4 && slot != DAT_00AC11A8 && slot != DAT_00AC11AC && slot->FUN_00696F50() == id) {
+				return(true);
+			}
+		}
+		for (int j = 0; j < 8; j++) {
+			if (DAT_00A8B2DC[j] == id) {
+				return(true);
+			}
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x005E97A0
+int __fastcall FUN_005E97A0(NSSlotName * slot)
+{
+	if (slot == DAT_00AC119C) return(2);
+	if (slot == DAT_00AC11A0) return(3);
+	if (slot == DAT_00AC11A4) return(4);
+	if (slot == DAT_00AC11A8) return(5);
+	if (slot == DAT_00AC11AC) return(6);
+	if (slot == DAT_00AC11B4) return(7);
+	return(2);
+}
+
+// FUNCTION: 0x005E9800
+NSSlotName * __fastcall FUN_005E9800(int kind)
+{
+	if (kind == 2) return(DAT_00AC119C);
+	if (kind == 3) return(DAT_00AC11A0);
+	if (kind == 4) return(DAT_00AC11A4);
+	if (kind == 5) return(DAT_00AC11A8);
+	if (kind == 6) return(DAT_00AC11AC);
+	if (kind == 7) return(DAT_00AC11B4);
+	return(NULL);
+}
+
+// FUNCTION: 0x005E9850
+void FUN_005E9850(void)
+{
+	if (FUN_00775B20() != 0xbc) {
+		HWND window = FUN_00775940(0xc2);
+		if (!window) {
+			window = FUN_00775940(0xc9);
+			if (!window) {
+				window = FUN_00775940(0xbc);
+				if (!window) {
+					window = FUN_00775940(0xbd);
+				}
+			}
+		}
+		EnableWindow(GetDlgItem(window, 0x59f), TRUE);
+	}
+	int count = DAT_00A8DA84;
+	for (int i = 0; i < count; i++) {
+		if (wcscmp(((NSSlotName **)DAT_00A8DA78)[i]->Name, DAT_00A8D610) != 0 && ((NSSlotName **)DAT_00A8DA78)[i]->Flag77) {
+			((NSSlotName **)DAT_00A8DA78)[i]->Flag77 = 0;
+		}
+	}
+}
+
+// FUNCTION: 0x005E98F0
+int __fastcall FUN_005E98F0(int kind)
+{
+	if (kind == 0) return(0x411);
+	if (kind == 1) return(0x412);
+	if (kind == 2) return(0x413);
+	if (kind == 3) return(0x414);
+	if (kind == 4) return(0x415);
+	if (kind == 5) return(0x416);
+	if (kind == 6) return(0x417);
+	if (kind == 7) return(0x418);
+	return(-1);
+}
+
+// FUNCTION: 0x005E9950
+int __fastcall FUN_005E9950(int id)
+{
+	if (id == 0x411) return(0);
+	if (id == 0x412) return(1);
+	if (id == 0x413) return(2);
+	if (id == 0x414) return(3);
+	if (id == 0x415) return(4);
+	if (id == 0x416) return(5);
+	if (id == 0x417) return(6);
+	if (id == 0x418) return(7);
+	return(-1);
+}
+
+// FUNCTION: 0x005E99C0
+wchar_t const * __fastcall FUN_005E99C0(NSSlotName * slot)
+{
+	if (slot == DAT_00AC119C) {
+#line 4948 "D:\\ra2mdpost\\netshare.cpp"
+		return(StringTable::LoadString("STT:PlayerOpen", NULL, __FILE__, __LINE__));
+	}
+	if (slot == DAT_00AC11A0) {
+#line 4950 "D:\\ra2mdpost\\netshare.cpp"
+		return(StringTable::LoadString("STT:PlayerClosed", NULL, __FILE__, __LINE__));
+	}
+	if (slot == DAT_00AC11A4) {
+#line 4952 "D:\\ra2mdpost\\netshare.cpp"
+		return(StringTable::LoadString("STT:PlayerDumbAI", NULL, __FILE__, __LINE__));
+	}
+	if (slot == DAT_00AC11A8) {
+#line 4954 "D:\\ra2mdpost\\netshare.cpp"
+		return(StringTable::LoadString("STT:PlayerSmartAI", NULL, __FILE__, __LINE__));
+	}
+	if (slot == DAT_00AC11AC) {
+#line 4956 "D:\\ra2mdpost\\netshare.cpp"
+		return(StringTable::LoadString("STT:PlayerGeniusAI", NULL, __FILE__, __LINE__));
+	}
+	if (slot == DAT_00AC11B4) {
+#line 4958 "D:\\ra2mdpost\\netshare.cpp"
+		return(StringTable::LoadString("STT:PlayerOpenObserver", NULL, __FILE__, __LINE__));
+	}
+#line 4960 "D:\\ra2mdpost\\netshare.cpp"
+	return(StringTable::LoadString("STT:PlayerHuman", NULL, __FILE__, __LINE__));
+}
+
+// FUNCTION: 0x005E9AA0
+void __fastcall FUN_005E9AA0(HWND dialog, int id, int data)
+{
+	HWND item = GetDlgItem(dialog, id);
+	ShowWindow(item, SW_HIDE);
+	int count = SendDlgItemMessage(dialog, id, CB_GETCOUNT, 0, 0);
+	for (int i = 0; i < count; i++) {
+		if (SendDlgItemMessage(dialog, id, CB_GETITEMDATA, i, 0) == data) {
+			SendDlgItemMessage(dialog, id, CB_SETCURSEL, i, 0);
+			break;
+		}
+	}
+	ShowWindow(item, SW_SHOW);
+}
+
+// FUNCTION: 0x005E9B20
+int __fastcall FUN_005E9B20(HWND dialog, int id, int index)
+{
+	if (index == -1) {
+		index = SendDlgItemMessage(dialog, id, CB_GETCURSEL, 0, 0);
+	}
+	int data = SendDlgItemMessage(dialog, id, CB_GETITEMDATA, index, 0);
+	return((data == -1) ? 0 : data);
+}
+
+int __fastcall FUN_004E3830(int id);
+int __fastcall FUN_004E4E20(HWND dialog, int id, int flag);
+int __fastcall FUN_004E4230(int id);
+void __fastcall FUN_004E4C20(HWND dialog, int id);
+int __fastcall FUN_004E5900(HWND dialog, int id, int flag);
+int __fastcall FUN_004E4EC0(int id);
+void __fastcall FUN_004E5700(HWND dialog, int id);
+
+// FUNCTION: 0x005E9B60
+void __fastcall FUN_005E9B60(HWND dialog, int combo)
+{
+	int country = FUN_004E4170(dialog, combo, -1);
+	int slot = FUN_004E3830(combo);
+	if (slot == DAT_00A8DA8C) {
+		Session.FUN_0069B760(country, false);
+		if (DAT_00A8DA84) {
+			((NSSlotName **)DAT_00A8DA78)[0]->FUN_00696F90(country);
+		}
+		return;
+	}
+	NSSlotName * node = DAT_00A8DA90[slot];
+	if (node && (node == DAT_00AC11A4 || node == DAT_00AC11A8 || node == DAT_00AC11AC)) {
+		DAT_00A8B29C[slot] = country;
+		return;
+	}
+	DAT_00A8B29C[slot] = -1;
+	DAT_00A8B27C[slot] = -1;
+	DAT_00A8B2BC[slot] = -1;
+}
+
+// FUNCTION: 0x005E9C00
+void __fastcall FUN_005E9C00(HWND dialog, int combo)
+{
+	int color = FUN_004E4E20(dialog, combo, -1);
+	int slot = FUN_004E4230(combo);
+	if (slot == DAT_00A8DA8C) {
+		FUN_004E4C20(dialog, combo);
+		if (FUN_005E96A0(color)) {
+			color = -2;
+		}
+		Session.FUN_0069B7E0(color, false);
+		if (DAT_00A8DA84) {
+			((NSSlotName **)DAT_00A8DA78)[0]->FUN_00696FC0(color);
+		}
+		return;
+	}
+	DAT_00A8B2BC[slot] = color;
+}
+
+// FUNCTION: 0x005E9CE0
+void __fastcall FUN_005E9CE0(HWND dialog, int combo)
+{
+	int start = FUN_004E5900(dialog, combo, -1);
+	int slot = FUN_004E4EC0(combo);
+	if (slot == DAT_00A8DA8C) {
+		FUN_004E5700(dialog, combo);
+		if (FUN_005E9720(start)) {
+			start = -2;
+		}
+		if (DAT_00A8DA84) {
+			((NSSlotName **)DAT_00A8DA78)[0]->FUN_00696FF0(start);
+		}
+		return;
+	}
+	DAT_00A8B2DC[slot] = start;
 }

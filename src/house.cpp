@@ -85,6 +85,7 @@ namespace Unsorted { extern int CurrentFrame; extern int MuteSWLaunches; extern 
 extern DynamicVectorClass<ObjectClass *> DAT_00A8ECB8;
 extern HouseClass * DAT_00AC1198;
 extern int DAT_007ED3FC;
+ThreatType __fastcall FUN_00645BB0(QuarryType quarry);
 
 // FUNCTION: 0x004F4EE0 $E2
 // FUNCTION: 0x004F4F00 $E5
@@ -4178,6 +4179,369 @@ double HouseClass::FUN_0050C0A0(TechnoTypeClass const * type) const
 float HouseClass::FUN_0050C160(void) const
 {
 	return Class->IncomeMult;
+}
+
+// FUNCTION: 0x0050C170
+int HouseClass::FindIndexByName(char const * name)
+{
+	for (int index = 0; index < Houses.Count(); index++) {
+		char buffer[20];
+		strcpy(buffer, Houses[index]->IniName);
+		if (strcmp(buffer, name) == 0) {
+			return index;
+		}
+	}
+	return -1;
+}
+
+// FUNCTION: 0x0050C210
+void HouseClass::FUN_0050C210(void)
+{
+	for (int index = Buildings.Count() - 1; index >= 0; index--) {
+		BuildingClass * building = Buildings[index];
+		for (int i = 0; i < Rule->BuildConst.Count(); i++) {
+			if (Rule->BuildConst[i] == building->Class) {
+				if (!building->IsInLimbo) {
+					if (building == NULL) {
+						return;
+					}
+					Cell center = building->PositionCoord.As_Cell();
+					BaseSpawnCell = center;
+					Begin_Construction();
+					Base.Nodes[0].CellID = center;
+					Base.PlacementCenter = center;
+					return;
+				}
+				break;
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x0050C340
+bool HouseClass::FUN_0050C340(int i)
+{
+	int width;
+	int height;
+	StructType wall = (StructType)-1;
+	for (int w = 0; w < Rule->ConcreteWalls.Count(); w++) {
+		int side = Rule->ConcreteWalls[w]->AIBasePlanningSide;
+		if (side == Class->Side || side == -1) {
+			wall = Rule->ConcreteWalls[w]->HeapID;
+			break;
+		}
+	}
+
+	BuildingClass * building = NULL;
+	int index;
+	for (index = i - 1; index >= 0; index--) {
+		building = Base.Get_Building(index);
+		if (building != NULL && building->Class->ProtectWithWall && Base.Nodes[index + 1].Type != wall) {
+			break;
+		}
+	}
+	if (index == -1 || building == NULL) {
+		return false;
+	}
+	BuildingTypeClass * btype = building->Class;
+	if (!btype->ProtectWithWall) {
+		return false;
+	}
+
+	Cell cell = building->PositionCoord.As_Cell();
+	width = btype->Width();
+	height = btype->Height(false);
+	Cell origin = Cell(cell.X - 1, cell.Y - 1);
+
+	for (i = 1; i <= width; i++) {
+		Base.Nodes.Insert_After(BaseNodeClass(wall, origin + Cell(i, 0)), index);
+		Base.Nodes.Insert_After(BaseNodeClass(wall, origin + Cell(i, height + 1)), index);
+	}
+	for (i = 1; i <= height; i++) {
+		Base.Nodes.Insert_After(BaseNodeClass(wall, origin + Cell(0, i)), index);
+		Base.Nodes.Insert_After(BaseNodeClass(wall, origin + Cell(width + 1, i)), index);
+	}
+
+	Base.Nodes.Insert_After(BaseNodeClass(wall, origin + Cell(0, 0)), index);
+	Base.Nodes.Insert_After(BaseNodeClass(wall, origin + Cell(width + 1, 0)), index);
+	Base.Nodes.Insert_After(BaseNodeClass(wall, origin + Cell(0, height + 1)), index);
+	Base.Nodes.Insert_After(BaseNodeClass(wall, origin + Cell(width + 1, height + 1)), index);
+	return true;
+}
+
+// FUNCTION: 0x0050C8C0
+void HouseClass::Cheer(void)
+{
+	int count = Technos.Count();
+	for (int index = 0; index < count; index++) {
+		TechnoClass * techno = Technos[index];
+		if (techno != NULL && techno->House == this) {
+			techno->Cheer(false);
+		}
+	}
+	VocClass::PlayGlobal(Rule->CheerSound, 1.0f, 0x2000);
+}
+
+// FUNCTION: 0x0050C920
+void HouseClass::FUN_0050C920(void)
+{
+	int count = Technos.Count();
+	Cell base = Get_Base_Center();
+	base = Map.Nearby_Location(base, SPEED_FOOT, -1, MZONE_NORMAL, false, Point2D(4, 4), false, false, false, true);
+	if (base == CELL_NONE) {
+		return;
+	}
+	base.X++;
+	base.Y++;
+	for (int index = 0; index < count; index++) {
+		TechnoClass * techno = Technos[index];
+		if (techno != NULL && techno->House == this) {
+			if (techno->Fetch_RTTI() == RTTI_BUILDING || techno->Fetch_RTTI() == RTTI_AIRCRAFT) {
+				continue;
+			}
+			if (techno->Techno_Type_Class()->DeploysInto != NULL && techno->Techno_Type_Class()->DeploysInto->IsConstructionYard) {
+				continue;
+			}
+			Cell dest = Get_Base_Center();
+			if (dest == CELL_NONE) {
+				continue;
+			}
+			techno->Assign_Destination(&Map[base]);
+			techno->Assign_Archive_Target(NULL);
+			techno->QueueMission(MISSION_MOVE, false);
+		}
+	}
+}
+
+// FUNCTION: 0x0050CAD0
+bool HouseClass::FUN_0050CAD0(BaseNodeClass * node)
+{
+	if (node->Type < 0) {
+		return true;
+	}
+	if (node->Type >= BuildingTypes.Count()) {
+		return false;
+	}
+	BuildingTypeClass * btype = BuildingTypes[node->Type];
+	if (btype->ResourceDestination && btype->ResourceGatherer) {
+		bool r = CountResourceGatherers < Rule->AISlaveMinerNumber[Difficulty];
+		return r;
+	}
+	if (Session.Type == GAME_NORMAL) {
+		return true;
+	}
+	if (btype == NULL) {
+		return false;
+	}
+	if (btype->GetWeapon(0)->Weapon != NULL) {
+		return true;
+	}
+	if (btype->IsWall) {
+		for (FacingType face = FACING_FIRST; face < FACING_COUNT; face++) {
+			BuildingClass * building = Map[node->CellID].Adjacent_Cell(face).Cell_Building();
+			if (building != NULL && building->House == this) {
+				return true;
+			}
+		}
+		return false;
+	}
+	if (btype->Power > 0) {
+		return true;
+	} else {
+		bool r = LATime + Rule->AIRestrictReplaceTime <= Unsorted::CurrentFrame;
+		return r;
+	}
+}
+
+// FUNCTION: 0x0050CBF0
+Cell HouseClass::PickIonCannonTarget(void)
+{
+	HouseClass * enemy = Houses[Enemy];
+	DynamicVectorClass<AbstractClass *> targets;
+	int best = 0;
+
+	for (int i = 0; i < Technos.Count(); i++) {
+		int value = 0;
+		bool valid = false;
+		TechnoClass * techno = Technos[i];
+
+		if (techno->House == enemy) {
+			value = 1;
+			if (techno->In_Which_Layer() == LAYER_GROUND && techno->IsActive && !techno->IsInLimbo) {
+				valid = true;
+			} else if (Difficulty == DIFF_EASY) {
+				for (int j = 0; j < Factories.Count(); j++) {
+					FactoryClass * factory = Factories[j];
+					if (factory->Get_Object() == techno && factory->Production.Fetch_Rate() != 0 && !factory->IsSuspended) {
+						valid = true;
+					}
+				}
+			}
+
+			switch (techno->Fetch_RTTI()) {
+				case RTTI_UNIT: {
+					UnitTypeClass const * unittype = ((UnitClass *)techno)->Class;
+					if (unittype->Harvester) {
+						value = Rule->AIIonCannonHarvesterValue[Difficulty];
+					} else if (Rule->BuildConst.Is_In_List(unittype->DeploysInto)) {
+						value = Rule->AIIonCannonMCVValue[Difficulty];
+					} else if (unittype->MaxPassengers > 0) {
+						value = Rule->AIIonCannonAPCValue[Difficulty];
+					} else {
+						value = 2;
+					}
+					break;
+				}
+
+				case RTTI_BUILDING: {
+					BuildingTypeClass const * builtype = ((BuildingClass *)techno)->Class;
+					if (builtype->ToBuild == RTTI_BUILDINGTYPE) {
+						value = Rule->AIIonCannonConYardValue[Difficulty];
+					} else if (builtype->ToBuild == RTTI_UNITTYPE && !builtype->Naval) {
+						value = Rule->AIIonCannonWarFactoryValue[Difficulty];
+					} else if (builtype->Power > builtype->Drain) {
+						value = Rule->AIIonCannonPowerValue[Difficulty];
+					} else if (builtype->IsBaseDefense) {
+						value = Rule->AIIonCannonBaseDefenseValue[Difficulty];
+					} else if (builtype->IsPlug) {
+						value = Rule->AIIonCannonPlugValue[Difficulty];
+					} else if (builtype->IsTemple) {
+						value = Rule->AIIonCannonTempleValue[Difficulty];
+					} else if (builtype->IsHoverPad) {
+						value = Rule->AIIonCannonHelipadValue[Difficulty];
+					} else if (Rule->BuildTech.Is_In_List(builtype)) {
+						value = Rule->AIIonCannonTechCenterValue[Difficulty];
+					} else {
+						value = 4;
+					}
+					break;
+				}
+
+				case RTTI_INFANTRY: {
+					InfantryTypeClass const * inftype = ((InfantryClass *)techno)->Class;
+					if (inftype->IsEngineer) {
+						value = Rule->AIIonCannonEngineerValue[Difficulty];
+					} else if (inftype->IsVehicleThief) {
+						value = Rule->AIIonCannonThiefValue[Difficulty];
+					} else {
+						value = 2;
+					}
+					break;
+				}
+			}
+		}
+
+		Cell cell = techno->Center_Coord().As_Cell();
+		if (!Map.In_Local_Radar(cell, true)) {
+			value = 0;
+		}
+
+		if (techno->Cloak == CLOAKED || techno->Fetch_RTTI() == RTTI_BUILDING && ((BuildingClass *)techno)->TranslucencyLevel == 15) {
+			value = Random_Pick(0, best + 10);
+		}
+
+		if (valid) {
+			if (value > best) {
+				targets.Clear();
+				targets.Add(techno);
+				best = value;
+			} else if (value == best) {
+				targets.Add(techno);
+			}
+		}
+	}
+
+	if (targets.Count() > 0) {
+		AbstractClass * target = targets[Random_Pick(0, targets.Count() - 1)];
+		if (target != NULL) {
+			return target->Center_Coord().As_Cell();
+		}
+	}
+	return CELL_NONE;
+}
+
+// FUNCTION: 0x0050D170
+Cell HouseClass::PickTargetByType(QuarryType quarry)
+{
+	ThreatType threat = FUN_00645BB0(quarry);
+	int index;
+	TeamClass * team = NULL;
+	for (index = 0; index < Teams.Count(); index++) {
+		team = Teams[index];
+		if (team->House == this) {
+			break;
+		}
+	}
+	if (team != NULL && team->House == this) {
+		FootClass * leader = team->Fetch_A_Leader();
+		AbstractClass * target = leader->Greatest_Threat(threat, leader->Center_Coord(), true);
+		if (target != NULL) {
+			return target->Center_Coord().As_Cell();
+		}
+		return CELL_NONE;
+	}
+	return CELL_NONE;
+}
+
+// FUNCTION: 0x0050D250
+void HouseClass::FUN_0050D250(Cell offset)
+{
+	for (int index = Base.Nodes.Count() - 1; index >= 0; index--) {
+		Base.Nodes[index].FUN_0042E6D0(offset);
+	}
+}
+
+// FUNCTION: 0x0050D290
+void HouseClass::FUN_0050D290(HouseClass * other)
+{
+	for (int index = other->Buildings.Count() - 1; index >= 0; index--) {
+		BuildingClass * building = other->Buildings[index];
+		building->Captured(this, false);
+		building->OriginallyOwnedByHouse = other;
+		building->MindControlledByHouse = this;
+	}
+}
+
+// FUNCTION: 0x0050D2D0
+void HouseClass::FUN_0050D2D0(HouseClass * other)
+{
+	for (int index = Buildings.Count() - 1; index >= 0; index--) {
+		BuildingClass * building = Buildings[index];
+		if (building->OriginallyOwnedByHouse == other) {
+			building->Captured(other, false);
+			building->OriginallyOwnedByHouse = NULL;
+			building->MindControlledByHouse = NULL;
+		}
+	}
+}
+
+static inline BuildingClass * Cast_Building(ObjectClass * object)
+{
+	if (object == NULL) return NULL;
+	return (object->Fetch_RTTI() == RTTI_BUILDING) ? (BuildingClass *)object : NULL;
+}
+
+// FUNCTION: 0x0050D320
+void HouseClass::RespawnStartingBuildings(void)
+{
+	for (int index = StartingUnits.Count() - 1; index >= 0; index--) {
+		StartingTechnoStruct * entry = StartingUnits[index];
+		TechnoTypeClass const * type = entry->Type;
+		if (type->Fetch_RTTI() != RTTI_BUILDINGTYPE) {
+			continue;
+		}
+		BuildingClass * existing = Map[entry->CellID].Cell_Building();
+		if (existing != NULL && existing->Class == type && existing->House == this) {
+			int damage = -existing->Class->MaxStrength;
+			existing->Take_Damage(damage, 0, Rule->C4Warhead, NULL, false, false, NULL);
+		} else {
+			BuildingClass * building = Cast_Building(type->Create_One_Of(this));
+			Coord coord = Map[entry->CellID].Center_Coord();
+			if (!building->ForceCreate(coord, 0)) {
+				building->Delete_Me();
+			}
+		}
+	}
 }
 
 // FUNCTION: 0x0050E000

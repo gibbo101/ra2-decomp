@@ -3420,16 +3420,8 @@ double MapGeneratorClass::Get_Tile_Patch_Score(const Cell & cell1, const Cell & 
 	return(RMG_RANDOM_DOUBLE(_random_range) + dist);
 }
 
-static inline void Init_Dirt_Roads(void)
-{
-	int i;
-	for (i = 0; i < 101; i++) {
-		DirtRoadTiles[i].ITType = IsometricTileType(IsometricTileTypeClass::DirtRoadCurve + i);
-	}
-	for (i = 0; i < 8; i++) {
-		DirtRoadTiles[i + 101].ITType = IsometricTileType(IsometricTileTypeClass::DirtRoadSlopes + i);
-	}
-}
+void Init_Dirt_Roads(void);
+int Dirt_Road_Tile_Index(IsometricTileType ittype);
 
 // FUNCTION: 0x005A5020
 void MapGeneratorClass::Generate_Urban_Areas(void)
@@ -3894,6 +3886,336 @@ void MapGeneratorClass::Mark_Tile(IsometricTileType ittype, Cell const & cell, b
 	}
 }
 
+// FUNCTION: 0x005A80B0
+void MapGeneratorClass::Generate_Rural_Areas(void)
+{
+	Init_Dirt_Roads();
+
+	int count = (SeedData.Cities + 0.49) * 2;
+	int tries = 0;
+	int placed = 0;
+
+	while (true) {
+		if (placed >= count) {
+			break;
+		}
+		Cell cell(0, 0);
+		int tries_here = 0;
+		while (true) {
+			cell = MapRegionClass::Pick_Random_Clear_Map_Cell();
+			if (++tries_here >= 20) break;
+			if (MapRegionClass::CellData::Is_Not_Inviolate(cell) && Can_Place_Paved_Road(Rect(cell.X - 4, cell.Y - 4, 8, 8), false, false) && Map.In_Local_Radar(cell)) {
+				break;
+			}
+		}
+
+		if (tries_here != 20) {
+			if (Generate_Rural_Roads(cell)) {
+				Generate_Rural_Buildings(cell);
+				Generate_Rural_Units(cell);
+				placed++;
+			}
+		}
+
+		tries++;
+		if (tries >= 10) {
+			break;
+		}
+	}
+}
+
+// FUNCTION: 0x005A82E0
+void MapGeneratorClass::Generate_Rural_Buildings(const Cell & cell)
+{
+	static char const * _names[] = {
+		"ABAN01",
+		"ABAN02",
+		"ABAN03",
+		"ABAN04",
+		"ABAN05",
+		"ABAN06",
+		"ABAN07",
+		"ABAN08",
+		"ABAN09",
+		"ABAN10",
+		"ABAN11",
+		"ABAN12",
+		"ABAN13",
+		"ABAN14",
+		"ABAN15",
+		"CA0001",
+		"CA0002",
+		"CA0003",
+		"CA0004",
+		"CA0005",
+		"CA0006",
+		"CA0007",
+		"CA0008",
+		"CA0009",
+		"CA0010",
+		"CA0011",
+		"CA0012",
+		"CA0013",
+		"CA0014",
+		"CA0015",
+		"CA0016",
+		"CA0017",
+		"CA0018",
+		"CA0019",
+		"CA0020",
+		"CA0021"
+	};
+
+	int count = Pick_Random_UInt(8, 12);
+	int tries = 0;
+	int placed = 0;
+
+	int height = Map[cell].Height;
+
+	int min_building = 0;
+	int max_building = ARRAY_SIZE(_names) - 1;
+	if (SeedData.Biome == BIOME_TUNDRA) {
+		min_building = 15;
+	}
+
+	DynamicVectorClass<char *> names;
+	for (int i = 0; i < ARRAY_SIZE(_names); i++) {
+		names.Add((char *&)_names[i]);
+	}
+
+	HouseClass * neutral = House_From_HousesType(HouseTypeClass::From_Name("Neutral"));
+
+	if (count > 0) {
+		while (placed < count) {
+			if (tries >= 2 * count) {
+				break;
+			}
+			int name_index = Pick_Random_UInt(min_building, max_building);
+			StructType bindex = BuildingTypeClass::From_Name(names[name_index]);
+			if (bindex != STRUCT_NONE) {
+				BuildingClass * building = new BuildingClass(BuildingTypes[bindex], neutral);
+
+				int tries_here = 0;
+				bool was_placed = false;
+				while (!was_placed) {
+					if (tries_here >= 60) {
+						break;
+					}
+
+					Cell building_cell = cell + Cell(Pick_Random_UInt(0, 14) - 7, Pick_Random_UInt(0, 14) - 7);
+
+					Cell const * list = building->Class->Occupy_List(true);
+					bool ok = true;
+					while (*list != REFRESH_EOL) {
+						CellClass * cellptr = &Map[building_cell + *list];
+						if (cellptr->Cell_Occupier() != NULL || !cellptr->Is_Tile_Clear() || cellptr->Height != height || cellptr->Land_Type() == LAND_ROCK || !Map.In_Local_Radar(cellptr)) {
+							ok = false;
+						}
+						list++;
+						if (!ok) break;
+					}
+
+					if (ok) {
+						if (building->Unlimbo(Coord(building_cell, 0))) {
+							was_placed = true;
+							placed++;
+							names.Delete_Index(name_index);
+							max_building--;
+						}
+					}
+					tries_here++;
+				}
+
+				if (!was_placed) {
+					delete building;
+				}
+
+				tries++;
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x005A8720
+void MapGeneratorClass::Generate_Rural_Units(const Cell & cell)
+{
+	static char const * _names[] = {
+		"CIV1",
+		"CIV2",
+		"CIV3",
+		"PICK",
+		"WINI",
+		"CAR"
+	};
+
+	HouseClass * neutral = House_From_HousesType(HouseTypeClass::From_Name("Neutral"));
+	int count = Pick_Random_UInt(1, 4);
+
+	int tries = 0;
+	int placed = 0;
+
+	while (placed < count) {
+		if (tries >= 2 * count) {
+			break;
+		}
+
+		int unit_index = Pick_Random_UInt(0, ARRAY_SIZE(_names) - 1);
+		FootClass * foot = NULL;
+		if (unit_index <= 2) {
+			foot = new InfantryClass(InfantryTypes[InfantryTypeClass::From_Name(_names[unit_index])], neutral);
+		} else {
+			foot = new UnitClass(UnitTypes[UnitTypeClass::From_Name(_names[unit_index])], neutral);
+		}
+
+		int tries_here = 0;
+		bool was_placed = false;
+		while (!was_placed) {
+			if (tries_here >= 60) {
+				break;
+			}
+			Cell unit_cell = cell + Cell(Pick_Random_UInt(0, 16) - 8, Pick_Random_UInt(0, 16) - 8);
+			if (Map.In_Local_Radar(unit_cell) && Map[unit_cell].Cell_Occupier() == NULL) {
+				if (foot->Unlimbo(Coord(unit_cell), (Dir256)(Pick_Random_UInt(0, 7) * 32))) {
+					foot->Strength = foot->Techno_Type_Class()->MaxStrength;
+					foot->EstimatedHealth = foot->Strength;
+					foot->Mark(MARK_CHANGE);
+					was_placed = true;
+					placed++;
+				}
+			}
+			tries_here++;
+		}
+
+		if (!was_placed) {
+			delete foot;
+		}
+
+		tries++;
+	}
+}
+
+namespace Unsorted { extern bool ArmageddonMode; }
+
+// FUNCTION: 0x005A91E0
+void MapGeneratorClass::Generate_Lights(void)
+{
+	StructType glite = BuildingTypeClass::From_Name("GALITE");
+	if (glite != STRUCT_NONE) {
+		HouseClass * hptr = House_From_HousesType(HouseTypeClass::From_Name("Special"));
+		if (hptr != NULL) {
+			bool old = Unsorted::ArmageddonMode;
+			Unsorted::ArmageddonMode = true;
+			int i;
+			for (i = 0; i < SeedData.NumPlayers; i++) {
+				Cell waypoint = Scen->Get_Waypoint_Cell(i);
+				int tries = 20;
+
+				static const int _light_counts[] = {0, 0, 2, 4};
+				int light_count = _light_counts[SeedData.Time];
+
+				bool can_place = false;
+				int j;
+				while (tries >= 0 && !can_place) {
+					double angle = Random_Fraction() * DEG_TO_RAD(360);
+					can_place = true;
+
+					for (j = 0; j < light_count; j++) {
+						Coord pc = Move_Coord(Coord(waypoint), j * DEG_TO_RAD(360) / light_count + angle, 8 * CELL_LEPTON);
+						Cell place_cell = pc.As_Cell();
+						if (!BuildingTypes[glite]->Legal_Placement(place_cell, hptr) || !Map.In_Radar(place_cell)) {
+							can_place = false;
+							break;
+						}
+					}
+
+					if (can_place) {
+						for (j = 0; j < light_count; j++) {
+							Coord pc = Move_Coord(Coord(waypoint), j * DEG_TO_RAD(360) / light_count + angle, 8 * CELL_LEPTON);
+						Cell place_cell = pc.As_Cell();
+							BuildingClass * light = new BuildingClass(BuildingTypes[glite], hptr);
+							if (!light->Unlimbo(Coord(place_cell))) {
+								delete light;
+							}
+						}
+					}
+
+					tries--;
+				}
+			}
+			Unsorted::ArmageddonMode = old;
+		}
+	}
+}
+
+// FUNCTION: 0x005A95B0
+void MapGeneratorClass::Generate_Neutral_Buildings(void)
+{
+	MapRegionClass * region;
+	int j;
+	if (SeedData.MapType == 2) {
+		int count = Pick_Random_UInt(0, 2);
+		int i = 0;
+		while (i < count) {
+			j = 0;
+			if (MapRegionClass::MapRegions.Count() > 0) {
+				do {
+					region = MapRegionClass::MapRegions[j];
+					MapRegionClass * same = region;
+					region = same;
+					if (MapRegionClass::MapRegions[j]->Unknown20 > 0) {
+						region->Place_Neutral_Building();
+					}
+					j++;
+				} while (j < MapRegionClass::MapRegions.Count());
+			}
+			i++;
+		}
+		return;
+	}
+
+	HouseClass * neutral = House_From_HousesType(HouseTypeClass::From_Name("Neutral"));
+	int count = Pick_Random_UInt(0, 4);
+
+	for (int i = 0; i < count; i++) {
+		bool placed = false;
+		int tries = 0;
+
+		BuildingClass * building = new BuildingClass(Rule->NeutralTechBuildings[Pick_Random_UInt(0, Rule->NeutralTechBuildings.Count() - 1)], neutral);
+
+		for (; !placed; ++tries) {
+			if (tries >= 100) {
+				break;
+			}
+
+			Cell building_cell = MapRegionClass::Pick_Random_Clear_Map_Cell();
+			int height = Map[building_cell].Height;
+
+			Cell const * list = building->Class->Occupy_List(true);
+			bool ok = true;
+			while (*list != REFRESH_EOL) {
+				CellClass * cellptr = &Map[building_cell + *list];
+				if (cellptr->Cell_Occupier() != NULL || !cellptr->Is_Tile_Clear() || cellptr->Height != height || cellptr->Land_Type() == LAND_ROCK || !Map.In_Local_Radar(cellptr) || !MapRegionClass::CellData::Is_Not_Inviolate(cellptr->CellID)) {
+					ok = false;
+				}
+				list++;
+				if (!ok) break;
+			}
+
+			if (ok) {
+				if (building->Unlimbo(Coord(building_cell, 0))) {
+					placed = true;
+				}
+			}
+		}
+
+		if (!placed) {
+			if (building != NULL) {
+				delete building;
+			}
+		}
+	}
+}
+
 // FUNCTION: 0x005A9920
 DirtRoadLink::DirtRoadLink(Cell const & cell, FacingType dir) :
 	Offset(cell),
@@ -3999,4 +4321,142 @@ DirtRoadTile::~DirtRoadTile(void)
 {
 	delete Links;
 	Links = NULL;
+}
+
+// FUNCTION: 0x005A9C20 $E202
+// FUNCTION: 0x005AC190 $E200
+DirtRoadTile DirtRoadTiles[] = {
+	/* 0 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_N), DirtRoadLink(Cell(2, 0), FACING_NE)),
+	/* 1 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_N), DirtRoadLink(Cell(1, 0), FACING_E)),
+	/* 2 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_N), DirtRoadLink(Cell(1, 1), FACING_SE)),
+	/* 3 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_N), DirtRoadLink(Cell(1, 0), FACING_SW)),
+	/* 4 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_N), DirtRoadLink(Cell(0, 0), FACING_W)),
+	/* 5 */ DirtRoadTile(DirtRoadLink(Cell(1, 0), FACING_N), DirtRoadLink(Cell(1, 1), FACING_NW)),
+	/* 6 */ DirtRoadTile(DirtRoadLink(Cell(1, 0), FACING_NE), DirtRoadLink(Cell(1, 1), FACING_E)),
+	/* 7 */ DirtRoadTile(DirtRoadLink(Cell(1, 0), FACING_NE), DirtRoadLink(Cell(1, 1), FACING_SE)),
+	/* 8 */ DirtRoadTile(DirtRoadLink(Cell(1, 0), FACING_NE), DirtRoadLink(Cell(0, 1), FACING_S)),
+	/* 9 */ DirtRoadTile(DirtRoadLink(Cell(1, 0), FACING_NE), DirtRoadLink(Cell(0, 0), FACING_W)),
+	/* 10 */ DirtRoadTile(DirtRoadLink(Cell(2, 0), FACING_NE), DirtRoadLink(Cell(1, 1), FACING_NW)),
+	/* 11 */ DirtRoadTile(DirtRoadLink(Cell(2, 0), FACING_NE), DirtRoadLink(Cell(0, 0), FACING_N)),
+	/* 12 */ DirtRoadTile(DirtRoadLink(Cell(1, 0), FACING_E), DirtRoadLink(Cell(1, 2), FACING_SE)),
+	/* 13 */ DirtRoadTile(DirtRoadLink(Cell(1, 0), FACING_E), DirtRoadLink(Cell(0, 1), FACING_S)),
+	/* 14 */ DirtRoadTile(DirtRoadLink(Cell(1, 0), FACING_E), DirtRoadLink(Cell(1, 0), FACING_SW)),
+	/* 15 */ DirtRoadTile(DirtRoadLink(Cell(1, 0), FACING_E), DirtRoadLink(Cell(1, 1), FACING_NW)),
+	/* 16 */ DirtRoadTile(DirtRoadLink(Cell(2, 1), FACING_SE), DirtRoadLink(Cell(0, 1), FACING_S)),
+	/* 17 */ DirtRoadTile(DirtRoadLink(Cell(1, 1), FACING_SE), DirtRoadLink(Cell(1, 0), FACING_SW)),
+	/* 18 */ DirtRoadTile(DirtRoadLink(Cell(1, 1), FACING_SE), DirtRoadLink(Cell(0, 0), FACING_W)),
+	/* 19 */ DirtRoadTile(DirtRoadLink(Cell(1, 1), FACING_S), DirtRoadLink(Cell(1, 0), FACING_SW)),
+	/* 20 */ DirtRoadTile(DirtRoadLink(Cell(0, 1), FACING_S), DirtRoadLink(Cell(0, 0), FACING_W)),
+	/* 21 */ DirtRoadTile(DirtRoadLink(Cell(0, 1), FACING_S), DirtRoadLink(Cell(1, 1), FACING_NW)),
+	/* 22 */ DirtRoadTile(DirtRoadLink(Cell(1, 1), FACING_SW), DirtRoadLink(Cell(1, 1), FACING_NW)),
+	/* 23 */ DirtRoadTile(DirtRoadLink(Cell(0, 1), FACING_W), DirtRoadLink(Cell(1, 1), FACING_NW)),
+	/* 24 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_N), DirtRoadLink(Cell(1, 0), FACING_E), DirtRoadLink(Cell(0, 1), FACING_S)),
+	/* 25 */ DirtRoadTile(DirtRoadLink(Cell(1, 0), FACING_E), DirtRoadLink(Cell(0, 1), FACING_S), DirtRoadLink(Cell(0, 0), FACING_W)),
+	/* 26 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_N), DirtRoadLink(Cell(0, 1), FACING_S), DirtRoadLink(Cell(0, 0), FACING_W)),
+	/* 27 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_N), DirtRoadLink(Cell(1, 0), FACING_E), DirtRoadLink(Cell(0, 0), FACING_W)),
+	/* 28 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_N), DirtRoadLink(Cell(1, 0), FACING_E), DirtRoadLink(Cell(0, 1), FACING_S), DirtRoadLink(Cell(0, 0), FACING_W)),
+	/* 29 */ DirtRoadTile(DirtRoadLink(Cell(2, 0), FACING_NE), DirtRoadLink(Cell(2, 2), FACING_SE), DirtRoadLink(Cell(1, 1), FACING_SW)),
+	/* 30 */ DirtRoadTile(DirtRoadLink(Cell(1, 1), FACING_NW), DirtRoadLink(Cell(1, 1), FACING_SW), DirtRoadLink(Cell(2, 2), FACING_SE)),
+	/* 31 */ DirtRoadTile(DirtRoadLink(Cell(2, 0), FACING_NE), DirtRoadLink(Cell(1, 1), FACING_NW), DirtRoadLink(Cell(1, 1), FACING_SW)),
+	/* 32 */ DirtRoadTile(DirtRoadLink(Cell(1, 1), FACING_NW), DirtRoadLink(Cell(2, 0), FACING_NE), DirtRoadLink(Cell(2, 2), FACING_SE)),
+	/* 33 */ DirtRoadTile(DirtRoadLink(Cell(1, 1), FACING_NW), DirtRoadLink(Cell(1, 1), FACING_SW), DirtRoadLink(Cell(2, 0), FACING_NE), DirtRoadLink(Cell(2, 2), FACING_SE)),
+	/* 34 */ DirtRoadTile(DirtRoadLink(Cell(3, 0), FACING_NE), DirtRoadLink(Cell(3, 2), FACING_E), DirtRoadLink(Cell(0, 2), FACING_W)),
+	/* 35 */ DirtRoadTile(DirtRoadLink(Cell(3, 0), FACING_NE), DirtRoadLink(Cell(1, 2), FACING_SW)),
+	/* 36 */ DirtRoadTile(DirtRoadLink(Cell(3, 0), FACING_NE), DirtRoadLink(Cell(1, 2), FACING_SW)),
+	/* 37 */ DirtRoadTile(DirtRoadLink(Cell(3, 0), FACING_NE), DirtRoadLink(Cell(1, 2), FACING_SW)),
+	/* 38 */ DirtRoadTile(DirtRoadLink(Cell(3, 0), FACING_NE), DirtRoadLink(Cell(1, 2), FACING_SW)),
+	/* 39 */ DirtRoadTile(DirtRoadLink(Cell(2, 0), FACING_NE), DirtRoadLink(Cell(1, 1), FACING_SW)),
+	/* 40 */ DirtRoadTile(DirtRoadLink(Cell(1, 0), FACING_NE), DirtRoadLink(Cell(1, 0), FACING_SW)),
+	/* 41 */ DirtRoadTile(DirtRoadLink(Cell(1, 0), FACING_NE), DirtRoadLink(Cell(1, 0), FACING_SW)),
+	/* 42 */ DirtRoadTile(DirtRoadLink(Cell(1, 2), FACING_SW)),
+	/* 43 */ DirtRoadTile(DirtRoadLink(Cell(1, 1), FACING_SW)),
+	/* 44 */ DirtRoadTile(DirtRoadLink(Cell(1, 1), FACING_SW)),
+	/* 45 */ DirtRoadTile(DirtRoadLink(Cell(3, 0), FACING_NE)),
+	/* 46 */ DirtRoadTile(DirtRoadLink(Cell(2, 0), FACING_NE)),
+	/* 47 */ DirtRoadTile(DirtRoadLink(Cell(2, 0), FACING_NE)),
+	/* 48 */ DirtRoadTile(DirtRoadLink(Cell(4, 0), FACING_NE), DirtRoadLink(Cell(1, 1), FACING_SW)),
+	/* 49 */ DirtRoadTile(DirtRoadLink(Cell(2, 0), FACING_NE), DirtRoadLink(Cell(1, 3), FACING_SW)),
+	/* 50 */ DirtRoadTile(),
+	/* 51 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_W), DirtRoadLink(Cell(3, 0), FACING_E)),
+	/* 52 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_W), DirtRoadLink(Cell(3, 0), FACING_E)),
+	/* 53 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_W), DirtRoadLink(Cell(3, 0), FACING_E)),
+	/* 54 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_W), DirtRoadLink(Cell(3, 0), FACING_E)),
+	/* 55 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_W), DirtRoadLink(Cell(2, 0), FACING_E)),
+	/* 56 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_W), DirtRoadLink(Cell(1, 0), FACING_E)),
+	/* 57 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_W), DirtRoadLink(Cell(0, 0), FACING_E)),
+	/* 58 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_W), DirtRoadLink(Cell(0, 0), FACING_E)),
+	/* 59 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_W)),
+	/* 60 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_W)),
+	/* 61 */ DirtRoadTile(DirtRoadLink(Cell(0, 1), FACING_W)),
+	/* 62 */ DirtRoadTile(DirtRoadLink(Cell(2, 0), FACING_E)),
+	/* 63 */ DirtRoadTile(DirtRoadLink(Cell(1, 0), FACING_E)),
+	/* 64 */ DirtRoadTile(DirtRoadLink(Cell(1, 0), FACING_E)),
+	/* 65 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_W), DirtRoadLink(Cell(3, 1), FACING_E)),
+	/* 66 */ DirtRoadTile(DirtRoadLink(Cell(0, 1), FACING_W), DirtRoadLink(Cell(3, 0), FACING_E)),
+	/* 67 */ DirtRoadTile(),
+	/* 68 */ DirtRoadTile(DirtRoadLink(Cell(1, 1), FACING_NW), DirtRoadLink(Cell(3, 3), FACING_SE)),
+	/* 69 */ DirtRoadTile(DirtRoadLink(Cell(1, 1), FACING_NW), DirtRoadLink(Cell(3, 3), FACING_SE)),
+	/* 70 */ DirtRoadTile(DirtRoadLink(Cell(1, 1), FACING_NW), DirtRoadLink(Cell(3, 3), FACING_SE)),
+	/* 71 */ DirtRoadTile(DirtRoadLink(Cell(1, 1), FACING_NW), DirtRoadLink(Cell(3, 3), FACING_SE)),
+	/* 72 */ DirtRoadTile(DirtRoadLink(Cell(1, 1), FACING_NW), DirtRoadLink(Cell(2, 2), FACING_SE)),
+	/* 73 */ DirtRoadTile(DirtRoadLink(Cell(1, 1), FACING_NW), DirtRoadLink(Cell(1, 1), FACING_SE)),
+	/* 74 */ DirtRoadTile(DirtRoadLink(Cell(1, 1), FACING_NW), DirtRoadLink(Cell(1, 1), FACING_SE)),
+	/* 75 */ DirtRoadTile(DirtRoadLink(Cell(1, 1), FACING_NW)),
+	/* 76 */ DirtRoadTile(DirtRoadLink(Cell(1, 1), FACING_NW)),
+	/* 77 */ DirtRoadTile(DirtRoadLink(Cell(1, 1), FACING_NW)),
+	/* 78 */ DirtRoadTile(DirtRoadLink(Cell(3, 3), FACING_SE)),
+	/* 79 */ DirtRoadTile(DirtRoadLink(Cell(1, 2), FACING_SE)),
+	/* 80 */ DirtRoadTile(DirtRoadLink(Cell(2, 2), FACING_SE)),
+	/* 81 */ DirtRoadTile(DirtRoadLink(Cell(1, 1), FACING_NW), DirtRoadLink(Cell(4, 2), FACING_SE)),
+	/* 82 */ DirtRoadTile(DirtRoadLink(Cell(1, 1), FACING_NW), DirtRoadLink(Cell(2, 4), FACING_SE)),
+	/* 83 */ DirtRoadTile(),
+	/* 84 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_N), DirtRoadLink(Cell(0, 3), FACING_S)),
+	/* 85 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_N), DirtRoadLink(Cell(0, 3), FACING_S)),
+	/* 86 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_N), DirtRoadLink(Cell(0, 3), FACING_S)),
+	/* 87 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_N), DirtRoadLink(Cell(0, 3), FACING_S)),
+	/* 88 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_N), DirtRoadLink(Cell(0, 2), FACING_S)),
+	/* 89 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_N), DirtRoadLink(Cell(0, 1), FACING_S)),
+	/* 90 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_N), DirtRoadLink(Cell(0, 0), FACING_S)),
+	/* 91 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_N), DirtRoadLink(Cell(0, 0), FACING_S)),
+	/* 92 */ DirtRoadTile(DirtRoadLink(Cell(0, 3), FACING_S)),
+	/* 93 */ DirtRoadTile(DirtRoadLink(Cell(0, 2), FACING_S)),
+	/* 94 */ DirtRoadTile(DirtRoadLink(Cell(0, 2), FACING_S)),
+	/* 95 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_N)),
+	/* 96 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_N)),
+	/* 97 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_N)),
+	/* 98 */ DirtRoadTile(DirtRoadLink(Cell(1, 0), FACING_N), DirtRoadLink(Cell(0, 3), FACING_S)),
+	/* 99 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_N), DirtRoadLink(Cell(1, 3), FACING_S)),
+	/* 100 */ DirtRoadTile(),
+	/* 101 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_W), DirtRoadLink(Cell(0, 0), FACING_E)),
+	/* 102 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_W), DirtRoadLink(Cell(0, 0), FACING_E)),
+	/* 103 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_N), DirtRoadLink(Cell(0, 0), FACING_S)),
+	/* 104 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_N), DirtRoadLink(Cell(0, 0), FACING_S)),
+	/* 105 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_W), DirtRoadLink(Cell(0, 0), FACING_E)),
+	/* 106 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_W), DirtRoadLink(Cell(0, 0), FACING_E)),
+	/* 107 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_N), DirtRoadLink(Cell(0, 0), FACING_S)),
+	/* 108 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_N), DirtRoadLink(Cell(0, 0), FACING_S))
+};
+
+// FUNCTION: 0x005AC1C0
+int Dirt_Road_Tile_Index(IsometricTileType ittype)
+{
+	if (ittype >= IsometricTileTypeClass::DirtRoadCurve && ittype < IsometricTileTypeClass::DirtRoadCurve + 101) {
+		return(ittype - IsometricTileTypeClass::DirtRoadCurve);
+	}
+	if (ittype < IsometricTileTypeClass::DirtRoadSlopes || ittype >= IsometricTileTypeClass::DirtRoadSlopes + 8) {
+		return(0);
+	}
+	return(ittype - IsometricTileTypeClass::DirtRoadSlopes + 101);
+}
+
+// FUNCTION: 0x005AC1F0
+void Init_Dirt_Roads(void)
+{
+	int i;
+	for (i = 0; i < 101; i++) {
+		DirtRoadTiles[i].ITType = IsometricTileType(IsometricTileTypeClass::DirtRoadCurve + i);
+	}
+	for (i = 0; i < 8; i++) {
+		DirtRoadTiles[i + 101].ITType = IsometricTileType(IsometricTileTypeClass::DirtRoadSlopes + i);
+	}
 }

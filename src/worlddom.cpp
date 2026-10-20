@@ -9,12 +9,14 @@
 
 #include "_mixfile.h"
 #include "_pk.h"
+#include "_surface.h"
 #include "addon.h"
 #include "grphmenu.h"
 #include "language\language.h"
 #include "mapgen.h"
 #include "mixfile.h"
 #include "ownrdraw.h"
+#include "rcptr.h"
 #include "wdtnet.h"
 #include "wonline.h"
 #include "wstring.h"
@@ -123,12 +125,13 @@ namespace OwnerDraw {
 	class DialogControl {
 	public:
 		virtual ~DialogControl(void);
-		virtual int F1(void) = 0;
-		virtual int F2(void) = 0;
+		virtual void F1(HWND window, int value) = 0;
+		virtual bool F2(void) = 0;
 		virtual int F3(void) = 0;
 	};
 	class SimpleDialogControl : public DialogControl {
 	public:
+		SimpleDialogControl(void);
 		virtual ~SimpleDialogControl(void);
 		int Field4;
 		char Field8;
@@ -136,14 +139,21 @@ namespace OwnerDraw {
 }
 
 namespace WorldDominationTour {
-	struct FactionImage { virtual ~FactionImage(void); };
+	typedef Surface FactionImage;
 	class FactionSelectDialogControl : public OwnerDraw::SimpleDialogControl {
 	public:
+		FactionSelectDialogControl(void);
 		virtual ~FactionSelectDialogControl(void);
+		virtual void F1(HWND window, int value);
+		virtual bool F2(void);
+		virtual int F3(void);
 		int FieldC;
 		FactionImage * Image1;
 		FactionImage * Image2;
 		FactionImage * Image3;
+		FactionImage * Current;
+		void Update_Hover(HWND window, POINT * point);
+		void Draw(int unused);
 	};
 }
 
@@ -154,3 +164,77 @@ WorldDominationTour::FactionSelectDialogControl::~FactionSelectDialogControl(voi
 	delete Image2;
 	delete Image3;
 }
+
+// FUNCTION: 0x007AF540
+void WorldDominationTour::FactionSelectDialogControl::Update_Hover(HWND window, POINT * point)
+{
+	if (F2()) {
+		return;
+	}
+	Current = Image1;
+	int side = 0;
+	int x = point->x;
+	if ((x >= 16 && x < 364 && point->y >= 20 && point->y < 136) ||
+		(x >= 130 && x < 300 && point->y >= 100 && point->y < 216) ||
+		(x >= 175 && x < 245 && point->y >= 216 && point->y < 262)) {
+		goto two;
+	}
+	if ((x >= 252 && x < 466 && point->y >= 180 && point->y < 382) ||
+		(x >= 212 && x < 496 && point->y >= 262 && point->y < 422)) {
+		side = 3;
+		Current = Image3;
+	} else if (false) {
+two:
+		side = 2;
+		Current = Image2;
+	}
+	if (FieldC != side) {
+		FieldC = side;
+		InvalidateRect(window, NULL, FALSE);
+	}
+}
+
+// FUNCTION: 0x007AF640
+void WorldDominationTour::FactionSelectDialogControl::Draw(int unused)
+{
+	if (AlternateSurface != NULL && Current != NULL) {
+		Rect rect = Current->Get_Rect();
+		AlternateSurface->Fill_Rect(rect, 0);
+		AlternateSurface->Blit_From(rect, *Current, rect, false, true);
+	}
+}
+
+GraphicMenu * __fastcall FUN_004F1B80(Wstring const & ini, Wstring const & name);
+
+// FUNCTION: 0x007AFAD0
+int __fastcall WDT_Theater_Choice_Menu(int side)
+{
+	char buffer[128];
+
+	sprintf(buffer, "TheaterChoice%sMenu", *WorldDominationTour::FUN_007AF2A0(side));
+	GraphicMenu * gmenu = FUN_004F1B80("WDTChoiceMD.ini", buffer);
+	if (gmenu == NULL) {
+		return 0;
+	}
+	int rc = gmenu->Presentation();
+	delete gmenu;
+	switch (rc) {
+		case 1: return 1;
+		case 2: return 2;
+		case 3: return 3;
+	}
+	return 0;
+}
+
+
+// FUNCTION: 0x007B0090 $E86
+// FUNCTION: 0x007B00B0 $E84
+WDTPointer<void> g_WDTUnusedPointer1;
+
+// FUNCTION: 0x007B00D0 $E91
+// FUNCTION: 0x007B00F0 $E89
+WDTPointer<void> g_WDTUnusedPointer2;
+
+// FUNCTION: 0x007B0110 $E96
+// FUNCTION: 0x007B0130 $E94
+rc_ptr<WDTState> DAT_00B77F58;

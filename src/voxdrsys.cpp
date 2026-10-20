@@ -11,15 +11,40 @@
 #include "voxlib.h"
 #include "wwfile.h"
 
+BOOL VoxelDrawSystem::EnableLighting;
+
+BOOL VoxelDrawSystem::EnableZBuffer;
+
 unsigned char VoxelDrawBuffer[VOXEL_BITMAP_WIDTH * VOXEL_BITMAP_HEIGHT * VOXEL_BITMAP_BPP];
 
+// FUNCTION: 0x007539D0 $E7
+// FUNCTION: 0x00753A30 $E5
+BSurface VoxelSurface(VOXEL_BITMAP_WIDTH, VOXEL_BITMAP_HEIGHT, VOXEL_BITMAP_BPP, VoxelDrawBuffer);
+
+unsigned char VoxelDrawZBuffer[VOXEL_BITMAP_WIDTH * VOXEL_BITMAP_HEIGHT * VOXEL_BITMAP_BPP];
+
+// FUNCTION: 0x00753A50 $E12
+// FUNCTION: 0x00753AB0 $E10
+BSurface VoxelZSurface(VOXEL_BITMAP_WIDTH, VOXEL_BITMAP_HEIGHT, VOXEL_BITMAP_BPP, VoxelDrawZBuffer);
+
+// FUNCTION: 0x00753AD0 $E15
 Vector3 MinVoxelBounds;
 
+// FUNCTION: 0x00753AE0 $E18
 Vector3 MaxVoxelBounds;
 
+// FUNCTION: 0x00753AF0 $E21
+Rect LastRenderRect(0, 0, VOXEL_BITMAP_WIDTH - 1, VOXEL_BITMAP_HEIGHT - 1);
+
+// FUNCTION: 0x00753B10 $E24
 VoxelRenderStruct VoxelRenderData[64];
 
+// FUNCTION: 0x00753B40 $E27
+VoxelShadowRenderStruct VoxelShadowRenderData[64];
+
 int VoxelRenderDataCount;
+
+int VoxelShadowRenderDataCount;
 
 unsigned short Voxel16BitColors[VOXEL_PALETTE_SIZE];
 
@@ -64,6 +89,18 @@ void VoxelDrawSystem::Convert_Voxel_Colors(int red_left, int red_right, int gree
 	}
 }
 
+// FUNCTION: 0x00753C60
+unsigned char * VoxelDrawSystem::Get_Surface_Buffer(void)
+{
+	return(VoxelDrawBuffer);
+}
+
+// FUNCTION: 0x00753C70
+Surface * VoxelDrawSystem::Get_Surface(void)
+{
+	return(&VoxelSurface);
+}
+
 // FUNCTION: 0x00753C80
 void VoxelDrawSystem::Precalculate_Light(VoxelLibrary * voxlib, int layer, int info, Matrix3D const & light_transform, Vector3 const & light)
 {
@@ -82,6 +119,39 @@ void VoxelDrawSystem::Precalculate_Light(VoxelLibrary * voxlib, int layer, int i
 	Vector3 viewer_tr = view_transform_inv.Rotate_Vector(Vector3(0, 0, 1));
 	int normal_type = voxlib->Get_Layer_Info(layer, info).NormalType;
 	Precalculate_Normal_Lookup(light_tr, viewer_tr, specular_strength, normal_type);
+}
+
+// FUNCTION: 0x00753E00
+void VoxelDrawSystem::Reset(void)
+{
+	static int _need_buffer_init = true;
+
+	VoxelRenderDataCount = 0;
+	VoxelShadowRenderDataCount = 0;
+
+	if (_need_buffer_init) {
+		memset(VoxelDrawBuffer, 0, sizeof(VoxelDrawBuffer));
+		memset(VoxelDrawZBuffer, 0, sizeof(VoxelDrawZBuffer));
+		_need_buffer_init = false;
+	} else {
+		if (LastRenderRect.X >= 0 && LastRenderRect.Y >= 0 && LastRenderRect.X + LastRenderRect.Width <= VOXEL_BITMAP_WIDTH-1 && LastRenderRect.Y + LastRenderRect.Height <= VOXEL_BITMAP_HEIGHT-1) {
+			for (int i = LastRenderRect.Y; i <= LastRenderRect.Y + LastRenderRect.Height; i++) {
+				memset(&VoxelDrawBuffer[VOXEL_BITMAP_HEIGHT * i + LastRenderRect.X], 0, LastRenderRect.Width + 1);
+			}
+		} else {
+			memset(VoxelDrawBuffer, 0, sizeof(VoxelDrawBuffer));
+		}
+		if (VoxelDrawSystem::EnableZBuffer) {
+			if (LastRenderRect.Y <= LastRenderRect.Height + LastRenderRect.Y) {
+				for (int i = LastRenderRect.Y; i <= LastRenderRect.Y + LastRenderRect.Height; i++) {
+					memset(&VoxelDrawZBuffer[VOXEL_BITMAP_HEIGHT * i + LastRenderRect.X], 0, LastRenderRect.Width + 1);
+				}
+			}
+		}
+	}
+
+	MinVoxelBounds = Vector3(10000, 10000, 10000);
+	MaxVoxelBounds = Vector3(-10000, -10000, -10000);
 }
 
 // FUNCTION: 0x007540F0

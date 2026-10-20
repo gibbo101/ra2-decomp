@@ -15,15 +15,16 @@
 #include "lightcon.h"
 #include "map.h"
 #include "milsectmr.h"
+#include "goptions.h"
 #include "sun.h"
 #include "tracker.h"
 #include "vector.h"
 
-// FUNCTION: 0x00554640 $E124
-// FUNCTION: 0x00554680 $E122
+// FUNCTION: 0x00554640 $E125
+// FUNCTION: 0x00554680 $E123
 DynamicVectorClass<LightSourceClass *> LightSources;
-// FUNCTION: 0x005546C0 $E130
-// FUNCTION: 0x00554700 $E127
+// FUNCTION: 0x005546C0 $E131
+// FUNCTION: 0x00554700 $E128
 DynamicVectorClass<LightSourceClass::PendingCellClass *> LightSourceClass::PendingCells;
 
 bool LightSourceClass::Recalc = true;
@@ -122,6 +123,41 @@ void LightSourceClass::ChangeLevels(int intensity, int red, int green, int blue,
 	}
 }
 
+// FUNCTION: 0x00554AF0
+void LightSourceClass::Recalculate_Affected_Cells(bool defer)
+{
+	if (Recalc && Options.DetailLevel >= DetailLevel) {
+		if (defer && PendingCells.Count() != 0) {
+			LightSourceClass::Process_Lighting(0, true);
+		}
+
+		Cell center = Position.As_Cell();
+		int radius = Visibility / CELL_LEPTON + 1;
+
+		for (int y = -radius; y <= radius; y++) {
+			for (int x = -radius; x <= radius; x++) {
+				Cell test_cell = center + Cell(x, y);
+				if (test_cell.X >= 0 && test_cell.X < MAP_CELL_W && test_cell.Y >= 0 && test_cell.Y < MAP_CELL_H && Map.Is_Valid(test_cell)) {
+					Coord cell_coord = test_cell.As_Coord();
+					int dx = cell_coord.X - Position.X;
+					int dy = cell_coord.Y - Position.Y;
+					int dist = dx * dx + dy * dy;
+
+					if (int(fastmath::sqrt(dist)) <= Visibility) {
+						if (defer) {
+							PendingCells.Add(new PendingCellClass(test_cell));
+						} else {
+							Map[test_cell].Init_Drawer();
+						}
+					}
+				}
+			}
+		}
+
+		Map.Flag_To_Redraw(GS_REDRAW_TACTICAL);
+	}
+}
+
 // FUNCTION: 0x00554D50
 void LightSourceClass::Process_Lighting(int time_budget_ms, bool force)
 {
@@ -193,12 +229,30 @@ void LightSourceClass::Process_Lighting(int time_budget_ms, bool force)
 	}
 }
 
+// FUNCTION: 0x00555070
+void LightSourceClass::Compute_CRC(CRCEngine & crc) const
+{
+	BASECLASS::Compute_CRC(crc);
+}
+
 // FUNCTION: 0x00555080
 HRESULT STDMETHODCALLTYPE LightSourceClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
 	*retval = CLSID_LightSource;
 	return(S_OK);
+}
+
+// FUNCTION: 0x005550C0
+HRESULT STDMETHODCALLTYPE LightSourceClass::Load(IStream * stream)
+{
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		new (this) LightSourceClass(NoInitClass());
+
+		result = S_OK;
+	}
+	return(result);
 }
 
 // FUNCTION: 0x00555110
@@ -210,3 +264,31 @@ HRESULT STDMETHODCALLTYPE LightSourceClass::Save(IStream * stream, BOOL cleardir
 	}
 	return(result);
 }
+
+// FUNCTION: 0x00555130
+int LightSourceClass::Fetch_Object_Size(void) const
+{
+	return(sizeof(*this));
+}
+
+// FUNCTION: 0x00555140
+RTTIType LightSourceClass::Fetch_RTTI(void) const
+{
+	return(RTTI_LIGHTSOURCE);
+}
+
+// FUNCTION: 0x00555150 LightSourceClass::~LightSourceClass
+
+// FUNCTION: 0x00555200 ?$DynamicVectorClass@PAVLightSourceClass@@::Clear
+template class DynamicVectorClass<LightSourceClass *>;
+
+// FUNCTION: 0x00555230 ?$DynamicVectorClass@PAVLightSourceClass@@::ID
+
+// FUNCTION: 0x00555250 ?$VectorClass@PAVLightSourceClass@@::GetItem
+
+// FUNCTION: 0x00555260 ?$DynamicVectorClass@PAVPendingCellClass@LightSourceClass@@::Clear
+template class DynamicVectorClass<LightSourceClass::PendingCellClass *>;
+
+// FUNCTION: 0x00555290 ?$DynamicVectorClass@PAVPendingCellClass@LightSourceClass@@::ID
+
+// FUNCTION: 0x005552B0 ?$VectorClass@PAVPendingCellClass@LightSourceClass@@::GetItem

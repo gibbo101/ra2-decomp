@@ -79,6 +79,11 @@ class HouseStaticClass {
 		SourceType Edge;
 };
 
+struct StartingTechnoStruct {
+	TechnoTypeClass const * Type;
+	Cell CellID;
+};
+
 class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, public IConnectionPointContainer
 {
 		typedef AbstractClass BASECLASS;
@@ -397,6 +402,8 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 		Cell Random_Cell_In_Zone(ZoneType zone) const;
 		static void Computer_Paranoid(void);
 		static HouseClass * FindByCountryIndex(int index);
+		static int FindIndexByName(char const * name);
+		bool FUN_0050C340(int node);
 		bool Is_Allowed_To_Ally(HouseClass * house) const;
 		void Super_Weapon_Handler(void);
 		int * Factory_Counter(RTTIType rtti, unsigned char naval);
@@ -446,6 +453,11 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 		void Destroy_All_Non_Buildings_Non_Naval(void);
 		void Destroy_All_Non_Buildings_Naval(void);
 		void Cheer(void);
+		void FUN_0050C920(void);
+		bool FUN_0050CAD0(BaseNodeClass * node);
+		void FUN_0050D250(Cell offset);
+		void FUN_0050D290(HouseClass * other);
+		void FUN_0050D2D0(HouseClass * other);
 		void RespawnStartingForces(void);
 		void RespawnStartingBuildings(void);
 		void Make_Ally(HouseClass * house, bool announce);

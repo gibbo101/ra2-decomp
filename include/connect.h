@@ -69,7 +69,7 @@ class ConnectionClass
 		virtual int Service_Receive_Queue(void);
 
 		virtual int Send(char *buf, int buflen, void *extrabuf,
-			int extralen) = 0;
+			int extralen, bool flag, unsigned short port) = 0;
 
 		int NumResends;
 

@@ -21,6 +21,7 @@
 #include <objidl.h>
 #include <math.h>
 #include <string.h>
+#include <stdio.h>
 namespace fastmath { double __cdecl sqrt(double x); }
 
 VocClass * __fastcall FUN_004063B0(char const * name);
@@ -697,7 +698,12 @@ IntTriple3 DAT_00B1D440;
 
 struct VoxEntry
 {
-	char Name[0x2c];
+	VoxEntry(char const * name);
+	~VoxEntry(void);
+	bool LoadFromINI(INIClass & ini);
+
+	char Name[0x28];
+	float Volume;
 	char Files[3][9];
 	int Priority;
 	int Type;
@@ -1001,6 +1007,229 @@ void VoxClass::SilenceIndex(int index)
 			delete node;
 		}
 	}
+}
+
+extern char DAT_00889F64[];
+extern AudioStream * DAT_00B1D4D8;
+extern int DAT_00B1D480;
+int DAT_00846614 = 255;
+
+// FUNCTION: 0x00752AB0
+void __fastcall FUN_00752AB0(int volume)
+{
+	DAT_00846614 = volume;
+	if (volume >= 255) {
+		DAT_00846614 = 255;
+	}
+}
+
+// FUNCTION: 0x00752AD0
+int FUN_00752AD0(void)
+{
+	if (!DAT_00B1D4D8) {
+		DAT_00B1D4D8 = FUN_00407010()->FUN_00407860(3000, 0);
+		if (!DAT_00B1D4D8) {
+			return 0;
+		}
+	}
+	FUN_00408080(DAT_00B1D4D8, "Taunt Stream");
+	FUN_00407B40(DAT_00B1D4CC, DAT_0087E740);
+	FUN_00407B50(DAT_00B1D4CC, DAT_0087E750);
+	DAT_00B1D480 = 0;
+	return 1;
+}
+
+// FUNCTION: 0x00752B40
+void FUN_00752B40(void)
+{
+	if (DAT_00B1D4D8) {
+		DAT_00B1D4D8->FUN_00407F40();
+		DAT_00B1D4D8->FUN_00407A90();
+		DAT_00B1D4D8 = NULL;
+	}
+}
+
+// FUNCTION: 0x00752B70
+int __fastcall FUN_00752B70(int taunt)
+{
+	if (DAT_00B1D4D8 && !DAT_00B1D480) {
+		char number = taunt & 0xf;
+		if (number >= 1 && number <= 8) {
+			char buffer[20];
+			switch ((taunt >> 4) & 0xf) {
+			case 0:
+				sprintf(buffer, "taunts\\tauam%02i.wav", number);
+				break;
+			case 1:
+				sprintf(buffer, "taunts\\tauko%02i.wav", number);
+				break;
+			case 2:
+				sprintf(buffer, "taunts\\taufr%02i.wav", number);
+				break;
+			case 3:
+				sprintf(buffer, "taunts\\tauge%02i.wav", number);
+				break;
+			case 4:
+				sprintf(buffer, "taunts\\taubr%02i.wav", number);
+				break;
+			case 5:
+				sprintf(buffer, "taunts\\tauli%02i.wav", number);
+				break;
+			case 6:
+				sprintf(buffer, "taunts\\tauir%02i.wav", number);
+				break;
+			case 7:
+				sprintf(buffer, "taunts\\taucu%02i.wav", number);
+				break;
+			case 8:
+				sprintf(buffer, "taunts\\tauru%02i.wav", number);
+				break;
+			case 9:
+				sprintf(buffer, "taunts\\tauyu%02i.wav", number);
+				break;
+			default:
+				return 0;
+			}
+			return FUN_00407B60(DAT_00B1D4D8, buffer, 0);
+		}
+	}
+	return 0;
+}
+
+// FUNCTION: 0x00752CA0
+void FUN_00752CA0(void)
+{
+	if (DAT_00B1D4D8) {
+		DAT_00B1D4D8->FUN_00407F40();
+	}
+}
+
+// FUNCTION: 0x00752CB0
+VoxEntry::VoxEntry(char const * name)
+{
+	Volume = 1.0f;
+	strcpy(Name, name);
+	Files[0][0] = '\0';
+	Files[1][0] = '\0';
+	Files[2][0] = '\0';
+	Priority = 1;
+	Type = 0;
+	State = 2;
+	VoxArray.Add(this);
+}
+
+// FUNCTION: 0x00752D60
+VoxEntry::~VoxEntry(void)
+{
+	VoxArray.Delete(this);
+}
+
+// FUNCTION: 0x00752DB0
+bool VoxEntry::LoadFromINI(INIClass & ini)
+{
+	char buffer[500];
+
+	ini.Reset();
+	Volume = 1.0f;
+	if (ini.Is_Present(Name)) {
+		Volume = ini.Get_Float(Name, "Volume", Volume);
+		ini.Get_String(Name, "Type", DAT_00889F64, buffer, sizeof(buffer));
+		if (strlen(buffer)) {
+			if (!strcmpi(buffer, "QUEUE")) {
+				Type = 1;
+			} else if (!strcmpi(buffer, "STANDARD")) {
+				Type = 0;
+			} else if (!strcmpi(buffer, "INTERRUPT")) {
+				Type = 2;
+			} else if (!strcmpi(buffer, "QUEUED_INTERRUPT")) {
+				Type = 3;
+			}
+		}
+		ini.Get_String(Name, "Priority", DAT_00889F64, buffer, sizeof(buffer));
+		if (strlen(buffer)) {
+			if (!strcmpi(buffer, "LOW")) {
+				Priority = 0;
+			} else if (!strcmpi(buffer, "NORMAL")) {
+				Priority = 1;
+			} else if (!strcmpi(buffer, "IMPORTANT")) {
+				Priority = 2;
+			} else if (!strcmpi(buffer, "CRITICAL")) {
+				Priority = 3;
+			}
+		}
+		ini.Get_String(Name, "Yuri", DAT_00889F64, buffer, sizeof(buffer));
+		strncpy(Files[0], buffer, 9);
+		Files[0][8] = '\0';
+		ini.Get_String(Name, "Russian", DAT_00889F64, buffer, sizeof(buffer));
+		strncpy(Files[1], buffer, 9);
+		Files[1][8] = '\0';
+		ini.Get_String(Name, "Allied", DAT_00889F64, buffer, sizeof(buffer));
+		strncpy(Files[2], buffer, 9);
+		Files[2][8] = '\0';
+		return true;
+	}
+	return false;
+}
+
+static int FindVoxChecked(char const * name)
+{
+	if (name == NULL) return -1;
+	return FindVox(name);
+}
+
+// FUNCTION: 0x00753000
+void __fastcall FUN_00753000(INIClass & ini)
+{
+	char const * const SECTION = "DialogList";
+
+	if (ini.Is_Present(SECTION)) {
+		int count = ini.Entry_Count(SECTION);
+		for (int i = 0; i < count; i++) {
+			char name[200];
+			if (ini.Get_String(SECTION, ini.Get_Entry(SECTION, i), DAT_00889F64, name, sizeof(name))) {
+				VoxEntry * vox;
+				int index = FindVoxChecked(name);
+				if (index == -1) {
+					vox = new VoxEntry(name);
+				} else {
+					vox = VoxArray[index];
+				}
+				vox->LoadFromINI(ini);
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x007531A0
+void FUN_007531A0(void)
+{
+	if (DAT_00B1D4C4) {
+		DAT_00B1D4C4->State = 2;
+		DAT_00B1D4C4 = NULL;
+	}
+	if (DAT_00B1D4CC) {
+		DAT_00B1D4CC->FUN_00407F40();
+	}
+	FUN_00752370();
+	while (VoxArray.Count() > 0) {
+		VoxEntry * vox = VoxArray[0];
+		delete vox;
+	}
+}
+
+// FUNCTION: 0x00753250
+int __fastcall FUN_00753250(char const * name)
+{
+	return FindVoxChecked(name);
+}
+
+// FUNCTION: 0x007532A0
+bool __fastcall FUN_007532A0(int index)
+{
+	if (index >= 0 && index < VoxArray.Count()) {
+		return VoxArray[index]->State == 2;
+	}
+	return true;
 }
 
 // FUNCTION: 0x007532D0

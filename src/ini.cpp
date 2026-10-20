@@ -703,6 +703,17 @@ PKey INIClass::Get_PKey(bool fast) const
 	return(key);
 }
 
+// FUNCTION: 0x0052A940
+bool INIClass::WriteTime(char const * section, char const * entry, int value)
+{
+	char buffer[32];
+	int seconds = value / 60;
+	int minutes = seconds / 60;
+	int hours = minutes / 60;
+	sprintf(buffer, "%02d:%02d:%02d", hours, minutes - hours * 60, seconds - minutes * 60);
+	return(Put_String(section, entry, buffer));
+}
+
 // FUNCTION: 0x0052A9E0
 char * INIClass::Scan_Line_For_Columns(char * buffer, int & assign_col, int & value_col, int & comment_col)
 {
@@ -817,3 +828,19 @@ INIClass::INISection::~INISection(void)
 		PrefixComment = next;
 	}
 }
+
+// FUNCTION: 0x0052AD50 INIClass::INIEntry::~INIEntry
+
+// FUNCTION: 0x0052AE00 INIClass::INISection::~INISection
+
+// FUNCTION: 0x0052AE20 ?$Node@PAUINISection@INIClass@@::~?$Node@PAUINISection@INIClass@@
+
+// FUNCTION: 0x0052AE70 BufferStraw::~BufferStraw
+
+// FUNCTION: 0x0052AEA0 Straw::~Straw
+
+// FUNCTION: 0x0052AEC0 CRCEngine::CRCEngine
+
+// FUNCTION: 0x0052AEE0 Pipe::~Pipe
+
+// FUNCTION: 0x0052AF00 INIClass::INIEntry::INIEntry

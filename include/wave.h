@@ -38,6 +38,7 @@ class WaveClass : public ObjectClass
 		virtual void Draw_It(Point2D const & point, Rect const & cliprect) const override;
 		void Draw_Sonic(Point2D const & point, Rect const & cliprect);
 		void Draw_Laser(Point2D const & point, Rect const & cliprect);
+		void FUN_007602E0(Point2D const & point, Rect const & cliprect);
 
 		virtual void AI(void) override;
 
@@ -48,8 +49,10 @@ class WaveClass : public ObjectClass
 	private:
 		void Set_Sonic_Pixel(int x, int xoff, int y, unsigned short * buffer) const;
 		void Set_Laser_Pixel(unsigned short * buffer, int mult) const;
+		void FUN_00760190(int x, int xoff, int y, unsigned short * buffer) const;
 
 		void Laser_AI(void);
+		void FUN_007610A0(void);
 
 		void Sonic_AI(void);
 		void Wave_Recalc_Affected_Cells(void);

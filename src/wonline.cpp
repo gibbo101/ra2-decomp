@@ -470,3 +470,152 @@ IPXAddressClass __fastcall FUN_0077D720(HostEntry * host)
 	IPXAddressClass address(netnum, net, 0);
 	return address;
 }
+
+#include "theme.h"
+#include "scenario.h"
+#include "_map.h"
+
+extern bool UserInputLocked;
+extern void * InputManagerInstance;
+void __fastcall FUN_0054F720(void * input);
+HWND FUN_005E26C0(void);
+int __fastcall FUN_007759E0(HWND window, bool (*callback)(void), int a, int b, int c);
+BOOL CALLBACK FUN_0078D120(HWND win, UINT msg, WPARAM wparam, LPARAM lparam);
+bool FUN_0077D820(void);
+
+namespace UI {
+	HWND __fastcall BeginDialog(int id, DLGPROC proc, int extra);
+	bool Updated(void);
+}
+
+// FUNCTION: 0x0077D7A0
+void FUN_0077D7A0(bool play)
+{
+	if (play) {
+		if (!Theme.Still_Playing()) {
+			Theme.Stop();
+			Theme.Queue_Song(THEME_PICK_ANOTHER);
+			return;
+		}
+		if (Theme.What_Is_Playing() == Theme.From_Name("INTRO")) {
+			Theme.Stop();
+			Theme.Queue_Song(THEME_PICK_ANOTHER);
+			return;
+		}
+	} else {
+		Theme.Queue_Song(THEME_QUIET);
+	}
+}
+
+// FUNCTION: 0x0077D820
+bool FUN_0077D820(void)
+{
+	UI::Updated();
+	HWND top = FUN_005E26C0();
+	if (top) {
+		InvalidateRect(top, NULL, TRUE);
+	}
+	return false;
+}
+
+// FUNCTION: 0x0077D840
+void FUN_0077D840(void)
+{
+	HWND dialog = UI::BeginDialog(0xCF, (DLGPROC)FUN_0078D120, 0);
+	UserInputLocked = true;
+	FUN_0054F720(InputManagerInstance);
+	ShowWindow(dialog, SW_SHOWNORMAL);
+	if (FUN_005E26C0()) {
+		FUN_007759E0(dialog, FUN_0077D820, 0, 1, 1);
+	} else {
+		FUN_007759E0(dialog, UI::Updated, 0, 1, 1);
+	}
+	FUN_0054F720(InputManagerInstance);
+	UserInputLocked = Scen->IsInputLocked;
+	Map.Flag_To_Redraw(GS_REDRAW_ALL);
+}
+
+void __fastcall FUN_00773E90(const char * name);
+
+// FUNCTION: 0x0077D8C0
+void FUN_0077D8C0(void)
+{
+	FUN_00773E90("Battleclans");
+}
+
+// FUNCTION: 0x0077D8D0
+void FUN_0077D8D0(void)
+{
+	FUN_00773E90("Battleclans");
+}
+
+// FUNCTION: 0x0077D8E0
+void FUN_0077D8E0(void)
+{
+	FUN_00773E90("Ladder");
+}
+
+// FUNCTION: 0x0077D8F0
+void FUN_0077D8F0(void)
+{
+	FUN_00773E90("News");
+}
+
+// FUNCTION: 0x0077D900
+void FUN_0077D900(void)
+{
+	FUN_00773E90("Manage");
+}
+
+struct WolChannel {
+	char Pad[0x14];
+	int Tournament;
+	char Pad2[8];
+	unsigned int Reserved : 8;
+	unsigned int Clan : 1;
+	unsigned int Rest : 23;
+};
+
+extern WolChannel DAT_00B76B10;
+
+// FUNCTION: 0x0077D910
+bool __fastcall FUN_0077D910(WolChannel * chan)
+{
+	if (Session.Type != GAME_INTERNET) {
+		return false;
+	}
+	bool r = false;
+	return chan->Tournament || (r = chan->Clan) || r;
+}
+
+// FUNCTION: 0x0077D940
+bool FUN_0077D940(void)
+{
+	if (Session.Type != GAME_INTERNET) {
+		return false;
+	}
+	bool r = false;
+	if (DAT_00B76B10.Tournament || (r = DAT_00B76B10.Clan)) {
+		return true;
+	}
+	return r;
+}
+
+// FUNCTION: 0x0077D970
+bool FUN_0077D970(void)
+{
+	if (Session.Type != GAME_INTERNET) {
+		return false;
+	}
+	bool r = DAT_00B76B10.Clan;
+	return r;
+}
+
+// FUNCTION: 0x0077D990
+bool __fastcall FUN_0077D990(WolChannel * chan)
+{
+	if (Session.Type != GAME_INTERNET) {
+		return false;
+	}
+	return chan->Clan;
+}

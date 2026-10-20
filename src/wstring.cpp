@@ -1066,6 +1066,40 @@ unsigned int WideWstring::length(void) const
 	return((unsigned int)wcslen(str));
 }
 
+// FUNCTION: 0x007B73F0
+char WideWstring::replace(wchar_t const* replaceThis, wchar_t const* withThis)
+{
+	WideWstring  dest;
+	wchar_t* foundStr, * src;
+	unsigned int   len;
+
+	src = get();
+	while (src && src[0])
+	{
+		foundStr = wcsstr(src, replaceThis);
+		if (foundStr)
+		{
+			len = (unsigned int)foundStr - (unsigned int)src;
+			if (len)
+			{
+				if (!dest.cat(len, src))
+					return(FALSE);
+			}
+			if (!dest.cat(withThis))
+				return(FALSE);
+			src = foundStr + wcslen(replaceThis);
+		}
+		else
+		{
+			if (!dest.cat(src))
+				return(FALSE);
+
+			src = NULL;
+		}
+	}
+	return(set(dest.get()));
+}
+
 // FUNCTION: 0x007B7660
 char WideWstring::set(wchar_t c, unsigned int index)
 {

@@ -193,6 +193,7 @@ class EventClass
 		EventClass(int index, unsigned char type, void *ptr, unsigned int size);
 
 		void Execute(void);
+		void FUN_00652230(void);
 
 		int operator == (EventClass & q) {
 			return(memcmp(this, &q, sizeof(q)) == 0);

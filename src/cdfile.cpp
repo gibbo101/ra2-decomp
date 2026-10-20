@@ -9,6 +9,13 @@
 
 HANDLE FindFileHandle = INVALID_HANDLE_VALUE;
 
+// FUNCTION: 0x0047A9D0
+CDFileClass::CDFileClass(char const * filename) :
+	IsDisabled(false)
+{
+	CDFileClass::Set_Name(filename);
+}
+
 // FUNCTION: 0x0047AA50
 int Is_Disk_Inserted(int disk)
 {

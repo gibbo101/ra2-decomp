@@ -778,8 +778,12 @@ void UnitClass::Draw_It(Point2D const & point, Rect const & cliprect) const
 			Coord_Pixel(Move_Coord(Render_Coord(), face, 30), pixel);
 			FacingType face2 = (FacingType)PrimaryFacing.Current().As_Dir8();
 			int row = 7 - face2;
-			if (TemporalTargetingMe == NULL && !IsBeingWarpedOut() && !IsWarpingIn()) {
-				Draw_Shape(*DSurface::Temp, *FileSystem::ANIM_PAL, harvesting_shape, row * 15 + (Frame + TotalFramesWalked) % 15, pixel, cliprect, ShapeFlags_Type(0x2a00), NULL, Get_Z_Adjust() - 2, ZGRAD_GROUND, brightness);
+			if (TemporalTargetingMe == NULL) {
+				if (!IsBeingWarpedOut()) {
+					if (!IsWarpingIn()) {
+						Draw_Shape(*DSurface::Temp, *FileSystem::ANIM_PAL, harvesting_shape, row * 15 + (Frame + TotalFramesWalked) % 15, pixel, cliprect, ShapeFlags_Type(0x2a00), NULL, Get_Z_Adjust() - 2, ZGRAD_GROUND, brightness);
+					}
+				}
 			}
 		}
 

@@ -23,10 +23,11 @@ class BaseNodeClass
 {
 	public:
 		BaseNodeClass(void) {};
-		BaseNodeClass(StructType building, Cell cell) : Type(building), CellID(cell) {};
+		BaseNodeClass(StructType building, Cell const & cell) : Type(building), CellID(cell), Placed(false), Attempts(0) {};
 		bool operator == (BaseNodeClass const & node);
 		bool operator != (BaseNodeClass const & node);
 		bool operator > (BaseNodeClass const & node);
+		void FUN_0042E6D0(Cell offset);
 
 		StructType Type;
 

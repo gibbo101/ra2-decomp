@@ -72,6 +72,120 @@ Cell DAT_00B45BC8(0, 0);
 // FUNCTION: 0x0075AA50 $E118
 Coord DAT_00B45BE8(0, 0, 0);
 
+// FUNCTION: 0x0075AA70 $E121
+Coord DAT_00B45C10(128, 128, 0);
+
+// FUNCTION: 0x0075AA90
+WalkLocomotionClass::WalkLocomotionClass(void) :
+	BASECLASS(),
+	DestinationCoord(COORD_NONE),
+	HeadToCoord(COORD_NONE),
+	IsMoving(false),
+	IsProcessingMovement(false),
+	IsReallyMoving(false)
+{
+}
+
+// FUNCTION: 0x0075AB00
+WalkLocomotionClass::~WalkLocomotionClass(void)
+{
+}
+
+// FUNCTION: 0x0075AB30
+boolean STDMETHODCALLTYPE WalkLocomotionClass::Is_Moving(void)
+{
+	return(IsMoving);
+}
+
+// FUNCTION: 0x0075AB40
+boolean STDMETHODCALLTYPE WalkLocomotionClass::Is_Moving_Now(void)
+{
+	if (Is_Moving() && LinkedTo->Speed > 0 && HeadToCoord != COORD_NONE) {
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x0075ABA0
+CoordStruct STDMETHODCALLTYPE WalkLocomotionClass::Destination(void)
+{
+	if (Is_Moving()) {
+		return(DestinationCoord);
+	}
+	return(COORD_NONE);
+}
+
+// FUNCTION: 0x0075AC00
+CoordStruct STDMETHODCALLTYPE WalkLocomotionClass::Head_To_Coord(void)
+{
+	if (HeadToCoord != COORD_NONE) {
+		return(HeadToCoord);
+	}
+	return(LinkedTo->PositionCoord);
+}
+
+// FUNCTION: 0x0075AC80
+boolean STDMETHODCALLTYPE WalkLocomotionClass::Process(void)
+{
+	IsProcessingMovement = true;
+	Movement_AI(true);
+	IsProcessingMovement = false;
+	return(Is_Moving());
+}
+
+// FUNCTION: 0x0075ACB0
+void STDMETHODCALLTYPE WalkLocomotionClass::Move_To(CoordStruct to)
+{
+	if (!LinkedTo->IsUnderEMP() && !LinkedTo->IsBeingWarpedOut() && !LinkedTo->IsWarpingIn()) {
+		DestinationCoord = to;
+		if ((Coord &)to != COORD_NONE) {
+			if (Map[(Coord)to].IsUnderBridge) {
+				DestinationCoord.Z += Tactical::Pixel_To_Z_Lepton(60);
+			}
+			IsMoving = true;
+		} else {
+			if (HeadToCoord == COORD_NONE) {
+				bool was_moving = IsMoving;
+				IsMoving = false;
+				if (was_moving) {
+					LinkedTo->vt_entry_54C();
+				}
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x0075ADA0
+void STDMETHODCALLTYPE WalkLocomotionClass::Stop_Moving(void)
+{
+	DestinationCoord = COORD_NONE;
+	if (HeadToCoord == COORD_NONE) {
+		IsMoving = false;
+		IsReallyMoving = false;
+		LinkedTo->vt_entry_54C();
+	}
+}
+
+// FUNCTION: 0x0075AE00
+void STDMETHODCALLTYPE WalkLocomotionClass::Do_Turn(DirStruct dir)
+{
+	LinkedTo->PrimaryFacing.Set(dir);
+}
+
+// FUNCTION: 0x0075AE30
+void STDMETHODCALLTYPE WalkLocomotionClass::Force_Immediate_Destination(CoordStruct coord)
+{
+	bool was_moving = IsMoving;
+	Coord head = coord;
+	Mark_Head_To(head);
+	if (HeadToCoord == COORD_NONE && DestinationCoord == COORD_NONE) {
+		IsMoving = false;
+		if (was_moving) {
+			LinkedTo->vt_entry_54C();
+		}
+	}
+}
+
 // FUNCTION: 0x0075C640
 HRESULT STDMETHODCALLTYPE WalkLocomotionClass::GetClassID(CLSID * retval)
 {

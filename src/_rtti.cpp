@@ -7,6 +7,7 @@
 #include "geometry.h"
 #include "_rtti.h"
 #include "object.h"
+#include "ccini.h"
 
 struct {
 	char const *Name;
@@ -162,3 +163,22 @@ TechnoClass * Dynamic_Cast<TechnoClass *>(AbstractClass * target)
 // FUNCTION: 0x0040DED0 $E23
 // FUNCTION: 0x0040DF00 $E26
 // FUNCTION: 0x0040DF30 $E29
+// FUNCTION: 0x0040DF60 $E32
+// FUNCTION: 0x0040DF70 $E35
+// FUNCTION: 0x0040DF90 $E38
+
+CCINIClass ArtINI;
+CCINIClass UIMDINI;
+CCINIClass AIINI;
+CCINIClass DAT_00887058;
+CCINIClass RA2MDINI;
+
+// FUNCTION: 0x0040DFB0 $E60
+// FUNCTION: 0x0040E050 $E58
+// FUNCTION: 0x0040E060 $E65
+// FUNCTION: 0x0040E100 $E63
+// FUNCTION: 0x0040E110 $E70
+// FUNCTION: 0x0040E1B0 $E68
+// FUNCTION: 0x0040E1C0 $E75
+// FUNCTION: 0x0040E260 $E73
+// FUNCTION: 0x0040E270 $E80

@@ -94,6 +94,78 @@ int MissionClass::Do_MISSION_MOVE(void)
 	return(TICKS_PER_SECOND*30);
 }
 
+// FUNCTION: 0x005B2EC0
+int MissionClass::Do_MISSION_RETREAT(void)
+{
+	return(TICKS_PER_SECOND*30);
+}
+
+// FUNCTION: 0x005B2ED0
+int MissionClass::Do_MISSION_RETURN(void)
+{
+	return(TICKS_PER_SECOND*30);
+}
+
+// FUNCTION: 0x005B2EE0
+int MissionClass::Do_MISSION_STOP(void)
+{
+	return(TICKS_PER_SECOND*30);
+}
+
+// FUNCTION: 0x005B2EF0
+int MissionClass::Do_MISSION_UNLOAD(void)
+{
+	return(TICKS_PER_SECOND*30);
+}
+
+// FUNCTION: 0x005B2F00
+int MissionClass::Do_MISSION_ENTER(void)
+{
+	return(TICKS_PER_SECOND*30);
+}
+
+// FUNCTION: 0x005B2F10
+int MissionClass::Do_MISSION_CONSTRUCTION(void)
+{
+	return(TICKS_PER_SECOND*30);
+}
+
+// FUNCTION: 0x005B2F20
+int MissionClass::Do_MISSION_DECONSTRUCTION(void)
+{
+	return(TICKS_PER_SECOND*30);
+}
+
+// FUNCTION: 0x005B2F30
+int MissionClass::Do_MISSION_REPAIR(void)
+{
+	return(TICKS_PER_SECOND*30);
+}
+
+// FUNCTION: 0x005B2F40
+int MissionClass::Do_MISSION_MISSILE(void)
+{
+	return(TICKS_PER_SECOND*30);
+}
+
+// FUNCTION: 0x005B2F50
+int MissionClass::Do_MISSION_OPEN(void)
+{
+	return(TICKS_PER_SECOND*30);
+}
+
+// FUNCTION: 0x005B2F60
+int MissionClass::Do_MISSION_RESCUE(void)
+{
+	return(TICKS_PER_SECOND*30);
+}
+
+// FUNCTION: 0x005B2F70
+int MissionClass::Do_MISSION_PATROL(void)
+{
+	return(TICKS_PER_SECOND*30);
+}
+
 // FUNCTION: 0x005B36E0
 bool MissionClass::Is_Recruitable_Mission(MissionType mission)
 {

@@ -218,6 +218,7 @@ class DynamicVectorClass : public VectorClass<T>
 		bool Add_Head(T const & object);
 		bool Insert(int index, T const & object);
 		bool Insert_After(int index, T const & object);
+		bool Insert_After(T const & object, int index);
 
 		bool Delete(T const & object);
 
@@ -342,6 +343,29 @@ bool DynamicVectorClass<T>::Insert(int index, T const & object)
 
 template<class T>
 bool DynamicVectorClass<T>::Insert_After(int index, T const & object)
+{
+	if (ActiveCount >= Length()) {
+		if ((IsAllocated || !VectorMax) && GrowthStep > 0) {
+			if (!Resize(Length() + GrowthStep)) {
+
+				return(false);
+			}
+		} else {
+
+			return(false);
+		}
+	}
+
+	if (index < ActiveCount - 1) {
+		memmove(&(*this)[index + 2], &(*this)[index + 1], (ActiveCount - (index + 1)) * sizeof(T));
+	}
+	(*this)[index + 1] = object;
+	ActiveCount++;
+	return(true);
+}
+
+template<class T>
+bool DynamicVectorClass<T>::Insert_After(T const & object, int index)
 {
 	if (ActiveCount >= Length()) {
 		if ((IsAllocated || !VectorMax) && GrowthStep > 0) {

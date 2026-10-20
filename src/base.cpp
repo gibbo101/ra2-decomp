@@ -42,6 +42,13 @@ bool BaseNodeClass::operator !=(BaseNodeClass const & node)
 	return(!(*this == node));
 }
 
+// FUNCTION: 0x0042E6D0
+void BaseNodeClass::FUN_0042E6D0(Cell offset)
+{
+	CellID.X += offset.X;
+	CellID.Y += offset.Y;
+}
+
 // FUNCTION: 0x0042E6F0
 BaseClass::BaseClass(void) :
 	Nodes(),

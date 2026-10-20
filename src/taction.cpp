@@ -384,6 +384,12 @@ void TActionClass::Read_INI(void)
 	}
 }
 
+// FUNCTION: 0x006E0030
+bool TActionClass::TAction_FUN_006E0030(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	return(true);
+}
+
 // FUNCTION: 0x006E0040
 bool TActionClass::TAction_CHANGE_ZOOM(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
@@ -2277,3 +2283,43 @@ bool TActionClass::TAction_ResetBaseCenter(HouseClass * house, ObjectClass * , T
 	house->FUN_0050DFF0();
 	return(true);
 }
+
+#undef Buildings
+
+// FUNCTION: 0x006E4560
+bool TActionClass::TAction_FlashBuildingsOfType(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
+{
+	if (house == NULL) {
+		return(false);
+	}
+	for (int index = house->Buildings.Count() - 1; index >= 0; index--) {
+		BuildingClass * building = house->Buildings[index];
+		if (TechnoID == building->Class->IniName) {
+			building->Flashing.FlashCount = Data.Value;
+		}
+	}
+	return(true);
+}
+
+// FUNCTION: 0x006E45E0
+HouseClass * TActionClass::FindHouseByIndex(TriggerClass * trig, int index) const
+{
+	if (trig == NULL) {
+		return(NULL);
+	}
+	return(Find_House(trig, index));
+}
+
+// FUNCTION: 0x006E4630 TActionClass::Fetch_Object_Size
+// FUNCTION: 0x006E4640 TActionClass::Fetch_RTTI
+// FUNCTION: 0x006E4650 TActionClass::Fetch_Heap_ID
+// FUNCTION: 0x006E4660 TActionClass::~TActionClass
+
+// FUNCTION: 0x006E4790 ?$TStringID@$0BP@::?$TStringID@$0BP@
+// FUNCTION: 0x006E47C0 ?$TStringID@$0BP@::operator=
+template struct TStringID<31>;
+
+// FUNCTION: 0x006E47F0 ?$DynamicVectorClass@PAVTActionClass@@::Clear
+// FUNCTION: 0x006E4820 ?$DynamicVectorClass@PAVTActionClass@@::ID
+// FUNCTION: 0x006E4840 ?$VectorClass@PAVTActionClass@@::GetItem
+template class DynamicVectorClass<TActionClass *>;

@@ -22,6 +22,9 @@
 #include "color.hh"
 #include <climits>
 
+extern int FUN_00407000(void);
+extern float DAT_00A8EB98;
+
 // FUNCTION: 0x005D1AA0
 MSEngine::MSEngine(void)
 {
@@ -111,6 +114,89 @@ void MSEngine::Restore_And_Advance(void)
 	Advance(HiddenSurface);
 }
 
+// FUNCTION: 0x005D1E70
+void MSEngine::Advance(Surface * surface)
+{
+	if (SurfacesRestored == true) {
+		SurfacesRestored = false;
+		surface->Fill(TBLACK);
+		Rect rect = AlternateSurface->Get_Rect();
+		rect.X = (surface->Get_Width() - rect.Width) / 2;
+		rect.Y = (surface->Get_Height() - rect.Height) / 2;
+		surface->Blit_From(AlternateSurface->Get_Rect(), *AlternateSurface, rect);
+		for (int i = 0; i < Anims.Count(); i++) {
+			Anims[i]->Redraw(surface);
+		}
+		RectCount = 0;
+		Add_Update_Rect(surface->Get_Rect());
+		Do_Custom_Draw(surface);
+	}
+
+	for (int i = 0; i < Anims.Count(); i++) {
+		Rect rect;
+		if (Anims[i]->Advance(surface, rect) == true) {
+			delete Anims[i];
+			Anims.Delete_Index(i);
+		}
+		Add_Update_Rect(rect);
+	}
+}
+
+
+// FUNCTION: 0x005D2260
+void MSEngine::Blit_All(Surface * surface)
+{
+	RECT client_rect;
+
+	if (RectCount > 0) {
+
+		GetClientRect(MainWindow, (LPRECT)&client_rect);
+		ClientToScreen(MainWindow, (LPPOINT)&client_rect.left);
+
+		if (MouseCursor) {
+			MouseCursor->Draw_Mouse(surface);
+		}
+
+		for (int i = 0; i < RectCount; i++) {
+			Rect offset_rect = Rects[i];
+			offset_rect.X += client_rect.left;
+			offset_rect.Y += client_rect.top;
+			VisibleSurface->Blit_From(offset_rect, *surface, Rects[i]);
+		}
+
+		RectCount = 0;
+
+		if (MouseCursor) {
+			MouseCursor->Erase_Mouse(surface);
+		}
+	}
+}
+
+// FUNCTION: 0x005D2350
+void MSEngine::Blit_Rect(Surface * surface, Rect const & rect)
+{
+	RECT client_rect;
+
+	if (rect.Is_Valid()) {
+
+		GetClientRect(MainWindow, (LPRECT)&client_rect);
+		ClientToScreen(MainWindow, (LPPOINT)&client_rect.left);
+
+		if (MouseCursor) {
+			MouseCursor->Draw_Mouse(surface);
+		}
+
+		Rect offset_rect = rect;
+		offset_rect.X += client_rect.left;
+		offset_rect.Y += client_rect.top;
+		VisibleSurface->Blit_From(offset_rect, *surface, rect);
+
+		if (MouseCursor) {
+			MouseCursor->Erase_Mouse(surface);
+		}
+	}
+}
+
 // FUNCTION: 0x005D2410
 void MSEngine::Wait_Delay(int delay)
 {
@@ -165,6 +251,36 @@ void MSEngine::Wait_For_Focus(void)
 	}
 }
 
+// FUNCTION: 0x005D25D0
+bool MSEngine::Add_Sound_Effect(char const * name, char const * file_name)
+{
+	if (name == NULL || file_name == NULL) {
+		return(false);
+	}
+
+	if (Sounds.Add(new MSSfx(name, file_name))) {
+		return(true);
+	}
+
+	return(false);
+}
+
+// FUNCTION: 0x005D2650
+void MSEngine::Play_Sound_Effect(char const * name, int volume)
+{
+	if (name == NULL || !FUN_00407000()) {
+		return;
+	}
+
+	for (int i = 0; i < Sounds.Count(); i++) {
+		MSSfx * sfx = Sounds[i];
+		if (stricmp(name, sfx->Get_Name()) == 0) {
+			sfx->Play(int(volume * DAT_00A8EB98));
+			break;
+		}
+	}
+}
+
 // FUNCTION: 0x005D26C0
 void MSEngine::Restore_Anims(Rect const & rect)
 {
@@ -172,3 +288,17 @@ void MSEngine::Restore_Anims(Rect const & rect)
 		Anims[i]->Restore(rect);
 	}
 }
+
+// FUNCTION: 0x005D26F0 MSEngine::Process_Idle
+
+// FUNCTION: 0x005D2700 MSEngine::~MSEngine
+
+// FUNCTION: 0x005D2720 ?$DynamicVectorClass@PAVMSAnim@@::Clear
+template class DynamicVectorClass<MSAnim *>;
+
+// FUNCTION: 0x005D2750 ?$DynamicVectorClass@PAVMSAnim@@::ID
+
+// FUNCTION: 0x005D2770 ?$VectorClass@PAVMSAnim@@::GetItem
+
+// FUNCTION: 0x005D2780 ?$DynamicVectorClass@PAVMSSfx@@::Clear
+template class DynamicVectorClass<MSSfx *>;

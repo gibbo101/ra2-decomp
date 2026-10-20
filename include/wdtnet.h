@@ -773,6 +773,8 @@ namespace WorldDominationTour
 			int FUN_00764FC0(bool vq_anim);
 			int FUN_00764FF0(int index);
 			void FUN_00765000(int index);
+			bool FUN_00764FA0(void);
+			void FUN_00765410(int faction);
 	};
 
 	class YRCampaignHandle : public YRHandleBase {
@@ -996,6 +998,8 @@ namespace WorldDominationTour
 
 void WDT_Review_Campaign(WorldDominationTour::Campaign * campaign);
 bool WDT_Select_Campaign(WorldDominationTour::Campaign * campaign, bool vq_anim);
+void __fastcall FUN_0076ECD0(WorldDominationTour::YRCampaignHandle * campaign, int theater);
+bool __fastcall FUN_0076ED10(WorldDominationTour::YRCampaignHandle * campaign, int theater);
 
 enum WDTStateRequestEnum {
 	WDT_REQ_STATE_EVERYTHING = 3,
