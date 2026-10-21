@@ -785,6 +785,117 @@ void AStarClass::Reset(void)
 	}
 }
 
+// FUNCTION: 0x0042C900
+PathStruct * AStarClass::Find_Path(Cell const & from, Cell const & to, FootClass * foot, FacingType * moves, int max_loops, MZoneType mzone, ObstacleAvoidanceType avoidance)
+{
+	int i;
+
+	IsHSEnabled = true;
+
+	Clear();
+
+	for (i = 0; i < ARRAY_SIZE(HierBannedEdges); i++) {
+		HierBannedEdges[i].Clear();
+	}
+
+	Avoidance = avoidance;
+
+	CellClass * from_ptr = &Map[from];
+	CellClass * to_ptr = &Map[to];
+
+	int from_zone = Map.Get_Cell_Zone(from, mzone != MZONE_NONE ? mzone : foot->TClass->MZone, foot->IsOnBridge);
+	int to_zone = Map.Get_Cell_Zone(to,  mzone != MZONE_NONE ? mzone : foot->TClass->MZone, Map[to].IsUnderBridge);
+
+	Cell hs_from = Map.Get_Bridge_Zone_Connection_Cell(from_ptr, foot->IsOnBridge);
+	Cell hs_to = Map.Get_Bridge_Zone_Connection_Cell(to_ptr, to_ptr->IsUnderBridge);
+
+	MZoneType move_zone = mzone != MZONE_NONE ? mzone : foot->TClass->MZone;
+
+	if (foot->RTTI == RTTI_INFANTRY) {
+		if (((InfantryClass *)foot)->Class->JumpJet) {
+			move_zone = MZONE_INFANTRY;
+			CLSID clsid;
+			IPersistPtr persist(foot->Locomotion);
+			persist->GetClassID(&clsid);
+		}
+	}
+
+	bool with_hs;
+	if (foot->TClass->IsTrain) {
+		with_hs = false;
+	} else if (!foot->IsInPlayfield || foot->Is_Allowed_To_Leave_Map()) {
+		with_hs = false;
+	} else if (!Map.In_Local_Radar(hs_from) || !Map.In_Local_Radar(hs_to)) {
+		with_hs = false;
+	} else {
+		with_hs = true;
+	}
+
+	if (from_zone != to_zone) {
+		if (with_hs) {
+			return(NULL);
+		}
+	}
+
+	if (with_hs) {
+		if (!Find_Path_Hierarchical(hs_from, hs_to, move_zone, foot)) {
+			DebugString("Hierarchical findpath failure: (%d,%d) to (%d, %d)\n", hs_from.X, hs_from.Y, hs_to.X, hs_to.Y);
+			with_hs = false;
+		}
+	}
+
+	PathStruct * path = NULL;
+
+	i = 0;
+	int tries = (max_loops == -1) ? 5 : 1;
+
+	while (true) {
+
+		if (!with_hs && hs_from != hs_to) {
+			DebugString("Warning.  A* without HS: (%d,%d) to (%d, %d)\n", hs_from.X, hs_from.Y, hs_to.X, hs_to.Y);
+		}
+
+		path = Find_Path_Regular(from, to, foot, moves, max_loops, with_hs);
+		if (path != NULL) {
+			break;
+		}
+
+		if (!with_hs) {
+			break;
+		}
+
+		int dy = abs(from.Y - to.Y);
+		int dx = abs(from.X - to.X);
+		if (dx <= dy) {
+			dx = dy;
+		}
+
+		if (dx > 1) {
+			DebugString("Regular findpath failure: (%d,%d) to (%d, %d)\n", hs_from.X, hs_from.Y, hs_to.X, hs_to.Y);
+		}
+
+		i++;
+
+		Ban_Blocked_Subzone_Edges(foot);
+		Clear();
+
+		with_hs = IsHSEnabled ? true : false;
+
+		if (i >= tries) {
+			break;
+		}
+
+		if (with_hs) {
+			if (!Find_Path_Hierarchical(hs_from, hs_to, move_zone, foot)) {
+				break;
+			}
+		}
+
+	}
+
+	return(path);
+}
+
 // FUNCTION: 0x0042CCD0
 void AStarClass::Ban_Blocked_Subzone_Edges(FootClass const * foot)
 {
@@ -886,4 +997,85 @@ void AStarClass::Ban_Neighborhood_Subzone_Edges(unsigned int subzone, int subzon
 			}
 		}
 	}
+}
+
+// FUNCTION: 0x0042D170
+int AStarClass::Test_Cell_Walk(Cell const & from, Cell const & to, FootClass const * foot, bool from_bridge, bool to_bridge, MZoneType mzone)
+{
+	IsHSEnabled = true;
+	Clear();
+
+	for (int i = 0; i < ARRAY_SIZE(HierBannedEdges); i++) {
+		HierBannedEdges[i].Clear();
+	}
+
+	CellClass * from_ptr = &Map[from];
+	CellClass * to_ptr = &Map[to];
+
+	Cell hs_from = Map.Get_Bridge_Zone_Connection_Cell(from_ptr, from_bridge);
+	Cell hs_to = Map.Get_Bridge_Zone_Connection_Cell(to_ptr, to_bridge);
+
+	if (mzone == MZONE_NONE) {
+		if (foot) {
+			mzone = foot->TClass->MZone;
+		} else {
+			mzone = MZONE_NORMAL;
+		}
+	}
+
+	if (Find_Path_Hierarchical(hs_from, hs_to, mzone, foot)) {
+		int radius = MAX(abs(from.X - to.X), abs(from.Y - to.Y));
+		int node_count = HierSubzonePathCount[SUBZONE_FINE];
+		int distance = 2 * node_count - 2;
+
+		bool add_bridge_dist = true;
+		if (to_bridge && from_bridge) {
+			int to_conn = Map.Zone_Connection_Index(to, 3, 0);
+			int from_conn = Map.Zone_Connection_Index(from, 3, 0);
+			if (to_conn == from_conn && to_conn != -1) {
+				add_bridge_dist = false;
+			}
+		}
+
+		if (add_bridge_dist) {
+			if (to_bridge) {
+				Cell bridge_end = CELL_NONE;
+				if (node_count >= 4) {
+					bridge_end = Map.Find_Bridge_End_Cell_For_Subzone(to, SUBZONE_FINE, HierSubzonePath[SUBZONE_FINE][node_count - 2]);
+				}
+				if (node_count < 4 || bridge_end == CELL_NONE) {
+					bridge_end = Map.Find_Bridge_End_Cell_For_Subzone(to, SUBZONE_FINE, HierSubzonePath[SUBZONE_FINE][node_count - 1]);
+				}
+				if (bridge_end == CELL_NONE) {
+					bridge_end = hs_to;
+				}
+				if (bridge_end != CELL_NONE) {
+					distance += MAX(abs(to.X - bridge_end.X), abs(to.Y - bridge_end.Y));
+				}
+			}
+
+			if (from_bridge) {
+				Cell bridge_end = CELL_NONE;
+				if (node_count >= 4) {
+					bridge_end = Map.Find_Bridge_End_Cell_For_Subzone(from, 0, HierSubzonePath[SUBZONE_FINE][1]);
+				}
+				if (node_count < 4 || bridge_end == CELL_NONE) {
+					bridge_end = Map.Find_Bridge_End_Cell_For_Subzone(from, 0, HierSubzonePath[SUBZONE_FINE][0]);
+				}
+				if (bridge_end == CELL_NONE) {
+					bridge_end = hs_from;
+				}
+				if (bridge_end != CELL_NONE) {
+					distance += MAX(abs(from.X - bridge_end.X), abs(from.Y - bridge_end.Y));
+				}
+			}
+
+			if (distance > radius) {
+				return(distance);
+			}
+		}
+
+		return(radius);
+	}
+	return(INT_MAX);
 }

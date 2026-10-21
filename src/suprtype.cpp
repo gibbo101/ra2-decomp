@@ -293,3 +293,27 @@ SuperWeaponTypeClass * SuperWeaponTypeClass::From_Action(ActionType action)
 	}
 	return(NULL);
 }
+
+// FUNCTION: 0x006CEEF0
+SuperWeaponTypeClass * SuperWeaponTypeClass::Find_Or_Make(const char * name)
+{
+	return(TFind_Or_Make<SuperWeaponTypeClass>(name, SuperWeaponTypes));
+}
+
+// FUNCTION: 0x006CEF80
+ActionType SuperWeaponTypeClass::What_Action(Cell const & cell, ObjectClass * object)
+{
+	if (Type == 10) {
+		if (Is_Target_Building(object)) {
+			BuildingClass * building = (object->RTTI == RTTI_BUILDING ? (BuildingClass *)object : NULL);
+			if (building->House->Is_Ally(PlayerPtr)) {
+				return(Action);
+			}
+		}
+		return((ActionType)0x46);
+	}
+	return(Action);
+}
+
+
+// FUNCTION: 0x006CEFE0 SuperWeaponTypeClass::~SuperWeaponTypeClass

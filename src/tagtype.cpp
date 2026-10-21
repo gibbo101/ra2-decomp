@@ -369,3 +369,27 @@ int DAT_00B0E89C = (int)(DAT_00B0E8A8 * 4 + DAT_007E1738);
 
 // FUNCTION: 0x006E69E0 $E49
 ShortPair DAT_00B0E830;
+
+struct IntTriple {
+	int A, B, C;
+	IntTriple() { A = 0; B = 0; C = 0; }
+};
+
+// FUNCTION: 0x006E69F0 $E52
+IntTriple DAT_00B0E868;
+
+struct SizeTriple {
+	int W, H, Z;
+	SizeTriple() { Z = 0; W = 128; H = 128; }
+};
+
+// FUNCTION: 0x006E6A10 $E55
+SizeTriple DAT_00B0E890;
+
+struct IntQuad {
+	int A, B, C, D;
+	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
+};
+
+// FUNCTION: 0x006E6A30 $E58
+IntQuad DAT_00B0E820;

@@ -4578,3 +4578,23 @@ template class IndexClass<int, MapRegionClass *>;
 
 // FUNCTION: 0x005AD9F0 ?$VectorClass@PAU_WIN32_FIND_DATAA@@::?$VectorClass@PAU_WIN32_FIND_DATAA@@
 template class VectorClass<WIN32_FIND_DATAA *>;
+
+// FUNCTION: 0x005ADA40 ?$VectorClass@V?$TRect@H@@::?$VectorClass@V?$TRect@H@@
+template class VectorClass<TRect<int> >;
+
+// FUNCTION: 0x005ADAB0 ?$VectorClass@N::?$VectorClass@N
+template class VectorClass<double>;
+
+extern int DAT_00ABED60;
+extern int DAT_00ABED64;
+extern int DAT_00ABED68;
+extern int DAT_00ABED6C;
+
+// FUNCTION: 0x005ADB00
+void FUN_005ADB00(void)
+{
+	DAT_00ABED60 = 0;
+	DAT_00ABED64 = 0;
+	DAT_00ABED68 = 0;
+	DAT_00ABED6C = 0;
+}

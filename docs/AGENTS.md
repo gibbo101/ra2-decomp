@@ -281,6 +281,8 @@ Each entry: what the diff showed, then the source change that fixed it.
   value from a switch or compare in the exe before trusting it.
 - An early `return` that the original tail-merges with a real branch: assign the result in
   each branch and keep one `return(action);` after the if/else, as TibSun writes it.
+- Never chain inline wrappers to run out VC6's inline depth (Find_Data0..7): only helpers
+  the original plausibly had are source, so such a match is banked, not landed.
 - The reverse, when inlined tails merge into the wrong arm's copy: end each arm with its
   own `return;`, which moves the shared copy to the last arm (ZBuffer::Pan).
 - VC6 spends the inline budget from the end of a function backwards, and every inlined call
@@ -360,6 +362,8 @@ Each entry: what the diff showed, then the source change that fixed it.
   header by offset, keeping TS names. Most then match in one or two checks.
 - Byte-identical twins exist (Wstring and WideWstring's constructors, 0x7B4620 and
   0x7B66C0): the neighbouring functions (char vs wchar_t) decide which class owns which.
+  Byte-identical overloads in one file (Get_Field's char& and unsigned char&) each take
+  the next unclaimed symbol in file order, so mark them in their source order.
 - YR made some TS text members wide: OwnerDraw's CellData holds `WideWstring`, so
   `include/ownrdraw.h` overrides the TibSun copy.
 - A function that lands makes its callers' references to it checkable: re-run checkall

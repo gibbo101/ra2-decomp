@@ -49,6 +49,11 @@ struct IntTriple {
 	IntTriple() { A = 0; B = 0; C = 0; }
 };
 
+struct IntTripleB {
+	int A, B, C;
+	IntTripleB() { C = 0; A = 128; B = 128; }
+};
+
 
 // FUNCTION: 0x004A2160 $E73
 double DAT_0089F900 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
@@ -85,6 +90,9 @@ ShortPair DAT_0089F8F8;
 
 // FUNCTION: 0x004A2310 $E106
 IntTriple DAT_0089F918;
+
+// FUNCTION: 0x004A2330 $E109
+IntTripleB DAT_0089F940;
 
 // FUNCTION: 0x004A2350
 CreditClass::CreditClass(void) :

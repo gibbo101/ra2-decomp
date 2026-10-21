@@ -530,3 +530,26 @@ int DAT_00B0B624 = (int)(DAT_00B0B630 * 4 + DAT_007E1738);
 
 // FUNCTION: 0x006AF0B0 $E136
 ShortPair DAT_00B0B5B8;
+
+// FUNCTION: 0x006AF0C0 $E139
+IntTriple DAT_00B0B5D8;
+
+extern int DAT_00B0B618;
+extern int DAT_00B0B61C;
+extern int DAT_00B0B620;
+
+// FUNCTION: 0x006AF0E0
+void FUN_006AF0E0(void)
+{
+	DAT_00B0B620 = 0;
+	DAT_00B0B618 = 0x80;
+	DAT_00B0B61C = 0x80;
+}
+
+struct IntQuad {
+	int A, B, C, D;
+	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
+};
+
+// FUNCTION: 0x006AF100 $E142
+IntQuad DAT_00B0B5A8;

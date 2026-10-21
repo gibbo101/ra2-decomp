@@ -1325,3 +1325,27 @@ template class RLEBlitTransLucent25AlphaZReadWrite<unsigned short>;
 // FUNCTION: 0x00499DC0 ?$RLEBlitTransZRemapXlat@E::~?$RLEBlitTransZRemapXlat@E
 
 // FUNCTION: 0x00499DE0 ?$RLEBlitTransRemapDest@E::~?$RLEBlitTransRemapDest@E
+
+// FUNCTION: 0x00499E00 ?$RLEBlitTransRemapXlat@E::~?$RLEBlitTransRemapXlat@E
+
+// FUNCTION: 0x00499E20 ?$RLEBlitTransXlatZRead@E::~?$RLEBlitTransXlatZRead@E
+
+// FUNCTION: 0x00499E40 ?$RLEBlitTransZRemapXlatZRead@E::~?$RLEBlitTransZRemapXlatZRead@E
+
+// FUNCTION: 0x00499E60 ?$RLEBlitTransRemapDestZRead@E::~?$RLEBlitTransRemapDestZRead@E
+
+// FUNCTION: 0x00499E80 ?$RLEBlitTransRemapXlatZRead@E::~?$RLEBlitTransRemapXlatZRead@E
+
+// FUNCTION: 0x00499EA0 ?$RLEBlitTransXlatZReadWrite@E::~?$RLEBlitTransXlatZReadWrite@E
+
+// FUNCTION: 0x00499EC0 ?$RLEBlitTransZRemapXlatZReadWrite@E::~?$RLEBlitTransZRemapXlatZReadWrite@E
+
+// FUNCTION: 0x00499EE0 ?$RLEBlitTransRemapDestZReadWrite@E::~?$RLEBlitTransRemapDestZReadWrite@E
+
+// FUNCTION: 0x00499F00 ?$RLEBlitTransRemapXlatZReadWrite@E::~?$RLEBlitTransRemapXlatZReadWrite@E
+
+// FUNCTION: 0x00499F20 ?$BlitPlainXlat@G::~?$BlitPlainXlat@G
+
+// FUNCTION: 0x00499F40 ?$BlitTransZRemapXlat@G::~?$BlitTransZRemapXlat@G
+
+// FUNCTION: 0x00499F60 ?$BlitTransDarken@G::~?$BlitTransDarken@G

@@ -7,6 +7,7 @@
 #include "geometry.h"
 #include "rndstraw.h"
 #include "sha.h"
+#include "rect.h"
 #include <climits>
 #include <cstring>
 
@@ -122,3 +123,7 @@ RandomStraw::~RandomStraw(void)
 // FUNCTION: 0x00661DF0 $E26
 // FUNCTION: 0x00661E20 $E29
 // FUNCTION: 0x00661E50 $E32
+
+// FUNCTION: 0x00661E60 $E35
+// FUNCTION: 0x00661E80 $E38
+// FUNCTION: 0x00661EA0 $E43

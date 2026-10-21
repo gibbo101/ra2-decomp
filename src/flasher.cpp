@@ -85,3 +85,24 @@ Short2 DAT_008B3C58;
 
 // FUNCTION: 0x004CC940 $E37
 Int3 DAT_008B3C78;
+
+struct Int3B {
+	int A;
+	int B;
+	int C;
+	Int3B() : A(128), B(128), C(0) {}
+};
+
+struct Int4 {
+	int A;
+	int B;
+	int C;
+	int D;
+	Int4() : A(0), B(0), C(0), D(0) {}
+};
+
+// FUNCTION: 0x004CC960 $E40
+Int3B DAT_008B3CA0;
+
+// FUNCTION: 0x004CC980 $E43
+Int4 DAT_008B3C48;

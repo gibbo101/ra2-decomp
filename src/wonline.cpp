@@ -3042,7 +3042,7 @@ namespace OwnerDraw {
 void __fastcall FUN_00607FD0(HWND window);
 
 struct DownloadObject : IUnknown {
-	virtual long __stdcall V03(void) = 0;
+	virtual long __stdcall DownloadFile(char const * server, char const * login, char const * password, char const * remote, char const * local, char const * registry) = 0;
 	virtual long __stdcall Abort(void) = 0;
 };
 
@@ -6367,4 +6367,378 @@ BOOL CALLBACK FUN_007A29E0(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 }
 
 // FUNCTION: 0x007A2E70 SimpleWonlineDialogControl::~SimpleWonlineDialogControl
+
+struct AtlObjectEntry {
+	GUID const * Clsid;
+	void * UpdateRegistry;
+	void * GetClassObject;
+	void * CreateInstance;
+	void * Factory;
+	DWORD Register;
+	void * GetObjectDescription;
+	void * GetCategoryMap;
+	void (__stdcall * ObjectMain)(BOOL start);
+};
+
+
+struct AtlCriticalSection {
+	CRITICAL_SECTION Section;
+	AtlCriticalSection(void) { InitializeCriticalSection(&Section); }
+};
+
+struct AtlSinkRoot {
+	long RefCount;
+	AtlCriticalSection Lock;
+	AtlSinkRoot(void) : RefCount(0) {}
+};
+
+struct NetUtilEventSink : AtlSinkRoot {
+	NetUtilEventSink(void);
+	virtual long __stdcall V00(IID const & iid, void ** object);
+};
+
+struct ChatEventSink : AtlSinkRoot {
+	ChatEventSink(void);
+	virtual long __stdcall V00(IID const & iid, void ** object);
+};
+
+extern int DAT_00B77DF4;
+extern int DAT_00B77DCC;
+extern HANDLE DAT_00B736A4;
+extern long DAT_00B77DF0;
+extern int DAT_00B77E64;
+extern int DAT_00B77780;
+extern int DAT_00B77CE0;
+extern int DAT_00B736F4;
+void FUN_007A1330(void);
+void FUN_007A1060(void);
+void __cdecl FUN_004068E0(char const * format, ...);
+void FUN_006C6D00(void);
+void FUN_006C6DE0(void);
+rc_ptr<WDTState> __fastcall FUN_0076ABA0(void * data);
+void __fastcall FUN_007B02A0(rc_ptr<WDTState> const & state);
+void __fastcall FUN_007B0220(rc_ptr<WDTState> const & state);
+
+// FUNCTION: 0x007A2EA0
+long __stdcall FUN_007A2EA0(IUnknown * source, IUnknown * sink, IID const & iid, DWORD * cookie)
+{
+	PointContainerPtr container;
+	PointPtr point;
+	HRESULT result = source->QueryInterface(IID_IConnectionPointContainer, (void **)&container.p);
+	if (SUCCEEDED(result)) {
+		result = container.p->FindConnectionPoint(iid, &point.p);
+	}
+	if (SUCCEEDED(result)) {
+		result = point.p->Advise(sink, cookie);
+	}
+	return result;
+}
+
+// FUNCTION: 0x007A2FC0 NetUtilEventSink::NetUtilEventSink
+NetUtilEventSink::NetUtilEventSink(void)
+{
+}
+
+// FUNCTION: 0x007A2FE0
+long __stdcall FUN_007A2FE0(void * sink, long result, unsigned char * data, int length)
+{
+	if (result < 0 || length <= 0) {
+		SetEvent(DAT_00B73684[5]);
+		return 0;
+	}
+	rc_ptr<WDTState> state = FUN_0076ABA0(data);
+	if (state.Get() != NULL && state->Has_Owner_History()) {
+		if (state->Is_Previous_Cycle()) {
+			FUN_004068E0("OnWDTState: Previous cycle data received\n");
+			FUN_007B02A0(state);
+			SetEvent(DAT_00B73684[11]);
+		} else {
+			FUN_004068E0("OnWDTState: Current cycle data received\n");
+			DAT_00B7646C = time(NULL) + state->TickTime;
+			FUN_007B0220(state);
+			SetEvent(DAT_00B73684[11]);
+		}
+	} else {
+		FUN_004068E0("OnWDTState: NACK received from server\n");
+		SetEvent(DAT_00B73684[11]);
+	}
+	return 0;
+}
+
+// FUNCTION: 0x007A30D0
+long __stdcall FUN_007A30D0(void * sink, long result)
+{
+	FUN_004068E0("OnGameresSent  %d\n", result);
+	if (result == 0) {
+		FUN_006C6D00();
+	}
+	FUN_006C6DE0();
+	return 0;
+}
+
+static inline rc_ptr<PlayerProfile> Profile_For_Nick(char const * nick)
+{
+	Wstring name(nick);
+	return FUN_00778A20(&name);
+}
+
+// FUNCTION: 0x007A3D90
+long __stdcall FUN_007A3D90(void * sink, long result, char const * message, char const * nick, char const * pass)
+{
+	FUN_004068E0("OnNewNick\n");
+	DAT_00B77DF0 = result;
+	if (result == 0) {
+		rc_ptr<PlayerProfile> profile = Profile_For_Nick(nick);
+		int nicknum = 0;
+		WOLOptionsClass options;
+		if (options.Is_Bit1_Clear()) {
+			int locale = profile->Field10;
+			nicknum = FUN_00789500(nick, pass, 1, locale);
+			Session.Write_MultiPlayer_Settings();
+		}
+		char login_mode = 1;
+		char combo_mode = 0;
+		HWND dialog = FUN_00775940(0x10F);
+		if (dialog == NULL) {
+			dialog = FUN_00775940(0x11D);
+			combo_mode = dialog != NULL;
+			if (dialog == NULL) {
+				login_mode = 0;
+				dialog = FUN_00775940(0x114);
+			}
+		}
+		if (dialog != NULL) {
+			HWND item = GetDlgItem(dialog, 0x628);
+			if (combo_mode) {
+				SendMessage(item, 0x4B4, 0, (LPARAM)nick);
+			} else {
+				int index = SendMessage(item, 0x4BC, 0, (LPARAM)nick);
+				SendMessage(item, 0x151, index, nicknum);
+				SendMessage(item, 0x14E, index, 0);
+			}
+			if (login_mode) {
+				DAT_00B73E40 = nick;
+				DAT_00B7778C = pass;
+				HWND password = GetDlgItem(dialog, 0x72C);
+				SendMessage(password, 0x4B4, 0, (LPARAM)DAT_00B7778C.text());
+				DAT_0084A238 = 1;
+				EnableWindow(GetDlgItem(dialog, 0x539), TRUE);
+				if (!combo_mode) {
+					EnableWindow(GetDlgItem(dialog, 0x72D), FALSE);
+					SendMessage(GetDlgItem(dialog, 0x72D), 0xF1, 1, 0);
+				}
+			} else {
+				SendMessage(GetDlgItem(dialog, 0x6FF), 0xF1, 0, 0);
+				EnableWindow(GetDlgItem(dialog, 0x6FF), TRUE);
+			}
+			if (!combo_mode) {
+				EnableWindow(GetDlgItem(dialog, 0x6EB), TRUE);
+				Wstring name(nick);
+				profile->FUN_0077A9F0(dialog, &name, true);
+			}
+		}
+	}
+	if (message) {
+		wchar_t text[0x1400];
+		FUN_00735060(text, message, -1);
+		ODMessageBox(text, 0, FUN_0077D710, 0);
+	} else {
+		ODMessageBox(L"Unknown Status", 0, FUN_0077D710, 0);
+	}
+	HWND chat = FUN_00775940(0xC4);
+	if (chat) {
+		DAT_00B77DC8 &= ~0x100;
+		if (DAT_00B77DC8 == 0) {
+			FUN_007757E0(chat, 0);
+		}
+	}
+	HWND top = FUN_00775B10();
+	HWND input = GetDlgItem(top, 0x540);
+	if (input) {
+		SetFocus(input);
+	}
+	return 0;
+}
+
+// FUNCTION: 0x007A4070
+long __stdcall FUN_007A4070(void * sink, long result, int age, int consent)
+{
+	FUN_004068E0("OnAgeCheck\n");
+	DAT_00B77DF4 = result;
+	if (result == 0) {
+		DAT_00B77E60 = age;
+		DAT_00B77E64 = consent;
+	}
+	HWND dialog = FUN_00775940(0xC4);
+	if (dialog) {
+		DAT_00B77DC8 &= ~0x100;
+		if (DAT_00B77DC8 == 0) {
+			FUN_007757E0(dialog, 0);
+		}
+	}
+	HWND top = FUN_00775B10();
+	HWND input = GetDlgItem(top, 0x540);
+	if (input) {
+		SetFocus(input);
+	}
+	return 0;
+}
+
+// FUNCTION: 0x007A40F0
+long __stdcall FUN_007A40F0(void * sink, long result, int time, unsigned long address, int extra)
+{
+	if (DAT_00B77DC1 && DAT_00B77780) {
+		if (result == 0 && time >= 0 && time < 1000) {
+			DAT_00B77CE0++;
+		}
+		return 0;
+	}
+	if (Session.unknown_0C == 3) {
+		goto counted;
+	}
+	if (Session.unknown_0C == 1) {
+		goto counted;
+	}
+	if (Session.unknown_0C == 2) {
+counted:
+		FUN_004068E0("Received Ping\n");
+		DAT_00B736F4++;
+		if (DAT_00B736F4 >= DAT_00B76970.length()) {
+			if (DAT_00B73A20 == 4 || DAT_00B73A20 == 5) {
+				FUN_007A1330();
+			}
+			FUN_007A1060();
+		}
+		return 0;
+	}
+	if (DAT_00B76B10.Type) {
+		FUN_00783C80(0, false);
+	}
+	return 0;
+}
+
+// FUNCTION: 0x007A41A0 ChatEventSink::ChatEventSink
+ChatEventSink::ChatEventSink(void)
+{
+}
+
+struct UpdateEntry {
+	char Pad[0xC];
+	UpdateEntry * Next;
+	char Server[0x41];
+	char PatchPath[0x100];
+	char PatchFile[0x21];
+	char Login[0x21];
+	char Password[0x21];
+	char Pad2[0x1D4 - 0x1B4];
+	char LocalPath[0x100];
+};
+
+// FUNCTION: 0x007A4C10
+long __stdcall FUN_007A4C10(void * sink, long result, UpdateEntry * updates)
+{
+	int count = 0;
+	char working_dir[257];
+	char fullpath[257];
+	char localfile[257];
+	wchar_t status[200];
+	if (result < 0 || updates == NULL) {
+		SetEvent(DAT_00B73684[0]);
+		return 0;
+	}
+	DAT_00B77DCC = 1;
+	UpdateEntry * tmp = updates;
+	while (tmp != NULL) {
+		tmp = tmp->Next;
+		count++;
+	}
+	HWND chat = FUN_00775940(0xC4);
+	if (chat) {
+		DAT_00B77DC8 &= ~0x10;
+		if (DAT_00B77DC8 == 0) {
+			FUN_007757E0(chat, 0);
+		}
+	}
+	HWND top = FUN_00775B10();
+	HWND input = GetDlgItem(top, 0x540);
+	if (input) {
+		SetFocus(input);
+	}
+	if (ODMessageBox(StringTable::LoadString("TXT_UPGRADEREQUIRED", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x1580), 4, FUN_0077D710, 0) == IDNO) {
+		SetEvent(DAT_00B73684[0]);
+		return 0;
+	}
+	GetCurrentDirectory(0x100, working_dir);
+	int i = 0;
+	while (updates != NULL) {
+		sprintf(fullpath, "%s/%s", updates->PatchPath, updates->PatchFile);
+		sprintf(localfile, "%s\\%s", updates->LocalPath, updates->PatchFile);
+		CreateDirectory(updates->LocalPath, NULL);
+		((DownloadObject *)DAT_00AC1174)->DownloadFile(updates->Server, updates->Login, updates->Password, fullpath, localfile, "SOFTWARE\\Westwood\\Yuri's Revenge");
+		i++;
+		swprintf(status, StringTable::LoadString("TXT_DOWNLOADING_X_OF_Y", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x1596), i, count);
+		WideWstring text(status);
+		FUN_007F7624_Class control;
+		HWND dialog = UI::BeginDialog(0xD3, FUN_0078DA30, 0);
+		HWND title = GetDlgItem(dialog, 0x5C7);
+		SendMessage(title, 0x4B2, 0, (LPARAM)text.text());
+		if (FUN_007759E0(dialog, (bool (*)(void))FUN_0077D710, 0, 1, 1) == IDCANCEL) {
+			SetEvent(DAT_00B73684[0]);
+			SetCurrentDirectory(working_dir);
+			return 0;
+		}
+		updates = updates->Next;
+	}
+	ODMessageBox(StringTable::LoadString("TXT_GAME_RESTART", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x15B6), 0, FUN_0077D710, 0);
+	SetEvent(DAT_00B736A4);
+	SetCurrentDirectory(working_dir);
+	return 0;
+}
+
+struct SquadEntry {
+	char Pad[0x168];
+	char Name[0x29];
+	char Abbreviation[0x29];
+};
+
+// FUNCTION: 0x007A4EC0
+long __stdcall FUN_007A4EC0(void * sink, long result, unsigned long id, SquadEntry * squad)
+{
+	DAT_00B77DDC--;
+	if (DAT_00B77DE0) {
+		DAT_00B77DE0 = 0;
+		DAT_00B77DE4 = id;
+		if (result != 0) {
+			return 0;
+		}
+		strcpy(DAT_00B77A94, squad->Abbreviation);
+	} else if (result != 0) {
+		return 0;
+	}
+	for (int i = 0; i < DAT_00B77900.length(); i++) {
+		User * user = NULL;
+		DAT_00B77900.getPointer(&user, i);
+		if (user->Squad == id) {
+			strcpy(user->Abbrev, squad->Abbreviation);
+			strcpy(user->Login, squad->Name);
+			User temp;
+			memset(&temp, 0, sizeof(temp));
+			DAT_00B77900.get(temp, i);
+			User copy = temp;
+			copy.Next = NULL;
+			DAT_00B77900.remove(i);
+			FUN_00783070(&copy);
+		}
+	}
+	Wstring key(squad->Abbreviation);
+	key.toLower();
+	if (!DAT_00B768C0.contains(key)) {
+		DAT_00AC1170->V05(DAT_00B761A8, DAT_00B77A90, squad->Abbreviation, 0x802100, -1, 0, 0);
+	}
+	if (DAT_00B77DDC == 0) {
+		FUN_00783C80(0, false);
+	}
+	return 0;
+}
+
 // FUNCTION: 0x007AC5D0 WonlineStringDialogControl::~WonlineStringDialogControl

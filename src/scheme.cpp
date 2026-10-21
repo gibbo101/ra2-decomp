@@ -80,6 +80,31 @@ ColorScheme::ColorScheme(void) :
 	ID = ColorSchemes.Count();
 }
 
+// FUNCTION: 0x0068C710
+ColorScheme::ColorScheme(char const * name, HSVClass & hsv, const PaletteClass & pal1, const PaletteClass & pal2, int shade_count, bool add_to_array) :
+	Name(strdup(name)),
+	HSV(hsv),
+	Converter(NULL),
+	IntensityLevels(shade_count),
+	Color(16),
+	BrightColor(15),
+	Shadow(25),
+	Background(24),
+	Corners(22),
+	Highlight(16),
+	Box(19),
+	Bright(16),
+	Underline(16),
+	Bar(21)
+{
+	Converter = (LightConvertClass *)Build_Light_Converter(HSV, pal1, pal2, &Palette, *VisibleSurface, shade_count, 1000, 1000, 1000, _indexes);
+
+	if (add_to_array) {
+		ColorSchemes.Add(this);
+		ID = ColorSchemes.Count();
+	}
+}
+
 // FUNCTION: 0x0068C860
 void ColorScheme::Build_Light_Converters(const PaletteClass & base, const PaletteClass & screenpalette, int r, int g, int b)
 {
@@ -119,6 +144,19 @@ bool ColorScheme::operator!=(ColorScheme const & that)
 	return(stricmp(Name, that.Name) != 0);
 }
 
+// FUNCTION: 0x0068C9C0
+int ColorScheme::Find_Or_Make(char const * name, HSVClass & hsv, const PaletteClass & base, const PaletteClass & screenpalette, int intensity_levels)
+{
+	while (true) {
+		for (int i = 0; i < ColorSchemes.Count(); i++) {
+			if (stricmp(name, ColorSchemes[i]->Name) == 0 && ColorSchemes[i]->IntensityLevels == intensity_levels) {
+				return(i);
+			}
+		}
+		new ColorScheme(name, hsv, base, screenpalette, intensity_levels, true);
+	}
+}
+
 // FUNCTION: 0x0068CA50
 ColorScheme * Fetch_Scheme_By_Name(char const * name, int intensity_levels)
 {
@@ -141,3 +179,12 @@ int Fetch_Scheme_Index_By_Name(char const * name, int intensity_levels)
 	}
 	return(-1);
 }
+
+struct SchemeQuad
+{
+	int A, B, C, D;
+	SchemeQuad(void) : A(0), B(0), C(0), D(0) {}
+};
+
+// FUNCTION: 0x0068CB10 $E4
+SchemeQuad SchemeQuadInstance;

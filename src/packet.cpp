@@ -124,6 +124,7 @@ bool PacketClass::Get_Field(char const *id, char &data)
 	return((field) ? true : false);
 }
 
+// FUNCTION: 0x00625DB0
 bool PacketClass::Get_Field(char const *id, unsigned char &data)
 {
 	FieldClass *field = Find_Field(id);
@@ -143,6 +144,7 @@ bool PacketClass::Get_Field(char const *id, short &data)
 	return((field) ? true : false);
 }
 
+// FUNCTION: 0x00625E50
 bool PacketClass::Get_Field(char const *id, unsigned short &data)
 {
 	FieldClass *field = Find_Field(id);
@@ -172,6 +174,7 @@ bool PacketClass::Get_Field(char const *id, char *data)
 	return((field) ? true : false);
 }
 
+// FUNCTION: 0x00625F60
 bool PacketClass::Get_Field(char const *id, unsigned int &data)
 {
 	FieldClass *field = Find_Field(id);

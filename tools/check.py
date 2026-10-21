@@ -412,17 +412,21 @@ def similarity(a: list[str], b: list[str]) -> float:
 
 
 def compare(orig: Original, obj: CoffObject, raw: bytes, address: int, name: str,
-            names: dict[str, int], local: dict[str, int], score: bool = False) -> Result:
+            names: dict[str, int], local: dict[str, int], score: bool = False,
+            prefer: dict[str, int] | None = None, taken: set[str] = frozenset()) -> Result:
     """The best result among the compiled functions the name could be: overloads share one.
     `local` maps decorated symbols to addresses; `names` maps undecorated names. `score`
-    fills in the normalised similarity too."""
+    fills in the normalised similarity too. Among equally good results, a symbol `prefer`
+    ties to this address wins, then one not in `taken`: byte-identical overloads differ."""
     prefixes = mangled(name)
     picks = [f for f in obj.functions() if f[0].name.startswith(prefixes)]
     if not picks:
         cands = ", ".join(f[0].name for f in obj.functions())
         raise SystemExit(f"{name}: no compiled function has this name ({cands})")
     results = [compare_one(orig, obj, raw, address, name, names, local, p, score) for p in picks]
-    return max(results, key=lambda r: (r.matched, r.bytes_match, r.ratio))
+    prefer = prefer or {}
+    return max(results, key=lambda r: (r.matched, r.bytes_match, r.ratio,
+                                       prefer.get(r.symbol) == address, r.symbol not in taken))
 
 
 def compare_one(orig, obj, raw, address, name, names, local, pick, score=False) -> Result:
@@ -576,10 +580,11 @@ def main() -> None:
     # Which compiled function each annotation is decides what its own symbol resolves to,
     # so pick them first, by bytes alone.
     local = known_decorated()
+    known = dict(local)
     claimed: dict[str, int] = {}
     failed = 0
     for address, name in annotations(src):
-        symbol = compare(orig, obj, raw, address, name, {}, {}).symbol
+        symbol = compare(orig, obj, raw, address, name, {}, {}, prefer=known, taken=set(claimed)).symbol
         if symbol in claimed and claimed[symbol] != address:
             print(f"0x{address:08X} {name or symbol}: same compiled function as "
                   f"0x{claimed[symbol]:08X} ({symbol})")
@@ -587,7 +592,7 @@ def main() -> None:
         claimed[symbol] = address
         local[symbol] = address
     for address, name in targets:
-        res = compare(orig, obj, raw, address, name, names, local, score)
+        res = compare(orig, obj, raw, address, name, names, local, score, prefer=local)
         if res.matched:
             verdict = "MATCH"
         elif res.bytes_match:

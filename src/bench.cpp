@@ -22,6 +22,28 @@ void Benchmark::Reset(void)
 	TotalCount = 0;
 }
 
+// FUNCTION: 0x00431930
+void Benchmark::Begin(bool reset)
+{
+	if (reset) Reset();
+	Clock = 0;
+}
+
+// FUNCTION: 0x00431970
+void Benchmark::End(void)
+{
+	unsigned int value = Clock;
+
+	if (Counter == MAXIMUM_EVENT_COUNT) {
+		Average -= Average / MAXIMUM_EVENT_COUNT;
+		Average += value;
+	} else {
+		Average += value;
+		Counter++;
+	}
+	TotalCount++;
+}
+
 // FUNCTION: 0x004319D0
 unsigned int Benchmark::Step(void)
 {

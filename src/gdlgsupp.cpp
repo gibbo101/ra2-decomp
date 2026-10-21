@@ -862,3 +862,63 @@ void FUN_004E5AC0(void)
 	DAT_008B3FC0[3].Text = StringTable::LoadString("LETTER_D", NULL, "D:\\ra2mdpost\\GDlgSupp.cpp", 0x43a);
 	DAT_008B3FC0[4].Text = "0";
 }
+
+// FUNCTION: 0x004E5B40
+bool __fastcall FUN_004E5B40(int slot)
+{
+	return DAT_008B3FC0[slot].Owner != -1;
+}
+
+MPGameModeClass * FUN_005E2F80(void);
+bool __cdecl FUN_0077D970(void);
+
+// FUNCTION: 0x004E5B60
+void __fastcall FUN_004E5B60(HWND dialog, int id)
+{
+	HWND item = GetDlgItem(dialog, id);
+	bool was_hidden = !ShowWindow(item, SW_HIDE);
+	SendMessage(item, CB_RESETCONTENT, 0, 0);
+	SendMessage(item, 0x4dd, 0, 1);
+	SendMessage(item, 0x4de, 0, 9);
+	if (Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) {
+		if (Session.MPGameMode && Session.MPGameMode->vt_entry_2C() < 0) {
+			Add_Item(item, (char const *)StringTable::LoadString("GUI:NoneAsSymbols", NULL, "D:\\ra2mdpost\\GDlgSupp.cpp", 0x456), -2);
+		}
+	} else {
+		MPGameModeClass * mode = FUN_005E2F80();
+		if (mode && mode->vt_entry_2C() < 0) {
+			Add_Item(item, (char const *)StringTable::LoadString("GUI:NoneAsSymbols", NULL, "D:\\ra2mdpost\\GDlgSupp.cpp", 0x45f), -2);
+		}
+	}
+	for (int i = 0; i < 4; i++) {
+		Add_Item(item, (char const *)DAT_008B3FC0[i].Text, i);
+	}
+	SendMessage(item, CB_SETCURSEL, 0, 0);
+	SendMessage(item, 0x4f1, 0, 0);
+	if (Session.Type == GAME_INTERNET && FUN_0077D970()) {
+		ShowWindow(item, SW_HIDE);
+		HWND other = GetDlgItem(dialog, 0x794);
+		ShowWindow(other, SW_HIDE);
+		return;
+	}
+	if (!was_hidden) {
+		ShowWindow(item, SW_SHOW);
+	}
+}
+
+// FUNCTION: 0x004E5CB0
+void __fastcall FUN_004E5CB0(HWND dialog, int id)
+{
+	HWND item = GetDlgItem(dialog, id);
+	bool was_hidden = !ShowWindow(item, SW_HIDE);
+	SendMessage(item, CB_RESETCONTENT, 0, 0);
+	SendMessage(item, 0x4dd, 0, 1);
+	SendMessage(item, 0x4de, 0, 9);
+	int index = Add_Item(item, (char const *)StringTable::LoadString("GUI:NoneAsSymbols", NULL, "D:\\ra2mdpost\\GDlgSupp.cpp", 0x48d), -2);
+	SendMessage(item, 0x498, index, -1);
+	SendMessage(item, CB_SETCURSEL, 0, 0);
+	SendMessage(item, 0x4f1, 0, 1);
+	if (!was_hidden) {
+		ShowWindow(item, SW_SHOW);
+	}
+}

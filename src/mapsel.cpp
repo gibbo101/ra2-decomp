@@ -101,6 +101,9 @@ class MapSelect : public MSEngine {
 		void Play_Sound(Wstring const & name);
 		void Queue_Voice(Wstring const & name, int delay);
 		void Start_Voice(Wstring const & name);
+		void Stop_Voice(bool fade);
+
+		virtual void Do_Custom_Draw(Surface * surface);
 
 		virtual void Process_Idle(void);
 		const char * Process_Input(MapStage * stage);
@@ -345,3 +348,15 @@ void MapSelect::Queue_Voice(Wstring const & name, int delay)
 void MapSelect::Start_Voice(Wstring const & name)
 {
 }
+
+// FUNCTION: 0x005AE580
+void MapSelect::Stop_Voice(bool fade)
+{
+}
+
+// FUNCTION: 0x005AE590
+void MapSelect::Do_Custom_Draw(Surface * surface)
+{
+}
+
+// FUNCTION: 0x005AE5A0 MapSelect::~MapSelect

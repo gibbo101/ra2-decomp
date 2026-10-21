@@ -16,6 +16,11 @@
 // The display name of a type whose INI section gives no UIName label: empty.
 static wchar_t NoUIName_00887734[2];
 
+int DAT_00887738;
+int DAT_0088773C;
+int DAT_00887740;
+int DAT_00887744;
+
 // FUNCTION: 0x00410800
 AbstractTypeClass::AbstractTypeClass(char const * ininame) :
 	BASECLASS(),
@@ -107,4 +112,15 @@ void AbstractTypeClass::Compute_CRC(CRCEngine & crc) const
 // FUNCTION: 0x00410C20
 void AbstractTypeClass::Init_Theater(TheaterType theater)
 {
+}
+
+// FUNCTION: 0x00410C30 AbstractTypeClass::~AbstractTypeClass
+
+// FUNCTION: 0x00410CC0
+void FUN_00410CC0(void)
+{
+	DAT_00887738 = 0;
+	DAT_0088773C = 0;
+	DAT_00887740 = 0;
+	DAT_00887744 = 0;
 }

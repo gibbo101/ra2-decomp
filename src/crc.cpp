@@ -32,6 +32,32 @@ void CRCEngine::operator() (short datum)
 	(*this)(&_datum.Composite, sizeof(_datum.Composite));
 }
 
+// FUNCTION: 0x004A1D50
+void CRCEngine::operator() (int datum)
+{
+	union {
+		int Composite;
+		int Datum;
+	} _datum;
+
+	_datum.Datum = datum;
+
+	(*this)(&_datum.Composite, sizeof(_datum.Composite));
+}
+
+// FUNCTION: 0x004A1D70
+void CRCEngine::operator() (float datum)
+{
+	union {
+		int Composite;
+		float Datum;
+	} _datum;
+
+	_datum.Datum = datum;
+
+	(*this)(&_datum.Composite, sizeof(_datum.Composite));
+}
+
 // FUNCTION: 0x004A1D90
 void CRCEngine::operator() (double datum)
 {

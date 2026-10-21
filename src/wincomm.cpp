@@ -778,6 +778,12 @@ void WinModemClass::Set_Abort_Function(int (*func)(void))
 	AbortFunction = func;
 }
 
+// FUNCTION: 0x007754C0
+HANDLE WinModemClass::Get_Port_Handle(void)
+{
+	return(PortHandle);
+}
+
 // FUNCTION: 0x007754D0
 void WinModemClass::Debug_Status(DWORD error, COMSTAT status)
 {
@@ -844,4 +850,20 @@ void WinModemClass::Debug_Status(DWORD error, COMSTAT status)
 	if (status.fTxim) {
 		DebugString("Comm status - Character waiting for Tx\n");
 	}
+}
+
+// FUNCTION: 0x00775610 WinModemClass::~WinModemClass
+
+int DAT_00B72F28;
+int DAT_00B72F2C;
+int DAT_00B72F30;
+int DAT_00B72F34;
+
+// FUNCTION: 0x00775670
+void FUN_00775670(void)
+{
+	DAT_00B72F28 = 0;
+	DAT_00B72F2C = 0;
+	DAT_00B72F30 = 0;
+	DAT_00B72F34 = 0;
 }

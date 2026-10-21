@@ -31,6 +31,16 @@ struct IntTriple {
 	IntTriple() { A = 0; B = 0; C = 0; }
 };
 
+struct Int3Init {
+	int A, B, C;
+	Int3Init() { C = 0; A = 0x80; B = 0x80; }
+};
+
+struct IntQuad {
+	int A, B, C, D;
+	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
+};
+
 // FUNCTION: 0x0043AEB0
 BufferClass::BufferClass(void *buffer, int size)
 {
@@ -104,3 +114,9 @@ ShortPair DAT_0089C818;
 
 // FUNCTION: 0x0043B0F0 $E35
 IntTriple DAT_0089C848;
+
+// FUNCTION: 0x0043B110 $E38
+Int3Init DAT_0089C870;
+
+// FUNCTION: 0x0043B130 $E41
+IntQuad DAT_0089C808;

@@ -222,3 +222,21 @@ int DAT_00B1D23C = (int)(DAT_00B1D248 * 4 + DAT_007E1738);
 
 // FUNCTION: 0x0074AD10 $E118
 ShortPair DAT_00B1D1E8;
+
+struct IntTriple {
+	int A, B, C;
+	IntTriple() { A = 0; B = 0; C = 0; }
+};
+
+struct IntTripleHalf {
+	int A, B, C;
+	IntTripleHalf() { A = 0x80; B = 0x80; C = 0; }
+};
+
+// FUNCTION: 0x0074AD20
+IntTriple DAT_00B1D208;
+
+// FUNCTION: 0x0074AD40
+IntTripleHalf DAT_00B1D230;
+
+// FUNCTION: 0x0074AD60 $E2

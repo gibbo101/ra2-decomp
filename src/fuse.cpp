@@ -24,3 +24,36 @@ void FuseClass::Arm_Fuse(Coord const & location, Coord const & target, int armin
 	HeadTo = target;
 	Proximity = location.Distance_To(target);
 }
+
+// FUNCTION: 0x004E11F0
+FuseResultType FuseClass::Fuse_Checkup(Coord const & newlocation)
+{
+	int	proximity;
+
+	if (Arming) {
+		return(FUSE_WAIT);
+	} else {
+		proximity = newlocation.Distance_To(HeadTo) / 2;
+		if (proximity < 0x0010*2) return(FUSE_EXPLODE_CLOSE);
+
+		if (proximity < CELL_LEPTON_W && proximity > Proximity) {
+			return(FUSE_EXPLODE_FAR);
+		}
+		Proximity = proximity;
+	}
+	return(FUSE_WAIT);
+}
+
+int DAT_008B3E78;
+int DAT_008B3E7C;
+int DAT_008B3E80;
+int DAT_008B3E84;
+
+// FUNCTION: 0x004E12B0
+void FUN_004E12B0(void)
+{
+	DAT_008B3E78 = 0;
+	DAT_008B3E7C = 0;
+	DAT_008B3E80 = 0;
+	DAT_008B3E84 = 0;
+}

@@ -767,3 +767,19 @@ template class TClassFactory<SmudgeTypeClass>;
 // FUNCTION: 0x006C3410 ?$TClassFactory@VUnitClass@@::CreateInstance
 // FUNCTION: 0x006C3490 ?$TClassFactory@VUnitClass@@::LockServer
 template class TClassFactory<UnitClass>;
+
+// FUNCTION: 0x006C34C0 ?$TClassFactory@VBuildingClass@@::?$TClassFactory@VBuildingClass@@
+// FUNCTION: 0x006C34D0 ?$TClassFactory@VBuildingClass@@::QueryInterface
+// FUNCTION: 0x006C3540 ?$TClassFactory@VBuildingClass@@::AddRef
+// FUNCTION: 0x006C3560 ?$TClassFactory@VBuildingClass@@::Release
+// FUNCTION: 0x006C3590 ?$TClassFactory@VBuildingClass@@::CreateInstance
+// FUNCTION: 0x006C3610 ?$TClassFactory@VBuildingClass@@::LockServer
+template class TClassFactory<BuildingClass>;
+
+// FUNCTION: 0x006C3640 ?$TClassFactory@VAircraftClass@@::?$TClassFactory@VAircraftClass@@
+// FUNCTION: 0x006C3650 ?$TClassFactory@VAircraftClass@@::QueryInterface
+// FUNCTION: 0x006C36C0 ?$TClassFactory@VAircraftClass@@::AddRef
+// FUNCTION: 0x006C36E0 ?$TClassFactory@VAircraftClass@@::Release
+// FUNCTION: 0x006C3710 ?$TClassFactory@VAircraftClass@@::CreateInstance
+// FUNCTION: 0x006C3790 ?$TClassFactory@VAircraftClass@@::LockServer
+template class TClassFactory<AircraftClass>;

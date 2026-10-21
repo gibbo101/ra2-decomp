@@ -17,6 +17,7 @@
 #include "data.h"
 #include "dbgprint.h"
 #include "globals.h"
+#include "goptions.h"
 #include "ipxmgr.h"
 #include "language\language.h"
 #include "msgloop.h"
@@ -41,6 +42,14 @@ extern signed char PlayerColorToColorSchemeLUT[9];
 extern char DAT_00889F64[];
 void __fastcall FUN_00735060(wchar_t * dest, char const * source, int length);
 char * __fastcall FUN_007350C0(wchar_t const * text);
+void __cdecl FUN_004068E0(char const * format, ...);
+void __fastcall FUN_00684240(void);
+void __fastcall FUN_00407150(void * p, int value);
+extern void * DAT_0087E758;
+extern int DAT_0083ED20;
+extern int DAT_00B07784;
+namespace Game { extern int PlayerColor; extern bool IsActive; }
+namespace Unsorted { extern int CurrentFrame; }
 
 // FUNCTION: 0x00696D00 $E2
 // FUNCTION: 0x00696D20 $E5
@@ -1082,4 +1091,31 @@ void SessionClass::FUN_0069B7E0(int color, bool random)
 	}
 	PrefColor = Color;
 	ColorIdx = Color2;
+}
+
+// FUNCTION: 0x0069B8B0
+void __stdcall FUN_0069B8B0(int, int)
+{
+}
+
+// FUNCTION: 0x0069BAB0
+void SessionClass::Resume(void)
+{
+	if (!CurrentlyInGame && Game::IsActive) {
+		CurrentlyInGame = true;
+		if (DAT_0083ED20 == -1) {
+			DAT_0083ED20 = ::Options.GameSpeed;
+		}
+		if (Type == GAME_NORMAL) {
+			::Options.GameSpeed = 2;
+		}
+		if (!Scen->IsInputLocked) {
+			FUN_00684240();
+			DAT_00B07784 = Unsorted::CurrentFrame + 3;
+		}
+		if (!MouseCursor->Is_Captured()) {
+			MouseCursor->Capture_Mouse();
+		}
+		FUN_00407150(DAT_0087E758, 0x4000);
+	}
 }

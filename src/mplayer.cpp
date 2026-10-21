@@ -14,6 +14,10 @@
 #include "ownrdraw.h"
 #include "session.h"
 #include "worlddom.h"
+#include <windows.h>
+#undef LoadString
+#include <stddef.h>
+#include "stringtable.h"
 
 extern double __cdecl FUN_004CAC40(double);
 extern double __cdecl FUN_004CAD50(double);
@@ -38,6 +42,9 @@ struct IntTriple {
 	int A, B, C;
 	IntTriple() { A = 0; B = 0; C = 0; }
 };
+
+int DAT_00ABF580, DAT_00ABF584, DAT_00ABF588;
+namespace UI { int __fastcall StandardWndProc(HWND window, UINT message, WPARAM wparam, LPARAM lparam); }
 
 // FUNCTION: 0x005C5E90 $E30
 double DAT_00ABF540 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
@@ -74,6 +81,34 @@ ShortPair DAT_00ABF538;
 
 // FUNCTION: 0x005C6040 $E63
 IntTriple DAT_00ABF558;
+
+// FUNCTION: 0x005C6060
+void Reset_Window_Size(void)
+{
+	DAT_00ABF588 = 0;
+	DAT_00ABF580 = 128;
+	DAT_00ABF584 = 128;
+}
+
+// FUNCTION: 0x005C6080
+BOOL CALLBACK Surrender_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	int rc = UI::StandardWndProc(window, message, wparam, lparam);
+
+	if (rc == 0) {
+		if (message == WM_COMMAND) {
+			*(int *)GetWindowLong(window, DWL_USER) = LOWORD(wparam);
+		}
+		return 0;
+	}
+	return rc;
+}
+
+// FUNCTION: 0x005C60D0
+int __fastcall Surrender_Dialog(wchar_t const * text)
+{
+	return WWMessageBox().Process(text, StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\MPLayer.CPP", 0x6c), StringTable::LoadString("TXT_CANCEL", NULL, "D:\\ra2mdpost\\MPLayer.CPP", 0x6c), NULL) == 0;
+}
 
 // FUNCTION: 0x005C6120
 void Clear_Vector(DynamicVectorClass <NodeNameType *> * vector)

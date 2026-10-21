@@ -530,7 +530,16 @@ EnumConnectionPointsClass::~EnumConnectionPointsClass(void)
 // FUNCTION: 0x004A13C0 ?$DynamicVectorClass@PAUIConnectionPoint@@::Resize
 // FUNCTION: 0x004A1470 ?$DynamicVectorClass@PAUIConnectionPoint@@::ID
 // FUNCTION: 0x004A14A0 ?$DynamicVectorClass@UtagCONNECTDATA@@::~?$DynamicVectorClass@UtagCONNECTDATA@@
+// FUNCTION: 0x004A14F0 ?$DynamicVectorClass@PAUIConnectionPoint@@::~?$DynamicVectorClass@PAUIConnectionPoint@@
 template class VectorClass<CONNECTDATA>;
 template class DynamicVectorClass<CONNECTDATA>;
 template class VectorClass<IConnectionPoint *>;
 template class DynamicVectorClass<IConnectionPoint *>;
+
+struct IntQuad {
+	int A, B, C, D;
+	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
+};
+
+// FUNCTION: 0x004A1540 $E43
+IntQuad DAT_0089F7E8;

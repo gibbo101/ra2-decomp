@@ -24,7 +24,7 @@ class TabClass: public SidebarClass, public INoticeSink
 		virtual bool Activate(int control) override;
 		virtual bool INoticeSink_Unknown(DWORD unknown, DWORD unknown2) override;
 
-		static void Draw_Credits_Tab(void);
+		void Draw_Credits_Tab(void);
 		static void Hilite_Tab(int tab);
 		void Flash_Money(void);
 

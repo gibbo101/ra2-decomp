@@ -112,3 +112,9 @@ int PKPipe::Plain_Key_Length(void) const
 	if (CipherKey == NULL) return(0);
 	return(CipherKey->Block_Count(BLOWFISH_KEY_SIZE) * CipherKey->Plain_Block_Size());
 }
+
+// FUNCTION: 0x00632F90 BlowPipe::~BlowPipe
+
+// FUNCTION: 0x00632FE0 PKPipe::Put_To
+
+// FUNCTION: 0x00632FF0 PKPipe::~PKPipe

@@ -104,3 +104,22 @@ const double CELL_DIAG_SLOPE_ANGLE = fastmath::atan((LEVEL_LEPTON_H * 2) / CELL_
 const int BRIDGE_LEPTON_HEIGHT = (int)((LEVEL_LEPTON_H * BRIDGE_CELL_HEIGHT) + 0.5);
 // FUNCTION: 0x0054ABD0 $E34
 Cell const CELL_NONE(0,0);
+
+struct Triple {
+	int X, Y, Z;
+	Triple() : X(0), Y(0), Z(0) {}
+	Triple(int x, int y, int z) : X(x), Y(y), Z(z) {}
+};
+struct Quad {
+	int A, B, C, D;
+	Quad() : A(0), B(0), C(0), D(0) {}
+};
+
+// FUNCTION: 0x0054ABE0 $E37
+Triple DAT_00ABC5A8;
+
+// FUNCTION: 0x0054AC00 $E40
+Triple DAT_00ABC5D0(128, 128, 0);
+
+// FUNCTION: 0x0054AC20 $E43
+Quad DAT_00ABC578;

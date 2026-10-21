@@ -3242,6 +3242,36 @@ void OwnerDraw::Display_Dialog(HWND window)
 	Keyboard->Clear();
 }
 
+namespace OwnerDraw {
+BOOL CALLBACK SetNeedsControlImage(HWND window, LPARAM lparam);
+BOOL CALLBACK RegisterChildControlProc(HWND window, LPARAM lparam);
+}
+BOOL CALLBACK FUN_0060F320(HWND edit, LPARAM lparam);
+bool __fastcall FUN_0060C540(HWND dialog);
+void __fastcall FUN_0060CF00(HWND dialog);
+void __fastcall Resize_Dialogs(HWND window);
+void __fastcall Center_Window_Within_Window(HWND window);
+extern int DAT_007F5BE0;
+extern int DAT_007F5BEC;
+
+namespace UI { bool Updated(void); }
+void __fastcall FUN_005D4D50(void);
+bool __fastcall FUN_0055CBF0(void);
+
+// FUNCTION: 0x00623120 UI::Updated
+bool UI::Updated(void)
+{
+	FUN_005D4D50();
+	if (Session.Type == GAME_NORMAL || Session.Type == GAME_SKIRMISH || Session.NetOpen || Session.Suspended) {
+		Game::CallBack();
+		return false;
+	}
+	if (!FUN_0055CBF0() && Game::MainLoop()) {
+		return true;
+	}
+	return false;
+}
+
 // FUNCTION: 0x00623170
 int OwnerDraw::Move_Dialog(HWND window, int x, int y)
 {

@@ -66,3 +66,10 @@ wchar_t * wcstrim(wchar_t * buffer)
 // FUNCTION: 0x00727F00 $E26
 // FUNCTION: 0x00727F30 $E29
 // FUNCTION: 0x00727F60 $E32
+// FUNCTION: 0x00727F70 $E35
+// FUNCTION: 0x00727F90 $E38
+
+struct TrimZero4I { int a, b, c, d; TrimZero4I() : a(0), b(0), c(0), d(0) {} };
+
+// FUNCTION: 0x00727FB0 $E41
+TrimZero4I DAT_00B0F860;

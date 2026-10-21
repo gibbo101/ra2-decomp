@@ -22,6 +22,7 @@ extern const double DAT_007F79B0;
 extern int DAT_00B780A0;
 extern bool DAT_00B7809C;
 extern int DAT_00B78088, DAT_00B78080, DAT_00B78084;
+extern int DAT_00B78110, DAT_00B78108, DAT_00B7810C;
 namespace Game { extern HWND hWnd; }
 extern void Add_CRC(unsigned int *crc, unsigned int val);
 extern "C" int __stdcall EnumProtocolsA(int *protocols, void *buffer, unsigned long *len);
@@ -667,3 +668,20 @@ int DAT_00B78114 = (int)(DAT_00B78120 * 4 + 0.5);
 
 // FUNCTION: 0x007B2D40 $E72
 ShortPair DAT_00B780C0;
+
+// FUNCTION: 0x007B2D50 $E75
+IntTriple DAT_00B780E0;
+
+// FUNCTION: 0x007B2D70
+void FUN_007B2D70(void)
+{
+	DAT_00B78110 = 0;
+	DAT_00B78108 = 128;
+	DAT_00B7810C = 128;
+}
+
+// FUNCTION: 0x007B2D90 $E78
+struct IntQuad {
+	int A, B, C, D;
+	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
+} DAT_00B780B0;

@@ -9,6 +9,7 @@
 #include "_timer.h"
 #include "connect.h"
 #include "dbgprint.h"
+#include "rect.h"
 #include "mono.h"
 #include <cstdio>
 #include <cstring>
@@ -413,3 +414,8 @@ void CommBufferClass::Configure_Debug(int type_offset, int type_size,
 	DebugNameStart = namestart;
 	DebugNameCount = namecount;
 }
+
+// FUNCTION: 0x0048BB00 CommBufferClass::~CommBufferClass
+
+// FUNCTION: 0x0048BB20 $E8
+const Rect RECT_NONE_2(0, 0, 0, 0);

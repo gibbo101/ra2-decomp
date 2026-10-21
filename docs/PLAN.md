@@ -1161,6 +1161,18 @@ ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; 
 fixed them. Cost: about 5.6M tokens. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
 
+### Batches 99, 100 and 101 (21 October 2026)
+
+**118 of 124 functions** (61, 33, 24), plus three Get_Field overloads: check.py now gives
+byte-identical overloads in one file each its own symbol in file order (preferring a symbol
+names.csv ties to the address), which also landed CRCEngine's float operator. Three matches
+were turned down at landing as stand-ins and banked: wonline's ATL module Init (a second
+layout cast over AtlModule) and high-score handler (an entry struct reinterpreted as
+LadderB), and ownrdraw's RegisterWindow, which matched only through an eight-deep chain of
+inline wrappers. The easy tail is now nearly spent: most modules have two or three small
+functions left. Cost: about 3.0M tokens. Merge gate: 14,000 of 14,000 (1,795.0 KB), about
+72% of game functions.
+
 ### Batches 96, 97 and 98 (21 October 2026)
 
 **155 of 160 functions** (70, 47, 38). Reading the vtable slots at landing relabelled

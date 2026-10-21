@@ -835,3 +835,20 @@ RTTIType AnimClass::Fetch_RTTI(void) const
 
 
 // FUNCTION: 0x00426620 ?$CDTimerClass@VFrameTimerClass@@::?$CDTimerClass@VFrameTimerClass@@
+
+// FUNCTION: 0x00426630 ?$CDTimerClass@VFrameTimerClass@@::Value
+template class CDTimerClass<FrameTimerClass>;
+
+extern int DAT_0089A1C8;
+extern int DAT_0089A1CC;
+extern int DAT_0089A1D0;
+extern int DAT_0089A1D4;
+
+// FUNCTION: 0x00426650
+void FUN_00426650(void)
+{
+	DAT_0089A1C8 = 0;
+	DAT_0089A1CC = 0;
+	DAT_0089A1D0 = 0;
+	DAT_0089A1D4 = 0;
+}

@@ -19,8 +19,7 @@ class ColorScheme
 {
 	public:
 		ColorScheme(void);
-		ColorScheme(char const * name, HSVClass &hsv, const PaletteClass & base, const PaletteClass & screenpalette, int intensity_levels);
-		ColorScheme(char const * name, HSVClass & hsv, PaletteClass & pal1, PaletteClass & pal2, int shade_count, bool add_to_array);
+		ColorScheme(char const * name, HSVClass & hsv, const PaletteClass & pal1, const PaletteClass & pal2, int shade_count, bool add_to_array);
 		~ColorScheme(void);
 
 		void Build_Light_Converters(const PaletteClass & base, const PaletteClass & screenpalette, int r = 1000, int g = 1000, int b = 1000);
