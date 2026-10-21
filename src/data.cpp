@@ -383,6 +383,12 @@ int Load_Uncompress(FileClass & file, Buffer & uncomp_buff, Buffer & dest_buff, 
 	return((int)size);
 }
 
+// FUNCTION: 0x004A3B30
+int FUN_004A3B30(void)
+{
+	return(0);
+}
+
 // FUNCTION: 0x004A3B40
 void const * Fetch_Resource(LPCSTR resname, LPCSTR restype)
 {
@@ -420,4 +426,36 @@ void * Hires_Load(FileClass & file)
 	} else {
 		return(NULL);
 	}
+}
+
+extern DWORD DAT_0089F980;
+extern DWORD DAT_0089F984;
+extern DWORD DAT_0089F988;
+extern DWORD DAT_0089F98C;
+
+struct Flag3D {
+	void FUN_004A3C00(void);
+
+	char Value;
+};
+
+// FUNCTION: 0x004A3BF0
+bool FUN_004A3BF0(void)
+{
+	return(true);
+}
+
+// FUNCTION: 0x004A3C00
+void Flag3D::FUN_004A3C00(void)
+{
+	Value = 0;
+}
+
+// FUNCTION: 0x004A3C10
+void FUN_004A3C10(void)
+{
+	DAT_0089F980 = 0;
+	DAT_0089F984 = 0;
+	DAT_0089F988 = 0;
+	DAT_0089F98C = 0;
 }

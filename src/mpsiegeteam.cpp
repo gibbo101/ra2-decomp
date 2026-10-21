@@ -20,6 +20,10 @@ extern const double DAT_007E1740;
 extern const double DAT_007EE7D0;
 extern const double DAT_007EE7D8;
 
+extern int DAT_00ABFAE0;
+extern int DAT_00ABFAE4;
+extern int DAT_00ABFAE8;
+
 struct ShortPair {
 	unsigned short A, B;
 	ShortPair() { A = 0; B = 0; }
@@ -65,3 +69,46 @@ ShortPair DAT_00ABFA98;
 
 // FUNCTION: 0x005CADD0 $E35
 IntTriple DAT_00ABFAB8;
+
+#include "mpsiege.h"
+#include "session.h"
+#include <windows.h>
+#undef LoadString
+#include <stddef.h>
+#include "stringtable.h"
+
+// FUNCTION: 0x005CADF0
+void Reset_Siege_Team_Stats(void)
+{
+	DAT_00ABFAE8 = 0;
+	DAT_00ABFAE0 = 128;
+	DAT_00ABFAE4 = 128;
+}
+
+// FUNCTION: 0x005CAE10
+MPSiegeDefenderTeam::MPSiegeDefenderTeam(void) :
+	MultiplayerTeam(StringTable::LoadString("MP:DefenderTeam", NULL, "D:\\ra2mdpost\\MPSiegeTeam.cpp", 6), 1)
+{
+}
+
+// FUNCTION: 0x005CAE60
+MPSiegeDefenderTeam::~MPSiegeDefenderTeam(void)
+{
+}
+
+// FUNCTION: 0x005CAE70
+bool __stdcall Siege_Only_Spectators_Remain(int self)
+{
+	for (int i = 0; i < Session.Players.Count(); i++) {
+		if (self != i && Session.Players[i]->Slot.SpectatorFlag == 1) {
+			return(false);
+		}
+	}
+	return(true);
+}
+
+// FUNCTION: 0x005CAEB0
+MPSiegeAttackerTeam::MPSiegeAttackerTeam(void) :
+	MultiplayerTeam(StringTable::LoadString("MP:AttackerTeam", NULL, "D:\\ra2mdpost\\MPSiegeTeam.cpp", 22), 1)
+{
+}

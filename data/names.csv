@@ -167,3 +167,8 @@ address,name,symbol,evidence
 0x008469E0,VoxelNormalTables,,five table pointers {0, 0x846A08, 0x846AC8, 0x846C78, 0x846F78}: TibSun voxlib NULL plus VoxelNormals1..4
 0x008469F4,VoxelNormalTableEntryCount,,{0, 16, 36, 64, 245}: entries per normal table, matching the 12-byte table spacing
 0x00A8E9C0,Ipx,,TibSun globals.h IPXManagerClass Ipx; YRpp IPXManagerClass::Instance; beacon Send_Global_Message reads it
+0x0056D230,MapClass::Get_Cell_Zone,?Get_Cell_Zone@MapClass@@QAEHABVCell@@W4MZoneType@@_N@Z,"TibSun Get_Cell_Zone: bridge walk then zone array at +0x18 by mzone, -1 when none; ret 0xC; called by matched 0x0041FEE0"
+0x00887368,ToolTips,,TibSun _tooltip.cpp CCToolTip * ToolTips; YRpp CCToolTip::Instance; read by matched 0x005D4D50
+0x00ABFC90,_ModelessDialogs,,initialiser 0x005D4C50 stores vtable 0x007EEC8C (DynamicVectorClass<HWND__ *>); 4-byte dialog loop in 0x005D4D50
+0x00ABFCB8,_Accelerators,,initialiser 0x005D4CD0 stores vtable 0x007EECCC (DynamicVectorClass<AcceleratorTracker>); 8-byte loop in 0x005D4D50
+0x00ABFD34,Message_Intercept_Handler,,TibSun msgloop.cpp; 0x005D4D50 calls through it with ECX = &msg

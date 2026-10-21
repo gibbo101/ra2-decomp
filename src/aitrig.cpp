@@ -27,6 +27,9 @@
 #include "super.h"
 #include "suprtype.h"
 #include "vector.h"
+#include "map.h"
+#include "_map.h"
+#include "teamtype.h"
 
 #include <math.h>
 
@@ -57,40 +60,40 @@ struct IntTriple {
 	IntTriple() { A = 0; B = 0; C = 0; }
 };
 
-// FUNCTION: 0x0041E160 $E65
+// FUNCTION: 0x0041E160 $E104
 double DAT_0088A020 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x0041E190 $E68
+// FUNCTION: 0x0041E190 $E107
 double DAT_0088A070 = DAT_0088A020 / DAT_007E2A08;
 
-// FUNCTION: 0x0041E1B0 $E71
+// FUNCTION: 0x0041E1B0 $E110
 double DAT_0088A058 = DAT_007E1718 / DAT_0088A070;
 
-// FUNCTION: 0x0041E1D0 $E74
+// FUNCTION: 0x0041E1D0 $E113
 double DAT_0088A050 = DAT_007E1720 * DAT_007E2A10;
 
-// FUNCTION: 0x0041E1F0 $E77
+// FUNCTION: 0x0041E1F0 $E116
 double DAT_0088A028 = DAT_007E1728 * DAT_007E2A10;
 
-// FUNCTION: 0x0041E210 $E80
+// FUNCTION: 0x0041E210 $E119
 double DAT_0088A000 = DAT_007E1730 * DAT_007E2A10;
 
-// FUNCTION: 0x0041E230 $E83
+// FUNCTION: 0x0041E230 $E122
 int DAT_0088A078 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_0088A000 - DAT_0088A028) * DAT_0088A020));
 
-// FUNCTION: 0x0041E270 $E86
+// FUNCTION: 0x0041E270 $E125
 double DAT_0088A030 = FUN_004CADE0(DAT_0088A078 * DAT_007E1740);
 
-// FUNCTION: 0x0041E2A0 $E89
+// FUNCTION: 0x0041E2A0 $E128
 double DAT_0088A048 = FUN_004CADE0((DAT_0088A078 * 2) / DAT_0088A020);
 
-// FUNCTION: 0x0041E2D0 $E92
+// FUNCTION: 0x0041E2D0 $E131
 int DAT_0088A06C = (int)(DAT_0088A078 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x0041E300 $E95
+// FUNCTION: 0x0041E300 $E134
 ShortPair DAT_0088A018;
 
-// FUNCTION: 0x0041E310 $E98
+// FUNCTION: 0x0041E310 $E137
 IntTriple DAT_0088A038;
 
 struct IntTriple2 {
@@ -98,7 +101,7 @@ struct IntTriple2 {
 	IntTriple2() { C = 0; A = 128; B = 128; }
 };
 
-// FUNCTION: 0x0041E330 $E101
+// FUNCTION: 0x0041E330 $E140
 IntTriple2 DAT_0088A060;
 
 // FUNCTION: 0x0041E350
@@ -1097,3 +1100,35 @@ void AITriggerTypeClass::Record_Failure(void)
 
 	TimesExecuted++;
 }
+
+// FUNCTION: 0x0041FEE0
+bool AITriggerTypeClass::FUN_0041FEE0(TeamTypeClass *team, HouseClass *house, HouseClass *enemy) const
+{
+	if (!team->field_F0 || enemy == NULL) {
+		return(true);
+	}
+	Cell a = house->Get_Base_Center();
+	Cell b = enemy->Get_Base_Center();
+	MZoneType mz = (MZoneType)team->field_EC;
+	if (team->field_F1) {
+		int zb = Map.Get_Cell_Zone(b, mz, false);
+		int za = Map.Get_Cell_Zone(a, mz, false);
+		if (za != zb) {
+			zb = Map.Get_Cell_Zone(b, MZONE_AMPHIBIOUS, false);
+			za = Map.Get_Cell_Zone(a, MZONE_AMPHIBIOUS, false);
+			if (za == zb) {
+				return(true);
+			}
+		}
+		return(false);
+	}
+	int zb = Map.Get_Cell_Zone(b, mz, false);
+	int za = Map.Get_Cell_Zone(a, mz, false);
+	return((za == zb) ? true : false);
+}
+
+// FUNCTION: 0x0041FFD0 AITriggerTypeClass::Fetch_RTTI
+
+// FUNCTION: 0x0041FFE0 AITriggerTypeClass::Fetch_Object_Size
+
+// FUNCTION: 0x0041FFF0 AITriggerTypeClass::~AITriggerTypeClass

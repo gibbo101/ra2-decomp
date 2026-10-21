@@ -34,6 +34,9 @@
 #include "winstub.h"
 #include "xstraw.h"
 
+#undef LoadString
+#include "stringtable.h"
+
 #include <math.h>
 
 namespace OwnerDraw {
@@ -100,6 +103,7 @@ ShortPair DAT_00ABF028;
 // FUNCTION: 0x005B4970 $E76
 IntTriple DAT_00ABF048;
 
+void __fastcall FUN_00735060(wchar_t * dest, char const * source, int limit);
 wchar_t * __fastcall FUN_00735120(char const * narrow);
 wchar_t * __fastcall wcstrim(wchar_t * buffer);
 
@@ -605,6 +609,26 @@ bool ModemGuest::SetGameOptions(SerialPacketType * packet)
 	return(true);
 }
 
+// FUNCTION: 0x005B6CD0
+void ModemGuest::SendGameOptions(void)
+{
+	SerialPacketType packet;
+	memset(&packet, 0, sizeof(SerialPacketType));
+	packet.Command = SERIAL_GAME_OPTIONS;
+	packet.ScenarioInfo.CheatCheck = CheatCheck;
+	packet.ScenarioInfo.ArtCheatCheck = ArtCheatCheck;
+	packet.ScenarioInfo.AICheatCheck = AICheatCheck;
+	packet.ScenarioInfo.BuildNumber = Build_Number();
+	packet.ScenarioInfo.MinVersion = VerNum.Min_Version();
+	packet.ScenarioInfo.MaxVersion = VerNum.Max_Version();
+	packet.ID = Session.ModemType;
+	strcpy(packet.Name, Session.Handle);
+	packet.ScenarioInfo.House = (HousesType)Session.House;
+	packet.ScenarioInfo.Color = Session.PrefColor;
+
+	NullModem.Send_Message(&packet, sizeof(packet), 1);
+}
+
 // FUNCTION: 0x005B6DA0
 void ModemGuest::SendAMessage(const wchar_t * message)
 {
@@ -638,3 +662,173 @@ void ModemGuest::DrawMessage(const wchar_t * name, int color, const wchar_t * me
 		}
 	}
 }
+
+// FUNCTION: 0x005B6F30
+void ModemGuest::SignOff(void)
+{
+	unsigned int starttime;
+	int packetlen;
+	SerialPacketType sendpacket;
+	SerialPacketType receivepacket;
+
+	memset(&sendpacket, 0, sizeof(SerialPacketType));
+	sendpacket.Command = SERIAL_SIGN_OFF;
+	sendpacket.ScenarioInfo.Color = Session.PrefColor;
+	sendpacket.ID = Session.ModemType;
+	NullModem.Send_Message(&sendpacket, sizeof(sendpacket), 1);
+
+	HWND dialog = OwnerDraw::Custom_Message_Box(StringTable::LoadString("TXT_SIGNING_OFF", NULL, "D:\\ra2mdpost\\ModemGst.cpp", 0x693), NULL, NULL);
+
+	if (dialog) {
+		OwnerDraw::Display_Dialog(dialog);
+	}
+
+	starttime = TickCount;
+	while (NullModem.Num_Send() && ((TickCount - starttime) < SIGNOFF_PACKET_CANCEL_TIMEOUT)) {
+		if (NullModem.Get_Message(&receivepacket, &packetlen) > 0) {
+			if (receivepacket.Command == SERIAL_SIGN_OFF && receivepacket.ID == Session.ModemType) {
+				break;
+			}
+		}
+
+		Call_Back();
+		Windows_Message_Handler();
+		NullModem.Service();
+	}
+	Shutdown_Modem();
+	if (dialog) {
+		OwnerDraw::End_Dialog(dialog);
+	}
+}
+
+// FUNCTION: 0x005B7090
+bool ModemGuest::StartGame(bool load_game)
+{
+	unsigned int starttime;
+	NodeNameType * who;
+
+	if (load_game == true) {
+		return(false);
+	}
+
+	ReadDialog();
+
+	Session.NumPlayers = 0;
+
+	who = new NodeNameType;
+	if (who != NULL) {
+		FUN_00735060(who->Name, Session.Handle, -1);
+		who->Player.House = Session.House;
+		who->Player.Color = Session.PrefColor;
+		who->Player.ProcessTime = -1;
+		Session.Players.Add(who);
+		Session.NumPlayers++;
+	}
+
+	who = new NodeNameType;
+	if (who != NULL) {
+		wcscpy(who->Name, TheirName);
+		who->Player.House = TheirHouse;
+		who->Player.Color = TheirColor;
+		who->Player.ProcessTime = -1;
+		Session.Players.Add(who);
+		Session.NumPlayers++;
+	}
+
+	if (Session.NumPlayers != 2) {
+		return(false);
+	}
+
+	HWND msgbox = OwnerDraw::Custom_Message_Box(StringTable::LoadString("TXT_SENDING_GO_ACK", NULL, "D:\\ra2mdpost\\ModemGst.cpp", 0x6f3));
+	if (msgbox) {
+		OwnerDraw::Display_Dialog(msgbox);
+	}
+	starttime = TickCount;
+	while ((NullModem.Num_Send() && ((TickCount - starttime) < PACKET_SENDING_TIMEOUT)) || ((TickCount - starttime) < TIMER_SECOND)) {
+		Call_Back();
+		Windows_Message_Handler();
+		NullModem.Service();
+	}
+	if (msgbox) {
+		OwnerDraw::End_Dialog(msgbox);
+	}
+
+	NullModem.Init_Send_Queue();
+
+	Session.NetOpen = false;
+	Scen->Scenario = Session.Options.ScenarioIndex;
+	Session.NumPlayers = Session.Players.Count();
+	Frame = 0;
+	Session.CommProtocol = (CommProtocolType)2;
+	Special.IsHarvesterImmune = Session.Options.HarvTruce;
+	Special.IsDestroyBridges = Session.Options.BridgeDestruction;
+	Special.IsTGrowth = true;
+	Special.IsTSpread = true;
+	Special.Apply_To_Game();
+	return(true);
+}
+
+bool __fastcall FUN_00693B70(char * name, int type, bool flag);
+
+// FUNCTION: 0x005B7360
+void ModemGuest::ReceivePreview(void)
+{
+	CDTimerClass<SystemTimerClass> response_timer;
+
+	DebugString("Starting map preview download\n");
+
+	SerialPacketType packet;
+	memset(&packet, 0, sizeof(packet));
+	packet.Command = SERIAL_PREVIEW_ACK;
+
+	DebugString("Sending preview mode ack\n");
+	NullModem.Send_Message(&packet, sizeof(packet), 1);
+	response_timer = 10 * TIMER_SECOND;
+	while (NullModem.Num_Send() > 0 && response_timer) {
+		Call_Back();
+	}
+	DebugString("Preview mode ack sent\n");
+
+	DebugString("Calling Get_File_From_Host to receive the file download\n");
+	char preview_name[256];
+	bool got_file = FUN_00693B70(preview_name, GAME_MODEM, false);
+	if (!got_file) {
+		DebugString("got_file is false. Download failed\n");
+		return;
+	}
+
+	DebugString("Loading the compressed preview image\n");
+	RawFileClass file(preview_name);
+	int size = file.Size();
+	char * buffer = new char[size];
+	file.Read(buffer, size);
+	int preview_size = ((int *)buffer)[0];
+
+	DebugString("Decompressing the preview image\n");
+
+	BufferStraw bstraw(&((int *)buffer)[1], size);
+	LZOStraw lzostraw(LZOStraw::DECOMPRESS);
+	lzostraw.Get_From(&bstraw);
+	char * preview = new char[2 * preview_size];
+	lzostraw.Get(preview, preview_size);
+
+	DebugString("Creating the new preview surface\n");
+	if (MultiplayerMapPreview) {
+		delete MultiplayerMapPreview;
+	}
+	MultiplayerMapPreview = new MapPreviewClass;
+	MultiplayerMapPreview->Create_Preview_Surface(preview);
+	InvalidateRect(_Dialog, NULL, FALSE);
+
+	DebugString("Cleaning up the temporary decompression buffers\n");
+	delete [] preview;
+	delete [] buffer;
+}
+
+struct IntQuad {
+	int A, B, C, D;
+	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
+};
+
+// FUNCTION: 0x005B75D0 $E79
+IntQuad DAT_00ABF098;

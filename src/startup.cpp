@@ -735,3 +735,19 @@ template class TClassFactory<InfantryTypeClass>;
 // FUNCTION: 0x006C2E10 ?$TClassFactory@VBulletTypeClass@@::CreateInstance
 // FUNCTION: 0x006C2E90 ?$TClassFactory@VBulletTypeClass@@::LockServer
 template class TClassFactory<BulletTypeClass>;
+
+// FUNCTION: 0x006C2EC0 ?$TClassFactory@VIsometricTileTypeClass@@::?$TClassFactory@VIsometricTileTypeClass@@
+// FUNCTION: 0x006C2ED0 ?$TClassFactory@VIsometricTileTypeClass@@::QueryInterface
+// FUNCTION: 0x006C2F40 ?$TClassFactory@VIsometricTileTypeClass@@::AddRef
+// FUNCTION: 0x006C2F60 ?$TClassFactory@VIsometricTileTypeClass@@::Release
+// FUNCTION: 0x006C2F90 ?$TClassFactory@VIsometricTileTypeClass@@::CreateInstance
+// FUNCTION: 0x006C3010 ?$TClassFactory@VIsometricTileTypeClass@@::LockServer
+template class TClassFactory<IsometricTileTypeClass>;
+
+// FUNCTION: 0x006C3040 ?$TClassFactory@VOverlayTypeClass@@::?$TClassFactory@VOverlayTypeClass@@
+// FUNCTION: 0x006C3050 ?$TClassFactory@VOverlayTypeClass@@::QueryInterface
+// FUNCTION: 0x006C30C0 ?$TClassFactory@VOverlayTypeClass@@::AddRef
+// FUNCTION: 0x006C30E0 ?$TClassFactory@VOverlayTypeClass@@::Release
+// FUNCTION: 0x006C3110 ?$TClassFactory@VOverlayTypeClass@@::CreateInstance
+// FUNCTION: 0x006C3190 ?$TClassFactory@VOverlayTypeClass@@::LockServer
+template class TClassFactory<OverlayTypeClass>;

@@ -1225,4 +1225,79 @@ template class RLEBlitTransLucent25AlphaZRead<unsigned short>;
 template class RLEBlitTransLucent75AlphaZReadWarp<unsigned short>;
 
 // FUNCTION: 0x00498CD0 ?$RLEBlitTransLucent50AlphaZReadWarp@G::Blit
+// FUNCTION: 0x00498E90 ?$RLEBlitTransLucent50AlphaZReadWarp@G::Blit_Copy_Tinted
 template class RLEBlitTransLucent50AlphaZReadWarp<unsigned short>;
+
+// FUNCTION: 0x00498ED0 ?$RLEBlitTransLucent25AlphaZReadWarp@G::Blit
+// FUNCTION: 0x004990A0 ?$RLEBlitTransLucent25AlphaZReadWarp@G::Blit_Copy_Tinted
+template class RLEBlitTransLucent25AlphaZReadWarp<unsigned short>;
+
+// FUNCTION: 0x004990E0 ?$RLEBlitTransXlatAlphaZReadWrite@G::Blit
+// FUNCTION: 0x00499280 ?$RLEBlitTransXlatAlphaZReadWrite@G::Blit_Copy_Tinted
+template<class T>
+void RLEBlitTransXlatAlphaZReadWrite<T>::Blit_Copy_Tinted(void * dest, void const * source, int length, int leadskip, int z_min, void * z_buff, void * a_buff, int alpha_level, int warp_offset, void * zshape, unsigned short tint) const
+{
+	unsigned char const * sptr = (unsigned char const *)source;
+	T * dptr = (T *)dest;
+	unsigned short* zp = (unsigned short*)(z_buff);
+	unsigned short* ap = (unsigned short*)(a_buff);
+	const signed char* zs = (const signed char*)(zshape);
+
+	const unsigned short* aLUT = AlphaLightingRemap->Get_Table(alpha_level);
+
+	if (leadskip > 0) {
+		int transcount = Skip_Leading_Pixels(sptr, leadskip);
+		dptr += transcount;
+		length -= transcount;
+
+		zp += transcount;
+		zp = Blit_Wrap_Z_Buffer(zp);
+
+		ap += transcount;
+		ap = Blit_Wrap_A_Buffer(ap);
+	}
+
+	while (length > 0) {
+		unsigned char value = *sptr++;
+
+		if (value == '\0') {
+			value = *sptr++;
+			length -= value;
+			dptr += value;
+			zp += value;
+			zs += value;
+			ap += value;
+		} else {
+			if ((z_min - (int)*zs) < (int)*zp) {
+				*dptr++ = TranslateTable[value | aLUT[*ap]] | tint;
+				*zp++  = z_min - *zs++;
+				length--;
+			} else {
+				zs++;
+				dptr++;
+				zp++;
+				length--;
+			}
+			ap++;
+		}
+		zp = Blit_Wrap_Z_Buffer(zp);
+		ap = Blit_Wrap_A_Buffer(ap);
+	}
+}
+
+template class RLEBlitTransXlatAlphaZReadWrite<unsigned short>;
+
+// FUNCTION: 0x00499430 ?$RLEBlitTransZRemapXlatAlphaZReadWrite@G::Blit
+// FUNCTION: 0x00499610 ?$RLEBlitTransZRemapXlatAlphaZReadWrite@G::Blit_Copy_Tinted
+template class RLEBlitTransZRemapXlatAlphaZReadWrite<unsigned short>;
+
+// FUNCTION: 0x00499650 ?$RLEBlitTransLucent75AlphaZReadWrite@G::Blit
+// FUNCTION: 0x00499820 ?$RLEBlitTransLucent75AlphaZReadWrite@G::Blit_Copy_Tinted
+template class RLEBlitTransLucent75AlphaZReadWrite<unsigned short>;
+
+// FUNCTION: 0x00499860 ?$RLEBlitTransLucent50AlphaZReadWrite@G::Blit
+// FUNCTION: 0x00499A50 ?$RLEBlitTransLucent50AlphaZReadWrite@G::Blit_Copy_Tinted
+template class RLEBlitTransLucent50AlphaZReadWrite<unsigned short>;
+
+// FUNCTION: 0x00499A90 ?$RLEBlitTransLucent25AlphaZReadWrite@G::Blit
+template class RLEBlitTransLucent25AlphaZReadWrite<unsigned short>;

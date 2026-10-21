@@ -3354,3 +3354,116 @@ Wstring __fastcall FUN_005EDEF0(NodeNameType * slot)
 	}
 	return(Wstring(DAT_0083170C));
 }
+
+extern NodeNameType * DAT_00AC11A0;
+extern NodeNameType * DAT_00AC11A4;
+extern NodeNameType * DAT_00AC11A8;
+extern NodeNameType * DAT_00AC11AC;
+extern NodeNameType * DAT_00AC11B0;
+extern NodeNameType * DAT_00AC11B4;
+
+// FUNCTION: 0x005EDFC0
+NodeNameType * __fastcall FUN_005EDFC0(WideWstring * name)
+{
+	if (FUN_007B7D90(name)) {
+		Wstring text = FUN_007B7F90(*name);
+		if (text == DAT_00831704) {
+			return(DAT_00AC119C);
+		}
+		if (text == DAT_00831708) {
+			return(DAT_00AC11A0);
+		}
+		if (text == DAT_0083170C) {
+			return(DAT_00AC11B0);
+		}
+		if (text == DAT_00831710) {
+			return(DAT_00AC11A4);
+		}
+		if (text == DAT_00831714) {
+			return(DAT_00AC11A8);
+		}
+		if (text == DAT_00831718) {
+			return(DAT_00AC11AC);
+		}
+		if (text == DAT_0083171C) {
+			return(DAT_00AC11B4);
+		}
+	}
+	return(NULL);
+}
+
+// FUNCTION: 0x005EE100
+int __fastcall FUN_005EE100(Wstring const & name)
+{
+	if (name == DAT_00831704 || name == DAT_00831708 || name == DAT_0083170C || name == DAT_00831710 || name == DAT_00831714 || name == DAT_00831718 || name == DAT_0083171C) {
+		return(1);
+	}
+	return(0);
+}
+
+extern CCINIClass DAT_008870C0;
+namespace Game { extern int ObserverMode; }
+
+// FUNCTION: 0x005EE190
+void FUN_005EE190(void)
+{
+	Game::ObserverMode = DAT_008870C0.Get_Int("MultiPlayer", "ObserverMode", 0);
+}
+
+// FUNCTION: 0x005EE1B0
+void FUN_005EE1B0(void)
+{
+	RawFileClass file("RA2MD.INI");
+	DAT_008870C0.Put_Int("MultiPlayer", "ObserverMode", Game::ObserverMode, 0);
+	DAT_008870C0.Save(file, false);
+}
+
+void __fastcall FUN_00603D30(HWND item, int surface);
+
+// FUNCTION: 0x005EE200
+void __fastcall FUN_005EE200(HWND dialog)
+{
+	if (dialog) {
+		HWND item = GetDlgItem(dialog, 0x760);
+		if (item) {
+			SendMessage(item, 0xf1, Game::ObserverMode != 0, 0);
+		}
+		int surface;
+		if (Game::ObserverMode) {
+			surface = PCX::Instance.GetSurface("wolob.pcx", NULL);
+		} else {
+			surface = PCX::Instance.GetSurface("wolnob.pcx", NULL);
+		}
+		item = GetDlgItem(dialog, 0x75f);
+		FUN_00603D30(item, surface);
+		item = GetDlgItem(dialog, 0x6cd);
+		if (item) {
+			wchar_t const * text;
+			if (Game::ObserverMode) {
+#line 6751 "D:\\ra2mdpost\\netshare.cpp"
+				text = StringTable::LoadString("GUI:Observe", NULL, __FILE__, __LINE__);
+			} else {
+#line 6753 "D:\\ra2mdpost\\netshare.cpp"
+				text = StringTable::LoadString("GUI:Join", NULL, __FILE__, __LINE__);
+			}
+			SendMessage(item, 0x4b2, 0, (LPARAM)text);
+			InvalidateRect(item, 0, 0);
+		}
+		item = GetDlgItem(dialog, 0x62d);
+		if (item) {
+			wchar_t const * text;
+			if (Game::ObserverMode) {
+#line 6762 "D:\\ra2mdpost\\netshare.cpp"
+				text = StringTable::LoadString("GUI:Observe", NULL, __FILE__, __LINE__);
+			} else if (FUN_00775940(0x113) == dialog) {
+#line 6766 "D:\\ra2mdpost\\netshare.cpp"
+				text = StringTable::LoadString("GUI:JoinGame", NULL, __FILE__, __LINE__);
+			} else {
+#line 6768 "D:\\ra2mdpost\\netshare.cpp"
+				text = StringTable::LoadString("GUI:Join", NULL, __FILE__, __LINE__);
+			}
+			SendMessage(item, 0x4b2, 0, (LPARAM)text);
+			InvalidateRect(item, 0, 0);
+		}
+	}
+}

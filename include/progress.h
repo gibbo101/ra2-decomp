@@ -45,7 +45,7 @@ class ProgressScreenClass : public ProgressNotifier
 
 		ColorScheme * Player_Scheme(int index);
 		void Set_Graphic_Data(char const * progbar, char const * background, int string);
-		void Set_Layout(int x, int y, int mode, bool usedialog, bool flag);
+		void Set_Layout(Point2D pt, wchar_t const * title, bool usedialog, bool flag);
 		void Set_Field78(int value);
 		void Bar_Size(int * width, int * height);
 		void Dialog_Size(int * width, int * height);

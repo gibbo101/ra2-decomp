@@ -17,6 +17,7 @@
 class CCINIClass;
 class CRCEngine;
 class BuildingClass;
+class BuildingTypeClass;
 class HouseClass;
 
 class BaseNodeClass
@@ -62,6 +63,8 @@ class BaseClass
 		bool Is_Node(BuildingClass const * obj);
 
 		void Mark_Node_Placed(BuildingClass const * obj);
+		BaseNodeClass * FUN_0042F340(BuildingTypeClass const * type);
+		int FailedToPlaceNode(BaseNodeClass * node);
 
 		BaseNodeClass * Get_Node(BuildingClass const * obj);
 		BaseNodeClass * Get_Node(int index) { return(&Nodes[index]); }

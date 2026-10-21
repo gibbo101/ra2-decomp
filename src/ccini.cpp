@@ -1371,3 +1371,8 @@ template class DynamicVectorClass<RGBClass>;
 // FUNCTION: 0x004786D0 ?$VectorClass@VRGBClass@@::~?$VectorClass@VRGBClass@@
 // FUNCTION: 0x00478720 ?$VectorClass@H::operator=
 // FUNCTION: 0x00478790 ?$VectorClass@PAVTechnoTypeClass@@::?$VectorClass@PAVTechnoTypeClass@@
+// FUNCTION: 0x004787E0 ?$VectorClass@PAVTechnoTypeClass@@::operator=
+// FUNCTION: 0x00478850 ?$VectorClass@VRGBClass@@::?$VectorClass@VRGBClass@@
+// FUNCTION: 0x004788E0 ?$VectorClass@VRGBClass@@::operator=
+
+// FUNCTION: 0x00478990 $E10

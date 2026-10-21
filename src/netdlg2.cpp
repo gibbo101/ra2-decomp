@@ -22,6 +22,7 @@
 #include "mapgen.h"
 #include "mplayer.h"
 #include "msgbox.h"
+#include "multiplayer.h"
 #include "netdlg.h"
 #include "netshare.h"
 #include "newmenu.h"
@@ -1525,3 +1526,99 @@ void Send_Join_Queries(int gamenow, int playernow, int chatnow, int init)
 // FUNCTION: 0x005DFDE0 $E130
 
 // FUNCTION: 0x005DFDF0 $E129
+
+extern int DAT_008316A4;
+void __fastcall FUN_005E32D0(bool force, bool now);
+
+// FUNCTION: 0x005DFE00
+bool Process_Global_Packet(GlobalPacketType * packet, IPXAddressClass * address)
+{
+	GlobalPacketType mypacket;
+
+	if (packet->Command == NET_QUERY_GAME && Session.NetStealth == 0) {
+		if (wcslen(Session.GameName) > 0 &&
+			(!Session.NetOpen || !stricmp(Session.Handle, FUN_007350C0(Session.GameName)))) {
+			if (stricmp(Session.Handle, FUN_007350C0(Session.GameName)) == 0 || ScenarioActive) {
+				memset(&mypacket, 0, sizeof(GlobalPacketType));
+
+				mypacket.Command = NET_ANSWER_GAME;
+				strcpy(mypacket.Name, FUN_007350C0(Session.GameName));
+				mypacket.GameInfo.IsOpen = Session.NetOpen;
+
+				Ipx.Send_Global_Message(&mypacket, sizeof(GlobalPacketType), 1, address, 0, 0);
+			} else {
+				return true;
+			}
+		}
+		return true;
+	} else if (packet->Command == NET_QUERY_PLAYER &&
+		!stricmp(packet->Name, FUN_007350C0(Session.GameName)) &&
+		wcslen(Session.GameName) > 0 && Session.NetStealth == 0 && JoinState >= JOIN_CONFIRMED) {
+		memset(&mypacket, 0, sizeof(GlobalPacketType));
+
+		mypacket.Command = NET_ANSWER_PLAYER;
+		strcpy(mypacket.Name, Session.Handle);
+		strcpy(mypacket.Serial, DAT_00ABFF7C);
+		mypacket.PlayerInfo.House = Session.FUN_0069B700();
+		mypacket.PlayerInfo.Color = Session.FUN_0069B720();
+		mypacket.PlayerInfo.NameCRC = FUN_005DAC00(Session.GameName);
+		mypacket.PlayerInfo.unknown_24 = Session.unknown_2854;
+		mypacket.PlayerInfo.Flag = Session.unknown_2854 == DAT_008316A4;
+
+		if (Session.Players.Count() == 0) {
+			return true;
+		}
+		if (*(int *)((char *)Session.Players[0] + 0x6b) != -1) {
+			mypacket.PlayerInfo.Flag = 0;
+		}
+
+		Ipx.Send_Global_Message(&mypacket, sizeof(GlobalPacketType), 1, address, 0, 0);
+
+		if (!stricmp(packet->Name, FUN_007350C0(Session.Players[0]->Name))) {
+			FUN_005E32D0(true, true);
+			if (Session.MPGameMode) {
+				Session.MPGameMode->vt_entry_60();
+			}
+		}
+		return true;
+	}
+	return false;
+}
+
+HWND FUN_00775B10(void);
+
+// FUNCTION: 0x005E2340
+void FUN_005E2340(void)
+{
+	HWND top = FUN_00775B10();
+	HWND item = GetDlgItem(top, 0x59f);
+	if (Net2GetAccept(NULL) != 1) {
+		SendMessage(item, 0x4dc, 0, 1);
+		PMessagePrintf(-1, StringTable::LoadString("GUI:HostGameStartJoiner", NULL, "D:\\ra2mdpost\\netdlg2.cpp", 0x14b4));
+	}
+}
+
+// FUNCTION: 0x005E23A0
+void FUN_005E23A0(void)
+{
+	HWND top = FUN_00775B10();
+	HWND item = GetDlgItem(top, 0x59f);
+	SendMessage(item, 0x4dc, 0, 0);
+}
+
+// FUNCTION: 0x005E23D0 ?$DynamicVectorClass@PAUNodeNameType@@::Delete_Index
+template class DynamicVectorClass<NodeNameType *>;
+
+int DAT_00AC0B38;
+int DAT_00AC0B3C;
+int DAT_00AC0B40;
+int DAT_00AC0B44;
+
+// FUNCTION: 0x005E2410
+void FUN_005E2410(void)
+{
+	DAT_00AC0B38 = 0;
+	DAT_00AC0B3C = 0;
+	DAT_00AC0B40 = 0;
+	DAT_00AC0B44 = 0;
+}

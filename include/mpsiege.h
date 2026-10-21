@@ -17,6 +17,7 @@ class MPSiegeDefenderTeam : public MultiplayerTeam
 {
 	public:
 		MPSiegeDefenderTeam(void);
+		virtual ~MPSiegeDefenderTeam(void);
 };
 
 class MPSiegeAttackerTeam : public MultiplayerTeam

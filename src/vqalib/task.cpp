@@ -12,6 +12,10 @@
 
 long VQA_ResetLastFrameNum(VQAHandle *vqa);
 
+void VQA_DispatchFrameChunks(VQAHandleP *vqap, long frame);
+
+long VQA_NumFramesWithPalettes(VQAHandleP *vqap);
+
 void VQA_ResetCache(VQAHandleP *vqap);
 
 long VQA_Configure_Buffer(VQAHandleP *vqap);
@@ -677,6 +681,12 @@ long VQA_SetStop(VQAHandle *vqa, long stop)
 	return(oldstop);
 }
 
+// FUNCTION: 0x007C36C0
+char *VQA_Version(void)
+{
+	return(VQA_VERSION);
+}
+
 // FUNCTION: 0x007C36D0
 long VQA_GetClipping(VQAHandleP *vqap, int & clipw, long & cliph)
 {
@@ -702,6 +712,75 @@ long VQA_GetBlockInfo(VQAHandle *vqa, long & blockw, long & blockh, long & clrmo
 	blockh = header->BlockHeight;
 	clrmode = header->ColorMode;
 	return(VQAERR_NONE);
+}
+
+// FUNCTION: 0x007C3740
+char *VQA_IDString(void)
+{
+	return("VQA playback 5.0 (Oct 30 2001 17:30:47)");
+}
+
+// FUNCTION: 0x007C3750
+long User_Update(VQAHandle *vqa)
+{
+	VQAHandleP *vqap;
+	VQAFrameNode *curframe;
+	VQADrawer *drawer;
+	VQAConfig *config;
+	long    rc = 0;
+
+	/* Dereference data members for quicker access. */
+	vqap = (VQAHandleP *)vqa;
+	drawer = &vqap->Drawer;
+	config = &vqap->Config;
+	curframe = vqap->Flipper.CurFrame;
+
+	if (config->EventHandler != NULL) {
+		if (curframe->Flags & VQAFRMF_LOOPED) {
+			config->EventHandler((VQAHandle *)vqap, VQAEVENT_LOOPED, (void *)curframe->FrameNum, vqap->LoopID);
+			curframe->Flags &= ~VQAFRMF_LOOPED;
+		}
+		if (curframe->Flags & VQAFRMF_LOOPJMP) {
+			config->EventHandler((VQAHandle *)vqap, VQAEVENT_LOOPJUMP, (void *)curframe->FrameNum, vqap->LoopID);
+			curframe->Flags &= ~VQAFRMF_LOOPJMP;
+		}
+		if (curframe->Flags & VQAFRMF_CHUNKS) {
+			VQA_DispatchFrameChunks((VQAHandleP *)vqap, curframe->FrameNum);
+			curframe->Flags &= ~VQAFRMF_CHUNKS;
+		}
+	}
+
+	/* Invoke the page flip routine */
+	rc = vqap->Page_Flip((VQAHandle *)vqap);
+
+	/* Update data for mono output */
+	vqap->Flipper.LastFrameNum = curframe->FrameNum;
+
+	/* Mark the frame as loadable */
+	if (!(drawer->Flags & VQADRWF_HOLD)) {
+		curframe->PrevFlags = curframe->Flags;
+		curframe->Flags = 0;
+	} else {
+		if (drawer->Flags & VQADRWF_FORCEDRAW) {
+			curframe->Flags |= VQAFRMF_11;
+			drawer->Flags &= ~VQADRWF_FORCEDRAW;
+		}
+		drawer->Flags &= ~VQADRWF_HOLD;
+	}
+
+	return(rc);
+}
+
+// FUNCTION: 0x007C3820
+long VQA_NumFramesWithPalettes(VQAHandleP *vqap)
+{
+	long num = 0;
+	for (int i = 0; i < vqap->NumFrames; i++) {
+		if (vqap->Foff[i] & VQAFINF_PAL) {
+			num++;
+		}
+	}
+	return(num);
 }
 
 // FUNCTION: 0x007C3840

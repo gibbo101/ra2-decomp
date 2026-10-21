@@ -72,3 +72,71 @@ ShortPair DAT_00ABEE70;
 
 // FUNCTION: 0x005B1D50 $E35
 IntTriple DAT_00ABEE90;
+
+struct IntTripleB {
+	int A, B, C;
+	IntTripleB() { C = 0; A = 128; B = 128; }
+};
+
+// FUNCTION: 0x005B1D70 $E38
+IntTripleB DAT_00ABEEB8;
+
+
+// FUNCTION: 0x005B1D90
+MillisecondTimerClass::MillisecondTimerClass(void)
+{
+	unsigned int high = 0;
+	Frequency = 1.0;
+	unsigned int low = Get_CPU_Rate(high);
+
+	if (low == 0 && high == 0) {
+		timeBeginPeriod(1);
+
+	} else {
+		double dl = low;
+		double dh = high;
+
+		DebugString("MillisecondTimerClass low = %d, high = %d\n");
+
+		Frequency = ((double)((double)dh * 4.294967296E9 + (double)dl)) / 1000;
+	}
+}
+
+// FUNCTION: 0x005B1E20
+MillisecondTimerClass::~MillisecondTimerClass(void)
+{
+	if (Frequency != 1.0) {
+		timeEndPeriod(1);
+	}
+}
+
+// FUNCTION: 0x005B1E40
+MillisecondTimerClass::operator double () const
+{
+	static int cpu_type = -1;
+	static bool has_mmx = false;
+
+	if (cpu_type == -1) {
+		Get_CPU_Type(cpu_type, has_mmx, NULL, 0);
+	}
+	if (Frequency != 1.0 && cpu_type > 4) {
+		unsigned int high;
+		unsigned int low;
+
+		low = Get_CPU_Clock(high);
+		double dl = low;
+		double dh = high;
+
+		return(((double)((double)dh * 4.294967296E9 + (double)dl)) / Frequency);
+	}
+
+	return(timeGetTime());
+}
+
+struct IntQuad {
+	int A, B, C, D;
+	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
+};
+
+// FUNCTION: 0x005B1EE0 $E41
+IntQuad DAT_00ABEEE0;

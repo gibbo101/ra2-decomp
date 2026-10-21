@@ -729,3 +729,81 @@ char const * Name_From_Speed(SpeedType speed)
 	}
 	return("<none>");
 }
+
+extern char const * LayerName[LAYER_COUNT];
+
+// FUNCTION: 0x0048E050
+LayerType Layer_From_Name(char const * name)
+{
+	if (name != NULL) {
+		for (LayerType layer = LAYER_FIRST; layer < LAYER_COUNT; layer++) {
+			if (stricmp(LayerName[layer], name) == 0) return(layer);
+		}
+	}
+	return(LAYER_NONE);
+}
+
+// FUNCTION: 0x0048E090
+char const * Name_From_Layer(LayerType layer)
+{
+	if ((unsigned)layer < LAYER_COUNT) {
+		return(LayerName[layer]);
+	}
+	return("<none>");
+}
+
+// FUNCTION: 0x0048E0B0
+void Print_MP_Stats(void)
+{
+	if (Session.Type == GAME_INTERNET) {
+		FILE *file = fopen("mpstats.txt", "wt");
+		if (file != NULL) {
+			fprintf(file, "Frames: %d\n", Frame);
+
+			fprintf(file, "Average FPS: %d\n", FPSCounter::TotalTimeElapsed != 0 ? FPSCounter::TotalFramesElapsed / FPSCounter::TotalTimeElapsed : 0);
+			fprintf(file, "Max MaxAhead: %d\n", Session.MaxMaxAhead);
+			fprintf(file, "Latency setting: %d\n", Session.LatencyFudge);
+			fprintf(file, "Game speed setting: %d\n", Options.GameSpeed);
+
+			if (PacketTransport != NULL) {
+				for (int i = 0; i < PacketTransport->Get_Num_Local_Addresses(); i++) {
+					unsigned char *addr = PacketTransport->Get_Local_Address(i);
+					if (addr != NULL) {
+						unsigned int a = *(unsigned int *)addr;
+						fprintf(file, "Local address: %d.%d.%d.%d\n", (a) & 0xFF, (a >> 8) & 0xFF, (a >> 16) & 0xFF, (a >> 24) & 0xFF);
+					}
+				}
+			}
+
+			for (int i = 0; i < MAX_PLAYERS; i++) {
+				MPStatsType &stats = Session.ConnectionStats[i];
+				if (stats.Name[0] == '\0') {
+					continue;
+				}
+
+				fprintf(file, "\nName: %s\n", stats.Name);
+				fprintf(file, "Address: %s\n", stats.Address.As_String(0));
+				fprintf(file, "Max avg round trip: %d\n", stats.MaxAvgRoundTrip);
+				fprintf(file, "Max round trip: %d\n", stats.MaxRoundTrip);
+				fprintf(file, "Resends: %d\n", stats.Resends);
+				fprintf(file, "Frame sync stalls: %d\n", stats.FrameSyncStalls);
+				fprintf(file, "Command cound stalls: %d\n", stats.CommandCountStalls);
+				fprintf(file, "Lost: %d\n", stats.Lost);
+				fprintf(file, "Percent lost: %d\n", stats.PercentLost);
+			}
+
+			fclose(file);
+		}
+	}
+}
+
+extern int DAT_0089E9C0, DAT_0089E9C4, DAT_0089E9C8, DAT_0089E9CC;
+
+// FUNCTION: 0x0048E270
+void Clear_Conquer_Counters(void)
+{
+	DAT_0089E9C0 = 0;
+	DAT_0089E9C4 = 0;
+	DAT_0089E9C8 = 0;
+	DAT_0089E9CC = 0;
+}

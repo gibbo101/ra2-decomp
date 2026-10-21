@@ -20,6 +20,7 @@ NullModemConnClass::NullModemConnClass (int numsend, int numreceive,
 }
 
 // FUNCTION: 0x005EF150
+// FUNCTION: 0x005EF290
 NullModemConnClass::~NullModemConnClass (void)
 {
 	delete [] SendBuf;
@@ -30,6 +31,34 @@ void NullModemConnClass::Init (HANDLE port_handle)
 {
 	BASECLASS::Init();
 	PortHandle = port_handle;
+}
+
+// FUNCTION: 0x005EF190
+int NullModemConnClass::Send (char *buf, int buflen, void *, int, bool, unsigned short)
+{
+	int *ibuf;
+	SerialHeaderType *header;
+	unsigned int sendlen;
+
+	if ( PortHandle == INVALID_HANDLE_VALUE ) return(false);
+
+	header = (SerialHeaderType *) SendBuf;
+	header->MagicNumber	= PACKET_SERIAL_START;
+	header->Length			= (short) buflen;
+	header->MagicNumber2	= PACKET_SERIAL_VERIFY;
+
+	sendlen = sizeof( SerialHeaderType );
+	memcpy (SendBuf + sendlen, buf, buflen);
+	sendlen += buflen;
+	ibuf = (int *)(SendBuf + sendlen);
+	*ibuf = Compute_CRC( buf, buflen );
+	sendlen += sizeof( int );
+
+	*(SendBuf + sendlen) = '\r';
+	sendlen += 1;
+
+	SerialPort->Write_To_Serial_Port((unsigned char *)SendBuf, (int)sendlen );
+	return(true);
 }
 
 // FUNCTION: 0x005EF240
@@ -52,3 +81,29 @@ int NullModemConnClass::Compute_CRC (char *buf, int buflen)
 
 	return((int)sum);
 }
+
+// FUNCTION: 0x005EF270
+int NullModemConnClass::Packet_Overhead_Size ( void )
+{
+	return( (PACKET_SERIAL_OVERHEAD_SIZE + sizeof(CommHeaderType)) );
+}
+
+// FUNCTION: 0x005EF280
+void NullModemConnClass::Init (void)
+{
+	BASECLASS::Init();
+}
+
+NullModemConnClass *NullConnDeleteProbe (NullModemConnClass *p)
+{
+	delete p;
+	return p;
+}
+
+struct NullConnProbe {
+	int A, B, C, D;
+	NullConnProbe () : A(0), B(0), C(0), D(0) {}
+};
+
+// FUNCTION: 0x005EF2D0 $E3
+NullConnProbe NullConnProbeObj;

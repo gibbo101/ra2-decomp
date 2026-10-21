@@ -1161,6 +1161,17 @@ ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; 
 fixed them. Cost: about 5.6M tokens. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
 
+### Batches 93, 94 and 95 (21 October 2026)
+
+**188 of 191 functions** (79, 60, 49). Batch 94's merge identified YR's subtitle class as
+Westwood's SubTitleClass from Renegade's source, field for field, and replaced a byte-offset
+stand-in in sendfile.cpp with wolapi's User::name. Batch 93's put msgloop's two global
+vectors back in TibSun's order, matching the vtables their initialisers install, and reached
+the tooltip manager through TibSun's ToolTips rather than a new static. Batch 95's landed
+ZBuffer::Pan by ending each arm with its own return. Landing named PlayerInfo's field at
++0x24 and replaced netdlg2's byte offsets with it and Flag. Cost: about 3.4M tokens. Merge
+gate: 13,724 of 13,724 (1,764.5 KB), about 70% of game functions.
+
 ### Batches 90, 91 and 92 (21 October 2026)
 
 **203 of 221 functions** (87, 61, 55), plus vein's Reduce_Veins_At (0x0074EF10), which

@@ -2919,3 +2919,15 @@ int CellClass::Fetch_Object_Size(void) const
 // FUNCTION: 0x00487EE0 ?$TRect@H::operator-
 
 // FUNCTION: 0x00487F20 ?$TPoint2D@H::operator-
+
+// FUNCTION: 0x00487F40 Union
+template TRect<int> const Union<int>(TRect<int> const &, TRect<int> const &);
+
+// FUNCTION: 0x00488030 ?$VectorClass@PAVObjectClass@@::~?$VectorClass@PAVObjectClass@@
+template class VectorClass<ObjectClass *>;
+
+// FUNCTION: 0x00488080 ?$VectorClass@PAVFoggedObjectClass@@::?$VectorClass@PAVFoggedObjectClass@@
+template class VectorClass<FoggedObjectClass *>;
+
+// FUNCTION: 0x004880D0 $E222
+Rect DAT_0089E7C8(0, 0, 0, 0);

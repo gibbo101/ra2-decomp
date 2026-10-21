@@ -281,6 +281,8 @@ Each entry: what the diff showed, then the source change that fixed it.
   value from a switch or compare in the exe before trusting it.
 - An early `return` that the original tail-merges with a real branch: assign the result in
   each branch and keep one `return(action);` after the if/else, as TibSun writes it.
+- The reverse, when inlined tails merge into the wrong arm's copy: end each arm with its
+  own `return;`, which moves the shared copy to the last arm (ZBuffer::Pan).
 - VC6 spends the inline budget from the end of a function backwards, and every inlined call
   costs the same: write the accessor calls the original made (planmgr's Get_Count, Set_Event).
 - An inline call the original leaves out of line goes out of line when wrapped in a file-local

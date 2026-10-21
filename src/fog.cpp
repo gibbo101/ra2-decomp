@@ -466,3 +466,32 @@ double DAT_008B3DB8 = FUN_004CADE0((DAT_008B3E00 * 2) / DAT_008B3D90);
 
 // FUNCTION: 0x004D30C0 $E170
 int DAT_008B3DF4 = (int)(DAT_008B3E00 * 4 + DAT_007E1738);
+
+struct Fog_Short2 {
+	short X, Y;
+	Fog_Short2(void) : X(0), Y(0) {}
+};
+struct Fog_Int3 {
+	int X, Y, Z;
+	Fog_Int3(void) : X(0), Y(0), Z(0) {}
+};
+struct Fog_Int4 {
+	int A, B, C, D;
+	Fog_Int4(void) : A(0), B(0), C(0), D(0) {}
+};
+struct Fog_Half {
+	int X, Y, Z;
+	Fog_Half(void) : X(128), Y(128), Z(0) {}
+};
+
+// FUNCTION: 0x004D30F0 $E173
+Fog_Short2 DAT_008B3D88;
+
+// FUNCTION: 0x004D3100 $E176
+Fog_Int3 DAT_008B3DA8;
+
+// FUNCTION: 0x004D3120 $E179
+Fog_Half DAT_008B3DE8;
+
+// FUNCTION: 0x004D3140 $E182
+Fog_Int4 DAT_008B3D78;

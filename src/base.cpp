@@ -323,6 +323,70 @@ HRESULT STDMETHODCALLTYPE BaseClass::Load(IStream *stream)
 	return(S_OK);
 }
 
+// FUNCTION: 0x0042F070
+HRESULT STDMETHODCALLTYPE BaseClass::Save(IStream * stream)
+{
+	HRESULT hr;
+
+	if (SUCCEEDED(stream->Write(this, sizeof(*this), NULL))) {
+
+		int index;
+
+		int count = Nodes.Count();
+		hr = stream->Write(&count, sizeof(count), NULL);
+		if (FAILED(hr)) {
+			return(S_OK);
+		}
+
+		for (index = 0; index < count; index++) {
+			hr = stream->Write(&Nodes[index], sizeof(Nodes[index]), NULL);
+			if (FAILED(hr)) {
+				return(S_OK);
+			}
+		}
+
+		count = InnerCells.Count();
+		hr = stream->Write(&count, sizeof(count), NULL);
+		if (FAILED(hr)) {
+			return(S_OK);
+		}
+
+		for (index = 0; index < count; index++) {
+			hr = stream->Write(&InnerCells[index], sizeof(InnerCells[index]), NULL);
+			if (FAILED(hr)) {
+				return(S_OK);
+			}
+		}
+
+		count = OuterCells.Count();
+		hr = stream->Write(&count, sizeof(count), NULL);
+		if (FAILED(hr)) {
+			return(S_OK);
+		}
+
+		for (index = 0; index < count; index++) {
+			hr = stream->Write(&OuterCells[index], sizeof(OuterCells[index]), NULL);
+			if (FAILED(hr)) {
+				return(S_OK);
+			}
+		}
+
+		return(hr);
+	}
+	return(S_OK);
+}
+
+// FUNCTION: 0x0042F180
+void BaseClass::Compute_CRC(CRCEngine & crc) const
+{
+	crc(Nodes.Count());
+	for (int i = 0; i < Nodes.Count(); i++) {
+		crc(Nodes[i].Type);
+		crc(Nodes[i].CellID.X);
+		crc(Nodes[i].CellID.Y);
+	}
+}
+
 // FUNCTION: 0x0042F1E0
 BaseClass::BaseClass(NoInitClass const & x)
 {
@@ -348,4 +412,26 @@ void BaseClass::Mark_Node_Placed(BuildingClass const * obj)
 		node->Placed = true;
 		node->Attempts = 0;
 	}
+}
+
+// FUNCTION: 0x0042F340
+BaseNodeClass * BaseClass::FUN_0042F340(BuildingTypeClass const * type)
+{
+	int id = type->HeapID;
+	for (int i = 0; i < Nodes.Count(); i++) {
+		BaseNodeClass * node = &Nodes[i];
+		if (node->Type == id && !node->Placed) {
+			return(node);
+		}
+	}
+	return(NULL);
+}
+
+// FUNCTION: 0x0042F380
+int BaseClass::FailedToPlaceNode(BaseNodeClass * node)
+{
+	if (node == NULL) {
+		return(0);
+	}
+	return(++node->Attempts);
 }

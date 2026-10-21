@@ -296,3 +296,23 @@ double DAT_00B45D98 = FUN_004CADE0(DAT_00B725C8 * DAT_007E1740);
 
 // FUNCTION: 0x0075E880 $E59
 double DAT_00B46640 = FUN_004CADE0((DAT_00B725C8 * 2) / DAT_00B45D80);
+
+// FUNCTION: 0x0075E8B0 $E62
+int DAT_00B725BC = (int)(DAT_00B725C8 * 4 + DAT_007E1738);
+
+struct Pair16 { short a; short b; Pair16() : a(0), b(0) {} };
+struct Trio { int a; int b; int c; Trio() : a(0), b(0), c(0) {} };
+struct Quad { int a; int b; int c; int d; Quad() : a(0), b(0), c(0), d(0) {} };
+struct Mid { int a; int b; int c; Mid() : c(0), a(128), b(128) {} };
+
+// FUNCTION: 0x0075E8E0 $E65
+Pair16 DAT_00B45D78;
+
+// FUNCTION: 0x0075E8F0 $E68
+Trio DAT_00B46248;
+
+// FUNCTION: 0x0075E910 $E71
+Mid DAT_00B46690;
+
+// FUNCTION: 0x0075E930 $E74
+Quad DAT_00B45D68;

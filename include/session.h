@@ -343,7 +343,7 @@ struct GlobalPacketType {
 			int AICheatCheck;
 			int ArtCheatCheck;
 			unsigned int BuildNumber;
-			unsigned int : 32;
+			int unknown_24;
 			unsigned int Flag;
 		} PlayerInfo;
 		struct {

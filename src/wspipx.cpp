@@ -350,3 +350,22 @@ int IPXInterfaceClass::Message_Handler(HWND , UINT message, UINT , LONG lParam)
 // FUNCTION: 0x007B1740 WinsockInterfaceClass::Get_Num_Local_Addresses
 
 // FUNCTION: 0x007B1750 WinsockInterfaceClass::Get_Local_Address
+
+// FUNCTION: 0x007B1760 WinsockInterfaceClass::Set_NetCard
+
+// FUNCTION: 0x007B1770 IPXInterfaceClass::Get_Protocol
+
+// FUNCTION: 0x007B1780 IPXInterfaceClass::Protocol_Event_Message
+
+// FUNCTION: 0x007B1790 IPXInterfaceClass::~IPXInterfaceClass
+
+struct WspIPXQuad {
+	int A;
+	int B;
+	int C;
+	int D;
+	WspIPXQuad(void) : A(0), B(0), C(0), D(0) {}
+};
+
+// FUNCTION: 0x007B17B0 $E4
+WspIPXQuad DAT_00B78028;

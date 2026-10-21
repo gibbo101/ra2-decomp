@@ -38,7 +38,7 @@ class NullModemConnClass : public ConnectionClass
 		virtual ~NullModemConnClass () override;
 
 		void Init (HANDLE port_handle);
-		virtual void Init (void) override { BASECLASS::Init(); }
+		virtual void Init (void) override;
 
 		unsigned int Actual_Max_Packet (void) { return (MaxPacketLen +
 			(sizeof(SerialHeaderType)) + sizeof(int) + sizeof (char)); }

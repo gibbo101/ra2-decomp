@@ -31,6 +31,7 @@
 #include <ole2.h>
 #include <ocidl.h>
 #include <shellapi.h>
+#include <winsock.h>
 #include <stddef.h>
 #include <string.h>
 #include <time.h>
@@ -38,6 +39,9 @@
 #include "stringtable.h"
 
 HWND WS_Find_Dialog(int id);
+void __fastcall FUN_004E34A0(HWND dialog, int side, int flag);
+void __fastcall FUN_005E3720(char const * text);
+extern int DAT_00B76440[];
 rc_ptr<PlayerProfile> __fastcall FUN_00778710(void);
 
 unsigned int __fastcall Wstring_Hash(Wstring & string);
@@ -1375,7 +1379,7 @@ struct NetUtilSink {
 	virtual void V03(void);
 	virtual void V04(void);
 	virtual long __stdcall V05(char const * a, int b, char const * c, unsigned long d, int e, int f, int g);
-	virtual void V06(void);
+	virtual long __stdcall V06(char const * address, int timeout, int * handle);
 	virtual void V07(void);
 	virtual long __stdcall V08(unsigned long address, int * ping);
 	virtual void V09(void);
@@ -5836,6 +5840,295 @@ bool __fastcall FUN_0079F0A0(Wstring * name, ArrayList<WolChannel> * channels, W
 	}
 	memset(result, 0, sizeof(WolChannel));
 	return false;
+}
+
+// FUNCTION: 0x0079FC10
+void __fastcall FUN_0079FC10(int a, int b, int c)
+{
+	DAT_00B77E14 = c;
+	DAT_00B73A20 = a;
+	DAT_00B77D70 = b;
+	DAT_00B77A88 = time(NULL);
+}
+
+// FUNCTION: 0x007A0430
+void FUN_007A0430(void)
+{
+	User user;
+	memset(&user, 0, sizeof(user));
+	FUN_004068E0("User list is %d long, adding to ping request queue\n", DAT_00B77900.length());
+	for (int i = 0; i < DAT_00B77900.length(); i++) {
+		DAT_00B77900.get(user, i);
+		if (user.Flags & 1) {
+			FUN_004068E0("%s is channel operator, no ping request\n", user.Nick);
+		} else if (stricmp(user.Nick, DAT_00B73E40.get()) == 0) {
+			FUN_004068E0("%s is local user, no ping request\n", user.Nick);
+		} else {
+			Wstring name(user.Nick);
+			FUN_004068E0("Adding %s to ping request queue\n", name.get());
+			DAT_00B76AD0.addTail(name);
+		}
+	}
+}
+
+// FUNCTION: 0x007A0D10
+void FUN_007A0D10(void)
+{
+	if (DAT_00B77E28 == 0) {
+		User user;
+		memset(&user, 0, sizeof(user));
+		int count = DAT_00B77900.length();
+		int handle = 0;
+		for (int i = 0; i < count; i++) {
+			DAT_00B77900.get(user, i);
+			in_addr addr;
+			addr.s_addr = user.IPAddr;
+			FUN_004068E0("Requesting ping for %s at %s\n", user.Nick, inet_ntoa(addr));
+			DAT_00AC1170->V06(inet_ntoa(addr), 1000, &handle);
+		}
+	}
+}
+
+// FUNCTION: 0x007A0DD0
+void __fastcall FUN_007A0DD0(User * user)
+{
+	if (user) {
+		for (int i = 0; i < 8; i++) {
+			if (Session.Slots[i] && strcmp(FUN_007350C0(Session.Slots[i]->Name), user->Nick) == 0) {
+				HWND window = FUN_005E26C0();
+				if (window) {
+					FUN_004E34A0(window, i, -1);
+				}
+				return;
+			}
+		}
+	}
+}
+
+void __fastcall FUN_007A0EA0(char const * name, int ping);
+
+// FUNCTION: 0x007A0E50
+void FUN_007A0E50(void)
+{
+	for (int i = 0; i < 8; i++) {
+		if (!Session.Slots[i] || !FUN_005E93F0(Session.Slots[i])) {
+			DAT_00B76440[i] = -1;
+		}
+		char const * name = FUN_007350C0(Session.Slots[i]->Name);
+		FUN_007A0EA0(name, DAT_00B76440[i]);
+	}
+}
+
+// FUNCTION: 0x007A0EA0
+void __fastcall FUN_007A0EA0(char const * name, int ping)
+{
+	FUN_004068E0("Got ping from gameoptions.  name = %s, ping = %d\n", name, ping);
+	for (int i = 0; i < 8; i++) {
+		if (Session.Slots[i] && strcmp(FUN_007350C0(Session.Slots[i]->Name), name) == 0) {
+			DAT_00B76440[i] = ping;
+			HWND window = FUN_005E26C0();
+			if (window) {
+				if (ping < 0) {
+					FUN_004E34A0(window, i, -1);
+				} else if (ping < 300) {
+					FUN_004E34A0(window, i, 0);
+				} else if (ping < 500) {
+					FUN_004E34A0(window, i, 1);
+				} else {
+					FUN_004E34A0(window, i, 2);
+				}
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x007A0F40
+void FUN_007A0F40(void)
+{
+	int count = DAT_00B77900.length();
+	User user;
+	memset(&user, 0, sizeof(user));
+	char list[0x100];
+	list[0] = 'P';
+	list[1] = (char)(count + '0');
+	list[2] = 0;
+	if (DAT_00B77E28 == 0) {
+		for (int i = 0; i < count; i++) {
+			DAT_00B77900.get(user, i);
+			int ping;
+			DAT_00AC1170->V08(user.IPAddr, &ping);
+			char entry[0x80];
+			sprintf(entry, ",%s,%d", user.Nick, ping);
+			strcat(list, entry);
+			FUN_007A0EA0(user.Nick, ping);
+		}
+		FUN_004068E0("Sending pings for users: %s\n", list);
+		FUN_005E3720(list);
+	}
+}
+
+// FUNCTION: 0x007A1060
+void FUN_007A1060(void)
+{
+	bool failed = false;
+	User user;
+	memset(&user, 0, sizeof(user));
+	if (DAT_00B77E28 == 0) {
+		FUN_004068E0("Requesting match pings, request list is %d long, pending list is %d long\n", DAT_00B76AD0.length(), DAT_00B76970.length());
+		if (DAT_00B76AD0.length() != 0) {
+			unsigned long ip = user.IPAddr;
+			while (DAT_00B76AD0.length() != 0) {
+				if (DAT_00B76970.length() >= 10 || failed) {
+					break;
+				}
+				{
+					Wstring name;
+					DAT_00B76AD0.getHead(name);
+					FUN_004068E0("Got %s from request list\n", name.get());
+					int handle;
+					int index;
+					{
+						Wstring key(name.get());
+						index = FUN_0077D240(&key);
+					}
+					if (index != -1) {
+						DAT_00B77900.get(user, index);
+						ip = user.IPAddr;
+						if (ip != 0) {
+							FUN_004068E0("Pinging %s\n", name.get());
+							in_addr addr;
+							addr.s_addr = ip;
+							if (DAT_00AC1170->V06(inet_ntoa(addr), 1000, &handle) == 0 && handle >= 0) {
+								DAT_00B76970.addTail(name);
+								DAT_00B76AD0.removeHead(name);
+								FUN_004068E0("Removing %s from request list\n", name.get());
+							} else {
+								failed = true;
+							}
+						} else {
+							DAT_00B76AD0.removeHead(name);
+							FUN_004068E0("%s ipaddr is zero\n", name.get());
+						}
+					} else {
+						if (DAT_00B76AD0.getHead(name)) {
+							DAT_00B76AD0.remove(0);
+						}
+						FUN_004068E0("%s not found in info\n", name.get());
+					}
+				}
+				if (DAT_00B76AD0.length() == 0) {
+					break;
+				}
+			}
+		}
+	}
+}
+
+extern char DAT_00B73714[];
+
+static inline bool Match_Failed(char const * message)
+{
+	if (strnicmp(message, "Fail", 4) == 0) {
+		FUN_005E2700(0x40FFFF, StringTable::LoadString("WOL:MatchFail", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x6FFF));
+		SetEvent(DAT_00B73684[17]);
+		return true;
+	}
+	if (strnicmp(message, "PingFail", 8) == 0) {
+		FUN_005E2700(0x40FFFF, StringTable::LoadString("WOL:MatchFailPing", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x7005));
+		SetEvent(DAT_00B73684[17]);
+		return true;
+	}
+	if (strnicmp(message, "RankFail", 8) == 0) {
+		FUN_005E2700(0x40FFFF, StringTable::LoadString("WOL:MatchFailRank", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x700B));
+		SetEvent(DAT_00B73684[17]);
+		return true;
+	}
+	if (strnicmp(message, "WDTSideFail", 11) == 0) {
+		FUN_005E2700(0x40FFFF, StringTable::LoadString("WOL:MatchFailWDTSide", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x7011));
+		SetEvent(DAT_00B73684[17]);
+		return true;
+	}
+	return false;
+}
+
+// FUNCTION: 0x007A16B0
+void __fastcall FUN_007A16B0(char const * message, bool strict)
+{
+	if (strict && Match_Failed(message)) {
+		return;
+	}
+	if (strnicmp(message, "Exit", 4) == 0) {
+		FUN_005E2700(0x40FFFF, StringTable::LoadString("WOL:MatchFailExit", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x7017));
+		DAT_00AC116C->V09();
+		ODMessageBox(StringTable::LoadString("WOL:MatchFailExit", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x701A), 0, FUN_0077D710, 0);
+		SetEvent(DAT_00B73684[0]);
+		return;
+	}
+	if (strnicmp(message, "Working", 7) == 0) {
+		if (DAT_00B73A20 == 4) {
+			FUN_0079FC10(5, 0xB4, 0);
+		}
+		FUN_005E2700(DAT_007EEF28, StringTable::LoadString("GUI:MatchingProgress2", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x7026));
+		return;
+	}
+	if (strnicmp(message, "Info ", 5) == 0) {
+		FUN_005E2700(0xFF8080, FUN_00735120(message + 5));
+		return;
+	}
+	if (strnicmp(message, "Pool ", 5) == 0) {
+		message += 5;
+		FUN_005E2700(0xFF8080, StringTable::LoadString("WOL:MatchingPlayerPool", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x7030), message);
+		return;
+	}
+	if (strict && strnicmp(message, "Start ", 6) == 0) {
+		message += 6;
+		strncpy(DAT_00B73714, message, 0xFF);
+		FUN_004068E0("%s\n", DAT_00B73714);
+		SetEvent(DAT_00B73684[16]);
+		return;
+	}
+	if (stricmp(message, "ack") == 0 || stricmp(message, "nack") == 0) {
+		return;
+	}
+	if (strnicmp(message, "need ", 5) == 0) {
+		FUN_004068E0("%s\n", message);
+		return;
+	}
+	if (strict) {
+		FUN_005E2700(0x40FFFF, StringTable::LoadString("WOL:MatchUnknownServerCommand", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x7051));
+	}
+}
+
+// FUNCTION: 0x007A19E0
+void FUN_007A19E0(void)
+{
+	FUN_005E2700(0xC0FFFF, StringTable::LoadString("WOL:MatchFoundWith", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x7066), DAT_00B76AC4.c_str());
+	Wstring lower = ((Wstring const &)DAT_00B76AC4).toLower();
+	LadderA * found = NULL;
+	DAT_00B77D80.getPointer(lower, &found);
+	int index;
+	{
+		Wstring key(DAT_00B76AC4.get());
+		index = FUN_0077D240(&key);
+	}
+	if (index == -1) {
+		FUN_005E2700(0xC0FFFF, StringTable::LoadString("WOL:MatchOpponentPingUnknown", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x7073));
+	} else {
+		User user;
+		memset(&user, 0, sizeof(user));
+		DAT_00B77900.get(user, index);
+		if (user.IPAddr == 0) {
+			FUN_005E2700(0xC0FFFF, StringTable::LoadString("WOL:MatchOpponentPingUnknown", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x707A));
+		} else {
+			int ping = -1;
+			DAT_00AC1170->V08(user.IPAddr, &ping);
+			if (ping != -1) {
+				FUN_005E2700(0xC0FFFF, StringTable::LoadString("WOL:MatchOpponentPing", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x7080), ping);
+			} else {
+				FUN_005E2700(0xC0FFFF, StringTable::LoadString("WOL:MatchOpponentPingUnknown", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x7082));
+			}
+		}
+	}
 }
 
 // FUNCTION: 0x007A2E70 SimpleWonlineDialogControl::~SimpleWonlineDialogControl

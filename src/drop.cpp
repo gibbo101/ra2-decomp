@@ -234,3 +234,17 @@ void DropListClass::Set_Selected_Index(wchar_t const * text)
 // FUNCTION: 0x004B59E0 $E35
 
 // FUNCTION: 0x004B5A10 $E38
+
+// FUNCTION: 0x004B5A40 $E41
+
+// FUNCTION: 0x004B5A50 $E44
+
+// FUNCTION: 0x004B5A70 $E47
+
+struct DropIntQuad {
+	int A, B, C, D;
+	DropIntQuad() { A = 0; B = 0; C = 0; D = 0; }
+};
+
+// FUNCTION: 0x004B5A90 $E50
+DropIntQuad DAT_008A07F0;

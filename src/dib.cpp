@@ -135,3 +135,35 @@ double DAT_008A0260 = FUN_004CADE0((DAT_008A0290 * 2) / DAT_008A0238);
 
 // FUNCTION: 0x004A6BD0 $E32
 int DAT_008A0284 = (int)(DAT_008A0290 * 4 + DAT_007E1738);
+
+struct ShortPair {
+	unsigned short A, B;
+	ShortPair() { A = 0; B = 0; }
+};
+
+struct IntTriple {
+	int A, B, C;
+	IntTriple() { A = 0; B = 0; C = 0; }
+};
+
+struct IntTriple2 {
+	int A, B, C;
+	IntTriple2() { C = 0; A = 128; B = 128; }
+};
+
+struct IntQuad {
+	int A, B, C, D;
+	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
+};
+
+// FUNCTION: 0x004A6C00 $E35
+ShortPair DAT_008A0230;
+
+// FUNCTION: 0x004A6C10 $E38
+IntTriple DAT_008A0250;
+
+// FUNCTION: 0x004A6C30 $E41
+IntTriple2 DAT_008A0278;
+
+// FUNCTION: 0x004A6C50 $E44
+IntQuad DAT_008A0220;

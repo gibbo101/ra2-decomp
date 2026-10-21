@@ -327,4 +327,24 @@ template class rc_ptr<Map>;
 // FUNCTION: 0x0076F190 ?F?$VectorCursor@VPoint2D@@V?$DynamicVectorClass@VPoint2D@@@@
 template class VectorCursor<Rect, DynamicVectorClass<Rect> >;
 template class VectorCursor<Point2D, DynamicVectorClass<Point2D> >;
+// FUNCTION: 0x0076F1A0 ?E?$VectorCursor@PAVMSSfxEntry@@V?$DynamicVectorClass@PAVMSSfxEntry@@@@
+// FUNCTION: 0x0076F1B0 ?F?$VectorCursor@PAVMSSfxEntry@@V?$DynamicVectorClass@PAVMSSfxEntry@@@@
+// FUNCTION: 0x0076F1C0 ?$VectorClass@PAVMSAnim@@::?$VectorClass@PAVMSAnim@@
+// FUNCTION: 0x0076F210 ?$VectorClass@PAVMSSfxEntry@@::?$VectorClass@PAVMSSfxEntry@@
+template class VectorClass<MSAnim *>;
+template class VectorClass<MSSfxEntry *>;
 template class VectorCursor<MSSfxEntry *, DynamicVectorClass<MSSfxEntry *> >;
+
+int DAT_00B72A98;
+int DAT_00B72A9C;
+int DAT_00B72AA0;
+int DAT_00B72AA4;
+
+// FUNCTION: 0x0076F260
+void FUN_0076F260(void)
+{
+	DAT_00B72A98 = 0;
+	DAT_00B72A9C = 0;
+	DAT_00B72AA0 = 0;
+	DAT_00B72AA4 = 0;
+}

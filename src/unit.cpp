@@ -66,6 +66,7 @@
 #include "tiberium.h"
 #include "tracker.h"
 #include "tube.h"
+#include "stbuffer.h"
 #include "unittype.h"
 #include "voc.h"
 #include "vox.h"
@@ -75,6 +76,8 @@ namespace Unsorted { extern int CurrentFrame; }
 #include "bench.hh"
 #include "color.hh"
 #include "tube.hh"
+
+template class IndexClass<int, StaticBufferClass::Entry *>;
 
 extern int DAT_00B1CFA8, DAT_00B1CFAC, DAT_00B1CFB0, DAT_00B1CFB4;
 extern int DAT_00B1CFC0, DAT_00B1CFC4, DAT_00B1CFC8, DAT_00B1CFCC;
@@ -2186,4 +2189,38 @@ HRESULT STDMETHODCALLTYPE UnitClass::GetClassID(CLSID * retval)
 	if (retval == NULL) return(E_POINTER);
 	*retval = CLSID_UnitClass;
 	return(S_OK);
+}
+
+// FUNCTION: 0x00746E20
+RTTIType UnitClass::Fetch_RTTI(void) const
+{
+	return(RTTI_UNIT);
+}
+
+// FUNCTION: 0x00746E30
+DirType UnitClass::Turret_Facing(void) const
+{
+	if (Class->IsTurretEquipped) {
+		return(SecondaryFacing.Current());
+	}
+
+	return(PrimaryFacing.Current());
+}
+
+// FUNCTION: 0x00746E80 UnitClass::~UnitClass
+
+// FUNCTION: 0x00746EA0 ?$IndexClass@HPAUEntry@StaticBufferClass@@::Is_Archive_Same
+
+extern int DAT_00B1D0C8;
+extern int DAT_00B1D0CC;
+extern int DAT_00B1D0D0;
+extern int DAT_00B1D0D4;
+
+// FUNCTION: 0x00746EC0
+void __cdecl FUN_00746EC0(void)
+{
+	DAT_00B1D0C8 = 0;
+	DAT_00B1D0CC = 0;
+	DAT_00B1D0D0 = 0;
+	DAT_00B1D0D4 = 0;
 }
