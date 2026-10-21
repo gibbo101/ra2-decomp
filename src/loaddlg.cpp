@@ -34,22 +34,35 @@ namespace UI {
 bool On_WM_MOVING(HWND window, WPARAM wparam, LPARAM lparam);
 void FUN_00607FD0(HWND dialog);
 
-// FUNCTION: 0x00558550 $E32
-// FUNCTION: 0x00558580 $E35
-// FUNCTION: 0x005585A0 $E38
-// FUNCTION: 0x005585C0 $E41
-// FUNCTION: 0x005585E0 $E44
-// FUNCTION: 0x00558600 $E47
-// FUNCTION: 0x00558620 $E50
-// FUNCTION: 0x00558660 $E53
-// FUNCTION: 0x00558690 $E56
-// FUNCTION: 0x005586C0 $E59
-// FUNCTION: 0x005586F0 $E62
-// FUNCTION: 0x00558700 $E65
+// SYNTHETIC: GAMEMD 0x00558550 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x00558580 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x005585A0 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x005585C0 SYMBOL
+// _$E41
+// SYNTHETIC: GAMEMD 0x005585E0 SYMBOL
+// _$E44
+// SYNTHETIC: GAMEMD 0x00558600 SYMBOL
+// _$E47
+// SYNTHETIC: GAMEMD 0x00558620 SYMBOL
+// _$E50
+// SYNTHETIC: GAMEMD 0x00558660 SYMBOL
+// _$E53
+// SYNTHETIC: GAMEMD 0x00558690 SYMBOL
+// _$E56
+// SYNTHETIC: GAMEMD 0x005586C0 SYMBOL
+// _$E59
+// SYNTHETIC: GAMEMD 0x005586F0 SYMBOL
+// _$E62
+// SYNTHETIC: GAMEMD 0x00558700 SYMBOL
+// _$E65
 
-// FUNCTION: 0x00558720 $E68
+// SYNTHETIC: GAMEMD 0x00558720 SYMBOL
+// _$E68
 
-// FUNCTION: 0x00558740
+// FUNCTION: GAMEMD 0x00558740
 LoadOptionsClass::LoadOptionsClass(void) :
 	Files(0,0),
 	Style(NONE),
@@ -64,7 +77,7 @@ LoadOptionsClass::LoadOptionsClass(void) :
 	Files.Clear();
 }
 
-// FUNCTION: 0x00558790
+// FUNCTION: GAMEMD 0x00558790
 LoadOptionsClass::~LoadOptionsClass(void)
 {
 	for (int i = 0; i < Files.Count(); i++) {
@@ -73,7 +86,7 @@ LoadOptionsClass::~LoadOptionsClass(void)
 	Files.Clear();
 }
 
-// FUNCTION: 0x005587F0
+// FUNCTION: GAMEMD 0x005587F0
 bool LoadOptionsClass::Load(void)
 {
 	Style = LOAD;
@@ -81,7 +94,7 @@ bool LoadOptionsClass::Load(void)
 	return(Dialog());
 }
 
-// FUNCTION: 0x00558810
+// FUNCTION: GAMEMD 0x00558810
 bool LoadOptionsClass::Save(wchar_t const * description)
 {
 	Style = SAVE;
@@ -92,7 +105,7 @@ bool LoadOptionsClass::Save(wchar_t const * description)
 	return(Dialog());
 }
 
-// FUNCTION: 0x00558840
+// FUNCTION: GAMEMD 0x00558840
 bool LoadOptionsClass::Delete(void)
 {
 	Style = WWDELETE;
@@ -100,7 +113,7 @@ bool LoadOptionsClass::Delete(void)
 	return(Dialog());
 }
 
-// FUNCTION: 0x00558860
+// FUNCTION: GAMEMD 0x00558860
 void LoadOptionsClass::Load_Dialog_On_WM_COMMAND(HWND window, WPARAM wparam, LPARAM lparam, int id)
 {
 	LoadOptionsClass * _this = (LoadOptionsClass *)GetWindowLong(window, DWL_USER);
@@ -123,7 +136,7 @@ void LoadOptionsClass::Load_Dialog_On_WM_COMMAND(HWND window, WPARAM wparam, LPA
 	}
 }
 
-// FUNCTION: 0x005588E0
+// FUNCTION: GAMEMD 0x005588E0
 void LoadOptionsClass::Save_Dialog_On_WM_COMMAND(HWND window, WPARAM wparam, LPARAM lparam, int id)
 {
 	LoadOptionsClass * _this = (LoadOptionsClass *)GetWindowLong(window, DWL_USER);
@@ -164,7 +177,7 @@ void LoadOptionsClass::Save_Dialog_On_WM_COMMAND(HWND window, WPARAM wparam, LPA
 	}
 }
 
-// FUNCTION: 0x005589F0
+// FUNCTION: GAMEMD 0x005589F0
 void LoadOptionsClass::Delete_Dialog_On_WM_COMMAND(HWND window, WPARAM wparam, LPARAM lparam, int id)
 {
 	LoadOptionsClass * _this = (LoadOptionsClass *)GetWindowLong(window, DWL_USER);
@@ -183,7 +196,7 @@ void LoadOptionsClass::Delete_Dialog_On_WM_COMMAND(HWND window, WPARAM wparam, L
 	}
 }
 
-// FUNCTION: 0x00558A30
+// FUNCTION: GAMEMD 0x00558A30
 LRESULT CALLBACK LoadOptionsClass::Load_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	int rc = UI::StandardWndProc(window, message, wparam, lparam);
@@ -213,7 +226,7 @@ LRESULT CALLBACK LoadOptionsClass::Load_Dialog_Proc(HWND window, UINT message, W
 	return(rc);
 }
 
-// FUNCTION: 0x00558B90
+// FUNCTION: GAMEMD 0x00558B90
 LRESULT CALLBACK LoadOptionsClass::Save_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	int rc = UI::StandardWndProc(window, message, wparam, lparam);
@@ -248,7 +261,7 @@ LRESULT CALLBACK LoadOptionsClass::Save_Dialog_Proc(HWND window, UINT message, W
 	return(rc);
 }
 
-// FUNCTION: 0x00558CB0
+// FUNCTION: GAMEMD 0x00558CB0
 LRESULT CALLBACK LoadOptionsClass::Delete_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	int rc = UI::StandardWndProc(window, message, wparam, lparam);
@@ -278,7 +291,7 @@ LRESULT CALLBACK LoadOptionsClass::Delete_Dialog_Proc(HWND window, UINT message,
 	return(rc);
 }
 
-// FUNCTION: 0x005595F0
+// FUNCTION: GAMEMD 0x005595F0
 void LoadOptionsClass::Pick_Filename(char * file_name)
 {
 	CCFileClass file;
@@ -288,7 +301,7 @@ void LoadOptionsClass::Pick_Filename(char * file_name)
 	} while (file.Is_Available() == true);
 }
 
-// FUNCTION: 0x00559670
+// FUNCTION: GAMEMD 0x00559670
 void LoadOptionsClass::Clear_List(void)
 {
 	for (int i = 0; i < Files.Count(); i++) {
@@ -297,7 +310,7 @@ void LoadOptionsClass::Clear_List(void)
 	Files.Clear();
 }
 
-// FUNCTION: 0x005596A0
+// FUNCTION: GAMEMD 0x005596A0
 void LoadOptionsClass::Fill_List(HWND window)
 {
 	OwnerDraw::CellData thecell;
@@ -425,7 +438,7 @@ void LoadOptionsClass::Fill_List(HWND window)
 	}
 }
 
-// FUNCTION: 0x00559C20
+// FUNCTION: GAMEMD 0x00559C20
 bool LoadOptionsClass::Files_Present(void)
 {
 	bool files_found = false;
@@ -459,7 +472,7 @@ bool LoadOptionsClass::Files_Present(void)
 	return(files_found);
 }
 
-// FUNCTION: 0x00559D30
+// FUNCTION: GAMEMD 0x00559D30
 int __cdecl LoadOptionsClass::Compare(const void * p1, const void * p2)
 {
 	FileEntryClass * fe1, * fe2;
@@ -471,7 +484,7 @@ int __cdecl LoadOptionsClass::Compare(const void * p1, const void * p2)
 	return(-res);
 }
 
-// FUNCTION: 0x00559D60
+// FUNCTION: GAMEMD 0x00559D60
 bool LoadOptionsClass::Load_File(const char * file_name)
 {
 	int hidden = Get_Mouse_State();
@@ -496,7 +509,7 @@ bool LoadOptionsClass::Load_File(const char * file_name)
 	return(loaded);
 }
 
-// FUNCTION: 0x00559E40
+// FUNCTION: GAMEMD 0x00559E40
 bool LoadOptionsClass::Save_File(const char * file_name, const wchar_t * descr)
 {
 	HWND dialog = OwnerDraw::Custom_Message_Box(StringTable::LoadString("TXT_SAVING_GAME", NULL, "D:\\ra2mdpost\\LoadDlg.CPP", 0x453), NULL, NULL);
@@ -512,7 +525,7 @@ bool LoadOptionsClass::Save_File(const char * file_name, const wchar_t * descr)
 	return(saved);
 }
 
-// FUNCTION: 0x00559EB0
+// FUNCTION: GAMEMD 0x00559EB0
 bool LoadOptionsClass::Delete_File(const char * file_name)
 {
 	if (DeleteFile(file_name) == TRUE) {
@@ -521,7 +534,7 @@ bool LoadOptionsClass::Delete_File(const char * file_name)
 	return(false);
 }
 
-// FUNCTION: 0x00559ED0
+// FUNCTION: GAMEMD 0x00559ED0
 bool LoadOptionsClass::Read_File(FileEntryClass * fdata, WIN32_FIND_DATAA * ff)
 {
 	if (fdata == NULL && ff == NULL) {
@@ -561,45 +574,58 @@ bool LoadOptionsClass::Read_File(FileEntryClass * fdata, WIN32_FIND_DATAA * ff)
 	return(false);
 }
 
-// FUNCTION: 0x0055A050
+// FUNCTION: GAMEMD 0x0055A050
 wchar_t const * LoadOptionsClass::GetUIString_Load(void) const
 {
 	return(StringTable::LoadString("GUI:LoadMissionMenu", NULL, "D:\\ra2mdpost\\LoadDlg.CPP", 0x4C0));
 }
 
-// FUNCTION: 0x0055A070
+// FUNCTION: GAMEMD 0x0055A070
 wchar_t const * LoadOptionsClass::GetUIString_Save(void) const
 {
 	return(StringTable::LoadString("GUI:SaveMissionMenu", NULL, "D:\\ra2mdpost\\LoadDlg.CPP", 0x4C6));
 }
 
-// FUNCTION: 0x0055A090
+// FUNCTION: GAMEMD 0x0055A090
 wchar_t const * LoadOptionsClass::GetUIString_Delete(void) const
 {
 	return(StringTable::LoadString("GUI:DeleteMissionMenu", NULL, "D:\\ra2mdpost\\LoadDlg.CPP", 0x4CC));
 }
 
-// FUNCTION: 0x0055A0B0
+// FUNCTION: GAMEMD 0x0055A0B0
 wchar_t const * LoadOptionsClass::GetUIString_GameSaved(void) const
 {
 	return(StringTable::LoadString("TXT_GAME_WAS_SAVED", NULL, "D:\\ra2mdpost\\LoadDlg.CPP", 0x4D2));
 }
 
-// FUNCTION: 0x0055A0D0 LoadOptionsClass::~LoadOptionsClass
+// SYNTHETIC: GAMEMD 0x0055A0D0
+// ??_GLoadOptionsClass@@UAEPAXI@Z
 
-// FUNCTION: 0x0055A150 ?$DynamicVectorClass@PAVFileEntryClass@@::Clear
+// TEMPLATE: GAMEMD 0x0055A150
+// ?Clear@?$DynamicVectorClass@PAVFileEntryClass@@@@UAEXXZ
 template class DynamicVectorClass<FileEntryClass *>;
 
-// FUNCTION: 0x0055A180 ?$DynamicVectorClass@PAVFileEntryClass@@::ID
-// FUNCTION: 0x0055A1A0 ?$VectorClass@PAVFileEntryClass@@::GetItem
-// FUNCTION: 0x0055A1B0 ?$VectorClass@PAVFileEntryClass@@::operator==
-// FUNCTION: 0x0055A1F0 ?$VectorClass@PAVFileEntryClass@@::Resize
-// FUNCTION: 0x0055A2A0 ?$VectorClass@PAVFileEntryClass@@::Clear
-// FUNCTION: 0x0055A2D0 ?$VectorClass@PAVFileEntryClass@@::ID
-// FUNCTION: 0x0055A310 ?$VectorClass@PAVFileEntryClass@@::ID
-// FUNCTION: 0x0055A330 ?$DynamicVectorClass@PAVFileEntryClass@@::Resize
-// FUNCTION: 0x0055A3E0 ?$DynamicVectorClass@PAVFileEntryClass@@::ID
-// FUNCTION: 0x0055A410 ?$VectorClass@PAVFileEntryClass@@::~?$VectorClass@PAVFileEntryClass@@
+// TEMPLATE: GAMEMD 0x0055A180
+// ?ID@?$DynamicVectorClass@PAVFileEntryClass@@@@UAEHPBQAVFileEntryClass@@@Z
+// TEMPLATE: GAMEMD 0x0055A1A0
+// ?GetItem@?$VectorClass@PAVFileEntryClass@@@@UBEPAVFileEntryClass@@H@Z
+// TEMPLATE: GAMEMD 0x0055A1B0
+// ??8?$VectorClass@PAVFileEntryClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x0055A1F0
+// ?Resize@?$VectorClass@PAVFileEntryClass@@@@UAE_NHPBQAVFileEntryClass@@@Z
+// TEMPLATE: GAMEMD 0x0055A2A0
+// ?Clear@?$VectorClass@PAVFileEntryClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0055A2D0
+// ?ID@?$VectorClass@PAVFileEntryClass@@@@UAEHABQAVFileEntryClass@@@Z
+// TEMPLATE: GAMEMD 0x0055A310
+// ?ID@?$VectorClass@PAVFileEntryClass@@@@UAEHPBQAVFileEntryClass@@@Z
+// TEMPLATE: GAMEMD 0x0055A330
+// ?Resize@?$DynamicVectorClass@PAVFileEntryClass@@@@UAE_NHPBQAVFileEntryClass@@@Z
+// TEMPLATE: GAMEMD 0x0055A3E0
+// ?ID@?$DynamicVectorClass@PAVFileEntryClass@@@@UAEHABQAVFileEntryClass@@@Z
+// SYNTHETIC: GAMEMD 0x0055A410
+// ??_G?$VectorClass@PAVFileEntryClass@@@@UAEPAXI@Z
 template class VectorClass<FileEntryClass *>;
 
-// FUNCTION: 0x0055A460 ?$DynamicVectorClass@PAVFileEntryClass@@::~?$DynamicVectorClass@PAVFileEntryClass@@
+// SYNTHETIC: GAMEMD 0x0055A460
+// ??_G?$DynamicVectorClass@PAVFileEntryClass@@@@UAEPAXI@Z

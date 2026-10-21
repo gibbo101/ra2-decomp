@@ -40,15 +40,19 @@ const double WaveRockScale = DEG_TO_RAD(360);
 const double WaveSpeedScale = 0.0125;
 const double WaveRange = 256.0;
 
-// FUNCTION: 0x0053CA30 $E89
+// SYNTHETIC: GAMEMD 0x0053CA30 SYMBOL
+// _$E89
 double WaveSpeed = ((WaveRange - WaveStartDistance) + WaveBandWidth) * WaveSpeedScale;
-// FUNCTION: 0x0053CA50 $E92
+// SYNTHETIC: GAMEMD 0x0053CA50 SYMBOL
+// _$E92
 double WavePhaseSpeed = WaveSpeed;
 
-// FUNCTION: 0x0053CA70 $E98
+// SYNTHETIC: GAMEMD 0x0053CA70 SYMBOL
+// _$E98
 DynamicVectorClass<IonBlastClass *> IonBlastClass::IonBlasts;
 
-// FUNCTION: 0x0053DDE0 $E101
+// SYNTHETIC: GAMEMD 0x0053DDE0 SYMBOL
+// _$E101
 Rect BlastBounds(0, 0, 0, 0);
 
 int Point_To_Spiral_Index(Point2D point);
@@ -57,9 +61,10 @@ void Calculate_Index_To_Surface_LUT(int stride);
 
 Point2D Spiral_Index_To_Point(int index);
 
-// FUNCTION: 0x0053CAB0 $E95
+// SYNTHETIC: GAMEMD 0x0053CAB0 SYMBOL
+// _$E95
 
-// FUNCTION: 0x0053CB10
+// FUNCTION: GAMEMD 0x0053CB10
 IonBlastClass::IonBlastClass(Coord coord) :
 	Lifetime(0),
 	Position(coord),
@@ -68,13 +73,13 @@ IonBlastClass::IonBlastClass(Coord coord) :
 	IonBlasts.Add(this);
 }
 
-// FUNCTION: 0x0053CB90
+// FUNCTION: GAMEMD 0x0053CB90
 IonBlastClass::~IonBlastClass(void)
 {
 	IonBlasts.Delete(this);
 }
 
-// FUNCTION: 0x0053D310
+// FUNCTION: GAMEMD 0x0053D310
 void IonBlastClass::Update_All(void)
 {
 	for (int i = IonBlasts.Count() - 1; i >= 0; i--) {
@@ -82,7 +87,7 @@ void IonBlastClass::Update_All(void)
 	}
 }
 
-// FUNCTION: 0x0053D550
+// FUNCTION: GAMEMD 0x0053D550
 void IonBlastClass::Clear_All(void)
 {
 	for (int i = 0; i < ARRAY_SIZE(BlastSurfaces); i++) {
@@ -91,7 +96,7 @@ void IonBlastClass::Clear_All(void)
 	}
 }
 
-// FUNCTION: 0x0053D850
+// FUNCTION: GAMEMD 0x0053D850
 void IonBlastClass::Draw_All(void)
 {
 	if (LogicalSurface->Stride() != BlastSurfaceStride) {
@@ -102,7 +107,7 @@ void IonBlastClass::Draw_All(void)
 	}
 }
 
-// FUNCTION: 0x0053D8E0
+// FUNCTION: GAMEMD 0x0053D8E0
 Point2D Spiral_Index_To_Point(int index)
 {
 	index--;
@@ -127,7 +132,7 @@ Point2D Spiral_Index_To_Point(int index)
 	}
 }
 
-// FUNCTION: 0x0053D960
+// FUNCTION: GAMEMD 0x0053D960
 int Point_To_Spiral_Index(Point2D point)
 {
 	if (point == Point2D(0,0)) {
@@ -155,7 +160,7 @@ int Point_To_Spiral_Index(Point2D point)
 	return(index);
 }
 
-// FUNCTION: 0x0053D9F0
+// FUNCTION: GAMEMD 0x0053D9F0
 void Calculate_Index_To_Surface_LUT(int stride)
 {
 	SpiralIndexToSurfaceLUT[0] = 0;
@@ -168,18 +173,31 @@ void Calculate_Index_To_Surface_LUT(int stride)
 	}
 }
 
-// FUNCTION: 0x0053DA40 ?$DynamicVectorClass@PAVIonBlastClass@@::Clear
+// TEMPLATE: GAMEMD 0x0053DA40
+// ?Clear@?$DynamicVectorClass@PAVIonBlastClass@@@@UAEXXZ
 template class DynamicVectorClass<IonBlastClass *>;
 
-// FUNCTION: 0x0053DA70 ?$DynamicVectorClass@PAVIonBlastClass@@::ID
-// FUNCTION: 0x0053DA90 ?$VectorClass@PAVIonBlastClass@@::GetItem
-// FUNCTION: 0x0053DAA0 ?$VectorClass@PAVIonBlastClass@@::operator==
-// FUNCTION: 0x0053DAE0 ?$VectorClass@PAVIonBlastClass@@::Resize
-// FUNCTION: 0x0053DB90 ?$VectorClass@PAVIonBlastClass@@::Clear
-// FUNCTION: 0x0053DBC0 ?$VectorClass@PAVIonBlastClass@@::ID
-// FUNCTION: 0x0053DC00 ?$VectorClass@PAVIonBlastClass@@::ID
-// FUNCTION: 0x0053DC20 ?$DynamicVectorClass@PAVIonBlastClass@@::Resize
-// FUNCTION: 0x0053DCD0 ?$DynamicVectorClass@PAVIonBlastClass@@::ID
-// FUNCTION: 0x0053DD00 ?$VectorClass@PAVIonBlastClass@@::~?$VectorClass@PAVIonBlastClass@@
-// FUNCTION: 0x0053DD50 ?$DynamicVectorClass@PAVIonBlastClass@@::~?$DynamicVectorClass@PAVIonBlastClass@@
-// FUNCTION: 0x0053DDA0 ?$DynamicVectorClass@PAVIonBlastClass@@::Delete_Index
+// TEMPLATE: GAMEMD 0x0053DA70
+// ?ID@?$DynamicVectorClass@PAVIonBlastClass@@@@UAEHPBQAVIonBlastClass@@@Z
+// TEMPLATE: GAMEMD 0x0053DA90
+// ?GetItem@?$VectorClass@PAVIonBlastClass@@@@UBEPAVIonBlastClass@@H@Z
+// TEMPLATE: GAMEMD 0x0053DAA0
+// ??8?$VectorClass@PAVIonBlastClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x0053DAE0
+// ?Resize@?$VectorClass@PAVIonBlastClass@@@@UAE_NHPBQAVIonBlastClass@@@Z
+// TEMPLATE: GAMEMD 0x0053DB90
+// ?Clear@?$VectorClass@PAVIonBlastClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0053DBC0
+// ?ID@?$VectorClass@PAVIonBlastClass@@@@UAEHABQAVIonBlastClass@@@Z
+// TEMPLATE: GAMEMD 0x0053DC00
+// ?ID@?$VectorClass@PAVIonBlastClass@@@@UAEHPBQAVIonBlastClass@@@Z
+// TEMPLATE: GAMEMD 0x0053DC20
+// ?Resize@?$DynamicVectorClass@PAVIonBlastClass@@@@UAE_NHPBQAVIonBlastClass@@@Z
+// TEMPLATE: GAMEMD 0x0053DCD0
+// ?ID@?$DynamicVectorClass@PAVIonBlastClass@@@@UAEHABQAVIonBlastClass@@@Z
+// SYNTHETIC: GAMEMD 0x0053DD00
+// ??_G?$VectorClass@PAVIonBlastClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x0053DD50
+// ??_G?$DynamicVectorClass@PAVIonBlastClass@@@@UAEPAXI@Z
+// TEMPLATE: GAMEMD 0x0053DDA0
+// ?Delete_Index@?$DynamicVectorClass@PAVIonBlastClass@@@@QAE_NH@Z

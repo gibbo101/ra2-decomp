@@ -9,7 +9,7 @@
 #include <cstddef>
 #include <cstring>
 
-// FUNCTION: 0x006C9850
+// FUNCTION: GAMEMD 0x006C9850
 Straw::~Straw(void)
 {
 	if (ChainTo != NULL) {
@@ -23,7 +23,7 @@ Straw::~Straw(void)
 	ChainTo = NULL;
 }
 
-// FUNCTION: 0x006C9890
+// FUNCTION: GAMEMD 0x006C9890
 void Straw::Get_From(Straw * straw)
 {
 	if (ChainTo != straw) {
@@ -43,7 +43,7 @@ void Straw::Get_From(Straw * straw)
 	}
 }
 
-// FUNCTION: 0x006C98E0
+// FUNCTION: GAMEMD 0x006C98E0
 int Straw::Get(void * source, int slen)
 {
 	if (ChainTo != NULL) {
@@ -52,7 +52,7 @@ int Straw::Get(void * source, int slen)
 	return(0);
 }
 
-// FUNCTION: 0x006C9900
+// FUNCTION: GAMEMD 0x006C9900
 SubTitleClass::SubTitleClass()
 	:
 	mTimeStamp(0),
@@ -64,7 +64,7 @@ SubTitleClass::SubTitleClass()
 {
 }
 
-// FUNCTION: 0x006C9930
+// FUNCTION: GAMEMD 0x006C9930
 SubTitleClass::~SubTitleClass()
 {
 	if (mCaption != NULL) {
@@ -72,13 +72,13 @@ SubTitleClass::~SubTitleClass()
 	}
 }
 
-// FUNCTION: 0x006C9940
+// FUNCTION: GAMEMD 0x006C9940
 void SubTitleClass::Set_RGB_Color(unsigned char red, unsigned char green, unsigned char blue)
 {
 	mRGBColor = (((unsigned long)red << 16) | ((unsigned long)green << 8) | (unsigned long)blue);
 }
 
-// FUNCTION: 0x006C9960
+// FUNCTION: GAMEMD 0x006C9960
 void SubTitleClass::Set_Caption(wchar_t * string)
 {
 	if (mCaption != NULL) {
@@ -98,7 +98,7 @@ void SubTitleClass::Set_Caption(wchar_t * string)
 
 int DAT_00B0BFD8, DAT_00B0BFDC, DAT_00B0BFE0, DAT_00B0BFE4;
 
-// FUNCTION: 0x006C99B0
+// FUNCTION: GAMEMD 0x006C99B0
 void FUN_006C99B0(void)
 {
 	DAT_00B0BFD8 = 0;

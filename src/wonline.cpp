@@ -75,12 +75,12 @@ public:
 	~OLEInitializer(void) { OleUninitialize(); }
 };
 
-// FUNCTION: 0x0077B8A0
-// FUNCTION: 0x0077B8C0
+// FUNCTION: GAMEMD 0x0077B8A0
+// FUNCTION: GAMEMD 0x0077B8C0
 OLEInitializer g_OLEInitializer;
 
-// FUNCTION: 0x0077B8D0
-// FUNCTION: 0x0077B8F0
+// FUNCTION: GAMEMD 0x0077B8D0
+// FUNCTION: GAMEMD 0x0077B8F0
 Wstring DAT_00B73AE0;
 
 struct Server {
@@ -88,16 +88,16 @@ struct Server {
 	char name[0xE0];
 };
 
-// FUNCTION: 0x0077B900
-// FUNCTION: 0x0077B920
+// FUNCTION: GAMEMD 0x0077B900
+// FUNCTION: GAMEMD 0x0077B920
 ArrayList<Server> DAT_00B778D8;
 
-// FUNCTION: 0x0077B940
-// FUNCTION: 0x0077B960
+// FUNCTION: GAMEMD 0x0077B940
+// FUNCTION: GAMEMD 0x0077B960
 ArrayList<WolChannel> DAT_00B73E10;
 
-// FUNCTION: 0x0077B980
-// FUNCTION: 0x0077B9A0
+// FUNCTION: GAMEMD 0x0077B980
+// FUNCTION: GAMEMD 0x0077B9A0
 ArrayList<WolChannel> DAT_00B76AE0;
 
 struct User {
@@ -113,12 +113,12 @@ struct User {
 	char Rest[0x6C - 0x61];
 };
 
-// FUNCTION: 0x0077B9C0
-// FUNCTION: 0x0077B9E0
+// FUNCTION: GAMEMD 0x0077B9C0
+// FUNCTION: GAMEMD 0x0077B9E0
 ArrayList<User> DAT_00B77900;
 
-// FUNCTION: 0x0077BA00
-// FUNCTION: 0x0077BA20
+// FUNCTION: GAMEMD 0x0077BA00
+// FUNCTION: GAMEMD 0x0077BA20
 ArrayList<int> DAT_00B76520;
 
 struct LadderA {
@@ -136,98 +136,98 @@ struct LadderB {
 	char Data[0x44];
 };
 
-// FUNCTION: 0x0077BA40
-// FUNCTION: 0x0077BAE0
+// FUNCTION: GAMEMD 0x0077BA40
+// FUNCTION: GAMEMD 0x0077BAE0
 Dictionary<Wstring, LadderA> DAT_00B768C0 HASH_ARG;
 
-// FUNCTION: 0x0077BC10
-// FUNCTION: 0x0077BCB0
+// FUNCTION: GAMEMD 0x0077BC10
+// FUNCTION: GAMEMD 0x0077BCB0
 Dictionary<Wstring, LadderA> DAT_00B73AF8 HASH_ARG;
 
-// FUNCTION: 0x0077BDE0
-// FUNCTION: 0x0077BE80
+// FUNCTION: GAMEMD 0x0077BDE0
+// FUNCTION: GAMEMD 0x0077BE80
 Dictionary<Wstring, LadderA> DAT_00B77D80 HASH_ARG;
 
-// FUNCTION: 0x0077BFB0
-// FUNCTION: 0x0077C050
+// FUNCTION: GAMEMD 0x0077BFB0
+// FUNCTION: GAMEMD 0x0077C050
 Dictionary<Wstring, LadderB> DAT_00B76640 HASH_ARG;
 
-// FUNCTION: 0x0077C180
-// FUNCTION: 0x0077C220
+// FUNCTION: GAMEMD 0x0077C180
+// FUNCTION: GAMEMD 0x0077C220
 Dictionary<Wstring, int> DAT_00B76680 HASH_ARG;
 
-// FUNCTION: 0x0077C350
-// FUNCTION: 0x0077C370
+// FUNCTION: GAMEMD 0x0077C350
+// FUNCTION: GAMEMD 0x0077C370
 ArrayList<Wstring> DAT_00B777A0;
 
-// FUNCTION: 0x0077C3B0
-// FUNCTION: 0x0077C450
+// FUNCTION: GAMEMD 0x0077C3B0
+// FUNCTION: GAMEMD 0x0077C450
 Dictionary<Wstring, int> DAT_00B76530 HASH_ARG;
 
-// FUNCTION: 0x0077C580
-// FUNCTION: 0x0077C5A0
+// FUNCTION: GAMEMD 0x0077C580
+// FUNCTION: GAMEMD 0x0077C5A0
 ArrayList<Wstring> DAT_00B765F8;
 
-// FUNCTION: 0x0077C5E0
-// FUNCTION: 0x0077C600
+// FUNCTION: GAMEMD 0x0077C5E0
+// FUNCTION: GAMEMD 0x0077C600
 ArrayList<Wstring> DAT_00B73BD8;
 
-// FUNCTION: 0x0077C640
-// FUNCTION: 0x0077C660
+// FUNCTION: GAMEMD 0x0077C640
+// FUNCTION: GAMEMD 0x0077C660
 ArrayList<Wstring> DAT_00B736F8;
 
-// FUNCTION: 0x0077C6A0
-// FUNCTION: 0x0077C6C0
+// FUNCTION: GAMEMD 0x0077C6A0
+// FUNCTION: GAMEMD 0x0077C6C0
 ArrayList<Wstring> DAT_00B76B00;
 
-// FUNCTION: 0x0077C700
-// FUNCTION: 0x0077C720
+// FUNCTION: GAMEMD 0x0077C700
+// FUNCTION: GAMEMD 0x0077C720
 ArrayList<Wstring> DAT_00B76510;
 
-// FUNCTION: 0x0077C760
-// FUNCTION: 0x0077C780
+// FUNCTION: GAMEMD 0x0077C760
+// FUNCTION: GAMEMD 0x0077C780
 ArrayList<Wstring> DAT_00B73AE8;
 
-// FUNCTION: 0x0077C7C0
-// FUNCTION: 0x0077C7E0
+// FUNCTION: GAMEMD 0x0077C7C0
+// FUNCTION: GAMEMD 0x0077C7E0
 ArrayList<Wstring> DAT_00B77820;
 
-// FUNCTION: 0x0077C820
-// FUNCTION: 0x0077C840
+// FUNCTION: GAMEMD 0x0077C820
+// FUNCTION: GAMEMD 0x0077C840
 ArrayList<Wstring> DAT_00B73708;
 
-// FUNCTION: 0x0077C880
-// FUNCTION: 0x0077C8A0
+// FUNCTION: GAMEMD 0x0077C880
+// FUNCTION: GAMEMD 0x0077C8A0
 ArrayList<Wstring> DAT_00B76188;
 
-// FUNCTION: 0x0077C8E0
-// FUNCTION: 0x0077C900
+// FUNCTION: GAMEMD 0x0077C8E0
+// FUNCTION: GAMEMD 0x0077C900
 ArrayList<Wstring> DAT_00B73AA8;
 
-// FUNCTION: 0x0077C940
-// FUNCTION: 0x0077C960
+// FUNCTION: GAMEMD 0x0077C940
+// FUNCTION: GAMEMD 0x0077C960
 ArrayList<Wstring> DAT_00B76980;
 
-// FUNCTION: 0x0077C9A0
-// FUNCTION: 0x0077C9C0
+// FUNCTION: GAMEMD 0x0077C9A0
+// FUNCTION: GAMEMD 0x0077C9C0
 ArrayList<Wstring> DAT_00B779B0;
 
-// FUNCTION: 0x0077CA00
-// FUNCTION: 0x0077CA20
+// FUNCTION: GAMEMD 0x0077CA00
+// FUNCTION: GAMEMD 0x0077CA20
 Wstring DAT_00B73ACC;
 
-// FUNCTION: 0x0077CA30
-// FUNCTION: 0x0077CA50
+// FUNCTION: GAMEMD 0x0077CA30
+// FUNCTION: GAMEMD 0x0077CA50
 Wstring DAT_00B76E24;
 
-// FUNCTION: 0x0077CA60
-// FUNCTION: 0x0077CB00
+// FUNCTION: GAMEMD 0x0077CA60
+// FUNCTION: GAMEMD 0x0077CB00
 Dictionary<Wstring, int> DAT_00B76990 HASH_ARG;
 
 typedef WolChannel LadderC;
 
-// FUNCTION: 0x0077CC30
-// FUNCTION: 0x0077CCD0
+// FUNCTION: GAMEMD 0x0077CC30
+// FUNCTION: GAMEMD 0x0077CCD0
 Dictionary<Wstring, LadderC> DAT_00B76608 HASH_ARG;
 
 extern int DAT_0084A1C4;
@@ -235,25 +235,25 @@ extern int DAT_0084A1C8;
 extern int DAT_0084A1D4;
 extern int DAT_0084A1D8;
 
-// FUNCTION: 0x0077CE10
+// FUNCTION: GAMEMD 0x0077CE10
 int DAT_00B765F0 = DAT_0084A1C8 - DAT_0084A1C4 - 4;
 
-// FUNCTION: 0x0077CE30
+// FUNCTION: GAMEMD 0x0077CE30
 int DAT_00B73E3C = DAT_0084A1D8 - DAT_0084A1D4 - 4;
 
-// FUNCTION: 0x0077CE50
-// FUNCTION: 0x0077CE70
+// FUNCTION: GAMEMD 0x0077CE50
+// FUNCTION: GAMEMD 0x0077CE70
 ArrayList<Wstring> DAT_00B76AD0;
 
-// FUNCTION: 0x0077CEB0
-// FUNCTION: 0x0077CED0
+// FUNCTION: GAMEMD 0x0077CEB0
+// FUNCTION: GAMEMD 0x0077CED0
 ArrayList<Wstring> DAT_00B76970;
 
-// FUNCTION: 0x0077CF10
-// FUNCTION: 0x0077CF30
+// FUNCTION: GAMEMD 0x0077CF10
+// FUNCTION: GAMEMD 0x0077CF30
 Wstring DAT_00B76AC4;
 
-// FUNCTION: 0x0077CF40
+// FUNCTION: GAMEMD 0x0077CF40
 int FUN_0077CF40(void)
 {
 	int t = Session.unknown_0C;
@@ -262,59 +262,59 @@ int FUN_0077CF40(void)
 	return 0;
 }
 
-// FUNCTION: 0x0077CF60
+// FUNCTION: GAMEMD 0x0077CF60
 int FUN_0077CF60(void)
 {
 	return Session.unknown_0C == 2;
 }
 
-// FUNCTION: 0x0077CF70
-// FUNCTION: 0x0077CF90
+// FUNCTION: GAMEMD 0x0077CF70
+// FUNCTION: GAMEMD 0x0077CF90
 Wstring DAT_00B76E34;
 
 
-// FUNCTION: 0x0077CFA0
-// FUNCTION: 0x0077CFC0
+// FUNCTION: GAMEMD 0x0077CFA0
+// FUNCTION: GAMEMD 0x0077CFC0
 Wstring DAT_00B73B30;
 
-// FUNCTION: 0x0077CFD0
-// FUNCTION: 0x0077CFF0
+// FUNCTION: GAMEMD 0x0077CFD0
+// FUNCTION: GAMEMD 0x0077CFF0
 Wstring DAT_00B7622C;
 
-// FUNCTION: 0x0077D000
-// FUNCTION: 0x0077D020
+// FUNCTION: GAMEMD 0x0077D000
+// FUNCTION: GAMEMD 0x0077D020
 Wstring DAT_00B76908;
 
-// FUNCTION: 0x0077D030
-// FUNCTION: 0x0077D050
+// FUNCTION: GAMEMD 0x0077D030
+// FUNCTION: GAMEMD 0x0077D050
 Wstring DAT_00B77794;
 
-// FUNCTION: 0x0077D060
-// FUNCTION: 0x0077D080
+// FUNCTION: GAMEMD 0x0077D060
+// FUNCTION: GAMEMD 0x0077D080
 Wstring DAT_00B778F4;
 
-// FUNCTION: 0x0077D090
-// FUNCTION: 0x0077D0B0
+// FUNCTION: GAMEMD 0x0077D090
+// FUNCTION: GAMEMD 0x0077D0B0
 Wstring DAT_00B778FC;
 
-// FUNCTION: 0x0077D0C0
-// FUNCTION: 0x0077D0E0
+// FUNCTION: GAMEMD 0x0077D0C0
+// FUNCTION: GAMEMD 0x0077D0E0
 Wstring DAT_00B765EC;
 
-// FUNCTION: 0x0077D0F0
-// FUNCTION: 0x0077D110
+// FUNCTION: GAMEMD 0x0077D0F0
+// FUNCTION: GAMEMD 0x0077D110
 Wstring DAT_00B76900;
 
-// FUNCTION: 0x0077D120
-// FUNCTION: 0x0077D140
+// FUNCTION: GAMEMD 0x0077D120
+// FUNCTION: GAMEMD 0x0077D140
 rc_ptr<PlayerProfile> DAT_00B75E48;
 
-// FUNCTION: 0x0077D160
-// FUNCTION: 0x0077D190
+// FUNCTION: GAMEMD 0x0077D160
+// FUNCTION: GAMEMD 0x0077D190
 CDTimerClass<SystemTimerClass> DAT_00B76478;
 
-// FUNCTION: 0x0077D1A0
-// FUNCTION: 0x0077D1C0
+// FUNCTION: GAMEMD 0x0077D1A0
+// FUNCTION: GAMEMD 0x0077D1C0
 WideWstring DAT_00B76230;
 
 class FUN_007EF720_Class {
@@ -336,25 +336,25 @@ public:
 	virtual ~FUN_007F7624_Class(void);
 };
 
-// FUNCTION: 0x0077D1D0
+// FUNCTION: GAMEMD 0x0077D1D0
 FUN_007F7624_Class::FUN_007F7624_Class(void)
 {
 }
 
-// FUNCTION: 0x0077D1F0
+// FUNCTION: GAMEMD 0x0077D1F0
 FUN_007F7624_Class::~FUN_007F7624_Class(void)
 {
 }
 
 void FUN_0077F900(void);
 
-// FUNCTION: 0x0077D200
+// FUNCTION: GAMEMD 0x0077D200
 void FUN_0077D200(void)
 {
 	FUN_0077F900();
 }
 
-// FUNCTION: 0x0077D210
+// FUNCTION: GAMEMD 0x0077D210
 void __fastcall FUN_0077D210(char * text)
 {
 	char * p = strchr(text, ' ');
@@ -364,7 +364,7 @@ void __fastcall FUN_0077D210(char * text)
 	}
 }
 
-// FUNCTION: 0x0077D240
+// FUNCTION: GAMEMD 0x0077D240
 int __fastcall FUN_0077D240(Wstring * name)
 {
 	User * user = NULL;
@@ -379,7 +379,7 @@ int __fastcall FUN_0077D240(Wstring * name)
 extern int DAT_00B779C0;
 extern int DAT_00B779DC;
 
-// FUNCTION: 0x0077D2A0
+// FUNCTION: GAMEMD 0x0077D2A0
 bool __fastcall FUN_0077D2A0(User * user)
 {
 	if (!user)
@@ -395,7 +395,7 @@ bool __fastcall FUN_0077D2A0(User * user)
 
 unsigned char __fastcall FUN_007B7D90(Wstring * text);
 
-// FUNCTION: 0x0077D2E0
+// FUNCTION: GAMEMD 0x0077D2E0
 bool __fastcall FUN_0077D2E0(User * user, Wstring * text)
 {
 	if (!user)
@@ -411,7 +411,7 @@ bool __fastcall FUN_0077D2E0(User * user, Wstring * text)
 	return DAT_00B779DC != 0;
 }
 
-// FUNCTION: 0x0077D350
+// FUNCTION: GAMEMD 0x0077D350
 int __fastcall FUN_0077D350(wchar_t const * text)
 {
 	wchar_t buffer[256];
@@ -419,7 +419,7 @@ int __fastcall FUN_0077D350(wchar_t const * text)
 	return wcsnicmp(text, buffer, wcslen(buffer)) == 0;
 }
 
-// FUNCTION: 0x0077D3A0
+// FUNCTION: GAMEMD 0x0077D3A0
 int __fastcall FUN_0077D3A0(wchar_t const * text)
 {
 	wchar_t buffer[256];
@@ -427,7 +427,7 @@ int __fastcall FUN_0077D3A0(wchar_t const * text)
 	return wcsnicmp(text, buffer, wcslen(buffer)) == 0;
 }
 
-// FUNCTION: 0x0077D3F0
+// FUNCTION: GAMEMD 0x0077D3F0
 bool __fastcall FUN_0077D3F0(User * user)
 {
 	if (!user)
@@ -442,7 +442,7 @@ bool __fastcall FUN_0077D3F0(User * user)
 	return false;
 }
 
-// FUNCTION: 0x0077D490
+// FUNCTION: GAMEMD 0x0077D490
 bool __fastcall FUN_0077D490(User * a, User * b)
 {
 	if (!a)
@@ -459,7 +459,7 @@ extern bool DAT_00B76AF0;
 extern bool DAT_00B73AD0;
 extern Wstring DAT_00B73E40;
 
-// FUNCTION: 0x0077D4C0
+// FUNCTION: GAMEMD 0x0077D4C0
 bool __fastcall FUN_0077D4C0(User * user)
 {
 	if (DAT_00B76AF0 || DAT_00B73AD0) {
@@ -487,7 +487,7 @@ bool __fastcall FUN_0077D4C0(User * user)
 	return true;
 }
 
-// FUNCTION: 0x0077D710
+// FUNCTION: GAMEMD 0x0077D710
 void FUN_0077D710(void)
 {
 	FUN_0077F900();
@@ -500,7 +500,7 @@ struct HostEntry {
 
 unsigned long __stdcall FUN_007C896E(unsigned long value);
 
-// FUNCTION: 0x0077D720
+// FUNCTION: GAMEMD 0x0077D720
 IPXAddressClass __fastcall FUN_0077D720(HostEntry * host)
 {
 	NetNumType netnum;
@@ -533,7 +533,7 @@ namespace UI {
 	bool Updated(void);
 }
 
-// FUNCTION: 0x0077D7A0
+// FUNCTION: GAMEMD 0x0077D7A0
 void FUN_0077D7A0(bool play)
 {
 					if (play != 0) {
@@ -552,7 +552,7 @@ void FUN_0077D7A0(bool play)
 	}
 }
 
-// FUNCTION: 0x0077D820
+// FUNCTION: GAMEMD 0x0077D820
 bool FUN_0077D820(void)
 {
 	UI::Updated();
@@ -563,7 +563,7 @@ bool FUN_0077D820(void)
 	return false;
 }
 
-// FUNCTION: 0x0077D840
+// FUNCTION: GAMEMD 0x0077D840
 void FUN_0077D840(void)
 {
 	HWND dialog = UI::BeginDialog(0xCF, (DLGPROC)FUN_0078D120, 0);
@@ -582,31 +582,31 @@ void FUN_0077D840(void)
 
 void __fastcall FUN_00773E90(const char * name);
 
-// FUNCTION: 0x0077D8C0
+// FUNCTION: GAMEMD 0x0077D8C0
 void FUN_0077D8C0(void)
 {
 	FUN_00773E90("Battleclans");
 }
 
-// FUNCTION: 0x0077D8D0
+// FUNCTION: GAMEMD 0x0077D8D0
 void FUN_0077D8D0(void)
 {
 	FUN_00773E90("Battleclans");
 }
 
-// FUNCTION: 0x0077D8E0
+// FUNCTION: GAMEMD 0x0077D8E0
 void FUN_0077D8E0(void)
 {
 	FUN_00773E90("Ladder");
 }
 
-// FUNCTION: 0x0077D8F0
+// FUNCTION: GAMEMD 0x0077D8F0
 void FUN_0077D8F0(void)
 {
 	FUN_00773E90("News");
 }
 
-// FUNCTION: 0x0077D900
+// FUNCTION: GAMEMD 0x0077D900
 void FUN_0077D900(void)
 {
 	FUN_00773E90("Manage");
@@ -614,7 +614,7 @@ void FUN_0077D900(void)
 
 extern WolChannel DAT_00B76B10;
 
-// FUNCTION: 0x0077D910
+// FUNCTION: GAMEMD 0x0077D910
 bool __fastcall FUN_0077D910(WolChannel * chan)
 {
 	if (Session.Type != GAME_INTERNET) {
@@ -624,7 +624,7 @@ bool __fastcall FUN_0077D910(WolChannel * chan)
 	return chan->Tournament || (r = (chan->Reserved >> 8) & 1) || r;
 }
 
-// FUNCTION: 0x0077D940
+// FUNCTION: GAMEMD 0x0077D940
 bool FUN_0077D940(void)
 {
 	if (Session.Type != GAME_INTERNET) {
@@ -637,7 +637,7 @@ bool FUN_0077D940(void)
 	return r;
 }
 
-// FUNCTION: 0x0077D970
+// FUNCTION: GAMEMD 0x0077D970
 bool FUN_0077D970(void)
 {
 	if (Session.Type != GAME_INTERNET) {
@@ -647,7 +647,7 @@ bool FUN_0077D970(void)
 	return r;
 }
 
-// FUNCTION: 0x0077D990
+// FUNCTION: GAMEMD 0x0077D990
 bool __fastcall FUN_0077D990(WolChannel * chan)
 {
 	if (Session.Type != GAME_INTERNET) {
@@ -656,7 +656,7 @@ bool __fastcall FUN_0077D990(WolChannel * chan)
 	return (chan->Reserved >> 8) & 1;
 }
 
-// FUNCTION: 0x0077D9B0
+// FUNCTION: GAMEMD 0x0077D9B0
 bool __fastcall FUN_0077D9B0(WolChannel * chan)
 {
 	if (Session.Type != GAME_INTERNET) {
@@ -665,7 +665,7 @@ bool __fastcall FUN_0077D9B0(WolChannel * chan)
 	return (chan->Reserved >> 11) & 1;
 }
 
-// FUNCTION: 0x0077D9D0
+// FUNCTION: GAMEMD 0x0077D9D0
 bool __fastcall FUN_0077D9D0(WolChannel * chan)
 {
 	if (Session.Type != GAME_INTERNET) {
@@ -674,18 +674,18 @@ bool __fastcall FUN_0077D9D0(WolChannel * chan)
 	return (chan->Reserved >> 12) & 1;
 }
 
-// FUNCTION: 0x0077D9F0
-// FUNCTION: 0x0077DA10
+// FUNCTION: GAMEMD 0x0077D9F0
+// FUNCTION: GAMEMD 0x0077DA10
 Wstring DAT_00B73E40;
 
-// FUNCTION: 0x0077DA20
-// FUNCTION: 0x0077DA40
+// FUNCTION: GAMEMD 0x0077DA20
+// FUNCTION: GAMEMD 0x0077DA40
 Wstring DAT_00B7778C;
 
 extern int DAT_00B779C4;
 char * __fastcall FUN_007350C0(wchar_t const * text);
 
-// FUNCTION: 0x0077DA50
+// FUNCTION: GAMEMD 0x0077DA50
 LadderA * __fastcall FUN_0077DA50(wchar_t const * name)
 {
 	Wstring key(FUN_007350C0(name));
@@ -778,7 +778,7 @@ struct ChatSink {
 };
 extern ChatSink * DAT_00AC116C;
 
-// FUNCTION: 0x0077DB90
+// FUNCTION: GAMEMD 0x0077DB90
 void FUN_0077DB90(void)
 {
 	char list[256];
@@ -803,7 +803,7 @@ extern char DAT_00A8ED80;
 extern HWND DAT_00B73550;
 int __cdecl FUN_007CD455(const char * path);
 
-// FUNCTION: 0x0077DC90
+// FUNCTION: GAMEMD 0x0077DC90
 void __fastcall FUN_0077DC90(const char * name, int no_ask)
 {
 	char filename[160];
@@ -891,7 +891,7 @@ void FUN_005EE190(void);
 void FUN_005EE1B0(void);
 void __fastcall FUN_005EE350(int arg);
 
-// FUNCTION: 0x0077DED0
+// FUNCTION: GAMEMD 0x0077DED0
 void FUN_0077DED0(void)
 {
 	DAT_00B76234 = DAT_008870C0.Get_Int("WOnline", "AllowPage", 1);
@@ -906,7 +906,7 @@ void FUN_0077DED0(void)
 	FUN_005EE190();
 }
 
-// FUNCTION: 0x0077DFD0
+// FUNCTION: GAMEMD 0x0077DFD0
 void FUN_0077DFD0(void)
 {
 	RawFileClass file("RA2MD.INI");
@@ -923,7 +923,7 @@ void FUN_0077DFD0(void)
 	FUN_005EE1B0();
 }
 
-// FUNCTION: 0x0077E110
+// FUNCTION: GAMEMD 0x0077E110
 void FUN_0077E110(void)
 {
 	if (DAT_00AC116C) {
@@ -947,7 +947,7 @@ void FUN_0077E110(void)
 
 HWND FUN_00775B10(void);
 
-// FUNCTION: 0x0077E1D0
+// FUNCTION: GAMEMD 0x0077E1D0
 int __fastcall FUN_0077E1D0(WideWstring const & msg)
 {
 	static int sel_user_indexes[128];
@@ -981,7 +981,7 @@ int __fastcall FUN_0077E1D0(WideWstring const & msg)
 	return 1;
 }
 
-// FUNCTION: 0x0077E300
+// FUNCTION: GAMEMD 0x0077E300
 int __fastcall FUN_0077E300(WideWstring const & msg)
 {
 	static int sel_user_indexes[128];
@@ -1024,7 +1024,7 @@ extern int DAT_00B77E00;
 extern int DAT_00B77E04;
 extern int DAT_00B77E08;
 
-// FUNCTION: 0x0077E780
+// FUNCTION: GAMEMD 0x0077E780
 int FUN_0077E780(void)
 {
 	return DAT_00B77E00 ^ DAT_00B77E08 ^ DAT_00B77E04;
@@ -1044,7 +1044,7 @@ int FUN_005E94D0(void);
 bool FUN_005E9560(void);
 bool FUN_005E9580(void);
 
-// FUNCTION: 0x0077E7A0
+// FUNCTION: GAMEMD 0x0077E7A0
 void __fastcall FUN_0077E7A0(char * out)
 {
 	int i = 0;
@@ -1067,7 +1067,7 @@ void __fastcall FUN_0077E7A0(char * out)
 	sprintf(out, "%d,%d,%d,%d,%d,%s", FUN_00777B50(), FUN_0077E780(), FUN_005E94D0(), FUN_005E9580(), !FUN_005E9560(), Session.ScenarioFileName);
 }
 
-// FUNCTION: 0x0077E820
+// FUNCTION: GAMEMD 0x0077E820
 void __fastcall FUN_0077E820(char * text, int * first, int * second, int * third, int * fourth, int * fifth, Wstring * rest)
 {
 	char * token = strtok(text, ",");
@@ -1095,7 +1095,7 @@ void __fastcall FUN_00783C80(int arg, bool flag);
 
 WideWstring __fastcall FUN_007B7ED0(Wstring const & text);
 
-// FUNCTION: 0x0077EBA0
+// FUNCTION: GAMEMD 0x0077EBA0
 int __fastcall FUN_0077EBA0(Wstring const & who)
 {
 	Wstring name(who.length() > 0 ? who : DAT_00B73E40);
@@ -1133,7 +1133,7 @@ void __fastcall FUN_004E50C0(HWND dialog, int id);
 void __fastcall FUN_004E5B60(HWND dialog, int id);
 int __fastcall FUN_005E98F0(int kind);
 
-// FUNCTION: 0x0077ED00
+// FUNCTION: GAMEMD 0x0077ED00
 int __fastcall FUN_0077ED00(Wstring const & who, int country, int color, int start, int team)
 {
 	int index = -1;
@@ -1204,7 +1204,7 @@ int __fastcall FUN_0077ED00(Wstring const & who, int country, int color, int sta
 
 void __cdecl FUN_004068E0(char const * format, ...);
 
-// FUNCTION: 0x0077EF90
+// FUNCTION: GAMEMD 0x0077EF90
 bool __fastcall FUN_0077EF90(int type, unsigned char ping)
 {
 	FUN_004068E0("Requesting channel list type = %d, ping = %d\n", type, ping);
@@ -1239,7 +1239,7 @@ static inline void Focus_Chat_Input(void)
 	}
 }
 
-// FUNCTION: 0x0077F120
+// FUNCTION: GAMEMD 0x0077F120
 bool FUN_0077F120(void)
 {
 	FUN_00792BE0(1, StringTable::LoadString("TXT_REQ_CHANLIST", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x8FA), 0);
@@ -1286,7 +1286,7 @@ bool FUN_0077F120(void)
 }
 
 
-// FUNCTION: 0x0077F320
+// FUNCTION: GAMEMD 0x0077F320
 bool __fastcall FUN_0077F320(int type, unsigned char ping, bool wait)
 {
 	if (DAT_00B76520.length() != 0) {
@@ -1307,7 +1307,7 @@ bool __fastcall FUN_0077F320(int type, unsigned char ping, bool wait)
 	return true;
 }
 
-// FUNCTION: 0x0077F520
+// FUNCTION: GAMEMD 0x0077F520
 bool __fastcall FUN_0077F520(bool wait)
 {
 	if (DAT_00B76520.length() != 0) {
@@ -1328,7 +1328,7 @@ bool __fastcall FUN_0077F520(bool wait)
 	return true;
 }
 
-// FUNCTION: 0x0077F710
+// FUNCTION: GAMEMD 0x0077F710
 bool __fastcall FUN_0077F710(unsigned char ping, bool wait)
 {
 	if (DAT_00B76520.length() != 0) {
@@ -1406,7 +1406,7 @@ extern int DAT_00B77E64;
 extern int DAT_00B77E20;
 
 
-// FUNCTION: 0x00780110
+// FUNCTION: GAMEMD 0x00780110
 void FUN_00780110(void)
 {
 	DAT_00B75E48 = FUN_00778710();
@@ -1499,7 +1499,7 @@ int __fastcall FUN_00623E00(HWND list);
 extern int DAT_00B76C1C;
 extern wchar_t DAT_00887734[];
 
-// FUNCTION: 0x007806C0
+// FUNCTION: GAMEMD 0x007806C0
 void FUN_007806C0(void)
 {
 	HWND dialog = FUN_00775940(0x113);
@@ -1562,7 +1562,7 @@ void FUN_007806C0(void)
 	InvalidateRect(list, NULL, 0);
 }
 
-// FUNCTION: 0x00780A00
+// FUNCTION: GAMEMD 0x00780A00
 WideWstring __fastcall FUN_00780A00(int locale)
 {
 	Wstring key = "WOL:Locale" + Wstring_FromInt(locale, 2);
@@ -1576,7 +1576,7 @@ WideWstring __fastcall FUN_00780A00(int locale)
 WideWstring __fastcall FUN_007B8090(wchar_t const * prefix, WideWstring const & text);
 WideWstring __fastcall FUN_007B7DD0(int value);
 
-// FUNCTION: 0x00780A90
+// FUNCTION: GAMEMD 0x00780A90
 WideWstring __fastcall FUN_00780A90(User * user)
 {
 	Wstring name(user->Nick);
@@ -1608,7 +1608,7 @@ WideWstring __fastcall FUN_00780A90(User * user)
 	return text;
 }
 
-// FUNCTION: 0x00780D90
+// FUNCTION: GAMEMD 0x00780D90
 WideWstring __fastcall FUN_00780D90(Wstring * file)
 {
 	if (strcmpi(file->text(), "RandMap.Sed") == 0) {
@@ -1623,7 +1623,7 @@ WideWstring __fastcall FUN_00780D90(Wstring * file)
 	return WideWstring(DAT_00887734);
 }
 
-// FUNCTION: 0x00780E30
+// FUNCTION: GAMEMD 0x00780E30
 WideWstring __fastcall FUN_00780E30(HWND list, int index)
 {
 	if (index == -1) {
@@ -1669,7 +1669,7 @@ WideWstring __fastcall FUN_00780E30(HWND list, int index)
 	return WideWstring(StringTable::LoadString("STT:LobbyListGames", NULL, "D:\\ra2mdpost\\wonline.cpp", 0xBB2));
 }
 
-// FUNCTION: 0x00781090
+// FUNCTION: GAMEMD 0x00781090
 WideWstring __fastcall FUN_00781090(HWND list, int index)
 {
 	if (index == -1) {
@@ -1687,7 +1687,7 @@ WideWstring __fastcall FUN_00781090(HWND list, int index)
 
 extern int DAT_00B77E44;
 
-// FUNCTION: 0x00781130
+// FUNCTION: GAMEMD 0x00781130
 bool __fastcall FUN_00781130(WolChannel * chan, int mode, int a, int b)
 {
 	int filter = DAT_00B77E44;
@@ -1759,7 +1759,7 @@ struct SortEntry {
 	int Key;
 };
 
-// FUNCTION: 0x00781380
+// FUNCTION: GAMEMD 0x00781380
 int __cdecl FUN_00781380(SortEntry const * a, SortEntry const * b)
 {
 	int x = a->Key;
@@ -1773,7 +1773,7 @@ int __cdecl FUN_00781380(SortEntry const * a, SortEntry const * b)
 	return 0;
 }
 
-// FUNCTION: 0x007813B0
+// FUNCTION: GAMEMD 0x007813B0
 int __cdecl FUN_007813B0(SortEntry const * a, SortEntry const * b)
 {
 	int x = a->Key;
@@ -1796,7 +1796,7 @@ struct UserSort {
 	int Flag;
 };
 
-// FUNCTION: 0x00781CC0
+// FUNCTION: GAMEMD 0x00781CC0
 int __cdecl FUN_00781CC0(UserSort const * a, UserSort const * b)
 {
 	if (a->Flag != b->Flag) {
@@ -1805,7 +1805,7 @@ int __cdecl FUN_00781CC0(UserSort const * a, UserSort const * b)
 	return strcmpi(a->Name, b->Name);
 }
 
-// FUNCTION: 0x00781CF0
+// FUNCTION: GAMEMD 0x00781CF0
 int __cdecl FUN_00781CF0(UserSort const * a, UserSort const * b)
 {
 	if (a->Flag != b->Flag) {
@@ -1814,7 +1814,7 @@ int __cdecl FUN_00781CF0(UserSort const * a, UserSort const * b)
 	return strcmpi(b->Name, a->Name);
 }
 
-// FUNCTION: 0x00781FB0
+// FUNCTION: GAMEMD 0x00781FB0
 void __fastcall FUN_00781FB0(User * user, bool ascending)
 {
 	User temp;
@@ -1879,7 +1879,7 @@ void __fastcall FUN_00781FB0(User * user, bool ascending)
 	}
 }
 
-// FUNCTION: 0x00781D20
+// FUNCTION: GAMEMD 0x00781D20
 void __fastcall FUN_00781D20(bool ascending)
 {
 	ArrayList<User> copy;
@@ -1925,7 +1925,7 @@ void __fastcall FUN_00782BB0(User * user, bool ascending);
 extern int DAT_00B77E48;
 void __fastcall FUN_00782320(User * user, bool ascending);
 
-// FUNCTION: 0x00783070
+// FUNCTION: GAMEMD 0x00783070
 void __fastcall FUN_00783070(User * user)
 {
 	int mode = DAT_00B77E48;
@@ -1950,7 +1950,7 @@ struct UserRank {
 	int Flag;
 };
 
-// FUNCTION: 0x007830C0
+// FUNCTION: GAMEMD 0x007830C0
 int __cdecl FUN_007830C0(UserRank const * a, UserRank const * b)
 {
 	if (a->Flag != b->Flag) {
@@ -1971,7 +1971,7 @@ int __cdecl FUN_007830C0(UserRank const * a, UserRank const * b)
 	return strcmpi(first.Nick, second.Nick);
 }
 
-// FUNCTION: 0x007831A0
+// FUNCTION: GAMEMD 0x007831A0
 int __cdecl FUN_007831A0(UserRank const * a, UserRank const * b)
 {
 	if (a->Flag != b->Flag) {
@@ -1992,7 +1992,7 @@ int __cdecl FUN_007831A0(UserRank const * a, UserRank const * b)
 	return strcmpi(first.Nick, second.Nick);
 }
 
-// FUNCTION: 0x00783270
+// FUNCTION: GAMEMD 0x00783270
 void __fastcall FUN_00783270(bool ascending)
 {
 	ArrayList<User> copy;
@@ -2032,7 +2032,7 @@ void __fastcall FUN_00783270(bool ascending)
 	delete sorted;
 }
 
-// FUNCTION: 0x00783520
+// FUNCTION: GAMEMD 0x00783520
 int __cdecl FUN_00783520(const char * a, const char * b)
 {
 	int la = strlen(a);
@@ -2046,7 +2046,7 @@ int __cdecl FUN_00783520(const char * a, const char * b)
 	return lb > 0;
 }
 
-// FUNCTION: 0x00783570
+// FUNCTION: GAMEMD 0x00783570
 int __cdecl FUN_00783570(const char * a, const char * b)
 {
 	int la = strlen(a);
@@ -2063,7 +2063,7 @@ int __cdecl FUN_00783570(const char * a, const char * b)
 int __cdecl FUN_007835C0(UserSort const * a, UserSort const * b);
 int __cdecl FUN_007836E0(UserSort const * a, UserSort const * b);
 
-// FUNCTION: 0x00783800
+// FUNCTION: GAMEMD 0x00783800
 void __fastcall FUN_00783800(bool ascending)
 {
 	ArrayList<User> copy;
@@ -2110,7 +2110,7 @@ struct PCX {
 	int GetSurface(char const * name, void * palette);
 };
 
-// FUNCTION: 0x00783A90
+// FUNCTION: GAMEMD 0x00783A90
 int __fastcall FUN_00783A90(int digit)
 {
 	switch (digit) {
@@ -2143,7 +2143,7 @@ struct RankedUser {
 	unsigned int Points;
 };
 
-// FUNCTION: 0x00783B80
+// FUNCTION: GAMEMD 0x00783B80
 int __fastcall FUN_00783B80(RankedUser * user)
 {
 	if (!user) {
@@ -2180,7 +2180,7 @@ int __fastcall FUN_00783B80(RankedUser * user)
 	return PCX::Instance.GetSurface("private.pcx", NULL);
 }
 
-// FUNCTION: 0x00785360
+// FUNCTION: GAMEMD 0x00785360
 void FUN_00785360(void)
 {
 	FUN_00783C80(0, false);
@@ -2259,7 +2259,7 @@ static inline void Close_Logout_Wait(unsigned int event)
 	}
 }
 
-// FUNCTION: 0x00785EA0
+// FUNCTION: GAMEMD 0x00785EA0
 void FUN_00785EA0(void)
 {
 	DAT_00B77DC0 = 1;
@@ -2295,7 +2295,7 @@ extern IID const DAT_007F7570;
 extern char DAT_00B77E75;
 void FUN_005E8A20(void);
 
-// FUNCTION: 0x00786080
+// FUNCTION: GAMEMD 0x00786080
 void FUN_00786080(void)
 {
 	if (MultiplayerMapPreview) {
@@ -2335,7 +2335,7 @@ extern char DAT_00B73B34[];
 extern int DAT_00B76B0C;
 extern int DAT_00B77E50;
 
-// FUNCTION: 0x00786270
+// FUNCTION: GAMEMD 0x00786270
 bool FUN_00786270(void)
 {
 	DWORD value = 0;
@@ -2369,7 +2369,7 @@ void FUN_005E8B60(void);
 namespace Game { extern HINSTANCE hInstance; }
 int __fastcall FUN_00785370(HINSTANCE instance);
 
-// FUNCTION: 0x00786390
+// FUNCTION: GAMEMD 0x00786390
 int FUN_00786390(void)
 {
 	if (DAT_00B77E75) {
@@ -2404,7 +2404,7 @@ int FUN_00786390(void)
 
 bool __fastcall FUN_007864C0(Server * server);
 
-// FUNCTION: 0x00786D90
+// FUNCTION: GAMEMD 0x00786D90
 bool FUN_00786D90(void)
 {
 	if (DAT_00B76468 >= 1 && DAT_00B76468 < DAT_00B778D8.length()) {
@@ -2417,7 +2417,7 @@ bool FUN_00786D90(void)
 
 extern char DAT_0084A238;
 
-// FUNCTION: 0x00786DC0
+// FUNCTION: GAMEMD 0x00786DC0
 bool __fastcall FUN_00786DC0(Wstring & name)
 {
 	DAT_00B7778C.clear();
@@ -2435,7 +2435,7 @@ bool __fastcall FUN_00786DC0(Wstring & name)
 	return false;
 }
 
-// FUNCTION: 0x00786E70
+// FUNCTION: GAMEMD 0x00786E70
 int __fastcall FUN_00786E70(Wstring & name)
 {
 	if (name.length()) {
@@ -2454,7 +2454,7 @@ int __fastcall FUN_00786E70(Wstring & name)
 extern long DAT_00B77DF8;
 int __cdecl sprintf(char * buffer, const char * format, ...);
 
-// FUNCTION: 0x00786EF0
+// FUNCTION: GAMEMD 0x00786EF0
 bool FUN_00786EF0(void)
 {
 	bool result = false;
@@ -2524,7 +2524,7 @@ static inline void Set_Lobby_Number(WolChannel & chan)
 	DAT_00B77DD4 = atol(chan.Name + strlen("Lob_41_"));
 }
 
-// FUNCTION: 0x00788180
+// FUNCTION: GAMEMD 0x00788180
 int __fastcall FUN_00788180(bool flag)
 {
 	int count = DAT_00B73E10.length();
@@ -2636,7 +2636,7 @@ static inline void Focus_Chat_Input_After(unsigned int event)
 	}
 }
 
-// FUNCTION: 0x00788710
+// FUNCTION: GAMEMD 0x00788710
 bool __fastcall FUN_00788710(int id, int flag)
 {
 	if (DAT_00B77DD0) {
@@ -2656,7 +2656,7 @@ bool __fastcall FUN_00788710(int id, int flag)
 
 void __fastcall FUN_00792BE0(int id, WideWstring const & text, char flag);
 
-// FUNCTION: 0x00788800
+// FUNCTION: GAMEMD 0x00788800
 long __fastcall FUN_00788800(WolChannel * chan, Wstring & key, WideWstring text)
 {
 	if (strcmp(chan->Name, DAT_00B76B10.Name) == 0 || strcmp(chan->Name, DAT_00B73BE8.Name) == 0) {
@@ -2674,7 +2674,7 @@ long __fastcall FUN_00788800(WolChannel * chan, Wstring & key, WideWstring text)
 
 void FUN_00781480(void);
 
-// FUNCTION: 0x00788A30
+// FUNCTION: GAMEMD 0x00788A30
 int __fastcall FUN_00788A30(bool flag)
 {
 	int lobby = FUN_00788180(flag);
@@ -2699,7 +2699,7 @@ int __fastcall FUN_00788A30(bool flag)
 	return -1;
 }
 
-// FUNCTION: 0x00789500
+// FUNCTION: GAMEMD 0x00789500
 int __fastcall FUN_00789500(char const * login, char const * password, int plain, int locale)
 {
 	char const * nick;
@@ -2742,7 +2742,7 @@ int __fastcall FUN_00789500(char const * login, char const * password, int plain
 	return nicknum;
 }
 
-// FUNCTION: 0x00789630
+// FUNCTION: GAMEMD 0x00789630
 Wstring __fastcall FUN_00789630(Server * server)
 {
 	Wstring name(server->name);
@@ -2764,7 +2764,7 @@ static inline bool Same_Name(Wstring const & a, Wstring const & b)
 	return a.toLower() == b.toLower();
 }
 
-// FUNCTION: 0x007896A0
+// FUNCTION: GAMEMD 0x007896A0
 bool __fastcall FUN_007896A0(HWND win, bool combo)
 {
 	if (combo) {
@@ -2841,7 +2841,7 @@ class WonlineStringDialogControl : public SimpleWonlineDialogControl
 		Wstring Text;
 };
 
-// FUNCTION: 0x00789960
+// FUNCTION: GAMEMD 0x00789960
 bool __fastcall FUN_00789960(WolChannel * chan, int extra)
 {
 	if (!FUN_0079BA60(chan, true, extra)) {
@@ -2888,7 +2888,7 @@ bool __fastcall FUN_00789960(WolChannel * chan, int extra)
 	return FUN_00788800(chan, name, WideWstring(StringTable::LoadString("TXT_JOINLOB", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2D1B))) == 0;
 }
 
-// FUNCTION: 0x0078A6B0
+// FUNCTION: GAMEMD 0x0078A6B0
 int __fastcall FUN_0078A6B0(wchar_t * input)
 {
 	struct { wchar_t prefix[64]; wchar_t message[64]; } buf;
@@ -2950,7 +2950,7 @@ int __fastcall FUN_0078A6B0(wchar_t * input)
 	return result;
 }
 
-// FUNCTION: 0x0078A8F0
+// FUNCTION: GAMEMD 0x0078A8F0
 int __fastcall FUN_0078A8F0(wchar_t * input)
 {
 	wchar_t message[128];
@@ -3025,7 +3025,7 @@ int __fastcall FUN_0078A8F0(wchar_t * input)
 
 extern bool DAT_00B77E40;
 
-// FUNCTION: 0x0078ABF0
+// FUNCTION: GAMEMD 0x0078ABF0
 void __fastcall FUN_0078ABF0(bool flag, wchar_t const * text)
 {
 	DAT_00B77E40 = flag;
@@ -3046,7 +3046,7 @@ struct DownloadObject : IUnknown {
 	virtual long __stdcall Abort(void) = 0;
 };
 
-// FUNCTION: 0x0078DA30
+// FUNCTION: GAMEMD 0x0078DA30
 BOOL CALLBACK FUN_0078DA30(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	if (message == WM_INITDIALOG && lparam) {
@@ -3115,7 +3115,7 @@ class WonlineGameControl : public SimpleWonlineDialogControl
 		bool Flag13;
 };
 
-// FUNCTION: 0x0078DB70
+// FUNCTION: GAMEMD 0x0078DB70
 BOOL CALLBACK FUN_0078DB70(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	if (message == WM_INITDIALOG && lparam) {
@@ -3239,7 +3239,7 @@ BOOL CALLBACK FUN_0078DB70(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 	return FALSE;
 }
 
-// FUNCTION: 0x0078E030
+// FUNCTION: GAMEMD 0x0078E030
 BOOL CALLBACK FUN_0078E030(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	if (message == WM_INITDIALOG && lparam) {
@@ -3307,7 +3307,7 @@ BOOL CALLBACK FUN_0078E030(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 int __fastcall FUN_0060D320(HWND dialog);
 bool __fastcall Focus_Next_Tab_Item(HWND window, bool previous);
 
-// FUNCTION: 0x0078E950
+// FUNCTION: GAMEMD 0x0078E950
 BOOL CALLBACK FUN_0078E950(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	switch (message) {
@@ -3411,7 +3411,7 @@ void FUN_0072B8E0(void);
 void FUN_0072B930(void);
 void __fastcall FUN_006B6230(void * unused);
 
-// FUNCTION: 0x0078EBC0
+// FUNCTION: GAMEMD 0x0078EBC0
 BOOL CALLBACK FUN_0078EBC0(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	bool play;
@@ -3575,7 +3575,7 @@ int __fastcall FUN_005E8D00(wchar_t const * name);
 extern int DAT_00B76440[];
 extern wchar_t DAT_00B75F6C[];
 
-// FUNCTION: 0x0078F5C0
+// FUNCTION: GAMEMD 0x0078F5C0
 wchar_t * __fastcall FUN_0078F5C0(wchar_t const * name)
 {
 	int ping = DAT_00B76440[FUN_005E8D00(name)];
@@ -3591,7 +3591,7 @@ wchar_t * __fastcall FUN_0078F5C0(wchar_t const * name)
 	return DAT_00B75F6C;
 }
 
-// FUNCTION: 0x0078F6B0
+// FUNCTION: GAMEMD 0x0078F6B0
 int __fastcall FUN_0078F6B0(int id)
 {
 	if (id == 0x754) {
@@ -3618,7 +3618,7 @@ int __fastcall FUN_0078F6B0(int id)
 	return id == 0x75B ? 7 : -1;
 }
 
-// FUNCTION: 0x0078F720
+// FUNCTION: GAMEMD 0x0078F720
 void __fastcall FUN_0078F720(HWND window)
 {
 	if (FUN_0077D940()) {
@@ -3640,7 +3640,7 @@ void __fastcall FUN_0078F720(HWND window)
 
 namespace Game { extern int ObserverMode; }
 
-// FUNCTION: 0x00791AA0
+// FUNCTION: GAMEMD 0x00791AA0
 void __fastcall FUN_00791AA0(HWND window)
 {
 	if (window) {
@@ -3661,7 +3661,7 @@ void FUN_0072CBA0(void);
 namespace UI { void __fastcall RegisterWindow(HWND window, int id); }
 BOOL CALLBACK FUN_00792CF0(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 
-// FUNCTION: 0x00792BE0
+// FUNCTION: GAMEMD 0x00792BE0
 void __fastcall FUN_00792BE0(int id, WideWstring const & text, char flag)
 {
 	HWND dialog = FUN_00775940(0xC4);
@@ -3692,7 +3692,7 @@ void __fastcall FUN_00792BE0(int id, WideWstring const & text, char flag)
 extern int DAT_0084A248;
 void __fastcall FUN_00608440(HWND window);
 
-// FUNCTION: 0x00792CF0
+// FUNCTION: GAMEMD 0x00792CF0
 BOOL CALLBACK FUN_00792CF0(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	switch (message) {
@@ -3749,7 +3749,7 @@ BOOL CALLBACK FUN_00792CF0(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 	return FALSE;
 }
 
-// FUNCTION: 0x00792E90
+// FUNCTION: GAMEMD 0x00792E90
 void __fastcall FUN_00792E90(wchar_t const * text)
 {
 	HWND dialog = FUN_00775940(0xC4);
@@ -3758,7 +3758,7 @@ void __fastcall FUN_00792E90(wchar_t const * text)
 	}
 }
 
-// FUNCTION: 0x00792EC0
+// FUNCTION: GAMEMD 0x00792EC0
 void __fastcall FUN_00792EC0(unsigned int mask)
 {
 	HWND dialog = FUN_00775940(0xC4);
@@ -3783,7 +3783,7 @@ extern User DAT_00B777B0;
 NodeNameType * __fastcall FUN_005E8BF0(wchar_t const * name);
 User * FUN_007931A0(void);
 
-// FUNCTION: 0x00792F10
+// FUNCTION: GAMEMD 0x00792F10
 void __fastcall FUN_00792F10(User * unused)
 {
 	Session.NumPlayers = 1;
@@ -3819,7 +3819,7 @@ void __fastcall FUN_00792F10(User * unused)
 	FUN_004068E0("User_List_To_Session_Players: Session.HostAddress = %s\n", Session.HostAddress.As_String(NULL));
 }
 
-// FUNCTION: 0x007930A0
+// FUNCTION: GAMEMD 0x007930A0
 bool FUN_007930A0(void)
 {
 	User * host = FUN_007931A0();
@@ -3832,7 +3832,7 @@ bool FUN_007930A0(void)
 	return true;
 }
 
-// FUNCTION: 0x00793120
+// FUNCTION: GAMEMD 0x00793120
 bool __fastcall FUN_00793120(Wstring & name)
 {
 	User * host = FUN_007931A0();
@@ -3845,7 +3845,7 @@ bool __fastcall FUN_00793120(Wstring & name)
 	return true;
 }
 
-// FUNCTION: 0x007931A0
+// FUNCTION: GAMEMD 0x007931A0
 User * FUN_007931A0(void)
 {
 	for (int i = 0; i < DAT_00B77900.length(); i++) {
@@ -3860,7 +3860,7 @@ User * FUN_007931A0(void)
 extern int DAT_0084A1F0[];
 extern char DAT_00B75F54[];
 
-// FUNCTION: 0x007931F0
+// FUNCTION: GAMEMD 0x007931F0
 void __fastcall FUN_007931F0(int index)
 {
 	if (index >= 0 && index < Session.Players.Count()) {
@@ -3876,7 +3876,7 @@ void __fastcall FUN_007931F0(int index)
 
 BOOL CALLBACK FUN_00793280(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 
-// FUNCTION: 0x00793250
+// FUNCTION: GAMEMD 0x00793250
 void FUN_00793250(void)
 {
 	HWND dialog = WS_Create_Dialog(Game::hInstance, 0x130, Game::hWnd, FUN_00793280, FALSE);
@@ -3887,7 +3887,7 @@ void FUN_00793250(void)
 
 extern char DAT_00B757EB[];
 
-// FUNCTION: 0x00793280
+// FUNCTION: GAMEMD 0x00793280
 BOOL CALLBACK FUN_00793280(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	switch (message) {
@@ -3962,7 +3962,7 @@ BOOL CALLBACK FUN_00793280(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 	return FALSE;
 }
 
-// FUNCTION: 0x00793440
+// FUNCTION: GAMEMD 0x00793440
 void FUN_00793440(void)
 {
 	HWND dialog = FUN_00775940(0x130);
@@ -3974,7 +3974,7 @@ void FUN_00793440(void)
 extern int DAT_00B73BB4[];
 extern int DAT_0084A1E0[];
 
-// FUNCTION: 0x00793460
+// FUNCTION: GAMEMD 0x00793460
 void __fastcall FUN_00793460(int index, int value)
 {
 	if (index < Session.Players.Count()) {
@@ -3984,7 +3984,7 @@ void __fastcall FUN_00793460(int index, int value)
 	}
 }
 
-// FUNCTION: 0x00793490
+// FUNCTION: GAMEMD 0x00793490
 void FUN_00793490(void)
 {
 	wchar_t message[256];
@@ -4041,7 +4041,7 @@ void FUN_00793490(void)
 	}
 }
 
-// FUNCTION: 0x00793710
+// FUNCTION: GAMEMD 0x00793710
 unsigned short __fastcall FUN_00793710(int send_port, int mangled_port, int unused, int port_spread)
 {
 	int port = send_port + mangled_port;
@@ -4071,7 +4071,7 @@ struct ConnectionRanker {
 };
 extern ConnectionRanker DAT_00ABFEC8;
 
-// FUNCTION: 0x007937B0
+// FUNCTION: GAMEMD 0x007937B0
 int __fastcall FUN_007937B0(int (*pairs)[2])
 {
 	int order[8];
@@ -4110,7 +4110,7 @@ int __fastcall FUN_007937B0(int (*pairs)[2])
 
 
 
-// FUNCTION: 0x00793930
+// FUNCTION: GAMEMD 0x00793930
 void __fastcall FUN_00793930(char const * from, char const * to, int state)
 {
 	int from_slot = -1;
@@ -4136,7 +4136,7 @@ void __fastcall FUN_00793930(char const * from, char const * to, int state)
 	}
 }
 
-// FUNCTION: 0x00793A10
+// FUNCTION: GAMEMD 0x00793A10
 void __fastcall FUN_00793A10(char const * name, unsigned short port)
 {
 	FUN_004068E0("Player %s is telling us we should send to port %d\n", name, port);
@@ -4148,7 +4148,7 @@ void __fastcall FUN_00793A10(char const * name, unsigned short port)
 	}
 }
 
-// FUNCTION: 0x00793A70
+// FUNCTION: GAMEMD 0x00793A70
 void __fastcall FUN_00793A70(char const * name, unsigned short port)
 {
 	char text[256];
@@ -4165,7 +4165,7 @@ void __fastcall FUN_00793A70(char const * name, unsigned short port)
 	}
 }
 
-// FUNCTION: 0x00793B30
+// FUNCTION: GAMEMD 0x00793B30
 void __fastcall FUN_00793B30(int mode, char const * options)
 {
 	char text[256];
@@ -4181,7 +4181,7 @@ void __fastcall FUN_00793B30(int mode, char const * options)
 	DAT_00AC116C->V15(text);
 }
 
-// FUNCTION: 0x00793CD0
+// FUNCTION: GAMEMD 0x00793CD0
 void __fastcall FUN_00793CD0(int slot)
 {
 	Session.unknown_2F6C[Session.unknown_2FEC] = slot;
@@ -4195,7 +4195,7 @@ void __fastcall FUN_00793CD0(int slot)
 
 extern bool DAT_00B77E2C;
 
-// FUNCTION: 0x00796710
+// FUNCTION: GAMEMD 0x00796710
 bool FUN_00796710(void)
 {
 	GlobalPacketType packet;
@@ -4246,7 +4246,7 @@ static inline int Current_Channel_Type(void)
 	return DAT_00B76B10.Type;
 }
 
-// FUNCTION: 0x00796960
+// FUNCTION: GAMEMD 0x00796960
 void FUN_00796960(void)
 {
 	if (Session.Type != GAME_INTERNET) {
@@ -4272,14 +4272,14 @@ void FUN_00796960(void)
 	}
 }
 
-// FUNCTION: 0x00796B20
+// FUNCTION: GAMEMD 0x00796B20
 void FUN_00796B20(void)
 {
 }
 
 BOOL CALLBACK FUN_00796B90(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 
-// FUNCTION: 0x00796B30
+// FUNCTION: GAMEMD 0x00796B30
 int FUN_00796B30(void)
 {
 	SimpleWonlineDialogControl dialog;
@@ -4292,7 +4292,7 @@ int FUN_00796B30(void)
 
 void __fastcall FUN_006223C0(HWND window);
 
-// FUNCTION: 0x00796B90
+// FUNCTION: GAMEMD 0x00796B90
 BOOL CALLBACK FUN_00796B90(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	if (message == WM_INITDIALOG && lparam) {
@@ -4374,7 +4374,7 @@ BOOL CALLBACK FUN_00796B90(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 	return FALSE;
 }
 
-// FUNCTION: 0x00796DE0
+// FUNCTION: GAMEMD 0x00796DE0
 void FUN_00796DE0(void)
 {
 	NodeNameType * who = new NodeNameType;
@@ -4397,7 +4397,7 @@ void FUN_00796DE0(void)
 	Session.NumPlayers++;
 }
 
-// FUNCTION: 0x00796ED0
+// FUNCTION: GAMEMD 0x00796ED0
 void FUN_00796ED0(void)
 {
 	NodeNameType * who = new NodeNameType;
@@ -4420,7 +4420,7 @@ void FUN_00796ED0(void)
 	Session.NumPlayers++;
 }
 
-// FUNCTION: 0x00796FC0
+// FUNCTION: GAMEMD 0x00796FC0
 void FUN_00796FC0(void)
 {
 	NodeNameType * who = new NodeNameType;
@@ -4463,7 +4463,7 @@ void __fastcall FUN_005C6120(DynamicVectorClass<NodeNameType *> * vec);
 void __fastcall FUN_005E7BF0(int slot);
 void __fastcall FUN_005E7460(void);
 
-// FUNCTION: 0x007970D0
+// FUNCTION: GAMEMD 0x007970D0
 void FUN_007970D0(void)
 {
 	char computer[0x3F8];
@@ -4629,7 +4629,7 @@ void FUN_007970D0(void)
 
 int __fastcall FUN_00797640(int sku);
 
-// FUNCTION: 0x007975E0
+// FUNCTION: GAMEMD 0x007975E0
 void FUN_007975E0(void)
 {
 	{
@@ -4645,7 +4645,7 @@ void FUN_007975E0(void)
 
 extern int DAT_00B77DE8;
 
-// FUNCTION: 0x00797640
+// FUNCTION: GAMEMD 0x00797640
 int __fastcall FUN_00797640(int sku)
 {
 	char saved = DAT_00B77DC0;
@@ -4728,7 +4728,7 @@ int __fastcall FUN_00797640(int sku)
 
 extern char DAT_00B77E10;
 
-// FUNCTION: 0x00797C20
+// FUNCTION: GAMEMD 0x00797C20
 void FUN_00797C20(void)
 {
 	if (DAT_00B77E10) {
@@ -4782,8 +4782,9 @@ void FUN_00797C20(void)
 	DAT_00B77E10 = 1;
 }
 
-// FUNCTION: 0x00798120 $E324
-// FUNCTION: 0x00798140
+// SYNTHETIC: GAMEMD 0x00798120 SYMBOL
+// _$E324
+// FUNCTION: GAMEMD 0x00798140
 void FUN_00798140(void)
 {
 	DAT_00B73BD8.clear();
@@ -4797,12 +4798,12 @@ void FUN_00798140(void)
 	DAT_00B77E10 = 0;
 }
 
-// FUNCTION: 0x007982A0
+// FUNCTION: GAMEMD 0x007982A0
 void FUN_007982A0(ArrayList<Wstring> list)
 {
 }
 
-// FUNCTION: 0x007982D0
+// FUNCTION: GAMEMD 0x007982D0
 int __fastcall FUN_007982D0(int seconds, int count)
 {
 	int remaining = seconds * 1000;
@@ -4818,7 +4819,7 @@ int __fastcall FUN_007982D0(int seconds, int count)
 	return index;
 }
 
-// FUNCTION: 0x00798340
+// FUNCTION: GAMEMD 0x00798340
 void FUN_00798340(void)
 {
 	for (int i = 0; i < 18; i++) {
@@ -4826,7 +4827,7 @@ void FUN_00798340(void)
 	}
 }
 
-// FUNCTION: 0x00798360
+// FUNCTION: GAMEMD 0x00798360
 void FUN_00798360(void)
 {
 	HKEY key;
@@ -4846,7 +4847,7 @@ void FUN_00798360(void)
 
 void __fastcall FUN_00603D30(HWND item, int surface);
 
-// FUNCTION: 0x007983E0
+// FUNCTION: GAMEMD 0x007983E0
 BOOL CALLBACK FUN_007983E0(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	if (message == WM_INITDIALOG && lparam) {
@@ -4997,7 +4998,7 @@ BOOL CALLBACK FUN_007983E0(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 	return FALSE;
 }
 
-// FUNCTION: 0x007988C0
+// FUNCTION: GAMEMD 0x007988C0
 BOOL CALLBACK FUN_007988C0(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	if (message == WM_INITDIALOG && lparam) {
@@ -5154,7 +5155,7 @@ BOOL CALLBACK FUN_007988C0(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 	return FALSE;
 }
 
-// FUNCTION: 0x00798F50
+// FUNCTION: GAMEMD 0x00798F50
 void __fastcall FUN_00798F50(HWND combo)
 {
 	int count;
@@ -5193,7 +5194,7 @@ void FUN_0072C9C0(void);
 void FUN_0072CA10(void);
 BOOL CALLBACK FUN_00799080(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 
-// FUNCTION: 0x00799CD0
+// FUNCTION: GAMEMD 0x00799CD0
 void FUN_00799CD0(void)
 {
 	DAT_00B73E10.setEmpty();
@@ -5205,7 +5206,7 @@ void FUN_00799CD0(void)
 	DAT_00B77DD0 = 0;
 }
 
-// FUNCTION: 0x00799D10
+// FUNCTION: GAMEMD 0x00799D10
 void FUN_00799D10(void)
 {
 	HWND window = FUN_00775B10();
@@ -5217,7 +5218,7 @@ void FUN_00799D10(void)
 	}
 }
 
-// FUNCTION: 0x00799D30
+// FUNCTION: GAMEMD 0x00799D30
 int FUN_00799D30(void)
 {
 	int result = FUN_00786390();
@@ -5255,7 +5256,7 @@ int FUN_00799D30(void)
 void __fastcall FUN_00779830(bool value);
 void __fastcall FUN_00779C90(Wstring const * value);
 
-// FUNCTION: 0x0079AE00
+// FUNCTION: GAMEMD 0x0079AE00
 BOOL CALLBACK FUN_0079AE00(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	if (message == WM_INITDIALOG && lparam) {
@@ -5301,7 +5302,7 @@ BOOL CALLBACK FUN_0079AE00(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 
 BOOL CALLBACK FUN_0079DB50(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 
-// FUNCTION: 0x0079BE70
+// FUNCTION: GAMEMD 0x0079BE70
 void FUN_0079BE70(void)
 {
 	HWND dialog = WS_Create_Dialog(Game::hInstance, 0x11E, Game::hWnd, FUN_0079DB50, FALSE);
@@ -5311,7 +5312,7 @@ void FUN_0079BE70(void)
 	FUN_007759E0(dialog, (bool (*)(void))FUN_0077F900, 0, 1, 1);
 }
 
-// FUNCTION: 0x0079BED0
+// FUNCTION: GAMEMD 0x0079BED0
 bool FUN_0079BED0(void)
 {
 	if (DAT_00B76E24.length() == 0) {
@@ -5341,7 +5342,7 @@ static inline void Set_Text(HWND window, wchar_t const * text)
 	SendMessage(window, 0x4B2, 0, (LPARAM)text);
 }
 
-// FUNCTION: 0x0079C040
+// FUNCTION: GAMEMD 0x0079C040
 void __fastcall FUN_0079C040(HWND dialog)
 {
 	HWND name_label = GetDlgItem(dialog, 0x6EF);
@@ -5384,7 +5385,7 @@ void __fastcall FUN_0079C040(HWND dialog)
 	}
 }
 
-// FUNCTION: 0x0079C3A0
+// FUNCTION: GAMEMD 0x0079C3A0
 void FUN_0079C3A0(void)
 {
 	if (DAT_00B73ACC.length() > 0) {
@@ -5404,7 +5405,7 @@ void FUN_0079C3A0(void)
 	DAT_00AC116C->V24(&user);
 }
 
-// FUNCTION: 0x0079C520
+// FUNCTION: GAMEMD 0x0079C520
 bool __fastcall FUN_0079C520(Wstring * name)
 {
 	Wstring lower(*name);
@@ -5429,7 +5430,7 @@ bool __fastcall FUN_0079C520(Wstring * name)
 	return true;
 }
 
-// FUNCTION: 0x0079C650
+// FUNCTION: GAMEMD 0x0079C650
 void __fastcall FUN_0079C650(Wstring * name)
 {
 	if (!FUN_0079C520(name)) {
@@ -5444,7 +5445,7 @@ void __fastcall FUN_0079C650(Wstring * name)
 
 void FUN_0079D110(void);
 
-// FUNCTION: 0x0079C8D0
+// FUNCTION: GAMEMD 0x0079C8D0
 void __fastcall FUN_0079C8D0(Wstring * name)
 {
 	if (!FUN_0079C520(name)) {
@@ -5469,7 +5470,7 @@ static inline char Remove_Channel(Wstring & key, LadderC & value)
 	return DAT_00B76608.remove(key, value);
 }
 
-// FUNCTION: 0x0079CBA0
+// FUNCTION: GAMEMD 0x0079CBA0
 void __fastcall FUN_0079CBA0(Wstring * name)
 {
 	LadderC value;
@@ -5490,7 +5491,7 @@ void __fastcall FUN_0079CBA0(Wstring * name)
 	}
 }
 
-// FUNCTION: 0x0079D110
+// FUNCTION: GAMEMD 0x0079D110
 void FUN_0079D110(void)
 {
 	int count = DAT_00B779B0.length();
@@ -5512,7 +5513,7 @@ void FUN_0079D110(void)
 	DAT_00AC1170->V14(DAT_00B761A8, DAT_00B77A90, keys.get(), DAT_0084A234 & 0xFFFF00);
 }
 
-// FUNCTION: 0x0079D2F0
+// FUNCTION: GAMEMD 0x0079D2F0
 void FUN_0079D2F0(void)
 {
 	DAT_00B779B0.clear();
@@ -5527,7 +5528,7 @@ void FUN_0079D2F0(void)
 void FUN_00623F60(HWND listbox, int index, WideWstring & text);
 int __fastcall FUN_00623EA0(HWND window, WideWstring * text);
 
-// FUNCTION: 0x0079D720
+// FUNCTION: GAMEMD 0x0079D720
 BOOL CALLBACK FUN_0079D720(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	int rc = UI::StandardWndProc(window, message, wparam, lparam);
@@ -5617,7 +5618,7 @@ BOOL CALLBACK FUN_0079D720(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 	}
 }
 
-// FUNCTION: 0x0079DA90
+// FUNCTION: GAMEMD 0x0079DA90
 Wstring __fastcall FUN_0079DA90(HWND list)
 {
 	int index = SendMessage(list, LB_GETCURSEL, 0, 0);
@@ -5642,7 +5643,7 @@ static inline void Show_Name(HWND window, Wstring const & name)
 	SendMessage(label, 0x4B4, 0, (LPARAM)name.text());
 }
 
-// FUNCTION: 0x0079DB50
+// FUNCTION: GAMEMD 0x0079DB50
 BOOL CALLBACK FUN_0079DB50(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	int rc = UI::StandardWndProc(window, message, wparam, lparam);
@@ -5756,7 +5757,7 @@ BOOL CALLBACK FUN_0079DB50(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 	}
 }
 
-// FUNCTION: 0x0079DFE0
+// FUNCTION: GAMEMD 0x0079DFE0
 BOOL CALLBACK FUN_0079DFE0(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	if (message == WM_INITDIALOG && lparam) {
@@ -5829,7 +5830,7 @@ BOOL CALLBACK FUN_0079DFE0(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 	}
 }
 
-// FUNCTION: 0x0079F0A0
+// FUNCTION: GAMEMD 0x0079F0A0
 bool __fastcall FUN_0079F0A0(Wstring * name, ArrayList<WolChannel> * channels, WolChannel * result)
 {
 	memset(result, 0, sizeof(WolChannel));
@@ -5843,7 +5844,7 @@ bool __fastcall FUN_0079F0A0(Wstring * name, ArrayList<WolChannel> * channels, W
 	return false;
 }
 
-// FUNCTION: 0x0079FC10
+// FUNCTION: GAMEMD 0x0079FC10
 void __fastcall FUN_0079FC10(int a, int b, int c)
 {
 	DAT_00B77E14 = c;
@@ -5852,7 +5853,7 @@ void __fastcall FUN_0079FC10(int a, int b, int c)
 	DAT_00B77A88 = time(NULL);
 }
 
-// FUNCTION: 0x007A0430
+// FUNCTION: GAMEMD 0x007A0430
 void FUN_007A0430(void)
 {
 	User user;
@@ -5872,7 +5873,7 @@ void FUN_007A0430(void)
 	}
 }
 
-// FUNCTION: 0x007A0D10
+// FUNCTION: GAMEMD 0x007A0D10
 void FUN_007A0D10(void)
 {
 	if (DAT_00B77E28 == 0) {
@@ -5890,7 +5891,7 @@ void FUN_007A0D10(void)
 	}
 }
 
-// FUNCTION: 0x007A0DD0
+// FUNCTION: GAMEMD 0x007A0DD0
 void __fastcall FUN_007A0DD0(User * user)
 {
 	if (user) {
@@ -5908,7 +5909,7 @@ void __fastcall FUN_007A0DD0(User * user)
 
 void __fastcall FUN_007A0EA0(char const * name, int ping);
 
-// FUNCTION: 0x007A0E50
+// FUNCTION: GAMEMD 0x007A0E50
 void FUN_007A0E50(void)
 {
 	for (int i = 0; i < 8; i++) {
@@ -5920,7 +5921,7 @@ void FUN_007A0E50(void)
 	}
 }
 
-// FUNCTION: 0x007A0EA0
+// FUNCTION: GAMEMD 0x007A0EA0
 void __fastcall FUN_007A0EA0(char const * name, int ping)
 {
 	FUN_004068E0("Got ping from gameoptions.  name = %s, ping = %d\n", name, ping);
@@ -5943,7 +5944,7 @@ void __fastcall FUN_007A0EA0(char const * name, int ping)
 	}
 }
 
-// FUNCTION: 0x007A0F40
+// FUNCTION: GAMEMD 0x007A0F40
 void FUN_007A0F40(void)
 {
 	int count = DAT_00B77900.length();
@@ -5968,7 +5969,7 @@ void FUN_007A0F40(void)
 	}
 }
 
-// FUNCTION: 0x007A1060
+// FUNCTION: GAMEMD 0x007A1060
 void FUN_007A1060(void)
 {
 	bool failed = false;
@@ -6052,7 +6053,7 @@ static inline bool Match_Failed(char const * message)
 	return false;
 }
 
-// FUNCTION: 0x007A16B0
+// FUNCTION: GAMEMD 0x007A16B0
 void __fastcall FUN_007A16B0(char const * message, bool strict)
 {
 	if (strict && Match_Failed(message)) {
@@ -6100,7 +6101,7 @@ void __fastcall FUN_007A16B0(char const * message, bool strict)
 	}
 }
 
-// FUNCTION: 0x007A19E0
+// FUNCTION: GAMEMD 0x007A19E0
 void FUN_007A19E0(void)
 {
 	FUN_005E2700(0xC0FFFF, StringTable::LoadString("WOL:MatchFoundWith", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x7066), DAT_00B76AC4.c_str());
@@ -6136,7 +6137,7 @@ void __fastcall FUN_005EC880(HWND dialog, int count, bool full, bool ai);
 void FUN_005E2AC0(void);
 bool FUN_00779940(void);
 
-// FUNCTION: 0x007A2110
+// FUNCTION: GAMEMD 0x007A2110
 BOOL CALLBACK FUN_007A2110(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	switch (message) {
@@ -6192,7 +6193,7 @@ BOOL CALLBACK FUN_007A2110(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 }
 
 
-// FUNCTION: 0x007A2230
+// FUNCTION: GAMEMD 0x007A2230
 void __fastcall FUN_007A2230(char * name, char * ip, unsigned long second, unsigned long third)
 {
 	if (!name || !ip || !second || !third) {
@@ -6222,7 +6223,7 @@ void __fastcall FUN_007A2230(char * name, char * ip, unsigned long second, unsig
 }
 
 
-// FUNCTION: 0x007A2730
+// FUNCTION: GAMEMD 0x007A2730
 void FUN_007A2730(void)
 {
 	if (DAT_00AC116C) {
@@ -6230,7 +6231,7 @@ void FUN_007A2730(void)
 	}
 }
 
-// FUNCTION: 0x007A2750
+// FUNCTION: GAMEMD 0x007A2750
 void FUN_007A2750(void)
 {
 	HWND dialog = FUN_00775B10();
@@ -6246,7 +6247,7 @@ void FUN_007A2750(void)
 	}
 }
 
-// FUNCTION: 0x007A27D0
+// FUNCTION: GAMEMD 0x007A27D0
 void FUN_007A27D0(void)
 {
 	HWND dialog = FUN_00775B10();
@@ -6254,14 +6255,14 @@ void FUN_007A27D0(void)
 	SendMessage(list, 0x4DC, 0, 0);
 }
 
-// FUNCTION: 0x007A2800
+// FUNCTION: GAMEMD 0x007A2800
 void __fastcall FUN_007A2800(int count, bool full, bool ai)
 {
 	HWND dialog = FUN_00775940(0xC2);
 	FUN_005EC880(dialog, count, full, ai);
 }
 
-// FUNCTION: 0x007A2830
+// FUNCTION: GAMEMD 0x007A2830
 void __fastcall FUN_007A2830(Wstring * name)
 {
 	User user;
@@ -6275,7 +6276,7 @@ void __fastcall FUN_007A2830(Wstring * name)
 	}
 }
 
-// FUNCTION: 0x007A28B0
+// FUNCTION: GAMEMD 0x007A28B0
 void __fastcall FUN_007A28B0(wchar_t const * wide)
 {
 	if (wide) {
@@ -6294,7 +6295,7 @@ void __fastcall FUN_007A28B0(wchar_t const * wide)
 
 BOOL CALLBACK FUN_007A29E0(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 
-// FUNCTION: 0x007A2970
+// FUNCTION: GAMEMD 0x007A2970
 void FUN_007A2970(void)
 {
 	char busy = DAT_00B77DC2;
@@ -6308,7 +6309,7 @@ void FUN_007A2970(void)
 
 void __fastcall FUN_00779A40(bool value);
 
-// FUNCTION: 0x007A29E0
+// FUNCTION: GAMEMD 0x007A29E0
 BOOL CALLBACK FUN_007A29E0(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	if (message == WM_INITDIALOG && lparam) {
@@ -6366,7 +6367,8 @@ BOOL CALLBACK FUN_007A29E0(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 	return FALSE;
 }
 
-// FUNCTION: 0x007A2E70 SimpleWonlineDialogControl::~SimpleWonlineDialogControl
+// SYNTHETIC: GAMEMD 0x007A2E70
+// ??_GSimpleWonlineDialogControl@@UAEPAXI@Z
 
 struct AtlObjectEntry {
 	GUID const * Clsid;
@@ -6419,7 +6421,7 @@ rc_ptr<WDTState> __fastcall FUN_0076ABA0(void * data);
 void __fastcall FUN_007B02A0(rc_ptr<WDTState> const & state);
 void __fastcall FUN_007B0220(rc_ptr<WDTState> const & state);
 
-// FUNCTION: 0x007A2EA0
+// FUNCTION: GAMEMD 0x007A2EA0
 long __stdcall FUN_007A2EA0(IUnknown * source, IUnknown * sink, IID const & iid, DWORD * cookie)
 {
 	PointContainerPtr container;
@@ -6434,12 +6436,13 @@ long __stdcall FUN_007A2EA0(IUnknown * source, IUnknown * sink, IID const & iid,
 	return result;
 }
 
-// FUNCTION: 0x007A2FC0 NetUtilEventSink::NetUtilEventSink
+// FUNCTION: GAMEMD 0x007A2FC0
+// NetUtilEventSink::NetUtilEventSink
 NetUtilEventSink::NetUtilEventSink(void)
 {
 }
 
-// FUNCTION: 0x007A2FE0
+// FUNCTION: GAMEMD 0x007A2FE0
 long __stdcall FUN_007A2FE0(void * sink, long result, unsigned char * data, int length)
 {
 	if (result < 0 || length <= 0) {
@@ -6465,7 +6468,7 @@ long __stdcall FUN_007A2FE0(void * sink, long result, unsigned char * data, int 
 	return 0;
 }
 
-// FUNCTION: 0x007A30D0
+// FUNCTION: GAMEMD 0x007A30D0
 long __stdcall FUN_007A30D0(void * sink, long result)
 {
 	FUN_004068E0("OnGameresSent  %d\n", result);
@@ -6482,7 +6485,7 @@ static inline rc_ptr<PlayerProfile> Profile_For_Nick(char const * nick)
 	return FUN_00778A20(&name);
 }
 
-// FUNCTION: 0x007A3D90
+// FUNCTION: GAMEMD 0x007A3D90
 long __stdcall FUN_007A3D90(void * sink, long result, char const * message, char const * nick, char const * pass)
 {
 	FUN_004068E0("OnNewNick\n");
@@ -6560,7 +6563,7 @@ long __stdcall FUN_007A3D90(void * sink, long result, char const * message, char
 	return 0;
 }
 
-// FUNCTION: 0x007A4070
+// FUNCTION: GAMEMD 0x007A4070
 long __stdcall FUN_007A4070(void * sink, long result, int age, int consent)
 {
 	FUN_004068E0("OnAgeCheck\n");
@@ -6584,7 +6587,7 @@ long __stdcall FUN_007A4070(void * sink, long result, int age, int consent)
 	return 0;
 }
 
-// FUNCTION: 0x007A40F0
+// FUNCTION: GAMEMD 0x007A40F0
 long __stdcall FUN_007A40F0(void * sink, long result, int time, unsigned long address, int extra)
 {
 	if (DAT_00B77DC1 && DAT_00B77780) {
@@ -6617,7 +6620,8 @@ counted:
 	return 0;
 }
 
-// FUNCTION: 0x007A41A0 ChatEventSink::ChatEventSink
+// FUNCTION: GAMEMD 0x007A41A0
+// ChatEventSink::ChatEventSink
 ChatEventSink::ChatEventSink(void)
 {
 }
@@ -6634,7 +6638,7 @@ struct UpdateEntry {
 	char LocalPath[0x100];
 };
 
-// FUNCTION: 0x007A4C10
+// FUNCTION: GAMEMD 0x007A4C10
 long __stdcall FUN_007A4C10(void * sink, long result, UpdateEntry * updates)
 {
 	int count = 0;
@@ -6701,7 +6705,7 @@ struct SquadEntry {
 	char Abbreviation[0x29];
 };
 
-// FUNCTION: 0x007A4EC0
+// FUNCTION: GAMEMD 0x007A4EC0
 long __stdcall FUN_007A4EC0(void * sink, long result, unsigned long id, SquadEntry * squad)
 {
 	DAT_00B77DDC--;
@@ -6741,4 +6745,5 @@ long __stdcall FUN_007A4EC0(void * sink, long result, unsigned long id, SquadEnt
 	return 0;
 }
 
-// FUNCTION: 0x007AC5D0 WonlineStringDialogControl::~WonlineStringDialogControl
+// SYNTHETIC: GAMEMD 0x007AC5D0
+// ??_GWonlineStringDialogControl@@UAEPAXI@Z

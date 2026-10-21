@@ -42,27 +42,28 @@ extern const double DAT_007E1740;
 extern const double DAT_007ED0B8;
 extern const double DAT_007ED0C0;
 
-// FUNCTION: 0x00556550 LinkClass::LinkClass
+// FUNCTION: GAMEMD 0x00556550
+// LinkClass::LinkClass
 LinkClass::LinkClass(LinkClass const & link) :
 	Next(0), Prev(0)
 {
 	Add((LinkClass &)link);
 }
 
-// FUNCTION: 0x005565A0
+// FUNCTION: GAMEMD 0x005565A0
 LinkClass::~LinkClass(void)
 {
 	Remove();
 }
 
-// FUNCTION: 0x005565F0
+// FUNCTION: GAMEMD 0x005565F0
 void LinkClass::Zap(void)
 {
 	Next = 0;
 	Prev = 0;
 }
 
-// FUNCTION: 0x00556600
+// FUNCTION: GAMEMD 0x00556600
 LinkClass & LinkClass::operator = (LinkClass const & link)
 {
 	if (&link == this) return(*this);
@@ -73,19 +74,19 @@ LinkClass & LinkClass::operator = (LinkClass const & link)
 	return(*this);
 }
 
-// FUNCTION: 0x00556620
+// FUNCTION: GAMEMD 0x00556620
 LinkClass * LinkClass::Get_Next(void) const
 {
 	return(Next);
 }
 
-// FUNCTION: 0x00556630
+// FUNCTION: GAMEMD 0x00556630
 LinkClass * LinkClass::Get_Prev(void) const
 {
 	return(Prev);
 }
 
-// FUNCTION: 0x00556640
+// FUNCTION: GAMEMD 0x00556640
 LinkClass & LinkClass::Head_Of_List(void)
 {
 	LinkClass * link = this;
@@ -96,7 +97,7 @@ LinkClass & LinkClass::Head_Of_List(void)
 	return(*link);
 }
 
-// FUNCTION: 0x00556670
+// FUNCTION: GAMEMD 0x00556670
 LinkClass & LinkClass::Tail_Of_List(void)
 {
 	LinkClass * link = this;
@@ -107,7 +108,7 @@ LinkClass & LinkClass::Tail_Of_List(void)
 	return(*link);
 }
 
-// FUNCTION: 0x005566A0
+// FUNCTION: GAMEMD 0x005566A0
 LinkClass & LinkClass::Add(LinkClass & list)
 {
 	Remove();
@@ -121,7 +122,7 @@ LinkClass & LinkClass::Add(LinkClass & list)
 	return(Head_Of_List());
 }
 
-// FUNCTION: 0x005566D0
+// FUNCTION: GAMEMD 0x005566D0
 LinkClass & LinkClass::Add_Head(LinkClass & list)
 {
 	Remove();
@@ -132,7 +133,7 @@ LinkClass & LinkClass::Add_Head(LinkClass & list)
 	return(*this);
 }
 
-// FUNCTION: 0x00556700
+// FUNCTION: GAMEMD 0x00556700
 LinkClass & LinkClass::Add_Tail(LinkClass & list)
 {
 	Remove();
@@ -143,7 +144,7 @@ LinkClass & LinkClass::Add_Tail(LinkClass & list)
 	return(Head_Of_List());
 }
 
-// FUNCTION: 0x00556730
+// FUNCTION: GAMEMD 0x00556730
 LinkClass * LinkClass::Remove(void)
 {
 	LinkClass * head = &Head_Of_List();
@@ -167,44 +168,58 @@ LinkClass * LinkClass::Remove(void)
 	return(head);
 }
 
-// FUNCTION: 0x00556790 $E2
+// SYNTHETIC: GAMEMD 0x00556790 SYMBOL
+// _$E2
 double DAT_00ABCB38 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x005567C0 $E5
+// SYNTHETIC: GAMEMD 0x005567C0 SYMBOL
+// _$E5
 double DAT_00ABCBA0 = DAT_00ABCB38 / DAT_007ED0B8;
 
-// FUNCTION: 0x005567E0 $E8
+// SYNTHETIC: GAMEMD 0x005567E0 SYMBOL
+// _$E8
 double DAT_00ABCB70 = DAT_007E1718 / DAT_00ABCBA0;
 
-// FUNCTION: 0x00556800 $E11
+// SYNTHETIC: GAMEMD 0x00556800 SYMBOL
+// _$E11
 double DAT_00ABCB68 = DAT_007E1720 * DAT_007ED0C0;
 
-// FUNCTION: 0x00556820 $E14
+// SYNTHETIC: GAMEMD 0x00556820 SYMBOL
+// _$E14
 double DAT_00ABCB40 = DAT_007E1728 * DAT_007ED0C0;
 
-// FUNCTION: 0x00556840 $E17
+// SYNTHETIC: GAMEMD 0x00556840 SYMBOL
+// _$E17
 double DAT_00ABCB18 = DAT_007E1730 * DAT_007ED0C0;
 
-// FUNCTION: 0x00556860 $E20
+// SYNTHETIC: GAMEMD 0x00556860 SYMBOL
+// _$E20
 int DAT_00ABCBA8 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00ABCB18 - DAT_00ABCB40) * DAT_00ABCB38));
 
-// FUNCTION: 0x005568A0 $E23
+// SYNTHETIC: GAMEMD 0x005568A0 SYMBOL
+// _$E23
 double DAT_00ABCB48 = FUN_004CADE0(DAT_00ABCBA8 * DAT_007E1740);
 
-// FUNCTION: 0x005568D0 $E26
+// SYNTHETIC: GAMEMD 0x005568D0 SYMBOL
+// _$E26
 double DAT_00ABCB60 = FUN_004CADE0((DAT_00ABCBA8 * 2) / DAT_00ABCB38);
 
-// FUNCTION: 0x00556900 $E29
+// SYNTHETIC: GAMEMD 0x00556900 SYMBOL
+// _$E29
 int DAT_00ABCB9C = (int)(DAT_00ABCBA8 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x00556930 $E32
+// SYNTHETIC: GAMEMD 0x00556930 SYMBOL
+// _$E32
 ShortPair DAT_00ABCB30;
 
-// FUNCTION: 0x00556940 $E35
+// SYNTHETIC: GAMEMD 0x00556940 SYMBOL
+// _$E35
 IntTriple DAT_00ABCB50;
 
-// FUNCTION: 0x00556960 $E38
+// SYNTHETIC: GAMEMD 0x00556960 SYMBOL
+// _$E38
 IntTriple2 DAT_00ABCB90;
 
-// FUNCTION: 0x00556980 $E41
+// SYNTHETIC: GAMEMD 0x00556980 SYMBOL
+// _$E41
 IntQuad DAT_00ABCB20;

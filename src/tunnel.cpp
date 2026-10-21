@@ -28,7 +28,7 @@
 #include "visual.hh"
 #include <new.h>
 
-// FUNCTION: 0x00728A00
+// FUNCTION: GAMEMD 0x00728A00
 TunnelLocomotionClass::TunnelLocomotionClass(void) :
 	BASECLASS(),
 	State(STATE_IDLE),
@@ -37,7 +37,7 @@ TunnelLocomotionClass::TunnelLocomotionClass(void) :
 {
 }
 
-// FUNCTION: 0x00728A50
+// FUNCTION: GAMEMD 0x00728A50
 boolean STDMETHODCALLTYPE TunnelLocomotionClass::Is_Moving(void)
 {
 	if (State != STATE_IDLE) {
@@ -46,7 +46,7 @@ boolean STDMETHODCALLTYPE TunnelLocomotionClass::Is_Moving(void)
 	return(false);
 }
 
-// FUNCTION: 0x00728A60
+// FUNCTION: GAMEMD 0x00728A60
 boolean STDMETHODCALLTYPE TunnelLocomotionClass::Is_Moving_Now(void)
 {
 	if (Is_Moving() && State != STATE_PRE_DIG_IN) {
@@ -55,7 +55,7 @@ boolean STDMETHODCALLTYPE TunnelLocomotionClass::Is_Moving_Now(void)
 	return(false);
 }
 
-// FUNCTION: 0x00728A90
+// FUNCTION: GAMEMD 0x00728A90
 CoordStruct STDMETHODCALLTYPE TunnelLocomotionClass::Destination(void)
 {
 	if (Is_Moving()) {
@@ -64,7 +64,7 @@ CoordStruct STDMETHODCALLTYPE TunnelLocomotionClass::Destination(void)
 	return(LinkedTo->PositionCoord);
 }
 
-// FUNCTION: 0x00728AF0
+// FUNCTION: GAMEMD 0x00728AF0
 void STDMETHODCALLTYPE TunnelLocomotionClass::Move_To(CoordStruct to)
 {
 	if (!LinkedTo->IsUnderEMP() && !LinkedTo->IsParalyzed() && !LinkedTo->IsBeingWarpedOut() && !LinkedTo->IsWarpingIn()) {
@@ -82,7 +82,7 @@ void STDMETHODCALLTYPE TunnelLocomotionClass::Move_To(CoordStruct to)
 	}
 }
 
-// FUNCTION: 0x00728C00
+// FUNCTION: GAMEMD 0x00728C00
 void STDMETHODCALLTYPE TunnelLocomotionClass::Stop_Moving(void)
 {
 	switch (State) {
@@ -133,7 +133,7 @@ void STDMETHODCALLTYPE TunnelLocomotionClass::Stop_Moving(void)
 	}
 }
 
-// FUNCTION: 0x00728E30
+// FUNCTION: GAMEMD 0x00728E30
 boolean STDMETHODCALLTYPE TunnelLocomotionClass::Process(void)
 {
 	if (Is_Moving()) {
@@ -197,7 +197,7 @@ boolean STDMETHODCALLTYPE TunnelLocomotionClass::Process(void)
 	return(false);
 }
 
-// FUNCTION: 0x007291D0
+// FUNCTION: GAMEMD 0x007291D0
 VisualType STDMETHODCALLTYPE TunnelLocomotionClass::Visual_Character(boolean flag)
 {
 	if (State == STATE_DIGGING) {
@@ -209,7 +209,7 @@ VisualType STDMETHODCALLTYPE TunnelLocomotionClass::Visual_Character(boolean fla
 	return(VISUAL_NORMAL);
 }
 
-// FUNCTION: 0x007291F0
+// FUNCTION: GAMEMD 0x007291F0
 void TunnelLocomotionClass::ProcessPreDigIn(void)
 {
 	if (!LinkedTo->PrimaryFacing.Is_Rotating()) {
@@ -229,7 +229,7 @@ void TunnelLocomotionClass::ProcessPreDigIn(void)
 	}
 }
 
-// FUNCTION: 0x00729370
+// FUNCTION: GAMEMD 0x00729370
 void TunnelLocomotionClass::ProcessDiggingIn(void)
 {
 	if (DigTimer.Progress() == 1.0) {
@@ -241,7 +241,7 @@ void TunnelLocomotionClass::ProcessDiggingIn(void)
 	}
 }
 
-// FUNCTION: 0x00729480
+// FUNCTION: GAMEMD 0x00729480
 void TunnelLocomotionClass::ProcessDugOut(void)
 {
 	if (DigTimer.Progress() == 1.0) {
@@ -250,7 +250,7 @@ void TunnelLocomotionClass::ProcessDugOut(void)
 	}
 }
 
-// FUNCTION: 0x007294E0
+// FUNCTION: GAMEMD 0x007294E0
 void TunnelLocomotionClass::ProcessDugIn(void)
 {
 	Coord coord = LinkedTo->PositionCoord;
@@ -275,7 +275,7 @@ void TunnelLocomotionClass::ProcessDugIn(void)
 	}
 }
 
-// FUNCTION: 0x007298F0
+// FUNCTION: GAMEMD 0x007298F0
 void TunnelLocomotionClass::ProcessPreDigOut(void)
 {
 	Coord coord = LinkedTo->PositionCoord;
@@ -307,7 +307,7 @@ void TunnelLocomotionClass::ProcessPreDigOut(void)
 	}
 }
 
-// FUNCTION: 0x00729AA0
+// FUNCTION: GAMEMD 0x00729AA0
 void TunnelLocomotionClass::ProcessDiggingOut(void)
 {
 	if (DigTimer.Progress() == 1.0) {
@@ -320,7 +320,7 @@ void TunnelLocomotionClass::ProcessDiggingOut(void)
 	}
 }
 
-// FUNCTION: 0x00729B40
+// FUNCTION: GAMEMD 0x00729B40
 Matrix3DStruct STDMETHODCALLTYPE TunnelLocomotionClass::Draw_Matrix(int * key)
 {
 	if (State == STATE_IDLE) {
@@ -383,7 +383,7 @@ Matrix3DStruct STDMETHODCALLTYPE TunnelLocomotionClass::Draw_Matrix(int * key)
 	return((Matrix3DStruct &)mtx);
 }
 
-// FUNCTION: 0x00729E50
+// FUNCTION: GAMEMD 0x00729E50
 int STDMETHODCALLTYPE TunnelLocomotionClass::Z_Adjust(void)
 {
 	static int tunnel_Z_Adjust[] = {45, 45};
@@ -432,7 +432,7 @@ int STDMETHODCALLTYPE TunnelLocomotionClass::Z_Adjust(void)
 	return(BASECLASS::Z_Adjust());
 }
 
-// FUNCTION: 0x0072A020
+// FUNCTION: GAMEMD 0x0072A020
 ZGradientType STDMETHODCALLTYPE TunnelLocomotionClass::Z_Gradient(void)
 {
 	if (State == STATE_DUG_IN || State == STATE_DIGGING_IN || State == STATE_DUG_OUT || State == STATE_DIGGING_OUT || State == STATE_PRE_DIG_OUT) {
@@ -441,7 +441,7 @@ ZGradientType STDMETHODCALLTYPE TunnelLocomotionClass::Z_Gradient(void)
 	return(BASECLASS::Z_Gradient());
 }
 
-// FUNCTION: 0x0072A060
+// FUNCTION: GAMEMD 0x0072A060
 boolean STDMETHODCALLTYPE TunnelLocomotionClass::Is_To_Have_Shadow(void)
 {
 	if (State == STATE_IDLE || State == STATE_PRE_DIG_IN || State == STATE_DUG_OUT || State == STATE_DIGGING_IN || State == STATE_DIGGING_OUT) {
@@ -450,7 +450,7 @@ boolean STDMETHODCALLTYPE TunnelLocomotionClass::Is_To_Have_Shadow(void)
 	return(false);
 }
 
-// FUNCTION: 0x0072A090
+// FUNCTION: GAMEMD 0x0072A090
 MoveType STDMETHODCALLTYPE TunnelLocomotionClass::Can_Enter_Cell(CellStruct cell)
 {
 	if (!Debug_Map && !Map[cell].Can_Burrow_Here()) {
@@ -459,14 +459,14 @@ MoveType STDMETHODCALLTYPE TunnelLocomotionClass::Can_Enter_Cell(CellStruct cell
 	return(MOVE_OK);
 }
 
-// FUNCTION: 0x0072A0E0
+// FUNCTION: GAMEMD 0x0072A0E0
 void STDMETHODCALLTYPE TunnelLocomotionClass::Do_Turn(DirStruct coord)
 {
 	DirType dir = (DirType &)coord;
 	LinkedTo->PrimaryFacing.Set_Desired(dir);
 }
 
-// FUNCTION: 0x0072A110
+// FUNCTION: GAMEMD 0x0072A110
 HRESULT STDMETHODCALLTYPE TunnelLocomotionClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -474,7 +474,7 @@ HRESULT STDMETHODCALLTYPE TunnelLocomotionClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x0072A150
+// FUNCTION: GAMEMD 0x0072A150
 HRESULT STDMETHODCALLTYPE TunnelLocomotionClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -484,7 +484,7 @@ HRESULT STDMETHODCALLTYPE TunnelLocomotionClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x0072A1A0
+// FUNCTION: GAMEMD 0x0072A1A0
 LayerType STDMETHODCALLTYPE TunnelLocomotionClass::In_Which_Layer(void)
 {
 	if (State != STATE_DIGGING) {
@@ -493,7 +493,7 @@ LayerType STDMETHODCALLTYPE TunnelLocomotionClass::In_Which_Layer(void)
 	return(LAYER_UNDERGROUND);
 }
 
-// FUNCTION: 0x0072A1C0
+// FUNCTION: GAMEMD 0x0072A1C0
 FireErrorType STDMETHODCALLTYPE TunnelLocomotionClass::Can_Fire(void)
 {
 	FireErrorType fire = BASECLASS::Can_Fire();
@@ -505,10 +505,11 @@ FireErrorType STDMETHODCALLTYPE TunnelLocomotionClass::Can_Fire(void)
 	return(fire);
 }
 
-// FUNCTION: 0x0072A1E0
+// FUNCTION: GAMEMD 0x0072A1E0
 boolean STDMETHODCALLTYPE TunnelLocomotionClass::Is_Surfacing(void)
 {
 	return(State == STATE_PRE_DIG_OUT || State == STATE_DIGGING_OUT);
 }
 
-// FUNCTION: 0x0072A200 TunnelLocomotionClass::Fetch_Object_Size
+// FUNCTION: GAMEMD 0x0072A200
+// TunnelLocomotionClass::Fetch_Object_Size

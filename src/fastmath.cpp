@@ -52,70 +52,70 @@ static void Sabotage_Routine(LPVOID funcptr)
 	}
 }
 
-// FUNCTION: 0x004CAC40
+// FUNCTION: GAMEMD 0x004CAC40
 double __cdecl fastmath::sqrt(double f)
 {
 	return((float)(fastmath::sqrtf(f)));
 }
 
-// FUNCTION: 0x004CACB0
+// FUNCTION: GAMEMD 0x004CACB0
 double __cdecl fastmath::sin(double f)
 {
 	return((float)(fastmath::sinf(f)));
 }
 
-// FUNCTION: 0x004CAD00
+// FUNCTION: GAMEMD 0x004CAD00
 double __cdecl fastmath::cos(double f)
 {
 	return((float)(fastmath::cosf(f)));
 }
 
-// FUNCTION: 0x004CAD50
+// FUNCTION: GAMEMD 0x004CAD50
 double __cdecl fastmath::tan(double f)
 {
 	return((float)(fastmath::tanf(f)));
 }
 
-// FUNCTION: 0x004CAD80
+// FUNCTION: GAMEMD 0x004CAD80
 double __cdecl fastmath::asin(double f)
 {
 	return((float)(fastmath::asinf(f)));
 }
 
-// FUNCTION: 0x004CADB0
+// FUNCTION: GAMEMD 0x004CADB0
 double __cdecl fastmath::acos(double f)
 {
 	return((float)(fastmath::acosf(f)));
 }
 
-// FUNCTION: 0x004CADE0
+// FUNCTION: GAMEMD 0x004CADE0
 double __cdecl fastmath::atan(double f)
 {
 	return((float)(fastmath::atan2(f, 1)));
 }
 
-// FUNCTION: 0x004CAE30
+// FUNCTION: GAMEMD 0x004CAE30
 double __cdecl fastmath::atan2(double y, double x)
 {
 	return((float)(fastmath::atan2f(y, x)));
 }
 
-// FUNCTION: 0x004CAEF0
+// FUNCTION: GAMEMD 0x004CAEF0
 void FUN_004CAEF0(void)
 {
 }
 
-// FUNCTION: 0x004CAF00
+// FUNCTION: GAMEMD 0x004CAF00
 void FUN_004CAF00(void)
 {
 }
 
-// FUNCTION: 0x004CAF10
+// FUNCTION: GAMEMD 0x004CAF10
 void FUN_004CAF10(void)
 {
 }
 
-// FUNCTION: 0x004CB060
+// FUNCTION: GAMEMD 0x004CB060
 float fastmath::sqrtf(float f)
 {
 	short expo;
@@ -144,7 +144,7 @@ float fastmath::sqrtf(float f)
 	return(x);
 }
 
-// FUNCTION: 0x004CB0E0
+// FUNCTION: GAMEMD 0x004CB0E0
 void init_sin_tab(void)
 {
 	double half = SIN_TABLE_SIZE/2;
@@ -155,7 +155,7 @@ void init_sin_tab(void)
 	}
 }
 
-// FUNCTION: 0x004CB150
+// FUNCTION: GAMEMD 0x004CB150
 float fastmath::sinf(float f)
 {
 	static float _s = SIN_TABLE_SIZE / M_PI;
@@ -174,7 +174,7 @@ float fastmath::sinf(float f)
 	return(sin_tab[index]);
 }
 
-// FUNCTION: 0x004CB1A0
+// FUNCTION: GAMEMD 0x004CB1A0
 float fastmath::cosf(float f)
 {
 	static float _s = SIN_TABLE_SIZE / M_PI;
@@ -196,7 +196,7 @@ float fastmath::cosf(float f)
 	return(sin_tab[index]);
 }
 
-// FUNCTION: 0x004CB200
+// FUNCTION: GAMEMD 0x004CB200
 void init_asin_tab(void)
 {
 	double half = ASIN_TABLE_SIZE/2;
@@ -207,7 +207,7 @@ void init_asin_tab(void)
 	}
 }
 
-// FUNCTION: 0x004CB260
+// FUNCTION: GAMEMD 0x004CB260
 float fastmath::asinf(float f)
 {
 	int i = (int)((f + 1) * (ASIN_TABLE_SIZE / 2));
@@ -215,13 +215,13 @@ float fastmath::asinf(float f)
 	return(asin_tab[i]);
 }
 
-// FUNCTION: 0x004CB290
+// FUNCTION: GAMEMD 0x004CB290
 float fastmath::acosf(float f)
 {
 	return(DEG_TO_RAD(90) - fastmath::asinf(f));
 }
 
-// FUNCTION: 0x004CB2C0
+// FUNCTION: GAMEMD 0x004CB2C0
 void init_tan_tab(void)
 {
 	double half = TAN_TABLE_SIZE/2;
@@ -232,7 +232,7 @@ void init_tan_tab(void)
 	}
 }
 
-// FUNCTION: 0x004CB320
+// FUNCTION: GAMEMD 0x004CB320
 float fastmath::tanf(float f)
 {
 	int i = int(f * (TAN_TABLE_SIZE / 2 / M_PI)) % TAN_TABLE_SIZE;
@@ -242,7 +242,7 @@ float fastmath::tanf(float f)
 	return(tan_tab[i]);
 }
 
-// FUNCTION: 0x004CB3D0
+// FUNCTION: GAMEMD 0x004CB3D0
 float fastmath::atan2f(float y, float x)
 {
 	if (x == 0) {
@@ -277,13 +277,13 @@ float fastmath::atan2f(float y, float x)
 	return(result);
 }
 
-// FUNCTION: 0x004CB480
+// FUNCTION: GAMEMD 0x004CB480
 float fastmath::atanf(float f)
 {
 	return((float)(fastmath::atan2f(f, 1)));
 }
 
-// FUNCTION: 0x004CB4C0
+// FUNCTION: GAMEMD 0x004CB4C0
 void Sabotage_Sine(void)
 {
 	Sabotage_Routine(fastmath::sin);

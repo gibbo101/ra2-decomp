@@ -21,7 +21,7 @@
 #include "layer.hh"
 #include <new.h>
 
-// FUNCTION: 0x005AFEF0
+// FUNCTION: GAMEMD 0x005AFEF0
 MechLocomotionClass::MechLocomotionClass(void) :
 	BASECLASS(),
 	DestinationCoord(COORD_NONE),
@@ -30,19 +30,19 @@ MechLocomotionClass::MechLocomotionClass(void) :
 {
 }
 
-// FUNCTION: 0x005AFF50
-// FUNCTION: 0x005B1B50
+// FUNCTION: GAMEMD 0x005AFF50
+// FUNCTION: GAMEMD 0x005B1B50
 MechLocomotionClass::~MechLocomotionClass(void)
 {
 }
 
-// FUNCTION: 0x005AFF70
+// FUNCTION: GAMEMD 0x005AFF70
 boolean STDMETHODCALLTYPE MechLocomotionClass::Is_Moving(void)
 {
 	return(IsMoving);
 }
 
-// FUNCTION: 0x005AFF80
+// FUNCTION: GAMEMD 0x005AFF80
 CoordStruct STDMETHODCALLTYPE MechLocomotionClass::Destination(void)
 {
 	if (Is_Moving()) {
@@ -51,7 +51,7 @@ CoordStruct STDMETHODCALLTYPE MechLocomotionClass::Destination(void)
 	return(COORD_NONE);
 }
 
-// FUNCTION: 0x005AFFE0
+// FUNCTION: GAMEMD 0x005AFFE0
 CoordStruct STDMETHODCALLTYPE MechLocomotionClass::Head_To_Coord(void)
 {
 	if (HeadToCoord != COORD_NONE) {
@@ -60,14 +60,14 @@ CoordStruct STDMETHODCALLTYPE MechLocomotionClass::Head_To_Coord(void)
 	return(LinkedTo->PositionCoord);
 }
 
-// FUNCTION: 0x005B0060
+// FUNCTION: GAMEMD 0x005B0060
 boolean STDMETHODCALLTYPE MechLocomotionClass::Process(void)
 {
 	Movement_AI(true);
 	return(Is_Moving());
 }
 
-// FUNCTION: 0x005B0080
+// FUNCTION: GAMEMD 0x005B0080
 void STDMETHODCALLTYPE MechLocomotionClass::Move_To(CoordStruct to)
 {
 	if (!LinkedTo->IsUnderEMP() && !LinkedTo->IsParalyzed() && !LinkedTo->IsBeingWarpedOut() && !LinkedTo->IsWarpingIn()) {
@@ -79,7 +79,7 @@ void STDMETHODCALLTYPE MechLocomotionClass::Move_To(CoordStruct to)
 	}
 }
 
-// FUNCTION: 0x005B0120
+// FUNCTION: GAMEMD 0x005B0120
 void STDMETHODCALLTYPE MechLocomotionClass::Stop_Moving(void)
 {
 	DestinationCoord = COORD_NONE;
@@ -88,19 +88,19 @@ void STDMETHODCALLTYPE MechLocomotionClass::Stop_Moving(void)
 	}
 }
 
-// FUNCTION: 0x005B0170
+// FUNCTION: GAMEMD 0x005B0170
 void MechLocomotionClass::Do_Turn(DirStruct coord)
 {
 	LinkedTo->PrimaryFacing.Set_Desired(coord);
 }
 
-// FUNCTION: 0x005B01A0
+// FUNCTION: GAMEMD 0x005B01A0
 void STDMETHODCALLTYPE MechLocomotionClass::Force_Immediate_Destination(CoordStruct coord)
 {
 	HeadToCoord = coord;
 }
 
-// FUNCTION: 0x005B17B0
+// FUNCTION: GAMEMD 0x005B17B0
 bool MechLocomotionClass::Mark_Head_To(Coord const & coord)
 {
 	Coord crd = coord;
@@ -134,7 +134,7 @@ bool MechLocomotionClass::Mark_Head_To(Coord const & coord)
 	return(false);
 }
 
-// FUNCTION: 0x005B1960
+// FUNCTION: GAMEMD 0x005B1960
 HRESULT STDMETHODCALLTYPE MechLocomotionClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -142,7 +142,7 @@ HRESULT STDMETHODCALLTYPE MechLocomotionClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x005B19A0
+// FUNCTION: GAMEMD 0x005B19A0
 HRESULT STDMETHODCALLTYPE MechLocomotionClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -152,13 +152,13 @@ HRESULT STDMETHODCALLTYPE MechLocomotionClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x005B19D0
+// FUNCTION: GAMEMD 0x005B19D0
 LayerType STDMETHODCALLTYPE MechLocomotionClass::In_Which_Layer(void)
 {
 	return(LAYER_GROUND);
 }
 
-// FUNCTION: 0x005B19E0
+// FUNCTION: GAMEMD 0x005B19E0
 boolean STDMETHODCALLTYPE MechLocomotionClass::Is_Moving_Now(void)
 {
 	if (LinkedTo->PrimaryFacing.Is_Rotating()) {
@@ -170,7 +170,7 @@ boolean STDMETHODCALLTYPE MechLocomotionClass::Is_Moving_Now(void)
 	return(false);
 }
 
-// FUNCTION: 0x005B1A50
+// FUNCTION: GAMEMD 0x005B1A50
 void STDMETHODCALLTYPE MechLocomotionClass::Mark_All_Occupation_Bits(int mark)
 {
 	if (mark == MARK_UP) {
@@ -178,7 +178,7 @@ void STDMETHODCALLTYPE MechLocomotionClass::Mark_All_Occupation_Bits(int mark)
 	}
 }
 
-// FUNCTION: 0x005B1AA0
+// FUNCTION: GAMEMD 0x005B1AA0
 boolean STDMETHODCALLTYPE MechLocomotionClass::Is_Moving_Here(CoordStruct to)
 {
 	CoordStruct coord = Head_To_Coord();
@@ -190,14 +190,15 @@ boolean STDMETHODCALLTYPE MechLocomotionClass::Is_Moving_Here(CoordStruct to)
 	return(false);
 }
 
-// FUNCTION: 0x005B1B40 MechLocomotionClass::Fetch_Object_Size
+// FUNCTION: GAMEMD 0x005B1B40
+// MechLocomotionClass::Fetch_Object_Size
 
 extern int DAT_00ABEE60;
 extern int DAT_00ABEE64;
 extern int DAT_00ABEE68;
 extern int DAT_00ABEE6C;
 
-// FUNCTION: 0x005B1B80
+// FUNCTION: GAMEMD 0x005B1B80
 void FUN_005B1B80(void)
 {
 	DAT_00ABEE60 = 0;

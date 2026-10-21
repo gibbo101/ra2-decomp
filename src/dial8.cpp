@@ -17,9 +17,10 @@
 #include "wwmouse.h"
 #include "_xmouse.h"
 
-// FUNCTION: 0x004A5390 $E2
+// SYNTHETIC: GAMEMD 0x004A5390 SYMBOL
+// _$E2
 
-// FUNCTION: 0x004A53B0
+// FUNCTION: GAMEMD 0x004A53B0
 Dial8Class::Dial8Class(int id, int x, int y, int w, int h, Dir256 dir) :
 	BASECLASS(id, x, y, w, h, LEFTPRESS | LEFTHELD | LEFTRELEASE, true)
 {
@@ -79,7 +80,7 @@ Dial8Class::Dial8Class(int id, int x, int y, int w, int h, Dir256 dir) :
 	FaceLine[FACING_NW][1] = FaceY - (h * 7 * 6 / 2) / 100;
 }
 
-// FUNCTION: 0x004A5660
+// FUNCTION: GAMEMD 0x004A5660
 int Dial8Class::Action(unsigned flags, KeyNumType &key, int modifier)
 {
 	static int is_sel = 0;
@@ -114,7 +115,7 @@ int Dial8Class::Action(unsigned flags, KeyNumType &key, int modifier)
 }
 
 
-// FUNCTION: 0x004A57B0
+// FUNCTION: GAMEMD 0x004A57B0
 int Dial8Class::Draw_Me(int forced)
 {
 	int scheme = GadgetClass::Get_Color_Scheme();
@@ -138,13 +139,13 @@ int Dial8Class::Draw_Me(int forced)
 	return(false);
 }
 
-// FUNCTION: 0x004A5950
+// FUNCTION: GAMEMD 0x004A5950
 Dir256 Dial8Class::Get_Direction(void) const
 {
 	return(Direction);
 }
 
-// FUNCTION: 0x004A5960
+// FUNCTION: GAMEMD 0x004A5960
 void Dial8Class::Set_Direction(Dir256 dir)
 {
 	Direction = dir;
@@ -153,12 +154,14 @@ void Dial8Class::Set_Direction(Dir256 dir)
 	Flag_To_Redraw();
 }
 
-// FUNCTION: 0x004A59A0 Dial8Class::~Dial8Class
+// SYNTHETIC: GAMEMD 0x004A59A0
+// ??_GDial8Class@@UAEPAXI@Z
 
 struct IntQuad {
 	int A, B, C, D;
 	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
 };
 
-// FUNCTION: 0x004A59C0 $E3
+// SYNTHETIC: GAMEMD 0x004A59C0 SYMBOL
+// _$E31
 IntQuad DAT_008A0160;

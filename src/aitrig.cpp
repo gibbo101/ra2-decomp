@@ -60,40 +60,52 @@ struct IntTriple {
 	IntTriple() { A = 0; B = 0; C = 0; }
 };
 
-// FUNCTION: 0x0041E160 $E104
+// SYNTHETIC: GAMEMD 0x0041E160 SYMBOL
+// _$E104
 double DAT_0088A020 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x0041E190 $E107
+// SYNTHETIC: GAMEMD 0x0041E190 SYMBOL
+// _$E107
 double DAT_0088A070 = DAT_0088A020 / DAT_007E2A08;
 
-// FUNCTION: 0x0041E1B0 $E110
+// SYNTHETIC: GAMEMD 0x0041E1B0 SYMBOL
+// _$E110
 double DAT_0088A058 = DAT_007E1718 / DAT_0088A070;
 
-// FUNCTION: 0x0041E1D0 $E113
+// SYNTHETIC: GAMEMD 0x0041E1D0 SYMBOL
+// _$E113
 double DAT_0088A050 = DAT_007E1720 * DAT_007E2A10;
 
-// FUNCTION: 0x0041E1F0 $E116
+// SYNTHETIC: GAMEMD 0x0041E1F0 SYMBOL
+// _$E116
 double DAT_0088A028 = DAT_007E1728 * DAT_007E2A10;
 
-// FUNCTION: 0x0041E210 $E119
+// SYNTHETIC: GAMEMD 0x0041E210 SYMBOL
+// _$E119
 double DAT_0088A000 = DAT_007E1730 * DAT_007E2A10;
 
-// FUNCTION: 0x0041E230 $E122
+// SYNTHETIC: GAMEMD 0x0041E230 SYMBOL
+// _$E122
 int DAT_0088A078 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_0088A000 - DAT_0088A028) * DAT_0088A020));
 
-// FUNCTION: 0x0041E270 $E125
+// SYNTHETIC: GAMEMD 0x0041E270 SYMBOL
+// _$E125
 double DAT_0088A030 = FUN_004CADE0(DAT_0088A078 * DAT_007E1740);
 
-// FUNCTION: 0x0041E2A0 $E128
+// SYNTHETIC: GAMEMD 0x0041E2A0 SYMBOL
+// _$E128
 double DAT_0088A048 = FUN_004CADE0((DAT_0088A078 * 2) / DAT_0088A020);
 
-// FUNCTION: 0x0041E2D0 $E131
+// SYNTHETIC: GAMEMD 0x0041E2D0 SYMBOL
+// _$E131
 int DAT_0088A06C = (int)(DAT_0088A078 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x0041E300 $E134
+// SYNTHETIC: GAMEMD 0x0041E300 SYMBOL
+// _$E134
 ShortPair DAT_0088A018;
 
-// FUNCTION: 0x0041E310 $E137
+// SYNTHETIC: GAMEMD 0x0041E310 SYMBOL
+// _$E137
 IntTriple DAT_0088A038;
 
 struct IntTriple2 {
@@ -101,10 +113,11 @@ struct IntTriple2 {
 	IntTriple2() { C = 0; A = 128; B = 128; }
 };
 
-// FUNCTION: 0x0041E330 $E140
+// SYNTHETIC: GAMEMD 0x0041E330 SYMBOL
+// _$E140
 IntTriple2 DAT_0088A060;
 
-// FUNCTION: 0x0041E350
+// FUNCTION: GAMEMD 0x0041E350
 AITriggerTypeClass::AITriggerTypeClass(const char *name) :
 	BASECLASS(name),
 	Type(AIT_NONE),
@@ -133,13 +146,13 @@ AITriggerTypeClass::AITriggerTypeClass(const char *name) :
 	AITriggerTypes.Add(this);
 }
 
-// FUNCTION: 0x0041E480
+// FUNCTION: GAMEMD 0x0041E480
 AITriggerTypeClass::~AITriggerTypeClass(void)
 {
 	AITriggerTypes.Delete(this);
 }
 
-// FUNCTION: 0x0041E500
+// FUNCTION: GAMEMD 0x0041E500
 HRESULT STDMETHODCALLTYPE AITriggerTypeClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -147,7 +160,7 @@ HRESULT STDMETHODCALLTYPE AITriggerTypeClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x0041E540
+// FUNCTION: GAMEMD 0x0041E540
 HRESULT STDMETHODCALLTYPE AITriggerTypeClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -163,7 +176,7 @@ HRESULT STDMETHODCALLTYPE AITriggerTypeClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x0041E5C0
+// FUNCTION: GAMEMD 0x0041E5C0
 HRESULT STDMETHODCALLTYPE AITriggerTypeClass::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -173,7 +186,7 @@ HRESULT STDMETHODCALLTYPE AITriggerTypeClass::Save(IStream * stream, BOOL cleard
 	return(result);
 }
 
-// FUNCTION: 0x0041E5E0
+// FUNCTION: GAMEMD 0x0041E5E0
 void AITriggerTypeClass::Compute_CRC(CRCEngine & crc) const
 {
 	BASECLASS::Compute_CRC(crc);
@@ -211,7 +224,7 @@ common:
 	crc(IsForBaseDefense);
 }
 
-// FUNCTION: 0x0041E720
+// FUNCTION: GAMEMD 0x0041E720
 bool AITriggerTypeClass::ConditionMet(HouseClass *house, HouseClass *enemy, bool skip_base_defense) const
 {
 	bool basedefense;
@@ -375,7 +388,7 @@ bool AITriggerTypeClass::ConditionMet(HouseClass *house, HouseClass *enemy, bool
 	return(true);
 }
 
-// FUNCTION: 0x0041EAF0
+// FUNCTION: GAMEMD 0x0041EAF0
 bool AITriggerTypeClass::EnemyHouseOwns(HouseClass *house, HouseClass *enemy) const
 {
 	bool res = false;
@@ -440,7 +453,7 @@ bool AITriggerTypeClass::EnemyHouseOwns(HouseClass *house, HouseClass *enemy) co
 	return(res);
 }
 
-// FUNCTION: 0x0041EC90
+// FUNCTION: GAMEMD 0x0041EC90
 bool AITriggerTypeClass::CivilianHouseOwns(HouseClass *house, HouseClass *enemy) const
 {
 	bool res = false;
@@ -511,7 +524,7 @@ bool AITriggerTypeClass::CivilianHouseOwns(HouseClass *house, HouseClass *enemy)
 	return(res);
 }
 
-// FUNCTION: 0x0041EE90
+// FUNCTION: GAMEMD 0x0041EE90
 bool AITriggerTypeClass::OwnerHouseOwns(HouseClass *house, HouseClass *enemy) const
 {
 	bool res = false;
@@ -576,7 +589,7 @@ bool AITriggerTypeClass::OwnerHouseOwns(HouseClass *house, HouseClass *enemy) co
 	return(res);
 }
 
-// FUNCTION: 0x0041F030
+// FUNCTION: GAMEMD 0x0041F030
 bool AITriggerTypeClass::Check_Enemy_Yellow_Power(HouseClass *house, HouseClass *enemy) const
 {
 	bool res = false;
@@ -587,7 +600,7 @@ bool AITriggerTypeClass::Check_Enemy_Yellow_Power(HouseClass *house, HouseClass 
 	return(res);
 }
 
-// FUNCTION: 0x0041F080
+// FUNCTION: GAMEMD 0x0041F080
 bool AITriggerTypeClass::Check_Enemy_Red_Power(HouseClass *house, HouseClass *enemy) const
 {
 	bool res = false;
@@ -598,7 +611,7 @@ bool AITriggerTypeClass::Check_Enemy_Red_Power(HouseClass *house, HouseClass *en
 	return(res);
 }
 
-// FUNCTION: 0x0041F0D0
+// FUNCTION: GAMEMD 0x0041F0D0
 bool AITriggerTypeClass::IronCurtainCharged(HouseClass *house, HouseClass *enemy) const
 {
 	if (house != NULL) {
@@ -619,7 +632,7 @@ bool AITriggerTypeClass::IronCurtainCharged(HouseClass *house, HouseClass *enemy
 	return(false);
 }
 
-// FUNCTION: 0x0041F180
+// FUNCTION: GAMEMD 0x0041F180
 bool AITriggerTypeClass::ChronoSphereCharged(HouseClass *house, HouseClass *enemy) const
 {
 	if (house != NULL) {
@@ -640,7 +653,7 @@ bool AITriggerTypeClass::ChronoSphereCharged(HouseClass *house, HouseClass *enem
 	return(false);
 }
 
-// FUNCTION: 0x0041F230
+// FUNCTION: GAMEMD 0x0041F230
 bool AITriggerTypeClass::HouseCredits(HouseClass *house, HouseClass *enemy) const
 {
 	bool res = false;
@@ -676,7 +689,7 @@ bool AITriggerTypeClass::HouseCredits(HouseClass *house, HouseClass *enemy) cons
 	return(res);
 }
 
-// FUNCTION: 0x0041F2E0
+// FUNCTION: GAMEMD 0x0041F2E0
 void AITriggerTypeClass::Read_All(CCINIClass const & ini, INIScopeType scope)
 {
 	int i;
@@ -720,7 +733,7 @@ void AITriggerTypeClass::Read_All(CCINIClass const & ini, INIScopeType scope)
 	}
 }
 
-// FUNCTION: 0x0041F490
+// FUNCTION: GAMEMD 0x0041F490
 void AITriggerTypeClass::Write_All(CCINIClass & ini, INIScopeType scope)
 {
 	int i;
@@ -751,7 +764,7 @@ void AITriggerTypeClass::Write_All(CCINIClass & ini, INIScopeType scope)
 	}
 }
 
-// FUNCTION: 0x0041F580
+// FUNCTION: GAMEMD 0x0041F580
 bool AITriggerTypeClass::Read_INI(CCINIClass & ini)
 {
 	unsigned int i;
@@ -960,7 +973,7 @@ bool AITriggerTypeClass::Read_INI(CCINIClass & ini)
 	return(false);
 }
 
-// FUNCTION: 0x0041FB10
+// FUNCTION: GAMEMD 0x0041FB10
 bool AITriggerTypeClass::Write_INI(CCINIClass & ini) const
 {
 	char paramstr[INIClass::MAX_LINE_LENGTH];
@@ -1030,31 +1043,31 @@ bool AITriggerTypeClass::Write_INI(CCINIClass & ini) const
 	return(ini.Put_String(INI_NAME, IniName, buf));
 }
 
-// FUNCTION: 0x0041FCA0
+// FUNCTION: GAMEMD 0x0041FCA0
 AITriggerTypeClass * AITriggerTypeClass::Find_Or_Make(char const * name)
 {
 	return(TFind_Or_Make<AITriggerTypeClass>(name, AITriggerTypes));
 }
 
-// FUNCTION: 0x0041FD30
+// FUNCTION: GAMEMD 0x0041FD30
 void AITriggerTypeClass::Set_Condition_Object(TechnoTypeClass *obj)
 {
 	ConditionObject = obj;
 }
 
-// FUNCTION: 0x0041FD40
+// FUNCTION: GAMEMD 0x0041FD40
 void AITriggerTypeClass::Set_First_TeamType(TeamTypeClass *team)
 {
 	TeamTypeOne = team;
 }
 
-// FUNCTION: 0x0041FD50
+// FUNCTION: GAMEMD 0x0041FD50
 void AITriggerTypeClass::Set_Second_TeamType(TeamTypeClass *team)
 {
 	TeamTypeTwo = team;
 }
 
-// FUNCTION: 0x0041FD60
+// FUNCTION: GAMEMD 0x0041FD60
 void AITriggerTypeClass::Record_Success(void)
 {
 	double weight = 0;
@@ -1078,7 +1091,7 @@ void AITriggerTypeClass::Record_Success(void)
 	TimesExecuted++;
 }
 
-// FUNCTION: 0x0041FE20
+// FUNCTION: GAMEMD 0x0041FE20
 void AITriggerTypeClass::Record_Failure(void)
 {
 	double weight = 0;
@@ -1101,7 +1114,7 @@ void AITriggerTypeClass::Record_Failure(void)
 	TimesExecuted++;
 }
 
-// FUNCTION: 0x0041FEE0
+// FUNCTION: GAMEMD 0x0041FEE0
 bool AITriggerTypeClass::FUN_0041FEE0(TeamTypeClass *team, HouseClass *house, HouseClass *enemy) const
 {
 	if (!team->field_F0 || enemy == NULL) {
@@ -1127,8 +1140,11 @@ bool AITriggerTypeClass::FUN_0041FEE0(TeamTypeClass *team, HouseClass *house, Ho
 	return((za == zb) ? true : false);
 }
 
-// FUNCTION: 0x0041FFD0 AITriggerTypeClass::Fetch_RTTI
+// FUNCTION: GAMEMD 0x0041FFD0
+// AITriggerTypeClass::Fetch_RTTI
 
-// FUNCTION: 0x0041FFE0 AITriggerTypeClass::Fetch_Object_Size
+// FUNCTION: GAMEMD 0x0041FFE0
+// AITriggerTypeClass::Fetch_Object_Size
 
-// FUNCTION: 0x0041FFF0 AITriggerTypeClass::~AITriggerTypeClass
+// SYNTHETIC: GAMEMD 0x0041FFF0
+// ??_GAITriggerTypeClass@@UAEPAXI@Z

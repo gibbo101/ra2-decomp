@@ -7,13 +7,13 @@
 #include "gametime.h"
 #include "win.h"
 
-// FUNCTION: 0x004E2450
+// FUNCTION: GAMEMD 0x004E2450
 GameTimeClass::GameTimeClass( void )
 {
 	game_start_time = timeGetTime();
 }
 
-// FUNCTION: 0x004E2460
+// FUNCTION: GAMEMD 0x004E2460
 unsigned int GameTimeClass::Get_Time( void )
 {
 	unsigned int curr_windows_time;
@@ -29,13 +29,13 @@ unsigned int GameTimeClass::Get_Time( void )
 	return( game_time );
 }
 
-// FUNCTION: 0x004E2480
+// FUNCTION: GAMEMD 0x004E2480
 unsigned int Get_Game_Time( void )
 {
 	return( Game_Time.Get_Time() );
 }
 
-// FUNCTION: 0x004E24A0
+// FUNCTION: GAMEMD 0x004E24A0
 unsigned int Get_Game_Time_50( void )
 {
 	return( 3 * Game_Time.Get_Time() / 50 );

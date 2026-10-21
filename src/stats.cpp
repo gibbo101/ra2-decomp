@@ -48,10 +48,10 @@ struct StatsCounters {
 	StatsCounters(void) : A(0), B(0), C(0), D(0) {}
 };
 
-// FUNCTION: 0x006C6AD0
+// FUNCTION: GAMEMD 0x006C6AD0
 BasicTimerClass<SystemTimerClass> GameTimer;
 
-// FUNCTION: 0x006C6B00
+// FUNCTION: GAMEMD 0x006C6B00
 PacketEntry::PacketEntry(PacketEntry const * rhs)
 {
 	Kind = rhs->Kind;
@@ -63,11 +63,11 @@ PacketEntry::PacketEntry(PacketEntry const * rhs)
 	memcpy(Data, rhs->Data, Size);
 }
 
-// FUNCTION: 0x006C6B40
-// FUNCTION: 0x006C6B60
+// FUNCTION: GAMEMD 0x006C6B40
+// FUNCTION: GAMEMD 0x006C6B60
 PacketQueue Queue;
 
-// FUNCTION: 0x006C6D00
+// FUNCTION: GAMEMD 0x006C6D00
 void Queue_Pop(void)
 {
 	int index = 0;
@@ -84,7 +84,7 @@ void Queue_Pop(void)
 
 int Get_Unit_Count(int *buf, int count);
 
-// FUNCTION: 0x006C87D0
+// FUNCTION: GAMEMD 0x006C87D0
 int Get_Unit_Count(int *buf, int count)
 {
 	int n = 0;
@@ -96,24 +96,25 @@ int Get_Unit_Count(int *buf, int count)
 	return(n);
 }
 
-// FUNCTION: 0x006C87F0
+// FUNCTION: GAMEMD 0x006C87F0
 void Register_Game_Start_Time(void)
 {
 	GameTimer = 0;
 	GameTimerInUse = true;
 }
 
-// FUNCTION: 0x006C8820
+// FUNCTION: GAMEMD 0x006C8820
 void Register_Game_End_Time(void)
 {
 	GameEndTime = GameTimer;
 	GameTimerInUse = false;
 }
 
-// FUNCTION: 0x006C8840 ?$rc_ptr@VPlayerProfile@@::~?$rc_ptr@VPlayerProfile@@
+// SYNTHETIC: GAMEMD 0x006C8840
+// ??_G?$rc_ptr@VPlayerProfile@@@@UAEPAXI@Z
 template class rc_ptr<PlayerProfile>;
 
-// FUNCTION: 0x006C8870
+// FUNCTION: GAMEMD 0x006C8870
 bool PacketQueue::Shrink(void)
 {
 	if (Count * 3 > Max) {
@@ -136,7 +137,7 @@ bool PacketQueue::Shrink(void)
 	return true;
 }
 
-// FUNCTION: 0x006C8900
+// FUNCTION: GAMEMD 0x006C8900
 bool PacketQueue::Grow(void)
 {
 	if (Count < Max) {
@@ -157,5 +158,5 @@ bool PacketQueue::Grow(void)
 	return true;
 }
 
-// FUNCTION: 0x006C8990
+// FUNCTION: GAMEMD 0x006C8990
 StatsCounters Counters;

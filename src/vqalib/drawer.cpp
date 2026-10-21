@@ -100,7 +100,7 @@ void VQA_SetPreviousFrameNode(VQAHandleP *vqap)
 	drawer->CurFrame->Flags = drawer->CurFrame->PrevFlags;
 }
 
-// FUNCTION: 0x007BE660
+// FUNCTION: GAMEMD 0x007BE660
 long VQA_ResetLastFrameNum(VQAHandle *vqa)
 {
 	VQAHandleP *vqap;
@@ -113,7 +113,7 @@ long VQA_ResetLastFrameNum(VQAHandle *vqa)
 	return(VQAERR_NONE);
 }
 
-// FUNCTION: 0x007BE670
+// FUNCTION: GAMEMD 0x007BE670
 long VQA_Configure_Drawer(VQAHandleP *vqap)
 {
 	VQAConfig *config;
@@ -202,7 +202,7 @@ long VQA_Configure_Drawer(VQAHandleP *vqap)
 	return(VQAERR_NONE);
 }
 
-// FUNCTION: 0x007BE830
+// FUNCTION: GAMEMD 0x007BE830
 void VQA_DispatchFrameChunks(VQAHandleP *vqap, long frame)
 {
 	unsigned long chunkid;
@@ -242,7 +242,7 @@ void VQA_DispatchFrameChunks(VQAHandleP *vqap, long frame)
 	}
 }
 
-// FUNCTION: 0x007BE940
+// FUNCTION: GAMEMD 0x007BE940
 void VQA_UnVQFrame(VQAHandleP *vqap, VQAFrameNode *frame)
 {
 	VQACBNode *codebk;
@@ -306,7 +306,7 @@ void VQA_UnVQFrame(VQAHandleP *vqap, VQAFrameNode *frame)
 	}
 }
 
-// FUNCTION: 0x007BEA40
+// FUNCTION: GAMEMD 0x007BEA40
 long DrawFrame_MCGA(VQAHandle *vqa)
 {
 	VQAHandleP *vqap;
@@ -335,7 +335,7 @@ long DrawFrame_MCGA(VQAHandle *vqa)
 	return(VQAERR_NONE);
 }
 
-// FUNCTION: 0x007BEA80
+// FUNCTION: GAMEMD 0x007BEA80
 STATIC long Select_Frame(VQAHandleP *vqap)
 {
 	VQADrawer    *drawer;
@@ -483,7 +483,7 @@ STATIC long Select_Frame(VQAHandleP *vqap)
 	return(VQA_SetCurrentFrameAsLast(vqap));
 }
 
-// FUNCTION: 0x007BEE20
+// FUNCTION: GAMEMD 0x007BEE20
 long VQA_ComputeDesiredFrame(VQAHandleP *vqap, VQAConfig *config, VQADrawer *drawer, VQAFrameNode *frame, unsigned long time)
 {
 	VQAHeader *header;
@@ -569,7 +569,7 @@ long VQA_ComputeDesiredFrame(VQAHandleP *vqap, VQAConfig *config, VQADrawer *dra
 	return(result);
 }
 
-// FUNCTION: 0x007BEFE0
+// FUNCTION: GAMEMD 0x007BEFE0
 STATIC void Prepare_Frame(VQAHandleP *vqap)
 {
 	VQADrawer    *drawer;
@@ -620,7 +620,7 @@ STATIC void Prepare_Frame(VQAHandleP *vqap)
 	}
 }
 
-// FUNCTION: 0x007BF0B0
+// FUNCTION: GAMEMD 0x007BF0B0
 STATIC long PageFlip_MCGA(VQAHandle *vqa)
 {
 	VQAHandleP *vqap;
@@ -667,7 +667,7 @@ STATIC long PageFlip_MCGA(VQAHandle *vqa)
 	return(VQAERR_NONE);
 }
 
-// FUNCTION: 0x007BF140
+// FUNCTION: GAMEMD 0x007BF140
 STATIC long DrawFrame_MCGABuf(VQAHandle *vqa)
 {
 	long rc;
@@ -698,7 +698,7 @@ STATIC long DrawFrame_MCGABuf(VQAHandle *vqa)
 	return(VQAERR_NONE);
 }
 
-// FUNCTION: 0x007BF190
+// FUNCTION: GAMEMD 0x007BF190
 STATIC long PageFlip_MCGABuf(VQAHandle *vqa)
 {
 	VQAHandleP *vqap;

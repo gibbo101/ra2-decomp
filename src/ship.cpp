@@ -26,7 +26,7 @@
 #include "tube.hh"
 #include <new.h>
 
-// FUNCTION: 0x0069EC50
+// FUNCTION: GAMEMD 0x0069EC50
 ShipLocomotionClass::ShipLocomotionClass(void) :
 	BASECLASS(),
 	CurrentRamp(0),
@@ -48,12 +48,12 @@ ShipLocomotionClass::ShipLocomotionClass(void) :
 {
 }
 
-// FUNCTION: 0x0069ECF0
+// FUNCTION: GAMEMD 0x0069ECF0
 ShipLocomotionClass::~ShipLocomotionClass(void)
 {
 }
 
-// FUNCTION: 0x0069ED20
+// FUNCTION: GAMEMD 0x0069ED20
 HRESULT ShipLocomotionClass::Piggyback_CLSID(CLSID * classid)
 {
 	if (classid == NULL) {
@@ -75,7 +75,7 @@ HRESULT ShipLocomotionClass::Piggyback_CLSID(CLSID * classid)
 	return(ptr->GetClassID(classid));
 }
 
-// FUNCTION: 0x0069EE30
+// FUNCTION: GAMEMD 0x0069EE30
 HRESULT STDMETHODCALLTYPE ShipLocomotionClass::QueryInterface(REFIID riid, LPVOID * ppvObject)
 {
 	HRESULT result = BASECLASS::QueryInterface(riid, ppvObject);
@@ -94,7 +94,7 @@ HRESULT STDMETHODCALLTYPE ShipLocomotionClass::QueryInterface(REFIID riid, LPVOI
 	return(result);
 }
 
-// FUNCTION: 0x0069EE90
+// FUNCTION: GAMEMD 0x0069EE90
 HRESULT STDMETHODCALLTYPE ShipLocomotionClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -111,7 +111,7 @@ HRESULT STDMETHODCALLTYPE ShipLocomotionClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x0069EF10
+// FUNCTION: GAMEMD 0x0069EF10
 HRESULT STDMETHODCALLTYPE ShipLocomotionClass::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -130,7 +130,7 @@ HRESULT STDMETHODCALLTYPE ShipLocomotionClass::Save(IStream * stream, BOOL clear
 	return(result);
 }
 
-// FUNCTION: 0x0069EFF0
+// FUNCTION: GAMEMD 0x0069EFF0
 HRESULT STDMETHODCALLTYPE ShipLocomotionClass::Begin_Piggyback(ILocomotion *pointer)
 {
 	if (pointer == NULL) {
@@ -143,7 +143,7 @@ HRESULT STDMETHODCALLTYPE ShipLocomotionClass::Begin_Piggyback(ILocomotion *poin
 	return(E_FAIL);
 }
 
-// FUNCTION: 0x0069F040
+// FUNCTION: GAMEMD 0x0069F040
 HRESULT ShipLocomotionClass::End_Piggyback(ILocomotion **pointer)
 {
 	if (pointer == NULL) {
@@ -157,7 +157,7 @@ HRESULT ShipLocomotionClass::End_Piggyback(ILocomotion **pointer)
 	return(S_FALSE);
 }
 
-// FUNCTION: 0x0069F080
+// FUNCTION: GAMEMD 0x0069F080
 boolean ShipLocomotionClass::Is_Ok_To_End(void)
 {
 	if (!Is_Moving() && (Piggybacker != NULL && IsLocomotorUnlocked && !LinkedTo->IsAttackedByLocomotor)) {
@@ -166,7 +166,7 @@ boolean ShipLocomotionClass::Is_Ok_To_End(void)
 	return(false);
 }
 
-// FUNCTION: 0x0069F0C0
+// FUNCTION: GAMEMD 0x0069F0C0
 Matrix3D ShipLocomotionClass::Get_Slope_Matrix(void) const
 {
 	Matrix3D mtx(true);
@@ -180,13 +180,13 @@ Matrix3D ShipLocomotionClass::Get_Slope_Matrix(void) const
 	return(mtx);
 }
 
-// FUNCTION: 0x0069F1B0
+// FUNCTION: GAMEMD 0x0069F1B0
 double ShipLocomotionClass::Get_Slope_Ratio(void) const
 {
 	return(RampTimer.Progress());
 }
 
-// FUNCTION: 0x0069F210
+// FUNCTION: GAMEMD 0x0069F210
 void ShipLocomotionClass::Set_Slope(int ramp)
 {
 	int cur = CurrentRamp;

@@ -38,7 +38,7 @@ struct EzFont {
 
 HFONT Ez_Create_Font (HDC hdc, const char * face_name, int decipt_width, int decipt_height, int attributes);
 
-// FUNCTION: 0x00775690
+// FUNCTION: GAMEMD 0x00775690
 BOOL Get_Display_Rect(HWND window, LPRECT rect)
 {
 	RECT client;
@@ -55,7 +55,7 @@ BOOL Get_Display_Rect(HWND window, LPRECT rect)
 	return(res);
 }
 
-// FUNCTION: 0x00775700
+// FUNCTION: GAMEMD 0x00775700
 HWND WS_Create_Dialog(HINSTANCE instance, int id, HWND parent, DLGPROC proc, BOOL force_show)
 {
 	WSDialogStruct *slot = &g_Dialogs[g_DialogCount];
@@ -99,7 +99,7 @@ HWND WS_Create_Dialog(HINSTANCE instance, int id, HWND parent, DLGPROC proc, BOO
 	return(window);
 }
 
-// FUNCTION: 0x00775910
+// FUNCTION: GAMEMD 0x00775910
 BOOL WS_Has_Dialog(HWND window)
 {
 	for (int i = 0; i < g_DialogCount; i++) {
@@ -110,7 +110,7 @@ BOOL WS_Has_Dialog(HWND window)
 	return(false);
 }
 
-// FUNCTION: 0x00775940
+// FUNCTION: GAMEMD 0x00775940
 HWND WS_Find_Dialog(int id)
 {
 	for (int i = g_DialogCount - 1; i >= 0; i--) {
@@ -121,7 +121,7 @@ HWND WS_Find_Dialog(int id)
 	return(NULL);
 }
 
-// FUNCTION: 0x00775970
+// FUNCTION: GAMEMD 0x00775970
 HWND WS_Next_Upper_Dialog(HWND window)
 {
 	for (int i = 0; i < g_DialogCount; i++) {
@@ -132,7 +132,7 @@ HWND WS_Next_Upper_Dialog(HWND window)
 	return(NULL);
 }
 
-// FUNCTION: 0x007759B0
+// FUNCTION: GAMEMD 0x007759B0
 HWND WS_Next_Lower_Dialog(HWND window)
 {
 	for (int i = g_DialogCount - 1; i >= 0; i--) {
@@ -143,7 +143,7 @@ HWND WS_Next_Lower_Dialog(HWND window)
 	return(NULL);
 }
 
-// FUNCTION: 0x007759E0
+// FUNCTION: GAMEMD 0x007759E0
 int WS_Wait_Dialog(HWND window, bool (*callback)(void), bool, bool place_on_top, bool show)
 {
 	MSG msg;
@@ -189,31 +189,31 @@ int WS_Wait_Dialog(HWND window, bool (*callback)(void), bool, bool place_on_top,
 	return(g_LastResponse);
 }
 
-// FUNCTION: 0x00775B10
+// FUNCTION: GAMEMD 0x00775B10
 HWND WS_Top_Window(void)
 {
 	return(g_TopWindow);
 }
 
-// FUNCTION: 0x00775B20
+// FUNCTION: GAMEMD 0x00775B20
 int WS_Top_Window_ID(void)
 {
 	return(g_TopWindowID);
 }
 
-// FUNCTION: 0x00775B30
+// FUNCTION: GAMEMD 0x00775B30
 WPARAM WS_Last_Response(void)
 {
 	return(g_LastResponse);
 }
 
-// FUNCTION: 0x00775B40
+// FUNCTION: GAMEMD 0x00775B40
 BOOL CALLBACK Resize_Dialog_Proc(HWND window, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	return(FALSE);
 }
 
-// FUNCTION: 0x00775B50
+// FUNCTION: GAMEMD 0x00775B50
 BOOL Get_Dialog_Resolution(unsigned short template_id, BOOL (__stdcall *dialog_proc)(HWND, UINT, WPARAM, LPARAM), int, POINT &pt)
 {
 	HWND window;
@@ -227,14 +227,14 @@ BOOL Get_Dialog_Resolution(unsigned short template_id, BOOL (__stdcall *dialog_p
 	return(1);
 }
 
-// FUNCTION: 0x00775BA0
+// FUNCTION: GAMEMD 0x00775BA0
 void Resize_Dialogs(HWND window)
 {
 	EnumChildWindows(window, Resize_Dialog, 1);
 	Resize_Dialog(window, 0);
 }
 
-// FUNCTION: 0x00775BC0
+// FUNCTION: GAMEMD 0x00775BC0
 BOOL CALLBACK Resize_Dialog(HWND window, LPARAM lParam)
 {
 	static int resize_dialog_width;
@@ -293,11 +293,11 @@ BOOL CALLBACK Resize_Dialog(HWND window, LPARAM lParam)
 	return(TRUE);
 }
 
-// FUNCTION: 0x00775D70
-// FUNCTION: 0x00775D90
+// FUNCTION: GAMEMD 0x00775D70
+// FUNCTION: GAMEMD 0x00775D90
 ArrayList<EzFont> g_EzFonts;
 
-// FUNCTION: 0x00775DB0
+// FUNCTION: GAMEMD 0x00775DB0
 HFONT WS_Get_Font(HDC hdc, const char * face_name, int decipt_width, int decipt_height, int attributes)
 {
 	EzFont font;
@@ -332,7 +332,7 @@ HFONT WS_Get_Font(HDC hdc, const char * face_name, int decipt_width, int decipt_
 	return(NULL);
 }
 
-// FUNCTION: 0x007760B0
+// FUNCTION: GAMEMD 0x007760B0
 HFONT Ez_Create_Font (HDC hdc, const char * face_name, int decipt_width,
 					int decipt_height, int attributes)
 {
@@ -392,5 +392,5 @@ struct WindlgSlots {
 	WindlgSlots() { A = 0; B = 0; C = 0; D = 0; }
 };
 
-// FUNCTION: 0x00776210
+// FUNCTION: GAMEMD 0x00776210
 WindlgSlots DAT_00B73088;

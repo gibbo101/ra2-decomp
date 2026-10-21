@@ -40,42 +40,55 @@ struct IntTriple {
 	IntTriple() { A = 0; B = 0; C = 0; }
 };
 
-// FUNCTION: 0x0046B9B0 $E2
+// SYNTHETIC: GAMEMD 0x0046B9B0 SYMBOL
+// _$E2
 
-// FUNCTION: 0x0046B9D0 $E57
+// SYNTHETIC: GAMEMD 0x0046B9D0 SYMBOL
+// _$E57
 double DAT_0089DE98 = FUN_004CAC40(pow(256.0, 2.0) * 2);
 
-// FUNCTION: 0x0046BA00 $E60
+// SYNTHETIC: GAMEMD 0x0046BA00 SYMBOL
+// _$E60
 double DAT_0089DEE8 = DAT_0089DE98 / DAT_007E4908;
 
-// FUNCTION: 0x0046BA20 $E63
+// SYNTHETIC: GAMEMD 0x0046BA20 SYMBOL
+// _$E63
 double DAT_0089DED0 = 1.0 / DAT_0089DEE8;
 
-// FUNCTION: 0x0046BA40 $E66
+// SYNTHETIC: GAMEMD 0x0046BA40 SYMBOL
+// _$E66
 double DAT_0089DEC8 = DAT_007E4910 * 45.0;
 
-// FUNCTION: 0x0046BA60 $E69
+// SYNTHETIC: GAMEMD 0x0046BA60 SYMBOL
+// _$E69
 double DAT_0089DEA0 = DAT_007E4910 * 60.0;
 
-// FUNCTION: 0x0046BA80 $E72
+// SYNTHETIC: GAMEMD 0x0046BA80 SYMBOL
+// _$E72
 double DAT_0089DE78 = DAT_007E4910 * 90.0;
 
-// FUNCTION: 0x0046BAA0 $E75
+// SYNTHETIC: GAMEMD 0x0046BAA0 SYMBOL
+// _$E75
 int DAT_0089DEF0 = (int)(FUN_004CAD50(DAT_0089DE78 - DAT_0089DEA0) * DAT_0089DE98 * 0.5);
 
-// FUNCTION: 0x0046BAE0 $E78
+// SYNTHETIC: GAMEMD 0x0046BAE0 SYMBOL
+// _$E78
 double DAT_0089DEA8 = FUN_004CADE0(DAT_0089DEF0 * 0.00390625);
 
-// FUNCTION: 0x0046BB10 $E81
+// SYNTHETIC: GAMEMD 0x0046BB10 SYMBOL
+// _$E81
 double DAT_0089DEC0 = FUN_004CADE0((DAT_0089DEF0 * 2) / DAT_0089DE98);
 
-// FUNCTION: 0x0046BB40 $E84
+// SYNTHETIC: GAMEMD 0x0046BB40 SYMBOL
+// _$E84
 int DAT_0089DEE4 = (int)(DAT_0089DEF0 * 4 + 0.5);
 
-// FUNCTION: 0x0046BB70 $E87
+// SYNTHETIC: GAMEMD 0x0046BB70 SYMBOL
+// _$E87
 ShortPair DAT_0089DE90;
 
-// FUNCTION: 0x0046BB80 $E90
+// SYNTHETIC: GAMEMD 0x0046BB80 SYMBOL
+// _$E90
 IntTriple DAT_0089DEB0;
 
 struct IntTriple2 {
@@ -83,10 +96,11 @@ struct IntTriple2 {
 	IntTriple2() { C = 0; A = 128; B = 128; }
 };
 
-// FUNCTION: 0x0046BBA0 $E93
+// SYNTHETIC: GAMEMD 0x0046BBA0 SYMBOL
+// _$E93
 IntTriple2 DAT_0089DED8;
 
-// FUNCTION: 0x0046BBC0
+// FUNCTION: GAMEMD 0x0046BBC0
 BulletTypeClass::BulletTypeClass(char const * name) :
 	BASECLASS(name),
 	IsAirburst(false),
@@ -147,13 +161,13 @@ BulletTypeClass::BulletTypeClass(char const * name) :
 	AbstractTypePtrTracker.Add(this);
 }
 
-// FUNCTION: 0x0046BDE0
+// FUNCTION: GAMEMD 0x0046BDE0
 BulletTypeClass::BulletTypeClass(NoInitClass const & x) :
 	BASECLASS(x)
 {
 }
 
-// FUNCTION: 0x0046BE10
+// FUNCTION: GAMEMD 0x0046BE10
 BulletTypeClass::~BulletTypeClass(void)
 {
 	Detach_This_From_All(this, true);
@@ -161,7 +175,7 @@ BulletTypeClass::~BulletTypeClass(void)
 	BulletTypes.Delete(this);
 }
 
-// FUNCTION: 0x0046BEE0
+// FUNCTION: GAMEMD 0x0046BEE0
 bool BulletTypeClass::Read_INI(CCINIClass & ini)
 {
 	ini.Reset();
@@ -227,7 +241,7 @@ bool BulletTypeClass::Read_INI(CCINIClass & ini)
 	return(false);
 }
 
-// FUNCTION: 0x0046C440
+// FUNCTION: GAMEMD 0x0046C440
 BulletType BulletTypeClass::From_Name(char const * name)
 {
 	if (stricmp(name, "<none>")) {
@@ -242,7 +256,7 @@ BulletType BulletTypeClass::From_Name(char const * name)
 	return(BULLET_NONE);
 }
 
-// FUNCTION: 0x0046C4D0
+// FUNCTION: GAMEMD 0x0046C4D0
 const char * BulletTypeClass::Name_From(BulletType bullet)
 {
 	if ((unsigned)bullet < (unsigned)BulletTypes.Count()) {
@@ -251,7 +265,7 @@ const char * BulletTypeClass::Name_From(BulletType bullet)
 	return(NULL);
 }
 
-// FUNCTION: 0x0046C4F0
+// FUNCTION: GAMEMD 0x0046C4F0
 Coord const BulletTypeClass::Coord_Fixup(Coord const & coord) const
 {
 	Coord c = coord;
@@ -264,7 +278,7 @@ Coord const BulletTypeClass::Coord_Fixup(Coord const & coord) const
 	return(c);
 }
 
-// FUNCTION: 0x0046C560
+// FUNCTION: GAMEMD 0x0046C560
 void BulletTypeClass::Compute_CRC(CRCEngine & crc) const
 {
 	BASECLASS::Compute_CRC(crc);
@@ -290,7 +304,7 @@ void BulletTypeClass::Compute_CRC(CRCEngine & crc) const
 	crc(Flat);
 }
 
-// FUNCTION: 0x0046C6A0
+// FUNCTION: GAMEMD 0x0046C6A0
 HRESULT STDMETHODCALLTYPE BulletTypeClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -308,7 +322,7 @@ HRESULT STDMETHODCALLTYPE BulletTypeClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x0046C730
+// FUNCTION: GAMEMD 0x0046C730
 HRESULT STDMETHODCALLTYPE BulletTypeClass::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -318,7 +332,7 @@ HRESULT STDMETHODCALLTYPE BulletTypeClass::Save(IStream * stream, BOOL cleardirt
 	return(result);
 }
 
-// FUNCTION: 0x0046C750
+// FUNCTION: GAMEMD 0x0046C750
 HRESULT STDMETHODCALLTYPE BulletTypeClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -326,7 +340,7 @@ HRESULT STDMETHODCALLTYPE BulletTypeClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x0046C790
+// FUNCTION: GAMEMD 0x0046C790
 BulletTypeClass * BulletTypeClass::FindOrAllocate(const char * name)
 {
 	if (stricmp("<none>", name) && stricmp("none", name)) {
@@ -340,7 +354,7 @@ BulletTypeClass * BulletTypeClass::FindOrAllocate(const char * name)
 	return(NULL);
 }
 
-// FUNCTION: 0x0046C820
+// FUNCTION: GAMEMD 0x0046C820
 void BulletTypeClass::Detach(AbstractClass const * target, bool all)
 {
 	if (target == Trailer) {
@@ -348,26 +362,29 @@ void BulletTypeClass::Detach(AbstractClass const * target, bool all)
 	}
 }
 
-// FUNCTION: 0x0046C840
+// FUNCTION: GAMEMD 0x0046C840
 void BulletTypeClass::SetScaledSpawnDelay(int delay)
 {
 	ScaledSpawnDelay = delay;
 }
 
-// FUNCTION: 0x0046C850
+// FUNCTION: GAMEMD 0x0046C850
 RTTIType BulletTypeClass::Fetch_RTTI(void) const
 {
 	return(RTTI_BULLETTYPE);
 }
 
-// FUNCTION: 0x0046C860
+// FUNCTION: GAMEMD 0x0046C860
 int BulletTypeClass::Fetch_Object_Size(void) const
 {
 	return(sizeof(*this));
 }
 
-// FUNCTION: 0x0046C870 BulletTypeClass::Create_And_Place
+// FUNCTION: GAMEMD 0x0046C870
+// BulletTypeClass::Create_And_Place
 
-// FUNCTION: 0x0046C880 BulletTypeClass::Create_One_Of
+// FUNCTION: GAMEMD 0x0046C880
+// BulletTypeClass::Create_One_Of
 
-// FUNCTION: 0x0046C890 BulletTypeClass::~BulletTypeClass
+// SYNTHETIC: GAMEMD 0x0046C890
+// ??_GBulletTypeClass@@UAEPAXI@Z

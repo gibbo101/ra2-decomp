@@ -31,7 +31,7 @@ extern const double DAT_007F5810;
 
 extern bool DAT_00A8F7D8;
 
-// FUNCTION: 0x00724000
+// FUNCTION: GAMEMD 0x00724000
 ToolTipManager::ToolTipManager(HWND window) :
 	Window(window),
 	IsActive(false),
@@ -43,7 +43,7 @@ ToolTipManager::ToolTipManager(HWND window) :
 	ToolTipIndex.Clear();
 }
 
-// FUNCTION: 0x007240B0
+// FUNCTION: GAMEMD 0x007240B0
 ToolTipManager::~ToolTipManager(void)
 {
 	KillTimer(Window, TOOLTIP_EVENT);
@@ -62,7 +62,7 @@ ToolTipManager::~ToolTipManager(void)
 	ToolTips.Clear();
 }
 
-// FUNCTION: 0x007241A0
+// FUNCTION: GAMEMD 0x007241A0
 void ToolTipManager::Activate(bool state)
 {
 	if (IsActive != state) {
@@ -76,7 +76,7 @@ void ToolTipManager::Activate(bool state)
 	}
 }
 
-// FUNCTION: 0x00724200
+// FUNCTION: GAMEMD 0x00724200
 void ToolTipManager::Message_Handler(MSG * msg)
 {
 	if (IsActive == true) {
@@ -126,49 +126,49 @@ void ToolTipManager::Message_Handler(MSG * msg)
 	}
 }
 
-// FUNCTION: 0x00724510
+// FUNCTION: GAMEMD 0x00724510
 int ToolTipManager::Get_Timer_Delay(void)
 {
 	return(ToolTipDelay);
 }
 
-// FUNCTION: 0x00724520
+// FUNCTION: GAMEMD 0x00724520
 void ToolTipManager::Set_Timer_Delay(int delay)
 {
 	ToolTipDelay = delay;
 }
 
-// FUNCTION: 0x00724530
+// FUNCTION: GAMEMD 0x00724530
 void ToolTipManager::Save_Timer_Delay(void)
 {
 	SavedToolTipDelay = ToolTipDelay;
 }
 
-// FUNCTION: 0x00724540
+// FUNCTION: GAMEMD 0x00724540
 void ToolTipManager::Restore_Timer_Delay(void)
 {
 	ToolTipDelay = SavedToolTipDelay;
 }
 
-// FUNCTION: 0x00724550
+// FUNCTION: GAMEMD 0x00724550
 int ToolTipManager::Get_Lifetime(void)
 {
 	return(ToolTipLifetime);
 }
 
-// FUNCTION: 0x00724560
+// FUNCTION: GAMEMD 0x00724560
 void ToolTipManager::Set_Lifetime(int lifetime)
 {
 	ToolTipLifetime = lifetime;
 }
 
-// FUNCTION: 0x00724570
+// FUNCTION: GAMEMD 0x00724570
 int ToolTipManager::Get_Count(void)
 {
 	return(ToolTips.Count());
 }
 
-// FUNCTION: 0x00724580
+// FUNCTION: GAMEMD 0x00724580
 bool ToolTipManager::Add(ToolTip const * tooltip)
 {
 	if (!Find(tooltip->ID, NULL)) {
@@ -184,7 +184,7 @@ bool ToolTipManager::Add(ToolTip const * tooltip)
 	return(false);
 }
 
-// FUNCTION: 0x00724730
+// FUNCTION: GAMEMD 0x00724730
 void ToolTipManager::Remove(unsigned id)
 {
 	if (ToolTipIndex.Is_Present(id)) {
@@ -203,7 +203,7 @@ void ToolTipManager::Remove(unsigned id)
 	}
 }
 
-// FUNCTION: 0x007248C0
+// FUNCTION: GAMEMD 0x007248C0
 bool ToolTipManager::Find(unsigned id, ToolTip * tooltip)
 {
 	if (!ToolTipIndex.Is_Present(id)) {
@@ -217,7 +217,7 @@ bool ToolTipManager::Find(unsigned id, ToolTip * tooltip)
 	return(true);
 }
 
-// FUNCTION: 0x00724A30
+// FUNCTION: GAMEMD 0x00724A30
 ToolTip const * ToolTipManager::Find_From_Pos(Point2D &xy)
 {
 	for (int i = 0; i < ToolTips.Count(); i++) {
@@ -233,13 +233,13 @@ ToolTip const * ToolTipManager::Find_From_Pos(Point2D &xy)
 	return(NULL);
 }
 
-// FUNCTION: 0x00724AA0
+// FUNCTION: GAMEMD 0x00724AA0
 bool ToolTipManager::Update(ToolTipText *text)
 {
 	return(true);
 }
 
-// FUNCTION: 0x00724AB0
+// FUNCTION: GAMEMD 0x00724AB0
 void ToolTipManager::Reset(const ToolTipText *text)
 {
 	CurrentToolTipInfo.Pos.x = 0;
@@ -249,7 +249,7 @@ void ToolTipManager::Reset(const ToolTipText *text)
 	CurrentToolTip = NULL;
 }
 
-// FUNCTION: 0x00724AD0
+// FUNCTION: GAMEMD 0x00724AD0
 bool ToolTipManager::Process(void)
 {
 	ToolTip const * cur = CurrentToolTip;
@@ -285,7 +285,7 @@ bool ToolTipManager::Process(void)
 	return(CurrentToolTip != NULL);
 }
 
-// FUNCTION: 0x00724B80
+// FUNCTION: GAMEMD 0x00724B80
 void ToolTipManager::Draw_Current(bool refresh)
 {
 	if (refresh == true) {
@@ -297,99 +297,131 @@ void ToolTipManager::Draw_Current(bool refresh)
 	}
 }
 
-// FUNCTION: 0x00724BB0
+// FUNCTION: GAMEMD 0x00724BB0
 void ToolTipManager::Draw(const ToolTipText *text)
 {
 	DebugString("ToolTip: %s\n", text->Text);
 }
 
-// FUNCTION: 0x00724BD0
+// FUNCTION: GAMEMD 0x00724BD0
 const char * ToolTipManager::ToolTip_Text(int id)
 {
 	return(NULL);
 }
 
-// FUNCTION: 0x00724BE0
+// FUNCTION: GAMEMD 0x00724BE0
 void ToolTipManager::Hide(void)
 {
 	Reset_Current();
 }
 
-// FUNCTION: 0x00724C00
+// FUNCTION: GAMEMD 0x00724C00
 bool ToolTipManager::IsToolTipShowing(void)
 {
 	return(CurrentToolTip != NULL);
 }
 
-// FUNCTION: 0x00724C10 ToolTipManager::~ToolTipManager
+// SYNTHETIC: GAMEMD 0x00724C10
+// ??_GToolTipManager@@UAEPAXI@Z
 
-// FUNCTION: 0x00724C30 ?$DynamicVectorClass@PBVToolTip@@::Clear
+// TEMPLATE: GAMEMD 0x00724C30
+// ?Clear@?$DynamicVectorClass@PBVToolTip@@@@UAEXXZ
 
-// FUNCTION: 0x00724C60 ?$VectorClass@PBVToolTip@@::ID
-// FUNCTION: 0x00724C80 ?$VectorClass@PBVToolTip@@::GetItem
-// FUNCTION: 0x00724C90 ?$VectorClass@PBVToolTip@@::operator==
-// FUNCTION: 0x00724CD0 ?$VectorClass@PBVToolTip@@::Resize
-// FUNCTION: 0x00724D80 ?$VectorClass@PBVToolTip@@::Clear
-// FUNCTION: 0x00724DB0 ?$VectorClass@PBVToolTip@@::ID
+// TEMPLATE: GAMEMD 0x00724C60
+// ?ID@?$VectorClass@PBVToolTip@@@@UAEHPBQBVToolTip@@@Z
+// TEMPLATE: GAMEMD 0x00724C80
+// ?GetItem@?$VectorClass@PBVToolTip@@@@UBEPBVToolTip@@H@Z
+// TEMPLATE: GAMEMD 0x00724C90
+// ??8?$VectorClass@PBVToolTip@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x00724CD0
+// ?Resize@?$VectorClass@PBVToolTip@@@@UAE_NHPBQBVToolTip@@@Z
+// TEMPLATE: GAMEMD 0x00724D80
+// ?Clear@?$VectorClass@PBVToolTip@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x00724DB0
+// ?ID@?$VectorClass@PBVToolTip@@@@UAEHABQBVToolTip@@@Z
 template class VectorClass<ToolTip const *>;
 
-// FUNCTION: 0x00724DF0 ?$DynamicVectorClass@PBVToolTip@@::ID
-// FUNCTION: 0x00724E10 ?$DynamicVectorClass@PBVToolTip@@::Resize
-// FUNCTION: 0x00724EC0 ?$DynamicVectorClass@PBVToolTip@@::ID
-// FUNCTION: 0x00724EF0 ?$DynamicVectorClass@PBVToolTip@@::~?$DynamicVectorClass@PBVToolTip@@
+// TEMPLATE: GAMEMD 0x00724DF0
+// ?ID@?$DynamicVectorClass@PBVToolTip@@@@UAEHPBQBVToolTip@@@Z
+// TEMPLATE: GAMEMD 0x00724E10
+// ?Resize@?$DynamicVectorClass@PBVToolTip@@@@UAE_NHPBQBVToolTip@@@Z
+// TEMPLATE: GAMEMD 0x00724EC0
+// ?ID@?$DynamicVectorClass@PBVToolTip@@@@UAEHABQBVToolTip@@@Z
+// SYNTHETIC: GAMEMD 0x00724EF0
+// ??_G?$DynamicVectorClass@PBVToolTip@@@@UAEPAXI@Z
 template class DynamicVectorClass<ToolTip const *>;
 
-// FUNCTION: 0x00724F40 ?$VectorClass@PBVToolTip@@::~?$VectorClass@PBVToolTip@@
+// SYNTHETIC: GAMEMD 0x00724F40
+// ??_G?$VectorClass@PBVToolTip@@@@UAEPAXI@Z
 
-// FUNCTION: 0x00724F90 ?$IndexClass@IPBVToolTip@@::NodeElement::NodeElement
+// TEMPLATE: GAMEMD 0x00724F90
+// ??0NodeElement@?$IndexClass@IPBVToolTip@@@@QAE@XZ
 
-// FUNCTION: 0x00724FA0 ?$IndexClass@IPBVToolTip@@::Is_Archive_Same
+// TEMPLATE: GAMEMD 0x00724FA0
+// ?Is_Archive_Same@?$IndexClass@IPBVToolTip@@@@ABE_NABI@Z
 
-// FUNCTION: 0x00724FC0 ?$IndexClass@IPBVToolTip@@::Search_For_Node
+// TEMPLATE: GAMEMD 0x00724FC0
+// ?Search_For_Node@?$IndexClass@IPBVToolTip@@@@ABEPBUNodeElement@1@ABI@Z
 
-// FUNCTION: 0x00725040 ?$IndexClass@IPBVToolTip@@::search_compfunc
+// TEMPLATE: GAMEMD 0x00725040
+// ?search_compfunc@?$IndexClass@IPBVToolTip@@@@CAHPBX0@Z
 
-// FUNCTION: 0x00725070 Binary_Search
+// TEMPLATE: GAMEMD 0x00725070
+// ?Binary_Search@@YIPAUNodeElement@?$IndexClass@IPBVToolTip@@@@PAU12@HABU12@@Z
 template class IndexClass<unsigned, ToolTip const *>;
 
-// FUNCTION: 0x007250C0 $E5
+// SYNTHETIC: GAMEMD 0x007250C0 SYMBOL
+// _$E5
 double DAT_00B0F638 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x007250F0 $E8
+// SYNTHETIC: GAMEMD 0x007250F0 SYMBOL
+// _$E8
 double DAT_00B0F748 = DAT_00B0F638 / DAT_007F5808;
 
-// FUNCTION: 0x00725110 $E11
+// SYNTHETIC: GAMEMD 0x00725110 SYMBOL
+// _$E11
 double DAT_00B0F6E8 = DAT_007E1718 / DAT_00B0F748;
 
-// FUNCTION: 0x00725130 $E14
+// SYNTHETIC: GAMEMD 0x00725130 SYMBOL
+// _$E14
 double DAT_00B0F6E0 = DAT_007E1720 * DAT_007F5810;
 
-// FUNCTION: 0x00725150 $E17
+// SYNTHETIC: GAMEMD 0x00725150 SYMBOL
+// _$E17
 double DAT_00B0F688 = DAT_007E1728 * DAT_007F5810;
 
-// FUNCTION: 0x00725170 $E20
+// SYNTHETIC: GAMEMD 0x00725170 SYMBOL
+// _$E20
 double DAT_00B0F5D0 = DAT_007E1730 * DAT_007F5810;
 
-// FUNCTION: 0x00725190 $E23
+// SYNTHETIC: GAMEMD 0x00725190 SYMBOL
+// _$E23
 int DAT_00B0F750 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B0F5D0 - DAT_00B0F688) * DAT_00B0F638));
 
-// FUNCTION: 0x007251D0 $E26
+// SYNTHETIC: GAMEMD 0x007251D0 SYMBOL
+// _$E26
 double DAT_00B0F690 = FUN_004CADE0(DAT_00B0F750 * DAT_007E1740);
 
-// FUNCTION: 0x00725200 $E29
+// SYNTHETIC: GAMEMD 0x00725200 SYMBOL
+// _$E29
 double DAT_00B0F6C0 = FUN_004CADE0(DAT_00B0F750 * 2 / DAT_00B0F638);
 
-// FUNCTION: 0x00725230 $E32
+// SYNTHETIC: GAMEMD 0x00725230 SYMBOL
+// _$E32
 int DAT_00B0F744 = (int)(DAT_00B0F750 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x00725260 $E35
+// SYNTHETIC: GAMEMD 0x00725260 SYMBOL
+// _$E35
 TPoint2D<short> DAT_00B0F630(0, 0);
 
-// FUNCTION: 0x00725270 $E38
+// SYNTHETIC: GAMEMD 0x00725270 SYMBOL
+// _$E38
 Point3D DAT_00B0F6B0(0, 0, 0);
 
-// FUNCTION: 0x00725290 $E41
+// SYNTHETIC: GAMEMD 0x00725290 SYMBOL
+// _$E41
 Point3D DAT_00B0F738(0x80, 0x80, 0);
 
-// FUNCTION: 0x007252B0 $E44
+// SYNTHETIC: GAMEMD 0x007252B0 SYMBOL
+// _$E44
 TRect<int> DAT_00B0F608(0, 0, 0, 0);

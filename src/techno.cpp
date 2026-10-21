@@ -102,24 +102,26 @@ namespace Unsorted { extern int CurrentFrame; }
 template class TPoint3D<int>;
 template class IndexClass<int, StaticBufferClass::Entry *>;
 
-// FUNCTION: 0x006CE270 ?$_com_ptr_t@V?$_com_IIID@UILocomotion@@$1?_GUID_070f3290_9841_11d1_b709_00a024ddafd1@@3U__s_GUID@@A@@::_AddRef
+// TEMPLATE: GAMEMD 0x006CE270
+// ?_AddRef@?$_com_ptr_t@V?$_com_IIID@UILocomotion@@$1?_GUID_070f3290_9841_11d1_b709_00a024ddafd1@@3U__s_GUID@@A@@@@AAEXXZ
 template class _com_ptr_t<_com_IIID<ILocomotion, &__uuidof(ILocomotion)> >;
 
 
-// FUNCTION: 0x006F2AD0 $E233
+// SYNTHETIC: GAMEMD 0x006F2AD0 SYMBOL
+// _$E233
 CDTimerClass<FrameTimerClass> TechnoClass::ActionLineTimer;
 
-// FUNCTION: 0x006F2AF0
-// FUNCTION: 0x006F2B20
+// FUNCTION: GAMEMD 0x006F2AF0
+// FUNCTION: GAMEMD 0x006F2B20
 CDTimerClass<SystemTimerClass> TechnoClass::TalkBubbleTimer;
 
-// FUNCTION: 0x006F3270
+// FUNCTION: GAMEMD 0x006F3270
 TechnoTypeClass const * TechnoClass::Techno_Type_Class(void) const
 {
 	return((TechnoTypeClass const *)Class_Of());
 }
 
-// FUNCTION: 0x006F3280
+// FUNCTION: GAMEMD 0x006F3280
 bool TechnoClass::Can_Scatter(void) const
 {
 	if (Mission != MISSION_SLEEP && Mission != MISSION_STICKY && Mission != MISSION_UNLOAD && !TClass->IsTrain) {
@@ -129,7 +131,7 @@ bool TechnoClass::Can_Scatter(void) const
 	return(false);
 }
 
-// FUNCTION: 0x006F32D0
+// FUNCTION: GAMEMD 0x006F32D0
 bool TechnoClass::Is_Players_Army(void) const
 {
 	if (Strength <= 0) {
@@ -158,7 +160,7 @@ static inline BuildingClass * Building_If_Building(AbstractClass * t)
 	return(t->RTTI == RTTI_BUILDING ? (BuildingClass *)t : (BuildingClass *)0);
 }
 
-// FUNCTION: 0x006F3330
+// FUNCTION: GAMEMD 0x006F3330
 int TechnoClass::What_Weapon_Should_I_Use(AbstractClass * target) const
 {
 	bool inwater;
@@ -279,7 +281,7 @@ success:
 	return(0);
 }
 
-// FUNCTION: 0x006F3820
+// FUNCTION: GAMEMD 0x006F3820
 int TechnoClass::SelectNavalTargeting(AbstractClass * target) const
 {
 	if (target == NULL) goto none;
@@ -326,7 +328,7 @@ none:
 	return(0);
 }
 
-// FUNCTION: 0x006F3950
+// FUNCTION: GAMEMD 0x006F3950
 int TechnoClass::How_Many_Survivors(void) const
 {
 	if (TClass->IsCrew) {
@@ -335,7 +337,7 @@ int TechnoClass::How_Many_Survivors(void) const
 	return(0);
 }
 
-// FUNCTION: 0x006F3AD0
+// FUNCTION: GAMEMD 0x006F3AD0
 Coord TechnoClass::Fire_Coord(int which, Coord base) const
 {
 	TechnoTypeClass const * tclass = TClass;
@@ -383,7 +385,7 @@ Coord TechnoClass::Fire_Coord(int which, Coord base) const
 	return(Render_Coord() + coord);
 }
 
-// FUNCTION: 0x006F3D60
+// FUNCTION: GAMEMD 0x006F3D60
 Coord TechnoClass::Turret_Coord(int which) const
 {
 	TechnoTypeClass const * tclass = TClass;
@@ -416,7 +418,7 @@ static inline void Set_Recoil(RecoilData & recoil, TurretControl const & control
 	recoil.Turret.HoldFrames = control.HoldFrames;
 }
 
-// FUNCTION: 0x006F3F40
+// FUNCTION: GAMEMD 0x006F3F40
 void TechnoClass::Init(void)
 {
 	if (House != NULL) {
@@ -476,7 +478,7 @@ void TechnoClass::Init(void)
 	}
 }
 
-// FUNCTION: 0x006F4300
+// FUNCTION: GAMEMD 0x006F4300
 TechnoClass::TechnoClass(NoInitClass const & x) :
 	BASECLASS(x),
 	Flashing(x),
@@ -522,7 +524,7 @@ TechnoClass::TechnoClass(NoInitClass const & x) :
 }
 
 
-// FUNCTION: 0x006F4500
+// FUNCTION: GAMEMD 0x006F4500
 TechnoClass::~TechnoClass(void)
 {
 	if (PlanningToken != NULL) {
@@ -580,7 +582,7 @@ TechnoClass::~TechnoClass(void)
 	}
 }
 
-// FUNCTION: 0x006F47A0
+// FUNCTION: GAMEMD 0x006F47A0
 int TechnoClass::Time_To_Build(void) const
 {
 	int val = Class_Of()->Time_To_Build();
@@ -621,7 +623,7 @@ int TechnoClass::Time_To_Build(void) const
 	return(val);
 }
 
-// FUNCTION: 0x006F4960
+// FUNCTION: GAMEMD 0x006F4960
 bool TechnoClass::Revealed(HouseClass * house)
 {
 	if (house == PlayerPtr) {
@@ -661,7 +663,7 @@ bool TechnoClass::Revealed(HouseClass * house)
 }
 
 
-// FUNCTION: 0x006F4A40
+// FUNCTION: GAMEMD 0x006F4A40
 void TechnoClass::Hidden(void)
 {
 	if (IsDiscoveredByPlayer) {
@@ -672,7 +674,7 @@ void TechnoClass::Hidden(void)
 }
 
 
-// FUNCTION: 0x006F4A70
+// FUNCTION: GAMEMD 0x006F4A70
 bool TechnoClass::Mark(MarkType mark)
 {
 	if (BASECLASS::Mark(mark)) {
@@ -701,7 +703,7 @@ static inline bool Is_Foot_Object(AbstractClass const * object)
 	return(flag != 0);
 }
 
-// FUNCTION: 0x006F4AB0
+// FUNCTION: GAMEMD 0x006F4AB0
 RadioMessageType TechnoClass::Receive_Message(RadioClass * from, RadioMessageType message, int & param)
 {
 	WeaponDataStruct const * weapon;
@@ -819,7 +821,7 @@ RadioMessageType TechnoClass::Receive_Message(RadioClass * from, RadioMessageTyp
 	return(BASECLASS::Receive_Message(from, message, param));
 }
 
-// FUNCTION: 0x006F4EB0
+// FUNCTION: GAMEMD 0x006F4EB0
 void TechnoClass::Sensed(void)
 {
 	int i;
@@ -847,7 +849,7 @@ void TechnoClass::Sensed(void)
 }
 
 
-// FUNCTION: 0x006F5090
+// FUNCTION: GAMEMD 0x006F5090
 void TechnoClass::Per_Cell_Process(PCPType why)
 {
 	if (why == PCP_END) {
@@ -875,7 +877,7 @@ void TechnoClass::Per_Cell_Process(PCPType why)
 	}
 }
 
-// FUNCTION: 0x006F5EF0
+// FUNCTION: GAMEMD 0x006F5EF0
 void TechnoClass::Draw_Double_Selection_Bracket(Coord const & coord1, Coord const & coord2, int color)
 {
 	Coord c1 = (coord1 + coord1 + coord1 + coord2) / 4;
@@ -894,7 +896,7 @@ void TechnoClass::Draw_Double_Selection_Bracket(Coord const & coord1, Coord cons
 	}
 }
 
-// FUNCTION: 0x006F6030
+// FUNCTION: GAMEMD 0x006F6030
 void TechnoClass::Draw_Single_Selection_Bracket(Coord const & coord1, Coord const & coord2, int color)
 {
 	Coord c1 = (coord1 + coord1 + coord1 + coord2) / 4;
@@ -906,12 +908,12 @@ void TechnoClass::Draw_Single_Selection_Bracket(Coord const & coord1, Coord cons
 	}
 }
 
-// FUNCTION: 0x006F60C0
+// FUNCTION: GAMEMD 0x006F60C0
 void TechnoClass::vt_entry_448(unsigned, unsigned)
 {
 }
 
-// FUNCTION: 0x006F6AC0
+// FUNCTION: GAMEMD 0x006F6AC0
 bool TechnoClass::Limbo(void)
 {
 	if (!IsInLimbo && TClass != NULL) {
@@ -973,7 +975,7 @@ static inline int Sight_Bonus_For(Coord const & coord)
 	return(10 * (coord.Z / Rule->LeptonsPerSightIncrease));
 }
 
-// FUNCTION: 0x006F6CA0
+// FUNCTION: GAMEMD 0x006F6CA0
 bool TechnoClass::Unlimbo(Coord const & coord, Dir256 dir)
 {
 	if (BASECLASS::Unlimbo(coord, dir)) {
@@ -1014,13 +1016,13 @@ bool TechnoClass::Unlimbo(Coord const & coord, Dir256 dir)
 	return(false);
 }
 
-// FUNCTION: 0x006F6F40
+// FUNCTION: GAMEMD 0x006F6F40
 int TechnoClass::Get_Sight_Bonus(Coord const & coord)
 {
 	return(10 * (coord.Z / Rule->LeptonsPerSightIncrease));
 }
 
-// FUNCTION: 0x006F6F60
+// FUNCTION: GAMEMD 0x006F6F60
 int TechnoClass::Elevation_Distance(AbstractClass const * target) const
 {
 	if (!On_Ground() || !target->On_Ground()) {
@@ -1037,7 +1039,7 @@ int TechnoClass::Elevation_Distance(AbstractClass const * target) const
 	return((int)fastmath::sqrt((double)(range * range + height * height)));
 }
 
-// FUNCTION: 0x006F70E0
+// FUNCTION: GAMEMD 0x006F70E0
 int TechnoClass::Elevation_Range_Bonus(AbstractClass const * target) const
 {
 	if (!On_Ground() || !target->On_Ground()) {
@@ -1052,7 +1054,7 @@ int TechnoClass::Elevation_Range_Bonus(AbstractClass const * target) const
 	return((int)bonus << 8);
 }
 
-// FUNCTION: 0x006F7660
+// FUNCTION: GAMEMD 0x006F7660
 bool TechnoClass::TriggersCellInset(AbstractClass * target)
 {
 	if (IsAreaFire()) {
@@ -1070,13 +1072,13 @@ bool TechnoClass::TriggersCellInset(AbstractClass * target)
 	return(false);
 }
 
-// FUNCTION: 0x006F7780
+// FUNCTION: GAMEMD 0x006F7780
 bool TechnoClass::IsCloseEnoughToAttack(AbstractClass * target) const
 {
 	return(In_Range(target, What_Weapon_Should_I_Use(target)));
 }
 
-// FUNCTION: 0x006F77B0
+// FUNCTION: GAMEMD 0x006F77B0
 bool TechnoClass::In_Range(AbstractClass * target, int which) const
 {
 	if (target == NULL) {
@@ -1096,7 +1098,7 @@ bool TechnoClass::In_Range(AbstractClass * target, int which) const
 	return(In_Weapon_Range(coord, target, weapon));
 }
 
-// FUNCTION: 0x006F78D0
+// FUNCTION: GAMEMD 0x006F78D0
 bool TechnoClass::InAuxiliarySearchRange(AbstractClass * target) const
 {
 	int which = GetSecondaryWeaponIndex();
@@ -1107,32 +1109,32 @@ bool TechnoClass::InAuxiliarySearchRange(AbstractClass * target) const
 	return(IsCloseEnoughToAttack(target));
 }
 
-// FUNCTION: 0x006F7930
+// FUNCTION: GAMEMD 0x006F7930
 bool TechnoClass::IsCloseEnoughToAttackCoords(Coord const & coord) const
 {
 	AbstractClass * target = &Map[coord];
 	return(In_Range(target, What_Weapon_Should_I_Use(target)));
 }
 
-// FUNCTION: 0x006F7970
+// FUNCTION: GAMEMD 0x006F7970
 bool TechnoClass::In_Range(Coord const & coord, int which) const
 {
 	return(In_Range(&Map[coord], which));
 }
 
-// FUNCTION: 0x006F9DB0
+// FUNCTION: GAMEMD 0x006F9DB0
 HousesType TechnoClass::Owner(void) const
 {
 	return(House->HeapID);
 }
 
-// FUNCTION: 0x006F9DC0
+// FUNCTION: GAMEMD 0x006F9DC0
 HouseClass * TechnoClass::Owner_HouseClass(void) const
 {
 	return(House);
 }
 
-// FUNCTION: 0x006F9DD0
+// FUNCTION: GAMEMD 0x006F9DD0
 void TechnoClass::Clicked_As_Target(int count)
 {
 	if (!IsDisguisedAs(PlayerPtr) || GetDisguiseHouse(true)) {
@@ -1140,7 +1142,7 @@ void TechnoClass::Clicked_As_Target(int count)
 	}
 }
 
-// FUNCTION: 0x006F9E10
+// FUNCTION: GAMEMD 0x006F9E10
 bool TechnoClass::Is_Voxel_Loaded(void) const
 {
 	if (TClass->Voxel.VoxLib == NULL) {
@@ -1152,7 +1154,7 @@ bool TechnoClass::Is_Voxel_Loaded(void) const
 	return(true);
 }
 
-// FUNCTION: 0x006FB010
+// FUNCTION: GAMEMD 0x006FB010
 void TechnoClass::Reload(void)
 {
 	int max = TClass->MaxAmmo;
@@ -1165,7 +1167,7 @@ void TechnoClass::Reload(void)
 	}
 }
 
-// FUNCTION: 0x006FB080
+// FUNCTION: GAMEMD 0x006FB080
 void TechnoClass::StartReloading(void)
 {
 	int max = TClass->MaxAmmo;
@@ -1180,7 +1182,7 @@ void TechnoClass::StartReloading(void)
 	}
 }
 
-// FUNCTION: 0x006FB170
+// FUNCTION: GAMEMD 0x006FB170
 void TechnoClass::CreateGap(void)
 {
 	if (PlayerPtr != NULL && !GeneratingGap && IsPowerOnline()) {
@@ -1226,7 +1228,7 @@ void TechnoClass::CreateGap(void)
 	}
 }
 
-// FUNCTION: 0x006FB470
+// FUNCTION: GAMEMD 0x006FB470
 void TechnoClass::DestroyGap(void)
 {
 	if (PlayerPtr != NULL && GeneratingGap) {
@@ -1270,7 +1272,7 @@ void TechnoClass::DestroyGap(void)
 	}
 }
 
-// FUNCTION: 0x0070D0D0
+// FUNCTION: GAMEMD 0x0070D0D0
 bool TechnoClass::Has_Ability(AbilityType ability) const
 {
 	if (Veterancy.Is_Veteran() || Veterancy.Is_Elite()) {
@@ -1285,7 +1287,7 @@ bool TechnoClass::Has_Ability(AbilityType ability) const
 	return(false);
 }
 
-// FUNCTION: 0x006FB740
+// FUNCTION: GAMEMD 0x006FB740
 void TechnoClass::Cloaking_AI(bool)
 {
 	if (Cloak == UNCLOAKED) {
@@ -1379,7 +1381,7 @@ void TechnoClass::Cloaking_AI(bool)
 	}
 }
 
-// FUNCTION: 0x006FBC90
+// FUNCTION: GAMEMD 0x006FBC90
 bool TechnoClass::Should_Uncloak(void) const
 {
 	if (!(Is_Allowed_To_Recloak() || IsCloakable) || Is_Immobilized()) {
@@ -1393,7 +1395,7 @@ bool TechnoClass::Should_Uncloak(void) const
 	return(false);
 }
 
-// FUNCTION: 0x006FBDC0
+// FUNCTION: GAMEMD 0x006FBDC0
 bool TechnoClass::Is_Ready_To_Cloak(void) const
 {
 	if (!Is_Allowed_To_Recloak() && !Has_Ability(ABILITY_CLOAK)) {
@@ -1434,7 +1436,7 @@ bool TechnoClass::Is_Ready_To_Cloak(void) const
 extern bool MoveFeedback;
 void FUN_00637840(TechnoClass * techno);
 
-// FUNCTION: 0x006FBFA0
+// FUNCTION: GAMEMD 0x006FBFA0
 bool TechnoClass::Select(void)
 {
 	if (!IsDiscoveredByPlayer && !House->Is_Player_Control() && MainWindow) {
@@ -1456,7 +1458,7 @@ bool TechnoClass::Select(void)
 	return(false);
 }
 
-// FUNCTION: 0x006FC030
+// FUNCTION: GAMEMD 0x006FC030
 bool TechnoClass::CanBeSelectedNow(void) const
 {
 	if (SlaveOwner != NULL) {
@@ -1476,13 +1478,13 @@ bool TechnoClass::CanBeSelectedNow(void) const
 	return(FUN_005F6C70());
 }
 
-// FUNCTION: 0x006FC090
+// FUNCTION: GAMEMD 0x006FC090
 FireErrorType TechnoClass::FUN_006FC090(AbstractClass * target, int which) const
 {
 	return(Can_Fire(target, which, false));
 }
 
-// FUNCTION: 0x006FCD40
+// FUNCTION: GAMEMD 0x006FCD40
 void TechnoClass::Stun(void)
 {
 	Assign_Target(NULL);
@@ -1500,7 +1502,7 @@ void TechnoClass::Stun(void)
 	Unselect();
 }
 
-// FUNCTION: 0x006FCDB0
+// FUNCTION: GAMEMD 0x006FCDB0
 void TechnoClass::Assign_Target(AbstractClass * target)
 {
 	ShouldLoseTargetNow = false;
@@ -1577,7 +1579,7 @@ void TechnoClass::Assign_Target(AbstractClass * target)
 	}
 }
 
-// FUNCTION: 0x006FCFA0
+// FUNCTION: GAMEMD 0x006FCFA0
 int TechnoClass::Rearm_Delay(int which) const
 {
 	if (RTTI == RTTI_BUILDING && Ammo > 1) {
@@ -1629,7 +1631,7 @@ int TechnoClass::Rearm_Delay(int which) const
 	return(delay);
 }
 
-// FUNCTION: 0x006FD210
+// FUNCTION: GAMEMD 0x006FD210
 LaserDrawClass * TechnoClass::CreateLaser(ObjectClass * target, int which, WeaponTypeClass * weapon, Coord const & source_coord)
 {
 	RGBClass color;
@@ -1679,7 +1681,7 @@ LaserDrawClass * TechnoClass::CreateLaser(ObjectClass * target, int which, Weapo
 	return(laser);
 }
 
-// FUNCTION: 0x006FD460
+// FUNCTION: GAMEMD 0x006FD460
 EBolt * TechnoClass::CreateEBolt(ObjectClass * target, WeaponTypeClass * weapon, Coord const & source_coord)
 {
 	int zadjust = 0;
@@ -1712,7 +1714,7 @@ EBolt * TechnoClass::CreateEBolt(ObjectClass * target, WeaponTypeClass * weapon,
 	return(ebolt);
 }
 
-// FUNCTION: 0x006FD570
+// FUNCTION: GAMEMD 0x006FD570
 EBolt * TechnoClass::FireEBolt(ObjectClass * target)
 {
 	int which = What_Weapon_Should_I_Use(target);
@@ -1734,7 +1736,7 @@ static inline TechnoClass * As_Techno(AbstractClass * object)
 	return(NULL);
 }
 
-// FUNCTION: 0x006FD620
+// FUNCTION: GAMEMD 0x006FD620
 RadBeam * TechnoClass::CreateRadBeam(ObjectClass * target, int type)
 {
 	RadBeam * beam = RadBeam::Allocate(1);
@@ -1788,7 +1790,7 @@ none:
 	return(beam);
 }
 
-// FUNCTION: 0x006FDA00
+// FUNCTION: GAMEMD 0x006FDA00
 DirType TechnoClass::Barrel_Pitch(AbstractClass * target) const
 {
 	DirType pitch(Dir256(TClass->FireAngle));
@@ -1811,7 +1813,7 @@ DirType TechnoClass::Barrel_Pitch(AbstractClass * target) const
 	return(pitch);
 }
 
-// FUNCTION: 0x006FDB80
+// FUNCTION: GAMEMD 0x006FDB80
 int TechnoClass::Estimate_Damage(TechnoClass * target, WeaponTypeClass const * weapon) const
 {
 	if (target == NULL) {
@@ -1839,7 +1841,7 @@ int TechnoClass::Estimate_Damage(TechnoClass * target, WeaponTypeClass const * w
 	return(damage);
 }
 
-// FUNCTION: 0x006FF950
+// FUNCTION: GAMEMD 0x006FF950
 void TechnoClass::FUN_006FF950(void)
 {
 }
@@ -1848,7 +1850,7 @@ bool FUN_00731BF0(void);
 bool FUN_00637AA0(void);
 void FUN_00637DD0(EventClass event);
 
-// FUNCTION: 0x006FFBE0
+// FUNCTION: GAMEMD 0x006FFBE0
 bool TechnoClass::Player_Assign_Mission(MissionType order, AbstractClass * target, AbstractClass * destination, AbstractClass * nearby)
 {
 	bool attack_move = FUN_00731BF0() && CanAttackOnTheMove();
@@ -1890,7 +1892,7 @@ bool TechnoClass::Player_Assign_Mission(MissionType order, AbstractClass * targe
 
 void __fastcall FUN_00639FD0(EventClass * event);
 
-// FUNCTION: 0x006FFE00
+// FUNCTION: GAMEMD 0x006FFE00
 bool TechnoClass::ClickedEvent(int event)
 {
 	EventClass ev(PlayerPtr->HeapID, (unsigned char)event, TargetClass(this));
@@ -1902,7 +1904,7 @@ bool TechnoClass::ClickedEvent(int event)
 	return(true);
 }
 
-// FUNCTION: 0x00700C40
+// FUNCTION: GAMEMD 0x00700C40
 bool TechnoClass::Can_Player_Move(void) const
 {
 	if (!House->Is_Player_Control()) {
@@ -1937,7 +1939,7 @@ bool TechnoClass::Can_Player_Move(void) const
 	return(true);
 }
 
-// FUNCTION: 0x00700D10
+// FUNCTION: GAMEMD 0x00700D10
 bool TechnoClass::Can_Attack_Now(void) const
 {
 	if (this != NULL && Fetch_RTTI() == RTTI_UNIT) {
@@ -1949,7 +1951,7 @@ bool TechnoClass::Can_Attack_Now(void) const
 	return(true);
 }
 
-// FUNCTION: 0x007010D0
+// FUNCTION: GAMEMD 0x007010D0
 bool TechnoClass::Can_Player_Fire(void) const
 {
 	if (!Deactivated && House->Is_Player_Control()) {
@@ -1961,14 +1963,14 @@ bool TechnoClass::Can_Player_Fire(void) const
 	return(false);
 }
 
-// FUNCTION: 0x00701120
+// FUNCTION: GAMEMD 0x00701120
 bool TechnoClass::Is_Weapon_Equipped(void) const
 {
 	WeaponDataStruct const * weapon = GetTurretWeapon();
 	return(weapon != NULL && weapon->Weapon != NULL);
 }
 
-// FUNCTION: 0x00701140
+// FUNCTION: GAMEMD 0x00701140
 bool TechnoClass::Can_Repair(void) const
 {
 	if (Fetch_RTTI() != RTTI_BUILDING) {
@@ -1977,13 +1979,13 @@ bool TechnoClass::Can_Repair(void) const
 	return(Techno_Type_Class()->IsRepairable && Strength != Class_Of()->MaxStrength);
 }
 
-// FUNCTION: 0x00701190
+// FUNCTION: GAMEMD 0x00701190
 bool TechnoClass::IsPowerOnline(void) const
 {
 	return(false);
 }
 
-// FUNCTION: 0x007011A0
+// FUNCTION: GAMEMD 0x007011A0
 int TechnoClass::FUN_007011A0(void)
 {
 	if (In_Air()) {
@@ -2022,7 +2024,7 @@ static inline int Passenger_Range(TechnoClass const * transport)
 	return(range);
 }
 
-// FUNCTION: 0x007012C0
+// FUNCTION: GAMEMD 0x007012C0
 int TechnoClass::Weapon_Range(int which) const
 {
 	WeaponTypeClass * weapon = Get_Class_Weapon_Data(which)->Weapon;
@@ -2036,7 +2038,7 @@ int TechnoClass::Weapon_Range(int which) const
 	return(0);
 }
 
-// FUNCTION: 0x007013A0
+// FUNCTION: GAMEMD 0x007013A0
 void TechnoClass::Override_Mission(MissionType mission, AbstractClass * tarcom, AbstractClass * navcom)
 {
 	SuspendedTarCom = TarCom;
@@ -2044,7 +2046,7 @@ void TechnoClass::Override_Mission(MissionType mission, AbstractClass * tarcom, 
 	Assign_Target(tarcom);
 }
 
-// FUNCTION: 0x007013E0
+// FUNCTION: GAMEMD 0x007013E0
 bool TechnoClass::Restore_Mission(void)
 {
 	if (MissionClass::Restore_Mission()) {
@@ -2054,7 +2056,7 @@ bool TechnoClass::Restore_Mission(void)
 	return(false);
 }
 
-// FUNCTION: 0x00701410
+// FUNCTION: GAMEMD 0x00701410
 void TechnoClass::Renovate(void)
 {
 	Mark(MARK_CHANGE);
@@ -2076,7 +2078,7 @@ static inline UnitClass * Cast_To_Unit(TechnoClass * techno)
 	return((techno->Fetch_RTTI() == RTTI_UNIT) ? (UnitClass *)techno : NULL);
 }
 
-// FUNCTION: 0x007014A0
+// FUNCTION: GAMEMD 0x007014A0
 bool TechnoClass::Captured(HouseClass * newowner, bool announce)
 {
 	if (newowner != House) {
@@ -2173,7 +2175,7 @@ bool TechnoClass::Captured(HouseClass * newowner, bool announce)
 	return(false);
 }
 
-// FUNCTION: 0x007018C0
+// FUNCTION: GAMEMD 0x007018C0
 void TechnoClass::Set_Owner(HouseClass * newowner)
 {
 	House = newowner;
@@ -2182,7 +2184,7 @@ void TechnoClass::Set_Owner(HouseClass * newowner)
 
 namespace Unsorted { extern bool ArmageddonMode; }
 
-// FUNCTION: 0x00702D40
+// FUNCTION: GAMEMD 0x00702D40
 void TechnoClass::RegisterDestruction(TechnoClass * destroyer)
 {
 	int total_recorded = 0;
@@ -2274,7 +2276,7 @@ static inline TechnoClass * Cast_To_Techno(ObjectClass const * object)
 	return(NULL);
 }
 
-// FUNCTION: 0x006F8960
+// FUNCTION: GAMEMD 0x006F8960
 bool TechnoClass::TryAutoTargetObject(ThreatType method, int mask, Cell const & cell, int range, TechnoClass const ** object, int & value, int zone) const
 {
 	*object = NULL;
@@ -2342,7 +2344,7 @@ bool TechnoClass::TryAutoTargetObject(ThreatType method, int mask, Cell const & 
 	return(result);
 }
 
-// FUNCTION: 0x006F8C10
+// FUNCTION: GAMEMD 0x006F8C10
 int TechnoClass::Evaluate_Just_Cell(Cell const & cell) const
 {
 	if (House->Is_Human_Player()) {
@@ -2383,7 +2385,7 @@ int TechnoClass::Evaluate_Just_Cell(Cell const & cell) const
 	return(Weapon_Range(0) - Distance(cell));
 }
 
-// FUNCTION: 0x00703230
+// FUNCTION: GAMEMD 0x00703230
 void TechnoClass::Record_The_Kill(HouseClass * source)
 {
 	int total_recorded = 0;
@@ -2451,7 +2453,7 @@ void TechnoClass::Record_The_Kill(HouseClass * source)
 	}
 }
 
-// FUNCTION: 0x00703590
+// FUNCTION: GAMEMD 0x00703590
 Cell TechnoClass::Nearby_Location(TechnoClass const * techno) const
 {
 	SpeedType speed = Techno_Type_Class()->Speed;
@@ -2469,7 +2471,7 @@ Cell TechnoClass::Nearby_Location(TechnoClass const * techno) const
 	return(Map.Nearby_Location(cell, speed, zone, mzone, IsOnBridge));
 }
 
-// FUNCTION: 0x007036C0
+// FUNCTION: GAMEMD 0x007036C0
 void TechnoClass::Do_Uncloak(bool silent)
 {
 	if (Cloak == CLOAKED || Cloak == CLOAKING) {
@@ -2483,7 +2485,7 @@ void TechnoClass::Do_Uncloak(bool silent)
 	}
 }
 
-// FUNCTION: 0x00703770
+// FUNCTION: GAMEMD 0x00703770
 void TechnoClass::Do_Cloak(bool silent)
 {
 	if (Cloak == UNCLOAKED || Cloak == UNCLOAKING) {
@@ -2501,13 +2503,13 @@ void TechnoClass::Do_Cloak(bool silent)
 	}
 }
 
-// FUNCTION: 0x00703850
+// FUNCTION: GAMEMD 0x00703850
 void TechnoClass::Do_Shimmer(void)
 {
 	Do_Uncloak();
 }
 
-// FUNCTION: 0x00703860
+// FUNCTION: GAMEMD 0x00703860
 VisualType TechnoClass::Visual_Character(bool raw, HouseClass const * house) const
 {
 	if (Techno_Type_Class()->IsInvisible && IsOwnedByPlayer) return(VISUAL_NORMAL);
@@ -2534,7 +2536,7 @@ VisualType TechnoClass::Visual_Character(bool raw, HouseClass const * house) con
 	return(VISUAL_HIDDEN);
 }
 
-// FUNCTION: 0x00703B10
+// FUNCTION: GAMEMD 0x00703B10
 bool TechnoClass::Is_Z_Fudge_Bridge(void) const
 {
 	Cell cell = Get_Cell();
@@ -2557,7 +2559,7 @@ bool TechnoClass::Is_Z_Fudge_Bridge(void) const
 	return(false);
 }
 
-// FUNCTION: 0x00703CC0
+// FUNCTION: GAMEMD 0x00703CC0
 bool TechnoClass::Was_Z_Fudge_Bridge(void) const
 {
 	Cell cell = Get_Cell();
@@ -2580,7 +2582,7 @@ bool TechnoClass::Was_Z_Fudge_Bridge(void) const
 	return(false);
 }
 
-// FUNCTION: 0x00703E70
+// FUNCTION: GAMEMD 0x00703E70
 int TechnoClass::Get_Z_Fudge_Column(void) const
 {
 	Cell cell = Get_Cell();
@@ -2616,7 +2618,7 @@ int TechnoClass::Get_Z_Fudge_Column(void) const
 	return(fudge);
 }
 
-// FUNCTION: 0x00704000
+// FUNCTION: GAMEMD 0x00704000
 int TechnoClass::Get_Z_Fudge_Tunnel(void) const
 {
 	int fudge = 0;
@@ -2657,7 +2659,7 @@ int TechnoClass::Get_Z_Fudge_Tunnel(void) const
 	return(fudge);
 }
 
-// FUNCTION: 0x00704240
+// FUNCTION: GAMEMD 0x00704240
 int TechnoClass::Get_Z_Fudge_Cliff(void) const
 {
 	int fudge = 0;
@@ -2681,7 +2683,7 @@ int TechnoClass::Get_Z_Fudge_Cliff(void) const
 	return(fudge);
 }
 
-// FUNCTION: 0x00705CA0
+// FUNCTION: GAMEMD 0x00705CA0
 Coord TechnoClass::GetAttackCoordinates(void) const
 {
 	if (Get_Mission() == MISSION_ATTACK && TarCom != NULL) {
@@ -2690,19 +2692,19 @@ Coord TechnoClass::GetAttackCoordinates(void) const
 	return(Position);
 }
 
-// FUNCTION: 0x00705D10
+// FUNCTION: GAMEMD 0x00705D10
 void TechnoClass::FUN_00705D10(PlanningTokenClass * token)
 {
 	PlanningToken = token;
 }
 
-// FUNCTION: 0x00705D20
+// FUNCTION: GAMEMD 0x00705D20
 PlanningTokenClass * TechnoClass::FUN_00705D20(void)
 {
 	return(PlanningToken);
 }
 
-// FUNCTION: 0x00705D30
+// FUNCTION: GAMEMD 0x00705D30
 bool TechnoClass::FUN_00705D30(void)
 {
 	if (PlanningToken == NULL) {
@@ -2711,19 +2713,19 @@ bool TechnoClass::FUN_00705D30(void)
 	return(PlanningToken->Node_Count() > 0 ? true : false);
 }
 
-// FUNCTION: 0x00705D50
+// FUNCTION: GAMEMD 0x00705D50
 bool TechnoClass::IsNotWarpingIn(void) const
 {
 	return(IsWarpingIn() ? false : true);
 }
 
-// FUNCTION: 0x00705D60
+// FUNCTION: GAMEMD 0x00705D60
 bool TechnoClass::FUN_00705D60(void)
 {
 	return(TryNextPlanningTokenNode());
 }
 
-// FUNCTION: 0x00705D70
+// FUNCTION: GAMEMD 0x00705D70
 void * TechnoClass::GetRemapColour(void) const
 {
 	TechnoTypeClass const * type = Techno_Type_Class();
@@ -2738,7 +2740,7 @@ void * TechnoClass::GetRemapColour(void) const
 	return(ColorSchemes[index]->Converter);
 }
 
-// FUNCTION: 0x00706BD0
+// FUNCTION: GAMEMD 0x00706BD0
 void TechnoClass::Techno_Draw_Voxel_Shadow(VoxelDataStruct const & voxeldata, int layer_index, int key, VoxelIndexClass * cache, Rect const & cliprect, Point2D const & point, Matrix3D const & matrix, bool force_cache, Surface * surface, int shadow_x, int shadow_y) const
 {
 	if (Cloak != UNCLOAKED || Techno_Type_Class()->NoShadow || voxeldata.VoxLib->Load_Failed()) {
@@ -2777,7 +2779,7 @@ void TechnoClass::Techno_Draw_Voxel_Shadow(VoxelDataStruct const & voxeldata, in
 
 extern int DAT_00B43180;
 
-// FUNCTION: 0x00707280
+// FUNCTION: GAMEMD 0x00707280
 SurfaceRegion TechnoClass::Techno_Render_Voxel_Shadow(VoxelDataStruct const & voxeldata, Matrix3D const & matrix, Point2D const & point, Rect const & cliprect, int layer_index, ShapeFlags_Type flags, bool cached, Surface * surface, int shadow_x, int shadow_y) const
 {
 	Matrix3D mtx3;
@@ -2808,7 +2810,7 @@ SurfaceRegion TechnoClass::Techno_Render_Voxel_Shadow(VoxelDataStruct const & vo
 	return(region);
 }
 
-// FUNCTION: 0x00707750
+// FUNCTION: GAMEMD 0x00707750
 void TechnoClass::Calculate_Sinking_Offset(short height, int y)
 {
 	SinkingYOffset = TacticalMap->TacPixelY + height + y - 10;
@@ -2835,7 +2837,7 @@ static inline void Stop_Drain(TechnoClass * drainer)
 	}
 }
 
-// FUNCTION: 0x007077C0
+// FUNCTION: GAMEMD 0x007077C0
 void TechnoClass::Detach(AbstractClass const * target, bool all)
 {
 	BASECLASS::Detach(target, all);
@@ -3008,7 +3010,7 @@ void TechnoClass::Detach(AbstractClass const * target, bool all)
 	AttackedTargets.Delete((AbstractClass *)target);
 }
 
-// FUNCTION: 0x00707CB0
+// FUNCTION: GAMEMD 0x00707CB0
 void TechnoClass::Kill_Cargo(TechnoClass * source)
 {
 	while (Cargo.Is_Something_Attached()) {
@@ -3022,7 +3024,7 @@ void TechnoClass::Kill_Cargo(TechnoClass * source)
 	}
 }
 
-// FUNCTION: 0x00707D20
+// FUNCTION: GAMEMD 0x00707D20
 InfantryTypeClass const * TechnoClass::Crew_Type(void) const
 {
 	if (!TClass->IsCrew) {
@@ -3049,7 +3051,7 @@ InfantryTypeClass const * TechnoClass::Crew_Type(void) const
 	return(infantry);
 }
 
-// FUNCTION: 0x00707DD0
+// FUNCTION: GAMEMD 0x00707DD0
 int TechnoClass::Value(void) const
 {
 	int value = 0;
@@ -3068,7 +3070,7 @@ int TechnoClass::Value(void) const
 	return(Risk() + TClass->Reward + value);
 }
 
-// FUNCTION: 0x00707E60
+// FUNCTION: GAMEMD 0x00707E60
 int TechnoClass::Threat_Range(int control) const
 {
 	if (control == -1) return(-1);
@@ -3096,7 +3098,7 @@ int TechnoClass::Threat_Range(int control) const
 	return(range);
 }
 
-// FUNCTION: 0x00707F60
+// FUNCTION: GAMEMD 0x00707F60
 bool TechnoClass::Is_In_Same_Zone(Coord const & coord) const
 {
 	MZoneType zone = TClass->MZone;
@@ -3119,7 +3121,7 @@ static inline bool Is_Object(AbstractClass const * a)
 	return(flag != 0);
 }
 
-// FUNCTION: 0x007087C0
+// FUNCTION: GAMEMD 0x007087C0
 bool TechnoClass::CanRetaliateToAttacker(ObjectClass * attacker, WarheadTypeClass * warhead)
 {
 	if (attacker == NULL) return(false);
@@ -3192,13 +3194,13 @@ bool TechnoClass::CanRetaliateToAttacker(ObjectClass * attacker, WarheadTypeClas
 	return(true);
 }
 
-// FUNCTION: 0x00708B30
+// FUNCTION: GAMEMD 0x00708B30
 int TechnoClass::Get_Ownable(void) const
 {
 	return(TClass->Get_Ownable());
 }
 
-// FUNCTION: 0x00708B40
+// FUNCTION: GAMEMD 0x00708B40
 int TechnoClass::Risk(void) const
 {
 	TechnoTypeClass const * ttptr = Techno_Type_Class();
@@ -3218,7 +3220,7 @@ int TechnoClass::Risk(void) const
 	return(0);
 }
 
-// FUNCTION: 0x00708BC0
+// FUNCTION: GAMEMD 0x00708BC0
 double TechnoClass::Tiberium_Load(void) const
 {
 	if (Techno_Type_Class()->Capacity != 0) {
@@ -3228,14 +3230,14 @@ double TechnoClass::Tiberium_Load(void) const
 	return(0.0);
 }
 
-// FUNCTION: 0x00708C10
+// FUNCTION: GAMEMD 0x00708C10
 FacingType TechnoClass::Desired_Load_Dir(ObjectClass * , Cell & moveto) const
 {
 	moveto = CELL_NONE;
 	return(FACING_N);
 }
 
-// FUNCTION: 0x00708C30
+// FUNCTION: GAMEMD 0x00708C30
 int TechnoClass::Pip_Count(void) const
 {
 	double maximum, current;
@@ -3273,13 +3275,13 @@ int TechnoClass::Pip_Count(void) const
 	return(retval);
 }
 
-// FUNCTION: 0x00708D70
+// FUNCTION: GAMEMD 0x00708D70
 DirType TechnoClass::Fire_Direction(void) const
 {
 	return(Turret_Facing());
 }
 
-// FUNCTION: 0x00708D90
+// FUNCTION: GAMEMD 0x00708D90
 void TechnoClass::QueueVoice(int voice)
 {
 	if (MoveFeedback && voice != -1 && House->Is_Player_Control()) {
@@ -3289,7 +3291,7 @@ void TechnoClass::QueueVoice(int voice)
 
 #pragma warning(push)
 #pragma warning(disable : 4716)
-// FUNCTION: 0x00708DC0
+// FUNCTION: GAMEMD 0x00708DC0
 int TechnoClass::VoiceCapture(void)
 {
 	if (Techno_Type_Class()->VoiceCapture != -1) {
@@ -3307,7 +3309,7 @@ static inline InfantryClass * As_Infantry_Techno(TechnoClass * techno)
 
 #pragma warning(push)
 #pragma warning(disable : 4716)
-// FUNCTION: 0x00708E00
+// FUNCTION: GAMEMD 0x00708E00
 int TechnoClass::VoiceDeploy(void)
 {
 	if (!unknown_bool_4F8) {
@@ -3323,7 +3325,7 @@ int TechnoClass::VoiceDeploy(void)
 }
 #pragma warning(pop)
 
-// FUNCTION: 0x00708EB0
+// FUNCTION: GAMEMD 0x00708EB0
 void TechnoClass::Response_Select(void)
 {
 	if (SlaveOwner != NULL) {
@@ -3339,7 +3341,7 @@ void TechnoClass::Response_Select(void)
 	}
 }
 
-// FUNCTION: 0x00708FC0
+// FUNCTION: GAMEMD 0x00708FC0
 void TechnoClass::Response_Move(void)
 {
 	if (Techno_Type_Class()->VoiceMove.Count()) {
@@ -3349,7 +3351,7 @@ void TechnoClass::Response_Move(void)
 
 #pragma warning(push)
 #pragma warning(disable : 4716)
-// FUNCTION: 0x00709020
+// FUNCTION: GAMEMD 0x00709020
 int TechnoClass::VoiceEnter(void)
 {
 	if (Techno_Type_Class()->VoiceEnter != -1) {
@@ -3362,7 +3364,7 @@ int TechnoClass::VoiceEnter(void)
 
 #pragma warning(push)
 #pragma warning(disable : 4716)
-// FUNCTION: 0x00709060
+// FUNCTION: GAMEMD 0x00709060
 int TechnoClass::VoiceHarvest(void)
 {
 	if (Techno_Type_Class()->VoiceHarvest != -1) {
@@ -3373,7 +3375,7 @@ int TechnoClass::VoiceHarvest(void)
 }
 #pragma warning(pop)
 
-// FUNCTION: 0x007091D0
+// FUNCTION: GAMEMD 0x007091D0
 bool TechnoClass::CanPassiveAcquireTargets(void) const
 {
 	if (IsWarpingSomethingOut() || SlaveOwner != NULL) {
@@ -3397,7 +3399,7 @@ bool TechnoClass::CanPassiveAcquireTargets(void) const
 	return(false);
 }
 
-// FUNCTION: 0x00709290
+// FUNCTION: GAMEMD 0x00709290
 bool TechnoClass::CanOpportunityFire(void) const
 {
 	if (TarCom == NULL && !House->FUN_0050B730() && Is_Foot() && ((FootClass const *)this)->Team != NULL
@@ -3447,7 +3449,7 @@ bool TechnoClass::CanOpportunityFire(void) const
 	return(true);
 }
 
-// FUNCTION: 0x00709460
+// FUNCTION: GAMEMD 0x00709460
 int TechnoClass::FUN_00709460(FireErrorType error) const
 {
 	if (error == FIRE_ILLEGAL || error == FIRE_CANT || error == FIRE_RANGE) {
@@ -3456,7 +3458,7 @@ int TechnoClass::FUN_00709460(FireErrorType error) const
 	return(true);
 }
 
-// FUNCTION: 0x00709480
+// FUNCTION: GAMEMD 0x00709480
 bool TechnoClass::FUN_00709480(void)
 {
 	bool result = false;
@@ -3472,13 +3474,13 @@ bool TechnoClass::FUN_00709480(void)
 	return(result);
 }
 
-// FUNCTION: 0x007094E0
+// FUNCTION: GAMEMD 0x007094E0
 bool TechnoClass::FUN_007094E0(void) const
 {
 	return(CurrentMission == MISSION_MOVE || CurrentMission == MISSION_HARVEST || CurrentMission == MISSION_GUARD);
 }
 
-// FUNCTION: 0x00709500
+// FUNCTION: GAMEMD 0x00709500
 bool TechnoClass::FUN_00709500(void) const
 {
 	return(CurrentMission == MISSION_SLEEP || CurrentMission == MISSION_ENTER || CurrentMission == MISSION_STOP
@@ -3487,7 +3489,7 @@ bool TechnoClass::FUN_00709500(void) const
 		|| CurrentMission == MISSION_HARMLESS || CurrentMission == MISSION_WAIT || CurrentMission == MISSION_OPEN);
 }
 
-// FUNCTION: 0x00709800
+// FUNCTION: GAMEMD 0x00709800
 int TechnoClass::FUN_00709800(FireErrorType error) const
 {
 	if (error == FIRE_ILLEGAL || error == FIRE_CANT) {
@@ -3496,7 +3498,7 @@ int TechnoClass::FUN_00709800(FireErrorType error) const
 	return(true);
 }
 
-// FUNCTION: 0x00709820
+// FUNCTION: GAMEMD 0x00709820
 bool TechnoClass::Target_Something_Nearby(Coord const & coord, ThreatType threat)
 {
 	unknown_4FC = Unsorted::CurrentFrame;
@@ -3538,29 +3540,29 @@ bool TechnoClass::Target_Something_Nearby(Coord const & coord, ThreatType threat
 	return(TarCom != NULL);
 }
 
-// FUNCTION: 0x007099D0
+// FUNCTION: GAMEMD 0x007099D0
 int TechnoClass::Exit_Object(TechnoClass *, Cell)
 {
 	return(0);
 }
 
-// FUNCTION: 0x007099E0
+// FUNCTION: GAMEMD 0x007099E0
 bool TechnoClass::Is_Ready_To_Random_Animate(void) const
 {
 	return(IdleTimer == 0);
 }
 
-// FUNCTION: 0x00709A20
+// FUNCTION: GAMEMD 0x00709A20
 void TechnoClass::vt_entry_47C(unsigned)
 {
 }
 
-// FUNCTION: 0x00709A30
+// FUNCTION: GAMEMD 0x00709A30
 void TechnoClass::Assign_Destination(AbstractClass *, bool)
 {
 }
 
-// FUNCTION: 0x00709A40
+// FUNCTION: GAMEMD 0x00709A40
 bool TechnoClass::Enter_Idle_Mode(bool, bool)
 {
 	if (TemporalImUsing != NULL && TemporalImUsing->Target != NULL) {
@@ -3574,7 +3576,7 @@ bool TechnoClass::Enter_Idle_Mode(bool, bool)
 
 namespace FileSystem { extern ShapeSet * PIPS_SHP; extern ConvertClass * PALETTE_PAL; }
 
-// FUNCTION: 0x0070A990
+// FUNCTION: GAMEMD 0x0070A990
 void TechnoClass::DrawVeterancyPips(Point2D const & point, Rect const & rect) const
 {
 	Class_Of();
@@ -3603,7 +3605,7 @@ void TechnoClass::DrawVeterancyPips(Point2D const & point, Rect const & rect) co
 Point2D Simple_Text_Print_Wide(wchar_t const * text, Surface * surface, Rect const * bounds, Point2D const * pt, unsigned fore, unsigned back, TextPrintType flags, int unused);
 Rect Drawing_GetTextDimensions(wchar_t const * text, Point2D loc, unsigned short flags, int marginX, int marginY);
 
-// FUNCTION: 0x0070AA60
+// FUNCTION: GAMEMD 0x0070AA60
 void TechnoClass::Draw_Text_Overlay(Point2D const & point1, Point2D const & point2, Rect const & cliprect) const
 {
 	wchar_t buffer[128];
@@ -3633,19 +3635,19 @@ void TechnoClass::Draw_Text_Overlay(Point2D const & point1, Point2D const & poin
 	}
 }
 
-// FUNCTION: 0x0070AD50
+// FUNCTION: GAMEMD 0x0070AD50
 Cell TechnoClass::Find_Exit_Cell(TechnoClass const * techno, unsigned) const
 {
 	return(Docking_Coord((TechnoClass *)techno).As_Cell());
 }
 
-// FUNCTION: 0x0070ADA0
+// FUNCTION: GAMEMD 0x0070ADA0
 int TechnoClass::Refund_Amount(void) const
 {
 	return(Techno_Type_Class()->GetRefund(House, false));
 }
 
-// FUNCTION: 0x0070ADC0
+// FUNCTION: GAMEMD 0x0070ADC0
 void TechnoClass::Look(bool incremental, bool dontmap)
 {
 	if (IsInPlayfield && (!House->Class->IsMultiplayPassive || Session.Type == GAME_NORMAL)) {
@@ -3668,7 +3670,7 @@ void TechnoClass::Look(bool incremental, bool dontmap)
 	}
 }
 
-// FUNCTION: 0x0070AF50
+// FUNCTION: GAMEMD 0x0070AF50
 void TechnoClass::UpdateSight(bool incremental, bool flag, bool use_house, HouseClass * house, int override_range)
 {
 	if (IsInPlayfield && !House->Class->IsMultiplayPassive) {
@@ -3709,7 +3711,7 @@ void TechnoClass::UpdateSight(bool incremental, bool flag, bool use_house, House
 	}
 }
 
-// FUNCTION: 0x0070B1D0
+// FUNCTION: GAMEMD 0x0070B1D0
 void TechnoClass::vt_entry_48C(bool incremental, bool flag, bool use_house, HouseClass * house)
 {
 	if (IsInPlayfield && !House->Class->IsMultiplayPassive) {
@@ -3731,13 +3733,13 @@ void TechnoClass::vt_entry_48C(bool incremental, bool flag, bool use_house, Hous
 	}
 }
 
-// FUNCTION: 0x0070BE50
+// FUNCTION: GAMEMD 0x0070BE50
 int TechnoClass::Get_Predator_Offset(void) const
 {
 	return((Fetch_ID() + (int)WarpFactor) % 400);
 }
 
-// FUNCTION: 0x0070BE80
+// FUNCTION: GAMEMD 0x0070BE80
 bool TechnoClass::Should_Self_Heal_Now(void) const
 {
 	if (!TClass->IsSelfHealing) {
@@ -3758,7 +3760,7 @@ bool TechnoClass::Should_Self_Heal_Now(void) const
 	return(false);
 }
 
-// FUNCTION: 0x0070BF50
+// FUNCTION: GAMEMD 0x0070BF50
 HRESULT STDMETHODCALLTYPE TechnoClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -3819,14 +3821,14 @@ HRESULT STDMETHODCALLTYPE TechnoClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x0070C250
+// FUNCTION: GAMEMD 0x0070C250
 HRESULT STDMETHODCALLTYPE TechnoClass::Save(IStream * stream, BOOL cleardirty)
 {
 	BASECLASS::Save(stream, cleardirty);
 	return(S_OK);
 }
 
-// FUNCTION: 0x0070C270
+// FUNCTION: GAMEMD 0x0070C270
 void TechnoClass::Compute_CRC(CRCEngine & crc) const
 {
 	BASECLASS::Compute_CRC(crc);
@@ -3885,7 +3887,7 @@ void TechnoClass::Compute_CRC(CRCEngine & crc) const
 	}
 }
 
-// FUNCTION: 0x0070C5A0
+// FUNCTION: GAMEMD 0x0070C5A0
 bool TechnoClass::Is_Allowed_To_Recloak(void) const
 {
 	if (IsCloakable) {
@@ -3894,19 +3896,19 @@ bool TechnoClass::Is_Allowed_To_Recloak(void) const
 	return(false);
 }
 
-// FUNCTION: 0x0070C5B0
+// FUNCTION: GAMEMD 0x0070C5B0
 bool TechnoClass::IsBeingWarpedOut(void) const
 {
 	return(BeingWarpedOut);
 }
 
-// FUNCTION: 0x0070C5C0
+// FUNCTION: GAMEMD 0x0070C5C0
 bool TechnoClass::IsWarpingIn(void) const
 {
 	return(WarpingOut);
 }
 
-// FUNCTION: 0x0070C5D0
+// FUNCTION: GAMEMD 0x0070C5D0
 bool TechnoClass::IsWarpingSomethingOut(void) const
 {
 	if (TemporalImUsing != NULL && TemporalImUsing->Target != NULL) {
@@ -3915,7 +3917,7 @@ bool TechnoClass::IsWarpingSomethingOut(void) const
 	return(false);
 }
 
-// FUNCTION: 0x0070C5F0
+// FUNCTION: GAMEMD 0x0070C5F0
 bool TechnoClass::IsNotWarping(void) const
 {
 	if (!BeingWarpedOut && !WarpingOut) {
@@ -3924,40 +3926,40 @@ bool TechnoClass::IsNotWarping(void) const
 	return(false);
 }
 
-// FUNCTION: 0x0070C610
+// FUNCTION: GAMEMD 0x0070C610
 void TechnoClass::Assign_Archive_Target(AbstractClass * target)
 {
 	ArchivedTarget = target;
 }
 
-// FUNCTION: 0x0070C620
+// FUNCTION: GAMEMD 0x0070C620
 bool TechnoClass::Is_On_Elevation(void) const
 {
 	Cell cell = TacticalMap->Coord_To_Cell(Get_Coord());
 	return(cell != Get_Cell());
 }
 
-// FUNCTION: 0x0070CC90
+// FUNCTION: GAMEMD 0x0070CC90
 void TechnoClass::Radar_Track(void)
 {
 	Map.Radar_Track(this, RadarPos);
 	IsRadarTracked = true;
 }
 
-// FUNCTION: 0x0070CCC0
+// FUNCTION: GAMEMD 0x0070CCC0
 void TechnoClass::Radar_Untrack(void)
 {
 	Map.Radar_Untrack(this, RadarPos);
 	IsRadarTracked = false;
 }
 
-// FUNCTION: 0x0070CCF0
+// FUNCTION: GAMEMD 0x0070CCF0
 void TechnoClass::Plot_On_Radar(void) const
 {
 	Map.Radar_Pixel(RadarPos);
 }
 
-// FUNCTION: 0x0070CD10
+// FUNCTION: GAMEMD 0x0070CD10
 double TechnoClass::Target_Threat(TechnoClass * target, Coord const & firing_coord) const
 {
 	double target_effectiveness_coefficient;
@@ -4033,19 +4035,19 @@ double TechnoClass::Target_Threat(TechnoClass * target, Coord const & firing_coo
 	return(threat + 100000.0);
 }
 
-// FUNCTION: 0x0070D150
+// FUNCTION: GAMEMD 0x0070D150
 void TechnoClass::Reset_Action_Line_Timer(void)
 {
 	ActionLineTimer = 25;
 }
 
-// FUNCTION: 0x0070D180
+// FUNCTION: GAMEMD 0x0070D180
 void TechnoClass::Set_Action_Lines(bool on)
 {
 	ActionLines = on;
 }
 
-// FUNCTION: 0x0070D190
+// FUNCTION: GAMEMD 0x0070D190
 int TechnoClass::Apparent_Brightness(int brightness) const
 {
 	if ((Flashing.FlashCount & 2) == 2) {
@@ -4054,7 +4056,7 @@ int TechnoClass::Apparent_Brightness(int brightness) const
 	return(brightness);
 }
 
-// FUNCTION: 0x0070D1D0
+// FUNCTION: GAMEMD 0x0070D1D0
 bool TechnoClass::Is_Radar_Visible(DetectedType & detected) const
 {
 	TechnoTypeClass const * ttype = Techno_Type_Class();
@@ -4089,7 +4091,7 @@ bool TechnoClass::Is_Radar_Visible(DetectedType & detected) const
 	return(true);
 }
 
-// FUNCTION: 0x0070D420
+// FUNCTION: GAMEMD 0x0070D420
 bool TechnoClass::Is_Sensed_By_Player(void) const
 {
 	if (PlayerPtr != NULL) {
@@ -4099,7 +4101,7 @@ bool TechnoClass::Is_Sensed_By_Player(void) const
 	return(false);
 }
 
-// FUNCTION: 0x0070D460
+// FUNCTION: GAMEMD 0x0070D460
 bool TechnoClass::Is_Sensed_By_House(HouseClass const * house) const
 {
 	if (house != NULL) {
@@ -4109,7 +4111,7 @@ bool TechnoClass::Is_Sensed_By_House(HouseClass const * house) const
 	return(false);
 }
 
-// FUNCTION: 0x0070D4A0
+// FUNCTION: GAMEMD 0x0070D4A0
 void AbstractClass::BecomeUntargetable(void)
 {
 	TechnoClass * self = this == NULL ? NULL : ((AbstractFlags & 1) ? (TechnoClass *)this : NULL);
@@ -4141,7 +4143,7 @@ void AbstractClass::BecomeUntargetable(void)
 	}
 }
 
-// FUNCTION: 0x0070D590
+// FUNCTION: GAMEMD 0x0070D590
 bool TechnoClass::Should_Use_High_Arc(int which) const
 {
 	WeaponTypeClass const * weapon = Get_Class_Weapon_Data(which)->Weapon;
@@ -4165,7 +4167,7 @@ bool TechnoClass::Should_Use_High_Arc(int which) const
 	return(result);
 }
 
-// FUNCTION: 0x0070D670
+// FUNCTION: GAMEMD 0x0070D670
 void TechnoClass::Reduce_Ammunition(void)
 {
 	if (Ammo > 0) {
@@ -4176,7 +4178,7 @@ void TechnoClass::Reduce_Ammunition(void)
 extern BulletClass * __fastcall FUN_0046B050(BulletTypeClass const * type, AbstractClass * target, TechnoClass * payback, int strength, WarheadTypeClass const * warhead, int max_speed, bool bright);
 extern const double DAT_007E1738;
 
-// FUNCTION: 0x0070D690
+// FUNCTION: GAMEMD 0x0070D690
 int TechnoClass::FireDeathWeapon(int additional_damage)
 {
 	WeaponTypeClass const * weapon;
@@ -4211,7 +4213,7 @@ int TechnoClass::FireDeathWeapon(int additional_damage)
 	return(damage);
 }
 
-// FUNCTION: 0x0070D7A0
+// FUNCTION: GAMEMD 0x0070D7A0
 void TechnoClass::Remove_Damage_Particle(void)
 {
 	if (HealthRatio > Rule->ConditionYellow || HeightAGL < -10) {
@@ -4232,7 +4234,7 @@ static inline TechnoClass * AsTechno(AbstractClass * object)
 	return(NULL);
 }
 
-// FUNCTION: 0x0070D7E0
+// FUNCTION: GAMEMD 0x0070D7E0
 bool TechnoClass::Enter_Object_Nearby(void)
 {
 	TechnoClass * techno = QueueUpToEnter;
@@ -4267,7 +4269,7 @@ bool TechnoClass::Enter_Object_Nearby(void)
 	return(false);
 }
 
-// FUNCTION: 0x0070D8F0
+// FUNCTION: GAMEMD 0x0070D8F0
 bool TechnoClass::Move_To_Object_Nearby(void)
 {
 	TechnoClass * techno = QueueUpToEnter;
@@ -4286,12 +4288,12 @@ bool TechnoClass::Move_To_Object_Nearby(void)
 	return(false);
 }
 
-// FUNCTION: 0x0070D980
+// FUNCTION: GAMEMD 0x0070D980
 void TechnoClass::Scatter_Incoming_Infantry(void) const
 {
 }
 
-// FUNCTION: 0x0070D990
+// FUNCTION: GAMEMD 0x0070D990
 void TechnoClass::Update_Radar_Position(bool force_update)
 {
 	if (!IsDiscoveredByPlayer && Session.Type == GAME_NORMAL) {
@@ -4347,19 +4349,19 @@ void TechnoClass::Update_Radar_Position(bool force_update)
 	}
 }
 
-// FUNCTION: 0x0070DC50
+// FUNCTION: GAMEMD 0x0070DC50
 bool TechnoClass::FUN_0070DC50(void) const
 {
 	return(Techno_Type_Class()->HasTurretTooltips);
 }
 
-// FUNCTION: 0x0070DC60
+// FUNCTION: GAMEMD 0x0070DC60
 bool TechnoClass::FUN_0070DC60(void) const
 {
 	return(Techno_Type_Class()->HasMultipleTurrets());
 }
 
-// FUNCTION: 0x0070DC70
+// FUNCTION: GAMEMD 0x0070DC70
 void TechnoClass::FUN_0070DC70(int which)
 {
 	if (!Techno_Type_Class()->IsChargeTurret) {
@@ -4373,19 +4375,19 @@ void TechnoClass::FUN_0070DC70(int which)
 	}
 }
 
-// FUNCTION: 0x0070DCE0
+// FUNCTION: GAMEMD 0x0070DCE0
 bool TechnoClass::FUN_0070DCE0(void) const
 {
 	return(CurrentTurretNumber != -1);
 }
 
-// FUNCTION: 0x0070DCF0
+// FUNCTION: GAMEMD 0x0070DCF0
 int TechnoClass::FUN_0070DCF0(void) const
 {
 	return(CurrentTurretNumber);
 }
 
-// FUNCTION: 0x0070DD00
+// FUNCTION: GAMEMD 0x0070DD00
 int TechnoClass::FUN_0070DD00(void)
 {
 	int changed = CurrentTurretNumber != unknown_int_128;
@@ -4393,7 +4395,7 @@ int TechnoClass::FUN_0070DD00(void)
 	return(changed);
 }
 
-// FUNCTION: 0x0070DD20
+// FUNCTION: GAMEMD 0x0070DD20
 int TechnoClass::FUN_0070DD20(void) const
 {
 	if (Techno_Type_Class()->HasMultipleTurrets()) {
@@ -4402,7 +4404,7 @@ int TechnoClass::FUN_0070DD20(void) const
 	return(0);
 }
 
-// FUNCTION: 0x0070DD50
+// FUNCTION: GAMEMD 0x0070DD50
 bool TechnoClass::FUN_0070DD50(void) const
 {
 	WeaponDataStruct const * weapon = GetDeployWeapon();
@@ -4412,31 +4414,31 @@ bool TechnoClass::FUN_0070DD50(void) const
 	return(false);
 }
 
-// FUNCTION: 0x0070DD70
+// FUNCTION: GAMEMD 0x0070DD70
 int TechnoClass::FUN_0070DD70(void) const
 {
 	return(!Techno_Type_Class()->SprayAttack);
 }
 
-// FUNCTION: 0x0070DD90
+// FUNCTION: GAMEMD 0x0070DD90
 int TechnoClass::FUN_0070DD90(void) const
 {
 	return(1);
 }
 
-// FUNCTION: 0x0070DDA0
+// FUNCTION: GAMEMD 0x0070DDA0
 int TechnoClass::FUN_0070DDA0(void) const
 {
 	return(!Techno_Type_Class()->SprayAttack);
 }
 
-// FUNCTION: 0x0070DDC0
+// FUNCTION: GAMEMD 0x0070DDC0
 int TechnoClass::FUN_0070DDC0(void) const
 {
 	return(CurrentGattlingStage);
 }
 
-// FUNCTION: 0x0070DDD0
+// FUNCTION: GAMEMD 0x0070DDD0
 void TechnoClass::SetCurrentWeaponStage(int stage)
 {
 	if (stage >= 0) {
@@ -4444,13 +4446,13 @@ void TechnoClass::SetCurrentWeaponStage(int stage)
 	}
 }
 
-// FUNCTION: 0x0070DDF0
+// FUNCTION: GAMEMD 0x0070DDF0
 int TechnoClass::FUN_0070DDF0(void)
 {
 	return(GattlingValue);
 }
 
-// FUNCTION: 0x0070DE00
+// FUNCTION: GAMEMD 0x0070DE00
 void TechnoClass::sub_70DE00(int value)
 {
 	if (value >= 0) {
@@ -4458,13 +4460,13 @@ void TechnoClass::sub_70DE00(int value)
 	}
 }
 
-// FUNCTION: 0x0070DE20
+// FUNCTION: GAMEMD 0x0070DE20
 void TechnoClass::FUN_0070DE20(int amount)
 {
 	GattlingValue += amount;
 }
 
-// FUNCTION: 0x0070DE40
+// FUNCTION: GAMEMD 0x0070DE40
 void TechnoClass::FUN_0070DE40(int amount)
 {
 	GattlingValue -= amount;
@@ -4473,7 +4475,7 @@ void TechnoClass::FUN_0070DE40(int amount)
 	}
 }
 
-// FUNCTION: 0x0070DE70
+// FUNCTION: GAMEMD 0x0070DE70
 void TechnoClass::GattlingRateUp(int rate)
 {
 	TechnoTypeClass const * type = Techno_Type_Class();
@@ -4515,7 +4517,7 @@ void TechnoClass::GattlingRateUp(int rate)
 	}
 }
 
-// FUNCTION: 0x0070E000
+// FUNCTION: GAMEMD 0x0070E000
 void TechnoClass::GattlingRateDown(int rate)
 {
 	GattlingSoundController.EndLooping();
@@ -4556,13 +4558,13 @@ void TechnoClass::GattlingRateDown(int rate)
 	}
 }
 
-// FUNCTION: 0x0070E120
+// FUNCTION: GAMEMD 0x0070E120
 WeaponDataStruct const * TechnoClass::GetDeployWeapon(void) const
 {
 	return(Get_Class_Weapon_Data(IsNotSprayAttack()));
 }
 
-// FUNCTION: 0x0070E140
+// FUNCTION: GAMEMD 0x0070E140
 WeaponDataStruct const * TechnoClass::Get_Class_Weapon_Data(int which) const
 {
 	if (which == -1) return(NULL);
@@ -4574,13 +4576,13 @@ WeaponDataStruct const * TechnoClass::Get_Class_Weapon_Data(int which) const
 	return(((TechnoTypeClass *)Techno_Type_Class())->GetWeapon(which));
 }
 
-// FUNCTION: 0x0070E1A0
+// FUNCTION: GAMEMD 0x0070E1A0
 WeaponDataStruct const * TechnoClass::GetTurretWeapon(void) const
 {
 	return(Get_Class_Weapon_Data(Techno_Type_Class()->HasMultipleTurrets() ? CurrentWeaponNumber : 0));
 }
 
-// FUNCTION: 0x0070E1E0
+// FUNCTION: GAMEMD 0x0070E1E0
 int TechnoClass::FUN_0070E1E0(int which) const
 {
 	bool low = which < 2;
@@ -4591,13 +4593,13 @@ int TechnoClass::FUN_0070E1E0(int which) const
 	return(0);
 }
 
-// FUNCTION: 0x0070E240
+// FUNCTION: GAMEMD 0x0070E240
 bool TechnoClass::FUN_0070E240(WeaponDataStruct const * weapon) const
 {
 	return(weapon != NULL && weapon->Weapon != NULL);
 }
 
-// FUNCTION: 0x0070E260
+// FUNCTION: GAMEMD 0x0070E260
 bool TechnoClass::FUN_0070E260(void) const
 {
 	WeaponDataStruct const * weapon = GetTurretWeapon();
@@ -4606,7 +4608,7 @@ bool TechnoClass::FUN_0070E260(void) const
 
 #pragma warning(push)
 #pragma warning(disable : 4716)
-// FUNCTION: 0x0070E280
+// FUNCTION: GAMEMD 0x0070E280
 unsigned TechnoClass::DisguiseAs(AbstractClass * target)
 {
 	if (target != NULL) {
@@ -4619,7 +4621,7 @@ unsigned TechnoClass::DisguiseAs(AbstractClass * target)
 
 #pragma warning(push)
 #pragma warning(disable : 4716)
-// FUNCTION: 0x0070E2B0
+// FUNCTION: GAMEMD 0x0070E2B0
 int TechnoClass::IronCurtain(int duration, HouseClass * source, bool force_shield)
 {
 	IronCurtainTimer = duration;
@@ -4632,26 +4634,26 @@ int TechnoClass::IronCurtain(int duration, HouseClass * source, bool force_shiel
 }
 #pragma warning(pop)
 
-// FUNCTION: 0x0070E300
+// FUNCTION: GAMEMD 0x0070E300
 void TechnoClass::StartAirstrikeTimer(int duration)
 {
 	AirstrikeTimer = duration;
 	AirstrikeTintStage = 0;
 }
 
-// FUNCTION: 0x0070E340
+// FUNCTION: GAMEMD 0x0070E340
 void TechnoClass::StopAirstrikeTimer(void)
 {
 	AirstrikeTimer = 0;
 }
 
-// FUNCTION: 0x0070E360
+// FUNCTION: GAMEMD 0x0070E360
 int TechnoClass::GetEffectTintIntensity(int brightness) const
 {
 	return(GetAirstrikeTintIntensity(GetInvulnerabilityTintIntensity(brightness)));
 }
 
-// FUNCTION: 0x0070E380
+// FUNCTION: GAMEMD 0x0070E380
 int TechnoClass::GetInvulnerabilityTintIntensity(int brightness) const
 {
 	int t = IronTintTimer.Value();
@@ -4691,7 +4693,7 @@ int TechnoClass::GetInvulnerabilityTintIntensity(int brightness) const
 	return level;
 }
 
-// FUNCTION: 0x0070E4B0
+// FUNCTION: GAMEMD 0x0070E4B0
 int TechnoClass::GetAirstrikeTintIntensity(int brightness) const
 {
 	int level;
@@ -4738,7 +4740,7 @@ static inline int Timer_Left(CDTimerClass<FrameTimerClass> const & timer)
 	return timer();
 }
 
-// FUNCTION: 0x0070E5A0
+// FUNCTION: GAMEMD 0x0070E5A0
 void TechnoClass::FUN_0070E5A0(void)
 {
 	if (IsIronCurtained()) {
@@ -4813,7 +4815,7 @@ void TechnoClass::FUN_0070E5A0(void)
 	}
 }
 
-// FUNCTION: 0x0070E920
+// FUNCTION: GAMEMD 0x0070E920
 void TechnoClass::FUN_0070E920(void)
 {
 	if (this != NULL && RTTI == RTTI_BUILDING && Airstrike != NULL && Airstrike->Target == ((RTTI == RTTI_BUILDING) ? this : NULL)) {
@@ -4888,7 +4890,7 @@ void TechnoClass::FUN_0070E920(void)
 	}
 }
 
-// FUNCTION: 0x0070ECE0
+// FUNCTION: GAMEMD 0x0070ECE0
 void RecoilData::Fire(void)
 {
 	int travel = Turret.Travel;
@@ -4902,7 +4904,7 @@ void RecoilData::Fire(void)
 	}
 }
 
-// FUNCTION: 0x0070ED10
+// FUNCTION: GAMEMD 0x0070ED10
 void RecoilData::Update(void)
 {
 	if (State != 0) {
@@ -4934,13 +4936,13 @@ void RecoilData::Update(void)
 	}
 }
 
-// FUNCTION: 0x0070EFD0
+// FUNCTION: GAMEMD 0x0070EFD0
 bool TechnoClass::IsUnderEMP(void) const
 {
 	return((int)EMPLockRemaining > 0);
 }
 
-// FUNCTION: 0x0070EFE0
+// FUNCTION: GAMEMD 0x0070EFE0
 int TechnoClass::Get_Max_Speed(void) const
 {
 	TechnoTypeClass const * type = Techno_Type_Class();
@@ -4950,13 +4952,13 @@ int TechnoClass::Get_Max_Speed(void) const
 	return(0);
 }
 
-// FUNCTION: 0x0070F000
+// FUNCTION: GAMEMD 0x0070F000
 int TechnoClass::RespondMegaEventMission(void * event)
 {
 	return(((signed char *)event)[12]);
 }
 
-// FUNCTION: 0x0070ED80
+// FUNCTION: GAMEMD 0x0070ED80
 unsigned TechnoClass::GetDisguiseFlags(unsigned flags) const
 {
 	unsigned result = flags;
@@ -4983,7 +4985,7 @@ unsigned TechnoClass::GetDisguiseFlags(unsigned flags) const
 	return(result);
 }
 
-// FUNCTION: 0x0070EE30
+// FUNCTION: GAMEMD 0x0070EE30
 bool TechnoClass::IsClearlyVisibleTo(HouseClass * house) const
 {
 	if (DisguiseBlinkTimer.Value() != 0 && !House->Is_Player_Control()) {
@@ -5003,7 +5005,7 @@ bool TechnoClass::IsClearlyVisibleTo(HouseClass * house) const
 	return(true);
 }
 
-// FUNCTION: 0x0070EF00
+// FUNCTION: GAMEMD 0x0070EF00
 bool TechnoClass::CanDisguiseAs(AbstractClass * target) const
 {
 	WeaponTypeClass * weapon = Get_Class_Weapon_Data(What_Weapon_Should_I_Use(target))->Weapon;
@@ -5030,71 +5032,71 @@ bool TechnoClass::CanDisguiseAs(AbstractClass * target) const
 	return(false);
 }
 
-// FUNCTION: 0x0070F010
+// FUNCTION: GAMEMD 0x0070F010
 void TechnoClass::ClearMegaMissionData(void)
 {
 }
 
-// FUNCTION: 0x0070F020
+// FUNCTION: GAMEMD 0x0070F020
 bool TechnoClass::HaveMegaMission(void) const
 {
 	return(false);
 }
 
-// FUNCTION: 0x0070F030
+// FUNCTION: GAMEMD 0x0070F030
 bool TechnoClass::HaveAttackMoveTarget(void) const
 {
 	return(false);
 }
 
-// FUNCTION: 0x0070F040
+// FUNCTION: GAMEMD 0x0070F040
 int TechnoClass::GetMegaMission(void) const
 {
 	return(-1);
 }
 
-// FUNCTION: 0x0070F050
+// FUNCTION: GAMEMD 0x0070F050
 Coord TechnoClass::GetAttackMoveCoords(void)
 {
 	return(Coord(-1, -1, -1));
 }
 
-// FUNCTION: 0x0070F070
+// FUNCTION: GAMEMD 0x0070F070
 bool TechnoClass::CanUseWaypoint(void) const
 {
 	return(Techno_Type_Class()->CanUseWaypoint());
 }
 
-// FUNCTION: 0x0070F090
+// FUNCTION: GAMEMD 0x0070F090
 bool TechnoClass::CanAttackOnTheMove(void) const
 {
 	return(Techno_Type_Class()->CanAttackMove());
 }
 
-// FUNCTION: 0x0070F0E0
+// FUNCTION: GAMEMD 0x0070F0E0
 bool TechnoClass::MegaMissionIsAttackMove(void) const
 {
 	return(false);
 }
 
-// FUNCTION: 0x0070F0F0
+// FUNCTION: GAMEMD 0x0070F0F0
 bool TechnoClass::ContinueMegaMission(void)
 {
 	return(false);
 }
 
-// FUNCTION: 0x0070F100
+// FUNCTION: GAMEMD 0x0070F100
 void TechnoClass::UpdateAttackMove(void)
 {
 }
 
-// FUNCTION: 0x0070F110
+// FUNCTION: GAMEMD 0x0070F110
 bool TechnoClass::RefreshMegaMission(void)
 {
 	return(false);
 }
 
-// FUNCTION: 0x0070F0B0
+// FUNCTION: GAMEMD 0x0070F0B0
 int __fastcall FUN_0070F0B0(int action, int unused, int extra)
 {
 	bool held = FUN_00731BF0();
@@ -5110,7 +5112,7 @@ int __fastcall FUN_0070F0B0(int action, int unused, int extra)
 	return(action);
 }
 
-// FUNCTION: 0x0070F120
+// FUNCTION: GAMEMD 0x0070F120
 void TechnoClass::Set_Talker(TechnoClass * techno, TalkType bubble)
 {
 	if (techno != NULL && bubble != TALK_NONE) {
@@ -5125,7 +5127,7 @@ void TechnoClass::Set_Talker(TechnoClass * techno, TalkType bubble)
 	}
 }
 
-// FUNCTION: 0x0070F670
+// FUNCTION: GAMEMD 0x0070F670
 void TechnoClass::FUN_0070F670(CellClass * cell)
 {
 	if (cell != NULL) {
@@ -5134,7 +5136,7 @@ void TechnoClass::FUN_0070F670(CellClass * cell)
 	}
 }
 
-// FUNCTION: 0x0070F6A0
+// FUNCTION: GAMEMD 0x0070F6A0
 void TechnoClass::FUN_0070F6A0(CellClass * cell)
 {
 	if (cell != NULL) {
@@ -5143,7 +5145,7 @@ void TechnoClass::FUN_0070F6A0(CellClass * cell)
 	}
 }
 
-// FUNCTION: 0x0070F6E0
+// FUNCTION: GAMEMD 0x0070F6E0
 void TechnoClass::UpdateThreatInCell(CellClass * cell)
 {
 	if (cell != NULL) {
@@ -5154,13 +5156,13 @@ void TechnoClass::UpdateThreatInCell(CellClass * cell)
 	}
 }
 
-// FUNCTION: 0x0070F740
+// FUNCTION: GAMEMD 0x0070F740
 void TechnoClass::FUN_0070F740(int delay)
 {
 	TargetingTimer = delay;
 }
 
-// FUNCTION: 0x0070F770
+// FUNCTION: GAMEMD 0x0070F770
 void TechnoClass::FUN_0070F770(void)
 {
 	if (TargetingTimer > 10 && !ScenarioInit) {
@@ -5168,13 +5170,13 @@ void TechnoClass::FUN_0070F770(void)
 	}
 }
 
-// FUNCTION: 0x0070F7E0
+// FUNCTION: GAMEMD 0x0070F7E0
 bool TechnoClass::TargetingTimerFinished(void)
 {
 	return(TargetingTimer == 0);
 }
 
-// FUNCTION: 0x0070F820
+// FUNCTION: GAMEMD 0x0070F820
 HouseClass * TechnoClass::GetOriginalOwner(void) const
 {
 	if (MindControlledBy != NULL) {
@@ -5186,7 +5188,7 @@ HouseClass * TechnoClass::GetOriginalOwner(void) const
 	return(House);
 }
 
-// FUNCTION: 0x0070F850
+// FUNCTION: GAMEMD 0x0070F850
 void TechnoClass::FUN_0070F850(void)
 {
 	Assign_Destination(NULL, true);
@@ -5195,7 +5197,7 @@ void TechnoClass::FUN_0070F850(void)
 	Set_Mission(MISSION_GUARD);
 }
 
-// FUNCTION: 0x0070F890
+// FUNCTION: GAMEMD 0x0070F890
 void TechnoClass::FUN_0070F890(int duration)
 {
 	BerzerkDurationLeft = duration;
@@ -5209,7 +5211,7 @@ void TechnoClass::FUN_0070F890(int duration)
 	}
 }
 
-// FUNCTION: 0x0070F8F0
+// FUNCTION: GAMEMD 0x0070F8F0
 Cell TechnoClass::FUN_0070F8F0(int rad, unsigned unused)
 {
 	Cell bestcell = CELL_NONE;
@@ -5264,7 +5266,7 @@ Cell TechnoClass::FUN_0070F8F0(int rad, unsigned unused)
 	return(bestcell);
 }
 
-// FUNCTION: 0x0070FB50
+// FUNCTION: GAMEMD 0x0070FB50
 bool TechnoClass::FUN_0070FB50(void) const
 {
 	if (!TClass->Bunkerable) {
@@ -5288,13 +5290,13 @@ bool TechnoClass::FUN_0070FB50(void) const
 	return(true);
 }
 
-// FUNCTION: 0x0070FBD0
+// FUNCTION: GAMEMD 0x0070FBD0
 bool UnitClass::IsDeactivated(void) const
 {
 	return(Deactivated);
 }
 
-// FUNCTION: 0x0070FBE0
+// FUNCTION: GAMEMD 0x0070FBE0
 void TechnoClass::Reactivate()
 {
 	Guard();
@@ -5307,7 +5309,7 @@ void TechnoClass::Reactivate()
 	Deactivated = false;
 }
 
-// FUNCTION: 0x0070FC90
+// FUNCTION: GAMEMD 0x0070FC90
 void TechnoClass::Deactivate(void)
 {
 	if (IsTethered && FUN_0065AD30(0) != NULL) {
@@ -5326,7 +5328,7 @@ void TechnoClass::Deactivate(void)
 	Deactivated = true;
 }
 
-// FUNCTION: 0x0070FD70
+// FUNCTION: GAMEMD 0x0070FD70
 void TechnoClass::FUN_0070FD70(BuildingClass * building)
 {
 	if (building != NULL && Get_Cell_Ptr()->Cell_Building() == building) {
@@ -5347,37 +5349,37 @@ void TechnoClass::FUN_0070FD70(BuildingClass * building)
 	}
 }
 
-// FUNCTION: 0x0070FE40
+// FUNCTION: GAMEMD 0x0070FE40
 void TechnoClass::FUN_0070FE40(TechnoClass * drainer)
 {
 	DrainingMe = drainer;
 }
 
-// FUNCTION: 0x0070FE50
+// FUNCTION: GAMEMD 0x0070FE50
 void TechnoClass::FUN_0070FE50(void)
 {
 	Stop_Drain(this);
 }
 
-// FUNCTION: 0x0070FEB0
+// FUNCTION: GAMEMD 0x0070FEB0
 bool TechnoClass::Is_Draining(void) const
 {
 	return(DrainTarget != NULL);
 }
 
-// FUNCTION: 0x0070FEC0
+// FUNCTION: GAMEMD 0x0070FEC0
 bool BuildingClass::IsBeingDrained(void) const
 {
 	return(DrainingMe != NULL);
 }
 
-// FUNCTION: 0x0070FED0
+// FUNCTION: GAMEMD 0x0070FED0
 bool TechnoClass::FUN_0070FED0(void) const
 {
 	return(Techno_Type_Class()->Drainable);
 }
 
-// FUNCTION: 0x0070FEE0
+// FUNCTION: GAMEMD 0x0070FEE0
 void TechnoClass::ReleaseLocomotor(bool set_target)
 {
 	if (LocomotorTarget != NULL) {
@@ -5419,7 +5421,7 @@ static inline FootClass * Cast_Techno(FootClass * object)
 	return(NULL);
 }
 
-// FUNCTION: 0x00710000
+// FUNCTION: GAMEMD 0x00710000
 void TechnoClass::ImbueLocomotor(FootClass * target, CLSID clsid)
 {
 	if (target != NULL) {
@@ -5480,7 +5482,7 @@ void TechnoClass::ImbueLocomotor(FootClass * target, CLSID clsid)
 	}
 }
 
-// FUNCTION: 0x00710410
+// FUNCTION: GAMEMD 0x00710410
 void TechnoClass::AnimPointerExpired(AnimClass * anim)
 {
 	if (anim == BehindAnim) {
@@ -5498,7 +5500,7 @@ void TechnoClass::AnimPointerExpired(AnimClass * anim)
 	ObjectClass::AnimPointerExpired(anim);
 }
 
-// FUNCTION: 0x00710460
+// FUNCTION: GAMEMD 0x00710460
 void TechnoClass::FUN_00710460(void)
 {
 	if (CaptureManager != NULL) {
@@ -5506,7 +5508,7 @@ void TechnoClass::FUN_00710460(void)
 	}
 }
 
-// FUNCTION: 0x00710470
+// FUNCTION: GAMEMD 0x00710470
 void TechnoClass::EnteredOpenTopped(TechnoClass * who)
 {
 	if (who != NULL) {
@@ -5516,7 +5518,7 @@ void TechnoClass::EnteredOpenTopped(TechnoClass * who)
 	}
 }
 
-// FUNCTION: 0x007104A0
+// FUNCTION: GAMEMD 0x007104A0
 void TechnoClass::ExitedOpenTopped(TechnoClass * who)
 {
 	if (who != NULL) {
@@ -5524,7 +5526,7 @@ void TechnoClass::ExitedOpenTopped(TechnoClass * who)
 	}
 }
 
-// FUNCTION: 0x007104F0
+// FUNCTION: GAMEMD 0x007104F0
 void FootClass::UpdatePassengerCoords(void)
 {
 	TechnoClass * passenger = Cargo.Attached_Object();
@@ -5537,7 +5539,7 @@ void FootClass::UpdatePassengerCoords(void)
 	}
 }
 
-// FUNCTION: 0x00710550
+// FUNCTION: GAMEMD 0x00710550
 void TechnoClass::SetTargetForPassengers(AbstractClass * target)
 {
 	for (TechnoClass * passenger = Cargo.Attached_Object(); passenger != NULL; ) {
@@ -5549,7 +5551,7 @@ void TechnoClass::SetTargetForPassengers(AbstractClass * target)
 	}
 }
 
-// FUNCTION: 0x00710590
+// FUNCTION: GAMEMD 0x00710590
 int TechnoClass::FUN_00710590(void)
 {
 	int result = 0x7FFFFFFF;
@@ -5566,13 +5568,13 @@ int TechnoClass::FUN_00710590(void)
 	return(result);
 }
 
-// FUNCTION: 0x007105E0
+// FUNCTION: GAMEMD 0x007105E0
 bool TechnoClass::IsMindControlled(void) const
 {
 	return(MindControlledBy != NULL || MindControlledByAUnit);
 }
 
-// FUNCTION: 0x00710600
+// FUNCTION: GAMEMD 0x00710600
 int TechnoClass::FUN_00710600(void) const
 {
 	if (Fetch_RTTI() == RTTI_UNIT && !Techno_Type_Class()->Organic) {
@@ -5581,7 +5583,7 @@ int TechnoClass::FUN_00710600(void) const
 	return(0);
 }
 
-// FUNCTION: 0x00710630
+// FUNCTION: GAMEMD 0x00710630
 int TechnoClass::FUN_00710630(void) const
 {
 	if (Fetch_RTTI() == RTTI_INFANTRY || (Fetch_RTTI() == RTTI_UNIT && Techno_Type_Class()->Organic)) {
@@ -5590,7 +5592,7 @@ int TechnoClass::FUN_00710630(void) const
 	return(0);
 }
 
-// FUNCTION: 0x00710670
+// FUNCTION: GAMEMD 0x00710670
 void TechnoClass::AddPassenger(FootClass * passenger)
 {
 	Cargo.Attach(passenger);
@@ -5609,34 +5611,46 @@ extern const double DAT_007F4E98;
 extern const double DAT_007F4EA0;
 extern double __cdecl FUN_004CAC40(double);
 
-// FUNCTION: 0x007106E0 TechnoClass::~TechnoClass
+// SYNTHETIC: GAMEMD 0x007106E0
+// ??_GTechnoClass@@UAEPAXI@Z
 
-// FUNCTION: 0x00710700 ?$TPoint3D@H::operator/
+// TEMPLATE: GAMEMD 0x00710700
+// ??K?$TPoint3D@H@@QBE?BV0@H@Z
 
-// FUNCTION: 0x00710750 ?$IndexClass@HPAUEntry@StaticBufferClass@@::Increase_Table_Size
+// TEMPLATE: GAMEMD 0x00710750
+// ?Increase_Table_Size@?$IndexClass@HPAUEntry@StaticBufferClass@@@@AAE_NH@Z
 
-// FUNCTION: 0x007107E0 ?$IndexClass@HPAUEntry@StaticBufferClass@@::Search_For_Node
+// TEMPLATE: GAMEMD 0x007107E0
+// ?Search_For_Node@?$IndexClass@HPAUEntry@StaticBufferClass@@@@ABEPBUNodeElement@1@ABH@Z
 
-// FUNCTION: 0x00710860 ?$IndexClass@HPAUEntry@StaticBufferClass@@::search_compfunc
+// TEMPLATE: GAMEMD 0x00710860
+// ?search_compfunc@?$IndexClass@HPAUEntry@StaticBufferClass@@@@CAHPBX0@Z
 
-// FUNCTION: 0x00710890 Binary_Search
+// TEMPLATE: GAMEMD 0x00710890
+// ?Binary_Search@@YIPAUNodeElement@?$IndexClass@HPAUEntry@StaticBufferClass@@@@PAU12@HABU12@@Z
 
-// FUNCTION: 0x007108E0 $E244
+// SYNTHETIC: GAMEMD 0x007108E0 SYMBOL
+// _$E244
 double DAT_00B0EB60 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x00710910 $E247
+// SYNTHETIC: GAMEMD 0x00710910 SYMBOL
+// _$E247
 double DAT_00B0EBB0 = DAT_00B0EB60 / DAT_007F4E98;
 
-// FUNCTION: 0x00710930 $E250
+// SYNTHETIC: GAMEMD 0x00710930 SYMBOL
+// _$E250
 double DAT_00B0EB98 = DAT_007E1718 / DAT_00B0EBB0;
 
-// FUNCTION: 0x00710950 $E253
+// SYNTHETIC: GAMEMD 0x00710950 SYMBOL
+// _$E253
 double DAT_00B0EB90 = DAT_007E1720 * DAT_007F4EA0;
 
-// FUNCTION: 0x00710970 $E256
+// SYNTHETIC: GAMEMD 0x00710970 SYMBOL
+// _$E256
 double DAT_00B0EB68 = DAT_007E1728 * DAT_007F4EA0;
 
-// FUNCTION: 0x00710990 $E259
+// SYNTHETIC: GAMEMD 0x00710990 SYMBOL
+// _$E259
 double DAT_00B0EB40 = DAT_007E1730 * DAT_007F4EA0;
 
 extern const double DAT_007E1738;
@@ -5664,26 +5678,34 @@ struct CenterTriple {
 	CenterTriple() { C = 0; A = 128; B = 128; }
 };
 
-// FUNCTION: 0x007109B0 $E262
+// SYNTHETIC: GAMEMD 0x007109B0 SYMBOL
+// _$E262
 int DAT_00B0EBB8 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B0EB40 - DAT_00B0EB68) * DAT_00B0EB60));
 
-// FUNCTION: 0x007109F0 $E265
+// SYNTHETIC: GAMEMD 0x007109F0 SYMBOL
+// _$E265
 double DAT_00B0EB70 = FUN_004CADE0(DAT_00B0EBB8 * DAT_007E1740);
 
-// FUNCTION: 0x00710A20 $E268
+// SYNTHETIC: GAMEMD 0x00710A20 SYMBOL
+// _$E268
 double DAT_00B0EB88 = FUN_004CADE0((DAT_00B0EBB8 * 2) / DAT_00B0EB60);
 
-// FUNCTION: 0x00710A50 $E271
+// SYNTHETIC: GAMEMD 0x00710A50 SYMBOL
+// _$E271
 int DAT_00B0EBAC = (int)(DAT_00B0EBB8 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x00710A80 $E274
+// SYNTHETIC: GAMEMD 0x00710A80 SYMBOL
+// _$E274
 ShortPair DAT_00B0EB58;
 
-// FUNCTION: 0x00710A90 $E277
+// SYNTHETIC: GAMEMD 0x00710A90 SYMBOL
+// _$E277
 IntTriple DAT_00B0EB78;
 
-// FUNCTION: 0x00710AB0 $E280
+// SYNTHETIC: GAMEMD 0x00710AB0 SYMBOL
+// _$E280
 CenterTriple DAT_00B0EBA0;
 
-// FUNCTION: 0x00710AD0 $E283
+// SYNTHETIC: GAMEMD 0x00710AD0 SYMBOL
+// _$E283
 IntQuad DAT_00B0EB48;

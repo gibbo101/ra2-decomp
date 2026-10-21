@@ -60,7 +60,7 @@ bool Hicolor_Set_Color_Mode(int cmode)
 	return(false);
 }
 
-// FUNCTION: 0x00748220
+// FUNCTION: GAMEMD 0x00748220
 bool Hicolor_Init_Table(int cmode)
 {
 	Hicolor_Clear_Table();
@@ -73,7 +73,7 @@ bool Hicolor_Init_Table(int cmode)
 	return(false);
 }
 
-// FUNCTION: 0x00748360
+// FUNCTION: GAMEMD 0x00748360
 void Hicolor_Clear_Table(void)
 {
 	if (HicolorTable != NULL) {
@@ -82,7 +82,7 @@ void Hicolor_Clear_Table(void)
 	}
 }
 
-// FUNCTION: 0x00748380
+// FUNCTION: GAMEMD 0x00748380
 void Hicolor_Translate(void * buffer, int size)
 {
 	unsigned short * buf = (unsigned short *)buffer;

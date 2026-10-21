@@ -48,46 +48,59 @@ struct IntTriple {
 	IntTriple() { A = 0; B = 0; C = 0; }
 };
 
-// FUNCTION: 0x0048BC70 $E3
+// SYNTHETIC: GAMEMD 0x0048BC70 SYMBOL
+// _$E3
 double DAT_0089E8B8 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x0048BCA0 $E6
+// SYNTHETIC: GAMEMD 0x0048BCA0 SYMBOL
+// _$E6
 double DAT_0089E908 = DAT_0089E8B8 / DAT_007E51A0;
 
-// FUNCTION: 0x0048BCC0 $E9
+// SYNTHETIC: GAMEMD 0x0048BCC0 SYMBOL
+// _$E9
 double DAT_0089E8F0 = DAT_007E1718 / DAT_0089E908;
 
-// FUNCTION: 0x0048BCE0 $E12
+// SYNTHETIC: GAMEMD 0x0048BCE0 SYMBOL
+// _$E12
 double DAT_0089E8E8 = DAT_007E1720 * DAT_007E51A8;
 
-// FUNCTION: 0x0048BD00 $E15
+// SYNTHETIC: GAMEMD 0x0048BD00 SYMBOL
+// _$E15
 double DAT_0089E8C0 = DAT_007E1728 * DAT_007E51A8;
 
-// FUNCTION: 0x0048BD20 $E18
+// SYNTHETIC: GAMEMD 0x0048BD20 SYMBOL
+// _$E18
 double DAT_0089E898 = DAT_007E1730 * DAT_007E51A8;
 
-// FUNCTION: 0x0048BD40 $E21
+// SYNTHETIC: GAMEMD 0x0048BD40 SYMBOL
+// _$E21
 int DAT_0089E910 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_0089E898 - DAT_0089E8C0) * DAT_0089E8B8));
 
-// FUNCTION: 0x0048BD80 $E24
+// SYNTHETIC: GAMEMD 0x0048BD80 SYMBOL
+// _$E24
 double DAT_0089E8C8 = FUN_004CADE0(DAT_0089E910 * DAT_007E1740);
 
-// FUNCTION: 0x0048BDB0 $E27
+// SYNTHETIC: GAMEMD 0x0048BDB0 SYMBOL
+// _$E27
 double DAT_0089E8E0 = FUN_004CADE0((DAT_0089E910 * 2) / DAT_0089E8B8);
 
-// FUNCTION: 0x0048BDE0 $E30
+// SYNTHETIC: GAMEMD 0x0048BDE0 SYMBOL
+// _$E30
 int DAT_0089E904 = (int)(DAT_0089E910 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x0048BE10 $E33
+// SYNTHETIC: GAMEMD 0x0048BE10 SYMBOL
+// _$E33
 ShortPair DAT_0089E8B0;
 
-// FUNCTION: 0x0048BE20 $E36
+// SYNTHETIC: GAMEMD 0x0048BE20 SYMBOL
+// _$E36
 IntTriple DAT_0089E8D0;
 
-// FUNCTION: 0x0048BE40 $E39
+// SYNTHETIC: GAMEMD 0x0048BE40 SYMBOL
+// _$E39
 IntTripleB DAT_0089E8F8;
 
-// FUNCTION: 0x0048BE60
+// FUNCTION: GAMEMD 0x0048BE60
 ConnectionClass::ConnectionClass (int numsend, int numreceive,
 	int maxlen, unsigned short magicnum, unsigned int retry_delta,
 	unsigned int max_retries, unsigned int timeout, int extralen)
@@ -101,14 +114,14 @@ ConnectionClass::ConnectionClass (int numsend, int numreceive,
 	Queue = new CommBufferClass (numsend, numreceive, MaxPacketLen, extralen);
 }
 
-// FUNCTION: 0x0048BEE0
+// FUNCTION: GAMEMD 0x0048BEE0
 ConnectionClass::~ConnectionClass (void)
 {
 	delete [] PacketBuf;
 	delete Queue;
 }
 
-// FUNCTION: 0x0048BF10
+// FUNCTION: GAMEMD 0x0048BF10
 void ConnectionClass::Init (void)
 {
 	NumRecNoAck = 0;
@@ -130,7 +143,7 @@ void ConnectionClass::Init (void)
 
 #include "session.h"
 
-// FUNCTION: 0x0048BF40
+// FUNCTION: GAMEMD 0x0048BF40
 int ConnectionClass::Send_Packet (void * buf, int buflen, int ack_req, int extra)
 {
 	((CommHeaderType *)PacketBuf)->MagicNumber = MagicNum;
@@ -168,7 +181,7 @@ int ConnectionClass::Send_Packet (void * buf, int buflen, int ack_req, int extra
 	}
 }
 
-// FUNCTION: 0x0048C040
+// FUNCTION: GAMEMD 0x0048C040
 int ConnectionClass::Receive_Packet (void * buf, int buflen)
 {
 	CommHeaderType *packet;
@@ -310,7 +323,7 @@ int ConnectionClass::Receive_Packet (void * buf, int buflen)
 	return(0);
 }
 
-// FUNCTION: 0x0048C320
+// FUNCTION: GAMEMD 0x0048C320
 int ConnectionClass::Get_Packet (void * buf, int *buflen)
 {
 	ReceiveQueueType *rec_entry;
@@ -357,7 +370,7 @@ int ConnectionClass::Get_Packet (void * buf, int *buflen)
 	return(0);
 }
 
-// FUNCTION: 0x0048C3B0
+// FUNCTION: GAMEMD 0x0048C3B0
 int ConnectionClass::Service (void)
 {
 	if ( Service_Send_Queue() && Service_Receive_Queue() ) {
@@ -367,7 +380,7 @@ int ConnectionClass::Service (void)
 	}
 }
 
-// FUNCTION: 0x0048C3E0
+// FUNCTION: GAMEMD 0x0048C3E0
 int ConnectionClass::Service_Send_Queue (void)
 {
 	int i;
@@ -441,13 +454,13 @@ int ConnectionClass::Service_Send_Queue (void)
 	}
 }
 
-// FUNCTION: 0x0048C590
+// FUNCTION: GAMEMD 0x0048C590
 int ConnectionClass::Discard_Undeliverable_Packets(void)
 {
 	return(0);
 }
 
-// FUNCTION: 0x0048C5A0
+// FUNCTION: GAMEMD 0x0048C5A0
 int ConnectionClass::Service_Receive_Queue (void)
 {
 	ReceiveQueueType *rec_entry;
@@ -474,13 +487,13 @@ int ConnectionClass::Service_Receive_Queue (void)
 	return(1);
 }
 
-// FUNCTION: 0x0048C600
+// FUNCTION: GAMEMD 0x0048C600
 unsigned int ConnectionClass::Time (void)
 {
 	return(TickCount);
 }
 
-// FUNCTION: 0x0048C630
+// FUNCTION: GAMEMD 0x0048C630
 const char *ConnectionClass::Command_Name(int command)
 {
 	if (command >= 0 && command < PACKET_COUNT) {
@@ -490,7 +503,9 @@ const char *ConnectionClass::Command_Name(int command)
 	}
 }
 
-// FUNCTION: 0x0048C650 ConnectionClass::~ConnectionClass
+// SYNTHETIC: GAMEMD 0x0048C650
+// ??_GConnectionClass@@UAEPAXI@Z
 
-// FUNCTION: 0x0048C690 $E48
+// SYNTHETIC: GAMEMD 0x0048C690 SYMBOL
+// _$E48
 IntQuad DAT_0089E930;

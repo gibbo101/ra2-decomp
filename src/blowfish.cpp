@@ -15,13 +15,13 @@
 #include "iblowfish.h"
 #endif
 
-// FUNCTION: 0x004371B0
+// FUNCTION: GAMEMD 0x004371B0
 int Buffer_Size(Surface & surface, int width, int height)
 {
 	return(width * height * surface.Bytes_Per_Pixel());
 }
 
-// FUNCTION: 0x004371D0
+// FUNCTION: GAMEMD 0x004371D0
 bool To_Buffer(Surface const & surface, Rect const & rect, Buffer & buffer)
 {
 	if (!rect.Is_Valid()) return(false);
@@ -30,7 +30,7 @@ bool To_Buffer(Surface const & surface, Rect const & rect, Buffer & buffer)
 	return(from.Blit_From(Rect(0, 0, rect.Width, rect.Height), surface, rect));
 }
 
-// FUNCTION: 0x00437290
+// FUNCTION: GAMEMD 0x00437290
 bool From_Buffer(Surface & surface, Rect const & rect, Buffer const & buffer)
 {
 	if (!rect.Is_Valid()) return(false);
@@ -39,13 +39,13 @@ bool From_Buffer(Surface & surface, Rect const & rect, Buffer const & buffer)
 	return(surface.Blit_From(rect, from, Rect(0, 0, rect.Width, rect.Height)));
 }
 
-// FUNCTION: 0x00437350
+// FUNCTION: GAMEMD 0x00437350
 bool Bit_Blit(Surface & dest, Rect const & destrect, Surface const & source, Rect const & sourcerect, Blitter const & blitter, int zdepth, ZGradientType zgrad, int alpha, int unknown)
 {
 	return(Bit_Blit(dest, dest.Get_Rect(), destrect, source, source.Get_Rect(), sourcerect, blitter, zdepth, zgrad, alpha, unknown));
 }
 
-// FUNCTION: 0x004373B0
+// FUNCTION: GAMEMD 0x004373B0
 bool Bit_Blit(Surface & dest, Rect const & dcliprect, Rect const & ddrect, Surface const & source, Rect const & scliprect, Rect const & ssrect, Blitter const & blitter, int zdepth, ZGradientType zgrad, int alpha, unsigned short tint, int)
 {
 	Rect srect = ssrect;
@@ -199,13 +199,13 @@ bool Bit_Blit(Surface & dest, Rect const & dcliprect, Rect const & ddrect, Surfa
 	return(true);
 }
 
-// FUNCTION: 0x004379A0
+// FUNCTION: GAMEMD 0x004379A0
 bool RLE_Blit(Surface & dest, Rect const & destrect, Surface const & source, Rect const & sourcerect, RLEBlitter const & blitter, int zdepth, ZGradientType zgrad, int alpha, int unknown)
 {
 	return(RLE_Blit(dest, dest.Get_Rect(), destrect, source, source.Get_Rect(), sourcerect, blitter, zdepth, zgrad, alpha, unknown, NULL, Point2D(0, 0)));
 }
 
-// FUNCTION: 0x00437A10
+// FUNCTION: GAMEMD 0x00437A10
 bool RLE_Blit(Surface & dest, Rect const & dcliprect, Rect const & ddrect, Surface const & source, Rect const & scliprect, Rect const & ssrect, RLEBlitter const & blitter, int zdepth, ZGradientType zgrad, int alpha, int, Surface * zshape, Point2D zpoint, unsigned short tint)
 {
 	static char _temp_buf[256];
@@ -333,17 +333,19 @@ bool RLE_Blit(Surface & dest, Rect const & dcliprect, Rect const & ddrect, Surfa
 	return(true);
 }
 
-// FUNCTION: 0x00437F10 ?$TPoint2D@H::operator+
+// TEMPLATE: GAMEMD 0x00437F10
+// ??H?$TPoint2D@H@@QBE?BV0@ABV0@@Z
 
-// FUNCTION: 0x00437F30 ?$TRect@H::Top_Left
+// TEMPLATE: GAMEMD 0x00437F30
+// ?Top_Left@?$TRect@H@@QBE?AV?$TPoint2D@H@@XZ
 
-// FUNCTION: 0x00437F50
+// FUNCTION: GAMEMD 0x00437F50
 BlowfishEngine::BlowfishEngine(void) :
 	BlockCypher(CLSID_BlowfishObject)
 {
 }
 
-// FUNCTION: 0x00437FC0
+// FUNCTION: GAMEMD 0x00437FC0
 BlowfishEngine::~BlowfishEngine(void)
 {
 #ifdef NO_BLOWFISH_DLL
@@ -353,7 +355,7 @@ BlowfishEngine::~BlowfishEngine(void)
 #endif
 }
 
-// FUNCTION: 0x00437FD0
+// FUNCTION: GAMEMD 0x00437FD0
 void BlowfishEngine::Submit_Key(void const * key, int length)
 {
 #ifndef NO_BLOWFISH_DLL
@@ -411,7 +413,7 @@ void BlowfishEngine::Submit_Key(void const * key, int length)
 #endif
 }
 
-// FUNCTION: 0x00438000
+// FUNCTION: GAMEMD 0x00438000
 int BlowfishEngine::Encrypt(void const * plaintext, int length, void * cyphertext)
 {
 #ifndef NO_BLOWFISH_DLL
@@ -447,7 +449,7 @@ int BlowfishEngine::Encrypt(void const * plaintext, int length, void * cyphertex
 #endif
 }
 
-// FUNCTION: 0x00438030
+// FUNCTION: GAMEMD 0x00438030
 int BlowfishEngine::Decrypt(void const * cyphertext, int length, void * plaintext)
 {
 #ifndef NO_BLOWFISH_DLL

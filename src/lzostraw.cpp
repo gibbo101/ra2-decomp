@@ -9,7 +9,7 @@
 #include "lzo.h"
 #include <cstring>
 
-// FUNCTION: 0x0055C720
+// FUNCTION: GAMEMD 0x0055C720
 LZOStraw::LZOStraw(CompControl control, int blocksize) :
 		Control(control),
 		Counter(0),
@@ -24,7 +24,7 @@ LZOStraw::LZOStraw(CompControl control, int blocksize) :
 	}
 }
 
-// FUNCTION: 0x0055C780
+// FUNCTION: GAMEMD 0x0055C780
 LZOStraw::~LZOStraw(void)
 {
 	delete [] Buffer;
@@ -34,7 +34,7 @@ LZOStraw::~LZOStraw(void)
 	Buffer2 = NULL;
 }
 
-// FUNCTION: 0x0055C7C0
+// FUNCTION: GAMEMD 0x0055C7C0
 int LZOStraw::Get(void * destbuf, int slen)
 {
 	int total = 0;
@@ -88,12 +88,14 @@ int LZOStraw::Get(void * destbuf, int slen)
 	return(total);
 }
 
-// FUNCTION: 0x0055C990 LZOStraw::~LZOStraw
+// SYNTHETIC: GAMEMD 0x0055C990
+// ??_GLZOStraw@@UAEPAXI@Z
 
 struct DAT_00ABCD68_Type {
 	int A, B, C, D;
 	DAT_00ABCD68_Type() : A(0), B(0), C(0), D(0) {}
 };
 
-// FUNCTION: 0x0055C9E0 $E2
+// SYNTHETIC: GAMEMD 0x0055C9E0 SYMBOL
+// _$E2
 DAT_00ABCD68_Type DAT_00ABCD68;

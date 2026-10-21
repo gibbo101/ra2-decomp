@@ -19,7 +19,7 @@
 namespace Game { extern HWND hWnd; }
 extern int DAT_00841F38;
 
-// FUNCTION: 0x007B2DB0
+// FUNCTION: GAMEMD 0x007B2DB0
 UDPInterfaceClass::UDPInterfaceClass (void) : BASECLASS()
 {
 	Port = 0;
@@ -28,7 +28,7 @@ UDPInterfaceClass::UDPInterfaceClass (void) : BASECLASS()
 	PeerCount = 0;
 }
 
-// FUNCTION: 0x007B2E50
+// FUNCTION: GAMEMD 0x007B2E50
 UDPInterfaceClass::~UDPInterfaceClass (void)
 {
 	Clear_Broadcast_Addresses();
@@ -41,7 +41,7 @@ UDPInterfaceClass::~UDPInterfaceClass (void)
 	Close();
 }
 
-// FUNCTION: 0x007B2F90
+// FUNCTION: GAMEMD 0x007B2F90
 void UDPInterfaceClass::Clear_Broadcast_Addresses(void)
 {
 	while ( BroadcastAddresses.Count() ) {
@@ -50,7 +50,7 @@ void UDPInterfaceClass::Clear_Broadcast_Addresses(void)
 	}
 }
 
-// FUNCTION: 0x007B2FF0
+// FUNCTION: GAMEMD 0x007B2FF0
 void UDPInterfaceClass::Set_Broadcast_Address (char const *address, unsigned short port)
 {
 	int addr[4];
@@ -66,7 +66,7 @@ void UDPInterfaceClass::Set_Broadcast_Address (char const *address, unsigned sho
 	BroadcastAddresses.Add (baddr);
 }
 
-// FUNCTION: 0x007B30B0
+// FUNCTION: GAMEMD 0x007B30B0
 bool UDPInterfaceClass::OpenSocket (unsigned short port)
 {
 	LINGER ling;
@@ -113,7 +113,7 @@ bool UDPInterfaceClass::OpenSocket (unsigned short port)
 	return(true);
 }
 
-// FUNCTION: 0x007B31E0
+// FUNCTION: GAMEMD 0x007B31E0
 bool UDPInterfaceClass::Open_Port_Socket (unsigned short port)
 {
 	struct sockaddr_in addr;
@@ -160,7 +160,7 @@ bool UDPInterfaceClass::Open_Port_Socket (unsigned short port)
 	return(true);
 }
 
-// FUNCTION: 0x007B3310
+// FUNCTION: GAMEMD 0x007B3310
 void UDPInterfaceClass::Close_Port_Socket (unsigned short port)
 {
 	if (port) {
@@ -182,7 +182,7 @@ void UDPInterfaceClass::Close_Port_Socket (unsigned short port)
 	}
 }
 
-// FUNCTION: 0x007B33D0
+// FUNCTION: GAMEMD 0x007B33D0
 void UDPInterfaceClass::Select_Port_Socket (unsigned short port)
 {
 	if (port && port != UDPListenPort) {
@@ -196,7 +196,7 @@ void UDPInterfaceClass::Select_Port_Socket (unsigned short port)
 	SelectedSocket = INVALID_SOCKET;
 }
 
-// FUNCTION: 0x007B3430
+// FUNCTION: GAMEMD 0x007B3430
 bool UDPInterfaceClass::Init_Ports (void)
 {
 	if (Init()) {
@@ -206,7 +206,7 @@ bool UDPInterfaceClass::Init_Ports (void)
 	return(false);
 }
 
-// FUNCTION: 0x007B3450
+// FUNCTION: GAMEMD 0x007B3450
 bool UDPInterfaceClass::Open_Socket ( SOCKET )
 {
 	LINGER ling;
@@ -282,7 +282,7 @@ bool UDPInterfaceClass::Open_Socket ( SOCKET )
 	return(true);
 }
 
-// FUNCTION: 0x007B36C0
+// FUNCTION: GAMEMD 0x007B36C0
 void UDPInterfaceClass::WriteTo (void *buffer, int buffer_len, void *address, int address_len, bool alternate, bool flag, unsigned short port)
 {
 	if ( address && ((IPXAddressClass *)address)->Is_Broadcast() ) {
@@ -292,7 +292,7 @@ void UDPInterfaceClass::WriteTo (void *buffer, int buffer_len, void *address, in
 	BASECLASS::WriteTo ( buffer, buffer_len, address, address_len, alternate, flag, port );
 }
 
-// FUNCTION: 0x007B3720
+// FUNCTION: GAMEMD 0x007B3720
 void UDPInterfaceClass::Broadcast (void *buffer, int buffer_len, bool alternate)
 {
 	for ( int i=0 ; i<BroadcastAddresses.Count() ; i++ ) {
@@ -323,7 +323,7 @@ void UDPInterfaceClass::Broadcast (void *buffer, int buffer_len, bool alternate)
 	}
 }
 
-// FUNCTION: 0x007B3890
+// FUNCTION: GAMEMD 0x007B3890
 bool UDPInterfaceClass::Start_Listening (void)
 {
 	if (BASECLASS::Start_Listening()) {
@@ -338,14 +338,14 @@ bool UDPInterfaceClass::Start_Listening (void)
 	return(true);
 }
 
-// FUNCTION: 0x007B3900
+// FUNCTION: GAMEMD 0x007B3900
 void UDPInterfaceClass::Stop_Listening (void)
 {
 	BASECLASS::Stop_Listening();
 	Close_All_Port_Sockets();
 }
 
-// FUNCTION: 0x007B3920
+// FUNCTION: GAMEMD 0x007B3920
 void UDPInterfaceClass::Add_Peer (unsigned char *address, unsigned short port)
 {
 	if (PeerCount < 16) {
@@ -361,7 +361,7 @@ void UDPInterfaceClass::Add_Peer (unsigned char *address, unsigned short port)
 	}
 }
 
-// FUNCTION: 0x007B39D0
+// FUNCTION: GAMEMD 0x007B39D0
 bool UDPInterfaceClass::Is_Reachable (unsigned char *address, unsigned short port)
 {
 	for (int i = 0; i < PeerCount; i++) {
@@ -372,7 +372,7 @@ bool UDPInterfaceClass::Is_Reachable (unsigned char *address, unsigned short por
 	return(true);
 }
 
-// FUNCTION: 0x007B3A20
+// FUNCTION: GAMEMD 0x007B3A20
 void UDPInterfaceClass::Close_All_Port_Sockets (void)
 {
 	for (int i = 0; i < PortCount; i++) {
@@ -384,13 +384,13 @@ void UDPInterfaceClass::Close_All_Port_Sockets (void)
 	SelectedSocket = INVALID_SOCKET;
 }
 
-// FUNCTION: 0x007B40F0
+// FUNCTION: GAMEMD 0x007B40F0
 ProtocolEnum UDPInterfaceClass::Get_Protocol (void)
 {
 	return(PROTOCOL_UDP);
 }
 
-// FUNCTION: 0x007B4100
+// FUNCTION: GAMEMD 0x007B4100
 int UDPInterfaceClass::Protocol_Event_Message (SOCKET socketnum)
 {
 	if (socketnum == Socket || socketnum == INVALID_SOCKET) {
@@ -399,22 +399,23 @@ int UDPInterfaceClass::Protocol_Event_Message (SOCKET socketnum)
 	return(socketnum == AlternateSocket ? WM_UDPASYNCEVENT + 1 : 0);
 }
 
-// FUNCTION: 0x007B4140
+// FUNCTION: GAMEMD 0x007B4140
 int UDPInterfaceClass::Get_Num_Local_Addresses (void)
 {
 	return(LocalAddresses.Count());
 }
 
-// FUNCTION: 0x007B4150
+// FUNCTION: GAMEMD 0x007B4150
 unsigned char *UDPInterfaceClass::Get_Local_Address (int index)
 {
 	return(LocalAddresses[index]);
 }
 
-// FUNCTION: 0x007B4160
+// FUNCTION: GAMEMD 0x007B4160
 unsigned short UDPInterfaceClass::Get_Port (void)
 {
 	return(Port);
 }
 
-// FUNCTION: 0x007B4170 UDPInterfaceClass::~UDPInterfaceClass
+// SYNTHETIC: GAMEMD 0x007B4170
+// ??_GUDPInterfaceClass@@UAEPAXI@Z

@@ -47,43 +47,55 @@ struct IntTriple {
 	IntTriple() { A = 0; B = 0; C = 0; }
 };
 
-// FUNCTION: 0x0053F240 $E21
+// SYNTHETIC: GAMEMD 0x0053F240 SYMBOL
+// _$E21
 double DAT_00AA0528 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2.0);
 
-// FUNCTION: 0x0053F270 $E24
+// SYNTHETIC: GAMEMD 0x0053F270 SYMBOL
+// _$E24
 double DAT_00AA0598 = DAT_00AA0528 / DAT_007EC0B8;
 
-// FUNCTION: 0x0053F290 $E27
+// SYNTHETIC: GAMEMD 0x0053F290 SYMBOL
+// _$E27
 double DAT_00AA0580 = DAT_007E1718 / DAT_00AA0598;
 
-// FUNCTION: 0x0053F2B0 $E30
+// SYNTHETIC: GAMEMD 0x0053F2B0 SYMBOL
+// _$E30
 double DAT_00AA0570 = DAT_007E1720 * DAT_007EC0C0;
 
-// FUNCTION: 0x0053F2D0 $E33
+// SYNTHETIC: GAMEMD 0x0053F2D0 SYMBOL
+// _$E33
 double DAT_00AA0538 = DAT_007E1728 * DAT_007EC0C0;
 
-// FUNCTION: 0x0053F2F0 $E36
+// SYNTHETIC: GAMEMD 0x0053F2F0 SYMBOL
+// _$E36
 double DAT_00AA0500 = DAT_007E1730 * DAT_007EC0C0;
 
-// FUNCTION: 0x0053F310 $E39
+// SYNTHETIC: GAMEMD 0x0053F310 SYMBOL
+// _$E39
 int DAT_00AA05A0 = (int)(FUN_004CAD50(DAT_00AA0500 - DAT_00AA0538) * DAT_007E1738 * DAT_00AA0528);
 
-// FUNCTION: 0x0053F350 $E42
+// SYNTHETIC: GAMEMD 0x0053F350 SYMBOL
+// _$E42
 double DAT_00AA0540 = FUN_004CADE0(DAT_00AA05A0 * DAT_007E1740);
 
-// FUNCTION: 0x0053F380 $E45
+// SYNTHETIC: GAMEMD 0x0053F380 SYMBOL
+// _$E45
 double DAT_00AA0560 = FUN_004CADE0((DAT_00AA05A0 * 2) / DAT_00AA0528);
 
-// FUNCTION: 0x0053F3B0 $E48
+// SYNTHETIC: GAMEMD 0x0053F3B0 SYMBOL
+// _$E48
 int DAT_00AA0594 = (int)(DAT_00AA05A0 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x0053F3E0 $E51
+// SYNTHETIC: GAMEMD 0x0053F3E0 SYMBOL
+// _$E51
 ShortPair DAT_00AA0520;
 
-// FUNCTION: 0x0053F3F0 $E54
+// SYNTHETIC: GAMEMD 0x0053F3F0 SYMBOL
+// _$E54
 IntTriple DAT_00AA0550;
 
-// FUNCTION: 0x0053F410
+// FUNCTION: GAMEMD 0x0053F410
 void FUN_0053F410(void)
 {
 	DAT_00AA0590 = 0;
@@ -91,7 +103,7 @@ void FUN_0053F410(void)
 	DAT_00AA058C = 128;
 }
 
-// FUNCTION: 0x0053F430
+// FUNCTION: GAMEMD 0x0053F430
 IPXConnClass::IPXConnClass (int numsend, int numreceive, int maxlen,
 	unsigned short magicnum, IPXAddressClass *address, int id, wchar_t const *name,
 	int extralen) :
@@ -110,13 +122,13 @@ IPXConnClass::IPXConnClass (int numsend, int numreceive, int maxlen,
 	Immed_Set = 0;
 }
 
-// FUNCTION: 0x0053F4E0
+// FUNCTION: GAMEMD 0x0053F4E0
 void IPXConnClass::Init (void)
 {
 	BASECLASS::Init();
 }
 
-// FUNCTION: 0x0053F4F0
+// FUNCTION: GAMEMD 0x0053F4F0
 void IPXConnClass::Configure (unsigned short socket, int conn_num,
 	                                            IPXHeaderType *listen_header,
 	IPXHeaderType *send_header, char *listen_buf, char *send_buf,
@@ -133,7 +145,7 @@ void IPXConnClass::Configure (unsigned short socket, int conn_num,
 	Configured = 1;
 }
 
-// FUNCTION: 0x0053F5B0
+// FUNCTION: GAMEMD 0x0053F5B0
 int IPXConnClass::Stop_Listening(void)
 {
 	if ( PacketTransport ) PacketTransport->Stop_Listening();
@@ -142,13 +154,13 @@ int IPXConnClass::Stop_Listening(void)
 	return(1);
 }
 
-// FUNCTION: 0x0053F5D0
+// FUNCTION: GAMEMD 0x0053F5D0
 int IPXConnClass::Send(char *buf, int buflen, void *, int, bool flag, unsigned short)
 {
 	return(Send_To (buf, buflen, &Address, NULL, flag, 0));
 }
 
-// FUNCTION: 0x0053F5F0
+// FUNCTION: GAMEMD 0x0053F5F0
 int IPXConnClass::Open_Socket(unsigned short socket)
 {
 	int rc;
@@ -160,7 +172,7 @@ int IPXConnClass::Open_Socket(unsigned short socket)
 	return( rc );
 }
 
-// FUNCTION: 0x0053F630
+// FUNCTION: GAMEMD 0x0053F630
 void IPXConnClass::Close_Socket(unsigned short socket)
 {
 	socket = socket;
@@ -172,7 +184,7 @@ void IPXConnClass::Close_Socket(unsigned short socket)
 #include "ipxgconn.h"
 #include "ipxmgr.h"
 
-// FUNCTION: 0x0053F650
+// FUNCTION: GAMEMD 0x0053F650
 int IPXConnClass::Send_To(char *buf, int buflen, IPXAddressClass *address,
 	NetNodeType immed, bool flag, unsigned short port)
 {
@@ -248,16 +260,17 @@ int IPXConnClass::Send_To(char *buf, int buflen, IPXAddressClass *address,
 }
 
 
-// FUNCTION: 0x0053F830
+// FUNCTION: GAMEMD 0x0053F830
 int IPXConnClass::Broadcast(char *buf, int buflen)
 {
 	PacketTransport->Broadcast (buf, buflen, false);
 	return(true);
 }
 
-// FUNCTION: 0x0053F850 IPXConnClass::~IPXConnClass
+// SYNTHETIC: GAMEMD 0x0053F850
+// ??_GIPXConnClass@@UAEPAXI@Z
 
-// FUNCTION: 0x0053F880
+// FUNCTION: GAMEMD 0x0053F880
 void FUN_0053F880(void)
 {
 	DAT_00AA05B8 = 0;

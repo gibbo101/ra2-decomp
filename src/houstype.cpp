@@ -21,22 +21,36 @@
 
 DynamicVectorClass<HouseTypeClass *> HouseTypeClass::Array;
 
-// FUNCTION: 0x005111E0 $E2
-// FUNCTION: 0x00511200 $E5
-// FUNCTION: 0x00511230 $E8
-// FUNCTION: 0x00511250 $E11
-// FUNCTION: 0x00511270 $E14
-// FUNCTION: 0x00511290 $E17
-// FUNCTION: 0x005112B0 $E20
-// FUNCTION: 0x005112D0 $E23
-// FUNCTION: 0x00511310 $E26
-// FUNCTION: 0x00511340 $E29
-// FUNCTION: 0x00511370 $E32
-// FUNCTION: 0x005113A0 $E35
-// FUNCTION: 0x005113B0 $E38
-// FUNCTION: 0x005113D0 $E41
+// SYNTHETIC: GAMEMD 0x005111E0 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x00511200 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x00511230 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x00511250 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x00511270 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x00511290 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x005112B0 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x005112D0 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x00511310 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x00511340 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x00511370 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x005113A0 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x005113B0 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x005113D0 SYMBOL
+// _$E41
 
-// FUNCTION: 0x005113F0
+// FUNCTION: GAMEMD 0x005113F0
 HouseTypeClass::HouseTypeClass(char const * ininame) :
 	BASECLASS(ininame),
 	HeapID(HOUSE_NONE),
@@ -82,7 +96,7 @@ HouseTypeClass::HouseTypeClass(char const * ininame) :
 	HeapID = (HousesType)Array.ID(this);
 }
 
-// FUNCTION: 0x00511650
+// FUNCTION: GAMEMD 0x00511650
 HouseTypeClass::HouseTypeClass(NoInitClass const & x) :
 	BASECLASS(x),
 	ParentCountry(x),
@@ -92,14 +106,14 @@ HouseTypeClass::HouseTypeClass(NoInitClass const & x) :
 {
 }
 
-// FUNCTION: 0x005116A0
+// FUNCTION: GAMEMD 0x005116A0
 HouseTypeClass::~HouseTypeClass(void)
 {
 	Detach_This_From_All(this, true);
 	Array.Delete(this);
 }
 
-// FUNCTION: 0x005117D0
+// FUNCTION: GAMEMD 0x005117D0
 HousesType HouseTypeClass::From_Name(char const * name)
 {
 	if (stricmp(name, "<random>") == 0) {
@@ -116,7 +130,7 @@ HousesType HouseTypeClass::From_Name(char const * name)
 	return(HOUSE_NONE);
 }
 
-// FUNCTION: 0x00512170
+// FUNCTION: GAMEMD 0x00512170
 void HouseTypeClass::Compute_CRC(CRCEngine & crc) const
 {
 	BASECLASS::Compute_CRC(crc);
@@ -135,13 +149,13 @@ void HouseTypeClass::Compute_CRC(CRCEngine & crc) const
 	crc(IsMultiplay);
 }
 
-// FUNCTION: 0x00512280
+// FUNCTION: GAMEMD 0x00512280
 HRESULT STDMETHODCALLTYPE HouseTypeClass::IsDirty(void)
 {
 	return(false);
 }
 
-// FUNCTION: 0x00512290
+// FUNCTION: GAMEMD 0x00512290
 HRESULT STDMETHODCALLTYPE HouseTypeClass::Load(IStream * stream)
 {
 	VeteranInfantry.Clear();
@@ -170,7 +184,7 @@ HRESULT STDMETHODCALLTYPE HouseTypeClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x00512480
+// FUNCTION: GAMEMD 0x00512480
 HRESULT STDMETHODCALLTYPE HouseTypeClass::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -184,7 +198,7 @@ HRESULT STDMETHODCALLTYPE HouseTypeClass::Save(IStream * stream, BOOL cleardirty
 	return(result);
 }
 
-// FUNCTION: 0x00512570
+// FUNCTION: GAMEMD 0x00512570
 HRESULT STDMETHODCALLTYPE HouseTypeClass::GetSizeMax(ULARGE_INTEGER *pcbSize)
 {
 	if (pcbSize == NULL) {
@@ -197,7 +211,7 @@ HRESULT STDMETHODCALLTYPE HouseTypeClass::GetSizeMax(ULARGE_INTEGER *pcbSize)
 	return(S_OK);
 }
 
-// FUNCTION: 0x005125A0
+// FUNCTION: GAMEMD 0x005125A0
 HRESULT STDMETHODCALLTYPE HouseTypeClass::QueryInterface(REFIID riid, LPVOID * ppvObject)
 {
 	if (ppvObject == NULL) {
@@ -226,7 +240,7 @@ HRESULT STDMETHODCALLTYPE HouseTypeClass::QueryInterface(REFIID riid, LPVOID * p
 	return(S_OK);
 }
 
-// FUNCTION: 0x00512640
+// FUNCTION: GAMEMD 0x00512640
 HRESULT STDMETHODCALLTYPE HouseTypeClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -234,139 +248,201 @@ HRESULT STDMETHODCALLTYPE HouseTypeClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x00512680
+// FUNCTION: GAMEMD 0x00512680
 HouseTypeClass * HouseTypeClass::Find_Or_Make(char const * ininame)
 {
 	return(TFind_Or_Make<HouseTypeClass>(ininame, Array));
 }
 
-// FUNCTION: 0x00512710
+// FUNCTION: GAMEMD 0x00512710
 RTTIType HouseTypeClass::Fetch_RTTI(void) const
 {
 	return(RTTI_HOUSETYPE);
 }
 
-// FUNCTION: 0x00512720
+// FUNCTION: GAMEMD 0x00512720
 int HouseTypeClass::Fetch_Object_Size(void) const
 {
 	return(sizeof(*this));
 }
 
-// FUNCTION: 0x00512730
+// FUNCTION: GAMEMD 0x00512730
 int HouseTypeClass::Fetch_Heap_ID(void) const
 {
 	return(HeapID);
 }
 
-// FUNCTION: 0x00512740
+// FUNCTION: GAMEMD 0x00512740
 ULONG STDMETHODCALLTYPE HouseTypeClass::AddRef(void)
 {
 	return(1);
 }
 
-// FUNCTION: 0x00512750
+// FUNCTION: GAMEMD 0x00512750
 ULONG STDMETHODCALLTYPE HouseTypeClass::Release(void)
 {
 	return(1);
 }
 
-// FUNCTION: 0x00512760 HouseTypeClass::~HouseTypeClass
+// SYNTHETIC: GAMEMD 0x00512760
+// ??_GHouseTypeClass@@UAEPAXI@Z
 
-// FUNCTION: 0x005128A0 ?$DynamicVectorClass@PAVInfantryTypeClass@@::Clear
+// TEMPLATE: GAMEMD 0x005128A0
+// ?Clear@?$DynamicVectorClass@PAVInfantryTypeClass@@@@UAEXXZ
 template class DynamicVectorClass<InfantryTypeClass *>;
 
-// FUNCTION: 0x005128D0 ?$VectorClass@PAVInfantryTypeClass@@::ID
-// FUNCTION: 0x005128F0 ?$VectorClass@PAVInfantryTypeClass@@::GetItem
+// TEMPLATE: GAMEMD 0x005128D0
+// ?ID@?$VectorClass@PAVInfantryTypeClass@@@@UAEHPBQAVInfantryTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x005128F0
+// ?GetItem@?$VectorClass@PAVInfantryTypeClass@@@@UBEPAVInfantryTypeClass@@H@Z
 
-// FUNCTION: 0x00512900 ?$DynamicVectorClass@PAVUnitTypeClass@@::Clear
+// TEMPLATE: GAMEMD 0x00512900
+// ?Clear@?$DynamicVectorClass@PAVUnitTypeClass@@@@UAEXXZ
 template class DynamicVectorClass<UnitTypeClass *>;
 
-// FUNCTION: 0x00512930 ?$VectorClass@PAVUnitTypeClass@@::ID
-// FUNCTION: 0x00512950 ?$VectorClass@PAVUnitTypeClass@@::GetItem
+// TEMPLATE: GAMEMD 0x00512930
+// ?ID@?$VectorClass@PAVUnitTypeClass@@@@UAEHPBQAVUnitTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x00512950
+// ?GetItem@?$VectorClass@PAVUnitTypeClass@@@@UBEPAVUnitTypeClass@@H@Z
 
-// FUNCTION: 0x00512960 ?$TypeList@PAVAircraftTypeClass@@::?$TypeList@PAVAircraftTypeClass@@
+// TEMPLATE: GAMEMD 0x00512960
+// ??0?$TypeList@PAVAircraftTypeClass@@@@QAE@XZ
 template class TypeList<AircraftTypeClass *>;
 
-// FUNCTION: 0x00512990 ?$DynamicVectorClass@PAVAircraftTypeClass@@::Clear
+// TEMPLATE: GAMEMD 0x00512990
+// ?Clear@?$DynamicVectorClass@PAVAircraftTypeClass@@@@UAEXXZ
 template class DynamicVectorClass<AircraftTypeClass *>;
 
-// FUNCTION: 0x005129C0 ?$VectorClass@PAVAircraftTypeClass@@::ID
-// FUNCTION: 0x005129E0 ?$VectorClass@PAVAircraftTypeClass@@::GetItem
+// TEMPLATE: GAMEMD 0x005129C0
+// ?ID@?$VectorClass@PAVAircraftTypeClass@@@@UAEHPBQAVAircraftTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x005129E0
+// ?GetItem@?$VectorClass@PAVAircraftTypeClass@@@@UBEPAVAircraftTypeClass@@H@Z
 
-// FUNCTION: 0x005129F0 ?$VectorClass@PAVInfantryTypeClass@@::~?$VectorClass@PAVInfantryTypeClass@@
-// FUNCTION: 0x00512A40 ?$VectorClass@PAVUnitTypeClass@@::~?$VectorClass@PAVUnitTypeClass@@
-// FUNCTION: 0x00512A90 ?$VectorClass@PAVAircraftTypeClass@@::~?$VectorClass@PAVAircraftTypeClass@@
-// FUNCTION: 0x00512AE0 ?$DynamicVectorClass@PAVInfantryTypeClass@@::~?$DynamicVectorClass@PAVInfantryTypeClass@@
-// FUNCTION: 0x00512B30 ?$DynamicVectorClass@PAVUnitTypeClass@@::~?$DynamicVectorClass@PAVUnitTypeClass@@
-// FUNCTION: 0x00512B80 ?$DynamicVectorClass@PAVAircraftTypeClass@@::~?$DynamicVectorClass@PAVAircraftTypeClass@@
-// FUNCTION: 0x00512BD0 ?$VectorClass@PAVAircraftTypeClass@@::operator=
-// FUNCTION: 0x00512C40 ?$VectorClass@PAVAircraftTypeClass@@::operator==
-// FUNCTION: 0x00512C80 ?$VectorClass@PAVAircraftTypeClass@@::Resize
+// SYNTHETIC: GAMEMD 0x005129F0
+// ??_G?$VectorClass@PAVInfantryTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00512A40
+// ??_G?$VectorClass@PAVUnitTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00512A90
+// ??_G?$VectorClass@PAVAircraftTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00512AE0
+// ??_G?$DynamicVectorClass@PAVInfantryTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00512B30
+// ??_G?$DynamicVectorClass@PAVUnitTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00512B80
+// ??_G?$DynamicVectorClass@PAVAircraftTypeClass@@@@UAEPAXI@Z
+// TEMPLATE: GAMEMD 0x00512BD0
+// ??4?$VectorClass@PAVAircraftTypeClass@@@@QAEAAV0@ABV0@@Z
+// TEMPLATE: GAMEMD 0x00512C40
+// ??8?$VectorClass@PAVAircraftTypeClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x00512C80
+// ?Resize@?$VectorClass@PAVAircraftTypeClass@@@@UAE_NHPBQAVAircraftTypeClass@@@Z
 template class VectorClass<AircraftTypeClass *>;
 
-// FUNCTION: 0x00512D30 ?$VectorClass@PBVInfantryTypeClass@@::Clear
-// FUNCTION: 0x00512D60 ?$VectorClass@PBVInfantryTypeClass@@::ID
-// FUNCTION: 0x00512DA0 ?$VectorClass@PBVInfantryTypeClass@@::ID
-// FUNCTION: 0x00512DC0 ?$DynamicVectorClass@PBVInfantryTypeClass@@::?$DynamicVectorClass@PBVInfantryTypeClass@@
-// FUNCTION: 0x00512E20 ?$VectorClass@PBVInfantryTypeClass@@::~?$VectorClass@PBVInfantryTypeClass@@
-// FUNCTION: 0x00512E70 ?$DynamicVectorClass@PBVInfantryTypeClass@@::Resize
-// FUNCTION: 0x00512F20 ?$DynamicVectorClass@PBVInfantryTypeClass@@::Add
-// FUNCTION: 0x00512F70 ?$DynamicVectorClass@PBVInfantryTypeClass@@::ID
-// FUNCTION: 0x00512FA0 ?$VectorClass@PBVInfantryTypeClass@@::operator=
-// FUNCTION: 0x00513010 ?$VectorClass@PBVInfantryTypeClass@@::operator==
-// FUNCTION: 0x00513050 ?$VectorClass@PBVInfantryTypeClass@@::Resize
+// TEMPLATE: GAMEMD 0x00512D30
+// ?Clear@?$VectorClass@PBVInfantryTypeClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x00512D60
+// ?ID@?$VectorClass@PBVInfantryTypeClass@@@@UAEHABQBVInfantryTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x00512DA0
+// ?ID@?$VectorClass@PBVInfantryTypeClass@@@@UAEHPBQBVInfantryTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x00512DC0
+// ??0?$DynamicVectorClass@PBVInfantryTypeClass@@@@QAE@IPBQBVInfantryTypeClass@@@Z
+// SYNTHETIC: GAMEMD 0x00512E20
+// ??_G?$VectorClass@PBVInfantryTypeClass@@@@UAEPAXI@Z
+// TEMPLATE: GAMEMD 0x00512E70
+// ?Resize@?$DynamicVectorClass@PBVInfantryTypeClass@@@@UAE_NHPBQBVInfantryTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x00512F20
+// ?Add@?$DynamicVectorClass@PBVInfantryTypeClass@@@@QAE_NABQBVInfantryTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x00512F70
+// ?ID@?$DynamicVectorClass@PBVInfantryTypeClass@@@@UAEHABQBVInfantryTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x00512FA0
+// ??4?$VectorClass@PBVInfantryTypeClass@@@@QAEAAV0@ABV0@@Z
+// TEMPLATE: GAMEMD 0x00513010
+// ??8?$VectorClass@PBVInfantryTypeClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x00513050
+// ?Resize@?$VectorClass@PBVInfantryTypeClass@@@@UAE_NHPBQBVInfantryTypeClass@@@Z
 template class VectorClass<InfantryTypeClass const *>;
 template class DynamicVectorClass<InfantryTypeClass const *>;
 
-// FUNCTION: 0x00513100 ?$VectorClass@PBVUnitTypeClass@@::Clear
-// FUNCTION: 0x00513130 ?$VectorClass@PBVUnitTypeClass@@::ID
-// FUNCTION: 0x00513170 ?$VectorClass@PBVUnitTypeClass@@::ID
-// FUNCTION: 0x00513190 ?$DynamicVectorClass@PBVUnitTypeClass@@::?$DynamicVectorClass@PBVUnitTypeClass@@
-// FUNCTION: 0x005131F0 ?$VectorClass@PBVUnitTypeClass@@::~?$VectorClass@PBVUnitTypeClass@@
-// FUNCTION: 0x00513240 ?$DynamicVectorClass@PBVUnitTypeClass@@::Resize
-// FUNCTION: 0x005132F0 ?$DynamicVectorClass@PBVUnitTypeClass@@::Add
-// FUNCTION: 0x00513340 ?$DynamicVectorClass@PBVUnitTypeClass@@::ID
-// FUNCTION: 0x00513370 ?$VectorClass@PBVUnitTypeClass@@::operator=
-// FUNCTION: 0x005133E0 ?$VectorClass@PBVUnitTypeClass@@::operator==
-// FUNCTION: 0x00513420 ?$VectorClass@PBVUnitTypeClass@@::Resize
+// TEMPLATE: GAMEMD 0x00513100
+// ?Clear@?$VectorClass@PBVUnitTypeClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x00513130
+// ?ID@?$VectorClass@PBVUnitTypeClass@@@@UAEHABQBVUnitTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x00513170
+// ?ID@?$VectorClass@PBVUnitTypeClass@@@@UAEHPBQBVUnitTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x00513190
+// ??0?$DynamicVectorClass@PBVUnitTypeClass@@@@QAE@IPBQBVUnitTypeClass@@@Z
+// SYNTHETIC: GAMEMD 0x005131F0
+// ??_G?$VectorClass@PBVUnitTypeClass@@@@UAEPAXI@Z
+// TEMPLATE: GAMEMD 0x00513240
+// ?Resize@?$DynamicVectorClass@PBVUnitTypeClass@@@@UAE_NHPBQBVUnitTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x005132F0
+// ?Add@?$DynamicVectorClass@PBVUnitTypeClass@@@@QAE_NABQBVUnitTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x00513340
+// ?ID@?$DynamicVectorClass@PBVUnitTypeClass@@@@UAEHABQBVUnitTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x00513370
+// ??4?$VectorClass@PBVUnitTypeClass@@@@QAEAAV0@ABV0@@Z
+// TEMPLATE: GAMEMD 0x005133E0
+// ??8?$VectorClass@PBVUnitTypeClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x00513420
+// ?Resize@?$VectorClass@PBVUnitTypeClass@@@@UAE_NHPBQBVUnitTypeClass@@@Z
 template class VectorClass<UnitTypeClass const *>;
 template class DynamicVectorClass<UnitTypeClass const *>;
 
-// FUNCTION: 0x005134D0 ?$VectorClass@PBVAircraftTypeClass@@::Clear
-// FUNCTION: 0x00513500 ?$VectorClass@PBVAircraftTypeClass@@::ID
-// FUNCTION: 0x00513540 ?$VectorClass@PBVAircraftTypeClass@@::ID
-// FUNCTION: 0x00513560 ?$DynamicVectorClass@PBVAircraftTypeClass@@::?$DynamicVectorClass@PBVAircraftTypeClass@@
-// FUNCTION: 0x005135C0 ?$VectorClass@PBVAircraftTypeClass@@::~?$VectorClass@PBVAircraftTypeClass@@
-// FUNCTION: 0x00513610 ?$DynamicVectorClass@PBVAircraftTypeClass@@::Resize
-// FUNCTION: 0x005136C0 ?$DynamicVectorClass@PBVAircraftTypeClass@@::Add
-// FUNCTION: 0x00513710 ?$DynamicVectorClass@PBVAircraftTypeClass@@::ID
+// TEMPLATE: GAMEMD 0x005134D0
+// ?Clear@?$VectorClass@PBVAircraftTypeClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x00513500
+// ?ID@?$VectorClass@PBVAircraftTypeClass@@@@UAEHABQBVAircraftTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x00513540
+// ?ID@?$VectorClass@PBVAircraftTypeClass@@@@UAEHPBQBVAircraftTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x00513560
+// ??0?$DynamicVectorClass@PBVAircraftTypeClass@@@@QAE@IPBQBVAircraftTypeClass@@@Z
+// SYNTHETIC: GAMEMD 0x005135C0
+// ??_G?$VectorClass@PBVAircraftTypeClass@@@@UAEPAXI@Z
+// TEMPLATE: GAMEMD 0x00513610
+// ?Resize@?$DynamicVectorClass@PBVAircraftTypeClass@@@@UAE_NHPBQBVAircraftTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x005136C0
+// ?Add@?$DynamicVectorClass@PBVAircraftTypeClass@@@@QAE_NABQBVAircraftTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x00513710
+// ?ID@?$DynamicVectorClass@PBVAircraftTypeClass@@@@UAEHABQBVAircraftTypeClass@@@Z
 template class VectorClass<AircraftTypeClass const *>;
 template class DynamicVectorClass<AircraftTypeClass const *>;
 
-// FUNCTION: 0x00513740 ?$TypeList@PBVUnitTypeClass@@::?$TypeList@PBVUnitTypeClass@@
+// TEMPLATE: GAMEMD 0x00513740
+// ??0?$TypeList@PBVUnitTypeClass@@@@QAE@ABV0@@Z
 template class TypeList<UnitTypeClass const *>;
 
-// FUNCTION: 0x005137D0 ?$TypeList@PBVAircraftTypeClass@@::?$TypeList@PBVAircraftTypeClass@@
+// TEMPLATE: GAMEMD 0x005137D0
+// ??0?$TypeList@PBVAircraftTypeClass@@@@QAE@ABV0@@Z
 template class TypeList<AircraftTypeClass const *>;
 
-// FUNCTION: 0x00513860 ?$TypeList@PBVInfantryTypeClass@@::?$TypeList@PBVInfantryTypeClass@@
+// TEMPLATE: GAMEMD 0x00513860
+// ??0?$TypeList@PBVInfantryTypeClass@@@@QAE@ABV0@@Z
 template class TypeList<InfantryTypeClass const *>;
 
-// FUNCTION: 0x005138F0 ?$VectorClass@PBVInfantryTypeClass@@::?$VectorClass@PBVInfantryTypeClass@@
-// FUNCTION: 0x00513940 ?$VectorClass@PBVUnitTypeClass@@::?$VectorClass@PBVUnitTypeClass@@
-// FUNCTION: 0x00513990 ?$VectorClass@PBVAircraftTypeClass@@::?$VectorClass@PBVAircraftTypeClass@@
+// TEMPLATE: GAMEMD 0x005138F0
+// ??0?$VectorClass@PBVInfantryTypeClass@@@@QAE@HPBQBVInfantryTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x00513940
+// ??0?$VectorClass@PBVUnitTypeClass@@@@QAE@HPBQBVUnitTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x00513990
+// ??0?$VectorClass@PBVAircraftTypeClass@@@@QAE@HPBQBVAircraftTypeClass@@@Z
 
-// FUNCTION: 0x005139E0 HouseTypeClass::QueryInterface
+// FUNCTION: GAMEMD 0x005139E0
+// HouseTypeClass::QueryInterface
 
-// FUNCTION: 0x005139F0 HouseTypeClass::AddRef
+// FUNCTION: GAMEMD 0x005139F0
+// HouseTypeClass::AddRef
 
-// FUNCTION: 0x00513A00 HouseTypeClass::Release
+// FUNCTION: GAMEMD 0x00513A00
+// HouseTypeClass::Release
 
-// FUNCTION: 0x005139E0 HouseTypeClass::QueryInterface
+// FUNCTION: GAMEMD 0x005139E0
+// HouseTypeClass::QueryInterface
 
-// FUNCTION: 0x005139F0 HouseTypeClass::AddRef
+// FUNCTION: GAMEMD 0x005139F0
+// HouseTypeClass::AddRef
 
-// FUNCTION: 0x00513A00 HouseTypeClass::Release
+// FUNCTION: GAMEMD 0x00513A00
+// HouseTypeClass::Release
 
 extern const double DAT_007E1708;
 extern const double DAT_007E1710;
@@ -379,34 +455,44 @@ extern const double DAT_007E1740;
 extern const double DAT_007EACE8;
 extern const double DAT_007EACF0;
 
-// FUNCTION: 0x00513A10 $E66
+// SYNTHETIC: GAMEMD 0x00513A10 SYMBOL
+// _$E66
 double DAT_00A8F168 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x00513A40 $E69
+// SYNTHETIC: GAMEMD 0x00513A40 SYMBOL
+// _$E69
 double DAT_00A8F1B8 = DAT_00A8F168 / DAT_007EACE8;
 
-// FUNCTION: 0x00513A60 $E72
+// SYNTHETIC: GAMEMD 0x00513A60 SYMBOL
+// _$E72
 double DAT_00A8F1A0 = DAT_007E1718 / DAT_00A8F1B8;
 
-// FUNCTION: 0x00513A80 $E75
+// SYNTHETIC: GAMEMD 0x00513A80 SYMBOL
+// _$E75
 double DAT_00A8F198 = DAT_007E1720 * DAT_007EACF0;
 
-// FUNCTION: 0x00513AA0 $E78
+// SYNTHETIC: GAMEMD 0x00513AA0 SYMBOL
+// _$E78
 double DAT_00A8F170 = DAT_007E1728 * DAT_007EACF0;
 
-// FUNCTION: 0x00513AC0 $E81
+// SYNTHETIC: GAMEMD 0x00513AC0 SYMBOL
+// _$E81
 double DAT_00A8F148 = DAT_007E1730 * DAT_007EACF0;
 
-// FUNCTION: 0x00513AE0 $E84
+// SYNTHETIC: GAMEMD 0x00513AE0 SYMBOL
+// _$E84
 int DAT_00A8F1C0 = (int)(fastmath::tan(DAT_00A8F148 - DAT_00A8F170) * DAT_007E1738 * DAT_00A8F168);
 
-// FUNCTION: 0x00513B20 $E87
+// SYNTHETIC: GAMEMD 0x00513B20 SYMBOL
+// _$E87
 double DAT_00A8F178 = fastmath::atan(DAT_00A8F1C0 * DAT_007E1740);
 
-// FUNCTION: 0x00513B50 $E90
+// SYNTHETIC: GAMEMD 0x00513B50 SYMBOL
+// _$E90
 double DAT_00A8F190 = fastmath::atan((DAT_00A8F1C0 * 2) / DAT_00A8F168);
 
-// FUNCTION: 0x00513B80 $E93
+// SYNTHETIC: GAMEMD 0x00513B80 SYMBOL
+// _$E93
 int DAT_00A8F1B4 = (int)(DAT_00A8F1C0 * 4 + DAT_007E1738);
 
 struct DAT_Pair16 { short A, B; DAT_Pair16() : A(0), B(0) {} };
@@ -414,14 +500,18 @@ struct DAT_Triple0 { int A, B, C; DAT_Triple0() : A(0), B(0), C(0) {} };
 struct DAT_Triple80 { int A, B, C; DAT_Triple80() : A(128), B(128), C(0) {} };
 struct DAT_Quad0 { int A, B, C, D; DAT_Quad0() : A(0), B(0), C(0), D(0) {} };
 
-// FUNCTION: 0x00513BB0 $E96
+// SYNTHETIC: GAMEMD 0x00513BB0 SYMBOL
+// _$E96
 DAT_Pair16 DAT_00A8F160;
 
-// FUNCTION: 0x00513BC0 $E99
+// SYNTHETIC: GAMEMD 0x00513BC0 SYMBOL
+// _$E99
 DAT_Triple0 DAT_00A8F180;
 
-// FUNCTION: 0x00513BE0 $E102
+// SYNTHETIC: GAMEMD 0x00513BE0 SYMBOL
+// _$E102
 DAT_Triple80 DAT_00A8F1A8;
 
-// FUNCTION: 0x00513C00 $E105
+// SYNTHETIC: GAMEMD 0x00513C00 SYMBOL
+// _$E105
 DAT_Quad0 DAT_00A8F150;

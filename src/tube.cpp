@@ -18,7 +18,7 @@
 
 char const * TubeClass::INI_NAME = "Tubes";
 
-// FUNCTION: 0x00727FD0
+// FUNCTION: GAMEMD 0x00727FD0
 TubeClass::TubeClass(Cell const &cell, FacingType dir) :
 	Enter(cell),
 	Exit(cell),
@@ -39,7 +39,7 @@ TubeClass::TubeClass(Cell const &cell, FacingType dir) :
 	}
 }
 
-// FUNCTION: 0x007280D0
+// FUNCTION: GAMEMD 0x007280D0
 TubeClass::~TubeClass(void)
 {
 	Detach_This_From_All(this, true);
@@ -54,7 +54,7 @@ TubeClass::~TubeClass(void)
 	Tubes.Delete(this);
 }
 
-// FUNCTION: 0x007281A0
+// FUNCTION: GAMEMD 0x007281A0
 HRESULT STDMETHODCALLTYPE TubeClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -66,7 +66,7 @@ HRESULT STDMETHODCALLTYPE TubeClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x007281E0
+// FUNCTION: GAMEMD 0x007281E0
 HRESULT STDMETHODCALLTYPE TubeClass::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -76,7 +76,7 @@ HRESULT STDMETHODCALLTYPE TubeClass::Save(IStream * stream, BOOL cleardirty)
 	return(result);
 }
 
-// FUNCTION: 0x00728200
+// FUNCTION: GAMEMD 0x00728200
 void TubeClass::Assign_Tubes(void)
 {
 	int tube_count = Tubes.Count();
@@ -96,7 +96,7 @@ void TubeClass::Assign_Tubes(void)
 	}
 }
 
-// FUNCTION: 0x00728280
+// FUNCTION: GAMEMD 0x00728280
 void TubeClass::Write_INI(CCINIClass & ini)
 {
 	char key[12];
@@ -120,7 +120,7 @@ void TubeClass::Write_INI(CCINIClass & ini)
 	}
 }
 
-// FUNCTION: 0x007283C0
+// FUNCTION: GAMEMD 0x007283C0
 void TubeClass::Read_INI(CCINIClass const & ini)
 {
 	char buffer[INIClass::MAX_LINE_LENGTH];
@@ -152,7 +152,7 @@ void TubeClass::Read_INI(CCINIClass const & ini)
 	}
 }
 
-// FUNCTION: 0x00728540
+// FUNCTION: GAMEMD 0x00728540
 bool TubeClass::Not_In_Tube(Cell const & cell) const
 {
 	Cell tubecell = Enter;
@@ -172,7 +172,7 @@ bool TubeClass::Not_In_Tube(Cell const & cell) const
 	return(true);
 }
 
-// FUNCTION: 0x007285D0
+// FUNCTION: GAMEMD 0x007285D0
 void TubeClass::Add_Direction(FacingType dir)
 {
 	if (Count < 99) {
@@ -183,7 +183,7 @@ void TubeClass::Add_Direction(FacingType dir)
 	Exit = Adjacent_Cell(Exit, dir);
 }
 
-// FUNCTION: 0x00728630
+// FUNCTION: GAMEMD 0x00728630
 void TubeClass::Compute_CRC(CRCEngine & crc) const
 {
 	BASECLASS::Compute_CRC(crc);
@@ -199,19 +199,19 @@ void TubeClass::Compute_CRC(CRCEngine & crc) const
 	crc(Count);
 }
 
-// FUNCTION: 0x007286B0
+// FUNCTION: GAMEMD 0x007286B0
 int TubeClass::Fetch_Object_Size(void) const
 {
 	return(sizeof(*this));
 }
 
-// FUNCTION: 0x007286C0
+// FUNCTION: GAMEMD 0x007286C0
 RTTIType TubeClass::Fetch_RTTI(void) const
 {
 	return(RTTI_TUBE);
 }
 
-// FUNCTION: 0x007286D0
+// FUNCTION: GAMEMD 0x007286D0
 HRESULT STDMETHODCALLTYPE TubeClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -219,7 +219,8 @@ HRESULT STDMETHODCALLTYPE TubeClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x00728710 TubeClass::~TubeClass
+// SYNTHETIC: GAMEMD 0x00728710
+// ??_GTubeClass@@UAEPAXI@Z
 
 #include <math.h>
 
@@ -247,38 +248,50 @@ struct IntTriple {
 	IntTriple() { A = 0; B = 0; C = 0; }
 };
 
-// FUNCTION: 0x007287F0 $E53
+// SYNTHETIC: GAMEMD 0x007287F0 SYMBOL
+// _$E53
 double DAT_00B0F8F8 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x00728820 $E56
+// SYNTHETIC: GAMEMD 0x00728820 SYMBOL
+// _$E56
 double DAT_00B0F948 = DAT_00B0F8F8 / DAT_007F5A10;
 
-// FUNCTION: 0x00728840 $E59
+// SYNTHETIC: GAMEMD 0x00728840 SYMBOL
+// _$E59
 double DAT_00B0F930 = DAT_007E1718 / DAT_00B0F948;
 
-// FUNCTION: 0x00728860 $E62
+// SYNTHETIC: GAMEMD 0x00728860 SYMBOL
+// _$E62
 double DAT_00B0F928 = DAT_007E1720 * DAT_007F5A18;
 
-// FUNCTION: 0x00728880 $E65
+// SYNTHETIC: GAMEMD 0x00728880 SYMBOL
+// _$E65
 double DAT_00B0F900 = DAT_007E1728 * DAT_007F5A18;
 
-// FUNCTION: 0x007288A0 $E68
+// SYNTHETIC: GAMEMD 0x007288A0 SYMBOL
+// _$E68
 double DAT_00B0F8D8 = DAT_007E1730 * DAT_007F5A18;
 
-// FUNCTION: 0x007288C0 $E71
+// SYNTHETIC: GAMEMD 0x007288C0 SYMBOL
+// _$E71
 int DAT_00B0F950 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B0F8D8 - DAT_00B0F900) * DAT_00B0F8F8));
 
-// FUNCTION: 0x00728900 $E74
+// SYNTHETIC: GAMEMD 0x00728900 SYMBOL
+// _$E74
 double DAT_00B0F908 = FUN_004CADE0(DAT_00B0F950 * DAT_007E1740);
 
-// FUNCTION: 0x00728930 $E77
+// SYNTHETIC: GAMEMD 0x00728930 SYMBOL
+// _$E77
 double DAT_00B0F920 = FUN_004CADE0((DAT_00B0F950 * 2) / DAT_00B0F8F8);
 
-// FUNCTION: 0x00728960 $E80
+// SYNTHETIC: GAMEMD 0x00728960 SYMBOL
+// _$E80
 int DAT_00B0F944 = (int)(DAT_00B0F950 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x00728990 $E83
+// SYNTHETIC: GAMEMD 0x00728990 SYMBOL
+// _$E83
 ShortPair DAT_00B0F8F0;
 
-// FUNCTION: 0x007289A0 $E86
+// SYNTHETIC: GAMEMD 0x007289A0 SYMBOL
+// _$E86
 IntTriple DAT_00B0F910;

@@ -8,7 +8,7 @@
 
 unsigned char VQOptions[OPTION_SLOTS];
 
-// FUNCTION: 0x0075A790
+// FUNCTION: GAMEMD 0x0075A790
 void Initialize_Options(void)
 {
 	for (int flag = 0; flag < VQ_OPTION_COUNT; flag++) {
@@ -17,7 +17,7 @@ void Initialize_Options(void)
 	Set_Option(OPTION_6);
 }
 
-// FUNCTION: 0x0075A7D0
+// FUNCTION: GAMEMD 0x0075A7D0
 void Set_Option(int flag)
 {
 	int v = (1 << (unsigned char)flag % (unsigned)OPTION_SLOTS);
@@ -25,7 +25,7 @@ void Set_Option(int flag)
 	VQOptions[pos] |= v;
 }
 
-// FUNCTION: 0x0075A7F0
+// FUNCTION: GAMEMD 0x0075A7F0
 void Clear_Option(int flag)
 {
 	int v = (1 << (unsigned char)flag % (unsigned)OPTION_SLOTS);
@@ -33,7 +33,7 @@ void Clear_Option(int flag)
 	VQOptions[pos] &= ~v;
 }
 
-// FUNCTION: 0x0075A810
+// FUNCTION: GAMEMD 0x0075A810
 bool Get_Option(int flag)
 {
 	int v = (1 << (unsigned char)flag % (unsigned)OPTION_SLOTS);
@@ -44,7 +44,7 @@ bool Get_Option(int flag)
 	return(false);
 }
 
-// FUNCTION: 0x0075A830
+// FUNCTION: GAMEMD 0x0075A830
 int Toggle_Option(int flag)
 {
 	if (Get_Option(flag)) {

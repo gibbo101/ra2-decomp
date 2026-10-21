@@ -15,7 +15,7 @@
 #include <cstdio>
 #include <cmath>
 
-// FUNCTION: 0x004C4EF0
+// FUNCTION: GAMEMD 0x004C4EF0
 EnlistedMemberClass::EnlistedMemberClass(char const * entry)
 {
 	char name[64];
@@ -46,7 +46,7 @@ EnlistedMemberClass::EnlistedMemberClass(char const * entry)
 	}
 }
 
-// FUNCTION: 0x004C4F90
+// FUNCTION: GAMEMD 0x004C4F90
 char const * EnlistedMemberClass::Build_INI_Entry(void) const
 {
 	static char _buf[32];
@@ -55,7 +55,7 @@ char const * EnlistedMemberClass::Build_INI_Entry(void) const
 	return(_buf);
 }
 
-// FUNCTION: 0x004C4FC0
+// FUNCTION: GAMEMD 0x004C4FC0
 void EnlistedMemberClass::Compute_CRC(CRCEngine & crc) const
 {
 	crc(Quantity);
@@ -65,18 +65,32 @@ void EnlistedMemberClass::Compute_CRC(CRCEngine & crc) const
 	}
 }
 
-// FUNCTION: 0x004C5000 $E2
-// FUNCTION: 0x004C5030 $E5
-// FUNCTION: 0x004C5050 $E8
-// FUNCTION: 0x004C5070 $E11
-// FUNCTION: 0x004C5090 $E14
-// FUNCTION: 0x004C50B0 $E17
-// FUNCTION: 0x004C50D0 $E20
-// FUNCTION: 0x004C5110 $E23
-// FUNCTION: 0x004C5140 $E26
-// FUNCTION: 0x004C5170 $E29
-// FUNCTION: 0x004C51A0 $E32
-// FUNCTION: 0x004C51B0 $E35
-// FUNCTION: 0x004C51D0 $E38
-// FUNCTION: 0x004C51F0 $E41
+// SYNTHETIC: GAMEMD 0x004C5000 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x004C5030 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x004C5050 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x004C5070 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x004C5090 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x004C50B0 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x004C50D0 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x004C5110 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x004C5140 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x004C5170 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x004C51A0 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x004C51B0 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x004C51D0 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x004C51F0 SYMBOL
+// _$E41
 

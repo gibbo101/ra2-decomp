@@ -17,7 +17,7 @@
 #include "tracker.h"
 #include "vector.h"
 
-// FUNCTION: 0x00543780
+// FUNCTION: GAMEMD 0x00543780
 IsometricTileClass::IsometricTileClass(IsometricTileType type, Cell const & cell) :
 	BASECLASS(),
 	Class(IsometricTileTypes[type])
@@ -29,7 +29,7 @@ IsometricTileClass::IsometricTileClass(IsometricTileType type, Cell const & cell
 	IsometricTiles.Add(this);
 }
 
-// FUNCTION: 0x00543880
+// FUNCTION: GAMEMD 0x00543880
 IsometricTileClass::~IsometricTileClass(void)
 {
 	Detach_This_From_All(this, true);
@@ -39,9 +39,10 @@ IsometricTileClass::~IsometricTileClass(void)
 	AbstractTypePtrTracker.Delete(this);
 }
 
-// FUNCTION: 0x00543B10 IsometricTileClass::~IsometricTileClass
+// SYNTHETIC: GAMEMD 0x00543B10
+// ??_GIsometricTileClass@@UAEPAXI@Z
 
-// FUNCTION: 0x00543990
+// FUNCTION: GAMEMD 0x00543990
 HRESULT STDMETHODCALLTYPE IsometricTileClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -53,7 +54,7 @@ HRESULT STDMETHODCALLTYPE IsometricTileClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x005439F0
+// FUNCTION: GAMEMD 0x005439F0
 HRESULT STDMETHODCALLTYPE IsometricTileClass::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -63,7 +64,7 @@ HRESULT STDMETHODCALLTYPE IsometricTileClass::Save(IStream * stream, BOOL cleard
 	return(result);
 }
 
-// FUNCTION: 0x00543A10
+// FUNCTION: GAMEMD 0x00543A10
 bool IsometricTileClass::Unlimbo(Coord const & coord, Dir256 dir)
 {
 	IsInLimbo = false;
@@ -71,7 +72,7 @@ bool IsometricTileClass::Unlimbo(Coord const & coord, Dir256 dir)
 	return(Mark(MARK_DOWN));
 }
 
-// FUNCTION: 0x00543A40
+// FUNCTION: GAMEMD 0x00543A40
 bool IsometricTileClass::Limbo(void)
 {
 	if (!GameActive || IsInLimbo) {
@@ -85,19 +86,19 @@ bool IsometricTileClass::Limbo(void)
 	return(true);
 }
 
-// FUNCTION: 0x00543A90
+// FUNCTION: GAMEMD 0x00543A90
 int IsometricTileClass::Fetch_Object_Size(void) const
 {
 	return(sizeof(*this));
 }
 
-// FUNCTION: 0x00543AA0
+// FUNCTION: GAMEMD 0x00543AA0
 RTTIType IsometricTileClass::Fetch_RTTI(void) const
 {
 	return(RTTI_ISOTILE);
 }
 
-// FUNCTION: 0x00543AB0
+// FUNCTION: GAMEMD 0x00543AB0
 HRESULT STDMETHODCALLTYPE IsometricTileClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -105,15 +106,16 @@ HRESULT STDMETHODCALLTYPE IsometricTileClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x00543AF0
+// FUNCTION: GAMEMD 0x00543AF0
 ObjectTypeClass const * IsometricTileClass::Class_Of(void) const
 {
 	return(Class);
 }
 
-// FUNCTION: 0x00543B00
+// FUNCTION: GAMEMD 0x00543B00
 void IsometricTileClass::Draw_It(Point2D const & point, Rect const & cliprect) const
 {
 }
 
-// FUNCTION: 0x00543C40 $E2
+// SYNTHETIC: GAMEMD 0x00543C40 SYMBOL
+// _$E2

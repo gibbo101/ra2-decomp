@@ -90,7 +90,7 @@ struct Int4Zero {
 	Int4Zero() { A = 0; B = 0; C = 0; D = 0; }
 };
 
-// FUNCTION: 0x00413CD0
+// FUNCTION: GAMEMD 0x00413CD0
 bool Counts_As_Civ_Evac(ObjectClass const * candidate)
 {
 	if (candidate == NULL) return(false);
@@ -106,7 +106,7 @@ bool Counts_As_Civ_Evac(ObjectClass const * candidate)
 	return(true);
 }
 
-// FUNCTION: 0x00413D20
+// FUNCTION: GAMEMD 0x00413D20
 AircraftClass::AircraftClass(AircraftTypeClass const * type, HouseClass * house) :
 	BASECLASS(house),
 	Class((AircraftTypeClass *)type),
@@ -135,7 +135,7 @@ AircraftClass::AircraftClass(AircraftTypeClass const * type, HouseClass * house)
 	TargetTracker.Add_Index(Fetch_ID(), this);
 }
 
-// FUNCTION: 0x00413F80
+// FUNCTION: GAMEMD 0x00413F80
 void AircraftClass::Init(void)
 {
 	BASECLASS::Init();
@@ -162,7 +162,7 @@ void AircraftClass::Init(void)
 	}
 }
 
-// FUNCTION: 0x00414080
+// FUNCTION: GAMEMD 0x00414080
 AircraftClass::~AircraftClass(void)
 {
 	if (GameActive && Class) {
@@ -189,7 +189,7 @@ AircraftClass::~AircraftClass(void)
 	IsActive = false;
 }
 
-// FUNCTION: 0x00414290
+// FUNCTION: GAMEMD 0x00414290
 HRESULT STDMETHODCALLTYPE AircraftClass::QueryInterface(struct _GUID const &guid, void **ppv)
 {
 	HRESULT res = BASECLASS::QueryInterface(guid, ppv);
@@ -203,19 +203,19 @@ HRESULT STDMETHODCALLTYPE AircraftClass::QueryInterface(struct _GUID const &guid
 	return(res);
 }
 
-// FUNCTION: 0x004142F0
+// FUNCTION: GAMEMD 0x004142F0
 ULONG STDMETHODCALLTYPE AircraftClass::AddRef(void)
 {
 	return(BASECLASS::AddRef());
 }
 
-// FUNCTION: 0x00414300
+// FUNCTION: GAMEMD 0x00414300
 ULONG STDMETHODCALLTYPE AircraftClass::Release(void)
 {
 	return(BASECLASS::Release());
 }
 
-// FUNCTION: 0x00414310
+// FUNCTION: GAMEMD 0x00414310
 bool AircraftClass::Unlimbo(Coord const & coord, Dir256 dir)
 {
 	Coord ucoord = coord;
@@ -253,7 +253,7 @@ bool AircraftClass::Unlimbo(Coord const & coord, Dir256 dir)
 	return(false);
 }
 
-// FUNCTION: 0x004144B0
+// FUNCTION: GAMEMD 0x004144B0
 void AircraftClass::Draw_It(Point2D const & xpoint, Rect const & cliprect) const
 {
 	if (!Debug_Map && MainWindow && Scen->Special.IsFogOfWar) {
@@ -350,12 +350,12 @@ int __fastcall FUN_0050DA80(HouseClass * house);
 int __fastcall FUN_0050DAC0(HouseClass * house);
 extern Coord DAT_00889E88;
 
-// FUNCTION: 0x00414A10
+// FUNCTION: GAMEMD 0x00414A10
 void AircraftClass::Draw_Rotors(Point2D const & xy, Rect const & cliprect) const
 {
 }
 
-// FUNCTION: 0x00414A20
+// FUNCTION: GAMEMD 0x00414A20
 bool AircraftClass::FUN_00414A20(MissionType mission) const
 {
 	switch (mission) {
@@ -371,7 +371,7 @@ bool AircraftClass::FUN_00414A20(MissionType mission) const
 	}
 }
 
-// FUNCTION: 0x00414A80
+// FUNCTION: GAMEMD 0x00414A80
 int AircraftClass::Do_MISSION_HUNT(void)
 {
 	if (!Ammo) {
@@ -396,7 +396,7 @@ int AircraftClass::Do_MISSION_HUNT(void)
 	}
 	return(Current_Mission_Control().Normal_Delay() + Random_Pick(0, 2));
 }
-// FUNCTION: 0x004151E0
+// FUNCTION: GAMEMD 0x004151E0
 int AircraftClass::Do_MISSION_UNLOAD(void)
 {
 	enum {
@@ -500,7 +500,7 @@ int AircraftClass::Do_MISSION_UNLOAD(void)
 	return(Current_Mission_Control().Normal_Delay() + Random_Pick(0, 2));
 }
 
-// FUNCTION: 0x004155F0
+// FUNCTION: GAMEMD 0x004155F0
 int AircraftClass::Do_MISSION_SPYPLANE_APPROACH(void)
 {
 	int dist = Planar_Distance(TarCom);
@@ -528,7 +528,7 @@ int AircraftClass::Do_MISSION_SPYPLANE_APPROACH(void)
 	return(Rule->SpyPlaneCameraFrames);
 }
 
-// FUNCTION: 0x004157C0
+// FUNCTION: GAMEMD 0x004157C0
 int AircraftClass::Do_MISSION_SPYPLANE_OVERFLY(void)
 {
 	int dist = Planar_Distance(TarCom);
@@ -549,7 +549,7 @@ int AircraftClass::Do_MISSION_SPYPLANE_OVERFLY(void)
 	return(3);
 }
 
-// FUNCTION: 0x004158E0
+// FUNCTION: GAMEMD 0x004158E0
 int AircraftClass::Do_MISSION_PARADROP_APPROACH(void)
 {
 	if (TarCom == NULL) {
@@ -570,7 +570,7 @@ int AircraftClass::Do_MISSION_PARADROP_APPROACH(void)
 	return(3);
 }
 
-// FUNCTION: 0x00415A50
+// FUNCTION: GAMEMD 0x00415A50
 int AircraftClass::Do_MISSION_RETREAT(void)
 {
 	if (NavCom == NULL) {
@@ -587,7 +587,7 @@ int AircraftClass::Do_MISSION_RETREAT(void)
 	return(3);
 }
 
-// FUNCTION: 0x00415B10
+// FUNCTION: GAMEMD 0x00415B10
 int AircraftClass::Exit_Object(TechnoClass * unit, Cell)
 {
 	static FacingType _toface[FACING_COUNT] = {FACING_S, FACING_SW, FACING_SE, FACING_NW, FACING_NE, FACING_N, FACING_W, FACING_E};
@@ -611,7 +611,7 @@ int AircraftClass::Exit_Object(TechnoClass * unit, Cell)
 	return(false);
 }
 
-// FUNCTION: 0x00415C60
+// FUNCTION: GAMEMD 0x00415C60
 int AircraftClass::Paradrop_Cargo(void)
 {
 	FootClass * passenger = (FootClass *)Cargo.Detach_Object();
@@ -652,7 +652,7 @@ int AircraftClass::Paradrop_Cargo(void)
 	return(0);
 }
 
-// FUNCTION: 0x004165C0
+// FUNCTION: GAMEMD 0x004165C0
 ResultType AircraftClass::Take_Damage(int & damage, int distance, WarheadTypeClass const * warhead, TechnoClass * source, bool forced, bool no_crew, HouseClass * source_house)
 {
 	ResultType res = BASECLASS::Take_Damage(damage, distance, warhead, source, forced, no_crew, source_house);
@@ -679,7 +679,7 @@ ResultType AircraftClass::Take_Damage(int & damage, int distance, WarheadTypeCla
 	return(res);
 }
 
-// FUNCTION: 0x004166C0
+// FUNCTION: GAMEMD 0x004166C0
 int AircraftClass::Do_MISSION_MOVE(void)
 {
 	if (Class->IsCarryall) {
@@ -688,7 +688,7 @@ int AircraftClass::Do_MISSION_MOVE(void)
 	return(Do_MISSION_MOVE_Normal());
 }
 
-// FUNCTION: 0x00416AF0
+// FUNCTION: GAMEMD 0x00416AF0
 void AircraftClass::Drop_Off_Cargo(void)
 {
 	DebugString("Do_MISSION_MOVE_Carryall - LAND - Dropping off cargo\n");
@@ -728,7 +728,7 @@ void AircraftClass::Drop_Off_Cargo(void)
 	}
 }
 
-// FUNCTION: 0x00416D50
+// FUNCTION: GAMEMD 0x00416D50
 int AircraftClass::Do_MISSION_MOVE_Carryall(void)
 {
 	enum {
@@ -869,7 +869,7 @@ static inline Cell LZ_Cell(AbstractClass * navcom, AircraftClass * aircraft)
 	return Cell(navcom->Destination_Coord(aircraft));
 }
 
-// FUNCTION: 0x00417300
+// FUNCTION: GAMEMD 0x00417300
 int AircraftClass::Do_MISSION_PATROL(void)
 {
 	enum {
@@ -979,7 +979,7 @@ int AircraftClass::Do_MISSION_PATROL(void)
 	return(Current_Mission_Control().Normal_Delay() + Random_Pick(0, 2));
 }
 
-// FUNCTION: 0x004176F0
+// FUNCTION: GAMEMD 0x004176F0
 bool AircraftClass::Enter_Idle_Mode(bool initial, bool resume_waypoint)
 {
 	if (Has_Suspended_Mission()) {
@@ -1147,7 +1147,7 @@ proceed:
 	return(result);
 }
 
-// FUNCTION: 0x00417BD0
+// FUNCTION: GAMEMD 0x00417BD0
 bool AircraftClass::Active_Click_With(ActionType action, ObjectClass * object, bool is_waypoint)
 {
 	action = What_Action(object, is_waypoint);
@@ -1172,19 +1172,19 @@ bool AircraftClass::Active_Click_With(ActionType action, ObjectClass * object, b
 	return(BASECLASS::Active_Click_With(action, object, is_waypoint));
 }
 
-// FUNCTION: 0x00417C80
+// FUNCTION: GAMEMD 0x00417C80
 bool AircraftClass::Active_Click_With(ActionType action, Cell const & cell, Cell const & cell2, bool is_waypoint)
 {
 	return(BASECLASS::Active_Click_With(action, cell, cell2, is_waypoint));
 }
 
-// FUNCTION: 0x00417CA0
+// FUNCTION: GAMEMD 0x00417CA0
 bool AircraftClass::Player_Assign_Mission(MissionType mission, AbstractClass * target, AbstractClass * destination, AbstractClass * nearby)
 {
 	return(BASECLASS::Player_Assign_Mission(mission, target, destination, nearby));
 }
 
-// FUNCTION: 0x00417CC0
+// FUNCTION: GAMEMD 0x00417CC0
 ActionType AircraftClass::What_Action(ObjectClass const * target, bool disallow_force) const
 {
 	ActionType action = BASECLASS::What_Action(target, disallow_force);
@@ -1253,7 +1253,7 @@ ActionType AircraftClass::What_Action(ObjectClass const * target, bool disallow_
 	return(action);
 }
 
-// FUNCTION: 0x00417F80
+// FUNCTION: GAMEMD 0x00417F80
 ActionType AircraftClass::What_Action(Cell const & cell, bool check_fog, bool disallow_force) const
 {
 	if (!House->Is_Player_Control()) {
@@ -1269,13 +1269,13 @@ ActionType AircraftClass::What_Action(Cell const & cell, bool check_fog, bool di
 	return(action);
 }
 
-// FUNCTION: 0x00417FD0
+// FUNCTION: GAMEMD 0x00417FD0
 Dir256 AircraftClass::Pose_Dir(void) const
 {
 	return(Rule->PoseDir);
 }
 
-// FUNCTION: 0x00418E20
+// FUNCTION: GAMEMD 0x00418E20
 AbstractClass * AircraftClass::New_LZ(AbstractClass * oldlz) const
 {
 	if (oldlz != NULL && (Team == NULL || !Team->Is_Leaving_Map()) && (!Is_LZ_Clear(oldlz) || !Cell_Seems_Ok(oldlz->Destination_Coord(NULL).As_Cell(), false))) {
@@ -1305,7 +1305,7 @@ AbstractClass * AircraftClass::New_LZ(AbstractClass * oldlz) const
 	return(oldlz);
 }
 
-// FUNCTION: 0x004190B0
+// FUNCTION: GAMEMD 0x004190B0
 RadioMessageType AircraftClass::Receive_Message(RadioClass * from, RadioMessageType message, int & param)
 {
 	AbstractClass * target;
@@ -1447,7 +1447,7 @@ proceed:
 	return(BASECLASS::Receive_Message(from, message, param));
 }
 
-// FUNCTION: 0x004195A0
+// FUNCTION: GAMEMD 0x004195A0
 FacingType AircraftClass::Desired_Load_Dir(ObjectClass * object, Cell & moveto) const
 {
 	static FacingType _toface[FACING_COUNT] = {FACING_S, FACING_SW, FACING_SE, FACING_W, FACING_E, FACING_NW, FACING_NE, FACING_N};
@@ -1464,7 +1464,7 @@ FacingType AircraftClass::Desired_Load_Dir(ObjectClass * object, Cell & moveto) 
 	return(FACING_N);
 }
 
-// FUNCTION: 0x0041B110
+// FUNCTION: GAMEMD 0x0041B110
 void AircraftClass::Read_INI(CCINIClass & ini)
 {
 	AircraftClass * air;
@@ -1553,7 +1553,7 @@ void AircraftClass::Read_INI(CCINIClass & ini)
 	}
 }
 
-// FUNCTION: 0x0041B430
+// FUNCTION: GAMEMD 0x0041B430
 HRESULT STDMETHODCALLTYPE AircraftClass::Load(IStream * stream)
 {
 	TargetTracker.Remove_Index(Fetch_ID());
@@ -1576,13 +1576,13 @@ HRESULT STDMETHODCALLTYPE AircraftClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x0041B5C0
+// FUNCTION: GAMEMD 0x0041B5C0
 HRESULT STDMETHODCALLTYPE AircraftClass::Save(IStream * stream, int cleardirty)
 {
 	return(BASECLASS::Save(stream, cleardirty));
 }
 
-// FUNCTION: 0x0041B5E0
+// FUNCTION: GAMEMD 0x0041B5E0
 bool AircraftClass::Ready_To_Next_Mission(void) const
 {
 	if (CurrentMission != MISSION_STICKY && CurrentMission != MISSION_RESCUE && (!IsLockedStraight || CurrentMission == MISSION_SPYPLANE_APPROACH)) {
@@ -1594,7 +1594,7 @@ bool AircraftClass::Ready_To_Next_Mission(void) const
 	return(false);
 }
 
-// FUNCTION: 0x0041B610
+// FUNCTION: GAMEMD 0x0041B610
 void AircraftClass::Compute_CRC(CRCEngine & crc) const
 {
 	BASECLASS::Compute_CRC(crc);
@@ -1604,7 +1604,7 @@ void AircraftClass::Compute_CRC(CRCEngine & crc) const
 	crc((int)NumParadropsLeft);
 }
 
-// FUNCTION: 0x0041B660
+// FUNCTION: GAMEMD 0x0041B660
 void AircraftClass::Detach(AbstractClass const * target, bool all)
 {
 	BASECLASS::Detach(target, all);
@@ -1616,7 +1616,7 @@ void AircraftClass::Detach(AbstractClass const * target, bool all)
 	}
 }
 
-// FUNCTION: 0x0041B6A0
+// FUNCTION: GAMEMD 0x0041B6A0
 LONG STDMETHODCALLTYPE AircraftClass::Landing_Altitude(void)
 {
 	if (Class->IsCarryall && !Cargo.Is_Something_Attached() && HasAnyLink()) {
@@ -1638,7 +1638,7 @@ LONG STDMETHODCALLTYPE AircraftClass::Landing_Altitude(void)
 	return(0);
 }
 
-// FUNCTION: 0x0041B760
+// FUNCTION: GAMEMD 0x0041B760
 LONG STDMETHODCALLTYPE AircraftClass::Landing_Direction(void)
 {
 	if (HasAnyLink()) {
@@ -1651,13 +1651,13 @@ LONG STDMETHODCALLTYPE AircraftClass::Landing_Direction(void)
 	return(Rule->PoseDir);
 }
 
-// FUNCTION: 0x0041B7D0
+// FUNCTION: GAMEMD 0x0041B7D0
 BOOL STDMETHODCALLTYPE AircraftClass::Is_Loaded(void)
 {
 	return(Cargo.Is_Something_Attached());
 }
 
-// FUNCTION: 0x0041B7F0
+// FUNCTION: GAMEMD 0x0041B7F0
 LONG STDMETHODCALLTYPE AircraftClass::Is_Strafe(void)
 {
 	const WeaponDataStruct * data = Get_Class_Weapon_Data(0);
@@ -1677,19 +1677,19 @@ LONG STDMETHODCALLTYPE AircraftClass::Is_Strafe(void)
 	return(true);
 }
 
-// FUNCTION: 0x0041B840
+// FUNCTION: GAMEMD 0x0041B840
 LONG STDMETHODCALLTYPE AircraftClass::Is_Fighter(void)
 {
 	return(Class->IsFighter != 0);
 }
 
-// FUNCTION: 0x0041B860
+// FUNCTION: GAMEMD 0x0041B860
 LONG STDMETHODCALLTYPE AircraftClass::Is_Locked(void)
 {
 	return(IsLockedStraight);
 }
 
-// FUNCTION: 0x0041B870
+// FUNCTION: GAMEMD 0x0041B870
 bool AircraftClass::Commence(void)
 {
 	if (CurrentMission != MISSION_SPYPLANE_APPROACH) {
@@ -1698,7 +1698,7 @@ bool AircraftClass::Commence(void)
 	return(BASECLASS::Commence());
 }
 
-// FUNCTION: 0x0041B890
+// FUNCTION: GAMEMD 0x0041B890
 bool AircraftClass::Should_Delete_Off_Map(void)
 {
 	if ((TarCom == NULL || CurrentMission == MISSION_SPYPLANE_OVERFLY) && IsInPlayfield &&
@@ -1710,18 +1710,18 @@ bool AircraftClass::Should_Delete_Off_Map(void)
 	return(false);
 }
 
-// FUNCTION: 0x0041B900
+// FUNCTION: GAMEMD 0x0041B900
 void AircraftClass::Reduce_Ammunition(void)
 {
 }
 
-// FUNCTION: 0x0041B910
+// FUNCTION: GAMEMD 0x0041B910
 bool AircraftClass::IsStrange(void) const
 {
 	return(On_Ground());
 }
 
-// FUNCTION: 0x0041B920
+// FUNCTION: GAMEMD 0x0041B920
 bool AircraftClass::In_Air(void) const
 {
 	if (Class == Rule->V3Rocket.Type || Class == Rule->DMisl.Type) {
@@ -1730,7 +1730,7 @@ bool AircraftClass::In_Air(void) const
 	return(BASECLASS::In_Air());
 }
 
-// FUNCTION: 0x0041B980
+// FUNCTION: GAMEMD 0x0041B980
 bool AircraftClass::On_Ground(void) const
 {
 	if (Class == Rule->V3Rocket.Type || Class == Rule->DMisl.Type) {
@@ -1739,13 +1739,13 @@ bool AircraftClass::On_Ground(void) const
 	return(BASECLASS::On_Ground());
 }
 
-// FUNCTION: 0x0041B9E0
+// FUNCTION: GAMEMD 0x0041B9E0
 bool AircraftClass::IsNotWarpingIn(void) const
 {
 	return(IsReturningFromAttackRun);
 }
 
-// FUNCTION: 0x0041B9F0
+// FUNCTION: GAMEMD 0x0041B9F0
 void AircraftClass::Set_Mission(MissionType mission)
 {
 	switch (CurrentMission) {
@@ -1772,7 +1772,7 @@ void AircraftClass::Set_Mission(MissionType mission)
 	BASECLASS::Set_Mission(mission);
 }
 
-// FUNCTION: 0x0041BA90
+// FUNCTION: GAMEMD 0x0041BA90
 void AircraftClass::QueueMission(MissionType mission, bool start)
 {
 	switch (CurrentMission) {
@@ -1799,7 +1799,7 @@ void AircraftClass::QueueMission(MissionType mission, bool start)
 	BASECLASS::QueueMission(mission, start);
 }
 
-// FUNCTION: 0x0041BB30
+// FUNCTION: GAMEMD 0x0041BB30
 void AircraftClass::Override_Mission(MissionType mission, AbstractClass * tarcom, AbstractClass * navcom)
 {
 	switch (CurrentMission) {
@@ -1826,7 +1826,7 @@ void AircraftClass::Override_Mission(MissionType mission, AbstractClass * tarcom
 	BASECLASS::Override_Mission(mission, tarcom, navcom);
 }
 
-// FUNCTION: 0x0041BBD0
+// FUNCTION: GAMEMD 0x0041BBD0
 BuildingClass * AircraftClass::TryNearestDockBuilding(TypeList<BuildingTypeClass *> * list, unsigned unk2, unsigned unk3) const
 {
 	if (Class->IsAirportBound && DockNowHeadingTo != NULL) {
@@ -1841,7 +1841,7 @@ BuildingClass * AircraftClass::TryNearestDockBuilding(TypeList<BuildingTypeClass
 
 extern BulletClass * __fastcall FUN_0046B050(BulletTypeClass const * type, AbstractClass * target, TechnoClass * payback, int strength, WarheadTypeClass const * warhead, int max_speed, bool bright);
 
-// FUNCTION: 0x0041BC30
+// FUNCTION: GAMEMD 0x0041BC30
 bool AircraftClass::INoticeSink_Unknown(DWORD unknown, DWORD unknown2)
 {
 	if (IsAttackedByLocomotor) {
@@ -1883,117 +1883,154 @@ bool AircraftClass::INoticeSink_Unknown(DWORD unknown, DWORD unknown2)
 	return(false);
 }
 
-// FUNCTION: 0x0041BDD0 ObjectClass::Target_Coord
+// FUNCTION: GAMEMD 0x0041BDD0
+// ObjectClass::Target_Coord
 
-// FUNCTION: 0x0041BE00 ObjectClass::Render_Coord
+// FUNCTION: GAMEMD 0x0041BE00
+// ObjectClass::Render_Coord
 
-// FUNCTION: 0x0041BE30 ObjectClass::Exit_Coord
+// FUNCTION: GAMEMD 0x0041BE30
+// ObjectClass::Exit_Coord
 
-// FUNCTION: 0x0041BE60 ObjectClass::GetDisguise
+// FUNCTION: GAMEMD 0x0041BE60
+// ObjectClass::GetDisguise
 
-// FUNCTION: 0x0041BE70 ObjectClass::GetDisguiseHouse
+// FUNCTION: GAMEMD 0x0041BE70
+// ObjectClass::GetDisguiseHouse
 
-// FUNCTION: 0x0041BE80 ObjectClass::Draw_Radial_Indicator
+// FUNCTION: GAMEMD 0x0041BE80
+// ObjectClass::Draw_Radial_Indicator
 
-// FUNCTION: 0x0041BE90 ObjectClass::Assign_Mission
+// FUNCTION: GAMEMD 0x0041BE90
+// ObjectClass::Assign_Mission
 
-// FUNCTION: 0x0041BEA0 ObjectClass::Get_Cell
+// FUNCTION: GAMEMD 0x0041BEA0
+// ObjectClass::Get_Cell
 
-// FUNCTION: 0x0041BEE0 TechnoClass::Is_Move_Override
+// FUNCTION: GAMEMD 0x0041BEE0
+// TechnoClass::Is_Move_Override
 
-// FUNCTION: 0x0041BEF0 TechnoClass::Is_Ready_To_Move
+// FUNCTION: GAMEMD 0x0041BEF0
+// TechnoClass::Is_Ready_To_Move
 
-// FUNCTION: 0x0041BF00 TechnoClass::Anti_Air
+// FUNCTION: GAMEMD 0x0041BF00
+// TechnoClass::Anti_Air
 
-// FUNCTION: 0x0041BF10 TechnoClass::Anti_Armor
+// FUNCTION: GAMEMD 0x0041BF10
+// TechnoClass::Anti_Armor
 
-// FUNCTION: 0x0041BF20 TechnoClass::Anti_Infantry
+// FUNCTION: GAMEMD 0x0041BF20
+// TechnoClass::Anti_Infantry
 
-// FUNCTION: 0x0041BF30 TechnoClass::Is_Renovator
+// FUNCTION: GAMEMD 0x0041BF30
+// TechnoClass::Is_Renovator
 
-// FUNCTION: 0x0041BF40 TechnoClass::IsIronCurtained
+// FUNCTION: GAMEMD 0x0041BF40
+// TechnoClass::IsIronCurtained
 
-// FUNCTION: 0x0041BF80 TechnoClass::CanCheer
+// FUNCTION: GAMEMD 0x0041BF80
+// TechnoClass::CanCheer
 
-// FUNCTION: 0x0041BF90 TechnoClass::Cheer
+// FUNCTION: GAMEMD 0x0041BF90
+// TechnoClass::Cheer
 
-// FUNCTION: 0x0041BFA0 TechnoClass::Is_Turret_Equipped
+// FUNCTION: GAMEMD 0x0041BFA0
+// TechnoClass::Is_Turret_Equipped
 
-// FUNCTION: 0x0041BFB0 TechnoClass::CanOccupyFire
+// FUNCTION: GAMEMD 0x0041BFB0
+// TechnoClass::CanOccupyFire
 
-// FUNCTION: 0x0041BFC0 TechnoClass::GetOccupyRangeBonus
+// FUNCTION: GAMEMD 0x0041BFC0
+// TechnoClass::GetOccupyRangeBonus
 
-// FUNCTION: 0x0041BFD0 TechnoClass::GetOccupantCount
+// FUNCTION: GAMEMD 0x0041BFD0
+// TechnoClass::GetOccupantCount
 
-// FUNCTION: 0x0041BFE0 TechnoClass::Rocking_AI
+// FUNCTION: GAMEMD 0x0041BFE0
+// TechnoClass::Rocking_AI
 
-// FUNCTION: 0x0041BFF0 TechnoClass::vt_entry_434
+// FUNCTION: GAMEMD 0x0041BFF0
+// TechnoClass::vt_entry_434
 
-// FUNCTION: 0x0041C000 TechnoClass::UpdateRefinerySmokeSystems
+// FUNCTION: GAMEMD 0x0041C000
+// TechnoClass::UpdateRefinerySmokeSystems
 
-// FUNCTION: 0x0041C010 TechnoClass::IsDisguised
+// FUNCTION: GAMEMD 0x0041C010
+// TechnoClass::IsDisguised
 
-// FUNCTION: 0x0041C020
+// FUNCTION: GAMEMD 0x0041C020
 bool TechnoClass::IsDisguisedAs(HouseClass *) const
 {
 	return(Disguised);
 }
 
-// FUNCTION: 0x0041C030
+// FUNCTION: GAMEMD 0x0041C030
 void TechnoClass::ClearDisguise(void)
 {
 	Disguised = false;
 }
 
-// FUNCTION: 0x0041C040 TechnoClass::Random_Animate
+// FUNCTION: GAMEMD 0x0041C040
+// TechnoClass::Random_Animate
 
-// FUNCTION: 0x0041C050 FootClass::Is_In_Team
+// FUNCTION: GAMEMD 0x0041C050
+// FootClass::Is_In_Team
 
-// FUNCTION: 0x0041C060 FootClass::Deploy_To_Fire
+// FUNCTION: GAMEMD 0x0041C060
+// FootClass::Deploy_To_Fire
 
-// FUNCTION: 0x0041C070 FootClass::Occupies_Cells
+// FUNCTION: GAMEMD 0x0041C070
+// FootClass::Occupies_Cells
 
-// FUNCTION: 0x0041C080 FootClass::JumpJet_To_Walk
+// FUNCTION: GAMEMD 0x0041C080
+// FootClass::JumpJet_To_Walk
 
-// FUNCTION: 0x0041C090 FootClass::Draw_Object
+// TEMPLATE: GAMEMD 0x0041C090
+// ?Draw_Object@FootClass@@UBEXPBVShapeSet@@HABVPoint2D@@ABV?$TRect@H@@W4Dir256@@HHW4ZGradientType@@_NHH0HV3@W4ShapeFlags_Type@@@Z
 
-// FUNCTION: 0x0041C0F0 FootClass::Berzerk
+// FUNCTION: GAMEMD 0x0041C0F0
+// FootClass::Berzerk
 
-// FUNCTION: 0x0041C100 FootClass::Start_Fear
+// FUNCTION: GAMEMD 0x0041C100
+// FootClass::Start_Fear
 
-// FUNCTION: 0x0041C110 FootClass::Stop_Fear
+// FUNCTION: GAMEMD 0x0041C110
+// FootClass::Stop_Fear
 
-// FUNCTION: 0x0041C120 FootClass::Do_Idle
+// FUNCTION: GAMEMD 0x0041C120
+// FootClass::Do_Idle
 
-// FUNCTION: 0x0041C130 FootClass::Overrun_Square
+// FUNCTION: GAMEMD 0x0041C130
+// FootClass::Overrun_Square
 
-// FUNCTION: 0x0041C140 FootClass::Fixup_Path
+// FUNCTION: GAMEMD 0x0041C140
+// FootClass::Fixup_Path
 
-// FUNCTION: 0x0041C150
+// FUNCTION: GAMEMD 0x0041C150
 Cell FootClass::GetLastFlightMapCoords(void) const
 {
 	return(LastFlightMapCoords);
 }
 
-// FUNCTION: 0x0041C160
+// FUNCTION: GAMEMD 0x0041C160
 void FootClass::SetLastFlightMapCoords(Cell coord)
 {
 	LastFlightMapCoords = coord;
 }
 
-// FUNCTION: 0x0041C170
+// FUNCTION: GAMEMD 0x0041C170
 int AircraftClass::Fetch_Object_Size(void) const
 {
 	return(sizeof(*this));
 }
 
-// FUNCTION: 0x0041C180
+// FUNCTION: GAMEMD 0x0041C180
 RTTIType AircraftClass::Fetch_RTTI(void) const
 {
 	return(RTTI_AIRCRAFT);
 }
 
-// FUNCTION: 0x0041C190
+// FUNCTION: GAMEMD 0x0041C190
 HRESULT STDMETHODCALLTYPE AircraftClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -2001,107 +2038,141 @@ HRESULT STDMETHODCALLTYPE AircraftClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x0041C1D0
+// FUNCTION: GAMEMD 0x0041C1D0
 wchar_t const * AircraftClass::Full_Name(void) const
 {
 	return(Class->UIName);
 }
 
-// FUNCTION: 0x0041C1E0
+// FUNCTION: GAMEMD 0x0041C1E0
 DirType AircraftClass::Turret_Facing(void) const
 {
 	return(SecondaryFacing.Current());
 }
 
-// FUNCTION: 0x0041C200
+// FUNCTION: GAMEMD 0x0041C200
 ObjectTypeClass const * AircraftClass::Class_Of(void) const
 {
 	return(Class);
 }
 
-// FUNCTION: 0x0041C210 AircraftClass::~AircraftClass
+// SYNTHETIC: GAMEMD 0x0041C210
+// ??_GAircraftClass@@UAEPAXI@Z
 
-// FUNCTION: 0x0041C230 ?$TPoint3D@H::?$TPoint3D@H
+// TEMPLATE: GAMEMD 0x0041C230
+// ??0?$TPoint3D@H@@QAE@HHH@Z
 
-// FUNCTION: 0x0041C250 ?$_com_ptr_t@V?$_com_IIID@UILocomotion@@$1?_GUID_070f3290_9841_11d1_b709_00a024ddafd1@@3U__s_GUID@@A@@::CreateInstance
+// TEMPLATE: GAMEMD 0x0041C250
+// ?CreateInstance@?$_com_ptr_t@V?$_com_IIID@UILocomotion@@$1?_GUID_070f3290_9841_11d1_b709_00a024ddafd1@@3U__s_GUID@@A@@@@QAEJABU_GUID@@PAUIUnknown@@K@Z
 
-// FUNCTION: 0x0041C2E0 ?$TVelocity3D@N::Get_Pitch
+// TEMPLATE: GAMEMD 0x0041C2E0
+// ?Get_Pitch@?$TVelocity3D@N@@QBE?AVDirType@@XZ
 
-// FUNCTION: 0x0041C350 ?$TVelocity2D@N::Speed
+// TEMPLATE: GAMEMD 0x0041C350
+// ?Speed@?$TVelocity2D@N@@QBENXZ
 
-// FUNCTION: 0x0041C380 ?$TPoint3D@H::Length
+// TEMPLATE: GAMEMD 0x0041C380
+// ?Length@?$TPoint3D@H@@QBEHXZ
 
-// FUNCTION: 0x0041C3C0 ?$TVelocity3D@N::Speed
+// TEMPLATE: GAMEMD 0x0041C3C0
+// ?Speed@?$TVelocity3D@N@@QBENXZ
 
-// FUNCTION: 0x0041C3F0 ?$TVelocity3D@N::Nonzero_Check
+// TEMPLATE: GAMEMD 0x0041C3F0
+// ?Nonzero_Check@?$TVelocity3D@N@@QAEXXZ
 
-// FUNCTION: 0x0041C430 ?$TVelocity3D@N::Horizontal_Speed
+// TEMPLATE: GAMEMD 0x0041C430
+// ?Horizontal_Speed@?$TVelocity3D@N@@QBENXZ
 
-// FUNCTION: 0x0041C460 ?$TVelocity2D@N::Nonzero_Check
+// TEMPLATE: GAMEMD 0x0041C460
+// ?Nonzero_Check@?$TVelocity2D@N@@QAEXXZ
 
-// FUNCTION: 0x0041C490 WaypointClass::~WaypointClass
+// SYNTHETIC: GAMEMD 0x0041C490
+// ??_EWaypointClass@@QAEPAXI@Z
 
-// FUNCTION: 0x0041C500 ?$IndexClass@HPAVAbstractClass@@::Increase_Table_Size
+// TEMPLATE: GAMEMD 0x0041C500
+// ?Increase_Table_Size@?$IndexClass@HPAVAbstractClass@@@@AAE_NH@Z
 
-// FUNCTION: 0x0041C590 ?$IndexClass@HPAVAbstractClass@@::Search_For_Node
+// TEMPLATE: GAMEMD 0x0041C590
+// ?Search_For_Node@?$IndexClass@HPAVAbstractClass@@@@ABEPBUNodeElement@1@ABH@Z
 
-// FUNCTION: 0x0041C610 ?$IndexClass@HPAVAbstractClass@@::search_compfunc
+// TEMPLATE: GAMEMD 0x0041C610
+// ?search_compfunc@?$IndexClass@HPAVAbstractClass@@@@CAHPBX0@Z
 
-// FUNCTION: 0x0041C640 AircraftClass::QueryInterface
+// FUNCTION: GAMEMD 0x0041C640
+// AircraftClass::QueryInterface
 
-// FUNCTION: 0x0041C650 AircraftClass::AddRef
+// FUNCTION: GAMEMD 0x0041C650
+// AircraftClass::AddRef
 
-// FUNCTION: 0x0041C660 AircraftClass::Release
+// FUNCTION: GAMEMD 0x0041C660
+// AircraftClass::Release
 
-// FUNCTION: 0x0041C670 AircraftClass::QueryInterface
+// FUNCTION: GAMEMD 0x0041C670
+// AircraftClass::QueryInterface
 
-// FUNCTION: 0x0041C680 AircraftClass::AddRef
+// FUNCTION: GAMEMD 0x0041C680
+// AircraftClass::AddRef
 
-// FUNCTION: 0x0041C690 AircraftClass::Release
+// FUNCTION: GAMEMD 0x0041C690
+// AircraftClass::Release
 
-// FUNCTION: 0x0041C6A0 $E116
+// SYNTHETIC: GAMEMD 0x0041C6A0 SYMBOL
+// _$E116
 double DAT_00889EF0 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x0041C6D0 $E119
+// SYNTHETIC: GAMEMD 0x0041C6D0 SYMBOL
+// _$E119
 double DAT_00889F50 = DAT_00889EF0 / DAT_007E2828;
 
-// FUNCTION: 0x0041C6F0 $E122
+// SYNTHETIC: GAMEMD 0x0041C6F0 SYMBOL
+// _$E122
 double DAT_00889F30 = DAT_007E1718 / DAT_00889F50;
 
-// FUNCTION: 0x0041C710 $E125
+// SYNTHETIC: GAMEMD 0x0041C710 SYMBOL
+// _$E125
 double DAT_00889F28 = DAT_007E1720 * DAT_007E2830;
 
-// FUNCTION: 0x0041C730 $E128
+// SYNTHETIC: GAMEMD 0x0041C730 SYMBOL
+// _$E128
 double DAT_00889EF8 = DAT_007E1728 * DAT_007E2830;
 
-// FUNCTION: 0x0041C750 $E131
+// SYNTHETIC: GAMEMD 0x0041C750 SYMBOL
+// _$E131
 double DAT_00889ED0 = DAT_007E1730 * DAT_007E2830;
 
-// FUNCTION: 0x0041C770 $E134
+// SYNTHETIC: GAMEMD 0x0041C770 SYMBOL
+// _$E134
 int DAT_00889F58 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00889ED0 - DAT_00889EF8) * DAT_00889EF0));
 
-// FUNCTION: 0x0041C7B0 $E137
+// SYNTHETIC: GAMEMD 0x0041C7B0 SYMBOL
+// _$E137
 double DAT_00889F00 = FUN_004CADE0(DAT_00889F58 * DAT_007E1740);
 
-// FUNCTION: 0x0041C7E0 $E140
+// SYNTHETIC: GAMEMD 0x0041C7E0 SYMBOL
+// _$E140
 double DAT_00889F18 = FUN_004CADE0((DAT_00889F58 * 2) / DAT_00889EF0);
 
-// FUNCTION: 0x0041C810 $E143
+// SYNTHETIC: GAMEMD 0x0041C810 SYMBOL
+// _$E143
 int DAT_00889F4C = (int)(DAT_00889F58 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x0041C840 $E146
+// SYNTHETIC: GAMEMD 0x0041C840 SYMBOL
+// _$E146
 ShortPair DAT_00889EE8;
 
-// FUNCTION: 0x0041C850 $E149
+// SYNTHETIC: GAMEMD 0x0041C850 SYMBOL
+// _$E149
 IntTriple DAT_00889F08;
 
-// FUNCTION: 0x0041C870 $E152
+// SYNTHETIC: GAMEMD 0x0041C870 SYMBOL
+// _$E152
 Int3Pad DAT_00889F40;
 
-// FUNCTION: 0x0041C890 $E155
+// SYNTHETIC: GAMEMD 0x0041C890 SYMBOL
+// _$E155
 Int4Zero DAT_00889ED8;
 
-// FUNCTION: 0x004196B0
+// FUNCTION: GAMEMD 0x004196B0
 MoveType AircraftClass::Can_Enter_Cell(CellClass const * cell, FacingType, int cell_height, CellClass const *, bool) const
 {
 	if (Team && Team->Is_Leaving_Map() && !Map.In_Local_Radar(cell)) return(MOVE_OK);
@@ -2125,7 +2196,7 @@ MoveType AircraftClass::Can_Enter_Cell(CellClass const * cell, FacingType, int c
 	return(MOVE_OK);
 }
 
-// FUNCTION: 0x004197C0
+// FUNCTION: GAMEMD 0x004197C0
 AbstractClass * AircraftClass::Good_Fire_Location(AbstractClass * target) const
 {
 	if (target != NULL) {
@@ -2186,7 +2257,7 @@ AbstractClass * AircraftClass::Good_Fire_Location(AbstractClass * target) const
 	return(NULL);
 }
 
-// FUNCTION: 0x00419B00
+// FUNCTION: GAMEMD 0x00419B00
 bool AircraftClass::Cell_Seems_Ok(Cell const & cell, bool strict) const
 {
 	if (!Map.In_Local_Radar(cell)) {
@@ -2220,7 +2291,7 @@ bool AircraftClass::Cell_Seems_Ok(Cell const & cell, bool strict) const
 	return(true);
 }
 
-// FUNCTION: 0x0041A160
+// FUNCTION: GAMEMD 0x0041A160
 AbstractClass * AircraftClass::Good_LZ(void) const
 {
 	Cell bestcell = Cell(0, 0);
@@ -2281,13 +2352,13 @@ AbstractClass * AircraftClass::Good_LZ(void) const
 	return(&Map[(Coord const &)PositionCoord]);
 }
 
-// FUNCTION: 0x0041A570
+// FUNCTION: GAMEMD 0x0041A570
 DirType AircraftClass::Fire_Direction(void) const
 {
 	return(SecondaryFacing.Current());
 }
 
-// FUNCTION: 0x0041A590
+// FUNCTION: GAMEMD 0x0041A590
 void AircraftClass::Scatter(Coord const & , bool, bool )
 {
 	if (!Current_Mission_Control().IsScatter) return;
@@ -2298,7 +2369,7 @@ void AircraftClass::Scatter(Coord const & , bool, bool )
 extern bool DAT_00889ECC;
 extern bool DAT_00889ECD;
 
-// FUNCTION: 0x0041A5C0
+// FUNCTION: GAMEMD 0x0041A5C0
 int AircraftClass::Do_MISSION_GUARD(void)
 {
 	if (Get_Height_AGL() == Class->GetFlightLevel()) {
@@ -2376,7 +2447,7 @@ int AircraftClass::Do_MISSION_GUARD(void)
 	return(BASECLASS::Do_MISSION_GUARD());
 }
 
-// FUNCTION: 0x0041A940
+// FUNCTION: GAMEMD 0x0041A940
 int AircraftClass::Do_MISSION_GUARD_AREA(void)
 {
 	if (Get_Height_AGL() == Class->GetFlightLevel()) {
@@ -2393,7 +2464,7 @@ int AircraftClass::Do_MISSION_GUARD_AREA(void)
 	return(BASECLASS::Do_MISSION_GUARD_AREA());
 }
 
-// FUNCTION: 0x0041A9E0
+// FUNCTION: GAMEMD 0x0041A9E0
 FireErrorType AircraftClass::Can_Fire(AbstractClass * target, int which, bool ignoreRange) const
 {
 	FireErrorType fire = BASECLASS::Can_Fire(target, which, ignoreRange);
@@ -2416,7 +2487,7 @@ FireErrorType AircraftClass::Can_Fire(AbstractClass * target, int which, bool ig
 	return(FIRE_OK);
 }
 
-// FUNCTION: 0x0041AA80
+// FUNCTION: GAMEMD 0x0041AA80
 void AircraftClass::Assign_Destination(AbstractClass * dest, bool immediate)
 {
 	if (dest != NULL) {
@@ -2515,13 +2586,13 @@ void AircraftClass::Assign_Destination(AbstractClass * dest, bool immediate)
 	BASECLASS::Assign_Destination(dest, immediate);
 }
 
-// FUNCTION: 0x0041ADC0
+// FUNCTION: GAMEMD 0x0041ADC0
 LayerType AircraftClass::In_Which_Layer(void) const
 {
 	return(Locomotion->In_Which_Layer());
 }
 
-// FUNCTION: 0x0041ADF0
+// FUNCTION: GAMEMD 0x0041ADF0
 void AircraftClass::Look(bool incremental, bool dont_map)
 {
 	Coord coord;
@@ -2546,7 +2617,7 @@ void AircraftClass::Look(bool incremental, bool dont_map)
 	}
 }
 
-// FUNCTION: 0x0041AF80
+// FUNCTION: GAMEMD 0x0041AF80
 void AircraftClass::Write_INI(CCINIClass & ini)
 {
 	ini.Clear(INI_NAME);

@@ -8,7 +8,7 @@
 #include "dbgprint.h"
 #include "globals.h"
 
-// FUNCTION: 0x004C65A0
+// FUNCTION: GAMEMD 0x004C65A0
 EventClass::EventClass(int index, SpecialClass data)
 {
 	if (index >= 0) {
@@ -23,7 +23,7 @@ EventClass::EventClass(int index, SpecialClass data)
 	}
 }
 
-// FUNCTION: 0x004C65E0
+// FUNCTION: GAMEMD 0x004C65E0
 EventClass::EventClass(int index, unsigned char type, TargetClass target)
 {
 	DebugString("Adding event %s\n", EventNames[type]);
@@ -39,7 +39,7 @@ EventClass::EventClass(int index, unsigned char type, TargetClass target)
 	}
 }
 
-// FUNCTION: 0x004C6650
+// FUNCTION: GAMEMD 0x004C6650
 EventClass::EventClass(int index, unsigned char type, Cell const & cell)
 {
 	DebugString("Adding event %s\n", EventNames[type]);
@@ -55,7 +55,7 @@ EventClass::EventClass(int index, unsigned char type, Cell const & cell)
 	}
 }
 
-// FUNCTION: 0x004C66C0
+// FUNCTION: GAMEMD 0x004C66C0
 EventClass::EventClass(int index, unsigned char type)
 {
 	DebugString("Adding event %s\n", EventNames[type]);
@@ -70,7 +70,7 @@ EventClass::EventClass(int index, unsigned char type)
 	}
 }
 
-// FUNCTION: 0x004C6720
+// FUNCTION: GAMEMD 0x004C6720
 EventClass::EventClass(int index, unsigned char type, int val)
 {
 	DebugString("Adding event %s\n", EventNames[type]);
@@ -86,7 +86,7 @@ EventClass::EventClass(int index, unsigned char type, int val)
 	}
 }
 
-// FUNCTION: 0x004C6780
+// FUNCTION: GAMEMD 0x004C6780
 EventClass::EventClass(int index, unsigned char type, TargetClass src, TargetClass dest)
 {
 	DebugString("Adding event %s\n", EventNames[type]);
@@ -103,7 +103,7 @@ EventClass::EventClass(int index, unsigned char type, TargetClass src, TargetCla
 	}
 }
 
-// FUNCTION: 0x004C6800
+// FUNCTION: GAMEMD 0x004C6800
 EventClass::EventClass(int index, AnimType anim, HousesType owner, Coord const & coord)
 {
 	DebugString("Adding event ANIMATION\n");
@@ -121,7 +121,7 @@ EventClass::EventClass(int index, AnimType anim, HousesType owner, Coord const &
 	}
 }
 
-// FUNCTION: 0x004C6860
+// FUNCTION: GAMEMD 0x004C6860
 EventClass::EventClass(int index, TargetClass src, MissionType mission, TargetClass target, TargetClass destination, TargetClass follow)
 {
 	if (index >= 0) {
@@ -141,7 +141,7 @@ EventClass::EventClass(int index, TargetClass src, MissionType mission, TargetCl
 	}
 }
 
-// FUNCTION: 0x004C68E0
+// FUNCTION: GAMEMD 0x004C68E0
 EventClass::EventClass(int index, TargetClass src, MissionType mission, TargetClass target, TargetClass destination, SpeedType speed, MPHType maxspeed)
 {
 	DebugString("Adding event MEGAMISSION_F\n");
@@ -162,7 +162,7 @@ EventClass::EventClass(int index, TargetClass src, MissionType mission, TargetCl
 	}
 }
 
-// FUNCTION: 0x004C6970
+// FUNCTION: GAMEMD 0x004C6970
 EventClass::EventClass(int index, unsigned char type, RTTIType object, int id, BOOL naval)
 {
 	DebugString("Adding event %s\n", EventNames[type]);
@@ -180,7 +180,7 @@ EventClass::EventClass(int index, unsigned char type, RTTIType object, int id, B
 	}
 }
 
-// FUNCTION: 0x004C69E0
+// FUNCTION: GAMEMD 0x004C69E0
 EventClass::EventClass(int index, unsigned char type, RTTIType object, Cell const & cell)
 {
 	DebugString("Adding event %s\n", EventNames[type]);
@@ -199,7 +199,7 @@ EventClass::EventClass(int index, unsigned char type, RTTIType object, Cell cons
 	}
 }
 
-// FUNCTION: 0x004C6A60
+// FUNCTION: GAMEMD 0x004C6A60
 EventClass::EventClass(int index, unsigned char type, RTTIType object, int id, Cell const & cell)
 {
 	DebugString("Adding event %s\n", EventNames[type]);
@@ -218,7 +218,7 @@ EventClass::EventClass(int index, unsigned char type, RTTIType object, int id, C
 	}
 }
 
-// FUNCTION: 0x004C6AE0
+// FUNCTION: GAMEMD 0x004C6AE0
 EventClass::EventClass(int index, unsigned char type, RTTIType object, int id, BOOL naval, Cell const & cell)
 {
 	DebugString("Adding event %s\n", EventNames[type]);
@@ -237,7 +237,7 @@ EventClass::EventClass(int index, unsigned char type, RTTIType object, int id, B
 	}
 }
 
-// FUNCTION: 0x004C6B60
+// FUNCTION: GAMEMD 0x004C6B60
 EventClass::EventClass(int index, unsigned char type, int id, Cell const & cell)
 {
 	DebugString("Adding event %s\n", EventNames[type]);
@@ -254,7 +254,7 @@ EventClass::EventClass(int index, unsigned char type, int id, Cell const & cell)
 	}
 }
 
-// FUNCTION: 0x004C6BE0
+// FUNCTION: GAMEMD 0x004C6BE0
 EventClass::EventClass(int index, unsigned char type, RTTIType object, int id)
 {
 	DebugString("Adding event %s\n", EventNames[type]);
@@ -271,7 +271,7 @@ EventClass::EventClass(int index, unsigned char type, RTTIType object, int id)
 	}
 }
 
-// FUNCTION: 0x004C6C50
+// FUNCTION: GAMEMD 0x004C6C50
 EventClass::EventClass(int index, IPXAddressClass & addr, signed char value)
 {
 	NetNumType net;
@@ -291,7 +291,8 @@ EventClass::EventClass(int index, IPXAddressClass & addr, signed char value)
 	}
 }
 
-// FUNCTION: 0x004C81D0 $E4
+// SYNTHETIC: GAMEMD 0x004C81D0 SYMBOL
+// _$E4
 struct ZeroQuad {
 	int A, B, C, D;
 	ZeroQuad(void) : A(0), B(0), C(0), D(0) {}

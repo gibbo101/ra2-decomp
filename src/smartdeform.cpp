@@ -102,19 +102,21 @@ struct DeformUndoStruct {
 	int OldHeight;
 };
 
-// FUNCTION: 0x006B23B0 $E152
-// FUNCTION: 0x006B23F0 $E150
+// SYNTHETIC: GAMEMD 0x006B23B0 SYMBOL
+// _$E152
+// SYNTHETIC: GAMEMD 0x006B23F0 SYMBOL
+// _$E150
 DynamicVectorClass<DeformUndoStruct> UndoRecords;
 
 bool Commit_Deform_Grid(Cell center, bool forced);
 
-// FUNCTION: 0x006B2430
+// FUNCTION: GAMEMD 0x006B2430
 void Record_Deform_Undo(const Point2D & point, int oldheight)
 {
 	UndoRecords.Add(DeformUndoStruct(point, oldheight));
 }
 
-// FUNCTION: 0x006B24A0
+// FUNCTION: GAMEMD 0x006B24A0
 void Undo_Deform(void)
 {
 	for (int i = UndoRecords.Count() - 1; i >= 0; i--) {
@@ -124,7 +126,7 @@ void Undo_Deform(void)
 	UndoRecords.Clear();
 }
 
-// FUNCTION: 0x006B2520
+// FUNCTION: GAMEMD 0x006B2520
 bool Can_Deform_Cell_RMG(CellClass * cellptr, bool)
 {
 	if (!My_In_Radar(cellptr->Fetch_CellID())) {
@@ -151,7 +153,7 @@ bool Can_Deform_Cell_RMG(CellClass * cellptr, bool)
 	return(true);
 }
 
-// FUNCTION: 0x006B25C0
+// FUNCTION: GAMEMD 0x006B25C0
 bool Can_Deform_Cell(CellClass * cellptr, bool)
 {
 	ObjectClass * obj = cellptr->Cell_Occupier();
@@ -194,7 +196,7 @@ bool Can_Deform_Cell(CellClass * cellptr, bool)
 	return(true);
 }
 
-// FUNCTION: 0x006B2700
+// FUNCTION: GAMEMD 0x006B2700
 void Init_Deform_Grid(Cell center, bool forced)
 {
 	if (DeformPoints) {
@@ -273,7 +275,7 @@ void Init_Deform_Grid(Cell center, bool forced)
 	}
 }
 
-// FUNCTION: 0x006B2A70
+// FUNCTION: GAMEMD 0x006B2A70
 void Init_Deform_Grid_RMG(void)
 {
 	if (DeformPoints != NULL) {
@@ -336,7 +338,7 @@ void Init_Deform_Grid_RMG(void)
 	}
 }
 
-// FUNCTION: 0x006B3850
+// FUNCTION: GAMEMD 0x006B3850
 bool Commit_Deform_Grid_RMG(void)
 {
 	Map.Reset_Iterator();
@@ -416,7 +418,7 @@ bool Commit_Deform_Grid_RMG(void)
 	return(true);
 }
 
-// FUNCTION: 0x006B3A80
+// FUNCTION: GAMEMD 0x006B3A80
 bool Ripple_Deform_Points(Point2D start_point, int general_direction, bool forced)
 {
 	DeformPointStruct & start_deform_point = DeformPoints[start_point.X + start_point.Y * DeformPointWidth];
@@ -471,7 +473,7 @@ bool Ripple_Deform_Points(Point2D start_point, int general_direction, bool force
 	return(true);
 }
 
-// FUNCTION: 0x006B3CD0
+// FUNCTION: GAMEMD 0x006B3CD0
 bool Deform_Cell(Cell original_cell, int general_direction, bool forced, int point_mask)
 {
 	UndoRecords.Clear();
@@ -518,7 +520,7 @@ bool Deform_Cell(Cell original_cell, int general_direction, bool forced, int poi
 	return(Commit_Deform_Grid(original_cell, forced));
 }
 
-// FUNCTION: 0x006B3E60
+// FUNCTION: GAMEMD 0x006B3E60
 bool Deform_Cell_RMG(Cell original_cell, int general_direction, bool forced, int point_mask)
 {
 	UndoRecords.Clear();
@@ -563,7 +565,7 @@ bool Deform_Cell_RMG(Cell original_cell, int general_direction, bool forced, int
 	return(true);
 }
 
-// FUNCTION: 0x006B4100
+// FUNCTION: GAMEMD 0x006B4100
 int Get_Deformed_Cell_Height(CellClass * cellptr)
 {
 	int x = cellptr->Fetch_CellID().X - DeformPointXAdd;
@@ -593,7 +595,7 @@ int Get_Deformed_Cell_Height(CellClass * cellptr)
 	}
 }
 
-// FUNCTION: 0x006B4240
+// FUNCTION: GAMEMD 0x006B4240
 int Get_Deformable_Cell_Corners(CellClass * cellptr, int direction)
 {
 	int i;
@@ -652,55 +654,79 @@ int Get_Deformable_Cell_Corners(CellClass * cellptr, int direction)
 	return(mask);
 }
 
-// FUNCTION: 0x006B43B0 ?$DynamicVectorClass@UDeformUndoStruct@@::Clear
-// FUNCTION: 0x006B43E0 ?$DynamicVectorClass@UDeformUndoStruct@@::ID
-// FUNCTION: 0x006B4410 ?$VectorClass@UDeformUndoStruct@@::GetItem
-// FUNCTION: 0x006B4440 ?$VectorClass@UDeformUndoStruct@@::operator==
-// FUNCTION: 0x006B44A0 ?$VectorClass@UDeformUndoStruct@@::Resize
-// FUNCTION: 0x006B45A0 ?$VectorClass@UDeformUndoStruct@@::Clear
-// FUNCTION: 0x006B45D0 ?$VectorClass@UDeformUndoStruct@@::ID
-// FUNCTION: 0x006B4620 ?$VectorClass@UDeformUndoStruct@@::ID
+// TEMPLATE: GAMEMD 0x006B43B0
+// ?Clear@?$DynamicVectorClass@UDeformUndoStruct@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x006B43E0
+// ?ID@?$DynamicVectorClass@UDeformUndoStruct@@@@UAEHPBUDeformUndoStruct@@@Z
+// TEMPLATE: GAMEMD 0x006B4410
+// ?GetItem@?$VectorClass@UDeformUndoStruct@@@@UBE?AUDeformUndoStruct@@H@Z
+// TEMPLATE: GAMEMD 0x006B4440
+// ??8?$VectorClass@UDeformUndoStruct@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x006B44A0
+// ?Resize@?$VectorClass@UDeformUndoStruct@@@@UAE_NHPBUDeformUndoStruct@@@Z
+// TEMPLATE: GAMEMD 0x006B45A0
+// ?Clear@?$VectorClass@UDeformUndoStruct@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x006B45D0
+// ?ID@?$VectorClass@UDeformUndoStruct@@@@UAEHABUDeformUndoStruct@@@Z
+// TEMPLATE: GAMEMD 0x006B4620
+// ?ID@?$VectorClass@UDeformUndoStruct@@@@UAEHPBUDeformUndoStruct@@@Z
 template class VectorClass<DeformUndoStruct>;
 
-// FUNCTION: 0x006B4650 ?$DynamicVectorClass@UDeformUndoStruct@@::Resize
-// FUNCTION: 0x006B4760 ?$DynamicVectorClass@UDeformUndoStruct@@::ID
+// TEMPLATE: GAMEMD 0x006B4650
+// ?Resize@?$DynamicVectorClass@UDeformUndoStruct@@@@UAE_NHPBUDeformUndoStruct@@@Z
+// TEMPLATE: GAMEMD 0x006B4760
+// ?ID@?$DynamicVectorClass@UDeformUndoStruct@@@@UAEHABUDeformUndoStruct@@@Z
 template class DynamicVectorClass<DeformUndoStruct>;
 
-// FUNCTION: 0x006B47A0 ?$VectorClass@UDeformUndoStruct@@::~?$VectorClass@UDeformUndoStruct@@
-// FUNCTION: 0x006B47F0 ?$DynamicVectorClass@UDeformUndoStruct@@::~?$DynamicVectorClass@UDeformUndoStruct@@
+// SYNTHETIC: GAMEMD 0x006B47A0
+// ??_G?$VectorClass@UDeformUndoStruct@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x006B47F0
+// ??_G?$DynamicVectorClass@UDeformUndoStruct@@@@UAEPAXI@Z
 
-// FUNCTION: 0x006B4840 $E157
+// SYNTHETIC: GAMEMD 0x006B4840 SYMBOL
+// _$E157
 double DAT_00B0B710 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x006B4870 $E160
+// SYNTHETIC: GAMEMD 0x006B4870 SYMBOL
+// _$E160
 double DAT_00B0B760 = DAT_00B0B710 / DAT_007F32B8;
 
-// FUNCTION: 0x006B4890 $E163
+// SYNTHETIC: GAMEMD 0x006B4890 SYMBOL
+// _$E163
 double DAT_00B0B748 = DAT_007E1718 / DAT_00B0B760;
 
-// FUNCTION: 0x006B48B0 $E166
+// SYNTHETIC: GAMEMD 0x006B48B0 SYMBOL
+// _$E166
 double DAT_00B0B740 = DAT_007E1720 * DAT_007F32C0;
 
-// FUNCTION: 0x006B48D0 $E169
+// SYNTHETIC: GAMEMD 0x006B48D0 SYMBOL
+// _$E169
 double DAT_00B0B718 = DAT_007E1728 * DAT_007F32C0;
 
-// FUNCTION: 0x006B48F0 $E172
+// SYNTHETIC: GAMEMD 0x006B48F0 SYMBOL
+// _$E172
 double DAT_00B0B6F0 = DAT_007E1730 * DAT_007F32C0;
 
-// FUNCTION: 0x006B4910 $E175
+// SYNTHETIC: GAMEMD 0x006B4910 SYMBOL
+// _$E175
 int DAT_00B0B768 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B0B6F0 - DAT_00B0B718) * DAT_00B0B710));
 
-// FUNCTION: 0x006B4950 $E178
+// SYNTHETIC: GAMEMD 0x006B4950 SYMBOL
+// _$E178
 double DAT_00B0B720 = FUN_004CADE0(DAT_00B0B768 * DAT_007E1740);
 
-// FUNCTION: 0x006B4980 $E181
+// SYNTHETIC: GAMEMD 0x006B4980 SYMBOL
+// _$E181
 double DAT_00B0B738 = FUN_004CADE0((DAT_00B0B768 * 2) / DAT_00B0B710);
 
-// FUNCTION: 0x006B49B0 $E184
+// SYNTHETIC: GAMEMD 0x006B49B0 SYMBOL
+// _$E184
 int DAT_00B0B75C = (int)(DAT_00B0B768 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x006B49E0 $E187
+// SYNTHETIC: GAMEMD 0x006B49E0 SYMBOL
+// _$E187
 ShortPair DAT_00B0B708;
 
-// FUNCTION: 0x006B49F0 $E190
+// SYNTHETIC: GAMEMD 0x006B49F0 SYMBOL
+// _$E190
 IntTriple DAT_00B0B728;

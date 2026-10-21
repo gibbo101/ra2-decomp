@@ -73,21 +73,34 @@ unsigned short DSurface::HalfbrightMask = 0;
 unsigned short DSurface::QuarterbrightMask = 0;
 unsigned short DSurface::EighthbrightMask = 0;
 
-// FUNCTION: 0x004BA3B0 $E2
-// FUNCTION: 0x004BA3E0 $E5
-// FUNCTION: 0x004BA400 $E8
-// FUNCTION: 0x004BA420 $E11
-// FUNCTION: 0x004BA440 $E14
-// FUNCTION: 0x004BA460 $E17
-// FUNCTION: 0x004BA480 $E20
-// FUNCTION: 0x004BA4C0 $E23
-// FUNCTION: 0x004BA4F0 $E26
-// FUNCTION: 0x004BA520 $E29
-// FUNCTION: 0x004BA550 $E32
-// FUNCTION: 0x004BA560 $E35
-// FUNCTION: 0x004BA580 $E38
+// SYNTHETIC: GAMEMD 0x004BA3B0 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x004BA3E0 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x004BA400 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x004BA420 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x004BA440 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x004BA460 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x004BA480 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x004BA4C0 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x004BA4F0 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x004BA520 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x004BA550 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x004BA560 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x004BA580 SYMBOL
+// _$E38
 
-// FUNCTION: 0x004BA5A0
+// FUNCTION: GAMEMD 0x004BA5A0
 DSurface::DSurface(int width, int height, bool system_memory, bool device_3d) :
 	BASECLASS(width, height),
 	BytesPerPixel(0),
@@ -124,7 +137,7 @@ DSurface::DSurface(int width, int height, bool system_memory, bool device_3d) :
 	}
 }
 
-// FUNCTION: 0x004BA6B0
+// FUNCTION: GAMEMD 0x004BA6B0
 DSurface::~DSurface(void)
 {
 	if (IsPrimary && SurfacePtr != NULL && Clipper != NULL) {
@@ -142,7 +155,7 @@ DSurface::~DSurface(void)
 	SurfacePtr = NULL;
 }
 
-// FUNCTION: 0x004BA720
+// FUNCTION: GAMEMD 0x004BA720
 DSurface::DSurface(void) :
 	BytesPerPixel(0),
 	LockPtr(NULL),
@@ -155,7 +168,7 @@ DSurface::DSurface(void) :
 	Description->dwSize = sizeof(DDSURFACEDESC);
 }
 
-// FUNCTION: 0x004BA770
+// FUNCTION: GAMEMD 0x004BA770
 DSurface * DSurface::Create_Primary(DSurface ** backsurface1)
 {
 	DebugString("DSurface::Create_Primary\n");
@@ -277,7 +290,7 @@ DSurface * DSurface::Create_Primary(DSurface ** backsurface1)
 	return(surface);
 }
 
-// FUNCTION: 0x004BAC60
+// FUNCTION: GAMEMD 0x004BAC60
 DSurface::DSurface(LPDIRECTDRAWSURFACE surfaceptr) :
 	BytesPerPixel(0),
 	LockPtr(NULL),
@@ -321,7 +334,7 @@ inline bool Restore_Surface(DSurface const * surface)
 	return(true);
 }
 
-// FUNCTION: 0x004BACF0
+// FUNCTION: GAMEMD 0x004BACF0
 HDC DSurface::GetDC(void)
 {
 	HDC hdc = NULL;
@@ -339,7 +352,7 @@ HDC DSurface::GetDC(void)
 	return(hdc);
 }
 
-// FUNCTION: 0x004BAD30
+// FUNCTION: GAMEMD 0x004BAD30
 int DSurface::ReleaseDC(HDC hdc)
 {
 	HRESULT hr;
@@ -354,19 +367,19 @@ int DSurface::ReleaseDC(HDC hdc)
 }
 
 
-// FUNCTION: 0x004BAD60
+// FUNCTION: GAMEMD 0x004BAD60
 int DSurface::Bytes_Per_Pixel(void) const
 {
 	return(BytesPerPixel);
 }
 
-// FUNCTION: 0x004BAD70
+// FUNCTION: GAMEMD 0x004BAD70
 int DSurface::Stride(void) const
 {
 	return(Description->lPitch);
 }
 
-// FUNCTION: 0x004BAD80
+// FUNCTION: GAMEMD 0x004BAD80
 void * DSurface::Lock(Point2D point) const
 {
 	if (!Restore_Surface(this)) return(NULL);
@@ -387,7 +400,7 @@ void * DSurface::Lock(Point2D point) const
 	return(((char*)LockPtr) + point.Y * Stride() + point.X * Bytes_Per_Pixel());
 }
 
-// FUNCTION: 0x004BAEC0
+// FUNCTION: GAMEMD 0x004BAEC0
 bool DSurface::Can_Lock(int x, int y) const
 {
 	if (LockCount == 0) {
@@ -401,13 +414,13 @@ bool DSurface::Can_Lock(int x, int y) const
 	return(true);
 }
 
-// FUNCTION: 0x004BAF20
+// FUNCTION: GAMEMD 0x004BAF20
 bool DSurface::Can_Blit(void) const
 {
 	return(SurfacePtr->GetBltStatus(DDGBS_CANBLT) == DD_OK);
 }
 
-// FUNCTION: 0x004BAF40
+// FUNCTION: GAMEMD 0x004BAF40
 bool DSurface::Unlock(void) const
 {
 	Restore_Surface(this);
@@ -422,25 +435,25 @@ bool DSurface::Unlock(void) const
 	return(false);
 }
 
-// FUNCTION: 0x004BAFE0
+// FUNCTION: GAMEMD 0x004BAFE0
 bool DSurface::Is_Lost(void) const
 {
 	return(SurfacePtr != NULL && SurfacePtr->IsLost() == DDERR_SURFACELOST);
 }
 
-// FUNCTION: 0x004BB000
+// FUNCTION: GAMEMD 0x004BB000
 bool DSurface::Restore_Check(void) const
 {
 	return(Restore_Surface(this));
 }
 
-// FUNCTION: 0x004BB080
+// FUNCTION: GAMEMD 0x004BB080
 bool DSurface::Blit_From(Rect const & destrect, Surface const & ssource, Rect const & sourcerect, bool trans, bool unknown)
 {
 	return(Blit_From(Get_Rect(), destrect, ssource, ssource.Get_Rect(), sourcerect, trans, unknown));
 }
 
-// FUNCTION: 0x004BB0D0
+// FUNCTION: GAMEMD 0x004BB0D0
 bool DSurface::Blit_From(Rect const & dcliprect, Rect const & destrect, Surface const & ssource, Rect const & scliprect, Rect const & sourcerect, bool trans, bool unknown)
 {
 	if (!dcliprect.Is_Valid() || !scliprect.Is_Valid() || !destrect.Is_Valid() || !sourcerect.Is_Valid()) return(false);
@@ -484,13 +497,13 @@ bool DSurface::Blit_From(Rect const & dcliprect, Rect const & destrect, Surface 
 	return(false);
 }
 
-// FUNCTION: 0x004BB5F0
+// FUNCTION: GAMEMD 0x004BB5F0
 bool DSurface::Fill_Rect(Rect const & fillrect, int color)
 {
 	return(DSurface::Fill_Rect(Get_Rect(), fillrect, color));
 }
 
-// FUNCTION: 0x004BB620
+// FUNCTION: GAMEMD 0x004BB620
 bool DSurface::Fill_Rect(Rect const & cliprect, Rect const & fillrect, int color)
 {
 	if (SurfacePtr == NULL || !fillrect.Is_Valid()) return(false);
@@ -521,7 +534,7 @@ bool DSurface::Fill_Rect(Rect const & cliprect, Rect const & fillrect, int color
 	return(result == DD_OK);
 }
 
-// FUNCTION: 0x004BB830
+// FUNCTION: GAMEMD 0x004BB830
 bool DSurface::Fill_Rect_Trans(Rect const & xcliprect, const RGBClass & color, unsigned int opacity)
 {
 
@@ -598,7 +611,7 @@ bool DSurface::Fill_Rect_Trans(Rect const & xcliprect, const RGBClass & color, u
 	return(true);
 }
 
-// FUNCTION: 0x004BBB00
+// FUNCTION: GAMEMD 0x004BBB00
 void DSurface::Build_Remap_Table(unsigned short * table, int count, PaletteClass const & palette)
 {
 	if (count >= 1) {
@@ -632,49 +645,49 @@ void DSurface::Build_Remap_Table(unsigned short * table, int count, PaletteClass
 	}
 }
 
-// FUNCTION: 0x004BBC30
+// FUNCTION: GAMEMD 0x004BBC30
 int DSurface::Get_Red_Right(void)
 {
 	return(RedRight);
 }
 
-// FUNCTION: 0x004BBC40
+// FUNCTION: GAMEMD 0x004BBC40
 int DSurface::Get_Red_Left(void)
 {
 	return(RedLeft);
 }
 
-// FUNCTION: 0x004BBC50
+// FUNCTION: GAMEMD 0x004BBC50
 int DSurface::Get_Green_Right(void)
 {
 	return(GreenRight);
 }
 
-// FUNCTION: 0x004BBC60
+// FUNCTION: GAMEMD 0x004BBC60
 int DSurface::Get_Green_Left(void)
 {
 	return(GreenLeft);
 }
 
-// FUNCTION: 0x004BBC70
+// FUNCTION: GAMEMD 0x004BBC70
 int DSurface::Get_Blue_Right(void)
 {
 	return(BlueRight);
 }
 
-// FUNCTION: 0x004BBC80
+// FUNCTION: GAMEMD 0x004BBC80
 int DSurface::Get_Blue_Left(void)
 {
 	return(BlueLeft);
 }
 
-// FUNCTION: 0x004BBC90
+// FUNCTION: GAMEMD 0x004BBC90
 int DSurface::Get_Primary_Color_Mode(void)
 {
 	return(PrimaryColorMode);
 }
 
-// FUNCTION: 0x004BE9D0
+// FUNCTION: GAMEMD 0x004BE9D0
 int __fastcall Brighten_Hicolor_Pixel(RGBClass const * rgb, int red_add, int green_add, int blue_add)
 {
 	int red = rgb->Get_Red() + red_add;
@@ -709,7 +722,7 @@ int __fastcall Brighten_Hicolor_Pixel(RGBClass const * rgb, int red_add, int gre
 	return(DSurface::Build_Hicolor_Pixel(red, green, blue));
 }
 
-// FUNCTION: 0x004BF650
+// FUNCTION: GAMEMD 0x004BF650
 unsigned short DSurface::Blend_Pixel(unsigned short src_color, unsigned short dst_color, int level)
 {
 	switch (level) {
@@ -730,7 +743,7 @@ done:
 	return(src_color);
 }
 
-// FUNCTION: 0x004BF750
+// FUNCTION: GAMEMD 0x004BF750
 bool DSurface::Draw_Ping_Pong_Gradient_Line(Rect const & cliprect, Point2D const & startpoint, Point2D const & endpoint, RGBClass const & start_color, RGBClass const & end_color, float & gradient_step, float & gradient_position) const
 {
 	Rect clipped_rect = Intersect(cliprect, Get_Rect());
@@ -858,7 +871,7 @@ bool DSurface::Draw_Ping_Pong_Gradient_Line(Rect const & cliprect, Point2D const
 	return(false);
 }
 
-// FUNCTION: 0x004C1440
+// FUNCTION: GAMEMD 0x004C1440
 int FUN_004C1440(void)
 {
 	DDCAPS caps;
@@ -886,7 +899,7 @@ static inline void Clear_Desc(DeviceDesc * desc)
 	desc->dwSize = sizeof(DeviceDesc);
 }
 
-// FUNCTION: 0x004C14D0
+// FUNCTION: GAMEMD 0x004C14D0
 int FUN_004C14D0(void)
 {
 	DeviceDesc hardware;
@@ -911,7 +924,7 @@ int FUN_004C14D0(void)
 	return(0);
 }
 
-// FUNCTION: 0x004C1600
+// FUNCTION: GAMEMD 0x004C1600
 int FUN_004C1600(void)
 {
 	HRESULT result = DirectDrawWrap::lpDD->QueryInterface(DAT_007F7D50, (void **)&DAT_008A0E00);
@@ -929,7 +942,7 @@ struct SurfaceDesc : DDSURFACEDESC {
 	SurfaceDesc(void) { memset(this, 0, sizeof(DDSURFACEDESC)); dwSize = sizeof(DDSURFACEDESC); }
 };
 
-// FUNCTION: 0x004C16A0
+// FUNCTION: GAMEMD 0x004C16A0
 int FUN_004C16A0(void)
 {
 	LPDIRECTDRAWSURFACE surface = DSurface::Composite->Get_DD_Surface();
@@ -1012,7 +1025,7 @@ done:
 	return(result);
 }
 
-// FUNCTION: 0x004C19B0
+// FUNCTION: GAMEMD 0x004C19B0
 void FUN_004C19B0(void)
 {
 	Texture3DCache * cache = DAT_008A0E10;
@@ -1057,43 +1070,57 @@ void FUN_004C19B0(void)
 	}
 }
 
-// FUNCTION: 0x004C1A90 DSurface::Blit_From
+// FUNCTION: GAMEMD 0x004C1A90
+// DSurface::Blit_From
 
-// FUNCTION: 0x004C1AB0 DSurface::Is_Direct_Draw
+// FUNCTION: GAMEMD 0x004C1AB0
+// DSurface::Is_Direct_Draw
 
-// FUNCTION: 0x004C1AC0 DSurface::~DSurface
+// SYNTHETIC: GAMEMD 0x004C1AC0
+// ??_GDSurface@@UAEPAXI@Z
 
-// FUNCTION: 0x004C1B50 ?$TPoint2D@H::Length
+// TEMPLATE: GAMEMD 0x004C1B50
+// ?Length@?$TPoint2D@H@@QBEHXZ
 template class TPoint2D<int>;
 
-// FUNCTION: 0x004C1B80 $E63
+// SYNTHETIC: GAMEMD 0x004C1B80 SYMBOL
+// _$E63
 double DAT_008A0E38 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x004C1BB0 $E66
+// SYNTHETIC: GAMEMD 0x004C1BB0 SYMBOL
+// _$E66
 double DAT_008A0EA8 = DAT_008A0E38 / DAT_007E8678;
 
-// FUNCTION: 0x004C1BD0 $E69
+// SYNTHETIC: GAMEMD 0x004C1BD0 SYMBOL
+// _$E69
 double DAT_008A0E70 = DAT_007E1718 / DAT_008A0EA8;
 
-// FUNCTION: 0x004C1BF0 $E72
+// SYNTHETIC: GAMEMD 0x004C1BF0 SYMBOL
+// _$E72
 double DAT_008A0E68 = DAT_007E1720 * DAT_007E8680;
 
-// FUNCTION: 0x004C1C10 $E75
+// SYNTHETIC: GAMEMD 0x004C1C10 SYMBOL
+// _$E75
 double DAT_008A0E40 = DAT_007E1728 * DAT_007E8680;
 
-// FUNCTION: 0x004C1C30 $E78
+// SYNTHETIC: GAMEMD 0x004C1C30 SYMBOL
+// _$E78
 double DAT_008A0E18 = DAT_007E1730 * DAT_007E8680;
 
-// FUNCTION: 0x004C1C50 $E81
+// SYNTHETIC: GAMEMD 0x004C1C50 SYMBOL
+// _$E81
 int DAT_008A0EB0 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_008A0E18 - DAT_008A0E40) * DAT_008A0E38));
 
-// FUNCTION: 0x004C1C90 $E84
+// SYNTHETIC: GAMEMD 0x004C1C90 SYMBOL
+// _$E84
 double DAT_008A0E48 = FUN_004CADE0(DAT_008A0EB0 * DAT_007E1740);
 
-// FUNCTION: 0x004C1CC0 $E87
+// SYNTHETIC: GAMEMD 0x004C1CC0 SYMBOL
+// _$E87
 double DAT_008A0E60 = FUN_004CADE0((DAT_008A0EB0 * 2) / DAT_008A0E38);
 
-// FUNCTION: 0x004C1CF0 $E90
+// SYNTHETIC: GAMEMD 0x004C1CF0 SYMBOL
+// _$E90
 int DAT_008A0EA0 = (int)(DAT_008A0EB0 * 4 + DAT_007E1738);
 
 struct ShortPair {
@@ -1101,7 +1128,8 @@ struct ShortPair {
 	ShortPair() { A = 0; B = 0; }
 };
 
-// FUNCTION: 0x004C1D20 $E93
+// SYNTHETIC: GAMEMD 0x004C1D20 SYMBOL
+// _$E93
 ShortPair DAT_008A0E30;
 
 struct IntTriple {
@@ -1109,7 +1137,8 @@ struct IntTriple {
 	IntTriple() { A = 0; B = 0; C = 0; }
 };
 
-// FUNCTION: 0x004C1D30 $E96
+// SYNTHETIC: GAMEMD 0x004C1D30 SYMBOL
+// _$E96
 IntTriple DAT_008A0E50;
 
 struct IntSeed {
@@ -1117,7 +1146,8 @@ struct IntSeed {
 	IntSeed() { Z = 0; X = 0x80; Y = 0x80; }
 };
 
-// FUNCTION: 0x004C1D50 $E99
+// SYNTHETIC: GAMEMD 0x004C1D50 SYMBOL
+// _$E99
 IntSeed DAT_008A0E78;
 
 struct IntQuad {
@@ -1125,5 +1155,6 @@ struct IntQuad {
 	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
 };
 
-// FUNCTION: 0x004C1D70 $E102
+// SYNTHETIC: GAMEMD 0x004C1D70 SYMBOL
+// _$E102
 IntQuad DAT_008A0E20;

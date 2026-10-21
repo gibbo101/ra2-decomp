@@ -18,7 +18,7 @@ static const unsigned char rle_code = 0xC0;
 static const unsigned char rle_max_run = 0x2F;
 static const unsigned char rle_full_run = (rle_max_run|rle_code);
 
-// FUNCTION: 0x007B05C0
+// FUNCTION: GAMEMD 0x007B05C0
 bool Write_PCX_File(FileClass & file, Surface & pic, PaletteClass * palette)
 {
 	unsigned char palcopy[256 * sizeof(RGB)];
@@ -169,7 +169,7 @@ static void Write_Pcx_ScanLine(FileClass & file, int scansize, char * ptr)
 /// <returns>Returns with the number of bytes placed into the destination buffer.</returns>
 
 #define WRITE_CHAR(x) {	file_ptr [size++] = x ; }
-// FUNCTION: 0x007B0B00
+// FUNCTION: GAMEMD 0x007B0B00
 static int Write_Pcx_ScanLine_Buf( int scansize, char * ptr, char * file_ptr )
 {
 	unsigned char last = *ptr;
@@ -227,34 +227,44 @@ extern const double DAT_007E1740;
 extern const double DAT_007F7938;
 extern const double DAT_007F7940;
 
-// FUNCTION: 0x007B0BA0 $E23
+// SYNTHETIC: GAMEMD 0x007B0BA0 SYMBOL
+// _$E23
 double DAT_00B77FC0 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2.0);
 
-// FUNCTION: 0x007B0BD0 $E26
+// SYNTHETIC: GAMEMD 0x007B0BD0 SYMBOL
+// _$E26
 double DAT_00B78010 = DAT_00B77FC0 / DAT_007F7938;
 
-// FUNCTION: 0x007B0BF0 $E29
+// SYNTHETIC: GAMEMD 0x007B0BF0 SYMBOL
+// _$E29
 double DAT_00B77FF8 = DAT_007E1718 / DAT_00B78010;
 
-// FUNCTION: 0x007B0C10 $E32
+// SYNTHETIC: GAMEMD 0x007B0C10 SYMBOL
+// _$E32
 double DAT_00B77FF0 = DAT_007E1720 * DAT_007F7940;
 
-// FUNCTION: 0x007B0C30 $E35
+// SYNTHETIC: GAMEMD 0x007B0C30 SYMBOL
+// _$E35
 double DAT_00B77FC8 = DAT_007E1728 * DAT_007F7940;
 
-// FUNCTION: 0x007B0C50 $E38
+// SYNTHETIC: GAMEMD 0x007B0C50 SYMBOL
+// _$E38
 double DAT_00B77FB0 = DAT_007E1730 * DAT_007F7940;
 
-// FUNCTION: 0x007B0C70 $E41
+// SYNTHETIC: GAMEMD 0x007B0C70 SYMBOL
+// _$E41
 int DAT_00B78018 = (int)(FUN_004CAD50(DAT_00B77FB0 - DAT_00B77FC8) * DAT_007E1738 * DAT_00B77FC0);
 
-// FUNCTION: 0x007B0CB0 $E44
+// SYNTHETIC: GAMEMD 0x007B0CB0 SYMBOL
+// _$E44
 double DAT_00B77FD0 = FUN_004CADE0(DAT_00B78018 * DAT_007E1740);
 
-// FUNCTION: 0x007B0CE0 $E47
+// SYNTHETIC: GAMEMD 0x007B0CE0 SYMBOL
+// _$E47
 double DAT_00B77FE8 = FUN_004CADE0((DAT_00B78018 * 2) / DAT_00B77FC0);
 
-// FUNCTION: 0x007B0D10 $E50
+// SYNTHETIC: GAMEMD 0x007B0D10 SYMBOL
+// _$E50
 int DAT_00B7800C = (int)(DAT_00B78018 * 4 + DAT_007E1738);
 
 struct WritePcxShortPair {
@@ -277,11 +287,14 @@ struct WritePcxHalfTriple {
 	WritePcxHalfTriple(void) : A(0x80), B(0x80), C(0) {}
 };
 
-// FUNCTION: 0x007B0D40 $E53
+// SYNTHETIC: GAMEMD 0x007B0D40 SYMBOL
+// _$E53
 WritePcxShortPair DAT_00B77FB8;
 
-// FUNCTION: 0x007B0D50 $E56
+// SYNTHETIC: GAMEMD 0x007B0D50 SYMBOL
+// _$E56
 WritePcxZeroTriple DAT_00B77FD8;
 
-// FUNCTION: 0x007B0D70 $E59
+// SYNTHETIC: GAMEMD 0x007B0D70 SYMBOL
+// _$E59
 WritePcxHalfTriple DAT_00B78000;

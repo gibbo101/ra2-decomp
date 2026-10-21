@@ -35,27 +35,43 @@ extern const double DAT_007E1738;
 extern const double DAT_007F4540;
 extern const double DAT_007F4548;
 
-// FUNCTION: 0x006E4B50 $E2
-// FUNCTION: 0x006E4B80 $E5
-// FUNCTION: 0x006E4BA0 $E8
-// FUNCTION: 0x006E4BC0 $E11
-// FUNCTION: 0x006E4BE0 $E14
-// FUNCTION: 0x006E4C00 $E17
-// FUNCTION: 0x006E4C20 $E20
-// FUNCTION: 0x006E4C60 $E23
-// FUNCTION: 0x006E4C90 $E26
-// FUNCTION: 0x006E4CC0 $E29
-// FUNCTION: 0x006E4CF0 $E32
-// FUNCTION: 0x006E4D00 $E35
-// FUNCTION: 0x006E4D20 $E38
-// FUNCTION: 0x006E4D40 $E47
+// SYNTHETIC: GAMEMD 0x006E4B50 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x006E4B80 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x006E4BA0 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x006E4BC0 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x006E4BE0 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x006E4C00 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x006E4C20 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x006E4C60 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x006E4C90 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x006E4CC0 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x006E4CF0 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x006E4D00 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x006E4D20 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x006E4D40 SYMBOL
+// _$E47
 
-// FUNCTION: 0x006E4D60 $E107
+// SYNTHETIC: GAMEMD 0x006E4D60 SYMBOL
+// _$E107
 
-// FUNCTION: 0x006E4DA0 $E105
+// SYNTHETIC: GAMEMD 0x006E4DA0 SYMBOL
+// _$E105
 DynamicVectorClass<TagClass *> Tags;
 
-// FUNCTION: 0x006E4DE0
+// FUNCTION: GAMEMD 0x006E4DE0
 TagClass::TagClass(TagTypeClass *type) :
 	BASECLASS(),
 	Class(type),
@@ -83,7 +99,7 @@ TagClass::TagClass(TagTypeClass *type) :
 	}
 }
 
-// FUNCTION: 0x006E4F60
+// FUNCTION: GAMEMD 0x006E4F60
 TagClass::~TagClass(void)
 {
 	Detach_This_From_All(this, true);
@@ -131,20 +147,20 @@ TagClass::~TagClass(void)
 	Detach_This_From_All(this, true);
 }
 
-// FUNCTION: 0x006E5230
+// FUNCTION: GAMEMD 0x006E5230
 void TagClass::Mark_To_Delete(void)
 {
 	IsToDie = true;
 	ObjectsToDelete.Add(this);
 }
 
-// FUNCTION: 0x006E5290
+// FUNCTION: GAMEMD 0x006E5290
 bool TagClass::Is_Marked_To_Delete(void) const
 {
 	return(IsToDie);
 }
 
-// FUNCTION: 0x006E52A0
+// FUNCTION: GAMEMD 0x006E52A0
 TagClass * Find_Or_Make(TagTypeClass *type)
 {
 	for (int index = 0; index < Tags.Count(); index++) {
@@ -157,31 +173,31 @@ TagClass * Find_Or_Make(TagTypeClass *type)
 	return(new TagClass(type));
 }
 
-// FUNCTION: 0x006E52F0
+// FUNCTION: GAMEMD 0x006E52F0
 Cell TagClass::Get_Position(void) const
 {
 	return(CellID);
 }
 
-// FUNCTION: 0x006E5300
+// FUNCTION: GAMEMD 0x006E5300
 bool TagClass::Is_Cross_Vertical(void) const
 {
 	return((Class != NULL && Class->Is_Cross_Vertical()) ? 1 : 0);
 }
 
-// FUNCTION: 0x006E5320
+// FUNCTION: GAMEMD 0x006E5320
 bool TagClass::Is_Cross_Horizontal(void) const
 {
 	return((Class != NULL && Class->Is_Cross_Horizontal()) ? 1 : 0);
 }
 
-// FUNCTION: 0x006E5340
+// FUNCTION: GAMEMD 0x006E5340
 bool TagClass::Is_Enters_Zone(void) const
 {
 	return((Class != NULL && Class->Is_Enters_Zone()) ? 1 : 0);
 }
 
-// FUNCTION: 0x006E5360
+// FUNCTION: GAMEMD 0x006E5360
 bool TagClass::Is_Allow_Win(void) const
 {
 	return((Class != NULL && Class->Is_Allow_Win()) ? 1 : 0);
@@ -189,7 +205,7 @@ bool TagClass::Is_Allow_Win(void) const
 
 namespace Unsorted { extern bool ArmageddonMode; }
 
-// FUNCTION: 0x006E5380
+// FUNCTION: GAMEMD 0x006E5380
 bool TagClass::Is_Trigger_Attached(TriggerClass *trigger) const
 {
 	TriggerClass * trigptr = Trigger;
@@ -202,7 +218,7 @@ bool TagClass::Is_Trigger_Attached(TriggerClass *trigger) const
 	return(false);
 }
 
-// FUNCTION: 0x006E53A0
+// FUNCTION: GAMEMD 0x006E53A0
 bool TagClass::Spring(TEventType event, ObjectClass * object, Cell cell, bool forced, TechnoClass *source)
 {
 	bool res = false; /// was handled
@@ -271,13 +287,13 @@ bool TagClass::Spring(TEventType event, ObjectClass * object, Cell cell, bool fo
 	return(res);
 }
 
-// FUNCTION: 0x006E5560
+// FUNCTION: GAMEMD 0x006E5560
 void TagClass::Set_Position(Cell cell)
 {
 	CellID = cell;
 }
 
-// FUNCTION: 0x006E5570
+// FUNCTION: GAMEMD 0x006E5570
 void TagClass::Init(void)
 {
 	while (Tags.Count() > 0) {
@@ -285,26 +301,26 @@ void TagClass::Init(void)
 	}
 }
 
-// FUNCTION: 0x006E55A0
+// FUNCTION: GAMEMD 0x006E55A0
 void TagClass::Timer_Global_Reset(int global)
 {
 	Trigger->Reset_Global_Linked_Timed_Events(global);
 }
 
-// FUNCTION: 0x006E55B0
+// FUNCTION: GAMEMD 0x006E55B0
 void TagClass::Timer_Local_Reset(int local)
 {
 	Trigger->Reset_Local_Linked_Timed_Events(local);
 }
 
-// FUNCTION: 0x006E55C0
+// FUNCTION: GAMEMD 0x006E55C0
 void TagClass::Link(TriggerClass *trigger)
 {
 	trigger->LinkedTo = Trigger;
 	Trigger = trigger;
 }
 
-// FUNCTION: 0x006E55D0
+// FUNCTION: GAMEMD 0x006E55D0
 bool TagClass::Unlink(TriggerClass *trigger)
 {
 	if (trigger != NULL) {
@@ -324,7 +340,7 @@ bool TagClass::Unlink(TriggerClass *trigger)
 	return(false);
 }
 
-// FUNCTION: 0x006E5610
+// FUNCTION: GAMEMD 0x006E5610
 void TagClass::Detach(AbstractClass const * target, bool all)
 {
 
@@ -341,7 +357,7 @@ void TagClass::Detach(AbstractClass const * target, bool all)
 	}
 }
 
-// FUNCTION: 0x006E56A0
+// FUNCTION: GAMEMD 0x006E56A0
 HRESULT STDMETHODCALLTYPE TagClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -349,7 +365,7 @@ HRESULT STDMETHODCALLTYPE TagClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x006E56E0
+// FUNCTION: GAMEMD 0x006E56E0
 void TagClass::Compute_CRC(CRCEngine & crc) const
 {
 	BASECLASS::Compute_CRC(crc);
@@ -360,7 +376,7 @@ void TagClass::Compute_CRC(CRCEngine & crc) const
 	crc(IsToDie);
 }
 
-// FUNCTION: 0x006E5730
+// FUNCTION: GAMEMD 0x006E5730
 HRESULT STDMETHODCALLTYPE TagClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -375,7 +391,7 @@ HRESULT STDMETHODCALLTYPE TagClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x006E57A0
+// FUNCTION: GAMEMD 0x006E57A0
 HRESULT STDMETHODCALLTYPE TagClass::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -385,7 +401,7 @@ HRESULT STDMETHODCALLTYPE TagClass::Save(IStream * stream, BOOL cleardirty)
 	return(result);
 }
 
-// FUNCTION: 0x006E57C0
+// FUNCTION: GAMEMD 0x006E57C0
 bool TagClass::Is_To_Inherit(void) const
 {
 	TriggerClass *trigger = Trigger;
@@ -398,7 +414,7 @@ bool TagClass::Is_To_Inherit(void) const
 	return(false);
 }
 
-// FUNCTION: 0x006E57F0
+// FUNCTION: GAMEMD 0x006E57F0
 void TagClass::All_Timer_Global_Reset(int global)
 {
 	for (int index = 0; index < Tags.Count(); index++) {
@@ -406,7 +422,7 @@ void TagClass::All_Timer_Global_Reset(int global)
 	}
 }
 
-// FUNCTION: 0x006E5820
+// FUNCTION: GAMEMD 0x006E5820
 void TagClass::All_Timer_Local_Reset(int local)
 {
 	for (int index = 0; index < Tags.Count(); index++) {
@@ -414,7 +430,7 @@ void TagClass::All_Timer_Local_Reset(int local)
 	}
 }
 
-// FUNCTION: 0x006E5850
+// FUNCTION: GAMEMD 0x006E5850
 bool TagClass::Is_One_Of_A_Kind(void)
 {
 	for (int i = 0; i < Tags.Count(); i++) {
@@ -426,41 +442,54 @@ bool TagClass::Is_One_Of_A_Kind(void)
 	return(true);
 }
 
-// FUNCTION: 0x006E5890 TagClass::Fetch_Object_Size
-// FUNCTION: 0x006E58A0 TagClass::Fetch_RTTI
-// FUNCTION: 0x006E58B0 TagClass::~TagClass
+// FUNCTION: GAMEMD 0x006E5890
+// TagClass::Fetch_Object_Size
+// FUNCTION: GAMEMD 0x006E58A0
+// TagClass::Fetch_RTTI
+// SYNTHETIC: GAMEMD 0x006E58B0
+// ??_GTagClass@@UAEPAXI@Z
 
-// FUNCTION: 0x006E58D0 $E110
+// SYNTHETIC: GAMEMD 0x006E58D0 SYMBOL
+// _$E110
 double DAT_00B0E7B8 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x006E5900 $E113
+// SYNTHETIC: GAMEMD 0x006E5900 SYMBOL
+// _$E113
 double DAT_00B0E808 = DAT_00B0E7B8 / DAT_007F4540;
 
-// FUNCTION: 0x006E5920 $E116
+// SYNTHETIC: GAMEMD 0x006E5920 SYMBOL
+// _$E116
 double DAT_00B0E7F0 = DAT_007E1718 / DAT_00B0E808;
 
-// FUNCTION: 0x006E5940 $E119
+// SYNTHETIC: GAMEMD 0x006E5940 SYMBOL
+// _$E119
 double DAT_00B0E7E8 = DAT_007E1720 * DAT_007F4548;
 
-// FUNCTION: 0x006E5960 $E122
+// SYNTHETIC: GAMEMD 0x006E5960 SYMBOL
+// _$E122
 double DAT_00B0E7C0 = DAT_007E1728 * DAT_007F4548;
 
-// FUNCTION: 0x006E5980 $E125
+// SYNTHETIC: GAMEMD 0x006E5980 SYMBOL
+// _$E125
 double DAT_00B0E798 = DAT_007E1730 * DAT_007F4548;
 
-// FUNCTION: 0x006E59A0 $E128
+// SYNTHETIC: GAMEMD 0x006E59A0 SYMBOL
+// _$E128
 int DAT_00B0E810 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B0E798 - DAT_00B0E7C0) * DAT_00B0E7B8));
 
 extern double __cdecl FUN_004CADE0(double);
 extern const double DAT_007E1740;
 
-// FUNCTION: 0x006E59E0 $E131
+// SYNTHETIC: GAMEMD 0x006E59E0 SYMBOL
+// _$E131
 double DAT_00B0E7C8 = FUN_004CADE0(DAT_00B0E810 * DAT_007E1740);
 
-// FUNCTION: 0x006E5A10 $E134
+// SYNTHETIC: GAMEMD 0x006E5A10 SYMBOL
+// _$E134
 double DAT_00B0E7E0 = FUN_004CADE0((DAT_00B0E810 * 2) / DAT_00B0E7B8);
 
-// FUNCTION: 0x006E5A40 $E137
+// SYNTHETIC: GAMEMD 0x006E5A40 SYMBOL
+// _$E137
 int DAT_00B0E804 = (int)(DAT_00B0E810 * 4 + DAT_007E1738);
 
 struct TagZero2S { short a, b; TagZero2S() : a(0), b(0) {} };
@@ -468,14 +497,18 @@ struct TagZero3I { int a, b, c; TagZero3I() : a(0), b(0), c(0) {} };
 struct TagInit128 { int a, b, c; TagInit128() { c = 0; a = 128; b = 128; } };
 struct TagZero4I { int a, b, c, d; TagZero4I() : a(0), b(0), c(0), d(0) {} };
 
-// FUNCTION: 0x006E5A70 $E140
+// SYNTHETIC: GAMEMD 0x006E5A70 SYMBOL
+// _$E140
 TagZero2S DAT_00B0E7B0;
 
-// FUNCTION: 0x006E5A80 $E143
+// SYNTHETIC: GAMEMD 0x006E5A80 SYMBOL
+// _$E143
 TagZero3I DAT_00B0E7D0;
 
-// FUNCTION: 0x006E5AA0 $E146
+// SYNTHETIC: GAMEMD 0x006E5AA0 SYMBOL
+// _$E146
 TagInit128 DAT_00B0E7F8;
 
-// FUNCTION: 0x006E5AC0 $E149
+// SYNTHETIC: GAMEMD 0x006E5AC0 SYMBOL
+// _$E149
 TagZero4I DAT_00B0E7A0;

@@ -41,23 +41,40 @@
 #include "vector.h"
 #include "zbuffer.h"
 
-// FUNCTION: 0x00543C60 $E2
-// FUNCTION: 0x00543C90 $E5
-// FUNCTION: 0x00543CB0 $E8
-// FUNCTION: 0x00543CD0 $E11
-// FUNCTION: 0x00543CF0 $E14
-// FUNCTION: 0x00543D10 $E17
-// FUNCTION: 0x00543D30 $E20
-// FUNCTION: 0x00543D70 $E23
-// FUNCTION: 0x00543DA0 $E26
-// FUNCTION: 0x00543DD0 $E29
-// FUNCTION: 0x00543E00 $E32
-// FUNCTION: 0x00543E10 $E35
-// FUNCTION: 0x00543E30 $E38
-// FUNCTION: 0x00543E50 $E196
-// FUNCTION: 0x00543E70 $E202
-// FUNCTION: 0x00543EB0 $E199
-// FUNCTION: 0x00544690 $E205
+// SYNTHETIC: GAMEMD 0x00543C60 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x00543C90 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x00543CB0 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x00543CD0 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x00543CF0 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x00543D10 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x00543D30 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x00543D70 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x00543DA0 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x00543DD0 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x00543E00 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x00543E10 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x00543E30 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x00543E50 SYMBOL
+// _$E196
+// SYNTHETIC: GAMEMD 0x00543E70 SYMBOL
+// _$E202
+// SYNTHETIC: GAMEMD 0x00543EB0 SYMBOL
+// _$E199
+// SYNTHETIC: GAMEMD 0x00544690 SYMBOL
+// _$E205
 
 enum {
 	ISO_WIDTH = 48,
@@ -98,7 +115,7 @@ ShadowCasterInfo ShadowCasterSlopeInfo[10] = {
 	ShadowCasterInfo(),
 };
 
-// FUNCTION: 0x005447C0
+// FUNCTION: GAMEMD 0x005447C0
 IsometricTileTypeClass::IsometricTileTypeClass(IsometricTileType type, int unknown1, unsigned char unknown2, char const * ininame, bool skip_registration) :
 	BASECLASS(ininame),
 	HeapID(type),
@@ -144,13 +161,13 @@ IsometricTileTypeClass::IsometricTileTypeClass(IsometricTileType type, int unkno
 	IsFootprint = false;
 }
 
-// FUNCTION: 0x00544A00
+// FUNCTION: GAMEMD 0x00544A00
 IsometricTileTypeClass::IsometricTileTypeClass(NoInitClass const & x) :
 	BASECLASS(x)
 {
 }
 
-// FUNCTION: 0x00544A70
+// FUNCTION: GAMEMD 0x00544A70
 IsometricTileTypeClass::~IsometricTileTypeClass(void)
 {
 	Detach_This_From_All(this, true);
@@ -173,7 +190,7 @@ IsometricTileTypeClass::~IsometricTileTypeClass(void)
 	}
 }
 
-// FUNCTION: 0x00544BE0
+// FUNCTION: GAMEMD 0x00544BE0
 LandType IsometricTileTypeClass::Land_Type(int tile) const
 {
 	IsoTileSet const * tileset = (IsoTileSet const *)Get_Image_Data();
@@ -206,7 +223,7 @@ LandType IsometricTileTypeClass::Land_Type(int tile) const
 	return(LAND_CLEAR);
 }
 
-// FUNCTION: 0x00544C20
+// FUNCTION: GAMEMD 0x00544C20
 bool IsometricTileTypeClass::Is_Tile_Index_Valid(int tile, bool load)
 {
 	if (load) {
@@ -220,7 +237,7 @@ bool IsometricTileTypeClass::Is_Tile_Index_Valid(int tile, bool load)
 	return(false);
 }
 
-// FUNCTION: 0x00544C80
+// FUNCTION: GAMEMD 0x00544C80
 bool IsometricTileTypeClass::Load_Tile_Image(void)
 {
 	if (ImageData == NULL && IsFileLoaded) {
@@ -229,7 +246,7 @@ bool IsometricTileTypeClass::Load_Tile_Image(void)
 	return(ImageData != NULL);
 }
 
-// FUNCTION: 0x00544CB0
+// FUNCTION: GAMEMD 0x00544CB0
 void const * IsometricTileTypeClass::Get_Image_Data(void) const
 {
 	void const * data = BASECLASS::Get_Image_Data();
@@ -240,7 +257,7 @@ void const * IsometricTileTypeClass::Get_Image_Data(void) const
 	return(data);
 }
 
-// FUNCTION: 0x00544CE0
+// FUNCTION: GAMEMD 0x00544CE0
 IsometricTileType IsometricTileTypeClass::From_Name(char const * name)
 {
 	if (name != NULL) {
@@ -253,7 +270,7 @@ IsometricTileType IsometricTileTypeClass::From_Name(char const * name)
 	return(ISOTILE_NONE);
 }
 
-// FUNCTION: 0x00544D30
+// FUNCTION: GAMEMD 0x00544D30
 Cell const * IsometricTileTypeClass::Occupy_List(bool placement) const
 {
 	static Cell _occupy[13*8+5+11];
@@ -273,9 +290,10 @@ Cell const * IsometricTileTypeClass::Occupy_List(bool placement) const
 	return((Cell const *)&_occupy[0]);
 }
 
-// FUNCTION: 0x00544DF0 $E208
+// SYNTHETIC: GAMEMD 0x00544DF0 SYMBOL
+// _$E208
 
-// FUNCTION: 0x00544E00
+// FUNCTION: GAMEMD 0x00544E00
 IsometricTileTypeClass * IsometricTileTypeClass::Next_Tile_From_Set(int index)
 {
 	int num = NumTileTypesInSet;
@@ -295,7 +313,7 @@ IsometricTileTypeClass * IsometricTileTypeClass::Next_Tile_From_Set(int index)
 	return(next);
 }
 
-// FUNCTION: 0x00544E30
+// FUNCTION: GAMEMD 0x00544E30
 IsometricTileType IsometricTileTypeClass::Fixup_Tile_Type(IsometricTileType current_type)
 {
 	IsometricTileType new_type = current_type;
@@ -313,7 +331,7 @@ IsometricTileType IsometricTileTypeClass::Fixup_Tile_Type(IsometricTileType curr
 	return(new_type);
 }
 
-// FUNCTION: 0x00544E70
+// FUNCTION: GAMEMD 0x00544E70
 LightConvertClass * IsometricTileTypeClass::Find_Or_Make_Drawer(int r, int g, int b)
 {
 	LightConvertClass * drawer;
@@ -345,13 +363,13 @@ LightConvertClass * IsometricTileTypeClass::Find_Or_Make_Drawer(int r, int g, in
 	return(drawer);
 }
 
-// FUNCTION: 0x00544FF0
+// FUNCTION: GAMEMD 0x00544FF0
 bool IsometricTileTypeClass::Free_Unused_Drawers(int time_budget_ms, bool force)
 {
 	return(false);
 }
 
-// FUNCTION: 0x00545000
+// FUNCTION: GAMEMD 0x00545000
 void IsometricTileTypeClass::Init_Drawers(void)
 {
 	for (int i = 0; i < TileDrawers.Count(); i++) {
@@ -374,7 +392,7 @@ void IsometricTileTypeClass::Init_Drawers(void)
 	}
 }
 
-// FUNCTION: 0x005471F0
+// FUNCTION: GAMEMD 0x005471F0
 bool IsometricTileTypeClass::Is_Randomized(int tile) const
 {
 	IsoTileSet const * tileset = (IsoTileSet const *)Get_Image_Data();
@@ -388,7 +406,7 @@ bool IsometricTileTypeClass::Is_Randomized(int tile) const
 	return(0);
 }
 
-// FUNCTION: 0x00546DA0
+// FUNCTION: GAMEMD 0x00546DA0
 void IsometricTileTypeClass::Load_Tiles(bool skipiteration, bool isrand)
 {
 	CDTimerClass<SystemTimerClass> timer = 0;
@@ -459,7 +477,7 @@ void IsometricTileTypeClass::Load_Tiles(bool skipiteration, bool isrand)
 	DebugString("Loaded %d isometric tiles consuming %d Kb\n", tile_count, bytes / 1024);
 }
 
-// FUNCTION: 0x00547020
+// FUNCTION: GAMEMD 0x00547020
 int IsometricTileTypeClass::Load_Tile_Data(void)
 {
 	CCFileClass file(Filename);
@@ -496,7 +514,7 @@ int IsometricTileTypeClass::Load_Tile_Data(void)
 	return(size);
 }
 
-// FUNCTION: 0x00547110
+// FUNCTION: GAMEMD 0x00547110
 void IsometricTileTypeClass::Clear_Use_Counts(void)
 {
 	IsometricTileTypeClass * t;
@@ -507,7 +525,7 @@ void IsometricTileTypeClass::Clear_Use_Counts(void)
 	}
 }
 
-// FUNCTION: 0x00547150
+// FUNCTION: GAMEMD 0x00547150
 bool IsometricTileTypeClass::Get_Tile_Pixel_Dimensions(int tile, int & width, int & height)
 {
 	IsoTileSet const * tileset = (IsoTileSet const *)Get_Image_Data();
@@ -525,7 +543,7 @@ bool IsometricTileTypeClass::Get_Tile_Pixel_Dimensions(int tile, int & width, in
 	return(false);
 }
 
-// FUNCTION: 0x005471B0
+// FUNCTION: GAMEMD 0x005471B0
 int IsometricTileTypeClass::Ramp_Type(int tile) const
 {
 	IsoTileSet const * tileset = (IsoTileSet const *)Get_Image_Data();
@@ -539,7 +557,7 @@ int IsometricTileTypeClass::Ramp_Type(int tile) const
 	return(0);
 }
 
-// FUNCTION: 0x00549830
+// FUNCTION: GAMEMD 0x00549830
 bool IsometricTileTypeClass::Get_Tile_Image(int tilenum, unsigned char **buffer, int width, int height)
 {
 	#define __ "\x20"
@@ -660,7 +678,7 @@ bool IsometricTileTypeClass::Get_Tile_Image(int tilenum, unsigned char **buffer,
 	return(true);
 }
 
-// FUNCTION: 0x00549A00
+// FUNCTION: GAMEMD 0x00549A00
 void World_To_Screen(int x, int y, int & xx, int & yy)
 {
 	xx = x * 60 / 2;
@@ -669,7 +687,7 @@ void World_To_Screen(int x, int y, int & xx, int & yy)
 	yy += y * 30 / 2;
 }
 
-// FUNCTION: 0x00549A60
+// FUNCTION: GAMEMD 0x00549A60
 int IsometricTileTypeClass::Get_Y_Offset(int tile)
 {
 	IsoTileSet const * tileset = (IsoTileSet const *)Get_Image_Data();
@@ -685,7 +703,7 @@ int IsometricTileTypeClass::Get_Y_Offset(int tile)
 	return(0);
 }
 
-// FUNCTION: 0x00549AA0
+// FUNCTION: GAMEMD 0x00549AA0
 bool IsometricTileTypeClass::Create_And_Place(Cell const & cell, HouseClass * house) const
 {
 	if (new IsometricTileClass(HeapID, cell)) {
@@ -694,14 +712,14 @@ bool IsometricTileTypeClass::Create_And_Place(Cell const & cell, HouseClass * ho
 	return(false);
 }
 
-// FUNCTION: 0x00549AE0
+// FUNCTION: GAMEMD 0x00549AE0
 ObjectClass * IsometricTileTypeClass::Create_One_Of(HouseClass * house) const
 {
 	((IsometricTileTypeClass *)this)->Load_Tile_Image();
 	return(new IsometricTileClass(HeapID, CELL_NONE));
 }
 
-// FUNCTION: 0x00549B30
+// FUNCTION: GAMEMD 0x00549B30
 void IsometricTileTypeClass::Clear_Z_Shapes(void)
 {
 	CellShadowShapes = NULL;
@@ -711,13 +729,13 @@ void IsometricTileTypeClass::Clear_Z_Shapes(void)
 	SlopeZShapes[3] = NULL;
 }
 
-// FUNCTION: 0x00549B50
+// FUNCTION: GAMEMD 0x00549B50
 Coord const IsometricTileTypeClass::Coord_Fixup(Coord const & coord) const
 {
 	return(coord);
 }
 
-// FUNCTION: 0x00549B70
+// FUNCTION: GAMEMD 0x00549B70
 void IsometricTileTypeClass::Compute_CRC(CRCEngine & crc) const
 {
 	BASECLASS::Compute_CRC(crc);
@@ -742,7 +760,7 @@ void IsometricTileTypeClass::Compute_CRC(CRCEngine & crc) const
 	crc(NumTileTypesInSet);
 }
 
-// FUNCTION: 0x00549C80
+// FUNCTION: GAMEMD 0x00549C80
 HRESULT STDMETHODCALLTYPE IsometricTileTypeClass::Load(IStream * stream)
 {
 	int i;
@@ -766,7 +784,7 @@ HRESULT STDMETHODCALLTYPE IsometricTileTypeClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x00549D70
+// FUNCTION: GAMEMD 0x00549D70
 HRESULT STDMETHODCALLTYPE IsometricTileTypeClass::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -776,7 +794,7 @@ HRESULT STDMETHODCALLTYPE IsometricTileTypeClass::Save(IStream * stream, BOOL cl
 	return(result);
 }
 
-// FUNCTION: 0x00549D90
+// FUNCTION: GAMEMD 0x00549D90
 HRESULT STDMETHODCALLTYPE IsometricTileTypeClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -784,7 +802,7 @@ HRESULT STDMETHODCALLTYPE IsometricTileTypeClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x00549DD0
+// FUNCTION: GAMEMD 0x00549DD0
 void IsometricTileTypeClass::Detach(AbstractClass const * target, bool all)
 {
 	if (NextTileTypeInSet == target) {
@@ -796,13 +814,13 @@ void IsometricTileTypeClass::Detach(AbstractClass const * target, bool all)
 	}
 }
 
-// FUNCTION: 0x00549E20
+// FUNCTION: GAMEMD 0x00549E20
 unsigned short IsometricTileTypeClass::Preview_Tile_Color(int tile, int level, bool use_high_color)
 {
 	return(PreviewTiles[tile][(use_high_color ? 1 : 0) + level * 2]);
 }
 
-// FUNCTION: 0x00549E90
+// FUNCTION: GAMEMD 0x00549E90
 void IsometricTileTypeClass::Build_Preview_Tiles(void)
 {
 	int i;
@@ -853,68 +871,97 @@ void IsometricTileTypeClass::Build_Preview_Tiles(void)
 	}
 }
 
-// FUNCTION: 0x0054A120
+// FUNCTION: GAMEMD 0x0054A120
 ShadowCasterInfo::ShadowCasterInfo(int frame, int index, int x, int y) : Frame(frame), Index(index), XOffset(x), YOffset(y)
 {
 }
 
-// FUNCTION: 0x0054A140 IsometricTileTypeClass::Fetch_RTTI
+// FUNCTION: GAMEMD 0x0054A140
+// IsometricTileTypeClass::Fetch_RTTI
 
-// FUNCTION: 0x0054A150 IsometricTileTypeClass::Fetch_Object_Size
+// FUNCTION: GAMEMD 0x0054A150
+// IsometricTileTypeClass::Fetch_Object_Size
 
-// FUNCTION: 0x0054A160 IsometricTileTypeClass::Fetch_Heap_ID
+// FUNCTION: GAMEMD 0x0054A160
+// IsometricTileTypeClass::Fetch_Heap_ID
 
-// FUNCTION: 0x0054A170 IsometricTileTypeClass::~IsometricTileTypeClass
+// SYNTHETIC: GAMEMD 0x0054A170
+// ??_GIsometricTileTypeClass@@UAEPAXI@Z
 
-// FUNCTION: 0x0054A190 ?$DynamicVectorClass@PAUTileInsertType@IsometricTileTypeClass@@::Clear
+// TEMPLATE: GAMEMD 0x0054A190
+// ?Clear@?$DynamicVectorClass@PAUTileInsertType@IsometricTileTypeClass@@@@UAEXXZ
 
-// FUNCTION: 0x0054A1C0 ?$DynamicVectorClass@PAUTileInsertType@IsometricTileTypeClass@@::ID
+// TEMPLATE: GAMEMD 0x0054A1C0
+// ?ID@?$DynamicVectorClass@PAUTileInsertType@IsometricTileTypeClass@@@@UAEHPBQAUTileInsertType@IsometricTileTypeClass@@@Z
 
-// FUNCTION: 0x0054A1E0 ?$VectorClass@PAUTileInsertType@IsometricTileTypeClass@@::GetItem
+// TEMPLATE: GAMEMD 0x0054A1E0
+// ?GetItem@?$VectorClass@PAUTileInsertType@IsometricTileTypeClass@@@@UBEPAUTileInsertType@IsometricTileTypeClass@@H@Z
 
-// FUNCTION: 0x0054A1F0 ?$DynamicVectorClass@PAG::Clear
+// TEMPLATE: GAMEMD 0x0054A1F0
+// ?Clear@?$DynamicVectorClass@PAG@@UAEXXZ
 
-// FUNCTION: 0x0054A220 ?$DynamicVectorClass@PAG::ID
+// TEMPLATE: GAMEMD 0x0054A220
+// ?ID@?$DynamicVectorClass@PAG@@UAEHPBQAG@Z
 
-// FUNCTION: 0x0054A240 ?$VectorClass@PAG::GetItem
+// TEMPLATE: GAMEMD 0x0054A240
+// ?GetItem@?$VectorClass@PAG@@UBEPAGH@Z
 
-// FUNCTION: 0x0054A250 ?$VectorClass@PAUTileInsertType@IsometricTileTypeClass@@::operator==
+// TEMPLATE: GAMEMD 0x0054A250
+// ??8?$VectorClass@PAUTileInsertType@IsometricTileTypeClass@@@@UBE_NABV0@@Z
 
-// FUNCTION: 0x0054A290 ?$VectorClass@PAUTileInsertType@IsometricTileTypeClass@@::Resize
+// TEMPLATE: GAMEMD 0x0054A290
+// ?Resize@?$VectorClass@PAUTileInsertType@IsometricTileTypeClass@@@@UAE_NHPBQAUTileInsertType@IsometricTileTypeClass@@@Z
 
-// FUNCTION: 0x0054A340 ?$VectorClass@PAUTileInsertType@IsometricTileTypeClass@@::Clear
+// TEMPLATE: GAMEMD 0x0054A340
+// ?Clear@?$VectorClass@PAUTileInsertType@IsometricTileTypeClass@@@@UAEXXZ
 
-// FUNCTION: 0x0054A370 ?$VectorClass@PAUTileInsertType@IsometricTileTypeClass@@::ID
+// TEMPLATE: GAMEMD 0x0054A370
+// ?ID@?$VectorClass@PAUTileInsertType@IsometricTileTypeClass@@@@UAEHABQAUTileInsertType@IsometricTileTypeClass@@@Z
 
-// FUNCTION: 0x0054A3B0 ?$VectorClass@PAUTileInsertType@IsometricTileTypeClass@@::ID
+// TEMPLATE: GAMEMD 0x0054A3B0
+// ?ID@?$VectorClass@PAUTileInsertType@IsometricTileTypeClass@@@@UAEHPBQAUTileInsertType@IsometricTileTypeClass@@@Z
 
-// FUNCTION: 0x0054A3D0 ?$DynamicVectorClass@PAUTileInsertType@IsometricTileTypeClass@@::Resize
+// TEMPLATE: GAMEMD 0x0054A3D0
+// ?Resize@?$DynamicVectorClass@PAUTileInsertType@IsometricTileTypeClass@@@@UAE_NHPBQAUTileInsertType@IsometricTileTypeClass@@@Z
 
-// FUNCTION: 0x0054A480 ?$DynamicVectorClass@PAUTileInsertType@IsometricTileTypeClass@@::ID
+// TEMPLATE: GAMEMD 0x0054A480
+// ?ID@?$DynamicVectorClass@PAUTileInsertType@IsometricTileTypeClass@@@@UAEHABQAUTileInsertType@IsometricTileTypeClass@@@Z
 
-// FUNCTION: 0x0054A4B0 ?$VectorClass@PAG::operator==
+// TEMPLATE: GAMEMD 0x0054A4B0
+// ??8?$VectorClass@PAG@@UBE_NABV0@@Z
 
-// FUNCTION: 0x0054A4F0 ?$VectorClass@PAG::Resize
+// TEMPLATE: GAMEMD 0x0054A4F0
+// ?Resize@?$VectorClass@PAG@@UAE_NHPBQAG@Z
 
-// FUNCTION: 0x0054A5A0 ?$VectorClass@PAG::Clear
+// TEMPLATE: GAMEMD 0x0054A5A0
+// ?Clear@?$VectorClass@PAG@@UAEXXZ
 
-// FUNCTION: 0x0054A5D0 ?$VectorClass@PAG::ID
+// TEMPLATE: GAMEMD 0x0054A5D0
+// ?ID@?$VectorClass@PAG@@UAEHABQAG@Z
 
-// FUNCTION: 0x0054A610 ?$VectorClass@PAG::ID
+// TEMPLATE: GAMEMD 0x0054A610
+// ?ID@?$VectorClass@PAG@@UAEHPBQAG@Z
 
-// FUNCTION: 0x0054A630 ?$DynamicVectorClass@PAG::Resize
+// TEMPLATE: GAMEMD 0x0054A630
+// ?Resize@?$DynamicVectorClass@PAG@@UAE_NHPBQAG@Z
 
-// FUNCTION: 0x0054A6E0 ?$DynamicVectorClass@PAG::ID
+// TEMPLATE: GAMEMD 0x0054A6E0
+// ?ID@?$DynamicVectorClass@PAG@@UAEHABQAG@Z
 
-// FUNCTION: 0x0054A710 ?$DynamicVectorClass@PAG::~?$DynamicVectorClass@PAG
+// SYNTHETIC: GAMEMD 0x0054A710
+// ??_G?$DynamicVectorClass@PAG@@UAEPAXI@Z
 
-// FUNCTION: 0x0054A760 ?$VectorClass@PAG::~?$VectorClass@PAG
+// SYNTHETIC: GAMEMD 0x0054A760
+// ??_G?$VectorClass@PAG@@UAEPAXI@Z
 
-// FUNCTION: 0x0054A7B0 ?$DynamicVectorClass@PAUTileInsertType@IsometricTileTypeClass@@::~?$DynamicVectorClass@PAUTileInsertType@IsometricTileTypeClass@@
+// SYNTHETIC: GAMEMD 0x0054A7B0
+// ??_G?$DynamicVectorClass@PAUTileInsertType@IsometricTileTypeClass@@@@UAEPAXI@Z
 
-// FUNCTION: 0x0054A800 ?$VectorClass@PAUTileInsertType@IsometricTileTypeClass@@::~?$VectorClass@PAUTileInsertType@IsometricTileTypeClass@@
+// SYNTHETIC: GAMEMD 0x0054A800
+// ??_G?$VectorClass@PAUTileInsertType@IsometricTileTypeClass@@@@UAEPAXI@Z
 
-// FUNCTION: 0x0054A850 ?$VectorClass@PAG::?$VectorClass@PAG
+// TEMPLATE: GAMEMD 0x0054A850
+// ??0?$VectorClass@PAG@@QAE@HPBQAG@Z
 
 struct IsoZeroQuad {
 	int A;
@@ -927,4 +974,5 @@ struct IsoZeroQuad {
 
 IsoZeroQuad IsoZeroQuadInstance;
 
-// FUNCTION: 0x0054A8A0 $E210
+// SYNTHETIC: GAMEMD 0x0054A8A0 SYMBOL
+// _$E210

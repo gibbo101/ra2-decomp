@@ -38,46 +38,59 @@ extern const double DAT_007E1740;
 extern const double DAT_007F69C0;
 extern const double DAT_007F69C8;
 
-// FUNCTION: 0x0075A8A0 $E96
+// SYNTHETIC: GAMEMD 0x0075A8A0 SYMBOL
+// _$E96
 double DAT_00B45BD0 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x0075A8D0 $E99
+// SYNTHETIC: GAMEMD 0x0075A8D0 SYMBOL
+// _$E99
 double DAT_00B45C20 = DAT_00B45BD0 / DAT_007F69C0;
 
-// FUNCTION: 0x0075A8F0 $E102
+// SYNTHETIC: GAMEMD 0x0075A8F0 SYMBOL
+// _$E102
 double DAT_00B45C08 = DAT_007E1718 / DAT_00B45C20;
 
-// FUNCTION: 0x0075A910 $E105
+// SYNTHETIC: GAMEMD 0x0075A910 SYMBOL
+// _$E105
 double DAT_00B45C00 = DAT_007E1720 * DAT_007F69C8;
 
-// FUNCTION: 0x0075A930 $E108
+// SYNTHETIC: GAMEMD 0x0075A930 SYMBOL
+// _$E108
 double DAT_00B45BD8 = DAT_007E1728 * DAT_007F69C8;
 
-// FUNCTION: 0x0075A950 $E111
+// SYNTHETIC: GAMEMD 0x0075A950 SYMBOL
+// _$E111
 double DAT_00B45BB0 = DAT_007E1730 * DAT_007F69C8;
 
-// FUNCTION: 0x0075A970 $E114
+// SYNTHETIC: GAMEMD 0x0075A970 SYMBOL
+// _$E114
 int DAT_00B45C28 = (int)(fastmath::tan(DAT_00B45BB0 - DAT_00B45BD8) * DAT_007E1738 * DAT_00B45BD0);
 
-// FUNCTION: 0x0075A9B0 $E117
+// SYNTHETIC: GAMEMD 0x0075A9B0 SYMBOL
+// _$E117
 double DAT_00B45BE0 = fastmath::atan(DAT_00B45C28 * DAT_007E1740);
 
-// FUNCTION: 0x0075A9E0 $E120
+// SYNTHETIC: GAMEMD 0x0075A9E0 SYMBOL
+// _$E120
 double DAT_00B45BF8 = fastmath::atan((DAT_00B45C28 * 2) / DAT_00B45BD0);
 
-// FUNCTION: 0x0075AA10 $E123
+// SYNTHETIC: GAMEMD 0x0075AA10 SYMBOL
+// _$E123
 int DAT_00B45C1C = (int)(DAT_00B45C28 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x0075AA40 $E126
+// SYNTHETIC: GAMEMD 0x0075AA40 SYMBOL
+// _$E126
 Cell DAT_00B45BC8(0, 0);
 
-// FUNCTION: 0x0075AA50 $E129
+// SYNTHETIC: GAMEMD 0x0075AA50 SYMBOL
+// _$E129
 Coord DAT_00B45BE8(0, 0, 0);
 
-// FUNCTION: 0x0075AA70 $E132
+// SYNTHETIC: GAMEMD 0x0075AA70 SYMBOL
+// _$E132
 Coord DAT_00B45C10(128, 128, 0);
 
-// FUNCTION: 0x0075AA90
+// FUNCTION: GAMEMD 0x0075AA90
 WalkLocomotionClass::WalkLocomotionClass(void) :
 	BASECLASS(),
 	DestinationCoord(COORD_NONE),
@@ -88,18 +101,18 @@ WalkLocomotionClass::WalkLocomotionClass(void) :
 {
 }
 
-// FUNCTION: 0x0075AB00
+// FUNCTION: GAMEMD 0x0075AB00
 WalkLocomotionClass::~WalkLocomotionClass(void)
 {
 }
 
-// FUNCTION: 0x0075AB30
+// FUNCTION: GAMEMD 0x0075AB30
 boolean STDMETHODCALLTYPE WalkLocomotionClass::Is_Moving(void)
 {
 	return(IsMoving);
 }
 
-// FUNCTION: 0x0075AB40
+// FUNCTION: GAMEMD 0x0075AB40
 boolean STDMETHODCALLTYPE WalkLocomotionClass::Is_Moving_Now(void)
 {
 	if (Is_Moving() && LinkedTo->Speed > 0 && HeadToCoord != COORD_NONE) {
@@ -108,7 +121,7 @@ boolean STDMETHODCALLTYPE WalkLocomotionClass::Is_Moving_Now(void)
 	return(false);
 }
 
-// FUNCTION: 0x0075ABA0
+// FUNCTION: GAMEMD 0x0075ABA0
 CoordStruct STDMETHODCALLTYPE WalkLocomotionClass::Destination(void)
 {
 	if (Is_Moving()) {
@@ -117,7 +130,7 @@ CoordStruct STDMETHODCALLTYPE WalkLocomotionClass::Destination(void)
 	return(COORD_NONE);
 }
 
-// FUNCTION: 0x0075AC00
+// FUNCTION: GAMEMD 0x0075AC00
 CoordStruct STDMETHODCALLTYPE WalkLocomotionClass::Head_To_Coord(void)
 {
 	if (HeadToCoord != COORD_NONE) {
@@ -126,7 +139,7 @@ CoordStruct STDMETHODCALLTYPE WalkLocomotionClass::Head_To_Coord(void)
 	return(LinkedTo->PositionCoord);
 }
 
-// FUNCTION: 0x0075AC80
+// FUNCTION: GAMEMD 0x0075AC80
 boolean STDMETHODCALLTYPE WalkLocomotionClass::Process(void)
 {
 	IsProcessingMovement = true;
@@ -135,7 +148,7 @@ boolean STDMETHODCALLTYPE WalkLocomotionClass::Process(void)
 	return(Is_Moving());
 }
 
-// FUNCTION: 0x0075ACB0
+// FUNCTION: GAMEMD 0x0075ACB0
 void STDMETHODCALLTYPE WalkLocomotionClass::Move_To(CoordStruct to)
 {
 	if (!LinkedTo->IsUnderEMP() && !LinkedTo->IsBeingWarpedOut() && !LinkedTo->IsWarpingIn()) {
@@ -157,7 +170,7 @@ void STDMETHODCALLTYPE WalkLocomotionClass::Move_To(CoordStruct to)
 	}
 }
 
-// FUNCTION: 0x0075ADA0
+// FUNCTION: GAMEMD 0x0075ADA0
 void STDMETHODCALLTYPE WalkLocomotionClass::Stop_Moving(void)
 {
 	DestinationCoord = COORD_NONE;
@@ -168,13 +181,13 @@ void STDMETHODCALLTYPE WalkLocomotionClass::Stop_Moving(void)
 	}
 }
 
-// FUNCTION: 0x0075AE00
+// FUNCTION: GAMEMD 0x0075AE00
 void STDMETHODCALLTYPE WalkLocomotionClass::Do_Turn(DirStruct dir)
 {
 	LinkedTo->PrimaryFacing.Set(dir);
 }
 
-// FUNCTION: 0x0075AE30
+// FUNCTION: GAMEMD 0x0075AE30
 void STDMETHODCALLTYPE WalkLocomotionClass::Force_Immediate_Destination(CoordStruct coord)
 {
 	bool was_moving = IsMoving;
@@ -193,7 +206,7 @@ static inline FootClass * Cast_Infantry(FootClass * foot)
 	return (!foot) ? NULL : ((foot->Fetch_RTTI() == RTTI_INFANTRY) ? foot : NULL);
 }
 
-// FUNCTION: 0x0075C240
+// FUNCTION: GAMEMD 0x0075C240
 bool WalkLocomotionClass::Mark_Head_To(Coord const & coord)
 {
 	if (HeadToCoord != COORD_NONE) {
@@ -255,7 +268,7 @@ bool WalkLocomotionClass::Mark_Head_To(Coord const & coord)
 	return(false);
 }
 
-// FUNCTION: 0x0075C640
+// FUNCTION: GAMEMD 0x0075C640
 HRESULT STDMETHODCALLTYPE WalkLocomotionClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -263,7 +276,7 @@ HRESULT STDMETHODCALLTYPE WalkLocomotionClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x0075C680
+// FUNCTION: GAMEMD 0x0075C680
 HRESULT STDMETHODCALLTYPE WalkLocomotionClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -280,7 +293,7 @@ HRESULT STDMETHODCALLTYPE WalkLocomotionClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x0075C700
+// FUNCTION: GAMEMD 0x0075C700
 HRESULT STDMETHODCALLTYPE WalkLocomotionClass::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -299,13 +312,13 @@ HRESULT STDMETHODCALLTYPE WalkLocomotionClass::Save(IStream * stream, BOOL clear
 	return(result);
 }
 
-// FUNCTION: 0x0075C7E0
+// FUNCTION: GAMEMD 0x0075C7E0
 LayerType STDMETHODCALLTYPE WalkLocomotionClass::In_Which_Layer(void)
 {
 	return(LAYER_GROUND);
 }
 
-// FUNCTION: 0x0075C7F0
+// FUNCTION: GAMEMD 0x0075C7F0
 HRESULT STDMETHODCALLTYPE WalkLocomotionClass::QueryInterface(REFIID riid, LPVOID * ppvObject)
 {
 	HRESULT result = BASECLASS::QueryInterface(riid, ppvObject);
@@ -324,7 +337,7 @@ HRESULT STDMETHODCALLTYPE WalkLocomotionClass::QueryInterface(REFIID riid, LPVOI
 	return(result);
 }
 
-// FUNCTION: 0x0075C850
+// FUNCTION: GAMEMD 0x0075C850
 HRESULT STDMETHODCALLTYPE WalkLocomotionClass::Begin_Piggyback(ILocomotion * pointer)
 {
 	if (pointer == NULL) {
@@ -337,7 +350,7 @@ HRESULT STDMETHODCALLTYPE WalkLocomotionClass::Begin_Piggyback(ILocomotion * poi
 	return(E_FAIL);
 }
 
-// FUNCTION: 0x0075C8A0
+// FUNCTION: GAMEMD 0x0075C8A0
 HRESULT STDMETHODCALLTYPE WalkLocomotionClass::End_Piggyback(ILocomotion ** pointer)
 {
 	if (pointer == NULL) {
@@ -351,7 +364,7 @@ HRESULT STDMETHODCALLTYPE WalkLocomotionClass::End_Piggyback(ILocomotion ** poin
 	return(S_FALSE);
 }
 
-// FUNCTION: 0x0075C8E0
+// FUNCTION: GAMEMD 0x0075C8E0
 boolean STDMETHODCALLTYPE WalkLocomotionClass::Is_Ok_To_End(void)
 {
 	if (!Is_Moving() && Piggybacker != NULL && !IsProcessingMovement && !LinkedTo->IsAttackedByLocomotor) {
@@ -360,7 +373,7 @@ boolean STDMETHODCALLTYPE WalkLocomotionClass::Is_Ok_To_End(void)
 	return(false);
 }
 
-// FUNCTION: 0x0075C920
+// FUNCTION: GAMEMD 0x0075C920
 HRESULT STDMETHODCALLTYPE WalkLocomotionClass::Piggyback_CLSID(GUID * classid)
 {
 	if (classid == NULL) {
@@ -382,7 +395,7 @@ HRESULT STDMETHODCALLTYPE WalkLocomotionClass::Piggyback_CLSID(GUID * classid)
 	return(ptr->GetClassID(classid));
 }
 
-// FUNCTION: 0x0075CA30
+// FUNCTION: GAMEMD 0x0075CA30
 void STDMETHODCALLTYPE WalkLocomotionClass::Mark_All_Occupation_Bits(int mark)
 {
 	if (mark == MARK_UP) {
@@ -390,7 +403,7 @@ void STDMETHODCALLTYPE WalkLocomotionClass::Mark_All_Occupation_Bits(int mark)
 	}
 }
 
-// FUNCTION: 0x0075CA80
+// FUNCTION: GAMEMD 0x0075CA80
 boolean STDMETHODCALLTYPE WalkLocomotionClass::Is_Moving_Here(CoordStruct to)
 {
 	Coord headto = Head_To_Coord();
@@ -400,39 +413,51 @@ boolean STDMETHODCALLTYPE WalkLocomotionClass::Is_Moving_Here(CoordStruct to)
 	return(false);
 }
 
-// FUNCTION: 0x0075CB20
+// FUNCTION: GAMEMD 0x0075CB20
 boolean STDMETHODCALLTYPE WalkLocomotionClass::Is_Really_Moving_Now(void)
 {
 	return(IsReallyMoving);
 }
 
-// FUNCTION: 0x0075CB30
+// FUNCTION: GAMEMD 0x0075CB30
 void STDMETHODCALLTYPE WalkLocomotionClass::Limbo(void)
 {
 	DestinationCoord = COORD_NONE;
 	HeadToCoord = COORD_NONE;
 }
 
-// FUNCTION: 0x0075CB80 WalkLocomotionClass::AddRef
+// FUNCTION: GAMEMD 0x0075CB80
+// WalkLocomotionClass::AddRef
 
-// FUNCTION: 0x0075CB90 WalkLocomotionClass::Release
+// FUNCTION: GAMEMD 0x0075CB90
+// WalkLocomotionClass::Release
 
-// FUNCTION: 0x0075CBA0 WalkLocomotionClass::Is_Piggybacking
+// FUNCTION: GAMEMD 0x0075CBA0
+// WalkLocomotionClass::Is_Piggybacking
 
-// FUNCTION: 0x0075CBC0 WalkLocomotionClass::Stop_Movement_Animation
+// FUNCTION: GAMEMD 0x0075CBC0
+// WalkLocomotionClass::Stop_Movement_Animation
 
-// FUNCTION: 0x0075CBD0 WalkLocomotionClass::Fetch_Object_Size
+// FUNCTION: GAMEMD 0x0075CBD0
+// WalkLocomotionClass::Fetch_Object_Size
 
-// FUNCTION: 0x0075CBE0 WalkLocomotionClass::~WalkLocomotionClass
+// SYNTHETIC: GAMEMD 0x0075CBE0
+// ??_GWalkLocomotionClass@@UAEPAXI@Z
 
-// FUNCTION: 0x0075CC30 WalkLocomotionClass::QueryInterface
+// FUNCTION: GAMEMD 0x0075CC30
+// WalkLocomotionClass::QueryInterface
 
-// FUNCTION: 0x0075CC40 WalkLocomotionClass::AddRef
+// FUNCTION: GAMEMD 0x0075CC40
+// WalkLocomotionClass::AddRef
 
-// FUNCTION: 0x0075CC50 WalkLocomotionClass::Release
+// FUNCTION: GAMEMD 0x0075CC50
+// WalkLocomotionClass::Release
 
-// FUNCTION: 0x0075CC60 WalkLocomotionClass::QueryInterface
+// FUNCTION: GAMEMD 0x0075CC60
+// WalkLocomotionClass::QueryInterface
 
-// FUNCTION: 0x0075CC70 WalkLocomotionClass::AddRef
+// FUNCTION: GAMEMD 0x0075CC70
+// WalkLocomotionClass::AddRef
 
-// FUNCTION: 0x0075CC80 WalkLocomotionClass::Release
+// FUNCTION: GAMEMD 0x0075CC80
+// WalkLocomotionClass::Release

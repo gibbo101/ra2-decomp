@@ -33,18 +33,18 @@ class MPSpawnHouse
 		Coord FUN_0050DF30(void);
 };
 
-// FUNCTION: 0x005CA630
+// FUNCTION: GAMEMD 0x005CA630
 MPSiegeClass::MPSiegeClass(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex) :
 	MPGameModeClass(title, tooltip, inifile, mapfilter, aiallowed, modeindex)
 {
 }
 
-// FUNCTION: 0x005CA670
+// FUNCTION: GAMEMD 0x005CA670
 MPSiegeClass::~MPSiegeClass(void)
 {
 }
 
-// FUNCTION: 0x005CA680
+// FUNCTION: GAMEMD 0x005CA680
 bool MPSiegeClass::vt_entry_10(void)
 {
 	if (!MPGameModeClass::vt_entry_10()) {
@@ -59,7 +59,7 @@ bool MPSiegeClass::vt_entry_10(void)
 	return(true);
 }
 
-// FUNCTION: 0x005CA6D0
+// FUNCTION: GAMEMD 0x005CA6D0
 bool MPSiegeClass::vt_entry_14(unsigned a)
 {
 	WideWstring * message = (WideWstring *)a;
@@ -98,25 +98,25 @@ bool MPSiegeClass::vt_entry_14(unsigned a)
 	return(true);
 }
 
-// FUNCTION: 0x005CA7D0
+// FUNCTION: GAMEMD 0x005CA7D0
 bool MPSiegeClass::vt_entry_18(void)
 {
 	return(MPGameModeClass::vt_entry_18());
 }
 
-// FUNCTION: 0x005CA7E0
+// FUNCTION: GAMEMD 0x005CA7E0
 bool MPSiegeClass::IsAIAllowed(void)
 {
 	return(false);
 }
 
-// FUNCTION: 0x005CA7F0
+// FUNCTION: GAMEMD 0x005CA7F0
 bool MPSiegeClass::UnfixAlliances(void)
 {
 	return(MPGameModeClass::UnfixAlliances());
 }
 
-// FUNCTION: 0x005CA800
+// FUNCTION: GAMEMD 0x005CA800
 bool MPSiegeClass::StartingPositionsToHouseBaseCells2(bool arg)
 {
 	DynamicVectorClass<Cell> cells = FUN_00688380(arg);
@@ -156,7 +156,7 @@ bool MPSiegeClass::StartingPositionsToHouseBaseCells2(bool arg)
 	return(true);
 }
 
-// FUNCTION: 0x005CA9B0
+// FUNCTION: GAMEMD 0x005CA9B0
 void MPSiegeClass::CreateMPTeams(DynamicVectorClass<MultiplayerTeam *> * teams)
 {
 	teams->Add(new MPObserverTeam);
@@ -164,7 +164,7 @@ void MPSiegeClass::CreateMPTeams(DynamicVectorClass<MultiplayerTeam *> * teams)
 	teams->Add(new MPSiegeAttackerTeam);
 }
 
-// FUNCTION: 0x005CAAC0
+// FUNCTION: GAMEMD 0x005CAAC0
 bool MPSiegeClass::SpawnBaseUnits(HouseClass * house, unsigned unused)
 {
 	int i = 0;
@@ -194,9 +194,10 @@ bool MPSiegeClass::SpawnBaseUnits(HouseClass * house, unsigned unused)
 	return(false);
 }
 
-// FUNCTION: 0x005CABD0 MPSiegeClass::~MPSiegeClass
+// SYNTHETIC: GAMEMD 0x005CABD0
+// ??_GMPSiegeClass@@UAEPAXI@Z
 
-// FUNCTION: 0x005CAC00
+// FUNCTION: GAMEMD 0x005CAC00
 void Clear_Siege_Stats(void)
 {
 	DAT_00ABFA88 = 0;

@@ -44,34 +44,44 @@ extern const double DAT_007E1740;
 extern const double DAT_007EEFC8;
 extern const double DAT_007EEFD0;
 
-// FUNCTION: 0x005F13D0 $E33
+// SYNTHETIC: GAMEMD 0x005F13D0 SYMBOL
+// _$E33
 double DAT_00AC12E0 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x005F1400 $E36
+// SYNTHETIC: GAMEMD 0x005F1400 SYMBOL
+// _$E36
 double DAT_00AC1338 = DAT_00AC12E0 / DAT_007EEFC8;
 
-// FUNCTION: 0x005F1420 $E39
+// SYNTHETIC: GAMEMD 0x005F1420 SYMBOL
+// _$E39
 double DAT_00AC1320 = DAT_007E1718 / DAT_00AC1338;
 
-// FUNCTION: 0x005F1440 $E42
+// SYNTHETIC: GAMEMD 0x005F1440 SYMBOL
+// _$E42
 double DAT_00AC1318 = DAT_007E1720 * DAT_007EEFD0;
 
-// FUNCTION: 0x005F1460 $E45
+// SYNTHETIC: GAMEMD 0x005F1460 SYMBOL
+// _$E45
 double DAT_00AC12F0 = DAT_007E1728 * DAT_007EEFD0;
 
-// FUNCTION: 0x005F1480 $E48
+// SYNTHETIC: GAMEMD 0x005F1480 SYMBOL
+// _$E48
 double DAT_00AC1270 = DAT_007E1730 * DAT_007EEFD0;
 
-// FUNCTION: 0x005F14A0 $E51
+// SYNTHETIC: GAMEMD 0x005F14A0 SYMBOL
+// _$E51
 int DAT_00AC1340 = (int)(FUN_004CAD50(DAT_00AC1270 - DAT_00AC12F0) * DAT_007E1738 * DAT_00AC12E0);
 
-// FUNCTION: 0x005F14E0 $E54
+// SYNTHETIC: GAMEMD 0x005F14E0 SYMBOL
+// _$E54
 double DAT_00AC12F8 = FUN_004CADE0(DAT_00AC1340 * DAT_007E1740);
 
-// FUNCTION: 0x005F1510 $E57
+// SYNTHETIC: GAMEMD 0x005F1510 SYMBOL
+// _$E57
 double DAT_00AC1310 = FUN_004CADE0((DAT_00AC1340 * 2) / DAT_00AC12E0);
 
-// FUNCTION: 0x005F1540 $E60
+// SYNTHETIC: GAMEMD 0x005F1540 SYMBOL
+// _$E60
 int DAT_00AC1334 = (int)(DAT_00AC1340 * 4 + DAT_007E1738);
 
 struct ShortPair {
@@ -84,10 +94,12 @@ struct IntTriple {
 	IntTriple() { A = 0; B = 0; C = 0; }
 };
 
-// FUNCTION: 0x005F1570 $E63
+// SYNTHETIC: GAMEMD 0x005F1570 SYMBOL
+// _$E63
 ShortPair DAT_00AC12D8;
 
-// FUNCTION: 0x005F1580 $E66
+// SYNTHETIC: GAMEMD 0x005F1580 SYMBOL
+// _$E66
 IntTriple DAT_00AC1300;
 
 struct IntTriple128 {
@@ -95,10 +107,11 @@ struct IntTriple128 {
 	IntTriple128() { A = 128; B = 128; C = 0; }
 };
 
-// FUNCTION: 0x005F15A0 $E69
+// SYNTHETIC: GAMEMD 0x005F15A0 SYMBOL
+// _$E69
 IntTriple128 DAT_00AC1328;
 
-// FUNCTION: 0x005F15C0
+// FUNCTION: GAMEMD 0x005F15C0
 NullModemClass::NullModemClass (int numsend, int numreceive, int maxlen,
 	unsigned short magicnum) :
 	BASECLASS(),
@@ -146,7 +159,7 @@ NullModemClass::NullModemClass (int numsend, int numreceive, int maxlen,
 	ModemRegistry = NULL;
 }
 
-// FUNCTION: 0x005F1650
+// FUNCTION: GAMEMD 0x005F1650
 NullModemClass::~NullModemClass (void)
 {
 	if (ModemRegistry != NULL) {
@@ -162,7 +175,7 @@ NullModemClass::~NullModemClass (void)
 	}
 }
 
-// FUNCTION: 0x005F16E0
+// FUNCTION: GAMEMD 0x005F16E0
 int NullModemClass::Init (int port, int irq, char *dev_name, int baud, char parity, int wordlen, int stopbits)
 {
 	DebugString("NullModemClass::Init\n");
@@ -296,13 +309,13 @@ int NullModemClass::Init (int port, int irq, char *dev_name, int baud, char pari
 	return(true);
 }
 
-// FUNCTION: 0x005F1950
+// FUNCTION: GAMEMD 0x005F1950
 int NullModemClass::Num_Connections( void )
 {
 	return(NumConnections);
 }
 
-// FUNCTION: 0x005F1960
+// FUNCTION: GAMEMD 0x005F1960
 int NullModemClass::Delete_Connection( void )
 {
 	if (Connection) {
@@ -330,7 +343,7 @@ int NullModemClass::Delete_Connection( void )
 	return( true );
 }
 
-// FUNCTION: 0x005F19C0
+// FUNCTION: GAMEMD 0x005F19C0
 int NullModemClass::Init_Send_Queue( void )
 {
 	if ( Connection ) {
@@ -340,7 +353,7 @@ int NullModemClass::Init_Send_Queue( void )
 	return(true);
 }
 
-// FUNCTION: 0x005F19E0
+// FUNCTION: GAMEMD 0x005F19E0
 DetectPortType NullModemClass::Detect_Port( SerialSettingsType *settings )
 {
 	static char com_ids[9][5]={
@@ -418,7 +431,7 @@ DetectPortType NullModemClass::Detect_Port( SerialSettingsType *settings )
 	return(PORT_VALID);
 }
 
-// FUNCTION: 0x005F1B70
+// FUNCTION: GAMEMD 0x005F1B70
 void NullModemClass::Shutdown ( void )
 {
 	if (PortHandle != INVALID_HANDLE_VALUE && SerialPort) {
@@ -430,7 +443,7 @@ void NullModemClass::Shutdown ( void )
 	}
 }
 
-// FUNCTION: 0x005F1BC0
+// FUNCTION: GAMEMD 0x005F1BC0
 void NullModemClass::Set_Timing (unsigned int retrydelta,
 	unsigned int maxretries, unsigned int timeout, bool)
 {
@@ -443,7 +456,7 @@ void NullModemClass::Set_Timing (unsigned int retrydelta,
 	Connection->Set_TimeOut (Timeout);
 }
 
-// FUNCTION: 0x005F1BF0
+// FUNCTION: GAMEMD 0x005F1BF0
 int NullModemClass::Send_Message (void *buf, int buflen, int ack_req)
 {
 	int rc;
@@ -459,7 +472,7 @@ int NullModemClass::Send_Message (void *buf, int buflen, int ack_req)
 	return(rc);
 }
 
-// FUNCTION: 0x005F1C30
+// FUNCTION: GAMEMD 0x005F1C30
 int NullModemClass::Get_Message (void *buf, int *buflen)
 {
 	if (NumConnections == 0) {
@@ -468,7 +481,7 @@ int NullModemClass::Get_Message (void *buf, int *buflen)
 	return( Connection->Get_Packet( buf, buflen ) );
 }
 
-// FUNCTION: 0x005F1C60
+// FUNCTION: GAMEMD 0x005F1C60
 int NullModemClass::Service (void)
 {
 	int pos;
@@ -590,7 +603,7 @@ int NullModemClass::Service (void)
 	return(Connection->Service());
 }
 
-// FUNCTION: 0x005F1EA0
+// FUNCTION: GAMEMD 0x005F1EA0
 int NullModemClass::Num_Send(void)
 {
 	if (Connection)
@@ -599,7 +612,7 @@ int NullModemClass::Num_Send(void)
 		return(0);
 }
 
-// FUNCTION: 0x005F1EC0
+// FUNCTION: GAMEMD 0x005F1EC0
 int NullModemClass::Num_Receive(void)
 {
 	if (Connection)
@@ -608,7 +621,7 @@ int NullModemClass::Num_Receive(void)
 		return(0);
 }
 
-// FUNCTION: 0x005F1EE0
+// FUNCTION: GAMEMD 0x005F1EE0
 unsigned int NullModemClass::Response_Time(void)
 {
 	if (Connection)
@@ -617,14 +630,14 @@ unsigned int NullModemClass::Response_Time(void)
 		return(0);
 }
 
-// FUNCTION: 0x005F1F00
+// FUNCTION: GAMEMD 0x005F1F00
 void NullModemClass::Reset_Response_Time(bool zero)
 {
 	if (Connection)
 		Connection->Queue->Reset_Response_Time(true);
 }
 
-// FUNCTION: 0x005F1F20
+// FUNCTION: GAMEMD 0x005F1F20
 void * NullModemClass::Oldest_Send(void)
 {
 	int i;
@@ -646,7 +659,7 @@ void * NullModemClass::Oldest_Send(void)
 	return(buf);
 }
 
-// FUNCTION: 0x005F1F70
+// FUNCTION: GAMEMD 0x005F1F70
 void NullModemClass::Configure_Debug(int, int type_offset, int type_size,
 	char **names, int namestart, int namecount)
 {
@@ -661,7 +674,7 @@ namespace OwnerDraw {
 	HWND Custom_Message_Box(wchar_t const * btn1txt, wchar_t const * btn2txt, bool * cancelled);
 }
 
-// FUNCTION: 0x005F2950
+// FUNCTION: GAMEMD 0x005F2950
 DialStatusType NullModemClass::Dial_Modem(char * string, DialMethodType method, bool reconnect)
 {
 	bool process = true;
@@ -781,7 +794,7 @@ DialStatusType NullModemClass::Dial_Modem(char * string, DialMethodType method, 
 	return( dialstatus );
 }
 
-// FUNCTION: 0x005F2CE0
+// FUNCTION: GAMEMD 0x005F2CE0
 DialStatusType NullModemClass::Answer_Modem( bool reconnect )
 {
 	bool process;
@@ -911,7 +924,7 @@ DialStatusType NullModemClass::Answer_Modem( bool reconnect )
 	return( dialstatus );
 }
 
-// FUNCTION: 0x005F3170
+// FUNCTION: GAMEMD 0x005F3170
 bool NullModemClass::Hangup_Modem( void )
 {
 	int status;
@@ -983,18 +996,18 @@ bool NullModemClass::Hangup_Modem( void )
 	return( true );
 }
 
-// FUNCTION: 0x005F3320
+// FUNCTION: GAMEMD 0x005F3320
 void NullModemClass::Setup_Modem_Echo( void ( *func )( char c) )
 {
 	SerialPort->Set_Echo_Function(func);
 }
 
-// FUNCTION: 0x005F3340
+// FUNCTION: GAMEMD 0x005F3340
 void NullModemClass::Remove_Modem_Echo( void )
 {
 }
 
-// FUNCTION: 0x005F3350
+// FUNCTION: GAMEMD 0x005F3350
 void NullModemClass::Print_EchoBuf( void )
 {
 	for (int i = 0; (unsigned)i < strlen(NullModem.EchoBuf); i++) {
@@ -1008,14 +1021,14 @@ void NullModemClass::Print_EchoBuf( void )
 	}
 }
 
-// FUNCTION: 0x005F33A0
+// FUNCTION: GAMEMD 0x005F33A0
 void NullModemClass::Reset_EchoBuf( void )
 {
 	*EchoBuf = 0;
 	EchoCount = 0;
 }
 
-// FUNCTION: 0x005F33B0
+// FUNCTION: GAMEMD 0x005F33B0
 int NullModemClass::Abort_Modem( PORT * )
 {
 	Call_Back();
@@ -1035,28 +1048,28 @@ int NullModemClass::Abort_Modem( PORT * )
 	return(ModemDialogIsOpen != 0 ? -1000 : 0);
 }
 
-// FUNCTION: 0x005F3400
+// FUNCTION: GAMEMD 0x005F3400
 void NullModemClass::Setup_Abort_Modem( void )
 {
 	SerialPort->Set_Abort_Function((int(*)(void))Abort_Modem);
 	ModemDialogIsOpen = false;
 }
 
-// FUNCTION: 0x005F3420
+// FUNCTION: GAMEMD 0x005F3420
 void NullModemClass::Remove_Abort_Modem( void )
 {
 	SerialPort->Set_Abort_Function(NULL);
 	ModemDialogIsOpen = false;
 }
 
-// FUNCTION: 0x005F3440
+// FUNCTION: GAMEMD 0x005F3440
 int NullModemClass::Change_IRQ_Priority( int irq )
 {
 	irq = irq;
 	return( COMMSUCCESS );
 }
 
-// FUNCTION: 0x005F3450
+// FUNCTION: GAMEMD 0x005F3450
 int NullModemClass::Get_Modem_Status( void )
 {
 	int modemstatus;
@@ -1074,13 +1087,13 @@ int NullModemClass::Get_Modem_Status( void )
 	return( modemstatus );
 }
 
-// FUNCTION: 0x005F34A0
+// FUNCTION: GAMEMD 0x005F34A0
 int NullModemClass::Send_Modem_Command( char const *command, char terminator, char *buffer, int buflen, int delay, int retries )
 {
 	return(SerialPort->Send_Command_To_Modem(command, terminator, buffer, buflen, delay, retries, -1));
 }
 
-// FUNCTION: 0x005F34D0
+// FUNCTION: GAMEMD 0x005F34D0
 int NullModemClass::Verify_And_Convert_To_Int( char *buffer )
 {
 	int value = 0;
@@ -1100,66 +1113,89 @@ int NullModemClass::Verify_And_Convert_To_Int( char *buffer )
 	return( value );
 }
 
-// FUNCTION: 0x005F3520 NullModemClass::Connection_ID
+// FUNCTION: GAMEMD 0x005F3520
+// NullModemClass::Connection_ID
 
-// FUNCTION: 0x005F3530 NullModemClass::Connection_Index
+// FUNCTION: GAMEMD 0x005F3530
+// NullModemClass::Connection_Index
 
-// FUNCTION: 0x005F3540 NullModemClass::Set_External_Timing
+// FUNCTION: GAMEMD 0x005F3540
+// NullModemClass::Set_External_Timing
 
-// FUNCTION: 0x005F3560 NullModemClass::Send_Private_Message
+// FUNCTION: GAMEMD 0x005F3560
+// NullModemClass::Send_Private_Message
 
-// FUNCTION: 0x005F35A0 NullModemClass::Get_Private_Message
+// FUNCTION: GAMEMD 0x005F35A0
+// NullModemClass::Get_Private_Message
 
-// FUNCTION: 0x005F35D0 NullModemClass::Global_Num_Send
+// FUNCTION: GAMEMD 0x005F35D0
+// NullModemClass::Global_Num_Send
 
-// FUNCTION: 0x005F35F0 NullModemClass::Global_Num_Receive
+// FUNCTION: GAMEMD 0x005F35F0
+// NullModemClass::Global_Num_Receive
 
-// FUNCTION: 0x005F3610 NullModemClass::Private_Num_Send
+// FUNCTION: GAMEMD 0x005F3610
+// NullModemClass::Private_Num_Send
 
-// FUNCTION: 0x005F3630 NullModemClass::Private_Num_Receive
+// FUNCTION: GAMEMD 0x005F3630
+// NullModemClass::Private_Num_Receive
 
-// FUNCTION: 0x005F3650 NullModemClass::~NullModemClass
+// SYNTHETIC: GAMEMD 0x005F3650
+// ??_GNullModemClass@@UAEPAXI@Z
 
 extern const double DAT_007EF020;
 extern const double DAT_007EF028;
 
-// FUNCTION: 0x005F36F0 $E72
+// SYNTHETIC: GAMEMD 0x005F36F0 SYMBOL
+// _$E72
 double DAT_00AC1368 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x005F3720 $E75
+// SYNTHETIC: GAMEMD 0x005F3720 SYMBOL
+// _$E75
 double DAT_00AC13C0 = DAT_00AC1368 / DAT_007EF020;
 
-// FUNCTION: 0x005F3740 $E78
+// SYNTHETIC: GAMEMD 0x005F3740 SYMBOL
+// _$E78
 double DAT_00AC13A8 = DAT_007E1718 / DAT_00AC13C0;
 
-// FUNCTION: 0x005F3760 $E81
+// SYNTHETIC: GAMEMD 0x005F3760 SYMBOL
+// _$E81
 double DAT_00AC13A0 = DAT_007E1720 * DAT_007EF028;
 
-// FUNCTION: 0x005F3780 $E84
+// SYNTHETIC: GAMEMD 0x005F3780 SYMBOL
+// _$E84
 double DAT_00AC1370 = DAT_007E1728 * DAT_007EF028;
 
-// FUNCTION: 0x005F37A0 $E87
+// SYNTHETIC: GAMEMD 0x005F37A0 SYMBOL
+// _$E87
 double DAT_00AC1348 = DAT_007E1730 * DAT_007EF028;
 
-// FUNCTION: 0x005F37C0 $E90
+// SYNTHETIC: GAMEMD 0x005F37C0 SYMBOL
+// _$E90
 int DAT_00AC13C8 = (int)(FUN_004CAD50(DAT_00AC1348 - DAT_00AC1370) * DAT_007E1738 * DAT_00AC1368);
 
-// FUNCTION: 0x005F3800 $E93
+// SYNTHETIC: GAMEMD 0x005F3800 SYMBOL
+// _$E93
 double DAT_00AC1378 = FUN_004CADE0(DAT_00AC13C8 * DAT_007E1740);
 
-// FUNCTION: 0x005F3830 $E96
+// SYNTHETIC: GAMEMD 0x005F3830 SYMBOL
+// _$E96
 double DAT_00AC1390 = FUN_004CADE0((DAT_00AC13C8 * 2) / DAT_00AC1368);
 
-// FUNCTION: 0x005F3860 $E99
+// SYNTHETIC: GAMEMD 0x005F3860 SYMBOL
+// _$E99
 int DAT_00AC13BC = (int)(DAT_00AC13C8 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x005F3890 $E102
+// SYNTHETIC: GAMEMD 0x005F3890 SYMBOL
+// _$E102
 ShortPair DAT_00AC1360;
 
-// FUNCTION: 0x005F38A0 $E105
+// SYNTHETIC: GAMEMD 0x005F38A0 SYMBOL
+// _$E105
 IntTriple DAT_00AC1380;
 
-// FUNCTION: 0x005F38C0 $E108
+// SYNTHETIC: GAMEMD 0x005F38C0 SYMBOL
+// _$E108
 IntTriple128 DAT_00AC13B0;
 
 struct IntQuad {
@@ -1167,5 +1203,6 @@ struct IntQuad {
 	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
 };
 
-// FUNCTION: 0x005F38E0 $E111
+// SYNTHETIC: GAMEMD 0x005F38E0 SYMBOL
+// _$E111
 IntQuad DAT_00AC1350;

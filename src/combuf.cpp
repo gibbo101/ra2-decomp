@@ -14,7 +14,7 @@
 #include <cstdio>
 #include <cstring>
 
-// FUNCTION: 0x0048B0E0
+// FUNCTION: GAMEMD 0x0048B0E0
 CommBufferClass::CommBufferClass(int numsend, int numreceive, int maxlen,
 	int extralen)
 {
@@ -54,7 +54,7 @@ CommBufferClass::CommBufferClass(int numsend, int numreceive, int maxlen,
 	Init();
 }
 
-// FUNCTION: 0x0048B1F0
+// FUNCTION: GAMEMD 0x0048B1F0
 CommBufferClass::~CommBufferClass(void)
 {
 	int i;
@@ -80,7 +80,7 @@ CommBufferClass::~CommBufferClass(void)
 	delete [] ReceiveIndex;
 }
 
-// FUNCTION: 0x0048B2A0
+// FUNCTION: GAMEMD 0x0048B2A0
 void CommBufferClass::Init(void)
 {
 	int i;
@@ -128,7 +128,7 @@ void CommBufferClass::Init(void)
 	DebugNameCount = 0;
 }
 
-// FUNCTION: 0x0048B390
+// FUNCTION: GAMEMD 0x0048B390
 void CommBufferClass::Init_Send_Queue(void)
 {
 	int i;
@@ -150,7 +150,7 @@ void CommBufferClass::Init_Send_Queue(void)
 	}
 }
 
-// FUNCTION: 0x0048B410
+// FUNCTION: GAMEMD 0x0048B410
 int CommBufferClass::Queue_Send(void *buf, int buflen, void *extrabuf,
 	int extralen, unsigned short port)
 {
@@ -203,7 +203,7 @@ int CommBufferClass::Queue_Send(void *buf, int buflen, void *extrabuf,
 	return(1);
 }
 
-// FUNCTION: 0x0048B570
+// FUNCTION: GAMEMD 0x0048B570
 int CommBufferClass::UnQueue_Send(void *buf, int *buflen, int index,
 	void *extrabuf, int *extralen, unsigned short *port)
 {
@@ -248,7 +248,7 @@ int CommBufferClass::UnQueue_Send(void *buf, int *buflen, int index,
 	return(1);
 }
 
-// FUNCTION: 0x0048B720
+// FUNCTION: GAMEMD 0x0048B720
 SendQueueType * CommBufferClass::Get_Send(int index)
 {
 	if (SendQueue[SendIndex[index]].IsActive==0) {
@@ -259,7 +259,7 @@ SendQueueType * CommBufferClass::Get_Send(int index)
 	}
 }
 
-// FUNCTION: 0x0048B750
+// FUNCTION: GAMEMD 0x0048B750
 int CommBufferClass::Queue_Receive(void *buf, int buflen, void *extrabuf,
 	int extralen)
 {
@@ -306,7 +306,7 @@ int CommBufferClass::Queue_Receive(void *buf, int buflen, void *extrabuf,
 	return(1);
 }
 
-// FUNCTION: 0x0048B890
+// FUNCTION: GAMEMD 0x0048B890
 int CommBufferClass::UnQueue_Receive(void *buf, int *buflen, int index,
 	void *extrabuf, int *extralen)
 {
@@ -343,7 +343,7 @@ int CommBufferClass::UnQueue_Receive(void *buf, int *buflen, int index,
 	return(1);
 }
 
-// FUNCTION: 0x0048B9E0
+// FUNCTION: GAMEMD 0x0048B9E0
 ReceiveQueueType * CommBufferClass::Get_Receive(int index)
 {
 	if (ReceiveQueue[ReceiveIndex[index]].IsActive==0) {
@@ -354,7 +354,7 @@ ReceiveQueueType * CommBufferClass::Get_Receive(int index)
 	}
 }
 
-// FUNCTION: 0x0048BA10
+// FUNCTION: GAMEMD 0x0048BA10
 void CommBufferClass::Add_Delay(unsigned int delay)
 {
 	int roundoff = 0;
@@ -377,19 +377,19 @@ void CommBufferClass::Add_Delay(unsigned int delay)
 	}
 }
 
-// FUNCTION: 0x0048BA80
+// FUNCTION: GAMEMD 0x0048BA80
 unsigned int CommBufferClass::Avg_Response_Time(void)
 {
 	return(MeanDelay);
 }
 
-// FUNCTION: 0x0048BA90
+// FUNCTION: GAMEMD 0x0048BA90
 unsigned int CommBufferClass::Max_Response_Time(void)
 {
 	return(MaxDelay);
 }
 
-// FUNCTION: 0x0048BAA0
+// FUNCTION: GAMEMD 0x0048BAA0
 void CommBufferClass::Reset_Response_Time(bool zero)
 {
 	if (zero) {
@@ -404,7 +404,7 @@ void CommBufferClass::Reset_Response_Time(bool zero)
 	}
 }
 
-// FUNCTION: 0x0048BAD0
+// FUNCTION: GAMEMD 0x0048BAD0
 void CommBufferClass::Configure_Debug(int type_offset, int type_size,
 	char **names, int namestart, int namecount)
 {
@@ -415,7 +415,9 @@ void CommBufferClass::Configure_Debug(int type_offset, int type_size,
 	DebugNameCount = namecount;
 }
 
-// FUNCTION: 0x0048BB00 CommBufferClass::~CommBufferClass
+// SYNTHETIC: GAMEMD 0x0048BB00
+// ??_GCommBufferClass@@UAEPAXI@Z
 
-// FUNCTION: 0x0048BB20 $E8
+// SYNTHETIC: GAMEMD 0x0048BB20 SYMBOL
+// _$E8
 const Rect RECT_NONE_2(0, 0, 0, 0);

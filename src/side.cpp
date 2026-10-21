@@ -48,7 +48,7 @@ inline void ShipLocomotionClass::Set_Slope(int ramp)
 	}
 }
 
-// FUNCTION: 0x006A0470
+// FUNCTION: GAMEMD 0x006A0470
 bool ShipLocomotionClass::Stop_Driver(void)
 {
 	if (HeadToCoord != COORD_NONE) {
@@ -59,7 +59,7 @@ bool ShipLocomotionClass::Stop_Driver(void)
 	return(false);
 }
 
-// FUNCTION: 0x0069F250
+// FUNCTION: GAMEMD 0x0069F250
 void STDMETHODCALLTYPE ShipLocomotionClass::Force_New_Slope(int ramp)
 {
 	PreviousRamp = ramp;
@@ -67,7 +67,7 @@ void STDMETHODCALLTYPE ShipLocomotionClass::Force_New_Slope(int ramp)
 	RampTimer = 0;
 }
 
-// FUNCTION: 0x0069F290
+// FUNCTION: GAMEMD 0x0069F290
 boolean STDMETHODCALLTYPE ShipLocomotionClass::Is_Moving(void)
 {
 	if (DestinationCoord != COORD_NONE) {
@@ -79,7 +79,7 @@ boolean STDMETHODCALLTYPE ShipLocomotionClass::Is_Moving(void)
 	return(false);
 }
 
-// FUNCTION: 0x0069F330
+// FUNCTION: GAMEMD 0x0069F330
 boolean STDMETHODCALLTYPE ShipLocomotionClass::Is_Moving_Now(void)
 {
 	if (LinkedTo->PrimaryFacing.Is_Rotating()) {
@@ -91,13 +91,13 @@ boolean STDMETHODCALLTYPE ShipLocomotionClass::Is_Moving_Now(void)
 	return(false);
 }
 
-// FUNCTION: 0x0069F3A0
+// FUNCTION: GAMEMD 0x0069F3A0
 CoordStruct STDMETHODCALLTYPE ShipLocomotionClass::Destination(void)
 {
 	return(DestinationCoord);
 }
 
-// FUNCTION: 0x0069F3D0
+// FUNCTION: GAMEMD 0x0069F3D0
 CoordStruct STDMETHODCALLTYPE ShipLocomotionClass::Head_To_Coord(void)
 {
 	if (HeadToCoord != COORD_NONE) {
@@ -106,7 +106,7 @@ CoordStruct STDMETHODCALLTYPE ShipLocomotionClass::Head_To_Coord(void)
 	return(LinkedTo->PositionCoord);
 }
 
-// FUNCTION: 0x0069F450
+// FUNCTION: GAMEMD 0x0069F450
 void STDMETHODCALLTYPE ShipLocomotionClass::Move_To(CoordStruct to)
 {
 	if (!LinkedTo->IsUnderEMP() && !LinkedTo->IsParalyzed() && !LinkedTo->IsBeingWarpedOut() && !LinkedTo->IsWarpingIn()) {
@@ -119,7 +119,7 @@ void STDMETHODCALLTYPE ShipLocomotionClass::Move_To(CoordStruct to)
 	}
 }
 
-// FUNCTION: 0x0069F510
+// FUNCTION: GAMEMD 0x0069F510
 void STDMETHODCALLTYPE ShipLocomotionClass::Stop_Moving(void)
 {
 	if (HeadToCoord != COORD_NONE) {
@@ -143,7 +143,7 @@ void STDMETHODCALLTYPE ShipLocomotionClass::Stop_Moving(void)
 	DestinationCoord = COORD_NONE;
 }
 
-// FUNCTION: 0x0069F5E0
+// FUNCTION: GAMEMD 0x0069F5E0
 BOOL ShipLocomotionClass::Is_Angled(void) const
 {
 	float percent = Get_Slope_Ratio();
@@ -155,7 +155,7 @@ BOOL ShipLocomotionClass::Is_Angled(void) const
 	return(false);
 }
 
-// FUNCTION: 0x0069FB20
+// FUNCTION: GAMEMD 0x0069FB20
 Matrix3DStruct STDMETHODCALLTYPE ShipLocomotionClass::Shadow_Matrix(int *key)
 {
 	if (!Is_Angled() && key) {
@@ -164,13 +164,13 @@ Matrix3DStruct STDMETHODCALLTYPE ShipLocomotionClass::Shadow_Matrix(int *key)
 	return(BASECLASS::Shadow_Matrix(key));
 }
 
-// FUNCTION: 0x0069FBE0
+// FUNCTION: GAMEMD 0x0069FBE0
 void STDMETHODCALLTYPE ShipLocomotionClass::Unlimbo(void)
 {
 	Force_New_Slope(LinkedTo->Get_Cell_Ptr()->Ramp);
 }
 
-// FUNCTION: 0x0069FC10
+// FUNCTION: GAMEMD 0x0069FC10
 boolean STDMETHODCALLTYPE ShipLocomotionClass::Process(void)
 {
 	Set_Slope(LinkedTo->Get_Cell_Ptr()->Ramp);
@@ -250,7 +250,7 @@ boolean STDMETHODCALLTYPE ShipLocomotionClass::Process(void)
 	return(Is_Moving());
 }
 
-// FUNCTION: 0x006A01A0
+// FUNCTION: GAMEMD 0x006A01A0
 void ShipLocomotionClass::Mark_Track(Coord const & headto, MarkType type)
 {
 	if (headto != COORD_NONE) {
@@ -288,7 +288,7 @@ void ShipLocomotionClass::Mark_Track(Coord const & headto, MarkType type)
 	}
 }
 
-// FUNCTION: 0x006A0310
+// FUNCTION: GAMEMD 0x006A0310
 void STDMETHODCALLTYPE ShipLocomotionClass::Force_Track(int track, CoordStruct coord)
 {
 	TrackNumber = track;
@@ -301,7 +301,7 @@ void STDMETHODCALLTYPE ShipLocomotionClass::Force_Track(int track, CoordStruct c
 	}
 }
 
-// FUNCTION: 0x006A04C0
+// FUNCTION: GAMEMD 0x006A04C0
 bool ShipLocomotionClass::Start_Driver(Coord const & headto)
 {
 	Stop_Driver();
@@ -321,18 +321,18 @@ bool ShipLocomotionClass::Start_Driver(Coord const & headto)
 	return(false);
 }
 
-// FUNCTION: 0x006A05C0
+// FUNCTION: GAMEMD 0x006A05C0
 void STDMETHODCALLTYPE ShipLocomotionClass::Do_Turn(DirStruct coord)
 {
 	LinkedTo->PrimaryFacing.Set_Desired(coord);
 }
 
-// FUNCTION: 0x006A3DA0
+// FUNCTION: GAMEMD 0x006A3DA0
 void ShipLocomotionClass::Lay_Track(void)
 {
 }
 
-// FUNCTION: 0x006A3DB0
+// FUNCTION: GAMEMD 0x006A3DB0
 Point2D ShipLocomotionClass::Smooth_Turn(Point2D const & adj, Dir256 & dir)
 {
 	Dir256 workdir = dir;
@@ -365,19 +365,19 @@ Point2D ShipLocomotionClass::Smooth_Turn(Point2D const & adj, Dir256 & dir)
 	return(Point2D(HeadToCoord.X + x, HeadToCoord.Y + y));
 }
 
-// FUNCTION: 0x006A3E30
+// FUNCTION: GAMEMD 0x006A3E30
 bool ShipLocomotionClass::Incoming(Cell cell)
 {
 	return(Map.Try_Open_Gate(LinkedTo, cell));
 }
 
-// FUNCTION: 0x006A3E50
+// FUNCTION: GAMEMD 0x006A3E50
 LayerType STDMETHODCALLTYPE ShipLocomotionClass::In_Which_Layer(void)
 {
 	return(LAYER_GROUND);
 }
 
-// FUNCTION: 0x006A3E60
+// FUNCTION: GAMEMD 0x006A3E60
 HRESULT STDMETHODCALLTYPE ShipLocomotionClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -385,19 +385,19 @@ HRESULT STDMETHODCALLTYPE ShipLocomotionClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x006A3EA0
+// FUNCTION: GAMEMD 0x006A3EA0
 int STDMETHODCALLTYPE ShipLocomotionClass::Z_Adjust(void)
 {
 	return(0);
 }
 
-// FUNCTION: 0x006A3EB0
+// FUNCTION: GAMEMD 0x006A3EB0
 ZGradientType STDMETHODCALLTYPE ShipLocomotionClass::Z_Gradient(void)
 {
 	return(BASECLASS::Z_Gradient());
 }
 
-// FUNCTION: 0x006A3EC0
+// FUNCTION: GAMEMD 0x006A3EC0
 bool ShipLocomotionClass::Abandon_Navigation(void)
 {
 	if (LinkedTo->RouteQueue.Count() == 0) {
@@ -409,7 +409,7 @@ bool ShipLocomotionClass::Abandon_Navigation(void)
 	return(LinkedTo->Enter_Idle_Mode());
 }
 
-// FUNCTION: 0x006A3F00
+// FUNCTION: GAMEMD 0x006A3F00
 void STDMETHODCALLTYPE ShipLocomotionClass::Mark_All_Occupation_Bits(int mark)
 {
 	if (HeadToCoord != COORD_NONE) {
@@ -417,7 +417,7 @@ void STDMETHODCALLTYPE ShipLocomotionClass::Mark_All_Occupation_Bits(int mark)
 	}
 }
 
-// FUNCTION: 0x006A3F50
+// FUNCTION: GAMEMD 0x006A3F50
 boolean STDMETHODCALLTYPE ShipLocomotionClass::Is_Moving_Here(CoordStruct to)
 {
 	Coord coord = Head_To_Coord();
@@ -452,7 +452,7 @@ boolean STDMETHODCALLTYPE ShipLocomotionClass::Is_Moving_Here(CoordStruct to)
 	return(false);
 }
 
-// FUNCTION: 0x006A4130
+// FUNCTION: GAMEMD 0x006A4130
 boolean STDMETHODCALLTYPE ShipLocomotionClass::Will_Jump_Tracks(void)
 {
 	TurnTrackType	const * track;
@@ -490,88 +490,109 @@ boolean STDMETHODCALLTYPE ShipLocomotionClass::Will_Jump_Tracks(void)
 	return(false);
 }
 
-// FUNCTION: 0x006A4210
+// FUNCTION: GAMEMD 0x006A4210
 void STDMETHODCALLTYPE ShipLocomotionClass::Lock(void)
 {
 	IsLocomotorUnlocked = false;
 }
 
-// FUNCTION: 0x006A4220
+// FUNCTION: GAMEMD 0x006A4220
 void STDMETHODCALLTYPE ShipLocomotionClass::Unlock(void)
 {
 	IsLocomotorUnlocked = true;
 }
 
-// FUNCTION: 0x006A4230
+// FUNCTION: GAMEMD 0x006A4230
 int STDMETHODCALLTYPE ShipLocomotionClass::Get_Track_Number(void)
 {
 	return(TrackNumber);
 }
 
-// FUNCTION: 0x006A4240
+// FUNCTION: GAMEMD 0x006A4240
 int STDMETHODCALLTYPE ShipLocomotionClass::Get_Track_Index(void)
 {
 	return(TrackIndex);
 }
 
-// FUNCTION: 0x006A4250
+// FUNCTION: GAMEMD 0x006A4250
 int STDMETHODCALLTYPE ShipLocomotionClass::Get_Speed_Accum(void)
 {
 	return(SpeedAccum);
 }
 
-// FUNCTION: 0x006A4260
+// FUNCTION: GAMEMD 0x006A4260
 ULONG STDMETHODCALLTYPE ShipLocomotionClass::AddRef(void)
 {
 	return(BASECLASS::AddRef());
 }
 
-// FUNCTION: 0x006A4270
+// FUNCTION: GAMEMD 0x006A4270
 ULONG STDMETHODCALLTYPE ShipLocomotionClass::Release(void)
 {
 	return(BASECLASS::Release());
 }
 
-// FUNCTION: 0x006A42A0 ShipLocomotionClass::Fetch_Object_Size
+// FUNCTION: GAMEMD 0x006A42A0
+// ShipLocomotionClass::Fetch_Object_Size
 
-// FUNCTION: 0x006A42B0 ShipLocomotionClass::~ShipLocomotionClass
+// SYNTHETIC: GAMEMD 0x006A42B0
+// ??_GShipLocomotionClass@@UAEPAXI@Z
 ShipLocomotionClass::~ShipLocomotionClass(void)
 {
 }
 
-// FUNCTION: 0x006A4300 ShipLocomotionClass::QueryInterface
+// FUNCTION: GAMEMD 0x006A4300
+// ShipLocomotionClass::QueryInterface
 
-// FUNCTION: 0x006A4310 ShipLocomotionClass::AddRef
+// FUNCTION: GAMEMD 0x006A4310
+// ShipLocomotionClass::AddRef
 
-// FUNCTION: 0x006A4320 ShipLocomotionClass::Release
+// FUNCTION: GAMEMD 0x006A4320
+// ShipLocomotionClass::Release
 
-// FUNCTION: 0x006A4330 ShipLocomotionClass::QueryInterface
+// FUNCTION: GAMEMD 0x006A4330
+// ShipLocomotionClass::QueryInterface
 
-// FUNCTION: 0x006A4340 ShipLocomotionClass::AddRef
+// FUNCTION: GAMEMD 0x006A4340
+// ShipLocomotionClass::AddRef
 
-// FUNCTION: 0x006A4350 ShipLocomotionClass::Release
+// FUNCTION: GAMEMD 0x006A4350
+// ShipLocomotionClass::Release
 
-// FUNCTION: 0x006A4360 $E2
+// SYNTHETIC: GAMEMD 0x006A4360 SYMBOL
+// _$E2
 
-// FUNCTION: 0x006A4390 $E5
+// SYNTHETIC: GAMEMD 0x006A4390 SYMBOL
+// _$E5
 
-// FUNCTION: 0x006A43B0 $E8
+// SYNTHETIC: GAMEMD 0x006A43B0 SYMBOL
+// _$E8
 
-// FUNCTION: 0x006A43D0 $E11
+// SYNTHETIC: GAMEMD 0x006A43D0 SYMBOL
+// _$E11
 
-// FUNCTION: 0x006A43F0 $E14
-// FUNCTION: 0x006A4410 $E17
-// FUNCTION: 0x006A4430 $E20
-// FUNCTION: 0x006A4470 $E23
-// FUNCTION: 0x006A44A0 $E26
-// FUNCTION: 0x006A44D0 $E29
-// FUNCTION: 0x006A4500 $E32
-// FUNCTION: 0x006A4510 $E35
-// FUNCTION: 0x006A4530 $E38
+// SYNTHETIC: GAMEMD 0x006A43F0 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x006A4410 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x006A4430 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x006A4470 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x006A44A0 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x006A44D0 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x006A4500 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x006A4510 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x006A4530 SYMBOL
+// _$E38
 
 DynamicVectorClass<SideClass *> SideClass::Array;
 
-// FUNCTION: 0x006A4550
+// FUNCTION: GAMEMD 0x006A4550
 SideClass::SideClass(char const * ininame) :
 	BASECLASS(ininame),
 	Houses()
@@ -580,15 +601,15 @@ SideClass::SideClass(char const * ininame) :
 	Array.Add(this);
 }
 
-// FUNCTION: 0x006A4610
-// FUNCTION: 0x006A4930
+// FUNCTION: GAMEMD 0x006A4610
+// FUNCTION: GAMEMD 0x006A4930
 SideClass::~SideClass(void)
 {
 	Detach_This_From_All(this);
 	Array.Delete(this);
 }
 
-// FUNCTION: 0x006A46D0
+// FUNCTION: GAMEMD 0x006A46D0
 SideType SideClass::From_Name(char const * name)
 {
 	for (int classid = 0; classid < Array.Count(); classid++) {
@@ -600,14 +621,14 @@ SideType SideClass::From_Name(char const * name)
 	return(SIDE_NONE);
 }
 
-// FUNCTION: 0x006A4710
+// FUNCTION: GAMEMD 0x006A4710
 void SideClass::Compute_CRC(CRCEngine & crc) const
 {
 	BASECLASS::Compute_CRC(crc);
 	crc(Houses.Count());
 }
 
-// FUNCTION: 0x006A4740
+// FUNCTION: GAMEMD 0x006A4740
 HRESULT STDMETHODCALLTYPE SideClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -615,7 +636,7 @@ HRESULT STDMETHODCALLTYPE SideClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x006A4780
+// FUNCTION: GAMEMD 0x006A4780
 HRESULT STDMETHODCALLTYPE SideClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -629,7 +650,7 @@ HRESULT STDMETHODCALLTYPE SideClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x006A48A0
+// FUNCTION: GAMEMD 0x006A48A0
 HRESULT STDMETHODCALLTYPE SideClass::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -641,6 +662,8 @@ HRESULT STDMETHODCALLTYPE SideClass::Save(IStream * stream, BOOL cleardirty)
 	return(result);
 }
 
-// FUNCTION: 0x006A4910 SideClass::Fetch_Object_Size
+// FUNCTION: GAMEMD 0x006A4910
+// SideClass::Fetch_Object_Size
 
-// FUNCTION: 0x006A4920 SideClass::Fetch_RTTI
+// FUNCTION: GAMEMD 0x006A4920
+// SideClass::Fetch_RTTI

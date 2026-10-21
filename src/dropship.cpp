@@ -51,7 +51,7 @@
 #include <climits>
 #include <cstring>
 
-// FUNCTION: 0x004B69B0
+// FUNCTION: GAMEMD 0x004B69B0
 DropshipLoadoutClass::DropshipLoadoutClass(void) :
 	CreationFrame(Frame),
 	Unused2(INT_MAX),
@@ -61,12 +61,12 @@ DropshipLoadoutClass::DropshipLoadoutClass(void) :
 {
 }
 
-// FUNCTION: 0x004B69D0
+// FUNCTION: GAMEMD 0x004B69D0
 DropshipLoadoutClass::~DropshipLoadoutClass(void)
 {
 }
 
-// FUNCTION: 0x004B69E0
+// FUNCTION: GAMEMD 0x004B69E0
 bool DropshipLoadoutClass::Add(TechnoTypeClass * ttype)
 {
 	if (EntryCount < MAX_ENTRIES) {
@@ -94,7 +94,7 @@ bool DropshipLoadoutClass::Add(TechnoTypeClass * ttype)
 	return(false);
 }
 
-// FUNCTION: 0x004B6AB0
+// FUNCTION: GAMEMD 0x004B6AB0
 bool DropshipLoadoutClass::Remove(int index)
 {
 	if (EntryCount > 0 && index >= 0 && index < EntryCount) {
@@ -117,7 +117,7 @@ bool DropshipLoadoutClass::Remove(int index)
 	return(false);
 }
 
-// FUNCTION: 0x004B6B80
+// FUNCTION: GAMEMD 0x004B6B80
 void DropshipLoadoutClass::Clear(void)
 {
 	UnusedBool1 = false;
@@ -130,7 +130,7 @@ void DropshipLoadoutClass::Clear(void)
 	TotalCost = 0;
 }
 
-// FUNCTION: 0x004B6BB0
+// FUNCTION: GAMEMD 0x004B6BB0
 void DropshipLoadoutClass::Swizzle(void)
 {
 	for (int i = 0; i < EntryCount; i++) {
@@ -138,13 +138,13 @@ void DropshipLoadoutClass::Swizzle(void)
 	}
 }
 
-// FUNCTION: 0x004B6BE0
+// FUNCTION: GAMEMD 0x004B6BE0
 TechnoTypeClass * DropshipLoadoutClass::Fetch(int index)
 {
 	return(Entries[index]);
 }
 
-// FUNCTION: 0x004B6BF0
+// FUNCTION: GAMEMD 0x004B6BF0
 int DropshipLoadoutClass::Get_Allowable_Index(TechnoTypeClass * ttype)
 {
 	if (Scen->AllowableUnits.Count()) {
@@ -170,7 +170,7 @@ BitFont * __fastcall FUN_004A60D0(int flags);
 
 static inline Point2D * Scratch(Point2D const & p) { return (Point2D *)&p; }
 
-// FUNCTION: 0x004B96A0
+// FUNCTION: GAMEMD 0x004B96A0
 void Draw_Cost(int cost, int maxcost, Surface & surface, Point2D const & drawpoint, wchar_t const * title, bool center, ConvertClass & drawer, Blitter const * blitter)
 {
 	static const int _width = 110;
@@ -207,7 +207,7 @@ void Draw_Cost(int cost, int maxcost, Surface & surface, Point2D const & drawpoi
 	Fancy_Text_Print_Wide(Scratch(Point2D()), cost_text, HiddenSurface, &HiddenSurface->Get_Rect(), &drawpoint, Fetch_Scheme_By_Name("Yellow"), TBLACK, type);
 }
 
-// FUNCTION: 0x004B9890
+// FUNCTION: GAMEMD 0x004B9890
 void Draw_Unit_Info(Surface * surface, ConvertClass * drawer, TechnoTypeClass * techtype, bool allowed)
 {
 	static const int _xpos = 450;
@@ -257,66 +257,93 @@ void Draw_Unit_Info(Surface * surface, ConvertClass * drawer, TechnoTypeClass * 
 	}
 }
 
-// FUNCTION: 0x004B9BE0 ?$DynamicVectorClass@PAVTechnoTypeClass@@::Clear
+// TEMPLATE: GAMEMD 0x004B9BE0
+// ?Clear@?$DynamicVectorClass@PAVTechnoTypeClass@@@@UAEXXZ
 template class DynamicVectorClass<TechnoTypeClass *>;
 
-// FUNCTION: 0x004B9C10 ?$DynamicVectorClass@PAVTechnoTypeClass@@::ID
+// TEMPLATE: GAMEMD 0x004B9C10
+// ?ID@?$DynamicVectorClass@PAVTechnoTypeClass@@@@UAEHPBQAVTechnoTypeClass@@@Z
 
-// FUNCTION: 0x004B9C30 ?$VectorClass@PAVTechnoTypeClass@@::GetItem
+// TEMPLATE: GAMEMD 0x004B9C30
+// ?GetItem@?$VectorClass@PAVTechnoTypeClass@@@@UBEPAVTechnoTypeClass@@H@Z
 
-// FUNCTION: 0x004B9C40 ?$DynamicVectorClass@PAUButtonFadeEffect@@::Clear
+// TEMPLATE: GAMEMD 0x004B9C40
+// ?Clear@?$DynamicVectorClass@PAUButtonFadeEffect@@@@UAEXXZ
 template class DynamicVectorClass<ButtonFadeEffect *>;
 
-// FUNCTION: 0x004B9C70 ?$DynamicVectorClass@PAUButtonFadeEffect@@::ID
+// TEMPLATE: GAMEMD 0x004B9C70
+// ?ID@?$DynamicVectorClass@PAUButtonFadeEffect@@@@UAEHPBQAUButtonFadeEffect@@@Z
 
-// FUNCTION: 0x004B9C90 ?$VectorClass@PAUButtonFadeEffect@@::GetItem
+// TEMPLATE: GAMEMD 0x004B9C90
+// ?GetItem@?$VectorClass@PAUButtonFadeEffect@@@@UBEPAUButtonFadeEffect@@H@Z
 
-// FUNCTION: 0x004B9CA0 ?$VectorClass@PAUButtonFadeEffect@@::operator==
+// TEMPLATE: GAMEMD 0x004B9CA0
+// ??8?$VectorClass@PAUButtonFadeEffect@@@@UBE_NABV0@@Z
 
-// FUNCTION: 0x004B9CE0 ?$VectorClass@PAUButtonFadeEffect@@::Resize
+// TEMPLATE: GAMEMD 0x004B9CE0
+// ?Resize@?$VectorClass@PAUButtonFadeEffect@@@@UAE_NHPBQAUButtonFadeEffect@@@Z
 
-// FUNCTION: 0x004B9D90 ?$VectorClass@PAUButtonFadeEffect@@::Clear
+// TEMPLATE: GAMEMD 0x004B9D90
+// ?Clear@?$VectorClass@PAUButtonFadeEffect@@@@UAEXXZ
 
-// FUNCTION: 0x004B9DC0 ?$VectorClass@PAUButtonFadeEffect@@::ID
+// TEMPLATE: GAMEMD 0x004B9DC0
+// ?ID@?$VectorClass@PAUButtonFadeEffect@@@@UAEHABQAUButtonFadeEffect@@@Z
 
-// FUNCTION: 0x004B9E00 ?$VectorClass@PAUButtonFadeEffect@@::ID
+// TEMPLATE: GAMEMD 0x004B9E00
+// ?ID@?$VectorClass@PAUButtonFadeEffect@@@@UAEHPBQAUButtonFadeEffect@@@Z
 
-// FUNCTION: 0x004B9E20 ?$DynamicVectorClass@PAUButtonFadeEffect@@::Resize
+// TEMPLATE: GAMEMD 0x004B9E20
+// ?Resize@?$DynamicVectorClass@PAUButtonFadeEffect@@@@UAE_NHPBQAUButtonFadeEffect@@@Z
 
-// FUNCTION: 0x004B9ED0 ?$DynamicVectorClass@PAUButtonFadeEffect@@::ID
+// TEMPLATE: GAMEMD 0x004B9ED0
+// ?ID@?$DynamicVectorClass@PAUButtonFadeEffect@@@@UAEHABQAUButtonFadeEffect@@@Z
 
 struct CrossDissolveEffect;
 template class DynamicVectorClass<CrossDissolveEffect *>;
 
-// FUNCTION: 0x004B9F00 ?$VectorClass@PAUCrossDissolveEffect@@::operator==
+// TEMPLATE: GAMEMD 0x004B9F00
+// ??8?$VectorClass@PAUCrossDissolveEffect@@@@UBE_NABV0@@Z
 
-// FUNCTION: 0x004B9F40 ?$VectorClass@PAUCrossDissolveEffect@@::Resize
+// TEMPLATE: GAMEMD 0x004B9F40
+// ?Resize@?$VectorClass@PAUCrossDissolveEffect@@@@UAE_NHPBQAUCrossDissolveEffect@@@Z
 
-// FUNCTION: 0x004B9FF0 ?$VectorClass@PAUCrossDissolveEffect@@::Clear
+// TEMPLATE: GAMEMD 0x004B9FF0
+// ?Clear@?$VectorClass@PAUCrossDissolveEffect@@@@UAEXXZ
 
-// FUNCTION: 0x004BA020 ?$VectorClass@PAUCrossDissolveEffect@@::ID
+// TEMPLATE: GAMEMD 0x004BA020
+// ?ID@?$VectorClass@PAUCrossDissolveEffect@@@@UAEHABQAUCrossDissolveEffect@@@Z
 
-// FUNCTION: 0x004BA060 ?$VectorClass@PAUCrossDissolveEffect@@::ID
+// TEMPLATE: GAMEMD 0x004BA060
+// ?ID@?$VectorClass@PAUCrossDissolveEffect@@@@UAEHPBQAUCrossDissolveEffect@@@Z
 
-// FUNCTION: 0x004BA080 ?$DynamicVectorClass@PAUCrossDissolveEffect@@::Resize
+// TEMPLATE: GAMEMD 0x004BA080
+// ?Resize@?$DynamicVectorClass@PAUCrossDissolveEffect@@@@UAE_NHPBQAUCrossDissolveEffect@@@Z
 
-// FUNCTION: 0x004BA130 ?$DynamicVectorClass@PAUCrossDissolveEffect@@::ID
+// TEMPLATE: GAMEMD 0x004BA130
+// ?ID@?$DynamicVectorClass@PAUCrossDissolveEffect@@@@UAEHABQAUCrossDissolveEffect@@@Z
 
-// FUNCTION: 0x004BA160 ?$VectorClass@PAVTechnoTypeClass@@::~?$VectorClass@PAVTechnoTypeClass@@
+// SYNTHETIC: GAMEMD 0x004BA160
+// ??_G?$VectorClass@PAVTechnoTypeClass@@@@UAEPAXI@Z
 template class VectorClass<TechnoTypeClass *>;
 
-// FUNCTION: 0x004BA1B0 ?$VectorClass@PAUButtonFadeEffect@@::~?$VectorClass@PAUButtonFadeEffect@@
+// SYNTHETIC: GAMEMD 0x004BA1B0
+// ??_G?$VectorClass@PAUButtonFadeEffect@@@@UAEPAXI@Z
 template class VectorClass<ButtonFadeEffect *>;
 
-// FUNCTION: 0x004BA200 ?$DynamicVectorClass@PAUButtonFadeEffect@@::~?$DynamicVectorClass@PAUButtonFadeEffect@@
+// SYNTHETIC: GAMEMD 0x004BA200
+// ??_G?$DynamicVectorClass@PAUButtonFadeEffect@@@@UAEPAXI@Z
 
-// FUNCTION: 0x004BA250 ?$VectorClass@PAUCrossDissolveEffect@@::~?$VectorClass@PAUCrossDissolveEffect@@
+// SYNTHETIC: GAMEMD 0x004BA250
+// ??_G?$VectorClass@PAUCrossDissolveEffect@@@@UAEPAXI@Z
 template class VectorClass<CrossDissolveEffect *>;
 
-// FUNCTION: 0x004BA2A0 ?$DynamicVectorClass@PAUCrossDissolveEffect@@::~?$DynamicVectorClass@PAUCrossDissolveEffect@@
+// SYNTHETIC: GAMEMD 0x004BA2A0
+// ??_G?$DynamicVectorClass@PAUCrossDissolveEffect@@@@UAEPAXI@Z
 
-// FUNCTION: 0x004BA2F0 ?$VectorClass@PAUButtonFadeEffect@@::?$VectorClass@PAUButtonFadeEffect@@
+// TEMPLATE: GAMEMD 0x004BA2F0
+// ??0?$VectorClass@PAUButtonFadeEffect@@@@QAE@HPBQAUButtonFadeEffect@@@Z
 
-// FUNCTION: 0x004BA340 ?$VectorClass@PAUCrossDissolveEffect@@::?$VectorClass@PAUCrossDissolveEffect@@
+// TEMPLATE: GAMEMD 0x004BA340
+// ??0?$VectorClass@PAUCrossDissolveEffect@@@@QAE@HPBQAUCrossDissolveEffect@@@Z
 
-// FUNCTION: 0x004BA390
+// FUNCTION: GAMEMD 0x004BA390

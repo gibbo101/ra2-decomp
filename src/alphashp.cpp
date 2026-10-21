@@ -37,34 +37,44 @@ extern const double DAT_007E1740;
 extern const double DAT_007E2B10;
 extern const double DAT_007E2B18;
 
-// FUNCTION: 0x004206F0 $E16
+// SYNTHETIC: GAMEMD 0x004206F0 SYMBOL
+// _$E16
 double DAT_0088A0C0 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x00420720 $E19
+// SYNTHETIC: GAMEMD 0x00420720 SYMBOL
+// _$E19
 double DAT_0089A128 = DAT_0088A0C0 / DAT_007E2B10;
 
-// FUNCTION: 0x00420740 $E22
+// SYNTHETIC: GAMEMD 0x00420740 SYMBOL
+// _$E22
 double DAT_0088A110 = DAT_007E1718 / DAT_0089A128;
 
-// FUNCTION: 0x00420760 $E25
+// SYNTHETIC: GAMEMD 0x00420760 SYMBOL
+// _$E25
 double DAT_0088A108 = DAT_007E1720 * DAT_007E2B18;
 
-// FUNCTION: 0x00420780 $E28
+// SYNTHETIC: GAMEMD 0x00420780 SYMBOL
+// _$E28
 double DAT_0088A0C8 = DAT_007E1728 * DAT_007E2B18;
 
-// FUNCTION: 0x004207A0 $E31
+// SYNTHETIC: GAMEMD 0x004207A0 SYMBOL
+// _$E31
 double DAT_0088A0A0 = DAT_007E1730 * DAT_007E2B18;
 
-// FUNCTION: 0x004207C0 $E34
+// SYNTHETIC: GAMEMD 0x004207C0 SYMBOL
+// _$E34
 int DAT_0089A130 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_0088A0A0 - DAT_0088A0C8) * DAT_0088A0C0));
 
-// FUNCTION: 0x00420800 $E37
+// SYNTHETIC: GAMEMD 0x00420800 SYMBOL
+// _$E37
 double DAT_0088A0D0 = FUN_004CADE0(DAT_0089A130 * DAT_007E1740);
 
-// FUNCTION: 0x00420830 $E40
+// SYNTHETIC: GAMEMD 0x00420830 SYMBOL
+// _$E40
 double DAT_0088A0E8 = FUN_004CADE0((DAT_0089A130 * 2) / DAT_0088A0C0);
 
-// FUNCTION: 0x00420860 $E43
+// SYNTHETIC: GAMEMD 0x00420860 SYMBOL
+// _$E43
 int DAT_0089A124 = (int)(DAT_0089A130 * 4 + DAT_007E1738);
 
 struct ShortPair {
@@ -77,26 +87,31 @@ struct IntTriple {
 	IntTriple() { A = 0; B = 0; C = 0; }
 };
 
-// FUNCTION: 0x00420890 $E46
+// SYNTHETIC: GAMEMD 0x00420890 SYMBOL
+// _$E46
 ShortPair DAT_0088A0B8;
 
-// FUNCTION: 0x004208A0 $E49
+// SYNTHETIC: GAMEMD 0x004208A0 SYMBOL
+// _$E49
 IntTriple DAT_0088A0D8;
 
-// FUNCTION: 0x004208C0 $E52
+// SYNTHETIC: GAMEMD 0x004208C0 SYMBOL
+// _$E52
 struct IntTriple2 {
 	int A, B, C;
 	IntTriple2() { C = 0; A = 0x80; B = 0x80; }
 };
 IntTriple2 DAT_0089A118;
 
-// FUNCTION: 0x004208E0 $E57
-// FUNCTION: 0x00420920 $E55
+// SYNTHETIC: GAMEMD 0x004208E0 SYMBOL
+// _$E57
+// SYNTHETIC: GAMEMD 0x00420920 SYMBOL
+// _$E55
 DynamicVectorClass<AlphaShapeClass *> AlphaShapes;
 
 unsigned char AlphaShapeClass::BrightnessTable[256][256];
 
-// FUNCTION: 0x00420960
+// FUNCTION: GAMEMD 0x00420960
 AlphaShapeClass::AlphaShapeClass(ObjectClass * owner, int x, int y) :
 	BASECLASS(),
 	Owner(owner),
@@ -114,7 +129,7 @@ AlphaShapeClass::AlphaShapeClass(ObjectClass * owner, int x, int y) :
 	}
 }
 
-// FUNCTION: 0x00420AF0
+// FUNCTION: GAMEMD 0x00420AF0
 AlphaShapeClass::AlphaShapeClass(void) :
 	BASECLASS(),
 	Owner(NULL),
@@ -130,20 +145,20 @@ AlphaShapeClass::AlphaShapeClass(void) :
 	}
 }
 
-// FUNCTION: 0x00420C50
+// FUNCTION: GAMEMD 0x00420C50
 AlphaShapeClass::AlphaShapeClass(NoInitClass const & x) :
 	BASECLASS(x)
 {
 }
 
-// FUNCTION: 0x00420C80
+// FUNCTION: GAMEMD 0x00420C80
 AlphaShapeClass::~AlphaShapeClass(void)
 {
 	AlphaShapes.Delete(this);
 	ObjectPtrTracker.Delete(this);
 }
 
-// FUNCTION: 0x00420D40
+// FUNCTION: GAMEMD 0x00420D40
 HRESULT STDMETHODCALLTYPE AlphaShapeClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -151,19 +166,19 @@ HRESULT STDMETHODCALLTYPE AlphaShapeClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x00420D80
+// FUNCTION: GAMEMD 0x00420D80
 RTTIType AlphaShapeClass::Fetch_RTTI(void) const
 {
 	return(RTTI_ALPHASHAPE);
 }
 
-// FUNCTION: 0x00420D90
+// FUNCTION: GAMEMD 0x00420D90
 int AlphaShapeClass::Fetch_Object_Size(void) const
 {
 	return(sizeof(*this));
 }
 
-// FUNCTION: 0x00420DA0
+// FUNCTION: GAMEMD 0x00420DA0
 void AlphaShapeClass::Compute_CRC(CRCEngine & crc) const
 {
 	BASECLASS::Compute_CRC(crc);
@@ -173,7 +188,7 @@ void AlphaShapeClass::Compute_CRC(CRCEngine & crc) const
 	crc(DrawRect.Height);
 }
 
-// FUNCTION: 0x00420DE0
+// FUNCTION: GAMEMD 0x00420DE0
 HRESULT STDMETHODCALLTYPE AlphaShapeClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -186,7 +201,7 @@ HRESULT STDMETHODCALLTYPE AlphaShapeClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x00420E40
+// FUNCTION: GAMEMD 0x00420E40
 HRESULT STDMETHODCALLTYPE AlphaShapeClass::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -196,7 +211,7 @@ HRESULT STDMETHODCALLTYPE AlphaShapeClass::Save(IStream * stream, BOOL cleardirt
 	return(result);
 }
 
-// FUNCTION: 0x00420E70
+// FUNCTION: GAMEMD 0x00420E70
 void AlphaShapeClass::Detach(AbstractClass const * target, bool all)
 {
 	if (target == Owner) {
@@ -204,7 +219,7 @@ void AlphaShapeClass::Detach(AbstractClass const * target, bool all)
 	}
 }
 
-// FUNCTION: 0x00420E90
+// FUNCTION: GAMEMD 0x00420E90
 void AlphaShapeClass::Update_All(void)
 {
 	if (!BrightnessCalculated) {
@@ -218,7 +233,7 @@ void AlphaShapeClass::Update_All(void)
 	}
 }
 
-// FUNCTION: 0x004216C0
+// FUNCTION: GAMEMD 0x004216C0
 void AlphaShapeClass::Calculate_Brightness_Table(void)
 {
 	BrightnessCalculated = true;
@@ -230,35 +245,50 @@ void AlphaShapeClass::Calculate_Brightness_Table(void)
 	}
 }
 
-// FUNCTION: 0x00421730 AlphaShapeClass::~AlphaShapeClass
+// SYNTHETIC: GAMEMD 0x00421730
+// ??_GAlphaShapeClass@@UAEPAXI@Z
 
-// FUNCTION: 0x00421800 ?$DynamicVectorClass@PAVAlphaShapeClass@@::Clear
+// TEMPLATE: GAMEMD 0x00421800
+// ?Clear@?$DynamicVectorClass@PAVAlphaShapeClass@@@@UAEXXZ
 template class DynamicVectorClass<AlphaShapeClass *>;
 
-// FUNCTION: 0x00421830 ?$DynamicVectorClass@PAVAlphaShapeClass@@::ID
+// TEMPLATE: GAMEMD 0x00421830
+// ?ID@?$DynamicVectorClass@PAVAlphaShapeClass@@@@UAEHPBQAVAlphaShapeClass@@@Z
 
-// FUNCTION: 0x00421850 ?$VectorClass@PAVAlphaShapeClass@@::GetItem
+// TEMPLATE: GAMEMD 0x00421850
+// ?GetItem@?$VectorClass@PAVAlphaShapeClass@@@@UBEPAVAlphaShapeClass@@H@Z
 
-// FUNCTION: 0x00421860 ?$VectorClass@PAVAlphaShapeClass@@::operator==
+// TEMPLATE: GAMEMD 0x00421860
+// ??8?$VectorClass@PAVAlphaShapeClass@@@@UBE_NABV0@@Z
 
-// FUNCTION: 0x004218A0 ?$VectorClass@PAVAlphaShapeClass@@::Resize
+// TEMPLATE: GAMEMD 0x004218A0
+// ?Resize@?$VectorClass@PAVAlphaShapeClass@@@@UAE_NHPBQAVAlphaShapeClass@@@Z
 
-// FUNCTION: 0x00421950 ?$VectorClass@PAVAlphaShapeClass@@::Clear
+// TEMPLATE: GAMEMD 0x00421950
+// ?Clear@?$VectorClass@PAVAlphaShapeClass@@@@UAEXXZ
 
-// FUNCTION: 0x00421980 ?$VectorClass@PAVAlphaShapeClass@@::ID
+// TEMPLATE: GAMEMD 0x00421980
+// ?ID@?$VectorClass@PAVAlphaShapeClass@@@@UAEHABQAVAlphaShapeClass@@@Z
 
-// FUNCTION: 0x004219C0 ?$VectorClass@PAVAlphaShapeClass@@::ID
+// TEMPLATE: GAMEMD 0x004219C0
+// ?ID@?$VectorClass@PAVAlphaShapeClass@@@@UAEHPBQAVAlphaShapeClass@@@Z
 
-// FUNCTION: 0x004219E0 ?$DynamicVectorClass@PAVAlphaShapeClass@@::Resize
+// TEMPLATE: GAMEMD 0x004219E0
+// ?Resize@?$DynamicVectorClass@PAVAlphaShapeClass@@@@UAE_NHPBQAVAlphaShapeClass@@@Z
 
-// FUNCTION: 0x00421A90 ?$DynamicVectorClass@PAVAlphaShapeClass@@::ID
+// TEMPLATE: GAMEMD 0x00421A90
+// ?ID@?$DynamicVectorClass@PAVAlphaShapeClass@@@@UAEHABQAVAlphaShapeClass@@@Z
 
-// FUNCTION: 0x00421AC0 ?$DynamicVectorClass@PAVAlphaShapeClass@@::~?$DynamicVectorClass@PAVAlphaShapeClass@@
+// SYNTHETIC: GAMEMD 0x00421AC0
+// ??_G?$DynamicVectorClass@PAVAlphaShapeClass@@@@UAEPAXI@Z
 
-// FUNCTION: 0x00421B10 ?$VectorClass@PAVAlphaShapeClass@@::~?$VectorClass@PAVAlphaShapeClass@@
+// SYNTHETIC: GAMEMD 0x00421B10
+// ??_G?$VectorClass@PAVAlphaShapeClass@@@@UAEPAXI@Z
 
-// FUNCTION: 0x00421B60 Intersect
+// TEMPLATE: GAMEMD 0x00421B60
+// ?Intersect@@YI?BV?$TRect@H@@ABV1@0PAH1@Z
 template Rect const Intersect<int>(Rect const &, Rect const &, int *, int *);
 
-// FUNCTION: 0x00421C90 $E60
+// SYNTHETIC: GAMEMD 0x00421C90 SYMBOL
+// _$E60
 Rect DAT_0089A140(0, 0, 0, 0);

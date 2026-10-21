@@ -14,7 +14,8 @@ struct IntQuad {
 	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
 };
 
-// FUNCTION: 0x00720420 $E66
+// SYNTHETIC: GAMEMD 0x00720420 SYMBOL
+// _$E66
 IntQuad DAT_00B0F400;
 
 #include "dialog.h"
@@ -24,7 +25,7 @@ IntQuad DAT_00B0F400;
 #include "surface.h"
 #include "vector.h"
 
-// FUNCTION: 0x0071FF20
+// FUNCTION: GAMEMD 0x0071FF20
 TextButtonClass::TextButtonClass(unsigned id, wchar_t const * text, TextPrintType style, int x, int y, int w, int h, bool blackborder, bool nobackground) :
 	BASECLASS(id, x, y, w, h),
 	IsNoBackground(nobackground),
@@ -43,7 +44,7 @@ TextButtonClass::TextButtonClass(unsigned id, wchar_t const * text, TextPrintTyp
 	}
 }
 
-// FUNCTION: 0x0071FFB0
+// FUNCTION: GAMEMD 0x0071FFB0
 TextButtonClass::TextButtonClass(void) :
 	BASECLASS(0, 0, 0, 0, 0)
 {
@@ -52,7 +53,7 @@ TextButtonClass::TextButtonClass(void) :
 	PrintFlags = TPF_8POINT;
 }
 
-// FUNCTION: 0x0071FFE0
+// FUNCTION: GAMEMD 0x0071FFE0
 int TextButtonClass::Draw_Me(int forced)
 {
 	if (ControlClass::Draw_Me(forced)) {
@@ -64,7 +65,7 @@ int TextButtonClass::Draw_Me(int forced)
 	return(false);
 }
 
-// FUNCTION: 0x00720020
+// FUNCTION: GAMEMD 0x00720020
 void TextButtonClass::Set_Text(wchar_t const * text, bool resize)
 {
 	String = text;
@@ -77,7 +78,7 @@ void TextButtonClass::Set_Text(wchar_t const * text, bool resize)
 	}
 }
 
-// FUNCTION: 0x00720070
+// FUNCTION: GAMEMD 0x00720070
 void TextButtonClass::Draw_Background(void)
 {
 	if (IsNoBackground) return;
@@ -101,7 +102,7 @@ void TextButtonClass::Draw_Background(void)
 	Draw_Box(Rect(X, Y, Width, Height), style, true);
 }
 
-// FUNCTION: 0x00720140
+// FUNCTION: GAMEMD 0x00720140
 void TextButtonClass::Draw_Text(wchar_t const * text)
 {
 	int scheme = GadgetClass::Get_Color_Scheme();
@@ -132,21 +133,37 @@ void TextButtonClass::Draw_Text(wchar_t const * text)
 	}
 }
 
-// FUNCTION: 0x00720200 TextButtonClass::Set_Style
+// FUNCTION: GAMEMD 0x00720200
+// TextButtonClass::Set_Style
 
-// FUNCTION: 0x00720210 TextButtonClass::~TextButtonClass
+// SYNTHETIC: GAMEMD 0x00720210
+// ??_GTextButtonClass@@UAEPAXI@Z
 
-// FUNCTION: 0x00720230 $E27
-// FUNCTION: 0x00720260 $E30
-// FUNCTION: 0x00720280 $E33
-// FUNCTION: 0x007202A0 $E36
-// FUNCTION: 0x007202C0 $E39
-// FUNCTION: 0x007202E0 $E42
-// FUNCTION: 0x00720300 $E45
-// FUNCTION: 0x00720340 $E48
-// FUNCTION: 0x00720370 $E51
-// FUNCTION: 0x007203A0 $E54
-// FUNCTION: 0x007203D0 $E57
-// FUNCTION: 0x007203E0 $E60
-// FUNCTION: 0x00720400 $E63
-// FUNCTION: 0x00720420 $E66
+// SYNTHETIC: GAMEMD 0x00720230 SYMBOL
+// _$E27
+// SYNTHETIC: GAMEMD 0x00720260 SYMBOL
+// _$E30
+// SYNTHETIC: GAMEMD 0x00720280 SYMBOL
+// _$E33
+// SYNTHETIC: GAMEMD 0x007202A0 SYMBOL
+// _$E36
+// SYNTHETIC: GAMEMD 0x007202C0 SYMBOL
+// _$E39
+// SYNTHETIC: GAMEMD 0x007202E0 SYMBOL
+// _$E42
+// SYNTHETIC: GAMEMD 0x00720300 SYMBOL
+// _$E45
+// SYNTHETIC: GAMEMD 0x00720340 SYMBOL
+// _$E48
+// SYNTHETIC: GAMEMD 0x00720370 SYMBOL
+// _$E51
+// SYNTHETIC: GAMEMD 0x007203A0 SYMBOL
+// _$E54
+// SYNTHETIC: GAMEMD 0x007203D0 SYMBOL
+// _$E57
+// SYNTHETIC: GAMEMD 0x007203E0 SYMBOL
+// _$E60
+// SYNTHETIC: GAMEMD 0x00720400 SYMBOL
+// _$E63
+// SYNTHETIC: GAMEMD 0x00720420 SYMBOL
+// _$E66

@@ -24,7 +24,7 @@ static bool FirstPaletteSet = false;
 
 int (*DirectDrawErrorHandler)(HRESULT error) = NULL;
 
-// FUNCTION: 0x004A3C30
+// FUNCTION: GAMEMD 0x004A3C30
 void Set_Palette(PaletteClass const & pal, int time, void (* callback)(void))
 {
 	if (VisibleSurface->Bytes_Per_Pixel() != 1) return;
@@ -56,7 +56,7 @@ void Set_Palette(PaletteClass const & pal, int time, void (* callback)(void))
 	Set_Palette((void*)&newpal[0]);
 }
 
-// FUNCTION: 0x004A3DD0
+// FUNCTION: GAMEMD 0x004A3DD0
 void Process_DD_Result(HRESULT result, int display_ok_msg)
 {
 #ifdef _DEBUG
@@ -184,7 +184,7 @@ void Process_DD_Result(HRESULT result, int display_ok_msg)
 	MessageBox(MainWindow, str, "Direct X", MB_ICONEXCLAMATION|MB_OK);
 }
 
-// FUNCTION: 0x004A3E40
+// FUNCTION: GAMEMD 0x004A3E40
 void Check_Overlapped_Blit_Capability(void)
 {
 	DSurface test_buffer(64, 64, false);
@@ -222,7 +222,7 @@ void Check_Overlapped_Blit_Capability(void)
 	}
 }
 
-// FUNCTION: 0x004A3FD0
+// FUNCTION: GAMEMD 0x004A3FD0
 void Prep_Direct_Draw(void)
 {
 	DebugString("Prep direct draw.\n");
@@ -243,7 +243,7 @@ void Prep_Direct_Draw(void)
 	}
 }
 
-// FUNCTION: 0x004A40C0
+// FUNCTION: GAMEMD 0x004A40C0
 void Destroy_Direct_Draw(void)
 {
 	if (DirectDrawObject != NULL) {
@@ -253,7 +253,7 @@ void Destroy_Direct_Draw(void)
 	}
 }
 
-// FUNCTION: 0x004A42F0
+// FUNCTION: GAMEMD 0x004A42F0
 bool Set_Video_Mode(HWND , int w, int h, int bits_per_pixel)
 {
 	HRESULT result;
@@ -312,7 +312,7 @@ bool Set_Video_Mode(HWND , int w, int h, int bits_per_pixel)
 	return(true);
 }
 
-// FUNCTION: 0x004A44F0
+// FUNCTION: GAMEMD 0x004A44F0
 void Reset_Video_Mode(void)
 {
 	HRESULT result;
@@ -330,7 +330,7 @@ void Reset_Video_Mode(void)
 	}
 }
 
-// FUNCTION: 0x004A45C0
+// FUNCTION: GAMEMD 0x004A45C0
 unsigned int Get_Free_Video_Memory(void)
 {
 	DDCAPS	video_capabilities;
@@ -348,7 +348,7 @@ unsigned int Get_Free_Video_Memory(void)
 	return(0);
 }
 
-// FUNCTION: 0x004A4620
+// FUNCTION: GAMEMD 0x004A4620
 unsigned Get_Video_Hardware_Capabilities(void)
 {
 	DDCAPS	video_capabilities;
@@ -383,7 +383,7 @@ unsigned Get_Video_Hardware_Capabilities(void)
 	return(video);
 }
 
-// FUNCTION: 0x004A4700
+// FUNCTION: GAMEMD 0x004A4700
 void Wait_Vert_Blank(void)
 {
 	if (CanVblankSync) {
@@ -396,7 +396,7 @@ void Wait_Vert_Blank(void)
 	}
 }
 
-// FUNCTION: 0x004A4780
+// FUNCTION: GAMEMD 0x004A4780
 void Set_Palette(void const * palette)
 {
 	if (&CurrentPalette[0] != palette) {
@@ -426,7 +426,7 @@ void Set_Palette(void const * palette)
 	}
 }
 
-// FUNCTION: 0x004A4830
+// FUNCTION: GAMEMD 0x004A4830
 void Wait_Blit (void)
 {
 	HRESULT	return_code;
@@ -436,7 +436,7 @@ void Wait_Blit (void)
 	} while (return_code != DD_OK && return_code != DDERR_SURFACELOST);
 }
 
-// FUNCTION: 0x004A4850
+// FUNCTION: GAMEMD 0x004A4850
 HRESULT CALLBACK EnumDisplayModesCallback(LPDDSURFACEDESC pddsd, LPVOID lpContext)
 {
 	DynamicVectorClass<DDSURFACEDESC *>* descs = (DynamicVectorClass<DDSURFACEDESC *>*)lpContext;
@@ -448,7 +448,7 @@ HRESULT CALLBACK EnumDisplayModesCallback(LPDDSURFACEDESC pddsd, LPVOID lpContex
 	return(DDENUMRET_OK);
 }
 
-// FUNCTION: 0x004A48C0
+// FUNCTION: GAMEMD 0x004A48C0
 int __cdecl CompareModes(const void *p1, const void *p2)
 {
 	int w1 = *((int *)p1);
@@ -465,7 +465,7 @@ int __cdecl CompareModes(const void *p1, const void *p2)
 	return(0);
 }
 
-// FUNCTION: 0x004A4900
+// FUNCTION: GAMEMD 0x004A4900
 int * EnumDisplayModes(DWORD minw, DWORD minh, DWORD maxw, DWORD maxh, DWORD bitdepth)
 {
 	if (DirectDrawObject != NULL) {
@@ -505,31 +505,45 @@ int * EnumDisplayModes(DWORD minw, DWORD minh, DWORD maxw, DWORD maxh, DWORD bit
 	return(NULL);
 }
 
-// FUNCTION: 0x004A4AC0 DebugStringNoPrefix
+// FUNCTION: GAMEMD 0x004A4AC0
+// DebugStringNoPrefix
 
-// FUNCTION: 0x004A4AD0 ?$DynamicVectorClass@PAU_DDSURFACEDESC@@::Clear
+// TEMPLATE: GAMEMD 0x004A4AD0
+// ?Clear@?$DynamicVectorClass@PAU_DDSURFACEDESC@@@@UAEXXZ
 template class DynamicVectorClass<DDSURFACEDESC *>;
 
-// FUNCTION: 0x004A4B00 ?$DynamicVectorClass@PAU_DDSURFACEDESC@@::ID
+// TEMPLATE: GAMEMD 0x004A4B00
+// ?ID@?$DynamicVectorClass@PAU_DDSURFACEDESC@@@@UAEHPBQAU_DDSURFACEDESC@@@Z
 
-// FUNCTION: 0x004A4B20 ?$VectorClass@PAU_DDSURFACEDESC@@::GetItem
+// TEMPLATE: GAMEMD 0x004A4B20
+// ?GetItem@?$VectorClass@PAU_DDSURFACEDESC@@@@UBEPAU_DDSURFACEDESC@@H@Z
 
-// FUNCTION: 0x004A4B30 ?$VectorClass@PAU_DDSURFACEDESC@@::operator==
+// TEMPLATE: GAMEMD 0x004A4B30
+// ??8?$VectorClass@PAU_DDSURFACEDESC@@@@UBE_NABV0@@Z
 
-// FUNCTION: 0x004A4B70 ?$VectorClass@PAU_DDSURFACEDESC@@::Resize
+// TEMPLATE: GAMEMD 0x004A4B70
+// ?Resize@?$VectorClass@PAU_DDSURFACEDESC@@@@UAE_NHPBQAU_DDSURFACEDESC@@@Z
 
-// FUNCTION: 0x004A4C20 ?$VectorClass@PAU_DDSURFACEDESC@@::Clear
+// TEMPLATE: GAMEMD 0x004A4C20
+// ?Clear@?$VectorClass@PAU_DDSURFACEDESC@@@@UAEXXZ
 
-// FUNCTION: 0x004A4C50 ?$VectorClass@PAU_DDSURFACEDESC@@::ID
+// TEMPLATE: GAMEMD 0x004A4C50
+// ?ID@?$VectorClass@PAU_DDSURFACEDESC@@@@UAEHABQAU_DDSURFACEDESC@@@Z
 
-// FUNCTION: 0x004A4C90 ?$VectorClass@PAU_DDSURFACEDESC@@::ID
+// TEMPLATE: GAMEMD 0x004A4C90
+// ?ID@?$VectorClass@PAU_DDSURFACEDESC@@@@UAEHPBQAU_DDSURFACEDESC@@@Z
 
-// FUNCTION: 0x004A4CB0 ?$DynamicVectorClass@PAU_DDSURFACEDESC@@::Resize
+// TEMPLATE: GAMEMD 0x004A4CB0
+// ?Resize@?$DynamicVectorClass@PAU_DDSURFACEDESC@@@@UAE_NHPBQAU_DDSURFACEDESC@@@Z
 
-// FUNCTION: 0x004A4D60 ?$DynamicVectorClass@PAU_DDSURFACEDESC@@::ID
+// TEMPLATE: GAMEMD 0x004A4D60
+// ?ID@?$DynamicVectorClass@PAU_DDSURFACEDESC@@@@UAEHABQAU_DDSURFACEDESC@@@Z
 
-// FUNCTION: 0x004A4D90 ?$DynamicVectorClass@PAU_DDSURFACEDESC@@::~?$DynamicVectorClass@PAU_DDSURFACEDESC@@
+// SYNTHETIC: GAMEMD 0x004A4D90
+// ??_G?$DynamicVectorClass@PAU_DDSURFACEDESC@@@@UAEPAXI@Z
 
-// FUNCTION: 0x004A4DE0 ?$VectorClass@PAU_DDSURFACEDESC@@::~?$VectorClass@PAU_DDSURFACEDESC@@
+// SYNTHETIC: GAMEMD 0x004A4DE0
+// ??_G?$VectorClass@PAU_DDSURFACEDESC@@@@UAEPAXI@Z
 
-// FUNCTION: 0x004A4E30 ?$VectorClass@PAU_DDSURFACEDESC@@::?$VectorClass@PAU_DDSURFACEDESC@@
+// TEMPLATE: GAMEMD 0x004A4E30
+// ??0?$VectorClass@PAU_DDSURFACEDESC@@@@QAE@HPBQAU_DDSURFACEDESC@@@Z

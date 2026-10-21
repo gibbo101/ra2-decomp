@@ -81,46 +81,58 @@ struct IntTriple {
 	IntTriple() { A = 0; B = 0; C = 0; }
 };
 
-// FUNCTION: 0x0055CA00 $E106
+// SYNTHETIC: GAMEMD 0x0055CA00 SYMBOL
+// _$E106
 double DAT_00ABCD80 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x0055CA30 $E109
+// SYNTHETIC: GAMEMD 0x0055CA30 SYMBOL
+// _$E109
 double DAT_00ABCDF0 = DAT_00ABCD80 / DAT_007ED3A0;
 
-// FUNCTION: 0x0055CA50 $E112
+// SYNTHETIC: GAMEMD 0x0055CA50 SYMBOL
+// _$E112
 double DAT_00ABCDD0 = DAT_007E1718 / DAT_00ABCDF0;
 
-// FUNCTION: 0x0055CA70 $E115
+// SYNTHETIC: GAMEMD 0x0055CA70 SYMBOL
+// _$E115
 double DAT_00ABCDC8 = DAT_007E1720 * DAT_007ED3A8;
 
-// FUNCTION: 0x0055CA90 $E118
+// SYNTHETIC: GAMEMD 0x0055CA90 SYMBOL
+// _$E118
 double DAT_00ABCD98 = DAT_007E1728 * DAT_007ED3A8;
 
-// FUNCTION: 0x0055CAB0 $E121
+// SYNTHETIC: GAMEMD 0x0055CAB0 SYMBOL
+// _$E121
 double DAT_00ABCD60 = DAT_007E1730 * DAT_007ED3A8;
 
-// FUNCTION: 0x0055CAD0 $E124
+// SYNTHETIC: GAMEMD 0x0055CAD0 SYMBOL
+// _$E124
 int DAT_00ABCDF8 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00ABCD60 - DAT_00ABCD98) * DAT_00ABCD80));
 
-// FUNCTION: 0x0055CB10 $E127
+// SYNTHETIC: GAMEMD 0x0055CB10 SYMBOL
+// _$E127
 double DAT_00ABCDA0 = FUN_004CADE0(DAT_00ABCDF8 * DAT_007E1740);
 
-// FUNCTION: 0x0055CB40 $E130
+// SYNTHETIC: GAMEMD 0x0055CB40 SYMBOL
+// _$E130
 double DAT_00ABCDC0 = FUN_004CADE0((DAT_00ABCDF8 * 2) / DAT_00ABCD80);
 
-// FUNCTION: 0x0055CB70 $E133
+// SYNTHETIC: GAMEMD 0x0055CB70 SYMBOL
+// _$E133
 int DAT_00ABCDEC = (int)(DAT_00ABCDF8 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x0055CBA0 $E136
+// SYNTHETIC: GAMEMD 0x0055CBA0 SYMBOL
+// _$E136
 ShortPair DAT_00ABCD78;
 
-// FUNCTION: 0x0055CBB0 $E139
+// SYNTHETIC: GAMEMD 0x0055CBB0 SYMBOL
+// _$E139
 IntTriple DAT_00ABCDB0;
 
 extern int DAT_00ABCDE0, DAT_00ABCDE4, DAT_00ABCDE8;
 extern bool DAT_00ABCD58;
 
-// FUNCTION: 0x0055CBD0
+// FUNCTION: GAMEMD 0x0055CBD0
 void FUN_0055CBD0(void)
 {
 	DAT_00ABCDE8 = 0;
@@ -128,25 +140,25 @@ void FUN_0055CBD0(void)
 	DAT_00ABCDE4 = 128;
 }
 
-// FUNCTION: 0x0055CBF0
+// FUNCTION: GAMEMD 0x0055CBF0
 bool FUN_0055CBF0(void)
 {
 	return DAT_00ABCD58;
 }
 
-// FUNCTION: 0x0055CC00
+// FUNCTION: GAMEMD 0x0055CC00
 void FUN_0055CC00(void)
 {
 	DAT_00ABCD58 = true;
 }
 
-// FUNCTION: 0x0055CC10
+// FUNCTION: GAMEMD 0x0055CC10
 void FUN_0055CC10(void)
 {
 	DAT_00ABCD58 = false;
 }
 
-// FUNCTION: 0x0055CC20
+// FUNCTION: GAMEMD 0x0055CC20
 void Motion_Capture(void)
 {
 	if (Debug_MotionCapture) {
@@ -237,7 +249,7 @@ extern WinsockInterfaceClass * DAT_00887628;
 extern void __cdecl FUN_004068E0(char const * format, ...);
 void FUN_006523A0(void);
 
-// FUNCTION: 0x0055CF10
+// FUNCTION: GAMEMD 0x0055CF10
 void FUN_0055CF10(void)
 {
 	FUN_004068E0("Disconnect_Gracefully\n");
@@ -274,7 +286,7 @@ static inline const CommandClass * Hotkey_Command(KeyNumType key)
 	return HotkeyCommands[key];
 }
 
-// FUNCTION: 0x0055DEE0
+// FUNCTION: GAMEMD 0x0055DEE0
 void Keyboard_Process(KeyNumType & input)
 {
 	Message_Input(input);
@@ -341,7 +353,7 @@ void Keyboard_Process(KeyNumType & input)
 	}
 }
 
-// FUNCTION: 0x0055E160
+// FUNCTION: GAMEMD 0x0055E160
 void Sync_Delay(void)
 {
 	SpareTicks += FrameTimer;
@@ -389,14 +401,15 @@ void Sync_Delay(void)
 	}
 }
 
-// FUNCTION: 0x0055E410 $E144
+// SYNTHETIC: GAMEMD 0x0055E410 SYMBOL
+// _$E144
 
 extern unsigned DAT_008373A0;
 extern int DAT_00ABCE04;
 
 static inline Point2D * Scratch(Point2D const & p) { return (Point2D *)&p; }
 
-// FUNCTION: 0x0055F1E0
+// FUNCTION: GAMEMD 0x0055F1E0
 void Multiplayer_Debug_Print(void)
 {
 	wchar_t buffer[256];
@@ -443,5 +456,6 @@ void Multiplayer_Debug_Print(void)
 	}
 }
 
-// FUNCTION: 0x0055F6C0 ?$IndexClass@HPBVCommandClass@@::Is_Archive_Same
+// TEMPLATE: GAMEMD 0x0055F6C0
+// ?Is_Archive_Same@?$IndexClass@HPBVCommandClass@@@@ABE_NABH@Z
 template class IndexClass<int, CommandClass const *>;

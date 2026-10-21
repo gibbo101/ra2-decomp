@@ -9,8 +9,10 @@
 #include "cctooltip.h"
 #include "vector.h"
 
-// FUNCTION: 0x005D4C50 $E7
-// FUNCTION: 0x005D4C90 $E5
+// SYNTHETIC: GAMEMD 0x005D4C50 SYMBOL
+// _$E7
+// SYNTHETIC: GAMEMD 0x005D4C90 SYMBOL
+// _$E5
 DynamicVectorClass<HWND> _ModelessDialogs;
 
 struct AcceleratorTracker {
@@ -23,8 +25,10 @@ struct AcceleratorTracker {
 	HWND Window;
 };
 
-// FUNCTION: 0x005D4CD0 $E12
-// FUNCTION: 0x005D4D10 $E10
+// SYNTHETIC: GAMEMD 0x005D4CD0 SYMBOL
+// _$E12
+// SYNTHETIC: GAMEMD 0x005D4D10 SYMBOL
+// _$E10
 static DynamicVectorClass<AcceleratorTracker> _Accelerators;
 
 bool (*Message_Intercept_Handler)(MSG &msg);
@@ -35,7 +39,7 @@ int __fastcall FUN_0053E770(MSG *msg, HWND window, unsigned int filter_min, unsi
 int __fastcall FUN_0053E730(MSG *msg, HWND window, unsigned int filter_min, unsigned int filter_max);
 extern int DAT_00AA0430;
 
-// FUNCTION: 0x005D4D50
+// FUNCTION: GAMEMD 0x005D4D50
 void Windows_Message_Handler(void)
 {
 	if (Game::hWnd == 0) return;
@@ -80,19 +84,19 @@ void Windows_Message_Handler(void)
 	}
 }
 
-// FUNCTION: 0x005D4E70
+// FUNCTION: GAMEMD 0x005D4E70
 void Add_Modeless_Dialog(HWND dialog)
 {
 	_ModelessDialogs.Add(dialog);
 }
 
-// FUNCTION: 0x005D4ED0
+// FUNCTION: GAMEMD 0x005D4ED0
 void Remove_Modeless_Dialog(HWND dialog)
 {
 	_ModelessDialogs.Delete(dialog);
 }
 
-// FUNCTION: 0x005D4F20
+// FUNCTION: GAMEMD 0x005D4F20
 HWND Get_Modeless_Dialog_From_Name(const char *name)
 {
 	static char _wname[100];
@@ -106,13 +110,13 @@ HWND Get_Modeless_Dialog_From_Name(const char *name)
 	return(NULL);
 }
 
-// FUNCTION: 0x005D4FA0
+// FUNCTION: GAMEMD 0x005D4FA0
 void Add_Accelerator(HWND window, HACCEL accelerator)
 {
 	_Accelerators.Add(AcceleratorTracker(window, accelerator));
 }
 
-// FUNCTION: 0x005D5010
+// FUNCTION: GAMEMD 0x005D5010
 void Remove_Accelerator(HACCEL accelerator)
 {
 	for (int index = 0; index < _Accelerators.Count(); index++) {

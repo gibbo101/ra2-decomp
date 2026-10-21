@@ -83,7 +83,7 @@ extern int DAT_00B1CFA8, DAT_00B1CFAC, DAT_00B1CFB0, DAT_00B1CFB4;
 extern int DAT_00B1CFC0, DAT_00B1CFC4, DAT_00B1CFC8, DAT_00B1CFCC;
 extern int __fastcall FUN_0050C170(char const * name);
 
-// FUNCTION: 0x00735390
+// FUNCTION: GAMEMD 0x00735390
 void FUN_00735390(void)
 {
 	DAT_00B1CFC0 = DAT_00B1CFA8;
@@ -92,7 +92,7 @@ void FUN_00735390(void)
 	DAT_00B1CFCC = DAT_00B1CFB4;
 }
 
-// FUNCTION: 0x007353C0
+// FUNCTION: GAMEMD 0x007353C0
 UnitClass::UnitClass(UnitTypeClass const * type, HouseClass * house) :
 	BASECLASS(house),
 	FiringSyncDelay(-1),
@@ -162,7 +162,8 @@ UnitClass::UnitClass(UnitTypeClass const * type, HouseClass * house) :
 	TargetTracker.Add_Index(Fetch_ID(), this);
 }
 
-// FUNCTION: 0x00735780 UnitClass::~UnitClass
+// FUNCTION: GAMEMD 0x00735780
+// UnitClass::~UnitClass
 UnitClass::~UnitClass(void)
 {
 	if (ElectricBolt != NULL) {
@@ -201,7 +202,7 @@ UnitClass::~UnitClass(void)
 	IsActive = false;
 }
 
-// FUNCTION: 0x00736990
+// FUNCTION: GAMEMD 0x00736990
 void UnitClass::Rotation_AI(void)
 {
 	if (TarCom != NULL && !IsRotating) {
@@ -260,7 +261,7 @@ void UnitClass::Rotation_AI(void)
 	}
 }
 
-// FUNCTION: 0x00736C10
+// FUNCTION: GAMEMD 0x00736C10
 bool UnitClass::Edge_Of_World_AI(void)
 {
 	if (Get_Mission() == MISSION_GUARD && !Map.In_Radar(Get_Coord()) && IsInPlayfield) {
@@ -274,7 +275,7 @@ bool UnitClass::Edge_Of_World_AI(void)
 	return(false);
 }
 
-// FUNCTION: 0x00736CA0
+// FUNCTION: GAMEMD 0x00736CA0
 void UnitClass::Reload(void)
 {
 	if (!Class->MobileFire && Locomotion->Is_Moving()) {
@@ -285,7 +286,7 @@ void UnitClass::Reload(void)
 	TechnoClass::Reload();
 }
 
-// FUNCTION: 0x00736D50
+// FUNCTION: GAMEMD 0x00736D50
 bool UnitClass::Deploy_To_Fire(void) const
 {
 	if (Class->DeployToFire) {
@@ -317,7 +318,7 @@ inline Cell Adjacent_Cell_By_Value(Cell cell, FacingType dir)
 	return(cell + AdjacentCell[(int)dir & 0x07]);
 }
 
-// FUNCTION: 0x00736DF0
+// FUNCTION: GAMEMD 0x00736DF0
 void UnitClass::Firing_AI(void)
 {
 	if (TarCom != NULL && Get_Class_Weapon_Data(0)->Weapon != NULL) {
@@ -410,7 +411,7 @@ void UnitClass::Firing_AI(void)
 	}
 }
 
-// FUNCTION: 0x00737180
+// FUNCTION: GAMEMD 0x00737180
 void UnitClass::Visceroid_AI(void)
 {
 	Cell cell = PositionCell;
@@ -468,7 +469,7 @@ void UnitClass::Visceroid_AI(void)
 	}
 }
 
-// FUNCTION: 0x00737BA0
+// FUNCTION: GAMEMD 0x00737BA0
 bool UnitClass::Unlimbo(Coord const & coord, Dir256 dir)
 {
 	if (BASECLASS::Unlimbo(coord, dir)) {
@@ -491,7 +492,7 @@ bool UnitClass::Unlimbo(Coord const & coord, Dir256 dir)
 	return(false);
 }
 
-// FUNCTION: 0x00738890
+// FUNCTION: GAMEMD 0x00738890
 bool UnitClass::Active_Click_With(ActionType action, ObjectClass * object, bool is_waypoint)
 {
 	ActionType what = What_Action(object, is_waypoint);
@@ -527,7 +528,7 @@ bool UnitClass::Active_Click_With(ActionType action, ObjectClass * object, bool 
 	return(BASECLASS::Active_Click_With(action, object, is_waypoint));
 }
 
-// FUNCTION: 0x00738910
+// FUNCTION: GAMEMD 0x00738910
 bool UnitClass::Active_Click_With(ActionType action, Cell const & cell, Cell const & cell2, bool is_waypoint)
 {
 	if (Deployed && What_Action(cell, false, is_waypoint) == ACTION_NOMOVE) {
@@ -539,7 +540,7 @@ bool UnitClass::Active_Click_With(ActionType action, Cell const & cell, Cell con
 	return(BASECLASS::Active_Click_With(action, cell, cell2, is_waypoint));
 }
 
-// FUNCTION: 0x00738970
+// FUNCTION: GAMEMD 0x00738970
 bool UnitClass::Enter_Idle_Mode(bool initial, bool resume_waypoint)
 {
 	MissionType order;
@@ -622,12 +623,12 @@ bool UnitClass::Enter_Idle_Mode(bool initial, bool resume_waypoint)
 	return(res);
 }
 
-// FUNCTION: 0x007393B0
+// FUNCTION: GAMEMD 0x007393B0
 void FUN_007393B0(void)
 {
 }
 
-// FUNCTION: 0x00739AC0
+// FUNCTION: GAMEMD 0x00739AC0
 void UnitClass::Deploy(void)
 {
 	if (Class->IsSimpleDeployer) {
@@ -665,7 +666,7 @@ void UnitClass::Deploy(void)
 	}
 }
 
-// FUNCTION: 0x00739CD0
+// FUNCTION: GAMEMD 0x00739CD0
 void UnitClass::Undeploy(void)
 {
 	if (Deployed) {
@@ -699,7 +700,7 @@ void UnitClass::Undeploy(void)
 	}
 }
 
-// FUNCTION: 0x0073B0B0
+// FUNCTION: GAMEMD 0x0073B0B0
 bool UnitClass::Render(Rect & rect, bool forced, bool extras_only) const
 {
 	if (IsTethered) {
@@ -732,7 +733,7 @@ inline void Coord_Pixel(Coord coord, Point2D & pixel)
 }
 
 extern BulletClass * __fastcall FUN_0046B050(BulletTypeClass const * type, AbstractClass * target, TechnoClass * payback, int strength, WarheadTypeClass const * warhead, int max_speed, bool bright);
-// FUNCTION: 0x0073CEC0
+// FUNCTION: GAMEMD 0x0073CEC0
 void UnitClass::Draw_It(Point2D const & point, Rect const & cliprect) const
 {
 	static ShapeSet const * harvesting_shape = (ShapeSet const *)FileSystem::LoadFile("OREGATH.SHP", false);
@@ -833,7 +834,7 @@ void UnitClass::Draw_It(Point2D const & point, Rect const & cliprect) const
 	}
 }
 
-// FUNCTION: 0x0073D450
+// FUNCTION: GAMEMD 0x0073D450
 bool UnitClass::Harvesting(void)
 {
 	CellClass * ptr = &Map[Get_Coord()];
@@ -867,7 +868,7 @@ bool UnitClass::Harvesting(void)
 	return(false);
 }
 
-// FUNCTION: 0x0073EFC0
+// FUNCTION: GAMEMD 0x0073EFC0
 int UnitClass::Do_MISSION_HUNT(void)
 {
 	if (Class->DeploysInto != NULL && (Rule->BuildConst.Is_In_List(Class->DeploysInto) || TarCom != NULL || House->FUN_0050B730())) {
@@ -892,7 +893,7 @@ int UnitClass::Do_MISSION_HUNT(void)
 	return(Current_Mission_Control().Normal_Delay() + Random_Pick(0, 2));
 }
 
-// FUNCTION: 0x007404B0
+// FUNCTION: GAMEMD 0x007404B0
 ActionType UnitClass::What_Action(Cell const & cell, bool check_fog, bool disallow_force) const
 {
 	if (!House->Is_Player_Control()) {
@@ -973,7 +974,7 @@ ActionType UnitClass::What_Action(Cell const & cell, bool check_fog, bool disall
 	return(action);
 }
 
-// FUNCTION: 0x00740810
+// FUNCTION: GAMEMD 0x00740810
 int UnitClass::Do_MISSION_GUARD(void)
 {
 	if (SlaveManager != NULL && Rule->SlaveMinerKickFrameDelay + CurrentMissionStartTime < Frame && SlaveManager->ShouldWakeUpNow()) {
@@ -1020,7 +1021,7 @@ int UnitClass::Do_MISSION_GUARD(void)
 	return(BASECLASS::Do_MISSION_GUARD());
 }
 
-// FUNCTION: 0x00740A90
+// FUNCTION: GAMEMD 0x00740A90
 int UnitClass::Do_MISSION_MOVE(void)
 {
 	IsHarvesting = false;
@@ -1037,7 +1038,7 @@ int UnitClass::Do_MISSION_MOVE(void)
 	return(BASECLASS::Do_MISSION_MOVE());
 }
 
-// FUNCTION: 0x00740B10
+// FUNCTION: GAMEMD 0x00740B10
 int UnitClass::Do_MISSION_PATROL(void)
 {
 	IsHarvesting = false;
@@ -1049,7 +1050,7 @@ int UnitClass::Do_MISSION_PATROL(void)
 	return(BASECLASS::Do_MISSION_PATROL());
 }
 
-// FUNCTION: 0x00740DF0
+// FUNCTION: GAMEMD 0x00740DF0
 bool UnitClass::Flag_Attach(HousesType house)
 {
 	if (house != HOUSE_NONE && Flagged == HOUSE_NONE) {
@@ -1060,7 +1061,7 @@ bool UnitClass::Flag_Attach(HousesType house)
 	return(false);
 }
 
-// FUNCTION: 0x00740E20
+// FUNCTION: GAMEMD 0x00740E20
 bool UnitClass::Flag_Remove(void)
 {
 	if (Flagged != HOUSE_NONE) {
@@ -1071,19 +1072,19 @@ bool UnitClass::Flag_Remove(void)
 	return(false);
 }
 
-// FUNCTION: 0x00740E50
+// FUNCTION: GAMEMD 0x00740E50
 int UnitClass::Pip_Count(void) const
 {
 	return(BASECLASS::Pip_Count());
 }
 
-// FUNCTION: 0x00740E60
+// FUNCTION: GAMEMD 0x00740E60
 void UnitClass::APC_Close_Door(void)
 {
 	Door.Close_Door(Class->DeployTime);
 }
 
-// FUNCTION: 0x00740E80
+// FUNCTION: GAMEMD 0x00740E80
 void UnitClass::APC_Open_Door(void)
 {
 	if (!Locomotion->Is_Moving() && !IsRotating) {
@@ -1091,13 +1092,13 @@ void UnitClass::APC_Open_Door(void)
 	}
 }
 
-// FUNCTION: 0x00740EE0
+// FUNCTION: GAMEMD 0x00740EE0
 InfantryTypeClass const * UnitClass::Crew_Type(void) const
 {
 	return(BASECLASS::Crew_Type());
 }
 
-// FUNCTION: 0x00740EF0
+// FUNCTION: GAMEMD 0x00740EF0
 int UnitClass::Do_MISSION_REPAIR(void)
 {
 	BuildingClass * nearest = TryNearestDockBuilding((TypeList<BuildingTypeClass *> *)&Rule->RepairBay, 0, 0);
@@ -1118,7 +1119,7 @@ int UnitClass::Do_MISSION_REPAIR(void)
 	return(Current_Mission_Control().Normal_Delay());
 }
 
-// FUNCTION: 0x00740F80
+// FUNCTION: GAMEMD 0x00740F80
 DirType UnitClass::Fire_Direction(void) const
 {
 	if (Class->IsTurretEquipped) {
@@ -1128,7 +1129,7 @@ DirType UnitClass::Fire_Direction(void) const
 	return(BASECLASS::Fire_Direction());
 }
 
-// FUNCTION: 0x00740FD0
+// FUNCTION: GAMEMD 0x00740FD0
 FireErrorType UnitClass::Can_Fire(AbstractClass * target, int which, bool ignoreRange) const
 {
 	if (DeathCounter >= 0) {
@@ -1212,7 +1213,7 @@ FireErrorType UnitClass::Can_Fire(AbstractClass * target, int which, bool ignore
 	return(fire);
 }
 
-// FUNCTION: 0x00741340
+// FUNCTION: GAMEMD 0x00741340
 BulletClass * UnitClass::Fire_At(AbstractClass * target, int which)
 {
 	BulletClass * bullet = NULL;
@@ -1251,13 +1252,13 @@ BulletClass * UnitClass::Fire_At(AbstractClass * target, int which)
 	return(bullet);
 }
 
-// FUNCTION: 0x00741490
+// FUNCTION: GAMEMD 0x00741490
 ObjectTypeClass const * UnitClass::Class_Of(void) const
 {
 	return(Class);
 }
 
-// FUNCTION: 0x007414A0
+// FUNCTION: GAMEMD 0x007414A0
 double UnitClass::Tiberium_Load(void) const
 {
 	if (Class->Harvester || Class->Weeder) {
@@ -1283,7 +1284,7 @@ static inline ObjectClass * Object_Of(AbstractClass * a)
 	return((a->AbstractFlags & 2) ? (ObjectClass *)a : NULL);
 }
 
-// FUNCTION: 0x007414E0
+// FUNCTION: GAMEMD 0x007414E0
 AbstractClass * UnitClass::Approach_Target(bool force)
 {
 	if (!House->FUN_0050B730() && TarCom != NULL && NavCom == NULL) {
@@ -1316,7 +1317,7 @@ AbstractClass * UnitClass::Approach_Target(bool force)
 	return(BASECLASS::Approach_Target(false));
 }
 
-// FUNCTION: 0x007416A0
+// FUNCTION: GAMEMD 0x007416A0
 void UnitClass::Overrun_Square(Cell const & cell, bool threaten)
 {
 	CellClass * cellptr = &Map[cell];
@@ -1378,7 +1379,7 @@ void UnitClass::Overrun_Square(Cell const & cell, bool threaten)
 	}
 }
 
-// FUNCTION: 0x00743190
+// FUNCTION: GAMEMD 0x00743190
 AbstractClass * UnitClass::Greatest_Threat(ThreatType threat, Coord const & coord, bool onlyenemy) const
 {
 	if (House->FUN_0050B730() && Class->DeployToFire) {
@@ -1400,7 +1401,7 @@ AbstractClass * UnitClass::Greatest_Threat(ThreatType threat, Coord const & coor
 	return(BASECLASS::Greatest_Threat(threat, coord, onlyenemy));
 }
 
-// FUNCTION: 0x00743270
+// FUNCTION: GAMEMD 0x00743270
 void UnitClass::Read_INI(CCINIClass & ini)
 {
 	UnitClass * unit;
@@ -1518,7 +1519,7 @@ void UnitClass::Read_INI(CCINIClass & ini)
 	}
 }
 
-// FUNCTION: 0x007436E0
+// FUNCTION: GAMEMD 0x007436E0
 void UnitClass::Write_INI(CCINIClass & ini)
 {
 	ini.Clear(INI_NAME);
@@ -1551,14 +1552,14 @@ void UnitClass::Write_INI(CCINIClass & ini)
 	}
 }
 
-// FUNCTION: 0x007438B0
+// FUNCTION: GAMEMD 0x007438B0
 int UnitClass::Credit_Load(void) const
 {
 	float total = Storage.Get_Total_Value();
 	return((int)(House->FUN_0050C160() * total));
 }
 
-// FUNCTION: 0x007438F0
+// FUNCTION: GAMEMD 0x007438F0
 bool UnitClass::Should_Crush_It(TechnoClass const * it) const
 {
 	if (!(Class->IsCrusher || Has_Ability(ABILITY_CRUSHER)) || it == NULL || !((ObjectClass const *)it)->IsCrushable((TechnoClass *)this)) return(false);
@@ -1574,7 +1575,7 @@ bool UnitClass::Should_Crush_It(TechnoClass const * it) const
 	return(true);
 }
 
-// FUNCTION: 0x007440B0
+// FUNCTION: GAMEMD 0x007440B0
 bool UnitClass::Limbo(void)
 {
 	if (BASECLASS::Limbo()) {
@@ -1587,7 +1588,7 @@ bool UnitClass::Limbo(void)
 	return(false);
 }
 
-// FUNCTION: 0x00744100
+// FUNCTION: GAMEMD 0x00744100
 int UnitClass::Do_MISSION_GUARD_AREA(void)
 {
 	if (SlaveManager != NULL && Rule->SlaveMinerKickFrameDelay + CurrentMissionStartTime < Frame && SlaveManager->ShouldWakeUpNow()) {
@@ -1597,7 +1598,7 @@ int UnitClass::Do_MISSION_GUARD_AREA(void)
 	return(BASECLASS::Do_MISSION_GUARD_AREA());
 }
 
-// FUNCTION: 0x00744180
+// FUNCTION: GAMEMD 0x00744180
 bool UnitClass::Is_Ready_To_Move(void) const
 {
 	if (Door.Is_Ready_To_Open()) {
@@ -1607,7 +1608,7 @@ bool UnitClass::Is_Ready_To_Move(void) const
 	return(false);
 }
 
-// FUNCTION: 0x007441B0
+// FUNCTION: GAMEMD 0x007441B0
 void UnitClass::Set_Occupy_Bit(Coord const & coord)
 {
 	CellClass &cell = Map[coord];
@@ -1618,7 +1619,7 @@ void UnitClass::Set_Occupy_Bit(Coord const & coord)
 	}
 }
 
-// FUNCTION: 0x00744210
+// FUNCTION: GAMEMD 0x00744210
 void UnitClass::Clear_Occupy_Bit(Coord const & coord)
 {
 	CellClass &cell = Map[coord];
@@ -1635,7 +1636,7 @@ static inline bool Is_Cell_Below(Cell const & a, Cell const & b)
 	return(diff.X == 0 && diff.Y == 1);
 }
 
-// FUNCTION: 0x00744270
+// FUNCTION: GAMEMD 0x00744270
 bool UnitClass::Ready_To_Next_Mission(void) const
 {
 	if (CurrentMission == MISSION_STICKY || CurrentMission == MISSION_RESCUE) {
@@ -1673,7 +1674,7 @@ bool UnitClass::Ready_To_Next_Mission(void) const
 	return(true);
 }
 
-// FUNCTION: 0x00744470
+// FUNCTION: GAMEMD 0x00744470
 HRESULT STDMETHODCALLTYPE UnitClass::Load(IStream * stream)
 {
 	TargetTracker.Remove_Index(Fetch_ID());
@@ -1697,7 +1698,7 @@ HRESULT STDMETHODCALLTYPE UnitClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x00744600
+// FUNCTION: GAMEMD 0x00744600
 HRESULT STDMETHODCALLTYPE UnitClass::Save(IStream * stream, BOOL cleardirty)
 {
 	if (ElectricBolt != NULL) {
@@ -1707,7 +1708,7 @@ HRESULT STDMETHODCALLTYPE UnitClass::Save(IStream * stream, BOOL cleardirty)
 	return(BASECLASS::Save(stream, cleardirty));
 }
 
-// FUNCTION: 0x00744640
+// FUNCTION: GAMEMD 0x00744640
 void UnitClass::Compute_CRC(CRCEngine & crc) const
 {
 	BASECLASS::Compute_CRC(crc);
@@ -1724,7 +1725,7 @@ void UnitClass::Compute_CRC(CRCEngine & crc) const
 	crc(IsToScatter);
 }
 
-// FUNCTION: 0x007446E0
+// FUNCTION: GAMEMD 0x007446E0
 void UnitClass::Detach(AbstractClass const * target, bool all)
 {
 	BASECLASS::Detach(target, all);
@@ -1736,7 +1737,7 @@ void UnitClass::Detach(AbstractClass const * target, bool all)
 	}
 }
 
-// FUNCTION: 0x00744720
+// FUNCTION: GAMEMD 0x00744720
 void UnitClass::RegisterDestruction(TechnoClass * source)
 {
 	if (Tag != NULL) {
@@ -1755,13 +1756,13 @@ void UnitClass::RegisterDestruction(TechnoClass * source)
 	BASECLASS::RegisterDestruction(source);
 }
 
-// FUNCTION: 0x007447A0
+// FUNCTION: GAMEMD 0x007447A0
 int UnitClass::Do_MISSION_ATTACK(void)
 {
 	return(BASECLASS::Do_MISSION_ATTACK());
 }
 
-// FUNCTION: 0x00746000
+// FUNCTION: GAMEMD 0x00746000
 bool UnitClass::AStarAttempt(Cell const * from, Cell const * to)
 {
 	if (Get_Height_AGL() >= 0 && Map.Is_Same_Cell_Zone(*from, *to, MZONE_NORMAL, false, false, false)) {
@@ -1780,7 +1781,7 @@ bool UnitClass::AStarAttempt(Cell const * from, Cell const * to)
 }
 
 
-// FUNCTION: 0x00746100
+// FUNCTION: GAMEMD 0x00746100
 bool UnitClass::INoticeSink_Unknown(DWORD unknown, DWORD unknown2)
 {
 	if ((Class->BalloonHover || Class->JumpJet) && unknown == 0x117b && HasAnyLink()) {
@@ -1842,7 +1843,8 @@ bool UnitClass::INoticeSink_Unknown(DWORD unknown, DWORD unknown2)
 	return(false);
 }
 
-// FUNCTION: 0x007463A0 UnitClass::Captured
+// FUNCTION: GAMEMD 0x007463A0
+// UnitClass::Captured
 bool UnitClass::Captured(HouseClass * newowner, bool announce)
 {
 	if (newowner != House) {
@@ -1858,13 +1860,13 @@ bool UnitClass::Captured(HouseClass * newowner, bool announce)
 	return(false);
 }
 
-// FUNCTION: 0x00746400
+// FUNCTION: GAMEMD 0x00746400
 bool UnitClass::IsStrange(void) const
 {
 	return(!Class->NonVehicle);
 }
 
-// FUNCTION: 0x00746420
+// FUNCTION: GAMEMD 0x00746420
 void UnitClass::ReceiveGunner(FootClass * gunner)
 {
 	TemporalClass * temporal = gunner->TemporalImUsing;
@@ -1885,7 +1887,7 @@ void UnitClass::ReceiveGunner(FootClass * gunner)
 	FUN_0070DC70(gunner->Techno_Type_Class()->IFVMode);
 }
 
-// FUNCTION: 0x007464E0
+// FUNCTION: GAMEMD 0x007464E0
 void UnitClass::RemoveGunner(FootClass * gunner)
 {
 	if (gunner != NULL) {
@@ -1910,7 +1912,7 @@ void UnitClass::RemoveGunner(FootClass * gunner)
 	FUN_0070DC70(0);
 }
 
-// FUNCTION: 0x007465B0
+// FUNCTION: GAMEMD 0x007465B0
 ObjectTypeClass * UnitClass::GetDisguise(bool against_allies) const
 {
 	if (House->Is_Ally(PlayerPtr) && !against_allies) {
@@ -1919,7 +1921,7 @@ ObjectTypeClass * UnitClass::GetDisguise(bool against_allies) const
 	return(Disguise);
 }
 
-// FUNCTION: 0x007465F0
+// FUNCTION: GAMEMD 0x007465F0
 HouseClass * UnitClass::GetDisguiseHouse(bool against_allies) const
 {
 	if (House->Is_Ally(PlayerPtr) && !against_allies) {
@@ -1928,7 +1930,7 @@ HouseClass * UnitClass::GetDisguiseHouse(bool against_allies) const
 	return(DisguisedAsHouse);
 }
 
-// FUNCTION: 0x00746630
+// FUNCTION: GAMEMD 0x00746630
 void UnitClass::FUN_00746630(ObjectTypeClass * type)
 {
 	if (type != NULL) {
@@ -1942,7 +1944,7 @@ void UnitClass::FUN_00746630(ObjectTypeClass * type)
 
 #pragma warning(push)
 #pragma warning(disable: 4716)
-// FUNCTION: 0x00746670
+// FUNCTION: GAMEMD 0x00746670
 unsigned UnitClass::DisguiseAs(AbstractClass * target)
 {
 	if (target != NULL) {
@@ -1973,7 +1975,7 @@ unsigned UnitClass::DisguiseAs(AbstractClass * target)
 }
 #pragma warning(pop)
 
-// FUNCTION: 0x00746720
+// FUNCTION: GAMEMD 0x00746720
 void UnitClass::ClearDisguise(void)
 {
 	Disguised = false;
@@ -1982,7 +1984,7 @@ void UnitClass::ClearDisguise(void)
 	DisguisedAsHouse = NULL;
 }
 
-// FUNCTION: 0x00746750
+// FUNCTION: GAMEMD 0x00746750
 bool UnitClass::IsDisguisedAs(HouseClass * house) const
 {
 	if (IsDisguised()) {
@@ -1997,7 +1999,7 @@ bool UnitClass::IsDisguisedAs(HouseClass * house) const
 	return(false);
 }
 
-// FUNCTION: 0x00746810
+// FUNCTION: GAMEMD 0x00746810
 void UnitClass::Init(void)
 {
 	TechnoClass::Init();
@@ -2020,7 +2022,7 @@ void UnitClass::Init(void)
 	}
 }
 
-// FUNCTION: 0x007468C0
+// FUNCTION: GAMEMD 0x007468C0
 void UnitClass::UpdateDisguise(void)
 {
 	bool still = false;
@@ -2066,7 +2068,7 @@ clear:
 	goto update;
 }
 
-// FUNCTION: 0x00746B20
+// FUNCTION: GAMEMD 0x00746B20
 wchar_t const * UnitClass::Full_Name(void) const
 {
 	if (IsDisguisedAs(PlayerPtr)) {
@@ -2107,25 +2109,25 @@ wchar_t const * UnitClass::Full_Name(void) const
 	return(Class->UIName);
 }
 
-// FUNCTION: 0x00746C90
+// FUNCTION: GAMEMD 0x00746C90
 bool UnitClass::IsUnderEMP(void) const
 {
 	return((DeathCounter != -1 || TechnoClass::IsUnderEMP()) ? 1 : 0);
 }
 
-// FUNCTION: 0x00746CB0
+// FUNCTION: GAMEMD 0x00746CB0
 bool UnitClass::CanUseWaypoint(void) const
 {
 	return(TechnoClass::CanUseWaypoint());
 }
 
-// FUNCTION: 0x00746CC0
+// FUNCTION: GAMEMD 0x00746CC0
 bool UnitClass::CanAttackOnTheMove(void) const
 {
 	return(TechnoClass::CanAttackOnTheMove());
 }
 
-// FUNCTION: 0x00746CD0
+// FUNCTION: GAMEMD 0x00746CD0
 int UnitClass::What_Weapon_Should_I_Use(AbstractClass * target) const
 {
 	if (Deployed && Class->DeployFire) {
@@ -2134,13 +2136,13 @@ int UnitClass::What_Weapon_Should_I_Use(AbstractClass * target) const
 	return(TechnoClass::What_Weapon_Should_I_Use(target));
 }
 
-// FUNCTION: 0x00746D00
+// FUNCTION: GAMEMD 0x00746D00
 bool UnitClass::FUN_00746D00(void) const
 {
 	return(Class->DeployFire);
 }
 
-// FUNCTION: 0x00746D10
+// FUNCTION: GAMEMD 0x00746D10
 bool UnitClass::FUN_00746D10(void) const
 {
 	if (!Class->IsSimpleDeployer) {
@@ -2152,38 +2154,38 @@ bool UnitClass::FUN_00746D10(void) const
 	return(true);
 }
 
-// FUNCTION: 0x00746D60
+// FUNCTION: GAMEMD 0x00746D60
 void UnitClass::Destroy(void)
 {
 	Explode();
 	FUN_00710460();
 }
 
-// FUNCTION: 0x00746D80
+// FUNCTION: GAMEMD 0x00746D80
 bool UnitClass::FUN_00746D80(void) const
 {
 	return(Deployed);
 }
 
-// FUNCTION: 0x00746D90
+// FUNCTION: GAMEMD 0x00746D90
 bool UnitClass::FUN_00746D90(void) const
 {
 	return(Deployed || Deploying);
 }
 
-// FUNCTION: 0x00746DB0
+// FUNCTION: GAMEMD 0x00746DB0
 bool UnitClass::FUN_00746DB0(void) const
 {
 	return(Deploying || Undeploying);
 }
 
-// FUNCTION: 0x00746DD0
+// FUNCTION: GAMEMD 0x00746DD0
 int UnitClass::Fetch_Object_Size(void) const
 {
 	return(sizeof(*this));
 }
 
-// FUNCTION: 0x00746DE0
+// FUNCTION: GAMEMD 0x00746DE0
 HRESULT STDMETHODCALLTYPE UnitClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -2191,13 +2193,13 @@ HRESULT STDMETHODCALLTYPE UnitClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x00746E20
+// FUNCTION: GAMEMD 0x00746E20
 RTTIType UnitClass::Fetch_RTTI(void) const
 {
 	return(RTTI_UNIT);
 }
 
-// FUNCTION: 0x00746E30
+// FUNCTION: GAMEMD 0x00746E30
 DirType UnitClass::Turret_Facing(void) const
 {
 	if (Class->IsTurretEquipped) {
@@ -2207,16 +2209,18 @@ DirType UnitClass::Turret_Facing(void) const
 	return(PrimaryFacing.Current());
 }
 
-// FUNCTION: 0x00746E80 UnitClass::~UnitClass
+// SYNTHETIC: GAMEMD 0x00746E80
+// ??_GUnitClass@@UAEPAXI@Z
 
-// FUNCTION: 0x00746EA0 ?$IndexClass@HPAUEntry@StaticBufferClass@@::Is_Archive_Same
+// TEMPLATE: GAMEMD 0x00746EA0
+// ?Is_Archive_Same@?$IndexClass@HPAUEntry@StaticBufferClass@@@@ABE_NABH@Z
 
 extern int DAT_00B1D0C8;
 extern int DAT_00B1D0CC;
 extern int DAT_00B1D0D0;
 extern int DAT_00B1D0D4;
 
-// FUNCTION: 0x00746EC0
+// FUNCTION: GAMEMD 0x00746EC0
 void __cdecl FUN_00746EC0(void)
 {
 	DAT_00B1D0C8 = 0;

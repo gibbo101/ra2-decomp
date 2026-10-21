@@ -9,7 +9,7 @@
 #include "lzo.h"
 #include <cstring>
 
-// FUNCTION: 0x0055C2B0
+// FUNCTION: GAMEMD 0x0055C2B0
 LZOPipe::LZOPipe(CompControl control, int blocksize) :
 		Control(control),
 		Counter(0),
@@ -23,7 +23,7 @@ LZOPipe::LZOPipe(CompControl control, int blocksize) :
 	BlockHeader.CompCount = 0xFFFF;
 }
 
-// FUNCTION: 0x0055C310
+// FUNCTION: GAMEMD 0x0055C310
 LZOPipe::~LZOPipe(void)
 {
 	delete [] Buffer;
@@ -33,7 +33,7 @@ LZOPipe::~LZOPipe(void)
 	Buffer2 = NULL;
 }
 
-// FUNCTION: 0x0055C350
+// FUNCTION: GAMEMD 0x0055C350
 int LZOPipe::Put(void const * source, int slen)
 {
 	if (source == NULL || slen < 1) {
@@ -106,7 +106,7 @@ int LZOPipe::Put(void const * source, int slen)
 	}
 	return(total);
 }
-// FUNCTION: 0x0055C5E0
+// FUNCTION: GAMEMD 0x0055C5E0
 int LZOPipe::Flush(void)
 {
 	int total = 0;
@@ -138,4 +138,5 @@ int LZOPipe::Flush(void)
 	return(total);
 }
 
-// FUNCTION: 0x0055C6D0 LZOPipe::~LZOPipe
+// SYNTHETIC: GAMEMD 0x0055C6D0
+// ??_GLZOPipe@@UAEPAXI@Z

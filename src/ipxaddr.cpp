@@ -68,7 +68,7 @@ struct MessageRecord {
 	MSG Message;
 };
 
-// FUNCTION: 0x0053E3C0
+// FUNCTION: GAMEMD 0x0053E3C0
 void __fastcall FUN_0053E3C0(HWND window)
 {
 	if (DAT_00AA0448 && window) {
@@ -88,7 +88,7 @@ void __fastcall FUN_0053E3C0(HWND window)
 	}
 }
 
-// FUNCTION: 0x0053E420
+// FUNCTION: GAMEMD 0x0053E420
 void __fastcall FUN_0053E420(HWND window)
 {
 	if (DAT_00AA0448 && window) {
@@ -104,7 +104,7 @@ void __fastcall FUN_0053E420(HWND window)
 	}
 }
 
-// FUNCTION: 0x0053E470
+// FUNCTION: GAMEMD 0x0053E470
 int __fastcall FUN_0053E470(int value)
 {
 	if (DAT_00AA0448) {
@@ -123,14 +123,14 @@ int __fastcall FUN_0053E470(int value)
 	return -1;
 }
 
-// FUNCTION: 0x0053E4C0
+// FUNCTION: GAMEMD 0x0053E4C0
 int __fastcall FUN_0053E4C0(int index)
 {
 	if (DAT_00AA0448 && index >= 0 && index < DAT_00AA0374) return DAT_00AA044C[index];
 	return 0;
 }
 
-// FUNCTION: 0x0053E4F0
+// FUNCTION: GAMEMD 0x0053E4F0
 int __fastcall FUN_0053E4F0(char const * name)
 {
 	if (DAT_00AA0448 && !DAT_00AA0468) {
@@ -143,7 +143,7 @@ int __fastcall FUN_0053E4F0(char const * name)
 	return 0;
 }
 
-// FUNCTION: 0x0053E550
+// FUNCTION: GAMEMD 0x0053E550
 int __fastcall FUN_0053E550(char const * name)
 {
 	if (DAT_00AA0448 && !DAT_00AA0468) {
@@ -162,7 +162,7 @@ int __fastcall FUN_0053E550(char const * name)
 	return 0;
 }
 
-// FUNCTION: 0x0053E5F0
+// FUNCTION: GAMEMD 0x0053E5F0
 void __fastcall FUN_0053E5F0(void)
 {
 	if (DAT_00AA0448) {
@@ -177,7 +177,7 @@ void __fastcall FUN_0053E5F0(void)
 	}
 }
 
-// FUNCTION: 0x0053E6B0
+// FUNCTION: GAMEMD 0x0053E6B0
 void __fastcall FUN_0053E6B0(void)
 {
 	if (DAT_00AA0448) {
@@ -190,7 +190,7 @@ void __fastcall FUN_0053E6B0(void)
 	}
 }
 
-// FUNCTION: 0x0053E720
+// FUNCTION: GAMEMD 0x0053E720
 int __fastcall FUN_0053E720(void)
 {
 	return DAT_00AA0444;
@@ -198,7 +198,7 @@ int __fastcall FUN_0053E720(void)
 
 int __fastcall FUN_0053E770(MSG * msg, HWND window, unsigned int filter_min, unsigned int filter_max, unsigned int remove);
 
-// FUNCTION: 0x0053E730
+// FUNCTION: GAMEMD 0x0053E730
 int __fastcall FUN_0053E730(MSG * msg, HWND window, unsigned int filter_min, unsigned int filter_max)
 {
 	int result;
@@ -209,7 +209,7 @@ int __fastcall FUN_0053E730(MSG * msg, HWND window, unsigned int filter_min, uns
 	return result;
 }
 
-// FUNCTION: 0x0053E770
+// FUNCTION: GAMEMD 0x0053E770
 int __fastcall FUN_0053E770(MSG * msg, HWND window, unsigned int filter_min, unsigned int filter_max, unsigned int remove)
 {
 	int result = 0;
@@ -318,7 +318,7 @@ top:
 	return result;
 }
 
-// FUNCTION: 0x0053EC00
+// FUNCTION: GAMEMD 0x0053EC00
 void __fastcall FUN_0053EC00(int * x, int * y)
 {
 	if (DAT_00AA0448 && DAT_00AA0444) {
@@ -329,7 +329,7 @@ void __fastcall FUN_0053EC00(int * x, int * y)
 	}
 }
 
-// FUNCTION: 0x0053EC40
+// FUNCTION: GAMEMD 0x0053EC40
 void __fastcall FUN_0053EC40(int key, bool up)
 {
 	if (DAT_00AA0444) {
@@ -337,21 +337,21 @@ void __fastcall FUN_0053EC40(int key, bool up)
 	}
 }
 
-// FUNCTION: 0x0053EC70
+// FUNCTION: GAMEMD 0x0053EC70
 short __fastcall FUN_0053EC70(int key)
 {
 	if (!DAT_00AA0444) return GetKeyState(key);
 	return DAT_00AA0168[key & 0xff];
 }
 
-// FUNCTION: 0x0053EC90
+// FUNCTION: GAMEMD 0x0053EC90
 short __fastcall FUN_0053EC90(int key)
 {
 	if (!DAT_00AA0444) return GetAsyncKeyState(key);
 	return DAT_00AA0168[key & 0xff];
 }
 
-// FUNCTION: 0x0053ECB0
+// FUNCTION: GAMEMD 0x0053ECB0
 IPXAddressClass::IPXAddressClass(void)
 {
 	NetworkNumber[0] = 0xff;
@@ -366,7 +366,7 @@ IPXAddressClass::IPXAddressClass(void)
 	NodeAddress[5] = 0xff;
 }
 
-// FUNCTION: 0x0053ECE0
+// FUNCTION: GAMEMD 0x0053ECE0
 IPXAddressClass::IPXAddressClass(NetNumType net, NetNodeType node, unsigned short port)
 {
 	memcpy(NodeAddress, node, 6);
@@ -378,7 +378,7 @@ IPXAddressClass::IPXAddressClass(NetNumType net, NetNodeType node, unsigned shor
 	}
 }
 
-// FUNCTION: 0x0053ED20
+// FUNCTION: GAMEMD 0x0053ED20
 void IPXAddressClass::Set_Address(NetNumType net, NetNodeType node, unsigned short port)
 {
 	memcpy(NodeAddress, node, 6);
@@ -390,7 +390,7 @@ void IPXAddressClass::Set_Address(NetNumType net, NetNodeType node, unsigned sho
 	}
 }
 
-// FUNCTION: 0x0053ED60
+// FUNCTION: GAMEMD 0x0053ED60
 void IPXAddressClass::Get_Address(NetNumType net, NetNodeType node, unsigned short * port)
 {
 	memcpy(node, NodeAddress, 6);
@@ -401,26 +401,26 @@ void IPXAddressClass::Get_Address(NetNumType net, NetNodeType node, unsigned sho
 	}
 }
 
-// FUNCTION: 0x0053EDA0
+// FUNCTION: GAMEMD 0x0053EDA0
 void IPXAddressClass::Get_Address(NetNumType net, NetNodeType node)
 {
 	memcpy(node, NodeAddress, 6);
 	memcpy(net, NetworkNumber, 4);
 }
 
-// FUNCTION: 0x0053EDC0
+// FUNCTION: GAMEMD 0x0053EDC0
 void IPXAddressClass::Get_Node(NetNodeType node)
 {
 	memcpy(node, NodeAddress, 6);
 }
 
-// FUNCTION: 0x0053EDE0
+// FUNCTION: GAMEMD 0x0053EDE0
 void IPXAddressClass::Set_Node(NetNodeType node)
 {
 	memcpy(NodeAddress, node, 6);
 }
 
-// FUNCTION: 0x0053EE00
+// FUNCTION: GAMEMD 0x0053EE00
 int IPXAddressClass::Is_Broadcast(void)
 {
 	if (DAT_00828140 == 1) {
@@ -438,7 +438,7 @@ int IPXAddressClass::Is_Broadcast(void)
 	return 0;
 }
 
-// FUNCTION: 0x0053EE70
+// FUNCTION: GAMEMD 0x0053EE70
 bool IPXAddressClass::operator == (IPXAddressClass & addr)
 {
 	if (DAT_00828140 == 2) {
@@ -461,13 +461,13 @@ bool IPXAddressClass::operator == (IPXAddressClass & addr)
 	return 0;
 }
 
-// FUNCTION: 0x0053EF30
+// FUNCTION: GAMEMD 0x0053EF30
 bool IPXAddressClass::FUN_0053EF30(IPXAddressClass & addr)
 {
 	return memcmp(NodeAddress, addr.NodeAddress, (DAT_00828140 == 2) ? 4 : 6) == 0;
 }
 
-// FUNCTION: 0x0053EF60
+// FUNCTION: GAMEMD 0x0053EF60
 bool IPXAddressClass::operator != (IPXAddressClass & addr)
 {
 	if (DAT_00828140 == 2) {
@@ -490,31 +490,31 @@ bool IPXAddressClass::operator != (IPXAddressClass & addr)
 	return 1;
 }
 
-// FUNCTION: 0x0053F020
+// FUNCTION: GAMEMD 0x0053F020
 bool IPXAddressClass::operator > (IPXAddressClass & addr)
 {
 	return(memcmp(this, &addr, 10) > 0);
 }
 
-// FUNCTION: 0x0053F050
+// FUNCTION: GAMEMD 0x0053F050
 bool IPXAddressClass::operator < (IPXAddressClass & addr)
 {
 	return(memcmp(this, &addr, 10) < 0);
 }
 
-// FUNCTION: 0x0053F080
+// FUNCTION: GAMEMD 0x0053F080
 bool IPXAddressClass::operator >= (IPXAddressClass & addr)
 {
 	return(memcmp(this, &addr, 10) >= 0);
 }
 
-// FUNCTION: 0x0053F0B0
+// FUNCTION: GAMEMD 0x0053F0B0
 bool IPXAddressClass::operator <= (IPXAddressClass & addr)
 {
 	return(memcmp(this, &addr, 10) <= 0);
 }
 
-// FUNCTION: 0x0053F0E0
+// FUNCTION: GAMEMD 0x0053F0E0
 const char * IPXAddressClass::As_String(IPXAddressClass * address)
 {
 	static char _addr_str[128];
@@ -533,13 +533,13 @@ const char * IPXAddressClass::As_String(IPXAddressClass * address)
 	return _addr_str;
 }
 
-// FUNCTION: 0x0053F1F0
+// FUNCTION: GAMEMD 0x0053F1F0
 void __fastcall FUN_0053F1F0(int value)
 {
 	DAT_00828140 = value;
 }
 
-// FUNCTION: 0x0053F200
+// FUNCTION: GAMEMD 0x0053F200
 void IPXAddressClass::Set_Port(unsigned short port)
 {
 	if (DAT_00828140 == 2) {
@@ -547,7 +547,7 @@ void IPXAddressClass::Set_Port(unsigned short port)
 	}
 }
 
-// FUNCTION: 0x0053F220
+// FUNCTION: GAMEMD 0x0053F220
 void __fastcall FUN_0053F220(void)
 {
 	DAT_00AA0510 = 0;

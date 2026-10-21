@@ -23,34 +23,44 @@ extern const double DAT_007E1730;
 extern const double DAT_007E1738;
 extern const double DAT_007E1740;
 
-// FUNCTION: 0x00552850 $E2
+// SYNTHETIC: GAMEMD 0x00552850 SYMBOL
+// _$E2
 double DAT_00ABC960 = FUN_004CAC40(pow(256.0, 2.0) * 2);
 
-// FUNCTION: 0x00552880 $E5
+// SYNTHETIC: GAMEMD 0x00552880 SYMBOL
+// _$E5
 double DAT_00ABC9B0 = DAT_00ABC960 / DAT_007ECF50;
 
-// FUNCTION: 0x005528A0 $E8
+// SYNTHETIC: GAMEMD 0x005528A0 SYMBOL
+// _$E8
 double DAT_00ABC998 = 1.0 / DAT_00ABC9B0;
 
-// FUNCTION: 0x005528C0 $E11
+// SYNTHETIC: GAMEMD 0x005528C0 SYMBOL
+// _$E11
 double DAT_00ABC990 = DAT_007ECF58 * 45.0;
 
-// FUNCTION: 0x005528E0 $E14
+// SYNTHETIC: GAMEMD 0x005528E0 SYMBOL
+// _$E14
 double DAT_00ABC968 = DAT_007ECF58 * 60.0;
 
-// FUNCTION: 0x00552900 $E17
+// SYNTHETIC: GAMEMD 0x00552900 SYMBOL
+// _$E17
 double DAT_00ABC940 = DAT_007ECF58 * 90.0;
 
-// FUNCTION: 0x00552920 $E20
+// SYNTHETIC: GAMEMD 0x00552920 SYMBOL
+// _$E20
 int DAT_00ABC9B8 = (int)(FUN_004CAD50(DAT_00ABC940 - DAT_00ABC968) * DAT_00ABC960 * 0.5);
 
-// FUNCTION: 0x00552960 $E23
+// SYNTHETIC: GAMEMD 0x00552960 SYMBOL
+// _$E23
 double DAT_00ABC970 = FUN_004CADE0(DAT_00ABC9B8 * 0.00390625);
 
-// FUNCTION: 0x00552990 $E26
+// SYNTHETIC: GAMEMD 0x00552990 SYMBOL
+// _$E26
 double DAT_00ABC988 = FUN_004CADE0((DAT_00ABC9B8 * 2) / DAT_00ABC960);
 
-// FUNCTION: 0x005529C0 $E29
+// SYNTHETIC: GAMEMD 0x005529C0 SYMBOL
+// _$E29
 int DAT_00ABC9AC = (int)(DAT_00ABC9B8 * 4 + 0.5);
 
 struct ShortPair {
@@ -63,10 +73,12 @@ struct IntTriple {
 	IntTriple() { A = 0; B = 0; C = 0; }
 };
 
-// FUNCTION: 0x005529F0 $E32
+// SYNTHETIC: GAMEMD 0x005529F0 SYMBOL
+// _$E32
 ShortPair DAT_00ABC958;
 
-// FUNCTION: 0x00552A00 $E35
+// SYNTHETIC: GAMEMD 0x00552A00 SYMBOL
+// _$E35
 IntTriple DAT_00ABC978;
 
 #include "ldprgmgr.h"
@@ -112,7 +124,7 @@ void __fastcall FUN_00621B80(Rect * rect, Surface * surface, unsigned short colo
 
 LoadProgressManager * LoadProgressManager::Instance;
 
-// FUNCTION: 0x00552A20
+// FUNCTION: GAMEMD 0x00552A20
 void FUN_00552A20(void)
 {
 	DAT_00ABC9A8 = 0;
@@ -120,7 +132,7 @@ void FUN_00552A20(void)
 	DAT_00ABC9A4 = 128;
 }
 
-// FUNCTION: 0x00552A40
+// FUNCTION: GAMEMD 0x00552A40
 void LoadProgressManager::Create(void)
 {
 	if (Instance == NULL) {
@@ -129,7 +141,7 @@ void LoadProgressManager::Create(void)
 	}
 }
 
-// FUNCTION: 0x00552AA0
+// FUNCTION: GAMEMD 0x00552AA0
 void LoadProgressManager::Destroy(void)
 {
 	if (Instance != NULL) {
@@ -139,7 +151,7 @@ void LoadProgressManager::Destroy(void)
 	Instance = NULL;
 }
 
-// FUNCTION: 0x00552AD0
+// FUNCTION: GAMEMD 0x00552AD0
 LoadProgressManager::LoadProgressManager(void)
 {
 	LoadMix = 0;
@@ -158,7 +170,7 @@ LoadProgressManager::LoadProgressManager(void)
 	ProgressSurface = 0;
 }
 
-// FUNCTION: 0x00552BE0
+// FUNCTION: GAMEMD 0x00552BE0
 Point2D LoadProgressManager::Text_Origin(void)
 {
 	Point2D p;
@@ -183,7 +195,7 @@ Point2D LoadProgressManager::Text_Origin(void)
 	return p;
 }
 
-// FUNCTION: 0x00552C90
+// FUNCTION: GAMEMD 0x00552C90
 int FUN_00552C90(void)
 {
 	int result = -1;
@@ -193,7 +205,7 @@ int FUN_00552C90(void)
 	return result;
 }
 
-// FUNCTION: 0x00552CC0
+// FUNCTION: GAMEMD 0x00552CC0
 void LoadProgressManager::Load_Mixes(void)
 {
 	if (LoadMDMix == NULL) {
@@ -216,7 +228,7 @@ void LoadProgressManager::Load_Mixes(void)
 	}
 }
 
-// FUNCTION: 0x00554100
+// FUNCTION: GAMEMD 0x00554100
 void __fastcall FUN_00554100(Point2D * point)
 {
 	int width = Drawing::RenderWidth;
@@ -240,7 +252,7 @@ struct ColourBytes {
 	unsigned Packed(void) const { return (((B << 8) | G) << 8) | R; }
 };
 
-// FUNCTION: 0x00554280
+// FUNCTION: GAMEMD 0x00554280
 void __fastcall FUN_00554280(wchar_t const * text, Surface * surface, Rect * rect, unsigned short color, int a)
 {
 	LTRBStruct bounds;
@@ -255,7 +267,7 @@ void __fastcall FUN_00554280(wchar_t const * text, Surface * surface, Rect * rec
 	OwnerDraw::DrawWideText(surface, text, &bounds, BitFont::Instance, c.Packed(), a, 0xc, 0, 0, 0);
 }
 
-// FUNCTION: 0x00554350
+// FUNCTION: GAMEMD 0x00554350
 void LoadProgressManager::FUN_00554350(Surface * target)
 {
 	if (ProgressSurface != NULL) {
@@ -263,7 +275,7 @@ void LoadProgressManager::FUN_00554350(Surface * target)
 	}
 }
 
-// FUNCTION: 0x00554370
+// FUNCTION: GAMEMD 0x00554370
 void LoadProgressManager::FUN_00554370(void)
 {
 	if (TitleBarSHP_loaded && TitleBarSHP != NULL) {
@@ -294,7 +306,7 @@ void LoadProgressManager::FUN_00554370(void)
 	ProgressSurface = NULL;
 }
 
-// FUNCTION: 0x00554400
+// FUNCTION: GAMEMD 0x00554400
 bool LoadProgressManager::FUN_00554400(int message, int extra)
 {
 	if (message == 0x11ae) {
@@ -304,40 +316,51 @@ bool LoadProgressManager::FUN_00554400(int message, int extra)
 	return false;
 }
 
-// FUNCTION: 0x00554430 $E96
+// SYNTHETIC: GAMEMD 0x00554430 SYMBOL
+// _$E96
 double DAT_00ABC9E8 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x00554460 $E99
+// SYNTHETIC: GAMEMD 0x00554460 SYMBOL
+// _$E99
 double DAT_00ABCA68 = DAT_00ABC9E8 / DAT_007ECF68;
 
-// FUNCTION: 0x00554480 $E102
+// SYNTHETIC: GAMEMD 0x00554480 SYMBOL
+// _$E102
 double DAT_00ABCA38 = DAT_007E1718 / DAT_00ABCA68;
 
-// FUNCTION: 0x005544A0 $E105
+// SYNTHETIC: GAMEMD 0x005544A0 SYMBOL
+// _$E105
 double DAT_00ABCA30 = DAT_007E1720 * DAT_007ECF70;
 
-// FUNCTION: 0x005544C0 $E108
+// SYNTHETIC: GAMEMD 0x005544C0 SYMBOL
+// _$E108
 double DAT_00ABC9F0 = DAT_007E1728 * DAT_007ECF70;
 
-// FUNCTION: 0x005544E0 $E111
+// SYNTHETIC: GAMEMD 0x005544E0 SYMBOL
+// _$E111
 double DAT_00ABC9C8 = DAT_007E1730 * DAT_007ECF70;
 
-// FUNCTION: 0x00554500 $E114
+// SYNTHETIC: GAMEMD 0x00554500 SYMBOL
+// _$E114
 int DAT_00ABCA70 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00ABC9C8 - DAT_00ABC9F0) * DAT_00ABC9E8));
 
-// FUNCTION: 0x00554540 $E117
+// SYNTHETIC: GAMEMD 0x00554540 SYMBOL
+// _$E117
 double DAT_00ABC9F8 = FUN_004CADE0(DAT_00ABCA70 * DAT_007E1740);
 
-// FUNCTION: 0x00554570 $E120
+// SYNTHETIC: GAMEMD 0x00554570 SYMBOL
+// _$E120
 double DAT_00ABCA28 = FUN_004CADE0((DAT_00ABCA70 * 2) / DAT_00ABC9E8);
 
-// FUNCTION: 0x005545A0 $E123
+// SYNTHETIC: GAMEMD 0x005545A0 SYMBOL
+// _$E123
 int DAT_00ABCA64 = (int)(DAT_00ABCA70 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x005545D0 $E126
+// SYNTHETIC: GAMEMD 0x005545D0 SYMBOL
+// _$E126
 ShortPair DAT_00ABC9E0;
 
-// FUNCTION: 0x00554600
+// FUNCTION: GAMEMD 0x00554600
 void FUN_00554600(void)
 {
 	DAT_00ABCA60 = 0;
@@ -350,5 +373,6 @@ struct IntQuad {
 	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
 };
 
-// FUNCTION: 0x00554620 $E129
+// SYNTHETIC: GAMEMD 0x00554620 SYMBOL
+// _$E129
 IntQuad DAT_00ABC9D0;

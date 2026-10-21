@@ -41,11 +41,13 @@ extern const double DAT_007E1740;
 extern const double DAT_007F4640;
 extern const double DAT_007F4648;
 
-// FUNCTION: 0x006E6A50 $E94
-// FUNCTION: 0x006E6A80 $E92
+// SYNTHETIC: GAMEMD 0x006E6A50 SYMBOL
+// _$E94
+// SYNTHETIC: GAMEMD 0x006E6A80 SYMBOL
+// _$E92
 IndexClass<int, AbstractClass *> TargetTracker;
 
-// FUNCTION: 0x006E6AB0
+// FUNCTION: GAMEMD 0x006E6AB0
 TargetClass::TargetClass(AbstractClass const * ptr)
 {
 	if (ptr != NULL) {
@@ -63,7 +65,7 @@ TargetClass::TargetClass(AbstractClass const * ptr)
 	}
 }
 
-// FUNCTION: 0x006E6B20
+// FUNCTION: GAMEMD 0x006E6B20
 TargetClass::TargetClass(Cell const & cell)
 {
 	if (cell == CELL_NONE) {
@@ -74,14 +76,14 @@ TargetClass::TargetClass(Cell const & cell)
 	}
 }
 
-// FUNCTION: 0x006E6B70
+// FUNCTION: GAMEMD 0x006E6B70
 TargetClass::TargetClass(Coord const & coord)
 {
 	RTTI = RTTI_CELL;
 	ID = ((coord.X / CELL_LEPTON_W) + (1000 * (coord.Y / CELL_LEPTON_H)));
 }
 
-// FUNCTION: 0x006E6BB0
+// FUNCTION: GAMEMD 0x006E6BB0
 AbstractTypeClass * xTargetClass::As_TypeClass(void) const
 {
 	if (RTTI == RTTI_ABSTRACT) {
@@ -90,7 +92,7 @@ AbstractTypeClass * xTargetClass::As_TypeClass(void) const
 	return(NULL);
 }
 
-// FUNCTION: 0x006E6C80
+// FUNCTION: GAMEMD 0x006E6C80
 TagClass * xTargetClass::As_Tag(void) const
 {
 	if (RTTI == RTTI_ABSTRACT) {
@@ -99,7 +101,7 @@ TagClass * xTargetClass::As_Tag(void) const
 	return(NULL);
 }
 
-// FUNCTION: 0x006E6D50
+// FUNCTION: GAMEMD 0x006E6D50
 TagTypeClass * xTargetClass::As_TagType(void) const
 {
 	if (RTTI == RTTI_ABSTRACT) {
@@ -108,7 +110,7 @@ TagTypeClass * xTargetClass::As_TagType(void) const
 	return(NULL);
 }
 
-// FUNCTION: 0x006E6E20
+// FUNCTION: GAMEMD 0x006E6E20
 AbstractClass * xTargetClass::As_Abstract(void) const
 {
 	if (RTTI == RTTI_ABSTRACT) {
@@ -122,7 +124,7 @@ AbstractClass * xTargetClass::As_Abstract(void) const
 	return(NULL);
 }
 
-// FUNCTION: 0x006E6F20
+// FUNCTION: GAMEMD 0x006E6F20
 TechnoClass * xTargetClass::As_Techno(void) const
 {
 	if (RTTI == RTTI_ABSTRACT) {
@@ -131,7 +133,7 @@ TechnoClass * xTargetClass::As_Techno(void) const
 	return(NULL);
 }
 
-// FUNCTION: 0x006E6FF0
+// FUNCTION: GAMEMD 0x006E6FF0
 ObjectClass * xTargetClass::As_Object(void) const
 {
 	if (RTTI == RTTI_ABSTRACT) {
@@ -140,7 +142,7 @@ ObjectClass * xTargetClass::As_Object(void) const
 	return(NULL);
 }
 
-// FUNCTION: 0x006E70C0
+// FUNCTION: GAMEMD 0x006E70C0
 FootClass * xTargetClass::As_Foot(void) const
 {
 	if (RTTI == RTTI_ABSTRACT) {
@@ -149,7 +151,7 @@ FootClass * xTargetClass::As_Foot(void) const
 	return(NULL);
 }
 
-// FUNCTION: 0x006E7190
+// FUNCTION: GAMEMD 0x006E7190
 TriggerClass * xTargetClass::As_Trigger(void) const
 {
 	if (RTTI == RTTI_ABSTRACT) {
@@ -158,7 +160,7 @@ TriggerClass * xTargetClass::As_Trigger(void) const
 	return(NULL);
 }
 
-// FUNCTION: 0x006E7260
+// FUNCTION: GAMEMD 0x006E7260
 HouseClass * xTargetClass::As_House(void) const
 {
 	if (RTTI == RTTI_ABSTRACT) {
@@ -167,7 +169,7 @@ HouseClass * xTargetClass::As_House(void) const
 	return(NULL);
 }
 
-// FUNCTION: 0x006E7330
+// FUNCTION: GAMEMD 0x006E7330
 TechnoTypeClass * xTargetClass::As_TechnoType(void) const
 {
 	if (RTTI == RTTI_ABSTRACT) {
@@ -176,7 +178,7 @@ TechnoTypeClass * xTargetClass::As_TechnoType(void) const
 	return(NULL);
 }
 
-// FUNCTION: 0x006E7400
+// FUNCTION: GAMEMD 0x006E7400
 TriggerTypeClass * xTargetClass::As_TriggerType(void) const
 {
 	if (RTTI == RTTI_ABSTRACT) {
@@ -185,7 +187,7 @@ TriggerTypeClass * xTargetClass::As_TriggerType(void) const
 	return(NULL);
 }
 
-// FUNCTION: 0x006E74D0
+// FUNCTION: GAMEMD 0x006E74D0
 TeamTypeClass * xTargetClass::As_TeamType(void) const
 {
 	if (RTTI == RTTI_ABSTRACT) {
@@ -194,7 +196,7 @@ TeamTypeClass * xTargetClass::As_TeamType(void) const
 	return(NULL);
 }
 
-// FUNCTION: 0x006E75A0
+// FUNCTION: GAMEMD 0x006E75A0
 TerrainClass * xTargetClass::As_Terrain(void) const
 {
 	if (RTTI == RTTI_ABSTRACT) {
@@ -203,7 +205,7 @@ TerrainClass * xTargetClass::As_Terrain(void) const
 	return(NULL);
 }
 
-// FUNCTION: 0x006E7670
+// FUNCTION: GAMEMD 0x006E7670
 BulletClass * xTargetClass::As_Bullet(void) const
 {
 	if (RTTI == RTTI_ABSTRACT) {
@@ -212,7 +214,7 @@ BulletClass * xTargetClass::As_Bullet(void) const
 	return(NULL);
 }
 
-// FUNCTION: 0x006E7740
+// FUNCTION: GAMEMD 0x006E7740
 AnimClass * xTargetClass::As_Anim(void) const
 {
 	if (RTTI == RTTI_ABSTRACT) {
@@ -221,7 +223,7 @@ AnimClass * xTargetClass::As_Anim(void) const
 	return(NULL);
 }
 
-// FUNCTION: 0x006E7810
+// FUNCTION: GAMEMD 0x006E7810
 TeamClass * xTargetClass::As_Team(void) const
 {
 	if (RTTI == RTTI_ABSTRACT) {
@@ -230,7 +232,7 @@ TeamClass * xTargetClass::As_Team(void) const
 	return(NULL);
 }
 
-// FUNCTION: 0x006E78E0
+// FUNCTION: GAMEMD 0x006E78E0
 InfantryClass * xTargetClass::As_Infantry(void) const
 {
 	if (RTTI == RTTI_ABSTRACT) {
@@ -239,7 +241,7 @@ InfantryClass * xTargetClass::As_Infantry(void) const
 	return(NULL);
 }
 
-// FUNCTION: 0x006E79B0
+// FUNCTION: GAMEMD 0x006E79B0
 UnitClass * xTargetClass::As_Unit(void) const
 {
 	if (RTTI == RTTI_ABSTRACT) {
@@ -248,7 +250,7 @@ UnitClass * xTargetClass::As_Unit(void) const
 	return(NULL);
 }
 
-// FUNCTION: 0x006E7A80
+// FUNCTION: GAMEMD 0x006E7A80
 BuildingClass * xTargetClass::As_Building(void) const
 {
 	if (RTTI == RTTI_ABSTRACT) {
@@ -257,7 +259,7 @@ BuildingClass * xTargetClass::As_Building(void) const
 	return(NULL);
 }
 
-// FUNCTION: 0x006E7B50
+// FUNCTION: GAMEMD 0x006E7B50
 AircraftClass * xTargetClass::As_Aircraft(void) const
 {
 	if (RTTI == RTTI_ABSTRACT) {
@@ -266,7 +268,7 @@ AircraftClass * xTargetClass::As_Aircraft(void) const
 	return(NULL);
 }
 
-// FUNCTION: 0x006E7C20
+// FUNCTION: GAMEMD 0x006E7C20
 CellClass * xTargetClass::As_Cell(void) const
 {
 	if (RTTI == RTTI_CELL) {
@@ -276,34 +278,44 @@ CellClass * xTargetClass::As_Cell(void) const
 	return(NULL);
 }
 
-// FUNCTION: 0x006E7C70 $E97
+// SYNTHETIC: GAMEMD 0x006E7C70 SYMBOL
+// _$E97
 double DAT_00B0E8D0 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x006E7CA0 $E100
+// SYNTHETIC: GAMEMD 0x006E7CA0 SYMBOL
+// _$E100
 double DAT_00B0E920 = DAT_00B0E8D0 / DAT_007F4640;
 
-// FUNCTION: 0x006E7CC0 $E103
+// SYNTHETIC: GAMEMD 0x006E7CC0 SYMBOL
+// _$E103
 double DAT_00B0E908 = DAT_007E1718 / DAT_00B0E920;
 
-// FUNCTION: 0x006E7CE0 $E106
+// SYNTHETIC: GAMEMD 0x006E7CE0 SYMBOL
+// _$E106
 double DAT_00B0E900 = DAT_007E1720 * DAT_007F4648;
 
-// FUNCTION: 0x006E7D00 $E109
+// SYNTHETIC: GAMEMD 0x006E7D00 SYMBOL
+// _$E109
 double DAT_00B0E8D8 = DAT_007E1728 * DAT_007F4648;
 
-// FUNCTION: 0x006E7D20 $E112
+// SYNTHETIC: GAMEMD 0x006E7D20 SYMBOL
+// _$E112
 double DAT_00B0E8B0 = DAT_007E1730 * DAT_007F4648;
 
-// FUNCTION: 0x006E7D40 $E115
+// SYNTHETIC: GAMEMD 0x006E7D40 SYMBOL
+// _$E115
 int DAT_00B0E928 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B0E8B0 - DAT_00B0E8D8) * DAT_00B0E8D0));
 
-// FUNCTION: 0x006E7D80 $E118
+// SYNTHETIC: GAMEMD 0x006E7D80 SYMBOL
+// _$E118
 double DAT_00B0E8E0 = FUN_004CADE0(DAT_00B0E928 * DAT_007E1740);
 
-// FUNCTION: 0x006E7DB0 $E121
+// SYNTHETIC: GAMEMD 0x006E7DB0 SYMBOL
+// _$E121
 double DAT_00B0E8F8 = FUN_004CADE0((DAT_00B0E928 * 2) / DAT_00B0E8D0);
 
-// FUNCTION: 0x006E7DE0 $E124
+// SYNTHETIC: GAMEMD 0x006E7DE0 SYMBOL
+// _$E124
 int DAT_00B0E91C = (int)(DAT_00B0E928 * 4 + DAT_007E1738);
 
 extern short DAT_00B0E8C8;
@@ -319,14 +331,14 @@ extern int DAT_00B0E8BC;
 extern int DAT_00B0E8C0;
 extern int DAT_00B0E8C4;
 
-// FUNCTION: 0x006E7E10
+// FUNCTION: GAMEMD 0x006E7E10
 void FUN_006E7E10(void)
 {
 	DAT_00B0E8C8 = 0;
 	DAT_00B0E8CA = 0;
 }
 
-// FUNCTION: 0x006E7E20
+// FUNCTION: GAMEMD 0x006E7E20
 void FUN_006E7E20(void)
 {
 	DAT_00B0E8E8 = 0;
@@ -334,7 +346,7 @@ void FUN_006E7E20(void)
 	DAT_00B0E8F0 = 0;
 }
 
-// FUNCTION: 0x006E7E40
+// FUNCTION: GAMEMD 0x006E7E40
 void FUN_006E7E40(void)
 {
 	DAT_00B0E918 = 0;
@@ -342,7 +354,7 @@ void FUN_006E7E40(void)
 	DAT_00B0E914 = 0x80;
 }
 
-// FUNCTION: 0x006E7E60
+// FUNCTION: GAMEMD 0x006E7E60
 void FUN_006E7E60(void)
 {
 	DAT_00B0E8B8 = 0;

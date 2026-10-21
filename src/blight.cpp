@@ -28,7 +28,7 @@
 #include "wave.h"
 #include "xsurface.h"
 
-// FUNCTION: 0x00435820
+// FUNCTION: GAMEMD 0x00435820
 BuildingLightClass::BuildingLightClass(TechnoClass * owner) :
 	BASECLASS(),
 	Speed(0),
@@ -50,13 +50,13 @@ BuildingLightClass::BuildingLightClass(TechnoClass * owner) :
 	}
 }
 
-// FUNCTION: 0x00436900
+// FUNCTION: GAMEMD 0x00436900
 int BuildingLightClass::Fetch_Object_Size(void) const
 {
 	return(sizeof(*this));
 }
 
-// FUNCTION: 0x00436910
+// FUNCTION: GAMEMD 0x00436910
 HRESULT STDMETHODCALLTYPE BuildingLightClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -64,7 +64,7 @@ HRESULT STDMETHODCALLTYPE BuildingLightClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x00436950
+// FUNCTION: GAMEMD 0x00436950
 HRESULT STDMETHODCALLTYPE BuildingLightClass::Load(IStream *stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -77,25 +77,25 @@ HRESULT STDMETHODCALLTYPE BuildingLightClass::Load(IStream *stream)
 	return(result);
 }
 
-// FUNCTION: 0x004369C0
+// FUNCTION: GAMEMD 0x004369C0
 HRESULT STDMETHODCALLTYPE BuildingLightClass::Save(IStream * stream, BOOL cleardirty)
 {
 	return(BASECLASS::Save(stream, cleardirty));
 }
 
-// FUNCTION: 0x004369E0
+// FUNCTION: GAMEMD 0x004369E0
 ObjectTypeClass const * BuildingLightClass::Class_Of(void) const
 {
 	return(NULL);
 }
 
-// FUNCTION: 0x004369F0
+// FUNCTION: GAMEMD 0x004369F0
 LayerType BuildingLightClass::In_Which_Layer(void) const
 {
 	return(LAYER_AIR);
 }
 
-// FUNCTION: 0x00436A00
+// FUNCTION: GAMEMD 0x00436A00
 void BuildingLightClass::Detach(AbstractClass const * target, bool all)
 {
 	BASECLASS::Detach(target, all);
@@ -107,7 +107,7 @@ void BuildingLightClass::Detach(AbstractClass const * target, bool all)
 	}
 }
 
-// FUNCTION: 0x00436A40
+// FUNCTION: GAMEMD 0x00436A40
 void BuildingLightClass::Init_Rotation_Arc(TechnoClass * owner)
 {
 	Coord target = Move_Coord(owner->PositionCoord, owner->PrimaryFacing.Current(), Rule->SpotlightLocationRadius);
@@ -118,7 +118,7 @@ void BuildingLightClass::Init_Rotation_Arc(TechnoClass * owner)
 	PositionCoord = target;
 }
 
-// FUNCTION: 0x00436BE0
+// FUNCTION: GAMEMD 0x00436BE0
 void BuildingLightClass::Set_Behavior_Type(LightBehaviorType type)
 {
 	Behavior = type;
@@ -155,7 +155,7 @@ void BuildingLightClass::Set_Behavior_Type(LightBehaviorType type)
 	}
 }
 
-// FUNCTION: 0x00436DA0
+// FUNCTION: GAMEMD 0x00436DA0
 int BuildingLightClass::Detection_Radius(void) const
 {
 	static const double _scale = 7.466666666666666;
@@ -164,7 +164,7 @@ int BuildingLightClass::Detection_Radius(void) const
 	return(radius);
 }
 
-// FUNCTION: 0x00436E80
+// FUNCTION: GAMEMD 0x00436E80
 int BuildingLightClass::Sweep_Stage(void) const
 {
 	int dist = Center_Coord().Distance_To(Owner->Center_Coord());
@@ -175,7 +175,7 @@ int BuildingLightClass::Sweep_Stage(void) const
 	return((dist - radius) / ((Rule->SpotlightMovementRadius - radius) / 10));
 }
 
-// FUNCTION: 0x00436F40
+// FUNCTION: GAMEMD 0x00436F40
 void BuildingLightClass::Compute_CRC(CRCEngine & crc) const
 {
 	BASECLASS::Compute_CRC(crc);
@@ -197,7 +197,7 @@ void BuildingLightClass::Compute_CRC(CRCEngine & crc) const
 	}
 }
 
-// FUNCTION: 0x00437030
+// FUNCTION: GAMEMD 0x00437030
 bool BuildingLightClass::Limbo(void)
 {
 	if (BASECLASS::Limbo()) {
@@ -207,7 +207,7 @@ bool BuildingLightClass::Limbo(void)
 	return(false);
 }
 
-// FUNCTION: 0x00437050
+// FUNCTION: GAMEMD 0x00437050
 bool BuildingLightClass::Unlimbo(Coord const & coord, Dir256 dir)
 {
 	if (BASECLASS::Unlimbo(coord, dir)) {
@@ -217,12 +217,14 @@ bool BuildingLightClass::Unlimbo(Coord const & coord, Dir256 dir)
 	return(false);
 }
 
-// FUNCTION: 0x00437090 Coord::Coord
+// FUNCTION: GAMEMD 0x00437090
+// Coord::Coord
 
-// FUNCTION: 0x004370B0 BuildingLightClass::Fetch_RTTI
+// FUNCTION: GAMEMD 0x004370B0
+// BuildingLightClass::Fetch_RTTI
 
-// FUNCTION: 0x00435B50
-// FUNCTION: 0x004370C0
+// FUNCTION: GAMEMD 0x00435B50
+// FUNCTION: GAMEMD 0x004370C0
 BuildingLightClass::~BuildingLightClass(void)
 {
 	Limbo();

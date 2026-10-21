@@ -54,22 +54,36 @@
 #include "color.hh"
 #include <cmath>
 
-// FUNCTION: 0x006A4A00 $E2
-// FUNCTION: 0x006A4A20 $E5
-// FUNCTION: 0x006A4A50 $E8
-// FUNCTION: 0x006A4A70 $E11
-// FUNCTION: 0x006A4A90 $E14
-// FUNCTION: 0x006A4AB0 $E17
-// FUNCTION: 0x006A4AD0 $E20
-// FUNCTION: 0x006A4AF0 $E23
-// FUNCTION: 0x006A4B30 $E26
-// FUNCTION: 0x006A4B60 $E29
-// FUNCTION: 0x006A4B90 $E32
-// FUNCTION: 0x006A4BC0 $E35
-// FUNCTION: 0x006A4BD0 $E38
-// FUNCTION: 0x006A4BF0 $E41
+// SYNTHETIC: GAMEMD 0x006A4A00 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x006A4A20 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x006A4A50 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x006A4A70 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x006A4A90 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x006A4AB0 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x006A4AD0 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x006A4AF0 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x006A4B30 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x006A4B60 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x006A4B90 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x006A4BC0 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x006A4BD0 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x006A4BF0 SYMBOL
+// _$E41
 
-// FUNCTION: 0x006AACB0
+// FUNCTION: GAMEMD 0x006AACB0
 SidebarClass::StripClass::SelectClass::SelectClass(void) :
 	ControlClass(0, 0, 0, 60, 48, LEFTPRESS|RIGHTPRESS|LEFTUP),
 	Strip(0),
@@ -77,37 +91,51 @@ SidebarClass::StripClass::SelectClass::SelectClass(void) :
 {
 }
 
-// FUNCTION: 0x006A4C10 $E175
-// FUNCTION: 0x006A4C40 $E172
+// SYNTHETIC: GAMEMD 0x006A4C10 SYMBOL
+// _$E175
+// SYNTHETIC: GAMEMD 0x006A4C40 SYMBOL
+// _$E172
 SidebarClass::SBGadgetClass SidebarClass::Background;
 
-// FUNCTION: 0x006A4E40
+// FUNCTION: GAMEMD 0x006A4E40
 SidebarClass::SBGadgetClass::SBGadgetClass(void) :
 	GadgetClass(0, 0, 1, 1, LEFTUP)
 {
 }
 
-// FUNCTION: 0x006A4C60 $E181
-// FUNCTION: 0x006A4C80 $E178
+// SYNTHETIC: GAMEMD 0x006A4C60 SYMBOL
+// _$E181
+// SYNTHETIC: GAMEMD 0x006A4C80 SYMBOL
+// _$E178
 ShapeButtonClass SidebarClass::Power;
-// FUNCTION: 0x006A4CA0 $E186
-// FUNCTION: 0x006A4CC0 $E184
+// SYNTHETIC: GAMEMD 0x006A4CA0 SYMBOL
+// _$E186
+// SYNTHETIC: GAMEMD 0x006A4CC0 SYMBOL
+// _$E184
 ShapeButtonClass SidebarClass::Repair;
-// FUNCTION: 0x006A4CE0 $E191
-// FUNCTION: 0x006A4D10 $E189
+// SYNTHETIC: GAMEMD 0x006A4CE0 SYMBOL
+// _$E191
+// SYNTHETIC: GAMEMD 0x006A4D10 SYMBOL
+// _$E189
 ShapeButtonClass SidebarClass::TabButtons[4];
-// FUNCTION: 0x006A4D40 $E196
-// FUNCTION: 0x006A4D60 $E194
+// SYNTHETIC: GAMEMD 0x006A4D40 SYMBOL
+// _$E196
+// SYNTHETIC: GAMEMD 0x006A4D60 SYMBOL
+// _$E194
 ShapeButtonClass SidebarClass::Upgrade;
-// FUNCTION: 0x006A4D80 $E201
-// FUNCTION: 0x006A4DA0 $E199
+// SYNTHETIC: GAMEMD 0x006A4D80 SYMBOL
+// _$E201
+// SYNTHETIC: GAMEMD 0x006A4DA0 SYMBOL
+// _$E199
 ShapeButtonClass SidebarClass::Waypoint;
 
-// FUNCTION: 0x006A4DC0 $E206
-// FUNCTION: 0x006A4E10 $E204
+// SYNTHETIC: GAMEMD 0x006A4DC0 SYMBOL
+// _$E206
+// SYNTHETIC: GAMEMD 0x006A4E10 SYMBOL
+// _$E204
 SidebarClass::StripClass::SelectClass SidebarClass::StripClass::SelectButton[SidebarClass::StripClass::SELECT_BUTTONS];
 
-// FUNCTION: 0x006A4E60
+// FUNCTION: GAMEMD 0x006A4E60
 SidebarClass::SidebarClass(void) :
 	BASECLASS(),
 	ActiveTabIndex(0),
@@ -124,13 +152,13 @@ SidebarClass::SidebarClass(void) :
 	}
 }
 
-// FUNCTION: 0x006A4F20
+// FUNCTION: GAMEMD 0x006A4F20
 SidebarClass::SidebarClass(NoInitClass const & x) :
 	BASECLASS(x)
 {
 }
 
-// FUNCTION: 0x006A4FF0
+// FUNCTION: GAMEMD 0x006A4FF0
 void SidebarClass::Set_Cameo_Text(bool state)
 {
 }
@@ -144,7 +172,7 @@ struct FileSystem {
 	static void * __fastcall LoadWholeFileEx(char const * name, bool & allocated);
 };
 
-// FUNCTION: 0x006A5000
+// FUNCTION: GAMEMD 0x006A5000
 void SidebarClass::One_Time(void)
 {
 	BASECLASS::One_Time();
@@ -154,7 +182,7 @@ void SidebarClass::One_Time(void)
 	}
 }
 
-// FUNCTION: 0x006A5030
+// FUNCTION: GAMEMD 0x006A5030
 void SidebarClass::Init_Clear(void)
 {
 	BASECLASS::Init_Clear();
@@ -181,7 +209,7 @@ extern int DAT_00B0B4F8;
 extern int DAT_00B0B4FC;
 extern int DAT_00B0B500;
 
-// FUNCTION: 0x006A5090
+// FUNCTION: GAMEMD 0x006A5090
 void SidebarClass::FUN_006A5090(void)
 {
 	int side = Scen->PlayerSideIndex;
@@ -284,7 +312,7 @@ inline ColorScheme * Color_Of(HouseClass * house)
 
 int * __fastcall FUN_0077DA50(wchar_t * name);
 
-// FUNCTION: 0x006A5310
+// FUNCTION: GAMEMD 0x006A5310
 void SidebarClass::Init_IO(void)
 {
 	BASECLASS::Init_IO();
@@ -448,7 +476,7 @@ extern DSurface * DAT_00887308;
 PaletteClass * __fastcall FUN_0072F4A0(void);
 PaletteClass * __fastcall FUN_0072F4E0(void);
 
-// FUNCTION: 0x006A5840
+// FUNCTION: GAMEMD 0x006A5840
 void SidebarClass::Init_For_House(void)
 {
 	BASECLASS::Init_For_House();
@@ -537,7 +565,7 @@ extern bool DAT_00B0B48C;
 extern bool DAT_00B0B48D;
 extern bool DAT_00B0B48E;
 
-// FUNCTION: 0x006A5BF0
+// FUNCTION: GAMEMD 0x006A5BF0
 void SidebarClass::DisposeOfArt(void)
 {
 	BASECLASS::DisposeOfArt();
@@ -575,7 +603,7 @@ void SidebarClass::DisposeOfArt(void)
 	Waypoint.ClearShape();
 }
 
-// FUNCTION: 0x006A5ED0
+// FUNCTION: GAMEMD 0x006A5ED0
 void SidebarClass::FUN_006A5ED0(void)
 {
 	IsToRedraw = true;
@@ -586,7 +614,7 @@ void SidebarClass::FUN_006A5ED0(void)
 	}
 }
 
-// FUNCTION: 0x006A5F20
+// FUNCTION: GAMEMD 0x006A5F20
 void SidebarClass::OnTechnoDestroyed(TechnoClass * techno)
 {
 	if (IsSidebarActive && techno) {
@@ -607,7 +635,7 @@ void SidebarClass::OnTechnoDestroyed(TechnoClass * techno)
 	}
 }
 
-// FUNCTION: 0x006A60A0
+// FUNCTION: GAMEMD 0x006A60A0
 void SidebarClass::RepaintSidebar(int tab)
 {
 	if (tab == ActiveTabIndex) {
@@ -617,7 +645,7 @@ void SidebarClass::RepaintSidebar(int tab)
 	}
 }
 
-// FUNCTION: 0x006A60E0
+// FUNCTION: GAMEMD 0x006A60E0
 void SidebarClass::FUN_006A60E0(int tab)
 {
 	if (tab == ActiveTabIndex) {
@@ -627,13 +655,13 @@ void SidebarClass::FUN_006A60E0(int tab)
 
 int __fastcall FUN_005004E0(RTTIType type, int id);
 
-// FUNCTION: 0x006A6140
+// FUNCTION: GAMEMD 0x006A6140
 bool SidebarClass::Factory_Link(FactoryClass * factory, RTTIType type, int id)
 {
 	return Column[GetObjectTabIdx(type, id, false)].Factory_Link(factory, type, id);
 }
 
-// FUNCTION: 0x006A6220
+// FUNCTION: GAMEMD 0x006A6220
 bool SidebarClass::FUN_006A6220(int control)
 {
 	bool old = unknown_bool_5515;
@@ -660,7 +688,7 @@ bool SidebarClass::FUN_006A6220(int control)
 	return old;
 }
 
-// FUNCTION: 0x006A6290
+// FUNCTION: GAMEMD 0x006A6290
 bool SidebarClass::FUN_006A6290(int control)
 {
 	bool old = unknown_bool_5514;
@@ -687,7 +715,7 @@ bool SidebarClass::FUN_006A6290(int control)
 	return old;
 }
 
-// FUNCTION: 0x006A6300
+// FUNCTION: GAMEMD 0x006A6300
 bool SidebarClass::AddCameo(RTTIType type, int id)
 {
 	if (!Unsorted::ArmageddonMode) {
@@ -763,7 +791,7 @@ static inline int Visible_Cameos(void)
 	return (DAT_00886F94 + DAT_00886F9C - DAT_00B0B4F8 - reserved - 7) / 50 * 2;
 }
 
-// FUNCTION: 0x006A6610
+// FUNCTION: GAMEMD 0x006A6610
 void SidebarClass::UpdateScrollButtons(void)
 {
 	if (PlayerPtr != DAT_00AC1198) {
@@ -803,7 +831,7 @@ void SidebarClass::UpdateScrollButtons(void)
 	}
 }
 
-// FUNCTION: 0x006A67A0
+// FUNCTION: GAMEMD 0x006A67A0
 void SidebarClass::FUN_006A67A0(int tab)
 {
 	if (First_Active_Tab(*this) == -1 && DAT_00B0B478) {
@@ -818,7 +846,7 @@ void SidebarClass::FUN_006A67A0(int tab)
 	}
 }
 
-// FUNCTION: 0x006A6820
+// FUNCTION: GAMEMD 0x006A6820
 void SidebarClass::FUN_006A6820(int tab)
 {
 	if (Column[tab].BuildableCount > 0) {
@@ -875,7 +903,7 @@ extern Rect DAT_00B07DC8;
 extern DSurface * DAT_00887300;
 extern CCToolTip * ToolTips;
 
-// FUNCTION: 0x006A6C30
+// FUNCTION: GAMEMD 0x006A6C30
 void SidebarClass::Draw_It(bool complete)
 {
 	DAT_008809F4 = DAT_00B07DC8;
@@ -981,7 +1009,7 @@ class MouseSlots {
 };
 extern MouseSlots * DAT_00887640;
 
-// FUNCTION: 0x006A70E0
+// FUNCTION: GAMEMD 0x006A70E0
 void SidebarClass::Blit_Sidebar(bool complete)
 {
 	if (IsSidebarActive && Game::IsActive && Unsorted::ScenarioStarted) {
@@ -1034,7 +1062,7 @@ void SidebarClass::Blit_Sidebar(bool complete)
 	DAT_00B0B518 = false;
 }
 
-// FUNCTION: 0x006A74A0
+// FUNCTION: GAMEMD 0x006A74A0
 void SidebarClass::FUN_006A74A0(int tab)
 {
 	ActiveTabIndex = tab;
@@ -1074,13 +1102,13 @@ static inline void Select_Tab(SidebarClass & sb, int tab)
 	}
 }
 
-// FUNCTION: 0x006A7590
+// FUNCTION: GAMEMD 0x006A7590
 void SidebarClass::SetTab(int tab)
 {
 	Select_Tab(*this, tab);
 }
 
-// FUNCTION: 0x006A76F0
+// FUNCTION: GAMEMD 0x006A76F0
 void SidebarClass::FUN_006A76F0(int tab)
 {
 	int delay = 10 - Unsorted::CurrentFrame % 10;
@@ -1089,13 +1117,13 @@ void SidebarClass::FUN_006A76F0(int tab)
 	Map.Flag_To_Redraw();
 }
 
-// FUNCTION: 0x006A7760
+// FUNCTION: GAMEMD 0x006A7760
 void SidebarClass::FUN_006A7760(int tab)
 {
 	TabButtons[tab].StopFlashing();
 }
 
-// FUNCTION: 0x006A7D20
+// FUNCTION: GAMEMD 0x006A7D20
 void SidebarClass::Recalc(void)
 {
 	bool redraw = false;
@@ -1114,7 +1142,7 @@ void SidebarClass::Recalc(void)
 namespace Game { extern unsigned char RecordingFlag; }
 void FUN_005BF450(void);
 
-// FUNCTION: 0x006A7D70
+// FUNCTION: GAMEMD 0x006A7D70
 bool SidebarClass::Activate(int control)
 {
 	bool old = IsSidebarActive;
@@ -1198,19 +1226,19 @@ bool SidebarClass::Activate(int control)
 	return(changed);
 }
 
-// FUNCTION: 0x006A8080
+// FUNCTION: GAMEMD 0x006A8080
 int SidebarClass::FUN_006A8080(int count)
 {
 	return DAT_00B0B4FC * count;
 }
 
-// FUNCTION: 0x006A8090
+// FUNCTION: GAMEMD 0x006A8090
 int SidebarClass::FUN_006A8090(int count)
 {
 	return DAT_00B0B500 * count + 1;
 }
 
-// FUNCTION: 0x006A80A0
+// FUNCTION: GAMEMD 0x006A80A0
 SidebarClass::StripClass::StripClass(InitClass const &) :
 	X(0),
 	Y(0),
@@ -1235,13 +1263,13 @@ SidebarClass::StripClass::StripClass(InitClass const &) :
 	}
 }
 
-// FUNCTION: 0x006A8160
+// FUNCTION: GAMEMD 0x006A8160
 void SidebarClass::StripClass::One_Time(int)
 {
 	FileSystem::DARKEN_SHP = FileSystem::LoadFile("DARKEN.SHP", false);
 }
 
-// FUNCTION: 0x006A8180
+// FUNCTION: GAMEMD 0x006A8180
 ShapeSet const * SidebarClass::StripClass::Get_Special_Cameo(SuperWeaponType type)
 {
 	if ((unsigned)type < (unsigned)SuperWeaponTypes.Count()) {
@@ -1250,7 +1278,7 @@ ShapeSet const * SidebarClass::StripClass::Get_Special_Cameo(SuperWeaponType typ
 	return NULL;
 }
 
-// FUNCTION: 0x006A81B0
+// FUNCTION: GAMEMD 0x006A81B0
 void SidebarClass::StripClass::Init_Clear(void)
 {
 	IsScrollingDown = false;
@@ -1287,7 +1315,7 @@ static inline int Strip_Rows(void)
 	return (DAT_00886F94 - DAT_00B0B4F8 - reserved + DAT_00886F9C - 7) / 50;
 }
 
-// FUNCTION: 0x006A8220
+// FUNCTION: GAMEMD 0x006A8220
 void SidebarClass::StripClass::Init_IO(int id)
 {
 	ID = id;
@@ -1307,7 +1335,7 @@ void SidebarClass::StripClass::Init_IO(int id)
 	}
 }
 
-// FUNCTION: 0x006A8330
+// FUNCTION: GAMEMD 0x006A8330
 void SidebarClass::StripClass::Activate(void)
 {
 	int count = Strip_Rows() * 2;
@@ -1318,7 +1346,7 @@ void SidebarClass::StripClass::Activate(void)
 	DAT_00884B8F = true;
 }
 
-// FUNCTION: 0x006A83E0
+// FUNCTION: GAMEMD 0x006A83E0
 void SidebarClass::StripClass::Deactivate(void)
 {
 	for (int index = 0; index < 60; index++) {
@@ -1328,7 +1356,7 @@ void SidebarClass::StripClass::Deactivate(void)
 
 TechnoTypeClass const * __fastcall Fetch_Techno_Type(RTTIType type, int id);
 
-// FUNCTION: 0x006A8420
+// FUNCTION: GAMEMD 0x006A8420
 bool SidebarClass::StripClass::SortsBefore(RTTIType type, int id, RTTIType otherType, int otherId)
 {
 	TechnoTypeClass const * left = Fetch_Techno_Type(type, id);
@@ -1434,7 +1462,7 @@ compare_names:
 	return true;
 }
 
-// FUNCTION: 0x006A87F0
+// FUNCTION: GAMEMD 0x006A87F0
 bool SidebarClass::StripClass::Add(RTTIType type, int id)
 {
 	if (BuildableCount <= MAX_BUILDABLES) {
@@ -1454,7 +1482,7 @@ bool SidebarClass::StripClass::Add(RTTIType type, int id)
 	return false;
 }
 
-// FUNCTION: 0x006A8860
+// FUNCTION: GAMEMD 0x006A8860
 bool SidebarClass::StripClass::Scroll(bool up, int amount)
 {
 	if (up) {
@@ -1476,13 +1504,13 @@ bool SidebarClass::StripClass::Scroll(bool up, int amount)
 	return true;
 }
 
-// FUNCTION: 0x006A8920
+// FUNCTION: GAMEMD 0x006A8920
 bool SidebarClass::StripClass::Scroll(bool up)
 {
 	return Scroll(up, 1);
 }
 
-// FUNCTION: 0x006A89E0
+// FUNCTION: GAMEMD 0x006A89E0
 bool SidebarClass::StripClass::Page(bool up)
 {
 	int amount = Strip_Rows();
@@ -1492,7 +1520,7 @@ bool SidebarClass::StripClass::Page(bool up)
 	return Scroll(up, amount);
 }
 
-// FUNCTION: 0x006A8B10
+// FUNCTION: GAMEMD 0x006A8B10
 void SidebarClass::StripClass::Flag_To_Redraw(void)
 {
 	IsToRedraw = true;
@@ -1502,7 +1530,7 @@ void SidebarClass::StripClass::Flag_To_Redraw(void)
 extern bool DAT_00884B8C;
 extern unsigned short DAT_00B07BC4[];
 
-// FUNCTION: 0x006A92E0
+// FUNCTION: GAMEMD 0x006A92E0
 unsigned short const * SidebarClass::StripClass::Help_Text(int id)
 {
 	int i = id + TopIndex * 2;
@@ -1535,7 +1563,7 @@ unsigned short const * SidebarClass::StripClass::Help_Text(int id)
 	return NULL;
 }
 
-// FUNCTION: 0x006A93F0
+// FUNCTION: GAMEMD 0x006A93F0
 void SidebarClass::StripClass::AddButtons(void)
 {
 	AllowedToDraw = true;
@@ -1547,7 +1575,7 @@ void SidebarClass::StripClass::AddButtons(void)
 	DAT_00884B8F = true;
 }
 
-// FUNCTION: 0x006A94B0
+// FUNCTION: GAMEMD 0x006A94B0
 void SidebarClass::StripClass::RemoveButtons(void)
 {
 	AllowedToDraw = false;
@@ -1556,7 +1584,7 @@ void SidebarClass::StripClass::RemoveButtons(void)
 	}
 }
 
-// FUNCTION: 0x006A94F0
+// FUNCTION: GAMEMD 0x006A94F0
 int SidebarClass::StripClass::FUN_006A94F0(int index)
 {
 	int progress = 0;
@@ -1572,7 +1600,7 @@ int SidebarClass::StripClass::FUN_006A94F0(int index)
 	return progress;
 }
 
-// FUNCTION: 0x006AACE0
+// FUNCTION: GAMEMD 0x006AACE0
 void SidebarClass::StripClass::SelectClass::Set_Owner(StripClass & strip, int index)
 {
 	Strip = &strip;
@@ -1581,7 +1609,7 @@ void SidebarClass::StripClass::SelectClass::Set_Owner(StripClass & strip, int in
 
 extern bool UserInputLocked;
 
-// FUNCTION: 0x006AB990
+// FUNCTION: GAMEMD 0x006AB990
 void SidebarClass::StripClass::SelectClass::OnMouseEnter(void)
 {
 	ToolTips->Save_Timer_Delay();
@@ -1593,7 +1621,7 @@ void SidebarClass::StripClass::SelectClass::OnMouseEnter(void)
 	DAT_00B0B518 = true;
 }
 
-// FUNCTION: 0x006AB9E0
+// FUNCTION: GAMEMD 0x006AB9E0
 void SidebarClass::StripClass::SelectClass::OnMouseLeave(void)
 {
 	ToolTips->Restore_Timer_Delay();
@@ -1604,20 +1632,20 @@ void SidebarClass::StripClass::SelectClass::OnMouseLeave(void)
 	DAT_00B0B518 = true;
 }
 
-// FUNCTION: 0x006ABA20
+// FUNCTION: GAMEMD 0x006ABA20
 bool SidebarClass::StripClass::SelectClass::FUN_006ABA20(void)
 {
 	return unknown_34 && !UserInputLocked;
 }
 
-// FUNCTION: 0x006ABA40
+// FUNCTION: GAMEMD 0x006ABA40
 int SidebarClass::SBGadgetClass::Action(unsigned flags, KeyNumType & key, int modifier)
 {
 	Map.Override_Mouse_Shape(MOUSE_NORMAL, false);
 	return true;
 }
 
-// FUNCTION: 0x006ABA60
+// FUNCTION: GAMEMD 0x006ABA60
 bool SidebarClass::StripClass::Factory_Link(FactoryClass * factory, RTTIType type, int id)
 {
 	for (int index = 0; index < BuildableCount; index++) {
@@ -1632,13 +1660,13 @@ bool SidebarClass::StripClass::Factory_Link(FactoryClass * factory, RTTIType typ
 	return false;
 }
 
-// FUNCTION: 0x006ABAC0
+// FUNCTION: GAMEMD 0x006ABAC0
 bool SidebarClass::StripClass::FUN_006ABAC0(void)
 {
 	return BuildableCount > 0;
 }
 
-// FUNCTION: 0x006ABAD0
+// FUNCTION: GAMEMD 0x006ABAD0
 bool SidebarClass::Abandon_Production(RTTIType type, int id, FactoryClass * factory)
 {
 	return Column[GetObjectTabIdx(type, id, false)].Abandon_Production(factory);
@@ -1654,7 +1682,7 @@ static inline bool Is_Building(TechnoClass * object)
 	return object && object->Fetch_RTTI() == RTTI_BUILDING;
 }
 
-// FUNCTION: 0x006ABB60
+// FUNCTION: GAMEMD 0x006ABB60
 bool SidebarClass::StripClass::Abandon_Production(FactoryClass const * factory)
 {
 	if (factory && factory->Get_Object() && Is_Building(factory->Get_Object())) {
@@ -1685,7 +1713,7 @@ bool SidebarClass::StripClass::Abandon_Production(FactoryClass const * factory)
 
 namespace Game { extern int SpecialDialog; }
 
-// FUNCTION: 0x006ABC40
+// FUNCTION: GAMEMD 0x006ABC40
 void FUN_006ABC40(void)
 {
 	if (Session.Type != GAME_NORMAL) {
@@ -1693,7 +1721,7 @@ void FUN_006ABC40(void)
 	}
 }
 
-// FUNCTION: 0x006ABC60
+// FUNCTION: GAMEMD 0x006ABC60
 int SidebarClass::GetObjectTabIdx(RTTIType type, int id, bool naval)
 {
 	if (type == RTTI_INFANTRY || type == RTTI_INFANTRYTYPE) {
@@ -1711,7 +1739,7 @@ int SidebarClass::GetObjectTabIdx(RTTIType type, int id, bool naval)
 	return -1;
 }
 
-// FUNCTION: 0x006ABCD0
+// FUNCTION: GAMEMD 0x006ABCD0
 int SidebarClass::GetObjectTabIdxByCat(RTTIType type, int buildCat, bool naval)
 {
 	if (type == RTTI_INFANTRYTYPE) {
@@ -1726,7 +1754,7 @@ int SidebarClass::GetObjectTabIdxByCat(RTTIType type, int buildCat, bool naval)
 	return -1;
 }
 
-// FUNCTION: 0x006ABD10
+// FUNCTION: GAMEMD 0x006ABD10
 int SidebarClass::FUN_006ABD10(void)
 {
 	for (int index = 0; index < STRIPS; index++) {
@@ -1739,7 +1767,7 @@ int SidebarClass::FUN_006ABD10(void)
 
 extern int DAT_00886F9C;
 
-// FUNCTION: 0x006AC3E0
+// FUNCTION: GAMEMD 0x006AC3E0
 int SidebarClass::Max_Visible(void)
 {
 	int side = Scen->PlayerSideIndex;
@@ -1754,19 +1782,19 @@ int SidebarClass::Max_Visible(void)
 	return (DAT_00886F94 - DAT_00B0B4F8 - reserved + DAT_00886F9C - 7) / 50;
 }
 
-// FUNCTION: 0x006AC5D0
+// FUNCTION: GAMEMD 0x006AC5D0
 HRESULT SidebarClass::Load(IStream * stream)
 {
 	return BASECLASS::Load(stream);
 }
 
-// FUNCTION: 0x006AC5E0
+// FUNCTION: GAMEMD 0x006AC5E0
 HRESULT SidebarClass::Save(IStream * stream)
 {
 	return BASECLASS::Save(stream);
 }
 
-// FUNCTION: 0x006AC5F0
+// FUNCTION: GAMEMD 0x006AC5F0
 void SidebarClass::FUN_006AC5F0(TechnoTypeClass const * type, int frames)
 {
 	int id;
@@ -1809,7 +1837,7 @@ found:
 	unknown_53A0 = Unsorted::CurrentFrame + frames + 1;
 }
 
-// FUNCTION: 0x006AC740
+// FUNCTION: GAMEMD 0x006AC740
 void SidebarClass::StripClass::FUN_006AC740(int id, int frames)
 {
 	for (int index = 0; index < MAX_BUILDABLES; index++) {
@@ -1820,15 +1848,21 @@ void SidebarClass::StripClass::FUN_006AC740(int id, int frames)
 	}
 }
 
-// FUNCTION: 0x006AC780 SidebarClass::StripClass::SelectClass::~SelectClass
+// SYNTHETIC: GAMEMD 0x006AC780
+// ??_GSelectClass@StripClass@SidebarClass@@UAEPAXI@Z
 
-// FUNCTION: 0x006AC7A0 SidebarClass::SBGadgetClass::~SBGadgetClass
+// SYNTHETIC: GAMEMD 0x006AC7A0
+// ??_GSBGadgetClass@SidebarClass@@UAEPAXI@Z
 
-// FUNCTION: 0x006AC7C0 SidebarClass::StripClass::BuildType::BuildType
+// FUNCTION: GAMEMD 0x006AC7C0
+// SidebarClass::StripClass::BuildType::BuildType
 
-// FUNCTION: 0x006AC7F0 SidebarClass::~SidebarClass
+// SYNTHETIC: GAMEMD 0x006AC7F0
+// ??_GSidebarClass@@UAEPAXI@Z
 
-// FUNCTION: 0x006AC840 DisplayClass::DisplayClass
+// FUNCTION: GAMEMD 0x006AC840
+// DisplayClass::DisplayClass
 
-// FUNCTION: 0x006AC8D0 ?$DynamicVectorClass@VPoint2D@@::?$DynamicVectorClass@VPoint2D@@
+// TEMPLATE: GAMEMD 0x006AC8D0
+// ??0?$DynamicVectorClass@VPoint2D@@@@QAE@IPBVPoint2D@@@Z
 template class DynamicVectorClass<Point2D>;

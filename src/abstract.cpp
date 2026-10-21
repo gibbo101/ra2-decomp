@@ -15,7 +15,7 @@
 #include "swizzle.h"
 #include "vector.h"
 
-// FUNCTION: 0x00410170
+// FUNCTION: GAMEMD 0x00410170
 AbstractClass::AbstractClass(void) :
 	ID(-1),
 	unknown_18(0),
@@ -25,36 +25,36 @@ AbstractClass::AbstractClass(void) :
 	AbstractFlags &= 0xF8;
 }
 
-// FUNCTION: 0x004101C0
+// FUNCTION: GAMEMD 0x004101C0
 AbstractClass::AbstractClass(NoInitClass const & x)
 {
 	x();
 }
 
-// FUNCTION: 0x004101F0
+// FUNCTION: GAMEMD 0x004101F0
 AbstractClass::~AbstractClass(void)
 {
 }
 
-// FUNCTION: 0x00410210
+// FUNCTION: GAMEMD 0x00410210
 int STDMETHODCALLTYPE AbstractClass::What_Am_I(void) const
 {
 	return(RTTI);
 }
 
-// FUNCTION: 0x00410220
+// FUNCTION: GAMEMD 0x00410220
 int STDMETHODCALLTYPE AbstractClass::Fetch_ID(void) const
 {
 	return(ID);
 }
 
-// FUNCTION: 0x00410230
+// FUNCTION: GAMEMD 0x00410230
 VOID STDMETHODCALLTYPE AbstractClass::Create_ID(void)
 {
 	ID = (Scen == NULL ? 0 : Scen->Get_Unique_ID());
 }
 
-// FUNCTION: 0x00410260
+// FUNCTION: GAMEMD 0x00410260
 HRESULT STDMETHODCALLTYPE AbstractClass::QueryInterface(REFIID riid, LPVOID * ppvObject)
 {
 	if (ppvObject == NULL) {
@@ -83,19 +83,19 @@ HRESULT STDMETHODCALLTYPE AbstractClass::QueryInterface(REFIID riid, LPVOID * pp
 	return(S_OK);
 }
 
-// FUNCTION: 0x00410300
+// FUNCTION: GAMEMD 0x00410300
 ULONG STDMETHODCALLTYPE AbstractClass::AddRef(void)
 {
 	return(1);
 }
 
-// FUNCTION: 0x00410310
+// FUNCTION: GAMEMD 0x00410310
 ULONG STDMETHODCALLTYPE AbstractClass::Release(void)
 {
 	return(1);
 }
 
-// FUNCTION: 0x00410320
+// FUNCTION: GAMEMD 0x00410320
 HRESULT STDMETHODCALLTYPE AbstractClass::Save(IStream * stream, BOOL cleardirty)
 {
 	if (stream == NULL) {
@@ -118,7 +118,7 @@ HRESULT STDMETHODCALLTYPE AbstractClass::Save(IStream * stream, BOOL cleardirty)
 	return(result);
 }
 
-// FUNCTION: 0x00410380
+// FUNCTION: GAMEMD 0x00410380
 HRESULT STDMETHODCALLTYPE AbstractClass::Load(IStream * stream)
 {
 	if (stream == NULL) {
@@ -139,7 +139,7 @@ HRESULT STDMETHODCALLTYPE AbstractClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x004103E0
+// FUNCTION: GAMEMD 0x004103E0
 HRESULT STDMETHODCALLTYPE AbstractClass::GetSizeMax(ULARGE_INTEGER *pcbSize)
 {
 	if (pcbSize == NULL) {
@@ -150,20 +150,20 @@ HRESULT STDMETHODCALLTYPE AbstractClass::GetSizeMax(ULARGE_INTEGER *pcbSize)
 	return(S_OK);
 }
 
-// FUNCTION: 0x00410410
+// FUNCTION: GAMEMD 0x00410410
 void AbstractClass::Compute_CRC(CRCEngine & crc) const
 {
 	crc(ID);
 	crc(Dirty);
 }
 
-// FUNCTION: 0x00410440
+// FUNCTION: GAMEMD 0x00410440
 bool AbstractClass::Is_Inactive(void) const
 {
 	return(true);
 }
 
-// FUNCTION: 0x00410450
+// FUNCTION: GAMEMD 0x00410450
 HRESULT AbstractClass::IsDirty(void)
 {
 	if (Dirty) {
@@ -172,81 +172,85 @@ HRESULT AbstractClass::IsDirty(void)
 	return(S_FALSE);
 }
 
-// FUNCTION: 0x00410470
+// FUNCTION: GAMEMD 0x00410470
 void AbstractClass::Init(void)
 {
 }
 
-// FUNCTION: 0x00410480
+// FUNCTION: GAMEMD 0x00410480
 void AbstractClass::Detach(AbstractClass const * target, bool all)
 {
 }
 
-// FUNCTION: 0x00410490
+// FUNCTION: GAMEMD 0x00410490
 HousesType AbstractClass::Owner(void) const
 {
 	return(HOUSE_NONE);
 }
 
-// FUNCTION: 0x004104A0
+// FUNCTION: GAMEMD 0x004104A0
 HouseClass *AbstractClass::Owner_HouseClass(void) const
 {
 	return(NULL);
 }
 
-// FUNCTION: 0x004104B0
+// FUNCTION: GAMEMD 0x004104B0
 int AbstractClass::Fetch_Heap_ID(void) const
 {
 	return(0);
 }
 
-// FUNCTION: 0x004104C0
+// FUNCTION: GAMEMD 0x004104C0
 Coord AbstractClass::Center_Coord(void) const
 {
 	return(COORD_NONE);
 }
 
-// FUNCTION: 0x004104F0
+// FUNCTION: GAMEMD 0x004104F0
 Coord AbstractClass::Destination_Coord(TechnoClass * docker) const
 {
 	return(Center_Coord());
 }
 
-// FUNCTION: 0x00410520
+// FUNCTION: GAMEMD 0x00410520
 bool AbstractClass::On_Ground(void) const
 {
 	return(false);
 }
 
-// FUNCTION: 0x00410530
+// FUNCTION: GAMEMD 0x00410530
 bool AbstractClass::In_Air(void) const
 {
 	return(false);
 }
 
-// FUNCTION: 0x00410540
+// FUNCTION: GAMEMD 0x00410540
 Coord AbstractClass::As_Coord(void) const
 {
 	return(Center_Coord());
 }
 
-// FUNCTION: 0x00410570
+// FUNCTION: GAMEMD 0x00410570
 void AbstractClass::AI(void)
 {
 }
 
-// FUNCTION: 0x00410580
+// FUNCTION: GAMEMD 0x00410580
 bool AbstractClass::INoticeSink_Unknown(DWORD unknown, DWORD unknown2)
 {
 	return(false);
 }
 
-// FUNCTION: 0x00410590
+// FUNCTION: GAMEMD 0x00410590
 void STDMETHODCALLTYPE AbstractClass::INoticeSource_Unknown(void)
 {
 }
 
-// FUNCTION: 0x004105A0 AbstractClass::~AbstractClass
-// FUNCTION: 0x004105E0 AbstractClass::QueryInterface
-// FUNCTION: 0x004105F0 AbstractClass::AddRef
-// FUNCTION: 0x00410600 AbstractClass::Release
+// SYNTHETIC: GAMEMD 0x004105A0
+// ??_GAbstractClass@@UAEPAXI@Z
+// FUNCTION: GAMEMD 0x004105E0
+// AbstractClass::QueryInterface
+// FUNCTION: GAMEMD 0x004105F0
+// AbstractClass::AddRef
+// FUNCTION: GAMEMD 0x00410600
+// AbstractClass::Release

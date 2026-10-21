@@ -9,7 +9,7 @@
 #include	<io.h>
 #include	<string.h>
 
-// FUNCTION: 0x007BF240
+// FUNCTION: GAMEMD 0x007BF240
 long __cdecl Disk_VQA_Stream_Handler(VQAHandle *vqa, long action, void *buffer, long nbytes)
 {
 	long fh;
@@ -79,7 +79,7 @@ long __cdecl Disk_VQA_Stream_Handler(VQAHandle *vqa, long action, void *buffer, 
 	return(error);
 }
 
-// FUNCTION: 0x007BF3A0
+// FUNCTION: GAMEMD 0x007BF3A0
 long __cdecl Memory_VQA_Stream_Handler(VQAHandle *vqa, long action, void *buffer, long nbytes)
 {
 	long error = 0;

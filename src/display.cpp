@@ -94,34 +94,52 @@ class BeaconManagerClass
 };
 extern BeaconManagerClass BeaconManager;
 
-// FUNCTION: 0x004A8420 $E2
-// FUNCTION: 0x004A8440 $E5
-// FUNCTION: 0x004A8470 $E8
-// FUNCTION: 0x004A8490 $E11
-// FUNCTION: 0x004A84B0 $E14
-// FUNCTION: 0x004A84D0 $E17
-// FUNCTION: 0x004A84F0 $E20
-// FUNCTION: 0x004A8510 $E23
-// FUNCTION: 0x004A8550 $E26
-// FUNCTION: 0x004A8580 $E29
-// FUNCTION: 0x004A85B0 $E32
-// FUNCTION: 0x004A85E0 $E35
-// FUNCTION: 0x004A85F0 $E38
-// FUNCTION: 0x004A8610 $E41
+// SYNTHETIC: GAMEMD 0x004A8420 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x004A8440 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x004A8470 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x004A8490 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x004A84B0 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x004A84D0 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x004A84F0 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x004A8510 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x004A8550 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x004A8580 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x004A85B0 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x004A85E0 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x004A85F0 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x004A8610 SYMBOL
+// _$E41
 
-// FUNCTION: 0x004A8630 $E240
-// FUNCTION: 0x004A8680 $E237
+// SYNTHETIC: GAMEMD 0x004A8630 SYMBOL
+// _$E240
+// SYNTHETIC: GAMEMD 0x004A8680 SYMBOL
+// _$E237
 LayerClass DisplayClass::Layer[LAYER_COUNT];
 
 void const * DisplayClass::ShadowShapes;
 void const * DisplayClass::PlacementShapes;
 void const * DAT_008A0418;
 
-// FUNCTION: 0x004A86E0 $E246
-// FUNCTION: 0x004A8710 $E243
+// SYNTHETIC: GAMEMD 0x004A86E0 SYMBOL
+// _$E246
+// SYNTHETIC: GAMEMD 0x004A8710 SYMBOL
+// _$E243
 DisplayClass::TacticalClass DisplayClass::TacButton;
 
-// FUNCTION: 0x004A8730
+// FUNCTION: GAMEMD 0x004A8730
 DisplayClass::DisplayClass(void) :
 	ZoneCell(CELL_NONE),
 	ZoneOffset(0,0),
@@ -164,7 +182,7 @@ struct FileSystem {
 };
 extern Rect __fastcall FUN_0072AD20(void);
 
-// FUNCTION: 0x004A8850
+// FUNCTION: GAMEMD 0x004A8850
 void DisplayClass::One_Time(void)
 {
 	BASECLASS::One_Time();
@@ -176,7 +194,7 @@ void DisplayClass::One_Time(void)
 	Set_View_Dimensions(rect);
 }
 
-// FUNCTION: 0x004A88C0
+// FUNCTION: GAMEMD 0x004A88C0
 void DisplayClass::Init_Clear(void)
 {
 	BASECLASS::Init_Clear();
@@ -197,7 +215,7 @@ void DisplayClass::Init_Clear(void)
 	}
 }
 
-// FUNCTION: 0x004A8930
+// FUNCTION: GAMEMD 0x004A8930
 void DisplayClass::Init_IO(void)
 {
 	BASECLASS::Init_IO();
@@ -207,7 +225,7 @@ void DisplayClass::Init_IO(void)
 	}
 }
 
-// FUNCTION: 0x004A8960
+// FUNCTION: GAMEMD 0x004A8960
 void DisplayClass::Set_View_Dimensions(Rect const & dimensions)
 {
 	DebugString("Set_View_Dimensions(%d,%d,%d,%d)\n", dimensions.X, dimensions.Y, dimensions.Width, dimensions.Height);
@@ -273,7 +291,7 @@ void DisplayClass::Set_View_Dimensions(Rect const & dimensions)
 	DebugString("Set_View_Dimensions(exit)\n");
 }
 
-// FUNCTION: 0x004A8BF0
+// FUNCTION: GAMEMD 0x004A8BF0
 void DisplayClass::SetActiveFoundation(Cell const * list)
 {
 	if (CursorSize) {
@@ -295,8 +313,9 @@ void DisplayClass::SetActiveFoundation(Cell const * list)
 	}
 }
 
-// FUNCTION: 0x004A8D40 $E249
-// FUNCTION: 0x004A8D50
+// SYNTHETIC: GAMEMD 0x004A8D40 SYMBOL
+// _$E249
+// FUNCTION: GAMEMD 0x004A8D50
 void DisplayClass::FUN_004A8D50(Cell const * list)
 {
 	if (CurrentFoundationCopy_Data) {
@@ -318,8 +337,9 @@ void DisplayClass::FUN_004A8D50(Cell const * list)
 	}
 }
 
-// FUNCTION: 0x004A8EA0 $E251
-// FUNCTION: 0x004A94F0
+// SYNTHETIC: GAMEMD 0x004A8EA0 SYMBOL
+// _$E251
+// FUNCTION: GAMEMD 0x004A94F0
 Cell DisplayClass::Get_Occupy_Dimensions(Cell const * list) const
 {
 	int min_x = MAP_CELL_W;
@@ -349,7 +369,7 @@ Cell DisplayClass::Get_Occupy_Dimensions(Cell const * list) const
 	return(cell);
 }
 
-// FUNCTION: 0x004A95A0
+// FUNCTION: GAMEMD 0x004A95A0
 void DisplayClass::Cursor_Mark(Cell const & pos, bool on)
 {
 	Cell const * ptr;
@@ -371,7 +391,7 @@ void DisplayClass::Cursor_Mark(Cell const & pos, bool on)
 	}
 }
 
-// FUNCTION: 0x004A9650
+// FUNCTION: GAMEMD 0x004A9650
 void DisplayClass::Mark_Foundation_Copy(Cell const & pos, bool on)
 {
 	Cell const * ptr;
@@ -393,13 +413,13 @@ void DisplayClass::Mark_Foundation_Copy(Cell const & pos, bool on)
 	}
 }
 
-// FUNCTION: 0x004A9700
+// FUNCTION: GAMEMD 0x004A9700
 void DisplayClass::AI(KeyNumType & input, Point2D const & xy)
 {
 	BASECLASS::AI(input, xy);
 }
 
-// FUNCTION: 0x004A9720
+// FUNCTION: GAMEMD 0x004A9720
 void DisplayClass::Submit(ObjectClass const * object)
 {
 	if (object) {
@@ -416,7 +436,7 @@ void DisplayClass::Submit(ObjectClass const * object)
 	}
 }
 
-// FUNCTION: 0x004A9770
+// FUNCTION: GAMEMD 0x004A9770
 void DisplayClass::Remove(ObjectClass const * object)
 {
 	if (object) {
@@ -435,7 +455,7 @@ void DisplayClass::Remove(ObjectClass const * object)
 	}
 }
 
-// FUNCTION: 0x004A9840
+// FUNCTION: GAMEMD 0x004A9840
 bool DisplayClass::Scroll_Map(FacingType facing, int & distance, bool really)
 {
 	if (distance == 0 && !really) return(false);
@@ -448,7 +468,7 @@ bool DisplayClass::Scroll_Map(FacingType facing, int & distance, bool really)
 	return(true);
 }
 
-// FUNCTION: 0x004A9890
+// FUNCTION: GAMEMD 0x004A9890
 bool DisplayClass::Map_Cell(Cell const & cell, HouseClass * house)
 {
 	CellClass * cellptr = &(*this)[cell];
@@ -565,7 +585,7 @@ bool DisplayClass::Map_Cell(Cell const & cell, HouseClass * house)
 	return(changed);
 }
 
-// FUNCTION: 0x004A9CA0
+// FUNCTION: GAMEMD 0x004A9CA0
 bool DisplayClass::RevealFogShroud(Cell const & cell, HouseClass * house, bool increase)
 {
 	CellClass * cellptr = &(*this)[cell];
@@ -613,7 +633,7 @@ bool DisplayClass::RevealFogShroud(Cell const & cell, HouseClass * house, bool i
 	return(changed);
 }
 
-// FUNCTION: 0x004A9DD0
+// FUNCTION: GAMEMD 0x004A9DD0
 bool DisplayClass::Fog_Map_Cell(Cell const & cell, HouseClass * house)
 {
 	CellClass * cellptr = &(*this)[cell];
@@ -688,7 +708,7 @@ bool DisplayClass::Fog_Map_Cell(Cell const & cell, HouseClass * house)
 	return(changed);
 }
 
-// FUNCTION: 0x004AA050
+// FUNCTION: GAMEMD 0x004AA050
 bool DisplayClass::Shadow_Map_Cell(Cell const & cell, HouseClass * house)
 {
 	CellClass * cellptr = &(*this)[cell];
@@ -756,13 +776,13 @@ bool DisplayClass::Shadow_Map_Cell(Cell const & cell, HouseClass * house)
 	return(changed);
 }
 
-// FUNCTION: 0x004AA290
+// FUNCTION: GAMEMD 0x004AA290
 ObjectClass * DisplayClass::Cell_Object(Cell const & cell, Point2D const & point) const
 {
 	return(*this)[cell].Cell_Object(point);
 }
 
-// FUNCTION: 0x004AA2B0
+// FUNCTION: GAMEMD 0x004AA2B0
 ObjectClass * DisplayClass::Next_Object(ObjectClass * object) const
 {
 	ObjectClass * firstobj = NULL;
@@ -795,7 +815,7 @@ ObjectClass * DisplayClass::Next_Object(ObjectClass * object) const
 	return(firstobj);
 }
 
-// FUNCTION: 0x004AA380
+// FUNCTION: GAMEMD 0x004AA380
 ObjectClass * DisplayClass::Prev_Object(ObjectClass * object) const
 {
 	ObjectClass * firstobj = NULL;
@@ -828,7 +848,7 @@ ObjectClass * DisplayClass::Prev_Object(ObjectClass * object) const
 	return(firstobj);
 }
 
-// FUNCTION: 0x004AAB30
+// FUNCTION: GAMEMD 0x004AAB30
 bool DisplayClass::Good_Reinforcement_Cell(Cell const & outcell, Cell const & incell, SpeedType loco, int zone, MZoneType mzone) const
 {
 	if (loco == SPEED_WINGED) {
@@ -851,7 +871,7 @@ bool DisplayClass::Good_Reinforcement_Cell(Cell const & outcell, Cell const & in
 	return(true);
 }
 
-// FUNCTION: 0x004AAC10
+// FUNCTION: GAMEMD 0x004AAC10
 int DisplayClass::TacticalClass::Action(unsigned flags, KeyNumType & key, int modifier)
 {
 	int x, y;
@@ -884,12 +904,12 @@ int DisplayClass::TacticalClass::Action(unsigned flags, KeyNumType & key, int mo
 	return(GadgetClass::Action(0, key, 0));
 }
 
-// FUNCTION: 0x004AAD20
+// FUNCTION: GAMEMD 0x004AAD20
 void DisplayClass::Mouse_Right_Press(Point2D const & point)
 {
 }
 
-// FUNCTION: 0x004AAD30
+// FUNCTION: GAMEMD 0x004AAD30
 void DisplayClass::Mouse_Right_Release(Point2D const & point)
 {
 	if (PendingObjectPtr && PendingObjectPtr->Is_Techno()) {
@@ -934,7 +954,7 @@ void DisplayClass::Mouse_Right_Release(Point2D const & point)
 	Set_Default_Mouse(MOUSE_NORMAL, DAT_00884D44);
 }
 
-// FUNCTION: 0x004AC2B0
+// FUNCTION: GAMEMD 0x004AC2B0
 void __fastcall Bandbox_Selection_Callback(ObjectClass * object)
 {
 	HouseClass * owner = object->Owner_HouseClass();
@@ -943,7 +963,7 @@ void __fastcall Bandbox_Selection_Callback(ObjectClass * object)
 	}
 }
 
-// FUNCTION: 0x004AC310
+// FUNCTION: GAMEMD 0x004AC310
 void DisplayClass::Mouse_Left_Press(Point2D const & point)
 {
 	if (!IsRepairMode && !IsPowerMode && !IsSellMode && IsTargettingMode == SUPER_NONE && !PendingObject) {
@@ -955,7 +975,7 @@ void DisplayClass::Mouse_Left_Press(Point2D const & point)
 	}
 }
 
-// FUNCTION: 0x004AC380
+// FUNCTION: GAMEMD 0x004AC380
 void DisplayClass::Mouse_Left_Held(Point2D const & point)
 {
 	if (IsRubberBand && !IsWaypointMode && !PlaceBeaconMode) {
@@ -984,7 +1004,7 @@ void DisplayClass::Mouse_Left_Held(Point2D const & point)
 	}
 }
 
-// FUNCTION: 0x004AC660
+// FUNCTION: GAMEMD 0x004AC660
 void DisplayClass::Sell_Mode_Control(int control)
 {
 	bool mode = IsSellMode;
@@ -1018,7 +1038,7 @@ void DisplayClass::Sell_Mode_Control(int control)
 	}
 }
 
-// FUNCTION: 0x004AC700
+// FUNCTION: GAMEMD 0x004AC700
 void DisplayClass::Waypoint_Mode_Control(int control, bool edit_selected_path)
 {
 	bool mode = IsWaypointMode;
@@ -1067,7 +1087,7 @@ void DisplayClass::Waypoint_Mode_Control(int control, bool edit_selected_path)
 	}
 }
 
-// FUNCTION: 0x004AC820
+// FUNCTION: GAMEMD 0x004AC820
 void DisplayClass::Power_Mode_Control(int control)
 {
 	bool mode = IsPowerMode;
@@ -1101,7 +1121,7 @@ void DisplayClass::Power_Mode_Control(int control)
 	}
 }
 
-// FUNCTION: 0x004AC8C0
+// FUNCTION: GAMEMD 0x004AC8C0
 void DisplayClass::Repair_Mode_Control(int control)
 {
 	bool mode = IsRepairMode;
@@ -1135,7 +1155,7 @@ void DisplayClass::Repair_Mode_Control(int control)
 	}
 }
 
-// FUNCTION: 0x004AC960
+// FUNCTION: GAMEMD 0x004AC960
 void DisplayClass::Place_Beacon_Mode_Control(int control)
 {
 	bool mode = IsRepairMode;
@@ -1172,20 +1192,20 @@ void DisplayClass::Place_Beacon_Mode_Control(int control)
 	}
 }
 
-// FUNCTION: 0x004ACA10
+// FUNCTION: GAMEMD 0x004ACA10
 Coord DisplayClass::Closest_Free_Spot(Coord const & coord, bool any) const
 {
 	CellClass *cellptr = &Map[coord];
 	return(cellptr->Closest_Free_Spot(coord, any, (cellptr->IsUnderBridge && coord.Z >= LEVEL_LEPTON_H * (cellptr->Height + BRIDGE_CELL_HEIGHT))));
 }
 
-// FUNCTION: 0x004ACA90
+// FUNCTION: GAMEMD 0x004ACA90
 bool DisplayClass::Is_Spot_Free(Coord const & coord, bool bridge) const
 {
 	return(Map[coord].Is_Spot_Free(CellClass::Spot_Index(coord), bridge));
 }
 
-// FUNCTION: 0x004ACAC0
+// FUNCTION: GAMEMD 0x004ACAC0
 void DisplayClass::Encroach_Shadow(void)
 {
 	int x;
@@ -1225,7 +1245,7 @@ void DisplayClass::Encroach_Shadow(void)
 	Flag_To_Redraw(GS_REDRAW_TACTICAL);
 }
 
-// FUNCTION: 0x004ACBC0
+// FUNCTION: GAMEMD 0x004ACBC0
 void DisplayClass::Encroach_Fog(void)
 {
 	Reset_Iterator();
@@ -1248,7 +1268,7 @@ void DisplayClass::Encroach_Fog(void)
 	}
 }
 
-// FUNCTION: 0x004ACC50
+// FUNCTION: GAMEMD 0x004ACC50
 void DisplayClass::Fog_Cell(Cell const & cell)
 {
 	if (!In_Radar(cell)) return;
@@ -1289,7 +1309,7 @@ void DisplayClass::Fog_Cell(Cell const & cell)
 	}
 }
 
-// FUNCTION: 0x004ACDA0
+// FUNCTION: GAMEMD 0x004ACDA0
 void DisplayClass::Shroud_Cell(Cell const & cell)
 {
 	if (!In_Radar(cell)) return;
@@ -1311,7 +1331,7 @@ void DisplayClass::Shroud_Cell(Cell const & cell)
 	}
 }
 
-// FUNCTION: 0x004AD7E0
+// FUNCTION: GAMEMD 0x004AD7E0
 void DisplayClass::Write_INI(CCINIClass & ini)
 {
 	char entry[20];
@@ -1357,7 +1377,7 @@ void DisplayClass::Write_INI(CCINIClass & ini)
 	AlternateSurface->Unlock();
 }
 
-// FUNCTION: 0x004ADA30
+// FUNCTION: GAMEMD 0x004ADA30
 int DisplayClass::Stash_Map_State(void * stash, int)
 {
 	unsigned char *data = (unsigned char *)stash;
@@ -1441,7 +1461,7 @@ int DisplayClass::Stash_Map_State(void * stash, int)
 	return(data - (unsigned char *)stash);
 }
 
-// FUNCTION: 0x004ADBA0
+// FUNCTION: GAMEMD 0x004ADBA0
 void DisplayClass::Restore_Map_State(void * stash)
 {
 	unsigned char *data = (unsigned char *)stash;
@@ -1508,7 +1528,7 @@ void DisplayClass::Restore_Map_State(void * stash)
 
 extern DynamicVectorClass<TechnoClass *> DAT_00A8EC78;
 
-// FUNCTION: 0x004ADCD0
+// FUNCTION: GAMEMD 0x004ADCD0
 void DisplayClass::FUN_004ADCD0(bool units_only, bool is_fog)
 {
 	int count = DAT_00A8EC78.Count();
@@ -1541,7 +1561,7 @@ void DisplayClass::FUN_004ADCD0(bool units_only, bool is_fog)
 	}
 }
 
-// FUNCTION: 0x004ADEE0
+// FUNCTION: GAMEMD 0x004ADEE0
 void DisplayClass::FUN_004ADEE0(bool units_only, bool is_fog)
 {
 	int count = DAT_00A8EC78.Count();
@@ -1566,7 +1586,7 @@ void DisplayClass::FUN_004ADEE0(bool units_only, bool is_fog)
 	}
 }
 
-// FUNCTION: 0x004ADFF0
+// FUNCTION: GAMEMD 0x004ADFF0
 void DisplayClass::FUN_004ADFF0(bool units_only, bool is_fog)
 {
 	for (int index = 0; index < Layer[LAYER_GROUND].Count(); index++) {
@@ -1586,7 +1606,7 @@ void DisplayClass::FUN_004ADFF0(bool units_only, bool is_fog)
 	}
 }
 
-// FUNCTION: 0x004AE0B0
+// FUNCTION: GAMEMD 0x004AE0B0
 void DisplayClass::Constrained_Look(Coord const & center, LEPTON distance)
 {
 	for (int index = 0; index < Layer[LAYER_GROUND].Count(); index++) {
@@ -1606,7 +1626,7 @@ void DisplayClass::Constrained_Look(Coord const & center, LEPTON distance)
 	}
 }
 
-// FUNCTION: 0x004AE290
+// FUNCTION: GAMEMD 0x004AE290
 void DisplayClass::Center_Map(void)
 {
 	int index;
@@ -1643,7 +1663,7 @@ void DisplayClass::Center_Map(void)
 	}
 }
 
-// FUNCTION: 0x004AE450
+// FUNCTION: GAMEMD 0x004AE450
 void DisplayClass::Reinit_Cell_Drawers(void)
 {
 	IsometricTileTypeClass::Init_Drawers();
@@ -1657,7 +1677,7 @@ void DisplayClass::Reinit_Cell_Drawers(void)
 	Flag_To_Redraw(GS_REDRAW_TACTICAL);
 }
 
-// FUNCTION: 0x004AE4C0
+// FUNCTION: GAMEMD 0x004AE4C0
 void DisplayClass::Update_Cell_Colors(void)
 {
 	Map.Reset_Iterator();
@@ -1677,7 +1697,7 @@ static inline TechnoClass * Help_Cast(ObjectClass * object)
 	return(NULL);
 }
 
-// FUNCTION: 0x004AE4F0
+// FUNCTION: GAMEMD 0x004AE4F0
 char const * DisplayClass::Help_Text(int id)
 {
 	if (id < 500 || id > 900 || Is_Scrolling()) {
@@ -1725,7 +1745,7 @@ char const * DisplayClass::Help_Text(int id)
 	return(NULL);
 }
 
-// FUNCTION: 0x004AE6B0
+// FUNCTION: GAMEMD 0x004AE6B0
 void DisplayClass::Reposition_Sidebar(void)
 {
 	if (UnusedWindow) {
@@ -1734,13 +1754,13 @@ void DisplayClass::Reposition_Sidebar(void)
 	}
 }
 
-// FUNCTION: 0x004AE6D0
+// FUNCTION: GAMEMD 0x004AE6D0
 LRESULT DisplayClass::Windows_Message_Proc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 {
 	return(DefWindowProc(hWnd, Msg, wParam, lParam));
 }
 
-// FUNCTION: 0x004AE6F0
+// FUNCTION: GAMEMD 0x004AE6F0
 HRESULT DisplayClass::Load(IStream * stream)
 {
 	HRESULT result = S_OK;
@@ -1750,7 +1770,7 @@ HRESULT DisplayClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x004AE720
+// FUNCTION: GAMEMD 0x004AE720
 HRESULT DisplayClass::Save(IStream * stream)
 {
 	HRESULT result = S_OK;
@@ -1761,7 +1781,7 @@ HRESULT DisplayClass::Save(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x004AE9B0
+// FUNCTION: GAMEMD 0x004AE9B0
 ActionType DisplayClass::Action_To_Waypoint_Action(ActionType action, Cell const & cell)
 {
 	if (PlayerPtr->Waypoint_At(cell) != NULL) {
@@ -1783,7 +1803,7 @@ ActionType DisplayClass::Action_To_Waypoint_Action(ActionType action, Cell const
 	return(action);
 }
 
-// FUNCTION: 0x004AEA20
+// FUNCTION: GAMEMD 0x004AEA20
 void DisplayClass::Update_Waypoint_Color(int index)
 {
 	int offset;
@@ -1801,7 +1821,7 @@ void DisplayClass::Update_Waypoint_Color(int index)
 
 extern bool DAT_00A8ED9D;
 
-// FUNCTION: 0x004AEAD0
+// FUNCTION: GAMEMD 0x004AEAD0
 void DisplayClass::Abort_Drag_Select(void)
 {
 	if (TacticalMap != NULL) {
@@ -1814,7 +1834,7 @@ void DisplayClass::Abort_Drag_Select(void)
 	Set_Default_Mouse(MOUSE_NORMAL, false);
 }
 
-// FUNCTION: 0x004AEB10
+// FUNCTION: GAMEMD 0x004AEB10
 ObjectClass * DisplayClass::Object_To_Follow(void) const
 {
 	if (FollowingObject && FollowingObjectPtr != NULL) {
@@ -1823,21 +1843,27 @@ ObjectClass * DisplayClass::Object_To_Follow(void) const
 	return(NULL);
 }
 
-// FUNCTION: 0x004AEB30
+// FUNCTION: GAMEMD 0x004AEB30
 void DisplayClass::Set_To_Follow(ObjectClass * object)
 {
 	FollowingObjectPtr = object;
 	FollowingObject = object != NULL ? true : false;
 }
 
-// FUNCTION: 0x004AEB50 LayerClass::~LayerClass
+// SYNTHETIC: GAMEMD 0x004AEB50
+// ??_GLayerClass@@UAEPAXI@Z
 
-// FUNCTION: 0x004AEBA0 GadgetClass::Get_ID
+// FUNCTION: GAMEMD 0x004AEBA0
+// GadgetClass::Get_ID
 
-// FUNCTION: 0x004AEBB0 DisplayClass::TacticalClass::~TacticalClass
+// SYNTHETIC: GAMEMD 0x004AEBB0
+// ??_GTacticalClass@DisplayClass@@UAEPAXI@Z
 
-// FUNCTION: 0x004AEBD0 GScreenClass::Draw_It
+// FUNCTION: GAMEMD 0x004AEBD0
+// GScreenClass::Draw_It
 
-// FUNCTION: 0x004AEBE0 MapClass::Is_Scrolling
+// FUNCTION: GAMEMD 0x004AEBE0
+// MapClass::Is_Scrolling
 
-// FUNCTION: 0x004AEBF0 DisplayClass::~DisplayClass
+// SYNTHETIC: GAMEMD 0x004AEBF0
+// ??_GDisplayClass@@UAEPAXI@Z

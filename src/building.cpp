@@ -91,7 +91,7 @@ SideType FUN_006A46D0(char const * name);
 void __fastcall FUN_00750D40(Coord const & coord, AudioController * controller);
 
 
-// FUNCTION: 0x0043B4C0
+// FUNCTION: GAMEMD 0x0043B4C0
 bool __fastcall FUN_0043B4C0(HouseClass * house, CellClass * cell)
 {
 	if (PlayerPtr->Is_Ally(house)) return false;
@@ -109,7 +109,7 @@ bool __fastcall FUN_0043B4C0(HouseClass * house, CellClass * cell)
 }
 
 
-// FUNCTION: 0x0043B5E0
+// FUNCTION: GAMEMD 0x0043B5E0
 AnimClass * HouseClass::PsiWarn(HouseClass * house, ObjectClass * target, BulletClass * bullet, char const * name)
 {
 	AnimType type = AnimTypeClass::From_Name(name);
@@ -123,7 +123,7 @@ AnimClass * HouseClass::PsiWarn(HouseClass * house, ObjectClass * target, Bullet
 }
 
 
-// FUNCTION: 0x0043B680
+// FUNCTION: GAMEMD 0x0043B680
 BuildingClass::BuildingClass(NoInitClass const & x) :
 	BASECLASS(x),
 	CountDown(x),
@@ -135,7 +135,7 @@ BuildingClass::BuildingClass(NoInitClass const & x) :
 }
 
 
-// FUNCTION: 0x0043B740
+// FUNCTION: GAMEMD 0x0043B740
 BuildingClass::BuildingClass(BuildingTypeClass const * type, HouseClass * house) :
 	BASECLASS(house),
 	Class((BuildingTypeClass *)type),
@@ -239,7 +239,7 @@ BuildingClass::BuildingClass(BuildingTypeClass const * type, HouseClass * house)
 	}
 }
 
-// FUNCTION: 0x0043C0D0
+// FUNCTION: GAMEMD 0x0043C0D0
 void BuildingClass::FUN_0043C0D0(void)
 {
 	int count = Rule->DamageFireTypes.Count();
@@ -262,7 +262,7 @@ void BuildingClass::FUN_0043C0D0(void)
 	}
 }
 
-// FUNCTION: 0x0043C2A0
+// FUNCTION: GAMEMD 0x0043C2A0
 void BuildingClass::FUN_0043C2A0(void)
 {
 	for (int i = 0; i < 8; i++) {
@@ -273,7 +273,7 @@ void BuildingClass::FUN_0043C2A0(void)
 	}
 }
 
-// FUNCTION: 0x0043CEA0
+// FUNCTION: GAMEMD 0x0043CEA0
 bool BuildingClass::Render(Rect & rect, bool forced, bool extras_only) const
 {
 	if (Debug_Map || !MainWindow || ((forced || IsToDisplay) && IsDown && !IsInLimbo)) {
@@ -304,7 +304,7 @@ bool BuildingClass::Render(Rect & rect, bool forced, bool extras_only) const
 	return(false);
 }
 
-// FUNCTION: 0x0043D030
+// FUNCTION: GAMEMD 0x0043D030
 void BuildingClass::Editor_Draw_It(Point2D const & xdrawpoint, Rect const & xcliprect) const
 {
 	Cell cell = PositionCell;
@@ -360,7 +360,7 @@ void BuildingClass::Editor_Draw_It(Point2D const & xdrawpoint, Rect const & xcli
 	}
 }
 
-// FUNCTION: 0x0043E900
+// FUNCTION: GAMEMD 0x0043E900
 int BuildingClass::Get_Z_Adjust(void) const
 {
 	int pixel = -Tactical::Z_Lepton_To_Pixel(Height);
@@ -371,7 +371,7 @@ int BuildingClass::Get_Z_Adjust(void) const
 	return(pixel);
 }
 
-// FUNCTION: 0x0043ED40
+// FUNCTION: GAMEMD 0x0043ED40
 DirType BuildingClass::Aim_Direction(AbstractClass * target) const
 {
 	Coord coord = COORD_NONE;
@@ -388,7 +388,7 @@ DirType BuildingClass::Aim_Direction(AbstractClass * target) const
 	return(::Direction(coord, target->Center_Coord()));
 }
 
-// FUNCTION: 0x0043EE50
+// FUNCTION: GAMEMD 0x0043EE50
 int BuildingClass::Set_Turret_Frame(void)
 {
 	int stage = 0;
@@ -405,7 +405,7 @@ int BuildingClass::Set_Turret_Frame(void)
 	return(stage);
 }
 
-// FUNCTION: 0x0043EEB0
+// FUNCTION: GAMEMD 0x0043EEB0
 void BuildingClass::Set_Turret_Index(int index)
 {
 	char buffer[64];
@@ -423,7 +423,7 @@ void BuildingClass::Set_Turret_Index(int index)
 	}
 }
 
-// FUNCTION: 0x0043EF90
+// FUNCTION: GAMEMD 0x0043EF90
 int BuildingClass::Shape_Number(void) const
 {
 	int shapenum = Animation.Fetch_Stage();
@@ -485,7 +485,7 @@ inline void Register_Dirty(Rect const & area)
 	TacticalMap->Register_Dirty_Area(area, false);
 }
 
-// FUNCTION: 0x00441F60
+// FUNCTION: GAMEMD 0x00441F60
 void BuildingClass::AfterDestruction(void)
 {
 	ShapeSet const * shape;
@@ -524,7 +524,7 @@ void BuildingClass::AfterDestruction(void)
 	}
 }
 
-// FUNCTION: 0x00442C40
+// FUNCTION: GAMEMD 0x00442C40
 void BuildingClass::Init(void)
 {
 	BASECLASS::Init();
@@ -555,7 +555,7 @@ void BuildingClass::Init(void)
 	}
 }
 
-// FUNCTION: 0x00443410
+// FUNCTION: GAMEMD 0x00443410
 bool BuildingClass::Active_Click_With(ActionType action, ObjectClass * object, bool)
 {
 	if (action == ACTION_ATTACK) {
@@ -599,7 +599,7 @@ bool BuildingClass::Active_Click_With(ActionType action, ObjectClass * object, b
 	return(true);
 }
 
-// FUNCTION: 0x004436F0
+// FUNCTION: GAMEMD 0x004436F0
 bool BuildingClass::Active_Click_With(ActionType action, Cell const & cell, Cell const & cell2, bool)
 {
 	if (action == ACTION_ATTACK) {
@@ -626,7 +626,7 @@ bool BuildingClass::Active_Click_With(ActionType action, Cell const & cell, Cell
 	return(true);
 }
 
-// FUNCTION: 0x00443860
+// FUNCTION: GAMEMD 0x00443860
 void BuildingClass::Assign_Rally_Point(Cell const & cell, bool play_eva)
 {
 	Cell nearbyloc;
@@ -660,7 +660,7 @@ void BuildingClass::Assign_Rally_Point(Cell const & cell, bool play_eva)
 	}
 }
 
-// FUNCTION: 0x00443B90
+// FUNCTION: GAMEMD 0x00443B90
 void BuildingClass::Assign_Target(AbstractClass * target)
 {
 	if (CurrentMission == MISSION_DECONSTRUCTION) goto none;
@@ -680,7 +680,7 @@ none:
 	BASECLASS::Assign_Target(target);
 }
 
-// FUNCTION: 0x004456D0
+// FUNCTION: GAMEMD 0x004456D0
 void BuildingClass::Update_Buildables(void)
 {
 	if (House == PlayerPtr && !IsInLimbo && IsDiscoveredByPlayer && IsOn) {
@@ -728,7 +728,7 @@ void BuildingClass::Update_Buildables(void)
 	}
 }
 
-// FUNCTION: 0x00445880
+// FUNCTION: GAMEMD 0x00445880
 bool BuildingClass::Limbo(void)
 {
 	Coord coord = PositionCoord;
@@ -876,7 +876,7 @@ bool BuildingClass::Limbo(void)
 	return(res);
 }
 
-// FUNCTION: 0x00445E50
+// FUNCTION: GAMEMD 0x00445E50
 DirType BuildingClass::Turret_Facing(void) const
 {
 	if (!Is_Turret_Equipped() && TarCom != NULL) {
@@ -885,7 +885,7 @@ DirType BuildingClass::Turret_Facing(void) const
 	return(PrimaryFacing.Current());
 }
 
-// FUNCTION: 0x00445F00
+// FUNCTION: GAMEMD 0x00445F00
 AbstractClass * BuildingClass::Greatest_Threat(ThreatType threat, Coord const & coord, bool onlyenemy) const
 {
 	if (PrimaryWeapon != NULL) {
@@ -898,7 +898,7 @@ AbstractClass * BuildingClass::Greatest_Threat(ThreatType threat, Coord const & 
 	return(BASECLASS::Greatest_Threat(threat, coord, onlyenemy));
 }
 
-// FUNCTION: 0x00446FF0
+// FUNCTION: GAMEMD 0x00446FF0
 void BuildingClass::Repair(int control)
 {
 	switch (control) {
@@ -951,7 +951,7 @@ void BuildingClass::Begin_Anim(BAnimType anim, bool damaged, int delay)
 	}
 }
 
-// FUNCTION: 0x00447110
+// FUNCTION: GAMEMD 0x00447110
 void BuildingClass::Sell_Back(int control)
 {
 	if (HasBuildupData) {
@@ -993,7 +993,7 @@ void BuildingClass::Sell_Back(int control)
 	}
 }
 
-// FUNCTION: 0x00447210
+// FUNCTION: GAMEMD 0x00447210
 ActionType BuildingClass::What_Action(ObjectClass const * object, bool disallow_force) const
 {
 	if (Class->IsInvisibleInGame) {
@@ -1063,7 +1063,7 @@ none:
 	return(action);
 }
 
-// FUNCTION: 0x00447540
+// FUNCTION: GAMEMD 0x00447540
 ActionType BuildingClass::What_Action(Cell const & cell, bool check_fog, bool disallow_force) const
 {
 	if (Class->IsInvisibleInGame) {
@@ -1115,7 +1115,7 @@ ActionType BuildingClass::What_Action(Cell const & cell, bool check_fog, bool di
 	return(action);
 }
 
-// FUNCTION: 0x00447780
+// FUNCTION: GAMEMD 0x00447780
 void BuildingClass::Begin_Mode(BStateType bstate)
 {
 	QueueBState = bstate;
@@ -1149,7 +1149,7 @@ void BuildingClass::Begin_Mode(BStateType bstate)
 	}
 }
 
-// FUNCTION: 0x00447AC0
+// FUNCTION: GAMEMD 0x00447AC0
 Coord BuildingClass::Center_Coord(void) const
 {
 	int h = (Class->Height(false) * (CELL_LEPTON_H / 2)) - (CELL_LEPTON_H / 2);
@@ -1158,7 +1158,7 @@ Coord BuildingClass::Center_Coord(void) const
 	return(PositionCoord + Coord(w, h));
 }
 
-// FUNCTION: 0x00447B20
+// FUNCTION: GAMEMD 0x00447B20
 Coord BuildingClass::Docking_Coord(TechnoClass * docker) const
 {
 	if (Class->IsWeeder) {
@@ -1206,13 +1206,13 @@ Coord BuildingClass::Docking_Coord(TechnoClass * docker) const
 	return(coord);
 }
 
-// FUNCTION: 0x00447E00
+// FUNCTION: GAMEMD 0x00447E00
 int BuildingClass::DistanceToDockingCoord(TechnoClass * docker) const
 {
 	return(Docking_Coord(docker).Distance_To(docker->Center_Coord()));
 }
 
-// FUNCTION: 0x00447E90
+// FUNCTION: GAMEMD 0x00447E90
 Coord BuildingClass::Destination_Coord(TechnoClass * docker) const
 {
 	if (Class->IsHelipad) {
@@ -1224,7 +1224,7 @@ Coord BuildingClass::Destination_Coord(TechnoClass * docker) const
 	return(Center_Coord());
 }
 
-// FUNCTION: 0x00447F10
+// FUNCTION: GAMEMD 0x00447F10
 FireErrorType BuildingClass::Can_Fire(AbstractClass * target, int which, bool ignoreRange) const
 {
 	if (Class->CanBeOccupied && (!Class->CanOccupyFire || !GetOccupantCount())) {
@@ -1257,7 +1257,7 @@ FireErrorType BuildingClass::Can_Fire(AbstractClass * target, int which, bool ig
 	return(canfire);
 }
 
-// FUNCTION: 0x00448070
+// FUNCTION: GAMEMD 0x00448070
 bool BuildingClass::FUN_00448070(bool demote)
 {
 	RTTIType type = Class->ToBuild;
@@ -1289,7 +1289,7 @@ done:
 	return(IsLeader != was);
 }
 
-// FUNCTION: 0x00448160
+// FUNCTION: GAMEMD 0x00448160
 bool BuildingClass::Toggle_Primary(void)
 {
 	if (Class->ToBuild == RTTI_NONE) {
@@ -1318,14 +1318,14 @@ bool BuildingClass::Toggle_Primary(void)
 	return(IsLeader);
 }
 
-// FUNCTION: 0x00449410
+// FUNCTION: GAMEMD 0x00449410
 int BuildingClass::Sort_Y(void) const
 {
 	int y = BASECLASS::Sort_Y();
 	return(y + (Class->IsTurretAnimAVoxel != 0 ? 32 : 0) - (Class->IsGate != 0 ? 16 : 0));
 }
 
-// FUNCTION: 0x00449440
+// FUNCTION: GAMEMD 0x00449440
 MoveType BuildingClass::Can_Enter_Cell(CellClass const * cell, FacingType dir, int cell_height, CellClass const *, bool) const
 {
 	Cell c = cell->CellID;
@@ -1335,7 +1335,7 @@ MoveType BuildingClass::Can_Enter_Cell(CellClass const * cell, FacingType dir, i
 	return(Class->Legal_Placement(c, House) ? MOVE_OK : MOVE_NO);
 }
 
-// FUNCTION: 0x004494C0
+// FUNCTION: GAMEMD 0x004494C0
 bool BuildingClass::Can_Demolish(void) const
 {
 	if (IsBeingDrained() || Class->IsUnsellable) {
@@ -1350,7 +1350,7 @@ bool BuildingClass::Can_Demolish(void) const
 	return(false);
 }
 
-// FUNCTION: 0x00449540
+// FUNCTION: GAMEMD 0x00449540
 bool BuildingClass::Clear_Weapons_Factory_Bib(void)
 {
 	if (Class->IsWeaponsFactory) {
@@ -1378,7 +1378,7 @@ bool BuildingClass::Clear_Weapons_Factory_Bib(void)
 	return(false);
 }
 
-// FUNCTION: 0x004496B0
+// FUNCTION: GAMEMD 0x004496B0
 int BuildingClass::Do_MISSION_GUARD(void)
 {
 	if (Techno_Type_Class()->IsGattling) {
@@ -1450,13 +1450,13 @@ int BuildingClass::Do_MISSION_GUARD(void)
 	return(Current_Mission_Control().AA_Delay() + Random_Pick(0, 2));
 }
 
-// FUNCTION: 0x00449A40
+// FUNCTION: GAMEMD 0x00449A40
 int BuildingClass::Do_MISSION_GUARD_AREA(void)
 {
 	return(Do_MISSION_GUARD());
 }
 
-// FUNCTION: 0x00449A50
+// FUNCTION: GAMEMD 0x00449A50
 int BuildingClass::Do_MISSION_CONSTRUCTION(void)
 {
 	switch (Status) {
@@ -1499,7 +1499,7 @@ int BuildingClass::Do_MISSION_CONSTRUCTION(void)
 	return(1);
 }
 
-// FUNCTION: 0x00449BC0
+// FUNCTION: GAMEMD 0x00449BC0
 bool BuildingClass::Can_Be_Undeployed(void)
 {
 	if (Class->UndeploysInto) {
@@ -1515,7 +1515,7 @@ bool BuildingClass::Can_Be_Undeployed(void)
 	return(false);
 }
 
-// FUNCTION: 0x0044ABD0
+// FUNCTION: GAMEMD 0x0044ABD0
 void BuildingClass::FireLaser(Coord coords)
 {
 	RGBClass black(0, 0, 0);
@@ -1531,19 +1531,19 @@ void BuildingClass::FireLaser(Coord coords)
 namespace Unsorted { extern bool ArmageddonMode; }
 void __fastcall FUN_00660B80(Cell const & cell);
 
-// FUNCTION: 0x0044B760
+// FUNCTION: GAMEMD 0x0044B760
 int BuildingClass::Do_MISSION_CAPTURE(void)
 {
 	return(MissionClass::Do_MISSION_CAPTURE());
 }
 
-// FUNCTION: 0x0044B770
+// FUNCTION: GAMEMD 0x0044B770
 int BuildingClass::Do_MISSION_HARVEST(void)
 {
 	return(MissionClass::Do_MISSION_HARVEST());
 }
 
-// FUNCTION: 0x0044D5D0
+// FUNCTION: GAMEMD 0x0044D5D0
 bool BuildingClass::Revealed(HouseClass * house)
 {
 	if (BASECLASS::Revealed(house)) {
@@ -1564,7 +1564,7 @@ bool BuildingClass::Revealed(HouseClass * house)
 	return(false);
 }
 
-// FUNCTION: 0x0044D6A0
+// FUNCTION: GAMEMD 0x0044D6A0
 bool BuildingClass::Enter_Idle_Mode(bool initial, bool)
 {
 	MissionType mission = MISSION_GUARD;
@@ -1579,7 +1579,7 @@ bool BuildingClass::Enter_Idle_Mode(bool initial, bool)
 	return(false);
 }
 
-// FUNCTION: 0x0044D700
+// FUNCTION: GAMEMD 0x0044D700
 int BuildingClass::Pip_Count(void) const
 {
 	switch (Class->PipScale) {
@@ -1592,7 +1592,7 @@ int BuildingClass::Pip_Count(void) const
 	return(BASECLASS::Pip_Count());
 }
 
-// FUNCTION: 0x0044D760
+// FUNCTION: GAMEMD 0x0044D760
 void BuildingClass::Death_Announcement(TechnoClass const * source) const
 {
 	if (source != NULL && House->Is_Player_Control()) {
@@ -1601,7 +1601,7 @@ void BuildingClass::Death_Announcement(TechnoClass const * source) const
 	}
 }
 
-// FUNCTION: 0x0044E3A0
+// FUNCTION: GAMEMD 0x0044E3A0
 bool BuildingClass::Is_Blocked_By_Occupier(void)
 {
 	Cell cell = Get_Cell();
@@ -1622,7 +1622,7 @@ bool BuildingClass::Is_Blocked_By_Occupier(void)
 	return(blocked);
 }
 
-// FUNCTION: 0x0044E440
+// FUNCTION: GAMEMD 0x0044E440
 int BuildingClass::Do_MISSION_OPEN(void)
 {
 	if (Class->IsGate) {
@@ -1699,7 +1699,7 @@ int BuildingClass::Do_MISSION_OPEN(void)
 	return(1);
 }
 
-// FUNCTION: 0x0044E7B0
+// FUNCTION: GAMEMD 0x0044E7B0
 int BuildingClass::Power_Output(void) const
 {
 	int power = Class->Power;
@@ -1727,7 +1727,7 @@ int BuildingClass::Power_Output(void) const
 	return(0);
 }
 
-// FUNCTION: 0x0044E880
+// FUNCTION: GAMEMD 0x0044E880
 int BuildingClass::Power_Drain(void) const
 {
 	if (!IsBeingWarpedOut() && IsOn) {
@@ -1755,7 +1755,7 @@ static inline void Replay_Anim(BuildingClass * building, BAnimType anim, bool da
 	}
 }
 
-// FUNCTION: 0x0044E8F0
+// FUNCTION: GAMEMD 0x0044E8F0
 void BuildingClass::Detach(AbstractClass const * target, bool all)
 {
 	BASECLASS::Detach(target, all);
@@ -1807,7 +1807,7 @@ void BuildingClass::Detach(AbstractClass const * target, bool all)
 	}
 }
 
-// FUNCTION: 0x0044EB10
+// FUNCTION: GAMEMD 0x0044EB10
 InfantryTypeClass const * BuildingClass::Crew_Type(void) const
 {
 	if (!IsCaptured && Percent_Chance(25) && Class->ToBuild == RTTI_BUILDINGTYPE) {
@@ -1816,7 +1816,7 @@ InfantryTypeClass const * BuildingClass::Crew_Type(void) const
 	return(BASECLASS::Crew_Type());
 }
 
-// FUNCTION: 0x0044EB60
+// FUNCTION: GAMEMD 0x0044EB60
 void BuildingClass::FUN_0044EB60(FactoryClass * factory)
 {
 	if (factory != NULL) {
@@ -1830,7 +1830,7 @@ void BuildingClass::FUN_0044EB60(FactoryClass * factory)
 	}
 }
 
-// FUNCTION: 0x0044EBF0
+// FUNCTION: GAMEMD 0x0044EBF0
 void BuildingClass::Detach_All(bool all)
 {
 	if (all) {
@@ -1870,7 +1870,7 @@ void BuildingClass::Detach_All(bool all)
 	BASECLASS::Detach_All(all);
 }
 
-// FUNCTION: 0x0044EF80
+// FUNCTION: GAMEMD 0x0044EF80
 int BuildingClass::Flush_For_Placement(TechnoClass * techno, Cell const & cell)
 {
 	if (techno) {
@@ -1879,7 +1879,7 @@ int BuildingClass::Flush_For_Placement(TechnoClass * techno, Cell const & cell)
 	return(-1);
 }
 
-// FUNCTION: 0x0044F5C0
+// FUNCTION: GAMEMD 0x0044F5C0
 bool BuildingClass::Can_Player_Move(void) const
 {
 	if ((int)EMPLockRemaining > 0) {
@@ -1896,7 +1896,7 @@ bool BuildingClass::Can_Player_Move(void) const
 	return(Class->UndeploysInto != NULL);
 }
 
-// FUNCTION: 0x0044F640
+// FUNCTION: GAMEMD 0x0044F640
 Coord BuildingClass::Exit_Coord(int index) const
 {
 	if (Class->ExitCoordinate != (Coord const &)DAT_0089C848) {
@@ -1905,7 +1905,7 @@ Coord BuildingClass::Exit_Coord(int index) const
 	return(Center_Coord());
 }
 
-// FUNCTION: 0x0044F6E0
+// FUNCTION: GAMEMD 0x0044F6E0
 Cell BuildingClass::Check_Point(CheckPointType cp) const
 {
 	int xoffset = 6;
@@ -1937,7 +1937,7 @@ Cell BuildingClass::Check_Point(CheckPointType cp) const
 	return(cell + Cell(xoffset, yoffset));
 }
 
-// FUNCTION: 0x0044F7A0
+// FUNCTION: GAMEMD 0x0044F7A0
 void BuildingClass::Update_Radar_Spied(void)
 {
 	House->RadarSpied = 0;
@@ -1953,7 +1953,7 @@ void BuildingClass::Update_Radar_Spied(void)
 
 char const * const BuildingClass::INI_NAME = "Structures";
 
-// FUNCTION: 0x0044FE60
+// FUNCTION: GAMEMD 0x0044FE60
 void BuildingClass::Write_All(CCINIClass & ini)
 {
 	ini.Clear(INI_NAME);
@@ -1966,7 +1966,7 @@ void BuildingClass::Write_All(CCINIClass & ini)
 	}
 }
 
-// FUNCTION: 0x0044FEC0
+// FUNCTION: GAMEMD 0x0044FEC0
 void BuildingClass::Write_INI(CCINIClass & ini)
 {
 	char	uname[10];
@@ -2010,14 +2010,14 @@ void BuildingClass::Write_INI(CCINIClass & ini)
 	ini.Put_String(INI_NAME, uname, buf);
 }
 
-// FUNCTION: 0x004500A0
+// FUNCTION: GAMEMD 0x004500A0
 Coord BuildingClass::Target_Coord(void) const
 {
 	Coord center = Center_Coord();
 	return(Class->TargetCoordOffset + center);
 }
 
-// FUNCTION: 0x004500F0
+// FUNCTION: GAMEMD 0x004500F0
 void BuildingClass::Factory_AI(void)
 {
 	if (Factory != NULL && Factory->Has_Completed() && PlacementDelay == 0) {
@@ -2085,12 +2085,12 @@ void BuildingClass::Factory_AI(void)
 	}
 }
 
-// FUNCTION: 0x004503E0
+// FUNCTION: GAMEMD 0x004503E0
 void BuildingClass::Rotation_AI(void)
 {
 }
 
-// FUNCTION: 0x004503F0
+// FUNCTION: GAMEMD 0x004503F0
 void BuildingClass::FUN_004503F0(void)
 {
 	if (PrismStage != 0) {
@@ -2121,7 +2121,7 @@ void BuildingClass::FUN_004503F0(void)
 	}
 }
 
-// FUNCTION: 0x004504F0
+// FUNCTION: GAMEMD 0x004504F0
 void BuildingClass::FUN_004504F0(int stage, CoordStruct const & coords)
 {
 	DelayBeforeFiring = Class->DelayedFireDelay;
@@ -2131,7 +2131,7 @@ void BuildingClass::FUN_004504F0(int stage, CoordStruct const & coords)
 	Replay_Anim(this, BANIM_SPECIAL_ONE, HealthRatio <= Rule->ConditionYellow);
 }
 
-// FUNCTION: 0x00450590
+// FUNCTION: GAMEMD 0x00450590
 void BuildingClass::FUN_00450590(void)
 {
 	for (int i = Overpowerers.Count() - 1; i >= 0; i--) {
@@ -2147,7 +2147,7 @@ void BuildingClass::FUN_00450590(void)
 	}
 }
 
-// FUNCTION: 0x00450630
+// FUNCTION: GAMEMD 0x00450630
 void BuildingClass::Repair_AI(void)
 {
 	if (House->IQ >= Rule->IQRepairSell && Get_Mission() != MISSION_CONSTRUCTION && Get_Mission() != MISSION_DECONSTRUCTION) {
@@ -2204,7 +2204,7 @@ void BuildingClass::Repair_AI(void)
 	}
 }
 
-// FUNCTION: 0x00451330
+// FUNCTION: GAMEMD 0x00451330
 int BuildingClass::How_Many_Survivors(void) const
 {
 	if (IsSurvivorless || !Class->IsCrew) return(0);
@@ -2227,7 +2227,7 @@ int BuildingClass::How_Many_Survivors(void) const
 	return(count);
 }
 
-// FUNCTION: 0x004513D0
+// FUNCTION: GAMEMD 0x004513D0
 void const * BuildingClass::Get_Image_Data(void) const
 {
 	if (BState != BSTATE_CONSTRUCTION && ActuallyPlacedOnMap) {
@@ -2236,7 +2236,7 @@ void const * BuildingClass::Get_Image_Data(void) const
 	return(Class->Get_Buildup_Data());
 }
 
-// FUNCTION: 0x00451400
+// FUNCTION: GAMEMD 0x00451400
 bool BuildingClass::Add_Upgrade(void)
 {
 	if (Strength != Class->MaxStrength) {
@@ -2272,7 +2272,7 @@ bool BuildingClass::Add_Upgrade(void)
 	return(true);
 }
 
-// FUNCTION: 0x00451690
+// FUNCTION: GAMEMD 0x00451690
 bool BuildingClass::Remove_Upgrade(void)
 {
 	if (UpgradeLevel == 0) {
@@ -2299,7 +2299,7 @@ bool BuildingClass::Remove_Upgrade(void)
 	return(true);
 }
 
-// FUNCTION: 0x00451750
+// FUNCTION: GAMEMD 0x00451750
 void BuildingClass::PlayNthAnim(BAnimType anim, bool damaged, bool garrisoned, int delay)
 {
 	char const * name = damaged ? Class->AnimData[anim].AnimDamaged : (garrisoned ? Class->AnimData[anim].AnimGarrisoned : Class->AnimData[anim].Anim);
@@ -2308,7 +2308,7 @@ void BuildingClass::PlayNthAnim(BAnimType anim, bool damaged, bool garrisoned, i
 	}
 }
 
-// FUNCTION: 0x004517D0
+// FUNCTION: GAMEMD 0x004517D0
 void BuildingClass::Set_Anim_Coords(void)
 {
 	Coord render = Render_Coord();
@@ -2340,7 +2340,7 @@ static inline void Power_Disable(BuildingClass * building, AnimClass * anim, int
 	}
 }
 
-// FUNCTION: 0x00451890
+// FUNCTION: GAMEMD 0x00451890
 void BuildingClass::PlayAnim(char const * name, BAnimType anim, bool damaged, bool garrisoned, int delay)
 {
 	Set_Anim_Damage_State(damaged);
@@ -2389,7 +2389,7 @@ void BuildingClass::PlayAnim(char const * name, BAnimType anim, bool damaged, bo
 	}
 }
 
-// FUNCTION: 0x00451B40
+// FUNCTION: GAMEMD 0x00451B40
 void BuildingClass::Detach_Anim(AnimClass * anim)
 {
 	if (IsActive) {
@@ -2433,7 +2433,7 @@ void BuildingClass::Detach_Anim(AnimClass * anim)
 	}
 }
 
-// FUNCTION: 0x00451E40
+// FUNCTION: GAMEMD 0x00451E40
 void BuildingClass::DestroyNthAnim(BAnimType anim)
 {
 	if (anim == BANIM_ALL) {
@@ -2453,7 +2453,7 @@ void BuildingClass::DestroyNthAnim(BAnimType anim)
 	}
 }
 
-// FUNCTION: 0x00451EA0
+// FUNCTION: GAMEMD 0x00451EA0
 void BuildingClass::HideNthAnim(BAnimType anim)
 {
 	if (anim == BANIM_ALL) {
@@ -2470,7 +2470,7 @@ void BuildingClass::HideNthAnim(BAnimType anim)
 	}
 }
 
-// FUNCTION: 0x00451EE0
+// FUNCTION: GAMEMD 0x00451EE0
 void BuildingClass::Set_Anim_Damage_State(bool damaged)
 {
 	if (IsDamagedAnims != damaged) {
@@ -2483,7 +2483,7 @@ void BuildingClass::Set_Anim_Damage_State(bool damaged)
 	}
 }
 
-// FUNCTION: 0x00451F60
+// FUNCTION: GAMEMD 0x00451F60
 void BuildingClass::Set_Anim_Drawer(ConvertClass * drawer, int brightness)
 {
 	for (int i = 0; i < BANIM_COUNT; i++) {
@@ -2498,7 +2498,7 @@ void BuildingClass::Set_Anim_Drawer(ConvertClass * drawer, int brightness)
 	}
 }
 
-// FUNCTION: 0x00452000
+// FUNCTION: GAMEMD 0x00452000
 void BuildingClass::Update_Anim_Appearance(void)
 {
 	ConvertClass * drawer = (ConvertClass *)GetRemapColour();
@@ -2512,7 +2512,7 @@ void BuildingClass::Update_Anim_Appearance(void)
 	Set_Anim_Translucency(TranslucencyLevel);
 }
 
-// FUNCTION: 0x00452170
+// FUNCTION: GAMEMD 0x00452170
 void BuildingClass::Set_Anim_Translucency(int translucency)
 {
 	int trans = translucency;
@@ -2527,7 +2527,7 @@ void BuildingClass::Set_Anim_Translucency(int translucency)
 	}
 }
 
-// FUNCTION: 0x004521C0
+// FUNCTION: GAMEMD 0x004521C0
 void BuildingClass::DisableTemporal(void)
 {
 	IsOn = false;
@@ -2542,7 +2542,7 @@ void BuildingClass::DisableTemporal(void)
 	}
 }
 
-// FUNCTION: 0x00452210
+// FUNCTION: GAMEMD 0x00452210
 void BuildingClass::EnableTemporal(void)
 {
 	IsOn = true;
@@ -2556,13 +2556,13 @@ void BuildingClass::EnableTemporal(void)
 	}
 }
 
-// FUNCTION: 0x00452250
+// FUNCTION: GAMEMD 0x00452250
 unsigned BuildingClass::vt_entry_504(void)
 {
 	return(0);
 }
 
-// FUNCTION: 0x00452260
+// FUNCTION: GAMEMD 0x00452260
 void BuildingClass::Turn_On(void)
 {
 	if (!IsOn && EMPLockRemaining == 0) {
@@ -2597,7 +2597,7 @@ void BuildingClass::Turn_On(void)
 	}
 }
 
-// FUNCTION: 0x00452360
+// FUNCTION: GAMEMD 0x00452360
 void BuildingClass::Turn_Off(void)
 {
 	if (IsOn && (Class->Drain > 0 || Class->IsPowered)) {
@@ -2618,7 +2618,7 @@ void BuildingClass::Turn_Off(void)
 	}
 }
 
-// FUNCTION: 0x00452410
+// FUNCTION: GAMEMD 0x00452410
 void BuildingClass::EnableStuff(void)
 {
 	IsPoweredOn = true;
@@ -2635,7 +2635,7 @@ void BuildingClass::EnableStuff(void)
 	}
 }
 
-// FUNCTION: 0x00452480
+// FUNCTION: GAMEMD 0x00452480
 void BuildingClass::DisableStuff(void)
 {
 	IsPoweredOn = false;
@@ -2662,7 +2662,7 @@ void BuildingClass::DisableStuff(void)
 	}
 }
 
-// FUNCTION: 0x00452540
+// FUNCTION: GAMEMD 0x00452540
 bool BuildingClass::Open_Gate(void)
 {
 	if (!Class->IsGate) {
@@ -2677,7 +2677,7 @@ bool BuildingClass::Open_Gate(void)
 	return(false);
 }
 
-// FUNCTION: 0x004525F0
+// FUNCTION: GAMEMD 0x004525F0
 bool BuildingClass::Is_Gate_Open(void) const
 {
 	if (!Class->IsGate) {
@@ -2689,7 +2689,7 @@ bool BuildingClass::Is_Gate_Open(void) const
 	return(false);
 }
 
-// FUNCTION: 0x00452630
+// FUNCTION: GAMEMD 0x00452630
 bool BuildingClass::Can_Repair(void) const
 {
 	if (Strength == 0) {
@@ -2704,7 +2704,7 @@ bool BuildingClass::Can_Repair(void) const
 	return(BASECLASS::Can_Repair());
 }
 
-// FUNCTION: 0x00452670
+// FUNCTION: GAMEMD 0x00452670
 bool BuildingClass::Can_Upgrade(BuildingTypeClass const * upgrade, HouseClass const * upgrader) const
 {
 	if (upgrader != House || stricmp(upgrade->PowersUpBuilding, Class->IniName)) {
@@ -2729,7 +2729,7 @@ failed:
 	return(false);
 }
 
-// FUNCTION: 0x004526F0
+// FUNCTION: GAMEMD 0x004526F0
 WeaponDataStruct const * BuildingClass::Get_Class_Weapon_Data(int which) const
 {
 	if (UpgradeLevel != 0) {
@@ -2758,7 +2758,7 @@ WeaponDataStruct const * BuildingClass::Get_Class_Weapon_Data(int which) const
 	return(BASECLASS::Get_Class_Weapon_Data(which));
 }
 
-// FUNCTION: 0x004527D0
+// FUNCTION: GAMEMD 0x004527D0
 bool BuildingClass::Is_Turret_Equipped(void) const
 {
 	if (Class->IsTurretEquipped) {
@@ -2774,14 +2774,14 @@ bool BuildingClass::Is_Turret_Equipped(void) const
 	return(false);
 }
 
-// FUNCTION: 0x00452820
+// FUNCTION: GAMEMD 0x00452820
 void BuildingClass::FUN_00452820(InfantryClass * infantry)
 {
 	Overpowerers.Delete(infantry);
 	Overpowerers.Add(infantry);
 }
 
-// FUNCTION: 0x004528A0
+// FUNCTION: GAMEMD 0x004528A0
 bool BuildingClass::FUN_004528A0(AbstractClass const * target)
 {
 	Coord a = Center_Coord();
@@ -2789,7 +2789,7 @@ bool BuildingClass::FUN_004528A0(AbstractClass const * target)
 	return(a.Distance_To(b) <= Class->PsychicDetectionRadius << 8);
 }
 
-// FUNCTION: 0x00452940
+// FUNCTION: GAMEMD 0x00452940
 bool BuildingClass::FUN_00452940(CellClass const * cell)
 {
 	Coord a = Center_Coord();
@@ -2797,7 +2797,7 @@ bool BuildingClass::FUN_00452940(CellClass const * cell)
 	return(a.Distance_To(b) <= Class->PsychicDetectionRadius << 8);
 }
 
-// FUNCTION: 0x004529E0
+// FUNCTION: GAMEMD 0x004529E0
 void BuildingClass::Init_Laser_Fence(void)
 {
 	if (!ScenarioInit && Class->IsLaserFencePost) {
@@ -2811,7 +2811,7 @@ void BuildingClass::Init_Laser_Fence(void)
 	}
 }
 
-// FUNCTION: 0x00452A40
+// FUNCTION: GAMEMD 0x00452A40
 void BuildingClass::Update_Laser_Fence_Connections(int explode)
 {
 	if (!ScenarioInit && Class->IsLaserFencePost) {
@@ -2840,7 +2840,7 @@ void BuildingClass::Update_Laser_Fence_Connections(int explode)
 	}
 }
 
-// FUNCTION: 0x00452BB0
+// FUNCTION: GAMEMD 0x00452BB0
 BuildingClass * BuildingClass::Find_Laser_Fence_Post(FacingType dir, bool connected, int xrange)
 {
 	int range = 1;
@@ -2879,7 +2879,7 @@ BuildingClass * BuildingClass::Find_Laser_Fence_Post(FacingType dir, bool connec
 	return(result);
 }
 
-// FUNCTION: 0x00452D40
+// FUNCTION: GAMEMD 0x00452D40
 void BuildingClass::Init_All_Laser_Fences(void)
 {
 	for (int i = 0; i < Buildings.Count(); i++) {
@@ -2890,7 +2890,7 @@ void BuildingClass::Init_All_Laser_Fences(void)
 	}
 }
 
-// FUNCTION: 0x00453240
+// FUNCTION: GAMEMD 0x00453240
 void BuildingClass::Unlimbo_Laser_Fence_Helper(Cell const & cell)
 {
 	CellClass * cptr = &Map[cell];
@@ -2925,7 +2925,7 @@ void BuildingClass::Unlimbo_Laser_Fence_Helper(Cell const & cell)
 	}
 }
 
-// FUNCTION: 0x00453370
+// FUNCTION: GAMEMD 0x00453370
 void BuildingClass::Init_Laser_Fence_Frame(void)
 {
 	if (!ScenarioInit && Class->IsLaserFencePost) {
@@ -2935,7 +2935,7 @@ void BuildingClass::Init_Laser_Fence_Frame(void)
 
 inline Cell Next_Cell(Cell const & cell, Cell const & adj) { return cell + adj; }
 
-// FUNCTION: 0x004533A0
+// FUNCTION: GAMEMD 0x004533A0
 void BuildingClass::Toggle_Laser_Fence_Post(bool force)
 {
 	if (Class->IsLaserFencePost && IsActive && !IsInLimbo) {
@@ -3073,7 +3073,7 @@ void BuildingClass::Toggle_Laser_Fence_Post(bool force)
 }
 
 
-// FUNCTION: 0x00453A70
+// FUNCTION: GAMEMD 0x00453A70
 Coord BuildingClass::Turret_Coord(int which) const
 {
 	if (!Class->CanBeOccupied || GetOccupantCount() <= 0) {
@@ -3098,7 +3098,7 @@ Coord BuildingClass::Turret_Coord(int which) const
 }
 
 
-// FUNCTION: 0x00453BF0
+// FUNCTION: GAMEMD 0x00453BF0
 Coord BuildingClass::Voxel_Fire_Coord(int which, bool just_fired) const
 {
 	WeaponTypeClass *weapon = Get_Class_Weapon_Data(which)->Weapon;
@@ -3136,19 +3136,19 @@ Coord BuildingClass::Voxel_Fire_Coord(int which, bool just_fired) const
 	return(coord);
 }
 
-// FUNCTION: 0x00453D60
+// FUNCTION: GAMEMD 0x00453D60
 void BuildingClass::Set_Occupy_Bit(Coord const & coord)
 {
 	Map[coord.As_Cell()].Flag.Occupy.Building = true;
 }
 
-// FUNCTION: 0x00453DC0
+// FUNCTION: GAMEMD 0x00453DC0
 void BuildingClass::Clear_Occupy_Bit(Coord const & coord)
 {
 	Map[coord.As_Cell()].Flag.Occupy.Building = false;
 }
 
-// FUNCTION: 0x00453E20
+// FUNCTION: GAMEMD 0x00453E20
 HRESULT STDMETHODCALLTYPE BuildingClass::Load(IStream * stream)
 {
 	TargetTracker.Remove_Index(Fetch_ID());
@@ -3225,7 +3225,7 @@ HRESULT STDMETHODCALLTYPE BuildingClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x00454190
+// FUNCTION: GAMEMD 0x00454190
 HRESULT STDMETHODCALLTYPE BuildingClass::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -3263,7 +3263,7 @@ HRESULT STDMETHODCALLTYPE BuildingClass::Save(IStream * stream, BOOL cleardirty)
 	return(result);
 }
 
-// FUNCTION: 0x00454250
+// FUNCTION: GAMEMD 0x00454250
 bool BuildingClass::Ready_To_Next_Mission(void) const
 {
 	if (IsReadyToCommence) {
@@ -3272,7 +3272,7 @@ bool BuildingClass::Ready_To_Next_Mission(void) const
 	return(false);
 }
 
-// FUNCTION: 0x00454260
+// FUNCTION: GAMEMD 0x00454260
 void BuildingClass::Compute_CRC(CRCEngine & crc) const
 {
 	BASECLASS::Compute_CRC(crc);
@@ -3313,7 +3313,7 @@ void BuildingClass::Compute_CRC(CRCEngine & crc) const
 	crc(UpgradeLevel);
 }
 
-// FUNCTION: 0x004544A0
+// FUNCTION: GAMEMD 0x004544A0
 VisualType BuildingClass::Visual_Character(bool raw, HouseClass const * house) const
 {
 	if (TranslucencyLevel != 0) {
@@ -3342,7 +3342,7 @@ VisualType BuildingClass::Visual_Character(bool raw, HouseClass const * house) c
 	return(BASECLASS::Visual_Character(raw, house));
 }
 
-// FUNCTION: 0x004545D0
+// FUNCTION: GAMEMD 0x004545D0
 void BuildingClass::FUN_004545D0(void)
 {
 	DestroyNthAnim(BANIM_SUPER_LOW_POWER);
@@ -3366,7 +3366,7 @@ void BuildingClass::FUN_004545D0(void)
 	}
 }
 
-// FUNCTION: 0x00454730
+// FUNCTION: GAMEMD 0x00454730
 void BuildingClass::FUN_00454730(void)
 {
 	DestroyNthAnim(BANIM_LOW_POWER);
@@ -3377,7 +3377,7 @@ void BuildingClass::FUN_00454730(void)
 	}
 }
 
-// FUNCTION: 0x004547C0
+// FUNCTION: GAMEMD 0x004547C0
 void BuildingClass::FUN_004547C0(void)
 {
 	for (int i = 0; i < BANIM_COUNT; i++) {
@@ -3406,7 +3406,7 @@ void BuildingClass::FUN_004547C0(void)
 	}
 }
 
-// FUNCTION: 0x00454930
+// FUNCTION: GAMEMD 0x00454930
 void BuildingClass::FUN_00454930(void)
 {
 	Replay_Anim(this, BANIM_LOW_POWER, HealthRatio <= Rule->ConditionYellow);
@@ -3417,7 +3417,7 @@ void BuildingClass::FUN_00454930(void)
 	}
 }
 
-// FUNCTION: 0x004549B0
+// FUNCTION: GAMEMD 0x004549B0
 void BuildingClass::FUN_004549B0(void)
 {
 	if (IsPowerOnline()) {
@@ -3498,12 +3498,12 @@ void BuildingClass::FUN_004549B0(void)
 	}
 }
 
-// FUNCTION: 0x00454CE0
+// FUNCTION: GAMEMD 0x00454CE0
 void __fastcall FUN_00454CE0(HouseClass * house)
 {
 }
 
-// FUNCTION: 0x00454CF0
+// FUNCTION: GAMEMD 0x00454CF0
 void BuildingClass::Enable_Cloak_Generator(void)
 {
 	if (Class->IsCloakGenerator) {
@@ -3515,7 +3515,7 @@ void BuildingClass::Enable_Cloak_Generator(void)
 	}
 }
 
-// FUNCTION: 0x00454D30
+// FUNCTION: GAMEMD 0x00454D30
 void BuildingClass::Disable_Cloak_Generator(void)
 {
 	if (Class->IsCloakGenerator) {
@@ -3527,7 +3527,7 @@ void BuildingClass::Disable_Cloak_Generator(void)
 	}
 }
 
-// FUNCTION: 0x00454D70
+// FUNCTION: GAMEMD 0x00454D70
 void __fastcall Cloak_Cell_Occupiers(CellClass * cellptr)
 {
 	ObjectClass * occupier = cellptr->Cell_Occupier();
@@ -3540,7 +3540,7 @@ void __fastcall Cloak_Cell_Occupiers(CellClass * cellptr)
 	}
 }
 
-// FUNCTION: 0x004555D0
+// FUNCTION: GAMEMD 0x004555D0
 bool BuildingClass::IsPowerOnline(void) const
 {
 	if (!IsOn && Overpowerers.Count() < 2) goto off;
@@ -3558,7 +3558,7 @@ off:
 	return false;
 }
 
-// FUNCTION: 0x004556D0
+// FUNCTION: GAMEMD 0x004556D0
 void BuildingClass::SensorArrayDeactivate(Cell cell)
 {
 	int radius = Class->CloakRadiusInCells;
@@ -3579,7 +3579,7 @@ void BuildingClass::SensorArrayDeactivate(Cell cell)
 	}
 }
 
-// FUNCTION: 0x00455820
+// FUNCTION: GAMEMD 0x00455820
 void BuildingClass::FUN_00455820(Cell cell)
 {
 	if (IsPowerOnline()) {
@@ -3602,7 +3602,7 @@ void BuildingClass::FUN_00455820(Cell cell)
 	}
 }
 
-// FUNCTION: 0x00455980
+// FUNCTION: GAMEMD 0x00455980
 void BuildingClass::DisguiseDetectorDeactivate(Cell cell)
 {
 	int radius = Class->DetectDisguiseRange;
@@ -3622,7 +3622,7 @@ void BuildingClass::DisguiseDetectorDeactivate(Cell cell)
 	}
 }
 
-// FUNCTION: 0x00455A80
+// FUNCTION: GAMEMD 0x00455A80
 void BuildingClass::SensorArrayActivate(Cell cell)
 {
 	if (IsPowerOnline()) {
@@ -3644,7 +3644,7 @@ void BuildingClass::SensorArrayActivate(Cell cell)
 	}
 }
 
-// FUNCTION: 0x00455B90
+// FUNCTION: GAMEMD 0x00455B90
 int BuildingClass::Get_Firestorm_Wall_Frame(void)
 {
 	unsigned frame = 0;
@@ -3660,7 +3660,7 @@ int BuildingClass::Get_Firestorm_Wall_Frame(void)
 	return(frame);
 }
 
-// FUNCTION: 0x00455C20
+// FUNCTION: GAMEMD 0x00455C20
 Rect BuildingClass::Get_Render_Rect(void)
 {
 	Coord render = Render_Coord();
@@ -3681,7 +3681,7 @@ Rect BuildingClass::Get_Render_Rect(void)
 	return(rect);
 }
 
-// FUNCTION: 0x00455D50
+// FUNCTION: GAMEMD 0x00455D50
 void BuildingClass::Assign_Destination(AbstractClass * target, bool immediate)
 {
 	if (CurrentMission != MISSION_DECONSTRUCTION) {
@@ -3692,7 +3692,7 @@ void BuildingClass::Assign_Destination(AbstractClass * target, bool immediate)
 	}
 }
 
-// FUNCTION: 0x00455DA0
+// FUNCTION: GAMEMD 0x00455DA0
 bool BuildingClass::Is_Move_Override(void) const
 {
 	if (Class->ToBuild != RTTI_UNITTYPE && Class->ToBuild != RTTI_INFANTRYTYPE && !Class->Cloning && !Class->IsCanUnitRepair) {
@@ -3701,7 +3701,7 @@ bool BuildingClass::Is_Move_Override(void) const
 	return(true);
 }
 
-// FUNCTION: 0x00455DD0
+// FUNCTION: GAMEMD 0x00455DD0
 BuildingClass * Find_Unit_Repair_Facility(HouseClass * house, TechnoClass * obj)
 {
 	BuildingClass * best_bld = NULL;
@@ -3723,7 +3723,7 @@ BuildingClass * Find_Unit_Repair_Facility(HouseClass * house, TechnoClass * obj)
 	return(best_bld);
 }
 
-// FUNCTION: 0x00455F10
+// FUNCTION: GAMEMD 0x00455F10
 void BuildingClass::Reserve_Base_Area(bool skip_inner_cells)
 {
 	int spacing = Rule->AIBaseSpacing;
@@ -3780,7 +3780,7 @@ void BuildingClass::Reserve_Base_Area(bool skip_inner_cells)
 	}
 }
 
-// FUNCTION: 0x004561F0
+// FUNCTION: GAMEMD 0x004561F0
 void BuildingClass::Release_Base_Area(void)
 {
 	int spacing = Rule->AIBaseSpacing;
@@ -3829,7 +3829,7 @@ void BuildingClass::Release_Base_Area(void)
 	}
 }
 
-// FUNCTION: 0x00456580
+// FUNCTION: GAMEMD 0x00456580
 void BuildingClass::Radar_Track(void)
 {
 	const FOUNDATION_LIST & list = Map.Get_Foundation(Class);
@@ -3840,7 +3840,7 @@ void BuildingClass::Radar_Track(void)
 	IsRadarTracked = true;
 }
 
-// FUNCTION: 0x004565E0
+// FUNCTION: GAMEMD 0x004565E0
 void BuildingClass::Radar_Untrack(void)
 {
 	const FOUNDATION_LIST & list = Map.Get_Foundation(Class);
@@ -3851,7 +3851,7 @@ void BuildingClass::Radar_Untrack(void)
 	IsRadarTracked = false;
 }
 
-// FUNCTION: 0x00456640
+// FUNCTION: GAMEMD 0x00456640
 void BuildingClass::Plot_On_Radar(void) const
 {
 	const FOUNDATION_LIST & list = Map.Get_Foundation(Class);
@@ -3861,7 +3861,7 @@ void BuildingClass::Plot_On_Radar(void) const
 	}
 }
 
-// FUNCTION: 0x004566B0
+// FUNCTION: GAMEMD 0x004566B0
 int BuildingClass::GetRadialIndicatorRange(void) const
 {
 	int range = 0;
@@ -3880,7 +3880,7 @@ int BuildingClass::GetRadialIndicatorRange(void) const
 	return(range);
 }
 
-// FUNCTION: 0x00456750
+// FUNCTION: GAMEMD 0x00456750
 void BuildingClass::Draw_Radial_Indicator(DWORD which)
 {
 	int range = GetRadialIndicatorRange();
@@ -3906,11 +3906,12 @@ void BuildingClass::Draw_Radial_Indicator(DWORD which)
 	}
 }
 
-// FUNCTION: 0x00456970 $E254
+// SYNTHETIC: GAMEMD 0x00456970 SYMBOL
+// _$E254
 
 namespace Unsorted { extern int CurrentFrame; }
 
-// FUNCTION: 0x00456980
+// FUNCTION: GAMEMD 0x00456980
 void __fastcall DrawRadialIndicator(bool draw_line, bool adjust_color, Coord center, RGBClass color, float radius_in, bool in_pixels, bool whole)
 {
 	if (whole) {
@@ -3972,7 +3973,7 @@ void __fastcall DrawRadialIndicator(bool draw_line, bool adjust_color, Coord cen
 	}
 }
 
-// FUNCTION: 0x00456E00
+// FUNCTION: GAMEMD 0x00456E00
 void BuildingClass::Clicked_As_Target(int count)
 {
 	if (count) {
@@ -3984,7 +3985,7 @@ void BuildingClass::Clicked_As_Target(int count)
 	Update_Anim_Appearance();
 }
 
-// FUNCTION: 0x00456F80
+// FUNCTION: GAMEMD 0x00456F80
 int BuildingClass::Apparent_Brightness(int brightness) const
 {
 	if ((Flashing.FlashCount & 2) == 2) {
@@ -3993,7 +3994,7 @@ int BuildingClass::Apparent_Brightness(int brightness) const
 	return(brightness);
 }
 
-// FUNCTION: 0x00456FB0
+// FUNCTION: GAMEMD 0x00456FB0
 int BuildingClass::Tinted_Brightness(int cellbrightness)
 {
 	int brightness = Apparent_Brightness(cellbrightness);
@@ -4003,7 +4004,7 @@ int BuildingClass::Tinted_Brightness(int cellbrightness)
 	return(brightness);
 }
 
-// FUNCTION: 0x00457020
+// FUNCTION: GAMEMD 0x00457020
 bool BuildingClass::Is_Radar_Visible(DetectedType & detected) const
 {
 	if (!Class->IsInvisible && !IsInLimbo) {
@@ -4045,7 +4046,7 @@ static inline bool Is_Tech_Building(BuildingTypeClass const * type)
 	return(false);
 }
 
-// FUNCTION: 0x004571E0
+// FUNCTION: GAMEMD 0x004571E0
 void BuildingClass::Infiltrate(HouseClass * house)
 {
 	bool announce = false;
@@ -4133,7 +4134,7 @@ void BuildingClass::Infiltrate(HouseClass * house)
 	}
 }
 
-// FUNCTION: 0x004575B0
+// FUNCTION: GAMEMD 0x004575B0
 void BuildingClass::Sell_All_Upgrades(void)
 {
 	char level = UpgradeLevel;
@@ -4148,13 +4149,13 @@ void BuildingClass::Sell_All_Upgrades(void)
 	Sell_Back(true);
 }
 
-// FUNCTION: 0x00457620
+// FUNCTION: GAMEMD 0x00457620
 bool BuildingClass::IsStrange(void) const
 {
 	return(Class->IsVehicle());
 }
 
-// FUNCTION: 0x00457630
+// FUNCTION: GAMEMD 0x00457630
 int BuildingClass::FirstActiveSWIdx(void) const
 {
 	if (Class->SuperWeapon != SUPER_NONE) {
@@ -4166,7 +4167,7 @@ int BuildingClass::FirstActiveSWIdx(void) const
 	return(Class->SuperWeapon);
 }
 
-// FUNCTION: 0x00457690
+// FUNCTION: GAMEMD 0x00457690
 int BuildingClass::SecondActiveSWIdx(void) const
 {
 	if (Class->SuperWeapon2 != SUPER_NONE) {
@@ -4178,7 +4179,7 @@ int BuildingClass::SecondActiveSWIdx(void) const
 	return(Class->SuperWeapon2);
 }
 
-// FUNCTION: 0x004576F0
+// FUNCTION: GAMEMD 0x004576F0
 void BuildingClass::GotHijacked(void)
 {
 	for (int i = 0; i < Infantry.Count(); i++) {
@@ -4192,7 +4193,7 @@ void BuildingClass::GotHijacked(void)
 	}
 }
 
-// FUNCTION: 0x00457770
+// FUNCTION: GAMEMD 0x00457770
 bool BuildingClass::Is_Ready_To_Cloak(void) const
 {
 	if (BASECLASS::Is_Ready_To_Cloak()) {
@@ -4217,7 +4218,7 @@ bool BuildingClass::Is_Ready_To_Cloak(void) const
 	return(false);
 }
 
-// FUNCTION: 0x004578C0
+// FUNCTION: GAMEMD 0x004578C0
 bool BuildingClass::Should_Uncloak(void) const
 {
 	if (!BASECLASS::Should_Uncloak()) {
@@ -4242,7 +4243,7 @@ bool BuildingClass::Should_Uncloak(void) const
 	return(true);
 }
 
-// FUNCTION: 0x00457A10
+// FUNCTION: GAMEMD 0x00457A10
 bool BuildingClass::Should_Fog(void) const
 {
 	Cell cell = PositionCell;
@@ -4256,7 +4257,7 @@ bool BuildingClass::Should_Fog(void) const
 	return(true);
 }
 
-// FUNCTION: 0x00457AA0
+// FUNCTION: GAMEMD 0x00457AA0
 void BuildingClass::Make_Fogged(DynamicVectorClass<FoggedObjectClass *> * fogged_objects, CellClass * cellptr, bool fade)
 {
 	Cell const * occupy = Class->Occupy_List();
@@ -4284,7 +4285,7 @@ void BuildingClass::Make_Fogged(DynamicVectorClass<FoggedObjectClass *> * fogged
 	}
 }
 
-// FUNCTION: 0x00457C90
+// FUNCTION: GAMEMD 0x00457C90
 int BuildingClass::IronCurtain(int duration, HouseClass * source, bool force_shield)
 {
 	if (IsGoingToBlow) {
@@ -4295,7 +4296,7 @@ int BuildingClass::IronCurtain(int duration, HouseClass * source, bool force_shi
 	return(TechnoClass::IronCurtain(duration, source, force_shield));
 }
 
-// FUNCTION: 0x00457CE0
+// FUNCTION: GAMEMD 0x00457CE0
 bool BuildingClass::CanBeOccupiedBy(InfantryClass * infantry) const
 {
 	if (infantry == NULL || !Class->CanBeOccupied) return(false);
@@ -4316,13 +4317,13 @@ bool BuildingClass::CanBeOccupiedBy(InfantryClass * infantry) const
 	return(true);
 }
 
-// FUNCTION: 0x004581F0
+// FUNCTION: GAMEMD 0x004581F0
 int BuildingClass::GetOccupantCount(void) const
 {
 	return(Occupants.Count());
 }
 
-// FUNCTION: 0x00458200
+// FUNCTION: GAMEMD 0x00458200
 void BuildingClass::FUN_00458200(void)
 {
 	if (Class->Level == -1) {
@@ -4355,7 +4356,7 @@ void BuildingClass::FUN_00458200(void)
 	}
 }
 
-// FUNCTION: 0x00458330
+// FUNCTION: GAMEMD 0x00458330
 void BuildingClass::FUN_00458330(void)
 {
 	if (Anims[BANIM_IDLE] != NULL) {
@@ -4375,7 +4376,7 @@ void BuildingClass::FUN_00458330(void)
 	}
 }
 
-// FUNCTION: 0x00458750
+// FUNCTION: GAMEMD 0x00458750
 void BuildingClass::FUN_00458750(void)
 {
 	CashProductionTimer = Class->ProduceCashDelay;
@@ -4389,14 +4390,14 @@ void BuildingClass::FUN_00458750(void)
 	}
 }
 
-// FUNCTION: 0x004587D0
+// FUNCTION: GAMEMD 0x004587D0
 bool BuildingClass::FUN_004587D0(ObjectTypeClass const * type)
 {
 	TechnoClass * object = (TechnoClass *)type->Create_One_Of(House);
 	return(Exit_Object(object, DAT_0089C818) ? true : false);
 }
 
-// FUNCTION: 0x00458810
+// FUNCTION: GAMEMD 0x00458810
 Matrix3D BuildingClass::Get_Barrel_Matrix(void) const
 {
 	Matrix3D matrix;
@@ -4426,7 +4427,7 @@ Matrix3D BuildingClass::Get_Barrel_Matrix(void) const
 	return(matrix);
 }
 
-// FUNCTION: 0x004589C0
+// FUNCTION: GAMEMD 0x004589C0
 int BuildingClass::FUN_004589C0(void) const
 {
 	if ((int)Storage.Get_Total_Amount() == 0) {
@@ -4435,7 +4436,7 @@ int BuildingClass::FUN_004589C0(void) const
 	return((int)Storage.Get_Total_Amount() * 4 / Class->Capacity);
 }
 
-// FUNCTION: 0x00458A00
+// FUNCTION: GAMEMD 0x00458A00
 bool BuildingClass::FUN_00458A00(CellClass const * cell)
 {
 	if (cell->Cell_Building() != this) {
@@ -4453,7 +4454,7 @@ bool BuildingClass::FUN_00458A00(CellClass const * cell)
 	return(rows + cx > x ? true : false);
 }
 
-// FUNCTION: 0x00458A80
+// FUNCTION: GAMEMD 0x00458A80
 bool BuildingClass::FUN_00458A80(Coord const & coord, Dir256 dir)
 {
 	Cell const * offset = Occupy_List(false);
@@ -4512,7 +4513,7 @@ failed:
 	return(true);
 }
 
-// FUNCTION: 0x00458DB0
+// FUNCTION: GAMEMD 0x00458DB0
 bool BuildingClass::Is_Weapon_Equipped(void) const
 {
 	if (CanOccupyFire()) {
@@ -4521,13 +4522,13 @@ bool BuildingClass::Is_Weapon_Equipped(void) const
 	return(TechnoClass::Is_Weapon_Equipped());
 }
 
-// FUNCTION: 0x00458DD0
+// FUNCTION: GAMEMD 0x00458DD0
 bool BuildingClass::CanOccupyFire(void) const
 {
 	return(Class->CanBeOccupied && Class->CanOccupyFire && GetOccupantCount() > 0);
 }
 
-// FUNCTION: 0x00458E00
+// FUNCTION: GAMEMD 0x00458E00
 int BuildingClass::GetOccupyRangeBonus(void) const
 {
 	if (Class->Width() < Class->Height()) {
@@ -4541,7 +4542,7 @@ static inline DirType Direction_From(AbstractClass const * object, Coord const &
 	return(::Direction(object->Center_Coord(), coord));
 }
 
-// FUNCTION: 0x00458E50
+// FUNCTION: GAMEMD 0x00458E50
 void BuildingClass::UpdateBunker(void)
 {
 	TechnoClass * unit = BunkerLinkedItem ? BunkerLinkedItem : FUN_0065AD30(0);
@@ -4663,7 +4664,7 @@ void BuildingClass::UpdateBunker(void)
 	}
 }
 
-// FUNCTION: 0x004593A0
+// FUNCTION: GAMEMD 0x004593A0
 void BuildingClass::UnloadBunker(void)
 {
 	TechnoClass * unit = BunkerLinkedItem;
@@ -4678,7 +4679,7 @@ void BuildingClass::UnloadBunker(void)
 	}
 }
 
-// FUNCTION: 0x00459470
+// FUNCTION: GAMEMD 0x00459470
 void BuildingClass::ClearBunker(void)
 {
 	DestroyNthAnim(BANIM_SPECIAL_ONE);
@@ -4697,7 +4698,7 @@ void BuildingClass::ClearBunker(void)
 	}
 }
 
-// FUNCTION: 0x004595C0
+// FUNCTION: GAMEMD 0x004595C0
 void BuildingClass::EmptyBunker(void)
 {
 	DestroyNthAnim(BANIM_SPECIAL_ONE);
@@ -4733,7 +4734,7 @@ void BuildingClass::EmptyBunker(void)
 	}
 }
 
-// FUNCTION: 0x00459840
+// FUNCTION: GAMEMD 0x00459840
 TechnoTypeClass const * BuildingClass::FUN_00459840(void) const
 {
 	if (Class->SecretInfantry != NULL) {
@@ -4748,25 +4749,25 @@ TechnoTypeClass const * BuildingClass::FUN_00459840(void) const
 	return(SecretProduction);
 }
 
-// FUNCTION: 0x00459870
+// FUNCTION: GAMEMD 0x00459870
 int BuildingClass::Anti_Air(void) const
 {
 	return(Class->AntiAirValue);
 }
 
-// FUNCTION: 0x00459880
+// FUNCTION: GAMEMD 0x00459880
 int BuildingClass::Anti_Armor(void) const
 {
 	return(Class->AntiArmorValue);
 }
 
-// FUNCTION: 0x00459890
+// FUNCTION: GAMEMD 0x00459890
 int BuildingClass::Anti_Infantry(void) const
 {
 	return(Class->AntiInfantryValue);
 }
 
-// FUNCTION: 0x004598A0
+// FUNCTION: GAMEMD 0x004598A0
 int BuildingClass::IsAbsorbAllowed(void) const
 {
 	if (Class->UnitAbsorb || Class->InfantryAbsorb) {
@@ -4775,7 +4776,7 @@ int BuildingClass::IsAbsorbAllowed(void) const
 	return(false);
 }
 
-// FUNCTION: 0x004598D0
+// FUNCTION: GAMEMD 0x004598D0
 bool BuildingClass::FUN_004598D0(void) const
 {
 	if (Class->UndeploysInto != NULL && Class->ResourceGatherer) {
@@ -4787,7 +4788,7 @@ bool BuildingClass::FUN_004598D0(void) const
 static inline bool _Same(Coord const & a, TPoint3D<int> const & b) {return(a == b);}
 static inline bool _Usable(Coord const & a) {return(a != (Coord const &)DAT_0089C848 && !(a == DAT_0089C870));}
 
-// FUNCTION: 0x00459900
+// FUNCTION: GAMEMD 0x00459900
 void BuildingClass::UpdateRefinerySmokeSystems(void)
 {
 	ParticleSystemTypeClass const * type = Class->RefinerySmokeParticleSystem;
@@ -4824,7 +4825,7 @@ void BuildingClass::UpdateRefinerySmokeSystems(void)
 	}
 }
 
-// FUNCTION: 0x00459C00
+// FUNCTION: GAMEMD 0x00459C00
 bool BuildingClass::CanBeSelectedNow(void) const
 {
 	if (!Class->IsVehicle()) {
@@ -4840,7 +4841,7 @@ static inline CellClass * _As_Cell(AbstractClass * target)
 
 #pragma warning(push)
 #pragma warning(disable : 4716)
-// FUNCTION: 0x00459C20
+// FUNCTION: GAMEMD 0x00459C20
 int BuildingClass::VoiceDeploy(void)
 {
 	if (Is_Target_Cell(ArchiveTarget)) {
@@ -4860,7 +4861,7 @@ static inline bool _Exit_Free(Cell const & cell)
 	return(Map.In_Radar(cell) && Map[cell].Cell_Occupier() == NULL && Map[cell].Is_Clear_To_Move(SPEED_FOOT, false, false));
 }
 
-// FUNCTION: 0x00459CA0
+// FUNCTION: GAMEMD 0x00459CA0
 bool BuildingClass::FUN_00459CA0(void) const
 {
 	Cell const * list = Class->ExitList;
@@ -4875,78 +4876,84 @@ bool BuildingClass::FUN_00459CA0(void) const
 	return(false);
 }
 
-// FUNCTION: 0x00459D80 TechnoClass::Is_In_Team
+// FUNCTION: GAMEMD 0x00459D80
+// TechnoClass::Is_In_Team
 
-// FUNCTION: 0x00459D90 TechnoClass::Is_In_Same_Zone_As
+// FUNCTION: GAMEMD 0x00459D90
+// TechnoClass::Is_In_Same_Zone_As
 
-// FUNCTION: 0x00459DA0 TechnoClass::Get_Z_Gradient
+// FUNCTION: GAMEMD 0x00459DA0
+// TechnoClass::Get_Z_Gradient
 
-// FUNCTION: 0x00459DB0
+// FUNCTION: GAMEMD 0x00459DB0
 Cell TechnoClass::GetLastFlightMapCoords(void) const
 {
 	return(DAT_0089C818);
 }
 
-// FUNCTION: 0x00459DC0
+// FUNCTION: GAMEMD 0x00459DC0
 void TechnoClass::SetLastFlightMapCoords(Cell coord)
 {
 }
 
-// FUNCTION: 0x00459DD0 TechnoClass::Is_Allowed_To_Leave_Map
+// FUNCTION: GAMEMD 0x00459DD0
+// TechnoClass::Is_Allowed_To_Leave_Map
 
-// FUNCTION: 0x00459DE0 TechnoClass::Advance_Waypoint_Path
+// FUNCTION: GAMEMD 0x00459DE0
+// TechnoClass::Advance_Waypoint_Path
 
-// FUNCTION: 0x00459DF0
+// FUNCTION: GAMEMD 0x00459DF0
 bool TechnoClass::EnterGrinder(void)
 {
 	return(false);
 }
 
-// FUNCTION: 0x00459E00
+// FUNCTION: GAMEMD 0x00459E00
 bool TechnoClass::EnterBioReactor(void)
 {
 	return(false);
 }
 
-// FUNCTION: 0x00459E10
+// FUNCTION: GAMEMD 0x00459E10
 bool TechnoClass::EnterTankBunker(void)
 {
 	return(false);
 }
 
-// FUNCTION: 0x00459E20
+// FUNCTION: GAMEMD 0x00459E20
 bool TechnoClass::EnterBattleBunker(void)
 {
 	return(false);
 }
 
-// FUNCTION: 0x00459E30
+// FUNCTION: GAMEMD 0x00459E30
 bool TechnoClass::GarrisonStructure(void)
 {
 	return(false);
 }
 
-// FUNCTION: 0x00459E40
+// FUNCTION: GAMEMD 0x00459E40
 bool TechnoClass::IsParalyzed(void) const
 {
 	return(false);
 }
 
-// FUNCTION: 0x00459E50
+// FUNCTION: GAMEMD 0x00459E50
 bool TechnoClass::Crash(ObjectClass * killer)
 {
 	return(false);
 }
 
-// FUNCTION: 0x00459E60 TechnoClass::Draw_Action_Line
+// FUNCTION: GAMEMD 0x00459E60
+// TechnoClass::Draw_Action_Line
 
-// FUNCTION: 0x00459E70
+// FUNCTION: GAMEMD 0x00459E70
 int BuildingClass::Fetch_Object_Size(void) const
 {
 	return(sizeof(BuildingClass));
 }
 
-// FUNCTION: 0x00459E80
+// FUNCTION: GAMEMD 0x00459E80
 HRESULT STDMETHODCALLTYPE BuildingClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -4954,127 +4961,185 @@ HRESULT STDMETHODCALLTYPE BuildingClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x00459EC0
+// FUNCTION: GAMEMD 0x00459EC0
 RTTIType BuildingClass::Fetch_RTTI(void) const
 {
 	return(RTTI_BUILDING);
 }
 
-// FUNCTION: 0x00459ED0
+// FUNCTION: GAMEMD 0x00459ED0
 wchar_t const * BuildingClass::Full_Name(void) const
 {
 	return(Class->UIName);
 }
 
-// FUNCTION: 0x00459EE0
+// FUNCTION: GAMEMD 0x00459EE0
 ObjectTypeClass const * BuildingClass::Class_Of(void) const
 {
 	return(Class);
 }
 
-// FUNCTION: 0x00459EF0
+// FUNCTION: GAMEMD 0x00459EF0
 Coord BuildingClass::Render_Coord(void) const
 {
 	return(PositionCoord - Coord(CELL_LEPTON/2, CELL_LEPTON/2, 0));
 }
 
-// FUNCTION: 0x00459F20 BuildingClass::~BuildingClass
+// SYNTHETIC: GAMEMD 0x00459F20
+// ??_GBuildingClass@@UAEPAXI@Z
 
-// FUNCTION: 0x00459F40
+// FUNCTION: GAMEMD 0x00459F40
 BuildingClass * __fastcall FUN_00459F40(AbstractClass * object)
 {
 	if (object == NULL) return(NULL);
 	return(object->Fetch_RTTI() == RTTI_BUILDING ? (BuildingClass *)object : NULL);
 }
 
-// FUNCTION: 0x00459F60 ?$TPoint3D@H::operator==
+// TEMPLATE: GAMEMD 0x00459F60
+// ??8?$TPoint3D@H@@QBE_NABV0@@Z
 template class TPoint3D<int>;
 
-// FUNCTION: 0x00459F90 ?$DynamicVectorClass@PAVInfantryClass@@::Clear
-// FUNCTION: 0x00459FC0 ?$DynamicVectorClass@PAVInfantryClass@@::ID
-// FUNCTION: 0x00459FE0 ?$VectorClass@PAVInfantryClass@@::GetItem
+// TEMPLATE: GAMEMD 0x00459F90
+// ?Clear@?$DynamicVectorClass@PAVInfantryClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x00459FC0
+// ?ID@?$DynamicVectorClass@PAVInfantryClass@@@@UAEHPBQAVInfantryClass@@@Z
+// TEMPLATE: GAMEMD 0x00459FE0
+// ?GetItem@?$VectorClass@PAVInfantryClass@@@@UBEPAVInfantryClass@@H@Z
 template class DynamicVectorClass<InfantryClass *>;
 
-// FUNCTION: 0x00459FF0 ?$DynamicVectorClass@PAVBuildingClass@@::Clear
-// FUNCTION: 0x0045A020 ?$DynamicVectorClass@PAVBuildingClass@@::ID
-// FUNCTION: 0x0045A040 ?$VectorClass@PAVBuildingClass@@::GetItem
+// TEMPLATE: GAMEMD 0x00459FF0
+// ?Clear@?$DynamicVectorClass@PAVBuildingClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0045A020
+// ?ID@?$DynamicVectorClass@PAVBuildingClass@@@@UAEHPBQAVBuildingClass@@@Z
+// TEMPLATE: GAMEMD 0x0045A040
+// ?GetItem@?$VectorClass@PAVBuildingClass@@@@UBEPAVBuildingClass@@H@Z
 template class DynamicVectorClass<BuildingClass *>;
 
-// FUNCTION: 0x0045A050 ?C?$_com_ptr_t@V?$_com_IIID@UILocomotion@@$1?_GUID_070f3290_9841_11d1_b709_00a024ddafd1@@3U__s_GUID@@A@@
+// TEMPLATE: GAMEMD 0x0045A050
+// ??C?$_com_ptr_t@V?$_com_IIID@UILocomotion@@$1?_GUID_070f3290_9841_11d1_b709_00a024ddafd1@@3U__s_GUID@@A@@@@QBEPAUILocomotion@@XZ
 
-// FUNCTION: 0x0045A070 ?$DynamicVectorClass@PAVFoggedObjectClass@@::Clear
-// FUNCTION: 0x0045A0A0 ?$DynamicVectorClass@PAVFoggedObjectClass@@::ID
-// FUNCTION: 0x0045A0C0 ?$VectorClass@PAVFoggedObjectClass@@::GetItem
+// TEMPLATE: GAMEMD 0x0045A070
+// ?Clear@?$DynamicVectorClass@PAVFoggedObjectClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0045A0A0
+// ?ID@?$DynamicVectorClass@PAVFoggedObjectClass@@@@UAEHPBQAVFoggedObjectClass@@@Z
+// TEMPLATE: GAMEMD 0x0045A0C0
+// ?GetItem@?$VectorClass@PAVFoggedObjectClass@@@@UBEPAVFoggedObjectClass@@H@Z
 template class DynamicVectorClass<FoggedObjectClass *>;
 
-// FUNCTION: 0x0045A0D0 ?$DynamicVectorClass@PAVReestablish@@::Clear
-// FUNCTION: 0x0045A100 ?$DynamicVectorClass@PAVReestablish@@::ID
-// FUNCTION: 0x0045A120 ?$VectorClass@PAVReestablish@@::GetItem
+// TEMPLATE: GAMEMD 0x0045A0D0
+// ?Clear@?$DynamicVectorClass@PAVReestablish@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0045A100
+// ?ID@?$DynamicVectorClass@PAVReestablish@@@@UAEHPBQAVReestablish@@@Z
+// TEMPLATE: GAMEMD 0x0045A120
+// ?GetItem@?$VectorClass@PAVReestablish@@@@UBEPAVReestablish@@H@Z
 template class DynamicVectorClass<Reestablish *>;
 
-// FUNCTION: 0x0045A130 ?$TRect@H::?$TRect@H
+// TEMPLATE: GAMEMD 0x0045A130
+// ??0?$TRect@H@@QAE@ABV?$TPoint2D@H@@HH@Z
 template class TRect<int>;
 
-// FUNCTION: 0x0045A160 ?$_com_ptr_t@V?$_com_IIID@UILocomotion@@$1?_GUID_070f3290_9841_11d1_b709_00a024ddafd1@@3U__s_GUID@@A@@::_Release
+// TEMPLATE: GAMEMD 0x0045A160
+// ?_Release@?$_com_ptr_t@V?$_com_IIID@UILocomotion@@$1?_GUID_070f3290_9841_11d1_b709_00a024ddafd1@@3U__s_GUID@@A@@@@AAEXXZ
 
-// FUNCTION: 0x0045A170 ?$_com_ptr_t@V?$_com_IIID@UILocomotion@@$1?_GUID_070f3290_9841_11d1_b709_00a024ddafd1@@3U__s_GUID@@A@@::_AddRef
+// TEMPLATE: GAMEMD 0x0045A170
+// ?_AddRef@?$_com_ptr_t@V?$_com_IIID@UILocomotion@@$1?_GUID_070f3290_9841_11d1_b709_00a024ddafd1@@3U__s_GUID@@A@@@@AAEXXZ
 template class _com_ptr_t<_com_IIID<ILocomotion, &__uuidof(ILocomotion)> >;
 
-// FUNCTION: 0x0045A180 ?$VectorClass@PBVParticleSystemTypeClass@@::operator==
-// FUNCTION: 0x0045A1C0 ?$VectorClass@PBVParticleSystemTypeClass@@::Resize
-// FUNCTION: 0x0045A270 ?$VectorClass@PBVParticleSystemTypeClass@@::Clear
-// FUNCTION: 0x0045A2A0 ?$VectorClass@PBVParticleSystemTypeClass@@::ID
-// FUNCTION: 0x0045A2E0 ?$VectorClass@PBVParticleSystemTypeClass@@::ID
+// TEMPLATE: GAMEMD 0x0045A180
+// ??8?$VectorClass@PBVParticleSystemTypeClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x0045A1C0
+// ?Resize@?$VectorClass@PBVParticleSystemTypeClass@@@@UAE_NHPBQBVParticleSystemTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x0045A270
+// ?Clear@?$VectorClass@PBVParticleSystemTypeClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0045A2A0
+// ?ID@?$VectorClass@PBVParticleSystemTypeClass@@@@UAEHABQBVParticleSystemTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x0045A2E0
+// ?ID@?$VectorClass@PBVParticleSystemTypeClass@@@@UAEHPBQBVParticleSystemTypeClass@@@Z
 template class VectorClass<ParticleSystemTypeClass const *>;
 
-// FUNCTION: 0x0045A300 ?$DynamicVectorClass@PBVParticleSystemTypeClass@@::Resize
-// FUNCTION: 0x0045A3B0 ?$DynamicVectorClass@PBVParticleSystemTypeClass@@::ID
+// TEMPLATE: GAMEMD 0x0045A300
+// ?Resize@?$DynamicVectorClass@PBVParticleSystemTypeClass@@@@UAE_NHPBQBVParticleSystemTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x0045A3B0
+// ?ID@?$DynamicVectorClass@PBVParticleSystemTypeClass@@@@UAEHABQBVParticleSystemTypeClass@@@Z
 template class DynamicVectorClass<ParticleSystemTypeClass const *>;
 
-// FUNCTION: 0x0045A3E0 ?$VectorClass@PAVInfantryClass@@::operator==
-// FUNCTION: 0x0045A420 ?$VectorClass@PAVInfantryClass@@::Resize
-// FUNCTION: 0x0045A4D0 ?$VectorClass@PAVInfantryClass@@::Clear
-// FUNCTION: 0x0045A500 ?$VectorClass@PAVInfantryClass@@::ID
-// FUNCTION: 0x0045A540 ?$VectorClass@PAVInfantryClass@@::ID
+// TEMPLATE: GAMEMD 0x0045A3E0
+// ??8?$VectorClass@PAVInfantryClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x0045A420
+// ?Resize@?$VectorClass@PAVInfantryClass@@@@UAE_NHPBQAVInfantryClass@@@Z
+// TEMPLATE: GAMEMD 0x0045A4D0
+// ?Clear@?$VectorClass@PAVInfantryClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0045A500
+// ?ID@?$VectorClass@PAVInfantryClass@@@@UAEHABQAVInfantryClass@@@Z
+// TEMPLATE: GAMEMD 0x0045A540
+// ?ID@?$VectorClass@PAVInfantryClass@@@@UAEHPBQAVInfantryClass@@@Z
 template class VectorClass<InfantryClass *>;
 
-// FUNCTION: 0x0045A560 ?$DynamicVectorClass@PAVInfantryClass@@::Resize
-// FUNCTION: 0x0045A610 ?$DynamicVectorClass@PAVInfantryClass@@::ID
+// TEMPLATE: GAMEMD 0x0045A560
+// ?Resize@?$DynamicVectorClass@PAVInfantryClass@@@@UAE_NHPBQAVInfantryClass@@@Z
+// TEMPLATE: GAMEMD 0x0045A610
+// ?ID@?$DynamicVectorClass@PAVInfantryClass@@@@UAEHABQAVInfantryClass@@@Z
 template class DynamicVectorClass<InfantryClass *>;
 
-// FUNCTION: 0x0045A640 ?$VectorClass@PAVFoggedObjectClass@@::operator==
+// TEMPLATE: GAMEMD 0x0045A640
+// ??8?$VectorClass@PAVFoggedObjectClass@@@@UBE_NABV0@@Z
 template class VectorClass<FoggedObjectClass *>;
 
 
-// FUNCTION: 0x0045A680 ?$DynamicVectorClass@PAVFoggedObjectClass@@::Resize
-// FUNCTION: 0x0045A730 ?$DynamicVectorClass@PAVFoggedObjectClass@@::ID
+// TEMPLATE: GAMEMD 0x0045A680
+// ?Resize@?$DynamicVectorClass@PAVFoggedObjectClass@@@@UAE_NHPBQAVFoggedObjectClass@@@Z
+// TEMPLATE: GAMEMD 0x0045A730
+// ?ID@?$DynamicVectorClass@PAVFoggedObjectClass@@@@UAEHABQAVFoggedObjectClass@@@Z
 
-// FUNCTION: 0x0045A760 ?$VectorClass@PAVBuildingClass@@::operator==
-// FUNCTION: 0x0045A7A0 ?$VectorClass@PAVBuildingClass@@::Resize
-// FUNCTION: 0x0045A850 ?$VectorClass@PAVBuildingClass@@::Clear
-// FUNCTION: 0x0045A880 ?$VectorClass@PAVBuildingClass@@::ID
-// FUNCTION: 0x0045A8C0 ?$VectorClass@PAVBuildingClass@@::ID
+// TEMPLATE: GAMEMD 0x0045A760
+// ??8?$VectorClass@PAVBuildingClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x0045A7A0
+// ?Resize@?$VectorClass@PAVBuildingClass@@@@UAE_NHPBQAVBuildingClass@@@Z
+// TEMPLATE: GAMEMD 0x0045A850
+// ?Clear@?$VectorClass@PAVBuildingClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0045A880
+// ?ID@?$VectorClass@PAVBuildingClass@@@@UAEHABQAVBuildingClass@@@Z
+// TEMPLATE: GAMEMD 0x0045A8C0
+// ?ID@?$VectorClass@PAVBuildingClass@@@@UAEHPBQAVBuildingClass@@@Z
 template class VectorClass<BuildingClass *>;
 
-// FUNCTION: 0x0045A8E0 ?$DynamicVectorClass@PAVBuildingClass@@::Resize
-// FUNCTION: 0x0045A990 ?$DynamicVectorClass@PAVBuildingClass@@::ID
+// TEMPLATE: GAMEMD 0x0045A8E0
+// ?Resize@?$DynamicVectorClass@PAVBuildingClass@@@@UAE_NHPBQAVBuildingClass@@@Z
+// TEMPLATE: GAMEMD 0x0045A990
+// ?ID@?$DynamicVectorClass@PAVBuildingClass@@@@UAEHABQAVBuildingClass@@@Z
 
-// FUNCTION: 0x0045A9C0 ?$DynamicVectorClass@PBVParticleSystemTypeClass@@::~?$DynamicVectorClass@PBVParticleSystemTypeClass@@
-// FUNCTION: 0x0045AA10 ?$VectorClass@PBVParticleSystemTypeClass@@::~?$VectorClass@PBVParticleSystemTypeClass@@
-// FUNCTION: 0x0045AA60 ?$VectorClass@PAVInfantryClass@@::~?$VectorClass@PAVInfantryClass@@
-// FUNCTION: 0x0045AAB0 ?$DynamicVectorClass@PAVInfantryClass@@::~?$DynamicVectorClass@PAVInfantryClass@@
-// FUNCTION: 0x0045AB00 ?$VectorClass@PAVFoggedObjectClass@@::~?$VectorClass@PAVFoggedObjectClass@@
-// FUNCTION: 0x0045AB50 ?$VectorClass@PAVFoggedObjectClass@@::Resize
-// FUNCTION: 0x0045AC00 ?$VectorClass@PAVFoggedObjectClass@@::Clear
-// FUNCTION: 0x0045AC30 ?$VectorClass@PAVFoggedObjectClass@@::ID
-// FUNCTION: 0x0045AC70 ?$VectorClass@PAVFoggedObjectClass@@::ID
-// FUNCTION: 0x0045AC90 ?$DynamicVectorClass@PAVFoggedObjectClass@@::~?$DynamicVectorClass@PAVFoggedObjectClass@@
-// FUNCTION: 0x0045ACE0 ?$VectorClass@PAVReestablish@@::~?$VectorClass@PAVReestablish@@
-// FUNCTION: 0x0045AD30 ?$DynamicVectorClass@PAVReestablish@@::~?$DynamicVectorClass@PAVReestablish@@
-// FUNCTION: 0x0045AD80 ?$VectorClass@PBVParticleSystemTypeClass@@::?$VectorClass@PBVParticleSystemTypeClass@@
-// FUNCTION: 0x0045ADD0 ?$DynamicVectorClass@PAVAbstractClass@@::Delete_Index
-// FUNCTION: 0x0045AE10 ?$DynamicVectorClass@PAVBuildingClass@@::Delete_Index
-// FUNCTION: 0x0045AE50 ?$VectorClass@PAVReestablish@@::?$VectorClass@PAVReestablish@@
+// SYNTHETIC: GAMEMD 0x0045A9C0
+// ??_G?$DynamicVectorClass@PBVParticleSystemTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x0045AA10
+// ??_G?$VectorClass@PBVParticleSystemTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x0045AA60
+// ??_G?$VectorClass@PAVInfantryClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x0045AAB0
+// ??_G?$DynamicVectorClass@PAVInfantryClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x0045AB00
+// ??_G?$VectorClass@PAVFoggedObjectClass@@@@UAEPAXI@Z
+// TEMPLATE: GAMEMD 0x0045AB50
+// ?Resize@?$VectorClass@PAVFoggedObjectClass@@@@UAE_NHPBQAVFoggedObjectClass@@@Z
+// TEMPLATE: GAMEMD 0x0045AC00
+// ?Clear@?$VectorClass@PAVFoggedObjectClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0045AC30
+// ?ID@?$VectorClass@PAVFoggedObjectClass@@@@UAEHABQAVFoggedObjectClass@@@Z
+// TEMPLATE: GAMEMD 0x0045AC70
+// ?ID@?$VectorClass@PAVFoggedObjectClass@@@@UAEHPBQAVFoggedObjectClass@@@Z
+// SYNTHETIC: GAMEMD 0x0045AC90
+// ??_G?$DynamicVectorClass@PAVFoggedObjectClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x0045ACE0
+// ??_G?$VectorClass@PAVReestablish@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x0045AD30
+// ??_G?$DynamicVectorClass@PAVReestablish@@@@UAEPAXI@Z
+// TEMPLATE: GAMEMD 0x0045AD80
+// ??0?$VectorClass@PBVParticleSystemTypeClass@@@@QAE@HPBQBVParticleSystemTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x0045ADD0
+// ?Delete_Index@?$DynamicVectorClass@PAVAbstractClass@@@@QAE_NH@Z
+// TEMPLATE: GAMEMD 0x0045AE10
+// ?Delete_Index@?$DynamicVectorClass@PAVBuildingClass@@@@QAE_NH@Z
+// TEMPLATE: GAMEMD 0x0045AE50
+// ??0?$VectorClass@PAVReestablish@@@@QAE@HPBQAVReestablish@@@Z
 template class VectorClass<Reestablish *>;
 template class DynamicVectorClass<AbstractClass *>;
 
@@ -5092,44 +5157,58 @@ extern const double DAT_007E1740;
 extern const double DAT_007E4530;
 extern const double DAT_007E4538;
 
-// FUNCTION: 0x0045AFA0 $E256
+// SYNTHETIC: GAMEMD 0x0045AFA0 SYMBOL
+// _$E256
 double DAT_0089C8B8 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x0045AFD0 $E259
+// SYNTHETIC: GAMEMD 0x0045AFD0 SYMBOL
+// _$E259
 double DAT_0089D360 = DAT_0089C8B8 / DAT_007E4530;
 
-// FUNCTION: 0x0045AFF0 $E262
+// SYNTHETIC: GAMEMD 0x0045AFF0 SYMBOL
+// _$E262
 double DAT_0089C8F8 = DAT_007E1718 / DAT_0089D360;
 
-// FUNCTION: 0x0045B010 $E265
+// SYNTHETIC: GAMEMD 0x0045B010 SYMBOL
+// _$E265
 double DAT_0089C8F0 = DAT_007E1720 * DAT_007E4538;
 
-// FUNCTION: 0x0045B030 $E268
+// SYNTHETIC: GAMEMD 0x0045B030 SYMBOL
+// _$E268
 double DAT_0089C8C0 = DAT_007E1728 * DAT_007E4538;
 
-// FUNCTION: 0x0045B050 $E271
+// SYNTHETIC: GAMEMD 0x0045B050 SYMBOL
+// _$E271
 double DAT_0089C898 = DAT_007E1730 * DAT_007E4538;
 
-// FUNCTION: 0x0045B070 $E274
+// SYNTHETIC: GAMEMD 0x0045B070 SYMBOL
+// _$E274
 int DAT_0089DDB8 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_0089C898 - DAT_0089C8C0) * DAT_0089C8B8));
 
-// FUNCTION: 0x0045B0B0 $E277
+// SYNTHETIC: GAMEMD 0x0045B0B0 SYMBOL
+// _$E277
 double DAT_0089C8C8 = FUN_004CADE0(DAT_0089DDB8 * DAT_007E1740);
 
-// FUNCTION: 0x0045B0E0 $E280
+// SYNTHETIC: GAMEMD 0x0045B0E0 SYMBOL
+// _$E280
 double DAT_0089C8E0 = FUN_004CADE0((DAT_0089DDB8 * 2) / DAT_0089C8B8);
 
-// FUNCTION: 0x0045B110 $E283
+// SYNTHETIC: GAMEMD 0x0045B110 SYMBOL
+// _$E283
 int DAT_0089D35C = (int)(DAT_007E1738 + DAT_0089DDB8 * 4);
 
-// FUNCTION: 0x0045B140 $E286
+// SYNTHETIC: GAMEMD 0x0045B140 SYMBOL
+// _$E286
 Cell DAT_0089C8B0(0, 0);
 
-// FUNCTION: 0x0045B150 $E289
+// SYNTHETIC: GAMEMD 0x0045B150 SYMBOL
+// _$E289
 Coord DAT_0089C8D0(0, 0, 0);
 
-// FUNCTION: 0x0045B170 $E292
+// SYNTHETIC: GAMEMD 0x0045B170 SYMBOL
+// _$E292
 Coord DAT_0089D350(128, 128, 0);
 
-// FUNCTION: 0x0045B190 $E295
+// SYNTHETIC: GAMEMD 0x0045B190 SYMBOL
+// _$E295
 Rect DAT_0089C8A0(0, 0, 0, 0);

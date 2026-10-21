@@ -16,7 +16,7 @@
 #include <new>
 #include <math.h>
 
-// FUNCTION: 0x004739F0
+// FUNCTION: GAMEMD 0x004739F0
 CCFileClass::CCFileClass(char const * filename) :
 	Position(0)
 {
@@ -24,7 +24,7 @@ CCFileClass::CCFileClass(char const * filename) :
 	CDFileClass::Set_Name(filename);
 }
 
-// FUNCTION: 0x00473A30
+// FUNCTION: GAMEMD 0x00473A30
 CCFileClass::CCFileClass(Wstring const & filename) :
 	Position(0)
 {
@@ -34,14 +34,14 @@ CCFileClass::CCFileClass(Wstring const & filename) :
 	CDFileClass::Set_Name(name);
 }
 
-// FUNCTION: 0x00473A80
+// FUNCTION: GAMEMD 0x00473A80
 CCFileClass::CCFileClass(void) :
 	Position(0)
 {
 	Availability = 0;
 }
 
-// FUNCTION: 0x00473AB0
+// FUNCTION: GAMEMD 0x00473AB0
 void CCFileClass::Error(int, int, char const *)
 {
 	if (!SkipCDCheck) {
@@ -49,7 +49,7 @@ void CCFileClass::Error(int, int, char const *)
 	}
 }
 
-// FUNCTION: 0x00473AE0
+// FUNCTION: GAMEMD 0x00473AE0
 int CCFileClass::Write(void const * buffer, int size)
 {
 	if (Is_Resident()) {
@@ -58,7 +58,7 @@ int CCFileClass::Write(void const * buffer, int size)
 	return(BASECLASS::Write(buffer, size));
 }
 
-// FUNCTION: 0x00473B10
+// FUNCTION: GAMEMD 0x00473B10
 int CCFileClass::Read(void * buffer, int size)
 {
 	bool opened = false;
@@ -85,7 +85,7 @@ int CCFileClass::Read(void * buffer, int size)
 	return(s);
 }
 
-// FUNCTION: 0x00473BA0
+// FUNCTION: GAMEMD 0x00473BA0
 int CCFileClass::Seek(int pos, int dir)
 {
 	if (Is_Resident()) {
@@ -108,7 +108,7 @@ int CCFileClass::Seek(int pos, int dir)
 	return(BASECLASS::Seek(pos, dir));
 }
 
-// FUNCTION: 0x00473C00
+// FUNCTION: GAMEMD 0x00473C00
 int CCFileClass::Size(void)
 {
 	if (Is_Resident()) return(Data.Get_Size());
@@ -121,7 +121,7 @@ int CCFileClass::Size(void)
 	return(BASECLASS::Size());
 }
 
-// FUNCTION: 0x00473C50
+// FUNCTION: GAMEMD 0x00473C50
 bool CCFileClass::Is_Available(int)
 {
 	if (Availability == 1) return(true);
@@ -141,14 +141,14 @@ bool CCFileClass::Is_Available(int)
 	return(false);
 }
 
-// FUNCTION: 0x00473CD0
+// FUNCTION: GAMEMD 0x00473CD0
 bool CCFileClass::Is_Open(void) const
 {
 	if (Is_Resident()) return(true);
 	return(BASECLASS::Is_Open());
 }
 
-// FUNCTION: 0x00473CE0
+// FUNCTION: GAMEMD 0x00473CE0
 void CCFileClass::Close(void)
 {
 	new(&Data) ::Buffer;
@@ -156,7 +156,7 @@ void CCFileClass::Close(void)
 	BASECLASS::Close();
 }
 
-// FUNCTION: 0x00473D10
+// FUNCTION: GAMEMD 0x00473D10
 int CCFileClass::Open(int rights)
 {
 	Close();
@@ -193,7 +193,7 @@ int CCFileClass::Open(int rights)
 	return(true);
 }
 
-// FUNCTION: 0x00473E50
+// FUNCTION: GAMEMD 0x00473E50
 unsigned int CCFileClass::Get_Date_Time(void)
 {
 	unsigned int datetime;
@@ -210,7 +210,7 @@ unsigned int CCFileClass::Get_Date_Time(void)
 	return(datetime);
 }
 
-// FUNCTION: 0x00473F00
+// FUNCTION: GAMEMD 0x00473F00
 bool CCFileClass::Set_Date_Time(unsigned int datetime)
 {
 	bool status;
@@ -227,7 +227,7 @@ bool CCFileClass::Set_Date_Time(unsigned int datetime)
 	return(status);
 }
 
-// FUNCTION: 0x00473FC0
+// FUNCTION: GAMEMD 0x00473FC0
 char const * CCFileClass::Set_Name(char const * filename)
 {
 	Availability = 0;
@@ -246,31 +246,40 @@ extern const double DAT_007E1740;
 extern const double DAT_007E4C40;
 extern const double DAT_007E4C48;
 
-// FUNCTION: 0x00473FE0 $E9
+// SYNTHETIC: GAMEMD 0x00473FE0 SYMBOL
+// _$E9
 double DAT_0089E2B0 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x00474010 $E12
+// SYNTHETIC: GAMEMD 0x00474010 SYMBOL
+// _$E12
 double DAT_0089E300 = DAT_0089E2B0 / DAT_007E4C40;
 
-// FUNCTION: 0x00474030 $E15
+// SYNTHETIC: GAMEMD 0x00474030 SYMBOL
+// _$E15
 double DAT_0089E2E8 = DAT_007E1718 / DAT_0089E300;
 
-// FUNCTION: 0x00474050 $E18
+// SYNTHETIC: GAMEMD 0x00474050 SYMBOL
+// _$E18
 double DAT_0089E2E0 = DAT_007E1720 * DAT_007E4C48;
 
-// FUNCTION: 0x00474070 $E21
+// SYNTHETIC: GAMEMD 0x00474070 SYMBOL
+// _$E21
 double DAT_0089E2B8 = DAT_007E1728 * DAT_007E4C48;
 
-// FUNCTION: 0x00474090 $E24
+// SYNTHETIC: GAMEMD 0x00474090 SYMBOL
+// _$E24
 double DAT_0089E290 = DAT_007E1730 * DAT_007E4C48;
 
-// FUNCTION: 0x004740B0 $E27
+// SYNTHETIC: GAMEMD 0x004740B0 SYMBOL
+// _$E27
 int DAT_0089E308 = (int)(fastmath::tan(DAT_0089E290 - DAT_0089E2B8) * DAT_007E1738 * DAT_0089E2B0);
 
-// FUNCTION: 0x004740F0 $E30
+// SYNTHETIC: GAMEMD 0x004740F0 SYMBOL
+// _$E30
 double DAT_0089E2C0 = fastmath::atan(DAT_0089E308 * DAT_007E1740);
 
-// FUNCTION: 0x00474120 $E33
+// SYNTHETIC: GAMEMD 0x00474120 SYMBOL
+// _$E33
 double DAT_0089E2D8 = fastmath::atan((DAT_0089E308 * 2) / DAT_0089E2B0);
 
 extern int DAT_0089E2FC;
@@ -287,20 +296,20 @@ extern int DAT_0089E29C;
 extern int DAT_0089E2A0;
 extern int DAT_0089E2A4;
 
-// FUNCTION: 0x00474150
+// FUNCTION: GAMEMD 0x00474150
 void FUN_00474150(void)
 {
 	DAT_0089E2FC = (int)((double)(DAT_0089E308 * 4) + DAT_007E1738);
 }
 
-// FUNCTION: 0x00474180
+// FUNCTION: GAMEMD 0x00474180
 void FUN_00474180(void)
 {
 	DAT_0089E2A8 = 0;
 	DAT_0089E2AA = 0;
 }
 
-// FUNCTION: 0x00474190
+// FUNCTION: GAMEMD 0x00474190
 void FUN_00474190(void)
 {
 	DAT_0089E2C8 = 0;
@@ -308,7 +317,7 @@ void FUN_00474190(void)
 	DAT_0089E2D0 = 0;
 }
 
-// FUNCTION: 0x004741B0
+// FUNCTION: GAMEMD 0x004741B0
 void FUN_004741B0(void)
 {
 	DAT_0089E2F8 = 0;
@@ -316,7 +325,7 @@ void FUN_004741B0(void)
 	DAT_0089E2F4 = 0x80;
 }
 
-// FUNCTION: 0x004741D0
+// FUNCTION: GAMEMD 0x004741D0
 void FUN_004741D0(void)
 {
 	DAT_0089E298 = 0;

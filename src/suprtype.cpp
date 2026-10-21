@@ -28,21 +28,34 @@ struct FileSystem {
 
 extern char DAT_00889F64[];
 
-// FUNCTION: 0x006CE380 $E2
-// FUNCTION: 0x006CE3B0 $E5
-// FUNCTION: 0x006CE3D0 $E8
-// FUNCTION: 0x006CE3F0 $E11
-// FUNCTION: 0x006CE410 $E14
-// FUNCTION: 0x006CE430 $E17
-// FUNCTION: 0x006CE450 $E20
-// FUNCTION: 0x006CE490 $E23
-// FUNCTION: 0x006CE4C0 $E26
-// FUNCTION: 0x006CE4F0 $E29
-// FUNCTION: 0x006CE520 $E32
-// FUNCTION: 0x006CE530 $E35
-// FUNCTION: 0x006CE550 $E38
+// SYNTHETIC: GAMEMD 0x006CE380 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x006CE3B0 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x006CE3D0 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x006CE3F0 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x006CE410 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x006CE430 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x006CE450 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x006CE490 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x006CE4C0 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x006CE4F0 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x006CE520 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x006CE530 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x006CE550 SYMBOL
+// _$E38
 
-// FUNCTION: 0x006CE570
+// FUNCTION: GAMEMD 0x006CE570
 SuperWeaponType Special_From_Name(char const * name)
 {
 	static const char * _names[SUPER_COUNT] = {
@@ -68,7 +81,7 @@ SuperWeaponType Special_From_Name(char const * name)
 	return(SUPER_NONE);
 }
 
-// FUNCTION: 0x006CE5B0
+// FUNCTION: GAMEMD 0x006CE5B0
 SuperWeaponTypeClass::SuperWeaponTypeClass(char const * ininame) :
 	BASECLASS(ininame),
 	Weapon(NULL),
@@ -103,7 +116,7 @@ SuperWeaponTypeClass::SuperWeaponTypeClass(char const * ininame) :
 	SidebarImage = IniName;
 }
 
-// FUNCTION: 0x006CE700
+// FUNCTION: GAMEMD 0x006CE700
 SuperWeaponTypeClass::SuperWeaponTypeClass(NoInitClass const & x) :
 	BASECLASS(x),
 	SidebarImage(x),
@@ -111,13 +124,13 @@ SuperWeaponTypeClass::SuperWeaponTypeClass(NoInitClass const & x) :
 {
 }
 
-// FUNCTION: 0x006CE740
+// FUNCTION: GAMEMD 0x006CE740
 SuperWeaponTypeClass::~SuperWeaponTypeClass(void)
 {
 	SuperWeaponTypes.Delete(this);
 }
 
-// FUNCTION: 0x006CE7C0
+// FUNCTION: GAMEMD 0x006CE7C0
 HRESULT STDMETHODCALLTYPE SuperWeaponTypeClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -125,7 +138,7 @@ HRESULT STDMETHODCALLTYPE SuperWeaponTypeClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x006CE800
+// FUNCTION: GAMEMD 0x006CE800
 HRESULT STDMETHODCALLTYPE SuperWeaponTypeClass::Load(IStream *stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -147,7 +160,7 @@ HRESULT STDMETHODCALLTYPE SuperWeaponTypeClass::Load(IStream *stream)
 	return(result);
 }
 
-// FUNCTION: 0x006CE8D0
+// FUNCTION: GAMEMD 0x006CE8D0
 HRESULT STDMETHODCALLTYPE SuperWeaponTypeClass::Save(IStream *stream, int cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -157,19 +170,19 @@ HRESULT STDMETHODCALLTYPE SuperWeaponTypeClass::Save(IStream *stream, int cleard
 	return(result);
 }
 
-// FUNCTION: 0x006CE8F0
+// FUNCTION: GAMEMD 0x006CE8F0
 RTTIType SuperWeaponTypeClass::Fetch_RTTI(void) const
 {
 	return(RTTI_SUPERWEAPONTYPE);
 }
 
-// FUNCTION: 0x006CE900
+// FUNCTION: GAMEMD 0x006CE900
 int SuperWeaponTypeClass::Fetch_Object_Size(void) const
 {
 	return(sizeof(*this));
 }
 
-// FUNCTION: 0x006CE910
+// FUNCTION: GAMEMD 0x006CE910
 void SuperWeaponTypeClass::Compute_CRC(CRCEngine & crc) const
 {
 	BASECLASS::Compute_CRC(crc);
@@ -191,7 +204,7 @@ void SuperWeaponTypeClass::Compute_CRC(CRCEngine & crc) const
 	crc(IsManualControl);
 }
 
-// FUNCTION: 0x006CEA10
+// FUNCTION: GAMEMD 0x006CEA10
 int SuperWeaponTypeClass::Fetch_Heap_ID(void) const
 {
 	return(HeapID);
@@ -210,7 +223,7 @@ static inline int Get_Sound(CCINIClass const & ini, char const * section, char c
 	return(index);
 }
 
-// FUNCTION: 0x006CEA20
+// FUNCTION: GAMEMD 0x006CEA20
 bool SuperWeaponTypeClass::Read_INI(CCINIClass & ini)
 {
 	ini.Reset();
@@ -270,7 +283,7 @@ bool SuperWeaponTypeClass::Read_INI(CCINIClass & ini)
 	return(false);
 }
 
-// FUNCTION: 0x006CEE60
+// FUNCTION: GAMEMD 0x006CEE60
 SuperWeaponType SuperWeaponTypeClass::From_Name(char const * name)
 {
 	if (name != NULL) {
@@ -283,7 +296,7 @@ SuperWeaponType SuperWeaponTypeClass::From_Name(char const * name)
 	return(SUPER_NONE);
 }
 
-// FUNCTION: 0x006CEEB0
+// FUNCTION: GAMEMD 0x006CEEB0
 SuperWeaponTypeClass * SuperWeaponTypeClass::From_Action(ActionType action)
 {
 	for (int classid = SUPER_FIRST; classid < SuperWeaponTypes.Count(); classid++) {
@@ -294,13 +307,13 @@ SuperWeaponTypeClass * SuperWeaponTypeClass::From_Action(ActionType action)
 	return(NULL);
 }
 
-// FUNCTION: 0x006CEEF0
+// FUNCTION: GAMEMD 0x006CEEF0
 SuperWeaponTypeClass * SuperWeaponTypeClass::Find_Or_Make(const char * name)
 {
 	return(TFind_Or_Make<SuperWeaponTypeClass>(name, SuperWeaponTypes));
 }
 
-// FUNCTION: 0x006CEF80
+// FUNCTION: GAMEMD 0x006CEF80
 ActionType SuperWeaponTypeClass::What_Action(Cell const & cell, ObjectClass * object)
 {
 	if (Type == 10) {
@@ -316,4 +329,5 @@ ActionType SuperWeaponTypeClass::What_Action(Cell const & cell, ObjectClass * ob
 }
 
 
-// FUNCTION: 0x006CEFE0 SuperWeaponTypeClass::~SuperWeaponTypeClass
+// SYNTHETIC: GAMEMD 0x006CEFE0
+// ??_GSuperWeaponTypeClass@@UAEPAXI@Z

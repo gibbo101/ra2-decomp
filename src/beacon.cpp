@@ -7,20 +7,34 @@
 #include "rect.h"
 #include "geometry.h"
 
-// FUNCTION: 0x0042FF80 $E2
-// FUNCTION: 0x0042FFA0 $E5
-// FUNCTION: 0x0042FFD0 $E8
-// FUNCTION: 0x0042FFF0 $E11
-// FUNCTION: 0x00430010 $E14
-// FUNCTION: 0x00430030 $E17
-// FUNCTION: 0x00430050 $E20
-// FUNCTION: 0x00430070 $E23
-// FUNCTION: 0x004300B0 $E26
-// FUNCTION: 0x004300E0 $E29
-// FUNCTION: 0x00430110 $E32
-// FUNCTION: 0x00430140 $E35
-// FUNCTION: 0x00430150 $E38
-// FUNCTION: 0x00430170 $E41
+// SYNTHETIC: GAMEMD 0x0042FF80 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x0042FFA0 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x0042FFD0 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x0042FFF0 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x00430010 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x00430030 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x00430050 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x00430070 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x004300B0 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x004300E0 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x00430110 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x00430140 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x00430150 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x00430170 SYMBOL
+// _$E41
 
 #include "_convert.h"
 #include "mouse.h"
@@ -47,11 +61,13 @@ extern ShapeSet * BeaconArt;
 extern ShapeSet * RadarBeaconArt;
 namespace Unsorted { extern int CurrentFrame; }
 
-// FUNCTION: 0x00430190 $E140
-// FUNCTION: 0x004301C0 $E138
+// SYNTHETIC: GAMEMD 0x00430190 SYMBOL
+// _$E140
+// SYNTHETIC: GAMEMD 0x004301C0 SYMBOL
+// _$E138
 BeaconManagerClass BeaconManager;
 
-// FUNCTION: 0x00430910
+// FUNCTION: GAMEMD 0x00430910
 BeaconManagerClass::BeaconManagerClass(void)
 {
 	memset(Beacons, 0, sizeof(Beacons));
@@ -59,13 +75,13 @@ BeaconManagerClass::BeaconManagerClass(void)
 	RadarBeaconAnimPeriod = 0;
 }
 
-// FUNCTION: 0x00430930
+// FUNCTION: GAMEMD 0x00430930
 BeaconManagerClass::~BeaconManagerClass(void)
 {
 	Reset();
 }
 
-// FUNCTION: 0x00430980
+// FUNCTION: GAMEMD 0x00430980
 void BeaconManagerClass::Reset(void)
 {
 	if (AllocatedCount) {
@@ -81,7 +97,7 @@ void BeaconManagerClass::Reset(void)
 	}
 }
 
-// FUNCTION: 0x00430210
+// FUNCTION: GAMEMD 0x00430210
 BeaconClass::BeaconClass(void)
 {
 	BeaconCoord = COORD_NONE;
@@ -90,7 +106,7 @@ BeaconClass::BeaconClass(void)
 	memset(Text, 0, sizeof(Text));
 }
 
-// FUNCTION: 0x00430250
+// FUNCTION: GAMEMD 0x00430250
 void BeaconClass::Draw(Surface * surface, Rect bounds)
 {
 	ColorScheme * scheme = ColorSchemes[Houses[HouseID]->Scheme];
@@ -145,12 +161,12 @@ void BeaconClass::Draw(Surface * surface, Rect bounds)
 	BitText::Instance->DrawText(font, surface, text, box.X + 4, box.Y + 4, 200, box.Height, false, 0, 0);
 }
 
-// FUNCTION: 0x00430580
+// FUNCTION: GAMEMD 0x00430580
 void __stdcall FUN_00430580(int, int, int, int, int, int, int)
 {
 }
 
-// FUNCTION: 0x00430590
+// FUNCTION: GAMEMD 0x00430590
 void BeaconClass::SetCoordAndHouse(Coord coord, int house)
 {
 	if (!(coord == COORD_NONE)) {
@@ -162,24 +178,24 @@ void BeaconClass::SetCoordAndHouse(Coord coord, int house)
 	}
 }
 
-// FUNCTION: 0x004305E0
+// FUNCTION: GAMEMD 0x004305E0
 void BeaconClass::SetFlashing(bool flashing)
 {
 	IsFlashing = flashing;
 }
 
-// FUNCTION: 0x00430600
+// FUNCTION: GAMEMD 0x00430600
 void FUN_00430600(void)
 {
 }
 
-// FUNCTION: 0x00430610
+// FUNCTION: GAMEMD 0x00430610
 void BeaconClass::ClearActive(void)
 {
 	IsActive = 0;
 }
 
-// FUNCTION: 0x00430620
+// FUNCTION: GAMEMD 0x00430620
 void BeaconClass::SetText(wchar_t const * text)
 {
 	memset(Text, 0, sizeof(Text));
@@ -188,7 +204,7 @@ void BeaconClass::SetText(wchar_t const * text)
 	}
 }
 
-// FUNCTION: 0x00430650
+// FUNCTION: GAMEMD 0x00430650
 void BeaconClass::DrawRadar(Surface * surface, Rect bounds, bool toclear)
 {
 	int frame = Unsorted::CurrentFrame % BeaconManager.RadarBeaconAnimPeriod;
@@ -213,7 +229,7 @@ void BeaconClass::DrawRadar(Surface * surface, Rect bounds, bool toclear)
 	}
 }
 
-// FUNCTION: 0x004308B0
+// FUNCTION: GAMEMD 0x004308B0
 bool BeaconClass::VisibleToPlayer(void) const
 {
 	if (IsActive && PlayerPtr->Is_Ally((HousesType)HouseID) && Houses[HouseID]->Is_Ally(PlayerPtr) && !Houses[HouseID]->IsDefeated) {
@@ -231,7 +247,7 @@ extern double __cdecl FUN_004CAC40(double);
 void __cdecl FUN_004068E0(char const * format, ...);
 void __fastcall UnselectAll(void);
 
-// FUNCTION: 0x004309D0
+// FUNCTION: GAMEMD 0x004309D0
 void BeaconManagerClass::LoadArt(void)
 {
 	RawFileClass file("PBEACON.SHP");
@@ -262,7 +278,7 @@ void BeaconManagerClass::LoadArt(void)
 	}
 }
 
-// FUNCTION: 0x00430AC0
+// FUNCTION: GAMEMD 0x00430AC0
 void BeaconManagerClass::Draw(Surface * surface, Rect bounds)
 {
 	if (AllocatedCount) {
@@ -277,7 +293,7 @@ void BeaconManagerClass::Draw(Surface * surface, Rect bounds)
 	}
 }
 
-// FUNCTION: 0x00430F30
+// FUNCTION: GAMEMD 0x00430F30
 bool BeaconManagerClass::CanPlaceBeacon(int house)
 {
 	for (int i = 0; i < 3; i++) {
@@ -288,7 +304,7 @@ bool BeaconManagerClass::CanPlaceBeacon(int house)
 	return false;
 }
 
-// FUNCTION: 0x00430F60
+// FUNCTION: GAMEMD 0x00430F60
 Point2D __stdcall FUN_00430F60(void)
 {
 	return Point2D(0, 0);
@@ -309,7 +325,7 @@ static inline int Coord_Dist3(Coord a, Coord b)
 	return (a - b).Length();
 }
 
-// FUNCTION: 0x00430F70
+// FUNCTION: GAMEMD 0x00430F70
 bool BeaconManagerClass::SelectBeacon(int x, int y, int z)
 {
 	int i;
@@ -334,7 +350,7 @@ found:
 	return true;
 }
 
-// FUNCTION: 0x00431060
+// FUNCTION: GAMEMD 0x00431060
 void BeaconManagerClass::ClearSelection(void)
 {
 	if (AllocatedCount) {
@@ -348,7 +364,7 @@ void BeaconManagerClass::ClearSelection(void)
 	}
 }
 
-// FUNCTION: 0x00431090
+// FUNCTION: GAMEMD 0x00431090
 BeaconClass * BeaconManagerClass::FindBeaconAt(Coord coord)
 {
 	if (AllocatedCount) {
@@ -363,7 +379,7 @@ BeaconClass * BeaconManagerClass::FindBeaconAt(Coord coord)
 	return 0;
 }
 
-// FUNCTION: 0x00431170
+// FUNCTION: GAMEMD 0x00431170
 BeaconClass * BeaconManagerClass::FindSelected(int house)
 {
 	if (AllocatedCount) {
@@ -399,7 +415,7 @@ struct BeaconPacket {
 };
 #pragma pack(pop)
 
-// FUNCTION: 0x004311C0
+// FUNCTION: GAMEMD 0x004311C0
 void BeaconManagerClass::DeleteBeacon(int house, int id)
 {
 	if (!AllocatedCount) {
@@ -453,7 +469,7 @@ end:
 	return;
 }
 
-// FUNCTION: 0x00431410
+// FUNCTION: GAMEMD 0x00431410
 void BeaconManagerClass::DeleteAllBeacons(int house)
 {
 	if (AllocatedCount) {
@@ -476,7 +492,7 @@ struct BeaconTextPacket {
 };
 #pragma pack(pop)
 
-// FUNCTION: 0x00431450
+// FUNCTION: GAMEMD 0x00431450
 void BeaconManagerClass::EditBeaconMessage(wchar_t * message, int house, int id, bool broadcast)
 {
 	bool selected = house == -1 && id == -1;
@@ -524,7 +540,7 @@ void BeaconManagerClass::EditBeaconMessage(wchar_t * message, int house, int id,
 	}
 }
 
-// FUNCTION: 0x00431700
+// FUNCTION: GAMEMD 0x00431700
 void BeaconManagerClass::DrawRadar(Surface * surface, Rect bounds)
 {
 	if (AllocatedCount) {
@@ -541,7 +557,7 @@ void BeaconManagerClass::DrawRadar(Surface * surface, Rect bounds)
 	}
 }
 
-// FUNCTION: 0x00431800
+// FUNCTION: GAMEMD 0x00431800
 bool BeaconManagerClass::RadarBeaconPulsing(void)
 {
 	if (AllocatedCount) {
@@ -564,5 +580,6 @@ bool BeaconManagerClass::RadarBeaconPulsing(void)
 	return false;
 }
 
-// FUNCTION: 0x004318D0 $E154
+// SYNTHETIC: GAMEMD 0x004318D0 SYMBOL
+// _$E154
 Rect DAT_0089C480(0, 0, 0, 0);

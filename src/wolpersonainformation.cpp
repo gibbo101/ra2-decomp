@@ -37,55 +37,70 @@ static inline int WOL_Int(INIClass & ini, Wstring const & section, char const * 
 }
 
 
-// FUNCTION: 0x007784F0 $E7
+// SYNTHETIC: GAMEMD 0x007784F0 SYMBOL
+// _$E7
 double DAT_00B73598 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x00778520 $E10
+// SYNTHETIC: GAMEMD 0x00778520 SYMBOL
+// _$E10
 double DAT_00B735E8 = DAT_00B73598 / DAT_007F74E0;
 
-// FUNCTION: 0x00778540 $E13
+// SYNTHETIC: GAMEMD 0x00778540 SYMBOL
+// _$E13
 double DAT_00B735D0 = DAT_007E1718 / DAT_00B735E8;
 
-// FUNCTION: 0x00778560 $E16
+// SYNTHETIC: GAMEMD 0x00778560 SYMBOL
+// _$E16
 double DAT_00B735C8 = DAT_007E1720 * DAT_007F74E8;
 
-// FUNCTION: 0x00778580 $E19
+// SYNTHETIC: GAMEMD 0x00778580 SYMBOL
+// _$E19
 double DAT_00B735A0 = DAT_007E1728 * DAT_007F74E8;
 
-// FUNCTION: 0x007785A0 $E22
+// SYNTHETIC: GAMEMD 0x007785A0 SYMBOL
+// _$E22
 double DAT_00B73578 = DAT_007E1730 * DAT_007F74E8;
 
-// FUNCTION: 0x007785C0 $E25
+// SYNTHETIC: GAMEMD 0x007785C0 SYMBOL
+// _$E25
 int DAT_00B735F0 = (int)(fastmath::tan(DAT_00B73578 - DAT_00B735A0) * DAT_007E1738 * DAT_00B73598);
 
-// FUNCTION: 0x00778600 $E28
+// SYNTHETIC: GAMEMD 0x00778600 SYMBOL
+// _$E28
 double DAT_00B735A8 = fastmath::atan(DAT_00B735F0 * DAT_007E1740);
 
-// FUNCTION: 0x00778630 $E31
+// SYNTHETIC: GAMEMD 0x00778630 SYMBOL
+// _$E31
 double DAT_00B735C0 = fastmath::atan((DAT_00B735F0 * 2) / DAT_00B73598);
 
-// FUNCTION: 0x00778660 $E34
+// SYNTHETIC: GAMEMD 0x00778660 SYMBOL
+// _$E34
 int DAT_00B735E4 = (int)(DAT_00B735F0 * 4 + DAT_007E1738);
 
 struct WOLShortPair { short a; short b; WOLShortPair(void) { a = 0; b = 0; } };
 struct WOLIntTriple { int a; int b; int c; WOLIntTriple(void) { a = 0; b = 0; c = 0; } };
 
-// FUNCTION: 0x00778690 $E37
+// SYNTHETIC: GAMEMD 0x00778690 SYMBOL
+// _$E37
 WOLShortPair DAT_00B73594;
 
-// FUNCTION: 0x007786A0 $E40
+// SYNTHETIC: GAMEMD 0x007786A0 SYMBOL
+// _$E40
 WOLIntTriple DAT_00B735B0;
 
 struct WOLWindowSize { int W; int H; int Z; WOLWindowSize(void) { Z = 0; W = 0x80; H = 0x80; } };
 
-// FUNCTION: 0x007786C0 $E43
+// SYNTHETIC: GAMEMD 0x007786C0 SYMBOL
+// _$E43
 WOLWindowSize DAT_00B735D8;
 
-// FUNCTION: 0x007786E0 $E48
-// FUNCTION: 0x00778700 $E46
+// SYNTHETIC: GAMEMD 0x007786E0 SYMBOL
+// _$E48
+// SYNTHETIC: GAMEMD 0x00778700 SYMBOL
+// _$E46
 Wstring DAT_00B73590("_Default_");
 
-// FUNCTION: 0x00778710
+// FUNCTION: GAMEMD 0x00778710
 rc_ptr<PlayerProfile> __fastcall FUN_00778710(void)
 {
 	Wstring server;
@@ -121,7 +136,7 @@ rc_ptr<PlayerProfile> __fastcall FUN_00778710(void)
 	return rc_ptr<PlayerProfile>(profile);
 }
 
-// FUNCTION: 0x00778A20
+// FUNCTION: GAMEMD 0x00778A20
 rc_ptr<PlayerProfile> __fastcall FUN_00778A20(Wstring const * name)
 {
 	CDFileClass file("wolinfoMD.ini");
@@ -165,7 +180,7 @@ rc_ptr<PlayerProfile> __fastcall FUN_00778A20(Wstring const * name)
 	return rc_ptr<PlayerProfile>(profile);
 }
 
-// FUNCTION: 0x00778F30
+// FUNCTION: GAMEMD 0x00778F30
 void __fastcall FUN_00778F30(Wstring * from, WideWstring * to)
 {
 	to->set(FUN_00735120(from->text()));
@@ -219,7 +234,7 @@ void __fastcall FUN_00778F30(Wstring * from, WideWstring * to)
 	}
 }
 
-// FUNCTION: 0x00779230
+// FUNCTION: GAMEMD 0x00779230
 void __fastcall FUN_00779230(WideWstring const * from, Wstring * to)
 {
 	WideWstring text;
@@ -263,19 +278,19 @@ void __fastcall FUN_00779230(WideWstring const * from, Wstring * to)
 	to->set(FUN_007350C0(text.get()));
 }
 
-// FUNCTION: 0x00779650
+// FUNCTION: GAMEMD 0x00779650
 char __fastcall FUN_00779650(Wstring const * from, WideWstring * to)
 {
 	return to->set(FUN_00735120(from->text()));
 }
 
-// FUNCTION: 0x00779670
+// FUNCTION: GAMEMD 0x00779670
 char __fastcall FUN_00779670(WideWstring const * from, Wstring * to)
 {
 	return to->set(FUN_007350C0(from->text()));
 }
 
-// FUNCTION: 0x00779690
+// FUNCTION: GAMEMD 0x00779690
 PlayerProfile::PlayerProfile(Wstring const & name, int a, bool b, int c, int d, int e, int f, int g, int h, int i, int j, bool k, WideWstring const & l, WideWstring const & m) :
 	Field8(0),
 	Name(name),
@@ -295,7 +310,7 @@ PlayerProfile::PlayerProfile(Wstring const & name, int a, bool b, int c, int d, 
 {
 }
 
-// FUNCTION: 0x00779730
+// FUNCTION: GAMEMD 0x00779730
 bool FUN_00779730(void)
 {
 	CDFileClass file("wolinfoMD.ini");
@@ -308,7 +323,7 @@ bool FUN_00779730(void)
 	return ini.Get_Bool("Ask", "AutoLogin", true);
 }
 
-// FUNCTION: 0x00779830
+// FUNCTION: GAMEMD 0x00779830
 void __fastcall FUN_00779830(bool value)
 {
 	CDFileClass file("wolinfoMD.ini");
@@ -325,7 +340,7 @@ void __fastcall FUN_00779830(bool value)
 	}
 }
 
-// FUNCTION: 0x00779940
+// FUNCTION: GAMEMD 0x00779940
 bool FUN_00779940(void)
 {
 	CDFileClass file("wolinfoMD.ini");
@@ -338,7 +353,7 @@ bool FUN_00779940(void)
 	return ini.Get_Bool("Ask", "AddMatchBuddies", true);
 }
 
-// FUNCTION: 0x00779A40
+// FUNCTION: GAMEMD 0x00779A40
 void __fastcall FUN_00779A40(bool value)
 {
 	CDFileClass file("wolinfoMD.ini");
@@ -355,7 +370,7 @@ void __fastcall FUN_00779A40(bool value)
 	}
 }
 
-// FUNCTION: 0x00779B50
+// FUNCTION: GAMEMD 0x00779B50
 Wstring __fastcall FUN_00779B50(void)
 {
 	CDFileClass file("wolinfoMD.ini");
@@ -374,7 +389,7 @@ Wstring __fastcall FUN_00779B50(void)
 	return result;
 }
 
-// FUNCTION: 0x00779C90
+// FUNCTION: GAMEMD 0x00779C90
 void __fastcall FUN_00779C90(Wstring const * value)
 {
 	CDFileClass file("wolinfoMD.ini");
@@ -395,7 +410,7 @@ void __fastcall FUN_00779C90(Wstring const * value)
 	}
 }
 
-// FUNCTION: 0x00779DD0
+// FUNCTION: GAMEMD 0x00779DD0
 Wstring __fastcall FUN_00779DD0(void)
 {
 	CDFileClass file("wolinfoMD.ini");
@@ -414,7 +429,7 @@ Wstring __fastcall FUN_00779DD0(void)
 	return result;
 }
 
-// FUNCTION: 0x00779F10
+// FUNCTION: GAMEMD 0x00779F10
 void __fastcall FUN_00779F10(Wstring const * value)
 {
 	CDFileClass file("wolinfoMD.ini");
@@ -435,7 +450,7 @@ void __fastcall FUN_00779F10(Wstring const * value)
 	}
 }
 
-// FUNCTION: 0x0077A050
+// FUNCTION: GAMEMD 0x0077A050
 PlayerProfile::~PlayerProfile(void)
 {
 }
@@ -446,7 +461,7 @@ static inline void WOL_PutInt(INIClass & ini, Wstring const & section, char cons
 	ini.Put_Int(section, k, value, 0);
 }
 
-// FUNCTION: 0x0077A080
+// FUNCTION: GAMEMD 0x0077A080
 void PlayerProfile::Save(Wstring const * name)
 {
 	WOLOptionsClass options;
@@ -496,7 +511,7 @@ void PlayerProfile::Save(Wstring const * name)
 	}
 }
 
-// FUNCTION: 0x0077A4A0
+// FUNCTION: GAMEMD 0x0077A4A0
 void PlayerProfile::SetName(Wstring const * name)
 {
 	if (!(*name == Name)) {
@@ -505,7 +520,7 @@ void PlayerProfile::SetName(Wstring const * name)
 	}
 }
 
-// FUNCTION: 0x0077A4D0
+// FUNCTION: GAMEMD 0x0077A4D0
 void PlayerProfile::SetUpdateStamp(void)
 {
 	time_t now = time(0);
@@ -554,7 +569,7 @@ void PlayerProfile::SetUpdateStamp(void)
 	Field8 = 1;
 }
 
-// FUNCTION: 0x0077A700
+// FUNCTION: GAMEMD 0x0077A700
 void PlayerProfile::SetLocale(int locale, int state)
 {
 	if (locale == Field10) {
@@ -581,7 +596,7 @@ void PlayerProfile::SetLocale(int locale, int state)
 	Field8 = 1;
 }
 
-// FUNCTION: 0x0077A760
+// FUNCTION: GAMEMD 0x0077A760
 void PlayerProfile::SetMatchByRes(bool value)
 {
 	if (value != Field38) {
@@ -590,7 +605,7 @@ void PlayerProfile::SetMatchByRes(bool value)
 	}
 }
 
-// FUNCTION: 0x0077A780
+// FUNCTION: GAMEMD 0x0077A780
 void PlayerProfile::SetCountry(int country)
 {
 	if (country != Field1C) {
@@ -599,7 +614,7 @@ void PlayerProfile::SetCountry(int country)
 	}
 }
 
-// FUNCTION: 0x0077A7A0
+// FUNCTION: GAMEMD 0x0077A7A0
 void PlayerProfile::SetField20(int value)
 {
 	if (value != Field20) {
@@ -608,7 +623,7 @@ void PlayerProfile::SetField20(int value)
 	}
 }
 
-// FUNCTION: 0x0077A7C0
+// FUNCTION: GAMEMD 0x0077A7C0
 void PlayerProfile::UpdateStats(PlayerStatsRecord const * record)
 {
 	char changed = 0;
@@ -643,7 +658,7 @@ void PlayerProfile::UpdateStats(PlayerStatsRecord const * record)
 	}
 }
 
-// FUNCTION: 0x0077A840
+// FUNCTION: GAMEMD 0x0077A840
 bool PlayerProfile::StatsDiffer(PlayerStatsRecord const * record) const
 {
 	if (record->Field1C != Field24) {
@@ -657,7 +672,7 @@ bool PlayerProfile::StatsDiffer(PlayerStatsRecord const * record) const
 	}
 }
 
-// FUNCTION: 0x0077A870
+// FUNCTION: GAMEMD 0x0077A870
 void PlayerProfile::AddField2C(int delta)
 {
 	if (Field2C != -1) {
@@ -666,7 +681,7 @@ void PlayerProfile::AddField2C(int delta)
 	}
 }
 
-// FUNCTION: 0x0077A890
+// FUNCTION: GAMEMD 0x0077A890
 void PlayerProfile::AddField30(int delta)
 {
 	if (Field30 != -1) {
@@ -675,7 +690,7 @@ void PlayerProfile::AddField30(int delta)
 	}
 }
 
-// FUNCTION: 0x0077A8B0
+// FUNCTION: GAMEMD 0x0077A8B0
 void PlayerProfile::AddField34(int delta)
 {
 	if (Field34 != -1) {
@@ -687,7 +702,7 @@ void PlayerProfile::AddField34(int delta)
 extern char DAT_00889F64[];
 extern wchar_t DAT_00887734[];
 
-// FUNCTION: 0x0077A8D0
+// FUNCTION: GAMEMD 0x0077A8D0
 void __fastcall FUN_0077A8D0(HWND dialog, bool clearBadge)
 {
 	HWND item;
@@ -711,11 +726,12 @@ void __fastcall FUN_0077A8D0(HWND dialog, bool clearBadge)
 	SendMessageA(item, 0x4b2, 0, (LPARAM)unknown.text());
 }
 
-// FUNCTION: 0x0077B030 PlayerProfile::~PlayerProfile
+// SYNTHETIC: GAMEMD 0x0077B030
+// ??_GPlayerProfile@@UAEPAXI@Z
 
 int DAT_00B73600, DAT_00B73604, DAT_00B73608, DAT_00B7360C;
 
-// FUNCTION: 0x0077B070
+// FUNCTION: GAMEMD 0x0077B070
 void FUN_0077B070(void)
 {
 	DAT_00B73600 = 0;

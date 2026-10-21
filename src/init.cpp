@@ -140,24 +140,36 @@
 #include <ctime>
 #include <dos.h>
 
-// FUNCTION: 0x0052B7C0 $E112
-// FUNCTION: 0x0052B7F0 $E115
-// FUNCTION: 0x0052B810 $E118
-// FUNCTION: 0x0052B830 $E121
-// FUNCTION: 0x0052B850 $E124
-// FUNCTION: 0x0052B870 $E127
-// FUNCTION: 0x0052B890 $E130
-// FUNCTION: 0x0052B8D0 $E133
-// FUNCTION: 0x0052B900 $E136
-// FUNCTION: 0x0052B930 $E139
-// FUNCTION: 0x0052B960 $E142
-// FUNCTION: 0x0052B970 $E145
+// SYNTHETIC: GAMEMD 0x0052B7C0 SYMBOL
+// _$E112
+// SYNTHETIC: GAMEMD 0x0052B7F0 SYMBOL
+// _$E115
+// SYNTHETIC: GAMEMD 0x0052B810 SYMBOL
+// _$E118
+// SYNTHETIC: GAMEMD 0x0052B830 SYMBOL
+// _$E121
+// SYNTHETIC: GAMEMD 0x0052B850 SYMBOL
+// _$E124
+// SYNTHETIC: GAMEMD 0x0052B870 SYMBOL
+// _$E127
+// SYNTHETIC: GAMEMD 0x0052B890 SYMBOL
+// _$E130
+// SYNTHETIC: GAMEMD 0x0052B8D0 SYMBOL
+// _$E133
+// SYNTHETIC: GAMEMD 0x0052B900 SYMBOL
+// _$E136
+// SYNTHETIC: GAMEMD 0x0052B930 SYMBOL
+// _$E139
+// SYNTHETIC: GAMEMD 0x0052B960 SYMBOL
+// _$E142
+// SYNTHETIC: GAMEMD 0x0052B970 SYMBOL
+// _$E145
 
 extern int DAT_00A8F768;
 extern int DAT_00A8F76C;
 extern int DAT_00A8F770;
 
-// FUNCTION: 0x0052B990
+// FUNCTION: GAMEMD 0x0052B990
 void FUN_0052B990(void)
 {
 	DAT_00A8F770 = 0;
@@ -170,7 +182,7 @@ struct Drawing {
 	static int RenderHeight;
 };
 
-// FUNCTION: 0x0052B9B0
+// FUNCTION: GAMEMD 0x0052B9B0
 void __fastcall FUN_0052B9B0(HWND dialog)
 {
 	HWND control = GetDlgItem(dialog, 0x71A);
@@ -200,7 +212,7 @@ struct Game {
 	static void InitRandom(void);
 };
 
-// FUNCTION: 0x0052CB50
+// FUNCTION: GAMEMD 0x0052CB50
 bool FUN_0052CB50(void)
 {
 	if (DAT_00A8E960 & 4) {
@@ -210,12 +222,12 @@ bool FUN_0052CB50(void)
 	return Game::CallBack();
 }
 
-// FUNCTION: 0x0052CB80
+// FUNCTION: GAMEMD 0x0052CB80
 void FUN_0052CB80(void)
 {
 }
 
-// FUNCTION: 0x0052CB90
+// FUNCTION: GAMEMD 0x0052CB90
 void FUN_0052CB90(void)
 {
 	bool found = false;
@@ -262,7 +274,7 @@ void FUN_0052CB90(void)
 	}
 }
 
-// FUNCTION: 0x0052D430
+// FUNCTION: GAMEMD 0x0052D430
 BOOL CALLBACK Rules_Choice_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	char buffer[128];
@@ -312,7 +324,7 @@ BOOL CALLBACK Rules_Choice_Dialog_Proc(HWND window, UINT message, WPARAM wparam,
 	return(0);
 }
 
-// FUNCTION: 0x0052D5B0
+// FUNCTION: GAMEMD 0x0052D5B0
 BOOL CALLBACK Pick_Protocol_Dialog(HWND window, UINT message, WPARAM wparam, LPARAM           )
 {
 	switch (message) {
@@ -335,17 +347,17 @@ BOOL CALLBACK Pick_Protocol_Dialog(HWND window, UINT message, WPARAM wparam, LPA
 	return(FALSE);
 }
 
-// FUNCTION: 0x0052D610
+// FUNCTION: GAMEMD 0x0052D610
 void FUN_0052D610(void)
 {
 }
 
-// FUNCTION: 0x0052D620
+// FUNCTION: GAMEMD 0x0052D620
 void FUN_0052D620(void)
 {
 }
 
-// FUNCTION: 0x0052D630
+// FUNCTION: GAMEMD 0x0052D630
 void FUN_0052D630(void)
 {
 }
@@ -354,7 +366,7 @@ namespace UI {
 	int __fastcall StandardWndProc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 }
 
-// FUNCTION: 0x0052D640
+// FUNCTION: GAMEMD 0x0052D640
 BOOL CALLBACK FUN_0052D640(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	int rc = UI::StandardWndProc(window, message, wparam, lparam);
@@ -407,7 +419,7 @@ BOOL CALLBACK FUN_0052D640(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 	return(0);
 }
 
-// FUNCTION: 0x0052D790
+// FUNCTION: GAMEMD 0x0052D790
 BOOL CALLBACK FUN_0052D790(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	int rc = UI::StandardWndProc(window, message, wparam, lparam);
@@ -451,7 +463,7 @@ BOOL CALLBACK FUN_0052D790(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 
 extern int DAT_00825C80;
 
-// FUNCTION: 0x0052D870
+// FUNCTION: GAMEMD 0x0052D870
 BOOL CALLBACK FUN_0052D870(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	bool changed = false;
@@ -509,7 +521,7 @@ BOOL CALLBACK FUN_0052D870(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 	return(0);
 }
 
-// FUNCTION: 0x0052F610
+// FUNCTION: GAMEMD 0x0052F610
 void Anim_Init(void)
 {
 	Initialize_Options();
@@ -530,7 +542,7 @@ void __fastcall FUN_00734F50(int value);
 void __fastcall FUN_00734F80(int value);
 void __fastcall FUN_007B2720(int value);
 
-// FUNCTION: 0x0052F620
+// FUNCTION: GAMEMD 0x0052F620
 bool Parse_Command_Line(int argc, char * argv[])
 {
 	Special.Init();
@@ -701,7 +713,7 @@ extern int DAT_00A8ED98;
 extern RandomStraw CryptRandom;
 int __cdecl FUN_0053E720(void);
 
-// FUNCTION: 0x0052FC20
+// FUNCTION: GAMEMD 0x0052FC20
 void Game::InitRandom(void)
 {
 	FUN_004068E0("Init random number\n");
@@ -745,7 +757,7 @@ void Game::InitRandom(void)
 	NonCriticalRandomNumber = Seed;
 }
 
-// FUNCTION: 0x0052FEC0
+// FUNCTION: GAMEMD 0x0052FEC0
 void __fastcall FUN_0052FEC0(Surface * surface, bool flag)
 {
 	if (surface == NULL) {
@@ -764,7 +776,7 @@ void __fastcall FUN_0052FEC0(Surface * surface, bool flag)
 	}
 }
 
-// FUNCTION: 0x0052FF90
+// FUNCTION: GAMEMD 0x0052FF90
 void Load_Title_Page(const char * name, bool visible)
 {
 	HiddenSurface->Fill(0);
@@ -773,7 +785,7 @@ void Load_Title_Page(const char * name, bool visible)
 		Update_Visible_Surface(true, HiddenSurface);
 }
 
-// FUNCTION: 0x0052FFD0
+// FUNCTION: GAMEMD 0x0052FFD0
 void Blank_Hidden_Surface(bool visible)
 {
 	HiddenSurface->Fill(0);
@@ -781,7 +793,7 @@ void Blank_Hidden_Surface(bool visible)
 		Update_Visible_Surface(true, HiddenSurface);
 }
 
-// FUNCTION: 0x00530000
+// FUNCTION: GAMEMD 0x00530000
 bool Init_Expansion_Files(void)
 {
 	HANDLE handle;
@@ -830,7 +842,7 @@ extern MFCD * DAT_00884E4C;
 extern MFCD * DAT_00884E50;
 extern MFCD * DAT_00884E54;
 
-// FUNCTION: 0x005301A0
+// FUNCTION: GAMEMD 0x005301A0
 bool Init_Bootstrap_Mixfiles(void)
 {
 	int index;
@@ -938,7 +950,7 @@ static bool Init_One_Time_Systems(void)
 	return(true);
 }
 
-// FUNCTION: 0x00531680
+// FUNCTION: GAMEMD 0x00531680
 bool Init_Bulk_Data(void)
 {
 	if (DAT_00884E38 == NULL || !DAT_00884E38->Cache()) {
@@ -960,7 +972,7 @@ bool Init_Bulk_Data(void)
 
 extern int DAT_00A8EC90;
 
-// FUNCTION: 0x005318C0
+// FUNCTION: GAMEMD 0x005318C0
 bool Save_Recording_Values(CCFileClass & file)
 {
 	FUN_004068E0("Saving recording values for scenario : %s\n", Scen->ScenarioName);
@@ -974,7 +986,7 @@ bool Save_Recording_Values(CCFileClass & file)
 	return(true);
 }
 
-// FUNCTION: 0x00531960
+// FUNCTION: GAMEMD 0x00531960
 bool Load_Recording_Values(CCFileClass & file)
 {
 	file.Read(&Game::TechLevel, sizeof(Game::TechLevel));
@@ -994,7 +1006,7 @@ extern char DAT_00A8F420[];
 extern char DAT_00A8F520[];
 extern char DAT_00A8F394[];
 
-// FUNCTION: 0x00531A00
+// FUNCTION: GAMEMD 0x00531A00
 BOOL CALLBACK Version_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	HWND handle;
@@ -1062,7 +1074,7 @@ namespace UI {
 	void __fastcall EndDialog(HWND window);
 }
 
-// FUNCTION: 0x00531C30
+// FUNCTION: GAMEMD 0x00531C30
 void Version_Dialog(void)
 {
 	HWND dialog;
@@ -1130,7 +1142,7 @@ static bool Cheat_Key_Process(char chr)
 
 BOOL CALLBACK Main_Menu_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 
-// FUNCTION: 0x00531CC0
+// FUNCTION: GAMEMD 0x00531CC0
 int Main_Menu(unsigned int timeout)
 {
 	HWND dialog;
@@ -1177,7 +1189,7 @@ int Main_Menu(unsigned int timeout)
 	return(retval);
 }
 
-// FUNCTION: 0x00531F60
+// FUNCTION: GAMEMD 0x00531F60
 BOOL CALLBACK Main_Menu_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	int * res;
@@ -1215,7 +1227,7 @@ BOOL CALLBACK Main_Menu_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LP
 	return(FALSE);
 }
 
-// FUNCTION: 0x00532100
+// FUNCTION: GAMEMD 0x00532100
 void Title_Screen_Restore(bool force)
 {
 	if (SurfacesRestored || force) {
@@ -1225,12 +1237,12 @@ void Title_Screen_Restore(bool force)
 	}
 }
 
-// FUNCTION: 0x00532130
+// FUNCTION: GAMEMD 0x00532130
 void FUN_00532130(void)
 {
 }
 
-// FUNCTION: 0x00532140
+// FUNCTION: GAMEMD 0x00532140
 void FUN_00532140(void)
 {
 }
@@ -2613,7 +2625,7 @@ class DeleteCommandClass : public CommandClass
 		}
 };
 
-// FUNCTION: 0x00532150
+// FUNCTION: GAMEMD 0x00532150
 void Init_Commands(void)
 {
 	if (Session.EnableMultiplayerDebug) {
@@ -2743,7 +2755,7 @@ void Init_Commands(void)
 	HotkeyCommands.Add_Index(KN_SPACE, reventcmd);
 }
 
-// FUNCTION: 0x00533D20
+// FUNCTION: GAMEMD 0x00533D20
 bool Init_Hotkeys(void)
 {
 	CCINIClass ini;
@@ -2777,7 +2789,7 @@ bool Init_Hotkeys(void)
 	return(false);
 }
 
-// FUNCTION: 0x00533F50
+// FUNCTION: GAMEMD 0x00533F50
 void Execute_Command(char const * name)
 {
 	for (int command = 0; command < AllCommands.Count(); command++) {
@@ -2841,7 +2853,7 @@ extern DynamicVectorClass<AbstractClass *> DAT_00A8E988;
 extern DynamicVectorClass<AbstractClass *> DAT_00A8E968;
 extern DynamicVectorClass<SpotlightClass *> DAT_00AC1678;
 
-// FUNCTION: 0x00534450
+// FUNCTION: GAMEMD 0x00534450
 void Delete_All_Objects(void)
 {
 	DAT_00A8E7AC++;
@@ -2999,7 +3011,7 @@ void const * __fastcall FUN_005B40B0(char const * name, bool flag);
 void __fastcall FUN_006267A0(TheaterType theater);
 void __fastcall FUN_00717840(void);
 
-// FUNCTION: 0x005349C0
+// FUNCTION: GAMEMD 0x005349C0
 void __fastcall Init_Theater(TheaterType theater)
 {
 	struct {
@@ -3112,7 +3124,7 @@ void __fastcall Init_Theater(TheaterType theater)
 extern MFCD * DAT_00884E5C;
 extern MFCD * DAT_00884E58;
 
-// FUNCTION: 0x00534DE0
+// FUNCTION: GAMEMD 0x00534DE0
 bool FUN_00534DE0(void)
 {
 	if (DAT_00884E5C != NULL) {
@@ -3140,7 +3152,7 @@ void __fastcall FUN_0072F440(int side);
 void __fastcall FUN_006D02B0(void * map);
 int __fastcall FUN_004A80D0(int drive, int arg);
 
-// FUNCTION: 0x00534FA0
+// FUNCTION: GAMEMD 0x00534FA0
 bool __fastcall FUN_00534FA0(int side)
 {
 	char name[64];
@@ -3222,7 +3234,7 @@ bool __fastcall FUN_00534FA0(int side)
 	return(false);
 }
 
-// FUNCTION: 0x005353D0
+// FUNCTION: GAMEMD 0x005353D0
 ObjectClass * __fastcall FUN_005353D0(Cell const * cell, ObjectClass const * target)
 {
 	ObjectClass * best_obj = NULL;
@@ -3279,7 +3291,7 @@ ObjectClass * __fastcall FUN_005353D0(Cell const * cell, ObjectClass const * tar
 	return(best_obj);
 }
 
-// FUNCTION: 0x005355C0
+// FUNCTION: GAMEMD 0x005355C0
 ThemeType FUN_005355C0(void)
 {
 	return(Theme.From_Name("INTRO"));
@@ -3296,7 +3308,7 @@ int FUN_004E6190(void);
 int FUN_005CAFC0(void);
 char const * FUN_004E62B0(void);
 
-// FUNCTION: 0x005355D0
+// FUNCTION: GAMEMD 0x005355D0
 int FUN_005355D0(void)
 {
 	if (DAT_00825C8C == -1) {
@@ -3433,337 +3445,655 @@ int FUN_005355D0(void)
 	return(DAT_00825C8C);
 }
 
-// FUNCTION: 0x00535AA0 INIClass::INIClass
+// FUNCTION: GAMEMD 0x00535AA0
+// INIClass::INIClass
 
-// FUNCTION: 0x00535BD0 CommandClass::Unknown14
-// FUNCTION: 0x00535BE0 CommandClass::Unknown18
-// FUNCTION: 0x00535BF0 CommandClass::Unknown1C
-// FUNCTION: 0x00535C00 CreateTeamCommandClass::CreateTeamCommandClass
-// FUNCTION: 0x00535C20 CreateTeamCommandClass::Get_Unique_Name
-// FUNCTION: 0x00535C40 CreateTeamCommandClass::Get_Display_Name
-// FUNCTION: 0x00535C70 CreateTeamCommandClass::Get_Category
-// FUNCTION: 0x00535C90 CreateTeamCommandClass::Get_Description
-// FUNCTION: 0x00535CC0 CreateTeamCommandClass::Execute
-// FUNCTION: 0x00535CD0 CreateTeamCommandClass::~CreateTeamCommandClass
-// FUNCTION: 0x00535CF0 CommandClass::Get_Display_Name
-// FUNCTION: 0x00535D00 CommandClass::~CommandClass
-// FUNCTION: 0x00535D20 SetStructureTabCommandClass::Get_Unique_Name
-// FUNCTION: 0x00535D30 SetStructureTabCommandClass::Get_Display_Name
-// FUNCTION: 0x00535D50 SetStructureTabCommandClass::Get_Category
-// FUNCTION: 0x00535D70 SetStructureTabCommandClass::Get_Description
-// FUNCTION: 0x00535D90 SetStructureTabCommandClass::Execute
-// FUNCTION: 0x00535DE0 SetDefenseTabCommandClass::Get_Unique_Name
-// FUNCTION: 0x00535DF0 SetDefenseTabCommandClass::Get_Display_Name
-// FUNCTION: 0x00535E10 SetDefenseTabCommandClass::Get_Category
-// FUNCTION: 0x00535E30 SetDefenseTabCommandClass::Get_Description
-// FUNCTION: 0x00535E50 SetDefenseTabCommandClass::Execute
-// FUNCTION: 0x00535EA0 SetInfantryTabCommandClass::Get_Unique_Name
-// FUNCTION: 0x00535EB0 SetInfantryTabCommandClass::Get_Display_Name
-// FUNCTION: 0x00535ED0 SetInfantryTabCommandClass::Get_Category
-// FUNCTION: 0x00535EF0 SetInfantryTabCommandClass::Get_Description
-// FUNCTION: 0x00535F10 SetInfantryTabCommandClass::Execute
-// FUNCTION: 0x00535F30 SetUnitTabCommandClass::Get_Unique_Name
-// FUNCTION: 0x00535F40 SetUnitTabCommandClass::Get_Display_Name
-// FUNCTION: 0x00535F60 SetUnitTabCommandClass::Get_Category
-// FUNCTION: 0x00535F80 SetUnitTabCommandClass::Get_Description
-// FUNCTION: 0x00535FA0 SetUnitTabCommandClass::Execute
-// FUNCTION: 0x00535FC0 SelectTeamCommandClass::SelectTeamCommandClass
-// FUNCTION: 0x00535FE0 SelectTeamCommandClass::Get_Unique_Name
-// FUNCTION: 0x00536000 SelectTeamCommandClass::Get_Display_Name
-// FUNCTION: 0x00536030 SelectTeamCommandClass::Get_Category
-// FUNCTION: 0x00536050 SelectTeamCommandClass::Get_Description
-// FUNCTION: 0x00536080 SelectTeamCommandClass::Execute
-// FUNCTION: 0x00536090 SelectTeamCommandClass::~SelectTeamCommandClass
-// FUNCTION: 0x005360B0 AddTeamCommandClass::AddTeamCommandClass
-// FUNCTION: 0x005360D0 AddTeamCommandClass::Get_Unique_Name
-// FUNCTION: 0x005360F0 AddTeamCommandClass::Get_Display_Name
-// FUNCTION: 0x00536120 AddTeamCommandClass::Get_Category
-// FUNCTION: 0x00536140 AddTeamCommandClass::Get_Description
-// FUNCTION: 0x00536170 AddTeamCommandClass::Execute
-// FUNCTION: 0x00536180 AddTeamCommandClass::~AddTeamCommandClass
-// FUNCTION: 0x005361A0 CenterTeamCommandClass::CenterTeamCommandClass
-// FUNCTION: 0x005361C0 CenterTeamCommandClass::Get_Unique_Name
-// FUNCTION: 0x005361E0 CenterTeamCommandClass::Get_Display_Name
-// FUNCTION: 0x00536210 CenterTeamCommandClass::Get_Category
-// FUNCTION: 0x00536230 CenterTeamCommandClass::Get_Description
-// FUNCTION: 0x00536260 CenterTeamCommandClass::Execute
-// FUNCTION: 0x00536270 CenterTeamCommandClass::~CenterTeamCommandClass
-// FUNCTION: 0x00536290 TauntCommandClass::TauntCommandClass
-// FUNCTION: 0x005362B0 TauntCommandClass::Get_Unique_Name
-// FUNCTION: 0x005362D0 TauntCommandClass::Get_Display_Name
-// FUNCTION: 0x00536300 TauntCommandClass::Get_Category
-// FUNCTION: 0x00536320 TauntCommandClass::Get_Description
-// FUNCTION: 0x00536580 TauntCommandClass::~TauntCommandClass
-// FUNCTION: 0x005365A0 NextObjectCommandClass::Get_Unique_Name
-// FUNCTION: 0x005365B0 NextObjectCommandClass::Get_Display_Name
-// FUNCTION: 0x005365D0 NextObjectCommandClass::Get_Category
-// FUNCTION: 0x005365F0 NextObjectCommandClass::Get_Description
-// FUNCTION: 0x00536610 NextObjectCommandClass::Execute
-// FUNCTION: 0x005366A0 PlanningModeCommandClass::Get_Unique_Name
-// FUNCTION: 0x005366B0 PlanningModeCommandClass::Get_Display_Name
-// FUNCTION: 0x005366D0 PlanningModeCommandClass::Get_Category
-// FUNCTION: 0x005366F0 PlanningModeCommandClass::Get_Description
-// FUNCTION: 0x00536710 PlanningModeCommandClass::Unknown14
-// FUNCTION: 0x00536730 PlanningModeCommandClass::Unknown18
-// FUNCTION: 0x00536740 PlanningModeCommandClass::Unknown1C
-// FUNCTION: 0x00536750 PlanningModeCommandClass::Execute
-// FUNCTION: 0x00536770 CombatantSelectCommandClass::Get_Unique_Name
-// FUNCTION: 0x00536780 CombatantSelectCommandClass::Get_Display_Name
-// FUNCTION: 0x005367A0 CombatantSelectCommandClass::Get_Category
-// FUNCTION: 0x005367C0 CombatantSelectCommandClass::Get_Description
-// FUNCTION: 0x005367E0 CombatantSelectCommandClass::Unknown14
-// FUNCTION: 0x005367F0 CombatantSelectCommandClass::Execute
-// FUNCTION: 0x00536810 TypeSelectCommandClass::Get_Unique_Name
-// FUNCTION: 0x00536820 TypeSelectCommandClass::Get_Display_Name
-// FUNCTION: 0x00536840 TypeSelectCommandClass::Get_Category
-// FUNCTION: 0x00536860 TypeSelectCommandClass::Get_Description
-// FUNCTION: 0x00536880 TypeSelectCommandClass::Unknown14
-// FUNCTION: 0x00536890 TypeSelectCommandClass::Unknown18
-// FUNCTION: 0x005368A0 TypeSelectCommandClass::Unknown1C
-// FUNCTION: 0x005368B0 TypeSelectCommandClass::Execute
-// FUNCTION: 0x005368D0 HealthNavCommandClass::Get_Unique_Name
-// FUNCTION: 0x005368E0 HealthNavCommandClass::Get_Display_Name
-// FUNCTION: 0x00536900 HealthNavCommandClass::Get_Category
-// FUNCTION: 0x00536920 HealthNavCommandClass::Get_Description
-// FUNCTION: 0x00536940 HealthNavCommandClass::Unknown14
-// FUNCTION: 0x00536950 HealthNavCommandClass::Execute
-// FUNCTION: 0x00536970 VeterancyNavCommandClass::Get_Unique_Name
-// FUNCTION: 0x00536980 VeterancyNavCommandClass::Get_Display_Name
-// FUNCTION: 0x005369A0 VeterancyNavCommandClass::Get_Category
-// FUNCTION: 0x005369C0 VeterancyNavCommandClass::Get_Description
-// FUNCTION: 0x005369E0 VeterancyNavCommandClass::Unknown14
-// FUNCTION: 0x005369F0 VeterancyNavCommandClass::Execute
-// FUNCTION: 0x00536A10 PrevObjectCommandClass::Get_Unique_Name
-// FUNCTION: 0x00536A20 PrevObjectCommandClass::Get_Display_Name
-// FUNCTION: 0x00536A40 PrevObjectCommandClass::Get_Category
-// FUNCTION: 0x00536A60 PrevObjectCommandClass::Get_Description
-// FUNCTION: 0x00536A80 PrevObjectCommandClass::Execute
-// FUNCTION: 0x00536B10 StopCommandClass::Get_Unique_Name
-// FUNCTION: 0x00536B20 StopCommandClass::Get_Display_Name
-// FUNCTION: 0x00536B40 StopCommandClass::Get_Category
-// FUNCTION: 0x00536B60 StopCommandClass::Get_Description
-// FUNCTION: 0x00536B80 StopCommandClass::Execute
-// FUNCTION: 0x00536B90 AllToCheerCommandClass::Get_Unique_Name
-// FUNCTION: 0x00536BA0 AllToCheerCommandClass::Get_Display_Name
-// FUNCTION: 0x00536BC0 AllToCheerCommandClass::Get_Category
-// FUNCTION: 0x00536BE0 AllToCheerCommandClass::Get_Description
-// FUNCTION: 0x00536C00 AllToCheerCommandClass::Execute
-// FUNCTION: 0x00536C10 DeployCommandClass::Get_Unique_Name
-// FUNCTION: 0x00536C20 DeployCommandClass::Get_Display_Name
-// FUNCTION: 0x00536C40 DeployCommandClass::Get_Category
-// FUNCTION: 0x00536C60 DeployCommandClass::Get_Description
-// FUNCTION: 0x00536C80 DeployCommandClass::Execute
-// FUNCTION: 0x00536C90 GuardCommandClass::Get_Unique_Name
-// FUNCTION: 0x00536CA0 GuardCommandClass::Get_Display_Name
-// FUNCTION: 0x00536CC0 GuardCommandClass::Get_Category
-// FUNCTION: 0x00536CE0 GuardCommandClass::Get_Description
-// FUNCTION: 0x00536D00 GuardCommandClass::Execute
-// FUNCTION: 0x00536D10 ScatterCommandClass::Get_Unique_Name
-// FUNCTION: 0x00536D20 ScatterCommandClass::Get_Display_Name
-// FUNCTION: 0x00536D40 ScatterCommandClass::Get_Category
-// FUNCTION: 0x00536D60 ScatterCommandClass::Get_Description
-// FUNCTION: 0x00536D80 ScatterCommandClass::Execute
-// FUNCTION: 0x00536D90 CenterViewCommandClass::Get_Unique_Name
-// FUNCTION: 0x00536DA0 CenterViewCommandClass::Get_Display_Name
-// FUNCTION: 0x00536DC0 CenterViewCommandClass::Get_Category
-// FUNCTION: 0x00536DE0 CenterViewCommandClass::Get_Description
-// FUNCTION: 0x00536E00 CenterViewCommandClass::Execute
-// FUNCTION: 0x00536E30 CenterBaseCommandClass::Get_Unique_Name
-// FUNCTION: 0x00536E40 CenterBaseCommandClass::Get_Display_Name
-// FUNCTION: 0x00536E60 CenterBaseCommandClass::Get_Category
-// FUNCTION: 0x00536E80 CenterBaseCommandClass::Get_Description
-// FUNCTION: 0x00536EA0 CenterBaseCommandClass::Execute
-// FUNCTION: 0x00536EB0 AllianceCommandClass::Get_Unique_Name
-// FUNCTION: 0x00536EC0 AllianceCommandClass::Get_Display_Name
-// FUNCTION: 0x00536EE0 AllianceCommandClass::Get_Category
-// FUNCTION: 0x00536F00 AllianceCommandClass::Get_Description
-// FUNCTION: 0x00536F20 AllianceCommandClass::Execute
-// FUNCTION: 0x00536F30 ToggleRepairCommandClass::Get_Unique_Name
-// FUNCTION: 0x00536F40 ToggleRepairCommandClass::Get_Display_Name
-// FUNCTION: 0x00536F60 ToggleRepairCommandClass::Get_Category
-// FUNCTION: 0x00536F80 ToggleRepairCommandClass::Get_Description
-// FUNCTION: 0x00536FA0 ToggleRepairCommandClass::Execute
-// FUNCTION: 0x00536FB0 ToggleSellCommandClass::Get_Unique_Name
-// FUNCTION: 0x00536FC0 ToggleSellCommandClass::Get_Display_Name
-// FUNCTION: 0x00536FE0 ToggleSellCommandClass::Get_Category
-// FUNCTION: 0x00537000 ToggleSellCommandClass::Get_Description
-// FUNCTION: 0x00537020 ToggleSellCommandClass::Execute
-// FUNCTION: 0x00537030 BeaconPlacementCommandClass::Get_Unique_Name
-// FUNCTION: 0x00537040 BeaconPlacementCommandClass::Get_Display_Name
-// FUNCTION: 0x00537060 BeaconPlacementCommandClass::Get_Category
-// FUNCTION: 0x00537080 BeaconPlacementCommandClass::Get_Description
-// FUNCTION: 0x005370A0 BeaconPlacementCommandClass::Execute
-// FUNCTION: 0x005370C0 CenterREventCommandClass::Get_Unique_Name
-// FUNCTION: 0x005370D0 CenterREventCommandClass::Get_Display_Name
-// FUNCTION: 0x005370F0 CenterREventCommandClass::Get_Category
-// FUNCTION: 0x00537110 CenterREventCommandClass::Get_Description
-// FUNCTION: 0x00537130 CenterREventCommandClass::Execute
-// FUNCTION: 0x00537140 SidebarUpCommandClass::Get_Unique_Name
-// FUNCTION: 0x00537150 SidebarUpCommandClass::Get_Display_Name
-// FUNCTION: 0x00537170 SidebarUpCommandClass::Get_Category
-// FUNCTION: 0x00537190 SidebarUpCommandClass::Get_Description
-// FUNCTION: 0x005371B0 SidebarUpCommandClass::Execute
-// FUNCTION: 0x005371D0 SidebarDownCommandClass::Get_Unique_Name
-// FUNCTION: 0x005371E0 SidebarDownCommandClass::Get_Display_Name
-// FUNCTION: 0x00537200 SidebarDownCommandClass::Get_Category
-// FUNCTION: 0x00537220 SidebarDownCommandClass::Get_Description
-// FUNCTION: 0x00537240 SidebarDownCommandClass::Execute
-// FUNCTION: 0x00537260 OptionsCommandClass::Get_Unique_Name
-// FUNCTION: 0x00537270 OptionsCommandClass::Get_Display_Name
-// FUNCTION: 0x00537290 OptionsCommandClass::Get_Category
-// FUNCTION: 0x005372B0 OptionsCommandClass::Get_Description
-// FUNCTION: 0x005372D0 OptionsCommandClass::Execute
-// FUNCTION: 0x005372E0 View1CommandClass::Get_Unique_Name
-// FUNCTION: 0x005372F0 View1CommandClass::Get_Display_Name
-// FUNCTION: 0x00537310 View1CommandClass::Get_Category
-// FUNCTION: 0x00537330 View1CommandClass::Get_Description
-// FUNCTION: 0x00537350 View1CommandClass::Execute
-// FUNCTION: 0x005373D0 View2CommandClass::Get_Unique_Name
-// FUNCTION: 0x005373E0 View2CommandClass::Get_Display_Name
-// FUNCTION: 0x00537400 View2CommandClass::Get_Category
-// FUNCTION: 0x00537420 View2CommandClass::Get_Description
-// FUNCTION: 0x00537440 View2CommandClass::Execute
-// FUNCTION: 0x005374C0 View3CommandClass::Get_Unique_Name
-// FUNCTION: 0x005374D0 View3CommandClass::Get_Display_Name
-// FUNCTION: 0x005374F0 View3CommandClass::Get_Category
-// FUNCTION: 0x00537510 View3CommandClass::Get_Description
-// FUNCTION: 0x00537530 View3CommandClass::Execute
-// FUNCTION: 0x005375B0 View4CommandClass::Get_Unique_Name
-// FUNCTION: 0x005375C0 View4CommandClass::Get_Display_Name
-// FUNCTION: 0x005375E0 View4CommandClass::Get_Category
-// FUNCTION: 0x00537600 View4CommandClass::Get_Description
-// FUNCTION: 0x00537620 View4CommandClass::Execute
-// FUNCTION: 0x005376A0 SetView1CommandClass::Get_Unique_Name
-// FUNCTION: 0x005376B0 SetView1CommandClass::Get_Display_Name
-// FUNCTION: 0x005376D0 SetView1CommandClass::Get_Category
-// FUNCTION: 0x005376F0 SetView1CommandClass::Get_Description
-// FUNCTION: 0x00537710 SetView1CommandClass::Execute
-// FUNCTION: 0x00537760 SetView2CommandClass::Get_Unique_Name
-// FUNCTION: 0x00537770 SetView2CommandClass::Get_Display_Name
-// FUNCTION: 0x00537790 SetView2CommandClass::Get_Category
-// FUNCTION: 0x005377B0 SetView2CommandClass::Get_Description
-// FUNCTION: 0x005377D0 SetView2CommandClass::Execute
-// FUNCTION: 0x00537820 SetView3CommandClass::Get_Unique_Name
-// FUNCTION: 0x00537830 SetView3CommandClass::Get_Display_Name
-// FUNCTION: 0x00537850 SetView3CommandClass::Get_Category
-// FUNCTION: 0x00537870 SetView3CommandClass::Get_Description
-// FUNCTION: 0x00537890 SetView3CommandClass::Execute
-// FUNCTION: 0x005378E0 SetView4CommandClass::Get_Unique_Name
-// FUNCTION: 0x005378F0 SetView4CommandClass::Get_Display_Name
-// FUNCTION: 0x00537910 SetView4CommandClass::Get_Category
-// FUNCTION: 0x00537930 SetView4CommandClass::Get_Description
-// FUNCTION: 0x00537950 SetView4CommandClass::Execute
-// FUNCTION: 0x005379A0 FollowCommandClass::Get_Unique_Name
-// FUNCTION: 0x005379B0 FollowCommandClass::Get_Display_Name
-// FUNCTION: 0x005379D0 FollowCommandClass::Get_Category
-// FUNCTION: 0x005379F0 FollowCommandClass::Get_Description
-// FUNCTION: 0x00537A10 FollowCommandClass::Execute
-// FUNCTION: 0x00537A50 MultiplayerDebugCommandClass::Get_Unique_Name
-// FUNCTION: 0x00537A60 MultiplayerDebugCommandClass::Get_Category
-// FUNCTION: 0x00537A70 MultiplayerDebugCommandClass::Get_Display_Name
-// FUNCTION: 0x00537A80 MultiplayerDebugCommandClass::Get_Description
-// FUNCTION: 0x00537A90 MultiplayerDebugCommandClass::Execute
-// FUNCTION: 0x00537AB0 MultiplayerSyncCommandClass::Get_Unique_Name
-// FUNCTION: 0x00537AC0 MultiplayerSyncCommandClass::Get_Category
-// FUNCTION: 0x00537AD0 MultiplayerSyncCommandClass::Get_Display_Name
-// FUNCTION: 0x00537AE0 MultiplayerSyncCommandClass::Get_Description
-// FUNCTION: 0x00537AF0 MultiplayerSyncCommandClass::Execute
-// FUNCTION: 0x00537B40 ScreenCaptureCommandClass::ScreenCaptureCommandClass
-// FUNCTION: 0x00537B50 ScreenCaptureCommandClass::Get_Unique_Name
-// FUNCTION: 0x00537B60 ScreenCaptureCommandClass::Get_Category
-// FUNCTION: 0x00537B80 ScreenCaptureCommandClass::Get_Display_Name
-// FUNCTION: 0x00537BA0 ScreenCaptureCommandClass::Get_Description
-// FUNCTION: 0x00537BC0 ScreenCaptureCommandClass::Execute
-// FUNCTION: 0x00537DD0 PageUserCommandClass::PageUserCommandClass
-// FUNCTION: 0x00537DE0 PageUserCommandClass::Get_Unique_Name
-// FUNCTION: 0x00537DF0 PageUserCommandClass::Get_Display_Name
-// FUNCTION: 0x00537E10 PageUserCommandClass::Get_Category
-// FUNCTION: 0x00537E30 PageUserCommandClass::Get_Description
-// FUNCTION: 0x00537E50 PageUserCommandClass::Execute
-// FUNCTION: 0x00537E70 CursorPositionCommandClass::CursorPositionCommandClass
-// FUNCTION: 0x00537E80 CursorPositionCommandClass::Get_Unique_Name
-// FUNCTION: 0x00537E90 CursorPositionCommandClass::Get_Display_Name
-// FUNCTION: 0x00537EB0 CursorPositionCommandClass::Get_Category
-// FUNCTION: 0x00537ED0 CursorPositionCommandClass::Get_Description
-// FUNCTION: 0x00537EF0 CursorPositionCommandClass::Execute
-// FUNCTION: 0x00537F10 DeleteCommandClass::DeleteCommandClass
-// FUNCTION: 0x00537F20 DeleteCommandClass::Get_Unique_Name
-// FUNCTION: 0x00537F30 DeleteCommandClass::Get_Display_Name
-// FUNCTION: 0x00537F50 DeleteCommandClass::Get_Category
-// FUNCTION: 0x00537F70 DeleteCommandClass::Get_Description
-// FUNCTION: 0x00537F90 DeleteCommandClass::Execute
-// FUNCTION: 0x00537FA0 MultiplayerDebugCommandClass::~MultiplayerDebugCommandClass
-// FUNCTION: 0x00537FC0 MultiplayerSyncCommandClass::~MultiplayerSyncCommandClass
-// FUNCTION: 0x00537FE0 FollowCommandClass::~FollowCommandClass
-// FUNCTION: 0x00538000 View1CommandClass::~View1CommandClass
-// FUNCTION: 0x00538020 View2CommandClass::~View2CommandClass
-// FUNCTION: 0x00538040 View3CommandClass::~View3CommandClass
-// FUNCTION: 0x00538060 View4CommandClass::~View4CommandClass
-// FUNCTION: 0x00538080 SetView1CommandClass::~SetView1CommandClass
-// FUNCTION: 0x005380A0 SetView2CommandClass::~SetView2CommandClass
-// FUNCTION: 0x005380C0 SetView3CommandClass::~SetView3CommandClass
-// FUNCTION: 0x005380E0 SetView4CommandClass::~SetView4CommandClass
-// FUNCTION: 0x00538100 OptionsCommandClass::~OptionsCommandClass
-// FUNCTION: 0x00538120 SidebarUpCommandClass::~SidebarUpCommandClass
-// FUNCTION: 0x00538140 SidebarDownCommandClass::~SidebarDownCommandClass
-// FUNCTION: 0x00538160 CenterREventCommandClass::~CenterREventCommandClass
-// FUNCTION: 0x00538180 BeaconPlacementCommandClass::~BeaconPlacementCommandClass
-// FUNCTION: 0x005381A0 ToggleSellCommandClass::~ToggleSellCommandClass
-// FUNCTION: 0x005381C0 ToggleRepairCommandClass::~ToggleRepairCommandClass
-// FUNCTION: 0x005381E0 AllianceCommandClass::~AllianceCommandClass
-// FUNCTION: 0x00538200 CenterBaseCommandClass::~CenterBaseCommandClass
-// FUNCTION: 0x00538220 CenterViewCommandClass::~CenterViewCommandClass
-// FUNCTION: 0x00538240 ScatterCommandClass::~ScatterCommandClass
-// FUNCTION: 0x00538260 GuardCommandClass::~GuardCommandClass
-// FUNCTION: 0x00538280 StopCommandClass::~StopCommandClass
-// FUNCTION: 0x005382A0 AllToCheerCommandClass::~AllToCheerCommandClass
-// FUNCTION: 0x005382C0 DeployCommandClass::~DeployCommandClass
-// FUNCTION: 0x005382E0 PrevObjectCommandClass::~PrevObjectCommandClass
-// FUNCTION: 0x00538300 NextObjectCommandClass::~NextObjectCommandClass
-// FUNCTION: 0x00538320 PlanningModeCommandClass::~PlanningModeCommandClass
-// FUNCTION: 0x00538340 CombatantSelectCommandClass::~CombatantSelectCommandClass
-// FUNCTION: 0x00538360 TypeSelectCommandClass::~TypeSelectCommandClass
-// FUNCTION: 0x00538380 HealthNavCommandClass::~HealthNavCommandClass
-// FUNCTION: 0x005383A0 VeterancyNavCommandClass::~VeterancyNavCommandClass
-// FUNCTION: 0x005383C0 SetStructureTabCommandClass::~SetStructureTabCommandClass
-// FUNCTION: 0x005383E0 SetDefenseTabCommandClass::~SetDefenseTabCommandClass
-// FUNCTION: 0x00538400 SetUnitTabCommandClass::~SetUnitTabCommandClass
-// FUNCTION: 0x00538420 SetInfantryTabCommandClass::~SetInfantryTabCommandClass
-// FUNCTION: 0x00538440 ScreenCaptureCommandClass::~ScreenCaptureCommandClass
-// FUNCTION: 0x00538460 PageUserCommandClass::~PageUserCommandClass
-// FUNCTION: 0x00538480 CursorPositionCommandClass::~CursorPositionCommandClass
-// FUNCTION: 0x005384A0 DeleteCommandClass::~DeleteCommandClass
+// FUNCTION: GAMEMD 0x00535BD0
+// CommandClass::Unknown14
+// FUNCTION: GAMEMD 0x00535BE0
+// CommandClass::Unknown18
+// FUNCTION: GAMEMD 0x00535BF0
+// CommandClass::Unknown1C
+// FUNCTION: GAMEMD 0x00535C00
+// CreateTeamCommandClass::CreateTeamCommandClass
+// FUNCTION: GAMEMD 0x00535C20
+// CreateTeamCommandClass::Get_Unique_Name
+// FUNCTION: GAMEMD 0x00535C40
+// CreateTeamCommandClass::Get_Display_Name
+// FUNCTION: GAMEMD 0x00535C70
+// CreateTeamCommandClass::Get_Category
+// FUNCTION: GAMEMD 0x00535C90
+// CreateTeamCommandClass::Get_Description
+// FUNCTION: GAMEMD 0x00535CC0
+// CreateTeamCommandClass::Execute
+// SYNTHETIC: GAMEMD 0x00535CD0
+// ??_GCreateTeamCommandClass@@UAEPAXI@Z
+// FUNCTION: GAMEMD 0x00535CF0
+// CommandClass::Get_Display_Name
+// SYNTHETIC: GAMEMD 0x00535D00
+// ??_GCommandClass@@UAEPAXI@Z
+// FUNCTION: GAMEMD 0x00535D20
+// SetStructureTabCommandClass::Get_Unique_Name
+// FUNCTION: GAMEMD 0x00535D30
+// SetStructureTabCommandClass::Get_Display_Name
+// FUNCTION: GAMEMD 0x00535D50
+// SetStructureTabCommandClass::Get_Category
+// FUNCTION: GAMEMD 0x00535D70
+// SetStructureTabCommandClass::Get_Description
+// FUNCTION: GAMEMD 0x00535D90
+// SetStructureTabCommandClass::Execute
+// FUNCTION: GAMEMD 0x00535DE0
+// SetDefenseTabCommandClass::Get_Unique_Name
+// FUNCTION: GAMEMD 0x00535DF0
+// SetDefenseTabCommandClass::Get_Display_Name
+// FUNCTION: GAMEMD 0x00535E10
+// SetDefenseTabCommandClass::Get_Category
+// FUNCTION: GAMEMD 0x00535E30
+// SetDefenseTabCommandClass::Get_Description
+// FUNCTION: GAMEMD 0x00535E50
+// SetDefenseTabCommandClass::Execute
+// FUNCTION: GAMEMD 0x00535EA0
+// SetInfantryTabCommandClass::Get_Unique_Name
+// FUNCTION: GAMEMD 0x00535EB0
+// SetInfantryTabCommandClass::Get_Display_Name
+// FUNCTION: GAMEMD 0x00535ED0
+// SetInfantryTabCommandClass::Get_Category
+// FUNCTION: GAMEMD 0x00535EF0
+// SetInfantryTabCommandClass::Get_Description
+// FUNCTION: GAMEMD 0x00535F10
+// SetInfantryTabCommandClass::Execute
+// FUNCTION: GAMEMD 0x00535F30
+// SetUnitTabCommandClass::Get_Unique_Name
+// FUNCTION: GAMEMD 0x00535F40
+// SetUnitTabCommandClass::Get_Display_Name
+// FUNCTION: GAMEMD 0x00535F60
+// SetUnitTabCommandClass::Get_Category
+// FUNCTION: GAMEMD 0x00535F80
+// SetUnitTabCommandClass::Get_Description
+// FUNCTION: GAMEMD 0x00535FA0
+// SetUnitTabCommandClass::Execute
+// FUNCTION: GAMEMD 0x00535FC0
+// SelectTeamCommandClass::SelectTeamCommandClass
+// FUNCTION: GAMEMD 0x00535FE0
+// SelectTeamCommandClass::Get_Unique_Name
+// FUNCTION: GAMEMD 0x00536000
+// SelectTeamCommandClass::Get_Display_Name
+// FUNCTION: GAMEMD 0x00536030
+// SelectTeamCommandClass::Get_Category
+// FUNCTION: GAMEMD 0x00536050
+// SelectTeamCommandClass::Get_Description
+// FUNCTION: GAMEMD 0x00536080
+// SelectTeamCommandClass::Execute
+// SYNTHETIC: GAMEMD 0x00536090
+// ??_GSelectTeamCommandClass@@UAEPAXI@Z
+// FUNCTION: GAMEMD 0x005360B0
+// AddTeamCommandClass::AddTeamCommandClass
+// FUNCTION: GAMEMD 0x005360D0
+// AddTeamCommandClass::Get_Unique_Name
+// FUNCTION: GAMEMD 0x005360F0
+// AddTeamCommandClass::Get_Display_Name
+// FUNCTION: GAMEMD 0x00536120
+// AddTeamCommandClass::Get_Category
+// FUNCTION: GAMEMD 0x00536140
+// AddTeamCommandClass::Get_Description
+// FUNCTION: GAMEMD 0x00536170
+// AddTeamCommandClass::Execute
+// SYNTHETIC: GAMEMD 0x00536180
+// ??_GAddTeamCommandClass@@UAEPAXI@Z
+// FUNCTION: GAMEMD 0x005361A0
+// CenterTeamCommandClass::CenterTeamCommandClass
+// FUNCTION: GAMEMD 0x005361C0
+// CenterTeamCommandClass::Get_Unique_Name
+// FUNCTION: GAMEMD 0x005361E0
+// CenterTeamCommandClass::Get_Display_Name
+// FUNCTION: GAMEMD 0x00536210
+// CenterTeamCommandClass::Get_Category
+// FUNCTION: GAMEMD 0x00536230
+// CenterTeamCommandClass::Get_Description
+// FUNCTION: GAMEMD 0x00536260
+// CenterTeamCommandClass::Execute
+// SYNTHETIC: GAMEMD 0x00536270
+// ??_GCenterTeamCommandClass@@UAEPAXI@Z
+// FUNCTION: GAMEMD 0x00536290
+// TauntCommandClass::TauntCommandClass
+// FUNCTION: GAMEMD 0x005362B0
+// TauntCommandClass::Get_Unique_Name
+// FUNCTION: GAMEMD 0x005362D0
+// TauntCommandClass::Get_Display_Name
+// FUNCTION: GAMEMD 0x00536300
+// TauntCommandClass::Get_Category
+// FUNCTION: GAMEMD 0x00536320
+// TauntCommandClass::Get_Description
+// SYNTHETIC: GAMEMD 0x00536580
+// ??_GTauntCommandClass@@UAEPAXI@Z
+// FUNCTION: GAMEMD 0x005365A0
+// NextObjectCommandClass::Get_Unique_Name
+// FUNCTION: GAMEMD 0x005365B0
+// NextObjectCommandClass::Get_Display_Name
+// FUNCTION: GAMEMD 0x005365D0
+// NextObjectCommandClass::Get_Category
+// FUNCTION: GAMEMD 0x005365F0
+// NextObjectCommandClass::Get_Description
+// FUNCTION: GAMEMD 0x00536610
+// NextObjectCommandClass::Execute
+// FUNCTION: GAMEMD 0x005366A0
+// PlanningModeCommandClass::Get_Unique_Name
+// FUNCTION: GAMEMD 0x005366B0
+// PlanningModeCommandClass::Get_Display_Name
+// FUNCTION: GAMEMD 0x005366D0
+// PlanningModeCommandClass::Get_Category
+// FUNCTION: GAMEMD 0x005366F0
+// PlanningModeCommandClass::Get_Description
+// FUNCTION: GAMEMD 0x00536710
+// PlanningModeCommandClass::Unknown14
+// FUNCTION: GAMEMD 0x00536730
+// PlanningModeCommandClass::Unknown18
+// FUNCTION: GAMEMD 0x00536740
+// PlanningModeCommandClass::Unknown1C
+// FUNCTION: GAMEMD 0x00536750
+// PlanningModeCommandClass::Execute
+// FUNCTION: GAMEMD 0x00536770
+// CombatantSelectCommandClass::Get_Unique_Name
+// FUNCTION: GAMEMD 0x00536780
+// CombatantSelectCommandClass::Get_Display_Name
+// FUNCTION: GAMEMD 0x005367A0
+// CombatantSelectCommandClass::Get_Category
+// FUNCTION: GAMEMD 0x005367C0
+// CombatantSelectCommandClass::Get_Description
+// FUNCTION: GAMEMD 0x005367E0
+// CombatantSelectCommandClass::Unknown14
+// FUNCTION: GAMEMD 0x005367F0
+// CombatantSelectCommandClass::Execute
+// FUNCTION: GAMEMD 0x00536810
+// TypeSelectCommandClass::Get_Unique_Name
+// FUNCTION: GAMEMD 0x00536820
+// TypeSelectCommandClass::Get_Display_Name
+// FUNCTION: GAMEMD 0x00536840
+// TypeSelectCommandClass::Get_Category
+// FUNCTION: GAMEMD 0x00536860
+// TypeSelectCommandClass::Get_Description
+// FUNCTION: GAMEMD 0x00536880
+// TypeSelectCommandClass::Unknown14
+// FUNCTION: GAMEMD 0x00536890
+// TypeSelectCommandClass::Unknown18
+// FUNCTION: GAMEMD 0x005368A0
+// TypeSelectCommandClass::Unknown1C
+// FUNCTION: GAMEMD 0x005368B0
+// TypeSelectCommandClass::Execute
+// FUNCTION: GAMEMD 0x005368D0
+// HealthNavCommandClass::Get_Unique_Name
+// FUNCTION: GAMEMD 0x005368E0
+// HealthNavCommandClass::Get_Display_Name
+// FUNCTION: GAMEMD 0x00536900
+// HealthNavCommandClass::Get_Category
+// FUNCTION: GAMEMD 0x00536920
+// HealthNavCommandClass::Get_Description
+// FUNCTION: GAMEMD 0x00536940
+// HealthNavCommandClass::Unknown14
+// FUNCTION: GAMEMD 0x00536950
+// HealthNavCommandClass::Execute
+// FUNCTION: GAMEMD 0x00536970
+// VeterancyNavCommandClass::Get_Unique_Name
+// FUNCTION: GAMEMD 0x00536980
+// VeterancyNavCommandClass::Get_Display_Name
+// FUNCTION: GAMEMD 0x005369A0
+// VeterancyNavCommandClass::Get_Category
+// FUNCTION: GAMEMD 0x005369C0
+// VeterancyNavCommandClass::Get_Description
+// FUNCTION: GAMEMD 0x005369E0
+// VeterancyNavCommandClass::Unknown14
+// FUNCTION: GAMEMD 0x005369F0
+// VeterancyNavCommandClass::Execute
+// FUNCTION: GAMEMD 0x00536A10
+// PrevObjectCommandClass::Get_Unique_Name
+// FUNCTION: GAMEMD 0x00536A20
+// PrevObjectCommandClass::Get_Display_Name
+// FUNCTION: GAMEMD 0x00536A40
+// PrevObjectCommandClass::Get_Category
+// FUNCTION: GAMEMD 0x00536A60
+// PrevObjectCommandClass::Get_Description
+// FUNCTION: GAMEMD 0x00536A80
+// PrevObjectCommandClass::Execute
+// FUNCTION: GAMEMD 0x00536B10
+// StopCommandClass::Get_Unique_Name
+// FUNCTION: GAMEMD 0x00536B20
+// StopCommandClass::Get_Display_Name
+// FUNCTION: GAMEMD 0x00536B40
+// StopCommandClass::Get_Category
+// FUNCTION: GAMEMD 0x00536B60
+// StopCommandClass::Get_Description
+// FUNCTION: GAMEMD 0x00536B80
+// StopCommandClass::Execute
+// FUNCTION: GAMEMD 0x00536B90
+// AllToCheerCommandClass::Get_Unique_Name
+// FUNCTION: GAMEMD 0x00536BA0
+// AllToCheerCommandClass::Get_Display_Name
+// FUNCTION: GAMEMD 0x00536BC0
+// AllToCheerCommandClass::Get_Category
+// FUNCTION: GAMEMD 0x00536BE0
+// AllToCheerCommandClass::Get_Description
+// FUNCTION: GAMEMD 0x00536C00
+// AllToCheerCommandClass::Execute
+// FUNCTION: GAMEMD 0x00536C10
+// DeployCommandClass::Get_Unique_Name
+// FUNCTION: GAMEMD 0x00536C20
+// DeployCommandClass::Get_Display_Name
+// FUNCTION: GAMEMD 0x00536C40
+// DeployCommandClass::Get_Category
+// FUNCTION: GAMEMD 0x00536C60
+// DeployCommandClass::Get_Description
+// FUNCTION: GAMEMD 0x00536C80
+// DeployCommandClass::Execute
+// FUNCTION: GAMEMD 0x00536C90
+// GuardCommandClass::Get_Unique_Name
+// FUNCTION: GAMEMD 0x00536CA0
+// GuardCommandClass::Get_Display_Name
+// FUNCTION: GAMEMD 0x00536CC0
+// GuardCommandClass::Get_Category
+// FUNCTION: GAMEMD 0x00536CE0
+// GuardCommandClass::Get_Description
+// FUNCTION: GAMEMD 0x00536D00
+// GuardCommandClass::Execute
+// FUNCTION: GAMEMD 0x00536D10
+// ScatterCommandClass::Get_Unique_Name
+// FUNCTION: GAMEMD 0x00536D20
+// ScatterCommandClass::Get_Display_Name
+// FUNCTION: GAMEMD 0x00536D40
+// ScatterCommandClass::Get_Category
+// FUNCTION: GAMEMD 0x00536D60
+// ScatterCommandClass::Get_Description
+// FUNCTION: GAMEMD 0x00536D80
+// ScatterCommandClass::Execute
+// FUNCTION: GAMEMD 0x00536D90
+// CenterViewCommandClass::Get_Unique_Name
+// FUNCTION: GAMEMD 0x00536DA0
+// CenterViewCommandClass::Get_Display_Name
+// FUNCTION: GAMEMD 0x00536DC0
+// CenterViewCommandClass::Get_Category
+// FUNCTION: GAMEMD 0x00536DE0
+// CenterViewCommandClass::Get_Description
+// FUNCTION: GAMEMD 0x00536E00
+// CenterViewCommandClass::Execute
+// FUNCTION: GAMEMD 0x00536E30
+// CenterBaseCommandClass::Get_Unique_Name
+// FUNCTION: GAMEMD 0x00536E40
+// CenterBaseCommandClass::Get_Display_Name
+// FUNCTION: GAMEMD 0x00536E60
+// CenterBaseCommandClass::Get_Category
+// FUNCTION: GAMEMD 0x00536E80
+// CenterBaseCommandClass::Get_Description
+// FUNCTION: GAMEMD 0x00536EA0
+// CenterBaseCommandClass::Execute
+// FUNCTION: GAMEMD 0x00536EB0
+// AllianceCommandClass::Get_Unique_Name
+// FUNCTION: GAMEMD 0x00536EC0
+// AllianceCommandClass::Get_Display_Name
+// FUNCTION: GAMEMD 0x00536EE0
+// AllianceCommandClass::Get_Category
+// FUNCTION: GAMEMD 0x00536F00
+// AllianceCommandClass::Get_Description
+// FUNCTION: GAMEMD 0x00536F20
+// AllianceCommandClass::Execute
+// FUNCTION: GAMEMD 0x00536F30
+// ToggleRepairCommandClass::Get_Unique_Name
+// FUNCTION: GAMEMD 0x00536F40
+// ToggleRepairCommandClass::Get_Display_Name
+// FUNCTION: GAMEMD 0x00536F60
+// ToggleRepairCommandClass::Get_Category
+// FUNCTION: GAMEMD 0x00536F80
+// ToggleRepairCommandClass::Get_Description
+// FUNCTION: GAMEMD 0x00536FA0
+// ToggleRepairCommandClass::Execute
+// FUNCTION: GAMEMD 0x00536FB0
+// ToggleSellCommandClass::Get_Unique_Name
+// FUNCTION: GAMEMD 0x00536FC0
+// ToggleSellCommandClass::Get_Display_Name
+// FUNCTION: GAMEMD 0x00536FE0
+// ToggleSellCommandClass::Get_Category
+// FUNCTION: GAMEMD 0x00537000
+// ToggleSellCommandClass::Get_Description
+// FUNCTION: GAMEMD 0x00537020
+// ToggleSellCommandClass::Execute
+// FUNCTION: GAMEMD 0x00537030
+// BeaconPlacementCommandClass::Get_Unique_Name
+// FUNCTION: GAMEMD 0x00537040
+// BeaconPlacementCommandClass::Get_Display_Name
+// FUNCTION: GAMEMD 0x00537060
+// BeaconPlacementCommandClass::Get_Category
+// FUNCTION: GAMEMD 0x00537080
+// BeaconPlacementCommandClass::Get_Description
+// FUNCTION: GAMEMD 0x005370A0
+// BeaconPlacementCommandClass::Execute
+// FUNCTION: GAMEMD 0x005370C0
+// CenterREventCommandClass::Get_Unique_Name
+// FUNCTION: GAMEMD 0x005370D0
+// CenterREventCommandClass::Get_Display_Name
+// FUNCTION: GAMEMD 0x005370F0
+// CenterREventCommandClass::Get_Category
+// FUNCTION: GAMEMD 0x00537110
+// CenterREventCommandClass::Get_Description
+// FUNCTION: GAMEMD 0x00537130
+// CenterREventCommandClass::Execute
+// FUNCTION: GAMEMD 0x00537140
+// SidebarUpCommandClass::Get_Unique_Name
+// FUNCTION: GAMEMD 0x00537150
+// SidebarUpCommandClass::Get_Display_Name
+// FUNCTION: GAMEMD 0x00537170
+// SidebarUpCommandClass::Get_Category
+// FUNCTION: GAMEMD 0x00537190
+// SidebarUpCommandClass::Get_Description
+// FUNCTION: GAMEMD 0x005371B0
+// SidebarUpCommandClass::Execute
+// FUNCTION: GAMEMD 0x005371D0
+// SidebarDownCommandClass::Get_Unique_Name
+// FUNCTION: GAMEMD 0x005371E0
+// SidebarDownCommandClass::Get_Display_Name
+// FUNCTION: GAMEMD 0x00537200
+// SidebarDownCommandClass::Get_Category
+// FUNCTION: GAMEMD 0x00537220
+// SidebarDownCommandClass::Get_Description
+// FUNCTION: GAMEMD 0x00537240
+// SidebarDownCommandClass::Execute
+// FUNCTION: GAMEMD 0x00537260
+// OptionsCommandClass::Get_Unique_Name
+// FUNCTION: GAMEMD 0x00537270
+// OptionsCommandClass::Get_Display_Name
+// FUNCTION: GAMEMD 0x00537290
+// OptionsCommandClass::Get_Category
+// FUNCTION: GAMEMD 0x005372B0
+// OptionsCommandClass::Get_Description
+// FUNCTION: GAMEMD 0x005372D0
+// OptionsCommandClass::Execute
+// FUNCTION: GAMEMD 0x005372E0
+// View1CommandClass::Get_Unique_Name
+// FUNCTION: GAMEMD 0x005372F0
+// View1CommandClass::Get_Display_Name
+// FUNCTION: GAMEMD 0x00537310
+// View1CommandClass::Get_Category
+// FUNCTION: GAMEMD 0x00537330
+// View1CommandClass::Get_Description
+// FUNCTION: GAMEMD 0x00537350
+// View1CommandClass::Execute
+// FUNCTION: GAMEMD 0x005373D0
+// View2CommandClass::Get_Unique_Name
+// FUNCTION: GAMEMD 0x005373E0
+// View2CommandClass::Get_Display_Name
+// FUNCTION: GAMEMD 0x00537400
+// View2CommandClass::Get_Category
+// FUNCTION: GAMEMD 0x00537420
+// View2CommandClass::Get_Description
+// FUNCTION: GAMEMD 0x00537440
+// View2CommandClass::Execute
+// FUNCTION: GAMEMD 0x005374C0
+// View3CommandClass::Get_Unique_Name
+// FUNCTION: GAMEMD 0x005374D0
+// View3CommandClass::Get_Display_Name
+// FUNCTION: GAMEMD 0x005374F0
+// View3CommandClass::Get_Category
+// FUNCTION: GAMEMD 0x00537510
+// View3CommandClass::Get_Description
+// FUNCTION: GAMEMD 0x00537530
+// View3CommandClass::Execute
+// FUNCTION: GAMEMD 0x005375B0
+// View4CommandClass::Get_Unique_Name
+// FUNCTION: GAMEMD 0x005375C0
+// View4CommandClass::Get_Display_Name
+// FUNCTION: GAMEMD 0x005375E0
+// View4CommandClass::Get_Category
+// FUNCTION: GAMEMD 0x00537600
+// View4CommandClass::Get_Description
+// FUNCTION: GAMEMD 0x00537620
+// View4CommandClass::Execute
+// FUNCTION: GAMEMD 0x005376A0
+// SetView1CommandClass::Get_Unique_Name
+// FUNCTION: GAMEMD 0x005376B0
+// SetView1CommandClass::Get_Display_Name
+// FUNCTION: GAMEMD 0x005376D0
+// SetView1CommandClass::Get_Category
+// FUNCTION: GAMEMD 0x005376F0
+// SetView1CommandClass::Get_Description
+// FUNCTION: GAMEMD 0x00537710
+// SetView1CommandClass::Execute
+// FUNCTION: GAMEMD 0x00537760
+// SetView2CommandClass::Get_Unique_Name
+// FUNCTION: GAMEMD 0x00537770
+// SetView2CommandClass::Get_Display_Name
+// FUNCTION: GAMEMD 0x00537790
+// SetView2CommandClass::Get_Category
+// FUNCTION: GAMEMD 0x005377B0
+// SetView2CommandClass::Get_Description
+// FUNCTION: GAMEMD 0x005377D0
+// SetView2CommandClass::Execute
+// FUNCTION: GAMEMD 0x00537820
+// SetView3CommandClass::Get_Unique_Name
+// FUNCTION: GAMEMD 0x00537830
+// SetView3CommandClass::Get_Display_Name
+// FUNCTION: GAMEMD 0x00537850
+// SetView3CommandClass::Get_Category
+// FUNCTION: GAMEMD 0x00537870
+// SetView3CommandClass::Get_Description
+// FUNCTION: GAMEMD 0x00537890
+// SetView3CommandClass::Execute
+// FUNCTION: GAMEMD 0x005378E0
+// SetView4CommandClass::Get_Unique_Name
+// FUNCTION: GAMEMD 0x005378F0
+// SetView4CommandClass::Get_Display_Name
+// FUNCTION: GAMEMD 0x00537910
+// SetView4CommandClass::Get_Category
+// FUNCTION: GAMEMD 0x00537930
+// SetView4CommandClass::Get_Description
+// FUNCTION: GAMEMD 0x00537950
+// SetView4CommandClass::Execute
+// FUNCTION: GAMEMD 0x005379A0
+// FollowCommandClass::Get_Unique_Name
+// FUNCTION: GAMEMD 0x005379B0
+// FollowCommandClass::Get_Display_Name
+// FUNCTION: GAMEMD 0x005379D0
+// FollowCommandClass::Get_Category
+// FUNCTION: GAMEMD 0x005379F0
+// FollowCommandClass::Get_Description
+// FUNCTION: GAMEMD 0x00537A10
+// FollowCommandClass::Execute
+// FUNCTION: GAMEMD 0x00537A50
+// MultiplayerDebugCommandClass::Get_Unique_Name
+// FUNCTION: GAMEMD 0x00537A60
+// MultiplayerDebugCommandClass::Get_Category
+// FUNCTION: GAMEMD 0x00537A70
+// MultiplayerDebugCommandClass::Get_Display_Name
+// FUNCTION: GAMEMD 0x00537A80
+// MultiplayerDebugCommandClass::Get_Description
+// FUNCTION: GAMEMD 0x00537A90
+// MultiplayerDebugCommandClass::Execute
+// FUNCTION: GAMEMD 0x00537AB0
+// MultiplayerSyncCommandClass::Get_Unique_Name
+// FUNCTION: GAMEMD 0x00537AC0
+// MultiplayerSyncCommandClass::Get_Category
+// FUNCTION: GAMEMD 0x00537AD0
+// MultiplayerSyncCommandClass::Get_Display_Name
+// FUNCTION: GAMEMD 0x00537AE0
+// MultiplayerSyncCommandClass::Get_Description
+// FUNCTION: GAMEMD 0x00537AF0
+// MultiplayerSyncCommandClass::Execute
+// FUNCTION: GAMEMD 0x00537B40
+// ScreenCaptureCommandClass::ScreenCaptureCommandClass
+// FUNCTION: GAMEMD 0x00537B50
+// ScreenCaptureCommandClass::Get_Unique_Name
+// FUNCTION: GAMEMD 0x00537B60
+// ScreenCaptureCommandClass::Get_Category
+// FUNCTION: GAMEMD 0x00537B80
+// ScreenCaptureCommandClass::Get_Display_Name
+// FUNCTION: GAMEMD 0x00537BA0
+// ScreenCaptureCommandClass::Get_Description
+// FUNCTION: GAMEMD 0x00537BC0
+// ScreenCaptureCommandClass::Execute
+// FUNCTION: GAMEMD 0x00537DD0
+// PageUserCommandClass::PageUserCommandClass
+// FUNCTION: GAMEMD 0x00537DE0
+// PageUserCommandClass::Get_Unique_Name
+// FUNCTION: GAMEMD 0x00537DF0
+// PageUserCommandClass::Get_Display_Name
+// FUNCTION: GAMEMD 0x00537E10
+// PageUserCommandClass::Get_Category
+// FUNCTION: GAMEMD 0x00537E30
+// PageUserCommandClass::Get_Description
+// FUNCTION: GAMEMD 0x00537E50
+// PageUserCommandClass::Execute
+// FUNCTION: GAMEMD 0x00537E70
+// CursorPositionCommandClass::CursorPositionCommandClass
+// FUNCTION: GAMEMD 0x00537E80
+// CursorPositionCommandClass::Get_Unique_Name
+// FUNCTION: GAMEMD 0x00537E90
+// CursorPositionCommandClass::Get_Display_Name
+// FUNCTION: GAMEMD 0x00537EB0
+// CursorPositionCommandClass::Get_Category
+// FUNCTION: GAMEMD 0x00537ED0
+// CursorPositionCommandClass::Get_Description
+// FUNCTION: GAMEMD 0x00537EF0
+// CursorPositionCommandClass::Execute
+// FUNCTION: GAMEMD 0x00537F10
+// DeleteCommandClass::DeleteCommandClass
+// FUNCTION: GAMEMD 0x00537F20
+// DeleteCommandClass::Get_Unique_Name
+// FUNCTION: GAMEMD 0x00537F30
+// DeleteCommandClass::Get_Display_Name
+// FUNCTION: GAMEMD 0x00537F50
+// DeleteCommandClass::Get_Category
+// FUNCTION: GAMEMD 0x00537F70
+// DeleteCommandClass::Get_Description
+// FUNCTION: GAMEMD 0x00537F90
+// DeleteCommandClass::Execute
+// SYNTHETIC: GAMEMD 0x00537FA0
+// ??_GMultiplayerDebugCommandClass@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00537FC0
+// ??_GMultiplayerSyncCommandClass@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00537FE0
+// ??_GFollowCommandClass@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00538000
+// ??_GView1CommandClass@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00538020
+// ??_GView2CommandClass@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00538040
+// ??_GView3CommandClass@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00538060
+// ??_GView4CommandClass@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00538080
+// ??_GSetView1CommandClass@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x005380A0
+// ??_GSetView2CommandClass@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x005380C0
+// ??_GSetView3CommandClass@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x005380E0
+// ??_GSetView4CommandClass@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00538100
+// ??_GOptionsCommandClass@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00538120
+// ??_GSidebarUpCommandClass@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00538140
+// ??_GSidebarDownCommandClass@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00538160
+// ??_GCenterREventCommandClass@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00538180
+// ??_GBeaconPlacementCommandClass@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x005381A0
+// ??_GToggleSellCommandClass@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x005381C0
+// ??_GToggleRepairCommandClass@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x005381E0
+// ??_GAllianceCommandClass@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00538200
+// ??_GCenterBaseCommandClass@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00538220
+// ??_GCenterViewCommandClass@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00538240
+// ??_GScatterCommandClass@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00538260
+// ??_GGuardCommandClass@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00538280
+// ??_GStopCommandClass@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x005382A0
+// ??_GAllToCheerCommandClass@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x005382C0
+// ??_GDeployCommandClass@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x005382E0
+// ??_GPrevObjectCommandClass@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00538300
+// ??_GNextObjectCommandClass@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00538320
+// ??_GPlanningModeCommandClass@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00538340
+// ??_GCombatantSelectCommandClass@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00538360
+// ??_GTypeSelectCommandClass@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00538380
+// ??_GHealthNavCommandClass@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x005383A0
+// ??_GVeterancyNavCommandClass@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x005383C0
+// ??_GSetStructureTabCommandClass@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x005383E0
+// ??_GSetDefenseTabCommandClass@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00538400
+// ??_GSetUnitTabCommandClass@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00538420
+// ??_GSetInfantryTabCommandClass@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00538440
+// ??_GScreenCaptureCommandClass@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00538460
+// ??_GPageUserCommandClass@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00538480
+// ??_GCursorPositionCommandClass@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x005384A0
+// ??_GDeleteCommandClass@@UAEPAXI@Z
 
-// FUNCTION: 0x005384C0 ?$DynamicVectorClass@PAVCCINIClass@@::Clear
+// TEMPLATE: GAMEMD 0x005384C0
+// ?Clear@?$DynamicVectorClass@PAVCCINIClass@@@@UAEXXZ
 template class DynamicVectorClass<CCINIClass *>;
 
-// FUNCTION: 0x005384F0 ?$DynamicVectorClass@PAVCCINIClass@@::ID
-// FUNCTION: 0x00538510 ?$VectorClass@PAVCCINIClass@@::GetItem
-// FUNCTION: 0x00538520 ?$VectorClass@PAVCCINIClass@@::operator==
-// FUNCTION: 0x00538560 ?$VectorClass@PAVCCINIClass@@::Resize
-// FUNCTION: 0x00538610 ?$VectorClass@PAVCCINIClass@@::Clear
-// FUNCTION: 0x00538640 ?$VectorClass@PAVCCINIClass@@::ID
-// FUNCTION: 0x00538680 ?$VectorClass@PAVCCINIClass@@::ID
-// FUNCTION: 0x005386A0 ?$DynamicVectorClass@PAVCCINIClass@@::Resize
-// FUNCTION: 0x00538750 ?$DynamicVectorClass@PAVCCINIClass@@::ID
-// FUNCTION: 0x00538780 ?$DynamicVectorClass@PBVCommandClass@@::Add
+// TEMPLATE: GAMEMD 0x005384F0
+// ?ID@?$DynamicVectorClass@PAVCCINIClass@@@@UAEHPBQAVCCINIClass@@@Z
+// TEMPLATE: GAMEMD 0x00538510
+// ?GetItem@?$VectorClass@PAVCCINIClass@@@@UBEPAVCCINIClass@@H@Z
+// TEMPLATE: GAMEMD 0x00538520
+// ??8?$VectorClass@PAVCCINIClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x00538560
+// ?Resize@?$VectorClass@PAVCCINIClass@@@@UAE_NHPBQAVCCINIClass@@@Z
+// TEMPLATE: GAMEMD 0x00538610
+// ?Clear@?$VectorClass@PAVCCINIClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x00538640
+// ?ID@?$VectorClass@PAVCCINIClass@@@@UAEHABQAVCCINIClass@@@Z
+// TEMPLATE: GAMEMD 0x00538680
+// ?ID@?$VectorClass@PAVCCINIClass@@@@UAEHPBQAVCCINIClass@@@Z
+// TEMPLATE: GAMEMD 0x005386A0
+// ?Resize@?$DynamicVectorClass@PAVCCINIClass@@@@UAE_NHPBQAVCCINIClass@@@Z
+// TEMPLATE: GAMEMD 0x00538750
+// ?ID@?$DynamicVectorClass@PAVCCINIClass@@@@UAEHABQAVCCINIClass@@@Z
+// TEMPLATE: GAMEMD 0x00538780
+// ?Add@?$DynamicVectorClass@PBVCommandClass@@@@QAE_NABQBVCommandClass@@@Z
 template class DynamicVectorClass<CommandClass const *>;
 template class VectorClass<CommandClass const *>;
 
-// FUNCTION: 0x005387D0 ?$IndexClass@HPBVCommandClass@@::Add_Index
-// FUNCTION: 0x005388A0 ?$IndexClass@HPBVCommandClass@@::Remove_Index
-// FUNCTION: 0x00538980 ?$IndexClass@HPBVCommandClass@@::Is_Present
-// FUNCTION: 0x00538A20 ?$rc_ptr@VWDTTerritory@@::~?$rc_ptr@VWDTTerritory@@
-// FUNCTION: 0x00538A90 ?$VectorClass@PBVCommandClass@@::~?$VectorClass@PBVCommandClass@@
-// FUNCTION: 0x00538AE0 ?$DynamicVectorClass@PBVCommandClass@@::~?$DynamicVectorClass@PBVCommandClass@@
-// FUNCTION: 0x00538B30 ?$VectorClass@PBVCommandClass@@::?$VectorClass@PBVCommandClass@@
-// FUNCTION: 0x00538B80 ?$IndexClass@HPBVCommandClass@@::Increase_Table_Size
+// TEMPLATE: GAMEMD 0x005387D0
+// ?Add_Index@?$IndexClass@HPBVCommandClass@@@@QAE_NABHABQBVCommandClass@@@Z
+// TEMPLATE: GAMEMD 0x005388A0
+// ?Remove_Index@?$IndexClass@HPBVCommandClass@@@@QAE_NABH@Z
+// TEMPLATE: GAMEMD 0x00538980
+// ?Is_Present@?$IndexClass@HPBVCommandClass@@@@QBE_NABH@Z
+// SYNTHETIC: GAMEMD 0x00538A20
+// ??_E?$rc_ptr@VWDTTerritory@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00538A90
+// ??_G?$VectorClass@PBVCommandClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00538AE0
+// ??_G?$DynamicVectorClass@PBVCommandClass@@@@UAEPAXI@Z
+// TEMPLATE: GAMEMD 0x00538B30
+// ??0?$VectorClass@PBVCommandClass@@@@QAE@HPBQBVCommandClass@@@Z
+// TEMPLATE: GAMEMD 0x00538B80
+// ?Increase_Table_Size@?$IndexClass@HPBVCommandClass@@@@AAE_NH@Z
 template class IndexClass<int, CommandClass const *>;
 
 extern unsigned long DAT_00A8F7F8[64];
 void __fastcall XMP_Init(unsigned long * number, unsigned long value, int precision);
 
-// FUNCTION: 0x00538C10
+// FUNCTION: GAMEMD 0x00538C10
 void FUN_00538C10(void)
 {
 	XMP_Init(DAT_00A8F7F8, 0, 64);
@@ -3774,7 +4104,7 @@ extern int DAT_00A8F90C;
 extern int DAT_00A8F910;
 extern int DAT_00A8F914;
 
-// FUNCTION: 0x00538C20
+// FUNCTION: GAMEMD 0x00538C20
 void FUN_00538C20(void)
 {
 	DAT_00A8F908 = 0;

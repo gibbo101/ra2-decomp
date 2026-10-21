@@ -11,7 +11,7 @@
 
 extern HKEY Get_Registry_Sub_Key (HKEY base_key, char const *search_key, bool close);
 
-// FUNCTION: 0x005BB580
+// FUNCTION: GAMEMD 0x005BB580
 HKEY Search_Registry_Key (HKEY key_in, char const *value_name, char const *search_string)
 {
 	int 	top_key_index = 0;
@@ -63,7 +63,7 @@ HKEY Search_Registry_Key (HKEY key_in, char const *value_name, char const *searc
 	return(0);
 }
 
-// FUNCTION: 0x005BB6E0
+// FUNCTION: GAMEMD 0x005BB6E0
 ModemRegistryEntryClass::ModemRegistryEntryClass (int modem_number)
 {
 	HKEY			key;
@@ -237,7 +237,7 @@ ModemRegistryEntryClass::ModemRegistryEntryClass (int modem_number)
 	}
 }
 
-// FUNCTION: 0x005BBEE0
+// FUNCTION: GAMEMD 0x005BBEE0
 void ModemRegistryEntryClass::Clear (void)
 {
 	if (ModemName) {

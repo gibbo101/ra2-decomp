@@ -11,7 +11,7 @@
 #include "geometry.h"
 #include "fastmath.h"
 
-// FUNCTION: 0x00682150
+// FUNCTION: GAMEMD 0x00682150
 HRESULT SaveVersionInfo::Load_String(IStorage *storage, int id, char *string)
 {
 	*string = '\0';
@@ -41,7 +41,7 @@ HRESULT SaveVersionInfo::Load_String(IStorage *storage, int id, char *string)
 	return(S_OK);
 }
 
-// FUNCTION: 0x00682240
+// FUNCTION: GAMEMD 0x00682240
 HRESULT SaveVersionInfo::Load_String(IStorage *storage, int id, wchar_t *string)
 {
 	*string = '\0';
@@ -66,7 +66,7 @@ HRESULT SaveVersionInfo::Load_String(IStorage *storage, int id, wchar_t *string)
 	}
 }
 
-// FUNCTION: 0x006822F0
+// FUNCTION: GAMEMD 0x006822F0
 HRESULT SaveVersionInfo::Load_String_Set(IPropertySetStorage *storageset, int id, char *string)
 {
 	*string = '\0';
@@ -96,7 +96,7 @@ HRESULT SaveVersionInfo::Load_String_Set(IPropertySetStorage *storageset, int id
 	return(res);
 }
 
-// FUNCTION: 0x006823D0
+// FUNCTION: GAMEMD 0x006823D0
 HRESULT SaveVersionInfo::Load_String_Set(IPropertySetStorage *storageset, int id, wchar_t *string)
 {
 	*string = '\0';
@@ -126,7 +126,7 @@ HRESULT SaveVersionInfo::Load_String_Set(IPropertySetStorage *storageset, int id
 	return(res);
 }
 
-// FUNCTION: 0x006824B0
+// FUNCTION: GAMEMD 0x006824B0
 HRESULT SaveVersionInfo::Load_Int(IStorage *storage, int id, int *integer)
 {
 	*integer = 0;
@@ -147,7 +147,7 @@ HRESULT SaveVersionInfo::Load_Int(IStorage *storage, int id, int *integer)
 	return(res);
 }
 
-// FUNCTION: 0x00682570
+// FUNCTION: GAMEMD 0x00682570
 HRESULT SaveVersionInfo::Load_Int_Set(IPropertySetStorage *storageset, int id, int *integer)
 {
 	*integer = 0;
@@ -177,7 +177,7 @@ HRESULT SaveVersionInfo::Load_Int_Set(IPropertySetStorage *storageset, int id, i
 	return(res);
 }
 
-// FUNCTION: 0x00682640
+// FUNCTION: GAMEMD 0x00682640
 HRESULT SaveVersionInfo::Save_String(IStorage *storage, int id, char *string)
 {
 	WCHAR buf[128];
@@ -203,7 +203,7 @@ HRESULT SaveVersionInfo::Save_String(IStorage *storage, int id, char *string)
 	return(res);
 }
 
-// FUNCTION: 0x00682780
+// FUNCTION: GAMEMD 0x00682780
 HRESULT SaveVersionInfo::Save_String(IStorage *storage, int id, const wchar_t *string)
 {
 	IStreamPtr stm(NULL);
@@ -225,7 +225,7 @@ HRESULT SaveVersionInfo::Save_String(IStorage *storage, int id, const wchar_t *s
 	return(res);
 }
 
-// FUNCTION: 0x00682880
+// FUNCTION: GAMEMD 0x00682880
 HRESULT SaveVersionInfo::Save_String_Set(IPropertySetStorage *storageset, int id, const char *string)
 {
 	WCHAR buf[128];
@@ -259,7 +259,7 @@ HRESULT SaveVersionInfo::Save_String_Set(IPropertySetStorage *storageset, int id
 	return(res);
 }
 
-// FUNCTION: 0x006829A0
+// FUNCTION: GAMEMD 0x006829A0
 HRESULT SaveVersionInfo::Save_String_Set(IPropertySetStorage *storageset, int id, const wchar_t *string)
 {
 	HRESULT res;
@@ -289,7 +289,7 @@ HRESULT SaveVersionInfo::Save_String_Set(IPropertySetStorage *storageset, int id
 	return(res);
 }
 
-// FUNCTION: 0x00682A90
+// FUNCTION: GAMEMD 0x00682A90
 HRESULT SaveVersionInfo::Save_Int(IStorage *storage, int id, int integer)
 {
 	IStreamPtr stm(NULL);
@@ -311,7 +311,7 @@ HRESULT SaveVersionInfo::Save_Int(IStorage *storage, int id, int integer)
 	return(res);
 }
 
-// FUNCTION: 0x00682B80
+// FUNCTION: GAMEMD 0x00682B80
 HRESULT SaveVersionInfo::Save_Int_Set(IPropertySetStorage *storageset, int id, int integer)
 {
 	HRESULT res;
@@ -341,7 +341,7 @@ HRESULT SaveVersionInfo::Save_Int_Set(IPropertySetStorage *storageset, int id, i
 	return(res);
 }
 
-// FUNCTION: 0x00682C70
+// FUNCTION: GAMEMD 0x00682C70
 HRESULT SaveVersionInfo::Load_Time(IStorage *storage, int id, FILETIME *time)
 {
 	time->dwLowDateTime = 0;
@@ -363,7 +363,7 @@ HRESULT SaveVersionInfo::Load_Time(IStorage *storage, int id, FILETIME *time)
 	return(res);
 }
 
-// FUNCTION: 0x00682D30
+// FUNCTION: GAMEMD 0x00682D30
 HRESULT SaveVersionInfo::Load_Time_Set(IPropertySetStorage *storageset, int id, FILETIME *time)
 {
 	time->dwLowDateTime = 0;
@@ -394,7 +394,7 @@ HRESULT SaveVersionInfo::Load_Time_Set(IPropertySetStorage *storageset, int id, 
 	return(res);
 }
 
-// FUNCTION: 0x00682E10
+// FUNCTION: GAMEMD 0x00682E10
 HRESULT SaveVersionInfo::Save_Time(IStorage *storage, int id, FILETIME *time)
 {
 	IStreamPtr stm(NULL);
@@ -416,7 +416,7 @@ HRESULT SaveVersionInfo::Save_Time(IStorage *storage, int id, FILETIME *time)
 	return(res);
 }
 
-// FUNCTION: 0x00682F00
+// FUNCTION: GAMEMD 0x00682F00
 HRESULT SaveVersionInfo::Save_Time_Set(IPropertySetStorage *storageset, int id, FILETIME *time)
 {
 	HRESULT res;
@@ -446,7 +446,7 @@ HRESULT SaveVersionInfo::Save_Time_Set(IPropertySetStorage *storageset, int id, 
 	return(res);
 }
 
-// FUNCTION: 0x00683000
+// FUNCTION: GAMEMD 0x00683000
 const WCHAR *Stream_Name_From_ID(int id)
 {
 	static struct pidsiStruct {
@@ -477,18 +477,26 @@ const WCHAR *Stream_Name_From_ID(int id)
 	return(NULL);
 }
 
-// FUNCTION: 0x00683030 ?C?$_com_ptr_t@V?$_com_IIID@UIStream@@$1?_GUID_0000000c_0000_0000_c000_000000000046@@3U__s_GUID@@A@@
-// FUNCTION: 0x00683050 ?$_com_ptr_t@V?$_com_IIID@UIStream@@$1?_GUID_0000000c_0000_0000_c000_000000000046@@3U__s_GUID@@A@@::_Release
+// TEMPLATE: GAMEMD 0x00683030
+// ??C?$_com_ptr_t@V?$_com_IIID@UIStream@@$1?_GUID_0000000c_0000_0000_c000_000000000046@@3U__s_GUID@@A@@@@QBEPAUIStream@@XZ
+// TEMPLATE: GAMEMD 0x00683050
+// ?_Release@?$_com_ptr_t@V?$_com_IIID@UIStream@@$1?_GUID_0000000c_0000_0000_c000_000000000046@@3U__s_GUID@@A@@@@AAEXXZ
 template class _com_ptr_t<_com_IIID<IStream, &__uuidof(IStream)> >;
 
-// FUNCTION: 0x00683060 ?$_com_ptr_t@V?$_com_IIID@UIPropertyStorage@@$1?_GUID_00000138_0000_0000_c000_000000000046@@3U__s_GUID@@A@@::_Release
+// TEMPLATE: GAMEMD 0x00683060
+// ?_Release@?$_com_ptr_t@V?$_com_IIID@UIPropertyStorage@@$1?_GUID_00000138_0000_0000_c000_000000000046@@3U__s_GUID@@A@@@@AAEXXZ
 template class _com_ptr_t<_com_IIID<IPropertyStorage, &__uuidof(IPropertyStorage)> >;
 
-// FUNCTION: 0x00683070 $E30
-// FUNCTION: 0x006830A0 $E33
-// FUNCTION: 0x006830C0 $E36
-// FUNCTION: 0x006830E0 $E39
-// FUNCTION: 0x00683100 $E42
+// SYNTHETIC: GAMEMD 0x00683070 SYMBOL
+// _$E30
+// SYNTHETIC: GAMEMD 0x006830A0 SYMBOL
+// _$E33
+// SYNTHETIC: GAMEMD 0x006830C0 SYMBOL
+// _$E36
+// SYNTHETIC: GAMEMD 0x006830E0 SYMBOL
+// _$E39
+// SYNTHETIC: GAMEMD 0x00683100 SYMBOL
+// _$E42
 
 extern const double DAT_007E1730;
 extern const double DAT_007E1738;
@@ -517,29 +525,38 @@ struct PlayfieldDefaults {
 	PlayfieldDefaults() { C = 0; A = 128; B = 128; }
 };
 
-// FUNCTION: 0x00683120 $E69
+// SYNTHETIC: GAMEMD 0x00683120 SYMBOL
+// _$E69
 double DAT_00B05440 = DAT_007E1730 * DAT_007F0E40;
 
-// FUNCTION: 0x00683140 $E72
+// SYNTHETIC: GAMEMD 0x00683140 SYMBOL
+// _$E72
 int DAT_00B054C8 = (int)(DAT_007E1738 * (fastmath::tan(DAT_00B05440 - DAT_00B05468) * DAT_00B05460));
 
-// FUNCTION: 0x00683180 $E75
+// SYNTHETIC: GAMEMD 0x00683180 SYMBOL
+// _$E75
 double DAT_00B05470 = fastmath::atan(DAT_00B054C8 * DAT_007E1740);
 
-// FUNCTION: 0x006831B0 $E78
+// SYNTHETIC: GAMEMD 0x006831B0 SYMBOL
+// _$E78
 double DAT_00B05498 = fastmath::atan((DAT_00B054C8 * 2) / DAT_00B05460);
 
-// FUNCTION: 0x006831E0 $E81
+// SYNTHETIC: GAMEMD 0x006831E0 SYMBOL
+// _$E81
 int DAT_00B054BC = (int)(DAT_00B054C8 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x00683210 $E84
+// SYNTHETIC: GAMEMD 0x00683210 SYMBOL
+// _$E84
 ShortPair DAT_00B05458;
 
-// FUNCTION: 0x00683220 $E87
+// SYNTHETIC: GAMEMD 0x00683220 SYMBOL
+// _$E87
 IntTriple DAT_00B05488;
 
-// FUNCTION: 0x00683240 $E90
+// SYNTHETIC: GAMEMD 0x00683240 SYMBOL
+// _$E90
 PlayfieldDefaults DAT_00B054B0;
 
-// FUNCTION: 0x00683260 $E93
+// SYNTHETIC: GAMEMD 0x00683260 SYMBOL
+// _$E93
 IntQuad DAT_00B05448;

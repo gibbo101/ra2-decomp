@@ -96,7 +96,7 @@ unsigned XMP_Count_Bits(const digit * number, int precision)
 	return(total_bit_count);
 }
 
-// FUNCTION: 0x005C69A0
+// FUNCTION: GAMEMD 0x005C69A0
 int XMP_Count_Bytes(const digit * number, int precision)
 {
 	unsigned char * ptr = (unsigned char *)number;
@@ -109,13 +109,13 @@ int XMP_Count_Bytes(const digit * number, int precision)
 	return(count);
 }
 
-// FUNCTION: 0x005C69C0
+// FUNCTION: GAMEMD 0x005C69C0
 void XMP_Move(digit * dest, digit const * source, int precision)
 {
 	memcpy(dest, source, precision * sizeof(digit));
 }
 
-// FUNCTION: 0x005C69E0
+// FUNCTION: GAMEMD 0x005C69E0
 int XMP_Compare(const digit * left_number, const digit * right_number, int precision)
 {
 	left_number += precision-1;
@@ -130,7 +130,7 @@ int XMP_Compare(const digit * left_number, const digit * right_number, int preci
 	return(0);
 }
 
-// FUNCTION: 0x005C6A30
+// FUNCTION: GAMEMD 0x005C6A30
 bool XMP_Add(digit * result, const digit * left_number, const digit * right_number, bool carry, int precision)
 {
 	while (precision--) {
@@ -145,7 +145,7 @@ bool XMP_Add(digit * result, const digit * left_number, const digit * right_numb
 	return(carry);
 }
 
-// FUNCTION: 0x005C6AA0
+// FUNCTION: GAMEMD 0x005C6AA0
 bool XMP_Add_Int(digit * result, const digit * left_number, digit right_number, bool carry, int precision)
 {
 	while (precision--) {
@@ -160,7 +160,7 @@ bool XMP_Add_Int(digit * result, const digit * left_number, digit right_number, 
 	return(carry);
 }
 
-// FUNCTION: 0x005C6B00
+// FUNCTION: GAMEMD 0x005C6B00
 bool XMP_Sub(digit * result, const digit * left_number, const digit * right_number, bool borrow, int precision)
 {
 	const unsigned short * left_number_ptr = (const unsigned short *)left_number;
@@ -178,7 +178,7 @@ bool XMP_Sub(digit * result, const digit * left_number, const digit * right_numb
 	return(borrow);
 }
 
-// FUNCTION: 0x005C6B60
+// FUNCTION: GAMEMD 0x005C6B60
 bool XMP_Sub_Int(digit * result, const digit * left_number, unsigned short right_number, bool borrow, int precision)
 {
 	const unsigned short * left_number_ptr = (const unsigned short *)left_number;
@@ -196,7 +196,7 @@ bool XMP_Sub_Int(digit * result, const digit * left_number, unsigned short right
 	return(borrow);
 }
 
-// FUNCTION: 0x005C6BC0
+// FUNCTION: GAMEMD 0x005C6BC0
 int XMP_Unsigned_Mult(digit * prod, const digit * multiplicand, const digit * multiplier, int precision)
 {
 	XMP_Init(prod, 0, precision);
@@ -225,7 +225,7 @@ int XMP_Unsigned_Mult(digit * prod, const digit * multiplicand, const digit * mu
 	return(0);
 }
 
-// FUNCTION: 0x005C6D90
+// FUNCTION: GAMEMD 0x005C6D90
 int XMP_Unsigned_Mult_Int(digit * prod, const digit * multiplicand, short multiplier, int precision)
 {
 	const unsigned short * m2 = (const unsigned short *)multiplicand;
@@ -241,7 +241,7 @@ int XMP_Unsigned_Mult_Int(digit * prod, const digit * multiplicand, short multip
 	return(0);
 }
 
-// FUNCTION: 0x005C6DD0
+// FUNCTION: GAMEMD 0x005C6DD0
 int XMP_Signed_Mult_Int(digit * prod, const digit * multiplicand, signed short multiplier, int precision)
 {
 	if (XMP_Is_Negative(multiplicand, precision)) {
@@ -268,7 +268,7 @@ int XMP_Signed_Mult_Int(digit * prod, const digit * multiplicand, signed short m
 	return(0);
 }
 
-// FUNCTION: 0x005C6FE0
+// FUNCTION: GAMEMD 0x005C6FE0
 int XMP_Signed_Mult(digit * prod, const digit * multiplicand, const digit * multiplier, int precision)
 {
 	if (XMP_Is_Negative(multiplicand, precision)) {
@@ -300,7 +300,7 @@ int XMP_Signed_Mult(digit * prod, const digit * multiplicand, const digit * mult
 	return(0);
 }
 
-// FUNCTION: 0x005C71E0
+// FUNCTION: GAMEMD 0x005C71E0
 unsigned short XMP_Unsigned_Div_Int(digit * quotient, digit const * dividend, unsigned short divisor, int precision)
 {
 	if (!divisor) return(0);
@@ -333,7 +333,7 @@ unsigned short XMP_Unsigned_Div_Int(digit * quotient, digit const * dividend, un
 	return(remainder);
 }
 
-// FUNCTION: 0x005C7310
+// FUNCTION: GAMEMD 0x005C7310
 int XMP_Unsigned_Div(digit * remainder, digit * quotient, digit const * dividend, digit const * divisor, int precision)
 {
 	if (XMP_Test_Eq_Int(divisor, 0, precision)) return(-1);
@@ -368,7 +368,7 @@ int XMP_Unsigned_Div(digit * remainder, digit * quotient, digit const * dividend
 	return(0);
 }
 
-// FUNCTION: 0x005C7520
+// FUNCTION: GAMEMD 0x005C7520
 void XMP_Signed_Div(digit * remainder, digit * quotient, digit const * dividend, digit const * divisor, int precision)
 {
 	bool negative = false;
@@ -399,7 +399,7 @@ void XMP_Signed_Div(digit * remainder, digit * quotient, digit const * dividend,
 	}
 }
 
-// FUNCTION: 0x005C7740
+// FUNCTION: GAMEMD 0x005C7740
 void XMP_Inverse_A_Mod_B(digit * result, digit const * number, digit const * modulus, int precision)
 {
 	digit g[3][MAX_UNIT_PRECISION];
@@ -425,7 +425,7 @@ void XMP_Inverse_A_Mod_B(digit * result, digit const * number, digit const * mod
 	XMP_Move(result, v[(i-1)%3], precision);
 }
 
-// FUNCTION: 0x005C7990
+// FUNCTION: GAMEMD 0x005C7990
 int XMP_Reciprocal(digit * quotient, const digit * divisor, int precision)
 {
 	digit remainder[MAX_UNIT_PRECISION];
@@ -458,7 +458,7 @@ int XMP_Reciprocal(digit * quotient, const digit * divisor, int precision)
 	return(0);
 }
 
-// FUNCTION: 0x005C7BA0
+// FUNCTION: GAMEMD 0x005C7BA0
 void XMP_Decode_ASCII(char const * str, digit * mpn, int precision)
 {
 	XMP_Init(mpn, 0, precision);
@@ -512,7 +512,7 @@ void XMP_Decode_ASCII(char const * str, digit * mpn, int precision)
 	}
 }
 
-// FUNCTION: 0x005C7DB0
+// FUNCTION: GAMEMD 0x005C7DB0
 void XMP_Hybrid_Mul(unsigned short * prod, unsigned short * multiplicand, unsigned short multiplier, int precision)
 {
 	unsigned int carry = 0;
@@ -526,7 +526,7 @@ void XMP_Hybrid_Mul(unsigned short * prod, unsigned short * multiplicand, unsign
 	*prod += (unsigned short) carry;
 }
 
-// FUNCTION: 0x005C7E00
+// FUNCTION: GAMEMD 0x005C7E00
 void XMP_Double_Mul(digit * prod, const digit * multiplicand, const digit * multiplier, int precision)
 {
 	XMP_Init(prod, 0, precision*2);
@@ -549,7 +549,7 @@ static digit _double_staging_number[MAX_UNIT_PRECISION * 2 + 2];
 static digit _mod_quotient[4];
 static digit _mod_divisor[4];
 
-// FUNCTION: 0x005C7EC0
+// FUNCTION: GAMEMD 0x005C7EC0
 int XMP_Prepare_Modulus(const digit * n_modulus, int precision)
 {
 	XMP_Move(_scratch_modulus, n_modulus, precision);
@@ -578,7 +578,7 @@ int XMP_Prepare_Modulus(const digit * n_modulus, int precision)
 	return(0);
 }
 
-// FUNCTION: 0x005C80A0
+// FUNCTION: GAMEMD 0x005C80A0
 int XMP_Mod_Mult(digit * prod, const digit * multiplicand, const digit * multiplier, int precision)
 {
 	XMP_Double_Mul(_double_staging_number, multiplicand, multiplier, precision);
@@ -623,7 +623,7 @@ int XMP_Mod_Mult(digit * prod, const digit * multiplicand, const digit * multipl
 	return(0);
 }
 
-// FUNCTION: 0x005C83C0
+// FUNCTION: GAMEMD 0x005C83C0
 void XMP_Mod_Mult_Clear(int precision)
 {
 	XMP_Init(_scratch_modulus, 0, precision);
@@ -635,7 +635,7 @@ void XMP_Mod_Mult_Clear(int precision)
 	_modulus_sub_precision = 0;
 }
 
-// FUNCTION: 0x005C8470
+// FUNCTION: GAMEMD 0x005C8470
 unsigned short mp_quo_digit(unsigned short * dividend)
 {
 	unsigned int q, q0, q1, q2;
@@ -654,7 +654,7 @@ unsigned short mp_quo_digit(unsigned short * dividend)
 	return((unsigned short) MIN(q, (unsigned int)(1L << 16) - 1));
 }
 
-// FUNCTION: 0x005C8500
+// FUNCTION: GAMEMD 0x005C8500
 int xmp_exponent_mod(digit * expout, const digit * expin, const digit * exponent_ptr, const digit * modulus, int precision)
 {
 	digit product[MAX_UNIT_PRECISION];
@@ -723,7 +723,7 @@ int xmp_exponent_mod(digit * expout, const digit * expin, const digit * exponent
 	return(0);
 }
 
-// FUNCTION: 0x005C8870
+// FUNCTION: GAMEMD 0x005C8870
 void memrev(char * buffer, size_t length)
 {
 	char * r2 = &(buffer[length - 1]);
@@ -734,7 +734,7 @@ void memrev(char * buffer, size_t length)
 	}
 }
 
-// FUNCTION: 0x005C8890
+// FUNCTION: GAMEMD 0x005C8890
 int _USERENTRY pfunc(const void * pkey, const void * base)
 {
 	if (*(unsigned short *)pkey < *(unsigned short *)base) return(-1);
@@ -742,7 +742,7 @@ int _USERENTRY pfunc(const void * pkey, const void * base)
 	return(0);
 }
 
-// FUNCTION: 0x005C88B0
+// FUNCTION: GAMEMD 0x005C88B0
 bool XMP_Is_Small_Prime(const digit * candidate, int precision)
 {
 	if (XMP_Significance(candidate, precision) > 1) return(false);
@@ -752,7 +752,7 @@ bool XMP_Is_Small_Prime(const digit * candidate, int precision)
 	return(ptr != NULL);
 }
 
-// FUNCTION: 0x005C8930
+// FUNCTION: GAMEMD 0x005C8930
 bool XMP_Small_Divisors_Test(const digit * candidate, int precision)
 {
 	digit quotient[MAX_UNIT_PRECISION];
@@ -763,7 +763,7 @@ bool XMP_Small_Divisors_Test(const digit * candidate, int precision)
 	return(true);
 }
 
-// FUNCTION: 0x005C8980
+// FUNCTION: GAMEMD 0x005C8980
 bool XMP_Fermat_Test(const digit * candidate_prime, unsigned rounds, int precision)
 {
 	assert(rounds < ARRAY_SIZE(primeTable));
@@ -782,7 +782,7 @@ bool XMP_Fermat_Test(const digit * candidate_prime, unsigned rounds, int precisi
 	return(true);
 }
 
-// FUNCTION: 0x005C8AB0
+// FUNCTION: GAMEMD 0x005C8AB0
 bool XMP_Rabin_Miller_Test(Straw & rng, digit const * w, int rounds, int precision)
 {
 	digit wminus1[MAX_UNIT_PRECISION];
@@ -830,7 +830,7 @@ bool XMP_Rabin_Miller_Test(Straw & rng, digit const * w, int rounds, int precisi
 	return(true);
 }
 
-// FUNCTION: 0x005C8DD0
+// FUNCTION: GAMEMD 0x005C8DD0
 void XMP_Randomize(digit * result, Straw & rng, int total_bits, int precision)
 {
 	assert(XMP_Bits_To_Digits(total_bits) <= MAX_UNIT_PRECISION);
@@ -843,7 +843,7 @@ void XMP_Randomize(digit * result, Straw & rng, int total_bits, int precision)
 	((unsigned char *)result)[nbytes-1] &= (unsigned char)(~((~0) << (total_bits % 8)));
 }
 
-// FUNCTION: 0x005C8E40
+// FUNCTION: GAMEMD 0x005C8E40
 void XMP_Randomize(digit * result, Straw & rng, digit const * minval, digit const * maxval, int precision)
 {
 	digit range[MAX_UNIT_PRECISION];
@@ -855,7 +855,7 @@ void XMP_Randomize(digit * result, Straw & rng, digit const * minval, digit cons
 	XMP_Add(result, result, minval, 0, precision);
 }
 
-// FUNCTION: 0x005C9020
+// FUNCTION: GAMEMD 0x005C9020
 bool XMP_Is_Prime(digit const * prime, int precision)
 {
 	if (!(*prime & 0x01)) return(false);
@@ -874,7 +874,8 @@ struct IntQuad {
 	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
 };
 
-// FUNCTION: 0x005C91D0 $E2
+// SYNTHETIC: GAMEMD 0x005C91D0 SYMBOL
+// _$E2
 IntQuad DAT_00ABF8E0;
 
 unsigned short primeTable[3511] = {

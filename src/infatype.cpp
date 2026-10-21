@@ -32,7 +32,7 @@ static inline void Init_Controls(InfantryTypeClass * type)
 	}
 }
 
-// FUNCTION: 0x005236A0
+// FUNCTION: GAMEMD 0x005236A0
 InfantryTypeClass::InfantryTypeClass(char const * ininame) :
 	BASECLASS(ininame, SPEED_FOOT),
 	HeapID(INFANTRY_NONE),
@@ -103,7 +103,7 @@ InfantryTypeClass::InfantryTypeClass(char const * ininame) :
 	Init_Controls(this);
 }
 
-// FUNCTION: 0x00523980
+// FUNCTION: GAMEMD 0x00523980
 InfantryTypeClass::InfantryTypeClass(NoInitClass const & x) :
 	BASECLASS(x),
 	DeadBodies(x),
@@ -112,7 +112,7 @@ InfantryTypeClass::InfantryTypeClass(NoInitClass const & x) :
 {
 }
 
-// FUNCTION: 0x005239D0
+// FUNCTION: GAMEMD 0x005239D0
 InfantryTypeClass::~InfantryTypeClass(void)
 {
 	Detach_This_From_All(this);
@@ -121,13 +121,13 @@ InfantryTypeClass::~InfantryTypeClass(void)
 	DoControls = NULL;
 }
 
-// FUNCTION: 0x00523B10
+// FUNCTION: GAMEMD 0x00523B10
 ObjectClass * InfantryTypeClass::Create_One_Of(HouseClass * house) const
 {
 	return(new InfantryClass(this, house));
 }
 
-// FUNCTION: 0x00523B40
+// FUNCTION: GAMEMD 0x00523B40
 bool InfantryTypeClass::Create_And_Place(Cell const & cell, HouseClass * house) const
 {
 	InfantryClass * i = new InfantryClass(this, house);
@@ -143,7 +143,7 @@ bool InfantryTypeClass::Create_And_Place(Cell const & cell, HouseClass * house) 
 	return(false);
 }
 
-// FUNCTION: 0x00523C20
+// FUNCTION: GAMEMD 0x00523C20
 Cell const * InfantryTypeClass::Occupy_List(bool) const
 {
 	static Cell const _list[] = {Cell(0, 0), REFRESH_EOL};
@@ -151,12 +151,12 @@ Cell const * InfantryTypeClass::Occupy_List(bool) const
 	return(&_list[0]);
 }
 
-// FUNCTION: 0x00523C80
+// FUNCTION: GAMEMD 0x00523C80
 void InfantryTypeClass::Init(TheaterType)
 {
 }
 
-// FUNCTION: 0x00523C90
+// FUNCTION: GAMEMD 0x00523C90
 InfantryType InfantryTypeClass::From_Name(char const * name)
 {
 	if (strcmpi(name, "<none>") != 0 && strcmpi(name, "none") != 0) {
@@ -181,7 +181,7 @@ char const * SequenceName[DOINFO_COUNT] = {
 	"Carry", "SecondaryFire", "SecondaryProne"
 };
 
-// FUNCTION: 0x00523D00
+// FUNCTION: GAMEMD 0x00523D00
 void InfantryTypeClass::Read_Sequence_INI(void)
 {
 	char seqname[32];
@@ -237,37 +237,37 @@ void InfantryTypeClass::Read_Sequence_INI(void)
 	}
 }
 
-// FUNCTION: 0x00524760
+// FUNCTION: GAMEMD 0x00524760
 Point3D InfantryTypeClass::Lepton_Dimensions(void) const
 {
 	return(Point3D(CELL_LEPTON_W / 3, CELL_LEPTON_H / 3, LEVEL_LEPTON_H * 2));
 }
 
-// FUNCTION: 0x00524790
+// FUNCTION: GAMEMD 0x00524790
 int InfantryTypeClass::Repair_Step(void) const
 {
 	return(Rule->IRepairStep);
 }
 
-// FUNCTION: 0x005247A0
+// FUNCTION: GAMEMD 0x005247A0
 int InfantryTypeClass::Repair_Cost(void) const
 {
 	return(0);
 }
 
-// FUNCTION: 0x005247B0
+// FUNCTION: GAMEMD 0x005247B0
 bool InfantryTypeClass::CanUseWaypoint(void) const
 {
 	return(BASECLASS::CanUseWaypoint());
 }
 
-// FUNCTION: 0x005247C0
+// FUNCTION: GAMEMD 0x005247C0
 bool InfantryTypeClass::CanAttackMove(void) const
 {
 	return(BASECLASS::CanAttackMove());
 }
 
-// FUNCTION: 0x005247D0
+// FUNCTION: GAMEMD 0x005247D0
 Coord const InfantryTypeClass::Coord_Fixup(Coord const & coord) const
 {
 	Coord fix = coord;
@@ -277,7 +277,7 @@ Coord const InfantryTypeClass::Coord_Fixup(Coord const & coord) const
 	return(fix);
 }
 
-// FUNCTION: 0x00524840
+// FUNCTION: GAMEMD 0x00524840
 void InfantryTypeClass::Compute_CRC(CRCEngine & crc) const
 {
 	BASECLASS::Compute_CRC(crc);
@@ -301,7 +301,7 @@ void InfantryTypeClass::Compute_CRC(CRCEngine & crc) const
 	crc(IsVehicleThief);
 }
 
-// FUNCTION: 0x00524B60
+// FUNCTION: GAMEMD 0x00524B60
 HRESULT STDMETHODCALLTYPE InfantryTypeClass::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -330,7 +330,7 @@ HRESULT STDMETHODCALLTYPE InfantryTypeClass::Save(IStream * stream, BOOL cleardi
 	return(result);
 }
 
-// FUNCTION: 0x00524C70
+// FUNCTION: GAMEMD 0x00524C70
 HRESULT STDMETHODCALLTYPE InfantryTypeClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -338,78 +338,99 @@ HRESULT STDMETHODCALLTYPE InfantryTypeClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x00524CB0
+// FUNCTION: GAMEMD 0x00524CB0
 InfantryTypeClass * InfantryTypeClass::Find_Or_Make(char const * name)
 {
 	return(TFind_Or_Make<InfantryTypeClass>(name, InfantryTypes));
 }
 
-// FUNCTION: 0x00524D40
+// FUNCTION: GAMEMD 0x00524D40
 RTTIType InfantryTypeClass::Fetch_RTTI(void) const
 {
 	return(RTTI_INFANTRYTYPE);
 }
 
-// FUNCTION: 0x00524D50
+// FUNCTION: GAMEMD 0x00524D50
 int InfantryTypeClass::Fetch_Object_Size(void) const
 {
 	return(sizeof(*this));
 }
 
-// FUNCTION: 0x00524D60
+// FUNCTION: GAMEMD 0x00524D60
 int InfantryTypeClass::Fetch_Heap_ID(void) const
 {
 	return(HeapID);
 }
 
-// FUNCTION: 0x00524D70 InfantryTypeClass::~InfantryTypeClass
+// SYNTHETIC: GAMEMD 0x00524D70
+// ??_GInfantryTypeClass@@UAEPAXI@Z
 
-// FUNCTION: 0x00524EC0
+// FUNCTION: GAMEMD 0x00524EC0
 char const * __fastcall FUN_00524EC0(char const * string)
 {
 	return(string);
 }
 
-// FUNCTION: 0x00524ED0 ?$DynamicVectorClass@PAVAnimTypeClass@@::Clear
+// TEMPLATE: GAMEMD 0x00524ED0
+// ?Clear@?$DynamicVectorClass@PAVAnimTypeClass@@@@UAEXXZ
 template class DynamicVectorClass<AnimTypeClass *>;
 template class VectorClass<AnimTypeClass *>;
 template class TypeList<AnimTypeClass *>;
 
-// FUNCTION: 0x00524F00 ?$DynamicVectorClass@PAVAnimTypeClass@@::ID
+// TEMPLATE: GAMEMD 0x00524F00
+// ?ID@?$DynamicVectorClass@PAVAnimTypeClass@@@@UAEHPBQAVAnimTypeClass@@@Z
 
-// FUNCTION: 0x00524F20 ?$DynamicVectorClass@PAVAnimTypeClass@@::operator=
+// TEMPLATE: GAMEMD 0x00524F20
+// ??4?$DynamicVectorClass@PAVAnimTypeClass@@@@QAEAAV0@ABV0@@Z
 
-// FUNCTION: 0x00524FB0 ?$VectorClass@PAVAnimTypeClass@@::GetItem
+// TEMPLATE: GAMEMD 0x00524FB0
+// ?GetItem@?$VectorClass@PAVAnimTypeClass@@@@UBEPAVAnimTypeClass@@H@Z
 
-// FUNCTION: 0x00524FC0 ?$DynamicVectorClass@PAVAnimTypeClass@@::~?$DynamicVectorClass@PAVAnimTypeClass@@
+// SYNTHETIC: GAMEMD 0x00524FC0
+// ??_G?$DynamicVectorClass@PAVAnimTypeClass@@@@UAEPAXI@Z
 
-// FUNCTION: 0x00525010 ?$VectorClass@PAVAnimTypeClass@@::~?$VectorClass@PAVAnimTypeClass@@
+// SYNTHETIC: GAMEMD 0x00525010
+// ??_G?$VectorClass@PAVAnimTypeClass@@@@UAEPAXI@Z
 
-// FUNCTION: 0x00525060 ?$VectorClass@PAVAnimTypeClass@@::operator=
+// TEMPLATE: GAMEMD 0x00525060
+// ??4?$VectorClass@PAVAnimTypeClass@@@@QAEAAV0@ABV0@@Z
 
-// FUNCTION: 0x005250D0 ?$VectorClass@PAVAnimTypeClass@@::operator==
+// TEMPLATE: GAMEMD 0x005250D0
+// ??8?$VectorClass@PAVAnimTypeClass@@@@UBE_NABV0@@Z
 
-// FUNCTION: 0x00525110 ?$VectorClass@PAVAnimTypeClass@@::Resize
+// TEMPLATE: GAMEMD 0x00525110
+// ?Resize@?$VectorClass@PAVAnimTypeClass@@@@UAE_NHPBQAVAnimTypeClass@@@Z
 
-// FUNCTION: 0x005251C0 ?$VectorClass@PAVAnimTypeClass@@::Clear
+// TEMPLATE: GAMEMD 0x005251C0
+// ?Clear@?$VectorClass@PAVAnimTypeClass@@@@UAEXXZ
 
-// FUNCTION: 0x005251F0 ?$VectorClass@PAVAnimTypeClass@@::ID
+// TEMPLATE: GAMEMD 0x005251F0
+// ?ID@?$VectorClass@PAVAnimTypeClass@@@@UAEHABQAVAnimTypeClass@@@Z
 
-// FUNCTION: 0x00525230 ?$VectorClass@PAVAnimTypeClass@@::ID
+// TEMPLATE: GAMEMD 0x00525230
+// ?ID@?$VectorClass@PAVAnimTypeClass@@@@UAEHPBQAVAnimTypeClass@@@Z
 
-// FUNCTION: 0x00525250 ?$DynamicVectorClass@PAVAnimTypeClass@@::?$DynamicVectorClass@PAVAnimTypeClass@@
+// TEMPLATE: GAMEMD 0x00525250
+// ??0?$DynamicVectorClass@PAVAnimTypeClass@@@@QAE@IPBQAVAnimTypeClass@@@Z
 
-// FUNCTION: 0x005252B0 ?$TypeList@PAVAnimTypeClass@@::~?$TypeList@PAVAnimTypeClass@@
+// SYNTHETIC: GAMEMD 0x005252B0
+// ??_G?$TypeList@PAVAnimTypeClass@@@@UAEPAXI@Z
 
-// FUNCTION: 0x00525300 ?$DynamicVectorClass@PBVAnimTypeClass@@::Resize
-// FUNCTION: 0x005253B0 ?$DynamicVectorClass@PBVAnimTypeClass@@::Add
-// FUNCTION: 0x00525400 ?$DynamicVectorClass@PBVAnimTypeClass@@::ID
+// TEMPLATE: GAMEMD 0x00525300
+// ?Resize@?$DynamicVectorClass@PBVAnimTypeClass@@@@UAE_NHPBQBVAnimTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x005253B0
+// ?Add@?$DynamicVectorClass@PBVAnimTypeClass@@@@QAE_NABQBVAnimTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x00525400
+// ?ID@?$DynamicVectorClass@PBVAnimTypeClass@@@@UAEHABQBVAnimTypeClass@@@Z
 template class DynamicVectorClass<AnimTypeClass const *>;
 
-// FUNCTION: 0x005255F0 ?$TypeList@PBVAnimTypeClass@@::?$TypeList@PBVAnimTypeClass@@
+// TEMPLATE: GAMEMD 0x005255F0
+// ??0?$TypeList@PBVAnimTypeClass@@@@QAE@ABV0@@Z
 template class TypeList<AnimTypeClass const *>;
 
-// FUNCTION: 0x00525680 ?$VectorClass@PBVAnimTypeClass@@::?$VectorClass@PBVAnimTypeClass@@
+// TEMPLATE: GAMEMD 0x00525680
+// ??0?$VectorClass@PBVAnimTypeClass@@@@QAE@HPBQBVAnimTypeClass@@@Z
 template class VectorClass<AnimTypeClass const *>;
 
-// FUNCTION: 0x005256D0 $E74
+// SYNTHETIC: GAMEMD 0x005256D0 SYMBOL
+// _$E74

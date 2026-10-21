@@ -7,20 +7,20 @@
 #include "swizzle.h"
 #include "vector.h"
 
-// FUNCTION: 0x006CF180
+// FUNCTION: GAMEMD 0x006CF180
 SwizzleManagerClass::SwizzleManagerClass(void)
 {
 	RequestTable.Set_Growth_Step(1000);
 	PointerTable.Set_Growth_Step(1000);
 }
 
-// FUNCTION: 0x006CF1D0
+// FUNCTION: GAMEMD 0x006CF1D0
 SwizzleManagerClass::~SwizzleManagerClass(void)
 {
 	Process_Tables();
 }
 
-// FUNCTION: 0x006CF230
+// FUNCTION: GAMEMD 0x006CF230
 HRESULT STDMETHODCALLTYPE SwizzleManagerClass::Reset(void)
 {
 	Process_Tables();
@@ -28,7 +28,7 @@ HRESULT STDMETHODCALLTYPE SwizzleManagerClass::Reset(void)
 	return(S_OK);
 }
 
-// FUNCTION: 0x006CF240
+// FUNCTION: GAMEMD 0x006CF240
 HRESULT STDMETHODCALLTYPE SwizzleManagerClass::Swizzle(void **pointer)
 {
 	if (pointer == NULL) {
@@ -48,7 +48,7 @@ HRESULT STDMETHODCALLTYPE SwizzleManagerClass::Swizzle(void **pointer)
 	return(S_OK);
 }
 
-// FUNCTION: 0x006CF2C0
+// FUNCTION: GAMEMD 0x006CF2C0
 HRESULT STDMETHODCALLTYPE SwizzleManagerClass::Here_I_Am(LONG id, void *pointer)
 {
 	SwizzlePointerClass pair;
@@ -59,7 +59,7 @@ HRESULT STDMETHODCALLTYPE SwizzleManagerClass::Here_I_Am(LONG id, void *pointer)
 	return(S_OK);
 }
 
-// FUNCTION: 0x006CF320
+// FUNCTION: GAMEMD 0x006CF320
 int __cdecl ptr_compare_func(const void *ptr1, const void *ptr2)
 {
 	const SwizzlePointerClass *p1 = static_cast<const SwizzlePointerClass *>(ptr1);
@@ -74,7 +74,7 @@ int __cdecl ptr_compare_func(const void *ptr1, const void *ptr2)
 	return(1);
 }
 
-// FUNCTION: 0x006CF350
+// FUNCTION: GAMEMD 0x006CF350
 void SwizzleManagerClass::Process_Tables(void)
 {
 	if (RequestTable.Count() != 0) {
@@ -123,7 +123,7 @@ void SwizzleManagerClass::Process_Tables(void)
 	}
 }
 
-// FUNCTION: 0x006CF410
+// FUNCTION: GAMEMD 0x006CF410
 HRESULT STDMETHODCALLTYPE SwizzleManagerClass::Get_Save_Size(int *size)
 {
 	if (size == NULL) {
@@ -134,7 +134,7 @@ HRESULT STDMETHODCALLTYPE SwizzleManagerClass::Get_Save_Size(int *size)
 	return(S_OK);
 }
 
-// FUNCTION: 0x006CF430
+// FUNCTION: GAMEMD 0x006CF430
 LONG STDMETHODCALLTYPE SwizzleManagerClass::QueryInterface(REFIID riid, LPVOID * ppvObject)
 {
 	if (ppvObject == NULL) {
@@ -151,7 +151,7 @@ LONG STDMETHODCALLTYPE SwizzleManagerClass::QueryInterface(REFIID riid, LPVOID *
 	return(S_OK);
 }
 
-// FUNCTION: 0x006CF490
+// FUNCTION: GAMEMD 0x006CF490
 HRESULT STDMETHODCALLTYPE SwizzleManagerClass::Fetch_Swizzle_ID(void *pointer, LONG *id)
 {
 	if (pointer != NULL && id != 0) {
@@ -162,24 +162,41 @@ HRESULT STDMETHODCALLTYPE SwizzleManagerClass::Fetch_Swizzle_ID(void *pointer, L
 	return(E_POINTER);
 }
 
-// FUNCTION: 0x006CF4B0 SwizzleManagerClass::AddRef
-// FUNCTION: 0x006CF4C0 SwizzleManagerClass::Release
-// FUNCTION: 0x006CF4D0 SwizzleManagerClass::Save_Interface
-// FUNCTION: 0x006CF4E0 SwizzleManagerClass::Load_Interface
+// FUNCTION: GAMEMD 0x006CF4B0
+// SwizzleManagerClass::AddRef
+// FUNCTION: GAMEMD 0x006CF4C0
+// SwizzleManagerClass::Release
+// FUNCTION: GAMEMD 0x006CF4D0
+// SwizzleManagerClass::Save_Interface
+// FUNCTION: GAMEMD 0x006CF4E0
+// SwizzleManagerClass::Load_Interface
 
-// FUNCTION: 0x006CF4F0 ?$DynamicVectorClass@VSwizzlePointerClass@@::Clear
-// FUNCTION: 0x006CF520 ?$DynamicVectorClass@VSwizzlePointerClass@@::ID
-// FUNCTION: 0x006CF540 ?$VectorClass@VSwizzlePointerClass@@::GetItem
-// FUNCTION: 0x006CF720 ?$DynamicVectorClass@VSwizzlePointerClass@@::Resize
-// FUNCTION: 0x006CF820 ?$DynamicVectorClass@VSwizzlePointerClass@@::ID
-// FUNCTION: 0x006CF8A0 ?$DynamicVectorClass@VSwizzlePointerClass@@::~?$DynamicVectorClass@VSwizzlePointerClass@@
+// TEMPLATE: GAMEMD 0x006CF4F0
+// ?Clear@?$DynamicVectorClass@VSwizzlePointerClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x006CF520
+// ?ID@?$DynamicVectorClass@VSwizzlePointerClass@@@@UAEHPBVSwizzlePointerClass@@@Z
+// TEMPLATE: GAMEMD 0x006CF540
+// ?GetItem@?$VectorClass@VSwizzlePointerClass@@@@UBE?AVSwizzlePointerClass@@H@Z
+// TEMPLATE: GAMEMD 0x006CF720
+// ?Resize@?$DynamicVectorClass@VSwizzlePointerClass@@@@UAE_NHPBVSwizzlePointerClass@@@Z
+// TEMPLATE: GAMEMD 0x006CF820
+// ?ID@?$DynamicVectorClass@VSwizzlePointerClass@@@@UAEHABVSwizzlePointerClass@@@Z
+// SYNTHETIC: GAMEMD 0x006CF8A0
+// ??_G?$DynamicVectorClass@VSwizzlePointerClass@@@@UAEPAXI@Z
 template class DynamicVectorClass<SwizzlePointerClass>;
 
-// FUNCTION: 0x006CF560 ?$VectorClass@VSwizzlePointerClass@@::operator==
-// FUNCTION: 0x006CF5A0 ?$VectorClass@VSwizzlePointerClass@@::Resize
-// FUNCTION: 0x006CF690 ?$VectorClass@VSwizzlePointerClass@@::Clear
-// FUNCTION: 0x006CF6C0 ?$VectorClass@VSwizzlePointerClass@@::ID
-// FUNCTION: 0x006CF700 ?$VectorClass@VSwizzlePointerClass@@::ID
-// FUNCTION: 0x006CF850 ?$VectorClass@VSwizzlePointerClass@@::~?$VectorClass@VSwizzlePointerClass@@
-// FUNCTION: 0x006CF8F0 ?$VectorClass@VSwizzlePointerClass@@::?$VectorClass@VSwizzlePointerClass@@
+// TEMPLATE: GAMEMD 0x006CF560
+// ??8?$VectorClass@VSwizzlePointerClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x006CF5A0
+// ?Resize@?$VectorClass@VSwizzlePointerClass@@@@UAE_NHPBVSwizzlePointerClass@@@Z
+// TEMPLATE: GAMEMD 0x006CF690
+// ?Clear@?$VectorClass@VSwizzlePointerClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x006CF6C0
+// ?ID@?$VectorClass@VSwizzlePointerClass@@@@UAEHABVSwizzlePointerClass@@@Z
+// TEMPLATE: GAMEMD 0x006CF700
+// ?ID@?$VectorClass@VSwizzlePointerClass@@@@UAEHPBVSwizzlePointerClass@@@Z
+// SYNTHETIC: GAMEMD 0x006CF850
+// ??_G?$VectorClass@VSwizzlePointerClass@@@@UAEPAXI@Z
+// TEMPLATE: GAMEMD 0x006CF8F0
+// ??0?$VectorClass@VSwizzlePointerClass@@@@QAE@HPBVSwizzlePointerClass@@@Z
 template class VectorClass<SwizzlePointerClass>;

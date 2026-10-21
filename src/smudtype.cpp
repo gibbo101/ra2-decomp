@@ -59,40 +59,52 @@ struct IntTriple {
 	IntTriple() { A = 0; B = 0; C = 0; }
 };
 
-// FUNCTION: 0x006B5070 $E137
+// SYNTHETIC: GAMEMD 0x006B5070 SYMBOL
+// _$E137
 double DAT_00B0B790 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x006B50A0 $E140
+// SYNTHETIC: GAMEMD 0x006B50A0 SYMBOL
+// _$E140
 double DAT_00B0B7E0 = DAT_00B0B790 / DAT_007F34E8;
 
-// FUNCTION: 0x006B50C0 $E143
+// SYNTHETIC: GAMEMD 0x006B50C0 SYMBOL
+// _$E143
 double DAT_00B0B7C8 = DAT_007E1718 / DAT_00B0B7E0;
 
-// FUNCTION: 0x006B50E0 $E146
+// SYNTHETIC: GAMEMD 0x006B50E0 SYMBOL
+// _$E146
 double DAT_00B0B7C0 = DAT_007E1720 * DAT_007F34F0;
 
-// FUNCTION: 0x006B5100 $E149
+// SYNTHETIC: GAMEMD 0x006B5100 SYMBOL
+// _$E149
 double DAT_00B0B798 = DAT_007E1728 * DAT_007F34F0;
 
-// FUNCTION: 0x006B5120 $E152
+// SYNTHETIC: GAMEMD 0x006B5120 SYMBOL
+// _$E152
 double DAT_00B0B770 = DAT_007E1730 * DAT_007F34F0;
 
-// FUNCTION: 0x006B5140 $E155
+// SYNTHETIC: GAMEMD 0x006B5140 SYMBOL
+// _$E155
 int DAT_00B0B7E8 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B0B770 - DAT_00B0B798) * DAT_00B0B790));
 
-// FUNCTION: 0x006B5180 $E158
+// SYNTHETIC: GAMEMD 0x006B5180 SYMBOL
+// _$E158
 double DAT_00B0B7A0 = FUN_004CADE0(DAT_00B0B7E8 * DAT_007E1740);
 
-// FUNCTION: 0x006B51B0 $E161
+// SYNTHETIC: GAMEMD 0x006B51B0 SYMBOL
+// _$E161
 double DAT_00B0B7B8 = FUN_004CADE0((DAT_00B0B7E8 * 2) / DAT_00B0B790);
 
-// FUNCTION: 0x006B51E0 $E164
+// SYNTHETIC: GAMEMD 0x006B51E0 SYMBOL
+// _$E164
 int DAT_00B0B7DC = (int)(DAT_00B0B7E8 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x006B5210 $E167
+// SYNTHETIC: GAMEMD 0x006B5210 SYMBOL
+// _$E167
 ShortPair DAT_00B0B788;
 
-// FUNCTION: 0x006B5220 $E170
+// SYNTHETIC: GAMEMD 0x006B5220 SYMBOL
+// _$E170
 IntTriple DAT_00B0B7A8;
 
 struct SmudgeTypeInit {
@@ -100,10 +112,11 @@ struct SmudgeTypeInit {
 	SmudgeTypeInit() { C = 0; A = 128; B = 128; }
 };
 
-// FUNCTION: 0x006B5240 $E173
+// SYNTHETIC: GAMEMD 0x006B5240 SYMBOL
+// _$E173
 SmudgeTypeInit DAT_00B0B7D0;
 
-// FUNCTION: 0x006B5260
+// FUNCTION: GAMEMD 0x006B5260
 SmudgeTypeClass::SmudgeTypeClass(char const * ini) :
 	BASECLASS(ini),
 	HeapID(SMUDGE_NONE),
@@ -125,13 +138,13 @@ SmudgeTypeClass::SmudgeTypeClass(char const * ini) :
 	HeapID = (SmudgeType)SmudgeTypes.ID(this);
 }
 
-// FUNCTION: 0x006B5370
+// FUNCTION: GAMEMD 0x006B5370
 SmudgeTypeClass::SmudgeTypeClass(NoInitClass const & x) :
 	BASECLASS(x)
 {
 }
 
-// FUNCTION: 0x006B53A0
+// FUNCTION: GAMEMD 0x006B53A0
 SmudgeTypeClass::~SmudgeTypeClass(void)
 {
 	if (ImageData != NULL) {
@@ -142,7 +155,7 @@ SmudgeTypeClass::~SmudgeTypeClass(void)
 	SmudgeTypes.Delete(this);
 }
 
-// FUNCTION: 0x006B5440
+// FUNCTION: GAMEMD 0x006B5440
 SmudgeType SmudgeTypeClass::From_Name(char const * name)
 {
 	if (name != NULL) {
@@ -155,7 +168,7 @@ SmudgeType SmudgeTypeClass::From_Name(char const * name)
 	return(SMUDGE_NONE);
 }
 
-// FUNCTION: 0x006B5490
+// FUNCTION: GAMEMD 0x006B5490
 void SmudgeTypeClass::Init(TheaterType theater)
 {
 	for (int index = SMUDGE_FIRST; index < SmudgeTypes.Count(); index++) {
@@ -169,7 +182,7 @@ void SmudgeTypeClass::Init(TheaterType theater)
 	}
 }
 
-// FUNCTION: 0x006B5550
+// FUNCTION: GAMEMD 0x006B5550
 bool SmudgeTypeClass::Create_And_Place(Cell const & cell, HouseClass * house) const
 {
 	if (new SmudgeClass(this, cell)) {
@@ -178,13 +191,13 @@ bool SmudgeTypeClass::Create_And_Place(Cell const & cell, HouseClass * house) co
 	return(false);
 }
 
-// FUNCTION: 0x006B55C0
+// FUNCTION: GAMEMD 0x006B55C0
 ObjectClass * SmudgeTypeClass::Create_One_Of(HouseClass *) const
 {
 	return(new SmudgeClass(this));
 }
 
-// FUNCTION: 0x006B55F0
+// FUNCTION: GAMEMD 0x006B55F0
 void SmudgeTypeClass::Draw_It(Point2D const & point, Rect const & cliprect, int size, int z, Cell const & cell) const
 {
 	ShapeSet const * ptr = (ShapeSet const *)Get_Image_Data();
@@ -202,7 +215,7 @@ void SmudgeTypeClass::Draw_It(Point2D const & point, Rect const & cliprect, int 
 	}
 }
 
-// FUNCTION: 0x006B56D0
+// FUNCTION: GAMEMD 0x006B56D0
 bool SmudgeTypeClass::Read_INI(CCINIClass & ini)
 {
 	ini.Reset();
@@ -225,7 +238,7 @@ bool SmudgeTypeClass::Read_INI(CCINIClass & ini)
 	return(false);
 }
 
-// FUNCTION: 0x006B57F0
+// FUNCTION: GAMEMD 0x006B57F0
 void SmudgeTypeClass::Compute_CRC(CRCEngine &crc) const
 {
 	BASECLASS::Compute_CRC(crc);
@@ -236,7 +249,7 @@ void SmudgeTypeClass::Compute_CRC(CRCEngine &crc) const
 	crc(Height);
 }
 
-// FUNCTION: 0x006B5850
+// FUNCTION: GAMEMD 0x006B5850
 HRESULT STDMETHODCALLTYPE SmudgeTypeClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -251,7 +264,7 @@ HRESULT STDMETHODCALLTYPE SmudgeTypeClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x006B58B0
+// FUNCTION: GAMEMD 0x006B58B0
 HRESULT STDMETHODCALLTYPE SmudgeTypeClass::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -261,7 +274,7 @@ HRESULT STDMETHODCALLTYPE SmudgeTypeClass::Save(IStream * stream, BOOL cleardirt
 	return(result);
 }
 
-// FUNCTION: 0x006B58D0
+// FUNCTION: GAMEMD 0x006B58D0
 HRESULT STDMETHODCALLTYPE SmudgeTypeClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -269,13 +282,13 @@ HRESULT STDMETHODCALLTYPE SmudgeTypeClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x006B5910
+// FUNCTION: GAMEMD 0x006B5910
 SmudgeTypeClass * SmudgeTypeClass::Find_Or_Make(const char *name)
 {
 	return(TFind_Or_Make<SmudgeTypeClass>(name, SmudgeTypes));
 }
 
-// FUNCTION: 0x006B59A0
+// FUNCTION: GAMEMD 0x006B59A0
 bool SmudgeTypeClass::Scorch_The_Ground(Coord const & coord, int width, int height, bool large)
 {
 	int i;
@@ -316,7 +329,7 @@ bool SmudgeTypeClass::Scorch_The_Ground(Coord const & coord, int width, int heig
 
 	return(false);
 }
-// FUNCTION: 0x006B5C90
+// FUNCTION: GAMEMD 0x006B5C90
 bool SmudgeTypeClass::Crater_The_Ground(Coord const & coord, int width, int height, bool large)
 {
 	int i;
@@ -358,7 +371,7 @@ bool SmudgeTypeClass::Crater_The_Ground(Coord const & coord, int width, int heig
 	return(false);
 }
 
-// FUNCTION: 0x006B5F80
+// FUNCTION: GAMEMD 0x006B5F80
 bool SmudgeTypeClass::Can_Place_Here(Cell const & origin, bool underbuildings) const
 {
 	for (int h = 0; h < Height; h++) {
@@ -391,7 +404,7 @@ bool SmudgeTypeClass::Can_Place_Here(Cell const & origin, bool underbuildings) c
 	return(true);
 }
 
-// FUNCTION: 0x006B6080
+// FUNCTION: GAMEMD 0x006B6080
 void SmudgeTypeClass::Place(Cell const & origin) const
 {
 	for (int h = 0; h < Height; h++) {
@@ -405,15 +418,20 @@ void SmudgeTypeClass::Place(Cell const & origin) const
 	}
 }
 
-// FUNCTION: 0x006B6130 SmudgeTypeClass::Fetch_RTTI
-// FUNCTION: 0x006B6140 SmudgeTypeClass::Fetch_Object_Size
-// FUNCTION: 0x006B6150 SmudgeTypeClass::Fetch_Heap_ID
-// FUNCTION: 0x006B6160 SmudgeTypeClass::~SmudgeTypeClass
+// FUNCTION: GAMEMD 0x006B6130
+// SmudgeTypeClass::Fetch_RTTI
+// FUNCTION: GAMEMD 0x006B6140
+// SmudgeTypeClass::Fetch_Object_Size
+// FUNCTION: GAMEMD 0x006B6150
+// SmudgeTypeClass::Fetch_Heap_ID
+// SYNTHETIC: GAMEMD 0x006B6160
+// ??_GSmudgeTypeClass@@UAEPAXI@Z
 
 struct SmudgeTypeZero {
 	int A, B, C, D;
 	SmudgeTypeZero() { A = 0; B = 0; C = 0; D = 0; }
 };
 
-// FUNCTION: 0x006B6210 $E176
+// SYNTHETIC: GAMEMD 0x006B6210 SYMBOL
+// _$E176
 SmudgeTypeZero DAT_00B0B7F0;

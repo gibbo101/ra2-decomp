@@ -8,7 +8,7 @@
 #include "assert.h"
 #include <cstring>
 
-// FUNCTION: 0x00438060
+// FUNCTION: GAMEMD 0x00438060
 int BlowPipe::Flush(void)
 {
 	int total = 0;
@@ -20,7 +20,7 @@ int BlowPipe::Flush(void)
 	return(total);
 }
 
-// FUNCTION: 0x004380A0
+// FUNCTION: GAMEMD 0x004380A0
 int BlowPipe::Put(void const * source, int slen)
 {
 	if (source == NULL || slen < 1) {

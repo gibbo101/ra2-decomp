@@ -54,40 +54,52 @@ struct IntTriple {
 	IntTriple() { A = 0; B = 0; C = 0; }
 };
 
-// FUNCTION: 0x00429590 $E78
+// SYNTHETIC: GAMEMD 0x00429590 SYMBOL
+// _$E78
 double DAT_0089C280 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x004295C0 $E81
+// SYNTHETIC: GAMEMD 0x004295C0 SYMBOL
+// _$E81
 double DAT_0089C2D0 = DAT_0089C280 / DAT_007E3700;
 
-// FUNCTION: 0x004295E0 $E84
+// SYNTHETIC: GAMEMD 0x004295E0 SYMBOL
+// _$E84
 double DAT_0089C2B8 = DAT_007E1718 / DAT_0089C2D0;
 
-// FUNCTION: 0x00429600 $E87
+// SYNTHETIC: GAMEMD 0x00429600 SYMBOL
+// _$E87
 double DAT_0089C2B0 = DAT_007E1720 * DAT_007E3708;
 
-// FUNCTION: 0x00429620 $E90
+// SYNTHETIC: GAMEMD 0x00429620 SYMBOL
+// _$E90
 double DAT_0089C288 = DAT_007E1728 * DAT_007E3708;
 
-// FUNCTION: 0x00429640 $E93
+// SYNTHETIC: GAMEMD 0x00429640 SYMBOL
+// _$E93
 double DAT_0089A2F8 = DAT_007E1730 * DAT_007E3708;
 
-// FUNCTION: 0x00429660 $E96
+// SYNTHETIC: GAMEMD 0x00429660 SYMBOL
+// _$E96
 int DAT_0089C2D8 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_0089A2F8 - DAT_0089C288) * DAT_0089C280));
 
-// FUNCTION: 0x004296A0 $E99
+// SYNTHETIC: GAMEMD 0x004296A0 SYMBOL
+// _$E99
 double DAT_0089C290 = FUN_004CADE0(DAT_0089C2D8 * DAT_007E1740);
 
-// FUNCTION: 0x004296D0 $E102
+// SYNTHETIC: GAMEMD 0x004296D0 SYMBOL
+// _$E102
 double DAT_0089C2A8 = FUN_004CADE0((DAT_0089C2D8 * 2) / DAT_0089C280);
 
-// FUNCTION: 0x00429700 $E105
+// SYNTHETIC: GAMEMD 0x00429700 SYMBOL
+// _$E105
 int DAT_0089C2CC = (int)(DAT_0089C2D8 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x00429730 $E108
+// SYNTHETIC: GAMEMD 0x00429730 SYMBOL
+// _$E108
 ShortPair DAT_0089C278;
 
-// FUNCTION: 0x00429740 $E111
+// SYNTHETIC: GAMEMD 0x00429740 SYMBOL
+// _$E111
 IntTriple DAT_0089C298;
 
 static unsigned int CellHeights[2000];
@@ -99,7 +111,8 @@ struct PlayfieldDefaults {
 	PlayfieldDefaults() { C = 0; A = 128; B = 128; }
 };
 
-// FUNCTION: 0x00429760 $E114
+// SYNTHETIC: GAMEMD 0x00429760 SYMBOL
+// _$E114
 PlayfieldDefaults DAT_0089C2C0;
 
 inline Cell Next_Cell(Cell const & cell, FacingType facing)
@@ -114,7 +127,7 @@ inline Cell Next_Cell(Cell const & cell, FacingType facing)
 	return(cell + (AdjacentCell[facing]));
 }
 
-// FUNCTION: 0x00429780
+// FUNCTION: GAMEMD 0x00429780
 Cell Follow_Path(Cell const & cell, int count, FacingType const * path)
 {
 	Cell result = cell;
@@ -127,7 +140,7 @@ Cell Follow_Path(Cell const & cell, int count, FacingType const * path)
 }
 
 
-// FUNCTION: 0x00429830
+// FUNCTION: GAMEMD 0x00429830
 double AStarClass::Get_Movement_Cost(CellClass **from, CellClass **to, bool bridge, MoveType move, FootClass * foot)
 {
 	static float _costs[MOVE_COUNT] = {
@@ -246,7 +259,7 @@ double AStarClass::Get_Movement_Cost(CellClass **from, CellClass **to, bool brid
 	return(cost);
 }
 
-// FUNCTION: 0x0042A460
+// FUNCTION: GAMEMD 0x0042A460
 AStarClass::RegularOpenNode * AStarClass::Create_Node(RegularOpenNode * parent, CellClass ** cell, Cell const & to, float movement_cost)
 {
 	RegularOpenNode * open_node = &RegularOpenNodes->Nodes[RegularOpenNodes->ActiveCount++];
@@ -288,7 +301,7 @@ AStarClass::RegularOpenNode * AStarClass::Create_Node(RegularOpenNode * parent, 
 	return(open_node);
 }
 
-// FUNCTION: 0x0042A5B0
+// FUNCTION: GAMEMD 0x0042A5B0
 void AStarClass::Clear(void)
 {
 	int i;
@@ -322,7 +335,7 @@ void AStarClass::Clear(void)
 	}
 }
 
-// FUNCTION: 0x0042A690
+// FUNCTION: GAMEMD 0x0042A690
 bool AStarClass::Is_Visited(int, bool base_level, int index)
 {
 	if (base_level) {
@@ -337,7 +350,7 @@ bool AStarClass::Is_Visited(int, bool base_level, int index)
 	return(false);
 }
 
-// FUNCTION: 0x0042A6D0
+// FUNCTION: GAMEMD 0x0042A6D0
 AStarClass::AStarClass(void) :
 	field_0(false),
 	IsAvoidBridges(false),
@@ -377,7 +390,7 @@ AStarClass::AStarClass(void) :
 	HierNodePool = new AStarHierarchicalNode[10000];
 }
 
-// FUNCTION: 0x0042A900
+// FUNCTION: GAMEMD 0x0042A900
 AStarClass::~AStarClass(void)
 {
 	delete RegularQueue;
@@ -436,7 +449,7 @@ AStarClass::~AStarClass(void)
 	delete [] HierNodePool;
 }
 
-// FUNCTION: 0x0042AA40
+// FUNCTION: GAMEMD 0x0042AA40
 FacingType Facing_Between(Cell const & cell1, Cell const & cell2)
 {
 	static FacingType _table[3][3] = {
@@ -451,7 +464,7 @@ FacingType Facing_Between(Cell const & cell1, Cell const & cell2)
 	return(FACING_COUNT);
 }
 
-// FUNCTION: 0x0042AA90
+// FUNCTION: GAMEMD 0x0042AA90
 PathStruct * AStarClass::Build_Final_Path(RegularOpenNode *final_node, FacingType *moves)
 {
 	static PathStruct path;
@@ -486,9 +499,10 @@ PathStruct * AStarClass::Build_Final_Path(RegularOpenNode *final_node, FacingTyp
 	return(&path);
 }
 
-// FUNCTION: 0x0042ABF0 $E117
+// SYNTHETIC: GAMEMD 0x0042ABF0 SYMBOL
+// _$E117
 
-// FUNCTION: 0x0042AC00
+// FUNCTION: GAMEMD 0x0042AC00
 void AStarClass::Update_Map_Dimensions(Rect const & dimensions)
 {
 	if (RegularVisited != NULL) {
@@ -525,7 +539,7 @@ void AStarClass::Update_Map_Dimensions(Rect const & dimensions)
 	AStarFacingToOffset[FACING_NW]	= -1 - MapCellStride;
 }
 
-// FUNCTION: 0x0042B080
+// FUNCTION: GAMEMD 0x0042B080
 FootClass * AStarClass::Find_Moving_Blocker(Cell const & cell, int cell_height)
 {
 	Coord coord = Coord(cell, 0);
@@ -547,19 +561,19 @@ FootClass * AStarClass::Find_Moving_Blocker(Cell const & cell, int cell_height)
 	return(NULL);
 }
 
-// FUNCTION: 0x0042B1C0
+// FUNCTION: GAMEMD 0x0042B1C0
 int Map_Cell_Index(Cell const & cell)
 {
 	return(((cell.X - cell.Y + Map.PlayRect.Width - 1) >> 1) + Map.PlayRect.Width * (cell.X - Map.PlayRect.Width + cell.Y - 1));
 }
 
-// FUNCTION: 0x0042B1F0
+// FUNCTION: GAMEMD 0x0042B1F0
 int Map_Cell_Count(void)
 {
 	return((2 * Map.PlayRect.Width) * (Map.PlayRect.Height + 4));
 }
 
-// FUNCTION: 0x0042B210
+// FUNCTION: GAMEMD 0x0042B210
 void AStarClass::Cut_Corners(PathStruct * path, FootClass * foot)
 {
 	int max_len = path->Length;
@@ -633,7 +647,7 @@ static Cell Follow_Path2(Cell const & cell, int count, FacingType const * path)
 	return(Follow_Path(cell, count, path));
 }
 
-// FUNCTION: 0x0042B420
+// FUNCTION: GAMEMD 0x0042B420
 int AStarClass::Try_Diagonal_Shortcut(FootClass * foot, FacingType * moves, unsigned int * heights, int initial_first_leg_length, int initial_second_leg_length, Cell & cell)
 {
 	int first_leg_length = initial_first_leg_length;
@@ -708,7 +722,7 @@ int AStarClass::Try_Diagonal_Shortcut(FootClass * foot, FacingType * moves, unsi
 	return(first_leg_length);
 }
 
-// FUNCTION: 0x0042BCA0
+// FUNCTION: GAMEMD 0x0042BCA0
 void AStarClass::Splice_Path(FacingType * moves, int start_index, int end_index, int & splice_index, Cell & cell)
 {
 	int max_radius = 0;
@@ -750,7 +764,7 @@ void AStarClass::Splice_Path(FacingType * moves, int start_index, int end_index,
 	return;
 }
 
-// FUNCTION: 0x0042C1C0
+// FUNCTION: GAMEMD 0x0042C1C0
 void AStarClass::Reset(void)
 {
 	int j;
@@ -785,7 +799,7 @@ void AStarClass::Reset(void)
 	}
 }
 
-// FUNCTION: 0x0042C900
+// FUNCTION: GAMEMD 0x0042C900
 PathStruct * AStarClass::Find_Path(Cell const & from, Cell const & to, FootClass * foot, FacingType * moves, int max_loops, MZoneType mzone, ObstacleAvoidanceType avoidance)
 {
 	int i;
@@ -896,7 +910,7 @@ PathStruct * AStarClass::Find_Path(Cell const & from, Cell const & to, FootClass
 	return(path);
 }
 
-// FUNCTION: 0x0042CCD0
+// FUNCTION: GAMEMD 0x0042CCD0
 void AStarClass::Ban_Blocked_Subzone_Edges(FootClass const * foot)
 {
 	CellSubzoneStruct & subzone = Map.CellSubzones[Map.Get_Cell_Zone_Index(HierLastNodeCell)];
@@ -919,7 +933,7 @@ void AStarClass::Ban_Blocked_Subzone_Edges(FootClass const * foot)
 	}
 }
 
-// FUNCTION: 0x0042CEB0
+// FUNCTION: GAMEMD 0x0042CEB0
 bool AStarClass::Subzone_Edge_Banned(unsigned short subzone1, unsigned short subzone2, int subzone_level)
 {
 	if (subzone2 < subzone1) {
@@ -936,7 +950,7 @@ bool AStarClass::Subzone_Edge_Banned(unsigned short subzone1, unsigned short sub
 	return(false);
 }
 
-// FUNCTION: 0x0042CF10
+// FUNCTION: GAMEMD 0x0042CF10
 void AStarClass::Ban_Subzone_Edge(unsigned int subzone1, unsigned int subzone2, int subzone_level)
 {
 	if (subzone1 != subzone2) {
@@ -948,7 +962,7 @@ void AStarClass::Ban_Subzone_Edge(unsigned int subzone1, unsigned int subzone2, 
 	}
 }
 
-// FUNCTION: 0x0042CF80
+// FUNCTION: GAMEMD 0x0042CF80
 void AStarClass::Ban_Neighborhood_Subzone_Edges(unsigned int subzone, int subzone_level)
 {
 	int i;
@@ -999,7 +1013,7 @@ void AStarClass::Ban_Neighborhood_Subzone_Edges(unsigned int subzone, int subzon
 	}
 }
 
-// FUNCTION: 0x0042D170
+// FUNCTION: GAMEMD 0x0042D170
 int AStarClass::Test_Cell_Walk(Cell const & from, Cell const & to, FootClass const * foot, bool from_bridge, bool to_bridge, MZoneType mzone)
 {
 	IsHSEnabled = true;

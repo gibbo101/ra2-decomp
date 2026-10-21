@@ -23,7 +23,7 @@
 #include "warhead.h"
 #include <cstring>
 
-// FUNCTION: 0x00771C70
+// FUNCTION: GAMEMD 0x00771C70
 WeaponTypeClass::WeaponTypeClass(char const * ininame) :
 	BASECLASS(ininame),
 	AmbientDamage(0),
@@ -94,7 +94,7 @@ WeaponTypeClass::WeaponTypeClass(char const * ininame) :
 	Weapons.Add(this);
 }
 
-// FUNCTION: 0x00771F00
+// FUNCTION: GAMEMD 0x00771F00
 WeaponTypeClass::WeaponTypeClass(NoInitClass const & x) :
 	BASECLASS(x),
 	Sound(x),
@@ -106,7 +106,7 @@ WeaponTypeClass::WeaponTypeClass(NoInitClass const & x) :
 {
 }
 
-// FUNCTION: 0x00771F50
+// FUNCTION: GAMEMD 0x00771F50
 WeaponTypeClass::~WeaponTypeClass(void)
 {
 	Detach_This_From_All(this, true);
@@ -116,7 +116,7 @@ WeaponTypeClass::~WeaponTypeClass(void)
 	Weapons.Delete(this);
 }
 
-// FUNCTION: 0x007729F0
+// FUNCTION: GAMEMD 0x007729F0
 void WeaponTypeClass::Init_Max_Speed(void)
 {
 	if (Bullet != NULL && Bullet->ROT == 0) {
@@ -128,7 +128,7 @@ void WeaponTypeClass::Init_Max_Speed(void)
 	}
 }
 
-// FUNCTION: 0x00772A50
+// FUNCTION: GAMEMD 0x00772A50
 ArmorType Armor_From_Name(char const * name)
 {
 	if (!name) return(ARMOR_NONE);
@@ -142,7 +142,7 @@ ArmorType Armor_From_Name(char const * name)
 	return(ARMOR_NONE);
 }
 
-// FUNCTION: 0x00772A90
+// FUNCTION: GAMEMD 0x00772A90
 ThreatType WeaponTypeClass::Allowed_Threats(void) const
 {
 	ThreatType threat = THREAT_NORMAL;
@@ -155,7 +155,7 @@ ThreatType WeaponTypeClass::Allowed_Threats(void) const
 	return(threat);
 }
 
-// FUNCTION: 0x00772AC0
+// FUNCTION: GAMEMD 0x00772AC0
 bool WeaponTypeClass::Is_Wall_Destroyer(void) const
 {
 	if (WarheadPtr != NULL && WarheadPtr->IsWallDestroyer) {
@@ -164,7 +164,7 @@ bool WeaponTypeClass::Is_Wall_Destroyer(void) const
 	return(false);
 }
 
-// FUNCTION: 0x00772AE0
+// FUNCTION: GAMEMD 0x00772AE0
 void WeaponTypeClass::Compute_CRC(CRCEngine &crc) const
 {
 	BASECLASS::Compute_CRC(crc);
@@ -197,7 +197,7 @@ void WeaponTypeClass::Compute_CRC(CRCEngine &crc) const
 	crc(DistributedWeaponFire);
 }
 
-// FUNCTION: 0x00772C90
+// FUNCTION: GAMEMD 0x00772C90
 HRESULT STDMETHODCALLTYPE WeaponTypeClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -205,7 +205,7 @@ HRESULT STDMETHODCALLTYPE WeaponTypeClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x00772CD0
+// FUNCTION: GAMEMD 0x00772CD0
 HRESULT STDMETHODCALLTYPE WeaponTypeClass::Load(IStream * stream)
 {
 	Sound.Clear();
@@ -234,7 +234,7 @@ HRESULT STDMETHODCALLTYPE WeaponTypeClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x00772EB0
+// FUNCTION: GAMEMD 0x00772EB0
 HRESULT STDMETHODCALLTYPE WeaponTypeClass::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -248,13 +248,13 @@ HRESULT STDMETHODCALLTYPE WeaponTypeClass::Save(IStream * stream, BOOL cleardirt
 	return(result);
 }
 
-// FUNCTION: 0x00772FA0
+// FUNCTION: GAMEMD 0x00772FA0
 WeaponTypeClass * WeaponTypeClass::Find_Or_Make(const char *name)
 {
 	return(TFind_Or_Make<WeaponTypeClass>(name, Weapons));
 }
 
-// FUNCTION: 0x00773030
+// FUNCTION: GAMEMD 0x00773030
 WeaponType WeaponTypeClass::From_Name(char const * name)
 {
 	for (int index = 0; index < Weapons.Count(); index++) {
@@ -265,7 +265,7 @@ WeaponType WeaponTypeClass::From_Name(char const * name)
 	return(WEAPON_NONE);
 }
 
-// FUNCTION: 0x00773070
+// FUNCTION: GAMEMD 0x00773070
 int WeaponTypeClass::Get_Speed(int range) const
 {
 	if (Bullet != NULL && Bullet->ROT == 0) {
@@ -275,18 +275,21 @@ int WeaponTypeClass::Get_Speed(int range) const
 	return(MaxSpeed);
 }
 
-// FUNCTION: 0x007730D0 WeaponTypeClass::Fetch_Object_Size
+// FUNCTION: GAMEMD 0x007730D0
+// WeaponTypeClass::Fetch_Object_Size
 
-// FUNCTION: 0x007730E0 WeaponTypeClass::Fetch_RTTI
+// FUNCTION: GAMEMD 0x007730E0
+// WeaponTypeClass::Fetch_RTTI
 
-// FUNCTION: 0x007730F0 WeaponTypeClass::~WeaponTypeClass
+// SYNTHETIC: GAMEMD 0x007730F0
+// ??_GWeaponTypeClass@@UAEPAXI@Z
 
 extern int DAT_00B72C98;
 extern int DAT_00B72C9C;
 extern int DAT_00B72CA0;
 extern int DAT_00B72CA4;
 
-// FUNCTION: 0x00773240
+// FUNCTION: GAMEMD 0x00773240
 void FUN_00773240(void)
 {
 	DAT_00B72C98 = 0;

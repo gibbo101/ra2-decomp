@@ -27,34 +27,44 @@ extern double __cdecl FUN_004CADE0(double);
 extern const double DAT_007F3138;
 extern const double DAT_007F3140;
 
-// FUNCTION: 0x006AC970 $E70
+// SYNTHETIC: GAMEMD 0x006AC970 SYMBOL
+// _$E70
 double DAT_00B0B540 = FUN_004CAC40(pow(256.0, 2.0) * 2);
 
-// FUNCTION: 0x006AC9A0 $E73
+// SYNTHETIC: GAMEMD 0x006AC9A0 SYMBOL
+// _$E73
 double DAT_00B0B590 = DAT_00B0B540 / DAT_007F3138;
 
-// FUNCTION: 0x006AC9C0 $E76
+// SYNTHETIC: GAMEMD 0x006AC9C0 SYMBOL
+// _$E76
 double DAT_00B0B578 = 1.0 / DAT_00B0B590;
 
-// FUNCTION: 0x006AC9E0 $E79
+// SYNTHETIC: GAMEMD 0x006AC9E0 SYMBOL
+// _$E79
 double DAT_00B0B570 = DAT_007F3140 * 45.0;
 
-// FUNCTION: 0x006ACA00 $E82
+// SYNTHETIC: GAMEMD 0x006ACA00 SYMBOL
+// _$E82
 double DAT_00B0B548 = DAT_007F3140 * 60.0;
 
-// FUNCTION: 0x006ACA20 $E85
+// SYNTHETIC: GAMEMD 0x006ACA20 SYMBOL
+// _$E85
 double DAT_00B0B520 = DAT_007F3140 * 90.0;
 
-// FUNCTION: 0x006ACA40 $E88
+// SYNTHETIC: GAMEMD 0x006ACA40 SYMBOL
+// _$E88
 int DAT_00B0B598 = (int)(FUN_004CAD50(DAT_00B0B520 - DAT_00B0B548) * DAT_00B0B540 * 0.5);
 
-// FUNCTION: 0x006ACA80 $E91
+// SYNTHETIC: GAMEMD 0x006ACA80 SYMBOL
+// _$E91
 double DAT_00B0B550 = FUN_004CADE0(DAT_00B0B598 * 0.00390625);
 
-// FUNCTION: 0x006ACAB0 $E94
+// SYNTHETIC: GAMEMD 0x006ACAB0 SYMBOL
+// _$E94
 double DAT_00B0B568 = FUN_004CADE0((DAT_00B0B598 * 2) / DAT_00B0B540);
 
-// FUNCTION: 0x006ACAE0 $E97
+// SYNTHETIC: GAMEMD 0x006ACAE0 SYMBOL
+// _$E97
 int DAT_00B0B58C = (int)(DAT_00B0B598 * 4 + 0.5);
 
 struct ShortPair {
@@ -67,10 +77,12 @@ struct IntTriple {
 	IntTriple() { A = 0; B = 0; C = 0; }
 };
 
-// FUNCTION: 0x006ACB10 $E100
+// SYNTHETIC: GAMEMD 0x006ACB10 SYMBOL
+// _$E100
 ShortPair DAT_00B0B538;
 
-// FUNCTION: 0x006ACB20 $E103
+// SYNTHETIC: GAMEMD 0x006ACB20 SYMBOL
+// _$E103
 IntTriple DAT_00B0B558;
 
 extern int DAT_00B0B580;
@@ -90,7 +102,7 @@ void __fastcall FUN_004E5ED0(HWND dialog, int id, int value);
 void __fastcall FUN_006ADF00(HWND dialog, int first, int count);
 void __fastcall FUN_006AE080(HWND dialog, int first);
 
-// FUNCTION: 0x006ACB40
+// FUNCTION: GAMEMD 0x006ACB40
 void FUN_006ACB40(void)
 {
 	DAT_00B0B588 = 0;
@@ -98,7 +110,7 @@ void FUN_006ACB40(void)
 	DAT_00B0B584 = 0x80;
 }
 
-// FUNCTION: 0x006ACB60
+// FUNCTION: GAMEMD 0x006ACB60
 int __fastcall FUN_006ACB60(int slot)
 {
 	if (slot == 0) return 0x50b;
@@ -111,7 +123,7 @@ int __fastcall FUN_006ACB60(int slot)
 	return -1;
 }
 
-// FUNCTION: 0x006ACBC0
+// FUNCTION: GAMEMD 0x006ACBC0
 int __fastcall FUN_006ACBC0(int id)
 {
 	if (id == 0x50b) return 0;
@@ -124,7 +136,7 @@ int __fastcall FUN_006ACBC0(int id)
 	return -1;
 }
 
-// FUNCTION: 0x006ACC20
+// FUNCTION: GAMEMD 0x006ACC20
 wchar_t const * __fastcall FUN_006ACC20(int level)
 {
 	if (level == -1) return StringTable::LoadString("STT:PlayerNone", NULL, "D:\\ra2mdpost\\Skirmish.cpp", 0x87);
@@ -134,7 +146,7 @@ wchar_t const * __fastcall FUN_006ACC20(int level)
 	return NULL;
 }
 
-// FUNCTION: 0x006ACCA0
+// FUNCTION: GAMEMD 0x006ACCA0
 bool __fastcall FUN_006ACCA0(int first)
 {
 	HWND dialog = DAT_00B0B59C;
@@ -153,7 +165,7 @@ bool __fastcall FUN_006ACCA0(int first)
 	return false;
 }
 
-// FUNCTION: 0x006ACD60
+// FUNCTION: GAMEMD 0x006ACD60
 void __fastcall FUN_006ACD60(HWND dialog)
 {
 	if (dialog == NULL) {
@@ -191,7 +203,7 @@ void __fastcall FUN_006ACD60(HWND dialog)
 	}
 }
 
-// FUNCTION: 0x006ACE80
+// FUNCTION: GAMEMD 0x006ACE80
 void __fastcall FUN_006ACE80(HWND dialog, int first)
 {
 	if (dialog != NULL && Session.MPGameMode != NULL) {
@@ -212,7 +224,7 @@ void __fastcall FUN_006ACE80(HWND dialog, int first)
 	}
 }
 
-// FUNCTION: 0x006ADC20
+// FUNCTION: GAMEMD 0x006ADC20
 void __fastcall FUN_006ADC20(HWND dialog, int id)
 {
 	int slot = FUN_006ACBC0(id) + 1;
@@ -242,7 +254,7 @@ void __fastcall FUN_006ADC20(HWND dialog, int id)
 	EnableWindow(teamItem, enable);
 }
 
-// FUNCTION: 0x006ADDF0
+// FUNCTION: GAMEMD 0x006ADDF0
 void __fastcall FUN_006ADDF0(HWND dialog, int from, int to)
 {
 	int fromCount;
@@ -272,7 +284,7 @@ void __fastcall FUN_006ADDF0(HWND dialog, int from, int to)
 	FUN_006ACE80(dialog, 0);
 }
 
-// FUNCTION: 0x006ADF00
+// FUNCTION: GAMEMD 0x006ADF00
 void __fastcall FUN_006ADF00(HWND dialog, int first, int count)
 {
 	int end = first + count;
@@ -299,7 +311,7 @@ void __fastcall FUN_006ADF00(HWND dialog, int first, int count)
 	}
 }
 
-// FUNCTION: 0x006AE080
+// FUNCTION: GAMEMD 0x006AE080
 void __fastcall FUN_006AE080(HWND dialog, int first)
 {
 	int i;
@@ -350,7 +362,7 @@ namespace UI {
 	bool Updated(void);
 }
 
-// FUNCTION: 0x006AE2C0
+// FUNCTION: GAMEMD 0x006AE2C0
 bool FUN_006AE2C0(void)
 {
 	int result = -1;
@@ -428,7 +440,7 @@ wchar_t const * __fastcall FUN_004E4F30(int slot);
 wchar_t const * __fastcall FUN_004E38A0(int side);
 wchar_t const * __fastcall FUN_004E42A0(int color);
 
-// FUNCTION: 0x006AE3F0
+// FUNCTION: GAMEMD 0x006AE3F0
 BOOL CALLBACK FUN_006AE3F0(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	BOOL result = UI::StandardWndProc(window, message, wparam, lparam);
@@ -498,47 +510,59 @@ BOOL CALLBACK FUN_006AE3F0(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 	return FALSE;
 }
 
-// FUNCTION: 0x006AEF10 $E106
+// SYNTHETIC: GAMEMD 0x006AEF10 SYMBOL
+// _$E106
 double DAT_00B0B5C0 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x006AEF40 $E109
+// SYNTHETIC: GAMEMD 0x006AEF40 SYMBOL
+// _$E109
 double DAT_00B0B628 = DAT_00B0B5C0 / DAT_007F3148;
 
-// FUNCTION: 0x006AEF60 $E112
+// SYNTHETIC: GAMEMD 0x006AEF60 SYMBOL
+// _$E112
 double DAT_00B0B610 = DAT_007E1718 / DAT_00B0B628;
 
-// FUNCTION: 0x006AEF80 $E115
+// SYNTHETIC: GAMEMD 0x006AEF80 SYMBOL
+// _$E115
 double DAT_00B0B608 = DAT_007E1720 * DAT_007F3150;
 
-// FUNCTION: 0x006AEFA0 $E118
+// SYNTHETIC: GAMEMD 0x006AEFA0 SYMBOL
+// _$E118
 double DAT_00B0B5C8 = DAT_007E1728 * DAT_007F3150;
 
-// FUNCTION: 0x006AEFC0 $E121
+// SYNTHETIC: GAMEMD 0x006AEFC0 SYMBOL
+// _$E121
 double DAT_00B0B5A0 = DAT_007E1730 * DAT_007F3150;
 
-// FUNCTION: 0x006AEFE0 $E124
+// SYNTHETIC: GAMEMD 0x006AEFE0 SYMBOL
+// _$E124
 int DAT_00B0B630 = (int)(FUN_004CAD50(DAT_00B0B5A0 - DAT_00B0B5C8) * DAT_007E1738 * DAT_00B0B5C0);
 
-// FUNCTION: 0x006AF020 $E127
+// SYNTHETIC: GAMEMD 0x006AF020 SYMBOL
+// _$E127
 double DAT_00B0B5D0 = FUN_004CADE0(DAT_00B0B630 * DAT_007E1740);
 
-// FUNCTION: 0x006AF050 $E130
+// SYNTHETIC: GAMEMD 0x006AF050 SYMBOL
+// _$E130
 double DAT_00B0B5E8 = FUN_004CADE0((DAT_00B0B630 * 2) / DAT_00B0B5C0);
 
-// FUNCTION: 0x006AF080 $E133
+// SYNTHETIC: GAMEMD 0x006AF080 SYMBOL
+// _$E133
 int DAT_00B0B624 = (int)(DAT_00B0B630 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x006AF0B0 $E136
+// SYNTHETIC: GAMEMD 0x006AF0B0 SYMBOL
+// _$E136
 ShortPair DAT_00B0B5B8;
 
-// FUNCTION: 0x006AF0C0 $E139
+// SYNTHETIC: GAMEMD 0x006AF0C0 SYMBOL
+// _$E139
 IntTriple DAT_00B0B5D8;
 
 extern int DAT_00B0B618;
 extern int DAT_00B0B61C;
 extern int DAT_00B0B620;
 
-// FUNCTION: 0x006AF0E0
+// FUNCTION: GAMEMD 0x006AF0E0
 void FUN_006AF0E0(void)
 {
 	DAT_00B0B620 = 0;
@@ -551,5 +575,6 @@ struct IntQuad {
 	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
 };
 
-// FUNCTION: 0x006AF100 $E142
+// SYNTHETIC: GAMEMD 0x006AF100 SYMBOL
+// _$E142
 IntQuad DAT_00B0B5A8;

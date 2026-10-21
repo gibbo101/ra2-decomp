@@ -20,16 +20,20 @@
 #include "tracker.h"
 #include "vector.h"
 
-// FUNCTION: 0x00554640 $E125
-// FUNCTION: 0x00554680 $E123
+// SYNTHETIC: GAMEMD 0x00554640 SYMBOL
+// _$E125
+// SYNTHETIC: GAMEMD 0x00554680 SYMBOL
+// _$E123
 DynamicVectorClass<LightSourceClass *> LightSources;
-// FUNCTION: 0x005546C0 $E131
-// FUNCTION: 0x00554700 $E128
+// SYNTHETIC: GAMEMD 0x005546C0 SYMBOL
+// _$E131
+// SYNTHETIC: GAMEMD 0x00554700 SYMBOL
+// _$E128
 DynamicVectorClass<LightSourceClass::PendingCellClass *> LightSourceClass::PendingCells;
 
 bool LightSourceClass::Recalc = true;
 
-// FUNCTION: 0x00554760
+// FUNCTION: GAMEMD 0x00554760
 LightSourceClass::LightSourceClass(Coord coord, int visibility, int intensity, int red, int green, int blue) :
 	BASECLASS(),
 	Intensity(intensity),
@@ -44,7 +48,7 @@ LightSourceClass::LightSourceClass(Coord coord, int visibility, int intensity, i
 	LightSources.Add(this);
 }
 
-// FUNCTION: 0x00554830
+// FUNCTION: GAMEMD 0x00554830
 LightSourceClass::LightSourceClass(void) :
 	BASECLASS(),
 	Intensity(0),
@@ -58,13 +62,13 @@ LightSourceClass::LightSourceClass(void) :
 	LightSources.Add(this);
 }
 
-// FUNCTION: 0x005548E0
+// FUNCTION: GAMEMD 0x005548E0
 LightSourceClass::LightSourceClass(NoInitClass const & x) :
 	BASECLASS(x)
 {
 }
 
-// FUNCTION: 0x00554910
+// FUNCTION: GAMEMD 0x00554910
 LightSourceClass::~LightSourceClass(void)
 {
 	Detach_This_From_All(this);
@@ -73,7 +77,7 @@ LightSourceClass::~LightSourceClass(void)
 	Disable();
 }
 
-// FUNCTION: 0x005549A0
+// FUNCTION: GAMEMD 0x005549A0
 void LightSourceClass::Reset(void)
 {
 	Recalc = false;
@@ -91,7 +95,7 @@ void LightSourceClass::Reset(void)
 	Recalc = true;
 }
 
-// FUNCTION: 0x00554A60
+// FUNCTION: GAMEMD 0x00554A60
 void LightSourceClass::Enable(bool defer)
 {
 	if (!IsEnabled) {
@@ -100,7 +104,7 @@ void LightSourceClass::Enable(bool defer)
 	}
 }
 
-// FUNCTION: 0x00554A80
+// FUNCTION: GAMEMD 0x00554A80
 void LightSourceClass::Disable(bool defer)
 {
 	if (IsEnabled) {
@@ -109,7 +113,7 @@ void LightSourceClass::Disable(bool defer)
 	}
 }
 
-// FUNCTION: 0x00554AA0
+// FUNCTION: GAMEMD 0x00554AA0
 void LightSourceClass::ChangeLevels(int intensity, int red, int green, int blue, bool defer)
 {
 	if (Intensity != intensity || RedTint != red || RedTint != blue) {
@@ -123,7 +127,7 @@ void LightSourceClass::ChangeLevels(int intensity, int red, int green, int blue,
 	}
 }
 
-// FUNCTION: 0x00554AF0
+// FUNCTION: GAMEMD 0x00554AF0
 void LightSourceClass::Recalculate_Affected_Cells(bool defer)
 {
 	if (Recalc && Options.DetailLevel >= DetailLevel) {
@@ -158,7 +162,7 @@ void LightSourceClass::Recalculate_Affected_Cells(bool defer)
 	}
 }
 
-// FUNCTION: 0x00554D50
+// FUNCTION: GAMEMD 0x00554D50
 void LightSourceClass::Process_Lighting(int time_budget_ms, bool force)
 {
 	static unsigned _update_frames = 0;
@@ -229,13 +233,13 @@ void LightSourceClass::Process_Lighting(int time_budget_ms, bool force)
 	}
 }
 
-// FUNCTION: 0x00555070
+// FUNCTION: GAMEMD 0x00555070
 void LightSourceClass::Compute_CRC(CRCEngine & crc) const
 {
 	BASECLASS::Compute_CRC(crc);
 }
 
-// FUNCTION: 0x00555080
+// FUNCTION: GAMEMD 0x00555080
 HRESULT STDMETHODCALLTYPE LightSourceClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -243,7 +247,7 @@ HRESULT STDMETHODCALLTYPE LightSourceClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x005550C0
+// FUNCTION: GAMEMD 0x005550C0
 HRESULT STDMETHODCALLTYPE LightSourceClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -255,7 +259,7 @@ HRESULT STDMETHODCALLTYPE LightSourceClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x00555110
+// FUNCTION: GAMEMD 0x00555110
 HRESULT STDMETHODCALLTYPE LightSourceClass::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -265,65 +269,91 @@ HRESULT STDMETHODCALLTYPE LightSourceClass::Save(IStream * stream, BOOL cleardir
 	return(result);
 }
 
-// FUNCTION: 0x00555130
+// FUNCTION: GAMEMD 0x00555130
 int LightSourceClass::Fetch_Object_Size(void) const
 {
 	return(sizeof(*this));
 }
 
-// FUNCTION: 0x00555140
+// FUNCTION: GAMEMD 0x00555140
 RTTIType LightSourceClass::Fetch_RTTI(void) const
 {
 	return(RTTI_LIGHTSOURCE);
 }
 
-// FUNCTION: 0x00555150 LightSourceClass::~LightSourceClass
+// SYNTHETIC: GAMEMD 0x00555150
+// ??_GLightSourceClass@@UAEPAXI@Z
 
-// FUNCTION: 0x00555200 ?$DynamicVectorClass@PAVLightSourceClass@@::Clear
+// TEMPLATE: GAMEMD 0x00555200
+// ?Clear@?$DynamicVectorClass@PAVLightSourceClass@@@@UAEXXZ
 template class DynamicVectorClass<LightSourceClass *>;
 
-// FUNCTION: 0x00555230 ?$DynamicVectorClass@PAVLightSourceClass@@::ID
+// TEMPLATE: GAMEMD 0x00555230
+// ?ID@?$DynamicVectorClass@PAVLightSourceClass@@@@UAEHPBQAVLightSourceClass@@@Z
 
-// FUNCTION: 0x00555250 ?$VectorClass@PAVLightSourceClass@@::GetItem
+// TEMPLATE: GAMEMD 0x00555250
+// ?GetItem@?$VectorClass@PAVLightSourceClass@@@@UBEPAVLightSourceClass@@H@Z
 
-// FUNCTION: 0x00555260 ?$DynamicVectorClass@PAVPendingCellClass@LightSourceClass@@::Clear
+// TEMPLATE: GAMEMD 0x00555260
+// ?Clear@?$DynamicVectorClass@PAVPendingCellClass@LightSourceClass@@@@UAEXXZ
 template class DynamicVectorClass<LightSourceClass::PendingCellClass *>;
 
-// FUNCTION: 0x00555290 ?$DynamicVectorClass@PAVPendingCellClass@LightSourceClass@@::ID
+// TEMPLATE: GAMEMD 0x00555290
+// ?ID@?$DynamicVectorClass@PAVPendingCellClass@LightSourceClass@@@@UAEHPBQAVPendingCellClass@LightSourceClass@@@Z
 
-// FUNCTION: 0x005552B0 ?$VectorClass@PAVPendingCellClass@LightSourceClass@@::GetItem
+// TEMPLATE: GAMEMD 0x005552B0
+// ?GetItem@?$VectorClass@PAVPendingCellClass@LightSourceClass@@@@UBEPAVPendingCellClass@LightSourceClass@@H@Z
 
-// FUNCTION: 0x005552C0 ?$VectorClass@PAVLightSourceClass@@::operator==
-// FUNCTION: 0x00555300 ?$VectorClass@PAVLightSourceClass@@::Resize
-// FUNCTION: 0x005553B0 ?$VectorClass@PAVLightSourceClass@@::Clear
-// FUNCTION: 0x005553E0 ?$VectorClass@PAVLightSourceClass@@::ID
-// FUNCTION: 0x00555420 ?$VectorClass@PAVLightSourceClass@@::ID
+// TEMPLATE: GAMEMD 0x005552C0
+// ??8?$VectorClass@PAVLightSourceClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x00555300
+// ?Resize@?$VectorClass@PAVLightSourceClass@@@@UAE_NHPBQAVLightSourceClass@@@Z
+// TEMPLATE: GAMEMD 0x005553B0
+// ?Clear@?$VectorClass@PAVLightSourceClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x005553E0
+// ?ID@?$VectorClass@PAVLightSourceClass@@@@UAEHABQAVLightSourceClass@@@Z
+// TEMPLATE: GAMEMD 0x00555420
+// ?ID@?$VectorClass@PAVLightSourceClass@@@@UAEHPBQAVLightSourceClass@@@Z
 template class VectorClass<LightSourceClass *>;
 
-// FUNCTION: 0x00555440 ?$DynamicVectorClass@PAVLightSourceClass@@::Resize
-// FUNCTION: 0x005554F0 ?$DynamicVectorClass@PAVLightSourceClass@@::ID
+// TEMPLATE: GAMEMD 0x00555440
+// ?Resize@?$DynamicVectorClass@PAVLightSourceClass@@@@UAE_NHPBQAVLightSourceClass@@@Z
+// TEMPLATE: GAMEMD 0x005554F0
+// ?ID@?$DynamicVectorClass@PAVLightSourceClass@@@@UAEHABQAVLightSourceClass@@@Z
 template class DynamicVectorClass<LightSourceClass *>;
 
-// FUNCTION: 0x00555520 ?$VectorClass@PAVPendingCellClass@LightSourceClass@@::operator==
-// FUNCTION: 0x00555560 ?$VectorClass@PAVPendingCellClass@LightSourceClass@@::Resize
-// FUNCTION: 0x00555610 ?$VectorClass@PAVPendingCellClass@LightSourceClass@@::Clear
-// FUNCTION: 0x00555640 ?$VectorClass@PAVPendingCellClass@LightSourceClass@@::ID
-// FUNCTION: 0x00555680 ?$VectorClass@PAVPendingCellClass@LightSourceClass@@::ID
+// TEMPLATE: GAMEMD 0x00555520
+// ??8?$VectorClass@PAVPendingCellClass@LightSourceClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x00555560
+// ?Resize@?$VectorClass@PAVPendingCellClass@LightSourceClass@@@@UAE_NHPBQAVPendingCellClass@LightSourceClass@@@Z
+// TEMPLATE: GAMEMD 0x00555610
+// ?Clear@?$VectorClass@PAVPendingCellClass@LightSourceClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x00555640
+// ?ID@?$VectorClass@PAVPendingCellClass@LightSourceClass@@@@UAEHABQAVPendingCellClass@LightSourceClass@@@Z
+// TEMPLATE: GAMEMD 0x00555680
+// ?ID@?$VectorClass@PAVPendingCellClass@LightSourceClass@@@@UAEHPBQAVPendingCellClass@LightSourceClass@@@Z
 template class VectorClass<LightSourceClass::PendingCellClass *>;
 
-// FUNCTION: 0x005556A0 ?$DynamicVectorClass@PAVPendingCellClass@LightSourceClass@@::Resize
-// FUNCTION: 0x00555750 ?$DynamicVectorClass@PAVPendingCellClass@LightSourceClass@@::ID
+// TEMPLATE: GAMEMD 0x005556A0
+// ?Resize@?$DynamicVectorClass@PAVPendingCellClass@LightSourceClass@@@@UAE_NHPBQAVPendingCellClass@LightSourceClass@@@Z
+// TEMPLATE: GAMEMD 0x00555750
+// ?ID@?$DynamicVectorClass@PAVPendingCellClass@LightSourceClass@@@@UAEHABQAVPendingCellClass@LightSourceClass@@@Z
 template class DynamicVectorClass<LightSourceClass::PendingCellClass *>;
 
-// FUNCTION: 0x00555780 ?$DynamicVectorClass@PAVLightSourceClass@@::~?$DynamicVectorClass@PAVLightSourceClass@@
-// FUNCTION: 0x005557D0 ?$VectorClass@PAVLightSourceClass@@::~?$VectorClass@PAVLightSourceClass@@
-// FUNCTION: 0x00555820 ?$DynamicVectorClass@PAVPendingCellClass@LightSourceClass@@::~?$DynamicVectorClass@PAVPendingCellClass@LightSourceClass@@
-// FUNCTION: 0x00555870 ?$VectorClass@PAVPendingCellClass@LightSourceClass@@::~?$VectorClass@PAVPendingCellClass@LightSourceClass@@
+// SYNTHETIC: GAMEMD 0x00555780
+// ??_G?$DynamicVectorClass@PAVLightSourceClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x005557D0
+// ??_G?$VectorClass@PAVLightSourceClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00555820
+// ??_G?$DynamicVectorClass@PAVPendingCellClass@LightSourceClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00555870
+// ??_G?$VectorClass@PAVPendingCellClass@LightSourceClass@@@@UAEPAXI@Z
 
 struct IntQuad {
 	int A, B, C, D;
 	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
 };
 
-// FUNCTION: 0x005558C0 $E134
+// SYNTHETIC: GAMEMD 0x005558C0 SYMBOL
+// _$E134
 IntQuad DAT_00ABCA88;

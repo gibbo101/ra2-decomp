@@ -28,7 +28,7 @@ extern int DAT_007F5BE8;
 extern int DAT_007F5BF4;
 extern GadgetClass * DAT_008B3E94;
 
-// FUNCTION: 0x004E12D0
+// FUNCTION: GAMEMD 0x004E12D0
 int GadgetClass::Get_Color_Scheme(void)
 {
 	ColorScheme * scheme = Fetch_Scheme_By_Name(CurrentColorScheme);
@@ -40,7 +40,7 @@ int GadgetClass::Get_Color_Scheme(void)
 	return(0);
 }
 
-// FUNCTION: 0x004E12F0
+// FUNCTION: GAMEMD 0x004E12F0
 GadgetClass::GadgetClass(int x, int y, int w, int h, unsigned flags, bool sticky) :
 	X(x), Y(y), Width(w), Height(h), IsToRepaint(false), IsSticky(sticky), IsDisabled(false), Flags(flags)
 {
@@ -49,7 +49,7 @@ GadgetClass::GadgetClass(int x, int y, int w, int h, unsigned flags, bool sticky
 	}
 }
 
-// FUNCTION: 0x004E1340
+// FUNCTION: GAMEMD 0x004E1340
 GadgetClass::GadgetClass(GadgetClass const & gadget) :
 	X(gadget.X),
 	Y(gadget.Y),
@@ -62,7 +62,7 @@ GadgetClass::GadgetClass(GadgetClass const & gadget) :
 {
 }
 
-// FUNCTION: 0x004E1390
+// FUNCTION: GAMEMD 0x004E1390
 GadgetClass::~GadgetClass(void)
 {
 	if (Has_Focus()) {
@@ -82,7 +82,7 @@ GadgetClass::~GadgetClass(void)
 	}
 }
 
-// FUNCTION: 0x004E13F0
+// FUNCTION: GAMEMD 0x004E13F0
 int GadgetClass::Clicked_On(KeyNumType & key, unsigned flags, int mousex, int mousey, int modifier)
 {
 	flags &= Flags;
@@ -96,7 +96,7 @@ int GadgetClass::Clicked_On(KeyNumType & key, unsigned flags, int mousex, int mo
 	return(false);
 }
 
-// FUNCTION: 0x004E1450
+// FUNCTION: GAMEMD 0x004E1450
 void GadgetClass::Enable(void)
 {
 	IsDisabled = false;
@@ -104,7 +104,7 @@ void GadgetClass::Enable(void)
 	Clear_Focus();
 }
 
-// FUNCTION: 0x004E1460
+// FUNCTION: GAMEMD 0x004E1460
 void GadgetClass::Disable(void)
 {
 	IsDisabled = true;
@@ -112,32 +112,32 @@ void GadgetClass::Disable(void)
 	Clear_Focus();
 }
 
-// FUNCTION: 0x004E1470
+// FUNCTION: GAMEMD 0x004E1470
 bool GadgetClass::Is_Enabled(void) const
 {
 	return(!IsDisabled);
 }
 
-// FUNCTION: 0x004E1480
+// FUNCTION: GAMEMD 0x004E1480
 LinkClass * GadgetClass::Remove(void)
 {
 	Clear_Focus();
 	return(BASECLASS::Remove());
 }
 
-// FUNCTION: 0x004E14A0
+// FUNCTION: GAMEMD 0x004E14A0
 LinkClass * GadgetClass::Get_Next(void) const
 {
 	return(BASECLASS::Get_Next());
 }
 
-// FUNCTION: 0x004E14B0
+// FUNCTION: GAMEMD 0x004E14B0
 LinkClass * GadgetClass::Get_Prev(void) const
 {
 	return(BASECLASS::Get_Prev());
 }
 
-// FUNCTION: 0x004E14C0
+// FUNCTION: GAMEMD 0x004E14C0
 void GadgetClass::Delete_List(void)
 {
 	GadgetClass * g = this;
@@ -155,17 +155,17 @@ void GadgetClass::Delete_List(void)
 	}
 }
 
-// FUNCTION: 0x004E1510
+// FUNCTION: GAMEMD 0x004E1510
 void GadgetClass::OnMouseEnter(void)
 {
 }
 
-// FUNCTION: 0x004E1520
+// FUNCTION: GAMEMD 0x004E1520
 void GadgetClass::OnMouseLeave(void)
 {
 }
 
-// FUNCTION: 0x004E1530
+// FUNCTION: GAMEMD 0x004E1530
 int GadgetClass::Action(unsigned flags, KeyNumType &, int)
 {
 	if (flags) {
@@ -176,7 +176,7 @@ int GadgetClass::Action(unsigned flags, KeyNumType &, int)
 	return(false);
 }
 
-// FUNCTION: 0x004E1550
+// FUNCTION: GAMEMD 0x004E1550
 int GadgetClass::Draw_Me(int forced)
 {
 	if (forced || IsToRepaint) {
@@ -186,7 +186,7 @@ int GadgetClass::Draw_Me(int forced)
 	return(false);
 }
 
-// FUNCTION: 0x004E1570
+// FUNCTION: GAMEMD 0x004E1570
 void GadgetClass::Draw_All(bool forced)
 {
 	GadgetClass * gadget = this;
@@ -202,7 +202,7 @@ static inline bool Key_Down(int key)
 	return InputManagerClass::Instance->IsKeyPressed(key);
 }
 
-// FUNCTION: 0x004E1640
+// FUNCTION: GAMEMD 0x004E1640
 KeyNumType GadgetClass::Input(void)
 {
 	int mousex, mousey;
@@ -318,7 +318,7 @@ KeyNumType GadgetClass::Input(void)
 	return(key);
 }
 
-// FUNCTION: 0x004E1920
+// FUNCTION: GAMEMD 0x004E1920
 ControlClass * GadgetClass::Extract_Gadget(unsigned id)
 {
 	GadgetClass * g = this;
@@ -334,13 +334,13 @@ ControlClass * GadgetClass::Extract_Gadget(unsigned id)
 	return(0);
 }
 
-// FUNCTION: 0x004E1960
+// FUNCTION: GAMEMD 0x004E1960
 void GadgetClass::Flag_To_Redraw(void)
 {
 	IsToRepaint = true;
 }
 
-// FUNCTION: 0x004E1970
+// FUNCTION: GAMEMD 0x004E1970
 void GadgetClass::Sticky_Process(unsigned flags)
 {
 	if (IsSticky && (flags & (LEFTPRESS|RIGHTPRESS))) {
@@ -351,7 +351,7 @@ void GadgetClass::Sticky_Process(unsigned flags)
 	}
 }
 
-// FUNCTION: 0x004E19A0
+// FUNCTION: GAMEMD 0x004E19A0
 void GadgetClass::Set_Focus(void)
 {
 	if (Focused) {
@@ -362,7 +362,7 @@ void GadgetClass::Set_Focus(void)
 	Focused = this;
 }
 
-// FUNCTION: 0x004E19D0
+// FUNCTION: GAMEMD 0x004E19D0
 void GadgetClass::Clear_Focus(void)
 {
 	if (Focused == this) {
@@ -371,13 +371,13 @@ void GadgetClass::Clear_Focus(void)
 	}
 }
 
-// FUNCTION: 0x004E19F0
+// FUNCTION: GAMEMD 0x004E19F0
 bool GadgetClass::Has_Focus(void)
 {
 	return(this == Focused);
 }
 
-// FUNCTION: 0x004E1A00
+// FUNCTION: GAMEMD 0x004E1A00
 int GadgetClass::Is_List_To_Redraw(void)
 {
 	GadgetClass * gadget = this;
@@ -391,20 +391,22 @@ int GadgetClass::Is_List_To_Redraw(void)
 	return(false);
 }
 
-// FUNCTION: 0x004E1A20
+// FUNCTION: GAMEMD 0x004E1A20
 void GadgetClass::Set_Position(int x, int y)
 {
 	X = x;
 	Y = y;
 }
 
-// FUNCTION: 0x004E1A40
+// FUNCTION: GAMEMD 0x004E1A40
 void GadgetClass::Set_Size(int w, int h)
 {
 	Width = w;
 	Height = h;
 }
 
-// FUNCTION: 0x004E1A60 GadgetClass::~GadgetClass
+// SYNTHETIC: GAMEMD 0x004E1A60
+// ??_GGadgetClass@@UAEPAXI@Z
 
-// FUNCTION: 0x004E1AD0 LinkClass::~LinkClass
+// SYNTHETIC: GAMEMD 0x004E1AD0
+// ??_GLinkClass@@UAEPAXI@Z

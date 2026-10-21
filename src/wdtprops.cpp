@@ -31,40 +31,52 @@ struct IntTriple {
 	IntTriple() { A = 0; B = 0; C = 0; }
 };
 
-// FUNCTION: 0x0076BCA0 $E2
+// SYNTHETIC: GAMEMD 0x0076BCA0 SYMBOL
+// _$E2
 double DAT_00B729B0 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x0076BCD0 $E5
+// SYNTHETIC: GAMEMD 0x0076BCD0 SYMBOL
+// _$E5
 double DAT_00B72A00 = DAT_00B729B0 / DAT_007F7280;
 
-// FUNCTION: 0x0076BCF0 $E8
+// SYNTHETIC: GAMEMD 0x0076BCF0 SYMBOL
+// _$E8
 double DAT_00B729E8 = DAT_007E1718 / DAT_00B72A00;
 
-// FUNCTION: 0x0076BD10 $E11
+// SYNTHETIC: GAMEMD 0x0076BD10 SYMBOL
+// _$E11
 double DAT_00B729E0 = DAT_007E1720 * DAT_007F7288;
 
-// FUNCTION: 0x0076BD30 $E14
+// SYNTHETIC: GAMEMD 0x0076BD30 SYMBOL
+// _$E14
 double DAT_00B729B8 = DAT_007E1728 * DAT_007F7288;
 
-// FUNCTION: 0x0076BD50 $E17
+// SYNTHETIC: GAMEMD 0x0076BD50 SYMBOL
+// _$E17
 double DAT_00B72990 = DAT_007E1730 * DAT_007F7288;
 
-// FUNCTION: 0x0076BD70 $E20
+// SYNTHETIC: GAMEMD 0x0076BD70 SYMBOL
+// _$E20
 int DAT_00B72A08 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B72990 - DAT_00B729B8) * DAT_00B729B0));
 
-// FUNCTION: 0x0076BDB0 $E23
+// SYNTHETIC: GAMEMD 0x0076BDB0 SYMBOL
+// _$E23
 double DAT_00B729C0 = FUN_004CADE0(DAT_00B72A08 * DAT_007E1740);
 
-// FUNCTION: 0x0076BDE0 $E26
+// SYNTHETIC: GAMEMD 0x0076BDE0 SYMBOL
+// _$E26
 double DAT_00B729D8 = FUN_004CADE0((DAT_00B72A08 * 2) / DAT_00B729B0);
 
-// FUNCTION: 0x0076BE10 $E29
+// SYNTHETIC: GAMEMD 0x0076BE10 SYMBOL
+// _$E29
 int DAT_00B729FC = (int)(DAT_00B72A08 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x0076BE40 $E32
+// SYNTHETIC: GAMEMD 0x0076BE40 SYMBOL
+// _$E32
 ShortPair DAT_00B729A8;
 
-// FUNCTION: 0x0076BE50 $E35
+// SYNTHETIC: GAMEMD 0x0076BE50 SYMBOL
+// _$E35
 IntTriple DAT_00B729C8;
 
 #include <windows.h>
@@ -78,7 +90,7 @@ using namespace WorldDominationTour;
 extern char DAT_00889F64[];
 extern int DAT_00B729F0, DAT_00B729F4, DAT_00B729F8, DAT_00B72A18, DAT_00B72A1C, DAT_00B72A20, DAT_00B72A24;
 
-// FUNCTION: 0x0076BE70
+// FUNCTION: GAMEMD 0x0076BE70
 void FUN_0076BE70(void)
 {
 	DAT_00B729F8 = 0;
@@ -86,18 +98,18 @@ void FUN_0076BE70(void)
 	DAT_00B729F4 = 0x80;
 }
 
-// FUNCTION: 0x0076BE90
+// FUNCTION: GAMEMD 0x0076BE90
 rc_ptr<WorldDominationTour::CampaignProperties> __fastcall FUN_0076BE90(rc_ptr<WDTState> const & state)
 {
 	return rc_ptr<WorldDominationTour::CampaignProperties>(new WorldDominationTour::CampaignProperties(state));
 }
 
-// FUNCTION: 0x0076BED0
+// FUNCTION: GAMEMD 0x0076BED0
 WorldDominationTour::CampaignProperties::~CampaignProperties(void)
 {
 }
 
-// FUNCTION: 0x0076BF00
+// FUNCTION: GAMEMD 0x0076BF00
 WorldDominationTour::CampaignProperties::CampaignProperties(rc_ptr<WDTState> const & state) :
 	State(state),
 	ShortDesc(state.Get() ? StringTable::LoadString(state->ShortDesc, NULL, "D:\\ra2mdpost\\WDTProps.cpp", 0x14) : StringTable::LoadString("\"WDT:DefaultShortDescription\"", NULL, "D:\\ra2mdpost\\WDTProps.cpp", 0x14)),
@@ -105,7 +117,7 @@ WorldDominationTour::CampaignProperties::CampaignProperties(rc_ptr<WDTState> con
 {
 }
 
-// FUNCTION: 0x0076BFA0
+// FUNCTION: GAMEMD 0x0076BFA0
 int WorldDominationTour::CampaignProperties::FUN_0076BFA0(void)
 {
 	if (State.Get()) {
@@ -114,13 +126,13 @@ int WorldDominationTour::CampaignProperties::FUN_0076BFA0(void)
 	return 0;
 }
 
-// FUNCTION: 0x0076BFB0
+// FUNCTION: GAMEMD 0x0076BFB0
 int WorldDominationTour::CampaignProperties::FUN_0076BFB0(void)
 {
 	return 1;
 }
 
-// FUNCTION: 0x0076BFC0
+// FUNCTION: GAMEMD 0x0076BFC0
 int WorldDominationTour::CampaignProperties::FUN_0076BFC0(void)
 {
 	if (State.Get()) {
@@ -129,7 +141,7 @@ int WorldDominationTour::CampaignProperties::FUN_0076BFC0(void)
 	return 1;
 }
 
-// FUNCTION: 0x0076BFE0
+// FUNCTION: GAMEMD 0x0076BFE0
 int WorldDominationTour::CampaignProperties::FUN_0076BFE0(void)
 {
 	if (State.Get()) {
@@ -138,7 +150,7 @@ int WorldDominationTour::CampaignProperties::FUN_0076BFE0(void)
 	return 0;
 }
 
-// FUNCTION: 0x0076BFF0
+// FUNCTION: GAMEMD 0x0076BFF0
 Wstring WorldDominationTour::CampaignProperties::FUN_0076BFF0(void)
 {
 	char const * url;
@@ -150,9 +162,10 @@ Wstring WorldDominationTour::CampaignProperties::FUN_0076BFF0(void)
 	return Wstring(url);
 }
 
-// FUNCTION: 0x0076C030 WorldDominationTour::CampaignProperties::~CampaignProperties
+// SYNTHETIC: GAMEMD 0x0076C030
+// ??_GCampaignProperties@WorldDominationTour@@UAEPAXI@Z
 
-// FUNCTION: 0x0076C080
+// FUNCTION: GAMEMD 0x0076C080
 void FUN_0076C080(void)
 {
 	DAT_00B72A18 = 0;

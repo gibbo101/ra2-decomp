@@ -48,40 +48,52 @@ struct IntTriple {
 	IntTriple() { A = 0; B = 0; C = 0; }
 };
 
-// FUNCTION: 0x005BEAD0 $E88
+// SYNTHETIC: GAMEMD 0x005BEAD0 SYMBOL
+// _$E88
 double DAT_00ABF300 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x005BEB00 $E91
+// SYNTHETIC: GAMEMD 0x005BEB00 SYMBOL
+// _$E91
 double DAT_00ABF350 = DAT_00ABF300 / DAT_007EE090;
 
-// FUNCTION: 0x005BEB20 $E94
+// SYNTHETIC: GAMEMD 0x005BEB20 SYMBOL
+// _$E94
 double DAT_00ABF338 = DAT_007E1718 / DAT_00ABF350;
 
-// FUNCTION: 0x005BEB40 $E97
+// SYNTHETIC: GAMEMD 0x005BEB40 SYMBOL
+// _$E97
 double DAT_00ABF330 = DAT_007E1720 * DAT_007EE098;
 
-// FUNCTION: 0x005BEB60 $E100
+// SYNTHETIC: GAMEMD 0x005BEB60 SYMBOL
+// _$E100
 double DAT_00ABF308 = DAT_007E1728 * DAT_007EE098;
 
-// FUNCTION: 0x005BEB80 $E103
+// SYNTHETIC: GAMEMD 0x005BEB80 SYMBOL
+// _$E103
 double DAT_00ABF2E0 = DAT_007E1730 * DAT_007EE098;
 
-// FUNCTION: 0x005BEBA0 $E106
+// SYNTHETIC: GAMEMD 0x005BEBA0 SYMBOL
+// _$E106
 int DAT_00ABF358 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00ABF2E0 - DAT_00ABF308) * DAT_00ABF300));
 
-// FUNCTION: 0x005BEBE0 $E109
+// SYNTHETIC: GAMEMD 0x005BEBE0 SYMBOL
+// _$E109
 double DAT_00ABF310 = FUN_004CADE0(DAT_00ABF358 * DAT_007E1740);
 
-// FUNCTION: 0x005BEC10 $E112
+// SYNTHETIC: GAMEMD 0x005BEC10 SYMBOL
+// _$E112
 double DAT_00ABF328 = FUN_004CADE0((DAT_00ABF358 * 2) / DAT_00ABF300);
 
-// FUNCTION: 0x005BEC40 $E115
+// SYNTHETIC: GAMEMD 0x005BEC40 SYMBOL
+// _$E115
 int DAT_00ABF34C = (int)(DAT_00ABF358 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x005BEC70 $E118
+// SYNTHETIC: GAMEMD 0x005BEC70 SYMBOL
+// _$E118
 ShortPair DAT_00ABF2F8;
 
-// FUNCTION: 0x005BEC80 $E121
+// SYNTHETIC: GAMEMD 0x005BEC80 SYMBOL
+// _$E121
 IntTriple DAT_00ABF318;
 
 extern int DAT_00ABF340;
@@ -123,7 +135,7 @@ bool __fastcall FUN_005C0640(char const * name, char * out, bool unused);
 MovieHandle * __fastcall OwnerDraw_InitMovieHandle(char const * name, Surface * surface, Rect * bounds);
 void Play_Movie(char const * name, ThemeType theme, bool clrscrn_after, bool stretch, bool clrscrn_before, bool fullscreen);
 
-// FUNCTION: 0x005BECA0
+// FUNCTION: GAMEMD 0x005BECA0
 void Movie_Init_Tables(void)
 {
 	DAT_00ABF348 = 0;
@@ -131,7 +143,7 @@ void Movie_Init_Tables(void)
 	DAT_00ABF344 = 0x80;
 }
 
-// FUNCTION: 0x005BECC0
+// FUNCTION: GAMEMD 0x005BECC0
 void Rebuild_Interpolated_Palette(unsigned char * interpal)
 {
 	for (int y=0; y<SIZE_OF_PALETTE - 1; y++) {
@@ -141,13 +153,13 @@ void Rebuild_Interpolated_Palette(unsigned char * interpal)
 	}
 }
 
-// FUNCTION: 0x005BED20
+// FUNCTION: GAMEMD 0x005BED20
 void Play_Movie(char const * name, ThemeType theme, bool clrscrn_after, bool stretch, bool clrscrn_before)
 {
 	Play_Movie(name, theme, clrscrn_after, stretch, clrscrn_before, true);
 }
 
-// FUNCTION: 0x005BED40
+// FUNCTION: GAMEMD 0x005BED40
 void Play_Movie(char const * name, ThemeType theme, bool clrscrn_after, bool stretch, bool clrscrn_before, bool fullscreen)
 {
 	char buffer[256];
@@ -232,7 +244,7 @@ void Play_Movie(char const * name, ThemeType theme, bool clrscrn_after, bool str
 	}
 }
 
-// FUNCTION: 0x005BF180
+// FUNCTION: GAMEMD 0x005BF180
 void __fastcall Play_Movie_Simple(char const * name)
 {
 	MovieHandle * movie = OwnerDraw_InitMovieHandle(name, HiddenSurface, NULL);
@@ -248,7 +260,7 @@ void __fastcall Play_Movie_Simple(char const * name)
 	}
 }
 
-// FUNCTION: 0x005BF260
+// FUNCTION: GAMEMD 0x005BF260
 void Play_Movie(VQType vq, ThemeType theme, bool clrscrn_after, bool stretch, bool clrscrn_before)
 {
 	if (vq >= 0 && vq < Movies.Count()) {
@@ -259,7 +271,7 @@ void Play_Movie(VQType vq, ThemeType theme, bool clrscrn_after, bool stretch, bo
 	}
 }
 
-// FUNCTION: 0x005BF2B0
+// FUNCTION: GAMEMD 0x005BF2B0
 void __fastcall Play_Ingame_Movie(char const * name, bool loop)
 {
 	if (Session.Type == GAME_NORMAL) {
@@ -273,7 +285,7 @@ void __fastcall Play_Ingame_Movie(char const * name, bool loop)
 	}
 }
 
-// FUNCTION: 0x005BF360
+// FUNCTION: GAMEMD 0x005BF360
 void __fastcall Ingame_Movie_Subtitle(void * data)
 {
 	if (data != NULL) {
@@ -281,7 +293,7 @@ void __fastcall Ingame_Movie_Subtitle(void * data)
 	}
 }
 
-// FUNCTION: 0x005BF390
+// FUNCTION: GAMEMD 0x005BF390
 void __fastcall Play_Ingame_Movie(VQType vq, bool loop)
 {
 	if (vq >= 0 && vq < Movies.Count()) {
@@ -298,7 +310,7 @@ void __fastcall Play_Ingame_Movie(VQType vq, bool loop)
 	}
 }
 
-// FUNCTION: 0x005BF450
+// FUNCTION: GAMEMD 0x005BF450
 void Stop_Ingame_Movie(void)
 {
 	for (int i = 0; i < IngameVQ.Count(); i++) {
@@ -310,7 +322,7 @@ void Stop_Ingame_Movie(void)
 	Movie_Audio_Resume();
 }
 
-// FUNCTION: 0x005BF500
+// FUNCTION: GAMEMD 0x005BF500
 void __fastcall Pause_Ingame_Movie(bool pause)
 {
 	if (IngameVQ.Count() > 0) {
@@ -318,13 +330,13 @@ void __fastcall Pause_Ingame_Movie(bool pause)
 	}
 }
 
-// FUNCTION: 0x005BF520
+// FUNCTION: GAMEMD 0x005BF520
 bool Has_Ingame_Movies(void)
 {
 	return(IngameVQ.Count() > 0);
 }
 
-// FUNCTION: 0x005BF530
+// FUNCTION: GAMEMD 0x005BF530
 void Movie_Audio_Resume(void)
 {
 	if (DAT_00ABF35C) {
@@ -338,7 +350,7 @@ void Movie_Audio_Resume(void)
 	}
 }
 
-// FUNCTION: 0x005BF580
+// FUNCTION: GAMEMD 0x005BF580
 void Movie_Audio_Suspend(void)
 {
 	if (!DAT_00ABF35C) {

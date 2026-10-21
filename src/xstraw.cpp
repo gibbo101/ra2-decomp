@@ -8,7 +8,7 @@
 #include <cstddef>
 #include <cstring>
 
-// FUNCTION: 0x007BA4D0
+// FUNCTION: GAMEMD 0x007BA4D0
 int BufferStraw::Get(void * source, int slen)
 {
 	int total = 0;
@@ -30,7 +30,7 @@ int BufferStraw::Get(void * source, int slen)
 	return(total);
 }
 
-// FUNCTION: 0x007BA530
+// FUNCTION: GAMEMD 0x007BA530
 int FileStraw::Get(void * source, int slen)
 {
 	if (Valid_File() && source != NULL && slen > 0) {
@@ -45,7 +45,7 @@ int FileStraw::Get(void * source, int slen)
 	return(0);
 }
 
-// FUNCTION: 0x007BA590
+// FUNCTION: GAMEMD 0x007BA590
 FileStraw::~FileStraw(void)
 {
 	if (Valid_File() && HasOpened) {

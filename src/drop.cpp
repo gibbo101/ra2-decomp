@@ -11,7 +11,7 @@
 #include "geometry.h"
 #include "fastmath.h"
 
-// FUNCTION: 0x004B4E10
+// FUNCTION: GAMEMD 0x004B4E10
 DropListClass::DropListClass(int id, wchar_t * text, int max_len, TextPrintType flags, int x, int y, int w, int h, ShapeSet const * up, ShapeSet const * down) :
 	BASECLASS(id, text, max_len, flags, x, y, w, 18, ALPHANUMERIC),
 	IsDropped(false),
@@ -25,7 +25,7 @@ DropListClass::DropListClass(int id, wchar_t * text, int max_len, TextPrintType 
 	DropButton.Make_Peer(*this);
 }
 
-// FUNCTION: 0x004B4EE0
+// FUNCTION: GAMEMD 0x004B4EE0
 void DropListClass::Zap(void)
 {
 	Collapse();
@@ -34,28 +34,28 @@ void DropListClass::Zap(void)
 	BASECLASS::Zap();
 }
 
-// FUNCTION: 0x004B4F20
+// FUNCTION: GAMEMD 0x004B4F20
 LinkClass & DropListClass::Add(LinkClass & object)
 {
 	DropButton.Add(object);
 	return((DropListClass &)BASECLASS::Add(object));
 }
 
-// FUNCTION: 0x004B4F40
+// FUNCTION: GAMEMD 0x004B4F40
 LinkClass & DropListClass::Add_Tail(LinkClass & object)
 {
 	DropButton.Add_Tail(object);
 	return((DropListClass &)BASECLASS::Add_Tail(object));
 }
 
-// FUNCTION: 0x004B4F60
+// FUNCTION: GAMEMD 0x004B4F60
 LinkClass & DropListClass::Add_Head(LinkClass & object)
 {
 	DropButton.Add_Head(object);
 	return((DropListClass &)BASECLASS::Add_Head(object));
 }
 
-// FUNCTION: 0x004B4F80
+// FUNCTION: GAMEMD 0x004B4F80
 LinkClass * DropListClass::Remove(void)
 {
 	if (IsDropped) {
@@ -65,7 +65,7 @@ LinkClass * DropListClass::Remove(void)
 	return((DropListClass *)BASECLASS::Remove());
 }
 
-// FUNCTION: 0x004B4FB0
+// FUNCTION: GAMEMD 0x004B4FB0
 int DropListClass::Add_Item(wchar_t const * text)
 {
 	wcsncpy(String, text, MaxLength);
@@ -73,19 +73,19 @@ int DropListClass::Add_Item(wchar_t const * text)
 	return(List.Add_Item(text));
 }
 
-// FUNCTION: 0x004B4FF0
+// FUNCTION: GAMEMD 0x004B4FF0
 wchar_t const * DropListClass::Current_Item(void)
 {
 	return(List.Current_Item());
 }
 
-// FUNCTION: 0x004B5010
+// FUNCTION: GAMEMD 0x004B5010
 int DropListClass::Current_Index(void)
 {
 	return(List.Current_Index());
 }
 
-// FUNCTION: 0x004B5030
+// FUNCTION: GAMEMD 0x004B5030
 void DropListClass::Set_Selected_Index(int index)
 {
 	if ((unsigned)index < (unsigned)List.Count()) {
@@ -96,13 +96,13 @@ void DropListClass::Set_Selected_Index(int index)
 	}
 }
 
-// FUNCTION: 0x004B50A0
+// FUNCTION: GAMEMD 0x004B50A0
 void DropListClass::Clear_Focus(void)
 {
 	Collapse();
 }
 
-// FUNCTION: 0x004B50C0
+// FUNCTION: GAMEMD 0x004B50C0
 void DropListClass::Peer_To_Peer(unsigned flags, KeyNumType & key, ControlClass & whom)
 {
 	if (&whom == &DropButton) {
@@ -123,7 +123,7 @@ void DropListClass::Peer_To_Peer(unsigned flags, KeyNumType & key, ControlClass 
 	}
 }
 
-// FUNCTION: 0x004B5190
+// FUNCTION: GAMEMD 0x004B5190
 void DropListClass::Expand(void)
 {
 	if (!IsDropped) {
@@ -137,7 +137,7 @@ void DropListClass::Expand(void)
 	}
 }
 
-// FUNCTION: 0x004B51F0
+// FUNCTION: GAMEMD 0x004B51F0
 void DropListClass::Collapse(void)
 {
 	if (IsDropped) {
@@ -146,7 +146,7 @@ void DropListClass::Collapse(void)
 	}
 }
 
-// FUNCTION: 0x004B5210
+// FUNCTION: GAMEMD 0x004B5210
 DropListClass & DropListClass::operator = (DropListClass const & list)
 {
 	if (this == &list) return(*this);
@@ -160,7 +160,7 @@ DropListClass & DropListClass::operator = (DropListClass const & list)
 	return(*this);
 }
 
-// FUNCTION: 0x004B53E0
+// FUNCTION: GAMEMD 0x004B53E0
 DropListClass::DropListClass(DropListClass const & list) :
 	BASECLASS(list),
 	IsDropped(list.IsDropped),
@@ -172,7 +172,7 @@ DropListClass::DropListClass(DropListClass const & list) :
 	DropButton.Make_Peer(*this);
 }
 
-// FUNCTION: 0x004B54E0
+// FUNCTION: GAMEMD 0x004B54E0
 void DropListClass::Set_Position(int x, int y)
 {
 	BASECLASS::Set_Position(x, y);
@@ -180,7 +180,7 @@ void DropListClass::Set_Position(int x, int y)
 	DropButton.Set_Position(x + Width, y);
 }
 
-// FUNCTION: 0x004B5530
+// FUNCTION: GAMEMD 0x004B5530
 void DropListClass::Set_Selected_Index(wchar_t const * text)
 {
 	if (text) {
@@ -193,58 +193,83 @@ void DropListClass::Set_Selected_Index(wchar_t const * text)
 	}
 }
 
-// FUNCTION: 0x004B55A0 EditClass::Get_Text
+// FUNCTION: GAMEMD 0x004B55A0
+// EditClass::Get_Text
 
-// FUNCTION: 0x004B55B0 DropListClass::Count
+// FUNCTION: GAMEMD 0x004B55B0
+// DropListClass::Count
 
-// FUNCTION: 0x004B55D0 DropListClass::Get_Item
+// FUNCTION: GAMEMD 0x004B55D0
+// DropListClass::Get_Item
 
-// FUNCTION: 0x004B55F0 DropListClass::~DropListClass
+// SYNTHETIC: GAMEMD 0x004B55F0
+// ??_GDropListClass@@UAEPAXI@Z
 
-// FUNCTION: 0x004B5630 ShapeButtonClass::operator=
+// FUNCTION: GAMEMD 0x004B5630
+// ShapeButtonClass::operator=
 
-// FUNCTION: 0x004B56E0 SliderClass::operator=
+// FUNCTION: GAMEMD 0x004B56E0
+// SliderClass::operator=
 
-// FUNCTION: 0x004B5780 GadgetClass::operator=
+// FUNCTION: GAMEMD 0x004B5780
+// GadgetClass::operator=
 
-// FUNCTION: 0x004B57D0 EditClass::~EditClass
+// SYNTHETIC: GAMEMD 0x004B57D0
+// ??_GEditClass@@UAEPAXI@Z
 
-// FUNCTION: 0x004B57F0 ShapeButtonClass::~ShapeButtonClass
+// SYNTHETIC: GAMEMD 0x004B57F0
+// ??_GShapeButtonClass@@UAEPAXI@Z
 
-// FUNCTION: 0x004B5810 ToggleClass::~ToggleClass
+// SYNTHETIC: GAMEMD 0x004B5810
+// ??_GToggleClass@@UAEPAXI@Z
 
-// FUNCTION: 0x004B5830 ?$VectorClass@PBG::operator=
+// TEMPLATE: GAMEMD 0x004B5830
+// ??4?$VectorClass@PBG@@QAEAAV0@ABV0@@Z
 
-// FUNCTION: 0x004B58A0 $E11
+// SYNTHETIC: GAMEMD 0x004B58A0 SYMBOL
+// _$E11
 
-// FUNCTION: 0x004B58D0 $E14
+// SYNTHETIC: GAMEMD 0x004B58D0 SYMBOL
+// _$E14
 
-// FUNCTION: 0x004B58F0 $E17
+// SYNTHETIC: GAMEMD 0x004B58F0 SYMBOL
+// _$E17
 
-// FUNCTION: 0x004B5910 $E20
+// SYNTHETIC: GAMEMD 0x004B5910 SYMBOL
+// _$E20
 
-// FUNCTION: 0x004B5930 $E23
+// SYNTHETIC: GAMEMD 0x004B5930 SYMBOL
+// _$E23
 
-// FUNCTION: 0x004B5950 $E26
+// SYNTHETIC: GAMEMD 0x004B5950 SYMBOL
+// _$E26
 
-// FUNCTION: 0x004B5970 $E29
+// SYNTHETIC: GAMEMD 0x004B5970 SYMBOL
+// _$E29
 
-// FUNCTION: 0x004B59B0 $E32
+// SYNTHETIC: GAMEMD 0x004B59B0 SYMBOL
+// _$E32
 
-// FUNCTION: 0x004B59E0 $E35
+// SYNTHETIC: GAMEMD 0x004B59E0 SYMBOL
+// _$E35
 
-// FUNCTION: 0x004B5A10 $E38
+// SYNTHETIC: GAMEMD 0x004B5A10 SYMBOL
+// _$E38
 
-// FUNCTION: 0x004B5A40 $E41
+// SYNTHETIC: GAMEMD 0x004B5A40 SYMBOL
+// _$E41
 
-// FUNCTION: 0x004B5A50 $E44
+// SYNTHETIC: GAMEMD 0x004B5A50 SYMBOL
+// _$E44
 
-// FUNCTION: 0x004B5A70 $E47
+// SYNTHETIC: GAMEMD 0x004B5A70 SYMBOL
+// _$E47
 
 struct DropIntQuad {
 	int A, B, C, D;
 	DropIntQuad() { A = 0; B = 0; C = 0; D = 0; }
 };
 
-// FUNCTION: 0x004B5A90 $E50
+// SYNTHETIC: GAMEMD 0x004B5A90 SYMBOL
+// _$E50
 DropIntQuad DAT_008A07F0;

@@ -27,11 +27,13 @@
 #include "unit.h"
 #include "unittype.h"
 
-// FUNCTION: 0x004C5210 $E91
-// FUNCTION: 0x004C5250 $E88
+// SYNTHETIC: GAMEMD 0x004C5210 SYMBOL
+// _$E91
+// SYNTHETIC: GAMEMD 0x004C5250 SYMBOL
+// _$E88
 DynamicVectorClass<EMPulseClass *> EMPulseClass::EMPulses;
 
-// FUNCTION: 0x004C52B0
+// FUNCTION: GAMEMD 0x004C52B0
 EMPulseClass::EMPulseClass(Cell cell, int spread, int duration, TechnoClass * source) :
 	BASECLASS(),
 	CellID(cell),
@@ -44,7 +46,7 @@ EMPulseClass::EMPulseClass(Cell cell, int spread, int duration, TechnoClass * so
 	Create(source);
 }
 
-// FUNCTION: 0x004C5370
+// FUNCTION: GAMEMD 0x004C5370
 EMPulseClass::EMPulseClass(void) :
 	BASECLASS(),
 	CellID(CELL_NONE),
@@ -54,13 +56,13 @@ EMPulseClass::EMPulseClass(void) :
 {
 }
 
-// FUNCTION: 0x004C53B0
+// FUNCTION: GAMEMD 0x004C53B0
 EMPulseClass::EMPulseClass(NoInitClass const & x) :
 	BASECLASS(x)
 {
 }
 
-// FUNCTION: 0x004C53E0
+// FUNCTION: GAMEMD 0x004C53E0
 EMPulseClass::~EMPulseClass(void)
 {
 	if (GameActive) {
@@ -70,7 +72,7 @@ EMPulseClass::~EMPulseClass(void)
 	EMPulses.Delete(this);
 }
 
-// FUNCTION: 0x004C5470
+// FUNCTION: GAMEMD 0x004C5470
 void EMPulseClass::Reset(void)
 {
 	while (EMPulses.Count()) {
@@ -78,7 +80,7 @@ void EMPulseClass::Reset(void)
 	}
 }
 
-// FUNCTION: 0x004C54A0
+// FUNCTION: GAMEMD 0x004C54A0
 void EMPulseClass::Update_All(void)
 {
 	for (int i = EMPulses.Count() - 1; i >= 0; i--) {
@@ -89,7 +91,7 @@ void EMPulseClass::Update_All(void)
 	}
 }
 
-// FUNCTION: 0x004C54E0
+// FUNCTION: GAMEMD 0x004C54E0
 void EMPulseClass::Create(TechnoClass * source)
 {
 	if (Duration + CreationFrame > Frame) {
@@ -154,7 +156,7 @@ void EMPulseClass::Create(TechnoClass * source)
 	}
 }
 
-// FUNCTION: 0x004C58C0
+// FUNCTION: GAMEMD 0x004C58C0
 void EMPulseClass::Destroy(void)
 {
 	int spread_sq = Spread * Spread;
@@ -175,7 +177,7 @@ void EMPulseClass::Destroy(void)
 	}
 }
 
-// FUNCTION: 0x004C59A0
+// FUNCTION: GAMEMD 0x004C59A0
 void EMPulseClass::Compute_CRC(CRCEngine &crc) const
 {
 	BASECLASS::Compute_CRC(crc);
@@ -186,7 +188,7 @@ void EMPulseClass::Compute_CRC(CRCEngine &crc) const
 	crc(Duration);
 }
 
-// FUNCTION: 0x004C59F0
+// FUNCTION: GAMEMD 0x004C59F0
 HRESULT STDMETHODCALLTYPE EMPulseClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -194,7 +196,7 @@ HRESULT STDMETHODCALLTYPE EMPulseClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x004C5A30
+// FUNCTION: GAMEMD 0x004C5A30
 HRESULT STDMETHODCALLTYPE EMPulseClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -206,7 +208,7 @@ HRESULT STDMETHODCALLTYPE EMPulseClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x004C5A80
+// FUNCTION: GAMEMD 0x004C5A80
 HRESULT STDMETHODCALLTYPE EMPulseClass::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -216,24 +218,39 @@ HRESULT STDMETHODCALLTYPE EMPulseClass::Save(IStream * stream, BOOL cleardirty)
 	return(result);
 }
 
-// FUNCTION: 0x004C5AA0 EMPulseClass::Fetch_Object_Size
+// FUNCTION: GAMEMD 0x004C5AA0
+// EMPulseClass::Fetch_Object_Size
 
-// FUNCTION: 0x004C5AB0 EMPulseClass::Fetch_RTTI
+// FUNCTION: GAMEMD 0x004C5AB0
+// EMPulseClass::Fetch_RTTI
 
-// FUNCTION: 0x004C5AC0 EMPulseClass::~EMPulseClass
+// SYNTHETIC: GAMEMD 0x004C5AC0
+// ??_GEMPulseClass@@UAEPAXI@Z
 
-// FUNCTION: 0x004C5B60 ?$DynamicVectorClass@PAVEMPulseClass@@::Clear
-// FUNCTION: 0x004C5B90 ?$DynamicVectorClass@PAVEMPulseClass@@::ID
-// FUNCTION: 0x004C5BB0 ?$VectorClass@PAVEMPulseClass@@::GetItem
-// FUNCTION: 0x004C5BC0 ?$VectorClass@PAVEMPulseClass@@::operator==
-// FUNCTION: 0x004C5C00 ?$VectorClass@PAVEMPulseClass@@::Resize
-// FUNCTION: 0x004C5CB0 ?$VectorClass@PAVEMPulseClass@@::Clear
-// FUNCTION: 0x004C5CE0 ?$VectorClass@PAVEMPulseClass@@::ID
-// FUNCTION: 0x004C5D20 ?$VectorClass@PAVEMPulseClass@@::ID
-// FUNCTION: 0x004C5D40 ?$DynamicVectorClass@PAVEMPulseClass@@::Resize
-// FUNCTION: 0x004C5DF0 ?$DynamicVectorClass@PAVEMPulseClass@@::ID
-// FUNCTION: 0x004C5E20 ?$VectorClass@PAVEMPulseClass@@::~?$VectorClass@PAVEMPulseClass@@
-// FUNCTION: 0x004C5E70 ?$DynamicVectorClass@PAVEMPulseClass@@::~?$DynamicVectorClass@PAVEMPulseClass@@
+// TEMPLATE: GAMEMD 0x004C5B60
+// ?Clear@?$DynamicVectorClass@PAVEMPulseClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004C5B90
+// ?ID@?$DynamicVectorClass@PAVEMPulseClass@@@@UAEHPBQAVEMPulseClass@@@Z
+// TEMPLATE: GAMEMD 0x004C5BB0
+// ?GetItem@?$VectorClass@PAVEMPulseClass@@@@UBEPAVEMPulseClass@@H@Z
+// TEMPLATE: GAMEMD 0x004C5BC0
+// ??8?$VectorClass@PAVEMPulseClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x004C5C00
+// ?Resize@?$VectorClass@PAVEMPulseClass@@@@UAE_NHPBQAVEMPulseClass@@@Z
+// TEMPLATE: GAMEMD 0x004C5CB0
+// ?Clear@?$VectorClass@PAVEMPulseClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004C5CE0
+// ?ID@?$VectorClass@PAVEMPulseClass@@@@UAEHABQAVEMPulseClass@@@Z
+// TEMPLATE: GAMEMD 0x004C5D20
+// ?ID@?$VectorClass@PAVEMPulseClass@@@@UAEHPBQAVEMPulseClass@@@Z
+// TEMPLATE: GAMEMD 0x004C5D40
+// ?Resize@?$DynamicVectorClass@PAVEMPulseClass@@@@UAE_NHPBQAVEMPulseClass@@@Z
+// TEMPLATE: GAMEMD 0x004C5DF0
+// ?ID@?$DynamicVectorClass@PAVEMPulseClass@@@@UAEHABQAVEMPulseClass@@@Z
+// SYNTHETIC: GAMEMD 0x004C5E20
+// ??_G?$VectorClass@PAVEMPulseClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004C5E70
+// ??_G?$DynamicVectorClass@PAVEMPulseClass@@@@UAEPAXI@Z
 template class DynamicVectorClass<EMPulseClass *>;
 
 extern double __cdecl FUN_004CAC40(double);
@@ -250,47 +267,61 @@ extern const double DAT_007E1740;
 extern const double DAT_007E8808;
 extern const double DAT_007E8810;
 
-// FUNCTION: 0x004C5EE0 $E94
+// SYNTHETIC: GAMEMD 0x004C5EE0 SYMBOL
+// _$E94
 double DAT_008A38D8 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x004C5F10 $E97
+// SYNTHETIC: GAMEMD 0x004C5F10 SYMBOL
+// _$E97
 double DAT_008A3970 = DAT_008A38D8 / DAT_007E8808;
 
-// FUNCTION: 0x004C5F30 $E100
+// SYNTHETIC: GAMEMD 0x004C5F30 SYMBOL
+// _$E100
 double DAT_008A3958 = DAT_007E1718 / DAT_008A3970;
 
-// FUNCTION: 0x004C5F50 $E103
+// SYNTHETIC: GAMEMD 0x004C5F50 SYMBOL
+// _$E103
 double DAT_008A3950 = DAT_007E1720 * DAT_007E8810;
 
-// FUNCTION: 0x004C5F70 $E106
+// SYNTHETIC: GAMEMD 0x004C5F70 SYMBOL
+// _$E106
 double DAT_008A3928 = DAT_007E1728 * DAT_007E8810;
 
-// FUNCTION: 0x004C5F90 $E109
+// SYNTHETIC: GAMEMD 0x004C5F90 SYMBOL
+// _$E109
 double DAT_008A38B8 = DAT_007E1730 * DAT_007E8810;
 
-// FUNCTION: 0x004C5FB0 $E112
+// SYNTHETIC: GAMEMD 0x004C5FB0 SYMBOL
+// _$E112
 int DAT_008A3978 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_008A38B8 - DAT_008A3928) * DAT_008A38D8));
 
-// FUNCTION: 0x004C5FF0 $E115
+// SYNTHETIC: GAMEMD 0x004C5FF0 SYMBOL
+// _$E115
 double DAT_008A3930 = FUN_004CADE0(DAT_008A3978 * DAT_007E1740);
 
 extern double DAT_008A3948;
 extern int DAT_008A396C;
 
-// FUNCTION: 0x004C6020 $E118
+// SYNTHETIC: GAMEMD 0x004C6020 SYMBOL
+// _$E118
 double DAT_008A3948 = FUN_004CADE0((DAT_008A3978 * 2) / DAT_008A38D8);
 
-// FUNCTION: 0x004C6050 $E121
+// SYNTHETIC: GAMEMD 0x004C6050 SYMBOL
+// _$E121
 int DAT_008A396C = (int)(DAT_008A3978 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x004C6080 $E124
+// SYNTHETIC: GAMEMD 0x004C6080 SYMBOL
+// _$E124
 Cell DAT_008A38D0(0, 0);
 
-// FUNCTION: 0x004C6090 $E127
+// SYNTHETIC: GAMEMD 0x004C6090 SYMBOL
+// _$E127
 Coord DAT_008A3938(0, 0, 0);
 
-// FUNCTION: 0x004C60B0 $E130
+// SYNTHETIC: GAMEMD 0x004C60B0 SYMBOL
+// _$E130
 Coord DAT_008A3960(128, 128, 0);
 
-// FUNCTION: 0x004C60D0 $E133
+// SYNTHETIC: GAMEMD 0x004C60D0 SYMBOL
+// _$E133
 Rect DAT_008A38C0(0, 0, 0, 0);

@@ -54,7 +54,7 @@ extern bool DAT_0089E3A0;
 extern int DAT_0087E744;
 extern int DAT_0087E754;
 
-// FUNCTION: 0x00720440
+// FUNCTION: GAMEMD 0x00720440
 ThemeControl::ThemeControl(void) :
 	Scenario(0),
 	Duration(0),
@@ -68,7 +68,7 @@ ThemeControl::ThemeControl(void) :
 	UIName[0] = L'\0';
 }
 
-// FUNCTION: 0x00720480
+// FUNCTION: GAMEMD 0x00720480
 bool ThemeControl::Fill_In(CCINIClass & ini)
 {
 	ini.Reset();
@@ -91,7 +91,7 @@ bool ThemeControl::Fill_In(CCINIClass & ini)
 	return(false);
 }
 
-// FUNCTION: 0x00720590
+// FUNCTION: GAMEMD 0x00720590
 void ThemeClass::Init_Themes(CCINIClass & ini)
 {
 	ThemeControl *ctrl;
@@ -123,7 +123,7 @@ void ThemeClass::Init_Themes(CCINIClass & ini)
 	}
 }
 
-// FUNCTION: 0x00720770
+// FUNCTION: GAMEMD 0x00720770
 void ThemeClass::Free_Themes(void)
 {
 	while (Themes.Count() > 0) {
@@ -139,7 +139,7 @@ void ThemeClass::Free_Themes(void)
 	}
 }
 
-// FUNCTION: 0x007207F0
+// FUNCTION: GAMEMD 0x007207F0
 void ThemeClass::Scan(void)
 {
 	char name[512];
@@ -162,7 +162,7 @@ void ThemeClass::Scan(void)
 	}
 }
 
-// FUNCTION: 0x00720940
+// FUNCTION: GAMEMD 0x00720940
 char const * ThemeClass::Base_Name(ThemeType theme) const
 {
 	if ((unsigned)theme < (unsigned)Themes.Count()) {
@@ -171,7 +171,7 @@ char const * ThemeClass::Base_Name(ThemeType theme) const
 	return("No theme");
 }
 
-// FUNCTION: 0x00720960
+// FUNCTION: GAMEMD 0x00720960
 ThemeClass::ThemeClass(void) :
 	Current(-1),
 	Score(THEME_NONE),
@@ -184,7 +184,7 @@ ThemeClass::ThemeClass(void) :
 {
 }
 
-// FUNCTION: 0x007209B0
+// FUNCTION: GAMEMD 0x007209B0
 wchar_t const * ThemeClass::Full_Name(ThemeType theme) const
 {
 	if ((unsigned)theme < (unsigned)Themes.Count()) {
@@ -193,7 +193,7 @@ wchar_t const * ThemeClass::Full_Name(ThemeType theme) const
 	return(NULL);
 }
 
-// FUNCTION: 0x007209D0
+// FUNCTION: GAMEMD 0x007209D0
 void ThemeClass::AI(void)
 {
 	if (FUN_00407000() && !DAT_00A8ED64) {
@@ -210,7 +210,7 @@ void ThemeClass::AI(void)
 	}
 }
 
-// FUNCTION: 0x00720A80
+// FUNCTION: GAMEMD 0x00720A80
 ThemeType ThemeClass::Next_Song(ThemeType theme) const
 {
 	int i;
@@ -246,7 +246,7 @@ ThemeType ThemeClass::Next_Song(ThemeType theme) const
 	return(theme);
 }
 
-// FUNCTION: 0x00720B20
+// FUNCTION: GAMEMD 0x00720B20
 void ThemeClass::Queue_Song(ThemeType theme)
 {
 	if (!ScoresPresent) return;
@@ -262,7 +262,7 @@ void ThemeClass::Queue_Song(ThemeType theme)
 	}
 }
 
-// FUNCTION: 0x00720BB0
+// FUNCTION: GAMEMD 0x00720BB0
 int ThemeClass::Play_Song(ThemeType theme)
 {
 	if (ScoresPresent && FUN_00407000() && !DAT_00A8ED64) {
@@ -294,7 +294,7 @@ int ThemeClass::Play_Song(ThemeType theme)
 	return(Current);
 }
 
-// FUNCTION: 0x00720E10
+// FUNCTION: GAMEMD 0x00720E10
 char const * ThemeClass::Theme_File_Name(ThemeType theme)
 {
 	if ((unsigned)theme < (unsigned)Themes.Count()) {
@@ -304,7 +304,7 @@ char const * ThemeClass::Theme_File_Name(ThemeType theme)
 	return(DAT_00889F64);
 }
 
-// FUNCTION: 0x00720E50
+// FUNCTION: GAMEMD 0x00720E50
 int ThemeClass::Track_Length(ThemeType theme) const
 {
 	if ((unsigned)theme < (unsigned)Themes.Count()) {
@@ -313,14 +313,14 @@ int ThemeClass::Track_Length(ThemeType theme) const
 	return 0;
 }
 
-// FUNCTION: 0x00720E80
+// FUNCTION: GAMEMD 0x00720E80
 void ThemeClass::Fade_Stream(void)
 {
 	if (Stream) Stream->FUN_004080C0();
 	IsFading = true;
 }
 
-// FUNCTION: 0x00720EA0
+// FUNCTION: GAMEMD 0x00720EA0
 void ThemeClass::Stop(bool fade)
 {
 	if (ScoresPresent && FUN_00407000() && !DAT_00A8ED64 && Current != -1) {
@@ -338,7 +338,7 @@ void ThemeClass::Stop(bool fade)
 	}
 }
 
-// FUNCTION: 0x00720F70
+// FUNCTION: GAMEMD 0x00720F70
 void ThemeClass::Suspend(void)
 {
 	if (ScoresPresent && FUN_00407000() && !DAT_00A8ED64 && Current != -1) {
@@ -350,7 +350,7 @@ void ThemeClass::Suspend(void)
 	}
 }
 
-// FUNCTION: 0x00720FD0
+// FUNCTION: GAMEMD 0x00720FD0
 bool ThemeClass::Still_Playing(void) const
 {
 	if (Stream) {
@@ -362,7 +362,7 @@ bool ThemeClass::Still_Playing(void) const
 	return(false);
 }
 
-// FUNCTION: 0x00721010
+// FUNCTION: GAMEMD 0x00721010
 long ThemeClass::Save(IStream * stream)
 {
 	long hr = stream->Write(&Score, 4, 0);
@@ -372,7 +372,7 @@ long ThemeClass::Save(IStream * stream)
 	return hr;
 }
 
-// FUNCTION: 0x00721040
+// FUNCTION: GAMEMD 0x00721040
 long __stdcall Theme_Load(IStream * stream)
 {
 	int score;
@@ -388,7 +388,7 @@ long __stdcall Theme_Load(IStream * stream)
 	return hr;
 }
 
-// FUNCTION: 0x00721140
+// FUNCTION: GAMEMD 0x00721140
 bool ThemeClass::Is_Allowed(ThemeType index) const
 {
 	if (index == THEME_QUIET || index == THEME_PICK_ANOTHER) return true;
@@ -400,7 +400,7 @@ bool ThemeClass::Is_Allowed(ThemeType index) const
 	return true;
 }
 
-// FUNCTION: 0x007211E0
+// FUNCTION: GAMEMD 0x007211E0
 bool ThemeClass::IsNormal(ThemeType index) const
 {
 	if (index != THEME_QUIET && index != THEME_PICK_ANOTHER && (unsigned)index < (unsigned)Themes.Count()) {
@@ -410,7 +410,7 @@ bool ThemeClass::IsNormal(ThemeType index) const
 	return false;
 }
 
-// FUNCTION: 0x00721210
+// FUNCTION: GAMEMD 0x00721210
 ThemeType ThemeClass::From_Name(char const * name) const
 {
 	if (name && strlen(name) > 0) {
@@ -424,7 +424,7 @@ ThemeType ThemeClass::From_Name(char const * name) const
 	return(THEME_NONE);
 }
 
-// FUNCTION: 0x00721270
+// FUNCTION: GAMEMD 0x00721270
 char const * ThemeClass::GetID(ThemeType index) const
 {
 	if (index >= 0 && index < Themes.Count()) {
@@ -433,22 +433,27 @@ char const * ThemeClass::GetID(ThemeType index) const
 	return "none";
 }
 
-// FUNCTION: 0x00721290
+// FUNCTION: GAMEMD 0x00721290
 void ThemeClass::Set_Volume(int volume)
 {
 	Volume = MIN(volume, 255);
 }
 
-// FUNCTION: 0x007212B0 ?$DynamicVectorClass@PAUThemeControl@@::Clear
+// TEMPLATE: GAMEMD 0x007212B0
+// ?Clear@?$DynamicVectorClass@PAUThemeControl@@@@UAEXXZ
 template class DynamicVectorClass<ThemeControl *>;
 
-// FUNCTION: 0x007212E0 ?$VectorClass@PAUThemeControl@@::ID
+// TEMPLATE: GAMEMD 0x007212E0
+// ?ID@?$VectorClass@PAUThemeControl@@@@UAEHPBQAUThemeControl@@@Z
 
-// FUNCTION: 0x00721300 ?$DynamicVectorClass@PAUThemeControl@@::Resize
+// TEMPLATE: GAMEMD 0x00721300
+// ?Resize@?$DynamicVectorClass@PAUThemeControl@@@@UAE_NHPBQAUThemeControl@@@Z
 
-// FUNCTION: 0x007213B0 ?$DynamicVectorClass@PAUThemeControl@@::ID
+// TEMPLATE: GAMEMD 0x007213B0
+// ?ID@?$DynamicVectorClass@PAUThemeControl@@@@UAEHABQAUThemeControl@@@Z
 
-// FUNCTION: 0x007213E0 ?$VectorClass@PAUThemeControl@@::~?$VectorClass@PAUThemeControl@@
+// SYNTHETIC: GAMEMD 0x007213E0
+// ??_G?$VectorClass@PAUThemeControl@@@@UAEPAXI@Z
 
 template class VectorClass<ThemeControl *>;
 
@@ -466,44 +471,58 @@ extern const double DAT_007E1740;
 extern const double DAT_007F56A8;
 extern const double DAT_007F56B0;
 
-// FUNCTION: 0x00721430 $E36
+// SYNTHETIC: GAMEMD 0x00721430 SYMBOL
+// _$E36
 double DAT_00B0F498 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x00721460 $E39
+// SYNTHETIC: GAMEMD 0x00721460 SYMBOL
+// _$E39
 double DAT_00B0F508 = DAT_00B0F498 / DAT_007F56A8;
 
-// FUNCTION: 0x00721480 $E42
+// SYNTHETIC: GAMEMD 0x00721480 SYMBOL
+// _$E42
 double DAT_00B0F4D0 = DAT_007E1718 / DAT_00B0F508;
 
-// FUNCTION: 0x007214A0 $E45
+// SYNTHETIC: GAMEMD 0x007214A0 SYMBOL
+// _$E45
 double DAT_00B0F4C8 = DAT_007E1720 * DAT_007F56B0;
 
-// FUNCTION: 0x007214C0 $E48
+// SYNTHETIC: GAMEMD 0x007214C0 SYMBOL
+// _$E48
 double DAT_00B0F4A0 = DAT_007E1728 * DAT_007F56B0;
 
-// FUNCTION: 0x007214E0 $E51
+// SYNTHETIC: GAMEMD 0x007214E0 SYMBOL
+// _$E51
 double DAT_00B0F478 = DAT_007E1730 * DAT_007F56B0;
 
-// FUNCTION: 0x00721500 $E54
+// SYNTHETIC: GAMEMD 0x00721500 SYMBOL
+// _$E54
 int DAT_00B0F510 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B0F478 - DAT_00B0F4A0) * DAT_00B0F498));
 
-// FUNCTION: 0x00721540 $E57
+// SYNTHETIC: GAMEMD 0x00721540 SYMBOL
+// _$E57
 double DAT_00B0F4A8 = FUN_004CADE0(DAT_00B0F510 * DAT_007E1740);
 
-// FUNCTION: 0x00721570 $E60
+// SYNTHETIC: GAMEMD 0x00721570 SYMBOL
+// _$E60
 double DAT_00B0F4C0 = FUN_004CADE0((DAT_00B0F510 * 2) / DAT_00B0F498);
 
-// FUNCTION: 0x007215A0 $E63
+// SYNTHETIC: GAMEMD 0x007215A0 SYMBOL
+// _$E63
 int DAT_00B0F500 = (int)(DAT_00B0F510 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x007215D0 $E66
+// SYNTHETIC: GAMEMD 0x007215D0 SYMBOL
+// _$E66
 TPoint2D<short> DAT_00B0F490(0, 0);
 
-// FUNCTION: 0x007215E0 $E69
+// SYNTHETIC: GAMEMD 0x007215E0 SYMBOL
+// _$E69
 Point3D DAT_00B0F4B0(0, 0, 0);
 
-// FUNCTION: 0x00721600 $E72
+// SYNTHETIC: GAMEMD 0x00721600 SYMBOL
+// _$E72
 Point3D DAT_00B0F4D8(0x80, 0x80, 0);
 
-// FUNCTION: 0x00721620 $E75
+// SYNTHETIC: GAMEMD 0x00721620 SYMBOL
+// _$E75
 TRect<int> DAT_00B0F480(0, 0, 0, 0);

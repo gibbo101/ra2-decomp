@@ -12,7 +12,7 @@ GraphicMenuItem * __fastcall GM_Read_Image_Item(Wstring const & name, INIClass c
 GraphicMenuItem * __fastcall GM_Read_Shortcut_Item(Wstring const & name, INIClass const & ini);
 GraphicMenuItem * __fastcall GM_Read_Anim_Item(Wstring const & name, INIClass const & ini, MSEngine & engine, Point2D & image_size);
 
-// FUNCTION: 0x004F38B0
+// FUNCTION: GAMEMD 0x004F38B0
 GraphicMenuItem * __fastcall GM_Create_Item_From_INI(Wstring const & name, INIClass const & ini, MSEngine & engine, Point2D & image_size)
 {
 	Wstring type;
@@ -46,7 +46,7 @@ GraphicMenuItem * __fastcall GM_Create_Item_From_INI(Wstring const & name, INICl
 	return(item);
 }
 
-// FUNCTION: 0x004F3A50
+// FUNCTION: GAMEMD 0x004F3A50
 GraphicMenuItem::GraphicMenuItem(int id) :
 	ID(id),
 	Selected(false),
@@ -55,7 +55,7 @@ GraphicMenuItem::GraphicMenuItem(int id) :
 {
 }
 
-// FUNCTION: 0x004F3A70
+// FUNCTION: GAMEMD 0x004F3A70
 GraphicMenuItem::~GraphicMenuItem(void)
 {
 	if (SelectSound != NULL) {
@@ -63,7 +63,7 @@ GraphicMenuItem::~GraphicMenuItem(void)
 	}
 }
 
-// FUNCTION: 0x004F3A90
+// FUNCTION: GAMEMD 0x004F3A90
 void GraphicMenuItem::Set_Selected(bool selected)
 {
 	if (selected != Selected) {
@@ -72,7 +72,7 @@ void GraphicMenuItem::Set_Selected(bool selected)
 	}
 }
 
-// FUNCTION: 0x004F3AB0
+// FUNCTION: GAMEMD 0x004F3AB0
 void GraphicMenuItem::Set_Enabled(bool enabled)
 {
 	if (enabled != Enabled) {
@@ -81,29 +81,29 @@ void GraphicMenuItem::Set_Enabled(bool enabled)
 	}
 }
 
-// FUNCTION: 0x004F3AD0
+// FUNCTION: GAMEMD 0x004F3AD0
 void GraphicMenuItem::On_Selected_Change(bool)
 {
 }
 
-// FUNCTION: 0x004F3AE0
+// FUNCTION: GAMEMD 0x004F3AE0
 void GraphicMenuItem::On_Enabled_Change(bool)
 {
 }
 
-// FUNCTION: 0x004F3AF0
+// FUNCTION: GAMEMD 0x004F3AF0
 bool GraphicMenuItem::Is_Input_Key(KeyNumType key)
 {
 	return(false);
 }
 
-// FUNCTION: 0x004F3B00
+// FUNCTION: GAMEMD 0x004F3B00
 bool GraphicMenuItem::Is_Mouse_Over(Point2D const & mouse)
 {
 	return(false);
 }
 
-// FUNCTION: 0x004F3B10
+// FUNCTION: GAMEMD 0x004F3B10
 void GraphicMenuItem::Action(MSEngine * engine)
 {
 	if (SelectSound != NULL) {
@@ -111,6 +111,8 @@ void GraphicMenuItem::Action(MSEngine * engine)
 	}
 }
 
-// FUNCTION: 0x004F3B20 GraphicMenuItem::~GraphicMenuItem
+// SYNTHETIC: GAMEMD 0x004F3B20
+// ??_GGraphicMenuItem@@UAEPAXI@Z
 
-// FUNCTION: 0x004F3B60 $E2
+// SYNTHETIC: GAMEMD 0x004F3B60 SYMBOL
+// _$E2

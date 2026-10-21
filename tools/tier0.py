@@ -703,7 +703,7 @@ def render(u: Unit) -> str:
                 out.append("")
 
     def fn_block(g):
-        marks = "\n".join(f"// FUNCTION: 0x{f.address:08X}" for f in sorted(g, key=lambda f: f.address))
+        marks = "\n".join(f"// FUNCTION: GAMEMD 0x{f.address:08X}" for f in sorted(g, key=lambda f: f.address))
         return marks + "\n" + item_text(u.src, g[0].item)
 
     if u.original is None:
@@ -764,16 +764,13 @@ def render(u: Unit) -> str:
 
 def annotations_text(text: str) -> list[tuple[int, str]]:
     """check.annotations() for text not yet written to a file."""
-    lines = text.splitlines()
-    out = []
-    for i, line in enumerate(lines):
-        m = check.ANNOTATION.match(line)
-        if m and m.group(2):
-            out.append((int(m.group(1), 16), m.group(2)))
-        elif m:
-            n = re.search(r"((?:\w+::)*(?:operator\s*\S+?|~?\w+))\s*\(", " ".join(lines[i + 1:i + 4]))
-            out.append((int(m.group(1), 16), n.group(1).replace(" ", "") if n else ""))
-    return out
+    import tempfile
+    with tempfile.NamedTemporaryFile("w", suffix=".cpp", delete=False) as f:
+        f.write(text)
+    try:
+        return check.annotations(Path(f.name))
+    finally:
+        os.unlink(f.name)
 
 
 def drop(u: Unit, fn: Fn, note: str) -> None:

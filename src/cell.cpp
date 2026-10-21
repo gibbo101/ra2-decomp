@@ -77,7 +77,7 @@ class PixelFXClass
 		virtual ~PixelFXClass(void);
 };
 
-// FUNCTION: 0x0047B360
+// FUNCTION: GAMEMD 0x0047B360
 CellClass::CellClass(NoInitClass const & x) :
 	BASECLASS(x),
 	Drawer(NULL),
@@ -86,7 +86,7 @@ CellClass::CellClass(NoInitClass const & x) :
 
 }
 
-// FUNCTION: 0x0047BB60
+// FUNCTION: GAMEMD 0x0047BB60
 CellClass::~CellClass(void)
 {
 	if (FoggedObjects) {
@@ -107,7 +107,7 @@ CellClass::~CellClass(void)
 	}
 }
 
-// FUNCTION: 0x0047BBF0
+// FUNCTION: GAMEMD 0x0047BBF0
 CellClass::CellClass(void) :
 	BASECLASS(),
 	CellID(CELL_NONE),
@@ -202,7 +202,7 @@ CellClass::CellClass(void) :
 	BridgeFlag.Composite = 0;
 }
 
-// FUNCTION: 0x0047BDB0
+// FUNCTION: GAMEMD 0x0047BDB0
 int CellClass::Preview_Cell_Color(unsigned char & unknown, bool terrainonly) const
 {
 	unknown = 0;
@@ -264,7 +264,7 @@ struct DAT_007E1BD0_Entry {
 };
 extern DAT_007E1BD0_Entry DAT_007E1BD0[];
 
-// FUNCTION: 0x0047C060
+// FUNCTION: GAMEMD 0x0047C060
 void CellClass::Cell_Color(RGBClass & lowcolor, RGBClass & highcolor) const
 {
 	TerrainClass * tptr = Cell_Terrain();
@@ -349,7 +349,7 @@ void CellClass::Cell_Color(RGBClass & lowcolor, RGBClass & highcolor) const
 	}
 }
 
-// FUNCTION: 0x0047C3D0
+// FUNCTION: GAMEMD 0x0047C3D0
 TechnoClass * CellClass::Cell_Techno(Point2D const & xy, bool bridge, TechnoClass const * notthis) const
 {
 	ObjectClass * object;
@@ -377,7 +377,7 @@ TechnoClass * CellClass::Cell_Techno(Point2D const & xy, bool bridge, TechnoClas
 	return(close);
 }
 
-// FUNCTION: 0x0047C4D0
+// FUNCTION: GAMEMD 0x0047C4D0
 ObjectClass * CellClass::Cell_Find_Object(RTTIType rtti, bool bridge) const
 {
 	if (GameActive) {
@@ -393,19 +393,19 @@ ObjectClass * CellClass::Cell_Find_Object(RTTIType rtti, bool bridge) const
 	return(NULL);
 }
 
-// FUNCTION: 0x0047C520
+// FUNCTION: GAMEMD 0x0047C520
 BuildingClass * CellClass::Cell_Building(void) const
 {
 	return((BuildingClass *)Cell_Find_Object(RTTI_BUILDING));
 }
 
-// FUNCTION: 0x0047C550
+// FUNCTION: GAMEMD 0x0047C550
 TerrainClass * CellClass::Cell_Terrain(bool bridge) const
 {
 	return((TerrainClass *)Cell_Find_Object(RTTI_TERRAIN, bridge));
 }
 
-// FUNCTION: 0x0047C5A0
+// FUNCTION: GAMEMD 0x0047C5A0
 ObjectClass * CellClass::Cell_Object(Point2D const & xy, bool bridge) const
 {
 	ObjectClass * ptr;
@@ -423,7 +423,7 @@ ObjectClass * CellClass::Cell_Object(Point2D const & xy, bool bridge) const
 	return(ptr);
 }
 
-// FUNCTION: 0x0047D210
+// FUNCTION: GAMEMD 0x0047D210
 void CellClass::Set_Wall_Owner(void)
 {
 	if (Overlay != OVERLAY_NONE && OverlayTypes[Overlay]->IsWall) {
@@ -443,7 +443,7 @@ void CellClass::Set_Wall_Owner(void)
 	}
 }
 
-// FUNCTION: 0x0047DD70
+// FUNCTION: GAMEMD 0x0047DD70
 void CellClass::Destroy_Bridge(void)
 {
 	if (!Debug_Map) {
@@ -478,7 +478,7 @@ void CellClass::Destroy_Bridge(void)
 	}
 }
 
-// FUNCTION: 0x0047E8A0
+// FUNCTION: GAMEMD 0x0047E8A0
 void CellClass::Occupy_Down(ObjectClass * object, bool bridge)
 {
 	ObjectClass * optr = Cell_Occupier(bridge);
@@ -516,7 +516,7 @@ void CellClass::Occupy_Down(ObjectClass * object, bool bridge)
 	}
 }
 
-// FUNCTION: 0x0047EA90
+// FUNCTION: GAMEMD 0x0047EA90
 void CellClass::Occupy_Up(ObjectClass * object, bool bridge)
 {
 	if (object == NULL) return;
@@ -550,19 +550,19 @@ void CellClass::Occupy_Up(ObjectClass * object, bool bridge)
 	}
 }
 
-// FUNCTION: 0x0047EBA0
+// FUNCTION: GAMEMD 0x0047EBA0
 UnitClass * CellClass::Cell_Unit(bool bridge) const
 {
 	return((UnitClass*)Cell_Find_Object(RTTI_UNIT, bridge));
 }
 
-// FUNCTION: 0x0047EBF0
+// FUNCTION: GAMEMD 0x0047EBF0
 AircraftClass * CellClass::Cell_Aircraft(bool bridge) const
 {
 	return((AircraftClass*)Cell_Find_Object(RTTI_AIRCRAFT, bridge));
 }
 
-// FUNCTION: 0x0047EC40
+// FUNCTION: GAMEMD 0x0047EC40
 InfantryClass * CellClass::Cell_Infantry(bool bridge) const
 {
 	return((InfantryClass*)Cell_Find_Object(RTTI_INFANTRY, bridge));
@@ -584,7 +584,7 @@ class SHPStruct
 		void * GetPixels(int frame) const;
 };
 
-// FUNCTION: 0x0047F250
+// FUNCTION: GAMEMD 0x0047F250
 void CellClass::Draw_Fog_Shape(Point2D const & drawpoint, Rect const & cliprect, int shapenum)
 {
 	static bool shapes_loaded = false;
@@ -654,7 +654,7 @@ void CellClass::Draw_Fog_Shape(Point2D const & drawpoint, Rect const & cliprect,
 	}
 }
 
-// FUNCTION: 0x0047F510
+// FUNCTION: GAMEMD 0x0047F510
 void CellClass::Draw_Overlay_Shadow(Point2D const & xpoint, Rect const & cliprect)
 {
 	int yoffset = 15 * Height;
@@ -689,7 +689,7 @@ void CellClass::Draw_Overlay_Shadow(Point2D const & xpoint, Rect const & cliprec
 		ShapeFlags_Type(0x4601), NULL, -2 - yoffset);
 }
 
-// FUNCTION: 0x0047FB90
+// FUNCTION: GAMEMD 0x0047FB90
 Rect CellClass::Overlay_Render_Rect(void) const
 {
 	if (Overlay == OVERLAY_NONE) {
@@ -740,7 +740,7 @@ Rect CellClass::Overlay_Render_Rect(void) const
 	return(shp->GetFrameBounds(frame) + (point - Point2D(shp->Width / 2, shp->Height / 2)));
 }
 
-// FUNCTION: 0x0047FDE0
+// FUNCTION: GAMEMD 0x0047FDE0
 Rect CellClass::Overlay_Shadow_Render_Rect(void) const
 {
 	SHPStruct const * image = NULL;
@@ -778,7 +778,7 @@ Rect CellClass::Overlay_Shadow_Render_Rect(void) const
 	return(image->GetFrameBounds(shadowframe) + (point - Point2D(image->Width / 2, image->Height / 2)));
 }
 
-// FUNCTION: 0x0047FF80
+// FUNCTION: GAMEMD 0x0047FF80
 Rect CellClass::Cell_Render_Rect(void) const
 {
 	Point2D point;
@@ -817,7 +817,7 @@ Rect CellClass::Cell_Render_Rect(void) const
 	}
 }
 
-// FUNCTION: 0x00480110
+// FUNCTION: GAMEMD 0x00480110
 Point2D CellClass::Overlay_Draw_Offset(void) const
 {
 	Point2D offset = ::Overlay_Draw_Offset(Overlay);
@@ -835,13 +835,13 @@ Point2D CellClass::Overlay_Draw_Offset(void) const
 	return(offset);
 }
 
-// FUNCTION: 0x00480180
+// FUNCTION: GAMEMD 0x00480180
 void CellClass::Wipe_Depth(Point2D const & point, Rect const & cliprect)
 {
 	IsometricTileTypes[ISOTILE_CLEAR]->Draw_Tile(TileDrawers[0], 0, *DSurface::Temp, point.X, point.Y, cliprect, Height, TileBrightness, 1, 0, false, true, false, false);
 }
 
-// FUNCTION: 0x004801F0
+// FUNCTION: GAMEMD 0x004801F0
 void CellClass::Draw_Shroud_And_Fog(Point2D const & point, Rect const & cliprect)
 {
 	ShadowFrame = TacticalMap->Cell_Shadow(CellID, false);
@@ -890,7 +890,7 @@ inline void CellClass::Fetch_Icon(IsometricTileTypeClass *& ittype, int & subtil
 	}
 }
 
-// FUNCTION: 0x004802A0
+// FUNCTION: GAMEMD 0x004802A0
 void CellClass::Draw_Shadow_Cast(Point2D const & point, Rect const & cliprect)
 {
 	int subtile;
@@ -902,7 +902,7 @@ void CellClass::Draw_Shadow_Cast(Point2D const & point, Rect const & cliprect)
 	}
 }
 
-// FUNCTION: 0x00480510
+// FUNCTION: GAMEMD 0x00480510
 bool CellClass::Has_Wall_Or_Gate(OverlayType type, FacingType facing) const
 {
 	if (Overlay == type && Overlay != OVERLAY_NONE) {
@@ -951,7 +951,7 @@ bool CellClass::Has_Wall_Or_Gate(OverlayType type, FacingType facing) const
 	return(false);
 }
 
-// FUNCTION: 0x00480A30
+// FUNCTION: GAMEMD 0x00480A30
 Coord CellClass::Cell_Coord(void) const
 {
 	Coord coord(Fetch_CellID());
@@ -959,7 +959,7 @@ Coord CellClass::Cell_Coord(void) const
 	return(coord);
 }
 
-// FUNCTION: 0x00480CB0
+// FUNCTION: GAMEMD 0x00480CB0
 int CellClass::Reduce_Wall(int damage)
 {
 	if (Overlay != OVERLAY_NONE) {
@@ -1016,7 +1016,7 @@ int CellClass::Reduce_Wall(int damage)
 	return(false);
 }
 
-// FUNCTION: 0x004810A0
+// FUNCTION: GAMEMD 0x004810A0
 int CellClass::Spot_Index(Coord const & coord)
 {
 	Point2D rel = Coord_Fraction(coord);
@@ -1032,7 +1032,7 @@ int CellClass::Spot_Index(Coord const & coord)
 	return(index+1);
 }
 
-// FUNCTION: 0x00481130
+// FUNCTION: GAMEMD 0x00481130
 bool CellClass::Is_Spot_Free(int spot_index, bool bridge) const
 {
 	if (spot_index == 0 || spot_index == 1) {
@@ -1047,7 +1047,7 @@ bool CellClass::Is_Spot_Free(int spot_index, bool bridge) const
 	}
 }
 
-// FUNCTION: 0x004814A0
+// FUNCTION: GAMEMD 0x004814A0
 BuildingClass * CellClass::Get_Gate(void) const
 {
 	BuildingClass * building = Cell_Building();
@@ -1057,7 +1057,7 @@ BuildingClass * CellClass::Get_Gate(void) const
 	return(building);
 }
 
-// FUNCTION: 0x004814F0
+// FUNCTION: GAMEMD 0x004814F0
 int CellClass::Clear_Icon(IsometricTileType type, int seq_length) const
 {
 	static bool _init = false;
@@ -1115,7 +1115,7 @@ int CellClass::Clear_Icon(IsometricTileType type, int seq_length) const
 	}
 }
 
-// FUNCTION: 0x00481670
+// FUNCTION: GAMEMD 0x00481670
 void CellClass::Incoming(Coord const & threat, bool forced, bool nokidding, bool bridge)
 {
 	ObjectClass * object = NULL;
@@ -1151,7 +1151,7 @@ void CellClass::Incoming(Coord const & threat, bool forced, bool nokidding, bool
 	}
 }
 
-// FUNCTION: 0x00481810
+// FUNCTION: GAMEMD 0x00481810
 CellClass const & CellClass::Adjacent_Cell(FacingType face) const
 {
 	if ((unsigned)face >= FACING_COUNT) {
@@ -1162,7 +1162,7 @@ CellClass const & CellClass::Adjacent_Cell(FacingType face) const
 	return(Map[newcell]);
 }
 
-// FUNCTION: 0x00481870
+// FUNCTION: GAMEMD 0x00481870
 void CellClass::Adjust_Threat(HousesType house, int threat_value)
 {
 	int region = Map.Cell_Region(Fetch_CellID());
@@ -1175,7 +1175,7 @@ void CellClass::Adjust_Threat(HousesType house, int threat_value)
 	}
 }
 
-// FUNCTION: 0x004818E0
+// FUNCTION: GAMEMD 0x004818E0
 int CellClass::Tiberium_Adjust(bool pregame)
 {
 	if (Overlay != OVERLAY_NONE) {
@@ -1206,7 +1206,7 @@ int CellClass::Tiberium_Adjust(bool pregame)
 	return(0);
 }
 
-// FUNCTION: 0x00483410
+// FUNCTION: GAMEMD 0x00483410
 bool CellClass::Flag_Place(HousesType house)
 {
 	if (!IsFlagged && Is_Clear_To_Move(SPEED_TRACK, false, false)) {
@@ -1217,7 +1217,7 @@ bool CellClass::Flag_Place(HousesType house)
 	return(false);
 }
 
-// FUNCTION: 0x00483460
+// FUNCTION: GAMEMD 0x00483460
 bool CellClass::Flag_Remove(void)
 {
 	if (IsFlagged) {
@@ -1228,7 +1228,7 @@ bool CellClass::Flag_Remove(void)
 	return(false);
 }
 
-// FUNCTION: 0x00483480
+// FUNCTION: GAMEMD 0x00483480
 void CellClass::Shimmer(void)
 {
 	ObjectClass * object = Cell_Occupier();
@@ -1239,7 +1239,7 @@ void CellClass::Shimmer(void)
 	}
 }
 
-// FUNCTION: 0x004834A0
+// FUNCTION: GAMEMD 0x004834A0
 bool CellClass::Is_Clear_To_Move(SpeedType loco, bool ignoreinfantry, bool ignorevehicles, int zone, MZoneType check, int cell_height, bool checkbridge) const
 {
 	if (loco == SPEED_WINGED) {
@@ -1302,13 +1302,13 @@ bool CellClass::Is_Clear_To_Move(SpeedType loco, bool ignoreinfantry, bool ignor
 	return(true);
 }
 
-// FUNCTION: 0x00483610
+// FUNCTION: GAMEMD 0x00483610
 bool CellClass::Is_Bridge_Here(void) const
 {
 	return(IsUnderBridge);
 }
 
-// FUNCTION: 0x00483620
+// FUNCTION: GAMEMD 0x00483620
 bool CellClass::Can_Tiberium_Grow(void) const
 {
 	if (!Scen->IsTibGrowth) return(false);
@@ -1328,7 +1328,7 @@ bool CellClass::Can_Tiberium_Grow(void) const
 	return(true);
 }
 
-// FUNCTION: 0x00483690
+// FUNCTION: GAMEMD 0x00483690
 bool CellClass::Can_Tiberium_Spread(void) const
 {
 	if (!Scen->Special.IsTSpread) return(false);
@@ -1350,7 +1350,7 @@ bool CellClass::Can_Tiberium_Spread(void) const
 
 inline TiberiumType Overlay_Tiberium(CellClass const * cell) { return Which_Tiberium_Type(cell->Overlay); }
 
-// FUNCTION: 0x00483710
+// FUNCTION: GAMEMD 0x00483710
 bool CellClass::Grow_Tiberium(void)
 {
 	if (Can_Tiberium_Grow()) {
@@ -1359,7 +1359,7 @@ bool CellClass::Grow_Tiberium(void)
 	return(false);
 }
 
-// FUNCTION: 0x00483780
+// FUNCTION: GAMEMD 0x00483780
 bool CellClass::Spread_Tiberium(bool forced)
 {
 	if (!forced) {
@@ -1396,7 +1396,7 @@ bool CellClass::Spread_Tiberium(bool forced)
 	return(false);
 }
 
-// FUNCTION: 0x004838E0
+// FUNCTION: GAMEMD 0x004838E0
 bool CellClass::Can_Tiberium_Germinate(TiberiumClass const * tiberium) const
 {
 	if (!Map.In_Local_Radar(CellID)) return(false);
@@ -1420,7 +1420,7 @@ bool CellClass::Can_Tiberium_Germinate(TiberiumClass const * tiberium) const
 	return(true);
 }
 
-// FUNCTION: 0x004839F0
+// FUNCTION: GAMEMD 0x004839F0
 HRESULT STDMETHODCALLTYPE CellClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -1477,7 +1477,7 @@ HRESULT STDMETHODCALLTYPE CellClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x00483C10
+// FUNCTION: GAMEMD 0x00483C10
 HRESULT STDMETHODCALLTYPE CellClass::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -1502,7 +1502,7 @@ HRESULT STDMETHODCALLTYPE CellClass::Save(IStream * stream, BOOL cleardirty)
 	return(result);
 }
 
-// FUNCTION: 0x00483C80
+// FUNCTION: GAMEMD 0x00483C80
 void CellClass::Recalc_Passability(void)
 {
 	if (!Map.In_Local_Radar(CellID)) {
@@ -1582,7 +1582,7 @@ void CellClass::Recalc_Passability(void)
 	Passability = PASSABLE_LAND;
 }
 
-// FUNCTION: 0x00483E30
+// FUNCTION: GAMEMD 0x00483E30
 void CellClass::Init_Drawer(LightConvertClass * drawer, int intensity, int ambient, int brightness, int tile_brightness, int alt_brightness)
 {
 	bool got_drawer = false;
@@ -1663,7 +1663,7 @@ class NukeFlash
 		static bool IsFadingIn(void);
 };
 
-// FUNCTION: 0x00484050
+// FUNCTION: GAMEMD 0x00484050
 void CellClass::Pick_Drawer(LightConvertClass * & drawer, int & intensity, int & ambient, int & brightness, int & tile_brightness, int & alt_brightness) const
 {
 	intensity = 0x10000;
@@ -1701,7 +1701,7 @@ void CellClass::Pick_Drawer(LightConvertClass * & drawer, int & intensity, int &
 	}
 }
 
-// FUNCTION: 0x00484180
+// FUNCTION: GAMEMD 0x00484180
 void CellClass::Init_Light(int & intensity, int & ambient, int & brightness, int & tile_brightness, int & alt_brightness, int & red_tint, int & green_tint, int & blue_tint) const
 {
 	if (CellID != Cell(0, 0) && CellID != Cell(-1, -1)) {
@@ -1777,7 +1777,7 @@ void CellClass::Init_Light(int & intensity, int & ambient, int & brightness, int
 	}
 }
 
-// FUNCTION: 0x00484680
+// FUNCTION: GAMEMD 0x00484680
 void CellClass::Recalc_Light(void)
 {
 	Brightness = Ambient + (NORMAL_LIGHT * Scen->CurrentAmbientLight) / 100;
@@ -1809,13 +1809,13 @@ void CellClass::Recalc_Light(void)
 	AltBrightness = MAX(AltBrightness, 0);
 }
 
-// FUNCTION: 0x00484A80
+// FUNCTION: GAMEMD 0x00484A80
 void CellClass::Inc_Drawer_Ref_Count(LightConvertClass * convert) const
 {
 	convert->Add_Reference();
 }
 
-// FUNCTION: 0x00484A90
+// FUNCTION: GAMEMD 0x00484A90
 void CellClass::Dec_Drawer_Ref_Count(LightConvertClass * convert) const
 {
 	if (GameActive) {
@@ -1823,13 +1823,13 @@ void CellClass::Dec_Drawer_Ref_Count(LightConvertClass * convert) const
 	}
 }
 
-// FUNCTION: 0x00484AB0
+// FUNCTION: GAMEMD 0x00484AB0
 bool CellClass::Has_Tunnel(void) const
 {
 	return(Tube >= TUBE_FIRST && Tube < Tubes.Count() && Land == LAND_TUNNEL);
 }
 
-// FUNCTION: 0x00484D60
+// FUNCTION: GAMEMD 0x00484D60
 bool CellClass::Is_Near_Tunnel_ES(void) const
 {
 	if (Has_Tunnel()) {
@@ -1857,13 +1857,13 @@ bool CellClass::Is_Near_Tunnel_ES(void) const
 	return(false);
 }
 
-// FUNCTION: 0x00484F10
+// FUNCTION: GAMEMD 0x00484F10
 bool CellClass::Can_Enter_Tunnel(FootClass const * foot) const
 {
 	return(true);
 }
 
-// FUNCTION: 0x00484F20
+// FUNCTION: GAMEMD 0x00484F20
 TubeClass * CellClass::Get_Tunnel(void) const
 {
 	if (Tube >= TUBE_FIRST && Tube < Tubes.Count()) {
@@ -1872,7 +1872,7 @@ TubeClass * CellClass::Get_Tunnel(void) const
 	return(NULL);
 }
 
-// FUNCTION: 0x00484F50
+// FUNCTION: GAMEMD 0x00484F50
 void CellClass::Force_New_Slope_For_Occupiers(void) const
 {
 	int count = 0;
@@ -1895,7 +1895,7 @@ void CellClass::Force_New_Slope_For_Occupiers(void) const
 	}
 }
 
-// FUNCTION: 0x00484FF0
+// FUNCTION: GAMEMD 0x00484FF0
 wchar_t const * CellClass::Tiberium_Name(void) const
 {
 	TiberiumType tib = Which_Tiberium_Type(Overlay);
@@ -1905,13 +1905,13 @@ wchar_t const * CellClass::Tiberium_Name(void) const
 	return(NULL);
 }
 
-// FUNCTION: 0x00485010
+// FUNCTION: GAMEMD 0x00485010
 TiberiumType CellClass::Tiberium_Type_Here(void) const
 {
 	return(Which_Tiberium_Type(Overlay));
 }
 
-// FUNCTION: 0x00485020
+// FUNCTION: GAMEMD 0x00485020
 int CellClass::Tiberium_Value(void) const
 {
 	TiberiumType tib = Which_Tiberium_Type(Overlay);
@@ -1921,13 +1921,13 @@ int CellClass::Tiberium_Value(void) const
 	return(Tiberiums[tib]->CreditValue * (OverlayData + 1));
 }
 
-// FUNCTION: 0x00485060
+// FUNCTION: GAMEMD 0x00485060
 bool CellClass::Is_Tile_Water(void) const
 {
 	return(ITType >= IsometricTileTypeClass::WaterSet && ITType < IsometricTileTypeClass::WaterSet + 14);
 }
 
-// FUNCTION: 0x00485080
+// FUNCTION: GAMEMD 0x00485080
 LEPTON CellClass::Occupier_Height(void) const
 {
 	Coord coord(CELL_LEPTON_W / 2, CELL_LEPTON_H / 2, 0);
@@ -1957,7 +1957,7 @@ LEPTON CellClass::Occupier_Height(void) const
 	return(coord.Z);
 }
 
-// FUNCTION: 0x00485130
+// FUNCTION: GAMEMD 0x00485130
 void CellClass::Detach(AbstractClass const * target)
 {
 	if (Tag == target) {
@@ -1980,7 +1980,7 @@ void CellClass::Detach(AbstractClass const * target)
 	}
 }
 
-// FUNCTION: 0x00485200
+// FUNCTION: GAMEMD 0x00485200
 HRESULT STDMETHODCALLTYPE CellClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -1988,13 +1988,13 @@ HRESULT STDMETHODCALLTYPE CellClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x00485240
+// FUNCTION: GAMEMD 0x00485240
 void CellClass::Set_CellID(Cell const & cell)
 {
 	CellID = cell;
 }
 
-// FUNCTION: 0x00485250
+// FUNCTION: GAMEMD 0x00485250
 void CellClass::Attach_Tag(TagClass *tag)
 {
 	if (Tag != NULL) {
@@ -2008,7 +2008,7 @@ void CellClass::Attach_Tag(TagClass *tag)
 	}
 }
 
-// FUNCTION: 0x004852D0
+// FUNCTION: GAMEMD 0x004852D0
 void CellClass::Register_As_Dirty(void)
 {
 	Point2D point;
@@ -2018,7 +2018,7 @@ void CellClass::Register_As_Dirty(void)
 	TacticalMap->Register_Dirty_Area(Rect(point, 60, 30));
 }
 
-// FUNCTION: 0x00485390
+// FUNCTION: GAMEMD 0x00485390
 int CellClass::Get_Vein_Frame(void) const
 {
 	int frame = 0;
@@ -2034,7 +2034,7 @@ int CellClass::Get_Vein_Frame(void) const
 	return(frame);
 }
 
-// FUNCTION: 0x00485460
+// FUNCTION: GAMEMD 0x00485460
 bool CellClass::Can_Place_Veins(void)
 {
 	if (Ramp <= RAMP_SOUTH) {
@@ -2064,7 +2064,7 @@ bool CellClass::Can_Place_Veins(void)
 static inline int _Vein_Frame_B(CellClass const * cell) { return cell->Get_Vein_Frame(); }
 static inline int _Vein_Frame_A(CellClass const * cell) { return _Vein_Frame_B(cell); }
 
-// FUNCTION: 0x00485590
+// FUNCTION: GAMEMD 0x00485590
 void CellClass::Redraw_Veins(void)
 {
 	Rect dirty(0, 0, 0, 0);
@@ -2110,7 +2110,7 @@ void CellClass::Redraw_Veins(void)
 #define IS_TILE_IN_SET(setname, setsize) (ITType >= IsometricTileTypeClass::setname && ITType < IsometricTileTypeClass::setname + setsize)
 #define IS_TILE_IN_VALID_SET(setname, setsize) (IS_SET_VALID(setname) && IS_TILE_IN_SET(setname, setsize))
 
-// FUNCTION: 0x00486380
+// FUNCTION: GAMEMD 0x00486380
 bool CellClass::Is_Tile_Clear(void) const
 {
 	if (ITType == ISOTILE_NONE || ITType == ISOTILE_CLEAR) {
@@ -2120,7 +2120,7 @@ bool CellClass::Is_Tile_Clear(void) const
 	return(false);
 }
 
-// FUNCTION: 0x004863A0
+// FUNCTION: GAMEMD 0x004863A0
 bool CellClass::Is_Tile_Ramp(void) const
 {
 	if (IS_TILE_IN_SET(RampStart, RAMP_BASE_COUNT) ||
@@ -2131,7 +2131,7 @@ bool CellClass::Is_Tile_Ramp(void) const
 	return(false);
 }
 
-// FUNCTION: 0x004863D0
+// FUNCTION: GAMEMD 0x004863D0
 bool CellClass::Is_Tile_Cliff(void) const
 {
 	if (IS_TILE_IN_VALID_SET(CliffSet, CLIFF_COUNT)) return(true);
@@ -2182,7 +2182,7 @@ bool CellClass::Is_Tile_Cliff(void) const
 	return(false);
 }
 
-// FUNCTION: 0x004865B0
+// FUNCTION: GAMEMD 0x004865B0
 bool CellClass::Is_Tile_Shore(void) const
 {
 	if (IS_TILE_IN_SET(ShorePieces, SHORE_PIECES_COUNT)) {
@@ -2192,7 +2192,7 @@ bool CellClass::Is_Tile_Shore(void) const
 	return(false);
 }
 
-// FUNCTION: 0x004865D0
+// FUNCTION: GAMEMD 0x004865D0
 bool CellClass::Is_Tile_With_Water(void) const
 {
 	if (Is_Tile_Shore()) {
@@ -2210,7 +2210,7 @@ bool CellClass::Is_Tile_With_Water(void) const
 	return(false);
 }
 
-// FUNCTION: 0x00486650
+// FUNCTION: GAMEMD 0x00486650
 bool CellClass::Is_Tile_Misc_Pavement(void) const
 {
 	if (IS_TILE_IN_SET(MiscPaveTile, MISC_PAVE_TILE_COUNT)) {
@@ -2220,7 +2220,7 @@ bool CellClass::Is_Tile_Misc_Pavement(void) const
 	return(false);
 }
 
-// FUNCTION: 0x00486670
+// FUNCTION: GAMEMD 0x00486670
 bool CellClass::Is_Tile_Pavement(void) const
 {
 	if (IS_TILE_IN_SET(PaveTile, PAVE_TILE_COUNT)) {
@@ -2230,7 +2230,7 @@ bool CellClass::Is_Tile_Pavement(void) const
 	return(false);
 }
 
-// FUNCTION: 0x00486690
+// FUNCTION: GAMEMD 0x00486690
 bool CellClass::Is_Tile_Dirt_Road(void) const
 {
 	if (IS_TILE_IN_SET(DirtRoadJunction, DIRT_ROAD_JUNCTION_COUNT) ||
@@ -2242,7 +2242,7 @@ bool CellClass::Is_Tile_Dirt_Road(void) const
 	return(false);
 }
 
-// FUNCTION: 0x004866D0
+// FUNCTION: GAMEMD 0x004866D0
 bool CellClass::Is_Tile_Paved_Road(void) const
 {
 	if (IS_TILE_IN_SET(PavedRoads, PAVED_ROAD_COUNT)) {
@@ -2252,7 +2252,7 @@ bool CellClass::Is_Tile_Paved_Road(void) const
 	return(false);
 }
 
-// FUNCTION: 0x004866F0
+// FUNCTION: GAMEMD 0x004866F0
 bool CellClass::Is_Tile_Paved_Road_End(void) const
 {
 	if (IS_TILE_IN_SET(PavedRoadEnds, PAVED_ROAD_ENDS_COUNT)) {
@@ -2262,7 +2262,7 @@ bool CellClass::Is_Tile_Paved_Road_End(void) const
 	return(false);
 }
 
-// FUNCTION: 0x00486710
+// FUNCTION: GAMEMD 0x00486710
 bool CellClass::Is_Tile_Paved_Road_Slope(void) const
 {
 	if (IS_TILE_IN_SET(PavedRoadSlopes, PAVED_ROAD_SLOPES_COUNT)) {
@@ -2272,7 +2272,7 @@ bool CellClass::Is_Tile_Paved_Road_Slope(void) const
 	return(false);
 }
 
-// FUNCTION: 0x00486730
+// FUNCTION: GAMEMD 0x00486730
 bool CellClass::Is_Tile_Road_Median(void) const
 {
 	if (IS_TILE_IN_SET(Medians, 14)) {
@@ -2282,7 +2282,7 @@ bool CellClass::Is_Tile_Road_Median(void) const
 	return(false);
 }
 
-// FUNCTION: 0x00486750
+// FUNCTION: GAMEMD 0x00486750
 bool CellClass::Is_Tile_Bridge(void) const
 {
 	if (IS_TILE_IN_VALID_SET(BridgeSet, BRIDGE_COUNT)) {
@@ -2292,7 +2292,7 @@ bool CellClass::Is_Tile_Bridge(void) const
 	return(false);
 }
 
-// FUNCTION: 0x00486770
+// FUNCTION: GAMEMD 0x00486770
 bool CellClass::Is_Tile_Train_Bridge(void) const
 {
 	if (IS_TILE_IN_VALID_SET(TrainBridgeSet, TRAIN_BRIDGE_COUNT)) {
@@ -2302,7 +2302,7 @@ bool CellClass::Is_Tile_Train_Bridge(void) const
 	return(false);
 }
 
-// FUNCTION: 0x00486790
+// FUNCTION: GAMEMD 0x00486790
 bool CellClass::Is_Tile_Clear_To_Sand_LAT(void) const
 {
 	if (IS_TILE_IN_SET(ClearToSandLat, 16)) {
@@ -2312,7 +2312,7 @@ bool CellClass::Is_Tile_Clear_To_Sand_LAT(void) const
 	return(false);
 }
 
-// FUNCTION: 0x004867B0
+// FUNCTION: GAMEMD 0x004867B0
 bool CellClass::Is_Tile_Clear_To_Green_LAT(void) const
 {
 	if (ITType == IsometricTileTypeClass::GreenTile || (ITType >= IsometricTileTypeClass::ClearToGreenLat && ITType < IsometricTileTypeClass::ClearToGreenLat + 16)) {
@@ -2321,7 +2321,7 @@ bool CellClass::Is_Tile_Clear_To_Green_LAT(void) const
 	return(false);
 }
 
-// FUNCTION: 0x004867E0
+// FUNCTION: GAMEMD 0x004867E0
 bool CellClass::Is_Tile_Not_Water(void) const
 {
 	if (ITType >= IsometricTileTypeClass::WaterSet && ITType < IsometricTileTypeClass::WaterSet + 14) {
@@ -2331,7 +2331,7 @@ bool CellClass::Is_Tile_Not_Water(void) const
 	return(true);
 }
 
-// FUNCTION: 0x00486800
+// FUNCTION: GAMEMD 0x00486800
 bool CellClass::Should_Draw_As_Cloaked(HousesType house) const
 {
 	if (PlayerPtr != NULL) {
@@ -2347,7 +2347,7 @@ bool CellClass::Should_Draw_As_Cloaked(HousesType house) const
 	return(false);
 }
 
-// FUNCTION: 0x00486840
+// FUNCTION: GAMEMD 0x00486840
 Coord CellClass::Center_Coord(void) const
 {
 	Point2D pt = Point2D((CellID.X * CELL_LEPTON_W) + CELL_LEPTON_W / 2, (CellID.Y * CELL_LEPTON_H) + CELL_LEPTON_H / 2);
@@ -2358,7 +2358,7 @@ Coord CellClass::Center_Coord(void) const
 	return(coord);
 }
 
-// FUNCTION: 0x00486890
+// FUNCTION: GAMEMD 0x00486890
 Coord CellClass::As_Coord(void) const
 {
 	if (IsUnderBridge) {
@@ -2368,7 +2368,7 @@ Coord CellClass::As_Coord(void) const
 	return(Center_Coord());
 }
 
-// FUNCTION: 0x00486900
+// FUNCTION: GAMEMD 0x00486900
 bool CellClass::Is_Tile_Destroyable_Cliff(void) const
 {
 	if (ITType == IsometricTileTypeClass::DestroyableCliffs + DESTROYABLE_CLIFFS_COUNT-2) {
@@ -2382,7 +2382,7 @@ bool CellClass::Is_Tile_Destroyable_Cliff(void) const
 	return(false);
 }
 
-// FUNCTION: 0x00486920
+// FUNCTION: GAMEMD 0x00486920
 void CellClass::Trigger_Veins(void)
 {
 	if (Overlay == OVERLAY_VEINS && OverlayData >= OVERLAYDATA_FIRST_SOLID_VEIN && Ramp == RAMP_NONE && !IsAnimAttached) {
@@ -2399,7 +2399,7 @@ void CellClass::Trigger_Veins(void)
 	}
 }
 
-// FUNCTION: 0x00486A70
+// FUNCTION: GAMEMD 0x00486A70
 void CellClass::Fog_Cell(void)
 {
 	if (Scen->Special.IsFogOfWar) {
@@ -2449,7 +2449,7 @@ void CellClass::Fog_Cell(void)
 	}
 }
 
-// FUNCTION: 0x00486BF0
+// FUNCTION: GAMEMD 0x00486BF0
 void CellClass::Unfog_Cell(void)
 {
 	Cell cell = CellID;
@@ -2464,7 +2464,7 @@ void CellClass::Unfog_Cell(void)
 	}
 }
 
-// FUNCTION: 0x00486C50
+// FUNCTION: GAMEMD 0x00486C50
 void CellClass::Remove_Fogged_Objects(void)
 {
 	if (FoggedObjects != NULL) {
@@ -2490,7 +2490,7 @@ void CellClass::Remove_Fogged_Objects(void)
 	}
 }
 
-// FUNCTION: 0x00486D90
+// FUNCTION: GAMEMD 0x00486D90
 int CellClass::Occupation_Mask(HousesType house) const
 {
 	if (!(OccupiedBy & (1 << house))) {
@@ -2507,7 +2507,7 @@ int CellClass::Occupation_Mask(HousesType house) const
 	return(mask);
 }
 
-// FUNCTION: 0x00486E30
+// FUNCTION: GAMEMD 0x00486E30
 int CellClass::Reduce_Weed(void)
 {
 	VeinholeMonsterClass * veinhole = VeinholeMonsterClass::Get_Vein_Owner_At(CellID);
@@ -2519,7 +2519,7 @@ int CellClass::Reduce_Weed(void)
 	return(0);
 }
 
-// FUNCTION: 0x00486E70
+// FUNCTION: GAMEMD 0x00486E70
 void CellClass::Register_For_Redraw(void)
 {
 	Rect rect = Union(Union(Cell_Render_Rect(), Overlay_Render_Rect()), Overlay_Shadow_Render_Rect());
@@ -2527,7 +2527,7 @@ void CellClass::Register_For_Redraw(void)
 	Map.Radar_Background(CellID);
 }
 
-// FUNCTION: 0x00486FF0
+// FUNCTION: GAMEMD 0x00486FF0
 bool CellClass::Can_Burrow_Here(void) const
 {
 	if (!Map.In_Local_Radar(this)) {
@@ -2548,61 +2548,61 @@ bool CellClass::Can_Burrow_Here(void) const
 	return(false);
 }
 
-// FUNCTION: 0x004870B0
+// FUNCTION: GAMEMD 0x004870B0
 bool CellClass::Is_Cloaked(HousesType house) const
 {
 	return((CloakedBy & (1 << house)) != 0);
 }
 
-// FUNCTION: 0x004870D0
+// FUNCTION: GAMEMD 0x004870D0
 bool CellClass::Is_Sensed(HousesType house) const
 {
 	return((short)SensorsOfHouses[house] > 0);
 }
 
-// FUNCTION: 0x004870F0
+// FUNCTION: GAMEMD 0x004870F0
 bool CellClass::Is_Disguise_Sensed(HousesType house) const
 {
 	return((short)DisguiseSensorsOfHouses[house] > 0);
 }
 
-// FUNCTION: 0x00487110
+// FUNCTION: GAMEMD 0x00487110
 void CellClass::Cloaked_By(HousesType house)
 {
 	CloakedBy |= (1 << house);
 }
 
-// FUNCTION: 0x00487130
+// FUNCTION: GAMEMD 0x00487130
 void CellClass::Uncloaked_By(HousesType house)
 {
 	CloakedBy &= ~(1 << house);
 }
 
-// FUNCTION: 0x00487150
+// FUNCTION: GAMEMD 0x00487150
 void CellClass::Sensed_By(HousesType house)
 {
 	SensorsOfHouses[house]++;
 }
 
-// FUNCTION: 0x00487160
+// FUNCTION: GAMEMD 0x00487160
 void CellClass::Unsensed_By(HousesType house)
 {
 	SensorsOfHouses[house]--;
 }
 
-// FUNCTION: 0x00487170
+// FUNCTION: GAMEMD 0x00487170
 void CellClass::Disguise_Sensed_By(HousesType house)
 {
 	DisguiseSensorsOfHouses[house]++;
 }
 
-// FUNCTION: 0x00487180
+// FUNCTION: GAMEMD 0x00487180
 void CellClass::Disguise_Unsensed_By(HousesType house)
 {
 	DisguiseSensorsOfHouses[house]--;
 }
 
-// FUNCTION: 0x00487190
+// FUNCTION: GAMEMD 0x00487190
 bool CellClass::Place_Tiberium(TiberiumType tib, int data)
 {
 	TiberiumClass * tiberium = Tiberiums[tib];
@@ -2633,7 +2633,7 @@ bool CellClass::Place_Tiberium(TiberiumType tib, int data)
 	return(false);
 }
 
-// FUNCTION: 0x00487630
+// FUNCTION: GAMEMD 0x00487630
 void CellClass::ReduceShroudCounter(void)
 {
 	if (ShroudCounter == 1) {
@@ -2658,7 +2658,7 @@ reveal:
 	}
 }
 
-// FUNCTION: 0x00487690
+// FUNCTION: GAMEMD 0x00487690
 void CellClass::IncreaseShroudCounter(void)
 {
 	int old = ShroudCounter;
@@ -2674,7 +2674,7 @@ void CellClass::IncreaseShroudCounter(void)
 	}
 }
 
-// FUNCTION: 0x004876F0
+// FUNCTION: GAMEMD 0x004876F0
 void CellClass::Unshroud(void)
 {
 	IsMapped = true;
@@ -2684,7 +2684,7 @@ void CellClass::Unshroud(void)
 	}
 }
 
-// FUNCTION: 0x00487720
+// FUNCTION: GAMEMD 0x00487720
 void CellClass::On_Bridge_Collapse(void)
 {
 	ObjectClass * next;
@@ -2727,19 +2727,19 @@ void CellClass::On_Bridge_Collapse(void)
 	}
 }
 
-// FUNCTION: 0x00487950
+// FUNCTION: GAMEMD 0x00487950
 bool CellClass::Is_Shrouded(void) const
 {
 	return(Map.Is_Shrouded(Cell_Coord()));
 }
 
-// FUNCTION: 0x004879B0
+// FUNCTION: GAMEMD 0x004879B0
 bool CellClass::Is_Fogged(void) const
 {
 	return(Map.Is_Fogged(Cell_Coord()));
 }
 
-// FUNCTION: 0x00487A10
+// FUNCTION: GAMEMD 0x00487A10
 void CellClass::Kill_Illegal_Occupiers(bool kill_jumpjets)
 {
 	ObjectClass * object = Cell_Occupier();
@@ -2775,7 +2775,7 @@ void CellClass::Kill_Illegal_Occupiers(bool kill_jumpjets)
 	}
 }
 
-// FUNCTION: 0x00487C10
+// FUNCTION: GAMEMD 0x00487C10
 bool CellClass::Can_Build_Here(void) const
 {
 	if (Ramp) {
@@ -2792,37 +2792,37 @@ bool CellClass::Can_Build_Here(void) const
 	return(Ground[Land].Build);
 }
 
-// FUNCTION: 0x00487C70
+// FUNCTION: GAMEMD 0x00487C70
 void CellClass::FUN_00487C70(RadSiteClass * site)
 {
 	RadSite = site;
 }
 
-// FUNCTION: 0x00487C80
+// FUNCTION: GAMEMD 0x00487C80
 RadSiteClass * CellClass::FUN_00487C80(void)
 {
 	return(RadSite);
 }
 
-// FUNCTION: 0x00487C90
+// FUNCTION: GAMEMD 0x00487C90
 bool CellClass::IsRadiated(void) const
 {
 	return(RadLevel > 1.0);
 }
 
-// FUNCTION: 0x00487CB0
+// FUNCTION: GAMEMD 0x00487CB0
 int CellClass::GetRadLevel(void) const
 {
 	return((int)MIN(RadLevel, (double)Rule->RadLevelMax));
 }
 
-// FUNCTION: 0x00487CE0
+// FUNCTION: GAMEMD 0x00487CE0
 void CellClass::RadLevel_Increase(double amount)
 {
 	RadLevel += amount;
 }
 
-// FUNCTION: 0x00487D00
+// FUNCTION: GAMEMD 0x00487D00
 void CellClass::RadLevel_Decrease(double amount)
 {
 	double level = RadLevel - amount;
@@ -2833,7 +2833,7 @@ void CellClass::RadLevel_Decrease(double amount)
 	RadLevel = level;
 }
 
-// FUNCTION: 0x00487D50
+// FUNCTION: GAMEMD 0x00487D50
 int CellClass::GetLevel(void) const
 {
 	return(Height + (IsBridgeDeck ? BRIDGE_CELL_HEIGHT : 0));
@@ -2849,7 +2849,7 @@ inline FootClass * As_Foot_Object(AbstractClass * const & p)
 	return(!p ? NULL : ((p->AbstractFlags & 4) ? (FootClass *)p : NULL));
 }
 
-// FUNCTION: 0x00487D70
+// FUNCTION: GAMEMD 0x00487D70
 bool CellClass::TryAssignJumpjet(FootClass * foot)
 {
 	if (foot == NULL) {
@@ -2869,7 +2869,7 @@ bool CellClass::TryAssignJumpjet(FootClass * foot)
 	return(true);
 }
 
-// FUNCTION: 0x00487DF0
+// FUNCTION: GAMEMD 0x00487DF0
 bool CellClass::FUN_00487DF0(void) const
 {
 	if (Land == LAND_TIBERIUM) {
@@ -2878,7 +2878,7 @@ bool CellClass::FUN_00487DF0(void) const
 	return(false);
 }
 
-// FUNCTION: 0x00487E00
+// FUNCTION: GAMEMD 0x00487E00
 bool CellClass::FUN_00487E00(void) const
 {
 	if (GameActive) {
@@ -2896,38 +2896,45 @@ bool CellClass::FUN_00487E00(void) const
 	return(OccupyHeightsCoveringMe != 0);
 }
 
-// FUNCTION: 0x00487E50
+// FUNCTION: GAMEMD 0x00487E50
 int STDMETHODCALLTYPE CellClass::What_Am_I(void) const
 {
 	return(RTTI_CELL);
 }
 
-// FUNCTION: 0x00487E60
+// FUNCTION: GAMEMD 0x00487E60
 RTTIType CellClass::Fetch_RTTI(void) const
 {
 	return(RTTI_CELL);
 }
 
-// FUNCTION: 0x00487E70
+// FUNCTION: GAMEMD 0x00487E70
 int CellClass::Fetch_Object_Size(void) const
 {
 	return(sizeof(*this));
 }
 
-// FUNCTION: 0x00487E80 CellClass::~CellClass
+// SYNTHETIC: GAMEMD 0x00487E80
+// ??_GCellClass@@UAEPAXI@Z
 
-// FUNCTION: 0x00487EE0 ?$TRect@H::operator-
+// TEMPLATE: GAMEMD 0x00487EE0
+// ??G?$TRect@H@@QBE?BV0@ABV?$TPoint2D@H@@@Z
 
-// FUNCTION: 0x00487F20 ?$TPoint2D@H::operator-
+// TEMPLATE: GAMEMD 0x00487F20
+// ??G?$TPoint2D@H@@QBE?BV0@ABV0@@Z
 
-// FUNCTION: 0x00487F40 Union
+// TEMPLATE: GAMEMD 0x00487F40
+// ?Union@@YI?BV?$TRect@H@@ABV1@0@Z
 template TRect<int> const Union<int>(TRect<int> const &, TRect<int> const &);
 
-// FUNCTION: 0x00488030 ?$VectorClass@PAVObjectClass@@::~?$VectorClass@PAVObjectClass@@
+// SYNTHETIC: GAMEMD 0x00488030
+// ??_G?$VectorClass@PAVObjectClass@@@@UAEPAXI@Z
 template class VectorClass<ObjectClass *>;
 
-// FUNCTION: 0x00488080 ?$VectorClass@PAVFoggedObjectClass@@::?$VectorClass@PAVFoggedObjectClass@@
+// TEMPLATE: GAMEMD 0x00488080
+// ??0?$VectorClass@PAVFoggedObjectClass@@@@QAE@HPBQAVFoggedObjectClass@@@Z
 template class VectorClass<FoggedObjectClass *>;
 
-// FUNCTION: 0x004880D0 $E222
+// SYNTHETIC: GAMEMD 0x004880D0 SYMBOL
+// _$E222
 Rect DAT_0089E7C8(0, 0, 0, 0);

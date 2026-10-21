@@ -21,7 +21,7 @@
 #include "trigtype.h"
 #include "vector.h"
 
-// FUNCTION: 0x00725FA0
+// FUNCTION: GAMEMD 0x00725FA0
 TriggerClass::TriggerClass(TriggerTypeClass * trigtype) :
 	Class(trigtype),
 	LinkedTo(NULL),
@@ -50,7 +50,7 @@ TriggerClass::TriggerClass(TriggerTypeClass * trigtype) :
 	}
 }
 
-// FUNCTION: 0x00726140
+// FUNCTION: GAMEMD 0x00726140
 TriggerClass::~TriggerClass(void)
 {
 	Detach_This_From_All(this, true);
@@ -59,7 +59,7 @@ TriggerClass::~TriggerClass(void)
 	TriggerPtrTracker.Delete(this);
 }
 
-// FUNCTION: 0x00726250
+// FUNCTION: GAMEMD 0x00726250
 bool TriggerClass::Is_Cross_Horizontal(void) const
 {
 	if (LinkedTo != NULL) {
@@ -68,7 +68,7 @@ bool TriggerClass::Is_Cross_Horizontal(void) const
 	return(Class->Is_Cross_Horizontal());
 }
 
-// FUNCTION: 0x00726290
+// FUNCTION: GAMEMD 0x00726290
 bool TriggerClass::Is_Cross_Vertical(void) const
 {
 	if (LinkedTo != NULL) {
@@ -77,7 +77,7 @@ bool TriggerClass::Is_Cross_Vertical(void) const
 	return(Class->Is_Cross_Vertical());
 }
 
-// FUNCTION: 0x007262D0
+// FUNCTION: GAMEMD 0x007262D0
 bool TriggerClass::Is_Enters_Zone(void) const
 {
 	if (LinkedTo != NULL) {
@@ -86,7 +86,7 @@ bool TriggerClass::Is_Enters_Zone(void) const
 	return(Class->Is_Enters_Zone());
 }
 
-// FUNCTION: 0x00726310
+// FUNCTION: GAMEMD 0x00726310
 bool TriggerClass::Is_Allow_Win(void) const
 {
 	if (LinkedTo != NULL) {
@@ -95,7 +95,7 @@ bool TriggerClass::Is_Allow_Win(void) const
 	return(Class->Is_Allow_Win());
 }
 
-// FUNCTION: 0x00726350
+// FUNCTION: GAMEMD 0x00726350
 bool TriggerClass::Is_Linked_To_Global(int global) const
 {
 	if (LinkedTo != NULL) {
@@ -104,7 +104,7 @@ bool TriggerClass::Is_Linked_To_Global(int global) const
 	return(Class->Is_Linked_To_Global(global));
 }
 
-// FUNCTION: 0x007263A0
+// FUNCTION: GAMEMD 0x007263A0
 void TriggerClass::Reset_Global_Linked_Timed_Events(int global)
 {
 	TriggerClass * tp = this;
@@ -116,7 +116,7 @@ void TriggerClass::Reset_Global_Linked_Timed_Events(int global)
 	}
 }
 
-// FUNCTION: 0x007263D0
+// FUNCTION: GAMEMD 0x007263D0
 void TriggerClass::Reset_Local_Linked_Timed_Events(int local)
 {
 	TriggerClass * tp = this;
@@ -128,7 +128,7 @@ void TriggerClass::Reset_Local_Linked_Timed_Events(int local)
 	}
 }
 
-// FUNCTION: 0x00726400
+// FUNCTION: GAMEMD 0x00726400
 void TriggerClass::Reset_All_Timed_Events(void)
 {
 	int index = 0;
@@ -147,7 +147,7 @@ void TriggerClass::Reset_All_Timed_Events(void)
 	}
 }
 
-// FUNCTION: 0x007264C0
+// FUNCTION: GAMEMD 0x007264C0
 bool TriggerClass::Should_Spring(TEventType event, ObjectClass * object, bool forced, bool persistent, TechnoClass * source)
 {
 	if (!IsEnabled || Is_Marked_To_Delete()) {
@@ -183,7 +183,7 @@ bool TriggerClass::Should_Spring(TEventType event, ObjectClass * object, bool fo
 	return(all_sprung);
 }
 
-// FUNCTION: 0x007265C0
+// FUNCTION: GAMEMD 0x007265C0
 bool TriggerClass::Spring(ObjectClass * object, Cell cell)
 {
 	if (!IsEnabled || Is_Marked_To_Delete()) {
@@ -202,7 +202,7 @@ bool TriggerClass::Spring(ObjectClass * object, Cell cell)
 	return(done);
 }
 
-// FUNCTION: 0x00726630
+// FUNCTION: GAMEMD 0x00726630
 TriggerClass * Find_Or_Make(TriggerTypeClass * trigtype)
 {
 	if (trigtype == NULL) return(NULL);
@@ -217,7 +217,7 @@ TriggerClass * Find_Or_Make(TriggerTypeClass * trigtype)
 	return(trig);
 }
 
-// FUNCTION: 0x00726690
+// FUNCTION: GAMEMD 0x00726690
 void TriggerClass::Detach(AbstractClass const * target, bool all)
 {
 	if (Class == target) {
@@ -231,38 +231,38 @@ void TriggerClass::Detach(AbstractClass const * target, bool all)
 	}
 }
 
-// FUNCTION: 0x007266C0
+// FUNCTION: GAMEMD 0x007266C0
 void TriggerClass::Flag_Event_Tripped(int event)
 {
 	IsTripped |= (1 << event);
 }
 
-// FUNCTION: 0x007266E0
+// FUNCTION: GAMEMD 0x007266E0
 void TriggerClass::Flag_Event_Untripped(int event)
 {
 	IsTripped &= ~(1 << event);
 }
 
-// FUNCTION: 0x00726700
+// FUNCTION: GAMEMD 0x00726700
 bool TriggerClass::Is_Event_Tripped(int event)
 {
 	return((IsTripped & (1 << event)) != 0);
 }
 
-// FUNCTION: 0x00726720
+// FUNCTION: GAMEMD 0x00726720
 void TriggerClass::Mark_To_Delete(void)
 {
 	IsToDelete = true;
 	ObjectsToDelete.Add(this);
 }
 
-// FUNCTION: 0x00726780
+// FUNCTION: GAMEMD 0x00726780
 bool TriggerClass::Is_Marked_To_Delete(void) const
 {
 	return(IsToDelete);
 }
 
-// FUNCTION: 0x00726790
+// FUNCTION: GAMEMD 0x00726790
 void TriggerClass::Compute_CRC(CRCEngine & crc) const
 {
 	BASECLASS::Compute_CRC(crc);
@@ -277,7 +277,7 @@ void TriggerClass::Compute_CRC(CRCEngine & crc) const
 	crc(IsTripped);
 }
 
-// FUNCTION: 0x00726820
+// FUNCTION: GAMEMD 0x00726820
 HRESULT STDMETHODCALLTYPE TriggerClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -285,7 +285,7 @@ HRESULT STDMETHODCALLTYPE TriggerClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x00726860
+// FUNCTION: GAMEMD 0x00726860
 HRESULT STDMETHODCALLTYPE TriggerClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -301,7 +301,7 @@ HRESULT STDMETHODCALLTYPE TriggerClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x007268D0
+// FUNCTION: GAMEMD 0x007268D0
 HRESULT STDMETHODCALLTYPE TriggerClass::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -311,55 +311,68 @@ HRESULT STDMETHODCALLTYPE TriggerClass::Save(IStream * stream, BOOL cleardirty)
 	return(result);
 }
 
-// FUNCTION: 0x007268F0
+// FUNCTION: GAMEMD 0x007268F0
 void TriggerClass::Enable(void)
 {
 	IsActive = true;
 	Reset_All_Timed_Events();
 }
 
-// FUNCTION: 0x00726900
+// FUNCTION: GAMEMD 0x00726900
 void TriggerClass::Disable(void)
 {
 	IsActive = false;
 }
 
-// FUNCTION: 0x00726910
+// FUNCTION: GAMEMD 0x00726910
 HouseClass * TriggerClass::Get_House(void) const
 {
 	return(House);
 }
 
-// FUNCTION: 0x00726920
+// FUNCTION: GAMEMD 0x00726920
 void TriggerClass::Set_House(HouseClass * house)
 {
 	House = house;
 }
 
-// FUNCTION: 0x00726930 TriggerClass::Fetch_Object_Size
+// FUNCTION: GAMEMD 0x00726930
+// TriggerClass::Fetch_Object_Size
 
-// FUNCTION: 0x00726940 TriggerClass::Fetch_RTTI
+// FUNCTION: GAMEMD 0x00726940
+// TriggerClass::Fetch_RTTI
 
-// FUNCTION: 0x00726950 TriggerClass::~TriggerClass
+// SYNTHETIC: GAMEMD 0x00726950
+// ??_GTriggerClass@@UAEPAXI@Z
 
-// FUNCTION: 0x00726A70 $E2
-// FUNCTION: 0x00726AA0 $E5
-// FUNCTION: 0x00726AC0 $E8
-// FUNCTION: 0x00726AE0 $E11
-// FUNCTION: 0x00726B00 $E14
-// FUNCTION: 0x00726B20 $E17
-// FUNCTION: 0x00726B40 $E20
-// FUNCTION: 0x00726B80 $E23
+// SYNTHETIC: GAMEMD 0x00726A70 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x00726AA0 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x00726AC0 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x00726AE0 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x00726B00 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x00726B20 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x00726B40 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x00726B80 SYMBOL
+// _$E23
 
 extern double __cdecl FUN_004CADE0(double);
 extern int DAT_00B0F850;
 extern double DAT_00B0F7F8;
 extern const double DAT_007E1738;
 
-// FUNCTION: 0x00726BB0 $E26
+// SYNTHETIC: GAMEMD 0x00726BB0 SYMBOL
+// _$E26
 double DAT_00B0F820 = FUN_004CADE0((DAT_00B0F850 * 2) / DAT_00B0F7F8);
 
-// FUNCTION: 0x00726BE0 $E29
+// SYNTHETIC: GAMEMD 0x00726BE0 SYMBOL
+// _$E29
 int DAT_00B0F844 = (int)(DAT_00B0F850 * 4 + DAT_007E1738);
 
 struct TrigZero2S { short a, b; TrigZero2S() : a(0), b(0) {} };
@@ -367,14 +380,18 @@ struct TrigZero3I { int a, b, c; TrigZero3I() : a(0), b(0), c(0) {} };
 struct TrigInit128 { int a, b, c; TrigInit128() { c = 0; a = 128; b = 128; } };
 struct TrigZero4I { int a, b, c, d; TrigZero4I() : a(0), b(0), c(0), d(0) {} };
 
-// FUNCTION: 0x00726C10 $E32
+// SYNTHETIC: GAMEMD 0x00726C10 SYMBOL
+// _$E32
 TrigZero2S DAT_00B0F7F0;
 
-// FUNCTION: 0x00726C20 $E35
+// SYNTHETIC: GAMEMD 0x00726C20 SYMBOL
+// _$E35
 TrigZero3I DAT_00B0F810;
 
-// FUNCTION: 0x00726C40 $E38
+// SYNTHETIC: GAMEMD 0x00726C40 SYMBOL
+// _$E38
 TrigInit128 DAT_00B0F838;
 
-// FUNCTION: 0x00726C60 $E50
+// SYNTHETIC: GAMEMD 0x00726C60 SYMBOL
+// _$E50
 TrigZero4I DAT_00B0F7E0;

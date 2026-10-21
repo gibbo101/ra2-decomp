@@ -36,40 +36,52 @@ extern const double DAT_007EE0A8;
 struct DatShorts { short X; short Y; DatShorts(short x, short y) : X(x), Y(y) {} };
 struct DatInts { int X; int Y; int Z; DatInts(int x, int y, int z) : X(x), Y(y), Z(z) {} };
 
-// FUNCTION: 0x005BF5E0 $E67
+// SYNTHETIC: GAMEMD 0x005BF5E0 SYMBOL
+// _$E67
 double DAT_00ABF380 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x005BF610 $E70
+// SYNTHETIC: GAMEMD 0x005BF610 SYMBOL
+// _$E70
 double DAT_00ABF3E8 = DAT_00ABF380 / DAT_007EE0A0;
 
-// FUNCTION: 0x005BF630 $E73
+// SYNTHETIC: GAMEMD 0x005BF630 SYMBOL
+// _$E73
 double DAT_00ABF3D0 = DAT_007E1718 / DAT_00ABF3E8;
 
-// FUNCTION: 0x005BF650 $E76
+// SYNTHETIC: GAMEMD 0x005BF650 SYMBOL
+// _$E76
 double DAT_00ABF3C8 = DAT_007E1720 * DAT_007EE0A8;
 
-// FUNCTION: 0x005BF670 $E79
+// SYNTHETIC: GAMEMD 0x005BF670 SYMBOL
+// _$E79
 double DAT_00ABF388 = DAT_007E1728 * DAT_007EE0A8;
 
-// FUNCTION: 0x005BF690 $E82
+// SYNTHETIC: GAMEMD 0x005BF690 SYMBOL
+// _$E82
 double DAT_00ABF360 = DAT_007E1730 * DAT_007EE0A8;
 
-// FUNCTION: 0x005BF6B0 $E85
+// SYNTHETIC: GAMEMD 0x005BF6B0 SYMBOL
+// _$E85
 int DAT_00ABF3F0 = (int)(DAT_007E1738 * (DAT_00ABF380 * fastmath::tan(DAT_00ABF360 - DAT_00ABF388)));
 
-// FUNCTION: 0x005BF6F0 $E88
+// SYNTHETIC: GAMEMD 0x005BF6F0 SYMBOL
+// _$E88
 double DAT_00ABF3A8 = fastmath::atan(DAT_00ABF3F0 * DAT_007E1740);
 
-// FUNCTION: 0x005BF720 $E91
+// SYNTHETIC: GAMEMD 0x005BF720 SYMBOL
+// _$E91
 double DAT_00ABF3C0 = fastmath::atan((DAT_00ABF3F0 * 2) / DAT_00ABF380);
 
-// FUNCTION: 0x005BF750 $E94
+// SYNTHETIC: GAMEMD 0x005BF750 SYMBOL
+// _$E94
 int DAT_00ABF3E4 = (int)((DAT_00ABF3F0 * 4) + DAT_007E1738);
 
-// FUNCTION: 0x005BF780 $E97
+// SYNTHETIC: GAMEMD 0x005BF780 SYMBOL
+// _$E97
 DatShorts DAT_00ABF378(0, 0);
 
-// FUNCTION: 0x005BF790 $E100
+// SYNTHETIC: GAMEMD 0x005BF790 SYMBOL
+// _$E100
 DatInts DAT_00ABF3B0(0, 0, 0);
 
 int MovieInt1 = 0;
@@ -80,14 +92,17 @@ extern int FUN_00407000(void);
 
 struct DatInts3 { int X; int Y; int Z; DatInts3(int x, int y, int z) : Z(z), X(x), Y(y) {} };
 
-// FUNCTION: 0x005BF7B0 $E103
+// SYNTHETIC: GAMEMD 0x005BF7B0 SYMBOL
+// _$E103
 DatInts3 DAT_00ABF3D8(0x80, 0x80, 0);
 
-// FUNCTION: 0x005BF7D0 $E108
-// FUNCTION: 0x005BF810 $E106
+// SYNTHETIC: GAMEMD 0x005BF7D0 SYMBOL
+// _$E108
+// SYNTHETIC: GAMEMD 0x005BF810 SYMBOL
+// _$E106
 DynamicVectorClass<char const *> DAT_00ABF390;
 
-// FUNCTION: 0x005BF850
+// FUNCTION: GAMEMD 0x005BF850
 void * Movie_Lock_Surface(void)
 {
 	Surface *surf = CurrentVQ->DrawSurface;
@@ -104,13 +119,13 @@ void * Movie_Lock_Surface(void)
 	return(buffptr);
 }
 
-// FUNCTION: 0x005BF8B0
+// FUNCTION: GAMEMD 0x005BF8B0
 bool Movie_Unlock_Surface(void)
 {
 	return(CurrentVQ->DrawSurface->Unlock());
 }
 
-// FUNCTION: 0x005BF8C0
+// FUNCTION: GAMEMD 0x005BF8C0
 void Movie_Blit_To_Screen(void)
 {
 	RECT rect;
@@ -131,7 +146,7 @@ void Movie_Blit_To_Screen(void)
 	}
 }
 
-// FUNCTION: 0x005BF950
+// FUNCTION: GAMEMD 0x005BF950
 void Movie_Blit_Subtitled(void)
 {
 	RECT rect;
@@ -165,7 +180,7 @@ void Movie_Blit_Subtitled(void)
 	}
 }
 
-// FUNCTION: 0x005BFAA0
+// FUNCTION: GAMEMD 0x005BFAA0
 VQHandle * Movie_Create(char const * name, Surface * surface, Rect rect1, Rect rect2, int volume, bool fullscreen)
 {
 	VQA_SURF_DRAW_CALLBACK callback = NULL;
@@ -243,7 +258,7 @@ VQHandle * Movie_Create(char const * name, Surface * surface, Rect rect1, Rect r
 	return(NULL);
 }
 
-// FUNCTION: 0x005BFF00
+// FUNCTION: GAMEMD 0x005BFF00
 void Movie_Destroy(VQHandle * handle)
 {
 	if (handle != NULL) {
@@ -260,7 +275,7 @@ void Movie_Destroy(VQHandle * handle)
 	}
 }
 
-// FUNCTION: 0x005BFF60
+// FUNCTION: GAMEMD 0x005BFF60
 void Movie_Play(VQHandle *movie, bool hide_mouse, ThemeType theme, bool user_break_not_allowed)
 {
 	if (CurrentVQ == NULL) {
@@ -320,7 +335,7 @@ void Movie_Play(VQHandle *movie, bool hide_mouse, ThemeType theme, bool user_bre
 	}
 }
 
-// FUNCTION: 0x005C0080
+// FUNCTION: GAMEMD 0x005C0080
 bool Movie_Advance_Frame(VQHandle * handle, bool &finished)
 {
 	if (CurrentVQ != NULL) {
@@ -332,13 +347,13 @@ bool Movie_Advance_Frame(VQHandle * handle, bool &finished)
 	return(res);
 }
 
-// FUNCTION: 0x005C00B0
+// FUNCTION: GAMEMD 0x005C00B0
 bool Movie_Is_Playing(void)
 {
 	return(CurrentVQ != NULL);
 }
 
-// FUNCTION: 0x005C00C0
+// FUNCTION: GAMEMD 0x005C00C0
 void Movie_Pause(VQHandle * handle)
 {
 	if (handle != NULL) {
@@ -348,7 +363,7 @@ void Movie_Pause(VQHandle * handle)
 	}
 }
 
-// FUNCTION: 0x005C00D0
+// FUNCTION: GAMEMD 0x005C00D0
 void Movie_Resume(VQHandle * handle)
 {
 	if (handle != NULL) {
@@ -358,7 +373,7 @@ void Movie_Resume(VQHandle * handle)
 	}
 }
 
-// FUNCTION: 0x005C00E0
+// FUNCTION: GAMEMD 0x005C00E0
 void Movie_Update_Visible_Surface(void)
 {
 	if (CurrentVQ != NULL) {
@@ -368,7 +383,7 @@ void Movie_Update_Visible_Surface(void)
 	}
 }
 
-// FUNCTION: 0x005C01A0
+// FUNCTION: GAMEMD 0x005C01A0
 VQHandle::VQHandle(void) :
 	VQA(NULL),
 	field_4(-1),
@@ -387,7 +402,7 @@ VQHandle::VQHandle(void) :
 {
 }
 
-// FUNCTION: 0x005C01F0
+// FUNCTION: GAMEMD 0x005C01F0
 VQHandle::~VQHandle(void)
 {
 	if (VQA != NULL) {
@@ -404,7 +419,7 @@ VQHandle::~VQHandle(void)
 	}
 }
 
-// FUNCTION: 0x005C0240
+// FUNCTION: GAMEMD 0x005C0240
 VQMovieHandle::VQMovieHandle(VQHandle * player) :
 	Finished(false)
 {
@@ -413,7 +428,7 @@ VQMovieHandle::VQMovieHandle(VQHandle * player) :
 	Height = Player->VQA->Get_VQA_Height();
 }
 
-// FUNCTION: 0x005C0280
+// FUNCTION: GAMEMD 0x005C0280
 void VQMovieHandle::Pause(bool pause)
 {
 	if (pause) {
@@ -427,7 +442,7 @@ void VQMovieHandle::Pause(bool pause)
 	}
 }
 
-// FUNCTION: 0x005C02C0
+// FUNCTION: GAMEMD 0x005C02C0
 void VQMovieHandle::Stop(void)
 {
 	DAT_00ABF3F8 = this;
@@ -435,13 +450,13 @@ void VQMovieHandle::Stop(void)
 	DAT_00ABF3F8 = NULL;
 }
 
-// FUNCTION: 0x005C02E0
+// FUNCTION: GAMEMD 0x005C02E0
 bool VQMovieHandle::FramesLeft(void)
 {
 	return(Finished);
 }
 
-// FUNCTION: 0x005C02F0
+// FUNCTION: GAMEMD 0x005C02F0
 bool VQMovieHandle::AdvanceFrame(void)
 {
 	VQHandle * p = Player;
@@ -454,12 +469,12 @@ bool VQMovieHandle::AdvanceFrame(void)
 	return(false);
 }
 
-// FUNCTION: 0x005C0330
+// FUNCTION: GAMEMD 0x005C0330
 void VQMovieHandle::Waiting(void)
 {
 }
 
-// FUNCTION: 0x005C0340
+// FUNCTION: GAMEMD 0x005C0340
 void VQMovieHandle::SetPosition(int x, int y)
 {
 	Player->InitialRect.X = x;
@@ -467,38 +482,38 @@ void VQMovieHandle::SetPosition(int x, int y)
 	Player->StretchRect = Player->InitialRect;
 }
 
-// FUNCTION: 0x005C0380
+// FUNCTION: GAMEMD 0x005C0380
 void VQMovieHandle::InitSubtitles(void (__fastcall * callback)(void *))
 {
 	Player->Subtitles->SetCallback(callback);
 }
 
-// FUNCTION: 0x005C03A0
+// FUNCTION: GAMEMD 0x005C03A0
 void VQMovieHandle::SeekToFrame(int frame)
 {
 	Player->VQA->Reset_VQA();
 	Player->VQA->Seek_To_Frame(frame);
 }
 
-// FUNCTION: 0x005C03C0
+// FUNCTION: GAMEMD 0x005C03C0
 int VQMovieHandle::Timing(void)
 {
 	return(33);
 }
 
-// FUNCTION: 0x005C03D0
+// FUNCTION: GAMEMD 0x005C03D0
 void VQMovieHandle::Blit(void)
 {
 	Movie_Update_Visible_Surface();
 }
 
-// FUNCTION: 0x005C0490
+// FUNCTION: GAMEMD 0x005C0490
 VQMovieHandle::~VQMovieHandle(void)
 {
 	Movie_Destroy(Player);
 }
 
-// FUNCTION: 0x005C0510
+// FUNCTION: GAMEMD 0x005C0510
 BinkMovieHandle::BinkMovieHandle(BinkHandle * player)
 {
 	Player = (VQHandle *)player;
@@ -508,13 +523,13 @@ BinkMovieHandle::BinkMovieHandle(BinkHandle * player)
 	}
 }
 
-// FUNCTION: 0x005C0540
+// FUNCTION: GAMEMD 0x005C0540
 void BinkMovieHandle::Pause(bool pause)
 {
 	((BinkHandle *)Player)->FUN_00432C30(pause);
 }
 
-// FUNCTION: 0x005C0550
+// FUNCTION: GAMEMD 0x005C0550
 void BinkMovieHandle::Stop(void)
 {
 	DAT_00ABF3F8 = this;
@@ -522,56 +537,58 @@ void BinkMovieHandle::Stop(void)
 	DAT_00ABF3F8 = NULL;
 }
 
-// FUNCTION: 0x005C0570
+// FUNCTION: GAMEMD 0x005C0570
 bool BinkMovieHandle::FramesLeft(void)
 {
 	return(((BinkHandle *)Player)->FUN_00432C50());
 }
 
-// FUNCTION: 0x005C0580
+// FUNCTION: GAMEMD 0x005C0580
 bool BinkMovieHandle::AdvanceFrame(void)
 {
 	return(((BinkHandle *)Player)->FUN_00433040());
 }
 
-// FUNCTION: 0x005C0590
+// FUNCTION: GAMEMD 0x005C0590
 void BinkMovieHandle::Waiting(void)
 {
 	((BinkHandle *)Player)->FUN_00433020();
 }
 
-// FUNCTION: 0x005C05A0
+// FUNCTION: GAMEMD 0x005C05A0
 void BinkMovieHandle::SetPosition(int x, int y)
 {
 	((BinkHandle *)Player)->FUN_00432AB0(x, y);
 }
 
-// FUNCTION: 0x005C05C0
+// FUNCTION: GAMEMD 0x005C05C0
 void BinkMovieHandle::InitSubtitles(void (__fastcall * callback)(void *))
 {
 	((BinkHandle *)Player)->FUN_00432C10(callback);
 }
 
-// FUNCTION: 0x005C05D0
+// FUNCTION: GAMEMD 0x005C05D0
 void BinkMovieHandle::SeekToFrame(int frame)
 {
 	((BinkHandle *)Player)->FUN_00432BD0(frame);
 }
 
-// FUNCTION: 0x005C05E0
+// FUNCTION: GAMEMD 0x005C05E0
 int BinkMovieHandle::Timing(void)
 {
 	return(((BinkHandle *)Player)->FUN_00432BF0());
 }
 
-// FUNCTION: 0x005C05F0
+// FUNCTION: GAMEMD 0x005C05F0
 void BinkMovieHandle::Blit(void)
 {
 	((BinkHandle *)Player)->FUN_00433060();
 }
 
-// FUNCTION: 0x005C0600 BinkMovieHandle::~BinkMovieHandle
-// FUNCTION: 0x005C0A30 BinkMovieHandle::~BinkMovieHandle
+// FUNCTION: GAMEMD 0x005C0600
+// BinkMovieHandle::~BinkMovieHandle
+// SYNTHETIC: GAMEMD 0x005C0A30
+// ??_GBinkMovieHandle@@UAEPAXI@Z
 BinkMovieHandle::~BinkMovieHandle(void)
 {
 	if (Player != NULL) {
@@ -579,12 +596,12 @@ BinkMovieHandle::~BinkMovieHandle(void)
 	}
 }
 
-// FUNCTION: 0x005C0630
+// FUNCTION: GAMEMD 0x005C0630
 MovieHandle::~MovieHandle(void)
 {
 }
 
-// FUNCTION: 0x005C0640
+// FUNCTION: GAMEMD 0x005C0640
 bool __fastcall FUN_005C0640(char const * name, char * out, bool unused)
 {
 	char buffer[200];
@@ -614,7 +631,7 @@ bool __fastcall FUN_005C0640(char const * name, char * out, bool unused)
 
 void __cdecl FUN_004068E0(char const *, ...);
 
-// FUNCTION: 0x005C07D0
+// FUNCTION: GAMEMD 0x005C07D0
 MovieHandle * __fastcall OwnerDraw_InitMovieHandle(char const * name, Surface * surface, Rect * bounds)
 {
 	char buffer[200];
@@ -644,13 +661,13 @@ MovieHandle * __fastcall OwnerDraw_InitMovieHandle(char const * name, Surface * 
 
 extern int DAT_00ABF3F4;
 
-// FUNCTION: 0x005C0980
+// FUNCTION: GAMEMD 0x005C0980
 bool __fastcall Game::IsMoviePlaying(void)
 {
 	return(DAT_00ABF3F4 != 0 || DAT_00ABF3F8 != NULL);
 }
 
-// FUNCTION: 0x005C09A0
+// FUNCTION: GAMEMD 0x005C09A0
 void __fastcall Game::BlitMovie(void)
 {
 	if (DAT_00ABF3F8 != NULL) {
@@ -658,26 +675,39 @@ void __fastcall Game::BlitMovie(void)
 	}
 }
 
-// FUNCTION: 0x005C09B0 VQMovieHandle::~VQMovieHandle
+// SYNTHETIC: GAMEMD 0x005C09B0
+// ??_GVQMovieHandle@@UAEPAXI@Z
 
-// FUNCTION: 0x005C0A70 ?$DynamicVectorClass@PAVMovieHandle@@::Clear
-// FUNCTION: 0x005C0AA0 ?$DynamicVectorClass@PAVMovieHandle@@::ID
-// FUNCTION: 0x005C0AC0 ?$VectorClass@PAVMovieHandle@@::GetItem
+// TEMPLATE: GAMEMD 0x005C0A70
+// ?Clear@?$DynamicVectorClass@PAVMovieHandle@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x005C0AA0
+// ?ID@?$DynamicVectorClass@PAVMovieHandle@@@@UAEHPBQAVMovieHandle@@@Z
+// TEMPLATE: GAMEMD 0x005C0AC0
+// ?GetItem@?$VectorClass@PAVMovieHandle@@@@UBEPAVMovieHandle@@H@Z
 template class DynamicVectorClass<MovieHandle *>;
 
-// FUNCTION: 0x005C0AD0 ?$VectorClass@PAVMovieHandle@@::operator==
+// TEMPLATE: GAMEMD 0x005C0AD0
+// ??8?$VectorClass@PAVMovieHandle@@@@UBE_NABV0@@Z
 template class VectorClass<MovieHandle *>;
 
-// FUNCTION: 0x005C0B10 ?$VectorClass@PBD::Resize
-// FUNCTION: 0x005C0BC0 ?$VectorClass@PBD::Clear
-// FUNCTION: 0x005C0BF0 ?$VectorClass@PBD::ID
-// FUNCTION: 0x005C0C30 ?$VectorClass@PBD::ID
+// TEMPLATE: GAMEMD 0x005C0B10
+// ?Resize@?$VectorClass@PBD@@UAE_NHPBQBD@Z
+// TEMPLATE: GAMEMD 0x005C0BC0
+// ?Clear@?$VectorClass@PBD@@UAEXXZ
+// TEMPLATE: GAMEMD 0x005C0BF0
+// ?ID@?$VectorClass@PBD@@UAEHABQBD@Z
+// TEMPLATE: GAMEMD 0x005C0C30
+// ?ID@?$VectorClass@PBD@@UAEHPBQBD@Z
 template class VectorClass<char const *>;
 
-// FUNCTION: 0x005C0C50 ?$DynamicVectorClass@PBD::Resize
-// FUNCTION: 0x005C0D00 ?$DynamicVectorClass@PBD::ID
-// FUNCTION: 0x005C0D30 ?$DynamicVectorClass@PBD::~?$DynamicVectorClass@PBD
-// FUNCTION: 0x005C0D80 ?$VectorClass@PBD::~?$VectorClass@PBD
+// TEMPLATE: GAMEMD 0x005C0C50
+// ?Resize@?$DynamicVectorClass@PBD@@UAE_NHPBQBD@Z
+// TEMPLATE: GAMEMD 0x005C0D00
+// ?ID@?$DynamicVectorClass@PBD@@UAEHABQBD@Z
+// SYNTHETIC: GAMEMD 0x005C0D30
+// ??_G?$DynamicVectorClass@PBD@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x005C0D80
+// ??_G?$VectorClass@PBD@@UAEPAXI@Z
 template class DynamicVectorClass<char const *>;
 
 class MPBattleClass : public MPGameModeClass
@@ -712,156 +742,157 @@ class MPBattleClass : public MPGameModeClass
 		virtual bool vt_entry_BC(void) override;
 };
 
-// FUNCTION: 0x005C0DD0
+// FUNCTION: GAMEMD 0x005C0DD0
 MPBattleClass::MPBattleClass(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex) :
 	MPGameModeClass(title, tooltip, inifile, mapfilter, aiallowed, modeindex)
 {
 }
 
-// FUNCTION: 0x005C0E10
+// FUNCTION: GAMEMD 0x005C0E10
 MPBattleClass::~MPBattleClass(void)
 {
 }
 
-// FUNCTION: 0x005C0E20
+// FUNCTION: GAMEMD 0x005C0E20
 bool MPBattleClass::vt_entry_40(void)
 {
 	return(true);
 }
 
-// FUNCTION: 0x005C0E30
+// FUNCTION: GAMEMD 0x005C0E30
 bool MPBattleClass::vt_entry_04(void)
 {
 	return(false);
 }
 
-// FUNCTION: 0x005C0E40
+// FUNCTION: GAMEMD 0x005C0E40
 bool MPBattleClass::vt_entry_08(void)
 {
 	return(false);
 }
 
-// FUNCTION: 0x005C0E50
+// FUNCTION: GAMEMD 0x005C0E50
 bool MPBattleClass::vt_entry_0C(unsigned a)
 {
 	return(true);
 }
 
-// FUNCTION: 0x005C0E60
+// FUNCTION: GAMEMD 0x005C0E60
 void MPBattleClass::vt_entry_20(void)
 {
 }
 
-// FUNCTION: 0x005C0E70
+// FUNCTION: GAMEMD 0x005C0E70
 void MPBattleClass::vt_entry_24(void)
 {
 }
 
-// FUNCTION: 0x005C0E80
+// FUNCTION: GAMEMD 0x005C0E80
 void MPBattleClass::vt_entry_38(unsigned a)
 {
 }
 
-// FUNCTION: 0x005C0E90
+// FUNCTION: GAMEMD 0x005C0E90
 bool MPBattleClass::vt_entry_58(int index, DynamicVectorClass<int> picks, char const * map, char const * name)
 {
 	return(false);
 }
 
-// FUNCTION: 0x005C0EB0
+// FUNCTION: GAMEMD 0x005C0EB0
 bool MPBattleClass::vt_entry_54(int index, DynamicVectorClass<int> picks)
 {
 	return(false);
 }
 
-// FUNCTION: 0x005C0ED0
+// FUNCTION: GAMEMD 0x005C0ED0
 bool MPBattleClass::vt_entry_5C(unsigned a, unsigned b, unsigned c)
 {
 	return(true);
 }
 
-// FUNCTION: 0x005C0EE0
+// FUNCTION: GAMEMD 0x005C0EE0
 bool MPBattleClass::vt_entry_68(void)
 {
 	return(true);
 }
 
-// FUNCTION: 0x005C0EF0
+// FUNCTION: GAMEMD 0x005C0EF0
 void MPBattleClass::vt_entry_74(unsigned a, unsigned b)
 {
 }
 
-// FUNCTION: 0x005C0F00
+// FUNCTION: GAMEMD 0x005C0F00
 void MPBattleClass::vt_entry_78(unsigned a)
 {
 }
 
-// FUNCTION: 0x005C0F10
+// FUNCTION: GAMEMD 0x005C0F10
 void MPBattleClass::vt_entry_90(void)
 {
 }
 
-// FUNCTION: 0x005C0F20
+// FUNCTION: GAMEMD 0x005C0F20
 void MPBattleClass::vt_entry_94(void)
 {
 }
 
-// FUNCTION: 0x005C0F30
+// FUNCTION: GAMEMD 0x005C0F30
 int MPBattleClass::vt_entry_98(void)
 {
 	return(-1);
 }
 
-// FUNCTION: 0x005C0F40
+// FUNCTION: GAMEMD 0x005C0F40
 void MPBattleClass::vt_entry_9C(void)
 {
 }
 
-// FUNCTION: 0x005C0F50
+// FUNCTION: GAMEMD 0x005C0F50
 void MPBattleClass::vt_entry_A0(unsigned a)
 {
 }
 
-// FUNCTION: 0x005C0F60
+// FUNCTION: GAMEMD 0x005C0F60
 void MPBattleClass::vt_entry_A4(unsigned a)
 {
 }
 
-// FUNCTION: 0x005C0F70
+// FUNCTION: GAMEMD 0x005C0F70
 bool MPBattleClass::vt_entry_A8(void)
 {
 	return(false);
 }
 
-// FUNCTION: 0x005C0F80
+// FUNCTION: GAMEMD 0x005C0F80
 void MPBattleClass::vt_entry_AC(void)
 {
 }
 
-// FUNCTION: 0x005C0F90
+// FUNCTION: GAMEMD 0x005C0F90
 void MPBattleClass::vt_entry_B0(void)
 {
 }
 
-// FUNCTION: 0x005C0FA0
+// FUNCTION: GAMEMD 0x005C0FA0
 bool MPBattleClass::vt_entry_B4(DynamicVectorClass<int> list, int * out)
 {
 	return(false);
 }
 
-// FUNCTION: 0x005C0FC0
+// FUNCTION: GAMEMD 0x005C0FC0
 int MPBattleClass::vt_entry_B8(void)
 {
 	return(0);
 }
 
-// FUNCTION: 0x005C0FD0
+// FUNCTION: GAMEMD 0x005C0FD0
 bool MPBattleClass::vt_entry_BC(void)
 {
 	return(true);
 }
 
-// FUNCTION: 0x005C0FE0 MPBattleClass::~MPBattleClass
+// SYNTHETIC: GAMEMD 0x005C0FE0
+// ??_GMPBattleClass@@UAEPAXI@Z
 
 unsigned char __stdcall FUN_005D8C90(int index);
 unsigned char __stdcall FUN_005D8CB0(int index);
@@ -875,31 +906,32 @@ class MultiplayerBattleTeam : public MultiplayerTeam
 		virtual bool SetPlayerTeam(int player);
 };
 
-// FUNCTION: 0x005C1010
+// FUNCTION: GAMEMD 0x005C1010
 MultiplayerBattleTeam::MultiplayerBattleTeam(WideWstring const & title, int index) :
 	MultiplayerTeam(title, index)
 {
 }
 
-// FUNCTION: 0x005C1030
+// FUNCTION: GAMEMD 0x005C1030
 MultiplayerTeam * __fastcall FUN_005C1030(int index)
 {
 	return(new MultiplayerBattleTeam(FUN_007B7DD0(index), index));
 }
 
-// FUNCTION: 0x005C1090
+// FUNCTION: GAMEMD 0x005C1090
 bool MultiplayerBattleTeam::IsTeamIncluded(int index)
 {
 	return(FUN_005D8C90(index) ? true : false);
 }
 
-// FUNCTION: 0x005C10B0
+// FUNCTION: GAMEMD 0x005C10B0
 bool MultiplayerBattleTeam::SetPlayerTeam(int player)
 {
 	return(FUN_005D8CB0(player) ? true : false);
 }
 
-// FUNCTION: 0x005C10D0 MultiplayerBattleTeam::~MultiplayerBattleTeam
+// SYNTHETIC: GAMEMD 0x005C10D0
+// ??_GMultiplayerBattleTeam@@UAEPAXI@Z
 
 extern const double DAT_007EE268;
 extern const double DAT_007EE270;
@@ -911,50 +943,64 @@ extern double DAT_00ABF428;
 extern double DAT_00ABF400;
 extern int DAT_00ABF498;
 
-// FUNCTION: 0x005C10F0 $E111
+// SYNTHETIC: GAMEMD 0x005C10F0 SYMBOL
+// _$E111
 double DAT_00ABF420 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x005C1120 $E114
+// SYNTHETIC: GAMEMD 0x005C1120 SYMBOL
+// _$E114
 double DAT_00ABF490 = DAT_00ABF420 / DAT_007EE268;
 
-// FUNCTION: 0x005C1140 $E117
+// SYNTHETIC: GAMEMD 0x005C1140 SYMBOL
+// _$E117
 double DAT_00ABF458 = DAT_007E1718 / DAT_00ABF490;
 
-// FUNCTION: 0x005C1160 $E120
+// SYNTHETIC: GAMEMD 0x005C1160 SYMBOL
+// _$E120
 double DAT_00ABF450 = DAT_007E1720 * DAT_007EE270;
 
-// FUNCTION: 0x005C1180 $E123
+// SYNTHETIC: GAMEMD 0x005C1180 SYMBOL
+// _$E123
 double DAT_00ABF428 = DAT_007E1728 * DAT_007EE270;
 
-// FUNCTION: 0x005C11A0 $E126
+// SYNTHETIC: GAMEMD 0x005C11A0 SYMBOL
+// _$E126
 double DAT_00ABF400 = DAT_007E1730 * DAT_007EE270;
 
-// FUNCTION: 0x005C11C0 $E129
+// SYNTHETIC: GAMEMD 0x005C11C0 SYMBOL
+// _$E129
 int DAT_00ABF498 = (int)(DAT_007E1738 * (fastmath::tan(DAT_00ABF400 - DAT_00ABF428) * DAT_00ABF420));
 
 extern double DAT_00ABF430;
 extern double DAT_00ABF448;
 extern int DAT_00ABF48C;
 
-// FUNCTION: 0x005C1200 $E132
+// SYNTHETIC: GAMEMD 0x005C1200 SYMBOL
+// _$E132
 double DAT_00ABF430 = fastmath::atan(DAT_00ABF498 * DAT_007E1740);
 
-// FUNCTION: 0x005C1230 $E135
+// SYNTHETIC: GAMEMD 0x005C1230 SYMBOL
+// _$E135
 double DAT_00ABF448 = fastmath::atan((DAT_00ABF498 * 2) / DAT_00ABF420);
 
-// FUNCTION: 0x005C1260 $E138
+// SYNTHETIC: GAMEMD 0x005C1260 SYMBOL
+// _$E138
 int DAT_00ABF48C = (int)((DAT_00ABF498 * 4) + DAT_007E1738);
 
-// FUNCTION: 0x005C1290 $E141
+// SYNTHETIC: GAMEMD 0x005C1290 SYMBOL
+// _$E141
 DatShorts DAT_00ABF418(0, 0);
 
-// FUNCTION: 0x005C12A0 $E144
+// SYNTHETIC: GAMEMD 0x005C12A0 SYMBOL
+// _$E144
 DatInts DAT_00ABF438(0, 0, 0);
 
-// FUNCTION: 0x005C12C0 $E147
+// SYNTHETIC: GAMEMD 0x005C12C0 SYMBOL
+// _$E147
 DatInts3 DAT_00ABF480(0x80, 0x80, 0);
 
 struct DatInts4 { int A; int B; int C; int D; DatInts4(int a, int b, int c, int d) : A(a), B(b), C(c), D(d) {} };
 
-// FUNCTION: 0x005C12E0 $E150
+// SYNTHETIC: GAMEMD 0x005C12E0 SYMBOL
+// _$E150
 DatInts4 DAT_00ABF408(0, 0, 0, 0);

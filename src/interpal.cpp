@@ -40,7 +40,7 @@ extern "C"{
 	unsigned char * InterpolationPalette;
 }
 
-// FUNCTION: 0x00538C40
+// FUNCTION: GAMEMD 0x00538C40
 void Read_Interpolation_Palette (char const * palette_file_name)
 {
 	CCFileClass palette_file(palette_file_name);
@@ -53,7 +53,7 @@ void Read_Interpolation_Palette (char const * palette_file_name)
 	}
 }
 
-// FUNCTION: 0x00538CC0
+// FUNCTION: GAMEMD 0x00538CC0
 void Write_Interpolation_Palette (char const * palette_file_name)
 {
 	CCFileClass palette_file(palette_file_name);
@@ -65,7 +65,7 @@ void Write_Interpolation_Palette (char const * palette_file_name)
 	}
 }
 
-// FUNCTION: 0x00538D40
+// FUNCTION: GAMEMD 0x00538D40
 void Create_Palette_Interpolation_Table( void )
 {
 	#if (1)
@@ -141,7 +141,7 @@ void Create_Palette_Interpolation_Table( void )
 	return;
 }
 
-// FUNCTION: 0x00538E70
+// FUNCTION: GAMEMD 0x00538E70
 void Increase_Palette_Luminance (PaletteClass & palette , double percentage)
 {
 	for (int i=0 ; i<SIZE_OF_PALETTE; i++) {
@@ -155,7 +155,7 @@ void Increase_Palette_Luminance (PaletteClass & palette , double percentage)
 	}
 }
 
-// FUNCTION: 0x00538F20
+// FUNCTION: GAMEMD 0x00538F20
 void Interpolate_2X_Scale( Surface * source, Surface * dest , char const * palette_file_name)
 {
 	unsigned char	* src_ptr;
@@ -213,17 +213,31 @@ void Interpolate_2X_Scale( Surface * source, Surface * dest , char const * palet
 	if (dest_locked) dest->Unlock();
 }
 
-// FUNCTION: 0x00539110 $E2
-// FUNCTION: 0x00539140 $E5
-// FUNCTION: 0x00539160 $E8
-// FUNCTION: 0x00539180 $E11
-// FUNCTION: 0x005391A0 $E14
-// FUNCTION: 0x005391C0 $E17
-// FUNCTION: 0x005391E0 $E20
-// FUNCTION: 0x00539220 $E23
-// FUNCTION: 0x00539250 $E26
-// FUNCTION: 0x00539280 $E29
-// FUNCTION: 0x005392B0 $E32
-// FUNCTION: 0x005392C0 $E35
-// FUNCTION: 0x005392E0 $E38
-// FUNCTION: 0x00539300 $E46
+// SYNTHETIC: GAMEMD 0x00539110 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x00539140 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x00539160 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x00539180 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x005391A0 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x005391C0 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x005391E0 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x00539220 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x00539250 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x00539280 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x005392B0 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x005392C0 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x005392E0 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x00539300 SYMBOL
+// _$E46

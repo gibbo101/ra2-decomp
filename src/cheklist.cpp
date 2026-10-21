@@ -14,7 +14,7 @@
 #include "vector.h"
 #include <cstdio>
 
-// FUNCTION: 0x00488280
+// FUNCTION: GAMEMD 0x00488280
 CheckListClass::CheckListClass(int id, int x, int y, int w, int h, TextPrintType flags,
 	ShapeSet const * up, ShapeSet const * down) :
 	BASECLASS (id, x, y, w, h, flags, up, down),
@@ -22,7 +22,7 @@ CheckListClass::CheckListClass(int id, int x, int y, int w, int h, TextPrintType
 {
 }
 
-// FUNCTION: 0x004882D0
+// FUNCTION: GAMEMD 0x004882D0
 CheckListClass::~CheckListClass(void)
 {
 	while (CheckListClass::Count()) {
@@ -33,14 +33,14 @@ CheckListClass::~CheckListClass(void)
 	}
 }
 
-// FUNCTION: 0x00488310
+// FUNCTION: GAMEMD 0x00488310
 int CheckListClass::Add_Item(wchar_t const * text)
 {
 	CheckObject * obj = new CheckObject(text, false);
 	return(BASECLASS::Add_Item((wchar_t const *)obj));
 }
 
-// FUNCTION: 0x00488350
+// FUNCTION: GAMEMD 0x00488350
 wchar_t const * CheckListClass::Current_Item(void) const
 {
 	CheckObject * obj = (CheckObject *)BASECLASS::Current_Item();
@@ -50,7 +50,7 @@ wchar_t const * CheckListClass::Current_Item(void) const
 	return(0);
 }
 
-// FUNCTION: 0x00488360
+// FUNCTION: GAMEMD 0x00488360
 wchar_t const * CheckListClass::Get_Item(int index) const
 {
 	CheckObject * obj = (CheckObject *)BASECLASS::Get_Item(index);
@@ -60,7 +60,7 @@ wchar_t const * CheckListClass::Get_Item(int index) const
 	return(0);
 }
 
-// FUNCTION: 0x00488380
+// FUNCTION: GAMEMD 0x00488380
 void CheckListClass::Remove_Item(wchar_t const * text)
 {
 	for (int index = 0; index < Count(); index++) {
@@ -73,7 +73,7 @@ void CheckListClass::Remove_Item(wchar_t const * text)
 	}
 }
 
-// FUNCTION: 0x004883F0
+// FUNCTION: GAMEMD 0x004883F0
 void CheckListClass::Set_Selected_Index(wchar_t const * text)
 {
 	for (int index = 0; index < Count(); index++) {
@@ -85,7 +85,7 @@ void CheckListClass::Set_Selected_Index(wchar_t const * text)
 	}
 }
 
-// FUNCTION: 0x00488450
+// FUNCTION: GAMEMD 0x00488450
 void CheckListClass::Check_Item(int index, bool checked)
 {
 	CheckObject * obj = (CheckObject *)BASECLASS::Get_Item(index);
@@ -95,7 +95,7 @@ void CheckListClass::Check_Item(int index, bool checked)
 	}
 }
 
-// FUNCTION: 0x00488480
+// FUNCTION: GAMEMD 0x00488480
 bool CheckListClass::Is_Checked(int index) const
 {
 	CheckObject * obj = (CheckObject *)BASECLASS::Get_Item(index);
@@ -105,7 +105,7 @@ bool CheckListClass::Is_Checked(int index) const
 	return(false);
 }
 
-// FUNCTION: 0x004884A0
+// FUNCTION: GAMEMD 0x004884A0
 int CheckListClass::Action(unsigned flags, KeyNumType &key, int modifier)
 {
 	int rc;
@@ -123,7 +123,7 @@ int CheckListClass::Action(unsigned flags, KeyNumType &key, int modifier)
 	return(rc);
 }
 
-// FUNCTION: 0x00488520
+// FUNCTION: GAMEMD 0x00488520
 void CheckListClass::Draw_Entry(int index, int x, int y, int width, int selected)
 {
 	if (index >= Count()) return;
@@ -157,16 +157,23 @@ void CheckListClass::Draw_Entry(int index, int x, int y, int width, int selected
 	}
 }
 
-// FUNCTION: 0x00488690 GadgetClass::Flag_List_To_Redraw
+// FUNCTION: GAMEMD 0x00488690
+// GadgetClass::Flag_List_To_Redraw
 
-// FUNCTION: 0x004886A0 GadgetClass::Is_To_Redraw
+// FUNCTION: GAMEMD 0x004886A0
+// GadgetClass::Is_To_Redraw
 
-// FUNCTION: 0x004886B0 ListClass::Count
+// FUNCTION: GAMEMD 0x004886B0
+// ListClass::Count
 
-// FUNCTION: 0x004886C0 CheckListClass::Remove_Item
+// FUNCTION: GAMEMD 0x004886C0
+// CheckListClass::Remove_Item
 
-// FUNCTION: 0x004886D0 CheckListClass::Set_Selected_Index
+// FUNCTION: GAMEMD 0x004886D0
+// CheckListClass::Set_Selected_Index
 
-// FUNCTION: 0x004886E0 CheckListClass::~CheckListClass
+// SYNTHETIC: GAMEMD 0x004886E0
+// ??_GCheckListClass@@UAEPAXI@Z
 
-// FUNCTION: 0x00488740 $E2
+// SYNTHETIC: GAMEMD 0x00488740 SYMBOL
+// _$E2

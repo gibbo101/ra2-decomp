@@ -22,7 +22,7 @@ static inline int Index_Of(VectorClass<TechnoClass *> const & links, TechnoClass
 	return -1;
 }
 
-// FUNCTION: 0x0065A750
+// FUNCTION: GAMEMD 0x0065A750
 RadioClass::RadioClass(void) :
 	BASECLASS(),
 	RadioLinks(1)
@@ -33,14 +33,14 @@ RadioClass::RadioClass(void) :
 	}
 }
 
-// FUNCTION: 0x0065A7E0
+// FUNCTION: GAMEMD 0x0065A7E0
 RadioClass::RadioClass(NoInitClass const & x) :
 	BASECLASS(x),
 	RadioLinks(x)
 {
 }
 
-// FUNCTION: 0x0065A820
+// FUNCTION: GAMEMD 0x0065A820
 RadioMessageType RadioClass::Receive_Message(RadioClass * from, RadioMessageType message, int & param)
 {
 	if (message != Old[0]) {
@@ -74,7 +74,7 @@ RadioMessageType RadioClass::Receive_Message(RadioClass * from, RadioMessageType
 	return BASECLASS::Receive_Message(from, message, param);
 }
 
-// FUNCTION: 0x0065A970
+// FUNCTION: GAMEMD 0x0065A970
 RadioMessageType RadioClass::Transmit_Message(RadioMessageType message, int & param, RadioClass * to)
 {
 	if (to == NULL) {
@@ -108,7 +108,7 @@ RadioMessageType RadioClass::Transmit_Message(RadioMessageType message, int & pa
 	return to->Receive_Message(Dynamic_Cast<TechnoClass *>(this), message, param);
 }
 
-// FUNCTION: 0x0065AA80
+// FUNCTION: GAMEMD 0x0065AA80
 bool RadioClass::Limbo(void)
 {
 	if (!IsInLimbo) {
@@ -117,13 +117,13 @@ bool RadioClass::Limbo(void)
 	return BASECLASS::Limbo();
 }
 
-// FUNCTION: 0x0065AAA0
+// FUNCTION: GAMEMD 0x0065AAA0
 RadioMessageType RadioClass::Transmit_Message(RadioMessageType message, RadioClass * to)
 {
 	return Transmit_Message(message, LParam, to);
 }
 
-// FUNCTION: 0x0065AAC0
+// FUNCTION: GAMEMD 0x0065AAC0
 void RadioClass::Detach(AbstractClass const * target, bool all)
 {
 	BASECLASS::Detach(target, all);
@@ -134,7 +134,7 @@ void RadioClass::Detach(AbstractClass const * target, bool all)
 	}
 }
 
-// FUNCTION: 0x0065AB10
+// FUNCTION: GAMEMD 0x0065AB10
 void RadioClass::Compute_CRC(CRCEngine & crc) const
 {
 	BASECLASS::Compute_CRC(crc);
@@ -147,7 +147,7 @@ void RadioClass::Compute_CRC(CRCEngine & crc) const
 	}
 }
 
-// FUNCTION: 0x0065AB80
+// FUNCTION: GAMEMD 0x0065AB80
 HRESULT STDMETHODCALLTYPE RadioClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -173,7 +173,7 @@ HRESULT STDMETHODCALLTYPE RadioClass::Load(IStream * stream)
 	return result;
 }
 
-// FUNCTION: 0x0065AC40
+// FUNCTION: GAMEMD 0x0065AC40
 HRESULT STDMETHODCALLTYPE RadioClass::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -191,7 +191,7 @@ HRESULT STDMETHODCALLTYPE RadioClass::Save(IStream * stream, BOOL cleardirty)
 	return result;
 }
 
-// FUNCTION: 0x0065ACB0
+// FUNCTION: GAMEMD 0x0065ACB0
 RadioMessageType RadioClass::Transmit_Message(RadioMessageType message)
 {
 	if (RadioLinks[0] != NULL) {
@@ -200,7 +200,7 @@ RadioMessageType RadioClass::Transmit_Message(RadioMessageType message)
 	return RADIO_STATIC;
 }
 
-// FUNCTION: 0x0065ACE0
+// FUNCTION: GAMEMD 0x0065ACE0
 void RadioClass::SendToEachLink(RadioMessageType command)
 {
 	for (int i = 0; i < RadioLinks.Length(); i++) {
@@ -210,25 +210,25 @@ void RadioClass::SendToEachLink(RadioMessageType command)
 	}
 }
 
-// FUNCTION: 0x0065AD30
+// FUNCTION: GAMEMD 0x0065AD30
 TechnoClass * RadioClass::FUN_0065AD30(int index)
 {
 	return RadioLinks[index];
 }
 
-// FUNCTION: 0x0065AD40
+// FUNCTION: GAMEMD 0x0065AD40
 TechnoClass * RadioClass::FUN_0065AD40(int index) const
 {
 	return RadioLinks[index];
 }
 
-// FUNCTION: 0x0065AD50
+// FUNCTION: GAMEMD 0x0065AD50
 bool RadioClass::ContainsLink(TechnoClass const * techno) const
 {
 	return FindLinkIndex(techno) != -1;
 }
 
-// FUNCTION: 0x0065AD90
+// FUNCTION: GAMEMD 0x0065AD90
 int RadioClass::FindLinkIndex(TechnoClass const * techno) const
 {
 	if (techno != NULL) {
@@ -239,7 +239,7 @@ int RadioClass::FindLinkIndex(TechnoClass const * techno) const
 	return -1;
 }
 
-// FUNCTION: 0x0065ADC0
+// FUNCTION: GAMEMD 0x0065ADC0
 bool RadioClass::HasFreeLink(void) const
 {
 	for (int i = 0; i < RadioLinks.Length(); i++) {
@@ -248,7 +248,7 @@ bool RadioClass::HasFreeLink(void) const
 	return false;
 }
 
-// FUNCTION: 0x0065ADF0
+// FUNCTION: GAMEMD 0x0065ADF0
 bool RadioClass::HasFreeLink(TechnoClass const * ignore) const
 {
 	for (int i = 0; i < RadioLinks.Length(); i++) {
@@ -257,7 +257,7 @@ bool RadioClass::HasFreeLink(TechnoClass const * ignore) const
 	return false;
 }
 
-// FUNCTION: 0x0065AE30
+// FUNCTION: GAMEMD 0x0065AE30
 bool RadioClass::HasAnyLink(void) const
 {
 	for (int i = 0; i < RadioLinks.Length(); i++) {
@@ -266,7 +266,7 @@ bool RadioClass::HasAnyLink(void) const
 	return false;
 }
 
-// FUNCTION: 0x0065AE60
+// FUNCTION: GAMEMD 0x0065AE60
 void RadioClass::SetLinkCount(int count)
 {
 	int old = RadioLinks.Length();
@@ -278,7 +278,8 @@ void RadioClass::SetLinkCount(int count)
 	}
 }
 
-// FUNCTION: 0x0065AEB0 RadioClass::~RadioClass
+// SYNTHETIC: GAMEMD 0x0065AEB0
+// ??_GRadioClass@@UAEPAXI@Z
 
 extern double __cdecl FUN_004CAC40(double);
 extern const double DAT_007E1708;
@@ -314,44 +315,58 @@ struct IntTripleHalf {
 	IntTripleHalf() { A = 0x80; B = 0x80; C = 0; }
 };
 
-// FUNCTION: 0x0065AF50 $E32
+// SYNTHETIC: GAMEMD 0x0065AF50 SYMBOL
+// _$E32
 double DAT_00B04B78 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x0065AF80 $E35
+// SYNTHETIC: GAMEMD 0x0065AF80 SYMBOL
+// _$E35
 double DAT_00B04BC8 = DAT_00B04B78 / DAT_007F0790;
 
-// FUNCTION: 0x0065AFA0 $E38
+// SYNTHETIC: GAMEMD 0x0065AFA0 SYMBOL
+// _$E38
 double DAT_00B04BB0 = DAT_007E1718 / DAT_00B04BC8;
 
-// FUNCTION: 0x0065AFC0 $E41
+// SYNTHETIC: GAMEMD 0x0065AFC0 SYMBOL
+// _$E41
 double DAT_00B04BA8 = DAT_007E1720 * DAT_007F0798;
 
-// FUNCTION: 0x0065AFE0 $E44
+// SYNTHETIC: GAMEMD 0x0065AFE0 SYMBOL
+// _$E44
 double DAT_00B04B80 = DAT_007E1728 * DAT_007F0798;
 
-// FUNCTION: 0x0065B000 $E47
+// SYNTHETIC: GAMEMD 0x0065B000 SYMBOL
+// _$E47
 double DAT_00B04B58 = DAT_007E1730 * DAT_007F0798;
 
-// FUNCTION: 0x0065B020 $E50
+// SYNTHETIC: GAMEMD 0x0065B020 SYMBOL
+// _$E50
 int DAT_00B04BE8 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B04B58 - DAT_00B04B80) * DAT_00B04B78));
 
-// FUNCTION: 0x0065B060 $E53
+// SYNTHETIC: GAMEMD 0x0065B060 SYMBOL
+// _$E53
 double DAT_00B04B88 = FUN_004CADE0(DAT_00B04BE8 * DAT_007E1740);
 
-// FUNCTION: 0x0065B090 $E56
+// SYNTHETIC: GAMEMD 0x0065B090 SYMBOL
+// _$E56
 double DAT_00B04BA0 = FUN_004CADE0((DAT_00B04BE8 * 2) / DAT_00B04B78);
 
-// FUNCTION: 0x0065B0C0 $E59
+// SYNTHETIC: GAMEMD 0x0065B0C0 SYMBOL
+// _$E59
 int DAT_00B04BC4 = (int)(DAT_00B04BE8 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x0065B0F0 $E62
+// SYNTHETIC: GAMEMD 0x0065B0F0 SYMBOL
+// _$E62
 ShortPair DAT_00B04B70;
 
-// FUNCTION: 0x0065B100 $E65
+// SYNTHETIC: GAMEMD 0x0065B100 SYMBOL
+// _$E65
 IntTriple DAT_00B04B90;
 
-// FUNCTION: 0x0065B120 $E68
+// SYNTHETIC: GAMEMD 0x0065B120 SYMBOL
+// _$E68
 IntTripleHalf DAT_00B04BB8;
 
-// FUNCTION: 0x0065B140 $E71
+// SYNTHETIC: GAMEMD 0x0065B140 SYMBOL
+// _$E71
 IntQuad DAT_00B04B60;

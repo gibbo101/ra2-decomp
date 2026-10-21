@@ -8,18 +8,30 @@
 #include <d3d.h>
 #include "geometry.h"
 
-// FUNCTION: 0x004F4030 $E2
-// FUNCTION: 0x004F4060 $E5
-// FUNCTION: 0x004F4080 $E8
-// FUNCTION: 0x004F40A0 $E11
-// FUNCTION: 0x004F40C0 $E14
-// FUNCTION: 0x004F40E0 $E17
-// FUNCTION: 0x004F4100 $E20
-// FUNCTION: 0x004F4140 $E23
-// FUNCTION: 0x004F4170 $E26
-// FUNCTION: 0x004F41A0 $E29
-// FUNCTION: 0x004F41D0 $E32
-// FUNCTION: 0x004F41E0 $E35
+// SYNTHETIC: GAMEMD 0x004F4030 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x004F4060 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x004F4080 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x004F40A0 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x004F40C0 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x004F40E0 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x004F4100 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x004F4140 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x004F4170 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x004F41A0 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x004F41D0 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x004F41E0 SYMBOL
+// _$E35
 
 #include "gscreen.h"
 #include "_bench.h"
@@ -72,7 +84,7 @@ extern int DAT_00A8EF38;
 extern int DAT_00A8EF3C;
 extern int DAT_00A8EF40;
 
-// FUNCTION: 0x004F4200
+// FUNCTION: GAMEMD 0x004F4200
 void FUN_004F4200(void)
 {
 	DAT_00A8EF40 = 0;
@@ -80,7 +92,7 @@ void FUN_004F4200(void)
 	DAT_00A8EF3C = 0x80;
 }
 
-// FUNCTION: 0x004F4220
+// FUNCTION: GAMEMD 0x004F4220
 GScreenClass::GScreenClass(void) :
 	ScreenX(0),
 	ScreenY(0),
@@ -88,7 +100,7 @@ GScreenClass::GScreenClass(void) :
 {
 }
 
-// FUNCTION: 0x004F4240
+// FUNCTION: GAMEMD 0x004F4240
 LONG GScreenClass::QueryInterface(REFIID riid, LPVOID * ppvObject)
 {
 	if (ppvObject == NULL) {
@@ -105,32 +117,32 @@ LONG GScreenClass::QueryInterface(REFIID riid, LPVOID * ppvObject)
 	return(S_OK);
 }
 
-// FUNCTION: 0x004F42A0
+// FUNCTION: GAMEMD 0x004F42A0
 void GScreenClass::One_Time(void)
 {
 	Buttons = 0;
 }
 
-// FUNCTION: 0x004F42B0
+// FUNCTION: GAMEMD 0x004F42B0
 void GScreenClass::Init(TheaterType theater)
 {
 	Init_Clear();
 	Init_IO();
 }
 
-// FUNCTION: 0x004F42D0
+// FUNCTION: GAMEMD 0x004F42D0
 void GScreenClass::Init_Clear(void)
 {
 	DrawFlags = GS_REDRAW_ALL;
 }
 
-// FUNCTION: 0x004F42E0
+// FUNCTION: GAMEMD 0x004F42E0
 void GScreenClass::Init_IO(void)
 {
 	Buttons = 0;
 }
 
-// FUNCTION: 0x004F42F0
+// FUNCTION: GAMEMD 0x004F42F0
 void GScreenClass::Flag_To_Redraw(GScreenRedrawFlags flags)
 {
 	if (TacticalMap != NULL) {
@@ -145,7 +157,7 @@ void GScreenClass::Flag_To_Redraw(GScreenRedrawFlags flags)
 	}
 }
 
-// FUNCTION: 0x004F4320
+// FUNCTION: GAMEMD 0x004F4320
 void GScreenClass::Input(KeyNumType & key, int & x, int & y)
 {
 	x = Get_Mouse_X();
@@ -174,13 +186,13 @@ void GScreenClass::Input(KeyNumType & key, int & x, int & y)
 	AI(key, Point2D(x, y));
 }
 
-// FUNCTION: 0x004F43F0
+// FUNCTION: GAMEMD 0x004F43F0
 bool GScreenClass::SetButtons(GadgetClass & gadget)
 {
 	return Buttons == &gadget.Head_Of_List();
 }
 
-// FUNCTION: 0x004F4410
+// FUNCTION: GAMEMD 0x004F4410
 bool GScreenClass::Add_A_Button(GadgetClass & gadget)
 {
 	if (SetButtons(gadget)) {
@@ -195,7 +207,7 @@ bool GScreenClass::Add_A_Button(GadgetClass & gadget)
 	return true;
 }
 
-// FUNCTION: 0x004F4450
+// FUNCTION: GAMEMD 0x004F4450
 bool GScreenClass::Remove_A_Button(GadgetClass & gadget)
 {
 	if (!SetButtons(gadget)) {
@@ -211,7 +223,7 @@ extern bool FUN_0053BAE0(void);
 extern void FUN_0055F1E0(bool);
 
 
-// FUNCTION: 0x004F4480
+// FUNCTION: GAMEMD 0x004F4480
 void GScreenClass::Render(void)
 {
 	Surface * oldpage = LogicalSurface;
@@ -252,7 +264,7 @@ void GScreenClass::Render(void)
 	LogicalSurface = oldpage;
 }
 
-// FUNCTION: 0x004F45B0
+// FUNCTION: GAMEMD 0x004F45B0
 void GScreenClass::Blit_Display(void)
 {
 	if (DAT_008A0DF0 && DAT_008A0E08 != NULL && DAT_008A0DF8->BeginScene() == 0) {
@@ -290,7 +302,7 @@ extern bool DAT_00884D2E;
 extern bool TacticalActive;
 extern Rect * DAT_00B0FC58;
 
-// FUNCTION: 0x004F4780
+// FUNCTION: GAMEMD 0x004F4780
 void __fastcall Update_Visible_Surface(bool flip_mouse, Surface *surface, Rect *rect)
 {
 	Rect default_rect;
@@ -407,7 +419,7 @@ void __fastcall Update_Visible_Surface(bool flip_mouse, Surface *surface, Rect *
 
 namespace Unsorted { extern int CurrentFrame; }
 
-// FUNCTION: 0x004F4BB0
+// FUNCTION: GAMEMD 0x004F4BB0
 void GScreenClass::AI(KeyNumType &, Point2D const &)
 {
 	if (!(Unsorted::CurrentFrame & 1)) {

@@ -17,17 +17,28 @@
 #include <wchar.h>
 #include <math.h>
 
-// FUNCTION: 0x005BBF90 $E2
-// FUNCTION: 0x005BBFC0 $E5
-// FUNCTION: 0x005BBFE0 $E8
-// FUNCTION: 0x005BC000 $E11
-// FUNCTION: 0x005BC020 $E14
-// FUNCTION: 0x005BC040 $E17
-// FUNCTION: 0x005BC060 $E20
-// FUNCTION: 0x005BC0A0 $E23
-// FUNCTION: 0x005BC0D0 $E26
-// FUNCTION: 0x005BC100 $E29
-// FUNCTION: 0x005BC130 $E32
+// SYNTHETIC: GAMEMD 0x005BBF90 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x005BBFC0 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x005BBFE0 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x005BC000 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x005BC020 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x005BC040 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x005BC060 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x005BC0A0 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x005BC0D0 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x005BC100 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x005BC130 SYMBOL
+// _$E32
 
 struct DebugPage {
 	char Text[80][25];
@@ -130,7 +141,7 @@ extern int __fastcall FUN_00407B60(AudioStream * stream, char const * name, int 
 extern void FUN_00406EE0(void);
 extern AudioStream * DAT_00ABF114[5];
 
-// FUNCTION: 0x005BC140
+// FUNCTION: GAMEMD 0x005BC140
 void FUN_005BC140(void)
 {
 	DAT_00ABF188 = 0;
@@ -138,7 +149,7 @@ void FUN_005BC140(void)
 	DAT_00ABF190 = 0;
 }
 
-// FUNCTION: 0x005BC160
+// FUNCTION: GAMEMD 0x005BC160
 void FUN_005BC160(void)
 {
 	DAT_00ABF208 = 0;
@@ -146,7 +157,7 @@ void FUN_005BC160(void)
 	DAT_00ABF204 = 128;
 }
 
-// FUNCTION: 0x005BC180
+// FUNCTION: GAMEMD 0x005BC180
 void __fastcall FUN_005BC180(HINSTANCE instance, HWND window, bool enabled)
 {
 	DAT_00ABF230 = instance;
@@ -169,7 +180,7 @@ void __fastcall FUN_005BC180(HINSTANCE instance, HWND window, bool enabled)
 	}
 }
 
-// FUNCTION: 0x005BC300
+// FUNCTION: GAMEMD 0x005BC300
 void FUN_005BC300(void)
 {
 	for (int i = 0; i < 8; i++) {
@@ -187,7 +198,7 @@ void FUN_005BC300(void)
 	}
 }
 
-// FUNCTION: 0x005BC370
+// FUNCTION: GAMEMD 0x005BC370
 void FUN_005BC370(void)
 {
 	if (DAT_00ABF234 == NULL) {
@@ -204,7 +215,7 @@ void FUN_005BC370(void)
 	}
 }
 
-// FUNCTION: 0x005BC3C0
+// FUNCTION: GAMEMD 0x005BC3C0
 void FUN_005BC3C0(void)
 {
 	if (DAT_00ABF238) {
@@ -217,7 +228,7 @@ void FUN_005BC3C0(void)
 	}
 }
 
-// FUNCTION: 0x005BC400
+// FUNCTION: GAMEMD 0x005BC400
 void FUN_005BC400(void)
 {
 	DAT_00ABF239 = false;
@@ -227,7 +238,7 @@ void FUN_005BC400(void)
 	}
 }
 
-// FUNCTION: 0x005BC420
+// FUNCTION: GAMEMD 0x005BC420
 int FUN_005BC420(void)
 {
 	if (DAT_00ABF23A || DAT_00ABF239) {
@@ -236,19 +247,19 @@ int FUN_005BC420(void)
 	return 0;
 }
 
-// FUNCTION: 0x005BC440
+// FUNCTION: GAMEMD 0x005BC440
 DebugPage * FUN_005BC440(void)
 {
 	return DAT_00ABF23C;
 }
 
-// FUNCTION: 0x005BC450
+// FUNCTION: GAMEMD 0x005BC450
 DebugPage * __fastcall FUN_005BC450(int index)
 {
 	return DAT_00ABF168[index];
 }
 
-// FUNCTION: 0x005BC460
+// FUNCTION: GAMEMD 0x005BC460
 void __fastcall FUN_005BC460(int index)
 {
 	DebugPage * page = DAT_00ABF168[index];
@@ -257,7 +268,7 @@ void __fastcall FUN_005BC460(int index)
 	DAT_00ABF23C->Refresh(0, 0, 80, 25);
 }
 
-// FUNCTION: 0x005BC4D0
+// FUNCTION: GAMEMD 0x005BC4D0
 void FUN_005BC4D0(void)
 {
 	for (int i = 0; i < 8; i++) {
@@ -265,7 +276,7 @@ void FUN_005BC4D0(void)
 	}
 }
 
-// FUNCTION: 0x005BC530
+// FUNCTION: GAMEMD 0x005BC530
 void FUN_005BC530(void)
 {
 	DAT_00ABF240 = CreateDialogParamA(DAT_00ABF230, MAKEINTRESOURCE(248), DAT_00ABF234, (DLGPROC)FUN_005BC6E0, 0);
@@ -308,7 +319,7 @@ void FUN_005BC530(void)
 	ReleaseDC(DAT_00ABF240, dc);
 }
 
-// FUNCTION: 0x005BC6E0
+// FUNCTION: GAMEMD 0x005BC6E0
 BOOL CALLBACK FUN_005BC6E0(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
 	if (msg == WM_PAINT) {
@@ -467,7 +478,7 @@ BOOL CALLBACK FUN_005BC6E0(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	return FALSE;
 }
 
-// FUNCTION: 0x005BCB60
+// FUNCTION: GAMEMD 0x005BCB60
 DebugPoint * DebugPoint::Cell_Origin(int col, int row)
 {
 	DebugPoint p;
@@ -477,32 +488,32 @@ DebugPoint * DebugPoint::Cell_Origin(int col, int row)
 	return this;
 }
 
-// FUNCTION: 0x005BCB90
+// FUNCTION: GAMEMD 0x005BCB90
 DebugPage::DebugPage(int index) :
 	Index(index), Field271C(0), Field2720(0), Field2724(0), Field2728(0), Columns(80), Rows(25)
 {
 	Reset();
 }
 
-// FUNCTION: 0x005BCC20
+// FUNCTION: GAMEMD 0x005BCC20
 void FUN_005BCC20(void)
 {
 }
 
-// FUNCTION: 0x005BCC30
+// FUNCTION: GAMEMD 0x005BCC30
 int DebugPage::Get_Index(void)
 {
 	return Index;
 }
 
-// FUNCTION: 0x005BCC40
+// FUNCTION: GAMEMD 0x005BCC40
 void DebugPage::Set_Cursor(int x, int y)
 {
 	Field271C = x;
 	Field2720 = y;
 }
 
-// FUNCTION: 0x005BCC60
+// FUNCTION: GAMEMD 0x005BCC60
 void DebugPage::Set_Window(int x, int y, int w, int h)
 {
 	Field2724 = x;
@@ -511,7 +522,7 @@ void DebugPage::Set_Window(int x, int y, int w, int h)
 	Rows = h;
 }
 
-// FUNCTION: 0x005BCC90
+// FUNCTION: GAMEMD 0x005BCC90
 void DebugPage::Reset(void)
 {
 	Blank();
@@ -519,13 +530,13 @@ void DebugPage::Reset(void)
 	Refresh(0, 0, 80, 25);
 }
 
-// FUNCTION: 0x005BCCE0
+// FUNCTION: GAMEMD 0x005BCCE0
 bool DebugPage::Is_Dirty(void)
 {
 	return Dirty;
 }
 
-// FUNCTION: 0x005BCCF0
+// FUNCTION: GAMEMD 0x005BCCF0
 void DebugPage::Show(void)
 {
 	if (DAT_00ABF23A) {
@@ -537,7 +548,7 @@ void DebugPage::Show(void)
 	}
 }
 
-// FUNCTION: 0x005BCD70
+// FUNCTION: GAMEMD 0x005BCD70
 void DebugPage::Set_Pad(int value)
 {
 	if (DAT_00ABF23A) {
@@ -545,7 +556,7 @@ void DebugPage::Set_Pad(int value)
 	}
 }
 
-// FUNCTION: 0x005BCD90
+// FUNCTION: GAMEMD 0x005BCD90
 void DebugPage::Fill(int x, int y, int w, int h, int attr)
 {
 	if (DAT_00ABF23A) {
@@ -562,7 +573,7 @@ void DebugPage::Fill(int x, int y, int w, int h, int attr)
 	}
 }
 
-// FUNCTION: 0x005BCE10
+// FUNCTION: GAMEMD 0x005BCE10
 void DebugPage::Scroll_Vertical(int amount)
 {
 	if (DAT_00ABF23A) {
@@ -593,7 +604,7 @@ void DebugPage::Scroll_Vertical(int amount)
 	}
 }
 
-// FUNCTION: 0x005BCF90
+// FUNCTION: GAMEMD 0x005BCF90
 void DebugPage::Scroll_Horizontal(int amount)
 {
 	if (DAT_00ABF23A) {
@@ -624,7 +635,7 @@ void DebugPage::Scroll_Horizontal(int amount)
 	}
 }
 
-// FUNCTION: 0x005BD0D0
+// FUNCTION: GAMEMD 0x005BD0D0
 void DebugPage::Print_Raw(char const * text)
 {
 	if (DAT_00ABF23A) {
@@ -652,7 +663,7 @@ void DebugPage::Print_Raw(char const * text)
 	}
 }
 
-// FUNCTION: 0x005BD1F0
+// FUNCTION: GAMEMD 0x005BD1F0
 void __cdecl FUN_005BD1F0(DebugPage * page, char const * format, ...)
 {
 	char buffer[256];
@@ -665,7 +676,7 @@ void __cdecl FUN_005BD1F0(DebugPage * page, char const * format, ...)
 	}
 }
 
-// FUNCTION: 0x005BD240
+// FUNCTION: GAMEMD 0x005BD240
 void __cdecl FUN_005BD240(DebugPage * page, wchar_t const * format, ...)
 {
 	char buffer[256];
@@ -679,7 +690,7 @@ void __cdecl FUN_005BD240(DebugPage * page, wchar_t const * format, ...)
 	}
 }
 
-// FUNCTION: 0x005BD2A0
+// FUNCTION: GAMEMD 0x005BD2A0
 void DebugPage::Print_At(char const * text, int x, int y, int attr)
 {
 	if (DAT_00ABF23A) {
@@ -690,7 +701,7 @@ void DebugPage::Print_At(char const * text, int x, int y, int attr)
 	}
 }
 
-// FUNCTION: 0x005BD2E0
+// FUNCTION: GAMEMD 0x005BD2E0
 void DebugPage::Print_At(wchar_t const * text, int x, int y, int attr)
 {
 	char buffer[1024];
@@ -703,7 +714,7 @@ void DebugPage::Print_At(wchar_t const * text, int x, int y, int attr)
 	}
 }
 
-// FUNCTION: 0x005BD360
+// FUNCTION: GAMEMD 0x005BD360
 char DebugPage::Translate(char c)
 {
 	if (c == '\n') {
@@ -728,7 +739,7 @@ char DebugPage::Translate(char c)
 	return c;
 }
 
-// FUNCTION: 0x005BD3D0
+// FUNCTION: GAMEMD 0x005BD3D0
 void DebugPage::Draw_Cell(HDC dc, int col, int row)
 {
 	int attr = Attr[col][row];
@@ -748,7 +759,7 @@ void DebugPage::Draw_Cell(HDC dc, int col, int row)
 	TextOutA(dc, origin.X, origin.Y, &ch, 1);
 }
 
-// FUNCTION: 0x005BD490
+// FUNCTION: GAMEMD 0x005BD490
 void DebugPage::Refresh(int x, int y, int w, int h)
 {
 	if (DAT_00ABF23A && this == DAT_00ABF23C) {
@@ -769,7 +780,7 @@ void DebugPage::Refresh(int x, int y, int w, int h)
 	}
 }
 
-// FUNCTION: 0x005BD560
+// FUNCTION: GAMEMD 0x005BD560
 MotionLibrary::MotionLibrary() :
 	LoadFailed(false),
 	LayerCount(0),
@@ -778,7 +789,7 @@ MotionLibrary::MotionLibrary() :
 {
 }
 
-// FUNCTION: 0x005BD570
+// FUNCTION: GAMEMD 0x005BD570
 MotionLibrary::MotionLibrary(FileClass & file) :
 	LoadFailed(false),
 	LayerCount(0),
@@ -790,13 +801,13 @@ MotionLibrary::MotionLibrary(FileClass & file) :
 	}
 }
 
-// FUNCTION: 0x005BD5A0
+// FUNCTION: GAMEMD 0x005BD5A0
 MotionLibrary::~MotionLibrary()
 {
 	Clear();
 }
 
-// FUNCTION: 0x005BD5C0
+// FUNCTION: GAMEMD 0x005BD5C0
 BOOL MotionLibrary::Read_File(FileClass & file)
 {
 	Clear();
@@ -843,7 +854,7 @@ BOOL MotionLibrary::Read_File(FileClass & file)
 	return(true);
 }
 
-// FUNCTION: 0x005BD730
+// FUNCTION: GAMEMD 0x005BD730
 void MotionLibrary::Scale(float scale)
 {
 	for (unsigned frame = 0; frame < FrameCount; frame++) {
@@ -855,7 +866,7 @@ void MotionLibrary::Scale(float scale)
 	}
 }
 
-// FUNCTION: 0x005BD7C0
+// FUNCTION: GAMEMD 0x005BD7C0
 void MotionLibrary::Clear()
 {
 	if (LayerMatrices != NULL) {
@@ -878,31 +889,40 @@ extern const double DAT_007E1740;
 extern const double DAT_007EDF98;
 extern const double DAT_007EDFA0;
 
-// FUNCTION: 0x005BD7E0 $E42
+// SYNTHETIC: GAMEMD 0x005BD7E0 SYMBOL
+// _$E42
 double DAT_00ABF270 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x005BD810 $E45
+// SYNTHETIC: GAMEMD 0x005BD810 SYMBOL
+// _$E45
 double DAT_00ABF2D0 = DAT_00ABF270 / DAT_007EDF98;
 
-// FUNCTION: 0x005BD830 $E48
+// SYNTHETIC: GAMEMD 0x005BD830 SYMBOL
+// _$E48
 double DAT_00ABF2B8 = DAT_007E1718 / DAT_00ABF2D0;
 
-// FUNCTION: 0x005BD850 $E51
+// SYNTHETIC: GAMEMD 0x005BD850 SYMBOL
+// _$E51
 double DAT_00ABF2B0 = DAT_007E1720 * DAT_007EDFA0;
 
-// FUNCTION: 0x005BD870 $E54
+// SYNTHETIC: GAMEMD 0x005BD870 SYMBOL
+// _$E54
 double DAT_00ABF278 = DAT_007E1728 * DAT_007EDFA0;
 
-// FUNCTION: 0x005BD890 $E57
+// SYNTHETIC: GAMEMD 0x005BD890 SYMBOL
+// _$E57
 double DAT_00ABF248 = DAT_007E1730 * DAT_007EDFA0;
 
-// FUNCTION: 0x005BD8B0 $E60
+// SYNTHETIC: GAMEMD 0x005BD8B0 SYMBOL
+// _$E60
 int DAT_00ABF2D8 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00ABF248 - DAT_00ABF278) * DAT_00ABF270));
 
-// FUNCTION: 0x005BD8F0 $E63
+// SYNTHETIC: GAMEMD 0x005BD8F0 SYMBOL
+// _$E63
 double DAT_00ABF280 = FUN_004CADE0(DAT_00ABF2D8 * DAT_007E1740);
 
-// FUNCTION: 0x005BD920 $E66
+// SYNTHETIC: GAMEMD 0x005BD920 SYMBOL
+// _$E66
 double DAT_00ABF298 = FUN_004CADE0((DAT_00ABF2D8 * 2) / DAT_00ABF270);
 
 extern int DAT_00ABF2CC;
@@ -919,20 +939,20 @@ extern int DAT_00ABF25C;
 extern int DAT_00ABF260;
 extern int DAT_00ABF264;
 
-// FUNCTION: 0x005BD950
+// FUNCTION: GAMEMD 0x005BD950
 void FUN_005BD950(void)
 {
 	DAT_00ABF2CC = (int)(DAT_00ABF2D8 * 4 + DAT_007E1738);
 }
 
-// FUNCTION: 0x005BD980
+// FUNCTION: GAMEMD 0x005BD980
 void FUN_005BD980(void)
 {
 	DAT_00ABF268 = 0;
 	DAT_00ABF26A = 0;
 }
 
-// FUNCTION: 0x005BD990
+// FUNCTION: GAMEMD 0x005BD990
 void FUN_005BD990(void)
 {
 	DAT_00ABF288 = 0;
@@ -940,7 +960,7 @@ void FUN_005BD990(void)
 	DAT_00ABF290 = 0;
 }
 
-// FUNCTION: 0x005BD9B0
+// FUNCTION: GAMEMD 0x005BD9B0
 void FUN_005BD9B0(void)
 {
 	DAT_00ABF2C8 = 0;
@@ -948,7 +968,7 @@ void FUN_005BD9B0(void)
 	DAT_00ABF2C4 = 128;
 }
 
-// FUNCTION: 0x005BD9D0
+// FUNCTION: GAMEMD 0x005BD9D0
 void FUN_005BD9D0(void)
 {
 	DAT_00ABF258 = 0;

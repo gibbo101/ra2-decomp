@@ -35,7 +35,7 @@
 
 DynamicVectorClass<TeamTypeClass *> TeamTypeClass::Array;
 
-// FUNCTION: 0x006F0680
+// FUNCTION: GAMEMD 0x006F0680
 int _ahtoi(const char *string)
 {
 	char *s = (char *)string;
@@ -55,7 +55,7 @@ int _ahtoi(const char *string)
 	return(integer);
 }
 
-// FUNCTION: 0x006F06E0
+// FUNCTION: GAMEMD 0x006F06E0
 TeamTypeClass::TeamTypeClass(char const * name) :
 	BASECLASS(name),
 	HeapID(-1),
@@ -107,7 +107,7 @@ TeamTypeClass::TeamTypeClass(char const * name) :
 	PointerExpiredNotification::NotifyInvalidType.Add(this);
 }
 
-// FUNCTION: 0x006F08F0
+// FUNCTION: GAMEMD 0x006F08F0
 TeamTypeClass::~TeamTypeClass(void)
 {
 	Detach_This_From_All(this, true);
@@ -120,7 +120,7 @@ bool FUN_00510F60(int index);
 HouseClass * FUN_00510ED0(int index);
 int __fastcall FUN_005889F0(int zone, int other);
 
-// FUNCTION: 0x006F09C0
+// FUNCTION: GAMEMD 0x006F09C0
 TeamClass * TeamTypeClass::Create_One_Of(HouseClass * house) const
 {
 	FUN_004068E0("Create_One_Of...\n");
@@ -142,7 +142,7 @@ TeamClass * TeamTypeClass::Create_One_Of(HouseClass * house) const
 	return(NULL);
 }
 
-// FUNCTION: 0x006F0A70
+// FUNCTION: GAMEMD 0x006F0A70
 void TeamTypeClass::Destroy_All_Of(void) const
 {
 	for (int index = 0; index < Teams.Count(); index++) {
@@ -155,7 +155,7 @@ void TeamTypeClass::Destroy_All_Of(void) const
 	}
 }
 
-// FUNCTION: 0x006F0FC0
+// FUNCTION: GAMEMD 0x006F0FC0
 TeamTypeClass * TeamTypeClass::From_Name(char const * name)
 {
 	if (name) {
@@ -168,7 +168,7 @@ TeamTypeClass * TeamTypeClass::From_Name(char const * name)
 	return(0);
 }
 
-// FUNCTION: 0x006F1030
+// FUNCTION: GAMEMD 0x006F1030
 void TeamTypeClass::Detach(AbstractClass const * target, bool all)
 {
 	if (Tag == target) {
@@ -188,7 +188,7 @@ void TeamTypeClass::Detach(AbstractClass const * target, bool all)
 	}
 }
 
-// FUNCTION: 0x006F1090
+// FUNCTION: GAMEMD 0x006F1090
 bool TeamTypeClass::Read_INI(CCINIClass & ini)
 {
 	ini.Reset();
@@ -261,7 +261,7 @@ bool TeamTypeClass::Read_INI(CCINIClass & ini)
 	return(false);
 }
 
-// FUNCTION: 0x006F1550
+// FUNCTION: GAMEMD 0x006F1550
 bool TeamTypeClass::Write_INI(CCINIClass & ini) const
 {
 	if (BASECLASS::Write_INI(ini)) {
@@ -321,7 +321,7 @@ bool TeamTypeClass::Write_INI(CCINIClass & ini) const
 	return(false);
 }
 
-// FUNCTION: 0x006F1870
+// FUNCTION: GAMEMD 0x006F1870
 int TeamTypeClass::Get_Group(void) const
 {
 	if (Group != -2 && Group == -1) {
@@ -332,7 +332,7 @@ int TeamTypeClass::Get_Group(void) const
 	return(Group);
 }
 
-// FUNCTION: 0x006F18A0
+// FUNCTION: GAMEMD 0x006F18A0
 Cell TeamTypeClass::Get_Origin(void) const
 {
 	if (Origin == -1) {
@@ -341,7 +341,7 @@ Cell TeamTypeClass::Get_Origin(void) const
 	return(Scen->Get_Waypoint_Cell(Origin));
 }
 
-// FUNCTION: 0x006F18E0
+// FUNCTION: GAMEMD 0x006F18E0
 Cell TeamTypeClass::Get_Transport_Origin(void) const
 {
 	if (TransportOrigin == -1) {
@@ -350,13 +350,13 @@ Cell TeamTypeClass::Get_Transport_Origin(void) const
 	return(Scen->Get_Waypoint_Cell(TransportOrigin));
 }
 
-// FUNCTION: 0x006F1920
+// FUNCTION: GAMEMD 0x006F1920
 TeamTypeClass * TeamTypeClass::Find_Or_Make(char const * name)
 {
 	return(TFind_Or_Make<TeamTypeClass>(name, Array));
 }
 
-// FUNCTION: 0x006F19B0
+// FUNCTION: GAMEMD 0x006F19B0
 void TeamTypeClass::Read_All(CCINIClass const & ini, INIScopeType scope)
 {
 	char buffer[32];
@@ -371,7 +371,7 @@ void TeamTypeClass::Read_All(CCINIClass const & ini, INIScopeType scope)
 	}
 }
 
-// FUNCTION: 0x006F1AB0
+// FUNCTION: GAMEMD 0x006F1AB0
 void TeamTypeClass::Write_All(CCINIClass & ini, INIScopeType scope)
 {
 	char buffer[32];
@@ -395,7 +395,7 @@ void TeamTypeClass::Write_All(CCINIClass & ini, INIScopeType scope)
 	}
 }
 
-// FUNCTION: 0x006F1B90
+// FUNCTION: GAMEMD 0x006F1B90
 HRESULT STDMETHODCALLTYPE TeamTypeClass::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -405,7 +405,7 @@ HRESULT STDMETHODCALLTYPE TeamTypeClass::Save(IStream * stream, BOOL cleardirty)
 	return(result);
 }
 
-// FUNCTION: 0x006F1BB0
+// FUNCTION: GAMEMD 0x006F1BB0
 HRESULT STDMETHODCALLTYPE TeamTypeClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -422,7 +422,7 @@ HRESULT STDMETHODCALLTYPE TeamTypeClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x006F1C40
+// FUNCTION: GAMEMD 0x006F1C40
 HRESULT STDMETHODCALLTYPE TeamTypeClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -430,7 +430,7 @@ HRESULT STDMETHODCALLTYPE TeamTypeClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x006F1C80
+// FUNCTION: GAMEMD 0x006F1C80
 void TeamTypeClass::Compute_CRC(CRCEngine & crc) const
 {
 	BASECLASS::Compute_CRC(crc);
@@ -475,7 +475,7 @@ void TeamTypeClass::Compute_CRC(CRCEngine & crc) const
 	}
 }
 
-// FUNCTION: 0x006F1E20
+// FUNCTION: GAMEMD 0x006F1E20
 bool TeamTypeClass::Can_Recruit(FootClass * foot, HouseClass * house) const
 {
 	if (foot->Team != NULL && this == foot->Team->Class) {
@@ -513,7 +513,7 @@ bool TeamTypeClass::Can_Recruit(FootClass * foot, HouseClass * house) const
 	return(true);
 }
 
-// FUNCTION: 0x006F1F30
+// FUNCTION: GAMEMD 0x006F1F30
 void TeamTypeClass::Flash(int frames)
 {
 	for (int index = 0; index < Teams.Count(); index++) {
@@ -524,7 +524,7 @@ void TeamTypeClass::Flash(int frames)
 	}
 }
 
-// FUNCTION: 0x006F1F70
+// FUNCTION: GAMEMD 0x006F1F70
 TeamClass * TeamTypeClass::Find_First_Of_Type(void)
 {
 	for (int index = 0; index < Teams.Count(); index++) {
@@ -536,7 +536,7 @@ TeamClass * TeamTypeClass::Find_First_Of_Type(void)
 	return(NULL);
 }
 
-// FUNCTION: 0x006F1FA0
+// FUNCTION: GAMEMD 0x006F1FA0
 void TeamTypeClass::Process_Task_Force(void)
 {
 	field_F0 = true;
@@ -558,7 +558,7 @@ void TeamTypeClass::Process_Task_Force(void)
 	}
 }
 
-// FUNCTION: 0x006F2040
+// FUNCTION: GAMEMD 0x006F2040
 void TeamTypeClass::Process_All_Task_Forces(void)
 {
 	for (int index = 0; index < Array.Count(); index++) {
@@ -566,7 +566,7 @@ void TeamTypeClass::Process_All_Task_Forces(void)
 	}
 }
 
-// FUNCTION: 0x006F2070
+// FUNCTION: GAMEMD 0x006F2070
 HouseClass * TeamTypeClass::Get_House(void) const
 {
 	if (House != NULL) {
@@ -578,44 +578,68 @@ HouseClass * TeamTypeClass::Get_House(void) const
 	return(NULL);
 }
 
-// FUNCTION: 0x006F20A0 TeamTypeClass::Fetch_RTTI
-// FUNCTION: 0x006F20B0 TeamTypeClass::Fetch_Object_Size
-// FUNCTION: 0x006F20C0 TeamTypeClass::Fetch_Heap_ID
+// FUNCTION: GAMEMD 0x006F20A0
+// TeamTypeClass::Fetch_RTTI
+// FUNCTION: GAMEMD 0x006F20B0
+// TeamTypeClass::Fetch_Object_Size
+// FUNCTION: GAMEMD 0x006F20C0
+// TeamTypeClass::Fetch_Heap_ID
 
-// FUNCTION: 0x006F20D0 TeamTypeClass::~TeamTypeClass
+// SYNTHETIC: GAMEMD 0x006F20D0
+// ??_GTeamTypeClass@@UAEPAXI@Z
 
 typedef DiscreteDistributionClass<AITriggerTypeClass>::DIST_OBJ TRIGGER_DIST_OBJ;
 
-// FUNCTION: 0x006F21B0 ?$DynamicVectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@::Clear
+// TEMPLATE: GAMEMD 0x006F21B0
+// ?Clear@?$DynamicVectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@@@UAEXXZ
 template class DynamicVectorClass<TRIGGER_DIST_OBJ>;
 
-// FUNCTION: 0x006F21F0 ?$VectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@::ID
-// FUNCTION: 0x006F2210 ?$VectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@::GetItem
+// TEMPLATE: GAMEMD 0x006F21F0
+// ?ID@?$VectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@@@UAEHPBV?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@@Z
+// TEMPLATE: GAMEMD 0x006F2210
+// ?GetItem@?$VectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@@@UBE?AV?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@H@Z
 
-// FUNCTION: 0x006F2230 ?$DynamicVectorClass@PBVTeamTypeClass@@::?$DynamicVectorClass@PBVTeamTypeClass@@
+// TEMPLATE: GAMEMD 0x006F2230
+// ??0?$DynamicVectorClass@PBVTeamTypeClass@@@@QAE@IPBQBVTeamTypeClass@@@Z
 template class DynamicVectorClass<TeamTypeClass const *>;
 
-// FUNCTION: 0x006F2290 ?$VectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@::operator==
-// FUNCTION: 0x006F22F0 ?$VectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@::Resize
-// FUNCTION: 0x006F2400 ?$VectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@::Clear
+// TEMPLATE: GAMEMD 0x006F2290
+// ??8?$VectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x006F22F0
+// ?Resize@?$VectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@@@UAE_NHPBV?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@@Z
+// TEMPLATE: GAMEMD 0x006F2400
+// ?Clear@?$VectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@@@UAEXXZ
 template class VectorClass<TRIGGER_DIST_OBJ>;
 
-// FUNCTION: 0x006F2440 ?$VectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@::ID
+// TEMPLATE: GAMEMD 0x006F2440
+// ?ID@?$VectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@@@UAEHABV?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@@Z
 
-// FUNCTION: 0x006F2490 ?$DynamicVectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@::ID
-// FUNCTION: 0x006F24B0 ?$DynamicVectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@::Resize
-// FUNCTION: 0x006F25E0 ?$DynamicVectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@::Add
-// FUNCTION: 0x006F2640 ?$DynamicVectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@::ID
-// FUNCTION: 0x006F25D0 ?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@::~?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@
-// FUNCTION: 0x006F2680 ?$DynamicVectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@::~?$DynamicVectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@
-// FUNCTION: 0x006F26E0 ?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@::~?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@
-// FUNCTION: 0x006F2720 ?$VectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@::~?$VectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@
-// FUNCTION: 0x006F2780 ?$VectorClass@PBVTeamTypeClass@@::operator=
+// TEMPLATE: GAMEMD 0x006F2490
+// ?ID@?$DynamicVectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@@@UAEHPBV?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@@Z
+// TEMPLATE: GAMEMD 0x006F24B0
+// ?Resize@?$DynamicVectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@@@UAE_NHPBV?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@@Z
+// TEMPLATE: GAMEMD 0x006F25E0
+// ?Add@?$DynamicVectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@@@QAE_NABV?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@@Z
+// TEMPLATE: GAMEMD 0x006F2640
+// ?ID@?$DynamicVectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@@@UAEHABV?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@@Z
+// TEMPLATE: GAMEMD 0x006F25D0
+// ??1?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@QAE@XZ
+// SYNTHETIC: GAMEMD 0x006F2680
+// ??_G?$DynamicVectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x006F26E0
+// ??_E?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@QAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x006F2720
+// ??_G?$VectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@@@UAEPAXI@Z
+// TEMPLATE: GAMEMD 0x006F2780
+// ??4?$VectorClass@PBVTeamTypeClass@@@@QAEAAV0@ABV0@@Z
 template class VectorClass<TeamTypeClass const *>;
-// FUNCTION: 0x006F27F0 ?$VectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@::?$VectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@
+// TEMPLATE: GAMEMD 0x006F27F0
+// ??0?$VectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@@@QAE@HPBV?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@@Z
 
-// FUNCTION: 0x006F28A0 $E2
-// FUNCTION: 0x006F28D0 $E5
+// SYNTHETIC: GAMEMD 0x006F28A0 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x006F28D0 SYMBOL
+// _$E5
 
 namespace fastmath { double __cdecl tan(double x); double __cdecl atan(double x); }
 extern const double DAT_007E1718;
@@ -633,38 +657,50 @@ struct TTIntTriple { int a; int b; int c; TTIntTriple(void) { a = 0; b = 0; c = 
 struct TTIntQuad { int a; int b; int c; int d; TTIntQuad(void) { a = 0; b = 0; c = 0; d = 0; } };
 struct TTCenterTriple { int a; int b; int c; TTCenterTriple(void) { c = 0; a = 128; b = 128; } };
 
-// FUNCTION: 0x006F28F0 $E8
+// SYNTHETIC: GAMEMD 0x006F28F0 SYMBOL
+// _$E8
 double DAT_00B0EB10 = DAT_007E1718 / DAT_00B0EB28;
 
-// FUNCTION: 0x006F2910 $E11
+// SYNTHETIC: GAMEMD 0x006F2910 SYMBOL
+// _$E11
 double DAT_00B0EB08 = DAT_007F4888 * DAT_007E1720;
 
-// FUNCTION: 0x006F2930 $E14
+// SYNTHETIC: GAMEMD 0x006F2930 SYMBOL
+// _$E14
 double DAT_00B0EA60 = DAT_007F4888 * DAT_007E1728;
 
-// FUNCTION: 0x006F2950 $E17
+// SYNTHETIC: GAMEMD 0x006F2950 SYMBOL
+// _$E17
 double DAT_00B0EA30 = DAT_007F4888 * DAT_007E1730;
 
-// FUNCTION: 0x006F2970 $E20
+// SYNTHETIC: GAMEMD 0x006F2970 SYMBOL
+// _$E20
 int DAT_00B0EB34 = (int)(fastmath::tan(DAT_00B0EA30 - DAT_00B0EA60) * DAT_00B0EA58 * DAT_007E1738);
 
-// FUNCTION: 0x006F29B0 $E23
+// SYNTHETIC: GAMEMD 0x006F29B0 SYMBOL
+// _$E23
 double DAT_00B0EA68 = fastmath::atan(DAT_00B0EB34 * DAT_007E1740);
 
-// FUNCTION: 0x006F29E0 $E26
+// SYNTHETIC: GAMEMD 0x006F29E0 SYMBOL
+// _$E26
 double DAT_00B0EAA0 = fastmath::atan((DAT_00B0EB34 * 2) / DAT_00B0EA58);
 
-// FUNCTION: 0x006F2A10 $E29
+// SYNTHETIC: GAMEMD 0x006F2A10 SYMBOL
+// _$E29
 int DAT_00B0EB24 = (int)(DAT_00B0EB34 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x006F2A40 $E32
+// SYNTHETIC: GAMEMD 0x006F2A40 SYMBOL
+// _$E32
 TTShortPair DAT_00B0EA50;
 
-// FUNCTION: 0x006F2A50 $E35
+// SYNTHETIC: GAMEMD 0x006F2A50 SYMBOL
+// _$E35
 TTIntTriple DAT_00B0EA90;
 
-// FUNCTION: 0x006F2A70 $E38
+// SYNTHETIC: GAMEMD 0x006F2A70 SYMBOL
+// _$E38
 TTCenterTriple DAT_00B0EB18;
 
-// FUNCTION: 0x006F2A90 $E144
+// SYNTHETIC: GAMEMD 0x006F2A90 SYMBOL
+// _$E144
 TTIntQuad DAT_00B0EA40;

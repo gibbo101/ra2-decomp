@@ -8,7 +8,7 @@
 #include <cstddef>
 #include <cstring>
 
-// FUNCTION: 0x00631C80
+// FUNCTION: GAMEMD 0x00631C80
 Pipe::~Pipe(void)
 {
 	if (ChainTo != NULL) {
@@ -22,7 +22,7 @@ Pipe::~Pipe(void)
 	ChainTo = NULL;
 }
 
-// FUNCTION: 0x00631CC0
+// FUNCTION: GAMEMD 0x00631CC0
 void Pipe::Put_To(Pipe * pipe)
 {
 	if (ChainTo != pipe) {
@@ -43,7 +43,7 @@ void Pipe::Put_To(Pipe * pipe)
 	}
 }
 
-// FUNCTION: 0x00631D10
+// FUNCTION: GAMEMD 0x00631D10
 int Pipe::Put(void const * source, int length)
 {
 	if (ChainTo != NULL) {
@@ -52,7 +52,7 @@ int Pipe::Put(void const * source, int length)
 	return(length);
 }
 
-// FUNCTION: 0x00631D30
+// FUNCTION: GAMEMD 0x00631D30
 int Pipe::Flush(void)
 {
 	if (ChainTo != NULL) {

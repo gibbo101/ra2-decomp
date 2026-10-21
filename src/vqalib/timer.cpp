@@ -6,7 +6,7 @@
 #include	"vqaplayp.h"
 #include	<stdio.h>
 
-// FUNCTION: 0x007C3910
+// FUNCTION: GAMEMD 0x007C3910
 void VQA_SetTimer(VQAHandleP *vqap, long time)
 {
 	vqap->TickOffset = 0;
@@ -14,7 +14,7 @@ void VQA_SetTimer(VQAHandleP *vqap, long time)
 	vqap->TickOffset = (time - curtime);
 }
 
-// FUNCTION: 0x007C3960
+// FUNCTION: GAMEMD 0x007C3960
 unsigned long VQA_GetTime(VQAHandleP *vqap)
 {
 	unsigned long ticks;
@@ -25,7 +25,7 @@ unsigned long VQA_GetTime(VQAHandleP *vqap)
 	return(ticks);
 }
 
-// FUNCTION: 0x007C3990
+// FUNCTION: GAMEMD 0x007C3990
 unsigned long VQA_GetMovieTime(VQAHandle *vqa)
 {
 	VQAHandleP *vqap = (VQAHandleP *)vqa;

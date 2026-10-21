@@ -7,7 +7,7 @@
 #include "voxlib.h"
 #include "wwfile.h"
 
-// FUNCTION: 0x00758950
+// FUNCTION: GAMEMD 0x00758950
 VoxelPaletteLibrary::VoxelPaletteLibrary(RGBStruct * rgb, void * lut)
 {
 	if (rgb == NULL) {
@@ -27,7 +27,7 @@ VoxelPaletteLibrary::VoxelPaletteLibrary(RGBStruct * rgb, void * lut)
 	}
 }
 
-// FUNCTION: 0x007589C0
+// FUNCTION: GAMEMD 0x007589C0
 VoxelPaletteLibrary::~VoxelPaletteLibrary(void)
 {
 	if (ColorsAllocated) {
@@ -38,7 +38,7 @@ VoxelPaletteLibrary::~VoxelPaletteLibrary(void)
 	}
 }
 
-// FUNCTION: 0x007589F0
+// FUNCTION: GAMEMD 0x007589F0
 int VoxelPaletteLibrary::Read_Colors(FileClass & file)
 {
 	int result = 0;
@@ -53,7 +53,7 @@ int VoxelPaletteLibrary::Read_Colors(FileClass & file)
 	return(result);
 }
 
-// FUNCTION: 0x00758A30
+// FUNCTION: GAMEMD 0x00758A30
 int VoxelPaletteLibrary::Read_File(FileClass & file)
 {
 	VPLHeaderStruct hdr;
@@ -93,7 +93,7 @@ int VoxelPaletteLibrary::Read_File(FileClass & file)
 	return(result);
 }
 
-// FUNCTION: 0x00758AD0
+// FUNCTION: GAMEMD 0x00758AD0
 int VoxelPaletteLibrary::Write_File(FileClass & file)
 {
 	VPLHeaderStruct hdr;
@@ -133,7 +133,7 @@ int VoxelPaletteLibrary::Write_File(FileClass & file)
 	return(result);
 }
 
-// FUNCTION: 0x00758B70
+// FUNCTION: GAMEMD 0x00758B70
 void VoxelPaletteLibrary::Calculate_Lookup_Table(float *scale, int lut_count)
 {
 	int index;
@@ -212,7 +212,7 @@ void VoxelPaletteLibrary::Calculate_Lookup_Table(float *scale, int lut_count)
 	#undef STEPS
 }
 
-// FUNCTION: 0x00758E10
+// FUNCTION: GAMEMD 0x00758E10
 unsigned char VoxelPaletteLibrary::Closest_Color(float red, float green, float blue) const
 {
 	int closest = 0;
@@ -239,7 +239,7 @@ unsigned char VoxelPaletteLibrary::Closest_Color(float red, float green, float b
 	return(closest);
 }
 
-// FUNCTION: 0x00758EA0
+// FUNCTION: GAMEMD 0x00758EA0
 unsigned char VoxelPaletteLibrary::Closest_Color(float red, float green, float blue, bool is_remap) const
 {
 	int closest = is_remap ? Header.RemapStart : 1;

@@ -16,12 +16,12 @@ Wstring::Wstring(IN char const* string) :str(NULL)
 	set(string);
 }
 
-// FUNCTION: 0x007B4620
+// FUNCTION: GAMEMD 0x007B4620
 Wstring::Wstring(void) :str(NULL)
 {
 }
 
-// FUNCTION: 0x007B4690
+// FUNCTION: GAMEMD 0x007B4690
 Wstring::Wstring(IN const Wstring& other) :str(NULL)
 {
 	if (other.str != NULL)
@@ -31,13 +31,13 @@ Wstring::Wstring(IN const Wstring& other) :str(NULL)
 	}
 }
 
-// FUNCTION: 0x007B46F0
+// FUNCTION: GAMEMD 0x007B46F0
 Wstring::~Wstring(void)
 {
 	clear();
 }
 
-// FUNCTION: 0x007B4710
+// FUNCTION: GAMEMD 0x007B4710
 bool Wstring::operator==(IN char const* other) const
 {
 	if ((str == NULL) && (other == NULL))
@@ -52,7 +52,7 @@ bool Wstring::operator==(IN char const* other) const
 		return(TRUE);
 }
 
-// FUNCTION: 0x007B4780
+// FUNCTION: GAMEMD 0x007B4780
 bool Wstring::operator==(IN Wstring const& other) const
 {
 	if ((str == NULL) && (other.str == NULL))
@@ -67,7 +67,7 @@ bool Wstring::operator==(IN Wstring const& other) const
 		return(TRUE);
 }
 
-// FUNCTION: 0x007B47F0
+// FUNCTION: GAMEMD 0x007B47F0
 bool Wstring::operator!=(IN char const* other) const
 {
 	if ((str == NULL) && (other == NULL))
@@ -82,7 +82,7 @@ bool Wstring::operator!=(IN char const* other) const
 		return(FALSE);
 }
 
-// FUNCTION: 0x007B4860
+// FUNCTION: GAMEMD 0x007B4860
 bool Wstring::operator!=(IN Wstring const& other) const
 {
 	if ((str == NULL) && (other.str == NULL))
@@ -97,14 +97,14 @@ bool Wstring::operator!=(IN Wstring const& other) const
 		return(FALSE);
 }
 
-// FUNCTION: 0x007B48D0
+// FUNCTION: GAMEMD 0x007B48D0
 Wstring& Wstring::operator=(char const* other)
 {
 	set(other);
 	return(*this);
 }
 
-// FUNCTION: 0x007B4940
+// FUNCTION: GAMEMD 0x007B4940
 Wstring& Wstring::operator=(IN Wstring const& other)
 {
 	if (*this == other)
@@ -114,7 +114,7 @@ Wstring& Wstring::operator=(IN Wstring const& other)
 	return(*this);
 }
 
-// FUNCTION: 0x007B4A10
+// FUNCTION: GAMEMD 0x007B4A10
 char Wstring::cat(IN char const* s)
 {
 	char* oldStr;
@@ -142,7 +142,7 @@ char Wstring::cat(IN char const* s)
 	return(TRUE);
 }
 
-// FUNCTION: 0x007B4AC0
+// FUNCTION: GAMEMD 0x007B4AC0
 char Wstring::cat(unsigned int size, IN char const* s)
 {
 	char* oldStr;
@@ -170,27 +170,29 @@ char Wstring::cat(unsigned int size, IN char const* s)
 	return(TRUE);
 }
 
-// FUNCTION: 0x007B4B50
+// FUNCTION: GAMEMD 0x007B4B50
 char Wstring::cat(IN Wstring const& other)
 {
 	return(cat(other.get()));
 }
 
-// FUNCTION: 0x007B4C20 ?YWstring
+// FUNCTION: GAMEMD 0x007B4C20
+// ??YWstring@@QAEAAV0@PBD@Z
 Wstring& Wstring::operator+=(IN char const* string)
 {
 	cat(string);
 	return(*this);
 }
 
-// FUNCTION: 0x007B4CD0 ?YWstring
+// FUNCTION: GAMEMD 0x007B4CD0
+// ??YWstring@@QAEAAV0@ABV0@@Z
 Wstring& Wstring::operator+=(IN Wstring const& other)
 {
 	cat(other.get());
 	return(*this);
 }
 
-// FUNCTION: 0x007B4DA0
+// FUNCTION: GAMEMD 0x007B4DA0
 Wstring Wstring::operator+(IN char const* string) const
 {
 	Wstring temp = *this;
@@ -198,7 +200,7 @@ Wstring Wstring::operator+(IN char const* string) const
 	return(temp);
 }
 
-// FUNCTION: 0x007B4ED0
+// FUNCTION: GAMEMD 0x007B4ED0
 Wstring Wstring::operator+(IN Wstring const& s) const
 {
 	Wstring temp = *this;
@@ -206,7 +208,7 @@ Wstring Wstring::operator+(IN Wstring const& s) const
 	return(temp);
 }
 
-// FUNCTION: 0x007B5020
+// FUNCTION: GAMEMD 0x007B5020
 char Wstring::remove(int pos, int count)
 {
 	char* s;
@@ -237,7 +239,7 @@ char Wstring::remove(int pos, int count)
 	return(TRUE);
 }
 
-// FUNCTION: 0x007B50F0
+// FUNCTION: GAMEMD 0x007B50F0
 char Wstring::removeChar(char c)
 {
 	int     len = 0;
@@ -265,14 +267,14 @@ char Wstring::removeChar(char c)
 	return(removed);
 }
 
-// FUNCTION: 0x007B51B0
+// FUNCTION: GAMEMD 0x007B51B0
 void Wstring::removeSpaces(void)
 {
 	removeChar(' ');
 	removeChar('\t');
 }
 
-// FUNCTION: 0x007B51D0
+// FUNCTION: GAMEMD 0x007B51D0
 void Wstring::trimLeading(IN Wstring const& delim)
 {
 	int i = 0;
@@ -283,7 +285,7 @@ void Wstring::trimLeading(IN Wstring const& delim)
 		remove(0, i);
 }
 
-// FUNCTION: 0x007B5230
+// FUNCTION: GAMEMD 0x007B5230
 void Wstring::trimTrailing(IN Wstring const& delim)
 {
 	unsigned int i = length();
@@ -296,7 +298,7 @@ void Wstring::trimTrailing(IN Wstring const& delim)
 	truncate(i + 1);
 }
 
-// FUNCTION: 0x007B5340
+// FUNCTION: GAMEMD 0x007B5340
 void Wstring::clear(void)
 {
 	if (str)
@@ -304,7 +306,7 @@ void Wstring::clear(void)
 	str = NULL;
 }
 
-// FUNCTION: 0x007B5360
+// FUNCTION: GAMEMD 0x007B5360
 void Wstring::setSize(int size)
 {
 	clear();
@@ -314,7 +316,7 @@ void Wstring::setSize(int size)
 	memset(str, 0, size);
 }
 
-// FUNCTION: 0x007B53B0
+// FUNCTION: GAMEMD 0x007B53B0
 void Wstring::cellCopy(char* dest, unsigned int len) const
 {
 	unsigned int i;
@@ -325,7 +327,7 @@ void Wstring::cellCopy(char* dest, unsigned int len) const
 	dest[len] = 0;
 }
 
-// FUNCTION: 0x007B5400
+// FUNCTION: GAMEMD 0x007B5400
 char* Wstring::get(void) const
 {
 	if (!str)
@@ -333,7 +335,7 @@ char* Wstring::get(void) const
 	return(str);
 }
 
-// FUNCTION: 0x007B5410
+// FUNCTION: GAMEMD 0x007B5410
 char Wstring::get(unsigned int index)
 {
 	if (index < strlen(str))
@@ -341,7 +343,7 @@ char Wstring::get(unsigned int index)
 	return(0);
 }
 
-// FUNCTION: 0x007B5440
+// FUNCTION: GAMEMD 0x007B5440
 char* Wstring::text(void) const
 {
 	if (!str)
@@ -349,7 +351,7 @@ char* Wstring::text(void) const
 	return(str);
 }
 
-// FUNCTION: 0x007B5450
+// FUNCTION: GAMEMD 0x007B5450
 char Wstring::operator[](unsigned int index) const
 {
 	if (index < strlen(str))
@@ -357,7 +359,7 @@ char Wstring::operator[](unsigned int index) const
 	return(0);
 }
 
-// FUNCTION: 0x007B5480
+// FUNCTION: GAMEMD 0x007B5480
 char Wstring::getChar(unsigned int index) const
 {
 	if (index < strlen(str))
@@ -365,7 +367,7 @@ char Wstring::getChar(unsigned int index) const
 	return(0);
 }
 
-// FUNCTION: 0x007B54B0
+// FUNCTION: GAMEMD 0x007B54B0
 unsigned int Wstring::length(void) const
 {
 	if (str == NULL)
@@ -373,7 +375,7 @@ unsigned int Wstring::length(void) const
 	return((unsigned int)strlen(str));
 }
 
-// FUNCTION: 0x007B54D0
+// FUNCTION: GAMEMD 0x007B54D0
 char Wstring::insert(char const* instring, unsigned int pos)
 {
 	if (str == NULL)
@@ -391,7 +393,7 @@ char Wstring::insert(char const* instring, unsigned int pos)
 	return(TRUE);
 }
 
-// FUNCTION: 0x007B5640
+// FUNCTION: GAMEMD 0x007B5640
 char Wstring::insert(char k, unsigned int pos)
 {
 	char* s;
@@ -426,7 +428,7 @@ char Wstring::insert(char k, unsigned int pos)
 	return(TRUE);
 }
 
-// FUNCTION: 0x007B57A0
+// FUNCTION: GAMEMD 0x007B57A0
 char Wstring::replace(char const* replaceThis, char const* withThis)
 {
 	Wstring  dest;
@@ -460,7 +462,7 @@ char Wstring::replace(char const* replaceThis, char const* withThis)
 	return(set(dest.get()));
 }
 
-// FUNCTION: 0x007B5A40
+// FUNCTION: GAMEMD 0x007B5A40
 char Wstring::set(IN char const* s)
 {
 	unsigned int len;
@@ -477,7 +479,7 @@ char Wstring::set(IN char const* s)
 	return(TRUE);
 }
 
-// FUNCTION: 0x007B5AB0
+// FUNCTION: GAMEMD 0x007B5AB0
 char Wstring::set(char c, unsigned int index)
 {
 	if (index >= (unsigned int)strlen(str))
@@ -488,7 +490,7 @@ char Wstring::set(char c, unsigned int index)
 	return(TRUE);
 }
 
-// FUNCTION: 0x007B5AE0
+// FUNCTION: GAMEMD 0x007B5AE0
 char Wstring::set(unsigned int size, IN char const* string)
 {
 	unsigned int len;
@@ -505,7 +507,7 @@ char Wstring::set(unsigned int size, IN char const* string)
 	return(TRUE);
 }
 
-// FUNCTION: 0x007B5B30
+// FUNCTION: GAMEMD 0x007B5B30
 void Wstring::toLower(void)
 {
 	unsigned int i;
@@ -517,7 +519,7 @@ void Wstring::toLower(void)
 	}
 }
 
-// FUNCTION: 0x007B5B80
+// FUNCTION: GAMEMD 0x007B5B80
 Wstring Wstring::toLower(void) const
 {
 	Wstring tmp = *this;
@@ -525,7 +527,7 @@ Wstring Wstring::toLower(void) const
 	return(tmp);
 }
 
-// FUNCTION: 0x007B5C50
+// FUNCTION: GAMEMD 0x007B5C50
 void Wstring::toUpper(void)
 {
 	unsigned int i;
@@ -537,7 +539,7 @@ void Wstring::toUpper(void)
 	}
 }
 
-// FUNCTION: 0x007B5CA0
+// FUNCTION: GAMEMD 0x007B5CA0
 Wstring Wstring::toUpper(void) const
 {
 	Wstring tmp = *this;
@@ -545,7 +547,7 @@ Wstring Wstring::toUpper(void) const
 	return(tmp);
 }
 
-// FUNCTION: 0x007B5D70
+// FUNCTION: GAMEMD 0x007B5D70
 char Wstring::truncate(unsigned int len)
 {
 	Wstring tmp;
@@ -554,7 +556,7 @@ char Wstring::truncate(unsigned int len)
 	return(TRUE);
 }
 
-// FUNCTION: 0x007B5E30
+// FUNCTION: GAMEMD 0x007B5E30
 char Wstring::truncate(char c)
 {
 	int  len;
@@ -570,7 +572,7 @@ char Wstring::truncate(char c)
 	return(TRUE);
 }
 
-// FUNCTION: 0x007B5F10
+// FUNCTION: GAMEMD 0x007B5F10
 int Wstring::getToken(int offset, char const* delim, Wstring& out) const
 {
 	int i;
@@ -598,7 +600,7 @@ int Wstring::getToken(int offset, char const* delim, Wstring& out) const
 	return(stop + 1);
 }
 
-// FUNCTION: 0x007B60E0
+// FUNCTION: GAMEMD 0x007B60E0
 int Wstring::getLine(int offset, Wstring& out) const
 {
 	int i;
@@ -622,13 +624,13 @@ int Wstring::getLine(int offset, Wstring& out) const
 	return(stop + 1);
 }
 
-// FUNCTION: 0x007B6280
+// FUNCTION: GAMEMD 0x007B6280
 int Wstring::toInt(void) const
 {
 	return(atoi(str));
 }
 
-// FUNCTION: 0x007B6290
+// FUNCTION: GAMEMD 0x007B6290
 Wstring Wstring_FromInt(int value)
 {
 	char buf[16];
@@ -636,7 +638,7 @@ Wstring Wstring_FromInt(int value)
 	return(Wstring(buf));
 }
 
-// FUNCTION: 0x007B6320
+// FUNCTION: GAMEMD 0x007B6320
 Wstring Wstring_FromInt(int value, int width)
 {
 	char buf[16];
@@ -645,14 +647,14 @@ Wstring Wstring_FromInt(int value, int width)
 	return(Wstring(buf));
 }
 
-// FUNCTION: 0x007B63C0
+// FUNCTION: GAMEMD 0x007B63C0
 Wstring operator+(char const* a, Wstring const& b)
 {
 	Wstring tmp(a);
 	return(tmp + b);
 }
 
-// FUNCTION: 0x007B64E0
+// FUNCTION: GAMEMD 0x007B64E0
 Wstring operator+(Wstring const& a, Wstring const& b)
 {
 	Wstring tmp = a;
@@ -660,7 +662,7 @@ Wstring operator+(Wstring const& a, Wstring const& b)
 	return(tmp);
 }
 
-// FUNCTION: 0x007B6630
+// FUNCTION: GAMEMD 0x007B6630
 bool Wstring::containsAny(char const* chars) const
 {
 	if (chars == NULL || str == NULL)
@@ -669,18 +671,18 @@ bool Wstring::containsAny(char const* chars) const
 	return(strcspn(str, chars) < len);
 }
 
-// FUNCTION: 0x007B6670
+// FUNCTION: GAMEMD 0x007B6670
 bool Wstring::containsAny(Wstring const& chars) const
 {
 	return(containsAny(chars.get()));
 }
 
-// FUNCTION: 0x007B66C0
+// FUNCTION: GAMEMD 0x007B66C0
 WideWstring::WideWstring(void) :str(NULL)
 {
 }
 
-// FUNCTION: 0x007B66D0
+// FUNCTION: GAMEMD 0x007B66D0
 WideWstring::WideWstring(wchar_t const* string) :str(NULL)
 {
 	str = new wchar_t[string ? wcslen(string) + 1 : 1];
@@ -689,7 +691,7 @@ WideWstring::WideWstring(wchar_t const* string) :str(NULL)
 		wcscpy(str, string);
 }
 
-// FUNCTION: 0x007B6720
+// FUNCTION: GAMEMD 0x007B6720
 WideWstring::WideWstring(WideWstring const& other) :str(NULL)
 {
 	if (other.str) {
@@ -698,7 +700,7 @@ WideWstring::WideWstring(WideWstring const& other) :str(NULL)
 	}
 }
 
-// FUNCTION: 0x007B6760
+// FUNCTION: GAMEMD 0x007B6760
 WideWstring::~WideWstring(void)
 {
 	if (str)
@@ -706,7 +708,7 @@ WideWstring::~WideWstring(void)
 	str = NULL;
 }
 
-// FUNCTION: 0x007B6780
+// FUNCTION: GAMEMD 0x007B6780
 bool WideWstring::operator==(wchar_t const* other) const
 {
 	if ((str == NULL) && (other == NULL))
@@ -721,7 +723,7 @@ bool WideWstring::operator==(wchar_t const* other) const
 		return(TRUE);
 }
 
-// FUNCTION: 0x007B67C0
+// FUNCTION: GAMEMD 0x007B67C0
 bool WideWstring::operator==(WideWstring const& other) const
 {
 	if ((str == NULL) && (other.str == NULL))
@@ -736,7 +738,7 @@ bool WideWstring::operator==(WideWstring const& other) const
 		return(TRUE);
 }
 
-// FUNCTION: 0x007B6800
+// FUNCTION: GAMEMD 0x007B6800
 bool WideWstring::operator!=(wchar_t const* other) const
 {
 	if ((str == NULL) && (other == NULL))
@@ -751,7 +753,7 @@ bool WideWstring::operator!=(wchar_t const* other) const
 		return(FALSE);
 }
 
-// FUNCTION: 0x007B6840
+// FUNCTION: GAMEMD 0x007B6840
 bool WideWstring::operator!=(WideWstring const& other) const
 {
 	if ((str == NULL) && (other.str == NULL))
@@ -766,7 +768,7 @@ bool WideWstring::operator!=(WideWstring const& other) const
 		return(FALSE);
 }
 
-// FUNCTION: 0x007B6880
+// FUNCTION: GAMEMD 0x007B6880
 WideWstring& WideWstring::operator=(wchar_t const* other)
 {
 	if (str)
@@ -779,7 +781,7 @@ WideWstring& WideWstring::operator=(wchar_t const* other)
 	return(*this);
 }
 
-// FUNCTION: 0x007B68E0
+// FUNCTION: GAMEMD 0x007B68E0
 WideWstring& WideWstring::operator=(WideWstring const& other)
 {
 	if (*this == other)
@@ -789,7 +791,7 @@ WideWstring& WideWstring::operator=(WideWstring const& other)
 	return(*this);
 }
 
-// FUNCTION: 0x007B6970
+// FUNCTION: GAMEMD 0x007B6970
 char WideWstring::cat(wchar_t const* s)
 {
 	wchar_t* oldStr;
@@ -817,7 +819,7 @@ char WideWstring::cat(wchar_t const* s)
 	return(TRUE);
 }
 
-// FUNCTION: 0x007B69F0
+// FUNCTION: GAMEMD 0x007B69F0
 char WideWstring::cat(unsigned int size, wchar_t const* s)
 {
 	wchar_t* oldStr;
@@ -845,27 +847,30 @@ char WideWstring::cat(unsigned int size, wchar_t const* s)
 	return(TRUE);
 }
 
-// FUNCTION: 0x007B6A60
+// FUNCTION: GAMEMD 0x007B6A60
 char WideWstring::cat(WideWstring const& other)
 {
 	return(cat(other.get()));
 }
 
-// FUNCTION: 0x007B6AE0 ?YWideWstring
+// FUNCTION: GAMEMD 0x007B6AE0
+// ??YWideWstring@@QAEAAV0@PBG@Z
 WideWstring& WideWstring::operator+=(wchar_t const* string)
 {
 	cat(string);
 	return(*this);
 }
 
-// FUNCTION: 0x007B6B60 ?YWideWstring
+// FUNCTION: GAMEMD 0x007B6B60
+// ??YWideWstring@@QAEAAV0@ABV0@@Z
 WideWstring& WideWstring::operator+=(WideWstring const& other)
 {
 	cat(other.get());
 	return(*this);
 }
 
-// FUNCTION: 0x007B6BE0 ?HWideWstring
+// FUNCTION: GAMEMD 0x007B6BE0
+// ??HWideWstring@@QBE?AV0@PBG@Z
 WideWstring WideWstring::operator+(wchar_t const* string) const
 {
 	WideWstring temp = *this;
@@ -873,7 +878,8 @@ WideWstring WideWstring::operator+(wchar_t const* string) const
 	return(temp);
 }
 
-// FUNCTION: 0x007B6CB0 ?HWideWstring
+// FUNCTION: GAMEMD 0x007B6CB0
+// ??HWideWstring@@QBE?AV0@ABV0@@Z
 WideWstring WideWstring::operator+(WideWstring const& s) const
 {
 	WideWstring temp = *this;
@@ -881,7 +887,7 @@ WideWstring WideWstring::operator+(WideWstring const& s) const
 	return(temp);
 }
 
-// FUNCTION: 0x007B6D90
+// FUNCTION: GAMEMD 0x007B6D90
 wchar_t WideWstring::remove(int pos, int count)
 {
 	wchar_t* s;
@@ -912,7 +918,7 @@ wchar_t WideWstring::remove(int pos, int count)
 	return(TRUE);
 }
 
-// FUNCTION: 0x007B6E20
+// FUNCTION: GAMEMD 0x007B6E20
 char WideWstring::removeChar(wchar_t c)
 {
 	int     len = 0;
@@ -940,14 +946,14 @@ char WideWstring::removeChar(wchar_t c)
 	return(removed);
 }
 
-// FUNCTION: 0x007B6EC0
+// FUNCTION: GAMEMD 0x007B6EC0
 void WideWstring::removeSpaces(void)
 {
 	removeChar(' ');
 	removeChar('\t');
 }
 
-// FUNCTION: 0x007B6EE0
+// FUNCTION: GAMEMD 0x007B6EE0
 void WideWstring::trimLeading(WideWstring const& delim)
 {
 	unsigned int i = 0;
@@ -964,7 +970,7 @@ void WideWstring::trimLeading(WideWstring const& delim)
 		remove(0, i);
 }
 
-// FUNCTION: 0x007B6F40
+// FUNCTION: GAMEMD 0x007B6F40
 void WideWstring::trimTrailing(WideWstring const& delim)
 {
 	unsigned int i = length();
@@ -979,7 +985,7 @@ void WideWstring::trimTrailing(WideWstring const& delim)
 	truncate(i + 1);
 }
 
-// FUNCTION: 0x007B7040
+// FUNCTION: GAMEMD 0x007B7040
 void WideWstring::clear(void)
 {
 	if (str)
@@ -987,7 +993,7 @@ void WideWstring::clear(void)
 	str = NULL;
 }
 
-// FUNCTION: 0x007B7060
+// FUNCTION: GAMEMD 0x007B7060
 void WideWstring::setSize(int size)
 {
 	clear();
@@ -997,7 +1003,7 @@ void WideWstring::setSize(int size)
 	memset(str, 0, size * sizeof(wchar_t));
 }
 
-// FUNCTION: 0x007B70B0
+// FUNCTION: GAMEMD 0x007B70B0
 void WideWstring::cellCopy(wchar_t* dest, unsigned int len) const
 {
 	unsigned int i;
@@ -1008,7 +1014,7 @@ void WideWstring::cellCopy(wchar_t* dest, unsigned int len) const
 	dest[len] = 0;
 }
 
-// FUNCTION: 0x007B7100
+// FUNCTION: GAMEMD 0x007B7100
 wchar_t* WideWstring::get(void) const
 {
 	if (!str)
@@ -1016,7 +1022,7 @@ wchar_t* WideWstring::get(void) const
 	return(str);
 }
 
-// FUNCTION: 0x007B7110
+// FUNCTION: GAMEMD 0x007B7110
 wchar_t WideWstring::get(unsigned int index)
 {
 	if (index < wcslen(str))
@@ -1024,7 +1030,7 @@ wchar_t WideWstring::get(unsigned int index)
 	return(0);
 }
 
-// FUNCTION: 0x007B7140
+// FUNCTION: GAMEMD 0x007B7140
 wchar_t* WideWstring::text(void) const
 {
 	if (!str)
@@ -1032,7 +1038,7 @@ wchar_t* WideWstring::text(void) const
 	return(str);
 }
 
-// FUNCTION: 0x007B7150
+// FUNCTION: GAMEMD 0x007B7150
 wchar_t WideWstring::operator[](unsigned int index) const
 {
 	if (index < wcslen(str))
@@ -1040,13 +1046,13 @@ wchar_t WideWstring::operator[](unsigned int index) const
 	return(0);
 }
 
-// FUNCTION: 0x007B7180
+// FUNCTION: GAMEMD 0x007B7180
 wchar_t WideWstring::getChar(unsigned int index) const
 {
 	return((*this)[index]);
 }
 
-// FUNCTION: 0x007B71B0
+// FUNCTION: GAMEMD 0x007B71B0
 unsigned int WideWstring::length(void) const
 {
 	if (str == NULL)
@@ -1054,7 +1060,7 @@ unsigned int WideWstring::length(void) const
 	return((unsigned int)wcslen(str));
 }
 
-// FUNCTION: 0x007B71D0
+// FUNCTION: GAMEMD 0x007B71D0
 char WideWstring::insert(wchar_t const* instring, unsigned int pos)
 {
 	if (str == NULL)
@@ -1072,7 +1078,7 @@ char WideWstring::insert(wchar_t const* instring, unsigned int pos)
 	return(TRUE);
 }
 
-// FUNCTION: 0x007B72F0
+// FUNCTION: GAMEMD 0x007B72F0
 char WideWstring::insert(wchar_t k, unsigned int pos)
 {
 	wchar_t* s;
@@ -1107,7 +1113,7 @@ char WideWstring::insert(wchar_t k, unsigned int pos)
 	return(TRUE);
 }
 
-// FUNCTION: 0x007B73F0
+// FUNCTION: GAMEMD 0x007B73F0
 char WideWstring::replace(wchar_t const* replaceThis, wchar_t const* withThis)
 {
 	WideWstring  dest;
@@ -1141,7 +1147,7 @@ char WideWstring::replace(wchar_t const* replaceThis, wchar_t const* withThis)
 	return(set(dest.get()));
 }
 
-// FUNCTION: 0x007B7600
+// FUNCTION: GAMEMD 0x007B7600
 wchar_t WideWstring::set(wchar_t const* s)
 {
 	unsigned int len;
@@ -1158,7 +1164,7 @@ wchar_t WideWstring::set(wchar_t const* s)
 	return(TRUE);
 }
 
-// FUNCTION: 0x007B7660
+// FUNCTION: GAMEMD 0x007B7660
 char WideWstring::set(wchar_t c, unsigned int index)
 {
 	if (index >= (unsigned int)wcslen(str))
@@ -1169,7 +1175,7 @@ char WideWstring::set(wchar_t c, unsigned int index)
 	return(TRUE);
 }
 
-// FUNCTION: 0x007B7690
+// FUNCTION: GAMEMD 0x007B7690
 wchar_t WideWstring::set(unsigned int size, wchar_t const* string)
 {
 	unsigned int len;
@@ -1186,7 +1192,7 @@ wchar_t WideWstring::set(unsigned int size, wchar_t const* string)
 	return(TRUE);
 }
 
-// FUNCTION: 0x007B76F0
+// FUNCTION: GAMEMD 0x007B76F0
 void WideWstring::toLower(void)
 {
 	unsigned int i;
@@ -1198,7 +1204,7 @@ void WideWstring::toLower(void)
 	}
 }
 
-// FUNCTION: 0x007B7740
+// FUNCTION: GAMEMD 0x007B7740
 WideWstring WideWstring::toLower(void) const
 {
 	WideWstring tmp = *this;
@@ -1206,7 +1212,7 @@ WideWstring WideWstring::toLower(void) const
 	return(tmp);
 }
 
-// FUNCTION: 0x007B77E0
+// FUNCTION: GAMEMD 0x007B77E0
 void WideWstring::toUpper(void)
 {
 	unsigned int i;
@@ -1218,7 +1224,7 @@ void WideWstring::toUpper(void)
 	}
 }
 
-// FUNCTION: 0x007B7830
+// FUNCTION: GAMEMD 0x007B7830
 WideWstring WideWstring::toUpper(void) const
 {
 	WideWstring tmp = *this;
@@ -1226,7 +1232,7 @@ WideWstring WideWstring::toUpper(void) const
 	return(tmp);
 }
 
-// FUNCTION: 0x007B78D0
+// FUNCTION: GAMEMD 0x007B78D0
 char WideWstring::truncate(unsigned int len)
 {
 	WideWstring tmp;
@@ -1235,7 +1241,7 @@ char WideWstring::truncate(unsigned int len)
 	return(TRUE);
 }
 
-// FUNCTION: 0x007B7980
+// FUNCTION: GAMEMD 0x007B7980
 char WideWstring::truncate(wchar_t c)
 {
 	int  len;
@@ -1251,7 +1257,7 @@ char WideWstring::truncate(wchar_t c)
 	return(TRUE);
 }
 
-// FUNCTION: 0x007B7A60
+// FUNCTION: GAMEMD 0x007B7A60
 int WideWstring::getToken(int offset, wchar_t const* delim, WideWstring& out) const
 {
 	int i;
@@ -1279,7 +1285,7 @@ int WideWstring::getToken(int offset, wchar_t const* delim, WideWstring& out) co
 	return(stop + 1);
 }
 
-// FUNCTION: 0x007B7C00
+// FUNCTION: GAMEMD 0x007B7C00
 int WideWstring::getLine(int offset, WideWstring& out) const
 {
 	int i;
@@ -1303,13 +1309,13 @@ int WideWstring::getLine(int offset, WideWstring& out) const
 	return(stop + 1);
 }
 
-// FUNCTION: 0x007B7D80
+// FUNCTION: GAMEMD 0x007B7D80
 int WideWstring::toInt(void) const
 {
 	return(wcstol(str, NULL, 10));
 }
 
-// FUNCTION: 0x007B7D90
+// FUNCTION: GAMEMD 0x007B7D90
 unsigned char __fastcall FUN_007B7D90(WideWstring * text)
 {
 	if (text->str) {
@@ -1324,7 +1330,7 @@ unsigned char __fastcall FUN_007B7D90(WideWstring * text)
 	return(1);
 }
 
-// FUNCTION: 0x007B7DD0
+// FUNCTION: GAMEMD 0x007B7DD0
 WideWstring __fastcall FUN_007B7DD0(int value)
 {
 	wchar_t buf[32];
@@ -1332,7 +1338,7 @@ WideWstring __fastcall FUN_007B7DD0(int value)
 	return(WideWstring(buf));
 }
 
-// FUNCTION: 0x007B7E40
+// FUNCTION: GAMEMD 0x007B7E40
 WideWstring __fastcall FUN_007B7E40(int value, int width)
 {
 	wchar_t buf[32];
@@ -1343,7 +1349,7 @@ WideWstring __fastcall FUN_007B7E40(int value, int width)
 
 void __fastcall FUN_00735060(wchar_t * dest, char const * source, int length);
 
-// FUNCTION: 0x007B7ED0
+// FUNCTION: GAMEMD 0x007B7ED0
 WideWstring __fastcall FUN_007B7ED0(Wstring const & text)
 {
 	int len = text.length();
@@ -1358,7 +1364,7 @@ namespace OwnerDraw {
 char * __fastcall WideToCharString(char * dest, wchar_t const * src, int count);
 }
 
-// FUNCTION: 0x007B7F90
+// FUNCTION: GAMEMD 0x007B7F90
 Wstring __fastcall FUN_007B7F90(WideWstring const & string)
 {
 	int len = string.length();
@@ -1369,13 +1375,13 @@ Wstring __fastcall FUN_007B7F90(WideWstring const & string)
 	return(tmp);
 }
 
-// FUNCTION: 0x007B8090
+// FUNCTION: GAMEMD 0x007B8090
 WideWstring __fastcall FUN_007B8090(wchar_t const * prefix, WideWstring const & text)
 {
 	return(WideWstring(prefix) + text);
 }
 
-// FUNCTION: 0x007B8170
+// FUNCTION: GAMEMD 0x007B8170
 WideWstring __fastcall FUN_007B8170(WideWstring const & a, WideWstring const & b)
 {
 	WideWstring tmp = a;
@@ -1383,7 +1389,7 @@ WideWstring __fastcall FUN_007B8170(WideWstring const & a, WideWstring const & b
 	return(tmp);
 }
 
-// FUNCTION: 0x007B8250
+// FUNCTION: GAMEMD 0x007B8250
 bool WideWstring::containsAny(wchar_t const* chars) const
 {
 	if (chars == NULL || str == NULL)
@@ -1394,13 +1400,13 @@ bool WideWstring::containsAny(wchar_t const* chars) const
 
 void __fastcall FUN_004335E0(wchar_t const * source, char * dest, int count);
 
-// FUNCTION: 0x007B8290
+// FUNCTION: GAMEMD 0x007B8290
 bool WideWstring::containsAny(WideWstring const & chars) const
 {
 	return(containsAny(chars.get()));
 }
 
-// FUNCTION: 0x007B82E0
+// FUNCTION: GAMEMD 0x007B82E0
 Wstring __fastcall FUN_007B82E0(WideWstring const & string)
 {
 	int len = string.length();
@@ -1414,7 +1420,7 @@ Wstring __fastcall FUN_007B82E0(WideWstring const & string)
 
 void __fastcall FUN_00433770(char const * source, wchar_t * dest, int count);
 
-// FUNCTION: 0x007B83E0
+// FUNCTION: GAMEMD 0x007B83E0
 WideWstring __fastcall FUN_007B83E0(Wstring const & text)
 {
 	unsigned int len = text.length();
@@ -1431,7 +1437,7 @@ int DAT_00B7812C;
 int DAT_00B78130;
 int DAT_00B78134;
 
-// FUNCTION: 0x007B84B0
+// FUNCTION: GAMEMD 0x007B84B0
 void FUN_007B84B0(void)
 {
 	DAT_00B78128 = 0;

@@ -7,7 +7,7 @@
 #include "field.h"
 #include <cstring>
 
-// FUNCTION: 0x004CB580
+// FUNCTION: GAMEMD 0x004CB580
 FieldClass::FieldClass(char const *id, char data)
 {
 	strncpy(ID, id, sizeof(ID));
@@ -18,7 +18,7 @@ FieldClass::FieldClass(char const *id, char data)
 	Next		= NULL;
 }
 
-// FUNCTION: 0x004CB5E0
+// FUNCTION: GAMEMD 0x004CB5E0
 FieldClass::FieldClass(char const *id, unsigned char data)
 {
 	strncpy(ID, id, sizeof(ID));
@@ -29,7 +29,7 @@ FieldClass::FieldClass(char const *id, unsigned char data)
 	Next		= NULL;
 }
 
-// FUNCTION: 0x004CB640
+// FUNCTION: GAMEMD 0x004CB640
 FieldClass::FieldClass(char const *id, short data)
 {
 	strncpy(ID, id, sizeof(ID));
@@ -40,7 +40,7 @@ FieldClass::FieldClass(char const *id, short data)
 	Next		= NULL;
 }
 
-// FUNCTION: 0x004CB6A0
+// FUNCTION: GAMEMD 0x004CB6A0
 FieldClass::FieldClass(char const *id, unsigned short data)
 {
 	strncpy(ID, id, sizeof(ID));
@@ -51,7 +51,7 @@ FieldClass::FieldClass(char const *id, unsigned short data)
 	Next		= NULL;
 }
 
-// FUNCTION: 0x004CB700
+// FUNCTION: GAMEMD 0x004CB700
 FieldClass::FieldClass(char const *id, int data)
 {
 	strncpy(ID, id, sizeof(ID));
@@ -62,7 +62,7 @@ FieldClass::FieldClass(char const *id, int data)
 	Next		= NULL;
 }
 
-// FUNCTION: 0x004CB760
+// FUNCTION: GAMEMD 0x004CB760
 FieldClass::FieldClass(char const *id, unsigned int data)
 {
 	strncpy(ID, id, sizeof(ID));
@@ -73,7 +73,7 @@ FieldClass::FieldClass(char const *id, unsigned int data)
 	Next		= NULL;
 }
 
-// FUNCTION: 0x004CB7C0
+// FUNCTION: GAMEMD 0x004CB7C0
 FieldClass::FieldClass(char const *id, char const *data)
 {
 	strncpy(ID, id, sizeof(ID));
@@ -84,7 +84,7 @@ FieldClass::FieldClass(char const *id, char const *data)
 	Next		= NULL;
 }
 
-// FUNCTION: 0x004CB830
+// FUNCTION: GAMEMD 0x004CB830
 FieldClass::FieldClass(char const *id, void *data, int length)
 {
 	strncpy(ID, id, sizeof(ID));
@@ -95,14 +95,14 @@ FieldClass::FieldClass(char const *id, void *data, int length)
 	Next		= NULL;
 }
 
-// FUNCTION: 0x004CB890
+// FUNCTION: GAMEMD 0x004CB890
 FieldClass::~FieldClass(void)
 {
 	delete[](Data);
 	Data=NULL;
 }
 
-// FUNCTION: 0x004CB8B0
+// FUNCTION: GAMEMD 0x004CB8B0
 void FieldClass::Host_To_Net(void)
 {
 	switch (DataType) {
@@ -129,7 +129,7 @@ void FieldClass::Host_To_Net(void)
 	Size 	 	= htons(Size);
 }
 
-// FUNCTION: 0x004CB920
+// FUNCTION: GAMEMD 0x004CB920
 void FieldClass::Net_To_Host(void)
 {
 	Size 	 	= ntohs(Size);

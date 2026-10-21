@@ -24,7 +24,7 @@
 
 extern int FUN_00407000(void);
 
-// FUNCTION: 0x005D1AA0
+// FUNCTION: GAMEMD 0x005D1AA0
 MSEngine::MSEngine(void)
 {
 	RectCount = 0;
@@ -34,7 +34,7 @@ MSEngine::MSEngine(void)
 	Sounds.Clear();
 }
 
-// FUNCTION: 0x005D1B30
+// FUNCTION: GAMEMD 0x005D1B30
 MSEngine::~MSEngine(void)
 {
 	int index;
@@ -52,7 +52,7 @@ MSEngine::~MSEngine(void)
 	Rects.Clear();
 }
 
-// FUNCTION: 0x005D1C20
+// FUNCTION: GAMEMD 0x005D1C20
 int MSEngine::Add_Animation(MSAnim * anim)
 {
 	if (anim != NULL) {
@@ -63,14 +63,14 @@ int MSEngine::Add_Animation(MSAnim * anim)
 	return(-1);
 }
 
-// FUNCTION: 0x005D1C90
+// FUNCTION: GAMEMD 0x005D1C90
 void MSEngine::Replace_Anim(MSAnim * new_anim, MSAnim * old_anim)
 {
 	Anims.Insert_After(Anims.ID(old_anim), new_anim);
 	Remove_Anim(old_anim);
 }
 
-// FUNCTION: 0x005D1D80
+// FUNCTION: GAMEMD 0x005D1D80
 void MSEngine::Remove_Anim(MSAnim * anim)
 {
 	if (anim) {
@@ -83,7 +83,7 @@ void MSEngine::Remove_Anim(MSAnim * anim)
 	}
 }
 
-// FUNCTION: 0x005D1DF0
+// FUNCTION: GAMEMD 0x005D1DF0
 void MSEngine::Wait_For_Anim(MSAnim * anim, unsigned delay)
 {
 	CDTimerClass<SystemTimerClass> timer = delay;
@@ -106,14 +106,14 @@ void MSEngine::Wait_For_Anim(MSAnim * anim, unsigned delay)
 	}
 }
 
-// FUNCTION: 0x005D1E50
+// FUNCTION: GAMEMD 0x005D1E50
 void MSEngine::Restore_And_Advance(void)
 {
 	SurfacesRestored = true;
 	Advance(HiddenSurface);
 }
 
-// FUNCTION: 0x005D1E70
+// FUNCTION: GAMEMD 0x005D1E70
 void MSEngine::Advance(Surface * surface)
 {
 	if (SurfacesRestored == true) {
@@ -142,7 +142,7 @@ void MSEngine::Advance(Surface * surface)
 }
 
 
-// FUNCTION: 0x005D2260
+// FUNCTION: GAMEMD 0x005D2260
 void MSEngine::Blit_All(Surface * surface)
 {
 	RECT client_rect;
@@ -171,7 +171,7 @@ void MSEngine::Blit_All(Surface * surface)
 	}
 }
 
-// FUNCTION: 0x005D2350
+// FUNCTION: GAMEMD 0x005D2350
 void MSEngine::Blit_Rect(Surface * surface, Rect const & rect)
 {
 	RECT client_rect;
@@ -196,7 +196,7 @@ void MSEngine::Blit_Rect(Surface * surface, Rect const & rect)
 	}
 }
 
-// FUNCTION: 0x005D2410
+// FUNCTION: GAMEMD 0x005D2410
 void MSEngine::Wait_Delay(int delay)
 {
 	CDTimerClass<SystemTimerClass> timer = 1;
@@ -226,7 +226,7 @@ void MSEngine::Wait_Delay(int delay)
 	} while (delay != 0);
 }
 
-// FUNCTION: 0x005D2530
+// FUNCTION: GAMEMD 0x005D2530
 void MSEngine::Wait_For_Focus(void)
 {
 	int index;
@@ -250,7 +250,7 @@ void MSEngine::Wait_For_Focus(void)
 	}
 }
 
-// FUNCTION: 0x005D25D0
+// FUNCTION: GAMEMD 0x005D25D0
 bool MSEngine::Add_Sound_Effect(char const * name, char const * file_name)
 {
 	if (name == NULL || file_name == NULL) {
@@ -264,7 +264,7 @@ bool MSEngine::Add_Sound_Effect(char const * name, char const * file_name)
 	return(false);
 }
 
-// FUNCTION: 0x005D2650
+// FUNCTION: GAMEMD 0x005D2650
 void MSEngine::Play_Sound_Effect(char const * name, int volume)
 {
 	if (name == NULL || !FUN_00407000()) {
@@ -280,7 +280,7 @@ void MSEngine::Play_Sound_Effect(char const * name, int volume)
 	}
 }
 
-// FUNCTION: 0x005D26C0
+// FUNCTION: GAMEMD 0x005D26C0
 void MSEngine::Restore_Anims(Rect const & rect)
 {
 	for (int i = 0; i < Anims.Count(); i++) {
@@ -288,58 +288,85 @@ void MSEngine::Restore_Anims(Rect const & rect)
 	}
 }
 
-// FUNCTION: 0x005D26F0 MSEngine::Process_Idle
+// FUNCTION: GAMEMD 0x005D26F0
+// MSEngine::Process_Idle
 
-// FUNCTION: 0x005D2700 MSEngine::~MSEngine
+// SYNTHETIC: GAMEMD 0x005D2700
+// ??_GMSEngine@@UAEPAXI@Z
 
-// FUNCTION: 0x005D2720 ?$DynamicVectorClass@PAVMSAnim@@::Clear
+// TEMPLATE: GAMEMD 0x005D2720
+// ?Clear@?$DynamicVectorClass@PAVMSAnim@@@@UAEXXZ
 template class DynamicVectorClass<MSAnim *>;
 
-// FUNCTION: 0x005D2750 ?$DynamicVectorClass@PAVMSAnim@@::ID
+// TEMPLATE: GAMEMD 0x005D2750
+// ?ID@?$DynamicVectorClass@PAVMSAnim@@@@UAEHPBQAVMSAnim@@@Z
 
-// FUNCTION: 0x005D2770 ?$VectorClass@PAVMSAnim@@::GetItem
+// TEMPLATE: GAMEMD 0x005D2770
+// ?GetItem@?$VectorClass@PAVMSAnim@@@@UBEPAVMSAnim@@H@Z
 
-// FUNCTION: 0x005D2780 ?$DynamicVectorClass@PAVMSSfx@@::Clear
+// TEMPLATE: GAMEMD 0x005D2780
+// ?Clear@?$DynamicVectorClass@PAVMSSfx@@@@UAEXXZ
 template class DynamicVectorClass<MSSfx *>;
 
-// FUNCTION: 0x005D27B0 ?$DynamicVectorClass@PAVMSSfx@@::ID
+// TEMPLATE: GAMEMD 0x005D27B0
+// ?ID@?$DynamicVectorClass@PAVMSSfx@@@@UAEHPBQAVMSSfx@@@Z
 
-// FUNCTION: 0x005D27D0 ?$VectorClass@PAVMSSfx@@::GetItem
+// TEMPLATE: GAMEMD 0x005D27D0
+// ?GetItem@?$VectorClass@PAVMSSfx@@@@UBEPAVMSSfx@@H@Z
 
-// FUNCTION: 0x005D27E0 ?$VectorClass@PAVMSAnim@@::operator==
+// TEMPLATE: GAMEMD 0x005D27E0
+// ??8?$VectorClass@PAVMSAnim@@@@UBE_NABV0@@Z
 
-// FUNCTION: 0x005D2820 ?$VectorClass@PAVMSAnim@@::Resize
+// TEMPLATE: GAMEMD 0x005D2820
+// ?Resize@?$VectorClass@PAVMSAnim@@@@UAE_NHPBQAVMSAnim@@@Z
 
-// FUNCTION: 0x005D28D0 ?$VectorClass@PAVMSAnim@@::Clear
+// TEMPLATE: GAMEMD 0x005D28D0
+// ?Clear@?$VectorClass@PAVMSAnim@@@@UAEXXZ
 
-// FUNCTION: 0x005D2900 ?$VectorClass@PAVMSAnim@@::ID
+// TEMPLATE: GAMEMD 0x005D2900
+// ?ID@?$VectorClass@PAVMSAnim@@@@UAEHABQAVMSAnim@@@Z
 
-// FUNCTION: 0x005D2940 ?$VectorClass@PAVMSSfx@@::ID
+// TEMPLATE: GAMEMD 0x005D2940
+// ?ID@?$VectorClass@PAVMSSfx@@@@UAEHPBQAVMSSfx@@@Z
 
-// FUNCTION: 0x005D2960 ?$DynamicVectorClass@PAVMSAnim@@::Resize
+// TEMPLATE: GAMEMD 0x005D2960
+// ?Resize@?$DynamicVectorClass@PAVMSAnim@@@@UAE_NHPBQAVMSAnim@@@Z
 
-// FUNCTION: 0x005D2A10 ?$DynamicVectorClass@PAVMSAnim@@::ID
+// TEMPLATE: GAMEMD 0x005D2A10
+// ?ID@?$DynamicVectorClass@PAVMSAnim@@@@UAEHABQAVMSAnim@@@Z
 
-// FUNCTION: 0x005D2A40 ?$VectorClass@PAVMSSfx@@::operator==
+// TEMPLATE: GAMEMD 0x005D2A40
+// ??8?$VectorClass@PAVMSSfx@@@@UBE_NABV0@@Z
 
-// FUNCTION: 0x005D2A80 ?$VectorClass@PAVMSSfx@@::Resize
+// TEMPLATE: GAMEMD 0x005D2A80
+// ?Resize@?$VectorClass@PAVMSSfx@@@@UAE_NHPBQAVMSSfx@@@Z
 
-// FUNCTION: 0x005D2B30 ?$VectorClass@PAVMSSfx@@::Clear
+// TEMPLATE: GAMEMD 0x005D2B30
+// ?Clear@?$VectorClass@PAVMSSfx@@@@UAEXXZ
 
-// FUNCTION: 0x005D2B60 ?$VectorClass@PAVMSSfx@@::ID
+// TEMPLATE: GAMEMD 0x005D2B60
+// ?ID@?$VectorClass@PAVMSSfx@@@@UAEHABQAVMSSfx@@@Z
 
-// FUNCTION: 0x005D2BA0 ?$VectorClass@PAVMSAnim@@::ID
+// TEMPLATE: GAMEMD 0x005D2BA0
+// ?ID@?$VectorClass@PAVMSAnim@@@@UAEHPBQAVMSAnim@@@Z
 
-// FUNCTION: 0x005D2BC0 ?$DynamicVectorClass@PAVMSSfx@@::Resize
+// TEMPLATE: GAMEMD 0x005D2BC0
+// ?Resize@?$DynamicVectorClass@PAVMSSfx@@@@UAE_NHPBQAVMSSfx@@@Z
 
-// FUNCTION: 0x005D2C70 ?$DynamicVectorClass@PAVMSSfx@@::ID
+// TEMPLATE: GAMEMD 0x005D2C70
+// ?ID@?$DynamicVectorClass@PAVMSSfx@@@@UAEHABQAVMSSfx@@@Z
 
-// FUNCTION: 0x005D2CA0 ?$VectorClass@PAVMSAnim@@::~?$VectorClass@PAVMSAnim@@
+// SYNTHETIC: GAMEMD 0x005D2CA0
+// ??_G?$VectorClass@PAVMSAnim@@@@UAEPAXI@Z
 
-// FUNCTION: 0x005D2CF0 ?$DynamicVectorClass@PAVMSAnim@@::~?$DynamicVectorClass@PAVMSAnim@@
+// SYNTHETIC: GAMEMD 0x005D2CF0
+// ??_G?$DynamicVectorClass@PAVMSAnim@@@@UAEPAXI@Z
 
-// FUNCTION: 0x005D2D40 ?$VectorClass@PAVMSSfx@@::~?$VectorClass@PAVMSSfx@@
+// SYNTHETIC: GAMEMD 0x005D2D40
+// ??_G?$VectorClass@PAVMSSfx@@@@UAEPAXI@Z
 
-// FUNCTION: 0x005D2D90 ?$DynamicVectorClass@PAVMSSfx@@::~?$DynamicVectorClass@PAVMSSfx@@
+// SYNTHETIC: GAMEMD 0x005D2D90
+// ??_G?$DynamicVectorClass@PAVMSSfx@@@@UAEPAXI@Z
 
-// FUNCTION: 0x005D2DE0 $E2
+// SYNTHETIC: GAMEMD 0x005D2DE0 SYMBOL
+// _$E2

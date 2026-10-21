@@ -20,7 +20,7 @@ namespace Randomizer { extern Random2Class Global; }
 extern int __cdecl FUN_007B2730(void);
 extern bool DAT_00B7801C;
 
-// FUNCTION: 0x007B0D90
+// FUNCTION: GAMEMD 0x007B0D90
 IPXInterfaceClass::IPXInterfaceClass (void) : BASECLASS()
 {
 	memset ( BroadcastNet, 0xff, sizeof (BroadcastNet) );
@@ -28,7 +28,7 @@ IPXInterfaceClass::IPXInterfaceClass (void) : BASECLASS()
 	memset ( MyNode, 0xff, sizeof (MyNode) );
 }
 
-// FUNCTION: 0x007B0DD0
+// FUNCTION: GAMEMD 0x007B0DD0
 int IPXInterfaceClass::Get_Network_Card_Address (int card_number, SOCKADDR_IPX *addr)
 {
 	int            	cbOpt;
@@ -84,7 +84,7 @@ int IPXInterfaceClass::Get_Network_Card_Address (int card_number, SOCKADDR_IPX *
 	return(1);
 }
 
-// FUNCTION: 0x007B0F50
+// FUNCTION: GAMEMD 0x007B0F50
 int IPXInterfaceClass::Get_Network_Card_Address_As_String(int card_number, char *buffer, int length)
 {
 	SOCKADDR_IPX address;
@@ -132,7 +132,7 @@ int IPXInterfaceClass::Get_Network_Card_Address_As_String(int card_number, char 
 	}
 }
 
-// FUNCTION: 0x007B10C0
+// FUNCTION: GAMEMD 0x007B10C0
 bool IPXInterfaceClass::Open_Socket( SOCKET socketnum )
 {
 	SOCKADDR_IPX 	addr;
@@ -225,7 +225,7 @@ bool IPXInterfaceClass::Open_Socket( SOCKET socketnum )
 	return( true );
 }
 
-// FUNCTION: 0x007B13D0
+// FUNCTION: GAMEMD 0x007B13D0
 int IPXInterfaceClass::Message_Handler(HWND , UINT message, UINT , LONG lParam)
 {
 	int					addr_len;
@@ -343,21 +343,29 @@ int IPXInterfaceClass::Message_Handler(HWND , UINT message, UINT , LONG lParam)
 	return(0);
 }
 
-// FUNCTION: 0x007B1720 WinsockInterfaceClass::Set_Broadcast_Address
+// FUNCTION: GAMEMD 0x007B1720
+// WinsockInterfaceClass::Set_Broadcast_Address
 
-// FUNCTION: 0x007B1730 WinsockInterfaceClass::Clear_Broadcast_Addresses
+// FUNCTION: GAMEMD 0x007B1730
+// WinsockInterfaceClass::Clear_Broadcast_Addresses
 
-// FUNCTION: 0x007B1740 WinsockInterfaceClass::Get_Num_Local_Addresses
+// FUNCTION: GAMEMD 0x007B1740
+// WinsockInterfaceClass::Get_Num_Local_Addresses
 
-// FUNCTION: 0x007B1750 WinsockInterfaceClass::Get_Local_Address
+// FUNCTION: GAMEMD 0x007B1750
+// WinsockInterfaceClass::Get_Local_Address
 
-// FUNCTION: 0x007B1760 WinsockInterfaceClass::Set_NetCard
+// FUNCTION: GAMEMD 0x007B1760
+// WinsockInterfaceClass::Set_NetCard
 
-// FUNCTION: 0x007B1770 IPXInterfaceClass::Get_Protocol
+// FUNCTION: GAMEMD 0x007B1770
+// IPXInterfaceClass::Get_Protocol
 
-// FUNCTION: 0x007B1780 IPXInterfaceClass::Protocol_Event_Message
+// FUNCTION: GAMEMD 0x007B1780
+// IPXInterfaceClass::Protocol_Event_Message
 
-// FUNCTION: 0x007B1790 IPXInterfaceClass::~IPXInterfaceClass
+// SYNTHETIC: GAMEMD 0x007B1790
+// ??_GIPXInterfaceClass@@UAEPAXI@Z
 
 struct WspIPXQuad {
 	int A;
@@ -367,5 +375,6 @@ struct WspIPXQuad {
 	WspIPXQuad(void) : A(0), B(0), C(0), D(0) {}
 };
 
-// FUNCTION: 0x007B17B0 $E4
+// SYNTHETIC: GAMEMD 0x007B17B0 SYMBOL
+// _$E4
 WspIPXQuad DAT_00B78028;

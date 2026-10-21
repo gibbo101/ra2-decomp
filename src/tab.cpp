@@ -22,20 +22,34 @@
 
 #include <cmath>
 
-// FUNCTION: 0x006CF990 $E2
-// FUNCTION: 0x006CF9B0 $E5
-// FUNCTION: 0x006CF9E0 $E8
-// FUNCTION: 0x006CFA00 $E11
-// FUNCTION: 0x006CFA20 $E14
-// FUNCTION: 0x006CFA40 $E17
-// FUNCTION: 0x006CFA60 $E20
-// FUNCTION: 0x006CFA80 $E23
-// FUNCTION: 0x006CFAC0 $E26
-// FUNCTION: 0x006CFAF0 $E29
-// FUNCTION: 0x006CFB20 $E32
-// FUNCTION: 0x006CFB50 $E35
-// FUNCTION: 0x006CFB60 $E38
-// FUNCTION: 0x006CFB80 $E41
+// SYNTHETIC: GAMEMD 0x006CF990 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x006CF9B0 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x006CF9E0 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x006CFA00 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x006CFA20 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x006CFA40 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x006CFA60 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x006CFA80 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x006CFAC0 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x006CFAF0 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x006CFB20 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x006CFB50 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x006CFB60 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x006CFB80 SYMBOL
+// _$E41
 
 struct CommandBarStatics {
 	static ShapeButtonClass Buttons[25];
@@ -43,16 +57,22 @@ struct CommandBarStatics {
 	static ShapeButtonClass ButtonB;
 };
 
-// FUNCTION: 0x006CFBA0 $E121
-// FUNCTION: 0x006CFBD0 $E118
+// SYNTHETIC: GAMEMD 0x006CFBA0 SYMBOL
+// _$E121
+// SYNTHETIC: GAMEMD 0x006CFBD0 SYMBOL
+// _$E118
 ShapeButtonClass CommandBarStatics::Buttons[25];
 
-// FUNCTION: 0x006CFC00 $E126
-// FUNCTION: 0x006CFC20 $E124
+// SYNTHETIC: GAMEMD 0x006CFC00 SYMBOL
+// _$E126
+// SYNTHETIC: GAMEMD 0x006CFC20 SYMBOL
+// _$E124
 ShapeButtonClass CommandBarStatics::ButtonA;
 
-// FUNCTION: 0x006CFC40 $E131
-// FUNCTION: 0x006CFC60 $E129
+// SYNTHETIC: GAMEMD 0x006CFC40 SYMBOL
+// _$E131
+// SYNTHETIC: GAMEMD 0x006CFC60 SYMBOL
+// _$E129
 ShapeButtonClass CommandBarStatics::ButtonB;
 
 extern void * DAT_00B0C148[];
@@ -61,7 +81,7 @@ extern char const * DAT_008427D0[11];
 extern int DAT_008427CC;
 extern int DAT_00B0CB78[];
 
-// FUNCTION: 0x006CFC80
+// FUNCTION: GAMEMD 0x006CFC80
 void __fastcall FUN_006CFC80(int index)
 {
 	if (DAT_00B0CBDC[index]) {
@@ -71,7 +91,7 @@ void __fastcall FUN_006CFC80(int index)
 	DAT_00B0C148[index] = NULL;
 }
 
-// FUNCTION: 0x006CFCC0
+// FUNCTION: GAMEMD 0x006CFCC0
 int __fastcall FUN_006CFCC0(char const * name)
 {
 	for (int i = 0; i < 11; i++) {
@@ -82,19 +102,19 @@ int __fastcall FUN_006CFCC0(char const * name)
 	return DAT_008427CC;
 }
 
-// FUNCTION: 0x006CFD20
+// FUNCTION: GAMEMD 0x006CFD20
 void __fastcall FUN_006CFD20(int button, int slot)
 {
 	DAT_00B0CB78[button] = slot;
 }
 
-// FUNCTION: 0x006CFD30
+// FUNCTION: GAMEMD 0x006CFD30
 int __fastcall FUN_006CFD30(int button)
 {
 	return DAT_00B0CB78[button];
 }
 
-// FUNCTION: 0x006CFD40
+// FUNCTION: GAMEMD 0x006CFD40
 ShapeButtonClass * __fastcall FUN_006CFD40(int button)
 {
 	int slot = DAT_00B0CB78[button];
@@ -126,14 +146,14 @@ namespace Unsorted { extern bool ArmageddonMode; }
 
 bool __fastcall FUN_0072F430(void);
 
-// FUNCTION: 0x006CFD60
+// FUNCTION: GAMEMD 0x006CFD60
 Rect __fastcall FUN_006CFD60(int button)
 {
 	Rect r = *DAT_00B0FC68;
 	return Rect(DAT_00B0CB78[button] * DAT_00B0CC38 + r.X, DAT_00B0CC24, r.Width, r.Height);
 }
 
-// FUNCTION: 0x006CFDB0
+// FUNCTION: GAMEMD 0x006CFDB0
 void __fastcall FUN_006CFDB0(int count)
 {
 	DAT_00B0CB54 = count;
@@ -146,13 +166,13 @@ void __fastcall FUN_006CFDB0(int count)
 	}
 }
 
-// FUNCTION: 0x006CFDF0
+// FUNCTION: GAMEMD 0x006CFDF0
 bool __fastcall FUN_006CFDF0(int value)
 {
 	return value >= DAT_00B0CC20 && value <= DAT_00B0CD28;
 }
 
-// FUNCTION: 0x006CFE10
+// FUNCTION: GAMEMD 0x006CFE10
 int __fastcall FUN_006CFE10(int value)
 {
 	return value - DAT_00B0CC20 + 1;
@@ -170,7 +190,7 @@ extern int DAT_00B0CB38;
 
 void __fastcall FUN_00637060(INoticeSink * sink);
 
-// FUNCTION: 0x006CFE20
+// FUNCTION: GAMEMD 0x006CFE20
 TabClass::TabClass(void) :
 	FlasherTimer(0),
 	MoneyFlashTimer(0),
@@ -192,13 +212,13 @@ TabClass::TabClass(void) :
 	FUN_00637060(this);
 }
 
-// FUNCTION: 0x006D0260
+// FUNCTION: GAMEMD 0x006D0260
 void TabClass::One_Time(void)
 {
 	BASECLASS::One_Time();
 }
 
-// FUNCTION: 0x006D0270
+// FUNCTION: GAMEMD 0x006D0270
 void TabClass::DisposeOfArt(void)
 {
 	BASECLASS::DisposeOfArt();
@@ -207,7 +227,7 @@ void TabClass::DisposeOfArt(void)
 	}
 }
 
-// FUNCTION: 0x006D03A0
+// FUNCTION: GAMEMD 0x006D03A0
 void TabClass::Init_IO(void)
 {
 	BASECLASS::Init_IO();
@@ -236,7 +256,7 @@ void TabClass::Init_IO(void)
 	}
 }
 
-// FUNCTION: 0x006D04A0
+// FUNCTION: GAMEMD 0x006D04A0
 void TabClass::FUN_006D04A0(void)
 {
 	for (int p = (int)CommandBarStatics::Buttons; p < (int)(CommandBarStatics::Buttons + 25); p += sizeof(ShapeButtonClass)) {
@@ -245,7 +265,7 @@ void TabClass::FUN_006D04A0(void)
 	}
 }
 
-// FUNCTION: 0x006D04D0
+// FUNCTION: GAMEMD 0x006D04D0
 void TabClass::FUN_006D04D0(void)
 {
 	for (int p = (int)CommandBarStatics::Buttons; p < (int)(CommandBarStatics::Buttons + 25); p += sizeof(ShapeButtonClass)) {
@@ -259,7 +279,7 @@ struct CCToolTip {
 
 void __fastcall FUN_006D09C0(ShapeButtonClass * button, char const * text);
 
-// FUNCTION: 0x006D04F0
+// FUNCTION: GAMEMD 0x006D04F0
 bool TabClass::Activate(int control)
 {
 	bool ok = BASECLASS::Activate(control);
@@ -360,7 +380,7 @@ inline void TabClass::Open_Thumb(void)
 	}
 }
 
-// FUNCTION: 0x006D0680
+// FUNCTION: GAMEMD 0x006D0680
 void TabClass::AI(KeyNumType & input, Point2D const & xy)
 {
 	if (MoneyFlashTimer == 1) {
@@ -425,7 +445,7 @@ void TabClass::AI(KeyNumType & input, Point2D const & xy)
 	BASECLASS::AI(input, xy);
 }
 
-// FUNCTION: 0x006D09C0
+// FUNCTION: GAMEMD 0x006D09C0
 void __fastcall FUN_006D09C0(ShapeButtonClass * button, char const * text)
 {
 	if (button) {
@@ -445,7 +465,7 @@ extern DSurface * DAT_00887300;
 extern ShapeSet const * DAT_00B0FB08;
 extern bool DAT_00B0B518;
 
-// FUNCTION: 0x006D0E60
+// FUNCTION: GAMEMD 0x006D0E60
 void TabClass::Draw_Credits_Tab(void)
 {
 	ShapeSet const * shape = DAT_00B0FB08;
@@ -453,7 +473,7 @@ void TabClass::Draw_Credits_Tab(void)
 	DAT_00B0B518 = true;
 }
 
-// FUNCTION: 0x006D0EC0
+// FUNCTION: GAMEMD 0x006D0EC0
 void TabClass::Flash_Money(void)
 {
 	IsToRedraw = true;
@@ -461,14 +481,14 @@ void TabClass::Flash_Money(void)
 	MoneyFlashTimer = 7;
 }
 
-// FUNCTION: 0x006D0F00
+// FUNCTION: GAMEMD 0x006D0F00
 void TabClass::Redraw_Tab(void)
 {
 	IsToRedraw = true;
 	Flag_To_Redraw();
 }
 
-// FUNCTION: 0x006D0F10
+// FUNCTION: GAMEMD 0x006D0F10
 void __cdecl FUN_006D0F10(void)
 {
 	bool loaded = false;
@@ -480,7 +500,7 @@ void __cdecl FUN_006D0F10(void)
 	}
 }
 
-// FUNCTION: 0x006D0F70
+// FUNCTION: GAMEMD 0x006D0F70
 void __cdecl FUN_006D0F70(void)
 {
 	for (int i = 0; i < 25; i++) {
@@ -492,7 +512,7 @@ void __cdecl FUN_006D0F70(void)
 	}
 }
 
-// FUNCTION: 0x006D0FB0
+// FUNCTION: GAMEMD 0x006D0FB0
 void __fastcall FUN_006D0FB0(ShapeButtonClass * button, int id, int flags)
 {
 	button->ID = id;
@@ -502,7 +522,7 @@ void __fastcall FUN_006D0FB0(ShapeButtonClass * button, int id, int flags)
 	button->IsToggleType = 0;
 }
 
-// FUNCTION: 0x006D0FD0
+// FUNCTION: GAMEMD 0x006D0FD0
 void TabClass::FUN_006D0FD0(void)
 {
 	for (int p = (int)CommandBarStatics::Buttons; p < (int)(CommandBarStatics::Buttons + 25); p += sizeof(ShapeButtonClass)) {
@@ -541,7 +561,7 @@ void TabClass::FUN_006D0FD0(void)
 	}
 }
 
-// FUNCTION: 0x006D1130
+// FUNCTION: GAMEMD 0x006D1130
 void __cdecl FUN_006D1130(void)
 {
 	ShapeSet const * shape = DAT_00B0FA90;
@@ -565,7 +585,7 @@ void __cdecl FUN_006D1130(void)
 	CommandBarStatics::ButtonB.Set_Shape(shape, 0, 0);
 }
 
-// FUNCTION: 0x006D1200
+// FUNCTION: GAMEMD 0x006D1200
 void TabClass::FUN_006D1200(void)
 {
 	FUN_006D04A0();
@@ -596,7 +616,7 @@ void TabClass::FUN_006D1200(void)
 	FUN_006D09C0(&CommandBarStatics::ButtonA, "Tip:ThumbOpen");
 }
 
-// FUNCTION: 0x006D14F0
+// FUNCTION: GAMEMD 0x006D14F0
 void TabClass::FUN_006D14F0(void)
 {
 	for (int p = (int)CommandBarStatics::Buttons; p < (int)(CommandBarStatics::Buttons + 25); p += sizeof(ShapeButtonClass)) {
@@ -612,21 +632,21 @@ void TabClass::FUN_006D14F0(void)
 	CCToolTip::Instance->Remove(0xF0);
 }
 
-// FUNCTION: 0x006D1570
+// FUNCTION: GAMEMD 0x006D1570
 void TabClass::FUN_006D1570(void)
 {
 	Add_A_Button(CommandBarStatics::ButtonB);
 	FUN_006D09C0(&CommandBarStatics::ButtonB, "Tip:ThumbClosed");
 }
 
-// FUNCTION: 0x006D15F0
+// FUNCTION: GAMEMD 0x006D15F0
 void TabClass::FUN_006D15F0(void)
 {
 	Remove_A_Button(CommandBarStatics::ButtonB);
 	CCToolTip::Instance->Remove(0xF1);
 }
 
-// FUNCTION: 0x006D1610
+// FUNCTION: GAMEMD 0x006D1610
 void TabClass::FUN_006D1610(void)
 {
 	if (!ThumbActive) {
@@ -639,7 +659,7 @@ void TabClass::FUN_006D1610(void)
 	}
 }
 
-// FUNCTION: 0x006D1660
+// FUNCTION: GAMEMD 0x006D1660
 void TabClass::FUN_006D1660(void)
 {
 	if (ThumbActive) {
@@ -655,7 +675,7 @@ void TabClass::FUN_006D1660(void)
 void __fastcall FUN_00723EA0(ShapeButtonClass * button);
 void __fastcall FUN_00723EB0(ShapeButtonClass * button);
 
-// FUNCTION: 0x006D1770
+// FUNCTION: GAMEMD 0x006D1770
 bool TabClass::INoticeSink_Unknown(DWORD unknown, DWORD unknown2)
 {
 	if (unknown == 0x11C7) {
@@ -675,13 +695,14 @@ bool TabClass::INoticeSink_Unknown(DWORD unknown, DWORD unknown2)
 	return false;
 }
 
-// FUNCTION: 0x006D1800
+// FUNCTION: GAMEMD 0x006D1800
 char const * TabClass::Help_Text(int id)
 {
 	return BASECLASS::Help_Text(id);
 }
 
-// FUNCTION: 0x006D1810 ToolTip::ToolTip
+// FUNCTION: GAMEMD 0x006D1810
+// ToolTip::ToolTip
 
 extern const double DAT_007E1708;
 extern const double DAT_007E1710;
@@ -691,16 +712,20 @@ extern const double DAT_007F4180;
 extern const double DAT_007F4188;
 extern double __cdecl FUN_004CAC40(double);
 
-// FUNCTION: 0x006D1830 $E136
+// SYNTHETIC: GAMEMD 0x006D1830 SYMBOL
+// _$E136
 double DAT_00B0CD78 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x006D1860 $E139
+// SYNTHETIC: GAMEMD 0x006D1860 SYMBOL
+// _$E139
 double DAT_00B0CEB8 = DAT_00B0CD78 / DAT_007F4180;
 
-// FUNCTION: 0x006D1880 $E142
+// SYNTHETIC: GAMEMD 0x006D1880 SYMBOL
+// _$E142
 double DAT_00B0CEA0 = DAT_007E1718 / DAT_00B0CEB8;
 
-// FUNCTION: 0x006D18A0 $E145
+// SYNTHETIC: GAMEMD 0x006D18A0 SYMBOL
+// _$E145
 double DAT_00B0CE98 = DAT_007E1720 * DAT_007F4188;
 
 extern const double DAT_007E1728;
@@ -730,32 +755,42 @@ struct TabIntInit {
 	TabIntInit() { A = 0x80; B = 0x80; C = 0; }
 };
 
-// FUNCTION: 0x006D18C0 $E148
+// SYNTHETIC: GAMEMD 0x006D18C0 SYMBOL
+// _$E148
 double DAT_00B0CD88 = DAT_007E1728 * DAT_007F4188;
 
-// FUNCTION: 0x006D18E0 $E151
+// SYNTHETIC: GAMEMD 0x006D18E0 SYMBOL
+// _$E151
 double DAT_00B0CD50 = DAT_007E1730 * DAT_007F4188;
 
-// FUNCTION: 0x006D1900 $E154
+// SYNTHETIC: GAMEMD 0x006D1900 SYMBOL
+// _$E154
 int DAT_00B0CEC0 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B0CD50 - DAT_00B0CD88) * DAT_00B0CD78));
 
-// FUNCTION: 0x006D1940 $E157
+// SYNTHETIC: GAMEMD 0x006D1940 SYMBOL
+// _$E157
 double DAT_00B0CD90 = FUN_004CADE0(DAT_00B0CEC0 * DAT_007E1740);
 
-// FUNCTION: 0x006D1970 $E160
+// SYNTHETIC: GAMEMD 0x006D1970 SYMBOL
+// _$E160
 double DAT_00B0CE20 = FUN_004CADE0((DAT_00B0CEC0 * 2) / DAT_00B0CD78);
 
-// FUNCTION: 0x006D19A0 $E163
+// SYNTHETIC: GAMEMD 0x006D19A0 SYMBOL
+// _$E163
 int DAT_00B0CEB4 = (int)(DAT_00B0CEC0 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x006D19D0 $E166
+// SYNTHETIC: GAMEMD 0x006D19D0 SYMBOL
+// _$E166
 TabShortPair DAT_00B0CD74;
 
-// FUNCTION: 0x006D19E0 $E169
+// SYNTHETIC: GAMEMD 0x006D19E0 SYMBOL
+// _$E169
 TabIntTriple DAT_00B0CE08;
 
-// FUNCTION: 0x006D1A00 $E172
+// SYNTHETIC: GAMEMD 0x006D1A00 SYMBOL
+// _$E172
 TabIntInit DAT_00B0CEA8;
 
-// FUNCTION: 0x006D1A20 $E175
+// SYNTHETIC: GAMEMD 0x006D1A20 SYMBOL
+// _$E175
 TabIntQuad DAT_00B0CD60;

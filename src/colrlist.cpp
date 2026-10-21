@@ -14,7 +14,7 @@
 #include "scheme.h"
 #include "vector.h"
 
-// FUNCTION: 0x00488760
+// FUNCTION: GAMEMD 0x00488760
 ColorListClass::ColorListClass (int id, int x, int y, int w, int h,
 	TextPrintType flags, ShapeSet const * up, ShapeSet const * down) :
 	BASECLASS (id, x, y, w, h, flags, up, down),
@@ -23,21 +23,21 @@ ColorListClass::ColorListClass (int id, int x, int y, int w, int h,
 {
 }
 
-// FUNCTION: 0x004887F0
+// FUNCTION: GAMEMD 0x004887F0
 ColorListClass::~ColorListClass(void)
 {
 	Colors.Clear();
 	SelectColor = 0;
 }
 
-// FUNCTION: 0x00488850
+// FUNCTION: GAMEMD 0x00488850
 int ColorListClass::Add_Item(wchar_t const * text, int color)
 {
 	Colors.Add(color);
 	return(BASECLASS::Add_Item(text));
 }
 
-// FUNCTION: 0x004888B0
+// FUNCTION: GAMEMD 0x004888B0
 void ColorListClass::Remove_Item(wchar_t const * text)
 {
 	int index = List.ID(text);
@@ -47,7 +47,7 @@ void ColorListClass::Remove_Item(wchar_t const * text)
 	}
 }
 
-// FUNCTION: 0x00488910
+// FUNCTION: GAMEMD 0x00488910
 void ColorListClass::Remove_Item(int index)
 {
 	if (index != -1) {
@@ -56,14 +56,14 @@ void ColorListClass::Remove_Item(int index)
 	}
 }
 
-// FUNCTION: 0x00488960
+// FUNCTION: GAMEMD 0x00488960
 void ColorListClass::Set_Selected_Style(SelectStyleType style, int color)
 {
 	Style = style;
 	SelectColor = color;
 }
 
-// FUNCTION: 0x00488980
+// FUNCTION: GAMEMD 0x00488980
 void ColorListClass::Draw_Entry(int index, int x, int y, int width, int selected)
 {
 	int color;
@@ -114,8 +114,11 @@ void ColorListClass::Draw_Entry(int index, int x, int y, int width, int selected
 	}
 }
 
-// FUNCTION: 0x00488EE0 ColorListClass::Add_Item
+// FUNCTION: GAMEMD 0x00488EE0
+// ColorListClass::Add_Item
 
-// FUNCTION: 0x00488F00 ColorListClass::~ColorListClass
+// SYNTHETIC: GAMEMD 0x00488F00
+// ??_GColorListClass@@UAEPAXI@Z
 
-// FUNCTION: 0x00488F70 $E2
+// SYNTHETIC: GAMEMD 0x00488F70 SYMBOL
+// _$E2

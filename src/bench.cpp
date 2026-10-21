@@ -6,7 +6,7 @@
 #include "always.h"
 #include "bench.h"
 
-// FUNCTION: 0x004318F0
+// FUNCTION: GAMEMD 0x004318F0
 Benchmark::Benchmark(void) :
 	Average(0),
 	Counter(0),
@@ -14,7 +14,7 @@ Benchmark::Benchmark(void) :
 {
 }
 
-// FUNCTION: 0x00431920
+// FUNCTION: GAMEMD 0x00431920
 void Benchmark::Reset(void)
 {
 	Average = 0;
@@ -22,14 +22,14 @@ void Benchmark::Reset(void)
 	TotalCount = 0;
 }
 
-// FUNCTION: 0x00431930
+// FUNCTION: GAMEMD 0x00431930
 void Benchmark::Begin(bool reset)
 {
 	if (reset) Reset();
 	Clock = 0;
 }
 
-// FUNCTION: 0x00431970
+// FUNCTION: GAMEMD 0x00431970
 void Benchmark::End(void)
 {
 	unsigned int value = Clock;
@@ -44,7 +44,7 @@ void Benchmark::End(void)
 	TotalCount++;
 }
 
-// FUNCTION: 0x004319D0
+// FUNCTION: GAMEMD 0x004319D0
 unsigned int Benchmark::Step(void)
 {
 	unsigned int value = Clock;
@@ -57,7 +57,7 @@ unsigned int Benchmark::Step(void)
 	return(TotalCount);
 }
 
-// FUNCTION: 0x00431A10
+// FUNCTION: GAMEMD 0x00431A10
 unsigned int Benchmark::Value(void) const
 {
 	if (Counter) {

@@ -8,7 +8,7 @@
 #include "tiberium.h"
 #include "vector.h"
 
-// FUNCTION: 0x006C95E0
+// FUNCTION: GAMEMD 0x006C95E0
 StorageClass::StorageClass(void)
 {
 	for (int i = 0; i < ARRAY_SIZE(Values); i++) {
@@ -16,7 +16,7 @@ StorageClass::StorageClass(void)
 	}
 }
 
-// FUNCTION: 0x006C9600
+// FUNCTION: GAMEMD 0x006C9600
 int StorageClass::Get_Total_Value(void) const
 {
 	int value = 0;
@@ -29,7 +29,7 @@ int StorageClass::Get_Total_Value(void) const
 	return(value);
 }
 
-// FUNCTION: 0x006C9650
+// FUNCTION: GAMEMD 0x006C9650
 float StorageClass::Get_Total_Amount(void) const
 {
 	int amount = 0;
@@ -40,20 +40,20 @@ float StorageClass::Get_Total_Amount(void) const
 	return(amount);
 }
 
-// FUNCTION: 0x006C9680
+// FUNCTION: GAMEMD 0x006C9680
 float StorageClass::Get_Amount(int slot) const
 {
 	return(Values[slot]);
 }
 
-// FUNCTION: 0x006C9690
+// FUNCTION: GAMEMD 0x006C9690
 float StorageClass::Increase_Amount(float by, int slot)
 {
 	Values[slot] += by;
 	return(Values[slot]);
 }
 
-// FUNCTION: 0x006C96B0
+// FUNCTION: GAMEMD 0x006C96B0
 float StorageClass::Decrease_Amount(float by, int slot)
 {
 	float amount;

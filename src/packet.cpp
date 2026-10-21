@@ -8,7 +8,7 @@
 #include <cstdlib>
 #include <cstring>
 
-// FUNCTION: 0x00625AB0
+// FUNCTION: GAMEMD 0x00625AB0
 PacketClass::~PacketClass(void)
 {
 	FieldClass *current;
@@ -19,14 +19,14 @@ PacketClass::~PacketClass(void)
 	}
 }
 
-// FUNCTION: 0x00625AE0
+// FUNCTION: GAMEMD 0x00625AE0
 void PacketClass::Add_Field(FieldClass *field)
 {
 	field->Next = Head;
 	Head = field;
 }
 
-// FUNCTION: 0x00625AF0
+// FUNCTION: GAMEMD 0x00625AF0
 PacketClass::PacketClass(char *curbuf)
 {
 	int remaining_size;
@@ -62,7 +62,7 @@ PacketClass::PacketClass(char *curbuf)
 	}
 }
 
-// FUNCTION: 0x00625C00
+// FUNCTION: GAMEMD 0x00625C00
 char *PacketClass::Create_Comms_Packet(int &size)
 {
 	FieldClass *current;
@@ -104,7 +104,7 @@ char *PacketClass::Create_Comms_Packet(int &size)
 	return(retval);
 }
 
-// FUNCTION: 0x00625D20
+// FUNCTION: GAMEMD 0x00625D20
 FieldClass *PacketClass::Find_Field(char const *id)
 {
 	for (FieldClass *current = Head; current; current = current->Next) {
@@ -114,7 +114,7 @@ FieldClass *PacketClass::Find_Field(char const *id)
 	return(NULL);
 }
 
-// FUNCTION: 0x00625D60
+// FUNCTION: GAMEMD 0x00625D60
 bool PacketClass::Get_Field(char const *id, char &data)
 {
 	FieldClass *field = Find_Field(id);
@@ -124,7 +124,7 @@ bool PacketClass::Get_Field(char const *id, char &data)
 	return((field) ? true : false);
 }
 
-// FUNCTION: 0x00625DB0
+// FUNCTION: GAMEMD 0x00625DB0
 bool PacketClass::Get_Field(char const *id, unsigned char &data)
 {
 	FieldClass *field = Find_Field(id);
@@ -134,7 +134,7 @@ bool PacketClass::Get_Field(char const *id, unsigned char &data)
 	return((field) ? true : false);
 }
 
-// FUNCTION: 0x00625E00
+// FUNCTION: GAMEMD 0x00625E00
 bool PacketClass::Get_Field(char const *id, short &data)
 {
 	FieldClass *field = Find_Field(id);
@@ -144,7 +144,7 @@ bool PacketClass::Get_Field(char const *id, short &data)
 	return((field) ? true : false);
 }
 
-// FUNCTION: 0x00625E50
+// FUNCTION: GAMEMD 0x00625E50
 bool PacketClass::Get_Field(char const *id, unsigned short &data)
 {
 	FieldClass *field = Find_Field(id);
@@ -154,7 +154,7 @@ bool PacketClass::Get_Field(char const *id, unsigned short &data)
 	return((field) ? true : false);
 }
 
-// FUNCTION: 0x00625EA0
+// FUNCTION: GAMEMD 0x00625EA0
 bool PacketClass::Get_Field(char const *id, int &data)
 {
 	FieldClass *field = Find_Field(id);
@@ -164,7 +164,7 @@ bool PacketClass::Get_Field(char const *id, int &data)
 	return((field) ? true : false);
 }
 
-// FUNCTION: 0x00625EF0
+// FUNCTION: GAMEMD 0x00625EF0
 bool PacketClass::Get_Field(char const *id, char *data)
 {
 	FieldClass *field = Find_Field(id);
@@ -174,7 +174,7 @@ bool PacketClass::Get_Field(char const *id, char *data)
 	return((field) ? true : false);
 }
 
-// FUNCTION: 0x00625F60
+// FUNCTION: GAMEMD 0x00625F60
 bool PacketClass::Get_Field(char const *id, unsigned int &data)
 {
 	FieldClass *field = Find_Field(id);
@@ -184,7 +184,7 @@ bool PacketClass::Get_Field(char const *id, unsigned int &data)
 	return((field) ? true : false);
 }
 
-// FUNCTION: 0x00625FB0
+// FUNCTION: GAMEMD 0x00625FB0
 bool PacketClass::Get_Field(char const *id, void *data, int &length)
 {
 	FieldClass *field = Find_Field(id);

@@ -52,7 +52,7 @@ LEPTON ParticleClass::SmokeWindY[FACING_COUNT] = { -2, -2, 0, 2, 2, 2, 0, -2 };
 LEPTON ParticleClass::GasWindX[FACING_COUNT] = { 0, 2, 2, 2, 0, -2, -2, -2 };
 LEPTON ParticleClass::GasWindY[FACING_COUNT] = { -2, -2, 0, 2, 2, 2, 0, -2 };
 
-// FUNCTION: 0x0062B5E0
+// FUNCTION: GAMEMD 0x0062B5E0
 ParticleClass::ParticleClass(ParticleTypeClass const * type, Coord const & origin, Coord const & target, ParticleSystemClass * partsys) :
 	Class(type),
 	Color(0,0,0),
@@ -135,7 +135,7 @@ ParticleClass::ParticleClass(ParticleTypeClass const * type, Coord const & origi
 	Unlimbo(coord);
 }
 
-// FUNCTION: 0x0062BB20
+// FUNCTION: GAMEMD 0x0062BB20
 ParticleClass::ParticleClass(void) :
 	Class(NULL),
 	Color(0,0,0),
@@ -161,7 +161,7 @@ ParticleClass::ParticleClass(void) :
 	Particles.Add(this);
 }
 
-// FUNCTION: 0x0062BCC0
+// FUNCTION: GAMEMD 0x0062BCC0
 ParticleClass::~ParticleClass(void)
 {
 	Limbo();
@@ -170,7 +170,7 @@ ParticleClass::~ParticleClass(void)
 	Particles.Delete(this);
 }
 
-// FUNCTION: 0x0062C3A0
+// FUNCTION: GAMEMD 0x0062C3A0
 void ParticleClass::Railgun_Behavior_AI(void)
 {
 	Vector3 direction(MovementDirection.X, MovementDirection.Y, MovementDirection.Z);
@@ -191,7 +191,7 @@ void ParticleClass::Railgun_Behavior_AI(void)
 	}
 }
 
-// FUNCTION: 0x0062C540
+// FUNCTION: GAMEMD 0x0062C540
 void ParticleClass::Smoke_Behavior_AI(void)
 {
 	if (Unsorted::CurrentFrame & 1) {
@@ -231,7 +231,7 @@ void ParticleClass::Smoke_Behavior_AI(void)
 	}
 }
 
-// FUNCTION: 0x0062CB10
+// FUNCTION: GAMEMD 0x0062CB10
 void ParticleClass::Fire_Behavior_AI(void)
 {
 	if (Speed > 0.0) {
@@ -280,7 +280,7 @@ void ParticleClass::Fire_Behavior_AI(void)
 	}
 }
 
-// FUNCTION: 0x0062CE40
+// FUNCTION: GAMEMD 0x0062CE40
 void ParticleClass::Behavior_AI(void)
 {
 	switch (Class->BehavesLike) {
@@ -309,7 +309,7 @@ void ParticleClass::Behavior_AI(void)
 	}
 }
 
-// FUNCTION: 0x0062CEC0
+// FUNCTION: GAMEMD 0x0062CEC0
 void ParticleClass::Draw_It(Point2D const & point, Rect const & cliprect) const
 {
 	if (FPSCounter::CurrentFrameRate < Detail::GetMinFrameRate() && Class->Damage == 0) {
@@ -369,7 +369,7 @@ void ParticleClass::Draw_It(Point2D const & point, Rect const & cliprect) const
 	}
 }
 
-// FUNCTION: 0x0062D2A0
+// FUNCTION: GAMEMD 0x0062D2A0
 void ParticleClass::Smoke_Motion_AI(void)
 {
 	Coord coord = Get_Coord();
@@ -399,7 +399,7 @@ void ParticleClass::Smoke_Motion_AI(void)
 	Set_Coord(coord);
 }
 
-// FUNCTION: 0x0062D3F0
+// FUNCTION: GAMEMD 0x0062D3F0
 void ParticleClass::Gas_Motion_AI(void)
 {
 	static const double _level_scale = 2.5;
@@ -429,7 +429,7 @@ void ParticleClass::Gas_Motion_AI(void)
 	Set_Coord(coord);
 }
 
-// FUNCTION: 0x0062D510
+// FUNCTION: GAMEMD 0x0062D510
 void ParticleClass::Fire_Motion_AI(void)
 {
 	Coord coord = PositionCoord;
@@ -449,7 +449,7 @@ void ParticleClass::Fire_Motion_AI(void)
 	Set_Coord(coord);
 }
 
-// FUNCTION: 0x0062D5E0
+// FUNCTION: GAMEMD 0x0062D5E0
 void ParticleClass::Motion_AI(void)
 {
 	switch (Class->BehavesLike)
@@ -468,7 +468,7 @@ void ParticleClass::Motion_AI(void)
 	}
 }
 
-// FUNCTION: 0x0062D6F0
+// FUNCTION: GAMEMD 0x0062D6F0
 bool ParticleClass::Mark(MarkType mark)
 {
 	if (BASECLASS::Mark(mark)) {
@@ -477,28 +477,29 @@ bool ParticleClass::Mark(MarkType mark)
 	return(false);
 }
 
-// FUNCTION: 0x0062D710
+// FUNCTION: GAMEMD 0x0062D710
 Cell const * ParticleClass::Occupy_List(bool placement) const
 {
 	static Cell const _list[] = {REFRESH_EOL};
 	return(_list);
 }
 
-// FUNCTION: 0x0062D760 $E155
+// SYNTHETIC: GAMEMD 0x0062D760 SYMBOL
+// _$E155
 
-// FUNCTION: 0x0062D770
+// FUNCTION: GAMEMD 0x0062D770
 LayerType ParticleClass::In_Which_Layer(void) const
 {
 	return(LAYER_AIR);
 }
 
-// FUNCTION: 0x0062D780
+// FUNCTION: GAMEMD 0x0062D780
 int Approximate_Distance(Point2D & pt)
 {
 	return((int)(abs(pt.X) + abs(pt.Y)) >> 1);
 }
 
-// FUNCTION: 0x0062D7A0
+// FUNCTION: GAMEMD 0x0062D7A0
 HRESULT STDMETHODCALLTYPE ParticleClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -513,7 +514,7 @@ HRESULT STDMETHODCALLTYPE ParticleClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x0062D810
+// FUNCTION: GAMEMD 0x0062D810
 HRESULT STDMETHODCALLTYPE ParticleClass::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -521,7 +522,7 @@ HRESULT STDMETHODCALLTYPE ParticleClass::Save(IStream * stream, BOOL cleardirty)
 	return(result);
 }
 
-// FUNCTION: 0x0062D830
+// FUNCTION: GAMEMD 0x0062D830
 int ParticleClass::Shape_Number(void) const
 {
 	Point2D fire_start;
@@ -557,7 +558,7 @@ state:
 	return(StateAI);
 }
 
-// FUNCTION: 0x0062D930
+// FUNCTION: GAMEMD 0x0062D930
 HRESULT STDMETHODCALLTYPE ParticleClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -565,38 +566,53 @@ HRESULT STDMETHODCALLTYPE ParticleClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x0062D970
+// FUNCTION: GAMEMD 0x0062D970
 int ParticleClass::Fetch_Object_Size(void) const
 {
 	return(sizeof(*this));
 }
 
-// FUNCTION: 0x0062D980
+// FUNCTION: GAMEMD 0x0062D980
 RTTIType ParticleClass::Fetch_RTTI(void) const
 {
 	return(RTTI_PARTICLE);
 }
 
-// FUNCTION: 0x0062D990
+// FUNCTION: GAMEMD 0x0062D990
 ObjectTypeClass const * ParticleClass::Class_Of(void) const
 {
 	return(Class);
 }
 
-// FUNCTION: 0x0062D9A0 ParticleClass::~ParticleClass
+// SYNTHETIC: GAMEMD 0x0062D9A0
+// ??_GParticleClass@@UAEPAXI@Z
 
-// FUNCTION: 0x0062DA40 $E2
-// FUNCTION: 0x0062DA70 $E5
+// SYNTHETIC: GAMEMD 0x0062DA40 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x0062DA70 SYMBOL
+// _$E5
 
-// FUNCTION: 0x0062DA90 $E8
-// FUNCTION: 0x0062DAB0 $E11
-// FUNCTION: 0x0062DAD0 $E14
-// FUNCTION: 0x0062DAF0 $E17
-// FUNCTION: 0x0062DB10 $E20
-// FUNCTION: 0x0062DB50 $E23
-// FUNCTION: 0x0062DB80 $E26
-// FUNCTION: 0x0062DBB0 $E29
-// FUNCTION: 0x0062DBE0 $E32
-// FUNCTION: 0x0062DBF0 $E35
-// FUNCTION: 0x0062DC10 $E38
-// FUNCTION: 0x0062DC30 $E47
+// SYNTHETIC: GAMEMD 0x0062DA90 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x0062DAB0 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x0062DAD0 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x0062DAF0 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x0062DB10 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x0062DB50 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x0062DB80 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x0062DBB0 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x0062DBE0 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x0062DBF0 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x0062DC10 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x0062DC30 SYMBOL
+// _$E47

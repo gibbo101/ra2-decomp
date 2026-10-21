@@ -20,7 +20,7 @@
 #include "voc.h"
 #include "super.hh"
 
-// FUNCTION: 0x004C98B0
+// FUNCTION: GAMEMD 0x004C98B0
 FactoryClass::FactoryClass(void) :
 	BASECLASS(),
 	Production(),
@@ -42,7 +42,7 @@ FactoryClass::FactoryClass(void) :
 	ObjectPtrTracker.Add(this);
 }
 
-// FUNCTION: 0x004C9A10
+// FUNCTION: GAMEMD 0x004C9A10
 FactoryClass::~FactoryClass(void)
 {
 	Detach_This_From_All(this, true);
@@ -53,7 +53,7 @@ FactoryClass::~FactoryClass(void)
 	ObjectPtrTracker.Delete(this);
 }
 
-// FUNCTION: 0x004C9B20
+// FUNCTION: GAMEMD 0x004C9B20
 void FactoryClass::AI(void)
 {
 	if (!IsSuspended && (Object != NULL || SpecialItem)) {
@@ -79,13 +79,13 @@ void FactoryClass::AI(void)
 	}
 }
 
-// FUNCTION: 0x004C9C50
+// FUNCTION: GAMEMD 0x004C9C50
 bool FactoryClass::Is_On_Hold(void) const
 {
 	return(OnHold);
 }
 
-// FUNCTION: 0x004C9C60
+// FUNCTION: GAMEMD 0x004C9C60
 bool FactoryClass::Has_Changed(void)
 {
 	bool changed = IsDifferent;
@@ -93,7 +93,7 @@ bool FactoryClass::Has_Changed(void)
 	return(changed);
 }
 
-// FUNCTION: 0x004C9C70
+// FUNCTION: GAMEMD 0x004C9C70
 bool FactoryClass::Set(TechnoTypeClass const & object, HouseClass & house, bool resume)
 {
 	if (object.Fetch_RTTI() == RTTI_BUILDINGTYPE) {
@@ -125,7 +125,7 @@ bool FactoryClass::Set(TechnoTypeClass const & object, HouseClass & house, bool 
 	return(Object != NULL);
 }
 
-// FUNCTION: 0x004C9E10
+// FUNCTION: GAMEMD 0x004C9E10
 void FactoryClass::Set(TechnoClass & object)
 {
 	Abandon();
@@ -138,7 +138,7 @@ void FactoryClass::Set(TechnoClass & object)
 	IsSuspended = true;
 }
 
-// FUNCTION: 0x004C9E60
+// FUNCTION: GAMEMD 0x004C9E60
 bool FactoryClass::Suspend(bool onhold)
 {
 	if (!IsSuspended) {
@@ -150,7 +150,7 @@ bool FactoryClass::Suspend(bool onhold)
 	return(false);
 }
 
-// FUNCTION: 0x004C9EA0
+// FUNCTION: GAMEMD 0x004C9EA0
 bool FactoryClass::Start(bool onhold)
 {
 	if ((Object || SpecialItem) && IsSuspended && !Is_Finished()) {
@@ -167,7 +167,7 @@ bool FactoryClass::Start(bool onhold)
 	return(false);
 }
 
-// FUNCTION: 0x004C9FB0
+// FUNCTION: GAMEMD 0x004C9FB0
 int FactoryClass::Build_Rate(void) const
 {
 	int time = 0;
@@ -179,7 +179,7 @@ int FactoryClass::Build_Rate(void) const
 	return(time);
 }
 
-// FUNCTION: 0x004C9FF0
+// FUNCTION: GAMEMD 0x004C9FF0
 bool FactoryClass::Abandon(void)
 {
 	if (Object) {
@@ -217,13 +217,13 @@ bool FactoryClass::Abandon(void)
 	return(false);
 }
 
-// FUNCTION: 0x004CA120
+// FUNCTION: GAMEMD 0x004CA120
 int FactoryClass::Completion(void)
 {
 	return(Production.Fetch_Stage());
 }
 
-// FUNCTION: 0x004CA130
+// FUNCTION: GAMEMD 0x004CA130
 bool FactoryClass::Has_Completed(void)
 {
 	if (Object && Production.Fetch_Stage() == STEP_COUNT) {
@@ -235,19 +235,19 @@ bool FactoryClass::Has_Completed(void)
 	return(false);
 }
 
-// FUNCTION: 0x004CA160
+// FUNCTION: GAMEMD 0x004CA160
 TechnoClass * FactoryClass::Get_Object(void) const
 {
 	return(Object);
 }
 
-// FUNCTION: 0x004CA170
+// FUNCTION: GAMEMD 0x004CA170
 int FactoryClass::Get_Special_Item(void) const
 {
 	return(SpecialItem);
 }
 
-// FUNCTION: 0x004CA180
+// FUNCTION: GAMEMD 0x004CA180
 int FactoryClass::Cost_Per_Tick(void)
 {
 	if (Object) {
@@ -260,7 +260,7 @@ int FactoryClass::Cost_Per_Tick(void)
 	return(0);
 }
 
-// FUNCTION: 0x004CA1A0
+// FUNCTION: GAMEMD 0x004CA1A0
 bool FactoryClass::Completed(void)
 {
 	if (Object && Production.Fetch_Stage() == STEP_COUNT) {
@@ -282,7 +282,7 @@ bool FactoryClass::Completed(void)
 	return(false);
 }
 
-// FUNCTION: 0x004CA230
+// FUNCTION: GAMEMD 0x004CA230
 HRESULT STDMETHODCALLTYPE FactoryClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -290,7 +290,7 @@ HRESULT STDMETHODCALLTYPE FactoryClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x004CA270
+// FUNCTION: GAMEMD 0x004CA270
 HRESULT STDMETHODCALLTYPE FactoryClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -326,7 +326,7 @@ HRESULT STDMETHODCALLTYPE FactoryClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x004CA3C0
+// FUNCTION: GAMEMD 0x004CA3C0
 HRESULT STDMETHODCALLTYPE FactoryClass::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -351,7 +351,7 @@ HRESULT STDMETHODCALLTYPE FactoryClass::Save(IStream * stream, BOOL cleardirty)
 	return(result);
 }
 
-// FUNCTION: 0x004CA430
+// FUNCTION: GAMEMD 0x004CA430
 void FactoryClass::Compute_CRC(CRCEngine &crc) const
 {
 	DebugString("Frame == %d\n", Frame);
@@ -379,7 +379,7 @@ void FactoryClass::Compute_CRC(CRCEngine &crc) const
 	crc(House->Fetch_ID());
 }
 
-// FUNCTION: 0x004CA580
+// FUNCTION: GAMEMD 0x004CA580
 void FactoryClass::Detach(AbstractClass const * target, bool all)
 {
 	if (target == (AbstractClass *)Object) {
@@ -387,7 +387,7 @@ void FactoryClass::Detach(AbstractClass const * target, bool all)
 	}
 }
 
-// FUNCTION: 0x004CA5A0
+// FUNCTION: GAMEMD 0x004CA5A0
 void FactoryClass::Resume_Queue(void)
 {
 	if (QueuedObjects.Count()) {
@@ -402,13 +402,13 @@ void FactoryClass::Resume_Queue(void)
 	}
 }
 
-// FUNCTION: 0x004CA620
+// FUNCTION: GAMEMD 0x004CA620
 bool FactoryClass::Remove_From_Queue(const TechnoTypeClass *type)
 {
 	return(QueuedObjects.Delete(type));
 }
 
-// FUNCTION: 0x004CA670
+// FUNCTION: GAMEMD 0x004CA670
 int FactoryClass::Total(const TechnoTypeClass *type)
 {
 	int total = 0;
@@ -426,7 +426,7 @@ int FactoryClass::Total(const TechnoTypeClass *type)
 	return(total);
 }
 
-// FUNCTION: 0x004CA6B0
+// FUNCTION: GAMEMD 0x004CA6B0
 bool FactoryClass::Is_Queued(const TechnoTypeClass *type)
 {
 	for (int i = 0; i < QueuedObjects.Count(); i++) {
@@ -437,7 +437,7 @@ bool FactoryClass::Is_Queued(const TechnoTypeClass *type)
 	return(false);
 }
 
-// FUNCTION: 0x004CA6E0
+// FUNCTION: GAMEMD 0x004CA6E0
 void Recalc_House_Factories(HouseClass *house)
 {
 	for (int i = 0; i < Factories.Count(); i++) {
@@ -449,8 +449,11 @@ void Recalc_House_Factories(HouseClass *house)
 	}
 }
 
-// FUNCTION: 0x004CA750 FactoryClass::Fetch_RTTI
+// FUNCTION: GAMEMD 0x004CA750
+// FactoryClass::Fetch_RTTI
 
-// FUNCTION: 0x004CA760 FactoryClass::Fetch_Object_Size
+// FUNCTION: GAMEMD 0x004CA760
+// FactoryClass::Fetch_Object_Size
 
-// FUNCTION: 0x004CA770 FactoryClass::~FactoryClass
+// SYNTHETIC: GAMEMD 0x004CA770
+// ??_GFactoryClass@@UAEPAXI@Z

@@ -23,13 +23,13 @@
 #include <cstdlib>
 #include <cstring>
 
-// FUNCTION: 0x005256F0
+// FUNCTION: GAMEMD 0x005256F0
 INIClass::~INIClass(void)
 {
 	Clear();
 }
 
-// FUNCTION: 0x005257C0
+// FUNCTION: GAMEMD 0x005257C0
 bool INIClass::Clear(char const * section, char const * entry)
 {
 	Reset();
@@ -63,7 +63,7 @@ bool INIClass::Clear(char const * section, char const * entry)
 	return(true);
 }
 
-// FUNCTION: 0x00525A10
+// FUNCTION: GAMEMD 0x00525A10
 int INIClass::Load(FileClass & file, bool keepcomments)
 {
 	Reset();
@@ -71,7 +71,7 @@ int INIClass::Load(FileClass & file, bool keepcomments)
 	return(Load(fs, keepcomments));
 }
 
-// FUNCTION: 0x00526420
+// FUNCTION: GAMEMD 0x00526420
 int INIClass::Save(FileClass & file) const
 {
 	const_cast<INIClass *>(this)->Reset();
@@ -79,7 +79,7 @@ int INIClass::Save(FileClass & file) const
 	return(Save(fp));
 }
 
-// FUNCTION: 0x00526470
+// FUNCTION: GAMEMD 0x00526470
 int INIClass::Save(Pipe & pipe) const
 {
 	const_cast<INIClass *>(this)->Reset();
@@ -180,7 +180,7 @@ int INIClass::Save(Pipe & pipe) const
 	return(total);
 }
 
-// FUNCTION: 0x00526810
+// FUNCTION: GAMEMD 0x00526810
 INIClass::INISection * INIClass::Find_Section(char const * section) const
 {
 	if (section != NULL) {
@@ -193,13 +193,13 @@ INIClass::INISection * INIClass::Find_Section(char const * section) const
 	return(NULL);
 }
 
-// FUNCTION: 0x00526950
+// FUNCTION: GAMEMD 0x00526950
 int INIClass::Section_Count(void) const
 {
 	return(SectionIndex.Count());
 }
 
-// FUNCTION: 0x00526960
+// FUNCTION: GAMEMD 0x00526960
 int INIClass::Entry_Count(char const * section) const
 {
 	INISection * secptr = Find_Section(section);
@@ -209,20 +209,20 @@ int INIClass::Entry_Count(char const * section) const
 	return(0);
 }
 
-// FUNCTION: 0x00526A30
+// FUNCTION: GAMEMD 0x00526A30
 int INIClass::Entry_Count(Wstring const & section) const
 {
 	return(Entry_Count(section.text()));
 }
 
-// FUNCTION: 0x00526B00
+// FUNCTION: GAMEMD 0x00526B00
 void INIClass::Reset(void)
 {
 	CurrentSectionName = NULL;
 	CurrentSection = NULL;
 }
 
-// FUNCTION: 0x00526CC0
+// FUNCTION: GAMEMD 0x00526CC0
 char const * INIClass::Get_Entry(char const * section, int index) const
 {
 	INISection * secptr = Find_Section(section);
@@ -239,13 +239,13 @@ char const * INIClass::Get_Entry(char const * section, int index) const
 	return(NULL);
 }
 
-// FUNCTION: 0x00526D90
+// FUNCTION: GAMEMD 0x00526D90
 Wstring INIClass::Get_Entry(Wstring const & section, int index) const
 {
 	return Wstring(Get_Entry(section.text(), index));
 }
 
-// FUNCTION: 0x00526E80
+// FUNCTION: GAMEMD 0x00526E80
 bool INIClass::Put_UUBlock(char const * section, void const * block, int len)
 {
 	if (section == NULL || block == NULL || len < 1) return(false);
@@ -293,7 +293,7 @@ inline int INIClass::Get_String(char const * section, char const * entry, char c
 	}
 }
 
-// FUNCTION: 0x00526FB0
+// FUNCTION: GAMEMD 0x00526FB0
 int INIClass::Get_UUBlock(char const * section, void * block, int len) const
 {
 	if (section == NULL) return(0);
@@ -316,7 +316,7 @@ int INIClass::Get_UUBlock(char const * section, void * block, int len) const
 	return(total);
 }
 
-// FUNCTION: 0x005271C0
+// FUNCTION: GAMEMD 0x005271C0
 bool INIClass::Put_TextBlock(char const * section, char const * text)
 {
 	if (section == NULL) return(false);
@@ -361,7 +361,7 @@ bool INIClass::Put_TextBlock(char const * section, char const * text)
 	return(true);
 }
 
-// FUNCTION: 0x005275C0
+// FUNCTION: GAMEMD 0x005275C0
 bool INIClass::Put_Int(char const * section, char const * entry, int number, int format)
 {
 	char buffer[MAX_LINE_LENGTH];
@@ -383,7 +383,7 @@ bool INIClass::Put_Int(char const * section, char const * entry, int number, int
 	return(Put_String(section, entry, buffer));
 }
 
-// FUNCTION: 0x00527640
+// FUNCTION: GAMEMD 0x00527640
 bool INIClass::Put_Int(Wstring const & section, Wstring const & entry, int number, int format)
 {
 	char buffer[MAX_LINE_LENGTH];
@@ -407,13 +407,13 @@ bool INIClass::Put_Int(Wstring const & section, Wstring const & entry, int numbe
 	return(Put_String(sectionstr, entrystr, buffer));
 }
 
-// FUNCTION: 0x005278F0
+// FUNCTION: GAMEMD 0x005278F0
 int INIClass::Get_Int(Wstring const & section, Wstring const & entry, int defvalue) const
 {
 	return(Get_Int(section.text(), entry.text(), defvalue));
 }
 
-// FUNCTION: 0x00527B90
+// FUNCTION: GAMEMD 0x00527B90
 bool INIClass::Put_CLSID(char const * section, char const * entry, CLSID const & value)
 {
 	char buffer[128];
@@ -427,7 +427,7 @@ bool INIClass::Put_CLSID(char const * section, char const * entry, CLSID const &
 	return(Put_String(section, entry, buffer));
 }
 
-// FUNCTION: 0x00527C10
+// FUNCTION: GAMEMD 0x00527C10
 bool INIClass::Put_Rect(char const * section, char const * entry, Rect const & value)
 {
 	char buffer[64];
@@ -436,7 +436,7 @@ bool INIClass::Put_Rect(char const * section, char const * entry, Rect const & v
 	return(Put_String(section, entry, buffer));
 }
 
-// FUNCTION: 0x00527C60
+// FUNCTION: GAMEMD 0x00527C60
 bool INIClass::Put_Rect(Wstring const & section, Wstring const & entry, Rect const & value)
 {
 	char buffer[64];
@@ -447,7 +447,7 @@ bool INIClass::Put_Rect(Wstring const & section, Wstring const & entry, Rect con
 	return(Put_String(sectionstr, entrystr, buffer));
 }
 
-// FUNCTION: 0x00528170
+// FUNCTION: GAMEMD 0x00528170
 bool INIClass::Put_Hex(char const * section, char const * entry, int number)
 {
 	char buffer[MAX_LINE_LENGTH];
@@ -456,7 +456,7 @@ bool INIClass::Put_Hex(char const * section, char const * entry, int number)
 	return(Put_String(section, entry, buffer));
 }
 
-// FUNCTION: 0x005281C0
+// FUNCTION: GAMEMD 0x005281C0
 bool INIClass::Put_Hex(Wstring const & section, Wstring const & entry, int number)
 {
 	char buffer[MAX_LINE_LENGTH];
@@ -467,7 +467,7 @@ bool INIClass::Put_Hex(Wstring const & section, Wstring const & entry, int numbe
 	return(Put_String(sectionstr, entrystr, buffer));
 }
 
-// FUNCTION: 0x005285B0
+// FUNCTION: GAMEMD 0x005285B0
 bool INIClass::Put_Float(char const * section, char const * entry, double number)
 {
 	char buffer[MAX_LINE_LENGTH];
@@ -476,7 +476,7 @@ bool INIClass::Put_Float(char const * section, char const * entry, double number
 	return(Put_String(section, entry, buffer));
 }
 
-// FUNCTION: 0x00528600
+// FUNCTION: GAMEMD 0x00528600
 bool INIClass::Put_Float(Wstring const & section, Wstring const & entry, double number)
 {
 	char buffer[MAX_LINE_LENGTH];
@@ -487,7 +487,7 @@ bool INIClass::Put_Float(Wstring const & section, Wstring const & entry, double 
 	return(Put_String(sectionstr, entrystr, buffer));
 }
 
-// FUNCTION: 0x00528660
+// FUNCTION: GAMEMD 0x00528660
 bool INIClass::Put_String(char const * section, char const * entry, char const * string)
 {
 	if (section == NULL || entry == NULL) return(false);
@@ -541,13 +541,13 @@ bool INIClass::Put_String(char const * section, char const * entry, char const *
 	return(true);
 }
 
-// FUNCTION: 0x005289E0
+// FUNCTION: GAMEMD 0x005289E0
 bool INIClass::Put_String(Wstring const & section, Wstring const & entry, Wstring const & string)
 {
 	return(Put_String(section.text(), entry.text(), string.text()));
 }
 
-// FUNCTION: 0x00528E00
+// FUNCTION: GAMEMD 0x00528E00
 bool INIClass::Put_UnicodeString(char const * section, char const * entry, wchar_t const * string)
 {
 	bool result;
@@ -572,13 +572,13 @@ bool INIClass::Put_UnicodeString(char const * section, char const * entry, wchar
 	return(result);
 }
 
-// FUNCTION: 0x00528ED0
+// FUNCTION: GAMEMD 0x00528ED0
 bool INIClass::Put_UnicodeString(Wstring const & section, Wstring const & entry, WideWstring const & string)
 {
 	return(Put_UnicodeString(section.text(), entry.text(), string.text()));
 }
 
-// FUNCTION: 0x00529560
+// FUNCTION: GAMEMD 0x00529560
 bool INIClass::Put_Bool(char const * section, char const * entry, bool value)
 {
 	if (value) {
@@ -588,7 +588,7 @@ bool INIClass::Put_Bool(char const * section, char const * entry, bool value)
 	}
 }
 
-// FUNCTION: 0x005295A0
+// FUNCTION: GAMEMD 0x005295A0
 bool INIClass::Put_Bool(Wstring const & section, Wstring const & entry, bool value)
 {
 	char * entrystr = entry.text();
@@ -601,7 +601,7 @@ bool INIClass::Put_Bool(Wstring const & section, Wstring const & entry, bool val
 	}
 }
 
-// FUNCTION: 0x005297E0
+// FUNCTION: GAMEMD 0x005297E0
 bool INIClass::Put_Point(char const * section, char const * entry, TPoint2D<int> const & value)
 {
 	char buffer[54];
@@ -609,7 +609,7 @@ bool INIClass::Put_Point(char const * section, char const * entry, TPoint2D<int>
 	return(Put_String(section, entry, buffer));
 }
 
-// FUNCTION: 0x00529820
+// FUNCTION: GAMEMD 0x00529820
 bool INIClass::Put_Point(Wstring const & section, Wstring const & entry, TPoint2D<int> const & value)
 {
 	char buffer[54];
@@ -620,7 +620,7 @@ bool INIClass::Put_Point(Wstring const & section, Wstring const & entry, TPoint2
 	return(Put_String(sectionstr, entrystr, buffer));
 }
 
-// FUNCTION: 0x00529BF0
+// FUNCTION: GAMEMD 0x00529BF0
 bool INIClass::Put_Point(char const * section, char const * entry, TPoint3D<int> const & value)
 {
 	char buffer[54];
@@ -628,7 +628,7 @@ bool INIClass::Put_Point(char const * section, char const * entry, TPoint3D<int>
 	return(Put_String(section, entry, buffer));
 }
 
-// FUNCTION: 0x00529C40
+// FUNCTION: GAMEMD 0x00529C40
 bool INIClass::Put_Point(Wstring const & section, Wstring const & entry, TPoint3D<int> const & value)
 {
 	char buffer[54];
@@ -639,7 +639,7 @@ bool INIClass::Put_Point(Wstring const & section, Wstring const & entry, TPoint3
 	return(Put_String(sectionstr, entrystr, buffer));
 }
 
-// FUNCTION: 0x0052A040
+// FUNCTION: GAMEMD 0x0052A040
 bool INIClass::Put_Point(char const * section, char const * entry, TPoint3D<float> const & value)
 {
 	char buffer[54];
@@ -647,7 +647,7 @@ bool INIClass::Put_Point(char const * section, char const * entry, TPoint3D<floa
 	return(Put_String(section, entry, buffer));
 }
 
-// FUNCTION: 0x0052A0A0
+// FUNCTION: GAMEMD 0x0052A0A0
 bool INIClass::Put_Point(Wstring const & section, Wstring const & entry, TPoint3D<float> const & value)
 {
 	char buffer[54];
@@ -658,7 +658,7 @@ bool INIClass::Put_Point(Wstring const & section, Wstring const & entry, TPoint3
 	return(Put_String(sectionstr, entrystr, buffer));
 }
 
-// FUNCTION: 0x0052A4D0
+// FUNCTION: GAMEMD 0x0052A4D0
 INIClass::INIEntry * INIClass::INISection::Find_Entry(char const * entry) const
 {
 	if (entry != NULL) {
@@ -670,7 +670,7 @@ INIClass::INIEntry * INIClass::INISection::Find_Entry(char const * entry) const
 	return(NULL);
 }
 
-// FUNCTION: 0x0052A610
+// FUNCTION: GAMEMD 0x0052A610
 bool INIClass::Put_PKey(PKey const & key)
 {
 	char buffer[MAX_LINE_LENGTH];
@@ -683,7 +683,7 @@ bool INIClass::Put_PKey(PKey const & key)
 	return(true);
 }
 
-// FUNCTION: 0x0052A670
+// FUNCTION: GAMEMD 0x0052A670
 PKey INIClass::Get_PKey(bool fast) const
 {
 	PKey key;
@@ -704,7 +704,7 @@ PKey INIClass::Get_PKey(bool fast) const
 	return(key);
 }
 
-// FUNCTION: 0x0052A940
+// FUNCTION: GAMEMD 0x0052A940
 bool INIClass::WriteTime(char const * section, char const * entry, int value)
 {
 	char buffer[32];
@@ -715,7 +715,7 @@ bool INIClass::WriteTime(char const * section, char const * entry, int value)
 	return(Put_String(section, entry, buffer));
 }
 
-// FUNCTION: 0x0052A9E0
+// FUNCTION: GAMEMD 0x0052A9E0
 char * INIClass::Scan_Line_For_Columns(char * buffer, int & assign_col, int & value_col, int & comment_col)
 {
 	char * line_comment = NULL;
@@ -765,7 +765,7 @@ char * INIClass::Scan_Line_For_Columns(char * buffer, int & assign_col, int & va
 	return(line_comment);
 }
 
-// FUNCTION: 0x0052AA90
+// FUNCTION: GAMEMD 0x0052AA90
 void INIClass::Strip_Comments(char * buffer)
 {
 	if (buffer != NULL) {
@@ -777,7 +777,7 @@ void INIClass::Strip_Comments(char * buffer)
 	}
 }
 
-// FUNCTION: 0x0052AAC0
+// FUNCTION: GAMEMD 0x0052AAC0
 bool INIClass::Is_A_Section(char * buffer)
 {
 	if (buffer == NULL) {
@@ -795,7 +795,7 @@ bool INIClass::Is_A_Section(char * buffer)
 	return(false);
 }
 
-// FUNCTION: 0x0052AAF0
+// FUNCTION: GAMEMD 0x0052AAF0
 INIClass::INIEntry::~INIEntry(void)
 {
 	free(Entry);
@@ -814,7 +814,7 @@ INIClass::INIEntry::~INIEntry(void)
 	LineComment = NULL;
 }
 
-// FUNCTION: 0x0052AB80
+// FUNCTION: GAMEMD 0x0052AB80
 INIClass::INISection::~INISection(void)
 {
 	free(Section);
@@ -830,58 +830,84 @@ INIClass::INISection::~INISection(void)
 	}
 }
 
-// FUNCTION: 0x0052AD50 INIClass::INIEntry::~INIEntry
+// SYNTHETIC: GAMEMD 0x0052AD50
+// ??_GINIEntry@INIClass@@UAEPAXI@Z
 
-// FUNCTION: 0x0052AE00 INIClass::INISection::~INISection
+// SYNTHETIC: GAMEMD 0x0052AE00
+// ??_GINISection@INIClass@@UAEPAXI@Z
 
-// FUNCTION: 0x0052AE20 ?$Node@PAUINISection@INIClass@@::~?$Node@PAUINISection@INIClass@@
+// SYNTHETIC: GAMEMD 0x0052AE20
+// ??_G?$Node@PAUINISection@INIClass@@@@UAEPAXI@Z
 
-// FUNCTION: 0x0052AE70 BufferStraw::~BufferStraw
+// SYNTHETIC: GAMEMD 0x0052AE70
+// ??_GBufferStraw@@UAEPAXI@Z
 
-// FUNCTION: 0x0052AEA0 Straw::~Straw
+// SYNTHETIC: GAMEMD 0x0052AEA0
+// ??_GStraw@@UAEPAXI@Z
 
-// FUNCTION: 0x0052AEC0 CRCEngine::CRCEngine
+// FUNCTION: GAMEMD 0x0052AEC0
+// CRCEngine::CRCEngine
 
-// FUNCTION: 0x0052AEE0 Pipe::~Pipe
+// SYNTHETIC: GAMEMD 0x0052AEE0
+// ??_GPipe@@UAEPAXI@Z
 
-// FUNCTION: 0x0052AF00 INIClass::INIEntry::INIEntry
+// FUNCTION: GAMEMD 0x0052AF00
+// INIClass::INIEntry::INIEntry
 
-// FUNCTION: 0x0052AF50 ?$List@PAUINIEntry@INIClass@@::?$List@PAUINIEntry@INIClass@@
+// TEMPLATE: GAMEMD 0x0052AF50
+// ??0?$List@PAUINIEntry@INIClass@@@@QAE@XZ
 
-// FUNCTION: 0x0052AFC0 ?$List@PAUINIEntry@INIClass@@::~?$List@PAUINIEntry@INIClass@@
+// SYNTHETIC: GAMEMD 0x0052AFC0
+// ??_G?$List@PAUINIEntry@INIClass@@@@UAEPAXI@Z
 
-// FUNCTION: 0x0052B080 ?$IndexClass@HPAUINIEntry@INIClass@@::?$IndexClass@HPAUINIEntry@INIClass@@
+// TEMPLATE: GAMEMD 0x0052B080
+// ??0?$IndexClass@HPAUINIEntry@INIClass@@@@QAE@XZ
 
-// FUNCTION: 0x0052B0A0 ?$IndexClass@HPAUINIEntry@INIClass@@::Add_Index
+// TEMPLATE: GAMEMD 0x0052B0A0
+// ?Add_Index@?$IndexClass@HPAUINIEntry@INIClass@@@@QAE_NABHABQAUINIEntry@INIClass@@@Z
 
-// FUNCTION: 0x0052B170 ?$IndexClass@HPAUINIEntry@INIClass@@::Is_Present
+// TEMPLATE: GAMEMD 0x0052B170
+// ?Is_Present@?$IndexClass@HPAUINIEntry@INIClass@@@@QBE_NABH@Z
 
-// FUNCTION: 0x0052B210 ?$IndexClass@HPAUINIEntry@INIClass@@::operator[]
+// TEMPLATE: GAMEMD 0x0052B210
+// ??A?$IndexClass@HPAUINIEntry@INIClass@@@@QBEABQAUINIEntry@INIClass@@ABH@Z
 
-// FUNCTION: 0x0052B2B0 ?$IndexClass@HPAUINISection@INIClass@@::Remove_Index
+// TEMPLATE: GAMEMD 0x0052B2B0
+// ?Remove_Index@?$IndexClass@HPAUINISection@INIClass@@@@QAE_NABH@Z
 
-// FUNCTION: 0x0052B390 ?$IndexClass@HPAUINISection@INIClass@@::Is_Present
+// TEMPLATE: GAMEMD 0x0052B390
+// ?Is_Present@?$IndexClass@HPAUINISection@INIClass@@@@QBE_NABH@Z
 
-// FUNCTION: 0x0052B430 ?$IndexClass@HPAUINISection@INIClass@@::operator[]
+// TEMPLATE: GAMEMD 0x0052B430
+// ??A?$IndexClass@HPAUINISection@INIClass@@@@QBEABQAUINISection@INIClass@@ABH@Z
 
-// FUNCTION: 0x0052B4D0 ?$IndexClass@HPAUINIEntry@INIClass@@::Is_Archive_Same
+// TEMPLATE: GAMEMD 0x0052B4D0
+// ?Is_Archive_Same@?$IndexClass@HPAUINIEntry@INIClass@@@@ABE_NABH@Z
 
-// FUNCTION: 0x0052B4F0 ?$IndexClass@HPAUINIEntry@INIClass@@::Search_For_Node
+// TEMPLATE: GAMEMD 0x0052B4F0
+// ?Search_For_Node@?$IndexClass@HPAUINIEntry@INIClass@@@@ABEPBUNodeElement@1@ABH@Z
 
-// FUNCTION: 0x0052B570 ?$IndexClass@HPAUINIEntry@INIClass@@::Increase_Table_Size
+// TEMPLATE: GAMEMD 0x0052B570
+// ?Increase_Table_Size@?$IndexClass@HPAUINIEntry@INIClass@@@@AAE_NH@Z
 
-// FUNCTION: 0x0052B600 ?$IndexClass@HPAUINISection@INIClass@@::Is_Archive_Same
+// TEMPLATE: GAMEMD 0x0052B600
+// ?Is_Archive_Same@?$IndexClass@HPAUINISection@INIClass@@@@ABE_NABH@Z
 
-// FUNCTION: 0x0052B620 ?$IndexClass@HPAUINISection@INIClass@@::Search_For_Node
+// TEMPLATE: GAMEMD 0x0052B620
+// ?Search_For_Node@?$IndexClass@HPAUINISection@INIClass@@@@ABEPBUNodeElement@1@ABH@Z
 
-// FUNCTION: 0x0052B6A0 ?$IndexClass@HPAUINIEntry@INIClass@@::search_compfunc
+// TEMPLATE: GAMEMD 0x0052B6A0
+// ?search_compfunc@?$IndexClass@HPAUINIEntry@INIClass@@@@CAHPBX0@Z
 
-// FUNCTION: 0x0052B6D0 Binary_Search
+// TEMPLATE: GAMEMD 0x0052B6D0
+// ?Binary_Search@@YIPAUNodeElement@?$IndexClass@HPAUINIEntry@INIClass@@@@PAU12@HABU12@@Z
 template IndexClass<int, INIClass::INIEntry *>::NodeElement * Binary_Search(IndexClass<int, INIClass::INIEntry *>::NodeElement *, int, IndexClass<int, INIClass::INIEntry *>::NodeElement const &);
 
-// FUNCTION: 0x0052B720 ?$IndexClass@HPAUINISection@INIClass@@::search_compfunc
+// TEMPLATE: GAMEMD 0x0052B720
+// ?search_compfunc@?$IndexClass@HPAUINISection@INIClass@@@@CAHPBX0@Z
 
-// FUNCTION: 0x0052B750 Binary_Search@@YIPAUNodeElement@?$IndexClass@HPAUINISection@INIClass@@
+// TEMPLATE: GAMEMD 0x0052B750
+// ?Binary_Search@@YIPAUNodeElement@?$IndexClass@HPAUINISection@INIClass@@@@PAU12@HABU12@@Z
 template IndexClass<int, INIClass::INISection *>::NodeElement * Binary_Search(IndexClass<int, INIClass::INISection *>::NodeElement *, int, IndexClass<int, INIClass::INISection *>::NodeElement const &);
 
 struct IniZeroQuad {
@@ -889,7 +915,8 @@ struct IniZeroQuad {
 	IniZeroQuad() { A = 0; B = 0; C = 0; D = 0; }
 };
 
-// FUNCTION: 0x0052B7A0 $E10
+// SYNTHETIC: GAMEMD 0x0052B7A0 SYMBOL
+// _$E10
 IniZeroQuad DAT_00A8F2E8;
 
 template class List<INIClass::INIEntry *>;

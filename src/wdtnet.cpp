@@ -15,13 +15,13 @@
 
 #define PEEK_AT(data, pos) (*((unsigned char*)(data) + pos))
 
-// FUNCTION: 0x0076AAB0
+// FUNCTION: GAMEMD 0x0076AAB0
 rc_ptr<WDTTerritory> FUN_0076AAB0(void)
 {
 	return rc_ptr<WDTTerritory>(new WDTTerritory);
 }
 
-// FUNCTION: 0x0076AAF0
+// FUNCTION: GAMEMD 0x0076AAF0
 WDTTerritory::WDTTerritory(void)
 {
 	Index = 0;
@@ -63,18 +63,18 @@ WDTTerritory::WDTTerritory(void)
 	UserModBooleans = -1;
 }
 
-// FUNCTION: 0x0076AB90
+// FUNCTION: GAMEMD 0x0076AB90
 WDTTerritory::~WDTTerritory(void)
 {
 }
 
-// FUNCTION: 0x0076ABA0
+// FUNCTION: GAMEMD 0x0076ABA0
 rc_ptr<WDTState> FUN_0076ABA0(void *data)
 {
 	return rc_ptr<WDTState>(new WDTState(data));
 }
 
-// FUNCTION: 0x0076ABE0
+// FUNCTION: GAMEMD 0x0076ABE0
 WDTState::WDTState(void)
 {
 	MapID = 0;
@@ -86,7 +86,7 @@ WDTState::WDTState(void)
 	OwnerHistory = NULL;
 }
 
-// FUNCTION: 0x0076AC90
+// FUNCTION: GAMEMD 0x0076AC90
 WDTState::WDTState(void *data)
 {
 	PacketClass *packet = new PacketClass((char *)data);
@@ -187,7 +187,7 @@ WDTState::WDTState(void *data)
 	}
 }
 
-// FUNCTION: 0x0076AFC0
+// FUNCTION: GAMEMD 0x0076AFC0
 WDTState::~WDTState(void)
 {
 	Territories.Clear();
@@ -212,7 +212,7 @@ WDTState::~WDTState(void)
 	}
 }
 
-// FUNCTION: 0x0076B080
+// FUNCTION: GAMEMD 0x0076B080
 bool WDTState::Has_Owner_History(void)
 {
 	if (OwnerHistory != NULL) {
@@ -221,13 +221,13 @@ bool WDTState::Has_Owner_History(void)
 	return(false);
 }
 
-// FUNCTION: 0x0076B090
+// FUNCTION: GAMEMD 0x0076B090
 bool WDTState::Is_Previous_Cycle(void)
 {
 	return(IsPreviousCycle);
 }
 
-// FUNCTION: 0x0076B0A0
+// FUNCTION: GAMEMD 0x0076B0A0
 bool WDTState::Create_History(void *data, int count)
 {
 	unsigned int i;
@@ -280,32 +280,49 @@ bool WDTState::Create_History(void *data, int count)
 	return(true);
 }
 
-// FUNCTION: 0x0076B6C0 WDTTerritory::~WDTTerritory
+// SYNTHETIC: GAMEMD 0x0076B6C0
+// ??_GWDTTerritory@@UAEPAXI@Z
 
-// FUNCTION: 0x0076B6F0 WDTState::~WDTState
-// FUNCTION: 0x0076B710 ?$DynamicVectorClass@V?$rc_ptr@VWDTTerritory@@@@::Clear
-// FUNCTION: 0x0076B740 ?$DynamicVectorClass@V?$rc_ptr@VWDTTerritory@@@@::ID
-// FUNCTION: 0x0076B760 ?$VectorClass@V?$rc_ptr@VWDTTerritory@@@@::GetItem
-// FUNCTION: 0x0076B790 ?$rc_ptr@VWDTTerritory@@::?$rc_ptr@VWDTTerritory@@
-// FUNCTION: 0x0076B7B0 ?$VectorClass@V?$rc_ptr@VWDTTerritory@@@@::operator=
-// FUNCTION: 0x0076B870 ?$VectorClass@V?$rc_ptr@VWDTTerritory@@@@::operator==
-// FUNCTION: 0x0076B8C0 ?$VectorClass@V?$rc_ptr@VWDTTerritory@@@@::Resize
-// FUNCTION: 0x0076B9E0 ?$VectorClass@V?$rc_ptr@VWDTTerritory@@@@::Clear
-// FUNCTION: 0x0076BA10 ?$VectorClass@V?$rc_ptr@VWDTTerritory@@@@::ID
-// FUNCTION: 0x0076BA50 ?$VectorClass@V?$rc_ptr@VWDTTerritory@@@@::ID
-// FUNCTION: 0x0076BA70 ?$DynamicVectorClass@V?$rc_ptr@VWDTTerritory@@@@::Resize
+// SYNTHETIC: GAMEMD 0x0076B6F0
+// ??_GWDTState@@UAEPAXI@Z
+// TEMPLATE: GAMEMD 0x0076B710
+// ?Clear@?$DynamicVectorClass@V?$rc_ptr@VWDTTerritory@@@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0076B740
+// ?ID@?$DynamicVectorClass@V?$rc_ptr@VWDTTerritory@@@@@@UAEHPBV?$rc_ptr@VWDTTerritory@@@@@Z
+// TEMPLATE: GAMEMD 0x0076B760
+// ?GetItem@?$VectorClass@V?$rc_ptr@VWDTTerritory@@@@@@UBE?AV?$rc_ptr@VWDTTerritory@@@@H@Z
+// TEMPLATE: GAMEMD 0x0076B790
+// ??0?$rc_ptr@VWDTTerritory@@@@QAE@PAVWDTTerritory@@@Z
+// TEMPLATE: GAMEMD 0x0076B7B0
+// ??4?$VectorClass@V?$rc_ptr@VWDTTerritory@@@@@@QAEAAV0@ABV0@@Z
+// TEMPLATE: GAMEMD 0x0076B870
+// ??8?$VectorClass@V?$rc_ptr@VWDTTerritory@@@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x0076B8C0
+// ?Resize@?$VectorClass@V?$rc_ptr@VWDTTerritory@@@@@@UAE_NHPBV?$rc_ptr@VWDTTerritory@@@@@Z
+// TEMPLATE: GAMEMD 0x0076B9E0
+// ?Clear@?$VectorClass@V?$rc_ptr@VWDTTerritory@@@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0076BA10
+// ?ID@?$VectorClass@V?$rc_ptr@VWDTTerritory@@@@@@UAEHABV?$rc_ptr@VWDTTerritory@@@@@Z
+// TEMPLATE: GAMEMD 0x0076BA50
+// ?ID@?$VectorClass@V?$rc_ptr@VWDTTerritory@@@@@@UAEHPBV?$rc_ptr@VWDTTerritory@@@@@Z
+// TEMPLATE: GAMEMD 0x0076BA70
+// ?Resize@?$DynamicVectorClass@V?$rc_ptr@VWDTTerritory@@@@@@UAE_NHPBV?$rc_ptr@VWDTTerritory@@@@@Z
 
-// FUNCTION: 0x0076BB90 ?$DynamicVectorClass@V?$rc_ptr@VWDTTerritory@@@@::ID
+// TEMPLATE: GAMEMD 0x0076BB90
+// ?ID@?$DynamicVectorClass@V?$rc_ptr@VWDTTerritory@@@@@@UAEHABV?$rc_ptr@VWDTTerritory@@@@@Z
 
-// FUNCTION: 0x0076BBC0 ?$VectorClass@V?$rc_ptr@VWDTTerritory@@@@::~?$VectorClass@V?$rc_ptr@VWDTTerritory@@@@
+// SYNTHETIC: GAMEMD 0x0076BBC0
+// ??_G?$VectorClass@V?$rc_ptr@VWDTTerritory@@@@@@UAEPAXI@Z
 
-// FUNCTION: 0x0076BC10 ?$DynamicVectorClass@V?$rc_ptr@VWDTTerritory@@@@::~?$DynamicVectorClass@V?$rc_ptr@VWDTTerritory@@@@
+// SYNTHETIC: GAMEMD 0x0076BC10
+// ??_G?$DynamicVectorClass@V?$rc_ptr@VWDTTerritory@@@@@@UAEPAXI@Z
 
-// FUNCTION: 0x0076BC60 ?$rc_ptr@VWDTTerritory@@::?$rc_ptr@VWDTTerritory@@
+// TEMPLATE: GAMEMD 0x0076BC60
+// ??0?$rc_ptr@VWDTTerritory@@@@QAE@XZ
 
 extern int DAT_00B72998, DAT_00B7299C, DAT_00B729A0, DAT_00B729A4;
 
-// FUNCTION: 0x0076BC80
+// FUNCTION: GAMEMD 0x0076BC80
 void FUN_0076BC80(void)
 {
 	DAT_00B72998 = 0;

@@ -34,8 +34,8 @@ method and a record of every batch.
 
 ## Layout
 
-- `src/`, `include/`: the reconstructed source. A `// FUNCTION: 0x...` line ties each
-  function to its address in the original.
+- `src/`, `include/`: the reconstructed source. A marker in reccmp's format
+  (`// FUNCTION: GAMEMD 0x...`) ties each function to its address in the original.
 - `data/`: the map of the executable (`functions.csv`, `modules.csv`), what matches
   (`progress.csv`), proven names for globals (`names.csv`), and every attempt that fell
   short (`attempts.csv`).

@@ -49,7 +49,7 @@ extern void * DAT_0087E748;
 void __fastcall FUN_00407150(void * p, int value);
 void __fastcall FUN_00752AB0(int volume);
 
-// FUNCTION: 0x005FA2E0
+// FUNCTION: GAMEMD 0x005FA2E0
 int __fastcall Hotkey_To_Key(int hotkey)
 {
 	int key = hotkey & 0xFF;
@@ -69,7 +69,7 @@ int __fastcall Hotkey_To_Key(int hotkey)
 	return key;
 }
 
-// FUNCTION: 0x005FA310
+// FUNCTION: GAMEMD 0x005FA310
 int __fastcall Key_To_Hotkey(int key)
 {
 	int mods = 0;
@@ -88,7 +88,7 @@ int __fastcall Key_To_Hotkey(int key)
 	return (key & 0xFF) | (mods << 8);
 }
 
-// FUNCTION: 0x005FA350
+// FUNCTION: GAMEMD 0x005FA350
 OptionsClass::OptionsClass(void) :
 	Difficulty(DIFF_NORMAL),
 	GameSpeed(3),
@@ -131,12 +131,12 @@ OptionsClass::OptionsClass(void) :
 	DestNet[0] = '\0';
 }
 
-// FUNCTION: 0x005FA430
+// FUNCTION: GAMEMD 0x005FA430
 void OptionsClass::One_Time(void)
 {
 }
 
-// FUNCTION: 0x005FA440
+// FUNCTION: GAMEMD 0x005FA440
 void OptionsClass::Set_Shuffle(bool on)
 {
 	IsScoreShuffle = on;
@@ -144,7 +144,7 @@ void OptionsClass::Set_Shuffle(bool on)
 	DebugString("ScoreShuffle is %s\n", IsScoreShuffle == true ? "ON" : "OFF");
 }
 
-// FUNCTION: 0x005FA470
+// FUNCTION: GAMEMD 0x005FA470
 void OptionsClass::Set_Repeat(bool on)
 {
 	IsScoreRepeat = on;
@@ -152,7 +152,7 @@ void OptionsClass::Set_Repeat(bool on)
 	DebugString("ScoreRepeat is %s\n", IsScoreRepeat == true ? "ON" : "OFF");
 }
 
-// FUNCTION: 0x005FA4A0
+// FUNCTION: GAMEMD 0x005FA4A0
 void OptionsClass::Set_Score_Volume(float volume, bool feedback)
 {
 	ScoreVolume = MIN(volume, 1.0);
@@ -161,7 +161,7 @@ void OptionsClass::Set_Score_Volume(float volume, bool feedback)
 	DebugString("ScoreVolume = %f\n", ScoreVolume);
 }
 
-// FUNCTION: 0x005FA510
+// FUNCTION: GAMEMD 0x005FA510
 void OptionsClass::Set_Sound_Volume(float volume, bool feedback)
 {
 	SoundVolume = MIN(volume, 1.0);
@@ -172,7 +172,7 @@ void OptionsClass::Set_Sound_Volume(float volume, bool feedback)
 	DebugString("SoundVolume = %f\n", SoundVolume);
 }
 
-// FUNCTION: 0x005FA590
+// FUNCTION: GAMEMD 0x005FA590
 void OptionsClass::Set_Voice_Volume(float volume, bool feedback)
 {
 	VoiceVolume = MIN(volume, 1.0);
@@ -184,7 +184,7 @@ void OptionsClass::Set_Voice_Volume(float volume, bool feedback)
 	DebugString("VoiceVolume = %f\n", VoiceVolume);
 }
 
-// FUNCTION: 0x005FB2E0
+// FUNCTION: GAMEMD 0x005FB2E0
 int OptionsClass::Normalize_Delay(int delay) const
 {
 	static int _adjust[][MAX_SPEED_SETTING + 1] = {
@@ -203,7 +203,7 @@ int OptionsClass::Normalize_Delay(int delay) const
 	return(delay);
 }
 
-// FUNCTION: 0x005FAD10
+// FUNCTION: GAMEMD 0x005FAD10
 void OptionsClass::Save_Settings(void)
 {
 	CCFileClass file("RA2MD.INI");
@@ -250,7 +250,7 @@ void OptionsClass::Save_Settings(void)
 	Setup_Dest_Net();
 }
 
-// FUNCTION: 0x005FB050
+// FUNCTION: GAMEMD 0x005FB050
 void OptionsClass::Setup_Dest_Net(void)
 {
 	if (Socket == 0xFFFF) {
@@ -292,7 +292,7 @@ void OptionsClass::Setup_Dest_Net(void)
 	}
 }
 
-// FUNCTION: 0x005FB160
+// FUNCTION: GAMEMD 0x005FB160
 void OptionsClass::Set(void)
 {
 	Set_Sound_Volume(SoundVolume, false);
@@ -305,7 +305,7 @@ void OptionsClass::Set(void)
 }
 
 
-// FUNCTION: 0x005FB310
+// FUNCTION: GAMEMD 0x005FB310
 int OptionsClass::Normalize_Volume(int volume) const
 {
 	return(volume * SoundVolume);
@@ -313,7 +313,7 @@ int OptionsClass::Normalize_Volume(int volume) const
 
 BOOL CALLBACK FUN_005FB320(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 
-// FUNCTION: 0x005FBEF0
+// FUNCTION: GAMEMD 0x005FBEF0
 bool OptionsClass::Hotkey_Dialog(void)
 {
 	int res = -1;
@@ -335,13 +335,13 @@ bool OptionsClass::Hotkey_Dialog(void)
 	return(true);
 }
 
-// FUNCTION: 0x005FBF70
+// FUNCTION: GAMEMD 0x005FBF70
 int OptionsClass::Get_Scroll_Method(void) const
 {
 	return(ScrollMethod);
 }
 
-// FUNCTION: 0x005FBF80
+// FUNCTION: GAMEMD 0x005FBF80
 void OptionsClass::FUN_005FBF80(char const * name)
 {
 	int index = 0;
@@ -369,7 +369,7 @@ all_done:
 	}
 }
 
-// FUNCTION: 0x005FC000
+// FUNCTION: GAMEMD 0x005FC000
 void OptionsClass::FUN_005FC000(HWND list)
 {
 	if (MovieUnlockableInfo::Common[0].Filename && MovieUnlockableInfo::Common[0].Description) {
@@ -404,5 +404,6 @@ void OptionsClass::FUN_005FC000(HWND list)
 	}
 }
 
-// FUNCTION: 0x005FC120 Binary_Search
+// TEMPLATE: GAMEMD 0x005FC120
+// ?Binary_Search@@YIPAUNodeElement@?$IndexClass@HPBVCommandClass@@@@PAU12@HABU12@@Z
 template IndexClass<int, CommandClass const *>::NodeElement * Binary_Search(IndexClass<int, CommandClass const *>::NodeElement *, int, IndexClass<int, CommandClass const *>::NodeElement const &);

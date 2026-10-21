@@ -28,7 +28,7 @@
 
 static const double _deaccel = 0.3f;
 
-// FUNCTION: 0x004AF540
+// FUNCTION: GAMEMD 0x004AF540
 DriveLocomotionClass::DriveLocomotionClass(void) :
 	BASECLASS(),
 	CurrentRamp(0),
@@ -50,12 +50,12 @@ DriveLocomotionClass::DriveLocomotionClass(void) :
 {
 }
 
-// FUNCTION: 0x004AF5E0
+// FUNCTION: GAMEMD 0x004AF5E0
 DriveLocomotionClass::~DriveLocomotionClass(void)
 {
 }
 
-// FUNCTION: 0x004AF610
+// FUNCTION: GAMEMD 0x004AF610
 HRESULT DriveLocomotionClass::Piggyback_CLSID(CLSID * classid)
 {
 	if (classid == NULL) {
@@ -77,7 +77,7 @@ HRESULT DriveLocomotionClass::Piggyback_CLSID(CLSID * classid)
 	return(ptr->GetClassID(classid));
 }
 
-// FUNCTION: 0x004AF720
+// FUNCTION: GAMEMD 0x004AF720
 HRESULT STDMETHODCALLTYPE DriveLocomotionClass::QueryInterface(REFIID riid, LPVOID * ppvObject)
 {
 	HRESULT result = BASECLASS::QueryInterface(riid, ppvObject);
@@ -96,7 +96,7 @@ HRESULT STDMETHODCALLTYPE DriveLocomotionClass::QueryInterface(REFIID riid, LPVO
 	return(result);
 }
 
-// FUNCTION: 0x004AF780
+// FUNCTION: GAMEMD 0x004AF780
 HRESULT STDMETHODCALLTYPE DriveLocomotionClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -113,7 +113,7 @@ HRESULT STDMETHODCALLTYPE DriveLocomotionClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x004AF800
+// FUNCTION: GAMEMD 0x004AF800
 HRESULT STDMETHODCALLTYPE DriveLocomotionClass::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -132,7 +132,7 @@ HRESULT STDMETHODCALLTYPE DriveLocomotionClass::Save(IStream * stream, BOOL clea
 	return(result);
 }
 
-// FUNCTION: 0x004AF8E0
+// FUNCTION: GAMEMD 0x004AF8E0
 HRESULT STDMETHODCALLTYPE DriveLocomotionClass::Begin_Piggyback(ILocomotion *pointer)
 {
 	if (pointer == NULL) {
@@ -145,7 +145,7 @@ HRESULT STDMETHODCALLTYPE DriveLocomotionClass::Begin_Piggyback(ILocomotion *poi
 	return(E_FAIL);
 }
 
-// FUNCTION: 0x004AF930
+// FUNCTION: GAMEMD 0x004AF930
 HRESULT DriveLocomotionClass::End_Piggyback(ILocomotion **pointer)
 {
 	if (pointer == NULL) {
@@ -159,7 +159,7 @@ HRESULT DriveLocomotionClass::End_Piggyback(ILocomotion **pointer)
 	return(S_FALSE);
 }
 
-// FUNCTION: 0x004AF970
+// FUNCTION: GAMEMD 0x004AF970
 boolean DriveLocomotionClass::Is_Ok_To_End(void)
 {
 	if (!Is_Moving() && (Piggybacker != NULL && IsLocomotorUnlocked && !LinkedTo->IsAttackedByLocomotor)) {
@@ -168,7 +168,7 @@ boolean DriveLocomotionClass::Is_Ok_To_End(void)
 	return(false);
 }
 
-// FUNCTION: 0x004AF9B0
+// FUNCTION: GAMEMD 0x004AF9B0
 Matrix3D DriveLocomotionClass::Get_Slope_Matrix(void) const
 {
 	Matrix3D mtx(true);
@@ -182,13 +182,13 @@ Matrix3D DriveLocomotionClass::Get_Slope_Matrix(void) const
 	return(mtx);
 }
 
-// FUNCTION: 0x004AFAA0
+// FUNCTION: GAMEMD 0x004AFAA0
 double DriveLocomotionClass::Get_Slope_Ratio(void) const
 {
 	return(RampTimer.Progress());
 }
 
-// FUNCTION: 0x004AFB00
+// FUNCTION: GAMEMD 0x004AFB00
 void DriveLocomotionClass::Set_Slope(int ramp)
 {
 	int cur = CurrentRamp;
@@ -199,7 +199,7 @@ void DriveLocomotionClass::Set_Slope(int ramp)
 	}
 }
 
-// FUNCTION: 0x004AFB40
+// FUNCTION: GAMEMD 0x004AFB40
 void STDMETHODCALLTYPE DriveLocomotionClass::Force_New_Slope(int ramp)
 {
 	PreviousRamp = ramp;
@@ -207,7 +207,7 @@ void STDMETHODCALLTYPE DriveLocomotionClass::Force_New_Slope(int ramp)
 	RampTimer = 0;
 }
 
-// FUNCTION: 0x004AFB80
+// FUNCTION: GAMEMD 0x004AFB80
 boolean STDMETHODCALLTYPE DriveLocomotionClass::Is_Moving(void)
 {
 	if (DestinationCoord != COORD_NONE) {
@@ -219,7 +219,7 @@ boolean STDMETHODCALLTYPE DriveLocomotionClass::Is_Moving(void)
 	return(false);
 }
 
-// FUNCTION: 0x004AFC20
+// FUNCTION: GAMEMD 0x004AFC20
 boolean STDMETHODCALLTYPE DriveLocomotionClass::Is_Moving_Now(void)
 {
 	if (LinkedTo->PrimaryFacing.Is_Rotating()) {
@@ -231,13 +231,13 @@ boolean STDMETHODCALLTYPE DriveLocomotionClass::Is_Moving_Now(void)
 	return(false);
 }
 
-// FUNCTION: 0x004AFC90
+// FUNCTION: GAMEMD 0x004AFC90
 CoordStruct STDMETHODCALLTYPE DriveLocomotionClass::Destination(void)
 {
 	return(DestinationCoord);
 }
 
-// FUNCTION: 0x004AFCC0
+// FUNCTION: GAMEMD 0x004AFCC0
 CoordStruct STDMETHODCALLTYPE DriveLocomotionClass::Head_To_Coord(void)
 {
 	if (HeadToCoord != COORD_NONE) {
@@ -246,7 +246,7 @@ CoordStruct STDMETHODCALLTYPE DriveLocomotionClass::Head_To_Coord(void)
 	return(LinkedTo->PositionCoord);
 }
 
-// FUNCTION: 0x004AFD40
+// FUNCTION: GAMEMD 0x004AFD40
 void STDMETHODCALLTYPE DriveLocomotionClass::Move_To(CoordStruct to)
 {
 	if (!LinkedTo->IsUnderEMP() && !LinkedTo->IsParalyzed() && !LinkedTo->IsBeingWarpedOut() && !LinkedTo->IsWarpingIn()) {
@@ -259,7 +259,7 @@ void STDMETHODCALLTYPE DriveLocomotionClass::Move_To(CoordStruct to)
 	}
 }
 
-// FUNCTION: 0x004AFE00
+// FUNCTION: GAMEMD 0x004AFE00
 void STDMETHODCALLTYPE DriveLocomotionClass::Stop_Moving(void)
 {
 	if (HeadToCoord != COORD_NONE) {
@@ -283,7 +283,7 @@ void STDMETHODCALLTYPE DriveLocomotionClass::Stop_Moving(void)
 	DestinationCoord = COORD_NONE;
 }
 
-// FUNCTION: 0x004AFED0
+// FUNCTION: GAMEMD 0x004AFED0
 BOOL DriveLocomotionClass::Is_Angled(void) const
 {
 	float percent = Get_Slope_Ratio();
@@ -295,7 +295,7 @@ BOOL DriveLocomotionClass::Is_Angled(void) const
 	return(false);
 }
 
-// FUNCTION: 0x004B0410
+// FUNCTION: GAMEMD 0x004B0410
 Matrix3DStruct STDMETHODCALLTYPE DriveLocomotionClass::Shadow_Matrix(int *key)
 {
 	if (!Is_Angled()) {
@@ -306,13 +306,13 @@ Matrix3DStruct STDMETHODCALLTYPE DriveLocomotionClass::Shadow_Matrix(int *key)
 	return(BASECLASS::Shadow_Matrix(key));
 }
 
-// FUNCTION: 0x004B04D0
+// FUNCTION: GAMEMD 0x004B04D0
 void STDMETHODCALLTYPE DriveLocomotionClass::Unlimbo(void)
 {
 	Force_New_Slope(LinkedTo->Get_Cell_Ptr()->Ramp);
 }
 
-// FUNCTION: 0x004B0DA0
+// FUNCTION: GAMEMD 0x004B0DA0
 bool DriveLocomotionClass::Stop_Driver(void)
 {
 	if (HeadToCoord != COORD_NONE) {
@@ -324,7 +324,7 @@ bool DriveLocomotionClass::Stop_Driver(void)
 }
 
 
-// FUNCTION: 0x004B4890
+// FUNCTION: GAMEMD 0x004B4890
 bool DriveLocomotionClass::Abandon_Navigation(void)
 {
 	if (LinkedTo->RouteQueue.Count() == 0) {
@@ -337,7 +337,7 @@ bool DriveLocomotionClass::Abandon_Navigation(void)
 }
 
 
-// FUNCTION: 0x004B0500
+// FUNCTION: GAMEMD 0x004B0500
 boolean STDMETHODCALLTYPE DriveLocomotionClass::Process(void)
 {
 	Set_Slope(LinkedTo->Get_Cell_Ptr()->Ramp);
@@ -424,7 +424,7 @@ boolean STDMETHODCALLTYPE DriveLocomotionClass::Process(void)
 }
 
 
-// FUNCTION: 0x004B0AD0
+// FUNCTION: GAMEMD 0x004B0AD0
 void DriveLocomotionClass::Mark_Track(Coord const & headto, MarkType type)
 {
 	if (headto != COORD_NONE) {
@@ -463,7 +463,7 @@ void DriveLocomotionClass::Mark_Track(Coord const & headto, MarkType type)
 }
 
 
-// FUNCTION: 0x004B0C40
+// FUNCTION: GAMEMD 0x004B0C40
 void STDMETHODCALLTYPE DriveLocomotionClass::Force_Track(int track, CoordStruct coord)
 {
 	TrackNumber = track;
@@ -477,7 +477,7 @@ void STDMETHODCALLTYPE DriveLocomotionClass::Force_Track(int track, CoordStruct 
 }
 
 
-// FUNCTION: 0x004B0DF0
+// FUNCTION: GAMEMD 0x004B0DF0
 bool DriveLocomotionClass::Start_Driver(Coord const & headto)
 {
 	Stop_Driver();
@@ -498,7 +498,7 @@ bool DriveLocomotionClass::Start_Driver(Coord const & headto)
 }
 
 
-// FUNCTION: 0x004B0EF0
+// FUNCTION: GAMEMD 0x004B0EF0
 void STDMETHODCALLTYPE DriveLocomotionClass::Do_Turn(DirStruct coord)
 {
 	DirType dir = (DirType &)coord;
@@ -506,13 +506,13 @@ void STDMETHODCALLTYPE DriveLocomotionClass::Do_Turn(DirStruct coord)
 }
 
 
-// FUNCTION: 0x004B4820
+// FUNCTION: GAMEMD 0x004B4820
 LayerType STDMETHODCALLTYPE DriveLocomotionClass::In_Which_Layer(void)
 {
 	return(LAYER_GROUND);
 }
 
-// FUNCTION: 0x004B4830
+// FUNCTION: GAMEMD 0x004B4830
 HRESULT STDMETHODCALLTYPE DriveLocomotionClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -520,13 +520,13 @@ HRESULT STDMETHODCALLTYPE DriveLocomotionClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x004B4770
+// FUNCTION: GAMEMD 0x004B4770
 void DriveLocomotionClass::Lay_Track(void)
 {
 }
 
 
-// FUNCTION: 0x004B4780
+// FUNCTION: GAMEMD 0x004B4780
 Point2D DriveLocomotionClass::Smooth_Turn(Point2D const & adj, Dir256 & dir)
 {
 	Dir256 workdir = dir;
@@ -560,27 +560,27 @@ Point2D DriveLocomotionClass::Smooth_Turn(Point2D const & adj, Dir256 & dir)
 }
 
 
-// FUNCTION: 0x004B4800
+// FUNCTION: GAMEMD 0x004B4800
 bool DriveLocomotionClass::Incoming(Cell cell)
 {
 	return(Map.Try_Open_Gate(LinkedTo, cell));
 }
 
 
-// FUNCTION: 0x004B4880
+// FUNCTION: GAMEMD 0x004B4880
 ZGradientType STDMETHODCALLTYPE DriveLocomotionClass::Z_Gradient(void)
 {
 	return(BASECLASS::Z_Gradient());
 }
 
-// FUNCTION: 0x004B4870
+// FUNCTION: GAMEMD 0x004B4870
 int STDMETHODCALLTYPE DriveLocomotionClass::Z_Adjust(void)
 {
 	return(0);
 }
 
 
-// FUNCTION: 0x004B48D0
+// FUNCTION: GAMEMD 0x004B48D0
 void STDMETHODCALLTYPE DriveLocomotionClass::Mark_All_Occupation_Bits(int mark)
 {
 	if (HeadToCoord != COORD_NONE) {
@@ -589,7 +589,7 @@ void STDMETHODCALLTYPE DriveLocomotionClass::Mark_All_Occupation_Bits(int mark)
 }
 
 
-// FUNCTION: 0x004B4920
+// FUNCTION: GAMEMD 0x004B4920
 boolean STDMETHODCALLTYPE DriveLocomotionClass::Is_Moving_Here(CoordStruct to)
 {
 	Coord coord = Head_To_Coord();
@@ -625,7 +625,7 @@ boolean STDMETHODCALLTYPE DriveLocomotionClass::Is_Moving_Here(CoordStruct to)
 }
 
 
-// FUNCTION: 0x004B4B00
+// FUNCTION: GAMEMD 0x004B4B00
 boolean STDMETHODCALLTYPE DriveLocomotionClass::Will_Jump_Tracks(void)
 {
 	TurnTrackType	const * track;
@@ -664,89 +664,108 @@ boolean STDMETHODCALLTYPE DriveLocomotionClass::Will_Jump_Tracks(void)
 }
 
 
-// FUNCTION: 0x004B4BE0
+// FUNCTION: GAMEMD 0x004B4BE0
 void STDMETHODCALLTYPE DriveLocomotionClass::Lock(void)
 {
 	IsLocomotorUnlocked = false;
 }
 
-// FUNCTION: 0x004B4BF0
+// FUNCTION: GAMEMD 0x004B4BF0
 void STDMETHODCALLTYPE DriveLocomotionClass::Unlock(void)
 {
 	IsLocomotorUnlocked = true;
 }
 
-// FUNCTION: 0x004B4C00
+// FUNCTION: GAMEMD 0x004B4C00
 int STDMETHODCALLTYPE DriveLocomotionClass::Get_Track_Number(void)
 {
 	return(TrackNumber);
 }
 
-// FUNCTION: 0x004B4C10
+// FUNCTION: GAMEMD 0x004B4C10
 int STDMETHODCALLTYPE DriveLocomotionClass::Get_Track_Index(void)
 {
 	return(TrackIndex);
 }
 
-// FUNCTION: 0x004B4C20
+// FUNCTION: GAMEMD 0x004B4C20
 int STDMETHODCALLTYPE DriveLocomotionClass::Get_Speed_Accum(void)
 {
 	return(SpeedAccum);
 }
 
-// FUNCTION: 0x004B4C30 LocomotionClass::IsDirty
+// FUNCTION: GAMEMD 0x004B4C30
+// LocomotionClass::IsDirty
 
-// FUNCTION: 0x004B4C50 LocomotionClass::Is_Really_Moving_Now
+// FUNCTION: GAMEMD 0x004B4C50
+// LocomotionClass::Is_Really_Moving_Now
 
-// FUNCTION: 0x004B4C60 LocomotionClass::Get_Status
+// FUNCTION: GAMEMD 0x004B4C60
+// LocomotionClass::Get_Status
 
-// FUNCTION: 0x004B4C70 LocomotionClass::Acquire_Hunter_Seeker_Target
+// FUNCTION: GAMEMD 0x004B4C70
+// LocomotionClass::Acquire_Hunter_Seeker_Target
 
-// FUNCTION: 0x004B4C80 LocomotionClass::Is_Surfacing
+// FUNCTION: GAMEMD 0x004B4C80
+// LocomotionClass::Is_Surfacing
 
-// FUNCTION: 0x004B4C90 LocomotionClass::Stop_Movement_Animation
+// FUNCTION: GAMEMD 0x004B4C90
+// LocomotionClass::Stop_Movement_Animation
 
-// FUNCTION: 0x004B4CA0 LocomotionClass::Limbo
+// FUNCTION: GAMEMD 0x004B4CA0
+// LocomotionClass::Limbo
 
-// FUNCTION: 0x004B4CB0
+// FUNCTION: GAMEMD 0x004B4CB0
 ULONG STDMETHODCALLTYPE DriveLocomotionClass::AddRef(void)
 {
 	return(BASECLASS::AddRef());
 }
 
-// FUNCTION: 0x004B4CC0
+// FUNCTION: GAMEMD 0x004B4CC0
 ULONG STDMETHODCALLTYPE DriveLocomotionClass::Release(void)
 {
 	return(BASECLASS::Release());
 }
 
-// FUNCTION: 0x004B4CD0 DriveLocomotionClass::Is_Piggybacking
+// FUNCTION: GAMEMD 0x004B4CD0
+// DriveLocomotionClass::Is_Piggybacking
 
-// FUNCTION: 0x004B4CF0 DriveLocomotionClass::Fetch_Object_Size
+// FUNCTION: GAMEMD 0x004B4CF0
+// DriveLocomotionClass::Fetch_Object_Size
 
-// FUNCTION: 0x004B4D00 DriveLocomotionClass::~DriveLocomotionClass
+// SYNTHETIC: GAMEMD 0x004B4D00
+// ??_GDriveLocomotionClass@@UAEPAXI@Z
 
 
-// FUNCTION: 0x004B4D50 ?$_com_ptr_t@V?$_com_IIID@UIPersist@@$1?_GUID_0000010c_0000_0000_c000_000000000046@@3U__s_GUID@@A@@::_Release
+// TEMPLATE: GAMEMD 0x004B4D50
+// ?_Release@?$_com_ptr_t@V?$_com_IIID@UIPersist@@$1?_GUID_0000010c_0000_0000_c000_000000000046@@3U__s_GUID@@A@@@@AAEXXZ
 template class _com_ptr_t<_com_IIID<IPersist, &__uuidof(IPersist)> >;
 
-// FUNCTION: 0x004B4D60 ?$_com_ptr_t@V?$_com_IIID@UIPersistStream@@$1?_GUID_00000109_0000_0000_c000_000000000046@@3U__s_GUID@@A@@::_Release
+// TEMPLATE: GAMEMD 0x004B4D60
+// ?_Release@?$_com_ptr_t@V?$_com_IIID@UIPersistStream@@$1?_GUID_00000109_0000_0000_c000_000000000046@@3U__s_GUID@@A@@@@AAEXXZ
 template class _com_ptr_t<_com_IIID<IPersistStream, &__uuidof(IPersistStream)> >;
 
-// FUNCTION: 0x004B4D70 ?$CDTimerClass@VFrameTimerClass@@::Value
+// TEMPLATE: GAMEMD 0x004B4D70
+// ?Value@?$CDTimerClass@VFrameTimerClass@@@@QBEHXZ
 template class CDTimerClass<FrameTimerClass>;
 
-// FUNCTION: 0x004B4D90 DriveLocomotionClass::QueryInterface
+// FUNCTION: GAMEMD 0x004B4D90
+// DriveLocomotionClass::QueryInterface
 
-// FUNCTION: 0x004B4DA0 DriveLocomotionClass::AddRef
+// FUNCTION: GAMEMD 0x004B4DA0
+// DriveLocomotionClass::AddRef
 
-// FUNCTION: 0x004B4DB0 DriveLocomotionClass::Release
+// FUNCTION: GAMEMD 0x004B4DB0
+// DriveLocomotionClass::Release
 
-// FUNCTION: 0x004B4DC0 DriveLocomotionClass::QueryInterface
+// FUNCTION: GAMEMD 0x004B4DC0
+// DriveLocomotionClass::QueryInterface
 
-// FUNCTION: 0x004B4DD0 DriveLocomotionClass::AddRef
+// FUNCTION: GAMEMD 0x004B4DD0
+// DriveLocomotionClass::AddRef
 
-// FUNCTION: 0x004B4DE0 DriveLocomotionClass::Release
+// FUNCTION: GAMEMD 0x004B4DE0
+// DriveLocomotionClass::Release
 
 struct ZeroQuad {
 	int A;
@@ -759,4 +778,5 @@ struct ZeroQuad {
 
 ZeroQuad DriveZeroQuad;
 
-// FUNCTION: 0x004B4DF0 $E106
+// SYNTHETIC: GAMEMD 0x004B4DF0 SYMBOL
+// _$E106

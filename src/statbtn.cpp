@@ -33,7 +33,7 @@ extern const double DAT_007E1728;
 extern const double DAT_007F3F30;
 extern const double DAT_007F3F38;
 
-// FUNCTION: 0x006C6540
+// FUNCTION: GAMEMD 0x006C6540
 StaticButtonClass::StaticButtonClass(unsigned , wchar_t const * text, TextPrintType style, int x, int y, int w, int h) :
 	BASECLASS(x, y, w, h, FlagEnum(0)),
 	String(NULL),
@@ -52,7 +52,7 @@ StaticButtonClass::StaticButtonClass(unsigned , wchar_t const * text, TextPrintT
 	}
 }
 
-// FUNCTION: 0x006C65D0
+// FUNCTION: GAMEMD 0x006C65D0
 StaticButtonClass::StaticButtonClass(void) :
 	BASECLASS(0, 0, 0, 0, FlagEnum(0)),
 	String(NULL),
@@ -60,7 +60,7 @@ StaticButtonClass::StaticButtonClass(void) :
 {
 }
 
-// FUNCTION: 0x006C6610
+// FUNCTION: GAMEMD 0x006C6610
 StaticButtonClass::~StaticButtonClass(void)
 {
 	if (String != NULL) {
@@ -68,7 +68,7 @@ StaticButtonClass::~StaticButtonClass(void)
 	}
 }
 
-// FUNCTION: 0x006C6640
+// FUNCTION: GAMEMD 0x006C6640
 int StaticButtonClass::Draw_Me(int forced)
 {
 	if (BASECLASS::Draw_Me(forced)) {
@@ -79,7 +79,7 @@ int StaticButtonClass::Draw_Me(int forced)
 	return(false);
 }
 
-// FUNCTION: 0x006C6680
+// FUNCTION: GAMEMD 0x006C6680
 void StaticButtonClass::Set_Text(wchar_t const * text, bool resize)
 {
 	if (String != NULL) {
@@ -104,7 +104,7 @@ void StaticButtonClass::Set_Text(wchar_t const * text, bool resize)
 	}
 }
 
-// FUNCTION: 0x006C6740
+// FUNCTION: GAMEMD 0x006C6740
 void StaticButtonClass::Draw_Background(void)
 {
 	if (Background.Get_Buffer() == NULL && Width > 0 && Height > 0) {
@@ -119,7 +119,7 @@ void StaticButtonClass::Draw_Background(void)
 	}
 }
 
-// FUNCTION: 0x006C67F0
+// FUNCTION: GAMEMD 0x006C67F0
 void StaticButtonClass::Draw_Text(wchar_t const * text)
 {
 	if (String != NULL) {
@@ -137,36 +137,47 @@ void StaticButtonClass::Draw_Text(wchar_t const * text)
 }
 
 
-// FUNCTION: 0x006C6880 StaticButtonClass::~StaticButtonClass
+// SYNTHETIC: GAMEMD 0x006C6880
+// ??_GStaticButtonClass@@UAEPAXI@Z
 
-// FUNCTION: 0x006C68C0 $E31
+// SYNTHETIC: GAMEMD 0x006C68C0 SYMBOL
+// _$E31
 double DAT_00B0BD30 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x006C68F0 $E34
+// SYNTHETIC: GAMEMD 0x006C68F0 SYMBOL
+// _$E34
 double DAT_00B0BDA8 = DAT_00B0BD30 / DAT_007F3F30;
 
-// FUNCTION: 0x006C6910 $E37
+// SYNTHETIC: GAMEMD 0x006C6910 SYMBOL
+// _$E37
 double DAT_00B0BD88 = DAT_007E1718 / DAT_00B0BDA8;
 
-// FUNCTION: 0x006C6930 $E40
+// SYNTHETIC: GAMEMD 0x006C6930 SYMBOL
+// _$E40
 double DAT_00B0BD80 = DAT_007E1720 * DAT_007F3F38;
 
-// FUNCTION: 0x006C6950 $E43
+// SYNTHETIC: GAMEMD 0x006C6950 SYMBOL
+// _$E43
 double DAT_00B0BD38 = DAT_007E1728 * DAT_007F3F38;
 
-// FUNCTION: 0x006C6970 $E46
+// SYNTHETIC: GAMEMD 0x006C6970 SYMBOL
+// _$E46
 double DAT_00B0BD08 = DAT_007E1730 * DAT_007F3F38;
 
-// FUNCTION: 0x006C6990 $E49
+// SYNTHETIC: GAMEMD 0x006C6990 SYMBOL
+// _$E49
 int DAT_00B0BDB0 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B0BD08 - DAT_00B0BD38) * DAT_00B0BD30));
 
-// FUNCTION: 0x006C69D0 $E52
+// SYNTHETIC: GAMEMD 0x006C69D0 SYMBOL
+// _$E52
 double DAT_00B0BD40 = FUN_004CADE0(DAT_00B0BDB0 * DAT_007E1740);
 
-// FUNCTION: 0x006C6A00 $E55
+// SYNTHETIC: GAMEMD 0x006C6A00 SYMBOL
+// _$E55
 double DAT_00B0BD70 = FUN_004CADE0((DAT_00B0BDB0 * 2) / DAT_00B0BD30);
 
-// FUNCTION: 0x006C6A30 $E58
+// SYNTHETIC: GAMEMD 0x006C6A30 SYMBOL
+// _$E58
 int DAT_00B0BDA4 = (int)(DAT_00B0BDB0 * 4 + DAT_007E1738);
 
 struct ShortPair {
@@ -189,14 +200,18 @@ struct Centre {
 	Centre() { C = 0; A = 128; B = 128; }
 };
 
-// FUNCTION: 0x006C6A60 $E61
+// SYNTHETIC: GAMEMD 0x006C6A60 SYMBOL
+// _$E61
 ShortPair DAT_00B0BD20;
 
-// FUNCTION: 0x006C6A70 $E64
+// SYNTHETIC: GAMEMD 0x006C6A70 SYMBOL
+// _$E64
 IntTriple DAT_00B0BD60;
 
-// FUNCTION: 0x006C6A90 $E67
+// SYNTHETIC: GAMEMD 0x006C6A90 SYMBOL
+// _$E67
 Centre DAT_00B0BD98;
 
-// FUNCTION: 0x006C6AB0 $E70
+// SYNTHETIC: GAMEMD 0x006C6AB0 SYMBOL
+// _$E70
 IntQuad DAT_00B0BD10;

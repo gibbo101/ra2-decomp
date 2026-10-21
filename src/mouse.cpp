@@ -32,11 +32,13 @@ ShapeSet const * MouseClass::MouseShapes;
 static bool MouseShapesLoaded;
 void * __fastcall FileSystem_LoadWholeFileEx(char const * name, bool & loaded);
 
-// FUNCTION: 0x005BD9F0 $E133
-// FUNCTION: 0x005BDA20 $E130
+// SYNTHETIC: GAMEMD 0x005BD9F0 SYMBOL
+// _$E133
+// SYNTHETIC: GAMEMD 0x005BDA20 SYMBOL
+// _$E130
 CDTimerClass<SystemTimerClass> MouseClass::Timer = 0;
 
-// FUNCTION: 0x005BDA40
+// FUNCTION: GAMEMD 0x005BDA40
 MouseClass::MouseClass(void) :
 	IsSmall(false),
 	CurrentMouseShape(MOUSE_NORMAL),
@@ -45,20 +47,20 @@ MouseClass::MouseClass(void) :
 {
 }
 
-// FUNCTION: 0x005BDA80
+// FUNCTION: GAMEMD 0x005BDA80
 void MouseClass::Set_Default_Mouse(MouseType mouse, bool size)
 {
 	NormalMouseShape = mouse;
 	Override_Mouse_Shape(mouse, size);
 }
 
-// FUNCTION: 0x005BDAA0
+// FUNCTION: GAMEMD 0x005BDAA0
 void MouseClass::Revert_Mouse_Shape(void)
 {
 	Override_Mouse_Shape(NormalMouseShape, false);
 }
 
-// FUNCTION: 0x005BDAB0
+// FUNCTION: GAMEMD 0x005BDAB0
 void MouseClass::Mouse_Small(bool wsmall)
 {
 	if (IsSmall == wsmall) {
@@ -70,7 +72,7 @@ void MouseClass::Mouse_Small(bool wsmall)
 	MouseCursor->Set_Cursor(Get_Mouse_Hotspot(CurrentMouseShape), MouseShapes, Get_Mouse_Current_Frame(CurrentMouseShape, wsmall));
 }
 
-// FUNCTION: 0x005BDB90
+// FUNCTION: GAMEMD 0x005BDB90
 int MouseClass::Get_Mouse_Start_Frame(MouseType mouse, bool wsmall) const
 {
 	MouseStruct const * control = &MouseControl[mouse];
@@ -84,13 +86,13 @@ int MouseClass::Get_Mouse_Start_Frame(MouseType mouse, bool wsmall) const
 	return(control->StartFrame);
 }
 
-// FUNCTION: 0x005BDBC0
+// FUNCTION: GAMEMD 0x005BDBC0
 int MouseClass::Get_Mouse_Current_Frame(MouseType mouse, bool wsmall) const
 {
 	return(Frame + Get_Mouse_Start_Frame(mouse, wsmall));
 }
 
-// FUNCTION: 0x005BDC00
+// FUNCTION: GAMEMD 0x005BDC00
 Point2D MouseClass::Get_Mouse_Hotspot(MouseType mouse) const
 {
 	Point2D hotspot(0,0);
@@ -114,7 +116,7 @@ Point2D MouseClass::Get_Mouse_Hotspot(MouseType mouse) const
 	return(hotspot);
 }
 
-// FUNCTION: 0x005BDC80
+// FUNCTION: GAMEMD 0x005BDC80
 bool MouseClass::Override_Mouse_Shape(MouseType mouse, bool wsmall)
 {
 	MouseStruct const * control = &MouseControl[mouse];
@@ -138,7 +140,7 @@ bool MouseClass::Override_Mouse_Shape(MouseType mouse, bool wsmall)
 	return(false);
 }
 
-// FUNCTION: 0x005BDDC0
+// FUNCTION: GAMEMD 0x005BDDC0
 void MouseClass::AI(KeyNumType &input, Point2D const & xy)
 {
 	MouseStruct const * control = &MouseControl[CurrentMouseShape];
@@ -159,14 +161,14 @@ void MouseClass::AI(KeyNumType &input, Point2D const & xy)
 	BASECLASS::AI(input, xy);
 }
 
-// FUNCTION: 0x005BDF30
+// FUNCTION: GAMEMD 0x005BDF30
 void MouseClass::One_Time(void)
 {
 	BASECLASS::One_Time();
 	MouseShapes = (ShapeSet const *)FileSystem_LoadWholeFileEx("MOUSE.SHA", MouseShapesLoaded);
 }
 
-// FUNCTION: 0x005BDF50
+// FUNCTION: GAMEMD 0x005BDF50
 void MouseClass::Init_Clear(void)
 {
 	BASECLASS::Init_Clear();
@@ -174,7 +176,7 @@ void MouseClass::Init_Clear(void)
 	NormalMouseShape = MOUSE_NORMAL;
 }
 
-// FUNCTION: 0x005BE6D0
+// FUNCTION: GAMEMD 0x005BE6D0
 HRESULT MouseClass::Save(IStream * stream)
 {
 	int i;
@@ -275,7 +277,7 @@ HRESULT MouseClass::Save(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x005BE940
+// FUNCTION: GAMEMD 0x005BE940
 void Free_Mouse_Shapes(void)
 {
 	if (MouseClass::MouseShapes) {
@@ -285,26 +287,28 @@ void Free_Mouse_Shapes(void)
 	MouseClass::MouseShapes = NULL;
 }
 
-// FUNCTION: 0x005BE970
+// FUNCTION: GAMEMD 0x005BE970
 int MouseClass::Get_Mouse_Start_Frame(MouseType mouse) const
 {
 	return(MouseControl[mouse].StartFrame);
 }
 
-// FUNCTION: 0x005BE990
+// FUNCTION: GAMEMD 0x005BE990
 int MouseClass::Get_Mouse_Frame_Count(MouseType mouse) const
 {
 	return(MouseControl[mouse].FrameCount);
 }
 
-// FUNCTION: 0x005BE9B0
+// FUNCTION: GAMEMD 0x005BE9B0
 MouseClass::MouseClass(NoInitClass const & x) :
 	BASECLASS(x)
 {
 }
 
-// FUNCTION: 0x005BEA30 ?$DynamicVectorClass@VPoint2D@@::?$DynamicVectorClass@VPoint2D@@
+// TEMPLATE: GAMEMD 0x005BEA30
+// ??0?$DynamicVectorClass@VPoint2D@@@@QAE@IPBVPoint2D@@@Z
 template class DynamicVectorClass<Point2D>;
 
-// FUNCTION: 0x005BEAB0 $E136
+// SYNTHETIC: GAMEMD 0x005BEAB0 SYMBOL
+// _$E136
 Rect MouseRect(0, 0, 0, 0);

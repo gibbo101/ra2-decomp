@@ -45,13 +45,15 @@ struct FileSystem {
 	static void const * TALKBUBL_SHP;
 };
 
-// FUNCTION: 0x005F6FF0 $E55
-// FUNCTION: 0x005F7030 $E52
+// SYNTHETIC: GAMEMD 0x005F6FF0 SYMBOL
+// _$E55
+// SYNTHETIC: GAMEMD 0x005F7030 SYMBOL
+// _$E52
 DynamicVectorClass<ObjectTypeClass *> ObjectTypeClass::ObjectTypes;
 
 static inline bool _Add_Type(DynamicVectorClass<ObjectTypeClass *> & v, ObjectTypeClass * p) { return v.Add(p); }
 
-// FUNCTION: 0x005F7090
+// FUNCTION: GAMEMD 0x005F7090
 ObjectTypeClass::ObjectTypeClass(char const * ininame) :
 	BASECLASS(ininame),
 	RadialColor(0, 0, 0),
@@ -91,7 +93,7 @@ ObjectTypeClass::ObjectTypeClass(char const * ininame) :
 	_Add_Type(ObjectTypes, this);
 }
 
-// FUNCTION: 0x005F7320
+// FUNCTION: GAMEMD 0x005F7320
 ObjectTypeClass::ObjectTypeClass(NoInitClass const & x) :
 	BASECLASS(x),
 	RadialColor(x),
@@ -105,7 +107,7 @@ ObjectTypeClass::ObjectTypeClass(NoInitClass const & x) :
 {
 }
 
-// FUNCTION: 0x005F7400
+// FUNCTION: GAMEMD 0x005F7400
 ObjectTypeClass::~ObjectTypeClass(void)
 {
 	ObjectTypes.Delete(this);
@@ -117,52 +119,53 @@ ObjectTypeClass::~ObjectTypeClass(void)
 	Free_Voxels();
 }
 
-// FUNCTION: 0x005F75B0
+// FUNCTION: GAMEMD 0x005F75B0
 int ObjectTypeClass::Max_Pips(void) const
 {
 	return(0);
 }
 
-// FUNCTION: 0x005F75C0
+// FUNCTION: GAMEMD 0x005F75C0
 Point3D ObjectTypeClass::Pixel_Dimensions(void) const
 {
 	return(Point3D(10, 10, 10));
 }
 
-// FUNCTION: 0x005F75E0
+// FUNCTION: GAMEMD 0x005F75E0
 Point3D ObjectTypeClass::Lepton_Dimensions(void) const
 {
 	return(Point3D(CELL_LEPTON_W, CELL_LEPTON_H, 2 * DAT_00AC1474));
 }
 
-// FUNCTION: 0x005F7610
+// FUNCTION: GAMEMD 0x005F7610
 int ObjectTypeClass::Cost_Of(HouseClass * house) const
 {
 	return(0);
 }
 
-// FUNCTION: 0x005F7620
+// FUNCTION: GAMEMD 0x005F7620
 int ObjectTypeClass::Time_To_Build(void) const
 {
 	return(0);
 }
 
-// FUNCTION: 0x005F7630
+// FUNCTION: GAMEMD 0x005F7630
 void const * ObjectTypeClass::Get_Cameo_Data(void) const
 {
 	return(NULL);
 }
 
-// FUNCTION: 0x005F7640
+// FUNCTION: GAMEMD 0x005F7640
 Cell const * ObjectTypeClass::Occupy_List(bool) const
 {
 	static Cell const _list[] = {Cell(0, 0), REFRESH_EOL};
 	return(_list);
 }
 
-// FUNCTION: 0x005F76A0 $E58
+// SYNTHETIC: GAMEMD 0x005F76A0 SYMBOL
+// _$E58
 
-// FUNCTION: 0x005F76B0
+// FUNCTION: GAMEMD 0x005F76B0
 void FUN_005F76B0(void)
 {
 	if (FileSystem::PIPBRD_SHP == NULL) {
@@ -199,7 +202,7 @@ void FUN_005F76B0(void)
 	}
 }
 
-// FUNCTION: 0x005F77F0
+// FUNCTION: GAMEMD 0x005F77F0
 void FUN_005F77F0(void)
 {
 	if (DAT_00AC1488) {
@@ -220,7 +223,7 @@ void FUN_005F77F0(void)
 	}
 }
 
-// FUNCTION: 0x005F7900
+// FUNCTION: GAMEMD 0x005F7900
 BuildingClass * ObjectTypeClass::Who_Can_Build_Me(bool intheory, bool needsnopower, bool legal, HouseClass * house) const
 {
 	BuildingClass * freebuilding = NULL;
@@ -264,7 +267,7 @@ BuildingClass * ObjectTypeClass::Who_Can_Build_Me(bool intheory, bool needsnopow
 	return(NULL);
 }
 
-// FUNCTION: 0x005F7A90
+// FUNCTION: GAMEMD 0x005F7A90
 bool ObjectTypeClass::Fetch_Charger_Turret(char const * graphic, int index)
 {
 	char buffer[256];
@@ -324,7 +327,7 @@ bool ObjectTypeClass::Fetch_Charger_Turret(char const * graphic, int index)
 	return(false);
 }
 
-// FUNCTION: 0x005F7DB0
+// FUNCTION: GAMEMD 0x005F7DB0
 bool ObjectTypeClass::Fetch_Charger_Barrel(char const * graphic, int index)
 {
 	char buffer[256];
@@ -370,7 +373,7 @@ bool ObjectTypeClass::Fetch_Charger_Barrel(char const * graphic, int index)
 	return(false);
 }
 
-// FUNCTION: 0x005F8080
+// FUNCTION: GAMEMD 0x005F8080
 void ObjectTypeClass::Free_Voxels(void)
 {
 	for (int index = 0; index < 18; index++) {
@@ -393,7 +396,7 @@ void ObjectTypeClass::Free_Voxels(void)
 	}
 }
 
-// FUNCTION: 0x005F8CE0
+// FUNCTION: GAMEMD 0x005F8CE0
 void ObjectTypeClass::Fetch_Aux_Voxel_Image(void)
 {
 	char buffer[256];
@@ -443,7 +446,7 @@ void ObjectTypeClass::Fetch_Aux_Voxel_Image(void)
 void FUN_005F96B0(char * name, TheaterType theater);
 void FUN_005F9710(char * name);
 
-// FUNCTION: 0x005F9070
+// FUNCTION: GAMEMD 0x005F9070
 void ObjectTypeClass::Fetch_Normal_Image(void)
 {
 	char fullname[260];
@@ -495,7 +498,7 @@ void ObjectTypeClass::Fetch_Normal_Image(void)
 	}
 }
 
-// FUNCTION: 0x005F92D0
+// FUNCTION: GAMEMD 0x005F92D0
 bool ObjectTypeClass::Read_INI(CCINIClass & ini)
 {
 	char namebuffer[25];
@@ -547,7 +550,7 @@ bool ObjectTypeClass::Read_INI(CCINIClass & ini)
 	return(false);
 }
 
-// FUNCTION: 0x005F96B0
+// FUNCTION: GAMEMD 0x005F96B0
 void FUN_005F96B0(char * name, TheaterType theater)
 {
 	if (theater != THEATER_NONE) {
@@ -563,13 +566,13 @@ void FUN_005F96B0(char * name, TheaterType theater)
 	}
 }
 
-// FUNCTION: 0x005F9710
+// FUNCTION: GAMEMD 0x005F9710
 void FUN_005F9710(char * name)
 {
 	name[1] = 'G';
 }
 
-// FUNCTION: 0x005F9720
+// FUNCTION: GAMEMD 0x005F9720
 HRESULT STDMETHODCALLTYPE ObjectTypeClass::Load(IStream * stream)
 {
 	char filename[260];
@@ -631,7 +634,7 @@ HRESULT STDMETHODCALLTYPE ObjectTypeClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x005F9950
+// FUNCTION: GAMEMD 0x005F9950
 HRESULT STDMETHODCALLTYPE ObjectTypeClass::Save(IStream *stream, int cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -641,7 +644,7 @@ HRESULT STDMETHODCALLTYPE ObjectTypeClass::Save(IStream *stream, int cleardirty)
 	return(result);
 }
 
-// FUNCTION: 0x005F9970
+// FUNCTION: GAMEMD 0x005F9970
 HRESULT STDMETHODCALLTYPE ObjectTypeClass::GetSizeMax(ULARGE_INTEGER *pcbSize)
 {
 	HRESULT res = BASECLASS::GetSizeMax(pcbSize);
@@ -651,7 +654,7 @@ HRESULT STDMETHODCALLTYPE ObjectTypeClass::GetSizeMax(ULARGE_INTEGER *pcbSize)
 	return(res);
 }
 
-// FUNCTION: 0x005F9990
+// FUNCTION: GAMEMD 0x005F9990
 ObjectTypeClass const * ObjectTypeClass::From_Name(char const * name)
 {
 	for (int classid = 0; classid < ObjectTypes.Count(); classid++) {

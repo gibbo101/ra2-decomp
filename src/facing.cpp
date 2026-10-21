@@ -20,49 +20,62 @@ extern const double DAT_007E8828;
 extern const double DAT_007E8830;
 extern const double DAT_007E8890;
 
-// FUNCTION: 0x004C81F0 $E2
+// SYNTHETIC: GAMEMD 0x004C81F0 SYMBOL
+// _$E2
 double DAT_008B3A20 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x004C8220 $E5
+// SYNTHETIC: GAMEMD 0x004C8220 SYMBOL
+// _$E5
 double DAT_008B3A70 = DAT_008B3A20 / DAT_007E8828;
 
-// FUNCTION: 0x004C8240 $E8
+// SYNTHETIC: GAMEMD 0x004C8240 SYMBOL
+// _$E8
 double DAT_008B3A58 = DAT_007E1718 / DAT_008B3A70;
 
-// FUNCTION: 0x004C8260 $E11
+// SYNTHETIC: GAMEMD 0x004C8260 SYMBOL
+// _$E11
 double DAT_008B3A50 = DAT_007E1720 * DAT_007E8830;
 
-// FUNCTION: 0x004C8280 $E14
+// SYNTHETIC: GAMEMD 0x004C8280 SYMBOL
+// _$E14
 double DAT_008B3A28 = DAT_007E1728 * DAT_007E8830;
 
-// FUNCTION: 0x004C82A0 $E17
+// SYNTHETIC: GAMEMD 0x004C82A0 SYMBOL
+// _$E17
 double DAT_008A3A00 = DAT_007E1730 * DAT_007E8830;
 
-// FUNCTION: 0x004C82C0 $E20
+// SYNTHETIC: GAMEMD 0x004C82C0 SYMBOL
+// _$E20
 int DAT_008B3A78 = (int)(fastmath::tan(DAT_008A3A00 - DAT_008B3A28) * DAT_007E1738 * DAT_008B3A20);
 
-// FUNCTION: 0x004C8300 $E23
+// SYNTHETIC: GAMEMD 0x004C8300 SYMBOL
+// _$E23
 double DAT_008B3A30 = fastmath::atan(DAT_008B3A78 * DAT_007E1740);
 
-// FUNCTION: 0x004C8330 $E26
+// SYNTHETIC: GAMEMD 0x004C8330 SYMBOL
+// _$E26
 double DAT_008B3A48 = fastmath::atan((DAT_008B3A78 * 2) / DAT_008B3A20);
 
-// FUNCTION: 0x004C8360 $E29
+// SYNTHETIC: GAMEMD 0x004C8360 SYMBOL
+// _$E29
 int DAT_008B3A6C = (int)(DAT_008B3A78 * 4 + DAT_007E1738);
 
 struct FacingShortPair { short a; short b; FacingShortPair(void) { a = 0; b = 0; } };
 struct FacingIntTriple { int a; int b; int c; FacingIntTriple(void) { a = 0; b = 0; c = 0; } };
 
-// FUNCTION: 0x004C8390 $E32
+// SYNTHETIC: GAMEMD 0x004C8390 SYMBOL
+// _$E32
 FacingShortPair DAT_008B3A18;
 
-// FUNCTION: 0x004C83A0 $E35
+// SYNTHETIC: GAMEMD 0x004C83A0 SYMBOL
+// _$E35
 FacingIntTriple DAT_008B3A38;
 
 
 struct FacingBias { int x; int y; int z; FacingBias(void) { z = 0; x = 0x80; y = 0x80; } };
 
-// FUNCTION: 0x004C83C0 $E38
+// SYNTHETIC: GAMEMD 0x004C83C0 SYMBOL
+// _$E38
 FacingBias DAT_008B3A60;
 
 
@@ -106,7 +119,7 @@ static bool Any_Locked(void)
 
 void __fastcall Dump_Exception_Info(EXCEPTION_POINTERS * e_info);
 
-// FUNCTION: 0x004C83E0
+// FUNCTION: GAMEMD 0x004C83E0
 int CALLBACK Exception_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	switch (message) {
@@ -149,7 +162,7 @@ int CALLBACK Exception_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lpa
 	return(0);
 }
 
-// FUNCTION: 0x004C84E0
+// FUNCTION: GAMEMD 0x004C84E0
 int Exception_Dialog(void)
 {
 	int retval = 0;
@@ -199,7 +212,7 @@ int Exception_Dialog(void)
 }
 
 
-// FUNCTION: 0x004C8FE0
+// FUNCTION: GAMEMD 0x004C8FE0
 int Exception_Handler(int exception_code, EXCEPTION_POINTERS *e_info)
 {
 	DebugString("Exception!\n");
@@ -245,27 +258,27 @@ int Exception_Handler(int exception_code, EXCEPTION_POINTERS *e_info)
 	return(EXCEPTION_EXECUTE_HANDLER);
 }
 
-// FUNCTION: 0x004C9150
+// FUNCTION: GAMEMD 0x004C9150
 int FUN_004C9150(void)
 {
 	return 0;
 }
 
-// FUNCTION: 0x004C9160
+// FUNCTION: GAMEMD 0x004C9160
 bool Expansion_Present(void)
 {
 	CCFileClass file("EXPAND.DAT");
 	return(file.Is_Available());
 }
 
-// FUNCTION: 0x004C91B0
+// FUNCTION: GAMEMD 0x004C91B0
 bool Expansion_Dialog(void)
 {
 	bool okval = true;
 	return(okval);
 }
 
-// FUNCTION: 0x004C91C0
+// FUNCTION: GAMEMD 0x004C91C0
 FacingClass::FacingClass(void) :
 	DesiredFacing(DIR_N),
 	StartFacing(DIR_N),
@@ -273,7 +286,7 @@ FacingClass::FacingClass(void) :
 {
 }
 
-// FUNCTION: 0x004C91E0
+// FUNCTION: GAMEMD 0x004C91E0
 FacingClass::FacingClass(int rate) :
 	DesiredFacing(DIR_N),
 	StartFacing(DIR_N),
@@ -282,7 +295,7 @@ FacingClass::FacingClass(int rate) :
 	Set_ROT(rate);
 }
 
-// FUNCTION: 0x004C9220
+// FUNCTION: GAMEMD 0x004C9220
 bool FacingClass::Set_Desired(DirType const & facing)
 {
 	if (DesiredFacing != facing) {
@@ -310,7 +323,7 @@ bool FacingClass::Set_Desired(DirType const & facing)
 	return(false);
 }
 
-// FUNCTION: 0x004C9300
+// FUNCTION: GAMEMD 0x004C9300
 bool FacingClass::Set(DirType const & facing)
 {
 	if (Current() != facing) {
@@ -324,7 +337,7 @@ bool FacingClass::Set(DirType const & facing)
 	return(false);
 }
 
-// FUNCTION: 0x004C93D0
+// FUNCTION: GAMEMD 0x004C93D0
 DirType FacingClass::Current(void) const
 {
 	if (Is_Rotating()) {
@@ -340,19 +353,19 @@ DirType FacingClass::Current(void) const
 	return(DesiredFacing);
 }
 
-// FUNCTION: 0x004C9470
+// FUNCTION: GAMEMD 0x004C9470
 DirType FacingClass::Desired(void) const
 {
 	return(DesiredFacing);
 }
 
-// FUNCTION: 0x004C9480
+// FUNCTION: GAMEMD 0x004C9480
 bool FacingClass::Is_Rotating(void) const
 {
 	return(ROT.Facing > 0 && RotationTimer);
 }
 
-// FUNCTION: 0x004C94B0
+// FUNCTION: GAMEMD 0x004C94B0
 bool FacingClass::Is_Rotating_CW(void) const
 {
 	if (Is_Rotating()) {
@@ -361,7 +374,7 @@ bool FacingClass::Is_Rotating_CW(void) const
 	return(false);
 }
 
-// FUNCTION: 0x004C94F0
+// FUNCTION: GAMEMD 0x004C94F0
 bool FacingClass::Is_Rotating_CCW(void) const
 {
 	if (Is_Rotating()) {
@@ -371,54 +384,64 @@ bool FacingClass::Is_Rotating_CCW(void) const
 	return(false);
 }
 
-// FUNCTION: 0x004C9530
+// FUNCTION: GAMEMD 0x004C9530
 DirType FacingClass::Difference(void)
 {
 	return(Desired() - Current());
 }
 
-// FUNCTION: 0x004C95D0
+// FUNCTION: GAMEMD 0x004C95D0
 DirType FacingClass::Difference(DirType const & facing)
 {
 	return(facing - Current());
 }
 
-// FUNCTION: 0x004C9680
+// FUNCTION: GAMEMD 0x004C9680
 void FacingClass::Set_ROT(int rate)
 {
 	ROT.From_Dir256((Dir256)MIN(rate, DIR_S - 1));
 }
 
-// FUNCTION: 0x004C96A0 $E48
+// SYNTHETIC: GAMEMD 0x004C96A0 SYMBOL
+// _$E48
 double DAT_008B3AD0 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x004C96D0 $E51
+// SYNTHETIC: GAMEMD 0x004C96D0 SYMBOL
+// _$E51
 double DAT_008B3B20 = DAT_008B3AD0 / DAT_007E8890;
 
-// FUNCTION: 0x004C96F0 $E54
+// SYNTHETIC: GAMEMD 0x004C96F0 SYMBOL
+// _$E54
 double DAT_008B3B08 = DAT_007E1718 / DAT_008B3B20;
 
 extern const double DAT_007E8898;
 
-// FUNCTION: 0x004C9710 $E57
+// SYNTHETIC: GAMEMD 0x004C9710 SYMBOL
+// _$E57
 double DAT_008B3B00 = DAT_007E1720 * DAT_007E8898;
 
-// FUNCTION: 0x004C9730 $E60
+// SYNTHETIC: GAMEMD 0x004C9730 SYMBOL
+// _$E60
 double DAT_008B3AD8 = DAT_007E1728 * DAT_007E8898;
 
-// FUNCTION: 0x004C9750 $E63
+// SYNTHETIC: GAMEMD 0x004C9750 SYMBOL
+// _$E63
 double DAT_008B3AB0 = DAT_007E1730 * DAT_007E8898;
 
-// FUNCTION: 0x004C9770 $E66
+// SYNTHETIC: GAMEMD 0x004C9770 SYMBOL
+// _$E66
 int DAT_008B3B28 = (int)(fastmath::tan(DAT_008B3AB0 - DAT_008B3AD8) * DAT_007E1738 * DAT_008B3AD0);
 
-// FUNCTION: 0x004C97B0 $E69
+// SYNTHETIC: GAMEMD 0x004C97B0 SYMBOL
+// _$E69
 double DAT_008B3AE0 = fastmath::atan(DAT_008B3B28 * DAT_007E1740);
 
-// FUNCTION: 0x004C97E0 $E72
+// SYNTHETIC: GAMEMD 0x004C97E0 SYMBOL
+// _$E72
 double DAT_008B3AF8 = fastmath::atan((DAT_008B3B28 * 2) / DAT_008B3AD0);
 
-// FUNCTION: 0x004C9810 $E75
+// SYNTHETIC: GAMEMD 0x004C9810 SYMBOL
+// _$E75
 int DAT_008B3B1C = (int)(DAT_008B3B28 * 4 + DAT_007E1738);
 
 struct FacingShortPair2 { short a; short b; FacingShortPair2(void) { a = 0; b = 0; } };
@@ -426,14 +449,18 @@ struct FacingIntTriple2 { int a; int b; int c; FacingIntTriple2(void) { a = 0; b
 struct FacingIntQuad { int a; int b; int c; int d; FacingIntQuad(void) { a = 0; b = 0; c = 0; d = 0; } };
 struct FacingInit80 { int a; int b; int c; FacingInit80(void) { c = 0; a = 0x80; b = 0x80; } };
 
-// FUNCTION: 0x004C9840 $E78
+// SYNTHETIC: GAMEMD 0x004C9840 SYMBOL
+// _$E78
 FacingShortPair2 DAT_008B3AC8;
 
-// FUNCTION: 0x004C9850 $E81
+// SYNTHETIC: GAMEMD 0x004C9850 SYMBOL
+// _$E81
 FacingIntTriple2 DAT_008B3AE8;
 
-// FUNCTION: 0x004C9870 $E84
+// SYNTHETIC: GAMEMD 0x004C9870 SYMBOL
+// _$E84
 FacingInit80 DAT_008B3B10;
 
-// FUNCTION: 0x004C9890 $E87
+// SYNTHETIC: GAMEMD 0x004C9890 SYMBOL
+// _$E87
 FacingIntQuad DAT_008B3AB8;

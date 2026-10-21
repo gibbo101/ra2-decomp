@@ -69,7 +69,7 @@ ConvertClass *Build_Light_Converter(HSVClass & hsv, const PaletteClass & base, c
 	return(new LightConvertClass(*remapped, screenpalette, typicalsurface, r, g, b, false, indexes, intensity_levels));
 }
 
-// FUNCTION: 0x0068C650
+// FUNCTION: GAMEMD 0x0068C650
 ColorScheme::ColorScheme(void) :
 	Name(NULL),
 	HSV(0,0,0),
@@ -80,7 +80,7 @@ ColorScheme::ColorScheme(void) :
 	ID = ColorSchemes.Count();
 }
 
-// FUNCTION: 0x0068C710
+// FUNCTION: GAMEMD 0x0068C710
 ColorScheme::ColorScheme(char const * name, HSVClass & hsv, const PaletteClass & pal1, const PaletteClass & pal2, int shade_count, bool add_to_array) :
 	Name(strdup(name)),
 	HSV(hsv),
@@ -105,7 +105,7 @@ ColorScheme::ColorScheme(char const * name, HSVClass & hsv, const PaletteClass &
 	}
 }
 
-// FUNCTION: 0x0068C860
+// FUNCTION: GAMEMD 0x0068C860
 void ColorScheme::Build_Light_Converters(const PaletteClass & base, const PaletteClass & screenpalette, int r, int g, int b)
 {
 	if (Converter != NULL) {
@@ -116,7 +116,7 @@ void ColorScheme::Build_Light_Converters(const PaletteClass & base, const Palett
 	Converter = (LightConvertClass *)Build_Light_Converter(HSV, base, screenpalette, &Palette, *VisibleSurface, IntensityLevels, r, g, b, _indexes);
 }
 
-// FUNCTION: 0x0068C8D0
+// FUNCTION: GAMEMD 0x0068C8D0
 ColorScheme::~ColorScheme(void)
 {
 	if (Name != NULL) {
@@ -132,19 +132,19 @@ ColorScheme::~ColorScheme(void)
 	ColorSchemes.Delete(this);
 }
 
-// FUNCTION: 0x0068C960
+// FUNCTION: GAMEMD 0x0068C960
 bool ColorScheme::operator==(ColorScheme const & that)
 {
 	return(stricmp(Name, that.Name) == 0);
 }
 
-// FUNCTION: 0x0068C990
+// FUNCTION: GAMEMD 0x0068C990
 bool ColorScheme::operator!=(ColorScheme const & that)
 {
 	return(stricmp(Name, that.Name) != 0);
 }
 
-// FUNCTION: 0x0068C9C0
+// FUNCTION: GAMEMD 0x0068C9C0
 int ColorScheme::Find_Or_Make(char const * name, HSVClass & hsv, const PaletteClass & base, const PaletteClass & screenpalette, int intensity_levels)
 {
 	while (true) {
@@ -157,7 +157,7 @@ int ColorScheme::Find_Or_Make(char const * name, HSVClass & hsv, const PaletteCl
 	}
 }
 
-// FUNCTION: 0x0068CA50
+// FUNCTION: GAMEMD 0x0068CA50
 ColorScheme * Fetch_Scheme_By_Name(char const * name, int intensity_levels)
 {
 	int id = Fetch_Scheme_Index_By_Name(name, intensity_levels);
@@ -169,7 +169,7 @@ ColorScheme * Fetch_Scheme_By_Name(char const * name, int intensity_levels)
 	return(NULL);
 }
 
-// FUNCTION: 0x0068CAB0
+// FUNCTION: GAMEMD 0x0068CAB0
 int Fetch_Scheme_Index_By_Name(char const * name, int intensity_levels)
 {
 	for (int i = 0; i < ColorSchemes.Count(); i++) {
@@ -186,5 +186,6 @@ struct SchemeQuad
 	SchemeQuad(void) : A(0), B(0), C(0), D(0) {}
 };
 
-// FUNCTION: 0x0068CB10 $E4
+// SYNTHETIC: GAMEMD 0x0068CB10 SYMBOL
+// _$E4
 SchemeQuad SchemeQuadInstance;

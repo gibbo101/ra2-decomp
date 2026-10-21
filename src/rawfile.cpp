@@ -14,12 +14,12 @@
 
 namespace Game { extern bool IsReadingAudioFile; }
 
-// FUNCTION: 0x0065CA70
+// FUNCTION: GAMEMD 0x0065CA70
 void RawFileClass::Error(int , int , char const * )
 {
 }
 
-// FUNCTION: 0x0065CA80
+// FUNCTION: GAMEMD 0x0065CA80
 RawFileClass::RawFileClass(char const * filename) :
 	Rights(0),
 	BiasStart(0),
@@ -32,7 +32,7 @@ RawFileClass::RawFileClass(char const * filename) :
 {
 }
 
-// FUNCTION: 0x0065CAC0
+// FUNCTION: GAMEMD 0x0065CAC0
 char const * RawFileClass::Set_Name(char const * filename)
 {
 	if (Filename != NULL && Allocated) {
@@ -53,14 +53,14 @@ char const * RawFileClass::Set_Name(char const * filename)
 	return(Filename);
 }
 
-// FUNCTION: 0x0065CB30
+// FUNCTION: GAMEMD 0x0065CB30
 int RawFileClass::Open(char const * filename, int rights)
 {
 	Set_Name(filename);
 	return(Open(rights));
 }
 
-// FUNCTION: 0x0065CB50
+// FUNCTION: GAMEMD 0x0065CB50
 int RawFileClass::Open(int rights)
 {
 	Close();
@@ -105,7 +105,7 @@ int RawFileClass::Open(int rights)
 	return(true);
 }
 
-// FUNCTION: 0x0065CBF0
+// FUNCTION: GAMEMD 0x0065CBF0
 bool RawFileClass::Is_Available(int forced)
 {
 	if (Filename == NULL) return(false);
@@ -134,7 +134,7 @@ bool RawFileClass::Is_Available(int forced)
 	return(true);
 }
 
-// FUNCTION: 0x0065CCA0
+// FUNCTION: GAMEMD 0x0065CCA0
 void RawFileClass::Close(void)
 {
 	if (Is_Open()) {
@@ -145,7 +145,7 @@ void RawFileClass::Close(void)
 	}
 }
 
-// FUNCTION: 0x0065CCE0
+// FUNCTION: GAMEMD 0x0065CCE0
 int RawFileClass::Read(void * buffer, int size)
 {
 	int	bytesread = 0;
@@ -186,7 +186,7 @@ int RawFileClass::Read(void * buffer, int size)
 	return(bytesread);
 }
 
-// FUNCTION: 0x0065CDD0
+// FUNCTION: GAMEMD 0x0065CDD0
 int RawFileClass::Write(void const * buffer, int size)
 {
 	int	byteswritten = 0;
@@ -215,7 +215,7 @@ int RawFileClass::Write(void const * buffer, int size)
 	return(byteswritten);
 }
 
-// FUNCTION: 0x0065CF00
+// FUNCTION: GAMEMD 0x0065CF00
 int RawFileClass::Seek(int pos, int dir)
 {
 	if (BiasLength != -1) {
@@ -251,7 +251,7 @@ int RawFileClass::Seek(int pos, int dir)
 	return(Raw_Seek(pos, dir));
 }
 
-// FUNCTION: 0x0065D0D0
+// FUNCTION: GAMEMD 0x0065D0D0
 int RawFileClass::Size(void)
 {
 	int	size = 0;
@@ -277,7 +277,7 @@ int RawFileClass::Size(void)
 	return(BiasLength);
 }
 
-// FUNCTION: 0x0065D150
+// FUNCTION: GAMEMD 0x0065D150
 int RawFileClass::Create(void)
 {
 	Close();
@@ -291,7 +291,7 @@ int RawFileClass::Create(void)
 	return(false);
 }
 
-// FUNCTION: 0x0065D190
+// FUNCTION: GAMEMD 0x0065D190
 int RawFileClass::Delete(void)
 {
 	Close();
@@ -315,7 +315,7 @@ int RawFileClass::Delete(void)
 	return(true);
 }
 
-// FUNCTION: 0x0065D1F0
+// FUNCTION: GAMEMD 0x0065D1F0
 unsigned int RawFileClass::Get_Date_Time(void)
 {
 	BY_HANDLE_FILE_INFORMATION info;
@@ -329,7 +329,7 @@ unsigned int RawFileClass::Get_Date_Time(void)
 	return(0);
 }
 
-// FUNCTION: 0x0065D240
+// FUNCTION: GAMEMD 0x0065D240
 bool RawFileClass::Set_Date_Time(unsigned int datetime)
 {
 	if (RawFileClass::Is_Open()) {
@@ -345,7 +345,7 @@ bool RawFileClass::Set_Date_Time(unsigned int datetime)
 	return(false);
 }
 
-// FUNCTION: 0x0065D2B0
+// FUNCTION: GAMEMD 0x0065D2B0
 void RawFileClass::Bias(int start, int length)
 {
 	if (start == 0) {
@@ -366,7 +366,7 @@ void RawFileClass::Bias(int start, int length)
 	}
 }
 
-// FUNCTION: 0x0065D320
+// FUNCTION: GAMEMD 0x0065D320
 int RawFileClass::Raw_Seek(int pos, int dir)
 {
 	if (!Is_Open()) {
@@ -396,7 +396,7 @@ int RawFileClass::Raw_Seek(int pos, int dir)
 	return(pos);
 }
 
-// FUNCTION: 0x0065D3A0
+// FUNCTION: GAMEMD 0x0065D3A0
 RawFileClass::~RawFileClass(void)
 {
 	Close();
@@ -407,4 +407,5 @@ RawFileClass::~RawFileClass(void)
 	}
 }
 
-// FUNCTION: 0x0065D420 RawFileClass::Is_Open
+// FUNCTION: GAMEMD 0x0065D420
+// RawFileClass::Is_Open

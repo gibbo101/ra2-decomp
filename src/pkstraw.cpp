@@ -11,7 +11,7 @@
 #include <cstring>
 
 
-// FUNCTION: 0x00633050
+// FUNCTION: GAMEMD 0x00633050
 PKStraw::PKStraw(CryptControl control, RandomStraw & rnd) :
 	IsGettingKey(true),
 	Rand(rnd),
@@ -24,7 +24,7 @@ PKStraw::PKStraw(CryptControl control, RandomStraw & rnd) :
 	BASECLASS::Get_From(BF);
 }
 
-// FUNCTION: 0x006330C0
+// FUNCTION: GAMEMD 0x006330C0
 void PKStraw::Get_From(Straw * straw)
 {
 	if (BF.ChainTo != straw) {
@@ -46,7 +46,7 @@ void PKStraw::Get_From(Straw * straw)
 	}
 }
 
-// FUNCTION: 0x00633110
+// FUNCTION: GAMEMD 0x00633110
 void PKStraw::Key(PKey const * key)
 {
 	CipherKey = key;
@@ -57,7 +57,7 @@ void PKStraw::Key(PKey const * key)
 	BytesLeft = 0;
 }
 
-// FUNCTION: 0x00633130
+// FUNCTION: GAMEMD 0x00633130
 int PKStraw::Get(void * source, int length)
 {
 	if (source == NULL || length < 1 || CipherKey == NULL) {
@@ -102,14 +102,14 @@ int PKStraw::Get(void * source, int length)
 	return(total);
 }
 
-// FUNCTION: 0x00633300
+// FUNCTION: GAMEMD 0x00633300
 int PKStraw::Encrypted_Key_Length(void) const
 {
 	if (CipherKey == NULL) return(0);
 	return(CipherKey->Block_Count(BLOWFISH_KEY_SIZE) * CipherKey->Crypt_Block_Size());
 }
 
-// FUNCTION: 0x00633330
+// FUNCTION: GAMEMD 0x00633330
 int PKStraw::Plain_Key_Length(void) const
 {
 	if (CipherKey == NULL) return(0);

@@ -32,19 +32,32 @@
 #include <ctime>
 
 
-// FUNCTION: 0x005EF2F0 $E69
-// FUNCTION: 0x005EF320 $E72
-// FUNCTION: 0x005EF340 $E75
-// FUNCTION: 0x005EF360 $E78
-// FUNCTION: 0x005EF380 $E81
-// FUNCTION: 0x005EF3A0 $E84
-// FUNCTION: 0x005EF3C0 $E87
-// FUNCTION: 0x005EF400 $E90
-// FUNCTION: 0x005EF430 $E93
-// FUNCTION: 0x005EF460 $E96
-// FUNCTION: 0x005EF490 $E99
-// FUNCTION: 0x005EF4A0 $E102
-// FUNCTION: 0x005EF4C0 $E105
+// SYNTHETIC: GAMEMD 0x005EF2F0 SYMBOL
+// _$E69
+// SYNTHETIC: GAMEMD 0x005EF320 SYMBOL
+// _$E72
+// SYNTHETIC: GAMEMD 0x005EF340 SYMBOL
+// _$E75
+// SYNTHETIC: GAMEMD 0x005EF360 SYMBOL
+// _$E78
+// SYNTHETIC: GAMEMD 0x005EF380 SYMBOL
+// _$E81
+// SYNTHETIC: GAMEMD 0x005EF3A0 SYMBOL
+// _$E84
+// SYNTHETIC: GAMEMD 0x005EF3C0 SYMBOL
+// _$E87
+// SYNTHETIC: GAMEMD 0x005EF400 SYMBOL
+// _$E90
+// SYNTHETIC: GAMEMD 0x005EF430 SYMBOL
+// _$E93
+// SYNTHETIC: GAMEMD 0x005EF460 SYMBOL
+// _$E96
+// SYNTHETIC: GAMEMD 0x005EF490 SYMBOL
+// _$E99
+// SYNTHETIC: GAMEMD 0x005EF4A0 SYMBOL
+// _$E102
+// SYNTHETIC: GAMEMD 0x005EF4C0 SYMBOL
+// _$E105
 
 void Select_Serial_On_INITDIALOG(HWND window);
 void Modem_Echo(char c);
@@ -53,7 +66,7 @@ bool Dial_Modem(SerialSettingsType *settings, bool reconnect);
 bool Answer_Modem(SerialSettingsType *settings, bool reconnect);
 SerialSettingsType *DialSettings;
 
-// FUNCTION: 0x005EFF00
+// FUNCTION: GAMEMD 0x005EFF00
 BOOL CALLBACK Select_Serial_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	int *retval;
@@ -76,7 +89,7 @@ BOOL CALLBACK Select_Serial_Dialog_Proc(HWND window, UINT message, WPARAM wparam
 	return(rc);
 }
 
-// FUNCTION: 0x005EFF70
+// FUNCTION: GAMEMD 0x005EFF70
 void Select_Serial_On_INITDIALOG(HWND window)
 {
 	HWND handle;
@@ -106,7 +119,7 @@ void Select_Serial_On_INITDIALOG(HWND window)
 	}
 }
 
-// FUNCTION: 0x005F0010
+// FUNCTION: GAMEMD 0x005F0010
 bool Init_Null_Modem( SerialSettingsType *settings )
 {
 	if ( NullModem.Init( settings->Port, settings->IRQ,
@@ -118,7 +131,7 @@ bool Init_Null_Modem( SerialSettingsType *settings )
 	}
 }
 
-// FUNCTION: 0x005F0040
+// FUNCTION: GAMEMD 0x005F0040
 void Shutdown_Modem( void )
 {
 	if (!Session.Play) {
@@ -130,7 +143,7 @@ void Shutdown_Modem( void )
 	NullModem.Shutdown();
 }
 
-// FUNCTION: 0x005F0070
+// FUNCTION: GAMEMD 0x005F0070
 void Modem_Signoff(void)
 {
 	unsigned int starttime;
@@ -149,7 +162,7 @@ void Modem_Signoff(void)
 	}
 }
 
-// FUNCTION: 0x005F0120
+// FUNCTION: GAMEMD 0x005F0120
 bool Reconnect_Modem(void)
 {
 	bool status = false;
@@ -183,7 +196,7 @@ bool Reconnect_Modem(void)
 	return(status);
 }
 
-// FUNCTION: 0x005F0180
+// FUNCTION: GAMEMD 0x005F0180
 void Destroy_Null_Connection(int id, int error)
 {
 	int i;
@@ -238,7 +251,7 @@ void Destroy_Null_Connection(int id, int error)
 	}
 }
 
-// FUNCTION: 0x005F03B0
+// FUNCTION: GAMEMD 0x005F03B0
 bool Reconnect_Null_Modem(void)
 {
 	bool retval = false;
@@ -309,7 +322,7 @@ bool Reconnect_Null_Modem(void)
 	return(retval);
 }
 
-// FUNCTION: 0x005F0D60
+// FUNCTION: GAMEMD 0x005F0D60
 bool Answer_Modem(SerialSettingsType *settings, bool reconnect)
 {
 	bool connected = false;
@@ -447,7 +460,7 @@ bool Answer_Modem(SerialSettingsType *settings, bool reconnect)
 	return(connected);
 }
 
-// FUNCTION: 0x005F1350
+// FUNCTION: GAMEMD 0x005F1350
 void Modem_Echo(char c)
 {
 	if (NullModem.EchoCount < (NullModem.EchoSize - 1)) {
@@ -457,10 +470,12 @@ void Modem_Echo(char c)
 	}
 }
 
-// FUNCTION: 0x005F1390 ?$TTimerClass@VSystemTimerClass@@::Value
+// TEMPLATE: GAMEMD 0x005F1390
+// ?Value@?$TTimerClass@VSystemTimerClass@@@@QBEHXZ
 template class TTimerClass<SystemTimerClass>;
 
-// FUNCTION: 0x005F13B0 $E112
+// SYNTHETIC: GAMEMD 0x005F13B0 SYMBOL
+// _$E112
 struct IntQuad {
 	int A, B, C, D;
 	IntQuad() { A = 0; B = 0; C = 0; D = 0; }

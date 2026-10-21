@@ -34,23 +34,37 @@
 #include "tracker.h"
 
 
-// FUNCTION: 0x005FE040 $E2
-// FUNCTION: 0x005FE060 $E5
-// FUNCTION: 0x005FE090 $E8
-// FUNCTION: 0x005FE0B0 $E11
-// FUNCTION: 0x005FE0D0 $E14
-// FUNCTION: 0x005FE0F0 $E17
-// FUNCTION: 0x005FE110 $E20
-// FUNCTION: 0x005FE130 $E23
-// FUNCTION: 0x005FE170 $E26
-// FUNCTION: 0x005FE1A0 $E29
-// FUNCTION: 0x005FE1D0 $E32
-// FUNCTION: 0x005FE200 $E35
-// FUNCTION: 0x005FE210 $E38
+// SYNTHETIC: GAMEMD 0x005FE040 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x005FE060 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x005FE090 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x005FE0B0 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x005FE0D0 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x005FE0F0 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x005FE110 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x005FE130 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x005FE170 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x005FE1A0 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x005FE1D0 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x005FE200 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x005FE210 SYMBOL
+// _$E38
 
-// FUNCTION: 0x005FE230 $E41
+// SYNTHETIC: GAMEMD 0x005FE230 SYMBOL
+// _$E41
 
-// FUNCTION: 0x005FE250
+// FUNCTION: GAMEMD 0x005FE250
 OverlayTypeClass::OverlayTypeClass(char const * ininame) :
 	BASECLASS(ininame),
 	HeapID(OVERLAY_NONE),
@@ -84,21 +98,21 @@ OverlayTypeClass::OverlayTypeClass(char const * ininame) :
 	HeapID = OverlayType(OverlayTypes.ID(this));
 }
 
-// FUNCTION: 0x005FE3C0
+// FUNCTION: GAMEMD 0x005FE3C0
 OverlayTypeClass::OverlayTypeClass(NoInitClass const & x) :
 	BASECLASS(x),
 	RadarColor(x)
 {
 }
 
-// FUNCTION: 0x005FE3F0
+// FUNCTION: GAMEMD 0x005FE3F0
 OverlayTypeClass::~OverlayTypeClass(void)
 {
 	Detach_This_From_All(this, true);
 	OverlayTypes.Delete(this);
 }
 
-// FUNCTION: 0x005FE470
+// FUNCTION: GAMEMD 0x005FE470
 OverlayType OverlayTypeClass::From_Name(char const * name)
 {
 	if (name != NULL) {
@@ -111,7 +125,7 @@ OverlayType OverlayTypeClass::From_Name(char const * name)
 	return(OVERLAY_NONE);
 }
 
-// FUNCTION: 0x005FE4C0
+// FUNCTION: GAMEMD 0x005FE4C0
 Cell const * OverlayTypeClass::Occupy_List(bool) const
 {
 	static Cell const _simple[] = {Cell(0, 0), REFRESH_EOL};
@@ -119,7 +133,8 @@ Cell const * OverlayTypeClass::Occupy_List(bool) const
 	return(_simple);
 }
 
-// FUNCTION: 0x005FE520 $E128
+// SYNTHETIC: GAMEMD 0x005FE520 SYMBOL
+// _$E128
 
 extern char DAT_00889F64[];
 
@@ -131,7 +146,7 @@ struct FileSystem {
 void FUN_005F9710(char * name);
 void FUN_005F96B0(char * name, TheaterType theater);
 
-// FUNCTION: 0x005FE530
+// FUNCTION: GAMEMD 0x005FE530
 bool OverlayTypeClass::Create_And_Place(Cell const & cell, HouseClass *) const
 {
 	if (new OverlayClass((OverlayTypeClass *)this, cell)) {
@@ -140,19 +155,19 @@ bool OverlayTypeClass::Create_And_Place(Cell const & cell, HouseClass *) const
 	return(false);
 }
 
-// FUNCTION: 0x005FE570
+// FUNCTION: GAMEMD 0x005FE570
 ObjectClass * OverlayTypeClass::Create_One_Of(HouseClass *) const
 {
 	return(new OverlayClass((OverlayTypeClass *)this, CELL_NONE));
 }
 
-// FUNCTION: 0x005FE5A0
+// FUNCTION: GAMEMD 0x005FE5A0
 void OverlayTypeClass::Draw_It(Point2D const & point, Rect const & cliprect, int data) const
 {
 	Draw_Shape(*DSurface::Temp, *FileSystem::x_PAL, (ShapeSet const *)Get_Image_Data(), data, DSurface::ViewBounds.Top_Left() + point + Point2D(ISO_TILE_PIXEL_W / 2, ISO_TILE_PIXEL_H / 2), cliprect, (ShapeFlags_Type)(SHAPE_CENTER|SHAPE_WIN_REL));
 }
 
-// FUNCTION: 0x005FE620
+// FUNCTION: GAMEMD 0x005FE620
 void OverlayTypeClass::Init(TheaterType theater)
 {
 	for (int index = 0; index < OverlayTypes.Count(); index++) {
@@ -188,7 +203,7 @@ void OverlayTypeClass::Init(TheaterType theater)
 	}
 }
 
-// FUNCTION: 0x005FE770
+// FUNCTION: GAMEMD 0x005FE770
 bool OverlayTypeClass::Read_INI(CCINIClass & ini)
 {
 	char fullname[_MAX_FNAME+_MAX_EXT];
@@ -235,13 +250,13 @@ bool OverlayTypeClass::Read_INI(CCINIClass & ini)
 	return(false);
 }
 
-// FUNCTION: 0x005FEA30
+// FUNCTION: GAMEMD 0x005FEA30
 Coord const OverlayTypeClass::Coord_Fixup(Coord const & coord) const
 {
 	return(coord);
 }
 
-// FUNCTION: 0x005FEA50
+// FUNCTION: GAMEMD 0x005FEA50
 void OverlayTypeClass::Compute_CRC(CRCEngine & crc) const
 {
 	BASECLASS::Compute_CRC(crc);
@@ -257,7 +272,7 @@ void OverlayTypeClass::Compute_CRC(CRCEngine & crc) const
 	crc(IsExplosive);
 }
 
-// FUNCTION: 0x005FEC10
+// FUNCTION: GAMEMD 0x005FEC10
 HRESULT STDMETHODCALLTYPE OverlayTypeClass::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -267,7 +282,7 @@ HRESULT STDMETHODCALLTYPE OverlayTypeClass::Save(IStream * stream, BOOL cleardir
 	return(result);
 }
 
-// FUNCTION: 0x005FEC30
+// FUNCTION: GAMEMD 0x005FEC30
 HRESULT STDMETHODCALLTYPE OverlayTypeClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -275,7 +290,7 @@ HRESULT STDMETHODCALLTYPE OverlayTypeClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x005FEAF0
+// FUNCTION: GAMEMD 0x005FEAF0
 HRESULT STDMETHODCALLTYPE OverlayTypeClass::Load(IStream * stream)
 {
 	char fullname[_MAX_FNAME+_MAX_EXT];
@@ -305,13 +320,13 @@ HRESULT STDMETHODCALLTYPE OverlayTypeClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x005FEC70
+// FUNCTION: GAMEMD 0x005FEC70
 OverlayTypeClass * OverlayTypeClass::Find_Or_Make(char const * name)
 {
 	return(TFind_Or_Make<OverlayTypeClass>(name, OverlayTypes));
 }
 
-// FUNCTION: 0x005FED00
+// FUNCTION: GAMEMD 0x005FED00
 RGBClass OverlayTypeClass::Get_Radar_Color(int shape) const
 {
 	ShapeSet const *image = (const ShapeSet *) Get_Image_Data();
@@ -333,7 +348,7 @@ RGBClass OverlayTypeClass::Get_Radar_Color(int shape) const
 	return(RGBClass(0, 0, 0));
 }
 
-// FUNCTION: 0x005FEDE0
+// FUNCTION: GAMEMD 0x005FEDE0
 void const * OverlayTypeClass::Get_Image_Data(void) const
 {
 	char fullname[_MAX_FNAME+_MAX_EXT];
@@ -365,13 +380,17 @@ void const * OverlayTypeClass::Get_Image_Data(void) const
 	return(ImageData);
 }
 
-// FUNCTION: 0x005FEF00 OverlayTypeClass::Fetch_RTTI
+// FUNCTION: GAMEMD 0x005FEF00
+// OverlayTypeClass::Fetch_RTTI
 
-// FUNCTION: 0x005FEF10 OverlayTypeClass::Fetch_Object_Size
+// FUNCTION: GAMEMD 0x005FEF10
+// OverlayTypeClass::Fetch_Object_Size
 
-// FUNCTION: 0x005FEF20 OverlayTypeClass::Fetch_Heap_ID
+// FUNCTION: GAMEMD 0x005FEF20
+// OverlayTypeClass::Fetch_Heap_ID
 
-// FUNCTION: 0x005FEF30 OverlayTypeClass::~OverlayTypeClass
+// SYNTHETIC: GAMEMD 0x005FEF30
+// ??_GOverlayTypeClass@@UAEPAXI@Z
 
 extern const double DAT_007E1708;
 extern const double DAT_007E1710;
@@ -380,16 +399,20 @@ extern const double DAT_007E1720;
 extern const double DAT_007EF6A8;
 extern const double DAT_007EF6B0;
 
-// FUNCTION: 0x005FEFC0 $E131
+// SYNTHETIC: GAMEMD 0x005FEFC0 SYMBOL
+// _$E131
 double DAT_00AC17D8 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x005FEFF0 $E134
+// SYNTHETIC: GAMEMD 0x005FEFF0 SYMBOL
+// _$E134
 double DAT_00AC1828 = DAT_00AC17D8 / DAT_007EF6A8;
 
-// FUNCTION: 0x005FF010 $E137
+// SYNTHETIC: GAMEMD 0x005FF010 SYMBOL
+// _$E137
 double DAT_00AC1810 = DAT_007E1718 / DAT_00AC1828;
 
-// FUNCTION: 0x005FF030 $E140
+// SYNTHETIC: GAMEMD 0x005FF030 SYMBOL
+// _$E140
 double DAT_00AC1808 = DAT_007E1720 * DAT_007EF6B0;
 
 extern const double DAT_007E1728;
@@ -397,32 +420,42 @@ extern const double DAT_007E1730;
 extern const double DAT_007E1738;
 extern const double DAT_007E1740;
 
-// FUNCTION: 0x005FF050 $E143
+// SYNTHETIC: GAMEMD 0x005FF050 SYMBOL
+// _$E143
 double DAT_00AC17E0 = DAT_007E1728 * DAT_007EF6B0;
 
-// FUNCTION: 0x005FF070 $E146
+// SYNTHETIC: GAMEMD 0x005FF070 SYMBOL
+// _$E146
 double DAT_00AC1690 = DAT_007E1730 * DAT_007EF6B0;
 
-// FUNCTION: 0x005FF090 $E149
+// SYNTHETIC: GAMEMD 0x005FF090 SYMBOL
+// _$E149
 int DAT_00AC1830 = (int)(fastmath::tan(DAT_00AC1690 - DAT_00AC17E0) * DAT_007E1738 * DAT_00AC17D8);
 
-// FUNCTION: 0x005FF0D0 $E152
+// SYNTHETIC: GAMEMD 0x005FF0D0 SYMBOL
+// _$E152
 double DAT_00AC17E8 = fastmath::atan(DAT_00AC1830 * DAT_007E1740);
 
-// FUNCTION: 0x005FF100 $E155
+// SYNTHETIC: GAMEMD 0x005FF100 SYMBOL
+// _$E155
 double DAT_00AC1800 = fastmath::atan((DAT_00AC1830 * 2) / DAT_00AC17D8);
 
-// FUNCTION: 0x005FF130 $E158
+// SYNTHETIC: GAMEMD 0x005FF130 SYMBOL
+// _$E158
 int DAT_00AC1824 = (int)((DAT_00AC1830 * 4) + DAT_007E1738);
 
-// FUNCTION: 0x005FF160 $E161
+// SYNTHETIC: GAMEMD 0x005FF160 SYMBOL
+// _$E161
 Cell DAT_00AC17D0(0, 0);
 
-// FUNCTION: 0x005FF170 $E164
+// SYNTHETIC: GAMEMD 0x005FF170 SYMBOL
+// _$E164
 Coord DAT_00AC17F0(0, 0, 0);
 
-// FUNCTION: 0x005FF190 $E167
+// SYNTHETIC: GAMEMD 0x005FF190 SYMBOL
+// _$E167
 Coord DAT_00AC1818(CELL_LEPTON_W / 2, CELL_LEPTON_H / 2, 0);
 
-// FUNCTION: 0x005FF1B0 $E170
+// SYNTHETIC: GAMEMD 0x005FF1B0 SYMBOL
+// _$E170
 Rect DAT_00AC17C0(0, 0, 0, 0);

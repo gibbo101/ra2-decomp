@@ -7,7 +7,7 @@
 #include "cstraw.h"
 #include <cstring>
 
-// FUNCTION: 0x004A2780
+// FUNCTION: GAMEMD 0x004A2780
 int CacheStraw::Get(void * source, int slen)
 {
 	int total = 0;

@@ -15,10 +15,12 @@
 
 DynamicVectorClass<ConvertClass *> ConvertClass::Drawers;
 
-// FUNCTION: 0x0048E6A0 $E29
-// FUNCTION: 0x0048E6E0 $E26
+// SYNTHETIC: GAMEMD 0x0048E6A0 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x0048E6E0 SYMBOL
+// _$E26
 
-// FUNCTION: 0x0048E740
+// FUNCTION: GAMEMD 0x0048E740
 ConvertClass::ConvertClass(PaletteClass const & artpalette, PaletteClass const & screenpalette, Surface const & surface, int intensity_levels, bool quick_init) :
 	BBP(surface.Bytes_Per_Pixel()),
 	PlainBlitter(NULL),
@@ -172,8 +174,10 @@ ConvertClass::ConvertClass(PaletteClass const & artpalette, PaletteClass const &
 	Drawers.Add(this);
 }
 
-// FUNCTION: 0x00490400 ConvertClass::~ConvertClass
-// FUNCTION: 0x00491210 ConvertClass::~ConvertClass
+// FUNCTION: GAMEMD 0x00490400
+// ConvertClass::~ConvertClass
+// SYNTHETIC: GAMEMD 0x00491210
+// ??_GConvertClass@@UAEPAXI@Z
 ConvertClass::~ConvertClass(void)
 {
 	Destroy_Blitters();
@@ -187,7 +191,7 @@ ConvertClass::~ConvertClass(void)
 	Drawers.Delete(this);
 }
 
-// FUNCTION: 0x00490B90
+// FUNCTION: GAMEMD 0x00490B90
 Blitter const * ConvertClass::Blitter_From_Flags(ShapeFlags_Type flags) const
 {
 	static ShapeFlags_Type z_read_flags = ShapeFlags_Type(SHAPE_ZREAD|SHAPE_ZGRAD);
@@ -415,7 +419,7 @@ Blitter const * ConvertClass::Blitter_From_Flags(ShapeFlags_Type flags) const
 	return(TransBlitter);
 }
 
-// FUNCTION: 0x00490E50
+// FUNCTION: GAMEMD 0x00490E50
 RLEBlitter const * ConvertClass::RLEBlitter_From_Flags(ShapeFlags_Type flags) const
 {
 	static ShapeFlags_Type z_read_flags = ShapeFlags_Type(SHAPE_ZREAD|SHAPE_ZGRAD);
@@ -625,7 +629,7 @@ RLEBlitter const * ConvertClass::RLEBlitter_From_Flags(ShapeFlags_Type flags) co
 	return(RLETransBlitter);
 }
 
-// FUNCTION: 0x00491100
+// FUNCTION: GAMEMD 0x00491100
 void ConvertClass::Reinitialize_Hicolor_Tables(int redleft, int redright, int greenleft, int greenright, int blueleft, int blueright)
 {
 	for (int i = 0; i < Drawers.Count(); i++) {
@@ -654,301 +658,489 @@ void ConvertClass::Reinitialize_Hicolor_Tables(int redleft, int redright, int gr
 
 template class BlitTransXlat<unsigned short>;
 
-// FUNCTION: 0x004912B0 ?$BlitTransXlat@G::BlitForward
-// FUNCTION: 0x00491300 ?$BlitTransXlat@G::BlitBackward
-// FUNCTION: 0x00491330 ?$BlitTransXlat@G::Blit_Copy_Tinted
-// FUNCTION: 0x00491360 ?$BlitTransXlat@G::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x004912B0
+// ?BlitForward@?$BlitTransXlat@G@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x00491300
+// ?BlitBackward@?$BlitTransXlat@G@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x00491330
+// ?Blit_Copy_Tinted@?$BlitTransXlat@G@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x00491360
+// ?Blit_Move_Tinted@?$BlitTransXlat@G@@UBEXPAXPBXHH00HG@Z
 
-// FUNCTION: 0x00491390 ?$DynamicVectorClass@PAVConvertClass@@::Clear
+// TEMPLATE: GAMEMD 0x00491390
+// ?Clear@?$DynamicVectorClass@PAVConvertClass@@@@UAEXXZ
 template class DynamicVectorClass<ConvertClass *>;
 
-// FUNCTION: 0x004913C0 ?$VectorClass@PAVConvertClass@@::ID
-// FUNCTION: 0x004913E0 ?$VectorClass@PAVConvertClass@@::GetItem
+// TEMPLATE: GAMEMD 0x004913C0
+// ?ID@?$VectorClass@PAVConvertClass@@@@UAEHPBQAVConvertClass@@@Z
+// TEMPLATE: GAMEMD 0x004913E0
+// ?GetItem@?$VectorClass@PAVConvertClass@@@@UBEPAVConvertClass@@H@Z
 
-// FUNCTION: 0x004913F0 ?$BlitPlainXlat@E::BlitForward
-// FUNCTION: 0x00491430 ?$BlitPlainXlat@E::BlitBackward
-// FUNCTION: 0x00491460 ?$BlitPlainXlat@E::Blit_Copy_Tinted
-// FUNCTION: 0x00491490 ?$BlitPlainXlat@E::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x004913F0
+// ?BlitForward@?$BlitPlainXlat@E@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x00491430
+// ?BlitBackward@?$BlitPlainXlat@E@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x00491460
+// ?Blit_Copy_Tinted@?$BlitPlainXlat@E@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x00491490
+// ?Blit_Move_Tinted@?$BlitPlainXlat@E@@UBEXPAXPBXHH00HG@Z
 template class BlitPlainXlat<unsigned char>;
 
-// FUNCTION: 0x004914C0 ?$BlitTransXlat@E::BlitForward
-// FUNCTION: 0x00491500 ?$BlitTransXlat@E::BlitBackward
-// FUNCTION: 0x00491530 ?$BlitTransXlat@E::Blit_Copy_Tinted
-// FUNCTION: 0x00491560 ?$BlitTransXlat@E::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x004914C0
+// ?BlitForward@?$BlitTransXlat@E@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x00491500
+// ?BlitBackward@?$BlitTransXlat@E@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x00491530
+// ?Blit_Copy_Tinted@?$BlitTransXlat@E@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x00491560
+// ?Blit_Move_Tinted@?$BlitTransXlat@E@@UBEXPAXPBXHH00HG@Z
 template class BlitTransXlat<unsigned char>;
 
-// FUNCTION: 0x00491590 ?$BlitTransZRemapXlat@E::BlitForward
-// FUNCTION: 0x004915E0 ?$BlitTransZRemapXlat@E::BlitBackward
-// FUNCTION: 0x00491610 ?$BlitTransZRemapXlat@E::Blit_Copy_Tinted
-// FUNCTION: 0x00491640 ?$BlitTransZRemapXlat@E::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x00491590
+// ?BlitForward@?$BlitTransZRemapXlat@E@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x004915E0
+// ?BlitBackward@?$BlitTransZRemapXlat@E@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x00491610
+// ?Blit_Copy_Tinted@?$BlitTransZRemapXlat@E@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x00491640
+// ?Blit_Move_Tinted@?$BlitTransZRemapXlat@E@@UBEXPAXPBXHH00HG@Z
 template class BlitTransZRemapXlat<unsigned char>;
 
-// FUNCTION: 0x00491670 ?$BlitTransRemapDest@E::BlitForward
-// FUNCTION: 0x004916B0 ?$BlitTransRemapDest@E::BlitBackward
-// FUNCTION: 0x004916E0 ?$BlitTransRemapDest@E::Blit_Copy_Tinted
-// FUNCTION: 0x00491710 ?$BlitTransRemapDest@E::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x00491670
+// ?BlitForward@?$BlitTransRemapDest@E@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x004916B0
+// ?BlitBackward@?$BlitTransRemapDest@E@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x004916E0
+// ?Blit_Copy_Tinted@?$BlitTransRemapDest@E@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x00491710
+// ?Blit_Move_Tinted@?$BlitTransRemapDest@E@@UBEXPAXPBXHH00HG@Z
 template class BlitTransRemapDest<unsigned char>;
 
-// FUNCTION: 0x00491740 ?$BlitTransRemapXlat@E::BlitForward
-// FUNCTION: 0x00491790 ?$BlitTransRemapXlat@E::BlitBackward
-// FUNCTION: 0x004917C0 ?$BlitTransRemapXlat@E::Blit_Copy_Tinted
-// FUNCTION: 0x004917F0 ?$BlitTransRemapXlat@E::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x00491740
+// ?BlitForward@?$BlitTransRemapXlat@E@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x00491790
+// ?BlitBackward@?$BlitTransRemapXlat@E@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x004917C0
+// ?Blit_Copy_Tinted@?$BlitTransRemapXlat@E@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x004917F0
+// ?Blit_Move_Tinted@?$BlitTransRemapXlat@E@@UBEXPAXPBXHH00HG@Z
 template class BlitTransRemapXlat<unsigned char>;
 
-// FUNCTION: 0x00491820 ?$RLEBlitTransXlat@E::Blit
-// FUNCTION: 0x004918A0 ?$RLEBlitTransXlat@E::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x00491820
+// ?Blit@?$RLEBlitTransXlat@E@@UBEXPAXPBXHHH00HH0@Z
+// TEMPLATE: GAMEMD 0x004918A0
+// ?Blit_Copy_Tinted@?$RLEBlitTransXlat@E@@UBEXPAXPBXHHH00HH0G@Z
 template class RLEBlitTransXlat<unsigned char>;
 
-// FUNCTION: 0x004918E0 ?$RLEBlitTransZRemapXlat@E::Blit
-// FUNCTION: 0x00491970 ?$RLEBlitTransZRemapXlat@E::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x004918E0
+// ?Blit@?$RLEBlitTransZRemapXlat@E@@UBEXPAXPBXHHH00HH0@Z
+// TEMPLATE: GAMEMD 0x00491970
+// ?Blit_Copy_Tinted@?$RLEBlitTransZRemapXlat@E@@UBEXPAXPBXHHH00HH0G@Z
 template class RLEBlitTransZRemapXlat<unsigned char>;
 
-// FUNCTION: 0x004919B0 ?$RLEBlitTransRemapDest@E::Blit
-// FUNCTION: 0x00491A30 ?$RLEBlitTransRemapDest@E::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x004919B0
+// ?Blit@?$RLEBlitTransRemapDest@E@@UBEXPAXPBXHHH00HH0@Z
+// TEMPLATE: GAMEMD 0x00491A30
+// ?Blit_Copy_Tinted@?$RLEBlitTransRemapDest@E@@UBEXPAXPBXHHH00HH0G@Z
 template class RLEBlitTransRemapDest<unsigned char>;
 
-// FUNCTION: 0x00491A70 ?$RLEBlitTransRemapXlat@E::Blit
-// FUNCTION: 0x00491B00 ?$RLEBlitTransRemapXlat@E::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x00491A70
+// ?Blit@?$RLEBlitTransRemapXlat@E@@UBEXPAXPBXHHH00HH0@Z
+// TEMPLATE: GAMEMD 0x00491B00
+// ?Blit_Copy_Tinted@?$RLEBlitTransRemapXlat@E@@UBEXPAXPBXHHH00HH0G@Z
 template class RLEBlitTransRemapXlat<unsigned char>;
 
-// FUNCTION: 0x00491B40 ?$RLEBlitTransXlatZRead@E::Blit
-// FUNCTION: 0x00491C10 ?$RLEBlitTransXlatZRead@E::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x00491B40
+// ?Blit@?$RLEBlitTransXlatZRead@E@@UBEXPAXPBXHHH00HH0@Z
+// TEMPLATE: GAMEMD 0x00491C10
+// ?Blit_Copy_Tinted@?$RLEBlitTransXlatZRead@E@@UBEXPAXPBXHHH00HH0G@Z
 template class RLEBlitTransXlatZRead<unsigned char>;
 
-// FUNCTION: 0x00491C50 ?$RLEBlitTransZRemapXlatZRead@E::Blit
-// FUNCTION: 0x00491D50 ?$RLEBlitTransZRemapXlatZRead@E::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x00491C50
+// ?Blit@?$RLEBlitTransZRemapXlatZRead@E@@UBEXPAXPBXHHH00HH0@Z
+// TEMPLATE: GAMEMD 0x00491D50
+// ?Blit_Copy_Tinted@?$RLEBlitTransZRemapXlatZRead@E@@UBEXPAXPBXHHH00HH0G@Z
 template class RLEBlitTransZRemapXlatZRead<unsigned char>;
 
-// FUNCTION: 0x00491D90 ?$RLEBlitTransRemapDestZRead@E::Blit
+// TEMPLATE: GAMEMD 0x00491D90
+// ?Blit@?$RLEBlitTransRemapDestZRead@E@@UBEXPAXPBXHHH00HH0@Z
 template class RLEBlitTransRemapDestZRead<unsigned char>;
 
-// FUNCTION: 0x00491E60 ?$RLEBlitTransRemapDestZRead@E::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x00491E60
+// ?Blit_Copy_Tinted@?$RLEBlitTransRemapDestZRead@E@@UBEXPAXPBXHHH00HH0G@Z
 
-// FUNCTION: 0x00491EA0 ?$RLEBlitTransRemapXlatZRead@E::Blit
-// FUNCTION: 0x00491F90 ?$RLEBlitTransRemapXlatZRead@E::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x00491EA0
+// ?Blit@?$RLEBlitTransRemapXlatZRead@E@@UBEXPAXPBXHHH00HH0@Z
+// TEMPLATE: GAMEMD 0x00491F90
+// ?Blit_Copy_Tinted@?$RLEBlitTransRemapXlatZRead@E@@UBEXPAXPBXHHH00HH0G@Z
 template class RLEBlitTransRemapXlatZRead<unsigned char>;
 
-// FUNCTION: 0x00491FD0 ?$RLEBlitTransXlatZReadWrite@E::Blit
-// FUNCTION: 0x004920C0 ?$RLEBlitTransXlatZReadWrite@E::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x00491FD0
+// ?Blit@?$RLEBlitTransXlatZReadWrite@E@@UBEXPAXPBXHHH00HH0@Z
+// TEMPLATE: GAMEMD 0x004920C0
+// ?Blit_Copy_Tinted@?$RLEBlitTransXlatZReadWrite@E@@UBEXPAXPBXHHH00HH0G@Z
 template class RLEBlitTransXlatZReadWrite<unsigned char>;
 
-// FUNCTION: 0x00492100 ?$RLEBlitTransZRemapXlatZReadWrite@E::Blit
-// FUNCTION: 0x00492210 ?$RLEBlitTransZRemapXlatZReadWrite@E::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x00492100
+// ?Blit@?$RLEBlitTransZRemapXlatZReadWrite@E@@UBEXPAXPBXHHH00HH0@Z
+// TEMPLATE: GAMEMD 0x00492210
+// ?Blit_Copy_Tinted@?$RLEBlitTransZRemapXlatZReadWrite@E@@UBEXPAXPBXHHH00HH0G@Z
 template class RLEBlitTransZRemapXlatZReadWrite<unsigned char>;
 
-// FUNCTION: 0x00492250 ?$RLEBlitTransRemapDestZReadWrite@E::Blit
-// FUNCTION: 0x00492330 ?$RLEBlitTransRemapDestZReadWrite@E::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x00492250
+// ?Blit@?$RLEBlitTransRemapDestZReadWrite@E@@UBEXPAXPBXHHH00HH0@Z
+// TEMPLATE: GAMEMD 0x00492330
+// ?Blit_Copy_Tinted@?$RLEBlitTransRemapDestZReadWrite@E@@UBEXPAXPBXHHH00HH0G@Z
 template class RLEBlitTransRemapDestZReadWrite<unsigned char>;
 
-// FUNCTION: 0x00492370 ?$RLEBlitTransRemapXlatZReadWrite@E::Blit
-// FUNCTION: 0x00492480 ?$RLEBlitTransRemapXlatZReadWrite@E::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x00492370
+// ?Blit@?$RLEBlitTransRemapXlatZReadWrite@E@@UBEXPAXPBXHHH00HH0@Z
+// TEMPLATE: GAMEMD 0x00492480
+// ?Blit_Copy_Tinted@?$RLEBlitTransRemapXlatZReadWrite@E@@UBEXPAXPBXHHH00HH0G@Z
 template class RLEBlitTransRemapXlatZReadWrite<unsigned char>;
 
-// FUNCTION: 0x004924C0 ?$BlitPlainXlat@G::BlitForward
-// FUNCTION: 0x00492500 ?$BlitPlainXlat@G::BlitBackward
-// FUNCTION: 0x00492530 ?$BlitPlainXlat@G::Blit_Copy_Tinted
-// FUNCTION: 0x00492560 ?$BlitPlainXlat@G::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x004924C0
+// ?BlitForward@?$BlitPlainXlat@G@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x00492500
+// ?BlitBackward@?$BlitPlainXlat@G@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x00492530
+// ?Blit_Copy_Tinted@?$BlitPlainXlat@G@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x00492560
+// ?Blit_Move_Tinted@?$BlitPlainXlat@G@@UBEXPAXPBXHH00HG@Z
 template class BlitPlainXlat<unsigned short>;
 
-// FUNCTION: 0x00492590 ?$BlitTransZRemapXlat@G::BlitForward
-// FUNCTION: 0x004925E0 ?$BlitTransZRemapXlat@G::BlitBackward
-// FUNCTION: 0x00492610 ?$BlitTransZRemapXlat@G::Blit_Copy_Tinted
-// FUNCTION: 0x00492640 ?$BlitTransZRemapXlat@G::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x00492590
+// ?BlitForward@?$BlitTransZRemapXlat@G@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x004925E0
+// ?BlitBackward@?$BlitTransZRemapXlat@G@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x00492610
+// ?Blit_Copy_Tinted@?$BlitTransZRemapXlat@G@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x00492640
+// ?Blit_Move_Tinted@?$BlitTransZRemapXlat@G@@UBEXPAXPBXHH00HG@Z
 template class BlitTransZRemapXlat<unsigned short>;
 
-// FUNCTION: 0x00492670 ?$BlitTransDarken@G::BlitForward
-// FUNCTION: 0x004926B0 ?$BlitTransDarken@G::BlitBackward
-// FUNCTION: 0x004926E0 ?$BlitTransDarken@G::Blit_Copy_Tinted
-// FUNCTION: 0x00492710 ?$BlitTransDarken@G::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x00492670
+// ?BlitForward@?$BlitTransDarken@G@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x004926B0
+// ?BlitBackward@?$BlitTransDarken@G@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x004926E0
+// ?Blit_Copy_Tinted@?$BlitTransDarken@G@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x00492710
+// ?Blit_Move_Tinted@?$BlitTransDarken@G@@UBEXPAXPBXHH00HG@Z
 template class BlitTransDarken<unsigned short>;
 
-// FUNCTION: 0x00492740 ?$BlitTransLucent75@G::BlitForward
-// FUNCTION: 0x004927A0 ?$BlitTransLucent75@G::BlitBackward
-// FUNCTION: 0x004927D0 ?$BlitTransLucent75@G::Blit_Copy_Tinted
-// FUNCTION: 0x00492800 ?$BlitTransLucent75@G::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x00492740
+// ?BlitForward@?$BlitTransLucent75@G@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x004927A0
+// ?BlitBackward@?$BlitTransLucent75@G@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x004927D0
+// ?Blit_Copy_Tinted@?$BlitTransLucent75@G@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x00492800
+// ?Blit_Move_Tinted@?$BlitTransLucent75@G@@UBEXPAXPBXHH00HG@Z
 template class BlitTransLucent75<unsigned short>;
 
-// FUNCTION: 0x00492890 ?$BlitTransLucent50@G::BlitBackward
-// FUNCTION: 0x004928C0 ?$BlitTransLucent50@G::Blit_Copy_Tinted
-// FUNCTION: 0x004928F0 ?$BlitTransLucent50@G::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x00492890
+// ?BlitBackward@?$BlitTransLucent50@G@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x004928C0
+// ?Blit_Copy_Tinted@?$BlitTransLucent50@G@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x004928F0
+// ?Blit_Move_Tinted@?$BlitTransLucent50@G@@UBEXPAXPBXHH00HG@Z
 template class BlitTransLucent50<unsigned short>;
 
-// FUNCTION: 0x00492920 ?$BlitTransLucent25@G::BlitForward
-// FUNCTION: 0x00492980 ?$BlitTransLucent25@G::BlitBackward
-// FUNCTION: 0x004929B0 ?$BlitTransLucent25@G::Blit_Copy_Tinted
-// FUNCTION: 0x004929E0 ?$BlitTransLucent25@G::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x00492920
+// ?BlitForward@?$BlitTransLucent25@G@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x00492980
+// ?BlitBackward@?$BlitTransLucent25@G@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x004929B0
+// ?Blit_Copy_Tinted@?$BlitTransLucent25@G@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x004929E0
+// ?Blit_Move_Tinted@?$BlitTransLucent25@G@@UBEXPAXPBXHH00HG@Z
 template class BlitTransLucent25<unsigned short>;
 
-// FUNCTION: 0x00492A10 ?$BlitPlainXlatZRead@G::BlitForward
-// FUNCTION: 0x00492A70 ?$BlitPlainXlatZRead@G::BlitBackward
-// FUNCTION: 0x00492AA0 ?$BlitPlainXlatZRead@G::Blit_Copy_Tinted
-// FUNCTION: 0x00492AD0 ?$BlitPlainXlatZRead@G::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x00492A10
+// ?BlitForward@?$BlitPlainXlatZRead@G@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x00492A70
+// ?BlitBackward@?$BlitPlainXlatZRead@G@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x00492AA0
+// ?Blit_Copy_Tinted@?$BlitPlainXlatZRead@G@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x00492AD0
+// ?Blit_Move_Tinted@?$BlitPlainXlatZRead@G@@UBEXPAXPBXHH00HG@Z
 template class BlitPlainXlatZRead<unsigned short>;
 
-// FUNCTION: 0x00492B00 ?$BlitTransXlatZRead@G::BlitForward
-// FUNCTION: 0x00492B70 ?$BlitTransXlatZRead@G::BlitBackward
-// FUNCTION: 0x00492BA0 ?$BlitTransXlatZRead@G::Blit_Copy_Tinted
-// FUNCTION: 0x00492BD0 ?$BlitTransXlatZRead@G::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x00492B00
+// ?BlitForward@?$BlitTransXlatZRead@G@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x00492B70
+// ?BlitBackward@?$BlitTransXlatZRead@G@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x00492BA0
+// ?Blit_Copy_Tinted@?$BlitTransXlatZRead@G@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x00492BD0
+// ?Blit_Move_Tinted@?$BlitTransXlatZRead@G@@UBEXPAXPBXHH00HG@Z
 template class BlitTransXlatZRead<unsigned short>;
 
-// FUNCTION: 0x00492C00 ?$BlitTransZRemapXlatZRead@G::BlitForward
-// FUNCTION: 0x00492C90 ?$BlitTransZRemapXlatZRead@G::BlitBackward
-// FUNCTION: 0x00492CC0 ?$BlitTransZRemapXlatZRead@G::Blit_Copy_Tinted
-// FUNCTION: 0x00492CF0 ?$BlitTransZRemapXlatZRead@G::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x00492C00
+// ?BlitForward@?$BlitTransZRemapXlatZRead@G@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x00492C90
+// ?BlitBackward@?$BlitTransZRemapXlatZRead@G@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x00492CC0
+// ?Blit_Copy_Tinted@?$BlitTransZRemapXlatZRead@G@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x00492CF0
+// ?Blit_Move_Tinted@?$BlitTransZRemapXlatZRead@G@@UBEXPAXPBXHH00HG@Z
 template class BlitTransZRemapXlatZRead<unsigned short>;
 
-// FUNCTION: 0x00492D20 ?$BlitTransDarkenZRead@G::BlitForward
-// FUNCTION: 0x00492D80 ?$BlitTransDarkenZRead@G::BlitBackward
-// FUNCTION: 0x00492DB0 ?$BlitTransDarkenZRead@G::Blit_Copy_Tinted
-// FUNCTION: 0x00492DE0 ?$BlitTransDarkenZRead@G::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x00492D20
+// ?BlitForward@?$BlitTransDarkenZRead@G@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x00492D80
+// ?BlitBackward@?$BlitTransDarkenZRead@G@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x00492DB0
+// ?Blit_Copy_Tinted@?$BlitTransDarkenZRead@G@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x00492DE0
+// ?Blit_Move_Tinted@?$BlitTransDarkenZRead@G@@UBEXPAXPBXHH00HG@Z
 template class BlitTransDarkenZRead<unsigned short>;
 
-// FUNCTION: 0x00492E10 ?$BlitTransLucent75ZRead@G::BlitForward
-// FUNCTION: 0x00492EA0 ?$BlitTransLucent75ZRead@G::BlitBackward
-// FUNCTION: 0x00492ED0 ?$BlitTransLucent75ZRead@G::Blit_Copy_Tinted
-// FUNCTION: 0x00492F00 ?$BlitTransLucent75ZRead@G::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x00492E10
+// ?BlitForward@?$BlitTransLucent75ZRead@G@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x00492EA0
+// ?BlitBackward@?$BlitTransLucent75ZRead@G@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x00492ED0
+// ?Blit_Copy_Tinted@?$BlitTransLucent75ZRead@G@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x00492F00
+// ?Blit_Move_Tinted@?$BlitTransLucent75ZRead@G@@UBEXPAXPBXHH00HG@Z
 template class BlitTransLucent75ZRead<unsigned short>;
 
-// FUNCTION: 0x00492F30 ?$BlitTransLucent50ZRead@G::BlitForward
-// FUNCTION: 0x00492FC0 ?$BlitTransLucent50ZRead@G::BlitBackward
-// FUNCTION: 0x00492FF0 ?$BlitTransLucent50ZRead@G::Blit_Copy_Tinted
-// FUNCTION: 0x00493020 ?$BlitTransLucent50ZRead@G::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x00492F30
+// ?BlitForward@?$BlitTransLucent50ZRead@G@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x00492FC0
+// ?BlitBackward@?$BlitTransLucent50ZRead@G@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x00492FF0
+// ?Blit_Copy_Tinted@?$BlitTransLucent50ZRead@G@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x00493020
+// ?Blit_Move_Tinted@?$BlitTransLucent50ZRead@G@@UBEXPAXPBXHH00HG@Z
 template class BlitTransLucent50ZRead<unsigned short>;
 
-// FUNCTION: 0x00493050 ?$BlitTransLucent25ZRead@G::BlitForward
-// FUNCTION: 0x004930E0 ?$BlitTransLucent25ZRead@G::BlitBackward
-// FUNCTION: 0x00493110 ?$BlitTransLucent25ZRead@G::Blit_Copy_Tinted
-// FUNCTION: 0x00493140 ?$BlitTransLucent25ZRead@G::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x00493050
+// ?BlitForward@?$BlitTransLucent25ZRead@G@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x004930E0
+// ?BlitBackward@?$BlitTransLucent25ZRead@G@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x00493110
+// ?Blit_Copy_Tinted@?$BlitTransLucent25ZRead@G@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x00493140
+// ?Blit_Move_Tinted@?$BlitTransLucent25ZRead@G@@UBEXPAXPBXHH00HG@Z
 template class BlitTransLucent25ZRead<unsigned short>;
 
-// FUNCTION: 0x00493170 ?$BlitTransLucent75ZReadWarp@G::BlitForward
-// FUNCTION: 0x00493210 ?$BlitTransLucent75ZReadWarp@G::BlitBackward
-// FUNCTION: 0x00493240 ?$BlitTransLucent75ZReadWarp@G::Blit_Copy_Tinted
-// FUNCTION: 0x00493270 ?$BlitTransLucent75ZReadWarp@G::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x00493170
+// ?BlitForward@?$BlitTransLucent75ZReadWarp@G@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x00493210
+// ?BlitBackward@?$BlitTransLucent75ZReadWarp@G@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x00493240
+// ?Blit_Copy_Tinted@?$BlitTransLucent75ZReadWarp@G@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x00493270
+// ?Blit_Move_Tinted@?$BlitTransLucent75ZReadWarp@G@@UBEXPAXPBXHH00HG@Z
 template class BlitTransLucent75ZReadWarp<unsigned short>;
 
-// FUNCTION: 0x004932A0 ?$BlitTransLucent50ZReadWarp@G::BlitForward
-// FUNCTION: 0x00493340 ?$BlitTransLucent50ZReadWarp@G::BlitBackward
-// FUNCTION: 0x00493370 ?$BlitTransLucent50ZReadWarp@G::Blit_Copy_Tinted
-// FUNCTION: 0x004933A0 ?$BlitTransLucent50ZReadWarp@G::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x004932A0
+// ?BlitForward@?$BlitTransLucent50ZReadWarp@G@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x00493340
+// ?BlitBackward@?$BlitTransLucent50ZReadWarp@G@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x00493370
+// ?Blit_Copy_Tinted@?$BlitTransLucent50ZReadWarp@G@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x004933A0
+// ?Blit_Move_Tinted@?$BlitTransLucent50ZReadWarp@G@@UBEXPAXPBXHH00HG@Z
 template class BlitTransLucent50ZReadWarp<unsigned short>;
 
-// FUNCTION: 0x004933D0 ?$BlitTransLucent25ZReadWarp@G::BlitForward
-// FUNCTION: 0x00493470 ?$BlitTransLucent25ZReadWarp@G::BlitBackward
-// FUNCTION: 0x004934A0 ?$BlitTransLucent25ZReadWarp@G::Blit_Copy_Tinted
-// FUNCTION: 0x004934D0 ?$BlitTransLucent25ZReadWarp@G::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x004933D0
+// ?BlitForward@?$BlitTransLucent25ZReadWarp@G@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x00493470
+// ?BlitBackward@?$BlitTransLucent25ZReadWarp@G@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x004934A0
+// ?Blit_Copy_Tinted@?$BlitTransLucent25ZReadWarp@G@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x004934D0
+// ?Blit_Move_Tinted@?$BlitTransLucent25ZReadWarp@G@@UBEXPAXPBXHH00HG@Z
 template class BlitTransLucent25ZReadWarp<unsigned short>;
 
-// FUNCTION: 0x00493500 ?$BlitPlainXlatZReadWrite@G::BlitForward
-// FUNCTION: 0x00493570 ?$BlitPlainXlatZReadWrite@G::BlitBackward
-// FUNCTION: 0x004935A0 ?$BlitPlainXlatZReadWrite@G::Blit_Copy_Tinted
-// FUNCTION: 0x004935D0 ?$BlitPlainXlatZReadWrite@G::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x00493500
+// ?BlitForward@?$BlitPlainXlatZReadWrite@G@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x00493570
+// ?BlitBackward@?$BlitPlainXlatZReadWrite@G@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x004935A0
+// ?Blit_Copy_Tinted@?$BlitPlainXlatZReadWrite@G@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x004935D0
+// ?Blit_Move_Tinted@?$BlitPlainXlatZReadWrite@G@@UBEXPAXPBXHH00HG@Z
 template class BlitPlainXlatZReadWrite<unsigned short>;
 
-// FUNCTION: 0x00493600 ?$BlitTransXlatZReadWrite@G::BlitForward
-// FUNCTION: 0x00493680 ?$BlitTransXlatZReadWrite@G::BlitBackward
-// FUNCTION: 0x004936B0 ?$BlitTransXlatZReadWrite@G::Blit_Copy_Tinted
-// FUNCTION: 0x004936E0 ?$BlitTransXlatZReadWrite@G::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x00493600
+// ?BlitForward@?$BlitTransXlatZReadWrite@G@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x00493680
+// ?BlitBackward@?$BlitTransXlatZReadWrite@G@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x004936B0
+// ?Blit_Copy_Tinted@?$BlitTransXlatZReadWrite@G@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x004936E0
+// ?Blit_Move_Tinted@?$BlitTransXlatZReadWrite@G@@UBEXPAXPBXHH00HG@Z
 template class BlitTransXlatZReadWrite<unsigned short>;
 
-// FUNCTION: 0x00493710 ?$BlitTransZRemapXlatZReadWrite@G::BlitForward
-// FUNCTION: 0x004937A0 ?$BlitTransZRemapXlatZReadWrite@G::BlitBackward
-// FUNCTION: 0x004937D0 ?$BlitTransZRemapXlatZReadWrite@G::Blit_Copy_Tinted
-// FUNCTION: 0x00493800 ?$BlitTransZRemapXlatZReadWrite@G::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x00493710
+// ?BlitForward@?$BlitTransZRemapXlatZReadWrite@G@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x004937A0
+// ?BlitBackward@?$BlitTransZRemapXlatZReadWrite@G@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x004937D0
+// ?Blit_Copy_Tinted@?$BlitTransZRemapXlatZReadWrite@G@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x00493800
+// ?Blit_Move_Tinted@?$BlitTransZRemapXlatZReadWrite@G@@UBEXPAXPBXHH00HG@Z
 template class BlitTransZRemapXlatZReadWrite<unsigned short>;
 
-// FUNCTION: 0x00493830 ?$BlitTransDarkenZReadWrite@G::BlitForward
-// FUNCTION: 0x004938A0 ?$BlitTransDarkenZReadWrite@G::BlitBackward
-// FUNCTION: 0x004938D0 ?$BlitTransDarkenZReadWrite@G::Blit_Copy_Tinted
-// FUNCTION: 0x00493900 ?$BlitTransDarkenZReadWrite@G::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x00493830
+// ?BlitForward@?$BlitTransDarkenZReadWrite@G@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x004938A0
+// ?BlitBackward@?$BlitTransDarkenZReadWrite@G@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x004938D0
+// ?Blit_Copy_Tinted@?$BlitTransDarkenZReadWrite@G@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x00493900
+// ?Blit_Move_Tinted@?$BlitTransDarkenZReadWrite@G@@UBEXPAXPBXHH00HG@Z
 template class BlitTransDarkenZReadWrite<unsigned short>;
 
-// FUNCTION: 0x00493930 ?$BlitTransLucent75ZReadWrite@G::BlitForward
-// FUNCTION: 0x004939D0 ?$BlitTransLucent75ZReadWrite@G::BlitBackward
-// FUNCTION: 0x00493A00 ?$BlitTransLucent75ZReadWrite@G::Blit_Copy_Tinted
-// FUNCTION: 0x00493A30 ?$BlitTransLucent75ZReadWrite@G::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x00493930
+// ?BlitForward@?$BlitTransLucent75ZReadWrite@G@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x004939D0
+// ?BlitBackward@?$BlitTransLucent75ZReadWrite@G@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x00493A00
+// ?Blit_Copy_Tinted@?$BlitTransLucent75ZReadWrite@G@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x00493A30
+// ?Blit_Move_Tinted@?$BlitTransLucent75ZReadWrite@G@@UBEXPAXPBXHH00HG@Z
 template class BlitTransLucent75ZReadWrite<unsigned short>;
 
-// FUNCTION: 0x00493A60 ?$BlitTransLucent50ZReadWrite@G::BlitForward
-// FUNCTION: 0x00493B00 ?$BlitTransLucent50ZReadWrite@G::BlitBackward
-// FUNCTION: 0x00493B30 ?$BlitTransLucent50ZReadWrite@G::Blit_Copy_Tinted
-// FUNCTION: 0x00493B60 ?$BlitTransLucent50ZReadWrite@G::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x00493A60
+// ?BlitForward@?$BlitTransLucent50ZReadWrite@G@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x00493B00
+// ?BlitBackward@?$BlitTransLucent50ZReadWrite@G@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x00493B30
+// ?Blit_Copy_Tinted@?$BlitTransLucent50ZReadWrite@G@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x00493B60
+// ?Blit_Move_Tinted@?$BlitTransLucent50ZReadWrite@G@@UBEXPAXPBXHH00HG@Z
 template class BlitTransLucent50ZReadWrite<unsigned short>;
 
-// FUNCTION: 0x00493B90 ?$BlitTransLucent25ZReadWrite@G::BlitForward
-// FUNCTION: 0x00493C30 ?$BlitTransLucent25ZReadWrite@G::BlitBackward
-// FUNCTION: 0x00493C60 ?$BlitTransLucent25ZReadWrite@G::Blit_Copy_Tinted
-// FUNCTION: 0x00493C90 ?$BlitTransLucent25ZReadWrite@G::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x00493B90
+// ?BlitForward@?$BlitTransLucent25ZReadWrite@G@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x00493C30
+// ?BlitBackward@?$BlitTransLucent25ZReadWrite@G@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x00493C60
+// ?Blit_Copy_Tinted@?$BlitTransLucent25ZReadWrite@G@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x00493C90
+// ?Blit_Move_Tinted@?$BlitTransLucent25ZReadWrite@G@@UBEXPAXPBXHH00HG@Z
 template class BlitTransLucent25ZReadWrite<unsigned short>;
 
-// FUNCTION: 0x00493CC0 ?$BlitPlainXlatAlpha@G::BlitForward
-// FUNCTION: 0x00493D60 ?$BlitPlainXlatAlpha@G::BlitBackward
-// FUNCTION: 0x00493D90 ?$BlitPlainXlatAlpha@G::Blit_Copy_Tinted
-// FUNCTION: 0x00493DC0 ?$BlitPlainXlatAlpha@G::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x00493CC0
+// ?BlitForward@?$BlitPlainXlatAlpha@G@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x00493D60
+// ?BlitBackward@?$BlitPlainXlatAlpha@G@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x00493D90
+// ?Blit_Copy_Tinted@?$BlitPlainXlatAlpha@G@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x00493DC0
+// ?Blit_Move_Tinted@?$BlitPlainXlatAlpha@G@@UBEXPAXPBXHH00HG@Z
 template class BlitPlainXlatAlpha<unsigned short>;
 
-// FUNCTION: 0x00493DF0 ?$BlitTransXlatAlpha@G::BlitForward
-// FUNCTION: 0x00493EA0 ?$BlitTransXlatAlpha@G::BlitBackward
-// FUNCTION: 0x00493ED0 ?$BlitTransXlatAlpha@G::Blit_Copy_Tinted
-// FUNCTION: 0x00493F00 ?$BlitTransXlatAlpha@G::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x00493DF0
+// ?BlitForward@?$BlitTransXlatAlpha@G@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x00493EA0
+// ?BlitBackward@?$BlitTransXlatAlpha@G@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x00493ED0
+// ?Blit_Copy_Tinted@?$BlitTransXlatAlpha@G@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x00493F00
+// ?Blit_Move_Tinted@?$BlitTransXlatAlpha@G@@UBEXPAXPBXHH00HG@Z
 template class BlitTransXlatAlpha<unsigned short>;
 
-// FUNCTION: 0x00493F30 ?$BlitTransZRemapXlatAlpha@G::BlitForward
-// FUNCTION: 0x00493FF0 ?$BlitTransZRemapXlatAlpha@G::BlitBackward
-// FUNCTION: 0x00494020 ?$BlitTransZRemapXlatAlpha@G::Blit_Copy_Tinted
-// FUNCTION: 0x00494050 ?$BlitTransZRemapXlatAlpha@G::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x00493F30
+// ?BlitForward@?$BlitTransZRemapXlatAlpha@G@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x00493FF0
+// ?BlitBackward@?$BlitTransZRemapXlatAlpha@G@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x00494020
+// ?Blit_Copy_Tinted@?$BlitTransZRemapXlatAlpha@G@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x00494050
+// ?Blit_Move_Tinted@?$BlitTransZRemapXlatAlpha@G@@UBEXPAXPBXHH00HG@Z
 template class BlitTransZRemapXlatAlpha<unsigned short>;
 
-// FUNCTION: 0x00494080 ?$BlitTransLucent75Alpha@G::BlitForward
-// FUNCTION: 0x00494150 ?$BlitTransLucent75Alpha@G::BlitBackward
-// FUNCTION: 0x00494180 ?$BlitTransLucent75Alpha@G::Blit_Copy_Tinted
-// FUNCTION: 0x004941B0 ?$BlitTransLucent75Alpha@G::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x00494080
+// ?BlitForward@?$BlitTransLucent75Alpha@G@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x00494150
+// ?BlitBackward@?$BlitTransLucent75Alpha@G@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x00494180
+// ?Blit_Copy_Tinted@?$BlitTransLucent75Alpha@G@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x004941B0
+// ?Blit_Move_Tinted@?$BlitTransLucent75Alpha@G@@UBEXPAXPBXHH00HG@Z
 template class BlitTransLucent75Alpha<unsigned short>;
 
-// FUNCTION: 0x004941E0 ?$BlitTransLucent50Alpha@G::BlitForward
-// FUNCTION: 0x004942A0 ?$BlitTransLucent50Alpha@G::BlitBackward
-// FUNCTION: 0x004942D0 ?$BlitTransLucent50Alpha@G::Blit_Copy_Tinted
-// FUNCTION: 0x00494300 ?$BlitTransLucent50Alpha@G::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x004941E0
+// ?BlitForward@?$BlitTransLucent50Alpha@G@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x004942A0
+// ?BlitBackward@?$BlitTransLucent50Alpha@G@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x004942D0
+// ?Blit_Copy_Tinted@?$BlitTransLucent50Alpha@G@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x00494300
+// ?Blit_Move_Tinted@?$BlitTransLucent50Alpha@G@@UBEXPAXPBXHH00HG@Z
 template class BlitTransLucent50Alpha<unsigned short>;
 
-// FUNCTION: 0x00494330 ?$BlitTransLucent25Alpha@G::BlitForward
-// FUNCTION: 0x00494400 ?$BlitTransLucent25Alpha@G::BlitBackward
-// FUNCTION: 0x00494430 ?$BlitTransLucent25Alpha@G::Blit_Copy_Tinted
-// FUNCTION: 0x00494460 ?$BlitTransLucent25Alpha@G::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x00494330
+// ?BlitForward@?$BlitTransLucent25Alpha@G@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x00494400
+// ?BlitBackward@?$BlitTransLucent25Alpha@G@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x00494430
+// ?Blit_Copy_Tinted@?$BlitTransLucent25Alpha@G@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x00494460
+// ?Blit_Move_Tinted@?$BlitTransLucent25Alpha@G@@UBEXPAXPBXHH00HG@Z
 template class BlitTransLucent25Alpha<unsigned short>;
 
-// FUNCTION: 0x00494490 ?$BlitTransXlatWriteAlpha@G::BlitForward
-// FUNCTION: 0x00494500 ?$BlitTransXlatWriteAlpha@G::BlitBackward
-// FUNCTION: 0x00494530 ?$BlitTransXlatWriteAlpha@G::Blit_Copy_Tinted
-// FUNCTION: 0x00494560 ?$BlitTransXlatWriteAlpha@G::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x00494490
+// ?BlitForward@?$BlitTransXlatWriteAlpha@G@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x00494500
+// ?BlitBackward@?$BlitTransXlatWriteAlpha@G@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x00494530
+// ?Blit_Copy_Tinted@?$BlitTransXlatWriteAlpha@G@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x00494560
+// ?Blit_Move_Tinted@?$BlitTransXlatWriteAlpha@G@@UBEXPAXPBXHH00HG@Z
 template class BlitTransXlatWriteAlpha<unsigned short>;
 
-// FUNCTION: 0x00494590 ?$BlitTransXlatMultWriteAlpha@G::BlitForward
-// FUNCTION: 0x00494600 ?$BlitTransXlatMultWriteAlpha@G::BlitBackward
-// FUNCTION: 0x00494630 ?$BlitTransXlatMultWriteAlpha@G::Blit_Copy_Tinted
-// FUNCTION: 0x00494660 ?$BlitTransXlatMultWriteAlpha@G::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x00494590
+// ?BlitForward@?$BlitTransXlatMultWriteAlpha@G@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x00494600
+// ?BlitBackward@?$BlitTransXlatMultWriteAlpha@G@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x00494630
+// ?Blit_Copy_Tinted@?$BlitTransXlatMultWriteAlpha@G@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x00494660
+// ?Blit_Move_Tinted@?$BlitTransXlatMultWriteAlpha@G@@UBEXPAXPBXHH00HG@Z
 template class BlitTransXlatMultWriteAlpha<unsigned short>;
 
-// FUNCTION: 0x00494690 ?$BlitTranslucentWriteAlpha@G::BlitForward
-// FUNCTION: 0x00494890 ?$BlitTranslucentWriteAlpha@G::BlitBackward
-// FUNCTION: 0x004948C0 ?$BlitTranslucentWriteAlpha@G::Blit_Copy_Tinted
-// FUNCTION: 0x004948F0 ?$BlitTranslucentWriteAlpha@G::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x00494690
+// ?BlitForward@?$BlitTranslucentWriteAlpha@G@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x00494890
+// ?BlitBackward@?$BlitTranslucentWriteAlpha@G@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x004948C0
+// ?Blit_Copy_Tinted@?$BlitTranslucentWriteAlpha@G@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x004948F0
+// ?Blit_Move_Tinted@?$BlitTranslucentWriteAlpha@G@@UBEXPAXPBXHH00HG@Z
 template class BlitTranslucentWriteAlpha<unsigned short>;
 
-// FUNCTION: 0x00494920 ?$BlitTranslucent50NonzeroAlpha@G::BlitForward
-// FUNCTION: 0x004949B0 ?$BlitTranslucent50NonzeroAlpha@G::BlitBackward
-// FUNCTION: 0x004949E0 ?$BlitTranslucent50NonzeroAlpha@G::Blit_Copy_Tinted
-// FUNCTION: 0x00494A10 ?$BlitTranslucent50NonzeroAlpha@G::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x00494920
+// ?BlitForward@?$BlitTranslucent50NonzeroAlpha@G@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x004949B0
+// ?BlitBackward@?$BlitTranslucent50NonzeroAlpha@G@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x004949E0
+// ?Blit_Copy_Tinted@?$BlitTranslucent50NonzeroAlpha@G@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x00494A10
+// ?Blit_Move_Tinted@?$BlitTranslucent50NonzeroAlpha@G@@UBEXPAXPBXHH00HG@Z
 template class BlitTranslucent50NonzeroAlpha<unsigned short>;
 
-// FUNCTION: 0x00494A40 ?$BlitTranslucent50ZeroAlpha@G::BlitForward
-// FUNCTION: 0x00494AD0 ?$BlitTranslucent50ZeroAlpha@G::BlitBackward
-// FUNCTION: 0x00494B00 ?$BlitTranslucent50ZeroAlpha@G::Blit_Copy_Tinted
-// FUNCTION: 0x00494B30 ?$BlitTranslucent50ZeroAlpha@G::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x00494A40
+// ?BlitForward@?$BlitTranslucent50ZeroAlpha@G@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x00494AD0
+// ?BlitBackward@?$BlitTranslucent50ZeroAlpha@G@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x00494B00
+// ?Blit_Copy_Tinted@?$BlitTranslucent50ZeroAlpha@G@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x00494B30
+// ?Blit_Move_Tinted@?$BlitTranslucent50ZeroAlpha@G@@UBEXPAXPBXHH00HG@Z
 template class BlitTranslucent50ZeroAlpha<unsigned short>;
 
-// FUNCTION: 0x00494B60 ?$BlitTransXlatAlphaZRead@G::BlitForward
-// FUNCTION: 0x00494C40 ?$BlitTransXlatAlphaZRead@G::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x00494B60
+// ?BlitForward@?$BlitTransXlatAlphaZRead@G@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x00494C40
+// ?Blit_Copy_Tinted@?$BlitTransXlatAlphaZRead@G@@UBEXPAXPBXHH00HHG@Z
 template<class T>
 void BlitTransXlatAlphaZRead<T>::Blit_Copy_Tinted(void * dest, void const * source, int length, int z_min, void * z_buff, void * a_buff, int alpha_level, int warp_offset, unsigned short tint) const
 {
@@ -972,188 +1164,292 @@ void BlitTransXlatAlphaZRead<T>::Blit_Copy_Tinted(void * dest, void const * sour
 	}
 }
 
-// FUNCTION: 0x00494D20 ?$BlitTransXlatAlphaZRead@G::BlitBackward
-// FUNCTION: 0x00494D50 ?$BlitTransXlatAlphaZRead@G::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x00494D20
+// ?BlitBackward@?$BlitTransXlatAlphaZRead@G@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x00494D50
+// ?Blit_Move_Tinted@?$BlitTransXlatAlphaZRead@G@@UBEXPAXPBXHH00HG@Z
 template class BlitTransXlatAlphaZRead<unsigned short>;
 
-// FUNCTION: 0x00494D90 ?$BlitTransZRemapXlatAlphaZRead@G::BlitForward
-// FUNCTION: 0x00494E90 ?$BlitTransZRemapXlatAlphaZRead@G::BlitBackward
-// FUNCTION: 0x00494EC0 ?$BlitTransZRemapXlatAlphaZRead@G::Blit_Copy_Tinted
-// FUNCTION: 0x00494EF0 ?$BlitTransZRemapXlatAlphaZRead@G::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x00494D90
+// ?BlitForward@?$BlitTransZRemapXlatAlphaZRead@G@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x00494E90
+// ?BlitBackward@?$BlitTransZRemapXlatAlphaZRead@G@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x00494EC0
+// ?Blit_Copy_Tinted@?$BlitTransZRemapXlatAlphaZRead@G@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x00494EF0
+// ?Blit_Move_Tinted@?$BlitTransZRemapXlatAlphaZRead@G@@UBEXPAXPBXHH00HG@Z
 template class BlitTransZRemapXlatAlphaZRead<unsigned short>;
 
-// FUNCTION: 0x00494F20 ?$BlitTransLucent75AlphaZRead@G::BlitForward
-// FUNCTION: 0x00495030 ?$BlitTransLucent75AlphaZRead@G::BlitBackward
-// FUNCTION: 0x00495060 ?$BlitTransLucent75AlphaZRead@G::Blit_Copy_Tinted
-// FUNCTION: 0x00495090 ?$BlitTransLucent75AlphaZRead@G::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x00494F20
+// ?BlitForward@?$BlitTransLucent75AlphaZRead@G@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x00495030
+// ?BlitBackward@?$BlitTransLucent75AlphaZRead@G@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x00495060
+// ?Blit_Copy_Tinted@?$BlitTransLucent75AlphaZRead@G@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x00495090
+// ?Blit_Move_Tinted@?$BlitTransLucent75AlphaZRead@G@@UBEXPAXPBXHH00HG@Z
 template class BlitTransLucent75AlphaZRead<unsigned short>;
 
-// FUNCTION: 0x004950C0 ?$BlitTransLucent50AlphaZRead@G::BlitForward
-// FUNCTION: 0x004951C0 ?$BlitTransLucent50AlphaZRead@G::BlitBackward
-// FUNCTION: 0x004951F0 ?$BlitTransLucent50AlphaZRead@G::Blit_Copy_Tinted
-// FUNCTION: 0x00495220 ?$BlitTransLucent50AlphaZRead@G::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x004950C0
+// ?BlitForward@?$BlitTransLucent50AlphaZRead@G@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x004951C0
+// ?BlitBackward@?$BlitTransLucent50AlphaZRead@G@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x004951F0
+// ?Blit_Copy_Tinted@?$BlitTransLucent50AlphaZRead@G@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x00495220
+// ?Blit_Move_Tinted@?$BlitTransLucent50AlphaZRead@G@@UBEXPAXPBXHH00HG@Z
 template class BlitTransLucent50AlphaZRead<unsigned short>;
 
-// FUNCTION: 0x00495250 ?$BlitTransLucent25AlphaZRead@G::BlitForward
-// FUNCTION: 0x00495360 ?$BlitTransLucent25AlphaZRead@G::BlitBackward
-// FUNCTION: 0x00495390 ?$BlitTransLucent25AlphaZRead@G::Blit_Copy_Tinted
-// FUNCTION: 0x004953C0 ?$BlitTransLucent25AlphaZRead@G::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x00495250
+// ?BlitForward@?$BlitTransLucent25AlphaZRead@G@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x00495360
+// ?BlitBackward@?$BlitTransLucent25AlphaZRead@G@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x00495390
+// ?Blit_Copy_Tinted@?$BlitTransLucent25AlphaZRead@G@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x004953C0
+// ?Blit_Move_Tinted@?$BlitTransLucent25AlphaZRead@G@@UBEXPAXPBXHH00HG@Z
 template class BlitTransLucent25AlphaZRead<unsigned short>;
 
-// FUNCTION: 0x004953F0 ?$BlitTransLucent75AlphaZReadWarp@G::BlitForward
-// FUNCTION: 0x00495500 ?$BlitTransLucent75AlphaZReadWarp@G::BlitBackward
-// FUNCTION: 0x00495530 ?$BlitTransLucent75AlphaZReadWarp@G::Blit_Copy_Tinted
-// FUNCTION: 0x00495560 ?$BlitTransLucent75AlphaZReadWarp@G::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x004953F0
+// ?BlitForward@?$BlitTransLucent75AlphaZReadWarp@G@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x00495500
+// ?BlitBackward@?$BlitTransLucent75AlphaZReadWarp@G@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x00495530
+// ?Blit_Copy_Tinted@?$BlitTransLucent75AlphaZReadWarp@G@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x00495560
+// ?Blit_Move_Tinted@?$BlitTransLucent75AlphaZReadWarp@G@@UBEXPAXPBXHH00HG@Z
 template class BlitTransLucent75AlphaZReadWarp<unsigned short>;
 
-// FUNCTION: 0x00495590 ?$BlitTransLucent50AlphaZReadWarp@G::BlitForward
-// FUNCTION: 0x004956A0 ?$BlitTransLucent50AlphaZReadWarp@G::BlitBackward
-// FUNCTION: 0x004956D0 ?$BlitTransLucent50AlphaZReadWarp@G::Blit_Copy_Tinted
-// FUNCTION: 0x00495700 ?$BlitTransLucent50AlphaZReadWarp@G::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x00495590
+// ?BlitForward@?$BlitTransLucent50AlphaZReadWarp@G@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x004956A0
+// ?BlitBackward@?$BlitTransLucent50AlphaZReadWarp@G@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x004956D0
+// ?Blit_Copy_Tinted@?$BlitTransLucent50AlphaZReadWarp@G@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x00495700
+// ?Blit_Move_Tinted@?$BlitTransLucent50AlphaZReadWarp@G@@UBEXPAXPBXHH00HG@Z
 template class BlitTransLucent50AlphaZReadWarp<unsigned short>;
 
-// FUNCTION: 0x00495730 ?$BlitTransLucent25AlphaZReadWarp@G::BlitForward
-// FUNCTION: 0x00495840 ?$BlitTransLucent25AlphaZReadWarp@G::BlitBackward
-// FUNCTION: 0x00495870 ?$BlitTransLucent25AlphaZReadWarp@G::Blit_Copy_Tinted
-// FUNCTION: 0x004958A0 ?$BlitTransLucent25AlphaZReadWarp@G::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x00495730
+// ?BlitForward@?$BlitTransLucent25AlphaZReadWarp@G@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x00495840
+// ?BlitBackward@?$BlitTransLucent25AlphaZReadWarp@G@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x00495870
+// ?Blit_Copy_Tinted@?$BlitTransLucent25AlphaZReadWarp@G@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x004958A0
+// ?Blit_Move_Tinted@?$BlitTransLucent25AlphaZReadWarp@G@@UBEXPAXPBXHH00HG@Z
 template class BlitTransLucent25AlphaZReadWarp<unsigned short>;
 
-// FUNCTION: 0x004958D0 ?$BlitTransXlatAlphaZReadWrite@G::BlitForward
-// FUNCTION: 0x004959C0 ?$BlitTransXlatAlphaZReadWrite@G::BlitBackward
-// FUNCTION: 0x004959F0 ?$BlitTransXlatAlphaZReadWrite@G::Blit_Copy_Tinted
-// FUNCTION: 0x00495A20 ?$BlitTransXlatAlphaZReadWrite@G::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x004958D0
+// ?BlitForward@?$BlitTransXlatAlphaZReadWrite@G@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x004959C0
+// ?BlitBackward@?$BlitTransXlatAlphaZReadWrite@G@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x004959F0
+// ?Blit_Copy_Tinted@?$BlitTransXlatAlphaZReadWrite@G@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x00495A20
+// ?Blit_Move_Tinted@?$BlitTransXlatAlphaZReadWrite@G@@UBEXPAXPBXHH00HG@Z
 template class BlitTransXlatAlphaZReadWrite<unsigned short>;
 
-// FUNCTION: 0x00495A50 ?$BlitTransZRemapXlatAlphaZReadWrite@G::BlitForward
-// FUNCTION: 0x00495B30 ?$BlitTransZRemapXlatAlphaZReadWrite@G::BlitBackward
-// FUNCTION: 0x00495B60 ?$BlitTransZRemapXlatAlphaZReadWrite@G::Blit_Copy_Tinted
-// FUNCTION: 0x00495B90 ?$BlitTransZRemapXlatAlphaZReadWrite@G::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x00495A50
+// ?BlitForward@?$BlitTransZRemapXlatAlphaZReadWrite@G@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x00495B30
+// ?BlitBackward@?$BlitTransZRemapXlatAlphaZReadWrite@G@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x00495B60
+// ?Blit_Copy_Tinted@?$BlitTransZRemapXlatAlphaZReadWrite@G@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x00495B90
+// ?Blit_Move_Tinted@?$BlitTransZRemapXlatAlphaZReadWrite@G@@UBEXPAXPBXHH00HG@Z
 template class BlitTransZRemapXlatAlphaZReadWrite<unsigned short>;
 
-// FUNCTION: 0x00495BC0 ?$BlitTransLucent75AlphaZReadWrite@G::BlitForward
-// FUNCTION: 0x00495CD0 ?$BlitTransLucent75AlphaZReadWrite@G::BlitBackward
-// FUNCTION: 0x00495D00 ?$BlitTransLucent75AlphaZReadWrite@G::Blit_Copy_Tinted
-// FUNCTION: 0x00495D30 ?$BlitTransLucent75AlphaZReadWrite@G::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x00495BC0
+// ?BlitForward@?$BlitTransLucent75AlphaZReadWrite@G@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x00495CD0
+// ?BlitBackward@?$BlitTransLucent75AlphaZReadWrite@G@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x00495D00
+// ?Blit_Copy_Tinted@?$BlitTransLucent75AlphaZReadWrite@G@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x00495D30
+// ?Blit_Move_Tinted@?$BlitTransLucent75AlphaZReadWrite@G@@UBEXPAXPBXHH00HG@Z
 template class BlitTransLucent75AlphaZReadWrite<unsigned short>;
 
-// FUNCTION: 0x00495D60 ?$BlitTransLucent50AlphaZReadWrite@G::BlitForward
-// FUNCTION: 0x00495E70 ?$BlitTransLucent50AlphaZReadWrite@G::BlitBackward
-// FUNCTION: 0x00495EA0 ?$BlitTransLucent50AlphaZReadWrite@G::Blit_Copy_Tinted
-// FUNCTION: 0x00495ED0 ?$BlitTransLucent50AlphaZReadWrite@G::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x00495D60
+// ?BlitForward@?$BlitTransLucent50AlphaZReadWrite@G@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x00495E70
+// ?BlitBackward@?$BlitTransLucent50AlphaZReadWrite@G@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x00495EA0
+// ?Blit_Copy_Tinted@?$BlitTransLucent50AlphaZReadWrite@G@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x00495ED0
+// ?Blit_Move_Tinted@?$BlitTransLucent50AlphaZReadWrite@G@@UBEXPAXPBXHH00HG@Z
 template class BlitTransLucent50AlphaZReadWrite<unsigned short>;
 
-// FUNCTION: 0x00495F00 ?$BlitTransLucent25AlphaZReadWrite@G::BlitForward
-// FUNCTION: 0x00496010 ?$BlitTransLucent25AlphaZReadWrite@G::BlitBackward
-// FUNCTION: 0x00496040 ?$BlitTransLucent25AlphaZReadWrite@G::Blit_Copy_Tinted
-// FUNCTION: 0x00496070 ?$BlitTransLucent25AlphaZReadWrite@G::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x00495F00
+// ?BlitForward@?$BlitTransLucent25AlphaZReadWrite@G@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x00496010
+// ?BlitBackward@?$BlitTransLucent25AlphaZReadWrite@G@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x00496040
+// ?Blit_Copy_Tinted@?$BlitTransLucent25AlphaZReadWrite@G@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x00496070
+// ?Blit_Move_Tinted@?$BlitTransLucent25AlphaZReadWrite@G@@UBEXPAXPBXHH00HG@Z
 template class BlitTransLucent25AlphaZReadWrite<unsigned short>;
 
-// FUNCTION: 0x004960A0 ?$RLEBlitTransXlat@G::Blit
-// FUNCTION: 0x00496130 ?$RLEBlitTransXlat@G::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x004960A0
+// ?Blit@?$RLEBlitTransXlat@G@@UBEXPAXPBXHHH00HH0@Z
+// TEMPLATE: GAMEMD 0x00496130
+// ?Blit_Copy_Tinted@?$RLEBlitTransXlat@G@@UBEXPAXPBXHHH00HH0G@Z
 template class RLEBlitTransXlat<unsigned short>;
 
-// FUNCTION: 0x00496170 ?$RLEBlitTransZRemapXlat@G::Blit
-// FUNCTION: 0x00496210 ?$RLEBlitTransZRemapXlat@G::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x00496170
+// ?Blit@?$RLEBlitTransZRemapXlat@G@@UBEXPAXPBXHHH00HH0@Z
+// TEMPLATE: GAMEMD 0x00496210
+// ?Blit_Copy_Tinted@?$RLEBlitTransZRemapXlat@G@@UBEXPAXPBXHHH00HH0G@Z
 template class RLEBlitTransZRemapXlat<unsigned short>;
 
-// FUNCTION: 0x00496250 ?$RLEBlitTransDarken@G::Blit
-// FUNCTION: 0x004962D0 ?$RLEBlitTransDarken@G::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x00496250
+// ?Blit@?$RLEBlitTransDarken@G@@UBEXPAXPBXHHH00HH0@Z
+// TEMPLATE: GAMEMD 0x004962D0
+// ?Blit_Copy_Tinted@?$RLEBlitTransDarken@G@@UBEXPAXPBXHHH00HH0G@Z
 template class RLEBlitTransDarken<unsigned short>;
 
-// FUNCTION: 0x00496310 ?$RLEBlitTransLucent75@G::Blit
-// FUNCTION: 0x004963B0 ?$RLEBlitTransLucent75@G::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x00496310
+// ?Blit@?$RLEBlitTransLucent75@G@@UBEXPAXPBXHHH00HH0@Z
+// TEMPLATE: GAMEMD 0x004963B0
+// ?Blit_Copy_Tinted@?$RLEBlitTransLucent75@G@@UBEXPAXPBXHHH00HH0G@Z
 template class RLEBlitTransLucent75<unsigned short>;
 
-// FUNCTION: 0x004963F0 ?$RLEBlitTransLucent50@G::Blit
-// FUNCTION: 0x00496490 ?$RLEBlitTransLucent50@G::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x004963F0
+// ?Blit@?$RLEBlitTransLucent50@G@@UBEXPAXPBXHHH00HH0@Z
+// TEMPLATE: GAMEMD 0x00496490
+// ?Blit_Copy_Tinted@?$RLEBlitTransLucent50@G@@UBEXPAXPBXHHH00HH0G@Z
 template class RLEBlitTransLucent50<unsigned short>;
 
-// FUNCTION: 0x004964D0 ?$RLEBlitTransLucent25@G::Blit
-// FUNCTION: 0x00496570 ?$RLEBlitTransLucent25@G::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x004964D0
+// ?Blit@?$RLEBlitTransLucent25@G@@UBEXPAXPBXHHH00HH0@Z
+// TEMPLATE: GAMEMD 0x00496570
+// ?Blit_Copy_Tinted@?$RLEBlitTransLucent25@G@@UBEXPAXPBXHHH00HH0G@Z
 template class RLEBlitTransLucent25<unsigned short>;
 
-// FUNCTION: 0x004965B0 ?$RLEBlitTransXlatZRead@G::Blit
-// FUNCTION: 0x00496690 ?$RLEBlitTransXlatZRead@G::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x004965B0
+// ?Blit@?$RLEBlitTransXlatZRead@G@@UBEXPAXPBXHHH00HH0@Z
+// TEMPLATE: GAMEMD 0x00496690
+// ?Blit_Copy_Tinted@?$RLEBlitTransXlatZRead@G@@UBEXPAXPBXHHH00HH0G@Z
 template class RLEBlitTransXlatZRead<unsigned short>;
 
-// FUNCTION: 0x004966D0 ?$RLEBlitTransZRemapXlatZRead@G::Blit
-// FUNCTION: 0x004967E0 ?$RLEBlitTransZRemapXlatZRead@G::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x004966D0
+// ?Blit@?$RLEBlitTransZRemapXlatZRead@G@@UBEXPAXPBXHHH00HH0@Z
+// TEMPLATE: GAMEMD 0x004967E0
+// ?Blit_Copy_Tinted@?$RLEBlitTransZRemapXlatZRead@G@@UBEXPAXPBXHHH00HH0G@Z
 template class RLEBlitTransZRemapXlatZRead<unsigned short>;
 
-// FUNCTION: 0x00496820 ?$RLEBlitTransDarkenZRead@G::Blit
-// FUNCTION: 0x004968F0 ?$RLEBlitTransDarkenZRead@G::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x00496820
+// ?Blit@?$RLEBlitTransDarkenZRead@G@@UBEXPAXPBXHHH00HH0@Z
+// TEMPLATE: GAMEMD 0x004968F0
+// ?Blit_Copy_Tinted@?$RLEBlitTransDarkenZRead@G@@UBEXPAXPBXHHH00HH0G@Z
 template class RLEBlitTransDarkenZRead<unsigned short>;
 
-// FUNCTION: 0x00496930 ?$RLEBlitTransLucent75ZRead@G::Blit
-// FUNCTION: 0x00496A40 ?$RLEBlitTransLucent75ZRead@G::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x00496930
+// ?Blit@?$RLEBlitTransLucent75ZRead@G@@UBEXPAXPBXHHH00HH0@Z
+// TEMPLATE: GAMEMD 0x00496A40
+// ?Blit_Copy_Tinted@?$RLEBlitTransLucent75ZRead@G@@UBEXPAXPBXHHH00HH0G@Z
 template class RLEBlitTransLucent75ZRead<unsigned short>;
 
-// FUNCTION: 0x00496A80 ?$RLEBlitTransLucent50ZRead@G::Blit
-// FUNCTION: 0x00496B80 ?$RLEBlitTransLucent50ZRead@G::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x00496A80
+// ?Blit@?$RLEBlitTransLucent50ZRead@G@@UBEXPAXPBXHHH00HH0@Z
+// TEMPLATE: GAMEMD 0x00496B80
+// ?Blit_Copy_Tinted@?$RLEBlitTransLucent50ZRead@G@@UBEXPAXPBXHHH00HH0G@Z
 template class RLEBlitTransLucent50ZRead<unsigned short>;
 
-// FUNCTION: 0x00496BC0 ?$RLEBlitTransLucent25ZRead@G::Blit
-// FUNCTION: 0x00496CD0 ?$RLEBlitTransLucent25ZRead@G::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x00496BC0
+// ?Blit@?$RLEBlitTransLucent25ZRead@G@@UBEXPAXPBXHHH00HH0@Z
+// TEMPLATE: GAMEMD 0x00496CD0
+// ?Blit_Copy_Tinted@?$RLEBlitTransLucent25ZRead@G@@UBEXPAXPBXHHH00HH0G@Z
 template class RLEBlitTransLucent25ZRead<unsigned short>;
 
-// FUNCTION: 0x00496D10 ?$RLEBlitTransLucent75ZReadWarp@G::Blit
-// FUNCTION: 0x00496E20 ?$RLEBlitTransLucent75ZReadWarp@G::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x00496D10
+// ?Blit@?$RLEBlitTransLucent75ZReadWarp@G@@UBEXPAXPBXHHH00HH0@Z
+// TEMPLATE: GAMEMD 0x00496E20
+// ?Blit_Copy_Tinted@?$RLEBlitTransLucent75ZReadWarp@G@@UBEXPAXPBXHHH00HH0G@Z
 template class RLEBlitTransLucent75ZReadWarp<unsigned short>;
 
-// FUNCTION: 0x00496E60 ?$RLEBlitTransLucent50ZReadWarp@G::Blit
-// FUNCTION: 0x00496F70 ?$RLEBlitTransLucent50ZReadWarp@G::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x00496E60
+// ?Blit@?$RLEBlitTransLucent50ZReadWarp@G@@UBEXPAXPBXHHH00HH0@Z
+// TEMPLATE: GAMEMD 0x00496F70
+// ?Blit_Copy_Tinted@?$RLEBlitTransLucent50ZReadWarp@G@@UBEXPAXPBXHHH00HH0G@Z
 template class RLEBlitTransLucent50ZReadWarp<unsigned short>;
 
-// FUNCTION: 0x00496FB0 ?$RLEBlitTransLucent25ZReadWarp@G::Blit
-// FUNCTION: 0x004970C0 ?$RLEBlitTransLucent25ZReadWarp@G::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x00496FB0
+// ?Blit@?$RLEBlitTransLucent25ZReadWarp@G@@UBEXPAXPBXHHH00HH0@Z
+// TEMPLATE: GAMEMD 0x004970C0
+// ?Blit_Copy_Tinted@?$RLEBlitTransLucent25ZReadWarp@G@@UBEXPAXPBXHHH00HH0G@Z
 template class RLEBlitTransLucent25ZReadWarp<unsigned short>;
 
-// FUNCTION: 0x00497100 ?$RLEBlitTransXlatZReadWrite@G::Blit
-// FUNCTION: 0x004971F0 ?$RLEBlitTransXlatZReadWrite@G::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x00497100
+// ?Blit@?$RLEBlitTransXlatZReadWrite@G@@UBEXPAXPBXHHH00HH0@Z
+// TEMPLATE: GAMEMD 0x004971F0
+// ?Blit_Copy_Tinted@?$RLEBlitTransXlatZReadWrite@G@@UBEXPAXPBXHHH00HH0G@Z
 template class RLEBlitTransXlatZReadWrite<unsigned short>;
 
-// FUNCTION: 0x00497230 ?$RLEBlitTransZRemapXlatZReadWrite@G::Blit
-// FUNCTION: 0x00497350 ?$RLEBlitTransZRemapXlatZReadWrite@G::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x00497230
+// ?Blit@?$RLEBlitTransZRemapXlatZReadWrite@G@@UBEXPAXPBXHHH00HH0@Z
+// TEMPLATE: GAMEMD 0x00497350
+// ?Blit_Copy_Tinted@?$RLEBlitTransZRemapXlatZReadWrite@G@@UBEXPAXPBXHHH00HH0G@Z
 template class RLEBlitTransZRemapXlatZReadWrite<unsigned short>;
 
-// FUNCTION: 0x00497390 ?$RLEBlitTransDarkenZReadWrite@G::Blit
-// FUNCTION: 0x00497470 ?$RLEBlitTransDarkenZReadWrite@G::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x00497390
+// ?Blit@?$RLEBlitTransDarkenZReadWrite@G@@UBEXPAXPBXHHH00HH0@Z
+// TEMPLATE: GAMEMD 0x00497470
+// ?Blit_Copy_Tinted@?$RLEBlitTransDarkenZReadWrite@G@@UBEXPAXPBXHHH00HH0G@Z
 template class RLEBlitTransDarkenZReadWrite<unsigned short>;
 
-// FUNCTION: 0x004974B0 ?$RLEBlitTransLucent75ZReadWrite@G::Blit
-// FUNCTION: 0x004975D0 ?$RLEBlitTransLucent75ZReadWrite@G::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x004974B0
+// ?Blit@?$RLEBlitTransLucent75ZReadWrite@G@@UBEXPAXPBXHHH00HH0@Z
+// TEMPLATE: GAMEMD 0x004975D0
+// ?Blit_Copy_Tinted@?$RLEBlitTransLucent75ZReadWrite@G@@UBEXPAXPBXHHH00HH0G@Z
 template class RLEBlitTransLucent75ZReadWrite<unsigned short>;
 
-// FUNCTION: 0x00497610 ?$RLEBlitTransLucent50ZReadWrite@G::Blit
-// FUNCTION: 0x00497720 ?$RLEBlitTransLucent50ZReadWrite@G::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x00497610
+// ?Blit@?$RLEBlitTransLucent50ZReadWrite@G@@UBEXPAXPBXHHH00HH0@Z
+// TEMPLATE: GAMEMD 0x00497720
+// ?Blit_Copy_Tinted@?$RLEBlitTransLucent50ZReadWrite@G@@UBEXPAXPBXHHH00HH0G@Z
 template class RLEBlitTransLucent50ZReadWrite<unsigned short>;
 
-// FUNCTION: 0x00497760 ?$RLEBlitTransLucent25ZReadWrite@G::Blit
-// FUNCTION: 0x00497880 ?$RLEBlitTransLucent25ZReadWrite@G::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x00497760
+// ?Blit@?$RLEBlitTransLucent25ZReadWrite@G@@UBEXPAXPBXHHH00HH0@Z
+// TEMPLATE: GAMEMD 0x00497880
+// ?Blit_Copy_Tinted@?$RLEBlitTransLucent25ZReadWrite@G@@UBEXPAXPBXHHH00HH0G@Z
 template class RLEBlitTransLucent25ZReadWrite<unsigned short>;
 
-// FUNCTION: 0x004978C0 ?$RLEBlitTransXlatAlpha@G::Blit
-// FUNCTION: 0x004979D0 ?$RLEBlitTransXlatAlpha@G::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x004978C0
+// ?Blit@?$RLEBlitTransXlatAlpha@G@@UBEXPAXPBXHHH00HH0@Z
+// TEMPLATE: GAMEMD 0x004979D0
+// ?Blit_Copy_Tinted@?$RLEBlitTransXlatAlpha@G@@UBEXPAXPBXHHH00HH0G@Z
 template class RLEBlitTransXlatAlpha<unsigned short>;
 
-// FUNCTION: 0x00497A10 ?$RLEBlitTransZRemapXlatAlpha@G::Blit
-// FUNCTION: 0x00497B40 ?$RLEBlitTransZRemapXlatAlpha@G::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x00497A10
+// ?Blit@?$RLEBlitTransZRemapXlatAlpha@G@@UBEXPAXPBXHHH00HH0@Z
+// TEMPLATE: GAMEMD 0x00497B40
+// ?Blit_Copy_Tinted@?$RLEBlitTransZRemapXlatAlpha@G@@UBEXPAXPBXHHH00HH0G@Z
 template class RLEBlitTransZRemapXlatAlpha<unsigned short>;
 
-// FUNCTION: 0x00497B80 ?$RLEBlitTransLucent75Alpha@G::Blit
-// FUNCTION: 0x00497CB0 ?$RLEBlitTransLucent75Alpha@G::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x00497B80
+// ?Blit@?$RLEBlitTransLucent75Alpha@G@@UBEXPAXPBXHHH00HH0@Z
+// TEMPLATE: GAMEMD 0x00497CB0
+// ?Blit_Copy_Tinted@?$RLEBlitTransLucent75Alpha@G@@UBEXPAXPBXHHH00HH0G@Z
 template class RLEBlitTransLucent75Alpha<unsigned short>;
 
-// FUNCTION: 0x00497CF0 ?$RLEBlitTransLucent50Alpha@G::Blit
-// FUNCTION: 0x00497E20 ?$RLEBlitTransLucent50Alpha@G::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x00497CF0
+// ?Blit@?$RLEBlitTransLucent50Alpha@G@@UBEXPAXPBXHHH00HH0@Z
+// TEMPLATE: GAMEMD 0x00497E20
+// ?Blit_Copy_Tinted@?$RLEBlitTransLucent50Alpha@G@@UBEXPAXPBXHHH00HH0G@Z
 template class RLEBlitTransLucent50Alpha<unsigned short>;
 
-// FUNCTION: 0x00497E60 ?$RLEBlitTransLucent25Alpha@G::Blit
-// FUNCTION: 0x00497F90 ?$RLEBlitTransLucent25Alpha@G::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x00497E60
+// ?Blit@?$RLEBlitTransLucent25Alpha@G@@UBEXPAXPBXHHH00HH0@Z
+// TEMPLATE: GAMEMD 0x00497F90
+// ?Blit_Copy_Tinted@?$RLEBlitTransLucent25Alpha@G@@UBEXPAXPBXHHH00HH0G@Z
 template class RLEBlitTransLucent25Alpha<unsigned short>;
 
-// FUNCTION: 0x00497FD0 ?$RLEBlitTransXlatAlphaZRead@G::Blit
-// FUNCTION: 0x00498150 ?$RLEBlitTransXlatAlphaZRead@G::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x00497FD0
+// ?Blit@?$RLEBlitTransXlatAlphaZRead@G@@UBEXPAXPBXHHH00HH0@Z
+// TEMPLATE: GAMEMD 0x00498150
+// ?Blit_Copy_Tinted@?$RLEBlitTransXlatAlphaZRead@G@@UBEXPAXPBXHHH00HH0G@Z
 template<class T>
 void RLEBlitTransXlatAlphaZRead<T>::Blit_Copy_Tinted(void * dest, void const * source, int length, int leadskip, int z_min, void * z_buff, void * a_buff, int alpha_level, int warp_offset, void * zshape, unsigned short tint) const
 {
@@ -1204,36 +1500,52 @@ void RLEBlitTransXlatAlphaZRead<T>::Blit_Copy_Tinted(void * dest, void const * s
 
 template class RLEBlitTransXlatAlphaZRead<unsigned short>;
 
-// FUNCTION: 0x004982E0 ?$RLEBlitTransZRemapXlatAlphaZRead@G::Blit
-// FUNCTION: 0x00498490 ?$RLEBlitTransZRemapXlatAlphaZRead@G::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x004982E0
+// ?Blit@?$RLEBlitTransZRemapXlatAlphaZRead@G@@UBEXPAXPBXHHH00HH0@Z
+// TEMPLATE: GAMEMD 0x00498490
+// ?Blit_Copy_Tinted@?$RLEBlitTransZRemapXlatAlphaZRead@G@@UBEXPAXPBXHHH00HH0G@Z
 template class RLEBlitTransZRemapXlatAlphaZRead<unsigned short>;
 
-// FUNCTION: 0x004984D0 ?$RLEBlitTransLucent75AlphaZRead@G::Blit
-// FUNCTION: 0x00498690 ?$RLEBlitTransLucent75AlphaZRead@G::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x004984D0
+// ?Blit@?$RLEBlitTransLucent75AlphaZRead@G@@UBEXPAXPBXHHH00HH0@Z
+// TEMPLATE: GAMEMD 0x00498690
+// ?Blit_Copy_Tinted@?$RLEBlitTransLucent75AlphaZRead@G@@UBEXPAXPBXHHH00HH0G@Z
 template class RLEBlitTransLucent75AlphaZRead<unsigned short>;
 
-// FUNCTION: 0x004986D0 ?$RLEBlitTransLucent50AlphaZRead@G::Blit
-// FUNCTION: 0x00498880 ?$RLEBlitTransLucent50AlphaZRead@G::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x004986D0
+// ?Blit@?$RLEBlitTransLucent50AlphaZRead@G@@UBEXPAXPBXHHH00HH0@Z
+// TEMPLATE: GAMEMD 0x00498880
+// ?Blit_Copy_Tinted@?$RLEBlitTransLucent50AlphaZRead@G@@UBEXPAXPBXHHH00HH0G@Z
 template class RLEBlitTransLucent50AlphaZRead<unsigned short>;
 
-// FUNCTION: 0x004988C0 ?$RLEBlitTransLucent25AlphaZRead@G::Blit
-// FUNCTION: 0x00498A80 ?$RLEBlitTransLucent25AlphaZRead@G::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x004988C0
+// ?Blit@?$RLEBlitTransLucent25AlphaZRead@G@@UBEXPAXPBXHHH00HH0@Z
+// TEMPLATE: GAMEMD 0x00498A80
+// ?Blit_Copy_Tinted@?$RLEBlitTransLucent25AlphaZRead@G@@UBEXPAXPBXHHH00HH0G@Z
 template class RLEBlitTransLucent25AlphaZRead<unsigned short>;
 
-// FUNCTION: 0x00498AC0 ?$RLEBlitTransLucent75AlphaZReadWarp@G::Blit
-// FUNCTION: 0x00498C90 ?$RLEBlitTransLucent75AlphaZReadWarp@G::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x00498AC0
+// ?Blit@?$RLEBlitTransLucent75AlphaZReadWarp@G@@UBEXPAXPBXHHH00HH0@Z
+// TEMPLATE: GAMEMD 0x00498C90
+// ?Blit_Copy_Tinted@?$RLEBlitTransLucent75AlphaZReadWarp@G@@UBEXPAXPBXHHH00HH0G@Z
 template class RLEBlitTransLucent75AlphaZReadWarp<unsigned short>;
 
-// FUNCTION: 0x00498CD0 ?$RLEBlitTransLucent50AlphaZReadWarp@G::Blit
-// FUNCTION: 0x00498E90 ?$RLEBlitTransLucent50AlphaZReadWarp@G::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x00498CD0
+// ?Blit@?$RLEBlitTransLucent50AlphaZReadWarp@G@@UBEXPAXPBXHHH00HH0@Z
+// TEMPLATE: GAMEMD 0x00498E90
+// ?Blit_Copy_Tinted@?$RLEBlitTransLucent50AlphaZReadWarp@G@@UBEXPAXPBXHHH00HH0G@Z
 template class RLEBlitTransLucent50AlphaZReadWarp<unsigned short>;
 
-// FUNCTION: 0x00498ED0 ?$RLEBlitTransLucent25AlphaZReadWarp@G::Blit
-// FUNCTION: 0x004990A0 ?$RLEBlitTransLucent25AlphaZReadWarp@G::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x00498ED0
+// ?Blit@?$RLEBlitTransLucent25AlphaZReadWarp@G@@UBEXPAXPBXHHH00HH0@Z
+// TEMPLATE: GAMEMD 0x004990A0
+// ?Blit_Copy_Tinted@?$RLEBlitTransLucent25AlphaZReadWarp@G@@UBEXPAXPBXHHH00HH0G@Z
 template class RLEBlitTransLucent25AlphaZReadWarp<unsigned short>;
 
-// FUNCTION: 0x004990E0 ?$RLEBlitTransXlatAlphaZReadWrite@G::Blit
-// FUNCTION: 0x00499280 ?$RLEBlitTransXlatAlphaZReadWrite@G::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x004990E0
+// ?Blit@?$RLEBlitTransXlatAlphaZReadWrite@G@@UBEXPAXPBXHHH00HH0@Z
+// TEMPLATE: GAMEMD 0x00499280
+// ?Blit_Copy_Tinted@?$RLEBlitTransXlatAlphaZReadWrite@G@@UBEXPAXPBXHHH00HH0G@Z
 template<class T>
 void RLEBlitTransXlatAlphaZReadWrite<T>::Blit_Copy_Tinted(void * dest, void const * source, int length, int leadskip, int z_min, void * z_buff, void * a_buff, int alpha_level, int warp_offset, void * zshape, unsigned short tint) const
 {
@@ -1287,65 +1599,96 @@ void RLEBlitTransXlatAlphaZReadWrite<T>::Blit_Copy_Tinted(void * dest, void cons
 
 template class RLEBlitTransXlatAlphaZReadWrite<unsigned short>;
 
-// FUNCTION: 0x00499430 ?$RLEBlitTransZRemapXlatAlphaZReadWrite@G::Blit
-// FUNCTION: 0x00499610 ?$RLEBlitTransZRemapXlatAlphaZReadWrite@G::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x00499430
+// ?Blit@?$RLEBlitTransZRemapXlatAlphaZReadWrite@G@@UBEXPAXPBXHHH00HH0@Z
+// TEMPLATE: GAMEMD 0x00499610
+// ?Blit_Copy_Tinted@?$RLEBlitTransZRemapXlatAlphaZReadWrite@G@@UBEXPAXPBXHHH00HH0G@Z
 template class RLEBlitTransZRemapXlatAlphaZReadWrite<unsigned short>;
 
-// FUNCTION: 0x00499650 ?$RLEBlitTransLucent75AlphaZReadWrite@G::Blit
-// FUNCTION: 0x00499820 ?$RLEBlitTransLucent75AlphaZReadWrite@G::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x00499650
+// ?Blit@?$RLEBlitTransLucent75AlphaZReadWrite@G@@UBEXPAXPBXHHH00HH0@Z
+// TEMPLATE: GAMEMD 0x00499820
+// ?Blit_Copy_Tinted@?$RLEBlitTransLucent75AlphaZReadWrite@G@@UBEXPAXPBXHHH00HH0G@Z
 template class RLEBlitTransLucent75AlphaZReadWrite<unsigned short>;
 
-// FUNCTION: 0x00499860 ?$RLEBlitTransLucent50AlphaZReadWrite@G::Blit
-// FUNCTION: 0x00499A50 ?$RLEBlitTransLucent50AlphaZReadWrite@G::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x00499860
+// ?Blit@?$RLEBlitTransLucent50AlphaZReadWrite@G@@UBEXPAXPBXHHH00HH0@Z
+// TEMPLATE: GAMEMD 0x00499A50
+// ?Blit_Copy_Tinted@?$RLEBlitTransLucent50AlphaZReadWrite@G@@UBEXPAXPBXHHH00HH0G@Z
 template class RLEBlitTransLucent50AlphaZReadWrite<unsigned short>;
 
-// FUNCTION: 0x00499A90 ?$RLEBlitTransLucent25AlphaZReadWrite@G::Blit
-// FUNCTION: 0x00499C60 ?$RLEBlitTransLucent25AlphaZReadWrite@G::Blit_Copy_Tinted
+// TEMPLATE: GAMEMD 0x00499A90
+// ?Blit@?$RLEBlitTransLucent25AlphaZReadWrite@G@@UBEXPAXPBXHHH00HH0@Z
+// TEMPLATE: GAMEMD 0x00499C60
+// ?Blit_Copy_Tinted@?$RLEBlitTransLucent25AlphaZReadWrite@G@@UBEXPAXPBXHHH00HH0G@Z
 template class RLEBlitTransLucent25AlphaZReadWrite<unsigned short>;
 
 
-// FUNCTION: 0x00499CA0 ?$BlitTransXlat@G::~?$BlitTransXlat@G
+// SYNTHETIC: GAMEMD 0x00499CA0
+// ??_G?$BlitTransXlat@G@@UAEPAXI@Z
 
-// FUNCTION: 0x00499CC0 Blitter::~Blitter
+// SYNTHETIC: GAMEMD 0x00499CC0
+// ??_GBlitter@@UAEPAXI@Z
 
-// FUNCTION: 0x00499CE0 ?$BlitPlainXlat@E::~?$BlitPlainXlat@E
+// SYNTHETIC: GAMEMD 0x00499CE0
+// ??_G?$BlitPlainXlat@E@@UAEPAXI@Z
 
-// FUNCTION: 0x00499D00 ?$BlitTransXlat@E::~?$BlitTransXlat@E
+// SYNTHETIC: GAMEMD 0x00499D00
+// ??_G?$BlitTransXlat@E@@UAEPAXI@Z
 
-// FUNCTION: 0x00499D20 ?$BlitTransZRemapXlat@E::~?$BlitTransZRemapXlat@E
+// SYNTHETIC: GAMEMD 0x00499D20
+// ??_G?$BlitTransZRemapXlat@E@@UAEPAXI@Z
 
-// FUNCTION: 0x00499D40 ?$BlitTransRemapDest@E::~?$BlitTransRemapDest@E
+// SYNTHETIC: GAMEMD 0x00499D40
+// ??_G?$BlitTransRemapDest@E@@UAEPAXI@Z
 
-// FUNCTION: 0x00499D60 ?$BlitTransRemapXlat@E::~?$BlitTransRemapXlat@E
+// SYNTHETIC: GAMEMD 0x00499D60
+// ??_G?$BlitTransRemapXlat@E@@UAEPAXI@Z
 
-// FUNCTION: 0x00499D80 ?$RLEBlitTransXlat@E::~?$RLEBlitTransXlat@E
+// SYNTHETIC: GAMEMD 0x00499D80
+// ??_G?$RLEBlitTransXlat@E@@UAEPAXI@Z
 
-// FUNCTION: 0x00499DA0 RLEBlitter::~RLEBlitter
+// SYNTHETIC: GAMEMD 0x00499DA0
+// ??_GRLEBlitter@@UAEPAXI@Z
 
-// FUNCTION: 0x00499DC0 ?$RLEBlitTransZRemapXlat@E::~?$RLEBlitTransZRemapXlat@E
+// SYNTHETIC: GAMEMD 0x00499DC0
+// ??_G?$RLEBlitTransZRemapXlat@E@@UAEPAXI@Z
 
-// FUNCTION: 0x00499DE0 ?$RLEBlitTransRemapDest@E::~?$RLEBlitTransRemapDest@E
+// SYNTHETIC: GAMEMD 0x00499DE0
+// ??_G?$RLEBlitTransRemapDest@E@@UAEPAXI@Z
 
-// FUNCTION: 0x00499E00 ?$RLEBlitTransRemapXlat@E::~?$RLEBlitTransRemapXlat@E
+// SYNTHETIC: GAMEMD 0x00499E00
+// ??_G?$RLEBlitTransRemapXlat@E@@UAEPAXI@Z
 
-// FUNCTION: 0x00499E20 ?$RLEBlitTransXlatZRead@E::~?$RLEBlitTransXlatZRead@E
+// SYNTHETIC: GAMEMD 0x00499E20
+// ??_G?$RLEBlitTransXlatZRead@E@@UAEPAXI@Z
 
-// FUNCTION: 0x00499E40 ?$RLEBlitTransZRemapXlatZRead@E::~?$RLEBlitTransZRemapXlatZRead@E
+// SYNTHETIC: GAMEMD 0x00499E40
+// ??_G?$RLEBlitTransZRemapXlatZRead@E@@UAEPAXI@Z
 
-// FUNCTION: 0x00499E60 ?$RLEBlitTransRemapDestZRead@E::~?$RLEBlitTransRemapDestZRead@E
+// SYNTHETIC: GAMEMD 0x00499E60
+// ??_G?$RLEBlitTransRemapDestZRead@E@@UAEPAXI@Z
 
-// FUNCTION: 0x00499E80 ?$RLEBlitTransRemapXlatZRead@E::~?$RLEBlitTransRemapXlatZRead@E
+// SYNTHETIC: GAMEMD 0x00499E80
+// ??_G?$RLEBlitTransRemapXlatZRead@E@@UAEPAXI@Z
 
-// FUNCTION: 0x00499EA0 ?$RLEBlitTransXlatZReadWrite@E::~?$RLEBlitTransXlatZReadWrite@E
+// SYNTHETIC: GAMEMD 0x00499EA0
+// ??_G?$RLEBlitTransXlatZReadWrite@E@@UAEPAXI@Z
 
-// FUNCTION: 0x00499EC0 ?$RLEBlitTransZRemapXlatZReadWrite@E::~?$RLEBlitTransZRemapXlatZReadWrite@E
+// SYNTHETIC: GAMEMD 0x00499EC0
+// ??_G?$RLEBlitTransZRemapXlatZReadWrite@E@@UAEPAXI@Z
 
-// FUNCTION: 0x00499EE0 ?$RLEBlitTransRemapDestZReadWrite@E::~?$RLEBlitTransRemapDestZReadWrite@E
+// SYNTHETIC: GAMEMD 0x00499EE0
+// ??_G?$RLEBlitTransRemapDestZReadWrite@E@@UAEPAXI@Z
 
-// FUNCTION: 0x00499F00 ?$RLEBlitTransRemapXlatZReadWrite@E::~?$RLEBlitTransRemapXlatZReadWrite@E
+// SYNTHETIC: GAMEMD 0x00499F00
+// ??_G?$RLEBlitTransRemapXlatZReadWrite@E@@UAEPAXI@Z
 
-// FUNCTION: 0x00499F20 ?$BlitPlainXlat@G::~?$BlitPlainXlat@G
+// SYNTHETIC: GAMEMD 0x00499F20
+// ??_G?$BlitPlainXlat@G@@UAEPAXI@Z
 
-// FUNCTION: 0x00499F40 ?$BlitTransZRemapXlat@G::~?$BlitTransZRemapXlat@G
+// SYNTHETIC: GAMEMD 0x00499F40
+// ??_G?$BlitTransZRemapXlat@G@@UAEPAXI@Z
 
-// FUNCTION: 0x00499F60 ?$BlitTransDarken@G::~?$BlitTransDarken@G
+// SYNTHETIC: GAMEMD 0x00499F60
+// ??_G?$BlitTransDarken@G@@UAEPAXI@Z

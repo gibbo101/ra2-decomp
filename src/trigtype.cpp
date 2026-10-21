@@ -29,7 +29,7 @@ static char const * PersistentName[3] = {
 	"Persistent"
 };
 
-// FUNCTION: 0x00726E00
+// FUNCTION: GAMEMD 0x00726E00
 TriggerTypeClass::~TriggerTypeClass(void)
 {
 	Detach_This_From_All(this, true);
@@ -53,7 +53,7 @@ TriggerTypeClass::~TriggerTypeClass(void)
 	EventActionPtrTracker.Delete(this);
 }
 
-// FUNCTION: 0x00726F50
+// FUNCTION: GAMEMD 0x00726F50
 bool TriggerTypeClass::Is_Cross_Vertical(void) const
 {
 	bool found = false;
@@ -68,7 +68,7 @@ bool TriggerTypeClass::Is_Cross_Vertical(void) const
 	return(found);
 }
 
-// FUNCTION: 0x00726F80
+// FUNCTION: GAMEMD 0x00726F80
 bool TriggerTypeClass::Is_Cross_Horizontal(void) const
 {
 	bool found = false;
@@ -83,7 +83,7 @@ bool TriggerTypeClass::Is_Cross_Horizontal(void) const
 	return(found);
 }
 
-// FUNCTION: 0x00726FB0
+// FUNCTION: GAMEMD 0x00726FB0
 bool TriggerTypeClass::Is_Enters_Zone(void) const
 {
 	bool found = false;
@@ -98,7 +98,7 @@ bool TriggerTypeClass::Is_Enters_Zone(void) const
 	return(found);
 }
 
-// FUNCTION: 0x00726FE0
+// FUNCTION: GAMEMD 0x00726FE0
 bool TriggerTypeClass::Is_Allow_Win(void) const
 {
 	bool found = false;
@@ -113,7 +113,7 @@ bool TriggerTypeClass::Is_Allow_Win(void) const
 	return(found);
 }
 
-// FUNCTION: 0x00727010
+// FUNCTION: GAMEMD 0x00727010
 bool TriggerTypeClass::Is_Linked_To_Global(int global) const
 {
 	bool found = false;
@@ -128,7 +128,7 @@ bool TriggerTypeClass::Is_Linked_To_Global(int global) const
 	return(found);
 }
 
-// FUNCTION: 0x00727050
+// FUNCTION: GAMEMD 0x00727050
 bool TriggerTypeClass::Is_Linked_To_Local(int local) const
 {
 	bool found = false;
@@ -143,7 +143,7 @@ bool TriggerTypeClass::Is_Linked_To_Local(int local) const
 	return(found);
 }
 
-// FUNCTION: 0x00727090
+// FUNCTION: GAMEMD 0x00727090
 void TriggerTypeClass::Detach(AbstractClass const * target, bool all)
 {
 	if (LinkedTo != NULL && LinkedTo == target) {
@@ -169,7 +169,7 @@ void TriggerTypeClass::Detach(AbstractClass const * target, bool all)
 	}
 }
 
-// FUNCTION: 0x00727120
+// FUNCTION: GAMEMD 0x00727120
 TriggerTypeClass * TriggerTypeClass::From_Name(char const * name)
 {
 	if (name != NULL) {
@@ -183,7 +183,7 @@ TriggerTypeClass * TriggerTypeClass::From_Name(char const * name)
 }
 
 
-// FUNCTION: 0x00727190
+// FUNCTION: GAMEMD 0x00727190
 PersistentType Persistence_From_Name(char const * name)
 {
 	for (int index = 0; index < ARRAY_SIZE(PersistentName); index++) {
@@ -194,13 +194,13 @@ PersistentType Persistence_From_Name(char const * name)
 	return(VOLATILE);
 }
 
-// FUNCTION: 0x007271D0
+// FUNCTION: GAMEMD 0x007271D0
 char const * Name_From_Persistence(PersistentType pers)
 {
 	return(PersistentName[pers]);
 }
 
-// FUNCTION: 0x007271E0
+// FUNCTION: GAMEMD 0x007271E0
 AttachType TriggerTypeClass::Attaches_To(void) const
 {
 	AttachType attach = ATTACH_NONE;
@@ -221,7 +221,7 @@ AttachType TriggerTypeClass::Attaches_To(void) const
 	return(attach);
 }
 
-// FUNCTION: 0x00727240
+// FUNCTION: GAMEMD 0x00727240
 bool TriggerTypeClass::Read_INI(CCINIClass & ini)
 {
 	char buffer[INIClass::MAX_LINE_LENGTH];
@@ -309,7 +309,7 @@ bool TriggerTypeClass::Read_INI(CCINIClass & ini)
 	return(false);
 }
 
-// FUNCTION: 0x007275D0
+// FUNCTION: GAMEMD 0x007275D0
 void TriggerTypeClass::Read_All(CCINIClass & ini)
 {
 	int len = ini.Entry_Count(INI_NAME);
@@ -320,7 +320,7 @@ void TriggerTypeClass::Read_All(CCINIClass & ini)
 	}
 }
 
-// FUNCTION: 0x007276A0
+// FUNCTION: GAMEMD 0x007276A0
 bool TriggerTypeClass::Write_INI(CCINIClass & ini) const
 {
 	char buffer[INIClass::MAX_LINE_LENGTH];
@@ -371,7 +371,7 @@ bool TriggerTypeClass::Write_INI(CCINIClass & ini) const
 	return(true);
 }
 
-// FUNCTION: 0x00727880
+// FUNCTION: GAMEMD 0x00727880
 void TriggerTypeClass::Write_All(CCINIClass & ini)
 {
 	int index;
@@ -408,7 +408,7 @@ void TriggerTypeClass::Write_All(CCINIClass & ini)
 	}
 }
 
-// FUNCTION: 0x007279E0
+// FUNCTION: GAMEMD 0x007279E0
 bool TriggerTypeClass::Delete_Action(TActionClass const * taction)
 {
 	if (FirstAction == taction) {
@@ -429,7 +429,7 @@ bool TriggerTypeClass::Delete_Action(TActionClass const * taction)
 	return(false);
 }
 
-// FUNCTION: 0x00727A40
+// FUNCTION: GAMEMD 0x00727A40
 bool TriggerTypeClass::Delete_Event(TEventClass const * tevent)
 {
 	if (FirstEvent == tevent) {
@@ -450,13 +450,13 @@ bool TriggerTypeClass::Delete_Event(TEventClass const * tevent)
 	return(false);
 }
 
-// FUNCTION: 0x00727AA0
+// FUNCTION: GAMEMD 0x00727AA0
 TriggerTypeClass * TriggerTypeClass::Find_Or_Make(char const * name)
 {
 	return(TFind_Or_Make<TriggerTypeClass>(name, TriggerTypes));
 }
 
-// FUNCTION: 0x00727B30
+// FUNCTION: GAMEMD 0x00727B30
 void TriggerTypeClass::Compute_CRC(CRCEngine & crc) const
 {
 	BASECLASS::Compute_CRC(crc);
@@ -467,7 +467,7 @@ void TriggerTypeClass::Compute_CRC(CRCEngine & crc) const
 	if (FirstAction != NULL) crc(FirstAction->Fetch_ID());
 }
 
-// FUNCTION: 0x00727BB0
+// FUNCTION: GAMEMD 0x00727BB0
 HRESULT STDMETHODCALLTYPE TriggerTypeClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -475,7 +475,7 @@ HRESULT STDMETHODCALLTYPE TriggerTypeClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x00727BF0
+// FUNCTION: GAMEMD 0x00727BF0
 HRESULT STDMETHODCALLTYPE TriggerTypeClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -492,7 +492,7 @@ HRESULT STDMETHODCALLTYPE TriggerTypeClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x00727C80
+// FUNCTION: GAMEMD 0x00727C80
 HRESULT STDMETHODCALLTYPE TriggerTypeClass::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -502,7 +502,11 @@ HRESULT STDMETHODCALLTYPE TriggerTypeClass::Save(IStream * stream, BOOL cleardir
 	return(result);
 }
 
-// FUNCTION: 0x00727CA0 TriggerTypeClass::Fetch_RTTI
-// FUNCTION: 0x00727CB0 TriggerTypeClass::Fetch_Object_Size
-// FUNCTION: 0x00727CC0 TriggerTypeClass::Fetch_Heap_ID
-// FUNCTION: 0x00727CD0 TriggerTypeClass::~TriggerTypeClass
+// FUNCTION: GAMEMD 0x00727CA0
+// TriggerTypeClass::Fetch_RTTI
+// FUNCTION: GAMEMD 0x00727CB0
+// TriggerTypeClass::Fetch_Object_Size
+// FUNCTION: GAMEMD 0x00727CC0
+// TriggerTypeClass::Fetch_Heap_ID
+// SYNTHETIC: GAMEMD 0x00727CD0
+// ??_GTriggerTypeClass@@UAEPAXI@Z

@@ -11,7 +11,7 @@
 #define ZBUFFER_COLOR  0xFFFF
 #define ZBUFFER_BPP    2
 
-// FUNCTION: 0x007BC970
+// FUNCTION: GAMEMD 0x007BC970
 ZBuffer::ZBuffer(Rect rect) :
 	BufferWidth(rect.Width),
 	BufferHeight(rect.Height)
@@ -30,7 +30,7 @@ ZBuffer::ZBuffer(Rect rect) :
 	SurfacePtr->Unlock();
 }
 
-// FUNCTION: 0x007BCA50
+// FUNCTION: GAMEMD 0x007BCA50
 void ZBuffer::Copy_To(Surface *surface, Rect rect)
 {
 
@@ -54,13 +54,13 @@ void ZBuffer::Copy_To(Surface *surface, Rect rect)
 	surface->Unlock();
 }
 
-// FUNCTION: 0x007BCAE0
+// FUNCTION: GAMEMD 0x007BCAE0
 void ZBuffer::Release_Surface(void)
 {
 	delete SurfacePtr;
 }
 
-// FUNCTION: 0x007BCAF0
+// FUNCTION: GAMEMD 0x007BCAF0
 void ZBuffer::Set(unsigned int dst, int size, unsigned short value)
 {
 	if ((unsigned int)dst & 2) {
@@ -91,7 +91,7 @@ void ZBuffer::Set(unsigned int dst, int size, unsigned short value)
 	}
 }
 
-// FUNCTION: 0x007BCB50
+// FUNCTION: GAMEMD 0x007BCB50
 void ZBuffer::Pan(int x, int y, unsigned short value)
 {
 	int target_col;
@@ -171,19 +171,19 @@ void ZBuffer::Pan(int x, int y, unsigned short value)
 }
 
 
-// FUNCTION: 0x007BCF50
+// FUNCTION: GAMEMD 0x007BCF50
 bool ZBuffer::Fill(unsigned short value)
 {
 	return(SurfacePtr->Fill_Rect(Rect(0, 0, BufferWidth, BufferHeight), value));
 }
 
-// FUNCTION: 0x007BCF90
+// FUNCTION: GAMEMD 0x007BCF90
 bool ZBuffer::Fill(unsigned short value, Rect rect)
 {
 	return(SurfacePtr->Fill_Rect(rect, value));
 }
 
-// FUNCTION: 0x007BCFB0
+// FUNCTION: GAMEMD 0x007BCFB0
 void ZBuffer::Update(Rect rect)
 {
 	unsigned int buffptr = Get_Buffer_Offset(Point2D(rect.X, rect.Y));
@@ -204,7 +204,7 @@ void ZBuffer::Update(Rect rect)
 	}
 }
 
-// FUNCTION: 0x007BD130
+// FUNCTION: GAMEMD 0x007BD130
 unsigned int ZBuffer::Get_Buffer_Offset(Point2D pos)
 {
 	unsigned int buffptr = (unsigned int)SurfacePtr->Lock(pos);

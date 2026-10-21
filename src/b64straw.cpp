@@ -8,7 +8,7 @@
 #include "base64.h"
 #include <cstring>
 
-// FUNCTION: 0x0042DF90
+// FUNCTION: GAMEMD 0x0042DF90
 int Base64Straw::Get(void * source, int slen)
 {
 	int total = 0;

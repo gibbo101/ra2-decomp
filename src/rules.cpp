@@ -71,7 +71,7 @@ void FUN_006269A0(void);
 void __fastcall FUN_00626AB0(char const * name, HSVClass & hsv);
 void Difficulty_Get(CCINIClass const & ini, DifficultyClass & diff, char const * section);
 
-// FUNCTION: 0x006686C0
+// FUNCTION: GAMEMD 0x006686C0
 void RulesClass::Initialize(CCINIClass & ini)
 {
 	while (ColorSchemes.Count()) {
@@ -163,7 +163,7 @@ void RulesClass::Initialize(CCINIClass & ini)
 	}
 }
 
-// FUNCTION: 0x00668FB0
+// FUNCTION: GAMEMD 0x00668FB0
 bool RulesClass::Special_Weapons(CCINIClass & ini)
 {
 	static char const * SPECIALWEAPONS = "SpecialWeapons";
@@ -183,7 +183,7 @@ bool RulesClass::Special_Weapons(CCINIClass & ini)
 	return(false);
 }
 
-// FUNCTION: 0x0066B900
+// FUNCTION: GAMEMD 0x0066B900
 bool RulesClass::Crate_Rules(CCINIClass const & ini)
 {
 	static char const * CRATERULES = "CrateRules";
@@ -207,7 +207,7 @@ bool RulesClass::Crate_Rules(CCINIClass const & ini)
 	return(false);
 }
 
-// FUNCTION: 0x0066CF70
+// FUNCTION: GAMEMD 0x0066CF70
 bool RulesClass::Radiation(CCINIClass const & ini)
 {
 	static char const * RADIATION = "Radiation";
@@ -227,7 +227,7 @@ bool RulesClass::Radiation(CCINIClass const & ini)
 	return(false);
 }
 
-// FUNCTION: 0x0066D150
+// FUNCTION: GAMEMD 0x0066D150
 bool RulesClass::Elevation_Model(CCINIClass const & ini)
 {
 	static char const * ELEVATIONMODEL = "ElevationModel";
@@ -240,7 +240,7 @@ bool RulesClass::Elevation_Model(CCINIClass const & ini)
 	return(false);
 }
 
-// FUNCTION: 0x0066D1F0
+// FUNCTION: GAMEMD 0x0066D1F0
 bool RulesClass::Wall_Model(CCINIClass const & ini)
 {
 	static char const * WALLMODEL = "WallModel";
@@ -252,7 +252,7 @@ bool RulesClass::Wall_Model(CCINIClass const & ini)
 	return(false);
 }
 
-// FUNCTION: 0x0066D270
+// FUNCTION: GAMEMD 0x0066D270
 void Difficulty_Get(CCINIClass const & ini, DifficultyClass & diff, char const * section)
 {
 	if (ini.Is_Present(section)) {
@@ -271,7 +271,7 @@ void Difficulty_Get(CCINIClass const & ini, DifficultyClass & diff, char const *
 	}
 }
 
-// FUNCTION: 0x0066D3A0
+// FUNCTION: GAMEMD 0x0066D3A0
 bool RulesClass::Color_Schemes(CCINIClass const & ini)
 {
 	static char const * COLORS = "Colors";
@@ -289,7 +289,7 @@ bool RulesClass::Color_Schemes(CCINIClass const & ini)
 	return(false);
 }
 
-// FUNCTION: 0x0066D480
+// FUNCTION: GAMEMD 0x0066D480
 bool RulesClass::Read_ColorAdd(CCINIClass const & ini)
 {
 	static char const * COLORADD = "ColorAdd";
@@ -305,7 +305,7 @@ bool RulesClass::Read_ColorAdd(CCINIClass const & ini)
 	return(false);
 }
 
-// FUNCTION: 0x00671EA0
+// FUNCTION: GAMEMD 0x00671EA0
 bool RulesClass::MPlayer(CCINIClass const & ini)
 {
 	static char const * MPLAYER = "MultiplayerDialogSettings";
@@ -342,7 +342,7 @@ bool RulesClass::MPlayer(CCINIClass const & ini)
 	return(false);
 }
 
-// FUNCTION: 0x00672230
+// FUNCTION: GAMEMD 0x00672230
 bool RulesClass::Heap_Maximums(CCINIClass const & ini)
 {
 	static char const * MAXIMUMS = "Maximums";
@@ -352,7 +352,7 @@ bool RulesClass::Heap_Maximums(CCINIClass const & ini)
 	return(true);
 }
 
-// FUNCTION: 0x00672280
+// FUNCTION: GAMEMD 0x00672280
 bool RulesClass::Do_InfantryTypes(CCINIClass const & ini)
 {
 	static char const * INFANTRYTYPES = "InfantryTypes";
@@ -366,7 +366,7 @@ bool RulesClass::Do_InfantryTypes(CCINIClass const & ini)
 	return(count > 0);
 }
 
-// FUNCTION: 0x006722F0
+// FUNCTION: GAMEMD 0x006722F0
 bool RulesClass::Do_HouseTypes(CCINIClass const & ini)
 {
 	static char const * HOUSES = "Countries";
@@ -380,7 +380,7 @@ bool RulesClass::Do_HouseTypes(CCINIClass const & ini)
 	return(count > 0);
 }
 
-// FUNCTION: 0x00672360
+// FUNCTION: GAMEMD 0x00672360
 bool RulesClass::Do_VehicleTypes(CCINIClass const & ini)
 {
 	static char const * VEHICLETYPES = "VehicleTypes";
@@ -394,7 +394,7 @@ bool RulesClass::Do_VehicleTypes(CCINIClass const & ini)
 	return(count > 0);
 }
 
-// FUNCTION: 0x006723D0
+// FUNCTION: GAMEMD 0x006723D0
 bool RulesClass::Do_AircraftTypes(CCINIClass const & ini)
 {
 	static char const * AIRCRAFTTYPES = "AircraftTypes";
@@ -408,7 +408,7 @@ bool RulesClass::Do_AircraftTypes(CCINIClass const & ini)
 	return(count > 0);
 }
 
-// FUNCTION: 0x00672440
+// FUNCTION: GAMEMD 0x00672440
 bool RulesClass::Do_Sides(CCINIClass const & ini)
 {
 	static char const * SIDES = "Sides";
@@ -434,7 +434,7 @@ bool RulesClass::Do_Sides(CCINIClass const & ini)
 	return(count > 0);
 }
 
-// FUNCTION: 0x006725F0
+// FUNCTION: GAMEMD 0x006725F0
 bool RulesClass::Do_SuperWeaponTypes(CCINIClass const & ini)
 {
 	static char const * SUPERWEAPONTYPES = "SuperWeaponTypes";
@@ -448,7 +448,7 @@ bool RulesClass::Do_SuperWeaponTypes(CCINIClass const & ini)
 	return(count > 0);
 }
 
-// FUNCTION: 0x00672660
+// FUNCTION: GAMEMD 0x00672660
 bool RulesClass::Do_BuildingTypes(CCINIClass const & ini)
 {
 	static char const * BUILDINGTYPES = "BuildingTypes";
@@ -462,7 +462,7 @@ bool RulesClass::Do_BuildingTypes(CCINIClass const & ini)
 	return(count > 0);
 }
 
-// FUNCTION: 0x006726D0
+// FUNCTION: GAMEMD 0x006726D0
 bool RulesClass::Do_TerrainTypes(CCINIClass const & ini)
 {
 	static char const * TERRAINTYPES = "TerrainTypes";
@@ -476,7 +476,7 @@ bool RulesClass::Do_TerrainTypes(CCINIClass const & ini)
 	return(count > 0);
 }
 
-// FUNCTION: 0x00672740
+// FUNCTION: GAMEMD 0x00672740
 bool RulesClass::Do_TeamTypes(CCINIClass & ini)
 {
 	static char const * TEAMS = "Teams";
@@ -488,7 +488,7 @@ bool RulesClass::Do_TeamTypes(CCINIClass & ini)
 	return(count > 0);
 }
 
-// FUNCTION: 0x006727D0
+// FUNCTION: GAMEMD 0x006727D0
 bool RulesClass::Do_SmudgeTypes(CCINIClass const & ini)
 {
 	static char const * SMUDGETYPES = "SmudgeTypes";
@@ -502,7 +502,7 @@ bool RulesClass::Do_SmudgeTypes(CCINIClass const & ini)
 	return(count > 0);
 }
 
-// FUNCTION: 0x00672840
+// FUNCTION: GAMEMD 0x00672840
 bool RulesClass::Do_OverlayTypes(CCINIClass const & ini)
 {
 	static char const * OVERLAYTYPES = "OverlayTypes";
@@ -516,7 +516,7 @@ bool RulesClass::Do_OverlayTypes(CCINIClass const & ini)
 	return(count > 0);
 }
 
-// FUNCTION: 0x006728B0
+// FUNCTION: GAMEMD 0x006728B0
 bool RulesClass::Do_AnimTypes(CCINIClass const & ini)
 {
 	char const * const ANIMATIONS = "Animations";
@@ -530,7 +530,7 @@ bool RulesClass::Do_AnimTypes(CCINIClass const & ini)
 	return(count > 0);
 }
 
-// FUNCTION: 0x00672920
+// FUNCTION: GAMEMD 0x00672920
 bool RulesClass::Do_VoxelAnimTypes(CCINIClass const & ini)
 {
 	char const * const VOXELANIMS = "VoxelAnims";
@@ -544,7 +544,7 @@ bool RulesClass::Do_VoxelAnimTypes(CCINIClass const & ini)
 	return(count > 0);
 }
 
-// FUNCTION: 0x00672990
+// FUNCTION: GAMEMD 0x00672990
 bool RulesClass::Do_WarheadTypes(CCINIClass const & ini)
 {
 	char buffer[32];
@@ -557,7 +557,7 @@ bool RulesClass::Do_WarheadTypes(CCINIClass const & ini)
 	return(count > 0);
 }
 
-// FUNCTION: 0x00672A00
+// FUNCTION: GAMEMD 0x00672A00
 bool RulesClass::Do_ParticleTypes(CCINIClass const & ini)
 {
 	char const * const PARTICLES = "Particles";
@@ -571,7 +571,7 @@ bool RulesClass::Do_ParticleTypes(CCINIClass const & ini)
 	return(count > 0);
 }
 
-// FUNCTION: 0x00672A70
+// FUNCTION: GAMEMD 0x00672A70
 bool RulesClass::Do_ParticleSystemTypes(CCINIClass const & ini)
 {
 	char const * const PARTICLESYSTEMS = "ParticleSystems";
@@ -585,7 +585,7 @@ bool RulesClass::Do_ParticleSystemTypes(CCINIClass const & ini)
 	return(count > 0);
 }
 
-// FUNCTION: 0x00673E80
+// FUNCTION: GAMEMD 0x00673E80
 bool RulesClass::Powerups(CCINIClass const & ini)
 {
 	static char const * POWERUPS = "Powerups";
@@ -628,7 +628,7 @@ bool RulesClass::Powerups(CCINIClass const & ini)
 	return(false);
 }
 
-// FUNCTION: 0x00674000
+// FUNCTION: GAMEMD 0x00674000
 bool RulesClass::Land_Types(CCINIClass const & ini)
 {
 	static char const * _lands[LAND_COUNT] = {
@@ -652,7 +652,7 @@ bool RulesClass::Land_Types(CCINIClass const & ini)
 	return(true);
 }
 
-// FUNCTION: 0x00674240
+// FUNCTION: GAMEMD 0x00674240
 bool RulesClass::IQ(CCINIClass const & ini)
 {
 	static char const * IQCONTROL = "IQ";
@@ -673,7 +673,7 @@ bool RulesClass::IQ(CCINIClass const & ini)
 	return(false);
 }
 
-// FUNCTION: 0x006743D0
+// FUNCTION: GAMEMD 0x006743D0
 bool RulesClass::Jumpjet_Controls(CCINIClass const & ini)
 {
 	static char const * SECTION = "JumpjetControls";
@@ -690,7 +690,7 @@ bool RulesClass::Jumpjet_Controls(CCINIClass const & ini)
 	return(false);
 }
 
-// FUNCTION: 0x00674500
+// FUNCTION: GAMEMD 0x00674500
 bool RulesClass::Difficulty(CCINIClass const & ini)
 {
 	Difficulty_Get(ini, Diff[DIFF_EASY], "Easy");
@@ -699,7 +699,7 @@ bool RulesClass::Difficulty(CCINIClass const & ini)
 	return(true);
 }
 
-// FUNCTION: 0x00674550
+// FUNCTION: GAMEMD 0x00674550
 bool RulesClass::Do_Movies(CCINIClass const & ini)
 {
 	static char const * const MOVIES = "Movies";
@@ -718,7 +718,7 @@ bool RulesClass::Do_Movies(CCINIClass const & ini)
 	return(false);
 }
 
-// FUNCTION: 0x00674650
+// FUNCTION: GAMEMD 0x00674650
 bool RulesClass::Read_AdvancedCommandBar(CCINIClass const & ini, bool multiplayer)
 {
 	static char const * BAR = "AdvancedCommandBar";
@@ -753,7 +753,7 @@ extern unsigned int DAT_00B053B4;
 extern bool DAT_00B053B8;
 int FUN_005D5ED0(void);
 
-// FUNCTION: 0x00679A10
+// FUNCTION: GAMEMD 0x00679A10
 bool RulesClass::Objects(CCINIClass & ini)
 {
 	for (int house = HOUSE_FIRST; house < HouseTypes.Count(); house++) {
@@ -820,7 +820,7 @@ bool RulesClass::Objects(CCINIClass & ini)
 	return(true);
 }
 
-// FUNCTION: 0x00679CC0
+// FUNCTION: GAMEMD 0x00679CC0
 int FUN_00679CC0(void)
 {
 	if (!DAT_00B053B8) {
@@ -834,7 +834,7 @@ int FUN_00679CC0(void)
 	return DAT_00B053B4;
 }
 
-// FUNCTION: 0x00679D90
+// FUNCTION: GAMEMD 0x00679D90
 int RulesClass::Get_Rule_Unique_ID(void)
 {
 	int id = RuleINI->Get_Unique_ID();
@@ -848,19 +848,19 @@ int RulesClass::Get_Rule_Unique_ID(void)
 	return id + FUN_00679CC0();
 }
 
-// FUNCTION: 0x00679EC0
+// FUNCTION: GAMEMD 0x00679EC0
 int RulesClass::Get_Art_Unique_ID(void)
 {
 	return ArtINI.Get_Unique_ID();
 }
 
-// FUNCTION: 0x00679ED0
+// FUNCTION: GAMEMD 0x00679ED0
 int RulesClass::Get_AI_Unique_ID(void)
 {
 	return AIINI.Get_Unique_ID();
 }
 
-// FUNCTION: 0x00679EE0
+// FUNCTION: GAMEMD 0x00679EE0
 void RulesClass::Load_Art_INI(void)
 {
 	ArtINI.Clear();
@@ -868,7 +868,8 @@ void RulesClass::Load_Art_INI(void)
 	ArtINI.ReadCCFile(art, false, false);
 }
 
-// FUNCTION: 0x00679F70 ?$VectorClass@H::~?$VectorClass@H
+// TEMPLATE: GAMEMD 0x00679F70
+// ??1?$VectorClass@H@@UAE@XZ
 template class VectorClass<int>;
 
 class BuildingTypeClass;
@@ -876,175 +877,266 @@ class UnitTypeClass;
 class AircraftTypeClass;
 class InfantryTypeClass;
 
-// FUNCTION: 0x00679FA0 ?$VectorClass@PBVBuildingTypeClass@@::~?$VectorClass@PBVBuildingTypeClass@@
+// TEMPLATE: GAMEMD 0x00679FA0
+// ??1?$VectorClass@PBVBuildingTypeClass@@@@UAE@XZ
 template class VectorClass<BuildingTypeClass const *>;
 
-// FUNCTION: 0x00679FD0 ?$VectorClass@PBVUnitTypeClass@@::~?$VectorClass@PBVUnitTypeClass@@
+// TEMPLATE: GAMEMD 0x00679FD0
+// ??1?$VectorClass@PBVUnitTypeClass@@@@UAE@XZ
 template class VectorClass<UnitTypeClass const *>;
 
-// FUNCTION: 0x0067A000 ?$VectorClass@PBVAircraftTypeClass@@::~?$VectorClass@PBVAircraftTypeClass@@
+// TEMPLATE: GAMEMD 0x0067A000
+// ??1?$VectorClass@PBVAircraftTypeClass@@@@UAE@XZ
 template class VectorClass<AircraftTypeClass const *>;
 
-// FUNCTION: 0x0067A030 ?$VectorClass@PBVInfantryTypeClass@@::~?$VectorClass@PBVInfantryTypeClass@@
+// TEMPLATE: GAMEMD 0x0067A030
+// ??1?$VectorClass@PBVInfantryTypeClass@@@@UAE@XZ
 template class VectorClass<InfantryTypeClass const *>;
 
 class TerrainTypeClass;
 class VoxelAnimTypeClass;
 
-// FUNCTION: 0x0067A060 ?$VectorClass@PBVTerrainTypeClass@@::~?$VectorClass@PBVTerrainTypeClass@@
+// TEMPLATE: GAMEMD 0x0067A060
+// ??1?$VectorClass@PBVTerrainTypeClass@@@@UAE@XZ
 template class VectorClass<TerrainTypeClass const *>;
 
-// FUNCTION: 0x0067A090 ?$TypeList@H::operator=
+// TEMPLATE: GAMEMD 0x0067A090
+// ??4?$TypeList@H@@QAEAAV0@ABV0@@Z
 template class TypeList<int>;
 
-// FUNCTION: 0x0067A110 ?$TypeList@PBVBuildingTypeClass@@::operator=
+// TEMPLATE: GAMEMD 0x0067A110
+// ??4?$TypeList@PBVBuildingTypeClass@@@@QAEAAV0@ABV0@@Z
 template class TypeList<BuildingTypeClass const *>;
 
-// FUNCTION: 0x0067A190 ?$TypeList@PBVUnitTypeClass@@::operator=
+// TEMPLATE: GAMEMD 0x0067A190
+// ??4?$TypeList@PBVUnitTypeClass@@@@QAEAAV0@ABV0@@Z
 template class TypeList<UnitTypeClass const *>;
 
-// FUNCTION: 0x0067A210 ?$TypeList@PBVAircraftTypeClass@@::operator=
+// TEMPLATE: GAMEMD 0x0067A210
+// ??4?$TypeList@PBVAircraftTypeClass@@@@QAEAAV0@ABV0@@Z
 template class TypeList<AircraftTypeClass const *>;
 
-// FUNCTION: 0x0067A290 ?$TypeList@PBVInfantryTypeClass@@::operator=
+// TEMPLATE: GAMEMD 0x0067A290
+// ??4?$TypeList@PBVInfantryTypeClass@@@@QAEAAV0@ABV0@@Z
 template class TypeList<InfantryTypeClass const *>;
 
-// FUNCTION: 0x0067A310 ?$TypeList@PBVTerrainTypeClass@@::operator=
+// TEMPLATE: GAMEMD 0x0067A310
+// ??4?$TypeList@PBVTerrainTypeClass@@@@QAEAAV0@ABV0@@Z
 template class TypeList<TerrainTypeClass const *>;
 
-// FUNCTION: 0x0067A390 ?$TypeList@PBVVoxelAnimTypeClass@@::?$TypeList@PBVVoxelAnimTypeClass@@
-// FUNCTION: 0x0067A3C0 ?$TypeList@PBVVoxelAnimTypeClass@@::Save
-// FUNCTION: 0x0067A410 ?$DynamicVectorClass@PBVVoxelAnimTypeClass@@::Clear
-// FUNCTION: 0x0067A440 ?$DynamicVectorClass@PBVVoxelAnimTypeClass@@::ID
-// FUNCTION: 0x0067A460 ?$VectorClass@PBVVoxelAnimTypeClass@@::GetItem
+// TEMPLATE: GAMEMD 0x0067A390
+// ??0?$TypeList@PBVVoxelAnimTypeClass@@@@QAE@XZ
+// TEMPLATE: GAMEMD 0x0067A3C0
+// ?Save@?$TypeList@PBVVoxelAnimTypeClass@@@@QBEXPAUIStream@@@Z
+// TEMPLATE: GAMEMD 0x0067A410
+// ?Clear@?$DynamicVectorClass@PBVVoxelAnimTypeClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0067A440
+// ?ID@?$DynamicVectorClass@PBVVoxelAnimTypeClass@@@@UAEHPBQBVVoxelAnimTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x0067A460
+// ?GetItem@?$VectorClass@PBVVoxelAnimTypeClass@@@@UBEPBVVoxelAnimTypeClass@@H@Z
 template class TypeList<VoxelAnimTypeClass const *>;
 
 class AnimTypeClass;
 class SmudgeTypeClass;
 
-// FUNCTION: 0x0067A470 ?$TypeList@PBVAnimTypeClass@@::?$TypeList@PBVAnimTypeClass@@
-// FUNCTION: 0x0067A4A0 ?$TypeList@PBVAnimTypeClass@@::Save
+// TEMPLATE: GAMEMD 0x0067A470
+// ??0?$TypeList@PBVAnimTypeClass@@@@QAE@XZ
+// TEMPLATE: GAMEMD 0x0067A4A0
+// ?Save@?$TypeList@PBVAnimTypeClass@@@@QBEXPAUIStream@@@Z
 template class TypeList<AnimTypeClass const *>;
 
-// FUNCTION: 0x0067A4F0 ?$TypeList@H::?$TypeList@H
-// FUNCTION: 0x0067A520 ?$TypeList@H::Save
-// FUNCTION: 0x0067A570 ?$DynamicVectorClass@H::operator=
+// TEMPLATE: GAMEMD 0x0067A4F0
+// ??0?$TypeList@H@@QAE@XZ
+// TEMPLATE: GAMEMD 0x0067A520
+// ?Save@?$TypeList@H@@QBEXPAUIStream@@@Z
+// TEMPLATE: GAMEMD 0x0067A570
+// ??4?$DynamicVectorClass@H@@QAEAAV0@ABV0@@Z
 template class DynamicVectorClass<int>;
 
-// FUNCTION: 0x0067A600 ?$TypeList@PBVSmudgeTypeClass@@::?$TypeList@PBVSmudgeTypeClass@@
-// FUNCTION: 0x0067A630 ?$TypeList@PBVSmudgeTypeClass@@::Save
-// FUNCTION: 0x0067A680 ?$DynamicVectorClass@PBVSmudgeTypeClass@@::Clear
-// FUNCTION: 0x0067A6B0 ?$DynamicVectorClass@PBVSmudgeTypeClass@@::ID
-// FUNCTION: 0x0067A6D0 ?$VectorClass@PBVSmudgeTypeClass@@::GetItem
+// TEMPLATE: GAMEMD 0x0067A600
+// ??0?$TypeList@PBVSmudgeTypeClass@@@@QAE@XZ
+// TEMPLATE: GAMEMD 0x0067A630
+// ?Save@?$TypeList@PBVSmudgeTypeClass@@@@QBEXPAUIStream@@@Z
+// TEMPLATE: GAMEMD 0x0067A680
+// ?Clear@?$DynamicVectorClass@PBVSmudgeTypeClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0067A6B0
+// ?ID@?$DynamicVectorClass@PBVSmudgeTypeClass@@@@UAEHPBQBVSmudgeTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x0067A6D0
+// ?GetItem@?$VectorClass@PBVSmudgeTypeClass@@@@UBEPBVSmudgeTypeClass@@H@Z
 template class TypeList<SmudgeTypeClass const *>;
 
-// FUNCTION: 0x0067A6E0 ?$TypeList@PBVBuildingTypeClass@@::Save
+// TEMPLATE: GAMEMD 0x0067A6E0
+// ?Save@?$TypeList@PBVBuildingTypeClass@@@@QBEXPAUIStream@@@Z
 template class TypeList<BuildingTypeClass const *>;
 
-// FUNCTION: 0x0067A730 ?$DynamicVectorClass@PBVBuildingTypeClass@@::Count
+// TEMPLATE: GAMEMD 0x0067A730
+// ?Count@?$DynamicVectorClass@PBVBuildingTypeClass@@@@QBEHXZ
 template class DynamicVectorClass<BuildingTypeClass const *>;
 
-// FUNCTION: 0x0067A740 ?$TypeList@PBVUnitTypeClass@@::?$TypeList@PBVUnitTypeClass@@
-// FUNCTION: 0x0067A770 ?$TypeList@PBVUnitTypeClass@@::Save
+// TEMPLATE: GAMEMD 0x0067A740
+// ??0?$TypeList@PBVUnitTypeClass@@@@QAE@XZ
+// TEMPLATE: GAMEMD 0x0067A770
+// ?Save@?$TypeList@PBVUnitTypeClass@@@@QBEXPAUIStream@@@Z
 template class TypeList<UnitTypeClass const *>;
 
-// FUNCTION: 0x0067A7C0 ?$DynamicVectorClass@PBVUnitTypeClass@@::Count
+// TEMPLATE: GAMEMD 0x0067A7C0
+// ?Count@?$DynamicVectorClass@PBVUnitTypeClass@@@@QBEHXZ
 template class DynamicVectorClass<UnitTypeClass const *>;
 
-// FUNCTION: 0x0067A7D0 ?$TypeList@PBVAircraftTypeClass@@::Save
+// TEMPLATE: GAMEMD 0x0067A7D0
+// ?Save@?$TypeList@PBVAircraftTypeClass@@@@QBEXPAUIStream@@@Z
 template class TypeList<AircraftTypeClass const *>;
 
-// FUNCTION: 0x0067A820 ?$TypeList@PBVInfantryTypeClass@@::?$TypeList@PBVInfantryTypeClass@@
-// FUNCTION: 0x0067A850 ?$TypeList@PBVInfantryTypeClass@@::Save
+// TEMPLATE: GAMEMD 0x0067A820
+// ??0?$TypeList@PBVInfantryTypeClass@@@@QAE@XZ
+// TEMPLATE: GAMEMD 0x0067A850
+// ?Save@?$TypeList@PBVInfantryTypeClass@@@@QBEXPAUIStream@@@Z
 template class TypeList<InfantryTypeClass const *>;
 
-// FUNCTION: 0x0067A8A0 ?$DynamicVectorClass@PBVInfantryTypeClass@@::Count
+// TEMPLATE: GAMEMD 0x0067A8A0
+// ?Count@?$DynamicVectorClass@PBVInfantryTypeClass@@@@QBEHXZ
 template class DynamicVectorClass<InfantryTypeClass const *>;
 
-// FUNCTION: 0x0067A8B0 ?$TypeList@PBVTerrainTypeClass@@::?$TypeList@PBVTerrainTypeClass@@
-// FUNCTION: 0x0067A8E0 ?$TypeList@PBVTerrainTypeClass@@::Save
-// FUNCTION: 0x0067A930 ?$DynamicVectorClass@PBVTerrainTypeClass@@::Clear
-// FUNCTION: 0x0067A960 ?$DynamicVectorClass@PBVTerrainTypeClass@@::ID
-// FUNCTION: 0x0067A980 ?$VectorClass@PBVTerrainTypeClass@@::GetItem
+// TEMPLATE: GAMEMD 0x0067A8B0
+// ??0?$TypeList@PBVTerrainTypeClass@@@@QAE@XZ
+// TEMPLATE: GAMEMD 0x0067A8E0
+// ?Save@?$TypeList@PBVTerrainTypeClass@@@@QBEXPAUIStream@@@Z
+// TEMPLATE: GAMEMD 0x0067A930
+// ?Clear@?$DynamicVectorClass@PBVTerrainTypeClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0067A960
+// ?ID@?$DynamicVectorClass@PBVTerrainTypeClass@@@@UAEHPBQBVTerrainTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x0067A980
+// ?GetItem@?$VectorClass@PBVTerrainTypeClass@@@@UBEPBVTerrainTypeClass@@H@Z
 template class TypeList<TerrainTypeClass const *>;
 
-// FUNCTION: 0x0067A990 ?$TypeList@PBVVoxelAnimTypeClass@@::~?$TypeList@PBVVoxelAnimTypeClass@@
-// FUNCTION: 0x0067C310 ?$VectorClass@PBVVoxelAnimTypeClass@@::?$VectorClass@PBVVoxelAnimTypeClass@@
+// SYNTHETIC: GAMEMD 0x0067A990
+// ??_G?$TypeList@PBVVoxelAnimTypeClass@@@@UAEPAXI@Z
+// TEMPLATE: GAMEMD 0x0067C310
+// ??0?$VectorClass@PBVVoxelAnimTypeClass@@@@QAE@HPBQBVVoxelAnimTypeClass@@@Z
 template class VectorClass<VoxelAnimTypeClass const *>;
 
-// FUNCTION: 0x0067A9E0 ?$TypeList@PBVSmudgeTypeClass@@::~?$TypeList@PBVSmudgeTypeClass@@
-// FUNCTION: 0x0067C3A0 ?$VectorClass@PBVSmudgeTypeClass@@::?$VectorClass@PBVSmudgeTypeClass@@
+// SYNTHETIC: GAMEMD 0x0067A9E0
+// ??_G?$TypeList@PBVSmudgeTypeClass@@@@UAEPAXI@Z
+// TEMPLATE: GAMEMD 0x0067C3A0
+// ??0?$VectorClass@PBVSmudgeTypeClass@@@@QAE@HPBQBVSmudgeTypeClass@@@Z
 template class VectorClass<SmudgeTypeClass const *>;
 
-// FUNCTION: 0x0067AA30 ?$TypeList@PBVTerrainTypeClass@@::~?$TypeList@PBVTerrainTypeClass@@
+// SYNTHETIC: GAMEMD 0x0067AA30
+// ??_G?$TypeList@PBVTerrainTypeClass@@@@UAEPAXI@Z
 template class TypeList<TerrainTypeClass const *>;
 
-// FUNCTION: 0x0067AA80 ?$VectorClass@PBVVoxelAnimTypeClass@@::operator=
-// FUNCTION: 0x0067AAF0 ?$VectorClass@PBVVoxelAnimTypeClass@@::operator==
-// FUNCTION: 0x0067AB30 ?$VectorClass@PBVVoxelAnimTypeClass@@::Resize
-// FUNCTION: 0x0067ABE0 ?$VectorClass@PBVVoxelAnimTypeClass@@::Clear
-// FUNCTION: 0x0067AC10 ?$VectorClass@PBVVoxelAnimTypeClass@@::ID
-// FUNCTION: 0x0067AC50 ?$VectorClass@PBVVoxelAnimTypeClass@@::ID
-// FUNCTION: 0x0067AC70 ?$DynamicVectorClass@PBVVoxelAnimTypeClass@@::?$DynamicVectorClass@PBVVoxelAnimTypeClass@@
-// FUNCTION: 0x0067ACD0 ?$DynamicVectorClass@PBVVoxelAnimTypeClass@@::Resize
-// FUNCTION: 0x0067AD80 ?$DynamicVectorClass@PBVVoxelAnimTypeClass@@::Add
-// FUNCTION: 0x0067C1F0 ?$DynamicVectorClass@PBVVoxelAnimTypeClass@@::?$DynamicVectorClass@PBVVoxelAnimTypeClass@@
-// FUNCTION: 0x0067C360 ?$DynamicVectorClass@PBVVoxelAnimTypeClass@@::Delete_Index
+// TEMPLATE: GAMEMD 0x0067AA80
+// ??4?$VectorClass@PBVVoxelAnimTypeClass@@@@QAEAAV0@ABV0@@Z
+// TEMPLATE: GAMEMD 0x0067AAF0
+// ??8?$VectorClass@PBVVoxelAnimTypeClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x0067AB30
+// ?Resize@?$VectorClass@PBVVoxelAnimTypeClass@@@@UAE_NHPBQBVVoxelAnimTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x0067ABE0
+// ?Clear@?$VectorClass@PBVVoxelAnimTypeClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0067AC10
+// ?ID@?$VectorClass@PBVVoxelAnimTypeClass@@@@UAEHABQBVVoxelAnimTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x0067AC50
+// ?ID@?$VectorClass@PBVVoxelAnimTypeClass@@@@UAEHPBQBVVoxelAnimTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x0067AC70
+// ??0?$DynamicVectorClass@PBVVoxelAnimTypeClass@@@@QAE@IPBQBVVoxelAnimTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x0067ACD0
+// ?Resize@?$DynamicVectorClass@PBVVoxelAnimTypeClass@@@@UAE_NHPBQBVVoxelAnimTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x0067AD80
+// ?Add@?$DynamicVectorClass@PBVVoxelAnimTypeClass@@@@QAE_NABQBVVoxelAnimTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x0067C1F0
+// ??0?$DynamicVectorClass@PBVVoxelAnimTypeClass@@@@QAE@ABV0@@Z
+// TEMPLATE: GAMEMD 0x0067C360
+// ?Delete_Index@?$DynamicVectorClass@PBVVoxelAnimTypeClass@@@@QAE_NH@Z
 template class DynamicVectorClass<VoxelAnimTypeClass const *>;
 
-// FUNCTION: 0x0067ADD0 ?$DynamicVectorClass@PBVVoxelAnimTypeClass@@::ID
-// FUNCTION: 0x0067AE00 ?$VectorClass@PBVSmudgeTypeClass@@::operator=
-// FUNCTION: 0x0067AE70 ?$VectorClass@PBVSmudgeTypeClass@@::operator==
-// FUNCTION: 0x0067AEB0 ?$VectorClass@PBVSmudgeTypeClass@@::Resize
-// FUNCTION: 0x0067AF60 ?$VectorClass@PBVSmudgeTypeClass@@::Clear
-// FUNCTION: 0x0067AF90 ?$VectorClass@PBVSmudgeTypeClass@@::ID
-// FUNCTION: 0x0067AFD0 ?$VectorClass@PBVSmudgeTypeClass@@::ID
-// FUNCTION: 0x0067AFF0 ?$DynamicVectorClass@PBVSmudgeTypeClass@@::?$DynamicVectorClass@PBVSmudgeTypeClass@@
-// FUNCTION: 0x0067B050 ?$DynamicVectorClass@PBVSmudgeTypeClass@@::Resize
-// FUNCTION: 0x0067B100 ?$DynamicVectorClass@PBVSmudgeTypeClass@@::Add
-// FUNCTION: 0x0067B150 ?$DynamicVectorClass@PBVSmudgeTypeClass@@::ID
-// FUNCTION: 0x0067C280 ?$DynamicVectorClass@PBVSmudgeTypeClass@@::?$DynamicVectorClass@PBVSmudgeTypeClass@@
-// FUNCTION: 0x0067C3F0 ?$DynamicVectorClass@PBVSmudgeTypeClass@@::Delete_Index
+// TEMPLATE: GAMEMD 0x0067ADD0
+// ?ID@?$DynamicVectorClass@PBVVoxelAnimTypeClass@@@@UAEHABQBVVoxelAnimTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x0067AE00
+// ??4?$VectorClass@PBVSmudgeTypeClass@@@@QAEAAV0@ABV0@@Z
+// TEMPLATE: GAMEMD 0x0067AE70
+// ??8?$VectorClass@PBVSmudgeTypeClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x0067AEB0
+// ?Resize@?$VectorClass@PBVSmudgeTypeClass@@@@UAE_NHPBQBVSmudgeTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x0067AF60
+// ?Clear@?$VectorClass@PBVSmudgeTypeClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0067AF90
+// ?ID@?$VectorClass@PBVSmudgeTypeClass@@@@UAEHABQBVSmudgeTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x0067AFD0
+// ?ID@?$VectorClass@PBVSmudgeTypeClass@@@@UAEHPBQBVSmudgeTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x0067AFF0
+// ??0?$DynamicVectorClass@PBVSmudgeTypeClass@@@@QAE@IPBQBVSmudgeTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x0067B050
+// ?Resize@?$DynamicVectorClass@PBVSmudgeTypeClass@@@@UAE_NHPBQBVSmudgeTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x0067B100
+// ?Add@?$DynamicVectorClass@PBVSmudgeTypeClass@@@@QAE_NABQBVSmudgeTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x0067B150
+// ?ID@?$DynamicVectorClass@PBVSmudgeTypeClass@@@@UAEHABQBVSmudgeTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x0067C280
+// ??0?$DynamicVectorClass@PBVSmudgeTypeClass@@@@QAE@ABV0@@Z
+// TEMPLATE: GAMEMD 0x0067C3F0
+// ?Delete_Index@?$DynamicVectorClass@PBVSmudgeTypeClass@@@@QAE_NH@Z
 template class DynamicVectorClass<SmudgeTypeClass const *>;
 
-// FUNCTION: 0x0067B1F0 ?$VectorClass@PBVTerrainTypeClass@@::operator==
-// FUNCTION: 0x0067B230 ?$VectorClass@PBVTerrainTypeClass@@::Resize
-// FUNCTION: 0x0067B2E0 ?$VectorClass@PBVTerrainTypeClass@@::Clear
-// FUNCTION: 0x0067B310 ?$VectorClass@PBVTerrainTypeClass@@::ID
-// FUNCTION: 0x0067B350 ?$VectorClass@PBVTerrainTypeClass@@::ID
-// FUNCTION: 0x0067B370 ?$DynamicVectorClass@PBVTerrainTypeClass@@::?$DynamicVectorClass@PBVTerrainTypeClass@@
-// FUNCTION: 0x0067B3D0 ?$DynamicVectorClass@PBVTerrainTypeClass@@::Resize
-// FUNCTION: 0x0067B480 ?$DynamicVectorClass@PBVTerrainTypeClass@@::Add
-// FUNCTION: 0x0067B4D0 ?$DynamicVectorClass@PBVTerrainTypeClass@@::ID
+// TEMPLATE: GAMEMD 0x0067B1F0
+// ??8?$VectorClass@PBVTerrainTypeClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x0067B230
+// ?Resize@?$VectorClass@PBVTerrainTypeClass@@@@UAE_NHPBQBVTerrainTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x0067B2E0
+// ?Clear@?$VectorClass@PBVTerrainTypeClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0067B310
+// ?ID@?$VectorClass@PBVTerrainTypeClass@@@@UAEHABQBVTerrainTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x0067B350
+// ?ID@?$VectorClass@PBVTerrainTypeClass@@@@UAEHPBQBVTerrainTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x0067B370
+// ??0?$DynamicVectorClass@PBVTerrainTypeClass@@@@QAE@IPBQBVTerrainTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x0067B3D0
+// ?Resize@?$DynamicVectorClass@PBVTerrainTypeClass@@@@UAE_NHPBQBVTerrainTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x0067B480
+// ?Add@?$DynamicVectorClass@PBVTerrainTypeClass@@@@QAE_NABQBVTerrainTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x0067B4D0
+// ?ID@?$DynamicVectorClass@PBVTerrainTypeClass@@@@UAEHABQBVTerrainTypeClass@@@Z
 template class DynamicVectorClass<TerrainTypeClass const *>;
 
-// FUNCTION: 0x0067B500 TGet_Class
+// FUNCTION: GAMEMD 0x0067B500
+// TGet_Class
 template WarheadTypeClass * TGet_Class<WarheadTypeClass>(CCINIClass const &, char const *, char const *, WarheadTypeClass *);
 
-// FUNCTION: 0x0067BAC0 TGet_Class@@YIPAVInfantryTypeClass
+// FUNCTION: GAMEMD 0x0067BAC0
+// TGet_Class@@YIPAVInfantryTypeClass
 template InfantryTypeClass * TGet_Class<InfantryTypeClass>(CCINIClass const &, char const *, char const *, InfantryTypeClass *);
 
-// FUNCTION: 0x0067BCE0 TGet_Class@@YIPAVBuildingTypeClass
+// FUNCTION: GAMEMD 0x0067BCE0
+// TGet_Class@@YIPAVBuildingTypeClass
 template BuildingTypeClass * TGet_Class<BuildingTypeClass>(CCINIClass const &, char const *, char const *, BuildingTypeClass *);
 
-// FUNCTION: 0x0067BD30 TGet_Class@@YIPAVAircraftTypeClass
+// FUNCTION: GAMEMD 0x0067BD30
+// TGet_Class@@YIPAVAircraftTypeClass
 template AircraftTypeClass * TGet_Class<AircraftTypeClass>(CCINIClass const &, char const *, char const *, AircraftTypeClass *);
 
-// FUNCTION: 0x0067BD80 TGet_Class@@YIPAVTerrainTypeClass
+// FUNCTION: GAMEMD 0x0067BD80
+// TGet_Class@@YIPAVTerrainTypeClass
 template TerrainTypeClass * TGet_Class<TerrainTypeClass>(CCINIClass const &, char const *, char const *, TerrainTypeClass *);
 
-// FUNCTION: 0x0067BFA0 ?$VectorClass@PBVTerrainTypeClass@@::operator=
+// TEMPLATE: GAMEMD 0x0067BFA0
+// ??4?$VectorClass@PBVTerrainTypeClass@@@@QAEAAV0@ABV0@@Z
 
-// FUNCTION: 0x0067C010 ?$VectorClass@PBVVoxelAnimTypeClass@@::~?$VectorClass@PBVVoxelAnimTypeClass@@
-// FUNCTION: 0x0067C060 ?$DynamicVectorClass@PBVVoxelAnimTypeClass@@::~?$DynamicVectorClass@PBVVoxelAnimTypeClass@@
-// FUNCTION: 0x0067C0B0 ?$VectorClass@PBVSmudgeTypeClass@@::~?$VectorClass@PBVSmudgeTypeClass@@
-// FUNCTION: 0x0067C100 ?$DynamicVectorClass@PBVSmudgeTypeClass@@::~?$DynamicVectorClass@PBVSmudgeTypeClass@@
+// SYNTHETIC: GAMEMD 0x0067C010
+// ??_G?$VectorClass@PBVVoxelAnimTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x0067C060
+// ??_G?$DynamicVectorClass@PBVVoxelAnimTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x0067C0B0
+// ??_G?$VectorClass@PBVSmudgeTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x0067C100
+// ??_G?$DynamicVectorClass@PBVSmudgeTypeClass@@@@UAEPAXI@Z
 
-// FUNCTION: 0x0067C150 ?$VectorClass@PBVTerrainTypeClass@@::~?$VectorClass@PBVTerrainTypeClass@@
-// FUNCTION: 0x0067C430 ?$VectorClass@PBVTerrainTypeClass@@::?$VectorClass@PBVTerrainTypeClass@@
+// SYNTHETIC: GAMEMD 0x0067C150
+// ??_G?$VectorClass@PBVTerrainTypeClass@@@@UAEPAXI@Z
+// TEMPLATE: GAMEMD 0x0067C430
+// ??0?$VectorClass@PBVTerrainTypeClass@@@@QAE@HPBQBVTerrainTypeClass@@@Z
 template class VectorClass<TerrainTypeClass const *>;
 
-// FUNCTION: 0x0067C1A0 ?$DynamicVectorClass@PBVTerrainTypeClass@@::~?$DynamicVectorClass@PBVTerrainTypeClass@@
+// SYNTHETIC: GAMEMD 0x0067C1A0
+// ??_G?$DynamicVectorClass@PBVTerrainTypeClass@@@@UAEPAXI@Z
 template class DynamicVectorClass<TerrainTypeClass const *>;
 
 DynamicVectorClass<VoxelAnimTypeClass const *> * Copy_Voxel_Vector(DynamicVectorClass<VoxelAnimTypeClass const *> const & src)
@@ -1057,4 +1149,5 @@ DynamicVectorClass<SmudgeTypeClass const *> * Copy_Smudge_Vector(DynamicVectorCl
 	return new DynamicVectorClass<SmudgeTypeClass const *>(src);
 }
 
-// FUNCTION: 0x0067C480 $E10
+// SYNTHETIC: GAMEMD 0x0067C480 SYMBOL
+// _$E10

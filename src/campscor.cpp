@@ -32,7 +32,7 @@ class CampScoreLink
 		int Field4;
 };
 
-// FUNCTION: 0x0046D330
+// FUNCTION: GAMEMD 0x0046D330
 CampScoreLink::CampScoreLink(void)
 {
 	Field4 = 0;
@@ -40,12 +40,12 @@ CampScoreLink::CampScoreLink(void)
 	DAT_0081B1E8 = -1;
 }
 
-// FUNCTION: 0x0046D350
+// FUNCTION: GAMEMD 0x0046D350
 CampScoreLink::~CampScoreLink(void)
 {
 }
 
-// FUNCTION: 0x0046D360
+// FUNCTION: GAMEMD 0x0046D360
 void __fastcall FUN_0046D360(wchar_t * buffer, int seconds)
 {
 	if (buffer != NULL) {
@@ -64,7 +64,7 @@ bool __fastcall FUN_005E93F0(NodeNameType * slot);
 bool __fastcall FUN_005E9440(NodeNameType * slot);
 extern bool DAT_0089E000[8];
 
-// FUNCTION: 0x0046D400
+// FUNCTION: GAMEMD 0x0046D400
 void __fastcall FUN_0046D400(int count)
 {
 	memset(DAT_0089E000, 1, 8);
@@ -73,7 +73,7 @@ void __fastcall FUN_0046D400(int count)
 	}
 }
 
-// FUNCTION: 0x0046D430
+// FUNCTION: GAMEMD 0x0046D430
 void FUN_0046D430(void)
 {
 	for (int i = 0; i < 8; i++) {
@@ -83,7 +83,7 @@ void FUN_0046D430(void)
 	}
 }
 
-// FUNCTION: 0x0046D460
+// FUNCTION: GAMEMD 0x0046D460
 bool FUN_0046D460(void)
 {
 	int i;
@@ -95,13 +95,13 @@ bool FUN_0046D460(void)
 	return i == 8;
 }
 
-// FUNCTION: 0x0046D480
+// FUNCTION: GAMEMD 0x0046D480
 void __fastcall FUN_0046D480(int index, bool value)
 {
 	DAT_0089E000[index] = value;
 }
 
-// FUNCTION: 0x0046D490
+// FUNCTION: GAMEMD 0x0046D490
 bool __fastcall FUN_0046D490(int index)
 {
 	return DAT_0089E000[index];
@@ -145,7 +145,7 @@ void __cdecl FUN_004068E0(char const * format, ...);
 char * __fastcall FUN_007350C0(wchar_t const * text);
 HWND WS_Find_Dialog(int id);
 
-// FUNCTION: 0x0046D4A0
+// FUNCTION: GAMEMD 0x0046D4A0
 void FUN_0046D4A0(void)
 {
 	CampScoreOptions packet;
@@ -180,7 +180,7 @@ void FUN_0046D4A0(void)
 	}
 }
 
-// FUNCTION: 0x0046D650
+// FUNCTION: GAMEMD 0x0046D650
 bool FUN_0046D650(void)
 {
 	CampScoreOptions & received = *(CampScoreOptions *)&Session.GPacket;
@@ -245,7 +245,7 @@ bool FUN_0046D650(void)
 	return changed;
 }
 
-// FUNCTION: 0x0046D810
+// FUNCTION: GAMEMD 0x0046D810
 void FUN_0046D810(void)
 {
 	CampScoreSlot packet;
@@ -267,7 +267,7 @@ int __fastcall FUN_004E4E60(int index);
 void __fastcall FUN_004E3F70(HWND dialog, int combo, int wanted);
 extern DynamicVectorClass<HouseClass *> DAT_00A80228;
 
-// FUNCTION: 0x0046DA20
+// FUNCTION: GAMEMD 0x0046DA20
 void __fastcall FUN_0046DA20(HWND dialog, int id, int value)
 {
 	wchar_t text[32];
@@ -276,7 +276,7 @@ void __fastcall FUN_0046DA20(HWND dialog, int id, int value)
 	SendMessage(item, 0x4b2, 0, (LPARAM)text);
 }
 
-// FUNCTION: 0x0046DA70
+// FUNCTION: GAMEMD 0x0046DA70
 void FUN_0046DA70(void)
 {
 	Session.NumScores = 0;
@@ -325,7 +325,7 @@ extern MPlayerScoreType * DAT_0089DF80[];
 
 int __cdecl FUN_0046DC90(void const * a, void const * b);
 
-// FUNCTION: 0x0046DC50
+// FUNCTION: GAMEMD 0x0046DC50
 void FUN_0046DC50(void)
 {
 	int count = Session.NumScores;
@@ -337,7 +337,7 @@ void FUN_0046DC50(void)
 	}
 }
 
-// FUNCTION: 0x0046DC90
+// FUNCTION: GAMEMD 0x0046DC90
 int __cdecl FUN_0046DC90(void const * a, void const * b)
 {
 	MPlayerScoreType * first = *(MPlayerScoreType * const *)a;
@@ -348,7 +348,7 @@ int __cdecl FUN_0046DC90(void const * a, void const * b)
 	return first->Score[0] > second->Score[0] ? -1 : 1;
 }
 
-// FUNCTION: 0x0046DCC0
+// FUNCTION: GAMEMD 0x0046DCC0
 void __fastcall FUN_0046DCC0(HWND dialog, bool enable)
 {
 	HWND item;
@@ -366,7 +366,7 @@ void __fastcall FUN_0046DCC0(HWND dialog, bool enable)
 	}
 }
 
-// FUNCTION: 0x0046DD70
+// FUNCTION: GAMEMD 0x0046DD70
 void __fastcall FUN_0046DD70(HWND dialog, bool enable)
 {
 	HWND item;
@@ -387,7 +387,7 @@ void __fastcall FUN_0046DD70(HWND dialog, bool enable)
 	}
 }
 
-// FUNCTION: 0x0046DE20
+// FUNCTION: GAMEMD 0x0046DE20
 void __fastcall FUN_0046DE20(HWND dialog, int show)
 {
 	HWND item = GetDlgItem(dialog, 0x732);
@@ -489,7 +489,7 @@ void __fastcall FUN_0046DE20(HWND dialog, int show)
 	}
 }
 
-// FUNCTION: 0x0046F5E0
+// FUNCTION: GAMEMD 0x0046F5E0
 int __fastcall FUN_0046F5E0(int index)
 {
 	if (index == 0) {
@@ -501,7 +501,7 @@ int __fastcall FUN_0046F5E0(int index)
 	return -1;
 }
 
-// FUNCTION: 0x0046F600
+// FUNCTION: GAMEMD 0x0046F600
 void __fastcall FUN_0046F600(HWND dialog)
 {
 	for (int i = 0; i < 8; i++) {
@@ -527,7 +527,7 @@ void __fastcall FUN_0046F600(HWND dialog)
 	}
 }
 
-// FUNCTION: 0x0046F6D0
+// FUNCTION: GAMEMD 0x0046F6D0
 void __fastcall FUN_0046F6D0(HWND dialog)
 {
 	for (int i = 0; i < 8; i++) {
@@ -613,13 +613,13 @@ inline int _Player_Start(int index)
 	return player->Get_Start();
 }
 
-// FUNCTION: 0x0046F810
+// FUNCTION: GAMEMD 0x0046F810
 int __fastcall FUN_0046F810(int index)
 {
 	return _Player_Color(index);
 }
 
-// FUNCTION: 0x0046F880
+// FUNCTION: GAMEMD 0x0046F880
 int __fastcall FUN_0046F880(int index)
 {
 	return _Player_Start(index);
@@ -642,7 +642,7 @@ struct Game
 	static bool __cdecl CallBack(void);
 };
 
-// FUNCTION: 0x0046F8F0
+// FUNCTION: GAMEMD 0x0046F8F0
 void __fastcall FUN_0046F8F0(HWND dialog)
 {
 	int own = Session.unknown_2854;
@@ -673,7 +673,7 @@ inline void _Set_Image(HWND item, int i, int first, int second)
 	}
 }
 
-// FUNCTION: 0x0046FA20
+// FUNCTION: GAMEMD 0x0046FA20
 void __fastcall FUN_0046FA20(HWND dialog)
 {
 	int first = PCX::Instance.GetSurface(DAT_0081B1E0, NULL);
@@ -693,7 +693,7 @@ void __fastcall FUN_0046FA20(HWND dialog)
 	}
 }
 
-// FUNCTION: 0x0046FAC0
+// FUNCTION: GAMEMD 0x0046FAC0
 void __fastcall FUN_0046FAC0(HWND dialog)
 {
 	for (int i = 0; i < 8; i++) {
@@ -702,7 +702,7 @@ void __fastcall FUN_0046FAC0(HWND dialog)
 	}
 }
 
-// FUNCTION: 0x0046FB50
+// FUNCTION: GAMEMD 0x0046FB50
 void __fastcall FUN_0046FB50(HWND dialog)
 {
 	HWND item = GetDlgItem(dialog, 0x6d1);
@@ -724,7 +724,7 @@ void __fastcall FUN_0046FB50(HWND dialog)
 bool FUN_005DAF20(void);
 bool FUN_0077F900(void);
 
-// FUNCTION: 0x0046FBD0
+// FUNCTION: GAMEMD 0x0046FBD0
 bool FUN_0046FBD0(void)
 {
 	if (Session.Type == GAME_IPX) {
@@ -750,7 +750,7 @@ class CampScoreResults
 		virtual void Show(DynamicVectorClass<CoopPlayerStats *> list, int a6, int a7, int a8, wchar_t const * name);
 };
 
-// FUNCTION: 0x00470C00
+// FUNCTION: GAMEMD 0x00470C00
 CampScoreResults::CampScoreResults(void)
 {
 	DAT_0089E008 = -1;
@@ -758,12 +758,12 @@ CampScoreResults::CampScoreResults(void)
 	DAT_0089DFD4 = 0;
 }
 
-// FUNCTION: 0x00470C30
+// FUNCTION: GAMEMD 0x00470C30
 CampScoreResults::~CampScoreResults(void)
 {
 }
 
-// FUNCTION: 0x00470C40
+// FUNCTION: GAMEMD 0x00470C40
 void __fastcall FUN_00470C40(HWND dialog, int id, int value)
 {
 	wchar_t text[32];
@@ -772,7 +772,7 @@ void __fastcall FUN_00470C40(HWND dialog, int id, int value)
 	SendMessage(item, 0x4b2, 0, (LPARAM)text);
 }
 
-// FUNCTION: 0x00470C90
+// FUNCTION: GAMEMD 0x00470C90
 void __fastcall FUN_00470C90(wchar_t * buffer, int seconds)
 {
 	if (buffer != NULL) {
@@ -787,7 +787,7 @@ void __fastcall FUN_00470C90(wchar_t * buffer, int seconds)
 	}
 }
 
-// FUNCTION: 0x00471400
+// FUNCTION: GAMEMD 0x00471400
 void FUN_00471400(void)
 {
 	int count = DAT_0089E020;
@@ -804,7 +804,7 @@ extern wchar_t DAT_0089E0A4[];
 extern int DAT_0089DFC0;
 int CALLBACK FUN_00470D30(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 
-// FUNCTION: 0x00471420
+// FUNCTION: GAMEMD 0x00471420
 void CampScoreResults::Show(DynamicVectorClass<CoopPlayerStats *> list, int a6, int a7, int a8, wchar_t const * name)
 {
 	DAT_0089E020 = list.Count();
@@ -827,9 +827,11 @@ void CampScoreResults::Show(DynamicVectorClass<CoopPlayerStats *> list, int a6, 
 	FUN_0072D350();
 }
 
-// FUNCTION: 0x00471500 CampScoreLink::~CampScoreLink
+// SYNTHETIC: GAMEMD 0x00471500
+// ??_GCampScoreLink@@UAEPAXI@Z
 
-// FUNCTION: 0x00471520 CampScoreResults::~CampScoreResults
+// SYNTHETIC: GAMEMD 0x00471520
+// ??_GCampScoreResults@@UAEPAXI@Z
 
 extern double __cdecl FUN_004CAC40(double);
 extern double __cdecl FUN_004CAD50(double);
@@ -850,37 +852,48 @@ struct ShortPair {
 	ShortPair() { A = 0; B = 0; }
 };
 
-// FUNCTION: 0x00471540 $E82
+// SYNTHETIC: GAMEMD 0x00471540 SYMBOL
+// _$E82
 double DAT_0089E120 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x00471570 $E85
+// SYNTHETIC: GAMEMD 0x00471570 SYMBOL
+// _$E85
 double DAT_0089E170 = DAT_0089E120 / DAT_007E4AC0;
 
-// FUNCTION: 0x00471590 $E88
+// SYNTHETIC: GAMEMD 0x00471590 SYMBOL
+// _$E88
 double DAT_0089E158 = DAT_007E1718 / DAT_0089E170;
 
-// FUNCTION: 0x004715B0 $E91
+// SYNTHETIC: GAMEMD 0x004715B0 SYMBOL
+// _$E91
 double DAT_0089E150 = DAT_007E1720 * DAT_007E4AC8;
 
-// FUNCTION: 0x004715D0 $E94
+// SYNTHETIC: GAMEMD 0x004715D0 SYMBOL
+// _$E94
 double DAT_0089E128 = DAT_007E1728 * DAT_007E4AC8;
 
-// FUNCTION: 0x004715F0 $E97
+// SYNTHETIC: GAMEMD 0x004715F0 SYMBOL
+// _$E97
 double DAT_0089E0E8 = DAT_007E1730 * DAT_007E4AC8;
 
-// FUNCTION: 0x00471610 $E100
+// SYNTHETIC: GAMEMD 0x00471610 SYMBOL
+// _$E100
 int DAT_0089E178 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_0089E0E8 - DAT_0089E128) * DAT_0089E120));
 
-// FUNCTION: 0x00471650 $E103
+// SYNTHETIC: GAMEMD 0x00471650 SYMBOL
+// _$E103
 double DAT_0089E130 = FUN_004CADE0(DAT_0089E178 * DAT_007E1740);
 
-// FUNCTION: 0x00471680 $E106
+// SYNTHETIC: GAMEMD 0x00471680 SYMBOL
+// _$E106
 double DAT_0089E148 = FUN_004CADE0((DAT_0089E178 * 2) / DAT_0089E120);
 
-// FUNCTION: 0x004716B0 $E109
+// SYNTHETIC: GAMEMD 0x004716B0 SYMBOL
+// _$E109
 int DAT_0089E16C = (int)(DAT_0089E178 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x004716E0 $E112
+// SYNTHETIC: GAMEMD 0x004716E0 SYMBOL
+// _$E112
 ShortPair DAT_0089E118;
 
 struct IntTriple {
@@ -888,7 +901,8 @@ struct IntTriple {
 	IntTriple() { A = 0; B = 0; C = 0; }
 };
 
-// FUNCTION: 0x004716F0 $E115
+// SYNTHETIC: GAMEMD 0x004716F0 SYMBOL
+// _$E115
 IntTriple DAT_0089E138;
 
 struct IntTripleHalf {
@@ -896,7 +910,8 @@ struct IntTripleHalf {
 	IntTripleHalf() { A = 0x80; B = 0x80; C = 0; }
 };
 
-// FUNCTION: 0x00471710 $E118
+// SYNTHETIC: GAMEMD 0x00471710 SYMBOL
+// _$E118
 IntTripleHalf DAT_0089E160;
 
 struct IntQuad {
@@ -904,5 +919,6 @@ struct IntQuad {
 	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
 };
 
-// FUNCTION: 0x00471730 $E121
+// SYNTHETIC: GAMEMD 0x00471730 SYMBOL
+// _$E121
 IntQuad DAT_0089E108;

@@ -51,40 +51,52 @@ struct IntTriple {
 	IntTriple() { A = 0; B = 0; C = 0; }
 };
 
-// FUNCTION: 0x005D37E0 $E37
+// SYNTHETIC: GAMEMD 0x005D37E0 SYMBOL
+// _$E37
 double DAT_00ABFC30 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2.0);
 
-// FUNCTION: 0x005D3810 $E40
+// SYNTHETIC: GAMEMD 0x005D3810 SYMBOL
+// _$E40
 double DAT_00ABFC80 = DAT_00ABFC30 / DAT_007EEC78;
 
-// FUNCTION: 0x005D3830 $E43
+// SYNTHETIC: GAMEMD 0x005D3830 SYMBOL
+// _$E43
 double DAT_00ABFC68 = DAT_007E1718 / DAT_00ABFC80;
 
-// FUNCTION: 0x005D3850 $E46
+// SYNTHETIC: GAMEMD 0x005D3850 SYMBOL
+// _$E46
 double DAT_00ABFC60 = DAT_007E1720 * DAT_007EEC80;
 
-// FUNCTION: 0x005D3870 $E49
+// SYNTHETIC: GAMEMD 0x005D3870 SYMBOL
+// _$E49
 double DAT_00ABFC38 = DAT_007E1728 * DAT_007EEC80;
 
-// FUNCTION: 0x005D3890 $E52
+// SYNTHETIC: GAMEMD 0x005D3890 SYMBOL
+// _$E52
 double DAT_00ABFC10 = DAT_007E1730 * DAT_007EEC80;
 
-// FUNCTION: 0x005D38B0 $E55
+// SYNTHETIC: GAMEMD 0x005D38B0 SYMBOL
+// _$E55
 int DAT_00ABFC88 = (int)(FUN_004CAD50(DAT_00ABFC10 - DAT_00ABFC38) * DAT_007E1738 * DAT_00ABFC30);
 
-// FUNCTION: 0x005D38F0 $E58
+// SYNTHETIC: GAMEMD 0x005D38F0 SYMBOL
+// _$E58
 double DAT_00ABFC40 = FUN_004CADE0(DAT_00ABFC88 * DAT_007E1740);
 
-// FUNCTION: 0x005D3920 $E61
+// SYNTHETIC: GAMEMD 0x005D3920 SYMBOL
+// _$E61
 double DAT_00ABFC58 = FUN_004CADE0((DAT_00ABFC88 * 2) / DAT_00ABFC30);
 
-// FUNCTION: 0x005D3950 $E64
+// SYNTHETIC: GAMEMD 0x005D3950 SYMBOL
+// _$E64
 int DAT_00ABFC7C = (int)(DAT_00ABFC88 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x005D3980 $E67
+// SYNTHETIC: GAMEMD 0x005D3980 SYMBOL
+// _$E67
 ShortPair DAT_00ABFC28;
 
-// FUNCTION: 0x005D3990 $E70
+// SYNTHETIC: GAMEMD 0x005D3990 SYMBOL
+// _$E70
 IntTriple DAT_00ABFC48;
 
 struct HalfTriple {
@@ -92,10 +104,11 @@ struct HalfTriple {
 	HalfTriple() { C = 0; A = 0x80; B = 0x80; }
 };
 
-// FUNCTION: 0x005D39B0 $E73
+// SYNTHETIC: GAMEMD 0x005D39B0 SYMBOL
+// _$E73
 HalfTriple DAT_00ABFC70;
 
-// FUNCTION: 0x005D39D0
+// FUNCTION: GAMEMD 0x005D39D0
 MessageListClass::MessageListClass(void)
 {
 	int i;
@@ -125,13 +138,13 @@ MessageListClass::MessageListClass(void)
 	}
 }
 
-// FUNCTION: 0x005D3A40
+// FUNCTION: GAMEMD 0x005D3A40
 MessageListClass::~MessageListClass(void)
 {
 	Init(0,0,0,0,0,0,0,0,0,0);
 }
 
-// FUNCTION: 0x005D3A60
+// FUNCTION: GAMEMD 0x005D3A60
 void MessageListClass::Init(int x, int y, int max_msg, int maxchars,
 	int height, int edit_x, int edit_y, bool overflow_on, int over_start,
 	int over_end, int width)
@@ -196,7 +209,7 @@ void MessageListClass::Init(int x, int y, int max_msg, int maxchars,
 	}
 }
 
-// FUNCTION: 0x005D3F60
+// FUNCTION: GAMEMD 0x005D3F60
 wchar_t * MessageListClass::Get_Message(int id)
 {
 	TextLabelClass * gadg;
@@ -214,7 +227,7 @@ wchar_t * MessageListClass::Get_Message(int id)
 	return(NULL);
 }
 
-// FUNCTION: 0x005D3F90
+// FUNCTION: GAMEMD 0x005D3F90
 TextLabelClass * MessageListClass::Get_Label(int id)
 {
 	TextLabelClass * gadg;
@@ -232,7 +245,7 @@ TextLabelClass * MessageListClass::Get_Label(int id)
 	return(NULL);
 }
 
-// FUNCTION: 0x005D3FC0
+// FUNCTION: GAMEMD 0x005D3FC0
 int MessageListClass::Concat_Message(wchar_t const * name, int id, wchar_t const * txt, int timeout)
 {
 	int min_chars;
@@ -305,13 +318,13 @@ int MessageListClass::Concat_Message(wchar_t const * name, int id, wchar_t const
 	return(1);
 }
 
-// FUNCTION: 0x005D41E0
+// FUNCTION: GAMEMD 0x005D41E0
 void MessageListClass::Set_Edit_Focus (void)
 {
 	if (IsEdit) EditLabel->Set_Focus();
 }
 
-// FUNCTION: 0x005D41F0
+// FUNCTION: GAMEMD 0x005D41F0
 bool MessageListClass::Has_Edit_Focus (void)
 {
 	if (IsEdit){
@@ -321,7 +334,7 @@ bool MessageListClass::Has_Edit_Focus (void)
 	}
 }
 
-// FUNCTION: 0x005D4210
+// FUNCTION: GAMEMD 0x005D4210
 TextLabelClass * MessageListClass::Add_Edit(int color,
 	TextPrintType style, wchar_t * to, char cursor, int width)
 {
@@ -373,7 +386,7 @@ TextLabelClass * MessageListClass::Add_Edit(int color,
 	return(EditLabel);
 }
 
-// FUNCTION: 0x005D4390
+// FUNCTION: GAMEMD 0x005D4390
 void MessageListClass::Remove_Edit(void)
 {
 	FUN_007781A0();
@@ -388,13 +401,13 @@ void MessageListClass::Remove_Edit(void)
 	}
 }
 
-// FUNCTION: 0x005D4400
+// FUNCTION: GAMEMD 0x005D4400
 wchar_t * MessageListClass::Get_Edit_Buf(void)
 {
 	return(EditBuf + EditInitPos);
 }
 
-// FUNCTION: 0x005D4410
+// FUNCTION: GAMEMD 0x005D4410
 void MessageListClass::Set_Edit_Color(int color)
 {
 	if (IsEdit) {
@@ -402,7 +415,7 @@ void MessageListClass::Set_Edit_Color(int color)
 	}
 }
 
-// FUNCTION: 0x005D4430
+// FUNCTION: GAMEMD 0x005D4430
 int MessageListClass::Manage(void)
 {
 	TextLabelClass * txtlabel;
@@ -435,7 +448,7 @@ int MessageListClass::Manage(void)
 	return(changed);
 }
 
-// FUNCTION: 0x005D4510
+// FUNCTION: GAMEMD 0x005D4510
 int MessageListClass::Input(KeyNumType &input, wchar_t definput)
 {
 	int retcode = 0;
@@ -561,7 +574,7 @@ key_done:
 	return(retcode);
 }
 
-// FUNCTION: 0x005D49A0
+// FUNCTION: GAMEMD 0x005D49A0
 void MessageListClass::Draw(void)
 {
 	wchar_t txt[2] = {0,0};
@@ -586,7 +599,7 @@ void MessageListClass::Draw(void)
 	}
 }
 
-// FUNCTION: 0x005D4AA0
+// FUNCTION: GAMEMD 0x005D4AA0
 int MessageListClass::Num_Messages(void)
 {
 	GadgetClass * gadg;
@@ -609,7 +622,7 @@ int MessageListClass::Num_Messages(void)
 	return(num);
 }
 
-// FUNCTION: 0x005D4AD0
+// FUNCTION: GAMEMD 0x005D4AD0
 void MessageListClass::Set_Width(int width)
 {
 	GadgetClass * gadg;
@@ -630,7 +643,7 @@ void MessageListClass::Set_Width(int width)
 	}
 }
 
-// FUNCTION: 0x005D4BF0
+// FUNCTION: GAMEMD 0x005D4BF0
 void MessageListClass::Compute_Y(void)
 {
 	GadgetClass * gadg;

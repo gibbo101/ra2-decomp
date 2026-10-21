@@ -44,21 +44,34 @@
 #include "mph.hh"
 #include <windef.h>
 
-// FUNCTION: 0x00488F90 $E2
-// FUNCTION: 0x00488FC0 $E5
-// FUNCTION: 0x00488FE0 $E8
-// FUNCTION: 0x00489000 $E11
-// FUNCTION: 0x00489020 $E14
-// FUNCTION: 0x00489040 $E17
-// FUNCTION: 0x00489060 $E20
-// FUNCTION: 0x004890A0 $E23
-// FUNCTION: 0x004890D0 $E26
-// FUNCTION: 0x00489100 $E29
-// FUNCTION: 0x00489130 $E32
-// FUNCTION: 0x00489140 $E35
-// FUNCTION: 0x00489160 $E38
+// SYNTHETIC: GAMEMD 0x00488F90 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x00488FC0 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x00488FE0 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x00489000 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x00489020 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x00489040 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x00489060 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x004890A0 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x004890D0 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x00489100 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x00489130 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x00489140 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x00489160 SYMBOL
+// _$E38
 
-// FUNCTION: 0x00489180
+// FUNCTION: GAMEMD 0x00489180
 int Modify_Damage(int damage, WarheadTypeClass const * warhead, ArmorType armor, int distance)
 {
 	if (!damage || Scen->Special.IsInert || warhead == NULL) return(0);
@@ -80,12 +93,12 @@ int Modify_Damage(int damage, WarheadTypeClass const * warhead, ArmorType armor,
 	return(MIN(damage, Rule->MaxDamage));
 }
 
-// FUNCTION: 0x00489270
+// FUNCTION: GAMEMD 0x00489270
 void Chain_Reaction_Damage(Cell const & cell)
 {
 }
 
-// FUNCTION: 0x0048A4F0
+// FUNCTION: GAMEMD 0x0048A4F0
 AnimTypeClass const * Combat_Anim(int damage, WarheadTypeClass const * warhead, LandType land, Coord const & coord)
 {
 	if (damage == 0 || warhead == NULL) {
@@ -118,7 +131,7 @@ AnimTypeClass const * Combat_Anim(int damage, WarheadTypeClass const * warhead, 
 namespace FPSCounter { extern unsigned CurrentFrameRate; }
 namespace Detail { unsigned GetMinFrameRate(void); }
 
-// FUNCTION: 0x0048A620
+// FUNCTION: GAMEMD 0x0048A620
 void Combat_Lighting(int damage, WarheadTypeClass const * warhead, Coord coord, bool forced, unsigned int disable_flags)
 {
 	if ((Options.DetailLevel && FPSCounter::CurrentFrameRate >= Detail::GetMinFrameRate()) || (disable_flags & 0xF)) {
@@ -142,7 +155,7 @@ void Combat_Lighting(int damage, WarheadTypeClass const * warhead, Coord coord, 
 	}
 }
 
-// FUNCTION: 0x0048A700
+// FUNCTION: GAMEMD 0x0048A700
 void Wide_Area_Damage(Coord const & coord, LEPTON radius, int rawdamage, TechnoClass * source, WarheadTypeClass const * warhead)
 {
 	if (warhead == NULL) return;
@@ -174,7 +187,7 @@ void Wide_Area_Damage(Coord const & coord, LEPTON radius, int rawdamage, TechnoC
 	}
 }
 
-// FUNCTION: 0x0048A8D0
+// FUNCTION: GAMEMD 0x0048A8D0
 bool Calculate_Projectile_Pitch(bool high_arc, int speed, int distance, int height, double gravity, DirType & pitch)
 {
 	double angle;
@@ -196,7 +209,7 @@ bool Calculate_Projectile_Pitch(bool high_arc, int speed, int distance, int heig
 	return(false);
 }
 
-// FUNCTION: 0x0048A9D0
+// FUNCTION: GAMEMD 0x0048A9D0
 bool Calculate_Projectile_Angle(bool high_arc, int speed, int distance, int height, double gravity, double & angle)
 {
 	if (height > 0) {
@@ -240,7 +253,7 @@ bool Calculate_Projectile_Angle(bool high_arc, int speed, int distance, int heig
 	return(false);
 }
 
-// FUNCTION: 0x0048AB20
+// FUNCTION: GAMEMD 0x0048AB20
 bool Calculate_Projectile_Dir(int speed, int distance, int height, double gravity, DirType & dir)
 {
 	double angle;
@@ -254,13 +267,13 @@ bool Calculate_Projectile_Dir(int speed, int distance, int height, double gravit
 	return(false);
 }
 
-// FUNCTION: 0x0048AB90
+// FUNCTION: GAMEMD 0x0048AB90
 MPHType Calculate_Projectile_Speed(int range, double gravity)
 {
 	return((MPHType)(int)fastmath::sqrt((double)range * gravity * 1.2));
 }
 
-// FUNCTION: 0x0048ABC0
+// FUNCTION: GAMEMD 0x0048ABC0
 bool Is_Projectile_Trajectory_Valid(int speed, int distance, int height, double gravity)
 {
 	double v = (double)speed;
@@ -295,34 +308,48 @@ bool Is_Projectile_Trajectory_Valid(int speed, int distance, int height, double 
 	return(false);
 }
 
-// FUNCTION: 0x0048ACE0
+// FUNCTION: GAMEMD 0x0048ACE0
 int Get_Explosion_Z(Coord coord)
 {
 	return(-15);
 }
 
-// FUNCTION: 0x0048ACF0
+// FUNCTION: GAMEMD 0x0048ACF0
 double Get_Floater_Gravity(void)
 {
 	return(Rule->Gravity * 0.5);
 }
 
-// FUNCTION: 0x0048AD10 ?$DynamicVectorClass@PAUDamageGroup@@::Clear
-// FUNCTION: 0x0048AD40 ?$DynamicVectorClass@PAUDamageGroup@@::ID
+// TEMPLATE: GAMEMD 0x0048AD10
+// ?Clear@?$DynamicVectorClass@PAUDamageGroup@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0048AD40
+// ?ID@?$DynamicVectorClass@PAUDamageGroup@@@@UAEHPBQAUDamageGroup@@@Z
 template class DynamicVectorClass<DamageGroup *>;
 
-// FUNCTION: 0x0048AD60 ?$VectorClass@PAUDamageGroup@@::GetItem
+// TEMPLATE: GAMEMD 0x0048AD60
+// ?GetItem@?$VectorClass@PAUDamageGroup@@@@UBEPAUDamageGroup@@H@Z
 
-// FUNCTION: 0x0048AD70 ?$VectorClass@PAUDamageGroup@@::operator==
-// FUNCTION: 0x0048ADB0 ?$VectorClass@PAUDamageGroup@@::Resize
-// FUNCTION: 0x0048AE60 ?$VectorClass@PAUDamageGroup@@::Clear
-// FUNCTION: 0x0048AE90 ?$VectorClass@PAUDamageGroup@@::ID
-// FUNCTION: 0x0048AED0 ?$VectorClass@PAUDamageGroup@@::ID
-// FUNCTION: 0x0048AEF0 ?$DynamicVectorClass@PAUDamageGroup@@::Resize
-// FUNCTION: 0x0048AFA0 ?$DynamicVectorClass@PAUDamageGroup@@::ID
-// FUNCTION: 0x0048AFD0 ?$DynamicVectorClass@PAUDamageGroup@@::~?$DynamicVectorClass@PAUDamageGroup@@
-// FUNCTION: 0x0048B020 ?$VectorClass@PAUDamageGroup@@::~?$VectorClass@PAUDamageGroup@@
-// FUNCTION: 0x0048B070 ?$VectorClass@PAUDamageGroup@@::?$VectorClass@PAUDamageGroup@@
+// TEMPLATE: GAMEMD 0x0048AD70
+// ??8?$VectorClass@PAUDamageGroup@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x0048ADB0
+// ?Resize@?$VectorClass@PAUDamageGroup@@@@UAE_NHPBQAUDamageGroup@@@Z
+// TEMPLATE: GAMEMD 0x0048AE60
+// ?Clear@?$VectorClass@PAUDamageGroup@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0048AE90
+// ?ID@?$VectorClass@PAUDamageGroup@@@@UAEHABQAUDamageGroup@@@Z
+// TEMPLATE: GAMEMD 0x0048AED0
+// ?ID@?$VectorClass@PAUDamageGroup@@@@UAEHPBQAUDamageGroup@@@Z
+// TEMPLATE: GAMEMD 0x0048AEF0
+// ?Resize@?$DynamicVectorClass@PAUDamageGroup@@@@UAE_NHPBQAUDamageGroup@@@Z
+// TEMPLATE: GAMEMD 0x0048AFA0
+// ?ID@?$DynamicVectorClass@PAUDamageGroup@@@@UAEHABQAUDamageGroup@@@Z
+// SYNTHETIC: GAMEMD 0x0048AFD0
+// ??_G?$DynamicVectorClass@PAUDamageGroup@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x0048B020
+// ??_G?$VectorClass@PAUDamageGroup@@@@UAEPAXI@Z
+// TEMPLATE: GAMEMD 0x0048B070
+// ??0?$VectorClass@PAUDamageGroup@@@@QAE@HPBQAUDamageGroup@@@Z
 template class VectorClass<DamageGroup *>;
 
-// FUNCTION: 0x0048B0C0 $E41
+// SYNTHETIC: GAMEMD 0x0048B0C0 SYMBOL
+// _$E41

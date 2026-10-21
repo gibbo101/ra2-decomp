@@ -7,19 +7,19 @@
 #include "crc.h"
 #include <cstring>
 
-// FUNCTION: 0x004A1C10
+// FUNCTION: GAMEMD 0x004A1C10
 void CRCEngine::operator() (char datum)
 {
 	Submit(datum);
 }
 
-// FUNCTION: 0x004A1CA0
+// FUNCTION: GAMEMD 0x004A1CA0
 void CRCEngine::operator() (bool datum)
 {
 	Submit(datum != false);
 }
 
-// FUNCTION: 0x004A1D30
+// FUNCTION: GAMEMD 0x004A1D30
 void CRCEngine::operator() (short datum)
 {
 	union {
@@ -32,7 +32,7 @@ void CRCEngine::operator() (short datum)
 	(*this)(&_datum.Composite, sizeof(_datum.Composite));
 }
 
-// FUNCTION: 0x004A1D50
+// FUNCTION: GAMEMD 0x004A1D50
 void CRCEngine::operator() (int datum)
 {
 	union {
@@ -45,7 +45,7 @@ void CRCEngine::operator() (int datum)
 	(*this)(&_datum.Composite, sizeof(_datum.Composite));
 }
 
-// FUNCTION: 0x004A1D70
+// FUNCTION: GAMEMD 0x004A1D70
 void CRCEngine::operator() (float datum)
 {
 	union {
@@ -58,7 +58,7 @@ void CRCEngine::operator() (float datum)
 	(*this)(&_datum.Composite, sizeof(_datum.Composite));
 }
 
-// FUNCTION: 0x004A1D90
+// FUNCTION: GAMEMD 0x004A1D90
 void CRCEngine::operator() (double datum)
 {
 	double _datum = datum;
@@ -66,7 +66,7 @@ void CRCEngine::operator() (double datum)
 	(*this)(&_datum, sizeof(_datum));
 }
 
-// FUNCTION: 0x004A1DB0
+// FUNCTION: GAMEMD 0x004A1DB0
 void CRCEngine::operator() (const char * buffer)
 {
 	if (buffer != NULL) {
@@ -74,7 +74,7 @@ void CRCEngine::operator() (const char * buffer)
 	}
 }
 
-// FUNCTION: 0x004A1DE0
+// FUNCTION: GAMEMD 0x004A1DE0
 int CRCEngine::operator() (void const * buffer, int length)
 {
 	if (buffer != NULL && length > 0)  {
@@ -106,7 +106,7 @@ int CRCEngine::operator() (void const * buffer, int length)
 	return(Value());
 }
 
-// FUNCTION: 0x004A1FB0
+// FUNCTION: GAMEMD 0x004A1FB0
 unsigned int	CRC::Memory( unsigned char *data, unsigned int length, unsigned int crc )
 {
 	crc ^= 0xFFFFFFFF;
@@ -116,7 +116,7 @@ unsigned int	CRC::Memory( unsigned char *data, unsigned int length, unsigned int
 	return(crc ^ 0xFFFFFFFF);
 }
 
-// FUNCTION: 0x004A1FF0
+// FUNCTION: GAMEMD 0x004A1FF0
 unsigned int	CRC::String( const char *string, unsigned int crc)
 {
 	crc ^= 0xFFFFFFFF;

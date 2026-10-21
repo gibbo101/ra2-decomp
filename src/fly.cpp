@@ -39,7 +39,7 @@
 #include "layer.hh"
 #include <new.h>
 
-// FUNCTION: 0x004CC9A0
+// FUNCTION: GAMEMD 0x004CC9A0
 FlyLocomotionClass::FlyLocomotionClass(void) :
 	BASECLASS(),
 	AirportBound(false),
@@ -59,7 +59,7 @@ FlyLocomotionClass::FlyLocomotionClass(void) :
 {
 }
 
-// FUNCTION: 0x004CCA20
+// FUNCTION: GAMEMD 0x004CCA20
 HRESULT STDMETHODCALLTYPE FlyLocomotionClass::Link_To_Object(void * object)
 {
 	HRESULT result = BASECLASS::Link_To_Object(object);
@@ -73,18 +73,18 @@ HRESULT STDMETHODCALLTYPE FlyLocomotionClass::Link_To_Object(void * object)
 	return(result);
 }
 
-// FUNCTION: 0x004CCA70
+// FUNCTION: GAMEMD 0x004CCA70
 FlyLocomotionClass::~FlyLocomotionClass(void)
 {
 }
 
-// FUNCTION: 0x004CCA90
+// FUNCTION: GAMEMD 0x004CCA90
 boolean STDMETHODCALLTYPE FlyLocomotionClass::Is_Moving(void)
 {
 	return(IsMoving || LinkedTo->PitchAngle > 0);
 }
 
-// FUNCTION: 0x004CCAC0
+// FUNCTION: GAMEMD 0x004CCAC0
 boolean STDMETHODCALLTYPE FlyLocomotionClass::Is_Moving_Now(void)
 {
 	if (CurrentSpeed == 0) {
@@ -93,7 +93,7 @@ boolean STDMETHODCALLTYPE FlyLocomotionClass::Is_Moving_Now(void)
 	return(true);
 }
 
-// FUNCTION: 0x004CCAE0
+// FUNCTION: GAMEMD 0x004CCAE0
 CoordStruct STDMETHODCALLTYPE FlyLocomotionClass::Destination(void)
 {
 	if (Is_Moving()) {
@@ -102,7 +102,7 @@ CoordStruct STDMETHODCALLTYPE FlyLocomotionClass::Destination(void)
 	return(COORD_NONE);
 }
 
-// FUNCTION: 0x004CCB40
+// FUNCTION: GAMEMD 0x004CCB40
 boolean STDMETHODCALLTYPE FlyLocomotionClass::Process(void)
 {
 	if (!IsLanding && !IsTakingOff && TargetSpeed >= 1.0 && FlightLevel == 0) {
@@ -135,7 +135,7 @@ boolean STDMETHODCALLTYPE FlyLocomotionClass::Process(void)
 	return(Is_Moving());
 }
 
-// FUNCTION: 0x004CCC80
+// FUNCTION: GAMEMD 0x004CCC80
 void STDMETHODCALLTYPE FlyLocomotionClass::Move_To(CoordStruct to)
 {
 	if (((Coord)to).As_Cell() != DestinationCoord.As_Cell() || !IsLanding) {
@@ -186,7 +186,7 @@ void STDMETHODCALLTYPE FlyLocomotionClass::Move_To(CoordStruct to)
 	}
 }
 
-// FUNCTION: 0x004CCFD0
+// FUNCTION: GAMEMD 0x004CCFD0
 void STDMETHODCALLTYPE FlyLocomotionClass::Stop_Moving(void)
 {
 	if (Is_Moving()) {
@@ -234,7 +234,7 @@ void STDMETHODCALLTYPE FlyLocomotionClass::Stop_Moving(void)
 	}
 }
 
-// FUNCTION: 0x004CD2A0
+// FUNCTION: GAMEMD 0x004CD2A0
 bool FlyLocomotionClass::Landing_Takeoff_AI(void)
 {
 	FootClass * foot = LinkedTo;
@@ -298,7 +298,7 @@ bool FlyLocomotionClass::Landing_Takeoff_AI(void)
 	return(false);
 }
 
-// FUNCTION: 0x004CD510
+// FUNCTION: GAMEMD 0x004CD510
 bool FlyLocomotionClass::Edge_Of_World_AI(void)
 {
 	if (!Map.In_Local_Radar((Coord const &)LinkedTo->PositionCoord)) {
@@ -327,7 +327,7 @@ bool FlyLocomotionClass::Edge_Of_World_AI(void)
 	return(false);
 }
 
-// FUNCTION: 0x004CE4B0
+// FUNCTION: GAMEMD 0x004CE4B0
 ImpactType FlyLocomotionClass::Physics(Coord & coord, DirType facing)
 {
 	int actual = Apparent_Speed();
@@ -347,7 +347,7 @@ ImpactType FlyLocomotionClass::Physics(Coord & coord, DirType facing)
 	return(IMPACT_NONE);
 }
 
-// FUNCTION: 0x004CE5A0
+// FUNCTION: GAMEMD 0x004CE5A0
 void FlyLocomotionClass::Rotation_AI(void)
 {
 	if (IsTumbling && LinkedTo->Strength > 0) {
@@ -367,7 +367,7 @@ void FlyLocomotionClass::Rotation_AI(void)
 	}
 }
 
-// FUNCTION: 0x004CE680
+// FUNCTION: GAMEMD 0x004CE680
 bool FlyLocomotionClass::Process_Take_Off(void)
 {
 	int height = LinkedTo->HeightAGL;
@@ -398,7 +398,7 @@ bool FlyLocomotionClass::Process_Take_Off(void)
 	return(true);
 }
 
-// FUNCTION: 0x004CF610
+// FUNCTION: GAMEMD 0x004CF610
 Matrix3DStruct STDMETHODCALLTYPE FlyLocomotionClass::Draw_Matrix(int * key)
 {
 	Matrix3D mtx;
@@ -452,7 +452,7 @@ Matrix3DStruct STDMETHODCALLTYPE FlyLocomotionClass::Draw_Matrix(int * key)
 	return((Matrix3DStruct &)mtx);
 }
 
-// FUNCTION: 0x004CF830
+// FUNCTION: GAMEMD 0x004CF830
 Point2DStruct STDMETHODCALLTYPE FlyLocomotionClass::Draw_Point(void)
 {
 	int y = 0;
@@ -470,13 +470,13 @@ Point2DStruct STDMETHODCALLTYPE FlyLocomotionClass::Draw_Point(void)
 	return(Point2D(0, y));
 }
 
-// FUNCTION: 0x004CF940
+// FUNCTION: GAMEMD 0x004CF940
 Point2DStruct STDMETHODCALLTYPE FlyLocomotionClass::Shadow_Point(void)
 {
 	return(Point2D(0, 0));
 }
 
-// FUNCTION: 0x004CF950
+// FUNCTION: GAMEMD 0x004CF950
 void FlyLocomotionClass::Take_Off(void)
 {
 	if (!LinkedTo->IsUnderEMP() && !LinkedTo->IsParalyzed() && !LinkedTo->IsBeingWarpedOut() && !LinkedTo->IsWarpingIn()) {
@@ -497,7 +497,7 @@ void FlyLocomotionClass::Take_Off(void)
 	}
 }
 
-// FUNCTION: 0x004CFA70
+// FUNCTION: GAMEMD 0x004CFA70
 void FlyLocomotionClass::Land(void)
 {
 	if (LinkedTo->Get_Mission() != MISSION_ENTER && LinkedTo->FUN_00705D60()) {
@@ -520,7 +520,7 @@ void FlyLocomotionClass::Land(void)
 	FlightLevel = 0;
 }
 
-// FUNCTION: 0x004CFB00
+// FUNCTION: GAMEMD 0x004CFB00
 Matrix3DStruct STDMETHODCALLTYPE FlyLocomotionClass::Shadow_Matrix(int * key)
 {
 	int ramp = Map[(Coord const &)LinkedTo->PositionCoord].Ramp;
@@ -538,13 +538,13 @@ Matrix3DStruct STDMETHODCALLTYPE FlyLocomotionClass::Shadow_Matrix(int * key)
 	return((Matrix3DStruct &)matrix);
 }
 
-// FUNCTION: 0x004CFC10
+// FUNCTION: GAMEMD 0x004CFC10
 void STDMETHODCALLTYPE FlyLocomotionClass::Do_Turn(DirStruct coord)
 {
 	LinkedTo->SecondaryFacing.Set(coord);
 }
 
-// FUNCTION: 0x004CFC40
+// FUNCTION: GAMEMD 0x004CFC40
 bool FlyLocomotionClass::Is_In_Flight(void)
 {
 	if (!IsLanding && (!IsTakingOff || LinkedTo->HeightAGL >= FlightLevel / 2)) {
@@ -553,7 +553,7 @@ bool FlyLocomotionClass::Is_In_Flight(void)
 	return(false);
 }
 
-// FUNCTION: 0x004CFC80
+// FUNCTION: GAMEMD 0x004CFC80
 HRESULT STDMETHODCALLTYPE FlyLocomotionClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -561,7 +561,7 @@ HRESULT STDMETHODCALLTYPE FlyLocomotionClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x004CFCC0
+// FUNCTION: GAMEMD 0x004CFCC0
 HRESULT STDMETHODCALLTYPE FlyLocomotionClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -571,13 +571,13 @@ HRESULT STDMETHODCALLTYPE FlyLocomotionClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x004CFCF0
+// FUNCTION: GAMEMD 0x004CFCF0
 LayerType STDMETHODCALLTYPE FlyLocomotionClass::In_Which_Layer(void)
 {
 	return(LinkedTo->HeightAGL <= 0 ? LAYER_GROUND : LAYER_TOP);
 }
 
-// FUNCTION: 0x004CFD20
+// FUNCTION: GAMEMD 0x004CFD20
 boolean STDMETHODCALLTYPE FlyLocomotionClass::Power_Off(void)
 {
 	if (Is_Moving()) {
@@ -588,19 +588,19 @@ boolean STDMETHODCALLTYPE FlyLocomotionClass::Power_Off(void)
 	return(BASECLASS::Power_Off());
 }
 
-// FUNCTION: 0x004CFD90
+// FUNCTION: GAMEMD 0x004CFD90
 boolean STDMETHODCALLTYPE FlyLocomotionClass::Is_Powered(void)
 {
 	return(BASECLASS::Is_Powered());
 }
 
-// FUNCTION: 0x004CFDA0
+// FUNCTION: GAMEMD 0x004CFDA0
 boolean STDMETHODCALLTYPE FlyLocomotionClass::Is_Ion_Sensitive(void)
 {
 	return(!LinkedTo->TClass->IsHunterSeeker);
 }
 
-// FUNCTION: 0x004CFDD0
+// FUNCTION: GAMEMD 0x004CFDD0
 void FlyLocomotionClass::Tumble(void)
 {
 	IsTumbling = true;
@@ -610,13 +610,13 @@ void FlyLocomotionClass::Tumble(void)
 	}
 }
 
-// FUNCTION: 0x004CFE20
+// FUNCTION: GAMEMD 0x004CFE20
 int STDMETHODCALLTYPE FlyLocomotionClass::Apparent_Speed(void)
 {
 	return(LinkedTo->TClass->MaxSpeed * CurrentSpeed);
 }
 
-// FUNCTION: 0x004CFE50
+// FUNCTION: GAMEMD 0x004CFE50
 int STDMETHODCALLTYPE FlyLocomotionClass::Get_Status(void)
 {
 	if (IsLanding) {
@@ -631,7 +631,7 @@ int STDMETHODCALLTYPE FlyLocomotionClass::Get_Status(void)
 	return(3);
 }
 
-// FUNCTION: 0x004CFE80
+// FUNCTION: GAMEMD 0x004CFE80
 void STDMETHODCALLTYPE FlyLocomotionClass::Acquire_Hunter_Seeker_Target(void)
 {
 	if (LinkedTo->TarCom == NULL) {
@@ -676,7 +676,7 @@ void STDMETHODCALLTYPE FlyLocomotionClass::Acquire_Hunter_Seeker_Target(void)
 	}
 }
 
-// FUNCTION: 0x004D02B0
+// FUNCTION: GAMEMD 0x004D02B0
 bool FlyLocomotionClass::Is_Locked_To_Straight_Flight(void)
 {
 	if (DestinationCoord.Z > Map.Get_Height_GL(DestinationCoord) + 120) {
@@ -695,24 +695,34 @@ bool FlyLocomotionClass::Is_Locked_To_Straight_Flight(void)
 	return(false);
 }
 
-// FUNCTION: 0x004D0390 FlyLocomotionClass::Fetch_Object_Size
+// FUNCTION: GAMEMD 0x004D0390
+// FlyLocomotionClass::Fetch_Object_Size
 
-// FUNCTION: 0x004D03A0 FlyLocomotionClass::~FlyLocomotionClass
+// SYNTHETIC: GAMEMD 0x004D03A0
+// ??_GFlyLocomotionClass@@UAEPAXI@Z
 
-// FUNCTION: 0x004D0400 ?$_com_ptr_t@V?$_com_IIID@UIFlyControl@@$1?_GUID_820f501c_4f39_11d2_9b70_00104b972fe8@@3U__s_GUID@@A@@::operator==
+// TEMPLATE: GAMEMD 0x004D0400
+// ??8?$_com_ptr_t@V?$_com_IIID@UIFlyControl@@$1?_GUID_820f501c_4f39_11d2_9b70_00104b972fe8@@3U__s_GUID@@A@@@@QAE_NH@Z
 
-// FUNCTION: 0x004D0430 ?$_com_ptr_t@V?$_com_IIID@UIFlyControl@@$1?_GUID_820f501c_4f39_11d2_9b70_00104b972fe8@@3U__s_GUID@@A@@::_Release
+// TEMPLATE: GAMEMD 0x004D0430
+// ?_Release@?$_com_ptr_t@V?$_com_IIID@UIFlyControl@@$1?_GUID_820f501c_4f39_11d2_9b70_00104b972fe8@@3U__s_GUID@@A@@@@AAEXXZ
 
-// FUNCTION: 0x004D0440 ?$VectorClass@PAVObjectClass@@::?$VectorClass@PAVObjectClass@@
+// TEMPLATE: GAMEMD 0x004D0440
+// ??0?$VectorClass@PAVObjectClass@@@@QAE@HPBQAVObjectClass@@@Z
 
-// FUNCTION: 0x004D0490 ?$_com_ptr_t@V?$_com_IIID@UIFlyControl@@$1?_GUID_820f501c_4f39_11d2_9b70_00104b972fe8@@3U__s_GUID@@A@@::_QueryInterface
+// TEMPLATE: GAMEMD 0x004D0490
+// ?_QueryInterface@?$_com_ptr_t@V?$_com_IIID@UIFlyControl@@$1?_GUID_820f501c_4f39_11d2_9b70_00104b972fe8@@3U__s_GUID@@A@@@@AAEJABQAUIDispatch@@@Z
 
 template class _com_ptr_t<_com_IIID<IFlyControl, &__uuidof(IFlyControl)> >;
 
-// FUNCTION: 0x004D0510 LocomotionClass::QueryInterface
+// FUNCTION: GAMEMD 0x004D0510
+// LocomotionClass::QueryInterface
 
-// FUNCTION: 0x004D0520 LocomotionClass::AddRef
+// FUNCTION: GAMEMD 0x004D0520
+// LocomotionClass::AddRef
 
-// FUNCTION: 0x004D0530 LocomotionClass::Release
+// FUNCTION: GAMEMD 0x004D0530
+// LocomotionClass::Release
 
-// FUNCTION: 0x004D0540 $E13
+// SYNTHETIC: GAMEMD 0x004D0540 SYMBOL
+// _$E13

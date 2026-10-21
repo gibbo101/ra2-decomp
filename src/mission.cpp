@@ -16,7 +16,7 @@
 
 namespace Unsorted { extern int CurrentFrame; }
 
-// FUNCTION: 0x005B2DA0
+// FUNCTION: GAMEMD 0x005B2DA0
 MissionClass::MissionClass(void) :
 	BASECLASS(),
 	CurrentMission(MISSION_NONE),
@@ -30,175 +30,175 @@ MissionClass::MissionClass(void) :
 {
 }
 
-// FUNCTION: 0x005B2E10
+// FUNCTION: GAMEMD 0x005B2E10
 int MissionClass::Do_MISSION_SLEEP(void)
 {
 	return(TICKS_PER_SECOND*30);
 }
 
-// FUNCTION: 0x005B2E20
+// FUNCTION: GAMEMD 0x005B2E20
 int MissionClass::Do_MISSION_HARMLESS(void)
 {
 	return(TICKS_PER_SECOND*30);
 }
 
-// FUNCTION: 0x005B2E30
+// FUNCTION: GAMEMD 0x005B2E30
 int MissionClass::Do_MISSION_AMBUSH(void)
 {
 	return(TICKS_PER_SECOND*30);
 }
 
-// FUNCTION: 0x005B2E40
+// FUNCTION: GAMEMD 0x005B2E40
 int MissionClass::Do_MISSION_ATTACK(void)
 {
 	return(TICKS_PER_SECOND*30);
 }
 
-// FUNCTION: 0x005B2E50
+// FUNCTION: GAMEMD 0x005B2E50
 int MissionClass::Do_MISSION_CAPTURE(void)
 {
 	return(TICKS_PER_SECOND*30);
 }
 
-// FUNCTION: 0x005B2E60
+// FUNCTION: GAMEMD 0x005B2E60
 int MissionClass::Do_MISSION_EATEN(void)
 {
 	return(TICKS_PER_SECOND*30);
 }
 
-// FUNCTION: 0x005B2E70
+// FUNCTION: GAMEMD 0x005B2E70
 int MissionClass::Do_MISSION_GUARD(void)
 {
 	return(TICKS_PER_SECOND*30);
 }
 
-// FUNCTION: 0x005B2E80
+// FUNCTION: GAMEMD 0x005B2E80
 int MissionClass::Do_MISSION_GUARD_AREA(void)
 {
 	return(TICKS_PER_SECOND*30);
 }
 
-// FUNCTION: 0x005B2E90
+// FUNCTION: GAMEMD 0x005B2E90
 int MissionClass::Do_MISSION_HARVEST(void)
 {
 	return(TICKS_PER_SECOND*30);
 }
 
-// FUNCTION: 0x005B2EA0
+// FUNCTION: GAMEMD 0x005B2EA0
 int MissionClass::Do_MISSION_HUNT(void)
 {
 	return(TICKS_PER_SECOND*30);
 }
 
-// FUNCTION: 0x005B2EB0
+// FUNCTION: GAMEMD 0x005B2EB0
 int MissionClass::Do_MISSION_MOVE(void)
 {
 	return(TICKS_PER_SECOND*30);
 }
 
-// FUNCTION: 0x005B2EC0
+// FUNCTION: GAMEMD 0x005B2EC0
 int MissionClass::Do_MISSION_RETREAT(void)
 {
 	return(TICKS_PER_SECOND*30);
 }
 
-// FUNCTION: 0x005B2ED0
+// FUNCTION: GAMEMD 0x005B2ED0
 int MissionClass::Do_MISSION_RETURN(void)
 {
 	return(TICKS_PER_SECOND*30);
 }
 
-// FUNCTION: 0x005B2EE0
+// FUNCTION: GAMEMD 0x005B2EE0
 int MissionClass::Do_MISSION_STOP(void)
 {
 	return(TICKS_PER_SECOND*30);
 }
 
-// FUNCTION: 0x005B2EF0
+// FUNCTION: GAMEMD 0x005B2EF0
 int MissionClass::Do_MISSION_UNLOAD(void)
 {
 	return(TICKS_PER_SECOND*30);
 }
 
-// FUNCTION: 0x005B2F00
+// FUNCTION: GAMEMD 0x005B2F00
 int MissionClass::Do_MISSION_ENTER(void)
 {
 	return(TICKS_PER_SECOND*30);
 }
 
-// FUNCTION: 0x005B2F10
+// FUNCTION: GAMEMD 0x005B2F10
 int MissionClass::Do_MISSION_CONSTRUCTION(void)
 {
 	return(TICKS_PER_SECOND*30);
 }
 
-// FUNCTION: 0x005B2F20
+// FUNCTION: GAMEMD 0x005B2F20
 int MissionClass::Do_MISSION_DECONSTRUCTION(void)
 {
 	return(TICKS_PER_SECOND*30);
 }
 
-// FUNCTION: 0x005B2F30
+// FUNCTION: GAMEMD 0x005B2F30
 int MissionClass::Do_MISSION_REPAIR(void)
 {
 	return(TICKS_PER_SECOND*30);
 }
 
-// FUNCTION: 0x005B2F40
+// FUNCTION: GAMEMD 0x005B2F40
 int MissionClass::Do_MISSION_MISSILE(void)
 {
 	return(TICKS_PER_SECOND*30);
 }
 
-// FUNCTION: 0x005B2F50
+// FUNCTION: GAMEMD 0x005B2F50
 int MissionClass::Do_MISSION_OPEN(void)
 {
 	return(TICKS_PER_SECOND*30);
 }
 
-// FUNCTION: 0x005B2F60
+// FUNCTION: GAMEMD 0x005B2F60
 int MissionClass::Do_MISSION_RESCUE(void)
 {
 	return(TICKS_PER_SECOND*30);
 }
 
-// FUNCTION: 0x005B2F70
+// FUNCTION: GAMEMD 0x005B2F70
 int MissionClass::Do_MISSION_PATROL(void)
 {
 	return(TICKS_PER_SECOND*30);
 }
 
-// FUNCTION: 0x005B2F80
+// FUNCTION: GAMEMD 0x005B2F80
 int MissionClass::Do_MISSION_PARADROP_APPROACH(void)
 {
 	return(TICKS_PER_SECOND*30);
 }
 
-// FUNCTION: 0x005B2F90
+// FUNCTION: GAMEMD 0x005B2F90
 int MissionClass::Do_MISSION_PARADROP_OVERFLY(void)
 {
 	return(TICKS_PER_SECOND*30);
 }
 
-// FUNCTION: 0x005B2FA0
+// FUNCTION: GAMEMD 0x005B2FA0
 int MissionClass::Do_MISSION_WAIT(void)
 {
 	return(TICKS_PER_SECOND*30);
 }
 
-// FUNCTION: 0x005B2FB0
+// FUNCTION: GAMEMD 0x005B2FB0
 int MissionClass::Do_MISSION_SPYPLANE_APPROACH(void)
 {
 	return(TICKS_PER_SECOND*30);
 }
 
-// FUNCTION: 0x005B2FC0
+// FUNCTION: GAMEMD 0x005B2FC0
 int MissionClass::Do_MISSION_SPYPLANE_OVERFLY(void)
 {
 	return(TICKS_PER_SECOND*30);
 }
 
-// FUNCTION: 0x005B2FD0
+// FUNCTION: GAMEMD 0x005B2FD0
 void MissionClass::Set_Mission(MissionType mission)
 {
 	if (CurrentMission == MISSION_WAIT && mission == MISSION_GUARD) {
@@ -213,13 +213,13 @@ void MissionClass::Set_Mission(MissionType mission)
 	Timer = 0;
 }
 
-// FUNCTION: 0x005B3040
+// FUNCTION: GAMEMD 0x005B3040
 MissionType MissionClass::Get_Mission(void) const
 {
 	return(CurrentMission == MISSION_NONE ? MissionQueue : CurrentMission);
 }
 
-// FUNCTION: 0x005B3060
+// FUNCTION: GAMEMD 0x005B3060
 void MissionClass::AI(void)
 {
 	BASECLASS::AI();
@@ -276,7 +276,7 @@ void MissionClass::AI(void)
 	}
 }
 
-// FUNCTION: 0x005B3570
+// FUNCTION: GAMEMD 0x005B3570
 bool MissionClass::Commence(void)
 {
 	if (MissionQueue != MISSION_NONE) {
@@ -292,7 +292,7 @@ bool MissionClass::Commence(void)
 	return(false);
 }
 
-// FUNCTION: 0x005B35E0
+// FUNCTION: GAMEMD 0x005B35E0
 void MissionClass::QueueMission(MissionType mission, bool start)
 {
 	if (CurrentMission == MISSION_WAIT && mission == MISSION_GUARD) {
@@ -310,7 +310,7 @@ void MissionClass::QueueMission(MissionType mission, bool start)
 	}
 }
 
-// FUNCTION: 0x005B3650
+// FUNCTION: GAMEMD 0x005B3650
 void MissionClass::Override_Mission(MissionType mission, AbstractClass *, AbstractClass *)
 {
 	if (CurrentMission == MISSION_WAIT && mission == MISSION_GUARD) {
@@ -328,7 +328,7 @@ void MissionClass::Override_Mission(MissionType mission, AbstractClass *, Abstra
 	IsMissionUnloadStandby = false;
 }
 
-// FUNCTION: 0x005B36B0
+// FUNCTION: GAMEMD 0x005B36B0
 bool MissionClass::Restore_Mission(void)
 {
 	if (SuspendedMission != MISSION_NONE) {
@@ -340,7 +340,7 @@ bool MissionClass::Restore_Mission(void)
 	return(false);
 }
 
-// FUNCTION: 0x005B36E0
+// FUNCTION: GAMEMD 0x005B36E0
 bool MissionClass::Is_Recruitable_Mission(MissionType mission)
 {
 	if (mission == MISSION_NONE) {
@@ -349,7 +349,7 @@ bool MissionClass::Is_Recruitable_Mission(MissionType mission)
 	return(MissionControl[mission].IsRecruitable);
 }
 
-// FUNCTION: 0x005B3700
+// FUNCTION: GAMEMD 0x005B3700
 MissionControlClass::MissionControlClass(void) :
 	Mission(MISSION_NONE),
 	IsNoThreat(false),
@@ -363,7 +363,7 @@ MissionControlClass::MissionControlClass(void) :
 {
 }
 
-// FUNCTION: 0x005B3740
+// FUNCTION: GAMEMD 0x005B3740
 char const * MissionControlClass::Name(void) const
 {
 	if (Mission == MISSION_NONE) {
@@ -372,7 +372,7 @@ char const * MissionControlClass::Name(void) const
 	return(Missions[Mission]);
 }
 
-// FUNCTION: 0x005B3760
+// FUNCTION: GAMEMD 0x005B3760
 bool MissionControlClass::Read_INI(CCINIClass & ini)
 {
 	ini.Reset();
@@ -393,7 +393,7 @@ bool MissionControlClass::Read_INI(CCINIClass & ini)
 	return(false);
 }
 
-// FUNCTION: 0x005B3910
+// FUNCTION: GAMEMD 0x005B3910
 MissionType MissionClass::Mission_From_Name(char const * name)
 {
 	MissionType	order;
@@ -408,13 +408,13 @@ MissionType MissionClass::Mission_From_Name(char const * name)
 	return(MISSION_NONE);
 }
 
-// FUNCTION: 0x005B3950
+// FUNCTION: GAMEMD 0x005B3950
 char const * MissionClass::Mission_Name(MissionType mission)
 {
 	return(mission != MISSION_NONE ? Missions[mission] : "<none>");
 }
 
-// FUNCTION: 0x005B3970
+// FUNCTION: GAMEMD 0x005B3970
 void MissionClass::Compute_CRC(CRCEngine & crc) const
 {
 	BASECLASS::Compute_CRC(crc);
@@ -426,26 +426,29 @@ void MissionClass::Compute_CRC(CRCEngine & crc) const
 	crc(CurrentMissionStartTime);
 }
 
-// FUNCTION: 0x005B3A00
+// FUNCTION: GAMEMD 0x005B3A00
 MissionControlClass const & MissionClass::Current_Mission_Control(void) const
 {
 	return(MissionControl[CurrentMission]);
 }
 
-// FUNCTION: 0x005B3A10
+// FUNCTION: GAMEMD 0x005B3A10
 bool MissionClass::Has_Suspended_Mission(void) const
 {
 	return(SuspendedMission != MISSION_NONE);
 }
 
-// FUNCTION: 0x005B3A20
+// FUNCTION: GAMEMD 0x005B3A20
 int MissionClass::Mission_Timer_Value(void) const
 {
 	return(Timer);
 }
 
-// FUNCTION: 0x005B3A50 ObjectClass::Draw_It
+// TEMPLATE: GAMEMD 0x005B3A50
+// ?Draw_It@ObjectClass@@UBEXABVPoint2D@@ABV?$TRect@H@@@Z
 
-// FUNCTION: 0x005B3A60 MissionClass::~MissionClass
+// SYNTHETIC: GAMEMD 0x005B3A60
+// ??_GMissionClass@@UAEPAXI@Z
 
-// FUNCTION: 0x005B3AA0 $E1
+// SYNTHETIC: GAMEMD 0x005B3AA0 SYMBOL
+// _$E10

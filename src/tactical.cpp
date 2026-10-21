@@ -81,21 +81,28 @@ static double PixelsPerLepton;
 static double ZPixelsPerLepton = fastmath::sin(RAD_60) * (PixelsPerLepton = 60.0 / CELL_LEPTON_DIAG);
 static double ZLeptonsPerPixel = CELL_LEPTON_DIAG / (fastmath::sin(RAD_60) * 60.0);
 
-// FUNCTION: 0x006D1A60 $E198
+// SYNTHETIC: GAMEMD 0x006D1A60 SYMBOL
+// _$E198
 
-// FUNCTION: 0x006D1AA0 $E195
+// SYNTHETIC: GAMEMD 0x006D1AA0 SYMBOL
+// _$E195
 
-// FUNCTION: 0x006D1B00 $E201
+// SYNTHETIC: GAMEMD 0x006D1B00 SYMBOL
+// _$E201
 
-// FUNCTION: 0x006D1B10 $E207
+// SYNTHETIC: GAMEMD 0x006D1B10 SYMBOL
+// _$E207
 
-// FUNCTION: 0x006D1B50 $E204
+// SYNTHETIC: GAMEMD 0x006D1B50 SYMBOL
+// _$E204
 
-// FUNCTION: 0x006D1BB0 $E210
+// SYNTHETIC: GAMEMD 0x006D1BB0 SYMBOL
+// _$E210
 
-// FUNCTION: 0x006D1BF0 $E213
+// SYNTHETIC: GAMEMD 0x006D1BF0 SYMBOL
+// _$E213
 
-// FUNCTION: 0x006D1C20
+// FUNCTION: GAMEMD 0x006D1C20
 Tactical::Tactical(void) :
 	LastAIFrame(-1),
 	Flags(false, false),
@@ -144,19 +151,19 @@ Tactical::Tactical(void) :
 	TacticalMap = this;
 }
 
-// FUNCTION: 0x006D1E30
+// FUNCTION: GAMEMD 0x006D1E30
 Tactical::Tactical(const NoInitClass &x) :
 	BASECLASS(x)
 {
 }
 
-// FUNCTION: 0x006D1E80
+// FUNCTION: GAMEMD 0x006D1E80
 Tactical::~Tactical(void)
 {
 	TacticalMap = NULL;
 }
 
-// FUNCTION: 0x006D1EB0
+// FUNCTION: GAMEMD 0x006D1EB0
 Point2D Tactical::Rectangular_To_Isometric(Point2D point)
 {
 	Point2D iso;
@@ -176,7 +183,7 @@ static int Lepton_To_Z_Pixel(LEPTON lepton)
 	return(int(lepton * ZPixelsPerLepton + fudge + 0.5));
 }
 
-// FUNCTION: 0x006D1F10
+// FUNCTION: GAMEMD 0x006D1F10
 Point2D Tactical::Coord_To_Pixel_Absolute(Coord const & coord)
 {
 	Point2D pixel = Rectangular_To_Isometric(Point2D(coord.X, coord.Y));
@@ -186,7 +193,7 @@ Point2D Tactical::Coord_To_Pixel_Absolute(Coord const & coord)
 	return(pixel);
 }
 
-// FUNCTION: 0x006D1FE0
+// FUNCTION: GAMEMD 0x006D1FE0
 Point2D Tactical::Coord_To_Pixel_Absolute(Point2D const & point)
 {
 	Point2D pixel = Rectangular_To_Isometric(point);
@@ -195,7 +202,7 @@ Point2D Tactical::Coord_To_Pixel_Absolute(Point2D const & point)
 	return(pixel);
 }
 
-// FUNCTION: 0x006D2070
+// FUNCTION: GAMEMD 0x006D2070
 Point2D Tactical::Pixel_To_Lepton(Point2D const & pixel)
 {
 	Vector3 vector(pixel.X, pixel.Y, 0.0);
@@ -203,19 +210,19 @@ Point2D Tactical::Pixel_To_Lepton(Point2D const & pixel)
 	return(Point2D(vector.X, vector.Y));
 }
 
-// FUNCTION: 0x006D20E0
+// FUNCTION: GAMEMD 0x006D20E0
 int Tactical::Z_Lepton_To_Pixel(LEPTON lepton)
 {
 	return(Lepton_To_Z_Pixel(lepton));
 }
 
-// FUNCTION: 0x006D2120
+// FUNCTION: GAMEMD 0x006D2120
 LEPTON Tactical::Pixel_To_Z_Lepton(int pixel)
 {
 	return(LEPTON(ZLeptonsPerPixel * (pixel - 0.5)));
 }
 
-// FUNCTION: 0x006D2140
+// FUNCTION: GAMEMD 0x006D2140
 bool Tactical::Coord_To_Pixel(Coord const & coord, Point2D & pixel)
 {
 	pixel = Coord_To_Pixel_Absolute(coord);
@@ -240,7 +247,7 @@ bool Tactical::Coord_To_Pixel(Coord const & coord, Point2D & pixel)
 	return(true);
 }
 
-// FUNCTION: 0x006D2280
+// FUNCTION: GAMEMD 0x006D2280
 Coord Tactical::Pixel_To_Coord(Point2D const & pixel)
 {
 	if (pixel.X < TacticalDimensions.Width && pixel.Y < TacticalDimensions.Height + TacticalDimensions.Y) {
@@ -251,7 +258,7 @@ Coord Tactical::Pixel_To_Coord(Point2D const & pixel)
 	return(COORD_NONE);
 }
 
-// FUNCTION: 0x006D2360
+// FUNCTION: GAMEMD 0x006D2360
 Coord Tactical::Pixel_To_Coord_Absolute(Point2D const & pixel)
 {
 	if (pixel.X < TacticalDimensions.Width && pixel.Y < TacticalDimensions.Height) {
@@ -262,7 +269,7 @@ Coord Tactical::Pixel_To_Coord_Absolute(Point2D const & pixel)
 	return(COORD_NONE);
 }
 
-// FUNCTION: 0x006D2420
+// FUNCTION: GAMEMD 0x006D2420
 void Tactical::Setup_Trigger_Scroll(Coord const & coord, int speed)
 {
 	static float _speeds[SCROLL_SPEED_COUNT] = {
@@ -284,7 +291,7 @@ void Tactical::Setup_Trigger_Scroll(Coord const & coord, int speed)
 	MoveFrom = TacticalCoord;
 }
 
-// FUNCTION: 0x006D2540
+// FUNCTION: GAMEMD 0x006D2540
 void Tactical::AI(void)
 {
 	bool coordchanged = false;
@@ -328,7 +335,7 @@ void Tactical::AI(void)
 	}
 }
 
-// FUNCTION: 0x006D2790
+// FUNCTION: GAMEMD 0x006D2790
 void Tactical::Register_Dirty_Area(Rect area, bool refresh_shroud)
 {
 	int best_index = -1;
@@ -366,12 +373,12 @@ void Tactical::Register_Dirty_Area(Rect area, bool refresh_shroud)
 	}
 }
 
-// FUNCTION: 0x006D2B50
+// FUNCTION: GAMEMD 0x006D2B50
 void Tactical_noop(int, int, int, int)
 {
 }
 
-// FUNCTION: 0x006D2B60
+// FUNCTION: GAMEMD 0x006D2B60
 void Tactical::Wipe_Depth(bool fullredraw, int xoff, int yoff, Rect const & cliprect)
 {
 	if (!fullredraw && DirtyAreas.Count()) {
@@ -404,7 +411,7 @@ void Tactical::Wipe_Depth(bool fullredraw, int xoff, int yoff, Rect const & clip
 	}
 }
 
-// FUNCTION: 0x006D2DE0
+// FUNCTION: GAMEMD 0x006D2DE0
 void Tactical::Render_Tiles(Rect const & xpanrect, Rect const & ypanrect, bool fullredraw)
 {
 	if (fullredraw) {
@@ -449,7 +456,7 @@ void Tactical::Render_Tiles(Rect const & xpanrect, Rect const & ypanrect, bool f
 	}
 }
 
-// FUNCTION: 0x006D3290
+// FUNCTION: GAMEMD 0x006D3290
 void Tactical::Render_Overlays(Rect const & xpanrect, Rect const & ypanrect, bool fullredraw)
 {
 	if (fullredraw) {
@@ -499,7 +506,7 @@ static inline void Fogged_Rect(Rect const & r)
 	::Draw_Fogged_Objects(r);
 }
 
-// FUNCTION: 0x006D3470
+// FUNCTION: GAMEMD 0x006D3470
 void Tactical::Render_Fogged_Objects(Rect const & xpanrect, Rect const & ypanrect, bool fullredraw)
 {
 	if (fullredraw) {
@@ -544,7 +551,7 @@ void Tactical::Render_Fogged_Objects(Rect const & xpanrect, Rect const & ypanrec
 	}
 }
 
-// FUNCTION: 0x006D3660
+// FUNCTION: GAMEMD 0x006D3660
 void Tactical::Render_Shroud(Rect const & xpanrect, Rect const & ypanrect, Rect const & cliprect, bool fullredraw)
 {
 	if (CellRedrawCount > 0 && !fullredraw) {
@@ -597,7 +604,7 @@ static inline Point2D * Print_Timer(wchar_t const * text, Point2D const & pt, Co
 	return Fancy_Text_Print_Wide(&ret, text, DSurface::Composite, &DSurface::Composite->Get_Rect(), &pt, scheme, 0, TextPrintType(0x4618));
 }
 
-// FUNCTION: 0x006D4B50
+// FUNCTION: GAMEMD 0x006D4B50
 int Tactical::DrawTimer(int index, ColorScheme * scheme, int time, wchar_t const * text, unsigned __int64 * flashtime, bool * flashstate)
 {
 	wchar_t buf1[256];
@@ -641,7 +648,7 @@ int Tactical::DrawTimer(int index, ColorScheme * scheme, int time, wchar_t const
 	return (int)Print_Timer(buf3, pt2, flash);
 }
 
-// FUNCTION: 0x006D4DB0
+// FUNCTION: GAMEMD 0x006D4DB0
 void Tactical::Set_Caption_Text(wchar_t const * text, int frame)
 {
 	if (!text) {
@@ -652,14 +659,14 @@ void Tactical::Set_Caption_Text(wchar_t const * text, int frame)
 	EndGameGraphicsFrame = frame;
 }
 
-// FUNCTION: 0x006D4E00
+// FUNCTION: GAMEMD 0x006D4E00
 void Tactical::Clear_Caption_Text(void)
 {
 	EndGameGraphicsFrame = -1;
 	ScreenText[0] = L'\0';
 }
 
-// FUNCTION: 0x006D4E20
+// FUNCTION: GAMEMD 0x006D4E20
 void Tactical::Draw_Screen_Text(wchar_t const * text)
 {
 	if (Unsorted::ArmageddonMode) {
@@ -699,20 +706,20 @@ void Tactical::Draw_Screen_Text(wchar_t const * text)
 	}
 }
 
-// FUNCTION: 0x006D5F30
+// FUNCTION: GAMEMD 0x006D5F30
 bool Tactical::Blit_Tiles(void)
 {
 	return(LogicalSurface->Blit_From(TacticalRect, *TileSurface, TacticalRect));
 }
 
-// FUNCTION: 0x006D5F60
+// FUNCTION: GAMEMD 0x006D5F60
 void Tactical::Set_View_Dimensions(Rect const & dimensions)
 {
 	TacticalDimensions = dimensions;
 	Set_Tactical_Position(DesiredTacticalCoord);
 }
 
-// FUNCTION: 0x006D6000
+// FUNCTION: GAMEMD 0x006D6000
 void Tactical::Set_Tactical_Position(Point2D const & point)
 {
 	Point2D clamped = point;
@@ -728,20 +735,20 @@ void Tactical::Set_Tactical_Position(Point2D const & point)
 	IsToRedraw = true;
 }
 
-// FUNCTION: 0x006D6170
+// FUNCTION: GAMEMD 0x006D6170
 Point2D Tactical::Get_Tactical_Position(void)
 {
 	return(TacticalCoord);
 }
 
-// FUNCTION: 0x006D6190
+// FUNCTION: GAMEMD 0x006D6190
 Point2D Tactical::Get_Relative_Tactical_Position(void)
 {
 	Point2D tac_offset = Point2D(TacPixelX, TacPixelY);
 	return(TacticalCoord - tac_offset);
 }
 
-// FUNCTION: 0x006D61C0
+// FUNCTION: GAMEMD 0x006D61C0
 void Tactical::Rectangular_To_Isometric(int xin, int yin, int & xout, int & yout)
 {
 	xout = xin * 60 / 2;
@@ -750,14 +757,14 @@ void Tactical::Rectangular_To_Isometric(int xin, int yin, int & xout, int & yout
 	yout += yin * 30 / 2;
 }
 
-// FUNCTION: 0x006D6220
+// FUNCTION: GAMEMD 0x006D6220
 void Tactical::Isometric_To_Rectangular(int xin, int yin, int & xout, int & yout)
 {
 	xout = ((60 / 2) * yin + (30 / 2) * xin) / 576 - 65536;
 	yout = ((60 / 2) * yin - (30 / 2) * xin) / 576 + 65536;
 }
 
-// FUNCTION: 0x006D6280
+// FUNCTION: GAMEMD 0x006D6280
 void Tactical::Cell_To_Rectangular(int xin, int yin, int & xout, int & yout)
 {
 	int xsh = xin << 8;
@@ -766,7 +773,7 @@ void Tactical::Cell_To_Rectangular(int xin, int yin, int & xout, int & yout)
 	yout = ((60 / 2) * ysh - (30 / 2) * xsh) / 576 + 65536;
 }
 
-// FUNCTION: 0x006D62E0
+// FUNCTION: GAMEMD 0x006D62E0
 void Tactical::Lepton_To_Map_Pixel(int xin, int yin, int & xout, int & yout)
 {
 	Rectangular_To_Isometric(xin, yin, xout, yout);
@@ -777,7 +784,7 @@ void Tactical::Lepton_To_Map_Pixel(int xin, int yin, int & xout, int & yout)
 	xout += (60 / 2) * 512;
 }
 
-// FUNCTION: 0x006D6370
+// FUNCTION: GAMEMD 0x006D6370
 void Tactical::Cell_To_Rectangular_Centered(int xin, int yin, int & xout, int & yout)
 {
 	static int xoff = -1;
@@ -798,27 +805,27 @@ void Tactical::Cell_To_Rectangular_Centered(int xin, int yin, int & xout, int & 
 	yout = y;
 }
 
-// FUNCTION: 0x006D6A90
+// FUNCTION: GAMEMD 0x006D6A90
 int Tactical::Get_Cell_Height(Coord const & coord)
 {
 	CellClass *cellptr = &Map[coord];
 	return(cellptr->Get_Height(coord));
 }
 
-// FUNCTION: 0x006D6AD0
+// FUNCTION: GAMEMD 0x006D6AD0
 int Tactical::Get_Cell_Ramp(Coord const & coord)
 {
 	return(Map[coord].Ramp);
 }
 
-// FUNCTION: 0x006D6AF0
+// FUNCTION: GAMEMD 0x006D6AF0
 void Tactical::Add_Shadow_Control(ShadowControlClass control)
 {
 	ShadowControlClass *ctrl = new ShadowControlClass(control);
 	ShadowControls.Add(ctrl);
 }
 
-// FUNCTION: 0x006D6BB0
+// FUNCTION: GAMEMD 0x006D6BB0
 CellClass * Tactical::Find_Bridge_Owner_Cell(Cell const & cell)
 {
 	CellClass * cellptr;
@@ -866,7 +873,7 @@ CellClass * Tactical::Find_Bridge_Owner_Cell(Cell const & cell)
 	return(NULL);
 }
 
-// FUNCTION: 0x006D84D0
+// FUNCTION: GAMEMD 0x006D84D0
 Point2D Tactical::Clamp_Pixel_To_Tactical(Point2D const & pixel)
 {
 	Point2D clamped = pixel;
@@ -877,7 +884,7 @@ Point2D Tactical::Clamp_Pixel_To_Tactical(Point2D const & pixel)
 	}
 }
 
-// FUNCTION: 0x006D8530
+// FUNCTION: GAMEMD 0x006D8530
 void Tactical::Scroll_Map(FacingType facing, int distance)
 {
 	static Point2D _scroll[FACING_COUNT] = 	{
@@ -905,9 +912,10 @@ void Tactical::Scroll_Map(FacingType facing, int distance)
 	}
 }
 
-// FUNCTION: 0x006D8630 $E216
+// SYNTHETIC: GAMEMD 0x006D8630 SYMBOL
+// _$E216
 
-// FUNCTION: 0x006D8640
+// FUNCTION: GAMEMD 0x006D8640
 bool Tactical::Clamp_To_Tactical_Rect(Point2D & pixel)
 {
 	int xmin = TacticalRect.Width / 2 - (60 >> 1) * (Map.PlayRect.Width - 2 * Map.LocalRect.X);
@@ -937,7 +945,7 @@ bool Tactical::Clamp_To_Tactical_Rect(Point2D & pixel)
 	return(clamped);
 }
 
-// FUNCTION: 0x006D8700
+// FUNCTION: GAMEMD 0x006D8700
 int Tactical::Cell_Shadow(Cell const & cell, bool fog)
 {
 	static char const _shadow[1 << FACING_COUNT]={
@@ -1041,7 +1049,7 @@ int Tactical::Cell_Shadow(Cell const & cell, bool fog)
 	return(value);
 }
 
-// FUNCTION: 0x006D8AE0
+// FUNCTION: GAMEMD 0x006D8AE0
 bool Tactical::Is_Cell_Visible(Cell const & cell)
 {
 	Point2D point = Point2D(cell.X, cell.Y);
@@ -1051,7 +1059,7 @@ bool Tactical::Is_Cell_Visible(Cell const & cell)
 	return(false);
 }
 
-// FUNCTION: 0x006D8B30
+// FUNCTION: GAMEMD 0x006D8B30
 void Tactical::Update_Visible_Cells(void)
 {
 	TacPixelX = TacticalCoord.X;
@@ -1068,7 +1076,7 @@ void Tactical::Update_Visible_Cells(void)
 	do { } while (0);
 }
 
-// FUNCTION: 0x006D8C60
+// FUNCTION: GAMEMD 0x006D8C60
 void Tactical::Draw_Render_Hooks(ObjectClass * object, Rect const & cliprect)
 {
 	Point2D pixel;
@@ -1078,7 +1086,7 @@ void Tactical::Draw_Render_Hooks(ObjectClass * object, Rect const & cliprect)
 	}
 }
 
-// FUNCTION: 0x006D97D0
+// FUNCTION: GAMEMD 0x006D97D0
 void Tactical::Draw_Terrain(bool forced, Rect const & area, Rect const & cliprect)
 {
 	Rect inter = Intersect(area, cliprect);
@@ -1095,13 +1103,13 @@ void Tactical::Draw_Terrain(bool forced, Rect const & area, Rect const & cliprec
 	}
 }
 
-// FUNCTION: 0x006D9910
+// FUNCTION: GAMEMD 0x006D9910
 void Tactical::Draw_Fogged_Objects(Rect const & area)
 {
 	::Draw_Fogged_Objects(area);
 }
 
-// FUNCTION: 0x006D9920
+// FUNCTION: GAMEMD 0x006D9920
 void Tactical::Draw_Buildings(bool forced, Rect const & area, Rect const & cliprect)
 {
 	Rect inter = Intersect(area, cliprect);
@@ -1118,7 +1126,7 @@ void Tactical::Draw_Buildings(bool forced, Rect const & area, Rect const & clipr
 	}
 }
 
-// FUNCTION: 0x006D9A50
+// FUNCTION: GAMEMD 0x006D9A50
 void Tactical::Register_Dirty_Buildings(Rect area)
 {
 	for (int i = 0; i < DisplayClass::Layer[LAYER_GROUND].Count(); i++) {
@@ -1133,7 +1141,7 @@ void Tactical::Register_Dirty_Buildings(Rect area)
 	}
 }
 
-// FUNCTION: 0x006D9B50
+// FUNCTION: GAMEMD 0x006D9B50
 bool Tactical::Contains_Selectable_Buildings(Rect rect)
 {
 	Point2D top_left;
@@ -1155,7 +1163,7 @@ bool Tactical::Contains_Selectable_Buildings(Rect rect)
 	return(false);
 }
 
-// FUNCTION: 0x006D9CE0
+// FUNCTION: GAMEMD 0x006D9CE0
 void Tactical::Add_Buildings_To_Selectable(Rect rect)
 {
 	Point2D top_left;
@@ -1176,7 +1184,7 @@ void Tactical::Add_Buildings_To_Selectable(Rect rect)
 	}
 }
 
-// FUNCTION: 0x006D9EF0
+// FUNCTION: GAMEMD 0x006D9EF0
 bool Tactical::Add_To_Selectables(ObjectClass * object, Point2D point)
 {
 	if (SelectableCount != MAX_SELECTABLE_OBJECTS) {
@@ -1190,7 +1198,7 @@ bool Tactical::Add_To_Selectables(ObjectClass * object, Point2D point)
 	return(false);
 }
 
-// FUNCTION: 0x006D9F80
+// FUNCTION: GAMEMD 0x006D9F80
 void Tactical::Start_Rubber_Band(Point2D const & point)
 {
 	if (RubberBandStart == Point2D(0, 0)) {
@@ -1199,7 +1207,7 @@ void Tactical::Start_Rubber_Band(Point2D const & point)
 	}
 }
 
-// FUNCTION: 0x006D9FC0
+// FUNCTION: GAMEMD 0x006D9FC0
 void Tactical::Modify_Rubber_Band(Point2D const & point)
 {
 	if (RubberBandStart != Point2D(0, 0)) {
@@ -1207,7 +1215,7 @@ void Tactical::Modify_Rubber_Band(Point2D const & point)
 	}
 }
 
-// FUNCTION: 0x006D9FF0
+// FUNCTION: GAMEMD 0x006D9FF0
 void Tactical::Select_Rubber_Band(void (*select_callback)(ObjectClass * object))
 {
 	if (RubberBandStart != Point2D(0, 0)) {
@@ -1227,7 +1235,7 @@ void Tactical::Select_Rubber_Band(void (*select_callback)(ObjectClass * object))
 	}
 }
 
-// FUNCTION: 0x006DA080
+// FUNCTION: GAMEMD 0x006DA080
 int Tactical::Rubber_Band_Contains_Selectable(void)
 {
 	Point2D start = RubberBandStart;
@@ -1254,14 +1262,14 @@ int Tactical::Rubber_Band_Contains_Selectable(void)
 	return(false);
 }
 
-// FUNCTION: 0x006DA160
+// FUNCTION: GAMEMD 0x006DA160
 void Tactical::End_Rubber_Band(void)
 {
 	RubberBandStart = Point2D(0, 0);
 	RubberBandEnd = Point2D(0, 0);
 }
 
-// FUNCTION: 0x006DA180
+// FUNCTION: GAMEMD 0x006DA180
 void Tactical::Draw_Rubber_Band(void)
 {
 	if (RubberBandStart != Point2D(0, 0)) {
@@ -1284,7 +1292,7 @@ void Tactical::Draw_Rubber_Band(void)
 	}
 }
 
-// FUNCTION: 0x006DA230
+// FUNCTION: GAMEMD 0x006DA230
 FacingType Tactical::Scroll_Dir(FacingType dir)
 {
 	static Point2D _scroll[FACING_COUNT] = 	{
@@ -1314,20 +1322,21 @@ FacingType Tactical::Scroll_Dir(FacingType dir)
 	return(dir);
 }
 
-// FUNCTION: 0x006DA350 $E218
+// SYNTHETIC: GAMEMD 0x006DA350 SYMBOL
+// _$E218
 
-// FUNCTION: 0x006DA360
+// FUNCTION: GAMEMD 0x006DA360
 Cell Tactical::Clamp_Cursor_To_Tactical(Cell const & cell, Cell const * list)
 {
 	return(cell);
 }
 
-// FUNCTION: 0x006DA370
+// FUNCTION: GAMEMD 0x006DA370
 void Tactical::Noop(int)
 {
 }
 
-// FUNCTION: 0x006DA380
+// FUNCTION: GAMEMD 0x006DA380
 ObjectClass * Tactical::Get_Selectable_Object(Point2D const & point)
 {
 	ObjectClass * best = NULL;
@@ -1379,7 +1388,7 @@ ObjectClass * Tactical::Get_Selectable_Object(Point2D const & point)
 	return(Map[Cell(Pixel_To_Cell(TacticalRect.Top_Left() + point))].Cell_Occupier());
 }
 
-// FUNCTION: 0x006DA560
+// FUNCTION: GAMEMD 0x006DA560
 void Tactical::Detach(AbstractClass const * target, bool all)
 {
 	for (int index = 0; index < MAX_SELECTABLE_OBJECTS; index++) {
@@ -1400,7 +1409,7 @@ void Tactical::Detach(AbstractClass const * target, bool all)
 bool FUN_00732D00(void);
 namespace Game { void __fastcall UICommands_TypeSelect_7327D0(char const * name); }
 
-// FUNCTION: 0x006DA5C0
+// FUNCTION: GAMEMD 0x006DA5C0
 void Tactical::Select_These(Rect const & rect, void (*select_callback)(ObjectClass * object))
 {
 	AllowVoice = true;
@@ -1452,7 +1461,7 @@ void Tactical::Select_These(Rect const & rect, void (*select_callback)(ObjectCla
 	AllowVoice = true;
 }
 
-// FUNCTION: 0x006DA740
+// FUNCTION: GAMEMD 0x006DA740
 void __fastcall FUN_006DA740(Tactical * tactical)
 {
 	while (CurrentObject.Count()) {
@@ -1461,7 +1470,7 @@ void __fastcall FUN_006DA740(Tactical * tactical)
 	FUN_00731D00(0);
 }
 
-// FUNCTION: 0x006DA7D0
+// FUNCTION: GAMEMD 0x006DA7D0
 void Tactical::Flag_Cell(CellClass & cell)
 {
 	if (Map.DrawFlags == GS_REDRAW_DIRTY && cell.LastRedrawFrame != Frame && (cell.IsMapped || cell.VisibilityChanged)) {
@@ -1493,7 +1502,7 @@ void Tactical::Flag_Cell(CellClass & cell)
 	}
 }
 
-// FUNCTION: 0x006DA980
+// FUNCTION: GAMEMD 0x006DA980
 void Tactical::Reset_Dirty_Rectangles(void)
 {
 	while (DirtyAreas.Count() > 0) {
@@ -1503,7 +1512,7 @@ void Tactical::Reset_Dirty_Rectangles(void)
 
 extern DynamicVectorClass<ObjectClass *> DAT_00A8E360;
 
-// FUNCTION: 0x006DB210
+// FUNCTION: GAMEMD 0x006DB210
 void Tactical::Debug_Draw_Occupier_Links(void)
 {
 	Map.Reset_Iterator();
@@ -1557,7 +1566,7 @@ void Tactical::Debug_Draw_Occupier_Links(void)
 	}
 }
 
-// FUNCTION: 0x006DBB60
+// FUNCTION: GAMEMD 0x006DBB60
 bool Tactical::Draw_3D_Line(Coord const & coord1, Coord const & coord2, int color, bool write_depth)
 {
 	Point2D start;
@@ -1570,7 +1579,7 @@ bool Tactical::Draw_3D_Line(Coord const & coord1, Coord const & coord2, int colo
 	return(true);
 }
 
-// FUNCTION: 0x006DBCE0
+// FUNCTION: GAMEMD 0x006DBCE0
 HRESULT STDMETHODCALLTYPE Tactical::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -1578,7 +1587,7 @@ HRESULT STDMETHODCALLTYPE Tactical::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x006DBD20
+// FUNCTION: GAMEMD 0x006DBD20
 HRESULT STDMETHODCALLTYPE Tactical::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -1596,7 +1605,7 @@ HRESULT STDMETHODCALLTYPE Tactical::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x006DBE00
+// FUNCTION: GAMEMD 0x006DBE00
 HRESULT STDMETHODCALLTYPE Tactical::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -1606,84 +1615,112 @@ HRESULT STDMETHODCALLTYPE Tactical::Save(IStream * stream, BOOL cleardirty)
 	return(result);
 }
 
-// FUNCTION: 0x006DC400
+// FUNCTION: GAMEMD 0x006DC400
 void Tactical_noop2(void)
 {
 }
 
-// FUNCTION: 0x006DC410
+// FUNCTION: GAMEMD 0x006DC410
 void Tactical_noop3(void)
 {
 }
 
-// FUNCTION: 0x006DC420
+// FUNCTION: GAMEMD 0x006DC420
 int Tactical::Selectable_Count(void)
 {
 	return(SelectableCount);
 }
 
-// FUNCTION: 0x006DC430
+// FUNCTION: GAMEMD 0x006DC430
 ObjectClass * __stdcall Tactical::Selectable_Object(int index)
 {
 	return(SelectableObjects[index].Object);
 }
 
-// FUNCTION: 0x006DC450 Tactical::Fetch_RTTI
+// FUNCTION: GAMEMD 0x006DC450
+// Tactical::Fetch_RTTI
 
-// FUNCTION: 0x006DC460 Tactical::Fetch_Object_Size
+// FUNCTION: GAMEMD 0x006DC460
+// Tactical::Fetch_Object_Size
 
-// FUNCTION: 0x006DC470 Tactical::~Tactical
+// SYNTHETIC: GAMEMD 0x006DC470
+// ??_GTactical@@UAEPAXI@Z
 
-// FUNCTION: 0x006DC4C0 ?Z?$TPoint2D@H
+// TEMPLATE: GAMEMD 0x006DC4C0
+// ??Z?$TPoint2D@H@@QAEABV0@ABV0@@Z
 template class TPoint2D<int>;
 
-// FUNCTION: 0x006DC4E0 ?$DynamicVectorClass@UDirtyAreaStruct@@::Clear
+// TEMPLATE: GAMEMD 0x006DC4E0
+// ?Clear@?$DynamicVectorClass@UDirtyAreaStruct@@@@UAEXXZ
 template class DynamicVectorClass<DirtyAreaStruct>;
 
-// FUNCTION: 0x006DC510 ?$DynamicVectorClass@UDirtyAreaStruct@@::ID
+// TEMPLATE: GAMEMD 0x006DC510
+// ?ID@?$DynamicVectorClass@UDirtyAreaStruct@@@@UAEHPBUDirtyAreaStruct@@@Z
 
-// FUNCTION: 0x006DC540 ?$VectorClass@UDirtyAreaStruct@@::GetItem
+// TEMPLATE: GAMEMD 0x006DC540
+// ?GetItem@?$VectorClass@UDirtyAreaStruct@@@@UBE?AUDirtyAreaStruct@@H@Z
 
-// FUNCTION: 0x006DC580 ?$DynamicVectorClass@PAVShadowControlClass@@::Clear
+// TEMPLATE: GAMEMD 0x006DC580
+// ?Clear@?$DynamicVectorClass@PAVShadowControlClass@@@@UAEXXZ
 template class DynamicVectorClass<ShadowControlClass *>;
 
-// FUNCTION: 0x006DC5B0 ?$DynamicVectorClass@PAVShadowControlClass@@::ID
+// TEMPLATE: GAMEMD 0x006DC5B0
+// ?ID@?$DynamicVectorClass@PAVShadowControlClass@@@@UAEHPBQAVShadowControlClass@@@Z
 
-// FUNCTION: 0x006DC5D0 ?$VectorClass@PAVShadowControlClass@@::GetItem
+// TEMPLATE: GAMEMD 0x006DC5D0
+// ?GetItem@?$VectorClass@PAVShadowControlClass@@@@UBEPAVShadowControlClass@@H@Z
 
-// FUNCTION: 0x006DC5E0 ?$VectorClass@UDirtyAreaStruct@@::operator==
-// FUNCTION: 0x006DC660 ?$VectorClass@UDirtyAreaStruct@@::Resize
+// TEMPLATE: GAMEMD 0x006DC5E0
+// ??8?$VectorClass@UDirtyAreaStruct@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x006DC660
+// ?Resize@?$VectorClass@UDirtyAreaStruct@@@@UAE_NHPBUDirtyAreaStruct@@@Z
 template class VectorClass<DirtyAreaStruct>;
 
-// FUNCTION: 0x006DC780 ?$VectorClass@UDirtyAreaStruct@@::Clear
+// TEMPLATE: GAMEMD 0x006DC780
+// ?Clear@?$VectorClass@UDirtyAreaStruct@@@@UAEXXZ
 
-// FUNCTION: 0x006DC7B0 ?$VectorClass@UDirtyAreaStruct@@::ID
+// TEMPLATE: GAMEMD 0x006DC7B0
+// ?ID@?$VectorClass@UDirtyAreaStruct@@@@UAEHABUDirtyAreaStruct@@@Z
 
-// FUNCTION: 0x006DC820 ?$VectorClass@UDirtyAreaStruct@@::ID
+// TEMPLATE: GAMEMD 0x006DC820
+// ?ID@?$VectorClass@UDirtyAreaStruct@@@@UAEHPBUDirtyAreaStruct@@@Z
 
-// FUNCTION: 0x006DC850 ?$DynamicVectorClass@UDirtyAreaStruct@@::Resize
+// TEMPLATE: GAMEMD 0x006DC850
+// ?Resize@?$DynamicVectorClass@UDirtyAreaStruct@@@@UAE_NHPBUDirtyAreaStruct@@@Z
 
-// FUNCTION: 0x006DC970 ?$DynamicVectorClass@UDirtyAreaStruct@@::ID
+// TEMPLATE: GAMEMD 0x006DC970
+// ?ID@?$DynamicVectorClass@UDirtyAreaStruct@@@@UAEHABUDirtyAreaStruct@@@Z
 
-// FUNCTION: 0x006DC9D0 ?$VectorClass@PAVShadowControlClass@@::operator==
+// TEMPLATE: GAMEMD 0x006DC9D0
+// ??8?$VectorClass@PAVShadowControlClass@@@@UBE_NABV0@@Z
 
-// FUNCTION: 0x006DCA10 ?$VectorClass@PAVShadowControlClass@@::Resize
+// TEMPLATE: GAMEMD 0x006DCA10
+// ?Resize@?$VectorClass@PAVShadowControlClass@@@@UAE_NHPBQAVShadowControlClass@@@Z
 
-// FUNCTION: 0x006DCAC0 ?$VectorClass@PAVShadowControlClass@@::Clear
+// TEMPLATE: GAMEMD 0x006DCAC0
+// ?Clear@?$VectorClass@PAVShadowControlClass@@@@UAEXXZ
 
-// FUNCTION: 0x006DCAF0 ?$VectorClass@PAVShadowControlClass@@::ID
+// TEMPLATE: GAMEMD 0x006DCAF0
+// ?ID@?$VectorClass@PAVShadowControlClass@@@@UAEHABQAVShadowControlClass@@@Z
 
-// FUNCTION: 0x006DCB30 ?$VectorClass@PAVShadowControlClass@@::ID
+// TEMPLATE: GAMEMD 0x006DCB30
+// ?ID@?$VectorClass@PAVShadowControlClass@@@@UAEHPBQAVShadowControlClass@@@Z
 
-// FUNCTION: 0x006DCB50 ?$DynamicVectorClass@PAVShadowControlClass@@::Resize
+// TEMPLATE: GAMEMD 0x006DCB50
+// ?Resize@?$DynamicVectorClass@PAVShadowControlClass@@@@UAE_NHPBQAVShadowControlClass@@@Z
 
-// FUNCTION: 0x006DCC00 ?$DynamicVectorClass@PAVShadowControlClass@@::ID
+// TEMPLATE: GAMEMD 0x006DCC00
+// ?ID@?$DynamicVectorClass@PAVShadowControlClass@@@@UAEHABQAVShadowControlClass@@@Z
 template class VectorClass<ShadowControlClass *>;
 
-// FUNCTION: 0x006DCC30 ?$VectorClass@UDirtyAreaStruct@@::~?$VectorClass@UDirtyAreaStruct@@
+// SYNTHETIC: GAMEMD 0x006DCC30
+// ??_G?$VectorClass@UDirtyAreaStruct@@@@UAEPAXI@Z
 
-// FUNCTION: 0x006DCC80 ?$DynamicVectorClass@UDirtyAreaStruct@@::~?$DynamicVectorClass@UDirtyAreaStruct@@
+// SYNTHETIC: GAMEMD 0x006DCC80
+// ??_G?$DynamicVectorClass@UDirtyAreaStruct@@@@UAEPAXI@Z
 
-// FUNCTION: 0x006DCCD0 ?$VectorClass@PAVShadowControlClass@@::~?$VectorClass@PAVShadowControlClass@@
+// SYNTHETIC: GAMEMD 0x006DCCD0
+// ??_G?$VectorClass@PAVShadowControlClass@@@@UAEPAXI@Z
 
-// FUNCTION: 0x006DCD20 ?$DynamicVectorClass@PAVShadowControlClass@@::~?$DynamicVectorClass@PAVShadowControlClass@@
+// SYNTHETIC: GAMEMD 0x006DCD20
+// ??_G?$DynamicVectorClass@PAVShadowControlClass@@@@UAEPAXI@Z

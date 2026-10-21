@@ -13,7 +13,7 @@
 #include "infantry.h"
 #include "unit.h"
 
-// FUNCTION: 0x00473750
+// FUNCTION: GAMEMD 0x00473750
 CarryoverClass::CarryoverClass(TechnoClass * techno) :
 	RTTI(RTTI_NONE),
 	CellID(0,0),
@@ -46,7 +46,7 @@ CarryoverClass::CarryoverClass(TechnoClass * techno) :
 	}
 }
 
-// FUNCTION: 0x004737F0
+// FUNCTION: GAMEMD 0x004737F0
 bool CarryoverClass::Create(void) const
 {
 	TechnoClass * techno = 0;
@@ -82,4 +82,5 @@ bool CarryoverClass::Create(void) const
 	return(false);
 }
 
-// FUNCTION: 0x00473920 CarryoverClass::~CarryoverClass
+// SYNTHETIC: GAMEMD 0x00473920
+// ??_GCarryoverClass@@UAEPAXI@Z

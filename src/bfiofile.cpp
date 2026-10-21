@@ -7,7 +7,7 @@
 #include "bfiofile.h"
 #include <cstring>
 
-// FUNCTION: 0x00431B20
+// FUNCTION: GAMEMD 0x00431B20
 BufferIOFileClass::BufferIOFileClass(void) :
 	IsAllocated(false),
 	IsOpen(false),
@@ -28,13 +28,13 @@ BufferIOFileClass::BufferIOFileClass(void) :
 {
 }
 
-// FUNCTION: 0x00431B80
+// FUNCTION: GAMEMD 0x00431B80
 BufferIOFileClass::~BufferIOFileClass(void)
 {
 	Free();
 }
 
-// FUNCTION: 0x00431BC0
+// FUNCTION: GAMEMD 0x00431BC0
 bool BufferIOFileClass::Cache( int size, void * ptr )
 {
 	if (Buffer) {
@@ -126,7 +126,7 @@ bool BufferIOFileClass::Cache( int size, void * ptr )
 	return(false);
 }
 
-// FUNCTION: 0x00431D90
+// FUNCTION: GAMEMD 0x00431D90
 void BufferIOFileClass::Free(void)
 {
 	if (Buffer) {
@@ -143,7 +143,7 @@ void BufferIOFileClass::Free(void)
 	UseBuffer		= false;
 }
 
-// FUNCTION: 0x00431DD0
+// FUNCTION: GAMEMD 0x00431DD0
 bool BufferIOFileClass::Commit( void )
 {
 	int size;
@@ -172,7 +172,7 @@ bool BufferIOFileClass::Commit( void )
 	}
 }
 
-// FUNCTION: 0x00431E80
+// FUNCTION: GAMEMD 0x00431E80
 char const * BufferIOFileClass::Set_Name(char const * filename)
 {
 	if ( File_Name() && UseBuffer) {
@@ -187,7 +187,7 @@ char const * BufferIOFileClass::Set_Name(char const * filename)
 	return( File_Name() );
 }
 
-// FUNCTION: 0x00431F10
+// FUNCTION: GAMEMD 0x00431F10
 bool BufferIOFileClass::Is_Available(int )
 {
 	if (UseBuffer) {
@@ -196,7 +196,7 @@ bool BufferIOFileClass::Is_Available(int )
 	return( BASECLASS::Is_Available() );
 }
 
-// FUNCTION: 0x00431F30
+// FUNCTION: GAMEMD 0x00431F30
 bool BufferIOFileClass::Is_Open(void) const
 {
 	if (IsOpen && UseBuffer) {
@@ -205,14 +205,14 @@ bool BufferIOFileClass::Is_Open(void) const
 	return( BASECLASS::Is_Open() );
 }
 
-// FUNCTION: 0x00431F50
+// FUNCTION: GAMEMD 0x00431F50
 int BufferIOFileClass::Open(char const * filename, int rights)
 {
 	Set_Name(filename);
 	return( BufferIOFileClass::Open( rights ) );
 }
 
-// FUNCTION: 0x00431F70
+// FUNCTION: GAMEMD 0x00431F70
 int BufferIOFileClass::Open(int rights)
 {
 	BufferIOFileClass::Close();
@@ -252,7 +252,7 @@ int BufferIOFileClass::Open(int rights)
 	return( true );
 }
 
-// FUNCTION: 0x00432050
+// FUNCTION: GAMEMD 0x00432050
 int BufferIOFileClass::Write(void const * buffer, int size)
 {
 	int opened = false;
@@ -354,7 +354,7 @@ int BufferIOFileClass::Write(void const * buffer, int size)
 	return( size );
 }
 
-// FUNCTION: 0x004322A0
+// FUNCTION: GAMEMD 0x004322A0
 int BufferIOFileClass::Read(void * buffer, int size)
 {
 	int opened = false;
@@ -438,7 +438,7 @@ int BufferIOFileClass::Read(void * buffer, int size)
 	return( size );
 }
 
-// FUNCTION: 0x004324B0
+// FUNCTION: GAMEMD 0x004324B0
 int BufferIOFileClass::Seek(int pos, int dir)
 {
 	if (UseBuffer) {
@@ -494,7 +494,7 @@ int BufferIOFileClass::Seek(int pos, int dir)
 }
 
 
-// FUNCTION: 0x004325A0
+// FUNCTION: GAMEMD 0x004325A0
 int BufferIOFileClass::Size(void)
 {
 	if (IsOpen && UseBuffer) {
@@ -504,7 +504,7 @@ int BufferIOFileClass::Size(void)
 	return( BASECLASS::Size() );
 }
 
-// FUNCTION: 0x004325C0
+// FUNCTION: GAMEMD 0x004325C0
 void BufferIOFileClass::Close(void)
 {
 	if (UseBuffer) {
@@ -529,12 +529,13 @@ void BufferIOFileClass::Close(void)
 	}
 }
 
-// FUNCTION: 0x00432610 BufferIOFileClass::~BufferIOFileClass
+// SYNTHETIC: GAMEMD 0x00432610
+// ??_GBufferIOFileClass@@UAEPAXI@Z
 
 struct Dat4 { int a, b, c, d; };
 extern Dat4 DAT_0089C498;
 
-// FUNCTION: 0x00432670
+// FUNCTION: GAMEMD 0x00432670
 void FUN_00432670(void)
 {
 	DAT_0089C498.a = 0;

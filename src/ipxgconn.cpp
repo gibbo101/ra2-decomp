@@ -37,46 +37,59 @@ struct Unknown_00B052D0 {
 };
 extern Unknown_00B052D0 DAT_00B052D0;
 
-// FUNCTION: 0x0053F8A0 $E40
+// SYNTHETIC: GAMEMD 0x0053F8A0 SYMBOL
+// _$E40
 double DAT_00AA05D0 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x0053F8D0 $E43
+// SYNTHETIC: GAMEMD 0x0053F8D0 SYMBOL
+// _$E43
 double DAT_00AA0620 = DAT_00AA05D0 / DAT_007EC0F8;
 
-// FUNCTION: 0x0053F8F0 $E46
+// SYNTHETIC: GAMEMD 0x0053F8F0 SYMBOL
+// _$E46
 double DAT_00AA0608 = DAT_007E1718 / DAT_00AA0620;
 
-// FUNCTION: 0x0053F910 $E49
+// SYNTHETIC: GAMEMD 0x0053F910 SYMBOL
+// _$E49
 double DAT_00AA0600 = DAT_007E1720 * DAT_007EC100;
 
-// FUNCTION: 0x0053F930 $E52
+// SYNTHETIC: GAMEMD 0x0053F930 SYMBOL
+// _$E52
 double DAT_00AA05D8 = DAT_007E1728 * DAT_007EC100;
 
-// FUNCTION: 0x0053F950 $E55
+// SYNTHETIC: GAMEMD 0x0053F950 SYMBOL
+// _$E55
 double DAT_00AA05B0 = DAT_007E1730 * DAT_007EC100;
 
-// FUNCTION: 0x0053F970 $E58
+// SYNTHETIC: GAMEMD 0x0053F970 SYMBOL
+// _$E58
 int DAT_00AA0628 = (int)(DAT_007E1738 * (fastmath::tan(DAT_00AA05B0 - DAT_00AA05D8) * DAT_00AA05D0));
 
-// FUNCTION: 0x0053F9B0 $E61
+// SYNTHETIC: GAMEMD 0x0053F9B0 SYMBOL
+// _$E61
 double DAT_00AA05E0 = fastmath::atan(DAT_00AA0628 * DAT_007E1740);
 
-// FUNCTION: 0x0053F9E0 $E64
+// SYNTHETIC: GAMEMD 0x0053F9E0 SYMBOL
+// _$E64
 double DAT_00AA05F8 = fastmath::atan((DAT_00AA0628 * 2) / DAT_00AA05D0);
 
-// FUNCTION: 0x0053FA10 $E67
+// SYNTHETIC: GAMEMD 0x0053FA10 SYMBOL
+// _$E67
 int DAT_00AA061C = (int)((DAT_00AA0628 * 4) + DAT_007E1738);
 
-// FUNCTION: 0x0053FA40 $E70
+// SYNTHETIC: GAMEMD 0x0053FA40 SYMBOL
+// _$E70
 Cell DAT_00AA05C8(0, 0);
 
-// FUNCTION: 0x0053FA50 $E73
+// SYNTHETIC: GAMEMD 0x0053FA50 SYMBOL
+// _$E73
 Coord DAT_00AA05E8(0, 0, 0);
 
-// FUNCTION: 0x0053FA70 $E76
+// SYNTHETIC: GAMEMD 0x0053FA70 SYMBOL
+// _$E76
 Coord DAT_00AA0610(128, 128, 0);
 
-// FUNCTION: 0x0053FA90
+// FUNCTION: GAMEMD 0x0053FA90
 IPXGlobalConnClass::IPXGlobalConnClass (int numsend, int numreceive, int maxlen,
 	unsigned short product_id, unsigned short magicnum) :
 	BASECLASS (numsend, numreceive, maxlen + 2, magicnum, NULL, 0, L"", sizeof (IPXAddressClass))
@@ -95,8 +108,8 @@ IPXGlobalConnClass::IPXGlobalConnClass (int numsend, int numreceive, int maxlen,
 	LastRXIndex = 0;
 }
 
-// FUNCTION: 0x0053FB70
-// FUNCTION: 0x00540670
+// FUNCTION: GAMEMD 0x0053FB70
+// FUNCTION: GAMEMD 0x00540670
 IPXGlobalConnClass::~IPXGlobalConnClass(void)
 {
 	if (LastPacketID) {
@@ -109,7 +122,7 @@ IPXGlobalConnClass::~IPXGlobalConnClass(void)
 	}
 }
 
-// FUNCTION: 0x0053FBD0
+// FUNCTION: GAMEMD 0x0053FBD0
 int IPXGlobalConnClass::Send_Packet (void * buf, int buflen,
 	IPXAddressClass *address, int ack_req, unsigned short port, int packet_id)
 {
@@ -144,7 +157,7 @@ int IPXGlobalConnClass::Send_Packet (void * buf, int buflen,
 		&dest_addr, sizeof (IPXAddressClass), port));
 }
 
-// FUNCTION: 0x0053FF10
+// FUNCTION: GAMEMD 0x0053FF10
 int IPXGlobalConnClass::Get_Packet (void * buf, int *buflen,
 	IPXAddressClass *address, unsigned short *product_id)
 {
@@ -176,7 +189,7 @@ int IPXGlobalConnClass::Get_Packet (void * buf, int *buflen,
 	return(0);
 }
 
-// FUNCTION: 0x0053FFA0
+// FUNCTION: GAMEMD 0x0053FFA0
 int IPXGlobalConnClass::vt_entry_38(int index, int buf, int buflen, int address, int product_id, int packet_id)
 {
 	ReceiveQueueType *rec_entry;
@@ -205,7 +218,7 @@ int IPXGlobalConnClass::vt_entry_38(int index, int buf, int buflen, int address,
 	return(0);
 }
 
-// FUNCTION: 0x00540030
+// FUNCTION: GAMEMD 0x00540030
 void IPXGlobalConnClass::vt_entry_3C(int index)
 {
 	if (index < Queue->Num_Receive()) {
@@ -213,7 +226,7 @@ void IPXGlobalConnClass::vt_entry_3C(int index)
 	}
 }
 
-// FUNCTION: 0x00540050
+// FUNCTION: GAMEMD 0x00540050
 int IPXGlobalConnClass::Send(char *buf, int buflen, void *extrabuf, int extralen, bool flag, unsigned short port)
 {
 	IPXAddressClass *addr = (IPXAddressClass *)extrabuf;
@@ -228,7 +241,7 @@ int IPXGlobalConnClass::Send(char *buf, int buflen, void *extrabuf, int extralen
 	return(Send_To (buf, buflen, addr, NULL, flag, port));
 }
 
-// FUNCTION: 0x005400D0
+// FUNCTION: GAMEMD 0x005400D0
 int IPXGlobalConnClass::Service_Receive_Queue (void)
 {
 	int i;
@@ -246,7 +259,7 @@ int IPXGlobalConnClass::Service_Receive_Queue (void)
 	return(1);
 }
 
-// FUNCTION: 0x00540110
+// FUNCTION: GAMEMD 0x00540110
 void IPXGlobalConnClass::vt_entry_44(unsigned age)
 {
 	FUN_004068E0("Stripping queue entries older than %d seconds. Num receive = %d\n", age / 60, Queue->Num_Receive());
@@ -282,7 +295,7 @@ void IPXGlobalConnClass::vt_entry_44(unsigned age)
 	FUN_004068E0("Done stripping. Num receive = %d\n", Queue->Num_Receive());
 }
 
-// FUNCTION: 0x005402B0
+// FUNCTION: GAMEMD 0x005402B0
 void IPXGlobalConnClass::Set_Bridge(NetNumType bridge)
 {
 	if (Configured) {
@@ -290,7 +303,7 @@ void IPXGlobalConnClass::Set_Bridge(NetNumType bridge)
 	}
 }
 
-// FUNCTION: 0x005402D0
+// FUNCTION: GAMEMD 0x005402D0
 int IPXGlobalConnClass::Discard_Undeliverable_Packets(void)
 {
 	int num = 0;
@@ -313,7 +326,7 @@ int IPXGlobalConnClass::Discard_Undeliverable_Packets(void)
 	return(num);
 }
 
-// FUNCTION: 0x00540340
+// FUNCTION: GAMEMD 0x00540340
 int IPXGlobalConnClass::vt_entry_40(IPXAddressClass *address, unsigned short port)
 {
 	int num = 0;
@@ -338,7 +351,7 @@ int IPXGlobalConnClass::vt_entry_40(IPXAddressClass *address, unsigned short por
 	return(num);
 }
 
-// FUNCTION: 0x005403F0
+// FUNCTION: GAMEMD 0x005403F0
 int IPXGlobalConnClass::Send_To(char *buf, int buflen, IPXAddressClass *address,
 	NetNodeType immed, bool flag, unsigned short port)
 {
@@ -398,62 +411,76 @@ int IPXGlobalConnClass::Send_To(char *buf, int buflen, IPXAddressClass *address,
 	return(1);
 }
 
-// FUNCTION: 0x00540610
+// FUNCTION: GAMEMD 0x00540610
 int IPXGlobalConnClass::Send_Packet (void * buf, int buflen, int ack_req, int extra)
 {
 	return BASECLASS::Send_Packet(buf, buflen, ack_req, extra);
 }
 
-// FUNCTION: 0x00540630
+// FUNCTION: GAMEMD 0x00540630
 int IPXGlobalConnClass::Receive_Packet (void * buf, int buflen)
 {
 	return BASECLASS::Receive_Packet(buf, buflen);
 }
 
-// FUNCTION: 0x00540650
+// FUNCTION: GAMEMD 0x00540650
 int IPXGlobalConnClass::Get_Packet (void * buf, int * buflen)
 {
 	return BASECLASS::Get_Packet(buf, buflen);
 }
 
-// FUNCTION: 0x005406E0 $E80
+// SYNTHETIC: GAMEMD 0x005406E0 SYMBOL
+// _$E80
 double DAT_00AA0650 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x00540710 $E83
+// SYNTHETIC: GAMEMD 0x00540710 SYMBOL
+// _$E83
 double DAT_00AA06A0 = DAT_00AA0650 / DAT_007EC158;
 
-// FUNCTION: 0x00540730 $E86
+// SYNTHETIC: GAMEMD 0x00540730 SYMBOL
+// _$E86
 double DAT_00AA0688 = DAT_007E1718 / DAT_00AA06A0;
 
-// FUNCTION: 0x00540750 $E89
+// SYNTHETIC: GAMEMD 0x00540750 SYMBOL
+// _$E89
 double DAT_00AA0680 = DAT_007E1720 * DAT_007EC160;
 
-// FUNCTION: 0x00540770 $E92
+// SYNTHETIC: GAMEMD 0x00540770 SYMBOL
+// _$E92
 double DAT_00AA0658 = DAT_007E1728 * DAT_007EC160;
 
-// FUNCTION: 0x00540790 $E95
+// SYNTHETIC: GAMEMD 0x00540790 SYMBOL
+// _$E95
 double DAT_00AA0630 = DAT_007E1730 * DAT_007EC160;
 
-// FUNCTION: 0x005407B0 $E98
+// SYNTHETIC: GAMEMD 0x005407B0 SYMBOL
+// _$E98
 int DAT_00AA06A8 = (int)(DAT_007E1738 * (fastmath::tan(DAT_00AA0630 - DAT_00AA0658) * DAT_00AA0650));
 
-// FUNCTION: 0x005407F0 $E101
+// SYNTHETIC: GAMEMD 0x005407F0 SYMBOL
+// _$E101
 double DAT_00AA0660 = fastmath::atan(DAT_00AA06A8 * DAT_007E1740);
 
-// FUNCTION: 0x00540820 $E104
+// SYNTHETIC: GAMEMD 0x00540820 SYMBOL
+// _$E104
 double DAT_00AA0678 = fastmath::atan((DAT_00AA06A8 * 2) / DAT_00AA0650);
 
-// FUNCTION: 0x00540850 $E107
+// SYNTHETIC: GAMEMD 0x00540850 SYMBOL
+// _$E107
 int DAT_00AA069C = (int)((DAT_00AA06A8 * 4) + DAT_007E1738);
 
-// FUNCTION: 0x00540880 $E110
+// SYNTHETIC: GAMEMD 0x00540880 SYMBOL
+// _$E110
 Cell DAT_00AA0648(0, 0);
 
-// FUNCTION: 0x00540890 $E113
+// SYNTHETIC: GAMEMD 0x00540890 SYMBOL
+// _$E113
 Coord DAT_00AA0668(0, 0, 0);
 
-// FUNCTION: 0x005408B0 $E116
+// SYNTHETIC: GAMEMD 0x005408B0 SYMBOL
+// _$E116
 Coord DAT_00AA0690(128, 128, 0);
 
-// FUNCTION: 0x005408D0 $E119
+// SYNTHETIC: GAMEMD 0x005408D0 SYMBOL
+// _$E119
 TRect<int> DAT_00AA0638(0, 0, 0, 0);

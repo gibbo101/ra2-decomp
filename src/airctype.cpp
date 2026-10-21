@@ -64,7 +64,7 @@ struct FileSystem {
 void const * AircraftTypeClass::LRotorData = NULL;
 void const * AircraftTypeClass::RRotorData = NULL;
 
-// FUNCTION: 0x0041C8B0
+// FUNCTION: GAMEMD 0x0041C8B0
 AircraftTypeClass::AircraftTypeClass(char const * ininame) :
 	BASECLASS(ininame, SPEED_WINGED),
 	IsLandable(false),
@@ -95,20 +95,20 @@ AircraftTypeClass::AircraftTypeClass(char const * ininame) :
 	Bunkerable = false;
 }
 
-// FUNCTION: 0x0041C9F0
+// FUNCTION: GAMEMD 0x0041C9F0
 AircraftTypeClass::AircraftTypeClass(NoInitClass const & x) :
 	BASECLASS(x)
 {
 }
 
-// FUNCTION: 0x0041CA20
+// FUNCTION: GAMEMD 0x0041CA20
 AircraftTypeClass::~AircraftTypeClass(void)
 {
 	Detach_This_From_All(this, true);
 	AircraftTypes.Delete(this);
 }
 
-// FUNCTION: 0x0041CAA0
+// FUNCTION: GAMEMD 0x0041CAA0
 AircraftType AircraftTypeClass::From_Name(char const * name)
 {
 	if (name != NULL) {
@@ -121,54 +121,54 @@ AircraftType AircraftTypeClass::From_Name(char const * name)
 	return(AIRCRAFT_NONE);
 }
 
-// FUNCTION: 0x0041CAF0
+// FUNCTION: GAMEMD 0x0041CAF0
 void AircraftTypeClass::One_Time(void)
 {
 	LRotorData = FileSystem::LoadFile("LROTOR.SHP", false);
 	RRotorData = FileSystem::LoadFile("RROTOR.SHP", false);
 }
 
-// FUNCTION: 0x0041CB20
+// FUNCTION: GAMEMD 0x0041CB20
 ObjectClass * AircraftTypeClass::Create_One_Of(HouseClass * house) const
 {
 	return(new AircraftClass(this, house));
 }
 
-// FUNCTION: 0x0041CB50
+// FUNCTION: GAMEMD 0x0041CB50
 bool AircraftTypeClass::CanUseWaypoint(void) const
 {
 	return(false);
 }
 
-// FUNCTION: 0x0041CB60
+// FUNCTION: GAMEMD 0x0041CB60
 bool AircraftTypeClass::CanAttackMove(void) const
 {
 	return(false);
 }
 
-// FUNCTION: 0x0041CB70
+// FUNCTION: GAMEMD 0x0041CB70
 Cell const * AircraftTypeClass::Occupy_List(bool) const
 {
 	static Cell const _list[] = {Cell(0,0), REFRESH_EOL};
 	return(_list);
 }
 
-// FUNCTION: 0x0041CBD0
+// FUNCTION: GAMEMD 0x0041CBD0
 void AircraftTypeClass::Init(TheaterType) {}
 
-// FUNCTION: 0x0041CBE0
+// FUNCTION: GAMEMD 0x0041CBE0
 bool AircraftTypeClass::Create_And_Place(Cell const &, HouseClass *) const
 {
 	return(false);
 }
 
-// FUNCTION: 0x0041CBF0
+// FUNCTION: GAMEMD 0x0041CBF0
 Point3D AircraftTypeClass::Lepton_Dimensions(void) const
 {
 	return(Point3D(CELL_LEPTON_W, CELL_LEPTON_H, LEVEL_LEPTON_H * 2));
 }
 
-// FUNCTION: 0x0041CC20
+// FUNCTION: GAMEMD 0x0041CC20
 bool AircraftTypeClass::Read_INI(CCINIClass & ini)
 {
 	ini.Reset();
@@ -195,7 +195,7 @@ bool AircraftTypeClass::Read_INI(CCINIClass & ini)
 }
 
 
-// FUNCTION: 0x0041CDB0
+// FUNCTION: GAMEMD 0x0041CDB0
 void AircraftTypeClass::Compute_CRC(CRCEngine & crc) const
 {
 	BASECLASS::Compute_CRC(crc);
@@ -207,7 +207,7 @@ void AircraftTypeClass::Compute_CRC(CRCEngine & crc) const
 	crc(HeapID);
 }
 
-// FUNCTION: 0x0041CE20
+// FUNCTION: GAMEMD 0x0041CE20
 HRESULT STDMETHODCALLTYPE AircraftTypeClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -224,7 +224,7 @@ HRESULT STDMETHODCALLTYPE AircraftTypeClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x0041CE90
+// FUNCTION: GAMEMD 0x0041CE90
 HRESULT STDMETHODCALLTYPE AircraftTypeClass::Save(IStream *stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -234,7 +234,7 @@ HRESULT STDMETHODCALLTYPE AircraftTypeClass::Save(IStream *stream, BOOL cleardir
 	return(result);
 }
 
-// FUNCTION: 0x0041CEB0
+// FUNCTION: GAMEMD 0x0041CEB0
 HRESULT STDMETHODCALLTYPE AircraftTypeClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -242,66 +242,85 @@ HRESULT STDMETHODCALLTYPE AircraftTypeClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x0041CEF0
+// FUNCTION: GAMEMD 0x0041CEF0
 AircraftTypeClass * AircraftTypeClass::Find_Or_Make(char const * name)
 {
 	return(TFind_Or_Make<AircraftTypeClass>(name, AircraftTypes));
 }
 
-// FUNCTION: 0x0041CF80 ObjectTypeClass::Coord_Fixup
+// FUNCTION: GAMEMD 0x0041CF80
+// ObjectTypeClass::Coord_Fixup
 
-// FUNCTION: 0x0041CFA0 ObjectTypeClass::Get_Image_Data
+// FUNCTION: GAMEMD 0x0041CFA0
+// ObjectTypeClass::Get_Image_Data
 
-// FUNCTION: 0x0041CFB0 AircraftTypeClass::Fetch_RTTI
+// FUNCTION: GAMEMD 0x0041CFB0
+// AircraftTypeClass::Fetch_RTTI
 
-// FUNCTION: 0x0041CFC0
+// FUNCTION: GAMEMD 0x0041CFC0
 int AircraftTypeClass::Fetch_Object_Size(void) const
 {
 	return(sizeof(AircraftTypeClass));
 }
 
-// FUNCTION: 0x0041CFD0 AircraftTypeClass::Fetch_Heap_ID
+// FUNCTION: GAMEMD 0x0041CFD0
+// AircraftTypeClass::Fetch_Heap_ID
 
-// FUNCTION: 0x0041CFE0 AircraftTypeClass::~AircraftTypeClass
+// SYNTHETIC: GAMEMD 0x0041CFE0
+// ??_GAircraftTypeClass@@UAEPAXI@Z
 
-// FUNCTION: 0x0041D070 $E36
+// SYNTHETIC: GAMEMD 0x0041D070 SYMBOL
+// _$E36
 double DAT_00889F88 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x0041D0A0 $E39
+// SYNTHETIC: GAMEMD 0x0041D0A0 SYMBOL
+// _$E39
 double DAT_00889FF0 = DAT_00889F88 / DAT_007E2928;
 
-// FUNCTION: 0x0041D0C0 $E42
+// SYNTHETIC: GAMEMD 0x0041D0C0 SYMBOL
+// _$E42
 double DAT_00889FD8 = DAT_007E1718 / DAT_00889FF0;
 
-// FUNCTION: 0x0041D0E0 $E45
+// SYNTHETIC: GAMEMD 0x0041D0E0 SYMBOL
+// _$E45
 double DAT_00889FD0 = DAT_007E1720 * DAT_007E2930;
 
-// FUNCTION: 0x0041D100 $E48
+// SYNTHETIC: GAMEMD 0x0041D100 SYMBOL
+// _$E48
 double DAT_00889F90 = DAT_007E1728 * DAT_007E2930;
 
-// FUNCTION: 0x0041D120 $E51
+// SYNTHETIC: GAMEMD 0x0041D120 SYMBOL
+// _$E51
 double DAT_00889F68 = DAT_007E1730 * DAT_007E2930;
 
-// FUNCTION: 0x0041D140 $E54
+// SYNTHETIC: GAMEMD 0x0041D140 SYMBOL
+// _$E54
 int DAT_00889FF8 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00889F68 - DAT_00889F90) * DAT_00889F88));
 
-// FUNCTION: 0x0041D180 $E57
+// SYNTHETIC: GAMEMD 0x0041D180 SYMBOL
+// _$E57
 double DAT_00889F98 = FUN_004CADE0(DAT_00889FF8 * DAT_007E1740);
 
-// FUNCTION: 0x0041D1B0 $E60
+// SYNTHETIC: GAMEMD 0x0041D1B0 SYMBOL
+// _$E60
 double DAT_00889FB0 = FUN_004CADE0((DAT_00889FF8 * 2) / DAT_00889F88);
 
-// FUNCTION: 0x0041D1E0 $E63
+// SYNTHETIC: GAMEMD 0x0041D1E0 SYMBOL
+// _$E63
 int DAT_00889FEC = (int)(DAT_00889FF8 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x0041D210 $E66
+// SYNTHETIC: GAMEMD 0x0041D210 SYMBOL
+// _$E66
 ShortPair DAT_00889F80;
 
-// FUNCTION: 0x0041D220 $E69
+// SYNTHETIC: GAMEMD 0x0041D220 SYMBOL
+// _$E69
 IntTriple DAT_00889FA0;
 
-// FUNCTION: 0x0041D240 $E72
+// SYNTHETIC: GAMEMD 0x0041D240 SYMBOL
+// _$E72
 IntInit DAT_00889FE0;
 
-// FUNCTION: 0x0041D260 $E75
+// SYNTHETIC: GAMEMD 0x0041D260 SYMBOL
+// _$E75
 IntQuad DAT_00889F70;

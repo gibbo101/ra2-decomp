@@ -7,7 +7,7 @@
 #include "pkpipe.h"
 #include <cstring>
 
-// FUNCTION: 0x00632CB0
+// FUNCTION: GAMEMD 0x00632CB0
 PKPipe::PKPipe(CryptControl control, RandomStraw & rnd) :
 	IsGettingKey(true),
 	Rand(rnd),
@@ -19,7 +19,7 @@ PKPipe::PKPipe(CryptControl control, RandomStraw & rnd) :
 {
 }
 
-// FUNCTION: 0x00632D10
+// FUNCTION: GAMEMD 0x00632D10
 void PKPipe::Put_To(Pipe * pipe)
 {
 	if (BF.ChainTo != pipe) {
@@ -40,7 +40,7 @@ void PKPipe::Put_To(Pipe * pipe)
 	}
 }
 
-// FUNCTION: 0x00632D60
+// FUNCTION: GAMEMD 0x00632D60
 void PKPipe::Key(PKey const * key)
 {
 	if (key == NULL) {
@@ -57,7 +57,7 @@ void PKPipe::Key(PKey const * key)
 	}
 }
 
-// FUNCTION: 0x00632DC0
+// FUNCTION: GAMEMD 0x00632DC0
 int PKPipe::Put(void const * source, int length)
 {
 	if (source == NULL || length < 1 || CipherKey == NULL) {
@@ -99,22 +99,25 @@ int PKPipe::Put(void const * source, int length)
 	return(total);
 }
 
-// FUNCTION: 0x00632F30
+// FUNCTION: GAMEMD 0x00632F30
 int PKPipe::Encrypted_Key_Length(void) const
 {
 	if (CipherKey == NULL) return(0);
 	return(CipherKey->Block_Count(BLOWFISH_KEY_SIZE) * CipherKey->Crypt_Block_Size());
 }
 
-// FUNCTION: 0x00632F60
+// FUNCTION: GAMEMD 0x00632F60
 int PKPipe::Plain_Key_Length(void) const
 {
 	if (CipherKey == NULL) return(0);
 	return(CipherKey->Block_Count(BLOWFISH_KEY_SIZE) * CipherKey->Plain_Block_Size());
 }
 
-// FUNCTION: 0x00632F90 BlowPipe::~BlowPipe
+// SYNTHETIC: GAMEMD 0x00632F90
+// ??_GBlowPipe@@UAEPAXI@Z
 
-// FUNCTION: 0x00632FE0 PKPipe::Put_To
+// FUNCTION: GAMEMD 0x00632FE0
+// PKPipe::Put_To
 
-// FUNCTION: 0x00632FF0 PKPipe::~PKPipe
+// SYNTHETIC: GAMEMD 0x00632FF0
+// ??_GPKPipe@@UAEPAXI@Z

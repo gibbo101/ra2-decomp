@@ -41,53 +41,67 @@ extern const double DAT_007E1740;
 extern const double DAT_007F72A0;
 extern const double DAT_007F72A8;
 
-// FUNCTION: 0x0076C0A0 $E31
+// SYNTHETIC: GAMEMD 0x0076C0A0 SYMBOL
+// _$E31
 double DAT_00B72A30 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x0076C0D0 $E34
+// SYNTHETIC: GAMEMD 0x0076C0D0 SYMBOL
+// _$E34
 double DAT_00B72A80 = DAT_00B72A30 / DAT_007F72A0;
 
-// FUNCTION: 0x0076C0F0 $E37
+// SYNTHETIC: GAMEMD 0x0076C0F0 SYMBOL
+// _$E37
 double DAT_00B72A68 = DAT_007E1718 / DAT_00B72A80;
 
-// FUNCTION: 0x0076C110 $E40
+// SYNTHETIC: GAMEMD 0x0076C110 SYMBOL
+// _$E40
 double DAT_00B72A60 = DAT_007E1720 * DAT_007F72A8;
 
-// FUNCTION: 0x0076C130 $E43
+// SYNTHETIC: GAMEMD 0x0076C130 SYMBOL
+// _$E43
 double DAT_00B72A38 = DAT_007E1728 * DAT_007F72A8;
 
-// FUNCTION: 0x0076C150 $E46
+// SYNTHETIC: GAMEMD 0x0076C150 SYMBOL
+// _$E46
 double DAT_00B72A10 = DAT_007E1730 * DAT_007F72A8;
 
-// FUNCTION: 0x0076C170 $E49
+// SYNTHETIC: GAMEMD 0x0076C170 SYMBOL
+// _$E49
 int DAT_00B72A88 = (int)(fastmath::tan(DAT_00B72A10 - DAT_00B72A38) * DAT_007E1738 * DAT_00B72A30);
 
-// FUNCTION: 0x0076C1B0 $E52
+// SYNTHETIC: GAMEMD 0x0076C1B0 SYMBOL
+// _$E52
 double DAT_00B72A40 = fastmath::atan(DAT_00B72A88 * DAT_007E1740);
 
-// FUNCTION: 0x0076C1E0 $E55
+// SYNTHETIC: GAMEMD 0x0076C1E0 SYMBOL
+// _$E55
 double DAT_00B72A58 = fastmath::atan((DAT_00B72A88 * 2) / DAT_00B72A30);
 
-// FUNCTION: 0x0076C210 $E58
+// SYNTHETIC: GAMEMD 0x0076C210 SYMBOL
+// _$E58
 int DAT_00B72A7C = (int)(DAT_00B72A88 * 4 + DAT_007E1738);
 
 struct WDTShortPair { short a; short b; WDTShortPair(void) { a = 0; b = 0; } };
 struct WDTIntTriple { int a; int b; int c; WDTIntTriple(void) { a = 0; b = 0; c = 0; } };
 
-// FUNCTION: 0x0076C240 $E61
+// SYNTHETIC: GAMEMD 0x0076C240 SYMBOL
+// _$E61
 WDTShortPair DAT_00B72A28;
 
-// FUNCTION: 0x0076C250 $E64
+// SYNTHETIC: GAMEMD 0x0076C250 SYMBOL
+// _$E64
 WDTIntTriple DAT_00B72A48;
 
 struct WDTAnchor { int a; int b; int c; WDTAnchor(void) { c = 0; a = 0x80; b = 0x80; } };
 
-// FUNCTION: 0x0076C270 $E67
+// SYNTHETIC: GAMEMD 0x0076C270 SYMBOL
+// _$E67
 WDTAnchor DAT_00B72A70;
 
 using namespace WorldDominationTour;
 
-// FUNCTION: 0x0076C970 WorldDominationTour::Selection::Init_Voices
+// FUNCTION: GAMEMD 0x0076C970
+// WorldDominationTour::Selection::Init_Voices
 void Selection::Init_Voices(INIClass const & ini, Wstring const & section)
 {
 	VoicePlayer.FUN_00770550(ini, section);
@@ -97,7 +111,8 @@ void Selection::Init_Voices(INIClass const & ini, Wstring const & section)
 	{ Wstring key("MegaLosingThreshold"); MegaLosingThreshold = ini.Get_Int(section, key, MegaLosingThreshold); }
 }
 
-// FUNCTION: 0x0076CA60 WorldDominationTour::Selection::Init_Sounds
+// FUNCTION: GAMEMD 0x0076CA60
+// WorldDominationTour::Selection::Init_Sounds
 void Selection::Init_Sounds(INIClass const & ini, Wstring const & section)
 {
 	Wstring buffer;
@@ -127,7 +142,8 @@ void Selection::Init_Sounds(INIClass const & ini, Wstring const & section)
 	}
 }
 
-// FUNCTION: 0x0076CBF0 WorldDominationTour::Selection::Init_Target
+// FUNCTION: GAMEMD 0x0076CBF0
+// WorldDominationTour::Selection::Init_Target
 void Selection::Init_Target(INIClass const & ini, Wstring const & section)
 {
 	Wstring buffer;
@@ -158,7 +174,8 @@ void Selection::Init_Target(INIClass const & ini, Wstring const & section)
 	ThrobbingTargetDividingFrame = ini.Get_Int(section, faction_name + "TargetDividingFrame", 32);
 }
 
-// FUNCTION: 0x0076D470 WorldDominationTour::Selection::Update_Hovered_Territory
+// FUNCTION: GAMEMD 0x0076D470
+// WorldDominationTour::Selection::Update_Hovered_Territory
 void Selection::Update_Hovered_Territory(Point2D const & point)
 {
 	int id = WorldMap.Get()->FUN_00769330(point);
@@ -196,13 +213,15 @@ static inline void Play_Sfx_Named(Selection * sel, char const * text)
 	}
 }
 
-// FUNCTION: 0x0076DFD0 WorldDominationTour::Selection::On_Map_Enter
+// FUNCTION: GAMEMD 0x0076DFD0
+// WorldDominationTour::Selection::On_Map_Enter
 void Selection::On_Map_Enter(void)
 {
 	Play_Sfx_Named(this, "MapEnter");
 }
 
-// FUNCTION: 0x0076E090 WorldDominationTour::Selection::On_Map_Leave
+// FUNCTION: GAMEMD 0x0076E090
+// WorldDominationTour::Selection::On_Map_Leave
 void Selection::On_Map_Leave(void)
 {
 	Play_Sfx_Named(this, "MapLeave");
@@ -211,7 +230,8 @@ void Selection::On_Map_Leave(void)
 	Select_Territory(none);
 }
 
-// FUNCTION: 0x0076E9D0 WorldDominationTour::Selection::Check_For_Breakout
+// FUNCTION: GAMEMD 0x0076E9D0
+// WorldDominationTour::Selection::Check_For_Breakout
 void Selection::Check_For_Breakout(void)
 {
 	Wait_For_Focus();
@@ -222,7 +242,8 @@ void Selection::Check_For_Breakout(void)
 	}
 }
 
-// FUNCTION: 0x0076EAF0 WorldDominationTour::Selection::Set_Tooltip
+// FUNCTION: GAMEMD 0x0076EAF0
+// WorldDominationTour::Selection::Set_Tooltip
 void Selection::Set_Tooltip(WideWstring const & text)
 {
 	Rect rect = WorldMap.Get()->TooltipRect;
@@ -241,7 +262,8 @@ void Selection::Set_Tooltip(WideWstring const & text)
 	}
 }
 
-// FUNCTION: 0x0076EBE0 WorldDominationTour::Selection::Play_SFX
+// FUNCTION: GAMEMD 0x0076EBE0
+// WorldDominationTour::Selection::Play_SFX
 void Selection::Play_SFX(Wstring const & name)
 {
 	if (name != (char const *)NULL) {
@@ -257,7 +279,7 @@ void Selection::Play_SFX(Wstring const & name)
 	}
 }
 
-// FUNCTION: 0x0076ECD0
+// FUNCTION: GAMEMD 0x0076ECD0
 void __fastcall FUN_0076ECD0(rc_ptr<Campaign> * campaign, int theater)
 {
 	InputManagerClass::Instance->FUN_0054F720();
@@ -265,7 +287,8 @@ void __fastcall FUN_0076ECD0(rc_ptr<Campaign> * campaign, int theater)
 	sel.Presentation(theater);
 }
 
-// FUNCTION: 0x0076EEB0 WorldDominationTour::Selection::FUN_0076EEB0
+// FUNCTION: GAMEMD 0x0076EEB0
+// WorldDominationTour::Selection::FUN_0076EEB0
 void Selection::FUN_0076EEB0(void)
 {
 	UserInputLocked = false;
@@ -284,7 +307,8 @@ void Selection::FUN_0076EEB0(void)
 	}
 }
 
-// FUNCTION: 0x0076EF80 WorldDominationTour::Selection::End
+// FUNCTION: GAMEMD 0x0076EF80
+// WorldDominationTour::Selection::End
 void Selection::End(void)
 {
 	MouseCursor->Hide_Mouse();
@@ -296,41 +320,63 @@ void Selection::End(void)
 	}
 }
 
-// FUNCTION: 0x0076F000 WorldDominationTour::Map::FUN_0076F000
+// TEMPLATE: GAMEMD 0x0076F000
+// ?FUN_0076F000@Map@WorldDominationTour@@QAE?AV?$rc_ptr@VTerritory@WorldDominationTour@@@@H@Z
 rc_ptr<Territory> Map::FUN_0076F000(int id)
 {
 	return(FUN_0076FF40(&Territories, id));
 }
 
-// FUNCTION: 0x0076F020 ?$rc_ptr@VCampaignProperties@WorldDominationTour@@::Get
+// TEMPLATE: GAMEMD 0x0076F020
+// ?Get@?$rc_ptr@VCampaignProperties@WorldDominationTour@@@@QBEPAVCampaignProperties@WorldDominationTour@@XZ
 template class rc_ptr<CampaignProperties>;
 
-// FUNCTION: 0x0076F030 ?$rc_ptr@VTerritory@WorldDominationTour@@::?$rc_ptr@VTerritory@WorldDominationTour@@
-// FUNCTION: 0x0076F060 ?$rc_ptr@VTerritory@WorldDominationTour@@::~?$rc_ptr@VTerritory@WorldDominationTour@@
-// FUNCTION: 0x0076F070 ?$rc_ptr@VTerritory@WorldDominationTour@@::Get
+// TEMPLATE: GAMEMD 0x0076F030
+// ??0?$rc_ptr@VTerritory@WorldDominationTour@@@@QAE@ABV0@@Z
+// TEMPLATE: GAMEMD 0x0076F060
+// ??1?$rc_ptr@VTerritory@WorldDominationTour@@@@UAE@XZ
+// TEMPLATE: GAMEMD 0x0076F070
+// ?Get@?$rc_ptr@VTerritory@WorldDominationTour@@@@QBEPAVTerritory@WorldDominationTour@@XZ
 template class rc_ptr<Territory>;
 
-// FUNCTION: 0x0076F080 ?$rc_ptr@VMap@WorldDominationTour@@::Get
+// TEMPLATE: GAMEMD 0x0076F080
+// ?Get@?$rc_ptr@VMap@WorldDominationTour@@@@QBEPAVMap@WorldDominationTour@@XZ
 template class rc_ptr<Map>;
 
-// FUNCTION: 0x0076F090 ?$VectorCursor@V?$TRect@H@@V?$DynamicVectorClass@V?$TRect@H@@@@::?$VectorCursor@V?$TRect@H@@V?$DynamicVectorClass@V?$TRect@H@@@@
-// FUNCTION: 0x0076F0B0 ?B?$VectorCursor@V?$TRect@H@@V?$DynamicVectorClass@V?$TRect@H@@@@
-// FUNCTION: 0x0076F0C0 ?$VectorCursor@VPoint2D@@V?$DynamicVectorClass@VPoint2D@@@@::?$VectorCursor@VPoint2D@@V?$DynamicVectorClass@VPoint2D@@@@
-// FUNCTION: 0x0076F0E0 ?B?$VectorCursor@VPoint2D@@V?$DynamicVectorClass@VPoint2D@@@@
-// FUNCTION: 0x0076F0F0 ?B?$VectorCursor@PAVMSSfxEntry@@V?$DynamicVectorClass@PAVMSSfxEntry@@@@
-// FUNCTION: 0x0076F100 ?$VectorCursor@V?$TRect@H@@V?$DynamicVectorClass@V?$TRect@H@@@@::~?$VectorCursor@V?$TRect@H@@V?$DynamicVectorClass@V?$TRect@H@@@@
-// FUNCTION: 0x0076F120 ?$VectorCursor@VPoint2D@@V?$DynamicVectorClass@VPoint2D@@@@::~?$VectorCursor@VPoint2D@@V?$DynamicVectorClass@VPoint2D@@@@
-// FUNCTION: 0x0076F140 ?$VectorCursor@PAVMSSfxEntry@@V?$DynamicVectorClass@PAVMSSfxEntry@@@@::~?$VectorCursor@PAVMSSfxEntry@@V?$DynamicVectorClass@PAVMSSfxEntry@@@@
-// FUNCTION: 0x0076F160 ?E?$VectorCursor@V?$TRect@H@@V?$DynamicVectorClass@V?$TRect@H@@@@
-// FUNCTION: 0x0076F170 ?F?$VectorCursor@V?$TRect@H@@V?$DynamicVectorClass@V?$TRect@H@@@@
-// FUNCTION: 0x0076F180 ?E?$VectorCursor@VPoint2D@@V?$DynamicVectorClass@VPoint2D@@@@
-// FUNCTION: 0x0076F190 ?F?$VectorCursor@VPoint2D@@V?$DynamicVectorClass@VPoint2D@@@@
+// TEMPLATE: GAMEMD 0x0076F090
+// ??0?$VectorCursor@V?$TRect@H@@V?$DynamicVectorClass@V?$TRect@H@@@@@@QAE@AAV?$DynamicVectorClass@V?$TRect@H@@@@H@Z
+// TEMPLATE: GAMEMD 0x0076F0B0
+// ??B?$VectorCursor@V?$TRect@H@@V?$DynamicVectorClass@V?$TRect@H@@@@@@UBE_NXZ
+// TEMPLATE: GAMEMD 0x0076F0C0
+// ??0?$VectorCursor@VPoint2D@@V?$DynamicVectorClass@VPoint2D@@@@@@QAE@AAV?$DynamicVectorClass@VPoint2D@@@@H@Z
+// TEMPLATE: GAMEMD 0x0076F0E0
+// ??B?$VectorCursor@VPoint2D@@V?$DynamicVectorClass@VPoint2D@@@@@@UBE_NXZ
+// TEMPLATE: GAMEMD 0x0076F0F0
+// ??B?$VectorCursor@PAVMSSfxEntry@@V?$DynamicVectorClass@PAVMSSfxEntry@@@@@@UBE_NXZ
+// SYNTHETIC: GAMEMD 0x0076F100
+// ??_G?$VectorCursor@V?$TRect@H@@V?$DynamicVectorClass@V?$TRect@H@@@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x0076F120
+// ??_G?$VectorCursor@VPoint2D@@V?$DynamicVectorClass@VPoint2D@@@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x0076F140
+// ??_G?$VectorCursor@PAVMSSfxEntry@@V?$DynamicVectorClass@PAVMSSfxEntry@@@@@@UAEPAXI@Z
+// TEMPLATE: GAMEMD 0x0076F160
+// ??E?$VectorCursor@V?$TRect@H@@V?$DynamicVectorClass@V?$TRect@H@@@@@@UAEAAV0@XZ
+// TEMPLATE: GAMEMD 0x0076F170
+// ??F?$VectorCursor@V?$TRect@H@@V?$DynamicVectorClass@V?$TRect@H@@@@@@UAEAAV0@XZ
+// TEMPLATE: GAMEMD 0x0076F180
+// ??E?$VectorCursor@VPoint2D@@V?$DynamicVectorClass@VPoint2D@@@@@@UAEAAV0@XZ
+// TEMPLATE: GAMEMD 0x0076F190
+// ??F?$VectorCursor@VPoint2D@@V?$DynamicVectorClass@VPoint2D@@@@@@UAEAAV0@XZ
 template class VectorCursor<Rect, DynamicVectorClass<Rect> >;
 template class VectorCursor<Point2D, DynamicVectorClass<Point2D> >;
-// FUNCTION: 0x0076F1A0 ?E?$VectorCursor@PAVMSSfxEntry@@V?$DynamicVectorClass@PAVMSSfxEntry@@@@
-// FUNCTION: 0x0076F1B0 ?F?$VectorCursor@PAVMSSfxEntry@@V?$DynamicVectorClass@PAVMSSfxEntry@@@@
-// FUNCTION: 0x0076F1C0 ?$VectorClass@PAVMSAnim@@::?$VectorClass@PAVMSAnim@@
-// FUNCTION: 0x0076F210 ?$VectorClass@PAVMSSfxEntry@@::?$VectorClass@PAVMSSfxEntry@@
+// TEMPLATE: GAMEMD 0x0076F1A0
+// ??E?$VectorCursor@PAVMSSfxEntry@@V?$DynamicVectorClass@PAVMSSfxEntry@@@@@@UAEAAV0@XZ
+// TEMPLATE: GAMEMD 0x0076F1B0
+// ??F?$VectorCursor@PAVMSSfxEntry@@V?$DynamicVectorClass@PAVMSSfxEntry@@@@@@UAEAAV0@XZ
+// TEMPLATE: GAMEMD 0x0076F1C0
+// ??0?$VectorClass@PAVMSAnim@@@@QAE@HPBQAVMSAnim@@@Z
+// TEMPLATE: GAMEMD 0x0076F210
+// ??0?$VectorClass@PAVMSSfxEntry@@@@QAE@HPBQAVMSSfxEntry@@@Z
 template class VectorClass<MSAnim *>;
 template class VectorClass<MSSfxEntry *>;
 template class VectorCursor<MSSfxEntry *, DynamicVectorClass<MSSfxEntry *> >;
@@ -340,7 +386,7 @@ int DAT_00B72A9C;
 int DAT_00B72AA0;
 int DAT_00B72AA4;
 
-// FUNCTION: 0x0076F260
+// FUNCTION: GAMEMD 0x0076F260
 void FUN_0076F260(void)
 {
 	DAT_00B72A98 = 0;

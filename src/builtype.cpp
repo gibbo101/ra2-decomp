@@ -38,8 +38,10 @@
 #include "warhead.h"
 #include "weapon.h"
 
-// FUNCTION: 0x0045B1B0 $E222
-// FUNCTION: 0x0045B1C0 $E199
+// SYNTHETIC: GAMEMD 0x0045B1B0 SYMBOL
+// _$E222
+// SYNTHETIC: GAMEMD 0x0045B1C0 SYMBOL
+// _$E199
 Cell const BuildingTypeClass::OccupyLists[BSIZE_COUNT][30] = {
 	/* BSIZE_11 */ { Cell(0,0),REFRESH_EOL },
 	/* BSIZE_21 */ { Cell(0,0),Cell(1,0),REFRESH_EOL },
@@ -65,8 +67,10 @@ Cell const BuildingTypeClass::OccupyLists[BSIZE_COUNT][30] = {
 	/* BSIZE_00 */ { REFRESH_EOL }
 };
 
-// FUNCTION: 0x0045C2F0 $E247
-// FUNCTION: 0x0045C300 $E224
+// SYNTHETIC: GAMEMD 0x0045C2F0 SYMBOL
+// _$E247
+// SYNTHETIC: GAMEMD 0x0045C300 SYMBOL
+// _$E224
 Cell const BuildingTypeClass::ExitLists[BSIZE_COUNT][30] = {
 	/* BSIZE_11 */ { Cell(0,1),Cell(-1,1),Cell(1,1),Cell(-1,0),Cell(1,0),Cell(0,-1),Cell(-1,-1),Cell(1,-1),REFRESH_EOL },
 	/* BSIZE_21 */ { Cell(0,1),Cell(1,1),Cell(-1,1),Cell(2,1),Cell(-1,0),Cell(2,0),Cell(0,-1),Cell(1,-1),Cell(-1,-1),Cell(2,-1),REFRESH_EOL },
@@ -105,7 +109,7 @@ static struct {
 	{ "Combat", 5 }
 };
 
-// FUNCTION: 0x0045DD20
+// FUNCTION: GAMEMD 0x0045DD20
 char const * Name_From_BuildCat(int value)
 {
 	for (int index = 0; index < 6; index++) {
@@ -116,7 +120,7 @@ char const * Name_From_BuildCat(int value)
 	return(_buildcats[0].Name);
 }
 
-// FUNCTION: 0x0045DD50
+// FUNCTION: GAMEMD 0x0045DD50
 int BuildCat_From_Name(char const * name)
 {
 	for (int index = 0; index < 6; index++) {
@@ -127,7 +131,7 @@ int BuildCat_From_Name(char const * name)
 	return(0);
 }
 
-// FUNCTION: 0x0045E520
+// FUNCTION: GAMEMD 0x0045E520
 BuildingTypeClass::BuildingTypeClass(NoInitClass const & x) :
 	BASECLASS(x),
 	BuildupData(NULL),
@@ -136,7 +140,7 @@ BuildingTypeClass::BuildingTypeClass(NoInitClass const & x) :
 {
 }
 
-// FUNCTION: 0x0045E580
+// FUNCTION: GAMEMD 0x0045E580
 BuildingTypeClass::~BuildingTypeClass(void)
 {
 	if (BuildupLoaded && BuildupData != NULL) {
@@ -178,12 +182,12 @@ BuildingTypeClass::~BuildingTypeClass(void)
 	BuildingTypes.Delete(this);
 }
 
-// FUNCTION: 0x0045E750
+// FUNCTION: GAMEMD 0x0045E750
 void BuildingTypeClass::One_Time(void)
 {
 }
 
-// FUNCTION: 0x0045E760
+// FUNCTION: GAMEMD 0x0045E760
 StructType BuildingTypeClass::From_Given_Name(char const * name)
 {
 	if (name != NULL) {
@@ -196,7 +200,7 @@ StructType BuildingTypeClass::From_Given_Name(char const * name)
 	return(STRUCT_NONE);
 }
 
-// FUNCTION: 0x0045E7B0
+// FUNCTION: GAMEMD 0x0045E7B0
 StructType BuildingTypeClass::From_Name(char const * name)
 {
 	if (name != NULL) {
@@ -209,7 +213,7 @@ StructType BuildingTypeClass::From_Name(char const * name)
 	return(STRUCT_NONE);
 }
 
-// FUNCTION: 0x0045E800
+// FUNCTION: GAMEMD 0x0045E800
 bool BuildingTypeClass::Create_And_Place(Cell const & cell, HouseClass * house) const
 {
 	BuildingClass * ptr;
@@ -221,13 +225,13 @@ bool BuildingTypeClass::Create_And_Place(Cell const & cell, HouseClass * house) 
 	return(false);
 }
 
-// FUNCTION: 0x0045E880
+// FUNCTION: GAMEMD 0x0045E880
 ObjectClass * BuildingTypeClass::Create_One_Of(HouseClass * house) const
 {
 	return(new BuildingClass(this, house));
 }
 
-// FUNCTION: 0x0045E8B0
+// FUNCTION: GAMEMD 0x0045E8B0
 void BuildingTypeClass::Init_Anim(BStateType state, int start, int count, int rate) const
 {
 	((int &)Anims[state].Start) = start;
@@ -239,7 +243,7 @@ struct FileSystem {
 	static void const * LoadFile(char const * name, bool flag);
 };
 
-// FUNCTION: 0x0045E8F0
+// FUNCTION: GAMEMD 0x0045E8F0
 void BuildingTypeClass::Fetch_Z_Data(void)
 {
 	if (BuildingZShape == NULL) {
@@ -259,7 +263,7 @@ void BuildingTypeClass::Fetch_Z_Data(void)
 	}
 }
 
-// FUNCTION: 0x0045E970
+// FUNCTION: GAMEMD 0x0045E970
 void BuildingTypeClass::Init(TheaterType theater)
 {
 	Fetch_Z_Data();
@@ -331,7 +335,7 @@ void BuildingTypeClass::Init(TheaterType theater)
 	}
 }
 
-// FUNCTION: 0x0045EBD0
+// FUNCTION: GAMEMD 0x0045EBD0
 Point3D BuildingTypeClass::Pixel_Dimensions(void) const
 {
 	SHPStruct const * data = (SHPStruct const *)Get_Image_Data();
@@ -348,7 +352,7 @@ Point3D BuildingTypeClass::Pixel_Dimensions(void) const
 	return(Point3D(w, w, h));
 }
 
-// FUNCTION: 0x0045EC20
+// FUNCTION: GAMEMD 0x0045EC20
 Cell const * BuildingTypeClass::Occupy_List(bool placement) const
 {
 	static Cell const _templap[] = {REFRESH_EOL};
@@ -358,20 +362,21 @@ Cell const * BuildingTypeClass::Occupy_List(bool placement) const
 	return(_templap);
 }
 
-// FUNCTION: 0x0045EC80 $E
-// FUNCTION: 0x0045EC90
+// SYNTHETIC: GAMEMD 0x0045EC80 SYMBOL
+// _$E44
+// FUNCTION: GAMEMD 0x0045EC90
 int BuildingTypeClass::Width(void) const
 {
 	return(SizeWidth[Size]);
 }
 
-// FUNCTION: 0x0045ECA0
+// FUNCTION: GAMEMD 0x0045ECA0
 int BuildingTypeClass::Height(bool bib) const
 {
 	return(SizeHeight[Size] + ((bib && IsBibbed) ? 1 : 0));
 }
 
-// FUNCTION: 0x0045ECE0
+// FUNCTION: GAMEMD 0x0045ECE0
 int BuildingTypeClass::Max_Pips(void) const
 {
 	int maxpips = (Width() * 60) / 8;
@@ -392,7 +397,7 @@ int BuildingTypeClass::Max_Pips(void) const
 	}
 }
 
-// FUNCTION: 0x0045ED50
+// FUNCTION: GAMEMD 0x0045ED50
 int BuildingTypeClass::Raw_Cost(void) const
 {
 	int cost = BASECLASS::Raw_Cost();
@@ -407,7 +412,7 @@ int BuildingTypeClass::Raw_Cost(void) const
 	return(cost);
 }
 
-// FUNCTION: 0x0045EDD0
+// FUNCTION: GAMEMD 0x0045EDD0
 int BuildingTypeClass::Cost_Of(HouseClass * house) const
 {
 	int cost = BASECLASS::Cost_Of(house);
@@ -422,7 +427,7 @@ int BuildingTypeClass::Cost_Of(HouseClass * house) const
 	return(cost);
 }
 
-// FUNCTION: 0x0045EE70
+// FUNCTION: GAMEMD 0x0045EE70
 int BuildingTypeClass::Flush_For_Placement(Cell const & cell, HouseClass * house) const
 {
 	bool again = false;
@@ -472,7 +477,7 @@ int BuildingTypeClass::Flush_For_Placement(Cell const & cell, HouseClass * house
 
 void FUN_005F9710(char * name);
 
-// FUNCTION: 0x0045F040
+// FUNCTION: GAMEMD 0x0045F040
 void const * BuildingTypeClass::Get_Image_Data(void) const
 {
 	if (ImageData == NULL && IsDemandLoad) {
@@ -498,7 +503,7 @@ void const * BuildingTypeClass::Get_Image_Data(void) const
 	return(ImageData);
 }
 
-// FUNCTION: 0x0045F160
+// FUNCTION: GAMEMD 0x0045F160
 bool BuildingTypeClass::FUN_0045F160(ShapeSet const ** shape, int * frame)
 {
 	if (LeaveRubble && shape != NULL) {
@@ -517,7 +522,7 @@ bool BuildingTypeClass::FUN_0045F160(ShapeSet const ** shape, int * frame)
 	return(false);
 }
 
-// FUNCTION: 0x0045F1D0
+// FUNCTION: GAMEMD 0x0045F1D0
 bool BuildingTypeClass::FUN_0045F1D0(ShapeSet const ** shape, int * frame)
 {
 	if (LeaveRubble && shape != NULL) {
@@ -536,7 +541,7 @@ bool BuildingTypeClass::FUN_0045F1D0(ShapeSet const ** shape, int * frame)
 	return(false);
 }
 
-// FUNCTION: 0x0045FA90
+// FUNCTION: GAMEMD 0x0045FA90
 void BuildingTypeClass::Fetch_Building_Voxel_Image(void)
 {
 	char buffer[128];
@@ -591,7 +596,7 @@ void BuildingTypeClass::Fetch_Building_Voxel_Image(void)
 	}
 }
 
-// FUNCTION: 0x00464A70
+// FUNCTION: GAMEMD 0x00464A70
 Coord const BuildingTypeClass::Coord_Fixup(Coord const & coord) const
 {
 	Coord crd = coord;
@@ -599,7 +604,7 @@ Coord const BuildingTypeClass::Coord_Fixup(Coord const & coord) const
 	return(crd);
 }
 
-// FUNCTION: 0x00464AC0
+// FUNCTION: GAMEMD 0x00464AC0
 bool BuildingTypeClass::Legal_Placement(Cell const & pos, HouseClass * house) const
 {
 	if (IsCanPlaceAnywhere) {
@@ -608,13 +613,13 @@ bool BuildingTypeClass::Legal_Placement(Cell const & pos, HouseClass * house) co
 	return(TechnoTypeClass::Legal_Placement(pos, house));
 }
 
-// FUNCTION: 0x00464AF0
+// FUNCTION: GAMEMD 0x00464AF0
 Point3D BuildingTypeClass::Lepton_Dimensions(void) const
 {
 	return(Point3D(SizeWidth[Size] << 8, SizeHeight[Size] << 8, ZHeight * LEVEL_LEPTON_H));
 }
 
-// FUNCTION: 0x00464B30
+// FUNCTION: GAMEMD 0x00464B30
 void BuildingTypeClass::Compute_CRC(CRCEngine & crc) const
 {
 	TechnoTypeClass::Compute_CRC(crc);
@@ -705,7 +710,7 @@ void BuildingTypeClass::Compute_CRC(CRCEngine & crc) const
 	crc(ConcentricRadialIndicator);
 }
 
-// FUNCTION: 0x00465010
+// FUNCTION: GAMEMD 0x00465010
 HRESULT STDMETHODCALLTYPE BuildingTypeClass::Load(IStream * stream)
 {
 	if (IsFreeBuildup && BuildupData != NULL) {
@@ -804,7 +809,7 @@ HRESULT STDMETHODCALLTYPE BuildingTypeClass::Load(IStream * stream)
 	return(S_OK);
 }
 
-// FUNCTION: 0x00465300
+// FUNCTION: GAMEMD 0x00465300
 HRESULT STDMETHODCALLTYPE BuildingTypeClass::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = TechnoTypeClass::Save(stream, cleardirty);
@@ -827,7 +832,7 @@ HRESULT STDMETHODCALLTYPE BuildingTypeClass::Save(IStream * stream, BOOL cleardi
 	return(S_OK);
 }
 
-// FUNCTION: 0x00465380
+// FUNCTION: GAMEMD 0x00465380
 HRESULT STDMETHODCALLTYPE BuildingTypeClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -835,13 +840,13 @@ HRESULT STDMETHODCALLTYPE BuildingTypeClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x004653C0
+// FUNCTION: GAMEMD 0x004653C0
 BuildingTypeClass * BuildingTypeClass::Find_Or_Make(char const * name)
 {
 	return(TFind_Or_Make<BuildingTypeClass>(name, BuildingTypes));
 }
 
-// FUNCTION: 0x00465450
+// FUNCTION: GAMEMD 0x00465450
 void BuildingTypeClass::Post_Load_Game(void)
 {
 	int maxcloak = 0;
@@ -868,7 +873,7 @@ void BuildingTypeClass::Post_Load_Game(void)
 	}
 }
 
-// FUNCTION: 0x00465550
+// FUNCTION: GAMEMD 0x00465550
 Cell const * BuildingTypeClass::Exit_List(void) const
 {
 	BSizeType size = Size;
@@ -878,19 +883,19 @@ Cell const * BuildingTypeClass::Exit_List(void) const
 	return(ExitLists[size]);
 }
 
-// FUNCTION: 0x00465910
+// FUNCTION: GAMEMD 0x00465910
 bool BuildingTypeClass::CanUseWaypoint(void) const
 {
 	return(false);
 }
 
-// FUNCTION: 0x00465920
+// FUNCTION: GAMEMD 0x00465920
 bool BuildingTypeClass::CanAttackMove(void) const
 {
 	return(false);
 }
 
-// FUNCTION: 0x00465930
+// FUNCTION: GAMEMD 0x00465930
 int BuildingTypeClass::Get_Max_Drain(DynamicVectorClass<BuildingTypeClass *> const & list)
 {
 	int maxdrain = 0;
@@ -904,7 +909,7 @@ int BuildingTypeClass::Get_Max_Drain(DynamicVectorClass<BuildingTypeClass *> con
 
 void FUN_005F96B0(char * name, TheaterType theater);
 
-// FUNCTION: 0x00465960
+// FUNCTION: GAMEMD 0x00465960
 void const * BuildingTypeClass::Get_Buildup_Data(void) const
 {
 	char fullname[MAX_PATH];
@@ -939,7 +944,7 @@ void const * BuildingTypeClass::Get_Buildup_Data(void) const
 	return(BuildupData);
 }
 
-// FUNCTION: 0x00465AF0
+// FUNCTION: GAMEMD 0x00465AF0
 void BuildingTypeClass::Free_Buildup_Data(void)
 {
 	if (IsFreeBuildup && BuildupData != NULL) {
@@ -949,7 +954,7 @@ void BuildingTypeClass::Free_Buildup_Data(void)
 	}
 }
 
-// FUNCTION: 0x00465B30
+// FUNCTION: GAMEMD 0x00465B30
 void BuildingTypeClass::Free_Bib_Shape(void)
 {
 	if (BibShapeLoaded && BibShape != NULL) {
@@ -959,7 +964,7 @@ void BuildingTypeClass::Free_Bib_Shape(void)
 	}
 }
 
-// FUNCTION: 0x00465B70
+// FUNCTION: GAMEMD 0x00465B70
 void BuildingTypeClass::Free_Deploying_Anim(void)
 {
 	if (DeployingAnimLoaded && DeployingAnim != NULL) {
@@ -969,7 +974,7 @@ void BuildingTypeClass::Free_Deploying_Anim(void)
 	}
 }
 
-// FUNCTION: 0x00465BB0
+// FUNCTION: GAMEMD 0x00465BB0
 void BuildingTypeClass::Free_Under_Door_Anim(void)
 {
 	if (UnderDoorAnimLoaded && UnderDoorAnim != NULL) {
@@ -979,7 +984,7 @@ void BuildingTypeClass::Free_Under_Door_Anim(void)
 	}
 }
 
-// FUNCTION: 0x00465BF0
+// FUNCTION: GAMEMD 0x00465BF0
 void BuildingTypeClass::Free_Rubble(void)
 {
 	if (RubbleLoaded && Rubble != NULL) {
@@ -989,7 +994,7 @@ void BuildingTypeClass::Free_Rubble(void)
 	}
 }
 
-// FUNCTION: 0x00465C30
+// FUNCTION: GAMEMD 0x00465C30
 void BuildingTypeClass::Free_Roof_Deploying_Anim(void)
 {
 	if (RoofDeployingAnimLoaded && RoofDeployingAnim != NULL) {
@@ -999,7 +1004,7 @@ void BuildingTypeClass::Free_Roof_Deploying_Anim(void)
 	}
 }
 
-// FUNCTION: 0x00465C70
+// FUNCTION: GAMEMD 0x00465C70
 void BuildingTypeClass::Free_Under_Roof_Door_Anim(void)
 {
 	if (UnderRoofDoorAnimLoaded && UnderRoofDoorAnim != NULL) {
@@ -1009,12 +1014,12 @@ void BuildingTypeClass::Free_Under_Roof_Door_Anim(void)
 	}
 }
 
-// FUNCTION: 0x00465CB0
+// FUNCTION: GAMEMD 0x00465CB0
 void BuildingTypeClass::Calculate_Base_Defense_Values(void)
 {
 }
 
-// FUNCTION: 0x00465CC0
+// FUNCTION: GAMEMD 0x00465CC0
 void BuildingTypeClass::Post_Read_Tile_Fixup(void)
 {
 	char buffer[60];
@@ -1030,62 +1035,71 @@ void BuildingTypeClass::Post_Read_Tile_Fixup(void)
 	}
 }
 
-// FUNCTION: 0x00465D30
+// FUNCTION: GAMEMD 0x00465D30
 bool BuildingTypeClass::FUN_00465D30(void) const
 {
 	return(false);
 }
 
-// FUNCTION: 0x00465D40
+// FUNCTION: GAMEMD 0x00465D40
 bool BuildingTypeClass::IsVehicle(void) const
 {
 	return(UndeploysInto != NULL && SizeWidth[Size] == 1 && SizeHeight[Size] == 1);
 }
 
-// FUNCTION: 0x00465D70
+// FUNCTION: GAMEMD 0x00465D70
 Dir256 BuildingTypeClass::Deploy_Facing(void) const
 {
 	return(Dir256(DeployFacing));
 }
 
-// FUNCTION: 0x00465D80
+// FUNCTION: GAMEMD 0x00465D80
 BuildingTypeClass * BuildingTypeClass::FUN_00465D80(void)
 {
 	return(this);
 }
 
-// FUNCTION: 0x00465D90
+// FUNCTION: GAMEMD 0x00465D90
 RTTIType BuildingTypeClass::Fetch_RTTI(void) const
 {
 	return(RTTI_BUILDINGTYPE);
 }
 
-// FUNCTION: 0x00465DA0
+// FUNCTION: GAMEMD 0x00465DA0
 int BuildingTypeClass::Fetch_Object_Size(void) const
 {
 	return(sizeof(*this));
 }
 
-// FUNCTION: 0x00465DB0
+// FUNCTION: GAMEMD 0x00465DB0
 int BuildingTypeClass::Fetch_Heap_ID(void) const
 {
 	return(HeapID);
 }
 
-// FUNCTION: 0x00465DC0 BuildingTypeClass::~BuildingTypeClass
+// SYNTHETIC: GAMEMD 0x00465DC0
+// ??_GBuildingTypeClass@@UAEPAXI@Z
 
-// FUNCTION: 0x00465DE0 ?$VectorClass@V?$TPoint3D@H@@::GetItem
-// FUNCTION: 0x00465E10 ?$VectorClass@V?$TPoint3D@H@@::operator==
-// FUNCTION: 0x00465E70 ?$VectorClass@V?$TPoint3D@H@@::Resize
-// FUNCTION: 0x00465F50 ?$VectorClass@V?$TPoint3D@H@@::Clear
-// FUNCTION: 0x00465F80 ?$VectorClass@V?$TPoint3D@H@@::ID
-// FUNCTION: 0x00465FD0 ?$VectorClass@V?$TPoint3D@H@@::ID
+// TEMPLATE: GAMEMD 0x00465DE0
+// ?GetItem@?$VectorClass@V?$TPoint3D@H@@@@UBE?AV?$TPoint3D@H@@H@Z
+// TEMPLATE: GAMEMD 0x00465E10
+// ??8?$VectorClass@V?$TPoint3D@H@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x00465E70
+// ?Resize@?$VectorClass@V?$TPoint3D@H@@@@UAE_NHPBV?$TPoint3D@H@@@Z
+// TEMPLATE: GAMEMD 0x00465F50
+// ?Clear@?$VectorClass@V?$TPoint3D@H@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x00465F80
+// ?ID@?$VectorClass@V?$TPoint3D@H@@@@UAEHABV?$TPoint3D@H@@@Z
+// TEMPLATE: GAMEMD 0x00465FD0
+// ?ID@?$VectorClass@V?$TPoint3D@H@@@@UAEHPBV?$TPoint3D@H@@@Z
 template class VectorClass<Point3D>;
 
-// FUNCTION: 0x00466000 TFind_Or_Make
+// TEMPLATE: GAMEMD 0x00466000
+// ?TFind_Or_Make@@YIPAVBuildingTypeClass@@PBDABV?$DynamicVectorClass@PAVBuildingTypeClass@@@@@Z
 template BuildingTypeClass * TFind_Or_Make<BuildingTypeClass>(char const *, DynamicVectorClass<BuildingTypeClass *> const &);
 
-// FUNCTION: 0x00466080 ?$VectorClass@V?$TPoint3D@H@@::~?$VectorClass@V?$TPoint3D@H@@
+// SYNTHETIC: GAMEMD 0x00466080
+// ??_G?$VectorClass@V?$TPoint3D@H@@@@UAEPAXI@Z
 
 #include <math.h>
 
@@ -1103,34 +1117,44 @@ extern const double DAT_007E1740;
 extern const double DAT_007E4660;
 extern const double DAT_007E4668;
 
-// FUNCTION: 0x004660D0 $E252
+// SYNTHETIC: GAMEMD 0x004660D0 SYMBOL
+// _$E252
 double DAT_0089DDF8 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x00466100 $E255
+// SYNTHETIC: GAMEMD 0x00466100 SYMBOL
+// _$E255
 double DAT_0089DE68 = DAT_0089DDF8 / DAT_007E4660;
 
-// FUNCTION: 0x00466120 $E258
+// SYNTHETIC: GAMEMD 0x00466120 SYMBOL
+// _$E258
 double DAT_0089DE50 = DAT_007E1718 / DAT_0089DE68;
 
-// FUNCTION: 0x00466140 $E261
+// SYNTHETIC: GAMEMD 0x00466140 SYMBOL
+// _$E261
 double DAT_0089DE48 = DAT_007E1720 * DAT_007E4668;
 
-// FUNCTION: 0x00466160 $E264
+// SYNTHETIC: GAMEMD 0x00466160 SYMBOL
+// _$E264
 double DAT_0089DE00 = DAT_007E1728 * DAT_007E4668;
 
-// FUNCTION: 0x00466180 $E267
+// SYNTHETIC: GAMEMD 0x00466180 SYMBOL
+// _$E267
 double DAT_0089DDD8 = DAT_007E1730 * DAT_007E4668;
 
-// FUNCTION: 0x004661A0 $E270
+// SYNTHETIC: GAMEMD 0x004661A0 SYMBOL
+// _$E270
 int DAT_0089DE70 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_0089DDD8 - DAT_0089DE00) * DAT_0089DDF8));
 
-// FUNCTION: 0x004661E0 $E273
+// SYNTHETIC: GAMEMD 0x004661E0 SYMBOL
+// _$E273
 double DAT_0089DE08 = FUN_004CADE0(DAT_0089DE70 * DAT_007E1740);
 
-// FUNCTION: 0x00466210 $E276
+// SYNTHETIC: GAMEMD 0x00466210 SYMBOL
+// _$E276
 double DAT_0089DE40 = FUN_004CADE0((DAT_0089DE70 * 2) / DAT_0089DDF8);
 
-// FUNCTION: 0x00466240 $E279
+// SYNTHETIC: GAMEMD 0x00466240 SYMBOL
+// _$E279
 int DAT_0089DE64 = (int)(DAT_0089DE70 * 4 + DAT_007E1738);
 
 struct ShortPair {
@@ -1153,14 +1177,18 @@ struct IntQuad {
 	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
 };
 
-// FUNCTION: 0x00466270 $E282
+// SYNTHETIC: GAMEMD 0x00466270 SYMBOL
+// _$E282
 ShortPair DAT_0089DDF0;
 
-// FUNCTION: 0x00466280 $E285
+// SYNTHETIC: GAMEMD 0x00466280 SYMBOL
+// _$E285
 IntTriple DAT_0089DE30;
 
-// FUNCTION: 0x004662A0 $E288
+// SYNTHETIC: GAMEMD 0x004662A0 SYMBOL
+// _$E288
 IntTriple2 DAT_0089DE58;
 
-// FUNCTION: 0x004662C0 $E291
+// SYNTHETIC: GAMEMD 0x004662C0 SYMBOL
+// _$E291
 IntQuad DAT_0089DDE0;

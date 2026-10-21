@@ -44,40 +44,52 @@ struct IntTriple {
 	IntTriple() { A = 0; B = 0; C = 0; }
 };
 
-// FUNCTION: 0x006954E0 $E33
+// SYNTHETIC: GAMEMD 0x006954E0 SYMBOL
+// _$E33
 double DAT_00B05768 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x00695510 $E36
+// SYNTHETIC: GAMEMD 0x00695510 SYMBOL
+// _$E36
 double DAT_00B057B8 = DAT_00B05768 / DAT_007F1180;
 
-// FUNCTION: 0x00695530 $E39
+// SYNTHETIC: GAMEMD 0x00695530 SYMBOL
+// _$E39
 double DAT_00B057A0 = DAT_007E1718 / DAT_00B057B8;
 
-// FUNCTION: 0x00695550 $E42
+// SYNTHETIC: GAMEMD 0x00695550 SYMBOL
+// _$E42
 double DAT_00B05798 = DAT_007E1720 * DAT_007F1188;
 
-// FUNCTION: 0x00695570 $E45
+// SYNTHETIC: GAMEMD 0x00695570 SYMBOL
+// _$E45
 double DAT_00B05770 = DAT_007E1728 * DAT_007F1188;
 
-// FUNCTION: 0x00695590 $E48
+// SYNTHETIC: GAMEMD 0x00695590 SYMBOL
+// _$E48
 double DAT_00B05748 = DAT_007E1730 * DAT_007F1188;
 
-// FUNCTION: 0x006955B0 $E51
+// SYNTHETIC: GAMEMD 0x006955B0 SYMBOL
+// _$E51
 int DAT_00B057C0 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B05748 - DAT_00B05770) * DAT_00B05768));
 
-// FUNCTION: 0x006955F0 $E54
+// SYNTHETIC: GAMEMD 0x006955F0 SYMBOL
+// _$E54
 double DAT_00B05778 = FUN_004CADE0(DAT_00B057C0 * DAT_007E1740);
 
-// FUNCTION: 0x00695620 $E57
+// SYNTHETIC: GAMEMD 0x00695620 SYMBOL
+// _$E57
 double DAT_00B05790 = FUN_004CADE0((DAT_00B057C0 * 2) / DAT_00B05768);
 
-// FUNCTION: 0x00695650 $E60
+// SYNTHETIC: GAMEMD 0x00695650 SYMBOL
+// _$E60
 int DAT_00B057B4 = (int)(DAT_00B057C0 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x00695680 $E63
+// SYNTHETIC: GAMEMD 0x00695680 SYMBOL
+// _$E63
 ShortPair DAT_00B05760;
 
-// FUNCTION: 0x00695690 $E66
+// SYNTHETIC: GAMEMD 0x00695690 SYMBOL
+// _$E66
 IntTriple DAT_00B05780;
 
 struct IntTripleB {
@@ -85,7 +97,8 @@ struct IntTripleB {
 	IntTripleB() { C = 0; A = 0x80; B = 0x80; }
 };
 
-// FUNCTION: 0x006956B0 $E69
+// SYNTHETIC: GAMEMD 0x006956B0 SYMBOL
+// _$E69
 IntTripleB DAT_00B057A8;
 
 #undef Edit_SetText
@@ -117,7 +130,7 @@ static wchar_t const *baudname[] = {
 
 BOOL CALLBACK Com_Settings_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 
-// FUNCTION: 0x006956D0
+// FUNCTION: GAMEMD 0x006956D0
 bool SerialEdit::Dialog(SerialSettingsType *settings)
 {
 	RC = -1;
@@ -289,7 +302,7 @@ BOOL SerialEdit::Handle_Message(HWND window, UINT message, WPARAM wparam, LPARAM
 	return(0);
 }
 
-// FUNCTION: 0x00695760
+// FUNCTION: GAMEMD 0x00695760
 BOOL CALLBACK Com_Settings_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	int rc;
@@ -303,7 +316,7 @@ BOOL CALLBACK Com_Settings_Dialog_Proc(HWND window, UINT message, WPARAM wparam,
 	return(SerialEdit::Handle_Message(window, message, wparam, lparam));
 }
 
-// FUNCTION: 0x00695BC0
+// FUNCTION: GAMEMD 0x00695BC0
 bool SerialEdit::Save(void)
 {
 	char * temp;
@@ -439,7 +452,7 @@ bool SerialEdit::Save(void)
 	return(false);
 }
 
-// FUNCTION: 0x00695FD0
+// FUNCTION: GAMEMD 0x00695FD0
 void SerialEdit::Init(SerialSettingsType *settings)
 {
 	memcpy( &TempSettings, settings, sizeof(SerialSettingsType) );
@@ -483,7 +496,7 @@ void SerialEdit::Init(SerialSettingsType *settings)
 	}
 }
 
-// FUNCTION: 0x00696200
+// FUNCTION: GAMEMD 0x00696200
 void SerialEdit::Build_Port_Listbox(void)
 {
 	static const char *portname[] = {
@@ -581,7 +594,7 @@ void SerialEdit::Build_Port_Listbox(void)
 	}
 }
 
-// FUNCTION: 0x006964C0
+// FUNCTION: GAMEMD 0x006964C0
 void SerialEdit::Build_Baud_Rate_Listbox(void)
 {
 	int i;
@@ -629,7 +642,7 @@ void SerialEdit::Build_Baud_Rate_Listbox(void)
 	}
 }
 
-// FUNCTION: 0x00696590
+// FUNCTION: GAMEMD 0x00696590
 void SerialEdit::Build_Call_Wait_Listbox(void)
 {
 	int index;
@@ -647,7 +660,7 @@ void SerialEdit::Build_Call_Wait_Listbox(void)
 	}
 }
 
-// FUNCTION: 0x00696610
+// FUNCTION: GAMEMD 0x00696610
 void SerialEdit::Build_Init_String_Listbox(void)
 {
 	HWND handle = GetDlgItem(_Dialog, IDC_SERIAL_INITLIST);
@@ -669,7 +682,7 @@ void SerialEdit::Build_Init_String_Listbox(void)
 	}
 }
 
-// FUNCTION: 0x006966D0
+// FUNCTION: GAMEMD 0x006966D0
 void SerialEdit::Set_Dial_Method(void)
 {
 	HWND handle;
@@ -685,7 +698,7 @@ void SerialEdit::Set_Dial_Method(void)
 	}
 }
 
-// FUNCTION: 0x00696740
+// FUNCTION: GAMEMD 0x00696740
 void SerialEdit::Set_String(int id)
 {
 	HWND handle = GetDlgItem(_Dialog, id);
@@ -704,7 +717,7 @@ void SerialEdit::Set_String(int id)
 	}
 }
 
-// FUNCTION: 0x006967B0
+// FUNCTION: GAMEMD 0x006967B0
 void SerialEdit::Set_Port(void)
 {
 	int index;
@@ -770,7 +783,7 @@ void SerialEdit::Set_Port(void)
 	}
 }
 
-// FUNCTION: 0x00696950
+// FUNCTION: GAMEMD 0x00696950
 void SerialEdit::Set_Init_String(void)
 {
 	HWND handle = GetDlgItem(_Dialog, IDC_SERIAL_CALLWAITING_EDIT);
@@ -785,7 +798,7 @@ void SerialEdit::Set_Init_String(void)
 	}
 }
 
-// FUNCTION: 0x00696C40
+// FUNCTION: GAMEMD 0x00696C40
 void SerialEdit::Delete_Init_String(void)
 {
 	int initstr_index;

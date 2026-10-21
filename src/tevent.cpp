@@ -21,11 +21,13 @@
 #include "tracker.h"
 #include "vector.h"
 
-// FUNCTION: 0x0071E620 $E40
-// FUNCTION: 0x0071E660 $E38
+// SYNTHETIC: GAMEMD 0x0071E620 SYMBOL
+// _$E40
+// SYNTHETIC: GAMEMD 0x0071E660 SYMBOL
+// _$E38
 DynamicVectorClass<TEventClass *> Events;
 
-// FUNCTION: 0x0071E6A0
+// FUNCTION: GAMEMD 0x0071E6A0
 TEventClass::TEventClass(void) :
 	HeapID(-1),
 	Next(NULL),
@@ -42,14 +44,14 @@ TEventClass::TEventClass(void) :
 	Data.Value = 0;
 }
 
-// FUNCTION: 0x0071E800
+// FUNCTION: GAMEMD 0x0071E800
 TEventClass::TEventClass(NoInitClass const & x) :
 	BASECLASS(x),
 	String(x)
 {
 }
 
-// FUNCTION: 0x0071E830
+// FUNCTION: GAMEMD 0x0071E830
 TEventClass::~TEventClass(void)
 {
 	Detach_This_From_All(this, true);
@@ -58,7 +60,7 @@ TEventClass::~TEventClass(void)
 	Events.Delete(this);
 }
 
-// FUNCTION: 0x0071F390
+// FUNCTION: GAMEMD 0x0071F390
 void TEventClass::Build_INI_Entry(char * ptr) const
 {
 	int code = 0;
@@ -78,7 +80,7 @@ void TEventClass::Build_INI_Entry(char * ptr) const
 	}
 }
 
-// FUNCTION: 0x0071F4E0
+// FUNCTION: GAMEMD 0x0071F4E0
 void TEventClass::Read_INI(void)
 {
 	Data.Value = 0;
@@ -107,7 +109,7 @@ void TEventClass::Read_INI(void)
 	}
 }
 
-// FUNCTION: 0x0071F5B0
+// FUNCTION: GAMEMD 0x0071F5B0
 NeedType Event_Needs(TEventType event)
 {
 	switch (event) {
@@ -179,7 +181,7 @@ NeedType Event_Needs(TEventType event)
 	return(NEED_NONE);
 }
 
-// FUNCTION: 0x0071F680
+// FUNCTION: GAMEMD 0x0071F680
 AttachType Attaches_To(TEventType event)
 {
 	AttachType attach = ATTACH_NONE;
@@ -297,7 +299,7 @@ AttachType Attaches_To(TEventType event)
 	return(attach);
 }
 
-// FUNCTION: 0x0071F800
+// FUNCTION: GAMEMD 0x0071F800
 void TEventClass::Detach(AbstractClass const * target, bool all)
 {
 	if (Next == target) {
@@ -308,7 +310,7 @@ void TEventClass::Detach(AbstractClass const * target, bool all)
 	}
 }
 
-// FUNCTION: 0x0071F820
+// FUNCTION: GAMEMD 0x0071F820
 void TEventClass::Compute_CRC(CRCEngine & crc) const
 {
 	BASECLASS::Compute_CRC(crc);
@@ -319,7 +321,7 @@ void TEventClass::Compute_CRC(CRCEngine & crc) const
 	crc((int)Data.Value);
 }
 
-// FUNCTION: 0x0071F880
+// FUNCTION: GAMEMD 0x0071F880
 HRESULT STDMETHODCALLTYPE TEventClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -327,7 +329,7 @@ HRESULT STDMETHODCALLTYPE TEventClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x0071F8C0
+// FUNCTION: GAMEMD 0x0071F8C0
 HRESULT STDMETHODCALLTYPE TEventClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -343,7 +345,7 @@ HRESULT STDMETHODCALLTYPE TEventClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x0071F930
+// FUNCTION: GAMEMD 0x0071F930
 HRESULT STDMETHODCALLTYPE TEventClass::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -353,7 +355,7 @@ HRESULT STDMETHODCALLTYPE TEventClass::Save(IStream * stream, BOOL cleardirty)
 	return(result);
 }
 
-// FUNCTION: 0x0071F950
+// FUNCTION: GAMEMD 0x0071F950
 bool TEventClass::Is_Time_Based(void) const
 {
 	switch (Event) {
@@ -367,7 +369,7 @@ bool TEventClass::Is_Time_Based(void) const
 	return(false);
 }
 
-// FUNCTION: 0x0071F9C0
+// FUNCTION: GAMEMD 0x0071F9C0
 bool TEventClass::Is_To_Flag_As_Tripped(void) const
 {
 	switch (Event) {
@@ -377,35 +379,51 @@ bool TEventClass::Is_To_Flag_As_Tripped(void) const
 	return(true);
 }
 
-// FUNCTION: 0x0071FA30
+// FUNCTION: GAMEMD 0x0071FA30
 HouseClass * TEventClass::Get_Event_House(void) const
 {
 	return(EventHouse);
 }
 
-// FUNCTION: 0x0071FA40
+// FUNCTION: GAMEMD 0x0071FA40
 void TEventClass::Set_Event_House(HouseClass * house)
 {
 	EventHouse = house;
 }
 
-// FUNCTION: 0x0071FA50 TEventClass::Fetch_Object_Size
-// FUNCTION: 0x0071FA60 TEventClass::Fetch_RTTI
-// FUNCTION: 0x0071FA70 TEventClass::Fetch_Heap_ID
-// FUNCTION: 0x0071FA80 TEventClass::~TEventClass
+// FUNCTION: GAMEMD 0x0071FA50
+// TEventClass::Fetch_Object_Size
+// FUNCTION: GAMEMD 0x0071FA60
+// TEventClass::Fetch_RTTI
+// FUNCTION: GAMEMD 0x0071FA70
+// TEventClass::Fetch_Heap_ID
+// SYNTHETIC: GAMEMD 0x0071FA80
+// ??_GTEventClass@@UAEPAXI@Z
 
-// FUNCTION: 0x0071FBA0 ?$DynamicVectorClass@PAVTEventClass@@::Clear
-// FUNCTION: 0x0071FBD0 ?$DynamicVectorClass@PAVTEventClass@@::ID
-// FUNCTION: 0x0071FBF0 ?$VectorClass@PAVTEventClass@@::GetItem
-// FUNCTION: 0x0071FC00 ?$VectorClass@PAVTEventClass@@::operator==
-// FUNCTION: 0x0071FC40 ?$VectorClass@PAVTEventClass@@::Resize
-// FUNCTION: 0x0071FCF0 ?$VectorClass@PAVTEventClass@@::Clear
-// FUNCTION: 0x0071FD20 ?$VectorClass@PAVTEventClass@@::ID
-// FUNCTION: 0x0071FD60 ?$VectorClass@PAVTEventClass@@::ID
-// FUNCTION: 0x0071FD80 ?$DynamicVectorClass@PAVTEventClass@@::Resize
-// FUNCTION: 0x0071FE30 ?$DynamicVectorClass@PAVTEventClass@@::ID
-// FUNCTION: 0x0071FE60 ?$VectorClass@PAVTEventClass@@::~?$VectorClass@PAVTEventClass@@
-// FUNCTION: 0x0071FEB0 ?$DynamicVectorClass@PAVTEventClass@@::~?$DynamicVectorClass@PAVTEventClass@@
+// TEMPLATE: GAMEMD 0x0071FBA0
+// ?Clear@?$DynamicVectorClass@PAVTEventClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0071FBD0
+// ?ID@?$DynamicVectorClass@PAVTEventClass@@@@UAEHPBQAVTEventClass@@@Z
+// TEMPLATE: GAMEMD 0x0071FBF0
+// ?GetItem@?$VectorClass@PAVTEventClass@@@@UBEPAVTEventClass@@H@Z
+// TEMPLATE: GAMEMD 0x0071FC00
+// ??8?$VectorClass@PAVTEventClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x0071FC40
+// ?Resize@?$VectorClass@PAVTEventClass@@@@UAE_NHPBQAVTEventClass@@@Z
+// TEMPLATE: GAMEMD 0x0071FCF0
+// ?Clear@?$VectorClass@PAVTEventClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0071FD20
+// ?ID@?$VectorClass@PAVTEventClass@@@@UAEHABQAVTEventClass@@@Z
+// TEMPLATE: GAMEMD 0x0071FD60
+// ?ID@?$VectorClass@PAVTEventClass@@@@UAEHPBQAVTEventClass@@@Z
+// TEMPLATE: GAMEMD 0x0071FD80
+// ?Resize@?$DynamicVectorClass@PAVTEventClass@@@@UAE_NHPBQAVTEventClass@@@Z
+// TEMPLATE: GAMEMD 0x0071FE30
+// ?ID@?$DynamicVectorClass@PAVTEventClass@@@@UAEHABQAVTEventClass@@@Z
+// SYNTHETIC: GAMEMD 0x0071FE60
+// ??_G?$VectorClass@PAVTEventClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x0071FEB0
+// ??_G?$DynamicVectorClass@PAVTEventClass@@@@UAEPAXI@Z
 template class DynamicVectorClass<TEventClass *>;
 
 struct IntQuad {
@@ -413,5 +431,6 @@ struct IntQuad {
 	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
 };
 
-// FUNCTION: 0x0071FF00 $E43
+// SYNTHETIC: GAMEMD 0x0071FF00 SYMBOL
+// _$E43
 IntQuad DAT_00B0F1E8;

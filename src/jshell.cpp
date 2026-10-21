@@ -18,7 +18,7 @@ DebugPage * __fastcall FUN_005BC450(int index);
 void __cdecl FUN_005BD1F0(DebugPage * page, char const * format, ...);
 void __fastcall FUN_006BEC50(int code);
 
-// FUNCTION: 0x0054A8C0
+// FUNCTION: GAMEMD 0x0054A8C0
 void __cdecl Fatal(char const * message, ...)
 {
 	va_list	va;
@@ -30,7 +30,7 @@ void __cdecl Fatal(char const * message, ...)
 	FUN_006BEC50(EXIT_FAILURE);
 }
 
-// FUNCTION: 0x0054A900
+// FUNCTION: GAMEMD 0x0054A900
 void Set_Bit(void * array, int bit, int value)
 {
 	unsigned char mask = (unsigned char)(1 << (bit % 8));
@@ -42,14 +42,14 @@ void Set_Bit(void * array, int bit, int value)
 	}
 }
 
-// FUNCTION: 0x0054A950
+// FUNCTION: GAMEMD 0x0054A950
 int Get_Bit(void const * array, int bit)
 {
 	unsigned char mask = (unsigned char)(1 << (bit % 8));
 	return((*((unsigned char *)array + (bit/8)) & mask) != 0);
 }
 
-// FUNCTION: 0x0054A990
+// FUNCTION: GAMEMD 0x0054A990
 int First_True_Bit(void const * array)
 {
 	int index = 0;
@@ -64,7 +64,7 @@ int First_True_Bit(void const * array)
 	return(index * 8 + subindex);
 }
 
-// FUNCTION: 0x0054A9E0
+// FUNCTION: GAMEMD 0x0054A9E0
 int First_False_Bit(void const * array)
 {
 	int index = 0;
@@ -82,27 +82,38 @@ int First_False_Bit(void const * array)
 const double ONE_RAD = M_PI / 180.0;
 const double ISO_TILE_SIZE = 60.0;
 
-// FUNCTION: 0x0054AA30 $E4
+// SYNTHETIC: GAMEMD 0x0054AA30 SYMBOL
+// _$E4
 const double CELL_LEPTON_DIAG = fastmath::sqrt(pow((double)CELL_LEPTON_H, 2) * 2);
-// FUNCTION: 0x0054AA60 $E7
+// SYNTHETIC: GAMEMD 0x0054AA60 SYMBOL
+// _$E7
 const double LEPTONS_PER_PIXEL = CELL_LEPTON_DIAG / ISO_TILE_SIZE;
-// FUNCTION: 0x0054AA80 $E10
+// SYNTHETIC: GAMEMD 0x0054AA80 SYMBOL
+// _$E10
 const double PIXELS_PER_LEPTON = 1.0 / LEPTONS_PER_PIXEL;
-// FUNCTION: 0x0054AAA0 $E13
+// SYNTHETIC: GAMEMD 0x0054AAA0 SYMBOL
+// _$E13
 const double RAD_45 = ONE_RAD * 45;
-// FUNCTION: 0x0054AAC0 $E16
+// SYNTHETIC: GAMEMD 0x0054AAC0 SYMBOL
+// _$E16
 const double RAD_60 = ONE_RAD * 60;
-// FUNCTION: 0x0054AAE0 $E19
+// SYNTHETIC: GAMEMD 0x0054AAE0 SYMBOL
+// _$E19
 const double RAD_90 = ONE_RAD * 90;
-// FUNCTION: 0x0054AB00 $E22
+// SYNTHETIC: GAMEMD 0x0054AB00 SYMBOL
+// _$E22
 const int LEVEL_LEPTON_H = (int)(fastmath::tan(RAD_90 - RAD_60) * CELL_LEPTON_DIAG * 0.5);
-// FUNCTION: 0x0054AB40 $E25
+// SYNTHETIC: GAMEMD 0x0054AB40 SYMBOL
+// _$E25
 const double CELL_SLOPE_ANGLE = fastmath::atan(LEVEL_LEPTON_H * (1 / (double)CELL_LEPTON_H));
-// FUNCTION: 0x0054AB70 $E28
+// SYNTHETIC: GAMEMD 0x0054AB70 SYMBOL
+// _$E28
 const double CELL_DIAG_SLOPE_ANGLE = fastmath::atan((LEVEL_LEPTON_H * 2) / CELL_LEPTON_DIAG);
-// FUNCTION: 0x0054ABA0 $E31
+// SYNTHETIC: GAMEMD 0x0054ABA0 SYMBOL
+// _$E31
 const int BRIDGE_LEPTON_HEIGHT = (int)((LEVEL_LEPTON_H * BRIDGE_CELL_HEIGHT) + 0.5);
-// FUNCTION: 0x0054ABD0 $E34
+// SYNTHETIC: GAMEMD 0x0054ABD0 SYMBOL
+// _$E34
 Cell const CELL_NONE(0,0);
 
 struct Triple {
@@ -115,11 +126,14 @@ struct Quad {
 	Quad() : A(0), B(0), C(0), D(0) {}
 };
 
-// FUNCTION: 0x0054ABE0 $E37
+// SYNTHETIC: GAMEMD 0x0054ABE0 SYMBOL
+// _$E37
 Triple DAT_00ABC5A8;
 
-// FUNCTION: 0x0054AC00 $E40
+// SYNTHETIC: GAMEMD 0x0054AC00 SYMBOL
+// _$E40
 Triple DAT_00ABC5D0(128, 128, 0);
 
-// FUNCTION: 0x0054AC20 $E43
+// SYNTHETIC: GAMEMD 0x0054AC20 SYMBOL
+// _$E43
 Quad DAT_00ABC578;

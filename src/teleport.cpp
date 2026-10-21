@@ -55,7 +55,7 @@ struct IntQuad {
 	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
 };
 
-// FUNCTION: 0x00718000
+// FUNCTION: GAMEMD 0x00718000
 TeleportLocomotionClass::TeleportLocomotionClass(void) :
 	BASECLASS(),
 	DestinationCoord(COORD_NONE),
@@ -69,7 +69,7 @@ TeleportLocomotionClass::TeleportLocomotionClass(void) :
 {
 }
 
-// FUNCTION: 0x00718080
+// FUNCTION: GAMEMD 0x00718080
 boolean STDMETHODCALLTYPE TeleportLocomotionClass::Is_Moving(void)
 {
 	if (IsMoving == true) {
@@ -78,7 +78,7 @@ boolean STDMETHODCALLTYPE TeleportLocomotionClass::Is_Moving(void)
 	return(false);
 }
 
-// FUNCTION: 0x00718090
+// FUNCTION: GAMEMD 0x00718090
 boolean TeleportLocomotionClass::Is_Stationary(void)
 {
 	if (Is_Moving() == false) {
@@ -87,7 +87,7 @@ boolean TeleportLocomotionClass::Is_Stationary(void)
 	return(false);
 }
 
-// FUNCTION: 0x007180A0
+// FUNCTION: GAMEMD 0x007180A0
 CoordStruct STDMETHODCALLTYPE TeleportLocomotionClass::Destination(void)
 {
 	if (Is_Moving()) {
@@ -96,7 +96,7 @@ CoordStruct STDMETHODCALLTYPE TeleportLocomotionClass::Destination(void)
 	return(LinkedTo->PositionCoord);
 }
 
-// FUNCTION: 0x00718100
+// FUNCTION: GAMEMD 0x00718100
 void STDMETHODCALLTYPE TeleportLocomotionClass::Move_To(CoordStruct to)
 {
 	if (!LinkedTo->IsUnderEMP() && !LinkedTo->IsParalyzed() && !LinkedTo->IsBeingWarpedOut() && !LinkedTo->IsWarpingIn()) {
@@ -117,7 +117,7 @@ void STDMETHODCALLTYPE TeleportLocomotionClass::Move_To(CoordStruct to)
 	}
 }
 
-// FUNCTION: 0x00718230
+// FUNCTION: GAMEMD 0x00718230
 void STDMETHODCALLTYPE TeleportLocomotionClass::Stop_Moving(void)
 {
 	DestinationCoord = COORD_NONE;
@@ -125,7 +125,7 @@ void STDMETHODCALLTYPE TeleportLocomotionClass::Stop_Moving(void)
 	Unknown36 = false;
 }
 
-// FUNCTION: 0x007187A0
+// FUNCTION: GAMEMD 0x007187A0
 void TeleportLocomotionClass::Check_Landing(Coord to)
 {
 	ObjectClass * obj = Map[to].Cell_Occupier();
@@ -186,13 +186,13 @@ void TeleportLocomotionClass::Check_Landing(Coord to)
 	}
 }
 
-// FUNCTION: 0x007192C0
+// FUNCTION: GAMEMD 0x007192C0
 void STDMETHODCALLTYPE TeleportLocomotionClass::Do_Turn(DirStruct coord)
 {
 	LinkedTo->PrimaryFacing.Set_Desired(coord);
 }
 
-// FUNCTION: 0x00719BF0
+// FUNCTION: GAMEMD 0x00719BF0
 void STDMETHODCALLTYPE TeleportLocomotionClass::Process_Delay(void)
 {
 	if (Timer == 0) {
@@ -209,7 +209,7 @@ void STDMETHODCALLTYPE TeleportLocomotionClass::Process_Delay(void)
 	}
 }
 
-// FUNCTION: 0x00719C60
+// FUNCTION: GAMEMD 0x00719C60
 HRESULT STDMETHODCALLTYPE TeleportLocomotionClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -217,7 +217,7 @@ HRESULT STDMETHODCALLTYPE TeleportLocomotionClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x00719CA0
+// FUNCTION: GAMEMD 0x00719CA0
 HRESULT STDMETHODCALLTYPE TeleportLocomotionClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -234,7 +234,7 @@ HRESULT STDMETHODCALLTYPE TeleportLocomotionClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x00719D40
+// FUNCTION: GAMEMD 0x00719D40
 HRESULT STDMETHODCALLTYPE TeleportLocomotionClass::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -253,13 +253,13 @@ HRESULT STDMETHODCALLTYPE TeleportLocomotionClass::Save(IStream * stream, BOOL c
 	return(result);
 }
 
-// FUNCTION: 0x00719E20
+// FUNCTION: GAMEMD 0x00719E20
 LayerType STDMETHODCALLTYPE TeleportLocomotionClass::In_Which_Layer(void)
 {
 	return(LAYER_GROUND);
 }
 
-// FUNCTION: 0x00719E30
+// FUNCTION: GAMEMD 0x00719E30
 HRESULT STDMETHODCALLTYPE TeleportLocomotionClass::QueryInterface(REFIID riid, LPVOID * ppvObject)
 {
 	HRESULT result = BASECLASS::QueryInterface(riid, ppvObject);
@@ -278,7 +278,7 @@ HRESULT STDMETHODCALLTYPE TeleportLocomotionClass::QueryInterface(REFIID riid, L
 	return(result);
 }
 
-// FUNCTION: 0x00719E90
+// FUNCTION: GAMEMD 0x00719E90
 HRESULT STDMETHODCALLTYPE TeleportLocomotionClass::Begin_Piggyback(ILocomotion * pointer)
 {
 	if (pointer == NULL) {
@@ -291,7 +291,7 @@ HRESULT STDMETHODCALLTYPE TeleportLocomotionClass::Begin_Piggyback(ILocomotion *
 	return(E_FAIL);
 }
 
-// FUNCTION: 0x00719EE0
+// FUNCTION: GAMEMD 0x00719EE0
 HRESULT STDMETHODCALLTYPE TeleportLocomotionClass::End_Piggyback(ILocomotion ** pointer)
 {
 	if (pointer == NULL) {
@@ -309,7 +309,7 @@ HRESULT STDMETHODCALLTYPE TeleportLocomotionClass::End_Piggyback(ILocomotion ** 
 	return(S_FALSE);
 }
 
-// FUNCTION: 0x00719F30
+// FUNCTION: GAMEMD 0x00719F30
 boolean STDMETHODCALLTYPE TeleportLocomotionClass::Is_Ok_To_End(void)
 {
 	if (!Is_Moving() && Piggybacker != NULL && !Unknown35 && !LinkedTo->IsImmobilized && State == 0 && !LinkedTo->IsAttackedByLocomotor) {
@@ -318,7 +318,7 @@ boolean STDMETHODCALLTYPE TeleportLocomotionClass::Is_Ok_To_End(void)
 	return(false);
 }
 
-// FUNCTION: 0x00719F80
+// FUNCTION: GAMEMD 0x00719F80
 HRESULT STDMETHODCALLTYPE TeleportLocomotionClass::Piggyback_CLSID(GUID * classid)
 {
 	if (classid == NULL) {
@@ -340,7 +340,7 @@ HRESULT STDMETHODCALLTYPE TeleportLocomotionClass::Piggyback_CLSID(GUID * classi
 	return(ptr->GetClassID(classid));
 }
 
-// FUNCTION: 0x0071A090
+// FUNCTION: GAMEMD 0x0071A090
 void STDMETHODCALLTYPE TeleportLocomotionClass::Mark_All_Occupation_Bits(int mark)
 {
 	if (mark == MARK_UP) {
@@ -348,66 +348,91 @@ void STDMETHODCALLTYPE TeleportLocomotionClass::Mark_All_Occupation_Bits(int mar
 	}
 }
 
-// FUNCTION: 0x0071A0E0 TeleportLocomotionClass::AddRef
+// FUNCTION: GAMEMD 0x0071A0E0
+// TeleportLocomotionClass::AddRef
 
-// FUNCTION: 0x0071A0F0 TeleportLocomotionClass::Release
+// FUNCTION: GAMEMD 0x0071A0F0
+// TeleportLocomotionClass::Release
 
-// FUNCTION: 0x0071A100 TeleportLocomotionClass::Is_Piggybacking
+// FUNCTION: GAMEMD 0x0071A100
+// TeleportLocomotionClass::Is_Piggybacking
 
-// FUNCTION: 0x0071A120 TeleportLocomotionClass::Fetch_Object_Size
+// FUNCTION: GAMEMD 0x0071A120
+// TeleportLocomotionClass::Fetch_Object_Size
 
-// FUNCTION: 0x0071A130 TeleportLocomotionClass::~TeleportLocomotionClass
+// SYNTHETIC: GAMEMD 0x0071A130
+// ??_GTeleportLocomotionClass@@UAEPAXI@Z
 
-// FUNCTION: 0x0071A160 TeleportLocomotionClass::QueryInterface
+// FUNCTION: GAMEMD 0x0071A160
+// TeleportLocomotionClass::QueryInterface
 
-// FUNCTION: 0x0071A170 TeleportLocomotionClass::AddRef
+// FUNCTION: GAMEMD 0x0071A170
+// TeleportLocomotionClass::AddRef
 
-// FUNCTION: 0x0071A180 TeleportLocomotionClass::Release
+// FUNCTION: GAMEMD 0x0071A180
+// TeleportLocomotionClass::Release
 
-// FUNCTION: 0x0071A190 TeleportLocomotionClass::QueryInterface
+// FUNCTION: GAMEMD 0x0071A190
+// TeleportLocomotionClass::QueryInterface
 
-// FUNCTION: 0x0071A1A0 TeleportLocomotionClass::AddRef
+// FUNCTION: GAMEMD 0x0071A1A0
+// TeleportLocomotionClass::AddRef
 
-// FUNCTION: 0x0071A1B0 TeleportLocomotionClass::Release
+// FUNCTION: GAMEMD 0x0071A1B0
+// TeleportLocomotionClass::Release
 
-// FUNCTION: 0x0071A1C0 $E80
+// SYNTHETIC: GAMEMD 0x0071A1C0 SYMBOL
+// _$E80
 double DAT_00B0EC78 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x0071A1F0 $E83
+// SYNTHETIC: GAMEMD 0x0071A1F0 SYMBOL
+// _$E83
 double DAT_00B0ECC8 = DAT_00B0EC78 / DAT_007F5100;
 
-// FUNCTION: 0x0071A210 $E86
+// SYNTHETIC: GAMEMD 0x0071A210 SYMBOL
+// _$E86
 double DAT_00B0ECB0 = DAT_007E1718 / DAT_00B0ECC8;
 
-// FUNCTION: 0x0071A230 $E89
+// SYNTHETIC: GAMEMD 0x0071A230 SYMBOL
+// _$E89
 double DAT_00B0ECA8 = DAT_007E1720 * DAT_007F5108;
 
-// FUNCTION: 0x0071A250 $E92
+// SYNTHETIC: GAMEMD 0x0071A250 SYMBOL
+// _$E92
 double DAT_00B0EC80 = DAT_007E1728 * DAT_007F5108;
 
-// FUNCTION: 0x0071A270 $E95
+// SYNTHETIC: GAMEMD 0x0071A270 SYMBOL
+// _$E95
 double DAT_00B0EC40 = DAT_007E1730 * DAT_007F5108;
 
-// FUNCTION: 0x0071A290 $E98
+// SYNTHETIC: GAMEMD 0x0071A290 SYMBOL
+// _$E98
 int DAT_00B0ECD0 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B0EC40 - DAT_00B0EC80) * DAT_00B0EC78));
 
-// FUNCTION: 0x0071A2D0 $E101
+// SYNTHETIC: GAMEMD 0x0071A2D0 SYMBOL
+// _$E101
 double DAT_00B0EC88 = FUN_004CADE0(DAT_00B0ECD0 * DAT_007E1740);
 
-// FUNCTION: 0x0071A300 $E104
+// SYNTHETIC: GAMEMD 0x0071A300 SYMBOL
+// _$E104
 double DAT_00B0ECA0 = FUN_004CADE0((DAT_00B0ECD0 * 2) / DAT_00B0EC78);
 
-// FUNCTION: 0x0071A330 $E107
+// SYNTHETIC: GAMEMD 0x0071A330 SYMBOL
+// _$E107
 int DAT_00B0ECC4 = (int)(DAT_00B0ECD0 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x0071A360 $E110
+// SYNTHETIC: GAMEMD 0x0071A360 SYMBOL
+// _$E110
 ShortPair DAT_00B0EC58;
 
-// FUNCTION: 0x0071A370 $E113
+// SYNTHETIC: GAMEMD 0x0071A370 SYMBOL
+// _$E113
 IntTriple DAT_00B0EC90;
 
-// FUNCTION: 0x0071A390 $E116
+// SYNTHETIC: GAMEMD 0x0071A390 SYMBOL
+// _$E116
 IntInit DAT_00B0ECB8;
 
-// FUNCTION: 0x0071A3B0 $E119
+// SYNTHETIC: GAMEMD 0x0071A3B0 SYMBOL
+// _$E119
 IntQuad DAT_00B0EC48;

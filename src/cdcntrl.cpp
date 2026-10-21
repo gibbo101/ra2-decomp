@@ -13,7 +13,7 @@
 #include <tchar.h>
 #include <winioctl.h>
 
-// FUNCTION: 0x00479710
+// FUNCTION: GAMEMD 0x00479710
 CDControlClass::CDControlClass(void)
 {
 	for (int i = 0; i < MAX_CD_DRIVES; i++) {

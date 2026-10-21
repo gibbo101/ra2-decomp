@@ -8,7 +8,7 @@
 #include "base64.h"
 #include <cstring>
 
-// FUNCTION: 0x0042DDB0
+// FUNCTION: GAMEMD 0x0042DDB0
 int Base64Pipe::Put(void const * source, int slen)
 {
 	if (source == NULL || slen < 1) {
@@ -73,7 +73,7 @@ int Base64Pipe::Put(void const * source, int slen)
 	return(total);
 }
 
-// FUNCTION: 0x0042DF40
+// FUNCTION: GAMEMD 0x0042DF40
 int Base64Pipe::Flush(void)
 {
 	int len = 0;

@@ -6,7 +6,7 @@
 #include "always.h"
 #include "buff.h"
 
-// FUNCTION: 0x0043ADC0
+// FUNCTION: GAMEMD 0x0043ADC0
 Buffer::Buffer(int size) :
 	BufferPtr(NULL),
 	Size(size),
@@ -18,7 +18,7 @@ Buffer::Buffer(int size) :
 	}
 }
 
-// FUNCTION: 0x0043ADF0
+// FUNCTION: GAMEMD 0x0043ADF0
 Buffer::Buffer(Buffer const & buffer) :
 	IsAllocated(false)
 {
@@ -26,7 +26,7 @@ Buffer::Buffer(Buffer const & buffer) :
 	Size = buffer.Size;
 }
 
-// FUNCTION: 0x0043AE10
+// FUNCTION: GAMEMD 0x0043AE10
 Buffer & Buffer::operator = (Buffer const & buffer)
 {
 	if (&buffer != this) {

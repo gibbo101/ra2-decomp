@@ -79,7 +79,8 @@ static inline int _Coord_Distance(Coord const & a, Coord const & b)
 	return(t.Length());
 }
 
-// FUNCTION: 0x006EF9E0 _Is_It_Breathing
+// FUNCTION: GAMEMD 0x006EF9E0
+// _Is_It_Breathing
 static inline bool _Is_It_Breathing(FootClass const * object)
 {
 	if (object == NULL || !object->IsActive || object->Strength == 0) return(false);
@@ -160,7 +161,7 @@ bool TeamClass::Coordinate_Conscript(FootClass * unit)
 	return(_Conscript(this, unit));
 }
 
-// FUNCTION: 0x006E8A90
+// FUNCTION: GAMEMD 0x006E8A90
 TeamClass::TeamClass(TeamTypeClass const * type, HouseClass * owner, void * unknown) :
 	BASECLASS(),
 	Class((TeamTypeClass *)type),
@@ -219,7 +220,7 @@ TeamClass::TeamClass(TeamTypeClass const * type, HouseClass * owner, void * unkn
 	}
 }
 
-// FUNCTION: 0x006E8DE0
+// FUNCTION: GAMEMD 0x006E8DE0
 TeamClass::~TeamClass(void)
 {
 	for (int i = 0; i < AITriggerTypes.Count(); i++) {
@@ -262,7 +263,7 @@ TeamClass::~TeamClass(void)
 	}
 }
 
-// FUNCTION: 0x006E9050
+// FUNCTION: GAMEMD 0x006E9050
 void TeamClass::Assign_Mission_Target(AbstractClass * new_target)
 {
 	if (new_target != MissionTarget) {
@@ -305,7 +306,7 @@ void TeamClass::Assign_Mission_Target(AbstractClass * new_target)
 	}
 }
 
-// FUNCTION: 0x006EA080
+// FUNCTION: GAMEMD 0x006EA080
 void TeamClass::Flag_Into_Action(void)
 {
 	IsMoving = true;
@@ -324,7 +325,7 @@ void TeamClass::Flag_Into_Action(void)
 	IsNextMission = true;
 }
 
-// FUNCTION: 0x006EA0D0
+// FUNCTION: GAMEMD 0x006EA0D0
 void TeamClass::Regroup(void)
 {
 	IsMoving = false;
@@ -371,7 +372,7 @@ void TeamClass::Regroup(void)
 	}
 }
 
-// FUNCTION: 0x006EA3E0
+// FUNCTION: GAMEMD 0x006EA3E0
 bool TeamClass::Recalc_Strength(void)
 {
 	bool old_under = IsUnderStrength;
@@ -428,13 +429,13 @@ bool TeamClass::Recalc_Strength(void)
 	return(true);
 }
 
-// FUNCTION: 0x006EA4F0
+// FUNCTION: GAMEMD 0x006EA4F0
 bool TeamClass::Add(FootClass * obj)
 {
 	return(AddMember(obj, true));
 }
 
-// FUNCTION: 0x006EA500
+// FUNCTION: GAMEMD 0x006EA500
 bool TeamClass::AddMember(FootClass * obj, bool flag)
 {
 	if (!obj) return(false);
@@ -470,7 +471,7 @@ bool TeamClass::AddMember(FootClass * obj, bool flag)
 	return(true);
 }
 
-// FUNCTION: 0x006EA610
+// FUNCTION: GAMEMD 0x006EA610
 bool TeamClass::Can_Add(FootClass * obj, int & typeindex, bool flag) const
 {
 	if (this == obj->Team) {
@@ -550,7 +551,7 @@ bool TeamClass::Can_Add(FootClass * obj, int & typeindex, bool flag) const
 	return(true);
 }
 
-// FUNCTION: 0x006EA870
+// FUNCTION: GAMEMD 0x006EA870
 bool TeamClass::Remove(FootClass * obj, int typeindex, bool flag)
 {
 	obj->IsDroppedFromTeam = true;
@@ -632,7 +633,7 @@ bool TeamClass::Remove(FootClass * obj, int typeindex, bool flag)
 	return(true);
 }
 
-// FUNCTION: 0x006EAE60
+// FUNCTION: GAMEMD 0x006EAE60
 void TeamClass::Detach(AbstractClass const * target, bool all)
 {
 	if (target == Tag) {
@@ -681,7 +682,7 @@ void TeamClass::Detach(AbstractClass const * target, bool all)
 	}
 }
 
-// FUNCTION: 0x006EAEE0
+// FUNCTION: GAMEMD 0x006EAEE0
 void TeamClass::Calc_Center(AbstractClass *& center, AbstractClass *& close_member) const
 {
 	close_member = NULL;
@@ -784,7 +785,7 @@ void TeamClass::Calc_Center(AbstractClass *& center, AbstractClass *& close_memb
 	}
 }
 
-// FUNCTION: 0x006EB380
+// FUNCTION: GAMEMD 0x006EB380
 void TeamClass::Took_Damage(FootClass *, ResultType result, TechnoClass * source)
 {
 	if ((source != NULL) && (result != RESULT_NONE) && (!Class->IsSuicide)) {
@@ -815,7 +816,7 @@ void TeamClass::Took_Damage(FootClass *, ResultType result, TechnoClass * source
 	}
 }
 
-// FUNCTION: 0x006EB490
+// FUNCTION: GAMEMD 0x006EB490
 void TeamClass::Coordinate_Attack(void)
 {
 	if (Target == NULL) {
@@ -877,7 +878,7 @@ void TeamClass::Coordinate_Attack(void)
 	}
 }
 
-// FUNCTION: 0x006EB870
+// FUNCTION: GAMEMD 0x006EB870
 bool TeamClass::Coordinate_Regroup(void)
 {
 	FootClass * unit = Member;
@@ -916,7 +917,7 @@ hold:
 	return(retval);
 }
 
-// FUNCTION: 0x006EBAD0
+// FUNCTION: GAMEMD 0x006EBAD0
 void TeamClass::Coordinate_Move(void)
 {
 	FootClass * unit = Member;
@@ -1016,7 +1017,7 @@ void TeamClass::Coordinate_Move(void)
 	}
 }
 
-// FUNCTION: 0x006EBF50
+// FUNCTION: GAMEMD 0x006EBF50
 bool TeamClass::Lagging_Units(void)
 {
 	FootClass * unit = Member;
@@ -1057,11 +1058,13 @@ bool TeamClass::Lagging_Units(void)
 	return(lag);
 }
 
-// FUNCTION: 0x006EC130 TeamClass::Coordinate_Conscript
+// FUNCTION: GAMEMD 0x006EC130
+// TeamClass::Coordinate_Conscript
 
-// FUNCTION: 0x006EC220 TeamClass::Is_A_Member
+// FUNCTION: GAMEMD 0x006EC220
+// TeamClass::Is_A_Member
 
-// FUNCTION: 0x006EC250
+// FUNCTION: GAMEMD 0x006EC250
 void TeamClass::Suspend_Teams(int priority, HouseClass const * house)
 {
 	for (int index = 0; index < Teams.Count(); index++) {
@@ -1078,7 +1081,7 @@ void TeamClass::Suspend_Teams(int priority, HouseClass const * house)
 	}
 }
 
-// FUNCTION: 0x006EC300
+// FUNCTION: GAMEMD 0x006EC300
 bool TeamClass::Is_Leaving_Map(void) const
 {
 	if (IsMoving && Script->Has_Missions_Remaining()) {
@@ -1091,7 +1094,7 @@ bool TeamClass::Is_Leaving_Map(void) const
 	return(false);
 }
 
-// FUNCTION: 0x006EC370
+// FUNCTION: GAMEMD 0x006EC370
 bool TeamClass::Has_Entered_Map(void) const
 {
 	bool ok = true;
@@ -1106,7 +1109,7 @@ bool TeamClass::Has_Entered_Map(void) const
 	return(ok);
 }
 
-// FUNCTION: 0x006EC3A0
+// FUNCTION: GAMEMD 0x006EC3A0
 void TeamClass::Scan_Limit(void)
 {
 	Assign_Mission_Target(NULL);
@@ -1118,9 +1121,10 @@ void TeamClass::Scan_Limit(void)
 	}
 }
 
-// FUNCTION: 0x006EC3D0 TeamClass::Fetch_A_Leader
+// FUNCTION: GAMEMD 0x006EC3D0
+// TeamClass::Fetch_A_Leader
 
-// FUNCTION: 0x006EC450
+// FUNCTION: GAMEMD 0x006EC450
 HRESULT STDMETHODCALLTYPE TeamClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -1144,7 +1148,7 @@ HRESULT STDMETHODCALLTYPE TeamClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x006EC540
+// FUNCTION: GAMEMD 0x006EC540
 HRESULT STDMETHODCALLTYPE TeamClass::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -1154,7 +1158,7 @@ HRESULT STDMETHODCALLTYPE TeamClass::Save(IStream * stream, BOOL cleardirty)
 	return(result);
 }
 
-// FUNCTION: 0x006EC560
+// FUNCTION: GAMEMD 0x006EC560
 HRESULT STDMETHODCALLTYPE TeamClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -1162,7 +1166,7 @@ HRESULT STDMETHODCALLTYPE TeamClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x006EC5A0
+// FUNCTION: GAMEMD 0x006EC5A0
 void TeamClass::Compute_CRC(CRCEngine & crc) const
 {
 	BASECLASS::Compute_CRC(crc);
@@ -1205,7 +1209,7 @@ void TeamClass::Compute_CRC(CRCEngine & crc) const
 	crc(Quantity, sizeof(Quantity));
 }
 
-// FUNCTION: 0x006EC730
+// FUNCTION: GAMEMD 0x006EC730
 void TeamClass::TMission_GOTO_SHROUD(TeamMissionClass * mission, bool first_time)
 {
 	if (first_time) {
@@ -1218,7 +1222,7 @@ void TeamClass::TMission_GOTO_SHROUD(TeamMissionClass * mission, bool first_time
 	Coordinate_Move();
 }
 
-// FUNCTION: 0x006EC770
+// FUNCTION: GAMEMD 0x006EC770
 void TeamClass::TMission_MOVECELL(TeamMissionClass * mission, bool first_time)
 {
 	if (first_time) {
@@ -1230,7 +1234,7 @@ void TeamClass::TMission_MOVECELL(TeamMissionClass * mission, bool first_time)
 	Coordinate_Move();
 }
 
-// FUNCTION: 0x006EC7D0
+// FUNCTION: GAMEMD 0x006EC7D0
 void TeamClass::TMission_MOVE(TeamMissionClass * mission, bool first_time)
 {
 	if (first_time) {
@@ -1265,7 +1269,7 @@ inline bool TeamClass::Ammo_Check(void) const
 	return(r);
 }
 
-// FUNCTION: 0x006EC9A0
+// FUNCTION: GAMEMD 0x006EC9A0
 void TeamClass::TMission_ATT_WAYPT(TeamMissionClass * mission, bool first_time)
 {
 	if (first_time) {
@@ -1287,7 +1291,7 @@ void TeamClass::TMission_ATT_WAYPT(TeamMissionClass * mission, bool first_time)
 	}
 }
 
-// FUNCTION: 0x006ECA70
+// FUNCTION: GAMEMD 0x006ECA70
 void TeamClass::TMission_ATT_WAYPT_BUILDING(TeamMissionClass * mission, bool first_time)
 {
 	if (first_time) {
@@ -1312,7 +1316,7 @@ void TeamClass::TMission_ATT_WAYPT_BUILDING(TeamMissionClass * mission, bool fir
 	}
 }
 
-// FUNCTION: 0x006ECB50
+// FUNCTION: GAMEMD 0x006ECB50
 void TeamClass::TMission_ENTER_GRINDER(TeamMissionClass * mission, bool)
 {
 	FootClass * unit = Member;
@@ -1327,7 +1331,7 @@ void TeamClass::TMission_ENTER_GRINDER(TeamMissionClass * mission, bool)
 	IsNextMission = true;
 }
 
-// FUNCTION: 0x006ECBA0
+// FUNCTION: GAMEMD 0x006ECBA0
 void TeamClass::TMission_ENTER_TANK_BUNKER(TeamMissionClass * mission, bool)
 {
 	FootClass * unit = Member;
@@ -1342,7 +1346,7 @@ void TeamClass::TMission_ENTER_TANK_BUNKER(TeamMissionClass * mission, bool)
 	IsNextMission = true;
 }
 
-// FUNCTION: 0x006ECBF0
+// FUNCTION: GAMEMD 0x006ECBF0
 void TeamClass::TMission_ENTER_BIO_REACTOR(TeamMissionClass * mission, bool)
 {
 	FootClass * unit = Member;
@@ -1357,7 +1361,7 @@ void TeamClass::TMission_ENTER_BIO_REACTOR(TeamMissionClass * mission, bool)
 	IsNextMission = true;
 }
 
-// FUNCTION: 0x006ECC40
+// FUNCTION: GAMEMD 0x006ECC40
 void TeamClass::TMission_ENTER_BATTLE_BUNKER(TeamMissionClass * mission, bool)
 {
 	FootClass * unit = Member;
@@ -1372,7 +1376,7 @@ void TeamClass::TMission_ENTER_BATTLE_BUNKER(TeamMissionClass * mission, bool)
 	IsNextMission = true;
 }
 
-// FUNCTION: 0x006ECC90
+// FUNCTION: GAMEMD 0x006ECC90
 void TeamClass::TMission_GARRISON_STRUCTURE(TeamMissionClass * mission, bool)
 {
 	FootClass * unit = Member;
@@ -1387,7 +1391,7 @@ void TeamClass::TMission_GARRISON_STRUCTURE(TeamMissionClass * mission, bool)
 	IsNextMission = true;
 }
 
-// FUNCTION: 0x006ECE60
+// FUNCTION: GAMEMD 0x006ECE60
 void TeamClass::TMission_SPY(TeamMissionClass * mission, bool first_time)
 {
 	if (first_time) {
@@ -1412,7 +1416,7 @@ void TeamClass::TMission_SPY(TeamMissionClass * mission, bool first_time)
 	}
 }
 
-// FUNCTION: 0x006ECF10
+// FUNCTION: GAMEMD 0x006ECF10
 void TeamClass::TMission_SCATTER(TeamMissionClass * mission, bool)
 {
 	FootClass * unit = Member;
@@ -1423,7 +1427,7 @@ void TeamClass::TMission_SCATTER(TeamMissionClass * mission, bool)
 	IsNextMission = true;
 }
 
-// FUNCTION: 0x006ECF50
+// FUNCTION: GAMEMD 0x006ECF50
 void TeamClass::TMission_CHANGE_HOUSE(TeamMissionClass * mission, bool)
 {
 	FootClass * unit = Member;
@@ -1435,7 +1439,7 @@ void TeamClass::TMission_CHANGE_HOUSE(TeamMissionClass * mission, bool)
 	IsNextMission = true;
 }
 
-// FUNCTION: 0x006ECFB0
+// FUNCTION: GAMEMD 0x006ECFB0
 void TeamClass::TMission_TEAMCHANGE(TeamMissionClass * mission, bool)
 {
 	TeamClass * team = new TeamClass(TeamTypes[mission->Data.Value], House);
@@ -1449,7 +1453,7 @@ void TeamClass::TMission_TEAMCHANGE(TeamMissionClass * mission, bool)
 	delete this;
 }
 
-// FUNCTION: 0x006ED030
+// FUNCTION: GAMEMD 0x006ED030
 void TeamClass::TMission_SCRIPT(TeamMissionClass * mission, bool)
 {
 	if (Script != NULL) {
@@ -1460,7 +1464,7 @@ void TeamClass::TMission_SCRIPT(TeamMissionClass * mission, bool)
 	Script->Stop_Script();
 }
 
-// FUNCTION: 0x006ED090
+// FUNCTION: GAMEMD 0x006ED090
 void TeamClass::TMission_ATTACK(TeamMissionClass * mission, bool)
 {
 	if (MissionTarget == NULL && Member != NULL) {
@@ -1475,7 +1479,7 @@ void TeamClass::TMission_ATTACK(TeamMissionClass * mission, bool)
 	Coordinate_Attack();
 }
 
-// FUNCTION: 0x006EF470
+// FUNCTION: GAMEMD 0x006EF470
 bool TeamClass::Has_Air_Transport(void) const
 {
 	for (int i = 0; i < Class->TaskForce->ClassCount; i++) {
@@ -1487,7 +1491,7 @@ bool TeamClass::Has_Air_Transport(void) const
 	return(false);
 }
 
-// FUNCTION: 0x006ED200
+// FUNCTION: GAMEMD 0x006ED200
 void TeamClass::TMission_LOAD(TeamMissionClass * mission, bool)
 {
 	FootClass * unit = Member;
@@ -1541,7 +1545,7 @@ void TeamClass::TMission_LOAD(TeamMissionClass * mission, bool)
 	}
 }
 
-// FUNCTION: 0x006ED4D0
+// FUNCTION: GAMEMD 0x006ED4D0
 void TeamClass::TMission_DEPLOY(TeamMissionClass * mission, bool)
 {
 	bool finished = true;
@@ -1585,7 +1589,7 @@ void TeamClass::TMission_DEPLOY(TeamMissionClass * mission, bool)
 	}
 }
 
-// FUNCTION: 0x006ED770
+// FUNCTION: GAMEMD 0x006ED770
 void TeamClass::TMission_GUARD(TeamMissionClass * mission, bool first_time)
 {
 	if (first_time) {
@@ -1599,7 +1603,7 @@ void TeamClass::TMission_GUARD(TeamMissionClass * mission, bool first_time)
 	}
 }
 
-// FUNCTION: 0x006ED7E0
+// FUNCTION: GAMEMD 0x006ED7E0
 void TeamClass::TMission_DO(TeamMissionClass * mission, bool)
 {
 	FootClass * unit = Member;
@@ -1634,35 +1638,35 @@ void TeamClass::TMission_DO(TeamMissionClass * mission, bool)
 	}
 }
 
-// FUNCTION: 0x006EDA90
+// FUNCTION: GAMEMD 0x006EDA90
 void TeamClass::TMission_SET_GLOBAL(TeamMissionClass * mission, bool)
 {
 	Scen->Set_Global_To(mission->Data.Value, true);
 	IsNextMission = true;
 }
 
-// FUNCTION: 0x006EDAC0
+// FUNCTION: GAMEMD 0x006EDAC0
 void TeamClass::TMission_CLEAR_GLOBAL(TeamMissionClass * mission, bool)
 {
 	Scen->Set_Global_To(mission->Data.Value, false);
 	IsNextMission = true;
 }
 
-// FUNCTION: 0x006EDAF0
+// FUNCTION: GAMEMD 0x006EDAF0
 void TeamClass::TMission_SET_LOCAL(TeamMissionClass * mission, bool)
 {
 	Scen->Set_Local_To(mission->Data.Value, true);
 	IsNextMission = true;
 }
 
-// FUNCTION: 0x006EDB20
+// FUNCTION: GAMEMD 0x006EDB20
 void TeamClass::TMission_CLEAR_LOCAL(TeamMissionClass * mission, bool)
 {
 	Scen->Set_Local_To(mission->Data.Value, false);
 	IsNextMission = true;
 }
 
-// FUNCTION: 0x006EDB50
+// FUNCTION: GAMEMD 0x006EDB50
 void TeamClass::TMission_HOUND_DOG(TeamMissionClass * mission, bool)
 {
 	Calc_Center(Zone, ClosestMember);
@@ -1689,7 +1693,7 @@ void TeamClass::TMission_HOUND_DOG(TeamMissionClass * mission, bool)
 	}
 }
 
-// FUNCTION: 0x006EDC70
+// FUNCTION: GAMEMD 0x006EDC70
 void TeamClass::TMission_UNPANIC(TeamMissionClass * mission, bool)
 {
 	FootClass *unit = Member;
@@ -1700,7 +1704,7 @@ void TeamClass::TMission_UNPANIC(TeamMissionClass * mission, bool)
 	IsNextMission = true;
 }
 
-// FUNCTION: 0x006EDCA0
+// FUNCTION: GAMEMD 0x006EDCA0
 void TeamClass::TMission_FORCE_FACING(TeamMissionClass * mission, bool)
 {
 	FootClass *unit = Member;
@@ -1720,7 +1724,7 @@ void TeamClass::TMission_FORCE_FACING(TeamMissionClass * mission, bool)
 	}
 }
 
-// FUNCTION: 0x006EDD60
+// FUNCTION: GAMEMD 0x006EDD60
 void TeamClass::TMission_PANIC(TeamMissionClass * mission, bool)
 {
 	FootClass *unit = Member;
@@ -1731,7 +1735,7 @@ void TeamClass::TMission_PANIC(TeamMissionClass * mission, bool)
 	IsNextMission = true;
 }
 
-// FUNCTION: 0x006EDD90
+// FUNCTION: GAMEMD 0x006EDD90
 void TeamClass::TMission_BERZERK(TeamMissionClass * mission, bool)
 {
 	FootClass *unit = Member;
@@ -1742,7 +1746,7 @@ void TeamClass::TMission_BERZERK(TeamMissionClass * mission, bool)
 	IsNextMission = true;
 }
 
-// FUNCTION: 0x006EDDC0
+// FUNCTION: GAMEMD 0x006EDDC0
 void TeamClass::TMission_IDLE_ANIM(TeamMissionClass * mission, bool)
 {
 	FootClass *unit = Member;
@@ -1753,55 +1757,55 @@ void TeamClass::TMission_IDLE_ANIM(TeamMissionClass * mission, bool)
 	IsNextMission = true;
 }
 
-// FUNCTION: 0x006EDE10
+// FUNCTION: GAMEMD 0x006EDE10
 void TeamClass::TMission_LOOP(TeamMissionClass * mission, bool)
 {
 	Script->Set_Line(mission->Data.Value-2);
 	IsNextMission = true;
 }
 
-// FUNCTION: 0x006EDE40
+// FUNCTION: GAMEMD 0x006EDE40
 void TeamClass::TMission_WIN(TeamMissionClass * mission, bool)
 {
 	PlayerPtr->Flag_To_Win();
 	IsNextMission = true;
 }
 
-// FUNCTION: 0x006EDE60
+// FUNCTION: GAMEMD 0x006EDE60
 void TeamClass::TMission_LOSE(TeamMissionClass * mission, bool)
 {
 	PlayerPtr->Flag_To_Lose();
 	IsNextMission = true;
 }
 
-// FUNCTION: 0x006EDE80
+// FUNCTION: GAMEMD 0x006EDE80
 void TeamClass::TMission_PLAY_SPEECH(TeamMissionClass * mission, bool)
 {
 	IsNextMission = true;
 }
 
-// FUNCTION: 0x006EDE90
+// FUNCTION: GAMEMD 0x006EDE90
 void TeamClass::TMission_PLAY_SOUND(TeamMissionClass * mission, bool)
 {
 	VocClass::PlayGlobal(mission->Data.Sound, 1.0f, 0x2000);
 	IsNextMission = true;
 }
 
-// FUNCTION: 0x006EDEC0
+// FUNCTION: GAMEMD 0x006EDEC0
 void TeamClass::TMission_PLAY_MOVIE(TeamMissionClass * mission, bool)
 {
 	FUN_005BF260(mission->Data.Movie, THEME_NONE, true, true, true);
 	IsNextMission = true;
 }
 
-// FUNCTION: 0x006EDEF0
+// FUNCTION: GAMEMD 0x006EDEF0
 void TeamClass::TMission_PLAY_MUSIC(TeamMissionClass * mission, bool)
 {
 	Theme.Queue_Song(mission->Data.Theme);
 	IsNextMission = true;
 }
 
-// FUNCTION: 0x006EDF10
+// FUNCTION: GAMEMD 0x006EDF10
 void TeamClass::TMission_REDUCE_TIBERIUM(TeamMissionClass * mission, bool)
 {
 	FootClass *unit = Member;
@@ -1813,21 +1817,21 @@ void TeamClass::TMission_REDUCE_TIBERIUM(TeamMissionClass * mission, bool)
 	IsNextMission = true;
 }
 
-// FUNCTION: 0x006EDF90
+// FUNCTION: GAMEMD 0x006EDF90
 void TeamClass::TMission_BEGIN_PRODUCTION(TeamMissionClass * mission, bool)
 {
 	House->IsStarted = true;
 	IsNextMission = true;
 }
 
-// FUNCTION: 0x006EDFB0
+// FUNCTION: GAMEMD 0x006EDFB0
 void TeamClass::TMission_FIRE_SALE(TeamMissionClass * mission, bool)
 {
 	House->State = STATE_ENDGAME;
 	IsNextMission = true;
 }
 
-// FUNCTION: 0x006EDFD0
+// FUNCTION: GAMEMD 0x006EDFD0
 void TeamClass::TMission_SELF_DESTRUCT(TeamMissionClass * mission, bool)
 {
 	bool doit = true;
@@ -1847,7 +1851,7 @@ void TeamClass::TMission_SELF_DESTRUCT(TeamMissionClass * mission, bool)
 	IsNextMission = true;
 }
 
-// FUNCTION: 0x006EE050
+// FUNCTION: GAMEMD 0x006EE050
 void TeamClass::TMission_DESTROY_MEMBERS(TeamMissionClass * mission, bool)
 {
 	FootClass *unit = Member;
@@ -1860,7 +1864,7 @@ void TeamClass::TMission_DESTROY_MEMBERS(TeamMissionClass * mission, bool)
 	IsNextMission = true;
 }
 
-// FUNCTION: 0x006EE0A0
+// FUNCTION: GAMEMD 0x006EE0A0
 void TeamClass::TMission_ION_STORM_START(TeamMissionClass * mission, bool)
 {
 	if (!FUN_0053A100()) {
@@ -1869,7 +1873,7 @@ void TeamClass::TMission_ION_STORM_START(TeamMissionClass * mission, bool)
 	IsNextMission = true;
 }
 
-// FUNCTION: 0x006EE0E0
+// FUNCTION: GAMEMD 0x006EE0E0
 void TeamClass::TMission_ION_STORM_END(TeamMissionClass * mission, bool)
 {
 	if (FUN_0053A100()) {
@@ -1878,7 +1882,7 @@ void TeamClass::TMission_ION_STORM_END(TeamMissionClass * mission, bool)
 	IsNextMission = true;
 }
 
-// FUNCTION: 0x006EE100
+// FUNCTION: GAMEMD 0x006EE100
 void TeamClass::TMission_CENTER_VIEWPOINT(TeamMissionClass * mission, bool)
 {
 	Coord coord = Zone->Center_Coord();
@@ -1892,21 +1896,21 @@ void TeamClass::TMission_CENTER_VIEWPOINT(TeamMissionClass * mission, bool)
 	IsNextMission = true;
 }
 
-// FUNCTION: 0x006EE1B0
+// FUNCTION: GAMEMD 0x006EE1B0
 void TeamClass::TMission_RESHROUD(TeamMissionClass * mission, bool)
 {
 	Map.Shroud_The_Map(NULL);
 	IsNextMission = true;
 }
 
-// FUNCTION: 0x006EE1D0
+// FUNCTION: GAMEMD 0x006EE1D0
 void TeamClass::TMission_REVEAL(TeamMissionClass * mission, bool)
 {
 	Map.Reveal_The_Map(NULL);
 	IsNextMission = true;
 }
 
-// FUNCTION: 0x006EE1F0
+// FUNCTION: GAMEMD 0x006EE1F0
 void TeamClass::TMission_FULLY_LOADED(TeamMissionClass * mission, bool)
 {
 	FootClass *unit = Member;
@@ -1919,7 +1923,7 @@ void TeamClass::TMission_FULLY_LOADED(TeamMissionClass * mission, bool)
 	IsNextMission = true;
 }
 
-// FUNCTION: 0x006EE230
+// FUNCTION: GAMEMD 0x006EE230
 void TeamClass::TMission_UNLOAD_TRUCK(TeamMissionClass * mission, bool)
 {
 	FootClass *unit = Member;
@@ -1934,7 +1938,7 @@ void TeamClass::TMission_UNLOAD_TRUCK(TeamMissionClass * mission, bool)
 	IsNextMission = true;
 }
 
-// FUNCTION: 0x006EE2A0
+// FUNCTION: GAMEMD 0x006EE2A0
 void TeamClass::TMission_LOAD_TRUCK(TeamMissionClass * mission, bool)
 {
 	FootClass *unit = Member;
@@ -1949,7 +1953,7 @@ void TeamClass::TMission_LOAD_TRUCK(TeamMissionClass * mission, bool)
 	IsNextMission = true;
 }
 
-// FUNCTION: 0x006EE310
+// FUNCTION: GAMEMD 0x006EE310
 void TeamClass::TMission_ATTACK_BUILDING_WITH_PROPERTY(TeamMissionClass * mission, bool first_time)
 {
 	if (first_time && MissionTarget == NULL) {
@@ -1979,7 +1983,7 @@ void TeamClass::TMission_ATTACK_BUILDING_WITH_PROPERTY(TeamMissionClass * missio
 	}
 }
 
-// FUNCTION: 0x006EE3F0
+// FUNCTION: GAMEMD 0x006EE3F0
 void TeamClass::TMission_MOVETO_BUILDING_WITH_PROPERTY(TeamMissionClass * mission, bool)
 {
 	if (MissionTarget == NULL) {
@@ -2013,7 +2017,7 @@ void TeamClass::TMission_MOVETO_BUILDING_WITH_PROPERTY(TeamMissionClass * missio
 	Coordinate_Move();
 }
 
-// FUNCTION: 0x006EE5C0
+// FUNCTION: GAMEMD 0x006EE5C0
 void TeamClass::TMission_MOVETO_FRIENDLY_BUILDING_WITH_PROPERTY(TeamMissionClass * mission, bool first_time)
 {
 	if (first_time && MissionTarget == NULL) {
@@ -2046,7 +2050,7 @@ void TeamClass::TMission_MOVETO_FRIENDLY_BUILDING_WITH_PROPERTY(TeamMissionClass
 	}
 }
 
-// FUNCTION: 0x006EE800
+// FUNCTION: GAMEMD 0x006EE800
 void TeamClass::TMission_SCOUT(TeamMissionClass * mission, bool)
 {
 	int i;
@@ -2121,7 +2125,7 @@ void TeamClass::TMission_SCOUT(TeamMissionClass * mission, bool)
 	}
 }
 
-// FUNCTION: 0x006EEBD0
+// FUNCTION: GAMEMD 0x006EEBD0
 BuildingClass * __fastcall Pick_Building_With_Property(BuildingTypeClass * type, HouseClass * house, FootClass * unit, TargetPropertyType prop, bool only_enemy)
 {
 	int best_same_dist = -1;
@@ -2179,7 +2183,7 @@ BuildingClass * __fastcall Pick_Building_With_Property(BuildingTypeClass * type,
 	return(best_same_ptr);
 }
 
-// FUNCTION: 0x006EEEA0
+// FUNCTION: GAMEMD 0x006EEEA0
 BuildingClass * __fastcall Pick_Own_Building_With_Property(BuildingTypeClass * type, HouseClass * house, FootClass * unit, TargetPropertyType prop, bool only_enemy)
 {
 	BuildingClass *best_ptr = NULL;
@@ -2224,7 +2228,7 @@ BuildingClass * __fastcall Pick_Own_Building_With_Property(BuildingTypeClass * t
 	return(best_ptr);
 }
 
-// FUNCTION: 0x006EF110
+// FUNCTION: GAMEMD 0x006EF110
 void TeamClass::TMission_UNLOAD(TeamMissionClass * mission, bool)
 {
 	FootClass * unit = Member;
@@ -2291,14 +2295,14 @@ void TeamClass::TMission_UNLOAD(TeamMissionClass * mission, bool)
 	}
 }
 
-// FUNCTION: 0x006EF450
+// FUNCTION: GAMEMD 0x006EF450
 void TeamClass::TMission_SUCCESS(TeamMissionClass * mission, bool)
 {
 	IsNextMission = true;
 	Succeeded = true;
 }
 
-// FUNCTION: 0x006EF4D0
+// FUNCTION: GAMEMD 0x006EF4D0
 void TeamClass::Team_Members(TEAM_MEMBER_LIST & list)
 {
 	for (int i = 0; i < Class->TaskForce->ClassCount; i++) {
@@ -2317,7 +2321,7 @@ void TeamClass::Team_Members(TEAM_MEMBER_LIST & list)
 	}
 }
 
-// FUNCTION: 0x006EF5C0
+// FUNCTION: GAMEMD 0x006EF5C0
 void TeamClass::TMission_FLASH(TeamMissionClass * mission, bool first_time)
 {
 	if (first_time) {
@@ -2326,7 +2330,7 @@ void TeamClass::TMission_FLASH(TeamMissionClass * mission, bool first_time)
 	}
 }
 
-// FUNCTION: 0x006EF5F0
+// FUNCTION: GAMEMD 0x006EF5F0
 void TeamClass::Flash(int count)
 {
 	FootClass *unit = Member;
@@ -2336,7 +2340,7 @@ void TeamClass::Flash(int count)
 	}
 }
 
-// FUNCTION: 0x006EF610
+// FUNCTION: GAMEMD 0x006EF610
 void TeamClass::TMission_PLAY_ANIM(TeamMissionClass * mission, bool first_time)
 {
 	int type = (int)mission->Data.AType;
@@ -2355,7 +2359,7 @@ void TeamClass::TMission_PLAY_ANIM(TeamMissionClass * mission, bool first_time)
 	IsNextMission = true;
 }
 
-// FUNCTION: 0x006EF6D0
+// FUNCTION: GAMEMD 0x006EF6D0
 void TeamClass::TMission_TALK_BUBBLE(TeamMissionClass * mission, bool first_time)
 {
 	if (first_time) {
@@ -2374,7 +2378,7 @@ static inline void _Fire_Super(HouseClass * house, SuperClass * super, Cell cons
 	house->Place_Special_Blast(super->Class->Type, cell);
 }
 
-// FUNCTION: 0x006EFC70
+// FUNCTION: GAMEMD 0x006EFC70
 void TeamClass::TMission_IRON_CURTAIN(TeamMissionClass * mission, bool)
 {
 	FootClass * leader = _Leader_Of(this);
@@ -2412,7 +2416,7 @@ void TeamClass::TMission_IRON_CURTAIN(TeamMissionClass * mission, bool)
 	IsNextMission = true;
 }
 
-// FUNCTION: 0x006F0130
+// FUNCTION: GAMEMD 0x006F0130
 void TeamClass::TMission_CHRONO_ATTACK(TeamMissionClass * mission, bool)
 {
 	FootClass * leader = _Team_Leader(this);
@@ -2457,14 +2461,14 @@ void TeamClass::TMission_CHRONO_ATTACK(TeamMissionClass * mission, bool)
 	}
 }
 
-// FUNCTION: 0x006F03B0
+// FUNCTION: GAMEMD 0x006F03B0
 int TeamClass::Stray_Distance(void)
 {
 	TeamMissionType action = Script->Get_Current_Mission().Mission;
 	return((action == (TeamMissionType)0x36 || action == (TeamMissionType)0x35) ? Rule->RelaxedStray : Rule->StrayDistance);
 }
 
-// FUNCTION: 0x006F03F0
+// FUNCTION: GAMEMD 0x006F03F0
 bool TeamClass::Has_Ammo(void) const
 {
 	bool found = false;
@@ -2477,10 +2481,13 @@ bool TeamClass::Has_Ammo(void) const
 	return(found);
 }
 
-// FUNCTION: 0x006F0430 TeamClass::Fetch_Object_Size
-// FUNCTION: 0x006F0440 TeamClass::Fetch_RTTI
+// FUNCTION: GAMEMD 0x006F0430
+// TeamClass::Fetch_Object_Size
+// FUNCTION: GAMEMD 0x006F0440
+// TeamClass::Fetch_RTTI
 
-// FUNCTION: 0x006F0450 TeamClass::~TeamClass
+// SYNTHETIC: GAMEMD 0x006F0450
+// ??_GTeamClass@@UAEPAXI@Z
 
 namespace fastmath { double __cdecl sqrt(double x); double __cdecl tan(double x); double __cdecl atan(double x); }
 extern const double DAT_007E1708;
@@ -2494,28 +2501,36 @@ extern const double DAT_007E1740;
 extern const double DAT_007F4790;
 extern const double DAT_007F4798;
 
-// FUNCTION: 0x006F0470 $E132
+// SYNTHETIC: GAMEMD 0x006F0470 SYMBOL
+// _$E132
 double DAT_00B0E9D0 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x006F04A0 $E135
+// SYNTHETIC: GAMEMD 0x006F04A0 SYMBOL
+// _$E135
 double DAT_00B0EA20 = DAT_00B0E9D0 / DAT_007F4790;
 
-// FUNCTION: 0x006F04C0 $E138
+// SYNTHETIC: GAMEMD 0x006F04C0 SYMBOL
+// _$E138
 double DAT_00B0EA08 = DAT_007E1718 / DAT_00B0EA20;
 
-// FUNCTION: 0x006F04E0 $E141
+// SYNTHETIC: GAMEMD 0x006F04E0 SYMBOL
+// _$E141
 double DAT_00B0EA00 = DAT_007E1720 * DAT_007F4798;
 
-// FUNCTION: 0x006F0500 $E144
+// SYNTHETIC: GAMEMD 0x006F0500 SYMBOL
+// _$E144
 double DAT_00B0E9D8 = DAT_007E1728 * DAT_007F4798;
 
-// FUNCTION: 0x006F0520 $E147
+// SYNTHETIC: GAMEMD 0x006F0520 SYMBOL
+// _$E147
 double DAT_00B0E9B0 = DAT_007E1730 * DAT_007F4798;
 
-// FUNCTION: 0x006F0540 $E150
+// SYNTHETIC: GAMEMD 0x006F0540 SYMBOL
+// _$E150
 int DAT_00B0EA28 = (int)(fastmath::tan(DAT_00B0E9B0 - DAT_00B0E9D8) * DAT_007E1738 * DAT_00B0E9D0);
 
-// FUNCTION: 0x006F0580 $E153
+// SYNTHETIC: GAMEMD 0x006F0580 SYMBOL
+// _$E153
 double DAT_00B0E9E0 = fastmath::atan(DAT_00B0EA28 * DAT_007E1740);
 
 double DAT_00B0E9F8;
@@ -2533,26 +2548,26 @@ int DAT_00B0E9BC;
 int DAT_00B0E9C0;
 int DAT_00B0E9C4;
 
-// FUNCTION: 0x006F05B0
+// FUNCTION: GAMEMD 0x006F05B0
 void FUN_006F05B0(void)
 {
 	DAT_00B0E9F8 = fastmath::atan((double)(DAT_00B0EA28 * 2) / DAT_00B0E9D0);
 }
 
-// FUNCTION: 0x006F05E0
+// FUNCTION: GAMEMD 0x006F05E0
 void FUN_006F05E0(void)
 {
 	DAT_00B0EA1C = (int)((double)(DAT_00B0EA28 * 4) + DAT_007E1738);
 }
 
-// FUNCTION: 0x006F0610
+// FUNCTION: GAMEMD 0x006F0610
 void FUN_006F0610(void)
 {
 	DAT_00B0E9C8 = 0;
 	DAT_00B0E9CA = 0;
 }
 
-// FUNCTION: 0x006F0620
+// FUNCTION: GAMEMD 0x006F0620
 void FUN_006F0620(void)
 {
 	DAT_00B0E9E8 = 0;
@@ -2560,7 +2575,7 @@ void FUN_006F0620(void)
 	DAT_00B0E9F0 = 0;
 }
 
-// FUNCTION: 0x006F0640
+// FUNCTION: GAMEMD 0x006F0640
 void FUN_006F0640(void)
 {
 	DAT_00B0EA18 = 0;
@@ -2568,7 +2583,7 @@ void FUN_006F0640(void)
 	DAT_00B0EA14 = 128;
 }
 
-// FUNCTION: 0x006F0660
+// FUNCTION: GAMEMD 0x006F0660
 void FUN_006F0660(void)
 {
 	DAT_00B0E9B8 = 0;

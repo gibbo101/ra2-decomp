@@ -42,20 +42,33 @@
 
 bool StillUpdating;
 
-// FUNCTION: 0x0068CB30 $E2
-// FUNCTION: 0x0068CB60 $E5
-// FUNCTION: 0x0068CB80 $E8
-// FUNCTION: 0x0068CBA0 $E11
-// FUNCTION: 0x0068CBC0 $E14
-// FUNCTION: 0x0068CBE0 $E17
-// FUNCTION: 0x0068CC00 $E20
-// FUNCTION: 0x0068CC40 $E23
-// FUNCTION: 0x0068CC70 $E26
-// FUNCTION: 0x0068CCA0 $E29
-// FUNCTION: 0x0068CCD0 $E32
-// FUNCTION: 0x0068CCE0 $E35
+// SYNTHETIC: GAMEMD 0x0068CB30 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x0068CB60 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x0068CB80 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x0068CBA0 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x0068CBC0 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x0068CBE0 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x0068CC00 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x0068CC40 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x0068CC70 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x0068CCA0 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x0068CCD0 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x0068CCE0 SYMBOL
+// _$E35
 
-// FUNCTION: 0x0068CD00 $E38
+// SYNTHETIC: GAMEMD 0x0068CD00 SYMBOL
+// _$E38
 Coord DAT_00B05568(128, 128, 0);
 
 int score_font_count;
@@ -83,13 +96,13 @@ struct ScoreTextSoundStruct {
 	bool mAllocated;
 } text_sounds[3];
 
-// FUNCTION: 0x0068EB90
+// FUNCTION: GAMEMD 0x0068EB90
 int ScoreClass::Alloc_Object(ScoreAnimClass *obj)
 {
 	return(ScoreObjs.Add(obj));
 }
 
-// FUNCTION: 0x0068EC00
+// FUNCTION: GAMEMD 0x0068EC00
 bool ScoreClass::Score_Object_Not_Present(ScoreAnimClass * obj)
 {
 	if (ScoreObjs.ID(obj) == -1) {
@@ -98,7 +111,7 @@ bool ScoreClass::Score_Object_Not_Present(ScoreAnimClass * obj)
 	return(false);
 }
 
-// FUNCTION: 0x0068EC20
+// FUNCTION: GAMEMD 0x0068EC20
 void ScoreClass::Cycle_Wait_Click(bool cycle)
 {
 	int counter = 0;
@@ -149,7 +162,7 @@ void ScoreClass::Wait_For_Print(ScoreAnimClass * obj)
 	}
 }
 
-// FUNCTION: 0x0068ED80
+// FUNCTION: GAMEMD 0x0068ED80
 unsigned int ScoreClass::Do_Calc(HouseClass * house)
 {
 	int remain = 0;
@@ -190,7 +203,7 @@ unsigned int ScoreClass::Do_Calc(HouseClass * house)
 	return(efficiency);
 }
 
-// FUNCTION: 0x0068EF20
+// FUNCTION: GAMEMD 0x0068EF20
 void ScoreClass::Do_Graphs(void)
 {
 	int allyu = 0;
@@ -223,7 +236,7 @@ void ScoreClass::Do_Graphs(void)
 	}
 }
 
-// FUNCTION: 0x0068F8A0
+// FUNCTION: GAMEMD 0x0068F8A0
 void ScoreClass::Show_Credits(void)
 {
 	char str[20];
@@ -238,7 +251,7 @@ void ScoreClass::Show_Credits(void)
 	Wait_For_Print(obj);
 }
 
-// FUNCTION: 0x0068F9B0
+// FUNCTION: GAMEMD 0x0068F9B0
 void ScoreClass::Print_Minutes(int time)
 {
 	wchar_t str[20];
@@ -261,7 +274,7 @@ void ScoreClass::Print_Minutes(int time)
 	Wait_For_Print(obj);
 }
 
-// FUNCTION: 0x0068FB10
+// FUNCTION: GAMEMD 0x0068FB10
 Rect ScoreClass::Count_Up_Print(Surface * surf, wchar_t *str, int percent, int maxval, int xpos, int ypos)
 {
 	wchar_t destbuf[64];
@@ -272,7 +285,7 @@ Rect ScoreClass::Count_Up_Print(Surface * surf, wchar_t *str, int percent, int m
 	return(Rect(xpos, ypos, FullFont->String_Width(destbuf), FullFont->Get_Height()));
 }
 
-// FUNCTION: 0x0068FBB0
+// FUNCTION: GAMEMD 0x0068FBB0
 void ScoreClass::Input_Name(char str[], int xpos, int ypos)
 {
 	int x = xpos;
@@ -340,7 +353,7 @@ void ScoreClass::Input_Name(char str[], int xpos, int ypos)
 	} while (key != KN_RETURN);
 }
 
-// FUNCTION: 0x0068FFE0
+// FUNCTION: GAMEMD 0x0068FFE0
 void ScoreClass::Animate_Cursor(int pos, int ypos)
 {
 	static int _lastpos = 0, _state;
@@ -369,9 +382,10 @@ void ScoreClass::Animate_Cursor(int pos, int ypos)
 	}
 }
 
-// FUNCTION: 0x00690150 $E107
+// SYNTHETIC: GAMEMD 0x00690150 SYMBOL
+// _$E107
 
-// FUNCTION: 0x00690160
+// FUNCTION: GAMEMD 0x00690160
 void ScoreClass::Call_Back_Delay(int time)
 {
 	Rect rect;
@@ -406,7 +420,7 @@ void ScoreClass::Call_Back_Delay(int time)
 	} while (time > 0);
 }
 
-// FUNCTION: 0x00690360
+// FUNCTION: GAMEMD 0x00690360
 void ScoreClass::Animate_Score_Objs(void)
 {
 	StillUpdating = false;
@@ -425,7 +439,7 @@ void ScoreClass::Animate_Score_Objs(void)
 	}
 }
 
-// FUNCTION: 0x00690400
+// FUNCTION: GAMEMD 0x00690400
 void ScoreClass::Draw(void)
 {
 	RECT r;
@@ -442,7 +456,7 @@ void ScoreClass::Draw(void)
 	if (MouseCursor != NULL) MouseCursor->Erase_Mouse(HiddenSurface);
 }
 
-// FUNCTION: 0x006904C0
+// FUNCTION: GAMEMD 0x006904C0
 void ScoreClass::Timing(void)
 {
 	if (GameInFocus == true) {
@@ -465,7 +479,7 @@ void ScoreClass::Timing(void)
 	}
 }
 
-// FUNCTION: 0x00690530
+// FUNCTION: GAMEMD 0x00690530
 void ScoreClass::DoSound(const char * name, int volume)
 {
 	if (name != NULL && FUN_00407000()) {
@@ -480,7 +494,7 @@ void ScoreClass::DoSound(const char * name, int volume)
 	}
 }
 
-// FUNCTION: 0x00690580
+// FUNCTION: GAMEMD 0x00690580
 ScoreFontClass::ScoreFontClass(void) :
 	Width(0),
 	Height(0),
@@ -491,7 +505,7 @@ ScoreFontClass::ScoreFontClass(void) :
 	score_font_count++;
 }
 
-// FUNCTION: 0x006905B0
+// FUNCTION: GAMEMD 0x006905B0
 ScoreFontClass::ScoreFontClass(int w, int h, void const * data, ConvertClass * drawer) :
 	Width(w),
 	Height(h),
@@ -502,7 +516,7 @@ ScoreFontClass::ScoreFontClass(int w, int h, void const * data, ConvertClass * d
 	score_font_count++;
 }
 
-// FUNCTION: 0x006905F0
+// FUNCTION: GAMEMD 0x006905F0
 ScoreFontClass::~ScoreFontClass(void)
 {
 	if (ShapePtr != NULL && IsShapeAllocated == true) {
@@ -520,7 +534,7 @@ ScoreFontClass::~ScoreFontClass(void)
 	}
 }
 
-// FUNCTION: 0x00690640
+// FUNCTION: GAMEMD 0x00690640
 void ScoreFontClass::Load_Sounds(void)
 {
 	if (FUN_00407000()) {
@@ -552,7 +566,7 @@ void ScoreFontClass::Load_Sounds(void)
 	}
 }
 
-// FUNCTION: 0x006907A0
+// FUNCTION: GAMEMD 0x006907A0
 int ScoreFontClass::String_Width(const wchar_t * string)
 {
 	const wchar_t * str = string;
@@ -563,7 +577,7 @@ int ScoreFontClass::String_Width(const wchar_t * string)
 	return(w);
 }
 
-// FUNCTION: 0x006907E0
+// FUNCTION: GAMEMD 0x006907E0
 int ScoreFontClass::Char_Width(wchar_t ch)
 {
 	char out[1];
@@ -582,7 +596,7 @@ int ScoreFontClass::Char_Width(wchar_t ch)
 	return(((SHPStruct const *)ShapePtr)->GetFrameBounds(frame + 2).Width);
 }
 
-// FUNCTION: 0x00690850
+// FUNCTION: GAMEMD 0x00690850
 void ScoreFontClass::Print_Char(Surface *surf, wchar_t ch, int x, int y, int v, bool play_sound)
 {
 	char c = (char)ch;
@@ -597,7 +611,7 @@ void ScoreFontClass::Print_Char(Surface *surf, wchar_t ch, int x, int y, int v, 
 	}
 }
 
-// FUNCTION: 0x00690A10
+// FUNCTION: GAMEMD 0x00690A10
 ScoreFullFontClass::ScoreFullFontClass(ConvertClass * drawer) :
 	ScoreFontClass()
 {
@@ -615,7 +629,7 @@ ScoreFullFontClass::ScoreFullFontClass(ConvertClass * drawer) :
 	Height = 21;
 }
 
-// FUNCTION: 0x00690AE0
+// FUNCTION: GAMEMD 0x00690AE0
 ScoreBigFontClass::ScoreBigFontClass(ConvertClass * drawer) :
 	ScoreFontClass()
 {
@@ -633,7 +647,7 @@ ScoreBigFontClass::ScoreBigFontClass(ConvertClass * drawer) :
 	Height = 35;
 }
 
-// FUNCTION: 0x00690BB0
+// FUNCTION: GAMEMD 0x00690BB0
 ScoreTimeClass::ScoreTimeClass(int xpos, int ypos, void const * data, int maxval, int xtimer, ConvertClass * drawer) :
 	ScoreAnimClass(xpos, ypos, data),
 	Stage(0),
@@ -643,7 +657,7 @@ ScoreTimeClass::ScoreTimeClass(int xpos, int ypos, void const * data, int maxval
 {
 }
 
-// FUNCTION: 0x00690C00
+// FUNCTION: GAMEMD 0x00690C00
 bool ScoreTimeClass::Update(Surface * surf)
 {
 	if (!Timer) {
@@ -655,7 +669,7 @@ bool ScoreTimeClass::Update(Surface * surf)
 	return(false);
 }
 
-// FUNCTION: 0x00690D10
+// FUNCTION: GAMEMD 0x00690D10
 ScorePrintClass::ScorePrintClass(void const * string, int xpos, int ypos, ScoreFontClass * font, bool is_fully_lit) :
 	ScoreAnimClass(xpos, ypos, string),
 	Pos(0),
@@ -665,7 +679,7 @@ ScorePrintClass::ScorePrintClass(void const * string, int xpos, int ypos, ScoreF
 {
 }
 
-// FUNCTION: 0x00690D60
+// FUNCTION: GAMEMD 0x00690D60
 bool ScorePrintClass::Update(Surface * surf)
 {
 	StillUpdating = true;
@@ -714,7 +728,7 @@ bool ScorePrintClass::Update(Surface * surf)
 	return(false);
 }
 
-// FUNCTION: 0x00690EF0
+// FUNCTION: GAMEMD 0x00690EF0
 SfxEntry::SfxEntry(char const * name, char const *filename) :
 	Name(NULL),
 	Sample(NULL),
@@ -725,7 +739,7 @@ SfxEntry::SfxEntry(char const * name, char const *filename) :
 	}
 }
 
-// FUNCTION: 0x00690F20
+// FUNCTION: GAMEMD 0x00690F20
 SfxEntry::~SfxEntry(void)
 {
 	if (Name != NULL) {
@@ -733,7 +747,7 @@ SfxEntry::~SfxEntry(void)
 	}
 }
 
-// FUNCTION: 0x00690F30
+// FUNCTION: GAMEMD 0x00690F30
 ScoreAnimClass::ScoreAnimClass(int x, int y, void const * data) :
 	XPos(x),
 	YPos(y),
@@ -742,23 +756,32 @@ ScoreAnimClass::ScoreAnimClass(int x, int y, void const * data) :
 {
 }
 
-// FUNCTION: 0x00690F70 ScoreAnimClass::Stop
+// FUNCTION: GAMEMD 0x00690F70
+// ScoreAnimClass::Stop
 
-// FUNCTION: 0x00690FC0 ScoreAnimClass::Start
+// FUNCTION: GAMEMD 0x00690FC0
+// ScoreAnimClass::Start
 
-// FUNCTION: 0x00690FE0 ScoreAnimClass::~ScoreAnimClass
+// SYNTHETIC: GAMEMD 0x00690FE0
+// ??_GScoreAnimClass@@UAEPAXI@Z
 
-// FUNCTION: 0x00691000 ScoreTimeClass::~ScoreTimeClass
+// SYNTHETIC: GAMEMD 0x00691000
+// ??_GScoreTimeClass@@UAEPAXI@Z
 
-// FUNCTION: 0x00691020 ScorePrintClass::~ScorePrintClass
+// SYNTHETIC: GAMEMD 0x00691020
+// ??_GScorePrintClass@@UAEPAXI@Z
 
-// FUNCTION: 0x00691040 ScoreFontClass::~ScoreFontClass
+// SYNTHETIC: GAMEMD 0x00691040
+// ??_GScoreFontClass@@UAEPAXI@Z
 
-// FUNCTION: 0x006910A0 ScoreFullFontClass::~ScoreFullFontClass
+// SYNTHETIC: GAMEMD 0x006910A0
+// ??_GScoreFullFontClass@@UAEPAXI@Z
 
-// FUNCTION: 0x00691100 ScoreBigFontClass::~ScoreBigFontClass
+// SYNTHETIC: GAMEMD 0x00691100
+// ??_GScoreBigFontClass@@UAEPAXI@Z
 
-// FUNCTION: 0x00691160 ?$DynamicVectorClass@PAVSfxEntry@@::Add
+// TEMPLATE: GAMEMD 0x00691160
+// ?Add@?$DynamicVectorClass@PAVSfxEntry@@@@QAE_NABQAVSfxEntry@@@Z
 template class DynamicVectorClass<SfxEntry *>;
 
 extern double __cdecl FUN_004CAC40(double);
@@ -766,10 +789,12 @@ extern const double DAT_007E1708;
 extern const double DAT_007E1710;
 extern const double DAT_007F0F38;
 
-// FUNCTION: 0x006911B0 $E109
+// SYNTHETIC: GAMEMD 0x006911B0 SYMBOL
+// _$E109
 double DAT_00B055C8 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2.0);
 
-// FUNCTION: 0x006911E0 $E112
+// SYNTHETIC: GAMEMD 0x006911E0 SYMBOL
+// _$E112
 double DAT_00B05618 = DAT_00B055C8 / DAT_007F0F38;
 
 extern double __cdecl FUN_004CAD50(double);
@@ -797,38 +822,50 @@ struct ScoreIntQuad {
 	ScoreIntQuad() { A = 0; B = 0; C = 0; D = 0; }
 };
 
-// FUNCTION: 0x00691200 $E115
+// SYNTHETIC: GAMEMD 0x00691200 SYMBOL
+// _$E115
 double DAT_00B05600 = DAT_007E1718 / DAT_00B05618;
 
-// FUNCTION: 0x00691220 $E118
+// SYNTHETIC: GAMEMD 0x00691220 SYMBOL
+// _$E118
 double DAT_00B055F8 = DAT_007E1720 * DAT_007F0F40;
 
-// FUNCTION: 0x00691240 $E121
+// SYNTHETIC: GAMEMD 0x00691240 SYMBOL
+// _$E121
 double DAT_00B055D0 = DAT_007E1728 * DAT_007F0F40;
 
-// FUNCTION: 0x00691260 $E124
+// SYNTHETIC: GAMEMD 0x00691260 SYMBOL
+// _$E124
 double DAT_00B055A8 = DAT_007E1730 * DAT_007F0F40;
 
-// FUNCTION: 0x00691280 $E127
+// SYNTHETIC: GAMEMD 0x00691280 SYMBOL
+// _$E127
 int DAT_00B05620 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B055A8 - DAT_00B055D0) * DAT_00B055C8));
 
-// FUNCTION: 0x006912C0 $E130
+// SYNTHETIC: GAMEMD 0x006912C0 SYMBOL
+// _$E130
 double DAT_00B055D8 = FUN_004CADE0(DAT_00B05620 * DAT_007E1740);
 
-// FUNCTION: 0x006912F0 $E133
+// SYNTHETIC: GAMEMD 0x006912F0 SYMBOL
+// _$E133
 double DAT_00B055F0 = FUN_004CADE0((DAT_00B05620 * 2) / DAT_00B055C8);
 
-// FUNCTION: 0x00691320 $E136
+// SYNTHETIC: GAMEMD 0x00691320 SYMBOL
+// _$E136
 int DAT_00B05614 = (int)(DAT_00B05620 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x00691350 $E139
+// SYNTHETIC: GAMEMD 0x00691350 SYMBOL
+// _$E139
 ScoreShortPair DAT_00B055C0;
 
-// FUNCTION: 0x00691360 $E142
+// SYNTHETIC: GAMEMD 0x00691360 SYMBOL
+// _$E142
 ScoreIntTriple DAT_00B055E0;
 
-// FUNCTION: 0x00691380 $E145
+// SYNTHETIC: GAMEMD 0x00691380 SYMBOL
+// _$E145
 Coord DAT_00B05608(128, 128, 0);
 
-// FUNCTION: 0x006913A0 $E148
+// SYNTHETIC: GAMEMD 0x006913A0 SYMBOL
+// _$E148
 ScoreIntQuad DAT_00B055B0;

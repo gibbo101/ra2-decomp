@@ -29,7 +29,7 @@ char * __fastcall WideToCharString(char * dest, wchar_t const * src, int count);
 }
 void __cdecl FUN_004068E0(char const * format, ...);
 
-// FUNCTION: 0x005408F0
+// FUNCTION: GAMEMD 0x005408F0
 IPXManagerClass::IPXManagerClass (int glb_maxlen, int pvt_maxlen,
 	int glb_num_packets, int pvt_num_packets, unsigned short socket,
 	unsigned short product_id)
@@ -84,7 +84,7 @@ IPXManagerClass::IPXManagerClass (int glb_maxlen, int pvt_maxlen,
 	Timeout = 60;
 }
 
-// FUNCTION: 0x005409F0
+// FUNCTION: GAMEMD 0x005409F0
 IPXManagerClass::~IPXManagerClass(void)
 {
 	int i;
@@ -113,7 +113,7 @@ IPXManagerClass::~IPXManagerClass(void)
 	NumConnections = 0;
 }
 
-// FUNCTION: 0x00540A80
+// FUNCTION: GAMEMD 0x00540A80
 int IPXManagerClass::Init(void)
 {
 	int i;
@@ -189,13 +189,13 @@ int IPXManagerClass::Init(void)
 	return(1);
 }
 
-// FUNCTION: 0x00540C50
+// FUNCTION: GAMEMD 0x00540C50
 int IPXManagerClass::Is_IPX(void)
 {
 	return(IPXStatus);
 }
 
-// FUNCTION: 0x00540C60
+// FUNCTION: GAMEMD 0x00540C60
 void IPXManagerClass::Set_Timing (unsigned int retrydelta,
 	unsigned int maxretries, unsigned int timeout, bool set_external)
 {
@@ -225,7 +225,7 @@ void IPXManagerClass::Set_Timing (unsigned int retrydelta,
 	}
 }
 
-// FUNCTION: 0x00540D10
+// FUNCTION: GAMEMD 0x00540D10
 void IPXManagerClass::Set_External_Timing (unsigned int retrydelta,
 	unsigned int maxretries, unsigned int timeout)
 {
@@ -236,7 +236,7 @@ void IPXManagerClass::Set_External_Timing (unsigned int retrydelta,
 	}
 }
 
-// FUNCTION: 0x00540D40
+// FUNCTION: GAMEMD 0x00540D40
 void IPXManagerClass::Save_Timing(void)
 {
 	if (GlobalChannel) {
@@ -246,7 +246,7 @@ void IPXManagerClass::Save_Timing(void)
 	}
 }
 
-// FUNCTION: 0x00540D60
+// FUNCTION: GAMEMD 0x00540D60
 void IPXManagerClass::Restore_Timing(void)
 {
 	if (GlobalChannel) {
@@ -256,7 +256,7 @@ void IPXManagerClass::Restore_Timing(void)
 	}
 }
 
-// FUNCTION: 0x00540D80
+// FUNCTION: GAMEMD 0x00540D80
 void IPXManagerClass::Set_Lobby_Timing(unsigned int retrydelta,
 	unsigned int maxretries, unsigned int timeout)
 {
@@ -272,7 +272,7 @@ void IPXManagerClass::Set_Lobby_Timing(unsigned int retrydelta,
 	}
 }
 
-// FUNCTION: 0x00540DC0
+// FUNCTION: GAMEMD 0x00540DC0
 int IPXManagerClass::Create_Connection(int id, wchar_t *name,
 	IPXAddressClass *address)
 {
@@ -300,7 +300,7 @@ int IPXManagerClass::Create_Connection(int id, wchar_t *name,
 	return(1);
 }
 
-// FUNCTION: 0x00540E70
+// FUNCTION: GAMEMD 0x00540E70
 int IPXManagerClass::Create_Multicast_Connection(void)
 {
 	if (!IPXStatus) {
@@ -321,7 +321,7 @@ int IPXManagerClass::Create_Multicast_Connection(void)
 	return(1);
 }
 
-// FUNCTION: 0x00540F00
+// FUNCTION: GAMEMD 0x00540F00
 int IPXManagerClass::Delete_Connection(int id)
 {
 	int i,j;
@@ -352,13 +352,13 @@ int IPXManagerClass::Delete_Connection(int id)
 	return(0);
 }
 
-// FUNCTION: 0x00540F90
+// FUNCTION: GAMEMD 0x00540F90
 int IPXManagerClass::Num_Connections(void)
 {
 	return NumConnections;
 }
 
-// FUNCTION: 0x00540FA0
+// FUNCTION: GAMEMD 0x00540FA0
 int IPXManagerClass::Connection_ID(int index)
 {
 	if (index >= 0 && index < NumConnections) {
@@ -367,7 +367,7 @@ int IPXManagerClass::Connection_ID(int index)
 	return CONNECTION_NONE;
 }
 
-// FUNCTION: 0x00540FC0
+// FUNCTION: GAMEMD 0x00540FC0
 wchar_t *IPXManagerClass::Connection_Name(int id)
 {
 	int i;
@@ -380,7 +380,7 @@ wchar_t *IPXManagerClass::Connection_Name(int id)
 	return NULL;
 }
 
-// FUNCTION: 0x00541000
+// FUNCTION: GAMEMD 0x00541000
 IPXAddressClass * IPXManagerClass::Connection_Address(int id)
 {
 	int i;
@@ -393,7 +393,7 @@ IPXAddressClass * IPXManagerClass::Connection_Address(int id)
 	return NULL;
 }
 
-// FUNCTION: 0x00541040
+// FUNCTION: GAMEMD 0x00541040
 int IPXManagerClass::Connection_Index(int id)
 {
 	int i;
@@ -406,7 +406,7 @@ int IPXManagerClass::Connection_Index(int id)
 	return CONNECTION_NONE;
 }
 
-// FUNCTION: 0x005410C0
+// FUNCTION: GAMEMD 0x005410C0
 void IPXManagerClass::Set_Connection_Parms(int index, int id, wchar_t *name)
 {
 	if (index >= NumConnections)
@@ -416,7 +416,7 @@ void IPXManagerClass::Set_Connection_Parms(int index, int id, wchar_t *name)
 	wcscpy(Connection[index]->Name, name);
 }
 
-// FUNCTION: 0x005410F0
+// FUNCTION: GAMEMD 0x005410F0
 int IPXManagerClass::Send_Global_Message(void *buf, int buflen, int ack_req,
 	IPXAddressClass *address, unsigned short port, int packet_id)
 {
@@ -436,7 +436,7 @@ int IPXManagerClass::Send_Global_Message(void *buf, int buflen, int ack_req,
 	return rc;
 }
 
-// FUNCTION: 0x00541170
+// FUNCTION: GAMEMD 0x00541170
 int IPXManagerClass::Send_Global_Message_To_Player(void *buf, int buflen, int ack_req, int id)
 {
 	int i;
@@ -457,7 +457,7 @@ int IPXManagerClass::Send_Global_Message_To_Player(void *buf, int buflen, int ac
 	return 0;
 }
 
-// FUNCTION: 0x00541260
+// FUNCTION: GAMEMD 0x00541260
 int IPXManagerClass::Send_Global_Message_To_Name(void *buf, int buflen, int ack_req, wchar_t *name)
 {
 	int i;
@@ -476,7 +476,7 @@ int IPXManagerClass::Send_Global_Message_To_Name(void *buf, int buflen, int ack_
 	return 0;
 }
 
-// FUNCTION: 0x00541370
+// FUNCTION: GAMEMD 0x00541370
 int IPXManagerClass::Get_Global_Message(void *buf, int *buflen,
 	IPXAddressClass *address, unsigned short *product_id)
 {
@@ -485,7 +485,7 @@ int IPXManagerClass::Get_Global_Message(void *buf, int *buflen,
 	return GlobalChannel->Get_Packet(buf, buflen, address, product_id);
 }
 
-// FUNCTION: 0x005413B0
+// FUNCTION: GAMEMD 0x005413B0
 int IPXManagerClass::Global_Channel_Op(int a1, int a2, int a3, int a4, int a5, int a6)
 {
 	if (!IPXStatus || !Listening) return 0;
@@ -493,7 +493,7 @@ int IPXManagerClass::Global_Channel_Op(int a1, int a2, int a3, int a4, int a5, i
 	return GlobalChannel->vt_entry_38(a1, a2, a3, a4, a5, a6);
 }
 
-// FUNCTION: 0x005413F0
+// FUNCTION: GAMEMD 0x005413F0
 void IPXManagerClass::Global_Channel_Op_3C(int a1)
 {
 	if (!IPXStatus || !Listening) return;
@@ -501,7 +501,7 @@ void IPXManagerClass::Global_Channel_Op_3C(int a1)
 	GlobalChannel->vt_entry_3C(a1);
 }
 
-// FUNCTION: 0x00541410
+// FUNCTION: GAMEMD 0x00541410
 int IPXManagerClass::Send_Lobby_Message(void *buf, int buflen, bool ack_req)
 {
 	int rc;
@@ -516,7 +516,7 @@ int IPXManagerClass::Send_Lobby_Message(void *buf, int buflen, bool ack_req)
 	return rc;
 }
 
-// FUNCTION: 0x00541480
+// FUNCTION: GAMEMD 0x00541480
 int IPXManagerClass::Get_Lobby_Message(void *buf, int *buflen,
 	IPXAddressClass *address, unsigned short *product_id)
 {
@@ -525,7 +525,7 @@ int IPXManagerClass::Get_Lobby_Message(void *buf, int *buflen,
 	return LobbyChannel->Get_Packet(buf, buflen, address, product_id);
 }
 
-// FUNCTION: 0x005414C0
+// FUNCTION: GAMEMD 0x005414C0
 int IPXManagerClass::Send_Private_Message(void *buf, int buflen, int ack_req,
 	int conn_id)
 {
@@ -567,7 +567,7 @@ int IPXManagerClass::Send_Private_Message(void *buf, int buflen, int ack_req,
 	return 1;
 }
 
-// FUNCTION: 0x005415F0
+// FUNCTION: GAMEMD 0x005415F0
 int IPXManagerClass::Get_Private_Message(void *buf, int *buflen, int *conn_id)
 {
 	int i;
@@ -600,7 +600,7 @@ int IPXManagerClass::Get_Private_Message(void *buf, int *buflen, int *conn_id)
 	return 0;
 }
 
-// FUNCTION: 0x00542280
+// FUNCTION: GAMEMD 0x00542280
 void IPXManagerClass::Set_Connection_Address(int id, IPXAddressClass *address)
 {
 	int index = Connection_Index(id);
@@ -610,13 +610,13 @@ void IPXManagerClass::Set_Connection_Address(int id, IPXAddressClass *address)
 	}
 }
 
-// FUNCTION: 0x005422C0
+// FUNCTION: GAMEMD 0x005422C0
 int IPXManagerClass::Get_Bad_Connection(void)
 {
 	return BadConnection;
 }
 
-// FUNCTION: 0x005422D0
+// FUNCTION: GAMEMD 0x005422D0
 int IPXManagerClass::Global_Num_Send(void)
 {
 	if (!IPXStatus || !Listening) return 0;
@@ -624,7 +624,7 @@ int IPXManagerClass::Global_Num_Send(void)
 	return GlobalChannel->Queue->Num_Send();
 }
 
-// FUNCTION: 0x005422F0
+// FUNCTION: GAMEMD 0x005422F0
 int IPXManagerClass::Global_Num_Receive(void)
 {
 	if (!IPXStatus || !Listening) return 0;
@@ -632,7 +632,7 @@ int IPXManagerClass::Global_Num_Receive(void)
 	return GlobalChannel->Queue->Num_Receive();
 }
 
-// FUNCTION: 0x00542310
+// FUNCTION: GAMEMD 0x00542310
 int IPXManagerClass::Lobby_Num_Send(void)
 {
 	if (!IPXStatus || !Listening || !LobbyChannel) return 0;
@@ -640,7 +640,7 @@ int IPXManagerClass::Lobby_Num_Send(void)
 	return LobbyChannel->Queue->Num_Send();
 }
 
-// FUNCTION: 0x00542330
+// FUNCTION: GAMEMD 0x00542330
 int IPXManagerClass::Lobby_Num_Receive(void)
 {
 	if (!IPXStatus || !Listening || !LobbyChannel) return 0;
@@ -648,7 +648,7 @@ int IPXManagerClass::Lobby_Num_Receive(void)
 	return LobbyChannel->Queue->Num_Receive();
 }
 
-// FUNCTION: 0x00542350
+// FUNCTION: GAMEMD 0x00542350
 int IPXManagerClass::Private_Num_Send(int id)
 {
 	int i;
@@ -678,7 +678,7 @@ int IPXManagerClass::Private_Num_Send(int id)
 	}
 }
 
-// FUNCTION: 0x005423C0
+// FUNCTION: GAMEMD 0x005423C0
 int IPXManagerClass::Private_Num_Receive(int id)
 {
 	int i;
@@ -708,14 +708,14 @@ int IPXManagerClass::Private_Num_Receive(int id)
 	}
 }
 
-// FUNCTION: 0x00542430
+// FUNCTION: GAMEMD 0x00542430
 void IPXManagerClass::Set_Socket(unsigned short socket)
 {
 	Socket = (unsigned short)( (((unsigned int)socket & 0x00ff) << 8) |
 		(((unsigned int)socket & 0xff00) >> 8));
 }
 
-// FUNCTION: 0x00542450
+// FUNCTION: GAMEMD 0x00542450
 unsigned int IPXManagerClass::Response_Time(void)
 {
 	unsigned int resp;
@@ -739,13 +739,13 @@ unsigned int IPXManagerClass::Response_Time(void)
 	return(maxresp);
 }
 
-// FUNCTION: 0x005424A0
+// FUNCTION: GAMEMD 0x005424A0
 unsigned int IPXManagerClass::Avg_Response_Time(int index)
 {
 	return(Connection[index]->Queue->Avg_Response_Time());
 }
 
-// FUNCTION: 0x005424C0
+// FUNCTION: GAMEMD 0x005424C0
 unsigned int IPXManagerClass::Global_Response_Time(void)
 {
 	if (GlobalChannel) {
@@ -756,7 +756,7 @@ unsigned int IPXManagerClass::Global_Response_Time(void)
 	}
 }
 
-// FUNCTION: 0x005424E0
+// FUNCTION: GAMEMD 0x005424E0
 unsigned int IPXManagerClass::Lobby_Response_Time(void)
 {
 	if (LobbyChannel) {
@@ -767,7 +767,7 @@ unsigned int IPXManagerClass::Lobby_Response_Time(void)
 	}
 }
 
-// FUNCTION: 0x00542500
+// FUNCTION: GAMEMD 0x00542500
 unsigned int IPXManagerClass::Multicast_Response_Time(void)
 {
 	if (MulticastChannel) {
@@ -778,7 +778,7 @@ unsigned int IPXManagerClass::Multicast_Response_Time(void)
 	}
 }
 
-// FUNCTION: 0x00542520
+// FUNCTION: GAMEMD 0x00542520
 void IPXManagerClass::Store_Stats(void)
 {
 	for (int i = 0; i < NumConnections; i++) {
@@ -804,7 +804,7 @@ void IPXManagerClass::Store_Stats(void)
 	}
 }
 
-// FUNCTION: 0x00542EC0
+// FUNCTION: GAMEMD 0x00542EC0
 void IPXManagerClass::Reset_Response_Time(bool zero)
 {
 	int i;
@@ -824,7 +824,7 @@ void IPXManagerClass::Reset_Response_Time(bool zero)
 	}
 }
 
-// FUNCTION: 0x00542F30
+// FUNCTION: GAMEMD 0x00542F30
 void * IPXManagerClass::Oldest_Send(void)
 {
 	int i,j;
@@ -866,7 +866,7 @@ void * IPXManagerClass::Oldest_Send(void)
 	return(buf);
 }
 
-// FUNCTION: 0x00542FC0
+// FUNCTION: GAMEMD 0x00542FC0
 void IPXManagerClass::Set_Bridge(NetNumType bridge)
 {
 	if (GlobalChannel) {
@@ -874,7 +874,7 @@ void IPXManagerClass::Set_Bridge(NetNumType bridge)
 	}
 }
 
-// FUNCTION: 0x00542FE0
+// FUNCTION: GAMEMD 0x00542FE0
 void IPXManagerClass::Configure_Debug(int index, int type_offset, int type_size,
 	char **names, int namestart, int namecount)
 {
@@ -887,12 +887,12 @@ void IPXManagerClass::Configure_Debug(int index, int type_offset, int type_size,
 	}
 }
 
-// FUNCTION: 0x00543040
+// FUNCTION: GAMEMD 0x00543040
 void IPXManagerClass::Mono_Debug_Print(int, int)
 {
 }
 
-// FUNCTION: 0x00543050
+// FUNCTION: GAMEMD 0x00543050
 void IPXManagerClass::FUN_00543050(IPXAddressClass *address)
 {
 	if (LobbyChannel) {
@@ -900,7 +900,7 @@ void IPXManagerClass::FUN_00543050(IPXAddressClass *address)
 	}
 }
 
-// FUNCTION: 0x00543080
+// FUNCTION: GAMEMD 0x00543080
 void IPXManagerClass::Global_Channel_Clear_FieldC8(void)
 {
 	if (GlobalChannel) {
@@ -908,7 +908,7 @@ void IPXManagerClass::Global_Channel_Clear_FieldC8(void)
 	}
 }
 
-// FUNCTION: 0x00543090
+// FUNCTION: GAMEMD 0x00543090
 void IPXManagerClass::Global_Channel_Set_FieldC8(void)
 {
 	if (GlobalChannel) {
@@ -916,7 +916,7 @@ void IPXManagerClass::Global_Channel_Set_FieldC8(void)
 	}
 }
 
-// FUNCTION: 0x005430A0
+// FUNCTION: GAMEMD 0x005430A0
 void IPXManagerClass::Global_Channel_Op_40(IPXAddressClass *address, unsigned short port)
 {
 	if (GlobalChannel) {
@@ -924,7 +924,7 @@ void IPXManagerClass::Global_Channel_Op_40(IPXAddressClass *address, unsigned sh
 	}
 }
 
-// FUNCTION: 0x005430C0
+// FUNCTION: GAMEMD 0x005430C0
 void IPXManagerClass::Global_Channel_Op_44(unsigned a1)
 {
 	if (GlobalChannel) {
@@ -932,9 +932,11 @@ void IPXManagerClass::Global_Channel_Op_44(unsigned a1)
 	}
 }
 
-// FUNCTION: 0x005430E0 IPXManagerClass::~IPXManagerClass
+// SYNTHETIC: GAMEMD 0x005430E0
+// ??_GIPXManagerClass@@UAEPAXI@Z
 
-// FUNCTION: 0x00543100 ConnManClass::~ConnManClass
+// SYNTHETIC: GAMEMD 0x00543100
+// ??_GConnManClass@@UAEPAXI@Z
 
 extern const double DAT_007E1708;
 extern const double DAT_007E1710;
@@ -942,13 +944,16 @@ extern const double DAT_007E1718;
 extern const double DAT_007EC218;
 extern double __cdecl FUN_004CAC40(double);
 
-// FUNCTION: 0x00543120 $E40
+// SYNTHETIC: GAMEMD 0x00543120 SYMBOL
+// _$E40
 double DAT_00AA06D8 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x00543150 $E43
+// SYNTHETIC: GAMEMD 0x00543150 SYMBOL
+// _$E43
 double DAT_00AA0728 = DAT_00AA06D8 / DAT_007EC218;
 
-// FUNCTION: 0x00543170 $E46
+// SYNTHETIC: GAMEMD 0x00543170 SYMBOL
+// _$E46
 double DAT_00AA0710 = DAT_007E1718 / DAT_00AA0728;
 
 extern const double DAT_007E1720;
@@ -980,35 +985,46 @@ struct IntInit {
 	IntInit() { C = 0; A = 0x80; B = 0x80; }
 };
 
-// FUNCTION: 0x00543190 $E49
+// SYNTHETIC: GAMEMD 0x00543190 SYMBOL
+// _$E49
 double DAT_00AA0708 = DAT_007E1720 * DAT_007EC220;
 
-// FUNCTION: 0x005431B0 $E52
+// SYNTHETIC: GAMEMD 0x005431B0 SYMBOL
+// _$E52
 double DAT_00AA06E0 = DAT_007E1728 * DAT_007EC220;
 
-// FUNCTION: 0x005431D0 $E55
+// SYNTHETIC: GAMEMD 0x005431D0 SYMBOL
+// _$E55
 double DAT_00AA06B8 = DAT_007E1730 * DAT_007EC220;
 
-// FUNCTION: 0x005431F0 $E58
+// SYNTHETIC: GAMEMD 0x005431F0 SYMBOL
+// _$E58
 int DAT_00AA0730 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00AA06B8 - DAT_00AA06E0) * DAT_00AA06D8));
 
-// FUNCTION: 0x00543230 $E61
+// SYNTHETIC: GAMEMD 0x00543230 SYMBOL
+// _$E61
 double DAT_00AA06E8 = FUN_004CADE0(DAT_00AA0730 * DAT_007E1740);
 
-// FUNCTION: 0x00543260 $E64
+// SYNTHETIC: GAMEMD 0x00543260 SYMBOL
+// _$E64
 double DAT_00AA0700 = FUN_004CADE0((DAT_00AA0730 * 2) / DAT_00AA06D8);
 
-// FUNCTION: 0x00543290 $E67
+// SYNTHETIC: GAMEMD 0x00543290 SYMBOL
+// _$E67
 int DAT_00AA0724 = (int)(DAT_00AA0730 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x005432C0 $E70
+// SYNTHETIC: GAMEMD 0x005432C0 SYMBOL
+// _$E70
 ShortPair DAT_00AA06D0;
 
-// FUNCTION: 0x005432D0 $E73
+// SYNTHETIC: GAMEMD 0x005432D0 SYMBOL
+// _$E73
 IntTriple DAT_00AA06F0;
 
-// FUNCTION: 0x005432F0 $E76
+// SYNTHETIC: GAMEMD 0x005432F0 SYMBOL
+// _$E76
 IntInit DAT_00AA0718;
 
-// FUNCTION: 0x00543310 $E79
+// SYNTHETIC: GAMEMD 0x00543310 SYMBOL
+// _$E79
 IntQuad DAT_00AA06C0;

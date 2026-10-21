@@ -122,7 +122,7 @@ struct QueueRecord {
 	~QueueRecord(void);
 };
 
-// FUNCTION: 0x00646C90
+// FUNCTION: GAMEMD 0x00646C90
 QueueRecord::QueueRecord(void)
 {
 	Tail = 0;
@@ -137,7 +137,7 @@ QueueRecord::QueueRecord(void)
 	Buffer = 0;
 }
 
-// FUNCTION: 0x00646CE0
+// FUNCTION: GAMEMD 0x00646CE0
 QueueRecord::~QueueRecord(void)
 {
 	if (Buffer) {
@@ -156,7 +156,7 @@ struct FrameSyncStruct {
 	FrameSyncStruct(void);
 };
 
-// FUNCTION: 0x00646D00
+// FUNCTION: GAMEMD 0x00646D00
 FrameSyncStruct::FrameSyncStruct(void)
 {
 	frame = -1;
@@ -167,13 +167,14 @@ FrameSyncStruct::FrameSyncStruct(void)
 	timing = 0;
 }
 
-// FUNCTION: 0x00646D20 $E163
+// SYNTHETIC: GAMEMD 0x00646D20 SYMBOL
+// _$E163
 FrameSyncStruct SyncBarFrameSync[7];
 
 void __fastcall FUN_00543090(IPXManagerClass *ipx);
 void __fastcall FUN_00543080(IPXManagerClass *ipx);
 
-// FUNCTION: 0x00646D50
+// FUNCTION: GAMEMD 0x00646D50
 void Queue_Ipx_Set(void)
 {
 	if (Session.Type == GAME_INTERNET) {
@@ -181,7 +182,7 @@ void Queue_Ipx_Set(void)
 	}
 }
 
-// FUNCTION: 0x00646D70
+// FUNCTION: GAMEMD 0x00646D70
 void Queue_Ipx_Clear(void)
 {
 	if (Session.Type == GAME_INTERNET) {
@@ -189,27 +190,32 @@ void Queue_Ipx_Clear(void)
 	}
 }
 
-// FUNCTION: 0x00646D90 $E168
-// FUNCTION: 0x00646DB0 $E166
+// SYNTHETIC: GAMEMD 0x00646D90 SYMBOL
+// _$E168
+// SYNTHETIC: GAMEMD 0x00646DB0 SYMBOL
+// _$E166
 BasicTimerClass<SystemTimerClass> SentFrameSyncTimer;
 
-// FUNCTION: 0x00646DC0 $E171
+// SYNTHETIC: GAMEMD 0x00646DC0 SYMBOL
+// _$E171
 FrameSyncStruct TheirFrameSync[7];
 
-// FUNCTION: 0x00646DF0
+// FUNCTION: GAMEMD 0x00646DF0
 void __fastcall Stamp_Their_Timing(int index)
 {
 	TheirFrameSync[index].timing = timeGetTime();
 }
 
-// FUNCTION: 0x00646E10 $E176
-// FUNCTION: 0x00646E60 $E174
+// SYNTHETIC: GAMEMD 0x00646E10 SYMBOL
+// _$E176
+// SYNTHETIC: GAMEMD 0x00646E60 SYMBOL
+// _$E174
 QueueRecord QueueRecords[256];
 
 
 extern QueueClass<EventClass, 128> OutList;
 
-// FUNCTION: 0x00646E90
+// FUNCTION: GAMEMD 0x00646E90
 bool Queue_Mission(TargetClass whom, MissionType mission, TargetClass & target, TargetClass & destination)
 {
 	if (! OutList.Add(EventClass(PlayerPtr->HeapID, whom, mission, target, destination, TargetClass()))) {
@@ -219,7 +225,7 @@ bool Queue_Mission(TargetClass whom, MissionType mission, TargetClass & target, 
 	}
 }
 
-// FUNCTION: 0x00646F70
+// FUNCTION: GAMEMD 0x00646F70
 bool Queue_Mission(TargetClass whom, MissionType mission, TargetClass & target, TargetClass & destination, SpeedType speed, MPHType maxspeed)
 {
 	if (! OutList.Add(EventClass(PlayerPtr->HeapID, whom, mission, target, destination, speed, maxspeed))) {
@@ -229,7 +235,7 @@ bool Queue_Mission(TargetClass whom, MissionType mission, TargetClass & target, 
 	}
 }
 
-// FUNCTION: 0x00647040
+// FUNCTION: GAMEMD 0x00647040
 bool Queue_Options(void)
 {
 	if (PlayerPtr->IsToWin || PlayerPtr->IsToLose || PlayerPtr->IsToDie) {
@@ -244,7 +250,7 @@ bool Queue_Options(void)
 	}
 }
 
-// FUNCTION: 0x006470F0
+// FUNCTION: GAMEMD 0x006470F0
 bool Queue_PageUser(void)
 {
 	if (PlayerPtr->IsToWin || PlayerPtr->IsToLose || PlayerPtr->IsToDie) {
@@ -259,7 +265,7 @@ bool Queue_PageUser(void)
 	}
 }
 
-// FUNCTION: 0x006471A0
+// FUNCTION: GAMEMD 0x006471A0
 bool Queue_Exit(void)
 {
 	unsigned char type = EventClass::EXIT;
@@ -322,7 +328,7 @@ void __fastcall FUN_006BEC60(void);
 void __fastcall FUN_006BEC50(int code);
 extern unsigned char DAT_00B04880;
 
-// FUNCTION: 0x00647260
+// FUNCTION: GAMEMD 0x00647260
 void Queue_AI(void)
 {
 	if (Session.Play) {
@@ -457,7 +463,7 @@ enum RetcodeType {
 
 void __fastcall Send_FrameSync(ConnManClass *net, int cmd_count);
 
-// FUNCTION: 0x00648340
+// FUNCTION: GAMEMD 0x00648340
 void Check_Mirror(void)
 {
 }
@@ -469,7 +475,7 @@ int __fastcall Send_Packets(ConnManClass *net, char *multi_packet_buf, int multi
 int __fastcall FUN_0064A0C0(ConnManClass *net, char *multi_packet_buf, int id, int packetlen, FrameSyncStruct *their, BasicTimerClass<SystemTimerClass> *timer);
 RetcodeType __fastcall Process_Serial_Packet(char *multi_packet_buf, int first_time);
 
-// FUNCTION: 0x00648350
+// FUNCTION: GAMEMD 0x00648350
 void Wait_For_End_Of_Queue(void)
 {
 	DebugString("Waiting to exit game\n");
@@ -687,7 +693,7 @@ static int Build_Send_Packet(void *buf, int bufsize, int frame_delay, int num_cm
 	return(size);
 }
 
-// FUNCTION: 0x00649CA0
+// FUNCTION: GAMEMD 0x00649CA0
 int __fastcall Send_Packets(ConnManClass *net, char *multi_packet_buf, int multi_packet_max, int max_ahead, int my_sent)
 {
 	int cnt;
@@ -742,7 +748,7 @@ int __fastcall Send_Packets(ConnManClass *net, char *multi_packet_buf, int multi
 	return(num);
 }
 
-// FUNCTION: 0x0064A000
+// FUNCTION: GAMEMD 0x0064A000
 void __fastcall Send_FrameSync(ConnManClass *net, int cmd_count)
 {
 	EventClass packet;
@@ -769,7 +775,7 @@ void __fastcall Send_FrameSync(ConnManClass *net, int cmd_count)
 void Destroy_Null_Connection(int id, int error);
 void __fastcall FUN_00752B70(unsigned char code);
 
-// FUNCTION: 0x0064A630
+// FUNCTION: GAMEMD 0x0064A630
 RetcodeType __fastcall Process_Serial_Packet(char *multi_packet_buf, int first_time)
 {
 	SerialPacketType *serial_packet;
@@ -861,7 +867,7 @@ extern DSurface * DAT_00887310;
 
 void __fastcall Draw_Sync_Bars(HWND window);
 
-// FUNCTION: 0x0064AAA0
+// FUNCTION: GAMEMD 0x0064AAA0
 void ListBox_Trim(HWND listbox)
 {
 	int string_count = ListBox_GetCount(listbox);
@@ -875,7 +881,7 @@ void ListBox_Trim(HWND listbox)
 void __fastcall Cast_Kick_Vote(int kicker, int kickee);
 char * __fastcall FUN_007350C0(wchar_t const * text);
 
-// FUNCTION: 0x0064AAE0
+// FUNCTION: GAMEMD 0x0064AAE0
 void __fastcall Propose_Kick_Player(HWND window, int id)
 {
 	if (id < 0 || id >= Session.Players.Count()) {
@@ -911,7 +917,7 @@ void __fastcall Propose_Kick_Player(HWND window, int id)
 	Cast_Kick_Vote(Session.Players[0]->Player.ID, Session.Players[id]->Player.ID);
 }
 
-// FUNCTION: 0x0064AC90
+// FUNCTION: GAMEMD 0x0064AC90
 void Kick_Packet_Received(GlobalPacketType & packet, IPXAddressClass & address)
 {
 	GlobalPacketType *newpacket = new GlobalPacketType;
@@ -919,7 +925,7 @@ void Kick_Packet_Received(GlobalPacketType & packet, IPXAddressClass & address)
 	Session.KickProposals.Add(newpacket);
 }
 
-// FUNCTION: 0x0064AD10
+// FUNCTION: GAMEMD 0x0064AD10
 void __fastcall Cast_Kick_Vote(int kicker, int kickee)
 {
 	wchar_t buffer[256];
@@ -951,7 +957,7 @@ void __fastcall Cast_Kick_Vote(int kicker, int kickee)
 }
 
 
-// FUNCTION: 0x0064AE30
+// FUNCTION: GAMEMD 0x0064AE30
 void Reset_Ping_Counters(void)
 {
 	DAT_00B04884 = 0;
@@ -972,7 +978,7 @@ extern int DAT_00B77CE0;
 extern int DAT_00B04890;
 extern char DAT_00B77930[];
 
-// FUNCTION: 0x0064AE50
+// FUNCTION: GAMEMD 0x0064AE50
 BOOL CALLBACK Reconnect_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	int * rc = (int *)GetWindowLong(window, DWL_USER);
@@ -1112,7 +1118,7 @@ BOOL CALLBACK Reconnect_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LP
 	return(FALSE);
 }
 
-// FUNCTION: 0x0064B240
+// FUNCTION: GAMEMD 0x0064B240
 void __fastcall Kick_Player_Now(ConnManClass *net, int kickee, FrameSyncStruct * their, bool error)
 {
 	static int last_kick_time;
@@ -1164,7 +1170,7 @@ void __fastcall Kick_Player_Now(ConnManClass *net, int kickee, FrameSyncStruct *
 
 bool Reconnect_Modem(void);
 
-// FUNCTION: 0x0064B410
+// FUNCTION: GAMEMD 0x0064B410
 int __fastcall Handle_Timeout(ConnManClass *net, FrameSyncStruct *their)
 {
 	if (Session.Type == GAME_MODEM || Session.Type == GAME_NULL_MODEM) {
@@ -1196,7 +1202,7 @@ int __fastcall Handle_Timeout(ConnManClass *net, FrameSyncStruct *their)
 
 extern QueueClass<EventClass, 256> MegaMissionList;
 
-// FUNCTION: 0x0064CD30
+// FUNCTION: GAMEMD 0x0064CD30
 void __fastcall FUN_0064CD30(int start, int count, xTargetClass whom, xTargetClass * destination)
 {
 	for (int i = start; i <= start + count; i++) {
@@ -1207,7 +1213,7 @@ void __fastcall FUN_0064CD30(int start, int count, xTargetClass whom, xTargetCla
 	}
 }
 
-// FUNCTION: 0x0064D990
+// FUNCTION: GAMEMD 0x0064D990
 void __fastcall Clean_DoList(ConnManClass *net)
 {
 	while (DoList.Count) {
@@ -1219,7 +1225,7 @@ void __fastcall Clean_DoList(ConnManClass *net)
 	}
 }
 
-// FUNCTION: 0x0064D9E0
+// FUNCTION: GAMEMD 0x0064D9E0
 void __fastcall Queue_Record(void)
 {
 	if (Frame == 0 && Session.Type != GAME_NORMAL) return;
@@ -1244,7 +1250,7 @@ void __fastcall Queue_Record(void)
 extern unsigned int DAT_00AC51FC;
 void __fastcall FUN_00650A90(int frame);
 
-// FUNCTION: 0x0064DAB0
+// FUNCTION: GAMEMD 0x0064DAB0
 void Compute_Game_CRC(void)
 {
 	int i, j;
@@ -1293,7 +1299,7 @@ void Compute_Game_CRC(void)
 	FUN_00650A90(Frame % 256);
 }
 
-// FUNCTION: 0x0064DE80
+// FUNCTION: GAMEMD 0x0064DE80
 void Add_CRC(unsigned int *crc, unsigned int val)
 {
 	int hibit;
@@ -1310,7 +1316,7 @@ void Add_CRC(unsigned int *crc, unsigned int val)
 	(*crc) += hibit;
 }
 
-// FUNCTION: 0x00652070
+// FUNCTION: GAMEMD 0x00652070
 void __fastcall Dump_Packet_Too_Late_Stuff(EventClass *event)
 {
 	DebugString("Packet received too late!\n");
@@ -1323,14 +1329,14 @@ void __fastcall Dump_Packet_Too_Late_Stuff(EventClass *event)
 	DebugString("FrameSendRate=%d\n", Session.FrameSendRate);
 }
 
-// FUNCTION: 0x00652100
+// FUNCTION: GAMEMD 0x00652100
 void FUN_00652100(void)
 {
 }
 
 namespace FPSCounter { extern unsigned CurrentFrameRate; }
 
-// FUNCTION: 0x00652110
+// FUNCTION: GAMEMD 0x00652110
 void __fastcall FUN_00652110(FrameSyncStruct *their, int index)
 {
 	if (Session.Type != GAME_INTERNET) {
@@ -1348,7 +1354,7 @@ void __fastcall FUN_00652110(FrameSyncStruct *their, int index)
 	}
 }
 
-// FUNCTION: 0x006521C0
+// FUNCTION: GAMEMD 0x006521C0
 bool __fastcall FUN_006521C0(EventClass event)
 {
 	event.Frame = Frame;
@@ -1379,7 +1385,7 @@ static inline void Stop_Game(bool is_cancelled)
 	}
 }
 
-// FUNCTION: 0x00652230
+// FUNCTION: GAMEMD 0x00652230
 void __fastcall FUN_00652230(EventClass *event)
 {
 	unsigned int next = ::Frame + 1;
@@ -1414,7 +1420,7 @@ struct Unknown_00B052D0 {
 extern Unknown_00B052D0 DAT_00B052D0;
 int __fastcall FUN_005422D0(IPXManagerClass *ipx);
 
-// FUNCTION: 0x006523A0
+// FUNCTION: GAMEMD 0x006523A0
 void FUN_006523A0(void)
 {
 	DebugString("Sending NET_PORT_UNREACHABLE packets\n");
@@ -1446,23 +1452,27 @@ void FUN_006523A0(void)
 	}
 }
 
-// FUNCTION: 0x00652540 ?$QueueClass@VEventClass@@$0IA@::Next
+// TEMPLATE: GAMEMD 0x00652540
+// ?Next@?$QueueClass@VEventClass@@$0IA@@@QAEHXZ
 template class QueueClass<EventClass, 128>;
 
-// FUNCTION: 0x00652560 ?$DynamicVectorClass@PAUGlobalPacketType@@::Delete_Index
+// TEMPLATE: GAMEMD 0x00652560
+// ?Delete_Index@?$DynamicVectorClass@PAUGlobalPacketType@@@@QAE_NH@Z
 template class DynamicVectorClass<GlobalPacketType *>;
 
-// FUNCTION: 0x006525A0 ?$IndexClass@HPAVObjectClass@@::Increase_Table_Size
+// TEMPLATE: GAMEMD 0x006525A0
+// ?Increase_Table_Size@?$IndexClass@HPAVObjectClass@@@@AAE_NH@Z
 template class IndexClass<int, ObjectClass *>;
 
-// FUNCTION: 0x00652630 ?$IndexClass@HPAVObjectClass@@::search_compfunc
+// TEMPLATE: GAMEMD 0x00652630
+// ?search_compfunc@?$IndexClass@HPAVObjectClass@@@@CAHPBX0@Z
 
 extern int DAT_00B048B0;
 extern int DAT_00B048B4;
 extern int DAT_00B048B8;
 extern int DAT_00B048BC;
 
-// FUNCTION: 0x00652660
+// FUNCTION: GAMEMD 0x00652660
 void FUN_00652660(void)
 {
 	DAT_00B048B0 = 0;

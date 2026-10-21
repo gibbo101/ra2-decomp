@@ -48,14 +48,15 @@ class MultiplayerObserverTeam : public MultiplayerTeam
 };
 
 
-// FUNCTION: 0x005D5AC0
+// FUNCTION: GAMEMD 0x005D5AC0
 DynamicVectorClass<MPGameModeClass *> & Game_Modes(void)
 {
 	static DynamicVectorClass<MPGameModeClass *> modes;
 	return(modes);
 }
 
-// FUNCTION: 0x005D5B20 $E89
+// SYNTHETIC: GAMEMD 0x005D5B20 SYMBOL
+// _$E89
 
 static int Game_Mode_Count(void)
 {
@@ -80,7 +81,7 @@ static inline bool Must_Ally_Without_Allies(bool must, bool allies)
 	return(must && !allies);
 }
 
-// FUNCTION: 0x005D5B60
+// FUNCTION: GAMEMD 0x005D5B60
 MPGameModeClass::MPGameModeClass(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex) :
 	MPTeams(),
 	UIName(title),
@@ -121,7 +122,7 @@ static inline void Delete_Teams(MPGameModeClass * mode)
 	}
 }
 
-// FUNCTION: 0x005D5D20
+// FUNCTION: GAMEMD 0x005D5D20
 MPGameModeClass::~MPGameModeClass(void)
 {
 	Delete_Teams(this);
@@ -129,25 +130,25 @@ MPGameModeClass::~MPGameModeClass(void)
 	delete INI;
 }
 
-// FUNCTION: 0x005D5DB0
+// FUNCTION: GAMEMD 0x005D5DB0
 int MPGameModeClass::vt_entry_28(void)
 {
 	return(-2);
 }
 
-// FUNCTION: 0x005D5DC0
+// FUNCTION: GAMEMD 0x005D5DC0
 int MPGameModeClass::vt_entry_2C(void)
 {
 	return(MustAlly ? 0 : -2);
 }
 
-// FUNCTION: 0x005D5DD0
+// FUNCTION: GAMEMD 0x005D5DD0
 int MPGameModeClass::vt_entry_30(void)
 {
 	return(AlliesAllowed ? 3 : -2);
 }
 
-// FUNCTION: 0x005D5DE0
+// FUNCTION: GAMEMD 0x005D5DE0
 bool MPGameModeClass::CanAllyWith(int index)
 {
 	if (MustAlly && index == -2) {
@@ -156,7 +157,7 @@ bool MPGameModeClass::CanAllyWith(int index)
 	return(index >= 0 && index <= 3 ? 1 : 0);
 }
 
-// FUNCTION: 0x005D5E10
+// FUNCTION: GAMEMD 0x005D5E10
 MPGameModeClass * First_Game_Mode(void)
 {
 	if (Game_Modes().Count() == 0) {
@@ -165,13 +166,13 @@ MPGameModeClass * First_Game_Mode(void)
 	return(Game_Modes()[0]);
 }
 
-// FUNCTION: 0x005D5ED0
+// FUNCTION: GAMEMD 0x005D5ED0
 int Game_Mode_Total(void)
 {
 	return(Game_Mode_Count());
 }
 
-// FUNCTION: 0x005D5F30
+// FUNCTION: GAMEMD 0x005D5F30
 MPGameModeClass * __fastcall MPGameModeClass::Get(int index)
 {
 	for (int i = 0; i < Game_Mode_Count(); i++) {
@@ -183,7 +184,7 @@ MPGameModeClass * __fastcall MPGameModeClass::Get(int index)
 	return(NULL);
 }
 
-// FUNCTION: 0x005D62C0
+// FUNCTION: GAMEMD 0x005D62C0
 bool MPGameModeClass::vt_entry_10(void)
 {
 	for (int i = 0; i < Session.Players.Count(); i++) {
@@ -196,43 +197,43 @@ bool MPGameModeClass::vt_entry_10(void)
 	return(true);
 }
 
-// FUNCTION: 0x005D6310
+// FUNCTION: GAMEMD 0x005D6310
 bool MPGameModeClass::vt_entry_14(unsigned a)
 {
 	return(true);
 }
 
-// FUNCTION: 0x005D6320
+// FUNCTION: GAMEMD 0x005D6320
 bool MPGameModeClass::vt_entry_04(void)
 {
 	return(true);
 }
 
-// FUNCTION: 0x005D6330
+// FUNCTION: GAMEMD 0x005D6330
 bool MPGameModeClass::vt_entry_08(void)
 {
 	return(true);
 }
 
-// FUNCTION: 0x005D6340
+// FUNCTION: GAMEMD 0x005D6340
 bool MPGameModeClass::vt_entry_18(void)
 {
 	return(true);
 }
 
-// FUNCTION: 0x005D6350
+// FUNCTION: GAMEMD 0x005D6350
 bool MPGameModeClass::IsAIAllowed(void)
 {
 	return(AIAllowed);
 }
 
-// FUNCTION: 0x005D6360
+// FUNCTION: GAMEMD 0x005D6360
 bool MPGameModeClass::vt_entry_40(void)
 {
 	return(false);
 }
 
-// FUNCTION: 0x005D6370
+// FUNCTION: GAMEMD 0x005D6370
 int MPGameModeClass::FirstValidMapIndex(void)
 {
 	int count = Session.Scenarios.Count();
@@ -254,7 +255,7 @@ int MPGameModeClass::FirstValidMapIndex(void)
 	return(-1);
 }
 
-// FUNCTION: 0x005D63E0
+// FUNCTION: GAMEMD 0x005D63E0
 bool MPGameModeClass::FUN_005D63E0(MultiMission * map)
 {
 	if (map->Is_Random_Map()) {
@@ -266,19 +267,19 @@ bool MPGameModeClass::FUN_005D63E0(MultiMission * map)
 	return(map->Supports_Game_Mode(MapFilter));
 }
 
-// FUNCTION: 0x005D6430
+// FUNCTION: GAMEMD 0x005D6430
 int MPGameModeClass::RandomHumanCountryIndex(void)
 {
 	return(FUN_0069B670(&Session));
 }
 
-// FUNCTION: 0x005D6440
+// FUNCTION: GAMEMD 0x005D6440
 int MPGameModeClass::RandomAICountryIndex(void)
 {
 	return(RandomHumanCountryIndex());
 }
 
-// FUNCTION: 0x005D6450
+// FUNCTION: GAMEMD 0x005D6450
 void MPGameModeClass::PopulateTeamDropdown(HWND hwnd, DynamicVectorClass<MultiplayerTeam *> * teams, MultiplayerTeam * team)
 {
 	FUN_00623840(hwnd);
@@ -292,7 +293,7 @@ void MPGameModeClass::PopulateTeamDropdown(HWND hwnd, DynamicVectorClass<Multipl
 	}
 }
 
-// FUNCTION: 0x005D64C0
+// FUNCTION: GAMEMD 0x005D64C0
 void MPGameModeClass::DrawTeamDropdown(HWND hwnd, DynamicVectorClass<MultiplayerTeam *> * teams, MultiplayerTeam * team)
 {
 	SendMessage(hwnd, LB_RESETCONTENT, 0, 0);
@@ -306,7 +307,7 @@ void MPGameModeClass::DrawTeamDropdown(HWND hwnd, DynamicVectorClass<Multiplayer
 	}
 }
 
-// FUNCTION: 0x005D6540
+// FUNCTION: GAMEMD 0x005D6540
 void MPGameModeClass::PopulateTeamDropdownForPlayer(HWND hwnd, int index)
 {
 	FUN_00623840(hwnd);
@@ -328,7 +329,7 @@ void MPGameModeClass::PopulateTeamDropdownForPlayer(HWND hwnd, int index)
 	}
 }
 
-// FUNCTION: 0x005D6620
+// FUNCTION: GAMEMD 0x005D6620
 MultiplayerTeam * MPGameModeClass::FUN_005D6620(int index)
 {
 	if (MPTeams.Count() < 3) {
@@ -347,7 +348,7 @@ MultiplayerTeam * MPGameModeClass::FUN_005D6620(int index)
 	return(NULL);
 }
 
-// FUNCTION: 0x005D6690
+// FUNCTION: GAMEMD 0x005D6690
 void MPGameModeClass::CreateMPTeams(DynamicVectorClass<MultiplayerTeam *> * teams)
 {
 	teams->Add(new MultiplayerObserverTeam);
@@ -356,7 +357,7 @@ void MPGameModeClass::CreateMPTeams(DynamicVectorClass<MultiplayerTeam *> * team
 	}
 }
 
-// FUNCTION: 0x005D6750
+// FUNCTION: GAMEMD 0x005D6750
 void MPGameModeClass::FUN_005D6750(void)
 {
 	for (int i = 0; i < MPTeams.Count(); i++) {
@@ -365,20 +366,20 @@ void MPGameModeClass::FUN_005D6750(void)
 	MPTeams.Clear();
 }
 
-// FUNCTION: 0x005D6790
+// FUNCTION: GAMEMD 0x005D6790
 bool MPGameModeClass::UnfixAlliances(void)
 {
 	Scen->Special.IsAllianceFixed = false;
 	return(true);
 }
 
-// FUNCTION: 0x005D67A0
+// FUNCTION: GAMEMD 0x005D67A0
 bool MPGameModeClass::vt_entry_1C(unsigned a)
 {
 	return(true);
 }
 
-// FUNCTION: 0x005D67B0
+// FUNCTION: GAMEMD 0x005D67B0
 CCINIClass * MPGameModeClass::FUN_005D67B0(void)
 {
 	if (INI == NULL) {
@@ -391,7 +392,7 @@ CCINIClass * MPGameModeClass::FUN_005D67B0(void)
 	return(INI);
 }
 
-// FUNCTION: 0x005D6BE0
+// FUNCTION: GAMEMD 0x005D6BE0
 bool MPGameModeClass::StartingPositionsToHouseBaseCells(char unused)
 {
 	DynamicVectorClass<Cell> cells = FUN_00688380(unused);
@@ -408,7 +409,7 @@ bool MPGameModeClass::StartingPositionsToHouseBaseCells(char unused)
 	return(true);
 }
 
-// FUNCTION: 0x005D6C70
+// FUNCTION: GAMEMD 0x005D6C70
 bool MPGameModeClass::StartingPositionsToHouseBaseCells2(bool arg)
 {
 	DynamicVectorClass<Cell> cells = FUN_00688380(arg);
@@ -455,7 +456,7 @@ static inline void Player_Owner_Mask(int & mask)
 	}
 }
 
-// FUNCTION: 0x005D6D80
+// FUNCTION: GAMEMD 0x005D6D80
 bool MPGameModeClass::FUN_005D6D80(void)
 {
 	int credits = 0;
@@ -537,7 +538,7 @@ class MPSpawnHouse
 
 int __fastcall FUN_00688ED0(ObjectClass * object, Cell const & cell, int flag);
 
-// FUNCTION: 0x005D7030
+// FUNCTION: GAMEMD 0x005D7030
 bool MPGameModeClass::SpawnBaseUnits(HouseClass * house, unsigned unused)
 {
 	if (!Session.Options.Bases) {
@@ -559,7 +560,7 @@ bool MPGameModeClass::SpawnBaseUnits(HouseClass * house, unsigned unused)
 	return(false);
 }
 
-// FUNCTION: 0x005D70F0
+// FUNCTION: GAMEMD 0x005D70F0
 bool MPGameModeClass::GenerateStartingUnits(HouseClass * house, int & amount)
 {
 	if (amount > 0) {
@@ -620,24 +621,24 @@ bool MPGameModeClass::GenerateStartingUnits(HouseClass * house, int & amount)
 	return(true);
 }
 
-// FUNCTION: 0x005D7550
+// FUNCTION: GAMEMD 0x005D7550
 int __stdcall House_Team(int index)
 {
 	return(Houses[index]->StartingAllies);
 }
 
-// FUNCTION: 0x005D7570
+// FUNCTION: GAMEMD 0x005D7570
 bool MPGameModeClass::vt_entry_8C(void)
 {
 	return(true);
 }
 
-// FUNCTION: 0x005D7580
+// FUNCTION: GAMEMD 0x005D7580
 MPGameModeClass::InitializerBase::InitializerBase(void)
 {
 }
 
-// FUNCTION: 0x005D7CD0
+// FUNCTION: GAMEMD 0x005D7CD0
 MPGameModeClass::InitializerBase::~InitializerBase(void)
 {
 }
@@ -653,7 +654,7 @@ MPBattleInit::MPBattleInit(void)
 {
 }
 
-// FUNCTION: 0x005D7E50
+// FUNCTION: GAMEMD 0x005D7E50
 void Free_Game_Modes(void)
 {
 	for (int i = 0; i < Game_Modes().Count(); i++) {
@@ -661,11 +662,14 @@ void Free_Game_Modes(void)
 	}
 }
 
-// FUNCTION: 0x005D7F20 MPGameModeClass::~MPGameModeClass
+// SYNTHETIC: GAMEMD 0x005D7F20
+// ??_GMPGameModeClass@@UAEPAXI@Z
 
-// FUNCTION: 0x005D7FD0 MPGameModeClass::InitializerBase::~InitializerBase
+// SYNTHETIC: GAMEMD 0x005D7FD0
+// ??_GInitializerBase@MPGameModeClass@@UAEPAXI@Z
 
-// FUNCTION: 0x005D7FF0 MPBattleInit::~MPBattleInit
+// SYNTHETIC: GAMEMD 0x005D7FF0
+// ??_GMPBattleInit@@UAEPAXI@Z
 
 #define MP_INIT_CLASS(name) \
 class name : public MPGameModeClass::InitializerBase \
@@ -684,18 +688,29 @@ MP_INIT_CLASS(MPUnholyAllianceInit)
 MP_INIT_CLASS(MPFreeForAllInit)
 MP_INIT_CLASS(MPMegawealthInit)
 
-// FUNCTION: 0x005D8010 MPManBattleInit::~MPManBattleInit
-// FUNCTION: 0x005D8030 MPSiegeInit::~MPSiegeInit
-// FUNCTION: 0x005D8050 MPUnholyAllianceInit::~MPUnholyAllianceInit
-// FUNCTION: 0x005D8070 MPFreeForAllInit::~MPFreeForAllInit
-// FUNCTION: 0x005D8090 MPMegawealthInit::~MPMegawealthInit
+// SYNTHETIC: GAMEMD 0x005D8010
+// ??_GMPManBattleInit@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x005D8030
+// ??_GMPSiegeInit@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x005D8050
+// ??_GMPUnholyAllianceInit@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x005D8070
+// ??_GMPFreeForAllInit@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x005D8090
+// ??_GMPMegawealthInit@@UAEPAXI@Z
 
-// FUNCTION: 0x005D80B0 ?$DynamicVectorClass@PAVMultiplayerTeam@@::Clear
-// FUNCTION: 0x005D80E0 ?$DynamicVectorClass@PAVMultiplayerTeam@@::ID
-// FUNCTION: 0x005D8100 ?$VectorClass@PAVMultiplayerTeam@@::GetItem
-// FUNCTION: 0x005D8110 ?$DynamicVectorClass@PAVMPGameModeClass@@::Clear
-// FUNCTION: 0x005D8140 ?$DynamicVectorClass@PAVMPGameModeClass@@::ID
-// FUNCTION: 0x005D8160 ?$VectorClass@PAVMPGameModeClass@@::GetItem
+// TEMPLATE: GAMEMD 0x005D80B0
+// ?Clear@?$DynamicVectorClass@PAVMultiplayerTeam@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x005D80E0
+// ?ID@?$DynamicVectorClass@PAVMultiplayerTeam@@@@UAEHPBQAVMultiplayerTeam@@@Z
+// TEMPLATE: GAMEMD 0x005D8100
+// ?GetItem@?$VectorClass@PAVMultiplayerTeam@@@@UBEPAVMultiplayerTeam@@H@Z
+// TEMPLATE: GAMEMD 0x005D8110
+// ?Clear@?$DynamicVectorClass@PAVMPGameModeClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x005D8140
+// ?ID@?$DynamicVectorClass@PAVMPGameModeClass@@@@UAEHPBQAVMPGameModeClass@@@Z
+// TEMPLATE: GAMEMD 0x005D8160
+// ?GetItem@?$VectorClass@PAVMPGameModeClass@@@@UBEPAVMPGameModeClass@@H@Z
 template class DynamicVectorClass<MPGameModeClass *>;
 
 class MPBattleClass : public MPGameModeClass
@@ -704,7 +719,7 @@ class MPBattleClass : public MPGameModeClass
 		MPBattleClass * FUN_005C0DD0(wchar_t ** title, wchar_t ** tooltip, char ** inifile, char ** mapfilter, bool aiallowed, int modeindex);
 };
 
-// FUNCTION: 0x005D8170
+// FUNCTION: GAMEMD 0x005D8170
 MPBattleClass * __stdcall Allocate_MPBattle(wchar_t ** title, wchar_t ** tooltip, char ** inifile, char ** mapfilter, bool aiallowed, int modeindex)
 {
 	MPBattleClass * mode = (MPBattleClass *)operator new(0x40);
@@ -717,7 +732,7 @@ class MPManBattleClass : public MPGameModeClass
 		MPManBattleClass * FUN_005C6150(wchar_t ** title, wchar_t ** tooltip, char ** inifile, char ** mapfilter, bool aiallowed, int modeindex);
 };
 
-// FUNCTION: 0x005D81B0
+// FUNCTION: GAMEMD 0x005D81B0
 MPManBattleClass * __stdcall Allocate_MPManBattle(wchar_t ** title, wchar_t ** tooltip, char ** inifile, char ** mapfilter, bool aiallowed, int modeindex)
 {
 	MPManBattleClass * mode = (MPManBattleClass *)operator new(0x40);
@@ -730,7 +745,7 @@ class MPSiegeClass : public MPGameModeClass
 		MPSiegeClass * FUN_005CA630(wchar_t ** title, wchar_t ** tooltip, char ** inifile, char ** mapfilter, bool aiallowed, int modeindex);
 };
 
-// FUNCTION: 0x005D81F0
+// FUNCTION: GAMEMD 0x005D81F0
 MPSiegeClass * __stdcall Allocate_MPSiege(wchar_t ** title, wchar_t ** tooltip, char ** inifile, char ** mapfilter, bool aiallowed, int modeindex)
 {
 	MPSiegeClass * mode = (MPSiegeClass *)operator new(0x40);
@@ -743,7 +758,7 @@ class MPUnholyAllianceClass : public MPGameModeClass
 		MPUnholyAllianceClass * FUN_005CB3A0(wchar_t ** title, wchar_t ** tooltip, char ** inifile, char ** mapfilter, bool aiallowed, int modeindex);
 };
 
-// FUNCTION: 0x005D8230
+// FUNCTION: GAMEMD 0x005D8230
 MPUnholyAllianceClass * __stdcall Allocate_MPUnholyAlliance(wchar_t ** title, wchar_t ** tooltip, char ** inifile, char ** mapfilter, bool aiallowed, int modeindex)
 {
 	MPUnholyAllianceClass * mode = (MPUnholyAllianceClass *)operator new(0x40);
@@ -756,7 +771,7 @@ class MPFreeForAllClass : public MPGameModeClass
 		MPFreeForAllClass * FUN_005C5CE0(wchar_t ** title, wchar_t ** tooltip, char ** inifile, char ** mapfilter, bool aiallowed, int modeindex);
 };
 
-// FUNCTION: 0x005D8270
+// FUNCTION: GAMEMD 0x005D8270
 MPFreeForAllClass * __stdcall Allocate_MPFreeForAll(wchar_t ** title, wchar_t ** tooltip, char ** inifile, char ** mapfilter, bool aiallowed, int modeindex)
 {
 	MPFreeForAllClass * mode = (MPFreeForAllClass *)operator new(0x40);
@@ -769,44 +784,66 @@ class MPCoopMode : public MPGameModeClass
 		MPCoopMode * FUN_005C1470(wchar_t ** title, wchar_t ** tooltip, char ** inifile, char ** mapfilter, bool aiallowed, int modeindex);
 };
 
-// FUNCTION: 0x005D82B0
+// FUNCTION: GAMEMD 0x005D82B0
 MPCoopMode * __stdcall Allocate_MPCoop(wchar_t ** title, wchar_t ** tooltip, char ** inifile, char ** mapfilter, bool aiallowed, int modeindex)
 {
 	MPCoopMode * mode = (MPCoopMode *)operator new(0x344);
 	return(mode ? mode->FUN_005C1470(title, tooltip, inifile, mapfilter, aiallowed, modeindex) : NULL);
 }
 
-// FUNCTION: 0x005D82F0 ?$VectorClass@PAVMultiplayerTeam@@::operator==
-// FUNCTION: 0x005D8330 ?$VectorClass@PAVMultiplayerTeam@@::Resize
-// FUNCTION: 0x005D83E0 ?$VectorClass@PAVMultiplayerTeam@@::Clear
-// FUNCTION: 0x005D8410 ?$VectorClass@PAVMultiplayerTeam@@::ID
-// FUNCTION: 0x005D8450 ?$VectorClass@PAVMultiplayerTeam@@::ID
-// FUNCTION: 0x005D8470 ?$DynamicVectorClass@PAVMultiplayerTeam@@::Resize
-// FUNCTION: 0x005D8520 ?$DynamicVectorClass@PAVMultiplayerTeam@@::ID
+// TEMPLATE: GAMEMD 0x005D82F0
+// ??8?$VectorClass@PAVMultiplayerTeam@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x005D8330
+// ?Resize@?$VectorClass@PAVMultiplayerTeam@@@@UAE_NHPBQAVMultiplayerTeam@@@Z
+// TEMPLATE: GAMEMD 0x005D83E0
+// ?Clear@?$VectorClass@PAVMultiplayerTeam@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x005D8410
+// ?ID@?$VectorClass@PAVMultiplayerTeam@@@@UAEHABQAVMultiplayerTeam@@@Z
+// TEMPLATE: GAMEMD 0x005D8450
+// ?ID@?$VectorClass@PAVMultiplayerTeam@@@@UAEHPBQAVMultiplayerTeam@@@Z
+// TEMPLATE: GAMEMD 0x005D8470
+// ?Resize@?$DynamicVectorClass@PAVMultiplayerTeam@@@@UAE_NHPBQAVMultiplayerTeam@@@Z
+// TEMPLATE: GAMEMD 0x005D8520
+// ?ID@?$DynamicVectorClass@PAVMultiplayerTeam@@@@UAEHABQAVMultiplayerTeam@@@Z
 template class DynamicVectorClass<MultiplayerTeam *>;
 
-// FUNCTION: 0x005D8550 ?$VectorClass@PAVMPGameModeClass@@::operator==
-// FUNCTION: 0x005D8590 ?$VectorClass@PAVMPGameModeClass@@::Resize
-// FUNCTION: 0x005D8640 ?$VectorClass@PAVMPGameModeClass@@::Clear
-// FUNCTION: 0x005D8670 ?$VectorClass@PAVMPGameModeClass@@::ID
-// FUNCTION: 0x005D86B0 ?$VectorClass@PAVMPGameModeClass@@::ID
-// FUNCTION: 0x005D86D0 ?$DynamicVectorClass@PAVMPGameModeClass@@::?$DynamicVectorClass@PAVMPGameModeClass@@
-// FUNCTION: 0x005D8730 ?$DynamicVectorClass@PAVMPGameModeClass@@::Resize
-// FUNCTION: 0x005D87E0 ?$DynamicVectorClass@PAVMPGameModeClass@@::ID
-// FUNCTION: 0x005D8810 ?$VectorClass@PAVMultiplayerTeam@@::~?$VectorClass@PAVMultiplayerTeam@@
-// FUNCTION: 0x005D8860 ?$DynamicVectorClass@PAVMultiplayerTeam@@::~?$DynamicVectorClass@PAVMultiplayerTeam@@
-// FUNCTION: 0x005D88B0 ?$VectorClass@PAVMPGameModeClass@@::~?$VectorClass@PAVMPGameModeClass@@
-// FUNCTION: 0x005D8900 ?$DynamicVectorClass@PAVMPGameModeClass@@::~?$DynamicVectorClass@PAVMPGameModeClass@@
+// TEMPLATE: GAMEMD 0x005D8550
+// ??8?$VectorClass@PAVMPGameModeClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x005D8590
+// ?Resize@?$VectorClass@PAVMPGameModeClass@@@@UAE_NHPBQAVMPGameModeClass@@@Z
+// TEMPLATE: GAMEMD 0x005D8640
+// ?Clear@?$VectorClass@PAVMPGameModeClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x005D8670
+// ?ID@?$VectorClass@PAVMPGameModeClass@@@@UAEHABQAVMPGameModeClass@@@Z
+// TEMPLATE: GAMEMD 0x005D86B0
+// ?ID@?$VectorClass@PAVMPGameModeClass@@@@UAEHPBQAVMPGameModeClass@@@Z
+// TEMPLATE: GAMEMD 0x005D86D0
+// ??0?$DynamicVectorClass@PAVMPGameModeClass@@@@QAE@IPBQAVMPGameModeClass@@@Z
+// TEMPLATE: GAMEMD 0x005D8730
+// ?Resize@?$DynamicVectorClass@PAVMPGameModeClass@@@@UAE_NHPBQAVMPGameModeClass@@@Z
+// TEMPLATE: GAMEMD 0x005D87E0
+// ?ID@?$DynamicVectorClass@PAVMPGameModeClass@@@@UAEHABQAVMPGameModeClass@@@Z
+// SYNTHETIC: GAMEMD 0x005D8810
+// ??_G?$VectorClass@PAVMultiplayerTeam@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x005D8860
+// ??_G?$DynamicVectorClass@PAVMultiplayerTeam@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x005D88B0
+// ??_G?$VectorClass@PAVMPGameModeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x005D8900
+// ??_G?$DynamicVectorClass@PAVMPGameModeClass@@@@UAEPAXI@Z
 template class DynamicVectorClass<MPGameModeClass *>;
 template class DynamicVectorClass<MultiplayerTeam *>;
 
-// FUNCTION: 0x005D8950 ?$VectorClass@PAVUnitTypeClass@@::?$VectorClass@PAVUnitTypeClass@@
+// TEMPLATE: GAMEMD 0x005D8950
+// ??0?$VectorClass@PAVUnitTypeClass@@@@QAE@HPBQAVUnitTypeClass@@@Z
 template class VectorClass<UnitTypeClass *>;
 
-// FUNCTION: 0x005D89A0 ?$VectorClass@PAVInfantryTypeClass@@::?$VectorClass@PAVInfantryTypeClass@@
+// TEMPLATE: GAMEMD 0x005D89A0
+// ??0?$VectorClass@PAVInfantryTypeClass@@@@QAE@HPBQAVInfantryTypeClass@@@Z
 template class VectorClass<InfantryTypeClass *>;
 
-// FUNCTION: 0x005D89F0 ?$VectorClass@PAVMPGameModeClass@@::?$VectorClass@PAVMPGameModeClass@@
+// TEMPLATE: GAMEMD 0x005D89F0
+// ??0?$VectorClass@PAVMPGameModeClass@@@@QAE@HPBQAVMPGameModeClass@@@Z
 template class VectorClass<MPGameModeClass *>;
 
 extern int DAT_00ABFDE0;
@@ -814,7 +851,7 @@ extern int DAT_00ABFDE4;
 extern int DAT_00ABFDE8;
 extern int DAT_00ABFDEC;
 
-// FUNCTION: 0x005D8A40
+// FUNCTION: GAMEMD 0x005D8A40
 void __cdecl FUN_005D8A40(void)
 {
 	DAT_00ABFDE0 = 0;

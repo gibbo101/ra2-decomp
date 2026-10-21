@@ -35,19 +35,23 @@ const RadarEventInfo RadarEventTable[RADAREVENT_COUNT] = {
 	{8, 200, 600, true},
 };
 
-// FUNCTION: 0x0065FA60 $E71
+// SYNTHETIC: GAMEMD 0x0065FA60 SYMBOL
+// _$E71
 Cell DAT_00B04D48[8];
 int DAT_00B04D88;
 int DAT_00B04DD8;
 
-// FUNCTION: 0x0065F9B0 $E77
-// FUNCTION: 0x0065F9F0 $E74
+// SYNTHETIC: GAMEMD 0x0065F9B0 SYMBOL
+// _$E77
+// SYNTHETIC: GAMEMD 0x0065F9F0 SYMBOL
+// _$E74
 DynamicVectorClass<RadarEventClass *> RadarEventClass::RadarEvents;
 
-// FUNCTION: 0x0065FA50 $E80
+// SYNTHETIC: GAMEMD 0x0065FA50 SYMBOL
+// _$E80
 Cell LastRadarEventCell(0,0);
 
-// FUNCTION: 0x0065FA70
+// FUNCTION: GAMEMD 0x0065FA70
 bool RadarEventClass::Create(RadarEventType event, Cell cell)
 {
 	if (Can_Suppress_Radar_Event(event)) {
@@ -63,19 +67,19 @@ bool RadarEventClass::Create(RadarEventType event, Cell cell)
 	return(true);
 }
 
-// FUNCTION: 0x0065FB60
+// FUNCTION: GAMEMD 0x0065FB60
 void Plot_Radar_Event_Point(Point2D const & point)
 {
 	Map.Radar_Pixel(point);
 }
 
-// FUNCTION: 0x0065FB70
+// FUNCTION: GAMEMD 0x0065FB70
 bool Can_Suppress_Radar_Event(RadarEventType event)
 {
 	return(RadarEventTable[event].CanSuppress);
 }
 
-// FUNCTION: 0x0065FB80
+// FUNCTION: GAMEMD 0x0065FB80
 RadarEventClass::RadarEventClass(RadarEventType type, Cell cell):
 	Type(type),
 	RotationAngle((float)DEG_TO_RAD(45)),
@@ -96,13 +100,13 @@ RadarEventClass::RadarEventClass(RadarEventType type, Cell cell):
 	RadarEvents.Add(this);
 }
 
-// FUNCTION: 0x0065FD00
+// FUNCTION: GAMEMD 0x0065FD00
 RadarEventClass::~RadarEventClass(void)
 {
 	RadarEvents.Delete(this);
 }
 
-// FUNCTION: 0x0065FD50
+// FUNCTION: GAMEMD 0x0065FD50
 void RadarEventClass::Clear(void)
 {
 	for (int i = RadarEvents.Count() - 1; i >= 0; i--) {
@@ -110,7 +114,7 @@ void RadarEventClass::Clear(void)
 	}
 }
 
-// FUNCTION: 0x0065FDD0
+// FUNCTION: GAMEMD 0x0065FDD0
 void Process_Radar_Events(void)
 {
 	for (int index = 0; index < RadarEventClass::RadarEvents.Count(); index++) {
@@ -118,7 +122,7 @@ void Process_Radar_Events(void)
 	}
 }
 
-// FUNCTION: 0x0065FE00
+// FUNCTION: GAMEMD 0x0065FE00
 void RadarEventClass::Process(void)
 {
 	if (IsVisible) {
@@ -161,7 +165,7 @@ void RadarEventClass::Process(void)
 	}
 }
 
-// FUNCTION: 0x00660000
+// FUNCTION: GAMEMD 0x00660000
 void RadarEventClass::Draw_Events(void)
 {
 	for (int index = 0; index < RadarEvents.Count(); index++) {
@@ -172,7 +176,7 @@ void RadarEventClass::Draw_Events(void)
 	}
 }
 
-// FUNCTION: 0x006603B0
+// FUNCTION: GAMEMD 0x006603B0
 void RadarEventClass::Remove_Finished(void)
 {
 	for (int index = RadarEvents.Count() - 1; index >= 0; index--) {
@@ -182,7 +186,7 @@ void RadarEventClass::Remove_Finished(void)
 	}
 }
 
-// FUNCTION: 0x00660460
+// FUNCTION: GAMEMD 0x00660460
 bool Try_Suppress_Radar_Event(RadarEventType event, int, Cell cell)
 {
 	if (Can_Suppress_Radar_Event(event)) {
@@ -197,7 +201,7 @@ bool Try_Suppress_Radar_Event(RadarEventType event, int, Cell cell)
 	return(false);
 }
 
-// FUNCTION: 0x00660530
+// FUNCTION: GAMEMD 0x00660530
 bool No_Radar_Events_Submitted(void)
 {
 	if (RadarEventClass::RadarEvents.Count() == 0) {
@@ -206,7 +210,7 @@ bool No_Radar_Events_Submitted(void)
 	return(false);
 }
 
-// FUNCTION: 0x00660540
+// FUNCTION: GAMEMD 0x00660540
 void RadarEventClass::Plot(void)
 {
 	Point2D event_rect[4];
@@ -233,7 +237,7 @@ void RadarEventClass::Plot(void)
 	}
 }
 
-// FUNCTION: 0x00660730
+// FUNCTION: GAMEMD 0x00660730
 void RadarEventClass::Get_Event_Rect(Point2D (& event_rect)[4]) const
 {
 	Matrix3D matrix;
@@ -251,7 +255,7 @@ void RadarEventClass::Get_Event_Rect(Point2D (& event_rect)[4]) const
 	event_rect[3] = Point2D(y_radius, -x_radius);
 }
 
-// FUNCTION: 0x006607D0
+// FUNCTION: GAMEMD 0x006607D0
 bool RadarEventClass::Save(IStream * stream)
 {
 	int count = RadarEvents.Count();
@@ -274,7 +278,7 @@ bool RadarEventClass::Save(IStream * stream)
 	return(false);
 }
 
-// FUNCTION: 0x00660840
+// FUNCTION: GAMEMD 0x00660840
 bool RadarEventClass::Load(IStream * stream)
 {
 	for (int i = RadarEvents.Count() - 1; i >= 0; i--) {

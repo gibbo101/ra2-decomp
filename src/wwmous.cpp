@@ -64,7 +64,7 @@ static inline void Unblock_Mouse(void)
 	ReleaseMutex(DAT_00B78168);
 }
 
-// FUNCTION: 0x007B84D0
+// FUNCTION: GAMEMD 0x007B84D0
 void __cdecl FUN_007B84D0(void)
 {
 	if (DAT_00B7816C == 0 && DAT_00B78164 != 0) {
@@ -75,7 +75,7 @@ void __cdecl FUN_007B84D0(void)
 
 DWORD WINAPI FUN_007B8610(void * param);
 
-// FUNCTION: 0x007B84F0
+// FUNCTION: GAMEMD 0x007B84F0
 void __cdecl FUN_007B84F0(void)
 {
 	char message[1024];
@@ -101,7 +101,7 @@ void __cdecl FUN_007B84F0(void)
 	}
 }
 
-// FUNCTION: 0x007B8610
+// FUNCTION: GAMEMD 0x007B8610
 DWORD WINAPI FUN_007B8610(void * param)
 {
 	MouseThreadInfo * info = (MouseThreadInfo *)param;
@@ -122,7 +122,7 @@ DWORD WINAPI FUN_007B8610(void * param)
 	return 0;
 }
 
-// FUNCTION: 0x007B86B0
+// FUNCTION: GAMEMD 0x007B86B0
 void __cdecl FUN_007B86B0(void)
 {
 	if (DAT_00B7816C != 0) {
@@ -140,7 +140,7 @@ void __cdecl FUN_007B86B0(void)
 	}
 }
 
-// FUNCTION: 0x007B8730
+// FUNCTION: GAMEMD 0x007B8730
 WWMouseClass::WWMouseClass(DSurface * surface, HWND window) :
 	Image(0),
 	ImageFrameIndex(0),
@@ -174,7 +174,7 @@ WWMouseClass::WWMouseClass(DSurface * surface, HWND window) :
 	Hide_System_Cursor();
 }
 
-// FUNCTION: 0x007B88D0
+// FUNCTION: GAMEMD 0x007B88D0
 WWMouseClass::~WWMouseClass(void)
 {
 	Block_Mouse();
@@ -196,7 +196,7 @@ WWMouseClass::~WWMouseClass(void)
 	}
 }
 
-// FUNCTION: 0x007B8960
+// FUNCTION: GAMEMD 0x007B8960
 void WWMouseClass::FUN_007B8960(void)
 {
 	RECT client;
@@ -214,19 +214,19 @@ void WWMouseClass::FUN_007B8960(void)
 	FUN_004068E0("Calc_Confining_Rect(%d,%d,%d,%d)\n", topleft.x, topleft.y, bottomright.x - topleft.x, bottomright.y - topleft.y);
 }
 
-// FUNCTION: 0x007B89F0
+// FUNCTION: GAMEMD 0x007B89F0
 int WWMouseClass::Get_Mouse_State(void) const
 {
 	return RefCount;
 }
 
-// FUNCTION: 0x007B8C50
+// FUNCTION: GAMEMD 0x007B8C50
 bool WWMouseClass::FUN_007B8C50(void)
 {
 	return Image ? true : false;
 }
 
-// FUNCTION: 0x007B8C60
+// FUNCTION: GAMEMD 0x007B8C60
 bool WWMouseClass::FUN_007B8C60(void)
 {
 	if (Image != 0) {
@@ -264,7 +264,7 @@ bool WWMouseClass::FUN_007B8C60(void)
 	return false;
 }
 
-// FUNCTION: 0x007B8E80
+// FUNCTION: GAMEMD 0x007B8E80
 Rect WWMouseClass::FUN_007B8E80(void)
 {
 	Rect rect(0, 0, 0, 0);
@@ -278,7 +278,7 @@ Rect WWMouseClass::FUN_007B8E80(void)
 	return rect;
 }
 
-// FUNCTION: 0x007B8F30
+// FUNCTION: GAMEMD 0x007B8F30
 void WWMouseClass::Save_Background(void)
 {
 	if (FUN_007B8C60() && Surface != 0) {
@@ -290,7 +290,7 @@ void WWMouseClass::Save_Background(void)
 	}
 }
 
-// FUNCTION: 0x007B9040
+// FUNCTION: GAMEMD 0x007B9040
 void WWMouseClass::Restore_Background(void)
 {
 	if (Rect1.Is_Valid() && Surface != 0 && field_44 != 0) {
@@ -301,7 +301,7 @@ void WWMouseClass::Restore_Background(void)
 	}
 }
 
-// FUNCTION: 0x007B90C0
+// FUNCTION: GAMEMD 0x007B90C0
 void WWMouseClass::Draw_Mouse(::Surface * surface, bool issidebarsurface)
 {
 	BSurface * savesurface;
@@ -349,7 +349,7 @@ void WWMouseClass::Draw_Mouse(::Surface * surface, bool issidebarsurface)
 	}
 }
 
-// FUNCTION: 0x007B92D0
+// FUNCTION: GAMEMD 0x007B92D0
 void WWMouseClass::Erase_Mouse(::Surface * surface, bool issidebarsurface)
 {
 	if (!Is_Hidden() && Is_Captured() && surface != 0 && surface != Surface && field_58 != 0 && field_6C != 0) {
@@ -372,7 +372,7 @@ void WWMouseClass::Erase_Mouse(::Surface * surface, bool issidebarsurface)
 	}
 }
 
-// FUNCTION: 0x007B93F0
+// FUNCTION: GAMEMD 0x007B93F0
 void WWMouseClass::Raw_Draw_Mouse(DSurface * surface, int xoffset, int yoffset)
 {
 	if (Image != 0 && surface != 0 && FileSystem_MOUSE_PAL != 0) {
@@ -388,7 +388,7 @@ void WWMouseClass::Raw_Draw_Mouse(DSurface * surface, int xoffset, int yoffset)
 	}
 }
 
-// FUNCTION: 0x007B9530
+// FUNCTION: GAMEMD 0x007B9530
 void WWMouseClass::Low_Show_Mouse(void)
 {
 	Block_Mouse();
@@ -397,7 +397,7 @@ void WWMouseClass::Low_Show_Mouse(void)
 	Unblock_Mouse();
 }
 
-// FUNCTION: 0x007B9690
+// FUNCTION: GAMEMD 0x007B9690
 void WWMouseClass::Low_Hide_Mouse(void)
 {
 	Block_Mouse();
@@ -405,7 +405,7 @@ void WWMouseClass::Low_Hide_Mouse(void)
 	Unblock_Mouse();
 }
 
-// FUNCTION: 0x007B9750
+// FUNCTION: GAMEMD 0x007B9750
 void WWMouseClass::Show_Mouse(void)
 {
 	if (RefCount != 0) {
@@ -425,7 +425,7 @@ void WWMouseClass::Show_Mouse(void)
 	}
 }
 
-// FUNCTION: 0x007B9930
+// FUNCTION: GAMEMD 0x007B9930
 void WWMouseClass::Hide_Mouse(void)
 {
 	Block_Mouse();
@@ -440,7 +440,7 @@ void WWMouseClass::Hide_Mouse(void)
 	Unblock_Mouse();
 }
 
-// FUNCTION: 0x007B9A60
+// FUNCTION: GAMEMD 0x007B9A60
 void WWMouseClass::Capture_Mouse(void)
 {
 	if (this != 0 && !Is_Captured()) {
@@ -455,7 +455,7 @@ void WWMouseClass::Capture_Mouse(void)
 	}
 }
 
-// FUNCTION: 0x007B9C30
+// FUNCTION: GAMEMD 0x007B9C30
 void WWMouseClass::Release_Mouse(void)
 {
 	if (this != 0 && Is_Captured()) {
@@ -470,7 +470,7 @@ void WWMouseClass::Release_Mouse(void)
 	}
 }
 
-// FUNCTION: 0x007B9D70
+// FUNCTION: GAMEMD 0x007B9D70
 void WWMouseClass::Conditional_Hide_Mouse(Rect region)
 {
 	Hide_Mouse();
@@ -480,13 +480,14 @@ extern bool AllowNegativeY;
 extern bool DAT_00B78170;
 int __fastcall FUN_0053E720(void);
 
-// FUNCTION: 0x007B9D80 WWMouseClass::Conditional_Show_Mouse
+// FUNCTION: GAMEMD 0x007B9D80
+// WWMouseClass::Conditional_Show_Mouse
 void WWMouseClass::Conditional_Show_Mouse(void)
 {
 	Show_Mouse();
 }
 
-// FUNCTION: 0x007B9D90
+// FUNCTION: GAMEMD 0x007B9D90
 void WWMouseClass::Convert_Coordinate(int & x, int & y) const
 {
 	x -= Rect0.X;
@@ -497,7 +498,7 @@ void WWMouseClass::Convert_Coordinate(int & x, int & y) const
 	if (y >= Rect0.Height) y = Rect0.Height - 1;
 }
 
-// FUNCTION: 0x007B9DF0
+// FUNCTION: GAMEMD 0x007B9DF0
 void WWMouseClass::Get_Bounded_Position(int & x, int & y) const
 {
 	POINT pt;
@@ -507,7 +508,7 @@ void WWMouseClass::Get_Bounded_Position(int & x, int & y) const
 	Convert_Coordinate(x, y);
 }
 
-// FUNCTION: 0x007B9E30
+// FUNCTION: GAMEMD 0x007B9E30
 void WWMouseClass::Update_Mouse_Position(int x, int y, bool forced)
 {
 	Block_Mouse();
@@ -524,7 +525,7 @@ void WWMouseClass::Update_Mouse_Position(int x, int y, bool forced)
 	Unblock_Mouse();
 }
 
-// FUNCTION: 0x007BA090
+// FUNCTION: GAMEMD 0x007BA090
 void WWMouseClass::FUN_007BA090(void)
 {
 	if (Surface != 0) {
@@ -551,13 +552,13 @@ void WWMouseClass::FUN_007BA090(void)
 	}
 }
 
-// FUNCTION: 0x007BA2C0
+// FUNCTION: GAMEMD 0x007BA2C0
 void __cdecl FUN_007BA2C0(void)
 {
 	Block_Mouse();
 }
 
-// FUNCTION: 0x007BA2F0
+// FUNCTION: GAMEMD 0x007BA2F0
 void __cdecl FUN_007BA2F0(void)
 {
 	Unblock_Mouse();

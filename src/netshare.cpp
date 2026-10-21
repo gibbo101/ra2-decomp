@@ -76,21 +76,34 @@ void __cdecl FUN_004068E0(char const * format, ...);
 
 rc_ptr<WDTTerritory> __fastcall FUN_007B0390(int id);
 
-// FUNCTION: 0x005E2430 $E2
-// FUNCTION: 0x005E2460 $E5
-// FUNCTION: 0x005E2480 $E8
-// FUNCTION: 0x005E24A0 $E11
-// FUNCTION: 0x005E24C0 $E14
-// FUNCTION: 0x005E24E0 $E17
-// FUNCTION: 0x005E2500 $E20
-// FUNCTION: 0x005E2540 $E23
-// FUNCTION: 0x005E2570 $E26
-// FUNCTION: 0x005E25A0 $E29
-// FUNCTION: 0x005E25D0 $E32
-// FUNCTION: 0x005E25E0 $E35
-// FUNCTION: 0x005E2600 $E38
+// SYNTHETIC: GAMEMD 0x005E2430 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x005E2460 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x005E2480 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x005E24A0 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x005E24C0 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x005E24E0 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x005E2500 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x005E2540 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x005E2570 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x005E25A0 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x005E25D0 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x005E25E0 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x005E2600 SYMBOL
+// _$E38
 
-// FUNCTION: 0x005E2620
+// FUNCTION: GAMEMD 0x005E2620
 unsigned int Wstring_Hash(Wstring & string)
 {
 	unsigned int hash = 0;
@@ -105,7 +118,7 @@ unsigned int Wstring_Hash(Wstring & string)
 	return(hash);
 }
 
-// FUNCTION: 0x005E2670
+// FUNCTION: GAMEMD 0x005E2670
 unsigned int Wstring_Hash(WideWstring & string)
 {
 	unsigned int hash = 0;
@@ -120,7 +133,7 @@ unsigned int Wstring_Hash(WideWstring & string)
 	return(hash);
 }
 
-// FUNCTION: 0x005E26C0
+// FUNCTION: GAMEMD 0x005E26C0
 HWND GameoptWindow(void)
 {
 	HWND dialog;
@@ -144,7 +157,7 @@ HWND GameoptWindow(void)
 	return(0);
 }
 
-// FUNCTION: 0x005E2700
+// FUNCTION: GAMEMD 0x005E2700
 void __cdecl PMessagePrintf(int color, const wchar_t * fmt, ...)
 {
 	va_list va;
@@ -173,7 +186,7 @@ void __cdecl PMessagePrintf(int color, const wchar_t * fmt, ...)
 	}
 }
 
-// FUNCTION: 0x005E2790
+// FUNCTION: GAMEMD 0x005E2790
 void __cdecl SMessagePrintf(int color, const wchar_t * fmt, ...)
 {
 	va_list va;
@@ -202,7 +215,7 @@ void __cdecl SMessagePrintf(int color, const wchar_t * fmt, ...)
 	}
 }
 
-// FUNCTION: 0x005E2820
+// FUNCTION: GAMEMD 0x005E2820
 void _DrawMessage(int color, const wchar_t * message, HWND window)
 {
 	RECT rect;
@@ -274,7 +287,7 @@ void _DrawMessage(int color, const wchar_t * message, HWND window)
 	ReleaseDC(window, l.hdc);
 }
 
-// FUNCTION: 0x005E29A0
+// FUNCTION: GAMEMD 0x005E29A0
 void _SetMessageString(HWND window, const wchar_t * message, int length, int color)
 {
 	static wchar_t buffer[512];
@@ -313,7 +326,7 @@ void _SetMessageString(HWND window, const wchar_t * message, int length, int col
 	SendMessage(window, OD_DISABLEPAINT, 0, old);
 }
 
-// FUNCTION: 0x005E2AC0
+// FUNCTION: GAMEMD 0x005E2AC0
 void FUN_005E2AC0(void)
 {
 	if (WS_Top_Window() != 0) {
@@ -343,7 +356,7 @@ void FUN_005E2AC0(void)
 	}
 }
 
-// FUNCTION: 0x005E2BA0
+// FUNCTION: GAMEMD 0x005E2BA0
 int CountOtherUndefeatedHumanHouses(HouseClass * house)
 {
 	int count = 0;
@@ -356,7 +369,7 @@ int CountOtherUndefeatedHumanHouses(HouseClass * house)
 	return(count);
 }
 
-// FUNCTION: 0x005E2BE0
+// FUNCTION: GAMEMD 0x005E2BE0
 int CountAliveTeams(HouseClass * house)
 {
 	int count = 0;
@@ -385,7 +398,7 @@ int CountAliveTeams(HouseClass * house)
 	return(count);
 }
 
-// FUNCTION: 0x005E2CD0
+// FUNCTION: GAMEMD 0x005E2CD0
 int ODMessageBox(const wchar_t * text, int type, bool (*callback)(void), bool large)
 {
 	if (text != NULL && wcslen(text) != 0) {
@@ -426,7 +439,7 @@ int ODMessageBox(const wchar_t * text, int type, bool (*callback)(void), bool la
 	return(0);
 }
 
-// FUNCTION: 0x005E2E40
+// FUNCTION: GAMEMD 0x005E2E40
 int CALLBACK ODMessageBox_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	switch (message) {
@@ -457,7 +470,7 @@ int CALLBACK ODMessageBox_Proc(HWND window, UINT message, WPARAM wparam, LPARAM 
 	return(FALSE);
 }
 
-// FUNCTION: 0x005E2EF0
+// FUNCTION: GAMEMD 0x005E2EF0
 void FUN_005E2EF0(HWND dialog, MPGameModeClass * mode)
 {
 	if (mode != NULL) {
@@ -466,7 +479,7 @@ void FUN_005E2EF0(HWND dialog, MPGameModeClass * mode)
 	}
 }
 
-// FUNCTION: 0x005E2F20
+// FUNCTION: GAMEMD 0x005E2F20
 void __fastcall FUN_005E2F20(HWND dialog, int index)
 {
 	if (index >= 0 && index < Session.Scenarios.Count()) {
@@ -478,14 +491,14 @@ void __fastcall FUN_005E2F20(HWND dialog, int index)
 	}
 }
 
-// FUNCTION: 0x005E2F60
+// FUNCTION: GAMEMD 0x005E2F60
 void __fastcall FUN_005E2F60(HWND dialog)
 {
 	HWND item = GetDlgItem(dialog, 0x5a8);
 	SendMessage(item, 0x4b2, 0, (LPARAM)Session.Options.ScenarioDescription);
 }
 
-// FUNCTION: 0x005E2F80
+// FUNCTION: GAMEMD 0x005E2F80
 MPGameModeClass * FUN_005E2F80(void)
 {
 	MPGameModeClass * mode = MPGameModeClass::Get(GameModeOptionsClass::Instance);
@@ -495,7 +508,7 @@ MPGameModeClass * FUN_005E2F80(void)
 	return(mode);
 }
 
-// FUNCTION: 0x005E2FA0
+// FUNCTION: GAMEMD 0x005E2FA0
 void FUN_005E2FA0(void)
 {
 	if (FUN_00775B20() == 0x6b) {
@@ -512,7 +525,7 @@ void FUN_005E2FA0(void)
 	}
 }
 
-// FUNCTION: 0x005E3010
+// FUNCTION: GAMEMD 0x005E3010
 void __fastcall DisplayGameopts(HWND window, BOOL initialize)
 {
 	int unit_count = Session.Options.UnitCount;
@@ -561,7 +574,7 @@ void __fastcall DisplayGameopts(HWND window, BOOL initialize)
 	SendDlgItemMessage(window, 0x54d, BM_SETCHECK, button_state[Session.Options.Goodies], 0);
 }
 
-// FUNCTION: 0x005E32D0
+// FUNCTION: GAMEMD 0x005E32D0
 void PumpGameopts(bool force, bool now)
 {
 	static int _last_pump_time;
@@ -664,7 +677,7 @@ void PumpGameopts(bool force, bool now)
 	}
 }
 
-// FUNCTION: 0x005E35A0
+// FUNCTION: GAMEMD 0x005E35A0
 void FUN_005E35A0(void)
 {
 	GlobalPacketType packet;
@@ -678,7 +691,7 @@ void FUN_005E35A0(void)
 	}
 }
 
-// FUNCTION: 0x005E3630
+// FUNCTION: GAMEMD 0x005E3630
 void FUN_005E3630(void)
 {
 	switch (Session.Type) {
@@ -692,7 +705,7 @@ void FUN_005E3630(void)
 	}
 }
 
-// FUNCTION: 0x005E36E0
+// FUNCTION: GAMEMD 0x005E36E0
 void FUN_005E36E0(void)
 {
 	Session.unknown_2878 = true;
@@ -703,7 +716,7 @@ void FUN_005E36E0(void)
 	}
 }
 
-// FUNCTION: 0x005E3700
+// FUNCTION: GAMEMD 0x005E3700
 void FUN_005E3700(void)
 {
 	Session.unknown_2878 = false;
@@ -714,7 +727,7 @@ void FUN_005E3700(void)
 	}
 }
 
-// FUNCTION: 0x005E3720
+// FUNCTION: GAMEMD 0x005E3720
 void SendPublicGameopts(char const * options)
 {
 	if (g_pChat != NULL) {
@@ -738,7 +751,7 @@ void SendPublicGameopts(char const * options)
 	}
 }
 
-// FUNCTION: 0x005E3850
+// FUNCTION: GAMEMD 0x005E3850
 void SendPrivateGameopts(char const * player, char const * options)
 {
 	if (g_pChat != NULL) {
@@ -771,7 +784,7 @@ int __fastcall FUN_005DBEC0(char * who);
 void __fastcall FUN_005DBE20(char * who, int status);
 HWND __fastcall FUN_00775940(int id);
 
-// FUNCTION: 0x005E39C0
+// FUNCTION: GAMEMD 0x005E39C0
 void FUN_005E39C0(char * name, int status)
 {
 	if (name == NULL) {
@@ -797,7 +810,7 @@ void FUN_005E39C0(char * name, int status)
 	}
 }
 
-// FUNCTION: 0x005E3AB0
+// FUNCTION: GAMEMD 0x005E3AB0
 void FUN_005E3AB0(void)
 {
 	int accept;
@@ -851,7 +864,7 @@ static inline void LBSelectText(HWND win, WideWstring & key, wchar_t * wide)
 	}
 }
 
-// FUNCTION: 0x005E6230
+// FUNCTION: GAMEMD 0x005E6230
 void LBRestoreSelections(HWND win, Dictionary<WideWstring,bool> & lbdict)
 {
 	int count = ListBox_GetCount(win);
@@ -880,7 +893,7 @@ void LBRestoreSelections(HWND win, Dictionary<WideWstring,bool> & lbdict)
 
 bool __cdecl FUN_0077D940(void);
 bool __cdecl FUN_0077D970(void);
-// FUNCTION: 0x005E6440
+// FUNCTION: GAMEMD 0x005E6440
 int FUN_005E6440(void)
 {
 	if (Session.Type == GAME_INTERNET) {
@@ -892,7 +905,7 @@ int FUN_005E6440(void)
 	return(8);
 }
 
-// FUNCTION: 0x005E6470
+// FUNCTION: GAMEMD 0x005E6470
 int FUN_005E6470(void)
 {
 	int count = FUN_005E6440();
@@ -906,7 +919,7 @@ int FUN_005E6470(void)
 	return(count + 1);
 }
 
-// FUNCTION: 0x005E64C0
+// FUNCTION: GAMEMD 0x005E64C0
 int FUN_005E64C0(int index)
 {
 	if (index == -1) {
@@ -929,7 +942,7 @@ int FUN_005E64C0(int index)
 	return(count);
 }
 
-// FUNCTION: 0x005E6520
+// FUNCTION: GAMEMD 0x005E6520
 int RandomMapWaypointCount(int index)
 {
 	char wp[32];
@@ -977,7 +990,7 @@ void __fastcall FUN_0052FEC0(Surface * surface, bool flag);
 void FUN_0072D120(void);
 void FUN_0072D170(void);
 
-// FUNCTION: 0x005E66D0
+// FUNCTION: GAMEMD 0x005E66D0
 int FUN_005E66D0(void)
 {
 	return(SendDlgItemMessage(DAT_00AC0D40, 0x553, LB_GETCURSEL, 0, 0));
@@ -986,7 +999,7 @@ int FUN_005E66D0(void)
 bool FUN_005DAF20(void);
 bool FUN_005BB260(void);
 
-// FUNCTION: 0x005E66F0
+// FUNCTION: GAMEMD 0x005E66F0
 bool FUN_005E66F0(void)
 {
 	int index = SendDlgItemMessage(DAT_00AC0D40, 0x553, LB_GETCURSEL, 0, 0);
@@ -1043,7 +1056,7 @@ bool FUN_005E66F0(void)
 	return(false);
 }
 
-// FUNCTION: 0x005E68A0
+// FUNCTION: GAMEMD 0x005E68A0
 int Scenario_Dialog(HWND top)
 {
 	FUN_0052FEC0(NULL, true);
@@ -1057,7 +1070,7 @@ int Scenario_Dialog(HWND top)
 	return(result);
 }
 
-// FUNCTION: 0x005E70D0
+// FUNCTION: GAMEMD 0x005E70D0
 int FUN_005E70D0(HWND dialog, MultiMission * map)
 {
 	if (map == NULL) {
@@ -1094,7 +1107,7 @@ static inline int Find_Map_Index(MultiMission * data)
 	return(-1);
 }
 
-// FUNCTION: 0x005E7160
+// FUNCTION: GAMEMD 0x005E7160
 bool FUN_005E7160(HWND dialog)
 {
 	int index = -1;
@@ -1204,7 +1217,7 @@ apply:
 	return(true);
 }
 
-// FUNCTION: 0x005E7460
+// FUNCTION: GAMEMD 0x005E7460
 void PregameSetup(void)
 {
 	Scen->Scenario = Session.Options.ScenarioIndex;
@@ -1239,7 +1252,7 @@ static inline int Send_To_Host(void * packet, int size, int sent)
 
 bool __fastcall FUN_00693B70(char * name, int type, bool flag);
 
-// FUNCTION: 0x005E7920
+// FUNCTION: GAMEMD 0x005E7920
 void Receive_Random_Map_Preview(void)
 {
 	Ipx.Set_Timing(50, -1, 5000);
@@ -1303,7 +1316,7 @@ void Receive_Random_Map_Preview(void)
 extern int DAT_0081C1D0;
 int __fastcall FUN_004790A0(int timeout);
 
-// FUNCTION: 0x005E7BF0
+// FUNCTION: GAMEMD 0x005E7BF0
 bool Set_Scenario_Info_From_Index(int index)
 {
 	if (index == -1) {
@@ -1341,7 +1354,7 @@ bool Set_Scenario_Info_From_Index(int index)
 	return(true);
 }
 
-// FUNCTION: 0x005E8590
+// FUNCTION: GAMEMD 0x005E8590
 int CreateRandomMap(void)
 {
 	int result;
@@ -1389,26 +1402,26 @@ int CreateRandomMap(void)
 	return(index);
 }
 
-// FUNCTION: 0x005E8720
+// FUNCTION: GAMEMD 0x005E8720
 int __fastcall FUN_005E8720(wchar_t const * name)
 {
 	return(wcscmp(name, Session.GameName) == 0);
 }
 
-// FUNCTION: 0x005E8740
+// FUNCTION: GAMEMD 0x005E8740
 int __fastcall FUN_005E8740(int index)
 {
 	return(wcscmp(Session.Players[index]->Name, Session.GameName) == 0);
 }
 
-// FUNCTION: 0x005E8760
+// FUNCTION: GAMEMD 0x005E8760
 int FUN_005E8760(void)
 {
 	wchar_t * name = FUN_00735120(Session.Handle);
 	return(wcscmp(name, Session.GameName) == 0);
 }
 
-// FUNCTION: 0x005E8780
+// FUNCTION: GAMEMD 0x005E8780
 int __fastcall FUN_005E8780(wchar_t const * name)
 {
 	return(wcscmp(name, FUN_00735120(Session.Handle)) == 0);
@@ -1429,7 +1442,7 @@ extern NodeNameType * DAT_00AC11AC;
 extern NodeNameType * DAT_00AC11B0;
 extern NodeNameType * DAT_00AC11B4;
 
-// FUNCTION: 0x005E87A0
+// FUNCTION: GAMEMD 0x005E87A0
 void FUN_005E87A0(void)
 {
 	if (DAT_00AC117C == NULL) {
@@ -1487,7 +1500,7 @@ extern char DAT_00AC0AEC[];
 extern char DAT_00AC0EA4[];
 extern char DAT_00AC0B10[];
 
-// FUNCTION: 0x005E8A20
+// FUNCTION: GAMEMD 0x005E8A20
 void FUN_005E8A20(void)
 {
 	if (DAT_00AC119C != NULL) {
@@ -1521,7 +1534,7 @@ void FUN_005E8A20(void)
 	Clear_Vector(&Session.Players);
 }
 
-// FUNCTION: 0x005E8AE0
+// FUNCTION: GAMEMD 0x005E8AE0
 void FUN_005E8AE0(void)
 {
 	int count = FUN_005E6440();
@@ -1534,7 +1547,7 @@ void FUN_005E8AE0(void)
 	}
 }
 
-// FUNCTION: 0x005E8B40
+// FUNCTION: GAMEMD 0x005E8B40
 void FUN_005E8B40(void)
 {
 	DAT_00AC0AC8[0] = 0;
@@ -1543,7 +1556,7 @@ void FUN_005E8B40(void)
 	DAT_00AC0B10[0] = 0;
 }
 
-// FUNCTION: 0x005E8B60
+// FUNCTION: GAMEMD 0x005E8B60
 void FUN_005E8B60(void)
 {
 	int count = FUN_005E6440();
@@ -1560,7 +1573,7 @@ void FUN_005E8B60(void)
 	DAT_00AC0B94[0] = 0;
 }
 
-// FUNCTION: 0x005E8BF0
+// FUNCTION: GAMEMD 0x005E8BF0
 NodeNameType * __fastcall FUN_005E8BF0(wchar_t const * name)
 {
 	if (wcscmp(DAT_00AC119C->Name, name) == 0) {
@@ -1594,7 +1607,7 @@ NodeNameType * __fastcall FUN_005E8BF0(wchar_t const * name)
 	return(NULL);
 }
 
-// FUNCTION: 0x005E8D00
+// FUNCTION: GAMEMD 0x005E8D00
 int __fastcall FUN_005E8D00(wchar_t const * name)
 {
 	for (int i = 0; i < 8; i++) {
@@ -1605,7 +1618,7 @@ int __fastcall FUN_005E8D00(wchar_t const * name)
 	return(-1);
 }
 
-// FUNCTION: 0x005E8D40
+// FUNCTION: GAMEMD 0x005E8D40
 int FUN_005E8D40(void)
 {
 	if (!Session.Players.Count()) {
@@ -1614,13 +1627,13 @@ int FUN_005E8D40(void)
 	return(FUN_005E8D00(Session.Players[0]->Name));
 }
 
-// FUNCTION: 0x005E8D90
+// FUNCTION: GAMEMD 0x005E8D90
 void __fastcall FUN_005E8D90(int slot, NodeNameType * name)
 {
 	Session.Slots[slot] = name;
 }
 
-// FUNCTION: 0x005E8DA0
+// FUNCTION: GAMEMD 0x005E8DA0
 void __fastcall FUN_005E8DA0(int slot)
 {
 	Session.unknown_2854 = slot;
@@ -1631,7 +1644,7 @@ extern wchar_t DAT_008304FC[];
 Wstring __fastcall FUN_005EDEF0(NodeNameType * slot);
 WideWstring __fastcall FUN_007B7ED0(Wstring const & text);
 
-// FUNCTION: 0x005E8DC0
+// FUNCTION: GAMEMD 0x005E8DC0
 void __fastcall FUN_005E8DC0(wchar_t * buffer)
 {
 	buffer[0] = 0;
@@ -1659,7 +1672,7 @@ void __fastcall FUN_004E4770(HWND dialog, int id);
 void __fastcall FUN_004E49A0(HWND dialog, int id, int flag);
 NodeNameType * __fastcall FUN_005EDFC0(WideWstring * name);
 
-// FUNCTION: 0x005E8EA0
+// FUNCTION: GAMEMD 0x005E8EA0
 void __fastcall FUN_005E8EA0(wchar_t * list)
 {
 	wchar_t text[170];
@@ -1781,7 +1794,7 @@ void __fastcall FUN_005E8EA0(wchar_t * list)
 	}
 }
 
-// FUNCTION: 0x005E9240
+// FUNCTION: GAMEMD 0x005E9240
 int __fastcall FUN_005E9240(NodeNameType * node)
 {
 	for (int i = 0; i < 8; i++) {
@@ -1796,7 +1809,7 @@ int __fastcall FUN_005E9240(NodeNameType * node)
 
 extern int DAT_008316A4;
 
-// FUNCTION: 0x005E9290
+// FUNCTION: GAMEMD 0x005E9290
 void __fastcall FUN_005E9290(IPXAddressClass * address)
 {
 	int limit;
@@ -1830,7 +1843,7 @@ void __fastcall FUN_005E9290(IPXAddressClass * address)
 	}
 }
 
-// FUNCTION: 0x005E9340
+// FUNCTION: GAMEMD 0x005E9340
 void __fastcall FUN_005E9340(char const * name)
 {
 	int limit;
@@ -1863,7 +1876,7 @@ void __fastcall FUN_005E9340(char const * name)
 	}
 }
 
-// FUNCTION: 0x005E93F0
+// FUNCTION: GAMEMD 0x005E93F0
 int __fastcall FUN_005E93F0(NodeNameType * slot)
 {
 	if (slot == NULL || slot == DAT_00AC119C || slot == DAT_00AC11A0 || slot == DAT_00AC11B0 || slot == DAT_00AC11B4 || slot == DAT_00AC11A4 || slot == DAT_00AC11A8 || slot == DAT_00AC11AC) {
@@ -1872,7 +1885,7 @@ int __fastcall FUN_005E93F0(NodeNameType * slot)
 	return(1);
 }
 
-// FUNCTION: 0x005E9440
+// FUNCTION: GAMEMD 0x005E9440
 int __fastcall FUN_005E9440(NodeNameType * slot)
 {
 	if (slot != NULL && (slot == DAT_00AC11A4 || slot == DAT_00AC11A8 || slot == DAT_00AC11AC)) {
@@ -1881,7 +1894,7 @@ int __fastcall FUN_005E9440(NodeNameType * slot)
 	return(0);
 }
 
-// FUNCTION: 0x005E9470
+// FUNCTION: GAMEMD 0x005E9470
 int __fastcall FUN_005E9470(NodeNameType * slot)
 {
 	if (slot == NULL || slot == DAT_00AC119C || slot == DAT_00AC11A0 || slot == DAT_00AC11B4 || slot == DAT_00AC11B0) {
@@ -1890,7 +1903,7 @@ int __fastcall FUN_005E9470(NodeNameType * slot)
 	return(1);
 }
 
-// FUNCTION: 0x005E94A0
+// FUNCTION: GAMEMD 0x005E94A0
 int __fastcall FUN_005E94A0(NodeNameType * slot)
 {
 	int result = -1;
@@ -1907,7 +1920,7 @@ int __fastcall FUN_005E94A0(NodeNameType * slot)
 	return(result);
 }
 
-// FUNCTION: 0x005E94D0
+// FUNCTION: GAMEMD 0x005E94D0
 int FUN_005E94D0(void)
 {
 	NodeNameType * ai0 = DAT_00AC11A4;
@@ -1924,7 +1937,7 @@ int FUN_005E94D0(void)
 	return(count);
 }
 
-// FUNCTION: 0x005E9510
+// FUNCTION: GAMEMD 0x005E9510
 bool FUN_005E9510(void)
 {
 	int count = (Session.MaxPlayers < Session.unknown_8D4) ? Session.MaxPlayers : Session.unknown_8D4;
@@ -1941,7 +1954,7 @@ bool FUN_005E9510(void)
 	return(true);
 }
 
-// FUNCTION: 0x005E9560
+// FUNCTION: GAMEMD 0x005E9560
 bool FUN_005E9560(void)
 {
 	for (int i = 0; i < 8; i++) {
@@ -1952,7 +1965,7 @@ bool FUN_005E9560(void)
 	return(true);
 }
 
-// FUNCTION: 0x005E9580
+// FUNCTION: GAMEMD 0x005E9580
 bool FUN_005E9580(void)
 {
 	int index = DAT_008316A4;
@@ -1968,7 +1981,7 @@ bool FUN_005E9580(void)
 	return(false);
 }
 
-// FUNCTION: 0x005E95E0
+// FUNCTION: GAMEMD 0x005E95E0
 bool FUN_005E95E0(void)
 {
 	int count = (Session.MaxPlayers < Session.unknown_8D4) ? Session.MaxPlayers : Session.unknown_8D4;
@@ -1982,7 +1995,7 @@ bool FUN_005E95E0(void)
 	return(false);
 }
 
-// FUNCTION: 0x005E96A0
+// FUNCTION: GAMEMD 0x005E96A0
 bool __fastcall FUN_005E96A0(int id)
 {
 	if (id != -2) {
@@ -2002,7 +2015,7 @@ bool __fastcall FUN_005E96A0(int id)
 }
 
 
-// FUNCTION: 0x005E9720
+// FUNCTION: GAMEMD 0x005E9720
 bool __fastcall FUN_005E9720(int id)
 {
 	if (id != -2) {
@@ -2021,7 +2034,7 @@ bool __fastcall FUN_005E9720(int id)
 	return(false);
 }
 
-// FUNCTION: 0x005E97A0
+// FUNCTION: GAMEMD 0x005E97A0
 int __fastcall FUN_005E97A0(NodeNameType * slot)
 {
 	if (slot == DAT_00AC119C) return(2);
@@ -2033,7 +2046,7 @@ int __fastcall FUN_005E97A0(NodeNameType * slot)
 	return(2);
 }
 
-// FUNCTION: 0x005E9800
+// FUNCTION: GAMEMD 0x005E9800
 NodeNameType * __fastcall FUN_005E9800(int kind)
 {
 	if (kind == 2) return(DAT_00AC119C);
@@ -2045,7 +2058,7 @@ NodeNameType * __fastcall FUN_005E9800(int kind)
 	return(NULL);
 }
 
-// FUNCTION: 0x005E9850
+// FUNCTION: GAMEMD 0x005E9850
 void FUN_005E9850(void)
 {
 	if (FUN_00775B20() != 0xbc) {
@@ -2069,7 +2082,7 @@ void FUN_005E9850(void)
 	}
 }
 
-// FUNCTION: 0x005E98F0
+// FUNCTION: GAMEMD 0x005E98F0
 int __fastcall FUN_005E98F0(int kind)
 {
 	if (kind == 0) return(0x411);
@@ -2083,7 +2096,7 @@ int __fastcall FUN_005E98F0(int kind)
 	return(-1);
 }
 
-// FUNCTION: 0x005E9950
+// FUNCTION: GAMEMD 0x005E9950
 int __fastcall FUN_005E9950(int id)
 {
 	if (id == 0x411) return(0);
@@ -2097,7 +2110,7 @@ int __fastcall FUN_005E9950(int id)
 	return(-1);
 }
 
-// FUNCTION: 0x005E99C0
+// FUNCTION: GAMEMD 0x005E99C0
 wchar_t const * __fastcall FUN_005E99C0(NodeNameType * slot)
 {
 	if (slot == DAT_00AC119C) {
@@ -2128,7 +2141,7 @@ wchar_t const * __fastcall FUN_005E99C0(NodeNameType * slot)
 	return(StringTable::LoadString("STT:PlayerHuman", NULL, __FILE__, __LINE__));
 }
 
-// FUNCTION: 0x005E9AA0
+// FUNCTION: GAMEMD 0x005E9AA0
 void __fastcall FUN_005E9AA0(HWND dialog, int id, int data)
 {
 	HWND item = GetDlgItem(dialog, id);
@@ -2143,7 +2156,7 @@ void __fastcall FUN_005E9AA0(HWND dialog, int id, int data)
 	ShowWindow(item, SW_SHOW);
 }
 
-// FUNCTION: 0x005E9B20
+// FUNCTION: GAMEMD 0x005E9B20
 int __fastcall FUN_005E9B20(HWND dialog, int id, int index)
 {
 	if (index == -1) {
@@ -2161,7 +2174,7 @@ int __fastcall FUN_004E5900(HWND dialog, int id, int flag);
 int __fastcall FUN_004E4EC0(int id);
 void __fastcall FUN_004E5700(HWND dialog, int id);
 
-// FUNCTION: 0x005E9B60
+// FUNCTION: GAMEMD 0x005E9B60
 void __fastcall FUN_005E9B60(HWND dialog, int combo)
 {
 	int country = FUN_004E4170(dialog, combo, -1);
@@ -2183,7 +2196,7 @@ void __fastcall FUN_005E9B60(HWND dialog, int combo)
 	Session.Options.AISlots.Colors[slot] = -1;
 }
 
-// FUNCTION: 0x005E9C00
+// FUNCTION: GAMEMD 0x005E9C00
 void __fastcall FUN_005E9C00(HWND dialog, int combo)
 {
 	int color = FUN_004E4E20(dialog, combo, -1);
@@ -2202,7 +2215,7 @@ void __fastcall FUN_005E9C00(HWND dialog, int combo)
 	Session.Options.AISlots.Colors[slot] = color;
 }
 
-// FUNCTION: 0x005E9CE0
+// FUNCTION: GAMEMD 0x005E9CE0
 void __fastcall FUN_005E9CE0(HWND dialog, int combo)
 {
 	int start = FUN_004E5900(dialog, combo, -1);
@@ -2246,7 +2259,7 @@ int __fastcall FUN_004E4E60(int id);
 void __fastcall FUN_004E3F70(HWND dialog, int id, int value);
 void __fastcall FUN_004E5480(HWND dialog, int id, int value);
 
-// FUNCTION: 0x005E9DB0
+// FUNCTION: GAMEMD 0x005E9DB0
 void __fastcall FUN_005E9DB0(HWND dialog, int combo)
 {
 	int value = FUN_004E6030(dialog, combo, -1);
@@ -2261,7 +2274,7 @@ void __fastcall FUN_005E9DB0(HWND dialog, int combo)
 	Session.Options.AISlots.Allies[slot] = value;
 }
 
-// FUNCTION: 0x005E9E00
+// FUNCTION: GAMEMD 0x005E9E00
 void __fastcall FUN_005E9E00(HWND dialog)
 {
 	for (int i = 0; i < 8; i++) {
@@ -2279,7 +2292,7 @@ void __fastcall FUN_005E9E00(HWND dialog)
 	}
 }
 
-// FUNCTION: 0x005E9E70
+// FUNCTION: GAMEMD 0x005E9E70
 void __fastcall FUN_005E9E70(HWND dialog, int slot, bool enable)
 {
 	int country = FUN_004E37D0(slot);
@@ -2342,7 +2355,7 @@ static inline int Slot_Ctrl(int i)
 	return(FUN_005E98F0(i));
 }
 
-// FUNCTION: 0x005EA0D0
+// FUNCTION: GAMEMD 0x005EA0D0
 void __fastcall FUN_005EA0D0(HWND dialog, int arg)
 {
 	for (int i = 0; i < 8; i++) {
@@ -2353,7 +2366,7 @@ void __fastcall FUN_005EA0D0(HWND dialog, int arg)
 	FUN_005E9E70(dialog, arg, true);
 }
 
-// FUNCTION: 0x005EA180
+// FUNCTION: GAMEMD 0x005EA180
 void __fastcall FUN_005EA180(HWND dialog, int arg)
 {
 	for (int i = 0; i < 8; i++) {
@@ -2377,7 +2390,7 @@ void __fastcall FUN_00603D30(HWND item, int surface);
 int __fastcall FUN_005EAAD0(int index);
 int __fastcall FUN_005EA8E0(int index);
 
-// FUNCTION: 0x005EA2A0
+// FUNCTION: GAMEMD 0x005EA2A0
 void __fastcall FUN_005EA2A0(HWND dialog)
 {
 	for (int i = 0; i < 8; i++) {
@@ -2393,7 +2406,7 @@ void __fastcall FUN_005EA2A0(HWND dialog)
 	}
 }
 
-// FUNCTION: 0x005EA8E0
+// FUNCTION: GAMEMD 0x005EA8E0
 int __fastcall FUN_005EA8E0(int index)
 {
 	int result = 0;
@@ -2404,7 +2417,7 @@ int __fastcall FUN_005EA8E0(int index)
 	return(result);
 }
 
-// FUNCTION: 0x005EA920
+// FUNCTION: GAMEMD 0x005EA920
 int __fastcall FUN_005EA920(int index)
 {
 	int result = -2;
@@ -2424,7 +2437,7 @@ int __fastcall FUN_005EA920(int index)
 	return(node->Get_Country());
 }
 
-// FUNCTION: 0x005EA9B0
+// FUNCTION: GAMEMD 0x005EA9B0
 int __fastcall FUN_005EA9B0(int index)
 {
 	NodeNameType * node = Session.Slots[index];
@@ -2437,7 +2450,7 @@ int __fastcall FUN_005EA9B0(int index)
 	return(node->Get_Color());
 }
 
-// FUNCTION: 0x005EAA10
+// FUNCTION: GAMEMD 0x005EAA10
 int __fastcall FUN_005EAA10(int index)
 {
 	NodeNameType * node = Session.Slots[index];
@@ -2450,7 +2463,7 @@ int __fastcall FUN_005EAA10(int index)
 	return(node->Get_Start());
 }
 
-// FUNCTION: 0x005EAA70
+// FUNCTION: GAMEMD 0x005EAA70
 int __fastcall FUN_005EAA70(int index)
 {
 	NodeNameType * node = Session.Slots[index];
@@ -2465,7 +2478,7 @@ int __fastcall FUN_005EAA70(int index)
 
 
 
-// FUNCTION: 0x005EAAD0
+// FUNCTION: GAMEMD 0x005EAAD0
 int __fastcall FUN_005EAAD0(int index)
 {
 	if (index == 0) return(0x6d2);
@@ -2542,7 +2555,7 @@ static inline int SlotC(int i)
 	return(node->Get_Team());
 }
 
-// FUNCTION: 0x005EAB30
+// FUNCTION: GAMEMD 0x005EAB30
 void __fastcall FUN_005EAB30(char * buffer)
 {
 	buffer[0] = '\0';
@@ -2553,7 +2566,7 @@ void __fastcall FUN_005EAB30(char * buffer)
 	}
 }
 
-// FUNCTION: 0x005EAC00
+// FUNCTION: GAMEMD 0x005EAC00
 void __fastcall FUN_005EAC00(char * buffer)
 {
 	buffer[0] = '\0';
@@ -2564,7 +2577,7 @@ void __fastcall FUN_005EAC00(char * buffer)
 	}
 }
 
-// FUNCTION: 0x005EACD0
+// FUNCTION: GAMEMD 0x005EACD0
 void __fastcall FUN_005EACD0(char * buffer)
 {
 	buffer[0] = '\0';
@@ -2575,7 +2588,7 @@ void __fastcall FUN_005EACD0(char * buffer)
 	}
 }
 
-// FUNCTION: 0x005EADA0
+// FUNCTION: GAMEMD 0x005EADA0
 void __fastcall FUN_005EADA0(HWND dialog)
 {
 	for (int i = 0; i < 8; i++) {
@@ -2584,7 +2597,7 @@ void __fastcall FUN_005EADA0(HWND dialog)
 	}
 }
 
-// FUNCTION: 0x005EAE40
+// FUNCTION: GAMEMD 0x005EAE40
 void __fastcall FUN_005EAE40(HWND dialog)
 {
 	for (int i = 0; i < 8; i++) {
@@ -2593,7 +2606,7 @@ void __fastcall FUN_005EAE40(HWND dialog)
 	}
 }
 
-// FUNCTION: 0x005EAEE0
+// FUNCTION: GAMEMD 0x005EAEE0
 void __fastcall FUN_005EAEE0(HWND dialog)
 {
 	int self = FUN_005E8D40();
@@ -2616,7 +2629,7 @@ static inline void AddEntry(HWND combo, wchar_t const * text, NodeNameType * con
 	SendMessage(combo, 0x151, index, (LPARAM)data);
 }
 
-// FUNCTION: 0x005EB060
+// FUNCTION: GAMEMD 0x005EB060
 void __fastcall FUN_005EB060(HWND dialog)
 {
 	bool aiAllowed = (Session.MPGameMode == NULL || Session.MPGameMode->vt_entry_40()) && !FUN_0077D940();
@@ -2719,7 +2732,7 @@ openDone:
 	}
 }
 
-// FUNCTION: 0x005EB660
+// FUNCTION: GAMEMD 0x005EB660
 bool __fastcall FUN_005EB660(HWND dialog)
 {
 	bool changed = false;
@@ -2746,7 +2759,7 @@ bool __fastcall FUN_005EB660(HWND dialog)
 
 int __fastcall FUN_004E37D0(int id);
 
-// FUNCTION: 0x005EB7B0
+// FUNCTION: GAMEMD 0x005EB7B0
 void __fastcall FUN_005EB7B0(HWND dialog, int start, int count)
 {
 	if (start < 0) {
@@ -2796,7 +2809,7 @@ void __fastcall FUN_005EB7B0(HWND dialog, int start, int count)
 	}
 }
 
-// FUNCTION: 0x005EBA00
+// FUNCTION: GAMEMD 0x005EBA00
 void __fastcall FUN_005EBA00(HWND dialog)
 {
 	int i = DAT_008316A4;
@@ -2873,7 +2886,7 @@ void __fastcall FUN_005EBA00(HWND dialog)
 	}
 }
 
-// FUNCTION: 0x005EBC00
+// FUNCTION: GAMEMD 0x005EBC00
 void __fastcall FUN_005EBC00(HWND dialog, int start)
 {
 	for (int i = start; i < 8; i++) {
@@ -2931,7 +2944,7 @@ void __fastcall FUN_005EBC00(HWND dialog, int start)
 	}
 }
 
-// FUNCTION: 0x005EBDD0
+// FUNCTION: GAMEMD 0x005EBDD0
 void __fastcall FUN_005EBDD0(HWND dialog, int start, int end, MPGameModeClass * mode)
 {
 	if (Session.MPGameMode != NULL && !Session.MPGameMode->vt_entry_40() && !FUN_0077D940()) {
@@ -2958,7 +2971,7 @@ void __fastcall FUN_005EBDD0(HWND dialog, int start, int end, MPGameModeClass * 
 void __fastcall FUN_005EC9F0(HWND dialog, int id, NodeNameType * node, bool flag);
 void FUN_005DAFD0(void);
 
-// FUNCTION: 0x005EBEC0
+// FUNCTION: GAMEMD 0x005EBEC0
 void __fastcall FUN_005EBEC0(HWND dialog, int start, int count)
 {
 	int end = start + count;
@@ -2982,7 +2995,7 @@ void __fastcall FUN_005EBEC0(HWND dialog, int start, int count)
 	PumpGameopts(true, false);
 }
 
-// FUNCTION: 0x005EC030
+// FUNCTION: GAMEMD 0x005EC030
 void __fastcall FUN_005EC030(HWND dialog)
 {
 	bool changed = false;
@@ -3033,7 +3046,7 @@ void __fastcall FUN_005EC030(HWND dialog)
 void FUN_00785360(void);
 extern int DAT_00AC116C;
 
-// FUNCTION: 0x005EC290
+// FUNCTION: GAMEMD 0x005EC290
 void __fastcall FUN_005EC290(HWND dialog, int start)
 {
 	int limit = FUN_005E6440();
@@ -3061,7 +3074,7 @@ extern int DAT_00AC11CC;
 
 inline void Format_Slot(char * buffer, Wstring const & narrow) { sprintf(buffer, "O%d%s", DAT_008316A4, narrow.c_str()); }
 
-// FUNCTION: 0x005EC3A0
+// FUNCTION: GAMEMD 0x005EC3A0
 void __fastcall FUN_005EC3A0(HWND dialog, int sel, int scenario)
 {
 	int maxslots = FUN_005E64C0(scenario);
@@ -3126,7 +3139,7 @@ void __fastcall FUN_005EC3A0(HWND dialog, int sel, int scenario)
 	DAT_00AC11CC = flag;
 }
 
-// FUNCTION: 0x005EC880
+// FUNCTION: GAMEMD 0x005EC880
 bool __fastcall FUN_005EC880(HWND dialog, int limit, bool arg1, bool arg2)
 {
 	if (DAT_008316A4 == 0) {
@@ -3160,7 +3173,7 @@ bool __fastcall FUN_005EC880(HWND dialog, int limit, bool arg1, bool arg2)
 	return(false);
 }
 
-// FUNCTION: 0x005ED270
+// FUNCTION: GAMEMD 0x005ED270
 void __fastcall FUN_005ED270(HWND dialog, int id, int kind)
 {
 	NodeNameType * node;
@@ -3192,7 +3205,7 @@ void __fastcall FUN_005ED270(HWND dialog, int id, int kind)
 	FUN_005EC9F0(dialog, id, node, false);
 }
 
-// FUNCTION: 0x005ED370
+// FUNCTION: GAMEMD 0x005ED370
 void __fastcall FUN_005ED370(HWND dialog)
 {
 	if (Session.Scenarios[Session.Options.ScenarioIndex]->Is_Random_Map()) {
@@ -3208,7 +3221,7 @@ void __fastcall FUN_005ED370(HWND dialog)
 	}
 }
 
-// FUNCTION: 0x005ED400
+// FUNCTION: GAMEMD 0x005ED400
 void __fastcall FUN_005ED400(HWND dialog, SessionOptionsClass * out)
 {
 	out->MPGameMode = GameModeOptionsClass::Instance;
@@ -3258,7 +3271,7 @@ void __fastcall FUN_005ED400(HWND dialog, SessionOptionsClass * out)
 int __fastcall FUN_00623EA0(HWND window, WideWstring * text);
 unsigned char __fastcall FUN_007B7D90(WideWstring * text);
 
-// FUNCTION: 0x005EDD00
+// FUNCTION: GAMEMD 0x005EDD00
 WideWstring __fastcall FUN_005EDD00(HWND edit)
 {
 	WideWstring text;
@@ -3306,7 +3319,7 @@ static inline void Enable_Team(HWND dialog, int id, bool enable)
 	}
 }
 
-// FUNCTION: 0x005EDDE0
+// FUNCTION: GAMEMD 0x005EDDE0
 void __fastcall FUN_005EDDE0(HWND dialog, bool enable)
 {
 	if (dialog) {
@@ -3328,7 +3341,7 @@ extern char const * DAT_00831714;
 extern char const * DAT_00831718;
 extern char const * DAT_0083171C;
 
-// FUNCTION: 0x005EDEF0
+// FUNCTION: GAMEMD 0x005EDEF0
 Wstring __fastcall FUN_005EDEF0(NodeNameType * slot)
 {
 	if (slot == DAT_00AC119C) {
@@ -3362,7 +3375,7 @@ extern NodeNameType * DAT_00AC11AC;
 extern NodeNameType * DAT_00AC11B0;
 extern NodeNameType * DAT_00AC11B4;
 
-// FUNCTION: 0x005EDFC0
+// FUNCTION: GAMEMD 0x005EDFC0
 NodeNameType * __fastcall FUN_005EDFC0(WideWstring * name)
 {
 	if (FUN_007B7D90(name)) {
@@ -3392,7 +3405,7 @@ NodeNameType * __fastcall FUN_005EDFC0(WideWstring * name)
 	return(NULL);
 }
 
-// FUNCTION: 0x005EE100
+// FUNCTION: GAMEMD 0x005EE100
 int __fastcall FUN_005EE100(Wstring const & name)
 {
 	if (name == DAT_00831704 || name == DAT_00831708 || name == DAT_0083170C || name == DAT_00831710 || name == DAT_00831714 || name == DAT_00831718 || name == DAT_0083171C) {
@@ -3404,13 +3417,13 @@ int __fastcall FUN_005EE100(Wstring const & name)
 extern CCINIClass DAT_008870C0;
 namespace Game { extern int ObserverMode; }
 
-// FUNCTION: 0x005EE190
+// FUNCTION: GAMEMD 0x005EE190
 void FUN_005EE190(void)
 {
 	Game::ObserverMode = DAT_008870C0.Get_Int("MultiPlayer", "ObserverMode", 0);
 }
 
-// FUNCTION: 0x005EE1B0
+// FUNCTION: GAMEMD 0x005EE1B0
 void FUN_005EE1B0(void)
 {
 	RawFileClass file("RA2MD.INI");
@@ -3420,7 +3433,7 @@ void FUN_005EE1B0(void)
 
 void __fastcall FUN_00603D30(HWND item, int surface);
 
-// FUNCTION: 0x005EE200
+// FUNCTION: GAMEMD 0x005EE200
 void __fastcall FUN_005EE200(HWND dialog)
 {
 	if (dialog) {

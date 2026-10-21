@@ -10,7 +10,7 @@
 #include <cstring>
 #include "win.h"
 
-// FUNCTION: 0x006C89B0
+// FUNCTION: GAMEMD 0x006C89B0
 StaticBufferClass::StaticBufferClass(int size)
 {
 	Size = size;
@@ -18,7 +18,7 @@ StaticBufferClass::StaticBufferClass(int size)
 	Cursor = Buffer;
 }
 
-// FUNCTION: 0x006C89D0
+// FUNCTION: GAMEMD 0x006C89D0
 StaticBufferClass::~StaticBufferClass(void)
 {
 	if (Buffer != NULL) {
@@ -40,7 +40,7 @@ extern int DAT_00B0BEE4;
 
 static char CompressionBuffer[256];
 
-// FUNCTION: 0x006C89E0
+// FUNCTION: GAMEMD 0x006C89E0
 StaticBufferClass::Entry * StaticBufferClass::Add(Surface & surface, SurfaceRegion const & region)
 {
 	Entry * header = (Entry *)Reserve(sizeof(Entry));
@@ -76,7 +76,7 @@ StaticBufferClass::Entry * StaticBufferClass::Add(Surface & surface, SurfaceRegi
 }
 
 
-// FUNCTION: 0x006C8B10
+// FUNCTION: GAMEMD 0x006C8B10
 StaticBufferClass::Entry * StaticBufferClass::Add(Surface & surface, Rect const & cliprect, short x, short y)
 {
 	Entry * header = (Entry *)Reserve(sizeof(Entry));
@@ -111,19 +111,19 @@ StaticBufferClass::Entry * StaticBufferClass::Add(Surface & surface, Rect const 
 	return(header);
 }
 
-// FUNCTION: 0x006C8C40
+// FUNCTION: GAMEMD 0x006C8C40
 unsigned long SystemTimer::GetTime(void)
 {
 	return timeGetTime() >> 4;
 }
 
-// FUNCTION: 0x006C8C50
+// FUNCTION: GAMEMD 0x006C8C50
 unsigned long FUN_006C8C50(void)
 {
 	return timeGetTime() >> 4;
 }
 
-// FUNCTION: 0x006C8C60
+// FUNCTION: GAMEMD 0x006C8C60
 void FUN_006C8C60(void)
 {
 	DAT_00B0BED8 = 0;

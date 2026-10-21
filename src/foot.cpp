@@ -61,12 +61,14 @@
 #include "color.hh"
 #include "tube.hh"
 
-// FUNCTION: 0x004D3160 $E1
+// SYNTHETIC: GAMEMD 0x004D3160 SYMBOL
+// _$E149
 
-// FUNCTION: 0x004D31A0 $E1
+// SYNTHETIC: GAMEMD 0x004D31A0 SYMBOL
+// _$E147
 DynamicVectorClass<FootClass *> Feet;
 
-// FUNCTION: 0x004D31E0
+// FUNCTION: GAMEMD 0x004D31E0
 FootClass::FootClass(HouseClass * house) :
 	BASECLASS(house),
 	IsToScatter(false),
@@ -138,7 +140,7 @@ FootClass::FootClass(HouseClass * house) :
 	PointerExpiredNotification::NotifyInvalidTeam.Add(this);
 }
 
-// FUNCTION: 0x004D3540
+// FUNCTION: GAMEMD 0x004D3540
 FootClass::FootClass(NoInitClass const & x) :
 	BASECLASS(x),
 	RouteQueue(x),
@@ -151,7 +153,7 @@ FootClass::FootClass(NoInitClass const & x) :
 {
 }
 
-// FUNCTION: 0x004D3590
+// FUNCTION: GAMEMD 0x004D3590
 FootClass::~FootClass(void)
 {
 	if (Team != NULL && GameActive) {
@@ -177,7 +179,7 @@ FootClass::~FootClass(void)
 	MoveSoundAudioController.FUN_00405C00();
 }
 
-// FUNCTION: 0x004D3710
+// FUNCTION: GAMEMD 0x004D3710
 void FootClass::Set_Speed(double speed)
 {
 	if (speed >= 1.0) {
@@ -189,7 +191,7 @@ void FootClass::Set_Speed(double speed)
 	Speed = speed;
 }
 
-// FUNCTION: 0x004D3780
+// FUNCTION: GAMEMD 0x004D3780
 bool FootClass::Mark(MarkType mark)
 {
 	if (mark == MARK_CHANGE) {
@@ -216,7 +218,7 @@ bool FootClass::Mark(MarkType mark)
 	return(false);
 }
 
-// FUNCTION: 0x004D3810
+// FUNCTION: GAMEMD 0x004D3810
 bool FootClass::Is_In_Same_Zone(Coord const & coord) const
 {
 	MZoneType zone = Techno_Type_Class()->MZone;
@@ -235,7 +237,7 @@ bool FootClass::Is_In_Same_Zone(Coord const & coord) const
 	return(Map.Is_Same_Cell_Zone(cell2, cell1, zone, ((ObjectClass *)this)->Is_Moving_Onto_Bridge(), Map[cell1].IsUnderBridge, Is_Allowed_To_Leave_Map()));
 }
 
-// FUNCTION: 0x004D4200
+// FUNCTION: GAMEMD 0x004D4200
 int FootClass::Do_MISSION_MOVE(void)
 {
 	if (NavCom == NULL && !Locomotion->Is_Moving() && MissionQueue == MISSION_NONE) {
@@ -246,7 +248,7 @@ int FootClass::Do_MISSION_MOVE(void)
 	return(Current_Mission_Control().Normal_Delay() + Random_Pick(0, 2));
 }
 
-// FUNCTION: 0x004D4B20
+// FUNCTION: GAMEMD 0x004D4B20
 int FootClass::Do_MISSION_CAPTURE(void)
 {
 	InfantryClass * inf = (this == NULL) ? NULL : (RTTI == RTTI_INFANTRY) ? (InfantryClass *)this : NULL;
@@ -273,7 +275,7 @@ int FootClass::Do_MISSION_CAPTURE(void)
 	return(Current_Mission_Control().Normal_Delay() + Random_Pick(0, 2));
 }
 
-// FUNCTION: 0x004D4CB0
+// FUNCTION: GAMEMD 0x004D4CB0
 int FootClass::Do_MISSION_EATEN(void)
 {
 	InfantryClass * inf = (this == NULL) ? NULL : (RTTI == RTTI_INFANTRY) ? (InfantryClass *)this : NULL;
@@ -292,7 +294,7 @@ int FootClass::Do_MISSION_EATEN(void)
 	return(Current_Mission_Control().Normal_Delay() + Random_Pick(0, 2));
 }
 
-// FUNCTION: 0x004D4DC0
+// FUNCTION: GAMEMD 0x004D4DC0
 int FootClass::Do_MISSION_ATTACK(void)
 {
 	if (Techno_Type_Class()->HoverAttack && HeightAGL == 0) {
@@ -329,7 +331,7 @@ int FootClass::Do_MISSION_ATTACK(void)
 	return(delay);
 }
 
-// FUNCTION: 0x004D4FC0
+// FUNCTION: GAMEMD 0x004D4FC0
 BuildingClass * FootClass::Adjacent_Overpowerable_Building(void)
 {
 	for (FacingType face = FACING_FIRST; face < FACING_COUNT; face++) {
@@ -353,7 +355,7 @@ static inline BuildingClass * Adjacent_Overpowerable(FootClass * foot)
 	return(NULL);
 }
 
-// FUNCTION: 0x004D5070
+// FUNCTION: GAMEMD 0x004D5070
 int FootClass::Do_MISSION_GUARD(void)
 {
 	if (ShouldEnterAbsorber) {
@@ -399,7 +401,7 @@ int FootClass::Do_MISSION_GUARD(void)
 	return(Current_Mission_Control().Normal_Delay());
 }
 
-// FUNCTION: 0x004D5350
+// FUNCTION: GAMEMD 0x004D5350
 int FootClass::Do_MISSION_HUNT(void)
 {
 	if (!Techno_Type_Class()->StupidHunt && Target_Something_Nearby(PositionCoord, THREAT_NORMAL)) {
@@ -448,21 +450,21 @@ int FootClass::Do_MISSION_HUNT(void)
 	return(Current_Mission_Control().Normal_Delay() + Random_Pick(0, 2));
 }
 
-// FUNCTION: 0x004D55C0
+// FUNCTION: GAMEMD 0x004D55C0
 bool FootClass::Stop_Driver(void)
 {
 	Locomotion->Stop_Moving();
 	return(false);
 }
 
-// FUNCTION: 0x004D55F0
+// FUNCTION: GAMEMD 0x004D55F0
 bool FootClass::Start_Driver(Coord & headto)
 {
 	Locomotion->Move_To(headto);
 	return(Locomotion->Is_Moving() != 0);
 }
 
-// FUNCTION: 0x004D5660
+// FUNCTION: GAMEMD 0x004D5660
 void FootClass::Stun(void)
 {
 	Assign_Destination(NULL);
@@ -476,7 +478,7 @@ inline Cell Adjacent_Cell_By_Value(Cell cell, FacingType dir)
 	return(cell + AdjacentCell[(int)dir & 0x07]);
 }
 
-// FUNCTION: 0x004D7170
+// FUNCTION: GAMEMD 0x004D7170
 bool FootClass::Unlimbo(Coord const & coord, Dir256 dir)
 {
 	if (BASECLASS::Unlimbo(coord, dir)) {
@@ -524,7 +526,7 @@ bool FootClass::Unlimbo(Coord const & coord, Dir256 dir)
 	return(false);
 }
 
-// FUNCTION: 0x004D7330
+// FUNCTION: GAMEMD 0x004D7330
 ResultType FootClass::Take_Damage(int & damage, int distance, WarheadTypeClass const * warhead, TechnoClass * source, bool forced, bool no_crew, HouseClass * house)
 {
 	if (warhead != NULL && warhead->Sonic && ParasiteEatingMe != NULL) {
@@ -573,7 +575,7 @@ ResultType FootClass::Take_Damage(int & damage, int distance, WarheadTypeClass c
 
 extern bool MoveFeedback;
 
-// FUNCTION: 0x004D7D50
+// FUNCTION: GAMEMD 0x004D7D50
 bool FootClass::Active_Click_With(ActionType action, Cell const & cell, Cell const & cell2, bool is_waypoint)
 {
 	if (TechnoClass::Berzerk) {
@@ -681,7 +683,7 @@ bool FootClass::Active_Click_With(ActionType action, Cell const & cell, Cell con
 	return(true);
 }
 
-// FUNCTION: 0x004D82B0
+// FUNCTION: GAMEMD 0x004D82B0
 bool FootClass::Enter_Idle_Mode(bool initial, bool resume_waypoint)
 {
 	if (!IsIdle) {
@@ -735,7 +737,7 @@ bool FootClass::Enter_Idle_Mode(bool initial, bool resume_waypoint)
 	return(false);
 }
 
-// FUNCTION: 0x004D8560
+// FUNCTION: GAMEMD 0x004D8560
 Coord FootClass::GetAttackCoordinates(void) const
 {
 	if (Get_Mission() != MISSION_ATTACK) {
@@ -749,7 +751,7 @@ Coord FootClass::GetAttackCoordinates(void) const
 	return(BASECLASS::GetAttackCoordinates());
 }
 
-// FUNCTION: 0x004D8F40
+// FUNCTION: GAMEMD 0x004D8F40
 void FootClass::Override_Mission(MissionType mission, AbstractClass * tarcom, AbstractClass * navcom)
 {
 	SuspendedNavCom = NavCom;
@@ -758,7 +760,7 @@ void FootClass::Override_Mission(MissionType mission, AbstractClass * tarcom, Ab
 	Assign_Destination(navcom);
 }
 
-// FUNCTION: 0x004D8F80
+// FUNCTION: GAMEMD 0x004D8F80
 bool FootClass::Restore_Mission(void)
 {
 	if (BASECLASS::Restore_Mission()) {
@@ -768,7 +770,7 @@ bool FootClass::Restore_Mission(void)
 	return(false);
 }
 
-// FUNCTION: 0x004D8FB0
+// FUNCTION: GAMEMD 0x004D8FB0
 RadioMessageType FootClass::Receive_Message(RadioClass * from, RadioMessageType message, int & param)
 {
 	BuildingClass const * building = NULL;
@@ -842,7 +844,7 @@ RadioMessageType FootClass::Receive_Message(RadioClass * from, RadioMessageType 
 	return(BASECLASS::Receive_Message(from, message, param));
 }
 
-// FUNCTION: 0x004D9290
+// FUNCTION: GAMEMD 0x004D9290
 int FootClass::Do_MISSION_ENTER(void)
 {
 	TechnoClass * contact = FUN_0065AD30(0);
@@ -883,7 +885,7 @@ int FootClass::Do_MISSION_ENTER(void)
 	return(Current_Mission_Control().Normal_Delay() + Random_Pick(0, 2));
 }
 
-// FUNCTION: 0x004D94A0
+// FUNCTION: GAMEMD 0x004D94A0
 void FootClass::vt_entry_47C(unsigned value)
 {
 	unknown_5A0 = (AbstractClass *)value;
@@ -891,7 +893,7 @@ void FootClass::vt_entry_47C(unsigned value)
 
 namespace LocomotionClass { namespace CLSIDs { extern const CLSID Hover; } }
 
-// FUNCTION: 0x004D94B0
+// FUNCTION: GAMEMD 0x004D94B0
 void FootClass::Assign_Destination(AbstractClass * target, bool)
 {
 	unknown_5A0 = NULL;
@@ -946,7 +948,7 @@ void FootClass::Assign_Destination(AbstractClass * target, bool)
 	PathDelay = 0;
 }
 
-// FUNCTION: 0x004D9720
+// FUNCTION: GAMEMD 0x004D9720
 void FootClass::Detach_All(bool all)
 {
 	if (all) {
@@ -967,7 +969,7 @@ void FootClass::Detach_All(bool all)
 	BASECLASS::Detach_All(all);
 }
 
-// FUNCTION: 0x004D97A0
+// FUNCTION: GAMEMD 0x004D97A0
 int FootClass::Rescue_Mission(AbstractClass * tarcom)
 {
 	if (tarcom == NULL) return(0);
@@ -998,7 +1000,7 @@ int FootClass::Rescue_Mission(AbstractClass * tarcom)
 	return(threat);
 }
 
-// FUNCTION: 0x004D98C0
+// FUNCTION: GAMEMD 0x004D98C0
 void FootClass::Death_Announcement(TechnoClass const * ) const
 {
 	if (House->Is_Player_Control() && !Techno_Type_Class()->Spawned) {
@@ -1008,7 +1010,7 @@ void FootClass::Death_Announcement(TechnoClass const * ) const
 	}
 }
 
-// FUNCTION: 0x004D9920
+// FUNCTION: GAMEMD 0x004D9920
 AbstractClass * FootClass::Greatest_Threat(ThreatType method, Coord const & coord, bool onlyenemy) const
 {
 	if (IsScanLimited) {
@@ -1027,7 +1029,7 @@ AbstractClass * FootClass::Greatest_Threat(ThreatType method, Coord const & coor
 
 extern bool ScenarioStarted;
 
-// FUNCTION: 0x004D9960
+// FUNCTION: GAMEMD 0x004D9960
 void FootClass::Detach(AbstractClass const * target, bool all)
 {
 	int index;
@@ -1107,13 +1109,13 @@ void FootClass::Detach(AbstractClass const * target, bool all)
 	}
 }
 
-// FUNCTION: 0x004D9C00
+// FUNCTION: GAMEMD 0x004D9C00
 int FootClass::Offload_Tiberium_Bail(void)
 {
 	return(0);
 }
 
-// FUNCTION: 0x004D9C10
+// FUNCTION: GAMEMD 0x004D9C10
 MoveType FootClass::Can_Enter_Cell(CellClass const * cell, FacingType, int cell_height, CellClass const *, bool use_locomotor_enter_check) const
 {
 	if (Locomotion != NULL && use_locomotor_enter_check) {
@@ -1123,7 +1125,7 @@ MoveType FootClass::Can_Enter_Cell(CellClass const * cell, FacingType, int cell_
 	return(MOVE_OK);
 }
 
-// FUNCTION: 0x004D9C60
+// FUNCTION: GAMEMD 0x004D9C60
 MoveType FootClass::Can_Reach(CellClass const * current_cell, FacingType facing, int & cell_height, bool & onto_bridge, CellClass const * adjacent_cell) const
 {
 	if (adjacent_cell == NULL) {
@@ -1190,7 +1192,7 @@ static inline int Coord_Distance(Coord const & a, Coord const & b)
 	return(diff.Length());
 }
 
-// FUNCTION: 0x004D9E70
+// FUNCTION: GAMEMD 0x004D9E70
 bool FootClass::Can_Demolish(void) const
 {
 	switch ((RTTIType)RTTI) {
@@ -1211,7 +1213,7 @@ bool FootClass::Can_Demolish(void) const
 	return(BASECLASS::Can_Demolish());
 }
 
-// FUNCTION: 0x004D9F70
+// FUNCTION: GAMEMD 0x004D9F70
 void FootClass::Sell_Back(int control)
 {
 	if (control != 0) {
@@ -1226,19 +1228,19 @@ void FootClass::Sell_Back(int control)
 	}
 }
 
-// FUNCTION: 0x004D9FF0
+// FUNCTION: GAMEMD 0x004D9FF0
 Coord FootClass::Likely_Coord(void) const
 {
 	return(Target_Coord());
 }
 
-// FUNCTION: 0x004DA020
+// FUNCTION: GAMEMD 0x004DA020
 Cell FootClass::Adjust_Dest(Cell const & cell) const
 {
 	return(cell);
 }
 
-// FUNCTION: 0x004DA030
+// FUNCTION: GAMEMD 0x004DA030
 void FootClass::Handle_Navigation_List(void)
 {
 	if (NavCom == NULL && NavQueue.Count()) {
@@ -1255,7 +1257,7 @@ void FootClass::Handle_Navigation_List(void)
 	}
 }
 
-// FUNCTION: 0x004DA0E0
+// FUNCTION: GAMEMD 0x004DA0E0
 void FootClass::Queue_Navigation_List(AbstractClass * target)
 {
 	if (target != NULL) {
@@ -1278,13 +1280,13 @@ void FootClass::Queue_Navigation_List(AbstractClass * target)
 	}
 }
 
-// FUNCTION: 0x004DA1C0
+// FUNCTION: GAMEMD 0x004DA1C0
 void FootClass::Clear_Navigation_List(void)
 {
 	NavQueue.Clear();
 }
 
-// FUNCTION: 0x004DA1D0
+// FUNCTION: GAMEMD 0x004DA1D0
 bool FootClass::Is_Allowed_To_Leave_Map(void) const
 {
 	if (!IsInPlayfield) return(false);
@@ -1294,7 +1296,7 @@ bool FootClass::Is_Allowed_To_Leave_Map(void) const
 	return(true);
 }
 
-// FUNCTION: 0x004DA230
+// FUNCTION: GAMEMD 0x004DA230
 bool FootClass::Is_Recruitable(HouseClass const * house) const
 {
 	if (house == NULL) {
@@ -1324,20 +1326,20 @@ bool FootClass::Is_Recruitable(HouseClass const * house) const
 	return(true);
 }
 
-// FUNCTION: 0x004DA2A0
+// FUNCTION: GAMEMD 0x004DA2A0
 bool FootClass::Is_On_Priority_Mission(void) const
 {
 	if (Mission == MISSION_ENTER) return(true);
 	return(false);
 }
 
-// FUNCTION: 0x004DA2B0
+// FUNCTION: GAMEMD 0x004DA2B0
 int FootClass::Do_MISSION_UNLOAD(void)
 {
 	return(BASECLASS::Do_MISSION_UNLOAD());
 }
 
-// FUNCTION: 0x004DA2C0
+// FUNCTION: GAMEMD 0x004DA2C0
 int FootClass::Do_MISSION_RETREAT(void)
 {
 	enum {
@@ -1375,7 +1377,7 @@ int FootClass::Do_MISSION_RETREAT(void)
 	return(Current_Mission_Control().Normal_Delay() + Random_Pick(0, 2));
 }
 
-// FUNCTION: 0x004DA4E0
+// FUNCTION: GAMEMD 0x004DA4E0
 VisualType FootClass::Visual_Character(bool raw, HouseClass const * house) const
 {
 	VisualType visual = VISUAL_NORMAL;
@@ -1390,7 +1392,7 @@ VisualType FootClass::Visual_Character(bool raw, HouseClass const * house) const
 	return(visual);
 }
 
-// FUNCTION: 0x004DAF10
+// FUNCTION: GAMEMD 0x004DAF10
 void FootClass::Draw_A_VXL(VoxelDataStruct const & voxeldata, int frame, int key, VoxelIndexClass * cache, Rect const & cliprect, Point2D const & point, Matrix3D const & matrix, int brightness, ShapeFlags_Type flags, int unknown) const
 {
 	Matrix3D mtx = matrix;
@@ -1403,7 +1405,7 @@ void FootClass::Draw_A_VXL(VoxelDataStruct const & voxeldata, int frame, int key
 	TechnoClass::Draw_Voxel(voxeldata, frame, key, cache, cliprect, pt, mtx, brightness, unknown, flags);
 }
 
-// FUNCTION: 0x004DAFC0
+// FUNCTION: GAMEMD 0x004DAFC0
 int FootClass::Get_Z_Adjust(void) const
 {
 	int adjust = 0;
@@ -1428,7 +1430,7 @@ int FootClass::Get_Z_Adjust(void) const
 	return(adjust);
 }
 
-// FUNCTION: 0x004DB0A0
+// FUNCTION: GAMEMD 0x004DB0A0
 ZGradientType FootClass::Get_Z_Gradient(void) const
 {
 	if (Locomotion != NULL) {
@@ -1437,7 +1439,7 @@ ZGradientType FootClass::Get_Z_Gradient(void) const
 	return(ZGRAD_90DEG);
 }
 
-// FUNCTION: 0x004DB0D0
+// FUNCTION: GAMEMD 0x004DB0D0
 void FootClass::Draw_Voxel_Shadow(VoxelDataStruct const & voxeldata, int layer_index, int key, VoxelIndexClass * cache, Rect const & cliprect, Point2D const & point, Matrix3D const & matrix, bool force_cache, Surface * surface, int shadow_x, int shadow_y) const
 {
 	if (Locomotion != NULL && Locomotion->Is_To_Have_Shadow() == (boolean)true) {
@@ -1449,7 +1451,7 @@ void FootClass::Draw_Voxel_Shadow(VoxelDataStruct const & voxeldata, int layer_i
 	}
 }
 
-// FUNCTION: 0x004DB1A0
+// FUNCTION: GAMEMD 0x004DB1A0
 int FootClass::Current_Speed(void)
 {
 	int speed = Get_Max_Speed() * House->FUN_0050C050(TClass) * SpeedBias;
@@ -1463,12 +1465,12 @@ int FootClass::Current_Speed(void)
 	return(speed);
 }
 
-// FUNCTION: 0x004DB250
+// FUNCTION: GAMEMD 0x004DB250
 void FootClass::Draw_It(Point2D const &, Rect const &) const
 {
 }
 
-// FUNCTION: 0x004DB260
+// FUNCTION: GAMEMD 0x004DB260
 bool FootClass::Limbo(void)
 {
 	if (!IsInLimbo && Techno_Type_Class() != NULL) {
@@ -1498,7 +1500,7 @@ bool FootClass::Limbo(void)
 
 void __fastcall FUN_004E02C0(void * loco);
 
-// FUNCTION: 0x004DB3C0
+// FUNCTION: GAMEMD 0x004DB3C0
 HRESULT STDMETHODCALLTYPE FootClass::Load(IStream * stream)
 {
 	if (Locomotion) {
@@ -1571,7 +1573,7 @@ HRESULT STDMETHODCALLTYPE FootClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x004DB690
+// FUNCTION: GAMEMD 0x004DB690
 HRESULT STDMETHODCALLTYPE FootClass::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = TechnoClass::Save(stream, cleardirty);
@@ -1613,13 +1615,13 @@ HRESULT STDMETHODCALLTYPE FootClass::Save(IStream * stream, BOOL cleardirty)
 	return(result);
 }
 
-// FUNCTION: 0x004DB7E0
+// FUNCTION: GAMEMD 0x004DB7E0
 LayerType FootClass::In_Which_Layer(void) const
 {
 	return(Locomotion->In_Which_Layer());
 }
 
-// FUNCTION: 0x004DB810
+// FUNCTION: GAMEMD 0x004DB810
 void FootClass::Set_Coord(Coord const & coord)
 {
 	Coord old = Position;
@@ -1643,7 +1645,7 @@ void FootClass::Set_Coord(Coord const & coord)
 
 namespace LocomotionClass { namespace CLSIDs { extern const CLSID Droppod; } }
 
-// FUNCTION: 0x004DB8A0
+// FUNCTION: GAMEMD 0x004DB8A0
 void FootClass::Link_DropPod(void)
 {
 	ILocomotionPtr locomotion = Locomotion;
@@ -1654,7 +1656,7 @@ void FootClass::Link_DropPod(void)
 	Locomotion = ballistic;
 }
 
-// FUNCTION: 0x004DB9B0
+// FUNCTION: GAMEMD 0x004DB9B0
 bool FootClass::Is_Docked_For_Repair(void)
 {
 	if (NavCom == NULL && TarCom == NULL) {
@@ -1669,23 +1671,23 @@ bool FootClass::Is_Docked_For_Repair(void)
 	return(false);
 }
 
-// FUNCTION: 0x004DBA30
+// FUNCTION: GAMEMD 0x004DBA30
 void FootClass::Stop_Movement_Animation(void)
 {
 }
 
-// FUNCTION: 0x004DBA40
+// FUNCTION: GAMEMD 0x004DBA40
 void FootClass::vt_entry_54C(void)
 {
 }
 
-// FUNCTION: 0x004DBA50
+// FUNCTION: GAMEMD 0x004DBA50
 bool FootClass::Is_In_Same_Zone_As(ObjectClass const * object) const
 {
 	return(Is_In_Same_Zone(object->Destination_Coord((TechnoClass *)this).As_Cell()));
 }
 
-// FUNCTION: 0x004DBAD0
+// FUNCTION: GAMEMD 0x004DBAD0
 void FootClass::Compute_CRC(CRCEngine & crc) const
 {
 	BASECLASS::Compute_CRC(crc);
@@ -1718,7 +1720,7 @@ void FootClass::Compute_CRC(CRCEngine & crc) const
 	crc(IonBlastYDrawOffset);
 }
 
-// FUNCTION: 0x004DBDA0
+// FUNCTION: GAMEMD 0x004DBDA0
 bool FootClass::Is_Allowed_To_Recloak(void) const
 {
 	if (BASECLASS::Is_Allowed_To_Recloak()) {
@@ -1729,7 +1731,7 @@ bool FootClass::Is_Allowed_To_Recloak(void) const
 	return(false);
 }
 
-// FUNCTION: 0x004DBDF0
+// FUNCTION: GAMEMD 0x004DBDF0
 Coord FootClass::Destination_Coord(TechnoClass * docker) const
 {
 	if (CurrentTube >= TUBE_FIRST) {
@@ -1745,7 +1747,7 @@ Coord FootClass::Destination_Coord(TechnoClass * docker) const
 	}
 }
 
-// FUNCTION: 0x004DBED0
+// FUNCTION: GAMEMD 0x004DBED0
 bool FootClass::Captured(HouseClass * newowner, bool announce)
 {
 	if (Techno_Type_Class()->SensorsSight != 0) {
@@ -1769,7 +1771,7 @@ bool FootClass::Captured(HouseClass * newowner, bool announce)
 	return(false);
 }
 
-// FUNCTION: 0x004DBFD0
+// FUNCTION: GAMEMD 0x004DBFD0
 bool FootClass::Is_Considered_Slow(void)
 {
 	if (Get_Class_Weapon_Data(0) == NULL) {
@@ -1787,7 +1789,7 @@ bool FootClass::Is_Considered_Slow(void)
 	return(true);
 }
 
-// FUNCTION: 0x004DC030
+// FUNCTION: GAMEMD 0x004DC030
 void FootClass::On_Movement_Blocked(void)
 {
 	if (Get_Mission() == MISSION_HUNT) {
@@ -1796,7 +1798,7 @@ void FootClass::On_Movement_Blocked(void)
 	}
 }
 
-// FUNCTION: 0x004DC060
+// FUNCTION: GAMEMD 0x004DC060
 void FootClass::Draw_Action_Line(bool force, int unknown) const
 {
 	if (!TarCom && !NavCom) {
@@ -1840,7 +1842,7 @@ static inline void Fill_Action_Rect(Point2D const & point, int pixel)
 	DSurface::Composite->Fill_Rect(Intersect(DSurface::ViewBounds, Action_Line_Rect(point)), pixel);
 }
 
-// FUNCTION: 0x004DC340
+// FUNCTION: GAMEMD 0x004DC340
 void FootClass::FUN_004DC340(void)
 {
 	RGBClass white(255, 255, 255);
@@ -1898,7 +1900,7 @@ void FootClass::FUN_004DC340(void)
 	}
 }
 
-// FUNCTION: 0x004DC760
+// FUNCTION: GAMEMD 0x004DC760
 double FootClass::Threat_Avoidance_Value(void) const
 {
 	if (Team != NULL && Team->Class->AvoidThreats) {
@@ -1907,7 +1909,7 @@ double FootClass::Threat_Avoidance_Value(void) const
 	return(ThreatAvoidanceCoefficient);
 }
 
-// FUNCTION: 0x004DC790
+// FUNCTION: GAMEMD 0x004DC790
 bool FootClass::Should_Delete_Off_Map(void)
 {
 	if (!IsInPlayfield) {
@@ -1922,7 +1924,7 @@ bool FootClass::Should_Delete_Off_Map(void)
 	return(true);
 }
 
-// FUNCTION: 0x004DC810
+// FUNCTION: GAMEMD 0x004DC810
 void FootClass::Set_Waypoint_Path(PathType path, char index)
 {
 	if (path != PATH_NONE) {
@@ -1938,7 +1940,7 @@ void FootClass::Set_Waypoint_Path(PathType path, char index)
 	WaypointOffsetCell = Cell(0, 0);
 }
 
-// FUNCTION: 0x004DC8C0
+// FUNCTION: GAMEMD 0x004DC8C0
 bool FootClass::Execute_Waypoint_Path(WaypointClass * waypoint)
 {
 	bool action_succeeded = false;
@@ -2077,7 +2079,7 @@ bool FootClass::Execute_Waypoint_Path(WaypointClass * waypoint)
 	return(action_succeeded);
 }
 
-// FUNCTION: 0x004DCE80
+// FUNCTION: GAMEMD 0x004DCE80
 bool FootClass::Tiberium_Check(Cell & center)
 {
 	if (!Map.In_Local_Radar(center)) return(false);
@@ -2092,7 +2094,7 @@ bool FootClass::Tiberium_Check(Cell & center)
 	return(false);
 }
 
-// FUNCTION: 0x004DCFE0
+// FUNCTION: GAMEMD 0x004DCFE0
 bool FootClass::Goto_Tiberium(int rad, unsigned allow_weighted)
 {
 	if (NavCom == NULL) {
@@ -2107,7 +2109,7 @@ bool FootClass::Goto_Tiberium(int rad, unsigned allow_weighted)
 	return(false);
 }
 
-// FUNCTION: 0x004DD0A0
+// FUNCTION: GAMEMD 0x004DD0A0
 Cell FootClass::ScanForTiberium(int rad, unsigned unk)
 {
 	Cell bestcell = CELL_NONE;
@@ -2162,7 +2164,7 @@ Cell FootClass::ScanForTiberium(int rad, unsigned unk)
 	return(bestcell);
 }
 
-// FUNCTION: 0x004DD890
+// FUNCTION: GAMEMD 0x004DD890
 Cell FootClass::Search_For_Weed(int rad)
 {
 	Cell bestcell = CELL_NONE;
@@ -2199,7 +2201,7 @@ Cell FootClass::Search_For_Weed(int rad)
 	return(bestcell);
 }
 
-// FUNCTION: 0x004DD9F0
+// FUNCTION: GAMEMD 0x004DD9F0
 bool FootClass::Weed_Check(Cell & center, int x, int y)
 {
 	Cell cell = center + Cell(x, y);
@@ -2218,7 +2220,7 @@ bool FootClass::Weed_Check(Cell & center, int x, int y)
 	return(false);
 }
 
-// FUNCTION: 0x004DDB90
+// FUNCTION: GAMEMD 0x004DDB90
 bool FootClass::Goto_Weed(int rad)
 {
 	if (NavCom == NULL) {
@@ -2233,7 +2235,7 @@ bool FootClass::Goto_Weed(int rad)
 	return(false);
 }
 
-// FUNCTION: 0x004DDC40
+// FUNCTION: GAMEMD 0x004DDC40
 bool FootClass::Is_Moving_Onto_Bridge(TechnoClass * docker) const
 {
 	if (CurrentTube >= 0) {
@@ -2242,7 +2244,7 @@ bool FootClass::Is_Moving_Onto_Bridge(TechnoClass * docker) const
 	return(BASECLASS::Is_Moving_Onto_Bridge(docker));
 }
 
-// FUNCTION: 0x004DDC60
+// FUNCTION: GAMEMD 0x004DDC60
 bool FootClass::Is_LZ_Clear(AbstractClass * target) const
 {
 	if (target == NULL) return(false);
@@ -2275,7 +2277,7 @@ bool FootClass::Is_LZ_Clear(AbstractClass * target) const
 	return(true);
 }
 
-// FUNCTION: 0x004DDDE0
+// FUNCTION: GAMEMD 0x004DDDE0
 ActionType FootClass::What_Action(Cell const & cell, bool check_fog, bool disallow_force) const
 {
 	ActionType action = BASECLASS::What_Action(cell, check_fog, disallow_force);
@@ -2299,7 +2301,7 @@ ActionType FootClass::What_Action(Cell const & cell, bool check_fog, bool disall
 	return(action);
 }
 
-// FUNCTION: 0x004DDED0
+// FUNCTION: GAMEMD 0x004DDED0
 ActionType FootClass::What_Action(ObjectClass const * target, bool disallow_force) const
 {
 	ActionType action = BASECLASS::What_Action(target, disallow_force);
@@ -2321,7 +2323,7 @@ ActionType FootClass::What_Action(ObjectClass const * target, bool disallow_forc
 	return(action);
 }
 
-// FUNCTION: 0x004DDF90
+// FUNCTION: GAMEMD 0x004DDF90
 int FootClass::Do_MISSION_RESCUE(void)
 {
 	enum {
@@ -2375,7 +2377,7 @@ int FootClass::Do_MISSION_RESCUE(void)
 	return(Current_Mission_Control().Normal_Delay() + Random_Pick(0, 2));
 }
 
-// FUNCTION: 0x004DE1D0
+// FUNCTION: GAMEMD 0x004DE1D0
 Cell FootClass::Move_Order(Cell const & where, bool consider_fog)
 {
 	ActionType action = What_Action(where, consider_fog, false);
@@ -2424,7 +2426,7 @@ Cell FootClass::Move_Order(Cell const & where, bool consider_fog)
 	return(CELL_NONE);
 }
 
-// FUNCTION: 0x004DE580
+// FUNCTION: GAMEMD 0x004DE580
 void FootClass::Advance_Waypoint_Path(void)
 {
 	if (CurrentPath != PATH_NONE) {
@@ -2434,7 +2436,7 @@ void FootClass::Advance_Waypoint_Path(void)
 	}
 }
 
-// FUNCTION: 0x004DE5D0
+// FUNCTION: GAMEMD 0x004DE5D0
 void FootClass::Delete_Me(void)
 {
 	if (CaptureManager != NULL) {
@@ -2449,13 +2451,13 @@ void FootClass::Delete_Me(void)
 	BASECLASS::Delete_Me();
 }
 
-// FUNCTION: 0x004DE620
+// FUNCTION: GAMEMD 0x004DE620
 bool FootClass::In_Air(void) const
 {
 	return(BASECLASS::In_Air());
 }
 
-// FUNCTION: 0x004DE630
+// FUNCTION: GAMEMD 0x004DE630
 void FootClass::AddPassenger(FootClass * passenger)
 {
 	BASECLASS::AddPassenger(passenger);
@@ -2464,7 +2466,7 @@ void FootClass::AddPassenger(FootClass * passenger)
 	}
 }
 
-// FUNCTION: 0x004DE670
+// FUNCTION: GAMEMD 0x004DE670
 void FootClass::RemovePassenger(FootClass * passenger)
 {
 	Cargo.Detach(passenger);
@@ -2476,7 +2478,7 @@ void FootClass::RemovePassenger(FootClass * passenger)
 	}
 }
 
-// FUNCTION: 0x004DE710
+// FUNCTION: GAMEMD 0x004DE710
 FootClass * FootClass::RemoveFirstPassenger(void)
 {
 	FootClass * passenger = Cargo.Detach_Object();
@@ -2486,23 +2488,23 @@ FootClass * FootClass::RemoveFirstPassenger(void)
 	return(passenger);
 }
 
-// FUNCTION: 0x004DE750
+// FUNCTION: GAMEMD 0x004DE750
 void FootClass::ReceiveGunner(FootClass * gunner)
 {
 }
 
-// FUNCTION: 0x004DE760
+// FUNCTION: GAMEMD 0x004DE760
 void FootClass::RemoveGunner(FootClass * gunner)
 {
 }
 
-// FUNCTION: 0x004DE770
+// FUNCTION: GAMEMD 0x004DE770
 bool FootClass::IsParalyzed(void) const
 {
 	return(ParalysisTimer.Value() != 0);
 }
 
-// FUNCTION: 0x004DE7B0
+// FUNCTION: GAMEMD 0x004DE7B0
 void FootClass::AddSensorsAt(Cell cell)
 {
 	int radius = Techno_Type_Class()->SensorsSight;
@@ -2534,7 +2536,7 @@ void FootClass::AddSensorsAt(Cell cell)
 	}
 }
 
-// FUNCTION: 0x004DE940
+// FUNCTION: GAMEMD 0x004DE940
 void FootClass::RemoveSensorsAt(Cell cell)
 {
 	int radius = Techno_Type_Class()->SensorsSight;
@@ -2571,7 +2573,7 @@ void FootClass::RemoveSensorsAt(Cell cell)
 	}
 }
 
-// FUNCTION: 0x004DEAE0
+// FUNCTION: GAMEMD 0x004DEAE0
 int FootClass::IronCurtain(int duration, HouseClass * source, bool force_shield)
 {
 	if (Techno_Type_Class()->Organic) {
@@ -2590,7 +2592,7 @@ extern const double DAT_007E3570;
 extern const double DAT_007E9280;
 extern const double DAT_007E3860;
 
-// FUNCTION: 0x004DEBB0
+// FUNCTION: GAMEMD 0x004DEBB0
 bool FootClass::Crash(ObjectClass * killer)
 {
 	if (Get_Height_AGL() > 0) {
@@ -2633,7 +2635,7 @@ bool FootClass::Crash(ObjectClass * killer)
 	return(false);
 }
 
-// FUNCTION: 0x004DED70
+// FUNCTION: GAMEMD 0x004DED70
 void const * FootClass::Get_Image_Data(void) const
 {
 	Cell cell = Center_Coord().As_Cell();
@@ -2648,14 +2650,14 @@ void const * FootClass::Get_Image_Data(void) const
 	return(BASECLASS::Get_Image_Data());
 }
 
-// FUNCTION: 0x004DEE50
+// FUNCTION: GAMEMD 0x004DEE50
 BuildingClass * FootClass::FindNearestDockBuilding(BuildingTypeClass * type, unsigned unk2, unsigned unk3) const
 {
 	int distance = -1;
 	return(FindCloserDockBuilding(type, unk2, unk3, &distance));
 }
 
-// FUNCTION: 0x004DEE80
+// FUNCTION: GAMEMD 0x004DEE80
 BuildingClass * FootClass::FindCloserDockBuilding(BuildingTypeClass * type, unsigned unk2, unsigned unk3, int * distance) const
 {
 	BuildingClass * result = NULL;
@@ -2687,7 +2689,7 @@ BuildingClass * FootClass::FindCloserDockBuilding(BuildingTypeClass * type, unsi
 	return(result);
 }
 
-// FUNCTION: 0x004DF040
+// FUNCTION: GAMEMD 0x004DF040
 BuildingClass * FootClass::TryNearestDockBuilding(TypeList<BuildingTypeClass *> * list, unsigned unk2, unsigned unk3) const
 {
 	BuildingClass * result = NULL;
@@ -2705,14 +2707,14 @@ BuildingClass * FootClass::TryNearestDockBuilding(TypeList<BuildingTypeClass *> 
 	return(result);
 }
 
-// FUNCTION: 0x004DF0D0
+// FUNCTION: GAMEMD 0x004DF0D0
 void FootClass::AbortMotion(void)
 {
 	unknown_5A0 = NULL;
 	NavCom = NULL;
 }
 
-// FUNCTION: 0x004DF1A0
+// FUNCTION: GAMEMD 0x004DF1A0
 void FootClass::ClearMegaMissionData(void)
 {
 	MegaMission = MISSION_NONE;
@@ -2721,25 +2723,25 @@ void FootClass::ClearMegaMissionData(void)
 	HasAttackMoveTarget = false;
 }
 
-// FUNCTION: 0x004DF1C0
+// FUNCTION: GAMEMD 0x004DF1C0
 bool FootClass::HaveMegaMission(void) const
 {
 	return(MegaMission != MISSION_NONE);
 }
 
-// FUNCTION: 0x004DF1D0
+// FUNCTION: GAMEMD 0x004DF1D0
 bool FootClass::HaveAttackMoveTarget(void) const
 {
 	return(HasAttackMoveTarget);
 }
 
-// FUNCTION: 0x004DF1E0
+// FUNCTION: GAMEMD 0x004DF1E0
 int FootClass::GetMegaMission(void) const
 {
 	return(MegaMission);
 }
 
-// FUNCTION: 0x004DF1F0
+// FUNCTION: GAMEMD 0x004DF1F0
 Coord FootClass::GetAttackMoveCoords(void)
 {
 	if (MegaDestination) {
@@ -2751,7 +2753,7 @@ Coord FootClass::GetAttackMoveCoords(void)
 	return(Coord(-1, -1, -1));
 }
 
-// FUNCTION: 0x004DF280
+// FUNCTION: GAMEMD 0x004DF280
 void FootClass::ResolveMegaTarget(void)
 {
 	if (MegaTarget) {
@@ -2764,13 +2766,13 @@ void FootClass::ResolveMegaTarget(void)
 	}
 }
 
-// FUNCTION: 0x004DF310
+// FUNCTION: GAMEMD 0x004DF310
 bool FootClass::MegaMissionIsAttackMove(void) const
 {
 	return(MegaMission == MISSION_ATTACK_MOVE);
 }
 
-// FUNCTION: 0x004DF320
+// FUNCTION: GAMEMD 0x004DF320
 bool FootClass::ContinueMegaMission(void)
 {
 	bool result = true;
@@ -2788,7 +2790,7 @@ bool FootClass::ContinueMegaMission(void)
 	return(result);
 }
 
-// FUNCTION: 0x004DF3A0
+// FUNCTION: GAMEMD 0x004DF3A0
 void FootClass::UpdateAttackMove(void)
 {
 	if (MegaDestination) {
@@ -2819,7 +2821,7 @@ void FootClass::UpdateAttackMove(void)
 	}
 }
 
-// FUNCTION: 0x004DF4B0
+// FUNCTION: GAMEMD 0x004DF4B0
 bool FootClass::RefreshMegaMission(void)
 {
 	bool result = false;
@@ -2840,7 +2842,7 @@ bool FootClass::RefreshMegaMission(void)
 namespace LocomotionClass { namespace CLSIDs { extern const CLSID Teleport; } }
 extern int DAT_008B3DF4;
 
-// FUNCTION: 0x004DF7F0
+// FUNCTION: GAMEMD 0x004DF7F0
 bool FootClass::ChronoWarpTo(Coord dest)
 {
 	if (In_Air() || IsIronCurtained() || IsImmobilized || IsBeingWarpedOut() || IsWarpingIn()) {
@@ -2868,7 +2870,7 @@ bool FootClass::ChronoWarpTo(Coord dest)
 	return(true);
 }
 
-// FUNCTION: 0x004DFA50
+// FUNCTION: GAMEMD 0x004DFA50
 bool FootClass::CanBeSelected(void) const
 {
 	if (IsAttackedByLocomotor) {
@@ -2877,7 +2879,7 @@ bool FootClass::CanBeSelected(void) const
 	return(BASECLASS::CanBeSelected());
 }
 
-// FUNCTION: 0x004DFA70
+// FUNCTION: GAMEMD 0x004DFA70
 bool FootClass::EnterGrinder(void)
 {
 	BuildingClass * best = NULL;
@@ -2898,7 +2900,7 @@ bool FootClass::EnterGrinder(void)
 	return(true);
 }
 
-// FUNCTION: 0x004DFB70
+// FUNCTION: GAMEMD 0x004DFB70
 bool FootClass::EnterBioReactor(void)
 {
 	BuildingClass * best = NULL;
@@ -2925,7 +2927,7 @@ bool FootClass::EnterBioReactor(void)
 	return(true);
 }
 
-// FUNCTION: 0x004DFCB0
+// FUNCTION: GAMEMD 0x004DFCB0
 bool FootClass::EnterBattleBunker(void)
 {
 	BuildingClass * best = NULL;
@@ -2951,7 +2953,7 @@ bool FootClass::EnterBattleBunker(void)
 	return(true);
 }
 
-// FUNCTION: 0x004DFE00
+// FUNCTION: GAMEMD 0x004DFE00
 bool FootClass::GarrisonStructure(void)
 {
 	BuildingClass * best = NULL;
@@ -2978,7 +2980,7 @@ bool FootClass::GarrisonStructure(void)
 	return(true);
 }
 
-// FUNCTION: 0x004DFF40
+// FUNCTION: GAMEMD 0x004DFF40
 bool FootClass::EnterTankBunker(void)
 {
 	if (!FUN_0070FB50()) {
@@ -3003,13 +3005,13 @@ bool FootClass::EnterTankBunker(void)
 	return(true);
 }
 
-// FUNCTION: 0x004E0080
+// FUNCTION: GAMEMD 0x004E0080
 bool FootClass::Is_Entering_Structure(void) const
 {
 	return(ShouldEnterAbsorber || ShouldEnterOccupiable || ShouldGarrisonStructure);
 }
 
-// FUNCTION: 0x004E00B0
+// FUNCTION: GAMEMD 0x004E00B0
 void FootClass::Jumpjet_OccupyCell(Cell cell)
 {
 	if (CurrentJumpjetMapCoords != CELL_NONE && cell != CELL_NONE) {
@@ -3020,14 +3022,17 @@ void FootClass::Jumpjet_OccupyCell(Cell cell)
 	CurrentJumpjetMapCoords = cell;
 }
 
-// FUNCTION: 0x004E0130 ObjectClass::Class_Of
+// FUNCTION: GAMEMD 0x004E0130
+// ObjectClass::Class_Of
 
-// FUNCTION: 0x004E0140
+// FUNCTION: GAMEMD 0x004E0140
 bool MissionClass::Ready_To_Next_Mission(void) const
 {
 	return(true);
 }
 
-// FUNCTION: 0x004E0150 TechnoClass::Turret_Facing
+// FUNCTION: GAMEMD 0x004E0150
+// TechnoClass::Turret_Facing
 
-// FUNCTION: 0x004E0170 FootClass::~FootClass
+// SYNTHETIC: GAMEMD 0x004E0170
+// ??_GFootClass@@UAEPAXI@Z

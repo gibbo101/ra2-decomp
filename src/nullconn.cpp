@@ -7,7 +7,7 @@
 #include "nullconn.h"
 #include "wincomm.h"
 
-// FUNCTION: 0x005EF100
+// FUNCTION: GAMEMD 0x005EF100
 NullModemConnClass::NullModemConnClass (int numsend, int numreceive,
 	int maxlen, unsigned short magicnum) :
 	BASECLASS (numsend, numreceive, maxlen, magicnum,
@@ -19,21 +19,21 @@ NullModemConnClass::NullModemConnClass (int numsend, int numreceive,
 	SendBuf = new char [ Actual_Max_Packet() ];
 }
 
-// FUNCTION: 0x005EF150
-// FUNCTION: 0x005EF290
+// FUNCTION: GAMEMD 0x005EF150
+// FUNCTION: GAMEMD 0x005EF290
 NullModemConnClass::~NullModemConnClass (void)
 {
 	delete [] SendBuf;
 }
 
-// FUNCTION: 0x005EF170
+// FUNCTION: GAMEMD 0x005EF170
 void NullModemConnClass::Init (HANDLE port_handle)
 {
 	BASECLASS::Init();
 	PortHandle = port_handle;
 }
 
-// FUNCTION: 0x005EF190
+// FUNCTION: GAMEMD 0x005EF190
 int NullModemConnClass::Send (char *buf, int buflen, void *, int, bool, unsigned short)
 {
 	int *ibuf;
@@ -61,7 +61,7 @@ int NullModemConnClass::Send (char *buf, int buflen, void *, int, bool, unsigned
 	return(true);
 }
 
-// FUNCTION: 0x005EF240
+// FUNCTION: GAMEMD 0x005EF240
 int NullModemConnClass::Compute_CRC (char *buf, int buflen)
 {
 	unsigned int sum, hibit;
@@ -82,13 +82,13 @@ int NullModemConnClass::Compute_CRC (char *buf, int buflen)
 	return((int)sum);
 }
 
-// FUNCTION: 0x005EF270
+// FUNCTION: GAMEMD 0x005EF270
 int NullModemConnClass::Packet_Overhead_Size ( void )
 {
 	return( (PACKET_SERIAL_OVERHEAD_SIZE + sizeof(CommHeaderType)) );
 }
 
-// FUNCTION: 0x005EF280
+// FUNCTION: GAMEMD 0x005EF280
 void NullModemConnClass::Init (void)
 {
 	BASECLASS::Init();
@@ -105,5 +105,6 @@ struct NullConnProbe {
 	NullConnProbe () : A(0), B(0), C(0), D(0) {}
 };
 
-// FUNCTION: 0x005EF2D0 $E3
+// SYNTHETIC: GAMEMD 0x005EF2D0 SYMBOL
+// _$E3
 NullConnProbe NullConnProbeObj;

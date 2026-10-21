@@ -113,16 +113,24 @@ DynamicVectorClass<AnimClass const *> LightningStorm::CloudsManifesting;
 DynamicVectorClass<AnimClass const *> LightningStorm::CloudsPresent;
 DynamicVectorClass<AnimClass const *> LightningStorm::BoltsPresent;
 
-// FUNCTION: 0x00539560 $E117
-// FUNCTION: 0x00539570 $E120
-// FUNCTION: 0x00539580 $E126
-// FUNCTION: 0x005395C0 $E123
-// FUNCTION: 0x00539620 $E132
-// FUNCTION: 0x00539660 $E129
-// FUNCTION: 0x005396C0 $E137
-// FUNCTION: 0x00539700 $E135
+// SYNTHETIC: GAMEMD 0x00539560 SYMBOL
+// _$E117
+// SYNTHETIC: GAMEMD 0x00539570 SYMBOL
+// _$E120
+// SYNTHETIC: GAMEMD 0x00539580 SYMBOL
+// _$E126
+// SYNTHETIC: GAMEMD 0x005395C0 SYMBOL
+// _$E123
+// SYNTHETIC: GAMEMD 0x00539620 SYMBOL
+// _$E132
+// SYNTHETIC: GAMEMD 0x00539660 SYMBOL
+// _$E129
+// SYNTHETIC: GAMEMD 0x005396C0 SYMBOL
+// _$E137
+// SYNTHETIC: GAMEMD 0x00539700 SYMBOL
+// _$E135
 
-// FUNCTION: 0x00539760
+// FUNCTION: GAMEMD 0x00539760
 void FUN_00539760(void)
 {
 	PsyDom::Coords = DAT_00A9F9F8;
@@ -151,7 +159,7 @@ void FUN_00539760(void)
 	FUN_0053AD00(-1, -1, -1, 0);
 }
 
-// FUNCTION: 0x00539890
+// FUNCTION: GAMEMD 0x00539890
 HRESULT __fastcall FUN_00539890(IStream * stream)
 {
 	int count;
@@ -227,7 +235,7 @@ HRESULT __fastcall FUN_00539890(IStream * stream)
 	return(hr);
 }
 
-// FUNCTION: 0x00539AE0
+// FUNCTION: GAMEMD 0x00539AE0
 HRESULT __fastcall FUN_00539AE0(IStream * stream)
 {
 	int count;
@@ -317,13 +325,13 @@ HRESULT __fastcall FUN_00539AE0(IStream * stream)
 	return(hr);
 }
 
-// FUNCTION: 0x00539EA0
+// FUNCTION: GAMEMD 0x00539EA0
 void __fastcall FUN_00539EA0(bool active)
 {
 	LightningStorm::Active = active;
 }
 
-// FUNCTION: 0x00539EB0
+// FUNCTION: GAMEMD 0x00539EB0
 void __fastcall FUN_00539EB0(int duration, int deferment, Cell cell, HouseClass * owner)
 {
 	if (cell == DAT_00A9F9F8) {
@@ -371,7 +379,7 @@ void __fastcall FUN_00539EB0(int duration, int deferment, Cell cell, HouseClass 
 	Map.Flag_To_Redraw(GS_REDRAW_TACTICAL);
 }
 
-// FUNCTION: 0x0053A090
+// FUNCTION: GAMEMD 0x0053A090
 void FUN_0053A090(void)
 {
 	if (LightningStorm::Active) {
@@ -379,7 +387,7 @@ void FUN_0053A090(void)
 	}
 }
 
-// FUNCTION: 0x0053A0B0
+// FUNCTION: GAMEMD 0x0053A0B0
 void FUN_0053A0B0(void)
 {
 	if (LightningStorm::Active) {
@@ -390,37 +398,37 @@ void FUN_0053A0B0(void)
 	}
 }
 
-// FUNCTION: 0x0053A0E0
+// FUNCTION: GAMEMD 0x0053A0E0
 bool FUN_0053A0E0(void)
 {
 	return LightningStorm::Active || LightningStorm::Deferment > 0;
 }
 
-// FUNCTION: 0x0053A100
+// FUNCTION: GAMEMD 0x0053A100
 bool FUN_0053A100(void)
 {
 	return LightningStorm::Active;
 }
 
-// FUNCTION: 0x0053A110
+// FUNCTION: GAMEMD 0x0053A110
 bool FUN_0053A110(void)
 {
 	return NukeFlash::Status == 1;
 }
 
-// FUNCTION: 0x0053A120
+// FUNCTION: GAMEMD 0x0053A120
 bool FUN_0053A120(void)
 {
 	return NukeFlash::Status == 2;
 }
 
-// FUNCTION: 0x0053A130
+// FUNCTION: GAMEMD 0x0053A130
 bool FUN_0053A130(void)
 {
 	return false;
 }
 
-// FUNCTION: 0x0053A140
+// FUNCTION: GAMEMD 0x0053A140
 void __fastcall FUN_0053A140(Cell cell)
 {
 	CellClass * cellptr = &Map[cell];
@@ -436,7 +444,7 @@ void __fastcall FUN_0053A140(Cell cell)
 	}
 }
 
-// FUNCTION: 0x0053A6C0
+// FUNCTION: GAMEMD 0x0053A6C0
 void FUN_0053A6C0(void)
 {
 	int i;
@@ -539,14 +547,14 @@ void FUN_0053A6C0(void)
 	}
 }
 
-// FUNCTION: 0x0053AB50
+// FUNCTION: GAMEMD 0x0053AB50
 void FUN_0053AB50(void)
 {
 	FUN_0053C280();
 	PlayerPtr->RecalcRadar = true;
 }
 
-// FUNCTION: 0x0053AB70
+// FUNCTION: GAMEMD 0x0053AB70
 void FUN_0053AB70(void)
 {
 	NukeFlash::Status = 1;
@@ -558,7 +566,7 @@ void FUN_0053AB70(void)
 	Map.Flag_To_Redraw(GS_REDRAW_TACTICAL);
 }
 
-// FUNCTION: 0x0053AC50
+// FUNCTION: GAMEMD 0x0053AC50
 void FUN_0053AC50(void)
 {
 	NukeFlash::Status = 2;
@@ -568,7 +576,7 @@ void FUN_0053AC50(void)
 	Map.Flag_To_Redraw(GS_REDRAW_TACTICAL);
 }
 
-// FUNCTION: 0x0053AC80
+// FUNCTION: GAMEMD 0x0053AC80
 void __fastcall FUN_0053AC80(int r, int g, int b, bool tint)
 {
 	HashIterator it = {0, 0, false};
@@ -581,7 +589,7 @@ void __fastcall FUN_0053AC80(int r, int g, int b, bool tint)
 	}
 }
 
-// FUNCTION: 0x0053AD00
+// FUNCTION: GAMEMD 0x0053AD00
 void __fastcall FUN_0053AD00(int r, int g, int b, bool tint)
 {
 	int i;
@@ -599,7 +607,7 @@ void __fastcall FUN_0053AD00(int r, int g, int b, bool tint)
 	Map.Flag_To_Redraw(GS_REDRAW_TACTICAL);
 }
 
-// FUNCTION: 0x0053AE00
+// FUNCTION: GAMEMD 0x0053AE00
 void FUN_0053AE00(void)
 {
 	wchar_t const * text = StringTable::LoadString("Msg:LightningStormActive", NULL, "D:\\ra2mdpost\\Ion.cpp", 0x463);
@@ -610,13 +618,13 @@ void FUN_0053AE00(void)
 	Session.Messages.Add_Message(NULL, 0, text, scheme, TextPrintType(0x4046), 150, false);
 }
 
-// FUNCTION: 0x0053B400
+// FUNCTION: GAMEMD 0x0053B400
 bool FUN_0053B400(void)
 {
 	return PsyDom::Status ? true : false;
 }
 
-// FUNCTION: 0x0053B410
+// FUNCTION: GAMEMD 0x0053B410
 void FUN_0053B410(void)
 {
 	wchar_t const * text = StringTable::LoadString("Msg:DominatorActive", NULL, "D:\\ra2mdpost\\Ion.cpp", 0x53b);
@@ -627,7 +635,7 @@ void FUN_0053B410(void)
 	Session.Messages.Add_Message(NULL, 0, text, scheme, TextPrintType(0x4046), 150, false);
 }
 
-// FUNCTION: 0x0053AE50
+// FUNCTION: GAMEMD 0x0053AE50
 void __fastcall FUN_0053AE50(HouseClass * owner, Cell cell)
 {
 	if (Rule->DominatorFirstAnim == NULL || Rule->DominatorSecondAnim == NULL) {
@@ -650,7 +658,7 @@ static inline TechnoClass * Cast_Techno(ObjectClass * object)
 	return (object->AbstractFlags & 1) ? (TechnoClass *)object : NULL;
 }
 
-// FUNCTION: 0x0053B080
+// FUNCTION: GAMEMD 0x0053B080
 void FUN_0053B080(void)
 {
 	IonBlastClass * blast = new IonBlastClass(Map[PsyDom::Coords].Center_Coord());
@@ -694,7 +702,7 @@ void FUN_0053B080(void)
 	}
 }
 
-// FUNCTION: 0x0053B3F0
+// FUNCTION: GAMEMD 0x0053B3F0
 void FUN_0053B3F0(void)
 {
 }
@@ -716,7 +724,7 @@ void __fastcall FUN_007518C0(bool enabled);
 void __fastcall FUN_00753580(void);
 void __fastcall FUN_0053BBA0(bool forward);
 
-// FUNCTION: 0x0053B560
+// FUNCTION: GAMEMD 0x0053B560
 void FUN_0053B560(void)
 {
 	switch (DAT_00A9FAB0) {
@@ -846,7 +854,7 @@ static inline void Fade_555(unsigned short * dest, int width, int height, int pa
 	}
 }
 
-// FUNCTION: 0x0053B780
+// FUNCTION: GAMEMD 0x0053B780
 void __fastcall FUN_0053B780(DSurface * surface)
 {
 	if (DAT_00A9FAB0 != 3) {
@@ -872,13 +880,13 @@ void __fastcall FUN_0053B780(DSurface * surface)
 	surface->Unlock();
 }
 
-// FUNCTION: 0x0053BAD0
+// FUNCTION: GAMEMD 0x0053BAD0
 bool FUN_0053BAD0(void)
 {
 	return DAT_00A9FAB0 != 0;
 }
 
-// FUNCTION: 0x0053BAE0
+// FUNCTION: GAMEMD 0x0053BAE0
 bool FUN_0053BAE0(void)
 {
 	return DAT_00A9FAB0 != 0;
@@ -886,7 +894,7 @@ bool FUN_0053BAE0(void)
 
 
 
-// FUNCTION: 0x0053BAF0
+// FUNCTION: GAMEMD 0x0053BAF0
 void FUN_0053BAF0(void)
 {
 	if (DAT_00A9FA9C_Surface != NULL) {
@@ -899,7 +907,7 @@ void FUN_0053BAF0(void)
 	DAT_00A9FAA4 = 0;
 }
 
-// FUNCTION: 0x0053BB80
+// FUNCTION: GAMEMD 0x0053BB80
 void FUN_0053BB80(void)
 {
 	if (DAT_00A9FA9C_Surface != NULL) {
@@ -908,7 +916,7 @@ void FUN_0053BB80(void)
 	DAT_00A9FA9C_Surface = NULL;
 }
 
-// FUNCTION: 0x0053C280
+// FUNCTION: GAMEMD 0x0053C280
 void __fastcall FUN_0053C280(void)
 {
 	if (NukeFlash::Status != 1 && DAT_00A9FAB0 == 0) {
@@ -928,7 +936,7 @@ void __fastcall FUN_0053C280(void)
 	}
 }
 
-// FUNCTION: 0x0053C450
+// FUNCTION: GAMEMD 0x0053C450
 bool TechnoClass::CanBePermaMindControlled(void) const
 {
 	if (this == NULL) {
@@ -950,18 +958,30 @@ bool TechnoClass::CanBePermaMindControlled(void) const
 	return true;
 }
 
-// FUNCTION: 0x0053C4C0 ?$DynamicVectorClass@PBVAnimClass@@::Clear
-// FUNCTION: 0x0053C4F0 ?$DynamicVectorClass@PBVAnimClass@@::ID
-// FUNCTION: 0x0053C510 ?$VectorClass@PBVAnimClass@@::GetItem
-// FUNCTION: 0x0053C520 ?$VectorClass@PBVAnimClass@@::operator==
-// FUNCTION: 0x0053C560 ?$VectorClass@PBVAnimClass@@::Resize
-// FUNCTION: 0x0053C610 ?$VectorClass@PBVAnimClass@@::Clear
-// FUNCTION: 0x0053C640 ?$VectorClass@PBVAnimClass@@::ID
-// FUNCTION: 0x0053C680 ?$VectorClass@PBVAnimClass@@::ID
-// FUNCTION: 0x0053C6A0 ?$DynamicVectorClass@PBVAnimClass@@::Resize
-// FUNCTION: 0x0053C750 ?$DynamicVectorClass@PBVAnimClass@@::ID
-// FUNCTION: 0x0053C780 ?$VectorClass@PBVAnimClass@@::~?$VectorClass@PBVAnimClass@@
-// FUNCTION: 0x0053C7D0 ?$DynamicVectorClass@PBVAnimClass@@::~?$DynamicVectorClass@PBVAnimClass@@
+// TEMPLATE: GAMEMD 0x0053C4C0
+// ?Clear@?$DynamicVectorClass@PBVAnimClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0053C4F0
+// ?ID@?$DynamicVectorClass@PBVAnimClass@@@@UAEHPBQBVAnimClass@@@Z
+// TEMPLATE: GAMEMD 0x0053C510
+// ?GetItem@?$VectorClass@PBVAnimClass@@@@UBEPBVAnimClass@@H@Z
+// TEMPLATE: GAMEMD 0x0053C520
+// ??8?$VectorClass@PBVAnimClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x0053C560
+// ?Resize@?$VectorClass@PBVAnimClass@@@@UAE_NHPBQBVAnimClass@@@Z
+// TEMPLATE: GAMEMD 0x0053C610
+// ?Clear@?$VectorClass@PBVAnimClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0053C640
+// ?ID@?$VectorClass@PBVAnimClass@@@@UAEHABQBVAnimClass@@@Z
+// TEMPLATE: GAMEMD 0x0053C680
+// ?ID@?$VectorClass@PBVAnimClass@@@@UAEHPBQBVAnimClass@@@Z
+// TEMPLATE: GAMEMD 0x0053C6A0
+// ?Resize@?$DynamicVectorClass@PBVAnimClass@@@@UAE_NHPBQBVAnimClass@@@Z
+// TEMPLATE: GAMEMD 0x0053C750
+// ?ID@?$DynamicVectorClass@PBVAnimClass@@@@UAEHABQBVAnimClass@@@Z
+// SYNTHETIC: GAMEMD 0x0053C780
+// ??_G?$VectorClass@PBVAnimClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x0053C7D0
+// ??_G?$DynamicVectorClass@PBVAnimClass@@@@UAEPAXI@Z
 template class DynamicVectorClass<AnimClass const *>;
 template class VectorClass<AnimClass const *>;
 
@@ -981,34 +1001,44 @@ extern const double DAT_007E1710;
 extern const double DAT_007E1718;
 extern const double DAT_007EC010;
 
-// FUNCTION: 0x0053C820 $E158
+// SYNTHETIC: GAMEMD 0x0053C820 SYMBOL
+// _$E158
 double DAT_00A9FF90 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x0053C850 $E161
+// SYNTHETIC: GAMEMD 0x0053C850 SYMBOL
+// _$E161
 double DAT_00AA0140 = DAT_00A9FF90 / DAT_007EC010;
 
-// FUNCTION: 0x0053C870 $E164
+// SYNTHETIC: GAMEMD 0x0053C870 SYMBOL
+// _$E164
 double DAT_00AA0110 = DAT_007E1718 / DAT_00AA0140;
 
-// FUNCTION: 0x0053C890 $E167
+// SYNTHETIC: GAMEMD 0x0053C890 SYMBOL
+// _$E167
 double DAT_00AA0108 = DAT_007E1720 * DAT_007EC018;
 
-// FUNCTION: 0x0053C8B0 $E170
+// SYNTHETIC: GAMEMD 0x0053C8B0 SYMBOL
+// _$E170
 double DAT_00A9FF98 = DAT_007E1728 * DAT_007EC018;
 
-// FUNCTION: 0x0053C8D0 $E173
+// SYNTHETIC: GAMEMD 0x0053C8D0 SYMBOL
+// _$E173
 double DAT_00A9FAE0 = DAT_007E1730 * DAT_007EC018;
 
-// FUNCTION: 0x0053C8F0 $E176
+// SYNTHETIC: GAMEMD 0x0053C8F0 SYMBOL
+// _$E176
 int DAT_00AA0148 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00A9FAE0 - DAT_00A9FF98) * DAT_00A9FF90));
 
-// FUNCTION: 0x0053C930 $E179
+// SYNTHETIC: GAMEMD 0x0053C930 SYMBOL
+// _$E179
 double DAT_00A9FFA0 = FUN_004CADE0(DAT_00AA0148 * DAT_007E1740);
 
-// FUNCTION: 0x0053C960 $E182
+// SYNTHETIC: GAMEMD 0x0053C960 SYMBOL
+// _$E182
 double DAT_00A9FFC0 = FUN_004CADE0((DAT_00AA0148 * 2) / DAT_00A9FF90);
 
-// FUNCTION: 0x0053C990 $E185
+// SYNTHETIC: GAMEMD 0x0053C990 SYMBOL
+// _$E185
 int DAT_00AA013C = (int)(DAT_00AA0148 * 4 + DAT_007E1738);
 
 struct IonShortPair {
@@ -1031,14 +1061,18 @@ struct IonIntQuad {
 	IonIntQuad() { A = 0; B = 0; C = 0; D = 0; }
 };
 
-// FUNCTION: 0x0053C9C0 $E188
+// SYNTHETIC: GAMEMD 0x0053C9C0 SYMBOL
+// _$E188
 IonShortPair DAT_00A9FF88;
 
-// FUNCTION: 0x0053C9D0 $E191
+// SYNTHETIC: GAMEMD 0x0053C9D0 SYMBOL
+// _$E191
 IonIntTriple DAT_00A9FFB0;
 
-// FUNCTION: 0x0053C9F0 $E194
+// SYNTHETIC: GAMEMD 0x0053C9F0 SYMBOL
+// _$E194
 IonDefaults DAT_00AA0130;
 
-// FUNCTION: 0x0053CA10 $E197
+// SYNTHETIC: GAMEMD 0x0053CA10 SYMBOL
+// _$E197
 IonIntQuad DAT_00A9FF70;

@@ -7,20 +7,34 @@
 #include "rect.h"
 #include "geometry.h"
 
-// FUNCTION: 0x00730760 $E2
-// FUNCTION: 0x00730780 $E5
-// FUNCTION: 0x007307B0 $E8
-// FUNCTION: 0x007307D0 $E11
-// FUNCTION: 0x007307F0 $E14
-// FUNCTION: 0x00730810 $E17
-// FUNCTION: 0x00730830 $E20
-// FUNCTION: 0x00730850 $E23
-// FUNCTION: 0x00730890 $E26
-// FUNCTION: 0x007308C0 $E29
-// FUNCTION: 0x007308F0 $E32
-// FUNCTION: 0x00730920 $E35
-// FUNCTION: 0x00730930 $E38
-// FUNCTION: 0x00730950 $E41
+// SYNTHETIC: GAMEMD 0x00730760 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x00730780 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x007307B0 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x007307D0 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x007307F0 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x00730810 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x00730830 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x00730850 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x00730890 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x007308C0 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x007308F0 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x00730920 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x00730930 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x00730950 SYMBOL
+// _$E41
 
 
 #include "_rules.h"
@@ -93,7 +107,7 @@ class BeaconManagerClass
 extern BeaconManagerClass BeaconManager;
 
 
-// FUNCTION: 0x00730970
+// FUNCTION: GAMEMD 0x00730970
 void FUN_00730970(void)
 {
 	if (DAT_00B0FE6C) {
@@ -110,7 +124,7 @@ static inline bool Player_Owned(TechnoClass * techno)
 	return techno->House->Is_Player_Control();
 }
 
-// FUNCTION: 0x00730990
+// FUNCTION: GAMEMD 0x00730990
 bool __fastcall FUN_00730990(int group)
 {
 	int count = DAT_00A8EC78.Count();
@@ -123,7 +137,7 @@ bool __fastcall FUN_00730990(int group)
 	return true;
 }
 
-// FUNCTION: 0x00730A10
+// FUNCTION: GAMEMD 0x00730A10
 int __fastcall FUN_00730A10(int group)
 {
 	int total = 0;
@@ -137,7 +151,7 @@ int __fastcall FUN_00730A10(int group)
 	return total;
 }
 
-// FUNCTION: 0x00730A90
+// FUNCTION: GAMEMD 0x00730A90
 void __fastcall FUN_00730A90(wchar_t const * text, int timeout)
 {
 	if (timeout == -1) {
@@ -150,13 +164,13 @@ void __fastcall FUN_00730A90(wchar_t const * text, int timeout)
 	Session.Messages.Add_Message(NULL, 0, text, color, TextPrintType(TPF_USE_GRAD_PAL | TPF_FULLSHADOW | TPF_6PT_GRAD), timeout, true);
 }
 
-// FUNCTION: 0x00730AD0
+// FUNCTION: GAMEMD 0x00730AD0
 int FUN_00730AD0(void)
 {
 	return TPF_USE_GRAD_PAL | TPF_FULLSHADOW | TPF_6PT_GRAD;
 }
 
-// FUNCTION: 0x00730AE0
+// FUNCTION: GAMEMD 0x00730AE0
 int FUN_00730AE0(void)
 {
 	return 240;
@@ -168,7 +182,7 @@ static inline UnitClass * Unit_Of(ObjectClass * object)
 	return (object->RTTI == RTTI_UNIT) ? (UnitClass *)object : NULL;
 }
 
-// FUNCTION: 0x00730D60
+// FUNCTION: GAMEMD 0x00730D60
 void FUN_00730D60(void)
 {
 	if (FUN_00637AA0()) {
@@ -202,7 +216,7 @@ void FUN_00730D60(void)
 	}
 }
 
-// FUNCTION: 0x00730EA0
+// FUNCTION: GAMEMD 0x00730EA0
 void FUN_00730EA0(void)
 {
 	if (DAT_00A8ECB8.Count() > 0) {
@@ -223,7 +237,7 @@ void FUN_00730EA0(void)
 	}
 }
 
-// FUNCTION: 0x00730F30
+// FUNCTION: GAMEMD 0x00730F30
 void FUN_00730F30(void)
 {
 	if (!Unsorted::MuteSWLaunches && Rule->MaximumCheerRate + DAT_0084555C < Unsorted::CurrentFrame) {
@@ -232,7 +246,7 @@ void FUN_00730F30(void)
 	}
 }
 
-// FUNCTION: 0x00730FE0
+// FUNCTION: GAMEMD 0x00730FE0
 void FUN_00730FE0(void)
 {
 	if (DAT_00A8ECB8.Count() > 0) {
@@ -253,7 +267,7 @@ void FUN_00730FE0(void)
 	}
 }
 
-// FUNCTION: 0x00731060
+// FUNCTION: GAMEMD 0x00731060
 void __fastcall FUN_00731060(int group)
 {
 	int count = DAT_00A8EC78.Count();
@@ -270,7 +284,7 @@ void __fastcall FUN_00731060(int group)
 	}
 }
 
-// FUNCTION: 0x007310D0
+// FUNCTION: GAMEMD 0x007310D0
 void __fastcall FUN_007310D0(int group)
 {
 	int count = DAT_00A8EC78.Count();
@@ -282,7 +296,7 @@ void __fastcall FUN_007310D0(int group)
 	}
 }
 
-// FUNCTION: 0x00731130
+// FUNCTION: GAMEMD 0x00731130
 bool __fastcall FUN_00731130(int group)
 {
 	for (int i = DAT_00A8EC78.Count() - 1; i >= 0; i--) {
@@ -308,7 +322,7 @@ static inline void Cancel_Modes(void)
 	Map.Place_Beacon_Mode_Control(0);
 }
 
-// FUNCTION: 0x007311C0
+// FUNCTION: GAMEMD 0x007311C0
 void __fastcall FUN_007311C0(int group)
 {
 	Cancel_Modes();
@@ -332,7 +346,7 @@ void __fastcall FUN_007311C0(int group)
 	FUN_0070D150();
 }
 
-// FUNCTION: 0x007313A0
+// FUNCTION: GAMEMD 0x007313A0
 void __fastcall FUN_007313A0(int group)
 {
 	Cancel_Modes();
@@ -353,7 +367,7 @@ void __fastcall FUN_007313A0(int group)
 	Unsorted::MoveFeedback = true;
 }
 
-// FUNCTION: 0x007314C0
+// FUNCTION: GAMEMD 0x007314C0
 void __fastcall FUN_007314C0(int group)
 {
 	Cancel_Modes();
@@ -378,7 +392,7 @@ static inline bool Is_Base_Unit(UnitTypeClass const * type)
 	return false;
 }
 
-// FUNCTION: 0x007315A0
+// FUNCTION: GAMEMD 0x007315A0
 void FUN_007315A0(void)
 {
 	Coord yard = DAT_00B0FE10;
@@ -430,7 +444,7 @@ place:
 	Map.Flag_To_Redraw(GS_REDRAW_TACTICAL);
 }
 
-// FUNCTION: 0x00731840
+// FUNCTION: GAMEMD 0x00731840
 void __fastcall FUN_00731840(int house)
 {
 	if (Session.Type != GAME_NORMAL && !Scen->Special.IsAllianceFixed && Rule->AlliesAllowed && Rule->AllyChangeAllowed) {
@@ -438,7 +452,7 @@ void __fastcall FUN_00731840(int house)
 	}
 }
 
-// FUNCTION: 0x007318F0
+// FUNCTION: GAMEMD 0x007318F0
 void FUN_007318F0(void)
 {
 	if (DAT_00A8ECB8.Count()) {
@@ -448,7 +462,7 @@ void FUN_007318F0(void)
 	}
 }
 
-// FUNCTION: 0x00731A10
+// FUNCTION: GAMEMD 0x00731A10
 void FUN_00731A10(void)
 {
 	PlanningNode * node = FUN_0063AC60();
@@ -459,7 +473,7 @@ void FUN_00731A10(void)
 	}
 }
 
-// FUNCTION: 0x00731A30
+// FUNCTION: GAMEMD 0x00731A30
 void FUN_00731A30(void)
 {
 	if (!Unsorted::MuteSWLaunches) {
@@ -467,7 +481,7 @@ void FUN_00731A30(void)
 	}
 }
 
-// FUNCTION: 0x00731A50
+// FUNCTION: GAMEMD 0x00731A50
 void __fastcall FUN_00731A50(bool flag)
 {
 	if (!Unsorted::MuteSWLaunches) {
@@ -476,7 +490,7 @@ void __fastcall FUN_00731A50(bool flag)
 	}
 }
 
-// FUNCTION: 0x00731A70
+// FUNCTION: GAMEMD 0x00731A70
 void __fastcall FUN_00731A70(bool flag)
 {
 	FUN_00637A10();
@@ -495,7 +509,7 @@ extern bool DAT_00B0FE58;
 extern bool DAT_00B0FE64;
 namespace Unsorted { extern int NavCycleMode; }
 
-// FUNCTION: 0x00731A90
+// FUNCTION: GAMEMD 0x00731A90
 bool FUN_00731A90(void)
 {
 	return FUN_00637AA0();
@@ -515,13 +529,13 @@ static inline bool All_Selected_Can_Attack_Move(void)
 	return true;
 }
 
-// FUNCTION: 0x00731AA0
+// FUNCTION: GAMEMD 0x00731AA0
 bool FUN_00731AA0(void)
 {
 	return All_Selected_Can_Attack_Move();
 }
 
-// FUNCTION: 0x00731AF0
+// FUNCTION: GAMEMD 0x00731AF0
 void FUN_00731AF0(void)
 {
 	if (DAT_00A8ECB8.Count() == 0) {
@@ -536,7 +550,7 @@ void FUN_00731AF0(void)
 	DAT_00B0FE58 = true;
 }
 
-// FUNCTION: 0x00731BE0
+// FUNCTION: GAMEMD 0x00731BE0
 void FUN_00731BE0(void)
 {
 	DAT_00B0FE58 = false;
@@ -547,7 +561,7 @@ static inline bool Key_Down(int key)
 	return InputManagerClass::Instance->IsKeyPressed(key);
 }
 
-// FUNCTION: 0x00731BF0
+// FUNCTION: GAMEMD 0x00731BF0
 bool FUN_00731BF0(void)
 {
 	if (DAT_00B0FE58) {
@@ -570,44 +584,44 @@ bool FUN_00731BF0(void)
 	return false;
 }
 
-// FUNCTION: 0x00731CB0
+// FUNCTION: GAMEMD 0x00731CB0
 int FUN_00731CB0(void)
 {
 	return 0x47;
 }
 
-// FUNCTION: 0x00731CC0
+// FUNCTION: GAMEMD 0x00731CC0
 int FUN_00731CC0(void)
 {
 	return 0x16;
 }
 
-// FUNCTION: 0x00731CD0
+// FUNCTION: GAMEMD 0x00731CD0
 int FUN_00731CD0(void)
 {
 	return Map.Get_Mouse_Start_Frame((MouseType)0x4d, false);
 }
 
-// FUNCTION: 0x00731CE0
+// FUNCTION: GAMEMD 0x00731CE0
 int FUN_00731CE0(void)
 {
 	return Map.Get_Mouse_Start_Frame((MouseType)0x4c, false);
 }
 
-// FUNCTION: 0x00731CF0
+// FUNCTION: GAMEMD 0x00731CF0
 void FUN_00731CF0(void)
 {
 	DAT_00B0FE58 = false;
 }
 
-// FUNCTION: 0x00731D00
+// FUNCTION: GAMEMD 0x00731D00
 void __fastcall FUN_00731D00(int mode)
 {
 	Unsorted::NavCycleMode = mode;
 	DAT_00B0FE58 = false;
 }
 
-// FUNCTION: 0x00731D10
+// FUNCTION: GAMEMD 0x00731D10
 wchar_t * __fastcall FUN_00731D10(wchar_t * buffer)
 {
 	if (DAT_00A8ECB8.Count() == 0) {
@@ -637,7 +651,7 @@ int __fastcall FUN_007325C0(TechnoClass * techno, int unused);
 void __fastcall FUN_006DA770(Tactical * tactical);
 extern Tactical * TacticalMap;
 
-// FUNCTION: 0x00731D90
+// FUNCTION: GAMEMD 0x00731D90
 void __fastcall FUN_00731D90(wchar_t * buffer, wchar_t const * name)
 {
 	wchar_t upper[100];
@@ -663,7 +677,7 @@ void __fastcall FUN_00731D90(wchar_t * buffer, wchar_t const * name)
 	wcscpy(buffer, StringTable::LoadString("MSG:NavEmpty", NULL, "D:\\ra2mdpost\\UICmnds.cpp", 0x3fe));
 }
 
-// FUNCTION: 0x00731EB0
+// FUNCTION: GAMEMD 0x00731EB0
 TechnoList * __fastcall FUN_00731EB0(bool (__fastcall * test)(TechnoClass *, int), int arg)
 {
 	TechnoList * result = new TechnoList;
@@ -677,7 +691,7 @@ TechnoList * __fastcall FUN_00731EB0(bool (__fastcall * test)(TechnoClass *, int
 	return result;
 }
 
-// FUNCTION: 0x00731F70
+// FUNCTION: GAMEMD 0x00731F70
 ObjectList * __fastcall FUN_00731F70(bool (__fastcall * test)(ObjectClass *, int), int arg)
 {
 	ObjectList * result = new ObjectList;
@@ -691,7 +705,7 @@ ObjectList * __fastcall FUN_00731F70(bool (__fastcall * test)(ObjectClass *, int
 	return result;
 }
 
-// FUNCTION: 0x00732050
+// FUNCTION: GAMEMD 0x00732050
 ObjectList * FUN_00732050(void)
 {
 	ObjectList * result = new ObjectList;
@@ -705,7 +719,7 @@ ObjectList * FUN_00732050(void)
 	return result;
 }
 
-// FUNCTION: 0x00732110
+// FUNCTION: GAMEMD 0x00732110
 void __fastcall FUN_00732110(ObjectList * list, void (__fastcall * fn)(ObjectClass *, int), int arg)
 {
 	int count = list->Count();
@@ -714,7 +728,7 @@ void __fastcall FUN_00732110(ObjectList * list, void (__fastcall * fn)(ObjectCla
 	}
 }
 
-// FUNCTION: 0x00732140
+// FUNCTION: GAMEMD 0x00732140
 void __fastcall FUN_00732140(ObjectList * list, bool (__fastcall * test)(ObjectClass *, int), void (__fastcall * fn)(ObjectClass *, int), int test_arg, int fn_arg)
 {
 	int count = list->Count();
@@ -726,7 +740,7 @@ void __fastcall FUN_00732140(ObjectList * list, bool (__fastcall * test)(ObjectC
 	}
 }
 
-// FUNCTION: 0x00732190
+// FUNCTION: GAMEMD 0x00732190
 bool __fastcall FUN_00732190(ObjectList * list, bool (__fastcall * test)(ObjectClass *, int), int arg)
 {
 	int count = list->Count();
@@ -738,7 +752,7 @@ bool __fastcall FUN_00732190(ObjectList * list, bool (__fastcall * test)(ObjectC
 	return true;
 }
 
-// FUNCTION: 0x007321D0
+// FUNCTION: GAMEMD 0x007321D0
 bool __fastcall FUN_007321D0(ObjectList * list, bool (__fastcall * test)(ObjectClass *, int), int arg)
 {
 	int count = list->Count();
@@ -750,7 +764,7 @@ bool __fastcall FUN_007321D0(ObjectList * list, bool (__fastcall * test)(ObjectC
 	return false;
 }
 
-// FUNCTION: 0x00732210
+// FUNCTION: GAMEMD 0x00732210
 int __fastcall FUN_00732210(DynamicVectorClass<char const *> * list, char const * name)
 {
 	for (int i = 0; i < list->Count(); i++) {
@@ -761,7 +775,7 @@ int __fastcall FUN_00732210(DynamicVectorClass<char const *> * list, char const 
 	return -1;
 }
 
-// FUNCTION: 0x00732580
+// FUNCTION: GAMEMD 0x00732580
 int __fastcall Is_Owned_Active(TechnoClass * techno, int unused)
 {
 	if (techno && techno->IsActive) {
@@ -778,7 +792,7 @@ int __fastcall Is_Owned_Active(TechnoClass * techno, int unused)
 	return false;
 }
 
-// FUNCTION: 0x007325C0
+// FUNCTION: GAMEMD 0x007325C0
 int __fastcall Is_Selectable_Combatant(TechnoClass * techno, int unused)
 {
 	if (techno->Fetch_RTTI() != RTTI_BUILDING && techno->Techno_Type_Class()->IsSelectableCombatant && techno->CanBeSelectedNow()) {
@@ -805,7 +819,7 @@ static inline TechnoList * Visible_Of_Name(char const * name)
 	return list;
 }
 
-// FUNCTION: 0x00732770
+// FUNCTION: GAMEMD 0x00732770
 int __fastcall Is_Player_Alive_Unit_Of(TechnoClass * techno, char const * name)
 {
 	if (techno && techno->IsActive && Player_Owned(techno) && techno->Is_Type_Named(name)) {
@@ -822,7 +836,7 @@ typedef DynamicVectorClass<char const *> NameList;
 NameList * FUN_00732D10(void);
 bool __fastcall FUN_00732C30(TechnoClass * techno, NameList * names);
 
-// FUNCTION: 0x00732C30
+// FUNCTION: GAMEMD 0x00732C30
 bool __fastcall Is_Named_Selectable(TechnoClass * techno, DynamicVectorClass<char const *> * names)
 {
 	int count = names->Count();
@@ -840,7 +854,7 @@ bool __fastcall Is_Named_Selectable(TechnoClass * techno, DynamicVectorClass<cha
 	return false;
 }
 
-// FUNCTION: 0x00732CA0
+// FUNCTION: GAMEMD 0x00732CA0
 void FUN_00732CA0(void)
 {
 	if (!Unsorted::TypeSelecting) {
@@ -849,7 +863,7 @@ void FUN_00732CA0(void)
 	}
 }
 
-// FUNCTION: 0x00732CC0
+// FUNCTION: GAMEMD 0x00732CC0
 void FUN_00732CC0(void)
 {
 	if (Unsorted::TypeSelecting) {
@@ -861,7 +875,7 @@ void FUN_00732CC0(void)
 	}
 }
 
-// FUNCTION: 0x00732D00
+// FUNCTION: GAMEMD 0x00732D00
 bool FUN_00732D00(void)
 {
 	return Unsorted::TypeSelecting;
@@ -885,7 +899,7 @@ static inline bool Add_Name(NameList * list, char const * name)
 	return false;
 }
 
-// FUNCTION: 0x00732D10
+// FUNCTION: GAMEMD 0x00732D10
 NameList * FUN_00732D10(void)
 {
 	NameList * list = new NameList(0, NULL);
@@ -904,7 +918,7 @@ NameList * FUN_00732D10(void)
 	return list;
 }
 
-// FUNCTION: 0x00732FF0
+// FUNCTION: GAMEMD 0x00732FF0
 void __fastcall FUN_00732FF0(char const * name, void (__fastcall * fn)(ObjectClass *, int), int arg)
 {
 	TechnoList * list;
@@ -939,7 +953,7 @@ static inline TechnoList * New_Techno_List(void)
 	return new TechnoList(0, NULL);
 }
 
-// FUNCTION: 0x007331B0
+// FUNCTION: GAMEMD 0x007331B0
 void FUN_007331B0(void)
 {
 	if (DAT_00B0FE6C) {
@@ -1048,7 +1062,7 @@ static inline void Show_Message(wchar_t * text, wchar_t const * name)
 	FUN_00730A90(text, 240);
 }
 
-// FUNCTION: 0x00733380
+// FUNCTION: GAMEMD 0x00733380
 void __fastcall FUN_00733380(bool redraw)
 {
 	wchar_t text[256];
@@ -1105,7 +1119,7 @@ void __fastcall FUN_00733380(bool redraw)
 	DAT_00B0FE58 = false;
 }
 
-// FUNCTION: 0x007335F0
+// FUNCTION: GAMEMD 0x007335F0
 int __fastcall FUN_007335F0(TechnoClass * techno, int unused)
 {
 	if (techno && techno->IsActive && Player_Owned(techno) && techno->Fetch_RTTI() != RTTI_BUILDING) {
@@ -1114,13 +1128,13 @@ int __fastcall FUN_007335F0(TechnoClass * techno, int unused)
 	return false;
 }
 
-// FUNCTION: 0x00733640
+// FUNCTION: GAMEMD 0x00733640
 wchar_t const * __fastcall FUN_00733640(int status)
 {
 	return Health_Text(status);
 }
 
-// FUNCTION: 0x007336A0
+// FUNCTION: GAMEMD 0x007336A0
 int __fastcall FUN_007336A0(int value)
 {
 	if (value == -1) {
@@ -1172,7 +1186,7 @@ static inline void Mixed_Rank(wchar_t const *& name, int next)
 	}
 }
 
-// FUNCTION: 0x007336C0
+// FUNCTION: GAMEMD 0x007336C0
 void __fastcall FUN_007336C0(bool redraw)
 {
 	wchar_t text[256];
@@ -1229,7 +1243,7 @@ void __fastcall FUN_007336C0(bool redraw)
 	DAT_00B0FE58 = false;
 }
 
-// FUNCTION: 0x00733930
+// FUNCTION: GAMEMD 0x00733930
 wchar_t const * __fastcall FUN_00733930(int level)
 {
 	if (level == 0) {
@@ -1244,7 +1258,7 @@ wchar_t const * __fastcall FUN_00733930(int level)
 	return DAT_00887734;
 }
 
-// FUNCTION: 0x00733990
+// FUNCTION: GAMEMD 0x00733990
 int __fastcall FUN_00733990(int value)
 {
 	if (value == -1) {
@@ -1307,7 +1321,7 @@ static inline void Find_Mixed_Outer(ObjectList * all, char const * chosen, wchar
 	Find_Mixed(all, chosen, name);
 }
 
-// FUNCTION: 0x007339B0
+// FUNCTION: GAMEMD 0x007339B0
 void __fastcall FUN_007339B0(bool redraw)
 {
 	wchar_t text[256];
@@ -1363,7 +1377,7 @@ void __fastcall FUN_007339B0(bool redraw)
 	}
 }
 
-// FUNCTION: 0x00733C60
+// FUNCTION: GAMEMD 0x00733C60
 int __fastcall FUN_00733C60(TechnoClass * techno, char const * name)
 {
 	char const * id = techno->Class_Of()->IniName;
@@ -1373,7 +1387,7 @@ int __fastcall FUN_00733C60(TechnoClass * techno, char const * name)
 	return false;
 }
 
-// FUNCTION: 0x00733CD0
+// FUNCTION: GAMEMD 0x00733CD0
 NameList * __fastcall FUN_00733CD0(ObjectList * objects)
 {
 	NameList * list = new NameList(0, NULL);
@@ -1386,7 +1400,7 @@ NameList * __fastcall FUN_00733CD0(ObjectList * objects)
 
 extern int DAT_00845558;
 
-// FUNCTION: 0x00734210
+// FUNCTION: GAMEMD 0x00734210
 void FUN_00734210(void)
 {
 	DAT_00845550 = timeGetTime() - 0x641;
@@ -1398,7 +1412,7 @@ void FUN_00734210(void)
 extern BuildingClass * DAT_00B0FE5C;
 extern BuildingClass * DAT_00B0FE60;
 
-// FUNCTION: 0x00734250
+// FUNCTION: GAMEMD 0x00734250
 void __fastcall FUN_00734250(BuildingClass * building)
 {
 	if (building->Class->BuildCat == 5) {
@@ -1408,7 +1422,7 @@ void __fastcall FUN_00734250(BuildingClass * building)
 	}
 }
 
-// FUNCTION: 0x00734270
+// FUNCTION: GAMEMD 0x00734270
 void TechnoClass::ClearSidebarTabObject(void)
 {
 	if (this == NULL) {
@@ -1421,19 +1435,19 @@ void TechnoClass::ClearSidebarTabObject(void)
 	}
 }
 
-// FUNCTION: 0x007342A0
+// FUNCTION: GAMEMD 0x007342A0
 BuildingClass * FUN_007342A0(void)
 {
 	return DAT_00B0FE5C;
 }
 
-// FUNCTION: 0x007342B0
+// FUNCTION: GAMEMD 0x007342B0
 BuildingClass * FUN_007342B0(void)
 {
 	return DAT_00B0FE60;
 }
 
-// FUNCTION: 0x007342C0
+// FUNCTION: GAMEMD 0x007342C0
 unsigned char __fastcall FUN_007342C0(ObjectClass * object)
 {
 	if (!object) {
@@ -1443,19 +1457,26 @@ unsigned char __fastcall FUN_007342C0(ObjectClass * object)
 	return flag;
 }
 
-// FUNCTION: 0x007342D0 ?$DynamicVectorClass@PAVTechnoClass@@::?$DynamicVectorClass@PAVTechnoClass@@
+// TEMPLATE: GAMEMD 0x007342D0
+// ??0?$DynamicVectorClass@PAVTechnoClass@@@@QAE@IPBQAVTechnoClass@@@Z
 template class DynamicVectorClass<TechnoClass *>;
 
-// FUNCTION: 0x00734330 ?$DynamicVectorClass@PBD::?$DynamicVectorClass@PBD
-// FUNCTION: 0x00734390 ?$DynamicVectorClass@PBD::Add
+// TEMPLATE: GAMEMD 0x00734330
+// ??0?$DynamicVectorClass@PBD@@QAE@IPBQBD@Z
+// TEMPLATE: GAMEMD 0x00734390
+// ?Add@?$DynamicVectorClass@PBD@@QAE_NABQBD@Z
 template class DynamicVectorClass<char const *>;
 
-// FUNCTION: 0x007343E0 ?$VectorClass@PBD::?$VectorClass@PBD
+// TEMPLATE: GAMEMD 0x007343E0
+// ??0?$VectorClass@PBD@@QAE@HPBQBD@Z
 template class VectorClass<char const *>;
 
-// FUNCTION: 0x00734430 $E149
-// FUNCTION: 0x00734460 $E152
-// FUNCTION: 0x00734480 $E155
+// SYNTHETIC: GAMEMD 0x00734430 SYMBOL
+// _$E149
+// SYNTHETIC: GAMEMD 0x00734460 SYMBOL
+// _$E152
+// SYNTHETIC: GAMEMD 0x00734480 SYMBOL
+// _$E155
 extern double __cdecl FUN_004CAC40(double);
 double DAT_00B11E98 = FUN_004CAC40(pow(256.0, 2.0) * 2);
 extern const double DAT_007F5C18;
@@ -1491,35 +1512,46 @@ struct IntQuad {
 	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
 };
 
-// FUNCTION: 0x007344A0 $E158
+// SYNTHETIC: GAMEMD 0x007344A0 SYMBOL
+// _$E158
 double DAT_00B1BF30 = DAT_007E1720 * DAT_007F5C20;
 
-// FUNCTION: 0x007344C0 $E161
+// SYNTHETIC: GAMEMD 0x007344C0 SYMBOL
+// _$E161
 double DAT_00B12EA0 = DAT_007E1728 * DAT_007F5C20;
 
-// FUNCTION: 0x007344E0 $E164
+// SYNTHETIC: GAMEMD 0x007344E0 SYMBOL
+// _$E164
 double DAT_00B0FE78 = DAT_007E1730 * DAT_007F5C20;
 
-// FUNCTION: 0x00734500 $E167
+// SYNTHETIC: GAMEMD 0x00734500 SYMBOL
+// _$E167
 int DAT_00B1CF5C = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B0FE78 - DAT_00B12EA0) * DAT_00B11E98));
 
-// FUNCTION: 0x00734540 $E170
+// SYNTHETIC: GAMEMD 0x00734540 SYMBOL
+// _$E170
 double DAT_00B13EA8 = FUN_004CADE0(DAT_00B1CF5C * DAT_007E1740);
 
-// FUNCTION: 0x00734570 $E173
+// SYNTHETIC: GAMEMD 0x00734570 SYMBOL
+// _$E173
 double DAT_00B1BF28 = FUN_004CADE0((DAT_00B1CF5C * 2) / DAT_00B11E98);
 
-// FUNCTION: 0x007345A0 $E176
+// SYNTHETIC: GAMEMD 0x007345A0 SYMBOL
+// _$E176
 int DAT_00B1CF4C = (int)(DAT_00B1CF5C * 4 + DAT_007E1738);
 
-// FUNCTION: 0x007345D0 $E179
+// SYNTHETIC: GAMEMD 0x007345D0 SYMBOL
+// _$E179
 ShortPair DAT_00B0FE90;
 
-// FUNCTION: 0x007345E0 $E182
+// SYNTHETIC: GAMEMD 0x007345E0 SYMBOL
+// _$E182
 IntTriple DAT_00B13F18;
 
-// FUNCTION: 0x00734600 $E185
+// SYNTHETIC: GAMEMD 0x00734600 SYMBOL
+// _$E185
 IntTripleMid DAT_00B1CF40;
 
-// FUNCTION: 0x00734620 $E188
+// SYNTHETIC: GAMEMD 0x00734620 SYMBOL
+// _$E188
 IntQuad DAT_00B0FE80;

@@ -43,7 +43,7 @@ typedef union {
 	unsigned int Raw;
 }	PacketType;
 
-// FUNCTION: 0x0042FD30
+// FUNCTION: GAMEMD 0x0042FD30
 int Base64_Encode(void const * source, int slen, void * dest, int dlen)
 {
 	if (source == NULL || slen == 0 || dest == NULL || dlen == 0) {

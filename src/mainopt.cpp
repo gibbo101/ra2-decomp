@@ -66,40 +66,52 @@ struct IntTriple {
 	IntTriple() { A = 0; B = 0; C = 0; }
 };
 
-// FUNCTION: 0x0055F780 $E104
+// SYNTHETIC: GAMEMD 0x0055F780 SYMBOL
+// _$E104
 double DAT_00ABCE40 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2.0);
 
-// FUNCTION: 0x0055F7B0 $E107
+// SYNTHETIC: GAMEMD 0x0055F7B0 SYMBOL
+// _$E107
 double DAT_00ABCF48 = DAT_00ABCE40 / DAT_007ED3B0;
 
-// FUNCTION: 0x0055F7D0 $E110
+// SYNTHETIC: GAMEMD 0x0055F7D0 SYMBOL
+// _$E110
 double DAT_00ABCF30 = DAT_007E1718 / DAT_00ABCF48;
 
-// FUNCTION: 0x0055F7F0 $E113
+// SYNTHETIC: GAMEMD 0x0055F7F0 SYMBOL
+// _$E113
 double DAT_00ABCF28 = DAT_007E1720 * DAT_007ED3B8;
 
-// FUNCTION: 0x0055F810 $E116
+// SYNTHETIC: GAMEMD 0x0055F810 SYMBOL
+// _$E116
 double DAT_00ABCE48 = DAT_007E1728 * DAT_007ED3B8;
 
-// FUNCTION: 0x0055F830 $E119
+// SYNTHETIC: GAMEMD 0x0055F830 SYMBOL
+// _$E119
 double DAT_00ABCE20 = DAT_007E1730 * DAT_007ED3B8;
 
-// FUNCTION: 0x0055F850 $E122
+// SYNTHETIC: GAMEMD 0x0055F850 SYMBOL
+// _$E122
 int DAT_00ABCF50 = (int)(FUN_004CAD50(DAT_00ABCE20 - DAT_00ABCE48) * DAT_007E1738 * DAT_00ABCE40);
 
-// FUNCTION: 0x0055F890 $E125
+// SYNTHETIC: GAMEMD 0x0055F890 SYMBOL
+// _$E125
 double DAT_00ABCE50 = FUN_004CADE0(DAT_00ABCF50 * DAT_007E1740);
 
-// FUNCTION: 0x0055F8C0 $E128
+// SYNTHETIC: GAMEMD 0x0055F8C0 SYMBOL
+// _$E128
 double DAT_00ABCE68 = FUN_004CADE0((DAT_00ABCF50 * 2) / DAT_00ABCE40);
 
-// FUNCTION: 0x0055F8F0 $E131
+// SYNTHETIC: GAMEMD 0x0055F8F0 SYMBOL
+// _$E131
 int DAT_00ABCF44 = (int)(DAT_00ABCF50 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x0055F920 $E134
+// SYNTHETIC: GAMEMD 0x0055F920 SYMBOL
+// _$E134
 ShortPair DAT_00ABCE38;
 
-// FUNCTION: 0x0055F930 $E137
+// SYNTHETIC: GAMEMD 0x0055F930 SYMBOL
+// _$E137
 IntTriple DAT_00ABCE58;
 
 struct ModeSize {
@@ -107,13 +119,15 @@ struct ModeSize {
 	ModeSize() { Flag = 0; Width = 0x80; Height = 0x80; }
 };
 
-// FUNCTION: 0x0055F950 $E140
+// SYNTHETIC: GAMEMD 0x0055F950 SYMBOL
+// _$E140
 ModeSize DAT_00ABCF38;
 
-// FUNCTION: 0x0055F970 $E143
+// SYNTHETIC: GAMEMD 0x0055F970 SYMBOL
+// _$E143
 GameOptionsClass TempOptions;
 
-// FUNCTION: 0x0055F980
+// FUNCTION: GAMEMD 0x0055F980
 BOOL CALLBACK Mode_Prompt_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	int rc = OwnerDraw::Default_Dialog_Proc(window, message, wparam, lparam);
@@ -149,7 +163,7 @@ namespace UI {
 	void __fastcall EndDialog(HWND window);
 }
 
-// FUNCTION: 0x0055FA30
+// FUNCTION: GAMEMD 0x0055FA30
 bool Mode_Prompt_Dialog(void)
 {
 	int res = -1;
@@ -173,7 +187,7 @@ bool Mode_Prompt_Dialog(void)
 extern const float DAT_007E1748;
 extern const double DAT_007E3860;
 
-// FUNCTION: 0x0055FAA0
+// FUNCTION: GAMEMD 0x0055FAA0
 void Apply_Game_Settings(HWND window)
 {
 	HWND item = GetDlgItem(window, 0x52B);
@@ -234,7 +248,7 @@ void Apply_Game_Settings(HWND window)
 BOOL CALLBACK FUN_0055FDB0(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 BOOL CALLBACK FUN_00560480(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 
-// FUNCTION: 0x0055FC80
+// FUNCTION: GAMEMD 0x0055FC80
 void Main_Options_Dialog(void)
 {
 	bool old_game_active = GameActive;
@@ -314,7 +328,7 @@ namespace OwnerDraw {
 	void __fastcall UpdateControlPosition(HWND dialog, LPARAM lparam);
 }
 
-// FUNCTION: 0x00560BF0
+// FUNCTION: GAMEMD 0x00560BF0
 bool Change_Display_Mode(int width, int height)
 {
 	DebugString("About to set video mode\n");
@@ -470,7 +484,7 @@ bool Change_Display_Mode(int width, int height)
 BOOL CALLBACK Confirm_Mode_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 void __fastcall FUN_0052FEC0(Surface * surface, bool flag);
 
-// FUNCTION: 0x00561180
+// FUNCTION: GAMEMD 0x00561180
 bool Test_Display_Mode_Dialog(int width, int height)
 {
 	int rc = -1;
@@ -520,7 +534,7 @@ bool Test_Display_Mode_Dialog(int width, int height)
 	return(true);
 }
 
-// FUNCTION: 0x00561350
+// FUNCTION: GAMEMD 0x00561350
 BOOL CALLBACK Confirm_Mode_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	int rc = OwnerDraw::Default_Dialog_Proc(window, message, wparam, lparam);

@@ -707,34 +707,44 @@ extern const double DAT_007E1740;
 extern const double DAT_007EEF08;
 extern const double DAT_007EEF10;
 
-// FUNCTION: 0x005DACF0 $E85
+// SYNTHETIC: GAMEMD 0x005DACF0 SYMBOL
+// _$E85
 double DAT_00AC01C0 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x005DAD20 $E88
+// SYNTHETIC: GAMEMD 0x005DAD20 SYMBOL
+// _$E88
 double DAT_00AC0250 = DAT_00AC01C0 / DAT_007EEF08;
 
-// FUNCTION: 0x005DAD40 $E91
+// SYNTHETIC: GAMEMD 0x005DAD40 SYMBOL
+// _$E91
 double DAT_00AC0218 = DAT_007E1718 / DAT_00AC0250;
 
-// FUNCTION: 0x005DAD60 $E94
+// SYNTHETIC: GAMEMD 0x005DAD60 SYMBOL
+// _$E94
 double DAT_00AC0210 = DAT_007E1720 * DAT_007EEF10;
 
-// FUNCTION: 0x005DAD80 $E97
+// SYNTHETIC: GAMEMD 0x005DAD80 SYMBOL
+// _$E97
 double DAT_00AC01C8 = DAT_007E1728 * DAT_007EEF10;
 
-// FUNCTION: 0x005DADA0 $E100
+// SYNTHETIC: GAMEMD 0x005DADA0 SYMBOL
+// _$E100
 double DAT_00AC0198 = DAT_007E1730 * DAT_007EEF10;
 
-// FUNCTION: 0x005DADC0 $E103
+// SYNTHETIC: GAMEMD 0x005DADC0 SYMBOL
+// _$E103
 int DAT_00AC0258 = (int)(fastmath::tan(DAT_00AC0198 - DAT_00AC01C8) * DAT_007E1738 * DAT_00AC01C0);
 
-// FUNCTION: 0x005DAE00 $E106
+// SYNTHETIC: GAMEMD 0x005DAE00 SYMBOL
+// _$E106
 double DAT_00AC01D8 = fastmath::atan(DAT_00AC0258 * DAT_007E1740);
 
-// FUNCTION: 0x005DAE30 $E109
+// SYNTHETIC: GAMEMD 0x005DAE30 SYMBOL
+// _$E109
 double DAT_00AC01F8 = fastmath::atan((DAT_00AC0258 * 2) / DAT_00AC01C0);
 
-// FUNCTION: 0x005DAE60 $E112
+// SYNTHETIC: GAMEMD 0x005DAE60 SYMBOL
+// _$E112
 int DAT_00AC024C = (int)(DAT_00AC0258 * 4 + DAT_007E1738);
 
 void __fastcall FUN_005E8DC0(wchar_t * buffer);
@@ -791,21 +801,26 @@ struct Net2ShortPair { short a; short b; Net2ShortPair(void) { a = 0; b = 0; } }
 struct Net2IntTriple { int a; int b; int c; Net2IntTriple(void) { a = 0; b = 0; c = 0; } };
 struct Net2Center { int a; int b; int c; Net2Center(void) { c = 0; a = 128; b = 128; } };
 
-// FUNCTION: 0x005DAE90 $E115
+// SYNTHETIC: GAMEMD 0x005DAE90 SYMBOL
+// _$E115
 Net2ShortPair DAT_00AC01B8;
 
-// FUNCTION: 0x005DAEA0 $E118
+// SYNTHETIC: GAMEMD 0x005DAEA0 SYMBOL
+// _$E118
 Net2IntTriple DAT_00AC01E8;
 
-// FUNCTION: 0x005DAEC0 $E121
+// SYNTHETIC: GAMEMD 0x005DAEC0 SYMBOL
+// _$E121
 Net2Center DAT_00AC0240;
 
-// FUNCTION: 0x005DAEE0 $E126
+// SYNTHETIC: GAMEMD 0x005DAEE0 SYMBOL
+// _$E126
 CDTimerClass<SystemTimerClass> DAT_00AC0230;
 
-// FUNCTION: 0x005DAF10 $E124
+// SYNTHETIC: GAMEMD 0x005DAF10 SYMBOL
+// _$E124
 
-// FUNCTION: 0x005DAF20
+// FUNCTION: GAMEMD 0x005DAF20
 bool Net2Callback(void)
 {
 	Call_Back();
@@ -813,7 +828,7 @@ bool Net2Callback(void)
 	return(false);
 }
 
-// FUNCTION: 0x005DAF30
+// FUNCTION: GAMEMD 0x005DAF30
 void FUN_005DAF30(void)
 {
 	GlobalPacketType packet;
@@ -828,13 +843,13 @@ void FUN_005DAF30(void)
 	}
 }
 
-// FUNCTION: 0x005DAFD0
+// FUNCTION: GAMEMD 0x005DAFD0
 void Net2DisplayUsers(void)
 {
 	FUN_005DAFE0(false);
 }
 
-// FUNCTION: 0x005DB600
+// FUNCTION: GAMEMD 0x005DB600
 void __fastcall FUN_005DB600(NodeNameType * node)
 {
 	memset(&Session.GPacket, 0, sizeof(GlobalPacketType));
@@ -843,14 +858,14 @@ void __fastcall FUN_005DB600(NodeNameType * node)
 	Ipx.Send_Global_Message(&Session.GPacket, sizeof(GlobalPacketType), 1, &node->Address);
 }
 
-// FUNCTION: 0x005DB650
+// FUNCTION: GAMEMD 0x005DB650
 bool __fastcall FUN_005DB650(int count, bool full, bool ai)
 {
 	HWND dialog = WS_Find_Dialog(0xbc);
 	return(FUN_005EC880(dialog, count, full, ai));
 }
 
-// FUNCTION: 0x005DB680
+// FUNCTION: GAMEMD 0x005DB680
 bool Net2Init_Network(void)
 {
 	NetNumType net;
@@ -873,7 +888,7 @@ bool Net2Init_Network(void)
 	return(true);
 }
 
-// FUNCTION: 0x005DB6F0
+// FUNCTION: GAMEMD 0x005DB6F0
 void Net2Shutdown_Network(void)
 {
 	FUN_005E8A20();
@@ -885,7 +900,7 @@ void Net2Shutdown_Network(void)
 	PacketTransport = NULL;
 }
 
-// FUNCTION: 0x005DB720
+// FUNCTION: GAMEMD 0x005DB720
 void Net2ServiceGameList(void)
 {
 	int i;
@@ -927,7 +942,7 @@ void Net2ServiceGameList(void)
 	}
 }
 
-// FUNCTION: 0x005DB9B0
+// FUNCTION: GAMEMD 0x005DB9B0
 void Net2DisplayGameList(void)
 {
 	wchar_t buffer[80];
@@ -972,7 +987,7 @@ void Net2DisplayGameList(void)
 	}
 }
 
-// FUNCTION: 0x005DBE20
+// FUNCTION: GAMEMD 0x005DBE20
 void __fastcall Net2SetAccept(char * who, int status)
 {
 	if (who == NULL) {
@@ -1001,7 +1016,7 @@ void __fastcall Net2SetAccept(char * who, int status)
 	FUN_005DAFE0(false);
 }
 
-// FUNCTION: 0x005DBEC0
+// FUNCTION: GAMEMD 0x005DBEC0
 int __fastcall Net2GetAccept(char * who)
 {
 	if (who == NULL) {
@@ -1025,7 +1040,7 @@ int __fastcall Net2GetAccept(char * who)
 	return(-1);
 }
 
-// FUNCTION: 0x005DBF50
+// FUNCTION: GAMEMD 0x005DBF50
 int __fastcall Net2SetHouseAndColor(char * who, int house, int color, int start, int team)
 {
 	int offset = -1;
@@ -1111,7 +1126,7 @@ static void Get_Serial_From_Registry(char * serial, char const * reg_key)
 	serial[SERIAL_MAX-1] = 0;
 }
 
-// FUNCTION: 0x005DC170
+// FUNCTION: GAMEMD 0x005DC170
 bool Decrypt_Serial(char * buffer)
 {
 	char serial[ENCRYPTION_STRING_LENGTH];
@@ -1162,7 +1177,7 @@ bool Decrypt_Serial(char * buffer)
 	return(true);
 }
 
-// FUNCTION: 0x005DD8A0
+// FUNCTION: GAMEMD 0x005DD8A0
 bool Net2ReadyToGo(int load_game)
 {
 	GlobalPacketType packet;
@@ -1231,7 +1246,7 @@ bool Net2ReadyToGo(int load_game)
 	return(true);
 }
 
-// FUNCTION: 0x005DE360
+// FUNCTION: GAMEMD 0x005DE360
 void __fastcall FUN_005DE360(HWND window, int printcolor, int color)
 {
 	wchar_t text[112];
@@ -1272,7 +1287,7 @@ void __fastcall FUN_005DE360(HWND window, int printcolor, int color)
 	}
 }
 
-// FUNCTION: 0x005DF180
+// FUNCTION: GAMEMD 0x005DF180
 BOOL CALLBACK FUN_005DF180(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	if (!Net2GameStarted) {
@@ -1354,7 +1369,7 @@ static inline bool Net2_Name_Is_Reserved(char const * text)
 	return(FUN_005EE100(name));
 }
 
-// FUNCTION: 0x005DF410
+// FUNCTION: GAMEMD 0x005DF410
 int __fastcall FUN_005DF410(int index, char flag)
 {
 	if (index < 1) {
@@ -1414,7 +1429,7 @@ int __fastcall FUN_005DF410(int index, char flag)
 	return(true);
 }
 
-// FUNCTION: 0x005DF8C0
+// FUNCTION: GAMEMD 0x005DF8C0
 void __fastcall Unjoin_Game(int game_index)
 {
 	int i;
@@ -1444,7 +1459,7 @@ void __fastcall Unjoin_Game(int game_index)
 	Session.GameName[0] = 0;
 }
 
-// FUNCTION: 0x005DF9E0
+// FUNCTION: GAMEMD 0x005DF9E0
 void Send_Join_Queries(int gamenow, int playernow, int chatnow, int init)
 {
 	GlobalPacketType packet;
@@ -1521,16 +1536,19 @@ void Send_Join_Queries(int gamenow, int playernow, int chatnow, int init)
 	}
 }
 
-// FUNCTION: 0x005DFDD0 $E131
+// SYNTHETIC: GAMEMD 0x005DFDD0 SYMBOL
+// _$E131
 
-// FUNCTION: 0x005DFDE0 $E130
+// SYNTHETIC: GAMEMD 0x005DFDE0 SYMBOL
+// _$E130
 
-// FUNCTION: 0x005DFDF0 $E129
+// SYNTHETIC: GAMEMD 0x005DFDF0 SYMBOL
+// _$E129
 
 extern int DAT_008316A4;
 void __fastcall FUN_005E32D0(bool force, bool now);
 
-// FUNCTION: 0x005DFE00
+// FUNCTION: GAMEMD 0x005DFE00
 bool Process_Global_Packet(GlobalPacketType * packet, IPXAddressClass * address)
 {
 	GlobalPacketType mypacket;
@@ -1587,7 +1605,7 @@ bool Process_Global_Packet(GlobalPacketType * packet, IPXAddressClass * address)
 
 HWND FUN_00775B10(void);
 
-// FUNCTION: 0x005E2340
+// FUNCTION: GAMEMD 0x005E2340
 void FUN_005E2340(void)
 {
 	HWND top = FUN_00775B10();
@@ -1598,7 +1616,7 @@ void FUN_005E2340(void)
 	}
 }
 
-// FUNCTION: 0x005E23A0
+// FUNCTION: GAMEMD 0x005E23A0
 void FUN_005E23A0(void)
 {
 	HWND top = FUN_00775B10();
@@ -1606,7 +1624,8 @@ void FUN_005E23A0(void)
 	SendMessage(item, 0x4dc, 0, 0);
 }
 
-// FUNCTION: 0x005E23D0 ?$DynamicVectorClass@PAUNodeNameType@@::Delete_Index
+// TEMPLATE: GAMEMD 0x005E23D0
+// ?Delete_Index@?$DynamicVectorClass@PAUNodeNameType@@@@QAE_NH@Z
 template class DynamicVectorClass<NodeNameType *>;
 
 int DAT_00AC0B38;
@@ -1614,7 +1633,7 @@ int DAT_00AC0B3C;
 int DAT_00AC0B40;
 int DAT_00AC0B44;
 
-// FUNCTION: 0x005E2410
+// FUNCTION: GAMEMD 0x005E2410
 void FUN_005E2410(void)
 {
 	DAT_00AC0B38 = 0;

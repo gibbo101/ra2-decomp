@@ -13,7 +13,7 @@ typedef unsigned char uint8_t;
 typedef unsigned short uint16_t;
 typedef unsigned int uint32_t;
 
-// FUNCTION: 0x007C3D60
+// FUNCTION: GAMEMD 0x007C3D60
 void __cdecl UnVQ1_C4_4x4(unsigned char * codebook, unsigned char * pointers, unsigned char * buffer, unsigned long blocksperrow, unsigned long numrows, unsigned long bufwidth)
 {
 	bufwidth *= 2u;
@@ -94,7 +94,7 @@ void __cdecl UnVQ1_C4_4x4(unsigned char * codebook, unsigned char * pointers, un
 	}
 }
 
-// FUNCTION: 0x007C4260
+// FUNCTION: GAMEMD 0x007C4260
 void __cdecl UnVQ1_C4_4x2(unsigned char * codebook, unsigned char * pointers, unsigned char * buffer, unsigned long blocksperrow, unsigned long numrows, unsigned long bufwidth)
 {
 	bufwidth *= 2u;
@@ -175,7 +175,7 @@ void __cdecl UnVQ1_C4_4x2(unsigned char * codebook, unsigned char * pointers, un
 	}
 }
 
-// FUNCTION: 0x007C43A0
+// FUNCTION: GAMEMD 0x007C43A0
 void __cdecl UnVQ2_C4_4x2(unsigned char * codebook, unsigned char * pointers, unsigned char * buffer, unsigned long blocksperrow, unsigned long numrows, unsigned long bufwidth)
 {
 	bufwidth *= 2u;
@@ -387,7 +387,7 @@ void __cdecl UnVQ2_C4_4x2(unsigned char * codebook, unsigned char * pointers, un
 	}
 }
 
-// FUNCTION: 0x007C4B80
+// FUNCTION: GAMEMD 0x007C4B80
 void __cdecl UnVQ2_C0_4x4_KEY(unsigned char * codebook, unsigned char * pointers, unsigned char * buffer, unsigned long blocksperrow, unsigned long numrows, unsigned long bufwidth)
 {
 	uint16_t * src = (uint16_t *)pointers;
@@ -625,7 +625,7 @@ void __cdecl UnVQ2_C0_4x4_KEY(unsigned char * codebook, unsigned char * pointers
 	}
 }
 
-// FUNCTION: 0x007C4F90
+// FUNCTION: GAMEMD 0x007C4F90
 void __cdecl UnVQ2_C0_4x4_TRANS_HALF(unsigned char * codebook, unsigned char * pointers, unsigned char * buffer, unsigned long blocksperrow, unsigned long numrows, unsigned long bufwidth)
 {
 	uint16_t * src = (uint16_t *)pointers;
@@ -868,7 +868,7 @@ void __cdecl UnVQ2_C0_4x4_TRANS_HALF(unsigned char * codebook, unsigned char * p
 	}
 }
 
-// FUNCTION: 0x007C53A0
+// FUNCTION: GAMEMD 0x007C53A0
 void __cdecl UnVQ2_C0_4x2_TRANS(unsigned char * codebook, unsigned char * pointers, unsigned char * buffer, unsigned long blocksperrow, unsigned long numrows, unsigned long bufwidth)
 {
 	uint16_t * src = (uint16_t *)pointers;
@@ -1113,7 +1113,7 @@ void __cdecl UnVQ2_C0_4x2_TRANS(unsigned char * codebook, unsigned char * pointe
 	}
 }
 
-// FUNCTION: 0x007C57D0
+// FUNCTION: GAMEMD 0x007C57D0
 void __cdecl UnVQ2_C0_4x2_KEY(unsigned char * codebook, unsigned char * pointers, unsigned char * buffer, unsigned long blocksperrow, unsigned long numrows, unsigned long bufwidth)
 {
 	uint16_t * src = (uint16_t *)pointers;

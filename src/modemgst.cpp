@@ -67,40 +67,52 @@ struct IntTriple {
 	IntTriple() { A = 0; B = 0; C = 0; }
 };
 
-// FUNCTION: 0x005B47C0 $E43
+// SYNTHETIC: GAMEMD 0x005B47C0 SYMBOL
+// _$E43
 double DAT_00ABF030 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x005B47F0 $E46
+// SYNTHETIC: GAMEMD 0x005B47F0 SYMBOL
+// _$E46
 double DAT_00ABF080 = DAT_00ABF030 / DAT_007EDF58;
 
-// FUNCTION: 0x005B4810 $E49
+// SYNTHETIC: GAMEMD 0x005B4810 SYMBOL
+// _$E49
 double DAT_00ABF068 = DAT_007E1718 / DAT_00ABF080;
 
-// FUNCTION: 0x005B4830 $E52
+// SYNTHETIC: GAMEMD 0x005B4830 SYMBOL
+// _$E52
 double DAT_00ABF060 = DAT_007E1720 * DAT_007EDF60;
 
-// FUNCTION: 0x005B4850 $E55
+// SYNTHETIC: GAMEMD 0x005B4850 SYMBOL
+// _$E55
 double DAT_00ABF038 = DAT_007E1728 * DAT_007EDF60;
 
-// FUNCTION: 0x005B4870 $E58
+// SYNTHETIC: GAMEMD 0x005B4870 SYMBOL
+// _$E58
 double DAT_00ABF010 = DAT_007E1730 * DAT_007EDF60;
 
-// FUNCTION: 0x005B4890 $E61
+// SYNTHETIC: GAMEMD 0x005B4890 SYMBOL
+// _$E61
 int DAT_00ABF088 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00ABF010 - DAT_00ABF038) * DAT_00ABF030));
 
-// FUNCTION: 0x005B48D0 $E64
+// SYNTHETIC: GAMEMD 0x005B48D0 SYMBOL
+// _$E64
 double DAT_00ABF040 = FUN_004CADE0(DAT_00ABF088 * DAT_007E1740);
 
-// FUNCTION: 0x005B4900 $E67
+// SYNTHETIC: GAMEMD 0x005B4900 SYMBOL
+// _$E67
 double DAT_00ABF058 = FUN_004CADE0((DAT_00ABF088 * 2) / DAT_00ABF030);
 
-// FUNCTION: 0x005B4930 $E70
+// SYNTHETIC: GAMEMD 0x005B4930 SYMBOL
+// _$E70
 int DAT_00ABF07C = (int)(DAT_00ABF088 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x005B4960 $E73
+// SYNTHETIC: GAMEMD 0x005B4960 SYMBOL
+// _$E73
 ShortPair DAT_00ABF028;
 
-// FUNCTION: 0x005B4970 $E76
+// SYNTHETIC: GAMEMD 0x005B4970 SYMBOL
+// _$E76
 IntTriple DAT_00ABF048;
 
 void __fastcall FUN_00735060(wchar_t * dest, char const * source, int limit);
@@ -111,7 +123,7 @@ int DAT_00ABF070;
 int DAT_00ABF074;
 int DAT_00ABF078;
 
-// FUNCTION: 0x005B4990
+// FUNCTION: GAMEMD 0x005B4990
 void FUN_005B4990(void)
 {
 	DAT_00ABF078 = 0;
@@ -121,7 +133,7 @@ void FUN_005B4990(void)
 
 BOOL CALLBACK Modem_Guest_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 
-// FUNCTION: 0x005B49B0
+// FUNCTION: GAMEMD 0x005B49B0
 bool ModemGuest::Dialog(void)
 {
 	bool started = false;
@@ -181,7 +193,7 @@ bool ModemGuest::Dialog(void)
 	return(started);
 }
 
-// FUNCTION: 0x005B4B10
+// FUNCTION: GAMEMD 0x005B4B10
 BOOL CALLBACK Modem_Guest_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	int rc = OwnerDraw::Default_Dialog_Proc(window, message, wparam, lparam);
@@ -252,7 +264,7 @@ BOOL CALLBACK Modem_Guest_Dialog_Proc(HWND window, UINT message, WPARAM wparam, 
 	return(rc);
 }
 
-// FUNCTION: 0x005B56F0
+// FUNCTION: GAMEMD 0x005B56F0
 void ModemGuest::ReadDialog(void)
 {
 	DebugString("ModemGuest.ReadDialog(enter)\n");
@@ -280,7 +292,7 @@ void ModemGuest::ReadDialog(void)
 	DebugString("ModemGuest.ReadDialog(exit)\n");
 }
 
-// FUNCTION: 0x005B57D0
+// FUNCTION: GAMEMD 0x005B57D0
 void ModemGuest::SendCurrentMessage(void)
 {
 	wchar_t buf[256];
@@ -296,7 +308,7 @@ void ModemGuest::SendCurrentMessage(void)
 	}
 }
 
-// FUNCTION: 0x005B5960
+// FUNCTION: GAMEMD 0x005B5960
 void ModemGuest::SetHouse(void)
 {
 	HWND handle = GetDlgItem(_Dialog, IDC_MODEM_YOURSIDE);
@@ -310,7 +322,7 @@ void ModemGuest::SetHouse(void)
 	}
 }
 
-// FUNCTION: 0x005B59B0
+// FUNCTION: GAMEMD 0x005B59B0
 void ModemGuest::SetColor(void)
 {
 	HWND handle = GetDlgItem(_Dialog, IDC_MODEM_YOURCOLOR);
@@ -332,7 +344,7 @@ void ModemGuest::SetColor(void)
 	}
 }
 
-// FUNCTION: 0x005B5A50
+// FUNCTION: GAMEMD 0x005B5A50
 void ModemGuest::SetName(bool update)
 {
 	wchar_t namebuf[21];
@@ -349,7 +361,7 @@ void ModemGuest::SetName(bool update)
 	}
 }
 
-// FUNCTION: 0x005B5AD0
+// FUNCTION: GAMEMD 0x005B5AD0
 void ModemGuest::SetOther(const wchar_t * name, int color, int house)
 {
 	wchar_t buf[80];
@@ -377,7 +389,7 @@ void ModemGuest::SetOther(const wchar_t * name, int color, int house)
 	}
 }
 
-// FUNCTION: 0x005B5BC0
+// FUNCTION: GAMEMD 0x005B5BC0
 void ModemGuest::SetSettings(void)
 {
 	DebugString("Settings change\n");
@@ -479,7 +491,7 @@ void ModemGuest::SetSettings(void)
 	VocClass::PlayGlobal(Rule->OptionsChanged, 1.0f, 0x2000);
 }
 
-// FUNCTION: 0x005B5E90
+// FUNCTION: GAMEMD 0x005B5E90
 void ModemGuest::AcceptOptions(void)
 {
 	HWND handle = GetDlgItem(_Dialog, IDOK);
@@ -493,7 +505,7 @@ void ModemGuest::AcceptOptions(void)
 	NullModem.Send_Message(&packet, 250, 1);
 }
 
-// FUNCTION: 0x005B5EF0
+// FUNCTION: GAMEMD 0x005B5EF0
 void ModemGuest::Send(bool force)
 {
 	NullModem.Service();
@@ -516,7 +528,7 @@ void ModemGuest::Send(bool force)
 	}
 }
 
-// FUNCTION: 0x005B67F0
+// FUNCTION: GAMEMD 0x005B67F0
 bool ModemGuest::SetGameOptions(SerialPacketType * packet)
 {
 	if (Session.Options.Bases == (bool)packet->ScenarioInfo.IsBases &&
@@ -609,7 +621,7 @@ bool ModemGuest::SetGameOptions(SerialPacketType * packet)
 	return(true);
 }
 
-// FUNCTION: 0x005B6CD0
+// FUNCTION: GAMEMD 0x005B6CD0
 void ModemGuest::SendGameOptions(void)
 {
 	SerialPacketType packet;
@@ -629,7 +641,7 @@ void ModemGuest::SendGameOptions(void)
 	NullModem.Send_Message(&packet, sizeof(packet), 1);
 }
 
-// FUNCTION: 0x005B6DA0
+// FUNCTION: GAMEMD 0x005B6DA0
 void ModemGuest::SendAMessage(const wchar_t * message)
 {
 	if (message != NULL) {
@@ -648,7 +660,7 @@ void ModemGuest::SendAMessage(const wchar_t * message)
 	}
 }
 
-// FUNCTION: 0x005B6EB0
+// FUNCTION: GAMEMD 0x005B6EB0
 void ModemGuest::DrawMessage(const wchar_t * name, int color, const wchar_t * message)
 {
 	wchar_t buf[256];
@@ -663,7 +675,7 @@ void ModemGuest::DrawMessage(const wchar_t * name, int color, const wchar_t * me
 	}
 }
 
-// FUNCTION: 0x005B6F30
+// FUNCTION: GAMEMD 0x005B6F30
 void ModemGuest::SignOff(void)
 {
 	unsigned int starttime;
@@ -701,7 +713,7 @@ void ModemGuest::SignOff(void)
 	}
 }
 
-// FUNCTION: 0x005B7090
+// FUNCTION: GAMEMD 0x005B7090
 bool ModemGuest::StartGame(bool load_game)
 {
 	unsigned int starttime;
@@ -770,7 +782,7 @@ bool ModemGuest::StartGame(bool load_game)
 
 bool __fastcall FUN_00693B70(char * name, int type, bool flag);
 
-// FUNCTION: 0x005B7360
+// FUNCTION: GAMEMD 0x005B7360
 void ModemGuest::ReceivePreview(void)
 {
 	CDTimerClass<SystemTimerClass> response_timer;
@@ -830,5 +842,6 @@ struct IntQuad {
 	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
 };
 
-// FUNCTION: 0x005B75D0 $E79
+// SYNTHETIC: GAMEMD 0x005B75D0 SYMBOL
+// _$E79
 IntQuad DAT_00ABF098;

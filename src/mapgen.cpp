@@ -218,46 +218,50 @@ struct TerritoryData {
 	unsigned char Cities;
 };
 
-// FUNCTION: 0x0058B740 $E185
-// FUNCTION: 0x0058B760 $E183
-// FUNCTION: 0x0058B770 $E188
-// FUNCTION: 0x0058B780 $E191
+// SYNTHETIC: GAMEMD 0x0058B740 SYMBOL
+// _$E185
+// SYNTHETIC: GAMEMD 0x0058B760 SYMBOL
+// _$E183
+// SYNTHETIC: GAMEMD 0x0058B770 SYMBOL
+// _$E188
+// SYNTHETIC: GAMEMD 0x0058B780 SYMBOL
+// _$E191
 
-// FUNCTION: 0x0058B7B0
+// FUNCTION: GAMEMD 0x0058B7B0
 void FUN_0058B7B0(void)
 {
 }
 
-// FUNCTION: 0x0058B7C0
+// FUNCTION: GAMEMD 0x0058B7C0
 void FUN_0058B7C0(void)
 {
 }
 
-// FUNCTION: 0x0058B7D0
+// FUNCTION: GAMEMD 0x0058B7D0
 int FUN_0058B7D0(void)
 {
 	return DAT_00ABED0C;
 }
 
-// FUNCTION: 0x0058B7E0
+// FUNCTION: GAMEMD 0x0058B7E0
 int FUN_0058B7E0(void)
 {
 	return DAT_00ABDFD4;
 }
 
-// FUNCTION: 0x0058B7F0
+// FUNCTION: GAMEMD 0x0058B7F0
 int FUN_0058B7F0(void)
 {
 	return DAT_00ABDFD0;
 }
 
-// FUNCTION: 0x0058B800
+// FUNCTION: GAMEMD 0x0058B800
 int FUN_0058B800(void)
 {
 	return DAT_00ABEC90;
 }
 
-// FUNCTION: 0x0058B810
+// FUNCTION: GAMEMD 0x0058B810
 int FUN_0058B810(void)
 {
 	return DAT_00ABECD0;
@@ -271,7 +275,7 @@ static inline Point2D Start_Point(int index)
 	return Point2D(0, 0);
 }
 
-// FUNCTION: 0x0058B820
+// FUNCTION: GAMEMD 0x0058B820
 void FUN_0058B820(void)
 {
 	DAT_00ABED0C = 0;
@@ -328,7 +332,7 @@ void FUN_0058B820(void)
 	}
 }
 
-// FUNCTION: 0x0058BB00
+// FUNCTION: GAMEMD 0x0058BB00
 Point2D FUN_0058BB00(int index)
 {
 	if (index >= 0 && index < DAT_00ABED0C) {
@@ -337,7 +341,7 @@ Point2D FUN_0058BB00(int index)
 	return Point2D(0, 0);
 }
 
-// FUNCTION: 0x0058BB30
+// FUNCTION: GAMEMD 0x0058BB30
 void FUN_0058BB30(void)
 {
 	if (Scen != NULL) {
@@ -353,7 +357,7 @@ void FUN_0058BB30(void)
 	}
 }
 
-// FUNCTION: 0x0058BC20
+// FUNCTION: GAMEMD 0x0058BC20
 void FUN_0058BC20(void)
 {
 	DAT_00ABED0C = 0;
@@ -361,10 +365,12 @@ void FUN_0058BC20(void)
 
 DynamicVectorClass<MapRegionClass *> MapRegionClass::MapRegions;
 
-// FUNCTION: 0x0058BC30 $E197
-// FUNCTION: 0x0058BC70 $E194
+// SYNTHETIC: GAMEMD 0x0058BC30 SYMBOL
+// _$E197
+// SYNTHETIC: GAMEMD 0x0058BC70 SYMBOL
+// _$E194
 
-// FUNCTION: 0x0058BCD0
+// FUNCTION: GAMEMD 0x0058BCD0
 bool FUN_0058BCD0(int value)
 {
 	return value == 1 || value == 3 || value == 4;
@@ -375,31 +381,31 @@ static inline bool Is_Three_Or_Four(int value)
 	return value == 3 || value == 4;
 }
 
-// FUNCTION: 0x0058BCF0
+// FUNCTION: GAMEMD 0x0058BCF0
 bool FUN_0058BCF0(int value)
 {
 	return !Is_Three_Or_Four(value);
 }
 
-// FUNCTION: 0x0058BD20
+// FUNCTION: GAMEMD 0x0058BD20
 bool FUN_0058BD20(int value)
 {
 	return value == 3 || value == 4;
 }
 
-// FUNCTION: 0x0058BD40
+// FUNCTION: GAMEMD 0x0058BD40
 bool FUN_0058BD40(int value)
 {
 	return value == 4 || value == 3;
 }
 
-// FUNCTION: 0x0058BD60
+// FUNCTION: GAMEMD 0x0058BD60
 bool FUN_0058BD60(int value)
 {
 	return value == 3 || value == 4;
 }
 
-// FUNCTION: 0x0058BD80
+// FUNCTION: GAMEMD 0x0058BD80
 bool FUN_0058BD80(int a, int b)
 {
 	switch (a) {
@@ -415,7 +421,7 @@ bool FUN_0058BD80(int a, int b)
 	return false;
 }
 
-// FUNCTION: 0x0058BDC0
+// FUNCTION: GAMEMD 0x0058BDC0
 MapRegionClass::CellData::CellData(void) :
 	CellID(0,0),
 	HillHeight(0),
@@ -438,7 +444,7 @@ MapRegionClass::CellData::CellData(void) :
 {
 }
 
-// FUNCTION: 0x0058BE20
+// FUNCTION: GAMEMD 0x0058BE20
 Cell MapRegionClass::Pick_Random_Map_Cell(void)
 {
 	int grid_size = MapCellStride * MapCellStride;
@@ -449,7 +455,7 @@ Cell MapRegionClass::Pick_Random_Map_Cell(void)
 	return(RMGCellData[index].CellID);
 }
 
-// FUNCTION: 0x0058BEA0
+// FUNCTION: GAMEMD 0x0058BEA0
 Cell MapRegionClass::Pick_Random_Clear_Map_Cell(void)
 {
 	int tries = 0;
@@ -464,7 +470,7 @@ Cell MapRegionClass::Pick_Random_Clear_Map_Cell(void)
 	}
 }
 
-// FUNCTION: 0x0058BF70
+// FUNCTION: GAMEMD 0x0058BF70
 MapRegionClass::MapRegionClass(Cell cell) :
 	Unknown0(0),
 	NeighborRegions(0),
@@ -487,7 +493,7 @@ MapRegionClass::MapRegionClass(Cell cell) :
 	MapRegions.Add(this);
 }
 
-// FUNCTION: 0x0058C070
+// FUNCTION: GAMEMD 0x0058C070
 MapRegionClass::~MapRegionClass(void)
 {
 	if (Unknown0 != NULL) {
@@ -497,7 +503,7 @@ MapRegionClass::~MapRegionClass(void)
 	MapRegions.Delete(this);
 }
 
-// FUNCTION: 0x0058C100
+// FUNCTION: GAMEMD 0x0058C100
 void MapRegionClass::Delete_All_Regions(void)
 {
 	MapRegionClass::TotalCount = 0;
@@ -510,31 +516,31 @@ void MapRegionClass::Delete_All_Regions(void)
 	}
 }
 
-// FUNCTION: 0x0058C1C0
+// FUNCTION: GAMEMD 0x0058C1C0
 bool MapRegionClass::CellData::Is_Not_Inviolate(Cell const &cell)
 {
 	return(!MapRegionClass::Get_Cell_Data(cell).Inviolate);
 }
 
-// FUNCTION: 0x0058C1F0
+// FUNCTION: GAMEMD 0x0058C1F0
 bool MapRegionClass::CellData::Is_Interior(Cell const &cell)
 {
 	return(MapRegionClass::Get_Cell_Data(cell).Interior);
 }
 
-// FUNCTION: 0x0058C210
+// FUNCTION: GAMEMD 0x0058C210
 void MapRegionClass::CellData::Set_Inviolate(Cell const &cell)
 {
 	MapRegionClass::Get_Cell_Data(cell).Inviolate = true;
 }
 
-// FUNCTION: 0x0058C240
+// FUNCTION: GAMEMD 0x0058C240
 void MapRegionClass::CellData::Clear_Inviolate(Cell const &cell)
 {
 	MapRegionClass::Get_Cell_Data(cell).Inviolate = false;
 }
 
-// FUNCTION: 0x0058C270
+// FUNCTION: GAMEMD 0x0058C270
 void MapRegionClass::CellData::Clear_Inviolates(void)
 {
 	int grid_size = MapCellStride * MapCellStride;
@@ -543,19 +549,19 @@ void MapRegionClass::CellData::Clear_Inviolates(void)
 	}
 }
 
-// FUNCTION: 0x0058C2A0
+// FUNCTION: GAMEMD 0x0058C2A0
 MapRegionClass::CellData & MapRegionClass::Get_Cell_Data(Cell const & cell)
 {
 	return(RMGCellData[cell.X + cell.Y * MapCellStride]);
 }
 
-// FUNCTION: 0x0058C2C0
+// FUNCTION: GAMEMD 0x0058C2C0
 MapRegionClass::CellData & MapRegionClass::Get_Cell_Data(int index)
 {
 	return(RMGCellData[index]);
 }
 
-// FUNCTION: 0x0058C2D0
+// FUNCTION: GAMEMD 0x0058C2D0
 void MapRegionClass::Recount_Cells(void)
 {
 	CellCount = 0;
@@ -568,7 +574,7 @@ void MapRegionClass::Recount_Cells(void)
 	}
 }
 
-// FUNCTION: 0x0058C320
+// FUNCTION: GAMEMD 0x0058C320
 Cell MapRegionClass::Pick_Random_Cell(void)
 {
 	int grid_size = MapCellStride * MapCellStride;
@@ -580,7 +586,7 @@ Cell MapRegionClass::Pick_Random_Cell(void)
 	return(RMGCellData[index].CellID);
 }
 
-// FUNCTION: 0x0058C3B0
+// FUNCTION: GAMEMD 0x0058C3B0
 Cell MapRegionClass::Pick_Random_Clear_Cell(void)
 {
 	int tries = 0;
@@ -595,7 +601,7 @@ Cell MapRegionClass::Pick_Random_Clear_Cell(void)
 	}
 }
 
-// FUNCTION: 0x0058C4A0
+// FUNCTION: GAMEMD 0x0058C4A0
 Cell MapRegionClass::Pick_Random_Clear_Interior_Cell(void)
 {
 	MapRegionClass::CellData & data = RMGCellData[0];
@@ -610,7 +616,7 @@ Cell MapRegionClass::Pick_Random_Clear_Interior_Cell(void)
 	return(data.CellID);
 }
 
-// FUNCTION: 0x0058C5A0
+// FUNCTION: GAMEMD 0x0058C5A0
 Cell MapRegionClass::Pick_Random_Clear_Cell_In_Zone(int zone, int region_id)
 {
 	MapRegionClass::CellData & data = RMGCellData[0];
@@ -630,7 +636,7 @@ Cell MapRegionClass::Pick_Random_Clear_Cell_In_Zone(int zone, int region_id)
 	return(data.CellID);
 }
 
-// FUNCTION: 0x0058C6C0
+// FUNCTION: GAMEMD 0x0058C6C0
 void MapRegionClass::CellData::Reset_Spreads(bool)
 {
 	int grid_size = MapCellStride * MapCellStride;
@@ -639,7 +645,7 @@ void MapRegionClass::CellData::Reset_Spreads(bool)
 	}
 }
 
-// FUNCTION: 0x0058C6F0
+// FUNCTION: GAMEMD 0x0058C6F0
 double MapRegionClass::Get_Angle_Score(const Cell & cell1, const Cell & cell2, double ref_angle)
 {
 	static const double _angle_weight = 1.5;
@@ -666,7 +672,7 @@ double MapRegionClass::Get_Angle_Score(const Cell & cell1, const Cell & cell2, d
 	return(RMG_RANDOM_DOUBLE2(2.5) + _length_weight * length + _angle_weight * angle_diff);
 }
 
-// FUNCTION: 0x0058CE90
+// FUNCTION: GAMEMD 0x0058CE90
 void MapRegionClass::Destroy_Cell_Regions(void)
 {
 	if (RMGCellData != NULL) {
@@ -687,7 +693,7 @@ void MapRegionClass::Destroy_Cell_Regions(void)
 	MapRegionClass::TotalCount = 0;
 }
 
-// FUNCTION: 0x0058CF90
+// FUNCTION: GAMEMD 0x0058CF90
 void MapRegionClass::Create_Water_Regions(void)
 {
 	int grid_size = MapCellStride * MapCellStride;
@@ -703,7 +709,7 @@ void MapRegionClass::Create_Water_Regions(void)
 	}
 }
 
-// FUNCTION: 0x0058D010
+// FUNCTION: GAMEMD 0x0058D010
 void MapRegionClass::Create_Land_Regions(bool unsplittable)
 {
 	int grid_size = MapCellStride * MapCellStride;
@@ -719,7 +725,7 @@ void MapRegionClass::Create_Land_Regions(bool unsplittable)
 	}
 }
 
-// FUNCTION: 0x0058D070
+// FUNCTION: GAMEMD 0x0058D070
 void MapRegionClass::CellData::Set_Region(Cell const &cell, int region_id)
 {
 	if (RMGCellData != NULL) {
@@ -728,7 +734,7 @@ void MapRegionClass::CellData::Set_Region(Cell const &cell, int region_id)
 	}
 }
 
-// FUNCTION: 0x0058D0A0
+// FUNCTION: GAMEMD 0x0058D0A0
 int MapRegionClass::CellData::Get_Region(Cell const &cell)
 {
 	if (RMGCellData == NULL) {
@@ -737,19 +743,19 @@ int MapRegionClass::CellData::Get_Region(Cell const &cell)
 	return(MapRegionClass::Get_Cell_Data(cell).RegionID);
 }
 
-// FUNCTION: 0x0058D0D0
+// FUNCTION: GAMEMD 0x0058D0D0
 void MapRegionClass::CellData::Set_Spread(Cell const &cell, int patch_id)
 {
 	MapRegionClass::Get_Cell_Data(cell).SpreadID = patch_id;
 }
 
-// FUNCTION: 0x0058D100
+// FUNCTION: GAMEMD 0x0058D100
 int MapRegionClass::CellData::Get_Spread(Cell const &cell)
 {
 	return(MapRegionClass::Get_Cell_Data(cell).SpreadID);
 }
 
-// FUNCTION: 0x0058D120
+// FUNCTION: GAMEMD 0x0058D120
 void MapRegionClass::Clear_Cells(int new_id, int cell_height)
 {
 	int grid_size = MapCellStride * MapCellStride;
@@ -770,7 +776,7 @@ void MapRegionClass::Clear_Cells(int new_id, int cell_height)
 	CellCount = 0;
 }
 
-// FUNCTION: 0x0058D1C0
+// FUNCTION: GAMEMD 0x0058D1C0
 void MapRegionClass::Reassign_Border_Cells(int rings, unsigned int region_id)
 {
 	DynamicVectorClass<Cell> * cells = Build_Border_Cell_List();
@@ -814,7 +820,7 @@ void MapRegionClass::Reassign_Border_Cells(int rings, unsigned int region_id)
 	}
 }
 
-// FUNCTION: 0x0058D410
+// FUNCTION: GAMEMD 0x0058D410
 DynamicVectorClass<Cell> *MapRegionClass::Build_Border_Cell_List(void)
 {
 	DynamicVectorClass<Cell> *cells = new DynamicVectorClass<Cell>;
@@ -847,7 +853,7 @@ DynamicVectorClass<Cell> *MapRegionClass::Build_Border_Cell_List(void)
 	return(cells);
 }
 
-// FUNCTION: 0x0058D5A0
+// FUNCTION: GAMEMD 0x0058D5A0
 void MapRegionClass::Increase_Height(char cell_height)
 {
 	Map.Reset_Iterator();
@@ -861,7 +867,7 @@ void MapRegionClass::Increase_Height(char cell_height)
 	}
 }
 
-// FUNCTION: 0x0058E5D0
+// FUNCTION: GAMEMD 0x0058E5D0
 DynamicVectorClass<Cell> *MapRegionClass::Build_Border_Cell_List2(void)
 {
 	DynamicVectorClass<Cell> *cells = new DynamicVectorClass<Cell>;
@@ -888,7 +894,7 @@ DynamicVectorClass<Cell> *MapRegionClass::Build_Border_Cell_List2(void)
 	return(cells);
 }
 
-// FUNCTION: 0x0058E740
+// FUNCTION: GAMEMD 0x0058E740
 bool MapRegionClass::Grow(int rings)
 {
 	DynamicVectorClass<Cell> * cells = Build_Border_Cell_List();
@@ -927,7 +933,7 @@ bool MapRegionClass::Grow(int rings)
 	return(true);
 }
 
-// FUNCTION: 0x0058E9B0
+// FUNCTION: GAMEMD 0x0058E9B0
 bool MapRegionClass::Claim_Expandable_Cells(void)
 {
 	int i;
@@ -964,7 +970,7 @@ bool MapRegionClass::Claim_Expandable_Cells(void)
 	return(true);
 }
 
-// FUNCTION: 0x0058EBC0
+// FUNCTION: GAMEMD 0x0058EBC0
 void MapRegionClass::Make_Ice_Regions(void)
 {
 	int i;
@@ -1044,7 +1050,7 @@ void MapRegionClass::Make_Ice_Regions(void)
 	}
 }
 
-// FUNCTION: 0x0058EEA0
+// FUNCTION: GAMEMD 0x0058EEA0
 void MapRegionClass::Mark_Interior_Cells(void)
 {
 	int grid_size = MapCellStride * MapCellStride;
@@ -1064,7 +1070,7 @@ void MapRegionClass::Mark_Interior_Cells(void)
 	}
 }
 
-// FUNCTION: 0x0058EF10
+// FUNCTION: GAMEMD 0x0058EF10
 bool MapRegionClass::Make_Regions(void)
 {
 	bool success = RandomMapGen.Expand_All_High_Ground();
@@ -1086,7 +1092,7 @@ bool MapRegionClass::Make_Regions(void)
 	return(true);
 }
 
-// FUNCTION: 0x0058F0C0
+// FUNCTION: GAMEMD 0x0058F0C0
 void MapRegionClass::Build_Neighbor_Regions(void)
 {
 	NeighborRegions = new DynamicVectorClass<int>;
@@ -1121,7 +1127,7 @@ void MapRegionClass::Build_Neighbor_Regions(void)
 	delete[] adjacent;
 }
 
-// FUNCTION: 0x005902C0
+// FUNCTION: GAMEMD 0x005902C0
 bool MapRegionClass::Is_Bridge_Allowed(Rect const & rect) const
 {
 	int height = Map[Cell(rect.X, rect.Y)].Height;
@@ -1149,7 +1155,7 @@ bool MapRegionClass::Is_Bridge_Allowed(Rect const & rect) const
 	return(false);
 }
 
-// FUNCTION: 0x005904B0
+// FUNCTION: GAMEMD 0x005904B0
 bool MapRegionClass::Place_Bridge_Hut(Rect const & rect) const
 {
 	for (int y = rect.Y; y < rect.Y + rect.Height + 1; y++) {
@@ -1167,7 +1173,7 @@ bool MapRegionClass::Place_Bridge_Hut(Rect const & rect) const
 	return(false);
 }
 
-// FUNCTION: 0x005905D0
+// FUNCTION: GAMEMD 0x005905D0
 void MapRegionClass::Make_Region_Connections(void)
 {
 	if (ContainsWater) {
@@ -1216,7 +1222,7 @@ void MapRegionClass::Make_Region_Connections(void)
 	}
 }
 
-// FUNCTION: 0x00590FD0
+// FUNCTION: GAMEMD 0x00590FD0
 unsigned MapRegionClass::Build_Neighbor_Region_Mask(Cell const & cell, bool & valid, int unknown, float threshold)
 {
 	static const double lo = 5.0;
@@ -1250,7 +1256,7 @@ unsigned MapRegionClass::Build_Neighbor_Region_Mask(Cell const & cell, bool & va
 	return(mask);
 }
 
-// FUNCTION: 0x00594010
+// FUNCTION: GAMEMD 0x00594010
 bool MapRegionClass::Is_Ramp_Area_Clear(Rect & rect, int id)
 {
 	if (Map.In_Local_Radar(Cell(rect.X, rect.Y)) &&
@@ -1276,7 +1282,7 @@ bool MapRegionClass::Is_Ramp_Area_Clear(Rect & rect, int id)
 	return(false);
 }
 
-// FUNCTION: 0x00594190
+// FUNCTION: GAMEMD 0x00594190
 void MapRegionClass::Flatten_Area(Rect const & rect, int region_id)
 {
 	for (int y = rect.Y; y < rect.Y + rect.Height; y++) {
@@ -1291,7 +1297,7 @@ void MapRegionClass::Flatten_Area(Rect const & rect, int region_id)
 	}
 }
 
-// FUNCTION: 0x005942F0
+// FUNCTION: GAMEMD 0x005942F0
 void MapRegionClass::Flatten_Area(Rect const & rect)
 {
 	for (int y = rect.Y; y < rect.Y + rect.Height; y++) {
@@ -1305,7 +1311,7 @@ void MapRegionClass::Flatten_Area(Rect const & rect)
 	}
 }
 
-// FUNCTION: 0x005943E0
+// FUNCTION: GAMEMD 0x005943E0
 MapRegionClass * MapRegionClass::From_ID(int id)
 {
 	for (int i = 0; i < MapRegions.Count(); i++) {
@@ -1318,7 +1324,7 @@ MapRegionClass * MapRegionClass::From_ID(int id)
 
 void __fastcall Create_Zone_Region(CellClass * cptr, MZoneType mzone, int zone);
 
-// FUNCTION: 0x00594700
+// FUNCTION: GAMEMD 0x00594700
 void Create_Zone_Regions(MZoneType mzone, int zone)
 {
 	MapRegionClass::Destroy_Cell_Regions();
@@ -1335,7 +1341,7 @@ void Create_Zone_Regions(MZoneType mzone, int zone)
 	}
 }
 
-// FUNCTION: 0x00594870
+// FUNCTION: GAMEMD 0x00594870
 void MapRegionClass::Pick_Start_Points(int first_waypoint)
 {
 	Rect bounds = Map.LocalRect;
@@ -1383,7 +1389,7 @@ void MapRegionClass::Pick_Start_Points(int first_waypoint)
 	Unknown0 = layout;
 }
 
-// FUNCTION: 0x00595400
+// FUNCTION: GAMEMD 0x00595400
 void MapRegionClass::Place_Neutral_Building(void)
 {
 	HouseClass * neutral = House_From_HousesType(HouseTypeClass::From_Name("Neutral"));
@@ -1426,7 +1432,7 @@ void MapRegionClass::Place_Neutral_Building(void)
 	}
 }
 
-// FUNCTION: 0x00595680
+// FUNCTION: GAMEMD 0x00595680
 MapSeedClass::MapSeedClass(void) :
 	Biome(0),
 	MapType(1),
@@ -1453,13 +1459,13 @@ MapSeedClass::MapSeedClass(void) :
 	}
 }
 
-// FUNCTION: 0x00595710
+// FUNCTION: GAMEMD 0x00595710
 void MapSeedClass::Reload_Description(void)
 {
 	wcscpy(MapDescription, StringTable::LoadString("TXT_RANDOM_MAP_DESCRIPTION", NULL, "D:\\ra2mdpost\\MapGen.cpp", 3934));
 }
 
-// FUNCTION: 0x00595740
+// FUNCTION: GAMEMD 0x00595740
 MapGeneratorClass::MapGeneratorClass(void) :
 	SeedData(),
 	MapSeeder(NULL),
@@ -1476,7 +1482,7 @@ MapGeneratorClass::MapGeneratorClass(void) :
 {
 }
 
-// FUNCTION: 0x00595BC0
+// FUNCTION: GAMEMD 0x00595BC0
 int Do_Random_Map_Dialog(bool (*callback)())
 {
 	LONG res = 0;
@@ -1522,7 +1528,7 @@ int Do_Random_Map_Dialog(bool (*callback)())
 	return(res);
 }
 
-// FUNCTION: 0x00595CE0
+// FUNCTION: GAMEMD 0x00595CE0
 void Clean_Up_RMCache(void)
 {
 	WIN32_FIND_DATA *ff;
@@ -1593,7 +1599,7 @@ void Clean_Up_RMCache(void)
 	}
 }
 
-// FUNCTION: 0x00595FB0
+// FUNCTION: GAMEMD 0x00595FB0
 void Do_Random_Map(HWND dialog, bool (*callback)())
 {
 	TerritoryRef territory;
@@ -1670,7 +1676,7 @@ void Do_Random_Map(HWND dialog, bool (*callback)())
 	}
 }
 
-// FUNCTION: 0x00596C70
+// FUNCTION: GAMEMD 0x00596C70
 void MapSeedClass::Get_Settings(HWND dialog)
 {
 	HWND handle;
@@ -1731,7 +1737,7 @@ done:
 	Fixup_Settings();
 }
 
-// FUNCTION: 0x00596E50
+// FUNCTION: GAMEMD 0x00596E50
 void MapSeedClass::Set_Settings(HWND dialog)
 {
 	HWND handle;
@@ -1806,7 +1812,7 @@ void MapSeedClass::Set_Settings(HWND dialog)
 	NumPlayers = players;
 }
 
-// FUNCTION: 0x00597260
+// FUNCTION: GAMEMD 0x00597260
 void MapSeedClass::Randomize(int map_type)
 {
 	WaterAmount = Sim_Random_Pick(DAT_0082B0A8[map_type], DAT_0082B0BC[map_type]);
@@ -1836,7 +1842,7 @@ void MapSeedClass::Randomize(int map_type)
 	Seed = Sim_Random_Pick(0, 65535);
 }
 
-// FUNCTION: 0x00597380
+// FUNCTION: GAMEMD 0x00597380
 void MapSeedClass::Randomize(void)
 {
 	Biome = Sim_Random_Pick(0U, 100U) >= 50;
@@ -1852,7 +1858,7 @@ void MapSeedClass::Randomize(void)
 
 #define WDT ((TerritoryData *)territory.Ptr)
 
-// FUNCTION: 0x00597430
+// FUNCTION: GAMEMD 0x00597430
 void MapSeedClass::Fixup_WDT_Settings(void)
 {
 	TerritoryRef territory;
@@ -1935,7 +1941,7 @@ void MapSeedClass::Fixup_WDT_Settings(void)
 
 #undef WDT
 
-// FUNCTION: 0x005975E0
+// FUNCTION: GAMEMD 0x005975E0
 void MapSeedClass::Fixup_Settings(void)
 {
 	if (Resources >= 4) {
@@ -2015,7 +2021,7 @@ void MapSeedClass::Fixup_Settings(void)
 	}
 }
 
-// FUNCTION: 0x00597730
+// FUNCTION: GAMEMD 0x00597730
 bool MapSeedClass::Save(const char * name)
 {
 	if (name) {
@@ -2028,7 +2034,7 @@ bool MapSeedClass::Save(const char * name)
 	return(false);
 }
 
-// FUNCTION: 0x00597760
+// FUNCTION: GAMEMD 0x00597760
 bool MapSeedClass::Save_File(const char * file_name, const wchar_t * descr)
 {
 	if (file_name != NULL) {
@@ -2061,7 +2067,7 @@ bool MapSeedClass::Save_File(const char * file_name, const wchar_t * descr)
 	return(false);
 }
 
-// FUNCTION: 0x00597A10
+// FUNCTION: GAMEMD 0x00597A10
 bool MapSeedClass::Load(const char * name)
 {
 	if (name) {
@@ -2074,13 +2080,13 @@ bool MapSeedClass::Load(const char * name)
 	return(false);
 }
 
-// FUNCTION: 0x00597D40
+// FUNCTION: GAMEMD 0x00597D40
 bool MapSeedClass::Delete(void)
 {
 	return(BASECLASS::Delete());
 }
 
-// FUNCTION: 0x00597D50
+// FUNCTION: GAMEMD 0x00597D50
 bool MapSeedClass::Delete_File(const char * file_name)
 {
 	return(BASECLASS::Delete_File(file_name));
@@ -2088,7 +2094,7 @@ bool MapSeedClass::Delete_File(const char * file_name)
 
 extern wchar_t DAT_00887734[];
 
-// FUNCTION: 0x00597D60
+// FUNCTION: GAMEMD 0x00597D60
 bool MapSeedClass::Read_File(FileEntryClass * entry, WIN32_FIND_DATAA * ff)
 {
 	wchar_t buffer[128];
@@ -2122,37 +2128,37 @@ bool MapSeedClass::Read_File(FileEntryClass * entry, WIN32_FIND_DATAA * ff)
 	return(false);
 }
 
-// FUNCTION: 0x00597F80
+// FUNCTION: GAMEMD 0x00597F80
 wchar_t const * MapSeedClass::GetUIString_Load(void) const
 {
 	return StringTable::LoadString("GUI:LoadMapMenu", NULL, "D:\\ra2mdpost\\MapGen.cpp", 5572);
 }
 
-// FUNCTION: 0x00597FA0
+// FUNCTION: GAMEMD 0x00597FA0
 wchar_t const * MapSeedClass::GetUIString_Save(void) const
 {
 	return StringTable::LoadString("GUI:SaveMapMenu", NULL, "D:\\ra2mdpost\\MapGen.cpp", 5578);
 }
 
-// FUNCTION: 0x00597FC0
+// FUNCTION: GAMEMD 0x00597FC0
 wchar_t const * MapSeedClass::GetUIString_Delete(void) const
 {
 	return StringTable::LoadString("GUI:DeleteMapMenu", NULL, "D:\\ra2mdpost\\MapGen.cpp", 5584);
 }
 
-// FUNCTION: 0x00597FE0
+// FUNCTION: GAMEMD 0x00597FE0
 wchar_t const * MapSeedClass::GetUIString_GameSaved(void) const
 {
 	return StringTable::LoadString("GUI:MapSaved", NULL, "D:\\ra2mdpost\\MapGen.cpp", 5590);
 }
 
-// FUNCTION: 0x00598000
+// FUNCTION: GAMEMD 0x00598000
 double Random_Fraction(void)
 {
 	return RMG_RANDOM_DOUBLE(1);
 }
 
-// FUNCTION: 0x00598030
+// FUNCTION: GAMEMD 0x00598030
 unsigned int Pick_Random_UInt(unsigned int minval, unsigned int maxval)
 {
 	unsigned int value = 0;
@@ -2165,7 +2171,7 @@ unsigned int Pick_Random_UInt(unsigned int minval, unsigned int maxval)
 	return(value);
 }
 
-// FUNCTION: 0x005980A0
+// FUNCTION: GAMEMD 0x005980A0
 NormalDistribution::NormalDistribution(double (*function)(void))
 {
 	HasSpare = false;
@@ -2173,7 +2179,7 @@ NormalDistribution::NormalDistribution(double (*function)(void))
 	Rand = function;
 }
 
-// FUNCTION: 0x005980C0
+// FUNCTION: GAMEMD 0x005980C0
 double NormalDistribution::operator ()(void)
 {
 	if (HasSpare) {
@@ -2200,13 +2206,13 @@ double NormalDistribution::operator ()(void)
 	return(r1);
 }
 
-// FUNCTION: 0x00598160
+// FUNCTION: GAMEMD 0x00598160
 double Sample_Normal(double mean, double standard_dev)
 {
 	return(standard_dev * RMGGaussian() + mean);
 }
 
-// FUNCTION: 0x00598180
+// FUNCTION: GAMEMD 0x00598180
 double Sample_Truncated_Normal(double mean, double scale, double lower_bound, double upper_bound)
 {
 	double value;
@@ -2239,7 +2245,7 @@ inline double Sample_Truncated_Normal_Inline(double mean, double scale, double l
 	return(value);
 }
 
-// FUNCTION: 0x00599530
+// FUNCTION: GAMEMD 0x00599530
 void MapGeneratorClass::Cleanup(void)
 {
 	SeededWaterAmount = 0;
@@ -2264,7 +2270,7 @@ void MapGeneratorClass::Cleanup(void)
 	Map.Compute_Radar_Image();
 }
 
-// FUNCTION: 0x0059A670
+// FUNCTION: GAMEMD 0x0059A670
 void MapGeneratorClass::Update_Progress(int percent_progress)
 {
 	if (Scen->IsReadingScenario) {
@@ -2274,7 +2280,7 @@ void MapGeneratorClass::Update_Progress(int percent_progress)
 	}
 }
 
-// FUNCTION: 0x0059A6C0
+// FUNCTION: GAMEMD 0x0059A6C0
 void MapGeneratorClass::Seed_Land(void)
 {
 	Map.Reset_Iterator();
@@ -2335,7 +2341,7 @@ void MapGeneratorClass::Seed_Land(void)
 	Green_Shores();
 }
 
-// FUNCTION: 0x0059A8F0
+// FUNCTION: GAMEMD 0x0059A8F0
 void MapGeneratorClass::Partition_Rect(DynamicVectorClass<Rect> & rects, int count, Rect const & area)
 {
 	int root = (int)fastmath::sqrt((double)count);
@@ -2417,7 +2423,7 @@ static inline int Double_Area(int width, int height)
 	return width * height * 2;
 }
 
-// FUNCTION: 0x0059B6D0
+// FUNCTION: GAMEMD 0x0059B6D0
 void MapGeneratorClass::Green_Shores(void)
 {
 	Map.Reset_Iterator();
@@ -2435,7 +2441,7 @@ void MapGeneratorClass::Green_Shores(void)
 	}
 }
 
-// FUNCTION: 0x0059B740
+// FUNCTION: GAMEMD 0x0059B740
 void MapGeneratorClass::Scatter_Green_Tiles(void)
 {
 	DynamicVectorClass<CellClass *> candidates;
@@ -2473,7 +2479,7 @@ void MapGeneratorClass::Scatter_Green_Tiles(void)
 	}
 }
 
-// FUNCTION: 0x0059B940
+// FUNCTION: GAMEMD 0x0059B940
 double MapGeneratorClass::FUN_0059B940(Cell const & from, Cell const & to, Rect const & rect, Cell const & center, float weight_x, float weight_y)
 {
 	if (!(rect == RECT_NONE)) {
@@ -2496,7 +2502,7 @@ double MapGeneratorClass::FUN_0059B940(Cell const & from, Cell const & to, Rect 
 	return fastmath::sqrt((double)(dy * dy + dx * dx));
 }
 
-// FUNCTION: 0x0059BAB0
+// FUNCTION: GAMEMD 0x0059BAB0
 bool MapGeneratorClass::FUN_0059BAB0(Cell const & cell, Rect const & rect, bool flag, double scale_x, double scale_y)
 {
 	if (rect == RECT_NONE) {
@@ -2512,7 +2518,7 @@ bool MapGeneratorClass::FUN_0059BAB0(Cell const & cell, Rect const & rect, bool 
 	return rect.Is_Point_Within(Point2D(cell.X, cell.Y));
 }
 
-// FUNCTION: 0x0059C530
+// FUNCTION: GAMEMD 0x0059C530
 void MapGeneratorClass::Clear_Shore_Tiles(void)
 {
 	Map.Reset_Iterator();
@@ -2526,7 +2532,7 @@ void MapGeneratorClass::Clear_Shore_Tiles(void)
 	}
 }
 
-// FUNCTION: 0x0059C580
+// FUNCTION: GAMEMD 0x0059C580
 void MapGeneratorClass::Seed_Water(void)
 {
 	WorkingRegionID++;
@@ -2559,7 +2565,7 @@ void MapGeneratorClass::Seed_Water(void)
 	}
 }
 
-// FUNCTION: 0x0059C630
+// FUNCTION: GAMEMD 0x0059C630
 void MapGeneratorClass::Vary_Water_Tiles(void)
 {
 	Map.Reset_Iterator();
@@ -2589,7 +2595,7 @@ void MapGeneratorClass::Vary_Water_Tiles(void)
 	}
 }
 
-// FUNCTION: 0x0059C800
+// FUNCTION: GAMEMD 0x0059C800
 bool MapGeneratorClass::Green_Region_Tiles(int region_id)
 {
 	Map.Reset_Iterator();
@@ -2605,7 +2611,7 @@ bool MapGeneratorClass::Green_Region_Tiles(int region_id)
 	return true;
 }
 
-// FUNCTION: 0x0059C880
+// FUNCTION: GAMEMD 0x0059C880
 void MapGeneratorClass::Clear_Region_Cells(int id, int new_id, int cell_height, IsometricTileType ittype)
 {
 	Map.Reset_Iterator();
@@ -2623,7 +2629,7 @@ void MapGeneratorClass::Clear_Region_Cells(int id, int new_id, int cell_height, 
 	}
 }
 
-// FUNCTION: 0x0059D440
+// FUNCTION: GAMEMD 0x0059D440
 int MapGeneratorClass::Get_Target_Water_Amount(void)
 {
 	if (SeedData.WaterAmount == 0) {
@@ -2632,7 +2638,7 @@ int MapGeneratorClass::Get_Target_Water_Amount(void)
 	return(0.008 * SeedData.WaterAmount * LocalWidth * LocalHeight + 100.0);
 }
 
-// FUNCTION: 0x0059D480
+// FUNCTION: GAMEMD 0x0059D480
 double MapGeneratorClass::Get_Spread_Score(const Cell & cell1, const Cell & cell2, int spread_step) const
 {
 	static const float scale = 0.5;
@@ -2650,7 +2656,7 @@ double MapGeneratorClass::Get_Spread_Score(const Cell & cell1, const Cell & cell
 	return(random_value + dist_term - step_term);
 }
 
-// FUNCTION: 0x0059E640
+// FUNCTION: GAMEMD 0x0059E640
 void MapGeneratorClass::Set_Height_Of_ID(int id, char cell_height)
 {
 	Map.Reset_Iterator();
@@ -2663,7 +2669,7 @@ void MapGeneratorClass::Set_Height_Of_ID(int id, char cell_height)
 	}
 }
 
-// FUNCTION: 0x0059E6C0
+// FUNCTION: GAMEMD 0x0059E6C0
 void MapGeneratorClass::Increase_Height_Of_ID(int id, char cell_height)
 {
 	Map.Reset_Iterator();
@@ -2676,31 +2682,31 @@ void MapGeneratorClass::Increase_Height_Of_ID(int id, char cell_height)
 	}
 }
 
-// FUNCTION: 0x005A0090
+// FUNCTION: GAMEMD 0x005A0090
 void MapGeneratorClass::Set_Cell_Data_Region(Cell const &cell, int region_id)
 {
 	MapRegionClass::CellData::Set_Region(cell, region_id);
 }
 
-// FUNCTION: 0x005A00C0
+// FUNCTION: GAMEMD 0x005A00C0
 int MapGeneratorClass::Get_Cell_Data_Region(Cell const &cell)
 {
 	return(MapRegionClass::CellData::Get_Region(cell));
 }
 
-// FUNCTION: 0x005A0100
+// FUNCTION: GAMEMD 0x005A0100
 void MapGeneratorClass::Set_Cell_Data_Spread(Cell const &cell, int patch_id)
 {
 	MapRegionClass::CellData::Set_Spread(cell, patch_id);
 }
 
-// FUNCTION: 0x005A0130
+// FUNCTION: GAMEMD 0x005A0130
 int MapGeneratorClass::Get_Cell_Data_Spread(Cell const &cell)
 {
 	return(MapRegionClass::CellData::Get_Spread(cell));
 }
 
-// FUNCTION: 0x005A0160
+// FUNCTION: GAMEMD 0x005A0160
 bool MapGeneratorClass::Grow_Region(int id, int rings, Rect rect, char set_height, char height)
 {
 	DynamicVectorClass<Cell> * cells = Build_Region_Border_Cell_List(id);
@@ -2741,7 +2747,7 @@ bool MapGeneratorClass::Grow_Region(int id, int rings, Rect rect, char set_heigh
 	return(true);
 }
 
-// FUNCTION: 0x005A0410
+// FUNCTION: GAMEMD 0x005A0410
 bool MapGeneratorClass::Clear_Region_Border(int id, int rings, int new_id)
 {
 	int i;
@@ -2806,7 +2812,7 @@ bool MapGeneratorClass::Clear_Region_Border(int id, int rings, int new_id)
 	return(true);
 }
 
-// FUNCTION: 0x005A0700
+// FUNCTION: GAMEMD 0x005A0700
 DynamicVectorClass<Cell> *MapGeneratorClass::Build_Region_Border_Cell_List(int id)
 {
 	DynamicVectorClass<Cell> *cells = new DynamicVectorClass<Cell>;
@@ -2836,7 +2842,7 @@ DynamicVectorClass<Cell> *MapGeneratorClass::Build_Region_Border_Cell_List(int i
 	return(cells);
 }
 
-// FUNCTION: 0x005A1190
+// FUNCTION: GAMEMD 0x005A1190
 double MapGeneratorClass::Get_Angle_Score(const Cell & cell1, const Cell & cell2, double ref_angle)
 {
 	static const double _random_weight = 2.0;
@@ -2861,7 +2867,7 @@ double MapGeneratorClass::Get_Angle_Score(const Cell & cell1, const Cell & cell2
 	return(RMG_RANDOM_DOUBLE2(_random_weight) + _angle_weight * angle_diff);
 }
 
-// FUNCTION: 0x005A1270
+// FUNCTION: GAMEMD 0x005A1270
 void MapGeneratorClass::Clear_Cell_Data_Spreads(void)
 {
 	Map.Reset_Iterator();
@@ -2872,7 +2878,7 @@ void MapGeneratorClass::Clear_Cell_Data_Spreads(void)
 	}
 }
 
-// FUNCTION: 0x005A12D0
+// FUNCTION: GAMEMD 0x005A12D0
 void MapGeneratorClass::Increase_Height_Except_ID(int cell_height, int id)
 {
 	Map.Reset_Iterator();
@@ -2886,7 +2892,7 @@ void MapGeneratorClass::Increase_Height_Except_ID(int cell_height, int id)
 	}
 }
 
-// FUNCTION: 0x005A1350
+// FUNCTION: GAMEMD 0x005A1350
 IsometricTileType MapGeneratorClass::Pick_Alternate_Cliff(IsometricTileType type)
 {
 	int cliff = type - IsometricTileTypeClass::CliffSet;
@@ -2955,7 +2961,7 @@ IsometricTileType MapGeneratorClass::Pick_Alternate_Cliff(IsometricTileType type
 	return (IsometricTileType)(IsometricTileTypeClass::CliffSet + cliff);
 }
 
-// FUNCTION: 0x005A19E0
+// FUNCTION: GAMEMD 0x005A19E0
 void MapGeneratorClass::Fixup_Cliff_Corners(void)
 {
 	Map.Reset_Iterator();
@@ -2994,7 +3000,7 @@ static inline bool Is_Special_Map_Type(MapSeedClass const & seed)
 	return(seed.MapType == 3 || seed.MapType == 4);
 }
 
-// FUNCTION: 0x005A1C70
+// FUNCTION: GAMEMD 0x005A1C70
 void MapGeneratorClass::Init_Regions(void)
 {
 	int i;
@@ -3013,7 +3019,7 @@ void MapGeneratorClass::Init_Regions(void)
 	MapRegionClass::Create_Land_Regions(false);
 }
 
-// FUNCTION: 0x005A1E10
+// FUNCTION: GAMEMD 0x005A1E10
 void MapGeneratorClass::Make_Regions(void)
 {
 	if (SeedData.MapType == 4 || SeedData.MapType == 3) {
@@ -3025,7 +3031,7 @@ void MapGeneratorClass::Make_Regions(void)
 	}
 }
 
-// FUNCTION: 0x005A1E50
+// FUNCTION: GAMEMD 0x005A1E50
 bool MapGeneratorClass::Region_Cell_Count_At_Least(Rect const & rect, int region_id, int, int count)
 {
 	Cell cell(rect.X, rect.Y);
@@ -3047,7 +3053,7 @@ bool MapGeneratorClass::Region_Cell_Count_At_Least(Rect const & rect, int region
 	return(false);
 }
 
-// FUNCTION: 0x005A1F60
+// FUNCTION: GAMEMD 0x005A1F60
 bool MapGeneratorClass::Expand_All_High_Ground(void)
 {
 	bool success = true;
@@ -3064,7 +3070,7 @@ bool MapGeneratorClass::Expand_All_High_Ground(void)
 	return(success);
 }
 
-// FUNCTION: 0x005A1FB0
+// FUNCTION: GAMEMD 0x005A1FB0
 bool MapGeneratorClass::Init_Start_Points(void)
 {
 	int player_index = 0;
@@ -3120,7 +3126,7 @@ bool MapGeneratorClass::Init_Start_Points(void)
 	return(true);
 }
 
-// FUNCTION: 0x005A2ED0
+// FUNCTION: GAMEMD 0x005A2ED0
 double MapGeneratorClass::Get_Tiberium_Score(const Cell & cell1, const Cell & cell2) const
 {
 	static const double _random_range = 5.0;
@@ -3131,7 +3137,7 @@ double MapGeneratorClass::Get_Tiberium_Score(const Cell & cell1, const Cell & ce
 	return(RMG_RANDOM_DOUBLE(_random_range) + dist);
 }
 
-// FUNCTION: 0x005A2F50
+// FUNCTION: GAMEMD 0x005A2F50
 void MapGeneratorClass::Seed_Hill_Heights(void)
 {
 	static const double scale = 0.025;
@@ -3218,7 +3224,7 @@ void MapGeneratorClass::Seed_Hill_Heights(void)
 	}
 }
 
-// FUNCTION: 0x005A33F0
+// FUNCTION: GAMEMD 0x005A33F0
 void MapGeneratorClass::Seed_Hill_Anchors(void)
 {
 	Map.Reset_Iterator();
@@ -3247,7 +3253,7 @@ void MapGeneratorClass::Seed_Hill_Anchors(void)
 	}
 }
 
-// FUNCTION: 0x005A35F0
+// FUNCTION: GAMEMD 0x005A35F0
 void MapGeneratorClass::Generate_Hills(void)
 {
 	Seed_Hill_Anchors();
@@ -3312,7 +3318,7 @@ void MapGeneratorClass::Generate_Hills(void)
 	}
 }
 
-// FUNCTION: 0x005A38C0
+// FUNCTION: GAMEMD 0x005A38C0
 void MapGeneratorClass::Seed_Vegetation(void)
 {
 	Map.Reset_Iterator();
@@ -3344,7 +3350,7 @@ void MapGeneratorClass::Seed_Vegetation(void)
 	}
 }
 
-// FUNCTION: 0x005A3A60
+// FUNCTION: GAMEMD 0x005A3A60
 void MapGeneratorClass::Seed_Arctic_Vegetation(void)
 {
 	static const double rough = 0.005;
@@ -3361,7 +3367,7 @@ void MapGeneratorClass::Seed_Arctic_Vegetation(void)
 	}
 }
 
-// FUNCTION: 0x005A4280
+// FUNCTION: GAMEMD 0x005A4280
 void MapGeneratorClass::Generate_Arctic_Vegetation(void)
 {
 	CellClass * cptr;
@@ -3398,7 +3404,7 @@ void MapGeneratorClass::Generate_Arctic_Vegetation(void)
 	}
 }
 
-// FUNCTION: 0x005A4AE0
+// FUNCTION: GAMEMD 0x005A4AE0
 double MapGeneratorClass::Get_Forest_Score(const Cell & cell1, const Cell & cell2) const
 {
 	static const double _random_range = 5.0;
@@ -3409,7 +3415,7 @@ double MapGeneratorClass::Get_Forest_Score(const Cell & cell1, const Cell & cell
 	return(RMG_RANDOM_DOUBLE(_random_range) + dist);
 }
 
-// FUNCTION: 0x005A4FA0
+// FUNCTION: GAMEMD 0x005A4FA0
 double MapGeneratorClass::Get_Tile_Patch_Score(const Cell & cell1, const Cell & cell2) const
 {
 	static const double _random_range = 5.0;
@@ -3423,7 +3429,7 @@ double MapGeneratorClass::Get_Tile_Patch_Score(const Cell & cell1, const Cell & 
 void Init_Dirt_Roads(void);
 int Dirt_Road_Tile_Index(IsometricTileType ittype);
 
-// FUNCTION: 0x005A5020
+// FUNCTION: GAMEMD 0x005A5020
 void MapGeneratorClass::Generate_Urban_Areas(void)
 {
 	int count = (SeedData.Cities + 0.32) * 3;
@@ -3474,7 +3480,7 @@ void MapGeneratorClass::Generate_Urban_Areas(void)
 	}
 }
 
-// FUNCTION: 0x005A5AE0
+// FUNCTION: GAMEMD 0x005A5AE0
 double MapGeneratorClass::Get_Urban_Score(const Cell & cell1, const Cell & cell2) const
 {
 	static const double _random_range = 3.0;
@@ -3485,7 +3491,7 @@ double MapGeneratorClass::Get_Urban_Score(const Cell & cell1, const Cell & cell2
 	return(RMG_RANDOM_DOUBLE(_random_range) + dist);
 }
 
-// FUNCTION: 0x005A6920
+// FUNCTION: GAMEMD 0x005A6920
 void MapGeneratorClass::Generate_Urban_Units(const DynamicVectorClass<Cell> & cells)
 {
 	HouseClass * neutral = House_From_HousesType(HouseTypeClass::From_Name("Neutral"));
@@ -3539,7 +3545,7 @@ void MapGeneratorClass::Generate_Urban_Units(const DynamicVectorClass<Cell> & ce
 	}
 }
 
-// FUNCTION: 0x005A6BA0
+// FUNCTION: GAMEMD 0x005A6BA0
 bool MapGeneratorClass::Is_Area_Cliff_Free(const Cell & cell)
 {
 	int yy = cell.Y;
@@ -3560,7 +3566,7 @@ bool MapGeneratorClass::Is_Area_Cliff_Free(const Cell & cell)
 	return(true);
 }
 
-// FUNCTION: 0x005A6C10
+// FUNCTION: GAMEMD 0x005A6C10
 void MapGeneratorClass::Place_Tile(IsometricTileType ittype, const Cell & cell, int region, int height)
 {
 	IsometricTileTypeClass * itype = IsometricTileTypes[ittype];
@@ -3588,7 +3594,7 @@ void MapGeneratorClass::Place_Tile(IsometricTileType ittype, const Cell & cell, 
 	}
 }
 
-// FUNCTION: 0x005A6D80
+// FUNCTION: GAMEMD 0x005A6D80
 Cell MapGeneratorClass::Plan_Paved_Road_Junction(Cell const & cell, Rect const & rect, FacingType dir)
 {
 	Cell wcell = cell;
@@ -3641,7 +3647,7 @@ Cell MapGeneratorClass::Plan_Paved_Road_Junction(Cell const & cell, Rect const &
 	return(wcell);
 }
 
-// FUNCTION: 0x005A7070
+// FUNCTION: GAMEMD 0x005A7070
 Cell MapGeneratorClass::Plan_Paved_Road(Cell const & cell, Rect const & rect, FacingType dir)
 {
 	bool south = dir == FACING_S;
@@ -3686,7 +3692,7 @@ Cell MapGeneratorClass::Plan_Paved_Road(Cell const & cell, Rect const & rect, Fa
 	return(wcell);
 }
 
-// FUNCTION: 0x005A7250
+// FUNCTION: GAMEMD 0x005A7250
 bool MapGeneratorClass::Can_Place_Paved_Road(Rect const & rect, bool overlap_road, bool overlap_road_end)
 {
 	if (My_In_Radar(Cell(rect.X, rect.Y)) &&
@@ -3714,7 +3720,7 @@ bool MapGeneratorClass::Can_Place_Paved_Road(Rect const & rect, bool overlap_roa
 	return(false);
 }
 
-// FUNCTION: 0x005A7440
+// FUNCTION: GAMEMD 0x005A7440
 bool MapGeneratorClass::Can_Place_Paved_Road_End(Rect const & rect, bool overlap_road)
 {
 	if (My_In_Radar(Cell(rect.X, rect.Y)) &&
@@ -3744,7 +3750,7 @@ bool MapGeneratorClass::Can_Place_Paved_Road_End(Rect const & rect, bool overlap
 	return(false);
 }
 
-// FUNCTION: 0x005A7640
+// FUNCTION: GAMEMD 0x005A7640
 Rect MapGeneratorClass::Get_Cell_Bounding_Rect(const DynamicVectorClass<Cell> & cells)
 {
 	Cell cmin;
@@ -3763,7 +3769,7 @@ Rect MapGeneratorClass::Get_Cell_Bounding_Rect(const DynamicVectorClass<Cell> & 
 	return(Rect(cmin.X, cmin.Y, (cmax.X - cmin.X) + 1, (cmax.Y - cmin.Y) + 1));
 }
 
-// FUNCTION: 0x005A76E0
+// FUNCTION: GAMEMD 0x005A76E0
 bool MapGeneratorClass::Can_Place_Paved_Road_Junction(Rect & rect)
 {
 	if (My_In_Radar(Cell(rect.X, rect.Y)) &&
@@ -3790,7 +3796,7 @@ bool MapGeneratorClass::Can_Place_Paved_Road_Junction(Rect & rect)
 	return(false);
 }
 
-// FUNCTION: 0x005A7B40
+// FUNCTION: GAMEMD 0x005A7B40
 bool MapGeneratorClass::Can_Place_Misc_Pavement(Rect const & rect)
 {
 	if (My_In_Radar(Cell(rect.X, rect.Y)) &&
@@ -3815,7 +3821,7 @@ bool MapGeneratorClass::Can_Place_Misc_Pavement(Rect const & rect)
 	return(false);
 }
 
-// FUNCTION: 0x005A7D00
+// FUNCTION: GAMEMD 0x005A7D00
 bool MapGeneratorClass::Can_Place_Tile(IsometricTileType ittype, Cell const & cell, bool collision, bool in_map)
 {
 	IsometricTileTypeClass * itype = IsometricTileTypes[ittype];
@@ -3842,7 +3848,7 @@ bool MapGeneratorClass::Can_Place_Tile(IsometricTileType ittype, Cell const & ce
 	return(true);
 }
 
-// FUNCTION: 0x005A7E90
+// FUNCTION: GAMEMD 0x005A7E90
 void MapGeneratorClass::Remove_Tile(IsometricTileType ittype, Cell const & cell)
 {
 	IsometricTileTypeClass * itype = IsometricTileTypes[ittype];
@@ -3865,7 +3871,7 @@ void MapGeneratorClass::Remove_Tile(IsometricTileType ittype, Cell const & cell)
 	}
 }
 
-// FUNCTION: 0x005A7FA0
+// FUNCTION: GAMEMD 0x005A7FA0
 void MapGeneratorClass::Mark_Tile(IsometricTileType ittype, Cell const & cell, bool placed)
 {
 	IsometricTileTypeClass * itype = IsometricTileTypes[ittype];
@@ -3886,7 +3892,7 @@ void MapGeneratorClass::Mark_Tile(IsometricTileType ittype, Cell const & cell, b
 	}
 }
 
-// FUNCTION: 0x005A80B0
+// FUNCTION: GAMEMD 0x005A80B0
 void MapGeneratorClass::Generate_Rural_Areas(void)
 {
 	Init_Dirt_Roads();
@@ -3924,7 +3930,7 @@ void MapGeneratorClass::Generate_Rural_Areas(void)
 	}
 }
 
-// FUNCTION: 0x005A82E0
+// FUNCTION: GAMEMD 0x005A82E0
 void MapGeneratorClass::Generate_Rural_Buildings(const Cell & cell)
 {
 	static char const * _names[] = {
@@ -4037,7 +4043,7 @@ void MapGeneratorClass::Generate_Rural_Buildings(const Cell & cell)
 	}
 }
 
-// FUNCTION: 0x005A8720
+// FUNCTION: GAMEMD 0x005A8720
 void MapGeneratorClass::Generate_Rural_Units(const Cell & cell)
 {
 	static char const * _names[] = {
@@ -4097,7 +4103,7 @@ void MapGeneratorClass::Generate_Rural_Units(const Cell & cell)
 
 namespace Unsorted { extern bool ArmageddonMode; }
 
-// FUNCTION: 0x005A91E0
+// FUNCTION: GAMEMD 0x005A91E0
 void MapGeneratorClass::Generate_Lights(void)
 {
 	StructType glite = BuildingTypeClass::From_Name("GALITE");
@@ -4148,7 +4154,7 @@ void MapGeneratorClass::Generate_Lights(void)
 	}
 }
 
-// FUNCTION: 0x005A95B0
+// FUNCTION: GAMEMD 0x005A95B0
 void MapGeneratorClass::Generate_Neutral_Buildings(void)
 {
 	MapRegionClass * region;
@@ -4217,28 +4223,28 @@ void MapGeneratorClass::Generate_Neutral_Buildings(void)
 	}
 }
 
-// FUNCTION: 0x005A9920
+// FUNCTION: GAMEMD 0x005A9920
 DirtRoadLink::DirtRoadLink(Cell const & cell, FacingType dir) :
 	Offset(cell),
 	Facing(dir)
 {
 }
 
-// FUNCTION: 0x005A9940
+// FUNCTION: GAMEMD 0x005A9940
 DirtRoadLink::DirtRoadLink(void) :
 	Offset(0, 0),
 	Facing(FACING_NONE)
 {
 }
 
-// FUNCTION: 0x005A9960
+// FUNCTION: GAMEMD 0x005A9960
 DirtRoadLink::DirtRoadLink(DirtRoadLink const & that) :
 	Offset(that.Offset),
 	Facing(that.Facing)
 {
 }
 
-// FUNCTION: 0x005A9980
+// FUNCTION: GAMEMD 0x005A9980
 DirtRoadNode::DirtRoadNode(IsometricTileType road_tile, Cell const & origin, IsometricTileType cap_tile, Cell const & cap_origin, int link_index) :
 	Tile(road_tile),
 	Origin(origin),
@@ -4248,7 +4254,7 @@ DirtRoadNode::DirtRoadNode(IsometricTileType road_tile, Cell const & origin, Iso
 {
 }
 
-// FUNCTION: 0x005A99B0
+// FUNCTION: GAMEMD 0x005A99B0
 DirtRoadNode::DirtRoadNode(void) :
 	Tile(ISOTILE_NONE),
 	Origin(Cell(0, 0)),
@@ -4258,7 +4264,7 @@ DirtRoadNode::DirtRoadNode(void) :
 {
 }
 
-// FUNCTION: 0x005A99F0
+// FUNCTION: GAMEMD 0x005A99F0
 DirtRoadNode::DirtRoadNode(DirtRoadNode const & that) :
 	Tile(that.Tile),
 	Origin(that.Origin),
@@ -4268,7 +4274,7 @@ DirtRoadNode::DirtRoadNode(DirtRoadNode const & that) :
 {
 }
 
-// FUNCTION: 0x005A9A20
+// FUNCTION: GAMEMD 0x005A9A20
 DirtRoadTile::DirtRoadTile(DirtRoadLink const & link1) :
 	ITType(ISOTILE_CLEAR)
 {
@@ -4277,7 +4283,7 @@ DirtRoadTile::DirtRoadTile(DirtRoadLink const & link1) :
 	Links[0] = link1;
 }
 
-// FUNCTION: 0x005A9A70
+// FUNCTION: GAMEMD 0x005A9A70
 DirtRoadTile::DirtRoadTile(DirtRoadLink const & link1, DirtRoadLink const & link2) :
 	ITType(ISOTILE_CLEAR)
 {
@@ -4287,7 +4293,7 @@ DirtRoadTile::DirtRoadTile(DirtRoadLink const & link1, DirtRoadLink const & link
 	Links[1] = link2;
 }
 
-// FUNCTION: 0x005A9AE0
+// FUNCTION: GAMEMD 0x005A9AE0
 DirtRoadTile::DirtRoadTile(DirtRoadLink const & link1, DirtRoadLink const & link2, DirtRoadLink const & link3) :
 	ITType(ISOTILE_CLEAR)
 {
@@ -4298,7 +4304,7 @@ DirtRoadTile::DirtRoadTile(DirtRoadLink const & link1, DirtRoadLink const & link
 	Links[2] = link3;
 }
 
-// FUNCTION: 0x005A9B60
+// FUNCTION: GAMEMD 0x005A9B60
 DirtRoadTile::DirtRoadTile(DirtRoadLink const & link1, DirtRoadLink const & link2, DirtRoadLink const & link3, DirtRoadLink const & link4) :
 	ITType(ISOTILE_CLEAR)
 {
@@ -4310,22 +4316,24 @@ DirtRoadTile::DirtRoadTile(DirtRoadLink const & link1, DirtRoadLink const & link
 	Links[3] = link4;
 }
 
-// FUNCTION: 0x005A9BF0
+// FUNCTION: GAMEMD 0x005A9BF0
 DirtRoadTile::DirtRoadTile()
 {
 	Count = 0;
 	Links = NULL;
 }
 
-// FUNCTION: 0x005A9C00
+// FUNCTION: GAMEMD 0x005A9C00
 DirtRoadTile::~DirtRoadTile(void)
 {
 	delete Links;
 	Links = NULL;
 }
 
-// FUNCTION: 0x005A9C20 $E202
-// FUNCTION: 0x005AC190 $E200
+// SYNTHETIC: GAMEMD 0x005A9C20 SYMBOL
+// _$E202
+// SYNTHETIC: GAMEMD 0x005AC190 SYMBOL
+// _$E200
 DirtRoadTile DirtRoadTiles[] = {
 	/* 0 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_N), DirtRoadLink(Cell(2, 0), FACING_NE)),
 	/* 1 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_N), DirtRoadLink(Cell(1, 0), FACING_E)),
@@ -4438,7 +4446,7 @@ DirtRoadTile DirtRoadTiles[] = {
 	/* 108 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_N), DirtRoadLink(Cell(0, 0), FACING_S))
 };
 
-// FUNCTION: 0x005AC1C0
+// FUNCTION: GAMEMD 0x005AC1C0
 int Dirt_Road_Tile_Index(IsometricTileType ittype)
 {
 	if (ittype >= IsometricTileTypeClass::DirtRoadCurve && ittype < IsometricTileTypeClass::DirtRoadCurve + 101) {
@@ -4450,7 +4458,7 @@ int Dirt_Road_Tile_Index(IsometricTileType ittype)
 	return(ittype - IsometricTileTypeClass::DirtRoadSlopes + 101);
 }
 
-// FUNCTION: 0x005AC1F0
+// FUNCTION: GAMEMD 0x005AC1F0
 void Init_Dirt_Roads(void)
 {
 	int i;
@@ -4462,127 +4470,200 @@ void Init_Dirt_Roads(void)
 	}
 }
 
-// FUNCTION: 0x005AC270 MapSeedClass::~MapSeedClass
+// SYNTHETIC: GAMEMD 0x005AC270
+// ??_GMapSeedClass@@UAEPAXI@Z
 
-// FUNCTION: 0x005AC340 ?$PriorityQueueClass@UCellNode@@::~?$PriorityQueueClass@UCellNode@@
+// SYNTHETIC: GAMEMD 0x005AC340
+// ??_G?$PriorityQueueClass@UCellNode@@@@QAEPAXI@Z
 template class PriorityQueueClass<CellNode>;
 
-// FUNCTION: 0x005AC370 ?$TPoint2D@F::operator!=
+// TEMPLATE: GAMEMD 0x005AC370
+// ??9?$TPoint2D@F@@QBE_NABV0@@Z
 template class TPoint2D<short>;
 
-// FUNCTION: 0x005AC3A0 ?$DynamicVectorClass@PAVMapRegionClass@@::Clear
-// FUNCTION: 0x005AC3D0 ?$DynamicVectorClass@PAVMapRegionClass@@::ID
-// FUNCTION: 0x005AC3F0 ?$VectorClass@PAVMapRegionClass@@::GetItem
+// TEMPLATE: GAMEMD 0x005AC3A0
+// ?Clear@?$DynamicVectorClass@PAVMapRegionClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x005AC3D0
+// ?ID@?$DynamicVectorClass@PAVMapRegionClass@@@@UAEHPBQAVMapRegionClass@@@Z
+// TEMPLATE: GAMEMD 0x005AC3F0
+// ?GetItem@?$VectorClass@PAVMapRegionClass@@@@UBEPAVMapRegionClass@@H@Z
 template class DynamicVectorClass<MapRegionClass *>;
 
-// FUNCTION: 0x005AC400 ?$TypeList@PBVBuildingTypeClass@@::?$TypeList@PBVBuildingTypeClass@@
+// TEMPLATE: GAMEMD 0x005AC400
+// ??0?$TypeList@PBVBuildingTypeClass@@@@QAE@XZ
 template class TypeList<BuildingTypeClass const *>;
 
-// FUNCTION: 0x005AC430 ?$DynamicVectorClass@PBVBuildingTypeClass@@::operator=
+// TEMPLATE: GAMEMD 0x005AC430
+// ??4?$DynamicVectorClass@PBVBuildingTypeClass@@@@QAEAAV0@ABV0@@Z
 template class DynamicVectorClass<BuildingTypeClass const *>;
 
-// FUNCTION: 0x005AC4C0 ?$DynamicVectorClass@PAU_WIN32_FIND_DATAA@@::Clear
-// FUNCTION: 0x005AC4F0 ?$DynamicVectorClass@PAU_WIN32_FIND_DATAA@@::ID
-// FUNCTION: 0x005AC510 ?$VectorClass@PAU_WIN32_FIND_DATAA@@::GetItem
+// TEMPLATE: GAMEMD 0x005AC4C0
+// ?Clear@?$DynamicVectorClass@PAU_WIN32_FIND_DATAA@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x005AC4F0
+// ?ID@?$DynamicVectorClass@PAU_WIN32_FIND_DATAA@@@@UAEHPBQAU_WIN32_FIND_DATAA@@@Z
+// TEMPLATE: GAMEMD 0x005AC510
+// ?GetItem@?$VectorClass@PAU_WIN32_FIND_DATAA@@@@UBEPAU_WIN32_FIND_DATAA@@H@Z
 template class DynamicVectorClass<WIN32_FIND_DATAA *>;
 
-// FUNCTION: 0x005AC520 ?$DynamicVectorClass@V?$TRect@H@@::Clear
-// FUNCTION: 0x005AC550 ?$DynamicVectorClass@V?$TRect@H@@::ID
-// FUNCTION: 0x005AC570 ?$VectorClass@V?$TRect@H@@::GetItem
+// TEMPLATE: GAMEMD 0x005AC520
+// ?Clear@?$DynamicVectorClass@V?$TRect@H@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x005AC550
+// ?ID@?$DynamicVectorClass@V?$TRect@H@@@@UAEHPBV?$TRect@H@@@Z
+// TEMPLATE: GAMEMD 0x005AC570
+// ?GetItem@?$VectorClass@V?$TRect@H@@@@UBE?AV?$TRect@H@@H@Z
 template class DynamicVectorClass<Rect>;
 
-// FUNCTION: 0x005AC5A0 ?$DynamicVectorClass@PAVCellClass@@::Clear
-// FUNCTION: 0x005AC5D0 ?$DynamicVectorClass@PAVCellClass@@::ID
+// TEMPLATE: GAMEMD 0x005AC5A0
+// ?Clear@?$DynamicVectorClass@PAVCellClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x005AC5D0
+// ?ID@?$DynamicVectorClass@PAVCellClass@@@@UAEHPBQAVCellClass@@@Z
 template class DynamicVectorClass<CellClass *>;
 
-// FUNCTION: 0x005AC5F0 ?$DynamicVectorClass@N::Clear
-// FUNCTION: 0x005AC620 ?$DynamicVectorClass@N::ID
-// FUNCTION: 0x005AC640 ?$VectorClass@N::GetItem
+// TEMPLATE: GAMEMD 0x005AC5F0
+// ?Clear@?$DynamicVectorClass@N@@UAEXXZ
+// TEMPLATE: GAMEMD 0x005AC620
+// ?ID@?$DynamicVectorClass@N@@UAEHPBN@Z
+// TEMPLATE: GAMEMD 0x005AC640
+// ?GetItem@?$VectorClass@N@@UBENH@Z
 template class DynamicVectorClass<double>;
 
-// FUNCTION: 0x005AC650 ?$TypeList@PBVBuildingTypeClass@@::~?$TypeList@PBVBuildingTypeClass@@
-// FUNCTION: 0x005AC6A0 ?$VectorClass@PAVMapRegionClass@@::operator==
-// FUNCTION: 0x005AC6E0 ?$VectorClass@PAVMapRegionClass@@::Resize
-// FUNCTION: 0x005AC790 ?$VectorClass@PAVMapRegionClass@@::Clear
-// FUNCTION: 0x005AC7C0 ?$VectorClass@PAVMapRegionClass@@::ID
-// FUNCTION: 0x005AC800 ?$VectorClass@PAVMapRegionClass@@::ID
+// SYNTHETIC: GAMEMD 0x005AC650
+// ??_G?$TypeList@PBVBuildingTypeClass@@@@UAEPAXI@Z
+// TEMPLATE: GAMEMD 0x005AC6A0
+// ??8?$VectorClass@PAVMapRegionClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x005AC6E0
+// ?Resize@?$VectorClass@PAVMapRegionClass@@@@UAE_NHPBQAVMapRegionClass@@@Z
+// TEMPLATE: GAMEMD 0x005AC790
+// ?Clear@?$VectorClass@PAVMapRegionClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x005AC7C0
+// ?ID@?$VectorClass@PAVMapRegionClass@@@@UAEHABQAVMapRegionClass@@@Z
+// TEMPLATE: GAMEMD 0x005AC800
+// ?ID@?$VectorClass@PAVMapRegionClass@@@@UAEHPBQAVMapRegionClass@@@Z
 template class VectorClass<MapRegionClass *>;
 
-// FUNCTION: 0x005AC820 ?$DynamicVectorClass@PAVMapRegionClass@@::Resize
-// FUNCTION: 0x005AC8D0 ?$DynamicVectorClass@PAVMapRegionClass@@::ID
-// FUNCTION: 0x005AC900 ?$DynamicVectorClass@PBVBuildingTypeClass@@::?$DynamicVectorClass@PBVBuildingTypeClass@@
-// FUNCTION: 0x005AC960 ?$PriorityQueueClass@UCellNode@@::Extract_Min
-// FUNCTION: 0x005ACA60 ?$VectorClass@PAU_WIN32_FIND_DATAA@@::operator==
-// FUNCTION: 0x005ACAA0 ?$VectorClass@PAU_WIN32_FIND_DATAA@@::Resize
-// FUNCTION: 0x005ACB50 ?$VectorClass@PAU_WIN32_FIND_DATAA@@::Clear
-// FUNCTION: 0x005ACB80 ?$VectorClass@PAU_WIN32_FIND_DATAA@@::ID
-// FUNCTION: 0x005ACBC0 ?$VectorClass@PAU_WIN32_FIND_DATAA@@::ID
-// FUNCTION: 0x005ACBE0 ?$DynamicVectorClass@PAU_WIN32_FIND_DATAA@@::Resize
-// FUNCTION: 0x005ACC90 ?$DynamicVectorClass@PAU_WIN32_FIND_DATAA@@::ID
+// TEMPLATE: GAMEMD 0x005AC820
+// ?Resize@?$DynamicVectorClass@PAVMapRegionClass@@@@UAE_NHPBQAVMapRegionClass@@@Z
+// TEMPLATE: GAMEMD 0x005AC8D0
+// ?ID@?$DynamicVectorClass@PAVMapRegionClass@@@@UAEHABQAVMapRegionClass@@@Z
+// TEMPLATE: GAMEMD 0x005AC900
+// ??0?$DynamicVectorClass@PBVBuildingTypeClass@@@@QAE@IPBQBVBuildingTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x005AC960
+// ?Extract_Min@?$PriorityQueueClass@UCellNode@@@@QAEPAUCellNode@@XZ
+// TEMPLATE: GAMEMD 0x005ACA60
+// ??8?$VectorClass@PAU_WIN32_FIND_DATAA@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x005ACAA0
+// ?Resize@?$VectorClass@PAU_WIN32_FIND_DATAA@@@@UAE_NHPBQAU_WIN32_FIND_DATAA@@@Z
+// TEMPLATE: GAMEMD 0x005ACB50
+// ?Clear@?$VectorClass@PAU_WIN32_FIND_DATAA@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x005ACB80
+// ?ID@?$VectorClass@PAU_WIN32_FIND_DATAA@@@@UAEHABQAU_WIN32_FIND_DATAA@@@Z
+// TEMPLATE: GAMEMD 0x005ACBC0
+// ?ID@?$VectorClass@PAU_WIN32_FIND_DATAA@@@@UAEHPBQAU_WIN32_FIND_DATAA@@@Z
+// TEMPLATE: GAMEMD 0x005ACBE0
+// ?Resize@?$DynamicVectorClass@PAU_WIN32_FIND_DATAA@@@@UAE_NHPBQAU_WIN32_FIND_DATAA@@@Z
+// TEMPLATE: GAMEMD 0x005ACC90
+// ?ID@?$DynamicVectorClass@PAU_WIN32_FIND_DATAA@@@@UAEHABQAU_WIN32_FIND_DATAA@@@Z
 template class VectorClass<WIN32_FIND_DATAA *>;
 
-// FUNCTION: 0x005ACCC0 ?$VectorClass@V?$TRect@H@@::operator==
-// FUNCTION: 0x005ACD30 ?$VectorClass@V?$TRect@H@@::Resize
-// FUNCTION: 0x005ACE20 ?$VectorClass@V?$TRect@H@@::Clear
-// FUNCTION: 0x005ACE50 ?$VectorClass@V?$TRect@H@@::ID
-// FUNCTION: 0x005ACEB0 ?$VectorClass@V?$TRect@H@@::ID
-// FUNCTION: 0x005ACED0 ?$DynamicVectorClass@V?$TRect@H@@::Resize
-// FUNCTION: 0x005ACFC0 ?$DynamicVectorClass@V?$TRect@H@@::ID
+// TEMPLATE: GAMEMD 0x005ACCC0
+// ??8?$VectorClass@V?$TRect@H@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x005ACD30
+// ?Resize@?$VectorClass@V?$TRect@H@@@@UAE_NHPBV?$TRect@H@@@Z
+// TEMPLATE: GAMEMD 0x005ACE20
+// ?Clear@?$VectorClass@V?$TRect@H@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x005ACE50
+// ?ID@?$VectorClass@V?$TRect@H@@@@UAEHABV?$TRect@H@@@Z
+// TEMPLATE: GAMEMD 0x005ACEB0
+// ?ID@?$VectorClass@V?$TRect@H@@@@UAEHPBV?$TRect@H@@@Z
+// TEMPLATE: GAMEMD 0x005ACED0
+// ?Resize@?$DynamicVectorClass@V?$TRect@H@@@@UAE_NHPBV?$TRect@H@@@Z
+// TEMPLATE: GAMEMD 0x005ACFC0
+// ?ID@?$DynamicVectorClass@V?$TRect@H@@@@UAEHABV?$TRect@H@@@Z
 template class VectorClass<Rect>;
 
-// FUNCTION: 0x005AD010 ?$DynamicVectorClass@PAVCellClass@@::Resize
-// FUNCTION: 0x005AD0C0 ?$DynamicVectorClass@PAVCellClass@@::ID
-// FUNCTION: 0x005AD0F0 ?$VectorClass@N::operator==
-// FUNCTION: 0x005AD130 ?$VectorClass@N::Resize
-// FUNCTION: 0x005AD1F0 ?$VectorClass@N::Clear
-// FUNCTION: 0x005AD220 ?$VectorClass@N::ID
-// FUNCTION: 0x005AD270 ?$VectorClass@N::ID
-// FUNCTION: 0x005AD290 ?$DynamicVectorClass@N::Resize
-// FUNCTION: 0x005AD350 ?$DynamicVectorClass@N::ID
-// FUNCTION: 0x005AD390 ?$VectorClass@PAVMapRegionClass@@::~?$VectorClass@PAVMapRegionClass@@
-// FUNCTION: 0x005AD3E0 ?$DynamicVectorClass@PAVMapRegionClass@@::~?$DynamicVectorClass@PAVMapRegionClass@@
-// FUNCTION: 0x005AD430 ?$VectorClass@PAU_WIN32_FIND_DATAA@@::~?$VectorClass@PAU_WIN32_FIND_DATAA@@
-// FUNCTION: 0x005AD480 ?$DynamicVectorClass@PAU_WIN32_FIND_DATAA@@::~?$DynamicVectorClass@PAU_WIN32_FIND_DATAA@@
-// FUNCTION: 0x005AD4D0 ?$VectorClass@V?$TRect@H@@::~?$VectorClass@V?$TRect@H@@
-// FUNCTION: 0x005AD520 ?$DynamicVectorClass@V?$TRect@H@@::~?$DynamicVectorClass@V?$TRect@H@@
-// FUNCTION: 0x005AD570 ?$VectorClass@PAVCellClass@@::~?$VectorClass@PAVCellClass@@
+// TEMPLATE: GAMEMD 0x005AD010
+// ?Resize@?$DynamicVectorClass@PAVCellClass@@@@UAE_NHPBQAVCellClass@@@Z
+// TEMPLATE: GAMEMD 0x005AD0C0
+// ?ID@?$DynamicVectorClass@PAVCellClass@@@@UAEHABQAVCellClass@@@Z
+// TEMPLATE: GAMEMD 0x005AD0F0
+// ??8?$VectorClass@N@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x005AD130
+// ?Resize@?$VectorClass@N@@UAE_NHPBN@Z
+// TEMPLATE: GAMEMD 0x005AD1F0
+// ?Clear@?$VectorClass@N@@UAEXXZ
+// TEMPLATE: GAMEMD 0x005AD220
+// ?ID@?$VectorClass@N@@UAEHABN@Z
+// TEMPLATE: GAMEMD 0x005AD270
+// ?ID@?$VectorClass@N@@UAEHPBN@Z
+// TEMPLATE: GAMEMD 0x005AD290
+// ?Resize@?$DynamicVectorClass@N@@UAE_NHPBN@Z
+// TEMPLATE: GAMEMD 0x005AD350
+// ?ID@?$DynamicVectorClass@N@@UAEHABN@Z
+// SYNTHETIC: GAMEMD 0x005AD390
+// ??_G?$VectorClass@PAVMapRegionClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x005AD3E0
+// ??_G?$DynamicVectorClass@PAVMapRegionClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x005AD430
+// ??_G?$VectorClass@PAU_WIN32_FIND_DATAA@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x005AD480
+// ??_G?$DynamicVectorClass@PAU_WIN32_FIND_DATAA@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x005AD4D0
+// ??_G?$VectorClass@V?$TRect@H@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x005AD520
+// ??_G?$DynamicVectorClass@V?$TRect@H@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x005AD570
+// ??_G?$VectorClass@PAVCellClass@@@@UAEPAXI@Z
 template class VectorClass<CellClass *>;
 template class VectorClass<double>;
 
-// FUNCTION: 0x005AD5C0 ?$VectorClass@N::~?$VectorClass@N
-// FUNCTION: 0x005AD610 ?$DynamicVectorClass@N::~?$DynamicVectorClass@N
+// SYNTHETIC: GAMEMD 0x005AD5C0
+// ??_G?$VectorClass@N@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x005AD610
+// ??_G?$DynamicVectorClass@N@@UAEPAXI@Z
 template class DynamicVectorClass<double>;
 
-// FUNCTION: 0x005AD660 ?$TypeList@PBVBuildingTypeClass@@::?$TypeList@PBVBuildingTypeClass@@
+// TEMPLATE: GAMEMD 0x005AD660
+// ??0?$TypeList@PBVBuildingTypeClass@@@@QAE@ABV0@@Z
 template class TypeList<BuildingTypeClass const *>;
 
-// FUNCTION: 0x005AD6F0 ?$VectorClass@PAD::?$VectorClass@PAD
+// TEMPLATE: GAMEMD 0x005AD6F0
+// ??0?$VectorClass@PAD@@QAE@HPBQAD@Z
 template class VectorClass<char *>;
 
-// FUNCTION: 0x005AD740 ?$VectorClass@PAVMapRegionClass@@::?$VectorClass@PAVMapRegionClass@@
-// FUNCTION: 0x005AD790 ?$DynamicVectorClass@PAVMapRegionClass@@::Delete_Index
+// TEMPLATE: GAMEMD 0x005AD740
+// ??0?$VectorClass@PAVMapRegionClass@@@@QAE@HPBQAVMapRegionClass@@@Z
+// TEMPLATE: GAMEMD 0x005AD790
+// ?Delete_Index@?$DynamicVectorClass@PAVMapRegionClass@@@@QAE_NH@Z
 template class DynamicVectorClass<MapRegionClass *>;
 
-// FUNCTION: 0x005AD7D0 ?$DynamicVectorClass@PBVBuildingTypeClass@@::Add
+// TEMPLATE: GAMEMD 0x005AD7D0
+// ?Add@?$DynamicVectorClass@PBVBuildingTypeClass@@@@QAE_NABQBVBuildingTypeClass@@@Z
 template class DynamicVectorClass<BuildingTypeClass const *>;
 
-// FUNCTION: 0x005AD820 ?$VectorClass@PAVCellClass@@::?$VectorClass@PAVCellClass@@
+// TEMPLATE: GAMEMD 0x005AD820
+// ??0?$VectorClass@PAVCellClass@@@@QAE@HPBQAVCellClass@@@Z
 template class VectorClass<CellClass *>;
 
-// FUNCTION: 0x005AD870 ?$PriorityQueueClass@UCellNode@@::Heapify
+// TEMPLATE: GAMEMD 0x005AD870
+// ?Heapify@?$PriorityQueueClass@UCellNode@@@@QAEXH@Z
 template class PriorityQueueClass<CellNode>;
 
-// FUNCTION: 0x005AD930 ?$IndexClass@HPAVMapRegionClass@@::Increase_Table_Size
-// FUNCTION: 0x005AD9C0 ?$IndexClass@HPAVMapRegionClass@@::search_compfunc
+// TEMPLATE: GAMEMD 0x005AD930
+// ?Increase_Table_Size@?$IndexClass@HPAVMapRegionClass@@@@AAE_NH@Z
+// TEMPLATE: GAMEMD 0x005AD9C0
+// ?search_compfunc@?$IndexClass@HPAVMapRegionClass@@@@CAHPBX0@Z
 template class IndexClass<int, MapRegionClass *>;
 
-// FUNCTION: 0x005AD9F0 ?$VectorClass@PAU_WIN32_FIND_DATAA@@::?$VectorClass@PAU_WIN32_FIND_DATAA@@
+// TEMPLATE: GAMEMD 0x005AD9F0
+// ??0?$VectorClass@PAU_WIN32_FIND_DATAA@@@@QAE@HPBQAU_WIN32_FIND_DATAA@@@Z
 template class VectorClass<WIN32_FIND_DATAA *>;
 
-// FUNCTION: 0x005ADA40 ?$VectorClass@V?$TRect@H@@::?$VectorClass@V?$TRect@H@@
+// TEMPLATE: GAMEMD 0x005ADA40
+// ??0?$VectorClass@V?$TRect@H@@@@QAE@HPBV?$TRect@H@@@Z
 template class VectorClass<TRect<int> >;
 
-// FUNCTION: 0x005ADAB0 ?$VectorClass@N::?$VectorClass@N
+// TEMPLATE: GAMEMD 0x005ADAB0
+// ??0?$VectorClass@N@@QAE@HPBN@Z
 template class VectorClass<double>;
 
 extern int DAT_00ABED60;
@@ -4590,7 +4671,7 @@ extern int DAT_00ABED64;
 extern int DAT_00ABED68;
 extern int DAT_00ABED6C;
 
-// FUNCTION: 0x005ADB00
+// FUNCTION: GAMEMD 0x005ADB00
 void FUN_005ADB00(void)
 {
 	DAT_00ABED60 = 0;

@@ -20,7 +20,7 @@ static VersionProtocolType VersionProtocol[] = {
 	{0x00010000,COMM_PROTOCOL_MULTI_E_COMP},
 };
 
-// FUNCTION: 0x0074F730
+// FUNCTION: GAMEMD 0x0074F730
 VersionClass::VersionClass(void) :
 	Version(0),
 	MajorVer(0),
@@ -36,7 +36,7 @@ VersionClass::VersionClass(void) :
 	VersionName[0] = '\0';
 }
 
-// FUNCTION: 0x0074F760
+// FUNCTION: GAMEMD 0x0074F760
 unsigned int VersionClass::Version_Number(void)
 {
 	if (!TextInit) {
@@ -54,7 +54,7 @@ unsigned int VersionClass::Version_Number(void)
 	return(Version);
 }
 
-// FUNCTION: 0x0074F960
+// FUNCTION: GAMEMD 0x0074F960
 unsigned short VersionClass::Major_Version(void)
 {
 	if (!TextInit) {
@@ -72,7 +72,7 @@ unsigned short VersionClass::Major_Version(void)
 	return(MajorVer);
 }
 
-// FUNCTION: 0x0074FA20
+// FUNCTION: GAMEMD 0x0074FA20
 unsigned short VersionClass::Minor_Version(void)
 {
 	if (!TextInit) {
@@ -90,7 +90,7 @@ unsigned short VersionClass::Minor_Version(void)
 	return(MinorVer);
 }
 
-// FUNCTION: 0x0074FAE0
+// FUNCTION: GAMEMD 0x0074FAE0
 char * VersionClass::Version_Name(void)
 {
 	unsigned short adjusted_minor;
@@ -101,7 +101,7 @@ char * VersionClass::Version_Name(void)
 	return(VersionName);
 }
 
-// FUNCTION: 0x0074FC80
+// FUNCTION: GAMEMD 0x0074FC80
 void VersionClass::Read_Text_String(void)
 {
 	RawFileClass file("VERSION.TXT");
@@ -117,7 +117,7 @@ void VersionClass::Read_Text_String(void)
 	}
 }
 
-// FUNCTION: 0x0074FD20
+// FUNCTION: GAMEMD 0x0074FD20
 CommProtocolType VersionClass::Version_Protocol(unsigned int version)
 {
 	int i,j;
@@ -133,14 +133,14 @@ CommProtocolType VersionClass::Version_Protocol(unsigned int version)
 	return(VersionProtocol[j-1].Protocol);
 }
 
-// FUNCTION: 0x0074FD50
+// FUNCTION: GAMEMD 0x0074FD50
 void VersionClass::Init_Clipping(void)
 {
 	MinClipVer = Min_Version();
 	MaxClipVer = Max_Version();
 }
 
-// FUNCTION: 0x0074FD60
+// FUNCTION: GAMEMD 0x0074FD60
 unsigned int VersionClass::Clip_Version(unsigned int minver,
 	unsigned int maxver)
 {
@@ -159,13 +159,13 @@ unsigned int VersionClass::Clip_Version(unsigned int minver,
 	return(MaxClipVer);
 }
 
-// FUNCTION: 0x0074FDA0
+// FUNCTION: GAMEMD 0x0074FDA0
 unsigned int VersionClass::Min_Version(void)
 {
 	return(MIN_VERSION);
 }
 
-// FUNCTION: 0x0074FDB0
+// FUNCTION: GAMEMD 0x0074FDB0
 unsigned int VersionClass::Max_Version(void)
 {
 	return(MAX_VERSION);
@@ -177,7 +177,7 @@ BOOL __stdcall FUN_007C89E6(LPSTR filename, DWORD handle, DWORD size, LPVOID blo
 BOOL __stdcall FUN_007C89E0(LPVOID block, LPSTR sub, LPVOID * buffer, UINT * len);
 }
 
-// FUNCTION: 0x0074FDC0
+// FUNCTION: GAMEMD 0x0074FDC0
 char const * Version_Name(void)
 {
 	static char buffer[512] = {"zzz"};
@@ -244,7 +244,7 @@ static const char *AbilityName[ABILITY_COUNT] = {
 	"CRUSHER"
 };
 
-// FUNCTION: 0x0074FEF0
+// FUNCTION: GAMEMD 0x0074FEF0
 AbilityType Ability_From_Name(const char *name)
 {
 	for (int ability = ABILITY_FIRST; ability < ABILITY_COUNT; ability++) {
@@ -255,49 +255,49 @@ AbilityType Ability_From_Name(const char *name)
 	return(ABILITY_NONE);
 }
 
-// FUNCTION: 0x0074FF30
+// FUNCTION: GAMEMD 0x0074FF30
 VeterancyClass::VeterancyClass(void) :
 	Experience(0)
 {
 }
 
-// FUNCTION: 0x0074FF40
+// FUNCTION: GAMEMD 0x0074FF40
 VeterancyClass::~VeterancyClass(void)
 {
 }
 
-// FUNCTION: 0x0074FF50
+// FUNCTION: GAMEMD 0x0074FF50
 void VeterancyClass::Made_A_Kill(int cost, int value)
 {
 	Experience += value / (cost * Rule->VeteranRatio);
 	Experience = MIN(Experience, Rule->VeteranCap);
 }
 
-// FUNCTION: 0x0074FF90
+// FUNCTION: GAMEMD 0x0074FF90
 bool VeterancyClass::Is_Veteran(void) const
 {
 	return Experience >= 1.0f && Experience < 2.0f;
 }
 
-// FUNCTION: 0x0074FFC0
+// FUNCTION: GAMEMD 0x0074FFC0
 bool VeterancyClass::Is_Rookie(void) const
 {
 	return Experience >= 0.0f && Experience < 1.0f;
 }
 
-// FUNCTION: 0x0074FFF0
+// FUNCTION: GAMEMD 0x0074FFF0
 bool VeterancyClass::Is_Dumbass(void) const
 {
 	return Experience < 0.0f;
 }
 
-// FUNCTION: 0x00750010
+// FUNCTION: GAMEMD 0x00750010
 bool VeterancyClass::Is_Elite(void) const
 {
 	return Experience >= 2.0f;
 }
 
-// FUNCTION: 0x00750030
+// FUNCTION: GAMEMD 0x00750030
 int VeterancyClass::Remaining_Levels(void) const
 {
 	if (Experience >= 2.0f) {
@@ -306,37 +306,37 @@ int VeterancyClass::Remaining_Levels(void) const
 	return Experience >= 1.0f ? 1 : 2;
 }
 
-// FUNCTION: 0x00750060
+// FUNCTION: GAMEMD 0x00750060
 void VeterancyClass::Set_Dumbass(bool set)
 {
 	Experience = set ? -0.25f : 0.0f;
 }
 
-// FUNCTION: 0x00750080
+// FUNCTION: GAMEMD 0x00750080
 void VeterancyClass::Set_Rookie(bool set)
 {
 	Experience = 0.0f;
 }
 
-// FUNCTION: 0x00750090
+// FUNCTION: GAMEMD 0x00750090
 void VeterancyClass::Set_Veteran(bool set)
 {
 	Experience = set ? 1.0f : 0.0f;
 }
 
-// FUNCTION: 0x007500B0
+// FUNCTION: GAMEMD 0x007500B0
 void VeterancyClass::Set_Elite(bool set)
 {
 	Experience = set ? 2.0f : 0.0f;
 }
 
-// FUNCTION: 0x007500D0
+// FUNCTION: GAMEMD 0x007500D0
 int VeterancyClass::To_Integer(void) const
 {
 	return (int)(Experience * 100.0f);
 }
 
-// FUNCTION: 0x007500E0
+// FUNCTION: GAMEMD 0x007500E0
 void VeterancyClass::From_Integer(int value)
 {
 	Experience = value * 0.01;

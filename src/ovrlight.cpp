@@ -19,16 +19,18 @@
 #include "surface.h"
 #include "tactical.h"
 
-// FUNCTION: 0x005FF1D0 $E75
+// SYNTHETIC: GAMEMD 0x005FF1D0 SYMBOL
+// _$E75
 DynamicVectorClass<SpotLightClass *> SpotLights;
 
-// FUNCTION: 0x005FF210 $E73
+// SYNTHETIC: GAMEMD 0x005FF210 SYMBOL
+// _$E73
 
 int *SpotLightMMXBuffer;
 
 BSurface *SpotLightSurfaces[SpotLightClass::SPOTLIGHT_SURFACE_COUNT + SpotLightClass::SPOTLIGHT_EXTRA_SURFACE_COUNT];
 
-// FUNCTION: 0x005FF250
+// FUNCTION: GAMEMD 0x005FF250
 SpotLightClass::SpotLightClass(Coord pos, int size) :
 	Radius(0),
 	Position(pos),
@@ -38,13 +40,13 @@ SpotLightClass::SpotLightClass(Coord pos, int size) :
 	SpotLights.Add(this);
 }
 
-// FUNCTION: 0x005FF2D0
+// FUNCTION: GAMEMD 0x005FF2D0
 SpotLightClass::~SpotLightClass(void)
 {
 	SpotLights.Delete(this);
 }
 
-// FUNCTION: 0x005FF320
+// FUNCTION: GAMEMD 0x005FF320
 void SpotLightClass::AI(void)
 {
 	Radius += SPOTLIGHT_RADIUS_STEP;
@@ -53,7 +55,7 @@ void SpotLightClass::AI(void)
 	}
 }
 
-// FUNCTION: 0x005FF390
+// FUNCTION: GAMEMD 0x005FF390
 void SpotLightClass::Update_All(void)
 {
 	for (int i = SpotLights.Count() - 1; i >= 0; i--) {
@@ -61,7 +63,7 @@ void SpotLightClass::Update_All(void)
 	}
 }
 
-// FUNCTION: 0x005FF800
+// FUNCTION: GAMEMD 0x005FF800
 void SpotLightClass::Clear_All(void)
 {
 	if (SpotLightMMXBuffer != NULL) {
@@ -74,7 +76,7 @@ void SpotLightClass::Clear_All(void)
 	}
 }
 
-// FUNCTION: 0x005FFFA0
+// FUNCTION: GAMEMD 0x005FFFA0
 void SpotLightClass::Draw_All(void)
 {
 	for (int i = SpotLights.Count() - 1; i >= 0; i--) {
@@ -82,37 +84,49 @@ void SpotLightClass::Draw_All(void)
 	}
 }
 
-// FUNCTION: 0x005FFFC0 ?$DynamicVectorClass@PAVSpotLightClass@@::Clear
+// TEMPLATE: GAMEMD 0x005FFFC0
+// ?Clear@?$DynamicVectorClass@PAVSpotLightClass@@@@UAEXXZ
 template class DynamicVectorClass<SpotLightClass *>;
 
-// FUNCTION: 0x005FFFF0 ?$DynamicVectorClass@PAVSpotLightClass@@::ID
+// TEMPLATE: GAMEMD 0x005FFFF0
+// ?ID@?$DynamicVectorClass@PAVSpotLightClass@@@@UAEHPBQAVSpotLightClass@@@Z
 
-// FUNCTION: 0x00600010 ?$VectorClass@PAVSpotLightClass@@::GetItem
+// TEMPLATE: GAMEMD 0x00600010
+// ?GetItem@?$VectorClass@PAVSpotLightClass@@@@UBEPAVSpotLightClass@@H@Z
 
-// FUNCTION: 0x00600020 ?$VectorClass@PAVSpotLightClass@@::operator==
+// TEMPLATE: GAMEMD 0x00600020
+// ??8?$VectorClass@PAVSpotLightClass@@@@UBE_NABV0@@Z
 
-// FUNCTION: 0x00600060 ?$VectorClass@PAVSpotLightClass@@::Resize
+// TEMPLATE: GAMEMD 0x00600060
+// ?Resize@?$VectorClass@PAVSpotLightClass@@@@UAE_NHPBQAVSpotLightClass@@@Z
 
-// FUNCTION: 0x00600110 ?$VectorClass@PAVSpotLightClass@@::Clear
+// TEMPLATE: GAMEMD 0x00600110
+// ?Clear@?$VectorClass@PAVSpotLightClass@@@@UAEXXZ
 
-// FUNCTION: 0x00600140 ?$VectorClass@PAVSpotLightClass@@::ID
+// TEMPLATE: GAMEMD 0x00600140
+// ?ID@?$VectorClass@PAVSpotLightClass@@@@UAEHABQAVSpotLightClass@@@Z
 
-// FUNCTION: 0x00600180 ?$VectorClass@PAVSpotLightClass@@::ID
+// TEMPLATE: GAMEMD 0x00600180
+// ?ID@?$VectorClass@PAVSpotLightClass@@@@UAEHPBQAVSpotLightClass@@@Z
 
-// FUNCTION: 0x006001A0 ?$DynamicVectorClass@PAVSpotLightClass@@::Resize
+// TEMPLATE: GAMEMD 0x006001A0
+// ?Resize@?$DynamicVectorClass@PAVSpotLightClass@@@@UAE_NHPBQAVSpotLightClass@@@Z
 
-// FUNCTION: 0x00600250 ?$DynamicVectorClass@PAVSpotLightClass@@::ID
+// TEMPLATE: GAMEMD 0x00600250
+// ?ID@?$DynamicVectorClass@PAVSpotLightClass@@@@UAEHABQAVSpotLightClass@@@Z
 
-// FUNCTION: 0x00600280 ?$DynamicVectorClass@PAVSpotLightClass@@::~?$DynamicVectorClass@PAVSpotLightClass@@
+// SYNTHETIC: GAMEMD 0x00600280
+// ??_G?$DynamicVectorClass@PAVSpotLightClass@@@@UAEPAXI@Z
 
-// FUNCTION: 0x006002D0 ?$VectorClass@PAVSpotLightClass@@::~?$VectorClass@PAVSpotLightClass@@
+// SYNTHETIC: GAMEMD 0x006002D0
+// ??_G?$VectorClass@PAVSpotLightClass@@@@UAEPAXI@Z
 
 int DAT_00AC18B0;
 int DAT_00AC18B4;
 int DAT_00AC18B8;
 int DAT_00AC18BC;
 
-// FUNCTION: 0x00600320
+// FUNCTION: GAMEMD 0x00600320
 void FUN_00600320(void)
 {
 	DAT_00AC18B0 = 0;

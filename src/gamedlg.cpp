@@ -55,40 +55,52 @@ struct IntTriple {
 	IntTriple() { A = 0; B = 0; C = 0; }
 };
 
-// FUNCTION: 0x004E1B10 $E84
+// SYNTHETIC: GAMEMD 0x004E1B10 SYMBOL
+// _$E84
 double DAT_008B3EB8 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x004E1B40 $E87
+// SYNTHETIC: GAMEMD 0x004E1B40 SYMBOL
+// _$E87
 double DAT_008B3F08 = DAT_008B3EB8 / DAT_007E9370;
 
-// FUNCTION: 0x004E1B60 $E90
+// SYNTHETIC: GAMEMD 0x004E1B60 SYMBOL
+// _$E90
 double DAT_008B3EF0 = DAT_007E1718 / DAT_008B3F08;
 
-// FUNCTION: 0x004E1B80 $E93
+// SYNTHETIC: GAMEMD 0x004E1B80 SYMBOL
+// _$E93
 double DAT_008B3EE8 = DAT_007E1720 * DAT_007E9378;
 
-// FUNCTION: 0x004E1BA0 $E96
+// SYNTHETIC: GAMEMD 0x004E1BA0 SYMBOL
+// _$E96
 double DAT_008B3EC0 = DAT_007E1728 * DAT_007E9378;
 
-// FUNCTION: 0x004E1BC0 $E99
+// SYNTHETIC: GAMEMD 0x004E1BC0 SYMBOL
+// _$E99
 double DAT_008B3E98 = DAT_007E1730 * DAT_007E9378;
 
-// FUNCTION: 0x004E1BE0 $E102
+// SYNTHETIC: GAMEMD 0x004E1BE0 SYMBOL
+// _$E102
 int DAT_008B3F10 = (int)(fastmath::tan(DAT_008B3E98 - DAT_008B3EC0) * DAT_007E1738 * DAT_008B3EB8);
 
-// FUNCTION: 0x004E1C20 $E105
+// SYNTHETIC: GAMEMD 0x004E1C20 SYMBOL
+// _$E105
 double DAT_008B3EC8 = fastmath::atan(DAT_008B3F10 * DAT_007E1740);
 
-// FUNCTION: 0x004E1C50 $E108
+// SYNTHETIC: GAMEMD 0x004E1C50 SYMBOL
+// _$E108
 double DAT_008B3EE0 = fastmath::atan((DAT_008B3F10 * 2) / DAT_008B3EB8);
 
-// FUNCTION: 0x004E1C80 $E111
+// SYNTHETIC: GAMEMD 0x004E1C80 SYMBOL
+// _$E111
 int DAT_008B3F04 = (int)(DAT_008B3F10 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x004E1CB0 $E114
+// SYNTHETIC: GAMEMD 0x004E1CB0 SYMBOL
+// _$E114
 ShortPair DAT_008B3EB0;
 
-// FUNCTION: 0x004E1CC0 $E117
+// SYNTHETIC: GAMEMD 0x004E1CC0 SYMBOL
+// _$E117
 IntTriple DAT_008B3ED0;
 
 struct SizePair {
@@ -96,7 +108,8 @@ struct SizePair {
 	SizePair() { Z = 0; W = 128; H = 128; }
 };
 
-// FUNCTION: 0x004E1CE0 $E120
+// SYNTHETIC: GAMEMD 0x004E1CE0 SYMBOL
+// _$E120
 SizePair DAT_008B3EF8;
 
 namespace UI {
@@ -109,7 +122,7 @@ extern unsigned char DAT_00A8EDDC;
 extern int FUN_00407000(void);
 extern BOOL CALLBACK Game_Controls_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 
-// FUNCTION: 0x004E1D00
+// FUNCTION: GAMEMD 0x004E1D00
 void GameControlsClass::Dialog(void)
 {
 	int res = -1;
@@ -144,7 +157,7 @@ void GameControlsClass::Dialog(void)
 	DebugString("GameControls: GameSpeed = %d, ScrollRate = %d, Detail = %d\n", Options.GameSpeed, Options.ScrollRate, Options.DetailLevel);
 }
 
-// FUNCTION: 0x004E1DE0
+// FUNCTION: GAMEMD 0x004E1DE0
 void GameControlsClass::Set(void)
 {
 	HWND handle;
@@ -202,7 +215,7 @@ void GameControlsClass::Set(void)
 	}
 }
 
-// FUNCTION: 0x004E1FE0
+// FUNCTION: GAMEMD 0x004E1FE0
 BOOL CALLBACK Game_Controls_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	HWND handle;

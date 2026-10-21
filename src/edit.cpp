@@ -45,7 +45,7 @@ class InputManagerClass : public KeyboardClass {
 		static InputManagerClass * Instance;
 };
 
-// FUNCTION: 0x004C2FC0
+// FUNCTION: GAMEMD 0x004C2FC0
 EditClass::EditClass(int id, wchar_t * text, int max_len, TextPrintType flags, int x, int y, int w, int h, EditStyle style) :
 	BASECLASS(id, x, y, w, h, LEFTPRESS)
 {
@@ -75,7 +75,7 @@ EditClass::EditClass(int id, wchar_t * text, int max_len, TextPrintType flags, i
 	IsReadOnly = 0;
 }
 
-// FUNCTION: 0x004C30B0
+// FUNCTION: GAMEMD 0x004C30B0
 EditClass::~EditClass(void)
 {
 	if (Has_Focus()) {
@@ -83,7 +83,7 @@ EditClass::~EditClass(void)
 	}
 }
 
-// FUNCTION: 0x004C30E0
+// FUNCTION: GAMEMD 0x004C30E0
 void EditClass::Set_Text(wchar_t * text, int max_len)
 {
 	String = text;
@@ -92,7 +92,7 @@ void EditClass::Set_Text(wchar_t * text, int max_len)
 	Flag_To_Redraw();
 }
 
-// FUNCTION: 0x004C3110
+// FUNCTION: GAMEMD 0x004C3110
 int EditClass::Draw_Me(int forced)
 {
 	if (BASECLASS::Draw_Me(forced)) {
@@ -105,7 +105,7 @@ int EditClass::Draw_Me(int forced)
 	return(false);
 }
 
-// FUNCTION: 0x004C3190
+// FUNCTION: GAMEMD 0x004C3190
 int EditClass::Action(unsigned flags, KeyNumType & key, int modifier)
 {
 	if (IsReadOnly) {
@@ -153,13 +153,13 @@ int EditClass::Action(unsigned flags, KeyNumType & key, int modifier)
 	return(BASECLASS::Action(flags, key, 0));
 }
 
-// FUNCTION: 0x004C32A0
+// FUNCTION: GAMEMD 0x004C32A0
 void EditClass::Draw_Background(void)
 {
 	Draw_Box (Rect(X, Y, Width, Height), BOXSTYLE_BOX, true);
 }
 
-// FUNCTION: 0x004C32E0
+// FUNCTION: GAMEMD 0x004C32E0
 void EditClass::Draw_Text(wchar_t const * text)
 {
 	TextPrintType flags;
@@ -178,7 +178,7 @@ void EditClass::Draw_Text(wchar_t const * text)
 	}
 }
 
-// FUNCTION: 0x004C3420
+// FUNCTION: GAMEMD 0x004C3420
 bool EditClass::Handle_Key(KeyASCIIType ascii)
 {
 	BitFont * font = Font_From_TPF(TextFlags);
@@ -228,7 +228,7 @@ bool EditClass::Handle_Key(KeyASCIIType ascii)
 	return(true);
 }
 
-// FUNCTION: 0x004C3570
+// FUNCTION: GAMEMD 0x004C3570
 void EditClass::Set_Focus(void)
 {
 	Length = 0;
@@ -238,34 +238,44 @@ void EditClass::Set_Focus(void)
 	BASECLASS::Set_Focus();
 }
 
-// FUNCTION: 0x004C35A0 $E31
+// SYNTHETIC: GAMEMD 0x004C35A0 SYMBOL
+// _$E31
 double DAT_008A0EE8 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x004C35D0 $E34
+// SYNTHETIC: GAMEMD 0x004C35D0 SYMBOL
+// _$E34
 double DAT_008A0F38 = DAT_008A0EE8 / DAT_007E86C8;
 
-// FUNCTION: 0x004C35F0 $E37
+// SYNTHETIC: GAMEMD 0x004C35F0 SYMBOL
+// _$E37
 double DAT_008A0F20 = DAT_007E1718 / DAT_008A0F38;
 
-// FUNCTION: 0x004C3610 $E40
+// SYNTHETIC: GAMEMD 0x004C3610 SYMBOL
+// _$E40
 double DAT_008A0F18 = DAT_007E1720 * DAT_007E86D0;
 
-// FUNCTION: 0x004C3630 $E43
+// SYNTHETIC: GAMEMD 0x004C3630 SYMBOL
+// _$E43
 double DAT_008A0EF0 = DAT_007E1728 * DAT_007E86D0;
 
-// FUNCTION: 0x004C3650 $E46
+// SYNTHETIC: GAMEMD 0x004C3650 SYMBOL
+// _$E46
 double DAT_008A0EC8 = DAT_007E1730 * DAT_007E86D0;
 
-// FUNCTION: 0x004C3670 $E49
+// SYNTHETIC: GAMEMD 0x004C3670 SYMBOL
+// _$E49
 int DAT_008A0F40 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_008A0EC8 - DAT_008A0EF0) * DAT_008A0EE8));
 
-// FUNCTION: 0x004C36B0 $E52
+// SYNTHETIC: GAMEMD 0x004C36B0 SYMBOL
+// _$E52
 double DAT_008A0EF8 = FUN_004CADE0(DAT_008A0F40 * DAT_007E1740);
 
-// FUNCTION: 0x004C36E0 $E55
+// SYNTHETIC: GAMEMD 0x004C36E0 SYMBOL
+// _$E55
 double DAT_008A0F10 = FUN_004CADE0((DAT_008A0F40 * 2) / DAT_008A0EE8);
 
-// FUNCTION: 0x004C3710 $E58
+// SYNTHETIC: GAMEMD 0x004C3710 SYMBOL
+// _$E58
 int DAT_008A0F34 = (int)((DAT_008A0F40 * 4) + DAT_007E1738);
 
 struct Pair16 { short a, b; Pair16() : a(0), b(0) {} };
@@ -273,14 +283,18 @@ struct Triple32 { int a, b, c; Triple32() : a(0), b(0), c(0) {} };
 struct Quad32 { int a, b, c, d; Quad32() : a(0), b(0), c(0), d(0) {} };
 struct Odd32 { int a, b, c; Odd32() : a(128), b(128), c(0) {} };
 
-// FUNCTION: 0x004C3740 $E61
+// SYNTHETIC: GAMEMD 0x004C3740 SYMBOL
+// _$E61
 Pair16 DAT_008A0EE0;
 
-// FUNCTION: 0x004C3750 $E64
+// SYNTHETIC: GAMEMD 0x004C3750 SYMBOL
+// _$E64
 Triple32 DAT_008A0F00;
 
-// FUNCTION: 0x004C3770 $E67
+// SYNTHETIC: GAMEMD 0x004C3770 SYMBOL
+// _$E67
 Odd32 DAT_008A0F28;
 
-// FUNCTION: 0x004C3790 $E70
+// SYNTHETIC: GAMEMD 0x004C3790 SYMBOL
+// _$E70
 Quad32 DAT_008A0ED0;

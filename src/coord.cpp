@@ -9,7 +9,8 @@
 #include "inline.h"
 #include "mouse.h"
 
-// FUNCTION: 0x0049F2F0 $E46
+// SYNTHETIC: GAMEMD 0x0049F2F0 SYMBOL
+// _$E46
 Cell const AdjacentCell[FACING_COUNT] = {
 	Cell(0,  -1),
 	Cell(1,  -1),
@@ -21,7 +22,8 @@ Cell const AdjacentCell[FACING_COUNT] = {
 	Cell(-1, -1),
 };
 
-// FUNCTION: 0x0049F3A0 $E49
+// SYNTHETIC: GAMEMD 0x0049F3A0 SYMBOL
+// _$E49
 Point2D const AdjacentPoint[FACING_COUNT] = {
 	Point2D(0,              -CELL_LEPTON_H),
 	Point2D(CELL_LEPTON_W,  -CELL_LEPTON_H),
@@ -38,7 +40,7 @@ static inline Coord _Move_Coord(Coord const & start, DirType const & dir, int di
 	return(Move_Coord(start, dir, distance));
 }
 
-// FUNCTION: 0x0049F420
+// FUNCTION: GAMEMD 0x0049F420
 Coord Coord_Scatter(Coord const & coord, int distance, bool lock)
 {
 	Coord newcoord;
@@ -56,7 +58,7 @@ Coord Coord_Scatter(Coord const & coord, int distance, bool lock)
 	return(newcoord);
 }
 
-// FUNCTION: 0x0049F550
+// FUNCTION: GAMEMD 0x0049F550
 Coord Adjacent_Coord_With_Height(Coord const & coord, FacingType dir)
 {
 	Coord newcoord = (coord + AdjacentPoint[(int)dir]);

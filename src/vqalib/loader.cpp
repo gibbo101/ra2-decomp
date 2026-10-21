@@ -842,7 +842,7 @@ static inline long Load_VPTZ_K(VQAHandleP *vqap, unsigned long iffsize)
 	return(VQAERR_NONE);
 }
 
-// FUNCTION: 0x007C0C80
+// FUNCTION: GAMEMD 0x007C0C80
 long Load_VQF(VQAHandleP *vqap, unsigned long frame_iffsize, char flags)
 {
 	VQAFrameNode  *curframe;
@@ -1252,7 +1252,7 @@ long Load_SN2J(VQAHandleP *vqap, unsigned long iffsize)
 	return(VQAERR_NONE);
 }
 
-// FUNCTION: 0x007C0490
+// FUNCTION: GAMEMD 0x007C0490
 long PrimeBuffers(VQAHandle *vqa)
 {
 	VQAHandleP *vqap;
@@ -1275,7 +1275,7 @@ long PrimeBuffers(VQAHandle *vqa)
 	return(VQAERR_NONE);
 }
 
-// FUNCTION: 0x007C04E0
+// FUNCTION: GAMEMD 0x007C04E0
 VQABool VQA_IsFrameStartOfLoop(VQAHandleP *vqap, long framenum)
 {
 	int i;
@@ -1300,7 +1300,7 @@ VQABool VQA_IsFrameStartOfLoop(VQAHandleP *vqap, long framenum)
 	return(false);
 }
 
-// FUNCTION: 0x007C0530
+// FUNCTION: GAMEMD 0x007C0530
 long VQA_ReloadPalette(VQAHandleP *vqap, long framenum, int force)
 {
 	VQALoader *loader;
@@ -1374,7 +1374,7 @@ long VQA_ReloadPalette(VQAHandleP *vqap, long framenum, int force)
 	return rc;
 }
 
-// FUNCTION: 0x007C06B0
+// FUNCTION: GAMEMD 0x007C06B0
 long VQA_GetPaletteFrameRange(VQAHandleP *vqap, long framenum, long * first_frame, long * last_frame)
 {
 	VQAPaletteInfo::DATA *data = vqap->PaletteInfo.Data;
@@ -1416,7 +1416,7 @@ long VQA_GetPaletteFrameRange(VQAHandleP *vqap, long framenum, long * first_fram
 	return(findex);
 }
 
-// FUNCTION: 0x007C0740
+// FUNCTION: GAMEMD 0x007C0740
 long VQA_SeekGroup(VQAHandleP *vqap, long framenum, long groupsize, VQABool preloadaudio, VQABool reset_state, VQABool &skipcodebook)
 {
 	VQALoader    *loader;
@@ -1667,7 +1667,7 @@ long VQA_SeekGroup(VQAHandleP *vqap, long framenum, long groupsize, VQABool prel
 #undef VQA_GROUP_END
 }
 
-// FUNCTION: 0x007C1130
+// FUNCTION: GAMEMD 0x007C1130
 long Load_CLIP(VQAHandleP *vqap, unsigned long iffsize)
 {
 	if (vqap->Config.StreamHandler((VQAHandle *)vqap, VQACMD_READ, &vqap->Clipper, PADSIZE(iffsize))) {
@@ -1676,7 +1676,7 @@ long Load_CLIP(VQAHandleP *vqap, unsigned long iffsize)
 	return(VQAERR_NONE);
 }
 
-// FUNCTION: 0x007C1150
+// FUNCTION: GAMEMD 0x007C1150
 long Load_LINF(VQAHandleP *vqap)
 {
 	unsigned long iffsize;
@@ -1725,7 +1725,7 @@ long Load_LINF(VQAHandleP *vqap)
 	return(VQAERR_NONE);
 }
 
-// FUNCTION: 0x007C19F0
+// FUNCTION: GAMEMD 0x007C19F0
 long VQA_GetCodebookFrameRange(VQAHandleP *vqap, long framenum, long *first_frame, long *last_frame)
 {
 	VQACodebookInfo::DATA *data = vqap->CodebookInfo.Data;
@@ -1771,7 +1771,7 @@ long VQA_GetCodebookFrameRange(VQAHandleP *vqap, long framenum, long *first_fram
 	return(findex);
 }
 
-// FUNCTION: 0x007C1A70
+// FUNCTION: GAMEMD 0x007C1A70
 long Load_CINF(VQAHandleP *vqap)
 {
 	int groupsize;
@@ -1824,7 +1824,7 @@ long Load_CINF(VQAHandleP *vqap)
 	return(VQAERR_NONE);
 }
 
-// FUNCTION: 0x007C1BE0
+// FUNCTION: GAMEMD 0x007C1BE0
 long Load_PINF(VQAHandleP *vqap)
 {
 	unsigned long iffsize;
@@ -1873,7 +1873,7 @@ long Load_PINF(VQAHandleP *vqap)
 	return(VQAERR_NONE);
 }
 
-// FUNCTION: 0x007C1D40
+// FUNCTION: GAMEMD 0x007C1D40
 long Load_FINF(VQAHandleP *vqap, unsigned long iffsize)
 {
 	if (vqap->Foff != NULL) {
@@ -1891,7 +1891,7 @@ long Load_FINF(VQAHandleP *vqap, unsigned long iffsize)
 	return(VQAERR_NONE);
 }
 
-// FUNCTION: 0x007C1D90
+// FUNCTION: GAMEMD 0x007C1D90
 long Load_CBFZ(VQAHandleP *vqap, unsigned long iffsize)
 {
 	VQALoader     *loader;
@@ -1928,7 +1928,7 @@ long Load_CBFZ(VQAHandleP *vqap, unsigned long iffsize)
 	return(VQAERR_NONE);
 }
 
-// FUNCTION: 0x007C1E10
+// FUNCTION: GAMEMD 0x007C1E10
 long Load_CBP0(VQAHandleP *vqap, unsigned long iffsize)
 {
 	VQALoader *loader;
@@ -1988,7 +1988,7 @@ long Load_CBP0(VQAHandleP *vqap, unsigned long iffsize)
 	return(VQAERR_NONE);
 }
 
-// FUNCTION: 0x007C1F30
+// FUNCTION: GAMEMD 0x007C1F30
 long Load_CBPZ(VQAHandleP *vqap, unsigned long iffsize)
 {
 	VQAConfig     *config;
@@ -2062,7 +2062,7 @@ long Load_CBPZ(VQAHandleP *vqap, unsigned long iffsize)
 	return(VQAERR_NONE);
 }
 
-// FUNCTION: 0x007C20B0
+// FUNCTION: GAMEMD 0x007C20B0
 long Load_CPLZ(VQAHandleP *vqap, unsigned long iffsize)
 {
 	VQADrawer *drawer;
@@ -2101,7 +2101,7 @@ long Load_CPLZ(VQAHandleP *vqap, unsigned long iffsize)
 	return(VQAERR_NONE);
 }
 
-// FUNCTION: 0x007C2180
+// FUNCTION: GAMEMD 0x007C2180
 long Load_SND0(VQAHandleP *vqap, unsigned long iffsize)
 {
 	VQAAudio      *audio;
@@ -2154,7 +2154,7 @@ long Load_SND0(VQAHandleP *vqap, unsigned long iffsize)
 	return(VQAERR_NONE);
 }
 
-// FUNCTION: 0x007C2250
+// FUNCTION: GAMEMD 0x007C2250
 long Load_SND1(VQAHandleP *vqap, unsigned long iffsize)
 {
 	VQAAudio      *audio;
@@ -2237,7 +2237,7 @@ long Load_SND1(VQAHandleP *vqap, unsigned long iffsize)
 	return(VQAERR_NONE);
 }
 
-// FUNCTION: 0x007C2410
+// FUNCTION: GAMEMD 0x007C2410
 long Load_SND2(VQAHandleP *vqap, unsigned long iffsize)
 {
 	VQAAudio      *audio;

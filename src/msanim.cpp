@@ -35,7 +35,7 @@ struct Drawing {
 SHPStruct * __fastcall FUN_004A3970(Wstring const & name, bool * loaded);
 void __fastcall FUN_00406670(char const * name, int volume);
 
-// FUNCTION: 0x005CB590
+// FUNCTION: GAMEMD 0x005CB590
 ConvertClass * Create_Drawer(Wstring const & palette_name)
 {
 	if (palette_name == (char const *)NULL) {
@@ -65,12 +65,12 @@ ConvertClass * Create_Drawer(Wstring const & palette_name)
 	return(new ConvertClass(CCPalette, CCPalette, *VisibleSurface));
 }
 
-// FUNCTION: 0x005CB6C0
+// FUNCTION: GAMEMD 0x005CB6C0
 MSAnim::~MSAnim(void)
 {
 }
 
-// FUNCTION: 0x005CB6D0
+// FUNCTION: GAMEMD 0x005CB6D0
 MSShapeAnim::MSShapeAnim(Wstring const & name, int x, int y, ConvertClass * drawer, int rate, bool loop, ShapeFlags_Type flags) :
 	MSAnim(x, y),
 	Drawer(drawer),
@@ -85,7 +85,7 @@ MSShapeAnim::MSShapeAnim(Wstring const & name, int x, int y, ConvertClass * draw
 	StopFrame = Shape->Get_Count() - 1;
 }
 
-// FUNCTION: 0x005CB750
+// FUNCTION: GAMEMD 0x005CB750
 MSShapeAnim::~MSShapeAnim(void)
 {
 	if (Shape != NULL && AllocLoaded) {
@@ -95,7 +95,7 @@ MSShapeAnim::~MSShapeAnim(void)
 	}
 }
 
-// FUNCTION: 0x005CB790
+// FUNCTION: GAMEMD 0x005CB790
 void MSShapeAnim::Set_Frame(unsigned frame)
 {
 	Rect rect = Get_Rect();
@@ -108,7 +108,7 @@ void MSShapeAnim::Set_Frame(unsigned frame)
 	}
 }
 
-// FUNCTION: 0x005CB840
+// FUNCTION: GAMEMD 0x005CB840
 void MSShapeAnim::Set_Start_Frame(unsigned frame)
 {
 	StartFrame = frame;
@@ -117,7 +117,7 @@ void MSShapeAnim::Set_Start_Frame(unsigned frame)
 	}
 }
 
-// FUNCTION: 0x005CB860
+// FUNCTION: GAMEMD 0x005CB860
 void MSShapeAnim::Set_Stop_Frame(unsigned frame)
 {
 	StopFrame = frame;
@@ -126,7 +126,7 @@ void MSShapeAnim::Set_Stop_Frame(unsigned frame)
 	}
 }
 
-// FUNCTION: 0x005CB880
+// FUNCTION: GAMEMD 0x005CB880
 bool MSShapeAnim::Advance(Surface * surface, Rect & rect)
 {
 	if (Active == true && Timer == 0) {
@@ -169,7 +169,7 @@ bool MSShapeAnim::Advance(Surface * surface, Rect & rect)
 	return(false);
 }
 
-// FUNCTION: 0x005CBB80
+// FUNCTION: GAMEMD 0x005CBB80
 void MSShapeAnim::Redraw(Surface * surface, Rect const * rect)
 {
 	Rect shape_rect(0, 0, 0, 0);
@@ -196,7 +196,7 @@ void MSShapeAnim::Redraw(Surface * surface, Rect const * rect)
 	}
 }
 
-// FUNCTION: 0x005CBCB0
+// FUNCTION: GAMEMD 0x005CBCB0
 Rect MSShapeAnim::Get_Rect(void) const
 {
 	Rect rect = Shape->GetFrameBounds(CurFrame);
@@ -209,7 +209,7 @@ Rect MSShapeAnim::Get_Rect(void) const
 	return(rect);
 }
 
-// FUNCTION: 0x005CBD20
+// FUNCTION: GAMEMD 0x005CBD20
 MSFadeAnim::MSFadeAnim(Wstring const & name, int x, int y, ConvertClass * drawer, int rate, ShapeFlags_Type flags, MS_ANIM_LIST * vector) :
 	MSShapeAnim(name, x, y, drawer, rate, false, flags),
 	FadeStage(0),
@@ -217,7 +217,7 @@ MSFadeAnim::MSFadeAnim(Wstring const & name, int x, int y, ConvertClass * drawer
 {
 }
 
-// FUNCTION: 0x005CBDA0
+// FUNCTION: GAMEMD 0x005CBDA0
 bool MSFadeAnim::Advance(Surface * surface, Rect & rect)
 {
 	if (Active == true && Timer == 0) {
@@ -282,7 +282,7 @@ bool MSFadeAnim::Advance(Surface * surface, Rect & rect)
 	return(false);
 }
 
-// FUNCTION: 0x005CC110
+// FUNCTION: GAMEMD 0x005CC110
 void MSFadeAnim::Redraw(Surface * surface, Rect const * rect)
 {
 	Rect shape_rect(0, 0, 0, 0);
@@ -314,7 +314,7 @@ void MSFadeAnim::Redraw(Surface * surface, Rect const * rect)
 	Draw_Shape(*surface, *Drawer, (ShapeSet *)Shape, CurFrame, Point2D(XPos, YPos), surface->Get_Rect(), flags);
 }
 
-// FUNCTION: 0x005CC250
+// FUNCTION: GAMEMD 0x005CC250
 MSOverlayAnim::MSOverlayAnim(Wstring const & name, int x, int y, ConvertClass * drawer, int rate, MS_ANIM_LIST * vector, bool persistent, unsigned frame, bool fade) :
 	MSFadeAnim(name, x, y, drawer, rate, SHAPE_NORMAL, vector),
 	Persistent(persistent)
@@ -325,12 +325,12 @@ MSOverlayAnim::MSOverlayAnim(Wstring const & name, int x, int y, ConvertClass * 
 	}
 }
 
-// FUNCTION: 0x005CC2F0
+// FUNCTION: GAMEMD 0x005CC2F0
 MSOverlayAnim::~MSOverlayAnim(void)
 {
 }
 
-// FUNCTION: 0x005CC330
+// FUNCTION: GAMEMD 0x005CC330
 bool MSOverlayAnim::Advance(Surface * surface, Rect & rect)
 {
 	if (Active == true && Timer == 0) {
@@ -373,7 +373,7 @@ bool MSOverlayAnim::Advance(Surface * surface, Rect & rect)
 	return(false);
 }
 
-// FUNCTION: 0x005CC550
+// FUNCTION: GAMEMD 0x005CC550
 void MSOverlayAnim::Redraw(Surface * surface, Rect const * rect)
 {
 	Rect shape_rect(0, 0, 0, 0);
@@ -400,20 +400,20 @@ void MSOverlayAnim::Redraw(Surface * surface, Rect const * rect)
 	}
 }
 
-// FUNCTION: 0x005CC690
+// FUNCTION: GAMEMD 0x005CC690
 void MSOverlayAnim::Restart(void)
 {
 	FadeStage = 0;
 }
 
-// FUNCTION: 0x005CC6A0
+// FUNCTION: GAMEMD 0x005CC6A0
 void MSOverlayAnim::Set_Frame(int frame)
 {
 	FadeStage = 0;
 	CurFrame = frame;
 }
 
-// FUNCTION: 0x005CC6C0
+// FUNCTION: GAMEMD 0x005CC6C0
 void MSOverlayAnim::Restore(Rect const & rect)
 {
 	int fading_stage = FadeStage < 3 ? FadeStage : 3;
@@ -423,13 +423,13 @@ void MSOverlayAnim::Restore(Rect const & rect)
 	}
 }
 
-// FUNCTION: 0x005CC740
+// FUNCTION: GAMEMD 0x005CC740
 bool MSOverlayAnim::Has_Finished(void) const
 {
 	return(!(Active && FadeStage < 4));
 }
 
-// FUNCTION: 0x005CC760
+// FUNCTION: GAMEMD 0x005CC760
 MSButtonAnim::MSButtonAnim(Wstring const & text, int width, MS_ANIM_LIST * vector, Rect const & rect, bool persistent) :
 	MSAnim(rect.X, rect.Y),
 	Text(NULL),
@@ -444,7 +444,7 @@ MSButtonAnim::MSButtonAnim(Wstring const & text, int width, MS_ANIM_LIST * vecto
 	}
 }
 
-// FUNCTION: 0x005CC820
+// FUNCTION: GAMEMD 0x005CC820
 MSButtonAnim::~MSButtonAnim(void)
 {
 	if (Text != NULL) {
@@ -452,20 +452,20 @@ MSButtonAnim::~MSButtonAnim(void)
 	}
 }
 
-// FUNCTION: 0x005CC850
+// FUNCTION: GAMEMD 0x005CC850
 Rect MSButtonAnim::Get_Rect(void) const
 {
 	return(Area);
 }
 
 
-// FUNCTION: 0x005CC880
+// FUNCTION: GAMEMD 0x005CC880
 bool MSButtonAnim::Has_Finished(void) const
 {
 	return(Text == NULL || Text->Is_Complete());
 }
 
-// FUNCTION: 0x005CC8A0
+// FUNCTION: GAMEMD 0x005CC8A0
 bool MSButtonAnim::Advance(Surface * surface, Rect & rect)
 {
 	if (surface == NULL) {
@@ -489,7 +489,7 @@ bool MSButtonAnim::Advance(Surface * surface, Rect & rect)
 	return(Text->Is_Complete() && !Persistent);
 }
 
-// FUNCTION: 0x005CC970
+// FUNCTION: GAMEMD 0x005CC970
 void MSButtonAnim::Redraw(Surface * surface, Rect const * rect)
 {
 	if (rect != NULL) {
@@ -498,12 +498,12 @@ void MSButtonAnim::Redraw(Surface * surface, Rect const * rect)
 	surface->Blit_From(Area, *AlternateSurface, Area);
 }
 
-// FUNCTION: 0x005CCA10
+// FUNCTION: GAMEMD 0x005CCA10
 void MSButtonAnim::Restore(Rect const & rect)
 {
 }
 
-// FUNCTION: 0x005CCA20
+// FUNCTION: GAMEMD 0x005CCA20
 MSVQAnim::MSVQAnim(Wstring const & name, Surface * surface, MS_ANIM_LIST * vector, Rect const & rect, bool persistent) :
 	MSAnim(0, 0, false),
 	Anims(vector),
@@ -528,7 +528,7 @@ MSVQAnim::MSVQAnim(Wstring const & name, Surface * surface, MS_ANIM_LIST * vecto
 	}
 }
 
-// FUNCTION: 0x005CCC30
+// FUNCTION: GAMEMD 0x005CCC30
 MSVQAnim::MSVQAnim(Wstring const & name, Surface * surface, MS_ANIM_LIST * vector, bool persistent) :
 	MSAnim(0, 0, false),
 	Anims(vector),
@@ -553,7 +553,7 @@ MSVQAnim::MSVQAnim(Wstring const & name, Surface * surface, MS_ANIM_LIST * vecto
 	}
 }
 
-// FUNCTION: 0x005CCE40
+// FUNCTION: GAMEMD 0x005CCE40
 MSVQAnim::~MSVQAnim(void)
 {
 	if (Background != NULL) {
@@ -566,7 +566,7 @@ MSVQAnim::~MSVQAnim(void)
 	}
 }
 
-// FUNCTION: 0x005CCE90
+// FUNCTION: GAMEMD 0x005CCE90
 bool MSVQAnim::Advance(Surface * surface, Rect & rect)
 {
 	if (Movie != NULL) {
@@ -626,7 +626,7 @@ bool MSVQAnim::Advance(Surface * surface, Rect & rect)
 	return(Done && !Persistent);
 }
 
-// FUNCTION: 0x005CD0E0
+// FUNCTION: GAMEMD 0x005CD0E0
 void MSVQAnim::Redraw(Surface * surface, const Rect * rect)
 {
 	if (Movie != NULL && !Done) {
@@ -636,7 +636,7 @@ void MSVQAnim::Redraw(Surface * surface, const Rect * rect)
 	}
 }
 
-// FUNCTION: 0x005CD240
+// FUNCTION: GAMEMD 0x005CD240
 void MSVQAnim::Restore(const Rect & rect)
 {
 	if (Done && Movie != NULL && Background != NULL) {
@@ -644,22 +644,23 @@ void MSVQAnim::Restore(const Rect & rect)
 	}
 }
 
-// FUNCTION: 0x005CD290
+// FUNCTION: GAMEMD 0x005CD290
 Rect MSVQAnim::Get_Rect(void) const
 {
 	static Rect _rect_none(0,0,0,0);
 	return(Movie != NULL ? Movie->StretchRect : _rect_none);
 }
 
-// FUNCTION: 0x005CD310 $E18
+// SYNTHETIC: GAMEMD 0x005CD310 SYMBOL
+// _$E18
 
-// FUNCTION: 0x005CD320
+// FUNCTION: GAMEMD 0x005CD320
 bool MSVQAnim::Has_Finished(void) const
 {
 	return(Done);
 }
 
-// FUNCTION: 0x005CD330
+// FUNCTION: GAMEMD 0x005CD330
 MSBitPrintAnim::MSBitPrintAnim(WideWstring const & text, Rect const & rect, bool flag) :
 	MSAnim(rect.X, rect.Y, true),
 	Text(text),
@@ -669,30 +670,30 @@ MSBitPrintAnim::MSBitPrintAnim(WideWstring const & text, Rect const & rect, bool
 {
 }
 
-// FUNCTION: 0x005CD3A0
+// FUNCTION: GAMEMD 0x005CD3A0
 MSBitPrintAnim::~MSBitPrintAnim(void)
 {
 }
 
-// FUNCTION: 0x005CD3C0
+// FUNCTION: GAMEMD 0x005CD3C0
 void MSBitPrintAnim::Set_Flag(bool flag)
 {
 	FlagA = flag;
 }
 
-// FUNCTION: 0x005CD3D0
+// FUNCTION: GAMEMD 0x005CD3D0
 Rect MSBitPrintAnim::Get_Rect(void) const
 {
 	return(Area);
 }
 
-// FUNCTION: 0x005CD400
+// FUNCTION: GAMEMD 0x005CD400
 bool MSBitPrintAnim::Has_Finished(void) const
 {
 	return(FlagA);
 }
 
-// FUNCTION: 0x005CD570
+// FUNCTION: GAMEMD 0x005CD570
 MSPrintAnim::MSPrintAnim(WideWstring const & text, int x, int y, MSFont * font, Rect const & rect, int start_delay, int print_delay, bool fade_effect, bool center) :
 	MSAnim(x, y, true),
 	Text(text),
@@ -718,7 +719,7 @@ MSPrintAnim::MSPrintAnim(WideWstring const & text, int x, int y, MSFont * font, 
 	}
 }
 
-// FUNCTION: 0x005CD690
+// FUNCTION: GAMEMD 0x005CD690
 void MSPrintAnim::Set_Dimensions(Rect const & rect)
 {
 	if (rect.Is_Valid()) {
@@ -739,7 +740,7 @@ void MSPrintAnim::Set_Dimensions(Rect const & rect)
 	}
 }
 
-// FUNCTION: 0x005CD850
+// FUNCTION: GAMEMD 0x005CD850
 int MSPrintAnim::Word_Wrap(WideWstring & string, MSFont * font, int line_width)
 {
 	int max_width = 0;
@@ -799,7 +800,7 @@ int MSPrintAnim::Word_Wrap(WideWstring & string, MSFont * font, int line_width)
 	return(max_width);
 }
 
-// FUNCTION: 0x005CDB90
+// FUNCTION: GAMEMD 0x005CDB90
 int MSPrintAnim::Paginate(WideWstring & string, MSFont * font, int page_height)
 {
 	if (string == (wchar_t const *)NULL || font == NULL || page_height < font->Get_Font_Height()) {
@@ -829,7 +830,7 @@ int MSPrintAnim::Paginate(WideWstring & string, MSFont * font, int page_height)
 	return(overflow_count);
 }
 
-// FUNCTION: 0x005CDC50
+// FUNCTION: GAMEMD 0x005CDC50
 bool MSPrintAnim::Advance(Surface * surface, Rect & rect)
 {
 	rect.Set(0, 0, 0, 0);
@@ -901,7 +902,7 @@ bool MSPrintAnim::Advance(Surface * surface, Rect & rect)
 	return(false);
 }
 
-// FUNCTION: 0x005CDEE0
+// FUNCTION: GAMEMD 0x005CDEE0
 void MSPrintAnim::Redraw(Surface * surface, Rect const * rect)
 {
 	if (rect == NULL || Intersect(*rect, Area).Is_Valid()) {
@@ -941,7 +942,7 @@ void MSPrintAnim::Redraw(Surface * surface, Rect const * rect)
 	}
 }
 
-// FUNCTION: 0x005CE0C0
+// FUNCTION: GAMEMD 0x005CE0C0
 bool MSWordAnim::Advance(Surface * surface, Rect & rect)
 {
 	if (Timer != 0 || Active != true) {
@@ -998,13 +999,13 @@ bool MSWordAnim::Advance(Surface * surface, Rect & rect)
 	return(false);
 }
 
-// FUNCTION: 0x005CE2B0
+// FUNCTION: GAMEMD 0x005CE2B0
 Rect MSPrintAnim::Get_Rect(void) const
 {
 	return(Area);
 }
 
-// FUNCTION: 0x005CE2E0
+// FUNCTION: GAMEMD 0x005CE2E0
 void MSPrintAnim::Set_Transient(bool transient)
 {
 	if (transient != Transient) {
@@ -1012,13 +1013,13 @@ void MSPrintAnim::Set_Transient(bool transient)
 	}
 }
 
-// FUNCTION: 0x005CE300
+// FUNCTION: GAMEMD 0x005CE300
 bool MSPrintAnim::Has_Finished(void) const
 {
 	return(Transient && PrintedCharCount > Text.length() && CompletionCount > 2);
 }
 
-// FUNCTION: 0x005CE330
+// FUNCTION: GAMEMD 0x005CE330
 int MSPrintAnim::Get_Line_Width(WideWstring const & str) const
 {
 	int i = 0;
@@ -1029,7 +1030,7 @@ int MSPrintAnim::Get_Line_Width(WideWstring const & str) const
 	return(width);
 }
 
-// FUNCTION: 0x005CE3A0
+// FUNCTION: GAMEMD 0x005CE3A0
 void MSWordAnim::Redraw(Surface * surface, Rect const * rect)
 {
 	if (rect == NULL || Intersect(*rect, Area).Is_Valid()) {
@@ -1053,7 +1054,7 @@ void MSWordAnim::Redraw(Surface * surface, Rect const * rect)
 	}
 }
 
-// FUNCTION: 0x005CE4A0
+// FUNCTION: GAMEMD 0x005CE4A0
 MSPCXAnim::MSPCXAnim(Wstring const & name, MS_ANIM_LIST * vector, bool transient) :
 	MSAnim(0, 0, false),
 	TargetSurface(AlternateSurface),
@@ -1081,7 +1082,7 @@ MSPCXAnim::MSPCXAnim(Wstring const & name, MS_ANIM_LIST * vector, bool transient
 	}
 }
 
-// FUNCTION: 0x005CE640
+// FUNCTION: GAMEMD 0x005CE640
 MSPCXAnim::MSPCXAnim(Wstring const & name, MS_ANIM_LIST * vector, Point2D const & position, bool transient) :
 	MSAnim(0, 0, false),
 	TargetSurface(AlternateSurface),
@@ -1109,7 +1110,7 @@ MSPCXAnim::MSPCXAnim(Wstring const & name, MS_ANIM_LIST * vector, Point2D const 
 	}
 }
 
-// FUNCTION: 0x005CE7B0
+// FUNCTION: GAMEMD 0x005CE7B0
 MSPCXAnim::~MSPCXAnim(void)
 {
 	if (Image) {
@@ -1117,7 +1118,7 @@ MSPCXAnim::~MSPCXAnim(void)
 	}
 }
 
-// FUNCTION: 0x005CE7D0
+// FUNCTION: GAMEMD 0x005CE7D0
 bool MSPCXAnim::Advance(Surface * surface, Rect & rect)
 {
 	if (!Drawn) {
@@ -1143,7 +1144,7 @@ bool MSPCXAnim::Advance(Surface * surface, Rect & rect)
 	return(Drawn && !Transient);
 }
 
-// FUNCTION: 0x005CE8C0
+// FUNCTION: GAMEMD 0x005CE8C0
 void MSPCXAnim::Redraw(Surface * surface, Rect const * rect)
 {
 	if (Image != NULL && !Drawn && Active) {
@@ -1153,7 +1154,7 @@ void MSPCXAnim::Redraw(Surface * surface, Rect const * rect)
 	}
 }
 
-// FUNCTION: 0x005CEA40
+// FUNCTION: GAMEMD 0x005CEA40
 void MSPCXAnim::Restore(Rect const & rect)
 {
 	if (Image != NULL && Active) {
@@ -1161,45 +1162,60 @@ void MSPCXAnim::Restore(Rect const & rect)
 	}
 }
 
-// FUNCTION: 0x005CEA80
+// FUNCTION: GAMEMD 0x005CEA80
 Rect MSPCXAnim::Get_Rect(void) const
 {
 	return(Area);
 }
 
-// FUNCTION: 0x005CEAB0
+// FUNCTION: GAMEMD 0x005CEAB0
 bool MSPCXAnim::Has_Finished(void) const
 {
 	return(Drawn);
 }
 
-// FUNCTION: 0x005CEAC0 MSAnim::Set_Active
+// FUNCTION: GAMEMD 0x005CEAC0
+// MSAnim::Set_Active
 
-// FUNCTION: 0x005CEAD0 MSAnim::Pause
+// FUNCTION: GAMEMD 0x005CEAD0
+// MSAnim::Pause
 
-// FUNCTION: 0x005CEB20 MSAnim::Resume
+// FUNCTION: GAMEMD 0x005CEB20
+// MSAnim::Resume
 
-// FUNCTION: 0x005CEB40 MSAnim::Has_Finished
+// FUNCTION: GAMEMD 0x005CEB40
+// MSAnim::Has_Finished
 
-// FUNCTION: 0x005CEB50 MSAnim::Restore
+// TEMPLATE: GAMEMD 0x005CEB50
+// ?Restore@MSAnim@@UAEXABV?$TRect@H@@@Z
 
-// FUNCTION: 0x005CEB60 MSAnim::~MSAnim
+// SYNTHETIC: GAMEMD 0x005CEB60
+// ??_GMSAnim@@UAEPAXI@Z
 
-// FUNCTION: 0x005CEB80 MSShapeAnim::~MSShapeAnim
+// SYNTHETIC: GAMEMD 0x005CEB80
+// ??_GMSShapeAnim@@UAEPAXI@Z
 
-// FUNCTION: 0x005CEBD0 MSFadeAnim::~MSFadeAnim
+// SYNTHETIC: GAMEMD 0x005CEBD0
+// ??_GMSFadeAnim@@UAEPAXI@Z
 
-// FUNCTION: 0x005CEC20 MSOverlayAnim::~MSOverlayAnim
+// SYNTHETIC: GAMEMD 0x005CEC20
+// ??_GMSOverlayAnim@@UAEPAXI@Z
 
-// FUNCTION: 0x005CEC70 MSButtonAnim::~MSButtonAnim
+// SYNTHETIC: GAMEMD 0x005CEC70
+// ??_GMSButtonAnim@@UAEPAXI@Z
 
-// FUNCTION: 0x005CECB0 MSVQAnim::~MSVQAnim
+// SYNTHETIC: GAMEMD 0x005CECB0
+// ??_GMSVQAnim@@UAEPAXI@Z
 
-// FUNCTION: 0x005CED10 MSBitPrintAnim::~MSBitPrintAnim
+// SYNTHETIC: GAMEMD 0x005CED10
+// ??_GMSBitPrintAnim@@UAEPAXI@Z
 
-// FUNCTION: 0x005CED40 MSPrintAnim::~MSPrintAnim
+// SYNTHETIC: GAMEMD 0x005CED40
+// ??_GMSPrintAnim@@UAEPAXI@Z
 
-// FUNCTION: 0x005CED70 MSPCXAnim::~MSPCXAnim
+// SYNTHETIC: GAMEMD 0x005CED70
+// ??_GMSPCXAnim@@UAEPAXI@Z
 
-// FUNCTION: 0x005CEDB0 $E20
+// SYNTHETIC: GAMEMD 0x005CEDB0 SYMBOL
+// _$E20
 Rect DAT_00ABFBB0(0, 0, 0, 0);

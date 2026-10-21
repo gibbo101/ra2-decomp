@@ -65,47 +65,62 @@ inline bool RadarTrackingStruct::Use_Head(void) const { return(Object->House == 
 int __fastcall FUN_00753250(char const * name);
 void __fastcall FUN_0055AF40(int value);
 
-// FUNCTION: 0x00652680 $E109
+// SYNTHETIC: GAMEMD 0x00652680 SYMBOL
+// _$E109
 const double DAT_00B048D8 = fastmath::sqrt(pow((double)CELL_LEPTON_H, 2) * 2);
 
-// FUNCTION: 0x006526B0 $E112
+// SYNTHETIC: GAMEMD 0x006526B0 SYMBOL
+// _$E112
 const double DAT_00B049F8 = DAT_00B048D8 / DAT_007F02A8;
 
-// FUNCTION: 0x006526D0 $E115
+// SYNTHETIC: GAMEMD 0x006526D0 SYMBOL
+// _$E115
 const double DAT_00B049E0 = 1.0 / DAT_00B049F8;
 
-// FUNCTION: 0x006526F0 $E118
+// SYNTHETIC: GAMEMD 0x006526F0 SYMBOL
+// _$E118
 const double DAT_00B049D8 = ONE_RAD * 45;
 
-// FUNCTION: 0x00652710 $E121
+// SYNTHETIC: GAMEMD 0x00652710 SYMBOL
+// _$E121
 const double DAT_00B048E8 = ONE_RAD * 60;
 
-// FUNCTION: 0x00652730 $E124
+// SYNTHETIC: GAMEMD 0x00652730 SYMBOL
+// _$E124
 const double DAT_00B048A0 = ONE_RAD * 90;
 
-// FUNCTION: 0x00652750 $E127
+// SYNTHETIC: GAMEMD 0x00652750 SYMBOL
+// _$E127
 const int DAT_00B04A34 = (int)(fastmath::tan(DAT_00B048A0 - DAT_00B048E8) * DAT_00B048D8 * 0.5);
 
-// FUNCTION: 0x00652790 $E130
+// SYNTHETIC: GAMEMD 0x00652790 SYMBOL
+// _$E130
 const double DAT_00B048F0 = fastmath::atan(DAT_00B04A34 * (1 / (double)CELL_LEPTON_H));
 
-// FUNCTION: 0x006527C0 $E133
+// SYNTHETIC: GAMEMD 0x006527C0 SYMBOL
+// _$E133
 const double DAT_00B04970 = fastmath::atan((DAT_00B04A34 * 2) / DAT_00B048D8);
 
-// FUNCTION: 0x006527F0 $E136
+// SYNTHETIC: GAMEMD 0x006527F0 SYMBOL
+// _$E136
 const int DAT_00B049F4 = (int)((DAT_00B04A34 * BRIDGE_CELL_HEIGHT) + 0.5);
 
-// FUNCTION: 0x00652820 $E139
+// SYNTHETIC: GAMEMD 0x00652820 SYMBOL
+// _$E139
 Cell const DAT_00B048C0(0, 0);
 
-// FUNCTION: 0x00652830 $E142
+// SYNTHETIC: GAMEMD 0x00652830 SYMBOL
+// _$E142
 Coord const DAT_00B04900(0, 0, 0);
 
-// FUNCTION: 0x00652850 $E145
+// SYNTHETIC: GAMEMD 0x00652850 SYMBOL
+// _$E145
 Coord const DAT_00B049E8(128, 128, 0);
 
-// FUNCTION: 0x00652870 $E151
-// FUNCTION: 0x006528A0 $E148
+// SYNTHETIC: GAMEMD 0x00652870 SYMBOL
+// _$E151
+// SYNTHETIC: GAMEMD 0x006528A0 SYMBOL
+// _$E148
 RadarClass::RTacticalClass RadarClass::RadarButton;
 
 struct RadarStatics {
@@ -113,21 +128,27 @@ struct RadarStatics {
 	static ShapeButtonClass DAT_00B04910;
 };
 
-// FUNCTION: 0x006528C0 $E156
+// SYNTHETIC: GAMEMD 0x006528C0 SYMBOL
+// _$E156
 Rect DAT_00B04A00;
 
-// FUNCTION: 0x006528D0 $E161
-// FUNCTION: 0x006528F0 $E159
+// SYNTHETIC: GAMEMD 0x006528D0 SYMBOL
+// _$E161
+// SYNTHETIC: GAMEMD 0x006528F0 SYMBOL
+// _$E159
 ShapeButtonClass RadarStatics::DAT_00B04978;
 
-// FUNCTION: 0x00652910 $E164
+// SYNTHETIC: GAMEMD 0x00652910 SYMBOL
+// _$E164
 Rect DAT_00B04A20;
 
-// FUNCTION: 0x00652920 $E169
-// FUNCTION: 0x00652940 $E167
+// SYNTHETIC: GAMEMD 0x00652920 SYMBOL
+// _$E169
+// SYNTHETIC: GAMEMD 0x00652940 SYMBOL
+// _$E167
 ShapeButtonClass RadarStatics::DAT_00B04910;
 
-// FUNCTION: 0x00652960
+// FUNCTION: GAMEMD 0x00652960
 RadarClass::RadarClass(void) :
 	RadY(0),
 	RadWidth(0),
@@ -169,14 +190,14 @@ RadarClass::RadarClass(void) :
 	unknown_14C0.FUN_00405BE0();
 }
 
-// FUNCTION: 0x00652C00
+// FUNCTION: GAMEMD 0x00652C00
 RadarClass::~RadarClass(void)
 {
 	unknown_14C0.FUN_00405C00();
 	Clear_Radar();
 }
 
-// FUNCTION: 0x00652CD0
+// FUNCTION: GAMEMD 0x00652CD0
 void RadarClass::Queue_Next_Movie(void)
 {
 	RadarState = RSTATE_NEXT_MOVIE;
@@ -242,7 +263,7 @@ struct CCToolTip {
 	static ToolTipManager * Instance;
 };
 
-// FUNCTION: 0x00652CF0
+// FUNCTION: GAMEMD 0x00652CF0
 void RadarClass::One_Time(void)
 {
 	DebugString("RadarClass::One_Time()\n");
@@ -264,7 +285,7 @@ void RadarClass::One_Time(void)
 	unknown_int_14D4 = FUN_00753250("EVA_IncomingTransmission");
 }
 
-// FUNCTION: 0x00652D90
+// FUNCTION: GAMEMD 0x00652D90
 void RadarClass::DisposeOfArt(void)
 {
 	if (DAT_00B048F9) {
@@ -279,7 +300,7 @@ void RadarClass::DisposeOfArt(void)
 	DAT_00B048AC = NULL;
 }
 
-// FUNCTION: 0x00652DE0
+// FUNCTION: GAMEMD 0x00652DE0
 void RadarClass::Init_Clear(void)
 {
 	BASECLASS::Init_Clear();
@@ -297,7 +318,7 @@ void RadarClass::Init_Clear(void)
 	DebugString("RadarClass::Init_Clear done\n");
 }
 
-// FUNCTION: 0x00652E50
+// FUNCTION: GAMEMD 0x00652E50
 void RadarClass::Set_Buttons(bool on)
 {
 	if (on) {
@@ -316,7 +337,7 @@ inline int Pack_Color(TextColor const & c)
 		| (c.B >> Drawing::BlueShiftRight << Drawing::BlueShiftLeft);
 }
 
-// FUNCTION: 0x00652E90
+// FUNCTION: GAMEMD 0x00652E90
 void RadarClass::Init_For_House(void)
 {
 	DebugString("RadarClass::Init_For_House()\n");
@@ -353,7 +374,7 @@ void RadarClass::Init_For_House(void)
 	RadPHeight = Pack_Color(CCToolTip::ToolTipTextColor);
 }
 
-// FUNCTION: 0x00653010
+// FUNCTION: GAMEMD 0x00653010
 void RadarClass::Init_IO(void)
 {
 	BASECLASS::Init_IO();
@@ -381,12 +402,12 @@ void RadarClass::Init_IO(void)
 	}
 }
 
-// FUNCTION: 0x00653750
+// FUNCTION: GAMEMD 0x00653750
 void RadarClass::Noop(int, int)
 {
 }
 
-// FUNCTION: 0x00653760
+// FUNCTION: GAMEMD 0x00653760
 Cell RadarClass::Click_Cell_Calc(Point2D const & point) const
 {
 	Point2D pixel = point;
@@ -403,7 +424,7 @@ Cell RadarClass::Click_Cell_Calc(Point2D const & point) const
 	return(CELL_NONE);
 }
 
-// FUNCTION: 0x00653810
+// FUNCTION: GAMEMD 0x00653810
 bool RadarClass::Map_Cell(Cell const & cell, HouseClass * house)
 {
 	if (BASECLASS::Map_Cell(cell, house)) {
@@ -412,7 +433,7 @@ bool RadarClass::Map_Cell(Cell const & cell, HouseClass * house)
 	return(false);
 }
 
-// FUNCTION: 0x00653830
+// FUNCTION: GAMEMD 0x00653830
 bool RadarClass::RevealFogShroud(Cell const & cell, HouseClass * house, bool increase)
 {
 	if (BASECLASS::RevealFogShroud(cell, house, increase)) {
@@ -421,7 +442,7 @@ bool RadarClass::RevealFogShroud(Cell const & cell, HouseClass * house, bool inc
 	return(false);
 }
 
-// FUNCTION: 0x00653850
+// FUNCTION: GAMEMD 0x00653850
 void RadarClass::AI(KeyNumType & input, Point2D const & xy)
 {
 	BASECLASS::AI(input, xy);
@@ -463,25 +484,25 @@ void RadarClass::AI(KeyNumType & input, Point2D const & xy)
 	}
 }
 
-// FUNCTION: 0x00653F50
+// FUNCTION: GAMEMD 0x00653F50
 void RadarClass::Set_Map_Dimensions(Rect const & size, bool reset_cells, int cell_height, bool refresh_map)
 {
 	BASECLASS::Set_Map_Dimensions(size, reset_cells, cell_height, refresh_map);
 }
 
-// FUNCTION: 0x00653F70
+// FUNCTION: GAMEMD 0x00653F70
 void RadarClass::Set_Tactical_Position(Coord const & coord)
 {
 	TacticalMap->Set_Tactical_Position(coord);
 }
 
-// FUNCTION: 0x00653F90
+// FUNCTION: GAMEMD 0x00653F90
 bool RadarClass::Cell_On_Radar(Cell const & cell)
 {
 	return(In_Local_Radar(cell));
 }
 
-// FUNCTION: 0x00653FA0
+// FUNCTION: GAMEMD 0x00653FA0
 void RadarClass::Draw_Names(void)
 {
 	int c_idx;
@@ -549,7 +570,7 @@ void RadarClass::Draw_Names(void)
 	}
 }
 
-// FUNCTION: 0x00654320
+// FUNCTION: GAMEMD 0x00654320
 void RadarClass::Reposition_Sidebar(void)
 {
 	BASECLASS::Reposition_Sidebar();
@@ -592,7 +613,7 @@ void RadarClass::Reposition_Sidebar(void)
 	FullRedraw = true;
 }
 
-// FUNCTION: 0x00654490
+// FUNCTION: GAMEMD 0x00654490
 void RadarClass::Set_Local_Dimensions(Rect const & size)
 {
 	BASECLASS::Set_Local_Dimensions(size);
@@ -643,7 +664,7 @@ void RadarClass::Set_Local_Dimensions(Rect const & size)
 	}
 }
 
-// FUNCTION: 0x00654650
+// FUNCTION: GAMEMD 0x00654650
 void RadarClass::Compute_Radar_Image(void)
 {
 	if (!RadarRect.Is_Valid()) {
@@ -692,7 +713,7 @@ void RadarClass::Compute_Radar_Image(void)
 	Compute_Foundations();
 }
 
-// FUNCTION: 0x00654EA0
+// FUNCTION: GAMEMD 0x00654EA0
 void RadarClass::Fill_In_Background(Rect const & cell_rect, Rect const & update_rect)
 {
 	RGBClass low(0, 0, 0);
@@ -730,7 +751,7 @@ void RadarClass::Fill_In_Background(Rect const & cell_rect, Rect const & update_
 	}
 }
 
-// FUNCTION: 0x00655050
+// FUNCTION: GAMEMD 0x00655050
 Rect RadarClass::Cell_Radar_Rect(Cell const & cell)
 {
 	int cellx = cell.X;
@@ -747,7 +768,7 @@ Rect RadarClass::Cell_Radar_Rect(Cell const & cell)
 	return(Rect(x, y, width, 1));
 }
 
-// FUNCTION: 0x006550C0
+// FUNCTION: GAMEMD 0x006550C0
 Rect RadarClass::Cell_To_Radar_Pixel(Cell const & cell)
 {
 	int cellx = cell.X;
@@ -758,7 +779,7 @@ Rect RadarClass::Cell_To_Radar_Pixel(Cell const & cell)
 	return(Rect(x, y, 1, 1));
 }
 
-// FUNCTION: 0x00655150
+// FUNCTION: GAMEMD 0x00655150
 Cell RadarClass::Radar_Pixel_To_Cell(Point2D const& point)
 {
 	float x = (point.X / ZoomFactor) - RadarX;
@@ -771,7 +792,7 @@ Cell RadarClass::Radar_Pixel_To_Cell(Point2D const& point)
 	return(cell);
 }
 
-// FUNCTION: 0x006551C0
+// FUNCTION: GAMEMD 0x006551C0
 void RadarClass::Radar_Background(Cell const & cell)
 {
 	for (int i = BackgroundStack.Count() - 1; i >= 0; i--) {
@@ -783,7 +804,7 @@ void RadarClass::Radar_Background(Cell const & cell)
 	IsToRedraw = true;
 }
 
-// FUNCTION: 0x00655250
+// FUNCTION: GAMEMD 0x00655250
 void RadarClass::Plot_Radar_Background(void)
 {
 	Rect r(0, 0, 0, 0);
@@ -825,7 +846,7 @@ void RadarClass::Plot_Radar_Background(void)
 	CellRedrawRect = r;
 }
 
-// FUNCTION: 0x00655560
+// FUNCTION: GAMEMD 0x00655560
 void RadarClass::Radar_Track(TechnoClass * techno, Point2D point)
 {
 	Rect surfacerect = RadarSurface->Get_Rect();
@@ -859,7 +880,7 @@ void RadarClass::Radar_Track(TechnoClass * techno, Point2D point)
 	}
 }
 
-// FUNCTION: 0x00655740
+// FUNCTION: GAMEMD 0x00655740
 void RadarClass::Radar_Untrack(TechnoClass * techno, Point2D point)
 {
 	RADAR_HASH_TABLE::BucketType * bucket = &RadarTrackingTable->Buckets[RadarTrackingStruct(techno, point.X, point.Y).Hash()];
@@ -873,7 +894,7 @@ void RadarClass::Radar_Untrack(TechnoClass * techno, Point2D point)
 	}
 }
 
-// FUNCTION: 0x006557F0
+// FUNCTION: GAMEMD 0x006557F0
 Point2D RadarClass::Coord_To_Radar_Pixel(Coord const & coord, bool clip)
 {
 	Point2D pt = coord;
@@ -896,25 +917,25 @@ Point2D RadarClass::Coord_To_Radar_Pixel(Coord const & coord, bool clip)
 	return(Point2D(x, y));
 }
 
-// FUNCTION: 0x00655890
+// FUNCTION: GAMEMD 0x00655890
 int RadarTrackingStruct::Hash_Old(RadarTrackingStruct const & s)
 {
 	return(((unsigned int)s.Object) + 251 * s.Position.X);
 }
 
-// FUNCTION: 0x006558B0
+// FUNCTION: GAMEMD 0x006558B0
 int RadarTrackingStruct::Hash2(RadarTrackingStruct const & s)
 {
 	return(s.Position.X + 251 * s.Position.Y);
 }
 
-// FUNCTION: 0x006558D0
+// FUNCTION: GAMEMD 0x006558D0
 void RadarClass::Init_Radar(void)
 {
 	RadarTrackingTable = new RADAR_HASH_TABLE(10, 256, RadarTrackingStruct::Hash2);
 }
 
-// FUNCTION: 0x00655990
+// FUNCTION: GAMEMD 0x00655990
 void RadarClass::Reset_Radar(void)
 {
 	if (RadarTrackingTable != NULL) {
@@ -930,7 +951,7 @@ void RadarClass::Reset_Radar(void)
 	}
 }
 
-// FUNCTION: 0x00655A90
+// FUNCTION: GAMEMD 0x00655A90
 void RadarClass::Clear_Radar(void)
 {
 	if (RadarSurface != NULL) {
@@ -955,7 +976,7 @@ void RadarClass::Clear_Radar(void)
 	}
 }
 
-// FUNCTION: 0x00655B20
+// FUNCTION: GAMEMD 0x00655B20
 void RadarClass::Post_Load_Radar_Fixup(void)
 {
 	RadarSurface = NULL;
@@ -979,7 +1000,7 @@ void RadarClass::Post_Load_Radar_Fixup(void)
 	}
 }
 
-// FUNCTION: 0x00656150
+// FUNCTION: GAMEMD 0x00656150
 void RadarClass::Render_Tracked_Objects(void)
 {
 	memset(PixelFlags, 0, RadarSurface->Get_Width() * RadarSurface->Get_Height() / 8 + 1);
@@ -1029,7 +1050,7 @@ void RadarClass::Render_Tracked_Objects(void)
 	}
 }
 
-// FUNCTION: 0x006562D0
+// FUNCTION: GAMEMD 0x006562D0
 void RadarClass::Radar_Pixel(Point2D const & point)
 {
 	if (point.X >= 0 && point.X < RadarSurface->Get_Width() && point.Y >= 0 && point.Y < RadarSurface->Get_Height()) {
@@ -1044,7 +1065,7 @@ void RadarClass::Radar_Pixel(Point2D const & point)
 	}
 }
 
-// FUNCTION: 0x006563B0
+// FUNCTION: GAMEMD 0x006563B0
 void RadarClass::Compute_Foundations(void)
 {
 	int i;
@@ -1102,13 +1123,13 @@ void RadarClass::Compute_Foundations(void)
 	}
 }
 
-// FUNCTION: 0x00656580
+// FUNCTION: GAMEMD 0x00656580
 FOUNDATION_LIST const & RadarClass::Get_Foundation(BuildingTypeClass * btype)
 {
 	return(Foundation[btype->Size]);
 }
 
-// FUNCTION: 0x006565A0
+// FUNCTION: GAMEMD 0x006565A0
 void RadarClass::Radar_Cell(Cell const & cell)
 {
 	if (RadarSurface != NULL) {
@@ -1136,7 +1157,7 @@ void RadarClass::Radar_Cell(Cell const & cell)
 	}
 }
 
-// FUNCTION: 0x006568A0
+// FUNCTION: GAMEMD 0x006568A0
 HRESULT RadarClass::Load(IStream * stream)
 {
 	int i;
@@ -1205,7 +1226,7 @@ HRESULT RadarClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x00656AC0
+// FUNCTION: GAMEMD 0x00656AC0
 HRESULT RadarClass::Save(IStream * stream)
 {
 	int i;
@@ -1256,7 +1277,7 @@ HRESULT RadarClass::Save(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x00656BE0
+// FUNCTION: GAMEMD 0x00656BE0
 void RadarClass::Set_Radar_State(bool on, bool sound)
 {
 	if (on == true) {
@@ -1279,13 +1300,13 @@ void RadarClass::Set_Radar_State(bool on, bool sound)
 	RadarAnimFrame = RadarAnimFrame;
 }
 
-// FUNCTION: 0x00656CA0
+// FUNCTION: GAMEMD 0x00656CA0
 bool RadarClass::Is_Radar_Active(void)
 {
 	return(RadarState == RSTATE_ACTIVE);
 }
 
-// FUNCTION: 0x00656CB0
+// FUNCTION: GAMEMD 0x00656CB0
 void RadarClass::Radar_Activate(int control, bool flag)
 {
 	if (Session.Type != GAME_NORMAL && PlayerPtr->IsDefeated && Unsorted::MuteSWLaunches) {
@@ -1324,19 +1345,19 @@ void RadarClass::Radar_Activate(int control, bool flag)
 	RadarMode = control;
 }
 
-// FUNCTION: 0x00656DC0
+// FUNCTION: GAMEMD 0x00656DC0
 bool RadarClass::Is_Radar_Tactical(void)
 {
 	return(RadarMode == RMODE_TACTICAL && RadarState == RSTATE_ACTIVE);
 }
 
-// FUNCTION: 0x00656DE0
+// FUNCTION: GAMEMD 0x00656DE0
 bool RadarClass::Is_Radar_Existing(void)
 {
 	return(DoesRadarExist);
 }
 
-// FUNCTION: 0x00656DF0
+// FUNCTION: GAMEMD 0x00656DF0
 void RadarClass::Toggle_Radar(bool on)
 {
 	if (DoesRadarExist != on) {
@@ -1351,19 +1372,19 @@ void RadarClass::Toggle_Radar(bool on)
 	}
 }
 
-// FUNCTION: 0x00656E50
+// FUNCTION: GAMEMD 0x00656E50
 bool RadarClass::Is_Player_Names(void)
 {
 	return(RadarMode == RMODE_PLAYER_NAMES && RadarState == RSTATE_ACTIVE);
 }
 
-// FUNCTION: 0x00656E70
+// FUNCTION: GAMEMD 0x00656E70
 bool RadarClass::Is_Playing_Movie(void)
 {
 	return(RadarMode == RMODE_MOVIE && RadarState == RSTATE_ACTIVE);
 }
 
-// FUNCTION: 0x00656E90
+// FUNCTION: GAMEMD 0x00656E90
 void RadarClass::Redraw_Radar(bool complete)
 {
 	IsToRedraw = true;
@@ -1378,7 +1399,7 @@ void FUN_00408390(void);
 int FUN_00408410(void);
 void FUN_005BF580(void);
 
-// FUNCTION: 0x006578F0
+// FUNCTION: GAMEMD 0x006578F0
 void RadarClass::FUN_006578F0(void)
 {
 	switch (unknown_14B8) {
@@ -1416,7 +1437,7 @@ void FUN_005BF530(void);
 void __fastcall Hold_Scenario(int seconds);
 void Release_Scenario(void);
 
-// FUNCTION: 0x006579E0
+// FUNCTION: GAMEMD 0x006579E0
 void RadarClass::Play_Movie(void)
 {
 	MovieHandle * movie = NULL;
@@ -1490,7 +1511,7 @@ void RadarClass::Play_Movie(void)
 	}
 }
 
-// FUNCTION: 0x00657CE0
+// FUNCTION: GAMEMD 0x00657CE0
 void RadarClass::Complete_Radar_Refresh(void)
 {
 	if (MainWindow == NULL) {
@@ -1507,7 +1528,7 @@ void RadarClass::Complete_Radar_Refresh(void)
 	}
 }
 
-// FUNCTION: 0x00658640
+// FUNCTION: GAMEMD 0x00658640
 void RadarClass::FUN_00658640(HWND dialog)
 {
 	int local = -1;
@@ -1544,7 +1565,7 @@ extern bool UserInputLocked;
 #include "scenario.h"
 LRESULT CALLBACK FUN_00657DA0(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 
-// FUNCTION: 0x006586D0
+// FUNCTION: GAMEMD 0x006586D0
 void RadarClass::FUN_006586D0(void)
 {
 	int result;
@@ -1572,32 +1593,48 @@ void RadarClass::FUN_006586D0(void)
 	Map.Flag_To_Redraw(GS_REDRAW_ALL);
 }
 
-// FUNCTION: 0x00658770
+// FUNCTION: GAMEMD 0x00658770
 char const * RadarClass::Help_Text(int id)
 {
 	return(BASECLASS::Help_Text(id));
 }
 
-// FUNCTION: 0x00658780 RadarClass::RTacticalClass::~RTacticalClass
+// SYNTHETIC: GAMEMD 0x00658780
+// ??_GRTacticalClass@RadarClass@@UAEPAXI@Z
 
-// FUNCTION: 0x006587A0 RadarClass::~RadarClass
+// SYNTHETIC: GAMEMD 0x006587A0
+// ??_GRadarClass@@UAEPAXI@Z
 
-// FUNCTION: 0x00658890 ?$DynamicVectorClass@U?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@::Clear
-// FUNCTION: 0x006588C0 ?$DynamicVectorClass@U?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@::ID
-// FUNCTION: 0x006588E0 ?$VectorClass@U?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@::GetItem
-// FUNCTION: 0x00658910 ?$VectorClass@U?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@::operator==
-// FUNCTION: 0x00658970 ?$VectorClass@U?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@::Resize
-// FUNCTION: 0x00658A70 ?$VectorClass@U?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@::Clear
-// FUNCTION: 0x00658AA0 ?$VectorClass@U?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@::ID
-// FUNCTION: 0x00658AF0 ?$VectorClass@U?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@::ID
-// FUNCTION: 0x00658B10 ?$DynamicVectorClass@U?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@::Resize
-// FUNCTION: 0x00658C20 ?$DynamicVectorClass@U?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@::ID
-// FUNCTION: 0x00658C60 ?$DynamicVectorClass@U?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@::~?$DynamicVectorClass@U?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@
+// TEMPLATE: GAMEMD 0x00658890
+// ?Clear@?$DynamicVectorClass@U?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x006588C0
+// ?ID@?$DynamicVectorClass@U?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@@@UAEHPBU?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@@Z
+// TEMPLATE: GAMEMD 0x006588E0
+// ?GetItem@?$VectorClass@U?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@@@UBE?AU?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@H@Z
+// TEMPLATE: GAMEMD 0x00658910
+// ??8?$VectorClass@U?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x00658970
+// ?Resize@?$VectorClass@U?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@@@UAE_NHPBU?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@@Z
+// TEMPLATE: GAMEMD 0x00658A70
+// ?Clear@?$VectorClass@U?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x00658AA0
+// ?ID@?$VectorClass@U?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@@@UAEHABU?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@@Z
+// TEMPLATE: GAMEMD 0x00658AF0
+// ?ID@?$VectorClass@U?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@@@UAEHPBU?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@@Z
+// TEMPLATE: GAMEMD 0x00658B10
+// ?Resize@?$DynamicVectorClass@U?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@@@UAE_NHPBU?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@@Z
+// TEMPLATE: GAMEMD 0x00658C20
+// ?ID@?$DynamicVectorClass@U?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@@@UAEHABU?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@@Z
+// SYNTHETIC: GAMEMD 0x00658C60
+// ??_E?$DynamicVectorClass@U?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@@@UAEPAXI@Z
 template class DynamicVectorClass<HashObject<RadarTrackingStruct, TechnoClass *> >;
 
-// FUNCTION: 0x00658D10 ?$VectorClass@U?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@::~?$VectorClass@U?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@
-// FUNCTION: 0x00658D60 ?$VectorClass@VPoint2D@@::?$VectorClass@VPoint2D@@
-// FUNCTION: 0x00658DE0 ?$DynamicVectorClass@U?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@::?$DynamicVectorClass@U?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@
+// SYNTHETIC: GAMEMD 0x00658D10
+// ??_G?$VectorClass@U?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@@@UAEPAXI@Z
+// TEMPLATE: GAMEMD 0x00658D60
+// ??0?$VectorClass@VPoint2D@@@@QAE@HPBVPoint2D@@@Z
+// TEMPLATE: GAMEMD 0x00658DE0
+// ??0?$DynamicVectorClass@U?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@@@QAE@IPBU?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@@Z
 
 extern const double DAT_007E1708;
 extern const double DAT_007E1710;
@@ -1610,44 +1647,58 @@ extern const double DAT_007E1740;
 extern const double DAT_007F0470;
 extern const double DAT_007F0478;
 
-// FUNCTION: 0x00658E80 $E192
+// SYNTHETIC: GAMEMD 0x00658E80 SYMBOL
+// _$E192
 double DAT_00B04A78 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x00658EB0 $E195
+// SYNTHETIC: GAMEMD 0x00658EB0 SYMBOL
+// _$E195
 double DAT_00B04AC8 = DAT_00B04A78 / DAT_007F0470;
 
-// FUNCTION: 0x00658ED0 $E198
+// SYNTHETIC: GAMEMD 0x00658ED0 SYMBOL
+// _$E198
 double DAT_00B04AB0 = DAT_007E1718 / DAT_00B04AC8;
 
-// FUNCTION: 0x00658EF0 $E201
+// SYNTHETIC: GAMEMD 0x00658EF0 SYMBOL
+// _$E201
 double DAT_00B04AA8 = DAT_007E1720 * DAT_007F0478;
 
-// FUNCTION: 0x00658F10 $E204
+// SYNTHETIC: GAMEMD 0x00658F10 SYMBOL
+// _$E204
 double DAT_00B04A80 = DAT_007E1728 * DAT_007F0478;
 
-// FUNCTION: 0x00658F30 $E207
+// SYNTHETIC: GAMEMD 0x00658F30 SYMBOL
+// _$E207
 double DAT_00B04A40 = DAT_007E1730 * DAT_007F0478;
 
-// FUNCTION: 0x00658F50 $E210
+// SYNTHETIC: GAMEMD 0x00658F50 SYMBOL
+// _$E210
 int DAT_00B04AD0 = (int)(fastmath::tan(DAT_00B04A40 - DAT_00B04A80) * DAT_007E1738 * DAT_00B04A78);
 
-// FUNCTION: 0x00658F90 $E213
+// SYNTHETIC: GAMEMD 0x00658F90 SYMBOL
+// _$E213
 double DAT_00B04A88 = fastmath::atan(DAT_00B04AD0 * DAT_007E1740);
 
-// FUNCTION: 0x00658FC0 $E216
+// SYNTHETIC: GAMEMD 0x00658FC0 SYMBOL
+// _$E216
 double DAT_00B04AA0 = fastmath::atan((DAT_00B04AD0 * 2) / DAT_00B04A78);
 
-// FUNCTION: 0x00658FF0 $E219
+// SYNTHETIC: GAMEMD 0x00658FF0 SYMBOL
+// _$E219
 int DAT_00B04AC4 = (int)(DAT_00B04AD0 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x00659020 $E222
+// SYNTHETIC: GAMEMD 0x00659020 SYMBOL
+// _$E222
 Cell DAT_00B04A58(0, 0);
 
-// FUNCTION: 0x00659030 $E225
+// SYNTHETIC: GAMEMD 0x00659030 SYMBOL
+// _$E225
 Coord DAT_00B04A90(0, 0, 0);
 
-// FUNCTION: 0x00659050 $E228
+// SYNTHETIC: GAMEMD 0x00659050 SYMBOL
+// _$E228
 Coord DAT_00B04AB8(128, 128, 0);
 
-// FUNCTION: 0x00659070 $E231
+// SYNTHETIC: GAMEMD 0x00659070 SYMBOL
+// _$E231
 Rect DAT_00B04A48(0, 0, 0, 0);

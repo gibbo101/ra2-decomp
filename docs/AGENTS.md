@@ -52,13 +52,19 @@ original compiler turns into that function's exact bytes. MATCH means
    classes, the gadgets, the surfaces). Include them
    rather than writing stand-ins; `uv run tools/headercheck.py <Class>` proves any header you fix in
    your overlay.
-3. Mark the definition with `// FUNCTION: <ADDR>` on the line before it. The function
-   must not be `static`: an unused static is discarded and the checker finds nothing.
-   A function a header defines, which the module's object emits out of line (an inline
-   constructor, a compiler-generated destructor), takes `// FUNCTION: <ADDR> Class::Name`
-   with no definition after it. A template instance takes its mangled class name
-   (`// FUNCTION: 0x0063E540 ?$DynamicVectorClass@H::Add`) and `template class X<T>;`
-   to force emission; an operator is named as written (`?$TPoint2D@H::operator==`); VC6 ignores `template bool X<int>::f(...)`.
+3. Mark the definition with `// FUNCTION: GAMEMD <ADDR>` on the line before it (reccmp's
+   annotation format). The function must not be `static`: an unused static is discarded
+   and the checker finds nothing. A function with no definition in the file takes its name
+   on the comment line after the marker, with nothing after it:
+   - a header inline the object emits out of line: `// FUNCTION: GAMEMD <ADDR>` then
+     `// Class::Name`;
+   - a template instance: `// TEMPLATE: GAMEMD <ADDR>` then its decorated symbol
+     (`// ?Add@?$DynamicVectorClass@H@@QAE_NABH@Z`, as check.py prints it) or the short
+     form `// ?$DynamicVectorClass@H::Add`, plus `template class X<T>;` to force
+     emission; VC6 ignores `template bool X<int>::f(...)`;
+   - a compiler-generated destructor: `// SYNTHETIC: GAMEMD <ADDR>` then
+     `// ??_GClass@@UAEPAXI@Z`; a static initialiser: `// SYNTHETIC: GAMEMD <ADDR> SYMBOL`
+     then `// _$E12`.
 4. `uv run tools/check.py build/spike/<ADDR>/<module>.cpp <ADDR> --overlay build/spike/<ADDR>/include`
    An overlay header reaches only direct includes: one included from another include/
    header resolves in include/ first, so test a nested header by editing it in place.
@@ -257,8 +263,7 @@ Each entry: what the diff showed, then the source change that fixed it.
   vtable minus 4 (`Exe.vtables()` in headercheck.py) before naming one.
 - Static initialisers and atexit stubs are named `$E<n>`, numbered across the whole
   file: after any header or file change, re-read the number from the checker's listing.
-  A marker name is a prefix (`$E2` also matches `$E20`): name each one in full. A bare
-  `$E` claims the file's first initialiser, and checkall fails two claims on one function.
+  Name each one exactly (`// _$E2` with SYMBOL); two claims on one function fail checkall.
 - A template instance's element type comes from its vtable's RTTI, not from look-alike
   code: palette's vectors are `HSVClass`, which compiles the same as `RGBClass`.
 - A free fastcall `operator==` whose body jumps to itself comes from a member operator==

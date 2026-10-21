@@ -12,7 +12,7 @@
 #define ABUFFER_MAX    0x8000
 #define ABUFFER_BPP    2
 
-// FUNCTION: 0x00410CE0
+// FUNCTION: GAMEMD 0x00410CE0
 ABuffer::ABuffer(Rect rect) :
 	BufferWidth(rect.Width),
 	BufferHeight(rect.Height)
@@ -31,7 +31,7 @@ ABuffer::ABuffer(Rect rect) :
 	SurfacePtr->Unlock();
 }
 
-// FUNCTION: 0x00410DC0
+// FUNCTION: GAMEMD 0x00410DC0
 void ABuffer::Copy_To(Surface *surface, Rect rect)
 {
 	unsigned short *surfbuffptr = (unsigned short *)(surface->Lock(Point2D(rect.X, rect.Y)));
@@ -54,14 +54,14 @@ void ABuffer::Copy_To(Surface *surface, Rect rect)
 	surface->Unlock();
 }
 
-// FUNCTION: 0x00410E50
+// FUNCTION: GAMEMD 0x00410E50
 void ABuffer::Release_Surface(void)
 {
 	delete SurfacePtr;
 	SurfacePtr = NULL;
 }
 
-// FUNCTION: 0x00410E70
+// FUNCTION: GAMEMD 0x00410E70
 void ABuffer::Set(unsigned int dst, int size, unsigned short value)
 {
 	if ((unsigned int)dst & 2) {
@@ -92,7 +92,7 @@ void ABuffer::Set(unsigned int dst, int size, unsigned short value)
 	}
 }
 
-// FUNCTION: 0x00410ED0
+// FUNCTION: GAMEMD 0x00410ED0
 void ABuffer::Pan(int x, int y, unsigned short value)
 {
 	int target_col;
@@ -174,19 +174,19 @@ void ABuffer::Pan(int x, int y, unsigned short value)
 	}
 }
 
-// FUNCTION: 0x004112D0
+// FUNCTION: GAMEMD 0x004112D0
 bool ABuffer::Fill(unsigned short value)
 {
 	return(SurfacePtr->Fill_Rect(Rect(0, 0, BufferWidth, BufferHeight), value));
 }
 
-// FUNCTION: 0x00411310
+// FUNCTION: GAMEMD 0x00411310
 bool ABuffer::Fill(unsigned short value, Rect rect)
 {
 	return(SurfacePtr->Fill_Rect(rect, value));
 }
 
-// FUNCTION: 0x00411330
+// FUNCTION: GAMEMD 0x00411330
 void ABuffer::Update(Rect rect)
 {
 	unsigned int buffptr = Get_Buffer_Offset(Point2D(rect.X, rect.Y));
@@ -207,7 +207,7 @@ void ABuffer::Update(Rect rect)
 	}
 }
 
-// FUNCTION: 0x004114B0
+// FUNCTION: GAMEMD 0x004114B0
 unsigned int ABuffer::Get_Buffer_Offset(Point2D pos)
 {
 	unsigned int buffptr = (unsigned int)SurfacePtr->Lock(pos);
@@ -218,27 +218,43 @@ unsigned int ABuffer::Get_Buffer_Offset(Point2D pos)
 	return(Wrap_Overflow(buffptr));
 }
 
-// FUNCTION: 0x004114F0 Surface::Can_Lock
-// FUNCTION: 0x00411500 Surface::entry_64
-// FUNCTION: 0x00411510 Surface::Get_Rect
-// FUNCTION: 0x00411540 Surface::Get_Width
-// FUNCTION: 0x00411550 Surface::Get_Height
-// FUNCTION: 0x00411560 XSurface::Lock
-// FUNCTION: 0x00411570 XSurface::Unlock
-// FUNCTION: 0x00411580 XSurface::Is_Locked
-// FUNCTION: 0x00411590 XSurface::Is_Direct_Draw
-// FUNCTION: 0x004115A0 XSurface::~XSurface
-// FUNCTION: 0x004115C0 Surface::Is_Direct_Draw
-// FUNCTION: 0x004115D0 Surface::~Surface
-// FUNCTION: 0x004115F0 BSurface::Lock
-// FUNCTION: 0x00411630 BSurface::Bytes_Per_Pixel
-// FUNCTION: 0x00411640 BSurface::Stride
-// FUNCTION: 0x00411650 BSurface::~BSurface
+// FUNCTION: GAMEMD 0x004114F0
+// Surface::Can_Lock
+// FUNCTION: GAMEMD 0x00411500
+// Surface::entry_64
+// TEMPLATE: GAMEMD 0x00411510
+// ?Get_Rect@Surface@@UBE?AV?$TRect@H@@XZ
+// FUNCTION: GAMEMD 0x00411540
+// Surface::Get_Width
+// FUNCTION: GAMEMD 0x00411550
+// Surface::Get_Height
+// FUNCTION: GAMEMD 0x00411560
+// XSurface::Lock
+// FUNCTION: GAMEMD 0x00411570
+// XSurface::Unlock
+// FUNCTION: GAMEMD 0x00411580
+// XSurface::Is_Locked
+// FUNCTION: GAMEMD 0x00411590
+// XSurface::Is_Direct_Draw
+// SYNTHETIC: GAMEMD 0x004115A0
+// ??_GXSurface@@UAEPAXI@Z
+// FUNCTION: GAMEMD 0x004115C0
+// Surface::Is_Direct_Draw
+// SYNTHETIC: GAMEMD 0x004115D0
+// ??_GSurface@@UAEPAXI@Z
+// FUNCTION: GAMEMD 0x004115F0
+// BSurface::Lock
+// FUNCTION: GAMEMD 0x00411630
+// BSurface::Bytes_Per_Pixel
+// FUNCTION: GAMEMD 0x00411640
+// BSurface::Stride
+// SYNTHETIC: GAMEMD 0x00411650
+// ??_GBSurface@@UAEPAXI@Z
 
 struct Dat4 { int a, b, c, d; };
 extern Dat4 DAT_00887748;
 
-// FUNCTION: 0x00411680
+// FUNCTION: GAMEMD 0x00411680
 void FUN_00411680(void)
 {
 	DAT_00887748.a = 0;

@@ -20,7 +20,7 @@
 #include "vector.h"
 #include "warhead.h"
 
-// FUNCTION: 0x0074AD80
+// FUNCTION: GAMEMD 0x0074AD80
 VoxelAnimTypeClass::VoxelAnimTypeClass(char const * ininame) :
 	BASECLASS(ininame),
 	IsNormalized(false),
@@ -60,8 +60,8 @@ VoxelAnimTypeClass::VoxelAnimTypeClass(char const * ininame) :
 	VoxelAnimTypes.Add(this);
 }
 
-// FUNCTION: 0x0074AF70
-// FUNCTION: 0x0074BA30
+// FUNCTION: GAMEMD 0x0074AF70
+// FUNCTION: GAMEMD 0x0074BA30
 VoxelAnimTypeClass::~VoxelAnimTypeClass(void)
 {
 	Detach_This_From_All(this);
@@ -73,7 +73,7 @@ VoxelAnimTypeClass::~VoxelAnimTypeClass(void)
 	}
 }
 
-// FUNCTION: 0x0074B050
+// FUNCTION: GAMEMD 0x0074B050
 bool VoxelAnimTypeClass::Read_INI(CCINIClass & ini)
 {
 	ini.Reset();
@@ -151,14 +151,14 @@ bool VoxelAnimTypeClass::Read_INI(CCINIClass & ini)
 	return(false);
 }
 
-// FUNCTION: 0x0074B620
+// FUNCTION: GAMEMD 0x0074B620
 char const * VoxelAnimTypeClass::Name_From(VoxelAnimType anim)
 {
 	if ((unsigned)anim > (unsigned)VoxelAnimTypes.Count()) return("");
 	return(VoxelAnimTypes[anim]->IniName);
 }
 
-// FUNCTION: 0x0074B640
+// FUNCTION: GAMEMD 0x0074B640
 VoxelAnimType VoxelAnimTypeClass::From_Name(char const * name)
 {
 	if (name != NULL) {
@@ -171,7 +171,7 @@ VoxelAnimType VoxelAnimTypeClass::From_Name(char const * name)
 	return(VANIM_NONE);
 }
 
-// FUNCTION: 0x0074B690
+// FUNCTION: GAMEMD 0x0074B690
 void VoxelAnimTypeClass::Compute_CRC(CRCEngine & crc) const
 {
 	BASECLASS::Compute_CRC(crc);
@@ -195,7 +195,7 @@ void VoxelAnimTypeClass::Compute_CRC(CRCEngine & crc) const
 	crc(IsTiberium);
 }
 
-// FUNCTION: 0x0074B7D0
+// FUNCTION: GAMEMD 0x0074B7D0
 HRESULT STDMETHODCALLTYPE VoxelAnimTypeClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -203,7 +203,7 @@ HRESULT STDMETHODCALLTYPE VoxelAnimTypeClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x0074B810
+// FUNCTION: GAMEMD 0x0074B810
 HRESULT STDMETHODCALLTYPE VoxelAnimTypeClass::Load(IStream *stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -224,7 +224,7 @@ HRESULT STDMETHODCALLTYPE VoxelAnimTypeClass::Load(IStream *stream)
 	return(result);
 }
 
-// FUNCTION: 0x0074B8D0
+// FUNCTION: GAMEMD 0x0074B8D0
 HRESULT STDMETHODCALLTYPE VoxelAnimTypeClass::Save(IStream *stream, int cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -234,7 +234,7 @@ HRESULT STDMETHODCALLTYPE VoxelAnimTypeClass::Save(IStream *stream, int cleardir
 	return(result);
 }
 
-// FUNCTION: 0x0074B8F0
+// FUNCTION: GAMEMD 0x0074B8F0
 void VoxelAnimTypeClass::Detach(AbstractClass const * target, bool all)
 {
 	if (Warhead == target) {
@@ -257,16 +257,20 @@ void VoxelAnimTypeClass::Detach(AbstractClass const * target, bool all)
 	}
 }
 
-// FUNCTION: 0x0074B960
+// FUNCTION: GAMEMD 0x0074B960
 VoxelAnimTypeClass * VoxelAnimTypeClass::Find_Or_Make(char const * name)
 {
 	return(TFind_Or_Make<VoxelAnimTypeClass>(name, VoxelAnimTypes));
 }
 
-// FUNCTION: 0x0074B9F0 VoxelAnimTypeClass::Fetch_RTTI
+// FUNCTION: GAMEMD 0x0074B9F0
+// VoxelAnimTypeClass::Fetch_RTTI
 
-// FUNCTION: 0x0074BA00 VoxelAnimTypeClass::Fetch_Object_Size
+// FUNCTION: GAMEMD 0x0074BA00
+// VoxelAnimTypeClass::Fetch_Object_Size
 
-// FUNCTION: 0x0074BA10 VoxelAnimTypeClass::Create_And_Place
+// FUNCTION: GAMEMD 0x0074BA10
+// VoxelAnimTypeClass::Create_And_Place
 
-// FUNCTION: 0x0074BA20 VoxelAnimTypeClass::Create_One_Of
+// FUNCTION: GAMEMD 0x0074BA20
+// VoxelAnimTypeClass::Create_One_Of

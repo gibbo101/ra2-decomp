@@ -11,11 +11,13 @@
 #include "house.h"
 #include "scenario.h"
 
-// FUNCTION: 0x004C60F0 $E18
-// FUNCTION: 0x004C6130 $E16
+// SYNTHETIC: GAMEMD 0x004C60F0 SYMBOL
+// _$E18
+// SYNTHETIC: GAMEMD 0x004C6130 SYMBOL
+// _$E16
 EnvironmentClass Environment;
 
-// FUNCTION: 0x004C6140
+// FUNCTION: GAMEMD 0x004C6140
 EnvironmentClass::EnvironmentClass(void):
 	CarryOverMoney(0),
 	MissionTimer(0),
@@ -27,12 +29,12 @@ EnvironmentClass::EnvironmentClass(void):
 	}
 }
 
-// FUNCTION: 0x004C6170
+// FUNCTION: GAMEMD 0x004C6170
 EnvironmentClass::~EnvironmentClass(void)
 {
 }
 
-// FUNCTION: 0x004C6180
+// FUNCTION: GAMEMD 0x004C6180
 void EnvironmentClass::Store(void)
 {
 	for (int i = 0; i < 50; i++) {
@@ -45,7 +47,7 @@ void EnvironmentClass::Store(void)
 	Stage = Scen->Stage;
 }
 
-// FUNCTION: 0x004C6210
+// FUNCTION: GAMEMD 0x004C6210
 void EnvironmentClass::Restore(void)
 {
 	for (int i = 0; i < 50; i++) {
@@ -73,13 +75,13 @@ void EnvironmentClass::Restore(void)
 	Scen->Stage = Stage;
 }
 
-// FUNCTION: 0x004C6320
+// FUNCTION: GAMEMD 0x004C6320
 HRESULT EnvironmentClass::Load(IStream * stream)
 {
 	return(stream->Read(this, sizeof(*this), NULL));
 }
 
-// FUNCTION: 0x004C6340
+// FUNCTION: GAMEMD 0x004C6340
 HRESULT EnvironmentClass::Save(IStream * stream)
 {
 	return(stream->Write(this, sizeof(*this), NULL));
@@ -88,33 +90,47 @@ HRESULT EnvironmentClass::Save(IStream * stream)
 const double ISO_TILE_SIZE = 60.0;
 const double ONE_RAD = M_PI / 180.0;
 
-// FUNCTION: 0x004C6360 $E21
+// SYNTHETIC: GAMEMD 0x004C6360 SYMBOL
+// _$E21
 const double CELL_LEPTON_DIAG = fastmath::sqrt(pow((double)CELL_LEPTON_H, 2) * 2);
-// FUNCTION: 0x004C6390 $E24
+// SYNTHETIC: GAMEMD 0x004C6390 SYMBOL
+// _$E24
 const double LEPTONS_PER_PIXEL = CELL_LEPTON_DIAG / ISO_TILE_SIZE;
-// FUNCTION: 0x004C63B0 $E27
+// SYNTHETIC: GAMEMD 0x004C63B0 SYMBOL
+// _$E27
 const double PIXELS_PER_LEPTON = 1.0 / LEPTONS_PER_PIXEL;
-// FUNCTION: 0x004C63D0 $E30
+// SYNTHETIC: GAMEMD 0x004C63D0 SYMBOL
+// _$E30
 const double RAD_45 = ONE_RAD * 45;
-// FUNCTION: 0x004C63F0 $E33
+// SYNTHETIC: GAMEMD 0x004C63F0 SYMBOL
+// _$E33
 const double RAD_60 = ONE_RAD * 60;
-// FUNCTION: 0x004C6410 $E36
+// SYNTHETIC: GAMEMD 0x004C6410 SYMBOL
+// _$E36
 const double RAD_90 = ONE_RAD * 90;
-// FUNCTION: 0x004C6430 $E39
+// SYNTHETIC: GAMEMD 0x004C6430 SYMBOL
+// _$E39
 const int LEVEL_LEPTON_H = (int)(fastmath::tan(RAD_90 - RAD_60) * CELL_LEPTON_DIAG * 0.5);
 
-// FUNCTION: 0x004C6470 $E42
+// SYNTHETIC: GAMEMD 0x004C6470 SYMBOL
+// _$E42
 const double CELL_SLOPE_ANGLE = fastmath::atan(LEVEL_LEPTON_H * (1 / (double)CELL_LEPTON_H));
-// FUNCTION: 0x004C64A0 $E45
+// SYNTHETIC: GAMEMD 0x004C64A0 SYMBOL
+// _$E45
 const double CELL_DIAG_SLOPE_ANGLE = fastmath::atan((LEVEL_LEPTON_H * 2) / CELL_LEPTON_DIAG);
-// FUNCTION: 0x004C64D0 $E48
+// SYNTHETIC: GAMEMD 0x004C64D0 SYMBOL
+// _$E48
 const int BRIDGE_LEPTON_HEIGHT = (int)((LEVEL_LEPTON_H * BRIDGE_CELL_HEIGHT) + 0.5);
-// FUNCTION: 0x004C6500 $E51
+// SYNTHETIC: GAMEMD 0x004C6500 SYMBOL
+// _$E51
 const Cell CELL_NONE(0, 0);
-// FUNCTION: 0x004C6510 $E54
+// SYNTHETIC: GAMEMD 0x004C6510 SYMBOL
+// _$E54
 const Coord COORD_NONE(0, 0, 0);
-// FUNCTION: 0x004C6530 $E57
+// SYNTHETIC: GAMEMD 0x004C6530 SYMBOL
+// _$E57
 const Coord CELL_CENTER_COORD(CELL_LEPTON_W / 2, CELL_LEPTON_H / 2, 0);
 
-// FUNCTION: 0x004C6550 $E60
+// SYNTHETIC: GAMEMD 0x004C6550 SYMBOL
+// _$E60
 const Rect RECT_NONE_2(0, 0, 0, 0);

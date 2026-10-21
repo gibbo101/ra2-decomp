@@ -25,7 +25,7 @@ struct ZeroQuad {
 	ZeroQuad() { A = 0; B = 0; C = 0; D = 0; }
 };
 
-// FUNCTION: 0x0046CB60
+// FUNCTION: GAMEMD 0x0046CB60
 CampaignClass::CampaignClass(char const * name) :
 	BASECLASS(name),
 	CDNumber(-1),
@@ -37,14 +37,14 @@ CampaignClass::CampaignClass(char const * name) :
 	wcscpy(Description, DAT_00887734);
 }
 
-// FUNCTION: 0x0046CC10
+// FUNCTION: GAMEMD 0x0046CC10
 CampaignClass::~CampaignClass(void)
 {
 	Detach_This_From_All(this, true);
 	Campaigns.Delete(this);
 }
 
-// FUNCTION: 0x0046CC90
+// FUNCTION: GAMEMD 0x0046CC90
 CampaignType CampaignClass::From_Name(char const * name)
 {
 	for (int index = 0; index < Campaigns.Count(); index++) {
@@ -56,7 +56,7 @@ CampaignType CampaignClass::From_Name(char const * name)
 	return(CAMPAIGN_NONE);
 }
 
-// FUNCTION: 0x0046CCD0
+// FUNCTION: GAMEMD 0x0046CCD0
 bool CampaignClass::Read_INI(CCINIClass & ini)
 {
 	ini.Reset();
@@ -78,7 +78,7 @@ bool CampaignClass::Read_INI(CCINIClass & ini)
 	return(false);
 }
 
-// FUNCTION: 0x0046CE10
+// FUNCTION: GAMEMD 0x0046CE10
 void __fastcall Read_Battle_INI(CCINIClass & ini)
 {
 	char name[32];
@@ -102,7 +102,7 @@ void __fastcall Read_Battle_INI(CCINIClass & ini)
 	}
 }
 
-// FUNCTION: 0x0046CF80
+// FUNCTION: GAMEMD 0x0046CF80
 HRESULT STDMETHODCALLTYPE CampaignClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -110,7 +110,7 @@ HRESULT STDMETHODCALLTYPE CampaignClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x0046CFC0
+// FUNCTION: GAMEMD 0x0046CFC0
 void CampaignClass::Compute_CRC(CRCEngine & crc) const
 {
 	BASECLASS::Compute_CRC(crc);
@@ -120,7 +120,7 @@ void CampaignClass::Compute_CRC(CRCEngine & crc) const
 	crc(FinalMovie);
 }
 
-// FUNCTION: 0x0046D000
+// FUNCTION: GAMEMD 0x0046D000
 HRESULT STDMETHODCALLTYPE CampaignClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -132,7 +132,7 @@ HRESULT STDMETHODCALLTYPE CampaignClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x0046D050
+// FUNCTION: GAMEMD 0x0046D050
 HRESULT STDMETHODCALLTYPE CampaignClass::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -142,34 +142,49 @@ HRESULT STDMETHODCALLTYPE CampaignClass::Save(IStream * stream, BOOL cleardirty)
 	return(result);
 }
 
-// FUNCTION: 0x0046D070
+// FUNCTION: GAMEMD 0x0046D070
 int CampaignClass::Fetch_Object_Size(void) const
 {
 	return(sizeof(*this));
 }
 
-// FUNCTION: 0x0046D080
+// FUNCTION: GAMEMD 0x0046D080
 RTTIType CampaignClass::Fetch_RTTI(void) const
 {
 	return(RTTI_CAMPAIGN);
 }
 
-// FUNCTION: 0x0046D090 CampaignClass::~CampaignClass
+// SYNTHETIC: GAMEMD 0x0046D090
+// ??_GCampaignClass@@UAEPAXI@Z
 
-// FUNCTION: 0x0046D120 $E2
-// FUNCTION: 0x0046D150 $E5
+// SYNTHETIC: GAMEMD 0x0046D120 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x0046D150 SYMBOL
+// _$E5
 
-// FUNCTION: 0x0046D170 $E8
-// FUNCTION: 0x0046D190 $E11
-// FUNCTION: 0x0046D1B0 $E14
-// FUNCTION: 0x0046D1D0 $E17
-// FUNCTION: 0x0046D1F0 $E20
-// FUNCTION: 0x0046D230 $E23
-// FUNCTION: 0x0046D260 $E26
-// FUNCTION: 0x0046D290 $E29
-// FUNCTION: 0x0046D2C0 $E32
-// FUNCTION: 0x0046D2D0 $E35
-// FUNCTION: 0x0046D2F0 $E38
+// SYNTHETIC: GAMEMD 0x0046D170 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x0046D190 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x0046D1B0 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x0046D1D0 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x0046D1F0 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x0046D230 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x0046D260 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x0046D290 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x0046D2C0 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x0046D2D0 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x0046D2F0 SYMBOL
+// _$E38
 
-// FUNCTION: 0x0046D310 $E55
+// SYNTHETIC: GAMEMD 0x0046D310 SYMBOL
+// _$E55
 ZeroQuad DAT_0089DF70;

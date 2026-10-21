@@ -35,7 +35,7 @@ extern double __cdecl FUN_004CADE0(double);
 extern const double DAT_007F46F0;
 extern const double DAT_007F46F8;
 
-// FUNCTION: 0x006E7E80
+// FUNCTION: GAMEMD 0x006E7E80
 TaskForceClass::TaskForceClass(char const *name) :
 	BASECLASS(name),
 	Group(-1),
@@ -49,17 +49,17 @@ TaskForceClass::TaskForceClass(char const *name) :
 	}
 }
 
-// FUNCTION: 0x006E7F50
+// FUNCTION: GAMEMD 0x006E7F50
 TaskForceClass::TaskForceClass(NoInitClass const & x) : BASECLASS(x) {}
 
-// FUNCTION: 0x006E7F80
+// FUNCTION: GAMEMD 0x006E7F80
 TaskForceClass::~TaskForceClass(void)
 {
 	Detach_This_From_All(this, true);
 	TaskForces.Delete(this);
 }
 
-// FUNCTION: 0x006E8000
+// FUNCTION: GAMEMD 0x006E8000
 TaskForceClass::TaskForceClass(TaskForceClass const & that) :
 	BASECLASS(that)
 {
@@ -72,7 +72,7 @@ TaskForceClass::TaskForceClass(TaskForceClass const & that) :
 	}
 }
 
-// FUNCTION: 0x006E80F0
+// FUNCTION: GAMEMD 0x006E80F0
 TaskForceClass TaskForceClass::operator=(TaskForceClass const & that)
 {
 	if (this != &that) {
@@ -87,7 +87,7 @@ TaskForceClass TaskForceClass::operator=(TaskForceClass const & that)
 	return(*this);
 }
 
-// FUNCTION: 0x006E8160
+// FUNCTION: GAMEMD 0x006E8160
 int TaskForceClass::Required_Object_Count(void) const
 {
 	int desired = 0;
@@ -97,7 +97,7 @@ int TaskForceClass::Required_Object_Count(void) const
 	return(desired);
 }
 
-// FUNCTION: 0x006E8180
+// FUNCTION: GAMEMD 0x006E8180
 TaskForceClass * TaskForceClass::From_Name(char const * name)
 {
 	if (name != NULL) {
@@ -110,7 +110,7 @@ TaskForceClass * TaskForceClass::From_Name(char const * name)
 	return(NULL);
 }
 
-// FUNCTION: 0x006E81D0
+// FUNCTION: GAMEMD 0x006E81D0
 TaskForceClass * TaskForceClass::From_Given_Name(char const * name)
 {
 	if (name != NULL) {
@@ -123,7 +123,7 @@ TaskForceClass * TaskForceClass::From_Given_Name(char const * name)
 	return(NULL);
 }
 
-// FUNCTION: 0x006E8220
+// FUNCTION: GAMEMD 0x006E8220
 void TaskForceClass::Read_All(CCINIClass const & ini, INIScopeType scope)
 {
 	int len = ini.Entry_Count("TaskForces");
@@ -142,7 +142,7 @@ void TaskForceClass::Read_All(CCINIClass const & ini, INIScopeType scope)
 	}
 }
 
-// FUNCTION: 0x006E8340
+// FUNCTION: GAMEMD 0x006E8340
 void TaskForceClass::Write_All(CCINIClass & ini, INIScopeType scope)
 {
 	char buffer[32];
@@ -168,7 +168,7 @@ void TaskForceClass::Write_All(CCINIClass & ini, INIScopeType scope)
 	}
 }
 
-// FUNCTION: 0x006E8420
+// FUNCTION: GAMEMD 0x006E8420
 bool TaskForceClass::Read_INI(CCINIClass & ini)
 {
 	ini.Reset();
@@ -194,7 +194,7 @@ bool TaskForceClass::Read_INI(CCINIClass & ini)
 	return(false);
 }
 
-// FUNCTION: 0x006E8510
+// FUNCTION: GAMEMD 0x006E8510
 bool TaskForceClass::Write_INI(CCINIClass & ini) const
 {
 	if (BASECLASS::Write_INI(ini)) {
@@ -214,7 +214,7 @@ bool TaskForceClass::Write_INI(CCINIClass & ini) const
 	return(false);
 }
 
-// FUNCTION: 0x006E85B0
+// FUNCTION: GAMEMD 0x006E85B0
 bool TaskForceClass::Has_Only_Infantry(void) const
 {
 	for (int i = 0; i < ClassCount; i++) {
@@ -225,13 +225,13 @@ bool TaskForceClass::Has_Only_Infantry(void) const
 	return(true);
 }
 
-// FUNCTION: 0x006E85F0
+// FUNCTION: GAMEMD 0x006E85F0
 TaskForceClass * TaskForceClass::Find_Or_Make(char const * name)
 {
 	return(TFind_Or_Make<TaskForceClass>(name, TaskForces));
 }
 
-// FUNCTION: 0x006E8680
+// FUNCTION: GAMEMD 0x006E8680
 HRESULT STDMETHODCALLTYPE TaskForceClass::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -241,7 +241,7 @@ HRESULT STDMETHODCALLTYPE TaskForceClass::Save(IStream * stream, BOOL cleardirty
 	return(result);
 }
 
-// FUNCTION: 0x006E86A0
+// FUNCTION: GAMEMD 0x006E86A0
 HRESULT STDMETHODCALLTYPE TaskForceClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -257,7 +257,7 @@ HRESULT STDMETHODCALLTYPE TaskForceClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x006E8710
+// FUNCTION: GAMEMD 0x006E8710
 HRESULT STDMETHODCALLTYPE TaskForceClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -265,7 +265,7 @@ HRESULT STDMETHODCALLTYPE TaskForceClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x006E8750
+// FUNCTION: GAMEMD 0x006E8750
 void TaskForceClass::Compute_CRC(CRCEngine & crc) const
 {
 	BASECLASS::Compute_CRC(crc);
@@ -274,7 +274,7 @@ void TaskForceClass::Compute_CRC(CRCEngine & crc) const
 	crc(ClassCount);
 }
 
-// FUNCTION: 0x006E8780
+// FUNCTION: GAMEMD 0x006E8780
 int TaskForceClass::Needed_Tech_Level(void) const
 {
 	int needed = 0;
@@ -292,50 +292,67 @@ int TaskForceClass::Needed_Tech_Level(void) const
 	return(needed);
 }
 
-// FUNCTION: 0x006E87D0 TaskForceClass::Fetch_RTTI
+// FUNCTION: GAMEMD 0x006E87D0
+// TaskForceClass::Fetch_RTTI
 
-// FUNCTION: 0x006E87E0 TaskForceClass::Fetch_Object_Size
+// FUNCTION: GAMEMD 0x006E87E0
+// TaskForceClass::Fetch_Object_Size
 
-// FUNCTION: 0x006E87F0 TaskForceClass::~TaskForceClass
+// SYNTHETIC: GAMEMD 0x006E87F0
+// ??_GTaskForceClass@@UAEPAXI@Z
 
-// FUNCTION: 0x006E8880 $E37
+// SYNTHETIC: GAMEMD 0x006E8880 SYMBOL
+// _$E37
 double DAT_00B0E950 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x006E88B0 $E40
+// SYNTHETIC: GAMEMD 0x006E88B0 SYMBOL
+// _$E40
 double DAT_00B0E9A0 = DAT_00B0E950 / DAT_007F46F0;
 
-// FUNCTION: 0x006E88D0 $E43
+// SYNTHETIC: GAMEMD 0x006E88D0 SYMBOL
+// _$E43
 double DAT_00B0E988 = DAT_007E1718 / DAT_00B0E9A0;
 
-// FUNCTION: 0x006E88F0 $E46
+// SYNTHETIC: GAMEMD 0x006E88F0 SYMBOL
+// _$E46
 double DAT_00B0E980 = DAT_007E1720 * DAT_007F46F8;
 
-// FUNCTION: 0x006E8910 $E49
+// SYNTHETIC: GAMEMD 0x006E8910 SYMBOL
+// _$E49
 double DAT_00B0E958 = DAT_007E1728 * DAT_007F46F8;
 
-// FUNCTION: 0x006E8930 $E52
+// SYNTHETIC: GAMEMD 0x006E8930 SYMBOL
+// _$E52
 double DAT_00B0E930 = DAT_007E1730 * DAT_007F46F8;
 
-// FUNCTION: 0x006E8950 $E55
+// SYNTHETIC: GAMEMD 0x006E8950 SYMBOL
+// _$E55
 int DAT_00B0E9A8 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B0E930 - DAT_00B0E958) * DAT_00B0E950));
 
-// FUNCTION: 0x006E8990 $E58
+// SYNTHETIC: GAMEMD 0x006E8990 SYMBOL
+// _$E58
 double DAT_00B0E960 = FUN_004CADE0(DAT_00B0E9A8 * DAT_007E1740);
 
-// FUNCTION: 0x006E89C0 $E61
+// SYNTHETIC: GAMEMD 0x006E89C0 SYMBOL
+// _$E61
 double DAT_00B0E978 = FUN_004CADE0((DAT_00B0E9A8 * 2) / DAT_00B0E950);
 
-// FUNCTION: 0x006E89F0 $E64
+// SYNTHETIC: GAMEMD 0x006E89F0 SYMBOL
+// _$E64
 int DAT_00B0E99C = (int)(DAT_00B0E9A8 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x006E8A20 $E67
+// SYNTHETIC: GAMEMD 0x006E8A20 SYMBOL
+// _$E67
 Cell DAT_00B0E948(0, 0);
 
-// FUNCTION: 0x006E8A30 $E70
+// SYNTHETIC: GAMEMD 0x006E8A30 SYMBOL
+// _$E70
 Coord DAT_00B0E968(0, 0, 0);
 
-// FUNCTION: 0x006E8A50 $E73
+// SYNTHETIC: GAMEMD 0x006E8A50 SYMBOL
+// _$E73
 Coord DAT_00B0E990(128, 128, 0);
 
-// FUNCTION: 0x006E8A70 $E76
+// SYNTHETIC: GAMEMD 0x006E8A70 SYMBOL
+// _$E76
 Rect DAT_00B0E938(0, 0, 0, 0);

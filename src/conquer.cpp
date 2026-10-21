@@ -107,47 +107,59 @@ struct IntTriple {
 	IntTriple() { A = 0; B = 0; C = 0; }
 };
 
-// FUNCTION: 0x0048C6B0 $E87
+// SYNTHETIC: GAMEMD 0x0048C6B0 SYMBOL
+// _$E87
 double DAT_0089E948 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2.0);
 
-// FUNCTION: 0x0048C6E0 $E90
+// SYNTHETIC: GAMEMD 0x0048C6E0 SYMBOL
+// _$E90
 double DAT_0089E9A0 = DAT_0089E948 / DAT_007E51E0;
 
-// FUNCTION: 0x0048C700 $E93
+// SYNTHETIC: GAMEMD 0x0048C700 SYMBOL
+// _$E93
 double DAT_0089E988 = DAT_007E1718 / DAT_0089E9A0;
 
-// FUNCTION: 0x0048C720 $E96
+// SYNTHETIC: GAMEMD 0x0048C720 SYMBOL
+// _$E96
 double DAT_0089E980 = DAT_007E1720 * DAT_007E51E8;
 
-// FUNCTION: 0x0048C740 $E99
+// SYNTHETIC: GAMEMD 0x0048C740 SYMBOL
+// _$E99
 double DAT_0089E958 = DAT_007E1728 * DAT_007E51E8;
 
-// FUNCTION: 0x0048C760 $E102
+// SYNTHETIC: GAMEMD 0x0048C760 SYMBOL
+// _$E102
 double DAT_0089E918 = DAT_007E1730 * DAT_007E51E8;
 
-// FUNCTION: 0x0048C780 $E105
+// SYNTHETIC: GAMEMD 0x0048C780 SYMBOL
+// _$E105
 int DAT_0089E9A8 = (int)(FUN_004CAD50(DAT_0089E918 - DAT_0089E958) * DAT_007E1738 * DAT_0089E948);
 
-// FUNCTION: 0x0048C7C0 $E108
+// SYNTHETIC: GAMEMD 0x0048C7C0 SYMBOL
+// _$E108
 double DAT_0089E960 = FUN_004CADE0(DAT_0089E9A8 * DAT_007E1740);
 
-// FUNCTION: 0x0048C7F0 $E111
+// SYNTHETIC: GAMEMD 0x0048C7F0 SYMBOL
+// _$E111
 double DAT_0089E978 = FUN_004CADE0((DAT_0089E9A8 * 2) / DAT_0089E948);
 
-// FUNCTION: 0x0048C820 $E114
+// SYNTHETIC: GAMEMD 0x0048C820 SYMBOL
+// _$E114
 int DAT_0089E99C = (int)(DAT_0089E9A8 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x0048C850 $E117
+// SYNTHETIC: GAMEMD 0x0048C850 SYMBOL
+// _$E117
 ShortPair DAT_0089E940;
 
-// FUNCTION: 0x0048C860 $E120
+// SYNTHETIC: GAMEMD 0x0048C860 SYMBOL
+// _$E120
 IntTriple DAT_0089E968;
 
 int DAT_0089E998;
 int DAT_0089E990;
 int DAT_0089E994;
 
-// FUNCTION: 0x0048C880
+// FUNCTION: GAMEMD 0x0048C880
 void Reset_Conquer_Globals(void)
 {
 	DAT_0089E998 = 0;
@@ -155,7 +167,7 @@ void Reset_Conquer_Globals(void)
 	DAT_0089E994 = 128;
 }
 
-// FUNCTION: 0x0048C8A0
+// FUNCTION: GAMEMD 0x0048C8A0
 void Conquer_Nop(void)
 {
 }
@@ -180,7 +192,7 @@ bool __fastcall FUN_0055CFD0(void);
 void __fastcall FUN_0072DFB0(void);
 void Print_MP_Stats(void);
 
-// FUNCTION: 0x0048C8B0
+// FUNCTION: GAMEMD 0x0048C8B0
 void Ingame_Menu_Dialog(void)
 {
 	if (Game::SpecialDialog != SDLG_NONE) {
@@ -302,7 +314,7 @@ void Ingame_Menu_Dialog(void)
 	}
 }
 
-// FUNCTION: 0x0048CCC0
+// FUNCTION: GAMEMD 0x0048CCC0
 void Main_Game(int argc, char * argv[])
 {
 	static bool fade = true;
@@ -428,7 +440,7 @@ ret_addr:
 	}
 }
 
-// FUNCTION: 0x0048CFD0
+// FUNCTION: GAMEMD 0x0048CFD0
 void Serial_Call_Back(void)
 {
 	int packetlen;
@@ -446,7 +458,7 @@ void Serial_Call_Back(void)
 	}
 }
 
-// FUNCTION: 0x0048D080
+// FUNCTION: GAMEMD 0x0048D080
 void Call_Back(void)
 {
 	FUN_00406F70();
@@ -475,19 +487,19 @@ void Call_Back(void)
 	}
 }
 
-// FUNCTION: 0x0048D1D0
+// FUNCTION: GAMEMD 0x0048D1D0
 bool MapGen_Call_Back(void)
 {
 	Call_Back();
 	return(false);
 }
 
-// FUNCTION: 0x0048DB70
+// FUNCTION: GAMEMD 0x0048DB70
 void Conquer_Nop2(void)
 {
 }
 
-// FUNCTION: 0x0048DB80
+// FUNCTION: GAMEMD 0x0048DB80
 SourceType Source_From_Name(char const * name)
 {
 	if (name) {
@@ -500,7 +512,7 @@ SourceType Source_From_Name(char const * name)
 	return(SOURCE_NONE);
 }
 
-// FUNCTION: 0x0048DBC0
+// FUNCTION: GAMEMD 0x0048DBC0
 char const * Name_From_Source(SourceType source)
 {
 	if ((unsigned)source < SOURCE_COUNT) {
@@ -509,7 +521,7 @@ char const * Name_From_Source(SourceType source)
 	return("None");
 }
 
-// FUNCTION: 0x0048DBE0
+// FUNCTION: GAMEMD 0x0048DBE0
 TheaterType Theater_From_Name(char const * name)
 {
 	for (TheaterType index = THEATER_FIRST; index < THEATER_COUNT; index++) {
@@ -520,7 +532,7 @@ TheaterType Theater_From_Name(char const * name)
 	return(THEATER_NONE);
 }
 
-// FUNCTION: 0x0048DC20
+// FUNCTION: GAMEMD 0x0048DC20
 FacingType KN_To_Facing(int input)
 {
 	input &= ~(KN_ALT_BIT|KN_SHIFT_BIT|KN_CTRL_BIT);
@@ -555,7 +567,7 @@ FacingType KN_To_Facing(int input)
 	return(FACING_NONE);
 }
 
-// FUNCTION: 0x0048DC90
+// FUNCTION: GAMEMD 0x0048DC90
 void Unselect_All(void)
 {
 	while (CurrentObject.Count()) {
@@ -565,7 +577,7 @@ void Unselect_All(void)
 	BeaconManager.ClearSelection();
 }
 
-// FUNCTION: 0x0048DCD0
+// FUNCTION: GAMEMD 0x0048DCD0
 TechnoTypeClass const * Fetch_Techno_Type(RTTIType type, int id)
 {
 	switch (type) {
@@ -591,7 +603,7 @@ TechnoTypeClass const * Fetch_Techno_Type(RTTIType type, int id)
 	return(NULL);
 }
 
-// FUNCTION: 0x0048DD50
+// FUNCTION: GAMEMD 0x0048DD50
 unsigned int Disk_Space_Available(void)
 {
 	ULARGE_INTEGER freebytecount;
@@ -634,7 +646,7 @@ unsigned int Disk_Space_Available(void)
 	return(0);
 }
 
-// FUNCTION: 0x0048DE70
+// FUNCTION: GAMEMD 0x0048DE70
 CrateType Crate_From_Name(char const * name)
 {
 	if (name != NULL) {
@@ -645,7 +657,7 @@ CrateType Crate_From_Name(char const * name)
 	return(CRATE_MONEY);
 }
 
-// FUNCTION: 0x0048DEB0
+// FUNCTION: GAMEMD 0x0048DEB0
 int Owner_From_Name(char const * text)
 {
 	int ownable = 0;
@@ -656,12 +668,12 @@ int Owner_From_Name(char const * text)
 	return(ownable);
 }
 
-// FUNCTION: 0x0048DED0
+// FUNCTION: GAMEMD 0x0048DED0
 void Conquer_Nop3(void)
 {
 }
 
-// FUNCTION: 0x0048DEE0
+// FUNCTION: GAMEMD 0x0048DEE0
 void List_Copy(Cell const * source, int len, Cell * dest)
 {
 	if (source == NULL || dest == NULL) {
@@ -679,7 +691,7 @@ void List_Copy(Cell const * source, int len, Cell * dest)
 	*(dest-1) = REFRESH_EOL;
 }
 
-// FUNCTION: 0x0048DF30
+// FUNCTION: GAMEMD 0x0048DF30
 VQType VQ_From_Name(char const * name)
 {
 	if (name != NULL && strcmpi("<none>", name)) {
@@ -690,7 +702,7 @@ VQType VQ_From_Name(char const * name)
 	return(VQ_NONE);
 }
 
-// FUNCTION: 0x0048DF80
+// FUNCTION: GAMEMD 0x0048DF80
 LandType Land_From_Name(char const * name)
 {
 	if (strcmpi("<none>", name) && name != NULL) {
@@ -701,7 +713,7 @@ LandType Land_From_Name(char const * name)
 	return(LAND_NONE);
 }
 
-// FUNCTION: 0x0048DFD0
+// FUNCTION: GAMEMD 0x0048DFD0
 char const * Name_From_Land(LandType land)
 {
 	if ((unsigned)land < LAND_COUNT) {
@@ -710,7 +722,7 @@ char const * Name_From_Land(LandType land)
 	return("<none>");
 }
 
-// FUNCTION: 0x0048DFF0
+// FUNCTION: GAMEMD 0x0048DFF0
 SpeedType Speed_From_Name(char const * name)
 {
 	if (name != NULL) {
@@ -721,7 +733,7 @@ SpeedType Speed_From_Name(char const * name)
 	return(SPEED_NONE);
 }
 
-// FUNCTION: 0x0048E030
+// FUNCTION: GAMEMD 0x0048E030
 char const * Name_From_Speed(SpeedType speed)
 {
 	if ((unsigned)speed < SPEED_COUNT) {
@@ -732,7 +744,7 @@ char const * Name_From_Speed(SpeedType speed)
 
 extern char const * LayerName[LAYER_COUNT];
 
-// FUNCTION: 0x0048E050
+// FUNCTION: GAMEMD 0x0048E050
 LayerType Layer_From_Name(char const * name)
 {
 	if (name != NULL) {
@@ -743,7 +755,7 @@ LayerType Layer_From_Name(char const * name)
 	return(LAYER_NONE);
 }
 
-// FUNCTION: 0x0048E090
+// FUNCTION: GAMEMD 0x0048E090
 char const * Name_From_Layer(LayerType layer)
 {
 	if ((unsigned)layer < LAYER_COUNT) {
@@ -752,7 +764,7 @@ char const * Name_From_Layer(LayerType layer)
 	return("<none>");
 }
 
-// FUNCTION: 0x0048E0B0
+// FUNCTION: GAMEMD 0x0048E0B0
 void Print_MP_Stats(void)
 {
 	if (Session.Type == GAME_INTERNET) {
@@ -799,7 +811,7 @@ void Print_MP_Stats(void)
 
 extern int DAT_0089E9C0, DAT_0089E9C4, DAT_0089E9C8, DAT_0089E9CC;
 
-// FUNCTION: 0x0048E270
+// FUNCTION: GAMEMD 0x0048E270
 void Clear_Conquer_Counters(void)
 {
 	DAT_0089E9C0 = 0;

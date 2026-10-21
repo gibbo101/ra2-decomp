@@ -24,7 +24,7 @@
 #include "unit.h"
 #include "tube.hh"
 
-// FUNCTION: 0x00513C20
+// FUNCTION: GAMEMD 0x00513C20
 HoverLocomotionClass::HoverLocomotionClass(void) :
 	DestinationCoord(COORD_NONE),
 	HeadToCoord(COORD_NONE),
@@ -39,7 +39,7 @@ HoverLocomotionClass::HoverLocomotionClass(void) :
 {
 }
 
-// FUNCTION: 0x00513CB0
+// FUNCTION: GAMEMD 0x00513CB0
 HRESULT STDMETHODCALLTYPE HoverLocomotionClass::Link_To_Object(void *pointer)
 {
 	HRESULT res = BASECLASS::Link_To_Object(pointer);
@@ -48,12 +48,12 @@ HRESULT STDMETHODCALLTYPE HoverLocomotionClass::Link_To_Object(void *pointer)
 	return(res);
 }
 
-// FUNCTION: 0x00513D00
+// FUNCTION: GAMEMD 0x00513D00
 HoverLocomotionClass::~HoverLocomotionClass(void)
 {
 }
 
-// FUNCTION: 0x00513D20
+// FUNCTION: GAMEMD 0x00513D20
 void HoverLocomotionClass::Gravity_AI(void)
 {
 	int height = LinkedTo->HeightAGL;
@@ -96,7 +96,7 @@ void HoverLocomotionClass::Gravity_AI(void)
 	Bounciness *= Rule->HoverDampen;
 }
 
-// FUNCTION: 0x00513F40
+// FUNCTION: GAMEMD 0x00513F40
 Matrix3DStruct STDMETHODCALLTYPE HoverLocomotionClass::Draw_Matrix(int *key)
 {
 	if ((float)fabs(LinkedTo->AngleRotatedSideways) >= 0.005 || (float)fabs(LinkedTo->AngleRotatedForwards) >= 0.005) {
@@ -150,7 +150,7 @@ Matrix3DStruct STDMETHODCALLTYPE HoverLocomotionClass::Draw_Matrix(int *key)
 	return(BASECLASS::Draw_Matrix(key));
 }
 
-// FUNCTION: 0x005142A0
+// FUNCTION: GAMEMD 0x005142A0
 Matrix3DStruct STDMETHODCALLTYPE HoverLocomotionClass::Shadow_Matrix(int *key)
 {
 	if (!((float)fabs(LinkedTo->AngleRotatedSideways) < 0.005 && (float)fabs(LinkedTo->AngleRotatedForwards) < 0.005) && key) {
@@ -159,19 +159,19 @@ Matrix3DStruct STDMETHODCALLTYPE HoverLocomotionClass::Shadow_Matrix(int *key)
 	return(BASECLASS::Shadow_Matrix(key));
 }
 
-// FUNCTION: 0x00514C30
+// FUNCTION: GAMEMD 0x00514C30
 boolean STDMETHODCALLTYPE HoverLocomotionClass::Is_Moving(void)
 {
 	return(DestinationCoord != COORD_NONE || HeadToCoord != COORD_NONE);
 }
 
-// FUNCTION: 0x00514C80
+// FUNCTION: GAMEMD 0x00514C80
 boolean STDMETHODCALLTYPE HoverLocomotionClass::Is_Moving_Now(void)
 {
 	return(Is_Moving() && Height != 0.0);
 }
 
-// FUNCTION: 0x00514CB0
+// FUNCTION: GAMEMD 0x00514CB0
 CoordStruct STDMETHODCALLTYPE HoverLocomotionClass::Destination(void)
 {
 	if (DestinationCoord != COORD_NONE) {
@@ -180,7 +180,7 @@ CoordStruct STDMETHODCALLTYPE HoverLocomotionClass::Destination(void)
 	return(COORD_NONE);
 }
 
-// FUNCTION: 0x00514D10
+// FUNCTION: GAMEMD 0x00514D10
 CoordStruct STDMETHODCALLTYPE HoverLocomotionClass::Head_To_Coord(void)
 {
 	if (HeadToCoord != COORD_NONE) {
@@ -189,7 +189,7 @@ CoordStruct STDMETHODCALLTYPE HoverLocomotionClass::Head_To_Coord(void)
 	return(LinkedTo->PositionCoord);
 }
 
-// FUNCTION: 0x00517110
+// FUNCTION: GAMEMD 0x00517110
 void HoverLocomotionClass::Start(void)
 {
 	bool anew = HeadToCoord == COORD_NONE || LinkedTo->PositionCell == HeadToCoord.As_Cell();
@@ -202,7 +202,7 @@ void HoverLocomotionClass::Start(void)
 	}
 }
 
-// FUNCTION: 0x00514D90
+// FUNCTION: GAMEMD 0x00514D90
 void STDMETHODCALLTYPE HoverLocomotionClass::Move_To(CoordStruct to)
 {
 	DestinationCoord = to;
@@ -229,7 +229,7 @@ void STDMETHODCALLTYPE HoverLocomotionClass::Move_To(CoordStruct to)
 	}
 }
 
-// FUNCTION: 0x00515E30
+// FUNCTION: GAMEMD 0x00515E30
 void HoverLocomotionClass::Stop(void)
 {
 	LinkedTo->Assign_Destination(NULL);
@@ -238,7 +238,7 @@ void HoverLocomotionClass::Stop(void)
 	LinkedTo->Set_Speed(0);
 }
 
-// FUNCTION: 0x00515E60
+// FUNCTION: GAMEMD 0x00515E60
 void HoverLocomotionClass::Stop_Driver(void)
 {
 	Acceleration = 0;
@@ -250,7 +250,7 @@ void HoverLocomotionClass::Stop_Driver(void)
 	}
 }
 
-// FUNCTION: 0x00516320
+// FUNCTION: GAMEMD 0x00516320
 void STDMETHODCALLTYPE HoverLocomotionClass::Stop_Moving(void)
 {
 	if (DestinationCoord != HeadToCoord) {
@@ -259,7 +259,7 @@ void STDMETHODCALLTYPE HoverLocomotionClass::Stop_Moving(void)
 	}
 }
 
-// FUNCTION: 0x00516370
+// FUNCTION: GAMEMD 0x00516370
 void HoverLocomotionClass::Do_Turn(DirStruct coord)
 {
 	DirType dir = (DirType &)coord;
@@ -267,7 +267,7 @@ void HoverLocomotionClass::Do_Turn(DirStruct coord)
 	LinkedTo->PrimaryFacing.Set_Desired(dir);
 }
 
-// FUNCTION: 0x005163A0
+// FUNCTION: GAMEMD 0x005163A0
 bool HoverLocomotionClass::Is_Moving1(void)
 {
 	if (Is_Moving()) {
@@ -276,7 +276,7 @@ bool HoverLocomotionClass::Is_Moving1(void)
 	return(false);
 }
 
-// FUNCTION: 0x005163B0
+// FUNCTION: GAMEMD 0x005163B0
 bool HoverLocomotionClass::Reduce_Path_Length(void)
 {
 	if (Is_Moving()) {
@@ -301,7 +301,7 @@ bool HoverLocomotionClass::Reduce_Path_Length(void)
 	return(false);
 }
 
-// FUNCTION: 0x00516BF0
+// FUNCTION: GAMEMD 0x00516BF0
 boolean STDMETHODCALLTYPE HoverLocomotionClass::Power_Off(void)
 {
 	if (Is_Powered() && LinkedTo->CurrentMission != MISSION_SLEEP && LinkedTo->CurrentMission != MISSION_ENTER) {
@@ -314,7 +314,7 @@ boolean STDMETHODCALLTYPE HoverLocomotionClass::Power_Off(void)
 	return(BASECLASS::Power_Off());
 }
 
-// FUNCTION: 0x00516C70
+// FUNCTION: GAMEMD 0x00516C70
 boolean STDMETHODCALLTYPE HoverLocomotionClass::Is_Powered(void)
 {
 	if (!BASECLASS::Is_Powered() && LinkedTo->HeightAGL <= 0) {
@@ -323,7 +323,7 @@ boolean STDMETHODCALLTYPE HoverLocomotionClass::Is_Powered(void)
 	return(true);
 }
 
-// FUNCTION: 0x00516CA0
+// FUNCTION: GAMEMD 0x00516CA0
 boolean STDMETHODCALLTYPE HoverLocomotionClass::Is_Ion_Sensitive(void)
 {
 	BuildingClass *bptr;
@@ -359,7 +359,7 @@ boolean STDMETHODCALLTYPE HoverLocomotionClass::Is_Ion_Sensitive(void)
 	return(true);
 }
 
-// FUNCTION: 0x00516E10
+// FUNCTION: GAMEMD 0x00516E10
 boolean STDMETHODCALLTYPE HoverLocomotionClass::Push(DirStruct dir)
 {
 	if (Is_Powered() && !WasPushed) {
@@ -397,7 +397,7 @@ boolean STDMETHODCALLTYPE HoverLocomotionClass::Push(DirStruct dir)
 	return(false);
 }
 
-// FUNCTION: 0x00516FC0
+// FUNCTION: GAMEMD 0x00516FC0
 boolean STDMETHODCALLTYPE HoverLocomotionClass::Shove(DirStruct dir)
 {
 	if (Push(dir)) {
@@ -407,7 +407,7 @@ boolean STDMETHODCALLTYPE HoverLocomotionClass::Shove(DirStruct dir)
 	return(false);
 }
 
-// FUNCTION: 0x00517020
+// FUNCTION: GAMEMD 0x00517020
 void HoverLocomotionClass::Do_Shove(void)
 {
 	WasShoved = true;
@@ -417,7 +417,7 @@ void HoverLocomotionClass::Do_Shove(void)
 	}
 }
 
-// FUNCTION: 0x00517070
+// FUNCTION: GAMEMD 0x00517070
 HRESULT STDMETHODCALLTYPE HoverLocomotionClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -425,7 +425,7 @@ HRESULT STDMETHODCALLTYPE HoverLocomotionClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x005170B0
+// FUNCTION: GAMEMD 0x005170B0
 HRESULT STDMETHODCALLTYPE HoverLocomotionClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -435,13 +435,13 @@ HRESULT STDMETHODCALLTYPE HoverLocomotionClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x00517100
+// FUNCTION: GAMEMD 0x00517100
 LayerType STDMETHODCALLTYPE HoverLocomotionClass::In_Which_Layer(void)
 {
 	return(LAYER_GROUND);
 }
 
-// FUNCTION: 0x005171C0
+// FUNCTION: GAMEMD 0x005171C0
 void STDMETHODCALLTYPE HoverLocomotionClass::Mark_All_Occupation_Bits(int mark)
 {
 	if (mark == MARK_UP) {
@@ -450,7 +450,7 @@ void STDMETHODCALLTYPE HoverLocomotionClass::Mark_All_Occupation_Bits(int mark)
 	}
 }
 
-// FUNCTION: 0x00517210
+// FUNCTION: GAMEMD 0x00517210
 boolean STDMETHODCALLTYPE HoverLocomotionClass::Is_Moving_Here(CoordStruct to)
 {
 	Coord coord = Head_To_Coord();
@@ -461,11 +461,14 @@ boolean STDMETHODCALLTYPE HoverLocomotionClass::Is_Moving_Here(CoordStruct to)
 	return(false);
 }
 
-// FUNCTION: 0x005172B0 HoverLocomotionClass::Fetch_Object_Size
+// FUNCTION: GAMEMD 0x005172B0
+// HoverLocomotionClass::Fetch_Object_Size
 
-// FUNCTION: 0x005172C0 HoverLocomotionClass::~HoverLocomotionClass
+// SYNTHETIC: GAMEMD 0x005172C0
+// ??_GHoverLocomotionClass@@UAEPAXI@Z
 
-// FUNCTION: 0x00517310 ?$TPoint2D@H::operator==
+// TEMPLATE: GAMEMD 0x00517310
+// ??8?$TPoint2D@H@@QBE_NABV0@@Z
 template<class T>
 bool TPoint2D<T>::operator == (TPoint2D<T> const & rvalue) const
 {

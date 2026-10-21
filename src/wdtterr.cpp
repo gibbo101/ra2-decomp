@@ -29,40 +29,52 @@ struct IntTriple {
 	IntTriple() { A = 0; B = 0; C = 0; }
 };
 
-// FUNCTION: 0x0076F720 $E2
+// SYNTHETIC: GAMEMD 0x0076F720 SYMBOL
+// _$E2
 double DAT_00B72B30 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x0076F750 $E5
+// SYNTHETIC: GAMEMD 0x0076F750 SYMBOL
+// _$E5
 double DAT_00B72B80 = DAT_00B72B30 / DAT_007F7320;
 
-// FUNCTION: 0x0076F770 $E8
+// SYNTHETIC: GAMEMD 0x0076F770 SYMBOL
+// _$E8
 double DAT_00B72B68 = DAT_007E1718 / DAT_00B72B80;
 
-// FUNCTION: 0x0076F790 $E11
+// SYNTHETIC: GAMEMD 0x0076F790 SYMBOL
+// _$E11
 double DAT_00B72B60 = DAT_007E1720 * DAT_007F7328;
 
-// FUNCTION: 0x0076F7B0 $E14
+// SYNTHETIC: GAMEMD 0x0076F7B0 SYMBOL
+// _$E14
 double DAT_00B72B38 = DAT_007E1728 * DAT_007F7328;
 
-// FUNCTION: 0x0076F7D0 $E17
+// SYNTHETIC: GAMEMD 0x0076F7D0 SYMBOL
+// _$E17
 double DAT_00B72B10 = DAT_007E1730 * DAT_007F7328;
 
-// FUNCTION: 0x0076F7F0 $E20
+// SYNTHETIC: GAMEMD 0x0076F7F0 SYMBOL
+// _$E20
 int DAT_00B72B88 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B72B10 - DAT_00B72B38) * DAT_00B72B30));
 
-// FUNCTION: 0x0076F830 $E23
+// SYNTHETIC: GAMEMD 0x0076F830 SYMBOL
+// _$E23
 double DAT_00B72B40 = FUN_004CADE0(DAT_00B72B88 * DAT_007E1740);
 
-// FUNCTION: 0x0076F860 $E26
+// SYNTHETIC: GAMEMD 0x0076F860 SYMBOL
+// _$E26
 double DAT_00B72B58 = FUN_004CADE0((DAT_00B72B88 * 2) / DAT_00B72B30);
 
-// FUNCTION: 0x0076F890 $E29
+// SYNTHETIC: GAMEMD 0x0076F890 SYMBOL
+// _$E29
 int DAT_00B72B7C = (int)(DAT_00B72B88 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x0076F8C0 $E32
+// SYNTHETIC: GAMEMD 0x0076F8C0 SYMBOL
+// _$E32
 ShortPair DAT_00B72B28;
 
-// FUNCTION: 0x0076F8D0 $E35
+// SYNTHETIC: GAMEMD 0x0076F8D0 SYMBOL
+// _$E35
 IntTriple DAT_00B72B48;
 
 struct Triple2 {
@@ -70,7 +82,8 @@ struct Triple2 {
 	Triple2() { C = 0; A = 128; B = 128; }
 };
 
-// FUNCTION: 0x0076F8F0 $E38
+// SYNTHETIC: GAMEMD 0x0076F8F0 SYMBOL
+// _$E38
 Triple2 DAT_00B72B70;
 
 #include "always.h"
@@ -90,13 +103,15 @@ struct Drawing {
 
 Wstring operator+(Wstring const & a, Wstring const & b);
 
-// FUNCTION: 0x0076F910 WorldDominationTour::FUN_0076F910
+// TEMPLATE: GAMEMD 0x0076F910
+// ?FUN_0076F910@WorldDominationTour@@YI?AV?$rc_ptr@VTerritory@WorldDominationTour@@@@HABVINIClass@@ABVWstring@@11@Z
 rc_ptr<Territory> __fastcall WorldDominationTour::FUN_0076F910(int id, INIClass const & ini, Wstring const & section, Wstring const & fileprefix, Wstring const & labelprefix)
 {
 	return rc_ptr<Territory>(new Territory(id, ini, section, fileprefix, labelprefix));
 }
 
-// FUNCTION: 0x0076F970 WorldDominationTour::Territory::Territory
+// FUNCTION: GAMEMD 0x0076F970
+// WorldDominationTour::Territory::Territory
 Territory::Territory(int id, INIClass const & ini, Wstring const & section, Wstring const & fileprefix, Wstring const & labelprefix) :
 	ID(id),
 	Target(0, 0),
@@ -124,7 +139,8 @@ Territory::Territory(int id, INIClass const & ini, Wstring const & section, Wstr
 	}
 }
 
-// FUNCTION: 0x0076FB90 WorldDominationTour::Territory::FUN_0076FB90
+// FUNCTION: GAMEMD 0x0076FB90
+// WorldDominationTour::Territory::FUN_0076FB90
 void Territory::FUN_0076FB90(Selection * engine, ConvertClass * drawer, Point2D const & pos)
 {
 	int x = Origin.X + pos.X;
@@ -137,7 +153,8 @@ void Territory::FUN_0076FB90(Selection * engine, ConvertClass * drawer, Point2D 
 	}
 }
 
-// FUNCTION: 0x0076FC50 WorldDominationTour::Territory::FUN_0076FC50
+// FUNCTION: GAMEMD 0x0076FC50
+// WorldDominationTour::Territory::FUN_0076FC50
 void Territory::FUN_0076FC50(Selection * engine, ConvertClass * drawer, Point2D const & pos)
 {
 	int x = Origin.X + pos.X;
@@ -150,12 +167,14 @@ void Territory::FUN_0076FC50(Selection * engine, ConvertClass * drawer, Point2D 
 	}
 }
 
-// FUNCTION: 0x0076FD10 WorldDominationTour::Territory::~Territory
+// FUNCTION: GAMEMD 0x0076FD10
+// WorldDominationTour::Territory::~Territory
 Territory::~Territory(void)
 {
 }
 
-// FUNCTION: 0x0076FD40 WorldDominationTour::Territory::FUN_0076FD40
+// FUNCTION: GAMEMD 0x0076FD40
+// WorldDominationTour::Territory::FUN_0076FD40
 void Territory::FUN_0076FD40(int state, Selection * engine, bool wait)
 {
 	if (OwnerAnim != NULL) {
@@ -188,7 +207,8 @@ void Territory::FUN_0076FD40(int state, Selection * engine, bool wait)
 	}
 }
 
-// FUNCTION: 0x0076FEB0 WorldDominationTour::Territory::FUN_0076FEB0
+// FUNCTION: GAMEMD 0x0076FEB0
+// WorldDominationTour::Territory::FUN_0076FEB0
 void Territory::FUN_0076FEB0(bool active, Selection * engine)
 {
 	if (HighlightAnim != NULL) {
@@ -200,13 +220,15 @@ void Territory::FUN_0076FEB0(bool active, Selection * engine)
 	}
 }
 
-// FUNCTION: 0x0076FF20 WorldDominationTour::Territory::FUN_0076FF20
+// FUNCTION: GAMEMD 0x0076FF20
+// WorldDominationTour::Territory::FUN_0076FF20
 void Territory::FUN_0076FF20(MSShapeAnim * anim)
 {
 	TargetAnim = anim;
 }
 
-// FUNCTION: 0x0076FF30 WorldDominationTour::Territory::FUN_0076FF30
+// FUNCTION: GAMEMD 0x0076FF30
+// WorldDominationTour::Territory::FUN_0076FF30
 MSShapeAnim * Territory::FUN_0076FF30(void)
 {
 	MSShapeAnim * old = TargetAnim;
@@ -214,4 +236,5 @@ MSShapeAnim * Territory::FUN_0076FF30(void)
 	return(old);
 }
 
-// FUNCTION: 0x00770020 WorldDominationTour::Territory::~Territory
+// SYNTHETIC: GAMEMD 0x00770020
+// ??_GTerritory@WorldDominationTour@@UAEPAXI@Z

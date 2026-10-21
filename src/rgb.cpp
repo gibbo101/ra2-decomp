@@ -7,7 +7,7 @@
 #include "rgb.h"
 #include "hsv.h"
 
-// FUNCTION: 0x00661020
+// FUNCTION: GAMEMD 0x00661020
 RGBClass & RGBClass::Lerp(RGBClass const & a, RGBClass const & b, float t)
 {
 	Red = (unsigned char)MAX(0.0f, MIN(255.0f, a.Red * (1.0f - t) + b.Red * t));
@@ -17,7 +17,7 @@ RGBClass & RGBClass::Lerp(RGBClass const & a, RGBClass const & b, float t)
 	return(*this);
 }
 
-// FUNCTION: 0x00661190
+// FUNCTION: GAMEMD 0x00661190
 RGBClass & RGBClass::Set(RGBClass const & rgb, float value)
 {
 	Red = (unsigned char)MAX(0.0f, MIN(255.0f, rgb.Red * value));
@@ -27,7 +27,7 @@ RGBClass & RGBClass::Set(RGBClass const & rgb, float value)
 	return(*this);
 }
 
-// FUNCTION: 0x006612C0
+// FUNCTION: GAMEMD 0x006612C0
 void RGBClass::Adjust(int ratio, RGBClass const & rgb)
 {
 	ratio &= 0x00FF;
@@ -42,7 +42,7 @@ void RGBClass::Adjust(int ratio, RGBClass const & rgb)
 	Blue = (unsigned char)((int)Blue + (value * ratio) / 256);
 }
 
-// FUNCTION: 0x00661350
+// FUNCTION: GAMEMD 0x00661350
 int RGBClass::Difference(RGBClass const & rgb) const
 {
 	int r = (int)Red - (int)rgb.Red;

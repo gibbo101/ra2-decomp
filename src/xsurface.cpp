@@ -24,13 +24,13 @@ const int CODE_TOP = 8;
 
 OutCode Compute_Code(double x, double y, Rect const & rect);
 
-// FUNCTION: 0x007BA5E0
+// FUNCTION: GAMEMD 0x007BA5E0
 bool XSurface::Draw_Line(Point2D const & startpoint, Point2D const & endpoint, int color)
 {
 	return(XSurface::Draw_Line(Get_Rect(), startpoint, endpoint, color));
 }
 
-// FUNCTION: 0x007BA610
+// FUNCTION: GAMEMD 0x007BA610
 bool XSurface::Draw_Line(Rect const & xcliprect, Point2D const & startpoint, Point2D const & endpoint, int color)
 {
 
@@ -140,7 +140,7 @@ bool XSurface::Draw_Line(Rect const & xcliprect, Point2D const & startpoint, Poi
 	return(false);
 }
 
-// FUNCTION: 0x007BA8C0
+// FUNCTION: GAMEMD 0x007BA8C0
 int XSurface::Draw_Dashed_Line(Point2D const & startpoint, Point2D const & endpoint, unsigned color, bool pattern[], int offset)
 {
 	Point2D start = startpoint;
@@ -281,49 +281,49 @@ int XSurface::Draw_Dashed_Line(Point2D const & startpoint, Point2D const & endpo
 	return(offset);
 }
 
-// FUNCTION: 0x007BAB30
+// FUNCTION: GAMEMD 0x007BAB30
 int XSurface::Draw_Masked_Dashed_Line(Point2D const & startpoint, Point2D const & endpoint, unsigned color, bool pattern[], int offset, bool draw_on_zero_alpha)
 {
 	return(false);
 }
 
-// FUNCTION: 0x007BAB40
+// FUNCTION: GAMEMD 0x007BAB40
 bool XSurface::Draw_Masked_Line(Point2D const & startpoint, Point2D const & endpoint, unsigned color, bool draw_on_zero_alpha)
 {
 	return(false);
 }
 
-// FUNCTION: 0x007BAB50
+// FUNCTION: GAMEMD 0x007BAB50
 bool XSurface::Draw_Depth_Shaded_Line(Rect const & cliprect, Point2D const & startpoint, Point2D const & endpoint, unsigned color, int start_depth, int end_depth, bool write_depth)
 {
 	return(false);
 }
 
-// FUNCTION: 0x007BAB60
+// FUNCTION: GAMEMD 0x007BAB60
 bool XSurface::Draw_Depth_Glow_Line(Rect const & cliprect, Point2D const & startpoint, Point2D const & endpoint, int glow_strength, int start_depth, int end_depth, bool write_depth)
 {
 	return(false);
 }
 
-// FUNCTION: 0x007BAB70
+// FUNCTION: GAMEMD 0x007BAB70
 bool XSurface::Draw_Depth_Antialiased_Line(Rect const & cliprect, Point2D const & startpoint, Point2D const & endpoint, RGBClass & color, int start_depth, int end_depth, bool write_depth, bool blend_red, bool blend_green, bool blend_blue, float intensity)
 {
 	return(false);
 }
 
-// FUNCTION: 0x007BAB80
+// FUNCTION: GAMEMD 0x007BAB80
 bool XSurface::DrawRGBMultiplyingLine(Rect const & cliprect, Point2D const & startpoint, Point2D const & endpoint, RGBClass const & color, float intensity, int start_depth, int end_depth)
 {
 	return(false);
 }
 
-// FUNCTION: 0x007BAD90
+// FUNCTION: GAMEMD 0x007BAD90
 bool XSurface::Draw_Rect(Rect const & crect, int color)
 {
 	return(XSurface::Draw_Rect(Get_Rect(), crect, color));
 }
 
-// FUNCTION: 0x007BADC0
+// FUNCTION: GAMEMD 0x007BADC0
 bool XSurface::Draw_Rect(Rect const & cliprect, Rect const & crect, int color)
 {
 	Point2D ul(crect.X, crect.Y);
@@ -338,7 +338,7 @@ bool XSurface::Draw_Rect(Rect const & cliprect, Rect const & crect, int color)
 	return(true);
 }
 
-// FUNCTION: 0x007BAE60
+// FUNCTION: GAMEMD 0x007BAE60
 int XSurface::Get_Pixel(Point2D const & point) const
 {
 	int color = 0;
@@ -354,7 +354,7 @@ int XSurface::Get_Pixel(Point2D const & point) const
 	return(color);
 }
 
-// FUNCTION: 0x007BAEB0
+// FUNCTION: GAMEMD 0x007BAEB0
 bool XSurface::Put_Pixel(Point2D const & point, int color)
 {
 	void * pointer = Lock(point);
@@ -370,7 +370,7 @@ bool XSurface::Put_Pixel(Point2D const & point, int color)
 	return(false);
 }
 
-// FUNCTION: 0x007BAF10
+// FUNCTION: GAMEMD 0x007BAF10
 int XSurface::Get_Pixel_Clip(Point2D const & point, Rect const & rect) const
 {
 	unsigned pixel = 0;
@@ -390,7 +390,7 @@ int XSurface::Get_Pixel_Clip(Point2D const & point, Rect const & rect) const
 	return(pixel);
 }
 
-// FUNCTION: 0x007BAF90
+// FUNCTION: GAMEMD 0x007BAF90
 bool XSurface::Put_Pixel_Clip(Point2D const & point, int color, Rect const & rect)
 {
 	if (rect.Is_Point_Within(point)) {
@@ -409,7 +409,7 @@ bool XSurface::Put_Pixel_Clip(Point2D const & point, int color, Rect const & rec
 	return(false);
 }
 
-// FUNCTION: 0x007BB020
+// FUNCTION: GAMEMD 0x007BB020
 bool XSurface::Fill_Rect(Rect const & fillrect, int color)
 {
 	return(XSurface::Fill_Rect(fillrect, Get_Rect(), color));
@@ -437,7 +437,7 @@ static void *surface_quick_fill(void *buf, int count, int color)
 }
 #pragma warning(default: 4035)
 
-// FUNCTION: 0x007BB050
+// FUNCTION: GAMEMD 0x007BB050
 bool XSurface::Fill_Rect(Rect const & cliprect, Rect const & fillrect, int color)
 {
 	if (!fillrect.Is_Valid()) return(false);
@@ -516,13 +516,13 @@ bool XSurface::Fill_Rect(Rect const & cliprect, Rect const & fillrect, int color
 	return(false);
 }
 
-// FUNCTION: 0x007BB340
+// FUNCTION: GAMEMD 0x007BB340
 bool XSurface::Fill_Rect_Trans(Rect const & rect, RGBClass const & color, unsigned int opacity)
 {
 	return(false);
 }
 
-// FUNCTION: 0x007BB920
+// FUNCTION: GAMEMD 0x007BB920
 void XSurface::Draw_Circle(Point2D center, int radius, Rect rect, int color)
 {
 	Point2D pt(radius, 0);
@@ -550,13 +550,13 @@ void XSurface::Draw_Circle(Point2D center, int radius, Rect rect, int color)
 	} while (pt.X >= pt.Y);
 }
 
-// FUNCTION: 0x007BBAB0
+// FUNCTION: GAMEMD 0x007BBAB0
 bool XSurface::Fill(int color)
 {
 	return(Fill_Rect(Get_Rect(), Get_Rect(), color));
 }
 
-// FUNCTION: 0x007BBAF0
+// FUNCTION: GAMEMD 0x007BBAF0
 bool XSurface::Blit_From(Surface const & source, bool trans, bool unknown)
 {
 	Rect drect = Get_Rect();
@@ -571,13 +571,13 @@ bool XSurface::Blit_From(Surface const & source, bool trans, bool unknown)
 	return(result);
 }
 
-// FUNCTION: 0x007BBB90
+// FUNCTION: GAMEMD 0x007BBB90
 bool XSurface::Blit_From(Rect const & destrect, Surface const & source, Rect const & sourcerect, bool trans, bool unknown)
 {
 	return(XSurface::Blit_From(Get_Rect(), destrect, source, source.Get_Rect(), sourcerect, trans, unknown));
 }
 
-// FUNCTION: 0x007BBCF0
+// FUNCTION: GAMEMD 0x007BBCF0
 bool XSurface::Blit_From(Rect const & dcliprect, Rect const & destrect, Surface const & source, Rect const & scliprect, Rect const & sourcerect, bool trans, bool)
 {
 	Rect drect = destrect;
@@ -593,7 +593,7 @@ bool XSurface::Blit_From(Rect const & dcliprect, Rect const & destrect, Surface 
 	return(false);
 }
 
-// FUNCTION: 0x007BBE20
+// FUNCTION: GAMEMD 0x007BBE20
 bool Blit_Clip(Rect & drect, Rect const & dwindow, Rect & srect, Rect const & swindow)
 {
 	if (drect.Width == srect.Width && drect.Height == srect.Height) {
@@ -653,13 +653,13 @@ bool Blit_Clip(Rect & drect, Rect const & dwindow, Rect & srect, Rect const & sw
 	return(drect.Is_Valid() && srect.Is_Valid());
 }
 
-// FUNCTION: 0x007BBFF0
+// FUNCTION: GAMEMD 0x007BBFF0
 bool XSurface::Prep_For_Blit(Surface & dest, Rect & drect, Surface const & source, Rect & srect, bool & overlapped, void * & dbuffer, void * & sbuffer)
 {
 	return(XSurface::Prep_For_Blit(dest, dest.Get_Rect(), drect, source, source.Get_Rect(), srect, overlapped, dbuffer, sbuffer));
 }
 
-// FUNCTION: 0x007BC040
+// FUNCTION: GAMEMD 0x007BC040
 bool XSurface::Prep_For_Blit(Surface & dest, Rect const & dcliprect, Rect & drect, Surface const & source, Rect const & scliprect, Rect & srect, bool & overlapped, void * & dbuffer, void * & sbuffer)
 {
 	overlapped = false;
@@ -690,7 +690,7 @@ bool XSurface::Prep_For_Blit(Surface & dest, Rect const & dcliprect, Rect & drec
 	return(true);
 }
 
-// FUNCTION: 0x007BC1F0
+// FUNCTION: GAMEMD 0x007BC1F0
 bool XSurface::Blit_Plain(Surface & dest, Rect const & destrect, Surface const & source, Rect const & sourcerect)
 {
 	if (dest.Bytes_Per_Pixel() == 1) {
@@ -699,7 +699,7 @@ bool XSurface::Blit_Plain(Surface & dest, Rect const & destrect, Surface const &
 	return(Bit_Blit(dest, destrect, source, sourcerect, BlitPlain<unsigned short>()));
 }
 
-// FUNCTION: 0x007BC250
+// FUNCTION: GAMEMD 0x007BC250
 bool XSurface::Blit_Trans(Surface & dest, Rect const & destrect, Surface const & source, Rect const & sourcerect)
 {
 	if (dest.Bytes_Per_Pixel() == 1) {
@@ -708,7 +708,7 @@ bool XSurface::Blit_Trans(Surface & dest, Rect const & destrect, Surface const &
 	return(Bit_Blit(dest, destrect, source, sourcerect, BlitTrans<unsigned short>()));
 }
 
-// FUNCTION: 0x007BC2B0
+// FUNCTION: GAMEMD 0x007BC2B0
 bool Clip_Line_To_Rect(Point2D & point1, Point2D & point2, Rect const & rect)
 {
 	int outcode0;
@@ -772,7 +772,7 @@ AGAIN:
 	return(false);
 }
 
-// FUNCTION: 0x007BC580
+// FUNCTION: GAMEMD 0x007BC580
 OutCode Compute_Code(double x, double y, Rect const & rect)
 {
 	OutCode code = CODE_INSIDE;
@@ -794,30 +794,51 @@ OutCode Compute_Code(double x, double y, Rect const & rect)
 	return(code);
 }
 
-// FUNCTION: 0x007BC610 ?$BlitTrans@E::BlitForward
-// FUNCTION: 0x007BC640 ?$BlitPlain@E::~?$BlitPlain@E
-// FUNCTION: 0x007BC660 ?$BlitPlain@G::~?$BlitPlain@G
-// FUNCTION: 0x007BC680 ?$BlitTrans@E::~?$BlitTrans@E
-// FUNCTION: 0x007BC6A0 ?$BlitTrans@G::~?$BlitTrans@G
-// FUNCTION: 0x007BC6C0 ?$BlitTrans@E::BlitBackward
-// FUNCTION: 0x007BC6F0 ?$BlitTrans@E::Blit_Copy_Tinted
-// FUNCTION: 0x007BC720 ?$BlitTrans@E::Blit_Move_Tinted
-// FUNCTION: 0x007BC750 ?$BlitPlain@E::BlitForward
-// FUNCTION: 0x007BC780 ?$BlitPlain@E::BlitBackward
-// FUNCTION: 0x007BC7A0 ?$BlitPlain@E::Blit_Copy_Tinted
-// FUNCTION: 0x007BC7D0 ?$BlitPlain@E::Blit_Move_Tinted
-// FUNCTION: 0x007BC7F0 ?$BlitPlain@G::BlitForward
-// FUNCTION: 0x007BC820 ?$BlitPlain@G::BlitBackward
-// FUNCTION: 0x007BC840 ?$BlitPlain@G::Blit_Copy_Tinted
-// FUNCTION: 0x007BC870 ?$BlitPlain@G::Blit_Move_Tinted
-// FUNCTION: 0x007BC890 ?$BlitTrans@G::BlitForward
-// FUNCTION: 0x007BC8C0 ?$BlitTrans@G::BlitBackward
-// FUNCTION: 0x007BC8F0 ?$BlitTrans@G::Blit_Copy_Tinted
-// FUNCTION: 0x007BC920 ?$BlitTrans@G::Blit_Move_Tinted
+// TEMPLATE: GAMEMD 0x007BC610
+// ?BlitForward@?$BlitTrans@E@@UBEXPAXPBXHH00HH@Z
+// SYNTHETIC: GAMEMD 0x007BC640
+// ??_G?$BlitPlain@E@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x007BC660
+// ??_G?$BlitPlain@G@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x007BC680
+// ??_G?$BlitTrans@E@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x007BC6A0
+// ??_G?$BlitTrans@G@@UAEPAXI@Z
+// TEMPLATE: GAMEMD 0x007BC6C0
+// ?BlitBackward@?$BlitTrans@E@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x007BC6F0
+// ?Blit_Copy_Tinted@?$BlitTrans@E@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x007BC720
+// ?Blit_Move_Tinted@?$BlitTrans@E@@UBEXPAXPBXHH00HG@Z
+// TEMPLATE: GAMEMD 0x007BC750
+// ?BlitForward@?$BlitPlain@E@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x007BC780
+// ?BlitBackward@?$BlitPlain@E@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x007BC7A0
+// ?Blit_Copy_Tinted@?$BlitPlain@E@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x007BC7D0
+// ?Blit_Move_Tinted@?$BlitPlain@E@@UBEXPAXPBXHH00HG@Z
+// TEMPLATE: GAMEMD 0x007BC7F0
+// ?BlitForward@?$BlitPlain@G@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x007BC820
+// ?BlitBackward@?$BlitPlain@G@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x007BC840
+// ?Blit_Copy_Tinted@?$BlitPlain@G@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x007BC870
+// ?Blit_Move_Tinted@?$BlitPlain@G@@UBEXPAXPBXHH00HG@Z
+// TEMPLATE: GAMEMD 0x007BC890
+// ?BlitForward@?$BlitTrans@G@@UBEXPAXPBXHH00HH@Z
+// TEMPLATE: GAMEMD 0x007BC8C0
+// ?BlitBackward@?$BlitTrans@G@@UBEXPAXPBXHH00H@Z
+// TEMPLATE: GAMEMD 0x007BC8F0
+// ?Blit_Copy_Tinted@?$BlitTrans@G@@UBEXPAXPBXHH00HHG@Z
+// TEMPLATE: GAMEMD 0x007BC920
+// ?Blit_Move_Tinted@?$BlitTrans@G@@UBEXPAXPBXHH00HG@Z
 template class BlitPlain<unsigned char>;
 template class BlitPlain<unsigned short>;
 template class BlitTrans<unsigned char>;
 template class BlitTrans<unsigned short>;
 
-// FUNCTION: 0x007BC950 $E24
+// SYNTHETIC: GAMEMD 0x007BC950 SYMBOL
+// _$E24
 Rect DAT_00B78188(0, 0, 0, 0);

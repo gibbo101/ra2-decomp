@@ -40,40 +40,52 @@ struct IntTriple {
 	IntTriple() { A = 0; B = 0; C = 0; }
 };
 
-// FUNCTION: 0x004394A0 $E80
+// SYNTHETIC: GAMEMD 0x004394A0 SYMBOL
+// _$E80
 double DAT_0089C720 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x004394D0 $E83
+// SYNTHETIC: GAMEMD 0x004394D0 SYMBOL
+// _$E83
 double DAT_0089C770 = DAT_0089C720 / DAT_007E3D70;
 
-// FUNCTION: 0x004394F0 $E86
+// SYNTHETIC: GAMEMD 0x004394F0 SYMBOL
+// _$E86
 double DAT_0089C758 = DAT_007E1718 / DAT_0089C770;
 
-// FUNCTION: 0x00439510 $E89
+// SYNTHETIC: GAMEMD 0x00439510 SYMBOL
+// _$E89
 double DAT_0089C750 = DAT_007E1720 * DAT_007E3D78;
 
-// FUNCTION: 0x00439530 $E92
+// SYNTHETIC: GAMEMD 0x00439530 SYMBOL
+// _$E92
 double DAT_0089C728 = DAT_007E1728 * DAT_007E3D78;
 
-// FUNCTION: 0x00439550 $E95
+// SYNTHETIC: GAMEMD 0x00439550 SYMBOL
+// _$E95
 double DAT_0089C700 = DAT_007E1730 * DAT_007E3D78;
 
-// FUNCTION: 0x00439570 $E98
+// SYNTHETIC: GAMEMD 0x00439570 SYMBOL
+// _$E98
 int DAT_0089C778 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_0089C700 - DAT_0089C728) * DAT_0089C720));
 
-// FUNCTION: 0x004395B0 $E101
+// SYNTHETIC: GAMEMD 0x004395B0 SYMBOL
+// _$E101
 double DAT_0089C730 = FUN_004CADE0(DAT_0089C778 * DAT_007E1740);
 
-// FUNCTION: 0x004395E0 $E104
+// SYNTHETIC: GAMEMD 0x004395E0 SYMBOL
+// _$E104
 double DAT_0089C748 = FUN_004CADE0((DAT_0089C778 * 2) / DAT_0089C720);
 
-// FUNCTION: 0x00439610 $E107
+// SYNTHETIC: GAMEMD 0x00439610 SYMBOL
+// _$E107
 int DAT_0089C76C = (int)(DAT_0089C778 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x00439640 $E110
+// SYNTHETIC: GAMEMD 0x00439640 SYMBOL
+// _$E110
 ShortPair DAT_0089C718;
 
-// FUNCTION: 0x00439650 $E113
+// SYNTHETIC: GAMEMD 0x00439650 SYMBOL
+// _$E113
 IntTriple DAT_0089C738;
 
 struct IntTripleXYZ {
@@ -81,7 +93,8 @@ struct IntTripleXYZ {
 	IntTripleXYZ(int x, int y, int z) { X = x; Y = y; Z = z; }
 };
 
-// FUNCTION: 0x00439670 $E116
+// SYNTHETIC: GAMEMD 0x00439670 SYMBOL
+// _$E116
 IntTripleXYZ DAT_0089C760(0x80, 0x80, 0);
 
 static inline Vector3 Normalize_Axis(const Vector3 & vec)
@@ -93,7 +106,7 @@ static inline Vector3 Normalize_Axis(const Vector3 & vec)
 	return(vec);
 }
 
-// FUNCTION: 0x004397E0
+// FUNCTION: GAMEMD 0x004397E0
 void BounceClass::Init(Coord const & coord, double elasticity, double gravity, double max_velocity, Vector3 const & velocity, double rotation)
 {
 	Elasticity = elasticity;
@@ -117,19 +130,19 @@ void BounceClass::Init(Coord const & coord, double elasticity, double gravity, d
 	Rotation = Build_Quaternion(identity_matrix);
 }
 
-// FUNCTION: 0x004399A0
+// FUNCTION: GAMEMD 0x004399A0
 Coord BounceClass::Get_Bounce_Coord(void) const
 {
 	return(Coord(MyCoord.X, MyCoord.Y, MyCoord.Z));
 }
 
-// FUNCTION: 0x004399E0
+// FUNCTION: GAMEMD 0x004399E0
 Matrix3D BounceClass::Get_Matrix(void) const
 {
 	return(Build_Matrix3D(Rotation));
 }
 
-// FUNCTION: 0x00439A10
+// FUNCTION: GAMEMD 0x00439A10
 double BounceClass::Get_Remaining_Motion(void) const
 {
 	Coord coord(MyCoord.X, MyCoord.Y, MyCoord.Z);

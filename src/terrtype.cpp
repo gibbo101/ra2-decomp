@@ -61,21 +61,35 @@ struct CenterTriple {
 	CenterTriple() { C = 0; A = 128; B = 128; }
 };
 
-// FUNCTION: 0x0071D390 $E2
-// FUNCTION: 0x0071D3C0 $E5
-// FUNCTION: 0x0071D3E0 $E8
-// FUNCTION: 0x0071D400 $E11
-// FUNCTION: 0x0071D420 $E14
-// FUNCTION: 0x0071D440 $E17
-// FUNCTION: 0x0071D460 $E20
-// FUNCTION: 0x0071D4A0 $E23
-// FUNCTION: 0x0071D4D0 $E26
-// FUNCTION: 0x0071D500 $E29
-// FUNCTION: 0x0071D530 $E32
-// FUNCTION: 0x0071D540 $E35
-// FUNCTION: 0x0071D560 $E38
+// SYNTHETIC: GAMEMD 0x0071D390 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x0071D3C0 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x0071D3E0 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x0071D400 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x0071D420 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x0071D440 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x0071D460 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x0071D4A0 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x0071D4D0 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x0071D500 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x0071D530 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x0071D540 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x0071D560 SYMBOL
+// _$E38
 
-// FUNCTION: 0x0071D580 $E115
+// SYNTHETIC: GAMEMD 0x0071D580 SYMBOL
+// _$E115
 static Cell const _OccupyLists[BSIZE_COUNT][10] = {
 	{ Cell(0, 0), REFRESH_EOL },
 	{ Cell(0, 0), Cell(1, 0), REFRESH_EOL },
@@ -91,7 +105,7 @@ struct FileSystem {
 	static void const * LoadFile(char const * name, bool flag);
 };
 
-// FUNCTION: 0x0071DA80
+// FUNCTION: GAMEMD 0x0071DA80
 TerrainTypeClass::TerrainTypeClass(char const * ininame) :
 	BASECLASS(ininame),
 	HeapID(TERRAIN_NONE),
@@ -123,14 +137,14 @@ TerrainTypeClass::TerrainTypeClass(char const * ininame) :
 	Armor = ARMOR_WOOD;
 }
 
-// FUNCTION: 0x0071DBD0
+// FUNCTION: GAMEMD 0x0071DBD0
 TerrainTypeClass::TerrainTypeClass(NoInitClass const & x) :
 	BASECLASS(x),
 	RadarColor(x)
 {
 }
 
-// FUNCTION: 0x0071DC00
+// FUNCTION: GAMEMD 0x0071DC00
 TerrainTypeClass::~TerrainTypeClass(void)
 {
 	if (ImageData != NULL) {
@@ -141,7 +155,7 @@ TerrainTypeClass::~TerrainTypeClass(void)
 	TerrainTypes.Delete(this);
 }
 
-// FUNCTION: 0x0071DCA0
+// FUNCTION: GAMEMD 0x0071DCA0
 void TerrainTypeClass::Init(TheaterType theater)
 {
 	for (TerrainType index = TERRAIN_FIRST; index < TerrainTypes.Count(); index++) {
@@ -161,7 +175,7 @@ void TerrainTypeClass::Init(TheaterType theater)
 	}
 }
 
-// FUNCTION: 0x0071DD80
+// FUNCTION: GAMEMD 0x0071DD80
 TerrainType TerrainTypeClass::From_Name(char const * name)
 {
 	TerrainType index;
@@ -176,7 +190,7 @@ TerrainType TerrainTypeClass::From_Name(char const * name)
 	return(TERRAIN_NONE);
 }
 
-// FUNCTION: 0x0071DDD0
+// FUNCTION: GAMEMD 0x0071DDD0
 bool TerrainTypeClass::Create_And_Place(Cell const & cell, HouseClass *) const
 {
 	if (new TerrainClass(this, cell)) {
@@ -185,13 +199,13 @@ bool TerrainTypeClass::Create_And_Place(Cell const & cell, HouseClass *) const
 	return(false);
 }
 
-// FUNCTION: 0x0071DE10
+// FUNCTION: GAMEMD 0x0071DE10
 ObjectClass * TerrainTypeClass::Create_One_Of(HouseClass *) const
 {
 	return(new TerrainClass(this, CELL_NONE));
 }
 
-// FUNCTION: 0x0071DE40
+// FUNCTION: GAMEMD 0x0071DE40
 Cell const * TerrainTypeClass::Occupy_List(bool) const
 {
 	if (Occupy != NULL) return(Occupy);
@@ -202,8 +216,9 @@ Cell const * TerrainTypeClass::Occupy_List(bool) const
 	return(&_simple[0]);
 }
 
-// FUNCTION: 0x0071DE90 $E118
-// FUNCTION: 0x0071DEA0
+// SYNTHETIC: GAMEMD 0x0071DE90 SYMBOL
+// _$E118
+// FUNCTION: GAMEMD 0x0071DEA0
 bool TerrainTypeClass::Read_INI(CCINIClass & ini)
 {
 	ini.Reset();
@@ -249,7 +264,7 @@ bool TerrainTypeClass::Read_INI(CCINIClass & ini)
 	return(false);
 }
 
-// FUNCTION: 0x0071E0D0
+// FUNCTION: GAMEMD 0x0071E0D0
 Coord const TerrainTypeClass::Coord_Fixup(Coord const & coord) const
 {
 	Coord tmp = coord;
@@ -259,7 +274,7 @@ Coord const TerrainTypeClass::Coord_Fixup(Coord const & coord) const
 	return(tmp);
 }
 
-// FUNCTION: 0x0071E240
+// FUNCTION: GAMEMD 0x0071E240
 HRESULT STDMETHODCALLTYPE TerrainTypeClass::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -269,7 +284,7 @@ HRESULT STDMETHODCALLTYPE TerrainTypeClass::Save(IStream * stream, BOOL cleardir
 	return(result);
 }
 
-// FUNCTION: 0x0071E260
+// FUNCTION: GAMEMD 0x0071E260
 HRESULT STDMETHODCALLTYPE TerrainTypeClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -277,7 +292,7 @@ HRESULT STDMETHODCALLTYPE TerrainTypeClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x0071E140
+// FUNCTION: GAMEMD 0x0071E140
 void TerrainTypeClass::Compute_CRC(CRCEngine & crc) const
 {
 	BASECLASS::Compute_CRC(crc);
@@ -291,7 +306,7 @@ void TerrainTypeClass::Compute_CRC(CRCEngine & crc) const
 	crc(AnimationProbability);
 }
 
-// FUNCTION: 0x0071E1D0
+// FUNCTION: GAMEMD 0x0071E1D0
 HRESULT STDMETHODCALLTYPE TerrainTypeClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -307,70 +322,85 @@ HRESULT STDMETHODCALLTYPE TerrainTypeClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x0071E2A0
+// FUNCTION: GAMEMD 0x0071E2A0
 TerrainTypeClass * TerrainTypeClass::Find_Or_Make(const char * name)
 {
 	return(TFind_Or_Make<TerrainTypeClass>(name, TerrainTypes));
 }
 
-// FUNCTION: 0x0071E330
+// FUNCTION: GAMEMD 0x0071E330
 RTTIType TerrainTypeClass::Fetch_RTTI(void) const
 {
 	return(RTTI_TERRAINTYPE);
 }
 
-// FUNCTION: 0x0071E340
+// FUNCTION: GAMEMD 0x0071E340
 int TerrainTypeClass::Fetch_Object_Size(void) const
 {
 	return(sizeof(*this));
 }
 
-// FUNCTION: 0x0071E350
+// FUNCTION: GAMEMD 0x0071E350
 int TerrainTypeClass::Fetch_Heap_ID(void) const
 {
 	return(HeapID);
 }
 
-// FUNCTION: 0x0071E360 TerrainTypeClass::~TerrainTypeClass
+// SYNTHETIC: GAMEMD 0x0071E360
+// ??_GTerrainTypeClass@@UAEPAXI@Z
 
-// FUNCTION: 0x0071E410 $E120
+// SYNTHETIC: GAMEMD 0x0071E410 SYMBOL
+// _$E120
 double DAT_00B0F170 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x0071E440 $E123
+// SYNTHETIC: GAMEMD 0x0071E440 SYMBOL
+// _$E123
 double DAT_00B0F1D8 = DAT_00B0F170 / DAT_007F54F8;
 
-// FUNCTION: 0x0071E460 $E126
+// SYNTHETIC: GAMEMD 0x0071E460 SYMBOL
+// _$E126
 double DAT_00B0F1C0 = DAT_007E1718 / DAT_00B0F1D8;
 
-// FUNCTION: 0x0071E480 $E129
+// SYNTHETIC: GAMEMD 0x0071E480 SYMBOL
+// _$E129
 double DAT_00B0F1B8 = DAT_007E1720 * DAT_007F5500;
 
-// FUNCTION: 0x0071E4A0 $E132
+// SYNTHETIC: GAMEMD 0x0071E4A0 SYMBOL
+// _$E132
 double DAT_00B0F178 = DAT_007E1728 * DAT_007F5500;
 
-// FUNCTION: 0x0071E4C0 $E135
+// SYNTHETIC: GAMEMD 0x0071E4C0 SYMBOL
+// _$E135
 double DAT_00B0F150 = DAT_007E1730 * DAT_007F5500;
 
-// FUNCTION: 0x0071E4E0 $E138
+// SYNTHETIC: GAMEMD 0x0071E4E0 SYMBOL
+// _$E138
 int DAT_00B0F1E0 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B0F150 - DAT_00B0F178) * DAT_00B0F170));
 
-// FUNCTION: 0x0071E520 $E141
+// SYNTHETIC: GAMEMD 0x0071E520 SYMBOL
+// _$E141
 double DAT_00B0F180 = FUN_004CADE0(DAT_00B0F1E0 * DAT_007E1740);
 
-// FUNCTION: 0x0071E550 $E144
+// SYNTHETIC: GAMEMD 0x0071E550 SYMBOL
+// _$E144
 double DAT_00B0F198 = FUN_004CADE0((DAT_00B0F1E0 * 2) / DAT_00B0F170);
 
-// FUNCTION: 0x0071E580 $E147
+// SYNTHETIC: GAMEMD 0x0071E580 SYMBOL
+// _$E147
 int DAT_00B0F1D4 = (int)(DAT_00B0F1E0 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x0071E5B0 $E150
+// SYNTHETIC: GAMEMD 0x0071E5B0 SYMBOL
+// _$E150
 ShortPair DAT_00B0F168;
 
-// FUNCTION: 0x0071E5C0 $E153
+// SYNTHETIC: GAMEMD 0x0071E5C0 SYMBOL
+// _$E153
 IntTriple DAT_00B0F188;
 
-// FUNCTION: 0x0071E5E0 $E156
+// SYNTHETIC: GAMEMD 0x0071E5E0 SYMBOL
+// _$E156
 CenterTriple DAT_00B0F1C8;
 
-// FUNCTION: 0x0071E600 $E159
+// SYNTHETIC: GAMEMD 0x0071E600 SYMBOL
+// _$E159
 IntQuad DAT_00B0F158;

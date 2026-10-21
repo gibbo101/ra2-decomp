@@ -76,22 +76,36 @@ static inline void Release_Animation(SuperClass * super)
 	}
 }
 
-// FUNCTION: 0x006CABF0 $E2
-// FUNCTION: 0x006CAC10 $E5
-// FUNCTION: 0x006CAC40 $E8
-// FUNCTION: 0x006CAC60 $E11
-// FUNCTION: 0x006CAC80 $E14
-// FUNCTION: 0x006CACA0 $E17
-// FUNCTION: 0x006CACC0 $E20
-// FUNCTION: 0x006CACE0 $E23
-// FUNCTION: 0x006CAD20 $E26
-// FUNCTION: 0x006CAD50 $E29
-// FUNCTION: 0x006CAD80 $E32
-// FUNCTION: 0x006CADB0 $E35
-// FUNCTION: 0x006CADC0 $E38
-// FUNCTION: 0x006CADE0 $E41
+// SYNTHETIC: GAMEMD 0x006CABF0 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x006CAC10 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x006CAC40 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x006CAC60 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x006CAC80 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x006CACA0 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x006CACC0 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x006CACE0 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x006CAD20 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x006CAD50 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x006CAD80 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x006CADB0 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x006CADC0 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x006CADE0 SYMBOL
+// _$E41
 
-// FUNCTION: 0x006CAE00
+// FUNCTION: GAMEMD 0x006CAE00
 void Init_006CAE00(void)
 {
 	DAT_00B0C038[0] = Cell(0, 0);
@@ -105,7 +119,7 @@ void Init_006CAE00(void)
 	DAT_00B0C038[8] = Cell(1, 1);
 }
 
-// FUNCTION: 0x006CAEC0
+// FUNCTION: GAMEMD 0x006CAEC0
 SuperClass::SuperClass(void) :
 	CustomChargeTime(-1),
 	Class(NULL),
@@ -128,7 +142,7 @@ SuperClass::SuperClass(void) :
 	Array.Add(this);
 }
 
-// FUNCTION: 0x006CAF90
+// FUNCTION: GAMEMD 0x006CAF90
 SuperClass::SuperClass(SuperWeaponTypeClass * type, HouseClass * owner) :
 	CustomChargeTime(-1),
 	Class(type),
@@ -155,7 +169,8 @@ SuperClass::SuperClass(SuperWeaponTypeClass * type, HouseClass * owner) :
 	PointerExpiredNotification::NotifyInvalidHouse.Add(this);
 }
 
-// FUNCTION: 0x006CB120 SuperClass::~SuperClass
+// FUNCTION: GAMEMD 0x006CB120
+// SuperClass::~SuperClass
 SuperClass::~SuperClass(void)
 {
 	Release_Animation(this);
@@ -165,7 +180,7 @@ SuperClass::~SuperClass(void)
 	PointerExpiredNotification::NotifyInvalidHouse.Delete(this);
 }
 
-// FUNCTION: 0x006CB2E0
+// FUNCTION: GAMEMD 0x006CB2E0
 void SuperClass::DetachAnimation(void)
 {
 	if (Animation != NULL) {
@@ -179,7 +194,7 @@ void SuperClass::DetachAnimation(void)
 	}
 }
 
-// FUNCTION: 0x006CB3A0
+// FUNCTION: GAMEMD 0x006CB3A0
 void SuperClass::CreateChronoAnim(Coord coords)
 {
 	Release_Animation(this);
@@ -190,7 +205,7 @@ void SuperClass::CreateChronoAnim(Coord coords)
 	}
 }
 
-// FUNCTION: 0x006CB4D0
+// FUNCTION: GAMEMD 0x006CB4D0
 bool SuperClass::SetOnHold(bool on)
 {
 	if (IsPresent && !IsOneTime && on != IsSuspended && NeedsBuilding) {
@@ -218,7 +233,7 @@ static inline bool Begin_Charge(SuperClass * super)
 	return(false);
 }
 
-// FUNCTION: 0x006CB560
+// FUNCTION: GAMEMD 0x006CB560
 bool SuperClass::Grant(bool oneTime, bool announce, bool onHold)
 {
 	if (!IsPresent) {
@@ -245,7 +260,7 @@ bool SuperClass::Grant(bool oneTime, bool announce, bool onHold)
 	return(false);
 }
 
-// FUNCTION: 0x006CB7B0
+// FUNCTION: GAMEMD 0x006CB7B0
 bool SuperClass::Lose(void)
 {
 	if (IsPresent) {
@@ -257,13 +272,13 @@ bool SuperClass::Lose(void)
 	return(false);
 }
 
-// FUNCTION: 0x006CB820
+// FUNCTION: GAMEMD 0x006CB820
 void SuperClass::SetReadiness(bool ready)
 {
 	IsReady = ready;
 }
 
-// FUNCTION: 0x006CB830
+// FUNCTION: GAMEMD 0x006CB830
 char SuperClass::StopPreclickAnim(bool isPlayer)
 {
 	DetachAnimation();
@@ -293,7 +308,7 @@ static inline int Charge_Time(SuperClass const * super)
 	return((super->CustomChargeTime != -1) ? super->CustomChargeTime : super->Class->RechargeTime);
 }
 
-// FUNCTION: 0x006CB920
+// FUNCTION: GAMEMD 0x006CB920
 bool SuperClass::Discharged(bool player, Cell const & cell)
 {
 	if (Class->UseChargeDrain) {
@@ -347,7 +362,7 @@ bool SuperClass::Discharged(bool player, Cell const & cell)
 	return(false);
 }
 
-// FUNCTION: 0x006CBCA0
+// FUNCTION: GAMEMD 0x006CBCA0
 bool SuperClass::AI(bool player)
 {
 	if (SpecialSoundDuration > 0) SpecialSoundDuration--;
@@ -428,7 +443,7 @@ bool SuperClass::AI(bool player)
 	return(false);
 }
 
-// FUNCTION: 0x006CBEE0
+// FUNCTION: GAMEMD 0x006CBEE0
 int SuperClass::Anim_Stage(void) const
 {
 	if (IsPresent) {
@@ -451,12 +466,12 @@ int SuperClass::Anim_Stage(void) const
 	return(0);
 }
 
-// FUNCTION: 0x006CC070
+// FUNCTION: GAMEMD 0x006CC070
 void FUN_006CC070(void)
 {
 }
 
-// FUNCTION: 0x006CC080
+// FUNCTION: GAMEMD 0x006CC080
 void SuperClass::Forced_Charge(bool player)
 {
 	if (IsPresent) {
@@ -508,7 +523,7 @@ void SuperClass::Forced_Charge(bool player)
 	}
 }
 
-// FUNCTION: 0x006CC1E0
+// FUNCTION: GAMEMD 0x006CC1E0
 void SuperClass::SetCharge(int percentage)
 {
 	if (IsPresent && percentage >= 0 && percentage <= 100) {
@@ -520,7 +535,7 @@ void SuperClass::SetCharge(int percentage)
 	}
 }
 
-// FUNCTION: 0x006CC260
+// FUNCTION: GAMEMD 0x006CC260
 int SuperClass::GetRechargeTime(void)
 {
 	int time = CustomChargeTime;
@@ -530,26 +545,26 @@ done:
 	return(time);
 }
 
-// FUNCTION: 0x006CC280
+// FUNCTION: GAMEMD 0x006CC280
 void SuperClass::SetRechargeTime(int time)
 {
 	CustomChargeTime = time;
 }
 
-// FUNCTION: 0x006CC290
+// FUNCTION: GAMEMD 0x006CC290
 void SuperClass::ResetRechargeTime(void)
 {
 	CustomChargeTime = -1;
 }
 
-// FUNCTION: 0x006CC2A0
+// FUNCTION: GAMEMD 0x006CC2A0
 bool SuperClass::Is_Powered(void) const
 {
 	return(Class->IsPowered);
 }
 
 
-// FUNCTION: 0x006CC2B0
+// FUNCTION: GAMEMD 0x006CC2B0
 wchar_t const * SuperClass::NameReadiness(void) const
 {
 	if (!IsSuspended) {
@@ -578,7 +593,7 @@ wchar_t const * SuperClass::NameReadiness(void) const
 	return(StringTable::LoadString("TXT_HOLD", NULL, __FILE__, __LINE__));
 }
 
-// FUNCTION: 0x006CC360
+// FUNCTION: GAMEMD 0x006CC360
 char SuperClass::CanFire(void) const
 {
 	if (!IsSuspended) {
@@ -592,19 +607,19 @@ char SuperClass::CanFire(void) const
 	return(false);
 }
 
-// FUNCTION: 0x006CDE80
+// FUNCTION: GAMEMD 0x006CDE80
 void __stdcall FUN_006CDE80(int, int)
 {
 }
 
-// FUNCTION: 0x006CDE90
+// FUNCTION: GAMEMD 0x006CDE90
 bool SuperClass::ShouldDrawProgress(void) const
 {
 	if (Class->UseChargeDrain) return(true);
 	return(!IsReady);
 }
 
-// FUNCTION: 0x006CDEB0
+// FUNCTION: GAMEMD 0x006CDEB0
 HRESULT STDMETHODCALLTYPE SuperClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -612,7 +627,7 @@ HRESULT STDMETHODCALLTYPE SuperClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x006CDEF0
+// FUNCTION: GAMEMD 0x006CDEF0
 HRESULT STDMETHODCALLTYPE SuperClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -628,7 +643,7 @@ HRESULT STDMETHODCALLTYPE SuperClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x006CDFD0
+// FUNCTION: GAMEMD 0x006CDFD0
 HRESULT STDMETHODCALLTYPE SuperClass::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -638,7 +653,7 @@ HRESULT STDMETHODCALLTYPE SuperClass::Save(IStream * stream, BOOL cleardirty)
 	return(result);
 }
 
-// FUNCTION: 0x006CDFF0
+// FUNCTION: GAMEMD 0x006CDFF0
 void SuperClass::Detach(AbstractClass const * target, bool all)
 {
 	if (target == House) House = NULL;
@@ -649,7 +664,7 @@ void SuperClass::Detach(AbstractClass const * target, bool all)
 	}
 }
 
-// FUNCTION: 0x006CE020
+// FUNCTION: GAMEMD 0x006CE020
 void SuperClass::Compute_CRC(CRCEngine & crc) const
 {
 	BASECLASS::Compute_CRC(crc);
@@ -666,7 +681,7 @@ void SuperClass::Compute_CRC(CRCEngine & crc) const
 	}
 }
 
-// FUNCTION: 0x006CE0B0
+// FUNCTION: GAMEMD 0x006CE0B0
 void SuperClass::Reset(void)
 {
 	Release_Animation(this);
@@ -677,7 +692,7 @@ void SuperClass::Reset(void)
 	if (!active) Control.Stop();
 }
 
-// FUNCTION: 0x006CE1A0
+// FUNCTION: GAMEMD 0x006CE1A0
 bool SuperClass::ShouldFlashTab(void) const
 {
 	if (IsSuspended) goto done;
@@ -695,19 +710,27 @@ done:
 	return(false);
 }
 
-// FUNCTION: 0x006CE1F0 SuperClass::What_Am_I
-// FUNCTION: 0x006CE200 SuperClass::Fetch_RTTI
-// FUNCTION: 0x006CE210 SuperClass::Fetch_Object_Size
+// FUNCTION: GAMEMD 0x006CE1F0
+// SuperClass::What_Am_I
+// FUNCTION: GAMEMD 0x006CE200
+// SuperClass::Fetch_RTTI
+// FUNCTION: GAMEMD 0x006CE210
+// SuperClass::Fetch_Object_Size
 
-// FUNCTION: 0x006CE240 ?$TPoint3D@H::operator+
-// FUNCTION: 0x006CE280 ?$CDTimerClass@VFrameTimerClass@@::Stop
-// FUNCTION: 0x006CE2C0 ?$CDTimerClass@VFrameTimerClass@@::Start
-// FUNCTION: 0x006CE2D0 ?$DynamicVectorClass@PAVSuperClass@@::Delete
-// FUNCTION: 0x006CE320 ?$DynamicVectorClass@PAVSuperClass@@::Delete_Index
+// TEMPLATE: GAMEMD 0x006CE240
+// ??H?$TPoint3D@H@@QBE?BV0@ABV0@@Z
+// TEMPLATE: GAMEMD 0x006CE280
+// ?Stop@?$CDTimerClass@VFrameTimerClass@@@@QAEXXZ
+// TEMPLATE: GAMEMD 0x006CE2C0
+// ?Start@?$CDTimerClass@VFrameTimerClass@@@@QAEXXZ
+// TEMPLATE: GAMEMD 0x006CE2D0
+// ?Delete@?$DynamicVectorClass@PAVSuperClass@@@@QAE_NABQAVSuperClass@@@Z
+// TEMPLATE: GAMEMD 0x006CE320
+// ?Delete_Index@?$DynamicVectorClass@PAVSuperClass@@@@QAE_NH@Z
 template class DynamicVectorClass<SuperClass *>;
 template class TPoint3D<int>;
 
-// FUNCTION: 0x006CE360
+// FUNCTION: GAMEMD 0x006CE360
 void FUN_006CE360(void)
 {
 	DAT_00B0C098 = 0;

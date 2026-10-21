@@ -22,7 +22,7 @@
 
 #include <cstdio>
 
-// FUNCTION: 0x006913C0
+// FUNCTION: GAMEMD 0x006913C0
 ScriptClass::ScriptClass(ScriptTypeClass *type):
 	Unused1(0),
 	Class(type),
@@ -31,21 +31,21 @@ ScriptClass::ScriptClass(ScriptTypeClass *type):
 	Scripts.Add(this);
 }
 
-// FUNCTION: 0x00691460
+// FUNCTION: GAMEMD 0x00691460
 ScriptClass::~ScriptClass(void)
 {
 	Detach_This_From_All(this, true);
 	Scripts.Delete(this);
 }
 
-// FUNCTION: 0x006914E0
+// FUNCTION: GAMEMD 0x006914E0
 void ScriptClass::Compute_CRC(CRCEngine &crc) const
 {
 	BASECLASS::Compute_CRC(crc);
 	crc(CurrentLineNumber);
 }
 
-// FUNCTION: 0x00691500
+// FUNCTION: GAMEMD 0x00691500
 TeamMissionClass ScriptClass::Get_Current_Mission(void)
 {
 	if (CurrentLineNumber == -1) {
@@ -54,7 +54,7 @@ TeamMissionClass ScriptClass::Get_Current_Mission(void)
 	return(Class->MissionList[CurrentLineNumber]);
 }
 
-// FUNCTION: 0x00691540
+// FUNCTION: GAMEMD 0x00691540
 TeamMissionClass ScriptClass::Get_Next_Mission(void)
 {
 	if (CurrentLineNumber + 1 >= Class->MissionCount) {
@@ -63,34 +63,34 @@ TeamMissionClass ScriptClass::Get_Next_Mission(void)
 	return(Class->MissionList[CurrentLineNumber + 1]);
 }
 
-// FUNCTION: 0x00691590
+// FUNCTION: GAMEMD 0x00691590
 bool ScriptClass::Stop_Script(void)
 {
 	CurrentLineNumber = -1;
 	return(true);
 }
 
-// FUNCTION: 0x006915A0
+// FUNCTION: GAMEMD 0x006915A0
 bool ScriptClass::Set_Line(int linenum)
 {
 	CurrentLineNumber = linenum;
 	return(true);
 }
 
-// FUNCTION: 0x006915B0
+// FUNCTION: GAMEMD 0x006915B0
 bool ScriptClass::Next_Mission(void)
 {
 	CurrentLineNumber++;
 	return(Has_Missions_Remaining());
 }
 
-// FUNCTION: 0x006915D0
+// FUNCTION: GAMEMD 0x006915D0
 bool ScriptClass::Has_Missions_Remaining(void)
 {
 	return((unsigned)CurrentLineNumber < (unsigned)Class->MissionCount);
 }
 
-// FUNCTION: 0x006915F0
+// FUNCTION: GAMEMD 0x006915F0
 HRESULT STDMETHODCALLTYPE ScriptClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -98,7 +98,7 @@ HRESULT STDMETHODCALLTYPE ScriptClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x00691630
+// FUNCTION: GAMEMD 0x00691630
 HRESULT STDMETHODCALLTYPE ScriptClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -112,7 +112,7 @@ HRESULT STDMETHODCALLTYPE ScriptClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x00691690
+// FUNCTION: GAMEMD 0x00691690
 HRESULT STDMETHODCALLTYPE ScriptClass::Save(IStream *stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -123,7 +123,7 @@ HRESULT STDMETHODCALLTYPE ScriptClass::Save(IStream *stream, BOOL cleardirty)
 	return(result);
 }
 
-// FUNCTION: 0x006916B0
+// FUNCTION: GAMEMD 0x006916B0
 ScriptTypeClass::ScriptTypeClass(char const *name) :
 	BASECLASS(name),
 	Scope(SCOPE_LOCAL),
@@ -133,14 +133,14 @@ ScriptTypeClass::ScriptTypeClass(char const *name) :
 	HeapID = ScriptTypes.ID(this);
 }
 
-// FUNCTION: 0x00691770
+// FUNCTION: GAMEMD 0x00691770
 ScriptTypeClass::~ScriptTypeClass(void)
 {
 	Detach_This_From_All(this, true);
 	ScriptTypes.Delete(this);
 }
 
-// FUNCTION: 0x006917F0
+// FUNCTION: GAMEMD 0x006917F0
 bool ScriptTypeClass::Write_INI(CCINIClass & ini) const
 {
 	if (BASECLASS::Write_INI(ini)) {
@@ -162,7 +162,7 @@ bool ScriptTypeClass::Write_INI(CCINIClass & ini) const
 	return(false);
 }
 
-// FUNCTION: 0x006918A0
+// FUNCTION: GAMEMD 0x006918A0
 bool ScriptTypeClass::Read_INI(CCINIClass & ini)
 {
 	ini.Reset();
@@ -191,7 +191,7 @@ bool ScriptTypeClass::Read_INI(CCINIClass & ini)
 	return(false);
 }
 
-// FUNCTION: 0x00691970
+// FUNCTION: GAMEMD 0x00691970
 void ScriptTypeClass::Read_All(CCINIClass & ini, INIScopeType scope)
 {
 	int len = ini.Entry_Count("ScriptTypes");
@@ -208,12 +208,12 @@ void ScriptTypeClass::Read_All(CCINIClass & ini, INIScopeType scope)
 	}
 }
 
-// FUNCTION: 0x00691B30
+// FUNCTION: GAMEMD 0x00691B30
 void ScriptTypeClass::Write_All(CCINIClass & ini, INIScopeType scope)
 {
 }
 
-// FUNCTION: 0x00691B40
+// FUNCTION: GAMEMD 0x00691B40
 ScriptTypeClass * ScriptTypeClass::From_Name(char const * name)
 {
 	if (name != NULL) {
@@ -226,7 +226,7 @@ ScriptTypeClass * ScriptTypeClass::From_Name(char const * name)
 	return(NULL);
 }
 
-// FUNCTION: 0x00691BB0
+// FUNCTION: GAMEMD 0x00691BB0
 ScriptTypeClass * ScriptTypeClass::From_Given_Name(char const * name)
 {
 	if (name != NULL) {
@@ -239,13 +239,13 @@ ScriptTypeClass * ScriptTypeClass::From_Given_Name(char const * name)
 	return(NULL);
 }
 
-// FUNCTION: 0x00691C00
+// FUNCTION: GAMEMD 0x00691C00
 ScriptTypeClass * ScriptTypeClass::Find_Or_Make(char const * name)
 {
 	return(TFind_Or_Make<ScriptTypeClass>(name, ScriptTypes));
 }
 
-// FUNCTION: 0x00691D50
+// FUNCTION: GAMEMD 0x00691D50
 HRESULT STDMETHODCALLTYPE ScriptTypeClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -253,7 +253,7 @@ HRESULT STDMETHODCALLTYPE ScriptTypeClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x00691D90
+// FUNCTION: GAMEMD 0x00691D90
 HRESULT STDMETHODCALLTYPE ScriptTypeClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -265,7 +265,7 @@ HRESULT STDMETHODCALLTYPE ScriptTypeClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x00691DE0
+// FUNCTION: GAMEMD 0x00691DE0
 HRESULT STDMETHODCALLTYPE ScriptTypeClass::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -276,7 +276,7 @@ HRESULT STDMETHODCALLTYPE ScriptTypeClass::Save(IStream * stream, BOOL cleardirt
 	return(result);
 }
 
-// FUNCTION: 0x00691E00
+// FUNCTION: GAMEMD 0x00691E00
 void ScriptTypeClass::Compute_CRC(CRCEngine & crc) const
 {
 	BASECLASS::Compute_CRC(crc);
@@ -284,7 +284,7 @@ void ScriptTypeClass::Compute_CRC(CRCEngine & crc) const
 	crc(MissionCount);
 }
 
-// FUNCTION: 0x00691E30
+// FUNCTION: GAMEMD 0x00691E30
 void ScriptTypeClass::Detach(AbstractClass const * target, bool all)
 {
 	if (target != NULL && target->Fetch_RTTI() == RTTI_TEAMTYPE) {
@@ -307,18 +307,26 @@ void ScriptTypeClass::Detach(AbstractClass const * target, bool all)
 	}
 }
 
-// FUNCTION: 0x00691EC0 ScriptClass::Fetch_RTTI
+// FUNCTION: GAMEMD 0x00691EC0
+// ScriptClass::Fetch_RTTI
 
-// FUNCTION: 0x00691ED0 ScriptClass::Fetch_Object_Size
+// FUNCTION: GAMEMD 0x00691ED0
+// ScriptClass::Fetch_Object_Size
 
-// FUNCTION: 0x00691EE0 ScriptClass::~ScriptClass
+// SYNTHETIC: GAMEMD 0x00691EE0
+// ??_GScriptClass@@UAEPAXI@Z
 
-// FUNCTION: 0x00691F70 ScriptTypeClass::Fetch_RTTI
+// FUNCTION: GAMEMD 0x00691F70
+// ScriptTypeClass::Fetch_RTTI
 
-// FUNCTION: 0x00691F80 ScriptTypeClass::Fetch_Object_Size
+// FUNCTION: GAMEMD 0x00691F80
+// ScriptTypeClass::Fetch_Object_Size
 
-// FUNCTION: 0x00691F90 ScriptTypeClass::Fetch_Heap_ID
+// FUNCTION: GAMEMD 0x00691F90
+// ScriptTypeClass::Fetch_Heap_ID
 
-// FUNCTION: 0x00691FA0 ScriptTypeClass::~ScriptTypeClass
+// SYNTHETIC: GAMEMD 0x00691FA0
+// ??_GScriptTypeClass@@UAEPAXI@Z
 
-// FUNCTION: 0x00692030 $E11
+// SYNTHETIC: GAMEMD 0x00692030 SYMBOL
+// _$E11

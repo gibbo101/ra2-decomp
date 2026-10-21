@@ -16,7 +16,7 @@
 #include "vector.h"
 #include <cstdio>
 
-// FUNCTION: 0x006B4A50
+// FUNCTION: GAMEMD 0x006B4A50
 SmudgeClass::SmudgeClass(SmudgeTypeClass const * type, Coord const & pos, HousesType house) :
 	BASECLASS(),
 	Class((SmudgeTypeClass *)type)
@@ -33,7 +33,7 @@ SmudgeClass::SmudgeClass(SmudgeTypeClass const * type, Coord const & pos, Houses
 	}
 }
 
-// FUNCTION: 0x006B4B40
+// FUNCTION: GAMEMD 0x006B4B40
 SmudgeClass::~SmudgeClass(void)
 {
 	Detach_This_From_All(this);
@@ -44,7 +44,7 @@ SmudgeClass::~SmudgeClass(void)
 	Class = NULL;
 }
 
-// FUNCTION: 0x006B4BE0
+// FUNCTION: GAMEMD 0x006B4BE0
 bool SmudgeClass::Mark(MarkType mark)
 {
 	if (BASECLASS::Mark(mark)) {
@@ -63,12 +63,12 @@ bool SmudgeClass::Mark(MarkType mark)
 	return(false);
 }
 
-// FUNCTION: 0x006B4C70
+// FUNCTION: GAMEMD 0x006B4C70
 void SmudgeClass::Disown(Cell const & cell)
 {
 }
 
-// FUNCTION: 0x006B4C80
+// FUNCTION: GAMEMD 0x006B4C80
 void SmudgeClass::Read_INI(CCINIClass & ini)
 {
 	char	buf[128];
@@ -103,7 +103,7 @@ void SmudgeClass::Read_INI(CCINIClass & ini)
 	}
 }
 
-// FUNCTION: 0x006B4DD0
+// FUNCTION: GAMEMD 0x006B4DD0
 void SmudgeClass::Write_INI(CCINIClass & ini)
 {
 	ini.Clear(INI_NAME);
@@ -128,7 +128,7 @@ void SmudgeClass::Write_INI(CCINIClass & ini)
 	}
 }
 
-// FUNCTION: 0x006B4EA0
+// FUNCTION: GAMEMD 0x006B4EA0
 HRESULT STDMETHODCALLTYPE SmudgeClass::Load(IStream *stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -140,31 +140,31 @@ HRESULT STDMETHODCALLTYPE SmudgeClass::Load(IStream *stream)
 	return(result);
 }
 
-// FUNCTION: 0x006B4F00
+// FUNCTION: GAMEMD 0x006B4F00
 HRESULT STDMETHODCALLTYPE SmudgeClass::Save(IStream *stream, int cleardirty)
 {
 	return(BASECLASS::Save(stream, cleardirty));
 }
 
-// FUNCTION: 0x006B4F20
+// FUNCTION: GAMEMD 0x006B4F20
 ObjectTypeClass const * SmudgeClass::Class_Of(void) const
 {
 	return(Class);
 }
 
-// FUNCTION: 0x006B4F30
+// FUNCTION: GAMEMD 0x006B4F30
 int SmudgeClass::Fetch_Object_Size(void) const
 {
 	return(sizeof(*this));
 }
 
-// FUNCTION: 0x006B4F40
+// FUNCTION: GAMEMD 0x006B4F40
 RTTIType SmudgeClass::Fetch_RTTI(void) const
 {
 	return(RTTI_SMUDGE);
 }
 
-// FUNCTION: 0x006B4F50
+// FUNCTION: GAMEMD 0x006B4F50
 HRESULT STDMETHODCALLTYPE SmudgeClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -172,6 +172,8 @@ HRESULT STDMETHODCALLTYPE SmudgeClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x006B4F90 SmudgeClass::Draw_It
+// TEMPLATE: GAMEMD 0x006B4F90
+// ?Draw_It@SmudgeClass@@UBEXABVPoint2D@@ABV?$TRect@H@@@Z
 
-// FUNCTION: 0x006B4FA0 SmudgeClass::~SmudgeClass
+// SYNTHETIC: GAMEMD 0x006B4FA0
+// ??_GSmudgeClass@@UAEPAXI@Z

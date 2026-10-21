@@ -6,7 +6,7 @@
 #include "always.h"
 #include "random.h"
 
-// FUNCTION: 0x0065C640
+// FUNCTION: GAMEMD 0x0065C640
 int RandomClass::operator ()(void)
 {
 	Seed = (Seed * MULT_CONSTANT) + ADD_CONSTANT;
@@ -14,20 +14,20 @@ int RandomClass::operator ()(void)
 	return((Seed >> THROW_AWAY_BITS) & (~((~0) << SIGNIFICANT_BITS)));
 }
 
-// FUNCTION: 0x0065C660
+// FUNCTION: GAMEMD 0x0065C660
 int RandomClass::operator() (int minval, int maxval)
 {
 	return(Pick_Random_Number(*this, minval, maxval));
 }
 
-// FUNCTION: 0x0065C890
+// FUNCTION: GAMEMD 0x0065C890
 Random3Class::Random3Class(unsigned seed1, unsigned seed2) :
 	Seed(seed1),
 	Index(seed2)
 {
 }
 
-// FUNCTION: 0x0065C8B0
+// FUNCTION: GAMEMD 0x0065C8B0
 int Random3Class::operator() (void)
 {
 	int loword = Seed;
@@ -45,13 +45,13 @@ int Random3Class::operator() (void)
 	return(hiword);
 }
 
-// FUNCTION: 0x0065C910
+// FUNCTION: GAMEMD 0x0065C910
 int Random3Class::operator() (int minval, int maxval)
 {
 	return(Pick_Random_Number(*this, minval, maxval));
 }
 
-// FUNCTION: 0x0065C6D0
+// FUNCTION: GAMEMD 0x0065C6D0
 Random2Class::Random2Class(unsigned seed) :
 	Index1(0),
 	Index2(103)
@@ -64,7 +64,7 @@ Random2Class::Random2Class(unsigned seed) :
 	unknown_00 = false;
 }
 
-// FUNCTION: 0x0065C780
+// FUNCTION: GAMEMD 0x0065C780
 int Random2Class::operator() (void)
 {
 	if (unknown_00) return(0);
@@ -81,7 +81,7 @@ int Random2Class::operator() (void)
 	return(val);
 }
 
-// FUNCTION: 0x0065C7E0
+// FUNCTION: GAMEMD 0x0065C7E0
 int Random2Class::operator() (int minval, int maxval)
 {
 	return(Pick_Random_Number(*this, minval, maxval));

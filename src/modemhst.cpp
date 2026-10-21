@@ -51,25 +51,38 @@ char * __fastcall WideToCharString(char * dest, wchar_t const * src, int count);
 }
 
 // Initialisers of geometry.h constants.
-// FUNCTION: 0x005B75F0 $E2
-// FUNCTION: 0x005B7620 $E5
-// FUNCTION: 0x005B7640 $E8
-// FUNCTION: 0x005B7660 $E11
-// FUNCTION: 0x005B7680 $E14
-// FUNCTION: 0x005B76A0 $E17
-// FUNCTION: 0x005B76C0 $E20
-// FUNCTION: 0x005B7700 $E23
-// FUNCTION: 0x005B7730 $E26
-// FUNCTION: 0x005B7760 $E29
-// FUNCTION: 0x005B7790 $E32
-// FUNCTION: 0x005B77A0 $E35
-// FUNCTION: 0x005B77C0 $E38
+// SYNTHETIC: GAMEMD 0x005B75F0 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x005B7620 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x005B7640 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x005B7660 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x005B7680 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x005B76A0 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x005B76C0 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x005B7700 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x005B7730 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x005B7760 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x005B7790 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x005B77A0 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x005B77C0 SYMBOL
+// _$E38
 
 ModemHost * _ModemHost;
 
 BOOL CALLBACK Modem_Host_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 
-// FUNCTION: 0x005B77E0
+// FUNCTION: GAMEMD 0x005B77E0
 bool ModemHost::Dialog(void)
 {
 	bool started = false;
@@ -142,7 +155,7 @@ bool ModemHost::Dialog(void)
 	return(started);
 }
 
-// FUNCTION: 0x005B8CE0
+// FUNCTION: GAMEMD 0x005B8CE0
 bool ModemHost::ReadDialog(void)
 {
 	DebugString("ModemHost.ReadDialog(enter)\n");
@@ -282,7 +295,7 @@ bool ModemHost::ReadDialog(void)
 	return(true);
 }
 
-// FUNCTION: 0x005B9250
+// FUNCTION: GAMEMD 0x005B9250
 void ModemHost::SendCurrentMessage(void)
 {
 	wchar_t buf[256];
@@ -300,7 +313,7 @@ void ModemHost::SendCurrentMessage(void)
 	}
 }
 
-// FUNCTION: 0x005B93F0
+// FUNCTION: GAMEMD 0x005B93F0
 void ModemHost::SetHouse(void)
 {
 	HWND handle = GetDlgItem(_Dialog, IDC_MODEM_YOURSIDE);
@@ -317,7 +330,7 @@ void ModemHost::SetHouse(void)
 	}
 }
 
-// FUNCTION: 0x005B9450
+// FUNCTION: GAMEMD 0x005B9450
 void ModemHost::SetColor(void)
 {
 	HWND handle = GetDlgItem(_Dialog, IDC_MODEM_YOURCOLOR);
@@ -332,7 +345,7 @@ void ModemHost::SetColor(void)
 	}
 }
 
-// FUNCTION: 0x005B94C0
+// FUNCTION: GAMEMD 0x005B94C0
 void ModemHost::SetName(bool update)
 {
 	wchar_t namebuf[20];
@@ -349,7 +362,7 @@ void ModemHost::SetName(bool update)
 	}
 }
 
-// FUNCTION: 0x005B9550
+// FUNCTION: GAMEMD 0x005B9550
 void ModemHost::SetOther(const wchar_t * name, int color, int house)
 {
 	if (wcsicmp(TheirName, name) != 0 || TheirColor != color || TheirHouse != house) {
@@ -372,7 +385,7 @@ void ModemHost::SetOther(const wchar_t * name, int color, int house)
 	Transmit = true;
 }
 
-// FUNCTION: 0x005B9650
+// FUNCTION: GAMEMD 0x005B9650
 void ModemHost::SetUnitCount(void)
 {
 	HWND handle = GetDlgItem(_Dialog, IDC_MODEM_UNITCOUNT);
@@ -382,7 +395,7 @@ void ModemHost::SetUnitCount(void)
 	}
 }
 
-// FUNCTION: 0x005B9680
+// FUNCTION: GAMEMD 0x005B9680
 void ModemHost::SetBuildLevel(void)
 {
 	HWND handle = GetDlgItem(_Dialog, IDC_TECHLEVEL);
@@ -392,7 +405,7 @@ void ModemHost::SetBuildLevel(void)
 	}
 }
 
-// FUNCTION: 0x005B96B0
+// FUNCTION: GAMEMD 0x005B96B0
 void ModemHost::SetCredits(void)
 {
 	HWND handle = GetDlgItem(_Dialog, IDC_CREDITS);
@@ -402,7 +415,7 @@ void ModemHost::SetCredits(void)
 	}
 }
 
-// FUNCTION: 0x005B96E0
+// FUNCTION: GAMEMD 0x005B96E0
 void ModemHost::SetAIPlayers(void)
 {
 	HWND handle = GetDlgItem(_Dialog, IDC_AIPLAYERS);
@@ -412,7 +425,7 @@ void ModemHost::SetAIPlayers(void)
 	}
 }
 
-// FUNCTION: 0x005B9710
+// FUNCTION: GAMEMD 0x005B9710
 void ModemHost::SetGameSpeed(void)
 {
 	HWND handle = GetDlgItem(_Dialog, IDC_GAME_SPEED_SLIDER);
@@ -422,7 +435,7 @@ void ModemHost::SetGameSpeed(void)
 	}
 }
 
-// FUNCTION: 0x005B9750
+// FUNCTION: GAMEMD 0x005B9750
 void ModemHost::SetAIDifficulty(void)
 {
 	HWND handle = GetDlgItem(_Dialog, IDC_AILEVEL_SLIDER);
@@ -432,7 +445,7 @@ void ModemHost::SetAIDifficulty(void)
 	}
 }
 
-// FUNCTION: 0x005B9780
+// FUNCTION: GAMEMD 0x005B9780
 void ModemHost::SetMCVRedeploy(void)
 {
 	HWND handle = GetDlgItem(_Dialog, IDC_MODEM_REDEPLOY_MCV);
@@ -442,7 +455,7 @@ void ModemHost::SetMCVRedeploy(void)
 	}
 }
 
-// FUNCTION: 0x005B97C0
+// FUNCTION: GAMEMD 0x005B97C0
 void ModemHost::SetBases(void)
 {
 	HWND handle = GetDlgItem(_Dialog, IDC_MODEM_BASES);
@@ -459,7 +472,7 @@ void ModemHost::SetBases(void)
 	}
 }
 
-// FUNCTION: 0x005B9830
+// FUNCTION: GAMEMD 0x005B9830
 void ModemHost::SetGoodies(void)
 {
 	HWND handle = GetDlgItem(_Dialog, IDC_GOODIES);
@@ -469,7 +482,7 @@ void ModemHost::SetGoodies(void)
 	}
 }
 
-// FUNCTION: 0x005B9870
+// FUNCTION: GAMEMD 0x005B9870
 void ModemHost::SetFogOfWar(void)
 {
 	HWND handle = GetDlgItem(_Dialog, IDC_MODEM_FOG);
@@ -479,7 +492,7 @@ void ModemHost::SetFogOfWar(void)
 	}
 }
 
-// FUNCTION: 0x005B98B0
+// FUNCTION: GAMEMD 0x005B98B0
 void ModemHost::SetBridgeDestruction(void)
 {
 	HWND handle = GetDlgItem(_Dialog, IDC_BRIDGE_DESTROY);
@@ -489,7 +502,7 @@ void ModemHost::SetBridgeDestruction(void)
 	}
 }
 
-// FUNCTION: 0x005B98F0
+// FUNCTION: GAMEMD 0x005B98F0
 void ModemHost::SetHarvTruce(void)
 {
 	HWND handle = GetDlgItem(_Dialog, IDC_HARVTRUCE);
@@ -499,7 +512,7 @@ void ModemHost::SetHarvTruce(void)
 	}
 }
 
-// FUNCTION: 0x005B9930
+// FUNCTION: GAMEMD 0x005B9930
 void ModemHost::SetShortGame(void)
 {
 	HWND handle = GetDlgItem(_Dialog, IDC_SHORT_GAME);
@@ -516,7 +529,7 @@ void ModemHost::SetShortGame(void)
 	}
 }
 
-// FUNCTION: 0x005B99A0
+// FUNCTION: GAMEMD 0x005B99A0
 void ModemHost::SetSWAllowed(void)
 {
 	HWND handle = GetDlgItem(_Dialog, 0x69a);
@@ -526,7 +539,7 @@ void ModemHost::SetSWAllowed(void)
 	}
 }
 
-// FUNCTION: 0x005B99E0
+// FUNCTION: GAMEMD 0x005B99E0
 void ModemHost::SetBuildOffAlly(void)
 {
 	HWND handle = GetDlgItem(_Dialog, 0x69d);
@@ -536,7 +549,7 @@ void ModemHost::SetBuildOffAlly(void)
 	}
 }
 
-// FUNCTION: 0x005B9A20
+// FUNCTION: GAMEMD 0x005B9A20
 void ModemHost::SetCrapEngineers(void)
 {
 	HWND handle = GetDlgItem(_Dialog, IDC_MULTI_ENGINEER);
@@ -552,7 +565,7 @@ static inline LRESULT _Send_Dlg_Item_Message(HWND dialog, int id, UINT msg, WPAR
 	return SendMessage(handle, msg, wparam, lparam);
 }
 
-// FUNCTION: 0x005B9A60
+// FUNCTION: GAMEMD 0x005B9A60
 void ModemHost::SelectMultiMap(void)
 {
 	DebugString("ModemHost.SelectMultiMap(enter)\n");
@@ -612,7 +625,7 @@ void ModemHost::SelectMultiMap(void)
 	DebugString("ModemHost.SelectMultiMap(exit)\n");
 }
 
-// FUNCTION: 0x005B9C90
+// FUNCTION: GAMEMD 0x005B9C90
 void ModemHost::SelectRandomMap(void)
 {
 	DebugString("ModemHost.SelectRandomMap(enter)\n");
@@ -667,7 +680,7 @@ void ModemHost::SelectRandomMap(void)
 	DebugString("ModemHost.SelectMultiMap(exit)\n");
 }
 
-// FUNCTION: 0x005B9F30
+// FUNCTION: GAMEMD 0x005B9F30
 void ModemHost::Send(bool force)
 {
 	NullModem.Service();
@@ -690,7 +703,7 @@ void ModemHost::Send(bool force)
 	}
 }
 
-// FUNCTION: 0x005BA060
+// FUNCTION: GAMEMD 0x005BA060
 bool ModemHost::Receive(bool silent)
 {
 	SerialPacketType receivepacket;
@@ -842,7 +855,7 @@ bool ModemHost::Receive(bool silent)
 	return(false);
 }
 
-// FUNCTION: 0x005BA660
+// FUNCTION: GAMEMD 0x005BA660
 void ModemHost::SendGameOptions(void)
 {
 	SerialPacketType sendpacket;
@@ -892,7 +905,7 @@ void ModemHost::SendGameOptions(void)
 	NullModem.Send_Message(&sendpacket, sizeof(sendpacket), 1);
 }
 
-// FUNCTION: 0x005BA970
+// FUNCTION: GAMEMD 0x005BA970
 void ModemHost::SendAMessage(const wchar_t * message)
 {
 	if (message != NULL) {
@@ -911,7 +924,7 @@ void ModemHost::SendAMessage(const wchar_t * message)
 	}
 }
 
-// FUNCTION: 0x005BAA80
+// FUNCTION: GAMEMD 0x005BAA80
 void ModemHost::DrawMessage(const wchar_t * name, int color, const wchar_t * message)
 {
 	wchar_t buf[256];
@@ -926,7 +939,7 @@ void ModemHost::DrawMessage(const wchar_t * name, int color, const wchar_t * mes
 	}
 }
 
-// FUNCTION: 0x005BAB00
+// FUNCTION: GAMEMD 0x005BAB00
 void ModemHost::SignOff(void)
 {
 	unsigned int starttime;
@@ -964,7 +977,7 @@ void ModemHost::SignOff(void)
 	}
 }
 
-// FUNCTION: 0x005BAC60
+// FUNCTION: GAMEMD 0x005BAC60
 bool ModemHost::StartGame(bool load_game)
 {
 	SerialPacketType sendpacket;
@@ -1103,7 +1116,7 @@ bool ModemHost::StartGame(bool load_game)
 	return(true);
 }
 
-// FUNCTION: 0x005BB260
+// FUNCTION: GAMEMD 0x005BB260
 bool ModemHostCallback(void)
 {
 	if (_ModemHost != NULL) {

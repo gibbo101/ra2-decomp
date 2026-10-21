@@ -50,7 +50,7 @@ extern void __cdecl UnVQ_Nop(unsigned char *codebook, unsigned char *pointers,
 		unsigned char *buffer, unsigned long blocksperrow,
 		unsigned long numrows, unsigned long bufwidth);
 
-// FUNCTION: 0x007C2C60
+// FUNCTION: GAMEMD 0x007C2C60
 void VQA_Close(VQAHandle *vqa)
 {
 	VQAHandleP *vqap;
@@ -83,7 +83,7 @@ void VQA_Close(VQAHandle *vqa)
 	config->MemoryHandler((VQAHandle *)vqap, VQAMEM_FREE, (VQAHandleP *)vqap, NULL);
 }
 
-// FUNCTION: 0x007C2D00
+// FUNCTION: GAMEMD 0x007C2D00
 long VQA_Play(VQAHandle *vqa, long mode, int flags)
 {
 	VQAHandleP *vqabuf;
@@ -373,7 +373,7 @@ long VQA_Play(VQAHandle *vqa, long mode, int flags)
 	return(rc);
 }
 
-// FUNCTION: 0x007C30D0
+// FUNCTION: GAMEMD 0x007C30D0
 long VQA_SeekFrame(VQAHandle *vqa, long framenum, long fromwhere)
 {
 	VQAHandleP   *vqap;
@@ -461,7 +461,7 @@ long VQA_SeekFrame(VQAHandle *vqa, long framenum, long fromwhere)
 	return(rc);
 }
 
-// FUNCTION: 0x007C3230
+// FUNCTION: GAMEMD 0x007C3230
 long VQA_SetUnVQ(VQAHandle *vqa, UNVQ_FUNC unvq1, UNVQ_FUNC unvq2)
 {
 	VQAHandleP *vqap = (VQAHandleP *)vqa;
@@ -480,7 +480,7 @@ long VQA_SetUnVQ(VQAHandle *vqa, UNVQ_FUNC unvq1, UNVQ_FUNC unvq2)
 	return(VQAERR_NONE);
 }
 
-// FUNCTION: 0x007C3270
+// FUNCTION: GAMEMD 0x007C3270
 long VQA_Set_DrawBuffer(VQAHandle *vqa, unsigned char *buffer, unsigned long width, unsigned long height, long xpos, long ypos)
 {
 	long origin;
@@ -570,7 +570,7 @@ long VQA_Set_DrawBuffer(VQAHandle *vqa, unsigned char *buffer, unsigned long wid
 	return(VQAERR_SETBUFFR);
 }
 
-// FUNCTION: 0x007C3430
+// FUNCTION: GAMEMD 0x007C3430
 long VQA_SetLoop(VQAHandle *vqa, int id, int iterations, int mode)
 {
 	VQAHandleP *vqap = (VQAHandleP *)vqa;
@@ -596,7 +596,7 @@ long VQA_SetLoop(VQAHandle *vqa, int id, int iterations, int mode)
 	return(rc);
 }
 
-// FUNCTION: 0x007C34B0
+// FUNCTION: GAMEMD 0x007C34B0
 long VQA_SetLoop_Internal(VQAHandle *vqa, int start, int end, int iterations, int mode)
 {
 	VQAHandleP *vqap = (VQAHandleP *)vqa;
@@ -650,13 +650,13 @@ long VQA_SetLoop_Internal(VQAHandle *vqa, int start, int end, int iterations, in
 	return(rc);
 }
 
-// FUNCTION: 0x007C35B0
+// FUNCTION: GAMEMD 0x007C35B0
 int VQA_GetLoopCount(VQAHandleP *vqap)
 {
 	return(vqap->LoopInfo.Header.Count);
 }
 
-// FUNCTION: 0x007C3670
+// FUNCTION: GAMEMD 0x007C3670
 void VQA_ResetCache(VQAHandleP *vqap)
 {
 	vqap->LoopCache.ID = -1;
@@ -664,7 +664,7 @@ void VQA_ResetCache(VQAHandleP *vqap)
 	vqap->LoopCache.Max = -1;
 }
 
-// FUNCTION: 0x007C3690
+// FUNCTION: GAMEMD 0x007C3690
 long VQA_SetStop(VQAHandle *vqa, long stop)
 {
 	VQAHandleP *vqap = (VQAHandleP *)vqa;
@@ -681,13 +681,13 @@ long VQA_SetStop(VQAHandle *vqa, long stop)
 	return(oldstop);
 }
 
-// FUNCTION: 0x007C36C0
+// FUNCTION: GAMEMD 0x007C36C0
 char *VQA_Version(void)
 {
 	return(VQA_VERSION);
 }
 
-// FUNCTION: 0x007C36D0
+// FUNCTION: GAMEMD 0x007C36D0
 long VQA_GetClipping(VQAHandleP *vqap, int & clipw, long & cliph)
 {
 	if (vqap->Clipper.Width > 0) {
@@ -700,7 +700,7 @@ long VQA_GetClipping(VQAHandleP *vqap, int & clipw, long & cliph)
 	return(VQAERR_NONE);
 }
 
-// FUNCTION: 0x007C3710
+// FUNCTION: GAMEMD 0x007C3710
 long VQA_GetBlockInfo(VQAHandle *vqa, long & blockw, long & blockh, long & clrmode)
 {
 	VQAHandleP *vqap = (VQAHandleP *)vqa;
@@ -714,13 +714,13 @@ long VQA_GetBlockInfo(VQAHandle *vqa, long & blockw, long & blockh, long & clrmo
 	return(VQAERR_NONE);
 }
 
-// FUNCTION: 0x007C3740
+// FUNCTION: GAMEMD 0x007C3740
 char *VQA_IDString(void)
 {
 	return("VQA playback 5.0 (Oct 30 2001 17:30:47)");
 }
 
-// FUNCTION: 0x007C3750
+// FUNCTION: GAMEMD 0x007C3750
 long User_Update(VQAHandle *vqa)
 {
 	VQAHandleP *vqap;
@@ -771,7 +771,7 @@ long User_Update(VQAHandle *vqa)
 	return(rc);
 }
 
-// FUNCTION: 0x007C3820
+// FUNCTION: GAMEMD 0x007C3820
 long VQA_NumFramesWithPalettes(VQAHandleP *vqap)
 {
 	long num = 0;
@@ -783,7 +783,7 @@ long VQA_NumFramesWithPalettes(VQAHandleP *vqap)
 	return(num);
 }
 
-// FUNCTION: 0x007C3840
+// FUNCTION: GAMEMD 0x007C3840
 long VQA_GetXYPos(VQAHandleP *vqap, int & x, long & y)
 {
 	VQAHeader *header;
@@ -796,7 +796,7 @@ long VQA_GetXYPos(VQAHandleP *vqap, int & x, long & y)
 	return(VQAERR_NONE);
 }
 
-// FUNCTION: 0x007C3860
+// FUNCTION: GAMEMD 0x007C3860
 long VQA_LargestLoop(VQAHandleP *vqap, long streamsize)
 {
 	VQALoopInfo::HEADER *infohdr = &vqap->LoopInfo.Header;

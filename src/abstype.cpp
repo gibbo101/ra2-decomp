@@ -21,7 +21,7 @@ int DAT_0088773C;
 int DAT_00887740;
 int DAT_00887744;
 
-// FUNCTION: 0x00410800
+// FUNCTION: GAMEMD 0x00410800
 AbstractTypeClass::AbstractTypeClass(char const * ininame) :
 	BASECLASS(),
 	IniName(),
@@ -40,7 +40,7 @@ AbstractTypeClass::AbstractTypeClass(char const * ininame) :
 	AbstractTypes.Add(this);
 }
 
-// FUNCTION: 0x00410960
+// FUNCTION: GAMEMD 0x00410960
 AbstractTypeClass::AbstractTypeClass(NoInitClass const & x) :
 	BASECLASS(x),
 	IniName(x),
@@ -55,19 +55,19 @@ AbstractTypeClass::AbstractTypeClass(NoInitClass const & x) :
 	}
 }
 
-// FUNCTION: 0x004109C0
+// FUNCTION: GAMEMD 0x004109C0
 AbstractTypeClass::~AbstractTypeClass(void)
 {
 	AbstractTypes.Delete(this);
 }
 
-// FUNCTION: 0x00410A40
+// FUNCTION: GAMEMD 0x00410A40
 bool AbstractTypeClass::operator == (char const * string) const
 {
 	return(stricmp(string, IniName) == 0);
 }
 
-// FUNCTION: 0x00410A60
+// FUNCTION: GAMEMD 0x00410A60
 bool AbstractTypeClass::Read_INI(CCINIClass & ini)
 {
 	char buffer[1024];
@@ -89,7 +89,7 @@ bool AbstractTypeClass::Read_INI(CCINIClass & ini)
 	return(false);
 }
 
-// FUNCTION: 0x00410B90
+// FUNCTION: GAMEMD 0x00410B90
 bool AbstractTypeClass::Write_INI(CCINIClass & ini) const
 {
 	ini.Clear(IniName);
@@ -100,7 +100,7 @@ bool AbstractTypeClass::Write_INI(CCINIClass & ini) const
 	return(true);
 }
 
-// FUNCTION: 0x00410BE0
+// FUNCTION: GAMEMD 0x00410BE0
 void AbstractTypeClass::Compute_CRC(CRCEngine & crc) const
 {
 	BASECLASS::Compute_CRC(crc);
@@ -109,14 +109,15 @@ void AbstractTypeClass::Compute_CRC(CRCEngine & crc) const
 	crc((const char *)UINameLabel);
 }
 
-// FUNCTION: 0x00410C20
+// FUNCTION: GAMEMD 0x00410C20
 void AbstractTypeClass::Init_Theater(TheaterType theater)
 {
 }
 
-// FUNCTION: 0x00410C30 AbstractTypeClass::~AbstractTypeClass
+// SYNTHETIC: GAMEMD 0x00410C30
+// ??_GAbstractTypeClass@@UAEPAXI@Z
 
-// FUNCTION: 0x00410CC0
+// FUNCTION: GAMEMD 0x00410CC0
 void FUN_00410CC0(void)
 {
 	DAT_00887738 = 0;

@@ -5,7 +5,7 @@
 
 #define PIXEL_RGB555(r,g,b) 		( (((r) & 0xF8) << 7) | (((g) & 0xF8) << 2) | (((b) & 0xF8) >> 3) )
 
-// FUNCTION: 0x004F4DA0
+// FUNCTION: GAMEMD 0x004F4DA0
 void rgb24_clamp(unsigned char *buf, int len)
 {
 	for (unsigned i = 0; i < 3 * (unsigned)len; i++) {
@@ -14,7 +14,7 @@ void rgb24_clamp(unsigned char *buf, int len)
 	}
 }
 
-// FUNCTION: 0x004F4DC0
+// FUNCTION: GAMEMD 0x004F4DC0
 void rgb32_to_rgb24_clamped(unsigned char *buf, int len)
 {
 	for (int i = 0; i < len; i++) {
@@ -31,7 +31,7 @@ void rgb32_to_rgb24_clamped(unsigned char *buf, int len)
 	}
 }
 
-// FUNCTION: 0x004F4EB0
+// FUNCTION: GAMEMD 0x004F4EB0
 void rgb32_to_rgb24(unsigned char *buf, int rows, int columns, int count)
 {
 	unsigned len = rows * columns * count;

@@ -52,40 +52,52 @@ struct IntTriple {
 	IntTriple() { A = 0; B = 0; C = 0; }
 };
 
-// FUNCTION: 0x005ADB20 $E15
+// SYNTHETIC: GAMEMD 0x005ADB20 SYMBOL
+// _$E15
 double DAT_00ABED78 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x005ADB50 $E18
+// SYNTHETIC: GAMEMD 0x005ADB50 SYMBOL
+// _$E18
 double DAT_00ABEDC8 = DAT_00ABED78 / DAT_007EDB38;
 
-// FUNCTION: 0x005ADB70 $E21
+// SYNTHETIC: GAMEMD 0x005ADB70 SYMBOL
+// _$E21
 double DAT_00ABEDB0 = DAT_007E1718 / DAT_00ABEDC8;
 
-// FUNCTION: 0x005ADB90 $E24
+// SYNTHETIC: GAMEMD 0x005ADB90 SYMBOL
+// _$E24
 double DAT_00ABEDA8 = DAT_007E1720 * DAT_007EDB40;
 
-// FUNCTION: 0x005ADBB0 $E27
+// SYNTHETIC: GAMEMD 0x005ADBB0 SYMBOL
+// _$E27
 double DAT_00ABED80 = DAT_007E1728 * DAT_007EDB40;
 
-// FUNCTION: 0x005ADBD0 $E30
+// SYNTHETIC: GAMEMD 0x005ADBD0 SYMBOL
+// _$E30
 double DAT_00ABED58 = DAT_007E1730 * DAT_007EDB40;
 
-// FUNCTION: 0x005ADBF0 $E33
+// SYNTHETIC: GAMEMD 0x005ADBF0 SYMBOL
+// _$E33
 int DAT_00ABEDD0 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00ABED58 - DAT_00ABED80) * DAT_00ABED78));
 
-// FUNCTION: 0x005ADC30 $E36
+// SYNTHETIC: GAMEMD 0x005ADC30 SYMBOL
+// _$E36
 double DAT_00ABED88 = FUN_004CADE0(DAT_00ABEDD0 * DAT_007E1740);
 
-// FUNCTION: 0x005ADC60 $E39
+// SYNTHETIC: GAMEMD 0x005ADC60 SYMBOL
+// _$E39
 double DAT_00ABEDA0 = FUN_004CADE0((DAT_00ABEDD0 * 2) / DAT_00ABED78);
 
-// FUNCTION: 0x005ADC90 $E42
+// SYNTHETIC: GAMEMD 0x005ADC90 SYMBOL
+// _$E42
 int DAT_00ABEDC4 = (int)(DAT_00ABEDD0 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x005ADCC0 $E45
+// SYNTHETIC: GAMEMD 0x005ADCC0 SYMBOL
+// _$E45
 ShortPair DAT_00ABED70;
 
-// FUNCTION: 0x005ADCD0 $E48
+// SYNTHETIC: GAMEMD 0x005ADCD0 SYMBOL
+// _$E48
 IntTriple DAT_00ABED90;
 
 class MapSelect : public MSEngine {
@@ -127,7 +139,7 @@ class MapSelect : public MSEngine {
 
 void __cdecl FUN_004068E0(char const * format, ...);
 
-// FUNCTION: 0x005ADCF0
+// FUNCTION: GAMEMD 0x005ADCF0
 void FUN_005ADCF0(void)
 {
 	extern int DAT_00ABEDC0;
@@ -138,7 +150,7 @@ void FUN_005ADCF0(void)
 	DAT_00ABEDBC = 0x80;
 }
 
-// FUNCTION: 0x005ADD10
+// FUNCTION: GAMEMD 0x005ADD10
 const char * Map_Selection(ScenarioClass * scen)
 {
 	if (MapSelect().SetNextScenario(scen) == false) {
@@ -151,7 +163,7 @@ const char * Map_Selection(ScenarioClass * scen)
 	return((strlen(scen->ScenarioName) == 0) ? NULL : scen->ScenarioName);
 }
 
-// FUNCTION: 0x005ADE20
+// FUNCTION: GAMEMD 0x005ADE20
 const char * Map_Select_Advance(ScenarioClass * scenario, const char * map_name)
 {
 	if (MapSelect().Advance_Progression(scenario, map_name) == false) {
@@ -162,7 +174,7 @@ const char * Map_Select_Advance(ScenarioClass * scenario, const char * map_name)
 	return(map_name);
 }
 
-// FUNCTION: 0x005ADF20
+// FUNCTION: GAMEMD 0x005ADF20
 bool MapSelect::Advance_Progression(ScenarioClass * scen, Wstring const & map_name)
 {
 	if ((scen == NULL) || (map_name == (char const *)NULL)) {
@@ -220,7 +232,7 @@ bool MapSelect::Advance_Progression(ScenarioClass * scen, Wstring const & map_na
 	return(strlen(scen->ScenarioName) > 0);
 }
 
-// FUNCTION: 0x005AE220
+// FUNCTION: GAMEMD 0x005AE220
 bool MapSelect::Init(ScenarioClass * scenario)
 {
 	AnimDrawer = NULL;
@@ -290,7 +302,7 @@ bool MapSelect::Init(ScenarioClass * scenario)
 	return(true);
 }
 
-// FUNCTION: 0x005AE460
+// FUNCTION: GAMEMD 0x005AE460
 void MapSelect::Deinit(void)
 {
 	if (Font != NULL) {
@@ -311,7 +323,7 @@ void MapSelect::Deinit(void)
 	Choices.Deinit();
 }
 
-// FUNCTION: 0x005AE4C0
+// FUNCTION: GAMEMD 0x005AE4C0
 void MapSelect::Process_Idle(void)
 {
 	if (VoiceName != (char const *)NULL && VoiceTimer == 0) {
@@ -319,13 +331,13 @@ void MapSelect::Process_Idle(void)
 	}
 }
 
-// FUNCTION: 0x005AE4F0
+// FUNCTION: GAMEMD 0x005AE4F0
 const char * MapSelect::Process_Input(MapStage * stage)
 {
 	return(NULL);
 }
 
-// FUNCTION: 0x005AE500
+// FUNCTION: GAMEMD 0x005AE500
 void MapSelect::Play_Sound(Wstring const & name)
 {
 	if (name != (char const *)NULL) {
@@ -337,26 +349,27 @@ void MapSelect::Play_Sound(Wstring const & name)
 	}
 }
 
-// FUNCTION: 0x005AE530
+// FUNCTION: GAMEMD 0x005AE530
 void MapSelect::Queue_Voice(Wstring const & name, int delay)
 {
 	VoiceName = name;
 	VoiceTimer = delay;
 }
 
-// FUNCTION: 0x005AE570
+// FUNCTION: GAMEMD 0x005AE570
 void MapSelect::Start_Voice(Wstring const & name)
 {
 }
 
-// FUNCTION: 0x005AE580
+// FUNCTION: GAMEMD 0x005AE580
 void MapSelect::Stop_Voice(bool fade)
 {
 }
 
-// FUNCTION: 0x005AE590
+// FUNCTION: GAMEMD 0x005AE590
 void MapSelect::Do_Custom_Draw(Surface * surface)
 {
 }
 
-// FUNCTION: 0x005AE5A0 MapSelect::~MapSelect
+// SYNTHETIC: GAMEMD 0x005AE5A0
+// ??_GMapSelect@@UAEPAXI@Z

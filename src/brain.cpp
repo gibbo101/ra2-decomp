@@ -15,7 +15,7 @@
 #include "tracker.h"
 #include "vector.h"
 
-// FUNCTION: 0x0043A350
+// FUNCTION: GAMEMD 0x0043A350
 NeuronClass::NeuronClass(void):
 	Pointer1(NULL),
 	Pointer2(NULL),
@@ -26,14 +26,14 @@ NeuronClass::NeuronClass(void):
 	AbstractTypePtrTracker.Add(this);
 }
 
-// FUNCTION: 0x0043A440
+// FUNCTION: GAMEMD 0x0043A440
 NeuronClass::~NeuronClass(void)
 {
 	AbstractTypePtrTracker.Delete(this);
 	TeamPtrTracker.Delete(this);
 }
 
-// FUNCTION: 0x0043A500
+// FUNCTION: GAMEMD 0x0043A500
 HRESULT STDMETHODCALLTYPE NeuronClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -41,7 +41,7 @@ HRESULT STDMETHODCALLTYPE NeuronClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x0043A540
+// FUNCTION: GAMEMD 0x0043A540
 HRESULT STDMETHODCALLTYPE NeuronClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -57,7 +57,7 @@ HRESULT STDMETHODCALLTYPE NeuronClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x0043A5B0
+// FUNCTION: GAMEMD 0x0043A5B0
 HRESULT STDMETHODCALLTYPE NeuronClass::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -67,20 +67,20 @@ HRESULT STDMETHODCALLTYPE NeuronClass::Save(IStream * stream, BOOL cleardirty)
 	return(result);
 }
 
-// FUNCTION: 0x0043A5D0
+// FUNCTION: GAMEMD 0x0043A5D0
 void NeuronClass::Compute_CRC(CRCEngine &crc) const
 {
 	BASECLASS::Compute_CRC(crc);
 	crc((int)(Frame - CreationFrame));
 }
 
-// FUNCTION: 0x0043A600
+// FUNCTION: GAMEMD 0x0043A600
 BrainClass::~BrainClass(void)
 {
 	Deinit();
 }
 
-// FUNCTION: 0x0043A670
+// FUNCTION: GAMEMD 0x0043A670
 void BrainClass::Deinit(void)
 {
 	int count = Neurons.Count();
@@ -92,7 +92,7 @@ void BrainClass::Deinit(void)
 	Neurons.Clear();
 }
 
-// FUNCTION: 0x0043A6B0
+// FUNCTION: GAMEMD 0x0043A6B0
 void BrainClass::Init(int min, int max)
 {
 	Deinit();
@@ -100,7 +100,7 @@ void BrainClass::Init(int min, int max)
 	MaxCount = max;
 }
 
-// FUNCTION: 0x0043A700
+// FUNCTION: GAMEMD 0x0043A700
 bool BrainClass::Add_Neuron(NeuronClass *neuron)
 {
 	if (Neurons.Count() < MaxCount) {
@@ -111,7 +111,7 @@ bool BrainClass::Add_Neuron(NeuronClass *neuron)
 	return(false);
 }
 
-// FUNCTION: 0x0043A770
+// FUNCTION: GAMEMD 0x0043A770
 HRESULT BrainClass::Save(IStream * stream, BOOL cleardirty)
 {
 	if (stream == NULL) {
@@ -134,7 +134,7 @@ HRESULT BrainClass::Save(IStream * stream, BOOL cleardirty)
 	return(result);
 }
 
-// FUNCTION: 0x0043A7E0
+// FUNCTION: GAMEMD 0x0043A7E0
 HRESULT BrainClass::Load(IStream * stream)
 {
 	if (stream == NULL) {
@@ -164,10 +164,14 @@ HRESULT BrainClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x0043A9A0 NeuronClass::Fetch_RTTI
+// FUNCTION: GAMEMD 0x0043A9A0
+// NeuronClass::Fetch_RTTI
 
-// FUNCTION: 0x0043A9B0 NeuronClass::Fetch_Object_Size
+// FUNCTION: GAMEMD 0x0043A9B0
+// NeuronClass::Fetch_Object_Size
 
-// FUNCTION: 0x0043A9C0 NeuronClass::~NeuronClass
+// SYNTHETIC: GAMEMD 0x0043A9C0
+// ??_GNeuronClass@@UAEPAXI@Z
 
-// FUNCTION: 0x0043AA90 BrainClass::~BrainClass
+// SYNTHETIC: GAMEMD 0x0043AA90
+// ??_GBrainClass@@UAEPAXI@Z

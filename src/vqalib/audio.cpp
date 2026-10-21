@@ -9,7 +9,7 @@
 #include	"ahandle.h"
 #include	"vqamem.h"
 
-// FUNCTION: 0x007BD170
+// FUNCTION: GAMEMD 0x007BD170
 long VQA_OpenAudio(VQAHandleP *vqap)
 {
 	VQAAudio *audio;
@@ -43,7 +43,7 @@ long VQA_OpenAudio(VQAHandleP *vqap)
 	return(rc);
 }
 
-// FUNCTION: 0x007BD210
+// FUNCTION: GAMEMD 0x007BD210
 void VQA_CloseAudio(VQAHandleP *vqap)
 {
 	VQAAudio *audio;
@@ -60,7 +60,7 @@ void VQA_CloseAudio(VQAHandleP *vqap)
 	}
 }
 
-// FUNCTION: 0x007BD270
+// FUNCTION: GAMEMD 0x007BD270
 void VQA_StartAudio(VQAHandleP *vqap)
 {
 	VQAAudio *audio;
@@ -71,21 +71,21 @@ void VQA_StartAudio(VQAHandleP *vqap)
 	audio->Flags |= VQAAUDF_ISPLAYING;
 }
 
-// FUNCTION: 0x007BD290
+// FUNCTION: GAMEMD 0x007BD290
 void VQA_PauseAudio(VQAHandleP *vqap)
 {
 	vqap->Config.AudioHandler((VQAHandle *)vqap, VQAAUDIO_PAUSE, NULL, NULL);
 	vqap->Audio.Flags &= ~VQAAUDF_ISPLAYING;
 }
 
-// FUNCTION: 0x007BD2B0
+// FUNCTION: GAMEMD 0x007BD2B0
 void VQA_StopAudio(VQAHandleP *vqap)
 {
 	vqap->Config.AudioHandler((VQAHandle *)vqap, VQAAUDIO_STOP, NULL, NULL);
 	vqap->Audio.Flags &= ~VQAAUDF_ISPLAYING;
 }
 
-// FUNCTION: 0x007BD2D0
+// FUNCTION: GAMEMD 0x007BD2D0
 long CopyAudio(VQAHandleP *vqap)
 {
 	VQAAudio  *audio;
@@ -171,7 +171,7 @@ long CopyAudio(VQAHandleP *vqap)
 	return(VQAERR_NONE);
 }
 
-// FUNCTION: 0x007BD470
+// FUNCTION: GAMEMD 0x007BD470
 long __cdecl VQA_AudioFillCallback(VQAHandleP *vqap)
 {
 	VQAAudio *audio;
@@ -255,7 +255,7 @@ long __cdecl VQA_AudioFillCallback(VQAHandleP *vqap)
 	return(size);
 }
 
-// FUNCTION: 0x007BD5C0
+// FUNCTION: GAMEMD 0x007BD5C0
 long __cdecl VQA_AudioDoneCallback(VQAHandleP *vqap, unsigned long buffer)
 {
 	VQAConfig *config;

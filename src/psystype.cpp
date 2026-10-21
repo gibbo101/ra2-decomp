@@ -15,7 +15,7 @@
 #include "tracker.h"
 #include "warhead.h"
 
-// FUNCTION: 0x006440A0
+// FUNCTION: GAMEMD 0x006440A0
 ParticleSystemTypeClass::ParticleSystemTypeClass(char const * ininame) :
 	BASECLASS(ininame),
 	HoldsWhat(PARTICLE_NONE),
@@ -47,21 +47,21 @@ ParticleSystemTypeClass::ParticleSystemTypeClass(char const * ininame) :
 	IsSentient = true;
 }
 
-// FUNCTION: 0x00644220
+// FUNCTION: GAMEMD 0x00644220
 ParticleSystemTypeClass::ParticleSystemTypeClass(NoInitClass const & x) :
 	BASECLASS(x),
 	LaserColor(x)
 {
 }
 
-// FUNCTION: 0x00644250
+// FUNCTION: GAMEMD 0x00644250
 ParticleSystemTypeClass::~ParticleSystemTypeClass(void)
 {
 	Detach_This_From_All(this);
 	ParticleSystemTypes.Delete(this);
 }
 
-// FUNCTION: 0x006442D0
+// FUNCTION: GAMEMD 0x006442D0
 bool ParticleSystemTypeClass::Read_INI(CCINIClass & ini)
 {
 	char buffer[64];
@@ -103,7 +103,7 @@ bool ParticleSystemTypeClass::Read_INI(CCINIClass & ini)
 	return(false);
 }
 
-// FUNCTION: 0x00644630
+// FUNCTION: GAMEMD 0x00644630
 ParticleSystemType ParticleSystemTypeClass::From_Name(char const * name)
 {
 	if (stricmp(name, "<none>") && strlen(name)) {
@@ -119,7 +119,7 @@ ParticleSystemType ParticleSystemTypeClass::From_Name(char const * name)
 	return(PARTSYS_NONE);
 }
 
-// FUNCTION: 0x006446E0
+// FUNCTION: GAMEMD 0x006446E0
 const char * ParticleSystemTypeClass::Name_From(ParticleSystemType partsys)
 {
 	if ((unsigned)partsys < (unsigned)ParticleSystemTypes.Count()) {
@@ -128,7 +128,7 @@ const char * ParticleSystemTypeClass::Name_From(ParticleSystemType partsys)
 	return("<none>");
 }
 
-// FUNCTION: 0x00644700
+// FUNCTION: GAMEMD 0x00644700
 void ParticleSystemTypeClass::Compute_CRC(CRCEngine & crc) const
 {
 	BASECLASS::Compute_CRC(crc);
@@ -145,7 +145,7 @@ void ParticleSystemTypeClass::Compute_CRC(CRCEngine & crc) const
 	crc(Lifetime);
 }
 
-// FUNCTION: 0x006447A0
+// FUNCTION: GAMEMD 0x006447A0
 HRESULT STDMETHODCALLTYPE ParticleSystemTypeClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -153,7 +153,7 @@ HRESULT STDMETHODCALLTYPE ParticleSystemTypeClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x006447E0
+// FUNCTION: GAMEMD 0x006447E0
 HRESULT STDMETHODCALLTYPE ParticleSystemTypeClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -163,14 +163,14 @@ HRESULT STDMETHODCALLTYPE ParticleSystemTypeClass::Load(IStream * stream)
 	return(S_OK);
 }
 
-// FUNCTION: 0x00644830
+// FUNCTION: GAMEMD 0x00644830
 HRESULT STDMETHODCALLTYPE ParticleSystemTypeClass::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
 	return(S_OK);
 }
 
-// FUNCTION: 0x00644850
+// FUNCTION: GAMEMD 0x00644850
 ParticleSystemBehaviorType Particle_System_Behavior_From_Name(char const * name)
 {
 	static char const * _BehaviorNames[PSYS_BEHAVIOR_COUNT] = {
@@ -189,7 +189,7 @@ ParticleSystemBehaviorType Particle_System_Behavior_From_Name(char const * name)
 	return(PSYS_BEHAVIOR_NONE);
 }
 
-// FUNCTION: 0x00644890
+// FUNCTION: GAMEMD 0x00644890
 ParticleSystemTypeClass * ParticleSystemTypeClass::FindOrAllocate(char const * name)
 {
 	if (stricmp("<none>", name) && stricmp("none", name)) {
@@ -203,19 +203,19 @@ ParticleSystemTypeClass * ParticleSystemTypeClass::FindOrAllocate(char const * n
 	return(NULL);
 }
 
-// FUNCTION: 0x00644920
+// FUNCTION: GAMEMD 0x00644920
 int ParticleSystemTypeClass::Fetch_Object_Size(void) const
 {
 	return(sizeof(*this));
 }
 
-// FUNCTION: 0x00644930
+// FUNCTION: GAMEMD 0x00644930
 RTTIType ParticleSystemTypeClass::Fetch_RTTI(void) const
 {
 	return(RTTI_PARTICLESYSTEMTYPE);
 }
 
-// FUNCTION: 0x00644940
+// FUNCTION: GAMEMD 0x00644940
 bool ParticleSystemTypeClass::Create_And_Place(Cell const & , HouseClass * house) const
 {
 	return(false);

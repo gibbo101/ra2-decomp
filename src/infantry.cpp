@@ -66,7 +66,7 @@
 
 extern int __fastcall FUN_0050C170(char const * name);
 
-// FUNCTION: 0x00517A50
+// FUNCTION: GAMEMD 0x00517A50
 InfantryClass::InfantryClass(InfantryTypeClass const * type, HouseClass * house) :
 	BASECLASS(house),
 	Class((InfantryTypeClass *)type),
@@ -97,7 +97,7 @@ InfantryClass::InfantryClass(InfantryTypeClass const * type, HouseClass * house)
 	TargetTracker.Add_Index(Fetch_ID(), this);
 }
 
-// FUNCTION: 0x00517CC0
+// FUNCTION: GAMEMD 0x00517CC0
 void InfantryClass::Init(void)
 {
 	BASECLASS::Init();
@@ -132,7 +132,7 @@ void InfantryClass::Init(void)
 	}
 }
 
-// FUNCTION: 0x00517D90
+// FUNCTION: GAMEMD 0x00517D90
 InfantryClass::~InfantryClass(void)
 {
 	if (GameActive && Class != NULL) {
@@ -162,7 +162,7 @@ InfantryClass::~InfantryClass(void)
 	IsActive = false;
 }
 
-// FUNCTION: 0x00522100
+// FUNCTION: GAMEMD 0x00522100
 bool InfantryClass::Is_JumpJet(void) const
 {
 	if (!Class->JumpJet) {
@@ -175,7 +175,7 @@ bool InfantryClass::Is_JumpJet(void) const
 	return((clsid == CLSID_JumpjetLocomotion) ? true : false);
 }
 
-// FUNCTION: 0x00518D80
+// FUNCTION: GAMEMD 0x00518D80
 int InfantryClass::Shape_Number(void) const
 {
 	DoType doit = Doing;
@@ -208,7 +208,7 @@ int InfantryClass::Shape_Number(void) const
 	return(shapenum);
 }
 
-// FUNCTION: 0x0051AA10
+// FUNCTION: GAMEMD 0x0051AA10
 void InfantryClass::Detach(AbstractClass const * target, bool all)
 {
 	BASECLASS::Detach(target, all);
@@ -231,7 +231,7 @@ static inline bool Edge_Of_World(InfantryClass * infantry)
 	return(false);
 }
 
-// FUNCTION: 0x0051B1F0
+// FUNCTION: GAMEMD 0x0051B1F0
 void InfantryClass::Assign_Target(AbstractClass * target)
 {
 	if (target != TarCom) {
@@ -281,7 +281,7 @@ deploy_fire:
 	unknown_bool_68E = false;
 }
 
-// FUNCTION: 0x0051BAB0
+// FUNCTION: GAMEMD 0x0051BAB0
 void InfantryClass::AI(void)
 {
 	if (CurrentTube >= 0) {
@@ -421,7 +421,7 @@ deploy_fire:
 	Movement_AI();
 }
 
-// FUNCTION: 0x0051CBA0
+// FUNCTION: GAMEMD 0x0051CBA0
 bool InfantryClass::Enter_Idle_Mode(bool initial, bool resume_waypoint)
 {
 	bool result = BASECLASS::Enter_Idle_Mode(initial, resume_waypoint);
@@ -488,7 +488,7 @@ bool InfantryClass::Enter_Idle_Mode(bool initial, bool resume_waypoint)
 	return(result);
 }
 
-// FUNCTION: 0x0051CDB0
+// FUNCTION: GAMEMD 0x0051CDB0
 bool InfantryClass::Random_Animate(void)
 {
 	if (Is_Ready_To_Random_Animate()) {
@@ -545,7 +545,7 @@ bool InfantryClass::Random_Animate(void)
 	return(false);
 }
 
-// FUNCTION: 0x0051D6F0
+// FUNCTION: GAMEMD 0x0051D6F0
 bool InfantryClass::Do_Action(DoType todo, bool force, bool randomize)
 {
 	if (todo == DO_NOTHING || Class->DoControls[todo].Count == 0) {
@@ -658,7 +658,7 @@ idle_rate:
 	return(true);
 }
 
-// FUNCTION: 0x0051DAF0
+// FUNCTION: GAMEMD 0x0051DAF0
 bool InfantryClass::Stop_Driver(void)
 {
 	if (Doing == 0x1b) goto deploy_fire;
@@ -682,7 +682,7 @@ deploy_fire:
 	return(BASECLASS::Stop_Driver());
 }
 
-// FUNCTION: 0x0051DBD0
+// FUNCTION: GAMEMD 0x0051DBD0
 bool InfantryClass::Start_Driver(Coord & headto)
 {
 	Coord old = headto;
@@ -702,7 +702,7 @@ bool InfantryClass::Start_Driver(Coord & headto)
 	return(false);
 }
 
-// FUNCTION: 0x0051DF10
+// FUNCTION: GAMEMD 0x0051DF10
 bool InfantryClass::Limbo(void)
 {
 	Locomotion->Stop_Movement_Animation();
@@ -712,7 +712,7 @@ bool InfantryClass::Limbo(void)
 	return(FootClass::Limbo());
 }
 
-// FUNCTION: 0x0051DF60
+// FUNCTION: GAMEMD 0x0051DF60
 BulletClass * InfantryClass::Fire_At(AbstractClass * target, int which)
 {
 	IsFiring = false;
@@ -729,7 +729,7 @@ BulletClass * InfantryClass::Fire_At(AbstractClass * target, int which)
 	return(bullet);
 }
 
-// FUNCTION: 0x0051DFF0
+// FUNCTION: GAMEMD 0x0051DFF0
 bool InfantryClass::Unlimbo(Coord const & xcoord, Dir256 facing)
 {
 	int height = Map.Get_Height_GL(xcoord);
@@ -758,7 +758,7 @@ bool InfantryClass::Unlimbo(Coord const & xcoord, Dir256 facing)
 	return(false);
 }
 
-// FUNCTION: 0x0051E140
+// FUNCTION: GAMEMD 0x0051E140
 AbstractClass * InfantryClass::Greatest_Threat(ThreatType threat, Coord const & coord, bool onlyenemy) const
 {
 	if (!House->Is_Human_Player() && Class->IsEngineer) {
@@ -806,7 +806,7 @@ AbstractClass * InfantryClass::Greatest_Threat(ThreatType threat, Coord const & 
 	return(BASECLASS::Greatest_Threat(threat, coord, onlyenemy));
 }
 
-// FUNCTION: 0x0051F190
+// FUNCTION: GAMEMD 0x0051F190
 bool InfantryClass::Active_Click_With(ActionType action, ObjectClass * object, bool is_waypoint)
 {
 	action = What_Action(object, is_waypoint);
@@ -843,7 +843,7 @@ bool InfantryClass::Active_Click_With(ActionType action, ObjectClass * object, b
 	return(BASECLASS::Active_Click_With(action, object, is_waypoint));
 }
 
-// FUNCTION: 0x0051F250
+// FUNCTION: GAMEMD 0x0051F250
 bool InfantryClass::Active_Click_With(ActionType action, Cell const & cell, Cell const & cell2, bool is_waypoint)
 {
 	if (Doing == 0x1b) goto deploy_fire;
@@ -861,7 +861,7 @@ deploy_fire:
 	return(BASECLASS::Active_Click_With(action, cell, cell2, is_waypoint));
 }
 
-// FUNCTION: 0x0051F2C0
+// FUNCTION: GAMEMD 0x0051F2C0
 wchar_t const * InfantryClass::Full_Name(void) const
 {
 	if (IsTechnician) {
@@ -876,7 +876,7 @@ wchar_t const * InfantryClass::Full_Name(void) const
 	return(Class->UIName);
 }
 
-// FUNCTION: 0x0051F330
+// FUNCTION: GAMEMD 0x0051F330
 void InfantryClass::Rocking_AI(void)
 {
 	int weapon = What_Weapon_Should_I_Use(NULL);
@@ -896,7 +896,7 @@ void InfantryClass::Rocking_AI(void)
 	}
 }
 
-// FUNCTION: 0x0051F3E0
+// FUNCTION: GAMEMD 0x0051F3E0
 int InfantryClass::Do_MISSION_ATTACK(void)
 {
 	if ((Class->IsBomber || Has_Ability(ABILITY_C4)) && TarCom != NULL && TarCom->Fetch_RTTI() == RTTI_BUILDING && ((BuildingClass *)TarCom)->Class->CanC4 && !((BuildingClass *)TarCom)->Class->IsInvisibleInGame) {
@@ -925,7 +925,7 @@ deploy_fire:
 	return(BASECLASS::Do_MISSION_ATTACK());
 }
 
-// FUNCTION: 0x0051F540
+// FUNCTION: GAMEMD 0x0051F540
 int InfantryClass::Do_MISSION_HUNT(void)
 {
 	if (!House->Is_Human_Player() && TarCom != NULL && TarCom->Fetch_RTTI() == RTTI_BUILDING && (Class->IsCapture || ((Class->Occupier || Class->Assaulter) && ((BuildingClass *)TarCom)->CanBeOccupiedBy(this)))) {
@@ -950,7 +950,7 @@ deploy_fire:
 	return(BASECLASS::Do_MISSION_HUNT());
 }
 
-// FUNCTION: 0x0051F620
+// FUNCTION: GAMEMD 0x0051F620
 int InfantryClass::Do_MISSION_GUARD(void)
 {
 	int delay = FUN_00521320();
@@ -960,7 +960,7 @@ int InfantryClass::Do_MISSION_GUARD(void)
 	return(delay);
 }
 
-// FUNCTION: 0x0051F640
+// FUNCTION: GAMEMD 0x0051F640
 int InfantryClass::Do_MISSION_GUARD_AREA(void)
 {
 	int delay = FUN_00521320();
@@ -970,7 +970,7 @@ int InfantryClass::Do_MISSION_GUARD_AREA(void)
 	return(delay);
 }
 
-// FUNCTION: 0x0051F660
+// FUNCTION: GAMEMD 0x0051F660
 int InfantryClass::Do_MISSION_MOVE(void)
 {
 	if (Doing == 0x1b || Doing == 0x1c || Doing == 0x1d || Doing == 0x1e) {
@@ -986,7 +986,7 @@ int InfantryClass::Do_MISSION_MOVE(void)
 	return(BASECLASS::Do_MISSION_MOVE());
 }
 
-// FUNCTION: 0x0051F6E0
+// FUNCTION: GAMEMD 0x0051F6E0
 int InfantryClass::Do_MISSION_UNLOAD(void)
 {
 	if (Class->Deployer) {
@@ -1022,7 +1022,7 @@ undeploy:
 	return(BASECLASS::Do_MISSION_UNLOAD());
 }
 
-// FUNCTION: 0x0051F800
+// FUNCTION: GAMEMD 0x0051F800
 ActionType InfantryClass::What_Action(Cell const & cell, bool check_fog, bool disallow_force) const
 {
 	if (!House->Is_Player_Control()) {
@@ -1101,13 +1101,13 @@ done:
 	return(action);
 }
 
-// FUNCTION: 0x0051FAF0
+// FUNCTION: GAMEMD 0x0051FAF0
 ObjectTypeClass const * InfantryClass::Class_Of(void) const
 {
 	return(Class);
 }
 
-// FUNCTION: 0x0051FB00
+// FUNCTION: GAMEMD 0x0051FB00
 void InfantryClass::Read_INI(CCINIClass & ini)
 {
 	ini.Reset();
@@ -1206,7 +1206,7 @@ void InfantryClass::Read_INI(CCINIClass & ini)
 	}
 }
 
-// FUNCTION: 0x0051FEF0
+// FUNCTION: GAMEMD 0x0051FEF0
 void InfantryClass::Write_INI(CCINIClass & ini)
 {
 	ini.Clear(INI_Name);
@@ -1245,7 +1245,7 @@ static inline void Reduce_Fear(int & fear)
 	fear--;
 }
 
-// FUNCTION: 0x005200B0
+// FUNCTION: GAMEMD 0x005200B0
 void InfantryClass::Fear_AI(void)
 {
 	if (Fear > 0) {
@@ -1277,13 +1277,13 @@ void InfantryClass::Fear_AI(void)
 	}
 }
 
-// FUNCTION: 0x00520260
+// FUNCTION: GAMEMD 0x00520260
 bool InfantryClass::Edge_Of_World_AI(void)
 {
 	return(Edge_Of_World(this));
 }
 
-// FUNCTION: 0x005202F0
+// FUNCTION: GAMEMD 0x005202F0
 bool InfantryClass::Theft_AI(void)
 {
 	if (!Class->IsThief) return(false);
@@ -1332,7 +1332,7 @@ bool InfantryClass::Theft_AI(void)
 	return(false);
 }
 
-// FUNCTION: 0x005206B0
+// FUNCTION: GAMEMD 0x005206B0
 void InfantryClass::Firing_AI(void)
 {
 	if (TarCom != NULL) {
@@ -1433,7 +1433,7 @@ deployed_idle:
 	}
 }
 
-// FUNCTION: 0x00520AE0
+// FUNCTION: GAMEMD 0x00520AE0
 void InfantryClass::Doing_AI(void)
 {
 	if (Doing == -1 || Animation.Fetch_Stage() >= Class->DoControls[Doing].Count) {
@@ -1543,7 +1543,7 @@ settle:
 	}
 }
 
-// FUNCTION: 0x00520F40
+// FUNCTION: GAMEMD 0x00520F40
 void InfantryClass::Movement_AI(void)
 {
 	if (Get_Mission() == MISSION_MOVE && !Locomotion->Is_Moving()) {
@@ -1592,7 +1592,7 @@ void InfantryClass::Movement_AI(void)
 	}
 }
 
-// FUNCTION: 0x00521320
+// FUNCTION: GAMEMD 0x00521320
 int InfantryClass::FUN_00521320(void)
 {
 	if (Doing == 0x1b) goto deployed;
@@ -1646,13 +1646,13 @@ deployed:
 	return(-1);
 }
 
-// FUNCTION: 0x005216C0
+// FUNCTION: GAMEMD 0x005216C0
 void const * InfantryClass::Get_Image_Data(void) const
 {
 	return(BASECLASS::Get_Image_Data());
 }
 
-// FUNCTION: 0x005216D0
+// FUNCTION: GAMEMD 0x005216D0
 bool InfantryClass::Is_Ready_To_Random_Animate(void) const
 {
 	if (!BASECLASS::Is_Ready_To_Random_Animate()) {
@@ -1680,7 +1680,7 @@ not_ready:
 	return(false);
 }
 
-// FUNCTION: 0x00521760
+// FUNCTION: GAMEMD 0x00521760
 bool InfantryClass::Paradrop(Coord const & coord)
 {
 	if (BASECLASS::Paradrop(coord)) {
@@ -1695,7 +1695,7 @@ bool InfantryClass::Paradrop(Coord const & coord)
 	return(false);
 }
 
-// FUNCTION: 0x005217C0
+// FUNCTION: GAMEMD 0x005217C0
 void InfantryClass::Set_Occupy_Bit(Coord const & coord)
 {
 	int spot_index = CellClass::Spot_Index(coord);
@@ -1709,7 +1709,7 @@ void InfantryClass::Set_Occupy_Bit(Coord const & coord)
 	}
 }
 
-// FUNCTION: 0x00521850
+// FUNCTION: GAMEMD 0x00521850
 void InfantryClass::Clear_Occupy_Bit(Coord const & coord)
 {
 	int spot_index = CellClass::Spot_Index(coord);
@@ -1729,7 +1729,7 @@ void InfantryClass::Clear_Occupy_Bit(Coord const & coord)
 	}
 }
 
-// FUNCTION: 0x005218E0
+// FUNCTION: GAMEMD 0x005218E0
 int InfantryClass::What_Weapon_Should_I_Use(AbstractClass * target) const
 {
 	if (Class->DeployFire) {
@@ -1748,7 +1748,7 @@ deploy_weapon:
 	return(BASECLASS::What_Weapon_Should_I_Use(target));
 }
 
-// FUNCTION: 0x00521960
+// FUNCTION: GAMEMD 0x00521960
 HRESULT STDMETHODCALLTYPE InfantryClass::Load(IStream * stream)
 {
 	TargetTracker.Remove_Index(Fetch_ID());
@@ -1771,13 +1771,13 @@ HRESULT STDMETHODCALLTYPE InfantryClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x00521B00
+// FUNCTION: GAMEMD 0x00521B00
 HRESULT STDMETHODCALLTYPE InfantryClass::Save(IStream * stream, BOOL cleardirty)
 {
 	return(BASECLASS::Save(stream, cleardirty));
 }
 
-// FUNCTION: 0x00521B20
+// FUNCTION: GAMEMD 0x00521B20
 void InfantryClass::Stop_Movement_Animation(void)
 {
 	if (Doing == 6 || Doing == 3 || Doing == 0x11) {
@@ -1785,7 +1785,7 @@ void InfantryClass::Stop_Movement_Animation(void)
 	}
 }
 
-// FUNCTION: 0x00521B40
+// FUNCTION: GAMEMD 0x00521B40
 void InfantryClass::vt_entry_54C(void)
 {
 	if (ShouldDeploy) {
@@ -1794,7 +1794,7 @@ void InfantryClass::vt_entry_54C(void)
 	}
 }
 
-// FUNCTION: 0x00521B60
+// FUNCTION: GAMEMD 0x00521B60
 bool InfantryClass::Ready_To_Next_Mission(void) const
 {
 	if (CurrentMission != MISSION_STICKY && CurrentMission != MISSION_RESCUE) {
@@ -1810,7 +1810,7 @@ bool InfantryClass::Ready_To_Next_Mission(void) const
 	return(false);
 }
 
-// FUNCTION: 0x00521C10
+// FUNCTION: GAMEMD 0x00521C10
 void InfantryClass::Start_Fear(void)
 {
 	if (!Class->IsFearless && !Has_Ability(ABILITY_FEARLESS)) {
@@ -1818,7 +1818,7 @@ void InfantryClass::Start_Fear(void)
 	}
 }
 
-// FUNCTION: 0x00521C40
+// FUNCTION: GAMEMD 0x00521C40
 void InfantryClass::Stop_Fear(void)
 {
 	if (!Class->IsFearless) {
@@ -1826,7 +1826,7 @@ void InfantryClass::Stop_Fear(void)
 	}
 }
 
-// FUNCTION: 0x00521C60
+// FUNCTION: GAMEMD 0x00521C60
 void InfantryClass::Do_Idle(int which)
 {
 	switch (which) {
@@ -1840,7 +1840,7 @@ void InfantryClass::Do_Idle(int which)
 	}
 }
 
-// FUNCTION: 0x00521C90
+// FUNCTION: GAMEMD 0x00521C90
 void InfantryClass::Compute_CRC(CRCEngine & crc) const
 {
 	BASECLASS::Compute_CRC(crc);
@@ -1854,13 +1854,13 @@ void InfantryClass::Compute_CRC(CRCEngine & crc) const
 	crc(WasSelected);
 }
 
-// FUNCTION: 0x00521D30
+// FUNCTION: GAMEMD 0x00521D30
 Coord InfantryClass::Turret_Coord(int which) const
 {
 	return(Fire_Coord(which, Coord(0, 0, 0)));
 }
 
-// FUNCTION: 0x00521D80
+// FUNCTION: GAMEMD 0x00521D80
 int InfantryClass::Current_Speed(void)
 {
 	int speed = BASECLASS::Current_Speed();
@@ -1874,7 +1874,7 @@ int InfantryClass::Current_Speed(void)
 	return(speed);
 }
 
-// FUNCTION: 0x00521DD0
+// FUNCTION: GAMEMD 0x00521DD0
 void InfantryClass::On_Movement_Blocked(void)
 {
 	BASECLASS::On_Movement_Blocked();
@@ -1882,7 +1882,7 @@ void InfantryClass::On_Movement_Blocked(void)
 	}
 }
 
-// FUNCTION: 0x00521EB0
+// FUNCTION: GAMEMD 0x00521EB0
 bool InfantryClass::JumpJet_To_Walk(void)
 {
 	int path_length = 0;
@@ -1914,13 +1914,13 @@ bool InfantryClass::JumpJet_To_Walk(void)
 	return(false);
 }
 
-// FUNCTION: 0x005220F0
+// FUNCTION: GAMEMD 0x005220F0
 void InfantryClass::Berzerk(void)
 {
 	IsBerzerk = true;
 }
 
-// FUNCTION: 0x005221D0
+// FUNCTION: GAMEMD 0x005221D0
 bool InfantryClass::Should_JumpJet_Fly(Cell const & from, Cell const & to)
 {
 	int height = HeightAGL;
@@ -1963,7 +1963,7 @@ static inline bool Is_Deploy_Doing(int doing)
 	return(doing == 0x1b || doing == 0x1c || doing == 0x1d || doing == 0x1e);
 }
 
-// FUNCTION: 0x00522340
+// FUNCTION: GAMEMD 0x00522340
 AbstractClass * InfantryClass::Approach_Target(bool force)
 {
 	if (TarCom != NULL) {
@@ -1996,37 +1996,37 @@ AbstractClass * InfantryClass::Approach_Target(bool force)
 	return(NULL);
 }
 
-// FUNCTION: 0x005224D0
+// FUNCTION: GAMEMD 0x005224D0
 bool InfantryClass::Is_Renovator(void) const
 {
 	return(Class->IsEngineer);
 }
 
-// FUNCTION: 0x005224E0
+// FUNCTION: GAMEMD 0x005224E0
 bool InfantryClass::FUN_005224E0(void) const
 {
 	return(Class->Deployer);
 }
 
-// FUNCTION: 0x005224F0
+// FUNCTION: GAMEMD 0x005224F0
 bool InfantryClass::FUN_005224F0(void) const
 {
 	return(Class->UndeployDelay > -1);
 }
 
-// FUNCTION: 0x00522510
+// FUNCTION: GAMEMD 0x00522510
 bool InfantryClass::FUN_00522510(void) const
 {
 	return(Is_Deploy_Doing(Doing));
 }
 
-// FUNCTION: 0x00522540
+// FUNCTION: GAMEMD 0x00522540
 bool InfantryClass::FUN_00522540(void) const
 {
 	return(Class->DeployFire);
 }
 
-// FUNCTION: 0x00522550
+// FUNCTION: GAMEMD 0x00522550
 int InfantryClass::FUN_00522550(void)
 {
 	if (!Locomotion->Is_Moving()) {
@@ -2038,14 +2038,14 @@ int InfantryClass::FUN_00522550(void)
 	return(Current_Mission_Control().Normal_Delay() + Random_Pick(0, 2));
 }
 
-// FUNCTION: 0x00522600
+// FUNCTION: GAMEMD 0x00522600
 int InfantryClass::IronCurtain(int duration, HouseClass * source, bool force_shield)
 {
 	int damage = Class->MaxStrength;
 	return(Take_Damage(damage, 0, Rule->C4Warhead, NULL, true, false, source));
 }
 
-// FUNCTION: 0x00522640
+// FUNCTION: GAMEMD 0x00522640
 ObjectTypeClass * InfantryClass::GetDisguise(bool against_allies) const
 {
 	if (House->Is_Ally(PlayerPtr) && !against_allies) {
@@ -2065,7 +2065,7 @@ ObjectTypeClass * InfantryClass::GetDisguise(bool against_allies) const
 	return(Disguise);
 }
 
-// FUNCTION: 0x005226C0
+// FUNCTION: GAMEMD 0x005226C0
 HouseClass * InfantryClass::GetDisguiseHouse(bool against_allies) const
 {
 	if (House->Is_Ally(PlayerPtr) && !against_allies) {
@@ -2079,7 +2079,7 @@ HouseClass * InfantryClass::GetDisguiseHouse(bool against_allies) const
 
 #pragma warning(push)
 #pragma warning(disable: 4716)
-// FUNCTION: 0x00522700
+// FUNCTION: GAMEMD 0x00522700
 unsigned InfantryClass::DisguiseAs(AbstractClass * target)
 {
 	if (target != NULL && target->Fetch_RTTI() == RTTI_INFANTRY) {
@@ -2097,7 +2097,7 @@ unsigned InfantryClass::DisguiseAs(AbstractClass * target)
 
 #pragma warning(pop)
 
-// FUNCTION: 0x00522780
+// FUNCTION: GAMEMD 0x00522780
 void InfantryClass::ClearDisguise(void)
 {
 	if (Class->PermaDisguise) {
@@ -2115,7 +2115,7 @@ void InfantryClass::ClearDisguise(void)
 	}
 }
 
-// FUNCTION: 0x005227F0
+// FUNCTION: GAMEMD 0x005227F0
 bool InfantryClass::IsDisguisedAs(HouseClass * house) const
 {
 	if (IsDisguised()) {
@@ -2130,25 +2130,25 @@ bool InfantryClass::IsDisguisedAs(HouseClass * house) const
 	return(false);
 }
 
-// FUNCTION: 0x005228B0
+// FUNCTION: GAMEMD 0x005228B0
 bool InfantryClass::CanUseWaypoint(void) const
 {
 	return(TechnoClass::CanUseWaypoint());
 }
 
-// FUNCTION: 0x005228C0
+// FUNCTION: GAMEMD 0x005228C0
 bool InfantryClass::CanAttackOnTheMove(void) const
 {
 	return(TechnoClass::CanAttackOnTheMove());
 }
 
-// FUNCTION: 0x005228D0
+// FUNCTION: GAMEMD 0x005228D0
 bool InfantryClass::IsDeployed(void) const
 {
 	return(Class->Deployer && (Doing == 0x1b || Doing == 0x1c || Doing == 0x1d || Doing == 0x1e));
 }
 
-// FUNCTION: 0x00522910
+// FUNCTION: GAMEMD 0x00522910
 void InfantryClass::FUN_00522910(BuildingClass * building)
 {
 	if (Class->Occupier) {
@@ -2173,12 +2173,12 @@ void InfantryClass::FUN_00522910(BuildingClass * building)
 	}
 }
 
-// FUNCTION: 0x00522A50
+// FUNCTION: GAMEMD 0x00522A50
 void InfantryClass::FUN_00522A50(int)
 {
 }
 
-// FUNCTION: 0x00522A60
+// FUNCTION: GAMEMD 0x00522A60
 bool InfantryClass::INoticeSink_Unknown(DWORD unknown, DWORD unknown2)
 {
 	if ((Class->BalloonHover || Class->JumpJet) && unknown == 0x117b && HasAnyLink()) {
@@ -2204,7 +2204,7 @@ bool InfantryClass::INoticeSink_Unknown(DWORD unknown, DWORD unknown2)
 	return(false);
 }
 
-// FUNCTION: 0x00522BC0
+// FUNCTION: GAMEMD 0x00522BC0
 bool InfantryClass::CanCheer(void) const
 {
 	if (Get_Mission() == MISSION_GUARD || Get_Mission() == MISSION_GUARD_AREA) {
@@ -2215,7 +2215,7 @@ bool InfantryClass::CanCheer(void) const
 	return(false);
 }
 
-// FUNCTION: 0x00522C00
+// FUNCTION: GAMEMD 0x00522C00
 void InfantryClass::Cheer(bool force)
 {
 	if (force || CanCheer()) {
@@ -2223,7 +2223,7 @@ void InfantryClass::Cheer(bool force)
 	}
 }
 
-// FUNCTION: 0x00522C30
+// FUNCTION: GAMEMD 0x00522C30
 bool InfantryClass::FUN_00522C30(DoType doing) const
 {
 	if (doing == 9 || doing == 0xa || doing == 0x12 || doing == 0x13 || doing == 0x17 || doing == 0x20) {
@@ -2232,19 +2232,19 @@ bool InfantryClass::FUN_00522C30(DoType doing) const
 	return(false);
 }
 
-// FUNCTION: 0x00522C60
+// FUNCTION: GAMEMD 0x00522C60
 bool InfantryClass::FUN_00522C60(DoType doing) const
 {
 	return(doing == 0xb || doing == 0xc || doing == 0xd || doing == 0xe || doing == 0xf || doing == 0x22 || doing == 0x23 || doing == 0x24 || doing == 0x14 || doing == 0x15);
 }
 
-// FUNCTION: 0x00522CB0
+// FUNCTION: GAMEMD 0x00522CB0
 bool InfantryClass::FUN_00522CB0(void)
 {
 	return(Doing == 0xb || Doing == 0xc || Doing == 0xd || Doing == 0xe || Doing == 0xf || Doing == 0x22 || Doing == 0x23 || Doing == 0x24 || Doing == 0x14 || Doing == 0x15);
 }
 
-// FUNCTION: 0x00522D00
+// FUNCTION: GAMEMD 0x00522D00
 void InfantryClass::FUN_00522D00(void)
 {
 	if (CurrentMission != MISSION_HARVEST) {
@@ -2252,13 +2252,13 @@ void InfantryClass::FUN_00522D00(void)
 	}
 }
 
-// FUNCTION: 0x00522D20
+// FUNCTION: GAMEMD 0x00522D20
 void InfantryClass::FUN_00522D20(void)
 {
 	QueueMission(MISSION_GUARD, false);
 }
 
-// FUNCTION: 0x00522D30
+// FUNCTION: GAMEMD 0x00522D30
 bool InfantryClass::FUN_00522D30(void)
 {
 	if (Tiberium_Load() == 1.0) {
@@ -2267,7 +2267,7 @@ bool InfantryClass::FUN_00522D30(void)
 	return(false);
 }
 
-// FUNCTION: 0x00522D50
+// FUNCTION: GAMEMD 0x00522D50
 void InfantryClass::FUN_00522D50(TechnoClass * building)
 {
 	bool unloaded = false;
@@ -2302,7 +2302,7 @@ void InfantryClass::FUN_00522D50(TechnoClass * building)
 	}
 }
 
-// FUNCTION: 0x00522E70
+// FUNCTION: GAMEMD 0x00522E70
 int InfantryClass::Do_MISSION_HARVEST(void)
 {
 	if (Class->Capacity == 0) {
@@ -2327,7 +2327,7 @@ int InfantryClass::Do_MISSION_HARVEST(void)
 	return(1);
 }
 
-// FUNCTION: 0x00522FC0
+// FUNCTION: GAMEMD 0x00522FC0
 bool InfantryClass::FUN_00522FC0(void)
 {
 	return(Get_Mission() == MISSION_HARVEST);
@@ -2335,7 +2335,7 @@ bool InfantryClass::FUN_00522FC0(void)
 
 extern int DAT_00A8F234;
 
-// FUNCTION: 0x00522FE0
+// FUNCTION: GAMEMD 0x00522FE0
 bool InfantryClass::ChronoWarpTo(Coord dest)
 {
 	if (In_Air() || IsIronCurtained() || IsImmobilized || IsBeingWarpedOut() || IsWarpingIn()) {
@@ -2361,7 +2361,7 @@ bool InfantryClass::ChronoWarpTo(Coord dest)
 	return(true);
 }
 
-// FUNCTION: 0x00523250
+// FUNCTION: GAMEMD 0x00523250
 Coord InfantryClass::Fire_Coord(int which, Coord base) const
 {
 	if (InOpenToppedTransport && Transporter != NULL) {
@@ -2373,13 +2373,13 @@ Coord InfantryClass::Fire_Coord(int which, Coord base) const
 	return(TechnoClass::Fire_Coord(which, Coord(0, 0, 0)));
 }
 
-// FUNCTION: 0x005232F0
+// FUNCTION: GAMEMD 0x005232F0
 int InfantryClass::Fetch_Object_Size(void) const
 {
 	return(sizeof(*this));
 }
 
-// FUNCTION: 0x00523300
+// FUNCTION: GAMEMD 0x00523300
 HRESULT STDMETHODCALLTYPE InfantryClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -2387,21 +2387,26 @@ HRESULT STDMETHODCALLTYPE InfantryClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x00523340
+// FUNCTION: GAMEMD 0x00523340
 RTTIType InfantryClass::Fetch_RTTI(void) const
 {
 	return(RTTI_INFANTRY);
 }
 
-// FUNCTION: 0x00523350 InfantryClass::~InfantryClass
+// SYNTHETIC: GAMEMD 0x00523350
+// ??_GInfantryClass@@UAEPAXI@Z
 
-// FUNCTION: 0x00523370 ?$_com_ptr_t@V?$_com_IIID@UILocomotion@@$1?_GUID_070f3290_9841_11d1_b709_00a024ddafd1@@3U__s_GUID@@A@@::operator=
+// TEMPLATE: GAMEMD 0x00523370
+// ??4?$_com_ptr_t@V?$_com_IIID@UILocomotion@@$1?_GUID_070f3290_9841_11d1_b709_00a024ddafd1@@3U__s_GUID@@A@@@@QAEAAV0@PAUILocomotion@@@Z
 
-// FUNCTION: 0x005233A0 ?$_com_ptr_t@V?$_com_IIID@UIPiggyback@@$1?_GUID_92fea800_a184_11d1_b70a_00a024ddafd1@@3U__s_GUID@@A@@::operator=
+// TEMPLATE: GAMEMD 0x005233A0
+// ??4?$_com_ptr_t@V?$_com_IIID@UIPiggyback@@$1?_GUID_92fea800_a184_11d1_b70a_00a024ddafd1@@3U__s_GUID@@A@@@@QAEAAV0@PAUIPiggyback@@@Z
 
-// FUNCTION: 0x005233D0 ?$_com_ptr_t@V?$_com_IIID@UIPersist@@$1?_GUID_0000010c_0000_0000_c000_000000000046@@3U__s_GUID@@A@@::?$_com_ptr_t@V?$_com_IIID@UIPersist@@$1?_GUID_0000010c_0000_0000_c000_000000000046@@3U__s_GUID@@A@@
+// TEMPLATE: GAMEMD 0x005233D0
+// ??0?$_com_ptr_t@V?$_com_IIID@UIPersist@@$1?_GUID_0000010c_0000_0000_c000_000000000046@@3U__s_GUID@@A@@@@QAE@ABV?$_com_ptr_t@V?$_com_IIID@UILocomotion@@$1?_GUID_070f3290_9841_11d1_b709_00a024ddafd1@@3U__s_GUID@@A@@@@@Z
 
-// FUNCTION: 0x00523440 Binary_Search
+// TEMPLATE: GAMEMD 0x00523440
+// ?Binary_Search@@YIPAUNodeElement@?$IndexClass@HPAVAbstractClass@@@@PAU12@HABU12@@Z
 
 extern double __cdecl FUN_004CAC40(double);
 extern double __cdecl FUN_004CAD50(double);
@@ -2417,34 +2422,44 @@ extern const double DAT_007E1740;
 extern const double DAT_007EB5D0;
 extern const double DAT_007EB5D8;
 
-// FUNCTION: 0x00523490 $E203
+// SYNTHETIC: GAMEMD 0x00523490 SYMBOL
+// _$E203
 double DAT_00A8F268 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x005234C0 $E206
+// SYNTHETIC: GAMEMD 0x005234C0 SYMBOL
+// _$E206
 double DAT_00A8F2C0 = DAT_00A8F268 / DAT_007EB5D0;
 
-// FUNCTION: 0x005234E0 $E209
+// SYNTHETIC: GAMEMD 0x005234E0 SYMBOL
+// _$E209
 double DAT_00A8F2A8 = DAT_007E1718 / DAT_00A8F2C0;
 
-// FUNCTION: 0x00523500 $E212
+// SYNTHETIC: GAMEMD 0x00523500 SYMBOL
+// _$E212
 double DAT_00A8F2A0 = DAT_007E1720 * DAT_007EB5D8;
 
-// FUNCTION: 0x00523520 $E215
+// SYNTHETIC: GAMEMD 0x00523520 SYMBOL
+// _$E215
 double DAT_00A8F270 = DAT_007E1728 * DAT_007EB5D8;
 
-// FUNCTION: 0x00523540 $E218
+// SYNTHETIC: GAMEMD 0x00523540 SYMBOL
+// _$E218
 double DAT_00A8F248 = DAT_007E1730 * DAT_007EB5D8;
 
-// FUNCTION: 0x00523560 $E221
+// SYNTHETIC: GAMEMD 0x00523560 SYMBOL
+// _$E221
 int DAT_00A8F2CC = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00A8F248 - DAT_00A8F270) * DAT_00A8F268));
 
-// FUNCTION: 0x005235A0 $E224
+// SYNTHETIC: GAMEMD 0x005235A0 SYMBOL
+// _$E224
 double DAT_00A8F278 = FUN_004CADE0(DAT_00A8F2CC * DAT_007E1740);
 
-// FUNCTION: 0x005235D0 $E227
+// SYNTHETIC: GAMEMD 0x005235D0 SYMBOL
+// _$E227
 double DAT_00A8F298 = FUN_004CADE0((DAT_00A8F2CC * 2) / DAT_00A8F268);
 
-// FUNCTION: 0x00523600 $E230
+// SYNTHETIC: GAMEMD 0x00523600 SYMBOL
+// _$E230
 int DAT_00A8F2BC = (int)(DAT_00A8F2CC * 4 + DAT_007E1738);
 
 struct InfShortPair { short A, B; InfShortPair() : A(0), B(0) {} };
@@ -2452,14 +2467,18 @@ struct InfIntTriple { int A, B, C; InfIntTriple() : A(0), B(0), C(0) {} };
 struct InfIntSplit { int A, B, C; InfIntSplit() : A(128), B(128), C(0) {} };
 struct InfIntQuad { int A, B, C, D; InfIntQuad() : A(0), B(0), C(0), D(0) {} };
 
-// FUNCTION: 0x00523630 $E233
+// SYNTHETIC: GAMEMD 0x00523630 SYMBOL
+// _$E233
 InfShortPair DAT_00A8F260;
 
-// FUNCTION: 0x00523640 $E236
+// SYNTHETIC: GAMEMD 0x00523640 SYMBOL
+// _$E236
 InfIntTriple DAT_00A8F280;
 
-// FUNCTION: 0x00523660 $E239
+// SYNTHETIC: GAMEMD 0x00523660 SYMBOL
+// _$E239
 InfIntSplit DAT_00A8F2B0;
 
-// FUNCTION: 0x00523680 $E242
+// SYNTHETIC: GAMEMD 0x00523680 SYMBOL
+// _$E242
 InfIntQuad DAT_00A8F250;

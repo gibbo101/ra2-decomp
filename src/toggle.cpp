@@ -7,7 +7,7 @@
 #include "toggle.h"
 #include "_xmouse.h"
 
-// FUNCTION: 0x00723E60
+// FUNCTION: GAMEMD 0x00723E60
 ToggleClass::ToggleClass(unsigned id, int x, int y, int w, int h) :
 	BASECLASS(id, x, y, w, h, LEFTPRESS|LEFTRELEASE, true),
 	IsPressed(false),
@@ -16,21 +16,21 @@ ToggleClass::ToggleClass(unsigned id, int x, int y, int w, int h) :
 {
 }
 
-// FUNCTION: 0x00723EA0
+// FUNCTION: GAMEMD 0x00723EA0
 void ToggleClass::Turn_On(void)
 {
 	IsOn = true;
 	Flag_To_Redraw();
 }
 
-// FUNCTION: 0x00723EB0
+// FUNCTION: GAMEMD 0x00723EB0
 void ToggleClass::Turn_Off(void)
 {
 	IsOn = false;
 	Flag_To_Redraw();
 }
 
-// FUNCTION: 0x00723EC0
+// FUNCTION: GAMEMD 0x00723EC0
 int ToggleClass::Action(unsigned flags, KeyNumType &key, int modifier)
 {
 	bool overbutton = ((unsigned)(Get_Mouse_X() - X) < (unsigned)Width && (unsigned)(Get_Mouse_Y() - Y) < (unsigned)Height);
@@ -87,7 +87,7 @@ int DAT_00B0F5AC;
 int DAT_00B0F5B0;
 int DAT_00B0F5B4;
 
-// FUNCTION: 0x00723FE0
+// FUNCTION: GAMEMD 0x00723FE0
 void FUN_00723FE0(void)
 {
 	DAT_00B0F5A8 = 0;

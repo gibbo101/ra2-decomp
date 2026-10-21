@@ -33,7 +33,7 @@ static inline void _Add_System(ParticleSystemClass * system)
 	ParticleSystems.Add(system);
 }
 
-// FUNCTION: 0x0062DC50
+// FUNCTION: GAMEMD 0x0062DC50
 ParticleSystemClass::ParticleSystemClass(ParticleSystemTypeClass const * type, Coord const & coord, AbstractClass * target, AbstractClass * source, Coord const & spawn_coord, HouseClass * house) :
 	BASECLASS(),
 	Class((ParticleSystemTypeClass *)type),
@@ -90,7 +90,7 @@ ParticleSystemClass::ParticleSystemClass(ParticleSystemTypeClass const * type, C
 	ObjectPtrTracker.Add(this);
 }
 
-// FUNCTION: 0x0062DF20
+// FUNCTION: GAMEMD 0x0062DF20
 ParticleSystemClass::ParticleSystemClass(void) :
 	BASECLASS(),
 	Class(NULL),
@@ -110,7 +110,7 @@ ParticleSystemClass::ParticleSystemClass(void) :
 	ObjectPtrTracker.Add(this);
 }
 
-// FUNCTION: 0x0062E070
+// FUNCTION: GAMEMD 0x0062E070
 ParticleSystemClass::~ParticleSystemClass(void)
 {
 	Detach_This_From_All(this);
@@ -129,7 +129,7 @@ ParticleSystemClass::~ParticleSystemClass(void)
 	ObjectPtrTracker.Delete(this);
 }
 
-// FUNCTION: 0x0062E280
+// FUNCTION: GAMEMD 0x0062E280
 void ParticleSystemClass::Draw_It(Point2D const & point, Rect const & cliprect) const
 {
 	if (Class->OneFrameLight) {
@@ -145,7 +145,7 @@ void ParticleSystemClass::Draw_It(Point2D const & point, Rect const & cliprect) 
 	}
 }
 
-// FUNCTION: 0x0062E380
+// FUNCTION: GAMEMD 0x0062E380
 ParticleClass * ParticleSystemClass::Spawn_Held_Particle(Coord const & coord1, Coord const & coord2)
 {
 	if (Class->HoldsWhat == PARTICLE_NONE) {
@@ -160,7 +160,7 @@ ParticleClass * ParticleSystemClass::Spawn_Held_Particle(Coord const & coord1, C
 	return(NULL);
 }
 
-// FUNCTION: 0x0062E430
+// FUNCTION: GAMEMD 0x0062E430
 ParticleClass * ParticleSystemClass::Spawn_Particle(ParticleTypeClass * type, Coord const & coord)
 {
 	ParticleClass * particle = new ParticleClass(type, coord, COORD_NONE, this);
@@ -171,7 +171,7 @@ ParticleClass * ParticleSystemClass::Spawn_Particle(ParticleTypeClass * type, Co
 	return(NULL);
 }
 
-// FUNCTION: 0x0062E4C0
+// FUNCTION: GAMEMD 0x0062E4C0
 ParticleClass * ParticleSystemClass::Spawn_Held_Particle_Random(Coord const & coord1, Coord const & coord2, int v)
 {
 	if (Class->HoldsWhat == PARTICLE_NONE) {
@@ -210,7 +210,7 @@ ParticleClass * ParticleSystemClass::Spawn_Held_Particle_Random(Coord const & co
 	return(particle);
 }
 
-// FUNCTION: 0x0062E5D0
+// FUNCTION: GAMEMD 0x0062E5D0
 bool ParticleSystemClass::Delete_Particle(int index)
 {
 	if (index < SystemParticles.Count()) {
@@ -221,7 +221,7 @@ bool ParticleSystemClass::Delete_Particle(int index)
 	return(false);
 }
 
-// FUNCTION: 0x0062E650
+// FUNCTION: GAMEMD 0x0062E650
 void ParticleSystemClass::Clear_System(void)
 {
 	for (int i = SystemParticles.Count() - 1; i >= 0; i--) {
@@ -229,7 +229,7 @@ void ParticleSystemClass::Clear_System(void)
 	}
 }
 
-// FUNCTION: 0x0062E6D0
+// FUNCTION: GAMEMD 0x0062E6D0
 void ParticleSystemClass::Gas_AI(void)
 {
 	int i;
@@ -266,7 +266,7 @@ extern short SineTable[];
 static int _FireStepX[FACING_COUNT] = { 1,  1,  0, -1, -1, -1,  0,  1 };
 static int _FireStepY[FACING_COUNT] = { 0,  1,  1,  1,  0, -1, -1, -1 };
 
-// FUNCTION: 0x0062F9A0
+// FUNCTION: GAMEMD 0x0062F9A0
 void ParticleSystemClass::Fire_AI(void)
 {
 	int i;
@@ -326,7 +326,7 @@ void ParticleSystemClass::Fire_AI(void)
 	}
 }
 
-// FUNCTION: 0x0062FD60
+// FUNCTION: GAMEMD 0x0062FD60
 void ParticleSystemClass::AI(void)
 {
 	switch (Class->BehavesLike) {
@@ -358,19 +358,19 @@ void ParticleSystemClass::AI(void)
 	}
 }
 
-// FUNCTION: 0x0062FE60
+// FUNCTION: GAMEMD 0x0062FE60
 bool ParticleSystemClass::Is_Inactive(void) const
 {
 	return(IsMarkedForDeletion && SystemParticles.Count() == 0);
 }
 
-// FUNCTION: 0x0062FE80
+// FUNCTION: GAMEMD 0x0062FE80
 LayerType ParticleSystemClass::In_Which_Layer(void) const
 {
 	return(LAYER_GROUND);
 }
 
-// FUNCTION: 0x0062FE90
+// FUNCTION: GAMEMD 0x0062FE90
 void ParticleSystemClass::Detach(AbstractClass const * target, bool all)
 {
 	BASECLASS::Detach(target, all);
@@ -387,7 +387,7 @@ void ParticleSystemClass::Detach(AbstractClass const * target, bool all)
 	}
 }
 
-// FUNCTION: 0x0062FF20
+// FUNCTION: GAMEMD 0x0062FF20
 HRESULT STDMETHODCALLTYPE ParticleSystemClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -423,7 +423,7 @@ HRESULT STDMETHODCALLTYPE ParticleSystemClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x00630090
+// FUNCTION: GAMEMD 0x00630090
 HRESULT STDMETHODCALLTYPE ParticleSystemClass::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -444,7 +444,7 @@ HRESULT STDMETHODCALLTYPE ParticleSystemClass::Save(IStream * stream, BOOL clear
 	return(result);
 }
 
-// FUNCTION: 0x00630100
+// FUNCTION: GAMEMD 0x00630100
 void ParticleSystemClass::Compute_CRC(CRCEngine & crc) const
 {
 	BASECLASS::Compute_CRC(crc);
@@ -461,7 +461,7 @@ void ParticleSystemClass::Compute_CRC(CRCEngine & crc) const
 	crc(Lifetime);
 }
 
-// FUNCTION: 0x006301A0
+// FUNCTION: GAMEMD 0x006301A0
 HRESULT STDMETHODCALLTYPE ParticleSystemClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -469,37 +469,42 @@ HRESULT STDMETHODCALLTYPE ParticleSystemClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x006301E0 ParticleSystemClass::Delete_Me
+// FUNCTION: GAMEMD 0x006301E0
+// ParticleSystemClass::Delete_Me
 
-// FUNCTION: 0x006301F0
+// FUNCTION: GAMEMD 0x006301F0
 void ParticleSystemClass::FUN_006301F0(int lifetime)
 {
 	Lifetime = lifetime;
 }
 
-// FUNCTION: 0x00630200
+// FUNCTION: GAMEMD 0x00630200
 int ParticleSystemClass::Fetch_Object_Size(void) const
 {
 	return(sizeof(*this));
 }
 
-// FUNCTION: 0x00630210
+// FUNCTION: GAMEMD 0x00630210
 RTTIType ParticleSystemClass::Fetch_RTTI(void) const
 {
 	return(RTTI_PARTICLESYSTEM);
 }
 
-// FUNCTION: 0x00630220
+// FUNCTION: GAMEMD 0x00630220
 ObjectTypeClass const * ParticleSystemClass::Class_Of(void) const
 {
 	return(Class);
 }
 
-// FUNCTION: 0x00630230 ParticleSystemClass::~ParticleSystemClass
+// SYNTHETIC: GAMEMD 0x00630230
+// ??_GParticleSystemClass@@UAEPAXI@Z
 
-// FUNCTION: 0x00630250 ?$DynamicVectorClass@PAVParticleClass@@::Add
+// TEMPLATE: GAMEMD 0x00630250
+// ?Add@?$DynamicVectorClass@PAVParticleClass@@@@QAE_NABQAVParticleClass@@@Z
 
-// FUNCTION: 0x006302A0 ?$VectorClass@PAVParticleClass@@::?$VectorClass@PAVParticleClass@@
+// TEMPLATE: GAMEMD 0x006302A0
+// ??0?$VectorClass@PAVParticleClass@@@@QAE@HPBQAVParticleClass@@@Z
 template class DynamicVectorClass<ParticleClass *>;
 
-// FUNCTION: 0x006302F0 $E2
+// SYNTHETIC: GAMEMD 0x006302F0 SYMBOL
+// _$E2

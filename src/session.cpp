@@ -51,34 +51,48 @@ extern int DAT_00B07784;
 namespace Game { extern int PlayerColor; extern bool IsActive; }
 namespace Unsorted { extern int CurrentFrame; }
 
-// FUNCTION: 0x00696D00 $E2
-// FUNCTION: 0x00696D20 $E5
-// FUNCTION: 0x00696D50 $E8
-// FUNCTION: 0x00696D70 $E11
-// FUNCTION: 0x00696D90 $E14
-// FUNCTION: 0x00696DB0 $E17
-// FUNCTION: 0x00696DD0 $E20
-// FUNCTION: 0x00696DF0 $E23
-// FUNCTION: 0x00696E30 $E26
-// FUNCTION: 0x00696E60 $E29
-// FUNCTION: 0x00696E90 $E32
-// FUNCTION: 0x00696EC0 $E35
-// FUNCTION: 0x00696ED0 $E38
-// FUNCTION: 0x00696EF0 $E41
+// SYNTHETIC: GAMEMD 0x00696D00 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x00696D20 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x00696D50 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x00696D70 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x00696D90 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x00696DB0 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x00696DD0 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x00696DF0 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x00696E30 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x00696E60 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x00696E90 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x00696EC0 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x00696ED0 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x00696EF0 SYMBOL
+// _$E41
 
-// FUNCTION: 0x00696F10
+// FUNCTION: GAMEMD 0x00696F10
 int NodeNameType::Get_Country(void)
 {
 	return (Slot.InitialCountry == -2) ? -2 : Slot.Country;
 }
 
-// FUNCTION: 0x00696F20
+// FUNCTION: GAMEMD 0x00696F20
 int NodeNameType::Get_Color(void)
 {
 	return (Slot.InitialColor == -2) ? -2 : Slot.ColorIdx;
 }
 
-// FUNCTION: 0x00696F30
+// FUNCTION: GAMEMD 0x00696F30
 int NodeNameType::Get_Color_Or_Random(void)
 {
 	if (Slot.InitialColor != -2 || Slot.ColorIdx != -1) {
@@ -87,7 +101,7 @@ int NodeNameType::Get_Color_Or_Random(void)
 	return -2;
 }
 
-// FUNCTION: 0x00696F50
+// FUNCTION: GAMEMD 0x00696F50
 int NodeNameType::Get_Start(void)
 {
 	if (Slot.InitialStart != -2 || Slot.Start != -1) {
@@ -96,7 +110,7 @@ int NodeNameType::Get_Start(void)
 	return -2;
 }
 
-// FUNCTION: 0x00696F70
+// FUNCTION: GAMEMD 0x00696F70
 int NodeNameType::Get_Team(void)
 {
 	if (Slot.InitialTeam != -2 || Slot.Team != -1) {
@@ -105,7 +119,7 @@ int NodeNameType::Get_Team(void)
 	return -2;
 }
 
-// FUNCTION: 0x00696F90
+// FUNCTION: GAMEMD 0x00696F90
 void NodeNameType::Set_Country(int value)
 {
 	if (value == -2) {
@@ -117,7 +131,7 @@ void NodeNameType::Set_Country(int value)
 	}
 }
 
-// FUNCTION: 0x00696FC0
+// FUNCTION: GAMEMD 0x00696FC0
 void NodeNameType::Set_Color(int value)
 {
 	if (value == -2) {
@@ -129,7 +143,7 @@ void NodeNameType::Set_Color(int value)
 	}
 }
 
-// FUNCTION: 0x00696FF0
+// FUNCTION: GAMEMD 0x00696FF0
 void NodeNameType::Set_Start(int value)
 {
 	if (value == -2) {
@@ -141,7 +155,7 @@ void NodeNameType::Set_Start(int value)
 	}
 }
 
-// FUNCTION: 0x00697020
+// FUNCTION: GAMEMD 0x00697020
 void NodeNameType::Set_Team(int value)
 {
 	if (value == -2) {
@@ -153,7 +167,7 @@ void NodeNameType::Set_Team(int value)
 	}
 }
 
-// FUNCTION: 0x00697050
+// FUNCTION: GAMEMD 0x00697050
 SessionOptionsClass::SessionOptionsClass(void)
 {
 	MPGameMode = 0;
@@ -173,7 +187,7 @@ SessionOptionsClass::SessionOptionsClass(void)
 	}
 }
 
-// FUNCTION: 0x006977C0
+// FUNCTION: GAMEMD 0x006977C0
 void SessionClass::Load_Call_Wait_Strings(void)
 {
 	for (int i = 0; i < CALL_WAIT_STRINGS_NUM; i++) {
@@ -181,7 +195,7 @@ void SessionClass::Load_Call_Wait_Strings(void)
 	}
 }
 
-// FUNCTION: 0x00697840
+// FUNCTION: GAMEMD 0x00697840
 SessionClass::~SessionClass(void)
 {
 	while (InitStrings.Count()) {
@@ -195,7 +209,7 @@ SessionClass::~SessionClass(void)
 	}
 }
 
-// FUNCTION: 0x00697AD0
+// FUNCTION: GAMEMD 0x00697AD0
 void SessionClass::One_Time(void)
 {
 	Read_Scenario_Descriptions();
@@ -204,7 +218,7 @@ void SessionClass::One_Time(void)
 	DebugString("Session one time init. UniqueID is %08x\n", UniqueID);
 }
 
-// FUNCTION: 0x00697B60
+// FUNCTION: GAMEMD 0x00697B60
 void SessionClass::Init(void)
 {
 }
@@ -216,7 +230,7 @@ struct Unknown_00B052D0 {
 };
 extern Unknown_00B052D0 DAT_00B052D0;
 
-// FUNCTION: 0x00697B70
+// FUNCTION: GAMEMD 0x00697B70
 int SessionClass::Create_Connections(void)
 {
 	int i;
@@ -304,7 +318,7 @@ int SessionClass::Create_Connections(void)
 	return(1);
 }
 
-// FUNCTION: 0x00697E70
+// FUNCTION: GAMEMD 0x00697E70
 bool SessionClass::Am_I_Master(HouseClass * who)
 {
 	int i;
@@ -338,7 +352,7 @@ bool SessionClass::Am_I_Master(HouseClass * who)
 	return(false);
 }
 
-// FUNCTION: 0x00697F10
+// FUNCTION: GAMEMD 0x00697F10
 void SessionOptionsClass::Read(CCINIClass & ini, char const * section, int default_slot, int default_first_slot)
 {
 	char entry[16];
@@ -368,7 +382,7 @@ void SessionOptionsClass::Read(CCINIClass & ini, char const * section, int defau
 	}
 }
 
-// FUNCTION: 0x00698CB0
+// FUNCTION: GAMEMD 0x00698CB0
 bool SessionClass::Log_To_File(FILE * out)
 {
 	int i;
@@ -437,7 +451,7 @@ bool SessionClass::Log_To_File(FILE * out)
 	return(true);
 }
 
-// FUNCTION: 0x00698F90
+// FUNCTION: GAMEMD 0x00698F90
 void SessionOptionsClass::Write(CCINIClass & ini, char const * section)
 {
 	char entry[16];
@@ -459,7 +473,7 @@ void SessionOptionsClass::Write(CCINIClass & ini, char const * section)
 	}
 }
 
-// FUNCTION: 0x006990A0
+// FUNCTION: GAMEMD 0x006990A0
 void SessionClass::Write_MultiPlayer_Settings(void)
 {
 	RawFileClass file("RA2MD.INI");
@@ -526,7 +540,7 @@ void SessionClass::Write_MultiPlayer_Settings(void)
 	DAT_008870C0.Save(file, false);
 }
 
-// FUNCTION: 0x00699450
+// FUNCTION: GAMEMD 0x00699450
 void SessionClass::Write_Chat_Settings(void)
 {
 	RawFileClass file("RA2MD.INI");
@@ -538,7 +552,7 @@ void SessionClass::Write_Chat_Settings(void)
 	DAT_008870C0.Save(file, false);
 }
 
-// FUNCTION: 0x0069A1F0
+// FUNCTION: GAMEMD 0x0069A1F0
 void SessionClass::Free_Scenario_Descriptions(void)
 {
 	int i;
@@ -561,12 +575,12 @@ void SessionClass::Free_Scenario_Descriptions(void)
 	PhoneBook.Clear();
 }
 
-// FUNCTION: 0x0069A300
+// FUNCTION: GAMEMD 0x0069A300
 void FUN_0069A300(void)
 {
 }
 
-// FUNCTION: 0x0069A310
+// FUNCTION: GAMEMD 0x0069A310
 int SessionClass::Color_Index_To_Scheme(int id)
 {
 	if (id == -2) {
@@ -578,7 +592,7 @@ int SessionClass::Color_Index_To_Scheme(int id)
 	return id;
 }
 
-// FUNCTION: 0x0069A340
+// FUNCTION: GAMEMD 0x0069A340
 unsigned int SessionClass::Compute_Unique_ID(void)
 {
 	unsigned int id;
@@ -600,7 +614,7 @@ unsigned int SessionClass::Compute_Unique_ID(void)
 	return(id);
 }
 
-// FUNCTION: 0x0069A3B0
+// FUNCTION: GAMEMD 0x0069A3B0
 MultiMission::MultiMission(CCINIClass const & ini, char const * name)
 {
 	char buffer[128];
@@ -678,7 +692,7 @@ MultiMission::MultiMission(CCINIClass const & ini, char const * name)
 	}
 }
 
-// FUNCTION: 0x0069A980
+// FUNCTION: GAMEMD 0x0069A980
 MultiMission::MultiMission(char const * filename, wchar_t const * description, char const * digest, bool official, char const * game_modes, int min_players, int max_players)
 {
 	Set_Filename(filename);
@@ -705,7 +719,7 @@ MultiMission::MultiMission(char const * filename, wchar_t const * description, c
 	}
 }
 
-// FUNCTION: 0x0069AC30
+// FUNCTION: GAMEMD 0x0069AC30
 bool MultiMission::Is_On_CD(DiskID cd) const
 {
 	if (cd == DISK_LOCAL) {
@@ -717,13 +731,13 @@ bool MultiMission::Is_On_CD(DiskID cd) const
 	return Disks.Is_In_List(cd);
 }
 
-// FUNCTION: 0x0069ACC0
+// FUNCTION: GAMEMD 0x0069ACC0
 DiskID MultiMission::On_Which_CD(void) const
 {
 	return Disks[0];
 }
 
-// FUNCTION: 0x0069ACD0
+// FUNCTION: GAMEMD 0x0069ACD0
 void MultiMission::Set_Description(wchar_t const * description)
 {
 	if (description != NULL) {
@@ -735,7 +749,7 @@ void MultiMission::Set_Description(wchar_t const * description)
 	}
 }
 
-// FUNCTION: 0x0069AD20
+// FUNCTION: GAMEMD 0x0069AD20
 void MultiMission::Set_Filename(char const * filename)
 {
 	if (filename != NULL) {
@@ -746,7 +760,7 @@ void MultiMission::Set_Filename(char const * filename)
 	}
 }
 
-// FUNCTION: 0x0069AD80
+// FUNCTION: GAMEMD 0x0069AD80
 void MultiMission::Set_Digest(char const * digest)
 {
 	if (digest != NULL) {
@@ -757,19 +771,19 @@ void MultiMission::Set_Digest(char const * digest)
 	}
 }
 
-// FUNCTION: 0x0069ADE0
+// FUNCTION: GAMEMD 0x0069ADE0
 void MultiMission::Set_Official(bool official)
 {
 	IsOfficial = official;
 }
 
-// FUNCTION: 0x0069ADF0
+// FUNCTION: GAMEMD 0x0069ADF0
 bool MultiMission::Is_Random_Map(void) const
 {
 	return stricmp(Filename, "RandMap.Sed") == 0;
 }
 
-// FUNCTION: 0x0069AE10
+// FUNCTION: GAMEMD 0x0069AE10
 bool MultiMission::Supports_Game_Mode(Wstring & mode) const
 {
 	if (GameModes.Count() == 0) {
@@ -783,7 +797,7 @@ bool MultiMission::Supports_Game_Mode(Wstring & mode) const
 	return false;
 }
 
-// FUNCTION: 0x0069AE70
+// FUNCTION: GAMEMD 0x0069AE70
 bool SessionClass::Is_Random_Map(void) const
 {
 	return stricmp(ScenarioFileName, "RandMap.Sed") == 0;
@@ -792,7 +806,7 @@ bool SessionClass::Is_Random_Map(void) const
 extern char DAT_00B77A04[];
 extern char DAT_00B76568[];
 
-// FUNCTION: 0x0069AE90
+// FUNCTION: GAMEMD 0x0069AE90
 void SessionClass::Update_Progress(int percent)
 {
 	if (Debug_Map) {
@@ -871,7 +885,7 @@ void SessionClass::Update_Progress(int percent)
 	Call_Back();
 }
 
-// FUNCTION: 0x0069B170
+// FUNCTION: GAMEMD 0x0069B170
 void SessionClass::Init_Fixed_Alliances(void)
 {
 	HouseClass * hptr;
@@ -953,7 +967,7 @@ void SessionClass::Init_Fixed_Alliances(void)
 	Scen->Special.IsAllianceFixed = true;
 }
 
-// FUNCTION: 0x0069B540
+// FUNCTION: GAMEMD 0x0069B540
 void GameOptionsType::FUN_0069B540(void)
 {
 	AIPlayers = 0;
@@ -963,7 +977,7 @@ void GameOptionsType::FUN_0069B540(void)
 	}
 }
 
-// FUNCTION: 0x0069B560
+// FUNCTION: GAMEMD 0x0069B560
 bool GameOptionsType::Save(IStream * stream) const
 {
 	if (stream != NULL) {
@@ -980,7 +994,7 @@ bool GameOptionsType::Save(IStream * stream) const
 	return(false);
 }
 
-// FUNCTION: 0x0069B5B0
+// FUNCTION: GAMEMD 0x0069B5B0
 bool GameOptionsType::Load(IStream * stream)
 {
 	if (stream != NULL) {
@@ -1000,7 +1014,7 @@ bool GameOptionsType::Load(IStream * stream)
 	return(false);
 }
 
-// FUNCTION: 0x0069B600
+// FUNCTION: GAMEMD 0x0069B600
 bool SessionClass::FUN_0069B600(int color) const
 {
 	if (color == -2) {
@@ -1019,13 +1033,13 @@ bool SessionClass::FUN_0069B600(int color) const
 	return false;
 }
 
-// FUNCTION: 0x0069B670
+// FUNCTION: GAMEMD 0x0069B670
 int SessionClass::FUN_0069B670(void)
 {
 	return Scen->RandomNumber(0, 9);
 }
 
-// FUNCTION: 0x0069B690
+// FUNCTION: GAMEMD 0x0069B690
 int SessionClass::FUN_0069B690(void)
 {
 	int color;
@@ -1035,25 +1049,25 @@ int SessionClass::FUN_0069B690(void)
 	return color;
 }
 
-// FUNCTION: 0x0069B700
+// FUNCTION: GAMEMD 0x0069B700
 int SessionClass::FUN_0069B700(void) const
 {
 	return (idxSide2 == -2) ? -2 : House;
 }
 
-// FUNCTION: 0x0069B720
+// FUNCTION: GAMEMD 0x0069B720
 int SessionClass::FUN_0069B720(void) const
 {
 	return (ColorIdx == -2) ? -2 : PrefColor;
 }
 
-// FUNCTION: 0x0069B740
+// FUNCTION: GAMEMD 0x0069B740
 int SessionClass::FUN_0069B740(void) const
 {
 	return (unknown_168 == -2) ? -2 : unknown_164;
 }
 
-// FUNCTION: 0x0069B760
+// FUNCTION: GAMEMD 0x0069B760
 void SessionClass::FUN_0069B760(int side, bool random)
 {
 	if (side == -2) {
@@ -1071,7 +1085,7 @@ void SessionClass::FUN_0069B760(int side, bool random)
 	idxSide2 = Side2;
 }
 
-// FUNCTION: 0x0069B7E0
+// FUNCTION: GAMEMD 0x0069B7E0
 void SessionClass::FUN_0069B7E0(int color, bool random)
 {
 	if (color == -2) {
@@ -1093,12 +1107,12 @@ void SessionClass::FUN_0069B7E0(int color, bool random)
 	ColorIdx = Color2;
 }
 
-// FUNCTION: 0x0069B8B0
+// FUNCTION: GAMEMD 0x0069B8B0
 void __stdcall FUN_0069B8B0(int, int)
 {
 }
 
-// FUNCTION: 0x0069BAB0
+// FUNCTION: GAMEMD 0x0069BAB0
 void SessionClass::Resume(void)
 {
 	if (!CurrentlyInGame && Game::IsActive) {

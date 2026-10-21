@@ -44,34 +44,44 @@ extern const double DAT_007E1718;
 extern const double DAT_007F74B0;
 extern const double DAT_007F74B8;
 
-// FUNCTION: 0x007771D0 $E67
+// SYNTHETIC: GAMEMD 0x007771D0 SYMBOL
+// _$E67
 double DAT_00B730D0 = FUN_004CAC40(pow(256.0, 2.0) * 2);
 
-// FUNCTION: 0x00777200 $E70
+// SYNTHETIC: GAMEMD 0x00777200 SYMBOL
+// _$E70
 double DAT_00B73538 = DAT_00B730D0 / DAT_007F74B0;
 
-// FUNCTION: 0x00777220 $E73
+// SYNTHETIC: GAMEMD 0x00777220 SYMBOL
+// _$E73
 double DAT_00B73520 = DAT_007E1718 / DAT_00B73538;
 
-// FUNCTION: 0x00777240 $E76
+// SYNTHETIC: GAMEMD 0x00777240 SYMBOL
+// _$E76
 double DAT_00B73310 = DAT_007F74B8 * 45.0;
 
-// FUNCTION: 0x00777260 $E79
+// SYNTHETIC: GAMEMD 0x00777260 SYMBOL
+// _$E79
 double DAT_00B730D8 = DAT_007F74B8 * 60.0;
 
-// FUNCTION: 0x00777280 $E82
+// SYNTHETIC: GAMEMD 0x00777280 SYMBOL
+// _$E82
 double DAT_00B730B0 = DAT_007F74B8 * 90.0;
 
-// FUNCTION: 0x007772A0 $E85
+// SYNTHETIC: GAMEMD 0x007772A0 SYMBOL
+// _$E85
 int DAT_00B73540 = (int)(FUN_004CAD50(DAT_00B730B0 - DAT_00B730D8) * DAT_00B730D0 * 0.5);
 
-// FUNCTION: 0x007772E0 $E88
+// SYNTHETIC: GAMEMD 0x007772E0 SYMBOL
+// _$E88
 double DAT_00B730E0 = FUN_004CADE0(DAT_00B73540 * 0.00390625);
 
-// FUNCTION: 0x00777310 $E91
+// SYNTHETIC: GAMEMD 0x00777310 SYMBOL
+// _$E91
 double DAT_00B73308 = FUN_004CADE0((DAT_00B73540 * 2) / DAT_00B730D0);
 
-// FUNCTION: 0x00777340 $E94
+// SYNTHETIC: GAMEMD 0x00777340 SYMBOL
+// _$E94
 int DAT_00B73534 = (int)(DAT_00B73540 * 4 + 0.5);
 
 struct ShortPair {
@@ -84,10 +94,12 @@ struct IntTriple {
 	IntTriple() { A = 0; B = 0; C = 0; }
 };
 
-// FUNCTION: 0x00777370 $E97
+// SYNTHETIC: GAMEMD 0x00777370 SYMBOL
+// _$E97
 ShortPair DAT_00B730C8;
 
-// FUNCTION: 0x00777380 $E100
+// SYNTHETIC: GAMEMD 0x00777380 SYMBOL
+// _$E100
 IntTriple DAT_00B732F8;
 
 namespace Game { extern HWND hWnd; extern HINSTANCE hInstance; extern void * hIMC; extern bool IsFocused; extern int SpecialDialog; }
@@ -116,7 +128,7 @@ extern int DAT_00B73530;
 extern int DAT_00B73528;
 extern int DAT_00B7352C;
 
-// FUNCTION: 0x007773A0
+// FUNCTION: GAMEMD 0x007773A0
 void FUN_007773A0(void)
 {
 	DAT_00B73530 = 0;
@@ -124,7 +136,7 @@ void FUN_007773A0(void)
 	DAT_00B7352C = 0x80;
 }
 
-// FUNCTION: 0x007773C0
+// FUNCTION: GAMEMD 0x007773C0
 void Focus_Loss(void)
 {
 	FUN_004068E0("Focus_Loss()\n");
@@ -140,7 +152,7 @@ void Focus_Loss(void)
 HWND FUN_00775B10(void);
 extern bool DAT_00884B8F;
 
-// FUNCTION: 0x00777420
+// FUNCTION: GAMEMD 0x00777420
 void Focus_Restore(void)
 {
 	FUN_004068E0("Focus_Restore()\n");
@@ -207,7 +219,7 @@ extern MouseSlots * DAT_00887640;
 
 namespace OwnerDraw { int __fastcall ServiceIMEMessage(HWND window, UINT message, WPARAM wparam, LPARAM lparam); }
 
-// FUNCTION: 0x007775C0
+// FUNCTION: GAMEMD 0x007775C0
 LRESULT CALLBACK Windows_Procedure(HWND hwnd, UINT message, UINT wParam, LONG lParam)
 {
 	if (PacketTransport) {
@@ -364,12 +376,12 @@ LRESULT CALLBACK Windows_Procedure(HWND hwnd, UINT message, UINT wParam, LONG lP
 	return(DefWindowProc(hwnd, message, wParam, lParam));
 }
 
-// FUNCTION: 0x00777AB0
+// FUNCTION: GAMEMD 0x00777AB0
 void FUN_00777AB0(void)
 {
 }
 
-// FUNCTION: 0x00777AC0
+// FUNCTION: GAMEMD 0x00777AC0
 void Build_Date_String(char * buffer, int buflen)
 {
 	SYSTEMTIME systime;
@@ -379,27 +391,27 @@ void Build_Date_String(char * buffer, int buflen)
 	}
 }
 
-// FUNCTION: 0x00777B30
+// FUNCTION: GAMEMD 0x00777B30
 char *Build_Number_String(char * buffer, int buflen)
 {
 	sprintf (buffer, "%d", *(unsigned int*)(&BuildNumber[28]));
 	return(buffer);
 }
 
-// FUNCTION: 0x00777B50
+// FUNCTION: GAMEMD 0x00777B50
 int FUN_00777B50(void)
 {
 	return(DAT_00822D1C);
 }
 
-// FUNCTION: 0x00777B60
+// FUNCTION: GAMEMD 0x00777B60
 char *Build_By_String(char * buffer, int buflen)
 {
 	strncpy(buffer, &BuildNumber[32], 32);
 	return(buffer);
 }
 
-// FUNCTION: 0x00777B80
+// FUNCTION: GAMEMD 0x00777B80
 char *Build_By_Initials(char * buffer, int buflen)
 {
 	buffer[0] = BuildNumber[32];
@@ -413,7 +425,7 @@ char *Build_By_Initials(char * buffer, int buflen)
 	return(buffer);
 }
 
-// FUNCTION: 0x00777BB0
+// FUNCTION: GAMEMD 0x00777BB0
 char *Build_Version_String(char * buffer, int buflen)
 {
 	char _buffer1[128];
@@ -443,7 +455,7 @@ namespace OwnerDraw {
 	void UpdateIMECompositionString(void);
 }
 
-// FUNCTION: 0x00777C30
+// FUNCTION: GAMEMD 0x00777C30
 void Create_Main_Window(HINSTANCE instance, int command_show, int width, int height)
 {
 	InitCommonControls();
@@ -489,7 +501,7 @@ void Create_Main_Window(HINSTANCE instance, int command_show, int width, int hei
 	SetCursor(LoadCursor(Game::hInstance, MAKEINTRESOURCE(104)));
 }
 
-// FUNCTION: 0x00777E00
+// FUNCTION: GAMEMD 0x00777E00
 void OwnerDraw::CancelIMEComposition(void)
 {
 	IMECompositionString[0] = 0;
@@ -512,7 +524,7 @@ struct IMECandidateList {
 	unsigned long Offset[1];
 };
 
-// FUNCTION: 0x00777E40
+// FUNCTION: GAMEMD 0x00777E40
 void __fastcall FUN_00777E40(void * context, unsigned int index, char * buffer, int length)
 {
 	if (context) {
@@ -530,7 +542,7 @@ void __fastcall FUN_00777E40(void * context, unsigned int index, char * buffer, 
 	}
 }
 
-// FUNCTION: 0x00777EA0
+// FUNCTION: GAMEMD 0x00777EA0
 void OwnerDraw::UpdateIMECompositionString(void)
 {
 	IMECompositionString[0] = 0;
@@ -563,7 +575,7 @@ void OwnerDraw::UpdateIMECompositionString(void)
 	}
 }
 
-// FUNCTION: 0x00777F90
+// FUNCTION: GAMEMD 0x00777F90
 void __fastcall FUN_00777F90(HWND window)
 {
 	if (Game::hIMC) {
@@ -584,7 +596,7 @@ void __fastcall FUN_00777F90(HWND window)
 	}
 }
 
-// FUNCTION: 0x00778030
+// FUNCTION: GAMEMD 0x00778030
 int __fastcall OwnerDraw::ServiceIMEMessage(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	switch (message) {
@@ -630,13 +642,13 @@ namespace OwnerDraw {
 	wchar_t ConvertIMECharToWide(unsigned int wparam, long lparam);
 }
 
-// FUNCTION: 0x00778120
+// FUNCTION: GAMEMD 0x00778120
 int OwnerDraw::GetIMEResult(void)
 {
 	return(DAT_00B73570);
 }
 
-// FUNCTION: 0x00778130
+// FUNCTION: GAMEMD 0x00778130
 void FUN_00778130(void)
 {
 	if (Game::hIMC) {
@@ -644,7 +656,7 @@ void FUN_00778130(void)
 	}
 }
 
-// FUNCTION: 0x00778150
+// FUNCTION: GAMEMD 0x00778150
 void FUN_00778150(void)
 {
 	if (Game::hIMC) {
@@ -652,12 +664,12 @@ void FUN_00778150(void)
 	}
 }
 
-// FUNCTION: 0x00778170
+// FUNCTION: GAMEMD 0x00778170
 void FUN_00778170(void)
 {
 }
 
-// FUNCTION: 0x00778180
+// FUNCTION: GAMEMD 0x00778180
 void FUN_00778180(void)
 {
 	if (Game::hIMC) {
@@ -665,13 +677,13 @@ void FUN_00778180(void)
 	}
 }
 
-// FUNCTION: 0x007781A0
+// FUNCTION: GAMEMD 0x007781A0
 void FUN_007781A0(void)
 {
 	FUN_007C8A1C(Game::hWnd, NULL);
 }
 
-// FUNCTION: 0x007781B0
+// FUNCTION: GAMEMD 0x007781B0
 wchar_t OwnerDraw::ConvertIMECharToWide(unsigned int wparam, long lparam)
 {
 	char mb[4];
@@ -688,7 +700,7 @@ wchar_t OwnerDraw::ConvertIMECharToWide(unsigned int wparam, long lparam)
 	return (converted == 1) ? wc : 0;
 }
 
-// FUNCTION: 0x00778210
+// FUNCTION: GAMEMD 0x00778210
 void __fastcall Load_Title_Screen(char const * name, Surface * surface, PaletteClass * palette)
 {
 	CCFileClass file(name);
@@ -725,14 +737,15 @@ void __fastcall Load_Title_Screen(char const * name, Surface * surface, PaletteC
 	}
 }
 
-// FUNCTION: 0x007784A0 CCToolTip::~CCToolTip
+// SYNTHETIC: GAMEMD 0x007784A0
+// ??_GCCToolTip@@UAEPAXI@Z
 
 extern int DAT_00B73580;
 extern int DAT_00B73584;
 extern int DAT_00B73588;
 extern int DAT_00B7358C;
 
-// FUNCTION: 0x007784D0
+// FUNCTION: GAMEMD 0x007784D0
 void FUN_007784D0(void)
 {
 	DAT_00B73580 = 0;

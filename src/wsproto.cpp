@@ -37,34 +37,44 @@ struct WinsockBufferType {
 	unsigned char Buffer[WS_INTERNET_BUFFER_LEN];
 };
 
-// FUNCTION: 0x007B17D0 $E5
+// SYNTHETIC: GAMEMD 0x007B17D0 SYMBOL
+// _$E5
 double DAT_00B78040 = FUN_004CAC40(pow(256.0, 2.0) * 2);
 
-// FUNCTION: 0x007B1800 $E8
+// SYNTHETIC: GAMEMD 0x007B1800 SYMBOL
+// _$E8
 double DAT_00B78090 = DAT_00B78040 / DAT_007F79A8;
 
-// FUNCTION: 0x007B1820 $E11
+// SYNTHETIC: GAMEMD 0x007B1820 SYMBOL
+// _$E11
 double DAT_00B78078 = 1.0 / DAT_00B78090;
 
-// FUNCTION: 0x007B1840 $E14
+// SYNTHETIC: GAMEMD 0x007B1840 SYMBOL
+// _$E14
 double DAT_00B78070 = DAT_007F79B0 * 45.0;
 
-// FUNCTION: 0x007B1860 $E17
+// SYNTHETIC: GAMEMD 0x007B1860 SYMBOL
+// _$E17
 double DAT_00B78048 = DAT_007F79B0 * 60.0;
 
-// FUNCTION: 0x007B1880 $E20
+// SYNTHETIC: GAMEMD 0x007B1880 SYMBOL
+// _$E20
 double DAT_00B78020 = DAT_007F79B0 * 90.0;
 
-// FUNCTION: 0x007B18A0 $E23
+// SYNTHETIC: GAMEMD 0x007B18A0 SYMBOL
+// _$E23
 int DAT_00B78098 = (int)(FUN_004CAD50(DAT_00B78020 - DAT_00B78048) * DAT_00B78040 * 0.5);
 
-// FUNCTION: 0x007B18E0 $E26
+// SYNTHETIC: GAMEMD 0x007B18E0 SYMBOL
+// _$E26
 double DAT_00B78050 = FUN_004CADE0(DAT_00B78098 * 0.00390625);
 
-// FUNCTION: 0x007B1910 $E29
+// SYNTHETIC: GAMEMD 0x007B1910 SYMBOL
+// _$E29
 double DAT_00B78068 = FUN_004CADE0((DAT_00B78098 * 2) / DAT_00B78040);
 
-// FUNCTION: 0x007B1940 $E32
+// SYNTHETIC: GAMEMD 0x007B1940 SYMBOL
+// _$E32
 int DAT_00B7808C = (int)(DAT_00B78098 * 4 + 0.5);
 
 class InputManagerClass {
@@ -83,13 +93,15 @@ struct IntTriple {
 	IntTriple() { A = 0; B = 0; C = 0; }
 };
 
-// FUNCTION: 0x007B1970 $E36
+// SYNTHETIC: GAMEMD 0x007B1970 SYMBOL
+// _$E36
 ShortPair DAT_00B78038;
 
-// FUNCTION: 0x007B1980 $E39
+// SYNTHETIC: GAMEMD 0x007B1980 SYMBOL
+// _$E39
 IntTriple DAT_00B78058;
 
-// FUNCTION: 0x007B19A0
+// FUNCTION: GAMEMD 0x007B19A0
 void FUN_007B19A0(void)
 {
 	DAT_00B78088 = 0;
@@ -97,7 +109,7 @@ void FUN_007B19A0(void)
 	DAT_00B78084 = 128;
 }
 
-// FUNCTION: 0x007B19C0
+// FUNCTION: GAMEMD 0x007B19C0
 WinsockInterfaceClass::WinsockInterfaceClass(void) :
 Socket(INVALID_SOCKET),
 AlternateSocket(INVALID_SOCKET)
@@ -131,13 +143,13 @@ AlternateSocket(INVALID_SOCKET)
 	DebugString("WinsockInterface constructed\n");
 }
 
-// FUNCTION: 0x007B1AB0
+// FUNCTION: GAMEMD 0x007B1AB0
 WinsockInterfaceClass::~WinsockInterfaceClass(void)
 {
 	Close();
 }
 
-// FUNCTION: 0x007B1B50
+// FUNCTION: GAMEMD 0x007B1B50
 void WinsockInterfaceClass::Close(void)
 {
 	if (!WinsockInitialised) return;
@@ -148,7 +160,7 @@ void WinsockInterfaceClass::Close(void)
 	WinsockInitialised = false;
 }
 
-// FUNCTION: 0x007B1B80
+// FUNCTION: GAMEMD 0x007B1B80
 void WinsockInterfaceClass::Close_Socket(void)
 {
 	if (Socket != INVALID_SOCKET) {
@@ -162,7 +174,7 @@ void WinsockInterfaceClass::Close_Socket(void)
 	}
 }
 
-// FUNCTION: 0x007B1BC0
+// FUNCTION: GAMEMD 0x007B1BC0
 bool WinsockInterfaceClass::Start_Listening(void)
 {
 	if (WSAAsyncSelect(Socket, Game::hWnd, Protocol_Event_Message(INVALID_SOCKET), FD_READ | FD_WRITE) == SOCKET_ERROR) {
@@ -179,7 +191,7 @@ bool WinsockInterfaceClass::Start_Listening(void)
 	return(true);
 }
 
-// FUNCTION: 0x007B1C50
+// FUNCTION: GAMEMD 0x007B1C50
 void WinsockInterfaceClass::Stop_Listening(void)
 {
 	if (Socket != INVALID_SOCKET && Game::hWnd) {
@@ -190,7 +202,7 @@ void WinsockInterfaceClass::Stop_Listening(void)
 	}
 }
 
-// FUNCTION: 0x007B1CA0
+// FUNCTION: GAMEMD 0x007B1CA0
 void WinsockInterfaceClass::Discard_In_Buffers(void)
 {
 	WinsockBufferType *packet;
@@ -209,7 +221,7 @@ void WinsockInterfaceClass::Discard_In_Buffers(void)
 	InBufferArrayPos = 0;
 }
 
-// FUNCTION: 0x007B1D10
+// FUNCTION: GAMEMD 0x007B1D10
 void WinsockInterfaceClass::Discard_Out_Buffers(void)
 {
 	WinsockBufferType *packet;
@@ -241,7 +253,7 @@ void WinsockInterfaceClass::Discard_Out_Buffers(void)
 	AltOutBufferArrayPos = 0;
 }
 
-// FUNCTION: 0x007B1DE0
+// FUNCTION: GAMEMD 0x007B1DE0
 bool WinsockInterfaceClass::Init(void)
 {
 	short version;
@@ -311,7 +323,7 @@ bool WinsockInterfaceClass::Init(void)
 	return(true);
 }
 
-// FUNCTION: 0x007B1FD0
+// FUNCTION: GAMEMD 0x007B1FD0
 void __stdcall Build_Packet_CRC(WinsockBufferType *packet)
 {
 	packet->CRC = 0;
@@ -331,7 +343,7 @@ void __stdcall Build_Packet_CRC(WinsockBufferType *packet)
 	}
 }
 
-// FUNCTION: 0x007B2050
+// FUNCTION: GAMEMD 0x007B2050
 bool __stdcall Passes_CRC_Check(WinsockBufferType *packet)
 {
 	if (packet->BufferLen >= WS_INTERNET_BUFFER_LEN) {
@@ -362,7 +374,7 @@ bool __stdcall Passes_CRC_Check(WinsockBufferType *packet)
 	return(false);
 }
 
-// FUNCTION: 0x007B20E0
+// FUNCTION: GAMEMD 0x007B20E0
 void *WinsockInterfaceClass::Get_New_Out_Buffer(bool alternate)
 {
 	WinsockBufferType *buffer = NULL;
@@ -418,7 +430,7 @@ void *WinsockInterfaceClass::Get_New_Out_Buffer(bool alternate)
 	return(buffer);
 }
 
-// FUNCTION: 0x007B2240
+// FUNCTION: GAMEMD 0x007B2240
 void *WinsockInterfaceClass::Get_New_In_Buffer(void)
 {
 	WinsockBufferType *buffer = NULL;
@@ -449,7 +461,7 @@ void *WinsockInterfaceClass::Get_New_In_Buffer(void)
 	return(buffer);
 }
 
-// FUNCTION: 0x007B22E0
+// FUNCTION: GAMEMD 0x007B22E0
 int WinsockInterfaceClass::Read(void *buffer, int &buffer_len, void *address, int &address_len, unsigned short &port)
 {
 	InputManagerClass::Instance->FUN_0054F000();
@@ -480,7 +492,7 @@ int WinsockInterfaceClass::Read(void *buffer, int &buffer_len, void *address, in
 	return(buffer_len);
 }
 
-// FUNCTION: 0x007B23B0
+// FUNCTION: GAMEMD 0x007B23B0
 void WinsockInterfaceClass::WriteTo(void *buffer, int buffer_len, void *address, int address_len, bool alternate, bool flag, unsigned short port)
 {
 	WinsockBufferType *packet = (WinsockBufferType *)Get_New_Out_Buffer(alternate);
@@ -508,7 +520,7 @@ void WinsockInterfaceClass::WriteTo(void *buffer, int buffer_len, void *address,
 	InputManagerClass::Instance->FUN_0054F000();
 }
 
-// FUNCTION: 0x007B24E0
+// FUNCTION: GAMEMD 0x007B24E0
 void WinsockInterfaceClass::Broadcast(void *buffer, int buffer_len, bool alternate)
 {
 	WinsockBufferType *packet = (WinsockBufferType *)Get_New_Out_Buffer(alternate);
@@ -534,7 +546,7 @@ void WinsockInterfaceClass::Broadcast(void *buffer, int buffer_len, bool alterna
 	InputManagerClass::Instance->FUN_0054F000();
 }
 
-// FUNCTION: 0x007B25E0
+// FUNCTION: GAMEMD 0x007B25E0
 void WinsockInterfaceClass::Clear_Socket_Error(SOCKET socket)
 {
 	unsigned int error_code;
@@ -547,7 +559,7 @@ void WinsockInterfaceClass::Clear_Socket_Error(SOCKET socket)
 	}
 }
 
-// FUNCTION: 0x007B2630
+// FUNCTION: GAMEMD 0x007B2630
 bool WinsockInterfaceClass::Set_Socket_Options(SOCKET socket)
 {
 	static int socket_transmit_buffer_size = SOCKET_BUFFER_SIZE;
@@ -574,7 +586,7 @@ bool WinsockInterfaceClass::Set_Socket_Options(SOCKET socket)
 	return(true);
 }
 
-// FUNCTION: 0x007B26D0
+// FUNCTION: GAMEMD 0x007B26D0
 bool WinsockInterfaceClass::Get_Host_Name(char *name, int len)
 {
 	if (gethostname(name, len) == -1) {
@@ -587,92 +599,121 @@ bool WinsockInterfaceClass::Get_Host_Name(char *name, int len)
 }
 
 
-// FUNCTION: 0x007B2720
+// FUNCTION: GAMEMD 0x007B2720
 void __fastcall FUN_007B2720(int value)
 {
 	DAT_00B780A0 = value;
 }
 
-// FUNCTION: 0x007B2730
+// FUNCTION: GAMEMD 0x007B2730
 int __cdecl FUN_007B2730(void)
 {
 	return DAT_00B780A0;
 }
 
-// FUNCTION: 0x007B2740 WinsockInterfaceClass::Get_Protocol
+// FUNCTION: GAMEMD 0x007B2740
+// WinsockInterfaceClass::Get_Protocol
 
-// FUNCTION: 0x007B2750 WinsockInterfaceClass::Protocol_Event_Message
+// FUNCTION: GAMEMD 0x007B2750
+// WinsockInterfaceClass::Protocol_Event_Message
 
-// FUNCTION: 0x007B2760 WinsockInterfaceClass::Open_Socket
+// FUNCTION: GAMEMD 0x007B2760
+// WinsockInterfaceClass::Open_Socket
 
-// FUNCTION: 0x007B2770 WinsockInterfaceClass::Message_Handler
+// FUNCTION: GAMEMD 0x007B2770
+// WinsockInterfaceClass::Message_Handler
 
-// FUNCTION: 0x007B2780 WinsockInterfaceClass::~WinsockInterfaceClass
+// SYNTHETIC: GAMEMD 0x007B2780
+// ??_GWinsockInterfaceClass@@UAEPAXI@Z
 
-// FUNCTION: 0x007B2840 ?$DynamicVectorClass@PAUWinsockBufferType@WinsockInterfaceClass@@::Clear
+// TEMPLATE: GAMEMD 0x007B2840
+// ?Clear@?$DynamicVectorClass@PAUWinsockBufferType@WinsockInterfaceClass@@@@UAEXXZ
 template class DynamicVectorClass<WinsockInterfaceClass::WinsockBufferType *>;
 
-// FUNCTION: 0x007B2870 ?$VectorClass@PAUWinsockBufferType@WinsockInterfaceClass@@::ID
+// TEMPLATE: GAMEMD 0x007B2870
+// ?ID@?$VectorClass@PAUWinsockBufferType@WinsockInterfaceClass@@@@UAEHPBQAUWinsockBufferType@WinsockInterfaceClass@@@Z
 
-// FUNCTION: 0x007B2890 ?$VectorClass@PAUWinsockBufferType@WinsockInterfaceClass@@::GetItem
+// TEMPLATE: GAMEMD 0x007B2890
+// ?GetItem@?$VectorClass@PAUWinsockBufferType@WinsockInterfaceClass@@@@UBEPAUWinsockBufferType@WinsockInterfaceClass@@H@Z
 
-// FUNCTION: 0x007B28A0 ?$VectorClass@PAUWinsockBufferType@WinsockInterfaceClass@@::operator==
+// TEMPLATE: GAMEMD 0x007B28A0
+// ??8?$VectorClass@PAUWinsockBufferType@WinsockInterfaceClass@@@@UBE_NABV0@@Z
 
-// FUNCTION: 0x007B28E0 ?$VectorClass@PAUWinsockBufferType@WinsockInterfaceClass@@::Resize
+// TEMPLATE: GAMEMD 0x007B28E0
+// ?Resize@?$VectorClass@PAUWinsockBufferType@WinsockInterfaceClass@@@@UAE_NHPBQAUWinsockBufferType@WinsockInterfaceClass@@@Z
 
-// FUNCTION: 0x007B2990 ?$VectorClass@PAUWinsockBufferType@WinsockInterfaceClass@@::Clear
+// TEMPLATE: GAMEMD 0x007B2990
+// ?Clear@?$VectorClass@PAUWinsockBufferType@WinsockInterfaceClass@@@@UAEXXZ
 
-// FUNCTION: 0x007B29C0 ?$VectorClass@PAUWinsockBufferType@WinsockInterfaceClass@@::ID
+// TEMPLATE: GAMEMD 0x007B29C0
+// ?ID@?$VectorClass@PAUWinsockBufferType@WinsockInterfaceClass@@@@UAEHABQAUWinsockBufferType@WinsockInterfaceClass@@@Z
 
-// FUNCTION: 0x007B2A00 ?$DynamicVectorClass@PAUWinsockBufferType@WinsockInterfaceClass@@::ID
+// TEMPLATE: GAMEMD 0x007B2A00
+// ?ID@?$DynamicVectorClass@PAUWinsockBufferType@WinsockInterfaceClass@@@@UAEHPBQAUWinsockBufferType@WinsockInterfaceClass@@@Z
 
-// FUNCTION: 0x007B2A20 ?$DynamicVectorClass@PAUWinsockBufferType@WinsockInterfaceClass@@::Resize
+// TEMPLATE: GAMEMD 0x007B2A20
+// ?Resize@?$DynamicVectorClass@PAUWinsockBufferType@WinsockInterfaceClass@@@@UAE_NHPBQAUWinsockBufferType@WinsockInterfaceClass@@@Z
 
-// FUNCTION: 0x007B2AD0 ?$DynamicVectorClass@PAUWinsockBufferType@WinsockInterfaceClass@@::ID
+// TEMPLATE: GAMEMD 0x007B2AD0
+// ?ID@?$DynamicVectorClass@PAUWinsockBufferType@WinsockInterfaceClass@@@@UAEHABQAUWinsockBufferType@WinsockInterfaceClass@@@Z
 
-// FUNCTION: 0x007B2B00 ~?$VectorClass@PAUWinsockBufferType@WinsockInterfaceClass@@
-// FUNCTION: 0x007B2B50 ?$DynamicVectorClass@PAUWinsockBufferType@WinsockInterfaceClass@@::~?$DynamicVectorClass@PAUWinsockBufferType@WinsockInterfaceClass@@
+// SYNTHETIC: GAMEMD 0x007B2B00
+// ??_G?$VectorClass@PAUWinsockBufferType@WinsockInterfaceClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x007B2B50
+// ??_G?$DynamicVectorClass@PAUWinsockBufferType@WinsockInterfaceClass@@@@UAEPAXI@Z
 
 extern const double DAT_007F7A58;
 extern const double DAT_007F7A60;
 
-// FUNCTION: 0x007B2BA0 $E42
+// SYNTHETIC: GAMEMD 0x007B2BA0 SYMBOL
+// _$E42
 double DAT_00B780C8 = FUN_004CAC40(pow(256.0, 2.0) * 2);
 
-// FUNCTION: 0x007B2BD0 $E45
+// SYNTHETIC: GAMEMD 0x007B2BD0 SYMBOL
+// _$E45
 double DAT_00B78118 = DAT_00B780C8 / DAT_007F7A58;
 
-// FUNCTION: 0x007B2BF0 $E48
+// SYNTHETIC: GAMEMD 0x007B2BF0 SYMBOL
+// _$E48
 double DAT_00B78100 = 1.0 / DAT_00B78118;
 
-// FUNCTION: 0x007B2C10 $E51
+// SYNTHETIC: GAMEMD 0x007B2C10 SYMBOL
+// _$E51
 double DAT_00B780F8 = DAT_007F7A60 * 45.0;
 
-// FUNCTION: 0x007B2C30 $E54
+// SYNTHETIC: GAMEMD 0x007B2C30 SYMBOL
+// _$E54
 double DAT_00B780D0 = DAT_007F7A60 * 60.0;
 
-// FUNCTION: 0x007B2C50 $E57
+// SYNTHETIC: GAMEMD 0x007B2C50 SYMBOL
+// _$E57
 double DAT_00B780A8 = DAT_007F7A60 * 90.0;
 
-// FUNCTION: 0x007B2C70 $E60
+// SYNTHETIC: GAMEMD 0x007B2C70 SYMBOL
+// _$E60
 int DAT_00B78120 = (int)(FUN_004CAD50(DAT_00B780A8 - DAT_00B780D0) * DAT_00B780C8 * 0.5);
 
-// FUNCTION: 0x007B2CB0 $E63
+// SYNTHETIC: GAMEMD 0x007B2CB0 SYMBOL
+// _$E63
 double DAT_00B780D8 = FUN_004CADE0(DAT_00B78120 * 0.00390625);
 
-// FUNCTION: 0x007B2CE0 $E66
+// SYNTHETIC: GAMEMD 0x007B2CE0 SYMBOL
+// _$E66
 double DAT_00B780F0 = FUN_004CADE0((DAT_00B78120 * 2) / DAT_00B780C8);
 
-// FUNCTION: 0x007B2D10 $E69
+// SYNTHETIC: GAMEMD 0x007B2D10 SYMBOL
+// _$E69
 int DAT_00B78114 = (int)(DAT_00B78120 * 4 + 0.5);
 
-// FUNCTION: 0x007B2D40 $E72
+// SYNTHETIC: GAMEMD 0x007B2D40 SYMBOL
+// _$E72
 ShortPair DAT_00B780C0;
 
-// FUNCTION: 0x007B2D50 $E75
+// SYNTHETIC: GAMEMD 0x007B2D50 SYMBOL
+// _$E75
 IntTriple DAT_00B780E0;
 
-// FUNCTION: 0x007B2D70
+// FUNCTION: GAMEMD 0x007B2D70
 void FUN_007B2D70(void)
 {
 	DAT_00B78110 = 0;
@@ -680,7 +721,8 @@ void FUN_007B2D70(void)
 	DAT_00B7810C = 128;
 }
 
-// FUNCTION: 0x007B2D90 $E78
+// SYNTHETIC: GAMEMD 0x007B2D90 SYMBOL
+// _$E78
 struct IntQuad {
 	int A, B, C, D;
 	IntQuad() { A = 0; B = 0; C = 0; D = 0; }

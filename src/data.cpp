@@ -63,7 +63,7 @@ struct FileSystem {
 };
 void * __fastcall FUN_004A3970(Wstring const & name, bool * loaded);
 
-// FUNCTION: 0x004A3270
+// FUNCTION: GAMEMD 0x004A3270
 Texture3D::Texture3D(int width, int height, int type)
 {
 	Type = type;
@@ -102,7 +102,7 @@ Texture3D::Texture3D(int width, int height, int type)
 	}
 }
 
-// FUNCTION: 0x004A3370
+// FUNCTION: GAMEMD 0x004A3370
 void Texture3D::FUN_004A3370(void)
 {
 	if (Texture != NULL) {
@@ -115,7 +115,7 @@ void Texture3D::FUN_004A3370(void)
 	}
 }
 
-// FUNCTION: 0x004A33A0
+// FUNCTION: GAMEMD 0x004A33A0
 int Texture3D::FUN_004A33A0(unsigned short * pixels)
 {
 	if (Surface == NULL) return(-1);
@@ -174,7 +174,7 @@ int Texture3D::FUN_004A33A0(unsigned short * pixels)
 	return((Surface->Unlock(NULL) != 0) ? 2 : 0);
 }
 
-// FUNCTION: 0x004A35A0
+// FUNCTION: GAMEMD 0x004A35A0
 void Triangle3D::Set_Color(int a, int b, int c)
 {
 	DWORD color = (((((0xFFFFFF00 | a) << 8) | (b & 0xFF)) << 8) | (c & 0xFF));
@@ -186,7 +186,7 @@ void Triangle3D::Set_Color(int a, int b, int c)
 	Vertex[0].specular = 0xFF000000;
 }
 
-// FUNCTION: 0x004A35F0
+// FUNCTION: GAMEMD 0x004A35F0
 void Triangle3D::Set_Vertex(int index, float x, float y, float z, float u, float v)
 {
 	D3DTLVERTEX * vertex = &Vertex[index];
@@ -198,24 +198,24 @@ void Triangle3D::Set_Vertex(int index, float x, float y, float z, float u, float
 	vertex->rhw = 1.0f;
 }
 
-// FUNCTION: 0x004A3630
+// FUNCTION: GAMEMD 0x004A3630
 Texture3DCache::Texture3DCache(void)
 {
 	Count = 0;
 }
 
-// FUNCTION: 0x004A3640
+// FUNCTION: GAMEMD 0x004A3640
 void Texture3DCache::FUN_004A3640(void)
 {
 	Count = 0;
 }
 
-// FUNCTION: 0x004A3650
+// FUNCTION: GAMEMD 0x004A3650
 void Texture3DCache::FUN_004A3650(void)
 {
 }
 
-// FUNCTION: 0x004A3660
+// FUNCTION: GAMEMD 0x004A3660
 HRESULT Texture3DCache::Flush(LPDIRECTDRAWSURFACE target)
 {
 	int count = Count;
@@ -270,7 +270,7 @@ HRESULT Texture3DCache::Flush(LPDIRECTDRAWSURFACE target)
 	return(result);
 }
 
-// FUNCTION: 0x004A3840
+// FUNCTION: GAMEMD 0x004A3840
 int Texture3DCache::Add(Triangle3D const & triangle)
 {
 	if (Count == 1024) return(1);
@@ -279,7 +279,7 @@ int Texture3DCache::Add(Triangle3D const & triangle)
 	return(0);
 }
 
-// FUNCTION: 0x004A3890
+// FUNCTION: GAMEMD 0x004A3890
 void * Load_Alloc_Data(FileClass & file)
 {
 	void * ptr = NULL;
@@ -294,7 +294,7 @@ void * Load_Alloc_Data(FileClass & file)
 	return(ptr);
 }
 
-// FUNCTION: 0x004A38D0
+// FUNCTION: GAMEMD 0x004A38D0
 void * FileSystem::LoadWholeFileEx(char const * name, bool & allocated)
 {
 	allocated = false;
@@ -315,7 +315,7 @@ void * FileSystem::LoadWholeFileEx(char const * name, bool & allocated)
 	return(ptr);
 }
 
-// FUNCTION: 0x004A3970
+// FUNCTION: GAMEMD 0x004A3970
 void * __fastcall FUN_004A3970(Wstring const & name, bool * loaded)
 {
 	char const * filename = name.text();
@@ -337,7 +337,7 @@ void * __fastcall FUN_004A3970(Wstring const & name, bool * loaded)
 	return(ptr);
 }
 
-// FUNCTION: 0x004A3A10
+// FUNCTION: GAMEMD 0x004A3A10
 int Load_Uncompress(FileClass & file, Buffer & uncomp_buff, Buffer & dest_buff, void * reserved_data)
 {
 	unsigned short	size;
@@ -383,13 +383,13 @@ int Load_Uncompress(FileClass & file, Buffer & uncomp_buff, Buffer & dest_buff, 
 	return((int)size);
 }
 
-// FUNCTION: 0x004A3B30
+// FUNCTION: GAMEMD 0x004A3B30
 int FUN_004A3B30(void)
 {
 	return(0);
 }
 
-// FUNCTION: 0x004A3B40
+// FUNCTION: GAMEMD 0x004A3B40
 void const * Fetch_Resource(LPCSTR resname, LPCSTR restype)
 {
 	HRSRC handle = FindResource(LanguageResources, MAKEINTRESOURCE(resname), restype);
@@ -405,13 +405,13 @@ void const * Fetch_Resource(LPCSTR resname, LPCSTR restype)
 	return(LockResource(rhandle));
 }
 
-// FUNCTION: 0x004A3B80
+// FUNCTION: GAMEMD 0x004A3B80
 int Load_Picture(FileClass & file, Buffer & scratchbuf, Buffer & destbuf, unsigned char * palette, PicturePlaneType )
 {
 	return(Load_Uncompress(file, scratchbuf, destbuf,  palette ) / 8000);
 }
 
-// FUNCTION: 0x004A3BB0
+// FUNCTION: GAMEMD 0x004A3BB0
 void * Hires_Load(FileClass & file)
 {
 	int 	length;
@@ -439,19 +439,19 @@ struct Flag3D {
 	char Value;
 };
 
-// FUNCTION: 0x004A3BF0
+// FUNCTION: GAMEMD 0x004A3BF0
 bool FUN_004A3BF0(void)
 {
 	return(true);
 }
 
-// FUNCTION: 0x004A3C00
+// FUNCTION: GAMEMD 0x004A3C00
 void Flag3D::FUN_004A3C00(void)
 {
 	Value = 0;
 }
 
-// FUNCTION: 0x004A3C10
+// FUNCTION: GAMEMD 0x004A3C10
 void FUN_004A3C10(void)
 {
 	DAT_0089F980 = 0;

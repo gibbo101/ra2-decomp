@@ -24,7 +24,7 @@
 #include <stdio.h>
 #include <wchar.h>
 
-// FUNCTION: 0x004A59E0
+// FUNCTION: GAMEMD 0x004A59E0
 Rect * Drawing_GetTextDimensions(Rect * out, wchar_t const * text, Point2D loc, unsigned short flags, int marginX, int marginY)
 {
 	BitFont * font = BitFont::Instance;
@@ -41,7 +41,7 @@ Rect * Drawing_GetTextDimensions(Rect * out, wchar_t const * text, Point2D loc, 
 	return out;
 }
 
-// FUNCTION: 0x004A5A50
+// FUNCTION: GAMEMD 0x004A5A50
 void Draw_Box(Rect const & rect, BoxStyleEnum up, bool filled)
 {
 	ColorScheme * scheme = ColorSchemes[GadgetClass::Get_Color_Scheme()];
@@ -83,7 +83,7 @@ void Draw_Box(Rect const & rect, BoxStyleEnum up, bool filled)
 	}
 }
 
-// FUNCTION: 0x004A5E50
+// FUNCTION: GAMEMD 0x004A5E50
 int Count_Text_Lines(wchar_t const * text, int unused, int columns, int * width, int * height)
 {
 	*width = 0;
@@ -96,7 +96,7 @@ int Count_Text_Lines(wchar_t const * text, int unused, int columns, int * width,
 	return 0;
 }
 
-// FUNCTION: 0x004A5EB0
+// FUNCTION: GAMEMD 0x004A5EB0
 Point2D Simple_Text_Print_Wide(wchar_t const * text, Surface * surface, Rect const * bounds, Point2D const * pt, unsigned fore, unsigned back, TextPrintType flags, int unused)
 {
 	BitFont * font = BitFont::Instance;
@@ -126,7 +126,7 @@ Point2D Simple_Text_Print_Wide(wchar_t const * text, Surface * surface, Rect con
 	return Point2D(x, y);
 }
 
-// FUNCTION: 0x004A6010
+// FUNCTION: GAMEMD 0x004A6010
 Point2D Simple_Text_Print_Wide(wchar_t const * text, Surface * surface, Rect const * bounds, Point2D const * pt, ColorScheme * scheme, unsigned back, TextPrintType flags, int unused)
 {
 	RGBClass rgb = scheme->HSV;
@@ -134,7 +134,7 @@ Point2D Simple_Text_Print_Wide(wchar_t const * text, Surface * surface, Rect con
 	return Simple_Text_Print_Wide(text, surface, bounds, pt, fore, back, flags, unused);
 }
 
-// FUNCTION: 0x004A60E0
+// FUNCTION: GAMEMD 0x004A60E0
 Point2D * __cdecl Fancy_Text_Print_Wide(Point2D * ret, wchar_t const * text, Surface * surface, Rect const * bounds, Point2D const * pt, unsigned fore, unsigned back, TextPrintType flags, ...)
 {
 	wchar_t buffer[512];
@@ -151,7 +151,7 @@ Point2D * __cdecl Fancy_Text_Print_Wide(Point2D * ret, wchar_t const * text, Sur
 	return ret;
 }
 
-// FUNCTION: 0x004A61C0
+// FUNCTION: GAMEMD 0x004A61C0
 Point2D * __cdecl Fancy_Text_Print_Wide(Point2D * ret, wchar_t const * text, Surface * surface, Rect const * bounds, Point2D const * pt, ColorScheme * scheme, unsigned back, TextPrintType flags, ...)
 {
 	wchar_t buffer[512];
@@ -168,7 +168,7 @@ Point2D * __cdecl Fancy_Text_Print_Wide(Point2D * ret, wchar_t const * text, Sur
 	return ret;
 }
 
-// FUNCTION: 0x004A6360
+// FUNCTION: GAMEMD 0x004A6360
 Point2D Conquer_Clip_Text_Print_Wide(wchar_t const * text, Surface * surface, Rect const * rect, Point2D const * pt, unsigned fore, unsigned back, TextPrintType flag, int width, int const * tabs)
 {
 	wchar_t buffer[512];
@@ -226,7 +226,7 @@ Point2D Conquer_Clip_Text_Print_Wide(wchar_t const * text, Surface * surface, Re
 	return point;
 }
 
-// FUNCTION: 0x004A6500
+// FUNCTION: GAMEMD 0x004A6500
 Point2D Conquer_Clip_Text_Print_Wide(wchar_t const * text, Surface * surface, Rect const * rect, Point2D const * pt, ColorScheme * scheme, unsigned back, TextPrintType flag, int width, int const * tabs)
 {
 	RGBClass rgb = scheme->HSV;
@@ -234,7 +234,7 @@ Point2D Conquer_Clip_Text_Print_Wide(wchar_t const * text, Surface * surface, Re
 	return Conquer_Clip_Text_Print_Wide(text, surface, rect, pt, fore, back, flag, width, tabs);
 }
 
-// FUNCTION: 0x004A67E0
+// FUNCTION: GAMEMD 0x004A67E0
 unsigned char * Font_Palette(int color)
 {
 	static unsigned char _fpalette[16];
@@ -249,7 +249,7 @@ extern int DAT_008A0174;
 extern int DAT_008A0178;
 extern int DAT_008A017C;
 
-// FUNCTION: 0x004A6820
+// FUNCTION: GAMEMD 0x004A6820
 void FUN_004A6820()
 {
 	DAT_008A0170 = 0;

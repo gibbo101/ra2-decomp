@@ -130,7 +130,7 @@ inline void Fill_Delta_Table2(VoxelFuncArgumentStruct * state)
 	}
 }
 
-// FUNCTION: 0x00755CB0
+// FUNCTION: GAMEMD 0x00755CB0
 VoxelLibrary::VoxelLibrary(void) :
 	LoadFailed(false),
 	LayerCount(0),
@@ -142,7 +142,7 @@ VoxelLibrary::VoxelLibrary(void) :
 {
 }
 
-// FUNCTION: 0x00755CD0
+// FUNCTION: GAMEMD 0x00755CD0
 VoxelLibrary::VoxelLibrary(FileClass & file, int load_file_palette) :
 	LoadFailed(false),
 	LayerCount(0),
@@ -157,13 +157,13 @@ VoxelLibrary::VoxelLibrary(FileClass & file, int load_file_palette) :
 	}
 }
 
-// FUNCTION: 0x00755D10
+// FUNCTION: GAMEMD 0x00755D10
 VoxelLibrary::~VoxelLibrary(void)
 {
 	Clear();
 }
 
-// FUNCTION: 0x00755D60
+// FUNCTION: GAMEMD 0x00755D60
 void VoxelLibrary::Clear(void)
 {
 	if (LayerHeaders != NULL) {
@@ -182,19 +182,19 @@ void VoxelLibrary::Clear(void)
 	Data = NULL;
 }
 
-// FUNCTION: 0x007564A0
+// FUNCTION: GAMEMD 0x007564A0
 VoxelLibrary::LayerStruct const & VoxelLibrary::Get_Layer(int layer)
 {
 	return(LayerHeaders[layer]);
 }
 
-// FUNCTION: 0x007564B0
+// FUNCTION: GAMEMD 0x007564B0
 VoxelLibrary::LayerInfoStruct const & VoxelLibrary::Get_Layer_Info(int layer, int info)
 {
 	return(LayerInfos[LayerHeaders[layer].InfoIndex + info]);
 }
 
-// FUNCTION: 0x007564E0
+// FUNCTION: GAMEMD 0x007564E0
 Vector3 VoxelLibrary::Get_Bounding_Box_Center(int layer, int info)
 {
 	LayerInfoStruct const & layerinfo = Get_Layer_Info(layer, info);
@@ -204,13 +204,13 @@ Vector3 VoxelLibrary::Get_Bounding_Box_Center(int layer, int info)
 	return(Vector3(v.X * 0.5f, v.Y * 0.5f, v.Z * 0.5f));
 }
 
-// FUNCTION: 0x00756570
+// FUNCTION: GAMEMD 0x00756570
 int VoxelLibrary::Memory_Used(void)
 {
 	return(sizeof(LayerStruct) * LayerCount) + (sizeof(LayerInfoStruct) * LayerInfoCount) + (DataSize + sizeof(VoxelLayerHeaderStruct));
 }
 
-// FUNCTION: 0x00756590
+// FUNCTION: GAMEMD 0x00756590
 void VoxelLibrary::Render_Object(VoxelRenderStruct & voxel, Vector3 & center)
 {
 	LayerInfoStruct const & layerinfo = Get_Layer_Info(voxel.Layer, voxel.Info);
@@ -274,7 +274,7 @@ void VoxelLibrary::Render_Object(VoxelRenderStruct & voxel, Vector3 & center)
 	VoxelDrawFunctions[funcnum](&arg);
 }
 
-// FUNCTION: 0x00756BB0
+// FUNCTION: GAMEMD 0x00756BB0
 void VoxelLibrary::Compute_Bounding_Box(void)
 {
 	for (unsigned i = 0; i < LayerInfoCount; i++) {
@@ -291,7 +291,7 @@ void VoxelLibrary::Compute_Bounding_Box(void)
 	}
 }
 
-// FUNCTION: 0x00756DD0
+// FUNCTION: GAMEMD 0x00756DD0
 void __cdecl Draw_Voxel_Regular_Normals(VoxelFuncArgumentStruct * state)
 {
 	Fill_Delta_Table2(state);
@@ -357,7 +357,7 @@ void __cdecl Draw_Voxel_Regular_Normals(VoxelFuncArgumentStruct * state)
 	}
 }
 
-// FUNCTION: 0x00756F80
+// FUNCTION: GAMEMD 0x00756F80
 void __cdecl Draw_Voxel_Reverse_Normals(VoxelFuncArgumentStruct * state)
 {
 	Fill_Delta_Table1(state);
@@ -423,7 +423,7 @@ void __cdecl Draw_Voxel_Reverse_Normals(VoxelFuncArgumentStruct * state)
 	}
 }
 
-// FUNCTION: 0x00757120
+// FUNCTION: GAMEMD 0x00757120
 void __cdecl Draw_Voxel_Regular_Normals_ZBuffer(VoxelFuncArgumentStruct * state)
 {
 	Fill_Delta_Table3(state);
@@ -501,7 +501,7 @@ void __cdecl Draw_Voxel_Regular_Normals_ZBuffer(VoxelFuncArgumentStruct * state)
 	}
 }
 
-// FUNCTION: 0x00757360
+// FUNCTION: GAMEMD 0x00757360
 void __cdecl Draw_Voxel_Reverse_Normals_ZBuffer(VoxelFuncArgumentStruct * state)
 {
 	Fill_Delta_Table2(state);
@@ -581,7 +581,7 @@ void __cdecl Draw_Voxel_Reverse_Normals_ZBuffer(VoxelFuncArgumentStruct * state)
 	}
 }
 
-// FUNCTION: 0x00757E70
+// FUNCTION: GAMEMD 0x00757E70
 void __cdecl Draw_Voxel_Regular(VoxelFuncArgumentStruct * state)
 {
 	Fill_Delta_Table1(state);
@@ -645,7 +645,7 @@ void __cdecl Draw_Voxel_Regular(VoxelFuncArgumentStruct * state)
 	}
 }
 
-// FUNCTION: 0x00758030
+// FUNCTION: GAMEMD 0x00758030
 void __cdecl Draw_Voxel_Reverse(VoxelFuncArgumentStruct * state)
 {
 	Fill_Delta_Table2(state);
@@ -709,7 +709,7 @@ void __cdecl Draw_Voxel_Reverse(VoxelFuncArgumentStruct * state)
 	}
 }
 
-// FUNCTION: 0x007581F0
+// FUNCTION: GAMEMD 0x007581F0
 void __cdecl Draw_Voxel_Regular_ZBuffer(VoxelFuncArgumentStruct * state)
 {
 	Fill_Delta_Table2(state);
@@ -785,7 +785,7 @@ void __cdecl Draw_Voxel_Regular_ZBuffer(VoxelFuncArgumentStruct * state)
 	}
 }
 
-// FUNCTION: 0x00758430
+// FUNCTION: GAMEMD 0x00758430
 void __cdecl Draw_Voxel_Reverse_ZBuffer(VoxelFuncArgumentStruct * state)
 {
 	Fill_Delta_Table2(state);
@@ -863,7 +863,7 @@ void __cdecl Draw_Voxel_Reverse_ZBuffer(VoxelFuncArgumentStruct * state)
 	}
 }
 
-// FUNCTION: 0x00758670
+// FUNCTION: GAMEMD 0x00758670
 void Precalculate_Normal_Lookup(Vector3 const & light, int normal_type)
 {
 	Vector3 const * normal_table = VoxelNormalTables[normal_type];
@@ -901,7 +901,7 @@ inline Vector3 Halfway_Vector(Vector3 const & light, Vector3 const & viewer)
 	return(sum);
 }
 
-// FUNCTION: 0x007586F0
+// FUNCTION: GAMEMD 0x007586F0
 void Precalculate_Normal_Lookup(Vector3 const & light, Vector3 const & viewer, float specular_strength, int normal_type)
 {
 	Vector3 const * normal_table = VoxelNormalTables[normal_type];
@@ -930,7 +930,7 @@ void Precalculate_Normal_Lookup(Vector3 const & light, Vector3 const & viewer, f
 	VoxelNormalTranslateTable[253] = VOXEL_PALETTE_LOOKUP_NEUTRAL;
 }
 
-// FUNCTION: 0x00758880
+// FUNCTION: GAMEMD 0x00758880
 int Find_Closest_Normal(Vector3 const & surface_normal, int normal_type)
 {
 	float best_dot = 0.0f;
@@ -955,7 +955,7 @@ int Find_Closest_Normal(Vector3 const & surface_normal, int normal_type)
 	return(best_index);
 }
 
-// FUNCTION: 0x00758930
+// FUNCTION: GAMEMD 0x00758930
 void Init_Normal_Lookup(void)
 {
 	memset(VoxelNormalTranslateTable, VOXEL_PALETTE_LOOKUP_NEUTRAL, VOXEL_PALETTE_SIZE);

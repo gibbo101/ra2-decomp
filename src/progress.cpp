@@ -23,25 +23,41 @@ Rect __fastcall FUN_0072AD20(void);
 BitFont * __fastcall FUN_004A60D0(int flags);
 wchar_t * __fastcall FUN_00735120(char const * text);
 
-// FUNCTION: 0x00642790 $E2
-// FUNCTION: 0x006427C0 $E5
-// FUNCTION: 0x006427E0 $E8
-// FUNCTION: 0x00642800 $E11
-// FUNCTION: 0x00642820 $E14
-// FUNCTION: 0x00642840 $E17
-// FUNCTION: 0x00642860 $E20
-// FUNCTION: 0x006428A0 $E23
-// FUNCTION: 0x006428D0 $E26
-// FUNCTION: 0x00642900 $E29
-// FUNCTION: 0x00642930 $E32
-// FUNCTION: 0x00642940 $E35
+// SYNTHETIC: GAMEMD 0x00642790 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x006427C0 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x006427E0 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x00642800 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x00642820 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x00642840 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x00642860 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x006428A0 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x006428D0 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x00642900 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x00642930 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x00642940 SYMBOL
+// _$E35
 
 ProgressScreenClass Progress;
 
-// FUNCTION: 0x00642960 $E38
-// FUNCTION: 0x00642980 $E80
-// FUNCTION: 0x006429A0 $E78
-// FUNCTION: 0x006429E0 ProgressScreenClass::ProgressScreenClass
+// SYNTHETIC: GAMEMD 0x00642960 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x00642980 SYMBOL
+// _$E80
+// SYNTHETIC: GAMEMD 0x006429A0 SYMBOL
+// _$E78
+// FUNCTION: GAMEMD 0x006429E0
+// ProgressScreenClass::ProgressScreenClass
 ProgressScreenClass::ProgressScreenClass(void) :
 	MainProgress(0), Field50(0), Buffer(0), BufferOwned(false), Field5C(0), IsActive(false),
 	PlayerCount(0), Field62(false), Dialog(0), Pos(0, 0), Field70(false),
@@ -53,7 +69,8 @@ ProgressScreenClass::ProgressScreenClass(void) :
 	}
 }
 
-// FUNCTION: 0x00642A30 ProgressScreenClass::~ProgressScreenClass
+// FUNCTION: GAMEMD 0x00642A30
+// ProgressScreenClass::~ProgressScreenClass
 ProgressScreenClass::~ProgressScreenClass(void)
 {
 	if (BufferOwned) {
@@ -63,7 +80,8 @@ ProgressScreenClass::~ProgressScreenClass(void)
 	Buffer = 0;
 }
 
-// FUNCTION: 0x00642A60 ProgressScreenClass::Initialize
+// FUNCTION: GAMEMD 0x00642A60
+// ProgressScreenClass::Initialize
 void ProgressScreenClass::Initialize(double progress, char count, void * dialog)
 {
 	MainProgress = progress;
@@ -81,13 +99,15 @@ void ProgressScreenClass::Initialize(double progress, char count, void * dialog)
 	Percentage = -1;
 }
 
-// FUNCTION: 0x00642AD0 ProgressScreenClass::End
+// FUNCTION: GAMEMD 0x00642AD0
+// ProgressScreenClass::End
 void ProgressScreenClass::End(void)
 {
 	IsActive = false;
 }
 
-// FUNCTION: 0x00642AE0 ProgressScreenClass::Free_Buffer
+// FUNCTION: GAMEMD 0x00642AE0
+// ProgressScreenClass::Free_Buffer
 void ProgressScreenClass::Free_Buffer(void)
 {
 	if (BufferOwned) {
@@ -97,19 +117,22 @@ void ProgressScreenClass::Free_Buffer(void)
 	Buffer = 0;
 }
 
-// FUNCTION: 0x00642B10 ProgressScreenClass::Set_Side
+// FUNCTION: GAMEMD 0x00642B10
+// ProgressScreenClass::Set_Side
 void ProgressScreenClass::Set_Side(int side)
 {
 	Side = side;
 }
 
-// FUNCTION: 0x00642B20 ProgressScreenClass::Get_Side
+// FUNCTION: GAMEMD 0x00642B20
+// ProgressScreenClass::Get_Side
 int ProgressScreenClass::Get_Side(void) const
 {
 	return Side;
 }
 
-// FUNCTION: 0x00642B30 ProgressScreenClass::Side_Scheme
+// FUNCTION: GAMEMD 0x00642B30
+// ProgressScreenClass::Side_Scheme
 ColorScheme * ProgressScreenClass::Side_Scheme(void) const
 {
 	if (Side == 0) {
@@ -118,7 +141,8 @@ ColorScheme * ProgressScreenClass::Side_Scheme(void) const
 	return Fetch_Scheme_By_Name("SovietLoad");
 }
 
-// FUNCTION: 0x00642B60 ProgressScreenClass::Loading_Scheme
+// FUNCTION: GAMEMD 0x00642B60
+// ProgressScreenClass::Loading_Scheme
 ColorScheme * ProgressScreenClass::Loading_Scheme(void) const
 {
 	if (Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) {
@@ -132,7 +156,8 @@ ColorScheme * ProgressScreenClass::Loading_Scheme(void) const
 	return Fetch_Scheme_By_Name("SovietLoad");
 }
 
-// FUNCTION: 0x00642BB0 ProgressScreenClass::Player_Scheme
+// FUNCTION: GAMEMD 0x00642BB0
+// ProgressScreenClass::Player_Scheme
 ColorScheme * ProgressScreenClass::Player_Scheme(int index)
 {
 	ColorScheme * result = 0;
@@ -148,7 +173,8 @@ ColorScheme * ProgressScreenClass::Player_Scheme(int index)
 	return result;
 }
 
-// FUNCTION: 0x00642C20 ProgressScreenClass::Set_Graphic_Data
+// FUNCTION: GAMEMD 0x00642C20
+// ProgressScreenClass::Set_Graphic_Data
 void ProgressScreenClass::Set_Graphic_Data(char const * progbar, char const * background, int string)
 {
 	if (progbar != 0) {
@@ -170,13 +196,15 @@ void ProgressScreenClass::Set_Graphic_Data(char const * progbar, char const * ba
 	}
 }
 
-// FUNCTION: 0x00642DF0 ProgressScreenClass::Set_Field78
+// FUNCTION: GAMEMD 0x00642DF0
+// ProgressScreenClass::Set_Field78
 void ProgressScreenClass::Set_Field78(int value)
 {
 	Field78 = value;
 }
 
-// FUNCTION: 0x00642E00 ProgressScreenClass::Bar_Size
+// FUNCTION: GAMEMD 0x00642E00
+// ProgressScreenClass::Bar_Size
 void ProgressScreenClass::Bar_Size(int * width, int * height)
 {
 	Rect rect = ((SHPStruct *)Buffer)->GetFrameBounds(0);
@@ -184,7 +212,8 @@ void ProgressScreenClass::Bar_Size(int * width, int * height)
 	*height = rect.Height + 6;
 }
 
-// FUNCTION: 0x00642E40 ProgressScreenClass::Dialog_Size
+// FUNCTION: GAMEMD 0x00642E40
+// ProgressScreenClass::Dialog_Size
 void ProgressScreenClass::Dialog_Size(int * width, int * height)
 {
 	Surface * surface = FUN_004E3560(0);
@@ -197,7 +226,8 @@ void ProgressScreenClass::Dialog_Size(int * width, int * height)
 	*height = surface->Get_Height();
 }
 
-// FUNCTION: 0x00642E80 Font_Cell_Size
+// FUNCTION: GAMEMD 0x00642E80
+// Font_Cell_Size
 void __fastcall Font_Cell_Size(int * width, int * height)
 {
 	BitFont * font = FUN_004A60D0(0x46);
@@ -210,7 +240,8 @@ void __fastcall Font_Cell_Size(int * width, int * height)
 	*height = font->field_1C;
 }
 
-// FUNCTION: 0x00642EF0 ProgressScreenClass::Fit_Size
+// FUNCTION: GAMEMD 0x00642EF0
+// ProgressScreenClass::Fit_Size
 void ProgressScreenClass::Fit_Size(int * width, int * height, int count, bool usedialog)
 {
 	Rect rect = ((SHPStruct *)Buffer)->GetFrameBounds(0);
@@ -233,7 +264,8 @@ void ProgressScreenClass::Fit_Size(int * width, int * height, int count, bool us
 	}
 }
 
-// FUNCTION: 0x00642FF0 ProgressScreenClass::Total_Height
+// FUNCTION: GAMEMD 0x00642FF0
+// ProgressScreenClass::Total_Height
 int ProgressScreenClass::Total_Height(int start, int count, bool usedialog)
 {
 	Rect rect = ((SHPStruct *)Buffer)->GetFrameBounds(0);
@@ -250,7 +282,8 @@ int ProgressScreenClass::Total_Height(int start, int count, bool usedialog)
 	return (h + 4) * count + start;
 }
 
-// FUNCTION: 0x006430C0 ProgressScreenClass::Bar_Y_Offset
+// FUNCTION: GAMEMD 0x006430C0
+// ProgressScreenClass::Bar_Y_Offset
 int ProgressScreenClass::Bar_Y_Offset(bool usedialog)
 {
 	Rect rect = ((SHPStruct *)Buffer)->GetFrameBounds(0);
@@ -268,7 +301,8 @@ int ProgressScreenClass::Bar_Y_Offset(bool usedialog)
 	return (h - rect.Height - 2) / 2;
 }
 
-// FUNCTION: 0x006431C0 ProgressScreenClass::Label_Y_Offset
+// FUNCTION: GAMEMD 0x006431C0
+// ProgressScreenClass::Label_Y_Offset
 int ProgressScreenClass::Label_Y_Offset(bool usedialog)
 {
 	Rect rect = ((SHPStruct *)Buffer)->GetFrameBounds(0);
@@ -287,7 +321,8 @@ int ProgressScreenClass::Label_Y_Offset(bool usedialog)
 	return (h - dh) / 2;
 }
 
-// FUNCTION: 0x006432C0 ProgressScreenClass::Label_X_Offset
+// FUNCTION: GAMEMD 0x006432C0
+// ProgressScreenClass::Label_X_Offset
 int ProgressScreenClass::Label_X_Offset(bool usedialog)
 {
 	Rect rect = ((SHPStruct *)Buffer)->GetFrameBounds(0);

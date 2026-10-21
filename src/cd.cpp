@@ -26,13 +26,13 @@ struct CDDriveManagerClass {
 	static int __fastcall GetCDNumber(int drive, int seconds);
 };
 
-// FUNCTION: 0x004790A0
+// FUNCTION: GAMEMD 0x004790A0
 DiskID CD::Get_Current_Disk(int timeout)
 {
 	return (DiskID)CDDriveManagerClass::GetCDNumber(CDFileClass::Get_CD_Drive(), timeout);
 }
 
-// FUNCTION: 0x004790B0
+// FUNCTION: GAMEMD 0x004790B0
 void CD::Set_Required_Disk(DiskID disk)
 {
 	if (_OverrideSwap == true) {
@@ -47,7 +47,7 @@ void CD::Set_Required_Disk(DiskID disk)
 	RequiredCD = disk;
 }
 
-// FUNCTION: 0x004790E0
+// FUNCTION: GAMEMD 0x004790E0
 bool CD::Force_Available(DiskID disk)
 {
 	if (disk == DISK_LOCAL) {
@@ -63,7 +63,7 @@ bool CD::Force_Available(DiskID disk)
 	return BASECLASS::Force_Available(disk);
 }
 
-// FUNCTION: 0x00479110
+// FUNCTION: GAMEMD 0x00479110
 bool CD::Request_Disk(DiskID disk)
 {
 	if (ThemePlaying == THEME_NONE) {

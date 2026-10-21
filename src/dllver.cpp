@@ -7,7 +7,7 @@
 #include "dllver.h"
 #include <shlwapi.h>
 
-// FUNCTION: 0x004AECD0
+// FUNCTION: GAMEMD 0x004AECD0
 DWORD GetDllVersion(LPCTSTR lpszDllName)
 {
 	HINSTANCE hinstDll;

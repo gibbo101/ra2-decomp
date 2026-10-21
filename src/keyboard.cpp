@@ -41,61 +41,71 @@ struct IntTriple128 {
 };
 
 
-// FUNCTION: 0x0054EC60 $E30
+// SYNTHETIC: GAMEMD 0x0054EC60 SYMBOL
+// _$E30
 
 
 
 double DAT_00ABC6B8 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x0054EC90 $E33
+// SYNTHETIC: GAMEMD 0x0054EC90 SYMBOL
+// _$E33
 
 
 
 double DAT_00ABC708 = DAT_00ABC6B8 / DAT_007ECEB8;
 
-// FUNCTION: 0x0054ECB0 $E36
+// SYNTHETIC: GAMEMD 0x0054ECB0 SYMBOL
+// _$E36
 
 
 
 double DAT_00ABC6F0 = DAT_007E1718 / DAT_00ABC708;
 
-// FUNCTION: 0x0054ECD0 $E39
+// SYNTHETIC: GAMEMD 0x0054ECD0 SYMBOL
+// _$E39
 
 
 
 double DAT_00ABC6E8 = DAT_007E1720 * DAT_007ECEC0;
 
-// FUNCTION: 0x0054ECF0 $E42
+// SYNTHETIC: GAMEMD 0x0054ECF0 SYMBOL
+// _$E42
 
 
 
 double DAT_00ABC6C0 = DAT_007E1728 * DAT_007ECEC0;
 
-// FUNCTION: 0x0054ED10 $E45
+// SYNTHETIC: GAMEMD 0x0054ED10 SYMBOL
+// _$E45
 
 
 
 double DAT_00ABC698 = DAT_007E1730 * DAT_007ECEC0;
 
-// FUNCTION: 0x0054ED30 $E48
+// SYNTHETIC: GAMEMD 0x0054ED30 SYMBOL
+// _$E48
 
 
 
 int DAT_00ABC710 = (int)(DAT_007E1738 * (DAT_00ABC6B8 * fastmath::tan(DAT_00ABC698 - DAT_00ABC6C0)));
 
-// FUNCTION: 0x0054ED70 $E51
+// SYNTHETIC: GAMEMD 0x0054ED70 SYMBOL
+// _$E51
 
 
 
 double DAT_00ABC6C8 = fastmath::atan(DAT_00ABC710 * DAT_007E1740);
 
-// FUNCTION: 0x0054EDA0 $E54
+// SYNTHETIC: GAMEMD 0x0054EDA0 SYMBOL
+// _$E54
 
 
 
 double DAT_00ABC6E0 = fastmath::atan((DAT_00ABC710 * 2) / DAT_00ABC6B8);
 
-// FUNCTION: 0x0054EDD0 $E57
+// SYNTHETIC: GAMEMD 0x0054EDD0 SYMBOL
+// _$E57
 
 
 
@@ -104,19 +114,22 @@ int DAT_00ABC704 = (int)((DAT_00ABC710 * 4) + DAT_007E1738);
 struct DatShorts { short X; short Y; DatShorts(short x, short y) : X(x), Y(y) {} };
 struct DatInts { int X; int Y; int Z; DatInts(int x, int y, int z) : X(x), Y(y), Z(z) {} };
 
-// FUNCTION: 0x0054EE00 $E60
+// SYNTHETIC: GAMEMD 0x0054EE00 SYMBOL
+// _$E60
 
 
 
 DatShorts DAT_00ABC6B0(0, 0);
 
-// FUNCTION: 0x0054EE10 $E63
+// SYNTHETIC: GAMEMD 0x0054EE10 SYMBOL
+// _$E63
 
 
 
 DatInts DAT_00ABC6D0(0, 0, 0);
 
-// FUNCTION: 0x0054EE30 $E66
+// SYNTHETIC: GAMEMD 0x0054EE30 SYMBOL
+// _$E66
 
 
 
@@ -127,12 +140,12 @@ struct ChronoScreenEffect { static bool Active(void); };
 void __fastcall FUN_0053EC40(int key, bool release);
 short __fastcall FUN_0053EC70(int vk);
 
-// FUNCTION: 0x0054EE50
+// FUNCTION: GAMEMD 0x0054EE50
 void WWKeyboardClass::Noop(void) const
 {
 }
 
-// FUNCTION: 0x0054EE60
+// FUNCTION: GAMEMD 0x0054EE60
 WWKeyboardClass::WWKeyboardClass(void) :
 	MouseQX(0),
 	MouseQY(0),
@@ -143,7 +156,7 @@ WWKeyboardClass::WWKeyboardClass(void) :
 	memset(KeyState, '\0', sizeof(KeyState));
 }
 
-// FUNCTION: 0x0054EE90
+// FUNCTION: GAMEMD 0x0054EE90
 unsigned short WWKeyboardClass::Buff_Get(void)
 {
 	while (!Check()) {}
@@ -159,21 +172,21 @@ unsigned short WWKeyboardClass::Buff_Get(void)
 	return(temp);
 }
 
-// FUNCTION: 0x0054EFC0
+// FUNCTION: GAMEMD 0x0054EFC0
 bool WWKeyboardClass::Is_Mouse_Key(unsigned short key)
 {
 	key &= 0xFF;
 	return(key == VK_LBUTTON || key == VK_MBUTTON || key == VK_RBUTTON);
 }
 
-// FUNCTION: 0x0054EFF0
+// FUNCTION: GAMEMD 0x0054EFF0
 bool WWKeyboardClass::Is_Wheel_Key(unsigned short key)
 {
 	key &= 0xFF;
 	return(key == 0xA);
 }
 
-// FUNCTION: 0x0054F000
+// FUNCTION: GAMEMD 0x0054F000
 unsigned short WWKeyboardClass::Check(void) const
 {
 	((WWKeyboardClass *)this)->Fill_Buffer_From_System();
@@ -181,14 +194,14 @@ unsigned short WWKeyboardClass::Check(void) const
 	return(Peek_Element());
 }
 
-// FUNCTION: 0x0054F050
+// FUNCTION: GAMEMD 0x0054F050
 unsigned short WWKeyboardClass::Get(void)
 {
 	while (!Check()) {}
 	return(Buff_Get());
 }
 
-// FUNCTION: 0x0054F1C0
+// FUNCTION: GAMEMD 0x0054F1C0
 bool WWKeyboardClass::Put(unsigned short key)
 {
 	if (!Is_Buffer_Full()) {
@@ -198,7 +211,7 @@ bool WWKeyboardClass::Put(unsigned short key)
 	return(false);
 }
 
-// FUNCTION: 0x0054F200
+// FUNCTION: GAMEMD 0x0054F200
 bool WWKeyboardClass::Put_Key_Message(unsigned short vk_key, bool release)
 {
 	if (!ChronoScreenEffect::Active()) {
@@ -229,7 +242,7 @@ bool WWKeyboardClass::Put_Key_Message(unsigned short vk_key, bool release)
 	return(true);
 }
 
-// FUNCTION: 0x0054F2F0
+// FUNCTION: GAMEMD 0x0054F2F0
 bool WWKeyboardClass::Put_Mouse_Message(unsigned short vk_key, int x, int y, bool release)
 {
 	if (UserInputLocked) {
@@ -244,7 +257,7 @@ bool WWKeyboardClass::Put_Mouse_Message(unsigned short vk_key, int x, int y, boo
 	return(false);
 }
 
-// FUNCTION: 0x0054F3D0
+// FUNCTION: GAMEMD 0x0054F3D0
 bool WWKeyboardClass::Put_Wheel_Message(int delta)
 {
 	if (UserInputLocked) {
@@ -258,7 +271,7 @@ bool WWKeyboardClass::Put_Wheel_Message(int delta)
 	return(false);
 }
 
-// FUNCTION: 0x0054F450
+// FUNCTION: GAMEMD 0x0054F450
 char WWKeyboardClass::To_ASCII(unsigned short key)
 {
 	if (key & WWKEY_RLS_BIT) {
@@ -304,7 +317,7 @@ char WWKeyboardClass::To_ASCII(unsigned short key)
 	return(buffer[0]);
 }
 
-// FUNCTION: 0x0054F530
+// FUNCTION: GAMEMD 0x0054F530
 char WWKeyboardClass::FUN_0054F530(unsigned short key)
 {
 	if (key & WWKEY_RLS_BIT) {
@@ -334,7 +347,7 @@ char WWKeyboardClass::FUN_0054F530(unsigned short key)
 
 short __fastcall FUN_0053EC90(int key);
 
-// FUNCTION: 0x0054F5C0
+// FUNCTION: GAMEMD 0x0054F5C0
 bool WWKeyboardClass::Down(unsigned short key)
 {
 	key &= 0xFF;
@@ -346,7 +359,7 @@ bool WWKeyboardClass::Down(unsigned short key)
 	return(FUN_0053EC90(key) != 0);
 }
 
-// FUNCTION: 0x0054F610
+// FUNCTION: GAMEMD 0x0054F610
 unsigned short WWKeyboardClass::Fetch_Element(void)
 {
 	unsigned short val = 0;
@@ -357,7 +370,7 @@ unsigned short WWKeyboardClass::Fetch_Element(void)
 	return(val);
 }
 
-// FUNCTION: 0x0054F650
+// FUNCTION: GAMEMD 0x0054F650
 unsigned short WWKeyboardClass::Peek_Element(void) const
 {
 	if (!Is_Buffer_Empty()) {
@@ -366,7 +379,7 @@ unsigned short WWKeyboardClass::Peek_Element(void) const
 	return(0);
 }
 
-// FUNCTION: 0x0054F670
+// FUNCTION: GAMEMD 0x0054F670
 bool WWKeyboardClass::Put_Element(unsigned short val)
 {
 	if (!Is_Buffer_Full()) {
@@ -378,7 +391,7 @@ bool WWKeyboardClass::Put_Element(unsigned short val)
 	return(false);
 }
 
-// FUNCTION: 0x0054F6B0
+// FUNCTION: GAMEMD 0x0054F6B0
 bool WWKeyboardClass::Is_Buffer_Full(void) const
 {
 	if ((Tail + 1) % ARRAY_SIZE(Buffer) == Head) {
@@ -387,7 +400,7 @@ bool WWKeyboardClass::Is_Buffer_Full(void) const
 	return(false);
 }
 
-// FUNCTION: 0x0054F6D0
+// FUNCTION: GAMEMD 0x0054F6D0
 bool WWKeyboardClass::Is_Buffer_Empty(void) const
 {
 	if (Head == Tail) {
@@ -396,7 +409,7 @@ bool WWKeyboardClass::Is_Buffer_Empty(void) const
 	return(false);
 }
 
-// FUNCTION: 0x0054F6F0
+// FUNCTION: GAMEMD 0x0054F6F0
 void WWKeyboardClass::Fill_Buffer_From_System(void)
 {
 	if (!Is_Buffer_Full()) {
@@ -404,7 +417,7 @@ void WWKeyboardClass::Fill_Buffer_From_System(void)
 	}
 }
 
-// FUNCTION: 0x0054F720
+// FUNCTION: GAMEMD 0x0054F720
 void WWKeyboardClass::Clear(void)
 {
 	Fill_Buffer_From_System();
@@ -418,7 +431,7 @@ static inline bool Is_Chat_Editing(void)
 	return(Session.Messages.Is_Edit());
 }
 
-// FUNCTION: 0x0054F790
+// FUNCTION: GAMEMD 0x0054F790
 int WWKeyboardClass::Message_Handler(HWND window, UINT message, UINT wParam, LONG lParam)
 {
 	bool processed = false;
@@ -513,50 +526,63 @@ int WWKeyboardClass::Message_Handler(HWND window, UINT message, UINT wParam, LON
 	return(false);
 }
 
-// FUNCTION: 0x0054FB90
+// FUNCTION: GAMEMD 0x0054FB90
 int WWKeyboardClass::Available_Buffer_Room(void) const
 {
 	return(ARRAY_SIZE(Buffer) - abs(Tail - Head));
 }
 
-// FUNCTION: 0x0054FBB0 $E69
+// SYNTHETIC: GAMEMD 0x0054FBB0 SYMBOL
+// _$E69
 
 
 
 double DAT_00ABC7C0 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x0054FBE0 $E72
+// SYNTHETIC: GAMEMD 0x0054FBE0 SYMBOL
+// _$E72
 double DAT_00ABC8B0 = DAT_00ABC7C0 / DAT_007ECEC8;
 
-// FUNCTION: 0x0054FC00 $E75
+// SYNTHETIC: GAMEMD 0x0054FC00 SYMBOL
+// _$E75
 double DAT_00ABC898 = DAT_007E1718 / DAT_00ABC8B0;
 
-// FUNCTION: 0x0054FC20 $E78
+// SYNTHETIC: GAMEMD 0x0054FC20 SYMBOL
+// _$E78
 double DAT_00ABC890 = DAT_007E1720 * DAT_007ECED0;
 
-// FUNCTION: 0x0054FC40 $E81
+// SYNTHETIC: GAMEMD 0x0054FC40 SYMBOL
+// _$E81
 double DAT_00ABC7D0 = DAT_007E1728 * DAT_007ECED0;
 
-// FUNCTION: 0x0054FC60 $E84
+// SYNTHETIC: GAMEMD 0x0054FC60 SYMBOL
+// _$E84
 double DAT_00ABC720 = DAT_007E1730 * DAT_007ECED0;
 
-// FUNCTION: 0x0054FC80 $E87
+// SYNTHETIC: GAMEMD 0x0054FC80 SYMBOL
+// _$E87
 int DAT_00ABC8BC = (int)(DAT_007E1738 * (fastmath::tan(DAT_00ABC720 - DAT_00ABC7D0) * DAT_00ABC7C0));
 
-// FUNCTION: 0x0054FCC0 $E90
+// SYNTHETIC: GAMEMD 0x0054FCC0 SYMBOL
+// _$E90
 double DAT_00ABC7D8 = fastmath::atan(DAT_00ABC8BC * DAT_007E1740);
 
-// FUNCTION: 0x0054FCF0 $E93
+// SYNTHETIC: GAMEMD 0x0054FCF0 SYMBOL
+// _$E93
 double DAT_00ABC7F0 = fastmath::atan((DAT_00ABC8BC * 2) / DAT_00ABC7C0);
 
-// FUNCTION: 0x0054FD20 $E96
+// SYNTHETIC: GAMEMD 0x0054FD20 SYMBOL
+// _$E96
 int DAT_00ABC8AC = (int)(DAT_00ABC8BC * 4 + DAT_007E1738);
 
-// FUNCTION: 0x0054FD50 $E99
+// SYNTHETIC: GAMEMD 0x0054FD50 SYMBOL
+// _$E99
 ShortPair DAT_00ABC7B8;
 
-// FUNCTION: 0x0054FD60 $E102
+// SYNTHETIC: GAMEMD 0x0054FD60 SYMBOL
+// _$E102
 IntTriple DAT_00ABC7E0;
 
-// FUNCTION: 0x0054FD80 $E105
+// SYNTHETIC: GAMEMD 0x0054FD80 SYMBOL
+// _$E105
 IntTriple128 DAT_00ABC8A0;

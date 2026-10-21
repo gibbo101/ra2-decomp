@@ -11,7 +11,7 @@
 #include "msanim.h"
 #include "mschoice.h"
 
-// FUNCTION: 0x004F3140
+// FUNCTION: GAMEMD 0x004F3140
 GraphicMenuItem * __fastcall GM_Read_Image_Item(Wstring const & name, INIClass const & ini, MSEngine & engine, Point2D & image_size)
 {
 	int id = ini.Get_Int(name, "ID", -1);
@@ -42,7 +42,7 @@ GraphicMenuItem * __fastcall GM_Read_Image_Item(Wstring const & name, INIClass c
 	return(new GraphicMenuImageItem(id, engine, origin, active_rect, image, highlighted, disabled, highlight_sound, select_vq));
 }
 
-// FUNCTION: 0x004F3460
+// FUNCTION: GAMEMD 0x004F3460
 GraphicMenuImageItem::GraphicMenuImageItem(int id, MSEngine & engine, Point2D const & origin, Rect const & rect, Wstring const & image, Wstring const & highlight_image, Wstring const & disabled_image, Wstring const & highlight_sound, Wstring const & select_vq) :
 	GraphicMenuItem(id),
 	Engine(&engine),
@@ -80,19 +80,19 @@ GraphicMenuImageItem::GraphicMenuImageItem(int id, MSEngine & engine, Point2D co
 	}
 }
 
-// FUNCTION: 0x004F3600
+// FUNCTION: GAMEMD 0x004F3600
 GraphicMenuImageItem::~GraphicMenuImageItem(void)
 {
 	delete(HighlightSound);
 }
 
-// FUNCTION: 0x004F3640
+// FUNCTION: GAMEMD 0x004F3640
 bool GraphicMenuImageItem::Is_Mouse_Over(Point2D const & mouse)
 {
 	return(Enabled && ActiveRect.Is_Point_Within(mouse));
 }
 
-// FUNCTION: 0x004F3690
+// FUNCTION: GAMEMD 0x004F3690
 void GraphicMenuImageItem::On_Selected_Change(bool selected)
 {
 	if (Image != NULL) {
@@ -113,7 +113,7 @@ void GraphicMenuImageItem::On_Selected_Change(bool selected)
 	}
 }
 
-// FUNCTION: 0x004F3720
+// FUNCTION: GAMEMD 0x004F3720
 void GraphicMenuImageItem::On_Enabled_Change(bool active)
 {
 	if (Image != NULL) {
@@ -129,7 +129,7 @@ void GraphicMenuImageItem::On_Enabled_Change(bool active)
 	Engine->Restore_And_Advance();
 }
 
-// FUNCTION: 0x004F37A0
+// FUNCTION: GAMEMD 0x004F37A0
 void GraphicMenuImageItem::Action(MSEngine * engine)
 {
 	GraphicMenuItem::Action(engine);
@@ -141,6 +141,8 @@ void GraphicMenuImageItem::Action(MSEngine * engine)
 	}
 }
 
-// FUNCTION: 0x004F3840 GraphicMenuImageItem::~GraphicMenuImageItem
+// SYNTHETIC: GAMEMD 0x004F3840
+// ??_GGraphicMenuImageItem@@UAEPAXI@Z
 
-// FUNCTION: 0x004F3890 $E2
+// SYNTHETIC: GAMEMD 0x004F3890 SYMBOL
+// _$E2

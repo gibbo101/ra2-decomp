@@ -13,7 +13,7 @@
 
 unsigned int __fastcall GM_Build_Key(Wstring const & list);
 
-// FUNCTION: 0x004F3B80
+// FUNCTION: GAMEMD 0x004F3B80
 GraphicMenuItem * __fastcall GM_Read_Shortcut_Item(Wstring const & name, INIClass const & ini)
 {
 	int id = ini.Get_Int(name, Wstring("ID"), -1);
@@ -30,7 +30,7 @@ GraphicMenuItem * __fastcall GM_Read_Shortcut_Item(Wstring const & name, INIClas
 	return(new GraphicMenuShortcutItem(id, buffer));
 }
 
-// FUNCTION: 0x004F3C40
+// FUNCTION: GAMEMD 0x004F3C40
 GraphicMenuShortcutItem::GraphicMenuShortcutItem(int id, Wstring const & keys) :
 	GraphicMenuItem(id)
 {
@@ -48,7 +48,7 @@ GraphicMenuShortcutItem::GraphicMenuShortcutItem(int id, Wstring const & keys) :
 	}
 }
 
-// FUNCTION: 0x004F3D40
+// FUNCTION: GAMEMD 0x004F3D40
 unsigned int __fastcall GM_Build_Key(Wstring const & list)
 {
 	static struct {
@@ -117,12 +117,12 @@ unsigned int __fastcall GM_Build_Key(Wstring const & list)
 	return(modifiers);
 }
 
-// FUNCTION: 0x004F3E90
+// FUNCTION: GAMEMD 0x004F3E90
 GraphicMenuShortcutItem::~GraphicMenuShortcutItem(void)
 {
 }
 
-// FUNCTION: 0x004F3EE0
+// FUNCTION: GAMEMD 0x004F3EE0
 bool GraphicMenuShortcutItem::Is_Input_Key(KeyNumType key)
 {
 	if (!Enabled) {
@@ -139,12 +139,18 @@ bool GraphicMenuShortcutItem::Is_Input_Key(KeyNumType key)
 	return(it);
 }
 
-// FUNCTION: 0x004F3F60 GraphicMenuShortcutItem::~GraphicMenuShortcutItem
+// SYNTHETIC: GAMEMD 0x004F3F60
+// ??_GGraphicMenuShortcutItem@@UAEPAXI@Z
 
-// FUNCTION: 0x004F3FC0 ?B?$VectorCursor@IV?$DynamicVectorClass@I@@
-// FUNCTION: 0x004F3FD0 ?$VectorCursor@IV?$DynamicVectorClass@I@@::~?$VectorCursor@IV?$DynamicVectorClass@I@@
-// FUNCTION: 0x004F3FF0 ?E?$VectorCursor@IV?$DynamicVectorClass@I@@
-// FUNCTION: 0x004F4000 ?F?$VectorCursor@IV?$DynamicVectorClass@I@@
+// TEMPLATE: GAMEMD 0x004F3FC0
+// ??B?$VectorCursor@IV?$DynamicVectorClass@I@@@@UBE_NXZ
+// SYNTHETIC: GAMEMD 0x004F3FD0
+// ??_G?$VectorCursor@IV?$DynamicVectorClass@I@@@@UAEPAXI@Z
+// TEMPLATE: GAMEMD 0x004F3FF0
+// ??E?$VectorCursor@IV?$DynamicVectorClass@I@@@@UAEAAV0@XZ
+// TEMPLATE: GAMEMD 0x004F4000
+// ??F?$VectorCursor@IV?$DynamicVectorClass@I@@@@UAEAAV0@XZ
 template class VectorCursor<unsigned int, DynamicVectorClass<unsigned int> >;
 
-// FUNCTION: 0x004F4010 $E2
+// SYNTHETIC: GAMEMD 0x004F4010 SYMBOL
+// _$E2

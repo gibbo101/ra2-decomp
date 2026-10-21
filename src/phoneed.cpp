@@ -43,40 +43,52 @@ struct IntTriple {
 	IntTriple() { A = 0; B = 0; C = 0; }
 };
 
-// FUNCTION: 0x006309A0 $E30
+// SYNTHETIC: GAMEMD 0x006309A0 SYMBOL
+// _$E30
 double DAT_00AC4AD0 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x006309D0 $E33
+// SYNTHETIC: GAMEMD 0x006309D0 SYMBOL
+// _$E33
 double DAT_00AC4B20 = DAT_00AC4AD0 / DAT_007EFD90;
 
-// FUNCTION: 0x006309F0 $E36
+// SYNTHETIC: GAMEMD 0x006309F0 SYMBOL
+// _$E36
 double DAT_00AC4B08 = DAT_007E1718 / DAT_00AC4B20;
 
-// FUNCTION: 0x00630A10 $E39
+// SYNTHETIC: GAMEMD 0x00630A10 SYMBOL
+// _$E39
 double DAT_00AC4B00 = DAT_007E1720 * DAT_007EFD98;
 
-// FUNCTION: 0x00630A30 $E42
+// SYNTHETIC: GAMEMD 0x00630A30 SYMBOL
+// _$E42
 double DAT_00AC4AD8 = DAT_007E1728 * DAT_007EFD98;
 
-// FUNCTION: 0x00630A50 $E45
+// SYNTHETIC: GAMEMD 0x00630A50 SYMBOL
+// _$E45
 double DAT_00AC4AB0 = DAT_007E1730 * DAT_007EFD98;
 
-// FUNCTION: 0x00630A70 $E48
+// SYNTHETIC: GAMEMD 0x00630A70 SYMBOL
+// _$E48
 int DAT_00AC4B28 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00AC4AB0 - DAT_00AC4AD8) * DAT_00AC4AD0));
 
-// FUNCTION: 0x00630AB0 $E51
+// SYNTHETIC: GAMEMD 0x00630AB0 SYMBOL
+// _$E51
 double DAT_00AC4AE0 = FUN_004CADE0(DAT_00AC4B28 * DAT_007E1740);
 
-// FUNCTION: 0x00630AE0 $E54
+// SYNTHETIC: GAMEMD 0x00630AE0 SYMBOL
+// _$E54
 double DAT_00AC4AF8 = FUN_004CADE0((DAT_00AC4B28 * 2) / DAT_00AC4AD0);
 
-// FUNCTION: 0x00630B10 $E57
+// SYNTHETIC: GAMEMD 0x00630B10 SYMBOL
+// _$E57
 int DAT_00AC4B1C = (int)(DAT_00AC4B28 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x00630B40 $E60
+// SYNTHETIC: GAMEMD 0x00630B40 SYMBOL
+// _$E60
 ShortPair DAT_00AC4AC8;
 
-// FUNCTION: 0x00630B50 $E63
+// SYNTHETIC: GAMEMD 0x00630B50 SYMBOL
+// _$E63
 IntTriple DAT_00AC4AE8;
 
 struct IntTripleB {
@@ -84,7 +96,8 @@ struct IntTripleB {
 	IntTripleB() { C = 0; A = 0x80; B = 0x80; }
 };
 
-// FUNCTION: 0x00630B70 $E66
+// SYNTHETIC: GAMEMD 0x00630B70 SYMBOL
+// _$E66
 IntTripleB DAT_00AC4B10;
 
 #undef Edit_SetText
@@ -128,7 +141,7 @@ class PhoneEntryEdit
 BOOL CALLBACK Phone_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 BOOL CALLBACK Edit_Phone_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 
-// FUNCTION: 0x00630B90
+// FUNCTION: GAMEMD 0x00630B90
 bool PhoneEdit::Dialog(void)
 {
 	_Dialog = OwnerDraw::Begin_Dialog(IDD_SERIAL_PHONE_LIST, (DLGPROC)Phone_Dialog_Proc, 0);
@@ -161,7 +174,7 @@ bool PhoneEdit::Dialog(void)
 	return(true);
 }
 
-// FUNCTION: 0x00630C10
+// FUNCTION: GAMEMD 0x00630C10
 BOOL CALLBACK Phone_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	HWND handle;
@@ -251,7 +264,7 @@ BOOL CALLBACK Phone_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM
 	return(rc);
 }
 
-// FUNCTION: 0x00630EA0
+// FUNCTION: GAMEMD 0x00630EA0
 bool PhoneEdit::Dial(void)
 {
 	HWND handle = GetDlgItem(_Dialog, IDC_PHONE_NAME);
@@ -290,7 +303,7 @@ bool PhoneEdit::Dial(void)
 	return(true);
 }
 
-// FUNCTION: 0x00631060
+// FUNCTION: GAMEMD 0x00631060
 void PhoneEdit::Build_Phone_Listbox(void)
 {
 	HWND handle;
@@ -362,7 +375,7 @@ void PhoneEdit::Build_Phone_Listbox(void)
 	}
 }
 
-// FUNCTION: 0x00631300
+// FUNCTION: GAMEMD 0x00631300
 void PhoneEdit::Select(void)
 {
 	HWND handle = GetDlgItem(_Dialog, IDC_PHONE_LIST);
@@ -379,7 +392,7 @@ void PhoneEdit::Select(void)
 	}
 }
 
-// FUNCTION: 0x00631380
+// FUNCTION: GAMEMD 0x00631380
 void PhoneEdit::Add(void)
 {
 	PhoneEntryClass *p_entry = new PhoneEntryClass();
@@ -423,7 +436,7 @@ void PhoneEdit::Add(void)
 	ShowWindow(_Dialog, SW_SHOW);
 }
 
-// FUNCTION: 0x00631500
+// FUNCTION: GAMEMD 0x00631500
 void PhoneEdit::Edit(void)
 {
 	HWND handle = GetDlgItem(_Dialog, IDC_PHONE_LIST);
@@ -464,7 +477,7 @@ void PhoneEdit::Edit(void)
 	delete p_entry;
 }
 
-// FUNCTION: 0x00631640
+// FUNCTION: GAMEMD 0x00631640
 void PhoneEdit::Delete(void)
 {
 	HWND handle = GetDlgItem(_Dialog, IDC_PHONE_LIST);
@@ -490,7 +503,7 @@ void PhoneEdit::Delete(void)
 	}
 }
 
-// FUNCTION: 0x006316E0
+// FUNCTION: GAMEMD 0x006316E0
 bool PhoneEntryEdit::Dialog(PhoneEntryClass *phone)
 {
 	int unused = RC + 1;
@@ -521,7 +534,7 @@ bool PhoneEntryEdit::Dialog(PhoneEntryClass *phone)
 	return(RC == 1 ? true : false);
 }
 
-// FUNCTION: 0x00631760
+// FUNCTION: GAMEMD 0x00631760
 BOOL CALLBACK Edit_Phone_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	wchar_t buffer[64];
@@ -597,7 +610,7 @@ BOOL CALLBACK Edit_Phone_Dialog_Proc(HWND window, UINT message, WPARAM wparam, L
 	return(rc);
 }
 
-// FUNCTION: 0x006319C0
+// FUNCTION: GAMEMD 0x006319C0
 void PhoneEntryEdit::Save(void)
 {
 	bool custom;

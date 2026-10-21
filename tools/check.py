@@ -5,18 +5,26 @@
     uv run tools/check.py work.cpp --overlay hdrs/    # headers in hdrs/ override include/
     uv run tools/check.py work.cpp 0x65CF00 --score   # also print the normalised score
 
-A function is tied to its address by a marker on the line before its definition:
+A function is tied to its address by a marker on the line before its definition, in
+reccmp's annotation format (module GAMEMD):
 
-    // FUNCTION: 0x0065CF00
+    // FUNCTION: GAMEMD 0x0065CF00
     int RawFileClass::Seek(int pos, int dir)
 
-A function a header defines, which the file's object emits out of line, is named on its
-marker instead: `// FUNCTION: 0x005FE020 XSurface::XSurface`. A template instance is named by its
-mangled class name: `// FUNCTION: 0x0063E540 ?$DynamicVectorClass@H::Add` (an explicit
-`template class DynamicVectorClass<int>;` makes the object emit it).
+A function with no definition in the file (a header inline the object emits out of line, a
+template instance, a compiler-generated destructor or initialiser) is named on the comment
+line after its marker: a qualified name, or an exact decorated symbol, which starts with `?`
+or carries the SYMBOL modifier:
+
+    // FUNCTION: GAMEMD 0x005FE020
+    // XSurface::XSurface
+    // TEMPLATE: GAMEMD 0x0063E540
+    // ?Add@?$DynamicVectorClass@H@@QAE_NABH@Z
+    // SYNTHETIC: GAMEMD 0x0048E050 SYMBOL
+    // _$E12
 
 An .asm file is assembled with MASM instead, and must be a file of Westwood's TibSun
-archive copied unchanged but for its markers, `; FUNCTION: 0x007C5DB0` on the line before
+archive copied unchanged but for its markers, `; FUNCTION: GAMEMD 0x007C5DB0` on the line before
 a PROC (the PROC's name is the function's).
 
 A function MATCHES when it is as long as the original (data/functions.csv), every byte
@@ -56,8 +64,11 @@ from coff import REL_DIR32, REL_REL32, CoffObject  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 FLAGS = ["/c", "/O2", "/Ob2", "/Gr", "/GR", "/MT", "/DWIN32"]
-ANNOTATION = re.compile(r"^\s*//\s*FUNCTION:\s*(0x[0-9A-Fa-f]+)(?:\s+((?:[\w?$@]+::)*(?:operator\S+|~?[\w?$@]+)))?\s*$")
-ASM_ANNOTATION = re.compile(r"^\s*;\s*FUNCTION:\s*(0x[0-9A-Fa-f]+)(?:\s+([\w?$@]+))?\s*$")
+ANNOTATION = re.compile(r"^\s*//\s*(?:FUNCTION|TEMPLATE|SYNTHETIC|LIBRARY):\s*GAMEMD\s+(0x[0-9A-Fa-f]+)"
+                        r"((?:\s+(?:FOLDED|SYMBOL))*)\s*$")
+ASM_ANNOTATION = re.compile(r"^\s*;\s*FUNCTION:\s*GAMEMD\s+(0x[0-9A-Fa-f]+)\s*$")
+# The name comment after a marker: one token, a qualified name or a decorated symbol.
+NAME_COMMENT = re.compile(r"^\s*//\s*([^\s:][^\s]*(?:::[^\s]+)*|(?:[\w?$@]+::)*operator\s*\S+)\s*$")
 PROC = re.compile(r"^\s*([\w?$@]+)\s+PROC\b", re.I | re.M)
 ASM_FLAGS = ["/c", "/coff", "/Cx"]
 FORBIDDEN = re.compile(r"\b(__asm|_asm|__emit|_emit)\b|#\s*pragma\s+(optimize|code_seg)")
@@ -196,8 +207,13 @@ def annotations(src: Path) -> list[tuple[int, str]]:
         m = (ASM_ANNOTATION if asm else ANNOTATION).match(line)
         if not m:
             continue
-        if m.group(2):
-            out.append((int(m.group(1), 16), m.group(2)))
+        nxt = lines[i + 1] if i + 1 < len(lines) else ""
+        named = None if asm or ANNOTATION.match(nxt) else NAME_COMMENT.match(nxt)
+        if named:
+            name = named.group(1).replace(" ", "")
+            # An exact decorated symbol is marked with a leading "=".
+            exact = (name.startswith("?") and "::" not in name) or "SYMBOL" in m.group(2)
+            out.append((int(m.group(1), 16), "=" + name if exact else name))
             continue
         if asm:
             n = PROC.search("\n".join(lines[i + 1:i + 4]))
@@ -419,10 +435,13 @@ def compare(orig: Original, obj: CoffObject, raw: bytes, address: int, name: str
     fills in the normalised similarity too. Among equally good results, a symbol `prefer`
     ties to this address wins, then one not in `taken`: byte-identical overloads differ."""
     prefixes = mangled(name)
-    picks = [f for f in obj.functions() if f[0].name.startswith(prefixes)]
+    if name.startswith("="):
+        picks = [f for f in obj.functions() if f[0].name == prefixes[0]]
+    else:
+        picks = [f for f in obj.functions() if f[0].name.startswith(prefixes)]
     if not picks:
         cands = ", ".join(f[0].name for f in obj.functions())
-        raise SystemExit(f"{name}: no compiled function has this name ({cands})")
+        raise SystemExit(f"{name.lstrip('=')}: no compiled function has this name ({cands})")
     results = [compare_one(orig, obj, raw, address, name, names, local, p, score) for p in picks]
     prefer = prefer or {}
     return max(results, key=lambda r: (r.matched, r.bytes_match, r.ratio,
@@ -537,6 +556,8 @@ OPERATORS = {"==": "8", "!=": "9", "=": "4", "[]": "A", "()": "R", "<": "M", ">"
 
 
 def mangled(name: str) -> tuple[str, ...]:
+    if name.startswith("="):
+        return (name[1:],)
     parts = name.split("::")
     last, scopes = parts[-1], parts[:-1]
     if last.startswith("operator"):
@@ -586,7 +607,7 @@ def main() -> None:
     for address, name in annotations(src):
         symbol = compare(orig, obj, raw, address, name, {}, {}, prefer=known, taken=set(claimed)).symbol
         if symbol in claimed and claimed[symbol] != address:
-            print(f"0x{address:08X} {name or symbol}: same compiled function as "
+            print(f"0x{address:08X} {name.lstrip('=') or symbol}: same compiled function as "
                   f"0x{claimed[symbol]:08X} ({symbol})")
             failed += 1
         claimed[symbol] = address
@@ -600,7 +621,7 @@ def main() -> None:
         else:
             verdict = f"{res.ratio * 100:.1f}%"
         extra = f", {res.unverified} unverified" if res.unverified else ""
-        print(f"0x{address:08X} {name or res.symbol}: {verdict} ({res.ours}/{res.size} bytes{extra}) "
+        print(f"0x{address:08X} {name.lstrip('=') or res.symbol}: {verdict} ({res.ours}/{res.size} bytes{extra}) "
               f"{res.symbol}")
         if score:
             raw_ratio = 1.0 if res.matched else res.ratio

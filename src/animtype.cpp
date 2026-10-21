@@ -35,7 +35,7 @@ struct FileSystem {
 void FUN_005F9710(char * name);
 void FUN_005F96B0(char * name, TheaterType theater);
 
-// FUNCTION: 0x00427530
+// FUNCTION: GAMEMD 0x00427530
 AnimTypeClass::AnimTypeClass(char const * ininame) :
 	BASECLASS(ininame),
 	HeapID(ANIM_NONE),
@@ -124,7 +124,7 @@ AnimTypeClass::AnimTypeClass(char const * ininame) :
 	HeapID = (AnimType)AnimTypes.ID(this);
 }
 
-// FUNCTION: 0x00427850
+// FUNCTION: GAMEMD 0x00427850
 AnimTypeClass::AnimTypeClass(NoInitClass const & x) :
 	BASECLASS(x),
 	RandomLoopDelay(x),
@@ -132,14 +132,14 @@ AnimTypeClass::AnimTypeClass(NoInitClass const & x) :
 {
 }
 
-// FUNCTION: 0x00427880
+// FUNCTION: GAMEMD 0x00427880
 AnimTypeClass::~AnimTypeClass(void)
 {
 	AbstractTypePtrTracker.Delete(this);
 	AnimTypes.Delete(this);
 }
 
-// FUNCTION: 0x00427940
+// FUNCTION: GAMEMD 0x00427940
 void AnimTypeClass::Init(TheaterType theater)
 {
 	for (int index = 0; index < AnimTypes.Count(); index++) {
@@ -174,7 +174,7 @@ void AnimTypeClass::Init(TheaterType theater)
 	}
 }
 
-// FUNCTION: 0x00427A80
+// FUNCTION: GAMEMD 0x00427A80
 void AnimTypeClass::Init_Theater(TheaterType theater)
 {
 	char fullname[_MAX_FNAME+_MAX_EXT];
@@ -194,7 +194,7 @@ void AnimTypeClass::Init_Theater(TheaterType theater)
 	}
 }
 
-// FUNCTION: 0x00427B50
+// FUNCTION: GAMEMD 0x00427B50
 void AnimTypeClass::Load_Image(TheaterType theater)
 {
 	char fullname[_MAX_FNAME+_MAX_EXT];
@@ -236,7 +236,7 @@ void AnimTypeClass::Load_Image(TheaterType theater)
 	}
 }
 
-// FUNCTION: 0x00427C90
+// FUNCTION: GAMEMD 0x00427C90
 char const * AnimTypeClass::Name_From(AnimType anim)
 {
 	if ((unsigned)anim > (unsigned)AnimTypes.Count()) return(DAT_00889F64);
@@ -244,7 +244,7 @@ char const * AnimTypeClass::Name_From(AnimType anim)
 	return(AnimTypes[anim]->IniName);
 }
 
-// FUNCTION: 0x00427CB0
+// FUNCTION: GAMEMD 0x00427CB0
 AnimType AnimTypeClass::From_Name(char const * name)
 {
 	if (name != NULL) {
@@ -257,7 +257,7 @@ AnimType AnimTypeClass::From_Name(char const * name)
 	return(ANIM_NONE);
 }
 
-// FUNCTION: 0x00428800
+// FUNCTION: GAMEMD 0x00428800
 HRESULT STDMETHODCALLTYPE AnimTypeClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -290,7 +290,7 @@ HRESULT STDMETHODCALLTYPE AnimTypeClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x00428970
+// FUNCTION: GAMEMD 0x00428970
 HRESULT STDMETHODCALLTYPE AnimTypeClass::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -301,7 +301,7 @@ HRESULT STDMETHODCALLTYPE AnimTypeClass::Save(IStream * stream, BOOL cleardirty)
 }
 
 
-// FUNCTION: 0x00428990
+// FUNCTION: GAMEMD 0x00428990
 HRESULT STDMETHODCALLTYPE AnimTypeClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -309,7 +309,7 @@ HRESULT STDMETHODCALLTYPE AnimTypeClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x004289D0
+// FUNCTION: GAMEMD 0x004289D0
 void AnimTypeClass::Compute_CRC(CRCEngine & crc) const
 {
 	BASECLASS::Compute_CRC(crc);
@@ -343,13 +343,13 @@ void AnimTypeClass::Compute_CRC(CRCEngine & crc) const
 	crc(Tiled);
 }
 
-// FUNCTION: 0x00428B80
+// FUNCTION: GAMEMD 0x00428B80
 AnimTypeClass * AnimTypeClass::Find_Or_Make(char const * name)
 {
 	return(TFind_Or_Make<AnimTypeClass>(name, AnimTypes));
 }
 
-// FUNCTION: 0x00428C10
+// FUNCTION: GAMEMD 0x00428C10
 void AnimTypeClass::Detach(AbstractClass const * target, bool all)
 {
 	if (Next == target) {
@@ -357,7 +357,7 @@ void AnimTypeClass::Detach(AbstractClass const * target, bool all)
 	}
 }
 
-// FUNCTION: 0x00428C30
+// FUNCTION: GAMEMD 0x00428C30
 void const * AnimTypeClass::Get_Image_Data(void) const
 {
 	void const * data = ImageData;
@@ -392,7 +392,7 @@ void const * AnimTypeClass::Get_Image_Data(void) const
 	return(data);
 }
 
-// FUNCTION: 0x00428DE0
+// FUNCTION: GAMEMD 0x00428DE0
 void AnimTypeClass::Free_Image(void)
 {
 	if (DemandLoad && ImageData != NULL && FreeLoad) {
@@ -403,21 +403,30 @@ void AnimTypeClass::Free_Image(void)
 	}
 }
 
-// FUNCTION: 0x00428E40 ObjectTypeClass::Get_Ownable
+// FUNCTION: GAMEMD 0x00428E40
+// ObjectTypeClass::Get_Ownable
 
-// FUNCTION: 0x00428E50 AnimTypeClass::Fetch_RTTI
+// FUNCTION: GAMEMD 0x00428E50
+// AnimTypeClass::Fetch_RTTI
 
-// FUNCTION: 0x00428E60 AnimTypeClass::Fetch_Heap_ID
+// FUNCTION: GAMEMD 0x00428E60
+// AnimTypeClass::Fetch_Heap_ID
 
-// FUNCTION: 0x00428E70 AnimTypeClass::Fetch_Object_Size
+// FUNCTION: GAMEMD 0x00428E70
+// AnimTypeClass::Fetch_Object_Size
 
-// FUNCTION: 0x00428E80 AnimTypeClass::Create_And_Place
+// FUNCTION: GAMEMD 0x00428E80
+// AnimTypeClass::Create_And_Place
 
-// FUNCTION: 0x00428E90 AnimTypeClass::Create_One_Of
+// FUNCTION: GAMEMD 0x00428E90
+// AnimTypeClass::Create_One_Of
 
-// FUNCTION: 0x00428EA0 AnimTypeClass::~AnimTypeClass
+// SYNTHETIC: GAMEMD 0x00428EA0
+// ??_GAnimTypeClass@@UAEPAXI@Z
 
-// FUNCTION: 0x00428F70 TFind_Or_Make
+// TEMPLATE: GAMEMD 0x00428F70
+// ?TFind_Or_Make@@YIPAVAnimTypeClass@@PBDABV?$DynamicVectorClass@PAVAnimTypeClass@@@@@Z
 template AnimTypeClass * TFind_Or_Make<AnimTypeClass>(char const *, DynamicVectorClass<AnimTypeClass *> const &);
 
-// FUNCTION: 0x00428FF0 $E2
+// SYNTHETIC: GAMEMD 0x00428FF0 SYMBOL
+// _$E2

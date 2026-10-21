@@ -47,7 +47,7 @@ static struct {
 	bool AllocLoaded;
 } Sounds[3];
 
-// FUNCTION: 0x005D2E00
+// FUNCTION: GAMEMD 0x005D2E00
 MSFont::MSFont(bool use_side_palette) :
 	Red(0),
 	Green(0),
@@ -57,7 +57,7 @@ MSFont::MSFont(bool use_side_palette) :
 	InstanceCount++;
 }
 
-// FUNCTION: 0x005D2E30
+// FUNCTION: GAMEMD 0x005D2E30
 MSFont::~MSFont(void)
 {
 	InstanceCount--;
@@ -84,7 +84,7 @@ MSFont::~MSFont(void)
 	}
 }
 
-// FUNCTION: 0x005D2E90
+// FUNCTION: GAMEMD 0x005D2E90
 bool MSFont::Init(bool use_side_palette)
 {
 	CCFileClass file;
@@ -150,7 +150,7 @@ bool MSFont::Init(bool use_side_palette)
 	return(true);
 }
 
-// FUNCTION: 0x005D30C0
+// FUNCTION: GAMEMD 0x005D30C0
 void MSFont::Get_String_Rect(wchar_t const * string, Rect & rect)
 {
 	int max_width = 0;
@@ -183,7 +183,7 @@ void MSFont::Get_String_Rect(wchar_t const * string, Rect & rect)
 	rect.Set(0, 0, 0, 0);
 }
 
-// FUNCTION: 0x005D3170
+// FUNCTION: GAMEMD 0x005D3170
 int MSFont::Get_String_Width(wchar_t const * string)
 {
 	int max_width = 0;
@@ -209,7 +209,7 @@ int MSFont::Get_String_Width(wchar_t const * string)
 	return(max_width);
 }
 
-// FUNCTION: 0x005D31D0
+// FUNCTION: GAMEMD 0x005D31D0
 int MSFont::Get_Character_Width(wchar_t character)
 {
 	unsigned char ch = (unsigned char)character;
@@ -229,7 +229,7 @@ int MSFont::Get_Character_Width(wchar_t character)
 	return(0);
 }
 
-// FUNCTION: 0x005D3250
+// FUNCTION: GAMEMD 0x005D3250
 void MSFont::Draw_Character(Surface * surface, wchar_t character, int x, int y, int frame, bool do_sound)
 {
 	char ch = (char)character;
@@ -250,7 +250,7 @@ void MSFont::Draw_Character(Surface * surface, wchar_t character, int x, int y, 
 	}
 }
 
-// FUNCTION: 0x005D3330
+// FUNCTION: GAMEMD 0x005D3330
 void MSFont::Draw_String(Surface * surface, wchar_t const * string, int x, int y, int frame)
 {
 	int current_x = x;
@@ -280,6 +280,8 @@ void MSFont::Draw_String(Surface * surface, wchar_t const * string, int x, int y
 	}
 }
 
-// FUNCTION: 0x005D3450 MSFont::~MSFont
+// SYNTHETIC: GAMEMD 0x005D3450
+// ??_GMSFont@@UAEPAXI@Z
 
-// FUNCTION: 0x005D3470 $E2
+// SYNTHETIC: GAMEMD 0x005D3470 SYMBOL
+// _$E2

@@ -17,7 +17,7 @@
 #include "xmouse.h"
 #include "color.hh"
 
-// FUNCTION: 0x004E2500
+// FUNCTION: GAMEMD 0x004E2500
 GaugeClass::GaugeClass(unsigned id, int x, int y, int w, int h)
 	: BASECLASS(id, x, y, w, h, LEFTHELD|LEFTPRESS|LEFTRELEASE, true)
 {
@@ -31,7 +31,7 @@ GaugeClass::GaugeClass(unsigned id, int x, int y, int w, int h)
 	ClickDiff = 0;
 }
 
-// FUNCTION: 0x004E2580
+// FUNCTION: GAMEMD 0x004E2580
 int GaugeClass::Set_Maximum(int value)
 {
 	if (value != MaxValue) {
@@ -42,7 +42,7 @@ int GaugeClass::Set_Maximum(int value)
 	return(false);
 }
 
-// FUNCTION: 0x004E25A0
+// FUNCTION: GAMEMD 0x004E25A0
 int GaugeClass::Set_Value(int value)
 {
 	value = Bound(value, 0, MaxValue);
@@ -54,7 +54,7 @@ int GaugeClass::Set_Value(int value)
 	return(false);
 }
 
-// FUNCTION: 0x004E25D0
+// FUNCTION: GAMEMD 0x004E25D0
 int GaugeClass::Pixel_To_Value(int pixel)
 {
 	int maximum;
@@ -71,7 +71,7 @@ int GaugeClass::Pixel_To_Value(int pixel)
 	return(int(MaxValue * ((double)pixel / maximum)));
 }
 
-// FUNCTION: 0x004E2650
+// FUNCTION: GAMEMD 0x004E2650
 int GaugeClass::Value_To_Pixel(int value)
 {
 	int maximum;
@@ -87,7 +87,7 @@ int GaugeClass::Value_To_Pixel(int value)
 	return(int(start + (maximum * ((double)value / MaxValue))));
 }
 
-// FUNCTION: 0x004E2690
+// FUNCTION: GAMEMD 0x004E2690
 int GaugeClass::Draw_Me(int forced)
 {
 	if (BASECLASS::Draw_Me(forced)) {
@@ -116,7 +116,7 @@ int GaugeClass::Draw_Me(int forced)
 	return(false);
 }
 
-// FUNCTION: 0x004E2830
+// FUNCTION: GAMEMD 0x004E2830
 int GaugeClass::Action(unsigned flags, KeyNumType &key, int modifier)
 {
 	if (!HasThumb) {
@@ -161,7 +161,7 @@ int GaugeClass::Action(unsigned flags, KeyNumType &key, int modifier)
 	return(BASECLASS::Action(flags, key, 0));
 }
 
-// FUNCTION: 0x004E29A0
+// FUNCTION: GAMEMD 0x004E29A0
 void GaugeClass::Draw_Thumb(void)
 {
 	int x = Value_To_Pixel(CurValue);
@@ -181,7 +181,7 @@ void GaugeClass::Draw_Thumb(void)
 	}
 }
 
-// FUNCTION: 0x004E2A50
+// FUNCTION: GAMEMD 0x004E2A50
 TriColorGaugeClass::TriColorGaugeClass(unsigned id, int x, int y, int w, int h)
 	: BASECLASS(id, x, y, w, h),
 	RedLimit(0),
@@ -189,7 +189,7 @@ TriColorGaugeClass::TriColorGaugeClass(unsigned id, int x, int y, int w, int h)
 {
 }
 
-// FUNCTION: 0x004E2AF0
+// FUNCTION: GAMEMD 0x004E2AF0
 int TriColorGaugeClass::Set_Red_Limit(int value)
 {
 	if (value >= 0 && value < MaxValue) {
@@ -200,7 +200,7 @@ int TriColorGaugeClass::Set_Red_Limit(int value)
 	return(false);
 }
 
-// FUNCTION: 0x004E2B20
+// FUNCTION: GAMEMD 0x004E2B20
 int TriColorGaugeClass::Set_Yellow_Limit(int value)
 {
 	if (value >= 0 && value < MaxValue) {
@@ -211,7 +211,7 @@ int TriColorGaugeClass::Set_Yellow_Limit(int value)
 	return(false);
 }
 
-// FUNCTION: 0x004E2B50
+// FUNCTION: GAMEMD 0x004E2B50
 int TriColorGaugeClass::Draw_Me(int forced)
 {
 	if (BASECLASS::Draw_Me(forced)) {
@@ -258,21 +258,23 @@ int TriColorGaugeClass::Draw_Me(int forced)
 	return(false);
 }
 
-// FUNCTION: 0x004E30B0
+// FUNCTION: GAMEMD 0x004E30B0
 void GaugeClass::Use_Thumb(int value)
 {
 	HasThumb = value ? true : false;
 }
 
-// FUNCTION: 0x004E30D0 GaugeClass::~GaugeClass
-// FUNCTION: 0x004E30F0 TriColorGaugeClass::~TriColorGaugeClass
+// SYNTHETIC: GAMEMD 0x004E30D0
+// ??_GGaugeClass@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004E30F0
+// ??_GTriColorGaugeClass@@UAEPAXI@Z
 
 extern int DAT_008B3F90;
 extern int DAT_008B3F94;
 extern int DAT_008B3F98;
 extern int DAT_008B3F9C;
 
-// FUNCTION: 0x004E3110
+// FUNCTION: GAMEMD 0x004E3110
 void FUN_004E3110(void)
 {
 	DAT_008B3F90 = 0;

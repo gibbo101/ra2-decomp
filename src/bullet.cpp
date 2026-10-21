@@ -55,10 +55,12 @@ extern int DAT_0081AF00;
 extern ULONG COMRefCount;
 
 
-// FUNCTION: 0x004662E0 $E120
-// FUNCTION: 0x00466320 $E117
+// SYNTHETIC: GAMEMD 0x004662E0 SYMBOL
+// _$E120
+// SYNTHETIC: GAMEMD 0x00466320 SYMBOL
+// _$E117
 
-// FUNCTION: 0x00466380
+// FUNCTION: GAMEMD 0x00466380
 BulletClass::BulletClass(void) :
 	BASECLASS(),
 	Class(NULL),
@@ -93,7 +95,7 @@ BulletClass::BulletClass(void) :
 	Array.Add(this);
 }
 
-// FUNCTION: 0x004664C0
+// FUNCTION: GAMEMD 0x004664C0
 void BulletClass::Construct(BulletTypeClass const *type, AbstractClass *target, TechnoClass *payback, int strength, WarheadTypeClass const *warhead, int max_speed, bool bright)
 {
 	Class = (BulletTypeClass *)type;
@@ -115,7 +117,8 @@ void BulletClass::Construct(BulletTypeClass const *type, AbstractClass *target, 
 	SpawnNextAnim = false;
 }
 
-// FUNCTION: 0x00466560 BulletClass::~BulletClass
+// FUNCTION: GAMEMD 0x00466560
+// BulletClass::~BulletClass
 BulletClass::~BulletClass(void)
 {
 	Detach_This_From_All(this, true);
@@ -134,7 +137,7 @@ BulletClass::~BulletClass(void)
 	Array.Delete(this);
 }
 
-// FUNCTION: 0x00466660
+// FUNCTION: GAMEMD 0x00466660
 Cell const * BulletClass::Occupy_List(bool) const
 {
 	static Cell const _list[] = { REFRESH_EOL };
@@ -142,9 +145,10 @@ Cell const * BulletClass::Occupy_List(bool) const
 	return(_list);
 }
 
-// FUNCTION: 0x004666B0 $E123
+// SYNTHETIC: GAMEMD 0x004666B0 SYMBOL
+// _$E123
 
-// FUNCTION: 0x004666C0
+// FUNCTION: GAMEMD 0x004666C0
 bool BulletClass::Mark(MarkType mark)
 {
 	if (BASECLASS::Mark(mark)) {
@@ -153,7 +157,7 @@ bool BulletClass::Mark(MarkType mark)
 	return(false);
 }
 
-// FUNCTION: 0x00468000
+// FUNCTION: GAMEMD 0x00468000
 int BulletClass::Shape_Number(void) const
 {
 	int shapenum = 0;
@@ -169,7 +173,7 @@ int BulletClass::Shape_Number(void) const
 	return(shapenum);
 }
 
-// FUNCTION: 0x00468090
+// FUNCTION: GAMEMD 0x00468090
 void BulletClass::Draw_It(Point2D const & point, Rect const & cliprect) const
 {
 	if (Scen->Special.IsFogOfWar && Map.Is_Fogged(Get_Coord())) return;
@@ -217,7 +221,7 @@ void BulletClass::Draw_It(Point2D const & point, Rect const & cliprect) const
 	}
 }
 
-// FUNCTION: 0x00468430
+// FUNCTION: GAMEMD 0x00468430
 void BulletClass::LoseTarget(void)
 {
 	Cell cell = TarCom->Center_Coord().As_Cell();
@@ -228,7 +232,7 @@ void BulletClass::LoseTarget(void)
 	}
 }
 
-// FUNCTION: 0x004684E0
+// FUNCTION: GAMEMD 0x004684E0
 void BulletClass::Detach(AbstractClass const * target, bool all)
 {
 	BASECLASS::Detach(target, all);
@@ -263,13 +267,13 @@ void BulletClass::Detach(AbstractClass const * target, bool all)
 	}
 }
 
-// FUNCTION: 0x00468B90
+// FUNCTION: GAMEMD 0x00468B90
 LayerType BulletClass::In_Which_Layer(void) const
 {
 	return(Class->Flat ? LAYER_SURFACE : LAYER_AIR);
 }
 
-// FUNCTION: 0x00468BB0
+// FUNCTION: GAMEMD 0x00468BB0
 bool BulletClass::Is_Forced_To_Explode(Coord & coord) const
 {
 	coord = PositionCoord;
@@ -316,7 +320,7 @@ static inline int Coord_Dist(Coord const & a, Coord const & b)
 	return(c.Length());
 }
 
-// FUNCTION: 0x00468D80
+// FUNCTION: GAMEMD 0x00468D80
 void BulletClass::Bullet_Explodes(bool forced)
 {
 	Coord coord = PositionCoord;
@@ -367,7 +371,7 @@ void BulletClass::Bullet_Explodes(bool forced)
 	}
 }
 
-// FUNCTION: 0x0046ADE0
+// FUNCTION: GAMEMD 0x0046ADE0
 void BulletClass::ApplyRadiationToCell(Cell cell, int radius, int amount)
 {
 	CellClass * cptr = &Map[cell];
@@ -384,7 +388,7 @@ void BulletClass::ApplyRadiationToCell(Cell cell, int radius, int amount)
 	}
 }
 
-// FUNCTION: 0x0046AE70
+// FUNCTION: GAMEMD 0x0046AE70
 HRESULT STDMETHODCALLTYPE BulletClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -404,20 +408,20 @@ HRESULT STDMETHODCALLTYPE BulletClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x0046AFB0
+// FUNCTION: GAMEMD 0x0046AFB0
 HRESULT STDMETHODCALLTYPE BulletClass::Save(IStream * stream, BOOL cleardirty)
 {
 	return(BASECLASS::Save(stream, cleardirty));
 }
 
-// FUNCTION: 0x0046AFD0
+// FUNCTION: GAMEMD 0x0046AFD0
 ULONG STDMETHODCALLTYPE BulletClass::AddRef(void)
 {
 	COMRefCount++;
 	return(InterlockedIncrement(&RefCount));
 }
 
-// FUNCTION: 0x0046AFF0
+// FUNCTION: GAMEMD 0x0046AFF0
 ULONG STDMETHODCALLTYPE BulletClass::Release(void)
 {
 	COMRefCount--;
@@ -428,7 +432,7 @@ ULONG STDMETHODCALLTYPE BulletClass::Release(void)
 	return(count);
 }
 
-// FUNCTION: 0x0046B030
+// FUNCTION: GAMEMD 0x0046B030
 bool BulletClass::Is_Homing(void) const
 {
 	if (Class->ROT > 0) {
@@ -437,7 +441,7 @@ bool BulletClass::Is_Homing(void) const
 	return(false);
 }
 
-// FUNCTION: 0x0046B050
+// FUNCTION: GAMEMD 0x0046B050
 BulletClass * __fastcall Create_Bullet(BulletTypeClass const * type, AbstractClass * target, TechnoClass * payback, int strength, WarheadTypeClass const * warhead, int max_speed, bool bright)
 {
 	LPVOID unk = NULL;
@@ -450,7 +454,7 @@ BulletClass * __fastcall Create_Bullet(BulletTypeClass const * type, AbstractCla
 	return(bullet);
 }
 
-// FUNCTION: 0x0046B0C0
+// FUNCTION: GAMEMD 0x0046B0C0
 void BulletClass::Draw_Voxel(VoxelDataStruct const & voxeldata, Matrix3D const & transform, Point2D const & drawpoint, Rect const & cliprect, int frame, ShapeFlags_Type flags, int brightness) const
 {
 	VoxelLibrary * voxlib = voxeldata.VoxLib;
@@ -479,19 +483,19 @@ void BulletClass::Draw_Voxel(VoxelDataStruct const & voxeldata, Matrix3D const &
 	Blit_Block(*LogicalSurface, *ColorSchemes[Class->Color]->Converter, *VoxelDrawSystem::Get_Surface(), region.Bounds, region.Point + drawpoint, cliprect, NULL, ColorSchemes[Class->Color]->Converter->Blitter_From_Flags(f), extra, Class->Flat ? ZGRAD_GROUND : ZGRAD_90DEG, brightness, 0, 0);
 }
 
-// FUNCTION: 0x0046B260
+// FUNCTION: GAMEMD 0x0046B260
 void BulletClass::Set_Weapon_Type(WeaponTypeClass * weapon)
 {
 	WeaponType = weapon;
 }
 
-// FUNCTION: 0x0046B270
+// FUNCTION: GAMEMD 0x0046B270
 WeaponTypeClass * BulletClass::Get_Weapon_Type(void) const
 {
 	return(WeaponType);
 }
 
-// FUNCTION: 0x0046B280
+// FUNCTION: GAMEMD 0x0046B280
 void BulletClass::InitScalable(void)
 {
 	ScalableBullets.Add(this);
@@ -502,7 +506,7 @@ void BulletClass::InitScalable(void)
 	Class->SetScaledSpawnDelay(Class->SpawnDelay + extra / 3);
 }
 
-// FUNCTION: 0x0046B560
+// FUNCTION: GAMEMD 0x0046B560
 HRESULT STDMETHODCALLTYPE BulletClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -510,55 +514,72 @@ HRESULT STDMETHODCALLTYPE BulletClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x0046B540
+// FUNCTION: GAMEMD 0x0046B540
 int BulletClass::Fetch_Object_Size(void) const
 {
 	return(sizeof(*this));
 }
 
-// FUNCTION: 0x0046B550
+// FUNCTION: GAMEMD 0x0046B550
 RTTIType BulletClass::Fetch_RTTI(void) const
 {
 	return(RTTI_BULLET);
 }
 
-// FUNCTION: 0x0046B5A0
+// FUNCTION: GAMEMD 0x0046B5A0
 void BulletClass::Assign_Target(AbstractClass * target)
 {
 	TarCom = target;
 }
 
-// FUNCTION: 0x0046B5B0
+// FUNCTION: GAMEMD 0x0046B5B0
 ObjectTypeClass const * BulletClass::Class_Of(void) const
 {
 	return(Class);
 }
 
-// FUNCTION: 0x0046B5C0 BulletClass::~BulletClass
+// SYNTHETIC: GAMEMD 0x0046B5C0
+// ??_GBulletClass@@UAEPAXI@Z
 
-// FUNCTION: 0x0046B5E0 ?$DynamicVectorClass@PAVBulletClass@@::Clear
-// FUNCTION: 0x0046B610 ?$DynamicVectorClass@PAVBulletClass@@::ID
-// FUNCTION: 0x0046B630 ?$VectorClass@PAVBulletClass@@::GetItem
+// TEMPLATE: GAMEMD 0x0046B5E0
+// ?Clear@?$DynamicVectorClass@PAVBulletClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0046B610
+// ?ID@?$DynamicVectorClass@PAVBulletClass@@@@UAEHPBQAVBulletClass@@@Z
+// TEMPLATE: GAMEMD 0x0046B630
+// ?GetItem@?$VectorClass@PAVBulletClass@@@@UBEPAVBulletClass@@H@Z
 template class DynamicVectorClass<BulletClass *>;
 
-// FUNCTION: 0x0046B640 ?$CDTimerClass@VFrameTimerClass@@::?$CDTimerClass@VFrameTimerClass@@
+// TEMPLATE: GAMEMD 0x0046B640
+// ??0?$CDTimerClass@VFrameTimerClass@@@@QAE@H@Z
 template class CDTimerClass<FrameTimerClass>;
 
-// FUNCTION: 0x0046B660 ?$VectorClass@PAVBulletClass@@::operator==
-// FUNCTION: 0x0046B6A0 ?$VectorClass@PAVBulletClass@@::Resize
-// FUNCTION: 0x0046B750 ?$VectorClass@PAVBulletClass@@::Clear
+// TEMPLATE: GAMEMD 0x0046B660
+// ??8?$VectorClass@PAVBulletClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x0046B6A0
+// ?Resize@?$VectorClass@PAVBulletClass@@@@UAE_NHPBQAVBulletClass@@@Z
+// TEMPLATE: GAMEMD 0x0046B750
+// ?Clear@?$VectorClass@PAVBulletClass@@@@UAEXXZ
 template class VectorClass<BulletClass *>;
 
-// FUNCTION: 0x0046B780 ?$VectorClass@PAVBulletClass@@::ID
-// FUNCTION: 0x0046B7C0 ?$VectorClass@PAVBulletClass@@::ID
-// FUNCTION: 0x0046B7E0 ?$DynamicVectorClass@PAVBulletClass@@::Resize
-// FUNCTION: 0x0046B890 ?$DynamicVectorClass@PAVBulletClass@@::ID
-// FUNCTION: 0x0046B8C0 ?$DynamicVectorClass@PAVBulletClass@@::~?$DynamicVectorClass@PAVBulletClass@@
-// FUNCTION: 0x0046B910 ?$VectorClass@PAVBulletClass@@::~?$VectorClass@PAVBulletClass@@
+// TEMPLATE: GAMEMD 0x0046B780
+// ?ID@?$VectorClass@PAVBulletClass@@@@UAEHABQAVBulletClass@@@Z
+// TEMPLATE: GAMEMD 0x0046B7C0
+// ?ID@?$VectorClass@PAVBulletClass@@@@UAEHPBQAVBulletClass@@@Z
+// TEMPLATE: GAMEMD 0x0046B7E0
+// ?Resize@?$DynamicVectorClass@PAVBulletClass@@@@UAE_NHPBQAVBulletClass@@@Z
+// TEMPLATE: GAMEMD 0x0046B890
+// ?ID@?$DynamicVectorClass@PAVBulletClass@@@@UAEHABQAVBulletClass@@@Z
+// SYNTHETIC: GAMEMD 0x0046B8C0
+// ??_G?$DynamicVectorClass@PAVBulletClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x0046B910
+// ??_G?$VectorClass@PAVBulletClass@@@@UAEPAXI@Z
 
-// FUNCTION: 0x0046B960 ?$TVelocity3D@N::operator+=
+// TEMPLATE: GAMEMD 0x0046B960
+// ??Y?$TVelocity3D@N@@QAEAAV0@ABV0@@Z
 template class TVelocity3D<double>;
 
-// FUNCTION: 0x0046B990 BulletClass::AddRef
+// FUNCTION: GAMEMD 0x0046B990
+// BulletClass::AddRef
 
-// FUNCTION: 0x0046B9A0 BulletClass::Release
+// FUNCTION: GAMEMD 0x0046B9A0
+// BulletClass::Release

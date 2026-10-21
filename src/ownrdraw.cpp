@@ -70,53 +70,68 @@ extern const double DAT_007E1740;
 extern const double DAT_007EF700;
 extern const double DAT_007EF708;
 
-// FUNCTION: 0x00600340 $E56
+// SYNTHETIC: GAMEMD 0x00600340 SYMBOL
+// _$E56
 double DAT_00AC1B40 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x00600370 $E59
+// SYNTHETIC: GAMEMD 0x00600370 SYMBOL
+// _$E59
 double DAT_00AC48A0 = DAT_00AC1B40 / DAT_007EF700;
 
-// FUNCTION: 0x00600390 $E62
+// SYNTHETIC: GAMEMD 0x00600390 SYMBOL
+// _$E62
 double DAT_00AC4838 = DAT_007E1718 / DAT_00AC48A0;
 
-// FUNCTION: 0x006003B0 $E65
+// SYNTHETIC: GAMEMD 0x006003B0 SYMBOL
+// _$E65
 double DAT_00AC4830 = DAT_007E1720 * DAT_007EF708;
 
-// FUNCTION: 0x006003D0 $E68
+// SYNTHETIC: GAMEMD 0x006003D0 SYMBOL
+// _$E68
 double DAT_00AC1B88 = DAT_007E1728 * DAT_007EF708;
 
-// FUNCTION: 0x006003F0 $E71
+// SYNTHETIC: GAMEMD 0x006003F0 SYMBOL
+// _$E71
 double DAT_00AC1898 = DAT_007E1730 * DAT_007EF708;
 
-// FUNCTION: 0x00600410 $E74
+// SYNTHETIC: GAMEMD 0x00600410 SYMBOL
+// _$E74
 int DAT_00AC48AC = (int)(fastmath::tan(DAT_00AC1898 - DAT_00AC1B88) * DAT_007E1738 * DAT_00AC1B40);
 
-// FUNCTION: 0x00600450 $E77
+// SYNTHETIC: GAMEMD 0x00600450 SYMBOL
+// _$E77
 double DAT_00AC1CA0 = fastmath::atan(DAT_00AC48AC * DAT_007E1740);
 
-// FUNCTION: 0x00600480 $E80
+// SYNTHETIC: GAMEMD 0x00600480 SYMBOL
+// _$E80
 double DAT_00AC4610 = fastmath::atan((DAT_00AC48AC * 2) / DAT_00AC1B40);
 
-// FUNCTION: 0x006004B0 $E83
+// SYNTHETIC: GAMEMD 0x006004B0 SYMBOL
+// _$E83
 int DAT_00AC489C = (int)(DAT_00AC48AC * 4 + DAT_007E1738);
 
 struct ODShortPair { short a; short b; ODShortPair(void) { a = 0; b = 0; } };
 struct ODIntTriple { int a; int b; int c; ODIntTriple(void) { a = 0; b = 0; c = 0; } };
 
-// FUNCTION: 0x006004E0 $E86
+// SYNTHETIC: GAMEMD 0x006004E0 SYMBOL
+// _$E86
 ODShortPair DAT_00AC1B38;
 
-// FUNCTION: 0x006004F0 $E89
+// SYNTHETIC: GAMEMD 0x006004F0 SYMBOL
+// _$E89
 ODIntTriple DAT_00AC1DF8;
 
 
 struct ODCenterTriple { int a; int b; int c; ODCenterTriple(void) { c = 0; a = 128; b = 128; } };
 
-// FUNCTION: 0x00600510 $E92
+// SYNTHETIC: GAMEMD 0x00600510 SYMBOL
+// _$E92
 ODCenterTriple DAT_00AC4888;
 
-// FUNCTION: 0x00600530 $E97
-// FUNCTION: 0x00600550 $E95
+// SYNTHETIC: GAMEMD 0x00600530 SYMBOL
+// _$E97
+// SYNTHETIC: GAMEMD 0x00600550 SYMBOL
+// _$E95
 SurfaceCacheClass SurfaceCache;
 
 namespace OwnerDraw {
@@ -143,7 +158,7 @@ namespace OwnerDraw {
 	extern int UnusedDarkAccentColor;
 }
 
-// FUNCTION: 0x00600560
+// FUNCTION: GAMEMD 0x00600560
 void OwnerDraw::Initialize(void)
 {
 	ControlInsetPx = 1;
@@ -169,7 +184,7 @@ void OwnerDraw::Initialize(void)
 	UnusedDarkAccentColor = 0x443716;
 }
 
-// FUNCTION: 0x00600630
+// FUNCTION: GAMEMD 0x00600630
 OwnerDraw::CellData::CellData(void)
 {
 	type = CellData::INVALID;
@@ -178,19 +193,19 @@ OwnerDraw::CellData::CellData(void)
 	surf = NULL;
 }
 
-// FUNCTION: 0x00600660
+// FUNCTION: GAMEMD 0x00600660
 unsigned int Hash_HWND(HWND &key)
 {
 	return(*(unsigned int*)&key);
 }
 
-// FUNCTION: 0x00600670
+// FUNCTION: GAMEMD 0x00600670
 unsigned int Hash_CtrlMsg(OwnerDraw::CtrlMsgData &key)
 {
 	return((unsigned int)((int)key.message * (int)key.window));
 }
 
-// FUNCTION: 0x00600680
+// FUNCTION: GAMEMD 0x00600680
 bool OwnerDraw::CtrlMsgData::operator ==(CtrlMsgData const & that) const
 {
 	if (that.window == window && that.message == message){
@@ -200,18 +215,23 @@ bool OwnerDraw::CtrlMsgData::operator ==(CtrlMsgData const & that) const
 }
 
 
-// FUNCTION: 0x006006B0 $E102
-// FUNCTION: 0x00600750 $E100
+// SYNTHETIC: GAMEMD 0x006006B0 SYMBOL
+// _$E102
+// SYNTHETIC: GAMEMD 0x00600750 SYMBOL
+// _$E100
 namespace OwnerDraw { Dictionary<HWND, WNDPROC> DialogProcs(Hash_HWND); }
 
-// FUNCTION: 0x00600880 $E107
-// FUNCTION: 0x00600920 $E105
+// SYNTHETIC: GAMEMD 0x00600880 SYMBOL
+// _$E107
+// SYNTHETIC: GAMEMD 0x00600920 SYMBOL
+// _$E105
 namespace OwnerDraw { Dictionary<HWND, WNDPROC> SubclassProcs(Hash_HWND); }
 
-// FUNCTION: 0x00600A50 $E112
+// SYNTHETIC: GAMEMD 0x00600A50 SYMBOL
+// _$E112
 namespace OwnerDraw { Dictionary<HWND, OwnerDraw::WinData> Dialogs(Hash_HWND); }
 
-// FUNCTION: 0x00600C70
+// FUNCTION: GAMEMD 0x00600C70
 bool Focus_Next_Tab_Item(HWND window, bool previous)
 {
 	HWND parent = GetParent(window);
@@ -223,7 +243,7 @@ bool Focus_Next_Tab_Item(HWND window, bool previous)
 	return false;
 }
 
-// FUNCTION: 0x00601360
+// FUNCTION: GAMEMD 0x00601360
 bool Is_Owner_Draw_Message(unsigned int msg)
 {
 	if (msg == 0x10c ||
@@ -289,7 +309,7 @@ bool Is_Owner_Draw_Message(unsigned int msg)
 	return false;
 }
 
-// FUNCTION: 0x006023F0
+// FUNCTION: GAMEMD 0x006023F0
 int Typed_Char_Sound(HWND dialog, HWND control)
 {
 	OwnerDraw::WinData *data = NULL;
@@ -307,7 +327,7 @@ int Typed_Char_Sound(HWND dialog, HWND control)
 	return -1;
 }
 
-// FUNCTION: 0x00602AE0
+// FUNCTION: GAMEMD 0x00602AE0
 int Is_Owner_Draw_Subset_Message(unsigned int msg)
 {
 	if (msg == 0x125 ||
@@ -333,7 +353,7 @@ int Is_Owner_Draw_Subset_Message(unsigned int msg)
 	return 0;
 }
 
-// FUNCTION: 0x00602B90
+// FUNCTION: GAMEMD 0x00602B90
 bool Is_Special_Control(HWND dialog, HWND control)
 {
 	OwnerDraw::WinData *data = NULL;
@@ -390,7 +410,7 @@ bool Is_Special_Control(HWND dialog, HWND control)
 	return false;
 }
 
-// FUNCTION: 0x00602D70
+// FUNCTION: GAMEMD 0x00602D70
 bool Is_Unused_Control(HWND dialog, HWND control)
 {
 	OwnerDraw::WinData *data = NULL;
@@ -400,7 +420,7 @@ bool Is_Unused_Control(HWND dialog, HWND control)
 	return false;
 }
 
-// FUNCTION: 0x00602DD0
+// FUNCTION: GAMEMD 0x00602DD0
 bool Is_Typed_Control(HWND dialog, HWND control)
 {
 	OwnerDraw::WinData *data = NULL;
@@ -467,7 +487,7 @@ bool Is_Typed_Control(HWND dialog, HWND control)
 	return false;
 }
 
-// FUNCTION: 0x00602FE0
+// FUNCTION: GAMEMD 0x00602FE0
 int Control_Slot_Count(HWND dialog, HWND control)
 {
 	OwnerDraw::WinData *data = NULL;
@@ -477,7 +497,7 @@ int Control_Slot_Count(HWND dialog, HWND control)
 	return 12;
 }
 
-// FUNCTION: 0x00603040
+// FUNCTION: GAMEMD 0x00603040
 int Control_Sound_Slot(HWND dialog, HWND control)
 {
 	OwnerDraw::WinData *data = NULL;
@@ -532,7 +552,7 @@ int Control_Sound_Slot(HWND dialog, HWND control)
 	return 0;
 }
 
-// FUNCTION: 0x00603240
+// FUNCTION: GAMEMD 0x00603240
 int Is_Typed_Control_Int(HWND dialog, HWND control)
 {
 	OwnerDraw::WinData *data = NULL;
@@ -582,7 +602,7 @@ int Is_Typed_Control_Int(HWND dialog, HWND control)
 	return 0;
 }
 
-// FUNCTION: 0x006033F0
+// FUNCTION: GAMEMD 0x006033F0
 int Control_Volume(HWND dialog, HWND control)
 {
 	OwnerDraw::WinData *data = NULL;
@@ -654,7 +674,7 @@ void FUN_0072DAD0(void);
 int FUN_0072D450(void);
 void FUN_0072CC80(void);
 
-// FUNCTION: 0x006035F0
+// FUNCTION: GAMEMD 0x006035F0
 void Play_Control_Sound(HWND dialog, HWND control)
 {
 	OwnerDraw::WinData *data = NULL;
@@ -736,7 +756,7 @@ extern int DAT_00B0FB10;
 extern int DAT_00B0FB30;
 extern int DAT_00B0FAD0;
 
-// FUNCTION: 0x00603810
+// FUNCTION: GAMEMD 0x00603810
 int FUN_00603810(HWND dialog, HWND control)
 {
 	OwnerDraw::WinData *data = NULL;
@@ -751,7 +771,7 @@ int FUN_00603810(HWND dialog, HWND control)
 	return 0;
 }
 
-// FUNCTION: 0x00603870
+// FUNCTION: GAMEMD 0x00603870
 int FUN_00603870(HWND dialog, HWND control, int arg)
 {
 	OwnerDraw::WinData *data = NULL;
@@ -825,7 +845,7 @@ done:
 	return 0;
 }
 
-// FUNCTION: 0x00603AA0
+// FUNCTION: GAMEMD 0x00603AA0
 int FUN_00603AA0(HWND dialog, HWND control)
 {
 	OwnerDraw::WinData *data = NULL;
@@ -883,7 +903,7 @@ decided:
 	return 0xc0;
 }
 
-// FUNCTION: 0x00603D30
+// FUNCTION: GAMEMD 0x00603D30
 void FUN_00603D30(HWND dialog, int value)
 {
 	OwnerDraw::WinData *data = NULL;
@@ -896,31 +916,31 @@ void FUN_00603D30(HWND dialog, int value)
 	}
 }
 
-// FUNCTION: 0x00603DB0
+// FUNCTION: GAMEMD 0x00603DB0
 LRESULT FUN_00603DB0(HWND window, int value)
 {
 	return SendMessage(window, 0x4e5, 0, value & 0xff);
 }
 
-// FUNCTION: 0x00603DD0
+// FUNCTION: GAMEMD 0x00603DD0
 LRESULT FUN_00603DD0(HWND window, int value)
 {
 	return SendMessage(window, 0x4e6, 0, value & 0xff);
 }
 
-// FUNCTION: 0x00603DF0
+// FUNCTION: GAMEMD 0x00603DF0
 bool FUN_00603DF0(HWND window)
 {
 	return SendMessage(window, 0x4e7, 0, 0) ? true : false;
 }
 
-// FUNCTION: 0x00603E10
+// FUNCTION: GAMEMD 0x00603E10
 LRESULT FUN_00603E10(HWND window, int low, int high)
 {
 	return SendMessage(window, 0x4e8, 0, MAKELONG(low, high));
 }
 
-// FUNCTION: 0x00603E40
+// FUNCTION: GAMEMD 0x00603E40
 void FUN_00603E40(HWND dialog, int value)
 {
 	OwnerDraw::WinData *data = NULL;
@@ -930,7 +950,7 @@ void FUN_00603E40(HWND dialog, int value)
 	}
 }
 
-// FUNCTION: 0x00603EA0
+// FUNCTION: GAMEMD 0x00603EA0
 int FUN_00603EA0(HWND dialog)
 {
 	OwnerDraw::WinData *data = NULL;
@@ -947,7 +967,7 @@ struct WideTextRequest {
 	WideWstring text;
 };
 
-// FUNCTION: 0x00603F00
+// FUNCTION: GAMEMD 0x00603F00
 WideWstring FUN_00603F00(HWND window, int first, int second)
 {
 	WideTextRequest request;
@@ -957,7 +977,7 @@ WideWstring FUN_00603F00(HWND window, int first, int second)
 	return request.text;
 }
 
-// FUNCTION: 0x00603F60
+// FUNCTION: GAMEMD 0x00603F60
 WideWstring FUN_00603F60(HWND window, int first)
 {
 	WideTextRequest request;
@@ -967,7 +987,7 @@ WideWstring FUN_00603F60(HWND window, int first)
 	return request.text;
 }
 
-// FUNCTION: 0x00603FC0
+// FUNCTION: GAMEMD 0x00603FC0
 WideWstring FUN_00603FC0(HWND window, int first, WORD low, WORD high)
 {
 	int second = SendMessage((HWND)first, 0x4e8, 0, MAKELONG(low, high));
@@ -975,7 +995,7 @@ WideWstring FUN_00603FC0(HWND window, int first, WORD low, WORD high)
 	return text;
 }
 
-// FUNCTION: 0x00604060
+// FUNCTION: GAMEMD 0x00604060
 WideWstring FUN_00604060(int type, int id)
 {
 	char const * label = GetTooltipStringLabel(type, id);
@@ -985,7 +1005,7 @@ WideWstring FUN_00604060(int type, int id)
 	return WideWstring(DAT_00887734);
 }
 
-// FUNCTION: 0x00606740
+// FUNCTION: GAMEMD 0x00606740
 void FUN_00606740(HWND dialog, bool value)
 {
 	OwnerDraw::WinData *data = NULL;
@@ -995,7 +1015,7 @@ void FUN_00606740(HWND dialog, bool value)
 	}
 }
 
-// FUNCTION: 0x006067A0
+// FUNCTION: GAMEMD 0x006067A0
 char FUN_006067A0(HWND dialog)
 {
 	OwnerDraw::WinData *data = NULL;
@@ -1008,13 +1028,13 @@ char FUN_006067A0(HWND dialog)
 
 BOOL CALLBACK FUN_00606800(HWND window, LPARAM lparam);
 
-// FUNCTION: 0x006071C0
+// FUNCTION: GAMEMD 0x006071C0
 BOOL FUN_006071C0(HWND window)
 {
 	return EnumChildWindows(window, FUN_00606800, 1);
 }
 
-// FUNCTION: 0x006071D0
+// FUNCTION: GAMEMD 0x006071D0
 BOOL FUN_006071D0(HWND window)
 {
 	return EnumChildWindows(window, FUN_00606800, 0);
@@ -1023,7 +1043,7 @@ BOOL FUN_006071D0(HWND window)
 struct Game { static HINSTANCE hInstance; static bool __cdecl CallBack(void); static bool __fastcall MainLoop(void); };
 void __fastcall DrawCampaignMenuTransition(HWND window, bool reverse);
 
-// FUNCTION: 0x00607FD0
+// FUNCTION: GAMEMD 0x00607FD0
 void FUN_00607FD0(HWND dialog)
 {
 	OwnerDraw::WinData *data = NULL;
@@ -1060,7 +1080,7 @@ inline OwnerDraw::WinData *Get_Data(HWND window)
 	return data;
 }
 
-// FUNCTION: 0x00608070
+// FUNCTION: GAMEMD 0x00608070
 bool FUN_00608070(HWND dialog)
 {
 	if (FUN_0069BBE0(&Session)) {
@@ -1103,7 +1123,7 @@ bool FUN_00608070(HWND dialog)
 	return true;
 }
 
-// FUNCTION: 0x00608260
+// FUNCTION: GAMEMD 0x00608260
 bool RunOpenAnimationIfNeeded(HWND dialog)
 {
 	OwnerDraw::WinData *data = NULL;
@@ -1134,7 +1154,7 @@ bool RunOpenAnimationIfNeeded(HWND dialog)
 	return true;
 }
 
-// FUNCTION: 0x00608380
+// FUNCTION: GAMEMD 0x00608380
 void FUN_00608380(HWND dialog)
 {
 	OwnerDraw::WinData *data = NULL;
@@ -1144,7 +1164,7 @@ void FUN_00608380(HWND dialog)
 	}
 }
 
-// FUNCTION: 0x006083E0
+// FUNCTION: GAMEMD 0x006083E0
 void FUN_006083E0(HWND dialog)
 {
 	OwnerDraw::WinData *data = NULL;
@@ -1154,7 +1174,7 @@ void FUN_006083E0(HWND dialog)
 	}
 }
 
-// FUNCTION: 0x00608440
+// FUNCTION: GAMEMD 0x00608440
 void FUN_00608440(HWND dialog)
 {
 	OwnerDraw::WinData *data = NULL;
@@ -1164,7 +1184,7 @@ void FUN_00608440(HWND dialog)
 	}
 }
 
-// FUNCTION: 0x006084A0
+// FUNCTION: GAMEMD 0x006084A0
 void FUN_006084A0(HWND dialog)
 {
 	OwnerDraw::WinData *data = NULL;
@@ -1176,7 +1196,7 @@ void FUN_006084A0(HWND dialog)
 
 bool __fastcall FUN_00608CD0(HWND parent, HWND child);
 
-// FUNCTION: 0x006096A0
+// FUNCTION: GAMEMD 0x006096A0
 bool FUN_006096A0(HWND parent, HWND child)
 {
 	OwnerDraw::WinData *data = NULL;
@@ -1190,7 +1210,7 @@ bool FUN_006096A0(HWND parent, HWND child)
 	return false;
 }
 
-// FUNCTION: 0x00609730
+// FUNCTION: GAMEMD 0x00609730
 bool FUN_00609730(HWND dialog, HWND control)
 {
 	OwnerDraw::WinData *data = NULL;
@@ -1239,7 +1259,7 @@ bool FUN_00609730(HWND dialog, HWND control)
 	return false;
 }
 
-// FUNCTION: 0x00609AA0
+// FUNCTION: GAMEMD 0x00609AA0
 bool FUN_00609AA0(HWND parent, HWND child)
 {
 	OwnerDraw::WinData *data = NULL;
@@ -1253,7 +1273,7 @@ bool FUN_00609AA0(HWND parent, HWND child)
 	return false;
 }
 
-// FUNCTION: 0x00609B30
+// FUNCTION: GAMEMD 0x00609B30
 bool FUN_00609B30(HWND dialog, HWND control)
 {
 	OwnerDraw::WinData *data = NULL;
@@ -1284,7 +1304,7 @@ inline bool Is_Plain_Control(HWND window)
 	return false;
 }
 
-// FUNCTION: 0x00609BC0
+// FUNCTION: GAMEMD 0x00609BC0
 bool FUN_00609BC0(HWND parent, HWND child)
 {
 	if (FUN_0069BBE0(&Session)) {
@@ -1299,7 +1319,7 @@ bool FUN_00609BC0(HWND parent, HWND child)
 	return false;
 }
 
-// FUNCTION: 0x00609CF0
+// FUNCTION: GAMEMD 0x00609CF0
 bool FUN_00609CF0(HWND parent, HWND child)
 {
 	if (!FUN_0069BBE0(&Session)) {
@@ -1314,7 +1334,7 @@ bool FUN_00609CF0(HWND parent, HWND child)
 	return false;
 }
 
-// FUNCTION: 0x00609E20
+// FUNCTION: GAMEMD 0x00609E20
 bool FUN_00609E20(HWND dialog, HWND control)
 {
 	OwnerDraw::WinData *data = NULL;
@@ -1395,7 +1415,7 @@ bool FUN_00609E20(HWND dialog, HWND control)
 	return false;
 }
 
-// FUNCTION: 0x0060A100
+// FUNCTION: GAMEMD 0x0060A100
 bool FUN_0060A100(HWND dialog, HWND control)
 {
 	OwnerDraw::WinData *data = NULL;
@@ -1416,7 +1436,7 @@ bool FUN_0060A100(HWND dialog, HWND control)
 int DAT_00AC1CAC;
 int DAT_00AC4894;
 
-// FUNCTION: 0x0060A180
+// FUNCTION: GAMEMD 0x0060A180
 BOOL CALLBACK FUN_0060A180(HWND window, LPARAM lparam)
 {
 	HWND parent = GetParent(window);
@@ -1433,7 +1453,7 @@ BOOL CALLBACK FUN_0060A180(HWND window, LPARAM lparam)
 	return TRUE;
 }
 
-// FUNCTION: 0x0060A230
+// FUNCTION: GAMEMD 0x0060A230
 int __fastcall FUN_0060A230(HWND dialog)
 {
 	DAT_00AC1CAC = 0;
@@ -1441,7 +1461,7 @@ int __fastcall FUN_0060A230(HWND dialog)
 	return DAT_00AC1CAC;
 }
 
-// FUNCTION: 0x0060A250
+// FUNCTION: GAMEMD 0x0060A250
 BOOL CALLBACK FUN_0060A250(HWND window, LPARAM lparam)
 {
 	HWND parent = GetParent(window);
@@ -1458,7 +1478,7 @@ BOOL CALLBACK FUN_0060A250(HWND window, LPARAM lparam)
 	return TRUE;
 }
 
-// FUNCTION: 0x0060A300
+// FUNCTION: GAMEMD 0x0060A300
 int __fastcall FUN_0060A300(HWND dialog)
 {
 	DAT_00AC4894 = 0;
@@ -1466,13 +1486,13 @@ int __fastcall FUN_0060A300(HWND dialog)
 	return DAT_00AC4894 >= 1;
 }
 
-// FUNCTION: 0x0060A5A0
+// FUNCTION: GAMEMD 0x0060A5A0
 void __fastcall FUN_0060A5A0(HWND dialog)
 {
 	EnumChildWindows(dialog, OwnerDraw::ClassifyLayoutBand, 0);
 }
 
-// FUNCTION: 0x0060AA50
+// FUNCTION: GAMEMD 0x0060AA50
 void __fastcall FUN_0060AA50(HWND dialog)
 {
 	EnumChildWindows(dialog, OwnerDraw::ResetControlDrawModeAndTimerProc, 0);
@@ -1480,7 +1500,8 @@ void __fastcall FUN_0060AA50(HWND dialog)
 
 
 namespace OwnerDraw {
-// FUNCTION: 0x0060AA60 OwnerDraw::SendTransitionCompleteToCustomTextChildProc
+// FUNCTION: GAMEMD 0x0060AA60
+// OwnerDraw::SendTransitionCompleteToCustomTextChildProc
 BOOL CALLBACK SendTransitionCompleteToCustomTextChildProc(HWND window, LPARAM lparam)
 {
 	HWND parent = GetParent(window);
@@ -1491,13 +1512,13 @@ BOOL CALLBACK SendTransitionCompleteToCustomTextChildProc(HWND window, LPARAM lp
 }
 }
 
-// FUNCTION: 0x0060AAA0
+// FUNCTION: GAMEMD 0x0060AAA0
 void __fastcall FUN_0060AAA0(HWND dialog)
 {
 	EnumChildWindows(dialog, OwnerDraw::SendTransitionCompleteToCustomTextChildProc, 0);
 }
 
-// FUNCTION: 0x0060AF40
+// FUNCTION: GAMEMD 0x0060AF40
 void __fastcall FUN_0060AF40(HWND dialog)
 {
 	EnumChildWindows(dialog, OwnerDraw::InitCompactDialogControlsProc, 0);
@@ -1526,7 +1547,7 @@ inline int Centre_Y(int span, bool compact)
 	return offset;
 }
 
-// FUNCTION: 0x0060AF50
+// FUNCTION: GAMEMD 0x0060AF50
 void __fastcall FUN_0060AF50(HWND window, RECT *rect)
 {
 	HWND parent = GetParent(window);
@@ -1543,7 +1564,7 @@ extern Rect *DAT_00B0FC28;
 extern Rect *DAT_00B0FC50;
 extern int DAT_007F5BF8;
 
-// FUNCTION: 0x0060B420
+// FUNCTION: GAMEMD 0x0060B420
 void __fastcall FUN_0060B420(HWND window)
 {
 	HWND parent = GetParent(window);
@@ -1571,7 +1592,7 @@ void __fastcall FUN_0060B420(HWND window)
 	MoveWindow(window, x, compact ? DAT_00B0FC50->Y - h : DAT_00B0FC28->Y - h, w, h, FALSE);
 }
 
-// FUNCTION: 0x0060B550
+// FUNCTION: GAMEMD 0x0060B550
 void __fastcall FUN_0060B550(HWND window)
 {
 	HWND parent = GetParent(window);
@@ -1597,7 +1618,7 @@ void __fastcall FUN_0060B550(HWND window)
 	MoveWindow(window, dx + client.left + 10, client.bottom - h - dy - 1, w, h, FALSE);
 }
 
-// FUNCTION: 0x0060B610
+// FUNCTION: GAMEMD 0x0060B610
 void __fastcall FUN_0060B610(HWND window)
 {
 	HWND parent = GetParent(window);
@@ -1630,7 +1651,7 @@ extern HWND CurrentDialogHwnd;
 }
 BOOL CALLBACK FUN_0060C0C0(HWND window, LPARAM lparam);
 
-// FUNCTION: 0x0060B740
+// FUNCTION: GAMEMD 0x0060B740
 void __fastcall FUN_0060B740(HWND window)
 {
 	HWND parent = GetParent(window);
@@ -1641,7 +1662,7 @@ void __fastcall FUN_0060B740(HWND window)
 	MoveWindow(window, own.left - frame.left, own.top - frame.top, own.right - own.left, own.bottom - own.top, FALSE);
 }
 
-// FUNCTION: 0x0060B7A0
+// FUNCTION: GAMEMD 0x0060B7A0
 void __fastcall FUN_0060B7A0(HWND window)
 {
 	HWND parent = GetParent(window);
@@ -1680,7 +1701,7 @@ void __fastcall FUN_0060B7A0(HWND window)
 	}
 }
 
-// FUNCTION: 0x0060B880
+// FUNCTION: GAMEMD 0x0060B880
 bool __fastcall FUN_0060B880(HWND dialog, HWND control)
 {
 	OwnerDraw::WinData *data = Get_Data(dialog);
@@ -1710,7 +1731,8 @@ extern int BlueShiftLeft;
 }
 
 namespace OwnerDraw {
-// FUNCTION: 0x0060C4A0 OwnerDraw::UpdateControlPosition
+// FUNCTION: GAMEMD 0x0060C4A0
+// OwnerDraw::UpdateControlPosition
 void __fastcall UpdateControlPosition(HWND dialog, LPARAM lparam)
 {
 	MoveWindow(dialog, 0, 0, Drawing::RenderWidth, Drawing::RenderHeight, FALSE);
@@ -1719,7 +1741,7 @@ void __fastcall UpdateControlPosition(HWND dialog, LPARAM lparam)
 }
 }
 
-// FUNCTION: 0x0060C4E0
+// FUNCTION: GAMEMD 0x0060C4E0
 int __fastcall FUN_0060C4E0(HWND dialog)
 {
 	OwnerDraw::WinData *data = NULL;
@@ -1730,7 +1752,8 @@ int __fastcall FUN_0060C4E0(HWND dialog)
 }
 
 namespace OwnerDraw {
-// FUNCTION: 0x0060C7D0 OwnerDraw::TrySetDialogLayoutBand2
+// FUNCTION: GAMEMD 0x0060C7D0
+// OwnerDraw::TrySetDialogLayoutBand2
 bool __fastcall TrySetDialogLayoutBand2(HWND dialog)
 {
 	OwnerDraw::WinData *data = Get_Data(dialog);
@@ -1749,7 +1772,7 @@ bool __fastcall TrySetDialogLayoutBand2(HWND dialog)
 }
 }
 
-// FUNCTION: 0x0060C8D0
+// FUNCTION: GAMEMD 0x0060C8D0
 unsigned char __fastcall FUN_0060C8D0(HWND dialog)
 {
 	OwnerDraw::WinData *data = Get_Data(dialog);
@@ -1759,7 +1782,7 @@ unsigned char __fastcall FUN_0060C8D0(HWND dialog)
 	return 0;
 }
 
-// FUNCTION: 0x0060C930
+// FUNCTION: GAMEMD 0x0060C930
 unsigned char __fastcall FUN_0060C930(HWND dialog)
 {
 	OwnerDraw::WinData *data = Get_Data(dialog);
@@ -1777,7 +1800,7 @@ unsigned char __fastcall FUN_0060C930(HWND dialog)
 	return v;
 }
 
-// FUNCTION: 0x0060C9D0
+// FUNCTION: GAMEMD 0x0060C9D0
 void __fastcall FUN_0060C9D0(HWND dialog)
 {
 	OwnerDraw::WinData *data = Get_Data(dialog);
@@ -1786,7 +1809,7 @@ void __fastcall FUN_0060C9D0(HWND dialog)
 	}
 }
 
-// FUNCTION: 0x0060CA30
+// FUNCTION: GAMEMD 0x0060CA30
 void __fastcall FUN_0060CA30(HWND dialog)
 {
 	OwnerDraw::WinData *data = Get_Data(dialog);
@@ -1795,7 +1818,7 @@ void __fastcall FUN_0060CA30(HWND dialog)
 	}
 }
 
-// FUNCTION: 0x0060CA90
+// FUNCTION: GAMEMD 0x0060CA90
 unsigned char __fastcall FUN_0060CA90(HWND dialog)
 {
 	OwnerDraw::WinData *data = Get_Data(dialog);
@@ -1805,7 +1828,7 @@ unsigned char __fastcall FUN_0060CA90(HWND dialog)
 	return 0;
 }
 
-// FUNCTION: 0x0060CAF0
+// FUNCTION: GAMEMD 0x0060CAF0
 unsigned char __fastcall FUN_0060CAF0(HWND dialog)
 {
 	OwnerDraw::WinData *data = Get_Data(dialog);
@@ -1823,7 +1846,7 @@ unsigned char __fastcall FUN_0060CAF0(HWND dialog)
 	return v;
 }
 
-// FUNCTION: 0x0060CBA0
+// FUNCTION: GAMEMD 0x0060CBA0
 void __fastcall FUN_0060CBA0(HWND dialog)
 {
 	OwnerDraw::WinData *data = Get_Data(dialog);
@@ -1832,7 +1855,7 @@ void __fastcall FUN_0060CBA0(HWND dialog)
 	}
 }
 
-// FUNCTION: 0x0060CC00
+// FUNCTION: GAMEMD 0x0060CC00
 void __fastcall FUN_0060CC00(HWND dialog)
 {
 	OwnerDraw::WinData *data = Get_Data(dialog);
@@ -1841,7 +1864,7 @@ void __fastcall FUN_0060CC00(HWND dialog)
 	}
 }
 
-// FUNCTION: 0x0060CC60
+// FUNCTION: GAMEMD 0x0060CC60
 unsigned char __fastcall FUN_0060CC60(HWND dialog)
 {
 	OwnerDraw::WinData *data = Get_Data(dialog);
@@ -1851,7 +1874,7 @@ unsigned char __fastcall FUN_0060CC60(HWND dialog)
 	return 0;
 }
 
-// FUNCTION: 0x0060CCC0
+// FUNCTION: GAMEMD 0x0060CCC0
 unsigned char __fastcall FUN_0060CCC0(HWND dialog)
 {
 	OwnerDraw::WinData *data = Get_Data(dialog);
@@ -1869,7 +1892,7 @@ unsigned char __fastcall FUN_0060CCC0(HWND dialog)
 	return v;
 }
 
-// FUNCTION: 0x0060CD50
+// FUNCTION: GAMEMD 0x0060CD50
 unsigned char __fastcall FUN_0060CD50(HWND dialog)
 {
 	OwnerDraw::WinData *data = Get_Data(dialog);
@@ -1879,7 +1902,7 @@ unsigned char __fastcall FUN_0060CD50(HWND dialog)
 	return 0;
 }
 
-// FUNCTION: 0x0060CDB0
+// FUNCTION: GAMEMD 0x0060CDB0
 unsigned char __fastcall FUN_0060CDB0(HWND dialog)
 {
 	OwnerDraw::WinData *data = Get_Data(dialog);
@@ -1897,7 +1920,7 @@ unsigned char __fastcall FUN_0060CDB0(HWND dialog)
 	return v;
 }
 
-// FUNCTION: 0x0060CE40
+// FUNCTION: GAMEMD 0x0060CE40
 int __fastcall FUN_0060CE40(HWND dialog)
 {
 	OwnerDraw::WinData *data = Get_Data(dialog);
@@ -1907,7 +1930,7 @@ int __fastcall FUN_0060CE40(HWND dialog)
 	return 0;
 }
 
-// FUNCTION: 0x0060CEA0
+// FUNCTION: GAMEMD 0x0060CEA0
 int __fastcall FUN_0060CEA0(HWND dialog)
 {
 	OwnerDraw::WinData *data = Get_Data(dialog);
@@ -1951,7 +1974,7 @@ extern int DAT_00B0FB34;
 extern int DAT_00B0FB50;
 extern int DAT_00B0FB54;
 
-// FUNCTION: 0x0060CF00
+// FUNCTION: GAMEMD 0x0060CF00
 void __fastcall FUN_0060CF00(HWND dialog)
 {
 	OwnerDraw::WinData *data = Get_Data(dialog);
@@ -2039,7 +2062,7 @@ void __fastcall FUN_0060CF00(HWND dialog)
 	}
 }
 
-// FUNCTION: 0x0060D2C0
+// FUNCTION: GAMEMD 0x0060D2C0
 void __fastcall FUN_0060D2C0(HWND dialog, int id)
 {
 	OwnerDraw::WinData *data = Get_Data(dialog);
@@ -2048,7 +2071,7 @@ void __fastcall FUN_0060D2C0(HWND dialog, int id)
 	}
 }
 
-// FUNCTION: 0x0060D320
+// FUNCTION: GAMEMD 0x0060D320
 int __fastcall FUN_0060D320(HWND dialog)
 {
 	OwnerDraw::WinData *data = Get_Data(dialog);
@@ -2069,7 +2092,7 @@ class InputManagerClass {
 		static InputManagerClass * Instance;
 };
 
-// FUNCTION: 0x0060D380
+// FUNCTION: GAMEMD 0x0060D380
 int __fastcall FUN_0060D380(int resource, DLGPROC proc, bool focus)
 {
 	int result;
@@ -2096,12 +2119,12 @@ int __fastcall FUN_0060D380(int resource, DLGPROC proc, bool focus)
 	return result;
 }
 
-// FUNCTION: 0x0060D430
+// FUNCTION: GAMEMD 0x0060D430
 void FUN_0060D430(void)
 {
 }
 
-// FUNCTION: 0x0060D440
+// FUNCTION: GAMEMD 0x0060D440
 void FUN_0060D440(void)
 {
 }
@@ -2111,7 +2134,8 @@ LRESULT CALLBACK FUN_0060D540(HWND window, UINT message, WPARAM wparam, LPARAM l
 LRESULT CALLBACK FUN_0060D520(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 namespace UI { void RegisterComboDropAndNewEditClasses(void); }
 
-// FUNCTION: 0x0060D450 UI::RegisterComboDropAndNewEditClasses
+// FUNCTION: GAMEMD 0x0060D450
+// UI::RegisterComboDropAndNewEditClasses
 void UI::RegisterComboDropAndNewEditClasses(void)
 {
 	if (DAT_00AC48CC == 1) {
@@ -2145,7 +2169,7 @@ void UI::RegisterComboDropAndNewEditClasses(void)
 	RegisterClass(&wc);
 }
 
-// FUNCTION: 0x0060D520
+// FUNCTION: GAMEMD 0x0060D520
 LRESULT CALLBACK FUN_0060D520(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	return DefWindowProc(window, message, wparam, lparam);
@@ -2156,7 +2180,7 @@ struct NewEditLink {
 	LONG style;
 };
 
-// FUNCTION: 0x0060F320
+// FUNCTION: GAMEMD 0x0060F320
 BOOL CALLBACK FUN_0060F320(HWND edit, LPARAM lparam)
 {
 	LONG style = GetWindowLong(edit, GWL_STYLE);
@@ -2231,7 +2255,7 @@ static inline BOOL RemoveFromDicts(HWND window)
 	return TRUE;
 }
 
-// FUNCTION: 0x00610360
+// FUNCTION: GAMEMD 0x00610360
 BOOL __fastcall FUN_00610360(HWND window)
 {
 	EnumChildWindows(window, FUN_00610570, 0);
@@ -2249,10 +2273,11 @@ union ODColorBits {
 	int v;
 };
 
-// FUNCTION: 0x006107A0 $E117
+// SYNTHETIC: GAMEMD 0x006107A0 SYMBOL
+// _$E117
 OwnerDraw::Tooltip ODTooltip;
 
-// FUNCTION: 0x006107E0
+// FUNCTION: GAMEMD 0x006107E0
 OwnerDraw::Tooltip::Tooltip(void)
 {
 	bounds.Set(0, 0, 0, 0);
@@ -2263,7 +2288,7 @@ OwnerDraw::Tooltip::Tooltip(void)
 	window = (HWND)NULL;
 }
 
-// FUNCTION: 0x00610810
+// FUNCTION: GAMEMD 0x00610810
 bool OwnerDraw::Start_Tooltip(Rect const & rect, wchar_t const * text, HWND window)
 {
 	OwnerDraw::End_Tooltip();
@@ -2283,7 +2308,8 @@ bool OwnerDraw::Start_Tooltip(Rect const & rect, wchar_t const * text, HWND wind
 	return OwnerDraw::DrawTooltip(true);
 }
 
-// FUNCTION: 0x00610950 OwnerDraw::DrawTooltip
+// FUNCTION: GAMEMD 0x00610950
+// OwnerDraw::DrawTooltip
 bool OwnerDraw::DrawTooltip(bool save_background)
 {
 	if (ODTooltip.isActive == false) {
@@ -2331,7 +2357,8 @@ bool OwnerDraw::DrawTooltip(bool save_background)
 	return true;
 }
 
-// FUNCTION: 0x00610B50 OwnerDraw::RestoreTooltipBackground
+// FUNCTION: GAMEMD 0x00610B50
+// OwnerDraw::RestoreTooltipBackground
 bool OwnerDraw::RestoreTooltipBackground(void)
 {
 	if (ODTooltip.isActive == false) {
@@ -2353,7 +2380,7 @@ bool OwnerDraw::RestoreTooltipBackground(void)
 	return true;
 }
 
-// FUNCTION: 0x00610BF0
+// FUNCTION: GAMEMD 0x00610BF0
 bool OwnerDraw::End_Tooltip(void)
 {
 	if (ODTooltip.isActive == false) {
@@ -2372,13 +2399,16 @@ bool OwnerDraw::End_Tooltip(void)
 	return true;
 }
 
-// FUNCTION: 0x00612910 $E120
+// SYNTHETIC: GAMEMD 0x00612910 SYMBOL
+// _$E120
 static ArrayList<HWND> ActiveWindows;
 
-// FUNCTION: 0x00612930 $E125
+// SYNTHETIC: GAMEMD 0x00612930 SYMBOL
+// _$E125
 static Dictionary<OwnerDraw::CtrlMsgData, bool> ProcessedMessages(Hash_CtrlMsg);
 
-// FUNCTION: 0x00612A60 OwnerDraw::SysListViewHandler
+// FUNCTION: GAMEMD 0x00612A60
+// OwnerDraw::SysListViewHandler
 LRESULT CALLBACK OwnerDraw::SysListViewHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	WNDPROC original = NULL;
@@ -2426,7 +2456,8 @@ inline Rect Rect_From_RECT(RECT const & r)
 	return Rect(r.left, r.top, r.right - r.left, r.bottom - r.top);
 }
 
-// FUNCTION: 0x006163A0 OwnerDraw::CheckBoxButtonHandler
+// FUNCTION: GAMEMD 0x006163A0
+// OwnerDraw::CheckBoxButtonHandler
 LRESULT CALLBACK OwnerDraw::CheckBoxButtonHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	OwnerDraw::WinData *data = Find_Data(window);
@@ -2566,7 +2597,8 @@ LRESULT CALLBACK OwnerDraw::CheckBoxButtonHandler(HWND window, UINT message, WPA
 	return 0;
 }
 
-// FUNCTION: 0x0061D6D0 OwnerDraw::ProgressHandler
+// FUNCTION: GAMEMD 0x0061D6D0
+// OwnerDraw::ProgressHandler
 LRESULT CALLBACK OwnerDraw::ProgressHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	RECT rect;
@@ -2636,7 +2668,8 @@ namespace OwnerDraw {
 void __fastcall DrawBeveledBorder(Surface & surface, Rect const & rect, int offset, int color);
 }
 
-// FUNCTION: 0x0061ECA0 OwnerDraw::HotkeyHandler
+// FUNCTION: GAMEMD 0x0061ECA0
+// OwnerDraw::HotkeyHandler
 LRESULT CALLBACK OwnerDraw::HotkeyHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	switch (message) {
@@ -2687,7 +2720,8 @@ LRESULT CALLBACK OwnerDraw::HotkeyHandler(HWND window, UINT message, WPARAM wpar
 	return CallWindowProc(proc, window, message, wparam, lparam);
 }
 
-// FUNCTION: 0x0061EF70 UI::GetKeyboardKeyString
+// FUNCTION: GAMEMD 0x0061EF70
+// UI::GetKeyboardKeyString
 void __fastcall UI::GetKeyboardKeyString(unsigned short key, wchar_t *buffer)
 {
 	char key_name[32];
@@ -2727,7 +2761,7 @@ void __fastcall UI::GetKeyboardKeyString(unsigned short key, wchar_t *buffer)
 ODComponentMasks ODMasks;
 unsigned short ODBComponentMask;
 
-// FUNCTION: 0x0061F190
+// FUNCTION: GAMEMD 0x0061F190
 void ODInitMasks(void)
 {
 	ODRComponentMask = 255;
@@ -2743,7 +2777,7 @@ void ODInitMasks(void)
 	ODBComponentMask <<= DSurface::Get_Blue_Right();
 }
 
-// FUNCTION: 0x00620720
+// FUNCTION: GAMEMD 0x00620720
 void ODDrawArrowBitmap(Surface * surface, Rect const & rect, BOOL upward, BOOL pressed, bool dark)
 {
 	if (surface != NULL) {
@@ -2778,14 +2812,14 @@ void ODDrawArrowBitmap(Surface * surface, Rect const & rect, BOOL upward, BOOL p
 	}
 }
 
-// FUNCTION: 0x00620870
+// FUNCTION: GAMEMD 0x00620870
 COLORREF ODPixelToPaletteColor(unsigned short pixel)
 {
 	RGBClass color = DSurface::Deconstruct_Hicolor_Pixel(pixel);
 	return PALETTERGB(color.Get_Red(), color.Get_Green(), color.Get_Blue());
 }
 
-// FUNCTION: 0x00620810
+// FUNCTION: GAMEMD 0x00620810
 int ODColorToHiColor(COLORREF color)
 {
 	if (color == 0xFFFFFFFF) {
@@ -2806,7 +2840,7 @@ int ODColorToHiColor(COLORREF color)
 	return(DSurface::Build_Hicolor_Pixel(c.red, c.green, c.blue));
 }
 
-// FUNCTION: 0x00620CD0
+// FUNCTION: GAMEMD 0x00620CD0
 void ODDrawButtonRect(Surface & surf, Rect const & rect, int offset)
 {
 	Rect work = rect;
@@ -2853,7 +2887,7 @@ inline unsigned Color_To_Pixel(unsigned color)
 		| (GetRValue(color) >> Drawing::RedShiftRight << Drawing::RedShiftLeft);
 }
 
-// FUNCTION: 0x00620F60
+// FUNCTION: GAMEMD 0x00620F60
 int __fastcall FUN_00620F60(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, unsigned color, int flags)
 {
 	unsigned pixel = Color_To_Pixel(color);
@@ -2875,7 +2909,8 @@ namespace OwnerDraw {
 int __fastcall DrawWideText(Surface * surface, wchar_t const * text, LTRBStruct * rect, BitFont * font, unsigned color, int style, int p5, int p6, int p7, int p8);
 }
 
-// FUNCTION: 0x00621040 OwnerDraw::DrawWideText
+// FUNCTION: GAMEMD 0x00621040
+// OwnerDraw::DrawWideText
 int __fastcall OwnerDraw::DrawWideText(Surface * surface, wchar_t const * text, LTRBStruct * rect, BitFont * font, unsigned color, int style, int p5, int p6, int p7, int p8)
 {
 	unsigned pixel = Color_To_Pixel(color);
@@ -2896,7 +2931,7 @@ int __fastcall OwnerDraw::DrawWideText(Surface * surface, wchar_t const * text, 
 	return 0;
 }
 
-// FUNCTION: 0x00621150
+// FUNCTION: GAMEMD 0x00621150
 float ODCalcTextRemapFactor(int hue)
 {
 	float val = 1.0f;
@@ -2924,7 +2959,7 @@ float ODCalcTextRemapFactor(int hue)
 	return(val);
 }
 
-// FUNCTION: 0x006213A0
+// FUNCTION: GAMEMD 0x006213A0
 void OwnerDraw::Draw_Item(LPDRAWITEMSTRUCT drawit)
 {
 	if (DAT_00887308 != NULL && DAT_00887310 != NULL) {
@@ -2955,7 +2990,7 @@ void OwnerDraw::Draw_Item(LPDRAWITEMSTRUCT drawit)
 	}
 }
 
-// FUNCTION: 0x006214B0
+// FUNCTION: GAMEMD 0x006214B0
 void __fastcall OwnerDraw::CopyDimmedBackground(Rect const & rect, HWND hWnd, int alpha)
 {
 	OwnerDraw::WinData * winData = NULL;
@@ -3025,7 +3060,7 @@ void __fastcall OwnerDraw::CopyDimmedBackground(Rect const & rect, HWND hWnd, in
 	DAT_00887310->Blit_From(rect, *surface, src, false, true);
 }
 
-// FUNCTION: 0x006217E0
+// FUNCTION: GAMEMD 0x006217E0
 void __fastcall OwnerDraw::BlendGradientRect(Rect const & rect, Surface & surface, int color, int amount)
 {
 	int fade = 1;
@@ -3065,7 +3100,7 @@ void __fastcall OwnerDraw::BlendGradientRect(Rect const & rect, Surface & surfac
 	surface.Unlock();
 }
 
-// FUNCTION: 0x00621D30
+// FUNCTION: GAMEMD 0x00621D30
 void ODDrawBitsStrand(Rect const & rect, Surface & surface)
 {
 	unsigned char paldata[768];
@@ -3093,7 +3128,7 @@ void ODDrawBitsStrand(Rect const & rect, Surface & surface)
 	}
 }
 
-// FUNCTION: 0x006223C0
+// FUNCTION: GAMEMD 0x006223C0
 void On_WM_NCDESTROY(HWND window)
 {
 	OwnerDraw::WinData * data;
@@ -3106,7 +3141,7 @@ void On_WM_NCDESTROY(HWND window)
 	}
 }
 
-// FUNCTION: 0x00622440
+// FUNCTION: GAMEMD 0x00622440
 int WINAPI ODUpdateWindowRect(HWND window, RECT *rect)
 {
 	InvalidateRect(window, rect, FALSE);
@@ -3114,7 +3149,7 @@ int WINAPI ODUpdateWindowRect(HWND window, RECT *rect)
 	return(1);
 }
 
-// FUNCTION: 0x00622470
+// FUNCTION: GAMEMD 0x00622470
 BOOL CALLBACK ODAddWindowToList(HWND window, ArrayList<HWND> * list)
 {
 	if (list != NULL) {
@@ -3123,7 +3158,7 @@ BOOL CALLBACK ODAddWindowToList(HWND window, ArrayList<HWND> * list)
 	return(TRUE);
 }
 
-// FUNCTION: 0x006225E0
+// FUNCTION: GAMEMD 0x006225E0
 int OwnerDraw::Capture_Mouse(void)
 {
 	if (MouseCursor != NULL) {
@@ -3135,7 +3170,7 @@ int OwnerDraw::Capture_Mouse(void)
 	return(_mouse_counter);
 }
 
-// FUNCTION: 0x00622610
+// FUNCTION: GAMEMD 0x00622610
 int OwnerDraw::Release_Mouse(void)
 {
 	if (_mouse_counter > 0) {
@@ -3163,7 +3198,7 @@ extern HWND DAT_00B73550;
 extern HINSTANCE DAT_00B732F0;
 void __fastcall Add_Modeless_Dialog(HWND dialog);
 
-// FUNCTION: 0x00622650
+// FUNCTION: GAMEMD 0x00622650
 HWND __fastcall UI::BeginDialog(int resource, DLGPROC proc, int param)
 {
 	unsigned short id = resource;
@@ -3200,7 +3235,7 @@ HWND __fastcall UI::BeginDialog(int resource, DLGPROC proc, int param)
 	return dialog;
 }
 
-// FUNCTION: 0x00622720
+// FUNCTION: GAMEMD 0x00622720
 void __fastcall UI::EndDialog(HWND window)
 {
 	InputManagerClass::Instance->DoSomething();
@@ -3234,7 +3269,7 @@ void __fastcall UI::EndDialog(HWND window)
 	}
 }
 
-// FUNCTION: 0x00622800
+// FUNCTION: GAMEMD 0x00622800
 void OwnerDraw::Display_Dialog(HWND window)
 {
 	ShowWindow(window, SW_SHOWNORMAL);
@@ -3258,7 +3293,8 @@ namespace UI { bool Updated(void); }
 void __fastcall FUN_005D4D50(void);
 bool __fastcall FUN_0055CBF0(void);
 
-// FUNCTION: 0x00623120 UI::Updated
+// FUNCTION: GAMEMD 0x00623120
+// UI::Updated
 bool UI::Updated(void)
 {
 	FUN_005D4D50();
@@ -3272,7 +3308,7 @@ bool UI::Updated(void)
 	return false;
 }
 
-// FUNCTION: 0x00623170
+// FUNCTION: GAMEMD 0x00623170
 int OwnerDraw::Move_Dialog(HWND window, int x, int y)
 {
 	int xpos;
@@ -3310,7 +3346,7 @@ int OwnerDraw::Move_Dialog(HWND window, int x, int y)
 	return(MoveWindow(window, rect2.left, rect2.top, rect2.right, rect2.bottom, FALSE));
 }
 
-// FUNCTION: 0x00623340
+// FUNCTION: GAMEMD 0x00623340
 OwnerDraw::WinData::WinData(void)
 {
 	memset(this, 0, sizeof(*this));

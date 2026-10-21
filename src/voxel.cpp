@@ -34,16 +34,24 @@ Vector3 LightDirectionVectors[256];
 
 Vector3 LightTiltVectors[256];
 
-// FUNCTION: 0x00754B20 $E12
-// FUNCTION: 0x00754B30 $E15
-// FUNCTION: 0x00754B40 $E18
-// FUNCTION: 0x00754B70 $E21
-// FUNCTION: 0x00754BA0 $E24
-// FUNCTION: 0x00754BB0 $E27
-// FUNCTION: 0x00754BC0 $E30
-// FUNCTION: 0x00754BD0 $E33
+// SYNTHETIC: GAMEMD 0x00754B20 SYMBOL
+// _$E12
+// SYNTHETIC: GAMEMD 0x00754B30 SYMBOL
+// _$E15
+// SYNTHETIC: GAMEMD 0x00754B40 SYMBOL
+// _$E18
+// SYNTHETIC: GAMEMD 0x00754B70 SYMBOL
+// _$E21
+// SYNTHETIC: GAMEMD 0x00754BA0 SYMBOL
+// _$E24
+// SYNTHETIC: GAMEMD 0x00754BB0 SYMBOL
+// _$E27
+// SYNTHETIC: GAMEMD 0x00754BC0 SYMBOL
+// _$E30
+// SYNTHETIC: GAMEMD 0x00754BD0 SYMBOL
+// _$E33
 
-// FUNCTION: 0x00754C00
+// FUNCTION: GAMEMD 0x00754C00
 void Set_Voxel_Light_Angle(float angle)
 {
 	Matrix3D mtx(true);
@@ -53,25 +61,25 @@ void Set_Voxel_Light_Angle(float angle)
 	VoxelShadowLightVector = Vector3(-6 * VoxelLightSource.X, 0, 0);
 }
 
-// FUNCTION: 0x00754BE0
+// FUNCTION: GAMEMD 0x00754BE0
 Matrix3D Get_Isometric_View_Matrix(void)
 {
 	return(IsometricViewMatrix);
 }
 
-// FUNCTION: 0x00755990
+// FUNCTION: GAMEMD 0x00755990
 void Get_Screen_Slope_Matrix(int ramp, Matrix3D & matrix)
 {
 	matrix = ScreenSlopeMatrices[ramp];
 }
 
-// FUNCTION: 0x007559B0
+// FUNCTION: GAMEMD 0x007559B0
 Matrix3D Get_Slope_Matrix(int ramp)
 {
 	return(SlopeMatrices[ramp]);
 }
 
-// FUNCTION: 0x007559D0
+// FUNCTION: GAMEMD 0x007559D0
 void Get_Screen_Slope_Transition_Matrix(int oldramp, int newramp, Matrix3D & matrix, double time)
 {
 	if (oldramp == newramp) {
@@ -81,7 +89,7 @@ void Get_Screen_Slope_Transition_Matrix(int oldramp, int newramp, Matrix3D & mat
 	}
 }
 
-// FUNCTION: 0x00755A40
+// FUNCTION: GAMEMD 0x00755A40
 Matrix3D Get_Slope_Transition_Matrix(int oldramp, int newramp, double time)
 {
 	if (oldramp != newramp) {
@@ -91,13 +99,13 @@ Matrix3D Get_Slope_Transition_Matrix(int oldramp, int newramp, double time)
 	}
 }
 
-// FUNCTION: 0x00755AC0
+// FUNCTION: GAMEMD 0x00755AC0
 int Get_Some_Voxel_Number(int index)
 {
 	return(SomeNumbers[index]);
 }
 
-// FUNCTION: 0x00755AD0
+// FUNCTION: GAMEMD 0x00755AD0
 unsigned char _Direction256(Coord const & coord1, Coord const & coord2)
 {
 	DirType dir = Direction(coord1, coord2);
@@ -105,7 +113,7 @@ unsigned char _Direction256(Coord const & coord1, Coord const & coord2)
 	return(facing);
 }
 
-// FUNCTION: 0x00755B30
+// FUNCTION: GAMEMD 0x00755B30
 void Apply_Light_Transform(Matrix3D & matrix, int axis, int angle)
 {
 	Matrix3D mtx(LightTiltVectors[axis], ExtraLightTiltAngles[angle]);
@@ -114,20 +122,20 @@ void Apply_Light_Transform(Matrix3D & matrix, int axis, int angle)
 	matrix.Translate(0, 0, 3);
 }
 
-// FUNCTION: 0x00755BF0
+// FUNCTION: GAMEMD 0x00755BF0
 Vector3 Get_Light_Vector(Dir256 dir, int)
 {
 	Vector3& vec = LightDirectionVectors[dir];
 	return(Vector3(vec.X * 1.5f, vec.Y * 1.5f, vec.Z * 1.5f));
 }
 
-// FUNCTION: 0x00755C50
+// FUNCTION: GAMEMD 0x00755C50
 void __fastcall Game_DestroyVoxelCaches(void)
 {
 	ObjectTypeClass::Clear_Voxel_Indexes();
 }
 
-// FUNCTION: 0x00755C60
+// FUNCTION: GAMEMD 0x00755C60
 Matrix3D Get_Bounce_Matrix(FacingType facing)
 {
 	if (facing >= FACING_S) {
@@ -146,4 +154,5 @@ struct VoxelZeroed {
 
 VoxelZeroed DAT_00B45580;
 
-// FUNCTION: 0x00755C90 $E36
+// SYNTHETIC: GAMEMD 0x00755C90 SYMBOL
+// _$E36

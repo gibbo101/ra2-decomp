@@ -37,40 +37,52 @@ struct IntTriple {
 	IntTriple() { A = 0; B = 0; C = 0; }
 };
 
-// FUNCTION: 0x00767110 $E5
+// SYNTHETIC: GAMEMD 0x00767110 SYMBOL
+// _$E5
 double DAT_00B727B0 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2.0);
 
-// FUNCTION: 0x00767140 $E8
+// SYNTHETIC: GAMEMD 0x00767140 SYMBOL
+// _$E8
 double DAT_00B72800 = DAT_00B727B0 / DAT_007F7078;
 
-// FUNCTION: 0x00767160 $E11
+// SYNTHETIC: GAMEMD 0x00767160 SYMBOL
+// _$E11
 double DAT_00B727E8 = DAT_007E1718 / DAT_00B72800;
 
-// FUNCTION: 0x00767180 $E14
+// SYNTHETIC: GAMEMD 0x00767180 SYMBOL
+// _$E14
 double DAT_00B727E0 = DAT_007E1720 * DAT_007F7080;
 
-// FUNCTION: 0x007671A0 $E17
+// SYNTHETIC: GAMEMD 0x007671A0 SYMBOL
+// _$E17
 double DAT_00B727B8 = DAT_007E1728 * DAT_007F7080;
 
-// FUNCTION: 0x007671C0 $E20
+// SYNTHETIC: GAMEMD 0x007671C0 SYMBOL
+// _$E20
 double DAT_00B72790 = DAT_007E1730 * DAT_007F7080;
 
-// FUNCTION: 0x007671E0 $E23
+// SYNTHETIC: GAMEMD 0x007671E0 SYMBOL
+// _$E23
 int DAT_00B72808 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B72790 - DAT_00B727B8) * DAT_00B727B0));
 
-// FUNCTION: 0x00767220 $E26
+// SYNTHETIC: GAMEMD 0x00767220 SYMBOL
+// _$E26
 double DAT_00B727C0 = FUN_004CADE0(DAT_00B72808 * DAT_007E1740);
 
-// FUNCTION: 0x00767250 $E29
+// SYNTHETIC: GAMEMD 0x00767250 SYMBOL
+// _$E29
 double DAT_00B727D8 = FUN_004CADE0((DAT_00B72808 * 2) / DAT_00B727B0);
 
-// FUNCTION: 0x00767280 $E32
+// SYNTHETIC: GAMEMD 0x00767280 SYMBOL
+// _$E32
 int DAT_00B727FC = (int)(DAT_00B72808 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x007672B0 $E35
+// SYNTHETIC: GAMEMD 0x007672B0 SYMBOL
+// _$E35
 ShortPair DAT_00B727A8;
 
-// FUNCTION: 0x007672C0 $E38
+// SYNTHETIC: GAMEMD 0x007672C0 SYMBOL
+// _$E38
 IntTriple DAT_00B727C8;
 
 WideWstring __fastcall FUN_007B8170(const WideWstring & a, const WideWstring & b);
@@ -82,21 +94,25 @@ struct IntTripleB {
 	IntTripleB() { C = 0; A = 128; B = 128; }
 };
 
-// FUNCTION: 0x007672E0 $E41
+// SYNTHETIC: GAMEMD 0x007672E0 SYMBOL
+// _$E41
 IntTripleB DAT_00B727F0;
 
-// FUNCTION: 0x00767300 WorldDominationTour::GameOption::~GameOption
+// FUNCTION: GAMEMD 0x00767300
+// WorldDominationTour::GameOption::~GameOption
 GameOption::~GameOption(void)
 {
 }
 
-// FUNCTION: 0x00767310 WorldDominationTour::GameOption::Is_User_Modifiable
+// TEMPLATE: GAMEMD 0x00767310
+// ?Is_User_Modifiable@GameOption@WorldDominationTour@@QAE_NABV?$rc_ptr@VWDTTerritory@@@@@Z
 bool GameOption::Is_User_Modifiable(const rc_ptr<WDTTerritory> & territory)
 {
 	return(false);
 }
 
-// FUNCTION: 0x00767320 WorldDominationTour::RangedGameOption::Get_String
+// TEMPLATE: GAMEMD 0x00767320
+// ?Get_String@RangedGameOption@WorldDominationTour@@UAE?AVWideWstring@@ABV?$rc_ptr@VWDTTerritory@@@@ABV3@@Z
 WideWstring RangedGameOption::Get_String(const rc_ptr<WDTTerritory> & territory, const WideWstring & prefix)
 {
 	int range = Get_In_Range_Of(territory);
@@ -108,7 +124,8 @@ WideWstring RangedGameOption::Get_String(const rc_ptr<WDTTerritory> & territory,
 	return(WideWstring(StringTable::LoadString(key.get(), 0, "D:\\ra2mdpost\\WDTGameOptions.cpp", 25)));
 }
 
-// FUNCTION: 0x00767400 WorldDominationTour::RangedGameOption::In_Range_Of
+// FUNCTION: GAMEMD 0x00767400
+// WorldDominationTour::RangedGameOption::In_Range_Of
 int RangedGameOption::In_Range_Of(unsigned int value)
 {
 	if (value <= Range0) {
@@ -126,7 +143,8 @@ int RangedGameOption::In_Range_Of(unsigned int value)
 	return(WDT_GAME_OPT_RANGE_MIDDLE);
 }
 
-// FUNCTION: 0x00767440 WorldDominationTour::RangedGameOption::Get_Display_Priority
+// TEMPLATE: GAMEMD 0x00767440
+// ?Get_Display_Priority@RangedGameOption@WorldDominationTour@@UAEHABV?$rc_ptr@VWDTTerritory@@@@@Z
 int RangedGameOption::Get_Display_Priority(const rc_ptr<WDTTerritory> & territory)
 {
 	if (Get_In_Range_Of(territory) == WDT_GAME_OPT_RANGE_MIDDLE) {
@@ -135,13 +153,14 @@ int RangedGameOption::Get_Display_Priority(const rc_ptr<WDTTerritory> & territor
 	return(WDT_GAME_OPT_PRIORITY);
 }
 
-// FUNCTION: 0x00767460
+// FUNCTION: GAMEMD 0x00767460
 rc_ptr<FlagGameOption> __fastcall FUN_00767460(unsigned int bitmask, Wstring off_string, int off_value, Wstring on_string, int on_value)
 {
 	return(rc_ptr<FlagGameOption>(new FlagGameOption(bitmask, off_string, off_value, on_string, on_value)));
 }
 
-// FUNCTION: 0x007674E0 WorldDominationTour::FlagGameOption::Get_Display_Priority
+// TEMPLATE: GAMEMD 0x007674E0
+// ?Get_Display_Priority@FlagGameOption@WorldDominationTour@@UAEHABV?$rc_ptr@VWDTTerritory@@@@@Z
 int FlagGameOption::Get_Display_Priority(const rc_ptr<WDTTerritory> & territory)
 {
 	if (territory->Booleans & Bitmask) {
@@ -150,7 +169,8 @@ int FlagGameOption::Get_Display_Priority(const rc_ptr<WDTTerritory> & territory)
 	return(OffValue);
 }
 
-// FUNCTION: 0x00767500 WorldDominationTour::FlagGameOption::Get_String
+// TEMPLATE: GAMEMD 0x00767500
+// ?Get_String@FlagGameOption@WorldDominationTour@@UAE?AVWideWstring@@ABV?$rc_ptr@VWDTTerritory@@@@ABV3@@Z
 WideWstring FlagGameOption::Get_String(const rc_ptr<WDTTerritory> & territory, const WideWstring & prefix)
 {
 	Wstring key = (territory->Booleans & Bitmask) ? OnString : OffString;
@@ -164,13 +184,15 @@ WideWstring FlagGameOption::Get_String(const rc_ptr<WDTTerritory> & territory, c
 	return(WideWstring(StringTable::LoadString(key.get(), 0, "D:\\ra2mdpost\\WDTGameOptions.cpp", 81)));
 }
 
-// FUNCTION: 0x00767600 WorldDominationTour::NumberOfPlayersGameOption::Get_Display_Priority
+// TEMPLATE: GAMEMD 0x00767600
+// ?Get_Display_Priority@NumberOfPlayersGameOption@WorldDominationTour@@UAEHABV?$rc_ptr@VWDTTerritory@@@@@Z
 int NumberOfPlayersGameOption::Get_Display_Priority(const rc_ptr<WDTTerritory> & territory)
 {
 	return(WDT_GAME_OPT_PRIORITY);
 }
 
-// FUNCTION: 0x00767610 WorldDominationTour::NumberOfPlayersGameOption::Get_String
+// TEMPLATE: GAMEMD 0x00767610
+// ?Get_String@NumberOfPlayersGameOption@WorldDominationTour@@UAE?AVWideWstring@@ABV?$rc_ptr@VWDTTerritory@@@@ABV3@@Z
 WideWstring NumberOfPlayersGameOption::Get_String(const rc_ptr<WDTTerritory> & territory, const WideWstring & prefix)
 {
 	Wstring key = (territory->NumPlayers == 4) ? "WDT:FourPlayerOnly" : "WDT:TwoPlayerOnly";
@@ -181,13 +203,14 @@ WideWstring NumberOfPlayersGameOption::Get_String(const rc_ptr<WDTTerritory> & t
 	return(WideWstring(StringTable::LoadString(key.get(), 0, "D:\\ra2mdpost\\WDTGameOptions.cpp", 107)));
 }
 
-// FUNCTION: 0x007676F0
+// FUNCTION: GAMEMD 0x007676F0
 rc_ptr<MapSizeGameOption> __fastcall FUN_007676F0(unsigned int bitmask)
 {
 	return(rc_ptr<MapSizeGameOption>(new MapSizeGameOption(bitmask)));
 }
 
-// FUNCTION: 0x00767800 WorldDominationTour::MapSizeGameOption::Get_Display_Priority
+// TEMPLATE: GAMEMD 0x00767800
+// ?Get_Display_Priority@MapSizeGameOption@WorldDominationTour@@UAEHABV?$rc_ptr@VWDTTerritory@@@@@Z
 int MapSizeGameOption::Get_Display_Priority(const rc_ptr<WDTTerritory> & territory)
 {
 	static int _table[4][4] = {
@@ -200,16 +223,20 @@ int MapSizeGameOption::Get_Display_Priority(const rc_ptr<WDTTerritory> & territo
 	return(_table[territory->Width][territory->Height]);
 }
 
-// FUNCTION: 0x00767820 WorldDominationTour::FlagGameOption::FlagGameOption
+// FUNCTION: GAMEMD 0x00767820
+// WorldDominationTour::FlagGameOption::FlagGameOption
 
-// FUNCTION: 0x00767880 WorldDominationTour::FlagGameOption::~FlagGameOption
+// SYNTHETIC: GAMEMD 0x00767880
+// ??_GFlagGameOption@WorldDominationTour@@UAEPAXI@Z
 
-// FUNCTION: 0x007678C0 WorldDominationTour::MapSizeGameOption::~MapSizeGameOption
+// SYNTHETIC: GAMEMD 0x007678C0
+// ??_GMapSizeGameOption@WorldDominationTour@@UAEPAXI@Z
 
 struct IntQuad {
 	int A, B, C, D;
 	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
 };
 
-// FUNCTION: 0x007678F0 $E44
+// SYNTHETIC: GAMEMD 0x007678F0 SYMBOL
+// _$E44
 IntQuad DAT_00B72818;

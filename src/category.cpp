@@ -25,7 +25,7 @@ static struct {
 	{ "Air Transport", "AirLift" }
 };
 
-// FUNCTION: 0x00473980
+// FUNCTION: GAMEMD 0x00473980
 CategoryType Category_From_Name(char const * name)
 {
 	if (name != NULL) {

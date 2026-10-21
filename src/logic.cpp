@@ -69,40 +69,52 @@ struct IntTriple {
 	IntTriple() { A = 0; B = 0; C = 0; }
 };
 
-// FUNCTION: 0x0055AD50 $E122
+// SYNTHETIC: GAMEMD 0x0055AD50 SYMBOL
+// _$E122
 double DAT_00ABCCE0 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x0055AD80 $E125
+// SYNTHETIC: GAMEMD 0x0055AD80 SYMBOL
+// _$E125
 double DAT_00ABCD30 = DAT_00ABCCE0 / DAT_007ED368;
 
-// FUNCTION: 0x0055ADA0 $E128
+// SYNTHETIC: GAMEMD 0x0055ADA0 SYMBOL
+// _$E128
 double DAT_00ABCD18 = DAT_007E1718 / DAT_00ABCD30;
 
-// FUNCTION: 0x0055ADC0 $E131
+// SYNTHETIC: GAMEMD 0x0055ADC0 SYMBOL
+// _$E131
 double DAT_00ABCD10 = DAT_007E1720 * DAT_007ED370;
 
-// FUNCTION: 0x0055ADE0 $E134
+// SYNTHETIC: GAMEMD 0x0055ADE0 SYMBOL
+// _$E134
 double DAT_00ABCCE8 = DAT_007E1728 * DAT_007ED370;
 
-// FUNCTION: 0x0055AE00 $E137
+// SYNTHETIC: GAMEMD 0x0055AE00 SYMBOL
+// _$E137
 double DAT_00ABCCC0 = DAT_007E1730 * DAT_007ED370;
 
-// FUNCTION: 0x0055AE20 $E140
+// SYNTHETIC: GAMEMD 0x0055AE20 SYMBOL
+// _$E140
 int DAT_00ABCD38 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00ABCCC0 - DAT_00ABCCE8) * DAT_00ABCCE0));
 
-// FUNCTION: 0x0055AE60 $E143
+// SYNTHETIC: GAMEMD 0x0055AE60 SYMBOL
+// _$E143
 double DAT_00ABCCF0 = FUN_004CADE0(DAT_00ABCD38 * DAT_007E1740);
 
-// FUNCTION: 0x0055AE90 $E146
+// SYNTHETIC: GAMEMD 0x0055AE90 SYMBOL
+// _$E146
 double DAT_00ABCD08 = FUN_004CADE0((DAT_00ABCD38 * 2) / DAT_00ABCCE0);
 
-// FUNCTION: 0x0055AEC0 $E149
+// SYNTHETIC: GAMEMD 0x0055AEC0 SYMBOL
+// _$E149
 int DAT_00ABCD2C = (int)(DAT_00ABCD38 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x0055AEF0 $E152
+// SYNTHETIC: GAMEMD 0x0055AEF0 SYMBOL
+// _$E152
 ShortPair DAT_00ABCCD8;
 
-// FUNCTION: 0x0055AF00 $E155
+// SYNTHETIC: GAMEMD 0x0055AF00 SYMBOL
+// _$E155
 IntTriple DAT_00ABCCF8;
 
 namespace Detail { extern unsigned MinFrameRate; extern unsigned BufferZoneWidth; unsigned GetMinFrameRate(void); }
@@ -111,7 +123,7 @@ extern int DAT_00ABCD28;
 extern int DAT_00ABCD20;
 extern int DAT_00ABCD24;
 
-// FUNCTION: 0x0055AF20
+// FUNCTION: GAMEMD 0x0055AF20
 void __cdecl FUN_0055AF20(void)
 {
 	DAT_00ABCD28 = 0;
@@ -119,19 +131,19 @@ void __cdecl FUN_0055AF20(void)
 	DAT_00ABCD24 = 0x80;
 }
 
-// FUNCTION: 0x0055AF40
+// FUNCTION: GAMEMD 0x0055AF40
 void __fastcall FUN_0055AF40(int value)
 {
 	Detail::MinFrameRate = value;
 }
 
-// FUNCTION: 0x0055AF50
+// FUNCTION: GAMEMD 0x0055AF50
 void __fastcall FUN_0055AF50(int value)
 {
 	Detail::BufferZoneWidth = value;
 }
 
-// FUNCTION: 0x0055AF60
+// FUNCTION: GAMEMD 0x0055AF60
 unsigned Detail::GetMinFrameRate(void)
 {
 	if (FPSCounter::ReducedEffects) {
@@ -148,7 +160,7 @@ unsigned Detail::GetMinFrameRate(void)
 	return Detail::MinFrameRate;
 }
 
-// FUNCTION: 0x0055B720
+// FUNCTION: GAMEMD 0x0055B720
 void LogicClass::Environment_AI(void)
 {
 	if (Rule->IsShroudGrow && Rule->ShroudRate != 0 && Scen->ShroudTimer == 0) {
@@ -169,7 +181,7 @@ void LogicClass::Environment_AI(void)
 	}
 }
 
-// FUNCTION: 0x0055B880
+// FUNCTION: GAMEMD 0x0055B880
 void LogicClass::Detach(AbstractClass const * target, bool all)
 {
 	if (Is_Target_Tag(target)) {
@@ -182,7 +194,7 @@ void LogicClass::Detach(AbstractClass const * target, bool all)
 	}
 }
 
-// FUNCTION: 0x0055B8F0
+// FUNCTION: GAMEMD 0x0055B8F0
 void FUN_0055B8F0(void)
 {
 	int index;
@@ -232,7 +244,7 @@ void FUN_0055B8F0(void)
 	}
 }
 
-// FUNCTION: 0x0055BAA0
+// FUNCTION: GAMEMD 0x0055BAA0
 bool LogicClass::Submit(ObjectClass const * object, bool sort)
 {
 	if (object->IsSubmittedToLayer) {
@@ -247,7 +259,7 @@ bool LogicClass::Submit(ObjectClass const * object, bool sort)
 	return(false);
 }
 
-// FUNCTION: 0x0055BAE0
+// FUNCTION: GAMEMD 0x0055BAE0
 void LogicClass::Remove(ObjectClass * object)
 {
 	if (object->IsSubmittedToLayer) {

@@ -19,7 +19,7 @@ struct FileSystem {
 	static void const * LoadFile(char const * name, bool flag);
 };
 
-// FUNCTION: 0x006B1B20
+// FUNCTION: GAMEMD 0x006B1B20
 SliderClass::SliderClass(unsigned id, int x, int y, int w, int h, int belong_to_list)
 	: BASECLASS(id, x, y, w, h)
 {
@@ -47,7 +47,7 @@ SliderClass::SliderClass(unsigned id, int x, int y, int w, int h, int belong_to_
 	IsColorized = 0;
 }
 
-// FUNCTION: 0x006B1D00
+// FUNCTION: GAMEMD 0x006B1D00
 SliderClass::~SliderClass(void)
 {
 	if (PlusGadget) {
@@ -60,7 +60,7 @@ SliderClass::~SliderClass(void)
 	}
 }
 
-// FUNCTION: 0x006B1D40
+// FUNCTION: GAMEMD 0x006B1D40
 int SliderClass::Set_Maximum(int value)
 {
 	if (BASECLASS::Set_Maximum(value)) {
@@ -70,7 +70,7 @@ int SliderClass::Set_Maximum(int value)
 	return(false);
 }
 
-// FUNCTION: 0x006B1DC0
+// FUNCTION: GAMEMD 0x006B1DC0
 void SliderClass::Set_Thumb_Size(int value)
 {
 	Thumb = MIN(value, MaxValue);
@@ -79,7 +79,7 @@ void SliderClass::Set_Thumb_Size(int value)
 	Recalc_Thumb();
 }
 
-// FUNCTION: 0x006B1E50
+// FUNCTION: GAMEMD 0x006B1E50
 int SliderClass::Set_Value(int value)
 {
 	value = MIN(value, MaxValue-Thumb);
@@ -91,7 +91,7 @@ int SliderClass::Set_Value(int value)
 	return(false);
 }
 
-// FUNCTION: 0x006B1EE0
+// FUNCTION: GAMEMD 0x006B1EE0
 void SliderClass::Recalc_Thumb(void)
 {
 	int length = IsHorizontal ? Width : Height;
@@ -101,7 +101,7 @@ void SliderClass::Recalc_Thumb(void)
 	ThumbStart = MIN(start, length-ThumbSize);
 }
 
-// FUNCTION: 0x006B1F50
+// FUNCTION: GAMEMD 0x006B1F50
 int SliderClass::Action(unsigned flags, KeyNumType &key, int modifier)
 {
 	if (flags & LEFTPRESS) {
@@ -138,7 +138,7 @@ int SliderClass::Action(unsigned flags, KeyNumType &key, int modifier)
 	return(BASECLASS::Action(flags, key, 0));
 }
 
-// FUNCTION: 0x006B2000
+// FUNCTION: GAMEMD 0x006B2000
 int SliderClass::Bump(int up)
 {
 	if (up) {
@@ -147,7 +147,7 @@ int SliderClass::Bump(int up)
 	return(Set_Value(CurValue + Thumb));
 }
 
-// FUNCTION: 0x006B2040
+// FUNCTION: GAMEMD 0x006B2040
 int SliderClass::Step(int up)
 {
 	if (up) {
@@ -156,7 +156,7 @@ int SliderClass::Step(int up)
 	return(Set_Value(CurValue + 1));
 }
 
-// FUNCTION: 0x006B2070
+// FUNCTION: GAMEMD 0x006B2070
 void SliderClass::Draw_Thumb(void)
 {
 	if (IsHorizontal) {
@@ -166,7 +166,7 @@ void SliderClass::Draw_Thumb(void)
 	}
 }
 
-// FUNCTION: 0x006B20F0
+// FUNCTION: GAMEMD 0x006B20F0
 int SliderClass::Draw_Me(int forced)
 {
 	if (BelongToList) {
@@ -179,7 +179,7 @@ int SliderClass::Draw_Me(int forced)
 	return(BASECLASS::Draw_Me(forced));
 }
 
-// FUNCTION: 0x006B2160
+// FUNCTION: GAMEMD 0x006B2160
 void SliderClass::Peer_To_Peer(unsigned flags, KeyNumType & , ControlClass & whom)
 {
 	if (flags & LEFTRELEASE) {
@@ -193,17 +193,31 @@ void SliderClass::Peer_To_Peer(unsigned flags, KeyNumType & , ControlClass & who
 }
 
 // Initialisers of geometry.h constants.
-// FUNCTION: 0x006B21A0 $E2
-// FUNCTION: 0x006B21D0 $E5
-// FUNCTION: 0x006B21F0 $E8
-// FUNCTION: 0x006B2210 $E11
-// FUNCTION: 0x006B2230 $E14
-// FUNCTION: 0x006B2250 $E17
-// FUNCTION: 0x006B2270 $E20
-// FUNCTION: 0x006B22B0 $E23
-// FUNCTION: 0x006B22E0 $E26
-// FUNCTION: 0x006B2310 $E29
-// FUNCTION: 0x006B2340 $E32
-// FUNCTION: 0x006B2350 $E35
-// FUNCTION: 0x006B2370 $E38
-// FUNCTION: 0x006B2390 $E41
+// SYNTHETIC: GAMEMD 0x006B21A0 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x006B21D0 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x006B21F0 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x006B2210 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x006B2230 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x006B2250 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x006B2270 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x006B22B0 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x006B22E0 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x006B2310 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x006B2340 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x006B2350 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x006B2370 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x006B2390 SYMBOL
+// _$E41

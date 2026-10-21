@@ -30,27 +30,40 @@
 #include <cstring>
 #include <stdlib.h>
 
-// FUNCTION: 0x00746EE0 $E2
-// FUNCTION: 0x00746F10 $E5
-// FUNCTION: 0x00746F30 $E8
-// FUNCTION: 0x00746F50 $E11
-// FUNCTION: 0x00746F70 $E14
-// FUNCTION: 0x00746F90 $E17
-// FUNCTION: 0x00746FB0 $E20
-// FUNCTION: 0x00746FF0 $E23
-// FUNCTION: 0x00747020 $E26
-// FUNCTION: 0x00747050 $E29
-// FUNCTION: 0x00747080 $E32
-// FUNCTION: 0x00747090 $E35
+// SYNTHETIC: GAMEMD 0x00746EE0 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x00746F10 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x00746F30 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x00746F50 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x00746F70 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x00746F90 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x00746FB0 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x00746FF0 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x00747020 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x00747050 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x00747080 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x00747090 SYMBOL
+// _$E35
 
 struct FileSystem {
 	static void const * LoadFile(char const * name, bool flag);
 	static char TEMPERAT_PAL[];
 };
 
-// FUNCTION: 0x007470B0 $E38
+// SYNTHETIC: GAMEMD 0x007470B0 SYMBOL
+// _$E38
 
-// FUNCTION: 0x007470D0
+// FUNCTION: GAMEMD 0x007470D0
 UnitTypeClass::UnitTypeClass(char const * ininame) :
 	BASECLASS(ininame, SPEED_NONE),
 	MovementRestrictedTo((LandType)-1),
@@ -100,21 +113,21 @@ UnitTypeClass::UnitTypeClass(char const * ininame) :
 	Bunkerable = true;
 }
 
-// FUNCTION: 0x007472C0
+// FUNCTION: GAMEMD 0x007472C0
 UnitTypeClass::UnitTypeClass(NoInitClass const & x) :
 	BASECLASS(x),
 	AltImageFile(x)
 {
 }
 
-// FUNCTION: 0x007472F0
+// FUNCTION: GAMEMD 0x007472F0
 UnitTypeClass::~UnitTypeClass(void)
 {
 	Detach_This_From_All(this, true);
 	UnitTypes.Delete(this);
 }
 
-// FUNCTION: 0x00747370
+// FUNCTION: GAMEMD 0x00747370
 UnitType UnitTypeClass::From_Name(char const * name)
 {
 	if (name != NULL) {
@@ -127,19 +140,19 @@ UnitType UnitTypeClass::From_Name(char const * name)
 	return(UNIT_NONE);
 }
 
-// FUNCTION: 0x007473C0
+// FUNCTION: GAMEMD 0x007473C0
 bool UnitTypeClass::CanUseWaypoint(void) const
 {
 	return(BASECLASS::CanUseWaypoint());
 }
 
-// FUNCTION: 0x007473D0
+// FUNCTION: GAMEMD 0x007473D0
 bool UnitTypeClass::CanAttackMove(void) const
 {
 	return(BASECLASS::CanAttackMove());
 }
 
-// FUNCTION: 0x007473E0
+// FUNCTION: GAMEMD 0x007473E0
 void UnitTypeClass::One_Time(void)
 {
 	if (EightBitSurface == NULL) {
@@ -153,7 +166,7 @@ void UnitTypeClass::One_Time(void)
 	LargeVisceroidShapes = FileSystem::LoadFile("VISC_LRG.SHP", false);
 }
 
-// FUNCTION: 0x007474B0
+// FUNCTION: GAMEMD 0x007474B0
 bool UnitTypeClass::Create_And_Place(Cell const & cell, HouseClass * house) const
 {
 	UnitClass * unit = new UnitClass(this, house);
@@ -164,13 +177,13 @@ bool UnitTypeClass::Create_And_Place(Cell const & cell, HouseClass * house) cons
 	return(false);
 }
 
-// FUNCTION: 0x00747560
+// FUNCTION: GAMEMD 0x00747560
 ObjectClass * UnitTypeClass::Create_One_Of(HouseClass * house) const
 {
 	return(new UnitClass(this, house));
 }
 
-// FUNCTION: 0x00747590
+// FUNCTION: GAMEMD 0x00747590
 Point3D UnitTypeClass::Pixel_Dimensions(void) const
 {
 	int width = MaxSize - (MaxSize / 4);
@@ -180,19 +193,19 @@ Point3D UnitTypeClass::Pixel_Dimensions(void) const
 	return(Point3D(width, width, height));
 }
 
-// FUNCTION: 0x007475D0
+// FUNCTION: GAMEMD 0x007475D0
 Point3D UnitTypeClass::Lepton_Dimensions(void) const
 {
 	return(Point3D(CELL_LEPTON_W, CELL_LEPTON_H, LEVEL_LEPTON_H * 2));
 }
 
-// FUNCTION: 0x00747600
+// FUNCTION: GAMEMD 0x00747600
 TPoint2D<int> UnitTypeClass::Turret_Adjust(Dir256 dir, TPoint2D<int> const & xy) const
 {
 	return(xy);
 }
 
-// FUNCTION: 0x00747620
+// FUNCTION: GAMEMD 0x00747620
 bool UnitTypeClass::Read_INI(CCINIClass & ini)
 {
 	ini.Reset();
@@ -333,7 +346,7 @@ bool UnitTypeClass::Read_INI(CCINIClass & ini)
 	return(false);
 }
 
-// FUNCTION: 0x00747EB0
+// FUNCTION: GAMEMD 0x00747EB0
 Coord const UnitTypeClass::Coord_Fixup(Coord const & coord) const
 {
 	Coord fix = coord;
@@ -343,13 +356,13 @@ Coord const UnitTypeClass::Coord_Fixup(Coord const & coord) const
 	return(fix);
 }
 
-// FUNCTION: 0x00747F20
+// FUNCTION: GAMEMD 0x00747F20
 int UnitTypeClass::Repair_Step(void) const
 {
 	return(Rule->RepairStep);
 }
 
-// FUNCTION: 0x00747F30
+// FUNCTION: GAMEMD 0x00747F30
 HRESULT STDMETHODCALLTYPE UnitTypeClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -357,7 +370,7 @@ HRESULT STDMETHODCALLTYPE UnitTypeClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x00747F70
+// FUNCTION: GAMEMD 0x00747F70
 void UnitTypeClass::Compute_CRC(CRCEngine & crc) const
 {
 	BASECLASS::Compute_CRC(crc);
@@ -373,7 +386,7 @@ void UnitTypeClass::Compute_CRC(CRCEngine & crc) const
 	crc(UseTurretShadow);
 }
 
-// FUNCTION: 0x00748010
+// FUNCTION: GAMEMD 0x00748010
 HRESULT STDMETHODCALLTYPE UnitTypeClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -394,7 +407,7 @@ HRESULT STDMETHODCALLTYPE UnitTypeClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x007480B0
+// FUNCTION: GAMEMD 0x007480B0
 HRESULT STDMETHODCALLTYPE UnitTypeClass::Save(IStream *stream, int cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -404,20 +417,23 @@ HRESULT STDMETHODCALLTYPE UnitTypeClass::Save(IStream *stream, int cleardirty)
 	return(result);
 }
 
-// FUNCTION: 0x007480D0
+// FUNCTION: GAMEMD 0x007480D0
 UnitTypeClass * UnitTypeClass::Find_Or_Make(char const * name)
 {
 	return(TFind_Or_Make<UnitTypeClass>(name, UnitTypes));
 }
 
-// FUNCTION: 0x00748160
+// FUNCTION: GAMEMD 0x00748160
 int UnitTypeClass::Fetch_Object_Size(void) const
 {
 	return(sizeof(UnitTypeClass));
 }
 
-// FUNCTION: 0x00748170 UnitTypeClass::Fetch_RTTI
+// FUNCTION: GAMEMD 0x00748170
+// UnitTypeClass::Fetch_RTTI
 
-// FUNCTION: 0x00748180 UnitTypeClass::Fetch_Heap_ID
+// FUNCTION: GAMEMD 0x00748180
+// UnitTypeClass::Fetch_Heap_ID
 
-// FUNCTION: 0x00748190 UnitTypeClass::~UnitTypeClass
+// SYNTHETIC: GAMEMD 0x00748190
+// ??_GUnitTypeClass@@UAEPAXI@Z

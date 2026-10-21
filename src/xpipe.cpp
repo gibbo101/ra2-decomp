@@ -8,7 +8,7 @@
 #include <cstddef>
 #include <cstring>
 
-// FUNCTION: 0x007BA3C0
+// FUNCTION: GAMEMD 0x007BA3C0
 int BufferPipe::Put(void const * source, int slen)
 {
 	int total = 0;
@@ -30,7 +30,7 @@ int BufferPipe::Put(void const * source, int slen)
 	return(total);
 }
 
-// FUNCTION: 0x007BA420
+// FUNCTION: GAMEMD 0x007BA420
 FilePipe::~FilePipe(void)
 {
 	if (Valid_File() && HasOpened) {
@@ -40,7 +40,7 @@ FilePipe::~FilePipe(void)
 	}
 }
 
-// FUNCTION: 0x007BA450
+// FUNCTION: GAMEMD 0x007BA450
 int FilePipe::End(void)
 {
 	int total = BASECLASS::End();
@@ -51,7 +51,7 @@ int FilePipe::End(void)
 	return(total);
 }
 
-// FUNCTION: 0x007BA480
+// FUNCTION: GAMEMD 0x007BA480
 int FilePipe::Put(void const * source, int slen)
 {
 	if (Valid_File() && source != NULL && slen > 0) {

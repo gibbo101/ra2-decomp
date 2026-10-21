@@ -7,13 +7,13 @@
 #include "counter.h"
 #include <comdef.h>
 
-// FUNCTION: 0x0049F9B0
+// FUNCTION: GAMEMD 0x0049F9B0
 CounterClass::CounterClass(void)
 {
 	TotalCount = 0;
 }
 
-// FUNCTION: 0x0049FAE0
+// FUNCTION: GAMEMD 0x0049FAE0
 int CounterClass::Value(int index) const
 {
 	if (const_cast<CounterClass *>(this)->Reserve(index)) {
@@ -22,7 +22,7 @@ int CounterClass::Value(int index) const
 	return(0);
 }
 
-// FUNCTION: 0x0049FB40
+// FUNCTION: GAMEMD 0x0049FB40
 void CounterClass::Clear(void)
 {
 	for (int i = 0; i < VectorMax; ++i) {
@@ -31,13 +31,13 @@ void CounterClass::Clear(void)
 	TotalCount = 0;
 }
 
-// FUNCTION: 0x0049FB60
+// FUNCTION: GAMEMD 0x0049FB60
 int CounterClass::Total(void) const
 {
 	return(TotalCount);
 }
 
-// FUNCTION: 0x0049FB70
+// FUNCTION: GAMEMD 0x0049FB70
 HRESULT CounterClass::Save(IStream * stream)
 {
 	HRESULT hr = stream->Write(&TotalCount, sizeof(TotalCount), NULL);
@@ -57,7 +57,7 @@ HRESULT CounterClass::Save(IStream * stream)
 	return(hr);
 }
 
-// FUNCTION: 0x0049FBE0
+// FUNCTION: GAMEMD 0x0049FBE0
 HRESULT CounterClass::Load(IStream * stream)
 {
 	new (this) CounterClass;
@@ -82,7 +82,7 @@ HRESULT CounterClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x0049FC80
+// FUNCTION: GAMEMD 0x0049FC80
 bool CounterClass::Reserve(int index)
 {
 	if (index < VectorMax) {
@@ -99,14 +99,15 @@ bool CounterClass::Reserve(int index)
 	return(false);
 }
 
-// FUNCTION: 0x0049FCE0 CounterClass::~CounterClass
+// SYNTHETIC: GAMEMD 0x0049FCE0
+// ??_GCounterClass@@UAEPAXI@Z
 
 int DAT_0089F768;
 int DAT_0089F76C;
 int DAT_0089F770;
 int DAT_0089F774;
 
-// FUNCTION: 0x0049FD30
+// FUNCTION: GAMEMD 0x0049FD30
 void FUN_0049FD30(void)
 {
 	DAT_0089F768 = 0;

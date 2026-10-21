@@ -11,7 +11,7 @@
 
 void * Build_Fading_Table(PaletteClass const & palette, void * dest, int color, int frac);
 
-// FUNCTION: 0x004C37D0
+// FUNCTION: GAMEMD 0x004C37D0
 void * Conquer_Build_Fading_Table(PaletteClass const & palette, void * dest, int color, int frac)
 {
 	if (dest) {
@@ -40,13 +40,13 @@ void * Conquer_Build_Fading_Table(PaletteClass const & palette, void * dest, int
 	return(dest);
 }
 
-// FUNCTION: 0x004C38D0
+// FUNCTION: GAMEMD 0x004C38D0
 int Translucent_Table_Size(int count)
 {
 	return(256L + (256L * count));
 }
 
-// FUNCTION: 0x004C38E0
+// FUNCTION: GAMEMD 0x004C38E0
 void * Build_Translucent_Table(PaletteClass const & palette, TLucentType const * control, int count, void * buffer)
 {
 	unsigned char	const *table;
@@ -71,7 +71,7 @@ void * Build_Translucent_Table(PaletteClass const & palette, TLucentType const *
 	return(buffer);
 }
 
-// FUNCTION: 0x004C3A20
+// FUNCTION: GAMEMD 0x004C3A20
 void * Conquer_Build_Translucent_Table(PaletteClass const & palette, TLucentType const * control, int count, void * buffer)
 {
 	unsigned char	const *table;
@@ -95,7 +95,7 @@ void * Conquer_Build_Translucent_Table(PaletteClass const & palette, TLucentType
 	return(buffer);
 }
 
-// FUNCTION: 0x004C3AD0
+// FUNCTION: GAMEMD 0x004C3AD0
 void * Make_Fading_Table(PaletteClass const & palette, void * dest, int color, int frac)
 {
 	if (dest) {
@@ -111,7 +111,7 @@ void * Make_Fading_Table(PaletteClass const & palette, void * dest, int color, i
 	return(dest);
 }
 
-// FUNCTION: 0x004C3B60
+// FUNCTION: GAMEMD 0x004C3B60
 void * Build_Fading_Table(PaletteClass const & palette, void * dest, int color, int frac)
 {
 	unsigned char * ptr = (unsigned char *)dest;
@@ -127,4 +127,5 @@ void * Build_Fading_Table(PaletteClass const & palette, void * dest, int color, 
 	return(ptr);
 }
 
-// FUNCTION: 0x004C3BF0 $E2
+// SYNTHETIC: GAMEMD 0x004C3BF0 SYMBOL
+// _$E2

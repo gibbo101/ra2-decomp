@@ -13,22 +13,36 @@
 #include "coord.h"
 #include "cell.h"
 
-// FUNCTION: 0x004A4E80 $E2
-// FUNCTION: 0x004A4EA0 $E5
-// FUNCTION: 0x004A4ED0 $E8
-// FUNCTION: 0x004A4EF0 $E11
-// FUNCTION: 0x004A4F10 $E14
-// FUNCTION: 0x004A4F30 $E17
-// FUNCTION: 0x004A4F50 $E20
-// FUNCTION: 0x004A4F70 $E23
-// FUNCTION: 0x004A4FB0 $E26
-// FUNCTION: 0x004A4FE0 $E29
-// FUNCTION: 0x004A5010 $E32
-// FUNCTION: 0x004A5040 $E35
-// FUNCTION: 0x004A5050 $E38
-// FUNCTION: 0x004A5070 $E41
+// SYNTHETIC: GAMEMD 0x004A4E80 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x004A4EA0 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x004A4ED0 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x004A4EF0 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x004A4F10 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x004A4F30 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x004A4F50 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x004A4F70 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x004A4FB0 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x004A4FE0 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x004A5010 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x004A5040 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x004A5050 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x004A5070 SYMBOL
+// _$E41
 
-// FUNCTION: 0x004A50A0
+// FUNCTION: GAMEMD 0x004A50A0
 void Delay(int duration)
 {
 	CDTimerClass<SystemTimerClass> timer(duration);
@@ -43,7 +57,7 @@ void Delay(int duration)
 #endif
 }
 
-// FUNCTION: 0x004A50F0
+// FUNCTION: GAMEMD 0x004A50F0
 DelayTimerClass::DelayTimerClass(void) :
 	Timer(0),
 	IsActive(false),
@@ -51,7 +65,7 @@ DelayTimerClass::DelayTimerClass(void) :
 {
 }
 
-// FUNCTION: 0x004A5110
+// FUNCTION: GAMEMD 0x004A5110
 bool DelayTimerClass::Is_Count_Up_Active(void) const
 {
 	if (IsActive && IsToCountUp) {
@@ -60,7 +74,7 @@ bool DelayTimerClass::Is_Count_Up_Active(void) const
 	return(false);
 }
 
-// FUNCTION: 0x004A5130
+// FUNCTION: GAMEMD 0x004A5130
 bool DelayTimerClass::Is_Count_Down_Active(void) const
 {
 	if (IsActive && !IsToCountUp) {
@@ -69,7 +83,7 @@ bool DelayTimerClass::Is_Count_Down_Active(void) const
 	return(false);
 }
 
-// FUNCTION: 0x004A5150
+// FUNCTION: GAMEMD 0x004A5150
 bool DelayTimerClass::Has_Ended(void) const
 {
 	if (!IsActive || Timer.Has_Completed()) {
@@ -79,7 +93,7 @@ bool DelayTimerClass::Has_Ended(void) const
 	return(false);
 }
 
-// FUNCTION: 0x004A51B0
+// FUNCTION: GAMEMD 0x004A51B0
 bool DelayTimerClass::Is_Count_Up_Complete(void) const
 {
 	if (!IsActive && IsToCountUp == true) {
@@ -88,7 +102,7 @@ bool DelayTimerClass::Is_Count_Up_Complete(void) const
 	return(false);
 }
 
-// FUNCTION: 0x004A51D0
+// FUNCTION: GAMEMD 0x004A51D0
 bool DelayTimerClass::Is_Count_Down_Complete(void) const
 {
 	if (!IsActive && !IsToCountUp) {
@@ -97,7 +111,7 @@ bool DelayTimerClass::Is_Count_Down_Complete(void) const
 	return(false);
 }
 
-// FUNCTION: 0x004A51F0
+// FUNCTION: GAMEMD 0x004A51F0
 void DelayTimerClass::Count_Up(double duration)
 {
 	if (IsActive || IsToCountUp != true) {
@@ -108,7 +122,7 @@ void DelayTimerClass::Count_Up(double duration)
 	}
 }
 
-// FUNCTION: 0x004A5240
+// FUNCTION: GAMEMD 0x004A5240
 void DelayTimerClass::Count_Down(double duration)
 {
 	if (IsActive || IsToCountUp) {
@@ -119,7 +133,7 @@ void DelayTimerClass::Count_Down(double duration)
 	}
 }
 
-// FUNCTION: 0x004A5290
+// FUNCTION: GAMEMD 0x004A5290
 void DelayTimerClass::Reverse(void)
 {
 	if (IsActive) {
@@ -128,21 +142,21 @@ void DelayTimerClass::Reverse(void)
 	}
 }
 
-// FUNCTION: 0x004A52D0
+// FUNCTION: GAMEMD 0x004A52D0
 void DelayTimerClass::End_Count_Up(void)
 {
 	IsActive = false;
 	IsToCountUp = true;
 }
 
-// FUNCTION: 0x004A52E0
+// FUNCTION: GAMEMD 0x004A52E0
 void DelayTimerClass::End_Count_Down(void)
 {
 	IsActive = false;
 	IsToCountUp = false;
 }
 
-// FUNCTION: 0x004A52F0
+// FUNCTION: GAMEMD 0x004A52F0
 double DelayTimerClass::Percent_Complete(void) const
 {
 	if (IsActive) {
@@ -151,7 +165,7 @@ double DelayTimerClass::Percent_Complete(void) const
 	return(1.0);
 }
 
-// FUNCTION: 0x004A5360
+// FUNCTION: GAMEMD 0x004A5360
 void DelayTimerClass::End_Count(void)
 {
 	if (Is_Count_Up_Active()) {

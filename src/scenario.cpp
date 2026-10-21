@@ -132,11 +132,11 @@ class InputManagerClass {
 		static InputManagerClass * Instance;
 };
 
-// FUNCTION: 0x00683280
-// FUNCTION: 0x006832B0
+// FUNCTION: GAMEMD 0x00683280
+// FUNCTION: GAMEMD 0x006832B0
 CDTimerClass<SystemTimerClass> ScenUnusedTimer;
 
-// FUNCTION: 0x006832C0
+// FUNCTION: GAMEMD 0x006832C0
 ScenarioClass::ScenarioClass(void)
 {
 	Reset();
@@ -170,7 +170,7 @@ ScenarioClass::ScenarioClass(void)
 	memset(Views, '\0', sizeof(Views));
 }
 
-// FUNCTION: 0x00683560
+// FUNCTION: GAMEMD 0x00683560
 ScenarioClass::ScenarioClass(NoInitClass const & x) :
 	ElapsedTimer(x),
 	MissionTimer(x),
@@ -189,7 +189,7 @@ ScenarioClass::ScenarioClass(NoInitClass const & x) :
 	}
 }
 
-// FUNCTION: 0x00683610
+// FUNCTION: GAMEMD 0x00683610
 void ScenarioClass::Reset(void)
 {
 	Home = WAYPT_HOME;
@@ -307,7 +307,7 @@ void ScenarioClass::Reset(void)
 	}
 }
 
-// FUNCTION: 0x00683AB0
+// FUNCTION: GAMEMD 0x00683AB0
 bool Start_Scenario(char const * name, bool briefing, CampaignType campaign)
 {
 	if ((name == NULL || strlen(name) == 0) && campaign != CAMPAIGN_NONE) {
@@ -424,7 +424,7 @@ bool Start_Scenario(char const * name, bool briefing, CampaignType campaign)
 	return(true);
 }
 
-// FUNCTION: 0x00683EB0
+// FUNCTION: GAMEMD 0x00683EB0
 void Pause_Scenario(void)
 {
 	FUN_00406F00();
@@ -450,7 +450,7 @@ void Pause_Scenario(void)
 	Show_Mouse();
 }
 
-// FUNCTION: 0x00683FB0
+// FUNCTION: GAMEMD 0x00683FB0
 void Resume_Scenario(void)
 {
 	Map.Revert_Mouse_Shape();
@@ -468,7 +468,7 @@ void Resume_Scenario(void)
 	FUN_00406F40();
 }
 
-// FUNCTION: 0x00684060
+// FUNCTION: GAMEMD 0x00684060
 void __fastcall Hold_Scenario(int seconds)
 {
 	if (seconds) {
@@ -502,7 +502,7 @@ void __fastcall Hold_Scenario(int seconds)
 	Scen->unknown_62C++;
 }
 
-// FUNCTION: 0x00684180
+// FUNCTION: GAMEMD 0x00684180
 void Release_Scenario(void)
 {
 	if (Scen->unknown_62C == 0) {
@@ -529,7 +529,7 @@ void Release_Scenario(void)
 	FUN_00406F40();
 }
 
-// FUNCTION: 0x00684240
+// FUNCTION: GAMEMD 0x00684240
 void Lock_Scenario_Input(void)
 {
 	Map.Abort_Drag_Select();
@@ -544,7 +544,7 @@ void Lock_Scenario_Input(void)
 	DAT_00B07784 = 0;
 }
 
-// FUNCTION: 0x00684290
+// FUNCTION: GAMEMD 0x00684290
 void Unlock_Scenario_Input(void)
 {
 	if (Scen->IsInputLocked == true) {
@@ -559,7 +559,7 @@ void Unlock_Scenario_Input(void)
 	DAT_00B07784 = 0;
 }
 
-// FUNCTION: 0x006842F0
+// FUNCTION: GAMEMD 0x006842F0
 void Toggle_Display_Mode(bool ingame)
 {
 	if (ingame) {
@@ -586,7 +586,7 @@ namespace Game { extern bool IsActive; extern HWND hWnd; bool __cdecl CallBack(v
 void __fastcall FUN_0055AF40(int value);
 void __fastcall FUN_0055AF50(int value);
 
-// FUNCTION: 0x00684C30
+// FUNCTION: GAMEMD 0x00684C30
 void Fill_In_Data(void)
 {
 	ScenarioInit++;
@@ -695,7 +695,7 @@ void Fill_In_Data(void)
 	FUN_0055AF50(Rule->DetailBufferZoneWidth);
 }
 
-// FUNCTION: 0x00685120
+// FUNCTION: GAMEMD 0x00685120
 void Post_Load_Game(void)
 {
 	BuildingTypeClass::Post_Load_Game();
@@ -725,7 +725,7 @@ void __fastcall FUN_006370B0(void);
 void __fastcall FUN_0052CB90(void);
 void __fastcall FUN_0053A090(void);
 
-// FUNCTION: 0x006851F0
+// FUNCTION: GAMEMD 0x006851F0
 void Clear_Scenario(void)
 {
 	int index;
@@ -838,7 +838,7 @@ void __fastcall FUN_00406E80(void);
 void __fastcall FUN_007529A0(bool a);
 void __fastcall FUN_00752CA0(void);
 
-// FUNCTION: 0x006863E0
+// FUNCTION: GAMEMD 0x006863E0
 void Do_Restart(void)
 {
 	FUN_0072DDB0();
@@ -882,7 +882,7 @@ bool __fastcall FUN_007529E0(void);
 void __fastcall FUN_00407070(void * p);
 void __fastcall FUN_004070B0(void * p);
 
-// FUNCTION: 0x00686570
+// FUNCTION: GAMEMD 0x00686570
 void Do_Abort(void)
 {
 	ScenarioStarted = false;
@@ -918,7 +918,7 @@ void Do_Abort(void)
 	Game::IsActive = false;
 }
 
-// FUNCTION: 0x00686700
+// FUNCTION: GAMEMD 0x00686700
 void ScenarioClass::Set_Scenario_Name(char const * name)
 {
 	if (name != NULL) {
@@ -927,7 +927,7 @@ void ScenarioClass::Set_Scenario_Name(char const * name)
 	}
 }
 
-// FUNCTION: 0x00686730
+// FUNCTION: GAMEMD 0x00686730
 bool Read_Scenario_INI(char const * fname, bool)
 {
 	if (CD::Force_Available() == false) {
@@ -970,7 +970,7 @@ static void Remove_AI_Players(void)
 	}
 }
 
-// FUNCTION: 0x00686890
+// FUNCTION: GAMEMD 0x00686890
 void Multiplayer_Last_Minute_Fixups(bool official)
 {
 	if ((Session.Options.AIPlayers + Session.Players.Count() < Rule->MaxPlayers) && !Debug_Map) {
@@ -1035,7 +1035,7 @@ void Multiplayer_Last_Minute_Fixups(bool official)
 	memset(Session.PlayerChatEnabled, true, sizeof(Session.PlayerChatEnabled));
 }
 
-// FUNCTION: 0x00687CE0
+// FUNCTION: GAMEMD 0x00687CE0
 void Write_Scenario_INI(char const * fname, bool mplayer)
 {
 	CCINIClass ini;
@@ -1086,7 +1086,7 @@ void Write_Scenario_INI(char const * fname, bool mplayer)
 
 extern HouseClass * DAT_00AC1198;
 
-// FUNCTION: 0x00687F10
+// FUNCTION: GAMEMD 0x00687F10
 void Assign_Houses(void)
 {
 	int i;
@@ -1195,7 +1195,7 @@ void Assign_Houses(void)
 	special_house->FUN_0050B840();
 }
 
-// FUNCTION: 0x00688380
+// FUNCTION: GAMEMD 0x00688380
 DynamicVectorClass<Cell> Build_Start_Waypoint_List(void)
 {
 	DynamicVectorClass<Cell> waypts;
@@ -1243,7 +1243,7 @@ DynamicVectorClass<Cell> Build_Start_Waypoint_List(void)
 	return(waypts);
 }
 
-// FUNCTION: 0x00689310
+// FUNCTION: GAMEMD 0x00689310
 void ScenarioClass::Save(IStream * stream) const
 {
 	DebugString("Scenario Save: ElapsedTimer = %ld\n", ElapsedTimer);
@@ -1263,7 +1263,7 @@ void ScenarioClass::Save(IStream * stream) const
 	}
 }
 
-// FUNCTION: 0x00689470
+// FUNCTION: GAMEMD 0x00689470
 void ScenarioClass::Load(IStream * stream)
 {
 	ElapsedTimer.Stop();
@@ -1290,7 +1290,7 @@ void ScenarioClass::Load(IStream * stream)
 	DebugString("Scenario Load: ElapsedTimer = %ld\n", ElapsedTimer);
 }
 
-// FUNCTION: 0x00689670
+// FUNCTION: GAMEMD 0x00689670
 bool ScenarioClass::Set_Global_To(int global, bool value)
 {
 	if ((unsigned)global < ARRAY_SIZE(Scen->GlobalFlags)) {
@@ -1305,7 +1305,7 @@ bool ScenarioClass::Set_Global_To(int global, bool value)
 	return(false);
 }
 
-// FUNCTION: 0x006896C0
+// FUNCTION: GAMEMD 0x006896C0
 bool ScenarioClass::Set_Global_To(char const * variable_name, bool value)
 {
 	int index = Global_From_Name(variable_name);
@@ -1315,7 +1315,7 @@ bool ScenarioClass::Set_Global_To(char const * variable_name, bool value)
 	return(true);
 }
 
-// FUNCTION: 0x00689760
+// FUNCTION: GAMEMD 0x00689760
 bool ScenarioClass::Fetch_Global_Value(int global, bool & value)
 {
 	if (global >= 0 && global < ARRAY_SIZE(GlobalFlags)) {
@@ -1325,7 +1325,7 @@ bool ScenarioClass::Fetch_Global_Value(int global, bool & value)
 	return(false);
 }
 
-// FUNCTION: 0x00689790
+// FUNCTION: GAMEMD 0x00689790
 bool ScenarioClass::Fetch_Global_Value(char const * variable_name, bool & value)
 {
 	int index = Global_From_Name(variable_name);
@@ -1335,7 +1335,7 @@ bool ScenarioClass::Fetch_Global_Value(char const * variable_name, bool & value)
 	return(false);
 }
 
-// FUNCTION: 0x00689820
+// FUNCTION: GAMEMD 0x00689820
 int ScenarioClass::Global_From_Name(char const * variable_name)
 {
 	for (int i = 0; i < ARRAY_SIZE(GlobalFlags); i++) {
@@ -1346,7 +1346,7 @@ int ScenarioClass::Global_From_Name(char const * variable_name)
 	return(-1);
 }
 
-// FUNCTION: 0x00689880
+// FUNCTION: GAMEMD 0x00689880
 bool ScenarioClass::Read_Global_INI(CCINIClass const & ini)
 {
 	char const * const SECTION = "VariableNames";
@@ -1360,7 +1360,7 @@ bool ScenarioClass::Read_Global_INI(CCINIClass const & ini)
 	return(true);
 }
 
-// FUNCTION: 0x00689910
+// FUNCTION: GAMEMD 0x00689910
 bool ScenarioClass::Set_Local_To(int index, bool value)
 {
 	if ((unsigned)index < ARRAY_SIZE(Scen->LocalFlags)) {
@@ -1375,7 +1375,7 @@ bool ScenarioClass::Set_Local_To(int index, bool value)
 	return(false);
 }
 
-// FUNCTION: 0x00689960
+// FUNCTION: GAMEMD 0x00689960
 bool ScenarioClass::Set_Local_To(char const * variable_name, bool value)
 {
 	int index = Local_From_Name(variable_name);
@@ -1385,7 +1385,7 @@ bool ScenarioClass::Set_Local_To(char const * variable_name, bool value)
 	return(true);
 }
 
-// FUNCTION: 0x00689A00
+// FUNCTION: GAMEMD 0x00689A00
 bool ScenarioClass::Fetch_Local_Value(int index, bool & value)
 {
 	if (index >= 0 && index < ARRAY_SIZE(LocalFlags)) {
@@ -1395,7 +1395,7 @@ bool ScenarioClass::Fetch_Local_Value(int index, bool & value)
 	return(false);
 }
 
-// FUNCTION: 0x00689A30
+// FUNCTION: GAMEMD 0x00689A30
 bool ScenarioClass::Fetch_Local_Value(char const * variable_name, bool & value)
 {
 	int index = Local_From_Name(variable_name);
@@ -1405,7 +1405,7 @@ bool ScenarioClass::Fetch_Local_Value(char const * variable_name, bool & value)
 	return(false);
 }
 
-// FUNCTION: 0x00689AC0
+// FUNCTION: GAMEMD 0x00689AC0
 int ScenarioClass::Local_From_Name(char const * variable_name)
 {
 	for (int i = 0; i < ARRAY_SIZE(LocalFlags); i++) {
@@ -1416,7 +1416,7 @@ int ScenarioClass::Local_From_Name(char const * variable_name)
 	return(-1);
 }
 
-// FUNCTION: 0x00689B20
+// FUNCTION: GAMEMD 0x00689B20
 bool ScenarioClass::Read_Local_INI(CCINIClass const & ini)
 {
 	char buffer[128];
@@ -1445,7 +1445,7 @@ bool ScenarioClass::Read_Local_INI(CCINIClass const & ini)
 	return(true);
 }
 
-// FUNCTION: 0x00689C60
+// FUNCTION: GAMEMD 0x00689C60
 bool ScenarioClass::Write_Local_INI(CCINIClass & ini) const
 {
 	static char const * const SECTION = "VariableNames";
@@ -1464,7 +1464,7 @@ bool ScenarioClass::Write_Local_INI(CCINIClass & ini) const
 	return(true);
 }
 
-// FUNCTION: 0x00689CF0
+// FUNCTION: GAMEMD 0x00689CF0
 int ScenarioClass::Used_Local_Count(void)
 {
 	int count = 0;
@@ -1476,7 +1476,7 @@ int ScenarioClass::Used_Local_Count(void)
 	return(count);
 }
 
-// FUNCTION: 0x00689D10
+// FUNCTION: GAMEMD 0x00689D10
 int ScenarioClass::First_Unused_Local(void) const
 {
 	for (int index = 0; index < ARRAY_SIZE(LocalFlags); index++) {
@@ -1487,7 +1487,7 @@ int ScenarioClass::First_Unused_Local(void) const
 	return(-1);
 }
 
-// FUNCTION: 0x00689D30
+// FUNCTION: GAMEMD 0x00689D30
 bool ScenarioClass::ReadStartPoints(CCINIClass const & ini)
 {
 	char const * const SECTION = "Header";
@@ -1516,7 +1516,7 @@ bool ScenarioClass::ReadStartPoints(CCINIClass const & ini)
 	return(true);
 }
 
-// FUNCTION: 0x0068B8A0
+// FUNCTION: GAMEMD 0x0068B8A0
 int Adjust_To_CPU_Timing(int time)
 {
 	static const double P_SIX_TWEAK = .8;
@@ -1547,7 +1547,7 @@ int Adjust_To_CPU_Timing(int time)
 	return(time);
 }
 
-// FUNCTION: 0x0068B940
+// FUNCTION: GAMEMD 0x0068B940
 void ScenarioClass::Compute_CRC(CRCEngine & crc) const
 {
 	crc(UIName);
@@ -1599,7 +1599,7 @@ void ScenarioClass::Compute_CRC(CRCEngine & crc) const
 	crc(DesiredAmbientLight);
 }
 
-// FUNCTION: 0x0068BCB0
+// FUNCTION: GAMEMD 0x0068BCB0
 int ScenarioClass::Get_Unique_ID(void)
 {
 	UniqueID++;
@@ -1607,19 +1607,19 @@ int ScenarioClass::Get_Unique_ID(void)
 	return(UniqueID);
 }
 
-// FUNCTION: 0x0068BCC0
+// FUNCTION: GAMEMD 0x0068BCC0
 Cell ScenarioClass::Get_Waypoint_Cell(WAYPOINT waypoint) const
 {
 	return(Waypoint[waypoint]);
 }
 
-// FUNCTION: 0x0068BCE0
+// FUNCTION: GAMEMD 0x0068BCE0
 AbstractClass * ScenarioClass::Get_Waypoint_Target(WAYPOINT waypoint) const
 {
 	return(&Map[Waypoint[waypoint]]);
 }
 
-// FUNCTION: 0x0068BD00
+// FUNCTION: GAMEMD 0x0068BD00
 Coord ScenarioClass::Get_Waypoint_Coord(WAYPOINT waypoint) const
 {
 	CellClass const * cell = &Map[Waypoint[waypoint]];
@@ -1631,7 +1631,7 @@ Coord ScenarioClass::Get_Waypoint_Coord(WAYPOINT waypoint) const
 	return(coord);
 }
 
-// FUNCTION: 0x0068BD60
+// FUNCTION: GAMEMD 0x0068BD60
 void ScenarioClass::Clear_All_Waypoints(void)
 {
 	for (int index = 0; index < ARRAY_SIZE(Waypoint); index++) {
@@ -1639,7 +1639,7 @@ void ScenarioClass::Clear_All_Waypoints(void)
 	}
 }
 
-// FUNCTION: 0x0068BD80
+// FUNCTION: GAMEMD 0x0068BD80
 bool ScenarioClass::Is_Valid_Waypoint(WAYPOINT waypoint) const
 {
 	if (waypoint < ARRAY_SIZE(Waypoint) &&

@@ -17,7 +17,7 @@
 
 extern char DAT_00889F64[];
 
-// FUNCTION: 0x00644BE0
+// FUNCTION: GAMEMD 0x00644BE0
 ParticleTypeClass::ParticleTypeClass(char const * ininame) :
 	BASECLASS(ininame),
 	NextParticleOffset(0, 0, 0),
@@ -56,7 +56,7 @@ ParticleTypeClass::ParticleTypeClass(char const * ininame) :
 	IsSentient = false;
 }
 
-// FUNCTION: 0x00644DD0
+// FUNCTION: GAMEMD 0x00644DD0
 ParticleTypeClass::ParticleTypeClass(NoInitClass const & x) :
 	BASECLASS(x),
 	StartColor1(x),
@@ -65,7 +65,7 @@ ParticleTypeClass::ParticleTypeClass(NoInitClass const & x) :
 
 }
 
-// FUNCTION: 0x00644E40
+// FUNCTION: GAMEMD 0x00644E40
 ParticleTypeClass::~ParticleTypeClass(void)
 {
 	Detach_This_From_All(this);
@@ -73,7 +73,7 @@ ParticleTypeClass::~ParticleTypeClass(void)
 	ParticleTypes.Delete(this);
 }
 
-// FUNCTION: 0x00644F50
+// FUNCTION: GAMEMD 0x00644F50
 bool ParticleTypeClass::Read_INI(CCINIClass & ini)
 {
 	ini.Reset();
@@ -137,7 +137,7 @@ bool ParticleTypeClass::Read_INI(CCINIClass & ini)
 	return(false);
 }
 
-// FUNCTION: 0x00645430
+// FUNCTION: GAMEMD 0x00645430
 ParticleType ParticleTypeClass::From_Name(char const * name)
 {
 	if (stricmp(name, "<none>")) {
@@ -153,7 +153,7 @@ ParticleType ParticleTypeClass::From_Name(char const * name)
 	return(PARTICLE_NONE);
 }
 
-// FUNCTION: 0x006454C0
+// FUNCTION: GAMEMD 0x006454C0
 const char * ParticleTypeClass::Name_From(ParticleType particle)
 {
 	if ((unsigned)particle < (unsigned)ParticleTypes.Count()) {
@@ -162,7 +162,7 @@ const char * ParticleTypeClass::Name_From(ParticleType particle)
 	return(NULL);
 }
 
-// FUNCTION: 0x006454E0
+// FUNCTION: GAMEMD 0x006454E0
 void ParticleTypeClass::Compute_CRC(CRCEngine & crc) const
 {
 	BASECLASS::Compute_CRC(crc);
@@ -189,7 +189,7 @@ void ParticleTypeClass::Compute_CRC(CRCEngine & crc) const
 	crc(ColorSpeed);
 }
 
-// FUNCTION: 0x00645620
+// FUNCTION: GAMEMD 0x00645620
 HRESULT STDMETHODCALLTYPE ParticleTypeClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -197,7 +197,7 @@ HRESULT STDMETHODCALLTYPE ParticleTypeClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x00645660
+// FUNCTION: GAMEMD 0x00645660
 HRESULT STDMETHODCALLTYPE ParticleTypeClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -229,7 +229,7 @@ HRESULT STDMETHODCALLTYPE ParticleTypeClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x006457A0
+// FUNCTION: GAMEMD 0x006457A0
 HRESULT STDMETHODCALLTYPE ParticleTypeClass::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -254,13 +254,13 @@ HRESULT STDMETHODCALLTYPE ParticleTypeClass::Save(IStream * stream, BOOL cleardi
 	return(result);
 }
 
-// FUNCTION: 0x00645820
+// FUNCTION: GAMEMD 0x00645820
 ParticleTypeClass * ParticleTypeClass::Find_Or_Make(char const * name)
 {
 	return(TFind_Or_Make<ParticleTypeClass>(name, ParticleTypes));
 }
 
-// FUNCTION: 0x006458B0
+// FUNCTION: GAMEMD 0x006458B0
 void ParticleTypeClass::Detach(AbstractClass const * target, bool all)
 {
 	if (Warhead == target) {
@@ -268,7 +268,7 @@ void ParticleTypeClass::Detach(AbstractClass const * target, bool all)
 	}
 }
 
-// FUNCTION: 0x006458D0
+// FUNCTION: GAMEMD 0x006458D0
 ParticleBehaviorType Particle_Behavior_From_Name(char const * name)
 {
 	static char const * _BehaviorNames[BEHAVIOR_COUNT] = {
@@ -289,28 +289,29 @@ ParticleBehaviorType Particle_Behavior_From_Name(char const * name)
 	return(BEHAVIOR_NONE);
 }
 
-// FUNCTION: 0x00645910
+// FUNCTION: GAMEMD 0x00645910
 int ParticleTypeClass::Fetch_Object_Size(void) const
 {
 	return(sizeof(*this));
 }
 
-// FUNCTION: 0x00645920
+// FUNCTION: GAMEMD 0x00645920
 RTTIType ParticleTypeClass::Fetch_RTTI(void) const
 {
 	return(RTTI_PARTICLETYPE);
 }
 
-// FUNCTION: 0x00645930
+// FUNCTION: GAMEMD 0x00645930
 bool ParticleTypeClass::Create_And_Place(Cell const & , HouseClass * house) const
 {
 	return(false);
 }
 
-// FUNCTION: 0x00645940
+// FUNCTION: GAMEMD 0x00645940
 ObjectClass * ParticleTypeClass::Create_One_Of(HouseClass *) const
 {
 	return(NULL);
 }
 
-// FUNCTION: 0x00645950 ParticleTypeClass::~ParticleTypeClass
+// SYNTHETIC: GAMEMD 0x00645950
+// ??_GParticleTypeClass@@UAEPAXI@Z

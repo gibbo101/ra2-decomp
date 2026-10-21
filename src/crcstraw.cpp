@@ -6,7 +6,7 @@
 #include "always.h"
 #include "crcstraw.h"
 
-// FUNCTION: 0x004A20B0
+// FUNCTION: GAMEMD 0x004A20B0
 int CRCStraw::Get(void * source, int slen)
 {
 	if (source == NULL || slen < 1) {
@@ -18,7 +18,7 @@ int CRCStraw::Get(void * source, int slen)
 	return(counter);
 }
 
-// FUNCTION: 0x004A20F0
+// FUNCTION: GAMEMD 0x004A20F0
 int CRCStraw::Result(void) const
 {
 	return(CRC());

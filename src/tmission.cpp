@@ -14,7 +14,7 @@
 #include "unload.hh"
 #include <cstdio>
 
-// FUNCTION: 0x00723CA0
+// FUNCTION: GAMEMD 0x00723CA0
 void TeamMissionClass::Fill_In(char const * entry)
 {
 	if (entry != NULL) {
@@ -28,7 +28,7 @@ void TeamMissionClass::Fill_In(char const * entry)
 	}
 }
 
-// FUNCTION: 0x00723CE0
+// FUNCTION: GAMEMD 0x00723CE0
 int TeamMissionClass::Build_INI_Entry(char * ptr) const
 {
 	if (ptr != NULL) {

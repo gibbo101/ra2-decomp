@@ -12,7 +12,7 @@
 #include "pcx.h"
 #include <new>
 
-// FUNCTION: 0x006B9370
+// FUNCTION: GAMEMD 0x006B9370
 int SurfaceCacheConvertPixel(int red, int green, int blue)
 {
 	int boosted = (green * 15) / 10;
@@ -20,7 +20,7 @@ int SurfaceCacheConvertPixel(int red, int green, int blue)
 	return(DSurface::Build_Hicolor_Pixel(green, red, blue / 4));
 }
 
-// FUNCTION: 0x006B93E0
+// FUNCTION: GAMEMD 0x006B93E0
 void SurfaceCacheConvertPalette(unsigned char *pal)
 {
 	unsigned char *p = pal;
@@ -38,14 +38,14 @@ void SurfaceCacheConvertPalette(unsigned char *pal)
 
 static unsigned int SurfaceCache_Wstring_Hash(Wstring & string);
 
-// FUNCTION: 0x006B9450
+// FUNCTION: GAMEMD 0x006B9450
 SurfaceCacheClass::SurfaceCacheClass(void) :
 	Dictionary<Wstring, SurfaceCacheEntry>(SurfaceCache_Wstring_Hash)
 {
 
 }
 
-// FUNCTION: 0x006B94E0
+// FUNCTION: GAMEMD 0x006B94E0
 static unsigned int SurfaceCache_Wstring_Hash(Wstring & string)
 {
 	unsigned int hash = 0;
@@ -60,7 +60,7 @@ static unsigned int SurfaceCache_Wstring_Hash(Wstring & string)
 	return(hash);
 }
 
-// FUNCTION: 0x006B9530
+// FUNCTION: GAMEMD 0x006B9530
 SurfaceCacheClass::~SurfaceCacheClass(void)
 {
 	Wstring key;
@@ -70,13 +70,13 @@ SurfaceCacheClass::~SurfaceCacheClass(void)
 	}
 }
 
-// FUNCTION: 0x006BA120
+// FUNCTION: GAMEMD 0x006BA120
 bool SurfaceCacheClass::CachePalettedPCX(char const *name)
 {
 	return(CachePCX(name, 1, true));
 }
 
-// FUNCTION: 0x006BA140
+// FUNCTION: GAMEMD 0x006BA140
 Surface * SurfaceCacheClass::GetSurface(char const * name, void * palette)
 {
 	Wstring n(name);
@@ -97,9 +97,10 @@ Surface * SurfaceCacheClass::GetSurface(char const * name, void * palette)
 	return(NULL);
 }
 
-// FUNCTION: 0x006BA220 $E27
+// SYNTHETIC: GAMEMD 0x006BA220 SYMBOL
+// _$E27
 
-// FUNCTION: 0x006BA230
+// FUNCTION: GAMEMD 0x006BA230
 void SurfaceCacheClass::Remove(char const *name)
 {
 	Wstring key(name);
@@ -111,23 +112,27 @@ void SurfaceCacheClass::Remove(char const *name)
 	getEntries();
 }
 
-// FUNCTION: 0x006BA680
+// FUNCTION: GAMEMD 0x006BA680
 bool SurfaceCacheClass::DrawNullsub(Rect const & rect, Surface & tosurface, Surface & fromsurface)
 {
 	return(false);
 }
 
-// FUNCTION: 0x006BAC40 ?$Dictionary@VWstring@@USurfaceCacheEntry@@::remove
+// TEMPLATE: GAMEMD 0x006BAC40
+// ?remove@?$Dictionary@VWstring@@USurfaceCacheEntry@@@@QAEDAAVWstring@@AAUSurfaceCacheEntry@@@Z
 template class Dictionary<Wstring, SurfaceCacheEntry>;
 
-// FUNCTION: 0x006BAEF0 ?$Dictionary@VWstring@@USurfaceCacheEntry@@::shrink
+// TEMPLATE: GAMEMD 0x006BAEF0
+// ?shrink@?$Dictionary@VWstring@@USurfaceCacheEntry@@@@AAEXXZ
 
-// FUNCTION: 0x006BAFA0 ?$Dictionary@VWstring@@USurfaceCacheEntry@@::expand
+// TEMPLATE: GAMEMD 0x006BAFA0
+// ?expand@?$Dictionary@VWstring@@USurfaceCacheEntry@@@@AAEXXZ
 
 struct SurfaceCacheZero {
 	int a, b, c, d;
 	SurfaceCacheZero(void) { a = 0; b = 0; c = 0; d = 0; }
 };
 
-// FUNCTION: 0x006BB050 $E29
+// SYNTHETIC: GAMEMD 0x006BB050 SYMBOL
+// _$E29
 SurfaceCacheZero DAT_00B0BC58;

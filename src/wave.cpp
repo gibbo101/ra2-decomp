@@ -53,7 +53,7 @@ const float WaveStep = 0.05f;
 
 FacingType Facing_Between_Points(Point2D const & pt1, Point2D const & pt2);
 
-// FUNCTION: 0x0075E950
+// FUNCTION: GAMEMD 0x0075E950
 WaveClass::WaveClass(Coord const & source_coord, Coord const & target_coord, TechnoClass * source, WaveType type, TechnoClass * target) :
 	BASECLASS(),
 	Target(target),
@@ -102,7 +102,7 @@ WaveClass::WaveClass(Coord const & source_coord, Coord const & target_coord, Tec
 	Update_Wave();
 }
 
-// FUNCTION: 0x0075EBE0
+// FUNCTION: GAMEMD 0x0075EBE0
 WaveClass::WaveClass(void) :
 	BASECLASS(),
 	Target(NULL),
@@ -122,7 +122,7 @@ WaveClass::WaveClass(void) :
 	}
 }
 
-// FUNCTION: 0x0075ED30
+// FUNCTION: GAMEMD 0x0075ED30
 WaveClass::~WaveClass(void)
 {
 	Detach_This_From_All(this, true);
@@ -130,7 +130,7 @@ WaveClass::~WaveClass(void)
 	AffectedCells.Clear();
 }
 
-// FUNCTION: 0x0075EDF0
+// FUNCTION: GAMEMD 0x0075EDF0
 void WaveClass::Set_Sonic_Pixel(int x, int xoff, int y, unsigned short * buffer) const
 {
 	int radius = RadiusTable[y][abs(x - WaveStartMiddle.X - xoff)];
@@ -148,7 +148,7 @@ void WaveClass::Set_Sonic_Pixel(int x, int xoff, int y, unsigned short * buffer)
 	*buffer = DSurface::Build_Hicolor_Pixel(red, MIN(255, green), MIN(255, blue));
 }
 
-// FUNCTION: 0x0075EF30
+// FUNCTION: GAMEMD 0x0075EF30
 void WaveClass::Set_Laser_Pixel(unsigned short * buffer, int mult) const
 {
 	RGBClass rgb = DSurface::Deconstruct_Hicolor_Pixel(*buffer);
@@ -160,7 +160,7 @@ void WaveClass::Set_Laser_Pixel(unsigned short * buffer, int mult) const
 	*buffer = DSurface::Build_Hicolor_Pixel(MIN(255, red), MIN(255, green), MIN(255, blue));
 }
 
-// FUNCTION: 0x0075F020
+// FUNCTION: GAMEMD 0x0075F020
 void WaveClass::Init_Statics(void)
 {
 	_tables_calculated = true;
@@ -185,7 +185,7 @@ void WaveClass::Init_Statics(void)
 	}
 }
 
-// FUNCTION: 0x0075F140
+// FUNCTION: GAMEMD 0x0075F140
 void WaveClass::Init_Offset_Tables(void)
 {
 	int stride = DSurface::Temp->Stride() >> 1;
@@ -220,7 +220,7 @@ void WaveClass::Init_Offset_Tables(void)
 	WaveIntensityTable[12]	= 3 * DirectionStrides[Direction];
 }
 
-// FUNCTION: 0x0075F230
+// FUNCTION: GAMEMD 0x0075F230
 FacingType Facing_Between_Points(Point2D const & pt1, Point2D const & pt2)
 {
 	int xdiff = pt2.X - pt1.X;
@@ -246,7 +246,7 @@ FacingType Facing_Between_Points(Point2D const & pt1, Point2D const & pt2)
 	return((ydiff > 0) ? FACING_N : FACING_S);
 }
 
-// FUNCTION: 0x0075F330
+// FUNCTION: GAMEMD 0x0075F330
 void WaveClass::Sonic_Damage(Coord const & coord)
 {
 	if (Source != NULL) {
@@ -289,7 +289,7 @@ void WaveClass::Sonic_Damage(Coord const & coord)
 	}
 }
 
-// FUNCTION: 0x0075F4C0
+// FUNCTION: GAMEMD 0x0075F4C0
 void WaveClass::Sonic_Add_Cell(Cell const & cell)
 {
 	CellClass * cptr = &Map[cell];
@@ -298,7 +298,7 @@ void WaveClass::Sonic_Add_Cell(Cell const & cell)
 	}
 }
 
-// FUNCTION: 0x0075F540
+// FUNCTION: GAMEMD 0x0075F540
 Coord Lerp(Coord const & a, Coord const & b, float t)
 {
 	double inv = 1.0 - t;
@@ -307,7 +307,7 @@ Coord Lerp(Coord const & a, Coord const & b, float t)
 				 int((a.Z * inv) + (b.Z * t))));
 }
 
-// FUNCTION: 0x0075F5C0
+// FUNCTION: GAMEMD 0x0075F5C0
 Point2D Lerp(Point2D const & a, Point2D const & b, float t)
 {
 	double inv = 1.0 - t;
@@ -316,7 +316,7 @@ Point2D Lerp(Point2D const & a, Point2D const & b, float t)
 	return(Point2D(x,y));
 }
 
-// FUNCTION: 0x0075F610
+// FUNCTION: GAMEMD 0x0075F610
 void WaveClass::Detach(AbstractClass const * target, bool all)
 {
 	BASECLASS::Detach(target, all);
@@ -329,7 +329,7 @@ void WaveClass::Detach(AbstractClass const * target, bool all)
 	}
 }
 
-// FUNCTION: 0x0075F650
+// FUNCTION: GAMEMD 0x0075F650
 HRESULT STDMETHODCALLTYPE WaveClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -369,7 +369,7 @@ HRESULT STDMETHODCALLTYPE WaveClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x0075F7D0
+// FUNCTION: GAMEMD 0x0075F7D0
 HRESULT STDMETHODCALLTYPE WaveClass::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -389,7 +389,7 @@ HRESULT STDMETHODCALLTYPE WaveClass::Save(IStream * stream, BOOL cleardirty)
 	return(result);
 }
 
-// FUNCTION: 0x0075F840
+// FUNCTION: GAMEMD 0x0075F840
 HRESULT STDMETHODCALLTYPE WaveClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -397,25 +397,25 @@ HRESULT STDMETHODCALLTYPE WaveClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x0075F880
+// FUNCTION: GAMEMD 0x0075F880
 int WaveClass::Fetch_Object_Size(void) const
 {
 	return sizeof(*this);
 }
 
-// FUNCTION: 0x0075F890
+// FUNCTION: GAMEMD 0x0075F890
 LayerType WaveClass::In_Which_Layer(void) const
 {
 	return LAYER_AIR;
 }
 
-// FUNCTION: 0x0075F8A0
+// FUNCTION: GAMEMD 0x0075F8A0
 ObjectTypeClass const * WaveClass::Class_Of(void) const
 {
 	return NULL;
 }
 
-// FUNCTION: 0x0075F8B0
+// FUNCTION: GAMEMD 0x0075F8B0
 bool WaveClass::Unlimbo(Coord const & coord, Dir256 facing)
 {
 	if (GameActive && IsInLimbo && !IsDown) {
@@ -438,7 +438,7 @@ bool WaveClass::Unlimbo(Coord const & coord, Dir256 facing)
 	return false;
 }
 
-// FUNCTION: 0x0075F980
+// FUNCTION: GAMEMD 0x0075F980
 bool WaveClass::Limbo(void)
 {
 	if (GameActive && !IsInLimbo) {
@@ -456,7 +456,7 @@ bool WaveClass::Limbo(void)
 	return false;
 }
 
-// FUNCTION: 0x0075F9F0
+// FUNCTION: GAMEMD 0x0075F9F0
 void WaveClass::Draw_It(Point2D const & point, Rect const & cliprect) const
 {
 	if (Scen->Special.IsFogOfWar && Map.Is_Fogged(StartCoord) && Map.Is_Fogged(EndCoord)) return;
@@ -475,7 +475,7 @@ void WaveClass::Draw_It(Point2D const & point, Rect const & cliprect) const
 	}
 }
 
-// FUNCTION: 0x00760190
+// FUNCTION: GAMEMD 0x00760190
 void WaveClass::FUN_00760190(int x, int xoff, int y, unsigned short * buffer) const
 {
 	int radius = RadiusTable[y][abs(x - WaveStartMiddle.X - xoff)];
@@ -494,7 +494,7 @@ void WaveClass::FUN_00760190(int x, int xoff, int y, unsigned short * buffer) co
 	*buffer = DSurface::Build_Hicolor_Pixel(MIN(255, red), green, MIN(255, blue));
 }
 
-// FUNCTION: 0x00760F50
+// FUNCTION: GAMEMD 0x00760F50
 void WaveClass::AI(void)
 {
 	int i;
@@ -530,7 +530,7 @@ void WaveClass::AI(void)
 	}
 }
 
-// FUNCTION: 0x00761030
+// FUNCTION: GAMEMD 0x00761030
 void WaveClass::Sonic_AI(void)
 {
 	Update_Wave();
@@ -545,7 +545,7 @@ void WaveClass::Sonic_AI(void)
 	}
 }
 
-// FUNCTION: 0x007610A0
+// FUNCTION: GAMEMD 0x007610A0
 void WaveClass::FUN_007610A0(void)
 {
 	Update_Wave();
@@ -557,7 +557,7 @@ void WaveClass::FUN_007610A0(void)
 	}
 }
 
-// FUNCTION: 0x007610D0
+// FUNCTION: GAMEMD 0x007610D0
 void WaveClass::Laser_AI(void)
 {
 	LaserEC -= 6;
@@ -581,7 +581,7 @@ static inline bool _Differs(Cell const & a, Coord const & c)
 	return a != c.As_Cell();
 }
 
-// FUNCTION: 0x007610F0
+// FUNCTION: GAMEMD 0x007610F0
 void WaveClass::Wave_Recalc_Affected_Cells(void)
 {
 	AffectedCells.Clear();
@@ -630,39 +630,56 @@ void WaveClass::Wave_Recalc_Affected_Cells(void)
 	}
 }
 
-// FUNCTION: 0x00762060
+// FUNCTION: GAMEMD 0x00762060
 void WaveClass::FUN_00762060(void)
 {
 }
 
-// FUNCTION: 0x00762AE0
+// FUNCTION: GAMEMD 0x00762AE0
 void WaveClass::FUN_00762AE0(void)
 {
 }
 
-// FUNCTION: 0x007631F0
+// FUNCTION: GAMEMD 0x007631F0
 RTTIType WaveClass::Fetch_RTTI(void) const
 {
 	return RTTI_WAVE;
 }
 
-// FUNCTION: 0x00763200 WaveClass::~WaveClass
+// SYNTHETIC: GAMEMD 0x00763200
+// ??_GWaveClass@@UAEPAXI@Z
 
-// FUNCTION: 0x007632D0 ?$DynamicVectorClass@PAVCellClass@@::?$DynamicVectorClass@PAVCellClass@@
-// FUNCTION: 0x00763330 ?$DynamicVectorClass@PAVCellClass@@::Add
+// TEMPLATE: GAMEMD 0x007632D0
+// ??0?$DynamicVectorClass@PAVCellClass@@@@QAE@IPBQAVCellClass@@@Z
+// TEMPLATE: GAMEMD 0x00763330
+// ?Add@?$DynamicVectorClass@PAVCellClass@@@@QAE_NABQAVCellClass@@@Z
 template class DynamicVectorClass<CellClass *>;
 
-// FUNCTION: 0x00763380 $E2
-// FUNCTION: 0x007633B0 $E5
-// FUNCTION: 0x007633D0 $E8
-// FUNCTION: 0x007633F0 $E11
-// FUNCTION: 0x00763410 $E14
-// FUNCTION: 0x00763430 $E17
-// FUNCTION: 0x00763450 $E20
-// FUNCTION: 0x00763490 $E23
-// FUNCTION: 0x007634C0 $E26
-// FUNCTION: 0x007634F0 $E29
-// FUNCTION: 0x00763520 $E32
-// FUNCTION: 0x00763530 $E35
-// FUNCTION: 0x00763550 $E38
-// FUNCTION: 0x00763570 $E41
+// SYNTHETIC: GAMEMD 0x00763380 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x007633B0 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x007633D0 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x007633F0 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x00763410 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x00763430 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x00763450 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x00763490 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x007634C0 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x007634F0 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x00763520 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x00763530 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x00763550 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x00763570 SYMBOL
+// _$E41

@@ -50,7 +50,7 @@ inline void Matrix3D::Multiply(const Matrix3D & A, const Matrix3D & B, Matrix3D 
 	set_result->Row[2].W = a20 * b03 + a21 * b13 + a22 * b23 + A.Row[2].W;
 }
 
-// FUNCTION: 0x005AE5E0
+// FUNCTION: GAMEMD 0x005AE5E0
 Matrix3D::Matrix3D(float m[12])
 {
 	for (int i = 0; i < 12; i++) {
@@ -58,13 +58,13 @@ Matrix3D::Matrix3D(float m[12])
 	}
 }
 
-// FUNCTION: 0x005AE610
+// FUNCTION: GAMEMD 0x005AE610
 Matrix3D::Matrix3D(const Matrix3DStruct & m)
 {
 	Matrix3DStruct_To_Matrix3D(*this, m);
 }
 
-// FUNCTION: 0x005AE630
+// FUNCTION: GAMEMD 0x005AE630
 Matrix3D::Matrix3D
 (
 	float m11,float m12,float m13,float m14,
@@ -77,7 +77,7 @@ Matrix3D::Matrix3D
 	Row[2].Set(m31,m32,m33,m34);
 }
 
-// FUNCTION: 0x005AE690
+// FUNCTION: GAMEMD 0x005AE690
 Matrix3D::Matrix3D
 (
 	const Vector3	&x,
@@ -102,7 +102,7 @@ Matrix3D::Matrix3D
 	Row[2].W = pos.Z;
 }
 
-// FUNCTION: 0x005AE6F0
+// FUNCTION: GAMEMD 0x005AE6F0
 Matrix3D::Matrix3D(float zrot, float xrot)
 {
 	float(&m)[3][4] = (float(&)[3][4])*this;
@@ -127,13 +127,13 @@ Matrix3D::Matrix3D(float zrot, float xrot)
 	Rotate_Z(-zrot);
 }
 
-// FUNCTION: 0x005AE750
+// FUNCTION: GAMEMD 0x005AE750
 Matrix3D::Matrix3D(const Vector3 & axis, float angle)
 {
 	Set(axis, angle);
 }
 
-// FUNCTION: 0x005AE860
+// FUNCTION: GAMEMD 0x005AE860
 void Matrix3D::Make_Identity(void)
 {
 	Row[0].Set(1,0,0,0);
@@ -141,7 +141,7 @@ void Matrix3D::Make_Identity(void)
 	Row[2].Set(0,0,1,0);
 }
 
-// FUNCTION: 0x005AE890
+// FUNCTION: GAMEMD 0x005AE890
 void Matrix3D::Translate(float x, float y, float z)
 {
 	Row[0].W += (float)(Row[0].X*x + Row[0].Y*y + Row[0].Z*z);
@@ -149,7 +149,7 @@ void Matrix3D::Translate(float x, float y, float z)
 	Row[2].W += (float)(Row[2].X*x + Row[2].Y*y + Row[2].Z*z);
 }
 
-// FUNCTION: 0x005AE8F0
+// FUNCTION: GAMEMD 0x005AE8F0
 void Matrix3D::Translate(Vector3 const & t)
 {
 	Translate_X(t[0]);
@@ -157,7 +157,7 @@ void Matrix3D::Translate(Vector3 const & t)
 	Translate_Z(t[2]);
 }
 
-// FUNCTION: 0x005AE980
+// FUNCTION: GAMEMD 0x005AE980
 void Matrix3D::Translate_X(float x)
 {
 	Row[0].W += (float)(Row[0].X*x);
@@ -165,7 +165,7 @@ void Matrix3D::Translate_X(float x)
 	Row[2].W += (float)(Row[2].X*x);
 }
 
-// FUNCTION: 0x005AE9B0
+// FUNCTION: GAMEMD 0x005AE9B0
 void Matrix3D::Translate_Y(float y)
 {
 	Row[0].W += (float)(Row[0].Y*y);
@@ -173,7 +173,7 @@ void Matrix3D::Translate_Y(float y)
 	Row[2].W += (float)(Row[2].Y*y);
 }
 
-// FUNCTION: 0x005AE9E0
+// FUNCTION: GAMEMD 0x005AE9E0
 void Matrix3D::Translate_Z(float z)
 {
 	Row[0].W += (float)(Row[0].Z*z);
@@ -181,7 +181,7 @@ void Matrix3D::Translate_Z(float z)
 	Row[2].W += (float)(Row[2].Z*z);
 }
 
-// FUNCTION: 0x005AEA10
+// FUNCTION: GAMEMD 0x005AEA10
 void Matrix3D::Scale(float scale)
 {
 	Row[0].X *= scale;
@@ -195,7 +195,7 @@ void Matrix3D::Scale(float scale)
 	Row[2].Z *= scale;
 }
 
-// FUNCTION: 0x005AEA70
+// FUNCTION: GAMEMD 0x005AEA70
 void Matrix3D::Scale(float x, float y, float z)
 {
 	Row[0].X *= x;
@@ -209,7 +209,7 @@ void Matrix3D::Scale(float x, float y, float z)
 	Row[2].Z *= z;
 }
 
-// FUNCTION: 0x005AEAD0
+// FUNCTION: GAMEMD 0x005AEAD0
 void Matrix3D::Scale_X(float scale)
 {
 	Row[0].X *= scale;
@@ -217,7 +217,7 @@ void Matrix3D::Scale_X(float scale)
 	Row[2].X *= scale;
 }
 
-// FUNCTION: 0x005AEAF0
+// FUNCTION: GAMEMD 0x005AEAF0
 void Matrix3D::Scale_Y(float scale)
 {
 	Row[0].Y *= scale;
@@ -225,7 +225,7 @@ void Matrix3D::Scale_Y(float scale)
 	Row[2].Y *= scale;
 }
 
-// FUNCTION: 0x005AEB20
+// FUNCTION: GAMEMD 0x005AEB20
 void Matrix3D::Scale_Z(float scale)
 {
 	Row[0].Z *= scale;
@@ -233,7 +233,7 @@ void Matrix3D::Scale_Z(float scale)
 	Row[2].Z *= scale;
 }
 
-// FUNCTION: 0x005AEB50
+// FUNCTION: GAMEMD 0x005AEB50
 void Matrix3D::Shear_YZ(float y, float z)
 {
 	Row[0].X += y * Row[0].Y + z * Row[0].Z;
@@ -241,7 +241,7 @@ void Matrix3D::Shear_YZ(float y, float z)
 	Row[2].X += y * Row[2].Y + z * Row[2].Z;
 }
 
-// FUNCTION: 0x005AEBA0
+// FUNCTION: GAMEMD 0x005AEBA0
 void Matrix3D::Shear_XY(float x, float y)
 {
 	Row[0].Z += x * Row[0].X + y * Row[0].Y;
@@ -249,7 +249,7 @@ void Matrix3D::Shear_XY(float x, float y)
 	Row[2].Z += x * Row[2].X + y * Row[2].Y;
 }
 
-// FUNCTION: 0x005AEBF0
+// FUNCTION: GAMEMD 0x005AEBF0
 void Matrix3D::Shear_XZ(float x, float z)
 {
 	Row[0].Y += x * Row[0].X + z * Row[0].Z;
@@ -257,7 +257,7 @@ void Matrix3D::Shear_XZ(float x, float z)
 	Row[2].Y += x * Row[2].X + z * Row[2].Z;
 }
 
-// FUNCTION: 0x005AEC40
+// FUNCTION: GAMEMD 0x005AEC40
 void Matrix3D::Pre_Rotate_X(float theta)
 {
 	float s = fastmath::sin(theta);
@@ -285,7 +285,7 @@ void Matrix3D::Pre_Rotate_X(float theta)
 	Row[2].W = m23 * c + m13 * s;
 }
 
-// FUNCTION: 0x005AEE50
+// FUNCTION: GAMEMD 0x005AEE50
 void Matrix3D::Pre_Rotate_Z(float theta)
 {
 	float s = fastmath::sin(theta);
@@ -313,7 +313,7 @@ void Matrix3D::Pre_Rotate_Z(float theta)
 	Row[1].W = m13 * c + m03 * s;
 }
 
-// FUNCTION: 0x005AEF60
+// FUNCTION: GAMEMD 0x005AEF60
 void Matrix3D::Rotate_X(float theta)
 {
 	float tmp1,tmp2;
@@ -335,7 +335,7 @@ void Matrix3D::Rotate_X(float theta)
 	Row[2].Z = (float)(-s*tmp1 + c*tmp2);
 }
 
-// FUNCTION: 0x005AF000
+// FUNCTION: GAMEMD 0x005AF000
 void Matrix3D::Rotate_X(float s,float c)
 {
 	float tmp1,tmp2;
@@ -353,7 +353,7 @@ void Matrix3D::Rotate_X(float s,float c)
 	Row[2].Z = (float)(-s*tmp1 + c*tmp2);
 }
 
-// FUNCTION: 0x005AF080
+// FUNCTION: GAMEMD 0x005AF080
 void Matrix3D::Rotate_Y(float theta)
 {
 	float tmp1,tmp2;
@@ -375,7 +375,7 @@ void Matrix3D::Rotate_Y(float theta)
 	Row[2].Z = (float)(s*tmp1 + c*tmp2);
 }
 
-// FUNCTION: 0x005AF120
+// FUNCTION: GAMEMD 0x005AF120
 void Matrix3D::Rotate_Y(float s,float c)
 {
 	float tmp1,tmp2;
@@ -393,7 +393,7 @@ void Matrix3D::Rotate_Y(float s,float c)
 	Row[2].Z = (float)(s*tmp1 + c*tmp2);
 }
 
-// FUNCTION: 0x005AF1A0
+// FUNCTION: GAMEMD 0x005AF1A0
 void Matrix3D::Rotate_Z(float theta)
 {
 	float tmp1,tmp2;
@@ -415,7 +415,7 @@ void Matrix3D::Rotate_Z(float theta)
 	Row[2].Y = (float)(-s*tmp1 + c*tmp2);
 }
 
-// FUNCTION: 0x005AF240
+// FUNCTION: GAMEMD 0x005AF240
 void Matrix3D::Rotate_Z(float s,float c)
 {
 	float tmp1,tmp2;
@@ -433,49 +433,49 @@ void Matrix3D::Rotate_Z(float s,float c)
 	Row[2].Y = (float)(-s*tmp1 + c*tmp2);
 }
 
-// FUNCTION: 0x005AF2C0
+// FUNCTION: GAMEMD 0x005AF2C0
 float Matrix3D::Get_X_Val(void)
 {
 	Vector3 v = (*this) * Vector3(0, 0, 0);
 	return(v.X);
 }
 
-// FUNCTION: 0x005AF310
+// FUNCTION: GAMEMD 0x005AF310
 float Matrix3D::Get_Y_Val(void)
 {
 	Vector3 v = (*this) * Vector3(0, 0, 0);
 	return(v.Y);
 }
 
-// FUNCTION: 0x005AF360
+// FUNCTION: GAMEMD 0x005AF360
 float Matrix3D::Get_Z_Val(void)
 {
 	Vector3 v = (*this) * Vector3(0, 0, 0);
 	return(v.Z);
 }
 
-// FUNCTION: 0x005AF3B0
+// FUNCTION: GAMEMD 0x005AF3B0
 float Matrix3D::Get_X_Rotation(void)
 {
 	Vector3 v = (*this) * Vector3(0, 1, 0);
 	return(fastmath::atan2(v.Z, v.Y));
 }
 
-// FUNCTION: 0x005AF410
+// FUNCTION: GAMEMD 0x005AF410
 float Matrix3D::Get_Y_Rotation(void)
 {
 	Vector3 v = (*this) * Vector3(0, 0, 1);
 	return(fastmath::atan2(v.X, v.Z));
 }
 
-// FUNCTION: 0x005AF470
+// FUNCTION: GAMEMD 0x005AF470
 float Matrix3D::Get_Z_Rotation(void)
 {
 	Vector3 v = (*this) * Vector3(1, 0, 0);
 	return(fastmath::atan2(v.Y, v.X));
 }
 
-// FUNCTION: 0x005AF4D0
+// FUNCTION: GAMEMD 0x005AF4D0
 Vector3 Matrix3D::Rotate_Vector(Vector3 const & vect)
 {
 	return(Vector3(
@@ -485,7 +485,7 @@ Vector3 Matrix3D::Rotate_Vector(Vector3 const & vect)
 	);
 }
 
-// FUNCTION: 0x005AF710
+// FUNCTION: GAMEMD 0x005AF710
 void Matrix3D::Obj_Look_At(const Vector3 &p, const Vector3 &t, float roll)
 {
 	float sinp,cosp;
@@ -541,7 +541,7 @@ void Matrix3D::Obj_Look_At(const Vector3 &p, const Vector3 &t, float roll)
 	Row[2].W = p.Z;
 }
 
-// FUNCTION: 0x005AF980
+// FUNCTION: GAMEMD 0x005AF980
 Matrix3D operator * (const Matrix3D & a, const Matrix3D & b)
 {
 	Matrix3D c;
@@ -549,14 +549,14 @@ Matrix3D operator * (const Matrix3D & a, const Matrix3D & b)
 	return(c);
 }
 
-// FUNCTION: 0x005AFC00
+// FUNCTION: GAMEMD 0x005AFC00
 Matrix3D & Matrix3D::Matrix3DStruct_To_Matrix3D(Matrix3D & d, const Matrix3DStruct &s)
 {
 	memcpy(&d, &s, sizeof(Matrix3D));
 	return d;
 }
 
-// FUNCTION: 0x005AFC20
+// FUNCTION: GAMEMD 0x005AFC20
 Matrix3D Matrix3D::Orthogonal_Inverse(Matrix3D const & src)
 {
 	Matrix3D inv;
@@ -591,34 +591,44 @@ extern const double DAT_007E1730;
 extern const double DAT_007E1738;
 extern const double DAT_007E1740;
 
-// FUNCTION: 0x005AFCE0 $E2
+// SYNTHETIC: GAMEMD 0x005AFCE0 SYMBOL
+// _$E2
 double DAT_00ABEDF8 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x005AFD10 $E5
+// SYNTHETIC: GAMEMD 0x005AFD10 SYMBOL
+// _$E5
 double DAT_00ABEE48 = DAT_00ABEDF8 / DAT_007EDB58;
 
-// FUNCTION: 0x005AFD30 $E8
+// SYNTHETIC: GAMEMD 0x005AFD30 SYMBOL
+// _$E8
 double DAT_00ABEE30 = DAT_007E1718 / DAT_00ABEE48;
 
-// FUNCTION: 0x005AFD50 $E11
+// SYNTHETIC: GAMEMD 0x005AFD50 SYMBOL
+// _$E11
 double DAT_00ABEE28 = DAT_007E1720 * DAT_007EDB60;
 
-// FUNCTION: 0x005AFD70 $E14
+// SYNTHETIC: GAMEMD 0x005AFD70 SYMBOL
+// _$E14
 double DAT_00ABEE00 = DAT_007E1728 * DAT_007EDB60;
 
-// FUNCTION: 0x005AFD90 $E17
+// SYNTHETIC: GAMEMD 0x005AFD90 SYMBOL
+// _$E17
 double DAT_00ABEDD8 = DAT_007E1730 * DAT_007EDB60;
 
-// FUNCTION: 0x005AFDB0 $E20
+// SYNTHETIC: GAMEMD 0x005AFDB0 SYMBOL
+// _$E20
 int DAT_00ABEE50 = (int)(fastmath::tan(DAT_00ABEDD8 - DAT_00ABEE00) * DAT_007E1738 * DAT_00ABEDF8);
 
-// FUNCTION: 0x005AFDF0 $E23
+// SYNTHETIC: GAMEMD 0x005AFDF0 SYMBOL
+// _$E23
 double DAT_00ABEE08 = fastmath::atan(DAT_00ABEE50 * DAT_007E1740);
 
-// FUNCTION: 0x005AFE20 $E26
+// SYNTHETIC: GAMEMD 0x005AFE20 SYMBOL
+// _$E26
 double DAT_00ABEE20 = fastmath::atan((DAT_00ABEE50 * 2) / DAT_00ABEDF8);
 
-// FUNCTION: 0x005AFE50 $E29
+// SYNTHETIC: GAMEMD 0x005AFE50 SYMBOL
+// _$E29
 int DAT_00ABEE44 = (int)(DAT_00ABEE50 * 4 + DAT_007E1738);
 
 struct ShortPair {
@@ -641,14 +651,18 @@ struct IntQuad {
 	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
 };
 
-// FUNCTION: 0x005AFE80 $E32
+// SYNTHETIC: GAMEMD 0x005AFE80 SYMBOL
+// _$E32
 ShortPair DAT_00ABEDF0;
 
-// FUNCTION: 0x005AFE90 $E35
+// SYNTHETIC: GAMEMD 0x005AFE90 SYMBOL
+// _$E35
 IntTriple DAT_00ABEE10;
 
-// FUNCTION: 0x005AFEB0 $E38
+// SYNTHETIC: GAMEMD 0x005AFEB0 SYMBOL
+// _$E38
 IntPairZ DAT_00ABEE38;
 
-// FUNCTION: 0x005AFED0 $E41
+// SYNTHETIC: GAMEMD 0x005AFED0 SYMBOL
+// _$E41
 IntQuad DAT_00ABEDE0;

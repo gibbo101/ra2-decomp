@@ -52,7 +52,7 @@ extern const double DAT_007E1740;
 extern const double DAT_007E3868;
 extern const double DAT_007E3870;
 
-// FUNCTION: 0x0042E0B0
+// FUNCTION: GAMEMD 0x0042E0B0
 ProgressBarClass::ProgressBarClass(int x, int y, int width, int height, int forecolor, int backcolor, int bordercolor) :
 	X(x),
 	Y(y),
@@ -67,14 +67,14 @@ ProgressBarClass::ProgressBarClass(int x, int y, int width, int height, int fore
 {
 }
 
-// FUNCTION: 0x0042E100
+// FUNCTION: GAMEMD 0x0042E100
 bool ProgressBarClass::Is_Horizontal(void) const
 {
 	if (Width > Height) return(true);
 	return(false);
 }
 
-// FUNCTION: 0x0042E110
+// FUNCTION: GAMEMD 0x0042E110
 bool ProgressBarClass::Update(double value)
 {
 	CurrentValue = value;
@@ -86,7 +86,7 @@ bool ProgressBarClass::Update(double value)
 	return(false);
 }
 
-// FUNCTION: 0x0042E150
+// FUNCTION: GAMEMD 0x0042E150
 void ProgressBarClass::Outline(void) const
 {
 	if (Is_Outlined()) {
@@ -94,7 +94,7 @@ void ProgressBarClass::Outline(void) const
 	}
 }
 
-// FUNCTION: 0x0042E1C0
+// FUNCTION: GAMEMD 0x0042E1C0
 void ProgressBarClass::Redraw(void) const
 {
 	Hide_Mouse();
@@ -139,46 +139,60 @@ void ProgressBarClass::Redraw(void) const
 	bar->IsDrawn = true;
 }
 
-// FUNCTION: 0x0042E410 ?$TRect@H::?$TRect@H
+// TEMPLATE: GAMEMD 0x0042E410
+// ??0?$TRect@H@@QAE@HHHH@Z
 template class TRect<int>;
 
-// FUNCTION: 0x0042E430 $E24
+// SYNTHETIC: GAMEMD 0x0042E430 SYMBOL
+// _$E24
 double DAT_0089C318 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x0042E460 $E27
+// SYNTHETIC: GAMEMD 0x0042E460 SYMBOL
+// _$E27
 double DAT_0089C368 = DAT_0089C318 / DAT_007E3868;
 
-// FUNCTION: 0x0042E480 $E30
+// SYNTHETIC: GAMEMD 0x0042E480 SYMBOL
+// _$E30
 double DAT_0089C350 = DAT_007E1718 / DAT_0089C368;
 
-// FUNCTION: 0x0042E4A0 $E33
+// SYNTHETIC: GAMEMD 0x0042E4A0 SYMBOL
+// _$E33
 double DAT_0089C348 = DAT_007E1720 * DAT_007E3870;
 
-// FUNCTION: 0x0042E4C0 $E36
+// SYNTHETIC: GAMEMD 0x0042E4C0 SYMBOL
+// _$E36
 double DAT_0089C320 = DAT_007E1728 * DAT_007E3870;
 
-// FUNCTION: 0x0042E4E0 $E39
+// SYNTHETIC: GAMEMD 0x0042E4E0 SYMBOL
+// _$E39
 double DAT_0089C2F8 = DAT_007E1730 * DAT_007E3870;
 
-// FUNCTION: 0x0042E500 $E42
+// SYNTHETIC: GAMEMD 0x0042E500 SYMBOL
+// _$E42
 int DAT_0089C370 = (int)(FUN_004CAD50(DAT_0089C2F8 - DAT_0089C320) * DAT_007E1738 * DAT_0089C318);
 
-// FUNCTION: 0x0042E540 $E45
+// SYNTHETIC: GAMEMD 0x0042E540 SYMBOL
+// _$E45
 double DAT_0089C328 = FUN_004CADE0(DAT_0089C370 * DAT_007E1740);
 
-// FUNCTION: 0x0042E570 $E48
+// SYNTHETIC: GAMEMD 0x0042E570 SYMBOL
+// _$E48
 double DAT_0089C340 = FUN_004CADE0((DAT_0089C370 * 2) / DAT_0089C318);
 
-// FUNCTION: 0x0042E5A0 $E51
+// SYNTHETIC: GAMEMD 0x0042E5A0 SYMBOL
+// _$E51
 int DAT_0089C364 = (int)(DAT_0089C370 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x0042E5D0 $E54
+// SYNTHETIC: GAMEMD 0x0042E5D0 SYMBOL
+// _$E54
 ShortPair DAT_0089C310;
 
-// FUNCTION: 0x0042E5E0 $E57
+// SYNTHETIC: GAMEMD 0x0042E5E0 SYMBOL
+// _$E57
 IntTriple DAT_0089C330;
 
-// FUNCTION: 0x0042E600 Reset_Bar_View
+// FUNCTION: GAMEMD 0x0042E600
+// Reset_Bar_View
 void Reset_Bar_View(void)
 {
 	DAT_0089C360 = 0;
@@ -186,5 +200,6 @@ void Reset_Bar_View(void)
 	DAT_0089C35C = 0x80;
 }
 
-// FUNCTION: 0x0042E620 $E60
+// SYNTHETIC: GAMEMD 0x0042E620 SYMBOL
+// _$E60
 IntQuad DAT_0089C300;

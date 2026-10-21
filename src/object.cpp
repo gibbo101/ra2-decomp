@@ -56,7 +56,7 @@ class SHPStruct
 };
 #define	GRAVITY	1.4
 
-// FUNCTION: 0x005F3900
+// FUNCTION: GAMEMD 0x005F3900
 ObjectClass::ObjectClass(void) :
 	BASECLASS(),
 	Riser(0,0,0),
@@ -96,13 +96,13 @@ ObjectClass::ObjectClass(void) :
 	AbstractFlags |= 2;
 }
 
-// FUNCTION: 0x005F3B50
+// FUNCTION: GAMEMD 0x005F3B50
 ObjectClass::ObjectClass(NoInitClass const & x) :
 	BASECLASS(x)
 {
 }
 
-// FUNCTION: 0x005F3B80
+// FUNCTION: GAMEMD 0x005F3B80
 ObjectClass::~ObjectClass(void)
 {
 	if (AttachedBomb != NULL) {
@@ -128,7 +128,7 @@ ObjectClass::~ObjectClass(void)
 	}
 }
 
-// FUNCTION: 0x005F3D90
+// FUNCTION: GAMEMD 0x005F3D90
 void ObjectClass::Clear_Line_Trail(void)
 {
 	if (LineTrailer != NULL) {
@@ -137,25 +137,25 @@ void ObjectClass::Clear_Line_Trail(void)
 	}
 }
 
-// FUNCTION: 0x005F3DB0
+// FUNCTION: GAMEMD 0x005F3DB0
 DirType AbstractClass::GetTargetDirection(AbstractClass const * target) const
 {
 	return(Direction(Center_Coord(), target->Center_Coord()));
 }
 
-// FUNCTION: 0x005F3E30
+// FUNCTION: GAMEMD 0x005F3E30
 void const * ObjectClass::Get_Image_Data(void) const
 {
 	return(Class_Of()->Get_Image_Data());
 }
 
-// FUNCTION: 0x005F3E50
+// FUNCTION: GAMEMD 0x005F3E50
 bool ObjectClass::Is_Type_Named(char const * name) const
 {
 	return(*Class_Of() == name);
 }
 
-// FUNCTION: 0x005F6060
+// FUNCTION: GAMEMD 0x005F6060
 void ObjectClass::Set_Height(int z)
 {
 	if (IsDown) {
@@ -167,7 +167,7 @@ void ObjectClass::Set_Height(int z)
 	}
 }
 
-// FUNCTION: 0x005F3E70
+// FUNCTION: GAMEMD 0x005F3E70
 void ObjectClass::AI(void)
 {
 	if (!IsInLimbo) {
@@ -230,7 +230,7 @@ void ObjectClass::AI(void)
 	}
 }
 
-// FUNCTION: 0x005F4160
+// FUNCTION: GAMEMD 0x005F4160
 void ObjectClass::Fall_From_Height(void)
 {
 	IsFalling = true;
@@ -252,19 +252,19 @@ void ObjectClass::Fall_From_Height(void)
 	}
 }
 
-// FUNCTION: 0x005F4240
+// FUNCTION: GAMEMD 0x005F4240
 ActionType ObjectClass::What_Action(ObjectClass const *, bool) const
 {
 	return(ACTION_NONE);
 }
 
-// FUNCTION: 0x005F4250
+// FUNCTION: GAMEMD 0x005F4250
 ActionType ObjectClass::What_Action(Cell const &, bool, bool) const
 {
 	return(ACTION_NONE);
 }
 
-// FUNCTION: 0x005F4260
+// FUNCTION: GAMEMD 0x005F4260
 LayerType ObjectClass::In_Which_Layer(void) const
 {
 	if (!In_Air()) {
@@ -276,135 +276,135 @@ LayerType ObjectClass::In_Which_Layer(void) const
 	return(LAYER_TOP);
 }
 
-// FUNCTION: 0x005F42A0
+// FUNCTION: GAMEMD 0x005F42A0
 int ObjectClass::Get_Ownable(void) const
 {
 	return(0x7FFFFFFF);
 }
 
-// FUNCTION: 0x005F42B0
+// FUNCTION: GAMEMD 0x005F42B0
 bool ObjectClass::Can_Repair(void) const
 {
 	return(false);
 }
 
-// FUNCTION: 0x005F42C0
+// FUNCTION: GAMEMD 0x005F42C0
 bool ObjectClass::Can_Demolish(void) const
 {
 	return(false);
 }
 
-// FUNCTION: 0x005F42D0
+// FUNCTION: GAMEMD 0x005F42D0
 bool ObjectClass::Can_Player_Fire(void) const
 {
 	return(false);
 }
 
-// FUNCTION: 0x005F42E0
+// FUNCTION: GAMEMD 0x005F42E0
 bool ObjectClass::Can_Player_Move(void) const
 {
 	return(false);
 }
 
-// FUNCTION: 0x005F42F0
+// FUNCTION: GAMEMD 0x005F42F0
 void ObjectClass::RegisterDestruction(TechnoClass *)
 {
 }
 
-// FUNCTION: 0x005F4300
+// FUNCTION: GAMEMD 0x005F4300
 void ObjectClass::Record_The_Kill(HouseClass *)
 {
 }
 
-// FUNCTION: 0x005F4310
+// FUNCTION: GAMEMD 0x005F4310
 void ObjectClass::Do_Shimmer(void)
 {
 }
 
-// FUNCTION: 0x005F4320
+// FUNCTION: GAMEMD 0x005F4320
 int ObjectClass::Exit_Object(TechnoClass *, Cell)
 {
 	return(0);
 }
 
-// FUNCTION: 0x005F4330
+// FUNCTION: GAMEMD 0x005F4330
 void ObjectClass::Hidden(void)
 {
 }
 
-// FUNCTION: 0x005F4340
+// FUNCTION: GAMEMD 0x005F4340
 void ObjectClass::Look(bool, bool)
 {
 }
 
-// FUNCTION: 0x005F4350
+// FUNCTION: GAMEMD 0x005F4350
 bool ObjectClass::Active_Click_With(ActionType, ObjectClass *, bool)
 {
 	return(false);
 }
 
-// FUNCTION: 0x005F4360
+// FUNCTION: GAMEMD 0x005F4360
 bool ObjectClass::Active_Click_With(ActionType, Cell const &, Cell const &, bool)
 {
 	return(false);
 }
 
-// FUNCTION: 0x005F4370
+// FUNCTION: GAMEMD 0x005F4370
 void ObjectClass::Clicked_As_Target(int)
 {
 }
 
-// FUNCTION: 0x005F4380
+// FUNCTION: GAMEMD 0x005F4380
 bool ObjectClass::In_Range(Coord const &, int) const
 {
 	return(false);
 }
 
-// FUNCTION: 0x005F4390
+// FUNCTION: GAMEMD 0x005F4390
 int ObjectClass::Weapon_Range(int) const
 {
 	return(0);
 }
 
-// FUNCTION: 0x005F43A0
+// FUNCTION: GAMEMD 0x005F43A0
 void ObjectClass::Scatter(Coord const &, bool, bool)
 {
 }
 
-// FUNCTION: 0x005F43B0
+// FUNCTION: GAMEMD 0x005F43B0
 bool ObjectClass::Catch_Fire(void)
 {
 	return(false);
 }
 
-// FUNCTION: 0x005F43C0
+// FUNCTION: GAMEMD 0x005F43C0
 void ObjectClass::Fire_Out(void)
 {
 }
 
-// FUNCTION: 0x005F43D0
+// FUNCTION: GAMEMD 0x005F43D0
 int ObjectClass::Value(void) const
 {
 	return(0);
 }
 
-// FUNCTION: 0x005F43E0
+// FUNCTION: GAMEMD 0x005F43E0
 MissionType ObjectClass::Get_Mission(void) const
 {
 	return(MISSION_NONE);
 }
 
-// FUNCTION: 0x005F43F0
+// FUNCTION: GAMEMD 0x005F43F0
 void ObjectClass::Repair(int)
 {
 }
 
-// FUNCTION: 0x005F4400
+// FUNCTION: GAMEMD 0x005F4400
 void ObjectClass::Sell_Back(int)
 {
 }
 
-// FUNCTION: 0x005F4410
+// FUNCTION: GAMEMD 0x005F4410
 void ObjectClass::Move(FacingType facing)
 {
 	Mark(MARK_UP);
@@ -415,7 +415,7 @@ void ObjectClass::Move(FacingType facing)
 	Mark(MARK_DOWN);
 }
 
-// FUNCTION: 0x005F44A0
+// FUNCTION: GAMEMD 0x005F44A0
 void ObjectClass::Unselect(void)
 {
 	if (IsSelected) {
@@ -427,7 +427,7 @@ void ObjectClass::Unselect(void)
 	}
 }
 
-// FUNCTION: 0x005F4520
+// FUNCTION: GAMEMD 0x005F4520
 bool ObjectClass::Select(void)
 {
 	if (!Unsorted::ArmageddonMode && (IsInLimbo || IsSelected || !CanBeSelected())) {
@@ -466,7 +466,7 @@ bool ObjectClass::Select(void)
 	return(true);
 }
 
-// FUNCTION: 0x005F4730
+// FUNCTION: GAMEMD 0x005F4730
 Rect ObjectClass::Get_Visual_Rect(void) const
 {
 	Point2D point;
@@ -491,7 +491,7 @@ Rect ObjectClass::Get_Visual_Rect(void) const
 	return(RECT_NONE);
 }
 
-// FUNCTION: 0x005F4870
+// FUNCTION: GAMEMD 0x005F4870
 Rect ObjectClass::Get_Render_Rect(void)
 {
 	Point2D drawpoint;
@@ -524,7 +524,7 @@ Rect ObjectClass::Get_Render_Rect(void)
 	return(result);
 }
 
-// FUNCTION: 0x005F4B10
+// FUNCTION: GAMEMD 0x005F4B10
 bool ObjectClass::Render(Rect & cliprect, bool forced, bool extras_only) const
 {
 	Point2D point;
@@ -552,7 +552,7 @@ bool ObjectClass::Render(Rect & cliprect, bool forced, bool extras_only) const
 	return(false);
 }
 
-// FUNCTION: 0x005F4D10
+// FUNCTION: GAMEMD 0x005F4D10
 void ObjectClass::Mark_For_Redraw(void)
 {
 	if (!IsToDisplay) {
@@ -561,7 +561,7 @@ void ObjectClass::Mark_For_Redraw(void)
 	}
 }
 
-// FUNCTION: 0x005F4D30
+// FUNCTION: GAMEMD 0x005F4D30
 bool ObjectClass::Limbo(void)
 {
 	if (Game::IsActive && !IsInLimbo) {
@@ -601,7 +601,7 @@ bool ObjectClass::Limbo(void)
 	return(false);
 }
 
-// FUNCTION: 0x005F4EC0
+// FUNCTION: GAMEMD 0x005F4EC0
 bool ObjectClass::Unlimbo(Coord const & coord, Dir256 )
 {
 	if (coord == COORD_NONE) {
@@ -676,7 +676,7 @@ bool ObjectClass::Unlimbo(Coord const & coord, Dir256 )
 	return(false);
 }
 
-// FUNCTION: 0x005F5230
+// FUNCTION: GAMEMD 0x005F5230
 void ObjectClass::Detach(AbstractClass const * target, bool all)
 {
 	if (Tag == target) {
@@ -699,7 +699,7 @@ void ObjectClass::Detach(AbstractClass const * target, bool all)
 	}
 }
 
-// FUNCTION: 0x005F5280
+// FUNCTION: GAMEMD 0x005F5280
 void ObjectClass::Detach_All(bool all)
 {
 	if (LineTrailer != NULL) {
@@ -735,7 +735,7 @@ void ObjectClass::Detach_All(bool all)
 	Detach_This_From_All(this, all);
 }
 
-// FUNCTION: 0x005F5320
+// FUNCTION: GAMEMD 0x005F5320
 RadioMessageType ObjectClass::Receive_Message(RadioClass *, RadioMessageType message, int & )
 {
 	switch (message) {
@@ -755,7 +755,7 @@ RadioMessageType ObjectClass::Receive_Message(RadioClass *, RadioMessageType mes
 	return(RADIO_STATIC);
 }
 
-// FUNCTION: 0x005F5390
+// FUNCTION: GAMEMD 0x005F5390
 ResultType ObjectClass::Take_Damage(int & damage, int distance, WarheadTypeClass const * warhead, TechnoClass * source, bool forced, bool, HouseClass * killer)
 {
 	ResultType result = RESULT_NONE;
@@ -910,7 +910,7 @@ ResultType ObjectClass::Take_Damage(int & damage, int distance, WarheadTypeClass
 	return(result);
 }
 
-// FUNCTION: 0x005F5850
+// FUNCTION: GAMEMD 0x005F5850
 bool ObjectClass::Mark(MarkType mark)
 {
 	if (!IsInLimbo) {
@@ -947,13 +947,13 @@ bool ObjectClass::Mark(MarkType mark)
 	return(false);
 }
 
-// FUNCTION: 0x005F5930
+// FUNCTION: GAMEMD 0x005F5930
 bool ObjectClass::Revealed(HouseClass * house)
 {
 	return(house != NULL);
 }
 
-// FUNCTION: 0x005F5940
+// FUNCTION: GAMEMD 0x005F5940
 bool ObjectClass::Paradrop(Coord const & coord)
 {
 	CellClass * cellptr;
@@ -1002,7 +1002,7 @@ bool ObjectClass::Paradrop(Coord const & coord)
 	return(false);
 }
 
-// FUNCTION: 0x005F5B50
+// FUNCTION: GAMEMD 0x005F5B50
 bool ObjectClass::Attach_Tag(TagClass * tag)
 {
 	if (Tag != NULL) {
@@ -1019,7 +1019,7 @@ bool ObjectClass::Attach_Tag(TagClass * tag)
 	return(false);
 }
 
-// FUNCTION: 0x005F5B90
+// FUNCTION: GAMEMD 0x005F5B90
 Cell const * ObjectClass::Occupy_List(bool placement) const
 {
 	static Cell const _list[] = {REFRESH_EOL};
@@ -1031,21 +1031,22 @@ Cell const * ObjectClass::Occupy_List(bool placement) const
 	return(Class_Of()->Occupy_List(placement));
 }
 
-// FUNCTION: 0x005F5C10 $E165
+// SYNTHETIC: GAMEMD 0x005F5C10 SYMBOL
+// _$E165
 
-// FUNCTION: 0x005F5C20
+// FUNCTION: GAMEMD 0x005F5C20
 BuildingClass * ObjectClass::Who_Can_Build_Me(bool intheory, bool legal) const
 {
 	return(Class_Of()->Who_Can_Build_Me(intheory, legal, false, Owner_HouseClass()));
 }
 
-// FUNCTION: 0x005F5C60
+// FUNCTION: GAMEMD 0x005F5C60
 double ObjectClass::Get_Health_Ratio(void) const
 {
 	return((double)Strength / Class_Of()->MaxStrength);
 }
 
-// FUNCTION: 0x005F5C80
+// FUNCTION: GAMEMD 0x005F5C80
 void ObjectClass::Set_Health_Ratio(double health)
 {
 	if (health > 0) {
@@ -1056,25 +1057,25 @@ void ObjectClass::Set_Health_Ratio(double health)
 	}
 }
 
-// FUNCTION: 0x005F5CD0
+// FUNCTION: GAMEMD 0x005F5CD0
 bool ObjectClass::Is_Red_HP(void) const
 {
 	return(HealthRatio <= Rule->ConditionRed && Strength > 0);
 }
 
-// FUNCTION: 0x005F5D20
+// FUNCTION: GAMEMD 0x005F5D20
 bool ObjectClass::Is_Yellow_HP(void) const
 {
 	return(HealthRatio > Rule->ConditionRed && HealthRatio <= Rule->ConditionYellow);
 }
 
-// FUNCTION: 0x005F5D90
+// FUNCTION: GAMEMD 0x005F5D90
 bool ObjectClass::Is_Green_HP(void) const
 {
 	return(HealthRatio > Rule->ConditionYellow);
 }
 
-// FUNCTION: 0x005F5DD0
+// FUNCTION: GAMEMD 0x005F5DD0
 HealthState ObjectClass::GetHealthStatus(void) const
 {
 	if (Is_Red_HP()) {
@@ -1086,7 +1087,7 @@ HealthState ObjectClass::GetHealthStatus(void) const
 	return(HEALTH_GREEN);
 }
 
-// FUNCTION: 0x005F5E80
+// FUNCTION: GAMEMD 0x005F5E80
 HRESULT STDMETHODCALLTYPE ObjectClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -1104,20 +1105,20 @@ HRESULT STDMETHODCALLTYPE ObjectClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x005F5F00
+// FUNCTION: GAMEMD 0x005F5F00
 int ObjectClass::Get_Cell_Height(void) const
 {
 	CellClass * cell = Get_Cell_Ptr();
 	return(cell->Height + (IsOnBridge ? BRIDGE_CELL_HEIGHT : 0));
 }
 
-// FUNCTION: 0x005F5F30
+// FUNCTION: GAMEMD 0x005F5F30
 int ObjectClass::Get_Height(void) const
 {
 	return(Position.Z);
 }
 
-// FUNCTION: 0x005F5F40
+// FUNCTION: GAMEMD 0x005F5F40
 int ObjectClass::Get_Height_AGL(void) const
 {
 	int height = Position.Z - Map.Get_Height_GL(PositionCoord);
@@ -1127,7 +1128,7 @@ int ObjectClass::Get_Height_AGL(void) const
 	return(height);
 }
 
-// FUNCTION: 0x005F5FA0
+// FUNCTION: GAMEMD 0x005F5FA0
 void ObjectClass::Set_Height_AGL(int height)
 {
 	if (IsOnBridge) {
@@ -1142,7 +1143,7 @@ void ObjectClass::Set_Height_AGL(int height)
 	}
 }
 
-// FUNCTION: 0x005F60A0
+// FUNCTION: GAMEMD 0x005F60A0
 void ObjectClass::Set_Occupy_Bit(Coord const & coord)
 {
 	if (Map.Get_Height_GL(coord) + BRIDGE_LEPTON_HEIGHT <= coord.Z && Map[coord].IsUnderBridge) {
@@ -1152,7 +1153,7 @@ void ObjectClass::Set_Occupy_Bit(Coord const & coord)
 	}
 }
 
-// FUNCTION: 0x005F6120
+// FUNCTION: GAMEMD 0x005F6120
 void ObjectClass::Clear_Occupy_Bit(Coord const & coord)
 {
 	if (Map.Get_Height_GL(coord) + BRIDGE_LEPTON_HEIGHT <= coord.Z && Map[coord].IsUnderBridge) {
@@ -1162,7 +1163,7 @@ void ObjectClass::Clear_Occupy_Bit(Coord const & coord)
 	}
 }
 
-// FUNCTION: 0x005F61A0
+// FUNCTION: GAMEMD 0x005F61A0
 VoxelDataStruct::~VoxelDataStruct(void)
 {
 	delete VoxLib;
@@ -1171,19 +1172,19 @@ VoxelDataStruct::~VoxelDataStruct(void)
 	MotLib = NULL;
 }
 
-// FUNCTION: 0x005F61F0
+// FUNCTION: GAMEMD 0x005F61F0
 bool ObjectClass::operator < (ObjectClass const & object) const
 {
 	return(Sort_Y() < object.Sort_Y());
 }
 
-// FUNCTION: 0x005F6220
+// FUNCTION: GAMEMD 0x005F6220
 bool ObjectClass::operator > (ObjectClass const & object) const
 {
 	return((Sort_Y() > object.Sort_Y()) ? true : false);
 }
 
-// FUNCTION: 0x005F6250
+// FUNCTION: GAMEMD 0x005F6250
 void ObjectClass::Compute_CRC(CRCEngine & crc) const
 {
 	BASECLASS::Compute_CRC(crc);
@@ -1213,7 +1214,7 @@ void ObjectClass::Compute_CRC(CRCEngine & crc) const
 	crc(Position.Z);
 }
 
-// FUNCTION: 0x005F6360
+// FUNCTION: GAMEMD 0x005F6360
 int ObjectClass::Distance(AbstractClass const * target) const
 {
 	if (target == NULL) {
@@ -1228,7 +1229,7 @@ int ObjectClass::Distance(AbstractClass const * target) const
 	return(dist);
 }
 
-// FUNCTION: 0x005F6440
+// FUNCTION: GAMEMD 0x005F6440
 int ObjectClass::Planar_Distance(AbstractClass const * target) const
 {
 	if (target == NULL) {
@@ -1243,7 +1244,7 @@ int ObjectClass::Planar_Distance(AbstractClass const * target) const
 	return(dist);
 }
 
-// FUNCTION: 0x005F6500
+// FUNCTION: GAMEMD 0x005F6500
 int ObjectClass::Relative_Distance(AbstractClass const * target) const
 {
 	if (target == NULL) {
@@ -1256,7 +1257,7 @@ int ObjectClass::Relative_Distance(AbstractClass const * target) const
 	return((pt.X * pt.X) + (pt.Y * pt.Y));
 }
 
-// FUNCTION: 0x005F6560
+// FUNCTION: GAMEMD 0x005F6560
 int ObjectClass::Relative_Distance(Coord const & coord) const
 {
 	Coord center = Center_Coord();
@@ -1264,19 +1265,19 @@ int ObjectClass::Relative_Distance(Coord const & coord) const
 	return((pt.X * pt.X) + (pt.Y * pt.Y));
 }
 
-// FUNCTION: 0x005F65A0
+// FUNCTION: GAMEMD 0x005F65A0
 Coord ObjectClass::Center_Coord(void) const
 {
 	return(PositionCoord);
 }
 
-// FUNCTION: 0x005F65D0
+// FUNCTION: GAMEMD 0x005F65D0
 void ObjectClass::Editor_Draw_It(Point2D const & point, Rect const & cliprect) const
 {
 	Draw_It(point, cliprect);
 }
 
-// FUNCTION: 0x005F65F0
+// FUNCTION: GAMEMD 0x005F65F0
 void ObjectClass::Delete_Me(void)
 {
 	if (AttachedBomb != NULL) {
@@ -1291,13 +1292,13 @@ void ObjectClass::Delete_Me(void)
 	ObjectsToDelete.Add(this);
 }
 
-// FUNCTION: 0x005F6690
+// FUNCTION: GAMEMD 0x005F6690
 bool ObjectClass::Is_Inactive(void) const
 {
 	return(IsActive==false);
 }
 
-// FUNCTION: 0x005F66A0
+// FUNCTION: GAMEMD 0x005F66A0
 Rect Vector_Rect(DynamicVectorClass<ObjectClass *> const & list)
 {
 	Rect bounds(0, 0, 0, 0);
@@ -1330,7 +1331,7 @@ Rect Vector_Rect(DynamicVectorClass<ObjectClass *> const & list)
 	return(bounds);
 }
 
-// FUNCTION: 0x005F6790
+// FUNCTION: GAMEMD 0x005F6790
 Coord Vector_Center(DynamicVectorClass<ObjectClass *> const & list)
 {
 	Coord center = Coord(0, 0, 0);
@@ -1344,7 +1345,7 @@ Coord Vector_Center(DynamicVectorClass<ObjectClass *> const & list)
 	return(center);
 }
 
-// FUNCTION: 0x005F6810
+// FUNCTION: GAMEMD 0x005F6810
 ObjectClass * Vector_Closest_Object(DynamicVectorClass<ObjectClass *> const & list, Coord const & coord)
 {
 	ObjectClass * closest = NULL;
@@ -1365,32 +1366,32 @@ ObjectClass * Vector_Closest_Object(DynamicVectorClass<ObjectClass *> const & li
 	return(closest);
 }
 
-// FUNCTION: 0x005F6940
+// FUNCTION: GAMEMD 0x005F6940
 void ObjectClass::Set_Coord(Coord const & coord)
 {
 	Position = coord;
 }
 
-// FUNCTION: 0x005F6960
+// FUNCTION: GAMEMD 0x005F6960
 CellClass * ObjectClass::Get_Cell_Ptr(void) const
 {
 	Map[Get_Coord()];
 	return(&Map[Get_Coord()]);
 }
 
-// FUNCTION: 0x005F69C0
+// FUNCTION: GAMEMD 0x005F69C0
 Cell ObjectClass::Get_Target_Cell(void) const
 {
 	return(Destination_Coord().As_Cell());
 }
 
-// FUNCTION: 0x005F6A10
+// FUNCTION: GAMEMD 0x005F6A10
 CellClass * ObjectClass::Get_Target_Cell_Ptr(void) const
 {
 	return(&Map[Destination_Coord().As_Cell()]);
 }
 
-// FUNCTION: 0x005F6A70
+// FUNCTION: GAMEMD 0x005F6A70
 bool ObjectClass::Is_Moving_Onto_Bridge(TechnoClass * docker) const
 {
 	bool bridge = IsOnBridge;
@@ -1415,12 +1416,12 @@ bool ObjectClass::Is_Moving_Onto_Bridge(TechnoClass * docker) const
 	return(bridge);
 }
 
-// FUNCTION: 0x005F6B50
+// FUNCTION: GAMEMD 0x005F6B50
 void ObjectClass::Set_Waypoint_Path(PathType path, char index)
 {
 }
 
-// FUNCTION: 0x005F6B60
+// FUNCTION: GAMEMD 0x005F6B60
 bool ObjectClass::On_Ground(void) const
 {
 	if (IsDown) {
@@ -1431,7 +1432,7 @@ bool ObjectClass::On_Ground(void) const
 	return(false);
 }
 
-// FUNCTION: 0x005F6B90
+// FUNCTION: GAMEMD 0x005F6B90
 bool ObjectClass::In_Air(void) const
 {
 	if (IsDown) {
@@ -1442,25 +1443,25 @@ bool ObjectClass::In_Air(void) const
 	return(false);
 }
 
-// FUNCTION: 0x005F6BC0
+// FUNCTION: GAMEMD 0x005F6BC0
 TechnoTypeClass const * ObjectClass::Techno_Type_Class(void) const
 {
 	return(0);
 }
 
-// FUNCTION: 0x005F6BD0
+// FUNCTION: GAMEMD 0x005F6BD0
 int ObjectClass::Sort_Y(void) const
 {
 	return(Render_Coord().Y + Render_Coord().X);
 }
 
-// FUNCTION: 0x005F6C10
+// FUNCTION: GAMEMD 0x005F6C10
 bool ObjectClass::Considered_Vehicle(void) const
 {
 	return(Get_Height_AGL() > -20);
 }
 
-// FUNCTION: 0x005F6C30
+// FUNCTION: GAMEMD 0x005F6C30
 bool ObjectClass::CanBeSelected(void) const
 {
 	if (IsDisguisedAs(PlayerPtr)) {
@@ -1471,19 +1472,19 @@ bool ObjectClass::CanBeSelected(void) const
 	return(Class_Of()->IsSelectable);
 }
 
-// FUNCTION: 0x005F6C70
+// FUNCTION: GAMEMD 0x005F6C70
 bool ObjectClass::CanBeSelectedNow(void) const
 {
 	return(CanBeSelected());
 }
 
-// FUNCTION: 0x005F6C80
+// FUNCTION: GAMEMD 0x005F6C80
 Coord ObjectClass::Docking_Coord(TechnoClass * ) const
 {
 	return(Center_Coord());
 }
 
-// FUNCTION: 0x005F6CB0
+// FUNCTION: GAMEMD 0x005F6CB0
 void ObjectClass::FUN_005F6CB0(int sound)
 {
 	CustomSound = sound;
@@ -1492,7 +1493,7 @@ void ObjectClass::FUN_005F6CB0(int sound)
 	}
 }
 
-// FUNCTION: 0x005F6CD0
+// FUNCTION: GAMEMD 0x005F6CD0
 bool ObjectClass::IsCrushable(TechnoClass * crusher) const
 {
 	if (crusher != NULL && crusher->Techno_Type_Class()->OmniCrusher && this != NULL && (AbstractFlags & 1) && !Techno_Type_Class()->OmniCrushResistant && Fetch_RTTI() != RTTI_BUILDING && !crusher->House->Is_Ally(this) && !IsIronCurtained()) {
@@ -1504,7 +1505,7 @@ bool ObjectClass::IsCrushable(TechnoClass * crusher) const
 	return(false);
 }
 
-// FUNCTION: 0x005F6DA0
+// FUNCTION: GAMEMD 0x005F6DA0
 void ObjectClass::AnimPointerExpired(AnimClass * anim)
 {
 	if (anim == Parachute) {
@@ -1512,19 +1513,34 @@ void ObjectClass::AnimPointerExpired(AnimClass * anim)
 	}
 }
 
-// FUNCTION: 0x005F6DC0 ObjectClass::~ObjectClass
+// SYNTHETIC: GAMEMD 0x005F6DC0
+// ??_GObjectClass@@UAEPAXI@Z
 
-// FUNCTION: 0x005F6DE0 $E2
-// FUNCTION: 0x005F6E10 $E5
-// FUNCTION: 0x005F6E30 $E8
-// FUNCTION: 0x005F6E50 $E11
-// FUNCTION: 0x005F6E70 $E14
-// FUNCTION: 0x005F6E90 $E17
-// FUNCTION: 0x005F6EB0 $E20
-// FUNCTION: 0x005F6EF0 $E23
-// FUNCTION: 0x005F6F20 $E26
-// FUNCTION: 0x005F6F50 $E29
-// FUNCTION: 0x005F6F80 $E32
-// FUNCTION: 0x005F6F90 $E35
-// FUNCTION: 0x005F6FB0 $E38
-// FUNCTION: 0x005F6FD0 $E47
+// SYNTHETIC: GAMEMD 0x005F6DE0 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x005F6E10 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x005F6E30 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x005F6E50 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x005F6E70 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x005F6E90 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x005F6EB0 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x005F6EF0 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x005F6F20 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x005F6F50 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x005F6F80 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x005F6F90 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x005F6FB0 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x005F6FD0 SYMBOL
+// _$E47

@@ -11,7 +11,7 @@
 #include "timer.h"
 #include <cstdio>
 
-// FUNCTION: 0x00774120
+// FUNCTION: GAMEMD 0x00774120
 WinModemClass::WinModemClass(void)
 {
 	SerialBuffer = new unsigned char [SIZE_OF_WINDOWS_SERIAL_BUFFER];
@@ -35,7 +35,7 @@ WinModemClass::WinModemClass(void)
 	PortHandle = INVALID_HANDLE_VALUE;
 }
 
-// FUNCTION: 0x00774170
+// FUNCTION: GAMEMD 0x00774170
 WinModemClass::~WinModemClass(void)
 {
 	if (PortHandle != INVALID_HANDLE_VALUE){
@@ -47,7 +47,7 @@ WinModemClass::~WinModemClass(void)
 	}
 }
 
-// FUNCTION: 0x007741C0
+// FUNCTION: GAMEMD 0x007741C0
 HKEY Get_Registry_Sub_Key (HKEY base_key, char const *search_key, bool close)
 {
 	char		class_string[1024];
@@ -119,7 +119,7 @@ HKEY Get_Registry_Sub_Key (HKEY base_key, char const *search_key, bool close)
 	return(0);
 }
 
-// FUNCTION: 0x00774310
+// FUNCTION: GAMEMD 0x00774310
 bool Get_Modem_Name_From_Registry(char *buffer, int buffer_len)
 {
 	HKEY	key;
@@ -148,7 +148,7 @@ bool Get_Modem_Name_From_Registry(char *buffer, int buffer_len)
 	return(TRUE);
 }
 
-// FUNCTION: 0x00774410
+// FUNCTION: GAMEMD 0x00774410
 HANDLE WinModemClass::Serial_Port_Open (char *device_name, int baud, int parity, int wordlen, int stopbits)
 {
 	HANDLE			com_handle;
@@ -257,7 +257,7 @@ HANDLE WinModemClass::Serial_Port_Open (char *device_name, int baud, int parity,
 	return(com_handle);
 }
 
-// FUNCTION: 0x00774670
+// FUNCTION: GAMEMD 0x00774670
 bool WinModemClass::Enter_Failsafe_Mode(void)
 {
 	DWORD error;
@@ -321,7 +321,7 @@ bool WinModemClass::Enter_Failsafe_Mode(void)
 	return(true);
 }
 
-// FUNCTION: 0x007747C0
+// FUNCTION: GAMEMD 0x007747C0
 void WinModemClass::Leave_Failsafe_Mode(void)
 {
 	DWORD error;
@@ -356,13 +356,13 @@ void WinModemClass::Leave_Failsafe_Mode(void)
 	Set_Serial_DTR(true);
 }
 
-// FUNCTION: 0x007748A0
+// FUNCTION: GAMEMD 0x007748A0
 void WinModemClass::Set_Modem_Dial_Type(WinCommDialMethodType method)
 {
 	DialingMethod = method;
 }
 
-// FUNCTION: 0x007748B0
+// FUNCTION: GAMEMD 0x007748B0
 unsigned WinModemClass::Get_Modem_Status(void)
 {
 	DWORD		modem_stat = 0;
@@ -378,7 +378,7 @@ unsigned WinModemClass::Get_Modem_Status(void)
 	return(return_stat);
 }
 
-// FUNCTION: 0x00774900
+// FUNCTION: GAMEMD 0x00774900
 void WinModemClass::Set_Serial_DTR(bool state)
 {
 	if (state){
@@ -393,7 +393,7 @@ void WinModemClass::Set_Serial_DTR(bool state)
 	DebugString("Set_Serial_DTR - EscapeCommFunction failed with error code %d, %s\n", GetLastError(), Last_Error_Text());
 }
 
-// FUNCTION: 0x00774950
+// FUNCTION: GAMEMD 0x00774950
 void WinModemClass::Serial_Port_Close (void)
 {
 	if (PortHandle != INVALID_HANDLE_VALUE){
@@ -403,7 +403,7 @@ void WinModemClass::Serial_Port_Close (void)
 	}
 }
 
-// FUNCTION: 0x00774980
+// FUNCTION: GAMEMD 0x00774980
 bool WinModemClass::Read_Serial_Chars (void)
 {
 	DWORD	bytes_read;
@@ -483,7 +483,7 @@ bool WinModemClass::Read_Serial_Chars (void)
 	return(total_bytes_read != 0);
 }
 
-// FUNCTION: 0x00774B30
+// FUNCTION: GAMEMD 0x00774B30
 int WinModemClass::Read_From_Serial_Port (unsigned char *dest_ptr, int buffer_len)
 {
 	int	bytes_read;
@@ -529,7 +529,7 @@ int WinModemClass::Read_From_Serial_Port (unsigned char *dest_ptr, int buffer_le
 	return(bytes_to_copy);
 }
 
-// FUNCTION: 0x00774BC0
+// FUNCTION: GAMEMD 0x00774BC0
 void WinModemClass::Wait_For_Serial_Write(void)
 {
 	DWORD						bytes_written;
@@ -558,7 +558,7 @@ void WinModemClass::Wait_For_Serial_Write(void)
 	ResetEvent(WriteOverlap.hEvent);
 }
 
-// FUNCTION: 0x00774C70
+// FUNCTION: GAMEMD 0x00774C70
 void WinModemClass::Write_To_Serial_Port (unsigned char *buffer, int length)
 {
 	DWORD	bytes_written;
@@ -596,7 +596,7 @@ void WinModemClass::Write_To_Serial_Port (unsigned char *buffer, int length)
 	}
 }
 
-// FUNCTION: 0x00774CD0
+// FUNCTION: GAMEMD 0x00774CD0
 int WinModemClass::Get_Modem_Result(int delay, char *buffer, int buffer_len, int inter_char_delay)
 {
 	CDTimerClass<SystemTimerClass>	timer;
@@ -677,7 +677,7 @@ int WinModemClass::Get_Modem_Result(int delay, char *buffer, int buffer_len, int
 	return(timer);
 }
 
-// FUNCTION: 0x00774F50
+// FUNCTION: GAMEMD 0x00774F50
 void WinModemClass::Dial_Modem(char *dial_number)
 {
 	char	dial_string[80];
@@ -702,7 +702,7 @@ void WinModemClass::Dial_Modem(char *dial_number)
 	Wait_For_Serial_Write();
 }
 
-// FUNCTION: 0x00775110
+// FUNCTION: GAMEMD 0x00775110
 int WinModemClass::Send_Command_To_Modem(char const *command, char terminator, char *buffer, int buflen, int delay, int retries, int inter_char_delay)
 {
 	int				times;
@@ -766,25 +766,25 @@ int WinModemClass::Send_Command_To_Modem(char const *command, char terminator, c
 	return(0);
 }
 
-// FUNCTION: 0x007754A0
+// FUNCTION: GAMEMD 0x007754A0
 void WinModemClass::Set_Echo_Function( void ( *func )( char c) )
 {
 	EchoFunction = func;
 }
 
-// FUNCTION: 0x007754B0
+// FUNCTION: GAMEMD 0x007754B0
 void WinModemClass::Set_Abort_Function(int (*func)(void))
 {
 	AbortFunction = func;
 }
 
-// FUNCTION: 0x007754C0
+// FUNCTION: GAMEMD 0x007754C0
 HANDLE WinModemClass::Get_Port_Handle(void)
 {
 	return(PortHandle);
 }
 
-// FUNCTION: 0x007754D0
+// FUNCTION: GAMEMD 0x007754D0
 void WinModemClass::Debug_Status(DWORD error, COMSTAT status)
 {
 	if (error) {
@@ -852,14 +852,15 @@ void WinModemClass::Debug_Status(DWORD error, COMSTAT status)
 	}
 }
 
-// FUNCTION: 0x00775610 WinModemClass::~WinModemClass
+// SYNTHETIC: GAMEMD 0x00775610
+// ??_GWinModemClass@@UAEPAXI@Z
 
 int DAT_00B72F28;
 int DAT_00B72F2C;
 int DAT_00B72F30;
 int DAT_00B72F34;
 
-// FUNCTION: 0x00775670
+// FUNCTION: GAMEMD 0x00775670
 void FUN_00775670(void)
 {
 	DAT_00B72F28 = 0;

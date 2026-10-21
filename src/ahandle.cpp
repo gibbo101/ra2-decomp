@@ -176,7 +176,7 @@ inline BOOL Move_HMI_Audio_Block_To_Direct_Sound_Buffer(VQAHandleP *vqap)
 	return(TRUE);
 }
 
-// FUNCTION: 0x004116A0
+// FUNCTION: GAMEMD 0x004116A0
 unsigned long __cdecl Timer_Callback_Audio_Handler(VQAHandle *vqa)
 {
 	VQAHandleP    *vqap = (VQAHandleP *)vqa;
@@ -213,7 +213,7 @@ unsigned long __cdecl Timer_Callback_Audio_Handler(VQAHandle *vqa)
 	return(handle->TickCount);
 }
 
-// FUNCTION: 0x00411820
+// FUNCTION: GAMEMD 0x00411820
 long __cdecl Stream_Audio_Handler(VQAHandle *vqa, long action, void *buffer, long nbytes)
 {
 	VQAHandleP *vqap = (VQAHandleP *)vqa;
@@ -261,7 +261,7 @@ long __cdecl Stream_Audio_Handler(VQAHandle *vqa, long action, void *buffer, lon
 	return(error);
 }
 
-// FUNCTION: 0x00411B20
+// FUNCTION: GAMEMD 0x00411B20
 long __cdecl Open_Audio_Handler(VQAHandleP *vqap, AhandleInitParams *params, long b)
 {
 	DSCAPS dscaps;
@@ -336,7 +336,7 @@ long __cdecl Open_Audio_Handler(VQAHandleP *vqap, AhandleInitParams *params, lon
 	return(VQAERR_AUDIO);
 }
 
-// FUNCTION: 0x00411CE0
+// FUNCTION: GAMEMD 0x00411CE0
 long __cdecl Close_Audio_Handler(VQAHandleP *vqap)
 {
 	DebugString("Closing VQ audio handler\n");
@@ -367,7 +367,7 @@ long __cdecl Close_Audio_Handler(VQAHandleP *vqap)
 	return(VQAERR_NONE);
 }
 
-// FUNCTION: 0x00411DF0
+// FUNCTION: GAMEMD 0x00411DF0
 long __cdecl Start_Audio_Handler(VQAHandleP *vqap)
 {
 	VQAConfig *config = &vqap->Config;
@@ -432,7 +432,7 @@ inline void Update_Volume(Ahandle *audio)
 	}
 }
 
-// FUNCTION: 0x00412000
+// FUNCTION: GAMEMD 0x00412000
 long __cdecl Load_Audio_Handler(VQAHandleP *vqap, void *buffer, long nbytes)
 {
 	Ahandle *handle = &_handles[vqap->AudioHandleIndex];
@@ -460,7 +460,7 @@ long __cdecl Load_Audio_Handler(VQAHandleP *vqap, void *buffer, long nbytes)
 	return(VQAERR_AUDIO);
 }
 
-// FUNCTION: 0x00412230
+// FUNCTION: GAMEMD 0x00412230
 long __cdecl Pause_Audio_Handler(VQAHandleP *vqap)
 {
 	Ahandle *handle = &_handles[vqap->AudioHandleIndex];
@@ -477,7 +477,7 @@ long __cdecl Pause_Audio_Handler(VQAHandleP *vqap)
 	return(VQAERR_NONE);
 }
 
-// FUNCTION: 0x00412280
+// FUNCTION: GAMEMD 0x00412280
 long __cdecl Play_Audio_Handler(VQAHandleP *vqap)
 {
 	Ahandle *handle = &_handles[vqap->AudioHandleIndex];
@@ -503,7 +503,7 @@ long __cdecl Play_Audio_Handler(VQAHandleP *vqap)
 	return(rc);
 }
 
-// FUNCTION: 0x00412320
+// FUNCTION: GAMEMD 0x00412320
 long __cdecl Stop_Audio_Handler(VQAHandleP *vqap)
 {
 	Ahandle *handle = &_handles[vqap->AudioHandleIndex];
@@ -524,7 +524,7 @@ long __cdecl Stop_Audio_Handler(VQAHandleP *vqap)
 	return(VQAERR_NONE);
 }
 
-// FUNCTION: 0x004123A0
+// FUNCTION: GAMEMD 0x004123A0
 void CALLBACK AudioCallback ( UINT uTimerID, UINT, DWORD dwUser, DWORD, DWORD )
 {
 	Ahandle  	*audio;
@@ -603,13 +603,13 @@ void CALLBACK AudioCallback ( UINT uTimerID, UINT, DWORD dwUser, DWORD, DWORD )
 	InterlockedDecrement(&audio->SuspendAudioCallback);
 }
 
-// FUNCTION: 0x00412540
+// FUNCTION: GAMEMD 0x00412540
 unsigned long __cdecl Simple_Timer_Callback_Audio_Handler(VQAHandle *vqa)
 {
 	return(Get_Game_Time_50());
 }
 
-// FUNCTION: 0x00412550
+// FUNCTION: GAMEMD 0x00412550
 void Pause_All_Audio_Handler(void)
 {
 	for (int i = 0; i < Ahandle::MAX_HANDLES; i++) {
@@ -625,7 +625,7 @@ void Pause_All_Audio_Handler(void)
 	}
 }
 
-// FUNCTION: 0x004125A0
+// FUNCTION: GAMEMD 0x004125A0
 void Resume_All_Audio_Handler(void)
 {
 	for (int i = 0; i < Ahandle::MAX_HANDLES; i++) {
@@ -640,14 +640,14 @@ void Resume_All_Audio_Handler(void)
 		}
 	}
 }
-// FUNCTION: 0x004125F0
+// FUNCTION: GAMEMD 0x004125F0
 long __cdecl Lock_Audio_Handler(void)
 {
 
 	return(1);
 }
 
-// FUNCTION: 0x00412600
+// FUNCTION: GAMEMD 0x00412600
 long __cdecl Unlock_Audio_Handler(void)
 {
 
@@ -655,7 +655,7 @@ long __cdecl Unlock_Audio_Handler(void)
 }
 
 
-// FUNCTION: 0x00412610
+// FUNCTION: GAMEMD 0x00412610
 int ahtoi(const char *str)
 {
 	int integer = 0;
@@ -677,44 +677,58 @@ int ahtoi(const char *str)
 	return(integer);
 }
 
-// FUNCTION: 0x00412660 $E10
+// SYNTHETIC: GAMEMD 0x00412660 SYMBOL
+// _$E10
 double DAT_00887858 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x00412690 $E13
+// SYNTHETIC: GAMEMD 0x00412690 SYMBOL
+// _$E13
 double DAT_00889E40 = DAT_00887858 / DAT_007E2228;
 
-// FUNCTION: 0x004126B0 $E16
+// SYNTHETIC: GAMEMD 0x004126B0 SYMBOL
+// _$E16
 double DAT_00889E28 = DAT_007E1718 / DAT_00889E40;
 
-// FUNCTION: 0x004126D0 $E19
+// SYNTHETIC: GAMEMD 0x004126D0 SYMBOL
+// _$E19
 double DAT_00889E20 = DAT_007E1720 * DAT_007E2230;
 
-// FUNCTION: 0x004126F0 $E22
+// SYNTHETIC: GAMEMD 0x004126F0 SYMBOL
+// _$E22
 double DAT_00887860 = DAT_007E1728 * DAT_007E2230;
 
-// FUNCTION: 0x00412710 $E25
+// SYNTHETIC: GAMEMD 0x00412710 SYMBOL
+// _$E25
 double DAT_00887838 = DAT_007E1730 * DAT_007E2230;
 
-// FUNCTION: 0x00412730 $E28
+// SYNTHETIC: GAMEMD 0x00412730 SYMBOL
+// _$E28
 int DAT_00889E48 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00887838 - DAT_00887860) * DAT_00887858));
 
-// FUNCTION: 0x00412770 $E31
+// SYNTHETIC: GAMEMD 0x00412770 SYMBOL
+// _$E31
 double DAT_00887868 = FUN_004CADE0(DAT_00889E48 * DAT_007E1740);
 
-// FUNCTION: 0x004127A0 $E34
+// SYNTHETIC: GAMEMD 0x004127A0 SYMBOL
+// _$E34
 double DAT_00887880 = FUN_004CADE0((DAT_00889E48 * 2) / DAT_00887858);
 
-// FUNCTION: 0x004127D0 $E37
+// SYNTHETIC: GAMEMD 0x004127D0 SYMBOL
+// _$E37
 int DAT_00889E3C = (int)(DAT_00889E48 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x00412800 $E40
+// SYNTHETIC: GAMEMD 0x00412800 SYMBOL
+// _$E40
 ShortPair DAT_00887850;
 
-// FUNCTION: 0x00412810 $E43
+// SYNTHETIC: GAMEMD 0x00412810 SYMBOL
+// _$E43
 IntTriple DAT_00887870;
 
-// FUNCTION: 0x00412830 $E46
+// SYNTHETIC: GAMEMD 0x00412830 SYMBOL
+// _$E46
 IntPairSized DAT_00889E30;
 
-// FUNCTION: 0x00412850 $E49
+// SYNTHETIC: GAMEMD 0x00412850 SYMBOL
+// _$E49
 IntQuad DAT_00887840;

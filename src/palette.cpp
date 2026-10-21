@@ -14,7 +14,7 @@
 #include "rect.h"
 #include <cstring>
 
-// FUNCTION: 0x00626020
+// FUNCTION: GAMEMD 0x00626020
 PaletteClass::PaletteClass(RGBClass const & rgb)
 {
 	for (int index = 0; index < COLOR_COUNT; index++) {
@@ -22,20 +22,20 @@ PaletteClass::PaletteClass(RGBClass const & rgb)
 	}
 }
 
-// FUNCTION: 0x00626070
+// FUNCTION: GAMEMD 0x00626070
 PaletteClass::PaletteClass(unsigned char * binary_palette)
 {
 	memcpy(&Palette[0], binary_palette, sizeof(Palette));
 }
 
-// FUNCTION: 0x006260A0
+// FUNCTION: GAMEMD 0x006260A0
 bool PaletteClass::operator == (PaletteClass const & palette) const
 {
 	if (this == &palette) return(true);
 	return(memcmp(&Palette[0], &palette.Palette[0], sizeof(Palette)) == 0);
 }
 
-// FUNCTION: 0x006260D0
+// FUNCTION: GAMEMD 0x006260D0
 PaletteClass & PaletteClass::operator = (PaletteClass const & palette)
 {
 	if (this == &palette) return(*this);
@@ -44,7 +44,7 @@ PaletteClass & PaletteClass::operator = (PaletteClass const & palette)
 	return(*this);
 }
 
-// FUNCTION: 0x006260F0
+// FUNCTION: GAMEMD 0x006260F0
 void PaletteClass::Adjust(int ratio)
 {
 	for (int index = 0; index < COLOR_COUNT; index++) {
@@ -52,7 +52,7 @@ void PaletteClass::Adjust(int ratio)
 	}
 }
 
-// FUNCTION: 0x00626120
+// FUNCTION: GAMEMD 0x00626120
 void PaletteClass::Adjust(int ratio, PaletteClass const & palette)
 {
 	for (int index = 0; index < COLOR_COUNT; index++) {
@@ -60,7 +60,7 @@ void PaletteClass::Adjust(int ratio, PaletteClass const & palette)
 	}
 }
 
-// FUNCTION: 0x00626170
+// FUNCTION: GAMEMD 0x00626170
 void PaletteClass::Partial_Adjust(int ratio, char *lut)
 {
 	for (int index = 0; index < COLOR_COUNT; index++) {
@@ -70,7 +70,7 @@ void PaletteClass::Partial_Adjust(int ratio, char *lut)
 	}
 }
 
-// FUNCTION: 0x006261B0
+// FUNCTION: GAMEMD 0x006261B0
 void PaletteClass::Partial_Adjust(int ratio, PaletteClass const & palette, char *lut)
 {
 	for (int index = 0; index < COLOR_COUNT; index++) {
@@ -80,7 +80,7 @@ void PaletteClass::Partial_Adjust(int ratio, PaletteClass const & palette, char 
 	}
 }
 
-// FUNCTION: 0x00626200
+// FUNCTION: GAMEMD 0x00626200
 int PaletteClass::Closest_Color(RGBClass const & rgb) const
 {
 	int closest = 0;
@@ -117,14 +117,14 @@ class SchemeNode
 		DynamicVectorClass<ColorScheme *> * Schemes;
 };
 
-// FUNCTION: 0x00626250
+// FUNCTION: GAMEMD 0x00626250
 SchemeNode::SchemeNode(char const * name, DynamicVectorClass<ColorScheme *> * schemes)
 {
 	strcpy(Name, name);
 	Schemes = schemes;
 }
 
-// FUNCTION: 0x00626290
+// FUNCTION: GAMEMD 0x00626290
 void SchemeNode::Release(void)
 {
 	if (Schemes) {
@@ -137,7 +137,7 @@ void SchemeNode::Release(void)
 	}
 }
 
-// FUNCTION: 0x006262F0
+// FUNCTION: GAMEMD 0x006262F0
 void SchemeNode::Replace(DynamicVectorClass<ColorScheme *> * schemes)
 {
 	if (Schemes) {
@@ -151,7 +151,7 @@ void SchemeNode::Replace(DynamicVectorClass<ColorScheme *> * schemes)
 	Schemes = schemes;
 }
 
-// FUNCTION: 0x00626370
+// FUNCTION: GAMEMD 0x00626370
 SchemeNode::~SchemeNode(void)
 {
 	if (Schemes) {
@@ -171,7 +171,7 @@ SchemeNode::~SchemeNode(void)
 	}
 }
 
-// FUNCTION: 0x00626660
+// FUNCTION: GAMEMD 0x00626660
 int SchemeHash(char const * str)
 {
 	int hash = 0;
@@ -251,7 +251,7 @@ inline SchemeNode ** Find_Node(SchemeTable * table, HashString const & key)
 	return(0);
 }
 
-// FUNCTION: 0x00626690
+// FUNCTION: GAMEMD 0x00626690
 DynamicVectorClass<ColorScheme *> * __fastcall GetPaletteSchemesFromIterator(HashIterator * it)
 {
 	HashString * key = Next_Key(DAT_00AC48F0->Table, it);
@@ -265,7 +265,7 @@ DynamicVectorClass<ColorScheme *> * __fastcall GetPaletteSchemesFromIterator(Has
 	return((*node)->Schemes);
 }
 
-// FUNCTION: 0x006269A0
+// FUNCTION: GAMEMD 0x006269A0
 void SchemeLibrary_Free(void)
 {
 	SchemeLibrary * library = Library();
@@ -277,7 +277,7 @@ void SchemeLibrary_Free(void)
 	DAT_00AC48F0->Colors->Clear();
 }
 
-// FUNCTION: 0x00626AB0
+// FUNCTION: GAMEMD 0x00626AB0
 void __fastcall SchemeLibrary_Add(char const * name, HSVClass const & color)
 {
 	Library();
@@ -288,13 +288,13 @@ void __fastcall SchemeLibrary_Add(char const * name, HSVClass const & color)
 }
 
 
-// FUNCTION: 0x00626C60
+// FUNCTION: GAMEMD 0x00626C60
 int __fastcall SchemeLibrary_Count(void)
 {
 	return(Library()->Names->Count());
 }
 
-// FUNCTION: 0x00626FF0
+// FUNCTION: GAMEMD 0x00626FF0
 void SchemeLibrary_Destroy(void)
 {
 	if (DAT_00AC48F0 != 0) {
@@ -303,15 +303,16 @@ void SchemeLibrary_Destroy(void)
 	}
 }
 
-// FUNCTION: 0x00627020
+// FUNCTION: GAMEMD 0x00627020
 void SchemeLibrary_Create(void)
 {
 	Library();
 }
 
-// FUNCTION: 0x00627170 SchemeLibrary::SchemeLibrary
+// FUNCTION: GAMEMD 0x00627170
+// SchemeLibrary::SchemeLibrary
 
-// FUNCTION: 0x006272A0
+// FUNCTION: GAMEMD 0x006272A0
 SchemeLibrary::~SchemeLibrary(void)
 {
 	if (Table != 0) {
@@ -332,7 +333,7 @@ SchemeLibrary::~SchemeLibrary(void)
 	}
 }
 
-// FUNCTION: 0x006274F0
+// FUNCTION: GAMEMD 0x006274F0
 DynamicVectorClass<ColorScheme *> * SchemeLibrary::Lookup(char const * name)
 {
 	HashString key(name);
@@ -343,7 +344,7 @@ DynamicVectorClass<ColorScheme *> * SchemeLibrary::Lookup(char const * name)
 	return((*node)->Schemes);
 }
 
-// FUNCTION: 0x00627590
+// FUNCTION: GAMEMD 0x00627590
 DynamicVectorClass<ColorScheme *> * SchemeLibrary::Generate(char const * name)
 {
 	if (Mode == -1) {
@@ -387,7 +388,7 @@ DynamicVectorClass<ColorScheme *> * SchemeLibrary::Generate(char const * name)
 	return(schemes);
 }
 
-// FUNCTION: 0x006278C0
+// FUNCTION: GAMEMD 0x006278C0
 void SchemeLibrary::Add(char const * name)
 {
 	DynamicVectorClass<ColorScheme *> * schemes = Generate(name);
@@ -403,7 +404,7 @@ void SchemeLibrary::Add(char const * name)
 	bucket.Add(SchemeEntry(key, node));
 }
 
-// FUNCTION: 0x00627A10
+// FUNCTION: GAMEMD 0x00627A10
 void SchemeLibrary::Replace(char const * name)
 {
 	HashString key(name);
@@ -411,7 +412,7 @@ void SchemeLibrary::Replace(char const * name)
 	node->Replace(Generate(name));
 }
 
-// FUNCTION: 0x00627B20
+// FUNCTION: GAMEMD 0x00627B20
 void SchemeLibrary::Set_Mode(int mode)
 {
 	Mode = mode;
@@ -425,112 +426,172 @@ void SchemeLibrary::Set_Mode(int mode)
 	}
 }
 
-// FUNCTION: 0x00627D20 ?$DynamicVectorClass@PAD::Clear
+// TEMPLATE: GAMEMD 0x00627D20
+// ?Clear@?$DynamicVectorClass@PAD@@UAEXXZ
 template class DynamicVectorClass<char *>;
 
-// FUNCTION: 0x00627D50 ?$VectorClass@PAD::ID
-// FUNCTION: 0x00627D70 ?$VectorClass@PAD::GetItem
+// TEMPLATE: GAMEMD 0x00627D50
+// ?ID@?$VectorClass@PAD@@UAEHPBQAD@Z
+// TEMPLATE: GAMEMD 0x00627D70
+// ?GetItem@?$VectorClass@PAD@@UBEPADH@Z
 
-// FUNCTION: 0x00627D80 ?$DynamicVectorClass@VHSVClass@@::Clear
+// TEMPLATE: GAMEMD 0x00627D80
+// ?Clear@?$DynamicVectorClass@VHSVClass@@@@UAEXXZ
 
-// FUNCTION: 0x00627DB0 ?$DynamicVectorClass@VHSVClass@@::ID
-// FUNCTION: 0x00627DE0 ?$VectorClass@VHSVClass@@::GetItem
+// TEMPLATE: GAMEMD 0x00627DB0
+// ?ID@?$DynamicVectorClass@VHSVClass@@@@UAEHPBVHSVClass@@@Z
+// TEMPLATE: GAMEMD 0x00627DE0
+// ?GetItem@?$VectorClass@VHSVClass@@@@UBE?AVHSVClass@@H@Z
 
-// FUNCTION: 0x00627E10 ?$VectorClass@PAVColorScheme@@::operator==
-// FUNCTION: 0x00627E50 ?$VectorClass@PAVColorScheme@@::Resize
-// FUNCTION: 0x00627F00 ?$VectorClass@PAVColorScheme@@::Clear
-// FUNCTION: 0x00627F30 ?$VectorClass@PAVColorScheme@@::ID
-// FUNCTION: 0x00627F70 ?$VectorClass@PAVColorScheme@@::ID
-// FUNCTION: 0x00627F90 ?$DynamicVectorClass@PAVColorScheme@@::Resize
-// FUNCTION: 0x00628040 ?$DynamicVectorClass@PAVColorScheme@@::ID
+// TEMPLATE: GAMEMD 0x00627E10
+// ??8?$VectorClass@PAVColorScheme@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x00627E50
+// ?Resize@?$VectorClass@PAVColorScheme@@@@UAE_NHPBQAVColorScheme@@@Z
+// TEMPLATE: GAMEMD 0x00627F00
+// ?Clear@?$VectorClass@PAVColorScheme@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x00627F30
+// ?ID@?$VectorClass@PAVColorScheme@@@@UAEHABQAVColorScheme@@@Z
+// TEMPLATE: GAMEMD 0x00627F70
+// ?ID@?$VectorClass@PAVColorScheme@@@@UAEHPBQAVColorScheme@@@Z
+// TEMPLATE: GAMEMD 0x00627F90
+// ?Resize@?$DynamicVectorClass@PAVColorScheme@@@@UAE_NHPBQAVColorScheme@@@Z
+// TEMPLATE: GAMEMD 0x00628040
+// ?ID@?$DynamicVectorClass@PAVColorScheme@@@@UAEHABQAVColorScheme@@@Z
 template class DynamicVectorClass<ColorScheme *>;
 
 
-// FUNCTION: 0x00628070 ?$HashTableClass@VHashString@@PAVSchemeNode@@::?$HashTableClass@VHashString@@PAVSchemeNode@@
+// TEMPLATE: GAMEMD 0x00628070
+// ??0?$HashTableClass@VHashString@@PAVSchemeNode@@@@QAE@HHP6IHABVHashString@@@Z@Z
 
-// FUNCTION: 0x00628110 ?$HashTableClass@VHashString@@PAVSchemeNode@@::Find
+// TEMPLATE: GAMEMD 0x00628110
+// ?Find@?$HashTableClass@VHashString@@PAVSchemeNode@@@@QAEPAPAVSchemeNode@@ABVHashString@@@Z
 template<>
 SchemeNode ** HashTableClass<HashString, SchemeNode *>::Find(HashString const & key)
 {
 	return(Find_Node(this, key));
 }
 
-// FUNCTION: 0x00628170 ?$HashTableClass@VHashString@@PAVSchemeNode@@::Next
+// TEMPLATE: GAMEMD 0x00628170
+// ?Next@?$HashTableClass@VHashString@@PAVSchemeNode@@@@QAEPAVHashString@@PAUHashIterator@@@Z
 template<>
 HashString * HashTableClass<HashString, SchemeNode *>::Next(HashIterator * it)
 {
 	return(Next_Key(this, it));
 }
 
-// FUNCTION: 0x006281F0 ?$VectorClass@VHSVClass@@::operator==
-// FUNCTION: 0x00628240 ?$DynamicVectorClass@VHSVClass@@::?$DynamicVectorClass@VHSVClass@@
-// FUNCTION: 0x006282E0 ?$VectorClass@VHSVClass@@::Resize
-// FUNCTION: 0x006283E0 ?$VectorClass@VHSVClass@@::Clear
-// FUNCTION: 0x00628410 ?$VectorClass@VHSVClass@@::ID
-// FUNCTION: 0x00628470 ?$VectorClass@VHSVClass@@::ID
-// FUNCTION: 0x006284A0 ?$DynamicVectorClass@VHSVClass@@::Resize
-// FUNCTION: 0x006285A0 ?$DynamicVectorClass@VHSVClass@@::ID
-// FUNCTION: 0x006285F0 ?$VectorClass@PAVColorScheme@@::~?$VectorClass@PAVColorScheme@@
+// TEMPLATE: GAMEMD 0x006281F0
+// ??8?$VectorClass@VHSVClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x00628240
+// ??0?$DynamicVectorClass@VHSVClass@@@@QAE@IPBVHSVClass@@@Z
+// TEMPLATE: GAMEMD 0x006282E0
+// ?Resize@?$VectorClass@VHSVClass@@@@UAE_NHPBVHSVClass@@@Z
+// TEMPLATE: GAMEMD 0x006283E0
+// ?Clear@?$VectorClass@VHSVClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x00628410
+// ?ID@?$VectorClass@VHSVClass@@@@UAEHABVHSVClass@@@Z
+// TEMPLATE: GAMEMD 0x00628470
+// ?ID@?$VectorClass@VHSVClass@@@@UAEHPBVHSVClass@@@Z
+// TEMPLATE: GAMEMD 0x006284A0
+// ?Resize@?$DynamicVectorClass@VHSVClass@@@@UAE_NHPBVHSVClass@@@Z
+// TEMPLATE: GAMEMD 0x006285A0
+// ?ID@?$DynamicVectorClass@VHSVClass@@@@UAEHABVHSVClass@@@Z
+// SYNTHETIC: GAMEMD 0x006285F0
+// ??_G?$VectorClass@PAVColorScheme@@@@UAEPAXI@Z
 template class DynamicVectorClass<HSVClass>;
 
-// FUNCTION: 0x00628640 ?$DynamicVectorClass@PAVColorScheme@@::~?$DynamicVectorClass@PAVColorScheme@@
+// SYNTHETIC: GAMEMD 0x00628640
+// ??_G?$DynamicVectorClass@PAVColorScheme@@@@UAEPAXI@Z
 
-// FUNCTION: 0x00628690 ?$DynamicVectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@::~?$DynamicVectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@
+// SYNTHETIC: GAMEMD 0x00628690
+// ??_E?$DynamicVectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@@@UAEPAXI@Z
 
-// FUNCTION: 0x00628740 ?_F?$DynamicVectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@
+// TEMPLATE: GAMEMD 0x00628740
+// ??_F?$DynamicVectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@@@QAEXXZ
 
-// FUNCTION: 0x00628760 ?$VectorClass@VHSVClass@@::~?$VectorClass@VHSVClass@@
+// SYNTHETIC: GAMEMD 0x00628760
+// ??_G?$VectorClass@VHSVClass@@@@UAEPAXI@Z
 
-// FUNCTION: 0x006287B0 ?$DynamicVectorClass@VHSVClass@@::~?$DynamicVectorClass@VHSVClass@@
+// SYNTHETIC: GAMEMD 0x006287B0
+// ??_G?$DynamicVectorClass@VHSVClass@@@@UAEPAXI@Z
 
-// FUNCTION: 0x00628800 ?$DynamicVectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@::Clear
+// TEMPLATE: GAMEMD 0x00628800
+// ?Clear@?$DynamicVectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@@@UAEXXZ
 
-// FUNCTION: 0x00628830 ?$DynamicVectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@::ID
+// TEMPLATE: GAMEMD 0x00628830
+// ?ID@?$DynamicVectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@@@UAEHPBU?$HashObject@VHashString@@PAVSchemeNode@@@@@Z
 
-// FUNCTION: 0x00628860 ?$VectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@::GetItem
+// TEMPLATE: GAMEMD 0x00628860
+// ?GetItem@?$VectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@@@UBE?AU?$HashObject@VHashString@@PAVSchemeNode@@@@H@Z
 
-// FUNCTION: 0x006288A0 ?$VectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@::operator==
+// TEMPLATE: GAMEMD 0x006288A0
+// ??8?$VectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@@@UBE_NABV0@@Z
 
-// FUNCTION: 0x006288F0 ?$VectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@::Resize
+// TEMPLATE: GAMEMD 0x006288F0
+// ?Resize@?$VectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@@@UAE_NHPBU?$HashObject@VHashString@@PAVSchemeNode@@@@@Z
 
-// FUNCTION: 0x00628A40 ?$VectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@::Clear
+// TEMPLATE: GAMEMD 0x00628A40
+// ?Clear@?$VectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@@@UAEXXZ
 
-// FUNCTION: 0x00628A70 ?$VectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@::ID
+// TEMPLATE: GAMEMD 0x00628A70
+// ?ID@?$VectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@@@UAEHABU?$HashObject@VHashString@@PAVSchemeNode@@@@@Z
 
-// FUNCTION: 0x00628AD0 ?$VectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@::ID
+// TEMPLATE: GAMEMD 0x00628AD0
+// ?ID@?$VectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@@@UAEHPBU?$HashObject@VHashString@@PAVSchemeNode@@@@@Z
 
-// FUNCTION: 0x00628B00 ?$DynamicVectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@::?$DynamicVectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@
+// TEMPLATE: GAMEMD 0x00628B00
+// ??0?$DynamicVectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@@@QAE@IPBU?$HashObject@VHashString@@PAVSchemeNode@@@@@Z
 
-// FUNCTION: 0x00628BB0 ?$DynamicVectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@::Resize
+// TEMPLATE: GAMEMD 0x00628BB0
+// ?Resize@?$DynamicVectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@@@UAE_NHPBU?$HashObject@VHashString@@PAVSchemeNode@@@@@Z
 
-// FUNCTION: 0x00628D10 ?$DynamicVectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@::Add
+// TEMPLATE: GAMEMD 0x00628D10
+// ?Add@?$DynamicVectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@@@QAE_NABU?$HashObject@VHashString@@PAVSchemeNode@@@@@Z
 
-// FUNCTION: 0x00628D80 ?$DynamicVectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@::ID
+// TEMPLATE: GAMEMD 0x00628D80
+// ?ID@?$DynamicVectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@@@UAEHABU?$HashObject@VHashString@@PAVSchemeNode@@@@@Z
 
-// FUNCTION: 0x00628DD0 ?$HashObject@VHashString@@PAVSchemeNode@@::?$HashObject@VHashString@@PAVSchemeNode@@
+// TEMPLATE: GAMEMD 0x00628DD0
+// ??0?$HashObject@VHashString@@PAVSchemeNode@@@@QAE@ABVHashString@@ABQAVSchemeNode@@@Z
 
-// FUNCTION: 0x00628DF0 ?$VectorClass@VHSVClass@@::?$VectorClass@VHSVClass@@
+// TEMPLATE: GAMEMD 0x00628DF0
+// ??0?$VectorClass@VHSVClass@@@@QAE@HPBVHSVClass@@@Z
 
 template struct HashObject<HashString, SchemeNode *>;
 template class DynamicVectorClass<HashObject<HashString, SchemeNode *> >;
 
-// FUNCTION: 0x00628E80 ?$VectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@::~?$VectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@
+// SYNTHETIC: GAMEMD 0x00628E80
+// ??_G?$VectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@@@UAEPAXI@Z
 
-// FUNCTION: 0x00628ED0 ?$VectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@::?$VectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@
+// TEMPLATE: GAMEMD 0x00628ED0
+// ??0?$VectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@@@QAE@HPBU?$HashObject@VHashString@@PAVSchemeNode@@@@@Z
 template class VectorClass<HashObject<HashString, SchemeNode *> >;
 
-// FUNCTION: 0x00628F80 $E2
-// FUNCTION: 0x00628FB0 $E5
-// FUNCTION: 0x00628FD0 $E8
-// FUNCTION: 0x00628FF0 $E11
+// SYNTHETIC: GAMEMD 0x00628F80 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x00628FB0 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x00628FD0 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x00628FF0 SYMBOL
+// _$E11
 
-// FUNCTION: 0x00629010 $E14
-// FUNCTION: 0x00629030 $E17
-// FUNCTION: 0x00629050 $E20
-// FUNCTION: 0x00629090 $E23
-// FUNCTION: 0x006290C0 $E26
-// FUNCTION: 0x006290F0 $E29
-// FUNCTION: 0x00629120 $E32
-// FUNCTION: 0x00629130 $E35
-// FUNCTION: 0x00629150 $E38
-// FUNCTION: 0x00629170 $E42
+// SYNTHETIC: GAMEMD 0x00629010 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x00629030 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x00629050 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x00629090 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x006290C0 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x006290F0 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x00629120 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x00629130 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x00629150 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x00629170 SYMBOL
+// _$E42

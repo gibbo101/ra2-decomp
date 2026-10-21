@@ -82,85 +82,85 @@ class SHPStruct
 };
 extern ParticleSystemClass * DAT_00A8ED78;
 
-// FUNCTION: 0x00421CB0
+// FUNCTION: GAMEMD 0x00421CB0
 
 
 
 double DAT_0089A158 = fastmath::sqrt(pow((double)CELL_LEPTON_H, 2) * 2);
 
-// FUNCTION: 0x00421CE0
+// FUNCTION: GAMEMD 0x00421CE0
 
 
 
 double DAT_0089A1B8 = DAT_0089A158 / DAT_007E3308;
 
-// FUNCTION: 0x00421D00
+// FUNCTION: GAMEMD 0x00421D00
 
 
 
 double DAT_0089A1A0 = 1.0 / DAT_0089A1B8;
 
-// FUNCTION: 0x00421D20
+// FUNCTION: GAMEMD 0x00421D20
 
 
 
 double DAT_0089A198 = DAT_007E3310 * 45;
 
-// FUNCTION: 0x00421D40
+// FUNCTION: GAMEMD 0x00421D40
 
 
 
 double DAT_0089A168 = DAT_007E3310 * 60;
 
-// FUNCTION: 0x00421D60
+// FUNCTION: GAMEMD 0x00421D60
 
 
 
 double DAT_0089A138 = DAT_007E3310 * 90;
 
-// FUNCTION: 0x00421D80
+// FUNCTION: GAMEMD 0x00421D80
 
 
 
 int DAT_0089A1C0 = (int)(fastmath::tan(DAT_0089A138 - DAT_0089A168) * DAT_0089A158 * 0.5);
 
-// FUNCTION: 0x00421DC0
+// FUNCTION: GAMEMD 0x00421DC0
 
 
 
 double DAT_0089A170 = fastmath::atan(DAT_0089A1C0 * (1 / (double)CELL_LEPTON_H));
 
-// FUNCTION: 0x00421DF0
+// FUNCTION: GAMEMD 0x00421DF0
 
 
 
 double DAT_0089A188 = fastmath::atan((DAT_0089A1C0 * 2) / DAT_0089A158);
 
-// FUNCTION: 0x00421E20
+// FUNCTION: GAMEMD 0x00421E20
 
 
 
 int DAT_0089A1B4 = (int)((DAT_0089A1C0 * 4) + 0.5);
 
-// FUNCTION: 0x00421E50
+// FUNCTION: GAMEMD 0x00421E50
 
 
 
 Cell const DAT_0089A150(0, 0);
 
-// FUNCTION: 0x00421E60
+// FUNCTION: GAMEMD 0x00421E60
 
 
 
 Coord const DAT_0089A178(0, 0, 0);
 
-// FUNCTION: 0x00421E80
+// FUNCTION: GAMEMD 0x00421E80
 
 
 
 Coord const DAT_0089A1A8(CELL_LEPTON_W / 2, CELL_LEPTON_H / 2, 0);
 
-// FUNCTION: 0x00422720
+// FUNCTION: GAMEMD 0x00422720
 AnimClass::AnimClass(void) :
 	BASECLASS(),
 	Animation(),
@@ -197,7 +197,7 @@ AnimClass::AnimClass(void) :
 	IsActive = true;
 }
 
-// FUNCTION: 0x00425530
+// FUNCTION: GAMEMD 0x00425530
 bool AnimClass::Limbo(void)
 {
 	if (Type != NULL && Type->IsVeins) {
@@ -211,7 +211,7 @@ bool AnimClass::Limbo(void)
 	return(false);
 }
 
-// FUNCTION: 0x004228E0
+// FUNCTION: GAMEMD 0x004228E0
 AnimClass::~AnimClass(void)
 {
 	Detach_This_From_All(this, true);
@@ -254,7 +254,7 @@ AnimClass::~AnimClass(void)
 	}
 }
 
-// FUNCTION: 0x00422B20
+// FUNCTION: GAMEMD 0x00422B20
 AnimType Anim_From_Name(char const * name)
 {
 	if (name == NULL) return(ANIM_NONE);
@@ -269,7 +269,7 @@ AnimType Anim_From_Name(char const * name)
 	return(ANIM_NONE);
 }
 
-// FUNCTION: 0x00422B80
+// FUNCTION: GAMEMD 0x00422B80
 void Shorten_Attached_Anims(ObjectClass * obj)
 {
 	if (obj != NULL) {
@@ -283,13 +283,13 @@ void Shorten_Attached_Anims(ObjectClass * obj)
 	}
 }
 
-// FUNCTION: 0x00422BC0
+// FUNCTION: GAMEMD 0x00422BC0
 int AnimClass::Sort_Y(void) const
 {
 	return(BASECLASS::Sort_Y() + YSortAdjust);
 }
 
-// FUNCTION: 0x00422BE0
+// FUNCTION: GAMEMD 0x00422BE0
 Coord AnimClass::Center_Coord(void) const
 {
 	if (OwnerObject != NULL) {
@@ -298,7 +298,7 @@ Coord AnimClass::Center_Coord(void) const
 	return(BASECLASS::Center_Coord());
 }
 
-// FUNCTION: 0x00422C70
+// FUNCTION: GAMEMD 0x00422C70
 bool AnimClass::Render(Rect & rect, bool forced, bool extras_only) const
 {
 	if (LoopDelay != 0) {
@@ -307,7 +307,7 @@ bool AnimClass::Render(Rect & rect, bool forced, bool extras_only) const
 	return(BASECLASS::Render(rect, forced, extras_only));
 }
 
-// FUNCTION: 0x004238B0
+// FUNCTION: GAMEMD 0x004238B0
 bool AnimClass::Mark(MarkType mark)
 {
 	if (BASECLASS::Mark(mark)) {
@@ -316,7 +316,7 @@ bool AnimClass::Mark(MarkType mark)
 	return(false);
 }
 
-// FUNCTION: 0x004238D0
+// FUNCTION: GAMEMD 0x004238D0
 Cell const * AnimClass::Occupy_List(bool) const
 {
 	static Cell _simple[] = {REFRESH_EOL};
@@ -324,9 +324,10 @@ Cell const * AnimClass::Occupy_List(bool) const
 	return(_simple);
 }
 
-// FUNCTION: 0x00423920 $E145
+// SYNTHETIC: GAMEMD 0x00423920 SYMBOL
+// _$E145
 
-// FUNCTION: 0x00423930
+// FUNCTION: GAMEMD 0x00423930
 BounceResultType AnimClass::Bounce_AI(void)
 {
 	BounceClass & bounce = Bounce;
@@ -363,7 +364,7 @@ BounceResultType AnimClass::Bounce_AI(void)
 	return(bounce_result);
 }
 
-// FUNCTION: 0x00424B50
+// FUNCTION: GAMEMD 0x00424B50
 void AnimClass::SetOwnerObject(ObjectClass * owner)
 {
 	if (OwnerObject != NULL) {
@@ -404,19 +405,19 @@ void AnimClass::SetOwnerObject(ObjectClass * owner)
 	Map.Submit(this);
 }
 
-// FUNCTION: 0x00424C90
+// FUNCTION: GAMEMD 0x00424C90
 void AnimClass::FUN_00424C90(BulletClass * bullet)
 {
 	AttachedBullet = bullet;
 }
 
-// FUNCTION: 0x00424CA0
+// FUNCTION: GAMEMD 0x00424CA0
 void AnimClass::FUN_00424CA0(HouseClass * house)
 {
 	Owner = house;
 }
 
-// FUNCTION: 0x00424CB0
+// FUNCTION: GAMEMD 0x00424CB0
 LayerType AnimClass::In_Which_Layer(void) const
 {
 	if (OwnerObject != NULL) {
@@ -428,7 +429,7 @@ LayerType AnimClass::In_Which_Layer(void) const
 	return(LAYER_AIR);
 }
 
-// FUNCTION: 0x00424CE0
+// FUNCTION: GAMEMD 0x00424CE0
 void AnimClass::Start(void)
 {
 	Mark(MARK_CHANGE);
@@ -467,7 +468,7 @@ void AnimClass::Start(void)
 	}
 }
 
-// FUNCTION: 0x00424F00
+// FUNCTION: GAMEMD 0x00424F00
 void AnimClass::Middle(void)
 {
 	Cell cell = Center_Coord().As_Cell();
@@ -509,7 +510,7 @@ void AnimClass::Middle(void)
 	}
 }
 
-// FUNCTION: 0x00425150
+// FUNCTION: GAMEMD 0x00425150
 void AnimClass::Detach(AbstractClass const * target, bool all)
 {
 	BASECLASS::Detach(target, all);
@@ -533,7 +534,7 @@ void AnimClass::Detach(AbstractClass const * target, bool all)
 	}
 }
 
-// FUNCTION: 0x004251F0
+// FUNCTION: GAMEMD 0x004251F0
 void AnimClass::Do_Atom_Damage(HousesType ownerhouse, Cell const & cell)
 {
 	Coord coord(cell.X * 256 + 128, cell.Y * 256 + 128, 0);
@@ -543,19 +544,19 @@ void AnimClass::Do_Atom_Damage(HousesType ownerhouse, Cell const & cell)
 	}
 }
 
-// FUNCTION: 0x00425260
+// FUNCTION: GAMEMD 0x00425260
 void AnimClass::Disable(void)
 {
 	PowerOff = true;
 }
 
-// FUNCTION: 0x00425270
+// FUNCTION: GAMEMD 0x00425270
 void AnimClass::Enable(void)
 {
 	PowerOff = false;
 }
 
-// FUNCTION: 0x00425280
+// FUNCTION: GAMEMD 0x00425280
 HRESULT STDMETHODCALLTYPE AnimClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -591,7 +592,7 @@ HRESULT STDMETHODCALLTYPE AnimClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x004253B0
+// FUNCTION: GAMEMD 0x004253B0
 HRESULT STDMETHODCALLTYPE AnimClass::Save(IStream * stream, BOOL cleardirty)
 {
 	if (LightConvert != NULL) {
@@ -607,7 +608,7 @@ done:
 	return(BASECLASS::Save(stream, cleardirty));
 }
 
-// FUNCTION: 0x00425410
+// FUNCTION: GAMEMD 0x00425410
 void AnimClass::Compute_CRC(CRCEngine & crc) const
 {
 	BASECLASS::Compute_CRC(crc);
@@ -630,19 +631,19 @@ void AnimClass::Compute_CRC(CRCEngine & crc) const
 	crc(PowerOff);
 }
 
-// FUNCTION: 0x00425510
+// FUNCTION: GAMEMD 0x00425510
 int AnimClass::Stage_Count(void) const
 {
 	return(Type->End);
 }
 
-// FUNCTION: 0x00425520
+// FUNCTION: GAMEMD 0x00425520
 ObjectTypeClass const * AnimClass::Class_Of(void) const
 {
 	return(Type);
 }
 
-// FUNCTION: 0x004255B0
+// FUNCTION: GAMEMD 0x004255B0
 void AnimClass::Delete_Me(void)
 {
 	if (OwnerObject != NULL) {
@@ -656,7 +657,7 @@ void AnimClass::Delete_Me(void)
 	BASECLASS::Delete_Me();
 }
 
-// FUNCTION: 0x00425630
+// FUNCTION: GAMEMD 0x00425630
 int AnimClass::Get_Height(void) const
 {
 	int z = Get_Coord().Z;
@@ -666,7 +667,7 @@ int AnimClass::Get_Height(void) const
 	return(z);
 }
 
-// FUNCTION: 0x004260F0
+// FUNCTION: GAMEMD 0x004260F0
 bool AnimClass::Is_Valid_Flaming_Guy_Cell(Cell const & cell)
 {
 	CellClass * cptr = &Map[cell];
@@ -689,7 +690,7 @@ bool AnimClass::Is_Valid_Flaming_Guy_Cell(Cell const & cell)
 	return(true);
 }
 
-// FUNCTION: 0x004261D0
+// FUNCTION: GAMEMD 0x004261D0
 void AnimClass::Post_Load_Game(void)
 {
 	for (int i = 0; i < Array.Count(); i++) {
@@ -707,7 +708,7 @@ void AnimClass::Post_Load_Game(void)
 	}
 }
 
-// FUNCTION: 0x00426270
+// FUNCTION: GAMEMD 0x00426270
 void AnimClass::Set_Occupy_Bit(Coord const & coord)
 {
 	int spot_index = CellClass::Spot_Index(coord);
@@ -721,7 +722,7 @@ void AnimClass::Set_Occupy_Bit(Coord const & coord)
 	}
 }
 
-// FUNCTION: 0x00426300
+// FUNCTION: GAMEMD 0x00426300
 void AnimClass::Clear_Occupy_Bit(Coord const & coord)
 {
 	int spot_index = CellClass::Spot_Index(coord);
@@ -741,83 +742,100 @@ void AnimClass::Clear_Occupy_Bit(Coord const & coord)
 	}
 }
 
-// FUNCTION: 0x00426390 ObjectClass::Is_Players_Army
+// FUNCTION: GAMEMD 0x00426390
+// ObjectClass::Is_Players_Army
 
-// FUNCTION: 0x004263A0 ObjectClass::Visual_Character
+// FUNCTION: GAMEMD 0x004263A0
+// ObjectClass::Visual_Character
 
-// FUNCTION: 0x004263B0
+// FUNCTION: GAMEMD 0x004263B0
 bool ObjectClass::IsStrange(void) const
 {
 	return(false);
 }
 
-// FUNCTION: 0x004263C0 ObjectClass::Full_Name
+// FUNCTION: GAMEMD 0x004263C0
+// ObjectClass::Full_Name
 
-// FUNCTION: 0x004263D0 ObjectClass::Fire_Coord
+// FUNCTION: GAMEMD 0x004263D0
+// ObjectClass::Fire_Coord
 
-// FUNCTION: 0x00426410 ObjectClass::Occupies_Cells
+// FUNCTION: GAMEMD 0x00426410
+// ObjectClass::Occupies_Cells
 
-// FUNCTION: 0x00426420 ObjectClass::IsDisguised
+// FUNCTION: GAMEMD 0x00426420
+// ObjectClass::IsDisguised
 
-// FUNCTION: 0x00426430 ObjectClass::IsDisguisedAs
+// FUNCTION: GAMEMD 0x00426430
+// ObjectClass::IsDisguisedAs
 
-// FUNCTION: 0x00426440 ObjectClass::Draw_Pre_Render
+// TEMPLATE: GAMEMD 0x00426440
+// ?Draw_Pre_Render@ObjectClass@@UBEXABVPoint2D@@ABV?$TRect@H@@@Z
 
-// FUNCTION: 0x00426450 ObjectClass::Draw_Post_Render
+// TEMPLATE: GAMEMD 0x00426450
+// ?Draw_Post_Render@ObjectClass@@UBEXABVPoint2D@@ABV?$TRect@H@@@Z
 
-// FUNCTION: 0x00426460 ObjectClass::IronCurtain
+// FUNCTION: GAMEMD 0x00426460
+// ObjectClass::IronCurtain
 
-// FUNCTION: 0x00426470 ObjectClass::StopAirstrikeTimer
+// FUNCTION: GAMEMD 0x00426470
+// ObjectClass::StopAirstrikeTimer
 
-// FUNCTION: 0x00426480 ObjectClass::StartAirstrikeTimer
+// FUNCTION: GAMEMD 0x00426480
+// ObjectClass::StartAirstrikeTimer
 
-// FUNCTION: 0x00426490 ObjectClass::IsIronCurtained
+// FUNCTION: GAMEMD 0x00426490
+// ObjectClass::IsIronCurtained
 
-// FUNCTION: 0x004264A0 ObjectClass::Destroy
+// FUNCTION: GAMEMD 0x004264A0
+// ObjectClass::Destroy
 
-// FUNCTION: 0x004264B0 ObjectClass::Per_Cell_Process
+// FUNCTION: GAMEMD 0x004264B0
+// ObjectClass::Per_Cell_Process
 
-// FUNCTION: 0x004264C0 ObjectClass::Can_Enter_Cell
+// FUNCTION: GAMEMD 0x004264C0
+// ObjectClass::Can_Enter_Cell
 
-// FUNCTION: 0x004264D0 ObjectClass::Can_Reach
+// FUNCTION: GAMEMD 0x004264D0
+// ObjectClass::Can_Reach
 
-// FUNCTION: 0x004264E0
+// FUNCTION: GAMEMD 0x004264E0
 bool ObjectClass::IsBeingWarpedOut(void) const
 {
 	return(false);
 }
 
-// FUNCTION: 0x004264F0
+// FUNCTION: GAMEMD 0x004264F0
 bool ObjectClass::IsWarpingIn(void) const
 {
 	return(false);
 }
 
-// FUNCTION: 0x00426500
+// FUNCTION: GAMEMD 0x00426500
 bool ObjectClass::IsWarpingSomethingOut(void) const
 {
 	return(false);
 }
 
-// FUNCTION: 0x00426510
+// FUNCTION: GAMEMD 0x00426510
 bool ObjectClass::IsNotWarping(void) const
 {
 	return(true);
 }
 
-// FUNCTION: 0x00426520
+// FUNCTION: GAMEMD 0x00426520
 void * ObjectClass::GetRemapColour(void) const
 {
 	return(NULL);
 }
 
-// FUNCTION: 0x00426530
+// FUNCTION: GAMEMD 0x00426530
 int AnimClass::Fetch_Object_Size(void) const
 {
 	return(sizeof(*this));
 }
 
-// FUNCTION: 0x00426540
+// FUNCTION: GAMEMD 0x00426540
 HRESULT STDMETHODCALLTYPE AnimClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -825,18 +843,21 @@ HRESULT STDMETHODCALLTYPE AnimClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x00426580
+// FUNCTION: GAMEMD 0x00426580
 RTTIType AnimClass::Fetch_RTTI(void) const
 {
 	return(RTTI_ANIM);
 }
 
-// FUNCTION: 0x00426590 AnimClass::~AnimClass
+// SYNTHETIC: GAMEMD 0x00426590
+// ??_GAnimClass@@UAEPAXI@Z
 
 
-// FUNCTION: 0x00426620 ?$CDTimerClass@VFrameTimerClass@@::?$CDTimerClass@VFrameTimerClass@@
+// TEMPLATE: GAMEMD 0x00426620
+// ??0?$CDTimerClass@VFrameTimerClass@@@@QAE@ABVNoInitClass@@@Z
 
-// FUNCTION: 0x00426630 ?$CDTimerClass@VFrameTimerClass@@::Value
+// TEMPLATE: GAMEMD 0x00426630
+// ?Value@?$CDTimerClass@VFrameTimerClass@@@@QBEHXZ
 template class CDTimerClass<FrameTimerClass>;
 
 extern int DAT_0089A1C8;
@@ -844,7 +865,7 @@ extern int DAT_0089A1CC;
 extern int DAT_0089A1D0;
 extern int DAT_0089A1D4;
 
-// FUNCTION: 0x00426650
+// FUNCTION: GAMEMD 0x00426650
 void FUN_00426650(void)
 {
 	DAT_0089A1C8 = 0;

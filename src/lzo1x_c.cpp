@@ -258,7 +258,7 @@ m3_m4_offset:
 	return(LZO_E_OK);
 }
 
-// FUNCTION: 0x0055BB90
+// FUNCTION: GAMEMD 0x0055BB90
 int lzo1x_1_compress     ( const lzo_byte * in, lzo_uint  in_len,
                                  lzo_byte * out, lzo_uint *out_len,
                                  lzo_voidp wrkmem )

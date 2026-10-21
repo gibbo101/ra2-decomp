@@ -7,7 +7,7 @@
 #include "pk.h"
 #include <cstring>
 
-// FUNCTION: 0x00631F60
+// FUNCTION: GAMEMD 0x00631F60
 PKey::PKey(void const * exponent, void const * modulus)
 {
 	Modulus.DERDecode((unsigned char *)modulus);
@@ -15,7 +15,7 @@ PKey::PKey(void const * exponent, void const * modulus)
 	BitPrecision = Modulus.BitCount()-1;
 }
 
-// FUNCTION: 0x00631FC0
+// FUNCTION: GAMEMD 0x00631FC0
 int PKey::Encode_Modulus(void * buffer) const
 {
 	if (buffer == NULL) {
@@ -24,7 +24,7 @@ int PKey::Encode_Modulus(void * buffer) const
 	return(Modulus.DEREncode((unsigned char *)buffer));
 }
 
-// FUNCTION: 0x00631FE0
+// FUNCTION: GAMEMD 0x00631FE0
 int PKey::Encode_Exponent(void * buffer) const
 {
 	if (buffer == NULL) {
@@ -33,20 +33,20 @@ int PKey::Encode_Exponent(void * buffer) const
 	return(Exponent.DEREncode((unsigned char *)buffer));
 }
 
-// FUNCTION: 0x00632000
+// FUNCTION: GAMEMD 0x00632000
 void PKey::Decode_Modulus(void * buffer)
 {
 	Modulus.DERDecode((unsigned char *)buffer);
 	BitPrecision = Modulus.BitCount()-1;
 }
 
-// FUNCTION: 0x00632030
+// FUNCTION: GAMEMD 0x00632030
 void PKey::Decode_Exponent(void * buffer)
 {
 	Exponent.DERDecode((unsigned char *)buffer);
 }
 
-// FUNCTION: 0x00632050
+// FUNCTION: GAMEMD 0x00632050
 void PKey::Generate(Straw & random, int bits, PKey & fastkey, PKey & slowkey)
 {
 	for (;;) {
@@ -79,7 +79,7 @@ void PKey::Generate(Straw & random, int bits, PKey & fastkey, PKey & slowkey)
 	}
 }
 
-// FUNCTION: 0x00632740
+// FUNCTION: GAMEMD 0x00632740
 int PKey::Encrypt(void const * source, int slen, void * dest) const
 {
 	int total = 0;
@@ -99,7 +99,7 @@ int PKey::Encrypt(void const * source, int slen, void * dest) const
 	return(total);
 }
 
-// FUNCTION: 0x00632870
+// FUNCTION: GAMEMD 0x00632870
 int PKey::Decrypt(void const * source, int slen, void * dest) const
 {
 	int total = 0;

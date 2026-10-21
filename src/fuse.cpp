@@ -6,7 +6,7 @@
 #include "always.h"
 #include "fuse.h"
 
-// FUNCTION: 0x004E1100
+// FUNCTION: GAMEMD 0x004E1100
 FuseClass::FuseClass(void) :
 	Timer(0),
 	Arming(0),
@@ -15,7 +15,7 @@ FuseClass::FuseClass(void) :
 {
 }
 
-// FUNCTION: 0x004E1130
+// FUNCTION: GAMEMD 0x004E1130
 void FuseClass::Arm_Fuse(Coord const & location, Coord const & target, int arming, int timeto)
 {
 	timeto = MAX(timeto, arming);
@@ -25,7 +25,7 @@ void FuseClass::Arm_Fuse(Coord const & location, Coord const & target, int armin
 	Proximity = location.Distance_To(target);
 }
 
-// FUNCTION: 0x004E11F0
+// FUNCTION: GAMEMD 0x004E11F0
 FuseResultType FuseClass::Fuse_Checkup(Coord const & newlocation)
 {
 	int	proximity;
@@ -49,7 +49,7 @@ int DAT_008B3E7C;
 int DAT_008B3E80;
 int DAT_008B3E84;
 
-// FUNCTION: 0x004E12B0
+// FUNCTION: GAMEMD 0x004E12B0
 void FUN_004E12B0(void)
 {
 	DAT_008B3E78 = 0;

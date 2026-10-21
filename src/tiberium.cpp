@@ -26,10 +26,12 @@
 
 DynamicVectorClass<TiberiumClass *> Tiberiums;
 
-// FUNCTION: 0x00721640 $E59
-// FUNCTION: 0x00721680 $E57
+// SYNTHETIC: GAMEMD 0x00721640 SYMBOL
+// _$E59
+// SYNTHETIC: GAMEMD 0x00721680 SYMBOL
+// _$E57
 
-// FUNCTION: 0x007216C0
+// FUNCTION: GAMEMD 0x007216C0
 TiberiumClass::TiberiumClass(char const * ininame) :
 	BASECLASS(ininame),
 	HeapID(TIBERIUM_NONE),
@@ -62,7 +64,7 @@ TiberiumClass::TiberiumClass(char const * ininame) :
 	AbstractTypePtrTracker.Add(this);
 }
 
-// FUNCTION: 0x00721880
+// FUNCTION: GAMEMD 0x00721880
 TiberiumClass::~TiberiumClass(void)
 {
 	Detach_This_From_All(this);
@@ -121,7 +123,7 @@ static TypeList<AnimTypeClass const *> Get_Debris(CCINIClass const & ini, char c
 	return(defvalue);
 }
 
-// FUNCTION: 0x00721A50
+// FUNCTION: GAMEMD 0x00721A50
 bool TiberiumClass::Read_INI(CCINIClass & ini)
 {
 	ini.Reset();
@@ -169,7 +171,7 @@ bool TiberiumClass::Read_INI(CCINIClass & ini)
 	return(false);
 }
 
-// FUNCTION: 0x00721D10
+// FUNCTION: GAMEMD 0x00721D10
 bool TiberiumClass::Process(CCINIClass & ini)
 {
 	char buffer[24];
@@ -190,7 +192,7 @@ bool TiberiumClass::Process(CCINIClass & ini)
 	return(true);
 }
 
-// FUNCTION: 0x00721DC0
+// FUNCTION: GAMEMD 0x00721DC0
 void TiberiumClass::Compute_CRC(CRCEngine & crc) const
 {
 	BASECLASS::Compute_CRC(crc);
@@ -203,7 +205,7 @@ void TiberiumClass::Compute_CRC(CRCEngine & crc) const
 	crc(Variety);
 }
 
-// FUNCTION: 0x00721E40
+// FUNCTION: GAMEMD 0x00721E40
 HRESULT STDMETHODCALLTYPE TiberiumClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -211,7 +213,7 @@ HRESULT STDMETHODCALLTYPE TiberiumClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x00723510
+// FUNCTION: GAMEMD 0x00723510
 void TiberiumClass::Clear_Growth(void)
 {
 	if (GrowthQueue) {
@@ -233,7 +235,7 @@ void TiberiumClass::Clear_Growth(void)
 	GrowthCount = 0;
 }
 
-// FUNCTION: 0x00721E80
+// FUNCTION: GAMEMD 0x00721E80
 HRESULT STDMETHODCALLTYPE TiberiumClass::Load(IStream * stream)
 {
 	Clear_Spread();
@@ -263,7 +265,7 @@ HRESULT STDMETHODCALLTYPE TiberiumClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x007220A0
+// FUNCTION: GAMEMD 0x007220A0
 HRESULT STDMETHODCALLTYPE TiberiumClass::GetSizeMax(ULARGE_INTEGER *pcbSize)
 {
 	HRESULT res = BASECLASS::GetSizeMax(pcbSize);
@@ -274,7 +276,7 @@ HRESULT STDMETHODCALLTYPE TiberiumClass::GetSizeMax(ULARGE_INTEGER *pcbSize)
 	return(res);
 }
 
-// FUNCTION: 0x007220D0
+// FUNCTION: GAMEMD 0x007220D0
 HRESULT STDMETHODCALLTYPE TiberiumClass::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -286,7 +288,7 @@ HRESULT STDMETHODCALLTYPE TiberiumClass::Save(IStream * stream, BOOL cleardirty)
 	return(result);
 }
 
-// FUNCTION: 0x00722140
+// FUNCTION: GAMEMD 0x00722140
 void TiberiumClass::Detach(AbstractClass const * target, bool all)
 {
 	for (int i = Debris.Count() -1; i >= 0; i--) {
@@ -300,7 +302,7 @@ void TiberiumClass::Detach(AbstractClass const * target, bool all)
 	}
 }
 
-// FUNCTION: 0x007221B0
+// FUNCTION: GAMEMD 0x007221B0
 void TiberiumClass::Tiberium_Spread(void)
 {
 	if (Scen->IsTibGrowth) {
@@ -314,7 +316,7 @@ void TiberiumClass::Tiberium_Spread(void)
 }
 
 
-// FUNCTION: 0x00722240
+// FUNCTION: GAMEMD 0x00722240
 void TiberiumClass::Init_Tiberium_Spread_System(void)
 {
 	for (int i = 0; i < Tiberiums.Count(); i++) {
@@ -322,7 +324,7 @@ void TiberiumClass::Init_Tiberium_Spread_System(void)
 	}
 }
 
-// FUNCTION: 0x00722390
+// FUNCTION: GAMEMD 0x00722390
 void TiberiumClass::Deinit_Tiberium_Spread_System(void)
 {
 	for (int i = 0; i < Tiberiums.Count(); i++) {
@@ -330,7 +332,7 @@ void TiberiumClass::Deinit_Tiberium_Spread_System(void)
 	}
 }
 
-// FUNCTION: 0x00722440
+// FUNCTION: GAMEMD 0x00722440
 void TiberiumClass::Spread_AI(void)
 {
 	if (SpreadQueue && SpreadQueue->Count() && SpreadPercentage > 0.00001) {
@@ -376,7 +378,7 @@ void TiberiumClass::Spread_AI(void)
 	}
 }
 
-// FUNCTION: 0x00722770
+// FUNCTION: GAMEMD 0x00722770
 void TiberiumClass::Init_Spread(void)
 {
 	Clear_Spread();
@@ -388,7 +390,7 @@ void TiberiumClass::Init_Spread(void)
 	Recalc_Spread();
 }
 
-// FUNCTION: 0x007228B0
+// FUNCTION: GAMEMD 0x007228B0
 void TiberiumClass::Recalc_Spread(void)
 {
 	SpreadCount = 0;
@@ -413,7 +415,7 @@ void TiberiumClass::Recalc_Spread(void)
 	}
 }
 
-// FUNCTION: 0x00722A20
+// FUNCTION: GAMEMD 0x00722A20
 void TiberiumClass::Clear_Spread(void)
 {
 	if (SpreadQueue) {
@@ -435,7 +437,7 @@ void TiberiumClass::Clear_Spread(void)
 	SpreadCount = 0;
 }
 
-// FUNCTION: 0x00722AB0
+// FUNCTION: GAMEMD 0x00722AB0
 void TiberiumClass::Clear_Spread_State(Cell const & cell)
 {
 	int cellindex = Map_Cell_Index(cell);
@@ -444,7 +446,7 @@ void TiberiumClass::Clear_Spread_State(Cell const & cell)
 	}
 }
 
-// FUNCTION: 0x00722AF0
+// FUNCTION: GAMEMD 0x00722AF0
 void TiberiumClass::Queue_Spread(Cell const & cell)
 {
 	int cellindex = Map_Cell_Index(cell);
@@ -460,7 +462,7 @@ void TiberiumClass::Queue_Spread(Cell const & cell)
 	}
 }
 
-// FUNCTION: 0x00722C40
+// FUNCTION: GAMEMD 0x00722C40
 void TiberiumClass::Tiberium_Growth(void)
 {
 	if (Scen->IsTibGrowth) {
@@ -473,7 +475,7 @@ void TiberiumClass::Tiberium_Growth(void)
 	}
 }
 
-// FUNCTION: 0x00722D00
+// FUNCTION: GAMEMD 0x00722D00
 void TiberiumClass::Init_Tiberium_Growth_System(void)
 {
 	for (int i = 0; i < Tiberiums.Count(); i++) {
@@ -481,7 +483,7 @@ void TiberiumClass::Init_Tiberium_Growth_System(void)
 	}
 }
 
-// FUNCTION: 0x00722E50
+// FUNCTION: GAMEMD 0x00722E50
 void TiberiumClass::Deinit_Tiberium_Growth_System(void)
 {
 	for (int i = 0; i < Tiberiums.Count(); i++) {
@@ -489,7 +491,7 @@ void TiberiumClass::Deinit_Tiberium_Growth_System(void)
 	}
 }
 
-// FUNCTION: 0x00722F00
+// FUNCTION: GAMEMD 0x00722F00
 void TiberiumClass::Growth_AI(void)
 {
 	if (GrowthQueue && GrowthQueue->Count() && GrowthPercentage > 0.00001) {
@@ -528,7 +530,7 @@ void TiberiumClass::Growth_AI(void)
 	}
 }
 
-// FUNCTION: 0x00723260
+// FUNCTION: GAMEMD 0x00723260
 void TiberiumClass::Init_Growth(void)
 {
 	Clear_Growth();
@@ -540,7 +542,7 @@ void TiberiumClass::Init_Growth(void)
 	Recalc_Growth();
 }
 
-// FUNCTION: 0x007233A0
+// FUNCTION: GAMEMD 0x007233A0
 void TiberiumClass::Recalc_Growth(void)
 {
 	GrowthCount = 0;
@@ -563,7 +565,7 @@ void TiberiumClass::Recalc_Growth(void)
 	}
 }
 
-// FUNCTION: 0x007235A0
+// FUNCTION: GAMEMD 0x007235A0
 void TiberiumClass::Queue_Growth(Cell const & cell)
 {
 	int cellindex = Map_Cell_Index(cell);
@@ -579,33 +581,49 @@ void TiberiumClass::Queue_Growth(Cell const & cell)
 	}
 }
 
-// FUNCTION: 0x007236D0
+// FUNCTION: GAMEMD 0x007236D0
 void TiberiumClass::Post_Load_Game(void)
 {
 }
 
-// FUNCTION: 0x007236E0 TiberiumClass::Fetch_Object_Size
-// FUNCTION: 0x007236F0 TiberiumClass::Fetch_RTTI
-// FUNCTION: 0x00723700 TiberiumClass::Fetch_Heap_ID
-// FUNCTION: 0x00723710 TiberiumClass::~TiberiumClass
+// FUNCTION: GAMEMD 0x007236E0
+// TiberiumClass::Fetch_Object_Size
+// FUNCTION: GAMEMD 0x007236F0
+// TiberiumClass::Fetch_RTTI
+// FUNCTION: GAMEMD 0x00723700
+// TiberiumClass::Fetch_Heap_ID
+// SYNTHETIC: GAMEMD 0x00723710
+// ??_GTiberiumClass@@UAEPAXI@Z
 
-// FUNCTION: 0x00723730 ?$DynamicVectorClass@PAVTiberiumClass@@::Clear
-// FUNCTION: 0x00723760 ?$DynamicVectorClass@PAVTiberiumClass@@::ID
-// FUNCTION: 0x00723780 ?$VectorClass@PAVTiberiumClass@@::GetItem
+// TEMPLATE: GAMEMD 0x00723730
+// ?Clear@?$DynamicVectorClass@PAVTiberiumClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x00723760
+// ?ID@?$DynamicVectorClass@PAVTiberiumClass@@@@UAEHPBQAVTiberiumClass@@@Z
+// TEMPLATE: GAMEMD 0x00723780
+// ?GetItem@?$VectorClass@PAVTiberiumClass@@@@UBEPAVTiberiumClass@@H@Z
 
-// FUNCTION: 0x00723790 ?$VectorClass@PAVTiberiumClass@@::operator==
-// FUNCTION: 0x007237D0 ?$VectorClass@PAVTiberiumClass@@::Resize
-// FUNCTION: 0x00723880 ?$VectorClass@PAVTiberiumClass@@::Clear
-// FUNCTION: 0x007238B0 ?$VectorClass@PAVTiberiumClass@@::ID
-// FUNCTION: 0x007238F0 ?$VectorClass@PAVTiberiumClass@@::ID
+// TEMPLATE: GAMEMD 0x00723790
+// ??8?$VectorClass@PAVTiberiumClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x007237D0
+// ?Resize@?$VectorClass@PAVTiberiumClass@@@@UAE_NHPBQAVTiberiumClass@@@Z
+// TEMPLATE: GAMEMD 0x00723880
+// ?Clear@?$VectorClass@PAVTiberiumClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x007238B0
+// ?ID@?$VectorClass@PAVTiberiumClass@@@@UAEHABQAVTiberiumClass@@@Z
+// TEMPLATE: GAMEMD 0x007238F0
+// ?ID@?$VectorClass@PAVTiberiumClass@@@@UAEHPBQAVTiberiumClass@@@Z
 template class VectorClass<TiberiumClass *>;
 
-// FUNCTION: 0x00723910 ?$DynamicVectorClass@PAVTiberiumClass@@::Resize
-// FUNCTION: 0x007239C0 ?$DynamicVectorClass@PAVTiberiumClass@@::ID
+// TEMPLATE: GAMEMD 0x00723910
+// ?Resize@?$DynamicVectorClass@PAVTiberiumClass@@@@UAE_NHPBQAVTiberiumClass@@@Z
+// TEMPLATE: GAMEMD 0x007239C0
+// ?ID@?$DynamicVectorClass@PAVTiberiumClass@@@@UAEHABQAVTiberiumClass@@@Z
 template class DynamicVectorClass<TiberiumClass *>;
 
-// FUNCTION: 0x007239F0 ?$DynamicVectorClass@PAVTiberiumClass@@::~?$DynamicVectorClass@PAVTiberiumClass@@
-// FUNCTION: 0x00723A40 ?$VectorClass@PAVTiberiumClass@@::~?$VectorClass@PAVTiberiumClass@@
+// SYNTHETIC: GAMEMD 0x007239F0
+// ??_G?$DynamicVectorClass@PAVTiberiumClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00723A40
+// ??_G?$VectorClass@PAVTiberiumClass@@@@UAEPAXI@Z
 
 namespace fastmath { double __cdecl sqrt(double x); }
 extern const double DAT_007E1708;
@@ -613,13 +631,16 @@ extern const double DAT_007E1710;
 extern const double DAT_007E1718;
 extern const double DAT_007F5798;
 
-// FUNCTION: 0x00723A90 $E64
+// SYNTHETIC: GAMEMD 0x00723A90 SYMBOL
+// _$E64
 double DAT_00B0F538 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x00723AC0 $E67
+// SYNTHETIC: GAMEMD 0x00723AC0 SYMBOL
+// _$E67
 double DAT_00B0F588 = DAT_00B0F538 / DAT_007F5798;
 
-// FUNCTION: 0x00723AE0 $E70
+// SYNTHETIC: GAMEMD 0x00723AE0 SYMBOL
+// _$E70
 double DAT_00B0F570 = DAT_007E1718 / DAT_00B0F588;
 
 namespace fastmath { double __cdecl tan(double x); double __cdecl atan(double x); }
@@ -630,35 +651,46 @@ extern const double DAT_007E1738;
 extern const double DAT_007E1740;
 extern const double DAT_007F57A0;
 
-// FUNCTION: 0x00723B00 $E73
+// SYNTHETIC: GAMEMD 0x00723B00 SYMBOL
+// _$E73
 double DAT_00B0F568 = DAT_007E1720 * DAT_007F57A0;
 
-// FUNCTION: 0x00723B20 $E76
+// SYNTHETIC: GAMEMD 0x00723B20 SYMBOL
+// _$E76
 double DAT_00B0F540 = DAT_007E1728 * DAT_007F57A0;
 
-// FUNCTION: 0x00723B40 $E79
+// SYNTHETIC: GAMEMD 0x00723B40 SYMBOL
+// _$E79
 double DAT_00B0F518 = DAT_007E1730 * DAT_007F57A0;
 
-// FUNCTION: 0x00723B60 $E82
+// SYNTHETIC: GAMEMD 0x00723B60 SYMBOL
+// _$E82
 int DAT_00B0F590 = (int)(fastmath::tan(DAT_00B0F518 - DAT_00B0F540) * DAT_007E1738 * DAT_00B0F538);
 
-// FUNCTION: 0x00723BA0 $E85
+// SYNTHETIC: GAMEMD 0x00723BA0 SYMBOL
+// _$E85
 double DAT_00B0F548 = fastmath::atan(DAT_00B0F590 * DAT_007E1740);
 
-// FUNCTION: 0x00723BD0 $E88
+// SYNTHETIC: GAMEMD 0x00723BD0 SYMBOL
+// _$E88
 double DAT_00B0F560 = fastmath::atan((DAT_00B0F590 * 2) / DAT_00B0F538);
 
-// FUNCTION: 0x00723C00 $E91
+// SYNTHETIC: GAMEMD 0x00723C00 SYMBOL
+// _$E91
 int DAT_00B0F584 = (int)((DAT_00B0F590 * 4) + DAT_007E1738);
 
-// FUNCTION: 0x00723C30 $E94
+// SYNTHETIC: GAMEMD 0x00723C30 SYMBOL
+// _$E94
 Cell DAT_00B0F530(0, 0);
 
-// FUNCTION: 0x00723C40 $E97
+// SYNTHETIC: GAMEMD 0x00723C40 SYMBOL
+// _$E97
 Coord DAT_00B0F550(0, 0, 0);
 
-// FUNCTION: 0x00723C60 $E100
+// SYNTHETIC: GAMEMD 0x00723C60 SYMBOL
+// _$E100
 Coord DAT_00B0F578(128, 128, 0);
 
-// FUNCTION: 0x00723C80 $E103
+// SYNTHETIC: GAMEMD 0x00723C80 SYMBOL
+// _$E103
 Rect DAT_00B0F520(0, 0, 0, 0);

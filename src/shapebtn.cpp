@@ -15,7 +15,7 @@
 #include "dsurface.h"
 #include "shapeset.h"
 
-// FUNCTION: 0x0069DCF0
+// FUNCTION: GAMEMD 0x0069DCF0
 ShapeButtonClass::ShapeButtonClass(void) :
 	BASECLASS(0, 0, 0, 0, 0),
 	IsToFlash(false),
@@ -30,7 +30,7 @@ ShapeButtonClass::ShapeButtonClass(void) :
 {
 }
 
-// FUNCTION: 0x0069DD30
+// FUNCTION: GAMEMD 0x0069DD30
 ShapeButtonClass::ShapeButtonClass(unsigned id, ShapeSet const * shape, int x, int y, int override_width, int override_height, bool faded) :
 	BASECLASS(id, x, y, 0, 0),
 	IsToFlash(false),
@@ -45,13 +45,13 @@ ShapeButtonClass::ShapeButtonClass(unsigned id, ShapeSet const * shape, int x, i
 	Set_Shape(shape, override_width, override_height);
 }
 
-// FUNCTION: 0x0069DDC0
+// FUNCTION: GAMEMD 0x0069DDC0
 ShapeButtonClass::~ShapeButtonClass(void)
 {
 	ClearShape();
 }
 
-// FUNCTION: 0x0069DE00
+// FUNCTION: GAMEMD 0x0069DE00
 void ShapeButtonClass::Set_Shape(ShapeSet const * data, int override_width, int override_height)
 {
 	ClearShape();
@@ -71,7 +71,7 @@ void ShapeButtonClass::Set_Shape(ShapeSet const * data, int override_width, int 
 	}
 }
 
-// FUNCTION: 0x0069DE70
+// FUNCTION: GAMEMD 0x0069DE70
 void ShapeButtonClass::ClearShape(void)
 {
 	if (IsShapeLoaded && ShapeData) {
@@ -83,13 +83,13 @@ void ShapeButtonClass::ClearShape(void)
 	}
 }
 
-// FUNCTION: 0x0069DEA0
+// FUNCTION: GAMEMD 0x0069DEA0
 void ShapeButtonClass::SetLoadedStatus(bool loaded)
 {
 	IsShapeLoaded = loaded;
 }
 
-// FUNCTION: 0x0069DEB0
+// FUNCTION: GAMEMD 0x0069DEB0
 int ShapeButtonClass::Draw_Me(int forced)
 {
 	if (ControlClass::Draw_Me(forced) && ShapeData) {
@@ -119,7 +119,7 @@ int ShapeButtonClass::Draw_Me(int forced)
 	return(false);
 }
 
-// FUNCTION: 0x0069DFC0
+// FUNCTION: GAMEMD 0x0069DFC0
 bool ShapeButtonClass::StartFlashing(int delay, int initdelay, bool start)
 {
 	if (FlashDelay == 0) {
@@ -131,7 +131,7 @@ bool ShapeButtonClass::StartFlashing(int delay, int initdelay, bool start)
 	return(false);
 }
 
-// FUNCTION: 0x0069DFF0
+// FUNCTION: GAMEMD 0x0069DFF0
 bool ShapeButtonClass::StopFlashing(void)
 {
 	if (FlashDelay != 0) {
@@ -143,7 +143,7 @@ bool ShapeButtonClass::StopFlashing(void)
 	return(false);
 }
 
-// FUNCTION: 0x0069E010
+// FUNCTION: GAMEMD 0x0069E010
 bool ShapeButtonClass::AI(void)
 {
 	if (IsDisabled) {
@@ -164,13 +164,13 @@ bool ShapeButtonClass::AI(void)
 	return(false);
 }
 
-// FUNCTION: 0x0069E050
+// FUNCTION: GAMEMD 0x0069E050
 bool ShapeButtonClass::IsFlashing(void)
 {
 	return(FlashDelay != 0);
 }
 
-// FUNCTION: 0x0069E060
+// FUNCTION: GAMEMD 0x0069E060
 bool ShapeButtonClass::IsFlashOn(void)
 {
 	return(IsToFlash);

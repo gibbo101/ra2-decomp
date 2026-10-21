@@ -12,11 +12,13 @@
 #include "tracker.h"
 #include "vector.h"
 
-// FUNCTION: 0x00763590 $E5
-// FUNCTION: 0x007635D0 $E3
+// SYNTHETIC: GAMEMD 0x00763590 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x007635D0 SYMBOL
+// _$E3
 DynamicVectorClass<WaypointPathClass *> WaypointPaths;
 
-// FUNCTION: 0x00763610
+// FUNCTION: GAMEMD 0x00763610
 const char *Waypoint_To_Name(WAYPOINT wp)
 {
 	static char _string[4];
@@ -37,7 +39,7 @@ const char *Waypoint_To_Name(WAYPOINT wp)
 	return(_string);
 }
 
-// FUNCTION: 0x00763690
+// FUNCTION: GAMEMD 0x00763690
 WAYPOINT Waypoint_From_Name(const char *string)
 {
 	WAYPOINT wp = -1;
@@ -55,24 +57,24 @@ WAYPOINT Waypoint_From_Name(const char *string)
 	return(wp);
 }
 
-// FUNCTION: 0x007636F0
+// FUNCTION: GAMEMD 0x007636F0
 WaypointClass::WaypointClass(void) :
 	Location(0,0,0)
 {
 }
 
-// FUNCTION: 0x00763700
+// FUNCTION: GAMEMD 0x00763700
 WaypointClass::WaypointClass(Coord const & coord) :
 	Location(coord)
 {
 }
 
-// FUNCTION: 0x00763720
+// FUNCTION: GAMEMD 0x00763720
 WaypointClass::~WaypointClass(void)
 {
 }
 
-// FUNCTION: 0x00763730
+// FUNCTION: GAMEMD 0x00763730
 WaypointPathClass::WaypointPathClass(void) :
 	BASECLASS(),
 	CurrentWaypoint(-1),
@@ -81,14 +83,14 @@ WaypointPathClass::WaypointPathClass(void) :
 	WaypointPaths.Add(this);
 }
 
-// FUNCTION: 0x007637D0
+// FUNCTION: GAMEMD 0x007637D0
 WaypointPathClass::WaypointPathClass(NoInitClass const & x) :
 	BASECLASS(x),
 	Waypoints(x)
 {
 }
 
-// FUNCTION: 0x00763810
+// FUNCTION: GAMEMD 0x00763810
 WaypointPathClass::WaypointPathClass(int index) :
 	BASECLASS(),
 	CurrentWaypoint(-1),
@@ -99,14 +101,14 @@ WaypointPathClass::WaypointPathClass(int index) :
 	}
 }
 
-// FUNCTION: 0x007638C0
+// FUNCTION: GAMEMD 0x007638C0
 WaypointPathClass::~WaypointPathClass(void)
 {
 	Detach_This_From_All(this);
 	WaypointPaths.Delete(this);
 }
 
-// FUNCTION: 0x00763980
+// FUNCTION: GAMEMD 0x00763980
 WaypointClass * WaypointPathClass::Get_Waypoint(int index)
 {
 	if (index >= 0 && index < Waypoints.Count()) {
@@ -115,7 +117,7 @@ WaypointClass * WaypointPathClass::Get_Waypoint(int index)
 	return(NULL);
 }
 
-// FUNCTION: 0x007639A0
+// FUNCTION: GAMEMD 0x007639A0
 bool WaypointPathClass::Add_Waypoint(Coord const & coord)
 {
 	Coord snapped = coord.As_Cell().As_Coord();
@@ -126,7 +128,7 @@ bool WaypointPathClass::Add_Waypoint(Coord const & coord)
 	return(true);
 }
 
-// FUNCTION: 0x00763A50
+// FUNCTION: GAMEMD 0x00763A50
 bool WaypointPathClass::Select_Waypoint(Coord const & coord)
 {
 	for (int i = 0; i < Waypoints.Count(); i++) {
@@ -138,7 +140,7 @@ bool WaypointPathClass::Select_Waypoint(Coord const & coord)
 	return(false);
 }
 
-// FUNCTION: 0x00763AF0
+// FUNCTION: GAMEMD 0x00763AF0
 void WaypointPathClass::Replace_Waypoint(int index, Coord const & coord)
 {
 	WaypointClass * wp = Get_Waypoint(index);
@@ -147,7 +149,7 @@ void WaypointPathClass::Replace_Waypoint(int index, Coord const & coord)
 	}
 }
 
-// FUNCTION: 0x00763B30
+// FUNCTION: GAMEMD 0x00763B30
 void WaypointPathClass::Delete_Waypoint(int index)
 {
 	if (index >= 0 && index < Waypoints.Count()) {
@@ -158,7 +160,7 @@ void WaypointPathClass::Delete_Waypoint(int index)
 	}
 }
 
-// FUNCTION: 0x00763BA0
+// FUNCTION: GAMEMD 0x00763BA0
 WaypointClass * WaypointPathClass::Get_Next_Waypoint(WaypointClass * wp)
 {
 	int index = Waypoints.ID(wp) + 1;
@@ -168,14 +170,14 @@ WaypointClass * WaypointPathClass::Get_Next_Waypoint(WaypointClass * wp)
 	return(Get_Waypoint(index));
 }
 
-// FUNCTION: 0x00763BE0
+// FUNCTION: GAMEMD 0x00763BE0
 void WaypointPathClass::Clear(void)
 {
 	Waypoints.Clear();
 	CurrentWaypoint = -1;
 }
 
-// FUNCTION: 0x00763C00
+// FUNCTION: GAMEMD 0x00763C00
 void WaypointPathClass::Compute_CRC(CRCEngine & crc) const
 {
 	BASECLASS::Compute_CRC(crc);
@@ -183,7 +185,7 @@ void WaypointPathClass::Compute_CRC(CRCEngine & crc) const
 	crc(Waypoints.Count());
 }
 
-// FUNCTION: 0x00763C30
+// FUNCTION: GAMEMD 0x00763C30
 HRESULT STDMETHODCALLTYPE WaypointPathClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -191,7 +193,7 @@ HRESULT STDMETHODCALLTYPE WaypointPathClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x00763C70
+// FUNCTION: GAMEMD 0x00763C70
 HRESULT STDMETHODCALLTYPE WaypointPathClass::Load(IStream *stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -221,7 +223,7 @@ HRESULT STDMETHODCALLTYPE WaypointPathClass::Load(IStream *stream)
 	return(result);
 }
 
-// FUNCTION: 0x00763D90
+// FUNCTION: GAMEMD 0x00763D90
 HRESULT STDMETHODCALLTYPE WaypointPathClass::Save(IStream *stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -246,47 +248,73 @@ HRESULT STDMETHODCALLTYPE WaypointPathClass::Save(IStream *stream, BOOL cleardir
 	return(result);
 }
 
-// FUNCTION: 0x00763E00
+// FUNCTION: GAMEMD 0x00763E00
 int WaypointPathClass::Fetch_Object_Size(void) const
 {
 	return(sizeof(*this));
 }
 
-// FUNCTION: 0x00763E10
+// FUNCTION: GAMEMD 0x00763E10
 RTTIType WaypointPathClass::Fetch_RTTI(void) const
 {
 	return(RTTI_WAYPOINT);
 }
 
-// FUNCTION: 0x00763E20 WaypointPathClass::~WaypointPathClass
+// SYNTHETIC: GAMEMD 0x00763E20
+// ??_GWaypointPathClass@@UAEPAXI@Z
 
-// FUNCTION: 0x00763EF0 ?$DynamicVectorClass@VWaypointClass@@::Clear
-// FUNCTION: 0x00763F30 ?$DynamicVectorClass@VWaypointClass@@::ID
-// FUNCTION: 0x00763F60 ?$VectorClass@VWaypointClass@@::GetItem
+// TEMPLATE: GAMEMD 0x00763EF0
+// ?Clear@?$DynamicVectorClass@VWaypointClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x00763F30
+// ?ID@?$DynamicVectorClass@VWaypointClass@@@@UAEHPBVWaypointClass@@@Z
+// TEMPLATE: GAMEMD 0x00763F60
+// ?GetItem@?$VectorClass@VWaypointClass@@@@UBE?AVWaypointClass@@H@Z
 template class DynamicVectorClass<WaypointClass>;
 
-// FUNCTION: 0x00763F90 ?$DynamicVectorClass@PAVWaypointPathClass@@::Clear
-// FUNCTION: 0x00763FC0 ?$DynamicVectorClass@PAVWaypointPathClass@@::ID
-// FUNCTION: 0x00763FE0 ?$VectorClass@PAVWaypointPathClass@@::GetItem
-// FUNCTION: 0x00763FF0 ?$DynamicVectorClass@VWaypointClass@@::~?$DynamicVectorClass@VWaypointClass@@
-// FUNCTION: 0x00764050 ?$VectorClass@VWaypointClass@@::~?$VectorClass@VWaypointClass@@
-// FUNCTION: 0x007640B0 ?$VectorClass@VWaypointClass@@::operator==
-// FUNCTION: 0x00764110 ?$VectorClass@VWaypointClass@@::Resize
-// FUNCTION: 0x00764220 ?$VectorClass@VWaypointClass@@::Clear
-// FUNCTION: 0x00764260 ?$VectorClass@VWaypointClass@@::ID
-// FUNCTION: 0x007642B0 ?$VectorClass@VWaypointClass@@::ID
-// FUNCTION: 0x007642E0 ?$DynamicVectorClass@VWaypointClass@@::Resize
-// FUNCTION: 0x00764420 ?$DynamicVectorClass@VWaypointClass@@::ID
-// FUNCTION: 0x00764460 ?$VectorClass@PAVWaypointPathClass@@::operator==
-// FUNCTION: 0x007644A0 ?$VectorClass@PAVWaypointPathClass@@::Resize
-// FUNCTION: 0x00764550 ?$VectorClass@PAVWaypointPathClass@@::Clear
-// FUNCTION: 0x00764580 ?$VectorClass@PAVWaypointPathClass@@::ID
-// FUNCTION: 0x007645C0 ?$VectorClass@PAVWaypointPathClass@@::ID
-// FUNCTION: 0x007645E0 ?$DynamicVectorClass@PAVWaypointPathClass@@::Resize
-// FUNCTION: 0x00764690 ?$DynamicVectorClass@PAVWaypointPathClass@@::ID
-// FUNCTION: 0x007646C0 ?$VectorClass@PAVWaypointPathClass@@::~?$VectorClass@PAVWaypointPathClass@@
-// FUNCTION: 0x00764710 ?$DynamicVectorClass@PAVWaypointPathClass@@::~?$DynamicVectorClass@PAVWaypointPathClass@@
-// FUNCTION: 0x00764760 ?$VectorClass@VWaypointClass@@::?$VectorClass@VWaypointClass@@
+// TEMPLATE: GAMEMD 0x00763F90
+// ?Clear@?$DynamicVectorClass@PAVWaypointPathClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x00763FC0
+// ?ID@?$DynamicVectorClass@PAVWaypointPathClass@@@@UAEHPBQAVWaypointPathClass@@@Z
+// TEMPLATE: GAMEMD 0x00763FE0
+// ?GetItem@?$VectorClass@PAVWaypointPathClass@@@@UBEPAVWaypointPathClass@@H@Z
+// SYNTHETIC: GAMEMD 0x00763FF0
+// ??_G?$DynamicVectorClass@VWaypointClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00764050
+// ??_G?$VectorClass@VWaypointClass@@@@UAEPAXI@Z
+// TEMPLATE: GAMEMD 0x007640B0
+// ??8?$VectorClass@VWaypointClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x00764110
+// ?Resize@?$VectorClass@VWaypointClass@@@@UAE_NHPBVWaypointClass@@@Z
+// TEMPLATE: GAMEMD 0x00764220
+// ?Clear@?$VectorClass@VWaypointClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x00764260
+// ?ID@?$VectorClass@VWaypointClass@@@@UAEHABVWaypointClass@@@Z
+// TEMPLATE: GAMEMD 0x007642B0
+// ?ID@?$VectorClass@VWaypointClass@@@@UAEHPBVWaypointClass@@@Z
+// TEMPLATE: GAMEMD 0x007642E0
+// ?Resize@?$DynamicVectorClass@VWaypointClass@@@@UAE_NHPBVWaypointClass@@@Z
+// TEMPLATE: GAMEMD 0x00764420
+// ?ID@?$DynamicVectorClass@VWaypointClass@@@@UAEHABVWaypointClass@@@Z
+// TEMPLATE: GAMEMD 0x00764460
+// ??8?$VectorClass@PAVWaypointPathClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x007644A0
+// ?Resize@?$VectorClass@PAVWaypointPathClass@@@@UAE_NHPBQAVWaypointPathClass@@@Z
+// TEMPLATE: GAMEMD 0x00764550
+// ?Clear@?$VectorClass@PAVWaypointPathClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x00764580
+// ?ID@?$VectorClass@PAVWaypointPathClass@@@@UAEHABQAVWaypointPathClass@@@Z
+// TEMPLATE: GAMEMD 0x007645C0
+// ?ID@?$VectorClass@PAVWaypointPathClass@@@@UAEHPBQAVWaypointPathClass@@@Z
+// TEMPLATE: GAMEMD 0x007645E0
+// ?Resize@?$DynamicVectorClass@PAVWaypointPathClass@@@@UAE_NHPBQAVWaypointPathClass@@@Z
+// TEMPLATE: GAMEMD 0x00764690
+// ?ID@?$DynamicVectorClass@PAVWaypointPathClass@@@@UAEHABQAVWaypointPathClass@@@Z
+// SYNTHETIC: GAMEMD 0x007646C0
+// ??_G?$VectorClass@PAVWaypointPathClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00764710
+// ??_G?$DynamicVectorClass@PAVWaypointPathClass@@@@UAEPAXI@Z
+// TEMPLATE: GAMEMD 0x00764760
+// ??0?$VectorClass@VWaypointClass@@@@QAE@HPBVWaypointClass@@@Z
 template class DynamicVectorClass<WaypointPathClass *>;
 template class VectorClass<WaypointPathClass *>;
 template class VectorClass<WaypointClass>;
@@ -294,5 +322,6 @@ template class VectorClass<WaypointClass>;
 
 struct WaypointIntQuad { int A; int B; int C; int D; WaypointIntQuad(int a, int b, int c, int d) { A = a; B = b; C = c; D = d; } };
 
-// FUNCTION: 0x00764810 $E8
+// SYNTHETIC: GAMEMD 0x00764810 SYMBOL
+// _$E8
 WaypointIntQuad DAT_00B72678(0, 0, 0, 0);

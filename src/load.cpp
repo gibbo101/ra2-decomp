@@ -8,7 +8,7 @@
 #include "lcw.h"
 #include <cstring>
 
-// FUNCTION: 0x005584F0
+// FUNCTION: GAMEMD 0x005584F0
 unsigned int Uncompress_Data(void const *src, void *dst)
 {
 	unsigned int					skip;

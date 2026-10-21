@@ -30,40 +30,52 @@ struct IntTriple {
 	IntTriple() { A = 0; B = 0; C = 0; }
 };
 
-// FUNCTION: 0x0063F4C0 $E2
+// SYNTHETIC: GAMEMD 0x0063F4C0 SYMBOL
+// _$E2
 double DAT_00AC4D18 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x0063F4F0 $E5
+// SYNTHETIC: GAMEMD 0x0063F4F0 SYMBOL
+// _$E5
 double DAT_00AC4E68 = DAT_00AC4D18 / DAT_007EFF40;
 
-// FUNCTION: 0x0063F510 $E8
+// SYNTHETIC: GAMEMD 0x0063F510 SYMBOL
+// _$E8
 double DAT_00AC4E50 = DAT_007E1718 / DAT_00AC4E68;
 
-// FUNCTION: 0x0063F530 $E11
+// SYNTHETIC: GAMEMD 0x0063F530 SYMBOL
+// _$E11
 double DAT_00AC4E48 = DAT_007E1720 * DAT_007EFF48;
 
-// FUNCTION: 0x0063F550 $E14
+// SYNTHETIC: GAMEMD 0x0063F550 SYMBOL
+// _$E14
 double DAT_00AC4D20 = DAT_007E1728 * DAT_007EFF48;
 
-// FUNCTION: 0x0063F570 $E17
+// SYNTHETIC: GAMEMD 0x0063F570 SYMBOL
+// _$E17
 double DAT_00AC4CF8 = DAT_007E1730 * DAT_007EFF48;
 
-// FUNCTION: 0x0063F590 $E20
+// SYNTHETIC: GAMEMD 0x0063F590 SYMBOL
+// _$E20
 int DAT_00AC4E70 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00AC4CF8 - DAT_00AC4D20) * DAT_00AC4D18));
 
-// FUNCTION: 0x0063F5D0 $E23
+// SYNTHETIC: GAMEMD 0x0063F5D0 SYMBOL
+// _$E23
 double DAT_00AC4D28 = FUN_004CADE0(DAT_00AC4E70 * DAT_007E1740);
 
-// FUNCTION: 0x0063F600 $E26
+// SYNTHETIC: GAMEMD 0x0063F600 SYMBOL
+// _$E26
 double DAT_00AC4E40 = FUN_004CADE0((DAT_00AC4E70 * 2) / DAT_00AC4D18);
 
-// FUNCTION: 0x0063F630 $E29
+// SYNTHETIC: GAMEMD 0x0063F630 SYMBOL
+// _$E29
 int DAT_00AC4E64 = (int)(DAT_00AC4E70 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x0063F660 $E32
+// SYNTHETIC: GAMEMD 0x0063F660 SYMBOL
+// _$E32
 ShortPair DAT_00AC4D10;
 
-// FUNCTION: 0x0063F670 $E35
+// SYNTHETIC: GAMEMD 0x0063F670 SYMBOL
+// _$E35
 IntTriple DAT_00AC4E30;
 
 struct PowerGlobalA {
@@ -71,7 +83,8 @@ struct PowerGlobalA {
 	PowerGlobalA() { C = 0; A = 128; B = 128; }
 };
 
-// FUNCTION: 0x0063F690 $E38
+// SYNTHETIC: GAMEMD 0x0063F690 SYMBOL
+// _$E38
 PowerGlobalA DAT_00AC4E58;
 
 #include "rect.h"
@@ -116,7 +129,7 @@ struct FileSystem {
 
 void const * PowerClass::PowerPipShape;
 
-// FUNCTION: 0x0063F6B0
+// FUNCTION: GAMEMD 0x0063F6B0
 PowerClass::PowerClass(void) :
 	BASECLASS(),
 	IsToRedraw(false),
@@ -132,7 +145,7 @@ PowerClass::PowerClass(void) :
 {
 }
 
-// FUNCTION: 0x0063F730
+// FUNCTION: GAMEMD 0x0063F730
 void PowerClass::Init_Clear(void)
 {
 	BASECLASS::Init_Clear();
@@ -147,20 +160,20 @@ void PowerClass::Init_Clear(void)
 	HasChanged = 0;
 }
 
-// FUNCTION: 0x0063F7B0
+// FUNCTION: GAMEMD 0x0063F7B0
 void PowerClass::One_Time(void)
 {
 	BASECLASS::One_Time();
 }
 
-// FUNCTION: 0x0063F7C0
+// FUNCTION: GAMEMD 0x0063F7C0
 void PowerClass::Init_For_House(void)
 {
 	BASECLASS::Init_For_House();
 	PowerPipShape = FileSystem_LoadWholeFileEx("POWERP.SHP", DAT_00AC4E78);
 }
 
-// FUNCTION: 0x0063F7E0
+// FUNCTION: GAMEMD 0x0063F7E0
 void PowerClass::DisposeOfArt(void)
 {
 	BASECLASS::DisposeOfArt();
@@ -170,14 +183,14 @@ void PowerClass::DisposeOfArt(void)
 	}
 }
 
-// FUNCTION: 0x0063F810
+// FUNCTION: GAMEMD 0x0063F810
 void PowerClass::Flash_Power(void)
 {
 	FlashCount = POWER_FLASH_COUNT;
 	FlashTimer = POWER_FLASH_RATE;
 }
 
-// FUNCTION: 0x0063F850
+// FUNCTION: GAMEMD 0x0063F850
 int PowerClass::Desired_Power_Height(void)
 {
 	int max_pips = Max_Power_Height();
@@ -198,7 +211,7 @@ int PowerClass::Desired_Power_Height(void)
 	return(max_pips - empty_pips);
 }
 
-// FUNCTION: 0x0063F8F0
+// FUNCTION: GAMEMD 0x0063F8F0
 int PowerClass::Update_Delay(void)
 {
 	int desired_pips = Desired_Power_Height();
@@ -211,13 +224,13 @@ int PowerClass::Update_Delay(void)
 	return((double)current_pips / (double)desired_pips * 5.0);
 }
 
-// FUNCTION: 0x0063F940
+// FUNCTION: GAMEMD 0x0063F940
 int PowerClass::Max_Power_Height(void)
 {
 	return((DAT_00B0B504 + 3) / 3);
 }
 
-// FUNCTION: 0x0063FDC0
+// FUNCTION: GAMEMD 0x0063FDC0
 void PowerClass::Remove_Pip(void)
 {
 	int green;
@@ -235,7 +248,7 @@ void PowerClass::Remove_Pip(void)
 	}
 }
 
-// FUNCTION: 0x0063FE30
+// FUNCTION: GAMEMD 0x0063FE30
 void PowerClass::Add_Pip(void)
 {
 	int green;
@@ -253,7 +266,7 @@ void PowerClass::Add_Pip(void)
 	}
 }
 
-// FUNCTION: 0x0063FEA0
+// FUNCTION: GAMEMD 0x0063FEA0
 void PowerClass::AI(KeyNumType & input, Point2D const & xy)
 {
 	if (Map.IsSidebarActive) {
@@ -330,7 +343,7 @@ void PowerClass::AI(KeyNumType & input, Point2D const & xy)
 	BASECLASS::AI(input, xy);
 }
 
-// FUNCTION: 0x00640450
+// FUNCTION: GAMEMD 0x00640450
 char const * PowerClass::Help_Text(int id)
 {
 	static wchar_t _str[128];
@@ -343,6 +356,8 @@ char const * PowerClass::Help_Text(int id)
 	return(BASECLASS::Help_Text(id));
 }
 
-// FUNCTION: 0x006404B0 PowerClass::~PowerClass
+// SYNTHETIC: GAMEMD 0x006404B0
+// ??_GPowerClass@@UAEPAXI@Z
 
-// FUNCTION: 0x006404D0 $E41
+// SYNTHETIC: GAMEMD 0x006404D0 SYMBOL
+// _$E41

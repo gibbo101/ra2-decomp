@@ -73,7 +73,7 @@ def parse(text: str):
     return _PARSER.parse(sanitise(text).encode("latin-1"))
 
 
-ANNOTATION = re.compile(r"^\s*//\s*FUNCTION:\s*(0x[0-9a-fA-F]+)(?:\s+(\S+))?")
+ANNOTATION = re.compile(r"^\s*//\s*(?:FUNCTION|TEMPLATE|SYNTHETIC|LIBRARY):\s*GAMEMD\s+(0x[0-9a-fA-F]+)")
 
 INT_TYPES = {
     "char", "signed char", "unsigned char", "short", "unsigned short", "int", "unsigned int",

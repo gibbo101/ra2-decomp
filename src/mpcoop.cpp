@@ -91,7 +91,7 @@ static inline char const * Scenario_Filename(MultiMission const * scenario)
 }
 
 
-// FUNCTION: 0x005C1300
+// FUNCTION: GAMEMD 0x005C1300
 int __fastcall FUN_005C1300(char const * name)
 {
 	if (name == NULL) {
@@ -139,7 +139,7 @@ static inline void Reload_Campaigns(MPCooperative * coop)
 	}
 }
 
-// FUNCTION: 0x005C1470
+// FUNCTION: GAMEMD 0x005C1470
 MPCooperative::MPCooperative(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex) :
 	MPGameModeClass(title, tooltip, inifile, mapfilter, false, modeindex)
 {
@@ -174,7 +174,7 @@ MPCooperative::MPCooperative(WideWstring const & title, WideWstring const & tool
 	}
 }
 
-// FUNCTION: 0x005C1640
+// FUNCTION: GAMEMD 0x005C1640
 MPCooperative::~MPCooperative(void)
 {
 	CoopCamp_0049B610 * current = Current;
@@ -204,7 +204,7 @@ MPCooperative::~MPCooperative(void)
 	unknown_4 = false;
 }
 
-// FUNCTION: 0x005C17B0
+// FUNCTION: GAMEMD 0x005C17B0
 bool MPCooperative::vt_entry_1C(unsigned a)
 {
 	CoopCampEntry * entry;
@@ -240,14 +240,14 @@ bool MPCooperative::vt_entry_1C(unsigned a)
 	return(found);
 }
 
-// FUNCTION: 0x005C18A0
+// FUNCTION: GAMEMD 0x005C18A0
 bool MPCooperative::vt_entry_10(void)
 {
 	Reload_Campaigns(this);
 	return(true);
 }
 
-// FUNCTION: 0x005C1980
+// FUNCTION: GAMEMD 0x005C1980
 int __fastcall FUN_005C1980(MPCooperative * coop)
 {
 	int found = -1;
@@ -265,7 +265,7 @@ int __fastcall FUN_005C1980(MPCooperative * coop)
 	return(found);
 }
 
-// FUNCTION: 0x005C1A10
+// FUNCTION: GAMEMD 0x005C1A10
 void MPCooperative::vt_entry_20(void)
 {
 	DAT_008316A4 = -1;
@@ -350,13 +350,13 @@ void MPCooperative::vt_entry_20(void)
 	}
 }
 
-// FUNCTION: 0x005C1CB0
+// FUNCTION: GAMEMD 0x005C1CB0
 void MPCooperative::vt_entry_24(void)
 {
 	Field340 = true;
 }
 
-// FUNCTION: 0x005C1CC0
+// FUNCTION: GAMEMD 0x005C1CC0
 int MPCooperative::FirstValidMapIndex(void)
 {
 	int count = 0;
@@ -379,7 +379,7 @@ int MPCooperative::FirstValidMapIndex(void)
 	return(-1);
 }
 
-// FUNCTION: 0x005C1D80
+// FUNCTION: GAMEMD 0x005C1D80
 bool MPCooperative::vt_entry_14(unsigned a)
 {
 	if (Session.Players.Count() == 2 && Current != NULL) {
@@ -393,7 +393,7 @@ static inline void Set_Player_Country(int index, int country)
 	Session.Players[index]->Set_Country(country);
 }
 
-// FUNCTION: 0x005C1DC0
+// FUNCTION: GAMEMD 0x005C1DC0
 bool MPCooperative::vt_entry_18(void)
 {
 	if (Current == NULL) {
@@ -459,7 +459,7 @@ bool MPCooperative::vt_entry_18(void)
 	return(true);
 }
 
-// FUNCTION: 0x005C1FA0
+// FUNCTION: GAMEMD 0x005C1FA0
 int MPCooperative::vt_entry_28(void)
 {
 	CoopCampEntry * entry;
@@ -488,7 +488,7 @@ int MPCooperative::vt_entry_28(void)
 	return(FUN_0049D9F0((*entry->ListA[index])[0]));
 }
 
-// FUNCTION: 0x005C2040
+// FUNCTION: GAMEMD 0x005C2040
 bool MPCooperative::vt_entry_58(int index, DynamicVectorClass<int> picks, char const * map, char const * name)
 {
 	if (Current == NULL) {
@@ -508,7 +508,7 @@ bool MPCooperative::vt_entry_58(int index, DynamicVectorClass<int> picks, char c
 	return(true);
 }
 
-// FUNCTION: 0x005C2100
+// FUNCTION: GAMEMD 0x005C2100
 bool MPCooperative::vt_entry_5C(unsigned a, unsigned b, unsigned c)
 {
 	if (Current == NULL) {
@@ -528,7 +528,7 @@ bool MPCooperative::vt_entry_5C(unsigned a, unsigned b, unsigned c)
 	return(result);
 }
 
-// FUNCTION: 0x005C21A0
+// FUNCTION: GAMEMD 0x005C21A0
 void MPCooperative::vt_entry_78(unsigned a)
 {
 	HWND button = GetDlgItem((HWND)a, 0x732);
@@ -537,7 +537,7 @@ void MPCooperative::vt_entry_78(unsigned a)
 	}
 }
 
-// FUNCTION: 0x005C21D0
+// FUNCTION: GAMEMD 0x005C21D0
 void MPCooperative::FUN_005C21D0(HWND dialog, bool show)
 {
 	bool ok = true;
@@ -610,7 +610,7 @@ void MPCooperative::FUN_005C21D0(HWND dialog, bool show)
 	}
 }
 
-// FUNCTION: 0x005C23B0
+// FUNCTION: GAMEMD 0x005C23B0
 void MPCooperative::FUN_005C23B0(HWND dialog, int control)
 {
 	int total = DAT_00A83CA8;
@@ -653,7 +653,7 @@ void MPCooperative::FUN_005C23B0(HWND dialog, int control)
 	ShowWindow(list, SW_SHOW);
 }
 
-// FUNCTION: 0x005C2500
+// FUNCTION: GAMEMD 0x005C2500
 void MPCooperative::FUN_005C2500(HWND dialog)
 {
 	if (dialog == NULL) {
@@ -696,7 +696,7 @@ void MPCooperative::FUN_005C2500(HWND dialog)
 	}
 }
 
-// FUNCTION: 0x005C2640
+// FUNCTION: GAMEMD 0x005C2640
 void MPCooperative::vt_entry_38(unsigned a)
 {
 	HWND dialog = (HWND)a;
@@ -709,7 +709,7 @@ void MPCooperative::vt_entry_38(unsigned a)
 	}
 }
 
-// FUNCTION: 0x005C2680
+// FUNCTION: GAMEMD 0x005C2680
 bool MPCooperative::vt_entry_60(void)
 {
 	if (Current == NULL) {
@@ -724,7 +724,7 @@ bool MPCooperative::vt_entry_60(void)
 	return(Current->FUN_0049D680());
 }
 
-// FUNCTION: 0x005C26D0
+// FUNCTION: GAMEMD 0x005C26D0
 void FUN_005C26D0(void)
 {
 	for (int k = 0; k < 8; k++) {
@@ -746,7 +746,7 @@ static inline bool Slot_Taken(int value)
 	return(false);
 }
 
-// FUNCTION: 0x005C2710
+// FUNCTION: GAMEMD 0x005C2710
 bool MPCooperative::vt_entry_64(void)
 {
 	CoopCampEntry * entry;
@@ -794,7 +794,7 @@ bool MPCooperative::vt_entry_64(void)
 	return(true);
 }
 
-// FUNCTION: 0x005C2A60
+// FUNCTION: GAMEMD 0x005C2A60
 void MPCooperative::vt_entry_74(unsigned a, unsigned b)
 {
 	if (a != 1) {
@@ -834,7 +834,7 @@ void MPCooperative::vt_entry_74(unsigned a, unsigned b)
 	}
 }
 
-// FUNCTION: 0x005C2CB0
+// FUNCTION: GAMEMD 0x005C2CB0
 bool MPCooperative::UnfixAlliances(void)
 {
 	HWND dialog = GameoptWindow();
@@ -847,7 +847,7 @@ bool MPCooperative::UnfixAlliances(void)
 	return(true);
 }
 
-// FUNCTION: 0x005C2CE0
+// FUNCTION: GAMEMD 0x005C2CE0
 void MPCooperative::PopulateTeamDropdownForPlayer(HWND hwnd, int index)
 {
 	MPGameModeClass::PopulateTeamDropdownForPlayer(hwnd, index);
@@ -864,7 +864,7 @@ static inline int Find_Player_Node(int house)
 	return(-1);
 }
 
-// FUNCTION: 0x005C2D00
+// FUNCTION: GAMEMD 0x005C2D00
 int MPCooperative::FUN_005C2D00(int house, DynamicVectorClass<Cell> * coords, unsigned char * satisfied)
 {
 	int usedCount = 0;
@@ -897,7 +897,7 @@ int MPCooperative::FUN_005C2D00(int house, DynamicVectorClass<Cell> * coords, un
 	return(index);
 }
 
-// FUNCTION: 0x005C2DE0
+// FUNCTION: GAMEMD 0x005C2DE0
 Cell * MPCooperative::AssignStartingPositionsToHouse(Cell * result, int house, DynamicVectorClass<Cell> * coords, unsigned char * satisfied)
 {
 	int usedCount = 0;
@@ -933,7 +933,7 @@ Cell * MPCooperative::AssignStartingPositionsToHouse(Cell * result, int house, D
 	return(result);
 }
 
-// FUNCTION: 0x005C2EF0
+// FUNCTION: GAMEMD 0x005C2EF0
 bool MPCooperative::StartingPositionsToHouseBaseCells2(bool arg)
 {
 	DynamicVectorClass<Cell> cells = FUN_00688380(arg);
@@ -982,7 +982,7 @@ bool MPCooperative::StartingPositionsToHouseBaseCells2(bool arg)
 	return(true);
 }
 
-// FUNCTION: 0x005C30C0
+// FUNCTION: GAMEMD 0x005C30C0
 bool MPCooperative::vt_entry_68(void)
 {
 	int aiCount = FUN_005E6520(Session.Options.ScenarioIndex) - Scen->NumCoopHumanStartSpots;
@@ -1032,7 +1032,7 @@ bool MPCooperative::vt_entry_68(void)
 	return(true);
 }
 
-// FUNCTION: 0x005C3220
+// FUNCTION: GAMEMD 0x005C3220
 bool MPCooperative::AllyTeams(void)
 {
 	FUN_004068E0("@@@@ Making Alliances\n");
@@ -1075,7 +1075,7 @@ bool MPCooperative::AllyTeams(void)
 	return(true);
 }
 
-// FUNCTION: 0x005C34F0
+// FUNCTION: GAMEMD 0x005C34F0
 int MPCooperative::FUN_005C34F0(void)
 {
 	int total = DAT_00A83CA8;
@@ -1107,7 +1107,7 @@ int MPCooperative::FUN_005C34F0(void)
 	return(pick);
 }
 
-// FUNCTION: 0x005C35F0
+// FUNCTION: GAMEMD 0x005C35F0
 int MPCooperative::FUN_005C35F0(void)
 {
 	int total = DAT_00A83CA8;
@@ -1139,19 +1139,19 @@ int MPCooperative::FUN_005C35F0(void)
 	return(pick);
 }
 
-// FUNCTION: 0x005C36F0
+// FUNCTION: GAMEMD 0x005C36F0
 bool MPCooperative::vt_entry_8C(void)
 {
 	return(MPGameModeClass::vt_entry_8C());
 }
 
-// FUNCTION: 0x005C3700
+// FUNCTION: GAMEMD 0x005C3700
 bool MPCooperative::IsAIAllowed(void)
 {
 	return(false);
 }
 
-// FUNCTION: 0x005C3710
+// FUNCTION: GAMEMD 0x005C3710
 void MPCooperative::vt_entry_A0(unsigned a)
 {
 	bool playerWins = false;
@@ -1235,7 +1235,7 @@ void MPCooperative::vt_entry_A0(unsigned a)
 	}
 }
 
-// FUNCTION: 0x005C3EC0
+// FUNCTION: GAMEMD 0x005C3EC0
 bool MPCooperative::FUN_005C3EC0(void)
 {
 	CoopCamp_0049B610 * old = Current;
@@ -1257,7 +1257,7 @@ bool MPCooperative::FUN_005C3EC0(void)
 	return(Current ? true : false);
 }
 
-// FUNCTION: 0x005C3F30
+// FUNCTION: GAMEMD 0x005C3F30
 void MPCooperative::vt_entry_9C(void)
 {
 	HWND dialog = GameoptWindow();
@@ -1270,7 +1270,7 @@ void MPCooperative::vt_entry_9C(void)
 	}
 }
 
-// FUNCTION: 0x005C3F80
+// FUNCTION: GAMEMD 0x005C3F80
 void MPCooperative::vt_entry_90(void)
 {
 	if (FUN_00775B20() == 0x6b) {
@@ -1327,7 +1327,7 @@ void MPCooperative::vt_entry_90(void)
 	}
 }
 
-// FUNCTION: 0x005C4110
+// FUNCTION: GAMEMD 0x005C4110
 void MPCooperative::vt_entry_94(void)
 {
 	if (Current == NULL) {
@@ -1378,13 +1378,13 @@ void MPCooperative::vt_entry_94(void)
 	}
 }
 
-// FUNCTION: 0x005C42C0
+// FUNCTION: GAMEMD 0x005C42C0
 int MPCooperative::vt_entry_98(void)
 {
 	return(2);
 }
 
-// FUNCTION: 0x005C42D0
+// FUNCTION: GAMEMD 0x005C42D0
 bool MPCooperative::vt_entry_A8(void)
 {
 	if (Field50 == NULL) {
@@ -1432,7 +1432,7 @@ bool MPCooperative::vt_entry_A8(void)
 	return(result);
 }
 
-// FUNCTION: 0x005C44E0
+// FUNCTION: GAMEMD 0x005C44E0
 void MPCooperative::vt_entry_A4(unsigned a)
 {
 	if (Current == NULL) {
@@ -1473,7 +1473,7 @@ void MPCooperative::vt_entry_A4(unsigned a)
 	}
 }
 
-// FUNCTION: 0x005C4670
+// FUNCTION: GAMEMD 0x005C4670
 int MPCooperative::vt_entry_B8(void)
 {
 	int result = 0;
@@ -1512,7 +1512,7 @@ struct CCToolTip {
 	static ToolTipManager * Instance;
 };
 
-// FUNCTION: 0x005C46E0
+// FUNCTION: GAMEMD 0x005C46E0
 void MPCooperative::vt_entry_AC(void)
 {
 	DAT_00B779D4 = 0;
@@ -1664,7 +1664,7 @@ void MPCooperative::vt_entry_AC(void)
 	FUN_004068E0("@@@@ After destroying connections players.count() = %d\n", Session.Players.Count());
 }
 
-// FUNCTION: 0x005C4CA0
+// FUNCTION: GAMEMD 0x005C4CA0
 void MPCooperative::vt_entry_B0(void)
 {
 	FUN_005C6120(&Session.Players);
@@ -1698,7 +1698,7 @@ void MPCooperative::vt_entry_B0(void)
 	}
 }
 
-// FUNCTION: 0x005C4E90
+// FUNCTION: GAMEMD 0x005C4E90
 bool MPCooperative::vt_entry_B4(DynamicVectorClass<int> list, int * out)
 {
 	*out = 0;
@@ -1709,74 +1709,116 @@ bool MPCooperative::vt_entry_B4(DynamicVectorClass<int> list, int * out)
 	}
 }
 
-// FUNCTION: 0x005C4EE0
+// FUNCTION: GAMEMD 0x005C4EE0
 bool MPCooperative::vt_entry_04(void)
 {
 	return(true);
 }
 
-// FUNCTION: 0x005C4EF0
+// FUNCTION: GAMEMD 0x005C4EF0
 bool MPCooperative::vt_entry_08(void)
 {
 	return(true);
 }
 
-// FUNCTION: 0x005C4F00
+// FUNCTION: GAMEMD 0x005C4F00
 bool MPCooperative::vt_entry_BC(void)
 {
 	return(false);
 }
 
-// FUNCTION: 0x005C4F10 MPCooperative::~MPCooperative
+// SYNTHETIC: GAMEMD 0x005C4F10
+// ??_GMPCooperative@@UAEPAXI@Z
 
-// FUNCTION: 0x005C4F30 ?$DynamicVectorClass@PAUCoopPlayerStats@@::?$DynamicVectorClass@PAUCoopPlayerStats@@
-// FUNCTION: 0x005C4FC0 ?$DynamicVectorClass@PAUCoopPlayerStats@@::~?$DynamicVectorClass@PAUCoopPlayerStats@@
-// FUNCTION: 0x005C5010 ?$DynamicVectorClass@PAUCoopPlayerStats@@::Clear
-// FUNCTION: 0x005C5040 ?$DynamicVectorClass@PAUCoopPlayerStats@@::ID
-// FUNCTION: 0x005C5060 ?$VectorClass@PAUCoopPlayerStats@@::GetItem
+// TEMPLATE: GAMEMD 0x005C4F30
+// ??0?$DynamicVectorClass@PAUCoopPlayerStats@@@@QAE@ABV0@@Z
+// SYNTHETIC: GAMEMD 0x005C4FC0
+// ??_G?$DynamicVectorClass@PAUCoopPlayerStats@@@@UAEPAXI@Z
+// TEMPLATE: GAMEMD 0x005C5010
+// ?Clear@?$DynamicVectorClass@PAUCoopPlayerStats@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x005C5040
+// ?ID@?$DynamicVectorClass@PAUCoopPlayerStats@@@@UAEHPBQAUCoopPlayerStats@@@Z
+// TEMPLATE: GAMEMD 0x005C5060
+// ?GetItem@?$VectorClass@PAUCoopPlayerStats@@@@UBEPAUCoopPlayerStats@@H@Z
 template class VectorClass<CoopPlayerStats *>;
 template class DynamicVectorClass<CoopPlayerStats *>;
 
-// FUNCTION: 0x005C5070 ?$DynamicVectorClass@PAUNodeNameType@@::Clear
-// FUNCTION: 0x005C50A0 ?$DynamicVectorClass@PAUNodeNameType@@::ID
-// FUNCTION: 0x005C50C0 ?$VectorClass@PAUNodeNameType@@::GetItem
+// TEMPLATE: GAMEMD 0x005C5070
+// ?Clear@?$DynamicVectorClass@PAUNodeNameType@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x005C50A0
+// ?ID@?$DynamicVectorClass@PAUNodeNameType@@@@UAEHPBQAUNodeNameType@@@Z
+// TEMPLATE: GAMEMD 0x005C50C0
+// ?GetItem@?$VectorClass@PAUNodeNameType@@@@UBEPAUNodeNameType@@H@Z
 template class DynamicVectorClass<NodeNameType *>;
 
-// FUNCTION: 0x005C50D0 ?$DynamicVectorClass@PAVCoopCamp_0049B610@@::Clear
-// FUNCTION: 0x005C5100 ?$DynamicVectorClass@PAVCoopCamp_0049B610@@::ID
-// FUNCTION: 0x005C5120 ?$VectorClass@PAVCoopCamp_0049B610@@::GetItem
-// FUNCTION: 0x005C5130 ?$VectorClass@PAUCoopPlayerStats@@::operator==
-// FUNCTION: 0x005C5170 ?$VectorClass@PAUCoopPlayerStats@@::Resize
-// FUNCTION: 0x005C5220 ?$VectorClass@PAUCoopPlayerStats@@::Clear
-// FUNCTION: 0x005C5250 ?$VectorClass@PAUCoopPlayerStats@@::ID
-// FUNCTION: 0x005C5290 ?$VectorClass@PAUCoopPlayerStats@@::ID
-// FUNCTION: 0x005C52B0 ?$DynamicVectorClass@PAUCoopPlayerStats@@::Resize
-// FUNCTION: 0x005C5360 ?$DynamicVectorClass@PAUCoopPlayerStats@@::ID
+// TEMPLATE: GAMEMD 0x005C50D0
+// ?Clear@?$DynamicVectorClass@PAVCoopCamp_0049B610@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x005C5100
+// ?ID@?$DynamicVectorClass@PAVCoopCamp_0049B610@@@@UAEHPBQAVCoopCamp_0049B610@@@Z
+// TEMPLATE: GAMEMD 0x005C5120
+// ?GetItem@?$VectorClass@PAVCoopCamp_0049B610@@@@UBEPAVCoopCamp_0049B610@@H@Z
+// TEMPLATE: GAMEMD 0x005C5130
+// ??8?$VectorClass@PAUCoopPlayerStats@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x005C5170
+// ?Resize@?$VectorClass@PAUCoopPlayerStats@@@@UAE_NHPBQAUCoopPlayerStats@@@Z
+// TEMPLATE: GAMEMD 0x005C5220
+// ?Clear@?$VectorClass@PAUCoopPlayerStats@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x005C5250
+// ?ID@?$VectorClass@PAUCoopPlayerStats@@@@UAEHABQAUCoopPlayerStats@@@Z
+// TEMPLATE: GAMEMD 0x005C5290
+// ?ID@?$VectorClass@PAUCoopPlayerStats@@@@UAEHPBQAUCoopPlayerStats@@@Z
+// TEMPLATE: GAMEMD 0x005C52B0
+// ?Resize@?$DynamicVectorClass@PAUCoopPlayerStats@@@@UAE_NHPBQAUCoopPlayerStats@@@Z
+// TEMPLATE: GAMEMD 0x005C5360
+// ?ID@?$DynamicVectorClass@PAUCoopPlayerStats@@@@UAEHABQAUCoopPlayerStats@@@Z
 template class VectorClass<CoopCamp_0049B610 *>;
 template class DynamicVectorClass<CoopCamp_0049B610 *>;
 
-// FUNCTION: 0x005C5390 ?$VectorClass@PAUNodeNameType@@::operator==
-// FUNCTION: 0x005C53D0 ?$VectorClass@PAUNodeNameType@@::Resize
-// FUNCTION: 0x005C5480 ?$VectorClass@PAUNodeNameType@@::Clear
-// FUNCTION: 0x005C54B0 ?$VectorClass@PAUNodeNameType@@::ID
-// FUNCTION: 0x005C54F0 ?$VectorClass@PAUNodeNameType@@::ID
-// FUNCTION: 0x005C5510 ?$DynamicVectorClass@PAUNodeNameType@@::Resize
-// FUNCTION: 0x005C55C0 ?$DynamicVectorClass@PAUNodeNameType@@::ID
-// FUNCTION: 0x005C55F0 ?$VectorClass@PAVCoopCamp_0049B610@@::operator==
-// FUNCTION: 0x005C5630 ?$VectorClass@PAVCoopCamp_0049B610@@::Resize
-// FUNCTION: 0x005C56E0 ?$VectorClass@PAVCoopCamp_0049B610@@::Clear
-// FUNCTION: 0x005C5710 ?$VectorClass@PAVCoopCamp_0049B610@@::ID
-// FUNCTION: 0x005C5750 ?$VectorClass@PAVCoopCamp_0049B610@@::ID
-// FUNCTION: 0x005C5770 ?$DynamicVectorClass@PAVCoopCamp_0049B610@@::Resize
-// FUNCTION: 0x005C5820 ?$DynamicVectorClass@PAVCoopCamp_0049B610@@::ID
-// FUNCTION: 0x005C5850 ?$VectorClass@PAUCoopPlayerStats@@::~?$VectorClass@PAUCoopPlayerStats@@
-// FUNCTION: 0x005C58A0 ?$VectorClass@PAUNodeNameType@@::~?$VectorClass@PAUNodeNameType@@
+// TEMPLATE: GAMEMD 0x005C5390
+// ??8?$VectorClass@PAUNodeNameType@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x005C53D0
+// ?Resize@?$VectorClass@PAUNodeNameType@@@@UAE_NHPBQAUNodeNameType@@@Z
+// TEMPLATE: GAMEMD 0x005C5480
+// ?Clear@?$VectorClass@PAUNodeNameType@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x005C54B0
+// ?ID@?$VectorClass@PAUNodeNameType@@@@UAEHABQAUNodeNameType@@@Z
+// TEMPLATE: GAMEMD 0x005C54F0
+// ?ID@?$VectorClass@PAUNodeNameType@@@@UAEHPBQAUNodeNameType@@@Z
+// TEMPLATE: GAMEMD 0x005C5510
+// ?Resize@?$DynamicVectorClass@PAUNodeNameType@@@@UAE_NHPBQAUNodeNameType@@@Z
+// TEMPLATE: GAMEMD 0x005C55C0
+// ?ID@?$DynamicVectorClass@PAUNodeNameType@@@@UAEHABQAUNodeNameType@@@Z
+// TEMPLATE: GAMEMD 0x005C55F0
+// ??8?$VectorClass@PAVCoopCamp_0049B610@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x005C5630
+// ?Resize@?$VectorClass@PAVCoopCamp_0049B610@@@@UAE_NHPBQAVCoopCamp_0049B610@@@Z
+// TEMPLATE: GAMEMD 0x005C56E0
+// ?Clear@?$VectorClass@PAVCoopCamp_0049B610@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x005C5710
+// ?ID@?$VectorClass@PAVCoopCamp_0049B610@@@@UAEHABQAVCoopCamp_0049B610@@@Z
+// TEMPLATE: GAMEMD 0x005C5750
+// ?ID@?$VectorClass@PAVCoopCamp_0049B610@@@@UAEHPBQAVCoopCamp_0049B610@@@Z
+// TEMPLATE: GAMEMD 0x005C5770
+// ?Resize@?$DynamicVectorClass@PAVCoopCamp_0049B610@@@@UAE_NHPBQAVCoopCamp_0049B610@@@Z
+// TEMPLATE: GAMEMD 0x005C5820
+// ?ID@?$DynamicVectorClass@PAVCoopCamp_0049B610@@@@UAEHABQAVCoopCamp_0049B610@@@Z
+// SYNTHETIC: GAMEMD 0x005C5850
+// ??_G?$VectorClass@PAUCoopPlayerStats@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x005C58A0
+// ??_G?$VectorClass@PAUNodeNameType@@@@UAEPAXI@Z
 template class VectorClass<NodeNameType *>;
-// FUNCTION: 0x005C58F0 ?$DynamicVectorClass@PAUNodeNameType@@::~?$DynamicVectorClass@PAUNodeNameType@@
-// FUNCTION: 0x005C5940 ?$DynamicVectorClass@PAVCoopCamp_0049B610@@::~?$DynamicVectorClass@PAVCoopCamp_0049B610@@
-// FUNCTION: 0x005C5990 ?$VectorClass@PAVCoopCamp_0049B610@@::~?$VectorClass@PAVCoopCamp_0049B610@@
-// FUNCTION: 0x005C59E0 ?$VectorClass@PAUCoopPlayerStats@@::?$VectorClass@PAUCoopPlayerStats@@
-// FUNCTION: 0x005C5A30 ?$VectorClass@PAUNodeNameType@@::?$VectorClass@PAUNodeNameType@@
-// FUNCTION: 0x005C5A80 ?$VectorClass@PAVCoopCamp_0049B610@@::?$VectorClass@PAVCoopCamp_0049B610@@
+// SYNTHETIC: GAMEMD 0x005C58F0
+// ??_G?$DynamicVectorClass@PAUNodeNameType@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x005C5940
+// ??_G?$DynamicVectorClass@PAVCoopCamp_0049B610@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x005C5990
+// ??_G?$VectorClass@PAVCoopCamp_0049B610@@@@UAEPAXI@Z
+// TEMPLATE: GAMEMD 0x005C59E0
+// ??0?$VectorClass@PAUCoopPlayerStats@@@@QAE@HPBQAUCoopPlayerStats@@@Z
+// TEMPLATE: GAMEMD 0x005C5A30
+// ??0?$VectorClass@PAUNodeNameType@@@@QAE@HPBQAUNodeNameType@@@Z
+// TEMPLATE: GAMEMD 0x005C5A80
+// ??0?$VectorClass@PAVCoopCamp_0049B610@@@@QAE@HPBQAVCoopCamp_0049B610@@@Z
 
-// FUNCTION: 0x005C5AD0 $E10
+// SYNTHETIC: GAMEMD 0x005C5AD0 SYMBOL
+// _$E10

@@ -76,7 +76,7 @@ void VQA_BufferPerpareLoop(VQAHandleP *vqap, long * needs_start_cb, long * needs
 	}
 }
 
-// FUNCTION: 0x007BD690
+// FUNCTION: GAMEMD 0x007BD690
 STATIC long AllocBuffers(VQAHandleP *vqap)
 {
 	long needs_start_cb;
@@ -399,7 +399,7 @@ STATIC long AllocBuffers(VQAHandleP *vqap)
 	return(VQAERR_NONE);
 }
 
-// FUNCTION: 0x007BE4A0
+// FUNCTION: GAMEMD 0x007BE4A0
 long VQA_Configure_Buffer(VQAHandleP *vqap)
 {
 	unsigned char *buf;
@@ -458,7 +458,7 @@ long VQA_Configure_Buffer(VQAHandleP *vqap)
 	return(VQAERR_NONE);
 }
 
-// FUNCTION: 0x007BE5D0
+// FUNCTION: GAMEMD 0x007BE5D0
 long __cdecl VQA_Memory_Handler(VQAHandle *vqa, long action, void *buffer, long nbytes)
 {
 	long error = 0;

@@ -6,7 +6,7 @@
 #include "always.h"
 #include "crcpipe.h"
 
-// FUNCTION: 0x004A2030
+// FUNCTION: GAMEMD 0x004A2030
 int CRCPipe::Put(void const * source, int slen)
 {
 	CRC(source, slen);

@@ -37,7 +37,7 @@
 #include "draw.hh"
 #include <cstdio>
 
-// FUNCTION: 0x0071B7B0
+// FUNCTION: GAMEMD 0x0071B7B0
 TerrainClass::~TerrainClass(void)
 {
 	Detach_This_From_All(this);
@@ -52,7 +52,7 @@ TerrainClass::~TerrainClass(void)
 }
 
 
-// FUNCTION: 0x0071B920
+// FUNCTION: GAMEMD 0x0071B920
 ResultType TerrainClass::Take_Damage(int & damage, int distance, WarheadTypeClass const * warhead, TechnoClass * source, bool forced, bool no_crew, HouseClass * house)
 {
 	ResultType res = RESULT_NONE;
@@ -92,7 +92,7 @@ ResultType TerrainClass::Take_Damage(int & damage, int distance, WarheadTypeClas
 }
 
 
-// FUNCTION: 0x0071BB90
+// FUNCTION: GAMEMD 0x0071BB90
 TerrainClass::TerrainClass(TerrainTypeClass const * type, Cell const & cell) :
 	BASECLASS(),
 	Class((TerrainTypeClass *)type),
@@ -116,7 +116,7 @@ TerrainClass::TerrainClass(TerrainTypeClass const * type, Cell const & cell) :
 }
 
 
-// FUNCTION: 0x0071BDF0
+// FUNCTION: GAMEMD 0x0071BDF0
 TerrainClass::TerrainClass(void) :
 	BASECLASS(),
 	Class(NULL),
@@ -131,7 +131,7 @@ TerrainClass::TerrainClass(void) :
 }
 
 
-// FUNCTION: 0x0071BFB0
+// FUNCTION: GAMEMD 0x0071BFB0
 bool TerrainClass::Mark(MarkType mark)
 {
 	if (BASECLASS::Mark(mark)) {
@@ -158,7 +158,7 @@ bool TerrainClass::Mark(MarkType mark)
 }
 
 
-// FUNCTION: 0x0071C070
+// FUNCTION: GAMEMD 0x0071C070
 void TerrainClass::Clear_Occupy_Bit(Coord const & coord)
 {
 	int bits = Scen->Theater != THEATER_SNOW ? Class->TemperateOccupationBits : Class->SnowOccupationBits;
@@ -179,7 +179,7 @@ void TerrainClass::Clear_Occupy_Bit(Coord const & coord)
 }
 
 
-// FUNCTION: 0x0071C110
+// FUNCTION: GAMEMD 0x0071C110
 void TerrainClass::Set_Occupy_Bit(Coord const & coord)
 {
 	int bits = Scen->Theater != THEATER_SNOW ? Class->TemperateOccupationBits : Class->SnowOccupationBits;
@@ -200,7 +200,7 @@ void TerrainClass::Set_Occupy_Bit(Coord const & coord)
 }
 
 
-// FUNCTION: 0x0071C1B0
+// FUNCTION: GAMEMD 0x0071C1B0
 void TerrainClass::Draw_It(Point2D const & point, Rect const & cliprect) const
 {
 	ShapeSet const * shapedata;
@@ -256,7 +256,7 @@ void TerrainClass::Draw_It(Point2D const & point, Rect const & cliprect) const
 }
 
 
-// FUNCTION: 0x0071C360
+// FUNCTION: GAMEMD 0x0071C360
 void TerrainClass::Editor_Draw_It(Point2D const & point, Rect const & cliprect) const
 {
 	ShapeSet const * shapedata;
@@ -302,7 +302,7 @@ void TerrainClass::Editor_Draw_It(Point2D const & point, Rect const & cliprect) 
 }
 
 
-// FUNCTION: 0x0071C4D0
+// FUNCTION: GAMEMD 0x0071C4D0
 MoveType TerrainClass::Can_Enter_Cell(CellClass const * cell, FacingType, int cell_height, CellClass const *, bool) const
 {
 	Cell const * offset = Occupy_List();
@@ -323,7 +323,7 @@ MoveType TerrainClass::Can_Enter_Cell(CellClass const * cell, FacingType, int ce
 }
 
 
-// FUNCTION: 0x0071C5B0
+// FUNCTION: GAMEMD 0x0071C5B0
 bool TerrainClass::Catch_Fire(void)
 {
 	if (!IsCrumbling && !IsOnFire && Class->Armor == ARMOR_WOOD && !Class->IsTiberiumSpawn) {
@@ -340,7 +340,7 @@ bool TerrainClass::Catch_Fire(void)
 }
 
 
-// FUNCTION: 0x0071C6B0
+// FUNCTION: GAMEMD 0x0071C6B0
 void TerrainClass::Fire_Out(void)
 {
 	if (IsOnFire) {
@@ -354,7 +354,7 @@ void TerrainClass::Fire_Out(void)
 }
 
 
-// FUNCTION: 0x0071C730
+// FUNCTION: GAMEMD 0x0071C730
 void TerrainClass::AI(void)
 {
 	BASECLASS::AI();
@@ -384,7 +384,7 @@ void TerrainClass::AI(void)
 }
 
 
-// FUNCTION: 0x0071C8E0
+// FUNCTION: GAMEMD 0x0071C8E0
 void TerrainClass::Start_To_Crumble(void)
 {
 	if (!IsCrumbling) {
@@ -395,7 +395,7 @@ void TerrainClass::Start_To_Crumble(void)
 }
 
 
-// FUNCTION: 0x0071C930
+// FUNCTION: GAMEMD 0x0071C930
 bool TerrainClass::Limbo(void)
 {
 	if (!IsInLimbo) {
@@ -420,7 +420,7 @@ bool TerrainClass::Limbo(void)
 }
 
 
-// FUNCTION: 0x0071CA70
+// FUNCTION: GAMEMD 0x0071CA70
 void TerrainClass::Read_INI(CCINIClass const & ini)
 {
 	TerrainClass * tptr;
@@ -448,7 +448,7 @@ void TerrainClass::Read_INI(CCINIClass const & ini)
 }
 
 
-// FUNCTION: 0x0071CB90
+// FUNCTION: GAMEMD 0x0071CB90
 void TerrainClass::Write_INI(CCINIClass & ini)
 {
 	ini.Clear(INI_NAME);
@@ -467,7 +467,7 @@ void TerrainClass::Write_INI(CCINIClass & ini)
 }
 
 
-// FUNCTION: 0x0071CC50
+// FUNCTION: GAMEMD 0x0071CC50
 bool TerrainClass::Render(Rect & cliprect, bool forced, bool extras_only) const
 {
 	if (Debug_Map || !MainWindow || ((forced || IsToDisplay) && IsDown && !IsInLimbo)) {
@@ -500,7 +500,7 @@ bool TerrainClass::Render(Rect & cliprect, bool forced, bool extras_only) const
 }
 
 
-// FUNCTION: 0x0071CDA0
+// FUNCTION: GAMEMD 0x0071CDA0
 HRESULT STDMETHODCALLTYPE TerrainClass::Load(IStream * stream)
 {
 	TargetTracker.Remove_Index(Fetch_ID());
@@ -515,13 +515,13 @@ HRESULT STDMETHODCALLTYPE TerrainClass::Load(IStream * stream)
 }
 
 
-// FUNCTION: 0x0071CF30
+// FUNCTION: GAMEMD 0x0071CF30
 HRESULT STDMETHODCALLTYPE TerrainClass::Save(IStream * stream, BOOL cleardirty)
 {
 	return(BASECLASS::Save(stream, cleardirty));
 }
 
-// FUNCTION: 0x0071CF50
+// FUNCTION: GAMEMD 0x0071CF50
 void TerrainClass::Compute_CRC(CRCEngine &crc) const
 {
 	BASECLASS::Compute_CRC(crc);
@@ -535,7 +535,7 @@ void TerrainClass::Compute_CRC(CRCEngine &crc) const
 }
 
 
-// FUNCTION: 0x0071CFD0
+// FUNCTION: GAMEMD 0x0071CFD0
 void TerrainClass::Detach(AbstractClass const * target, bool all)
 {
 	BASECLASS::Detach(target, all);
@@ -545,7 +545,7 @@ void TerrainClass::Detach(AbstractClass const * target, bool all)
 }
 
 
-// FUNCTION: 0x0071D000
+// FUNCTION: GAMEMD 0x0071D000
 bool TerrainClass::Unlimbo(Coord const & coord, Dir256 dir)
 {
 	if (BASECLASS::Unlimbo(coord, dir)) {
@@ -568,14 +568,14 @@ bool TerrainClass::Unlimbo(Coord const & coord, Dir256 dir)
 }
 
 
-// FUNCTION: 0x0071D150
+// FUNCTION: GAMEMD 0x0071D150
 ObjectTypeClass const * TerrainClass::Class_Of(void) const
 {
 	return(Class);
 }
 
 
-// FUNCTION: 0x0071D160
+// FUNCTION: GAMEMD 0x0071D160
 Rect TerrainClass::Get_Render_Rect(void)
 {
 	Point2D drawpoint = RenderPixelPos - Point2D(TacticalMap->TacPixelX, TacticalMap->TacPixelY);
@@ -595,7 +595,7 @@ Rect TerrainClass::Get_Render_Rect(void)
 }
 
 
-// FUNCTION: 0x0071D310
+// FUNCTION: GAMEMD 0x0071D310
 HRESULT STDMETHODCALLTYPE TerrainClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -604,21 +604,22 @@ HRESULT STDMETHODCALLTYPE TerrainClass::GetClassID(CLSID * retval)
 }
 
 
-// FUNCTION: 0x0071D2F0
+// FUNCTION: GAMEMD 0x0071D2F0
 int TerrainClass::Fetch_Object_Size(void) const
 {
 	return(sizeof(*this));
 }
 
 
-// FUNCTION: 0x0071D300
+// FUNCTION: GAMEMD 0x0071D300
 RTTIType TerrainClass::Fetch_RTTI(void) const
 {
 	return(RTTI_TERRAIN);
 }
 
 
-// FUNCTION: 0x0071D350 TerrainClass::~TerrainClass
+// SYNTHETIC: GAMEMD 0x0071D350
+// ??_GTerrainClass@@UAEPAXI@Z
 
 
 struct IntQuad {
@@ -628,4 +629,5 @@ struct IntQuad {
 
 static IntQuad ZeroQuad;
 
-// FUNCTION: 0x0071D370 $E2
+// SYNTHETIC: GAMEMD 0x0071D370 SYMBOL
+// _$E2

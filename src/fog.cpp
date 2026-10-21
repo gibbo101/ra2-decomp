@@ -52,35 +52,52 @@ extern const double DAT_007E1740;
 extern const double DAT_007E8BE0;
 extern const double DAT_007E8BE8;
 
-// FUNCTION: 0x004D0560 $E2
-// FUNCTION: 0x004D0590 $E5
-// FUNCTION: 0x004D05B0 $E8
-// FUNCTION: 0x004D05D0 $E11
-// FUNCTION: 0x004D05F0 $E14
-// FUNCTION: 0x004D0610 $E17
-// FUNCTION: 0x004D0630 $E20
-// FUNCTION: 0x004D0670 $E23
-// FUNCTION: 0x004D06A0 $E26
-// FUNCTION: 0x004D06D0 $E29
-// FUNCTION: 0x004D0700 $E32
-// FUNCTION: 0x004D0710 $E35
+// SYNTHETIC: GAMEMD 0x004D0560 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x004D0590 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x004D05B0 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x004D05D0 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x004D05F0 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x004D0610 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x004D0630 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x004D0670 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x004D06A0 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x004D06D0 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x004D0700 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x004D0710 SYMBOL
+// _$E35
 
-// FUNCTION: 0x004D0730 $E38
-// FUNCTION: 0x004D0750 $E134
-// FUNCTION: 0x004D0790 $E131
+// SYNTHETIC: GAMEMD 0x004D0730 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x004D0750 SYMBOL
+// _$E134
+// SYNTHETIC: GAMEMD 0x004D0790 SYMBOL
+// _$E131
 DynamicVectorClass<FoggedObjectClass *> FoggedObjectClass::FoggyObjects;
 
-// FUNCTION: 0x004D07F0 $E140
-// FUNCTION: 0x004D0820 $E137
+// SYNTHETIC: GAMEMD 0x004D07F0 SYMBOL
+// _$E140
+// SYNTHETIC: GAMEMD 0x004D0820 SYMBOL
+// _$E137
 IndexClass<int, FoggedObjectClass *> FoggedObjectClass::FoggedObjectIndex;
 
-// FUNCTION: 0x004D0860
+// FUNCTION: GAMEMD 0x004D0860
 FoggedObjectClass::FoggedObjectClass(NoInitClass const & x) :
 	BASECLASS(x)
 {
 }
 
-// FUNCTION: 0x004D08B0
+// FUNCTION: GAMEMD 0x004D08B0
 FoggedObjectClass::FoggedObjectClass(void) :
 	BASECLASS(),
 	Overlay(OVERLAY_NONE),
@@ -98,7 +115,7 @@ FoggedObjectClass::FoggedObjectClass(void) :
 	FoggyObjects.Add(this);
 }
 
-// FUNCTION: 0x004D0980
+// FUNCTION: GAMEMD 0x004D0980
 FoggedObjectClass::FoggedObjectClass(Coord const & coord, OverlayType type, int data) :
 	BASECLASS(),
 	Overlay(type),
@@ -125,7 +142,7 @@ FoggedObjectClass::FoggedObjectClass(Coord const & coord, OverlayType type, int 
 	FoggedObjectIndex.Add_Index(id, this);
 }
 
-// FUNCTION: 0x004D0C40
+// FUNCTION: GAMEMD 0x004D0C40
 FoggedObjectClass::FoggedObjectClass(Coord const & coord, SmudgeType type, int data) :
 	BASECLASS(),
 	Overlay(OVERLAY_NONE),
@@ -158,7 +175,7 @@ FoggedObjectClass::FoggedObjectClass(Coord const & coord, SmudgeType type, int d
 	FoggedObjectIndex.Add_Index(id, this);
 }
 
-// FUNCTION: 0x004D0EF0
+// FUNCTION: GAMEMD 0x004D0EF0
 FoggedObjectClass::FoggedObjectClass(BuildingClass * object, bool fade) :
 	BASECLASS(),
 	Overlay(OVERLAY_NONE),
@@ -212,7 +229,7 @@ FoggedObjectClass::FoggedObjectClass(BuildingClass * object, bool fade) :
 	BoundingRect.Y += TacticalMap->TacPixelY;
 }
 
-// FUNCTION: 0x004D1370
+// FUNCTION: GAMEMD 0x004D1370
 FoggedObjectClass::FoggedObjectClass(TerrainClass * object) :
 	BASECLASS(),
 	Overlay(OVERLAY_NONE),
@@ -266,7 +283,7 @@ FoggedObjectClass::~FoggedObjectClass(void)
 	}
 }
 
-// FUNCTION: 0x004D2370
+// FUNCTION: GAMEMD 0x004D2370
 void Update_Fogged_Objects(void)
 {
 	for (int i = 0; i < FoggedObjectClass::FoggyObjects.Count(); i++) {
@@ -285,7 +302,7 @@ void Update_Fogged_Objects(void)
 	}
 }
 
-// FUNCTION: 0x004D24A0
+// FUNCTION: GAMEMD 0x004D24A0
 HRESULT STDMETHODCALLTYPE FoggedObjectClass::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -310,7 +327,7 @@ HRESULT STDMETHODCALLTYPE FoggedObjectClass::Save(IStream * stream, BOOL cleardi
 	return(result);
 }
 
-// FUNCTION: 0x004D2510
+// FUNCTION: GAMEMD 0x004D2510
 HRESULT STDMETHODCALLTYPE FoggedObjectClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -344,7 +361,7 @@ HRESULT STDMETHODCALLTYPE FoggedObjectClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x004D2790
+// FUNCTION: GAMEMD 0x004D2790
 Cell const * FoggedObjectClass::Get_Head_Record_Occupy_List(void)
 {
 	if (RTTI == RTTI_BUILDING) {
@@ -353,19 +370,19 @@ Cell const * FoggedObjectClass::Get_Head_Record_Occupy_List(void)
 	return(NULL);
 }
 
-// FUNCTION: 0x004D27B0
+// FUNCTION: GAMEMD 0x004D27B0
 RTTIType FoggedObjectClass::Fetch_RTTI(void) const
 {
 	return(RTTI_FOGGEDOBJECT);
 }
 
-// FUNCTION: 0x004D27C0
+// FUNCTION: GAMEMD 0x004D27C0
 int FoggedObjectClass::Fetch_Object_Size(void) const
 {
 	return(sizeof((*this)));
 }
 
-// FUNCTION: 0x004D27D0
+// FUNCTION: GAMEMD 0x004D27D0
 HRESULT STDMETHODCALLTYPE FoggedObjectClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -373,7 +390,7 @@ HRESULT STDMETHODCALLTYPE FoggedObjectClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x004D2810
+// FUNCTION: GAMEMD 0x004D2810
 void FoggedObjectClass::Compute_CRC(CRCEngine &crc) const
 {
 	BASECLASS::Compute_CRC(crc);
@@ -393,7 +410,7 @@ void FoggedObjectClass::Compute_CRC(CRCEngine &crc) const
 	crc(Records.Count());
 }
 
-// FUNCTION: 0x004D28C0
+// FUNCTION: GAMEMD 0x004D28C0
 ObjectTypeClass * FoggedObjectClass::Get_Head_Record_Object_Type(void)
 {
 	if (Records.Count() > 0) {
@@ -402,69 +419,96 @@ ObjectTypeClass * FoggedObjectClass::Get_Head_Record_Object_Type(void)
 	return(NULL);
 }
 
-// FUNCTION: 0x004D28D0
+// FUNCTION: GAMEMD 0x004D28D0
 Cell FoggedObjectClass::Get_Cell(void)
 {
 	return(Position.As_Cell());
 }
 
-// FUNCTION: 0x004D2910 FoggedObjectClass::~FoggedObjectClass
+// SYNTHETIC: GAMEMD 0x004D2910
+// ??_GFoggedObjectClass@@UAEPAXI@Z
 
-// FUNCTION: 0x004D2930 ?$DynamicVectorClass@UDrawRecord@FoggedObjectClass@@::Clear
-// FUNCTION: 0x004D2960 ?$DynamicVectorClass@UDrawRecord@FoggedObjectClass@@::ID
+// TEMPLATE: GAMEMD 0x004D2930
+// ?Clear@?$DynamicVectorClass@UDrawRecord@FoggedObjectClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004D2960
+// ?ID@?$DynamicVectorClass@UDrawRecord@FoggedObjectClass@@@@UAEHPBUDrawRecord@FoggedObjectClass@@@Z
 template class DynamicVectorClass<FoggedObjectClass::DrawRecord>;
 
-// FUNCTION: 0x004D2980 ?$VectorClass@UDrawRecord@FoggedObjectClass@@::GetItem
-// FUNCTION: 0x004D29B0 ?$VectorClass@UDrawRecord@FoggedObjectClass@@::operator==
-// FUNCTION: 0x004D2A10 ?$VectorClass@UDrawRecord@FoggedObjectClass@@::Resize
-// FUNCTION: 0x004D2B20 ?$VectorClass@UDrawRecord@FoggedObjectClass@@::Clear
-// FUNCTION: 0x004D2B50 ?$VectorClass@UDrawRecord@FoggedObjectClass@@::ID
-// FUNCTION: 0x004D2BA0 ?$VectorClass@UDrawRecord@FoggedObjectClass@@::ID
+// TEMPLATE: GAMEMD 0x004D2980
+// ?GetItem@?$VectorClass@UDrawRecord@FoggedObjectClass@@@@UBE?AUDrawRecord@FoggedObjectClass@@H@Z
+// TEMPLATE: GAMEMD 0x004D29B0
+// ??8?$VectorClass@UDrawRecord@FoggedObjectClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x004D2A10
+// ?Resize@?$VectorClass@UDrawRecord@FoggedObjectClass@@@@UAE_NHPBUDrawRecord@FoggedObjectClass@@@Z
+// TEMPLATE: GAMEMD 0x004D2B20
+// ?Clear@?$VectorClass@UDrawRecord@FoggedObjectClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004D2B50
+// ?ID@?$VectorClass@UDrawRecord@FoggedObjectClass@@@@UAEHABUDrawRecord@FoggedObjectClass@@@Z
+// TEMPLATE: GAMEMD 0x004D2BA0
+// ?ID@?$VectorClass@UDrawRecord@FoggedObjectClass@@@@UAEHPBUDrawRecord@FoggedObjectClass@@@Z
 template class VectorClass<FoggedObjectClass::DrawRecord>;
 
-// FUNCTION: 0x004D2BC0 ?$DynamicVectorClass@UDrawRecord@FoggedObjectClass@@::Resize
-// FUNCTION: 0x004D2CD0 ?$DynamicVectorClass@UDrawRecord@FoggedObjectClass@@::ID
+// TEMPLATE: GAMEMD 0x004D2BC0
+// ?Resize@?$DynamicVectorClass@UDrawRecord@FoggedObjectClass@@@@UAE_NHPBUDrawRecord@FoggedObjectClass@@@Z
+// TEMPLATE: GAMEMD 0x004D2CD0
+// ?ID@?$DynamicVectorClass@UDrawRecord@FoggedObjectClass@@@@UAEHABUDrawRecord@FoggedObjectClass@@@Z
 template class DynamicVectorClass<FoggedObjectClass::DrawRecord>;
 
-// FUNCTION: 0x004D2D10 ?$VectorClass@UDrawRecord@FoggedObjectClass@@::~?$VectorClass@UDrawRecord@FoggedObjectClass@@
-// FUNCTION: 0x004D2D60 ?$DynamicVectorClass@UDrawRecord@FoggedObjectClass@@::~?$DynamicVectorClass@UDrawRecord@FoggedObjectClass@@
-// FUNCTION: 0x004D2DB0 ?$VectorClass@UDrawRecord@FoggedObjectClass@@::?$VectorClass@UDrawRecord@FoggedObjectClass@@
-// FUNCTION: 0x004D2E40 ?$IndexClass@HPAVFoggedObjectClass@@::Increase_Table_Size
+// SYNTHETIC: GAMEMD 0x004D2D10
+// ??_G?$VectorClass@UDrawRecord@FoggedObjectClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004D2D60
+// ??_G?$DynamicVectorClass@UDrawRecord@FoggedObjectClass@@@@UAEPAXI@Z
+// TEMPLATE: GAMEMD 0x004D2DB0
+// ??0?$VectorClass@UDrawRecord@FoggedObjectClass@@@@QAE@HPBUDrawRecord@FoggedObjectClass@@@Z
+// TEMPLATE: GAMEMD 0x004D2E40
+// ?Increase_Table_Size@?$IndexClass@HPAVFoggedObjectClass@@@@AAE_NH@Z
 template class IndexClass<int, FoggedObjectClass *>;
 
-// FUNCTION: 0x004D2ED0 ?$IndexClass@HPAVFoggedObjectClass@@::search_compfunc
+// TEMPLATE: GAMEMD 0x004D2ED0
+// ?search_compfunc@?$IndexClass@HPAVFoggedObjectClass@@@@CAHPBX0@Z
 
-// FUNCTION: 0x004D2F00 Binary_Search
+// TEMPLATE: GAMEMD 0x004D2F00
+// ?Binary_Search@@YIPAUNodeElement@?$IndexClass@HPAVFoggedObjectClass@@@@PAU12@HABU12@@Z
 template IndexClass<int, FoggedObjectClass *>::NodeElement * Binary_Search(IndexClass<int, FoggedObjectClass *>::NodeElement *, int, IndexClass<int, FoggedObjectClass *>::NodeElement const &);
 
-// FUNCTION: 0x004D2F50 $E143
+// SYNTHETIC: GAMEMD 0x004D2F50 SYMBOL
+// _$E143
 double DAT_008B3D90 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x004D2F80 $E146
+// SYNTHETIC: GAMEMD 0x004D2F80 SYMBOL
+// _$E146
 double DAT_008B3DF8 = DAT_008B3D90 / DAT_007E8BE0;
 
-// FUNCTION: 0x004D2FA0 $E149
+// SYNTHETIC: GAMEMD 0x004D2FA0 SYMBOL
+// _$E149
 double DAT_008B3DE0 = DAT_007E1718 / DAT_008B3DF8;
 
-// FUNCTION: 0x004D2FC0 $E152
+// SYNTHETIC: GAMEMD 0x004D2FC0 SYMBOL
+// _$E152
 double DAT_008B3DD8 = DAT_007E1720 * DAT_007E8BE8;
 
-// FUNCTION: 0x004D2FE0 $E155
+// SYNTHETIC: GAMEMD 0x004D2FE0 SYMBOL
+// _$E155
 double DAT_008B3D98 = DAT_007E1728 * DAT_007E8BE8;
 
-// FUNCTION: 0x004D3000 $E158
+// SYNTHETIC: GAMEMD 0x004D3000 SYMBOL
+// _$E158
 double DAT_008B3D70 = DAT_007E1730 * DAT_007E8BE8;
 
-// FUNCTION: 0x004D3020 $E161
+// SYNTHETIC: GAMEMD 0x004D3020 SYMBOL
+// _$E161
 int DAT_008B3E00 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_008B3D70 - DAT_008B3D98) * DAT_008B3D90));
 
-// FUNCTION: 0x004D3060 $E164
+// SYNTHETIC: GAMEMD 0x004D3060 SYMBOL
+// _$E164
 double DAT_008B3DA0 = FUN_004CADE0(DAT_008B3E00 * DAT_007E1740);
 
-// FUNCTION: 0x004D3090 $E167
+// SYNTHETIC: GAMEMD 0x004D3090 SYMBOL
+// _$E167
 double DAT_008B3DB8 = FUN_004CADE0((DAT_008B3E00 * 2) / DAT_008B3D90);
 
-// FUNCTION: 0x004D30C0 $E170
+// SYNTHETIC: GAMEMD 0x004D30C0 SYMBOL
+// _$E170
 int DAT_008B3DF4 = (int)(DAT_008B3E00 * 4 + DAT_007E1738);
 
 struct Fog_Short2 {
@@ -484,14 +528,18 @@ struct Fog_Half {
 	Fog_Half(void) : X(128), Y(128), Z(0) {}
 };
 
-// FUNCTION: 0x004D30F0 $E173
+// SYNTHETIC: GAMEMD 0x004D30F0 SYMBOL
+// _$E173
 Fog_Short2 DAT_008B3D88;
 
-// FUNCTION: 0x004D3100 $E176
+// SYNTHETIC: GAMEMD 0x004D3100 SYMBOL
+// _$E176
 Fog_Int3 DAT_008B3DA8;
 
-// FUNCTION: 0x004D3120 $E179
+// SYNTHETIC: GAMEMD 0x004D3120 SYMBOL
+// _$E179
 Fog_Half DAT_008B3DE8;
 
-// FUNCTION: 0x004D3140 $E182
+// SYNTHETIC: GAMEMD 0x004D3140 SYMBOL
+// _$E182
 Fog_Int4 DAT_008B3D78;

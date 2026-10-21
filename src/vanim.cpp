@@ -59,7 +59,7 @@ struct ShortPair {
 	ShortPair() { A = 0; B = 0; }
 };
 
-// FUNCTION: 0x007498D0
+// FUNCTION: GAMEMD 0x007498D0
 VoxelAnimClass::VoxelAnimClass(void) :
 	BASECLASS(),
 	Class(NULL),
@@ -76,7 +76,7 @@ VoxelAnimClass::VoxelAnimClass(void) :
 	VoxelAnims.Add(this);
 }
 
-// FUNCTION: 0x007499F0
+// FUNCTION: GAMEMD 0x007499F0
 VoxelAnimClass::~VoxelAnimClass(void)
 {
 	Detach_This_From_All(this);
@@ -96,7 +96,7 @@ VoxelAnimClass::~VoxelAnimClass(void)
 	Class = NULL;
 }
 
-// FUNCTION: 0x00749B20
+// FUNCTION: GAMEMD 0x00749B20
 bool VoxelAnimClass::Render(Rect &cliprect, bool forced, bool extras_only) const
 {
 	if (Map[Center_Coord()].IsVisible) {
@@ -105,7 +105,7 @@ bool VoxelAnimClass::Render(Rect &cliprect, bool forced, bool extras_only) const
 	return(BASECLASS::Render(cliprect, forced, false));
 }
 
-// FUNCTION: 0x00749F00
+// FUNCTION: GAMEMD 0x00749F00
 void VoxelAnimClass::Init_Clear(void)
 {
 	while (VoxelAnims.Count()) {
@@ -113,13 +113,13 @@ void VoxelAnimClass::Init_Clear(void)
 	}
 }
 
-// FUNCTION: 0x0074A960
+// FUNCTION: GAMEMD 0x0074A960
 LayerType VoxelAnimClass::In_Which_Layer(void) const
 {
 	return(LAYER_AIR);
 }
 
-// FUNCTION: 0x0074A970
+// FUNCTION: GAMEMD 0x0074A970
 HRESULT STDMETHODCALLTYPE VoxelAnimClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -135,13 +135,13 @@ HRESULT STDMETHODCALLTYPE VoxelAnimClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x0074AA10
+// FUNCTION: GAMEMD 0x0074AA10
 HRESULT STDMETHODCALLTYPE VoxelAnimClass::Save(IStream * stream, BOOL cleardirty)
 {
 	return(BASECLASS::Save(stream, cleardirty));
 }
 
-// FUNCTION: 0x0074AA30
+// FUNCTION: GAMEMD 0x0074AA30
 void VoxelAnimClass::Compute_CRC(CRCEngine & crc) const
 {
 	BASECLASS::Compute_CRC(crc);
@@ -156,7 +156,7 @@ void VoxelAnimClass::Compute_CRC(CRCEngine & crc) const
 	crc(ECCounter);
 }
 
-// FUNCTION: 0x0074AAD0
+// FUNCTION: GAMEMD 0x0074AAD0
 HRESULT STDMETHODCALLTYPE VoxelAnimClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -164,63 +164,75 @@ HRESULT STDMETHODCALLTYPE VoxelAnimClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x0074AB10
+// FUNCTION: GAMEMD 0x0074AB10
 int VoxelAnimClass::Fetch_Object_Size(void) const
 {
 	return(sizeof(*this));
 }
 
-// FUNCTION: 0x0074AB20
+// FUNCTION: GAMEMD 0x0074AB20
 RTTIType VoxelAnimClass::Fetch_RTTI(void) const
 {
 	return(RTTI_VOXELANIM);
 }
 
-// FUNCTION: 0x0074AB30
+// FUNCTION: GAMEMD 0x0074AB30
 ObjectTypeClass const * VoxelAnimClass::Class_Of(void) const
 {
 	return(Class);
 }
 
-// FUNCTION: 0x0074AB40
+// FUNCTION: GAMEMD 0x0074AB40
 Cell const * VoxelAnimClass::Occupy_List(bool placement) const
 {
 	return(NULL);
 }
 
-// FUNCTION: 0x0074AB50 VoxelAnimClass::~VoxelAnimClass
+// SYNTHETIC: GAMEMD 0x0074AB50
+// ??_GVoxelAnimClass@@UAEPAXI@Z
 
-// FUNCTION: 0x0074AB70 $E88
+// SYNTHETIC: GAMEMD 0x0074AB70 SYMBOL
+// _$E88
 double DAT_00B1D1F0 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x0074ABA0 $E91
+// SYNTHETIC: GAMEMD 0x0074ABA0 SYMBOL
+// _$E91
 double DAT_00B1D240 = DAT_00B1D1F0 / DAT_007F6508;
 
-// FUNCTION: 0x0074ABC0 $E94
+// SYNTHETIC: GAMEMD 0x0074ABC0 SYMBOL
+// _$E94
 double DAT_00B1D228 = DAT_007E1718 / DAT_00B1D240;
 
-// FUNCTION: 0x0074ABE0 $E97
+// SYNTHETIC: GAMEMD 0x0074ABE0 SYMBOL
+// _$E97
 double DAT_00B1D220 = DAT_007E1720 * DAT_007F6510;
 
-// FUNCTION: 0x0074AC00 $E100
+// SYNTHETIC: GAMEMD 0x0074AC00 SYMBOL
+// _$E100
 double DAT_00B1D1F8 = DAT_007E1728 * DAT_007F6510;
 
-// FUNCTION: 0x0074AC20 $E103
+// SYNTHETIC: GAMEMD 0x0074AC20 SYMBOL
+// _$E103
 double DAT_00B1D1D0 = DAT_007E1730 * DAT_007F6510;
 
-// FUNCTION: 0x0074AC40 $E106
+// SYNTHETIC: GAMEMD 0x0074AC40 SYMBOL
+// _$E106
 int DAT_00B1D248 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B1D1D0 - DAT_00B1D1F8) * DAT_00B1D1F0));
 
-// FUNCTION: 0x0074AC80 $E109
+// SYNTHETIC: GAMEMD 0x0074AC80 SYMBOL
+// _$E109
 double DAT_00B1D200 = FUN_004CADE0(DAT_00B1D248 * DAT_007E1740);
 
-// FUNCTION: 0x0074ACB0 $E112
+// SYNTHETIC: GAMEMD 0x0074ACB0 SYMBOL
+// _$E112
 double DAT_00B1D218 = FUN_004CADE0((DAT_00B1D248 * 2) / DAT_00B1D1F0);
 
-// FUNCTION: 0x0074ACE0 $E115
+// SYNTHETIC: GAMEMD 0x0074ACE0 SYMBOL
+// _$E115
 int DAT_00B1D23C = (int)(DAT_00B1D248 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x0074AD10 $E118
+// SYNTHETIC: GAMEMD 0x0074AD10 SYMBOL
+// _$E118
 ShortPair DAT_00B1D1E8;
 
 struct IntTriple {
@@ -233,10 +245,11 @@ struct IntTripleHalf {
 	IntTripleHalf() { A = 0x80; B = 0x80; C = 0; }
 };
 
-// FUNCTION: 0x0074AD20
+// FUNCTION: GAMEMD 0x0074AD20
 IntTriple DAT_00B1D208;
 
-// FUNCTION: 0x0074AD40
+// FUNCTION: GAMEMD 0x0074AD40
 IntTripleHalf DAT_00B1D230;
 
-// FUNCTION: 0x0074AD60 $E2
+// SYNTHETIC: GAMEMD 0x0074AD60 SYMBOL
+// _$E2

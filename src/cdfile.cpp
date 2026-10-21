@@ -24,20 +24,20 @@ extern const double DAT_007E4EB0;
 
 HANDLE FindFileHandle = INVALID_HANDLE_VALUE;
 
-// FUNCTION: 0x0047A9D0
+// FUNCTION: GAMEMD 0x0047A9D0
 CDFileClass::CDFileClass(char const * filename) :
 	IsDisabled(false)
 {
 	CDFileClass::Set_Name(filename);
 }
 
-// FUNCTION: 0x0047AA30
+// FUNCTION: GAMEMD 0x0047AA30
 CDFileClass::CDFileClass(void) :
 	IsDisabled(false)
 {
 }
 
-// FUNCTION: 0x0047AA50
+// FUNCTION: GAMEMD 0x0047AA50
 int Is_Disk_Inserted(int disk)
 {
 	WIN32_FIND_DATA fb;
@@ -55,13 +55,13 @@ int Is_Disk_Inserted(int disk)
 	return(true);
 }
 
-// FUNCTION: 0x0047AAB0
+// FUNCTION: GAMEMD 0x0047AAB0
 int CDFileClass::Open(int rights)
 {
 	return(BASECLASS::Open(rights));
 }
 
-// FUNCTION: 0x0047AAC0
+// FUNCTION: GAMEMD 0x0047AAC0
 void CDFileClass::Refresh_Search_Drives (void)
 {
 	Clear_Search_Drives();
@@ -72,7 +72,7 @@ struct CDDriveManagerClass {
 	static int __fastcall GetCDNumber(int drive, int seconds);
 };
 
-// FUNCTION: 0x0047AB10
+// FUNCTION: GAMEMD 0x0047AB10
 int CDFileClass::Set_Search_Drives(char * pathlist)
 {
 	bool found = false;
@@ -129,7 +129,7 @@ int CDFileClass::Set_Search_Drives(char * pathlist)
 	return(0);
 }
 
-// FUNCTION: 0x0047AD50
+// FUNCTION: GAMEMD 0x0047AD50
 void CDFileClass::Add_Search_Drive(char *path)
 {
 	SearchDriveType *srch;
@@ -150,14 +150,14 @@ void CDFileClass::Add_Search_Drive(char *path)
 	}
 }
 
-// FUNCTION: 0x0047ADA0
+// FUNCTION: GAMEMD 0x0047ADA0
 void CDFileClass::Set_CD_Drive (int drive)
 {
 	LastCDDrive = CurrentCDDrive;
 	CurrentCDDrive = drive;
 }
 
-// FUNCTION: 0x0047ADC0
+// FUNCTION: GAMEMD 0x0047ADC0
 void CDFileClass::Clear_Search_Drives(void)
 {
 	SearchDriveType	* chain;
@@ -177,7 +177,7 @@ void CDFileClass::Clear_Search_Drives(void)
 	First = 0;
 }
 
-// FUNCTION: 0x0047AE10
+// FUNCTION: GAMEMD 0x0047AE10
 char const * CDFileClass::Set_Name(char const *filename)
 {
 	BASECLASS::Set_Name(filename);
@@ -198,7 +198,7 @@ char const * CDFileClass::Set_Name(char const *filename)
 	return(File_Name());
 }
 
-// FUNCTION: 0x0047AF10
+// FUNCTION: GAMEMD 0x0047AF10
 int CDFileClass::Open(char const *filename, int rights)
 {
 	CDFileClass::Close();
@@ -214,7 +214,7 @@ int CDFileClass::Open(char const *filename, int rights)
 	return(BASECLASS::Open(rights));
 }
 
-// FUNCTION: 0x0047AF70
+// FUNCTION: GAMEMD 0x0047AF70
 bool CDFileClass::Find_First_File(char *fname)
 {
 	WIN32_FIND_DATAA fb;
@@ -261,7 +261,7 @@ bool CDFileClass::Find_First_File(char *fname)
 	return(false);
 }
 
-// FUNCTION: 0x0047B0C0
+// FUNCTION: GAMEMD 0x0047B0C0
 bool CDFileClass::Find_Next_File(char *buffer)
 {
 	WIN32_FIND_DATAA fb;
@@ -277,7 +277,7 @@ bool CDFileClass::Find_Next_File(char *buffer)
 	return(false);
 }
 
-// FUNCTION: 0x0047B130
+// FUNCTION: GAMEMD 0x0047B130
 void CDFileClass::Find_Close(void)
 {
 	if (FindFileHandle != INVALID_HANDLE_VALUE) {
@@ -286,34 +286,44 @@ void CDFileClass::Find_Close(void)
 	}
 }
 
-// FUNCTION: 0x0047B150 $E6
+// SYNTHETIC: GAMEMD 0x0047B150 SYMBOL
+// _$E6
 double DAT_0089E750 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x0047B180 $E9
+// SYNTHETIC: GAMEMD 0x0047B180 SYMBOL
+// _$E9
 double DAT_0089E7B8 = DAT_0089E750 / DAT_007E4EA8;
 
-// FUNCTION: 0x0047B1A0 $E12
+// SYNTHETIC: GAMEMD 0x0047B1A0 SYMBOL
+// _$E12
 double DAT_0089E7A0 = DAT_007E1718 / DAT_0089E7B8;
 
-// FUNCTION: 0x0047B1C0 $E15
+// SYNTHETIC: GAMEMD 0x0047B1C0 SYMBOL
+// _$E15
 double DAT_0089E798 = DAT_007E1720 * DAT_007E4EB0;
 
-// FUNCTION: 0x0047B1E0 $E18
+// SYNTHETIC: GAMEMD 0x0047B1E0 SYMBOL
+// _$E18
 double DAT_0089E758 = DAT_007E1728 * DAT_007E4EB0;
 
-// FUNCTION: 0x0047B200 $E21
+// SYNTHETIC: GAMEMD 0x0047B200 SYMBOL
+// _$E21
 double DAT_0089E728 = DAT_007E1730 * DAT_007E4EB0;
 
-// FUNCTION: 0x0047B220 $E24
+// SYNTHETIC: GAMEMD 0x0047B220 SYMBOL
+// _$E24
 int DAT_0089E7C0 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_0089E728 - DAT_0089E758) * DAT_0089E750));
 
-// FUNCTION: 0x0047B260 $E27
+// SYNTHETIC: GAMEMD 0x0047B260 SYMBOL
+// _$E27
 double DAT_0089E768 = FUN_004CADE0(DAT_0089E7C0 * DAT_007E1740);
 
-// FUNCTION: 0x0047B290 $E30
+// SYNTHETIC: GAMEMD 0x0047B290 SYMBOL
+// _$E30
 double DAT_0089E788 = FUN_004CADE0((DAT_0089E7C0 * 2) / DAT_0089E750);
 
-// FUNCTION: 0x0047B2C0 $E33
+// SYNTHETIC: GAMEMD 0x0047B2C0 SYMBOL
+// _$E33
 int DAT_0089E7B4 = (int)((DAT_0089E7C0 * 4) + DAT_007E1738);
 
 struct CdZero2S {
@@ -345,14 +355,18 @@ struct CdZero4 {
 	CdZero4(void) : A(0), B(0), C(0), D(0) {}
 };
 
-// FUNCTION: 0x0047B2F0 $E36
+// SYNTHETIC: GAMEMD 0x0047B2F0 SYMBOL
+// _$E36
 CdZero2S DAT_0089E748;
 
-// FUNCTION: 0x0047B300 $E39
+// SYNTHETIC: GAMEMD 0x0047B300 SYMBOL
+// _$E39
 CdZero3 DAT_0089E778;
 
-// FUNCTION: 0x0047B320 $E42
+// SYNTHETIC: GAMEMD 0x0047B320 SYMBOL
+// _$E42
 CdInit128 DAT_0089E7A4;
 
-// FUNCTION: 0x0047B340 $E45
+// SYNTHETIC: GAMEMD 0x0047B340 SYMBOL
+// _$E45
 CdZero4 DAT_0089E730;

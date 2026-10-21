@@ -42,34 +42,44 @@ extern const double DAT_007E1740;
 extern const double DAT_007F6970;
 extern const double DAT_007F6978;
 
-// FUNCTION: 0x00758F90 $E36
+// SYNTHETIC: GAMEMD 0x00758F90 SYMBOL
+// _$E36
 double DAT_00B45B30 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x00758FC0 $E39
+// SYNTHETIC: GAMEMD 0x00758FC0 SYMBOL
+// _$E39
 double DAT_00B45B98 = DAT_00B45B30 / DAT_007F6970;
 
-// FUNCTION: 0x00758FE0 $E42
+// SYNTHETIC: GAMEMD 0x00758FE0 SYMBOL
+// _$E42
 double DAT_00B45B80 = DAT_007E1718 / DAT_00B45B98;
 
-// FUNCTION: 0x00759000 $E45
+// SYNTHETIC: GAMEMD 0x00759000 SYMBOL
+// _$E45
 double DAT_00B45B78 = DAT_007E1720 * DAT_007F6978;
 
-// FUNCTION: 0x00759020 $E48
+// SYNTHETIC: GAMEMD 0x00759020 SYMBOL
+// _$E48
 double DAT_00B45B38 = DAT_007E1728 * DAT_007F6978;
 
-// FUNCTION: 0x00759040 $E51
+// SYNTHETIC: GAMEMD 0x00759040 SYMBOL
+// _$E51
 double DAT_00B45B10 = DAT_007E1730 * DAT_007F6978;
 
-// FUNCTION: 0x00759060 $E54
+// SYNTHETIC: GAMEMD 0x00759060 SYMBOL
+// _$E54
 int DAT_00B45BA0 = (int)(fastmath::tan(DAT_00B45B10 - DAT_00B45B38) * DAT_007E1738 * DAT_00B45B30);
 
-// FUNCTION: 0x007590A0 $E57
+// SYNTHETIC: GAMEMD 0x007590A0 SYMBOL
+// _$E57
 double DAT_00B45B40 = fastmath::atan(DAT_00B45BA0 * DAT_007E1740);
 
-// FUNCTION: 0x007590D0 $E60
+// SYNTHETIC: GAMEMD 0x007590D0 SYMBOL
+// _$E60
 double DAT_00B45B70 = fastmath::atan((DAT_00B45BA0 * 2) / DAT_00B45B30);
 
-// FUNCTION: 0x00759100 $E63
+// SYNTHETIC: GAMEMD 0x00759100 SYMBOL
+// _$E63
 int DAT_00B45B94 = (int)(DAT_00B45BA0 * 4 + DAT_007E1738);
 
 struct VQAShortPair {
@@ -85,10 +95,12 @@ struct VQAIntTriple {
 	VQAIntTriple() : A(0), B(0), C(0) {}
 };
 
-// FUNCTION: 0x00759130 $E66
+// SYNTHETIC: GAMEMD 0x00759130 SYMBOL
+// _$E66
 VQAShortPair DAT_00B45B28;
 
-// FUNCTION: 0x00759140 $E69
+// SYNTHETIC: GAMEMD 0x00759140 SYMBOL
+// _$E69
 VQAIntTriple DAT_00B45B48;
 
 struct VQAColorInit {
@@ -98,18 +110,21 @@ struct VQAColorInit {
 	VQAColorInit() { C = 0; A = 0x80; B = 0x80; }
 };
 
-// FUNCTION: 0x00759160 $E72
+// SYNTHETIC: GAMEMD 0x00759160 SYMBOL
+// _$E72
 VQAColorInit DAT_00B45B88;
 
-// FUNCTION: 0x00759180 $E77
-// FUNCTION: 0x007591C0 $E75
+// SYNTHETIC: GAMEMD 0x00759180 SYMBOL
+// _$E77
+// SYNTHETIC: GAMEMD 0x007591C0 SYMBOL
+// _$E75
 DynamicVectorClass<MovieHandle *> IngameVQ;
 
 extern int DAT_00AA0430;
 int __fastcall FUN_0053E770(MSG *msg, HWND wnd, UINT min, UINT max, UINT flags);
 int __fastcall FUN_0053E730(MSG *msg, HWND wnd, UINT min, UINT max);
 
-// FUNCTION: 0x00759200
+// FUNCTION: GAMEMD 0x00759200
 bool VQA_Message_Handler(void)
 {
 	MSG msg;
@@ -126,7 +141,7 @@ bool VQA_Message_Handler(void)
 	return(true);
 }
 
-// FUNCTION: 0x00759260
+// FUNCTION: GAMEMD 0x00759260
 VQAClass::VQAClass(char const * filename, int flags, VQA_SURF_LOCK_CALLBACK surface_lock, VQA_SURF_UNLOCK_CALLBACK surface_unlock, VQA_SURF_DRAW_CALLBACK surface_draw, int frame_rate, int draw_rate)
 {
 	unsigned char buffer;
@@ -234,13 +249,13 @@ VQAClass::VQAClass(char const * filename, int flags, VQA_SURF_LOCK_CALLBACK surf
 	Subtitles = NULL;
 }
 
-// FUNCTION: 0x00759510
+// FUNCTION: GAMEMD 0x00759510
 VQAClass::~VQAClass(void)
 {
 	Hicolor_Clear_Table();
 }
 
-// FUNCTION: 0x00759540
+// FUNCTION: GAMEMD 0x00759540
 long VQAClass::Cache_VQA(unsigned long bytes_to_cache)
 {
 	if (!IsFileOpen) {
@@ -285,7 +300,7 @@ long VQAClass::Cache_VQA(unsigned long bytes_to_cache)
 	return(CACHE_NO_ERROR);
 }
 
-// FUNCTION: 0x00759670
+// FUNCTION: GAMEMD 0x00759670
 long VQAClass::CacheHandler(long action, void * buffer, long nbytes)
 {
 	long rc = 1;
@@ -337,20 +352,20 @@ long VQAClass::CacheHandler(long action, void * buffer, long nbytes)
 	return(rc);
 }
 
-// FUNCTION: 0x00759760
+// FUNCTION: GAMEMD 0x00759760
 void VQAClass::Handle_Palette_Event(void *buffer)
 {
 	memcpy(Palette, buffer, sizeof(Palette));
 	HasPaletteChanged = true;
 }
 
-// FUNCTION: 0x00759790
+// FUNCTION: GAMEMD 0x00759790
 void VQAClass::Set_DirectDraw_Palette(void)
 {
 	Set_Palette(Palette);
 }
 
-// FUNCTION: 0x007597A0
+// FUNCTION: GAMEMD 0x007597A0
 bool VQAClass::Open_And_Load_Buffers(void)
 {
 	if (VQA_Open(Filename, &Config, &Handle) != VQAERR_NONE) {
@@ -368,7 +383,7 @@ bool VQAClass::Open_And_Load_Buffers(void)
 	return(true);
 }
 
-// FUNCTION: 0x00759810
+// FUNCTION: GAMEMD 0x00759810
 int VQAClass::Get_VQA_Version(void) const
 {
 	if (Handle != NULL) {
@@ -377,7 +392,7 @@ int VQAClass::Get_VQA_Version(void) const
 	return(-1);
 }
 
-// FUNCTION: 0x00759830
+// FUNCTION: GAMEMD 0x00759830
 int VQAClass::Set_VQA_Volume(int vol)
 {
 	int old = Config.Volume;
@@ -387,7 +402,7 @@ int VQAClass::Set_VQA_Volume(int vol)
 	return(old);
 }
 
-// FUNCTION: 0x00759850
+// FUNCTION: GAMEMD 0x00759850
 bool VQAClass::Set_Loop(int loop_id, int iterations)
 {
 	if (iterations < 0) {
@@ -400,7 +415,7 @@ bool VQAClass::Set_Loop(int loop_id, int iterations)
 	return(false);
 }
 
-// FUNCTION: 0x00759880
+// FUNCTION: GAMEMD 0x00759880
 bool VQAClass::Set_Loop(int start, int end, int iterations)
 {
 	if (start < 0 || start >= TotalFrames) {
@@ -422,7 +437,7 @@ bool VQAClass::Set_Loop(int start, int end, int iterations)
 	return(false);
 }
 
-// FUNCTION: 0x007598D0
+// FUNCTION: GAMEMD 0x007598D0
 void VQAClass::Seek_To_Frame(int frame)
 {
 	if (frame == (int)CurrentFrame) {
@@ -436,7 +451,7 @@ void VQAClass::Seek_To_Frame(int frame)
 
 unsigned long __fastcall FUN_007C3990(VQAHandle *vqa);
 
-// FUNCTION: 0x00759900
+// FUNCTION: GAMEMD 0x00759900
 bool VQAClass::Seek_To_Stored_Frame(void)
 {
 	if (IsOpen) {
@@ -449,7 +464,7 @@ bool VQAClass::Seek_To_Stored_Frame(void)
 	return(true);
 }
 
-// FUNCTION: 0x00759940
+// FUNCTION: GAMEMD 0x00759940
 int VQAClass::Play_VQA(int last_frame_to_play, bool nobreakout)
 {
 	long errval;
@@ -544,7 +559,7 @@ int VQAClass::Play_VQA(int last_frame_to_play, bool nobreakout)
 	return(VQA_PLAY_NO_ERROR);
 }
 
-// FUNCTION: 0x00759BC0
+// FUNCTION: GAMEMD 0x00759BC0
 void VQAClass::Play_VQA_Frame(int frame_number)
 {
 	if (frame_number == PLAY_LAST_FRAME) {
@@ -563,7 +578,7 @@ void VQAClass::Play_VQA_Frame(int frame_number)
 	}
 }
 
-// FUNCTION: 0x00759C30
+// FUNCTION: GAMEMD 0x00759C30
 bool VQAClass::Advance_Frame(bool & finished)
 {
 	static bool _state = false;
@@ -628,7 +643,7 @@ bool VQAClass::Advance_Frame(bool & finished)
 	return(false);
 }
 
-// FUNCTION: 0x00759E10
+// FUNCTION: GAMEMD 0x00759E10
 void VQAClass::Pause_VQA(void)
 {
 	if (IsOpen) {
@@ -639,13 +654,13 @@ void VQAClass::Pause_VQA(void)
 	IsPaused = true;
 }
 
-// FUNCTION: 0x00759E50
+// FUNCTION: GAMEMD 0x00759E50
 void VQAClass::Resume_VQA(void)
 {
 	IsPaused = false;
 }
 
-// FUNCTION: 0x00759E60
+// FUNCTION: GAMEMD 0x00759E60
 void VQAClass::Close_And_Free_VQA(void)
 {
 	if (IsOpen) {
@@ -653,7 +668,7 @@ void VQAClass::Close_And_Free_VQA(void)
 	}
 }
 
-// FUNCTION: 0x00759E80
+// FUNCTION: GAMEMD 0x00759E80
 void VQAClass::Reset_VQA(void)
 {
 	VQA_Reset(Handle);
@@ -662,14 +677,14 @@ void VQAClass::Reset_VQA(void)
 	}
 }
 
-// FUNCTION: 0x00759EA0
+// FUNCTION: GAMEMD 0x00759EA0
 int VQAClass::Get_Desired_Color_Mode(void)
 {
 	return(DesiredColorMode);
 }
 
 
-// FUNCTION: 0x00759EB0
+// FUNCTION: GAMEMD 0x00759EB0
 bool VQAClass::Set_Draw_Buffer(void * buffer, int buffer_width, int buffer_height, int x_offset, int y_offset)
 {
 	if (buffer_width == -1) {
@@ -696,14 +711,14 @@ bool VQAClass::Set_Draw_Buffer(void * buffer, int buffer_width, int buffer_heigh
 }
 
 
-// FUNCTION: 0x00759F20
+// FUNCTION: GAMEMD 0x00759F20
 void VQAClass::Set_Primary_Color_Mode(int mode)
 {
 	PrimaryColorMode = mode;
 }
 
 
-// FUNCTION: 0x00759F30
+// FUNCTION: GAMEMD 0x00759F30
 void VQAClass::Handle_Codebook_Event(void *buf, unsigned int num)
 {
 	if (PrimaryColorMode != -1) {
@@ -713,35 +728,35 @@ void VQAClass::Handle_Codebook_Event(void *buf, unsigned int num)
 }
 
 
-// FUNCTION: 0x00759F70
+// FUNCTION: GAMEMD 0x00759F70
 int VQAClass::Get_VQA_Width(void) const
 {
 	return(Width);
 }
 
 
-// FUNCTION: 0x00759F80
+// FUNCTION: GAMEMD 0x00759F80
 int VQAClass::Get_VQA_Height(void) const
 {
 	return(Height);
 }
 
 
-// FUNCTION: 0x00759F90
+// FUNCTION: GAMEMD 0x00759F90
 void *VQAClass::Handle_Lock_Event(void)
 {
 	return(SurfaceLockCallback());
 }
 
 
-// FUNCTION: 0x00759FA0
+// FUNCTION: GAMEMD 0x00759FA0
 bool VQAClass::Handle_Unlock_Event(void)
 {
 	return(SurfaceUnlockCallback());
 }
 
 
-// FUNCTION: 0x00759FB0
+// FUNCTION: GAMEMD 0x00759FB0
 long VQAClass::CCFileHandler(long action, void * buffer, long nbytes)
 {
 	long error = 1;
@@ -801,7 +816,7 @@ long VQAClass::CCFileHandler(long action, void * buffer, long nbytes)
 }
 
 
-// FUNCTION: 0x0075A100
+// FUNCTION: GAMEMD 0x0075A100
 long __cdecl VQACCFileHandler(VQAHandle * vqa, long action, void * buffer, long nbytes)
 {
 	VQAHandleP *vqap = (VQAHandleP *)vqa;
@@ -811,7 +826,7 @@ long __cdecl VQACCFileHandler(VQAHandle * vqa, long action, void * buffer, long 
 	return(_this->CCFileHandler(action, buffer, nbytes));
 }
 
-// FUNCTION: 0x0075A120
+// FUNCTION: GAMEMD 0x0075A120
 long VQAClass::MixFileHandler(long action, void * buffer, long nbytes)
 {
 	long error = 1;
@@ -878,7 +893,7 @@ long VQAClass::MixFileHandler(long action, void * buffer, long nbytes)
 }
 
 
-// FUNCTION: 0x0075A2B0
+// FUNCTION: GAMEMD 0x0075A2B0
 long __cdecl VQAMixFileHandler(VQAHandle * vqa, long action, void * buffer, long nbytes)
 {
 	VQAHandleP *vqap = (VQAHandleP *)vqa;
@@ -888,7 +903,7 @@ long __cdecl VQAMixFileHandler(VQAHandle * vqa, long action, void * buffer, long
 	return(_this->MixFileHandler(action, buffer, nbytes));
 }
 
-// FUNCTION: 0x0075A2D0
+// FUNCTION: GAMEMD 0x0075A2D0
 long             VQACacheHandler(VQAHandle * vqa, long action, void * buffer, long nbytes)
 {
 	VQAHandleP *vqap = (VQAHandleP *)vqa;
@@ -898,7 +913,7 @@ long             VQACacheHandler(VQAHandle * vqa, long action, void * buffer, lo
 	return(_this->CacheHandler(action, buffer, nbytes));
 }
 
-// FUNCTION: 0x0075A2F0
+// FUNCTION: GAMEMD 0x0075A2F0
 long __cdecl VQAMemoryHandler(VQAHandle * vqa, long action, void * buffer, long nbytes)
 {
 	long error = 0;

@@ -21,32 +21,32 @@
 
 #include <cstdio>
 
-// FUNCTION: 0x0042E640
+// FUNCTION: GAMEMD 0x0042E640
 bool BaseNodeClass::operator == (BaseNodeClass const & node)
 {
 	return(Type == node.Type && CellID == node.CellID);
 }
 
-// FUNCTION: 0x0042E670
+// FUNCTION: GAMEMD 0x0042E670
 bool BaseNodeClass::operator !=(BaseNodeClass const & node)
 {
 	return(!(*this == node));
 }
 
-// FUNCTION: 0x0042E6C0
+// FUNCTION: GAMEMD 0x0042E6C0
 bool BaseNodeClass::operator > (BaseNodeClass const &)
 {
 	return(true);
 }
 
-// FUNCTION: 0x0042E6D0
+// FUNCTION: GAMEMD 0x0042E6D0
 void BaseNodeClass::FUN_0042E6D0(Cell offset)
 {
 	CellID.X += offset.X;
 	CellID.Y += offset.Y;
 }
 
-// FUNCTION: 0x0042E6F0
+// FUNCTION: GAMEMD 0x0042E6F0
 BaseClass::BaseClass(void) :
 	Nodes(),
 	PercentBuilt(0),
@@ -59,7 +59,7 @@ BaseClass::BaseClass(void) :
 {
 }
 
-// FUNCTION: 0x0042E780
+// FUNCTION: GAMEMD 0x0042E780
 bool BaseClass::Is_Built(int index) const
 {
 	if (Get_Building(index) != NULL) {
@@ -86,13 +86,13 @@ bool BaseClass::Is_Built(int index) const
 	return(false);
 }
 
-// FUNCTION: 0x0042E800
+// FUNCTION: GAMEMD 0x0042E800
 bool BaseClass::FUN_0042E800(int index) const
 {
 	return(Nodes[index].Placed);
 }
 
-// FUNCTION: 0x0042E820
+// FUNCTION: GAMEMD 0x0042E820
 BuildingClass * BaseClass::Get_Building(int index) const
 {
 	int i;
@@ -144,7 +144,7 @@ BuildingClass * BaseClass::Get_Building(int index) const
 }
 
 
-// FUNCTION: 0x0042E990
+// FUNCTION: GAMEMD 0x0042E990
 bool BaseClass::Is_Node(BuildingClass const * obj)
 {
 	if (Get_Node(obj) != NULL) {
@@ -154,7 +154,7 @@ bool BaseClass::Is_Node(BuildingClass const * obj)
 	}
 }
 
-// FUNCTION: 0x0042EA30
+// FUNCTION: GAMEMD 0x0042EA30
 BaseNodeClass * BaseClass::Get_Node(BuildingClass const * obj)
 {
 	if (obj->House == House) {
@@ -168,7 +168,7 @@ BaseNodeClass * BaseClass::Get_Node(BuildingClass const * obj)
 	return(NULL);
 }
 
-// FUNCTION: 0x0042EAD0
+// FUNCTION: GAMEMD 0x0042EAD0
 BaseNodeClass * BaseClass::Get_Node(Cell const & cell)
 {
 	for (int index = 0; index < Nodes.Count(); index++) {
@@ -179,7 +179,7 @@ BaseNodeClass * BaseClass::Get_Node(Cell const & cell)
 	return(NULL);
 }
 
-// FUNCTION: 0x0042EB20
+// FUNCTION: GAMEMD 0x0042EB20
 BaseNodeClass * BaseClass::Next_Buildable(StructType type)
 {
 	int index = Next_Buildable_Index(type);
@@ -189,7 +189,7 @@ BaseNodeClass * BaseClass::Next_Buildable(StructType type)
 	return(NULL);
 }
 
-// FUNCTION: 0x0042EB50
+// FUNCTION: GAMEMD 0x0042EB50
 int BaseClass::Next_Buildable_Index(StructType type)
 {
 	for (int i = 0; i < Nodes.Count(); i++) {
@@ -213,7 +213,7 @@ int BaseClass::Next_Buildable_Index(StructType type)
 	return(-1);
 }
 
-// FUNCTION: 0x0042EBE0
+// FUNCTION: GAMEMD 0x0042EBE0
 void BaseClass::Read_INI(CCINIClass & ini, char const * hname)
 {
 	char buf[128];
@@ -245,7 +245,7 @@ void BaseClass::Read_INI(CCINIClass & ini, char const * hname)
 	}
 }
 
-// FUNCTION: 0x0042ED60
+// FUNCTION: GAMEMD 0x0042ED60
 void BaseClass::Write_INI(CCINIClass & ini, char const * hname)
 {
 	ini.Put_Int(hname, "PercentBuilt", PercentBuilt);
@@ -272,7 +272,7 @@ void BaseClass::Write_INI(CCINIClass & ini, char const * hname)
 	}
 }
 
-// FUNCTION: 0x0042EE30
+// FUNCTION: GAMEMD 0x0042EE30
 HRESULT STDMETHODCALLTYPE BaseClass::Load(IStream *stream)
 {
 	if (SUCCEEDED(stream->Read(this, sizeof(*this), NULL))) {
@@ -323,7 +323,7 @@ HRESULT STDMETHODCALLTYPE BaseClass::Load(IStream *stream)
 	return(S_OK);
 }
 
-// FUNCTION: 0x0042F070
+// FUNCTION: GAMEMD 0x0042F070
 HRESULT STDMETHODCALLTYPE BaseClass::Save(IStream * stream)
 {
 	HRESULT hr;
@@ -376,7 +376,7 @@ HRESULT STDMETHODCALLTYPE BaseClass::Save(IStream * stream)
 	return(S_OK);
 }
 
-// FUNCTION: 0x0042F180
+// FUNCTION: GAMEMD 0x0042F180
 void BaseClass::Compute_CRC(CRCEngine & crc) const
 {
 	crc(Nodes.Count());
@@ -387,12 +387,12 @@ void BaseClass::Compute_CRC(CRCEngine & crc) const
 	}
 }
 
-// FUNCTION: 0x0042F1E0
+// FUNCTION: GAMEMD 0x0042F1E0
 BaseClass::BaseClass(NoInitClass const & x)
 {
 }
 
-// FUNCTION: 0x0042F260
+// FUNCTION: GAMEMD 0x0042F260
 void BaseClass::Mark_Node_Placed(BuildingClass const * obj)
 {
 	BaseNodeClass * node = Get_Node(obj);
@@ -414,7 +414,7 @@ void BaseClass::Mark_Node_Placed(BuildingClass const * obj)
 	}
 }
 
-// FUNCTION: 0x0042F340
+// FUNCTION: GAMEMD 0x0042F340
 BaseNodeClass * BaseClass::FUN_0042F340(BuildingTypeClass const * type)
 {
 	int id = type->HeapID;
@@ -427,7 +427,7 @@ BaseNodeClass * BaseClass::FUN_0042F340(BuildingTypeClass const * type)
 	return(NULL);
 }
 
-// FUNCTION: 0x0042F380
+// FUNCTION: GAMEMD 0x0042F380
 int BaseClass::FailedToPlaceNode(BaseNodeClass * node)
 {
 	if (node == NULL) {

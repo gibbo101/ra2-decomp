@@ -8,14 +8,14 @@
 #include <cstring>
 #include <new.h>
 
-// FUNCTION: 0x0074BBF0
+// FUNCTION: GAMEMD 0x0074BBF0
 BooleanVectorClass::BooleanVectorClass(BooleanVectorClass const & vector)
 {
 	LastIndex = -1;
 	*this = vector;
 }
 
-// FUNCTION: 0x0074BCA0
+// FUNCTION: GAMEMD 0x0074BCA0
 BooleanVectorClass & BooleanVectorClass::operator =(BooleanVectorClass const & vector)
 {
 	Fixup();
@@ -26,14 +26,14 @@ BooleanVectorClass & BooleanVectorClass::operator =(BooleanVectorClass const & v
 	return(*this);
 }
 
-// FUNCTION: 0x0074BD50
+// FUNCTION: GAMEMD 0x0074BD50
 bool BooleanVectorClass::operator == (const BooleanVectorClass & vector) const
 {
 	Fixup(LastIndex);
 	return(BitCount == vector.BitCount && BitArray == vector.BitArray);
 }
 
-// FUNCTION: 0x0074BDC0
+// FUNCTION: GAMEMD 0x0074BDC0
 int BooleanVectorClass::Resize(unsigned size)
 {
 	Fixup();
@@ -57,7 +57,7 @@ int BooleanVectorClass::Resize(unsigned size)
 	return(true);
 }
 
-// FUNCTION: 0x0074BEA0
+// FUNCTION: GAMEMD 0x0074BEA0
 void BooleanVectorClass::Clear(void)
 {
 	Fixup();
@@ -65,7 +65,7 @@ void BooleanVectorClass::Clear(void)
 	BitArray.Clear();
 }
 
-// FUNCTION: 0x0074BEE0
+// FUNCTION: GAMEMD 0x0074BEE0
 void BooleanVectorClass::Reset(void)
 {
 	LastIndex = -1;
@@ -74,7 +74,7 @@ void BooleanVectorClass::Reset(void)
 	}
 }
 
-// FUNCTION: 0x0074BF10
+// FUNCTION: GAMEMD 0x0074BF10
 void BooleanVectorClass::Set(void)
 {
 	LastIndex = -1;
@@ -83,7 +83,7 @@ void BooleanVectorClass::Set(void)
 	}
 }
 
-// FUNCTION: 0x0074BF40
+// FUNCTION: GAMEMD 0x0074BF40
 void BooleanVectorClass::Fixup(int index) const
 {
 	if ((unsigned)index >= (unsigned)BitCount) {
@@ -105,24 +105,32 @@ void BooleanVectorClass::Fixup(int index) const
 
 template class VectorClass<unsigned char>;
 
-// FUNCTION: 0x0074BF90 ?$VectorClass@E::GetItem
+// TEMPLATE: GAMEMD 0x0074BF90
+// ?GetItem@?$VectorClass@E@@UBEEH@Z
 
-// FUNCTION: 0x0074BFA0 ?$VectorClass@E::~?$VectorClass@E
+// SYNTHETIC: GAMEMD 0x0074BFA0
+// ??_G?$VectorClass@E@@UAEPAXI@Z
 
-// FUNCTION: 0x0074BFF0 ?$VectorClass@E::operator==
+// TEMPLATE: GAMEMD 0x0074BFF0
+// ??8?$VectorClass@E@@UBE_NABV0@@Z
 
-// FUNCTION: 0x0074C030 ?$VectorClass@E::Resize
+// TEMPLATE: GAMEMD 0x0074C030
+// ?Resize@?$VectorClass@E@@UAE_NHPBE@Z
 
-// FUNCTION: 0x0074C0E0 ?$VectorClass@E::Clear
+// TEMPLATE: GAMEMD 0x0074C0E0
+// ?Clear@?$VectorClass@E@@UAEXXZ
 
-// FUNCTION: 0x0074C110 ?$VectorClass@E::ID
+// TEMPLATE: GAMEMD 0x0074C110
+// ?ID@?$VectorClass@E@@UAEHABE@Z
 
-// FUNCTION: 0x0074C150 ?$VectorClass@E::ID
+// TEMPLATE: GAMEMD 0x0074C150
+// ?ID@?$VectorClass@E@@UAEHPBE@Z
 
 struct IntQuad {
 	int A, B, C, D;
 	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
 };
 
-// FUNCTION: 0x0074C170 $E2
+// SYNTHETIC: GAMEMD 0x0074C170 SYMBOL
+// _$E2
 IntQuad DAT_00B1D260;

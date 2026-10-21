@@ -73,50 +73,65 @@ struct CenterTriple {
 	CenterTriple() { A = 128; B = 128; C = 0; }
 };
 
-// FUNCTION: 0x00692050 $E81
+// SYNTHETIC: GAMEMD 0x00692050 SYMBOL
+// _$E81
 double DAT_00B05660 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x00692080 $E84
+// SYNTHETIC: GAMEMD 0x00692080 SYMBOL
+// _$E84
 double DAT_00B056B8 = DAT_00B05660 / DAT_007F1078;
 
-// FUNCTION: 0x006920A0 $E87
+// SYNTHETIC: GAMEMD 0x006920A0 SYMBOL
+// _$E87
 double DAT_00B056A0 = DAT_007E1718 / DAT_00B056B8;
 
-// FUNCTION: 0x006920C0 $E90
+// SYNTHETIC: GAMEMD 0x006920C0 SYMBOL
+// _$E90
 double DAT_00B05698 = DAT_007E1720 * DAT_007F1080;
 
-// FUNCTION: 0x006920E0 $E93
+// SYNTHETIC: GAMEMD 0x006920E0 SYMBOL
+// _$E93
 double DAT_00B05668 = DAT_007E1728 * DAT_007F1080;
 
-// FUNCTION: 0x00692100 $E96
+// SYNTHETIC: GAMEMD 0x00692100 SYMBOL
+// _$E96
 double DAT_00B05630 = DAT_007E1730 * DAT_007F1080;
 
-// FUNCTION: 0x00692120 $E99
+// SYNTHETIC: GAMEMD 0x00692120 SYMBOL
+// _$E99
 int DAT_00B056C0 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B05630 - DAT_00B05668) * DAT_00B05660));
 
-// FUNCTION: 0x00692160 $E102
+// SYNTHETIC: GAMEMD 0x00692160 SYMBOL
+// _$E102
 double DAT_00B05670 = FUN_004CADE0(DAT_00B056C0 * DAT_007E1740);
 
-// FUNCTION: 0x00692190 $E105
+// SYNTHETIC: GAMEMD 0x00692190 SYMBOL
+// _$E105
 double DAT_00B05688 = FUN_004CADE0((DAT_00B056C0 * 2) / DAT_00B05660);
 
-// FUNCTION: 0x006921C0 $E108
+// SYNTHETIC: GAMEMD 0x006921C0 SYMBOL
+// _$E108
 int DAT_00B056B4 = (int)(DAT_00B056C0 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x006921F0 $E111
+// SYNTHETIC: GAMEMD 0x006921F0 SYMBOL
+// _$E111
 ShortPair DAT_00B05658;
 
-// FUNCTION: 0x00692200 $E114
+// SYNTHETIC: GAMEMD 0x00692200 SYMBOL
+// _$E114
 IntTriple DAT_00B05678;
 
-// FUNCTION: 0x00692220 $E117
+// SYNTHETIC: GAMEMD 0x00692220 SYMBOL
+// _$E117
 CenterTriple DAT_00B056A8;
 
-// FUNCTION: 0x00692240 $E123
-// FUNCTION: 0x00692270 $E120
+// SYNTHETIC: GAMEMD 0x00692240 SYMBOL
+// _$E123
+// SYNTHETIC: GAMEMD 0x00692270 SYMBOL
+// _$E120
 CDTimerClass<SystemTimerClass> ScrollClass::Counter;
 
-// FUNCTION: 0x00692290
+// FUNCTION: GAMEMD 0x00692290
 ScrollClass::ScrollClass(void) :
 	Inertia(0),
 	IsCoastScrollAllowed(false),
@@ -127,7 +142,7 @@ ScrollClass::ScrollClass(void) :
 {
 }
 
-// FUNCTION: 0x00692300
+// FUNCTION: GAMEMD 0x00692300
 bool ScrollClass::Resolve_Point(Point2D const & point, Cell & cell, Coord & coord, ObjectClass * & object, bool & fog, bool & shadow)
 {
 	object = NULL;
@@ -180,7 +195,7 @@ bool ScrollClass::Resolve_Point(Point2D const & point, Cell & cell, Coord & coor
 	return(false);
 }
 
-// FUNCTION: 0x00692610
+// FUNCTION: GAMEMD 0x00692610
 ActionType ScrollClass::What_Action(Cell const & cell, ObjectClass * object, bool check_fog)
 {
 	ActionType action = ACTION_NONE;
@@ -312,7 +327,7 @@ ActionType ScrollClass::What_Action(Cell const & cell, ObjectClass * object, boo
 	return(action);
 }
 
-// FUNCTION: 0x00692B60
+// FUNCTION: GAMEMD 0x00692B60
 void ScrollClass::Scroll_Edge(Point2D const & point)
 {
 	if (IsMouseDown != true) {
@@ -414,16 +429,17 @@ void ScrollClass::Scroll_Edge(Point2D const & point)
 	}
 }
 
-// FUNCTION: 0x00692F20 $E126
+// SYNTHETIC: GAMEMD 0x00692F20 SYMBOL
+// _$E126
 
-// FUNCTION: 0x006922E0
+// FUNCTION: GAMEMD 0x006922E0
 void ScrollClass::AI(KeyNumType &input, Point2D const & xy)
 {
 	Scroll_AI();
 	BASECLASS::AI(input, xy);
 }
 
-// FUNCTION: 0x00692F30
+// FUNCTION: GAMEMD 0x00692F30
 void ScrollClass::Scroll_AI(void)
 {
 	if (!IgnoreInput) {
@@ -458,7 +474,7 @@ void ScrollClass::Scroll_AI(void)
 	}
 }
 
-// FUNCTION: 0x00693060
+// FUNCTION: GAMEMD 0x00693060
 bool ScrollClass::Is_Scrolling(void) const
 {
 	if (IsMouseDown || IgnoreInput) {
@@ -470,7 +486,7 @@ bool ScrollClass::Is_Scrolling(void) const
 	return(false);
 }
 
-// FUNCTION: 0x006930A0
+// FUNCTION: GAMEMD 0x006930A0
 void ScrollClass::Message_Handler(HWND hwnd, UINT & message, UINT & wParam, LONG & lParam)
 {
 	if (TacticalActive == false) {
@@ -576,7 +592,7 @@ void ScrollClass::Message_Handler(HWND hwnd, UINT & message, UINT & wParam, LONG
 	}
 }
 
-// FUNCTION: 0x00693440
+// FUNCTION: GAMEMD 0x00693440
 void ScrollClass::Scroll_Coast(Point2D const & point)
 {
 	if (!GameActive) {
@@ -740,7 +756,7 @@ void ScrollClass::Scroll_Coast(Point2D const & point)
 	}
 }
 
-// FUNCTION: 0x00693840
+// FUNCTION: GAMEMD 0x00693840
 void ScrollClass::Mouse_Right_Release(Point2D const & point)
 {
 	if (IsDragOperation) {
@@ -751,7 +767,7 @@ void ScrollClass::Mouse_Right_Release(Point2D const & point)
 	BASECLASS::Mouse_Right_Release(point);
 }
 
-// FUNCTION: 0x00693880
+// FUNCTION: GAMEMD 0x00693880
 void ScrollClass::Mouse_Right_Press(Point2D const & point)
 {
 	if (!IgnoreInput) {
@@ -762,7 +778,7 @@ void ScrollClass::Mouse_Right_Press(Point2D const & point)
 	}
 }
 
-// FUNCTION: 0x006938C0
+// FUNCTION: GAMEMD 0x006938C0
 void ScrollClass::Abort_Drag_Select(void)
 {
 	BASECLASS::Abort_Drag_Select();

@@ -49,41 +49,42 @@ WWMouseClass::~WWMouseClass(void)
 	}
 }
 
-// FUNCTION: 0x007BA320
+// FUNCTION: GAMEMD 0x007BA320
 bool WWMouseClass::Is_Hidden(void) const
 {
 	return RefCount < 0;
 }
 
-// FUNCTION: 0x007BA330
+// FUNCTION: GAMEMD 0x007BA330
 bool WWMouseClass::Is_Captured(void) const
 {
 	return field_10;
 }
 
-// FUNCTION: 0x007BA340
+// FUNCTION: GAMEMD 0x007BA340
 int WWMouseClass::Get_Mouse_X(void) const
 {
 	return field_1C;
 }
 
-// FUNCTION: 0x007BA350
+// FUNCTION: GAMEMD 0x007BA350
 int WWMouseClass::Get_Mouse_Y(void) const
 {
 	return field_20;
 }
 
-// FUNCTION: 0x007BA360
+// FUNCTION: GAMEMD 0x007BA360
 Point2D WWMouseClass::Get_Mouse_Point(void) const
 {
 	return Point2D(field_1C, field_20);
 }
 
-// FUNCTION: 0x007BA380
+// FUNCTION: GAMEMD 0x007BA380
 void WWMouseClass::Set_Mouse_Point(int x, int y)
 {
 	field_1C = x;
 	field_20 = y;
 }
 
-// FUNCTION: 0x007BA3A0 WWMouseClass::~WWMouseClass
+// SYNTHETIC: GAMEMD 0x007BA3A0
+// ??_GWWMouseClass@@UAEPAXI@Z

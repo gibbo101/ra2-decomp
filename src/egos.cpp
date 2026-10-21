@@ -40,11 +40,13 @@ struct Drawing { static int RenderWidth; static int RenderHeight; };
 namespace Game { extern bool IsFocused; }
 extern Surface * DAT_008A0F58;
 
-// FUNCTION: 0x004C3C10 $E40
-// FUNCTION: 0x004C3C50 $E38
+// SYNTHETIC: GAMEMD 0x004C3C10 SYMBOL
+// _$E40
+// SYNTHETIC: GAMEMD 0x004C3C50 SYMBOL
+// _$E38
 DynamicVectorClass<EgoClass *> EgoList;
 
-// FUNCTION: 0x004C3C90
+// FUNCTION: GAMEMD 0x004C3C90
 EgoClass::EgoClass (int x, int y, wchar_t *text, TextPrintType flags)
 {
 	XPos = x;
@@ -54,13 +56,13 @@ EgoClass::EgoClass (int x, int y, wchar_t *text, TextPrintType flags)
 	wcscpy (Text, text);
 }
 
-// FUNCTION: 0x004C3CD0
+// FUNCTION: GAMEMD 0x004C3CD0
 EgoClass::~EgoClass(void)
 {
 	delete [] Text;
 }
 
-// FUNCTION: 0x004C3CE0
+// FUNCTION: GAMEMD 0x004C3CE0
 bool EgoClass::Scroll(int distance)
 {
 	YPos -= distance;
@@ -71,7 +73,7 @@ bool EgoClass::Scroll(int distance)
 	}
 }
 
-// FUNCTION: 0x004C3D00
+// FUNCTION: GAMEMD 0x004C3D00
 void EgoClass::Render(bool fresh)
 {
 	if ((YPos < DSurface::Temp->Get_Height() && YPos > DSurface::Temp->Get_Height() - 52) || YPos >= -16 && YPos <= 32 || fresh) {
@@ -96,7 +98,7 @@ void EgoClass::Render(bool fresh)
 	}
 }
 
-// FUNCTION: 0x004C3DD0
+// FUNCTION: GAMEMD 0x004C3DD0
 void EgoClass::Wipe (Surface *background)
 {
 	BitFont * font = Font_From_TPF(Flags);

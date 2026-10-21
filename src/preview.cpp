@@ -50,34 +50,44 @@ extern const double DAT_007E1740;
 extern const double DAT_007F0030;
 extern const double DAT_007F0038;
 
-// FUNCTION: 0x006404F0 $E83
+// SYNTHETIC: GAMEMD 0x006404F0 SYMBOL
+// _$E83
 double DAT_00AC4EB0 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x00640520 $E86
+// SYNTHETIC: GAMEMD 0x00640520 SYMBOL
+// _$E86
 double DAT_00AC4F00 = DAT_00AC4EB0 / DAT_007F0030;
 
-// FUNCTION: 0x00640540 $E89
+// SYNTHETIC: GAMEMD 0x00640540 SYMBOL
+// _$E89
 double DAT_00AC4EE8 = DAT_007E1718 / DAT_00AC4F00;
 
-// FUNCTION: 0x00640560 $E92
+// SYNTHETIC: GAMEMD 0x00640560 SYMBOL
+// _$E92
 double DAT_00AC4EE0 = DAT_007E1720 * DAT_007F0038;
 
-// FUNCTION: 0x00640580 $E95
+// SYNTHETIC: GAMEMD 0x00640580 SYMBOL
+// _$E95
 double DAT_00AC4EB8 = DAT_007E1728 * DAT_007F0038;
 
-// FUNCTION: 0x006405A0 $E98
+// SYNTHETIC: GAMEMD 0x006405A0 SYMBOL
+// _$E98
 double DAT_00AC4E88 = DAT_007E1730 * DAT_007F0038;
 
-// FUNCTION: 0x006405C0 $E101
+// SYNTHETIC: GAMEMD 0x006405C0 SYMBOL
+// _$E101
 int DAT_00AC4F08 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00AC4E88 - DAT_00AC4EB8) * DAT_00AC4EB0));
 
-// FUNCTION: 0x00640600 $E104
+// SYNTHETIC: GAMEMD 0x00640600 SYMBOL
+// _$E104
 double DAT_00AC4EC0 = FUN_004CADE0(DAT_00AC4F08 * DAT_007E1740);
 
-// FUNCTION: 0x00640630 $E107
+// SYNTHETIC: GAMEMD 0x00640630 SYMBOL
+// _$E107
 double DAT_00AC4ED8 = FUN_004CADE0((DAT_00AC4F08 * 2) / DAT_00AC4EB0);
 
-// FUNCTION: 0x00640660 $E110
+// SYNTHETIC: GAMEMD 0x00640660 SYMBOL
+// _$E110
 int DAT_00AC4EFC = (int)(DAT_00AC4F08 * 4 + DAT_007E1738);
 
 struct ShortPair {
@@ -90,10 +100,12 @@ struct IntTriple {
 	IntTriple() { A = 0; B = 0; C = 0; }
 };
 
-// FUNCTION: 0x00640690 $E113
+// SYNTHETIC: GAMEMD 0x00640690 SYMBOL
+// _$E113
 ShortPair DAT_00AC4EA8;
 
-// FUNCTION: 0x006406A0 $E116
+// SYNTHETIC: GAMEMD 0x006406A0 SYMBOL
+// _$E116
 IntTriple DAT_00AC4EC8;
 
 struct IntTripleB {
@@ -101,16 +113,17 @@ struct IntTripleB {
 	IntTripleB() { A = 128; B = 128; C = 0; }
 };
 
-// FUNCTION: 0x006406C0 $E119
+// SYNTHETIC: GAMEMD 0x006406C0 SYMBOL
+// _$E119
 IntTripleB DAT_00AC4EF0;
 
-// FUNCTION: 0x006406E0
+// FUNCTION: GAMEMD 0x006406E0
 MapPreviewClass::MapPreviewClass(void) :
 	SurfacePtr(NULL)
 {
 }
 
-// FUNCTION: 0x006406F0
+// FUNCTION: GAMEMD 0x006406F0
 MapPreviewClass::~MapPreviewClass(void)
 {
 	if (SurfacePtr != NULL) {
@@ -125,7 +138,7 @@ ConvertClass * FUN_0072E280(void);
 
 static inline int Min_Ref(int a, int b) { return (b < a) ? b : a; }
 
-// FUNCTION: 0x00640710
+// FUNCTION: GAMEMD 0x00640710
 void MapPreviewClass::DrawStartPoints(HWND window)
 {
 	ValidateRect(window, NULL);
@@ -163,7 +176,7 @@ void MapPreviewClass::DrawStartPoints(HWND window)
 	}
 }
 
-// FUNCTION: 0x006410C0
+// FUNCTION: GAMEMD 0x006410C0
 Point2D MapPreviewClass::Cell_To_Preview_Pixel(Cell cell) const
 {
 	int x;
@@ -172,7 +185,7 @@ Point2D MapPreviewClass::Cell_To_Preview_Pixel(Cell cell) const
 	return(Point2D(x / 60, y / 30));
 }
 
-// FUNCTION: 0x006418B0
+// FUNCTION: GAMEMD 0x006418B0
 bool MapPreviewClass::Write_INI(CCINIClass & ini)
 {
 	static char const * const PREVIEW = "Preview";
@@ -222,7 +235,7 @@ bool MapPreviewClass::Write_INI(CCINIClass & ini)
 	return(total > 0);
 }
 
-// FUNCTION: 0x00641B00
+// FUNCTION: GAMEMD 0x00641B00
 bool MapPreviewClass::Read_INI(CCINIClass const & ini)
 {
 	static char const * const PREVIEW = "Preview";
@@ -273,7 +286,7 @@ bool MapPreviewClass::Read_INI(CCINIClass const & ini)
 	return(true);
 }
 
-// FUNCTION: 0x00641DB0
+// FUNCTION: GAMEMD 0x00641DB0
 bool MapPreviewClass::Read_PCX_Preview(char const * filename)
 {
 	CCFileClass file(filename);
@@ -297,7 +310,7 @@ bool MapPreviewClass::Read_PCX_Preview(char const * filename)
 	return(false);
 }
 
-// FUNCTION: 0x00641EE0
+// FUNCTION: GAMEMD 0x00641EE0
 bool MapPreviewClass::Read_INI_Preview(char const * filename)
 {
 	CCFileClass file(filename);
@@ -342,7 +355,7 @@ bool MapPreviewClass::Read_INI_Preview(char const * filename)
 	return(false);
 }
 
-// FUNCTION: 0x00642130
+// FUNCTION: GAMEMD 0x00642130
 unsigned * MapPreviewClass::Create_Paletted_Preview(int colorcount, int & size)
 {
 	int i;
@@ -445,7 +458,7 @@ unsigned * MapPreviewClass::Create_Paletted_Preview(int colorcount, int & size)
 	return((unsigned *)block);
 }
 
-// FUNCTION: 0x006425F0
+// FUNCTION: GAMEMD 0x006425F0
 void MapPreviewClass::Create_Preview_Surface(char * buffer)
 {
 	int * header = (int *)buffer;
@@ -478,5 +491,6 @@ struct IntQuad {
 	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
 };
 
-// FUNCTION: 0x00642770 $E123
+// SYNTHETIC: GAMEMD 0x00642770 SYMBOL
+// _$E123
 IntQuad DAT_00AC4F18;

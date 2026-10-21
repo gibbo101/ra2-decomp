@@ -7,7 +7,7 @@
 #include "alphalighting.h"
 #include "vector.h"
 
-// FUNCTION: 0x00420140
+// FUNCTION: GAMEMD 0x00420140
 AlphaLightingRemapClass *AlphaLightingRemapInitClass::Init(int count)
 {
 	for (int i = 0; i < AlphaLightingRemapClass::AlphaLightingRemaps.Count(); i++) {
@@ -23,7 +23,7 @@ AlphaLightingRemapClass *AlphaLightingRemapInitClass::Init(int count)
 	return(ptr);
 }
 
-// FUNCTION: 0x00420270
+// FUNCTION: GAMEMD 0x00420270
 void AlphaLightingRemapInitClass::Deinit(AlphaLightingRemapClass *ptr)
 {
 	if (ptr != NULL) {
@@ -36,7 +36,7 @@ void AlphaLightingRemapInitClass::Deinit(AlphaLightingRemapClass *ptr)
 	}
 }
 
-// FUNCTION: 0x004202F0
+// FUNCTION: GAMEMD 0x004202F0
 AlphaLightingRemapClass::AlphaLightingRemapClass(int count)
 {
 	Count = count;
@@ -51,43 +51,55 @@ AlphaLightingRemapClass::AlphaLightingRemapClass(int count)
 	}
 }
 
-// FUNCTION: 0x00420360
+// FUNCTION: GAMEMD 0x00420360
 AlphaLightingRemapInitClass::~AlphaLightingRemapInitClass(void)
 {
 }
 
-// FUNCTION: 0x00420370 ?$DynamicVectorClass@PAVAlphaLightingRemapClass@@::Clear
+// TEMPLATE: GAMEMD 0x00420370
+// ?Clear@?$DynamicVectorClass@PAVAlphaLightingRemapClass@@@@UAEXXZ
 template class DynamicVectorClass<AlphaLightingRemapClass *>;
 
-// FUNCTION: 0x004203A0 ?$DynamicVectorClass@PAVAlphaLightingRemapClass@@::ID
+// TEMPLATE: GAMEMD 0x004203A0
+// ?ID@?$DynamicVectorClass@PAVAlphaLightingRemapClass@@@@UAEHPBQAVAlphaLightingRemapClass@@@Z
 
-// FUNCTION: 0x004203C0 ?$VectorClass@PAVAlphaLightingRemapClass@@::GetItem
+// TEMPLATE: GAMEMD 0x004203C0
+// ?GetItem@?$VectorClass@PAVAlphaLightingRemapClass@@@@UBEPAVAlphaLightingRemapClass@@H@Z
 
-// FUNCTION: 0x004203D0 ?$VectorClass@PAVAlphaLightingRemapClass@@::operator==
+// TEMPLATE: GAMEMD 0x004203D0
+// ??8?$VectorClass@PAVAlphaLightingRemapClass@@@@UBE_NABV0@@Z
 
-// FUNCTION: 0x00420410 ?$VectorClass@PAVAlphaLightingRemapClass@@::Resize
+// TEMPLATE: GAMEMD 0x00420410
+// ?Resize@?$VectorClass@PAVAlphaLightingRemapClass@@@@UAE_NHPBQAVAlphaLightingRemapClass@@@Z
 
-// FUNCTION: 0x004204C0 ?$VectorClass@PAVAlphaLightingRemapClass@@::Clear
+// TEMPLATE: GAMEMD 0x004204C0
+// ?Clear@?$VectorClass@PAVAlphaLightingRemapClass@@@@UAEXXZ
 
-// FUNCTION: 0x004204F0 ?$VectorClass@PAVAlphaLightingRemapClass@@::ID
+// TEMPLATE: GAMEMD 0x004204F0
+// ?ID@?$VectorClass@PAVAlphaLightingRemapClass@@@@UAEHABQAVAlphaLightingRemapClass@@@Z
 
-// FUNCTION: 0x00420530 ?$VectorClass@PAVAlphaLightingRemapClass@@::ID
+// TEMPLATE: GAMEMD 0x00420530
+// ?ID@?$VectorClass@PAVAlphaLightingRemapClass@@@@UAEHPBQAVAlphaLightingRemapClass@@@Z
 
-// FUNCTION: 0x00420550 ?$DynamicVectorClass@PAVAlphaLightingRemapClass@@::Resize
+// TEMPLATE: GAMEMD 0x00420550
+// ?Resize@?$DynamicVectorClass@PAVAlphaLightingRemapClass@@@@UAE_NHPBQAVAlphaLightingRemapClass@@@Z
 
-// FUNCTION: 0x00420600 ?$DynamicVectorClass@PAVAlphaLightingRemapClass@@::ID
+// TEMPLATE: GAMEMD 0x00420600
+// ?ID@?$DynamicVectorClass@PAVAlphaLightingRemapClass@@@@UAEHABQAVAlphaLightingRemapClass@@@Z
 
-// FUNCTION: 0x00420630 ?$VectorClass@PAVAlphaLightingRemapClass@@::~?$VectorClass@PAVAlphaLightingRemapClass@@
+// SYNTHETIC: GAMEMD 0x00420630
+// ??_G?$VectorClass@PAVAlphaLightingRemapClass@@@@UAEPAXI@Z
 template class VectorClass<AlphaLightingRemapClass *>;
 
-// FUNCTION: 0x00420680 ?$DynamicVectorClass@PAVAlphaLightingRemapClass@@::~?$DynamicVectorClass@PAVAlphaLightingRemapClass@@
+// SYNTHETIC: GAMEMD 0x00420680
+// ??_G?$DynamicVectorClass@PAVAlphaLightingRemapClass@@@@UAEPAXI@Z
 
 struct AlphaRectBlock {
 	int A, B, C, D;
 };
 extern AlphaRectBlock DAT_0088A0A8;
 
-// FUNCTION: 0x004206D0
+// FUNCTION: GAMEMD 0x004206D0
 void FUN_004206D0(void)
 {
 	DAT_0088A0A8.A = 0;

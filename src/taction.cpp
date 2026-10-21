@@ -135,24 +135,40 @@ extern char DAT_00889F64[];
 extern DynamicVectorClass<TechnoClass *> DAT_00A8EC78;
 #define Technos DAT_00A8EC78
 
-// FUNCTION: 0x006DCD70 $E2
-// FUNCTION: 0x006DCDA0 $E5
-// FUNCTION: 0x006DCDC0 $E8
-// FUNCTION: 0x006DCDE0 $E11
-// FUNCTION: 0x006DCE00 $E14
-// FUNCTION: 0x006DCE20 $E17
-// FUNCTION: 0x006DCE40 $E20
-// FUNCTION: 0x006DCE80 $E23
-// FUNCTION: 0x006DCEB0 $E26
-// FUNCTION: 0x006DCEE0 $E29
-// FUNCTION: 0x006DCF10 $E32
-// FUNCTION: 0x006DCF20 $E35
-// FUNCTION: 0x006DCF40 $E38
-// FUNCTION: 0x006DCF60 $E47
-// FUNCTION: 0x006DCF80 $E174
-// FUNCTION: 0x006DCFC0 $E172
+// SYNTHETIC: GAMEMD 0x006DCD70 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x006DCDA0 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x006DCDC0 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x006DCDE0 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x006DCE00 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x006DCE20 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x006DCE40 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x006DCE80 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x006DCEB0 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x006DCEE0 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x006DCF10 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x006DCF20 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x006DCF40 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x006DCF60 SYMBOL
+// _$E47
+// SYNTHETIC: GAMEMD 0x006DCF80 SYMBOL
+// _$E174
+// SYNTHETIC: GAMEMD 0x006DCFC0 SYMBOL
+// _$E172
 
-// FUNCTION: 0x006DD000
+// FUNCTION: GAMEMD 0x006DD000
 TActionClass::TActionClass(void) :
 	HeapID(-1),
 	Next(NULL),
@@ -174,14 +190,14 @@ TActionClass::TActionClass(void) :
 	Data.Value = 0;
 }
 
-// FUNCTION: 0x006DD180
+// FUNCTION: GAMEMD 0x006DD180
 TActionClass::TActionClass(NoInitClass const & x) :
 	BASECLASS(x),
 	TechnoID(x)
 {
 }
 
-// FUNCTION: 0x006DD1B0
+// FUNCTION: GAMEMD 0x006DD1B0
 TActionClass::~TActionClass(void)
 {
 	Detach_This_From_All(this, true);
@@ -192,7 +208,7 @@ TActionClass::~TActionClass(void)
 	Text[0] = 0;
 }
 
-// FUNCTION: 0x006DD2C0
+// FUNCTION: GAMEMD 0x006DD2C0
 void TActionClass::Detach(AbstractClass const * target, bool all)
 {
 	if (Next == target) {
@@ -209,7 +225,7 @@ void TActionClass::Detach(AbstractClass const * target, bool all)
 	}
 }
 
-// FUNCTION: 0x006DD300
+// FUNCTION: GAMEMD 0x006DD300
 void TActionClass::Build_INI_Entry(char * ptr) const
 {
 	int mode = GetMode(Action);
@@ -279,7 +295,7 @@ void TActionClass::Build_INI_Entry(char * ptr) const
 	}
 }
 
-// FUNCTION: 0x006DD5B0
+// FUNCTION: GAMEMD 0x006DD5B0
 void TActionClass::Read_INI(void)
 {
 	Data.Value = 0;
@@ -384,26 +400,26 @@ void TActionClass::Read_INI(void)
 	}
 }
 
-// FUNCTION: 0x006E0030
+// FUNCTION: GAMEMD 0x006E0030
 bool TActionClass::TAction_FUN_006E0030(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	return(true);
 }
 
-// FUNCTION: 0x006E0040
+// FUNCTION: GAMEMD 0x006E0040
 bool TActionClass::TAction_CHANGE_ZOOM(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	return(true);
 }
 
-// FUNCTION: 0x006E0050
+// FUNCTION: GAMEMD 0x006E0050
 bool TActionClass::TAction_ION_LIGHTNING_STRIKE(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	IonStormClass::Lightning_Bolt(Scen->Get_Waypoint_Cell(EffectLocation));
 	return(true);
 }
 
-// FUNCTION: 0x006E0080
+// FUNCTION: GAMEMD 0x006E0080
 bool TActionClass::TAction_REMOVE_PARTICLE_ANIM(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	Cell cell2 = Scen->Get_Waypoint_Cell(EffectLocation);
@@ -418,7 +434,7 @@ bool TActionClass::TAction_REMOVE_PARTICLE_ANIM(HouseClass * , ObjectClass * , T
 	return(true);
 }
 
-// FUNCTION: 0x006E0110
+// FUNCTION: GAMEMD 0x006E0110
 bool TActionClass::TAction_PARTICLE_ANIM(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	Cell cell2 = Scen->Get_Waypoint_Cell(EffectLocation);
@@ -428,7 +444,7 @@ bool TActionClass::TAction_PARTICLE_ANIM(HouseClass * , ObjectClass * , TriggerC
 	return(true);
 }
 
-// FUNCTION: 0x006E01C0
+// FUNCTION: GAMEMD 0x006E01C0
 bool TActionClass::TAction_WAKEUP_SELF(HouseClass * , ObjectClass * , TriggerClass * trigger, Cell const & )
 {
 	for (int index = 0; index < Technos.Count(); index++) {
@@ -442,28 +458,28 @@ bool TActionClass::TAction_WAKEUP_SELF(HouseClass * , ObjectClass * , TriggerCla
 	return(true);
 }
 
-// FUNCTION: 0x006E0250
+// FUNCTION: GAMEMD 0x006E0250
 bool TActionClass::TAction_VEIN_GROWTH(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	Scen->IsVeinGrowth = Data.Bool;
 	return(true);
 }
 
-// FUNCTION: 0x006E0270
+// FUNCTION: GAMEMD 0x006E0270
 bool TActionClass::TAction_TIB_GROWTH(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	Scen->IsTibGrowth = Data.Bool;
 	return(true);
 }
 
-// FUNCTION: 0x006E0290
+// FUNCTION: GAMEMD 0x006E0290
 bool TActionClass::TAction_ICE_GROWTH(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	Scen->IsIceGrowth = Data.Bool;
 	return(true);
 }
 
-// FUNCTION: 0x006E02B0
+// FUNCTION: GAMEMD 0x006E02B0
 bool TActionClass::TAction_WAKEUP_ALL_SLEEP(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
 {
 	for (int index = 0; index < Feet.Count(); index++) {
@@ -475,7 +491,7 @@ bool TActionClass::TAction_WAKEUP_ALL_SLEEP(HouseClass * house, ObjectClass * , 
 	return(true);
 }
 
-// FUNCTION: 0x006E0330
+// FUNCTION: GAMEMD 0x006E0330
 bool TActionClass::TAction_WAKEUP_ALL_HARMLESS(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
 {
 	for (int index = 0; index < Feet.Count(); index++) {
@@ -487,7 +503,7 @@ bool TActionClass::TAction_WAKEUP_ALL_HARMLESS(HouseClass * house, ObjectClass *
 	return(true);
 }
 
-// FUNCTION: 0x006E03B0
+// FUNCTION: GAMEMD 0x006E03B0
 bool TActionClass::TAction_WAKEUP_GROUP(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	for (int index = 0; index < Technos.Count(); index++) {
@@ -504,28 +520,28 @@ bool TActionClass::TAction_WAKEUP_GROUP(HouseClass * , ObjectClass * , TriggerCl
 	return(true);
 }
 
-// FUNCTION: 0x006E0440
+// FUNCTION: GAMEMD 0x006E0440
 bool TActionClass::TAction_ANNOUNCE_WIN(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	PlayerPtr->Flag_To_Win(true);
 	return(true);
 }
 
-// FUNCTION: 0x006E0460
+// FUNCTION: GAMEMD 0x006E0460
 bool TActionClass::TAction_ANNOUNCE_LOSE(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	PlayerPtr->Flag_To_Lose(true);
 	return(true);
 }
 
-// FUNCTION: 0x006E0480
+// FUNCTION: GAMEMD 0x006E0480
 bool TActionClass::TAction_FORCE_END(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	PlayerPtr->Flag_To_End();
 	return(true);
 }
 
-// FUNCTION: 0x006E0490
+// FUNCTION: GAMEMD 0x006E0490
 bool TActionClass::TAction_DAMAGE(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	int damage = 100;
@@ -554,7 +570,7 @@ bool TActionClass::TAction_DAMAGE(HouseClass * , ObjectClass * , TriggerClass * 
 	return(true);
 }
 
-// FUNCTION: 0x006E0790
+// FUNCTION: GAMEMD 0x006E0790
 bool TActionClass::TAction_LIGHT_SMALL(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	WarheadTypeClass const * warhead = Rule->C4Warhead;
@@ -562,7 +578,7 @@ bool TActionClass::TAction_LIGHT_SMALL(HouseClass * , ObjectClass * , TriggerCla
 	return(true);
 }
 
-// FUNCTION: 0x006E07F0
+// FUNCTION: GAMEMD 0x006E07F0
 bool TActionClass::TAction_LIGHT_MEDIUM(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	WarheadTypeClass const * warhead = Rule->C4Warhead;
@@ -570,7 +586,7 @@ bool TActionClass::TAction_LIGHT_MEDIUM(HouseClass * , ObjectClass * , TriggerCl
 	return(true);
 }
 
-// FUNCTION: 0x006E0850
+// FUNCTION: GAMEMD 0x006E0850
 bool TActionClass::TAction_LIGHT_LARGE(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	WarheadTypeClass const * warhead = Rule->C4Warhead;
@@ -578,7 +594,7 @@ bool TActionClass::TAction_LIGHT_LARGE(HouseClass * , ObjectClass * , TriggerCla
 	return(true);
 }
 
-// FUNCTION: 0x006E08B0
+// FUNCTION: GAMEMD 0x006E08B0
 bool TActionClass::TAction_SELL_ATTACHED(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
 {
 	bool success = false;
@@ -598,7 +614,7 @@ bool TActionClass::TAction_SELL_ATTACHED(HouseClass * , ObjectClass * , TriggerC
 	return(success);
 }
 
-// FUNCTION: 0x006E0930
+// FUNCTION: GAMEMD 0x006E0930
 bool TActionClass::TAction_GO_BERZERK(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
 {
 	bool success = false;
@@ -618,7 +634,7 @@ bool TActionClass::TAction_GO_BERZERK(HouseClass * , ObjectClass * , TriggerClas
 	return(success);
 }
 
-// FUNCTION: 0x006E09A0
+// FUNCTION: GAMEMD 0x006E09A0
 bool TActionClass::TAction_TURN_OFF_ATTACHED(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
 {
 	bool success = false;
@@ -638,7 +654,7 @@ bool TActionClass::TAction_TURN_OFF_ATTACHED(HouseClass * , ObjectClass * , Trig
 	return(success);
 }
 
-// FUNCTION: 0x006E0A20
+// FUNCTION: GAMEMD 0x006E0A20
 bool TActionClass::TAction_TURN_ON_ATTACHED(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
 {
 	bool success = false;
@@ -652,7 +668,7 @@ bool TActionClass::TAction_TURN_ON_ATTACHED(HouseClass * , ObjectClass * , Trigg
 	return(success);
 }
 
-// FUNCTION: 0x006E0AA0
+// FUNCTION: GAMEMD 0x006E0AA0
 bool TActionClass::TAction_CHANGE_HOUSE(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
 {
 	HouseClass * hptr = Find_House(trig, Data.Value);
@@ -676,7 +692,7 @@ bool TActionClass::TAction_CHANGE_HOUSE(HouseClass * , ObjectClass * , TriggerCl
 	return(success);
 }
 
-// FUNCTION: 0x006E0B60
+// FUNCTION: GAMEMD 0x006E0B60
 bool TActionClass::TAction_ALL_CHANGE_HOUSE(HouseClass * house, ObjectClass * , TriggerClass * trig, Cell const & )
 {
 	bool retval = false;
@@ -712,7 +728,7 @@ bool TActionClass::TAction_ALL_CHANGE_HOUSE(HouseClass * house, ObjectClass * , 
 	return(retval);
 }
 
-// FUNCTION: 0x006E0CA0
+// FUNCTION: GAMEMD 0x006E0CA0
 bool TActionClass::TAction_MIND_CONTROL_BUILDINGS(HouseClass * house, ObjectClass * , TriggerClass * trig, Cell const & )
 {
 	HouseClass * hptr = Find_House(trig, Data.Value);
@@ -723,7 +739,7 @@ bool TActionClass::TAction_MIND_CONTROL_BUILDINGS(HouseClass * house, ObjectClas
 	return(true);
 }
 
-// FUNCTION: 0x006E0D00
+// FUNCTION: GAMEMD 0x006E0D00
 bool TActionClass::TAction_RELINQUISH_BUILDINGS(HouseClass * house, ObjectClass * , TriggerClass * trig, Cell const & )
 {
 	HouseClass * hptr = Find_House(trig, Data.Value);
@@ -734,7 +750,7 @@ bool TActionClass::TAction_RELINQUISH_BUILDINGS(HouseClass * house, ObjectClass 
 	return(true);
 }
 
-// FUNCTION: 0x006E0D60
+// FUNCTION: GAMEMD 0x006E0D60
 bool TActionClass::TAction_TEXT_TRIGGER(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	char * label = Text[0] ? Text : NULL;
@@ -746,7 +762,7 @@ bool TActionClass::TAction_TEXT_TRIGGER(HouseClass * , ObjectClass * , TriggerCl
 	return(true);
 }
 
-// FUNCTION: 0x006E0DF0
+// FUNCTION: GAMEMD 0x006E0DF0
 bool TActionClass::TAction_MAKE_ALLY(HouseClass * house, ObjectClass * , TriggerClass * trig, Cell const & )
 {
 	HouseClass * house2 = Find_House(trig, Data.Value);
@@ -758,7 +774,7 @@ bool TActionClass::TAction_MAKE_ALLY(HouseClass * house, ObjectClass * , Trigger
 	return(true);
 }
 
-// FUNCTION: 0x006E0E60
+// FUNCTION: GAMEMD 0x006E0E60
 bool TActionClass::TAction_MAKE_ENEMY(HouseClass * house, ObjectClass * , TriggerClass * trig, Cell const & )
 {
 	HouseClass * house2 = Find_House(trig, Data.Value);
@@ -770,7 +786,7 @@ bool TActionClass::TAction_MAKE_ENEMY(HouseClass * house, ObjectClass * , Trigge
 	return(true);
 }
 
-// FUNCTION: 0x006E0ED0
+// FUNCTION: GAMEMD 0x006E0ED0
 bool TActionClass::TAction_PREFERRED_TARGET(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
 {
 	if (house != NULL) {
@@ -779,7 +795,7 @@ bool TActionClass::TAction_PREFERRED_TARGET(HouseClass * house, ObjectClass * , 
 	return(true);
 }
 
-// FUNCTION: 0x006E0EF0
+// FUNCTION: GAMEMD 0x006E0EF0
 bool TActionClass::TAction_BASE_BUILDING(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
 {
 	if (Data.Bool) {
@@ -799,28 +815,28 @@ bool TActionClass::TAction_BASE_BUILDING(HouseClass * house, ObjectClass * , Tri
 	return(true);
 }
 
-// FUNCTION: 0x006E0F90
+// FUNCTION: GAMEMD 0x006E0F90
 bool TActionClass::TAction_CREEP_SHADOW(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	Map.Encroach_Shadow();
 	return(true);
 }
 
-// FUNCTION: 0x006E0FA0
+// FUNCTION: GAMEMD 0x006E0FA0
 bool TActionClass::TAction_SET_GLOBAL(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	Scen->Set_Global_To(Data.Value, true);
 	return(true);
 }
 
-// FUNCTION: 0x006E0FC0
+// FUNCTION: GAMEMD 0x006E0FC0
 bool TActionClass::TAction_CLEAR_GLOBAL(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	Scen->Set_Global_To(Data.Value, false);
 	return(true);
 }
 
-// FUNCTION: 0x006E0FE0
+// FUNCTION: GAMEMD 0x006E0FE0
 bool TActionClass::TAction_REVEAL_SOME(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	if (!PlayerPtr->IsVisionary) {
@@ -838,7 +854,7 @@ bool TActionClass::TAction_REVEAL_SOME(HouseClass * , ObjectClass * , TriggerCla
 	return(true);
 }
 
-// FUNCTION: 0x006E1180
+// FUNCTION: GAMEMD 0x006E1180
 bool TActionClass::TAction_REDUCE_TIBERIUM(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	Cell cell1 = Scen->Get_Waypoint_Cell(Data.Value);
@@ -846,7 +862,7 @@ bool TActionClass::TAction_REDUCE_TIBERIUM(HouseClass * , ObjectClass * , Trigge
 	return(true);
 }
 
-// FUNCTION: 0x006E11C0
+// FUNCTION: GAMEMD 0x006E11C0
 bool TActionClass::TAction_REVEAL_ZONE(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	if (!PlayerPtr->IsVisionary) {
@@ -870,7 +886,7 @@ bool TActionClass::TAction_REVEAL_ZONE(HouseClass * , ObjectClass * , TriggerCla
 	return(true);
 }
 
-// FUNCTION: 0x006E1330
+// FUNCTION: GAMEMD 0x006E1330
 bool TActionClass::TAction_REVEAL_ALL(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	if (!PlayerPtr->IsVisionary) {
@@ -888,7 +904,7 @@ bool TActionClass::TAction_REVEAL_ALL(HouseClass * , ObjectClass * , TriggerClas
 	return(true);
 }
 
-// FUNCTION: 0x006E13A0
+// FUNCTION: GAMEMD 0x006E13A0
 bool TActionClass::TAction_START_TIMER(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	if (!Scen->MissionTimer.Is_Active()) {
@@ -898,7 +914,7 @@ bool TActionClass::TAction_START_TIMER(HouseClass * , ObjectClass * , TriggerCla
 	return(true);
 }
 
-// FUNCTION: 0x006E13E0
+// FUNCTION: GAMEMD 0x006E13E0
 bool TActionClass::TAction_STOP_TIMER(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	if (Scen->MissionTimer.Is_Active()) {
@@ -908,7 +924,7 @@ bool TActionClass::TAction_STOP_TIMER(HouseClass * , ObjectClass * , TriggerClas
 	return(true);
 }
 
-// FUNCTION: 0x006E1440
+// FUNCTION: GAMEMD 0x006E1440
 bool TActionClass::TAction_ADD_TIMER(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	Scen->MissionTimer = Scen->MissionTimer + Data.Value * TICKS_PER_SECOND;
@@ -916,7 +932,7 @@ bool TActionClass::TAction_ADD_TIMER(HouseClass * , ObjectClass * , TriggerClass
 	return(true);
 }
 
-// FUNCTION: 0x006E14A0
+// FUNCTION: GAMEMD 0x006E14A0
 bool TActionClass::TAction_SUB_TIMER(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	if (Scen->MissionTimer <= Data.Value * TICKS_PER_SECOND) {
@@ -928,7 +944,7 @@ bool TActionClass::TAction_SUB_TIMER(HouseClass * , ObjectClass * , TriggerClass
 	return(true);
 }
 
-// FUNCTION: 0x006E1530
+// FUNCTION: GAMEMD 0x006E1530
 bool TActionClass::TAction_SET_TIMER(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	Scen->MissionTimer = Data.Value * TICKS_PER_SECOND;
@@ -939,7 +955,7 @@ bool TActionClass::TAction_SET_TIMER(HouseClass * , ObjectClass * , TriggerClass
 	return(true);
 }
 
-// FUNCTION: 0x006E15F0
+// FUNCTION: GAMEMD 0x006E15F0
 bool TActionClass::TAction_SET_TIMER_TEXT(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	char const * text = Text[0] ? Text : NULL;
@@ -955,7 +971,7 @@ bool TActionClass::TAction_SET_TIMER_TEXT(HouseClass * , ObjectClass * , Trigger
 	return(true);
 }
 
-// FUNCTION: 0x006E16D0
+// FUNCTION: GAMEMD 0x006E16D0
 bool TActionClass::TAction_PLAY_MOVIE(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	FUN_0072DDB0();
@@ -968,28 +984,28 @@ bool TActionClass::TAction_PLAY_MOVIE(HouseClass * , ObjectClass * , TriggerClas
 	return(true);
 }
 
-// FUNCTION: 0x006E1720
+// FUNCTION: GAMEMD 0x006E1720
 bool TActionClass::TAction_PLAY_INGAME_MOVIE(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	FUN_005BF390(Data.Movie, false);
 	return(true);
 }
 
-// FUNCTION: 0x006E1740
+// FUNCTION: GAMEMD 0x006E1740
 bool TActionClass::TAction_PLAY_INGAME_MOVIE_PAUSE(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	FUN_005BF390(Data.Movie, true);
 	return(true);
 }
 
-// FUNCTION: 0x006E1760
+// FUNCTION: GAMEMD 0x006E1760
 bool TActionClass::TAction_PLAY_SOUND(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	VocClass::PlayGlobal(Data.Sound, 1.0f, 0x2000);
 	return(true);
 }
 
-// FUNCTION: 0x006E1780
+// FUNCTION: GAMEMD 0x006E1780
 bool TActionClass::TAction_PLAY_SOUND_RANDOM(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	Cell list[100];
@@ -1006,7 +1022,7 @@ bool TActionClass::TAction_PLAY_SOUND_RANDOM(HouseClass * , ObjectClass * , Trig
 	return(true);
 }
 
-// FUNCTION: 0x006E1830
+// FUNCTION: GAMEMD 0x006E1830
 ObjectClass * __fastcall Coord_Object(Coord const & coord)
 {
 	Cell cell = Cell(coord);
@@ -1021,7 +1037,7 @@ ObjectClass * __fastcall Coord_Object(Coord const & coord)
 	return(object);
 }
 
-// FUNCTION: 0x006E18B0
+// FUNCTION: GAMEMD 0x006E18B0
 bool TActionClass::TAction_PLAY_SOUND_AT(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	Coord coord = Scen->Get_Waypoint_Coord(EffectLocation);
@@ -1034,7 +1050,7 @@ bool TActionClass::TAction_PLAY_SOUND_AT(HouseClass * , ObjectClass * , TriggerC
 	return(true);
 }
 
-// FUNCTION: 0x006E1980
+// FUNCTION: GAMEMD 0x006E1980
 bool TActionClass::TAction_STOP_SOUND_AT(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	Coord coord = Scen->Get_Waypoint_Coord(EffectLocation);
@@ -1047,7 +1063,7 @@ bool TActionClass::TAction_STOP_SOUND_AT(HouseClass * , ObjectClass * , TriggerC
 	return(true);
 }
 
-// FUNCTION: 0x006E1A40
+// FUNCTION: GAMEMD 0x006E1A40
 bool TActionClass::TAction_TELEPORT_HOUSE(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
 {
 	Cell cell = Scen->Get_Waypoint_Cell(EffectLocation);
@@ -1055,7 +1071,7 @@ bool TActionClass::TAction_TELEPORT_HOUSE(HouseClass * house, ObjectClass * , Tr
 	return(true);
 }
 
-// FUNCTION: 0x006E1A70
+// FUNCTION: GAMEMD 0x006E1A70
 bool TActionClass::TAction_REVEAL_AROUND_WAYPOINT(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	if (!PlayerPtr->IsVisionary) {
@@ -1067,21 +1083,21 @@ bool TActionClass::TAction_REVEAL_AROUND_WAYPOINT(HouseClass * , ObjectClass * ,
 	return(true);
 }
 
-// FUNCTION: 0x006E1B90
+// FUNCTION: GAMEMD 0x006E1B90
 bool TActionClass::TAction_PLAY_MUSIC(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	Theme.Queue_Song(Data.Theme);
 	return(true);
 }
 
-// FUNCTION: 0x006E1BB0
+// FUNCTION: GAMEMD 0x006E1BB0
 bool TActionClass::TAction_PLAY_SPEECH(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	FUN_00752480(Data.Speech, 2, -1);
 	return(true);
 }
 
-// FUNCTION: 0x006E1BD0
+// FUNCTION: GAMEMD 0x006E1BD0
 bool TActionClass::TAction_1_SPECIAL(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
 {
 	house->SuperWeapon[Data.Special]->Grant(true, false, false);
@@ -1093,7 +1109,7 @@ bool TActionClass::TAction_1_SPECIAL(HouseClass * house, ObjectClass * , Trigger
 	return(true);
 }
 
-// FUNCTION: 0x006E1C40
+// FUNCTION: GAMEMD 0x006E1C40
 bool TActionClass::TAction_FULL_SPECIAL(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
 {
 	house->SuperWeapon[Data.Special]->Grant(false, false, false);
@@ -1106,7 +1122,7 @@ bool TActionClass::TAction_FULL_SPECIAL(HouseClass * house, ObjectClass * , Trig
 	return(true);
 }
 
-// FUNCTION: 0x006E1CC0
+// FUNCTION: GAMEMD 0x006E1CC0
 bool TActionClass::TAction_DZ(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	Cell waypoint = Scen->Get_Waypoint_Cell(EffectLocation);
@@ -1121,7 +1137,7 @@ bool TActionClass::TAction_DZ(HouseClass * , ObjectClass * , TriggerClass * , Ce
 	return(true);
 }
 
-// FUNCTION: 0x006E1DC0
+// FUNCTION: GAMEMD 0x006E1DC0
 bool TActionClass::TAction_WIN(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	if (Data.House == PlayerPtr->Class->House) {
@@ -1132,7 +1148,7 @@ bool TActionClass::TAction_WIN(HouseClass * , ObjectClass * , TriggerClass * , C
 	return(true);
 }
 
-// FUNCTION: 0x006E1E00
+// FUNCTION: GAMEMD 0x006E1E00
 bool TActionClass::TAction_LOSE(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	if (Data.House != PlayerPtr->Class->House) {
@@ -1143,7 +1159,7 @@ bool TActionClass::TAction_LOSE(HouseClass * , ObjectClass * , TriggerClass * , 
 	return(true);
 }
 
-// FUNCTION: 0x006E1E40
+// FUNCTION: GAMEMD 0x006E1E40
 bool TActionClass::TAction_BEGIN_PRODUCTION(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
 {
 	HouseClass * h = Find_House(trig, Data.House);
@@ -1152,7 +1168,7 @@ bool TActionClass::TAction_BEGIN_PRODUCTION(HouseClass * , ObjectClass * , Trigg
 	return(true);
 }
 
-// FUNCTION: 0x006E1EA0
+// FUNCTION: GAMEMD 0x006E1EA0
 bool TActionClass::TAction_FIRE_SALE(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
 {
 	HouseClass * h = Find_House(trig, Data.House);
@@ -1161,7 +1177,7 @@ bool TActionClass::TAction_FIRE_SALE(HouseClass * , ObjectClass * , TriggerClass
 	return(true);
 }
 
-// FUNCTION: 0x006E1F00
+// FUNCTION: GAMEMD 0x006E1F00
 bool TActionClass::TAction_AUTOCREATE(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
 {
 	HouseClass * h = Find_House(trig, Data.House);
@@ -1170,7 +1186,7 @@ bool TActionClass::TAction_AUTOCREATE(HouseClass * , ObjectClass * , TriggerClas
 	return(true);
 }
 
-// FUNCTION: 0x006E1F60
+// FUNCTION: GAMEMD 0x006E1F60
 bool TActionClass::TAction_CREATE_TEAM(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	ScenarioInit++;
@@ -1181,7 +1197,7 @@ bool TActionClass::TAction_CREATE_TEAM(HouseClass * , ObjectClass * , TriggerCla
 	return(true);
 }
 
-// FUNCTION: 0x006E1F90
+// FUNCTION: GAMEMD 0x006E1F90
 bool TActionClass::TAction_DESTROY_TEAM(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	if (Team != NULL) {
@@ -1190,7 +1206,7 @@ bool TActionClass::TAction_DESTROY_TEAM(HouseClass * , ObjectClass * , TriggerCl
 	return(true);
 }
 
-// FUNCTION: 0x006E1FB0
+// FUNCTION: GAMEMD 0x006E1FB0
 bool TActionClass::TAction_SPAWN_TEAM(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	if (Team != NULL) {
@@ -1199,14 +1215,14 @@ bool TActionClass::TAction_SPAWN_TEAM(HouseClass * , ObjectClass * , TriggerClas
 	return(false);
 }
 
-// FUNCTION: 0x006E1FD0
+// FUNCTION: GAMEMD 0x006E1FD0
 bool TActionClass::TAction_SPAWN_TEAM_AT_WP(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	if (Team == NULL || EffectLocation == -1) return(false);
 	return(FUN_0065D8E0(Team, EffectLocation));
 }
 
-// FUNCTION: 0x006E1FF0
+// FUNCTION: GAMEMD 0x006E1FF0
 bool TActionClass::TAction_ALL_HUNT(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
 {
 	HouseClass * h = Find_House(trig, Data.House);
@@ -1215,7 +1231,7 @@ bool TActionClass::TAction_ALL_HUNT(HouseClass * , ObjectClass * , TriggerClass 
 	return(true);
 }
 
-// FUNCTION: 0x006E2050
+// FUNCTION: GAMEMD 0x006E2050
 bool TActionClass::TAction_DESTROY_OBJECT(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & cell)
 {
 	bool any = false;
@@ -1247,13 +1263,13 @@ bool TActionClass::TAction_DESTROY_OBJECT(HouseClass * , ObjectClass * , Trigger
 	return(any);
 }
 
-// FUNCTION: 0x006E21D0
+// FUNCTION: GAMEMD 0x006E21D0
 bool TActionClass::TAction_NOP(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	return(true);
 }
 
-// FUNCTION: 0x006E21E0
+// FUNCTION: GAMEMD 0x006E21E0
 bool TActionClass::TAction_RESIZE_PLAYER_VIEW(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	Map.LocalRect = TriggerRect;
@@ -1279,7 +1295,7 @@ bool TActionClass::TAction_RESIZE_PLAYER_VIEW(HouseClass * , ObjectClass * , Tri
 	return(true);
 }
 
-// FUNCTION: 0x006E2290
+// FUNCTION: GAMEMD 0x006E2290
 bool TActionClass::TAction_PLAY_ANIM(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	Cell waypoint = Scen->Get_Waypoint_Cell(EffectLocation);
@@ -1293,7 +1309,7 @@ bool TActionClass::TAction_PLAY_ANIM(HouseClass * , ObjectClass * , TriggerClass
 	return(true);
 }
 
-// FUNCTION: 0x006E2390
+// FUNCTION: GAMEMD 0x006E2390
 bool TActionClass::TAction_DO_EXPLOSION(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	Cell waypoint = Scen->Get_Waypoint_Cell(EffectLocation);
@@ -1316,7 +1332,7 @@ bool TActionClass::TAction_DO_EXPLOSION(HouseClass * , ObjectClass * , TriggerCl
 	return(true);
 }
 
-// FUNCTION: 0x006E2520
+// FUNCTION: GAMEMD 0x006E2520
 bool TActionClass::TAction_METEOR_IMPACT(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	Cell waypoint = Scen->Get_Waypoint_Cell(EffectLocation);
@@ -1329,7 +1345,7 @@ bool TActionClass::TAction_METEOR_IMPACT(HouseClass * , ObjectClass * , TriggerC
 	return(true);
 }
 
-// FUNCTION: 0x006E2600
+// FUNCTION: GAMEMD 0x006E2600
 bool TActionClass::TAction_ION_STORM_START(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	if (IonStormClass::Is_Ion_Storm_Active()) {
@@ -1339,7 +1355,7 @@ bool TActionClass::TAction_ION_STORM_START(HouseClass * , ObjectClass * , Trigge
 	return(true);
 }
 
-// FUNCTION: 0x006E2640
+// FUNCTION: GAMEMD 0x006E2640
 bool TActionClass::TAction_ION_STORM_STOP(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	if (!IonStormClass::Is_Ion_Storm_Active()) {
@@ -1350,7 +1366,7 @@ bool TActionClass::TAction_ION_STORM_STOP(HouseClass * , ObjectClass * , Trigger
 	return(true);
 }
 
-// FUNCTION: 0x006E2660
+// FUNCTION: GAMEMD 0x006E2660
 bool TActionClass::TAction_CLEAR_MODES(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	DAT_0088098C.Ptr = 0;
@@ -1366,14 +1382,14 @@ bool TActionClass::TAction_CLEAR_MODES(HouseClass * , ObjectClass * , TriggerCla
 	return(true);
 }
 
-// FUNCTION: 0x006E26C0
+// FUNCTION: GAMEMD 0x006E26C0
 bool TActionClass::TAction_UNLOCK_INPUT(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	Unlock_Scenario_Input();
 	return(true);
 }
 
-// FUNCTION: 0x006E26D0
+// FUNCTION: GAMEMD 0x006E26D0
 bool TActionClass::TAction_CENTER_VIEWPOINT(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	Cell waypoint = Scen->Get_Waypoint_Cell(EffectLocation);
@@ -1388,7 +1404,7 @@ bool TActionClass::TAction_CENTER_VIEWPOINT(HouseClass * , ObjectClass * , Trigg
 	return(true);
 }
 
-// FUNCTION: 0x006E2790
+// FUNCTION: GAMEMD 0x006E2790
 bool TActionClass::TAction_JUMP_VIEWPOINT(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	Cell waypoint = Scen->Get_Waypoint_Cell(EffectLocation);
@@ -1403,14 +1419,14 @@ bool TActionClass::TAction_JUMP_VIEWPOINT(HouseClass * , ObjectClass * , Trigger
 	return(true);
 }
 
-// FUNCTION: 0x006E2850
+// FUNCTION: GAMEMD 0x006E2850
 bool TActionClass::TAction_CENTER_ON_BASE(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	FUN_007315A0();
 	return(true);
 }
 
-// FUNCTION: 0x006E2860
+// FUNCTION: GAMEMD 0x006E2860
 bool TActionClass::TAction_ZOOM_IN(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	TacticalMap->ZoomFactor = Rule->ZoomInFactor;
@@ -1426,7 +1442,7 @@ bool TActionClass::TAction_ZOOM_IN(HouseClass * , ObjectClass * , TriggerClass *
 	return(true);
 }
 
-// FUNCTION: 0x006E28E0
+// FUNCTION: GAMEMD 0x006E28E0
 bool TActionClass::TAction_ZOOM_OUT(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	TacticalMap->ZoomFactor = 1;
@@ -1440,14 +1456,14 @@ bool TActionClass::TAction_ZOOM_OUT(HouseClass * , ObjectClass * , TriggerClass 
 	return(true);
 }
 
-// FUNCTION: 0x006E2950
+// FUNCTION: GAMEMD 0x006E2950
 bool TActionClass::TAction_RESHROUD(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
 {
 	Map.FUN_00577C90(house);
 	return(true);
 }
 
-// FUNCTION: 0x006E2970
+// FUNCTION: GAMEMD 0x006E2970
 bool TActionClass::TAction_CHANGE_SPOTLIGHT_BEHAVIOR(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
 {
 	bool success = false;
@@ -1468,7 +1484,7 @@ bool TActionClass::TAction_CHANGE_SPOTLIGHT_BEHAVIOR(HouseClass * , ObjectClass 
 	return(success);
 }
 
-// FUNCTION: 0x006E2A10
+// FUNCTION: GAMEMD 0x006E2A10
 bool TActionClass::TAction_DESTROY_TRIGGER(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	if (Trigger != NULL) {
@@ -1481,7 +1497,7 @@ bool TActionClass::TAction_DESTROY_TRIGGER(HouseClass * , ObjectClass * , Trigge
 	return(true);
 }
 
-// FUNCTION: 0x006E2A50
+// FUNCTION: GAMEMD 0x006E2A50
 bool TActionClass::TAction_DESTROY_TAG(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	if (Tag != NULL) {
@@ -1496,7 +1512,7 @@ bool TActionClass::TAction_DESTROY_TAG(HouseClass * , ObjectClass * , TriggerCla
 	return(true);
 }
 
-// FUNCTION: 0x006E2AA0
+// FUNCTION: GAMEMD 0x006E2AA0
 bool TActionClass::TAction_FORCE_TRIGGER(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	if (Trigger != NULL) {
@@ -1509,7 +1525,7 @@ bool TActionClass::TAction_FORCE_TRIGGER(HouseClass * , ObjectClass * , TriggerC
 	return(true);
 }
 
-// FUNCTION: 0x006E2AF0
+// FUNCTION: GAMEMD 0x006E2AF0
 bool TActionClass::TAction_ENABLE_TRIGGER(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	if (Trigger != NULL) {
@@ -1528,7 +1544,7 @@ bool TActionClass::TAction_ENABLE_TRIGGER(HouseClass * , ObjectClass * , Trigger
 	return(true);
 }
 
-// FUNCTION: 0x006E2B70
+// FUNCTION: GAMEMD 0x006E2B70
 bool TActionClass::TAction_DISABLE_TRIGGER(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	if (Trigger != NULL) {
@@ -1541,28 +1557,28 @@ bool TActionClass::TAction_DISABLE_TRIGGER(HouseClass * , ObjectClass * , Trigge
 	return(true);
 }
 
-// FUNCTION: 0x006E2BB0
+// FUNCTION: GAMEMD 0x006E2BB0
 bool TActionClass::TAction_RADAR_EVENT(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	Submit_Radar_Event(Data.RadarEvent, Scen->Get_Waypoint_Cell(EffectLocation));
 	return(true);
 }
 
-// FUNCTION: 0x006E2BE0
+// FUNCTION: GAMEMD 0x006E2BE0
 bool TActionClass::TAction_SET_LOCAL(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	Scen->Set_Local_To(Data.Value, true);
 	return(true);
 }
 
-// FUNCTION: 0x006E2C00
+// FUNCTION: GAMEMD 0x006E2C00
 bool TActionClass::TAction_CLEAR_LOCAL(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	Scen->Set_Local_To(Data.Value, false);
 	return(true);
 }
 
-// FUNCTION: 0x006E2C20
+// FUNCTION: GAMEMD 0x006E2C20
 bool TActionClass::TAction_CLEAR_SMUDGES(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	FUN_00588AC0(&Map);
@@ -1570,7 +1586,7 @@ bool TActionClass::TAction_CLEAR_SMUDGES(HouseClass * , ObjectClass * , TriggerC
 	return(true);
 }
 
-// FUNCTION: 0x006E2C40
+// FUNCTION: GAMEMD 0x006E2C40
 bool TActionClass::TAction_METEOR_SHOWER(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	static const int _scale = 70;
@@ -1595,21 +1611,21 @@ bool TActionClass::TAction_METEOR_SHOWER(HouseClass * , ObjectClass * , TriggerC
 	return(true);
 }
 
-// FUNCTION: 0x006E2E20
+// FUNCTION: GAMEMD 0x006E2E20
 bool TActionClass::TAction_SET_AMBIENT_STEP(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	Rule->AmbientLightChangeStep = (double)Data.Float;
 	return(true);
 }
 
-// FUNCTION: 0x006E2E40
+// FUNCTION: GAMEMD 0x006E2E40
 bool TActionClass::TAction_SET_AMBIENT_RATE(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	Rule->AmbientLightChangeRate = (double)Data.Float;
 	return(true);
 }
 
-// FUNCTION: 0x006E2E60
+// FUNCTION: GAMEMD 0x006E2E60
 bool TActionClass::TAction_SET_TINT_RED(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	FUN_0053AD00(Data.Value * 10, Scen->NormalLighting.GreenTint * 10, Scen->NormalLighting.BlueTint * 10, 0);
@@ -1617,7 +1633,7 @@ bool TActionClass::TAction_SET_TINT_RED(HouseClass * , ObjectClass * , TriggerCl
 	return(true);
 }
 
-// FUNCTION: 0x006E2EB0
+// FUNCTION: GAMEMD 0x006E2EB0
 bool TActionClass::TAction_SET_TINT_GREEN(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	FUN_0053AD00(Scen->NormalLighting.RedTint * 10, Data.Value * 10, Scen->NormalLighting.BlueTint * 10, 0);
@@ -1625,7 +1641,7 @@ bool TActionClass::TAction_SET_TINT_GREEN(HouseClass * , ObjectClass * , Trigger
 	return(true);
 }
 
-// FUNCTION: 0x006E2F00
+// FUNCTION: GAMEMD 0x006E2F00
 bool TActionClass::TAction_SET_TINT_BLUE(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	FUN_0053AD00(Scen->NormalLighting.RedTint * 10, Scen->NormalLighting.GreenTint * 10, Data.Value * 10, 0);
@@ -1633,7 +1649,7 @@ bool TActionClass::TAction_SET_TINT_BLUE(HouseClass * , ObjectClass * , TriggerC
 	return(true);
 }
 
-// FUNCTION: 0x006E2F50
+// FUNCTION: GAMEMD 0x006E2F50
 bool TActionClass::TAction_SET_AMBIENT_LIGHT(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	Scen->AmbientLight = Data.Value;
@@ -1643,14 +1659,14 @@ bool TActionClass::TAction_SET_AMBIENT_LIGHT(HouseClass * , ObjectClass * , Trig
 	return(true);
 }
 
-// FUNCTION: 0x006E2F90
+// FUNCTION: GAMEMD 0x006E2F90
 bool TActionClass::TAction_SET_CHRONO_SCREEN_EFFECT(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	FUN_0053B460(Data.Value);
 	return(true);
 }
 
-// FUNCTION: 0x006E2FA0
+// FUNCTION: GAMEMD 0x006E2FA0
 bool TActionClass::TAction_BEGIN_AI_TRIGGERS(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
 {
 	HouseClass * hptr = Find_House(trig, Data.Value);
@@ -1659,7 +1675,7 @@ bool TActionClass::TAction_BEGIN_AI_TRIGGERS(HouseClass * , ObjectClass * , Trig
 	return(true);
 }
 
-// FUNCTION: 0x006E3000
+// FUNCTION: GAMEMD 0x006E3000
 bool TActionClass::TAction_STOP_AI_TRIGGERS(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
 {
 	HouseClass * hptr = Find_House(trig, Data.Value);
@@ -1668,7 +1684,7 @@ bool TActionClass::TAction_STOP_AI_TRIGGERS(HouseClass * , ObjectClass * , Trigg
 	return(true);
 }
 
-// FUNCTION: 0x006E3060
+// FUNCTION: GAMEMD 0x006E3060
 bool TActionClass::TAction_CHEER(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
 {
 	HouseClass * hptr = Find_House(trig, Data.Value);
@@ -1677,7 +1693,7 @@ bool TActionClass::TAction_CHEER(HouseClass * , ObjectClass * , TriggerClass * t
 	return(true);
 }
 
-// FUNCTION: 0x006E30C0
+// FUNCTION: GAMEMD 0x006E30C0
 bool TActionClass::TAction_RESTORE_STARTING_UNITS(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
 {
 	HouseClass * hptr = Find_House(trig, Data.Value);
@@ -1686,7 +1702,7 @@ bool TActionClass::TAction_RESTORE_STARTING_UNITS(HouseClass * , ObjectClass * ,
 	return(true);
 }
 
-// FUNCTION: 0x006E3120
+// FUNCTION: GAMEMD 0x006E3120
 bool TActionClass::TAction_RESTORE_STARTING_BUILDINGS(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
 {
 	HouseClass * hptr = Find_House(trig, Data.Value);
@@ -1695,7 +1711,7 @@ bool TActionClass::TAction_RESTORE_STARTING_BUILDINGS(HouseClass * , ObjectClass
 	return(true);
 }
 
-// FUNCTION: 0x006E3180
+// FUNCTION: GAMEMD 0x006E3180
 bool TActionClass::TAction_DESTROY_ALL_OBJECTS(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
 {
 	HouseClass * hptr = Find_House(trig, Data.Value);
@@ -1704,7 +1720,7 @@ bool TActionClass::TAction_DESTROY_ALL_OBJECTS(HouseClass * , ObjectClass * , Tr
 	return(true);
 }
 
-// FUNCTION: 0x006E31E0
+// FUNCTION: GAMEMD 0x006E31E0
 bool TActionClass::TAction_DESTROY_ALL_BUILDINGS(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
 {
 	HouseClass * hptr = Find_House(trig, Data.Value);
@@ -1713,7 +1729,7 @@ bool TActionClass::TAction_DESTROY_ALL_BUILDINGS(HouseClass * , ObjectClass * , 
 	return(true);
 }
 
-// FUNCTION: 0x006E3240
+// FUNCTION: GAMEMD 0x006E3240
 bool TActionClass::TAction_DESTROY_ALL_NON_NAVAL_UNITS(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
 {
 	HouseClass * hptr = Find_House(trig, Data.Value);
@@ -1722,7 +1738,7 @@ bool TActionClass::TAction_DESTROY_ALL_NON_NAVAL_UNITS(HouseClass * , ObjectClas
 	return(true);
 }
 
-// FUNCTION: 0x006E32A0
+// FUNCTION: GAMEMD 0x006E32A0
 bool TActionClass::TAction_DESTROY_ALL_NAVAL_UNITS(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
 {
 	HouseClass * hptr = Find_House(trig, Data.Value);
@@ -1731,7 +1747,7 @@ bool TActionClass::TAction_DESTROY_ALL_NAVAL_UNITS(HouseClass * , ObjectClass * 
 	return(true);
 }
 
-// FUNCTION: 0x006E3300
+// FUNCTION: GAMEMD 0x006E3300
 bool TActionClass::TAction_SET_AI_TRIGGER_TEAM_RATIO(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
 {
 	if (house != NULL) {
@@ -1740,7 +1756,7 @@ bool TActionClass::TAction_SET_AI_TRIGGER_TEAM_RATIO(HouseClass * house, ObjectC
 	return(true);
 }
 
-// FUNCTION: 0x006E3320
+// FUNCTION: GAMEMD 0x006E3320
 bool TActionClass::TAction_SET_TEAM_AIRCRAFT_RATIO(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
 {
 	if (house != NULL) {
@@ -1749,7 +1765,7 @@ bool TActionClass::TAction_SET_TEAM_AIRCRAFT_RATIO(HouseClass * house, ObjectCla
 	return(true);
 }
 
-// FUNCTION: 0x006E3340
+// FUNCTION: GAMEMD 0x006E3340
 bool TActionClass::TAction_SET_TEAM_INFANTRY_RATIO(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
 {
 	if (house != NULL) {
@@ -1758,7 +1774,7 @@ bool TActionClass::TAction_SET_TEAM_INFANTRY_RATIO(HouseClass * house, ObjectCla
 	return(true);
 }
 
-// FUNCTION: 0x006E3360
+// FUNCTION: GAMEMD 0x006E3360
 bool TActionClass::TAction_SET_TEAM_UNIT_RATIO(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
 {
 	if (house != NULL) {
@@ -1767,7 +1783,7 @@ bool TActionClass::TAction_SET_TEAM_UNIT_RATIO(HouseClass * house, ObjectClass *
 	return(true);
 }
 
-// FUNCTION: 0x006E3380
+// FUNCTION: GAMEMD 0x006E3380
 bool TActionClass::TAction_ION_CANNON(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	Cell waypoint = Scen->Get_Waypoint_Cell(EffectLocation);
@@ -1778,7 +1794,7 @@ bool TActionClass::TAction_ION_CANNON(HouseClass * , ObjectClass * , TriggerClas
 	return(true);
 }
 
-// FUNCTION: 0x006E35F0
+// FUNCTION: GAMEMD 0x006E35F0
 bool TActionClass::TAction_LIGHTNING_STORM(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
 {
 	Cell waypoint = Scen->Get_Waypoint_Cell(EffectLocation);
@@ -1795,7 +1811,7 @@ bool TActionClass::TAction_LIGHTNING_STORM(HouseClass * house, ObjectClass * , T
 	return(false);
 }
 
-// FUNCTION: 0x006E37F0
+// FUNCTION: GAMEMD 0x006E37F0
 bool TActionClass::TAction_SET_TECH_LEVEL(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	for (int index = TechnoTypes.Count() - 1; index >= 0; index--) {
@@ -1811,7 +1827,7 @@ bool TActionClass::TAction_SET_TECH_LEVEL(HouseClass * , ObjectClass * , Trigger
 	return(true);
 }
 
-// FUNCTION: 0x006E3890
+// FUNCTION: GAMEMD 0x006E3890
 bool TActionClass::TAction_CHRONO_IN_TEAM(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	if (Team != NULL && EffectLocation != -1) {
@@ -1820,14 +1836,14 @@ bool TActionClass::TAction_CHRONO_IN_TEAM(HouseClass * , ObjectClass * , Trigger
 	return(false);
 }
 
-// FUNCTION: 0x006E38B0
+// FUNCTION: GAMEMD 0x006E38B0
 bool TActionClass::TAction_CREATE_CRATE(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	Cell cell = Scen->Get_Waypoint_Cell(EffectLocation);
 	return(Map.PlacePowerupCrate(cell, Data.Value));
 }
 
-// FUNCTION: 0x006E38F0
+// FUNCTION: GAMEMD 0x006E38F0
 bool TActionClass::TAction_CHEM_MISSILE(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	Cell waypoint = Scen->Get_Waypoint_Cell(EffectLocation);
@@ -1851,14 +1867,14 @@ bool TActionClass::TAction_CHEM_MISSILE(HouseClass * , ObjectClass * , TriggerCl
 	return(false);
 }
 
-// FUNCTION: 0x006E3B20
+// FUNCTION: GAMEMD 0x006E3B20
 bool TActionClass::TAction_TOGGLE_TRAIN_CARGO(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	Scen->IsTrainCargo = (Scen->IsTrainCargo == false);
 	return(true);
 }
 
-// FUNCTION: 0x006E3B40
+// FUNCTION: GAMEMD 0x006E3B40
 bool TActionClass::TAction_RADAR_BLACKOUT(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
 {
 	if (house == NULL) {
@@ -1868,7 +1884,7 @@ bool TActionClass::TAction_RADAR_BLACKOUT(HouseClass * house, ObjectClass * , Tr
 	return(true);
 }
 
-// FUNCTION: 0x006E3B60
+// FUNCTION: GAMEMD 0x006E3B60
 int TActionClass::GetMode(TActionType action)
 {
 	switch (action) {
@@ -1980,7 +1996,7 @@ int TActionClass::GetMode(TActionType action)
 	return(0);
 }
 
-// FUNCTION: 0x006E3D70
+// FUNCTION: GAMEMD 0x006E3D70
 HRESULT STDMETHODCALLTYPE TActionClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -1988,7 +2004,7 @@ HRESULT STDMETHODCALLTYPE TActionClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x006E3DB0
+// FUNCTION: GAMEMD 0x006E3DB0
 HRESULT STDMETHODCALLTYPE TActionClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -2005,7 +2021,7 @@ HRESULT STDMETHODCALLTYPE TActionClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x006E3E30
+// FUNCTION: GAMEMD 0x006E3E30
 HRESULT STDMETHODCALLTYPE TActionClass::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -2015,7 +2031,7 @@ HRESULT STDMETHODCALLTYPE TActionClass::Save(IStream * stream, BOOL cleardirty)
 	return(result);
 }
 
-// FUNCTION: 0x006E3E50
+// FUNCTION: GAMEMD 0x006E3E50
 void TActionClass::Compute_CRC(CRCEngine & crc) const
 {
 	BASECLASS::Compute_CRC(crc);
@@ -2028,7 +2044,7 @@ void TActionClass::Compute_CRC(CRCEngine & crc) const
 	crc((int)Data.Value);
 }
 
-// FUNCTION: 0x006E3EE0
+// FUNCTION: GAMEMD 0x006E3EE0
 int __fastcall Action_Flags(int action)
 {
 	int flags = 0;
@@ -2042,13 +2058,13 @@ int __fastcall Action_Flags(int action)
 	return(flags);
 }
 
-// FUNCTION: 0x006E3F70
+// FUNCTION: GAMEMD 0x006E3F70
 Coord TActionClass::Waypoint_As_Coord(void)
 {
 	return(Scen->Get_Waypoint_Coord(Data.Value));
 }
 
-// FUNCTION: 0x006E3FB0
+// FUNCTION: GAMEMD 0x006E3FB0
 void TActionClass::Set_Text(char const * text)
 {
 	Text[0] = '\0';
@@ -2068,13 +2084,13 @@ void TActionClass::Set_Text(char const * text)
 	}
 }
 
-// FUNCTION: 0x006E4010
+// FUNCTION: GAMEMD 0x006E4010
 char * TActionClass::Get_Text(void)
 {
 	return(Text[0] != '\0' ? Text : NULL);
 }
 
-// FUNCTION: 0x006E4020
+// FUNCTION: GAMEMD 0x006E4020
 bool TActionClass::TAction_FLASH_TEAM(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	if (Team != NULL) {
@@ -2083,7 +2099,7 @@ bool TActionClass::TAction_FLASH_TEAM(HouseClass * , ObjectClass * , TriggerClas
 	return(true);
 }
 
-// FUNCTION: 0x006E4040
+// FUNCTION: GAMEMD 0x006E4040
 bool TActionClass::TAction_TALK_BUBBLE(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	if (Team != NULL) {
@@ -2097,14 +2113,14 @@ bool TActionClass::TAction_TALK_BUBBLE(HouseClass * , ObjectClass * , TriggerCla
 	return(true);
 }
 
-// FUNCTION: 0x006E4080
+// FUNCTION: GAMEMD 0x006E4080
 bool TActionClass::TAction_PAUSE_SCENARIO(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	Hold_Scenario(Data.Value);
 	return(true);
 }
 
-// FUNCTION: 0x006E4090
+// FUNCTION: GAMEMD 0x006E4090
 bool TActionClass::TAction_EJECT_OCCUPANTS(HouseClass * , ObjectClass * , TriggerClass * trigger, Cell const & )
 {
 	bool result = false;
@@ -2119,7 +2135,7 @@ bool TActionClass::TAction_EJECT_OCCUPANTS(HouseClass * , ObjectClass * , Trigge
 	return(result);
 }
 
-// FUNCTION: 0x006E4100
+// FUNCTION: GAMEMD 0x006E4100
 bool TActionClass::TAction_SWITCH_TAB(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	int tab = Data.Value;
@@ -2130,7 +2146,7 @@ bool TActionClass::TAction_SWITCH_TAB(HouseClass * , ObjectClass * , TriggerClas
 	return(false);
 }
 
-// FUNCTION: 0x006E4150
+// FUNCTION: GAMEMD 0x006E4150
 bool TActionClass::TAction_FlashCameo(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	int found = -1;
@@ -2147,7 +2163,7 @@ bool TActionClass::TAction_FlashCameo(HouseClass * , ObjectClass * , TriggerClas
 	return(false);
 }
 
-// FUNCTION: 0x006E4200
+// FUNCTION: GAMEMD 0x006E4200
 bool TActionClass::TAction_CreateBuildingAt(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
 {
 	if (house != NULL) {
@@ -2169,7 +2185,7 @@ bool TActionClass::TAction_CreateBuildingAt(HouseClass * house, ObjectClass * , 
 	return(false);
 }
 
-// FUNCTION: 0x006E42D0
+// FUNCTION: GAMEMD 0x006E42D0
 bool TActionClass::TAction_SetSWChargeLevel(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
 {
 	if (house != NULL && Data.Value >= 0 && Data.Value <= house->SuperWeapon.Count()) {
@@ -2182,7 +2198,7 @@ bool TActionClass::TAction_SetSWChargeLevel(HouseClass * house, ObjectClass * , 
 	return(false);
 }
 
-// FUNCTION: 0x006E4320
+// FUNCTION: GAMEMD 0x006E4320
 bool TActionClass::TAction_SetSWRechargeTime(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
 {
 	if (house != NULL && Data.Value >= 0 && Data.Value <= house->SuperWeapon.Count()) {
@@ -2192,7 +2208,7 @@ bool TActionClass::TAction_SetSWRechargeTime(HouseClass * house, ObjectClass * ,
 	return(false);
 }
 
-// FUNCTION: 0x006E4360
+// FUNCTION: GAMEMD 0x006E4360
 bool TActionClass::TAction_ResetSWRechargeTime(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
 {
 	if (house != NULL && Data.Value >= 0 && Data.Value <= house->SuperWeapon.Count()) {
@@ -2202,7 +2218,7 @@ bool TActionClass::TAction_ResetSWRechargeTime(HouseClass * house, ObjectClass *
 	return(false);
 }
 
-// FUNCTION: 0x006E43A0
+// FUNCTION: GAMEMD 0x006E43A0
 bool TActionClass::TAction_ResetSW(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
 {
 	if (house != NULL && Data.Value >= 0 && Data.Value <= house->SuperWeapon.Count()) {
@@ -2212,7 +2228,7 @@ bool TActionClass::TAction_ResetSW(HouseClass * house, ObjectClass * , TriggerCl
 	return(false);
 }
 
-// FUNCTION: 0x006E43E0
+// FUNCTION: GAMEMD 0x006E43E0
 bool TActionClass::TAction_SetPreferredTargetCell(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
 {
 	if (house == NULL) {
@@ -2226,7 +2242,7 @@ bool TActionClass::TAction_SetPreferredTargetCell(HouseClass * house, ObjectClas
 	return(true);
 }
 
-// FUNCTION: 0x006E4440
+// FUNCTION: GAMEMD 0x006E4440
 bool TActionClass::TAction_ResetTargetCell(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
 {
 	if (house == NULL) {
@@ -2236,7 +2252,7 @@ bool TActionClass::TAction_ResetTargetCell(HouseClass * house, ObjectClass * , T
 	return(true);
 }
 
-// FUNCTION: 0x006E4460
+// FUNCTION: GAMEMD 0x006E4460
 bool TActionClass::TAction_SetDefenseCell(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
 {
 	if (house == NULL) {
@@ -2250,7 +2266,7 @@ bool TActionClass::TAction_SetDefenseCell(HouseClass * house, ObjectClass * , Tr
 	return(true);
 }
 
-// FUNCTION: 0x006E44C0
+// FUNCTION: GAMEMD 0x006E44C0
 bool TActionClass::TAction_ResetDefenseCell(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
 {
 	if (house == NULL) {
@@ -2260,7 +2276,7 @@ bool TActionClass::TAction_ResetDefenseCell(HouseClass * house, ObjectClass * , 
 	return(true);
 }
 
-// FUNCTION: 0x006E44E0
+// FUNCTION: GAMEMD 0x006E44E0
 bool TActionClass::TAction_SetBaseCenter(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
 {
 	if (house == NULL) {
@@ -2274,7 +2290,7 @@ bool TActionClass::TAction_SetBaseCenter(HouseClass * house, ObjectClass * , Tri
 	return(true);
 }
 
-// FUNCTION: 0x006E4540
+// FUNCTION: GAMEMD 0x006E4540
 bool TActionClass::TAction_ResetBaseCenter(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
 {
 	if (house == NULL) {
@@ -2286,7 +2302,7 @@ bool TActionClass::TAction_ResetBaseCenter(HouseClass * house, ObjectClass * , T
 
 #undef Buildings
 
-// FUNCTION: 0x006E4560
+// FUNCTION: GAMEMD 0x006E4560
 bool TActionClass::TAction_FlashBuildingsOfType(HouseClass * house, ObjectClass * , TriggerClass * , Cell const & )
 {
 	if (house == NULL) {
@@ -2301,7 +2317,7 @@ bool TActionClass::TAction_FlashBuildingsOfType(HouseClass * house, ObjectClass 
 	return(true);
 }
 
-// FUNCTION: 0x006E45E0
+// FUNCTION: GAMEMD 0x006E45E0
 HouseClass * TActionClass::FindHouseByIndex(TriggerClass * trig, int index) const
 {
 	if (trig == NULL) {
@@ -2310,28 +2326,46 @@ HouseClass * TActionClass::FindHouseByIndex(TriggerClass * trig, int index) cons
 	return(Find_House(trig, index));
 }
 
-// FUNCTION: 0x006E4630 TActionClass::Fetch_Object_Size
-// FUNCTION: 0x006E4640 TActionClass::Fetch_RTTI
-// FUNCTION: 0x006E4650 TActionClass::Fetch_Heap_ID
-// FUNCTION: 0x006E4660 TActionClass::~TActionClass
+// FUNCTION: GAMEMD 0x006E4630
+// TActionClass::Fetch_Object_Size
+// FUNCTION: GAMEMD 0x006E4640
+// TActionClass::Fetch_RTTI
+// FUNCTION: GAMEMD 0x006E4650
+// TActionClass::Fetch_Heap_ID
+// SYNTHETIC: GAMEMD 0x006E4660
+// ??_GTActionClass@@UAEPAXI@Z
 
-// FUNCTION: 0x006E4790 ?$TStringID@$0BP@::?$TStringID@$0BP@
-// FUNCTION: 0x006E47C0 ?$TStringID@$0BP@::operator=
+// TEMPLATE: GAMEMD 0x006E4790
+// ??0?$TStringID@$0BP@@@QAE@PBD@Z
+// TEMPLATE: GAMEMD 0x006E47C0
+// ??4?$TStringID@$0BP@@@QAE?AU0@ABU0@@Z
 template struct TStringID<31>;
 
-// FUNCTION: 0x006E47F0 ?$DynamicVectorClass@PAVTActionClass@@::Clear
-// FUNCTION: 0x006E4820 ?$DynamicVectorClass@PAVTActionClass@@::ID
-// FUNCTION: 0x006E4840 ?$VectorClass@PAVTActionClass@@::GetItem
-// FUNCTION: 0x006E4850 ?$VectorClass@PAVTActionClass@@::operator==
-// FUNCTION: 0x006E4890 ?$VectorClass@PAVTActionClass@@::Resize
-// FUNCTION: 0x006E4940 ?$VectorClass@PAVTActionClass@@::Clear
-// FUNCTION: 0x006E4970 ?$VectorClass@PAVTActionClass@@::ID
-// FUNCTION: 0x006E49B0 ?$VectorClass@PAVTActionClass@@::ID
+// TEMPLATE: GAMEMD 0x006E47F0
+// ?Clear@?$DynamicVectorClass@PAVTActionClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x006E4820
+// ?ID@?$DynamicVectorClass@PAVTActionClass@@@@UAEHPBQAVTActionClass@@@Z
+// TEMPLATE: GAMEMD 0x006E4840
+// ?GetItem@?$VectorClass@PAVTActionClass@@@@UBEPAVTActionClass@@H@Z
+// TEMPLATE: GAMEMD 0x006E4850
+// ??8?$VectorClass@PAVTActionClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x006E4890
+// ?Resize@?$VectorClass@PAVTActionClass@@@@UAE_NHPBQAVTActionClass@@@Z
+// TEMPLATE: GAMEMD 0x006E4940
+// ?Clear@?$VectorClass@PAVTActionClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x006E4970
+// ?ID@?$VectorClass@PAVTActionClass@@@@UAEHABQAVTActionClass@@@Z
+// TEMPLATE: GAMEMD 0x006E49B0
+// ?ID@?$VectorClass@PAVTActionClass@@@@UAEHPBQAVTActionClass@@@Z
 template class VectorClass<TActionClass *>;
 
-// FUNCTION: 0x006E49D0 ?$DynamicVectorClass@PAVTActionClass@@::Resize
-// FUNCTION: 0x006E4A80 ?$DynamicVectorClass@PAVTActionClass@@::ID
+// TEMPLATE: GAMEMD 0x006E49D0
+// ?Resize@?$DynamicVectorClass@PAVTActionClass@@@@UAE_NHPBQAVTActionClass@@@Z
+// TEMPLATE: GAMEMD 0x006E4A80
+// ?ID@?$DynamicVectorClass@PAVTActionClass@@@@UAEHABQAVTActionClass@@@Z
 template class DynamicVectorClass<TActionClass *>;
 
-// FUNCTION: 0x006E4AB0 ?$VectorClass@PAVTActionClass@@::~?$VectorClass@PAVTActionClass@@
-// FUNCTION: 0x006E4B00 ?$DynamicVectorClass@PAVTActionClass@@::~?$DynamicVectorClass@PAVTActionClass@@
+// SYNTHETIC: GAMEMD 0x006E4AB0
+// ??_G?$VectorClass@PAVTActionClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x006E4B00
+// ??_G?$DynamicVectorClass@PAVTActionClass@@@@UAEPAXI@Z

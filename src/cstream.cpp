@@ -9,7 +9,7 @@
 
 extern ULONG COMRefCount;
 
-// FUNCTION: 0x004A2820
+// FUNCTION: GAMEMD 0x004A2820
 CStreamClass::CStreamClass(void) :
 	StreamPtr(NULL),
 	RefCount(0),
@@ -23,7 +23,7 @@ CStreamClass::CStreamClass(void) :
 	BlockHead.CompSize = BUFFER_SIZE - 1;
 }
 
-// FUNCTION: 0x004A2880
+// FUNCTION: GAMEMD 0x004A2880
 CStreamClass::~CStreamClass(void)
 {
 	IUnknown **unk = NULL;
@@ -39,14 +39,14 @@ CStreamClass::~CStreamClass(void)
 	StreamBuffer = NULL;
 }
 
-// FUNCTION: 0x004A2930
+// FUNCTION: GAMEMD 0x004A2930
 ULONG CStreamClass::AddRef(void)
 {
 	COMRefCount++;
 	return(InterlockedIncrement(&RefCount));
 }
 
-// FUNCTION: 0x004A2950
+// FUNCTION: GAMEMD 0x004A2950
 ULONG CStreamClass::Release(void)
 {
 	COMRefCount--;
@@ -59,7 +59,7 @@ ULONG CStreamClass::Release(void)
 	return(i);
 }
 
-// FUNCTION: 0x004A2990
+// FUNCTION: GAMEMD 0x004A2990
 LONG CStreamClass::QueryInterface(REFIID riid, LPVOID * ppvObject)
 {
 	if (ppvObject == NULL) {
@@ -83,7 +83,7 @@ LONG CStreamClass::QueryInterface(REFIID riid, LPVOID * ppvObject)
 	return(S_OK);
 }
 
-// FUNCTION: 0x004A2A20
+// FUNCTION: GAMEMD 0x004A2A20
 HRESULT CStreamClass::Link_Stream(IUnknown *stream)
 {
 	if (stream == NULL) {
@@ -108,7 +108,7 @@ HRESULT CStreamClass::Link_Stream(IUnknown *stream)
 	return(S_OK);
 }
 
-// FUNCTION: 0x004A2AB0
+// FUNCTION: GAMEMD 0x004A2AB0
 HRESULT CStreamClass::Unlink_Stream(IUnknown **stream)
 {
 	Compress();
@@ -132,7 +132,7 @@ HRESULT CStreamClass::Unlink_Stream(IUnknown **stream)
 	return(S_OK);
 }
 
-// FUNCTION: 0x004A2B60
+// FUNCTION: GAMEMD 0x004A2B60
 HRESULT CStreamClass::Read(void *pv, ULONG cb, ULONG *pcbRead)
 {
 	int read_size;
@@ -214,7 +214,7 @@ HRESULT CStreamClass::Read(void *pv, ULONG cb, ULONG *pcbRead)
 	return(S_OK);
 }
 
-// FUNCTION: 0x004A2CD0
+// FUNCTION: GAMEMD 0x004A2CD0
 HRESULT CStreamClass::Write(const void *pv, ULONG cb, ULONG *pcbWritten)
 {
 	unsigned char *ptr;
@@ -294,7 +294,7 @@ HRESULT CStreamClass::Write(const void *pv, ULONG cb, ULONG *pcbWritten)
 	return(S_OK);
 }
 
-// FUNCTION: 0x004A2E00
+// FUNCTION: GAMEMD 0x004A2E00
 HRESULT CStreamClass::Seek(LARGE_INTEGER dlibMove, DWORD dwOrigin, ULARGE_INTEGER *plibNewPosition)
 {
 	if (IsReading || IsWriting) {
@@ -304,7 +304,7 @@ HRESULT CStreamClass::Seek(LARGE_INTEGER dlibMove, DWORD dwOrigin, ULARGE_INTEGE
 	return(StreamPtr->Seek(dlibMove, dwOrigin, plibNewPosition));
 }
 
-// FUNCTION: 0x004A2E50
+// FUNCTION: GAMEMD 0x004A2E50
 HRESULT CStreamClass::SetSize(ULARGE_INTEGER libNewSize)
 {
 	if (IsReading || IsWriting) {
@@ -314,49 +314,49 @@ HRESULT CStreamClass::SetSize(ULARGE_INTEGER libNewSize)
 	return(StreamPtr->SetSize(libNewSize));
 }
 
-// FUNCTION: 0x004A2EA0
+// FUNCTION: GAMEMD 0x004A2EA0
 HRESULT CStreamClass::CopyTo(IStream *pstm, ULARGE_INTEGER cb, ULARGE_INTEGER *pcbRead, ULARGE_INTEGER *pcbWritten)
 {
 	return(StreamPtr->CopyTo(pstm, cb, pcbRead, pcbWritten));
 }
 
-// FUNCTION: 0x004A2EE0
+// FUNCTION: GAMEMD 0x004A2EE0
 HRESULT CStreamClass::Commit(DWORD grfCommitFlags)
 {
 	return(StreamPtr->Commit(grfCommitFlags));
 }
 
-// FUNCTION: 0x004A2F10
+// FUNCTION: GAMEMD 0x004A2F10
 HRESULT CStreamClass::Revert(void)
 {
 	return(StreamPtr->Revert());
 }
 
-// FUNCTION: 0x004A2F40
+// FUNCTION: GAMEMD 0x004A2F40
 HRESULT CStreamClass::LockRegion(ULARGE_INTEGER libOffset, ULARGE_INTEGER cb, DWORD dwLockType)
 {
 	return(StreamPtr->LockRegion(libOffset, cb, dwLockType));
 }
 
-// FUNCTION: 0x004A2F80
+// FUNCTION: GAMEMD 0x004A2F80
 HRESULT CStreamClass::UnlockRegion(ULARGE_INTEGER libOffset, ULARGE_INTEGER cb, DWORD dwLockType)
 {
 	return(StreamPtr->UnlockRegion(libOffset, cb, dwLockType));
 }
 
-// FUNCTION: 0x004A2FC0
+// FUNCTION: GAMEMD 0x004A2FC0
 HRESULT CStreamClass::Stat(STATSTG *pstatstg, DWORD grfStatFlag)
 {
 	return(StreamPtr->Stat(pstatstg, grfStatFlag));
 }
 
-// FUNCTION: 0x004A2FF0
+// FUNCTION: GAMEMD 0x004A2FF0
 HRESULT CStreamClass::Clone(IStream **ppstm)
 {
 	return(StreamPtr->Clone(ppstm));
 }
 
-// FUNCTION: 0x004A3020
+// FUNCTION: GAMEMD 0x004A3020
 HRESULT CStreamClass::Compress(void *in_buffer, ULONG length)
 {
 	HRESULT hr;
@@ -382,7 +382,7 @@ HRESULT CStreamClass::Compress(void *in_buffer, ULONG length)
 	return(hr);
 }
 
-// FUNCTION: 0x004A30E0
+// FUNCTION: GAMEMD 0x004A30E0
 HRESULT CStreamClass::Compress(void)
 {
 	if (IsWriting && CurOffset > 0) {
@@ -396,20 +396,26 @@ HRESULT CStreamClass::Compress(void)
 	return(S_OK);
 }
 
-// FUNCTION: 0x004A3110 CStreamClass::~CStreamClass
+// SYNTHETIC: GAMEMD 0x004A3110
+// ??_GCStreamClass@@UAEPAXI@Z
 
-// FUNCTION: 0x004A31F0 ?$_com_ptr_t@V?$_com_IIID@UIStream@@$1?_GUID_0000000c_0000_0000_c000_000000000046@@3U__s_GUID@@A@@::operator==
+// TEMPLATE: GAMEMD 0x004A31F0
+// ??8?$_com_ptr_t@V?$_com_IIID@UIStream@@$1?_GUID_0000000c_0000_0000_c000_000000000046@@3U__s_GUID@@A@@@@QAE_NH@Z
 
-// FUNCTION: 0x004A3220 CStreamClass::QueryInterface
+// FUNCTION: GAMEMD 0x004A3220
+// CStreamClass::QueryInterface
 
-// FUNCTION: 0x004A3230 CStreamClass::AddRef
+// FUNCTION: GAMEMD 0x004A3230
+// CStreamClass::AddRef
 
-// FUNCTION: 0x004A3240 CStreamClass::Release
+// FUNCTION: GAMEMD 0x004A3240
+// CStreamClass::Release
 
 struct IntQuad {
 	int A, B, C, D;
 	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
 };
 
-// FUNCTION: 0x004A3250 $E2
+// SYNTHETIC: GAMEMD 0x004A3250 SYMBOL
+// _$E2
 IntQuad DAT_0089F960;

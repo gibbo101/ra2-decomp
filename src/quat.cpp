@@ -9,25 +9,39 @@
 #include "fastmath.h"
 #include "matrix3d.h"
 #include "rect.h"
-// FUNCTION: 0x00646A80 $E2
-// FUNCTION: 0x00646AB0 $E5
-// FUNCTION: 0x00646AD0 $E8
-// FUNCTION: 0x00646AF0 $E11
-// FUNCTION: 0x00646B10 $E14
-// FUNCTION: 0x00646B30 $E17
-// FUNCTION: 0x00646B50 $E20
-// FUNCTION: 0x00646B90 $E23
-// FUNCTION: 0x00646BC0 $E26
-// FUNCTION: 0x00646BF0 $E29
-// FUNCTION: 0x00646C20 $E32
-// FUNCTION: 0x00646C30 $E35
-// FUNCTION: 0x00646C50 $E38
-// FUNCTION: 0x00646C70 $E41
+// SYNTHETIC: GAMEMD 0x00646A80 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x00646AB0 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x00646AD0 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x00646AF0 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x00646B10 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x00646B30 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x00646B50 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x00646B90 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x00646BC0 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x00646BF0 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x00646C20 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x00646C30 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x00646C50 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x00646C70 SYMBOL
+// _$E41
 
 #define SLERP_EPSILON 1e-5
 #define SLERP_HALF_PI 1.570796326794895
 
-// FUNCTION: 0x00645C30
+// FUNCTION: GAMEMD 0x00645C30
 Quaternion::Quaternion(float x, float y, float z, float w)
 {
 	X=x;
@@ -36,7 +50,7 @@ Quaternion::Quaternion(float x, float y, float z, float w)
 	W=w;
 }
 
-// FUNCTION: 0x00645C50
+// FUNCTION: GAMEMD 0x00645C50
 void Quaternion::Set(float x, float y, float z, float w)
 {
 	X=x;
@@ -45,7 +59,7 @@ void Quaternion::Set(float x, float y, float z, float w)
 	W=w;
 }
 
-// FUNCTION: 0x00645C70
+// FUNCTION: GAMEMD 0x00645C70
 void Quaternion::Normalize(void)
 {
 	float len2 = X * X + Y * Y + Z * Z + W * W;
@@ -58,7 +72,7 @@ void Quaternion::Normalize(void)
 	}
 }
 
-// FUNCTION: 0x00645CD0
+// FUNCTION: GAMEMD 0x00645CD0
 void Quaternion::Scale(float s)
 {
 	X = (float)(s * X);
@@ -67,19 +81,19 @@ void Quaternion::Scale(float s)
 	W = (float)(s * W);
 }
 
-// FUNCTION: 0x00645D00
+// FUNCTION: GAMEMD 0x00645D00
 float & Quaternion::operator [](int i)
 {
 	return (&X)[i];
 }
 
-// FUNCTION: 0x00645D10
+// FUNCTION: GAMEMD 0x00645D10
 const float Quaternion::operator [](int i) const
 {
 	return (&X)[i];
 }
 
-// FUNCTION: 0x00645D20
+// FUNCTION: GAMEMD 0x00645D20
 Quaternion Quaternion::operator=(const Quaternion & q)
 {
 	X = q[0];
@@ -90,25 +104,25 @@ Quaternion Quaternion::operator=(const Quaternion & q)
 	return(*this);
 }
 
-// FUNCTION: 0x00646040
+// FUNCTION: GAMEMD 0x00646040
 Quaternion operator / (const Quaternion & a,const Quaternion & b)
 {
 	return(a * Inverse(b));
 }
 
-// FUNCTION: 0x006460C0
+// FUNCTION: GAMEMD 0x006460C0
 Quaternion Inverse(const Quaternion & q)
 {
 	return(Quaternion(-q[0],-q[1],-q[2],q[3]));
 }
 
-// FUNCTION: 0x00646110
+// FUNCTION: GAMEMD 0x00646110
 Quaternion Conjugate(const Quaternion & q)
 {
 	return(Quaternion(-q.X,-q.Y,-q.Z,q.W));
 }
 
-// FUNCTION: 0x00646480
+// FUNCTION: GAMEMD 0x00646480
 Quaternion Axis_To_Quat(const Vector3 &a, float phi)
 {
 	Quaternion q;
@@ -125,7 +139,7 @@ Quaternion Axis_To_Quat(const Vector3 &a, float phi)
 	return(q);
 }
 
-// FUNCTION: 0x00646590
+// FUNCTION: GAMEMD 0x00646590
 Quaternion Slerp(const Quaternion &a, const Quaternion &b, float t)
 {
 	Quaternion res;
@@ -161,7 +175,7 @@ Quaternion Slerp(const Quaternion &a, const Quaternion &b, float t)
 	return(res);
 }
 
-// FUNCTION: 0x00646730
+// FUNCTION: GAMEMD 0x00646730
 Quaternion Build_Quaternion(const Matrix3D& mat)
 {
 	const float * m = (float const *)&mat;
@@ -233,7 +247,7 @@ Quaternion Build_Quaternion(const Matrix3D& mat)
 	return(q);
 }
 
-// FUNCTION: 0x00646980
+// FUNCTION: GAMEMD 0x00646980
 Matrix3D Build_Matrix3D(const Quaternion &q)
 {
 	Matrix3D m;

@@ -11,7 +11,7 @@
 #include <climits>
 #include <cstring>
 
-// FUNCTION: 0x00661730
+// FUNCTION: GAMEMD 0x00661730
 void RandomStraw::Reset(void)
 {
 	SeedBits = 0;
@@ -19,7 +19,7 @@ void RandomStraw::Reset(void)
 	memset(Random, '\0', sizeof(Random));
 }
 
-// FUNCTION: 0x00661750
+// FUNCTION: GAMEMD 0x00661750
 int RandomStraw::Seed_Bits_Needed(void) const
 {
 	const int total = sizeof(Random) * CHAR_BIT;
@@ -29,7 +29,7 @@ int RandomStraw::Seed_Bits_Needed(void) const
 	return(0);
 }
 
-// FUNCTION: 0x00661770
+// FUNCTION: GAMEMD 0x00661770
 void RandomStraw::Seed_Bit(int seed)
 {
 	char * ptr = ((char *)&Random[0]) + ((SeedBits / CHAR_BIT) % sizeof(Random));
@@ -45,7 +45,7 @@ void RandomStraw::Seed_Bit(int seed)
 	}
 }
 
-// FUNCTION: 0x00661850
+// FUNCTION: GAMEMD 0x00661850
 void RandomStraw::Seed_Byte(char seed)
 {
 	for (int index = 0; index < CHAR_BIT; index++) {
@@ -54,7 +54,7 @@ void RandomStraw::Seed_Byte(char seed)
 	}
 }
 
-// FUNCTION: 0x00661960
+// FUNCTION: GAMEMD 0x00661960
 void RandomStraw::Seed_Short(short seed)
 {
 	for (int index = 0; index < (sizeof(seed)*CHAR_BIT); index++) {
@@ -63,7 +63,7 @@ void RandomStraw::Seed_Short(short seed)
 	}
 }
 
-// FUNCTION: 0x00661A60
+// FUNCTION: GAMEMD 0x00661A60
 void RandomStraw::Seed_Long(int seed)
 {
 	for (int index = 0; index < (sizeof(seed)*CHAR_BIT); index++) {
@@ -72,7 +72,7 @@ void RandomStraw::Seed_Long(int seed)
 	}
 }
 
-// FUNCTION: 0x00661B70
+// FUNCTION: GAMEMD 0x00661B70
 void RandomStraw::Scramble_Seed(void)
 {
 	SHAEngine sha;
@@ -88,7 +88,7 @@ void RandomStraw::Scramble_Seed(void)
 	}
 }
 
-// FUNCTION: 0x00661C10
+// FUNCTION: GAMEMD 0x00661C10
 int RandomStraw::Get(void * source, int slen)
 {
 	if (source == NULL || slen < 1) {
@@ -106,24 +106,39 @@ int RandomStraw::Get(void * source, int slen)
 	return(total);
 }
 
-// FUNCTION: 0x00661C70 ~RandomStraw
+// SYNTHETIC: GAMEMD 0x00661C70
+// ??_GRandomStraw@@UAEPAXI@Z
 RandomStraw::~RandomStraw(void)
 {
 	Reset();
 }
 
-// FUNCTION: 0x00661CB0 $E2
-// FUNCTION: 0x00661CE0 $E5
-// FUNCTION: 0x00661D00 $E8
-// FUNCTION: 0x00661D20 $E11
-// FUNCTION: 0x00661D40 $E14
-// FUNCTION: 0x00661D60 $E17
-// FUNCTION: 0x00661D80 $E20
-// FUNCTION: 0x00661DC0 $E23
-// FUNCTION: 0x00661DF0 $E26
-// FUNCTION: 0x00661E20 $E29
-// FUNCTION: 0x00661E50 $E32
+// SYNTHETIC: GAMEMD 0x00661CB0 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x00661CE0 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x00661D00 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x00661D20 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x00661D40 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x00661D60 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x00661D80 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x00661DC0 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x00661DF0 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x00661E20 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x00661E50 SYMBOL
+// _$E32
 
-// FUNCTION: 0x00661E60 $E35
-// FUNCTION: 0x00661E80 $E38
-// FUNCTION: 0x00661EA0 $E43
+// SYNTHETIC: GAMEMD 0x00661E60 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x00661E80 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x00661EA0 SYMBOL
+// _$E43

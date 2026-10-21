@@ -44,22 +44,36 @@
 #include "xstraw.h"
 #include "overlay.hh"
 
-// FUNCTION: 0x005FC170 $E2
-// FUNCTION: 0x005FC1A0 $E5
-// FUNCTION: 0x005FC1C0 $E8
-// FUNCTION: 0x005FC1E0 $E11
-// FUNCTION: 0x005FC200 $E14
-// FUNCTION: 0x005FC220 $E17
-// FUNCTION: 0x005FC240 $E20
-// FUNCTION: 0x005FC280 $E23
-// FUNCTION: 0x005FC2B0 $E26
-// FUNCTION: 0x005FC2E0 $E29
-// FUNCTION: 0x005FC310 $E32
-// FUNCTION: 0x005FC320 $E35
-// FUNCTION: 0x005FC340 $E38
-// FUNCTION: 0x005FC360 $E41
+// SYNTHETIC: GAMEMD 0x005FC170 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x005FC1A0 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x005FC1C0 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x005FC1E0 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x005FC200 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x005FC220 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x005FC240 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x005FC280 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x005FC2B0 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x005FC2E0 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x005FC310 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x005FC320 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x005FC340 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x005FC360 SYMBOL
+// _$E41
 
-// FUNCTION: 0x005FC380
+// FUNCTION: GAMEMD 0x005FC380
 OverlayClass::OverlayClass(OverlayTypeClass const * ttype, Cell const & pos, HousesType house) :
 	Class((OverlayTypeClass *)ttype)
 {
@@ -78,8 +92,8 @@ OverlayClass::OverlayClass(OverlayTypeClass const * ttype, Cell const & pos, Hou
 	}
 }
 
-// FUNCTION: 0x005FC4D0
-// FUNCTION: 0x005FDF70
+// FUNCTION: GAMEMD 0x005FC4D0
+// FUNCTION: GAMEMD 0x005FDF70
 OverlayClass::~OverlayClass(void)
 {
 	Detach_This_From_All(this, true);
@@ -91,7 +105,7 @@ OverlayClass::~OverlayClass(void)
 	Class = NULL;
 }
 
-// FUNCTION: 0x005FD270
+// FUNCTION: GAMEMD 0x005FD270
 bool OverlayClass::Unlimbo(Coord const & coord, Dir256 facing)
 {
 	CellClass & cellref = Map[coord.As_Cell()];
@@ -101,7 +115,7 @@ bool OverlayClass::Unlimbo(Coord const & coord, Dir256 facing)
 	return(BASECLASS::Unlimbo(coord, facing));
 }
 
-// FUNCTION: 0x005FD2E0
+// FUNCTION: GAMEMD 0x005FD2E0
 void OverlayClass::Read_INI(CCINIClass & ini)
 {
 	ini.Reset();
@@ -176,7 +190,7 @@ void OverlayClass::Read_INI(CCINIClass & ini)
 	Process_Deferred_Deletion();
 }
 
-// FUNCTION: 0x005FD6A0
+// FUNCTION: GAMEMD 0x005FD6A0
 void OverlayClass::Write_INI(CCINIClass & ini)
 {
 	ini.Clear(INI_NAME);
@@ -220,7 +234,7 @@ void OverlayClass::Write_INI(CCINIClass & ini)
 	AlternateSurface->Unlock();
 }
 
-// FUNCTION: 0x005FD8F0
+// FUNCTION: GAMEMD 0x005FD8F0
 HRESULT STDMETHODCALLTYPE OverlayClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -232,14 +246,14 @@ HRESULT STDMETHODCALLTYPE OverlayClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x005FD950
+// FUNCTION: GAMEMD 0x005FD950
 HRESULT STDMETHODCALLTYPE OverlayClass::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
 	return(result);
 }
 
-// FUNCTION: 0x005FD970
+// FUNCTION: GAMEMD 0x005FD970
 void OverlayClass::Editor_Draw_It(Point2D const & point, Rect const & cliprect) const
 {
 	ShapeSet const * shapefile = (ShapeSet const *)Class->Get_Image_Data();
@@ -275,7 +289,7 @@ void OverlayClass::Editor_Draw_It(Point2D const & point, Rect const & cliprect) 
 	}
 }
 
-// FUNCTION: 0x005FDCC0
+// FUNCTION: GAMEMD 0x005FDCC0
 Point2D Overlay_Draw_Offset(OverlayType overlay)
 {
 	OverlayTypeClass const & otype = *OverlayTypes[overlay];
@@ -294,7 +308,7 @@ Point2D Overlay_Draw_Offset(OverlayType overlay)
 	return(offset);
 }
 
-// FUNCTION: 0x005FDD20
+// FUNCTION: GAMEMD 0x005FDD20
 TiberiumType Which_Tiberium_Type(OverlayType overlay)
 {
 	if (overlay != OVERLAY_NONE) {
@@ -319,13 +333,13 @@ TiberiumType Which_Tiberium_Type(OverlayType overlay)
 	return(TIBERIUM_NONE);
 }
 
-// FUNCTION: 0x005FDDE0
+// FUNCTION: GAMEMD 0x005FDDE0
 ObjectTypeClass const * OverlayClass::Class_Of(void) const
 {
 	return(Class);
 }
 
-// FUNCTION: 0x005FDDF0
+// FUNCTION: GAMEMD 0x005FDDF0
 void OverlayClass::Post_Read_Vein_Fixups(void)
 {
 	int index;
@@ -354,8 +368,9 @@ void OverlayClass::Post_Read_Vein_Fixups(void)
 	}
 }
 
-// FUNCTION: 0x005FDF00 OverlayClass::Fetch_Object_Size
-// FUNCTION: 0x005FDF10
+// FUNCTION: GAMEMD 0x005FDF00
+// OverlayClass::Fetch_Object_Size
+// FUNCTION: GAMEMD 0x005FDF10
 HRESULT STDMETHODCALLTYPE OverlayClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -363,8 +378,11 @@ HRESULT STDMETHODCALLTYPE OverlayClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x005FDF50 OverlayClass::Fetch_RTTI
-// FUNCTION: 0x005FDF60 OverlayClass::Draw_It
+// FUNCTION: GAMEMD 0x005FDF50
+// OverlayClass::Fetch_RTTI
+// TEMPLATE: GAMEMD 0x005FDF60
+// ?Draw_It@OverlayClass@@UBEXABVPoint2D@@ABV?$TRect@H@@@Z
 
-// FUNCTION: 0x005FE020 XSurface::XSurface
+// FUNCTION: GAMEMD 0x005FE020
+// XSurface::XSurface
 

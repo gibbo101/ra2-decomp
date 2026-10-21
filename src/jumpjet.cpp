@@ -38,7 +38,7 @@ extern const double DAT_007E1740;
 extern const double DAT_007ECE68;
 extern const double DAT_007ECE70;
 
-// FUNCTION: 0x0054AC40
+// FUNCTION: GAMEMD 0x0054AC40
 JumpjetLocomotionClass::JumpjetLocomotionClass(void) :
 	BASECLASS(),
 	HeadToCoord(COORD_NONE),
@@ -57,12 +57,12 @@ JumpjetLocomotionClass::JumpjetLocomotionClass(void) :
 	Facing.Set(DIR_E);
 }
 
-// FUNCTION: 0x0054AD00
+// FUNCTION: GAMEMD 0x0054AD00
 JumpjetLocomotionClass::~JumpjetLocomotionClass(void)
 {
 }
 
-// FUNCTION: 0x0054AD30
+// FUNCTION: GAMEMD 0x0054AD30
 HRESULT STDMETHODCALLTYPE JumpjetLocomotionClass::Link_To_Object(void * object)
 {
 	FootClass * foot = (FootClass *)object;
@@ -83,13 +83,13 @@ HRESULT STDMETHODCALLTYPE JumpjetLocomotionClass::Link_To_Object(void * object)
 	return(BASECLASS::Link_To_Object(object));
 }
 
-// FUNCTION: 0x0054AE50
+// FUNCTION: GAMEMD 0x0054AE50
 boolean STDMETHODCALLTYPE JumpjetLocomotionClass::Is_Moving(void)
 {
 	return(IsMoving);
 }
 
-// FUNCTION: 0x0054AE60
+// FUNCTION: GAMEMD 0x0054AE60
 CoordStruct STDMETHODCALLTYPE JumpjetLocomotionClass::Destination(void)
 {
 	if (Is_Moving()) {
@@ -99,7 +99,7 @@ CoordStruct STDMETHODCALLTYPE JumpjetLocomotionClass::Destination(void)
 	}
 }
 
-// FUNCTION: 0x0054B1C0
+// FUNCTION: GAMEMD 0x0054B1C0
 void STDMETHODCALLTYPE JumpjetLocomotionClass::Move_To(CoordStruct to)
 {
 	if (HeadToCoord != COORD_NONE && CurrentState != GROUNDED && IsLanding) {
@@ -143,7 +143,7 @@ void STDMETHODCALLTYPE JumpjetLocomotionClass::Move_To(CoordStruct to)
 	}
 }
 
-// FUNCTION: 0x0054B4D0
+// FUNCTION: GAMEMD 0x0054B4D0
 void STDMETHODCALLTYPE JumpjetLocomotionClass::Stop_Moving(void)
 {
 	if (!ScenarioInit && IsMoving) {
@@ -171,13 +171,13 @@ void STDMETHODCALLTYPE JumpjetLocomotionClass::Stop_Moving(void)
 	}
 }
 
-// FUNCTION: 0x0054B6E0
+// FUNCTION: GAMEMD 0x0054B6E0
 void STDMETHODCALLTYPE JumpjetLocomotionClass::Do_Turn(DirStruct coord)
 {
 	LinkedTo->PrimaryFacing.Set(coord);
 }
 
-// FUNCTION: 0x0054B710
+// FUNCTION: GAMEMD 0x0054B710
 HRESULT STDMETHODCALLTYPE JumpjetLocomotionClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -185,7 +185,7 @@ HRESULT STDMETHODCALLTYPE JumpjetLocomotionClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x0054B750
+// FUNCTION: GAMEMD 0x0054B750
 HRESULT STDMETHODCALLTYPE JumpjetLocomotionClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -202,7 +202,7 @@ HRESULT STDMETHODCALLTYPE JumpjetLocomotionClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x0054B7E0
+// FUNCTION: GAMEMD 0x0054B7E0
 HRESULT STDMETHODCALLTYPE JumpjetLocomotionClass::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -221,7 +221,7 @@ HRESULT STDMETHODCALLTYPE JumpjetLocomotionClass::Save(IStream * stream, BOOL cl
 	return(result);
 }
 
-// FUNCTION: 0x0054B8D0
+// FUNCTION: GAMEMD 0x0054B8D0
 LayerType STDMETHODCALLTYPE JumpjetLocomotionClass::In_Which_Layer(void)
 {
 	int height = LinkedTo->HeightAGL;
@@ -242,7 +242,7 @@ LayerType STDMETHODCALLTYPE JumpjetLocomotionClass::In_Which_Layer(void)
 	return((LayerType)layer);
 }
 
-// FUNCTION: 0x0054B980
+// FUNCTION: GAMEMD 0x0054B980
 void JumpjetLocomotionClass::Process_Grounded(void)
 {
 	if (Is_Moving()) {
@@ -269,7 +269,7 @@ static inline DirType & Direction_To(DirType & dir, Coord const & coord1, Coord 
 	return dir;
 }
 
-// FUNCTION: 0x0054BA30
+// FUNCTION: GAMEMD 0x0054BA30
 void JumpjetLocomotionClass::Process_Ascent(void)
 {
 	int height = LinkedTo->HeightAGL;
@@ -339,7 +339,7 @@ static inline void Release_Jumpjet(FootClass * const & foot)
 	}
 }
 
-// FUNCTION: 0x0054BFF0
+// FUNCTION: GAMEMD 0x0054BFF0
 void JumpjetLocomotionClass::Process_Cruise(void)
 {
 	Coord position = LinkedTo->PositionCoord;
@@ -449,7 +449,7 @@ void JumpjetLocomotionClass::Process_Cruise(void)
 	}
 }
 
-// FUNCTION: 0x0054C550
+// FUNCTION: GAMEMD 0x0054C550
 void JumpjetLocomotionClass::Process_Descent(void)
 {
 	CellClass * cellptr = &Map[HeadToCoord];
@@ -564,12 +564,12 @@ void JumpjetLocomotionClass::Process_Descent(void)
 	}
 }
 
-// FUNCTION: 0x0054D0C0
+// FUNCTION: GAMEMD 0x0054D0C0
 void JumpjetLocomotionClass::Process_Unknown(void)
 {
 }
 
-// FUNCTION: 0x0054D0D0
+// FUNCTION: GAMEMD 0x0054D0D0
 boolean STDMETHODCALLTYPE JumpjetLocomotionClass::Is_Moving_Now(void)
 {
 	if (CurrentState != GROUNDED && CurrentState != HOVERING) {
@@ -578,7 +578,7 @@ boolean STDMETHODCALLTYPE JumpjetLocomotionClass::Is_Moving_Now(void)
 	return(false);
 }
 
-// FUNCTION: 0x0054D6D0
+// FUNCTION: GAMEMD 0x0054D6D0
 Coord JumpjetLocomotionClass::Closest_Free_Spot(Coord const & to) const
 {
 	Coord closest;
@@ -602,7 +602,7 @@ Coord JumpjetLocomotionClass::Closest_Free_Spot(Coord const & to) const
 	return(closest);
 }
 
-// FUNCTION: 0x0054D820
+// FUNCTION: GAMEMD 0x0054D820
 int JumpjetLocomotionClass::Desired_Flight_Level(void) const
 {
 	Coord coord = LinkedTo->PositionCoord;
@@ -626,7 +626,7 @@ int JumpjetLocomotionClass::Desired_Flight_Level(void) const
 	return(height);
 }
 
-// FUNCTION: 0x0054D930
+// FUNCTION: GAMEMD 0x0054D930
 void STDMETHODCALLTYPE JumpjetLocomotionClass::Mark_All_Occupation_Bits(int mark)
 {
 	if (mark == MARK_UP) {
@@ -638,7 +638,7 @@ void STDMETHODCALLTYPE JumpjetLocomotionClass::Mark_All_Occupation_Bits(int mark
 	}
 }
 
-// FUNCTION: 0x0054D9B0
+// FUNCTION: GAMEMD 0x0054D9B0
 CoordStruct STDMETHODCALLTYPE JumpjetLocomotionClass::Head_To_Coord(void)
 {
 	if (CurrentState == GROUNDED) {
@@ -648,7 +648,7 @@ CoordStruct STDMETHODCALLTYPE JumpjetLocomotionClass::Head_To_Coord(void)
 	}
 }
 
-// FUNCTION: 0x0054DA00
+// FUNCTION: GAMEMD 0x0054DA00
 HRESULT STDMETHODCALLTYPE JumpjetLocomotionClass::Begin_Piggyback(ILocomotion * pointer)
 {
 	if (pointer == NULL) {
@@ -661,7 +661,7 @@ HRESULT STDMETHODCALLTYPE JumpjetLocomotionClass::Begin_Piggyback(ILocomotion * 
 	return(E_FAIL);
 }
 
-// FUNCTION: 0x0054DA50
+// FUNCTION: GAMEMD 0x0054DA50
 HRESULT STDMETHODCALLTYPE JumpjetLocomotionClass::End_Piggyback(ILocomotion ** pointer)
 {
 	if (pointer == NULL) {
@@ -688,7 +688,7 @@ HRESULT STDMETHODCALLTYPE JumpjetLocomotionClass::End_Piggyback(ILocomotion ** p
 	return(S_FALSE);
 }
 
-// FUNCTION: 0x0054DB00
+// FUNCTION: GAMEMD 0x0054DB00
 boolean STDMETHODCALLTYPE JumpjetLocomotionClass::Is_Ok_To_End(void)
 {
 	if (!Is_Moving() && Piggybacker != NULL && !IsPiggyReady) {
@@ -699,7 +699,7 @@ boolean STDMETHODCALLTYPE JumpjetLocomotionClass::Is_Ok_To_End(void)
 	return(false);
 }
 
-// FUNCTION: 0x0054DB50
+// FUNCTION: GAMEMD 0x0054DB50
 HRESULT STDMETHODCALLTYPE JumpjetLocomotionClass::Piggyback_CLSID(GUID * classid)
 {
 	if (classid == NULL) {
@@ -721,7 +721,7 @@ HRESULT STDMETHODCALLTYPE JumpjetLocomotionClass::Piggyback_CLSID(GUID * classid
 	return(ptr->GetClassID(classid));
 }
 
-// FUNCTION: 0x0054DC60
+// FUNCTION: GAMEMD 0x0054DC60
 HRESULT STDMETHODCALLTYPE JumpjetLocomotionClass::QueryInterface(REFIID riid, LPVOID * ppvObject)
 {
 	HRESULT result = BASECLASS::QueryInterface(riid, ppvObject);
@@ -740,7 +740,7 @@ HRESULT STDMETHODCALLTYPE JumpjetLocomotionClass::QueryInterface(REFIID riid, LP
 	return(result);
 }
 
-// FUNCTION: 0x0054DCC0
+// FUNCTION: GAMEMD 0x0054DCC0
 Matrix3DStruct STDMETHODCALLTYPE JumpjetLocomotionClass::Draw_Matrix(int * key)
 {
 	if (LinkedTo->TClass->TiltCrashJumpjet && ((float)fabs(LinkedTo->AngleRotatedSideways) >= 0.005 || (float)fabs(LinkedTo->AngleRotatedForwards) >= 0.005)) {
@@ -784,64 +784,83 @@ Matrix3DStruct STDMETHODCALLTYPE JumpjetLocomotionClass::Draw_Matrix(int * key)
 	return(BASECLASS::Draw_Matrix(key));
 }
 
-// FUNCTION: 0x0054DF50
+// FUNCTION: GAMEMD 0x0054DF50
 ULONG STDMETHODCALLTYPE JumpjetLocomotionClass::AddRef(void)
 {
 	return(BASECLASS::AddRef());
 }
 
-// FUNCTION: 0x0054DF60
+// FUNCTION: GAMEMD 0x0054DF60
 ULONG STDMETHODCALLTYPE JumpjetLocomotionClass::Release(void)
 {
 	return(BASECLASS::Release());
 }
 
-// FUNCTION: 0x0054DF70 JumpjetLocomotionClass::Is_Piggybacking
+// FUNCTION: GAMEMD 0x0054DF70
+// JumpjetLocomotionClass::Is_Piggybacking
 
-// FUNCTION: 0x0054DF90 JumpjetLocomotionClass::Fetch_Object_Size
+// FUNCTION: GAMEMD 0x0054DF90
+// JumpjetLocomotionClass::Fetch_Object_Size
 
-// FUNCTION: 0x0054DFA0 JumpjetLocomotionClass::~JumpjetLocomotionClass
+// SYNTHETIC: GAMEMD 0x0054DFA0
+// ??_GJumpjetLocomotionClass@@UAEPAXI@Z
 
-// FUNCTION: 0x0054DFF0 JumpjetLocomotionClass::QueryInterface
+// FUNCTION: GAMEMD 0x0054DFF0
+// JumpjetLocomotionClass::QueryInterface
 
-// FUNCTION: 0x0054E000 JumpjetLocomotionClass::AddRef
+// FUNCTION: GAMEMD 0x0054E000
+// JumpjetLocomotionClass::AddRef
 
-// FUNCTION: 0x0054E010 JumpjetLocomotionClass::Release
+// FUNCTION: GAMEMD 0x0054E010
+// JumpjetLocomotionClass::Release
 
-// FUNCTION: 0x0054E020 JumpjetLocomotionClass::QueryInterface
+// FUNCTION: GAMEMD 0x0054E020
+// JumpjetLocomotionClass::QueryInterface
 
-// FUNCTION: 0x0054E030 JumpjetLocomotionClass::AddRef
+// FUNCTION: GAMEMD 0x0054E030
+// JumpjetLocomotionClass::AddRef
 
-// FUNCTION: 0x0054E040 JumpjetLocomotionClass::Release
+// FUNCTION: GAMEMD 0x0054E040
+// JumpjetLocomotionClass::Release
 
-// FUNCTION: 0x0054E050 $E102
+// SYNTHETIC: GAMEMD 0x0054E050 SYMBOL
+// _$E102
 double DAT_00ABC638 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x0054E080 $E105
+// SYNTHETIC: GAMEMD 0x0054E080 SYMBOL
+// _$E105
 double DAT_00ABC688 = DAT_00ABC638 / DAT_007ECE68;
 
-// FUNCTION: 0x0054E0A0 $E108
+// SYNTHETIC: GAMEMD 0x0054E0A0 SYMBOL
+// _$E108
 double DAT_00ABC670 = DAT_007E1718 / DAT_00ABC688;
 
-// FUNCTION: 0x0054E0C0 $E111
+// SYNTHETIC: GAMEMD 0x0054E0C0 SYMBOL
+// _$E111
 double DAT_00ABC668 = DAT_007E1720 * DAT_007ECE70;
 
-// FUNCTION: 0x0054E0E0 $E114
+// SYNTHETIC: GAMEMD 0x0054E0E0 SYMBOL
+// _$E114
 double DAT_00ABC640 = DAT_007E1728 * DAT_007ECE70;
 
-// FUNCTION: 0x0054E100 $E117
+// SYNTHETIC: GAMEMD 0x0054E100 SYMBOL
+// _$E117
 double DAT_00ABC5F0 = DAT_007E1730 * DAT_007ECE70;
 
-// FUNCTION: 0x0054E120 $E120
+// SYNTHETIC: GAMEMD 0x0054E120 SYMBOL
+// _$E120
 int DAT_00ABC690 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00ABC5F0 - DAT_00ABC640) * DAT_00ABC638));
 
-// FUNCTION: 0x0054E160 $E123
+// SYNTHETIC: GAMEMD 0x0054E160 SYMBOL
+// _$E123
 double DAT_00ABC648 = FUN_004CADE0(DAT_00ABC690 * DAT_007E1740);
 
-// FUNCTION: 0x0054E190 $E126
+// SYNTHETIC: GAMEMD 0x0054E190 SYMBOL
+// _$E126
 double DAT_00ABC660 = FUN_004CADE0((DAT_00ABC690 * 2) / DAT_00ABC638);
 
-// FUNCTION: 0x0054E1C0 $E129
+// SYNTHETIC: GAMEMD 0x0054E1C0 SYMBOL
+// _$E129
 int DAT_00ABC684 = (int)(DAT_00ABC690 * 4 + DAT_007E1738);
 
 struct ShortPair_ABC630 {
@@ -850,7 +869,8 @@ struct ShortPair_ABC630 {
 	ShortPair_ABC630(void) : X(0), Y(0) {}
 };
 
-// FUNCTION: 0x0054E1F0 $E132
+// SYNTHETIC: GAMEMD 0x0054E1F0 SYMBOL
+// _$E132
 ShortPair_ABC630 DAT_00ABC630;
 
 struct IntTriple_ABC650 {
@@ -858,7 +878,8 @@ struct IntTriple_ABC650 {
 	IntTriple_ABC650() { A = 0; B = 0; C = 0; }
 };
 
-// FUNCTION: 0x0054E200 $E135
+// SYNTHETIC: GAMEMD 0x0054E200 SYMBOL
+// _$E135
 IntTriple_ABC650 DAT_00ABC650;
 
 struct IntTriple_ABC678 {
@@ -866,7 +887,8 @@ struct IntTriple_ABC678 {
 	IntTriple_ABC678() { C = 0; A = 128; B = 128; }
 };
 
-// FUNCTION: 0x0054E220 $E138
+// SYNTHETIC: GAMEMD 0x0054E220 SYMBOL
+// _$E138
 IntTriple_ABC678 DAT_00ABC678;
 
 struct IntQuad_ABC620 {
@@ -874,5 +896,6 @@ struct IntQuad_ABC620 {
 	IntQuad_ABC620() { A = 0; B = 0; C = 0; D = 0; }
 };
 
-// FUNCTION: 0x0054E240 $E141
+// SYNTHETIC: GAMEMD 0x0054E240 SYMBOL
+// _$E141
 IntQuad_ABC620 DAT_00ABC620;

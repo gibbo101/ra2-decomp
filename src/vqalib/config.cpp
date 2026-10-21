@@ -74,7 +74,7 @@ static VQAConfig _defaultconfig = {
 	0
 };
 
-// FUNCTION: 0x007BE640
+// FUNCTION: GAMEMD 0x007BE640
 void VQA_DefaultConfig(VQAConfig *config)
 {
 	memcpy(config, &_defaultconfig, sizeof(VQAConfig));

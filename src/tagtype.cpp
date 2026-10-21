@@ -38,11 +38,13 @@ struct ShortPair {
 	ShortPair() { A = 0; B = 0; }
 };
 
-// FUNCTION: 0x006E5AE0 $E16
-// FUNCTION: 0x006E5B20 $E14
+// SYNTHETIC: GAMEMD 0x006E5AE0 SYMBOL
+// _$E16
+// SYNTHETIC: GAMEMD 0x006E5B20 SYMBOL
+// _$E14
 DynamicVectorClass<TagTypeClass *> TagTypes;
 
-// FUNCTION: 0x006E5B60
+// FUNCTION: GAMEMD 0x006E5B60
 TagTypeClass::TagTypeClass(char const *name) :
 	BASECLASS(name),
 	HeapID(-1),
@@ -55,7 +57,7 @@ TagTypeClass::TagTypeClass(char const *name) :
 	AbstractTypePtrTracker.Add(this);
 }
 
-// FUNCTION: 0x006E5CA0
+// FUNCTION: GAMEMD 0x006E5CA0
 TagTypeClass::~TagTypeClass(void)
 {
 	Detach_This_From_All(this, true);
@@ -77,7 +79,7 @@ TagTypeClass::~TagTypeClass(void)
 	TagTypes.Delete(this);
 }
 
-// FUNCTION: 0x006E5DD0
+// FUNCTION: GAMEMD 0x006E5DD0
 bool TagTypeClass::Link(TriggerTypeClass *trigger)
 {
 	if (trigger != NULL) {
@@ -88,7 +90,7 @@ bool TagTypeClass::Link(TriggerTypeClass *trigger)
 	return(false);
 }
 
-// FUNCTION: 0x006E5E00
+// FUNCTION: GAMEMD 0x006E5E00
 bool TagTypeClass::Unlink(TriggerTypeClass *trigger)
 {
 	if (FirstTrigger == trigger) {
@@ -106,7 +108,7 @@ bool TagTypeClass::Unlink(TriggerTypeClass *trigger)
 	return(false);
 }
 
-// FUNCTION: 0x006E5E50
+// FUNCTION: GAMEMD 0x006E5E50
 void TagTypeClass::Detach(AbstractClass const * target, bool all)
 {
 	if (FirstTrigger == target) {
@@ -114,7 +116,7 @@ void TagTypeClass::Detach(AbstractClass const * target, bool all)
 	}
 }
 
-// FUNCTION: 0x006E5E70
+// FUNCTION: GAMEMD 0x006E5E70
 TagTypeClass * TagTypeClass::From_Name(char const * name)
 {
 	if (name != NULL) {
@@ -128,7 +130,7 @@ TagTypeClass * TagTypeClass::From_Name(char const * name)
 	return(NULL);
 }
 
-// FUNCTION: 0x006E5ED0
+// FUNCTION: GAMEMD 0x006E5ED0
 void TagTypeClass::Read_All(CCINIClass & ini)
 {
 	int len = ini.Entry_Count(INI_NAME);
@@ -144,7 +146,7 @@ void TagTypeClass::Read_All(CCINIClass & ini)
 	}
 }
 
-// FUNCTION: 0x006E5FE0
+// FUNCTION: GAMEMD 0x006E5FE0
 void TagTypeClass::Write_All(CCINIClass & ini)
 {
 	int numtypes = ini.Entry_Count(INI_NAME);
@@ -161,7 +163,7 @@ void TagTypeClass::Write_All(CCINIClass & ini)
 	}
 }
 
-// FUNCTION: 0x006E6080
+// FUNCTION: GAMEMD 0x006E6080
 bool TagTypeClass::Read_INI(CCINIClass & ini)
 {
 	char buffer[128];
@@ -178,7 +180,7 @@ bool TagTypeClass::Read_INI(CCINIClass & ini)
 	return(false);
 }
 
-// FUNCTION: 0x006E6160
+// FUNCTION: GAMEMD 0x006E6160
 bool TagTypeClass::Write_INI(CCINIClass & ini) const
 {
 	char buffer[128];
@@ -192,7 +194,7 @@ bool TagTypeClass::Write_INI(CCINIClass & ini) const
 	return(true);
 }
 
-// FUNCTION: 0x006E61F0
+// FUNCTION: GAMEMD 0x006E61F0
 AttachType TagTypeClass::Attaches_To(void) const
 {
 	AttachType attach = ATTACH_NONE;
@@ -204,7 +206,7 @@ AttachType TagTypeClass::Attaches_To(void) const
 	return(attach);
 }
 
-// FUNCTION: 0x006E6220
+// FUNCTION: GAMEMD 0x006E6220
 bool TagTypeClass::Is_Allow_Win(void) const
 {
 	TriggerTypeClass * trigger = FirstTrigger;
@@ -217,7 +219,7 @@ bool TagTypeClass::Is_Allow_Win(void) const
 	return(false);
 }
 
-// FUNCTION: 0x006E6250
+// FUNCTION: GAMEMD 0x006E6250
 bool TagTypeClass::Is_Cross_Horizontal(void) const
 {
 	TriggerTypeClass * trigger = FirstTrigger;
@@ -230,7 +232,7 @@ bool TagTypeClass::Is_Cross_Horizontal(void) const
 	return(false);
 }
 
-// FUNCTION: 0x006E6280
+// FUNCTION: GAMEMD 0x006E6280
 bool TagTypeClass::Is_Cross_Vertical(void) const
 {
 	TriggerTypeClass * trigger = FirstTrigger;
@@ -243,7 +245,7 @@ bool TagTypeClass::Is_Cross_Vertical(void) const
 	return(false);
 }
 
-// FUNCTION: 0x006E62B0
+// FUNCTION: GAMEMD 0x006E62B0
 bool TagTypeClass::Is_Enters_Zone(void) const
 {
 	TriggerTypeClass * trigger = FirstTrigger;
@@ -256,7 +258,7 @@ bool TagTypeClass::Is_Enters_Zone(void) const
 	return(false);
 }
 
-// FUNCTION: 0x006E62E0
+// FUNCTION: GAMEMD 0x006E62E0
 bool TagTypeClass::Is_Linked(TriggerTypeClass *trigger) const
 {
 	TriggerTypeClass * trigtype = FirstTrigger;
@@ -269,13 +271,13 @@ bool TagTypeClass::Is_Linked(TriggerTypeClass *trigger) const
 	return(false);
 }
 
-// FUNCTION: 0x006E6310
+// FUNCTION: GAMEMD 0x006E6310
 TagTypeClass * TagTypeClass::Find_Or_Make(char const * name)
 {
 	return(TFind_Or_Make<TagTypeClass>(name, TagTypes));
 }
 
-// FUNCTION: 0x006E63A0
+// FUNCTION: GAMEMD 0x006E63A0
 HRESULT STDMETHODCALLTYPE TagTypeClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -283,14 +285,14 @@ HRESULT STDMETHODCALLTYPE TagTypeClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x006E63E0
+// FUNCTION: GAMEMD 0x006E63E0
 void TagTypeClass::Compute_CRC(CRCEngine & crc) const
 {
 	BASECLASS::Compute_CRC(crc);
 	crc(Persistence);
 }
 
-// FUNCTION: 0x006E6410
+// FUNCTION: GAMEMD 0x006E6410
 HRESULT STDMETHODCALLTYPE TagTypeClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -302,7 +304,7 @@ HRESULT STDMETHODCALLTYPE TagTypeClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x006E6470
+// FUNCTION: GAMEMD 0x006E6470
 HRESULT STDMETHODCALLTYPE TagTypeClass::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -312,62 +314,89 @@ HRESULT STDMETHODCALLTYPE TagTypeClass::Save(IStream * stream, BOOL cleardirty)
 	return(result);
 }
 
-// FUNCTION: 0x006E6490 TagTypeClass::Fetch_RTTI
+// FUNCTION: GAMEMD 0x006E6490
+// TagTypeClass::Fetch_RTTI
 
-// FUNCTION: 0x006E64A0 TagTypeClass::Fetch_Object_Size
+// FUNCTION: GAMEMD 0x006E64A0
+// TagTypeClass::Fetch_Object_Size
 
-// FUNCTION: 0x006E64B0 TagTypeClass::Fetch_Heap_ID
+// FUNCTION: GAMEMD 0x006E64B0
+// TagTypeClass::Fetch_Heap_ID
 
-// FUNCTION: 0x006E64C0 TagTypeClass::~TagTypeClass
+// SYNTHETIC: GAMEMD 0x006E64C0
+// ??_GTagTypeClass@@UAEPAXI@Z
 
-// FUNCTION: 0x006E64E0 ?$DynamicVectorClass@PAVTagTypeClass@@::Clear
+// TEMPLATE: GAMEMD 0x006E64E0
+// ?Clear@?$DynamicVectorClass@PAVTagTypeClass@@@@UAEXXZ
 template class DynamicVectorClass<TagTypeClass *>;
 
-// FUNCTION: 0x006E6510 ?$DynamicVectorClass@PAVTagTypeClass@@::ID
-// FUNCTION: 0x006E6530 ?$VectorClass@PAVTagTypeClass@@::GetItem
-// FUNCTION: 0x006E6540 ?$VectorClass@PAVTagTypeClass@@::operator==
-// FUNCTION: 0x006E6580 ?$VectorClass@PAVTagTypeClass@@::Resize
-// FUNCTION: 0x006E6630 ?$VectorClass@PAVTagTypeClass@@::Clear
-// FUNCTION: 0x006E6660 ?$VectorClass@PAVTagTypeClass@@::ID
-// FUNCTION: 0x006E66A0 ?$VectorClass@PAVTagTypeClass@@::ID
-// FUNCTION: 0x006E66C0 ?$DynamicVectorClass@PAVTagTypeClass@@::Resize
-// FUNCTION: 0x006E6770 ?$DynamicVectorClass@PAVTagTypeClass@@::ID
-// FUNCTION: 0x006E67A0 ?$VectorClass@PAVTagTypeClass@@::~?$VectorClass@PAVTagTypeClass@@
+// TEMPLATE: GAMEMD 0x006E6510
+// ?ID@?$DynamicVectorClass@PAVTagTypeClass@@@@UAEHPBQAVTagTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x006E6530
+// ?GetItem@?$VectorClass@PAVTagTypeClass@@@@UBEPAVTagTypeClass@@H@Z
+// TEMPLATE: GAMEMD 0x006E6540
+// ??8?$VectorClass@PAVTagTypeClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x006E6580
+// ?Resize@?$VectorClass@PAVTagTypeClass@@@@UAE_NHPBQAVTagTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x006E6630
+// ?Clear@?$VectorClass@PAVTagTypeClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x006E6660
+// ?ID@?$VectorClass@PAVTagTypeClass@@@@UAEHABQAVTagTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x006E66A0
+// ?ID@?$VectorClass@PAVTagTypeClass@@@@UAEHPBQAVTagTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x006E66C0
+// ?Resize@?$DynamicVectorClass@PAVTagTypeClass@@@@UAE_NHPBQAVTagTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x006E6770
+// ?ID@?$DynamicVectorClass@PAVTagTypeClass@@@@UAEHABQAVTagTypeClass@@@Z
+// SYNTHETIC: GAMEMD 0x006E67A0
+// ??_G?$VectorClass@PAVTagTypeClass@@@@UAEPAXI@Z
 template class VectorClass<TagTypeClass *>;
 
-// FUNCTION: 0x006E67F0 ?$DynamicVectorClass@PAVTagTypeClass@@::~?$DynamicVectorClass@PAVTagTypeClass@@
+// SYNTHETIC: GAMEMD 0x006E67F0
+// ??_G?$DynamicVectorClass@PAVTagTypeClass@@@@UAEPAXI@Z
 
-// FUNCTION: 0x006E6840 $E19
+// SYNTHETIC: GAMEMD 0x006E6840 SYMBOL
+// _$E19
 double DAT_00B0E838 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x006E6870 $E22
+// SYNTHETIC: GAMEMD 0x006E6870 SYMBOL
+// _$E22
 double DAT_00B0E8A0 = DAT_00B0E838 / DAT_007F4630;
 
-// FUNCTION: 0x006E6890 $E25
+// SYNTHETIC: GAMEMD 0x006E6890 SYMBOL
+// _$E25
 double DAT_00B0E888 = DAT_007E1718 / DAT_00B0E8A0;
 
-// FUNCTION: 0x006E68B0 $E28
+// SYNTHETIC: GAMEMD 0x006E68B0 SYMBOL
+// _$E28
 double DAT_00B0E880 = DAT_007E1720 * DAT_007F4638;
 
-// FUNCTION: 0x006E68D0 $E31
+// SYNTHETIC: GAMEMD 0x006E68D0 SYMBOL
+// _$E31
 double DAT_00B0E858 = DAT_007E1728 * DAT_007F4638;
 
-// FUNCTION: 0x006E68F0 $E34
+// SYNTHETIC: GAMEMD 0x006E68F0 SYMBOL
+// _$E34
 double DAT_00B0E818 = DAT_007E1730 * DAT_007F4638;
 
-// FUNCTION: 0x006E6910 $E37
+// SYNTHETIC: GAMEMD 0x006E6910 SYMBOL
+// _$E37
 int DAT_00B0E8A8 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B0E818 - DAT_00B0E858) * DAT_00B0E838));
 
-// FUNCTION: 0x006E6950 $E40
+// SYNTHETIC: GAMEMD 0x006E6950 SYMBOL
+// _$E40
 double DAT_00B0E860 = FUN_004CADE0(DAT_00B0E8A8 * DAT_007E1740);
 
-// FUNCTION: 0x006E6980 $E43
+// SYNTHETIC: GAMEMD 0x006E6980 SYMBOL
+// _$E43
 double DAT_00B0E878 = FUN_004CADE0((DAT_00B0E8A8 * 2) / DAT_00B0E838);
 
-// FUNCTION: 0x006E69B0 $E46
+// SYNTHETIC: GAMEMD 0x006E69B0 SYMBOL
+// _$E46
 int DAT_00B0E89C = (int)(DAT_00B0E8A8 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x006E69E0 $E49
+// SYNTHETIC: GAMEMD 0x006E69E0 SYMBOL
+// _$E49
 ShortPair DAT_00B0E830;
 
 struct IntTriple {
@@ -375,7 +404,8 @@ struct IntTriple {
 	IntTriple() { A = 0; B = 0; C = 0; }
 };
 
-// FUNCTION: 0x006E69F0 $E52
+// SYNTHETIC: GAMEMD 0x006E69F0 SYMBOL
+// _$E52
 IntTriple DAT_00B0E868;
 
 struct SizeTriple {
@@ -383,7 +413,8 @@ struct SizeTriple {
 	SizeTriple() { Z = 0; W = 128; H = 128; }
 };
 
-// FUNCTION: 0x006E6A10 $E55
+// SYNTHETIC: GAMEMD 0x006E6A10 SYMBOL
+// _$E55
 SizeTriple DAT_00B0E890;
 
 struct IntQuad {
@@ -391,5 +422,6 @@ struct IntQuad {
 	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
 };
 
-// FUNCTION: 0x006E6A30 $E58
+// SYNTHETIC: GAMEMD 0x006E6A30 SYMBOL
+// _$E58
 IntQuad DAT_00B0E820;

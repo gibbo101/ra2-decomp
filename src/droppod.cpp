@@ -24,7 +24,7 @@
 #include <new.h>
 #include <math.h>
 
-// FUNCTION: 0x004B5AB0
+// FUNCTION: GAMEMD 0x004B5AB0
 DropPodLocomotionClass::DropPodLocomotionClass(void) :
 	BASECLASS(),
 	Flipped(false),
@@ -33,24 +33,24 @@ DropPodLocomotionClass::DropPodLocomotionClass(void) :
 {
 }
 
-// FUNCTION: 0x004B5B00
+// FUNCTION: GAMEMD 0x004B5B00
 DropPodLocomotionClass::~DropPodLocomotionClass(void)
 {
 }
 
-// FUNCTION: 0x004B5B30
+// FUNCTION: GAMEMD 0x004B5B30
 boolean STDMETHODCALLTYPE DropPodLocomotionClass::Is_Moving(void)
 {
 	return(true);
 }
 
-// FUNCTION: 0x004B5B40
+// FUNCTION: GAMEMD 0x004B5B40
 CoordStruct STDMETHODCALLTYPE DropPodLocomotionClass::Destination(void)
 {
 	return(DestinationCoord);
 }
 
-// FUNCTION: 0x004B5B70
+// FUNCTION: GAMEMD 0x004B5B70
 boolean STDMETHODCALLTYPE DropPodLocomotionClass::Process(void)
 {
 	Coord coord = LinkedTo->Position;
@@ -117,7 +117,7 @@ boolean STDMETHODCALLTYPE DropPodLocomotionClass::Process(void)
 	return(true);
 }
 
-// FUNCTION: 0x004B6040
+// FUNCTION: GAMEMD 0x004B6040
 void STDMETHODCALLTYPE DropPodLocomotionClass::Move_To(CoordStruct to)
 {
 	if (DestinationCoord == COORD_NONE) {
@@ -146,7 +146,7 @@ void STDMETHODCALLTYPE DropPodLocomotionClass::Move_To(CoordStruct to)
 	}
 }
 
-// FUNCTION: 0x004B6200
+// FUNCTION: GAMEMD 0x004B6200
 HRESULT STDMETHODCALLTYPE DropPodLocomotionClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -154,7 +154,7 @@ HRESULT STDMETHODCALLTYPE DropPodLocomotionClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x004B6240
+// FUNCTION: GAMEMD 0x004B6240
 HRESULT STDMETHODCALLTYPE DropPodLocomotionClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -171,7 +171,7 @@ HRESULT STDMETHODCALLTYPE DropPodLocomotionClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x004B62C0
+// FUNCTION: GAMEMD 0x004B62C0
 HRESULT STDMETHODCALLTYPE DropPodLocomotionClass::Save(IStream * stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -190,12 +190,12 @@ HRESULT STDMETHODCALLTYPE DropPodLocomotionClass::Save(IStream * stream, BOOL cl
 	return(result);
 }
 
-// FUNCTION: 0x004B63A0
+// FUNCTION: GAMEMD 0x004B63A0
 void STDMETHODCALLTYPE DropPodLocomotionClass::Stop_Moving(void)
 {
 }
 
-// FUNCTION: 0x004B63B0
+// FUNCTION: GAMEMD 0x004B63B0
 HRESULT STDMETHODCALLTYPE DropPodLocomotionClass::Begin_Piggyback(ILocomotion * pointer)
 {
 	if (pointer == NULL) {
@@ -208,7 +208,7 @@ HRESULT STDMETHODCALLTYPE DropPodLocomotionClass::Begin_Piggyback(ILocomotion * 
 	return(E_FAIL);
 }
 
-// FUNCTION: 0x004B6400
+// FUNCTION: GAMEMD 0x004B6400
 HRESULT STDMETHODCALLTYPE DropPodLocomotionClass::End_Piggyback(ILocomotion ** pointer)
 {
 	if (pointer == NULL) {
@@ -222,7 +222,7 @@ HRESULT STDMETHODCALLTYPE DropPodLocomotionClass::End_Piggyback(ILocomotion ** p
 	return(S_FALSE);
 }
 
-// FUNCTION: 0x004B6440
+// FUNCTION: GAMEMD 0x004B6440
 boolean STDMETHODCALLTYPE DropPodLocomotionClass::Is_Ok_To_End(void)
 {
 	if (!Is_Moving() && Piggybacker != NULL) {
@@ -231,7 +231,7 @@ boolean STDMETHODCALLTYPE DropPodLocomotionClass::Is_Ok_To_End(void)
 	return(false);
 }
 
-// FUNCTION: 0x004B6470
+// FUNCTION: GAMEMD 0x004B6470
 HRESULT STDMETHODCALLTYPE DropPodLocomotionClass::QueryInterface(REFIID riid, LPVOID * ppvObject)
 {
 	HRESULT result = BASECLASS::QueryInterface(riid, ppvObject);
@@ -250,13 +250,13 @@ HRESULT STDMETHODCALLTYPE DropPodLocomotionClass::QueryInterface(REFIID riid, LP
 	return(result);
 }
 
-// FUNCTION: 0x004B64D0
+// FUNCTION: GAMEMD 0x004B64D0
 LayerType STDMETHODCALLTYPE DropPodLocomotionClass::In_Which_Layer(void)
 {
 	return(LAYER_AIR);
 }
 
-// FUNCTION: 0x004B64E0
+// FUNCTION: GAMEMD 0x004B64E0
 HRESULT STDMETHODCALLTYPE DropPodLocomotionClass::Piggyback_CLSID(GUID * classid)
 {
 	if (classid == NULL) {
@@ -278,51 +278,71 @@ HRESULT STDMETHODCALLTYPE DropPodLocomotionClass::Piggyback_CLSID(GUID * classid
 	return(ptr->GetClassID(classid));
 }
 
-// FUNCTION: 0x004B65F0
+// FUNCTION: GAMEMD 0x004B65F0
 int STDMETHODCALLTYPE DropPodLocomotionClass::Drawing_Code(void)
 {
 	return(Flipped ? 1 : 0);
 }
 
-// FUNCTION: 0x004B6610 LocomotionClass::Is_Moving_Now
+// FUNCTION: GAMEMD 0x004B6610
+// LocomotionClass::Is_Moving_Now
 
-// FUNCTION: 0x004B6620 LocomotionClass::Mark_All_Occupation_Bits
+// FUNCTION: GAMEMD 0x004B6620
+// LocomotionClass::Mark_All_Occupation_Bits
 
-// FUNCTION: 0x004B6630 LocomotionClass::Is_Moving_Here
+// FUNCTION: GAMEMD 0x004B6630
+// LocomotionClass::Is_Moving_Here
 
-// FUNCTION: 0x004B6640 LocomotionClass::Will_Jump_Tracks
+// FUNCTION: GAMEMD 0x004B6640
+// LocomotionClass::Will_Jump_Tracks
 
-// FUNCTION: 0x004B6650 LocomotionClass::Lock
+// FUNCTION: GAMEMD 0x004B6650
+// LocomotionClass::Lock
 
-// FUNCTION: 0x004B6660 LocomotionClass::Unlock
+// FUNCTION: GAMEMD 0x004B6660
+// LocomotionClass::Unlock
 
-// FUNCTION: 0x004B6670 LocomotionClass::Get_Track_Number
+// FUNCTION: GAMEMD 0x004B6670
+// LocomotionClass::Get_Track_Number
 
-// FUNCTION: 0x004B6680 LocomotionClass::Get_Track_Index
+// FUNCTION: GAMEMD 0x004B6680
+// LocomotionClass::Get_Track_Index
 
-// FUNCTION: 0x004B6690 LocomotionClass::Get_Speed_Accum
+// FUNCTION: GAMEMD 0x004B6690
+// LocomotionClass::Get_Speed_Accum
 
-// FUNCTION: 0x004B66A0 DropPodLocomotionClass::AddRef
+// FUNCTION: GAMEMD 0x004B66A0
+// DropPodLocomotionClass::AddRef
 
-// FUNCTION: 0x004B66B0 DropPodLocomotionClass::Release
+// FUNCTION: GAMEMD 0x004B66B0
+// DropPodLocomotionClass::Release
 
-// FUNCTION: 0x004B66C0 DropPodLocomotionClass::Is_Piggybacking
+// FUNCTION: GAMEMD 0x004B66C0
+// DropPodLocomotionClass::Is_Piggybacking
 
-// FUNCTION: 0x004B66E0 DropPodLocomotionClass::Fetch_Object_Size
+// FUNCTION: GAMEMD 0x004B66E0
+// DropPodLocomotionClass::Fetch_Object_Size
 
-// FUNCTION: 0x004B66F0 DropPodLocomotionClass::~DropPodLocomotionClass
+// SYNTHETIC: GAMEMD 0x004B66F0
+// ??_GDropPodLocomotionClass@@UAEPAXI@Z
 
-// FUNCTION: 0x004B6740 DropPodLocomotionClass::QueryInterface
+// FUNCTION: GAMEMD 0x004B6740
+// DropPodLocomotionClass::QueryInterface
 
-// FUNCTION: 0x004B6750 DropPodLocomotionClass::AddRef
+// FUNCTION: GAMEMD 0x004B6750
+// DropPodLocomotionClass::AddRef
 
-// FUNCTION: 0x004B6760 DropPodLocomotionClass::Release
+// FUNCTION: GAMEMD 0x004B6760
+// DropPodLocomotionClass::Release
 
-// FUNCTION: 0x004B6770 DropPodLocomotionClass::QueryInterface
+// FUNCTION: GAMEMD 0x004B6770
+// DropPodLocomotionClass::QueryInterface
 
-// FUNCTION: 0x004B6780 DropPodLocomotionClass::AddRef
+// FUNCTION: GAMEMD 0x004B6780
+// DropPodLocomotionClass::AddRef
 
-// FUNCTION: 0x004B6790 DropPodLocomotionClass::Release
+// FUNCTION: GAMEMD 0x004B6790
+// DropPodLocomotionClass::Release
 
 extern double __cdecl FUN_004CAC40(double);
 extern const double DAT_007E1708;
@@ -338,13 +358,16 @@ extern const double DAT_007E8378;
 extern double __cdecl FUN_004CAD50(double);
 extern double __cdecl FUN_004CADE0(double);
 
-// FUNCTION: 0x004B67A0 $E81
+// SYNTHETIC: GAMEMD 0x004B67A0 SYMBOL
+// _$E81
 double DAT_008A08A8 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x004B67D0 $E84
+// SYNTHETIC: GAMEMD 0x004B67D0 SYMBOL
+// _$E84
 double DAT_008A0918 = DAT_008A08A8 / DAT_007E8370;
 
-// FUNCTION: 0x004B67F0 $E87
+// SYNTHETIC: GAMEMD 0x004B67F0 SYMBOL
+// _$E87
 double DAT_008A0900 = DAT_007E1718 / DAT_008A0918;
 
 struct ShortPair {
@@ -367,35 +390,46 @@ struct ColorTriple {
 	ColorTriple() { A = 128; B = 128; C = 0; }
 };
 
-// FUNCTION: 0x004B6810 $E90
+// SYNTHETIC: GAMEMD 0x004B6810 SYMBOL
+// _$E90
 double DAT_008A08F8 = DAT_007E1720 * DAT_007E8378;
 
-// FUNCTION: 0x004B6830 $E93
+// SYNTHETIC: GAMEMD 0x004B6830 SYMBOL
+// _$E93
 double DAT_008A08B0 = DAT_007E1728 * DAT_007E8378;
 
-// FUNCTION: 0x004B6850 $E96
+// SYNTHETIC: GAMEMD 0x004B6850 SYMBOL
+// _$E96
 double DAT_008A0868 = DAT_007E1730 * DAT_007E8378;
 
-// FUNCTION: 0x004B6870 $E99
+// SYNTHETIC: GAMEMD 0x004B6870 SYMBOL
+// _$E99
 int DAT_008A0920 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_008A0868 - DAT_008A08B0) * DAT_008A08A8));
 
-// FUNCTION: 0x004B68B0 $E102
+// SYNTHETIC: GAMEMD 0x004B68B0 SYMBOL
+// _$E102
 double DAT_008A08B8 = FUN_004CADE0(DAT_008A0920 * DAT_007E1740);
 
-// FUNCTION: 0x004B68E0 $E105
+// SYNTHETIC: GAMEMD 0x004B68E0 SYMBOL
+// _$E105
 double DAT_008A08F0 = FUN_004CADE0((DAT_008A0920 * 2) / DAT_008A08A8);
 
-// FUNCTION: 0x004B6910 $E108
+// SYNTHETIC: GAMEMD 0x004B6910 SYMBOL
+// _$E108
 int DAT_008A0914 = (int)(DAT_008A0920 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x004B6940 $E111
+// SYNTHETIC: GAMEMD 0x004B6940 SYMBOL
+// _$E111
 ShortPair DAT_008A08A0;
 
-// FUNCTION: 0x004B6950 $E114
+// SYNTHETIC: GAMEMD 0x004B6950 SYMBOL
+// _$E114
 IntTriple DAT_008A08E0;
 
-// FUNCTION: 0x004B6970 $E117
+// SYNTHETIC: GAMEMD 0x004B6970 SYMBOL
+// _$E117
 ColorTriple DAT_008A0908;
 
-// FUNCTION: 0x004B6990 $E120
+// SYNTHETIC: GAMEMD 0x004B6990 SYMBOL
+// _$E120
 IntQuad DAT_008A0890;

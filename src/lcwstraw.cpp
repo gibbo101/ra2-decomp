@@ -10,7 +10,7 @@
 #include "rect.h"
 #include <cstring>
 
-// FUNCTION: 0x005523E0
+// FUNCTION: GAMEMD 0x005523E0
 LCWStraw::LCWStraw(CompControl control, int blocksize) :
 		Control(control),
 		Counter(0),
@@ -25,7 +25,7 @@ LCWStraw::LCWStraw(CompControl control, int blocksize) :
 	}
 }
 
-// FUNCTION: 0x00552450
+// FUNCTION: GAMEMD 0x00552450
 LCWStraw::~LCWStraw(void)
 {
 	delete [] Buffer;
@@ -35,7 +35,7 @@ LCWStraw::~LCWStraw(void)
 	Buffer2 = NULL;
 }
 
-// FUNCTION: 0x00552490
+// FUNCTION: GAMEMD 0x00552490
 int LCWStraw::Get(void * destbuf, int slen)
 {
 	int total = 0;
@@ -82,11 +82,12 @@ int LCWStraw::Get(void * destbuf, int slen)
 	return(total);
 }
 
-// FUNCTION: 0x005525F0 LCWStraw::~LCWStraw
+// SYNTHETIC: GAMEMD 0x005525F0
+// ??_GLCWStraw@@UAEPAXI@Z
 
 extern "C" {
 
-// FUNCTION: 0x00552640
+// FUNCTION: GAMEMD 0x00552640
 unsigned long __cdecl LCW_Uncompress (void * source, void * dest, unsigned long )
 {
 	unsigned char * source_ptr, * dest_ptr, * copy_ptr, op_code, data;
@@ -173,4 +174,5 @@ unsigned long __cdecl LCW_Uncompress (void * source, void * dest, unsigned long 
 
 }
 
-// FUNCTION: 0x00552830 $E2
+// SYNTHETIC: GAMEMD 0x00552830 SYMBOL
+// _$E2

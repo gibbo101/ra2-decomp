@@ -9,7 +9,7 @@
 #include "lcw.h"
 #include <cstring>
 
-// FUNCTION: 0x00551FF0
+// FUNCTION: GAMEMD 0x00551FF0
 LCWPipe::LCWPipe(CompControl control, int blocksize) :
 		Control(control),
 		Counter(0),
@@ -24,7 +24,7 @@ LCWPipe::LCWPipe(CompControl control, int blocksize) :
 	BlockHeader.CompCount = 0xFFFF;
 }
 
-// FUNCTION: 0x00552060
+// FUNCTION: GAMEMD 0x00552060
 LCWPipe::~LCWPipe(void)
 {
 	delete [] Buffer;
@@ -34,7 +34,7 @@ LCWPipe::~LCWPipe(void)
 	Buffer2 = NULL;
 }
 
-// FUNCTION: 0x005520A0
+// FUNCTION: GAMEMD 0x005520A0
 int LCWPipe::Put(void const * source, int slen)
 {
 	if (source == NULL || slen < 1) {
@@ -118,7 +118,7 @@ int LCWPipe::Put(void const * source, int slen)
 	return(total);
 }
 
-// FUNCTION: 0x005522D0
+// FUNCTION: GAMEMD 0x005522D0
 int LCWPipe::Flush(void)
 {
 	int total = 0;
@@ -154,4 +154,5 @@ int LCWPipe::Flush(void)
 	return(total);
 }
 
-// FUNCTION: 0x00552390 LCWPipe::~LCWPipe
+// SYNTHETIC: GAMEMD 0x00552390
+// ??_GLCWPipe@@UAEPAXI@Z

@@ -89,51 +89,66 @@ struct IntTriple {
 	IntTriple() { A = 0; B = 0; C = 0; }
 };
 
-// FUNCTION: 0x0074C190 $E158
+// SYNTHETIC: GAMEMD 0x0074C190 SYMBOL
+// _$E158
 double DAT_00B1D278 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x0074C1C0 $E161
+// SYNTHETIC: GAMEMD 0x0074C1C0 SYMBOL
+// _$E161
 double DAT_00B1D2E0 = DAT_00B1D278 / DAT_007F6610;
 
-// FUNCTION: 0x0074C1E0 $E164
+// SYNTHETIC: GAMEMD 0x0074C1E0 SYMBOL
+// _$E164
 double DAT_00B1D2C8 = DAT_007E1718 / DAT_00B1D2E0;
 
-// FUNCTION: 0x0074C200 $E167
+// SYNTHETIC: GAMEMD 0x0074C200 SYMBOL
+// _$E167
 double DAT_00B1D2C0 = DAT_007E1720 * DAT_007F6618;
 
-// FUNCTION: 0x0074C220 $E170
+// SYNTHETIC: GAMEMD 0x0074C220 SYMBOL
+// _$E170
 double DAT_00B1D280 = DAT_007E1728 * DAT_007F6618;
 
-// FUNCTION: 0x0074C240 $E173
+// SYNTHETIC: GAMEMD 0x0074C240 SYMBOL
+// _$E173
 double DAT_00B1D258 = DAT_007E1730 * DAT_007F6618;
 
-// FUNCTION: 0x0074C260 $E176
+// SYNTHETIC: GAMEMD 0x0074C260 SYMBOL
+// _$E176
 int DAT_00B1D2E8 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B1D258 - DAT_00B1D280) * DAT_00B1D278));
 
-// FUNCTION: 0x0074C2A0 $E179
+// SYNTHETIC: GAMEMD 0x0074C2A0 SYMBOL
+// _$E179
 double DAT_00B1D288 = FUN_004CADE0(DAT_00B1D2E8 * DAT_007E1740);
 
-// FUNCTION: 0x0074C2D0 $E182
+// SYNTHETIC: GAMEMD 0x0074C2D0 SYMBOL
+// _$E182
 double DAT_00B1D2B8 = FUN_004CADE0((DAT_00B1D2E8 * 2) / DAT_00B1D278);
 
-// FUNCTION: 0x0074C300 $E185
+// SYNTHETIC: GAMEMD 0x0074C300 SYMBOL
+// _$E185
 int DAT_00B1D2DC = (int)(DAT_00B1D2E8 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x0074C330 $E188
+// SYNTHETIC: GAMEMD 0x0074C330 SYMBOL
+// _$E188
 ShortPair DAT_00B1D270;
 
-// FUNCTION: 0x0074C340 $E191
+// SYNTHETIC: GAMEMD 0x0074C340 SYMBOL
+// _$E191
 IntTriple DAT_00B1D2A8;
 
-// FUNCTION: 0x0074C360 $E194
+// SYNTHETIC: GAMEMD 0x0074C360 SYMBOL
+// _$E194
 SizeCenter DAT_00B1D2D0;
 
-// FUNCTION: 0x0074C3C0 $E197
-// FUNCTION: 0x0074C380 $E200
+// SYNTHETIC: GAMEMD 0x0074C3C0 SYMBOL
+// _$E197
+// SYNTHETIC: GAMEMD 0x0074C380 SYMBOL
+// _$E200
 DynamicVectorClass<VeinholeMonsterClass *> VeinholeMonsterClass::VeinholeMonsters;
 
 
-// FUNCTION: 0x0074C420
+// FUNCTION: GAMEMD 0x0074C420
 VeinholeMonsterClass::VeinholeMonsterClass(NoInitClass const & x) :
 	BASECLASS(x),
 	Control(x),
@@ -149,7 +164,7 @@ VeinholeMonsterClass::VeinholeMonsterClass(NoInitClass const & x) :
 	GrowthLogic.GrowthState = new bool [Map_Cell_Count()];
 }
 
-// FUNCTION: 0x0074C5B0
+// FUNCTION: GAMEMD 0x0074C5B0
 VeinholeMonsterClass::VeinholeMonsterClass(Cell const & cell) :
 	BASECLASS(),
 	GrowthLogic(true),
@@ -233,7 +248,7 @@ static inline void Clear_Growth_Data(VeinholeMonsterClass * monster)
 	monster->GrowthLogic.GrowthCount = 0;
 }
 
-// FUNCTION: 0x0074C9F0
+// FUNCTION: GAMEMD 0x0074C9F0
 VeinholeMonsterClass::~VeinholeMonsterClass(void)
 {
 	for (int x = -2; x <= 2; x++) {
@@ -270,7 +285,7 @@ VeinholeMonsterClass::~VeinholeMonsterClass(void)
 	TargetTracker.Remove_Index(Fetch_ID());
 }
 
-// FUNCTION: 0x0074CD60
+// FUNCTION: GAMEMD 0x0074CD60
 VeinholeMonsterClass * VeinholeMonsterClass::Get_Monster_At(Cell const & cell)
 {
 	for (int i = VeinholeMonsters.Count() - 1; i >= 0; i--) {
@@ -281,7 +296,7 @@ VeinholeMonsterClass * VeinholeMonsterClass::Get_Monster_At(Cell const & cell)
 	return(NULL);
 }
 
-// FUNCTION: 0x0074CDB0
+// FUNCTION: GAMEMD 0x0074CDB0
 VeinholeMonsterClass * VeinholeMonsterClass::Get_Vein_Owner_At(Cell const & cell)
 {
 	for (int i = VeinholeMonsters.Count() - 1; i >= 0; i--) {
@@ -292,7 +307,7 @@ VeinholeMonsterClass * VeinholeMonsterClass::Get_Vein_Owner_At(Cell const & cell
 	return(NULL);
 }
 
-// FUNCTION: 0x0074CDF0
+// FUNCTION: GAMEMD 0x0074CDF0
 void VeinholeMonsterClass::Update_All(void)
 {
 	for (int i = VeinholeMonsters.Count() - 1; i >= 0; i--) {
@@ -311,7 +326,7 @@ static inline void Halt_Stage(StageClass & stage)
 	stage.Set_Step(0);
 }
 
-// FUNCTION: 0x0074DC00
+// FUNCTION: GAMEMD 0x0074DC00
 void VeinholeMonsterClass::Shrink(void)
 {
 	if (GrowthLogic.GrowthQueue != NULL) {
@@ -329,7 +344,7 @@ void VeinholeMonsterClass::Shrink(void)
 	}
 }
 
-// FUNCTION: 0x0074CE50
+// FUNCTION: GAMEMD 0x0074CE50
 void VeinholeMonsterClass::AI(void)
 {
 	static int _state_to_mouth_frame[STATE_COUNT][FRAME_COUNT + 1] = {{1, 7, 6, 5, 4, 3, 2, 1, 0, 0, 0, 0, 0}, {4, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {1, 8, 9, 10, 11, 11, 11, 11, 11, 10, 9, 8, 1}, {12, 11, 10, 9, 8, 1, 0, 0, 0, 0, 0, 0, 0}};
@@ -442,7 +457,7 @@ void VeinholeMonsterClass::AI(void)
 	}
 }
 
-// FUNCTION: 0x0074D430
+// FUNCTION: GAMEMD 0x0074D430
 void VeinholeMonsterClass::Draw_All(void)
 {
 	for (int i = VeinholeMonsters.Count() - 1; i >= 0; i--) {
@@ -450,7 +465,7 @@ void VeinholeMonsterClass::Draw_All(void)
 	}
 }
 
-// FUNCTION: 0x0074D450
+// FUNCTION: GAMEMD 0x0074D450
 void VeinholeMonsterClass::Init(TheaterType theater)
 {
 	char buffer[32];
@@ -458,7 +473,7 @@ void VeinholeMonsterClass::Init(TheaterType theater)
 	MonsterShape = FileSystem::LoadFile(buffer, false);
 }
 
-// FUNCTION: 0x0074D490
+// FUNCTION: GAMEMD 0x0074D490
 void VeinholeMonsterClass::Draw_It(void)
 {
 	if (!IsDead) {
@@ -480,7 +495,7 @@ void VeinholeMonsterClass::Draw_It(void)
 	}
 }
 
-// FUNCTION: 0x0074D5D0
+// FUNCTION: GAMEMD 0x0074D5D0
 ResultType VeinholeMonsterClass::Take_Damage(int & damage, int distance, WarheadTypeClass const * warhead, TechnoClass * source, bool forced, bool no_crew, HouseClass * house)
 {
 	ResultType result = BASECLASS::Take_Damage(damage, distance, warhead, source, forced, no_crew, house);
@@ -505,7 +520,7 @@ ResultType VeinholeMonsterClass::Take_Damage(int & damage, int distance, Warhead
 	return(result);
 }
 
-// FUNCTION: 0x0074D670
+// FUNCTION: GAMEMD 0x0074D670
 bool VeinholeMonsterClass::Can_Monster_Go_Here(Cell const & cell)
 {
 	if (ScenarioInit > 0) {
@@ -536,7 +551,7 @@ bool VeinholeMonsterClass::Can_Monster_Go_Here(Cell const & cell)
 	return(true);
 }
 
-// FUNCTION: 0x0074D760
+// FUNCTION: GAMEMD 0x0074D760
 void VeinholeMonsterClass::Reset(void)
 {
 	for (int i = VeinholeMonsters.Count() - 1; i >= 0; i--) {
@@ -545,7 +560,7 @@ void VeinholeMonsterClass::Reset(void)
 	VeinholeMonsters.Clear();
 }
 
-// FUNCTION: 0x0074D7C0
+// FUNCTION: GAMEMD 0x0074D7C0
 void VeinholeMonsterClass::Grow(void)
 {
 	if (GrowthLogic.GrowthQueue && GrowthLogic.GrowthCount <= Rule->MaxVeinholeGrowth - 40 && VeinCount <= Rule->MaxVeinholeGrowth - 100 && Scen->IsVeinGrowth) {
@@ -597,7 +612,7 @@ void VeinholeMonsterClass::Grow(void)
 	}
 }
 
-// FUNCTION: 0x0074DE90
+// FUNCTION: GAMEMD 0x0074DE90
 void VeinholeMonsterClass::Init_Vein_Growth_System(bool clear)
 {
 	int i;
@@ -647,7 +662,7 @@ void VeinholeMonsterClass::Init_Vein_Growth_System(bool clear)
 	}
 }
 
-// FUNCTION: 0x0074E100
+// FUNCTION: GAMEMD 0x0074E100
 void VeinholeMonsterClass::Deinit_Vein_Growth_System(void)
 {
 	for (int i = VeinholeMonsters.Count() - 1; i >= 0; i--) {
@@ -656,7 +671,7 @@ void VeinholeMonsterClass::Deinit_Vein_Growth_System(void)
 	Clear_Global_Data();
 }
 
-// FUNCTION: 0x0074E1C0
+// FUNCTION: GAMEMD 0x0074E1C0
 void VeinholeMonsterClass::Build_Growth_Queue(void)
 {
 	DynamicVectorClass<Cell> cells;
@@ -727,7 +742,7 @@ void VeinholeMonsterClass::Build_Growth_Queue(void)
 	}
 }
 
-// FUNCTION: 0x0074E6B0
+// FUNCTION: GAMEMD 0x0074E6B0
 void VeinholeMonsterClass::Build_Shrinking_Queue(void)
 {
 	GrowthLogic.GrowthCount = 0;
@@ -752,7 +767,7 @@ void VeinholeMonsterClass::Build_Shrinking_Queue(void)
 	}
 }
 
-// FUNCTION: 0x0074E880
+// FUNCTION: GAMEMD 0x0074E880
 void VeinholeMonsterClass::Clear_Global_Data(void)
 {
 	if (GlobalGrowthState) {
@@ -761,13 +776,13 @@ void VeinholeMonsterClass::Clear_Global_Data(void)
 	}
 }
 
-// FUNCTION: 0x0074E8A0
+// FUNCTION: GAMEMD 0x0074E8A0
 void VeinholeMonsterClass::Clear_Growth(void)
 {
 	Clear_Growth_Data(this);
 }
 
-// FUNCTION: 0x0074E930
+// FUNCTION: GAMEMD 0x0074E930
 void VeinholeMonsterClass::Destroy_Monster(void)
 {
 	CellClass & cptr = Map[CellID];
@@ -800,7 +815,7 @@ void VeinholeMonsterClass::Destroy_Monster(void)
 	IsDead = true;
 }
 
-// FUNCTION: 0x0074EA30
+// FUNCTION: GAMEMD 0x0074EA30
 void VeinholeMonsterClass::Remove_Dead(void)
 {
 	for (int i = VeinholeMonsters.Count() - 1; i >= 0; i--) {
@@ -810,7 +825,7 @@ void VeinholeMonsterClass::Remove_Dead(void)
 	}
 }
 
-// FUNCTION: 0x0074EA70
+// FUNCTION: GAMEMD 0x0074EA70
 bool VeinholeMonsterClass::Load_All(IStream * stream)
 {
 	Reset();
@@ -869,7 +884,7 @@ bool VeinholeMonsterClass::Load_All(IStream * stream)
 	return(true);
 }
 
-// FUNCTION: 0x0074ED60
+// FUNCTION: GAMEMD 0x0074ED60
 bool VeinholeMonsterClass::Save_All(IStream * stream)
 {
 	int monster_count = VeinholeMonsters.Count();
@@ -908,19 +923,19 @@ bool VeinholeMonsterClass::Save_All(IStream * stream)
 	return(true);
 }
 
-// FUNCTION: 0x0074EEE0
+// FUNCTION: GAMEMD 0x0074EEE0
 HRESULT STDMETHODCALLTYPE VeinholeMonsterClass::Save(IStream * stream, BOOL cleardirty)
 {
 	return(BASECLASS::Save(stream, cleardirty));
 }
 
-// FUNCTION: 0x0074EF00
+// FUNCTION: GAMEMD 0x0074EF00
 TerrainTypeClass const * VeinholeMonsterClass::GetTerrainType(void)
 {
 	return(Rule->VeinholeTypeClass);
 }
 
-// FUNCTION: 0x0074EF10
+// FUNCTION: GAMEMD 0x0074EF10
 void VeinholeMonsterClass::Reduce_Veins_At(CellClass * cellptr)
 {
 	if (cellptr->Overlay == OVERLAY_VEINS && cellptr->OverlayData >= OVERLAYDATA_FIRST_SOLID_VEIN) {
@@ -970,7 +985,7 @@ void VeinholeMonsterClass::Reduce_Veins_At(CellClass * cellptr)
 	}
 }
 
-// FUNCTION: 0x0074F2D0
+// FUNCTION: GAMEMD 0x0074F2D0
 HRESULT STDMETHODCALLTYPE VeinholeMonsterClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -978,10 +993,14 @@ HRESULT STDMETHODCALLTYPE VeinholeMonsterClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x0074F310 VeinholeMonsterClass::Fetch_RTTI
+// FUNCTION: GAMEMD 0x0074F310
+// VeinholeMonsterClass::Fetch_RTTI
 
-// FUNCTION: 0x0074F320 VeinholeMonsterClass::Fetch_Object_Size
+// FUNCTION: GAMEMD 0x0074F320
+// VeinholeMonsterClass::Fetch_Object_Size
 
-// FUNCTION: 0x0074F330 VeinholeMonsterClass::In_Which_Layer
+// FUNCTION: GAMEMD 0x0074F330
+// VeinholeMonsterClass::In_Which_Layer
 
-// FUNCTION: 0x0074F340 VeinholeMonsterClass::~VeinholeMonsterClass
+// SYNTHETIC: GAMEMD 0x0074F340
+// ??_GVeinholeMonsterClass@@UAEPAXI@Z

@@ -21,10 +21,12 @@ namespace Unsorted { extern int CurrentFrame; }
 
 DynamicVectorClass<RadSiteClass *> RadSites;
 
-// FUNCTION: 0x0065B160 $E56
-// FUNCTION: 0x0065B1A0 $E54
+// SYNTHETIC: GAMEMD 0x0065B160 SYMBOL
+// _$E56
+// SYNTHETIC: GAMEMD 0x0065B1A0 SYMBOL
+// _$E54
 
-// FUNCTION: 0x0065B1E0
+// FUNCTION: GAMEMD 0x0065B1E0
 RadSiteClass::RadSiteClass(void) :
 	BASECLASS(),
 	LightSource(NULL),
@@ -44,7 +46,7 @@ RadSiteClass::RadSiteClass(void) :
 	RadSites.Add(this);
 }
 
-// FUNCTION: 0x0065B2A0
+// FUNCTION: GAMEMD 0x0065B2A0
 RadSiteClass::RadSiteClass(NoInitClass const & x) :
 	BASECLASS(x),
 	RadLevelTimer(),
@@ -52,7 +54,7 @@ RadSiteClass::RadSiteClass(NoInitClass const & x) :
 {
 }
 
-// FUNCTION: 0x0065B2F0
+// FUNCTION: GAMEMD 0x0065B2F0
 RadSiteClass::~RadSiteClass(void)
 {
 	CellClass & cell = Map[BaseCell];
@@ -65,25 +67,25 @@ RadSiteClass::~RadSiteClass(void)
 	RadSites.Delete(this);
 }
 
-// FUNCTION: 0x0065B3A0
+// FUNCTION: GAMEMD 0x0065B3A0
 int RadSiteClass::Fetch_Object_Size(void) const
 {
 	return(sizeof(*this));
 }
 
-// FUNCTION: 0x0065B3B0
+// FUNCTION: GAMEMD 0x0065B3B0
 void RadSiteClass::Compute_CRC(CRCEngine & crc) const
 {
 	BASECLASS::Compute_CRC(crc);
 }
 
-// FUNCTION: 0x0065B3C0
+// FUNCTION: GAMEMD 0x0065B3C0
 RTTIType RadSiteClass::Fetch_RTTI(void) const
 {
 	return(RTTI_RADSITE);
 }
 
-// FUNCTION: 0x0065B3D0
+// FUNCTION: GAMEMD 0x0065B3D0
 HRESULT STDMETHODCALLTYPE RadSiteClass::Load(IStream * stream)
 {
 	HRESULT result = BASECLASS::Load(stream);
@@ -94,13 +96,13 @@ HRESULT STDMETHODCALLTYPE RadSiteClass::Load(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x0065B450
+// FUNCTION: GAMEMD 0x0065B450
 HRESULT STDMETHODCALLTYPE RadSiteClass::Save(IStream * stream, BOOL cleardirty)
 {
 	return(BASECLASS::Save(stream, cleardirty));
 }
 
-// FUNCTION: 0x0065B470
+// FUNCTION: GAMEMD 0x0065B470
 HRESULT STDMETHODCALLTYPE RadSiteClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) {
@@ -110,26 +112,26 @@ HRESULT STDMETHODCALLTYPE RadSiteClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x0065B4B0
+// FUNCTION: GAMEMD 0x0065B4B0
 int RadSiteClass::GetSpread(void)
 {
 	return(Spread);
 }
 
-// FUNCTION: 0x0065B4C0
+// FUNCTION: GAMEMD 0x0065B4C0
 void RadSiteClass::SetBaseCell(Cell * cell)
 {
 	BaseCell = *cell;
 }
 
-// FUNCTION: 0x0065B4D0
+// FUNCTION: GAMEMD 0x0065B4D0
 void RadSiteClass::SetSpread(int spread)
 {
 	Spread = spread;
 	SpreadInLeptons = spread * 256 + 128;
 }
 
-// FUNCTION: 0x0065B4F0
+// FUNCTION: GAMEMD 0x0065B4F0
 void RadSiteClass::SetRadLevel(int level)
 {
 	RadLevel = level;
@@ -137,7 +139,7 @@ void RadSiteClass::SetRadLevel(int level)
 	RadTimeLeft = RadDuration;
 }
 
-// FUNCTION: 0x0065B510
+// FUNCTION: GAMEMD 0x0065B510
 int RadSiteClass::GetRadLevel(void)
 {
 	if (RadDuration <= 0) {
@@ -146,7 +148,7 @@ int RadSiteClass::GetRadLevel(void)
 	return(RadTimeLeft * RadLevel / RadDuration);
 }
 
-// FUNCTION: 0x0065B530
+// FUNCTION: GAMEMD 0x0065B530
 void RadSiteClass::Add(int level)
 {
 	double a = RadLevel;
@@ -160,7 +162,7 @@ void RadSiteClass::Add(int level)
 	Activate();
 }
 
-// FUNCTION: 0x0065B580
+// FUNCTION: GAMEMD 0x0065B580
 void RadSiteClass::Activate(void)
 {
 	int leveldelay = Rule->RadLevelDelay;
@@ -211,7 +213,7 @@ void RadSiteClass::Activate(void)
 	Radiate();
 }
 
-// FUNCTION: 0x0065B800
+// FUNCTION: GAMEMD 0x0065B800
 void RadSiteClass::AI(void)
 {
 	RadTimeLeft--;
@@ -228,7 +230,7 @@ void RadSiteClass::AI(void)
 	}
 }
 
-// FUNCTION: 0x0065B8F0
+// FUNCTION: GAMEMD 0x0065B8F0
 double RadSiteClass::GetRadLevelAt(Cell const & cell)
 {
 	CellClass & here = Map[BaseCell];
@@ -244,7 +246,7 @@ double RadSiteClass::GetRadLevelAt(Cell const & cell)
 	return(result);
 }
 
-// FUNCTION: 0x0065B9C0
+// FUNCTION: GAMEMD 0x0065B9C0
 void RadSiteClass::Radiate(void)
 {
 	int x0 = BaseCell.X - Spread;
@@ -271,7 +273,7 @@ void RadSiteClass::Radiate(void)
 	}
 }
 
-// FUNCTION: 0x0065BB50
+// FUNCTION: GAMEMD 0x0065BB50
 void RadSiteClass::Deactivate(void)
 {
 	int steps = RadTimeLeft / Rule->RadLevelDelay + 1;
@@ -300,7 +302,7 @@ void RadSiteClass::Deactivate(void)
 	}
 }
 
-// FUNCTION: 0x0065BD00
+// FUNCTION: GAMEMD 0x0065BD00
 void RadSiteClass::DecreaseRadiation(void)
 {
 	int x0 = BaseCell.X - Spread;
@@ -328,32 +330,45 @@ void RadSiteClass::DecreaseRadiation(void)
 	}
 }
 
-// FUNCTION: 0x0065BE90
+// FUNCTION: GAMEMD 0x0065BE90
 void RadSiteClass::DecreaseLight(void)
 {
 	LightSource->ChangeLevels(LightSource->Intensity - IntensityDecrement, Tint.Red * RadTimeLeft / RadDuration, Tint.Green * RadTimeLeft / RadDuration, Tint.Blue * RadTimeLeft / RadDuration, false);
 }
 
-// FUNCTION: 0x0065BED0 RadSiteClass::~RadSiteClass
+// SYNTHETIC: GAMEMD 0x0065BED0
+// ??_GRadSiteClass@@UAEPAXI@Z
 
-// FUNCTION: 0x0065BEF0 ?$DynamicVectorClass@PAVRadSiteClass@@::Clear
+// TEMPLATE: GAMEMD 0x0065BEF0
+// ?Clear@?$DynamicVectorClass@PAVRadSiteClass@@@@UAEXXZ
 template class DynamicVectorClass<RadSiteClass *>;
 
-// FUNCTION: 0x0065BF20 ?$DynamicVectorClass@PAVRadSiteClass@@::ID
-// FUNCTION: 0x0065BF40 ?$VectorClass@PAVRadSiteClass@@::GetItem
-// FUNCTION: 0x0065BF50 ?$VectorClass@PAVRadSiteClass@@::operator==
-// FUNCTION: 0x0065BF90 ?$VectorClass@PAVRadSiteClass@@::Resize
-// FUNCTION: 0x0065C040 ?$VectorClass@PAVRadSiteClass@@::Clear
-// FUNCTION: 0x0065C070 ?$VectorClass@PAVRadSiteClass@@::ID
-// FUNCTION: 0x0065C0B0 ?$VectorClass@PAVRadSiteClass@@::ID
-// FUNCTION: 0x0065C0D0 ?$DynamicVectorClass@PAVRadSiteClass@@::Resize
-// FUNCTION: 0x0065C180 ?$DynamicVectorClass@PAVRadSiteClass@@::ID
-// FUNCTION: 0x0065C1B0 ?$VectorClass@PAVRadSiteClass@@::~?$VectorClass@PAVRadSiteClass@@
+// TEMPLATE: GAMEMD 0x0065BF20
+// ?ID@?$DynamicVectorClass@PAVRadSiteClass@@@@UAEHPBQAVRadSiteClass@@@Z
+// TEMPLATE: GAMEMD 0x0065BF40
+// ?GetItem@?$VectorClass@PAVRadSiteClass@@@@UBEPAVRadSiteClass@@H@Z
+// TEMPLATE: GAMEMD 0x0065BF50
+// ??8?$VectorClass@PAVRadSiteClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x0065BF90
+// ?Resize@?$VectorClass@PAVRadSiteClass@@@@UAE_NHPBQAVRadSiteClass@@@Z
+// TEMPLATE: GAMEMD 0x0065C040
+// ?Clear@?$VectorClass@PAVRadSiteClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0065C070
+// ?ID@?$VectorClass@PAVRadSiteClass@@@@UAEHABQAVRadSiteClass@@@Z
+// TEMPLATE: GAMEMD 0x0065C0B0
+// ?ID@?$VectorClass@PAVRadSiteClass@@@@UAEHPBQAVRadSiteClass@@@Z
+// TEMPLATE: GAMEMD 0x0065C0D0
+// ?Resize@?$DynamicVectorClass@PAVRadSiteClass@@@@UAE_NHPBQAVRadSiteClass@@@Z
+// TEMPLATE: GAMEMD 0x0065C180
+// ?ID@?$DynamicVectorClass@PAVRadSiteClass@@@@UAEHABQAVRadSiteClass@@@Z
+// SYNTHETIC: GAMEMD 0x0065C1B0
+// ??_G?$VectorClass@PAVRadSiteClass@@@@UAEPAXI@Z
 template class VectorClass<RadSiteClass *>;
 
-// FUNCTION: 0x0065C200 ?$DynamicVectorClass@PAVRadSiteClass@@::~?$DynamicVectorClass@PAVRadSiteClass@@
+// SYNTHETIC: GAMEMD 0x0065C200
+// ??_G?$DynamicVectorClass@PAVRadSiteClass@@@@UAEPAXI@Z
 
-// FUNCTION: 0x0065C250
+// FUNCTION: GAMEMD 0x0065C250
 RAMFileClass::RAMFileClass(void * buffer, int len) :
 	Buffer((char *)buffer),
 	MaxLength(len),
@@ -369,7 +384,7 @@ RAMFileClass::RAMFileClass(void * buffer, int len) :
 	}
 }
 
-// FUNCTION: 0x0065C2A0
+// FUNCTION: GAMEMD 0x0065C2A0
 RAMFileClass::~RAMFileClass(void)
 {
 	Close();
@@ -380,7 +395,7 @@ RAMFileClass::~RAMFileClass(void)
 	}
 }
 
-// FUNCTION: 0x0065C2E0
+// FUNCTION: GAMEMD 0x0065C2E0
 int RAMFileClass::Create(void)
 {
 	if (!Is_Open()) {
@@ -390,7 +405,7 @@ int RAMFileClass::Create(void)
 	return(false);
 }
 
-// FUNCTION: 0x0065C300
+// FUNCTION: GAMEMD 0x0065C300
 int RAMFileClass::Delete(void)
 {
 	if (!Is_Open()) {
@@ -400,25 +415,25 @@ int RAMFileClass::Delete(void)
 	return(false);
 }
 
-// FUNCTION: 0x0065C320
+// FUNCTION: GAMEMD 0x0065C320
 bool RAMFileClass::Is_Available(int )
 {
 	return(true);
 }
 
-// FUNCTION: 0x0065C330
+// FUNCTION: GAMEMD 0x0065C330
 bool RAMFileClass::Is_Open(void) const
 {
 	return(IsOpen);
 }
 
-// FUNCTION: 0x0065C340
+// FUNCTION: GAMEMD 0x0065C340
 int RAMFileClass::Open(char const *, int access)
 {
 	return(Open(access));
 }
 
-// FUNCTION: 0x0065C350
+// FUNCTION: GAMEMD 0x0065C350
 int RAMFileClass::Open(int access)
 {
 	if (Buffer == NULL || Is_Open()) {
@@ -445,7 +460,7 @@ int RAMFileClass::Open(int access)
 	return(Is_Open());
 }
 
-// FUNCTION: 0x0065C3A0
+// FUNCTION: GAMEMD 0x0065C3A0
 int RAMFileClass::Read(void * buffer, int size)
 {
 	if (Buffer == NULL || buffer == NULL || size == 0) {
@@ -473,7 +488,7 @@ int RAMFileClass::Read(void * buffer, int size)
 	return(tocopy);
 }
 
-// FUNCTION: 0x0065C420
+// FUNCTION: GAMEMD 0x0065C420
 int RAMFileClass::Seek(int pos, int dir)
 {
 	if (Buffer == NULL || !Is_Open()) {
@@ -509,13 +524,13 @@ int RAMFileClass::Seek(int pos, int dir)
 	return(Offset);
 }
 
-// FUNCTION: 0x0065C4A0
+// FUNCTION: GAMEMD 0x0065C4A0
 int RAMFileClass::Size(void)
 {
 	return(Length);
 }
 
-// FUNCTION: 0x0065C4B0
+// FUNCTION: GAMEMD 0x0065C4B0
 int RAMFileClass::Write(void const * buffer, int size)
 {
 	if (Buffer == NULL || buffer == NULL || size == 0) {
@@ -546,16 +561,23 @@ int RAMFileClass::Write(void const * buffer, int size)
 	return(tocopy);
 }
 
-// FUNCTION: 0x0065C540 RAMFileClass::Close
+// FUNCTION: GAMEMD 0x0065C540
+// RAMFileClass::Close
 
-// FUNCTION: 0x0065C550 RAMFileClass::File_Name
+// FUNCTION: GAMEMD 0x0065C550
+// RAMFileClass::File_Name
 
-// FUNCTION: 0x0065C560 RAMFileClass::Set_Name
+// FUNCTION: GAMEMD 0x0065C560
+// RAMFileClass::Set_Name
 
-// FUNCTION: 0x0065C570 RAMFileClass::Get_Date_Time
+// FUNCTION: GAMEMD 0x0065C570
+// RAMFileClass::Get_Date_Time
 
-// FUNCTION: 0x0065C580 RAMFileClass::Set_Date_Time
+// FUNCTION: GAMEMD 0x0065C580
+// RAMFileClass::Set_Date_Time
 
-// FUNCTION: 0x0065C590 RAMFileClass::Error
+// FUNCTION: GAMEMD 0x0065C590
+// RAMFileClass::Error
 
-// FUNCTION: 0x0065C5A0 RAMFileClass::~RAMFileClass
+// SYNTHETIC: GAMEMD 0x0065C5A0
+// ??_GRAMFileClass@@UAEPAXI@Z

@@ -8,7 +8,7 @@
 #include "playcd.h"
 #include "win.h"
 
-// FUNCTION: 0x004E6070
+// FUNCTION: GAMEMD 0x004E6070
 GetCDClass::GetCDClass(void)
 {
 	char path[] = "a:\\";

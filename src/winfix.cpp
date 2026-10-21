@@ -42,7 +42,7 @@ char const *last_view_ini_section_name;
 #define AUD_UNCOMP_CHUNK_SIZE 2048
 #define AUD_FILL_SIZE ((unsigned)AUD_UNCOMP_CHUNK_SIZE * sizeof(unsigned short))
 
-// FUNCTION: 0x00776230
+// FUNCTION: GAMEMD 0x00776230
 bool TreeView_Begin_Drag(HWND window, HWND hwndTV, LPNMTREEVIEW lpnmtv)
 {
 	if (lpnmtv->itemNew.lParam != 0) {
@@ -76,7 +76,7 @@ bool TreeView_Begin_Drag(HWND window, HWND hwndTV, LPNMTREEVIEW lpnmtv)
 	return(s_dragging);
 }
 
-// FUNCTION: 0x00776320
+// FUNCTION: GAMEMD 0x00776320
 bool TreeView_End_Drag(LPARAM lParam)
 {
 	if (s_dragging) {
@@ -107,7 +107,7 @@ bool TreeView_End_Drag(LPARAM lParam)
 	return(false);
 }
 
-// FUNCTION: 0x00776490
+// FUNCTION: GAMEMD 0x00776490
 item_data TreeView_get_item_data(DWORD xy)
 {
 	item_data data;
@@ -143,7 +143,7 @@ item_data TreeView_get_item_data(DWORD xy)
 	return(data);
 }
 
-// FUNCTION: 0x00776570
+// FUNCTION: GAMEMD 0x00776570
 void TreeView_handle_item_drag(int timer_id)
 {
 	if (timer_id == 1 && s_dragging) {
@@ -182,7 +182,7 @@ void TreeView_handle_item_drag(int timer_id)
 	}
 }
 
-// FUNCTION: 0x00776670
+// FUNCTION: GAMEMD 0x00776670
 bool TreeView_On_Mouse_Move(LPARAM lParam)
 {
 	bool ok;
@@ -212,7 +212,7 @@ bool TreeView_On_Mouse_Move(LPARAM lParam)
 	return(false);
 }
 
-// FUNCTION: 0x00776750
+// FUNCTION: GAMEMD 0x00776750
 bool TreeView_set_item_image(HWND window, NMTREEVIEW *nmtv, int collapse_image, int expand_image)
 {
 	bool ret;
@@ -240,7 +240,7 @@ bool TreeView_set_item_image(HWND window, NMTREEVIEW *nmtv, int collapse_image, 
 	return(ret);
 }
 
-// FUNCTION: 0x007767B0
+// FUNCTION: GAMEMD 0x007767B0
 void TreeView_set_edit_text(HWND window, char *text, WPARAM limit)
 {
 	HWND ctrl = TreeView_GetEditControl(window);
@@ -251,7 +251,7 @@ void TreeView_set_edit_text(HWND window, char *text, WPARAM limit)
 	}
 }
 
-// FUNCTION: 0x007767F0
+// FUNCTION: GAMEMD 0x007767F0
 int TreeView_set_item_text(NMTVDISPINFO *info)
 {
 	char * text = info->item.pszText;
@@ -268,7 +268,7 @@ int TreeView_set_item_text(NMTVDISPINFO *info)
 	return(0);
 }
 
-// FUNCTION: 0x00776880
+// FUNCTION: GAMEMD 0x00776880
 BOOL On_WM_HELP(LPARAM help_info)
 {
 	HELPINFO *info = (HELPINFO *)help_info;
@@ -276,7 +276,7 @@ BOOL On_WM_HELP(LPARAM help_info)
 	return(WinHelp(window, "SUN.HLP", HELP_CONTEXTPOPUP, GetWindowContextHelpId(window)));
 }
 
-// FUNCTION: 0x007768A0
+// FUNCTION: GAMEMD 0x007768A0
 BOOL On_WM_CONTEXTMENU(WPARAM window)
 {
 	DWORD identifiers[4];
@@ -288,7 +288,7 @@ BOOL On_WM_CONTEXTMENU(WPARAM window)
 	return(WinHelp((HWND)window, "SUN.HLP", HELP_CONTEXTMENU, (ULONG)identifiers));
 }
 
-// FUNCTION: 0x007768F0
+// FUNCTION: GAMEMD 0x007768F0
 BOOL CALLBACK read_view_from_ini(HWND window, INIClass const &ini)
 {
 	char buffer[64];
@@ -333,7 +333,7 @@ BOOL CALLBACK read_view_from_ini(HWND window, INIClass const &ini)
 	return(true);
 }
 
-// FUNCTION: 0x00776A70
+// FUNCTION: GAMEMD 0x00776A70
 void read_views_from_ini(char const *section, HWND window, INIClass const &ini)
 {
 	LONG x;
@@ -371,7 +371,7 @@ void read_views_from_ini(char const *section, HWND window, INIClass const &ini)
 	}
 }
 
-// FUNCTION: 0x00776B40
+// FUNCTION: GAMEMD 0x00776B40
 BOOL CALLBACK write_view_to_ini(HWND window, INIClass &ini)
 {
 	char buf[32];
@@ -424,7 +424,7 @@ BOOL CALLBACK write_view_to_ini(HWND window, INIClass &ini)
 	return(true);
 }
 
-// FUNCTION: 0x00776CD0
+// FUNCTION: GAMEMD 0x00776CD0
 void write_views_to_ini(char const *section, HWND window, INIClass &ini)
 {
 	if (window != NULL) {
@@ -437,7 +437,7 @@ void write_views_to_ini(char const *section, HWND window, INIClass &ini)
 	}
 }
 
-// FUNCTION: 0x00776D40
+// FUNCTION: GAMEMD 0x00776D40
 const char *Make_Identifier(char *str, int num)
 {
 	static char _buffer[32];
@@ -453,7 +453,7 @@ const char *Make_Identifier(char *str, int num)
 	return(_buffer);
 }
 
-// FUNCTION: 0x00776D80
+// FUNCTION: GAMEMD 0x00776D80
 bool On_WM_MOVING(HWND window, WPARAM wparam, LPARAM lparam)
 {
 	RECT *rcl = (RECT *)lparam;
@@ -488,7 +488,7 @@ bool On_WM_MOVING(HWND window, WPARAM wparam, LPARAM lparam)
 	return(res);
 }
 
-// FUNCTION: 0x00776E10
+// FUNCTION: GAMEMD 0x00776E10
 int ComboBox_Find_Item_Data(HWND hwndCtl, WPARAM indexStart, LPARAM data)
 {
 	int count = SendMessage(hwndCtl, CB_GETCOUNT, 0, 0);
@@ -503,7 +503,7 @@ int ComboBox_Find_Item_Data(HWND hwndCtl, WPARAM indexStart, LPARAM data)
 	return(-1);
 }
 
-// FUNCTION: 0x00776E70
+// FUNCTION: GAMEMD 0x00776E70
 void Capture_Or_Release_Mouse(HWND window, short release)
 {
 	if (MouseCursor != NULL) {
@@ -517,12 +517,12 @@ void Capture_Or_Release_Mouse(HWND window, short release)
 	}
 }
 
-// FUNCTION: 0x00776EA0
+// FUNCTION: GAMEMD 0x00776EA0
 void noop(void)
 {
 }
 
-// FUNCTION: 0x00776EB0
+// FUNCTION: GAMEMD 0x00776EB0
 WindowsVersionInfo::WindowsVersionInfo(void) :
 	MajorVersionNumber(0),
 	MinorVersionNumber(0),
@@ -551,7 +551,7 @@ WindowsVersionInfo::WindowsVersionInfo(void) :
 	AdditionalInfo[sizeof(AdditionalInfo) - 1] = '\x0';
 }
 
-// FUNCTION: 0x00776F40
+// FUNCTION: GAMEMD 0x00776F40
 char *WindowsVersionInfo::Version_String(void)
 {
 	static char _ver95[]   	= {"Windows 95 "};
@@ -583,7 +583,7 @@ char *WindowsVersionInfo::Version_String(void)
 	return(version);
 }
 
-// FUNCTION: 0x00777060
+// FUNCTION: GAMEMD 0x00777060
 void Center_Window_Within_Window(HWND window)
 {
 	HWND parent = (HWND)GetWindowLong(window, GWL_HWNDPARENT);
@@ -592,7 +592,7 @@ void Center_Window_Within_Window(HWND window)
 	}
 }
 
-// FUNCTION: 0x00777080
+// FUNCTION: GAMEMD 0x00777080
 void Center_Window_Within_Window(HWND window, HWND parent)
 {
 	RECT rcl;
@@ -627,7 +627,7 @@ void Center_Window_Within_Window(HWND window, HWND parent)
 	SetWindowPos(window, 0, x, y, -1, -1, SWP_NOSIZE|SWP_NOZORDER);
 }
 
-// FUNCTION: 0x00777160
+// FUNCTION: GAMEMD 0x00777160
 void Prefetch_Audio_Buffer(char *src, int size)
 {
 	int n1 = (unsigned short)src % AUD_FILL_SIZE;
@@ -656,7 +656,7 @@ int DAT_00B730BC;
 int DAT_00B730C0;
 int DAT_00B730C4;
 
-// FUNCTION: 0x007771B0
+// FUNCTION: GAMEMD 0x007771B0
 void Reset_Winfix_Globals(void)
 {
 	DAT_00B730B8 = 0;

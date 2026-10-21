@@ -27,10 +27,12 @@
 
 DynamicVectorClass<LaserDrawClass *> LaserDrawClass::LaserDraws;
 
-// FUNCTION: 0x0054FDC0 $E117
-// FUNCTION: 0x0054FE00 $E114
+// SYNTHETIC: GAMEMD 0x0054FDC0 SYMBOL
+// _$E117
+// SYNTHETIC: GAMEMD 0x0054FE00 SYMBOL
+// _$E114
 
-// FUNCTION: 0x0054FE60
+// FUNCTION: GAMEMD 0x0054FE60
 LaserDrawClass::LaserDrawClass(Coord start, Coord end, int zadjust, bool unknown, RGBClass inner_color, RGBClass outer_color, RGBClass outer_spread, int duration, bool blinks, bool fades, float start_intensity, float end_intensity) :
 	StageClass(),
 	Thickness(1),
@@ -60,13 +62,13 @@ LaserDrawClass::LaserDrawClass(Coord start, Coord end, int zadjust, bool unknown
 	LaserDraws.Add(this);
 }
 
-// FUNCTION: 0x0054FFB0
+// FUNCTION: GAMEMD 0x0054FFB0
 LaserDrawClass::~LaserDrawClass(void)
 {
 	LaserDraws.Delete(this);
 }
 
-// FUNCTION: 0x00550000
+// FUNCTION: GAMEMD 0x00550000
 void LaserDrawClass::All_Clear(void)
 {
 	while (LaserDraws.Count()) {
@@ -74,7 +76,7 @@ void LaserDrawClass::All_Clear(void)
 	}
 }
 
-// FUNCTION: 0x00550080
+// FUNCTION: GAMEMD 0x00550080
 void LaserDrawClass::AI(void)
 {
 	Graphic_Logic();
@@ -87,7 +89,7 @@ void LaserDrawClass::AI(void)
 	}
 }
 
-// FUNCTION: 0x00550150
+// FUNCTION: GAMEMD 0x00550150
 void LaserDrawClass::Update_All(void)
 {
 	for (int i = LaserDraws.Count() - 1; i >= 0; i--) {
@@ -95,7 +97,7 @@ void LaserDrawClass::Update_All(void)
 	}
 }
 
-// FUNCTION: 0x00550240
+// FUNCTION: GAMEMD 0x00550240
 void LaserDrawClass::Draw_All(void)
 {
 	for (int i = LaserDraws.Count() - 1; i >= 0; i--) {
@@ -103,23 +105,35 @@ void LaserDrawClass::Draw_All(void)
 	}
 }
 
-// FUNCTION: 0x005512D0 ?$DynamicVectorClass@PAVLaserDrawClass@@::Clear
+// TEMPLATE: GAMEMD 0x005512D0
+// ?Clear@?$DynamicVectorClass@PAVLaserDrawClass@@@@UAEXXZ
 template class DynamicVectorClass<LaserDrawClass *>;
 
-// FUNCTION: 0x00551300 ?$VectorClass@PAVLaserDrawClass@@::ID
-// FUNCTION: 0x00551320 ?$VectorClass@PAVLaserDrawClass@@::GetItem
-// FUNCTION: 0x00551330 ?$VectorClass@PAVLaserDrawClass@@::operator==
-// FUNCTION: 0x00551370 ?$VectorClass@PAVLaserDrawClass@@::Resize
+// TEMPLATE: GAMEMD 0x00551300
+// ?ID@?$VectorClass@PAVLaserDrawClass@@@@UAEHPBQAVLaserDrawClass@@@Z
+// TEMPLATE: GAMEMD 0x00551320
+// ?GetItem@?$VectorClass@PAVLaserDrawClass@@@@UBEPAVLaserDrawClass@@H@Z
+// TEMPLATE: GAMEMD 0x00551330
+// ??8?$VectorClass@PAVLaserDrawClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x00551370
+// ?Resize@?$VectorClass@PAVLaserDrawClass@@@@UAE_NHPBQAVLaserDrawClass@@@Z
 
-// FUNCTION: 0x00551420 ?$VectorClass@PAVLaserDrawClass@@::Clear
-// FUNCTION: 0x00551450 ?$VectorClass@PAVLaserDrawClass@@::ID
-// FUNCTION: 0x00551490 ?$DynamicVectorClass@PAVLaserDrawClass@@::ID
-// FUNCTION: 0x005514B0 ?$DynamicVectorClass@PAVLaserDrawClass@@::Resize
-// FUNCTION: 0x00551560 ?$DynamicVectorClass@PAVLaserDrawClass@@::ID
-// FUNCTION: 0x00551590 ?$VectorClass@PAVLaserDrawClass@@::~?$VectorClass@PAVLaserDrawClass@@
-// FUNCTION: 0x005515E0 ?$DynamicVectorClass@PAVLaserDrawClass@@::~?$DynamicVectorClass@PAVLaserDrawClass@@
+// TEMPLATE: GAMEMD 0x00551420
+// ?Clear@?$VectorClass@PAVLaserDrawClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x00551450
+// ?ID@?$VectorClass@PAVLaserDrawClass@@@@UAEHABQAVLaserDrawClass@@@Z
+// TEMPLATE: GAMEMD 0x00551490
+// ?ID@?$DynamicVectorClass@PAVLaserDrawClass@@@@UAEHPBQAVLaserDrawClass@@@Z
+// TEMPLATE: GAMEMD 0x005514B0
+// ?Resize@?$DynamicVectorClass@PAVLaserDrawClass@@@@UAE_NHPBQAVLaserDrawClass@@@Z
+// TEMPLATE: GAMEMD 0x00551560
+// ?ID@?$DynamicVectorClass@PAVLaserDrawClass@@@@UAEHABQAVLaserDrawClass@@@Z
+// SYNTHETIC: GAMEMD 0x00551590
+// ??_G?$VectorClass@PAVLaserDrawClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x005515E0
+// ??_G?$DynamicVectorClass@PAVLaserDrawClass@@@@UAEPAXI@Z
 
-// FUNCTION: 0x00551630
+// FUNCTION: GAMEMD 0x00551630
 bool ViewHTML(char const * name)
 {
 	char windir[MAX_PATH];
@@ -153,18 +167,32 @@ bool ViewHTML(char const * name)
 	return false;
 }
 
-// FUNCTION: 0x005517A0 $E2
-// FUNCTION: 0x005517D0 $E5
-// FUNCTION: 0x005517F0 $E8
-// FUNCTION: 0x00551810 $E11
+// SYNTHETIC: GAMEMD 0x005517A0 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x005517D0 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x005517F0 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x00551810 SYMBOL
+// _$E11
 
-// FUNCTION: 0x00551830 $E14
-// FUNCTION: 0x00551850 $E17
-// FUNCTION: 0x00551870 $E20
-// FUNCTION: 0x005518B0 $E23
-// FUNCTION: 0x005518E0 $E26
-// FUNCTION: 0x00551910 $E29
-// FUNCTION: 0x00551940 $E32
-// FUNCTION: 0x00551950 $E35
-// FUNCTION: 0x00551970 $E38
-// FUNCTION: 0x00551990 $E42
+// SYNTHETIC: GAMEMD 0x00551830 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x00551850 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x00551870 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x005518B0 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x005518E0 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x00551910 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x00551940 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x00551950 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x00551970 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x00551990 SYMBOL
+// _$E42

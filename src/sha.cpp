@@ -13,7 +13,7 @@
 #define	MIN(a, b)		((a)<(b))?(a):(b)
 #define	Reverse_LONG(a)	((a>>24)&0x000000FFL) | ((a>>8)&0x0000FF00L) | ((a<<8)&0x00FF0000L) | ((a<<24)&0xFF000000L)
 
-// FUNCTION: 0x0069D8C0
+// FUNCTION: GAMEMD 0x0069D8C0
 void SHAEngine::Process_Partial(void const * & data, int & length)
 {
 	if (length == 0 || data == NULL) return;
@@ -33,7 +33,7 @@ void SHAEngine::Process_Partial(void const * & data, int & length)
 	}
 }
 
-// FUNCTION: 0x0069D960
+// FUNCTION: GAMEMD 0x0069D960
 void SHAEngine::Hash(void const * data, int length)
 {
 	IsCached = false;
@@ -55,7 +55,7 @@ void SHAEngine::Hash(void const * data, int length)
 	Process_Partial(data, length);
 }
 
-// FUNCTION: 0x0069D9E0
+// FUNCTION: GAMEMD 0x0069D9E0
 int SHAEngine::Result(void * result) const
 {
 	if (IsCached) {

@@ -49,17 +49,19 @@ static inline int HexValue(char c)
 	return 0;
 }
 
-// FUNCTION: 0x0049B390 $E23
-// FUNCTION: 0x0049B420 $E21
+// SYNTHETIC: GAMEMD 0x0049B390 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x0049B420 SYMBOL
+// _$E21
 CoopCampSource_0049E4F0 DAT_0089F518;
 
-// FUNCTION: 0x0049B450
+// FUNCTION: GAMEMD 0x0049B450
 int __fastcall FUN_0049B450(char c)
 {
 	return HexValue(c);
 }
 
-// FUNCTION: 0x0049B490
+// FUNCTION: GAMEMD 0x0049B490
 char * __fastcall FUN_0049B490(char const * text)
 {
 	char const * p = text;
@@ -78,7 +80,7 @@ char * __fastcall FUN_0049B490(char const * text)
 	return DAT_0089ED18;
 }
 
-// FUNCTION: 0x0049B540
+// FUNCTION: GAMEMD 0x0049B540
 char * __fastcall FUN_0049B540(char const * text)
 {
 	char * out = DAT_0089F118;
@@ -103,7 +105,7 @@ char * __fastcall FUN_0049B540(char const * text)
 	return DAT_0089F118;
 }
 
-// FUNCTION: 0x0049B610
+// FUNCTION: GAMEMD 0x0049B610
 CoopCamp_0049B610 * CoopCamp_0049B610::FUN_0049B610(void)
 {
 	Name[0] = 0;
@@ -129,7 +131,7 @@ CoopCamp_0049B610 * CoopCamp_0049B610::FUN_0049B610(void)
 	return this;
 }
 
-// FUNCTION: 0x0049B660
+// FUNCTION: GAMEMD 0x0049B660
 CoopCamp_0049B610 * CoopCamp_0049B610::FUN_0049B660(wchar_t const * name, wchar_t const * map)
 {
 	if (name) {
@@ -163,7 +165,7 @@ CoopCamp_0049B610 * CoopCamp_0049B610::FUN_0049B660(wchar_t const * name, wchar_
 	return this;
 }
 
-// FUNCTION: 0x0049B720
+// FUNCTION: GAMEMD 0x0049B720
 void CoopCamp_0049B610::FUN_0049B720(void)
 {
 	if (Items) {
@@ -176,7 +178,7 @@ void CoopCamp_0049B610::FUN_0049B720(void)
 	}
 }
 
-// FUNCTION: 0x0049B760
+// FUNCTION: GAMEMD 0x0049B760
 void CoopCamp_0049B610::FUN_0049B760(wchar_t const * name, wchar_t const * map)
 {
 	if (name) {
@@ -191,7 +193,7 @@ void CoopCamp_0049B610::FUN_0049B760(wchar_t const * name, wchar_t const * map)
 	}
 }
 
-// FUNCTION: 0x0049B7E0
+// FUNCTION: GAMEMD 0x0049B7E0
 void __fastcall FUN_0049B7E0(CoopPlayerStats * stats, bool second)
 {
 	int count = DAT_00A80228.Count();
@@ -240,7 +242,7 @@ void __fastcall FUN_0049B7E0(CoopPlayerStats * stats, bool second)
 	}
 }
 
-// FUNCTION: 0x0049BC80
+// FUNCTION: GAMEMD 0x0049BC80
 bool CoopCamp_0049B610::FUN_0049BC80(int * out)
 {
 	if (!Field6C) {
@@ -250,7 +252,7 @@ bool CoopCamp_0049B610::FUN_0049BC80(int * out)
 	return true;
 }
 
-// FUNCTION: 0x0049BCA0
+// FUNCTION: GAMEMD 0x0049BCA0
 bool CoopCamp_0049B610::FUN_0049BCA0(int * out)
 {
 	if (!Field6C) {
@@ -260,7 +262,7 @@ bool CoopCamp_0049B610::FUN_0049BCA0(int * out)
 	return true;
 }
 
-// FUNCTION: 0x0049BCC0
+// FUNCTION: GAMEMD 0x0049BCC0
 bool CoopCamp_0049B610::FUN_0049BCC0(int * out)
 {
 	if (!Field6C) {
@@ -270,7 +272,7 @@ bool CoopCamp_0049B610::FUN_0049BCC0(int * out)
 	return true;
 }
 
-// FUNCTION: 0x0049BCE0
+// FUNCTION: GAMEMD 0x0049BCE0
 bool CoopCamp_0049B610::FUN_0049BCE0(DynamicVectorClass<CoopPlayerStats *> * list, int * out)
 {
 	if (!Field6C) {
@@ -302,7 +304,7 @@ bool CoopCamp_0049B610::FUN_0049BCE0(DynamicVectorClass<CoopPlayerStats *> * lis
 	return true;
 }
 
-// FUNCTION: 0x0049BE40
+// FUNCTION: GAMEMD 0x0049BE40
 bool CoopCamp_0049B610::FUN_0049BE40(void)
 {
 	if (!Name[0] || !Map[0]) {
@@ -355,7 +357,7 @@ bool CoopCamp_0049B610::FUN_0049BE40(void)
 	return true;
 }
 
-// FUNCTION: 0x0049C0D0
+// FUNCTION: GAMEMD 0x0049C0D0
 bool CoopCamp_0049B610::FUN_0049C0D0(void)
 {
 	if (!Name[0] || !Map[0]) {
@@ -438,7 +440,7 @@ bool CoopCamp_0049B610::FUN_0049C0D0(void)
 	}
 }
 
-// FUNCTION: 0x0049D070
+// FUNCTION: GAMEMD 0x0049D070
 bool CoopCamp_0049B610::FUN_0049D070(void ** out, int index)
 {
 	bool result = false;
@@ -460,7 +462,7 @@ bool CoopCamp_0049B610::FUN_0049D070(void ** out, int index)
 	return result;
 }
 
-// FUNCTION: 0x0049D0C0
+// FUNCTION: GAMEMD 0x0049D0C0
 bool CoopCamp_0049B610::FUN_0049D0C0(int * house, int * color)
 {
 	if (Field6C) {
@@ -471,7 +473,7 @@ bool CoopCamp_0049B610::FUN_0049D0C0(int * house, int * color)
 	return false;
 }
 
-// FUNCTION: 0x0049D0F0
+// FUNCTION: GAMEMD 0x0049D0F0
 bool CoopCamp_0049B610::FUN_0049D0F0(int * house, int * color)
 {
 	if (Field6C) {
@@ -482,7 +484,7 @@ bool CoopCamp_0049B610::FUN_0049D0F0(int * house, int * color)
 	return false;
 }
 
-// FUNCTION: 0x0049D120
+// FUNCTION: GAMEMD 0x0049D120
 bool CoopCamp_0049B610::FUN_0049D120(void)
 {
 	if (!Name[0] || !Map[0]) {
@@ -533,7 +535,7 @@ bool CoopCamp_0049B610::FUN_0049D120(void)
 	return ini.GetSection(section) != NULL;
 }
 
-// FUNCTION: 0x0049D390
+// FUNCTION: GAMEMD 0x0049D390
 bool CoopCamp_0049B610::FUN_0049D390(char * out)
 {
 	if (!Name[0] || !Map[0]) {
@@ -590,7 +592,7 @@ bool CoopCamp_0049B610::FUN_0049D390(char * out)
 	return false;
 }
 
-// FUNCTION: 0x0049D680
+// FUNCTION: GAMEMD 0x0049D680
 bool CoopCamp_0049B610::FUN_0049D680(void)
 {
 	if (!Field6C) {
@@ -649,7 +651,7 @@ bool CoopCamp_0049B610::FUN_0049D680(void)
 	return true;
 }
 
-// FUNCTION: 0x0049D9F0
+// FUNCTION: GAMEMD 0x0049D9F0
 int __fastcall FUN_0049D9F0(char const * name)
 {
 	if (strcmpi(name, "<random>") == 0) {
@@ -666,13 +668,13 @@ int __fastcall FUN_0049D9F0(char const * name)
 	return -1;
 }
 
-// FUNCTION: 0x0049DA60
+// FUNCTION: GAMEMD 0x0049DA60
 CoopCampSource_0049E4F0::CoopCampSource_0049E4F0(void)
 {
 	Loaded = false;
 }
 
-// FUNCTION: 0x0049E3B0
+// FUNCTION: GAMEMD 0x0049E3B0
 bool CoopCampSource_0049E4F0::FUN_0049E3B0(int index, CoopCampEntry ** out)
 {
 	if (!Loaded) {
@@ -686,7 +688,7 @@ bool CoopCampSource_0049E4F0::FUN_0049E3B0(int index, CoopCampEntry ** out)
 	return false;
 }
 
-// FUNCTION: 0x0049E400
+// FUNCTION: GAMEMD 0x0049E400
 bool CoopCampSource_0049E4F0::FUN_0049E400(char const * name, CoopCampEntry ** out)
 {
 	if (!Loaded) {
@@ -705,7 +707,7 @@ bool CoopCampSource_0049E4F0::FUN_0049E400(char const * name, CoopCampEntry ** o
 	return false;
 }
 
-// FUNCTION: 0x0049E4F0
+// FUNCTION: GAMEMD 0x0049E4F0
 bool CoopCampSource_0049E4F0::FUN_0049E4F0(int * count)
 {
 	if (!Loaded) {
@@ -715,7 +717,7 @@ bool CoopCampSource_0049E4F0::FUN_0049E4F0(int * count)
 	return Loaded;
 }
 
-// FUNCTION: 0x0049E510
+// FUNCTION: GAMEMD 0x0049E510
 CoopCampSource_0049E4F0::~CoopCampSource_0049E4F0(void)
 {
 	if (Entries) {
@@ -748,7 +750,7 @@ CoopCampSource_0049E4F0::~CoopCampSource_0049E4F0(void)
 	}
 }
 
-// FUNCTION: 0x0049E740
+// FUNCTION: GAMEMD 0x0049E740
 bool CoopCampSource_0049E4F0::FUN_0049E740(DynamicVectorClass<wchar_t *> * list)
 {
 	if (!Loaded) {
@@ -767,39 +769,67 @@ bool CoopCampSource_0049E4F0::FUN_0049E740(DynamicVectorClass<wchar_t *> * list)
 	return false;
 }
 
-// FUNCTION: 0x0049E8E0 ?$List@PAUINISection@INIClass@@::?$List@PAUINISection@INIClass@@
+// TEMPLATE: GAMEMD 0x0049E8E0
+// ??0?$List@PAUINISection@INIClass@@@@QAE@XZ
 
 template class DynamicVectorClass<char *>;
 template class DynamicVectorClass<CoopCampNameList *>;
 template class VectorClass<CoopCampNameList *>;
 
-// FUNCTION: 0x0049E950 ?$DynamicVectorClass@PAD::Clear
-// FUNCTION: 0x0049E980 ?$DynamicVectorClass@PAD::ID
-// FUNCTION: 0x0049E9A0 ?$VectorClass@PAD::GetItem
-// FUNCTION: 0x0049E9B0 ?$DynamicVectorClass@PAV?$DynamicVectorClass@PAD@@::Clear
-// FUNCTION: 0x0049E9E0 ?$DynamicVectorClass@PAV?$DynamicVectorClass@PAD@@::ID
-// FUNCTION: 0x0049EA00 ?$VectorClass@PAV?$DynamicVectorClass@PAD@@::GetItem
-// FUNCTION: 0x0049EA10 ?$IndexClass@HPAUINISection@INIClass@@::?$IndexClass@HPAUINISection@INIClass@@
-// FUNCTION: 0x0049EA30 ?$VectorClass@PAD::operator==
-// FUNCTION: 0x0049EA70 ?$DynamicVectorClass@PAD::Resize
-// FUNCTION: 0x0049EB20 ?$DynamicVectorClass@PAD::ID
-// FUNCTION: 0x0049EB50 ?$VectorClass@PAV?$DynamicVectorClass@PAD@@::operator==
-// FUNCTION: 0x0049EB90 ?$VectorClass@PAV?$DynamicVectorClass@PAD@@::Resize
-// FUNCTION: 0x0049EC40 ?$VectorClass@PAV?$DynamicVectorClass@PAD@@::Clear
-// FUNCTION: 0x0049EC70 ?$VectorClass@PAV?$DynamicVectorClass@PAD@@::ID
-// FUNCTION: 0x0049ECB0 ?$VectorClass@PAV?$DynamicVectorClass@PAD@@::ID
-// FUNCTION: 0x0049ECD0 ?$DynamicVectorClass@PAV?$DynamicVectorClass@PAD@@::?$DynamicVectorClass@PAV?$DynamicVectorClass@PAD@@
-// FUNCTION: 0x0049ED30 ?$DynamicVectorClass@PAV?$DynamicVectorClass@PAD@@::Resize
-// FUNCTION: 0x0049EDE0 ?$DynamicVectorClass@PAV?$DynamicVectorClass@PAD@@::ID
-// FUNCTION: 0x0049EE10 ?$VectorClass@PAV?$DynamicVectorClass@PAD@@::~?$VectorClass@PAV?$DynamicVectorClass@PAD@@
-// FUNCTION: 0x0049EE60 ?$VectorClass@PAD::Resize
-// FUNCTION: 0x0049EF10 ?$VectorClass@PAD::Clear
-// FUNCTION: 0x0049EF40 ?$VectorClass@PAD::ID
-// FUNCTION: 0x0049EF80 ?$VectorClass@PAD::ID
-// FUNCTION: 0x0049EFA0 ?$VectorClass@PAD::~?$VectorClass@PAD
-// FUNCTION: 0x0049EFF0 ?$DynamicVectorClass@PAD::~?$DynamicVectorClass@PAD
-// FUNCTION: 0x0049F040 ?$DynamicVectorClass@PAV?$DynamicVectorClass@PAD@@::~?$DynamicVectorClass@PAV?$DynamicVectorClass@PAD@@
-// FUNCTION: 0x0049F090 ?$VectorClass@PAV?$DynamicVectorClass@PAD@@::?$VectorClass@PAV?$DynamicVectorClass@PAD@@
+// TEMPLATE: GAMEMD 0x0049E950
+// ?Clear@?$DynamicVectorClass@PAD@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0049E980
+// ?ID@?$DynamicVectorClass@PAD@@UAEHPBQAD@Z
+// TEMPLATE: GAMEMD 0x0049E9A0
+// ?GetItem@?$VectorClass@PAD@@UBEPADH@Z
+// TEMPLATE: GAMEMD 0x0049E9B0
+// ?Clear@?$DynamicVectorClass@PAV?$DynamicVectorClass@PAD@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0049E9E0
+// ?ID@?$DynamicVectorClass@PAV?$DynamicVectorClass@PAD@@@@UAEHPBQAV?$DynamicVectorClass@PAD@@@Z
+// TEMPLATE: GAMEMD 0x0049EA00
+// ?GetItem@?$VectorClass@PAV?$DynamicVectorClass@PAD@@@@UBEPAV?$DynamicVectorClass@PAD@@H@Z
+// TEMPLATE: GAMEMD 0x0049EA10
+// ??0?$IndexClass@HPAUINISection@INIClass@@@@QAE@XZ
+// TEMPLATE: GAMEMD 0x0049EA30
+// ??8?$VectorClass@PAD@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x0049EA70
+// ?Resize@?$DynamicVectorClass@PAD@@UAE_NHPBQAD@Z
+// TEMPLATE: GAMEMD 0x0049EB20
+// ?ID@?$DynamicVectorClass@PAD@@UAEHABQAD@Z
+// TEMPLATE: GAMEMD 0x0049EB50
+// ??8?$VectorClass@PAV?$DynamicVectorClass@PAD@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x0049EB90
+// ?Resize@?$VectorClass@PAV?$DynamicVectorClass@PAD@@@@UAE_NHPBQAV?$DynamicVectorClass@PAD@@@Z
+// TEMPLATE: GAMEMD 0x0049EC40
+// ?Clear@?$VectorClass@PAV?$DynamicVectorClass@PAD@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0049EC70
+// ?ID@?$VectorClass@PAV?$DynamicVectorClass@PAD@@@@UAEHABQAV?$DynamicVectorClass@PAD@@@Z
+// TEMPLATE: GAMEMD 0x0049ECB0
+// ?ID@?$VectorClass@PAV?$DynamicVectorClass@PAD@@@@UAEHPBQAV?$DynamicVectorClass@PAD@@@Z
+// TEMPLATE: GAMEMD 0x0049ECD0
+// ??0?$DynamicVectorClass@PAV?$DynamicVectorClass@PAD@@@@QAE@IPBQAV?$DynamicVectorClass@PAD@@@Z
+// TEMPLATE: GAMEMD 0x0049ED30
+// ?Resize@?$DynamicVectorClass@PAV?$DynamicVectorClass@PAD@@@@UAE_NHPBQAV?$DynamicVectorClass@PAD@@@Z
+// TEMPLATE: GAMEMD 0x0049EDE0
+// ?ID@?$DynamicVectorClass@PAV?$DynamicVectorClass@PAD@@@@UAEHABQAV?$DynamicVectorClass@PAD@@@Z
+// SYNTHETIC: GAMEMD 0x0049EE10
+// ??_G?$VectorClass@PAV?$DynamicVectorClass@PAD@@@@UAEPAXI@Z
+// TEMPLATE: GAMEMD 0x0049EE60
+// ?Resize@?$VectorClass@PAD@@UAE_NHPBQAD@Z
+// TEMPLATE: GAMEMD 0x0049EF10
+// ?Clear@?$VectorClass@PAD@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0049EF40
+// ?ID@?$VectorClass@PAD@@UAEHABQAD@Z
+// TEMPLATE: GAMEMD 0x0049EF80
+// ?ID@?$VectorClass@PAD@@UAEHPBQAD@Z
+// SYNTHETIC: GAMEMD 0x0049EFA0
+// ??_G?$VectorClass@PAD@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x0049EFF0
+// ??_G?$DynamicVectorClass@PAD@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x0049F040
+// ??_G?$DynamicVectorClass@PAV?$DynamicVectorClass@PAD@@@@UAEPAXI@Z
+// TEMPLATE: GAMEMD 0x0049F090
+// ??0?$VectorClass@PAV?$DynamicVectorClass@PAD@@@@QAE@HPBQAV?$DynamicVectorClass@PAD@@@Z
 
 extern const double DAT_007E1708;
 extern const double DAT_007E1710;
@@ -815,44 +845,58 @@ extern double __cdecl FUN_004CAC40(double);
 extern double __cdecl FUN_004CAD50(double);
 extern double __cdecl FUN_004CADE0(double);
 
-// FUNCTION: 0x0049F0E0 $E26
+// SYNTHETIC: GAMEMD 0x0049F0E0 SYMBOL
+// _$E26
 double DAT_0089F6C0 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x0049F110 $E29
+// SYNTHETIC: GAMEMD 0x0049F110 SYMBOL
+// _$E29
 double DAT_0089F750 = DAT_0089F6C0 / DAT_007E5C40;
 
-// FUNCTION: 0x0049F130 $E32
+// SYNTHETIC: GAMEMD 0x0049F130 SYMBOL
+// _$E32
 double DAT_0089F738 = DAT_007E1718 / DAT_0089F750;
 
-// FUNCTION: 0x0049F150 $E35
+// SYNTHETIC: GAMEMD 0x0049F150 SYMBOL
+// _$E35
 double DAT_0089F730 = DAT_007E1720 * DAT_007E5C48;
 
-// FUNCTION: 0x0049F170 $E38
+// SYNTHETIC: GAMEMD 0x0049F170 SYMBOL
+// _$E38
 double DAT_0089F6C8 = DAT_007E1728 * DAT_007E5C48;
 
-// FUNCTION: 0x0049F190 $E41
+// SYNTHETIC: GAMEMD 0x0049F190 SYMBOL
+// _$E41
 double DAT_0089F680 = DAT_007E1730 * DAT_007E5C48;
 
-// FUNCTION: 0x0049F1B0 $E44
+// SYNTHETIC: GAMEMD 0x0049F1B0 SYMBOL
+// _$E44
 int DAT_0089F758 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_0089F680 - DAT_0089F6C8) * DAT_0089F6C0));
 
-// FUNCTION: 0x0049F1F0 $E47
+// SYNTHETIC: GAMEMD 0x0049F1F0 SYMBOL
+// _$E47
 double DAT_0089F6D0 = FUN_004CADE0(DAT_0089F758 * DAT_007E1740);
 
-// FUNCTION: 0x0049F220 $E50
+// SYNTHETIC: GAMEMD 0x0049F220 SYMBOL
+// _$E50
 double DAT_0089F728 = FUN_004CADE0((DAT_0089F758 * 2) / DAT_0089F6C0);
 
-// FUNCTION: 0x0049F250 $E53
+// SYNTHETIC: GAMEMD 0x0049F250 SYMBOL
+// _$E53
 int DAT_0089F74C = (int)(DAT_0089F758 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x0049F280 $E56
+// SYNTHETIC: GAMEMD 0x0049F280 SYMBOL
+// _$E56
 TPoint2D<short> DAT_0089F6B8(0, 0);
 
-// FUNCTION: 0x0049F290 $E59
+// SYNTHETIC: GAMEMD 0x0049F290 SYMBOL
+// _$E59
 TPoint3D<int> DAT_0089F718(0, 0, 0);
 
-// FUNCTION: 0x0049F2B0 $E62
+// SYNTHETIC: GAMEMD 0x0049F2B0 SYMBOL
+// _$E62
 TPoint3D<int> DAT_0089F740(128, 128, 0);
 
-// FUNCTION: 0x0049F2D0 $E65
+// SYNTHETIC: GAMEMD 0x0049F2D0 SYMBOL
+// _$E65
 Rect DAT_0089F6A8(0, 0, 0, 0);

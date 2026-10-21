@@ -42,11 +42,13 @@ struct FileSystem {
 	static void const * LoadFile(char const * name, bool as_shape);
 };
 
-// FUNCTION: 0x005B3AC0 $E19
-// FUNCTION: 0x005B3B10 $E16
+// SYNTHETIC: GAMEMD 0x005B3AC0 SYMBOL
+// _$E19
+// SYNTHETIC: GAMEMD 0x005B3B10 SYMBOL
+// _$E16
 List<MixFileClass *> MixFileClass::List;
 
-// FUNCTION: 0x005B3C00
+// FUNCTION: GAMEMD 0x005B3C00
 int __cdecl compfunc(void const * ptr1, void const * ptr2)
 {
 	if (*(int const *)ptr1 < *(int const *)ptr2) return(-1);
@@ -54,7 +56,7 @@ int __cdecl compfunc(void const * ptr1, void const * ptr2)
 	return(0);
 }
 
-// FUNCTION: 0x005B3C20
+// FUNCTION: GAMEMD 0x005B3C20
 MixFileClass::MixFileClass(char const * filename, PKey const * key) :
 	IsDigest(false),
 	IsEncrypted(false),
@@ -114,7 +116,7 @@ MixFileClass::MixFileClass(char const * filename, PKey const * key) :
 	List.Add_Tail(this);
 }
 
-// FUNCTION: 0x005B3E90
+// FUNCTION: GAMEMD 0x005B3E90
 bool MixFileClass::Free(char const * filename)
 {
 	MixFileClass * ptr = Finder(filename);
@@ -126,7 +128,7 @@ bool MixFileClass::Free(char const * filename)
 	return(false);
 }
 
-// FUNCTION: 0x005B3F50
+// FUNCTION: GAMEMD 0x005B3F50
 MixFileClass::~MixFileClass(void)
 {
 	if (Filename) {
@@ -146,7 +148,7 @@ MixFileClass::~MixFileClass(void)
 	Unlink();
 }
 
-// FUNCTION: 0x005B3FF0
+// FUNCTION: GAMEMD 0x005B3FF0
 void CacheTree_Insert(CacheNode * node, CacheNode ** link)
 {
 	CacheNode * cur = *link;
@@ -163,7 +165,7 @@ void CacheTree_Insert(CacheNode * node, CacheNode ** link)
 	}
 }
 
-// FUNCTION: 0x005B4020
+// FUNCTION: GAMEMD 0x005B4020
 CacheNode * CacheTree_Find(int key, CacheNode * node)
 {
 	while (node) {
@@ -173,7 +175,7 @@ CacheNode * CacheTree_Find(int key, CacheNode * node)
 	return(NULL);
 }
 
-// FUNCTION: 0x005B4050
+// FUNCTION: GAMEMD 0x005B4050
 CacheNode * CacheTree_Clear(int key, CacheNode * node)
 {
 	while (node) {
@@ -186,7 +188,7 @@ CacheNode * CacheTree_Clear(int key, CacheNode * node)
 	return(node);
 }
 
-// FUNCTION: 0x005B4080
+// FUNCTION: GAMEMD 0x005B4080
 void CacheTree_Destroy(CacheNode * node)
 {
 	if (node) {
@@ -196,7 +198,7 @@ void CacheTree_Destroy(CacheNode * node)
 	}
 }
 
-// FUNCTION: 0x005B40B0
+// FUNCTION: GAMEMD 0x005B40B0
 void const * FileSystem::LoadFile(char const * name, bool as_shape)
 {
 	char upper[_MAX_PATH];
@@ -226,7 +228,7 @@ void const * FileSystem::LoadFile(char const * name, bool as_shape)
 	return(data);
 }
 
-// FUNCTION: 0x005B4270
+// FUNCTION: GAMEMD 0x005B4270
 void Uncache_Shape(char const * name)
 {
 	char upper[_MAX_PATH];
@@ -238,7 +240,7 @@ void Uncache_Shape(char const * name)
 	CacheTree_Clear(id, DAT_00ABF00C);
 }
 
-// FUNCTION: 0x005B4350
+// FUNCTION: GAMEMD 0x005B4350
 MixFileClass * MixFileClass::Finder(char const * filename)
 {
 	MixFileClass * ptr = List.First();
@@ -258,19 +260,19 @@ MixFileClass * MixFileClass::Finder(char const * filename)
 	return(NULL);
 }
 
-// FUNCTION: 0x005B43E0
+// FUNCTION: GAMEMD 0x005B43E0
 bool MixFileClass::Cache(char const *, Buffer const *)
 {
 	return(true);
 }
 
-// FUNCTION: 0x005B43F0
+// FUNCTION: GAMEMD 0x005B43F0
 bool MixFileClass::Cache(Buffer const *)
 {
 	return(true);
 }
 
-// FUNCTION: 0x005B4400
+// FUNCTION: GAMEMD 0x005B4400
 void MixFileClass::Free(void)
 {
 	if (Data != NULL && IsAllocated) {
@@ -280,7 +282,7 @@ void MixFileClass::Free(void)
 	IsAllocated = false;
 }
 
-// FUNCTION: 0x005B4430
+// FUNCTION: GAMEMD 0x005B4430
 bool MixFileClass::Offset(char const * filename, void ** realptr, MixFileClass ** mixfile, int * offset, int * size)
 {
 	MixFileClass * ptr;
@@ -324,20 +326,26 @@ bool MixFileClass::Offset(char const * filename, void ** realptr, MixFileClass *
 	return(false);
 }
 
-// FUNCTION: 0x005B4590 GenericNode::Unlink
+// FUNCTION: GAMEMD 0x005B4590
+// GenericNode::Unlink
 
-// FUNCTION: 0x005B45C0 BlowStraw::~BlowStraw
+// SYNTHETIC: GAMEMD 0x005B45C0
+// ??_GBlowStraw@@UAEPAXI@Z
 
-// FUNCTION: 0x005B4610 BlowfishEngine::~BlowfishEngine
+// SYNTHETIC: GAMEMD 0x005B4610
+// ??_GBlowfishEngine@@QAEPAXI@Z
 
-// FUNCTION: 0x005B4630 MixFileClass::~MixFileClass
+// SYNTHETIC: GAMEMD 0x005B4630
+// ??_GMixFileClass@@UAEPAXI@Z
 
-// FUNCTION: 0x005B46E0 ?$List@PAVMixFileClass@@::~?$List@PAVMixFileClass@@
+// SYNTHETIC: GAMEMD 0x005B46E0
+// ??_G?$List@PAVMixFileClass@@@@UAEPAXI@Z
 
 struct Quad4 {
 	int A, B, C, D;
 	Quad4(void) : A(0), B(0), C(0), D(0) {}
 };
 
-// FUNCTION: 0x005B47A0 $E22
+// SYNTHETIC: GAMEMD 0x005B47A0 SYMBOL
+// _$E22
 Quad4 DAT_00ABF018;

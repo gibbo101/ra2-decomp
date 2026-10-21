@@ -8,7 +8,7 @@
 #include "swap.h"
 #include <cmath>
 
-// FUNCTION: 0x0063F080
+// FUNCTION: GAMEMD 0x0063F080
 void Rasterize_Polygon(const PolygonShapeStruct & shape, PolygonRasterStruct & raster)
 {
 	Point2D * out_points;
@@ -115,7 +115,7 @@ void Rasterize_Polygon(const PolygonShapeStruct & shape, PolygonRasterStruct & r
 	}
 }
 
-// FUNCTION: 0x0063F2E0
+// FUNCTION: GAMEMD 0x0063F2E0
 void Rasterize_Line_Span(int x0, int y0, int x1, int y1, int axis, int skip, Point2D *&points)
 {
 	Point2D *out = points;

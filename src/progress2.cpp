@@ -47,7 +47,8 @@ class PCX {
 		static PCX Instance;
 };
 
-// FUNCTION: 0x006433D0 ProgressScreenClass::Get_Current_Progress
+// FUNCTION: GAMEMD 0x006433D0
+// ProgressScreenClass::Get_Current_Progress
 double ProgressScreenClass::Get_Current_Progress(void) const
 {
 	double total = 0;
@@ -57,7 +58,8 @@ double ProgressScreenClass::Get_Current_Progress(void) const
 	return total / PlayerCount / MainProgress;
 }
 
-// FUNCTION: 0x00643400 ProgressScreenClass::Draw_Bar
+// FUNCTION: GAMEMD 0x00643400
+// ProgressScreenClass::Draw_Bar
 void ProgressScreenClass::Draw_Bar(Point2D pos, double ratio, Surface * surface, ColorScheme * scheme)
 {
 	Rect shape = ((SHPStruct *)Buffer)->GetFrameBounds(0);
@@ -86,7 +88,8 @@ void ProgressScreenClass::Draw_Bar(Point2D pos, double ratio, Surface * surface,
 	Draw_Shape(*surface, *drawer, (ShapeSet *)Buffer, 0, Point2D(0, 0), bar, ShapeFlags_Type(0x400));
 }
 
-// FUNCTION: 0x006435B0 ProgressScreenClass::Draw_Flag
+// FUNCTION: GAMEMD 0x006435B0
+// ProgressScreenClass::Draw_Flag
 void ProgressScreenClass::Draw_Flag(int x, int y, Surface * flag)
 {
 	Surface * surface = FUN_004E3560(0);
@@ -108,7 +111,8 @@ void ProgressScreenClass::Draw_Flag(int x, int y, Surface * flag)
 	}
 }
 
-// FUNCTION: 0x00643670 ProgressScreenClass::Draw_Label
+// FUNCTION: GAMEMD 0x00643670
+// ProgressScreenClass::Draw_Label
 void ProgressScreenClass::Draw_Label(Point2D pt, wchar_t const * name, ColorScheme * scheme, int width)
 {
 	BitFont * font = Font_From_TPF(TextPrintType(0x46));
@@ -126,7 +130,8 @@ void ProgressScreenClass::Draw_Label(Point2D pt, wchar_t const * name, ColorSche
 	Fancy_Text_Print_Wide(&scratch, name, HiddenSurface, &Rect(0, 0, pt.X + w, pt.Y + h), &pt, scheme, 0, TextPrintType(0x19));
 }
 
-// FUNCTION: 0x00643AE0 ProgressScreenClass::Display_Progress
+// FUNCTION: GAMEMD 0x00643AE0
+// ProgressScreenClass::Display_Progress
 void ProgressScreenClass::Display_Progress(Point2D xpt)
 {
 	if (IsActive && Buffer != 0) {
@@ -178,7 +183,8 @@ static inline void Fill_Notice(int * data, int before, double progress)
 	data[1] = (int)(progress * 100.0);
 }
 
-// FUNCTION: 0x00643C50 ProgressScreenClass::Set_Progress_Percent
+// FUNCTION: GAMEMD 0x00643C50
+// ProgressScreenClass::Set_Progress_Percent
 void ProgressScreenClass::Set_Progress_Percent(int index, double value, Point2D pt)
 {
 	int before = (int)(Get_Current_Progress() * 100.0);
@@ -201,7 +207,8 @@ void ProgressScreenClass::Set_Progress_Percent(int index, double value, Point2D 
 	}
 }
 
-// FUNCTION: 0x00643D60 ProgressScreenClass::Add_Progress_Percent
+// FUNCTION: GAMEMD 0x00643D60
+// ProgressScreenClass::Add_Progress_Percent
 void ProgressScreenClass::Add_Progress_Percent(int index, double value, Point2D pt)
 {
 	int before = (int)(Get_Current_Progress() * 100.0);
@@ -224,25 +231,29 @@ void ProgressScreenClass::Add_Progress_Percent(int index, double value, Point2D 
 	}
 }
 
-// FUNCTION: 0x00643E60 ProgressScreenClass::Has_Dialog
+// FUNCTION: GAMEMD 0x00643E60
+// ProgressScreenClass::Has_Dialog
 bool ProgressScreenClass::Has_Dialog(void) const
 {
 	return Dialog != 0;
 }
 
-// FUNCTION: 0x00643E70 ProgressScreenClass::Clear_Dialog
+// FUNCTION: GAMEMD 0x00643E70
+// ProgressScreenClass::Clear_Dialog
 void ProgressScreenClass::Clear_Dialog(void)
 {
 	Dialog = 0;
 }
 
-// FUNCTION: 0x00643E80 ProgressNotifier::Set_Callback
+// FUNCTION: GAMEMD 0x00643E80
+// ProgressNotifier::Set_Callback
 void ProgressNotifier::Set_Callback(ProgressCallback * callback)
 {
 	Callback = callback;
 }
 
-// FUNCTION: 0x00643E90 ProgressScreenClass::Get_Current_Progress
+// FUNCTION: GAMEMD 0x00643E90
+// ProgressScreenClass::Get_Current_Progress
 double ProgressScreenClass::Get_Current_Progress(int index) const
 {
 	double progress;

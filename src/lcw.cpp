@@ -6,7 +6,7 @@
 #include	"always.h"
 #include	"lcw.h"
 
-// FUNCTION: 0x00551C60
+// FUNCTION: GAMEMD 0x00551C60
 int LCW_Uncomp(void const * source, void * dest, unsigned long )
 {
 	unsigned char * source_ptr, * dest_ptr, * copy_ptr;

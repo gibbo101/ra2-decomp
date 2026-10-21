@@ -7,7 +7,7 @@
 #include "layer.h"
 #include "swizzle.h"
 
-// FUNCTION: 0x005519B0
+// FUNCTION: GAMEMD 0x005519B0
 bool LayerClass::Submit(ObjectClass const * object, bool sort)
 {
 	if (sort) {
@@ -16,7 +16,7 @@ bool LayerClass::Submit(ObjectClass const * object, bool sort)
 	return(Add((ObjectClass *)object) != false);
 }
 
-// FUNCTION: 0x00551A30
+// FUNCTION: GAMEMD 0x00551A30
 void LayerClass::Sort(void)
 {
 	for (int index = 0; index < Count()-1; index++) {
@@ -31,7 +31,7 @@ void LayerClass::Sort(void)
 	}
 }
 
-// FUNCTION: 0x00551A90
+// FUNCTION: GAMEMD 0x00551A90
 int LayerClass::Sorted_Add(ObjectClass const * const object)
 {
 	if (ActiveCount >= Length()) {
@@ -59,7 +59,7 @@ int LayerClass::Sorted_Add(ObjectClass const * const object)
 	return(true);
 }
 
-// FUNCTION: 0x00551B20
+// FUNCTION: GAMEMD 0x00551B20
 HRESULT LayerClass::Save(IStream * stream)
 {
 	if (stream == NULL) {
@@ -81,7 +81,7 @@ HRESULT LayerClass::Save(IStream * stream)
 	return(result);
 }
 
-// FUNCTION: 0x00551B90
+// FUNCTION: GAMEMD 0x00551B90
 HRESULT LayerClass::Load(IStream * stream)
 {
 	if (stream == NULL) {

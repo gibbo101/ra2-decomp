@@ -53,7 +53,7 @@ extern const double DAT_007F4FD0;
 
 DynamicVectorClass<TechnoTypeClass *> TechnoTypeClass::Array;
 
-// FUNCTION: 0x00711840
+// FUNCTION: GAMEMD 0x00711840
 TechnoTypeClass::TechnoTypeClass(NoInitClass const & x) :
 	BASECLASS(x),
 	VeteranAbilities(x),
@@ -107,7 +107,7 @@ inline void Free_Alt_Cameo(TechnoTypeClass * type)
 	}
 }
 
-// FUNCTION: 0x00711AE0
+// FUNCTION: GAMEMD 0x00711AE0
 TechnoTypeClass::~TechnoTypeClass(void)
 {
 	if (CameoAllocated && CameoData != NULL) {
@@ -120,13 +120,13 @@ TechnoTypeClass::~TechnoTypeClass(void)
 	Array.Delete(this);
 }
 
-// FUNCTION: 0x00711E80
+// FUNCTION: GAMEMD 0x00711E80
 bool TechnoTypeClass::CanUseWaypoint(void) const
 {
 	return(true);
 }
 
-// FUNCTION: 0x00711E90
+// FUNCTION: GAMEMD 0x00711E90
 bool TechnoTypeClass::CanAttackMove(void) const
 {
 	if (Weapons[0].Weapon != NULL) {
@@ -137,13 +137,13 @@ bool TechnoTypeClass::CanAttackMove(void) const
 	return(false);
 }
 
-// FUNCTION: 0x00711EB0
+// FUNCTION: GAMEMD 0x00711EB0
 int TechnoTypeClass::Raw_Cost(void) const
 {
 	return(Cost);
 }
 
-// FUNCTION: 0x00711EC0
+// FUNCTION: GAMEMD 0x00711EC0
 int TechnoTypeClass::Get_Ownable(void) const
 {
 	if (IsDoubleOwned && Session.Type != GAME_NORMAL) {
@@ -152,13 +152,13 @@ int TechnoTypeClass::Get_Ownable(void) const
 	return(Ownable);
 }
 
-// FUNCTION: 0x00711EE0
+// FUNCTION: GAMEMD 0x00711EE0
 int TechnoTypeClass::Time_To_Build(void) const
 {
 	return(Cost * Rule->BuildSpeedBias * (TICKS_PER_MINUTE / 1000.));
 }
 
-// FUNCTION: 0x00711F00
+// FUNCTION: GAMEMD 0x00711F00
 int TechnoTypeClass::Cost_Of(HouseClass * house) const
 {
 	if (house != NULL) {
@@ -169,7 +169,7 @@ int TechnoTypeClass::Cost_Of(HouseClass * house) const
 	return(Raw_Cost());
 }
 
-// FUNCTION: 0x00711F60
+// FUNCTION: GAMEMD 0x00711F60
 int TechnoTypeClass::GetRefund(HouseClass * house, bool unknown) const
 {
 	float refund = Rule->RefundPercent;
@@ -191,7 +191,7 @@ int TechnoTypeClass::GetRefund(HouseClass * house, bool unknown) const
 	return(Raw_Cost() * refund);
 }
 
-// FUNCTION: 0x00712040
+// FUNCTION: GAMEMD 0x00712040
 void const * TechnoTypeClass::Get_Cameo_Data(void) const
 {
 	if (PlayerPtr != NULL && PlayerPtr->BarracksInfiltrated) {
@@ -209,20 +209,20 @@ void const * TechnoTypeClass::Get_Cameo_Data(void) const
 	return(CameoData);
 }
 
-// FUNCTION: 0x007120D0
+// FUNCTION: GAMEMD 0x007120D0
 int TechnoTypeClass::Repair_Cost(void) const
 {
 	int cost = (Raw_Cost()/(MaxStrength/Rule->RepairStep)) * Rule->RepairPercent;
 	return(MAX(cost, 1));
 }
 
-// FUNCTION: 0x00712120
+// FUNCTION: GAMEMD 0x00712120
 int TechnoTypeClass::Repair_Step(void) const
 {
 	return(Rule->RepairStep);
 }
 
-// FUNCTION: 0x00712130
+// FUNCTION: GAMEMD 0x00712130
 bool TechnoTypeClass::Is_Two_Shooter(void) const
 {
 	WeaponTypeClass *pri = Weapons[0].Weapon;
@@ -241,7 +241,7 @@ bool TechnoTypeClass::Is_Two_Shooter(void) const
 	return(false);
 }
 
-// FUNCTION: 0x00716150
+// FUNCTION: GAMEMD 0x00716150
 bool TechnoTypeClass::Legal_Placement(Cell const & pos, HouseClass * house) const
 {
 	if (pos == CELL_NONE) return(0);
@@ -277,7 +277,7 @@ bool TechnoTypeClass::Legal_Placement(Cell const & pos, HouseClass * house) cons
 	return(any_blocked == 0);
 }
 
-// FUNCTION: 0x00716290
+// FUNCTION: GAMEMD 0x00716290
 int TechnoTypeClass::Max_Pips(void) const
 {
 	switch (PipScale) {
@@ -300,7 +300,7 @@ int TechnoTypeClass::Max_Pips(void) const
 	return(0);
 }
 
-// FUNCTION: 0x00716DC0
+// FUNCTION: GAMEMD 0x00716DC0
 HRESULT STDMETHODCALLTYPE TechnoTypeClass::Save(IStream *stream, BOOL cleardirty)
 {
 	HRESULT result = BASECLASS::Save(stream, cleardirty);
@@ -331,7 +331,7 @@ HRESULT STDMETHODCALLTYPE TechnoTypeClass::Save(IStream *stream, BOOL cleardirty
 	return(result);
 }
 
-// FUNCTION: 0x007170A0
+// FUNCTION: GAMEMD 0x007170A0
 HRESULT STDMETHODCALLTYPE TechnoTypeClass::GetSizeMax(ULARGE_INTEGER *pcbSize)
 {
 	HRESULT res = BASECLASS::GetSizeMax(pcbSize);
@@ -359,19 +359,19 @@ HRESULT STDMETHODCALLTYPE TechnoTypeClass::GetSizeMax(ULARGE_INTEGER *pcbSize)
 	return(res);
 }
 
-// FUNCTION: 0x007177C0
+// FUNCTION: GAMEMD 0x007177C0
 YRWeaponDataStruct * TechnoTypeClass::GetWeapon(int index)
 {
 	return(&Weapons[index]);
 }
 
-// FUNCTION: 0x007177E0
+// FUNCTION: GAMEMD 0x007177E0
 YRWeaponDataStruct * TechnoTypeClass::GetEliteWeapon(int index)
 {
 	return(&EliteWeapons[index]);
 }
 
-// FUNCTION: 0x00717800
+// FUNCTION: GAMEMD 0x00717800
 int TechnoTypeClass::GetFlightLevel(void) const
 {
 	if (FlightLevel == -1) {
@@ -380,7 +380,7 @@ int TechnoTypeClass::GetFlightLevel(void) const
 	return(FlightLevel);
 }
 
-// FUNCTION: 0x00717820
+// FUNCTION: GAMEMD 0x00717820
 void TechnoTypeClass::FUN_00717820(void)
 {
 	if (PaletteFile[0]) {
@@ -388,7 +388,7 @@ void TechnoTypeClass::FUN_00717820(void)
 	}
 }
 
-// FUNCTION: 0x00717840
+// FUNCTION: GAMEMD 0x00717840
 void TechnoTypeClass::FUN_00717840(void)
 {
 	for (int index = 0; index < Array.Count(); index++) {
@@ -396,95 +396,106 @@ void TechnoTypeClass::FUN_00717840(void)
 	}
 }
 
-// FUNCTION: 0x00717880
+// FUNCTION: GAMEMD 0x00717880
 bool TechnoTypeClass::HasMultipleTurrets(void) const
 {
 	return(TurretCount > 0);
 }
 
-// FUNCTION: 0x00717890
+// FUNCTION: GAMEMD 0x00717890
 void TechnoTypeClass::FUN_00717890(int index, int weapon)
 {
 	TurretWeapon[weapon] = index;
 }
 
-// FUNCTION: 0x007178B0
+// FUNCTION: GAMEMD 0x007178B0
 int TechnoTypeClass::FUN_007178B0(int weapon) const
 {
 	return(TurretWeapon[weapon]);
 }
 
-// FUNCTION: 0x007179A0 TechnoTypeClass::~TechnoTypeClass
+// SYNTHETIC: GAMEMD 0x007179A0
+// ??_GTechnoTypeClass@@UAEPAXI@Z
 
-// FUNCTION: 0x007179C0
+// FUNCTION: GAMEMD 0x007179C0
 void FUN_007179C0(void)
 {
 }
 
-// FUNCTION: 0x00717A30
+// FUNCTION: GAMEMD 0x00717A30
 void TurretControl::FUN_00717A30(int travel)
 {
 	Travel = travel;
 }
 
-// FUNCTION: 0x00717A40
+// FUNCTION: GAMEMD 0x00717A40
 int TurretControl::FUN_00717A40(void) const
 {
 	return(Travel);
 }
 
-// FUNCTION: 0x00717A50
+// FUNCTION: GAMEMD 0x00717A50
 void TurretControl::FUN_00717A50(int frames)
 {
 	CompressFrames = (frames > 0) ? frames : 1;
 }
 
-// FUNCTION: 0x00717A70
+// FUNCTION: GAMEMD 0x00717A70
 int TurretControl::FUN_00717A70(void) const
 {
 	return(CompressFrames);
 }
 
-// FUNCTION: 0x00717A80
+// FUNCTION: GAMEMD 0x00717A80
 void TurretControl::FUN_00717A80(int frames)
 {
 	RecoverFrames = (frames > 0) ? frames : 1;
 }
 
-// FUNCTION: 0x00717AA0
+// FUNCTION: GAMEMD 0x00717AA0
 int TurretControl::FUN_00717AA0(void) const
 {
 	return(RecoverFrames);
 }
 
-// FUNCTION: 0x00717AB0
+// FUNCTION: GAMEMD 0x00717AB0
 void TurretControl::FUN_00717AB0(int frames)
 {
 	HoldFrames = (frames > 0) ? frames : 1;
 }
 
-// FUNCTION: 0x00717AD0
+// FUNCTION: GAMEMD 0x00717AD0
 int TurretControl::FUN_00717AD0(void) const
 {
 	return(HoldFrames);
 }
 
-// FUNCTION: 0x00717AE0
+// FUNCTION: GAMEMD 0x00717AE0
 bool FUN_00717AE0(VoxelLibrary * library)
 {
 	return(!library->Load_Failed());
 }
 
-// FUNCTION: 0x00717AF0 ?$TypeList@PBVParticleSystemTypeClass@@::?$TypeList@PBVParticleSystemTypeClass@@
-// FUNCTION: 0x00717B20 ?$TypeList@PBVParticleSystemTypeClass@@::Save
-// FUNCTION: 0x00717B70 ?$VectorClass@PBVParticleSystemTypeClass@@::~?$VectorClass@PBVParticleSystemTypeClass@@
-// FUNCTION: 0x00717BC0 ?$DynamicVectorClass@PBVVoxelAnimTypeClass@@::?$DynamicVectorClass@PBVVoxelAnimTypeClass@@
-// FUNCTION: 0x00717BD0 ?$DynamicVectorClass@H::?$DynamicVectorClass@H
-// FUNCTION: 0x00717BE0 ?$DynamicVectorClass@PBVBuildingTypeClass@@::?$DynamicVectorClass@PBVBuildingTypeClass@@
-// FUNCTION: 0x00717BF0 ?$DynamicVectorClass@PBVAnimTypeClass@@::?$DynamicVectorClass@PBVAnimTypeClass@@
-// FUNCTION: 0x00717C00 ?$VectorClass@PBVParticleSystemTypeClass@@::operator=
-// FUNCTION: 0x00717C70 ?$DynamicVectorClass@PBVParticleSystemTypeClass@@::?$DynamicVectorClass@PBVParticleSystemTypeClass@@
-// FUNCTION: 0x00717CD0 ?$DynamicVectorClass@PBVParticleSystemTypeClass@@::Add
+// TEMPLATE: GAMEMD 0x00717AF0
+// ??0?$TypeList@PBVParticleSystemTypeClass@@@@QAE@XZ
+// TEMPLATE: GAMEMD 0x00717B20
+// ?Save@?$TypeList@PBVParticleSystemTypeClass@@@@QBEXPAUIStream@@@Z
+// SYNTHETIC: GAMEMD 0x00717B70
+// ??_G?$VectorClass@PBVParticleSystemTypeClass@@@@UAEPAXI@Z
+// TEMPLATE: GAMEMD 0x00717BC0
+// ??0?$DynamicVectorClass@PBVVoxelAnimTypeClass@@@@QAE@ABVNoInitClass@@@Z
+// TEMPLATE: GAMEMD 0x00717BD0
+// ??0?$DynamicVectorClass@H@@QAE@ABVNoInitClass@@@Z
+// TEMPLATE: GAMEMD 0x00717BE0
+// ??0?$DynamicVectorClass@PBVBuildingTypeClass@@@@QAE@ABVNoInitClass@@@Z
+// TEMPLATE: GAMEMD 0x00717BF0
+// ??0?$DynamicVectorClass@PBVAnimTypeClass@@@@QAE@ABVNoInitClass@@@Z
+// TEMPLATE: GAMEMD 0x00717C00
+// ??4?$VectorClass@PBVParticleSystemTypeClass@@@@QAEAAV0@ABV0@@Z
+// TEMPLATE: GAMEMD 0x00717C70
+// ??0?$DynamicVectorClass@PBVParticleSystemTypeClass@@@@QAE@IPBQBVParticleSystemTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x00717CD0
+// ?Add@?$DynamicVectorClass@PBVParticleSystemTypeClass@@@@QAE_NABQBVParticleSystemTypeClass@@@Z
 template class TypeList<ParticleSystemTypeClass const *>;
 template class DynamicVectorClass<VoxelAnimTypeClass const *>;
 template class DynamicVectorClass<int>;
@@ -492,38 +503,50 @@ template class DynamicVectorClass<BuildingTypeClass const *>;
 template class DynamicVectorClass<AnimTypeClass const *>;
 template class VectorClass<ParticleSystemTypeClass const *>;
 template class DynamicVectorClass<ParticleSystemTypeClass const *>;
-// FUNCTION: 0x00717D20 ?$TypeList@PBVParticleSystemTypeClass@@::?$TypeList@PBVParticleSystemTypeClass@@
-// FUNCTION: 0x00717DB0 ?$DynamicVectorClass@PAVTechnoTypeClass@@::Delete_Index
+// TEMPLATE: GAMEMD 0x00717D20
+// ??0?$TypeList@PBVParticleSystemTypeClass@@@@QAE@ABV0@@Z
+// TEMPLATE: GAMEMD 0x00717DB0
+// ?Delete_Index@?$DynamicVectorClass@PAVTechnoTypeClass@@@@QAE_NH@Z
 template class DynamicVectorClass<TechnoTypeClass *>;
 
-// FUNCTION: 0x00717DF0 $E116
+// SYNTHETIC: GAMEMD 0x00717DF0 SYMBOL
+// _$E116
 double DAT_00B0EBE0 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
-// FUNCTION: 0x00717E20 $E119
+// SYNTHETIC: GAMEMD 0x00717E20 SYMBOL
+// _$E119
 double DAT_00B0EC30 = DAT_00B0EBE0 / DAT_007F4FC8;
 
-// FUNCTION: 0x00717E40 $E122
+// SYNTHETIC: GAMEMD 0x00717E40 SYMBOL
+// _$E122
 double DAT_00B0EC18 = DAT_007E1718 / DAT_00B0EC30;
 
-// FUNCTION: 0x00717E60 $E125
+// SYNTHETIC: GAMEMD 0x00717E60 SYMBOL
+// _$E125
 double DAT_00B0EC10 = DAT_007E1720 * DAT_007F4FD0;
 
-// FUNCTION: 0x00717E80 $E128
+// SYNTHETIC: GAMEMD 0x00717E80 SYMBOL
+// _$E128
 double DAT_00B0EBE8 = DAT_007E1728 * DAT_007F4FD0;
 
-// FUNCTION: 0x00717EA0 $E131
+// SYNTHETIC: GAMEMD 0x00717EA0 SYMBOL
+// _$E131
 double DAT_00B0EBC0 = DAT_007E1730 * DAT_007F4FD0;
 
-// FUNCTION: 0x00717EC0 $E134
+// SYNTHETIC: GAMEMD 0x00717EC0 SYMBOL
+// _$E134
 int DAT_00B0EC38 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B0EBC0 - DAT_00B0EBE8) * DAT_00B0EBE0));
 
-// FUNCTION: 0x00717F00 $E137
+// SYNTHETIC: GAMEMD 0x00717F00 SYMBOL
+// _$E137
 double DAT_00B0EBF0 = FUN_004CADE0(DAT_00B0EC38 * DAT_007E1740);
 
-// FUNCTION: 0x00717F30 $E140
+// SYNTHETIC: GAMEMD 0x00717F30 SYMBOL
+// _$E140
 double DAT_00B0EC08 = FUN_004CADE0((DAT_00B0EC38 * 2) / DAT_00B0EBE0);
 
-// FUNCTION: 0x00717F60 $E143
+// SYNTHETIC: GAMEMD 0x00717F60 SYMBOL
+// _$E143
 int DAT_00B0EC2C = (int)(DAT_00B0EC38 * 4 + DAT_007E1738);
 
 struct TT_Short2 { short A; short B; TT_Short2() : A(0), B(0) {} };
@@ -531,14 +554,18 @@ struct TT_Int3 { int A; int B; int C; TT_Int3() : A(0), B(0), C(0) {} };
 struct TT_Int3b { int A; int B; int C; TT_Int3b() : A(128), B(128), C(0) {} };
 struct TT_Int4 { int A; int B; int C; int D; TT_Int4() : A(0), B(0), C(0), D(0) {} };
 
-// FUNCTION: 0x00717F90 $E146
+// SYNTHETIC: GAMEMD 0x00717F90 SYMBOL
+// _$E146
 TT_Short2 DAT_00B0EBD8;
 
-// FUNCTION: 0x00717FA0 $E149
+// SYNTHETIC: GAMEMD 0x00717FA0 SYMBOL
+// _$E149
 TT_Int3 DAT_00B0EBF8;
 
-// FUNCTION: 0x00717FC0 $E152
+// SYNTHETIC: GAMEMD 0x00717FC0 SYMBOL
+// _$E152
 TT_Int3b DAT_00B0EC20;
 
-// FUNCTION: 0x00717FE0 $E155
+// SYNTHETIC: GAMEMD 0x00717FE0 SYMBOL
+// _$E155
 TT_Int4 DAT_00B0EBC8;

@@ -7,7 +7,7 @@
 #include "control.h"
 #include "rect.h"
 
-// FUNCTION: 0x0048E520
+// FUNCTION: GAMEMD 0x0048E520
 ControlClass::ControlClass(unsigned id, int x, int y, int w, int h, unsigned flags, bool sticky) :
 	BASECLASS(x, y, w, h, flags, sticky),
 	ID(id),
@@ -15,7 +15,7 @@ ControlClass::ControlClass(unsigned id, int x, int y, int w, int h, unsigned fla
 {
 }
 
-// FUNCTION: 0x0048E570
+// FUNCTION: GAMEMD 0x0048E570
 ControlClass::ControlClass(ControlClass const & control) :
 	BASECLASS(control),
 	ID(control.ID),
@@ -23,7 +23,7 @@ ControlClass::ControlClass(ControlClass const & control) :
 {
 }
 
-// FUNCTION: 0x0048E5A0
+// FUNCTION: GAMEMD 0x0048E5A0
 int ControlClass::Action(unsigned flags, KeyNumType & key, int modifier)
 {
 	if (flags) {
@@ -45,19 +45,19 @@ int ControlClass::Action(unsigned flags, KeyNumType & key, int modifier)
 }
 
 
-// FUNCTION: 0x0048E600
+// FUNCTION: GAMEMD 0x0048E600
 void ControlClass::Make_Peer(BASECLASS & gadget)
 {
 	Peer = &gadget;
 }
 
-// FUNCTION: 0x0048E610
+// FUNCTION: GAMEMD 0x0048E610
 unsigned ControlClass::Get_ID(void) const
 {
 	return(ID);
 }
 
-// FUNCTION: 0x0048E620
+// FUNCTION: GAMEMD 0x0048E620
 int ControlClass::Draw_Me(int forced)
 {
 	if (Peer) {
@@ -65,8 +65,11 @@ int ControlClass::Draw_Me(int forced)
 	}
 	return(BASECLASS::Draw_Me(forced));
 }
-// FUNCTION: 0x0048E650 GadgetClass::Peer_To_Peer
+// FUNCTION: GAMEMD 0x0048E650
+// GadgetClass::Peer_To_Peer
 
-// FUNCTION: 0x0048E660 ControlClass::~ControlClass
+// SYNTHETIC: GAMEMD 0x0048E660
+// ??_GControlClass@@UAEPAXI@Z
 
-// FUNCTION: 0x0048E680 $E
+// SYNTHETIC: GAMEMD 0x0048E680 SYMBOL
+// _$E2

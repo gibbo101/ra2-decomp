@@ -90,27 +90,43 @@ extern HouseClass * DAT_00AC1198;
 extern int DAT_007ED3FC;
 ThreatType __fastcall FUN_00645BB0(QuarryType quarry);
 
-// FUNCTION: 0x004F4EE0 $E2
-// FUNCTION: 0x004F4F00 $E5
-// FUNCTION: 0x004F4F30 $E8
-// FUNCTION: 0x004F4F50 $E11
-// FUNCTION: 0x004F4F70 $E14
-// FUNCTION: 0x004F4F90 $E17
-// FUNCTION: 0x004F4FB0 $E20
-// FUNCTION: 0x004F4FD0 $E23
-// FUNCTION: 0x004F5010 $E26
-// FUNCTION: 0x004F5040 $E29
-// FUNCTION: 0x004F5070 $E32
-// FUNCTION: 0x004F50A0 $E35
-// FUNCTION: 0x004F50B0 $E38
-// FUNCTION: 0x004F50D0 $E41
+// SYNTHETIC: GAMEMD 0x004F4EE0 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x004F4F00 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x004F4F30 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x004F4F50 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x004F4F70 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x004F4F90 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x004F4FB0 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x004F4FD0 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x004F5010 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x004F5040 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x004F5070 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x004F50A0 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x004F50B0 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x004F50D0 SYMBOL
+// _$E41
 
-// FUNCTION: 0x004F50F0 $E202
+// SYNTHETIC: GAMEMD 0x004F50F0 SYMBOL
+// _$E202
 
-// FUNCTION: 0x004F5130 $E199
+// SYNTHETIC: GAMEMD 0x004F5130 SYMBOL
+// _$E199
 DynamicVectorClass<HouseClass::BuildChoiceClass *> HouseClass::BuildChoice;
 
-// FUNCTION: 0x004F5190
+// FUNCTION: GAMEMD 0x004F5190
 HouseClass::HouseClass(NoInitClass const & x) :
 	BASECLASS(x),
 	Control(x),
@@ -159,7 +175,7 @@ inline UnitTypeClass const * First_Ownable(HouseClass const * house, TypeList<Un
 	return(NULL);
 }
 
-// FUNCTION: 0x004F6540
+// FUNCTION: GAMEMD 0x004F6540
 bool HouseClass::Can_Make_Money(void)
 {
 	bool hasdest = CountResourceDestinations > 0;
@@ -228,7 +244,7 @@ bool HouseClass::Can_Make_Money(void)
 	return(false);
 }
 
-// FUNCTION: 0x004F6830
+// FUNCTION: GAMEMD 0x004F6830
 HRESULT STDMETHODCALLTYPE HouseClass::QueryInterface(REFIID riid, LPVOID * ppvObject)
 {
 	if (ppvObject == NULL) {
@@ -270,13 +286,13 @@ HRESULT STDMETHODCALLTYPE HouseClass::QueryInterface(REFIID riid, LPVOID * ppvOb
 	return(S_OK);
 }
 
-// FUNCTION: 0x004F6910
+// FUNCTION: GAMEMD 0x004F6910
 bool STDMETHODCALLTYPE HouseClass::Is_Powered(void)
 {
 	return(Power >= Drain);
 }
 
-// FUNCTION: 0x004F6930
+// FUNCTION: GAMEMD 0x004F6930
 IApplication * STDMETHODCALLTYPE HouseClass::Get_Application(void)
 {
 	IApplication *app;
@@ -284,7 +300,7 @@ IApplication * STDMETHODCALLTYPE HouseClass::Get_Application(void)
 	return(app);
 }
 
-// FUNCTION: 0x004F6950
+// FUNCTION: GAMEMD 0x004F6950
 BSTR STDMETHODCALLTYPE HouseClass::Name(void)
 {
 	WCHAR psz[32];
@@ -292,7 +308,7 @@ BSTR STDMETHODCALLTYPE HouseClass::Name(void)
 	return(SysAllocString(psz));
 }
 
-// FUNCTION: 0x004F6990
+// FUNCTION: GAMEMD 0x004F6990
 LONG STDMETHODCALLTYPE HouseClass::Available_Money(void)
 {
 	float mult = Class->IncomeMult;
@@ -300,25 +316,25 @@ LONG STDMETHODCALLTYPE HouseClass::Available_Money(void)
 	return((LONG)(value * mult + Credits));
 }
 
-// FUNCTION: 0x004F69D0
+// FUNCTION: GAMEMD 0x004F69D0
 LONG STDMETHODCALLTYPE HouseClass::Available_Storage(void)
 {
 	return(Capacity - (int)Tiberium.Get_Total_Amount());
 }
 
-// FUNCTION: 0x004F6A00
+// FUNCTION: GAMEMD 0x004F6A00
 LONG STDMETHODCALLTYPE HouseClass::Power_Output(void)
 {
 	return(Power);
 }
 
-// FUNCTION: 0x004F6A10
+// FUNCTION: GAMEMD 0x004F6A10
 LONG STDMETHODCALLTYPE HouseClass::Power_Drain(void)
 {
 	return(Drain);
 }
 
-// FUNCTION: 0x004F6A20
+// FUNCTION: GAMEMD 0x004F6A20
 LONG STDMETHODCALLTYPE HouseClass::Category_Quantity(CategoryType category)
 {
 	int quantity = 0;
@@ -333,7 +349,7 @@ LONG STDMETHODCALLTYPE HouseClass::Category_Quantity(CategoryType category)
 	return(quantity);
 }
 
-// FUNCTION: 0x004F6A80
+// FUNCTION: GAMEMD 0x004F6A80
 LONG STDMETHODCALLTYPE HouseClass::Apparent_Category_Quantity(CategoryType category)
 {
 	int quantity = 0;
@@ -348,7 +364,7 @@ LONG STDMETHODCALLTYPE HouseClass::Apparent_Category_Quantity(CategoryType categ
 	return(quantity);
 }
 
-// FUNCTION: 0x004F6AE0
+// FUNCTION: GAMEMD 0x004F6AE0
 LONG STDMETHODCALLTYPE HouseClass::Category_Power(CategoryType category)
 {
 	int quantity = 0;
@@ -364,7 +380,7 @@ LONG STDMETHODCALLTYPE HouseClass::Category_Power(CategoryType category)
 	return(quantity);
 }
 
-// FUNCTION: 0x004F6B50
+// FUNCTION: GAMEMD 0x004F6B50
 LONG STDMETHODCALLTYPE HouseClass::Apparent_Category_Power(CategoryType category)
 {
 	int quantity = 0;
@@ -388,7 +404,7 @@ static inline Coord Base_Coord(Cell base)
 	return(Map[base].Center_Coord());
 }
 
-// FUNCTION: 0x004F6BC0
+// FUNCTION: GAMEMD 0x004F6BC0
 CellStruct STDMETHODCALLTYPE HouseClass::Base_Center(void)
 {
 	Cell cell;
@@ -397,7 +413,7 @@ CellStruct STDMETHODCALLTYPE HouseClass::Base_Center(void)
 	return((CellStruct &)cell);
 }
 
-// FUNCTION: 0x004F6D10
+// FUNCTION: GAMEMD 0x004F6D10
 CellStruct STDMETHODCALLTYPE HouseClass::Apparent_Base_Center(void)
 {
 	Cell cell;
@@ -406,13 +422,13 @@ CellStruct STDMETHODCALLTYPE HouseClass::Apparent_Base_Center(void)
 	return((CellStruct &)cell);
 }
 
-// FUNCTION: 0x004F6E60
+// FUNCTION: GAMEMD 0x004F6E60
 LONG STDMETHODCALLTYPE HouseClass::ID_Number(void)
 {
 	return(HeapID);
 }
 
-// FUNCTION: 0x004F6E70
+// FUNCTION: GAMEMD 0x004F6E70
 double HouseClass::Tiberium_Fraction(void) const
 {
 	if ((int)Tiberium.Get_Total_Amount() == 0) {
@@ -421,12 +437,12 @@ double HouseClass::Tiberium_Fraction(void) const
 	return(Tiberium.Get_Total_Amount() / Capacity);
 }
 
-// FUNCTION: 0x004F6EB0
+// FUNCTION: GAMEMD 0x004F6EB0
 void HouseClass::One_Time(void)
 {
 }
 
-// FUNCTION: 0x004F6EC0
+// FUNCTION: GAMEMD 0x004F6EC0
 DiffType HouseClass::Assign_Handicap(DiffType handicap)
 {
 	DiffType old = Difficulty;
@@ -460,7 +476,7 @@ DiffType HouseClass::Assign_Handicap(DiffType handicap)
 	return(old);
 }
 
-// FUNCTION: 0x004F7850
+// FUNCTION: GAMEMD 0x004F7850
 HouseStaticClass::HouseStaticClass(void) :
 	IQ(0),
 	TechLevel(1),
@@ -470,7 +486,7 @@ HouseStaticClass::HouseStaticClass(void) :
 {
 }
 
-// FUNCTION: 0x004F83C0
+// FUNCTION: GAMEMD 0x004F83C0
 FactoryClass * HouseClass::Factory_Producing_This(ObjectTypeClass const * object) const
 {
 	FactoryClass * fptr = NULL;
@@ -485,7 +501,7 @@ FactoryClass * HouseClass::Factory_Producing_This(ObjectTypeClass const * object
 	return(fptr);
 }
 
-// FUNCTION: 0x004F9370
+// FUNCTION: GAMEMD 0x004F9370
 void HouseClass::Super_Weapon_Handler(void)
 {
 	for (int i = 0; i < SuperWeapon.Count(); i++) {
@@ -499,7 +515,7 @@ void HouseClass::Super_Weapon_Handler(void)
 	}
 }
 
-// FUNCTION: 0x004F93E0
+// FUNCTION: GAMEMD 0x004F93E0
 void HouseClass::Attacked(BuildingClass * source)
 {
 	if (source != NULL && source->IsStrange()) return;
@@ -530,7 +546,7 @@ void HouseClass::Attacked(BuildingClass * source)
 	}
 }
 
-// FUNCTION: 0x004F9610
+// FUNCTION: GAMEMD 0x004F9610
 float HouseClass::Give_Tiberium(float amount, int slot)
 {
 	PointTotal += amount * 5.0f;
@@ -538,7 +554,7 @@ float HouseClass::Give_Tiberium(float amount, int slot)
 	return(amount);
 }
 
-// FUNCTION: 0x004F9670
+// FUNCTION: GAMEMD 0x004F9670
 BuildingClass * HouseClass::Emptiest_Silo(void) const
 {
 	BuildingClass * best = NULL;
@@ -560,7 +576,7 @@ BuildingClass * HouseClass::Emptiest_Silo(void) const
 	return(best);
 }
 
-// FUNCTION: 0x004F9700
+// FUNCTION: GAMEMD 0x004F9700
 void HouseClass::Harvested_Weed(int weed, int slot)
 {
 	int i = weed;
@@ -573,7 +589,7 @@ void HouseClass::Harvested_Weed(int weed, int slot)
 	}
 }
 
-// FUNCTION: 0x004F9750
+// FUNCTION: GAMEMD 0x004F9750
 double HouseClass::Weed_Fraction(void) const
 {
 	if (Weed.Get_Total_Amount() == 0) {
@@ -582,13 +598,13 @@ double HouseClass::Weed_Fraction(void) const
 	return((double)Weed.Get_Total_Amount() / Rule->WeedCapacity);
 }
 
-// FUNCTION: 0x004F9950
+// FUNCTION: GAMEMD 0x004F9950
 void HouseClass::Refund_Money(int money)
 {
 	Credits += money;
 }
 
-// FUNCTION: 0x004F9970
+// FUNCTION: GAMEMD 0x004F9970
 void HouseClass::Silo_Redraw_Check(int oldtib, int oldcap)
 {
 	int oldratio = 0;
@@ -607,7 +623,7 @@ void HouseClass::Silo_Redraw_Check(int oldtib, int oldcap)
 	}
 }
 
-// FUNCTION: 0x004F9A10
+// FUNCTION: GAMEMD 0x004F9A10
 bool HouseClass::Is_Ally(HousesType house) const
 {
 	if (house == HeapID) return(true);
@@ -617,7 +633,7 @@ bool HouseClass::Is_Ally(HousesType house) const
 	return(false);
 }
 
-// FUNCTION: 0x004F9A50
+// FUNCTION: GAMEMD 0x004F9A50
 bool HouseClass::Is_Ally(HouseClass const * house) const
 {
 	if (house) {
@@ -630,7 +646,7 @@ bool HouseClass::Is_Ally(HouseClass const * house) const
 	return(false);
 }
 
-// FUNCTION: 0x004F9A90
+// FUNCTION: GAMEMD 0x004F9A90
 bool HouseClass::Is_Ally(ObjectClass const * object) const
 {
 	if (object) {
@@ -639,7 +655,7 @@ bool HouseClass::Is_Ally(ObjectClass const * object) const
 	return(false);
 }
 
-// FUNCTION: 0x004F9AF0
+// FUNCTION: GAMEMD 0x004F9AF0
 bool HouseClass::CanOverpower(AbstractClass const * target) const
 {
 	if (target && (target->AbstractFlags & 2)) {
@@ -648,7 +664,7 @@ bool HouseClass::CanOverpower(AbstractClass const * target) const
 	return(false);
 }
 
-// FUNCTION: 0x004F9B50
+// FUNCTION: GAMEMD 0x004F9B50
 void HouseClass::Make_Ally(HousesType house, bool announce)
 {
 	Make_Ally(Houses[house], announce);
@@ -662,7 +678,7 @@ inline bool HouseClass::Is_Human_Player(void) const
 	return(IsHuman);
 }
 
-// FUNCTION: 0x004F9B70
+// FUNCTION: GAMEMD 0x004F9B70
 void HouseClass::Make_Ally(HouseClass * house, bool announce)
 {
 	if (Is_Allowed_To_Ally(house)) {
@@ -730,13 +746,13 @@ void HouseClass::Make_Ally(HouseClass * house, bool announce)
 	}
 }
 
-// FUNCTION: 0x004F9F70
+// FUNCTION: GAMEMD 0x004F9F70
 void HouseClass::Make_Enemy(HousesType house, bool announce)
 {
 	Make_Enemy(Houses[house], announce);
 }
 
-// FUNCTION: 0x004F9F90
+// FUNCTION: GAMEMD 0x004F9F90
 void HouseClass::Make_Enemy(HouseClass * house, bool announce)
 {
 	bool broken = false;
@@ -783,14 +799,14 @@ void HouseClass::Make_Enemy(HouseClass * house, bool announce)
 	}
 }
 
-// FUNCTION: 0x004FA210
+// FUNCTION: GAMEMD 0x004FA210
 SUGGESTED_TEAM_LIST HouseClass::Suggested_New_Team(bool alertcheck)
 {
 	SUGGESTED_TEAM_LIST teams = TeamTypeClass::Suggested_New_Team(this, alertcheck);
 	return(teams);
 }
 
-// FUNCTION: 0x004FA2E0
+// FUNCTION: GAMEMD 0x004FA2E0
 void HouseClass::Adjust_Threat(int region, int threat)
 {
 	static int _val[] = {
@@ -929,7 +945,7 @@ static inline void Clear_Production_Flag(HouseClass * house, RTTIType type, bool
 	house->FUN_005007A0(type, naval, buildcat, false);
 }
 
-// FUNCTION: 0x004FA350
+// FUNCTION: GAMEMD 0x004FA350
 ProdFailType HouseClass::Begin_Production(RTTIType type, int id, bool naval, bool resume)
 {
 	int result = true;
@@ -1043,7 +1059,7 @@ ProdFailType HouseClass::Begin_Production(RTTIType type, int id, bool naval, boo
 	return(PROD_CANT);
 }
 
-// FUNCTION: 0x004FA910
+// FUNCTION: GAMEMD 0x004FA910
 ProdFailType HouseClass::Suspend_Production(RTTIType type, int id, bool naval)
 {
 	int buildcat;
@@ -1072,7 +1088,7 @@ ProdFailType HouseClass::Suspend_Production(RTTIType type, int id, bool naval)
 	return(PROD_OK);
 }
 
-// FUNCTION: 0x004FAD20
+// FUNCTION: GAMEMD 0x004FAD20
 void HouseClass::Special_Weapon_AI(SuperWeaponType id)
 {
 	BuildingClass * bestptr = NULL;
@@ -1095,7 +1111,7 @@ void HouseClass::Special_Weapon_AI(SuperWeaponType id)
 	}
 }
 
-// FUNCTION: 0x004FAE50
+// FUNCTION: GAMEMD 0x004FAE50
 bool HouseClass::Place_Special_Blast(SuperWeaponType id, Cell const & cell)
 {
 	SuperClass * super = SuperWeapon[id];
@@ -1125,7 +1141,7 @@ bool HouseClass::Place_Special_Blast(SuperWeaponType id, Cell const & cell)
 	return(true);
 }
 
-// FUNCTION: 0x004FB6B0
+// FUNCTION: GAMEMD 0x004FB6B0
 void HouseClass::Just_Built(TechnoClass * product)
 {
 	int sound = -1;
@@ -1189,7 +1205,7 @@ extern bool DAT_0088099C;
 extern int CurrentSWType;
 void __fastcall UnselectAll(void);
 
-// FUNCTION: 0x004FB840
+// FUNCTION: GAMEMD 0x004FB840
 bool HouseClass::Manual_Place(BuildingClass * builder, BuildingClass * object)
 {
 	if (this == PlayerPtr && !DAT_00880990 && builder && object) {
@@ -1211,7 +1227,7 @@ bool HouseClass::Manual_Place(BuildingClass * builder, BuildingClass * object)
 	return(false);
 }
 
-// FUNCTION: 0x004FB920
+// FUNCTION: GAMEMD 0x004FB920
 void HouseClass::Clobber_All(void)
 {
 	int i;
@@ -1232,7 +1248,7 @@ void HouseClass::Clobber_All(void)
 	delete this;
 }
 
-// FUNCTION: 0x004FBD00
+// FUNCTION: GAMEMD 0x004FBD00
 bool HouseClass::Does_Enemy_Building_Exist(StructType btype) const
 {
 	for (HousesType index = HOUSE_FIRST; index < Houses.Count(); index++) {
@@ -1245,7 +1261,7 @@ bool HouseClass::Does_Enemy_Building_Exist(StructType btype) const
 	return(false);
 }
 
-// FUNCTION: 0x004FBD80
+// FUNCTION: GAMEMD 0x004FBD80
 TechnoTypeClass const * HouseClass::Suggest_New_Object(RTTIType objecttype, bool kennel) const
 {
 	switch (objecttype) {
@@ -1280,7 +1296,7 @@ TechnoTypeClass const * HouseClass::Suggest_New_Object(RTTIType objecttype, bool
 	return(NULL);
 }
 
-// FUNCTION: 0x004FBE40
+// FUNCTION: GAMEMD 0x004FBE40
 bool HouseClass::Flag_Remove(AbstractClass * target, bool set_home)
 {
 	bool rc = false;
@@ -1312,7 +1328,7 @@ bool HouseClass::Flag_Remove(AbstractClass * target, bool set_home)
 	return(false);
 }
 
-// FUNCTION: 0x004FBF60
+// FUNCTION: GAMEMD 0x004FBF60
 bool HouseClass::Flag_Attach(Cell const & cell, bool set_home)
 {
 	bool rc;
@@ -1338,7 +1354,7 @@ bool HouseClass::Flag_Attach(Cell const & cell, bool set_home)
 	return(false);
 }
 
-// FUNCTION: 0x004FC060
+// FUNCTION: GAMEMD 0x004FC060
 bool HouseClass::Flag_Attach(UnitClass * object, bool set_home)
 {
 	if (object && !object->IsInLimbo) {
@@ -1351,7 +1367,7 @@ bool HouseClass::Flag_Attach(UnitClass * object, bool set_home)
 	return(false);
 }
 
-// FUNCTION: 0x004FC6D0
+// FUNCTION: GAMEMD 0x004FC6D0
 void HouseClass::Destroy_All(void)
 {
 	int i = 0;
@@ -1374,7 +1390,7 @@ void HouseClass::Destroy_All(void)
 	}
 }
 
-// FUNCTION: 0x004FC790
+// FUNCTION: GAMEMD 0x004FC790
 void HouseClass::Destroy_All_Buildings(void)
 {
 	int i = 0;
@@ -1393,7 +1409,7 @@ void HouseClass::Destroy_All_Buildings(void)
 	}
 }
 
-// FUNCTION: 0x004FC820
+// FUNCTION: GAMEMD 0x004FC820
 void HouseClass::Destroy_All_Non_Buildings_Non_Naval(void)
 {
 	int i = 0;
@@ -1413,7 +1429,7 @@ void HouseClass::Destroy_All_Non_Buildings_Non_Naval(void)
 	}
 }
 
-// FUNCTION: 0x004FC8D0
+// FUNCTION: GAMEMD 0x004FC8D0
 void HouseClass::Destroy_All_Non_Buildings_Naval(void)
 {
 	int i = 0;
@@ -1433,7 +1449,7 @@ void HouseClass::Destroy_All_Non_Buildings_Naval(void)
 	}
 }
 
-// FUNCTION: 0x004FC980
+// FUNCTION: GAMEMD 0x004FC980
 bool HouseClass::Flag_To_Die(void)
 {
 	if (!IsToWin && !IsToDie && !IsToLose) {
@@ -1443,7 +1459,7 @@ bool HouseClass::Flag_To_Die(void)
 	return(IsToDie);
 }
 
-// FUNCTION: 0x004FC9E0
+// FUNCTION: GAMEMD 0x004FC9E0
 bool HouseClass::Flag_To_Win(bool silent)
 {
 	if (!IsToWin && !IsToDie && !IsToLose) {
@@ -1470,7 +1486,7 @@ bool HouseClass::Flag_To_Win(bool silent)
 	return(IsToWin);
 }
 
-// FUNCTION: 0x004FCBD0
+// FUNCTION: GAMEMD 0x004FCBD0
 bool HouseClass::Flag_To_Lose(bool silent)
 {
 	IsToWin = false;
@@ -1500,7 +1516,7 @@ bool HouseClass::Flag_To_Lose(bool silent)
 	return(IsToLose);
 }
 
-// FUNCTION: 0x004FCDC0
+// FUNCTION: GAMEMD 0x004FCDC0
 void HouseClass::Flag_To_End(void)
 {
 	if (!IsToLose && !IsToWin) {
@@ -1510,7 +1526,7 @@ void HouseClass::Flag_To_End(void)
 	}
 }
 
-// FUNCTION: 0x004FCE00
+// FUNCTION: GAMEMD 0x004FCE00
 void HouseClass::Init_Data(int color, HousesType house, int credits)
 {
 	Credits = Control.InitialCredits = credits;
@@ -1518,7 +1534,7 @@ void HouseClass::Init_Data(int color, HousesType house, int credits)
 	Scheme = color;
 }
 
-// FUNCTION: 0x004FCE30
+// FUNCTION: GAMEMD 0x004FCE30
 double HouseClass::Power_Fraction(void) const
 {
 	if (Power >= Drain || Drain == 0) return(1);
@@ -1529,7 +1545,7 @@ double HouseClass::Power_Fraction(void) const
 	return(0);
 }
 
-// FUNCTION: 0x004FCE80
+// FUNCTION: GAMEMD 0x004FCE80
 void HouseClass::Sell_Wall(Cell const & cell, bool quiet)
 {
 	if (cell != CELL_NONE) {
@@ -1574,7 +1590,7 @@ void HouseClass::Sell_Wall(Cell const & cell, bool quiet)
 	}
 }
 
-// FUNCTION: 0x004FD040
+// FUNCTION: GAMEMD 0x004FD040
 BuildingTypeClass const * HouseClass::Suggest_New_Building(void) const
 {
 	if (BuildStructure != STRUCT_NONE) {
@@ -1583,7 +1599,7 @@ BuildingTypeClass const * HouseClass::Suggest_New_Building(void) const
 	return(NULL);
 }
 
-// FUNCTION: 0x004FD060
+// FUNCTION: GAMEMD 0x004FD060
 BuildingClass * HouseClass::Find_Building(StructType type, ZoneType zone) const
 {
 	if (BQuantity.Value(type) > 0) {
@@ -1600,13 +1616,13 @@ BuildingClass * HouseClass::Find_Building(StructType type, ZoneType zone) const
 	return(NULL);
 }
 
-// FUNCTION: 0x004FD120
+// FUNCTION: GAMEMD 0x004FD120
 Coord HouseClass::Find_Build_Location(BuildingClass * building) const
 {
 	return(COORD_NONE);
 }
 
-// FUNCTION: 0x004FD940
+// FUNCTION: GAMEMD 0x004FD940
 UrgencyType HouseClass::Check_Fire_Sale(void)
 {
 	if (State != STATE_ATTACKED) {
@@ -1621,7 +1637,7 @@ UrgencyType HouseClass::Check_Fire_Sale(void)
 	return(URGENCY_NONE);
 }
 
-// FUNCTION: 0x004FDCE0
+// FUNCTION: GAMEMD 0x004FDCE0
 bool HouseClass::AI_Fire_Sale(UrgencyType urgency)
 {
 	if (urgency == URGENCY_CRITICAL) {
@@ -1632,7 +1648,7 @@ bool HouseClass::AI_Fire_Sale(UrgencyType urgency)
 	return(false);
 }
 
-// FUNCTION: 0x004FEA60
+// FUNCTION: GAMEMD 0x004FEA60
 int HouseClass::AI_Unit(void)
 {
 	if (BuildUnit != UNIT_NONE) return(TICKS_PER_SECOND);
@@ -1729,7 +1745,7 @@ int HouseClass::AI_Unit(void)
 	return(TICKS_PER_SECOND);
 }
 
-// FUNCTION: 0x004FEEE0
+// FUNCTION: GAMEMD 0x004FEEE0
 int HouseClass::AI_Infantry(void)
 {
 	if (BuildInfantry != INFANTRY_NONE) return(TICKS_PER_SECOND);
@@ -1805,7 +1821,7 @@ int HouseClass::AI_Infantry(void)
 	return(TICKS_PER_SECOND);
 }
 
-// FUNCTION: 0x004FF210
+// FUNCTION: GAMEMD 0x004FF210
 int HouseClass::AI_Aircraft(void)
 {
 	if (BuildAircraft != AIRCRAFT_NONE) return(TICKS_PER_SECOND);
@@ -1881,12 +1897,12 @@ int HouseClass::AI_Aircraft(void)
 	return(TICKS_PER_SECOND);
 }
 
-// FUNCTION: 0x004FF540
+// FUNCTION: GAMEMD 0x004FF540
 void HouseClass::Production_Begun(TechnoClass const * product)
 {
 }
 
-// FUNCTION: 0x004FF550
+// FUNCTION: GAMEMD 0x004FF550
 void HouseClass::Tracking_Remove(TechnoClass const * techno)
 {
 	((TechnoClass *)techno)->CountedAsOwned = false;
@@ -1929,7 +1945,7 @@ void HouseClass::Tracking_Remove(TechnoClass const * techno)
 	}
 }
 
-// FUNCTION: 0x004FF8F0
+// FUNCTION: GAMEMD 0x004FF8F0
 int * HouseClass::Factory_Counter(RTTIType rtti, unsigned char naval)
 {
 	switch (rtti) {
@@ -1956,7 +1972,7 @@ int * HouseClass::Factory_Counter(RTTIType rtti, unsigned char naval)
 	return(NULL);
 }
 
-// FUNCTION: 0x004FF980
+// FUNCTION: GAMEMD 0x004FF980
 void HouseClass::Active_Remove(TechnoClass const * techno)
 {
 	if (techno->Fetch_RTTI() == RTTI_BUILDING) {
@@ -1969,7 +1985,7 @@ void HouseClass::Active_Remove(TechnoClass const * techno)
 	}
 }
 
-// FUNCTION: 0x004FFA50
+// FUNCTION: GAMEMD 0x004FFA50
 void HouseClass::Active_Add(TechnoClass const * techno)
 {
 	if (techno->Fetch_RTTI() == RTTI_BUILDING) {
@@ -1982,7 +1998,7 @@ void HouseClass::Active_Add(TechnoClass const * techno)
 	}
 }
 
-// FUNCTION: 0x004FFB20
+// FUNCTION: GAMEMD 0x004FFB20
 ZoneType HouseClass::Which_Zone(Coord const & coord) const
 {
 	if (coord == COORD_NONE) return(ZONE_NONE);
@@ -1998,20 +2014,20 @@ ZoneType HouseClass::Which_Zone(Coord const & coord) const
 	return(ZONE_EAST);
 }
 
-// FUNCTION: 0x004FFD50
+// FUNCTION: GAMEMD 0x004FFD50
 ZoneType HouseClass::Which_Zone(ObjectClass const * object) const
 {
 	if (!object) return(ZONE_NONE);
 	return(Which_Zone(object->Center_Coord()));
 }
 
-// FUNCTION: 0x004FFD90
+// FUNCTION: GAMEMD 0x004FFD90
 ZoneType HouseClass::Which_Zone(Cell const & cell) const
 {
 	return(Which_Zone((Coord)cell));
 }
 
-// FUNCTION: 0x00500200
+// FUNCTION: GAMEMD 0x00500200
 Cell HouseClass::Where_To_Go(FootClass const * object) const
 {
 	ZoneType zone;
@@ -2026,7 +2042,7 @@ Cell HouseClass::Where_To_Go(FootClass const * object) const
 	return(Map.Nearby_Location(cell, SPEED_TRACK, Map.Get_Cell_Zone(object->PositionCoord.As_Cell())));
 }
 
-// FUNCTION: 0x00500300
+// FUNCTION: GAMEMD 0x00500300
 AbstractClass * HouseClass::Find_Juicy_Target(Coord const & coord) const
 {
 	UnitClass * best = 0;
@@ -2090,7 +2106,7 @@ static inline void Assign_Production_Flag(HouseClass * house, RTTIType type, boo
 	}
 }
 
-// FUNCTION: 0x005004E0
+// FUNCTION: GAMEMD 0x005004E0
 int __fastcall Build_Category(RTTIType type, int id)
 {
 	if (id < 0) {
@@ -2103,31 +2119,31 @@ int __fastcall Build_Category(RTTIType type, int id)
 	return(0);
 }
 
-// FUNCTION: 0x00500510
+// FUNCTION: GAMEMD 0x00500510
 FactoryClass * HouseClass::Fetch_Factory(RTTIType rtti, bool naval, int buildcat) const
 {
 	return(Primary_Factory(this, rtti, naval, buildcat));
 }
 
-// FUNCTION: 0x005005B0
+// FUNCTION: GAMEMD 0x005005B0
 void HouseClass::FUN_005005B0(RTTIType rtti, bool naval, int buildcat)
 {
 	Assign_Production_Flag(this, rtti, naval, buildcat, true);
 }
 
-// FUNCTION: 0x00500660
+// FUNCTION: GAMEMD 0x00500660
 void HouseClass::FUN_00500660(RTTIType rtti, bool naval, int buildcat)
 {
 	Assign_Production_Flag(this, rtti, naval, buildcat, false);
 }
 
-// FUNCTION: 0x00500700
+// FUNCTION: GAMEMD 0x00500700
 unsigned char HouseClass::FUN_00500700(RTTIType rtti, bool naval, int buildcat) const
 {
 	return(Production_Flag(this, rtti, naval, buildcat));
 }
 
-// FUNCTION: 0x005007A0
+// FUNCTION: GAMEMD 0x005007A0
 void HouseClass::FUN_005007A0(RTTIType type, bool naval, int buildcat, bool flag)
 {
 	switch (type) {
@@ -2160,13 +2176,13 @@ void HouseClass::FUN_005007A0(RTTIType type, bool naval, int buildcat, bool flag
 	}
 }
 
-// FUNCTION: 0x00500850
+// FUNCTION: GAMEMD 0x00500850
 void HouseClass::Set_Factory(FactoryClass * factory, RTTIType rtti, bool naval, int buildcat)
 {
 	Assign_Primary_Factory(this, rtti, naval, buildcat, factory);
 }
 
-// FUNCTION: 0x00500910
+// FUNCTION: GAMEMD 0x00500910
 int HouseClass::FUN_00500910(RTTIType rtti, bool naval) const
 {
 	int const * ptr;
@@ -2206,7 +2222,7 @@ int HouseClass::FUN_00500910(RTTIType rtti, bool naval) const
 	return(0);
 }
 
-// FUNCTION: 0x005009B0
+// FUNCTION: GAMEMD 0x005009B0
 void HouseClass::Read_All(CCINIClass const & ini)
 {
 	char buffer[HOUSE_NAME_MAX];
@@ -2240,7 +2256,7 @@ void HouseClass::Read_All(CCINIClass const & ini)
 	}
 }
 
-// FUNCTION: 0x00501160
+// FUNCTION: GAMEMD 0x00501160
 void HouseClass::Write_All(CCINIClass & ini)
 {
 	char buffer[32];
@@ -2268,7 +2284,7 @@ class MPGameModeClass
 		virtual bool vt_entry_04(void);
 };
 
-// FUNCTION: 0x00501210
+// FUNCTION: GAMEMD 0x00501210
 void HouseClass::Write_INI(CCINIClass & ini)
 {
 	char name[20];
@@ -2299,7 +2315,7 @@ void HouseClass::Write_INI(CCINIClass & ini)
 	Base.Write_INI(ini, name);
 }
 
-// FUNCTION: 0x005013A0
+// FUNCTION: GAMEMD 0x005013A0
 HRESULT STDMETHODCALLTYPE HouseClass::Fire_Sale(void)
 {
 	if (CurBuildings > 0) {
@@ -2316,7 +2332,7 @@ HRESULT STDMETHODCALLTYPE HouseClass::Fire_Sale(void)
 	return(true);
 }
 
-// FUNCTION: 0x00501400
+// FUNCTION: GAMEMD 0x00501400
 HRESULT STDMETHODCALLTYPE HouseClass::All_To_Hunt(void)
 {
 	for (int index = Technos.Count() - 1; index >= 0; index--) {
@@ -2346,7 +2362,7 @@ HRESULT STDMETHODCALLTYPE HouseClass::All_To_Hunt(void)
 	return(S_OK);
 }
 
-// FUNCTION: 0x00501540
+// FUNCTION: GAMEMD 0x00501540
 bool HouseClass::Is_Allowed_To_Ally(HouseClass * house) const
 {
 	if (house != NULL) {
@@ -2386,7 +2402,7 @@ bool HouseClass::Is_Allowed_To_Ally(HouseClass * house) const
 	return(true);
 }
 
-// FUNCTION: 0x00501640
+// FUNCTION: GAMEMD 0x00501640
 void HouseClass::Computer_Paranoid(void)
 {
 	bool paranoid = Rule->AlliesAllowed;
@@ -2416,7 +2432,7 @@ void HouseClass::Computer_Paranoid(void)
 	}
 }
 
-// FUNCTION: 0x00501750
+// FUNCTION: GAMEMD 0x00501750
 void HouseClass::Adjust_Power(int adjust)
 {
 	if (!GameActive) return;
@@ -2467,7 +2483,7 @@ void HouseClass::Adjust_Power(int adjust)
 	}
 }
 
-// FUNCTION: 0x005018C0
+// FUNCTION: GAMEMD 0x005018C0
 void HouseClass::Adjust_Drain(int adjust)
 {
 	bool waslost = Power < Drain;
@@ -2517,7 +2533,7 @@ void HouseClass::Adjust_Drain(int adjust)
 	}
 }
 
-// FUNCTION: 0x00501A20
+// FUNCTION: GAMEMD 0x00501A20
 void HouseClass::Update_Spied_Power_Plants(void)
 {
 	int count = DAT_00A8ECB8.Count();
@@ -2536,13 +2552,13 @@ void HouseClass::Update_Spied_Power_Plants(void)
 	}
 }
 
-// FUNCTION: 0x00501AA0
+// FUNCTION: GAMEMD 0x00501AA0
 Cell HouseClass::Find_Cell_In_Zone(TechnoClass const * techno, ZoneType zone) const
 {
 	return(Cell(0, 0));
 }
 
-// FUNCTION: 0x00502100
+// FUNCTION: GAMEMD 0x00502100
 void HouseClass::Make_Ally(ObjectClass * object, bool announce)
 {
 	if (object) {
@@ -2550,7 +2566,7 @@ void HouseClass::Make_Ally(ObjectClass * object, bool announce)
 	}
 }
 
-// FUNCTION: 0x00502130
+// FUNCTION: GAMEMD 0x00502130
 void HouseClass::Make_Enemy(ObjectClass * object, bool announce)
 {
 	if (object) {
@@ -2558,7 +2574,7 @@ void HouseClass::Make_Enemy(ObjectClass * object, bool announce)
 	}
 }
 
-// FUNCTION: 0x00502160
+// FUNCTION: GAMEMD 0x00502160
 void HouseClass::Place_Waypoint(Coord const & coord)
 {
 	if (Can_Place_Waypoint(coord.As_Cell())) {
@@ -2567,14 +2583,14 @@ void HouseClass::Place_Waypoint(Coord const & coord)
 	}
 }
 
-// FUNCTION: 0x00502290
+// FUNCTION: GAMEMD 0x00502290
 bool HouseClass::Select_Waypoint(Coord const & coord)
 {
 	Ensure_Path(SelectedPath);
 	return(Paths[SelectedPath]->Select_Waypoint(coord));
 }
 
-// FUNCTION: 0x005022F0
+// FUNCTION: GAMEMD 0x005022F0
 bool HouseClass::Can_Place_Waypoint(Cell const & cell)
 {
 	for (PathType path = PATH_FIRST; path < PATH_COUNT; path++) {
@@ -2589,7 +2605,7 @@ bool HouseClass::Can_Place_Waypoint(Cell const & cell)
 	return(true);
 }
 
-// FUNCTION: 0x005023B0
+// FUNCTION: GAMEMD 0x005023B0
 WaypointClass * HouseClass::Waypoint_At(Cell const & cell)
 {
 	for (PathType path = PATH_FIRST; path < PATH_COUNT; path++) {
@@ -2604,7 +2620,7 @@ WaypointClass * HouseClass::Waypoint_At(Cell const & cell)
 	return(NULL);
 }
 
-// FUNCTION: 0x00502460
+// FUNCTION: GAMEMD 0x00502460
 bool HouseClass::Fetch_Waypoint_Data(WaypointClass * waypt, PathType & xpath, char & waypt_id)
 {
 	for (PathType path = PATH_FIRST; path < PATH_COUNT; path++) {
@@ -2622,7 +2638,7 @@ bool HouseClass::Fetch_Waypoint_Data(WaypointClass * waypt, PathType & xpath, ch
 	return(false);
 }
 
-// FUNCTION: 0x005024F0
+// FUNCTION: GAMEMD 0x005024F0
 HRESULT STDMETHODCALLTYPE HouseClass::EnumConnectionPoints(IEnumConnectionPoints **ppEnum)
 {
 	if (ppEnum == NULL) {
@@ -2640,7 +2656,7 @@ HRESULT STDMETHODCALLTYPE HouseClass::EnumConnectionPoints(IEnumConnectionPoints
 	return(S_OK);
 }
 
-// FUNCTION: 0x00502550
+// FUNCTION: GAMEMD 0x00502550
 HRESULT STDMETHODCALLTYPE HouseClass::FindConnectionPoint(REFIID riid, IConnectionPoint **ppCP)
 {
 	if (ppCP == NULL) {
@@ -2668,7 +2684,7 @@ inline BuildingClass * Building_Cast(TechnoClass * techno)
 	return((techno->Fetch_RTTI() == RTTI_BUILDING) ? (BuildingClass *)techno : NULL);
 }
 
-// FUNCTION: 0x005025F0
+// FUNCTION: GAMEMD 0x005025F0
 void HouseClass::RegisterLoss(TechnoClass * techno, bool keeptiberium)
 {
 	if (techno->Techno_Type_Class()->ResourceGatherer) {
@@ -2760,7 +2776,7 @@ void HouseClass::RegisterLoss(TechnoClass * techno, bool keeptiberium)
 	}
 }
 
-// FUNCTION: 0x00502A80
+// FUNCTION: GAMEMD 0x00502A80
 void HouseClass::RegisterGain(TechnoClass * techno, bool ownerchange)
 {
 	if (techno->Techno_Type_Class()->ResourceGatherer) {
@@ -2818,7 +2834,7 @@ void HouseClass::RegisterGain(TechnoClass * techno, bool ownerchange)
 	}
 }
 
-// FUNCTION: 0x00502D30
+// FUNCTION: GAMEMD 0x00502D30
 HouseClass * HouseClass::FindByCountryIndex(int index)
 {
 	for (int i = 0; i < Houses.Count(); i++) {
@@ -2830,7 +2846,7 @@ HouseClass * HouseClass::FindByCountryIndex(int index)
 	return(NULL);
 }
 
-// FUNCTION: 0x00502D60
+// FUNCTION: GAMEMD 0x00502D60
 void HouseClass::Compute_CRC(CRCEngine & crc) const
 {
 	BASECLASS::Compute_CRC(crc);
@@ -2876,7 +2892,7 @@ void HouseClass::Compute_CRC(CRCEngine & crc) const
 	Base.Compute_CRC(crc);
 }
 
-// FUNCTION: 0x005046F0
+// FUNCTION: GAMEMD 0x005046F0
 HRESULT STDMETHODCALLTYPE HouseClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
@@ -2884,13 +2900,13 @@ HRESULT STDMETHODCALLTYPE HouseClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-// FUNCTION: 0x00504730
+// FUNCTION: GAMEMD 0x00504730
 int HouseClass::Fetch_Object_Size(void) const
 {
 	return(sizeof(*this));
 }
 
-// FUNCTION: 0x00504740
+// FUNCTION: GAMEMD 0x00504740
 WaypointPathClass * HouseClass::Ensure_Path(PathType path)
 {
 	WaypointPathClass *wp = Paths[path];
@@ -2901,7 +2917,7 @@ WaypointPathClass * HouseClass::Ensure_Path(PathType path)
 	return(wp);
 }
 
-// FUNCTION: 0x00504790
+// FUNCTION: GAMEMD 0x00504790
 void HouseClass::Add_Anger(int level, HouseClass const * house)
 {
 	int i;
@@ -2932,7 +2948,7 @@ void HouseClass::Add_Anger(int level, HouseClass const * house)
 	}
 }
 
-// FUNCTION: 0x00504860
+// FUNCTION: GAMEMD 0x00504860
 void HouseClass::Mark_Scouted(HouseClass const * house)
 {
 	for (int i = 0; i < ScoutNodes.Count(); i++) {
@@ -2942,7 +2958,7 @@ void HouseClass::Mark_Scouted(HouseClass const * house)
 	}
 }
 
-// FUNCTION: 0x00505180
+// FUNCTION: GAMEMD 0x00505180
 void HouseClass::Begin_Construction(void)
 {
 	if (!Is_Human_Player() && Session.Type != GAME_NORMAL) {
@@ -2956,7 +2972,7 @@ void HouseClass::Begin_Construction(void)
 	}
 }
 
-// FUNCTION: 0x005051E0
+// FUNCTION: GAMEMD 0x005051E0
 TechnoTypeClass const * HouseClass::FirstBuildableFromArray(DynamicVectorClass<BuildingTypeClass const *> const & list) const
 {
 	int owners = 1 << HouseTypeClass::From_Name(Class->ParentCountry);
@@ -2985,7 +3001,7 @@ TechnoTypeClass const * HouseClass::FirstBuildableFromArray(DynamicVectorClass<B
 	return(NULL);
 }
 
-// FUNCTION: 0x00505310
+// FUNCTION: GAMEMD 0x00505310
 BuildingTypeClass const * HouseClass::Get_First_Ownable(DynamicVectorClass<BuildingTypeClass const *> const & vector) const
 {
 	int owners = 1 << HouseTypeClass::From_Name(Class->ParentCountry);
@@ -2998,7 +3014,7 @@ BuildingTypeClass const * HouseClass::Get_First_Ownable(DynamicVectorClass<Build
 	return(NULL);
 }
 
-// FUNCTION: 0x00505F80
+// FUNCTION: GAMEMD 0x00505F80
 int HouseClass::Base_Cell_Weight_By_Distance(HouseClass const & house, Cell const & cell, int tie_breaker, int context)
 {
 	int x = cell.X - house.Base.PlacementCenter.X;
@@ -3008,17 +3024,17 @@ int HouseClass::Base_Cell_Weight_By_Distance(HouseClass const & house, Cell cons
 	return(tie_breaker + size * 1000);
 }
 
-// FUNCTION: 0x00506B70
+// FUNCTION: GAMEMD 0x00506B70
 void FUN_00506B70(void)
 {
 }
 
-// FUNCTION: 0x00506B80
+// FUNCTION: GAMEMD 0x00506B80
 void FUN_00506B80(void)
 {
 }
 
-// FUNCTION: 0x00506B90
+// FUNCTION: GAMEMD 0x00506B90
 Cell HouseClass::Where_To_Place_Upgrade(BuildingTypeClass const * upgrade) const
 {
 	StructType upgradee_id = BuildingTypeClass::From_Name(upgrade->PowersUpBuilding);
@@ -3048,7 +3064,7 @@ Cell HouseClass::Where_To_Place_Upgrade(BuildingTypeClass const * upgrade) const
 	return(Cell(0, 0));
 }
 
-// FUNCTION: 0x00506CD0
+// FUNCTION: GAMEMD 0x00506CD0
 Cell Clamp_Cell(Rect const & bounds, Cell const & cell)
 {
 	Cell result = cell;
@@ -3067,7 +3083,7 @@ Cell Clamp_Cell(Rect const & bounds, Cell const & cell)
 	return(result);
 }
 
-// FUNCTION: 0x00506D50
+// FUNCTION: GAMEMD 0x00506D50
 void HouseClass::Calculate_Defense_Values(BuildingClass const * building, int value, int * values, Rect const & area) const
 {
 	if (value <= 0) value = 1;
@@ -3097,7 +3113,7 @@ void HouseClass::Calculate_Defense_Values(BuildingClass const * building, int va
 	}
 }
 
-// FUNCTION: 0x00507B80
+// FUNCTION: GAMEMD 0x00507B80
 DynamicVectorClass<BuildingTypeClass *> HouseClass::Get_Anti_Air_Defense_Buildings(DynamicVectorClass<BuildingTypeClass const *> & owned) const
 {
 	unsigned ownable = 1 << HouseTypeClass::From_Name(Class->ParentCountry);
@@ -3122,7 +3138,7 @@ DynamicVectorClass<BuildingTypeClass *> HouseClass::Get_Anti_Air_Defense_Buildin
 	return(defenses);
 }
 
-// FUNCTION: 0x00507D70
+// FUNCTION: GAMEMD 0x00507D70
 DynamicVectorClass<BuildingTypeClass *> HouseClass::Get_Anti_Armor_Defense_Buildings(DynamicVectorClass<BuildingTypeClass const *> & owned) const
 {
 	unsigned ownable = 1 << HouseTypeClass::From_Name(Class->ParentCountry);
@@ -3147,7 +3163,7 @@ DynamicVectorClass<BuildingTypeClass *> HouseClass::Get_Anti_Armor_Defense_Build
 	return(defenses);
 }
 
-// FUNCTION: 0x00507F60
+// FUNCTION: GAMEMD 0x00507F60
 DynamicVectorClass<BuildingTypeClass *> HouseClass::Get_Anti_Ground_Defense_Buildings(DynamicVectorClass<BuildingTypeClass const *> & owned) const
 {
 	unsigned ownable = 1 << HouseTypeClass::From_Name(Class->ParentCountry);
@@ -3172,7 +3188,7 @@ DynamicVectorClass<BuildingTypeClass *> HouseClass::Get_Anti_Ground_Defense_Buil
 	return(defenses);
 }
 
-// FUNCTION: 0x00508150
+// FUNCTION: GAMEMD 0x00508150
 void HouseClass::Calculate_Enemy_Predictions(void)
 {
 	HouseClass * enemy;
@@ -3211,7 +3227,7 @@ fallback:
 
 void __fastcall FUN_00454CE0(HouseClass * house);
 
-// FUNCTION: 0x00508C30
+// FUNCTION: GAMEMD 0x00508C30
 void HouseClass::Recalc_Power_Drain(void)
 {
 	bool was_low_power = Power_Fraction() < 1.0;
@@ -3250,7 +3266,7 @@ void HouseClass::Recalc_Power_Drain(void)
 	RecalcRadar = true;
 }
 
-// FUNCTION: 0x00508DF0
+// FUNCTION: GAMEMD 0x00508DF0
 void HouseClass::Recalc_Radar_Availability(void)
 {
 	RecalcRadar = false;
@@ -3284,7 +3300,7 @@ void HouseClass::Recalc_Radar_Availability(void)
 	}
 }
 
-// FUNCTION: 0x00508F60
+// FUNCTION: GAMEMD 0x00508F60
 void HouseClass::Recalc_Spy_Satellite(void)
 {
 	RecalcRadar = false;
@@ -3319,7 +3335,7 @@ void HouseClass::Recalc_Spy_Satellite(void)
 	}
 }
 
-// FUNCTION: 0x005090A0
+// FUNCTION: GAMEMD 0x005090A0
 PathType HouseClass::New_Waypoint_Path(void) const
 {
 	for (int i = 0; i < PATH_COUNT; i++) {
@@ -3334,7 +3350,7 @@ PathType HouseClass::New_Waypoint_Path(void) const
 	return(PATH_NONE);
 }
 
-// FUNCTION: 0x005090F0
+// FUNCTION: GAMEMD 0x005090F0
 bool HouseClass::Can_Add_Waypoint_To_Path(void) const
 {
 	if (SelectedPath < 0 || SelectedPath >= PATH_COUNT) return(false);
@@ -3342,13 +3358,13 @@ bool HouseClass::Can_Add_Waypoint_To_Path(void) const
 	return(path->Waypoint_Count() < Rule->MaxWaypointPathLength && path->Current_Waypoint() == -1);
 }
 
-// FUNCTION: 0x00509130
+// FUNCTION: GAMEMD 0x00509130
 void HouseClass::Activate_Threat_Node(void)
 {
 	IsThreatRatingNodeActive = true;
 }
 
-// FUNCTION: 0x00509140
+// FUNCTION: GAMEMD 0x00509140
 void HouseClass::Update_Factories(RTTIType rtti, bool naval, int buildcat)
 {
 	FactoryClass * factory = NULL;
@@ -3409,7 +3425,7 @@ void HouseClass::Update_Factories(RTTIType rtti, bool naval, int buildcat)
 	}
 }
 
-// FUNCTION: 0x005092F0
+// FUNCTION: GAMEMD 0x005092F0
 void HouseClass::Update_Spied_Radar(HouseClass * house)
 {
 	RadarSpied |= 1 << house->Class->House;
@@ -3425,7 +3441,7 @@ void HouseClass::Update_Spied_Radar(HouseClass * house)
 	}
 }
 
-// FUNCTION: 0x005093C0
+// FUNCTION: GAMEMD 0x005093C0
 void HouseClass::Clear_Anger(HouseClass const * house)
 {
 	for (int i = 0; i < AngerNodes.Count(); i++) {
@@ -3436,7 +3452,7 @@ void HouseClass::Clear_Anger(HouseClass const * house)
 	}
 }
 
-// FUNCTION: 0x00509400
+// FUNCTION: GAMEMD 0x00509400
 void HouseClass::Recalc_Threat_Regions(void)
 {
 	int i;
@@ -3467,7 +3483,7 @@ void HouseClass::Recalc_Threat_Regions(void)
 	}
 }
 
-// FUNCTION: 0x005095D0
+// FUNCTION: GAMEMD 0x005095D0
 int HouseClass::Owned_Team_Count(TeamTypeClass const * teamtype) const
 {
 	int count = 0;
@@ -3480,7 +3496,7 @@ int HouseClass::Owned_Team_Count(TeamTypeClass const * teamtype) const
 	return(count);
 }
 
-// FUNCTION: 0x00509610
+// FUNCTION: GAMEMD 0x00509610
 bool HouseClass::Can_Create_Team(TeamTypeClass const * teamtype)
 {
 	if (teamtype != NULL && teamtype->TaskForce != NULL) {
@@ -3504,7 +3520,7 @@ bool HouseClass::Can_Create_Team(TeamTypeClass const * teamtype)
 	return(false);
 }
 
-// FUNCTION: 0x00509700
+// FUNCTION: GAMEMD 0x00509700
 void HouseClass::Update_Production_Mode(RTTIType type)
 {
 	if (Is_Human_Player() || Session.Type == GAME_NORMAL) return;
@@ -3598,7 +3614,7 @@ static inline void Fire_At_Defensive_Cell(HouseClass * house, SuperClass * super
 	}
 }
 
-// FUNCTION: 0x005098F0
+// FUNCTION: GAMEMD 0x005098F0
 void HouseClass::AI_TryFireSW(void)
 {
 	if (!Is_Human_Player()) {
@@ -3642,7 +3658,7 @@ void HouseClass::AI_TryFireSW(void)
 	}
 }
 
-// FUNCTION: 0x00509B20
+// FUNCTION: GAMEMD 0x00509B20
 void HouseClass::AI_Multi_Missile(SuperClass * super)
 {
 	if (Enemy != HOUSE_NONE) {
@@ -3660,7 +3676,7 @@ void HouseClass::AI_Multi_Missile(SuperClass * super)
 	}
 }
 
-// FUNCTION: 0x00509BD0
+// FUNCTION: GAMEMD 0x00509BD0
 void HouseClass::AI_Hunter_Seeker(SuperClass * super)
 {
 	if (Enemy != HOUSE_NONE) {
@@ -3668,7 +3684,7 @@ void HouseClass::AI_Hunter_Seeker(SuperClass * super)
 	}
 }
 
-// FUNCTION: 0x00509C10
+// FUNCTION: GAMEMD 0x00509C10
 void HouseClass::AI_Chem_Missile(SuperClass * super)
 {
 	if (Enemy != HOUSE_NONE) {
@@ -3686,12 +3702,12 @@ void HouseClass::AI_Chem_Missile(SuperClass * super)
 	}
 }
 
-// FUNCTION: 0x00509CC0
+// FUNCTION: GAMEMD 0x00509CC0
 void HouseClass::AI_Drop_Pods(SuperClass * super)
 {
 }
 
-// FUNCTION: 0x00509CD0
+// FUNCTION: GAMEMD 0x00509CD0
 void HouseClass::Fire_ParaDrop(SuperClass * super)
 {
 	HouseClass * enemy = (Enemy != HOUSE_NONE) ? Houses[Enemy] : this;
@@ -3713,7 +3729,7 @@ void HouseClass::Fire_ParaDrop(SuperClass * super)
 	}
 }
 
-// FUNCTION: 0x00509E00
+// FUNCTION: GAMEMD 0x00509E00
 void HouseClass::Fire_LightningStorm(SuperClass * super)
 {
 	if (!FUN_0053A100() && Enemy != HOUSE_NONE) {
@@ -3731,7 +3747,7 @@ void HouseClass::Fire_LightningStorm(SuperClass * super)
 	}
 }
 
-// FUNCTION: 0x00509EC0
+// FUNCTION: GAMEMD 0x00509EC0
 void HouseClass::FUN_00509EC0(SuperClass * super)
 {
 	Cell target = CELL_NONE;
@@ -3747,7 +3763,7 @@ void HouseClass::FUN_00509EC0(SuperClass * super)
 	}
 }
 
-// FUNCTION: 0x0050A350
+// FUNCTION: GAMEMD 0x0050A350
 void HouseClass::FUN_0050A350(SuperClass * super)
 {
 	if (Enemy != HOUSE_NONE) {
@@ -3774,7 +3790,7 @@ void HouseClass::FUN_0050A350(SuperClass * super)
 	}
 }
 
-// FUNCTION: 0x0050B1D0
+// FUNCTION: GAMEMD 0x0050B1D0
 void HouseClass::AISupers(void)
 {
 	if (!IsDefeated) {
@@ -3811,7 +3827,7 @@ void HouseClass::AISupers(void)
 	}
 }
 
-// FUNCTION: 0x0050B370
+// FUNCTION: GAMEMD 0x0050B370
 bool HouseClass::FUN_0050B370(TechnoTypeClass const * type)
 {
 	if (type == NULL) {
@@ -3910,7 +3926,7 @@ bool HouseClass::FUN_0050B370(TechnoTypeClass const * type)
 	return(false);
 }
 
-// FUNCTION: 0x0050B6F0
+// FUNCTION: GAMEMD 0x0050B6F0
 bool HouseClass::Is_Player_Control(void) const
 {
 	if (Session.Type == GAME_NORMAL) {
@@ -3919,7 +3935,7 @@ bool HouseClass::Is_Player_Control(void) const
 	return(this == PlayerPtr) == true;
 }
 
-// FUNCTION: 0x0050B730
+// FUNCTION: GAMEMD 0x0050B730
 bool HouseClass::FUN_0050B730(void) const
 {
 	if (Session.Type != GAME_NORMAL) {
@@ -3931,7 +3947,7 @@ bool HouseClass::FUN_0050B730(void) const
 	return(false);
 }
 
-// FUNCTION: 0x0050B760
+// FUNCTION: GAMEMD 0x0050B760
 bool HouseClass::FUN_0050B760(BuildingTypeClass const * type, Cell const & cell)
 {
 	if (Session.Type == GAME_NORMAL) {
@@ -3962,7 +3978,7 @@ struct Drawing {
 	static int BlueShiftRight;
 };
 
-// FUNCTION: 0x0050B840
+// FUNCTION: GAMEMD 0x0050B840
 void HouseClass::FUN_0050B840(void)
 {
 	if (Scheme < 0) {
@@ -3982,7 +3998,7 @@ void HouseClass::FUN_0050B840(void)
 extern double __cdecl FUN_004CAC40(double);
 extern float DAT_007E2AC8;
 
-// FUNCTION: 0x0050B920
+// FUNCTION: GAMEMD 0x0050B920
 void __fastcall FUN_0050B920(double * r, double * g, double * b)
 {
 	double len = FUN_004CAC40(*r * *r + *b * *b + *g * *g);
@@ -4006,7 +4022,7 @@ void __fastcall FUN_0050B920(double * r, double * g, double * b)
 	}
 }
 
-// FUNCTION: 0x0050BA00
+// FUNCTION: GAMEMD 0x0050BA00
 void HouseClass::FUN_0050BA00(void)
 {
 	double r = RemapColorRGB.Get_Red();
@@ -4028,21 +4044,21 @@ void HouseClass::FUN_0050BA00(void)
 	LaserColor.Set_Blue((unsigned char)(int)b);
 }
 
-// FUNCTION: 0x0050BC90
+// FUNCTION: GAMEMD 0x0050BC90
 void HouseClass::CreatePowerOutage(int duration)
 {
 	PowerBlackoutTimer = duration;
 	RecalcPower = true;
 }
 
-// FUNCTION: 0x0050BCD0
+// FUNCTION: GAMEMD 0x0050BCD0
 void HouseClass::Create_Radar_Outage(int duration)
 {
 	RadarBlackoutTimer = duration;
 	RecalcRadar = true;
 }
 
-// FUNCTION: 0x0050BD10
+// FUNCTION: GAMEMD 0x0050BD10
 void HouseClass::ReshroudMap(void)
 {
 	if (!SpySatActive) {
@@ -4050,7 +4066,7 @@ void HouseClass::ReshroudMap(void)
 	}
 }
 
-// FUNCTION: 0x0050BD30
+// FUNCTION: GAMEMD 0x0050BD30
 double HouseClass::GetArmorMultiplier(TechnoTypeClass const * type) const
 {
 	switch (type->Fetch_RTTI()) {
@@ -4069,7 +4085,7 @@ double HouseClass::GetArmorMultiplier(TechnoTypeClass const * type) const
 	return DAT_007E2AC8;
 }
 
-// FUNCTION: 0x0050BDF0
+// FUNCTION: GAMEMD 0x0050BDF0
 float HouseClass::FUN_0050BDF0(TechnoTypeClass const * type) const
 {
 	switch (type->Fetch_RTTI()) {
@@ -4088,7 +4104,7 @@ float HouseClass::FUN_0050BDF0(TechnoTypeClass const * type) const
 	return 1.0f;
 }
 
-// FUNCTION: 0x0050BEB0
+// FUNCTION: GAMEMD 0x0050BEB0
 float HouseClass::FUN_0050BEB0(TechnoTypeClass const * type) const
 {
 	switch (type->Fetch_RTTI()) {
@@ -4107,7 +4123,7 @@ float HouseClass::FUN_0050BEB0(TechnoTypeClass const * type) const
 	return 1.0f;
 }
 
-// FUNCTION: 0x0050BF60
+// FUNCTION: GAMEMD 0x0050BF60
 void HouseClass::CalculateCostMultipliers(void)
 {
 	CostInfantryMult = 1.0f;
@@ -4124,7 +4140,7 @@ void HouseClass::CalculateCostMultipliers(void)
 	}
 }
 
-// FUNCTION: 0x0050C050
+// FUNCTION: GAMEMD 0x0050C050
 double HouseClass::FUN_0050C050(TechnoTypeClass const * type) const
 {
 	switch (type->Fetch_RTTI()) {
@@ -4138,7 +4154,7 @@ double HouseClass::FUN_0050C050(TechnoTypeClass const * type) const
 	return DAT_007E2AC8;
 }
 
-// FUNCTION: 0x0050C0A0
+// FUNCTION: GAMEMD 0x0050C0A0
 double HouseClass::FUN_0050C0A0(TechnoTypeClass const * type) const
 {
 	switch (type->Fetch_RTTI()) {
@@ -4157,13 +4173,13 @@ double HouseClass::FUN_0050C0A0(TechnoTypeClass const * type) const
 	return DAT_007E2AC8;
 }
 
-// FUNCTION: 0x0050C160
+// FUNCTION: GAMEMD 0x0050C160
 float HouseClass::FUN_0050C160(void) const
 {
 	return Class->IncomeMult;
 }
 
-// FUNCTION: 0x0050C170
+// FUNCTION: GAMEMD 0x0050C170
 int HouseClass::FindIndexByName(char const * name)
 {
 	for (int index = 0; index < Houses.Count(); index++) {
@@ -4176,7 +4192,7 @@ int HouseClass::FindIndexByName(char const * name)
 	return -1;
 }
 
-// FUNCTION: 0x0050C210
+// FUNCTION: GAMEMD 0x0050C210
 void HouseClass::FUN_0050C210(void)
 {
 	for (int index = Buildings.Count() - 1; index >= 0; index--) {
@@ -4200,7 +4216,7 @@ void HouseClass::FUN_0050C210(void)
 	}
 }
 
-// FUNCTION: 0x0050C340
+// FUNCTION: GAMEMD 0x0050C340
 bool HouseClass::FUN_0050C340(int i)
 {
 	int width;
@@ -4251,7 +4267,7 @@ bool HouseClass::FUN_0050C340(int i)
 	return true;
 }
 
-// FUNCTION: 0x0050C8C0
+// FUNCTION: GAMEMD 0x0050C8C0
 void HouseClass::Cheer(void)
 {
 	int count = Technos.Count();
@@ -4264,7 +4280,7 @@ void HouseClass::Cheer(void)
 	VocClass::PlayGlobal(Rule->CheerSound, 1.0f, 0x2000);
 }
 
-// FUNCTION: 0x0050C920
+// FUNCTION: GAMEMD 0x0050C920
 void HouseClass::FUN_0050C920(void)
 {
 	int count = Technos.Count();
@@ -4295,7 +4311,7 @@ void HouseClass::FUN_0050C920(void)
 	}
 }
 
-// FUNCTION: 0x0050CAD0
+// FUNCTION: GAMEMD 0x0050CAD0
 bool HouseClass::FUN_0050CAD0(BaseNodeClass * node)
 {
 	if (node->Type < 0) {
@@ -4335,7 +4351,7 @@ bool HouseClass::FUN_0050CAD0(BaseNodeClass * node)
 	}
 }
 
-// FUNCTION: 0x0050CBF0
+// FUNCTION: GAMEMD 0x0050CBF0
 Cell HouseClass::PickIonCannonTarget(void)
 {
 	HouseClass * enemy = Houses[Enemy];
@@ -4442,7 +4458,7 @@ Cell HouseClass::PickIonCannonTarget(void)
 	return CELL_NONE;
 }
 
-// FUNCTION: 0x0050D170
+// FUNCTION: GAMEMD 0x0050D170
 Cell HouseClass::PickTargetByType(QuarryType quarry)
 {
 	ThreatType threat = FUN_00645BB0(quarry);
@@ -4465,7 +4481,7 @@ Cell HouseClass::PickTargetByType(QuarryType quarry)
 	return CELL_NONE;
 }
 
-// FUNCTION: 0x0050D250
+// FUNCTION: GAMEMD 0x0050D250
 void HouseClass::FUN_0050D250(Cell offset)
 {
 	for (int index = Base.Nodes.Count() - 1; index >= 0; index--) {
@@ -4473,7 +4489,7 @@ void HouseClass::FUN_0050D250(Cell offset)
 	}
 }
 
-// FUNCTION: 0x0050D290
+// FUNCTION: GAMEMD 0x0050D290
 void HouseClass::FUN_0050D290(HouseClass * other)
 {
 	for (int index = other->Buildings.Count() - 1; index >= 0; index--) {
@@ -4484,7 +4500,7 @@ void HouseClass::FUN_0050D290(HouseClass * other)
 	}
 }
 
-// FUNCTION: 0x0050D2D0
+// FUNCTION: GAMEMD 0x0050D2D0
 void HouseClass::FUN_0050D2D0(HouseClass * other)
 {
 	for (int index = Buildings.Count() - 1; index >= 0; index--) {
@@ -4503,7 +4519,7 @@ static inline BuildingClass * Cast_Building(ObjectClass * object)
 	return (object->Fetch_RTTI() == RTTI_BUILDING) ? (BuildingClass *)object : NULL;
 }
 
-// FUNCTION: 0x0050D320
+// FUNCTION: GAMEMD 0x0050D320
 void HouseClass::RespawnStartingBuildings(void)
 {
 	for (int index = StartingUnits.Count() - 1; index >= 0; index--) {
@@ -4526,7 +4542,7 @@ void HouseClass::RespawnStartingBuildings(void)
 	}
 }
 
-// FUNCTION: 0x0050D560
+// FUNCTION: GAMEMD 0x0050D560
 void HouseClass::FUN_0050D560(TechnoTypeClass const * type, Cell cell)
 {
 	StartingTechnoStruct * entry = new StartingTechnoStruct;
@@ -4535,7 +4551,7 @@ void HouseClass::FUN_0050D560(TechnoTypeClass const * type, Cell cell)
 	StartingUnits.Add(entry);
 }
 
-// FUNCTION: 0x0050D5D0
+// FUNCTION: GAMEMD 0x0050D5D0
 void HouseClass::FUN_0050D5D0(void)
 {
 	for (int index = StartingUnits.Count() - 1; index >= 0; index--) {
@@ -4544,7 +4560,7 @@ void HouseClass::FUN_0050D5D0(void)
 	StartingUnits.Clear();
 }
 
-// FUNCTION: 0x0050D610
+// FUNCTION: GAMEMD 0x0050D610
 void HouseClass::FUN_0050D610(void)
 {
 	for (int index = Technos.Count() - 1; index >= 0; index--) {
@@ -4560,7 +4576,7 @@ void HouseClass::FUN_0050D610(void)
 	}
 }
 
-// FUNCTION: 0x0050D6D0
+// FUNCTION: GAMEMD 0x0050D6D0
 void HouseClass::FUN_0050D6D0(Cell cell)
 {
 	if (cell == CELL_NONE) {
@@ -4602,56 +4618,56 @@ void HouseClass::FUN_0050D6D0(Cell cell)
 	}
 }
 
-// FUNCTION: 0x0050D9C0
+// FUNCTION: GAMEMD 0x0050D9C0
 bool HouseClass::FUN_0050D9C0(void) const
 {
 	return InfantrySelfHeal > 0;
 }
 
-// FUNCTION: 0x0050D9D0
+// FUNCTION: GAMEMD 0x0050D9D0
 bool HouseClass::FUN_0050D9D0(void) const
 {
 	return UnitsSelfHeal > 0;
 }
 
-// FUNCTION: 0x0050D9E0
+// FUNCTION: GAMEMD 0x0050D9E0
 int HouseClass::GetInfSelfHealStep(void) const
 {
 	return Rule->SelfHealInfantryAmount * InfantrySelfHeal;
 }
 
-// FUNCTION: 0x0050D9F0
+// FUNCTION: GAMEMD 0x0050D9F0
 int HouseClass::GetUnitSelfHealStep(void) const
 {
 	return Rule->SelfHealUnitAmount * UnitsSelfHeal;
 }
 
-// FUNCTION: 0x0050DA00
+// FUNCTION: GAMEMD 0x0050DA00
 void HouseClass::FUN_0050DA00(Cell cell)
 {
 	PreferredTargetCell = cell;
 }
 
-// FUNCTION: 0x0050DA10
+// FUNCTION: GAMEMD 0x0050DA10
 void HouseClass::FUN_0050DA10(void)
 {
 	PreferredTargetCell = CELL_NONE;
 }
 
-// FUNCTION: 0x0050DA20
+// FUNCTION: GAMEMD 0x0050DA20
 void HouseClass::FUN_0050DA20(Cell cell)
 {
 	PreferredDefensiveCell = cell;
 	PreferredDefensiveCellStartTime = Unsorted::CurrentFrame;
 }
 
-// FUNCTION: 0x0050DA40
+// FUNCTION: GAMEMD 0x0050DA40
 void HouseClass::FUN_0050DA40(Cell cell)
 {
 	PreferredDefensiveCell2 = cell;
 }
 
-// FUNCTION: 0x0050DA50
+// FUNCTION: GAMEMD 0x0050DA50
 void HouseClass::FUN_0050DA50(void)
 {
 	PreferredDefensiveCell = CELL_NONE;
@@ -4659,7 +4675,7 @@ void HouseClass::FUN_0050DA50(void)
 	PreferredDefensiveCell2 = CELL_NONE;
 }
 
-// FUNCTION: 0x0050DA80
+// FUNCTION: GAMEMD 0x0050DA80
 SourceType HouseClass::FUN_0050DA80(void) const
 {
 	if (Edge < SOURCE_NORTH || Edge > SOURCE_WEST) {
@@ -4668,7 +4684,7 @@ SourceType HouseClass::FUN_0050DA80(void) const
 	return(Edge);
 }
 
-// FUNCTION: 0x0050DAA0
+// FUNCTION: GAMEMD 0x0050DAA0
 SourceType HouseClass::FUN_0050DAA0(void) const
 {
 	if (Control.Edge < SOURCE_NORTH || Control.Edge > SOURCE_WEST) {
@@ -4677,7 +4693,7 @@ SourceType HouseClass::FUN_0050DAA0(void) const
 	return(Control.Edge);
 }
 
-// FUNCTION: 0x0050DAC0
+// FUNCTION: GAMEMD 0x0050DAC0
 SourceType HouseClass::FUN_0050DAC0(void) const
 {
 	switch (Edge) {
@@ -4696,7 +4712,7 @@ SourceType HouseClass::FUN_0050DAC0(void) const
 	return(SOURCE_NORTH);
 }
 
-// FUNCTION: 0x0050DB00
+// FUNCTION: GAMEMD 0x0050DB00
 SourceType HouseClass::FUN_0050DB00(BuildingClass * building)
 {
 	Coord center = COORD_NONE;
@@ -4750,7 +4766,7 @@ SourceType HouseClass::FUN_0050DB00(BuildingClass * building)
 	return(FUN_0050DA80());
 }
 
-// FUNCTION: 0x0050DEF0
+// FUNCTION: GAMEMD 0x0050DEF0
 Cell HouseClass::Get_Base_Center(void) const
 {
 	if ((TPoint2D<short> const &)BaseCenter == CELL_NONE) {
@@ -4759,7 +4775,7 @@ Cell HouseClass::Get_Base_Center(void) const
 	return(BaseCenter);
 }
 
-// FUNCTION: 0x0050DF30
+// FUNCTION: GAMEMD 0x0050DF30
 Coord HouseClass::FUN_0050DF30(void) const
 {
 	Cell base = Get_Base_Center();
@@ -4769,25 +4785,25 @@ Coord HouseClass::FUN_0050DF30(void) const
 	return(Map[base].Center_Coord());
 }
 
-// FUNCTION: 0x0050DFE0
+// FUNCTION: GAMEMD 0x0050DFE0
 void HouseClass::FUN_0050DFE0(Cell cell)
 {
 	BaseCenter = cell;
 }
 
-// FUNCTION: 0x0050DFF0
+// FUNCTION: GAMEMD 0x0050DFF0
 void HouseClass::FUN_0050DFF0(void)
 {
 	BaseCenter = CELL_NONE;
 }
 
-// FUNCTION: 0x0050E000
+// FUNCTION: GAMEMD 0x0050E000
 void HouseClass::Set_Base_Spawn_Cell(Cell cell)
 {
 	BaseSpawnCell = cell;
 }
 
-// FUNCTION: 0x0050E010
+// FUNCTION: GAMEMD 0x0050E010
 void HouseClass::FUN_0050E010(UnitTypeClass * type)
 {
 	PoweredUnitCenters++;
@@ -4806,7 +4822,7 @@ void HouseClass::FUN_0050E010(UnitTypeClass * type)
 	}
 }
 
-// FUNCTION: 0x0050E0E0
+// FUNCTION: GAMEMD 0x0050E0E0
 void HouseClass::LostPoweredCenter(UnitTypeClass * type)
 {
 	PoweredUnitCenters--;
@@ -4825,13 +4841,13 @@ void HouseClass::LostPoweredCenter(UnitTypeClass * type)
 	}
 }
 
-// FUNCTION: 0x0050E1B0
+// FUNCTION: GAMEMD 0x0050E1B0
 bool HouseClass::GainedPoweredCenter(TechnoTypeClass const *)
 {
 	return(PoweredUnitCenters > 0);
 }
 
-// FUNCTION: 0x0050E1C0
+// FUNCTION: GAMEMD 0x0050E1C0
 void HouseClass::FUN_0050E1C0(UnitTypeClass * type)
 {
 	if (type) {
@@ -4849,7 +4865,7 @@ void HouseClass::FUN_0050E1C0(UnitTypeClass * type)
 	}
 }
 
-// FUNCTION: 0x0050E280
+// FUNCTION: GAMEMD 0x0050E280
 void HouseClass::FUN_0050E280(UnitTypeClass * type)
 {
 	if (type) {
@@ -4867,215 +4883,330 @@ void HouseClass::FUN_0050E280(UnitTypeClass * type)
 	}
 }
 
-// FUNCTION: 0x0050E340
+// FUNCTION: GAMEMD 0x0050E340
 ULONG STDMETHODCALLTYPE HouseClass::AddRef(void)
 {
 	return(1);
 }
 
-// FUNCTION: 0x0050E350
+// FUNCTION: GAMEMD 0x0050E350
 ULONG STDMETHODCALLTYPE HouseClass::Release(void)
 {
 	return(1);
 }
 
-// FUNCTION: 0x0050E360
+// FUNCTION: GAMEMD 0x0050E360
 RTTIType HouseClass::Fetch_RTTI(void) const
 {
 	return(RTTI_HOUSE);
 }
 
-// FUNCTION: 0x0050E370
+// FUNCTION: GAMEMD 0x0050E370
 int HouseClass::Fetch_Heap_ID(void) const
 {
 	return(HeapID);
 }
 
-// FUNCTION: 0x0050E380 HouseClass::~HouseClass
+// SYNTHETIC: GAMEMD 0x0050E380
+// ??_GHouseClass@@UAEPAXI@Z
 
-// FUNCTION: 0x0050E450 BaseNodeClass::BaseNodeClass
+// FUNCTION: GAMEMD 0x0050E450
+// BaseNodeClass::BaseNodeClass
 
-// FUNCTION: 0x0050E470 ?$TPoint2D@F::operator==
+// TEMPLATE: GAMEMD 0x0050E470
+// ??8?$TPoint2D@F@@QBE_NABV0@@Z
 template<class T>
 bool TPoint2D<T>::operator == (TPoint2D<T> const & rvalue) const
 {
 	return(X==rvalue.X && Y==rvalue.Y);
 }
 
-// FUNCTION: 0x0050E4A0 ?$DynamicVectorClass@PBVBuildingTypeClass@@::Clear
+// TEMPLATE: GAMEMD 0x0050E4A0
+// ?Clear@?$DynamicVectorClass@PBVBuildingTypeClass@@@@UAEXXZ
 template class DynamicVectorClass<BuildingTypeClass const *>;
 
-// FUNCTION: 0x0050E4D0 ?$DynamicVectorClass@PBVBuildingTypeClass@@::ID
+// TEMPLATE: GAMEMD 0x0050E4D0
+// ?ID@?$DynamicVectorClass@PBVBuildingTypeClass@@@@UAEHPBQBVBuildingTypeClass@@@Z
 
-// FUNCTION: 0x0050E4F0 ?$VectorClass@PBVBuildingTypeClass@@::GetItem
+// TEMPLATE: GAMEMD 0x0050E4F0
+// ?GetItem@?$VectorClass@PBVBuildingTypeClass@@@@UBEPBVBuildingTypeClass@@H@Z
 
-// FUNCTION: 0x0050E500 ?$DynamicVectorClass@PBVTeamTypeClass@@::Clear
+// TEMPLATE: GAMEMD 0x0050E500
+// ?Clear@?$DynamicVectorClass@PBVTeamTypeClass@@@@UAEXXZ
 template class DynamicVectorClass<TeamTypeClass const *>;
 
-// FUNCTION: 0x0050E530 ?$DynamicVectorClass@PBVTeamTypeClass@@::ID
+// TEMPLATE: GAMEMD 0x0050E530
+// ?ID@?$DynamicVectorClass@PBVTeamTypeClass@@@@UAEHPBQBVTeamTypeClass@@@Z
 
-// FUNCTION: 0x0050E550 ?$VectorClass@PBVTeamTypeClass@@::GetItem
+// TEMPLATE: GAMEMD 0x0050E550
+// ?GetItem@?$VectorClass@PBVTeamTypeClass@@@@UBEPBVTeamTypeClass@@H@Z
 
-// FUNCTION: 0x0050E560 ?$DynamicVectorClass@UAngerStruct@@::Clear
+// TEMPLATE: GAMEMD 0x0050E560
+// ?Clear@?$DynamicVectorClass@UAngerStruct@@@@UAEXXZ
 template class DynamicVectorClass<AngerStruct>;
 
-// FUNCTION: 0x0050E590 ?$DynamicVectorClass@UAngerStruct@@::ID
+// TEMPLATE: GAMEMD 0x0050E590
+// ?ID@?$DynamicVectorClass@UAngerStruct@@@@UAEHPBUAngerStruct@@@Z
 
-// FUNCTION: 0x0050E5B0 ?$VectorClass@UAngerStruct@@::GetItem
+// TEMPLATE: GAMEMD 0x0050E5B0
+// ?GetItem@?$VectorClass@UAngerStruct@@@@UBE?AUAngerStruct@@H@Z
 
-// FUNCTION: 0x0050E5D0 ?$DynamicVectorClass@UScoutStruct@@::Clear
+// TEMPLATE: GAMEMD 0x0050E5D0
+// ?Clear@?$DynamicVectorClass@UScoutStruct@@@@UAEXXZ
 template class DynamicVectorClass<ScoutStruct>;
 
-// FUNCTION: 0x0050E600 ?$DynamicVectorClass@UScoutStruct@@::ID
+// TEMPLATE: GAMEMD 0x0050E600
+// ?ID@?$DynamicVectorClass@UScoutStruct@@@@UAEHPBUScoutStruct@@@Z
 
-// FUNCTION: 0x0050E620 ?$VectorClass@UScoutStruct@@::GetItem
+// TEMPLATE: GAMEMD 0x0050E620
+// ?GetItem@?$VectorClass@UScoutStruct@@@@UBE?AUScoutStruct@@H@Z
 
-// FUNCTION: 0x0050E640 ?$DynamicVectorClass@PAVBuildingTypeClass@@::Clear
+// TEMPLATE: GAMEMD 0x0050E640
+// ?Clear@?$DynamicVectorClass@PAVBuildingTypeClass@@@@UAEXXZ
 template class DynamicVectorClass<BuildingTypeClass *>;
 
-// FUNCTION: 0x0050E670 ?$DynamicVectorClass@PAVBuildingTypeClass@@::ID
+// TEMPLATE: GAMEMD 0x0050E670
+// ?ID@?$DynamicVectorClass@PAVBuildingTypeClass@@@@UAEHPBQAVBuildingTypeClass@@@Z
 
-// FUNCTION: 0x0050E690 ?$VectorClass@PAVBuildingTypeClass@@::GetItem
+// TEMPLATE: GAMEMD 0x0050E690
+// ?GetItem@?$VectorClass@PAVBuildingTypeClass@@@@UBEPAVBuildingTypeClass@@H@Z
 
-// FUNCTION: 0x0050E6A0 ?$DynamicVectorClass@PAVAbstractClass@@::Clear
+// TEMPLATE: GAMEMD 0x0050E6A0
+// ?Clear@?$DynamicVectorClass@PAVAbstractClass@@@@UAEXXZ
 template class DynamicVectorClass<AbstractClass *>;
 
-// FUNCTION: 0x0050E6D0 ?$DynamicVectorClass@PAVAbstractClass@@::ID
+// TEMPLATE: GAMEMD 0x0050E6D0
+// ?ID@?$DynamicVectorClass@PAVAbstractClass@@@@UAEHPBQAVAbstractClass@@@Z
 
-// FUNCTION: 0x0050E6F0 ?$VectorClass@PAVAbstractClass@@::GetItem
+// TEMPLATE: GAMEMD 0x0050E6F0
+// ?GetItem@?$VectorClass@PAVAbstractClass@@@@UBEPAVAbstractClass@@H@Z
 
-// FUNCTION: 0x0050E700 ?$DynamicVectorClass@_N::Clear
+// TEMPLATE: GAMEMD 0x0050E700
+// ?Clear@?$DynamicVectorClass@_N@@UAEXXZ
 template class DynamicVectorClass<bool>;
 
-// FUNCTION: 0x0050E730 ?$DynamicVectorClass@_N::ID
+// TEMPLATE: GAMEMD 0x0050E730
+// ?ID@?$DynamicVectorClass@_N@@UAEHPB_N@Z
 
-// FUNCTION: 0x0050E750 ?$VectorClass@_N::GetItem
+// TEMPLATE: GAMEMD 0x0050E750
+// ?GetItem@?$VectorClass@_N@@UBE_NH@Z
 
 typedef DiscreteDistributionClass<BuildingTypeClass>::DIST_OBJ BUILDING_DIST_OBJ;
 
-// FUNCTION: 0x0050E760 ?$DynamicVectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@::Clear
+// TEMPLATE: GAMEMD 0x0050E760
+// ?Clear@?$DynamicVectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@@@UAEXXZ
 template class DynamicVectorClass<BUILDING_DIST_OBJ>;
 
-// FUNCTION: 0x0050E7A0 ?$DynamicVectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@::ID
+// TEMPLATE: GAMEMD 0x0050E7A0
+// ?ID@?$DynamicVectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@@@UAEHPBV?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@@Z
 
-// FUNCTION: 0x0050E7C0 ?$VectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@::GetItem
+// TEMPLATE: GAMEMD 0x0050E7C0
+// ?GetItem@?$VectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@@@UBE?AV?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@H@Z
 
-// FUNCTION: 0x0050E7E0 ?$TypeList@PBVTeamTypeClass@@::~?$TypeList@PBVTeamTypeClass@@
-// FUNCTION: 0x0050E830 ?$DynamicVectorClass@PBVTeamTypeClass@@::?$DynamicVectorClass@PBVTeamTypeClass@@
-// FUNCTION: 0x0050E8C0 ?$DynamicVectorClass@PBVTeamTypeClass@@::~?$DynamicVectorClass@PBVTeamTypeClass@@
-// FUNCTION: 0x0050E910 ?$VectorClass@PBVTeamTypeClass@@::operator==
-// FUNCTION: 0x0050E950 ?$VectorClass@PBVTeamTypeClass@@::Resize
-// FUNCTION: 0x0050EA00 ?$VectorClass@PBVTeamTypeClass@@::Clear
-// FUNCTION: 0x0050EA30 ?$VectorClass@PBVTeamTypeClass@@::ID
-// FUNCTION: 0x0050EA70 ?$VectorClass@PBVTeamTypeClass@@::ID
-// FUNCTION: 0x0050EA90 ?$DynamicVectorClass@PBVTeamTypeClass@@::Resize
-// FUNCTION: 0x0050EB40 ?$DynamicVectorClass@PBVTeamTypeClass@@::ID
+// SYNTHETIC: GAMEMD 0x0050E7E0
+// ??_G?$TypeList@PBVTeamTypeClass@@@@UAEPAXI@Z
+// TEMPLATE: GAMEMD 0x0050E830
+// ??0?$DynamicVectorClass@PBVTeamTypeClass@@@@QAE@ABV0@@Z
+// SYNTHETIC: GAMEMD 0x0050E8C0
+// ??_G?$DynamicVectorClass@PBVTeamTypeClass@@@@UAEPAXI@Z
+// TEMPLATE: GAMEMD 0x0050E910
+// ??8?$VectorClass@PBVTeamTypeClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x0050E950
+// ?Resize@?$VectorClass@PBVTeamTypeClass@@@@UAE_NHPBQBVTeamTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x0050EA00
+// ?Clear@?$VectorClass@PBVTeamTypeClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0050EA30
+// ?ID@?$VectorClass@PBVTeamTypeClass@@@@UAEHABQBVTeamTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x0050EA70
+// ?ID@?$VectorClass@PBVTeamTypeClass@@@@UAEHPBQBVTeamTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x0050EA90
+// ?Resize@?$DynamicVectorClass@PBVTeamTypeClass@@@@UAE_NHPBQBVTeamTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x0050EB40
+// ?ID@?$DynamicVectorClass@PBVTeamTypeClass@@@@UAEHABQBVTeamTypeClass@@@Z
 template class VectorClass<TeamTypeClass const *>;
 
-// FUNCTION: 0x0050EB70 ?$DynamicVectorClass@VBaseNodeClass@@::Insert_After
+// TEMPLATE: GAMEMD 0x0050EB70
+// ?Insert_After@?$DynamicVectorClass@VBaseNodeClass@@@@QAE_NABVBaseNodeClass@@H@Z
 template class DynamicVectorClass<BaseNodeClass>;
 
-// FUNCTION: 0x0050EC20 ?$VectorClass@PBVBuildingTypeClass@@::operator==
-// FUNCTION: 0x0050EC60 ?$VectorClass@PBVBuildingTypeClass@@::Resize
-// FUNCTION: 0x0050ED10 ?$VectorClass@PBVBuildingTypeClass@@::Clear
-// FUNCTION: 0x0050ED40 ?$VectorClass@PBVBuildingTypeClass@@::ID
-// FUNCTION: 0x0050ED80 ?$VectorClass@PBVBuildingTypeClass@@::ID
-// FUNCTION: 0x0050EDA0 ?$DynamicVectorClass@PBVBuildingTypeClass@@::Resize
-// FUNCTION: 0x0050EE50 ?$DynamicVectorClass@PBVBuildingTypeClass@@::ID
+// TEMPLATE: GAMEMD 0x0050EC20
+// ??8?$VectorClass@PBVBuildingTypeClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x0050EC60
+// ?Resize@?$VectorClass@PBVBuildingTypeClass@@@@UAE_NHPBQBVBuildingTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x0050ED10
+// ?Clear@?$VectorClass@PBVBuildingTypeClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0050ED40
+// ?ID@?$VectorClass@PBVBuildingTypeClass@@@@UAEHABQBVBuildingTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x0050ED80
+// ?ID@?$VectorClass@PBVBuildingTypeClass@@@@UAEHPBQBVBuildingTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x0050EDA0
+// ?Resize@?$DynamicVectorClass@PBVBuildingTypeClass@@@@UAE_NHPBQBVBuildingTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x0050EE50
+// ?ID@?$DynamicVectorClass@PBVBuildingTypeClass@@@@UAEHABQBVBuildingTypeClass@@@Z
 template class VectorClass<BuildingTypeClass const *>;
 
-// FUNCTION: 0x0050EE80 ?$VectorClass@UAngerStruct@@::operator==
-// FUNCTION: 0x0050EEE0 ?$VectorClass@UAngerStruct@@::Resize
-// FUNCTION: 0x0050EFD0 ?$VectorClass@UAngerStruct@@::Clear
-// FUNCTION: 0x0050F000 ?$VectorClass@UAngerStruct@@::ID
-// FUNCTION: 0x0050F050 ?$VectorClass@UAngerStruct@@::ID
-// FUNCTION: 0x0050F070 ?$DynamicVectorClass@UAngerStruct@@::Resize
-// FUNCTION: 0x0050F170 ?$DynamicVectorClass@UAngerStruct@@::ID
+// TEMPLATE: GAMEMD 0x0050EE80
+// ??8?$VectorClass@UAngerStruct@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x0050EEE0
+// ?Resize@?$VectorClass@UAngerStruct@@@@UAE_NHPBUAngerStruct@@@Z
+// TEMPLATE: GAMEMD 0x0050EFD0
+// ?Clear@?$VectorClass@UAngerStruct@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0050F000
+// ?ID@?$VectorClass@UAngerStruct@@@@UAEHABUAngerStruct@@@Z
+// TEMPLATE: GAMEMD 0x0050F050
+// ?ID@?$VectorClass@UAngerStruct@@@@UAEHPBUAngerStruct@@@Z
+// TEMPLATE: GAMEMD 0x0050F070
+// ?Resize@?$DynamicVectorClass@UAngerStruct@@@@UAE_NHPBUAngerStruct@@@Z
+// TEMPLATE: GAMEMD 0x0050F170
+// ?ID@?$DynamicVectorClass@UAngerStruct@@@@UAEHABUAngerStruct@@@Z
 template class VectorClass<AngerStruct>;
 
-// FUNCTION: 0x0050F1B0 ?$VectorClass@UScoutStruct@@::operator==
-// FUNCTION: 0x0050F210 ?$VectorClass@UScoutStruct@@::Resize
-// FUNCTION: 0x0050F300 ?$VectorClass@UScoutStruct@@::Clear
-// FUNCTION: 0x0050F330 ?$VectorClass@UScoutStruct@@::ID
-// FUNCTION: 0x0050F380 ?$VectorClass@UScoutStruct@@::ID
-// FUNCTION: 0x0050F3A0 ?$DynamicVectorClass@UScoutStruct@@::Resize
-// FUNCTION: 0x0050F4A0 ?$DynamicVectorClass@UScoutStruct@@::ID
+// TEMPLATE: GAMEMD 0x0050F1B0
+// ??8?$VectorClass@UScoutStruct@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x0050F210
+// ?Resize@?$VectorClass@UScoutStruct@@@@UAE_NHPBUScoutStruct@@@Z
+// TEMPLATE: GAMEMD 0x0050F300
+// ?Clear@?$VectorClass@UScoutStruct@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0050F330
+// ?ID@?$VectorClass@UScoutStruct@@@@UAEHABUScoutStruct@@@Z
+// TEMPLATE: GAMEMD 0x0050F380
+// ?ID@?$VectorClass@UScoutStruct@@@@UAEHPBUScoutStruct@@@Z
+// TEMPLATE: GAMEMD 0x0050F3A0
+// ?Resize@?$DynamicVectorClass@UScoutStruct@@@@UAE_NHPBUScoutStruct@@@Z
+// TEMPLATE: GAMEMD 0x0050F4A0
+// ?ID@?$DynamicVectorClass@UScoutStruct@@@@UAEHABUScoutStruct@@@Z
 template class VectorClass<ScoutStruct>;
 
-// FUNCTION: 0x0050F4E0 ?$VectorClass@PAUBuildChoiceClass@HouseClass@@::operator==
-// FUNCTION: 0x0050F520 ?$VectorClass@PAUBuildChoiceClass@HouseClass@@::Resize
-// FUNCTION: 0x0050F5D0 ?$VectorClass@PAUBuildChoiceClass@HouseClass@@::Clear
-// FUNCTION: 0x0050F600 ?$VectorClass@PAUBuildChoiceClass@HouseClass@@::ID
+// TEMPLATE: GAMEMD 0x0050F4E0
+// ??8?$VectorClass@PAUBuildChoiceClass@HouseClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x0050F520
+// ?Resize@?$VectorClass@PAUBuildChoiceClass@HouseClass@@@@UAE_NHPBQAUBuildChoiceClass@HouseClass@@@Z
+// TEMPLATE: GAMEMD 0x0050F5D0
+// ?Clear@?$VectorClass@PAUBuildChoiceClass@HouseClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0050F600
+// ?ID@?$VectorClass@PAUBuildChoiceClass@HouseClass@@@@UAEHABQAUBuildChoiceClass@HouseClass@@@Z
 template class VectorClass<HouseClass::BuildChoiceClass *>;
-// FUNCTION: 0x0050F640 ?$VectorClass@PAUBuildChoiceClass@HouseClass@@::ID
-// FUNCTION: 0x0050F660 ?$DynamicVectorClass@PAUBuildChoiceClass@HouseClass@@::Resize
-// FUNCTION: 0x0050F710 ?$DynamicVectorClass@PAUBuildChoiceClass@HouseClass@@::ID
+// TEMPLATE: GAMEMD 0x0050F640
+// ?ID@?$VectorClass@PAUBuildChoiceClass@HouseClass@@@@UAEHPBQAUBuildChoiceClass@HouseClass@@@Z
+// TEMPLATE: GAMEMD 0x0050F660
+// ?Resize@?$DynamicVectorClass@PAUBuildChoiceClass@HouseClass@@@@UAE_NHPBQAUBuildChoiceClass@HouseClass@@@Z
+// TEMPLATE: GAMEMD 0x0050F710
+// ?ID@?$DynamicVectorClass@PAUBuildChoiceClass@HouseClass@@@@UAEHABQAUBuildChoiceClass@HouseClass@@@Z
 template class DynamicVectorClass<HouseClass::BuildChoiceClass *>;
 
-// FUNCTION: 0x0050F740 ?$VectorClass@PAVBuildingTypeClass@@::operator==
-// FUNCTION: 0x0050F780 ?$VectorClass@PAVBuildingTypeClass@@::Resize
-// FUNCTION: 0x0050F830 ?$VectorClass@PAVBuildingTypeClass@@::Clear
-// FUNCTION: 0x0050F860 ?$VectorClass@PAVBuildingTypeClass@@::ID
-// FUNCTION: 0x0050F8A0 ?$VectorClass@PAVBuildingTypeClass@@::ID
-// FUNCTION: 0x0050F8C0 ?$DynamicVectorClass@PAVBuildingTypeClass@@::Resize
-// FUNCTION: 0x0050F970 ?$DynamicVectorClass@PAVBuildingTypeClass@@::ID
+// TEMPLATE: GAMEMD 0x0050F740
+// ??8?$VectorClass@PAVBuildingTypeClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x0050F780
+// ?Resize@?$VectorClass@PAVBuildingTypeClass@@@@UAE_NHPBQAVBuildingTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x0050F830
+// ?Clear@?$VectorClass@PAVBuildingTypeClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0050F860
+// ?ID@?$VectorClass@PAVBuildingTypeClass@@@@UAEHABQAVBuildingTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x0050F8A0
+// ?ID@?$VectorClass@PAVBuildingTypeClass@@@@UAEHPBQAVBuildingTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x0050F8C0
+// ?Resize@?$DynamicVectorClass@PAVBuildingTypeClass@@@@UAE_NHPBQAVBuildingTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x0050F970
+// ?ID@?$DynamicVectorClass@PAVBuildingTypeClass@@@@UAEHABQAVBuildingTypeClass@@@Z
 template class VectorClass<BuildingTypeClass *>;
 
-// FUNCTION: 0x0050F9A0 ?$VectorClass@_N::operator==
-// FUNCTION: 0x0050F9E0 ?$VectorClass@_N::Resize
-// FUNCTION: 0x0050FA90 ?$VectorClass@_N::Clear
-// FUNCTION: 0x0050FAC0 ?$VectorClass@_N::ID
-// FUNCTION: 0x0050FB00 ?$VectorClass@_N::ID
-// FUNCTION: 0x0050FB20 ?$DynamicVectorClass@_N::Resize
-// FUNCTION: 0x0050FBD0 ?$DynamicVectorClass@_N::ID
+// TEMPLATE: GAMEMD 0x0050F9A0
+// ??8?$VectorClass@_N@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x0050F9E0
+// ?Resize@?$VectorClass@_N@@UAE_NHPB_N@Z
+// TEMPLATE: GAMEMD 0x0050FA90
+// ?Clear@?$VectorClass@_N@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0050FAC0
+// ?ID@?$VectorClass@_N@@UAEHAB_N@Z
+// TEMPLATE: GAMEMD 0x0050FB00
+// ?ID@?$VectorClass@_N@@UAEHPB_N@Z
+// TEMPLATE: GAMEMD 0x0050FB20
+// ?Resize@?$DynamicVectorClass@_N@@UAE_NHPB_N@Z
+// TEMPLATE: GAMEMD 0x0050FBD0
+// ?ID@?$DynamicVectorClass@_N@@UAEHAB_N@Z
 template class VectorClass<bool>;
 
-// FUNCTION: 0x0050FC00 ?$VectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@::operator==
-// FUNCTION: 0x0050FC60 ?$VectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@::Resize
-// FUNCTION: 0x0050FD70 ?$VectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@::Clear
-// FUNCTION: 0x0050FDB0 ?$VectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@::ID
-// FUNCTION: 0x0050FE00 ?$VectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@::ID
+// TEMPLATE: GAMEMD 0x0050FC00
+// ??8?$VectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x0050FC60
+// ?Resize@?$VectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@@@UAE_NHPBV?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@@Z
+// TEMPLATE: GAMEMD 0x0050FD70
+// ?Clear@?$VectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0050FDB0
+// ?ID@?$VectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@@@UAEHABV?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@@Z
+// TEMPLATE: GAMEMD 0x0050FE00
+// ?ID@?$VectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@@@UAEHPBV?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@@Z
 template class VectorClass<BUILDING_DIST_OBJ>;
-// FUNCTION: 0x0050FE20 ?$DynamicVectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@::Resize
-// FUNCTION: 0x0050FF40 ?$DiscreteDistributionClass@VBuildingTypeClass@@::?$DistributionObject@PAVBuildingTypeClass@@::~?$DistributionObject@PAVBuildingTypeClass@@
-// FUNCTION: 0x0050FF50 ?$DynamicVectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@::Add
-// FUNCTION: 0x0050FFB0 ?$DynamicVectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@::ID
-// FUNCTION: 0x0050FFF0 ?$VectorClass@PBVBuildingTypeClass@@::~?$VectorClass@PBVBuildingTypeClass@@
-// FUNCTION: 0x00510040 ?$DynamicVectorClass@PBVBuildingTypeClass@@::~?$DynamicVectorClass@PBVBuildingTypeClass@@
-// FUNCTION: 0x00510090 ?$VectorClass@PAUStartingTechnoStruct@@::~?$VectorClass@PAUStartingTechnoStruct@@
-// FUNCTION: 0x005100E0 ?$DynamicVectorClass@PAUStartingTechnoStruct@@::~?$DynamicVectorClass@PAUStartingTechnoStruct@@
-// FUNCTION: 0x00510130 ?$VectorClass@UAngerStruct@@::~?$VectorClass@UAngerStruct@@
-// FUNCTION: 0x00510180 ?$DynamicVectorClass@UAngerStruct@@::~?$DynamicVectorClass@UAngerStruct@@
-// FUNCTION: 0x005101D0 ?$VectorClass@UScoutStruct@@::~?$VectorClass@UScoutStruct@@
-// FUNCTION: 0x00510220 ?$DynamicVectorClass@UScoutStruct@@::~?$DynamicVectorClass@UScoutStruct@@
-// FUNCTION: 0x00510270 ?$VectorClass@PAUBuildChoiceClass@HouseClass@@::~?$VectorClass@PAUBuildChoiceClass@HouseClass@@
-// FUNCTION: 0x005102C0 ?$DynamicVectorClass@PAUBuildChoiceClass@HouseClass@@::~?$DynamicVectorClass@PAUBuildChoiceClass@HouseClass@@
+// TEMPLATE: GAMEMD 0x0050FE20
+// ?Resize@?$DynamicVectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@@@UAE_NHPBV?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@@Z
+// TEMPLATE: GAMEMD 0x0050FF40
+// ??1?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@QAE@XZ
+// TEMPLATE: GAMEMD 0x0050FF50
+// ?Add@?$DynamicVectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@@@QAE_NABV?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@@Z
+// TEMPLATE: GAMEMD 0x0050FFB0
+// ?ID@?$DynamicVectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@@@UAEHABV?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@@Z
+// SYNTHETIC: GAMEMD 0x0050FFF0
+// ??_G?$VectorClass@PBVBuildingTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00510040
+// ??_G?$DynamicVectorClass@PBVBuildingTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00510090
+// ??_G?$VectorClass@PAUStartingTechnoStruct@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x005100E0
+// ??_G?$DynamicVectorClass@PAUStartingTechnoStruct@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00510130
+// ??_G?$VectorClass@UAngerStruct@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00510180
+// ??_G?$DynamicVectorClass@UAngerStruct@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x005101D0
+// ??_G?$VectorClass@UScoutStruct@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00510220
+// ??_G?$DynamicVectorClass@UScoutStruct@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00510270
+// ??_G?$VectorClass@PAUBuildChoiceClass@HouseClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x005102C0
+// ??_G?$DynamicVectorClass@PAUBuildChoiceClass@HouseClass@@@@UAEPAXI@Z
 
 
-// FUNCTION: 0x00510310 ?$VectorClass@PBVTeamTypeClass@@::~?$VectorClass@PBVTeamTypeClass@@
-// FUNCTION: 0x00510360 ?$VectorClass@_N::~?$VectorClass@_N
-// FUNCTION: 0x005103B0 ?$DynamicVectorClass@_N::~?$DynamicVectorClass@_N
-// FUNCTION: 0x00510400 ?$VectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@::~?$VectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@
-// FUNCTION: 0x00510460 ?$DiscreteDistributionClass@VBuildingTypeClass@@::?$DistributionObject@PAVBuildingTypeClass@@::~?$DistributionObject@PAVBuildingTypeClass@@
-// FUNCTION: 0x005104A0 ?$DynamicVectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@::~?$DynamicVectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@
-// FUNCTION: 0x00510500 ?$VectorClass@PAVSuperClass@@::?$VectorClass@PAVSuperClass@@
+// SYNTHETIC: GAMEMD 0x00510310
+// ??_G?$VectorClass@PBVTeamTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00510360
+// ??_G?$VectorClass@_N@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x005103B0
+// ??_G?$DynamicVectorClass@_N@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00510400
+// ??_G?$VectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00510460
+// ??_E?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@QAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x005104A0
+// ??_G?$DynamicVectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@@@UAEPAXI@Z
+// TEMPLATE: GAMEMD 0x00510500
+// ??0?$VectorClass@PAVSuperClass@@@@QAE@HPBQAVSuperClass@@@Z
 template class VectorClass<SuperClass *>;
-// FUNCTION: 0x00510550 ?$VectorClass@PAVBuildingClass@@::?$VectorClass@PAVBuildingClass@@
+// TEMPLATE: GAMEMD 0x00510550
+// ??0?$VectorClass@PAVBuildingClass@@@@QAE@HPBQAVBuildingClass@@@Z
 template class VectorClass<BuildingClass *>;
-// FUNCTION: 0x005105A0 ?$VectorClass@PBVBuildingTypeClass@@::?$VectorClass@PBVBuildingTypeClass@@
-// FUNCTION: 0x005105F0 ?$VectorClass@PAUIConnectionPoint@@::?$VectorClass@PAUIConnectionPoint@@
+// TEMPLATE: GAMEMD 0x005105A0
+// ??0?$VectorClass@PBVBuildingTypeClass@@@@QAE@HPBQBVBuildingTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x005105F0
+// ??0?$VectorClass@PAUIConnectionPoint@@@@QAE@HPBQAUIConnectionPoint@@@Z
 template class VectorClass<IConnectionPoint *>;
-// FUNCTION: 0x00510640 ?$VectorClass@PAVTagClass@@::?$VectorClass@PAVTagClass@@
+// TEMPLATE: GAMEMD 0x00510640
+// ??0?$VectorClass@PAVTagClass@@@@QAE@HPBQAVTagClass@@@Z
 template class VectorClass<TagClass *>;
-// FUNCTION: 0x00510690 ?$VectorClass@PAUStartingTechnoStruct@@::?$VectorClass@PAUStartingTechnoStruct@@
+// TEMPLATE: GAMEMD 0x00510690
+// ??0?$VectorClass@PAUStartingTechnoStruct@@@@QAE@HPBQAUStartingTechnoStruct@@@Z
 template class VectorClass<StartingTechnoStruct *>;
-// FUNCTION: 0x005106E0 ?$VectorClass@UAngerStruct@@::?$VectorClass@UAngerStruct@@
+// TEMPLATE: GAMEMD 0x005106E0
+// ??0?$VectorClass@UAngerStruct@@@@QAE@HPBUAngerStruct@@@Z
 template class VectorClass<AngerStruct>;
-// FUNCTION: 0x00510780 ?$VectorClass@UScoutStruct@@::?$VectorClass@UScoutStruct@@
+// TEMPLATE: GAMEMD 0x00510780
+// ??0?$VectorClass@UScoutStruct@@@@QAE@HPBUScoutStruct@@@Z
 template class VectorClass<ScoutStruct>;
-// FUNCTION: 0x00510820 ?$DynamicVectorClass@PAVHouseClass@@::Delete_Index
+// TEMPLATE: GAMEMD 0x00510820
+// ?Delete_Index@?$DynamicVectorClass@PAVHouseClass@@@@QAE_NH@Z
 template class DynamicVectorClass<HouseClass *>;
-// FUNCTION: 0x00510860 BasePlanningCellContainer::AddCapacity
+// FUNCTION: GAMEMD 0x00510860
+// BasePlanningCellContainer::AddCapacity
 bool BasePlanningCellContainer::AddCapacity(int additional)
 {
 	if (additional >= 0) {
@@ -5098,7 +5229,8 @@ bool BasePlanningCellContainer::AddCapacity(int additional)
 	return false;
 }
 
-// FUNCTION: 0x005108F0 BasePlanningCellContainer::Comparator
+// FUNCTION: GAMEMD 0x005108F0
+// BasePlanningCellContainer::Comparator
 int __cdecl BasePlanningCellContainer::Comparator(const void * a, const void * b)
 {
 	int wa = ((BasePlanningCell const *)a)->Weight;
@@ -5109,25 +5241,41 @@ int __cdecl BasePlanningCellContainer::Comparator(const void * a, const void * b
 	return (wa < wb) ? -1 : 1;
 }
 
-// FUNCTION: 0x00510920 ?$VectorClass@_N::?$VectorClass@_N
+// TEMPLATE: GAMEMD 0x00510920
+// ??0?$VectorClass@_N@@QAE@HPB_N@Z
 template class VectorClass<bool>;
-// FUNCTION: 0x00510970 ?$VectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@::?$VectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@
+// TEMPLATE: GAMEMD 0x00510970
+// ??0?$VectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@@@QAE@HPBV?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@@Z
 template class VectorClass<BUILDING_DIST_OBJ>;
 
-// FUNCTION: 0x00510A20 HouseClass::QueryInterface
-// FUNCTION: 0x00510A30 HouseClass::AddRef
-// FUNCTION: 0x00510A40 HouseClass::Release
-// FUNCTION: 0x00510A50 HouseClass::QueryInterface
-// FUNCTION: 0x00510A60 HouseClass::AddRef
-// FUNCTION: 0x00510A70 HouseClass::Release
-// FUNCTION: 0x00510A80 HouseClass::QueryInterface
-// FUNCTION: 0x00510A90 HouseClass::AddRef
-// FUNCTION: 0x00510AA0 HouseClass::Release
-// FUNCTION: 0x00510AB0 HouseClass::ID_Number
-// FUNCTION: 0x00510AC0 HouseClass::Name
-// FUNCTION: 0x00510AD0 HouseClass::QueryInterface
-// FUNCTION: 0x00510AE0 HouseClass::AddRef
-// FUNCTION: 0x00510AF0 HouseClass::Release
+// FUNCTION: GAMEMD 0x00510A20
+// HouseClass::QueryInterface
+// FUNCTION: GAMEMD 0x00510A30
+// HouseClass::AddRef
+// FUNCTION: GAMEMD 0x00510A40
+// HouseClass::Release
+// FUNCTION: GAMEMD 0x00510A50
+// HouseClass::QueryInterface
+// FUNCTION: GAMEMD 0x00510A60
+// HouseClass::AddRef
+// FUNCTION: GAMEMD 0x00510A70
+// HouseClass::Release
+// FUNCTION: GAMEMD 0x00510A80
+// HouseClass::QueryInterface
+// FUNCTION: GAMEMD 0x00510A90
+// HouseClass::AddRef
+// FUNCTION: GAMEMD 0x00510AA0
+// HouseClass::Release
+// FUNCTION: GAMEMD 0x00510AB0
+// HouseClass::ID_Number
+// FUNCTION: GAMEMD 0x00510AC0
+// HouseClass::Name
+// FUNCTION: GAMEMD 0x00510AD0
+// HouseClass::QueryInterface
+// FUNCTION: GAMEMD 0x00510AE0
+// HouseClass::AddRef
+// FUNCTION: GAMEMD 0x00510AF0
+// HouseClass::Release
 
 extern double __cdecl FUN_004CAD50(double);
 extern double __cdecl FUN_004CADE0(double);
@@ -5161,35 +5309,46 @@ struct CenterTriple {
 	CenterTriple() { C = 0; A = 0x80; B = 0x80; }
 };
 
-// FUNCTION: 0x00510B70 $E211
+// SYNTHETIC: GAMEMD 0x00510B70 SYMBOL
+// _$E211
 double DAT_00A8F098 = DAT_007E1720 * DAT_007EAB10;
 
-// FUNCTION: 0x00510B90 $E214
+// SYNTHETIC: GAMEMD 0x00510B90 SYMBOL
+// _$E214
 double DAT_00A8F070 = DAT_007E1728 * DAT_007EAB10;
 
-// FUNCTION: 0x00510BB0 $E217
+// SYNTHETIC: GAMEMD 0x00510BB0 SYMBOL
+// _$E217
 double DAT_00A8F048 = DAT_007E1730 * DAT_007EAB10;
 
-// FUNCTION: 0x00510BD0 $E220
+// SYNTHETIC: GAMEMD 0x00510BD0 SYMBOL
+// _$E220
 int DAT_00A8F0C0 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00A8F048 - DAT_00A8F070) * DAT_00A8F068));
 
-// FUNCTION: 0x00510C10 $E223
+// SYNTHETIC: GAMEMD 0x00510C10 SYMBOL
+// _$E223
 double DAT_00A8F078 = FUN_004CADE0(DAT_00A8F0C0 * DAT_007E1740);
 
-// FUNCTION: 0x00510C40 $E226
+// SYNTHETIC: GAMEMD 0x00510C40 SYMBOL
+// _$E226
 double DAT_00A8F090 = FUN_004CADE0((DAT_00A8F0C0 * 2) / DAT_00A8F068);
 
-// FUNCTION: 0x00510C70 $E229
+// SYNTHETIC: GAMEMD 0x00510C70 SYMBOL
+// _$E229
 int DAT_00A8F0B4 = (int)(DAT_00A8F0C0 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x00510CA0 $E232
+// SYNTHETIC: GAMEMD 0x00510CA0 SYMBOL
+// _$E232
 ShortPair DAT_00A8F060;
 
-// FUNCTION: 0x00510CB0 $E235
+// SYNTHETIC: GAMEMD 0x00510CB0 SYMBOL
+// _$E235
 IntTriple DAT_00A8F080;
 
-// FUNCTION: 0x00510CD0 $E238
+// SYNTHETIC: GAMEMD 0x00510CD0 SYMBOL
+// _$E238
 CenterTriple DAT_00A8F0A8;
 
-// FUNCTION: 0x00510CF0 $E241
+// SYNTHETIC: GAMEMD 0x00510CF0 SYMBOL
+// _$E241
 IntQuad DAT_00A8F050;

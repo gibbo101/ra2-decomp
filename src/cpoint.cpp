@@ -37,40 +37,52 @@ struct IntTriple {
 	IntTriple() { A = 0; B = 0; C = 0; }
 };
 
-// FUNCTION: 0x0049FD50 $E4
+// SYNTHETIC: GAMEMD 0x0049FD50 SYMBOL
+// _$E4
 double DAT_0089F780 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2.0);
 
-// FUNCTION: 0x0049FD80 $E7
+// SYNTHETIC: GAMEMD 0x0049FD80 SYMBOL
+// _$E7
 double DAT_0089F7D0 = DAT_0089F780 / DAT_007E5C70;
 
-// FUNCTION: 0x0049FDA0 $E10
+// SYNTHETIC: GAMEMD 0x0049FDA0 SYMBOL
+// _$E10
 double DAT_0089F7B8 = DAT_007E1718 / DAT_0089F7D0;
 
-// FUNCTION: 0x0049FDC0 $E13
+// SYNTHETIC: GAMEMD 0x0049FDC0 SYMBOL
+// _$E13
 double DAT_0089F7B0 = DAT_007E1720 * DAT_007E5C78;
 
-// FUNCTION: 0x0049FDE0 $E16
+// SYNTHETIC: GAMEMD 0x0049FDE0 SYMBOL
+// _$E16
 double DAT_0089F788 = DAT_007E1728 * DAT_007E5C78;
 
-// FUNCTION: 0x0049FE00 $E19
+// SYNTHETIC: GAMEMD 0x0049FE00 SYMBOL
+// _$E19
 double DAT_0089F760 = DAT_007E1730 * DAT_007E5C78;
 
-// FUNCTION: 0x0049FE20 $E22
+// SYNTHETIC: GAMEMD 0x0049FE20 SYMBOL
+// _$E22
 int DAT_0089F7D8 = (int)(FUN_004CAD50(DAT_0089F760 - DAT_0089F788) * DAT_007E1738 * DAT_0089F780);
 
-// FUNCTION: 0x0049FE60 $E25
+// SYNTHETIC: GAMEMD 0x0049FE60 SYMBOL
+// _$E25
 double DAT_0089F790 = FUN_004CADE0(DAT_0089F7D8 * DAT_007E1740);
 
-// FUNCTION: 0x0049FE90 $E28
+// SYNTHETIC: GAMEMD 0x0049FE90 SYMBOL
+// _$E28
 double DAT_0089F7A8 = FUN_004CADE0((DAT_0089F7D8 * 2) / DAT_0089F780);
 
-// FUNCTION: 0x0049FEC0 $E31
+// SYNTHETIC: GAMEMD 0x0049FEC0 SYMBOL
+// _$E31
 int DAT_0089F7CC = (int)(DAT_0089F7D8 * 4 + DAT_007E1738);
 
-// FUNCTION: 0x0049FEF0 $E34
+// SYNTHETIC: GAMEMD 0x0049FEF0 SYMBOL
+// _$E34
 ShortPair DAT_0089F778;
 
-// FUNCTION: 0x0049FF00 $E37
+// SYNTHETIC: GAMEMD 0x0049FF00 SYMBOL
+// _$E37
 IntTriple DAT_0089F798;
 
 struct InitPair {
@@ -78,22 +90,23 @@ struct InitPair {
 	InitPair() { C = 0; A = 0x80; B = 0x80; }
 };
 
-// FUNCTION: 0x0049FF20 $E40
+// SYNTHETIC: GAMEMD 0x0049FF20 SYMBOL
+// _$E40
 InitPair DAT_0089F7C0;
 
-// FUNCTION: 0x0049FF40
+// FUNCTION: GAMEMD 0x0049FF40
 bool operator!=(CONNECTDATA const &left, CONNECTDATA const &right)
 {
 	return(left.dwCookie != right.dwCookie || left.pUnk != right.pUnk);
 }
 
-// FUNCTION: 0x0049FF60
+// FUNCTION: GAMEMD 0x0049FF60
 bool operator==(CONNECTDATA const &left, CONNECTDATA const &right)
 {
 	return(left.dwCookie == right.dwCookie && left.pUnk == right.pUnk);
 }
 
-// FUNCTION: 0x0049FF80
+// FUNCTION: GAMEMD 0x0049FF80
 HRESULT EnumConnectionsClass::QueryInterface(REFIID riid, LPVOID *ppv)
 {
 	if (ppv == NULL) {
@@ -117,14 +130,14 @@ HRESULT EnumConnectionsClass::QueryInterface(REFIID riid, LPVOID *ppv)
 	return(E_NOINTERFACE);
 }
 
-// FUNCTION: 0x0049FFF0
+// FUNCTION: GAMEMD 0x0049FFF0
 ULONG EnumConnectionsClass::AddRef(void)
 {
 	COMRefCount++;
 	return(InterlockedIncrement(&RefCount));
 }
 
-// FUNCTION: 0x004A0010
+// FUNCTION: GAMEMD 0x004A0010
 ULONG EnumConnectionsClass::Release(void)
 {
 	COMRefCount--;
@@ -137,7 +150,7 @@ ULONG EnumConnectionsClass::Release(void)
 	return(count);
 }
 
-// FUNCTION: 0x004A00B0
+// FUNCTION: GAMEMD 0x004A00B0
 HRESULT EnumConnectionsClass::Next(ULONG cConnections, CONNECTDATA * rgpcd, ULONG * pcFetched)
 {
 	if (rgpcd == NULL) {
@@ -170,21 +183,21 @@ HRESULT EnumConnectionsClass::Next(ULONG cConnections, CONNECTDATA * rgpcd, ULON
 	return(count ? S_OK : E_FAIL);
 }
 
-// FUNCTION: 0x004A0160
+// FUNCTION: GAMEMD 0x004A0160
 HRESULT EnumConnectionsClass::Skip(ULONG cConnections)
 {
 	ListPosition += cConnections;
 	return(S_OK);
 }
 
-// FUNCTION: 0x004A0180
+// FUNCTION: GAMEMD 0x004A0180
 HRESULT EnumConnectionsClass::Reset(void)
 {
 	ListPosition = 0;
 	return(S_OK);
 }
 
-// FUNCTION: 0x004A0190
+// FUNCTION: GAMEMD 0x004A0190
 HRESULT EnumConnectionsClass::Clone(IEnumConnections** ppEnum)
 {
 	if (ppEnum == NULL) {
@@ -205,7 +218,7 @@ HRESULT EnumConnectionsClass::Clone(IEnumConnections** ppEnum)
 	return(S_OK);
 }
 
-// FUNCTION: 0x004A02B0
+// FUNCTION: GAMEMD 0x004A02B0
 EnumConnectionsClass::EnumConnectionsClass(DynamicVectorClass<CONNECTDATA> &list) :
 	List(list),
 	ListPosition(0),
@@ -216,7 +229,7 @@ EnumConnectionsClass::EnumConnectionsClass(DynamicVectorClass<CONNECTDATA> &list
 	}
 }
 
-// FUNCTION: 0x004A0380
+// FUNCTION: GAMEMD 0x004A0380
 EnumConnectionsClass::EnumConnectionsClass(EnumConnectionsClass &that) :
 	List(that.List),
 	ListPosition(that.ListPosition),
@@ -227,7 +240,7 @@ EnumConnectionsClass::EnumConnectionsClass(EnumConnectionsClass &that) :
 	}
 }
 
-// FUNCTION: 0x004A0450
+// FUNCTION: GAMEMD 0x004A0450
 EnumConnectionsClass::~EnumConnectionsClass(void)
 {
 	for (int i = 0; i < List.Count(); i++) {
@@ -237,7 +250,7 @@ EnumConnectionsClass::~EnumConnectionsClass(void)
 	List.Clear();
 }
 
-// FUNCTION: 0x004A04B0
+// FUNCTION: GAMEMD 0x004A04B0
 HRESULT ConnectionPointClass::QueryInterface(REFIID riid, void** ppv)
 {
 	if (ppv == NULL) {
@@ -260,14 +273,14 @@ HRESULT ConnectionPointClass::QueryInterface(REFIID riid, void** ppv)
 	return(E_NOINTERFACE);
 }
 
-// FUNCTION: 0x004A0520
+// FUNCTION: GAMEMD 0x004A0520
 ULONG ConnectionPointClass::AddRef(void)
 {
 	COMRefCount++;
 	return(InterlockedIncrement(&RefCount));
 }
 
-// FUNCTION: 0x004A0540
+// FUNCTION: GAMEMD 0x004A0540
 ULONG ConnectionPointClass::Release(void)
 {
 	COMRefCount--;
@@ -280,7 +293,7 @@ ULONG ConnectionPointClass::Release(void)
 	return(count);
 }
 
-// FUNCTION: 0x004A05D0
+// FUNCTION: GAMEMD 0x004A05D0
 HRESULT ConnectionPointClass::GetConnectionInterface(IID *pIID)
 {
 	if (pIID == NULL) {
@@ -292,13 +305,13 @@ HRESULT ConnectionPointClass::GetConnectionInterface(IID *pIID)
 	return(S_OK);
 }
 
-// FUNCTION: 0x004A0610
+// FUNCTION: GAMEMD 0x004A0610
 HRESULT ConnectionPointClass::GetConnectionPointContainer(IConnectionPointContainer** ppCPC)
 {
 	return(Object->QueryInterface(IID_IConnectionPointContainer, (void**)ppCPC));
 }
 
-// FUNCTION: 0x004A0630
+// FUNCTION: GAMEMD 0x004A0630
 HRESULT ConnectionPointClass::Advise(IUnknown * pUnkSink, DWORD * pdwCookie)
 {
 	if (pUnkSink != NULL && pdwCookie != NULL) {
@@ -320,7 +333,7 @@ HRESULT ConnectionPointClass::Advise(IUnknown * pUnkSink, DWORD * pdwCookie)
 	return(E_POINTER);
 }
 
-// FUNCTION: 0x004A0700
+// FUNCTION: GAMEMD 0x004A0700
 HRESULT ConnectionPointClass::Unadvise(DWORD dwCookie)
 {
 	for (int i = 0; i < List.Count(); i++) {
@@ -333,7 +346,7 @@ HRESULT ConnectionPointClass::Unadvise(DWORD dwCookie)
 	return(CONNECT_E_NOCONNECTION);
 }
 
-// FUNCTION: 0x004A0760
+// FUNCTION: GAMEMD 0x004A0760
 HRESULT ConnectionPointClass::EnumConnections(IEnumConnections** ppEnum)
 {
 	if (ppEnum == NULL) {
@@ -349,7 +362,7 @@ HRESULT ConnectionPointClass::EnumConnections(IEnumConnections** ppEnum)
 	return(enumerator->QueryInterface(IID_IEnumConnections, (void**)ppEnum));
 }
 
-// FUNCTION: 0x004A0870
+// FUNCTION: GAMEMD 0x004A0870
 ConnectionPointClass::ConnectionPointClass(REFIID riid, IUnknown *obj) :
 	InterfaceID(riid),
 	Object(obj),
@@ -358,14 +371,14 @@ ConnectionPointClass::ConnectionPointClass(REFIID riid, IUnknown *obj) :
 	obj->AddRef();
 }
 
-// FUNCTION: 0x004A08D0
+// FUNCTION: GAMEMD 0x004A08D0
 ConnectionPointClass::~ConnectionPointClass(void)
 {
 	Object->Release();
 	List.Clear();
 }
 
-// FUNCTION: 0x004A0920
+// FUNCTION: GAMEMD 0x004A0920
 HRESULT EnumConnectionPointsClass::QueryInterface(REFIID riid, LPVOID *ppv)
 {
 	if (ppv == NULL) {
@@ -388,14 +401,14 @@ HRESULT EnumConnectionPointsClass::QueryInterface(REFIID riid, LPVOID *ppv)
 	return(E_NOINTERFACE);
 }
 
-// FUNCTION: 0x004A0990
+// FUNCTION: GAMEMD 0x004A0990
 ULONG EnumConnectionPointsClass::AddRef(void)
 {
 	COMRefCount++;
 	return(InterlockedIncrement(&RefCount));
 }
 
-// FUNCTION: 0x004A09B0
+// FUNCTION: GAMEMD 0x004A09B0
 ULONG EnumConnectionPointsClass::Release(void)
 {
 	COMRefCount--;
@@ -408,7 +421,7 @@ ULONG EnumConnectionPointsClass::Release(void)
 	return(count);
 }
 
-// FUNCTION: 0x004A0A50
+// FUNCTION: GAMEMD 0x004A0A50
 HRESULT EnumConnectionPointsClass::Next(ULONG cConnections, IConnectionPoint ** rgpcn, ULONG * pcFetched)
 {
 	if (rgpcn == NULL) {
@@ -441,21 +454,21 @@ HRESULT EnumConnectionPointsClass::Next(ULONG cConnections, IConnectionPoint ** 
 	return(count ? S_OK : E_FAIL);
 }
 
-// FUNCTION: 0x004A0AF0
+// FUNCTION: GAMEMD 0x004A0AF0
 HRESULT EnumConnectionPointsClass::Skip(ULONG cConnections)
 {
 	ListPosition += cConnections;
 	return(S_OK);
 }
 
-// FUNCTION: 0x004A0B10
+// FUNCTION: GAMEMD 0x004A0B10
 HRESULT EnumConnectionPointsClass::Reset(void)
 {
 	ListPosition = 0;
 	return(S_OK);
 }
 
-// FUNCTION: 0x004A0B20
+// FUNCTION: GAMEMD 0x004A0B20
 HRESULT EnumConnectionPointsClass::Clone(IEnumConnectionPoints** ppEnum)
 {
 	if (ppEnum == NULL) {
@@ -475,7 +488,7 @@ HRESULT EnumConnectionPointsClass::Clone(IEnumConnectionPoints** ppEnum)
 	return(S_OK);
 }
 
-// FUNCTION: 0x004A0C20
+// FUNCTION: GAMEMD 0x004A0C20
 EnumConnectionPointsClass::EnumConnectionPointsClass(DynamicVectorClass<IConnectionPoint *> &list) :
 	ListPosition(0),
 	RefCount(0),
@@ -486,7 +499,7 @@ EnumConnectionPointsClass::EnumConnectionPointsClass(DynamicVectorClass<IConnect
 	}
 }
 
-// FUNCTION: 0x004A0CE0
+// FUNCTION: GAMEMD 0x004A0CE0
 EnumConnectionPointsClass::EnumConnectionPointsClass(EnumConnectionPointsClass &that) :
 	ListPosition(that.ListPosition),
 	RefCount(0),
@@ -497,7 +510,7 @@ EnumConnectionPointsClass::EnumConnectionPointsClass(EnumConnectionPointsClass &
 	}
 }
 
-// FUNCTION: 0x004A0DB0
+// FUNCTION: GAMEMD 0x004A0DB0
 EnumConnectionPointsClass::~EnumConnectionPointsClass(void)
 {
 	for (int i = 0; i < List.Count(); i++) {
@@ -507,30 +520,54 @@ EnumConnectionPointsClass::~EnumConnectionPointsClass(void)
 	List.Clear();
 }
 
-// FUNCTION: 0x004A0E10 ?$VectorClass@UtagCONNECTDATA@@::~?$VectorClass@UtagCONNECTDATA@@
-// FUNCTION: 0x004A0E60 ?$VectorClass@PAUIConnectionPoint@@::~?$VectorClass@PAUIConnectionPoint@@
-// FUNCTION: 0x004A0EB0 ?$DynamicVectorClass@UtagCONNECTDATA@@::Clear
-// FUNCTION: 0x004A0EE0 ?$DynamicVectorClass@UtagCONNECTDATA@@::ID
-// FUNCTION: 0x004A0F00 ?$VectorClass@UtagCONNECTDATA@@::GetItem
-// FUNCTION: 0x004A0F20 ?$DynamicVectorClass@PAUIConnectionPoint@@::Clear
-// FUNCTION: 0x004A0F50 ?$DynamicVectorClass@PAUIConnectionPoint@@::ID
-// FUNCTION: 0x004A0F70 ?$VectorClass@PAUIConnectionPoint@@::GetItem
-// FUNCTION: 0x004A0F80 ?$VectorClass@UtagCONNECTDATA@@::operator==
-// FUNCTION: 0x004A0FE0 ?$VectorClass@UtagCONNECTDATA@@::Resize
-// FUNCTION: 0x004A10A0 ?$VectorClass@UtagCONNECTDATA@@::Clear
-// FUNCTION: 0x004A10D0 ?$VectorClass@UtagCONNECTDATA@@::ID
-// FUNCTION: 0x004A1120 ?$VectorClass@UtagCONNECTDATA@@::ID
-// FUNCTION: 0x004A1140 ?$DynamicVectorClass@UtagCONNECTDATA@@::Resize
-// FUNCTION: 0x004A1200 ?$DynamicVectorClass@UtagCONNECTDATA@@::ID
-// FUNCTION: 0x004A1240 ?$VectorClass@PAUIConnectionPoint@@::operator==
-// FUNCTION: 0x004A1280 ?$VectorClass@PAUIConnectionPoint@@::Resize
-// FUNCTION: 0x004A1330 ?$VectorClass@PAUIConnectionPoint@@::Clear
-// FUNCTION: 0x004A1360 ?$VectorClass@PAUIConnectionPoint@@::ID
-// FUNCTION: 0x004A13A0 ?$VectorClass@PAUIConnectionPoint@@::ID
-// FUNCTION: 0x004A13C0 ?$DynamicVectorClass@PAUIConnectionPoint@@::Resize
-// FUNCTION: 0x004A1470 ?$DynamicVectorClass@PAUIConnectionPoint@@::ID
-// FUNCTION: 0x004A14A0 ?$DynamicVectorClass@UtagCONNECTDATA@@::~?$DynamicVectorClass@UtagCONNECTDATA@@
-// FUNCTION: 0x004A14F0 ?$DynamicVectorClass@PAUIConnectionPoint@@::~?$DynamicVectorClass@PAUIConnectionPoint@@
+// SYNTHETIC: GAMEMD 0x004A0E10
+// ??_G?$VectorClass@UtagCONNECTDATA@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004A0E60
+// ??_G?$VectorClass@PAUIConnectionPoint@@@@UAEPAXI@Z
+// TEMPLATE: GAMEMD 0x004A0EB0
+// ?Clear@?$DynamicVectorClass@UtagCONNECTDATA@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004A0EE0
+// ?ID@?$DynamicVectorClass@UtagCONNECTDATA@@@@UAEHPBUtagCONNECTDATA@@@Z
+// TEMPLATE: GAMEMD 0x004A0F00
+// ?GetItem@?$VectorClass@UtagCONNECTDATA@@@@UBE?AUtagCONNECTDATA@@H@Z
+// TEMPLATE: GAMEMD 0x004A0F20
+// ?Clear@?$DynamicVectorClass@PAUIConnectionPoint@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004A0F50
+// ?ID@?$DynamicVectorClass@PAUIConnectionPoint@@@@UAEHPBQAUIConnectionPoint@@@Z
+// TEMPLATE: GAMEMD 0x004A0F70
+// ?GetItem@?$VectorClass@PAUIConnectionPoint@@@@UBEPAUIConnectionPoint@@H@Z
+// TEMPLATE: GAMEMD 0x004A0F80
+// ??8?$VectorClass@UtagCONNECTDATA@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x004A0FE0
+// ?Resize@?$VectorClass@UtagCONNECTDATA@@@@UAE_NHPBUtagCONNECTDATA@@@Z
+// TEMPLATE: GAMEMD 0x004A10A0
+// ?Clear@?$VectorClass@UtagCONNECTDATA@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004A10D0
+// ?ID@?$VectorClass@UtagCONNECTDATA@@@@UAEHABUtagCONNECTDATA@@@Z
+// TEMPLATE: GAMEMD 0x004A1120
+// ?ID@?$VectorClass@UtagCONNECTDATA@@@@UAEHPBUtagCONNECTDATA@@@Z
+// TEMPLATE: GAMEMD 0x004A1140
+// ?Resize@?$DynamicVectorClass@UtagCONNECTDATA@@@@UAE_NHPBUtagCONNECTDATA@@@Z
+// TEMPLATE: GAMEMD 0x004A1200
+// ?ID@?$DynamicVectorClass@UtagCONNECTDATA@@@@UAEHABUtagCONNECTDATA@@@Z
+// TEMPLATE: GAMEMD 0x004A1240
+// ??8?$VectorClass@PAUIConnectionPoint@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x004A1280
+// ?Resize@?$VectorClass@PAUIConnectionPoint@@@@UAE_NHPBQAUIConnectionPoint@@@Z
+// TEMPLATE: GAMEMD 0x004A1330
+// ?Clear@?$VectorClass@PAUIConnectionPoint@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004A1360
+// ?ID@?$VectorClass@PAUIConnectionPoint@@@@UAEHABQAUIConnectionPoint@@@Z
+// TEMPLATE: GAMEMD 0x004A13A0
+// ?ID@?$VectorClass@PAUIConnectionPoint@@@@UAEHPBQAUIConnectionPoint@@@Z
+// TEMPLATE: GAMEMD 0x004A13C0
+// ?Resize@?$DynamicVectorClass@PAUIConnectionPoint@@@@UAE_NHPBQAUIConnectionPoint@@@Z
+// TEMPLATE: GAMEMD 0x004A1470
+// ?ID@?$DynamicVectorClass@PAUIConnectionPoint@@@@UAEHABQAUIConnectionPoint@@@Z
+// SYNTHETIC: GAMEMD 0x004A14A0
+// ??_G?$DynamicVectorClass@UtagCONNECTDATA@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004A14F0
+// ??_G?$DynamicVectorClass@PAUIConnectionPoint@@@@UAEPAXI@Z
 template class VectorClass<CONNECTDATA>;
 template class DynamicVectorClass<CONNECTDATA>;
 template class VectorClass<IConnectionPoint *>;
@@ -541,5 +578,6 @@ struct IntQuad {
 	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
 };
 
-// FUNCTION: 0x004A1540 $E43
+// SYNTHETIC: GAMEMD 0x004A1540 SYMBOL
+// _$E43
 IntQuad DAT_0089F7E8;

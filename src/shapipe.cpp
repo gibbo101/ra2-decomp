@@ -17,7 +17,7 @@ int SHPCacheSize;
 int SHPCacheIndex;
 int SHPReferenceCount = 1;
 
-// FUNCTION: 0x0069E090
+// FUNCTION: GAMEMD 0x0069E090
 void SHPStruct::Load(void)
 {
 	if (Flags == -1) {
@@ -33,7 +33,7 @@ void SHPStruct::Load(void)
 	}
 }
 
-// FUNCTION: 0x0069E100
+// FUNCTION: GAMEMD 0x0069E100
 void SHPStruct::Unload(void)
 {
 	if (Flags == -1) {
@@ -46,7 +46,7 @@ void SHPStruct::Unload(void)
 	}
 }
 
-// FUNCTION: 0x0069E180
+// FUNCTION: GAMEMD 0x0069E180
 void __fastcall SHPFreeAll(void)
 {
 	SHPReference * cur = SHPHead;
@@ -58,7 +58,7 @@ void __fastcall SHPFreeAll(void)
 	SHPHead = NULL;
 }
 
-// FUNCTION: 0x0069E430
+// FUNCTION: GAMEMD 0x0069E430
 SHPReference::SHPReference(char const * filename)
 {
 	Index = SHPReferenceCount;
@@ -80,7 +80,7 @@ SHPReference::SHPReference(char const * filename)
 	Reserved = 0;
 }
 
-// FUNCTION: 0x0069E500
+// FUNCTION: GAMEMD 0x0069E500
 SHPStruct::~SHPStruct(void)
 {
 	if (Flags == -1) {
@@ -96,7 +96,7 @@ SHPStruct::~SHPStruct(void)
 	}
 }
 
-// FUNCTION: 0x0069E740
+// FUNCTION: GAMEMD 0x0069E740
 void * SHPStruct::GetPixels(int frame) const
 {
 	((SHPStruct *)this)->Load();
@@ -108,7 +108,7 @@ void * SHPStruct::GetPixels(int frame) const
 	return(NULL);
 }
 
-// FUNCTION: 0x0069E7E0
+// FUNCTION: GAMEMD 0x0069E7E0
 Rect SHPStruct::GetFrameBounds(int frame) const
 {
 	SHPFile * file = (SHPFile *)((SHPStruct *)this)->GetData();
@@ -119,7 +119,7 @@ Rect SHPStruct::GetFrameBounds(int frame) const
 	return(RECT_NONE);
 }
 
-// FUNCTION: 0x0069E860
+// FUNCTION: GAMEMD 0x0069E860
 RGBClass SHPStruct::GetColor(int frame) const
 {
 	SHPFile * file = (SHPFile *)((SHPStruct *)this)->GetData();
@@ -130,7 +130,7 @@ RGBClass SHPStruct::GetColor(int frame) const
 	return(RGBClass(0, 0, 0));
 }
 
-// FUNCTION: 0x0069E8D0
+// FUNCTION: GAMEMD 0x0069E8D0
 bool SHPStruct::HasTransparency(int frame) const
 {
 	SHPFile * file = (SHPFile *)((SHPStruct *)this)->GetData();
@@ -141,9 +141,10 @@ bool SHPStruct::HasTransparency(int frame) const
 	return(false);
 }
 
-// FUNCTION: 0x0069E930 SHPStruct::~SHPStruct
+// SYNTHETIC: GAMEMD 0x0069E930
+// ??_GSHPStruct@@QAEPAXI@Z
 
-// FUNCTION: 0x0069E9B0
+// FUNCTION: GAMEMD 0x0069E9B0
 int SHAPipe::Put(void const * source, int slen)
 {
 	SHA.Hash(source, slen);
