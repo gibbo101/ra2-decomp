@@ -39,9 +39,10 @@ class IPXManagerClass : public ConnManClass
 		int Create_Connection(int id, wchar_t *name, IPXAddressClass *address);
 		int Delete_Connection(int id);
 		int Create_Multicast_Connection(void);
-		void Save_Timing(void);
-		void Restore_Timing(void);
-		void Set_Lobby_Timing(unsigned int retrydelta, unsigned int maxretries, unsigned int timeout);
+		virtual void Save_Timing(void);
+		virtual void Restore_Timing(void);
+		virtual void Set_Lobby_Timing(unsigned int retrydelta, unsigned int maxretries, unsigned int timeout);
+		virtual int FUN_00541070(IPXConnClass * connection);
 		virtual int Num_Connections(void) override;
 		virtual int Connection_ID(int index) override;
 		wchar_t *Connection_Name(int id);
@@ -60,8 +61,8 @@ class IPXManagerClass : public ConnManClass
 		int Send_Lobby_Message (void *buf, int buflen, bool ack_req);
 		int Get_Lobby_Message (void *buf, int *buflen, IPXAddressClass *address,
 			unsigned short *product_id);
-		int Lobby_Num_Send(void);
-		int Lobby_Num_Receive(void);
+		virtual int Lobby_Num_Send(void);
+		virtual int Lobby_Num_Receive(void);
 		void Set_Connection_Address(int id, IPXAddressClass *address);
 		void FUN_00543050(IPXAddressClass *address);
 		void Global_Channel_Clear_FieldC8(void);

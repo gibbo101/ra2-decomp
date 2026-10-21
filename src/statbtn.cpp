@@ -20,6 +20,11 @@
 
 static inline Point2D * Scratch(Point2D const & p) { return (Point2D *)&p; }
 extern double __cdecl FUN_004CAC40(double);
+extern double __cdecl FUN_004CAD50(double);
+extern double __cdecl FUN_004CADE0(double);
+extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
 extern const double DAT_007E1708;
 extern const double DAT_007E1710;
 extern const double DAT_007E1718;
@@ -148,3 +153,50 @@ double DAT_00B0BD80 = DAT_007E1720 * DAT_007F3F38;
 
 // FUNCTION: 0x006C6950 $E43
 double DAT_00B0BD38 = DAT_007E1728 * DAT_007F3F38;
+
+// FUNCTION: 0x006C6970 $E46
+double DAT_00B0BD08 = DAT_007E1730 * DAT_007F3F38;
+
+// FUNCTION: 0x006C6990 $E49
+int DAT_00B0BDB0 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B0BD08 - DAT_00B0BD38) * DAT_00B0BD30));
+
+// FUNCTION: 0x006C69D0 $E52
+double DAT_00B0BD40 = FUN_004CADE0(DAT_00B0BDB0 * DAT_007E1740);
+
+// FUNCTION: 0x006C6A00 $E55
+double DAT_00B0BD70 = FUN_004CADE0((DAT_00B0BDB0 * 2) / DAT_00B0BD30);
+
+// FUNCTION: 0x006C6A30 $E58
+int DAT_00B0BDA4 = (int)(DAT_00B0BDB0 * 4 + DAT_007E1738);
+
+struct ShortPair {
+	unsigned short A, B;
+	ShortPair() { A = 0; B = 0; }
+};
+
+struct IntTriple {
+	int A, B, C;
+	IntTriple() { A = 0; B = 0; C = 0; }
+};
+
+struct IntQuad {
+	int A, B, C, D;
+	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
+};
+
+struct Centre {
+	int A, B, C;
+	Centre() { C = 0; A = 128; B = 128; }
+};
+
+// FUNCTION: 0x006C6A60 $E61
+ShortPair DAT_00B0BD20;
+
+// FUNCTION: 0x006C6A70 $E64
+IntTriple DAT_00B0BD60;
+
+// FUNCTION: 0x006C6A90 $E67
+Centre DAT_00B0BD98;
+
+// FUNCTION: 0x006C6AB0 $E70
+IntQuad DAT_00B0BD10;

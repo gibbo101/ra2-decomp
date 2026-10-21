@@ -372,6 +372,27 @@ char const * MissionControlClass::Name(void) const
 	return(Missions[Mission]);
 }
 
+// FUNCTION: 0x005B3760
+bool MissionControlClass::Read_INI(CCINIClass & ini)
+{
+	ini.Reset();
+	if (ini.Is_Present(Name())) {
+		IsNoThreat = ini.Get_Bool(Name(), "NoThreat", IsNoThreat);
+		IsZombie = ini.Get_Bool(Name(), "Zombie", IsZombie);
+		IsRecruitable = ini.Get_Bool(Name(), "Recruitable", IsRecruitable);
+		IsParalyzed = ini.Get_Bool(Name(), "Paralyzed", IsParalyzed);
+		IsRetaliate = ini.Get_Bool(Name(), "Retaliate", IsRetaliate);
+		IsScatter = ini.Get_Bool(Name(), "Scatter", IsScatter);
+		Rate = ini.Get_Float(Name(), "Rate", Rate);
+		AARate = ini.Get_Float(Name(), "AARate", 0);
+		if (AARate == 0) {
+			AARate = Rate;
+		}
+		return(true);
+	}
+	return(false);
+}
+
 // FUNCTION: 0x005B3910
 MissionType MissionClass::Mission_From_Name(char const * name)
 {
@@ -392,3 +413,39 @@ char const * MissionClass::Mission_Name(MissionType mission)
 {
 	return(mission != MISSION_NONE ? Missions[mission] : "<none>");
 }
+
+// FUNCTION: 0x005B3970
+void MissionClass::Compute_CRC(CRCEngine & crc) const
+{
+	BASECLASS::Compute_CRC(crc);
+	crc(CurrentMission);
+	crc(SuspendedMission);
+	crc(MissionQueue);
+	crc(Status);
+	crc((int)Timer);
+	crc(CurrentMissionStartTime);
+}
+
+// FUNCTION: 0x005B3A00
+MissionControlClass const & MissionClass::Current_Mission_Control(void) const
+{
+	return(MissionControl[CurrentMission]);
+}
+
+// FUNCTION: 0x005B3A10
+bool MissionClass::Has_Suspended_Mission(void) const
+{
+	return(SuspendedMission != MISSION_NONE);
+}
+
+// FUNCTION: 0x005B3A20
+int MissionClass::Mission_Timer_Value(void) const
+{
+	return(Timer);
+}
+
+// FUNCTION: 0x005B3A50 ObjectClass::Draw_It
+
+// FUNCTION: 0x005B3A60 MissionClass::~MissionClass
+
+// FUNCTION: 0x005B3AA0 $E1

@@ -319,6 +319,12 @@ TiberiumType Which_Tiberium_Type(OverlayType overlay)
 	return(TIBERIUM_NONE);
 }
 
+// FUNCTION: 0x005FDDE0
+ObjectTypeClass const * OverlayClass::Class_Of(void) const
+{
+	return(Class);
+}
+
 // FUNCTION: 0x005FDDF0
 void OverlayClass::Post_Read_Vein_Fixups(void)
 {
@@ -348,6 +354,7 @@ void OverlayClass::Post_Read_Vein_Fixups(void)
 	}
 }
 
+// FUNCTION: 0x005FDF00 OverlayClass::Fetch_Object_Size
 // FUNCTION: 0x005FDF10
 HRESULT STDMETHODCALLTYPE OverlayClass::GetClassID(CLSID * retval)
 {
@@ -355,6 +362,9 @@ HRESULT STDMETHODCALLTYPE OverlayClass::GetClassID(CLSID * retval)
 	*retval = CLSID_OverlayClass;
 	return(S_OK);
 }
+
+// FUNCTION: 0x005FDF50 OverlayClass::Fetch_RTTI
+// FUNCTION: 0x005FDF60 OverlayClass::Draw_It
 
 // FUNCTION: 0x005FE020 XSurface::XSurface
 

@@ -9,6 +9,9 @@
 #include "wwfile.h"
 #include <climits>
 
+extern const Vector3 * VoxelNormalTables[];
+extern int VoxelNormalTableEntryCount[];
+
 typedef void (__cdecl *VoxelFuncPtr)(VoxelFuncArgumentStruct *);
 
 void __cdecl Draw_Voxel_Regular_Normals(VoxelFuncArgumentStruct * state);
@@ -152,6 +155,31 @@ VoxelLibrary::VoxelLibrary(FileClass & file, int load_file_palette) :
 	if (!Read_File(file, load_file_palette)) {
 		LoadFailed = true;
 	}
+}
+
+// FUNCTION: 0x00755D10
+VoxelLibrary::~VoxelLibrary(void)
+{
+	Clear();
+}
+
+// FUNCTION: 0x00755D60
+void VoxelLibrary::Clear(void)
+{
+	if (LayerHeaders != NULL) {
+		delete [] LayerHeaders;
+	}
+	LayerHeaders = NULL;
+
+	if (LayerInfos != NULL) {
+		delete [] LayerInfos;
+	}
+	LayerInfos = NULL;
+
+	if (Data != NULL) {
+		delete [] Data;
+	}
+	Data = NULL;
 }
 
 // FUNCTION: 0x007564A0
@@ -833,6 +861,98 @@ void __cdecl Draw_Voxel_Reverse_ZBuffer(VoxelFuncArgumentStruct * state)
 		pixel_z = row_start_z + state->TransformMatrix[2].K;
 		state->StartIndex = state->StrideY + base_index;
 	}
+}
+
+// FUNCTION: 0x00758670
+void Precalculate_Normal_Lookup(Vector3 const & light, int normal_type)
+{
+	Vector3 const * normal_table = VoxelNormalTables[normal_type];
+	int count = VoxelNormalTableEntryCount[normal_type];
+
+	for (int i = 0; i < count; i++) {
+		Vector3 const & normal = normal_table[i];
+		float diffuse = normal * light;
+
+		if (diffuse < 0.0) {
+			VoxelNormalTranslateTable[i] = 0;
+		} else {
+			VoxelNormalTranslateTable[i] = (unsigned char)(diffuse * VOXEL_PALETTE_LOOKUP_NEUTRAL);
+		}
+	}
+
+	VoxelNormalTranslateTable[VOXEL_PALETTE_SIZE - 1] = VOXEL_PALETTE_LOOKUP_NEUTRAL;
+	VoxelNormalTranslateTable[VOXEL_PALETTE_SIZE - 2] = VOXEL_PALETTE_LOOKUP_NEUTRAL;
+	VoxelNormalTranslateTable[VOXEL_PALETTE_SIZE - 3] = VOXEL_PALETTE_LOOKUP_NEUTRAL;
+}
+
+inline float Specular_Term(Vector3 const & normal, Vector3 const & halfway, float specular_strength)
+{
+	float halfway_dot = normal * halfway;
+	return(halfway_dot / (specular_strength - halfway_dot * specular_strength + halfway_dot));
+}
+
+inline Vector3 Halfway_Vector(Vector3 const & light, Vector3 const & viewer)
+{
+	Vector3 sum = viewer + light;
+	float len = (float)fastmath::sqrt(sum.X*sum.X + sum.Y*sum.Y + sum.Z*sum.Z);
+	if (len != 0.0) {
+		return(sum / len);
+	}
+	return(sum);
+}
+
+// FUNCTION: 0x007586F0
+void Precalculate_Normal_Lookup(Vector3 const & light, Vector3 const & viewer, float specular_strength, int normal_type)
+{
+	Vector3 const * normal_table = VoxelNormalTables[normal_type];
+
+	Vector3 halfway = Halfway_Vector(light, viewer);
+
+	for (int i = 0; i < VoxelNormalTableEntryCount[normal_type]; i++) {
+		Vector3 const & normal = normal_table[i];
+		float diffuse = normal * light;
+		float specular = Specular_Term(normal, halfway, specular_strength);
+
+		specular = specular >= 0.0f ? specular : 0.0f;
+		diffuse = diffuse >= 0.0f ? diffuse : 0.0f;
+
+		float brightness = diffuse + specular;
+
+		if (brightness < 0.0) {
+			VoxelNormalTranslateTable[i] = 0;
+		} else {
+			VoxelNormalTranslateTable[i] = (unsigned char)(brightness * VOXEL_PALETTE_LOOKUP_NEUTRAL);
+		}
+	}
+
+	VoxelNormalTranslateTable[VOXEL_PALETTE_SIZE - 1] = VOXEL_PALETTE_LOOKUP_NEUTRAL;
+	VoxelNormalTranslateTable[VOXEL_PALETTE_SIZE - 2] = VOXEL_PALETTE_LOOKUP_NEUTRAL;
+	VoxelNormalTranslateTable[253] = VOXEL_PALETTE_LOOKUP_NEUTRAL;
+}
+
+// FUNCTION: 0x00758880
+int Find_Closest_Normal(Vector3 const & surface_normal, int normal_type)
+{
+	float best_dot = 0.0f;
+	int best_index = 0;
+
+	Vector3 const * normal_table = VoxelNormalTables[normal_type];
+
+	if (surface_normal.Length() < 0.2f) {
+		return(VOXEL_PALETTE_SIZE - 1);
+	}
+
+	for (int i = 0; i < VoxelNormalTableEntryCount[normal_type]; i++) {
+		Vector3 const & normal = normal_table[i];
+		float dot = normal * surface_normal;
+
+		if (dot > best_dot) {
+			best_dot = dot;
+			best_index = i;
+		}
+	}
+
+	return(best_index);
 }
 
 // FUNCTION: 0x00758930

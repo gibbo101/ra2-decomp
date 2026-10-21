@@ -22,7 +22,19 @@ extern const double DAT_007E1728;
 extern const double DAT_007E1730;
 extern const double DAT_007E1738;
 extern const double DAT_007E1740;
+extern int DAT_00AA0590, DAT_00AA0588, DAT_00AA058C;
+extern int DAT_00AA05B8, DAT_00AA05BC, DAT_00AA05C0, DAT_00AA05C4;
 extern const double DAT_007EC0B8;
+extern int DAT_00AA0590, DAT_00AA0588, DAT_00AA058C;
+extern int DAT_00AA05B8, DAT_00AA05BC, DAT_00AA05C0, DAT_00AA05C4;
+extern const double DAT_007EC0B8;
+extern int DAT_00841F3C;
+extern WinsockInterfaceClass * DAT_00887628;
+struct Unknown_00B052D0 {
+	unsigned char FUN_00663D60(int);
+};
+extern Unknown_00B052D0 DAT_00B052D0;
+
 extern const double DAT_007EC0C0;
 
 struct ShortPair {
@@ -71,6 +83,39 @@ ShortPair DAT_00AA0520;
 // FUNCTION: 0x0053F3F0 $E54
 IntTriple DAT_00AA0550;
 
+// FUNCTION: 0x0053F410
+void FUN_0053F410(void)
+{
+	DAT_00AA0590 = 0;
+	DAT_00AA0588 = 128;
+	DAT_00AA058C = 128;
+}
+
+// FUNCTION: 0x0053F430
+IPXConnClass::IPXConnClass (int numsend, int numreceive, int maxlen,
+	unsigned short magicnum, IPXAddressClass *address, int id, wchar_t const *name,
+	int extralen) :
+	BASECLASS (numsend, numreceive, maxlen, magicnum, 2, -1, 60, extralen)
+{
+	NetNumType net;
+	NetNodeType node;
+
+	if (address)
+		Address = (*address);
+	ID = id;
+	wcscpy (Name, name);
+
+	Address.Get_Address(net,node);
+	memcpy(ImmediateAddress,node,6);
+	Immed_Set = 0;
+}
+
+// FUNCTION: 0x0053F4E0
+void IPXConnClass::Init (void)
+{
+	BASECLASS::Init();
+}
+
 // FUNCTION: 0x0053F4F0
 void IPXConnClass::Configure (unsigned short socket, int conn_num,
 	                                            IPXHeaderType *listen_header,
@@ -97,6 +142,12 @@ int IPXConnClass::Stop_Listening(void)
 	return(1);
 }
 
+// FUNCTION: 0x0053F5D0
+int IPXConnClass::Send(char *buf, int buflen, void *, int, bool flag, unsigned short)
+{
+	return(Send_To (buf, buflen, &Address, NULL, flag, 0));
+}
+
 // FUNCTION: 0x0053F5F0
 int IPXConnClass::Open_Socket(unsigned short socket)
 {
@@ -115,4 +166,102 @@ void IPXConnClass::Close_Socket(unsigned short socket)
 	socket = socket;
 	PacketTransport->Close_Socket();
 	SocketOpen = 0;
+}
+
+#include "session.h"
+#include "ipxgconn.h"
+#include "ipxmgr.h"
+
+// FUNCTION: 0x0053F650
+int IPXConnClass::Send_To(char *buf, int buflen, IPXAddressClass *address,
+	NetNodeType immed, bool flag, unsigned short port)
+{
+	IPXAddressClass dest;
+	unsigned short dest_port;
+
+	dest = *address;
+	if (immed) {
+		NetNodeType node;
+		NetNumType net;
+		address->Get_Address(net, node);
+		memcpy(net, immed, 4);
+		dest.Set_Address(net, node, 0);
+	}
+
+	dest_port = 0;
+	if (!flag && Session.ViaPacketRouter) {
+		if (!((GlobalHeaderType *)buf)->Field3) {
+			unsigned char result = DAT_00B052D0.FUN_00663D60(ID);
+			if (!result) {
+				return 0;
+			}
+			((GlobalHeaderType *)buf)->Field3 = result;
+		}
+
+		dest = Session.unknown_296C;
+		dest_port = DAT_00841F3C;
+		if (Session.unknown_2978 == Session.Players[0]->Address && dest.FUN_0053EF30(Session.Players[0]->Address)) {
+			((GlobalHeaderType *)buf)->FieldC = 0;
+			memset(&((GlobalHeaderType *)buf)->Field8, 0, 4);
+		}
+		else {
+			dest_port = *(unsigned short *)Session.unknown_2984;
+			((GlobalHeaderType *)buf)->FieldC = DAT_00841F3C;
+			memset(&((GlobalHeaderType *)buf)->Field8, 0, 4);
+		}
+	}
+	else {
+		((GlobalHeaderType *)buf)->FieldC = 0;
+		memset(&((GlobalHeaderType *)buf)->Field8, 0, 4);
+	}
+
+	if (Session.Type == GAME_INTERNET && !Session.ViaPacketRouter) {
+		int index = Ipx.FUN_00541070(this);
+		switch (index) {
+		case -3:
+		case -2:
+		case -1:
+			goto none;
+		default:
+			if (index == 0 && Session.ViaPacketRouter) {
+				if (*(unsigned short *)Session.unknown_2984) {
+					dest_port = *(unsigned short *)Session.unknown_2984;
+				}
+			}
+			else if (index >= 0 && index < Ipx.Num_Connections()) {
+				dest_port = Session.FUN_0069BC20(Ipx.Connection_ID(index));
+			}
+			break;
+		case -4:
+			if (*(unsigned short *)Session.unknown_2984) {
+				dest_port = *(unsigned short *)Session.unknown_2984;
+			}
+			break;
+		}
+		none:;
+	}
+
+	if (DAT_00887628) {
+		DAT_00887628->WriteTo(buf, buflen, &dest, sizeof(dest), flag, false, dest_port);
+	}
+	return(1);
+}
+
+
+// FUNCTION: 0x0053F830
+int IPXConnClass::Broadcast(char *buf, int buflen)
+{
+	PacketTransport->Broadcast (buf, buflen, false);
+	return(true);
+}
+
+// FUNCTION: 0x0053F850 IPXConnClass::~IPXConnClass
+
+// FUNCTION: 0x0053F880
+void FUN_0053F880(void)
+{
+	DAT_00AA05B8 = 0;
+	DAT_00AA05BC = 0;
+	DAT_00AA05C0 = 0;
+	DAT_00AA05C4 = 0;
 }

@@ -6,6 +6,7 @@
 #include "always.h"
 #include "ipxgconn.h"
 #include "coord.h"
+#include "rect.h"
 #include "dbgprint.h"
 #include <cstdio>
 #include <cstring>
@@ -432,3 +433,27 @@ double DAT_00AA0658 = DAT_007E1728 * DAT_007EC160;
 
 // FUNCTION: 0x00540790 $E95
 double DAT_00AA0630 = DAT_007E1730 * DAT_007EC160;
+
+// FUNCTION: 0x005407B0 $E98
+int DAT_00AA06A8 = (int)(DAT_007E1738 * (fastmath::tan(DAT_00AA0630 - DAT_00AA0658) * DAT_00AA0650));
+
+// FUNCTION: 0x005407F0 $E101
+double DAT_00AA0660 = fastmath::atan(DAT_00AA06A8 * DAT_007E1740);
+
+// FUNCTION: 0x00540820 $E104
+double DAT_00AA0678 = fastmath::atan((DAT_00AA06A8 * 2) / DAT_00AA0650);
+
+// FUNCTION: 0x00540850 $E107
+int DAT_00AA069C = (int)((DAT_00AA06A8 * 4) + DAT_007E1738);
+
+// FUNCTION: 0x00540880 $E110
+Cell DAT_00AA0648(0, 0);
+
+// FUNCTION: 0x00540890 $E113
+Coord DAT_00AA0668(0, 0, 0);
+
+// FUNCTION: 0x005408B0 $E116
+Coord DAT_00AA0690(128, 128, 0);
+
+// FUNCTION: 0x005408D0 $E119
+TRect<int> DAT_00AA0638(0, 0, 0, 0);

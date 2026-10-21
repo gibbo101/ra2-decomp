@@ -19,8 +19,7 @@ class MouseClass: public ScrollClass
 
 	public:
 		MouseClass(void);
-		MouseClass(NoInitClass const & x) : BASECLASS(x) {};
-		virtual ~MouseClass(void) override {}
+		MouseClass(NoInitClass const & x);
 
 		virtual void One_Time(void) override;
 		virtual void Init_Clear(void) override;
@@ -36,6 +35,8 @@ class MouseClass: public ScrollClass
 		int Get_Mouse_Current_Frame(MouseType mouse, bool wsmall) const;
 		Point2D Get_Mouse_Hotspot(MouseType mouse) const;
 		int Get_Mouse_Start_Frame(MouseType mouse, bool wsmall) const;
+		int Get_Mouse_Start_Frame(MouseType mouse) const;
+		int Get_Mouse_Frame_Count(MouseType mouse) const;
 
 		friend class TacticalClass;
 

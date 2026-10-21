@@ -4,10 +4,16 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 #pragma once
 
+#include <windows.h>
 #include "refcount.h"
 #include "widewstring.h"
 #include "wstring.h"
 
+
+struct PlayerStatsRecord
+{
+	int Pad0, Pad4, Field8, FieldC, Field10, Pad14, Pad18, Field1C, Field20;
+};
 
 class PlayerProfile : public ReferenceCounted
 {
@@ -19,7 +25,14 @@ class PlayerProfile : public ReferenceCounted
 		void SetCountry(int country);
 		void SetMatchByRes(bool value);
 		void SetUpdateStamp(void);
+		void SetField20(int value);
+		void UpdateStats(PlayerStatsRecord const * record);
+		bool StatsDiffer(PlayerStatsRecord const * record) const;
+		void AddField2C(int delta);
+		void AddField30(int delta);
+		void AddField34(int delta);
 		void Save(Wstring const * name);
+		void FUN_0077A9F0(HWND window, Wstring const * name, bool flag);
 
 		char Field8;
 		Wstring Name;

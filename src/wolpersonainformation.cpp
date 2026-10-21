@@ -598,3 +598,128 @@ void PlayerProfile::SetCountry(int country)
 		Field8 = 1;
 	}
 }
+
+// FUNCTION: 0x0077A7A0
+void PlayerProfile::SetField20(int value)
+{
+	if (value != Field20) {
+		Field20 = value;
+		Field8 = 1;
+	}
+}
+
+// FUNCTION: 0x0077A7C0
+void PlayerProfile::UpdateStats(PlayerStatsRecord const * record)
+{
+	char changed = 0;
+	if (record->Field1C != Field24) {
+		Field24 = record->Field1C;
+		Field8 = 1;
+		changed = 1;
+	}
+	if (record->Field10 != Field28) {
+		Field28 = record->Field10;
+		Field8 = 1;
+		changed = 1;
+	}
+	if (record->Field8 != Field2C) {
+		Field2C = record->Field8;
+		Field8 = 1;
+		changed = 1;
+	}
+	if (record->FieldC != Field30) {
+		Field30 = record->FieldC;
+		Field8 = 1;
+		changed = 1;
+	}
+	if (record->Field20 != Field34) {
+		Field34 = record->Field20;
+		Field8 = 1;
+		SetUpdateStamp();
+		return;
+	}
+	if (changed) {
+		SetUpdateStamp();
+	}
+}
+
+// FUNCTION: 0x0077A840
+bool PlayerProfile::StatsDiffer(PlayerStatsRecord const * record) const
+{
+	if (record->Field1C != Field24) {
+		return true;
+	} else {
+		if (record->Field10 != Field28) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+}
+
+// FUNCTION: 0x0077A870
+void PlayerProfile::AddField2C(int delta)
+{
+	if (Field2C != -1) {
+		Field8 = 1;
+		Field2C += delta;
+	}
+}
+
+// FUNCTION: 0x0077A890
+void PlayerProfile::AddField30(int delta)
+{
+	if (Field30 != -1) {
+		Field8 = 1;
+		Field30 += delta;
+	}
+}
+
+// FUNCTION: 0x0077A8B0
+void PlayerProfile::AddField34(int delta)
+{
+	if (Field34 != -1) {
+		Field8 = 1;
+		Field34 += delta;
+	}
+}
+
+extern char DAT_00889F64[];
+extern wchar_t DAT_00887734[];
+
+// FUNCTION: 0x0077A8D0
+void __fastcall FUN_0077A8D0(HWND dialog, bool clearBadge)
+{
+	HWND item;
+	if (clearBadge) {
+		HWND badge = GetDlgItem(dialog, 0x628);
+		SendMessageA(badge, 0x4b4, 0, (LPARAM)DAT_00889F64);
+		InvalidateRect(badge, NULL, 0);
+	}
+	item = GetDlgItem(dialog, 0x6ef);
+	SendMessageA(item, 0x4b2, 0, (LPARAM)DAT_00887734);
+	WideWstring unknown(StringTable::LoadString("GUI:UnknownStats", NULL, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x37c));
+	item = GetDlgItem(dialog, 0x6f0);
+	SendMessageA(item, 0x4b2, 0, (LPARAM)unknown.text());
+	item = GetDlgItem(dialog, 0x6f1);
+	SendMessageA(item, 0x4b2, 0, (LPARAM)unknown.text());
+	item = GetDlgItem(dialog, 0x701);
+	SendMessageA(item, 0x4b2, 0, (LPARAM)unknown.text());
+	item = GetDlgItem(dialog, 0x6f4);
+	SendMessageA(item, 0x4b2, 0, (LPARAM)unknown.text());
+	item = GetDlgItem(dialog, 0x6f5);
+	SendMessageA(item, 0x4b2, 0, (LPARAM)unknown.text());
+}
+
+// FUNCTION: 0x0077B030 PlayerProfile::~PlayerProfile
+
+int DAT_00B73600, DAT_00B73604, DAT_00B73608, DAT_00B7360C;
+
+// FUNCTION: 0x0077B070
+void FUN_0077B070(void)
+{
+	DAT_00B73600 = 0;
+	DAT_00B73604 = 0;
+	DAT_00B73608 = 0;
+	DAT_00B7360C = 0;
+}

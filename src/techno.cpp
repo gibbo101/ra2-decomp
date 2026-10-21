@@ -5638,3 +5638,52 @@ double DAT_00B0EB68 = DAT_007E1728 * DAT_007F4EA0;
 
 // FUNCTION: 0x00710990 $E259
 double DAT_00B0EB40 = DAT_007E1730 * DAT_007F4EA0;
+
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
+extern double __cdecl FUN_004CAD50(double);
+extern double __cdecl FUN_004CADE0(double);
+
+struct ShortPair {
+	unsigned short A, B;
+	ShortPair() { A = 0; B = 0; }
+};
+
+struct IntTriple {
+	int A, B, C;
+	IntTriple() { A = 0; B = 0; C = 0; }
+};
+
+struct IntQuad {
+	int A, B, C, D;
+	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
+};
+
+struct CenterTriple {
+	int A, B, C;
+	CenterTriple() { C = 0; A = 128; B = 128; }
+};
+
+// FUNCTION: 0x007109B0 $E262
+int DAT_00B0EBB8 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B0EB40 - DAT_00B0EB68) * DAT_00B0EB60));
+
+// FUNCTION: 0x007109F0 $E265
+double DAT_00B0EB70 = FUN_004CADE0(DAT_00B0EBB8 * DAT_007E1740);
+
+// FUNCTION: 0x00710A20 $E268
+double DAT_00B0EB88 = FUN_004CADE0((DAT_00B0EBB8 * 2) / DAT_00B0EB60);
+
+// FUNCTION: 0x00710A50 $E271
+int DAT_00B0EBAC = (int)(DAT_00B0EBB8 * 4 + DAT_007E1738);
+
+// FUNCTION: 0x00710A80 $E274
+ShortPair DAT_00B0EB58;
+
+// FUNCTION: 0x00710A90 $E277
+IntTriple DAT_00B0EB78;
+
+// FUNCTION: 0x00710AB0 $E280
+CenterTriple DAT_00B0EBA0;
+
+// FUNCTION: 0x00710AD0 $E283
+IntQuad DAT_00B0EB48;

@@ -3748,6 +3748,37 @@ template class DynamicVectorClass<CCINIClass *>;
 // FUNCTION: 0x00538750 ?$DynamicVectorClass@PAVCCINIClass@@::ID
 // FUNCTION: 0x00538780 ?$DynamicVectorClass@PBVCommandClass@@::Add
 template class DynamicVectorClass<CommandClass const *>;
+template class VectorClass<CommandClass const *>;
 
 // FUNCTION: 0x005387D0 ?$IndexClass@HPBVCommandClass@@::Add_Index
+// FUNCTION: 0x005388A0 ?$IndexClass@HPBVCommandClass@@::Remove_Index
+// FUNCTION: 0x00538980 ?$IndexClass@HPBVCommandClass@@::Is_Present
+// FUNCTION: 0x00538A20 ?$rc_ptr@VWDTTerritory@@::~?$rc_ptr@VWDTTerritory@@
+// FUNCTION: 0x00538A90 ?$VectorClass@PBVCommandClass@@::~?$VectorClass@PBVCommandClass@@
+// FUNCTION: 0x00538AE0 ?$DynamicVectorClass@PBVCommandClass@@::~?$DynamicVectorClass@PBVCommandClass@@
+// FUNCTION: 0x00538B30 ?$VectorClass@PBVCommandClass@@::?$VectorClass@PBVCommandClass@@
+// FUNCTION: 0x00538B80 ?$IndexClass@HPBVCommandClass@@::Increase_Table_Size
 template class IndexClass<int, CommandClass const *>;
+
+extern unsigned long DAT_00A8F7F8[64];
+void __fastcall XMP_Init(unsigned long * number, unsigned long value, int precision);
+
+// FUNCTION: 0x00538C10
+void FUN_00538C10(void)
+{
+	XMP_Init(DAT_00A8F7F8, 0, 64);
+}
+
+extern int DAT_00A8F908;
+extern int DAT_00A8F90C;
+extern int DAT_00A8F910;
+extern int DAT_00A8F914;
+
+// FUNCTION: 0x00538C20
+void FUN_00538C20(void)
+{
+	DAT_00A8F908 = 0;
+	DAT_00A8F90C = 0;
+	DAT_00A8F910 = 0;
+	DAT_00A8F914 = 0;
+}

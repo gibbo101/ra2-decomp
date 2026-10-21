@@ -65,3 +65,79 @@ ShortPair DAT_00ABF8F0;
 
 // FUNCTION: 0x005C93A0 $E35
 IntTriple DAT_00ABF910;
+
+#include "mpobserver.h"
+#include "mpsiege.h"
+#include <windows.h>
+#undef LoadString
+#include <stddef.h>
+#include "stringtable.h"
+
+extern int DAT_00ABF938;
+extern int DAT_00ABF93C;
+extern int DAT_00ABF940;
+extern int DAT_00ABF980;
+extern int DAT_00ABF984;
+extern int DAT_00ABF988;
+extern int DAT_00ABF98C;
+class HouseClass;
+
+class MPRevealMap
+{
+	public:
+		void FUN_00577F30(HouseClass * house);
+};
+
+extern MPRevealMap DAT_0087F7E8;
+bool __stdcall FUN_005D8C90(int index);
+
+// FUNCTION: 0x005C93C0
+void Reset_Observer_View(void)
+{
+	DAT_00ABF940 = 0;
+	DAT_00ABF938 = 0x80;
+	DAT_00ABF93C = 0x80;
+}
+
+// FUNCTION: 0x005C93E0
+MPMegawealthClass::MPMegawealthClass(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex) :
+	MPGameModeClass(title, tooltip, inifile, mapfilter, aiallowed, modeindex)
+{
+}
+
+// FUNCTION: 0x005C9420
+MPMegawealthClass::~MPMegawealthClass(void)
+{
+}
+
+// FUNCTION: 0x005C9430
+bool MPMegawealthClass::vt_entry_8C(void)
+{
+	DAT_0087F7E8.FUN_00577F30(NULL);
+	return(true);
+}
+
+// FUNCTION: 0x005C9440 MPMegawealthClass::~MPMegawealthClass
+
+// FUNCTION: 0x005C9470
+MPObserverTeam::MPObserverTeam(void) :
+	MultiplayerTeam(StringTable::LoadString("MP:ObserverTeam", NULL, "D:\\ra2mdpost\\MPObserver.cpp", 5), -1)
+{
+}
+
+// FUNCTION: 0x005C94C0
+bool MPObserverTeam::IsTeamIncluded(int index)
+{
+	return(FUN_005D8C90(index));
+}
+
+// FUNCTION: 0x005C94D0 MPObserverTeam::~MPObserverTeam
+
+// FUNCTION: 0x005C94F0
+void Clear_Observer_Stats(void)
+{
+	DAT_00ABF980 = 0;
+	DAT_00ABF984 = 0;
+	DAT_00ABF988 = 0;
+	DAT_00ABF98C = 0;
+}

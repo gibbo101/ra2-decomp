@@ -16,6 +16,7 @@
 #include "mapgen.h"
 #include "mixfile.h"
 #include "ownrdraw.h"
+#include "pcx.h"
 #include "rcptr.h"
 #include "wdtnet.h"
 #include "wonline.h"
@@ -276,4 +277,71 @@ void __fastcall FUN_007B0320(char * state)
 		delete DAT_00B77F54;
 	}
 	DAT_00B77F54 = state;
+}
+
+char * DAT_00B77F60;
+
+// FUNCTION: 0x007B0340
+char * __cdecl FUN_007B0340(void)
+{
+	return DAT_00B77F60;
+}
+
+// FUNCTION: 0x007B0350
+void __fastcall FUN_007B0350(char * state)
+{
+	if (DAT_00B77F60 != NULL) {
+		delete DAT_00B77F60;
+	}
+	DAT_00B77F60 = state;
+}
+
+// FUNCTION: 0x007B0370
+rc_ptr<WorldDominationTour::History> * __cdecl FUN_007B0370(void)
+{
+	return &DAT_00B77F68;
+}
+
+// FUNCTION: 0x007B0380
+rc_ptr<WorldDominationTour::History> * __cdecl FUN_007B0380(void)
+{
+	return &DAT_00B77F78;
+}
+
+// FUNCTION: 0x007B0430
+bool __cdecl FUN_007B0430(void)
+{
+	return true;
+}
+
+// FUNCTION: 0x007B0440 WorldDominationTour::FactionSelectDialogControl::~FactionSelectDialogControl
+
+// FUNCTION: 0x007B0490
+WorldDominationTour::FactionSelectDialogControl::FactionSelectDialogControl(void)
+	: FieldC(0), Image1(NULL), Image2(NULL), Image3(NULL)
+{
+	if (Image1 == NULL) {
+		CCFileClass file("WDTFSBSm.pcx");
+		Image1 = Read_PCX_File(file);
+	}
+	if (Image2 == NULL) {
+		CCFileClass file("WDTFSAsm.pcx");
+		Image2 = Read_PCX_File(file);
+	}
+	if (Image3 == NULL) {
+		CCFileClass file("WDTFSSsm.pcx");
+		Image3 = Read_PCX_File(file);
+	}
+	Current = Image1;
+}
+
+int DAT_00B77FA0, DAT_00B77FA4, DAT_00B77FA8, DAT_00B77FAC;
+
+// FUNCTION: 0x007B05A0
+void __cdecl FUN_007B05A0(void)
+{
+	DAT_00B77FA0 = 0;
+	DAT_00B77FA4 = 0;
+	DAT_00B77FA8 = 0;
+	DAT_00B77FAC = 0;
 }

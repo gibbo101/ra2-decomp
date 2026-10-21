@@ -35,6 +35,31 @@ extern const double DAT_007E1720;
 extern const double DAT_007E1728;
 extern const double DAT_007F54F8;
 extern const double DAT_007F5500;
+extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
+extern double __cdecl FUN_004CAD50(double);
+extern double __cdecl FUN_004CADE0(double);
+
+struct ShortPair {
+	unsigned short A, B;
+	ShortPair() { A = 0; B = 0; }
+};
+
+struct IntTriple {
+	int A, B, C;
+	IntTriple() { A = 0; B = 0; C = 0; }
+};
+
+struct IntQuad {
+	int A, B, C, D;
+	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
+};
+
+struct CenterTriple {
+	int A, B, C;
+	CenterTriple() { C = 0; A = 128; B = 128; }
+};
 
 // FUNCTION: 0x0071D390 $E2
 // FUNCTION: 0x0071D3C0 $E5
@@ -322,3 +347,30 @@ double DAT_00B0F1B8 = DAT_007E1720 * DAT_007F5500;
 
 // FUNCTION: 0x0071E4A0 $E132
 double DAT_00B0F178 = DAT_007E1728 * DAT_007F5500;
+
+// FUNCTION: 0x0071E4C0 $E135
+double DAT_00B0F150 = DAT_007E1730 * DAT_007F5500;
+
+// FUNCTION: 0x0071E4E0 $E138
+int DAT_00B0F1E0 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B0F150 - DAT_00B0F178) * DAT_00B0F170));
+
+// FUNCTION: 0x0071E520 $E141
+double DAT_00B0F180 = FUN_004CADE0(DAT_00B0F1E0 * DAT_007E1740);
+
+// FUNCTION: 0x0071E550 $E144
+double DAT_00B0F198 = FUN_004CADE0((DAT_00B0F1E0 * 2) / DAT_00B0F170);
+
+// FUNCTION: 0x0071E580 $E147
+int DAT_00B0F1D4 = (int)(DAT_00B0F1E0 * 4 + DAT_007E1738);
+
+// FUNCTION: 0x0071E5B0 $E150
+ShortPair DAT_00B0F168;
+
+// FUNCTION: 0x0071E5C0 $E153
+IntTriple DAT_00B0F188;
+
+// FUNCTION: 0x0071E5E0 $E156
+CenterTriple DAT_00B0F1C8;
+
+// FUNCTION: 0x0071E600 $E159
+IntQuad DAT_00B0F158;

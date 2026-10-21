@@ -8,6 +8,15 @@
 #include "_surface.h"
 #include "dsurface.h"
 #include "geometry.h"
+
+struct IntQuad {
+	int A, B, C, D;
+	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
+};
+
+// FUNCTION: 0x00720420 $E66
+IntQuad DAT_00B0F400;
+
 #include "dialog.h"
 #include "bitfont.h"
 #include "lightcon.h"
@@ -131,3 +140,13 @@ void TextButtonClass::Draw_Text(wchar_t const * text)
 // FUNCTION: 0x00720260 $E30
 // FUNCTION: 0x00720280 $E33
 // FUNCTION: 0x007202A0 $E36
+// FUNCTION: 0x007202C0 $E39
+// FUNCTION: 0x007202E0 $E42
+// FUNCTION: 0x00720300 $E45
+// FUNCTION: 0x00720340 $E48
+// FUNCTION: 0x00720370 $E51
+// FUNCTION: 0x007203A0 $E54
+// FUNCTION: 0x007203D0 $E57
+// FUNCTION: 0x007203E0 $E60
+// FUNCTION: 0x00720400 $E63
+// FUNCTION: 0x00720420 $E66

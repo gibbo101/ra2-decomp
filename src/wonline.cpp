@@ -4714,5 +4714,465 @@ int __fastcall FUN_00797640(int sku)
 	return result;
 }
 
+extern char DAT_00B77E10;
+
+// FUNCTION: 0x00797C20
+void FUN_00797C20(void)
+{
+	if (DAT_00B77E10) {
+		return;
+	}
+	static Wstring _sound_names[16];
+
+	_sound_names[0].set("01-W024.V01");
+	_sound_names[1].set("01-W026.V01");
+	_sound_names[2].set("01-W028.V01");
+	_sound_names[3].set("01-W018.V01");
+	_sound_names[4].set("01-W020.V01");
+	_sound_names[5].set("01-W022.V01");
+	_sound_names[6].set("00-W022.V00");
+	_sound_names[7].set("00-W024.V00");
+	_sound_names[8].set("00-W026.V00");
+	_sound_names[9].set("00-W017.V00");
+	_sound_names[10].set("00-W018.V00");
+	_sound_names[11].set("00-W020.V00");
+	_sound_names[12].set("01-W032.V01");
+	_sound_names[13].set("01-W030.V01");
+	_sound_names[14].set("00-W031.V00");
+	_sound_names[15].set("00-W029.V00");
+
+	DAT_00B73BD8.clear();
+	DAT_00B736F8.clear();
+	DAT_00B76B00.clear();
+	DAT_00B76510.clear();
+	DAT_00B73AE8.clear();
+	DAT_00B77820.clear();
+	DAT_00B73708.clear();
+	DAT_00B76188.clear();
+
+	DAT_00B73BD8.addHead(_sound_names[0]);
+	DAT_00B73BD8.addHead(_sound_names[1]);
+	DAT_00B73BD8.addHead(_sound_names[2]);
+	DAT_00B76B00.addHead(_sound_names[3]);
+	DAT_00B76B00.addHead(_sound_names[4]);
+	DAT_00B76B00.addHead(_sound_names[5]);
+	DAT_00B736F8.addHead(_sound_names[6]);
+	DAT_00B736F8.addHead(_sound_names[7]);
+	DAT_00B736F8.addHead(_sound_names[8]);
+	DAT_00B76510.addHead(_sound_names[9]);
+	DAT_00B76510.addHead(_sound_names[10]);
+	DAT_00B76510.addHead(_sound_names[11]);
+	DAT_00B73AE8.addHead(_sound_names[12]);
+	DAT_00B73708.addHead(_sound_names[13]);
+	DAT_00B77820.addHead(_sound_names[14]);
+	DAT_00B76188.addHead(_sound_names[15]);
+
+	DAT_00B77E10 = 1;
+}
+
+// FUNCTION: 0x00798120 $E324
+// FUNCTION: 0x00798140
+void FUN_00798140(void)
+{
+	DAT_00B73BD8.clear();
+	DAT_00B736F8.clear();
+	DAT_00B76B00.clear();
+	DAT_00B76510.clear();
+	DAT_00B73AE8.clear();
+	DAT_00B77820.clear();
+	DAT_00B73708.clear();
+	DAT_00B76188.clear();
+	DAT_00B77E10 = 0;
+}
+
+// FUNCTION: 0x007982A0
+void FUN_007982A0(ArrayList<Wstring> list)
+{
+}
+
+// FUNCTION: 0x007982D0
+int __fastcall FUN_007982D0(int seconds, int count)
+{
+	int remaining = seconds * 1000;
+	DWORD index;
+	while ((index = WaitForMultipleObjects(count, DAT_00B73684, FALSE, 100)) == WAIT_TIMEOUT) {
+		remaining -= 100;
+		if (remaining <= 0) {
+			return 18;
+		}
+		FUN_0077F900();
+	}
+	ResetEvent(DAT_00B73684[index]);
+	return index;
+}
+
+// FUNCTION: 0x00798340
+void FUN_00798340(void)
+{
+	for (int i = 0; i < 18; i++) {
+		ResetEvent(DAT_00B73684[i]);
+	}
+}
+
+// FUNCTION: 0x00798360
+void FUN_00798360(void)
+{
+	HKEY key;
+	DWORD size;
+	DWORD type;
+	char value[0x200];
+
+	if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, "Software\\Westwood\\Yuri's Revenge\\URL", 0, KEY_READ, &key) == ERROR_SUCCESS) {
+		size = 0x200;
+		LONG status = RegQueryValueEx(key, "Community", NULL, &type, (LPBYTE)value, &size);
+		RegCloseKey(key);
+		if (status == ERROR_SUCCESS) {
+			FUN_0077DC90(value, 0);
+		}
+	}
+}
+
+void __fastcall FUN_00603D30(HWND item, int surface);
+
+// FUNCTION: 0x007983E0
+BOOL CALLBACK FUN_007983E0(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	if (message == WM_INITDIALOG && lparam) {
+		SetWindowLong(window, 8, ((int *)lparam)[1]);
+	}
+	int rc = UI::StandardWndProc(window, message, wparam, lparam);
+	if (rc) {
+		return rc;
+	}
+	SimpleWonlineDialogControl * control = (SimpleWonlineDialogControl *)GetWindowLong(window, 8);
+	switch (message) {
+		case WM_ERASEBKGND:
+			return TRUE;
+
+		case WM_PAINT:
+			OwnerDraw::Paint(window);
+			FUN_00607FD0(window);
+			ValidateRect(window, NULL);
+			return TRUE;
+
+		case WM_DRAWITEM:
+			OwnerDraw::DrawItem((LPDRAWITEMSTRUCT)lparam);
+			return TRUE;
+
+		case WM_COMMAND:
+			switch (LOWORD(wparam)) {
+				case 0x6E0:
+					Session.unknown_0C = 1;
+					control->F1(window, 0x6E0);
+					return FALSE;
+
+				case 0x686:
+					Session.unknown_0C = 0;
+					control->F1(window, 0x686);
+					return FALSE;
+
+				case 0x55F:
+					{
+						HKEY key;
+						DWORD size;
+						DWORD type;
+						char value[0x200];
+						if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, "Software\\Westwood\\Yuri's Revenge\\URL", 0, KEY_READ, &key) == ERROR_SUCCESS) {
+							size = 0x200;
+							LONG status = RegQueryValueEx(key, "Community", NULL, &type, (LPBYTE)value, &size);
+							RegCloseKey(key);
+							if (status == ERROR_SUCCESS) {
+								FUN_0077DC90(value, 0);
+								return FALSE;
+							}
+						}
+					}
+					break;
+
+				case 0x6E1:
+					Session.unknown_0C = 4;
+					control->F1(window, 0x6E1);
+					return FALSE;
+
+				case 0x6E2:
+					Session.unknown_0C = 5;
+					Session.unknown_10 = 0;
+					control->F1(window, 0x6E2);
+					break;
+
+				case 0x6E3:
+					Session.unknown_0C = 3;
+					control->F1(window, 0x6E3);
+					return FALSE;
+
+				case 0x771:
+					Session.unknown_0C = 2;
+					control->F1(window, 0x771);
+					return FALSE;
+			}
+			break;
+
+		case 0x497:
+			{
+				HWND item = GetDlgItem(window, 0x746);
+				int surface = PCX::Instance.GetSurface("gt18.pcx", NULL);
+				if (item && surface) {
+					FUN_00603D30(item, surface);
+				}
+				item = GetDlgItem(window, 0x748);
+				surface = PCX::Instance.GetSurface("wolclan.pcx", NULL);
+				if (item && surface) {
+					FUN_00603D30(item, surface);
+				}
+				item = GetDlgItem(window, 0x749);
+				surface = PCX::Instance.GetSurface("wolreslk.pcx", NULL);
+				if (item && surface) {
+					FUN_00603D30(item, surface);
+				}
+				item = GetDlgItem(window, 0x74A);
+				surface = PCX::Instance.GetSurface("wolob.pcx", NULL);
+				if (item && surface) {
+					FUN_00603D30(item, surface);
+				}
+				item = GetDlgItem(window, 0x752);
+				surface = PCX::Instance.GetSurface("wolpriv.pcx", NULL);
+				if (item && surface) {
+					FUN_00603D30(item, surface);
+				}
+				item = GetDlgItem(window, 0x75C);
+				surface = PCX::Instance.GetSurface("pingg.pcx", NULL);
+				if (item && surface) {
+					FUN_00603D30(item, surface);
+				}
+				item = GetDlgItem(window, 0x75D);
+				surface = PCX::Instance.GetSurface("pingy.pcx", NULL);
+				if (item && surface) {
+					FUN_00603D30(item, surface);
+				}
+				item = GetDlgItem(window, 0x75E);
+				surface = PCX::Instance.GetSurface("pingr.pcx", NULL);
+				if (item && surface) {
+					FUN_00603D30(item, surface);
+				}
+				item = GetDlgItem(window, 0x79E);
+				surface = PCX::Instance.GetSurface("number1.pcx", NULL);
+				if (item && surface) {
+					FUN_00603D30(item, surface);
+				}
+				item = GetDlgItem(window, 0x79F);
+				surface = PCX::Instance.GetSurface("number0.pcx", NULL);
+				if (item && surface) {
+					FUN_00603D30(item, surface);
+				}
+				item = GetDlgItem(window, 0x7A0);
+				surface = PCX::Instance.GetSurface("number0.pcx", NULL);
+				if (item && surface) {
+					FUN_00603D30(item, surface);
+				}
+				item = GetDlgItem(window, 0x7A1);
+				surface = PCX::Instance.GetSurface("cooperat.pcx", NULL);
+				if (item && surface) {
+					FUN_00603D30(item, surface);
+				}
+				item = GetDlgItem(window, 0x7A2);
+				surface = PCX::Instance.GetSurface("comchief.pcx", NULL);
+				if (item && surface) {
+					FUN_00603D30(item, surface);
+				}
+			}
+			break;
+	}
+	return FALSE;
+}
+
+// FUNCTION: 0x007988C0
+BOOL CALLBACK FUN_007988C0(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	if (message == WM_INITDIALOG && lparam) {
+		SetWindowLong(window, 8, ((int *)lparam)[1]);
+	}
+	int rc = UI::StandardWndProc(window, message, wparam, lparam);
+	if (rc) {
+		return rc;
+	}
+	SimpleWonlineDialogControl * control = (SimpleWonlineDialogControl *)GetWindowLong(window, 8);
+	switch (message) {
+		case WM_ERASEBKGND:
+			return TRUE;
+
+		case WM_PAINT:
+			OwnerDraw::Paint(window);
+			FUN_00607FD0(window);
+			ValidateRect(window, NULL);
+			return TRUE;
+
+		case WM_DRAWITEM:
+			OwnerDraw::DrawItem((LPDRAWITEMSTRUCT)lparam);
+			return TRUE;
+
+		case WM_COMMAND:
+			switch (LOWORD(wparam)) {
+				case 0x6E0:
+					Session.unknown_0C = 1;
+					control->F1(window, 0x6E0);
+					return FALSE;
+
+				case 0x686:
+					Session.unknown_0C = 0;
+					control->F1(window, 0x686);
+					return FALSE;
+
+				case 0x55F:
+					{
+						HKEY key;
+						DWORD size;
+						DWORD type;
+						char value[0x200];
+						if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, "Software\\Westwood\\Yuri's Revenge\\URL", 0, KEY_READ, &key) == ERROR_SUCCESS) {
+							size = 0x200;
+							LONG status = RegQueryValueEx(key, "Community", NULL, &type, (LPBYTE)value, &size);
+							RegCloseKey(key);
+							if (status == ERROR_SUCCESS) {
+								FUN_0077DC90(value, 0);
+								return FALSE;
+							}
+						}
+					}
+					break;
+
+				case 0x6E1:
+					Session.unknown_0C = 4;
+					control->F1(window, 0x6E1);
+					return FALSE;
+
+				case 0x6E2:
+					Session.unknown_0C = 5;
+					Session.unknown_10 = 0;
+					control->F1(window, 0x6E2);
+					break;
+
+				case 0x6E4:
+					Session.unknown_0C = 6;
+					control->F1(window, 0x6E4);
+					return FALSE;
+
+				case 0x771:
+					Session.unknown_0C = 2;
+					control->F1(window, 0x771);
+					return FALSE;
+			}
+			break;
+
+		case 0x497:
+			{
+				if (DAT_00B73E40.length() > 0) {
+					rc_ptr<PlayerProfile> profile = FUN_00778A20(&DAT_00B73E40);
+					if (profile.Get()) {
+						profile->FUN_0077A9F0(window, &DAT_00B73E40, true);
+					}
+				}
+				HWND item = GetDlgItem(window, 0x746);
+				int surface = PCX::Instance.GetSurface("gt18.pcx", NULL);
+				if (item && surface) {
+					FUN_00603D30(item, surface);
+				}
+				item = GetDlgItem(window, 0x748);
+				surface = PCX::Instance.GetSurface("wolclan.pcx", NULL);
+				if (item && surface) {
+					FUN_00603D30(item, surface);
+				}
+				item = GetDlgItem(window, 0x749);
+				surface = PCX::Instance.GetSurface("wolreslk.pcx", NULL);
+				if (item && surface) {
+					FUN_00603D30(item, surface);
+				}
+				item = GetDlgItem(window, 0x74A);
+				surface = PCX::Instance.GetSurface("wolob.pcx", NULL);
+				if (item && surface) {
+					FUN_00603D30(item, surface);
+				}
+				item = GetDlgItem(window, 0x752);
+				surface = PCX::Instance.GetSurface("wolpriv.pcx", NULL);
+				if (item && surface) {
+					FUN_00603D30(item, surface);
+				}
+				item = GetDlgItem(window, 0x75C);
+				surface = PCX::Instance.GetSurface("pingg.pcx", NULL);
+				if (item && surface) {
+					FUN_00603D30(item, surface);
+				}
+				item = GetDlgItem(window, 0x75D);
+				surface = PCX::Instance.GetSurface("pingy.pcx", NULL);
+				if (item && surface) {
+					FUN_00603D30(item, surface);
+				}
+				item = GetDlgItem(window, 0x75E);
+				surface = PCX::Instance.GetSurface("pingr.pcx", NULL);
+				if (item && surface) {
+					FUN_00603D30(item, surface);
+				}
+				item = GetDlgItem(window, 0x79E);
+				surface = PCX::Instance.GetSurface("number1.pcx", NULL);
+				if (item && surface) {
+					FUN_00603D30(item, surface);
+				}
+				item = GetDlgItem(window, 0x79F);
+				surface = PCX::Instance.GetSurface("number0.pcx", NULL);
+				if (item && surface) {
+					FUN_00603D30(item, surface);
+				}
+				item = GetDlgItem(window, 0x7A0);
+				surface = PCX::Instance.GetSurface("number0.pcx", NULL);
+				if (item && surface) {
+					FUN_00603D30(item, surface);
+				}
+				item = GetDlgItem(window, 0x7A1);
+				surface = PCX::Instance.GetSurface("cooperat.pcx", NULL);
+				if (item && surface) {
+					FUN_00603D30(item, surface);
+				}
+				item = GetDlgItem(window, 0x7A2);
+				surface = PCX::Instance.GetSurface("comchief.pcx", NULL);
+				if (item && surface) {
+					FUN_00603D30(item, surface);
+				}
+			}
+			break;
+	}
+	return FALSE;
+}
+
+// FUNCTION: 0x00798F50
+void __fastcall FUN_00798F50(HWND combo)
+{
+	int count;
+
+	FUN_00623840(combo);
+	count = 0;
+	DAT_00AC116C->V52(&count);
+	WOLOptionsClass options;
+	rc_ptr<PlayerProfile> profile;
+	if (options.Is_Bit1_Clear()) {
+		profile = FUN_00778A20(&DAT_00B73E40);
+	} else {
+		profile = DAT_00B75E48;
+	}
+	if (count > 0) {
+		for (int i = count - 1; i >= 0; i--) {
+			WideWstring name(FUN_00780A00(i));
+			int item;
+			if (i < 2) {
+				item = SendMessage(combo, 0x4C1, 0, (LPARAM)name.get());
+			} else {
+				item = SendMessage(combo, 0x4C2, 0, (LPARAM)name.get());
+			}
+			SendMessage(combo, 0x151, item, i);
+			if (profile.Get() && i == profile->Field10) {
+				SendMessage(combo, 0x14E, item, 0);
+			}
+		}
+	}
+}
+
 // FUNCTION: 0x007A2E70 SimpleWonlineDialogControl::~SimpleWonlineDialogControl
 // FUNCTION: 0x007AC5D0 WonlineStringDialogControl::~WonlineStringDialogControl

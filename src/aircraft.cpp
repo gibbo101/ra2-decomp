@@ -65,6 +65,30 @@ extern const double DAT_007E1728;
 extern const double DAT_007E1730;
 extern const double DAT_007E2828;
 extern const double DAT_007E2830;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
+extern double __cdecl FUN_004CAD50(double);
+extern double __cdecl FUN_004CADE0(double);
+
+struct ShortPair {
+	unsigned short A, B;
+	ShortPair() { A = 0; B = 0; }
+};
+
+struct IntTriple {
+	int A, B, C;
+	IntTriple() { A = 0; B = 0; C = 0; }
+};
+
+struct Int3Pad {
+	int A, B, C;
+	Int3Pad() { C = 0; A = 128; B = 128; }
+};
+
+struct Int4Zero {
+	int A, B, C, D;
+	Int4Zero() { A = 0; B = 0; C = 0; D = 0; }
+};
 
 // FUNCTION: 0x00413CD0
 bool Counts_As_Civ_Evac(ObjectClass const * candidate)
@@ -2052,6 +2076,30 @@ double DAT_00889EF8 = DAT_007E1728 * DAT_007E2830;
 
 // FUNCTION: 0x0041C750 $E131
 double DAT_00889ED0 = DAT_007E1730 * DAT_007E2830;
+
+// FUNCTION: 0x0041C770 $E134
+int DAT_00889F58 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00889ED0 - DAT_00889EF8) * DAT_00889EF0));
+
+// FUNCTION: 0x0041C7B0 $E137
+double DAT_00889F00 = FUN_004CADE0(DAT_00889F58 * DAT_007E1740);
+
+// FUNCTION: 0x0041C7E0 $E140
+double DAT_00889F18 = FUN_004CADE0((DAT_00889F58 * 2) / DAT_00889EF0);
+
+// FUNCTION: 0x0041C810 $E143
+int DAT_00889F4C = (int)(DAT_00889F58 * 4 + DAT_007E1738);
+
+// FUNCTION: 0x0041C840 $E146
+ShortPair DAT_00889EE8;
+
+// FUNCTION: 0x0041C850 $E149
+IntTriple DAT_00889F08;
+
+// FUNCTION: 0x0041C870 $E152
+Int3Pad DAT_00889F40;
+
+// FUNCTION: 0x0041C890 $E155
+Int4Zero DAT_00889ED8;
 
 // FUNCTION: 0x004196B0
 MoveType AircraftClass::Can_Enter_Cell(CellClass const * cell, FacingType, int cell_height, CellClass const *, bool) const

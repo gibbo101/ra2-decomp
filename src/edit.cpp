@@ -29,7 +29,15 @@ extern const double DAT_007E1720;
 extern const double DAT_007E1728;
 extern const double DAT_007E86C8;
 extern const double DAT_007E86D0;
+extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
+extern double __cdecl FUN_004CAD50(double);
+extern double __cdecl FUN_004CADE0(double);
+extern double DAT_008A0EC8;
 extern double DAT_008A0EE8;
+extern double DAT_008A0EF0;
+extern int DAT_008A0F40;
 extern double DAT_008A0F38;
 
 class InputManagerClass : public KeyboardClass {
@@ -244,3 +252,35 @@ double DAT_008A0F18 = DAT_007E1720 * DAT_007E86D0;
 
 // FUNCTION: 0x004C3630 $E43
 double DAT_008A0EF0 = DAT_007E1728 * DAT_007E86D0;
+
+// FUNCTION: 0x004C3650 $E46
+double DAT_008A0EC8 = DAT_007E1730 * DAT_007E86D0;
+
+// FUNCTION: 0x004C3670 $E49
+int DAT_008A0F40 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_008A0EC8 - DAT_008A0EF0) * DAT_008A0EE8));
+
+// FUNCTION: 0x004C36B0 $E52
+double DAT_008A0EF8 = FUN_004CADE0(DAT_008A0F40 * DAT_007E1740);
+
+// FUNCTION: 0x004C36E0 $E55
+double DAT_008A0F10 = FUN_004CADE0((DAT_008A0F40 * 2) / DAT_008A0EE8);
+
+// FUNCTION: 0x004C3710 $E58
+int DAT_008A0F34 = (int)((DAT_008A0F40 * 4) + DAT_007E1738);
+
+struct Pair16 { short a, b; Pair16() : a(0), b(0) {} };
+struct Triple32 { int a, b, c; Triple32() : a(0), b(0), c(0) {} };
+struct Quad32 { int a, b, c, d; Quad32() : a(0), b(0), c(0), d(0) {} };
+struct Odd32 { int a, b, c; Odd32() : a(128), b(128), c(0) {} };
+
+// FUNCTION: 0x004C3740 $E61
+Pair16 DAT_008A0EE0;
+
+// FUNCTION: 0x004C3750 $E64
+Triple32 DAT_008A0F00;
+
+// FUNCTION: 0x004C3770 $E67
+Odd32 DAT_008A0F28;
+
+// FUNCTION: 0x004C3790 $E70
+Quad32 DAT_008A0ED0;

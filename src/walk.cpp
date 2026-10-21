@@ -418,3 +418,21 @@ void STDMETHODCALLTYPE WalkLocomotionClass::Limbo(void)
 // FUNCTION: 0x0075CB90 WalkLocomotionClass::Release
 
 // FUNCTION: 0x0075CBA0 WalkLocomotionClass::Is_Piggybacking
+
+// FUNCTION: 0x0075CBC0 WalkLocomotionClass::Stop_Movement_Animation
+
+// FUNCTION: 0x0075CBD0 WalkLocomotionClass::Fetch_Object_Size
+
+// FUNCTION: 0x0075CBE0 WalkLocomotionClass::~WalkLocomotionClass
+
+// FUNCTION: 0x0075CC30 WalkLocomotionClass::QueryInterface
+
+// FUNCTION: 0x0075CC40 WalkLocomotionClass::AddRef
+
+// FUNCTION: 0x0075CC50 WalkLocomotionClass::Release
+
+// FUNCTION: 0x0075CC60 WalkLocomotionClass::QueryInterface
+
+// FUNCTION: 0x0075CC70 WalkLocomotionClass::AddRef
+
+// FUNCTION: 0x0075CC80 WalkLocomotionClass::Release

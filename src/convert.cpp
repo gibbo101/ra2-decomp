@@ -1105,4 +1105,28 @@ template class RLEBlitTransLucent75ZReadWarp<unsigned short>;
 template class RLEBlitTransLucent50ZReadWarp<unsigned short>;
 
 // FUNCTION: 0x00496FB0 ?$RLEBlitTransLucent25ZReadWarp@G::Blit
+// FUNCTION: 0x004970C0 ?$RLEBlitTransLucent25ZReadWarp@G::Blit_Copy_Tinted
 template class RLEBlitTransLucent25ZReadWarp<unsigned short>;
+
+// FUNCTION: 0x00497100 ?$RLEBlitTransXlatZReadWrite@G::Blit
+// FUNCTION: 0x004971F0 ?$RLEBlitTransXlatZReadWrite@G::Blit_Copy_Tinted
+template class RLEBlitTransXlatZReadWrite<unsigned short>;
+
+// FUNCTION: 0x00497230 ?$RLEBlitTransZRemapXlatZReadWrite@G::Blit
+// FUNCTION: 0x00497350 ?$RLEBlitTransZRemapXlatZReadWrite@G::Blit_Copy_Tinted
+template class RLEBlitTransZRemapXlatZReadWrite<unsigned short>;
+
+// FUNCTION: 0x00497390 ?$RLEBlitTransDarkenZReadWrite@G::Blit
+// FUNCTION: 0x00497470 ?$RLEBlitTransDarkenZReadWrite@G::Blit_Copy_Tinted
+template class RLEBlitTransDarkenZReadWrite<unsigned short>;
+
+// FUNCTION: 0x004974B0 ?$RLEBlitTransLucent75ZReadWrite@G::Blit
+// FUNCTION: 0x004975D0 ?$RLEBlitTransLucent75ZReadWrite@G::Blit_Copy_Tinted
+template class RLEBlitTransLucent75ZReadWrite<unsigned short>;
+
+// FUNCTION: 0x00497610 ?$RLEBlitTransLucent50ZReadWrite@G::Blit
+// FUNCTION: 0x00497720 ?$RLEBlitTransLucent50ZReadWrite@G::Blit_Copy_Tinted
+template class RLEBlitTransLucent50ZReadWrite<unsigned short>;
+
+// FUNCTION: 0x00497760 ?$RLEBlitTransLucent25ZReadWrite@G::Blit
+template class RLEBlitTransLucent25ZReadWrite<unsigned short>;

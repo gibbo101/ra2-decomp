@@ -39,6 +39,10 @@ extern int DAT_00AA0434;
 extern int DAT_00AA0438;
 extern short DAT_00AA0168[256];
 extern int DAT_00828140;
+extern int DAT_00AA0510;
+extern int DAT_00AA0514;
+extern int DAT_00AA0518;
+extern int DAT_00AA051C;
 extern int DAT_00AA0430;
 extern int DAT_00AA043C;
 extern int DAT_00AA0440;
@@ -416,6 +420,76 @@ void IPXAddressClass::Set_Node(NetNodeType node)
 	memcpy(NodeAddress, node, 6);
 }
 
+// FUNCTION: 0x0053EE00
+int IPXAddressClass::Is_Broadcast(void)
+{
+	if (DAT_00828140 == 1) {
+		if (NetworkNumber[0] == 0xff && NetworkNumber[1] == 0xff && NetworkNumber[2] == 0xff && NetworkNumber[3] == 0xff &&
+			NodeAddress[0] == 0xff && NodeAddress[1] == 0xff && NodeAddress[2] == 0xff && NodeAddress[3] == 0xff &&
+			NodeAddress[4] == 0xff && NodeAddress[5] == 0xff) {
+			return 1;
+		}
+		return 0;
+	}
+	if (NodeAddress[0] == 0xff && NodeAddress[1] == 0xff && NodeAddress[2] == 0xff && NodeAddress[3] == 0xff &&
+		NodeAddress[4] == 0xff && NodeAddress[5] == 0xff) {
+		return 1;
+	}
+	return 0;
+}
+
+// FUNCTION: 0x0053EE70
+bool IPXAddressClass::operator == (IPXAddressClass & addr)
+{
+	if (DAT_00828140 == 2) {
+		if (memcmp(NodeAddress, addr.NodeAddress, 4) == 0 && memcmp(NetworkNumber, addr.NetworkNumber, 2) == 0) {
+			return 1;
+		}
+		return 0;
+	}
+	if ((NetworkNumber[0] == 0 && NetworkNumber[1] == 0 && NetworkNumber[2] == 0 && NetworkNumber[3] == 0) ||
+		(addr.NetworkNumber[0] == 0 && addr.NetworkNumber[1] == 0 && addr.NetworkNumber[2] == 0 && addr.NetworkNumber[3] == 0)) {
+		if (memcmp(NodeAddress, addr.NodeAddress, 6) == 0) {
+			return 1;
+		} else {
+			return 0;
+		}
+	}
+	if (memcmp(NodeAddress, addr.NodeAddress, 6) == 0 && memcmp(NetworkNumber, addr.NetworkNumber, 4) == 0) {
+		return 1;
+	}
+	return 0;
+}
+
+// FUNCTION: 0x0053EF30
+bool IPXAddressClass::FUN_0053EF30(IPXAddressClass & addr)
+{
+	return memcmp(NodeAddress, addr.NodeAddress, (DAT_00828140 == 2) ? 4 : 6) == 0;
+}
+
+// FUNCTION: 0x0053EF60
+bool IPXAddressClass::operator != (IPXAddressClass & addr)
+{
+	if (DAT_00828140 == 2) {
+		if (memcmp(NodeAddress, addr.NodeAddress, 4) == 0 && memcmp(NetworkNumber, addr.NetworkNumber, 2) == 0) {
+			return 0;
+		}
+		return 1;
+	}
+	if ((NetworkNumber[0] == 0 && NetworkNumber[1] == 0 && NetworkNumber[2] == 0 && NetworkNumber[3] == 0) ||
+		(addr.NetworkNumber[0] == 0 && addr.NetworkNumber[1] == 0 && addr.NetworkNumber[2] == 0 && addr.NetworkNumber[3] == 0)) {
+		if (memcmp(NodeAddress, addr.NodeAddress, 6) == 0) {
+			return 0;
+		} else {
+			return 1;
+		}
+	}
+	if (memcmp(NodeAddress, addr.NodeAddress, 6) == 0 && memcmp(NetworkNumber, addr.NetworkNumber, 4) == 0) {
+		return 0;
+	}
+	return 1;
+}
+
 // FUNCTION: 0x0053F020
 bool IPXAddressClass::operator > (IPXAddressClass & addr)
 {
@@ -438,4 +512,46 @@ bool IPXAddressClass::operator >= (IPXAddressClass & addr)
 bool IPXAddressClass::operator <= (IPXAddressClass & addr)
 {
 	return(memcmp(this, &addr, 10) <= 0);
+}
+
+// FUNCTION: 0x0053F0E0
+const char * IPXAddressClass::As_String(IPXAddressClass * address)
+{
+	static char _addr_str[128];
+	NetNumType num;
+	NetNodeType node;
+
+	if (!address) address = this;
+	memcpy(node, address->NodeAddress, 6);
+	if (DAT_00828140 == 1) {
+		memcpy(num, address->NetworkNumber, 4);
+		sprintf(_addr_str, "%02X %02X %02X %02X : %02X %02X %02X %02X %02X %02X",
+			num[0], num[1], num[2], num[3], node[0], node[1], node[2], node[3], node[4], node[5]);
+	} else {
+		sprintf(_addr_str, "%d.%d.%d.%d ; %d", node[0], node[1], node[2], node[3], *(unsigned short *)NetworkNumber);
+	}
+	return _addr_str;
+}
+
+// FUNCTION: 0x0053F1F0
+void __fastcall FUN_0053F1F0(int value)
+{
+	DAT_00828140 = value;
+}
+
+// FUNCTION: 0x0053F200
+void IPXAddressClass::Set_Port(unsigned short port)
+{
+	if (DAT_00828140 == 2) {
+		*(unsigned short *)NetworkNumber = port;
+	}
+}
+
+// FUNCTION: 0x0053F220
+void __fastcall FUN_0053F220(void)
+{
+	DAT_00AA0510 = 0;
+	DAT_00AA0514 = 0;
+	DAT_00AA0518 = 0;
+	DAT_00AA051C = 0;
 }

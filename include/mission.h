@@ -38,6 +38,7 @@ class MissionClass : public ObjectClass
 		void  Debug_Dump(MonoClass *mono) const;
 #endif
 
+		int Mission_Timer_Value(void) const;
 		void Shorten_Mission_Timer(void) {Timer = 0;}
 		virtual MissionType Get_Mission(void) const override;
 		virtual void AI(void) override;
@@ -96,7 +97,7 @@ class MissionControlClass
 	public:
 		MissionControlClass(void);
 
-		bool Read_INI(CCINIClass const & ini);
+		bool Read_INI(CCINIClass & ini);
 		int Normal_Delay(void) const {return(int(TICKS_PER_MINUTE * Rate));}
 		int AA_Delay(void) const {return(int(TICKS_PER_MINUTE * AARate));}
 

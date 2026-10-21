@@ -6,6 +6,7 @@
 #define INCLUDE_COM
 #include "always.h"
 #include "geometry.h"
+#include "rect.h"
 #include "wave.h"
 #include "_logic.h"
 #include "_map.h"
@@ -656,3 +657,12 @@ template class DynamicVectorClass<CellClass *>;
 // FUNCTION: 0x007633D0 $E8
 // FUNCTION: 0x007633F0 $E11
 // FUNCTION: 0x00763410 $E14
+// FUNCTION: 0x00763430 $E17
+// FUNCTION: 0x00763450 $E20
+// FUNCTION: 0x00763490 $E23
+// FUNCTION: 0x007634C0 $E26
+// FUNCTION: 0x007634F0 $E29
+// FUNCTION: 0x00763520 $E32
+// FUNCTION: 0x00763530 $E35
+// FUNCTION: 0x00763550 $E38
+// FUNCTION: 0x00763570 $E41

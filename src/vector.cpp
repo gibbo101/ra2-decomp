@@ -102,3 +102,27 @@ void BooleanVectorClass::Fixup(int index) const
 		((BooleanVectorClass *)this)->LastIndex = index;
 	}
 }
+
+template class VectorClass<unsigned char>;
+
+// FUNCTION: 0x0074BF90 ?$VectorClass@E::GetItem
+
+// FUNCTION: 0x0074BFA0 ?$VectorClass@E::~?$VectorClass@E
+
+// FUNCTION: 0x0074BFF0 ?$VectorClass@E::operator==
+
+// FUNCTION: 0x0074C030 ?$VectorClass@E::Resize
+
+// FUNCTION: 0x0074C0E0 ?$VectorClass@E::Clear
+
+// FUNCTION: 0x0074C110 ?$VectorClass@E::ID
+
+// FUNCTION: 0x0074C150 ?$VectorClass@E::ID
+
+struct IntQuad {
+	int A, B, C, D;
+	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
+};
+
+// FUNCTION: 0x0074C170 $E2
+IntQuad DAT_00B1D260;

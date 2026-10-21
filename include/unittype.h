@@ -78,11 +78,11 @@ class UnitTypeClass : public TechnoTypeClass
 		virtual HRESULT STDMETHODCALLTYPE Load(IStream * stream) override;
 		virtual HRESULT STDMETHODCALLTYPE Save(IStream * stream, BOOL cleardirty) override;
 
-		virtual RTTIType Fetch_RTTI(void) const override;
+		virtual RTTIType Fetch_RTTI(void) const override {return(RTTI_UNITTYPE);}
 		virtual int Fetch_Object_Size(void) const override;
 		virtual bool CanUseWaypoint(void) const override;
 		virtual void Compute_CRC(CRCEngine & crc) const override;
-		virtual int Fetch_Heap_ID(void) const override;
+		virtual int Fetch_Heap_ID(void) const override {return(HeapID);}
 
 		static UnitType From_Name(char const * name);
 		static void Init(TheaterType ) {};

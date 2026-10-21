@@ -325,3 +325,21 @@ template class DynamicVectorClass<MSSfx *>;
 // FUNCTION: 0x005D2A80 ?$VectorClass@PAVMSSfx@@::Resize
 
 // FUNCTION: 0x005D2B30 ?$VectorClass@PAVMSSfx@@::Clear
+
+// FUNCTION: 0x005D2B60 ?$VectorClass@PAVMSSfx@@::ID
+
+// FUNCTION: 0x005D2BA0 ?$VectorClass@PAVMSAnim@@::ID
+
+// FUNCTION: 0x005D2BC0 ?$DynamicVectorClass@PAVMSSfx@@::Resize
+
+// FUNCTION: 0x005D2C70 ?$DynamicVectorClass@PAVMSSfx@@::ID
+
+// FUNCTION: 0x005D2CA0 ?$VectorClass@PAVMSAnim@@::~?$VectorClass@PAVMSAnim@@
+
+// FUNCTION: 0x005D2CF0 ?$DynamicVectorClass@PAVMSAnim@@::~?$DynamicVectorClass@PAVMSAnim@@
+
+// FUNCTION: 0x005D2D40 ?$VectorClass@PAVMSSfx@@::~?$VectorClass@PAVMSSfx@@
+
+// FUNCTION: 0x005D2D90 ?$DynamicVectorClass@PAVMSSfx@@::~?$DynamicVectorClass@PAVMSSfx@@
+
+// FUNCTION: 0x005D2DE0 $E2

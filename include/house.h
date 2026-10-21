@@ -84,6 +84,22 @@ struct StartingTechnoStruct {
 	Cell CellID;
 };
 
+struct BasePlanningCell {
+	int Weight;
+	CellStruct Position;
+};
+
+struct BasePlanningCellContainer {
+	BasePlanningCell * Items;
+	int Count;
+	int Capacity;
+	bool Sorted;
+	DWORD Unknown_10;
+
+	bool AddCapacity(int additional);
+	static int __cdecl Comparator(const void * a, const void * b);
+};
+
 class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, public IConnectionPointContainer
 {
 		typedef AbstractClass BASECLASS;

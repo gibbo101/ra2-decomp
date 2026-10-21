@@ -489,3 +489,57 @@ template class _com_ptr_t<_com_IIID<IPropertyStorage, &__uuidof(IPropertyStorage
 // FUNCTION: 0x006830C0 $E36
 // FUNCTION: 0x006830E0 $E39
 // FUNCTION: 0x00683100 $E42
+
+extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
+extern const double DAT_007F0E40;
+extern double DAT_00B05460;
+extern double DAT_00B05468;
+
+struct ShortPair {
+	unsigned short A, B;
+	ShortPair() { A = 0; B = 0; }
+};
+
+struct IntTriple {
+	int A, B, C;
+	IntTriple() { A = 0; B = 0; C = 0; }
+};
+
+struct IntQuad {
+	int A, B, C, D;
+	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
+};
+
+struct PlayfieldDefaults {
+	int A, B, C;
+	PlayfieldDefaults() { C = 0; A = 128; B = 128; }
+};
+
+// FUNCTION: 0x00683120 $E69
+double DAT_00B05440 = DAT_007E1730 * DAT_007F0E40;
+
+// FUNCTION: 0x00683140 $E72
+int DAT_00B054C8 = (int)(DAT_007E1738 * (fastmath::tan(DAT_00B05440 - DAT_00B05468) * DAT_00B05460));
+
+// FUNCTION: 0x00683180 $E75
+double DAT_00B05470 = fastmath::atan(DAT_00B054C8 * DAT_007E1740);
+
+// FUNCTION: 0x006831B0 $E78
+double DAT_00B05498 = fastmath::atan((DAT_00B054C8 * 2) / DAT_00B05460);
+
+// FUNCTION: 0x006831E0 $E81
+int DAT_00B054BC = (int)(DAT_00B054C8 * 4 + DAT_007E1738);
+
+// FUNCTION: 0x00683210 $E84
+ShortPair DAT_00B05458;
+
+// FUNCTION: 0x00683220 $E87
+IntTriple DAT_00B05488;
+
+// FUNCTION: 0x00683240 $E90
+PlayfieldDefaults DAT_00B054B0;
+
+// FUNCTION: 0x00683260 $E93
+IntQuad DAT_00B05448;

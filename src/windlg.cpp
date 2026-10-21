@@ -17,10 +17,11 @@
 
 BOOL CALLBACK Resize_Dialog(HWND window, LPARAM lParam);
 
-BOOL CALLBACK Resize_Dialog_Proc(HWND window, UINT message, WPARAM wParam, LPARAM lParam)
-{
-	return(FALSE);
-}
+extern bool g_PlayingNetGame;
+extern int DAT_00AA0430;
+int __fastcall FUN_0053E770(MSG *msg, HWND wnd, UINT min, UINT max, UINT flags);
+
+BOOL CALLBACK Resize_Dialog_Proc(HWND window, UINT message, WPARAM wParam, LPARAM lParam);
 
 struct EzFont {
 	char FaceName[128];
@@ -29,8 +30,6 @@ struct EzFont {
 	int Attributes;
 	HFONT FontHandle;
 };
-
-ArrayList<EzFont> g_EzFonts;
 
 #define EZ_ATTR_BOLD		  1
 #define EZ_ATTR_ITALIC		  2
@@ -54,6 +53,50 @@ BOOL Get_Display_Rect(HWND window, LPRECT rect)
 	rect->top -= client.top;
 	rect->bottom -= client.top;
 	return(res);
+}
+
+// FUNCTION: 0x00775700
+HWND WS_Create_Dialog(HINSTANCE instance, int id, HWND parent, DLGPROC proc, BOOL force_show)
+{
+	WSDialogStruct *slot = &g_Dialogs[g_DialogCount];
+	g_Dialogs[g_DialogCount].handle = 0;
+	g_Dialogs[g_DialogCount].id = 0;
+
+	LPCDLGTEMPLATE templ = (LPCDLGTEMPLATE)Fetch_Resource((LPCSTR)id, (LPCSTR)RT_DIALOG);
+
+	if (templ == NULL) {
+		return(NULL);
+	}
+
+	g_DialogCount++;
+
+	HWND window = CreateDialogIndirectParam(instance, (LPCDLGTEMPLATE)templ, parent, proc, 0);
+
+	if (window == NULL) {
+		g_DialogCount--;
+		return(NULL);
+	}
+
+	_dialog_count++;
+
+	Add_Modeless_Dialog(window);
+
+	EnumChildWindows(window, Resize_Dialog, TRUE);
+
+	Resize_Dialog(window, 0);
+
+	slot->handle = window;
+	slot->id = id;
+
+	if (force_show) {
+		ShowWindow(window, SW_SHOWNORMAL);
+	}
+
+	SetForegroundWindow(window);
+	SetFocus(window);
+	g_TopWindow = window;
+	g_TopWindowID = id;
+	return(window);
 }
 
 // FUNCTION: 0x00775910
@@ -98,6 +141,76 @@ HWND WS_Next_Lower_Dialog(HWND window)
 		}
 	}
 	return(NULL);
+}
+
+// FUNCTION: 0x007759E0
+int WS_Wait_Dialog(HWND window, bool (*callback)(void), bool, bool place_on_top, bool show)
+{
+	MSG msg;
+
+	if (place_on_top) {
+		SetForegroundWindow(window);
+		SendMessage(window, OD_SETTOP, 0, TRUE);
+	}
+
+	if (show) {
+		ShowWindow(window, SW_SHOWNORMAL);
+	}
+
+	while (true) {
+		if (!WS_Has_Dialog(window)) {
+			break;
+		}
+		if (callback != NULL) {
+			if (callback() == TRUE) {
+				WS_Destroy_Dialog(window, IDCANCEL);
+			}
+		}
+		if (!g_PlayingNetGame) {
+			Title_Screen_Restore(false);
+		}
+
+		DAT_00AA0430++;
+		while (FUN_0053E770(&msg, NULL, 0, 0, 1)) {
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+			if (!WS_Has_Dialog(window)) {
+				break;
+			}
+		}
+
+		Sleep(0);
+	}
+
+	if (place_on_top) {
+		SendMessage(window, OD_SETTOP, 0, FALSE);
+	}
+
+	return(g_LastResponse);
+}
+
+// FUNCTION: 0x00775B10
+HWND WS_Top_Window(void)
+{
+	return(g_TopWindow);
+}
+
+// FUNCTION: 0x00775B20
+int WS_Top_Window_ID(void)
+{
+	return(g_TopWindowID);
+}
+
+// FUNCTION: 0x00775B30
+WPARAM WS_Last_Response(void)
+{
+	return(g_LastResponse);
+}
+
+// FUNCTION: 0x00775B40
+BOOL CALLBACK Resize_Dialog_Proc(HWND window, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	return(FALSE);
 }
 
 // FUNCTION: 0x00775B50
@@ -179,6 +292,10 @@ BOOL CALLBACK Resize_Dialog(HWND window, LPARAM lParam)
 
 	return(TRUE);
 }
+
+// FUNCTION: 0x00775D70
+// FUNCTION: 0x00775D90
+ArrayList<EzFont> g_EzFonts;
 
 // FUNCTION: 0x00775DB0
 HFONT WS_Get_Font(HDC hdc, const char * face_name, int decipt_width, int decipt_height, int attributes)
@@ -266,3 +383,14 @@ HFONT Ez_Create_Font (HDC hdc, const char * face_name, int decipt_width,
 	RestoreDC (hdc, -1);
 	return(hFont);
 }
+
+struct WindlgSlots {
+	int A;
+	int B;
+	int C;
+	int D;
+	WindlgSlots() { A = 0; B = 0; C = 0; D = 0; }
+};
+
+// FUNCTION: 0x00776210
+WindlgSlots DAT_00B73088;

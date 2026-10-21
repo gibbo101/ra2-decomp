@@ -343,12 +343,55 @@ Coord const UnitTypeClass::Coord_Fixup(Coord const & coord) const
 	return(fix);
 }
 
+// FUNCTION: 0x00747F20
+int UnitTypeClass::Repair_Step(void) const
+{
+	return(Rule->RepairStep);
+}
+
 // FUNCTION: 0x00747F30
 HRESULT STDMETHODCALLTYPE UnitTypeClass::GetClassID(CLSID * retval)
 {
 	if (retval == NULL) return(E_POINTER);
 	*retval = CLSID_UnitTypeClass;
 	return(S_OK);
+}
+
+// FUNCTION: 0x00747F70
+void UnitTypeClass::Compute_CRC(CRCEngine & crc) const
+{
+	BASECLASS::Compute_CRC(crc);
+	crc(MovementRestrictedTo);
+	crc(Passive);
+	crc(CrateGoodie);
+	crc(Harvester);
+	crc(Weeder);
+	crc(unknown_E10);
+	crc(HasTurret);
+	crc(IsTilter);
+	crc(IsSimpleDeployer);
+	crc(UseTurretShadow);
+}
+
+// FUNCTION: 0x00748010
+HRESULT STDMETHODCALLTYPE UnitTypeClass::Load(IStream * stream)
+{
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		new (this) UnitTypeClass(NoInitClass());
+
+		Fetch_Voxel_Image();
+		Fetch_Normal_Image();
+
+		if (AltImage != NULL) {
+			char filename[260];
+			_makepath(filename, NULL, NULL, AltImageFile, ".SHP");
+			AltImage = FileSystem::LoadFile(filename, false);
+		}
+
+		result = S_OK;
+	}
+	return(result);
 }
 
 // FUNCTION: 0x007480B0
@@ -360,3 +403,21 @@ HRESULT STDMETHODCALLTYPE UnitTypeClass::Save(IStream *stream, int cleardirty)
 	}
 	return(result);
 }
+
+// FUNCTION: 0x007480D0
+UnitTypeClass * UnitTypeClass::Find_Or_Make(char const * name)
+{
+	return(TFind_Or_Make<UnitTypeClass>(name, UnitTypes));
+}
+
+// FUNCTION: 0x00748160
+int UnitTypeClass::Fetch_Object_Size(void) const
+{
+	return(sizeof(UnitTypeClass));
+}
+
+// FUNCTION: 0x00748170 UnitTypeClass::Fetch_RTTI
+
+// FUNCTION: 0x00748180 UnitTypeClass::Fetch_Heap_ID
+
+// FUNCTION: 0x00748190 UnitTypeClass::~UnitTypeClass

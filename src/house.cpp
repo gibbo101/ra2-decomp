@@ -4960,7 +4960,7 @@ template class DynamicVectorClass<BUILDING_DIST_OBJ>;
 
 // FUNCTION: 0x0050E7C0 ?$VectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@::GetItem
 
-// FUNCTION: 0x0050E7E0 ?$VectorClass@PBVTeamTypeClass@@::~?$VectorClass@PBVTeamTypeClass@@
+// FUNCTION: 0x0050E7E0 ?$TypeList@PBVTeamTypeClass@@::~?$TypeList@PBVTeamTypeClass@@
 // FUNCTION: 0x0050E830 ?$DynamicVectorClass@PBVTeamTypeClass@@::?$DynamicVectorClass@PBVTeamTypeClass@@
 // FUNCTION: 0x0050E8C0 ?$DynamicVectorClass@PBVTeamTypeClass@@::~?$DynamicVectorClass@PBVTeamTypeClass@@
 // FUNCTION: 0x0050E910 ?$VectorClass@PBVTeamTypeClass@@::operator==
@@ -5052,8 +5052,7 @@ template class VectorClass<BUILDING_DIST_OBJ>;
 // FUNCTION: 0x005102C0 ?$DynamicVectorClass@PAUBuildChoiceClass@HouseClass@@::~?$DynamicVectorClass@PAUBuildChoiceClass@HouseClass@@
 
 
-// FUNCTION: 0x00510310 ?$VectorClass@PAVAbstractClass@@::~?$VectorClass@PAVAbstractClass@@
-template class VectorClass<AbstractClass *>;
+// FUNCTION: 0x00510310 ?$VectorClass@PBVTeamTypeClass@@::~?$VectorClass@PBVTeamTypeClass@@
 // FUNCTION: 0x00510360 ?$VectorClass@_N::~?$VectorClass@_N
 // FUNCTION: 0x005103B0 ?$DynamicVectorClass@_N::~?$DynamicVectorClass@_N
 // FUNCTION: 0x00510400 ?$VectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@::~?$VectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@
@@ -5070,3 +5069,53 @@ template class VectorClass<IConnectionPoint *>;
 template class VectorClass<TagClass *>;
 // FUNCTION: 0x00510690 ?$VectorClass@PAUStartingTechnoStruct@@::?$VectorClass@PAUStartingTechnoStruct@@
 template class VectorClass<StartingTechnoStruct *>;
+// FUNCTION: 0x005106E0 ?$VectorClass@UAngerStruct@@::?$VectorClass@UAngerStruct@@
+template class VectorClass<AngerStruct>;
+// FUNCTION: 0x00510780 ?$VectorClass@UScoutStruct@@::?$VectorClass@UScoutStruct@@
+template class VectorClass<ScoutStruct>;
+// FUNCTION: 0x00510820 ?$DynamicVectorClass@PAVHouseClass@@::Delete_Index
+template class DynamicVectorClass<HouseClass *>;
+// FUNCTION: 0x00510860 BasePlanningCellContainer::AddCapacity
+bool BasePlanningCellContainer::AddCapacity(int additional)
+{
+	if (additional >= 0) {
+		int newcap = Capacity + additional;
+		BasePlanningCell * items = new BasePlanningCell[newcap];
+		if (items) {
+			int last = newcap - 1;
+			for (; last >= 0; last--) {
+			}
+			for (int i = 0; i < Count; i++) {
+				items[i] = Items[i];
+			}
+			delete Items;
+			Items = items;
+			Capacity += additional;
+			Unknown_10 = 0;
+			return true;
+		}
+	}
+	return false;
+}
+
+// FUNCTION: 0x005108F0 BasePlanningCellContainer::Comparator
+int __cdecl BasePlanningCellContainer::Comparator(const void * a, const void * b)
+{
+	int wa = ((BasePlanningCell const *)a)->Weight;
+	int wb = ((BasePlanningCell const *)b)->Weight;
+	if (wa == wb) {
+		return 0;
+	}
+	return (wa < wb) ? -1 : 1;
+}
+
+// FUNCTION: 0x00510920 ?$VectorClass@_N::?$VectorClass@_N
+template class VectorClass<bool>;
+// FUNCTION: 0x00510970 ?$VectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@::?$VectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@
+template class VectorClass<BUILDING_DIST_OBJ>;
+
+// FUNCTION: 0x00510A20 HouseClass::QueryInterface
+// FUNCTION: 0x00510A30 HouseClass::AddRef
+// FUNCTION: 0x00510A40 HouseClass::Release
+// FUNCTION: 0x00510A50 HouseClass::QueryInterface
+// FUNCTION: 0x00510A60 HouseClass::AddRef

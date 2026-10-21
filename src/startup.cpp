@@ -687,3 +687,19 @@ template class TClassFactory<TeamClass>;
 // FUNCTION: 0x006C2510 ?$TClassFactory@VTeamTypeClass@@::CreateInstance
 // FUNCTION: 0x006C2590 ?$TClassFactory@VTeamTypeClass@@::LockServer
 template class TClassFactory<TeamTypeClass>;
+
+// FUNCTION: 0x006C25C0 ?$TClassFactory@VTaskForceClass@@::?$TClassFactory@VTaskForceClass@@
+// FUNCTION: 0x006C25D0 ?$TClassFactory@VTaskForceClass@@::QueryInterface
+// FUNCTION: 0x006C2640 ?$TClassFactory@VTaskForceClass@@::AddRef
+// FUNCTION: 0x006C2660 ?$TClassFactory@VTaskForceClass@@::Release
+// FUNCTION: 0x006C2690 ?$TClassFactory@VTaskForceClass@@::CreateInstance
+// FUNCTION: 0x006C2710 ?$TClassFactory@VTaskForceClass@@::LockServer
+template class TClassFactory<TaskForceClass>;
+
+// FUNCTION: 0x006C2740 ?$TClassFactory@VUnitTypeClass@@::?$TClassFactory@VUnitTypeClass@@
+// FUNCTION: 0x006C2750 ?$TClassFactory@VUnitTypeClass@@::QueryInterface
+// FUNCTION: 0x006C27C0 ?$TClassFactory@VUnitTypeClass@@::AddRef
+// FUNCTION: 0x006C27E0 ?$TClassFactory@VUnitTypeClass@@::Release
+// FUNCTION: 0x006C2810 ?$TClassFactory@VUnitTypeClass@@::CreateInstance
+// FUNCTION: 0x006C2890 ?$TClassFactory@VUnitTypeClass@@::LockServer
+template class TClassFactory<UnitTypeClass>;

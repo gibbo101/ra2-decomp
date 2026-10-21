@@ -8,13 +8,37 @@
 
 #include <math.h>
 
+struct ShortPair {
+	unsigned short A, B;
+	ShortPair() { A = 0; B = 0; }
+};
+
+struct IntTriple {
+	int A, B, C;
+	IntTriple() { A = 0; B = 0; C = 0; }
+};
+
+struct IntTriple2 {
+	int A, B, C;
+	IntTriple2() { C = 0; A = 128; B = 128; }
+};
+
+struct IntQuad {
+	int A, B, C, D;
+	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
+};
+
 extern double __cdecl FUN_004CAC40(double);
 extern const double DAT_007E1708;
 extern const double DAT_007E1710;
 extern const double DAT_007E1718;
 extern const double DAT_007E1720;
 extern const double DAT_007E1728;
+extern double __cdecl FUN_004CAD50(double);
+extern double __cdecl FUN_004CADE0(double);
 extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
 extern const double DAT_007ED0B8;
 extern const double DAT_007ED0C0;
 
@@ -160,3 +184,27 @@ double DAT_00ABCB40 = DAT_007E1728 * DAT_007ED0C0;
 
 // FUNCTION: 0x00556840 $E17
 double DAT_00ABCB18 = DAT_007E1730 * DAT_007ED0C0;
+
+// FUNCTION: 0x00556860 $E20
+int DAT_00ABCBA8 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00ABCB18 - DAT_00ABCB40) * DAT_00ABCB38));
+
+// FUNCTION: 0x005568A0 $E23
+double DAT_00ABCB48 = FUN_004CADE0(DAT_00ABCBA8 * DAT_007E1740);
+
+// FUNCTION: 0x005568D0 $E26
+double DAT_00ABCB60 = FUN_004CADE0((DAT_00ABCBA8 * 2) / DAT_00ABCB38);
+
+// FUNCTION: 0x00556900 $E29
+int DAT_00ABCB9C = (int)(DAT_00ABCBA8 * 4 + DAT_007E1738);
+
+// FUNCTION: 0x00556930 $E32
+ShortPair DAT_00ABCB30;
+
+// FUNCTION: 0x00556940 $E35
+IntTriple DAT_00ABCB50;
+
+// FUNCTION: 0x00556960 $E38
+IntTriple2 DAT_00ABCB90;
+
+// FUNCTION: 0x00556980 $E41
+IntQuad DAT_00ABCB20;

@@ -398,4 +398,20 @@ void TEventClass::Set_Event_House(HouseClass * house)
 // FUNCTION: 0x0071FBD0 ?$DynamicVectorClass@PAVTEventClass@@::ID
 // FUNCTION: 0x0071FBF0 ?$VectorClass@PAVTEventClass@@::GetItem
 // FUNCTION: 0x0071FC00 ?$VectorClass@PAVTEventClass@@::operator==
+// FUNCTION: 0x0071FC40 ?$VectorClass@PAVTEventClass@@::Resize
+// FUNCTION: 0x0071FCF0 ?$VectorClass@PAVTEventClass@@::Clear
+// FUNCTION: 0x0071FD20 ?$VectorClass@PAVTEventClass@@::ID
+// FUNCTION: 0x0071FD60 ?$VectorClass@PAVTEventClass@@::ID
+// FUNCTION: 0x0071FD80 ?$DynamicVectorClass@PAVTEventClass@@::Resize
+// FUNCTION: 0x0071FE30 ?$DynamicVectorClass@PAVTEventClass@@::ID
+// FUNCTION: 0x0071FE60 ?$VectorClass@PAVTEventClass@@::~?$VectorClass@PAVTEventClass@@
+// FUNCTION: 0x0071FEB0 ?$DynamicVectorClass@PAVTEventClass@@::~?$DynamicVectorClass@PAVTEventClass@@
 template class DynamicVectorClass<TEventClass *>;
+
+struct IntQuad {
+	int A, B, C, D;
+	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
+};
+
+// FUNCTION: 0x0071FF00 $E43
+IntQuad DAT_00B0F1E8;

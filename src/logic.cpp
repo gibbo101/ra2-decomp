@@ -105,6 +105,70 @@ ShortPair DAT_00ABCCD8;
 // FUNCTION: 0x0055AF00 $E155
 IntTriple DAT_00ABCCF8;
 
+namespace Detail { extern unsigned MinFrameRate; extern unsigned BufferZoneWidth; unsigned GetMinFrameRate(void); }
+namespace FPSCounter { extern unsigned CurrentFrameRate; extern bool ReducedEffects; }
+extern int DAT_00ABCD28;
+extern int DAT_00ABCD20;
+extern int DAT_00ABCD24;
+
+// FUNCTION: 0x0055AF20
+void __cdecl FUN_0055AF20(void)
+{
+	DAT_00ABCD28 = 0;
+	DAT_00ABCD20 = 0x80;
+	DAT_00ABCD24 = 0x80;
+}
+
+// FUNCTION: 0x0055AF40
+void __fastcall FUN_0055AF40(int value)
+{
+	Detail::MinFrameRate = value;
+}
+
+// FUNCTION: 0x0055AF50
+void __fastcall FUN_0055AF50(int value)
+{
+	Detail::BufferZoneWidth = value;
+}
+
+// FUNCTION: 0x0055AF60
+unsigned Detail::GetMinFrameRate(void)
+{
+	if (FPSCounter::ReducedEffects) {
+		if (FPSCounter::CurrentFrameRate >= Detail::MinFrameRate + Detail::BufferZoneWidth) {
+			FPSCounter::ReducedEffects = false;
+			return Detail::MinFrameRate;
+		}
+		return Detail::MinFrameRate + Detail::BufferZoneWidth;
+	}
+	if (FPSCounter::CurrentFrameRate < Detail::MinFrameRate) {
+		FPSCounter::ReducedEffects = true;
+		return Detail::MinFrameRate + Detail::BufferZoneWidth;
+	}
+	return Detail::MinFrameRate;
+}
+
+// FUNCTION: 0x0055B720
+void LogicClass::Environment_AI(void)
+{
+	if (Rule->IsShroudGrow && Rule->ShroudRate != 0 && Scen->ShroudTimer == 0) {
+		Scen->ShroudTimer = TICKS_PER_MINUTE * Rule->ShroudRate;
+		Map.Encroach_Shadow();
+	}
+
+	if (Scen->Special.IsFogOfWar && Rule->FogRate != 0 && Scen->FogTimer == 0) {
+		Scen->FogTimer = TICKS_PER_MINUTE * Rule->FogRate;
+		Map.Encroach_Fog();
+	}
+
+	for (int index = 0; index < Count(); index++) {
+		FootClass *foot = (FootClass *)(*this)[index];
+		if (foot->Is_Foot() && foot->Locomotion != NULL && !foot->IsSinking) {
+			foot->Locomotion->Process();
+		}
+	}
+}
+
 // FUNCTION: 0x0055B880
 void LogicClass::Detach(AbstractClass const * target, bool all)
 {
@@ -115,5 +179,79 @@ void LogicClass::Detach(AbstractClass const * target, bool all)
 				index--;
 			}
 		}
+	}
+}
+
+// FUNCTION: 0x0055B8F0
+void FUN_0055B8F0(void)
+{
+	int index;
+	for (index = Anims.Count() - 1; index >= 0; index--) {
+		AnimClass * anim = Anims[index];
+		if (anim->IsSubmittedToLayer) anim->AI();
+	}
+	for (index = BuildingLights.Count() - 1; index >= 0; index--) {
+		BuildingLightClass * blight = BuildingLights[index];
+		if (blight->IsSubmittedToLayer) blight->AI();
+	}
+	for (index = Bullets.Count() - 1; index >= 0; index--) {
+		BulletClass * bullet = Bullets[index];
+		if (bullet->IsSubmittedToLayer) bullet->AI();
+	}
+	for (index = Buildings.Count() - 1; index >= 0; index--) {
+		BuildingClass * building = Buildings[index];
+		if (building->IsSubmittedToLayer) building->AI();
+	}
+	for (index = Aircraft.Count() - 1; index >= 0; index--) {
+		AircraftClass * aircraft = Aircraft[index];
+		if (aircraft->IsSubmittedToLayer) aircraft->AI();
+	}
+	for (index = Infantry.Count() - 1; index >= 0; index--) {
+		InfantryClass * infantry = Infantry[index];
+		if (infantry->IsSubmittedToLayer) infantry->AI();
+	}
+	for (index = Units.Count() - 1; index >= 0; index--) {
+		UnitClass * unit = Units[index];
+		if (unit->IsSubmittedToLayer) unit->AI();
+	}
+	for (index = ParticleSystems.Count() - 1; index >= 0; index--) {
+		ParticleSystemClass * partsys = ParticleSystems[index];
+		if (partsys->IsSubmittedToLayer) partsys->AI();
+	}
+	for (index = Terrains.Count() - 1; index >= 0; index--) {
+		TerrainClass * terrain = Terrains[index];
+		if (terrain->IsSubmittedToLayer) terrain->AI();
+	}
+	for (index = VoxelAnims.Count() - 1; index >= 0; index--) {
+		VoxelAnimClass * voxelanim = VoxelAnims[index];
+		if (voxelanim->IsSubmittedToLayer) voxelanim->AI();
+	}
+	for (index = Waves.Count() - 1; index >= 0; index--) {
+		WaveClass * wave = Waves[index];
+		if (wave->IsSubmittedToLayer) wave->AI();
+	}
+}
+
+// FUNCTION: 0x0055BAA0
+bool LogicClass::Submit(ObjectClass const * object, bool sort)
+{
+	if (object->IsSubmittedToLayer) {
+		return(true);
+	}
+
+	if (BASECLASS::Submit(object, sort)) {
+		((ObjectClass *)object)->IsSubmittedToLayer = true;
+		return(true);
+	}
+
+	return(false);
+}
+
+// FUNCTION: 0x0055BAE0
+void LogicClass::Remove(ObjectClass * object)
+{
+	if (object->IsSubmittedToLayer) {
+		Delete(object);
+		object->IsSubmittedToLayer = false;
 	}
 }

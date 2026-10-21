@@ -1161,6 +1161,18 @@ ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; 
 fixed them. Cost: about 5.6M tokens. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
 
+### Batches 84, 85 and 86 (21 October 2026)
+
+**314 of 329 functions** (117, 105, 92). Batch 85's merge found six more of
+IPXManagerClass's methods virtual in YR, bringing its vtable to all 25 of the exe's slots,
+and turned down a timer.h change the exe disproves (YR's BasicTimerClass has a destructor).
+Batch 84's merge moved one include in astar.cpp to keep Build_Final_Path in its heap-order
+band after real House members were declared. Reading vtable slots at landing relabelled
+0x0050E7E0 as TypeList<TeamTypeClass const *>'s destructor and 0x00510310 as
+VectorClass<TeamTypeClass const *>'s, retiring a VectorClass<AbstractClass *> stand-in.
+Cost: about 4.1M tokens. Merge gate: 13,079 of 13,079 (1,698.0 KB), about 67% of game
+functions.
+
 ### Batches 81, 82 and 83 (20 to 21 October 2026)
 
 **377 of 382 functions** (132, 126, 119): the long tail now leaves fewer than 12 untried

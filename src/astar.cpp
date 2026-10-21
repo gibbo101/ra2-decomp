@@ -4,7 +4,6 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
-#include "_map.h"
 #include "astar.h"
 #include "_astar.h"
 #include "cell.h"
@@ -21,6 +20,7 @@
 #include "unit.h"
 #include "unittype.h"
 #include "vector.h"
+#include "_map.h"
 #include "tube.hh"
 #define	END			FACING_NONE
 #define	EMPTY		(FacingType)-2

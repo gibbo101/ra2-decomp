@@ -14,6 +14,7 @@
 #include "hashtable.h"
 #include "isotype.h"
 #include "mixfile.h"
+#include "msanim.h"
 #include "overtype.h"
 #include "rawfile.h"
 #include "scenario.h"
@@ -164,3 +165,146 @@ void MouseClass::One_Time(void)
 	BASECLASS::One_Time();
 	MouseShapes = (ShapeSet const *)FileSystem_LoadWholeFileEx("MOUSE.SHA", MouseShapesLoaded);
 }
+
+// FUNCTION: 0x005BDF50
+void MouseClass::Init_Clear(void)
+{
+	BASECLASS::Init_Clear();
+	IsSmall = false;
+	NormalMouseShape = MOUSE_NORMAL;
+}
+
+// FUNCTION: 0x005BE6D0
+HRESULT MouseClass::Save(IStream * stream)
+{
+	int i;
+	int count;
+	HRESULT result = BASECLASS::Save(stream);
+	if (SUCCEEDED(result)) {
+		int theater = Scen->Theater;
+		result = stream->Write(&theater, sizeof(theater), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+
+		result = stream->Write(this, sizeof(*this), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+
+		result = stream->Write(CellZones, sizeof(*CellZones) * CellZoneCount, NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+
+		for (i = 0; i < MZONE_COUNT; i++) {
+			result = stream->Write(Zones[i], sizeof(unsigned short) * ZoneCount, NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+		}
+
+		int zcount = ZoneConnections.Count();
+		result = stream->Write(&zcount, sizeof(zcount), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+		for (i = 0; i < zcount; i++) {
+			ZoneConnectionClass zcon = ZoneConnections[i];
+			result = stream->Write(&zcon, sizeof(zcon), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+		}
+
+		count = 0;
+		Reset_Iterator();
+		CellClass *cptr = Iterate();
+		while (cptr != NULL) {
+			Cell cell = cptr->CellID;
+			if (Is_Valid(cell)) {
+				count++;
+			}
+			cptr = Iterate();
+		}
+		result = stream->Write(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+
+		Reset_Iterator();
+		cptr = Iterate();
+		while (cptr != NULL) {
+			Cell cell = cptr->CellID;
+			if (Is_Valid(cell)) {
+				OleSaveToStream(cptr, stream);
+				count--;
+			}
+			cptr = Iterate();
+		}
+		if (count != 0) {
+			return(result);
+		}
+
+		count = TaggedCells.Count();
+		result = stream->Write(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+		for (i = 0; i < count; i++) {
+			result = stream->Write(&TaggedCells[i], sizeof(TaggedCells[i]), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+		}
+
+		count = PendingBridgeCells.Count();
+		result = stream->Write(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+		for (i = 0; i < count; i++) {
+			result = stream->Write(&PendingBridgeCells[i], sizeof(PendingBridgeCells[0]), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+		}
+
+		result = S_OK;
+	}
+	return(result);
+}
+
+// FUNCTION: 0x005BE940
+void Free_Mouse_Shapes(void)
+{
+	if (MouseClass::MouseShapes) {
+		delete (SHPStruct *)MouseClass::MouseShapes;
+		MouseShapesLoaded = false;
+	}
+	MouseClass::MouseShapes = NULL;
+}
+
+// FUNCTION: 0x005BE970
+int MouseClass::Get_Mouse_Start_Frame(MouseType mouse) const
+{
+	return(MouseControl[mouse].StartFrame);
+}
+
+// FUNCTION: 0x005BE990
+int MouseClass::Get_Mouse_Frame_Count(MouseType mouse) const
+{
+	return(MouseControl[mouse].FrameCount);
+}
+
+// FUNCTION: 0x005BE9B0
+MouseClass::MouseClass(NoInitClass const & x) :
+	BASECLASS(x)
+{
+}
+
+// FUNCTION: 0x005BEA30 ?$DynamicVectorClass@VPoint2D@@::?$DynamicVectorClass@VPoint2D@@
+template class DynamicVectorClass<Point2D>;
+
+// FUNCTION: 0x005BEAB0 $E136
+Rect MouseRect(0, 0, 0, 0);

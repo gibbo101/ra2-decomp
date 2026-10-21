@@ -33,6 +33,7 @@
 #include "wwmouse.h"
 #include "mainopt.h"
 #include "conquer.h"
+#include "bsurface.h"
 #include <commctrl.h>
 #include <math.h>
 
@@ -617,4 +618,125 @@ int __fastcall OwnerDraw::ServiceIMEMessage(HWND hwnd, UINT message, WPARAM wPar
 			return(1);
 	}
 	return(0);
+}
+
+extern int DAT_007F5BE8;
+extern bool __fastcall FUN_0072E820(Surface * surface, Rect const & rect, int color);
+extern Rect __fastcall FUN_0072AD20(void);
+int __stdcall FUN_007C8A3A(void * context, int enable);
+
+namespace OwnerDraw {
+	int GetIMEResult(void);
+	wchar_t ConvertIMECharToWide(unsigned int wparam, long lparam);
+}
+
+// FUNCTION: 0x00778120
+int OwnerDraw::GetIMEResult(void)
+{
+	return(DAT_00B73570);
+}
+
+// FUNCTION: 0x00778130
+void FUN_00778130(void)
+{
+	if (Game::hIMC) {
+		FUN_007C8A3A(Game::hIMC, 0);
+	}
+}
+
+// FUNCTION: 0x00778150
+void FUN_00778150(void)
+{
+	if (Game::hIMC) {
+		FUN_007C8A3A(Game::hIMC, 1);
+	}
+}
+
+// FUNCTION: 0x00778170
+void FUN_00778170(void)
+{
+}
+
+// FUNCTION: 0x00778180
+void FUN_00778180(void)
+{
+	if (Game::hIMC) {
+		FUN_007C8A1C(Game::hWnd, Game::hIMC);
+	}
+}
+
+// FUNCTION: 0x007781A0
+void FUN_007781A0(void)
+{
+	FUN_007C8A1C(Game::hWnd, NULL);
+}
+
+// FUNCTION: 0x007781B0
+wchar_t OwnerDraw::ConvertIMECharToWide(unsigned int wparam, long lparam)
+{
+	char mb[4];
+	int wc;
+	if (wparam & 0xFF00) {
+		mb[0] = (char)(wparam >> 8);
+		mb[1] = (char)wparam;
+		mb[2] = 0;
+	} else {
+		mb[0] = (char)wparam;
+		mb[1] = 0;
+	}
+	int converted = MultiByteToWideChar(0, 0, mb, strlen(mb), (LPWSTR)&wc, 1);
+	return (converted == 1) ? wc : 0;
+}
+
+// FUNCTION: 0x00778210
+void __fastcall Load_Title_Screen(char const * name, Surface * surface, PaletteClass * palette)
+{
+	CCFileClass file(name);
+	Surface * load_buffer = Read_PCX_File(file, palette);
+
+	if (load_buffer) {
+		int surface_width = surface->Get_Width();
+		int surface_height = surface->Get_Height();
+		Rect screen(0, 0, surface_width, surface_height);
+		BSurface * black = new BSurface(surface_width, surface_height, 2);
+		FUN_0072E820(black, screen, 0);
+		surface->Blit_From(*black, false, true);
+		delete black;
+
+		int x = 0;
+		int y = 0;
+		int width = load_buffer->Get_Width();
+		int height = load_buffer->Get_Height();
+		Point2D origin;
+		if (surface->Get_Width() > DAT_007F5BE8) {
+			Rect area = FUN_0072AD20();
+			origin = Point2D(area.X, area.Y);
+			x = (area.Width - width) / 2;
+			y = (area.Height - height) / 2;
+		}
+		if (palette && load_buffer->Bytes_Per_Pixel() == 1) {
+			ConvertClass * drawer = new ConvertClass(*palette, *palette, *surface);
+			Blit_Block(*surface, *drawer, *load_buffer, load_buffer->Get_Rect(), Point2D(x, y), surface->Get_Rect());
+			delete drawer;
+		} else {
+			surface->Blit_From(surface->Get_Rect(), Rect(x, y, load_buffer->Get_Width(), load_buffer->Get_Height()), *load_buffer, load_buffer->Get_Rect(), load_buffer->Get_Rect());
+		}
+		delete load_buffer;
+	}
+}
+
+// FUNCTION: 0x007784A0 CCToolTip::~CCToolTip
+
+extern int DAT_00B73580;
+extern int DAT_00B73584;
+extern int DAT_00B73588;
+extern int DAT_00B7358C;
+
+// FUNCTION: 0x007784D0
+void FUN_007784D0(void)
+{
+	DAT_00B73580 = 0;
+	DAT_00B73584 = 0;
+	DAT_00B73588 = 0;
+	DAT_00B7358C = 0;
 }

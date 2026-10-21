@@ -553,6 +553,7 @@ class SessionClass
 		void FUN_0069B7E0(int color, bool random);
 		void Resume(void);
 		void FUN_0069BB40(void);
+		unsigned short FUN_0069BC20(int connection_id);
 
 		void Trap_Object(void);
 		bool Log_To_File(FILE *out);

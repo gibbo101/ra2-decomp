@@ -10,6 +10,7 @@ class MPObserverTeam : public MultiplayerTeam
 {
 	public:
 		MPObserverTeam(void);
+		virtual bool IsTeamIncluded(int index) override;
 };
 
 class MPSiegeDefenderTeam : public MultiplayerTeam
