@@ -537,6 +537,7 @@ class SessionClass
 		void Load_Call_Wait_Strings(void);
 
 		int Create_Connections(void);
+		void FUN_0069BBF0(int index);
 		bool Am_I_Master(HouseClass * who = NULL);
 		unsigned int Compute_Unique_ID(void);
 		void Update_Progress(int percent);

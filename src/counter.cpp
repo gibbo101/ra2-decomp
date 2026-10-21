@@ -7,6 +7,12 @@
 #include "counter.h"
 #include <comdef.h>
 
+// FUNCTION: 0x0049F9B0
+CounterClass::CounterClass(void)
+{
+	TotalCount = 0;
+}
+
 // FUNCTION: 0x0049FAE0
 int CounterClass::Value(int index) const
 {
@@ -14,6 +20,66 @@ int CounterClass::Value(int index) const
 		return(Vector[index]);
 	}
 	return(0);
+}
+
+// FUNCTION: 0x0049FB40
+void CounterClass::Clear(void)
+{
+	for (int i = 0; i < VectorMax; ++i) {
+		Vector[i] = int(0);
+	}
+	TotalCount = 0;
+}
+
+// FUNCTION: 0x0049FB60
+int CounterClass::Total(void) const
+{
+	return(TotalCount);
+}
+
+// FUNCTION: 0x0049FB70
+HRESULT CounterClass::Save(IStream * stream)
+{
+	HRESULT hr = stream->Write(&TotalCount, sizeof(TotalCount), NULL);
+	if (SUCCEEDED(hr)) {
+		int count = VectorMax;
+		hr = stream->Write(&count, sizeof(count), NULL);
+		if (SUCCEEDED(hr)) {
+			for (int index = 0; index < count; index++) {
+				hr = stream->Write(&Vector[index], sizeof(int), NULL);
+				if (FAILED(hr)) {
+					return(hr);
+				}
+			}
+			return(0);
+		}
+	}
+	return(hr);
+}
+
+// FUNCTION: 0x0049FBE0
+HRESULT CounterClass::Load(IStream * stream)
+{
+	new (this) CounterClass;
+
+	HRESULT result = stream->Read(&TotalCount, sizeof(TotalCount), NULL);
+	if (SUCCEEDED(result)) {
+		int count;
+		result = stream->Read(&count, sizeof(count), NULL);
+		if (SUCCEEDED(result)) {
+			if (!Resize(count)) {
+				return(8);
+			}
+			for (int index = 0; index < count; index++) {
+				result = stream->Read(&Vector[index], sizeof(int), NULL);
+				if (FAILED(result)) {
+					return(result);
+				}
+			}
+			return(S_OK);
+		}
+	}
+	return(result);
 }
 
 // FUNCTION: 0x0049FC80
@@ -31,4 +97,20 @@ bool CounterClass::Reserve(int index)
 		return(true);
 	}
 	return(false);
+}
+
+// FUNCTION: 0x0049FCE0 CounterClass::~CounterClass
+
+int DAT_0089F768;
+int DAT_0089F76C;
+int DAT_0089F770;
+int DAT_0089F774;
+
+// FUNCTION: 0x0049FD30
+void FUN_0049FD30(void)
+{
+	DAT_0089F768 = 0;
+	DAT_0089F76C = 0;
+	DAT_0089F770 = 0;
+	DAT_0089F774 = 0;
 }

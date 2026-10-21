@@ -310,3 +310,20 @@ template class DynamicVectorClass<LightSourceClass *>;
 // FUNCTION: 0x00555640 ?$VectorClass@PAVPendingCellClass@LightSourceClass@@::ID
 // FUNCTION: 0x00555680 ?$VectorClass@PAVPendingCellClass@LightSourceClass@@::ID
 template class VectorClass<LightSourceClass::PendingCellClass *>;
+
+// FUNCTION: 0x005556A0 ?$DynamicVectorClass@PAVPendingCellClass@LightSourceClass@@::Resize
+// FUNCTION: 0x00555750 ?$DynamicVectorClass@PAVPendingCellClass@LightSourceClass@@::ID
+template class DynamicVectorClass<LightSourceClass::PendingCellClass *>;
+
+// FUNCTION: 0x00555780 ?$DynamicVectorClass@PAVLightSourceClass@@::~?$DynamicVectorClass@PAVLightSourceClass@@
+// FUNCTION: 0x005557D0 ?$VectorClass@PAVLightSourceClass@@::~?$VectorClass@PAVLightSourceClass@@
+// FUNCTION: 0x00555820 ?$DynamicVectorClass@PAVPendingCellClass@LightSourceClass@@::~?$DynamicVectorClass@PAVPendingCellClass@LightSourceClass@@
+// FUNCTION: 0x00555870 ?$VectorClass@PAVPendingCellClass@LightSourceClass@@::~?$VectorClass@PAVPendingCellClass@LightSourceClass@@
+
+struct IntQuad {
+	int A, B, C, D;
+	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
+};
+
+// FUNCTION: 0x005558C0 $E134
+IntQuad DAT_00ABCA88;

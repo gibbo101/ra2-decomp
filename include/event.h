@@ -5,6 +5,7 @@
 #pragma once
 
 #include "coord.h"
+#include "ipxaddr.h"
 #include "special.h"
 #include "target.h"
 
@@ -153,6 +154,10 @@ class EventClass
 				int			ID;
 				xCell			Where;
 			} Special;
+			struct {
+				signed char	Value;
+				unsigned int	Node;
+			} Address;
 
 			struct {
 				unsigned int CRC;
@@ -191,6 +196,10 @@ class EventClass
 
 		EventClass(int index, unsigned char type, RTTIType object, int id, BOOL naval);
 		EventClass(int index, unsigned char type, RTTIType object, Cell const & cell);
+		EventClass(int index, unsigned char type, RTTIType object, int id, Cell const & cell);
+		EventClass(int index, unsigned char type, RTTIType object, int id, BOOL naval, Cell const & cell);
+		EventClass(int index, unsigned char type, RTTIType object, int id);
+		EventClass(int index, IPXAddressClass & addr, signed char value);
 		EventClass(int index, unsigned char type, int id, Cell const & cell);
 		EventClass(int index, AnimType anim, HousesType owner, Coord const & coord);
 		EventClass(int index, unsigned char type, void *ptr, unsigned int size);

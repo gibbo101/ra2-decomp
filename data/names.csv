@@ -166,3 +166,4 @@ address,name,symbol,evidence
 0x00887300,SidebarSurface,,TibSun SidebarSurface (_surface.h); YRpp DSurface::Sidebar; read by 0x0069DEB0
 0x008469E0,VoxelNormalTables,,five table pointers {0, 0x846A08, 0x846AC8, 0x846C78, 0x846F78}: TibSun voxlib NULL plus VoxelNormals1..4
 0x008469F4,VoxelNormalTableEntryCount,,{0, 16, 36, 64, 245}: entries per normal table, matching the 12-byte table spacing
+0x00A8E9C0,Ipx,,TibSun globals.h IPXManagerClass Ipx; YRpp IPXManagerClass::Instance; beacon Send_Global_Message reads it

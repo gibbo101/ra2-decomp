@@ -737,3 +737,26 @@ template class _com_ptr_t<_com_IIID<IPersistStream, &__uuidof(IPersistStream)> >
 template class CDTimerClass<FrameTimerClass>;
 
 // FUNCTION: 0x004B4D90 DriveLocomotionClass::QueryInterface
+
+// FUNCTION: 0x004B4DA0 DriveLocomotionClass::AddRef
+
+// FUNCTION: 0x004B4DB0 DriveLocomotionClass::Release
+
+// FUNCTION: 0x004B4DC0 DriveLocomotionClass::QueryInterface
+
+// FUNCTION: 0x004B4DD0 DriveLocomotionClass::AddRef
+
+// FUNCTION: 0x004B4DE0 DriveLocomotionClass::Release
+
+struct ZeroQuad {
+	int A;
+	int B;
+	int C;
+	int D;
+
+	ZeroQuad() : A(0), B(0), C(0), D(0) {}
+};
+
+ZeroQuad DriveZeroQuad;
+
+// FUNCTION: 0x004B4DF0 $E106

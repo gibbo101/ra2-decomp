@@ -581,6 +581,7 @@ SideClass::SideClass(char const * ininame) :
 }
 
 // FUNCTION: 0x006A4610
+// FUNCTION: 0x006A4930
 SideClass::~SideClass(void)
 {
 	Detach_This_From_All(this);
@@ -598,3 +599,48 @@ SideType SideClass::From_Name(char const * name)
 
 	return(SIDE_NONE);
 }
+
+// FUNCTION: 0x006A4710
+void SideClass::Compute_CRC(CRCEngine & crc) const
+{
+	BASECLASS::Compute_CRC(crc);
+	crc(Houses.Count());
+}
+
+// FUNCTION: 0x006A4740
+HRESULT STDMETHODCALLTYPE SideClass::GetClassID(CLSID * retval)
+{
+	if (retval == NULL) return(E_POINTER);
+	*retval = CLSID_SideClass;
+	return(S_OK);
+}
+
+// FUNCTION: 0x006A4780
+HRESULT STDMETHODCALLTYPE SideClass::Load(IStream * stream)
+{
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		new (this) SideClass(NoInitClass());
+
+		Houses.Load(stream);
+
+		result = S_OK;
+	}
+	return(result);
+}
+
+// FUNCTION: 0x006A48A0
+HRESULT STDMETHODCALLTYPE SideClass::Save(IStream * stream, BOOL cleardirty)
+{
+	HRESULT result = BASECLASS::Save(stream, cleardirty);
+	if (SUCCEEDED(result)) {
+		Houses.Save(stream);
+
+		result = S_OK;
+	}
+	return(result);
+}
+
+// FUNCTION: 0x006A4910 SideClass::Fetch_Object_Size
+
+// FUNCTION: 0x006A4920 SideClass::Fetch_RTTI

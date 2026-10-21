@@ -5119,3 +5119,12 @@ template class VectorClass<BUILDING_DIST_OBJ>;
 // FUNCTION: 0x00510A40 HouseClass::Release
 // FUNCTION: 0x00510A50 HouseClass::QueryInterface
 // FUNCTION: 0x00510A60 HouseClass::AddRef
+// FUNCTION: 0x00510A70 HouseClass::Release
+// FUNCTION: 0x00510A80 HouseClass::QueryInterface
+// FUNCTION: 0x00510A90 HouseClass::AddRef
+// FUNCTION: 0x00510AA0 HouseClass::Release
+// FUNCTION: 0x00510AB0 HouseClass::ID_Number
+// FUNCTION: 0x00510AC0 HouseClass::Name
+// FUNCTION: 0x00510AD0 HouseClass::QueryInterface
+// FUNCTION: 0x00510AE0 HouseClass::AddRef
+// FUNCTION: 0x00510AF0 HouseClass::Release

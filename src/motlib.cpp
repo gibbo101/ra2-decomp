@@ -298,7 +298,7 @@ void FUN_005BC530(void)
 	rect.left = 0;
 	rect.top = 0;
 	rect.right = DAT_00ABF1C8.tmMaxCharWidth * 79 + 20;
-	rect.bottom = (DAT_00ABF1C8.tmExternalLeading + DAT_00ABF1C8.tmHeight) * 25 + 20;
+	rect.bottom = (DAT_00ABF1C8.tmHeight + DAT_00ABF1C8.tmExternalLeading) * 25 + 20;
 	AdjustWindowRect(&rect, WS_CAPTION, FALSE);
 	RECT parent;
 	GetWindowRect(DAT_00ABF234, &parent);

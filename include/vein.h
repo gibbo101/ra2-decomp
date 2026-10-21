@@ -62,6 +62,7 @@ class VeinholeMonsterClass : public ObjectClass
 		static void Remove_Dead(void);
 		static bool Load_All(IStream * stream);
 		static bool Save_All(IStream * stream);
+		static TerrainTypeClass const * __fastcall GetTerrainType(void);
 		void Reduce_Veins_At(CellClass * cellptr);
 
 		virtual RTTIType Fetch_RTTI(void) const override {return(RTTI_VEINHOLEMONSTER);}

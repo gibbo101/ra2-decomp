@@ -248,3 +248,17 @@ template class DynamicVectorClass<AlphaShapeClass *>;
 // FUNCTION: 0x00421980 ?$VectorClass@PAVAlphaShapeClass@@::ID
 
 // FUNCTION: 0x004219C0 ?$VectorClass@PAVAlphaShapeClass@@::ID
+
+// FUNCTION: 0x004219E0 ?$DynamicVectorClass@PAVAlphaShapeClass@@::Resize
+
+// FUNCTION: 0x00421A90 ?$DynamicVectorClass@PAVAlphaShapeClass@@::ID
+
+// FUNCTION: 0x00421AC0 ?$DynamicVectorClass@PAVAlphaShapeClass@@::~?$DynamicVectorClass@PAVAlphaShapeClass@@
+
+// FUNCTION: 0x00421B10 ?$VectorClass@PAVAlphaShapeClass@@::~?$VectorClass@PAVAlphaShapeClass@@
+
+// FUNCTION: 0x00421B60 Intersect
+template Rect const Intersect<int>(Rect const &, Rect const &, int *, int *);
+
+// FUNCTION: 0x00421C90 $E60
+Rect DAT_0089A140(0, 0, 0, 0);

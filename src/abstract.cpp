@@ -234,3 +234,19 @@ Coord AbstractClass::As_Coord(void) const
 void AbstractClass::AI(void)
 {
 }
+
+// FUNCTION: 0x00410580
+bool AbstractClass::INoticeSink_Unknown(DWORD unknown, DWORD unknown2)
+{
+	return(false);
+}
+
+// FUNCTION: 0x00410590
+void STDMETHODCALLTYPE AbstractClass::INoticeSource_Unknown(void)
+{
+}
+
+// FUNCTION: 0x004105A0 AbstractClass::~AbstractClass
+// FUNCTION: 0x004105E0 AbstractClass::QueryInterface
+// FUNCTION: 0x004105F0 AbstractClass::AddRef
+// FUNCTION: 0x00410600 AbstractClass::Release

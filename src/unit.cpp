@@ -728,6 +728,7 @@ inline void Coord_Pixel(Coord coord, Point2D & pixel)
 	TacticalMap->Coord_To_Pixel(coord, pixel);
 }
 
+extern BulletClass * __fastcall FUN_0046B050(BulletTypeClass const * type, AbstractClass * target, TechnoClass * payback, int strength, WarheadTypeClass const * warhead, int max_speed, bool bright);
 // FUNCTION: 0x0073CEC0
 void UnitClass::Draw_It(Point2D const & point, Rect const & cliprect) const
 {
@@ -1775,7 +1776,6 @@ bool UnitClass::AStarAttempt(Cell const * from, Cell const * to)
 	return(true);
 }
 
-extern BulletClass * __fastcall FUN_0046B050(BulletTypeClass const * type, AbstractClass * target, TechnoClass * payback, int strength, WarheadTypeClass const * warhead, int max_speed, bool bright);
 
 // FUNCTION: 0x00746100
 bool UnitClass::INoticeSink_Unknown(DWORD unknown, DWORD unknown2)

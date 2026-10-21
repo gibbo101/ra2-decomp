@@ -60,6 +60,8 @@ original compiler turns into that function's exact bytes. MATCH means
    (`// FUNCTION: 0x0063E540 ?$DynamicVectorClass@H::Add`) and `template class X<T>;`
    to force emission; an operator is named as written (`?$TPoint2D@H::operator==`); VC6 ignores `template bool X<int>::f(...)`.
 4. `uv run tools/check.py build/spike/<ADDR>/<module>.cpp <ADDR> --overlay build/spike/<ADDR>/include`
+   An overlay header reaches only direct includes: one included from another include/
+   header resolves in include/ first, so test a nested header by editing it in place.
 5. Read the diff, change the source, repeat.
 
 Stop at MATCH, or after 30 checks without the score rising, or after 45 minutes (for a

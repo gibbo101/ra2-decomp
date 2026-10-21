@@ -236,9 +236,9 @@ inline TypeList<int> CCINIClass::Get_VocType_List(CCINIClass const & ini, const 
 		TypeList<int> list;
 		char * token = strtok(buffer, ",");
 		while (token != NULL && *token != '\0') {
-			VocClass * voc = VocClass_From_Name(token);
+			VocEntry * voc = FUN_00751520(token);
 			if (voc != NULL) {
-				list.Add(voc->Voc_Type());
+				list.Add(FUN_007515C0(voc));
 			}
 			token = strtok(NULL, ",");
 		}

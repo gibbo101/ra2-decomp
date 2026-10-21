@@ -169,6 +169,9 @@ InfantryType InfantryTypeClass::From_Name(char const * name)
 	return(INFANTRY_NONE);
 }
 
+struct Z4 { int a, b, c, d; Z4(void) : a(0), b(0), c(0), d(0) {} };
+static Z4 Unused_Zero;
+
 char const * SequenceName[DOINFO_COUNT] = {
 	"Ready", "Guard", "Prone", "Walk", "FireUp", "Down", "Crawl", "Up", "FireProne",
 	"Idle1", "Idle2", "Die1", "Die2", "Die3", "Die4", "Die5", "Tread", "Swim",
@@ -397,3 +400,16 @@ template class TypeList<AnimTypeClass *>;
 // FUNCTION: 0x00525250 ?$DynamicVectorClass@PAVAnimTypeClass@@::?$DynamicVectorClass@PAVAnimTypeClass@@
 
 // FUNCTION: 0x005252B0 ?$TypeList@PAVAnimTypeClass@@::~?$TypeList@PAVAnimTypeClass@@
+
+// FUNCTION: 0x00525300 ?$DynamicVectorClass@PBVAnimTypeClass@@::Resize
+// FUNCTION: 0x005253B0 ?$DynamicVectorClass@PBVAnimTypeClass@@::Add
+// FUNCTION: 0x00525400 ?$DynamicVectorClass@PBVAnimTypeClass@@::ID
+template class DynamicVectorClass<AnimTypeClass const *>;
+
+// FUNCTION: 0x005255F0 ?$TypeList@PBVAnimTypeClass@@::?$TypeList@PBVAnimTypeClass@@
+template class TypeList<AnimTypeClass const *>;
+
+// FUNCTION: 0x00525680 ?$VectorClass@PBVAnimTypeClass@@::?$VectorClass@PBVAnimTypeClass@@
+template class VectorClass<AnimTypeClass const *>;
+
+// FUNCTION: 0x005256D0 $E74

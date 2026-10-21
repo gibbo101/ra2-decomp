@@ -931,3 +931,30 @@ double DAT_00ABF400 = DAT_007E1730 * DAT_007EE270;
 
 // FUNCTION: 0x005C11C0 $E129
 int DAT_00ABF498 = (int)(DAT_007E1738 * (fastmath::tan(DAT_00ABF400 - DAT_00ABF428) * DAT_00ABF420));
+
+extern double DAT_00ABF430;
+extern double DAT_00ABF448;
+extern int DAT_00ABF48C;
+
+// FUNCTION: 0x005C1200 $E132
+double DAT_00ABF430 = fastmath::atan(DAT_00ABF498 * DAT_007E1740);
+
+// FUNCTION: 0x005C1230 $E135
+double DAT_00ABF448 = fastmath::atan((DAT_00ABF498 * 2) / DAT_00ABF420);
+
+// FUNCTION: 0x005C1260 $E138
+int DAT_00ABF48C = (int)((DAT_00ABF498 * 4) + DAT_007E1738);
+
+// FUNCTION: 0x005C1290 $E141
+DatShorts DAT_00ABF418(0, 0);
+
+// FUNCTION: 0x005C12A0 $E144
+DatInts DAT_00ABF438(0, 0, 0);
+
+// FUNCTION: 0x005C12C0 $E147
+DatInts3 DAT_00ABF480(0x80, 0x80, 0);
+
+struct DatInts4 { int A; int B; int C; int D; DatInts4(int a, int b, int c, int d) : A(a), B(b), C(c), D(d) {} };
+
+// FUNCTION: 0x005C12E0 $E150
+DatInts4 DAT_00ABF408(0, 0, 0, 0);

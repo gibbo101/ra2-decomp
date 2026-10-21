@@ -1126,3 +1126,41 @@ int DAT_0089DE70 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_0089DDD8 - DAT_0089DE0
 
 // FUNCTION: 0x004661E0 $E273
 double DAT_0089DE08 = FUN_004CADE0(DAT_0089DE70 * DAT_007E1740);
+
+// FUNCTION: 0x00466210 $E276
+double DAT_0089DE40 = FUN_004CADE0((DAT_0089DE70 * 2) / DAT_0089DDF8);
+
+// FUNCTION: 0x00466240 $E279
+int DAT_0089DE64 = (int)(DAT_0089DE70 * 4 + DAT_007E1738);
+
+struct ShortPair {
+	unsigned short A, B;
+	ShortPair() { A = 0; B = 0; }
+};
+
+struct IntTriple {
+	int A, B, C;
+	IntTriple() { A = 0; B = 0; C = 0; }
+};
+
+struct IntTriple2 {
+	int A, B, C;
+	IntTriple2() { C = 0; A = 128; B = 128; }
+};
+
+struct IntQuad {
+	int A, B, C, D;
+	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
+};
+
+// FUNCTION: 0x00466270 $E282
+ShortPair DAT_0089DDF0;
+
+// FUNCTION: 0x00466280 $E285
+IntTriple DAT_0089DE30;
+
+// FUNCTION: 0x004662A0 $E288
+IntTriple2 DAT_0089DE58;
+
+// FUNCTION: 0x004662C0 $E291
+IntQuad DAT_0089DDE0;

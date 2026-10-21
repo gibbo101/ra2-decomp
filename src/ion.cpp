@@ -78,9 +78,9 @@ class LightningStorm
 {
 	public:
 		static Cell Coords;
-		static DynamicVectorClass<CellClass *> CloudsManifesting;
-		static DynamicVectorClass<CellClass *> CloudsPresent;
-		static DynamicVectorClass<CellClass *> BoltsPresent;
+		static DynamicVectorClass<AnimClass const *> CloudsManifesting;
+		static DynamicVectorClass<AnimClass const *> CloudsPresent;
+		static DynamicVectorClass<AnimClass const *> BoltsPresent;
 		static bool Active;
 		static int StartTime;
 		static int Duration;
@@ -108,10 +108,10 @@ class NukeFlash
 
 Cell LightningStorm::Coords = DAT_00A9F9F8;
 Cell PsyDom::Coords = DAT_00A9F9F8;
-DynamicVectorClass<CellClass *> LightningStorm::CloudsManifesting;
+DynamicVectorClass<AnimClass const *> LightningStorm::CloudsManifesting;
 
-DynamicVectorClass<CellClass *> LightningStorm::CloudsPresent;
-DynamicVectorClass<CellClass *> LightningStorm::BoltsPresent;
+DynamicVectorClass<AnimClass const *> LightningStorm::CloudsPresent;
+DynamicVectorClass<AnimClass const *> LightningStorm::BoltsPresent;
 
 // FUNCTION: 0x00539560 $E117
 // FUNCTION: 0x00539570 $E120
@@ -155,7 +155,7 @@ void FUN_00539760(void)
 HRESULT __fastcall FUN_00539890(IStream * stream)
 {
 	int count;
-	CellClass * item;
+	AnimClass const * item;
 	HRESULT hr = stream->Write(&LightningStorm::Active, sizeof(LightningStorm::Active), NULL);
 	if (FAILED(hr)) return(hr);
 
@@ -231,7 +231,7 @@ HRESULT __fastcall FUN_00539890(IStream * stream)
 HRESULT __fastcall FUN_00539AE0(IStream * stream)
 {
 	int count;
-	CellClass * item;
+	AnimClass const * item;
 	HRESULT hr = stream->Read(&LightningStorm::Active, sizeof(LightningStorm::Active), NULL);
 	if (FAILED(hr)) return(hr);
 
@@ -431,8 +431,8 @@ void __fastcall FUN_0053A140(Cell cell)
 	if (coord != DAT_00A9FA30) {
 		AnimTypeClass const * type = Rule->WeatherConClouds.Pick(Scen->RandomNumber);
 		AnimClass * anim = new AnimClass(type, coord, 0, 1, ShapeFlags_Type(0x600), 0, false);
-		LightningStorm::CloudsManifesting.Add((CellClass *)anim);
-		LightningStorm::CloudsPresent.Add((CellClass *)anim);
+		LightningStorm::CloudsManifesting.Add(anim);
+		LightningStorm::CloudsPresent.Add(anim);
 	}
 }
 
@@ -459,7 +459,7 @@ void FUN_0053A6C0(void)
 
 	if (LightningStorm::BoltsPresent.Count() > 0) {
 		for (i = LightningStorm::BoltsPresent.Count() - 1; i >= 0; i--) {
-			AnimClass * anim = (AnimClass *)LightningStorm::BoltsPresent[i];
+			AnimClass const * anim = LightningStorm::BoltsPresent[i];
 			if (anim->Animation.Fetch_Stage() >= ((short const *)anim->Class_Of()->Get_Image_Data())[3] / 2) {
 				LightningStorm::BoltsPresent.Delete_Index(i);
 			}
@@ -467,7 +467,7 @@ void FUN_0053A6C0(void)
 	}
 
 	for (i = LightningStorm::CloudsManifesting.Count() - 1; i >= 0; i--) {
-		AnimClass * anim = (AnimClass *)LightningStorm::CloudsManifesting[i];
+		AnimClass const * anim = LightningStorm::CloudsManifesting[i];
 		if (anim->Animation.Fetch_Stage() > ((short const *)anim->Class_Of()->Get_Image_Data())[3] / 2) {
 			FUN_0053A300(anim->Center_Coord());
 			LightningStorm::CloudsManifesting.Delete_Index(i);
@@ -476,7 +476,7 @@ void FUN_0053A6C0(void)
 
 	if (LightningStorm::CloudsPresent.Count() > 0) {
 		for (i = LightningStorm::CloudsPresent.Count() - 1; i >= 0; i--) {
-			AnimClass * anim = (AnimClass *)LightningStorm::CloudsPresent[i];
+			AnimClass const * anim = LightningStorm::CloudsPresent[i];
 			if (anim->Animation.Fetch_Stage() >= ((short const *)anim->Class_Of()->Get_Image_Data())[3] - 1) {
 				LightningStorm::CloudsPresent.Delete_Index(i);
 			}
@@ -506,7 +506,7 @@ void FUN_0053A6C0(void)
 				target.Y += Scen->RandomNumber(lo, spread);
 				blocked = false;
 				for (i = 0; i < LightningStorm::CloudsPresent.Count(); i++) {
-					Cell cc = ((AnimClass *)LightningStorm::CloudsPresent[i])->Center_Coord().As_Cell();
+					Cell cc = LightningStorm::CloudsPresent[i]->Center_Coord().As_Cell();
 					int dx = target.X - cc.X;
 					if (dx < 0) dx = -dx;
 					int dy = target.Y - cc.Y;
@@ -950,11 +950,9 @@ bool TechnoClass::CanBePermaMindControlled(void) const
 	return true;
 }
 
-// FUNCTION: 0x0053C4C0 ?$DynamicVectorClass@PAVCellClass@@::Clear
-// FUNCTION: 0x0053C4F0 ?$DynamicVectorClass@PAVCellClass@@::ID
-// FUNCTION: 0x0053C510 ?$VectorClass@PAVCellClass@@::GetItem
-template class DynamicVectorClass<CellClass *>;
-
+// FUNCTION: 0x0053C4C0 ?$DynamicVectorClass@PBVAnimClass@@::Clear
+// FUNCTION: 0x0053C4F0 ?$DynamicVectorClass@PBVAnimClass@@::ID
+// FUNCTION: 0x0053C510 ?$VectorClass@PBVAnimClass@@::GetItem
 // FUNCTION: 0x0053C520 ?$VectorClass@PBVAnimClass@@::operator==
 // FUNCTION: 0x0053C560 ?$VectorClass@PBVAnimClass@@::Resize
 // FUNCTION: 0x0053C610 ?$VectorClass@PBVAnimClass@@::Clear
@@ -962,8 +960,8 @@ template class DynamicVectorClass<CellClass *>;
 // FUNCTION: 0x0053C680 ?$VectorClass@PBVAnimClass@@::ID
 // FUNCTION: 0x0053C6A0 ?$DynamicVectorClass@PBVAnimClass@@::Resize
 // FUNCTION: 0x0053C750 ?$DynamicVectorClass@PBVAnimClass@@::ID
-// FUNCTION: 0x0053C780 ?$DynamicVectorClass@PBVAnimClass@@::~?$DynamicVectorClass@PBVAnimClass@@
-// FUNCTION: 0x0053C7D0 ?$VectorClass@PBVAnimClass@@::~?$VectorClass@PBVAnimClass@@
+// FUNCTION: 0x0053C780 ?$VectorClass@PBVAnimClass@@::~?$VectorClass@PBVAnimClass@@
+// FUNCTION: 0x0053C7D0 ?$DynamicVectorClass@PBVAnimClass@@::~?$DynamicVectorClass@PBVAnimClass@@
 template class DynamicVectorClass<AnimClass const *>;
 template class VectorClass<AnimClass const *>;
 

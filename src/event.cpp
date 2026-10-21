@@ -198,3 +198,102 @@ EventClass::EventClass(int index, unsigned char type, RTTIType object, Cell cons
 		Frame = ::Frame;
 	}
 }
+
+// FUNCTION: 0x004C6A60
+EventClass::EventClass(int index, unsigned char type, RTTIType object, int id, Cell const & cell)
+{
+	DebugString("Adding event %s\n", EventNames[type]);
+	if (index >= 0) {
+		ID = index;
+		Type = type;
+		Data.Place.Type = object;
+		Data.Place.ID = id;
+		Data.Place.IsNaval = 0;
+		Data.Place.Where = cell;
+		Frame = ::Frame;
+	} else {
+		ID = -1;
+		Type = EMPTY;
+		Frame = ::Frame;
+	}
+}
+
+// FUNCTION: 0x004C6AE0
+EventClass::EventClass(int index, unsigned char type, RTTIType object, int id, BOOL naval, Cell const & cell)
+{
+	DebugString("Adding event %s\n", EventNames[type]);
+	if (index >= 0) {
+		ID = index;
+		Type = type;
+		Data.Place.Type = object;
+		Data.Place.ID = id;
+		Data.Place.IsNaval = naval;
+		Data.Place.Where = cell;
+		Frame = ::Frame;
+	} else {
+		ID = -1;
+		Type = EMPTY;
+		Frame = ::Frame;
+	}
+}
+
+// FUNCTION: 0x004C6B60
+EventClass::EventClass(int index, unsigned char type, int id, Cell const & cell)
+{
+	DebugString("Adding event %s\n", EventNames[type]);
+	if (index >= 0) {
+		ID = index;
+		Type = type;
+		Data.Special.ID = id;
+		Data.Special.Where = cell;
+		Frame = ::Frame;
+	} else {
+		ID = -1;
+		Type = EMPTY;
+		Frame = ::Frame;
+	}
+}
+
+// FUNCTION: 0x004C6BE0
+EventClass::EventClass(int index, unsigned char type, RTTIType object, int id)
+{
+	DebugString("Adding event %s\n", EventNames[type]);
+	if (index >= 0) {
+		ID = index;
+		Type = type;
+		Data.Specific.Type = object;
+		Data.Specific.ID = id;
+		Frame = ::Frame;
+	} else {
+		ID = -1;
+		Type = EMPTY;
+		Frame = ::Frame;
+	}
+}
+
+// FUNCTION: 0x004C6C50
+EventClass::EventClass(int index, IPXAddressClass & addr, signed char value)
+{
+	NetNumType net;
+	NetNodeType node;
+
+	if (index >= 0) {
+		ID = index;
+		Type = ADDRESS_CHANGE;
+		addr.Get_Address(net, node);
+		Data.Address.Node = *(unsigned int *)node;
+		Data.Address.Value = value;
+		Frame = ::Frame;
+	} else {
+		ID = -1;
+		Type = EMPTY;
+		Frame = ::Frame;
+	}
+}
+
+// FUNCTION: 0x004C81D0 $E4
+struct ZeroQuad {
+	int A, B, C, D;
+	ZeroQuad(void) : A(0), B(0), C(0), D(0) {}
+};
+ZeroQuad DAT_008B3A08;

@@ -545,3 +545,17 @@ int RAMFileClass::Write(void const * buffer, int size)
 
 	return(tocopy);
 }
+
+// FUNCTION: 0x0065C540 RAMFileClass::Close
+
+// FUNCTION: 0x0065C550 RAMFileClass::File_Name
+
+// FUNCTION: 0x0065C560 RAMFileClass::Set_Name
+
+// FUNCTION: 0x0065C570 RAMFileClass::Get_Date_Time
+
+// FUNCTION: 0x0065C580 RAMFileClass::Set_Date_Time
+
+// FUNCTION: 0x0065C590 RAMFileClass::Error
+
+// FUNCTION: 0x0065C5A0 RAMFileClass::~RAMFileClass

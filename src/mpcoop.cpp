@@ -1772,3 +1772,11 @@ template class DynamicVectorClass<CoopCamp_0049B610 *>;
 // FUNCTION: 0x005C5850 ?$VectorClass@PAUCoopPlayerStats@@::~?$VectorClass@PAUCoopPlayerStats@@
 // FUNCTION: 0x005C58A0 ?$VectorClass@PAUNodeNameType@@::~?$VectorClass@PAUNodeNameType@@
 template class VectorClass<NodeNameType *>;
+// FUNCTION: 0x005C58F0 ?$DynamicVectorClass@PAUNodeNameType@@::~?$DynamicVectorClass@PAUNodeNameType@@
+// FUNCTION: 0x005C5940 ?$DynamicVectorClass@PAVCoopCamp_0049B610@@::~?$DynamicVectorClass@PAVCoopCamp_0049B610@@
+// FUNCTION: 0x005C5990 ?$VectorClass@PAVCoopCamp_0049B610@@::~?$VectorClass@PAVCoopCamp_0049B610@@
+// FUNCTION: 0x005C59E0 ?$VectorClass@PAUCoopPlayerStats@@::?$VectorClass@PAUCoopPlayerStats@@
+// FUNCTION: 0x005C5A30 ?$VectorClass@PAUNodeNameType@@::?$VectorClass@PAUNodeNameType@@
+// FUNCTION: 0x005C5A80 ?$VectorClass@PAVCoopCamp_0049B610@@::?$VectorClass@PAVCoopCamp_0049B610@@
+
+// FUNCTION: 0x005C5AD0 $E10

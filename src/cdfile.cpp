@@ -309,3 +309,50 @@ int DAT_0089E7C0 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_0089E728 - DAT_0089E75
 
 // FUNCTION: 0x0047B260 $E27
 double DAT_0089E768 = FUN_004CADE0(DAT_0089E7C0 * DAT_007E1740);
+
+// FUNCTION: 0x0047B290 $E30
+double DAT_0089E788 = FUN_004CADE0((DAT_0089E7C0 * 2) / DAT_0089E750);
+
+// FUNCTION: 0x0047B2C0 $E33
+int DAT_0089E7B4 = (int)((DAT_0089E7C0 * 4) + DAT_007E1738);
+
+struct CdZero2S {
+	short A;
+	short B;
+	CdZero2S(void) : A(0), B(0) {}
+};
+
+struct CdZero3 {
+	int A;
+	int B;
+	int C;
+	CdZero3(void) : A(0), B(0), C(0) {}
+};
+
+struct CdInit128 {
+	int Unused;
+	int B;
+	int C;
+	int A;
+	CdInit128(void) : A(0), B(128), C(128) {}
+};
+
+struct CdZero4 {
+	int A;
+	int B;
+	int C;
+	int D;
+	CdZero4(void) : A(0), B(0), C(0), D(0) {}
+};
+
+// FUNCTION: 0x0047B2F0 $E36
+CdZero2S DAT_0089E748;
+
+// FUNCTION: 0x0047B300 $E39
+CdZero3 DAT_0089E778;
+
+// FUNCTION: 0x0047B320 $E42
+CdInit128 DAT_0089E7A4;
+
+// FUNCTION: 0x0047B340 $E45
+CdZero4 DAT_0089E730;

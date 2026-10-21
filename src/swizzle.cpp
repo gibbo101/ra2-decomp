@@ -170,10 +170,16 @@ HRESULT STDMETHODCALLTYPE SwizzleManagerClass::Fetch_Swizzle_ID(void *pointer, L
 // FUNCTION: 0x006CF4F0 ?$DynamicVectorClass@VSwizzlePointerClass@@::Clear
 // FUNCTION: 0x006CF520 ?$DynamicVectorClass@VSwizzlePointerClass@@::ID
 // FUNCTION: 0x006CF540 ?$VectorClass@VSwizzlePointerClass@@::GetItem
+// FUNCTION: 0x006CF720 ?$DynamicVectorClass@VSwizzlePointerClass@@::Resize
+// FUNCTION: 0x006CF820 ?$DynamicVectorClass@VSwizzlePointerClass@@::ID
+// FUNCTION: 0x006CF8A0 ?$DynamicVectorClass@VSwizzlePointerClass@@::~?$DynamicVectorClass@VSwizzlePointerClass@@
 template class DynamicVectorClass<SwizzlePointerClass>;
 
 // FUNCTION: 0x006CF560 ?$VectorClass@VSwizzlePointerClass@@::operator==
 // FUNCTION: 0x006CF5A0 ?$VectorClass@VSwizzlePointerClass@@::Resize
 // FUNCTION: 0x006CF690 ?$VectorClass@VSwizzlePointerClass@@::Clear
 // FUNCTION: 0x006CF6C0 ?$VectorClass@VSwizzlePointerClass@@::ID
+// FUNCTION: 0x006CF700 ?$VectorClass@VSwizzlePointerClass@@::ID
+// FUNCTION: 0x006CF850 ?$VectorClass@VSwizzlePointerClass@@::~?$VectorClass@VSwizzlePointerClass@@
+// FUNCTION: 0x006CF8F0 ?$VectorClass@VSwizzlePointerClass@@::?$VectorClass@VSwizzlePointerClass@@
 template class VectorClass<SwizzlePointerClass>;

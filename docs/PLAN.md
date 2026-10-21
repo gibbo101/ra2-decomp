@@ -1161,6 +1161,19 @@ ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; 
 fixed them. Cost: about 5.6M tokens. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
 
+### Batches 87, 88 and 89 (21 October 2026)
+
+**252 of 261 functions** (98, 82, 72), plus CounterClass's out-of-line constructor
+(0x0049F9B0): a batch had made it inline, which inlined it into HouseClass's constructor
+where the exe calls it; its destructor stays inline, as the exe has only the deleting one.
+An agent alongside the round retyped Ion's LightningStorm vectors to the
+DynamicVectorClass<AnimClass const *> the exe's RTTI names. Real declarations added to
+event.h and session.h flipped UnitClass::Draw_It again; moving unit.cpp's one later
+declaration before it holds it under both header states. Overlays reach only directly
+included headers, which had hidden that cause. One function, vein 0x0074EF10, waits on a
+ruling: it matches only with Westwood's `volatile int div_zero` idiom as a local. Cost:
+about 4.0M tokens. Merge gate: 13,332 of 13,332 (1,720.7 KB), about 68% of game functions.
+
 ### Batches 84, 85 and 86 (21 October 2026)
 
 **314 of 329 functions** (117, 105, 92). Batch 85's merge found six more of

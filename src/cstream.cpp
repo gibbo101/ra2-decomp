@@ -214,6 +214,86 @@ HRESULT CStreamClass::Read(void *pv, ULONG cb, ULONG *pcbRead)
 	return(S_OK);
 }
 
+// FUNCTION: 0x004A2CD0
+HRESULT CStreamClass::Write(const void *pv, ULONG cb, ULONG *pcbWritten)
+{
+	unsigned char *ptr;
+	int write_size;
+	int left;
+	int result;
+	int temp_size;
+
+	ptr = (unsigned char *)pv;
+	left = cb;
+
+	if (pv == NULL) {
+		return(E_POINTER);
+	}
+
+	if ((int)cb < 0) {
+		return(E_INVALIDARG);
+	}
+
+	if (StreamPtr == NULL) {
+		return(E_FAIL);
+	}
+
+	if (IsReading) {
+		return(E_FAIL);
+	}
+
+	IsWriting = true;
+
+	if (cb != 0) {
+		if (pcbWritten != NULL) {
+			*pcbWritten = 0;
+		}
+
+		int offset = CurOffset;
+		if (offset > 0) {
+			write_size = cb;
+			if (write_size >= BUFFER_SIZE - offset) {
+				write_size = BUFFER_SIZE - offset;
+			}
+
+			memmove((unsigned char *)DataBuffer + CurOffset, ptr, write_size);
+			temp_size = write_size + CurOffset;
+
+			ptr += write_size;
+			left -= write_size;
+			CurOffset = temp_size;
+
+			if (CurOffset == BUFFER_SIZE) {
+				result = Compress(DataBuffer, CurOffset);
+				if (result < 0) {
+					return(result);
+				}
+				CurOffset = 0;
+			}
+
+		}
+		while (left >= BUFFER_SIZE) {
+			result = Compress(ptr, BUFFER_SIZE);
+			if (result < 0) {
+				return(result);
+			}
+			left -= BUFFER_SIZE;
+			ptr += BUFFER_SIZE;
+		}
+
+		if (left > 0) {
+			memmove((unsigned char *)DataBuffer, ptr, left);
+			CurOffset = left;
+		}
+
+		if (pcbWritten) {
+			*pcbWritten = cb;
+		}
+	}
+
+	return(S_OK);
+}
+
 // FUNCTION: 0x004A2E00
 HRESULT CStreamClass::Seek(LARGE_INTEGER dlibMove, DWORD dwOrigin, ULARGE_INTEGER *plibNewPosition)
 {
@@ -315,3 +395,21 @@ HRESULT CStreamClass::Compress(void)
 	}
 	return(S_OK);
 }
+
+// FUNCTION: 0x004A3110 CStreamClass::~CStreamClass
+
+// FUNCTION: 0x004A31F0 ?$_com_ptr_t@V?$_com_IIID@UIStream@@$1?_GUID_0000000c_0000_0000_c000_000000000046@@3U__s_GUID@@A@@::operator==
+
+// FUNCTION: 0x004A3220 CStreamClass::QueryInterface
+
+// FUNCTION: 0x004A3230 CStreamClass::AddRef
+
+// FUNCTION: 0x004A3240 CStreamClass::Release
+
+struct IntQuad {
+	int A, B, C, D;
+	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
+};
+
+// FUNCTION: 0x004A3250 $E2
+IntQuad DAT_0089F960;

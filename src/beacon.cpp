@@ -380,3 +380,189 @@ BeaconClass * BeaconManagerClass::FindSelected(int house)
 	}
 	return 0;
 }
+
+#include "ipxmgr.h"
+#include "revent.h"
+extern Surface * DAT_00880A04;
+char * __fastcall FUN_007350C0(wchar_t const * text);
+wchar_t * __fastcall FUN_00735120(char const * text);
+extern char DAT_00889F64[];
+extern IPXManagerClass Ipx;
+
+#pragma pack(push, 1)
+struct BeaconPacket {
+	int Command;
+	char Name[55];
+	unsigned char ID;
+	unsigned char House;
+	char Rest[456 - 0x3d];
+};
+#pragma pack(pop)
+
+// FUNCTION: 0x004311C0
+void BeaconManagerClass::DeleteBeacon(int house, int id)
+{
+	if (!AllocatedCount) {
+		goto end;
+	}
+	bool selected;
+	BeaconClass * beacon;
+	BeaconPacket packet;
+	int beaconhouse;
+	int k;
+	selected = house == -1 && id == -1;
+	if (selected) {
+		beacon = FindSelected(-1);
+	} else {
+		beacon = Beacons[house][id];
+	}
+	if (!beacon) {
+		return;
+	}
+	beaconhouse = beacon->HouseID;
+	if (beaconhouse != PlayerPtr->HeapID && selected) {
+		beacon->IsActive = 0;
+		beacon->IsFlashing = 0;
+		return;
+	}
+	if (beacon->IsActive && PlayerPtr->Is_Ally((HousesType)beaconhouse) && Houses[beacon->HouseID]->Is_Ally(PlayerPtr) && !Houses[beacon->HouseID]->IsDefeated) {
+		beacon->DrawRadar(DAT_00880A04, DAT_00880A04->Get_Rect(), true);
+	}
+	delete beacon;
+	for (k = 0; k < 3; k++) {
+		if (beacon == Beacons[beaconhouse][k]) {
+			Beacons[beaconhouse][k] = 0;
+			AllocatedCount--;
+			if (Session.Type == GAME_NORMAL || Session.Type == GAME_SKIRMISH) {
+				goto end;
+			}
+			if (beaconhouse == PlayerPtr->HeapID && selected) {
+				packet.Command = 0x21;
+				strcpy(packet.Name, FUN_007350C0(Session.Players[0]->Name));
+				packet.House = (unsigned char)beaconhouse;
+				packet.ID = (unsigned char)k;
+				for (int p = 1; p < Session.Players.Count(); p++) {
+					FUN_004068E0("Sending beacon delete to %s\n", Session.Players[p]);
+					Ipx.Send_Global_Message(&packet, 0x3d, 1, &Session.Players[p]->Address, 0, 0);
+				}
+			}
+			goto end;
+		}
+	}
+end:
+	return;
+}
+
+// FUNCTION: 0x00431410
+void BeaconManagerClass::DeleteAllBeacons(int house)
+{
+	if (AllocatedCount) {
+		for (int i = 0; i < 3; i++) {
+			if (Beacons[house][i]) {
+				DeleteBeacon(house, i);
+			}
+		}
+	}
+}
+
+#pragma pack(push, 1)
+struct BeaconTextPacket {
+	int Command;
+	char Name[43];
+	unsigned char ID;
+	char House;
+	wchar_t Text[128];
+	char Rest[456 - 0x131];
+};
+#pragma pack(pop)
+
+// FUNCTION: 0x00431450
+void BeaconManagerClass::EditBeaconMessage(wchar_t * message, int house, int id, bool broadcast)
+{
+	bool selected = house == -1 && id == -1;
+	BeaconClass * beacon;
+	BeaconTextPacket packet;
+	if (selected) {
+		beacon = FindSelected(-1);
+	} else {
+		beacon = Beacons[house][id];
+	}
+	if (!beacon) {
+		return;
+	}
+	beacon->SetText(message);
+	if (Session.Type == GAME_NORMAL || Session.Type == GAME_SKIRMISH) {
+		return;
+	}
+	if (selected && beacon->HouseID == PlayerPtr->HeapID && broadcast) {
+		packet.Command = 0x22;
+		strcpy(packet.Name, FUN_007350C0(Session.Players[0]->Name));
+		if (message) {
+			wcsncpy(packet.Text, message, 128);
+		} else {
+			wcscpy(packet.Text, FUN_00735120(DAT_00889F64));
+		}
+		packet.House = (char)PlayerPtr->HeapID;
+		packet.ID = 0xff;
+		for (int j = 0; j < 3; j++) {
+			if (Beacons[packet.House][j] == beacon) {
+				packet.ID = j;
+			}
+		}
+		if (packet.ID == 0xff) {
+			return;
+		}
+		for (int p = 1; p < Session.Players.Count(); p++) {
+			FUN_004068E0("Sending beacon text to %s\n", Session.Players[p]);
+			Ipx.Send_Global_Message(&packet, 0x1c7, 1, &Session.Players[p]->Address, 0, 0);
+		}
+	} else if (beacon->HouseID != PlayerPtr->HeapID) {
+		if (beacon->VisibleToPlayer()) {
+			Coord coord = beacon->BeaconCoord;
+			RadarEventClass::Create((RadarEventType)0xb, coord.As_Cell());
+		}
+	}
+}
+
+// FUNCTION: 0x00431700
+void BeaconManagerClass::DrawRadar(Surface * surface, Rect bounds)
+{
+	if (AllocatedCount) {
+		if (Unsorted::CurrentFrame % RadarBeaconAnimPeriod < BeaconManager.RadarBeaconFrameCount + 1) {
+			for (int i = 0; i < 8; i++) {
+				for (int j = 0; j < 3; j++) {
+					BeaconClass * beacon = Beacons[i][j];
+					if (beacon && beacon->VisibleToPlayer()) {
+						beacon->DrawRadar(surface, bounds, false);
+					}
+				}
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x00431800
+bool BeaconManagerClass::RadarBeaconPulsing(void)
+{
+	if (AllocatedCount) {
+		bool any = false;
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 3; j++) {
+				BeaconClass * beacon = Beacons[i][j];
+				if (beacon && beacon->VisibleToPlayer()) {
+					any = true;
+					break;
+				}
+			}
+		}
+		if (any) {
+			if (Unsorted::CurrentFrame % RadarBeaconAnimPeriod < BeaconManager.RadarBeaconFrameCount + 1) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+// FUNCTION: 0x004318D0 $E154
+Rect DAT_0089C480(0, 0, 0, 0);

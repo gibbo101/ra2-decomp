@@ -1822,3 +1822,22 @@ ObjectClass * DisplayClass::Object_To_Follow(void) const
 	}
 	return(NULL);
 }
+
+// FUNCTION: 0x004AEB30
+void DisplayClass::Set_To_Follow(ObjectClass * object)
+{
+	FollowingObjectPtr = object;
+	FollowingObject = object != NULL ? true : false;
+}
+
+// FUNCTION: 0x004AEB50 LayerClass::~LayerClass
+
+// FUNCTION: 0x004AEBA0 GadgetClass::Get_ID
+
+// FUNCTION: 0x004AEBB0 DisplayClass::TacticalClass::~TacticalClass
+
+// FUNCTION: 0x004AEBD0 GScreenClass::Draw_It
+
+// FUNCTION: 0x004AEBE0 MapClass::Is_Scrolling
+
+// FUNCTION: 0x004AEBF0 DisplayClass::~DisplayClass

@@ -25,6 +25,8 @@ int Sound_Effect(VocType voc, float volume=1, int=0);
 int Voice_Sound_Effect(VocType voc, float volume=1);
 int Sound_Effect(VocType voc, Coord const & coord);
 VocClass * VocClass_From_Name(char const * name);
+VocEntry * __fastcall FUN_00751520(char const * name);
+int __fastcall FUN_007515C0(VocEntry * entry);
 char const * Voc_Name(VocType voc);
 
 enum ContextType {

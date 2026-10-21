@@ -450,3 +450,32 @@ double DAT_00B0E798 = DAT_007E1730 * DAT_007F4548;
 
 // FUNCTION: 0x006E59A0 $E128
 int DAT_00B0E810 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B0E798 - DAT_00B0E7C0) * DAT_00B0E7B8));
+
+extern double __cdecl FUN_004CADE0(double);
+extern const double DAT_007E1740;
+
+// FUNCTION: 0x006E59E0 $E131
+double DAT_00B0E7C8 = FUN_004CADE0(DAT_00B0E810 * DAT_007E1740);
+
+// FUNCTION: 0x006E5A10 $E134
+double DAT_00B0E7E0 = FUN_004CADE0((DAT_00B0E810 * 2) / DAT_00B0E7B8);
+
+// FUNCTION: 0x006E5A40 $E137
+int DAT_00B0E804 = (int)(DAT_00B0E810 * 4 + DAT_007E1738);
+
+struct TagZero2S { short a, b; TagZero2S() : a(0), b(0) {} };
+struct TagZero3I { int a, b, c; TagZero3I() : a(0), b(0), c(0) {} };
+struct TagInit128 { int a, b, c; TagInit128() { c = 0; a = 128; b = 128; } };
+struct TagZero4I { int a, b, c, d; TagZero4I() : a(0), b(0), c(0), d(0) {} };
+
+// FUNCTION: 0x006E5A70 $E140
+TagZero2S DAT_00B0E7B0;
+
+// FUNCTION: 0x006E5A80 $E143
+TagZero3I DAT_00B0E7D0;
+
+// FUNCTION: 0x006E5AA0 $E146
+TagInit128 DAT_00B0E7F8;
+
+// FUNCTION: 0x006E5AC0 $E149
+TagZero4I DAT_00B0E7A0;

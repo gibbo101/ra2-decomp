@@ -703,3 +703,19 @@ template class TClassFactory<TaskForceClass>;
 // FUNCTION: 0x006C2810 ?$TClassFactory@VUnitTypeClass@@::CreateInstance
 // FUNCTION: 0x006C2890 ?$TClassFactory@VUnitTypeClass@@::LockServer
 template class TClassFactory<UnitTypeClass>;
+
+// FUNCTION: 0x006C28C0 ?$TClassFactory@VBuildingTypeClass@@::?$TClassFactory@VBuildingTypeClass@@
+// FUNCTION: 0x006C28D0 ?$TClassFactory@VBuildingTypeClass@@::QueryInterface
+// FUNCTION: 0x006C2940 ?$TClassFactory@VBuildingTypeClass@@::AddRef
+// FUNCTION: 0x006C2960 ?$TClassFactory@VBuildingTypeClass@@::Release
+// FUNCTION: 0x006C2990 ?$TClassFactory@VBuildingTypeClass@@::CreateInstance
+// FUNCTION: 0x006C2A10 ?$TClassFactory@VBuildingTypeClass@@::LockServer
+template class TClassFactory<BuildingTypeClass>;
+
+// FUNCTION: 0x006C2A40 ?$TClassFactory@VAircraftTypeClass@@::?$TClassFactory@VAircraftTypeClass@@
+// FUNCTION: 0x006C2A50 ?$TClassFactory@VAircraftTypeClass@@::QueryInterface
+// FUNCTION: 0x006C2AC0 ?$TClassFactory@VAircraftTypeClass@@::AddRef
+// FUNCTION: 0x006C2AE0 ?$TClassFactory@VAircraftTypeClass@@::Release
+// FUNCTION: 0x006C2B10 ?$TClassFactory@VAircraftTypeClass@@::CreateInstance
+// FUNCTION: 0x006C2B90 ?$TClassFactory@VAircraftTypeClass@@::LockServer
+template class TClassFactory<AircraftTypeClass>;

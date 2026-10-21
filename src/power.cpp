@@ -90,13 +90,24 @@ PowerGlobalA DAT_00AC4E58;
 #include "scenario.h"
 #include "shapeset.h"
 #include "surface.h"
+#include "tooltip.h"
+#include <stddef.h>
+#include <wchar.h>
+#include <windows.h>
+#undef LoadString
+#include "stringtable.h"
 
 extern int DAT_00B0B504;
 extern bool DAT_00AC4E78;
 extern bool DAT_00884B8D;
 extern bool DAT_00B0B518;
+extern int DAT_00886F90;
 extern int DAT_00886F94;
 extern DSurface * DAT_00887300;
+struct CCToolTip {
+	static ToolTipManager * Instance;
+};
+
 void * __fastcall FileSystem_LoadWholeFileEx(char const * name, bool & loaded);
 
 struct FileSystem {
@@ -205,3 +216,133 @@ int PowerClass::Max_Power_Height(void)
 {
 	return((DAT_00B0B504 + 3) / 3);
 }
+
+// FUNCTION: 0x0063FDC0
+void PowerClass::Remove_Pip(void)
+{
+	int green;
+	int red;
+	int yellow;
+
+	Desired_Levels(green, yellow, red);
+
+	if (GreenPipCount > green) {
+		GreenPipCount--;
+	} else if (RedPipCount > red) {
+		RedPipCount--;
+	} else if (YellowPipCount > yellow) {
+		YellowPipCount--;
+	}
+}
+
+// FUNCTION: 0x0063FE30
+void PowerClass::Add_Pip(void)
+{
+	int green;
+	int red;
+	int yellow;
+
+	Desired_Levels(green, yellow, red);
+
+	if (RedPipCount < red) {
+		RedPipCount++;
+	} else if (GreenPipCount < green) {
+		GreenPipCount++;
+	} else if (YellowPipCount < yellow) {
+		YellowPipCount++;
+	}
+}
+
+// FUNCTION: 0x0063FEA0
+void PowerClass::AI(KeyNumType & input, Point2D const & xy)
+{
+	if (Map.IsSidebarActive) {
+
+		if (!HasChanged && FlashCount > 0) {
+			if (FlashTimer == 0) {
+				IsToRedraw = true;
+				FlashCount--;
+				Map.SidebarClass::IsToRedraw = true;
+				Map.Flag_To_Redraw();
+				FlashTimer = POWER_FLASH_RATE;
+			}
+		}
+
+		if (PlayerPtr->Power_Drain() != RecordedDrain || PlayerPtr->Power_Output() != RecordedPower || HasChanged) {
+
+			IsToRedraw = true;
+			Map.SidebarClass::IsToRedraw = true;
+			Map.Flag_To_Redraw();
+
+			if (PlayerPtr->Power_Drain() != RecordedDrain || PlayerPtr->Power_Output() != RecordedPower) {
+				HasChanged = true;
+				Flash_Power();
+			}
+
+			RecordedDrain = PlayerPtr->Power_Drain();
+			RecordedPower = PlayerPtr->Power_Output();
+
+			int green, yellow, red;
+			Desired_Levels(green, yellow, red);
+
+			if (UpdateTimer == 0) {
+				HasChanged = false;
+
+				if (RedPipCount != red) {
+					HasChanged = true;
+
+					if (RedPipCount > red) {
+						RedPipCount--;
+						Add_Pip();
+					} else {
+						RedPipCount++;
+						Remove_Pip();
+					}
+				} else if (GreenPipCount != green) {
+					HasChanged = true;
+
+					if (GreenPipCount > green) {
+						GreenPipCount--;
+						Add_Pip();
+					} else {
+						GreenPipCount++;
+						Remove_Pip();
+					}
+				} else if (YellowPipCount != yellow) {
+					HasChanged = true;
+
+					if (YellowPipCount > yellow) {
+						YellowPipCount--;
+						Add_Pip();
+					} else {
+						YellowPipCount++;
+						Remove_Pip();
+					}
+				}
+
+				if (HasChanged) {
+					UpdateTimer = Update_Delay();
+				}
+			}
+		}
+	}
+
+	BASECLASS::AI(input, xy);
+}
+
+// FUNCTION: 0x00640450
+char const * PowerClass::Help_Text(int id)
+{
+	static wchar_t _str[128];
+
+	if (id == GADGET_POWER) {
+		swprintf(_str, StringTable::LoadString("TXT_POWER_DRAIN", NULL, "D:\\ra2mdpost\\Power.CPP", 670), PlayerPtr->Power, PlayerPtr->Drain);
+		return((char const *)_str);
+	}
+
+	return(BASECLASS::Help_Text(id));
+}
+
+// FUNCTION: 0x006404B0 PowerClass::~PowerClass
+
+// FUNCTION: 0x006404D0 $E41

@@ -47,6 +47,8 @@ class WWMouseClass : public Mouse {
 		void Raw_Draw_Mouse(DSurface * surface, int xoffset, int yoffset);
 		void Low_Show_Mouse(void);
 		void Low_Hide_Mouse(void);
+		void Get_Bounded_Position(int & x, int & y) const;
+		void Update_Mouse_Position(int x, int y, bool forced);
 		void FUN_007BA090(void);
 
 		SHPStruct * Image;

@@ -42,6 +42,11 @@ class BeaconManagerClass
 		void LoadArt(void);
 		void Draw(Surface * surface, Rect bounds);
 		void PlaceBeacon(int house, Coord coord, int id = -1);
+		void DeleteBeacon(int house, int id);
+		void DeleteAllBeacons(int house);
+		void EditBeaconMessage(wchar_t * message, int house, int id, bool broadcast);
+		void DrawRadar(Surface * surface, Rect bounds);
+		bool RadarBeaconPulsing(void);
 		bool CanPlaceBeacon(int house);
 		bool SelectBeacon(int x, int y, int z);
 		void ClearSelection(void);

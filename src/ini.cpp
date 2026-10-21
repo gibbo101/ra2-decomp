@@ -870,6 +870,28 @@ INIClass::INISection::~INISection(void)
 
 // FUNCTION: 0x0052B570 ?$IndexClass@HPAUINIEntry@INIClass@@::Increase_Table_Size
 
+// FUNCTION: 0x0052B600 ?$IndexClass@HPAUINISection@INIClass@@::Is_Archive_Same
+
+// FUNCTION: 0x0052B620 ?$IndexClass@HPAUINISection@INIClass@@::Search_For_Node
+
+// FUNCTION: 0x0052B6A0 ?$IndexClass@HPAUINIEntry@INIClass@@::search_compfunc
+
+// FUNCTION: 0x0052B6D0 Binary_Search
+template IndexClass<int, INIClass::INIEntry *>::NodeElement * Binary_Search(IndexClass<int, INIClass::INIEntry *>::NodeElement *, int, IndexClass<int, INIClass::INIEntry *>::NodeElement const &);
+
+// FUNCTION: 0x0052B720 ?$IndexClass@HPAUINISection@INIClass@@::search_compfunc
+
+// FUNCTION: 0x0052B750 Binary_Search@@YIPAUNodeElement@?$IndexClass@HPAUINISection@INIClass@@
+template IndexClass<int, INIClass::INISection *>::NodeElement * Binary_Search(IndexClass<int, INIClass::INISection *>::NodeElement *, int, IndexClass<int, INIClass::INISection *>::NodeElement const &);
+
+struct IniZeroQuad {
+	int A, B, C, D;
+	IniZeroQuad() { A = 0; B = 0; C = 0; D = 0; }
+};
+
+// FUNCTION: 0x0052B7A0 $E10
+IniZeroQuad DAT_00A8F2E8;
+
 template class List<INIClass::INIEntry *>;
 template class IndexClass<int, INIClass::INIEntry *>;
 template class IndexClass<int, INIClass::INISection *>;

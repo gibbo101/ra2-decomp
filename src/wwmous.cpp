@@ -475,3 +475,90 @@ void WWMouseClass::Conditional_Hide_Mouse(Rect region)
 {
 	Hide_Mouse();
 }
+
+extern bool AllowNegativeY;
+extern bool DAT_00B78170;
+int __fastcall FUN_0053E720(void);
+
+// FUNCTION: 0x007B9D80 WWMouseClass::Conditional_Show_Mouse
+void WWMouseClass::Conditional_Show_Mouse(void)
+{
+	Show_Mouse();
+}
+
+// FUNCTION: 0x007B9D90
+void WWMouseClass::Convert_Coordinate(int & x, int & y) const
+{
+	x -= Rect0.X;
+	y -= Rect0.Y;
+	if (x < 0) x = 0;
+	if (y < 0 && !AllowNegativeY) y = 0;
+	if (x >= Rect0.Width) x = Rect0.Width - 1;
+	if (y >= Rect0.Height) y = Rect0.Height - 1;
+}
+
+// FUNCTION: 0x007B9DF0
+void WWMouseClass::Get_Bounded_Position(int & x, int & y) const
+{
+	POINT pt;
+	GetCursorPos(&pt);
+	x = pt.x;
+	y = pt.y;
+	Convert_Coordinate(x, y);
+}
+
+// FUNCTION: 0x007B9E30
+void WWMouseClass::Update_Mouse_Position(int x, int y, bool forced)
+{
+	Block_Mouse();
+	if (x != MouseX || y != MouseY || forced) {
+		if (Is_Captured() && !Is_Hidden() && GameInFocus) {
+			Low_Hide_Mouse();
+		}
+		MouseX = x;
+		MouseY = y;
+		if (Is_Captured() && !Is_Hidden() && GameInFocus) {
+			Low_Show_Mouse();
+		}
+	}
+	Unblock_Mouse();
+}
+
+// FUNCTION: 0x007BA090
+void WWMouseClass::FUN_007BA090(void)
+{
+	if (Surface != 0) {
+		Block_Mouse();
+		int x;
+		int y;
+		if (FUN_0053E720()) {
+			x = field_1C;
+			y = field_20;
+		} else {
+			Get_Bounded_Position(x, y);
+			field_1C = x;
+			field_20 = y;
+		}
+		if (!Surface->entry_64() && !DAT_00B78170) {
+			MouseX = x;
+			MouseY = y;
+			DAT_00B78170 = true;
+		} else {
+			Update_Mouse_Position(x, y, DAT_00B78170);
+			DAT_00B78170 = false;
+		}
+		Unblock_Mouse();
+	}
+}
+
+// FUNCTION: 0x007BA2C0
+void __cdecl FUN_007BA2C0(void)
+{
+	Block_Mouse();
+}
+
+// FUNCTION: 0x007BA2F0
+void __cdecl FUN_007BA2F0(void)
+{
+	Unblock_Mouse();
+}

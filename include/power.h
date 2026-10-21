@@ -46,7 +46,7 @@ class PowerClass : public RadarClass
 
 	private:
 		static int Max_Power_Height(void);
-		static int Desired_Power_Height(void);
+		int Desired_Power_Height(void);
 		int Desired_Levels(int & green, int & yellow, int & red);
 		int Update_Delay(void);
 		void Remove_Pip(void);

@@ -9,6 +9,8 @@
 
 #include "side.hh"
 
+EXTERN_C const CLSID CLSID_SideClass;
+
 class SideClass : public AbstractTypeClass
 {
 		typedef AbstractTypeClass BASECLASS;

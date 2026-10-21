@@ -117,9 +117,14 @@ ArrayList<User> DAT_00B77900;
 ArrayList<int> DAT_00B76520;
 
 struct LadderA {
-	char Pad[0x1C];
+	char Pad[8];
+	int Field08;
+	int Field0C;
+	int Field10;
+	char Pad2[8];
 	int Rung;
-	char Data[0x6C - 0x20];
+	int Field20;
+	char Data[0x6C - 0x24];
 };
 
 struct LadderB {
@@ -214,9 +219,7 @@ Wstring DAT_00B76E24;
 // FUNCTION: 0x0077CB00
 Dictionary<Wstring, int> DAT_00B76990 HASH_ARG;
 
-struct LadderC {
-	char Data[0x10C];
-};
+typedef WolChannel LadderC;
 
 // FUNCTION: 0x0077CC30
 // FUNCTION: 0x0077CCD0
@@ -1370,13 +1373,16 @@ struct NetUtilSink {
 	virtual unsigned long __stdcall V02(void);
 	virtual void V03(void);
 	virtual void V04(void);
-	virtual void V05(void);
+	virtual long __stdcall V05(char const * a, int b, char const * c, unsigned long d, int e, int f, int g);
 	virtual void V06(void);
 	virtual void V07(void);
 	virtual long __stdcall V08(unsigned long address, int * ping);
 	virtual void V09(void);
 	virtual void V10(void);
 	virtual long __stdcall V11(char const * host, int port, int mode);
+	virtual void V12(void);
+	virtual void V13(void);
+	virtual long __stdcall V14(char const * a, int b, char const * c, unsigned long d);
 };
 extern NetUtilSink * DAT_00AC1170;
 extern IUnknown * DAT_00AC1174;
@@ -5172,6 +5178,248 @@ void __fastcall FUN_00798F50(HWND combo)
 			}
 		}
 	}
+}
+
+extern char DAT_0084A210;
+extern char DAT_00B761A8[];
+extern int DAT_00B77A90;
+void FUN_0072C9C0(void);
+void FUN_0072CA10(void);
+BOOL CALLBACK FUN_00799080(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+
+// FUNCTION: 0x00799CD0
+void FUN_00799CD0(void)
+{
+	DAT_00B73E10.setEmpty();
+	memset(&DAT_00B76B10, 0, 0x10C);
+	memset(&DAT_00B73BE8, 0, 0x10C);
+	DAT_0084A210 = 1;
+	DAT_00B76AE0.setEmpty();
+	DAT_00B77900.setEmpty();
+	DAT_00B77DD0 = 0;
+}
+
+// FUNCTION: 0x00799D10
+void FUN_00799D10(void)
+{
+	HWND window = FUN_00775B10();
+	if (window) {
+		do {
+			FUN_007757E0(window, 0);
+			window = FUN_00775B10();
+		} while (window);
+	}
+}
+
+// FUNCTION: 0x00799D30
+int FUN_00799D30(void)
+{
+	int result = FUN_00786390();
+	if (result == 1) {
+		{
+			WideWstring text(StringTable::LoadString("TXT_FETCHING_SERVLIST", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x5EEC));
+			FUN_00792BE0(0x10, text, 0);
+		}
+		int sku = 0x2300;
+		if (Session.unknown_0C != 3) {
+			sku = 0x2900;
+		}
+		result = FUN_00797640(sku);
+		switch (result) {
+			case 0:
+				break;
+			case 2:
+				return -1;
+			default:
+				return -2;
+		}
+		if (DAT_00AC1170 && strlen(DAT_00B761A8) && DAT_00B73E40.length() > 0) {
+			DAT_00AC1170->V05(DAT_00B761A8, DAT_00B77A90, DAT_00B73E40.get(), DAT_0084A234 & 0xFFFF00, -1, 0, 0);
+			DAT_00AC1170->V14(DAT_00B761A8, DAT_00B77A90, DAT_00B73E40.get(), DAT_0084A234 & 0xFFFF00);
+		}
+		FUN_0072C9C0();
+		FUN_007F7624_Class control;
+		FUN_006241F0(0x114, FUN_00799080, (OwnerDraw::DialogControl *)&control);
+		FUN_0072CA10();
+		return Session.unknown_0C != 0;
+	}
+	return result;
+}
+
+void __fastcall FUN_00779830(bool value);
+void __fastcall FUN_00779C90(Wstring const * value);
+
+// FUNCTION: 0x0079AE00
+BOOL CALLBACK FUN_0079AE00(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	if (message == WM_INITDIALOG && lparam) {
+		do SetWindowLong(window, 8, ((int *)lparam)[1]); while (0);
+	}
+	int rc = UI::StandardWndProc(window, message, wparam, lparam);
+	if (rc) {
+		return rc;
+	}
+	SimpleWonlineDialogControl * control = (SimpleWonlineDialogControl *)GetWindowLong(window, 8);
+	switch (message) {
+		case WM_ERASEBKGND:
+			return TRUE;
+
+		case WM_PAINT:
+			OwnerDraw::Paint(window);
+			FUN_00607FD0(window);
+			ValidateRect(window, NULL);
+			return TRUE;
+
+		case WM_DRAWITEM:
+			OwnerDraw::DrawItem((LPDRAWITEMSTRUCT)lparam);
+			return TRUE;
+
+		case WM_COMMAND:
+			switch (LOWORD(wparam)) {
+				case IDOK:
+					FUN_00779C90(&DAT_00B73E40);
+					control->F1(window, 1);
+					break;
+
+				case IDCANCEL:
+					bool checked = IsDlgButtonChecked(window, 0x6F9) == BST_CHECKED;
+					FUN_00779830(!checked);
+					control->F1(window, 2);
+					break;
+			}
+			break;
+	}
+	return FALSE;
+}
+
+BOOL CALLBACK FUN_0079DB50(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+
+// FUNCTION: 0x0079BE70
+void FUN_0079BE70(void)
+{
+	HWND dialog = WS_Create_Dialog(Game::hInstance, 0x11E, Game::hWnd, FUN_0079DB50, FALSE);
+	UI::RegisterWindow(dialog, 0x11E);
+	SendMessage(dialog, 0x4A9, 0, 1);
+	ShowWindow(dialog, SW_SHOWNORMAL);
+	FUN_007759E0(dialog, (bool (*)(void))FUN_0077F900, 0, 1, 1);
+}
+
+// FUNCTION: 0x0079BED0
+bool FUN_0079BED0(void)
+{
+	if (DAT_00B76E24.length() == 0) {
+		return false;
+	}
+	int * state;
+	if (!DAT_00B76990.getPointer(DAT_00B76E24, &state)) {
+		return false;
+	}
+	if (state == NULL) {
+		goto done;
+	}
+	{
+		int value = *state;
+		if (value < 0 || value > 2) {
+			return true;
+		}
+	}
+done:
+	return false;
+}
+
+extern int DAT_00B779D0;
+
+static inline void Set_Text(HWND window, wchar_t const * text)
+{
+	SendMessage(window, 0x4B2, 0, (LPARAM)text);
+}
+
+// FUNCTION: 0x0079C040
+void __fastcall FUN_0079C040(HWND dialog)
+{
+	HWND name_label = GetDlgItem(dialog, 0x6EF);
+	HWND rank_label = GetDlgItem(dialog, 0x6F4);
+	HWND field10_label = GetDlgItem(dialog, 0x6F5);
+	HWND field08_label = GetDlgItem(dialog, 0x6F0);
+	HWND field0C_label = GetDlgItem(dialog, 0x6F1);
+	HWND field20_label = GetDlgItem(dialog, 0x701);
+	if (DAT_00B76E24.length() == 0) {
+		Set_Text(name_label, DAT_00887734);
+		Set_Text(rank_label, DAT_00887734);
+		Set_Text(field10_label, DAT_00887734);
+		Set_Text(field08_label, DAT_00887734);
+		Set_Text(field0C_label, DAT_00887734);
+		Set_Text(field20_label, DAT_00887734);
+		return;
+	}
+	WideWstring format(StringTable::LoadString("GUI:UserProfileLabel", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x6902));
+	wchar_t * text = new wchar_t[format.length() + DAT_00B76E24.length() + 1];
+	swprintf(text, format.get(), DAT_00B76E24.get());
+	HWND name_item = GetDlgItem(dialog, 0x6EF);
+	Set_Text(name_item, text);
+	delete text;
+	LadderA ladder;
+	memset(&ladder, 0, sizeof(ladder));
+	Wstring key = ((Wstring const &)DAT_00B76E24).toLower();
+	if (DAT_00B77D80.getValue(key, ladder)) {
+		Set_Text(rank_label, FUN_007B7DD0(ladder.Rung).text());
+		Set_Text(field10_label, FUN_007B7DD0(ladder.Field10).text());
+		Set_Text(field08_label, FUN_007B7DD0(ladder.Field08).text());
+		Set_Text(field0C_label, FUN_007B7DD0(ladder.Field0C).text());
+		Set_Text(field20_label, FUN_007B7DD0(ladder.Field20).text());
+	} else {
+		WideWstring unknown(StringTable::LoadString("GUI:UnknownStats", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x6913));
+		Set_Text(rank_label, unknown.text());
+		Set_Text(field10_label, unknown.text());
+		Set_Text(field08_label, unknown.text());
+		Set_Text(field0C_label, unknown.text());
+		Set_Text(field20_label, unknown.text());
+	}
+}
+
+// FUNCTION: 0x0079C3A0
+void FUN_0079C3A0(void)
+{
+	if (DAT_00B73ACC.length() > 0) {
+		if ((unsigned int)(time(NULL) - DAT_00B779D0) < 5) {
+			return;
+		}
+		DAT_00B73ACC.clear();
+	}
+	if (DAT_00B76980.length() == 0) {
+		return;
+	}
+	DAT_00B76980.removeHead(DAT_00B73ACC);
+	DAT_00B779D0 = time(NULL);
+	User user;
+	memset(&user, 0, sizeof(user));
+	strcpy(user.Nick, DAT_00B73ACC.get());
+	DAT_00AC116C->V24(&user);
+}
+
+// FUNCTION: 0x0079C520
+bool __fastcall FUN_0079C520(Wstring * name)
+{
+	Wstring lower(*name);
+	lower.toLower();
+	if (name->length() == 0) {
+		return false;
+	}
+	if (((Wstring const &)lower).toLower() == ((Wstring const &)DAT_00B73E40).toLower()) {
+		return false;
+	}
+	if (name->containsAny(" ,;")) {
+		return false;
+	}
+	for (int i = 0; i < DAT_00B73AA8.length(); i++) {
+		Wstring entry;
+		DAT_00B73AA8.get(entry, i);
+		entry.toLower();
+		if (entry == lower) {
+			return false;
+		}
+	}
+	return true;
 }
 
 // FUNCTION: 0x007A2E70 SimpleWonlineDialogControl::~SimpleWonlineDialogControl

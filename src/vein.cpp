@@ -869,10 +869,55 @@ bool VeinholeMonsterClass::Load_All(IStream * stream)
 	return(true);
 }
 
+// FUNCTION: 0x0074ED60
+bool VeinholeMonsterClass::Save_All(IStream * stream)
+{
+	int monster_count = VeinholeMonsters.Count();
+	if (FAILED(stream->Write(&monster_count, sizeof(monster_count), NULL))) {
+		return(false);
+	}
+
+	int cell_count = Map_Cell_Count();
+	if (FAILED(stream->Write(GlobalGrowthState, cell_count, NULL))) {
+		return(false);
+	}
+
+	for (int i = 0; i < monster_count; i++) {
+		LONG id = (LONG)VeinholeMonsters[i];
+		if (FAILED(stream->Write(&id, sizeof(id), NULL))) {
+			return(false);
+		}
+
+		if (FAILED(stream->Write(VeinholeMonsters[i], sizeof(VeinholeMonsterClass), NULL))) {
+			return(false);
+		}
+
+		if (FAILED(stream->Write(VeinholeMonsters[i]->GrowthLogic.GrowthState, cell_count, NULL))) {
+			return(false);
+		}
+
+		if (FAILED(stream->Write(VeinholeMonsters[i]->GrowthLogic.GrowthNodes, sizeof(CellNode) * Rule->MaxVeinholeGrowth, NULL))) {
+			return(false);
+		}
+
+		if (FAILED(VeinholeMonsters[i]->GrowthLogic.GrowthQueue->Save(stream, VeinholeMonsters[i]->GrowthLogic.GrowthNodes))) {
+			return(false);
+		}
+	}
+
+	return(true);
+}
+
 // FUNCTION: 0x0074EEE0
 HRESULT STDMETHODCALLTYPE VeinholeMonsterClass::Save(IStream * stream, BOOL cleardirty)
 {
 	return(BASECLASS::Save(stream, cleardirty));
+}
+
+// FUNCTION: 0x0074EF00
+TerrainTypeClass const * VeinholeMonsterClass::GetTerrainType(void)
+{
+	return(Rule->VeinholeTypeClass);
 }
 
 // FUNCTION: 0x0074F2D0
@@ -882,3 +927,11 @@ HRESULT STDMETHODCALLTYPE VeinholeMonsterClass::GetClassID(CLSID * retval)
 	*retval = CLSID_VeinholeMonsterClass;
 	return(S_OK);
 }
+
+// FUNCTION: 0x0074F310 VeinholeMonsterClass::Fetch_RTTI
+
+// FUNCTION: 0x0074F320 VeinholeMonsterClass::Fetch_Object_Size
+
+// FUNCTION: 0x0074F330 VeinholeMonsterClass::In_Which_Layer
+
+// FUNCTION: 0x0074F340 VeinholeMonsterClass::~VeinholeMonsterClass

@@ -19,6 +19,7 @@
 #include "pkstraw.h"
 #include "shastraw.h"
 #include "xstraw.h"
+#include "blwstraw.h"
 
 
 struct CacheNode {
@@ -278,3 +279,65 @@ void MixFileClass::Free(void)
 	Data = NULL;
 	IsAllocated = false;
 }
+
+// FUNCTION: 0x005B4430
+bool MixFileClass::Offset(char const * filename, void ** realptr, MixFileClass ** mixfile, int * offset, int * size)
+{
+	MixFileClass * ptr;
+
+	if (filename == NULL) {
+		return(false);
+	}
+
+	char upper[_MAX_PATH];
+	strcpy(upper, filename);
+	strupr(upper);
+
+	CRCEngine engine;
+	int crc = engine(upper, strlen(upper));
+
+	SubBlock key;
+	key.CRC = crc;
+
+	ptr = List.First();
+	while (ptr->Is_Valid()) {
+		SubBlock * block;
+
+		block = Binary_Search<SubBlock>(ptr->HeaderBuffer, ptr->Count, key);
+		if (block != NULL) {
+			if (mixfile != NULL) *mixfile = ptr;
+			if (size != NULL) *size = block->Size;
+			if (realptr != NULL) *realptr = NULL;
+			if (offset != NULL) *offset = block->Offset;
+			if (realptr != NULL && ptr->Data != NULL) {
+				*realptr = (char *)ptr->Data + block->Offset;
+			}
+			if (ptr->Data == NULL && offset != NULL) {
+				*offset += ptr->DataStart;
+			}
+			return(true);
+		}
+
+		ptr = ptr->Next();
+	}
+
+	return(false);
+}
+
+// FUNCTION: 0x005B4590 GenericNode::Unlink
+
+// FUNCTION: 0x005B45C0 BlowStraw::~BlowStraw
+
+// FUNCTION: 0x005B4610 BlowfishEngine::~BlowfishEngine
+
+// FUNCTION: 0x005B4630 MixFileClass::~MixFileClass
+
+// FUNCTION: 0x005B46E0 ?$List@PAVMixFileClass@@::~?$List@PAVMixFileClass@@
+
+struct Quad4 {
+	int A, B, C, D;
+	Quad4(void) : A(0), B(0), C(0), D(0) {}
+};
+
+// FUNCTION: 0x005B47A0 $E22
+Quad4 DAT_00ABF018;
