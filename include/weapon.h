@@ -34,7 +34,7 @@ class WeaponTypeClass : public AbstractTypeClass
 		static WeaponType From_Name(char const * name);
 
 		virtual RTTIType Fetch_RTTI(void) const override {return(RTTI_WEAPONTYPE);}
-		virtual int Fetch_Object_Size(void) const override;
+		virtual int Fetch_Object_Size(void) const override {return(sizeof(*this));}
 
 		virtual void Compute_CRC(CRCEngine &) const override;
 

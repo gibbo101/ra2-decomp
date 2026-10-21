@@ -43,6 +43,7 @@
 
 char * __fastcall FUN_007350C0(wchar_t const * text);
 wchar_t * __fastcall FUN_00735120(char const * narrow);
+void __fastcall FUN_00694760(char * name, int type, bool a, bool b);
 wchar_t * __fastcall wcstrim(wchar_t * buffer);
 
 namespace OwnerDraw {
@@ -689,6 +690,208 @@ void ModemHost::Send(bool force)
 	}
 }
 
+// FUNCTION: 0x005BA060
+bool ModemHost::Receive(bool silent)
+{
+	SerialPacketType receivepacket;
+	unsigned int version;
+	unsigned int starttime;
+	int packetlen;
+	wchar_t * name;
+
+	if (NullModem.Get_Message(&receivepacket, &packetlen) > 0) {
+
+		LastMsgTime = TickCount;
+		MsgTimeout = 20 * TIMER_SECOND;
+
+		if (receivepacket.Command >= SERIAL_CONNECT &&
+			receivepacket.Command < SERIAL_LAST_COMMAND &&
+			receivepacket.Command != SERIAL_MESSAGE &&
+			receivepacket.ID == Session.ModemType) {
+
+			DebugString("Received our own packet back\n");
+
+			if (!silent) {
+				WWMessageBox().Process(StringTable::LoadString("TXT_SYSTEM_NOT_RESPONDING", NULL, "D:\\ra2mdpost\\ModemHst.cpp", 0x7e2), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\ModemHst.cpp", 0x7e2), NULL, NULL);
+			}
+
+			return(true);
+		}
+
+		switch (receivepacket.Command) {
+			case (SERIAL_SIGN_OFF):
+				DebugString("Received SignOff!\n");
+				starttime = TickCount;
+				while (TickCount - starttime < TIMER_SECOND) {
+					Call_Back();
+					NullModem.Service();
+				}
+
+				if (!silent) {
+					WWMessageBox().Process(StringTable::LoadString("TXT_USER_SIGNED_OFF", NULL, "D:\\ra2mdpost\\ModemHst.cpp", 0x7f6), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\ModemHst.cpp", 0x7f6), NULL, NULL);
+				}
+
+				LastMsgTime = TickCount;
+
+				Shutdown_Modem();
+				return(true);
+
+			case (SERIAL_GAME_OPTIONS):
+				DebugString("Received game options\n");
+
+				version = VerNum.Clip_Version(receivepacket.ScenarioInfo.MinVersion,
+					receivepacket.ScenarioInfo.MaxVersion);
+				if (version == 0) {
+					if (!silent) {
+						WWMessageBox().Process(StringTable::LoadString("TXT_DESTGAME_OUTDATED", NULL, "D:\\ra2mdpost\\ModemHst.cpp", 0x80b), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\ModemHst.cpp", 0x80b), NULL, NULL);
+					}
+
+					LastMsgTime = TickCount;
+
+					return(true);
+				} else if (version == 0xffffffff) {
+					if (!silent) {
+						WWMessageBox().Process(StringTable::LoadString("TXT_YOURGAME_OUTDATED", NULL, "D:\\ra2mdpost\\ModemHst.cpp", 0x814), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\ModemHst.cpp", 0x814), NULL, NULL);
+					}
+
+					LastMsgTime = TickCount;
+
+					return(true);
+				} else {
+
+					bool ok = true;
+
+					if (receivepacket.ScenarioInfo.CheatCheck != CheatCheck) {
+						ok = false;
+					}
+					if (receivepacket.ScenarioInfo.AICheatCheck != AICheatCheck) {
+						ok = false;
+					}
+					if (receivepacket.ScenarioInfo.ArtCheatCheck != ArtCheatCheck) {
+						ok = false;
+					}
+
+					if (!ok) {
+
+						if (!silent) {
+							WWMessageBox().Process(StringTable::LoadString("TXT_MISMATCH", NULL, "D:\\ra2mdpost\\ModemHst.cpp", 0x851), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\ModemHst.cpp", 0x851), NULL, NULL);
+						}
+
+						LastMsgTime = TickCount;
+
+						return(true);
+					}
+
+					Session.CommProtocol = VerNum.Version_Protocol(version);
+
+					name = FUN_00735120(receivepacket.Name);
+					SetOther(name, receivepacket.ScenarioInfo.Color, receivepacket.ScenarioInfo.House);
+					GameOptions = true;
+				}
+				break;
+
+			case (SERIAL_ACCEPT_OPTIONS):
+				DebugString("Received Accept Options\n");
+				EnableWindow(GetDlgItem(_Dialog, 1), TRUE);
+				break;
+
+			case (SERIAL_MESSAGE):
+				DebugString("Received serial message\n");
+				name = FUN_00735120(receivepacket.Name);
+				DrawMessage(name, receivepacket.ID, receivepacket.Message.Message);
+
+				if (!silent) {
+					VocClass::PlayGlobal(Rule->IncomingMessage, 1.0f, 0x2000);
+				}
+				break;
+
+			case (SERIAL_TIMING):
+				DebugString("Received timing packet\n");
+				TheirResponseTime = receivepacket.ScenarioInfo.ResponseTime;
+
+				if (!GameOptions) {
+					Transmit = true;
+				}
+				break;
+
+			case (SERIAL_SCORE_SCREEN):
+				DebugString("Received score screen packet\n");
+				break;
+
+			case (SERIAL_REQ_PREVIEW):
+				SendPreview();
+				LastMsgTime = TickCount;
+				break;
+
+			default:
+				DebugString("Received packet\n");
+				break;
+		}
+	}
+
+	unsigned int time = (TickCount - LastMsgTime);
+	if (time > MsgTimeout) {
+		DebugString("Timeout! %d ticks since last incoming message\n", time);
+
+		if (!silent) {
+			WWMessageBox().Process(StringTable::LoadString("TXT_SYSTEM_NOT_RESPONDING", NULL, "D:\\ra2mdpost\\ModemHst.cpp", 0x895), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\ModemHst.cpp", 0x895), NULL, NULL);
+		}
+
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: 0x005BA660
+void ModemHost::SendGameOptions(void)
+{
+	SerialPacketType sendpacket;
+
+	DebugString("Sending game options packet\n");
+	EnableWindow(GetDlgItem(_Dialog, 1), FALSE);
+
+	memset(&sendpacket, 0, sizeof(SerialPacketType));
+	sendpacket.Command = SERIAL_GAME_OPTIONS;
+	sendpacket.ScenarioInfo.CheatCheck = CheatCheck;
+	sendpacket.ScenarioInfo.ArtCheatCheck = ArtCheatCheck;
+	sendpacket.ScenarioInfo.AICheatCheck = AICheatCheck;
+	sendpacket.ScenarioInfo.BuildNumber = Build_Number();
+	sendpacket.ScenarioInfo.MinVersion = VerNum.Min_Version();
+	sendpacket.ScenarioInfo.MaxVersion = VerNum.Max_Version();
+	sendpacket.ScenarioInfo.Seed = Seed;
+	sendpacket.ScenarioInfo.Special = Special;
+	sendpacket.ScenarioInfo.GameSpeed = Session.Options.GameSpeed;
+	sendpacket.ScenarioInfo.IsCrapEngineers = Session.Options.CrapEngineers;
+	sendpacket.ScenarioInfo.IsBuildOffAlly = Session.Options.BuildOffAlly;
+	sendpacket.ScenarioInfo.IsSWAllowed = Session.Options.SWAllowed;
+	sendpacket.ScenarioInfo.IsShortGame = Session.Options.ShortGame;
+	sendpacket.ID = Session.ModemType;
+	strcpy(sendpacket.Name, Session.Handle);
+	sendpacket.ScenarioInfo.House = (HousesType)Session.House;
+	sendpacket.ScenarioInfo.Color = Session.PrefColor;
+	sendpacket.ScenarioInfo.Credits = Session.Options.Credits;
+	sendpacket.ScenarioInfo.IsBases = Session.Options.Bases;
+	sendpacket.ScenarioInfo.IsMCVRedeploy = Session.Options.MCVRedeploy;
+	sendpacket.ScenarioInfo.IsBridgeDestruction = Session.Options.BridgeDestruction;
+	sendpacket.ScenarioInfo.IsGoodies = Session.Options.Goodies;
+	sendpacket.ScenarioInfo.IsHarvTruce = Session.Options.HarvTruce;
+	sendpacket.ScenarioInfo.IsFogOfWar = Session.Options.FogOfWar;
+	sendpacket.ScenarioInfo.AIPlayers = Session.Options.AIPlayers;
+	sendpacket.ScenarioInfo.AIDifficulty = Session.Options.AIDifficulty;
+	sendpacket.ScenarioInfo.BuildLevel = BuildLevel;
+	sendpacket.ScenarioInfo.UnitCount = Session.Options.UnitCount;
+
+	wcscpy(sendpacket.ScenarioInfo.Scenario, Session.Scenarios[Session.Options.ScenarioIndex]->Description());
+	CCFileClass file(Session.Scenarios[Session.Options.ScenarioIndex]->Get_Filename());
+
+	sendpacket.ScenarioInfo.FileLength = file.Size();
+
+	strncpy(sendpacket.ScenarioInfo.ShortFileName, Session.Scenarios[Session.Options.ScenarioIndex]->Get_Filename(), sizeof(sendpacket.ScenarioInfo.ShortFileName));
+	strncpy((char *)sendpacket.ScenarioInfo.FileDigest, Session.Scenarios[Session.Options.ScenarioIndex]->Get_Digest(), sizeof sendpacket.ScenarioInfo.FileDigest);
+	sendpacket.ScenarioInfo.OfficialScenario = Session.Scenarios[Session.Options.ScenarioIndex]->Get_Official();
+	NullModem.Send_Message(&sendpacket, sizeof(sendpacket), 1);
+}
+
 // FUNCTION: 0x005BA970
 void ModemHost::SendAMessage(const wchar_t * message)
 {
@@ -721,6 +924,183 @@ void ModemHost::DrawMessage(const wchar_t * name, int color, const wchar_t * mes
 			_DrawMessage(c, buf, handle);
 		}
 	}
+}
+
+// FUNCTION: 0x005BAB00
+void ModemHost::SignOff(void)
+{
+	unsigned int starttime;
+	int packetlen;
+	SerialPacketType sendpacket;
+	SerialPacketType receivepacket;
+
+	memset(&sendpacket, 0, sizeof(SerialPacketType));
+	sendpacket.Command = SERIAL_SIGN_OFF;
+	sendpacket.ScenarioInfo.Color = Session.PrefColor;
+	sendpacket.ID = Session.ModemType;
+	NullModem.Send_Message(&sendpacket, sizeof(sendpacket), 1);
+
+	HWND dialog = OwnerDraw::Custom_Message_Box(StringTable::LoadString("TXT_SIGNING_OFF", NULL, "D:\\ra2mdpost\\ModemHst.cpp", 0x95e), NULL, NULL);
+
+	if (dialog) {
+		OwnerDraw::Display_Dialog(dialog);
+	}
+
+	starttime = TickCount;
+	while (NullModem.Num_Send() && ((TickCount - starttime) < SIGNOFF_PACKET_CANCEL_TIMEOUT)) {
+		if (NullModem.Get_Message(&receivepacket, &packetlen) > 0) {
+			if (receivepacket.Command == SERIAL_SIGN_OFF && receivepacket.ID == Session.ModemType) {
+				break;
+			}
+		}
+
+		Call_Back();
+		Windows_Message_Handler();
+		NullModem.Service();
+	}
+	Shutdown_Modem();
+	if (dialog) {
+		OwnerDraw::End_Dialog(dialog);
+	}
+}
+
+// FUNCTION: 0x005BAC60
+bool ModemHost::StartGame(bool load_game)
+{
+	SerialPacketType sendpacket;
+	SerialPacketType receivepacket;
+	unsigned int starttime;
+	int packetlen;
+	NodeNameType * who;
+
+	DebugString("ModemHost.StartGame(enter)\n");
+	DebugString("LoadGame = %s\n", load_game == true ? "true" : "false");
+
+	if (load_game == true) {
+		return(false);
+	}
+
+	Scen->Scenario = Session.Options.ScenarioIndex;
+	strcpy(Scen->ScenarioName, Session.Scenarios[Session.Options.ScenarioIndex]->Get_Filename());
+
+	Scen->CDifficulty = DIFF_NORMAL;
+	Scen->Difficulty = DIFF_NORMAL;
+
+	Session.NumPlayers = 0;
+
+	who = new NodeNameType;
+	if (who != NULL) {
+		wcscpy(who->Name, FUN_00735120(Session.Handle));
+		who->Player.House = Session.House;
+		who->Player.Color = Session.PrefColor;
+		who->Player.ProcessTime = -1;
+		Session.Players.Add(who);
+	}
+
+	who = new NodeNameType;
+	if (who != NULL) {
+		wcscpy(who->Name, TheirName);
+		who->Player.House = TheirHouse;
+		who->Player.Color = TheirColor;
+		who->Player.ProcessTime = -1;
+		Session.Players.Add(who);
+	}
+
+	if (Session.Players.Count() != 2) {
+		return(false);
+	}
+
+	memset(&sendpacket, 0, sizeof(SerialPacketType));
+	sendpacket.Command = SERIAL_GO;
+
+	sendpacket.ScenarioInfo.ResponseTime = NullModem.Response_Time();
+	if (TheirResponseTime == 10000) {
+		;
+	} else if (sendpacket.ScenarioInfo.ResponseTime < TheirResponseTime) {
+		sendpacket.ScenarioInfo.ResponseTime = TheirResponseTime;
+	}
+
+	Options.GameSpeed = Session.Options.GameSpeed;
+	Session.FrameSendRate = 5;
+	Session.LatencyFudge = 0;
+	Session.PrecalcMaxAhead = 0;
+	Session.PrecalcDesiredFrameRate = 0;
+
+	if (Session.CommProtocol == COMM_PROTOCOL_MULTI_E_COMP) {
+		Session.MaxAhead = MAX(((sendpacket.ScenarioInfo.ResponseTime / 8 + 4) / 5) * 5, 10);
+	} else {
+		Session.MaxAhead = sendpacket.ScenarioInfo.ResponseTime / 8;
+		Session.MaxAhead = MAX((int)(Session.MaxAhead), MODEM_MIN_MAX_AHEAD);
+	}
+	sendpacket.ID = Session.ModemType;
+
+	NullModem.Send_Message(&sendpacket, sizeof(sendpacket), 1);
+	HWND msgbox = OwnerDraw::Custom_Message_Box(StringTable::LoadString("TXT_SENDING_GO", NULL, "D:\\ra2mdpost\\ModemHst.cpp", 0x9ec));
+	if (msgbox) {
+		OwnerDraw::Display_Dialog(msgbox);
+	}
+	starttime = TickCount;
+	while ((NullModem.Num_Send() && ((TickCount - starttime) < PACKET_SENDING_TIMEOUT)) || ((TickCount - starttime) < TIMER_SECOND)) {
+		Call_Back();
+		Windows_Message_Handler();
+		NullModem.Service();
+	}
+	if (msgbox) {
+		OwnerDraw::Set_Custom_Message_Box_Text(msgbox, StringTable::LoadString("TXT_WAITING_GO", NULL, "D:\\ra2mdpost\\ModemHst.cpp", 0x9fd));
+	}
+
+	DebugString("Waiting for 'GO' response.\n");
+	starttime = TickCount;
+
+	do {
+		Call_Back();
+		Windows_Message_Handler();
+		NullModem.Service();
+
+		if (NullModem.Get_Message(&receivepacket, &packetlen) > 0) {
+			DebugString("Received message\n");
+
+			if (receivepacket.Command == SERIAL_READY_TO_GO) {
+				DebugString("Received GO message\n");
+				break;
+			}
+
+			if (receivepacket.Command == SERIAL_NO_SCENARIO) {
+				WWMessageBox().Process(StringTable::LoadString("TXT_NO_EXPANSION_SCENARIO", NULL, "D:\\ra2mdpost\\ModemHst.cpp", 0xa16), StringTable::LoadString("TXT_CANCEL", NULL, "D:\\ra2mdpost\\ModemHst.cpp", 0xa16), NULL, NULL);
+				LastMsgTime = TickCount;
+				DebugString("***Guest doesn't have scenario!\n");
+				return(false);
+			}
+
+			if (receivepacket.Command == SERIAL_REQ_SCENARIO) {
+				DebugString("About to call 'Send_Remote_File'.\n");
+				FUN_00694760(Scen->ScenarioName, GAME_MODEM, false, false);
+				break;
+			}
+		}
+
+	} while (TickCount - starttime < 20 * TIMER_SECOND);
+
+	if (msgbox) {
+		OwnerDraw::End_Dialog(msgbox);
+	}
+
+	NullModem.Init_Send_Queue();
+
+	Session.NetOpen = false;
+	Scen->Scenario = Session.Options.ScenarioIndex;
+	Session.NumPlayers = Session.Players.Count();
+	Special.IsHarvesterImmune = Session.Options.HarvTruce;
+	Special.IsDestroyBridges = Session.Options.BridgeDestruction;
+	Frame = 0;
+	Session.CommProtocol = (CommProtocolType)2;
+	Special.IsTGrowth = true;
+	Special.IsTSpread = true;
+	Scen->Special.IsAllianceFixed = false;
+	Session.Options.AlliesAllowed = true;
+	Special.Apply_To_Game();
+	DebugString("ModemHost.StartGame(exit)\n");
+	return(true);
 }
 
 // FUNCTION: 0x005BB260

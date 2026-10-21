@@ -59,8 +59,8 @@ class HouseTypeClass : public AbstractTypeClass
 		float BuildtimeBuildingsMult;
 		float BuildtimeDefensesMult;
 		float IncomeMult;
-		TypeList<InfantryTypeClass *> VeteranInfantry;
-		TypeList<UnitTypeClass *> VeteranUnits;
+		TypeList<InfantryTypeClass const *> VeteranInfantry;
+		TypeList<UnitTypeClass const *> VeteranUnits;
 		TypeList<AircraftTypeClass *> VeteranAircraft;
 		char Suffix[4];
 		char Prefix;

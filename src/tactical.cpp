@@ -1679,3 +1679,11 @@ template class VectorClass<DirtyAreaStruct>;
 
 // FUNCTION: 0x006DCC00 ?$DynamicVectorClass@PAVShadowControlClass@@::ID
 template class VectorClass<ShadowControlClass *>;
+
+// FUNCTION: 0x006DCC30 ?$VectorClass@UDirtyAreaStruct@@::~?$VectorClass@UDirtyAreaStruct@@
+
+// FUNCTION: 0x006DCC80 ?$DynamicVectorClass@UDirtyAreaStruct@@::~?$DynamicVectorClass@UDirtyAreaStruct@@
+
+// FUNCTION: 0x006DCCD0 ?$VectorClass@PAVShadowControlClass@@::~?$VectorClass@PAVShadowControlClass@@
+
+// FUNCTION: 0x006DCD20 ?$DynamicVectorClass@PAVShadowControlClass@@::~?$DynamicVectorClass@PAVShadowControlClass@@

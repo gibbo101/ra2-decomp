@@ -108,7 +108,7 @@ void InfantryClass::Init(void)
 
 	if (Class != NULL) {
 		if (House != NULL) {
-			TypeList<InfantryTypeClass *> & list = House->Class->VeteranInfantry;
+			TypeList<InfantryTypeClass const *> & list = House->Class->VeteranInfantry;
 			for (int index = 0; index < list.Count(); index++) {
 				if (list[index] == Class) {
 					Veterancy.Set_Veteran(true);
@@ -2446,3 +2446,20 @@ double DAT_00A8F298 = FUN_004CADE0((DAT_00A8F2CC * 2) / DAT_00A8F268);
 
 // FUNCTION: 0x00523600 $E230
 int DAT_00A8F2BC = (int)(DAT_00A8F2CC * 4 + DAT_007E1738);
+
+struct InfShortPair { short A, B; InfShortPair() : A(0), B(0) {} };
+struct InfIntTriple { int A, B, C; InfIntTriple() : A(0), B(0), C(0) {} };
+struct InfIntSplit { int A, B, C; InfIntSplit() : A(128), B(128), C(0) {} };
+struct InfIntQuad { int A, B, C, D; InfIntQuad() : A(0), B(0), C(0), D(0) {} };
+
+// FUNCTION: 0x00523630 $E233
+InfShortPair DAT_00A8F260;
+
+// FUNCTION: 0x00523640 $E236
+InfIntTriple DAT_00A8F280;
+
+// FUNCTION: 0x00523660 $E239
+InfIntSplit DAT_00A8F2B0;
+
+// FUNCTION: 0x00523680 $E242
+InfIntQuad DAT_00A8F250;

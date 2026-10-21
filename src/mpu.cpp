@@ -5,6 +5,7 @@
 
 #include "always.h"
 #include "geometry.h"
+#include "rect.h"
 #include "mpu.h"
 #include "win.h"
 #include <math.h>
@@ -160,3 +161,7 @@ int Get_RDTSC_CPU_Speed(void)
 // FUNCTION: 0x005CB2A0 $E23
 // FUNCTION: 0x005CB2D0 $E26
 // FUNCTION: 0x005CB300 $E29
+// FUNCTION: 0x005CB330 $E32
+// FUNCTION: 0x005CB340 $E35
+// FUNCTION: 0x005CB360 $E38
+// FUNCTION: 0x005CB380 $E41

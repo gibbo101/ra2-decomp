@@ -116,3 +116,18 @@ bool SurfaceCacheClass::DrawNullsub(Rect const & rect, Surface & tosurface, Surf
 {
 	return(false);
 }
+
+// FUNCTION: 0x006BAC40 ?$Dictionary@VWstring@@USurfaceCacheEntry@@::remove
+template class Dictionary<Wstring, SurfaceCacheEntry>;
+
+// FUNCTION: 0x006BAEF0 ?$Dictionary@VWstring@@USurfaceCacheEntry@@::shrink
+
+// FUNCTION: 0x006BAFA0 ?$Dictionary@VWstring@@USurfaceCacheEntry@@::expand
+
+struct SurfaceCacheZero {
+	int a, b, c, d;
+	SurfaceCacheZero(void) { a = 0; b = 0; c = 0; d = 0; }
+};
+
+// FUNCTION: 0x006BB050 $E29
+SurfaceCacheZero DAT_00B0BC58;

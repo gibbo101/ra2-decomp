@@ -35,6 +35,21 @@ extern const double DAT_007E1740;
 extern const double DAT_007E2228;
 extern const double DAT_007E2230;
 
+struct IntTriple {
+	int A, B, C;
+	IntTriple() { A = 0; B = 0; C = 0; }
+};
+
+struct IntPairSized {
+	int A, B, C;
+	IntPairSized() { C = 0; A = 128; B = 128; }
+};
+
+struct IntQuad {
+	int A, B, C, D;
+	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
+};
+
 struct ShortPair {
 	unsigned short A, B;
 	ShortPair() { A = 0; B = 0; }
@@ -694,3 +709,12 @@ int DAT_00889E3C = (int)(DAT_00889E48 * 4 + DAT_007E1738);
 
 // FUNCTION: 0x00412800 $E40
 ShortPair DAT_00887850;
+
+// FUNCTION: 0x00412810 $E43
+IntTriple DAT_00887870;
+
+// FUNCTION: 0x00412830 $E46
+IntPairSized DAT_00889E30;
+
+// FUNCTION: 0x00412850 $E49
+IntQuad DAT_00887840;

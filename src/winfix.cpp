@@ -9,6 +9,7 @@
 #include "misc.h"
 #include "ownrdraw.h"
 #include "trim.h"
+#include "xmouse.h"
 #include <commctrl.h>
 
 char *TreeView_Text;
@@ -502,6 +503,54 @@ int ComboBox_Find_Item_Data(HWND hwndCtl, WPARAM indexStart, LPARAM data)
 	return(-1);
 }
 
+// FUNCTION: 0x00776E70
+void Capture_Or_Release_Mouse(HWND window, short release)
+{
+	if (MouseCursor != NULL) {
+		if (release == 0) {
+			MouseCursor->Capture_Mouse();
+		} else {
+			MouseCursor->Release_Mouse();
+			UINT flags = RDW_INVALIDATE|RDW_INTERNALPAINT|RDW_ERASE|RDW_ALLCHILDREN|RDW_UPDATENOW|RDW_FRAME;
+			RedrawWindow(window, NULL, NULL, flags);
+		}
+	}
+}
+
+// FUNCTION: 0x00776EA0
+void noop(void)
+{
+}
+
+// FUNCTION: 0x00776EB0
+WindowsVersionInfo::WindowsVersionInfo(void) :
+	MajorVersionNumber(0),
+	MinorVersionNumber(0),
+	BuildNumber(0),
+	IsWin9x(false),
+	IsWinNT(false)
+{
+	OSVERSIONINFO version_info;
+
+	version_info.dwOSVersionInfoSize = sizeof(version_info);
+
+	GetVersionEx(&version_info);
+
+	MajorVersionNumber = (int)version_info.dwMajorVersion;
+	MinorVersionNumber = (int)version_info.dwMinorVersion;
+	BuildNumber = (int)version_info.dwBuildNumber;
+
+	if (version_info.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS) {
+		IsWin9x = true;
+	}
+
+	if (version_info.dwPlatformId == VER_PLATFORM_WIN32_NT) {
+		IsWinNT = true;
+	}
+	strncpy(AdditionalInfo, version_info.szCSDVersion, sizeof(AdditionalInfo) - 1);
+	AdditionalInfo[sizeof(AdditionalInfo) - 1] = '\x0';
+}
+
 // FUNCTION: 0x00776F40
 char *WindowsVersionInfo::Version_String(void)
 {
@@ -600,4 +649,18 @@ void Prefetch_Audio_Buffer(char *src, int size)
 			}
 		}
 	}
+}
+
+int DAT_00B730B8;
+int DAT_00B730BC;
+int DAT_00B730C0;
+int DAT_00B730C4;
+
+// FUNCTION: 0x007771B0
+void Reset_Winfix_Globals(void)
+{
+	DAT_00B730B8 = 0;
+	DAT_00B730BC = 0;
+	DAT_00B730C0 = 0;
+	DAT_00B730C4 = 0;
 }

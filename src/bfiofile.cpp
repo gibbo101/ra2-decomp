@@ -494,6 +494,16 @@ int BufferIOFileClass::Seek(int pos, int dir)
 }
 
 
+// FUNCTION: 0x004325A0
+int BufferIOFileClass::Size(void)
+{
+	if (IsOpen && UseBuffer) {
+		return( FileSize );
+	}
+
+	return( BASECLASS::Size() );
+}
+
 // FUNCTION: 0x004325C0
 void BufferIOFileClass::Close(void)
 {
@@ -517,4 +527,18 @@ void BufferIOFileClass::Close(void)
 	} else {
 		BASECLASS::Close();
 	}
+}
+
+// FUNCTION: 0x00432610 BufferIOFileClass::~BufferIOFileClass
+
+struct Dat4 { int a, b, c, d; };
+extern Dat4 DAT_0089C498;
+
+// FUNCTION: 0x00432670
+void FUN_00432670(void)
+{
+	DAT_0089C498.a = 0;
+	DAT_0089C498.b = 0;
+	DAT_0089C498.c = 0;
+	DAT_0089C498.d = 0;
 }

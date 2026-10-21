@@ -14,6 +14,7 @@
 #include "unittype.h"
 #include "unit.h"
 #include "techno.h"
+#include "team.h"
 #include "infatype.h"
 #include "rules.h"
 #include "_rules.h"
@@ -784,20 +785,40 @@ MPCoopMode * __stdcall Allocate_MPCoop(wchar_t ** title, wchar_t ** tooltip, cha
 // FUNCTION: 0x005D8520 ?$DynamicVectorClass@PAVMultiplayerTeam@@::ID
 template class DynamicVectorClass<MultiplayerTeam *>;
 
-class AircraftTypeClass;
-class BuildingTypeClass;
+// FUNCTION: 0x005D8550 ?$VectorClass@PAVMPGameModeClass@@::operator==
+// FUNCTION: 0x005D8590 ?$VectorClass@PAVMPGameModeClass@@::Resize
+// FUNCTION: 0x005D8640 ?$VectorClass@PAVMPGameModeClass@@::Clear
+// FUNCTION: 0x005D8670 ?$VectorClass@PAVMPGameModeClass@@::ID
+// FUNCTION: 0x005D86B0 ?$VectorClass@PAVMPGameModeClass@@::ID
+// FUNCTION: 0x005D86D0 ?$DynamicVectorClass@PAVMPGameModeClass@@::?$DynamicVectorClass@PAVMPGameModeClass@@
+// FUNCTION: 0x005D8730 ?$DynamicVectorClass@PAVMPGameModeClass@@::Resize
+// FUNCTION: 0x005D87E0 ?$DynamicVectorClass@PAVMPGameModeClass@@::ID
+// FUNCTION: 0x005D8810 ?$VectorClass@PAVMultiplayerTeam@@::~?$VectorClass@PAVMultiplayerTeam@@
+// FUNCTION: 0x005D8860 ?$DynamicVectorClass@PAVMultiplayerTeam@@::~?$DynamicVectorClass@PAVMultiplayerTeam@@
+// FUNCTION: 0x005D88B0 ?$VectorClass@PAVMPGameModeClass@@::~?$VectorClass@PAVMPGameModeClass@@
+// FUNCTION: 0x005D8900 ?$DynamicVectorClass@PAVMPGameModeClass@@::~?$DynamicVectorClass@PAVMPGameModeClass@@
+template class DynamicVectorClass<MPGameModeClass *>;
+template class DynamicVectorClass<MultiplayerTeam *>;
 
-// FUNCTION: 0x005D8550 ?$VectorClass@PAVAircraftTypeClass@@::operator==
-// FUNCTION: 0x005D8590 ?$VectorClass@PAVAircraftTypeClass@@::Resize
-// FUNCTION: 0x005D8640 ?$VectorClass@PAVAircraftTypeClass@@::Clear
-// FUNCTION: 0x005D8670 ?$VectorClass@PAVAircraftTypeClass@@::ID
-// FUNCTION: 0x005D86B0 ?$VectorClass@PAVAircraftTypeClass@@::ID
-// FUNCTION: 0x005D86D0 ?$DynamicVectorClass@PAVAircraftTypeClass@@::?$DynamicVectorClass@PAVAircraftTypeClass@@
-// FUNCTION: 0x005D8730 ?$DynamicVectorClass@PAVAircraftTypeClass@@::Resize
-// FUNCTION: 0x005D87E0 ?$DynamicVectorClass@PAVAircraftTypeClass@@::ID
-// FUNCTION: 0x005D8810 ?$VectorClass@PAVBuildingTypeClass@@::~?$VectorClass@PAVBuildingTypeClass@@
-// FUNCTION: 0x005D8860 ?$DynamicVectorClass@PAVBuildingTypeClass@@::~?$DynamicVectorClass@PAVBuildingTypeClass@@
-// FUNCTION: 0x005D88B0 ?$VectorClass@PAVAircraftTypeClass@@::~?$VectorClass@PAVAircraftTypeClass@@
-// FUNCTION: 0x005D8900 ?$DynamicVectorClass@PAVAircraftTypeClass@@::~?$DynamicVectorClass@PAVAircraftTypeClass@@
-template class DynamicVectorClass<AircraftTypeClass *>;
-template class DynamicVectorClass<BuildingTypeClass *>;
+// FUNCTION: 0x005D8950 ?$VectorClass@PAVUnitTypeClass@@::?$VectorClass@PAVUnitTypeClass@@
+template class VectorClass<UnitTypeClass *>;
+
+// FUNCTION: 0x005D89A0 ?$VectorClass@PAVInfantryTypeClass@@::?$VectorClass@PAVInfantryTypeClass@@
+template class VectorClass<InfantryTypeClass *>;
+
+// FUNCTION: 0x005D89F0 ?$VectorClass@PAVMPGameModeClass@@::?$VectorClass@PAVMPGameModeClass@@
+template class VectorClass<MPGameModeClass *>;
+
+extern int DAT_00ABFDE0;
+extern int DAT_00ABFDE4;
+extern int DAT_00ABFDE8;
+extern int DAT_00ABFDEC;
+
+// FUNCTION: 0x005D8A40
+void __cdecl FUN_005D8A40(void)
+{
+	DAT_00ABFDE0 = 0;
+	DAT_00ABFDE4 = 0;
+	DAT_00ABFDE8 = 0;
+	DAT_00ABFDEC = 0;
+}

@@ -602,3 +602,30 @@ HRESULT STDMETHODCALLTYPE TerrainClass::GetClassID(CLSID * retval)
 	*retval = CLSID_TerrainClass;
 	return(S_OK);
 }
+
+
+// FUNCTION: 0x0071D2F0
+int TerrainClass::Fetch_Object_Size(void) const
+{
+	return(sizeof(*this));
+}
+
+
+// FUNCTION: 0x0071D300
+RTTIType TerrainClass::Fetch_RTTI(void) const
+{
+	return(RTTI_TERRAIN);
+}
+
+
+// FUNCTION: 0x0071D350 TerrainClass::~TerrainClass
+
+
+struct IntQuad {
+	int A, B, C, D;
+	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
+};
+
+static IntQuad ZeroQuad;
+
+// FUNCTION: 0x0071D370 $E2

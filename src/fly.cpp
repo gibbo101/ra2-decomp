@@ -710,3 +710,9 @@ bool FlyLocomotionClass::Is_Locked_To_Straight_Flight(void)
 template class _com_ptr_t<_com_IIID<IFlyControl, &__uuidof(IFlyControl)> >;
 
 // FUNCTION: 0x004D0510 LocomotionClass::QueryInterface
+
+// FUNCTION: 0x004D0520 LocomotionClass::AddRef
+
+// FUNCTION: 0x004D0530 LocomotionClass::Release
+
+// FUNCTION: 0x004D0540 $E13

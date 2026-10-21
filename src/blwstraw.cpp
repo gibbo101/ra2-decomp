@@ -115,3 +115,34 @@ struct ShortPair_89C698 {
 
 // FUNCTION: 0x004384E0 $E32
 ShortPair_89C698 DAT_0089C698;
+
+struct Triple_89C6B8 {
+	int A;
+	int B;
+	int C;
+	Triple_89C6B8(void) : A(0), B(0), C(0) {}
+};
+
+// FUNCTION: 0x004384F0 $E35
+Triple_89C6B8 DAT_0089C6B8;
+
+struct Triple_89C6E0 {
+	int A;
+	int B;
+	int C;
+	Triple_89C6E0(void) : A(128), B(128), C(0) {}
+};
+
+// FUNCTION: 0x00438510 $E38
+Triple_89C6E0 DAT_0089C6E0;
+
+struct Quad_89C688 {
+	int A;
+	int B;
+	int C;
+	int D;
+	Quad_89C688(void) : A(0), B(0), C(0), D(0) {}
+};
+
+// FUNCTION: 0x00438530 $E41
+Quad_89C688 DAT_0089C688;

@@ -294,3 +294,23 @@ int ParticleTypeClass::Fetch_Object_Size(void) const
 {
 	return(sizeof(*this));
 }
+
+// FUNCTION: 0x00645920
+RTTIType ParticleTypeClass::Fetch_RTTI(void) const
+{
+	return(RTTI_PARTICLETYPE);
+}
+
+// FUNCTION: 0x00645930
+bool ParticleTypeClass::Create_And_Place(Cell const & , HouseClass * house) const
+{
+	return(false);
+}
+
+// FUNCTION: 0x00645940
+ObjectClass * ParticleTypeClass::Create_One_Of(HouseClass *) const
+{
+	return(NULL);
+}
+
+// FUNCTION: 0x00645950 ParticleTypeClass::~ParticleTypeClass

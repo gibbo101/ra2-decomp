@@ -1300,4 +1300,28 @@ template class RLEBlitTransLucent75AlphaZReadWrite<unsigned short>;
 template class RLEBlitTransLucent50AlphaZReadWrite<unsigned short>;
 
 // FUNCTION: 0x00499A90 ?$RLEBlitTransLucent25AlphaZReadWrite@G::Blit
+// FUNCTION: 0x00499C60 ?$RLEBlitTransLucent25AlphaZReadWrite@G::Blit_Copy_Tinted
 template class RLEBlitTransLucent25AlphaZReadWrite<unsigned short>;
+
+
+// FUNCTION: 0x00499CA0 ?$BlitTransXlat@G::~?$BlitTransXlat@G
+
+// FUNCTION: 0x00499CC0 Blitter::~Blitter
+
+// FUNCTION: 0x00499CE0 ?$BlitPlainXlat@E::~?$BlitPlainXlat@E
+
+// FUNCTION: 0x00499D00 ?$BlitTransXlat@E::~?$BlitTransXlat@E
+
+// FUNCTION: 0x00499D20 ?$BlitTransZRemapXlat@E::~?$BlitTransZRemapXlat@E
+
+// FUNCTION: 0x00499D40 ?$BlitTransRemapDest@E::~?$BlitTransRemapDest@E
+
+// FUNCTION: 0x00499D60 ?$BlitTransRemapXlat@E::~?$BlitTransRemapXlat@E
+
+// FUNCTION: 0x00499D80 ?$RLEBlitTransXlat@E::~?$RLEBlitTransXlat@E
+
+// FUNCTION: 0x00499DA0 RLEBlitter::~RLEBlitter
+
+// FUNCTION: 0x00499DC0 ?$RLEBlitTransZRemapXlat@E::~?$RLEBlitTransZRemapXlat@E
+
+// FUNCTION: 0x00499DE0 ?$RLEBlitTransRemapDest@E::~?$RLEBlitTransRemapDest@E

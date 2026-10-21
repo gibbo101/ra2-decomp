@@ -262,3 +262,11 @@ VoxelAnimTypeClass * VoxelAnimTypeClass::Find_Or_Make(char const * name)
 {
 	return(TFind_Or_Make<VoxelAnimTypeClass>(name, VoxelAnimTypes));
 }
+
+// FUNCTION: 0x0074B9F0 VoxelAnimTypeClass::Fetch_RTTI
+
+// FUNCTION: 0x0074BA00 VoxelAnimTypeClass::Fetch_Object_Size
+
+// FUNCTION: 0x0074BA10 VoxelAnimTypeClass::Create_And_Place
+
+// FUNCTION: 0x0074BA20 VoxelAnimTypeClass::Create_One_Of

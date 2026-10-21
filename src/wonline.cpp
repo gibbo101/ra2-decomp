@@ -723,7 +723,7 @@ struct ChatSink {
 	virtual long __stdcall V08(WolChannel * channel);
 	virtual long __stdcall V09(void);
 	virtual void V10(void);
-	virtual void V11(void);
+	virtual long __stdcall V11(char const * text);
 	virtual void V12(void);
 	virtual long __stdcall V13(void);
 	virtual long __stdcall V14(User * user, char * text);
@@ -733,7 +733,7 @@ struct ChatSink {
 	virtual long __stdcall V18(User * users);
 	virtual void V19(void);
 	virtual long __stdcall V20(unsigned long * version);
-	virtual void V21(void);
+	virtual long __stdcall V21(User * user);
 	virtual void V22(void);
 	virtual void V23(void);
 	virtual long __stdcall V24(User * user);
@@ -5266,6 +5266,7 @@ BOOL CALLBACK FUN_0079AE00(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 		return rc;
 	}
 	SimpleWonlineDialogControl * control = (SimpleWonlineDialogControl *)GetWindowLong(window, 8);
+	wchar_t buffer[128];
 	switch (message) {
 		case WM_ERASEBKGND:
 			return TRUE;
@@ -6129,6 +6130,240 @@ void FUN_007A19E0(void)
 			}
 		}
 	}
+}
+
+void __fastcall FUN_005EC880(HWND dialog, int count, bool full, bool ai);
+void FUN_005E2AC0(void);
+bool FUN_00779940(void);
+
+// FUNCTION: 0x007A2110
+BOOL CALLBACK FUN_007A2110(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	switch (message) {
+		case WM_DESTROY:
+			KillTimer(window, 0);
+			return FALSE;
+
+		case WM_PAINT:
+			OwnerDraw::Paint(window);
+			FUN_00607FD0(window);
+			ValidateRect(window, NULL);
+			return TRUE;
+
+		case WM_ERASEBKGND:
+			return TRUE;
+
+		case WM_DRAWITEM:
+			OwnerDraw::DrawItem((LPDRAWITEMSTRUCT)lparam);
+			return TRUE;
+
+		case WM_COMMAND:
+			switch (LOWORD(wparam)) {
+				case 0x5C0:
+					if (DAT_00B73A20 == 0xB) {
+						FUN_007757E0(window, 0);
+						return FALSE;
+					}
+					SetEvent(DAT_00B73684[0]);
+					break;
+
+				case 0x708:
+					DAT_00AC116C->V11("start 4439,0,0,10000,10,1,1,1,3,Match,1,0,MP18S3.MAP,Match:mshag,4,1,xyzkerble,7,4");
+					return FALSE;
+
+				case 0x709:
+					DAT_00AC116C->V11("start 4439,0,0,10000,10,1,1,1,3,Match,1,0,MP18S3.MAP,Match:xyzkerble,7,4,mshag,4,1,");
+					return FALSE;
+			}
+			break;
+
+		case WM_TIMER:
+			if (wparam == 0) {
+				FUN_005E2AC0();
+				return FALSE;
+			}
+			break;
+
+		case 0x497:
+			SetTimer(window, 0, 2000, NULL);
+			return FALSE;
+	}
+	return FALSE;
+}
+
+
+// FUNCTION: 0x007A2230
+void __fastcall FUN_007A2230(char * name, char * ip, unsigned long second, unsigned long third)
+{
+	if (!name || !ip || !second || !third) {
+		return;
+	}
+	char * third_text = (char *)third;
+	char * second_text = (char *)second;
+	unsigned long third_value;
+	second = 0;
+	third = 0;
+	third_value = 0;
+	sscanf(ip, "%X", &second);
+	sscanf(second_text, "%X", &third);
+	sscanf(third_text, "%X", &third_value);
+	for (int i = 0; i < 8; i++) {
+		if (stricmp(name, FUN_007350C0(Session.Slots[i]->Name)) == 0) {
+			unsigned long net = 0;
+			unsigned char node[6];
+			memset(node, 0, 6);
+			*(unsigned long *)node = second;
+			Session.unknown_2994[i].Set_Address((unsigned char *)&net, node, 0);
+			Session.unknown_29F4[i] = third;
+			Session.unknown_2FF8[i] = third_value;
+			return;
+		}
+	}
+}
+
+
+// FUNCTION: 0x007A2730
+void FUN_007A2730(void)
+{
+	if (DAT_00AC116C) {
+		DAT_00AC116C->V15("G");
+	}
+}
+
+// FUNCTION: 0x007A2750
+void FUN_007A2750(void)
+{
+	HWND dialog = FUN_00775B10();
+	HWND list = GetDlgItem(dialog, 0x59F);
+	bool notHost;
+	{
+		Wstring empty((char *)NULL);
+		notHost = FUN_0077EBA0(empty) != 1;
+	}
+	if (notHost) {
+		SendMessage(list, 0x4DC, 0, 1);
+		FUN_005E2700(-1, StringTable::LoadString("GUI:HostGameStartJoiner", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x7212));
+	}
+}
+
+// FUNCTION: 0x007A27D0
+void FUN_007A27D0(void)
+{
+	HWND dialog = FUN_00775B10();
+	HWND list = GetDlgItem(dialog, 0x59F);
+	SendMessage(list, 0x4DC, 0, 0);
+}
+
+// FUNCTION: 0x007A2800
+void __fastcall FUN_007A2800(int count, bool full, bool ai)
+{
+	HWND dialog = FUN_00775940(0xC2);
+	FUN_005EC880(dialog, count, full, ai);
+}
+
+// FUNCTION: 0x007A2830
+void __fastcall FUN_007A2830(Wstring * name)
+{
+	User user;
+	user.Flags = 0;
+	for (int i = 0; i < DAT_00B77900.length(); i++) {
+		DAT_00B77900.get(user, i);
+		if (stricmp(name->text(), user.Nick) == 0) {
+			DAT_00AC116C->V21(&user);
+			return;
+		}
+	}
+}
+
+// FUNCTION: 0x007A28B0
+void __fastcall FUN_007A28B0(wchar_t const * wide)
+{
+	if (wide) {
+		User user;
+		Wstring name = FUN_007B7F90(wide);
+		user.Flags = 0;
+		for (int i = 0; i < DAT_00B77900.length(); i++) {
+			DAT_00B77900.get(user, i);
+			if (stricmp(name.text(), user.Nick) == 0) {
+				DAT_00AC116C->V21(&user);
+				break;
+			}
+		}
+	}
+}
+
+BOOL CALLBACK FUN_007A29E0(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+
+// FUNCTION: 0x007A2970
+void FUN_007A2970(void)
+{
+	char busy = DAT_00B77DC2;
+	DAT_00B77DC1 = 0;
+	if (!busy && FUN_00779940() && FUN_0079C520(&DAT_00B76AC4)) {
+		FUN_007F7624_Class control;
+		FUN_006241F0(0x122, FUN_007A29E0, (OwnerDraw::DialogControl *)&control);
+	}
+}
+
+
+void __fastcall FUN_00779A40(bool value);
+
+// FUNCTION: 0x007A29E0
+BOOL CALLBACK FUN_007A29E0(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	if (message == WM_INITDIALOG && lparam) {
+		SetWindowLong(window, 8, ((int *)lparam)[1]);
+	}
+	int rc = UI::StandardWndProc(window, message, wparam, lparam);
+	if (rc) {
+		return rc;
+	}
+	SimpleWonlineDialogControl * control = (SimpleWonlineDialogControl *)GetWindowLong(window, 8);
+	wchar_t buffer[128];
+	switch (message) {
+		case WM_ERASEBKGND:
+			return TRUE;
+
+		case WM_PAINT:
+			OwnerDraw::Paint(window);
+			FUN_00607FD0(window);
+			ValidateRect(window, NULL);
+			return TRUE;
+
+		case WM_DRAWITEM:
+			OwnerDraw::DrawItem((LPDRAWITEMSTRUCT)lparam);
+			return TRUE;
+
+		case WM_COMMAND:
+			switch (LOWORD(wparam)) {
+				case IDOK:
+					{
+						bool checked = IsDlgButtonChecked(window, 0x6F9) == 1;
+						FUN_00779A40(!checked);
+					}
+					FUN_0079C8D0(&DAT_00B76AC4);
+					control->F1(window, 1);
+					return FALSE;
+
+				case IDCANCEL:
+					{
+						bool checked = IsDlgButtonChecked(window, 0x6F9) == 1;
+						FUN_00779A40(!checked);
+					}
+					control->F1(window, 2);
+					return FALSE;
+			}
+			break;
+
+		case 0x497:
+			{
+				swprintf(buffer, StringTable::LoadString("WOL:AddBuddyQuery", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x726B), DAT_00B76AC4.get());
+				HWND item = GetDlgItem(window, 0x71B);
+				SendMessage(item, 0x4B2, 0, (LPARAM)buffer);
+			}
+			return FALSE;
+	}
+	return FALSE;
 }
 
 // FUNCTION: 0x007A2E70 SimpleWonlineDialogControl::~SimpleWonlineDialogControl

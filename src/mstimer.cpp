@@ -76,3 +76,20 @@ double DAT_00ABFD88 = FUN_004CADE0((DAT_00ABFDD0 * 2) / DAT_00ABFD58);
 
 // FUNCTION: 0x005D5A20 $E29
 int DAT_00ABFDC4 = (int)(DAT_00ABFDD0 * 4 + DAT_007E1738);
+
+struct MsInit2 { short a; short b; MsInit2() : a(0), b(0) {} };
+struct MsInit3 { int a; int b; int c; MsInit3() : a(0), b(0), c(0) {} };
+struct MsInit4 { int a; int b; int c; int d; MsInit4() : a(0), b(0), c(0), d(0) {} };
+struct MsInit128 { int a; int b; int c; MsInit128() : c(0), a(0x80), b(0x80) {} };
+
+// FUNCTION: 0x005D5A50 $E32
+MsInit2 DAT_00ABFD50;
+
+// FUNCTION: 0x005D5A60 $E35
+MsInit3 DAT_00ABFD78;
+
+// FUNCTION: 0x005D5A80 $E38
+MsInit128 DAT_00ABFDB8;
+
+// FUNCTION: 0x005D5AA0 $E41
+MsInit4 DAT_00ABFD40;

@@ -821,6 +821,28 @@ _STATIC long VQA_LoadLoop(VQAHandleP *vqap, long framenum)
 	return(rc);
 }
 
+static inline long Load_VPTZ_K(VQAHandleP *vqap, unsigned long iffsize)
+{
+	unsigned long padsize = PADSIZE(iffsize);
+	unsigned long lcwoffset = vqap->Max_Ptr_Size - padsize;
+	VQAFrameNode *curframe = vqap->Loader.CurFrame;
+	void *buffer = curframe->Pointers + lcwoffset;
+
+	if (vqap->Config.StreamHandler((VQAHandle *)vqap, VQACMD_READ, buffer, padsize)) {
+		return(VQAERR_READ);
+	}
+
+	curframe->Flags |= VQAFRMF_PTRCOMP;
+	curframe->PtrOffset = lcwoffset;
+
+	if (vqap->Header.Version < VQAHD_VER3) {
+		((unsigned char *)buffer)[iffsize + 1] = 0x80;
+	}
+
+	return(VQAERR_NONE);
+}
+
+// FUNCTION: 0x007C0C80
 long Load_VQF(VQAHandleP *vqap, unsigned long frame_iffsize, char flags)
 {
 	VQAFrameNode  *curframe;
@@ -902,13 +924,6 @@ long Load_VQF(VQAHandleP *vqap, unsigned long frame_iffsize, char flags)
 					return(VQAERR_READ);
 				}
 
-				#if 0
-				if (drawer->CurPalSize == 0) {
-					memcpy(drawer->Palette_24,curframe->Palette,curframe->PaletteSize);
-					drawer->CurPalSize = curframe->PaletteSize;
-				}
-				#endif
-
 				curframe->Flags |= VQAFRMF_PALETTE;
 
 				skip = false;
@@ -921,14 +936,6 @@ long Load_VQF(VQAHandleP *vqap, unsigned long frame_iffsize, char flags)
 				if (Load_CPLZ(vqap, iffsize) != VQAERR_NONE) {
 					return(VQAERR_READ);
 				}
-
-				#if 0
-				if (drawer->CurPalSize == 0) {
-					drawer->CurPalSize = VQA_LCW_Uncompress((char *)curframe->Palette
-							+ curframe->PalOffset, (char *)drawer->Palette_24,
-							vqap->Max_Pal_Size);
-				}
-				#endif
 
 				curframe->Flags |= VQAFRMF_PALETTE;
 
@@ -945,6 +952,19 @@ long Load_VQF(VQAHandleP *vqap, unsigned long frame_iffsize, char flags)
 				}
 
 				skip = false;
+				break;
+
+			case ID_VPKZ:
+				if (flags & VQALOADF_NOPTR) {
+					break;
+				}
+				if (Load_VPTZ_K(vqap, iffsize) != VQAERR_NONE) {
+					return(VQAERR_READ);
+				}
+
+				skip = false;
+				curframe->Flags |= VQAFRMF_KEY;
+
 				break;
 
 			case ID_VPTZ:
@@ -982,19 +1002,6 @@ long Load_VQF(VQAHandleP *vqap, unsigned long frame_iffsize, char flags)
 
 				skip = false;
 				curframe->Flags |= VQAFRMF_RSDCOMP;
-
-				break;
-
-			case ID_VPKZ:
-				if (flags & VQALOADF_NOPTR) {
-					break;
-				}
-				if (Load_VPTZ(vqap, iffsize) != VQAERR_NONE) {
-					return(VQAERR_READ);
-				}
-
-				skip = false;
-				curframe->Flags |= VQAFRMF_KEY;
 
 				break;
 
@@ -1117,80 +1124,6 @@ long Load_CBF0(VQAHandleP *vqap, unsigned long iffsize)
 
 	loader->FullCB = curcb;
 	loader->CurCB = curcb->Next;
-
-	return(VQAERR_NONE);
-}
-
-long Load_CBPZ(VQAHandleP *vqap, unsigned long iffsize)
-{
-	VQAConfig     *config;
-	VQALoader     *loader;
-	VQACBNode     *curcb;
-	void          *buffer;
-	unsigned long padsize;
-	VQAHeader     *header;
-	long          groupsize;
-	int cbfull;
-
-	padsize = PADSIZE(iffsize);
-	config = &vqap->Config;
-	loader = &vqap->Loader;
-	header = &vqap->Header;
-	groupsize = header->Groupsize;
-	curcb = loader->CurCB;
-
-	if (loader->PartialCBSize == 0) {
-		if (groupsize != 0) {
-			loader->CBSize = PADSIZE(groupsize) + groupsize * padsize;
-		} else {
-			loader->CBSize = VQA_GetCodebookSize(vqap, loader->CurFrameNum);
-		}
-		if (!(vqap->AltBufferFlags & VQAABUFF_ALTCB)) {
-			curcb->CBOffset = vqap->Max_CB_Size - loader->CBSize;
-		} else {
-			curcb->CBOffset = 0;
-		}
-	}
-
-	buffer = ((curcb->Buffer + curcb->CBOffset) + loader->PartialCBSize);
-
-	if (vqap->Config.StreamHandler((VQAHandle *)vqap, VQACMD_READ, buffer, padsize)) {
-		return(VQAERR_READ);
-	}
-
-	loader->PartialCBSize += iffsize;
-	loader->NumPartialCB++;
-	cbfull = false;
-
-	if (groupsize != 0) {
-		if (loader->NumPartialCB == groupsize) {
-			cbfull = true;
-		}
-	} else {
-		if (loader->PartialCBSize == loader->CBSize) {
-			cbfull = true;
-		} else {
-			if (loader->PartialCBSize > loader->CBSize) {
-				return(VQAERR_READ);
-			}
-		}
-	}
-
-	if (cbfull) {
-		loader->NumPartialCB = 0;
-		loader->PartialCBSize = 0;
-
-		curcb->Flags = 0;
-
-		curcb->Flags |= VQACBF_CBFULL|VQACBF_CBCOMP;
-
-		loader->FullCB = curcb;
-		loader->CurCB = curcb->Next;
-
-		if (header->Version < VQAHD_VER3) {
-			curcb->Buffer[loader->CBSize + curcb->CBOffset + 1] = 0x80;
-		}
-	}
 
 	return(VQAERR_NONE);
 }
@@ -2050,6 +1983,80 @@ long Load_CBP0(VQAHandleP *vqap, unsigned long iffsize)
 
 		loader->FullCB = curcb;
 		loader->CurCB = curcb->Next;
+	}
+
+	return(VQAERR_NONE);
+}
+
+// FUNCTION: 0x007C1F30
+long Load_CBPZ(VQAHandleP *vqap, unsigned long iffsize)
+{
+	VQAConfig     *config;
+	VQALoader     *loader;
+	VQACBNode     *curcb;
+	void          *buffer;
+	unsigned long padsize;
+	long          groupsize;
+	int cbfull;
+
+	padsize = PADSIZE(iffsize);
+	config = &vqap->Config;
+	loader = &vqap->Loader;
+	curcb = loader->CurCB;
+	groupsize = vqap->Header.Groupsize;
+
+	if (loader->PartialCBSize == 0) {
+		if (groupsize != 0) {
+			loader->CBSize = PADSIZE(groupsize) + groupsize * padsize;
+		} else {
+			loader->CBSize = VQA_GetCodebookSize(vqap, loader->CurFrameNum);
+		}
+		if (!(vqap->AltBufferFlags & VQAABUFF_ALTCB)) {
+			curcb->CBOffset = vqap->Max_CB_Size - loader->CBSize;
+		} else {
+			curcb->CBOffset = 0;
+		}
+	}
+
+	buffer = curcb->Buffer + curcb->CBOffset;
+	buffer = (char *)buffer + loader->PartialCBSize;
+
+	if (vqap->Config.StreamHandler((VQAHandle *)vqap, VQACMD_READ, buffer, padsize)) {
+		return(VQAERR_READ);
+	}
+
+	loader->PartialCBSize += iffsize;
+	loader->NumPartialCB++;
+	cbfull = false;
+
+	if (groupsize != 0) {
+		if (loader->NumPartialCB == groupsize) {
+			cbfull = true;
+		}
+	} else {
+		if (loader->PartialCBSize == loader->CBSize) {
+			cbfull = true;
+		} else {
+			if (loader->PartialCBSize > loader->CBSize) {
+				return(VQAERR_READ);
+			}
+		}
+	}
+
+	if (cbfull) {
+		loader->NumPartialCB = 0;
+		loader->PartialCBSize = 0;
+
+		curcb->Flags = 0;
+
+		curcb->Flags |= VQACBF_CBFULL|VQACBF_CBCOMP;
+
+		loader->FullCB = curcb;
+		loader->CurCB = curcb->Next;
+
+		if (vqap->Header.Version < VQAHD_VER3) {
+			curcb->Buffer[loader->CBSize + curcb->CBOffset + 1] = 0x80;
+		}
 	}
 
 	return(VQAERR_NONE);

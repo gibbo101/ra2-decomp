@@ -751,3 +751,19 @@ template class TClassFactory<IsometricTileTypeClass>;
 // FUNCTION: 0x006C3110 ?$TClassFactory@VOverlayTypeClass@@::CreateInstance
 // FUNCTION: 0x006C3190 ?$TClassFactory@VOverlayTypeClass@@::LockServer
 template class TClassFactory<OverlayTypeClass>;
+
+// FUNCTION: 0x006C31C0 ?$TClassFactory@VSmudgeTypeClass@@::?$TClassFactory@VSmudgeTypeClass@@
+// FUNCTION: 0x006C31D0 ?$TClassFactory@VSmudgeTypeClass@@::QueryInterface
+// FUNCTION: 0x006C3240 ?$TClassFactory@VSmudgeTypeClass@@::AddRef
+// FUNCTION: 0x006C3260 ?$TClassFactory@VSmudgeTypeClass@@::Release
+// FUNCTION: 0x006C3290 ?$TClassFactory@VSmudgeTypeClass@@::CreateInstance
+// FUNCTION: 0x006C3310 ?$TClassFactory@VSmudgeTypeClass@@::LockServer
+template class TClassFactory<SmudgeTypeClass>;
+
+// FUNCTION: 0x006C3340 ?$TClassFactory@VUnitClass@@::?$TClassFactory@VUnitClass@@
+// FUNCTION: 0x006C3350 ?$TClassFactory@VUnitClass@@::QueryInterface
+// FUNCTION: 0x006C33C0 ?$TClassFactory@VUnitClass@@::AddRef
+// FUNCTION: 0x006C33E0 ?$TClassFactory@VUnitClass@@::Release
+// FUNCTION: 0x006C3410 ?$TClassFactory@VUnitClass@@::CreateInstance
+// FUNCTION: 0x006C3490 ?$TClassFactory@VUnitClass@@::LockServer
+template class TClassFactory<UnitClass>;

@@ -209,6 +209,12 @@ void GraphicMenu::Set_Background_Name(Wstring const & name)
 // FUNCTION: 0x004F2B10 ?$DynamicVectorClass@PAVGraphicMenuItem@@::ID
 // FUNCTION: 0x004F2B40 ?E?$VectorCursor@PAVGraphicMenuItem@@V?$DynamicVectorClass@PAVGraphicMenuItem@@@@
 // FUNCTION: 0x004F2B50 ?F?$VectorCursor@PAVGraphicMenuItem@@V?$DynamicVectorClass@PAVGraphicMenuItem@@@@
+// FUNCTION: 0x004F2B60 ?$VectorClass@PAVGraphicMenuItem@@::~?$VectorClass@PAVGraphicMenuItem@@
+// FUNCTION: 0x004F2BB0 ?$DynamicVectorClass@PAVGraphicMenuItem@@::~?$DynamicVectorClass@PAVGraphicMenuItem@@
+// FUNCTION: 0x004F2C00 ?$VectorClass@PAVGraphicMenuItem@@::?$VectorClass@PAVGraphicMenuItem@@
 template class VectorClass<GraphicMenuItem *>;
 template class VectorCursor<GraphicMenuItem *, DynamicVectorClass<GraphicMenuItem *> >;
 template class DynamicVectorClass<GraphicMenuItem *>;
+
+// FUNCTION: 0x004F2C50 $E12
+Rect DAT_00A8EE98(0, 0, 0, 0);

@@ -1391,3 +1391,51 @@ bool WideWstring::containsAny(wchar_t const* chars) const
 	unsigned int len = wcslen(str);
 	return(wcscspn(str, chars) < len);
 }
+
+void __fastcall FUN_004335E0(wchar_t const * source, char * dest, int count);
+
+// FUNCTION: 0x007B8290
+bool WideWstring::containsAny(WideWstring const & chars) const
+{
+	return(containsAny(chars.get()));
+}
+
+// FUNCTION: 0x007B82E0
+Wstring __fastcall FUN_007B82E0(WideWstring const & string)
+{
+	int len = string.length();
+	int count = (len + 1) * 16;
+	char * narrow = new char[(count + 6) / 7];
+	FUN_004335E0(string.get(), narrow, count);
+	Wstring tmp(narrow);
+	delete[](narrow);
+	return(tmp);
+}
+
+void __fastcall FUN_00433770(char const * source, wchar_t * dest, int count);
+
+// FUNCTION: 0x007B83E0
+WideWstring __fastcall FUN_007B83E0(Wstring const & text)
+{
+	unsigned int len = text.length();
+	int count = (int)(((len + 1) * 7 >> 3) + 1) / 2;
+	wchar_t * wide = new wchar_t[count + 1];
+	FUN_00433770(text.get(), wide, count);
+	WideWstring tmp(wide);
+	delete[](wide);
+	return(tmp);
+}
+
+int DAT_00B78128;
+int DAT_00B7812C;
+int DAT_00B78130;
+int DAT_00B78134;
+
+// FUNCTION: 0x007B84B0
+void FUN_007B84B0(void)
+{
+	DAT_00B78128 = 0;
+	DAT_00B7812C = 0;
+	DAT_00B78130 = 0;
+	DAT_00B78134 = 0;
+}

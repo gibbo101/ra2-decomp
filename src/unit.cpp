@@ -143,7 +143,7 @@ UnitClass::UnitClass(UnitTypeClass const * type, HouseClass * house) :
 
 	if (Class != NULL) {
 		if (House != NULL) {
-			TypeList<UnitTypeClass *> & list = House->Class->VeteranUnits;
+			TypeList<UnitTypeClass const *> & list = House->Class->VeteranUnits;
 			for (int i = 0; i < list.Count(); i++) {
 				if (list[i] == Class) {
 					Veterancy.Set_Veteran(true);
@@ -2003,7 +2003,7 @@ void UnitClass::Init(void)
 	TechnoClass::Init();
 	if (Class != NULL) {
 		if (House != NULL) {
-			TypeList<UnitTypeClass *> & list = House->Class->VeteranUnits;
+			TypeList<UnitTypeClass const *> & list = House->Class->VeteranUnits;
 			for (int i = 0; i < list.Count(); i++) {
 				if (list[i] == Class) {
 					Veterancy.Set_Veteran(true);

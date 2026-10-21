@@ -274,3 +274,23 @@ int WeaponTypeClass::Get_Speed(int range) const
 	}
 	return(MaxSpeed);
 }
+
+// FUNCTION: 0x007730D0 WeaponTypeClass::Fetch_Object_Size
+
+// FUNCTION: 0x007730E0 WeaponTypeClass::Fetch_RTTI
+
+// FUNCTION: 0x007730F0 WeaponTypeClass::~WeaponTypeClass
+
+extern int DAT_00B72C98;
+extern int DAT_00B72C9C;
+extern int DAT_00B72CA0;
+extern int DAT_00B72CA4;
+
+// FUNCTION: 0x00773240
+void FUN_00773240(void)
+{
+	DAT_00B72C98 = 0;
+	DAT_00B72C9C = 0;
+	DAT_00B72CA0 = 0;
+	DAT_00B72CA4 = 0;
+}

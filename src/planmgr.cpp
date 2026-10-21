@@ -2212,3 +2212,48 @@ PlanningNodeClass * __fastcall FUN_0063AC60(void)
 {
 	return DAT_00AC4BF0;
 }
+
+extern DynamicVectorClass<ObjectClass *> DAT_00A8ECB8;
+
+// FUNCTION: 0x0063AC70
+int __fastcall FUN_0063AC70(PlanningNodeClass * node)
+{
+	int count = DAT_00A8ECB8.Count();
+	for (int i = 0; i < count; i++) {
+		ObjectClass * object = DAT_00A8ECB8[i];
+		if (object && object->Is_Techno()) {
+			TechnoClass * techno = (TechnoClass *)object;
+			PlanningTokenClass * token = techno->FUN_00705D20();
+			if (token) {
+				if (token->Loop_Start_Valid()) {
+					return 1;
+				}
+				PlanningNodeClass * key = node;
+				int index = token->PlanningNodes.ID(key);
+				if (index == -1) {
+					return 5;
+				}
+				int last = token->PlanningNodes.Count();
+				if (index == last - 1) {
+					return 2;
+				}
+				if (index == last - 2) {
+					return 3;
+				}
+			}
+		}
+	}
+	return -1;
+}
+
+// FUNCTION: 0x0063AD30
+void __fastcall FUN_0063AD30(PlanningNodeClass * node)
+{
+	DAT_00AC4C38 = node;
+}
+
+// FUNCTION: 0x0063AD40
+PlanningNodeClass * __fastcall FUN_0063AD40(void)
+{
+	return DAT_00AC4C38;
+}

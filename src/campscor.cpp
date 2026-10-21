@@ -882,3 +882,27 @@ int DAT_0089E16C = (int)(DAT_0089E178 * 4 + DAT_007E1738);
 
 // FUNCTION: 0x004716E0 $E112
 ShortPair DAT_0089E118;
+
+struct IntTriple {
+	int A, B, C;
+	IntTriple() { A = 0; B = 0; C = 0; }
+};
+
+// FUNCTION: 0x004716F0 $E115
+IntTriple DAT_0089E138;
+
+struct IntTripleHalf {
+	int A, B, C;
+	IntTripleHalf() { A = 0x80; B = 0x80; C = 0; }
+};
+
+// FUNCTION: 0x00471710 $E118
+IntTripleHalf DAT_0089E160;
+
+struct IntQuad {
+	int A, B, C, D;
+	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
+};
+
+// FUNCTION: 0x00471730 $E121
+IntQuad DAT_0089E108;

@@ -494,3 +494,12 @@ ObjectTypeClass const * ParticleSystemClass::Class_Of(void) const
 {
 	return(Class);
 }
+
+// FUNCTION: 0x00630230 ParticleSystemClass::~ParticleSystemClass
+
+// FUNCTION: 0x00630250 ?$DynamicVectorClass@PAVParticleClass@@::Add
+
+// FUNCTION: 0x006302A0 ?$VectorClass@PAVParticleClass@@::?$VectorClass@PAVParticleClass@@
+template class DynamicVectorClass<ParticleClass *>;
+
+// FUNCTION: 0x006302F0 $E2

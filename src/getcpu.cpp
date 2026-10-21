@@ -134,3 +134,20 @@ double DAT_00A8E958 = FUN_004CADE0((DAT_00A8ED58 * 2) / DAT_00A83D40);
 
 // FUNCTION: 0x004E6440 $E29
 int DAT_00A8EC94 = (int)(DAT_00A8ED58 * 4 + DAT_007E1738);
+
+struct Short2 { short a; short b; Short2() : a(0), b(0) {} };
+struct Int3 { int a; int b; int c; Int3() : a(0), b(0), c(0) {} };
+struct Int3B { int a; int b; int c; Int3B() : a(128), b(128), c(0) {} };
+struct Int4 { int a; int b; int c; int d; Int4() : a(0), b(0), c(0), d(0) {} };
+
+// FUNCTION: 0x004E6470 $E32
+Short2 DAT_00A83CD0;
+
+// FUNCTION: 0x004E6480 $E35
+Int3 DAT_00A8E380;
+
+// FUNCTION: 0x004E64A0 $E38
+Int3B DAT_00A8EC68;
+
+// FUNCTION: 0x004E64C0 $E41
+Int4 DAT_00A83C58;

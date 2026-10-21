@@ -1411,5 +1411,22 @@ template class DynamicVectorClass<VoxEntry *>;
 // FUNCTION: 0x007537D0 ?$VectorClass@PAUVoxNode@@::ID
 // FUNCTION: 0x00753810 ?$VectorClass@PAUVoxNode@@::ID
 // FUNCTION: 0x00753830 ?$DynamicVectorClass@PAUVoxNode@@::Resize
+// FUNCTION: 0x007538E0 ?$DynamicVectorClass@PAUVoxNode@@::ID
+// FUNCTION: 0x00753910 ?$DynamicVectorClass@PAUVoxNode@@::~?$DynamicVectorClass@PAUVoxNode@@
+// FUNCTION: 0x00753960 ?$VectorClass@PAUVoxNode@@::~?$VectorClass@PAUVoxNode@@
 template class VectorClass<VoxNode *>;
 template class DynamicVectorClass<VoxNode *>;
+
+int DAT_00B2D810;
+int DAT_00B2D814;
+int DAT_00B2D818;
+int DAT_00B2D81C;
+
+// FUNCTION: 0x007539B0
+void FUN_007539B0(void)
+{
+	DAT_00B2D810 = 0;
+	DAT_00B2D814 = 0;
+	DAT_00B2D818 = 0;
+	DAT_00B2D81C = 0;
+}

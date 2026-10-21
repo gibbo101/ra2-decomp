@@ -1161,6 +1161,18 @@ ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; 
 fixed them. Cost: about 5.6M tokens. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
 
+### Batches 96, 97 and 98 (21 October 2026)
+
+**155 of 160 functions** (70, 47, 38). Reading the vtable slots at landing relabelled
+multiplayer.cpp's template instances: the AircraftTypeClass ones are MultiplayerGameMode's
+(our MPGameModeClass), the BuildingTypeClass destructors MultiplayerTeam's, and two new
+constructors UnitTypeClass's and InfantryTypeClass's, not TeamClass's and int's. Naming
+those exposed HouseTypeClass building the non-const vectors where the exe builds
+VectorClass<InfantryTypeClass const *> and <UnitTypeClass const *>, so its veteran lists
+now hold const pointers, as RTTI says and YRpp drops. Four aliases into Session in
+wonline.cpp became Slots and its per-slot arrays. Cost: about 3.4M tokens. Merge gate:
+13,879 of 13,879 (1,782.9 KB), about 71% of game functions.
+
 ### Batches 93, 94 and 95 (21 October 2026)
 
 **188 of 191 functions** (79, 60, 49). Batch 94's merge identified YR's subtitle class as

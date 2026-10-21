@@ -525,3 +525,20 @@ double DAT_00B0EC08 = FUN_004CADE0((DAT_00B0EC38 * 2) / DAT_00B0EBE0);
 
 // FUNCTION: 0x00717F60 $E143
 int DAT_00B0EC2C = (int)(DAT_00B0EC38 * 4 + DAT_007E1738);
+
+struct TT_Short2 { short A; short B; TT_Short2() : A(0), B(0) {} };
+struct TT_Int3 { int A; int B; int C; TT_Int3() : A(0), B(0), C(0) {} };
+struct TT_Int3b { int A; int B; int C; TT_Int3b() : A(128), B(128), C(0) {} };
+struct TT_Int4 { int A; int B; int C; int D; TT_Int4() : A(0), B(0), C(0), D(0) {} };
+
+// FUNCTION: 0x00717F90 $E146
+TT_Short2 DAT_00B0EBD8;
+
+// FUNCTION: 0x00717FA0 $E149
+TT_Int3 DAT_00B0EBF8;
+
+// FUNCTION: 0x00717FC0 $E152
+TT_Int3b DAT_00B0EC20;
+
+// FUNCTION: 0x00717FE0 $E155
+TT_Int4 DAT_00B0EBC8;

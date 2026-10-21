@@ -100,3 +100,23 @@ template class DynamicVectorClass<SpotLightClass *>;
 // FUNCTION: 0x00600180 ?$VectorClass@PAVSpotLightClass@@::ID
 
 // FUNCTION: 0x006001A0 ?$DynamicVectorClass@PAVSpotLightClass@@::Resize
+
+// FUNCTION: 0x00600250 ?$DynamicVectorClass@PAVSpotLightClass@@::ID
+
+// FUNCTION: 0x00600280 ?$DynamicVectorClass@PAVSpotLightClass@@::~?$DynamicVectorClass@PAVSpotLightClass@@
+
+// FUNCTION: 0x006002D0 ?$VectorClass@PAVSpotLightClass@@::~?$VectorClass@PAVSpotLightClass@@
+
+int DAT_00AC18B0;
+int DAT_00AC18B4;
+int DAT_00AC18B8;
+int DAT_00AC18BC;
+
+// FUNCTION: 0x00600320
+void FUN_00600320(void)
+{
+	DAT_00AC18B0 = 0;
+	DAT_00AC18B4 = 0;
+	DAT_00AC18B8 = 0;
+	DAT_00AC18BC = 0;
+}

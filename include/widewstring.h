@@ -24,6 +24,7 @@ class WideWstring
 		int				toInt(void) const;
 		int				getToken(int offset, wchar_t const * delim, WideWstring & out) const;
 		bool			containsAny(wchar_t const * chars) const;
+		bool			containsAny(WideWstring const & chars) const;
 		int				getLine(int offset, WideWstring & out) const;
 		char			cat(wchar_t const * s);
 		char			cat(unsigned int size, wchar_t const * s);

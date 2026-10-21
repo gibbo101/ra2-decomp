@@ -76,3 +76,22 @@ template class DynamicVectorClass<AlphaLightingRemapClass *>;
 // FUNCTION: 0x00420550 ?$DynamicVectorClass@PAVAlphaLightingRemapClass@@::Resize
 
 // FUNCTION: 0x00420600 ?$DynamicVectorClass@PAVAlphaLightingRemapClass@@::ID
+
+// FUNCTION: 0x00420630 ?$VectorClass@PAVAlphaLightingRemapClass@@::~?$VectorClass@PAVAlphaLightingRemapClass@@
+template class VectorClass<AlphaLightingRemapClass *>;
+
+// FUNCTION: 0x00420680 ?$DynamicVectorClass@PAVAlphaLightingRemapClass@@::~?$DynamicVectorClass@PAVAlphaLightingRemapClass@@
+
+struct AlphaRectBlock {
+	int A, B, C, D;
+};
+extern AlphaRectBlock DAT_0088A0A8;
+
+// FUNCTION: 0x004206D0
+void FUN_004206D0(void)
+{
+	DAT_0088A0A8.A = 0;
+	DAT_0088A0A8.B = 0;
+	DAT_0088A0A8.C = 0;
+	DAT_0088A0A8.D = 0;
+}
