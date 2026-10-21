@@ -1,0 +1,23 @@
+# Crosscheck pilot: 20 functions matched by both ra2-decomp and gagarin (a1cdb5b).
+# Generate: uv run tools/xmanifest.py --from data/crosscheck/pilot_addresses.txt --out data/crosscheck/pilot_manifest.json
+# Each line: address, then why it is in the pilot ("same" = both projects give the same decorated symbol).
+0x004112D0  # no relocations; same: ABuffer::Fill(unsigned short)
+0x0048C3B0  # no relocations, virtual; same: ConnectionClass::Service
+0x004308B0  # REL32 calls and DIR32 globals, all bound; same: BeaconClass::VisibleToPlayer
+0x0046C790  # static member, 11 relocations (calls, globals, strings); same: BulletTypeClass::FindOrAllocate
+0x00724730  # 385 bytes, calls and globals; same: ToolTipManager::Remove
+0x007B24E0  # virtual with calls and globals, all bound; same: WinsockInterfaceClass::Broadcast
+0x0040E320  # constructor storing a vtable (DIR32 to ??_7, RTTI checked); same: GenericNode::GenericNode
+0x004115D0  # scalar deleting destructor (vtable store, call); same: ??_GSurface
+0x00420370  # template instance, virtual; same: DynamicVectorClass<AlphaLightingRemapClass *>::Clear
+0x00421AC0  # template deleting destructor; ours DynamicVectorClass<T>, theirs VectorClass<T>; the exe's vtable slot names VectorClass
+0x0047AAB0  # virtual; ours CDFileClass::Open(int), theirs CCFileClass::Open(unsigned); the slot is CDFileClass's
+0x004101F0  # destructor; ours virtual (UAE), theirs not (QAE); AbstractClass's vtable holds a deleting destructor
+0x00557A20  # no relocations; ours virtual ListClass::Bump, theirs non-virtual; it is a ListClass vtable slot
+0x007B1FD0  # ours free __stdcall Build_Packet_CRC, theirs virtual WinsockInterfaceClass::ComputePacketCrc; it is a slot
+0x00438340  # static initialiser; ours _$E2, theirs placeholder
+0x0040DD20  # jump table (local DIR32s); lengths differ: ours 67 with the table, theirs 41 without
+0x0071F950  # jump table; real names differ (Is_Time_Based / GetStateA); lengths 99 / 32
+0x00529560  # names differ by convention (Put_Bool / WriteBool); lengths 54 / 52, theirs ends inside `ret 0xc`
+0x0041F0D0  # signature differs where bytes cannot decide: private vs public, class vs struct HouseClass
+0x0046D330  # constructor; our vtable symbol's class (CampScoreLink) disagrees with the exe's RTTI (CampaignScoreClass)

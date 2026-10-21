@@ -1,0 +1,957 @@
+{
+ "format": "ra2-decomp crosscheck manifest",
+ "format_version": 1,
+ "normalization": "reloc-zero-v1",
+ "project": "ra2-decomp",
+ "repository": "https://github.com/gibbo101/ra2-decomp",
+ "commit": "964bb3a199d1aed3e6eeeaba8ecff2ec5a6d9702",
+ "exe": {
+  "file": "gamemd.exe",
+  "version": "1.001",
+  "md5": "2a1307f6f57c9c492f985b4e3afb88e6",
+  "sha256": "3e81a61775d2745d1dabe397325ef663cd994ffc194da4e998e3bf5d2d308600",
+  "size": 5286208
+ },
+ "compiler": "Visual C++ 6.0 SP3 (C2.DLL 12.00.8447)",
+ "flags": [
+  "/O2",
+  "/Ob2",
+  "/Gr",
+  "/GR",
+  "/MT",
+  "/DWIN32"
+ ],
+ "inputs": {
+  "include_tree_sha256": "bb29135c188ed58418aefb4a78dc199c5f49690a8a4ca005880c8a5c95af78ff",
+  "data/functions.csv": "efbfe1418d927e6557b7d76d6fe81e68f13045b98d31ebfc81f0cda82c644b4f",
+  "data/progress.csv": "6da9c1b318327a5e1c28556c303c0ab2eee142979275057d2b03d9d2f183b157",
+  "data/names.csv": "f8d4d3ae7b35c9fa18e246c9dfae103087e4223e1975e3a7297ae285efb2f1bb",
+  "data/symbols.csv": "25d00f97b646a3fa8be378200fd9daa89d49891a13630f56398706e511fa8186",
+  "data/library.csv": "8d3055bbab6014a29d6721c1020124408de5c96943032464dac2cd4ed035b44b",
+  "data/exe_patches.csv": "3968d906c610346648cd7072979c7c57b5c1c026add340cabdd37ece1a0f33de",
+  "reference/tibsun": "dbfbfbfaac40364ce7e1cd8fad7bcade5c6fb0d4",
+  "reference/YRpp": "b22f1860dd7b100cad57123d4ca5d459b9020d88"
+ },
+ "sources": {
+  "src/_rtti.cpp": "42057510437e3ec42425e9c60f8c728a9130fe12673f5c9542b24686c5eaae93",
+  "src/abstract.cpp": "aea58b39847bb5d647b4938500452442638fcd62bf6338876435acf95265bba4",
+  "src/abuffer.cpp": "8a77c8bbfa7d88225fd101b8f27d9630e4772c6208f7754ed37461b43b032383",
+  "src/aitrig.cpp": "552dd509d4dee5320c26dc457546e57458c32e805c18377986a98489bf2ea865",
+  "src/alphalighting.cpp": "7a9e00abf8116821b23b7c71ef03c823a02deae709c6935e6326302a1fca2bcf",
+  "src/alphashp.cpp": "a9ff67eed79ec3f3abf74b990c825ef56e2df31c9461fa81154063a3e5bc65fc",
+  "src/beacon.cpp": "1373dcb24c031c751740f84cb7a98060f45c7b3f6a301d18c983b12ea3319146",
+  "src/blwstraw.cpp": "c1ea4d1bba126095229691209335d843a93562f72cd369f7fa801b143ebf4f66",
+  "src/bullettype.cpp": "02c92ee73175b9b8cbc91bc960a2f62c30a328ec227fde0d3f6e39d31341820f",
+  "src/campscor.cpp": "dbc7f8ef9e5125a9d5aa4119a821c709d3a08a7230849b404c51ac1414cac1fb",
+  "src/cdfile.cpp": "44a78d6d3f461424ab6354a1f665e6d63455a21f55e8c6aab8e55402c081fbdd",
+  "src/connect.cpp": "e4c064e8421c1cad289378de10755c77624615008def37a6ccd585b03cfe81b4",
+  "src/ini.cpp": "fa727525f390adce10f987fccb4fd343fb604cc98404911cbd50d50e323282e0",
+  "src/list.cpp": "f4afb6c174fdf4eb62a8afc4378c04022a962f24ecd396c4491509d4480efcbd",
+  "src/tevent.cpp": "40a1d078cc7ac2fc1a0a8774c6daf3a26b5d628414b703b3810ed2381fbc1108",
+  "src/tooltip.cpp": "5e1ede16b4f5bb481e74dff9d8b84c66e7238419836d31b6403c51a989c36fb5",
+  "src/wsproto.cpp": "fbdd6bb0b9c3e674743b98395a8845e5d971ece7e9cbed3a37f29a91de988c06"
+ },
+ "functions": [
+  {
+   "address": "0x0040DD20",
+   "size": 67,
+   "symbol": "?Dynamic_Cast@@YIPBVTechnoClass@@PBVAbstractClass@@@Z",
+   "source": "src/_rtti.cpp",
+   "byte_match": true,
+   "raw_sha256": "63fa97ae66ccf9fe8ec297d550baeb9f95a36ac0a3ad29966ce47003d9f81450",
+   "normalized_sha256": "1d63504d375ba82f86b83278071ca8bccf834a2cdedfa240fe682b287943dccc",
+   "relocations": [
+    {
+     "offset": 22,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": null,
+     "target_address": "0x0040DD54",
+     "binding": "ok"
+    },
+    {
+     "offset": 29,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": null,
+     "target_address": "0x0040DD4C",
+     "binding": "ok"
+    },
+    {
+     "offset": 44,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": null,
+     "target_address": "0x0040DD41",
+     "binding": "ok"
+    },
+    {
+     "offset": 48,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": null,
+     "target_address": "0x0040DD45",
+     "binding": "ok"
+    }
+   ],
+   "verification": {
+    "bytes": true,
+    "references": "all-ok",
+    "layout": "unchecked",
+    "vtable": "n-a",
+    "virtual": "n-a"
+   }
+  },
+  {
+   "address": "0x0040E320",
+   "size": 17,
+   "symbol": "??0GenericNode@@QAE@XZ",
+   "source": "src/_rtti.cpp",
+   "byte_match": true,
+   "raw_sha256": "b492c6317ac11e3a12f075f1fcc803bda1752fe02785b4a22d6dfa18274457fb",
+   "normalized_sha256": "2d132e871c89eddd856de6388bb3de987e8928e096847ca62a5119da3406ce3e",
+   "relocations": [
+    {
+     "offset": 12,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "??_7GenericNode@@6B@",
+     "target_address": "0x007E1B0C",
+     "binding": "unverified",
+     "rtti": ".?AVGenericNode@@"
+    }
+   ],
+   "verification": {
+    "bytes": true,
+    "references": "some-unverified",
+    "layout": "unchecked",
+    "vtable": "verified",
+    "virtual": "verified"
+   }
+  },
+  {
+   "address": "0x004101F0",
+   "size": 28,
+   "symbol": "??1AbstractClass@@UAE@XZ",
+   "source": "src/abstract.cpp",
+   "byte_match": true,
+   "raw_sha256": "5a3a0cdb0f16c90206592bc8e991334c265da8e40016a66036e9d9d41d2f1783",
+   "normalized_sha256": "c31fa8976d0c7ceee8c4961db29a3d0ecb1ebeb1915d2104ad31d2cec04b5248",
+   "relocations": [
+    {
+     "offset": 2,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "??_7AbstractClass@@6BIPersistStream@@@",
+     "target_address": "0x007E1F50",
+     "binding": "unverified",
+     "rtti": ".?AVAbstractClass@@"
+    },
+    {
+     "offset": 9,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "??_7AbstractClass@@6BIRTTITypeInfo@@@",
+     "target_address": "0x007E1F34",
+     "binding": "unverified",
+     "rtti": ".?AVAbstractClass@@"
+    },
+    {
+     "offset": 16,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "??_7AbstractClass@@6BINoticeSink@@@",
+     "target_address": "0x007E1F2C",
+     "binding": "unverified",
+     "rtti": ".?AVAbstractClass@@"
+    },
+    {
+     "offset": 23,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "??_7AbstractClass@@6BINoticeSource@@@",
+     "target_address": "0x007E1F24",
+     "binding": "unverified",
+     "rtti": ".?AVAbstractClass@@"
+    }
+   ],
+   "verification": {
+    "bytes": true,
+    "references": "some-unverified",
+    "layout": "unchecked",
+    "vtable": "verified",
+    "virtual": "verified"
+   }
+  },
+  {
+   "address": "0x004112D0",
+   "size": 57,
+   "symbol": "?Fill@ABuffer@@QAE_NG@Z",
+   "source": "src/abuffer.cpp",
+   "byte_match": true,
+   "raw_sha256": "33521f97b06dd3401a32b95ed8dd945a1dadf790dc970ad616f84559fdef8313",
+   "normalized_sha256": "33521f97b06dd3401a32b95ed8dd945a1dadf790dc970ad616f84559fdef8313",
+   "relocations": [],
+   "verification": {
+    "bytes": true,
+    "references": "n-a",
+    "layout": "unchecked",
+    "vtable": "n-a",
+    "virtual": "unchecked"
+   }
+  },
+  {
+   "address": "0x004115D0",
+   "size": 32,
+   "symbol": "??_GSurface@@UAEPAXI@Z",
+   "source": "src/abuffer.cpp",
+   "byte_match": true,
+   "raw_sha256": "d582031ff57f4f9fee78deb4a9f52c422741d578f5c5120d4a9ff524f94786d3",
+   "normalized_sha256": "ea7c5b9f45bb374cb70aa4ca26d11c7741d217678e901f3600790685c69a61b9",
+   "relocations": [
+    {
+     "offset": 11,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "??_7Surface@@6B@",
+     "target_address": "0x007E2198",
+     "binding": "unverified",
+     "rtti": ".?AVSurface@@"
+    },
+    {
+     "offset": 19,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "??3@YAXPAX@Z",
+     "target_address": "0x007C8B3D",
+     "binding": "ok"
+    }
+   ],
+   "verification": {
+    "bytes": true,
+    "references": "some-unverified",
+    "layout": "unchecked",
+    "vtable": "verified",
+    "virtual": "verified"
+   }
+  },
+  {
+   "address": "0x0041F0D0",
+   "size": 171,
+   "symbol": "?IronCurtainCharged@AITriggerTypeClass@@ABE_NPAVHouseClass@@0@Z",
+   "source": "src/aitrig.cpp",
+   "byte_match": true,
+   "raw_sha256": "52903e675febbc97bad830772efd8bcb40feb471bb0ff582fe1f5155f178009d",
+   "normalized_sha256": "0071e438c5b32dd2fdc6511cfa94eb56948ee88d8e4a8e4fa75649c3317710a0",
+   "relocations": [
+    {
+     "offset": 88,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "?Frame@@3HA",
+     "target_address": "0x00A8ED84",
+     "binding": "unverified"
+    },
+    {
+     "offset": 107,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?GetRechargeTime@SuperClass@@QAEHXZ",
+     "target_address": "0x006CC260",
+     "binding": "ok"
+    },
+    {
+     "offset": 116,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "?Rule@@3PAVRulesClass@@A",
+     "target_address": "0x008871E0",
+     "binding": "ok"
+    },
+    {
+     "offset": 132,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "__real@4@3fff8000000000000000",
+     "target_address": "0x007E2AC8",
+     "binding": "ok"
+    }
+   ],
+   "verification": {
+    "bytes": true,
+    "references": "some-unverified",
+    "layout": "unchecked",
+    "vtable": "n-a",
+    "virtual": "verified"
+   }
+  },
+  {
+   "address": "0x00420370",
+   "size": 42,
+   "symbol": "?Clear@?$DynamicVectorClass@PAVAlphaLightingRemapClass@@@@UAEXXZ",
+   "source": "src/alphalighting.cpp",
+   "byte_match": true,
+   "raw_sha256": "89f48be6dd5df623919cebd2bcee880a20bc2e680a83c7e63a530938d0ef77fc",
+   "normalized_sha256": "00e6e7ae812d5fbd5ef71d9308e77cc3945b4f2d12949970e939051c6289c801",
+   "relocations": [
+    {
+     "offset": 23,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "??3@YAXPAX@Z",
+     "target_address": "0x007C8B3D",
+     "binding": "ok"
+    }
+   ],
+   "verification": {
+    "bytes": true,
+    "references": "all-ok",
+    "layout": "unchecked",
+    "vtable": "n-a",
+    "virtual": "verified"
+   }
+  },
+  {
+   "address": "0x00421AC0",
+   "size": 73,
+   "symbol": "??_G?$DynamicVectorClass@PAVAlphaShapeClass@@@@UAEPAXI@Z",
+   "source": "src/alphashp.cpp",
+   "byte_match": true,
+   "raw_sha256": "9435905b4117b33353c1fdbefb635498ccaa941b3eda83875b67e4ca770cc2da",
+   "normalized_sha256": "661d672e115f52b786a48283367632a07e5f203d106e3151d3607fe913b70a99",
+   "relocations": [
+    {
+     "offset": 8,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "??_7?$VectorClass@PAVAlphaShapeClass@@@@6B@",
+     "target_address": "0x007E3258",
+     "binding": "unverified",
+     "rtti": ".?AV?$VectorClass@PAVAlphaShapeClass@@@@"
+    },
+    {
+     "offset": 25,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "??3@YAXPAX@Z",
+     "target_address": "0x007C8B3D",
+     "binding": "ok"
+    },
+    {
+     "offset": 60,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "??3@YAXPAX@Z",
+     "target_address": "0x007C8B3D",
+     "binding": "ok"
+    }
+   ],
+   "verification": {
+    "bytes": true,
+    "references": "some-unverified",
+    "layout": "unchecked",
+    "vtable": "verified",
+    "virtual": "mismatch"
+   }
+  },
+  {
+   "address": "0x004308B0",
+   "size": 94,
+   "symbol": "?VisibleToPlayer@BeaconClass@@QBE_NXZ",
+   "source": "src/beacon.cpp",
+   "byte_match": true,
+   "raw_sha256": "bd78f9b66d9fcd3a38a65246a3e0027f028c3b7261849ae428662ce80c370227",
+   "normalized_sha256": "3cf5053727306257f7e2058f3bb75f66fea23eba8ef5488847cf470e8c961144",
+   "relocations": [
+    {
+     "offset": 17,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "?PlayerPtr@@3PAVHouseClass@@A",
+     "target_address": "0x00A83D4C",
+     "binding": "ok"
+    },
+    {
+     "offset": 23,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?Is_Ally@HouseClass@@QBE_NW4HousesType@@@Z",
+     "target_address": "0x004F9A10",
+     "binding": "ok"
+    },
+    {
+     "offset": 33,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "?PlayerPtr@@3PAVHouseClass@@A",
+     "target_address": "0x00A83D4C",
+     "binding": "ok"
+    },
+    {
+     "offset": 44,
+     "type": "DIR32",
+     "addend": 4,
+     "target_symbol": "?Houses@@3V?$DynamicVectorClass@PAVHouseClass@@@@A",
+     "target_address": "0x00A80228",
+     "binding": "ok"
+    },
+    {
+     "offset": 53,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?Is_Ally@HouseClass@@QBE_NPBV1@@Z",
+     "target_address": "0x004F9A50",
+     "binding": "ok"
+    },
+    {
+     "offset": 69,
+     "type": "DIR32",
+     "addend": 4,
+     "target_symbol": "?Houses@@3V?$DynamicVectorClass@PAVHouseClass@@@@A",
+     "target_address": "0x00A80228",
+     "binding": "ok"
+    }
+   ],
+   "verification": {
+    "bytes": true,
+    "references": "all-ok",
+    "layout": "unchecked",
+    "vtable": "n-a",
+    "virtual": "unchecked"
+   }
+  },
+  {
+   "address": "0x00438340",
+   "size": 40,
+   "symbol": "_$E2",
+   "source": "src/blwstraw.cpp",
+   "byte_match": true,
+   "raw_sha256": "a84089a28ae424db49a59057c440db7f228624de75ad5ff898de6686b5ca206d",
+   "normalized_sha256": "d3aad4355983120be1af25c9b79ffed1dadefb474e8fb7063ce693013b089751",
+   "relocations": [
+    {
+     "offset": 2,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "?DAT_007E1710@@3NB",
+     "target_address": "0x007E1710",
+     "binding": "ok"
+    },
+    {
+     "offset": 8,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "?DAT_007E1708@@3NB",
+     "target_address": "0x007E1708",
+     "binding": "ok"
+    },
+    {
+     "offset": 13,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "__CIpow",
+     "target_address": "0x007C8FB0",
+     "binding": "ok"
+    },
+    {
+     "offset": 26,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?FUN_004CAC40@@YANN@Z",
+     "target_address": "0x004CAC40",
+     "binding": "ok"
+    },
+    {
+     "offset": 32,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "?DAT_0089C6A0@@3NA",
+     "target_address": "0x0089C6A0",
+     "binding": "ok"
+    }
+   ],
+   "verification": {
+    "bytes": true,
+    "references": "all-ok",
+    "layout": "unchecked",
+    "vtable": "n-a",
+    "virtual": "n-a"
+   }
+  },
+  {
+   "address": "0x0046C790",
+   "size": 131,
+   "symbol": "?FindOrAllocate@BulletTypeClass@@SIPAV1@PBD@Z",
+   "source": "src/bullettype.cpp",
+   "byte_match": true,
+   "raw_sha256": "f8dc6166a3c069733bf55ad84fc9fd67d58f53ec7c6836e815170836e1815bf8",
+   "normalized_sha256": "b703b7c6e2a85505612053416531b837892fdfe9db561a0c3049b91c381c662a",
+   "relocations": [
+    {
+     "offset": 6,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "??_C@_06CPHF@?$DMnone?$DO?$AA@",
+     "target_address": "0x00817474",
+     "binding": "ok"
+    },
+    {
+     "offset": 11,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "_stricmp",
+     "target_address": "0x007C8D20",
+     "binding": "ok"
+    },
+    {
+     "offset": 24,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "??_C@_04KIKH@none?$AA@",
+     "target_address": "0x00817694",
+     "binding": "ok"
+    },
+    {
+     "offset": 29,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "_stricmp",
+     "target_address": "0x007C8D20",
+     "binding": "ok"
+    },
+    {
+     "offset": 41,
+     "type": "DIR32",
+     "addend": 16,
+     "target_symbol": "?BulletTypes@@3V?$DynamicVectorClass@PAVBulletTypeClass@@@@A",
+     "target_address": "0x00A83C80",
+     "binding": "ok"
+    },
+    {
+     "offset": 52,
+     "type": "DIR32",
+     "addend": 4,
+     "target_symbol": "?BulletTypes@@3V?$DynamicVectorClass@PAVBulletTypeClass@@@@A",
+     "target_address": "0x00A83C80",
+     "binding": "ok"
+    },
+    {
+     "offset": 65,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "_stricmp",
+     "target_address": "0x007C8D20",
+     "binding": "ok"
+    },
+    {
+     "offset": 77,
+     "type": "DIR32",
+     "addend": 16,
+     "target_symbol": "?BulletTypes@@3V?$DynamicVectorClass@PAVBulletTypeClass@@@@A",
+     "target_address": "0x00A83C80",
+     "binding": "ok"
+    },
+    {
+     "offset": 92,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "??2@YAPAXI@Z",
+     "target_address": "0x007C8E17",
+     "binding": "ok"
+    },
+    {
+     "offset": 107,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "??0BulletTypeClass@@QAE@PBD@Z",
+     "target_address": "0x0046BBC0",
+     "binding": "ok"
+    },
+    {
+     "offset": 116,
+     "type": "DIR32",
+     "addend": 4,
+     "target_symbol": "?BulletTypes@@3V?$DynamicVectorClass@PAVBulletTypeClass@@@@A",
+     "target_address": "0x00A83C80",
+     "binding": "ok"
+    }
+   ],
+   "verification": {
+    "bytes": true,
+    "references": "all-ok",
+    "layout": "unchecked",
+    "vtable": "n-a",
+    "virtual": "verified"
+   }
+  },
+  {
+   "address": "0x0046D330",
+   "size": 30,
+   "symbol": "??0CampScoreLink@@QAE@XZ",
+   "source": "src/campscor.cpp",
+   "byte_match": true,
+   "raw_sha256": "bf6e6c6b8a3935d7c5274f70d708ca5fcb8f3e96c27ff991ca1464ee3a9d439f",
+   "normalized_sha256": "9051cccbb7b0f8b7db18325a2d1d454e5eff40bb6e6fe88af2fb0026d8628806",
+   "relocations": [
+    {
+     "offset": 6,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "??_7CampScoreLink@@6B@",
+     "target_address": "0x007E4AAC",
+     "binding": "unverified",
+     "rtti": ".?AVCampaignScoreClass@@"
+    },
+    {
+     "offset": 15,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "?DAT_0089E050@@3HA",
+     "target_address": "0x0089E050",
+     "binding": "ok"
+    },
+    {
+     "offset": 21,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "?DAT_0081B1E8@@3HA",
+     "target_address": "0x0081B1E8",
+     "binding": "ok"
+    }
+   ],
+   "verification": {
+    "bytes": true,
+    "references": "some-unverified",
+    "layout": "unchecked",
+    "vtable": "mismatch",
+    "virtual": "unchecked"
+   }
+  },
+  {
+   "address": "0x0047AAB0",
+   "size": 13,
+   "symbol": "?Open@CDFileClass@@UAEHH@Z",
+   "source": "src/cdfile.cpp",
+   "byte_match": true,
+   "raw_sha256": "a88fc9e952de7dbabec520e20d5f61d40b9e4a169793fa7117eb48e3a8073e92",
+   "normalized_sha256": "48a011df685f7d4c652f00585be349ab43a8b1bc2e40e52167c375c5d2951d5c",
+   "relocations": [
+    {
+     "offset": 6,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?Open@BufferIOFileClass@@UAEHH@Z",
+     "target_address": "0x00431F70",
+     "binding": "ok"
+    }
+   ],
+   "verification": {
+    "bytes": true,
+    "references": "all-ok",
+    "layout": "n-a",
+    "vtable": "n-a",
+    "virtual": "verified"
+   }
+  },
+  {
+   "address": "0x0048C3B0",
+   "size": 34,
+   "symbol": "?Service@ConnectionClass@@UAEHXZ",
+   "source": "src/connect.cpp",
+   "byte_match": true,
+   "raw_sha256": "fed3bc9361635c106ac6a2df334993b83bf42b416c0a0c6306f36be493085cdf",
+   "normalized_sha256": "fed3bc9361635c106ac6a2df334993b83bf42b416c0a0c6306f36be493085cdf",
+   "relocations": [],
+   "verification": {
+    "bytes": true,
+    "references": "n-a",
+    "layout": "unchecked",
+    "vtable": "n-a",
+    "virtual": "verified"
+   }
+  },
+  {
+   "address": "0x00529560",
+   "size": 54,
+   "symbol": "?Put_Bool@INIClass@@QAE_NPBD0_N@Z",
+   "source": "src/ini.cpp",
+   "byte_match": true,
+   "raw_sha256": "380269b232fe5c44b4736daddb65939f22c031e0f9a07f812afcd076c9ddcd9a",
+   "normalized_sha256": "bf552a347b8d7f296febf85e2bc287a1b6bbf115341f98f5de2071997dcac840",
+   "relocations": [
+    {
+     "offset": 17,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "??_C@_03LGKI@yes?$AA@",
+     "target_address": "0x00825BF8",
+     "binding": "ok"
+    },
+    {
+     "offset": 24,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?Put_String@INIClass@@QAE_NPBD00@Z",
+     "target_address": "0x00528660",
+     "binding": "ok"
+    },
+    {
+     "offset": 40,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "??_C@_02ELCB@no?$AA@",
+     "target_address": "0x00825BF4",
+     "binding": "ok"
+    },
+    {
+     "offset": 47,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?Put_String@INIClass@@QAE_NPBD00@Z",
+     "target_address": "0x00528660",
+     "binding": "ok"
+    }
+   ],
+   "verification": {
+    "bytes": true,
+    "references": "all-ok",
+    "layout": "n-a",
+    "vtable": "n-a",
+    "virtual": "verified"
+   }
+  },
+  {
+   "address": "0x00557A20",
+   "size": 68,
+   "symbol": "?Bump@ListClass@@UAEXH@Z",
+   "source": "src/list.cpp",
+   "byte_match": true,
+   "raw_sha256": "ffb56c681f65d8ca82d38096995cf342a21911da37132c8cb77fa102193df1e2",
+   "normalized_sha256": "ffb56c681f65d8ca82d38096995cf342a21911da37132c8cb77fa102193df1e2",
+   "relocations": [],
+   "verification": {
+    "bytes": true,
+    "references": "n-a",
+    "layout": "unchecked",
+    "vtable": "n-a",
+    "virtual": "verified"
+   }
+  },
+  {
+   "address": "0x0071F950",
+   "size": 99,
+   "symbol": "?Is_Time_Based@TEventClass@@QBE_NXZ",
+   "source": "src/tevent.cpp",
+   "byte_match": true,
+   "raw_sha256": "da3b8d8a04f922b454b70518c718058a672caa967ea03384f023b15df4ad3921",
+   "normalized_sha256": "11288867fd8ad20abad908cec1c0464a970355b7ecbdd91cd5d92efed935bf4e",
+   "relocations": [
+    {
+     "offset": 15,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": null,
+     "target_address": "0x0071F978",
+     "binding": "ok"
+    },
+    {
+     "offset": 22,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": null,
+     "target_address": "0x0071F970",
+     "binding": "ok"
+    },
+    {
+     "offset": 32,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": null,
+     "target_address": "0x0071F96A",
+     "binding": "ok"
+    },
+    {
+     "offset": 36,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": null,
+     "target_address": "0x0071F96D",
+     "binding": "ok"
+    }
+   ],
+   "verification": {
+    "bytes": true,
+    "references": "all-ok",
+    "layout": "unchecked",
+    "vtable": "n-a",
+    "virtual": "verified"
+   }
+  },
+  {
+   "address": "0x00724730",
+   "size": 385,
+   "symbol": "?Remove@ToolTipManager@@QAEXI@Z",
+   "source": "src/tooltip.cpp",
+   "byte_match": true,
+   "raw_sha256": "cc630abd20c10a6b33774019e297c9088fbb39fad4154658c930c094a15a1f4c",
+   "normalized_sha256": "d2a80f56617d978cb3a15b2f5f85ddc98b9dcbaf838a45787628983ec3ffd128",
+   "relocations": [
+    {
+     "offset": 52,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?Search_For_Node@?$IndexClass@IPBVToolTip@@@@ABEPBUNodeElement@1@ABI@Z",
+     "target_address": "0x00724FC0",
+     "binding": "ok"
+    },
+    {
+     "offset": 99,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?Search_For_Node@?$IndexClass@IPBVToolTip@@@@ABEPBUNodeElement@1@ABI@Z",
+     "target_address": "0x00724FC0",
+     "binding": "ok"
+    },
+    {
+     "offset": 119,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "?x@?4???A?$IndexClass@IPBVToolTip@@@@QBEABQBVToolTip@@ABI@Z@4PBV2@B",
+     "target_address": "0x00B78820",
+     "binding": "unverified"
+    },
+    {
+     "offset": 180,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "?search_compfunc@?$IndexClass@IPBVToolTip@@@@CAHPBX0@Z",
+     "target_address": "0x00725040",
+     "binding": "ok"
+    },
+    {
+     "offset": 189,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "_qsort",
+     "target_address": "0x007C8B48",
+     "binding": "ok"
+    },
+    {
+     "offset": 224,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?Binary_Search@@YIPAUNodeElement@?$IndexClass@IPBVToolTip@@@@PAU12@HABU12@@Z",
+     "target_address": "0x00725070",
+     "binding": "ok"
+    },
+    {
+     "offset": 370,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "??3@YAXPAX@Z",
+     "target_address": "0x007C8B3D",
+     "binding": "ok"
+    }
+   ],
+   "verification": {
+    "bytes": true,
+    "references": "some-unverified",
+    "layout": "unchecked",
+    "vtable": "n-a",
+    "virtual": "verified"
+   }
+  },
+  {
+   "address": "0x007B1FD0",
+   "size": 113,
+   "symbol": "?Build_Packet_CRC@@YGXPAUWinsockBufferType@@@Z",
+   "source": "src/wsproto.cpp",
+   "byte_match": true,
+   "raw_sha256": "400afbad4fd4381cdf056d0a13eca39cb10549cd0d5fe3591fb6617a172fdbca",
+   "normalized_sha256": "ddfae726eb9b25508bc95c8d0aa1f89a16b9c0d57ea6e27748ea432455a8c8d7",
+   "relocations": [
+    {
+     "offset": 47,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?Add_CRC@@YIXPAII@Z",
+     "target_address": "0x0064DE80",
+     "binding": "ok"
+    },
+    {
+     "offset": 102,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?Add_CRC@@YIXPAII@Z",
+     "target_address": "0x0064DE80",
+     "binding": "ok"
+    }
+   ],
+   "verification": {
+    "bytes": true,
+    "references": "all-ok",
+    "layout": "unchecked",
+    "vtable": "n-a",
+    "virtual": "mismatch"
+   }
+  },
+  {
+   "address": "0x007B24E0",
+   "size": 251,
+   "symbol": "?Broadcast@WinsockInterfaceClass@@UAEXPAXH_N@Z",
+   "source": "src/wsproto.cpp",
+   "byte_match": true,
+   "raw_sha256": "dec8572967004b6658cd39f6c238e0fe7fc6f27d1db4f3dd1321a562dd0fe316",
+   "normalized_sha256": "9e19a4dd2a19ade74213f365c236907688e919ded5d57130d45817934e718246",
+   "relocations": [
+    {
+     "offset": 12,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?Get_New_Out_Buffer@WinsockInterfaceClass@@IAEPAX_N@Z",
+     "target_address": "0x007B20E0",
+     "binding": "ok"
+    },
+    {
+     "offset": 222,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "?hWnd@Game@@3PAUHWND__@@A",
+     "target_address": "0x00B73550",
+     "binding": "ok"
+    },
+    {
+     "offset": 229,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "__imp__SendMessageA@16",
+     "target_address": "0x007E14A4",
+     "binding": "ok"
+    },
+    {
+     "offset": 235,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "?Instance@InputManagerClass@@2PAV1@A",
+     "target_address": "0x0087F770",
+     "binding": "ok"
+    },
+    {
+     "offset": 240,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?FUN_0054F000@InputManagerClass@@QAEXXZ",
+     "target_address": "0x0054F000",
+     "binding": "ok"
+    }
+   ],
+   "verification": {
+    "bytes": true,
+    "references": "all-ok",
+    "layout": "unchecked",
+    "vtable": "n-a",
+    "virtual": "verified"
+   }
+  }
+ ]
+}

@@ -1,0 +1,1029 @@
+{
+ "format": "ra2-decomp crosscheck manifest",
+ "format_version": 1,
+ "normalization": "reloc-zero-v1",
+ "project": "ra2-decomp",
+ "repository": "https://github.com/gibbo101/ra2-decomp",
+ "commit": "964bb3a199d1aed3e6eeeaba8ecff2ec5a6d9702",
+ "exe": {
+  "file": "gamemd.exe",
+  "version": "1.001",
+  "md5": "2a1307f6f57c9c492f985b4e3afb88e6",
+  "sha256": "3e81a61775d2745d1dabe397325ef663cd994ffc194da4e998e3bf5d2d308600",
+  "size": 5286208
+ },
+ "compiler": "Visual C++ 6.0 SP3 (C2.DLL 12.00.8447)",
+ "flags": [
+  "/O2",
+  "/Ob2",
+  "/Gr",
+  "/GR",
+  "/MT",
+  "/DWIN32"
+ ],
+ "inputs": {
+  "include_tree_sha256": "80ba17009cf8ce0204efe30f239300826b9a77c445a6df7928aa923821f3c991",
+  "data/functions.csv": "efbfe1418d927e6557b7d76d6fe81e68f13045b98d31ebfc81f0cda82c644b4f",
+  "data/progress.csv": "6da9c1b318327a5e1c28556c303c0ab2eee142979275057d2b03d9d2f183b157",
+  "data/names.csv": "f8d4d3ae7b35c9fa18e246c9dfae103087e4223e1975e3a7297ae285efb2f1bb",
+  "data/symbols.csv": "25d00f97b646a3fa8be378200fd9daa89d49891a13630f56398706e511fa8186",
+  "data/library.csv": "8d3055bbab6014a29d6721c1020124408de5c96943032464dac2cd4ed035b44b",
+  "data/exe_patches.csv": "3968d906c610346648cd7072979c7c57b5c1c026add340cabdd37ece1a0f33de",
+  "reference/tibsun": "dbfbfbfaac40364ce7e1cd8fad7bcade5c6fb0d4",
+  "reference/YRpp": "b22f1860dd7b100cad57123d4ca5d459b9020d88"
+ },
+ "sources": {
+  "src/fly.cpp": "a1fe6cf47cbeea1fc0ac06f5bf838bc2c807488112ed1894d6467954f6d0ed42",
+  "src/loco.cpp": "a7644b63ddb4bb9c1320c89920bc1b335e517c66cb22c0b9320465e1926f5c14",
+  "src/wspipx.cpp": "d74d4a7e0d53b33ee08f5e43532ce3e1eaff39228e0dcec22447deecc076b306",
+  "src/wsproto.cpp": "fbdd6bb0b9c3e674743b98395a8845e5d971ece7e9cbed3a37f29a91de988c06"
+ },
+ "functions": [
+  {
+   "address": "0x004CF610",
+   "size": 530,
+   "symbol": "?Draw_Matrix@FlyLocomotionClass@@UAG?AUMatrix3DStruct@@PAH@Z",
+   "source": "src/fly.cpp",
+   "byte_match": true,
+   "raw_sha256": "ee1b2e94bea743f9f68acce62f8caae0059a26ecefa68c41d5b033167700a23b",
+   "normalized_sha256": "a07f5457483a875b3e78610876a3ea3ac865188578efc50e03433990196f8ed8",
+   "relocations": [
+    {
+     "offset": 10,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?Make_Identity@Matrix3D@@QAEXXZ",
+     "target_address": "0x005AE860",
+     "binding": "ok"
+    },
+    {
+     "offset": 41,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?Current@FacingClass@@QBE?AVDirType@@XZ",
+     "target_address": "0x004C93D0",
+     "binding": "ok"
+    },
+    {
+     "offset": 80,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?Current@FacingClass@@QBE?AVDirType@@XZ",
+     "target_address": "0x004C93D0",
+     "binding": "ok"
+    },
+    {
+     "offset": 113,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "__real@8@bffcc90fdaa22168c000",
+     "target_address": "0x007E4408",
+     "binding": "ok"
+    },
+    {
+     "offset": 121,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?Rotate_Z@Matrix3D@@QAEXM@Z",
+     "target_address": "0x005AF1A0",
+     "binding": "ok"
+    },
+    {
+     "offset": 169,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?Rotate_X@Matrix3D@@QAEXM@Z",
+     "target_address": "0x005AEF60",
+     "binding": "ok"
+    },
+    {
+     "offset": 247,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?Rotate_Y@Matrix3D@@QAEXM@Z",
+     "target_address": "0x005AF080",
+     "binding": "ok"
+    },
+    {
+     "offset": 317,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "__real@8@00000000000000000000",
+     "target_address": "0x007E2800",
+     "binding": "ok"
+    },
+    {
+     "offset": 364,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?Rotate_Y@Matrix3D@@QAEXM@Z",
+     "target_address": "0x005AF080",
+     "binding": "ok"
+    },
+    {
+     "offset": 387,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "__real@8@00000000000000000000",
+     "target_address": "0x007E2800",
+     "binding": "ok"
+    },
+    {
+     "offset": 408,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?Is_Rotating_CW@FacingClass@@QBE_NXZ",
+     "target_address": "0x004C94B0",
+     "binding": "ok"
+    },
+    {
+     "offset": 455,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?Is_Rotating_CCW@FacingClass@@QBE_NXZ",
+     "target_address": "0x004C94F0",
+     "binding": "ok"
+    },
+    {
+     "offset": 501,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?Rotate_X@Matrix3D@@QAEXM@Z",
+     "target_address": "0x005AEF60",
+     "binding": "ok"
+    }
+   ],
+   "verification": {
+    "bytes": true,
+    "references": "all-ok",
+    "layout": "unchecked",
+    "vtable": "n-a",
+    "virtual": "verified"
+   }
+  },
+  {
+   "address": "0x004CFB00",
+   "size": 265,
+   "symbol": "?Shadow_Matrix@FlyLocomotionClass@@UAG?AUMatrix3DStruct@@PAH@Z",
+   "source": "src/fly.cpp",
+   "byte_match": true,
+   "raw_sha256": "e8179ef7c0148053c852fb08e6b9a260bba2c70cab890d8456d47b8146ce7b43",
+   "normalized_sha256": "5c03831d2dc33c71f9b536dd1c589335ba0b1baaf1fc5b24ee3234c533ed585d",
+   "relocations": [
+    {
+     "offset": 38,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "?Map@@3VMouseClass@@A",
+     "target_address": "0x0087F7E8",
+     "binding": "ok"
+    },
+    {
+     "offset": 50,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "??AMapClass@@QBEAAVCellClass@@ABVCoord@@@Z",
+     "target_address": "0x00565730",
+     "binding": "ok"
+    },
+    {
+     "offset": 94,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?Get_Slope_Matrix@@YI?AVMatrix3D@@H@Z",
+     "target_address": "0x007559B0",
+     "binding": "ok"
+    },
+    {
+     "offset": 126,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?Current@FacingClass@@QBE?AVDirType@@XZ",
+     "target_address": "0x004C93D0",
+     "binding": "ok"
+    },
+    {
+     "offset": 159,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "__real@8@bffcc90fdaa22168c000",
+     "target_address": "0x007E4408",
+     "binding": "ok"
+    },
+    {
+     "offset": 167,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?Rotate_Z@Matrix3D@@QAEXM@Z",
+     "target_address": "0x005AF1A0",
+     "binding": "ok"
+    },
+    {
+     "offset": 214,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?Current@FacingClass@@QBE?AVDirType@@XZ",
+     "target_address": "0x004C93D0",
+     "binding": "ok"
+    }
+   ],
+   "verification": {
+    "bytes": true,
+    "references": "all-ok",
+    "layout": "unchecked",
+    "vtable": "n-a",
+    "virtual": "verified"
+   }
+  },
+  {
+   "address": "0x0055A730",
+   "size": 159,
+   "symbol": "?Draw_Matrix@LocomotionClass@@UAG?AUMatrix3DStruct@@PAH@Z",
+   "source": "src/loco.cpp",
+   "byte_match": true,
+   "raw_sha256": "fd8ac9031eb51f261c465593bfaa21b0461823755e1c08618c4428fdd2318759",
+   "normalized_sha256": "c1411bb7e73879aad8a16f5e8426b0cc9a726e9caeff137633d8dbd6b22f6107",
+   "relocations": [
+    {
+     "offset": 10,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?Make_Identity@Matrix3D@@QAEXXZ",
+     "target_address": "0x005AE860",
+     "binding": "ok"
+    },
+    {
+     "offset": 33,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?Current@FacingClass@@QBE?AVDirType@@XZ",
+     "target_address": "0x004C93D0",
+     "binding": "ok"
+    },
+    {
+     "offset": 66,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "__real@8@bffcc90fdaa22168c000",
+     "target_address": "0x007E4408",
+     "binding": "ok"
+    },
+    {
+     "offset": 74,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?Rotate_Z@Matrix3D@@QAEXM@Z",
+     "target_address": "0x005AF1A0",
+     "binding": "ok"
+    },
+    {
+     "offset": 113,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?Current@FacingClass@@QBE?AVDirType@@XZ",
+     "target_address": "0x004C93D0",
+     "binding": "ok"
+    }
+   ],
+   "verification": {
+    "bytes": true,
+    "references": "all-ok",
+    "layout": "unchecked",
+    "vtable": "n-a",
+    "virtual": "verified"
+   }
+  },
+  {
+   "address": "0x0055A7D0",
+   "size": 240,
+   "symbol": "?Shadow_Matrix@LocomotionClass@@UAG?AUMatrix3DStruct@@PAH@Z",
+   "source": "src/loco.cpp",
+   "byte_match": true,
+   "raw_sha256": "ad5c53ed321412206c62ca430b2a0608832350f71fc4263315dc1ab0b38dd7c8",
+   "normalized_sha256": "1db80becca01a42c65136fcb6f72eee467fa7a51bfbf1cf6e73cf7df158fe5b6",
+   "relocations": [
+    {
+     "offset": 38,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "?Map@@3VMouseClass@@A",
+     "target_address": "0x0087F7E8",
+     "binding": "ok"
+    },
+    {
+     "offset": 50,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "??AMapClass@@QBEAAVCellClass@@ABVCoord@@@Z",
+     "target_address": "0x00565730",
+     "binding": "ok"
+    },
+    {
+     "offset": 69,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?Get_Slope_Matrix@@YI?AVMatrix3D@@H@Z",
+     "target_address": "0x007559B0",
+     "binding": "ok"
+    },
+    {
+     "offset": 101,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?Current@FacingClass@@QBE?AVDirType@@XZ",
+     "target_address": "0x004C93D0",
+     "binding": "ok"
+    },
+    {
+     "offset": 134,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "__real@8@bffcc90fdaa22168c000",
+     "target_address": "0x007E4408",
+     "binding": "ok"
+    },
+    {
+     "offset": 142,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?Rotate_Z@Matrix3D@@QAEXM@Z",
+     "target_address": "0x005AF1A0",
+     "binding": "ok"
+    },
+    {
+     "offset": 189,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?Current@FacingClass@@QBE?AVDirType@@XZ",
+     "target_address": "0x004C93D0",
+     "binding": "ok"
+    }
+   ],
+   "verification": {
+    "bytes": true,
+    "references": "all-ok",
+    "layout": "unchecked",
+    "vtable": "n-a",
+    "virtual": "verified"
+   }
+  },
+  {
+   "address": "0x007B1720",
+   "size": 3,
+   "symbol": "?Set_Broadcast_Address@WinsockInterfaceClass@@UAEXPBDG@Z",
+   "source": "src/wspipx.cpp",
+   "byte_match": true,
+   "raw_sha256": "1d10894625976bca9d8906f3ecf1e766b94e9219ec3bf1c30e02feea5e18e45a",
+   "normalized_sha256": "1d10894625976bca9d8906f3ecf1e766b94e9219ec3bf1c30e02feea5e18e45a",
+   "relocations": [],
+   "verification": {
+    "bytes": true,
+    "references": "n-a",
+    "layout": "n-a",
+    "vtable": "n-a",
+    "virtual": "verified"
+   }
+  },
+  {
+   "address": "0x007B1730",
+   "size": 1,
+   "symbol": "?Clear_Broadcast_Addresses@WinsockInterfaceClass@@UAEXXZ",
+   "source": "src/wspipx.cpp",
+   "byte_match": true,
+   "raw_sha256": "ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e",
+   "normalized_sha256": "ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e",
+   "relocations": [],
+   "verification": {
+    "bytes": true,
+    "references": "n-a",
+    "layout": "n-a",
+    "vtable": "n-a",
+    "virtual": "verified"
+   }
+  },
+  {
+   "address": "0x007B1740",
+   "size": 3,
+   "symbol": "?Get_Num_Local_Addresses@WinsockInterfaceClass@@UAEHXZ",
+   "source": "src/wspipx.cpp",
+   "byte_match": true,
+   "raw_sha256": "4bc724f3b1d0caf4fe369c18cba3102e6c4ea057f63fe1587e3973134a7f755e",
+   "normalized_sha256": "4bc724f3b1d0caf4fe369c18cba3102e6c4ea057f63fe1587e3973134a7f755e",
+   "relocations": [],
+   "verification": {
+    "bytes": true,
+    "references": "n-a",
+    "layout": "n-a",
+    "vtable": "n-a",
+    "virtual": "verified"
+   }
+  },
+  {
+   "address": "0x007B1750",
+   "size": 5,
+   "symbol": "?Get_Local_Address@WinsockInterfaceClass@@UAEPAEH@Z",
+   "source": "src/wspipx.cpp",
+   "byte_match": true,
+   "raw_sha256": "5fed5afb29946811bf02359627a94bc01d08d31b779528feaadde3866af9c855",
+   "normalized_sha256": "5fed5afb29946811bf02359627a94bc01d08d31b779528feaadde3866af9c855",
+   "relocations": [],
+   "verification": {
+    "bytes": true,
+    "references": "n-a",
+    "layout": "n-a",
+    "vtable": "n-a",
+    "virtual": "verified"
+   }
+  },
+  {
+   "address": "0x007B1760",
+   "size": 13,
+   "symbol": "?Set_NetCard@WinsockInterfaceClass@@UAEXH@Z",
+   "source": "src/wspipx.cpp",
+   "byte_match": true,
+   "raw_sha256": "5ab47386a7dbe4c86e8fe07cc1c8e445e7fa04845fff9fefe8e0f1d5faaf2fad",
+   "normalized_sha256": "5ab47386a7dbe4c86e8fe07cc1c8e445e7fa04845fff9fefe8e0f1d5faaf2fad",
+   "relocations": [],
+   "verification": {
+    "bytes": true,
+    "references": "n-a",
+    "layout": "unchecked",
+    "vtable": "n-a",
+    "virtual": "verified"
+   }
+  },
+  {
+   "address": "0x007B1B80",
+   "size": 59,
+   "symbol": "?Close_Socket@WinsockInterfaceClass@@UAEXXZ",
+   "source": "src/wsproto.cpp",
+   "byte_match": true,
+   "raw_sha256": "94b550152abbbf23381bc9afd972e6934487ccf08282260ce71c47ced63a3425",
+   "normalized_sha256": "9963805530b3650a2049a631c592a28c310a081c6ae1965c2bc13523b270b21a",
+   "relocations": [
+    {
+     "offset": 16,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "_closesocket@4",
+     "target_address": "0x007C8992",
+     "binding": "unverified"
+    },
+    {
+     "offset": 43,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "_closesocket@4",
+     "target_address": "0x007C8992",
+     "binding": "unverified"
+    }
+   ],
+   "verification": {
+    "bytes": true,
+    "references": "some-unverified",
+    "layout": "unchecked",
+    "vtable": "n-a",
+    "virtual": "verified"
+   }
+  },
+  {
+   "address": "0x007B1C50",
+   "size": 69,
+   "symbol": "?Stop_Listening@WinsockInterfaceClass@@UAEXXZ",
+   "source": "src/wsproto.cpp",
+   "byte_match": true,
+   "raw_sha256": "dc87a4128545e1ca13503647e01b02ce81865f2a92ffe7adeb0eff2dfc025195",
+   "normalized_sha256": "3469e43cd7daf499d69dcd8ee403f9911d36b554ec6495764da5a0d24fd6bb49",
+   "relocations": [
+    {
+     "offset": 5,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "?hWnd@Game@@3PAUHWND__@@A",
+     "target_address": "0x00B73550",
+     "binding": "ok"
+    },
+    {
+     "offset": 31,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "_WSAAsyncSelect@16",
+     "target_address": "0x007C89BC",
+     "binding": "unverified"
+    },
+    {
+     "offset": 37,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "?hWnd@Game@@3PAUHWND__@@A",
+     "target_address": "0x00B73550",
+     "binding": "ok"
+    },
+    {
+     "offset": 64,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "_WSAAsyncSelect@16",
+     "target_address": "0x007C89BC",
+     "binding": "unverified"
+    }
+   ],
+   "verification": {
+    "bytes": true,
+    "references": "some-unverified",
+    "layout": "unchecked",
+    "vtable": "n-a",
+    "virtual": "verified"
+   }
+  },
+  {
+   "address": "0x007B1FD0",
+   "size": 113,
+   "symbol": "?Build_Packet_CRC@@YGXPAUWinsockBufferType@@@Z",
+   "source": "src/wsproto.cpp",
+   "byte_match": true,
+   "raw_sha256": "400afbad4fd4381cdf056d0a13eca39cb10549cd0d5fe3591fb6617a172fdbca",
+   "normalized_sha256": "ddfae726eb9b25508bc95c8d0aa1f89a16b9c0d57ea6e27748ea432455a8c8d7",
+   "relocations": [
+    {
+     "offset": 47,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?Add_CRC@@YIXPAII@Z",
+     "target_address": "0x0064DE80",
+     "binding": "ok"
+    },
+    {
+     "offset": 102,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?Add_CRC@@YIXPAII@Z",
+     "target_address": "0x0064DE80",
+     "binding": "ok"
+    }
+   ],
+   "verification": {
+    "bytes": true,
+    "references": "all-ok",
+    "layout": "unchecked",
+    "vtable": "n-a",
+    "virtual": "mismatch"
+   }
+  },
+  {
+   "address": "0x007B2050",
+   "size": 144,
+   "symbol": "?Passes_CRC_Check@@YG_NPAUWinsockBufferType@@@Z",
+   "source": "src/wsproto.cpp",
+   "byte_match": true,
+   "raw_sha256": "d64d0f250d631219ead492fedc56b093ade2300b77a821772869acc70243aee7",
+   "normalized_sha256": "5bf1d61a1237af640f5774c26a5d98463edeac5b85ef21c0d0ff7066dcf76301",
+   "relocations": [
+    {
+     "offset": 49,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?Add_CRC@@YIXPAII@Z",
+     "target_address": "0x0064DE80",
+     "binding": "ok"
+    },
+    {
+     "offset": 102,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?Add_CRC@@YIXPAII@Z",
+     "target_address": "0x0064DE80",
+     "binding": "ok"
+    },
+    {
+     "offset": 126,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "??_C@_0BN@DELG@Error?5in?5Winsock?5packet?5CRC?6?$AA@",
+     "target_address": "0x0084E040",
+     "binding": "ok"
+    },
+    {
+     "offset": 131,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?DebugString@@YAXPBDZZ",
+     "target_address": "0x004068E0",
+     "binding": "unverified"
+    }
+   ],
+   "verification": {
+    "bytes": true,
+    "references": "some-unverified",
+    "layout": "unchecked",
+    "vtable": "n-a",
+    "virtual": "mismatch"
+   }
+  },
+  {
+   "address": "0x007B22E0",
+   "size": 202,
+   "symbol": "?Read@WinsockInterfaceClass@@UAEHPAXAAH01AAG@Z",
+   "source": "src/wsproto.cpp",
+   "byte_match": true,
+   "raw_sha256": "33d95a4c6012527f79ae9e08f386d10043c800cc6337992e7c5c1cc4f2861c95",
+   "normalized_sha256": "bfd1c9ff6dd7c43beaa1d13528a9d171b224125f16ccb0e24126c88f8aadf014",
+   "relocations": [
+    {
+     "offset": 5,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "?Instance@InputManagerClass@@2PAV1@A",
+     "target_address": "0x0087F770",
+     "binding": "ok"
+    },
+    {
+     "offset": 10,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?FUN_0054F000@InputManagerClass@@QAEXXZ",
+     "target_address": "0x0054F000",
+     "binding": "ok"
+    },
+    {
+     "offset": 162,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "??3@YAXPAX@Z",
+     "target_address": "0x007C8B3D",
+     "binding": "ok"
+    }
+   ],
+   "verification": {
+    "bytes": true,
+    "references": "all-ok",
+    "layout": "unchecked",
+    "vtable": "n-a",
+    "virtual": "verified"
+   }
+  },
+  {
+   "address": "0x007B23B0",
+   "size": 289,
+   "symbol": "?WriteTo@WinsockInterfaceClass@@UAEXPAXH0H_N1G@Z",
+   "source": "src/wsproto.cpp",
+   "byte_match": true,
+   "raw_sha256": "4656ceabba1b9d647f59d8e5047bfc9d989cca1d654166a27ae18dd7115977c1",
+   "normalized_sha256": "352636f954df2156e78e403757741c6c12612e538c9eb8a82328f369d251fe4e",
+   "relocations": [
+    {
+     "offset": 12,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?Get_New_Out_Buffer@WinsockInterfaceClass@@IAEPAX_N@Z",
+     "target_address": "0x007B20E0",
+     "binding": "ok"
+    },
+    {
+     "offset": 260,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "?hWnd@Game@@3PAUHWND__@@A",
+     "target_address": "0x00B73550",
+     "binding": "ok"
+    },
+    {
+     "offset": 267,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "__imp__SendMessageA@16",
+     "target_address": "0x007E14A4",
+     "binding": "ok"
+    },
+    {
+     "offset": 273,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "?Instance@InputManagerClass@@2PAV1@A",
+     "target_address": "0x0087F770",
+     "binding": "ok"
+    },
+    {
+     "offset": 278,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?FUN_0054F000@InputManagerClass@@QAEXXZ",
+     "target_address": "0x0054F000",
+     "binding": "ok"
+    }
+   ],
+   "verification": {
+    "bytes": true,
+    "references": "all-ok",
+    "layout": "unchecked",
+    "vtable": "n-a",
+    "virtual": "verified"
+   }
+  },
+  {
+   "address": "0x007B24E0",
+   "size": 251,
+   "symbol": "?Broadcast@WinsockInterfaceClass@@UAEXPAXH_N@Z",
+   "source": "src/wsproto.cpp",
+   "byte_match": true,
+   "raw_sha256": "dec8572967004b6658cd39f6c238e0fe7fc6f27d1db4f3dd1321a562dd0fe316",
+   "normalized_sha256": "9e19a4dd2a19ade74213f365c236907688e919ded5d57130d45817934e718246",
+   "relocations": [
+    {
+     "offset": 12,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?Get_New_Out_Buffer@WinsockInterfaceClass@@IAEPAX_N@Z",
+     "target_address": "0x007B20E0",
+     "binding": "ok"
+    },
+    {
+     "offset": 222,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "?hWnd@Game@@3PAUHWND__@@A",
+     "target_address": "0x00B73550",
+     "binding": "ok"
+    },
+    {
+     "offset": 229,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "__imp__SendMessageA@16",
+     "target_address": "0x007E14A4",
+     "binding": "ok"
+    },
+    {
+     "offset": 235,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "?Instance@InputManagerClass@@2PAV1@A",
+     "target_address": "0x0087F770",
+     "binding": "ok"
+    },
+    {
+     "offset": 240,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?FUN_0054F000@InputManagerClass@@QAEXXZ",
+     "target_address": "0x0054F000",
+     "binding": "ok"
+    }
+   ],
+   "verification": {
+    "bytes": true,
+    "references": "all-ok",
+    "layout": "unchecked",
+    "vtable": "n-a",
+    "virtual": "verified"
+   }
+  },
+  {
+   "address": "0x007B25E0",
+   "size": 79,
+   "symbol": "?Clear_Socket_Error@WinsockInterfaceClass@@UAEXI@Z",
+   "source": "src/wsproto.cpp",
+   "byte_match": true,
+   "raw_sha256": "b3bcdb43b684bc4b3adc3a524f0ac4c6163fee1cde81f5df1f844dccae1987ec",
+   "normalized_sha256": "654c8b95e1305d053c651ee30ff75d1bf0e0c83eab3ea3d306d95c8e0a64a300",
+   "relocations": [
+    {
+     "offset": 36,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "_getsockopt@20",
+     "target_address": "0x007C898C",
+     "binding": "unverified"
+    },
+    {
+     "offset": 70,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "_setsockopt@20",
+     "target_address": "0x007C89A4",
+     "binding": "unverified"
+    }
+   ],
+   "verification": {
+    "bytes": true,
+    "references": "some-unverified",
+    "layout": "n-a",
+    "vtable": "n-a",
+    "virtual": "verified"
+   }
+  },
+  {
+   "address": "0x007B2630",
+   "size": 149,
+   "symbol": "?Set_Socket_Options@WinsockInterfaceClass@@UAE_NI@Z",
+   "source": "src/wsproto.cpp",
+   "byte_match": true,
+   "raw_sha256": "33c56bca5155f085ce418e76c6d0984cfce8693fd8971ebbee0f826c17423f4c",
+   "normalized_sha256": "7a6e930ae54e7eaf9cf8e4f7c74b50199fef63696b2fa1657bc741836864cd47",
+   "relocations": [
+    {
+     "offset": 19,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "_?socket_receive_buffer_size@?1??Set_Socket_Options@WinsockInterfaceClass@@UAE_NI@Z@4HA",
+     "target_address": "0x0084DDA0",
+     "binding": "unverified"
+    },
+    {
+     "offset": 35,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "_setsockopt@20",
+     "target_address": "0x007C89A4",
+     "binding": "unverified"
+    },
+    {
+     "offset": 45,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "_WSAGetLastError@0",
+     "target_address": "0x007C897A",
+     "binding": "unverified"
+    },
+    {
+     "offset": 51,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "??_C@_0DI@PGAN@Failed?5to?5set?5socket?5option?5SO_R@",
+     "target_address": "0x0084E0D8",
+     "binding": "ok"
+    },
+    {
+     "offset": 56,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?DebugString@@YAXPBDZZ",
+     "target_address": "0x004068E0",
+     "binding": "unverified"
+    },
+    {
+     "offset": 66,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "??_C@_0CA@CCIN@Socket?5option?5SO_RCVBUF?5set?5OK?6?$AA@",
+     "target_address": "0x0084E0B8",
+     "binding": "ok"
+    },
+    {
+     "offset": 71,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?DebugString@@YAXPBDZZ",
+     "target_address": "0x004068E0",
+     "binding": "unverified"
+    },
+    {
+     "offset": 81,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "_?socket_transmit_buffer_size@?1??Set_Socket_Options@WinsockInterfaceClass@@UAE_NI@Z@4HA",
+     "target_address": "0x0084DD9C",
+     "binding": "unverified"
+    },
+    {
+     "offset": 97,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "_setsockopt@20",
+     "target_address": "0x007C89A4",
+     "binding": "unverified"
+    },
+    {
+     "offset": 108,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "_WSAGetLastError@0",
+     "target_address": "0x007C897A",
+     "binding": "unverified"
+    },
+    {
+     "offset": 114,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "??_C@_0DI@KKO@Failed?5to?5set?5socket?5option?5SO_S@",
+     "target_address": "0x0084E080",
+     "binding": "ok"
+    },
+    {
+     "offset": 119,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?DebugString@@YAXPBDZZ",
+     "target_address": "0x004068E0",
+     "binding": "unverified"
+    },
+    {
+     "offset": 132,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "??_C@_0CA@BIBE@Socket?5option?5SO_SNDBUF?5set?5OK?6?$AA@",
+     "target_address": "0x0084E060",
+     "binding": "ok"
+    },
+    {
+     "offset": 137,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?DebugString@@YAXPBDZZ",
+     "target_address": "0x004068E0",
+     "binding": "unverified"
+    }
+   ],
+   "verification": {
+    "bytes": true,
+    "references": "some-unverified",
+    "layout": "unchecked",
+    "vtable": "n-a",
+    "virtual": "verified"
+   }
+  },
+  {
+   "address": "0x007B26D0",
+   "size": 66,
+   "symbol": "?Get_Host_Name@WinsockInterfaceClass@@UAE_NPADH@Z",
+   "source": "src/wsproto.cpp",
+   "byte_match": true,
+   "raw_sha256": "4434b183fb3d1a23cbe8fadee19df983ee4a46eced740b56a0dfe5285c2b5df9",
+   "normalized_sha256": "d1a0b8d1ea66843f8efbce9faa21d0f9a92f4fd75bbf3e98573d91d0e904d42b",
+   "relocations": [
+    {
+     "offset": 12,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "_gethostname@8",
+     "target_address": "0x007C89CE",
+     "binding": "unverified"
+    },
+    {
+     "offset": 22,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "_WSAGetLastError@0",
+     "target_address": "0x007C897A",
+     "binding": "unverified"
+    },
+    {
+     "offset": 28,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "??_C@_0EB@GDGN@Error?5?9?5WinsockInterface?5Unable?5@",
+     "target_address": "0x0084E134",
+     "binding": "ok"
+    },
+    {
+     "offset": 33,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?DebugString@@YAXPBDZZ",
+     "target_address": "0x004068E0",
+     "binding": "unverified"
+    },
+    {
+     "offset": 48,
+     "type": "DIR32",
+     "addend": 0,
+     "target_symbol": "??_C@_0CC@CKAA@WinsockInterface?5Host?5name?5is?5?$CFs@",
+     "target_address": "0x0084E110",
+     "binding": "ok"
+    },
+    {
+     "offset": 53,
+     "type": "REL32",
+     "addend": 0,
+     "target_symbol": "?DebugString@@YAXPBDZZ",
+     "target_address": "0x004068E0",
+     "binding": "unverified"
+    }
+   ],
+   "verification": {
+    "bytes": true,
+    "references": "some-unverified",
+    "layout": "n-a",
+    "vtable": "n-a",
+    "virtual": "verified"
+   }
+  },
+  {
+   "address": "0x007B2740",
+   "size": 3,
+   "symbol": "?Get_Protocol@WinsockInterfaceClass@@UAE?AW4ProtocolEnum@@XZ",
+   "source": "src/wsproto.cpp",
+   "byte_match": true,
+   "raw_sha256": "4bc724f3b1d0caf4fe369c18cba3102e6c4ea057f63fe1587e3973134a7f755e",
+   "normalized_sha256": "4bc724f3b1d0caf4fe369c18cba3102e6c4ea057f63fe1587e3973134a7f755e",
+   "relocations": [],
+   "verification": {
+    "bytes": true,
+    "references": "n-a",
+    "layout": "n-a",
+    "vtable": "n-a",
+    "virtual": "verified"
+   }
+  }
+ ]
+}

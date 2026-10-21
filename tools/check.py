@@ -464,26 +464,15 @@ def compare_one(orig, obj, raw, address, name, names, local, pick, score=False) 
     res = Result(address, name, size, len(ours), same, sym.name)
 
     # Field offsets line up with the original's only when the bytes do.
-    for r in relocs if same else []:
-        off = r.offset - start
-        if off + 4 > len(theirs):
-            continue
-        target_sym = obj.by_index[r.symbol]
-        addend = struct.unpack_from("<i", ours, off)[0] if off + 4 <= len(ours) else 0
-        if r.type == REL_DIR32:
-            got = orig.u32(address + off) - addend
-        elif r.type == REL_REL32:
-            got = (address + off + 4 + struct.unpack_from("<i", theirs, off)[0] - addend) & 0xFFFFFFFF
-        else:
-            continue
-        status, want = check_ref(orig, obj, raw, target_sym, sec, start, address, got, names, local)
-        if status == "mismatch":
+    for ref in ref_checks(orig, obj, raw, pick, ours, theirs, address, names, local) if same else []:
+        if ref.status == "mismatch":
             res.mismatched_refs += 1
-        if status == "unverified":
+        if ref.status == "unverified":
             res.unverified += 1
-        if status != "ok":
-            res.refs.append(f"  +0x{off:X} {qualified(target_sym.name)}: original 0x{got:08X}"
-                            + (f", expected 0x{want:08X}" if want is not None else "") + f" [{status}]")
+        if ref.status != "ok":
+            res.refs.append(f"  +0x{ref.offset:X} {qualified(ref.target.name)}: original 0x{ref.got:08X}"
+                            + (f", expected 0x{ref.want:08X}" if ref.want is not None else "")
+                            + f" [{ref.status}]")
 
     if not res.matched:
         # Our linker-filled fields take the original's values, so only real differences show.
@@ -503,6 +492,58 @@ def compare_one(orig, obj, raw, address, name, names, local, pick, score=False) 
     else:
         res.norm_ratio = 1.0
     return res
+
+
+@dataclass
+class RefCheck:
+    offset: int
+    type: int
+    addend: int
+    target: object
+    got: int
+    status: str
+    want: int | None
+
+
+def ref_checks(orig, obj, raw, pick, ours: bytes, theirs: bytes, address: int, names, local) -> list[RefCheck]:
+    """Each DIR32 or REL32 field of the compiled function `pick` that lies inside the
+    original's bytes: the target the original's field holds, and whether it is ours."""
+    sym, sec, start, end = pick
+    out = []
+    for r in sec.relocs:
+        if not start <= r.offset < end:
+            continue
+        off = r.offset - start
+        if off + 4 > len(theirs):
+            continue
+        target_sym = obj.by_index[r.symbol]
+        addend = struct.unpack_from("<i", ours, off)[0] if off + 4 <= len(ours) else 0
+        if r.type == REL_DIR32:
+            got = orig.u32(address + off) - addend
+        elif r.type == REL_REL32:
+            got = (address + off + 4 + struct.unpack_from("<i", theirs, off)[0] - addend) & 0xFFFFFFFF
+        else:
+            continue
+        status, want = check_ref(orig, obj, raw, target_sym, sec, start, address, got, names, local)
+        out.append(RefCheck(off, r.type, addend, target_sym, got, status, want))
+    return out
+
+
+def bind_annotations(orig, obj, raw, src: Path) -> tuple[dict[str, int], list[str]]:
+    """Decorated symbol -> address for every known match, with each annotated function of
+    `src` bound to the compiled function its bytes pick; and a line per double claim."""
+    local = known_decorated()
+    known = dict(local)
+    claimed: dict[str, int] = {}
+    duplicates = []
+    for address, name in annotations(src):
+        symbol = compare(orig, obj, raw, address, name, {}, {}, prefer=known, taken=set(claimed)).symbol
+        if symbol in claimed and claimed[symbol] != address:
+            duplicates.append(f"0x{address:08X} {name.lstrip('=') or symbol}: same compiled function as "
+                              f"0x{claimed[symbol]:08X} ({symbol})")
+        claimed[symbol] = address
+        local[symbol] = address
+    return local, duplicates
 
 
 def function_symbols(obj: CoffObject) -> set[str]:
@@ -600,18 +641,10 @@ def main() -> None:
     obj, orig, names = CoffObject(raw), Original(), known_names()
     # Which compiled function each annotation is decides what its own symbol resolves to,
     # so pick them first, by bytes alone.
-    local = known_decorated()
-    known = dict(local)
-    claimed: dict[str, int] = {}
-    failed = 0
-    for address, name in annotations(src):
-        symbol = compare(orig, obj, raw, address, name, {}, {}, prefer=known, taken=set(claimed)).symbol
-        if symbol in claimed and claimed[symbol] != address:
-            print(f"0x{address:08X} {name.lstrip('=') or symbol}: same compiled function as "
-                  f"0x{claimed[symbol]:08X} ({symbol})")
-            failed += 1
-        claimed[symbol] = address
-        local[symbol] = address
+    local, duplicates = bind_annotations(orig, obj, raw, src)
+    for line in duplicates:
+        print(line)
+    failed = len(duplicates)
     for address, name in targets:
         res = compare(orig, obj, raw, address, name, names, local, score, prefer=local)
         if res.matched:

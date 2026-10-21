@@ -46,6 +46,15 @@ method and a record of every batch.
 - `docs/`: `PLAN.md` (method, facts about the binary, progress), `AGENTS.md` (how a
   function is matched, and the lessons learned), `COMMIT_GUARD.md`.
 
+## Verifying a claim
+
+`data/manifest.csv` lists every matched function: address, size, the decorated symbol our
+object gives it, the source file, and the SHA-256 of the original's bytes at that address
+(so you know exactly which bytes a claim covers). Every file compiles with Visual C++ 6.0
+SP3 (`C2.DLL` 12.00.8447) and `/O2 /Ob2 /Gr /GR /MT /DWIN32`; `tools/manifest.py`
+regenerates the list. Disagreements with another decompilation's labels at the same
+address are welcome as issues.
+
 ## Contributing
 
 Read `docs/AGENTS.md` first: it says what counts as a match and what does not (no inline

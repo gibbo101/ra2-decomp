@@ -592,7 +592,8 @@ def module_lookup():
 
     def module(a: int) -> str:
         k = bisect.bisect_right(firsts, a) - 1
-        if k >= 0 and rows[k][0] <= a <= rows[k][1]:
+        # A provisional seg_ range is as unnamed as "?".
+        if k >= 0 and rows[k][0] <= a <= rows[k][1] and not rows[k][2].startswith("seg_"):
             return rows[k][2]
         return "?"
 
@@ -600,8 +601,8 @@ def module_lookup():
         """The named modules before and after an address; the linker placed modules in
         case-insensitive alphabetical order, so an unnamed one sorts between them."""
         k = bisect.bisect_right(firsts, a) - 1
-        before = next((rows[j][2] for j in range(k, -1, -1) if rows[j][2] != "?"), "")
-        after = next((rows[j][2] for j in range(k + 1, len(rows)) if rows[j][2] != "?"), "~")
+        before = next((rows[j][2] for j in range(k, -1, -1) if module(rows[j][0]) != "?"), "")
+        after = next((rows[j][2] for j in range(k + 1, len(rows)) if module(rows[j][0]) != "?"), "~")
         return before, after
     module.window = window
     return module
