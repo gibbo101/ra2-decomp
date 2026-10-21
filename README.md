@@ -4,6 +4,12 @@ A matching decompilation of *Command & Conquer: Red Alert 2 – Yuri's Revenge*
 (`gamemd.exe` 1.001): C++ source that the original compiler builds back into the shipped
 executable, function by function.
 
+**Made with AI assistance.** Functions are matched by AI agents (Claude) working in batches
+under human direction. That does not loosen what counts as a match: a function counts only
+when the checker shows its compiled bytes equal the original's, and stand-ins such as casts
+over real objects or hard-coded addresses are rejected however well they score.
+`docs/AGENTS.md` holds the rules the agents follow and every lesson learned.
+
 **Status (21 October 2026):** 13,996 of the game's 19,366 functions match byte for byte
 (72%), covering 1.84 MB of its 3.81 MB of game code (48%). Each function is checked on
 its own; linking a whole executable that matches comes later. `docs/PLAN.md` has the
