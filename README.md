@@ -4,7 +4,45 @@ A matching decompilation of *Command & Conquer: Red Alert 2 – Yuri's Revenge*
 (`gamemd.exe` 1.001): C++ source that the original compiler builds back into the shipped
 executable, function by function.
 
-**Status:** planning. See `docs/PLAN.md`.
+**Status (21 October 2026):** 13,996 of the game's 19,366 functions match byte for byte
+(72%), covering 1.84 MB of its 3.81 MB of game code (48%). Each function is checked on
+its own; linking a whole executable that matches comes later. `docs/PLAN.md` has the
+method and a record of every batch.
+
+## Getting started
+
+1. Run `tools/setup_toolchain.sh`. It fetches Visual C++ 6.0 with Service Pack 3, sets it
+   up under Wine, and clones the OpenTS TibSun archive (whose headers the build falls back
+   on) into `reference/tibsun`.
+2. Copy your Yuri's Revenge 1.001 `gamemd.exe` (the Steam copy, MD5
+   `2a1307f6f57c9c492f985b4e3afb88e6`) to `orig/gamemd.exe`.
+3. Check one file, or everything:
+
+   ```sh
+   uv run tools/check.py src/house.cpp            # every annotated function in the file
+   uv run tools/check.py src/house.cpp 0x004F5190 # one function
+   uv run tools/checkall.py                       # the whole tree
+   ```
+
+   Each function prints MATCH, or how close it came and why.
+
+## Layout
+
+- `src/`, `include/`: the reconstructed source. A `// FUNCTION: 0x...` line ties each
+  function to its address in the original.
+- `data/`: the map of the executable (`functions.csv`, `modules.csv`), what matches
+  (`progress.csv`), proven names for globals (`names.csv`), and every attempt that fell
+  short (`attempts.csv`).
+- `tools/`: the checker and its helpers.
+- `docs/`: `PLAN.md` (method, facts about the binary, progress), `AGENTS.md` (how a
+  function is matched, and the lessons learned), `COMMIT_GUARD.md`.
+
+## Contributing
+
+Read `docs/AGENTS.md` first: it says what counts as a match and what does not (no inline
+asm, hard-coded addresses or stand-in structs to force one). Turn on the commit guard
+before your first commit (`docs/COMMIT_GUARD.md`); it keeps game files and personal data
+out of history.
 
 ## You need your own copy of the game
 

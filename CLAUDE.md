@@ -1,19 +1,21 @@
 # ra2-decomp: Claude context
 
 A matching decompilation of Red Alert 2: Yuri's Revenge (`gamemd.exe` 1.001), modelled on
-Byte Tactics (Total Annihilation). Parked until there's token budget for it.
+Byte Tactics (Total Annihilation). Active: about 72% of the game's functions match, landed
+in rounds of agent batches.
 
-**Read `docs/PLAN.md` first.** It holds everything gathered so far: the method, the binary's
-measured facts, the prior art (OpenTS, YRpp, the recomp), the legal footing and the spike
-that comes first.
+**Read `docs/PLAN.md` first** for the method, the binary's measured facts, the prior art
+(OpenTS, YRpp, the recomp), the legal footing and a record of every round. Then
+`docs/AGENTS.md`: how a function is matched and every lesson learned. The README covers
+setup and the checker.
 
 ## Rules
 
 - Never commit game files, the original exe, or compiler binaries. `orig/`, `toolchain/` and
   `build/` are gitignored; the player brings the game and a setup script fetches the
   compiler.
-- `../cnc-remastered-mods/reference/OpenTS` and the EA source clones (`../CnC_*`) are
-  read-only references. Copy from them; never edit them.
+- Third-party references are read-only: the TibSun archive (`reference/tibsun`), YRpp
+  (`reference/YRpp`), OpenTS and EA's source releases. Copy from them; never edit them.
 - v1 is the game as shipped: no fixes, features or enhancements in this repo, even
   obvious ones. Those go to the v2 repo (see "Scope" in `docs/PLAN.md`).
 - MATCH means the checker printed MATCH. No inline asm, `#pragma optimize`, hard-coded
