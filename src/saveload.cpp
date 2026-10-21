@@ -48,6 +48,7 @@
 #include "particle.h"
 #include "partsys.h"
 #include "psystype.h"
+#include "progress.h"
 #include "ptype.h"
 #include "revent.h"
 #include "rules.h"
@@ -150,6 +151,266 @@ IntTriple DAT_00B053F8;
 
 #define	SAVE_BLOCK_SIZE	4096
 #define	SAVEGAME_VERSION		(DESCRIP_MAX + 0x01000006)
+
+int DAT_00B05420;
+int DAT_00B05424;
+int DAT_00B05428;
+
+// FUNCTION: 0x0067C670
+void FUN_0067C670(void)
+{
+	DAT_00B05428 = 0;
+	DAT_00B05420 = 128;
+	DAT_00B05424 = 128;
+}
+
+// FUNCTION: 0x0067C690
+HRESULT FUN_0067C690(IStream * stream)
+{
+	int count;
+	int index;
+	LPVOID obj;
+
+	HRESULT result = stream->Read(&count, sizeof(count), NULL);
+	if (FAILED(result)) {
+		return(result);
+	}
+	for (index = 0; index < count; index++) {
+		result = OleLoadFromStream(stream, IID_IUnknown, &obj);
+		if (FAILED(result)) {
+			return(result);
+		}
+	}
+	return(S_OK);
+}
+
+namespace Unsorted { extern int CurrentFrame; }
+namespace Powerups {
+extern int Weights[19];
+extern AnimType Anims[19];
+extern double Arguments[19];
+extern bool Naval[19];
+}
+extern int DAT_00B07784;
+HRESULT __fastcall FUN_00539890(IStream * stream);
+HRESULT __fastcall FUN_00539AE0(IStream * stream);
+
+// FUNCTION: 0x0067F7E0
+int Save_Misc_Values(IStream * stream)
+{
+	int i;
+	int count;
+	HRESULT res;
+
+	res = stream->Write(&GasSystem, sizeof(GasSystem), NULL);
+	if (FAILED(res)) {
+		return(res);
+	}
+
+	res = stream->Write(&PlayerPtr, sizeof(PlayerPtr), NULL);
+	if (FAILED(res)) {
+		return(res);
+	}
+
+	res = stream->Write(&Unsorted::CurrentFrame, sizeof(Unsorted::CurrentFrame), NULL);
+	if (FAILED(res)) {
+		return(res);
+	}
+
+	count = CurrentObject.Count();
+	res = stream->Write(&count, sizeof(count), NULL);
+	if (FAILED(res)) {
+		return(res);
+	}
+
+	for (i = 0; i < count; i++) {
+		res = stream->Write(&CurrentObject[i], sizeof(CurrentObject[i]), NULL);
+		if (FAILED(res)) {
+			return(res);
+		}
+	}
+
+	res = stream->Write(&Ground, sizeof(Ground), NULL);
+	if (FAILED(res)) {
+		return(res);
+	}
+
+	FUN_00539890(stream);
+
+	count = LogicTags.Count();
+	res = stream->Write(&count, sizeof(count), NULL);
+	if (FAILED(res)) {
+		return(res);
+	}
+
+	for (i = 0; i < count; i++) {
+		res = stream->Write(&LogicTags[i], sizeof(LogicTags[i]), NULL);
+		if (FAILED(res)) {
+			return(res);
+		}
+	}
+
+	count = MapTags.Count();
+	res = stream->Write(&count, sizeof(count), NULL);
+	if (FAILED(res)) {
+		return(res);
+	}
+
+	for (i = 0; i < count; i++) {
+		res = stream->Write(&MapTags[i], sizeof(MapTags[i]), NULL);
+		if (FAILED(res)) {
+			return(res);
+		}
+	}
+
+	res = stream->Write(&Powerups::Weights, sizeof(Powerups::Weights), NULL);
+	if (FAILED(res)) {
+		return(res);
+	}
+
+	res = stream->Write(&Powerups::Anims, sizeof(Powerups::Anims), NULL);
+	if (FAILED(res)) {
+		return(res);
+	}
+
+	res = stream->Write(&Powerups::Arguments, sizeof(Powerups::Arguments), NULL);
+	if (FAILED(res)) {
+		return(res);
+	}
+
+	res = stream->Write(&Powerups::Naval, sizeof(Powerups::Naval), NULL);
+	if (FAILED(res)) {
+		return(res);
+	}
+
+	res = stream->Write(&MissionControl, sizeof(MissionControl), NULL);
+	if (FAILED(res)) {
+		return(res);
+	}
+
+	res = stream->Write(&DAT_00B07784, sizeof(DAT_00B07784), NULL);
+	if (FAILED(res)) {
+		return(res);
+	}
+
+	return(S_OK);
+}
+
+// FUNCTION: 0x0067F9C0
+int Load_Misc_Values(IStream * stream)
+{
+	int i;
+	int count;
+	void * ptr;
+	HRESULT res;
+
+	res = stream->Read(&GasSystem, sizeof(GasSystem), NULL);
+	if (FAILED(res)) {
+		return(res);
+	}
+	Swizzle_Pointer(&GasSystem);
+
+	res = stream->Read(&PlayerPtr, sizeof(PlayerPtr), NULL);
+	if (FAILED(res)) {
+		return(res);
+	}
+	Swizzle_Pointer(&PlayerPtr);
+
+	res = stream->Read(&Unsorted::CurrentFrame, sizeof(Unsorted::CurrentFrame), NULL);
+	if (FAILED(res)) {
+		return(res);
+	}
+
+	res = stream->Read(&count, sizeof(count), NULL);
+	if (FAILED(res)) {
+		return(res);
+	}
+
+	for (i = 0; i < count; i++) {
+		res = stream->Read(&ptr, sizeof(ptr), NULL);
+		if (FAILED(res)) {
+			return(res);
+		}
+		CurrentObject.Add(*(ObjectClass **)&ptr);
+	}
+
+	for (i = 0; i < CurrentObject.Count(); i++) {
+		Swizzle_Pointer(&CurrentObject[i]);
+	}
+
+	res = stream->Read(&Ground, sizeof(Ground), NULL);
+	if (FAILED(res)) {
+		return(res);
+	}
+
+	FUN_00539AE0(stream);
+
+	res = stream->Read(&count, sizeof(count), NULL);
+	if (FAILED(res)) {
+		return(res);
+	}
+
+	for (i = 0; i < count; i++) {
+		res = stream->Read(&ptr, sizeof(ptr), NULL);
+		if (FAILED(res)) {
+			return(res);
+		}
+		LogicTags.Add(*(TagClass **)&ptr);
+	}
+
+	for (i = 0; i < LogicTags.Count(); i++) {
+		Swizzle_Pointer(&LogicTags[i]);
+	}
+
+	res = stream->Read(&count, sizeof(count), NULL);
+	if (FAILED(res)) {
+		return(res);
+	}
+
+	for (i = 0; i < count; i++) {
+		res = stream->Read(&ptr, sizeof(ptr), NULL);
+		if (FAILED(res)) {
+			return(res);
+		}
+		MapTags.Add(*(TagClass **)&ptr);
+	}
+
+	for (i = 0; i < MapTags.Count(); i++) {
+		Swizzle_Pointer(&MapTags[i]);
+	}
+
+	res = stream->Read(&Powerups::Weights, sizeof(Powerups::Weights), NULL);
+	if (FAILED(res)) {
+		return(res);
+	}
+
+	res = stream->Read(&Powerups::Anims, sizeof(Powerups::Anims), NULL);
+	if (FAILED(res)) {
+		return(res);
+	}
+
+	res = stream->Read(&Powerups::Arguments, sizeof(Powerups::Arguments), NULL);
+	if (FAILED(res)) {
+		return(res);
+	}
+
+	res = stream->Read(&Powerups::Naval, sizeof(Powerups::Naval), NULL);
+	if (FAILED(res)) {
+		return(res);
+	}
+
+	res = stream->Read(&MissionControl, sizeof(MissionControl), NULL);
+	if (FAILED(res)) {
+		return(res);
+	}
+
+	res = stream->Read(&DAT_00B07784, sizeof(DAT_00B07784), NULL);
+	if (FAILED(res)) {
+		return(res);
+	}
+
+	return(S_OK);
+}
 
 // FUNCTION: 0x0067FD20
 bool Get_Savefile_Info(char const * name, SaveVersionInfo * info)

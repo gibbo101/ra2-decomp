@@ -405,3 +405,23 @@ double DAT_00A8F178 = fastmath::atan(DAT_00A8F1C0 * DAT_007E1740);
 
 // FUNCTION: 0x00513B50 $E90
 double DAT_00A8F190 = fastmath::atan((DAT_00A8F1C0 * 2) / DAT_00A8F168);
+
+// FUNCTION: 0x00513B80 $E93
+int DAT_00A8F1B4 = (int)(DAT_00A8F1C0 * 4 + DAT_007E1738);
+
+struct DAT_Pair16 { short A, B; DAT_Pair16() : A(0), B(0) {} };
+struct DAT_Triple0 { int A, B, C; DAT_Triple0() : A(0), B(0), C(0) {} };
+struct DAT_Triple80 { int A, B, C; DAT_Triple80() : A(128), B(128), C(0) {} };
+struct DAT_Quad0 { int A, B, C, D; DAT_Quad0() : A(0), B(0), C(0), D(0) {} };
+
+// FUNCTION: 0x00513BB0 $E96
+DAT_Pair16 DAT_00A8F160;
+
+// FUNCTION: 0x00513BC0 $E99
+DAT_Triple0 DAT_00A8F180;
+
+// FUNCTION: 0x00513BE0 $E102
+DAT_Triple80 DAT_00A8F1A8;
+
+// FUNCTION: 0x00513C00 $E105
+DAT_Quad0 DAT_00A8F150;

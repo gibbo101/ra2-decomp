@@ -5128,3 +5128,68 @@ template class VectorClass<BUILDING_DIST_OBJ>;
 // FUNCTION: 0x00510AD0 HouseClass::QueryInterface
 // FUNCTION: 0x00510AE0 HouseClass::AddRef
 // FUNCTION: 0x00510AF0 HouseClass::Release
+
+extern double __cdecl FUN_004CAD50(double);
+extern double __cdecl FUN_004CADE0(double);
+extern const double DAT_007EAB10;
+extern const double DAT_007E1720;
+extern const double DAT_007E1728;
+extern const double DAT_007E1730;
+extern const double DAT_007E1738;
+extern const double DAT_007E1740;
+extern double DAT_00A8F068;
+extern double DAT_00A8F070;
+extern double DAT_00A8F048;
+
+struct ShortPair {
+	unsigned short A, B;
+	ShortPair() { A = 0; B = 0; }
+};
+
+struct IntTriple {
+	int A, B, C;
+	IntTriple() { A = 0; B = 0; C = 0; }
+};
+
+struct IntQuad {
+	int A, B, C, D;
+	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
+};
+
+struct CenterTriple {
+	int A, B, C;
+	CenterTriple() { C = 0; A = 0x80; B = 0x80; }
+};
+
+// FUNCTION: 0x00510B70 $E211
+double DAT_00A8F098 = DAT_007E1720 * DAT_007EAB10;
+
+// FUNCTION: 0x00510B90 $E214
+double DAT_00A8F070 = DAT_007E1728 * DAT_007EAB10;
+
+// FUNCTION: 0x00510BB0 $E217
+double DAT_00A8F048 = DAT_007E1730 * DAT_007EAB10;
+
+// FUNCTION: 0x00510BD0 $E220
+int DAT_00A8F0C0 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00A8F048 - DAT_00A8F070) * DAT_00A8F068));
+
+// FUNCTION: 0x00510C10 $E223
+double DAT_00A8F078 = FUN_004CADE0(DAT_00A8F0C0 * DAT_007E1740);
+
+// FUNCTION: 0x00510C40 $E226
+double DAT_00A8F090 = FUN_004CADE0((DAT_00A8F0C0 * 2) / DAT_00A8F068);
+
+// FUNCTION: 0x00510C70 $E229
+int DAT_00A8F0B4 = (int)(DAT_00A8F0C0 * 4 + DAT_007E1738);
+
+// FUNCTION: 0x00510CA0 $E232
+ShortPair DAT_00A8F060;
+
+// FUNCTION: 0x00510CB0 $E235
+IntTriple DAT_00A8F080;
+
+// FUNCTION: 0x00510CD0 $E238
+CenterTriple DAT_00A8F0A8;
+
+// FUNCTION: 0x00510CF0 $E241
+IntQuad DAT_00A8F050;

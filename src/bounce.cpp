@@ -76,6 +76,47 @@ ShortPair DAT_0089C718;
 // FUNCTION: 0x00439650 $E113
 IntTriple DAT_0089C738;
 
+struct IntTripleXYZ {
+	int X, Y, Z;
+	IntTripleXYZ(int x, int y, int z) { X = x; Y = y; Z = z; }
+};
+
+// FUNCTION: 0x00439670 $E116
+IntTripleXYZ DAT_0089C760(0x80, 0x80, 0);
+
+static inline Vector3 Normalize_Axis(const Vector3 & vec)
+{
+	float len = (float)fastmath::sqrt(vec.Z*vec.Z + vec.Y*vec.Y + vec.X*vec.X);
+	if (len != 0.0) {
+		return(vec / len);
+	}
+	return(vec);
+}
+
+// FUNCTION: 0x004397E0
+void BounceClass::Init(Coord const & coord, double elasticity, double gravity, double max_velocity, Vector3 const & velocity, double rotation)
+{
+	Elasticity = elasticity;
+	Gravity = gravity;
+	MaxVelocity = max_velocity;
+	MyCoord.X = coord.X;
+	MyCoord.Y = coord.Y;
+	MyCoord.Z = coord.Z;
+	Velocity = velocity;
+
+	Vector3 rotation_axis(
+		Random_Pick(-65535, 65535) * (1.0f / 65535.0f),
+		Random_Pick(-65535, 65535) * (1.0f / 65535.0f),
+		Random_Pick(-65535, 65535) * (1.0f / 65535.0f)
+	);
+
+	rotation_axis = Normalize_Axis(rotation_axis);
+	AngularVelocity = Axis_To_Quat(rotation_axis, rotation);
+	Matrix3D identity_matrix;
+	identity_matrix.Make_Identity();
+	Rotation = Build_Quaternion(identity_matrix);
+}
+
 // FUNCTION: 0x004399A0
 Coord BounceClass::Get_Bounce_Coord(void) const
 {
@@ -86,4 +127,16 @@ Coord BounceClass::Get_Bounce_Coord(void) const
 Matrix3D BounceClass::Get_Matrix(void) const
 {
 	return(Build_Matrix3D(Rotation));
+}
+
+// FUNCTION: 0x00439A10
+double BounceClass::Get_Remaining_Motion(void) const
+{
+	Coord coord(MyCoord.X, MyCoord.Y, MyCoord.Z);
+
+	int height = MyCoord.Z - Map.Get_Height_GL(coord);
+	if (Map[coord].IsUnderBridge && height >= BRIDGE_LEPTON_HEIGHT) {
+		height -= BRIDGE_LEPTON_HEIGHT;
+	}
+	return(Point3D(Velocity.X, Velocity.Y, height * Gravity + Velocity.Z).Length());
 }

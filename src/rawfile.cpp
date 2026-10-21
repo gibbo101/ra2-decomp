@@ -186,35 +186,6 @@ int RawFileClass::Read(void * buffer, int size)
 	return(bytesread);
 }
 
-int RawFileClass::Raw_Seek(int pos, int dir)
-{
-	if (!Is_Open()) {
-		Error(EBADF, false, Filename);
-		return(0);
-	}
-
-	switch (dir) {
-		case SEEK_SET:
-			dir = FILE_BEGIN;
-			break;
-
-		case SEEK_CUR:
-			dir = FILE_CURRENT;
-			break;
-
-		case SEEK_END:
-			dir = FILE_END;
-			break;
-	}
-	pos = SetFilePointer(Handle, pos, NULL, dir);
-
-	if (pos == 0xFFFFFFFF) {
-		Error(GetLastError(), false, Filename);
-		return(0);
-	}
-	return(pos);
-}
-
 // FUNCTION: 0x0065CDD0
 int RawFileClass::Write(void const * buffer, int size)
 {
@@ -344,6 +315,37 @@ int RawFileClass::Delete(void)
 	return(true);
 }
 
+// FUNCTION: 0x0065D1F0
+unsigned int RawFileClass::Get_Date_Time(void)
+{
+	BY_HANDLE_FILE_INFORMATION info;
+
+	if (GetFileInformationByHandle(Handle, &info)) {
+		WORD dosdate;
+		WORD dostime;
+		FileTimeToDosDateTime(&info.ftLastWriteTime, &dosdate, &dostime);
+		return((dosdate << 16) | dostime);
+	}
+	return(0);
+}
+
+// FUNCTION: 0x0065D240
+bool RawFileClass::Set_Date_Time(unsigned int datetime)
+{
+	if (RawFileClass::Is_Open()) {
+		BY_HANDLE_FILE_INFORMATION info;
+
+		if (GetFileInformationByHandle(Handle, &info)) {
+			FILETIME filetime;
+			if (DosDateTimeToFileTime((WORD)(datetime >> 16), (WORD)(datetime & 0x0FFFF), &filetime)) {
+				return(SetFileTime(Handle, &info.ftCreationTime, &filetime, &filetime) != 0);
+			}
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x0065D2B0
 void RawFileClass::Bias(int start, int length)
 {
 	if (start == 0) {
@@ -363,3 +365,46 @@ void RawFileClass::Bias(int start, int length)
 		RawFileClass::Seek(0, SEEK_SET);
 	}
 }
+
+// FUNCTION: 0x0065D320
+int RawFileClass::Raw_Seek(int pos, int dir)
+{
+	if (!Is_Open()) {
+		Error(EBADF, false, Filename);
+		return(0);
+	}
+
+	switch (dir) {
+		case SEEK_SET:
+			dir = FILE_BEGIN;
+			break;
+
+		case SEEK_CUR:
+			dir = FILE_CURRENT;
+			break;
+
+		case SEEK_END:
+			dir = FILE_END;
+			break;
+	}
+	pos = SetFilePointer(Handle, pos, NULL, dir);
+
+	if (pos == 0xFFFFFFFF) {
+		Error(GetLastError(), false, Filename);
+		return(0);
+	}
+	return(pos);
+}
+
+// FUNCTION: 0x0065D3A0
+RawFileClass::~RawFileClass(void)
+{
+	Close();
+	if (Allocated && Filename) {
+		free((char *)Filename);
+		((char *&)Filename) = 0;
+		Allocated = false;
+	}
+}
+
+// FUNCTION: 0x0065D420 RawFileClass::Is_Open

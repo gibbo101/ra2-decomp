@@ -15,6 +15,7 @@
 #include "scheme.h"
 #include "wwfont.h"
 #include "color.hh"
+#include "geometry.h"
 #include <math.h>
 
 extern double __cdecl FUN_004CAC40(double);
@@ -77,6 +78,8 @@ ShortPair DAT_0089E328;
 // FUNCTION: 0x00478B60 $E97
 IntTriple DAT_0089E348;
 
+// FUNCTION: 0x00478B80 $E100
+
 // FUNCTION: 0x00478DB0
 void CCToolTip::Reset(const ToolTipText * text)
 {
@@ -99,6 +102,13 @@ void CCToolTip::Reset(const ToolTipText * text)
 	BASECLASS::Reset(text);
 }
 
+// FUNCTION: 0x00478E10
+void CCToolTip::Draw_Current(bool sidebar)
+{
+	UseSidebarSurface = sidebar;
+	BASECLASS::Draw_Current(sidebar == 0);
+}
+
 // FUNCTION: 0x00479050
 const char * CCToolTip::ToolTip_Text(int id)
 {
@@ -107,3 +117,5 @@ const char * CCToolTip::ToolTip_Text(int id)
 	}
 	return(Map.Help_Text(id));
 }
+
+// FUNCTION: 0x00479080 $E2

@@ -100,6 +100,21 @@ double __cdecl fastmath::atan2(double y, double x)
 	return((float)(fastmath::atan2f(y, x)));
 }
 
+// FUNCTION: 0x004CAEF0
+void FUN_004CAEF0(void)
+{
+}
+
+// FUNCTION: 0x004CAF00
+void FUN_004CAF00(void)
+{
+}
+
+// FUNCTION: 0x004CAF10
+void FUN_004CAF10(void)
+{
+}
+
 // FUNCTION: 0x004CB060
 float fastmath::sqrtf(float f)
 {

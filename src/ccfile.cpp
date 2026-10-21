@@ -272,3 +272,55 @@ double DAT_0089E2C0 = fastmath::atan(DAT_0089E308 * DAT_007E1740);
 
 // FUNCTION: 0x00474120 $E33
 double DAT_0089E2D8 = fastmath::atan((DAT_0089E308 * 2) / DAT_0089E2B0);
+
+extern int DAT_0089E2FC;
+extern short DAT_0089E2A8;
+extern short DAT_0089E2AA;
+extern int DAT_0089E2C8;
+extern int DAT_0089E2CC;
+extern int DAT_0089E2D0;
+extern int DAT_0089E2F8;
+extern int DAT_0089E2F0;
+extern int DAT_0089E2F4;
+extern int DAT_0089E298;
+extern int DAT_0089E29C;
+extern int DAT_0089E2A0;
+extern int DAT_0089E2A4;
+
+// FUNCTION: 0x00474150
+void FUN_00474150(void)
+{
+	DAT_0089E2FC = (int)((double)(DAT_0089E308 * 4) + DAT_007E1738);
+}
+
+// FUNCTION: 0x00474180
+void FUN_00474180(void)
+{
+	DAT_0089E2A8 = 0;
+	DAT_0089E2AA = 0;
+}
+
+// FUNCTION: 0x00474190
+void FUN_00474190(void)
+{
+	DAT_0089E2C8 = 0;
+	DAT_0089E2CC = 0;
+	DAT_0089E2D0 = 0;
+}
+
+// FUNCTION: 0x004741B0
+void FUN_004741B0(void)
+{
+	DAT_0089E2F8 = 0;
+	DAT_0089E2F0 = 0x80;
+	DAT_0089E2F4 = 0x80;
+}
+
+// FUNCTION: 0x004741D0
+void FUN_004741D0(void)
+{
+	DAT_0089E298 = 0;
+	DAT_0089E29C = 0;
+	DAT_0089E2A0 = 0;
+	DAT_0089E2A4 = 0;
+}

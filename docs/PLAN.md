@@ -1161,6 +1161,18 @@ ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; 
 fixed them. Cost: about 5.6M tokens. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
 
+### Batches 90, 91 and 92 (21 October 2026)
+
+**203 of 221 functions** (87, 61, 55), plus vein's Reduce_Veins_At (0x0074EF10), which
+matches only with Westwood's `volatile int div_zero` crash idiom as a local in priority.h's
+Remove_Matching; the maintainer approved landing it. A struct with static members added to
+options.h used up three `$E` numbers in every file including goptions.h, so the merge moved
+it into options.cpp, its only user, as the exe's numbering implies. Bounce's Init sums its
+axis length in a different order from Axis_To_Quat, so bounce.cpp normalises through its
+own inline helper rather than the shared one. Three Get_Field overloads byte-identical to
+their signed twins wait on check.py preferring an unclaimed overload. Cost: about 4.4M
+tokens. Merge gate: 13,536 of 13,536 (1,743.0 KB), about 69% of game functions.
+
 ### Batches 87, 88 and 89 (21 October 2026)
 
 **252 of 261 functions** (98, 82, 72), plus CounterClass's out-of-line constructor

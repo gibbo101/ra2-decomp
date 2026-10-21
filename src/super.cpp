@@ -44,6 +44,10 @@
 extern Cell DAT_00B0C038[9];
 extern wchar_t DAT_00887734[];
 extern int DAT_008809A0;
+extern int DAT_00B0C098;
+extern int DAT_00B0C09C;
+extern int DAT_00B0C0A0;
+extern int DAT_00B0C0A4;
 
 class LightningStorm
 {
@@ -694,3 +698,20 @@ done:
 // FUNCTION: 0x006CE1F0 SuperClass::What_Am_I
 // FUNCTION: 0x006CE200 SuperClass::Fetch_RTTI
 // FUNCTION: 0x006CE210 SuperClass::Fetch_Object_Size
+
+// FUNCTION: 0x006CE240 ?$TPoint3D@H::operator+
+// FUNCTION: 0x006CE280 ?$CDTimerClass@VFrameTimerClass@@::Stop
+// FUNCTION: 0x006CE2C0 ?$CDTimerClass@VFrameTimerClass@@::Start
+// FUNCTION: 0x006CE2D0 ?$DynamicVectorClass@PAVSuperClass@@::Delete
+// FUNCTION: 0x006CE320 ?$DynamicVectorClass@PAVSuperClass@@::Delete_Index
+template class DynamicVectorClass<SuperClass *>;
+template class TPoint3D<int>;
+
+// FUNCTION: 0x006CE360
+void FUN_006CE360(void)
+{
+	DAT_00B0C098 = 0;
+	DAT_00B0C09C = 0;
+	DAT_00B0C0A0 = 0;
+	DAT_00B0C0A4 = 0;
+}

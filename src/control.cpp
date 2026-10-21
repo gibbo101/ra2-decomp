@@ -5,6 +5,7 @@
 
 #include "always.h"
 #include "control.h"
+#include "rect.h"
 
 // FUNCTION: 0x0048E520
 ControlClass::ControlClass(unsigned id, int x, int y, int w, int h, unsigned flags, bool sticky) :
@@ -22,10 +23,38 @@ ControlClass::ControlClass(ControlClass const & control) :
 {
 }
 
+// FUNCTION: 0x0048E5A0
+int ControlClass::Action(unsigned flags, KeyNumType & key, int modifier)
+{
+	if (flags) {
+		if (ID) {
+			key = (KeyNumType)(ID | KN_BUTTON);
+			if (flags & RIGHTRELEASE && Flags & RIGHTPRESS) {
+				key = (KeyNumType)(key | WWKEY_UNK_BIT);
+			}
+		} else {
+			key = KN_NONE;
+		}
+	}
+
+	if (Peer) {
+		Peer->Peer_To_Peer(flags, key, *this);
+	}
+
+	return(BASECLASS::Action(flags, key, 0));
+}
+
+
 // FUNCTION: 0x0048E600
 void ControlClass::Make_Peer(BASECLASS & gadget)
 {
 	Peer = &gadget;
+}
+
+// FUNCTION: 0x0048E610
+unsigned ControlClass::Get_ID(void) const
+{
+	return(ID);
 }
 
 // FUNCTION: 0x0048E620
@@ -36,3 +65,8 @@ int ControlClass::Draw_Me(int forced)
 	}
 	return(BASECLASS::Draw_Me(forced));
 }
+// FUNCTION: 0x0048E650 GadgetClass::Peer_To_Peer
+
+// FUNCTION: 0x0048E660 ControlClass::~ControlClass
+
+// FUNCTION: 0x0048E680 $E

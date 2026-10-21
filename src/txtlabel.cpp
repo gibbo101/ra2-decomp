@@ -71,3 +71,40 @@ ShortPair DAT_00B0F970;
 
 // FUNCTION: 0x0072A400 $E61
 IntTriple DAT_00B0F990;
+
+struct IntTriple2 {
+	int A, B, C;
+	IntTriple2() { C = 0; A = 128; B = 128; }
+};
+
+struct IntQuad {
+	int A, B, C, D;
+	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
+};
+
+// FUNCTION: 0x0072A420 $E64
+IntTriple2 DAT_00B0F9B8;
+
+// FUNCTION: 0x0072A440
+TextLabelClass::TextLabelClass(wchar_t * txt, int x, int y, int color, TextPrintType style) :
+	GadgetClass(x, y, 1, 1, 0, 0),
+	Text(txt),
+	UserData1(0),
+	UserData2(0),
+	Style(style),
+	Color(color),
+	PixWidth(-1),
+	AnimDword3C(0),
+	SkipDraw(false),
+	Animate(false),
+	AnimPos(0),
+	AnimTiming(0)
+{
+}
+
+// FUNCTION: 0x0072A660 TextLabelClass::Set_Text
+
+// FUNCTION: 0x0072A670 TextLabelClass::~TextLabelClass
+
+// FUNCTION: 0x0072A690 $E67
+IntQuad DAT_00B0FA08;

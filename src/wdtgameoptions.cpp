@@ -186,3 +186,30 @@ rc_ptr<MapSizeGameOption> __fastcall FUN_007676F0(unsigned int bitmask)
 {
 	return(rc_ptr<MapSizeGameOption>(new MapSizeGameOption(bitmask)));
 }
+
+// FUNCTION: 0x00767800 WorldDominationTour::MapSizeGameOption::Get_Display_Priority
+int MapSizeGameOption::Get_Display_Priority(const rc_ptr<WDTTerritory> & territory)
+{
+	static int _table[4][4] = {
+		{ 0, 0, 0, 0 },
+		{ 0, 1, 2, 0 },
+		{ 0, 2, 1, 0 },
+		{ 0, 0, 0, 0 }
+	};
+
+	return(_table[territory->Width][territory->Height]);
+}
+
+// FUNCTION: 0x00767820 WorldDominationTour::FlagGameOption::FlagGameOption
+
+// FUNCTION: 0x00767880 WorldDominationTour::FlagGameOption::~FlagGameOption
+
+// FUNCTION: 0x007678C0 WorldDominationTour::MapSizeGameOption::~MapSizeGameOption
+
+struct IntQuad {
+	int A, B, C, D;
+	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
+};
+
+// FUNCTION: 0x007678F0 $E44
+IntQuad DAT_00B72818;

@@ -837,3 +837,42 @@ int DAT_00ABC690 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00ABC5F0 - DAT_00ABC64
 
 // FUNCTION: 0x0054E160 $E123
 double DAT_00ABC648 = FUN_004CADE0(DAT_00ABC690 * DAT_007E1740);
+
+// FUNCTION: 0x0054E190 $E126
+double DAT_00ABC660 = FUN_004CADE0((DAT_00ABC690 * 2) / DAT_00ABC638);
+
+// FUNCTION: 0x0054E1C0 $E129
+int DAT_00ABC684 = (int)(DAT_00ABC690 * 4 + DAT_007E1738);
+
+struct ShortPair_ABC630 {
+	short X;
+	short Y;
+	ShortPair_ABC630(void) : X(0), Y(0) {}
+};
+
+// FUNCTION: 0x0054E1F0 $E132
+ShortPair_ABC630 DAT_00ABC630;
+
+struct IntTriple_ABC650 {
+	int A, B, C;
+	IntTriple_ABC650() { A = 0; B = 0; C = 0; }
+};
+
+// FUNCTION: 0x0054E200 $E135
+IntTriple_ABC650 DAT_00ABC650;
+
+struct IntTriple_ABC678 {
+	int A, B, C;
+	IntTriple_ABC678() { C = 0; A = 128; B = 128; }
+};
+
+// FUNCTION: 0x0054E220 $E138
+IntTriple_ABC678 DAT_00ABC678;
+
+struct IntQuad_ABC620 {
+	int A, B, C, D;
+	IntQuad_ABC620() { A = 0; B = 0; C = 0; D = 0; }
+};
+
+// FUNCTION: 0x0054E240 $E141
+IntQuad_ABC620 DAT_00ABC620;

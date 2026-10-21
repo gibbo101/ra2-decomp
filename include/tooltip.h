@@ -89,7 +89,7 @@ class ToolTipManager
 			TOOLTIP_LIFETIME = 10000,
 		};
 
-	private:
+	protected:
 
 		ToolTip const * CurrentToolTip;
 

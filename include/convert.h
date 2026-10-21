@@ -5,6 +5,7 @@
 #pragma once
 
 #include "draw.hh"
+#include "noinit.h"
 
 class Blitter;
 class RLEBlitter;
@@ -19,6 +20,7 @@ class ConvertClass
 		friend class IsometricTileTypeClass;
 	public:
 		ConvertClass(PaletteClass const & artpalette, PaletteClass const & screenpalette, Surface const & typicalsurface, int intensity_levels = 1, bool quick_init = false);
+		ConvertClass(NoInitClass const &) {}
 		virtual ~ConvertClass(void);
 
 		int Convert_Pixel(int pixel) const {

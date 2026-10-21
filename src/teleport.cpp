@@ -35,6 +35,26 @@ extern const double DAT_007E1740;
 extern const double DAT_007F5100;
 extern const double DAT_007F5108;
 
+struct ShortPair {
+	unsigned short A, B;
+	ShortPair() { A = 0; B = 0; }
+};
+
+struct IntTriple {
+	int A, B, C;
+	IntTriple() { A = 0; B = 0; C = 0; }
+};
+
+struct IntInit {
+	int A, B, C;
+	IntInit() { C = 0; A = 0x80; B = 0x80; }
+};
+
+struct IntQuad {
+	int A, B, C, D;
+	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
+};
+
 // FUNCTION: 0x00718000
 TeleportLocomotionClass::TeleportLocomotionClass(void) :
 	BASECLASS(),
@@ -373,3 +393,21 @@ int DAT_00B0ECD0 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B0EC40 - DAT_00B0EC8
 
 // FUNCTION: 0x0071A2D0 $E101
 double DAT_00B0EC88 = FUN_004CADE0(DAT_00B0ECD0 * DAT_007E1740);
+
+// FUNCTION: 0x0071A300 $E104
+double DAT_00B0ECA0 = FUN_004CADE0((DAT_00B0ECD0 * 2) / DAT_00B0EC78);
+
+// FUNCTION: 0x0071A330 $E107
+int DAT_00B0ECC4 = (int)(DAT_00B0ECD0 * 4 + DAT_007E1738);
+
+// FUNCTION: 0x0071A360 $E110
+ShortPair DAT_00B0EC58;
+
+// FUNCTION: 0x0071A370 $E113
+IntTriple DAT_00B0EC90;
+
+// FUNCTION: 0x0071A390 $E116
+IntInit DAT_00B0ECB8;
+
+// FUNCTION: 0x0071A3B0 $E119
+IntQuad DAT_00B0EC48;

@@ -172,9 +172,21 @@ inline bool PriorityQueueClass <T>::Remove_Matching(T const & item)
 						parent = PARENT(index);
 					}
 					Heap[index] = last;
+					for (int i = 1; i <= ActiveCount; i++) {
+						if ((unsigned)Heap[i] < MinNodePointer || (unsigned)Heap[i] > MaxNodePointer) {
+							volatile int div_zero = 0;
+							div_zero = 1 / div_zero;
+						}
+					}
 				} else {
 					Heap[index] = last;
 					Heapify(index);
+					for (int i = 1; i <= ActiveCount; i++) {
+						if ((unsigned)Heap[i] < MinNodePointer || (unsigned)Heap[i] > MaxNodePointer) {
+							volatile int div_zero = 0;
+							div_zero = 1 / div_zero;
+						}
+					}
 				}
 			}
 

@@ -24,6 +24,7 @@
 #include "ipxmgr.h"
 #include "_rules.h"
 #include "gadget.h"
+#include "_xmouse.h"
 
 #include <windows.h>
 #undef LoadString
@@ -762,9 +763,9 @@ struct ChatSink {
 	virtual long __stdcall V52(int * count);
 	virtual void V53(void);
 	virtual void V54(void);
-	virtual void V55(void);
-	virtual void V56(void);
-	virtual void V57(void);
+	virtual long __stdcall V55(void);
+	virtual long __stdcall V56(User * user);
+	virtual long __stdcall V57(User * user);
 	virtual long __stdcall V58(wchar_t * text);
 	virtual long __stdcall V59(User * users, wchar_t * text);
 	virtual long __stdcall V60(wchar_t * text);
@@ -2507,7 +2508,8 @@ extern int DAT_007EEF28;
 extern char DAT_00B77E30[];
 bool __fastcall FUN_0069BBE0(SessionClass * session);
 wchar_t * __fastcall FUN_00735120(char const * text);
-void __cdecl FUN_005E2700(int color, wchar_t const * text);
+void __cdecl FUN_005E2700(int color, wchar_t const * text, ...);
+extern int DAT_007EEF2C;
 void __cdecl FUN_005E2790(int color, wchar_t const * text);
 extern int DAT_00B76C20;
 extern int DAT_00B77E90;
@@ -5420,6 +5422,420 @@ bool __fastcall FUN_0079C520(Wstring * name)
 		}
 	}
 	return true;
+}
+
+// FUNCTION: 0x0079C650
+void __fastcall FUN_0079C650(Wstring * name)
+{
+	if (!FUN_0079C520(name)) {
+		return;
+	}
+	Wstring entry(*name);
+	DAT_00B73AA8.addTail(entry);
+	DAT_00B76980.addTail(entry);
+	DAT_00B779B0.addTail(entry);
+	FUN_0079C3A0();
+}
+
+void FUN_0079D110(void);
+
+// FUNCTION: 0x0079C8D0
+void __fastcall FUN_0079C8D0(Wstring * name)
+{
+	if (!FUN_0079C520(name)) {
+		return;
+	}
+	User user;
+	memset(&user, 0, sizeof(user));
+	strncpy(user.Nick, name->text(), 9);
+	DAT_00AC116C->V56(&user);
+	if (FUN_0079C520(name)) {
+		Wstring entry(*name);
+		DAT_00B73AA8.addTail(entry);
+		DAT_00B76980.addTail(entry);
+		DAT_00B779B0.addTail(entry);
+		FUN_0079C3A0();
+	}
+	FUN_0079D110();
+}
+
+static inline char Remove_Channel(Wstring & key, LadderC & value)
+{
+	return DAT_00B76608.remove(key, value);
+}
+
+// FUNCTION: 0x0079CBA0
+void __fastcall FUN_0079CBA0(Wstring * name)
+{
+	LadderC value;
+	User user;
+	for (int i = 0; i < DAT_00B73AA8.length(); i++) {
+		Wstring entry;
+		DAT_00B73AA8.get(entry, i);
+		if (entry == *name) {
+			DAT_00B73AA8.remove(i);
+			Wstring key(*name);
+			Remove_Channel(key, value);
+			DAT_00B76990.remove(key);
+			memset(&user, 0, sizeof(user));
+			strncpy(user.Nick, name->text(), 9);
+			DAT_00AC116C->V57(&user);
+			return;
+		}
+	}
+}
+
+// FUNCTION: 0x0079D110
+void FUN_0079D110(void)
+{
+	int count = DAT_00B779B0.length();
+	if (count > 10) {
+		count = 10;
+	} else if (count == 0) {
+		return;
+	}
+	Wstring keys;
+	for (int i = 0; i < count; i++) {
+		Wstring name;
+		DAT_00B779B0.removeHead(name);
+		if (keys.length() > 0) {
+			keys += ":";
+		}
+		keys += name;
+	}
+	DAT_00AC1170->V05(DAT_00B761A8, DAT_00B77A90, keys.get(), DAT_0084A234 & 0xFFFF00, -1, 0, 0);
+	DAT_00AC1170->V14(DAT_00B761A8, DAT_00B77A90, keys.get(), DAT_0084A234 & 0xFFFF00);
+}
+
+// FUNCTION: 0x0079D2F0
+void FUN_0079D2F0(void)
+{
+	DAT_00B779B0.clear();
+	for (int i = 0; i < DAT_00B73AA8.length(); i++) {
+		Wstring node;
+		DAT_00B73AA8.get(node, i);
+		DAT_00B779B0.addTail(node);
+	}
+	FUN_0079D110();
+}
+
+void FUN_00623F60(HWND listbox, int index, WideWstring & text);
+int __fastcall FUN_00623EA0(HWND window, WideWstring * text);
+
+// FUNCTION: 0x0079D720
+BOOL CALLBACK FUN_0079D720(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	int rc = UI::StandardWndProc(window, message, wparam, lparam);
+	if (rc) {
+		return rc;
+	}
+	switch (message) {
+		case WM_DESTROY:
+			return FALSE;
+
+		case WM_COMMAND:
+			switch (LOWORD(wparam)) {
+				case 0x540:
+					switch (HIWORD(wparam)) {
+						case EN_CHANGE: {
+							WideWstring text;
+							FUN_00623EA0((HWND)lparam, &text);
+							EnableWindow(GetDlgItem(window, 0x5C2), text.length() > 0);
+							return FALSE;
+						}
+
+						case EN_UPDATE: {
+							WideWstring text;
+							FUN_00623EA0((HWND)lparam, &text);
+							text.trimTrailing(L"\n\r");
+							return FALSE;
+						}
+
+						case EN_MAXTEXT:
+							SendMessage(GetDlgItem(window, 0x5C2), BM_CLICK, 0, 0);
+							return FALSE;
+
+						default:
+							return FALSE;
+					}
+
+				case 0x5C2: {
+					WideWstring text;
+					HWND edit = GetDlgItem(window, 0x540);
+					FUN_00623EA0(edit, &text);
+					SendMessage(edit, 0x4B2, 0, (LPARAM)DAT_00887734);
+					if (text.length() > 0) {
+						text.trimTrailing(L"\n\r");
+						User user;
+						memset(&user, 0, sizeof(user));
+						strcpy(user.Nick, DAT_00B76E24.get());
+						DAT_00AC116C->V62(&user, text.get());
+					}
+					InvalidateRect(edit, NULL, FALSE);
+					FUN_007757E0(window, 0x5C2);
+					return FALSE;
+				}
+
+				case 0x686:
+					FUN_007757E0(window, 0x686);
+					return FALSE;
+
+				default:
+					return FALSE;
+			}
+
+		case 0x497: {
+			HWND edit = GetDlgItem(window, 0x540);
+			SendMessage(edit, EM_LIMITTEXT, 0x78, 0);
+			SendMessage(edit, 0x4B2, 0, (LPARAM)DAT_00887734);
+			EnableWindow(GetDlgItem(window, 0x5C2), FALSE);
+			HWND label = GetDlgItem(window, 0x712);
+			SendMessage(label, 0x4B4, 0, (LPARAM)DAT_00B76E24.text());
+			return FALSE;
+		}
+
+		case WM_DRAWITEM:
+			OwnerDraw::DrawItem((LPDRAWITEMSTRUCT)lparam);
+			return TRUE;
+
+		case WM_PAINT:
+			OwnerDraw::Paint(window);
+			FUN_00607FD0(window);
+			ValidateRect(window, NULL);
+			return TRUE;
+
+		case WM_ERASEBKGND:
+			return TRUE;
+
+		default:
+			return FALSE;
+	}
+}
+
+// FUNCTION: 0x0079DA90
+Wstring __fastcall FUN_0079DA90(HWND list)
+{
+	int index = SendMessage(list, LB_GETCURSEL, 0, 0);
+	if (index == -1) {
+		index = 0;
+	}
+	while (index < SendMessage(list, LB_GETCOUNT, 0, 0)) {
+		WideWstring text;
+		FUN_00623F60(list, index, text);
+		if (text.getChar(0) == L'(' && text.truncate(L')')) {
+			text.removeChar(L'(');
+			return FUN_007B7F90(text);
+		}
+		index++;
+	}
+	return DAT_00B76E24;
+}
+
+static inline void Show_Name(HWND window, Wstring const & name)
+{
+	HWND label = GetDlgItem(window, 0x718);
+	SendMessage(label, 0x4B4, 0, (LPARAM)name.text());
+}
+
+// FUNCTION: 0x0079DB50
+BOOL CALLBACK FUN_0079DB50(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	int rc = UI::StandardWndProc(window, message, wparam, lparam);
+	if (rc) {
+		return rc;
+	}
+	switch (message) {
+		case WM_DESTROY:
+			return FALSE;
+
+		case WM_COMMAND:
+			switch (LOWORD(wparam)) {
+				case 0x53F:
+					switch (HIWORD(wparam)) {
+						case LBN_SELCHANGE: {
+							Wstring name = FUN_0079DA90((HWND)lparam);
+							HWND label = GetDlgItem(window, 0x718);
+							SendMessage(label, 0x4B4, 0, (LPARAM)name.text());
+							return FALSE;
+						}
+
+						default:
+							return FALSE;
+					}
+
+				case 0x540:
+					switch (HIWORD(wparam)) {
+						case EN_CHANGE: {
+							WideWstring text;
+							FUN_00623EA0((HWND)lparam, &text);
+							EnableWindow(GetDlgItem(window, 0x5C2), text.length() > 0);
+							return FALSE;
+						}
+
+						case EN_UPDATE: {
+							WideWstring text;
+							FUN_00623EA0((HWND)lparam, &text);
+							text.trimTrailing(L"\n\r");
+							return FALSE;
+						}
+
+						case EN_MAXTEXT: {
+							WideWstring text;
+							FUN_00623EA0((HWND)lparam, &text);
+							text.trimTrailing(L"\n\r");
+							if (text.length() > 0) {
+								SendMessage(GetDlgItem(window, 0x5C2), BM_CLICK, 0, 0);
+							}
+							return FALSE;
+						}
+
+						default:
+							return FALSE;
+					}
+
+				case 0x5C2: {
+					WideWstring text;
+					HWND edit = GetDlgItem(window, 0x540);
+					FUN_00623EA0(edit, &text);
+					SendMessage(edit, 0x4B2, 0, (LPARAM)DAT_00887734);
+					Wstring name = FUN_0079DA90(GetDlgItem(window, 0x53F));
+					if (name.length() > 0 && text.length() > 0) {
+						text.trimTrailing(L"\n\r");
+						User user;
+						memset(&user, 0, sizeof(user));
+						strcpy(user.Nick, name.get());
+						DAT_00AC116C->V62(&user, text.get());
+						wchar_t * message = text.get();
+						FUN_005E2700(DAT_007EEF2C, L"[%hs] %s", DAT_00B73E40.c_str(), message);
+					}
+					EnableWindow((HWND)lparam, FALSE);
+					InvalidateRect(edit, NULL, FALSE);
+					return FALSE;
+				}
+
+				case 0x686:
+					FUN_007757E0(window, 0x5C2);
+					return FALSE;
+
+				default:
+					return FALSE;
+			}
+
+		case 0x497: {
+			HWND edit = GetDlgItem(window, 0x540);
+			SendMessage(edit, EM_LIMITTEXT, 0x78, 0);
+			SendMessage(edit, 0x4B2, 0, (LPARAM)DAT_00887734);
+			EnableWindow(GetDlgItem(window, 0x5C2), FALSE);
+			Show_Name(window, FUN_0079DA90(GetDlgItem(window, 0x53F)));
+			if (MouseCursor) {
+				MouseCursor->Release_Mouse();
+			}
+			return FALSE;
+		}
+
+		case WM_DRAWITEM:
+			OwnerDraw::DrawItem((LPDRAWITEMSTRUCT)lparam);
+			return TRUE;
+
+		case WM_PAINT:
+			OwnerDraw::Paint(window);
+			FUN_00607FD0(window);
+			ValidateRect(window, NULL);
+			return TRUE;
+
+		case WM_ERASEBKGND:
+			return TRUE;
+
+		default:
+			return FALSE;
+	}
+}
+
+// FUNCTION: 0x0079DFE0
+BOOL CALLBACK FUN_0079DFE0(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	if (message == WM_INITDIALOG && lparam) {
+		SetWindowLong(window, 8, ((int *)lparam)[1]);
+	}
+	int rc = UI::StandardWndProc(window, message, wparam, lparam);
+	if (rc) {
+		return rc;
+	}
+	SimpleWonlineDialogControl * control = (SimpleWonlineDialogControl *)GetWindowLong(window, 8);
+	switch (message) {
+		case WM_COMMAND:
+			switch (LOWORD(wparam)) {
+				case 0x540:
+					if (HIWORD(wparam) != 0) {
+						Wstring name;
+						FUN_00623E40((HWND)lparam, name);
+						EnableWindow(GetDlgItem(window, 0x702), FUN_0079C520(&name));
+					}
+					return FALSE;
+
+				case 0x686:
+					control->F1(window, 0x686);
+					return FALSE;
+
+				case 0x702: {
+					Wstring name;
+					HWND edit = GetDlgItem(window, 0x540);
+					FUN_00623E40(edit, name);
+					SendMessage(edit, 0x4B4, 0, (LPARAM)DAT_00889F64);
+					if (FUN_0079C520(&name)) {
+						FUN_0079C8D0(&name);
+					}
+					InvalidateRect(edit, NULL, FALSE);
+					control->F1(window, 0x702);
+					return FALSE;
+				}
+
+				default:
+					return FALSE;
+			}
+
+		case 0x497: {
+			HWND edit = GetDlgItem(window, 0x540);
+			SendMessage(edit, EM_LIMITTEXT, 9, 0);
+			SendMessage(edit, 0x4D1, 1, 0);
+			SendMessage(edit, 0x4B4, 0, (LPARAM)DAT_00889F64);
+			EnableWindow(GetDlgItem(window, 0x702), FALSE);
+			return FALSE;
+		}
+
+		case 0x4DA:
+			PostMessage(GetDlgItem(window, 0x702), BM_CLICK, 0, 0);
+			return FALSE;
+
+		case WM_DRAWITEM:
+			OwnerDraw::DrawItem((LPDRAWITEMSTRUCT)lparam);
+			return TRUE;
+
+		case WM_PAINT:
+			OwnerDraw::Paint(window);
+			FUN_00607FD0(window);
+			ValidateRect(window, NULL);
+
+		case WM_ERASEBKGND:
+			return TRUE;
+
+		default:
+			return FALSE;
+	}
+}
+
+// FUNCTION: 0x0079F0A0
+bool __fastcall FUN_0079F0A0(Wstring * name, ArrayList<WolChannel> * channels, WolChannel * result)
+{
+	memset(result, 0, sizeof(WolChannel));
+	for (int i = 0; i < channels->length(); i++) {
+		channels->get(*result, i);
+		if (stricmp(result->Name, name->text()) == 0) {
+			return true;
+		}
+	}
+	memset(result, 0, sizeof(WolChannel));
+	return false;
 }
 
 // FUNCTION: 0x007A2E70 SimpleWonlineDialogControl::~SimpleWonlineDialogControl

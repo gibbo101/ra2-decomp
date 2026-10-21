@@ -425,3 +425,32 @@ int FactoryClass::Total(const TechnoTypeClass *type)
 	}
 	return(total);
 }
+
+// FUNCTION: 0x004CA6B0
+bool FactoryClass::Is_Queued(const TechnoTypeClass *type)
+{
+	for (int i = 0; i < QueuedObjects.Count(); i++) {
+		if (type == QueuedObjects[i]) {
+			return(true);
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: 0x004CA6E0
+void Recalc_House_Factories(HouseClass *house)
+{
+	for (int i = 0; i < Factories.Count(); i++) {
+		FactoryClass *fptr = Factories[i];
+		if (fptr->Get_House() == house) {
+			int rate = fptr->Build_Rate();
+			fptr->Production.Adjust_Rate(rate);
+		}
+	}
+}
+
+// FUNCTION: 0x004CA750 FactoryClass::Fetch_RTTI
+
+// FUNCTION: 0x004CA760 FactoryClass::Fetch_Object_Size
+
+// FUNCTION: 0x004CA770 FactoryClass::~FactoryClass

@@ -13,6 +13,31 @@
 #include "xmouse.h"
 #include <math.h>
 
+struct ShortPair {
+	short A;
+	short B;
+	ShortPair() { A = 0; B = 0; }
+};
+
+struct IntTriple {
+	int A;
+	int B;
+	int C;
+	IntTriple() { A = 0; B = 0; C = 0; }
+};
+
+struct IntQuad {
+	int A;
+	int B;
+	int C;
+	int D;
+	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
+};
+
+extern int DAT_0089C358;
+extern int DAT_0089C35C;
+extern int DAT_0089C360;
+
 extern double __cdecl FUN_004CAC40(double);
 extern double __cdecl FUN_004CAD50(double);
 extern double __cdecl FUN_004CADE0(double);
@@ -143,3 +168,23 @@ double DAT_0089C328 = FUN_004CADE0(DAT_0089C370 * DAT_007E1740);
 
 // FUNCTION: 0x0042E570 $E48
 double DAT_0089C340 = FUN_004CADE0((DAT_0089C370 * 2) / DAT_0089C318);
+
+// FUNCTION: 0x0042E5A0 $E51
+int DAT_0089C364 = (int)(DAT_0089C370 * 4 + DAT_007E1738);
+
+// FUNCTION: 0x0042E5D0 $E54
+ShortPair DAT_0089C310;
+
+// FUNCTION: 0x0042E5E0 $E57
+IntTriple DAT_0089C330;
+
+// FUNCTION: 0x0042E600 Reset_Bar_View
+void Reset_Bar_View(void)
+{
+	DAT_0089C360 = 0;
+	DAT_0089C358 = 0x80;
+	DAT_0089C35C = 0x80;
+}
+
+// FUNCTION: 0x0042E620 $E60
+IntQuad DAT_0089C300;

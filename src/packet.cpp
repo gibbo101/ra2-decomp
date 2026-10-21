@@ -114,12 +114,69 @@ FieldClass *PacketClass::Find_Field(char const *id)
 	return(NULL);
 }
 
+// FUNCTION: 0x00625D60
+bool PacketClass::Get_Field(char const *id, char &data)
+{
+	FieldClass *field = Find_Field(id);
+	if (field) {
+		data = *((char *)field->Data);
+	}
+	return((field) ? true : false);
+}
+
+bool PacketClass::Get_Field(char const *id, unsigned char &data)
+{
+	FieldClass *field = Find_Field(id);
+	if (field) {
+		data = *((unsigned char *)field->Data);
+	}
+	return((field) ? true : false);
+}
+
+// FUNCTION: 0x00625E00
+bool PacketClass::Get_Field(char const *id, short &data)
+{
+	FieldClass *field = Find_Field(id);
+	if (field) {
+		data = *((short *)field->Data);
+	}
+	return((field) ? true : false);
+}
+
+bool PacketClass::Get_Field(char const *id, unsigned short &data)
+{
+	FieldClass *field = Find_Field(id);
+	if (field) {
+		data = *((unsigned short *)field->Data);
+	}
+	return((field) ? true : false);
+}
+
+// FUNCTION: 0x00625EA0
+bool PacketClass::Get_Field(char const *id, int &data)
+{
+	FieldClass *field = Find_Field(id);
+	if (field) {
+		data = *((int *)field->Data);
+	}
+	return((field) ? true : false);
+}
+
 // FUNCTION: 0x00625EF0
 bool PacketClass::Get_Field(char const *id, char *data)
 {
 	FieldClass *field = Find_Field(id);
 	if (field) {
 		strcpy(data, (char *)field->Data);
+	}
+	return((field) ? true : false);
+}
+
+bool PacketClass::Get_Field(char const *id, unsigned int &data)
+{
+	FieldClass *field = Find_Field(id);
+	if (field) {
+		data = *((unsigned int *)field->Data);
 	}
 	return((field) ? true : false);
 }

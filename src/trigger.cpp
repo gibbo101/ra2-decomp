@@ -350,3 +350,31 @@ void TriggerClass::Set_House(HouseClass * house)
 // FUNCTION: 0x00726B20 $E17
 // FUNCTION: 0x00726B40 $E20
 // FUNCTION: 0x00726B80 $E23
+
+extern double __cdecl FUN_004CADE0(double);
+extern int DAT_00B0F850;
+extern double DAT_00B0F7F8;
+extern const double DAT_007E1738;
+
+// FUNCTION: 0x00726BB0 $E26
+double DAT_00B0F820 = FUN_004CADE0((DAT_00B0F850 * 2) / DAT_00B0F7F8);
+
+// FUNCTION: 0x00726BE0 $E29
+int DAT_00B0F844 = (int)(DAT_00B0F850 * 4 + DAT_007E1738);
+
+struct TrigZero2S { short a, b; TrigZero2S() : a(0), b(0) {} };
+struct TrigZero3I { int a, b, c; TrigZero3I() : a(0), b(0), c(0) {} };
+struct TrigInit128 { int a, b, c; TrigInit128() { c = 0; a = 128; b = 128; } };
+struct TrigZero4I { int a, b, c, d; TrigZero4I() : a(0), b(0), c(0), d(0) {} };
+
+// FUNCTION: 0x00726C10 $E32
+TrigZero2S DAT_00B0F7F0;
+
+// FUNCTION: 0x00726C20 $E35
+TrigZero3I DAT_00B0F810;
+
+// FUNCTION: 0x00726C40 $E38
+TrigInit128 DAT_00B0F838;
+
+// FUNCTION: 0x00726C60 $E50
+TrigZero4I DAT_00B0F7E0;

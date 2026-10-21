@@ -96,6 +96,9 @@ extern int DAT_007F5BF0;
 extern int DAT_00ABC9A0;
 extern int DAT_00ABC9A4;
 extern int DAT_00ABC9A8;
+extern int DAT_00ABCA58;
+extern int DAT_00ABCA5C;
+extern int DAT_00ABCA60;
 extern PKey DAT_00886980;
 
 void __cdecl FUN_0072B460(void);
@@ -327,3 +330,25 @@ double DAT_00ABC9F8 = FUN_004CADE0(DAT_00ABCA70 * DAT_007E1740);
 
 // FUNCTION: 0x00554570 $E120
 double DAT_00ABCA28 = FUN_004CADE0((DAT_00ABCA70 * 2) / DAT_00ABC9E8);
+
+// FUNCTION: 0x005545A0 $E123
+int DAT_00ABCA64 = (int)(DAT_00ABCA70 * 4 + DAT_007E1738);
+
+// FUNCTION: 0x005545D0 $E126
+ShortPair DAT_00ABC9E0;
+
+// FUNCTION: 0x00554600
+void FUN_00554600(void)
+{
+	DAT_00ABCA60 = 0;
+	DAT_00ABCA58 = 128;
+	DAT_00ABCA5C = 128;
+}
+
+struct IntQuad {
+	int A, B, C, D;
+	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
+};
+
+// FUNCTION: 0x00554620 $E129
+IntQuad DAT_00ABC9D0;

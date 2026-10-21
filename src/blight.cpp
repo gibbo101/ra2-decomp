@@ -50,6 +50,12 @@ BuildingLightClass::BuildingLightClass(TechnoClass * owner) :
 	}
 }
 
+// FUNCTION: 0x00436900
+int BuildingLightClass::Fetch_Object_Size(void) const
+{
+	return(sizeof(*this));
+}
+
 // FUNCTION: 0x00436910
 HRESULT STDMETHODCALLTYPE BuildingLightClass::GetClassID(CLSID * retval)
 {
@@ -75,6 +81,18 @@ HRESULT STDMETHODCALLTYPE BuildingLightClass::Load(IStream *stream)
 HRESULT STDMETHODCALLTYPE BuildingLightClass::Save(IStream * stream, BOOL cleardirty)
 {
 	return(BASECLASS::Save(stream, cleardirty));
+}
+
+// FUNCTION: 0x004369E0
+ObjectTypeClass const * BuildingLightClass::Class_Of(void) const
+{
+	return(NULL);
+}
+
+// FUNCTION: 0x004369F0
+LayerType BuildingLightClass::In_Which_Layer(void) const
+{
+	return(LAYER_AIR);
 }
 
 // FUNCTION: 0x00436A00
@@ -200,6 +218,8 @@ bool BuildingLightClass::Unlimbo(Coord const & coord, Dir256 dir)
 }
 
 // FUNCTION: 0x00437090 Coord::Coord
+
+// FUNCTION: 0x004370B0 BuildingLightClass::Fetch_RTTI
 
 // FUNCTION: 0x00435B50
 // FUNCTION: 0x004370C0

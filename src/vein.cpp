@@ -920,6 +920,56 @@ TerrainTypeClass const * VeinholeMonsterClass::GetTerrainType(void)
 	return(Rule->VeinholeTypeClass);
 }
 
+// FUNCTION: 0x0074EF10
+void VeinholeMonsterClass::Reduce_Veins_At(CellClass * cellptr)
+{
+	if (cellptr->Overlay == OVERLAY_VEINS && cellptr->OverlayData >= OVERLAYDATA_FIRST_SOLID_VEIN) {
+
+		bool facingbools[4];
+		int facing;
+		for (facing = FACING_FIRST; facing < FACING_COUNT; facing += FACING_90) {
+			CellClass * adjacent = &cellptr->Adjacent_Cell((FacingType)facing);
+			facingbools[facing / 2] = (adjacent->Overlay == OVERLAY_VEINS && (adjacent->OverlayData < OVERLAYDATA_FIRST_SOLID_VEIN || adjacent->OverlayData > OVERLAYDATA_FIRST_SOLID_VEIN + 3));
+		}
+
+		cellptr->Redraw_Veins();
+		VeinCount--;
+
+		for (facing = FACING_FIRST; facing < FACING_COUNT; facing += FACING_90) {
+			CellClass * adjacent = &cellptr->Adjacent_Cell((FacingType)facing);
+			if (adjacent->Overlay == OVERLAY_NONE) {
+				int cindex = Map_Cell_Index(adjacent->CellID);
+				if (cindex >= 0 && cindex < Map_Cell_Count()) {
+					GrowthLogic.GrowthState[cindex] = false;
+					GlobalGrowthState[cindex] = false;
+				}
+
+				if (facingbools[facing / 2] == true && !IsDead) {
+					GrowthLogic.GrowthQueue->Remove_Matching(CellNode(adjacent->CellID));
+				}
+			}
+		}
+
+		OverlayType overlay = cellptr->Overlay;
+		Cell & cell = cellptr->CellID;
+		int cindex = Map_Cell_Index(cell);
+		if (cindex >= 0 && cindex < Map_Cell_Count()) {
+			if (overlay == OVERLAY_NONE) {
+				GrowthLogic.GrowthState[cindex] = false;
+				GlobalGrowthState[cindex] = false;
+			} else if (!IsDead) {
+				if (GrowthLogic.GrowthCount < Rule->MaxVeinholeGrowth) {
+					GrowthLogic.GrowthNodes[GrowthLogic.GrowthCount].Element = cell;
+					GrowthLogic.GrowthNodes[GrowthLogic.GrowthCount].Score = float(Frame / 50 + abs(Scen->RandomNumber() % 50) + 1);
+					GrowthLogic.GrowthQueue->Insert(GrowthLogic.GrowthNodes[GrowthLogic.GrowthCount++]);
+					GrowthLogic.GrowthState[cindex] = true;
+					GlobalGrowthState[cindex] = true;
+				}
+			}
+		}
+	}
+}
+
 // FUNCTION: 0x0074F2D0
 HRESULT STDMETHODCALLTYPE VeinholeMonsterClass::GetClassID(CLSID * retval)
 {

@@ -13,6 +13,7 @@ class TextLabelClass : public GadgetClass
 		typedef GadgetClass BASECLASS;
 
 	public:
+		TextLabelClass(void) {}
 		TextLabelClass(wchar_t *txt, int x, int y, int color, TextPrintType style);
 
 		virtual int Draw_Me(int forced = false) override;

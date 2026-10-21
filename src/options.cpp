@@ -28,6 +28,19 @@
 #include "vector.h"
 #include "vox.h"
 #include "diff.hh"
+#undef LoadString
+#include <stddef.h>
+#include "stringtable.h"
+
+struct MovieUnlockableInfo {
+	char const * Filename;
+	char const * Description;
+	int DiskRequired;
+
+	static MovieUnlockableInfo Common[];
+	static MovieUnlockableInfo Allied[];
+	static MovieUnlockableInfo Soviet[];
+};
 
 extern CCINIClass DAT_008870C0;
 extern void * DAT_0087E740;
@@ -291,3 +304,105 @@ void OptionsClass::Set(void)
 	TechnoClass::Set_Action_Lines(ActionLines);
 }
 
+
+// FUNCTION: 0x005FB310
+int OptionsClass::Normalize_Volume(int volume) const
+{
+	return(volume * SoundVolume);
+}
+
+BOOL CALLBACK FUN_005FB320(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+
+// FUNCTION: 0x005FBEF0
+bool OptionsClass::Hotkey_Dialog(void)
+{
+	int res = -1;
+
+	HWND handle = OwnerDraw::Begin_Dialog(163, FUN_005FB320, 0);
+	if (handle != NULL) {
+		SetWindowLong(handle, DWL_USER, (LONG)&res);
+		OwnerDraw::Display_Dialog(handle);
+		while (res < 0) {
+			if (OwnerDraw::Dialog_Message_Handler() == true) {
+				res = 2;
+			}
+			if (!GameActive) {
+				Title_Screen_Restore();
+			}
+		}
+		OwnerDraw::End_Dialog(handle);
+	}
+	return(true);
+}
+
+// FUNCTION: 0x005FBF70
+int OptionsClass::Get_Scroll_Method(void) const
+{
+	return(ScrollMethod);
+}
+
+// FUNCTION: 0x005FBF80
+void OptionsClass::FUN_005FBF80(char const * name)
+{
+	int index = 0;
+	for (MovieUnlockableInfo * info = MovieUnlockableInfo::Soviet; info->Filename; info++, index++) {
+		if (stricmp(name, info->Filename) == 0) {
+			goto sov_done;
+		}
+	}
+	index = -1;
+sov_done:
+	if (index > LastUnlockedSovMovie) {
+		LastUnlockedSovMovie = index;
+	}
+
+	index = 0;
+	for (MovieUnlockableInfo * ainfo = MovieUnlockableInfo::Allied; ainfo->Filename; ainfo++, index++) {
+		if (stricmp(name, ainfo->Filename) == 0) {
+			goto all_done;
+		}
+	}
+	index = -1;
+all_done:
+	if (index > LastUnlockedAllMovie) {
+		LastUnlockedAllMovie = index;
+	}
+}
+
+// FUNCTION: 0x005FC000
+void OptionsClass::FUN_005FC000(HWND list)
+{
+	if (MovieUnlockableInfo::Common[0].Filename && MovieUnlockableInfo::Common[0].Description) {
+		int item = SendMessage(list, 0x4cd, 0, (LPARAM)StringTable::LoadString(MovieUnlockableInfo::Common[0].Description, NULL, "D:\\ra2mdpost\\Options.CPP", 0x4f1));
+		if (item != -1) {
+			SendMessage(list, 0x19a, item, (LPARAM)MovieUnlockableInfo::Common);
+		}
+	}
+
+	if (LastUnlockedSovMovie >= 0) {
+		int count = LastUnlockedSovMovie + 1;
+		for (MovieUnlockableInfo * info = MovieUnlockableInfo::Soviet; info->Filename && count > 0; info++, count--) {
+			if (info->Filename && info->Description) {
+				int item = SendMessage(list, 0x4cd, 0, (LPARAM)StringTable::LoadString(info->Description, NULL, "D:\\ra2mdpost\\Options.CPP", 0x4f1));
+				if (item != -1) {
+					SendMessage(list, 0x19a, item, (LPARAM)info);
+				}
+			}
+		}
+	}
+
+	if (LastUnlockedAllMovie >= 0) {
+		int count = LastUnlockedAllMovie + 1;
+		for (MovieUnlockableInfo * info = MovieUnlockableInfo::Allied; info->Filename && count > 0; info++, count--) {
+			if (info->Filename && info->Description) {
+				int item = SendMessage(list, 0x4cd, 0, (LPARAM)StringTable::LoadString(info->Description, NULL, "D:\\ra2mdpost\\Options.CPP", 0x4f1));
+				if (item != -1) {
+					SendMessage(list, 0x19a, item, (LPARAM)info);
+				}
+			}
+		}
+	}
+}
+
+// FUNCTION: 0x005FC120 Binary_Search
+template IndexClass<int, CommandClass const *>::NodeElement * Binary_Search(IndexClass<int, CommandClass const *>::NodeElement *, int, IndexClass<int, CommandClass const *>::NodeElement const &);

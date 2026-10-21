@@ -98,3 +98,41 @@ int DAT_00B04C98 = (int)(FUN_004CAD50(DAT_00B04C20 - DAT_00B04C48) * DAT_007E173
 
 // FUNCTION: 0x0065D7D0 $E23
 double DAT_00B04C50 = FUN_004CADE0(DAT_00B04C98 * DAT_007E1740);
+
+struct ShortPair {
+	unsigned short A, B;
+	ShortPair() { A = 0; B = 0; }
+};
+
+struct IntTriple {
+	int A, B, C;
+	IntTriple() { A = 0; B = 0; C = 0; }
+};
+
+struct IntQuad {
+	int A, B, C, D;
+	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
+};
+
+struct PlayfieldDefaults {
+	int A, B, C;
+	PlayfieldDefaults() { C = 0; A = 128; B = 128; }
+};
+
+// FUNCTION: 0x0065D800 $E26
+double DAT_00B04C68 = FUN_004CADE0((DAT_00B04C98 * 2) / DAT_00B04C40);
+
+// FUNCTION: 0x0065D830 $E29
+int DAT_00B04C8C = (int)(DAT_00B04C98 * 4 + DAT_007E1738);
+
+// FUNCTION: 0x0065D860 $E32
+ShortPair DAT_00B04C38;
+
+// FUNCTION: 0x0065D870 $E35
+IntTriple DAT_00B04C58;
+
+// FUNCTION: 0x0065D890 $E38
+PlayfieldDefaults DAT_00B04C80;
+
+// FUNCTION: 0x0065D8B0 $E41
+IntQuad DAT_00B04C28;

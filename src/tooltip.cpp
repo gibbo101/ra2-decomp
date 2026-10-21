@@ -7,6 +7,8 @@
 #include "tooltip.h"
 #include "data.h"
 #include "dbgprint.h"
+#include "point.h"
+#include "rect.h"
 #undef LoadString
 #include <stddef.h>
 #include "stringtable.h"
@@ -373,3 +375,21 @@ int DAT_00B0F750 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B0F5D0 - DAT_00B0F68
 
 // FUNCTION: 0x007251D0 $E26
 double DAT_00B0F690 = FUN_004CADE0(DAT_00B0F750 * DAT_007E1740);
+
+// FUNCTION: 0x00725200 $E29
+double DAT_00B0F6C0 = FUN_004CADE0(DAT_00B0F750 * 2 / DAT_00B0F638);
+
+// FUNCTION: 0x00725230 $E32
+int DAT_00B0F744 = (int)(DAT_00B0F750 * 4 + DAT_007E1738);
+
+// FUNCTION: 0x00725260 $E35
+TPoint2D<short> DAT_00B0F630(0, 0);
+
+// FUNCTION: 0x00725270 $E38
+Point3D DAT_00B0F6B0(0, 0, 0);
+
+// FUNCTION: 0x00725290 $E41
+Point3D DAT_00B0F738(0x80, 0x80, 0);
+
+// FUNCTION: 0x007252B0 $E44
+TRect<int> DAT_00B0F608(0, 0, 0, 0);

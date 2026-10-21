@@ -719,3 +719,19 @@ template class TClassFactory<BuildingTypeClass>;
 // FUNCTION: 0x006C2B10 ?$TClassFactory@VAircraftTypeClass@@::CreateInstance
 // FUNCTION: 0x006C2B90 ?$TClassFactory@VAircraftTypeClass@@::LockServer
 template class TClassFactory<AircraftTypeClass>;
+
+// FUNCTION: 0x006C2BC0 ?$TClassFactory@VInfantryTypeClass@@::?$TClassFactory@VInfantryTypeClass@@
+// FUNCTION: 0x006C2BD0 ?$TClassFactory@VInfantryTypeClass@@::QueryInterface
+// FUNCTION: 0x006C2C40 ?$TClassFactory@VInfantryTypeClass@@::AddRef
+// FUNCTION: 0x006C2C60 ?$TClassFactory@VInfantryTypeClass@@::Release
+// FUNCTION: 0x006C2C90 ?$TClassFactory@VInfantryTypeClass@@::CreateInstance
+// FUNCTION: 0x006C2D10 ?$TClassFactory@VInfantryTypeClass@@::LockServer
+template class TClassFactory<InfantryTypeClass>;
+
+// FUNCTION: 0x006C2D40 ?$TClassFactory@VBulletTypeClass@@::?$TClassFactory@VBulletTypeClass@@
+// FUNCTION: 0x006C2D50 ?$TClassFactory@VBulletTypeClass@@::QueryInterface
+// FUNCTION: 0x006C2DC0 ?$TClassFactory@VBulletTypeClass@@::AddRef
+// FUNCTION: 0x006C2DE0 ?$TClassFactory@VBulletTypeClass@@::Release
+// FUNCTION: 0x006C2E10 ?$TClassFactory@VBulletTypeClass@@::CreateInstance
+// FUNCTION: 0x006C2E90 ?$TClassFactory@VBulletTypeClass@@::LockServer
+template class TClassFactory<BulletTypeClass>;

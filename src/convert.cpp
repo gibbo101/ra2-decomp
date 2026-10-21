@@ -1153,4 +1153,76 @@ template class RLEBlitTransLucent50Alpha<unsigned short>;
 template class RLEBlitTransLucent25Alpha<unsigned short>;
 
 // FUNCTION: 0x00497FD0 ?$RLEBlitTransXlatAlphaZRead@G::Blit
+// FUNCTION: 0x00498150 ?$RLEBlitTransXlatAlphaZRead@G::Blit_Copy_Tinted
+template<class T>
+void RLEBlitTransXlatAlphaZRead<T>::Blit_Copy_Tinted(void * dest, void const * source, int length, int leadskip, int z_min, void * z_buff, void * a_buff, int alpha_level, int warp_offset, void * zshape, unsigned short tint) const
+{
+	unsigned char const * sptr = (unsigned char const *)source;
+	T * dptr = (T *)dest;
+	unsigned short* zp = (unsigned short*)(z_buff);
+	unsigned short* ap = (unsigned short*)(a_buff);
+	const signed char* zs = (const signed char*)(zshape);
+
+	const unsigned short* aLUT = AlphaLightingRemap->Get_Table(alpha_level);
+
+	if (leadskip > 0) {
+		int transcount = Skip_Leading_Pixels(sptr, leadskip);
+		dptr += transcount;
+		length -= transcount;
+
+		zp += transcount;
+		zp = Blit_Wrap_Z_Buffer(zp);
+
+		ap += transcount;
+		ap = Blit_Wrap_A_Buffer(ap);
+	}
+
+	while (length > 0) {
+		unsigned char value = *sptr++;
+
+		if (value == '\0') {
+			value = *sptr++;
+			length -= value;
+			dptr += value;
+			zp += value;
+			zs += value;
+			ap += value;
+		} else {
+			if ((z_min - (int)*zs++) < (int)*zp++) {
+				*dptr++ = TranslateTable[value | aLUT[*ap]] | tint;
+				length--;
+			} else {
+				dptr++;
+				length--;
+			}
+			ap++;
+		}
+		zp = Blit_Wrap_Z_Buffer(zp);
+		ap = Blit_Wrap_A_Buffer(ap);
+	}
+}
+
 template class RLEBlitTransXlatAlphaZRead<unsigned short>;
+
+// FUNCTION: 0x004982E0 ?$RLEBlitTransZRemapXlatAlphaZRead@G::Blit
+// FUNCTION: 0x00498490 ?$RLEBlitTransZRemapXlatAlphaZRead@G::Blit_Copy_Tinted
+template class RLEBlitTransZRemapXlatAlphaZRead<unsigned short>;
+
+// FUNCTION: 0x004984D0 ?$RLEBlitTransLucent75AlphaZRead@G::Blit
+// FUNCTION: 0x00498690 ?$RLEBlitTransLucent75AlphaZRead@G::Blit_Copy_Tinted
+template class RLEBlitTransLucent75AlphaZRead<unsigned short>;
+
+// FUNCTION: 0x004986D0 ?$RLEBlitTransLucent50AlphaZRead@G::Blit
+// FUNCTION: 0x00498880 ?$RLEBlitTransLucent50AlphaZRead@G::Blit_Copy_Tinted
+template class RLEBlitTransLucent50AlphaZRead<unsigned short>;
+
+// FUNCTION: 0x004988C0 ?$RLEBlitTransLucent25AlphaZRead@G::Blit
+// FUNCTION: 0x00498A80 ?$RLEBlitTransLucent25AlphaZRead@G::Blit_Copy_Tinted
+template class RLEBlitTransLucent25AlphaZRead<unsigned short>;
+
+// FUNCTION: 0x00498AC0 ?$RLEBlitTransLucent75AlphaZReadWarp@G::Blit
+// FUNCTION: 0x00498C90 ?$RLEBlitTransLucent75AlphaZReadWarp@G::Blit_Copy_Tinted
+template class RLEBlitTransLucent75AlphaZReadWarp<unsigned short>;
+
+// FUNCTION: 0x00498CD0 ?$RLEBlitTransLucent50AlphaZReadWarp@G::Blit
+template class RLEBlitTransLucent50AlphaZReadWarp<unsigned short>;

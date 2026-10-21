@@ -353,3 +353,21 @@ void BulletTypeClass::SetScaledSpawnDelay(int delay)
 {
 	ScaledSpawnDelay = delay;
 }
+
+// FUNCTION: 0x0046C850
+RTTIType BulletTypeClass::Fetch_RTTI(void) const
+{
+	return(RTTI_BULLETTYPE);
+}
+
+// FUNCTION: 0x0046C860
+int BulletTypeClass::Fetch_Object_Size(void) const
+{
+	return(sizeof(*this));
+}
+
+// FUNCTION: 0x0046C870 BulletTypeClass::Create_And_Place
+
+// FUNCTION: 0x0046C880 BulletTypeClass::Create_One_Of
+
+// FUNCTION: 0x0046C890 BulletTypeClass::~BulletTypeClass

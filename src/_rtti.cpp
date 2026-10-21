@@ -11,6 +11,7 @@
 #include "_script.h"
 #include "ccini.h"
 #include "stimer.h"
+#include "mstimer.h"
 #include "timer.h"
 #include <cmath>
 
@@ -272,3 +273,19 @@ template class DynamicVectorClass<ScriptClass *>;
 // FUNCTION: 0x0040EB50 $E129
 // FUNCTION: 0x0040EB80 $E127
 CDTimerClass<SystemTimerClass> DAT_00887348;
+
+// FUNCTION: 0x0040EB90 $E134
+// FUNCTION: 0x0040EBC0 $E132
+CDTimerClass<MillisecondSystemTimerClass> DAT_00887328;
+
+// FUNCTION: 0x0040EBD0 $E139
+// FUNCTION: 0x0040EC00 $E137
+CDTimerClass<SystemTimerClass> DAT_00887338;
+
+struct Dat4 {
+	int a, b, c, d;
+	Dat4(void) : a(0), b(0), c(0), d(0) {}
+};
+
+// FUNCTION: 0x0040EC10 $E142
+Dat4 DAT_00887358;
