@@ -16,15 +16,17 @@ setup and the checker.
   compiler.
 - Third-party references are read-only: the TibSun archive (`reference/tibsun`), YRpp
   (`reference/YRpp`), OpenTS and EA's source releases. Copy from them; never edit them.
-- v1 is the game as shipped: no fixes, features or enhancements in this repo, even
-  obvious ones. Those go to the v2 repo (see "Scope" in `docs/PLAN.md`).
+- The source is the game as shipped: no fixes, features or enhancements, even obvious
+  ones. The only goal is a byte-matching rebuild.
 - MATCH means the checker printed MATCH. No inline asm, `#pragma optimize`, hard-coded
   addresses or `volatile` tricks to force one. The exceptions are the original's own
   constructs:
   - inline asm, `#pragma optimize` and whole `.asm` files that Westwood's own source had,
     copied unchanged from the TibSun archive (`reference/tibsun/code`);
   - `volatile` on data another thread writes (a field or global, never a local), where
-    the exe re-reads it in the way only `volatile` makes VC6 do.
+    the exe re-reads it in the way only `volatile` makes VC6 do;
+  - Westwood's `div_zero` crash idiom as a local (`volatile int div_zero = 0;
+    div_zero = 1 / div_zero;`), where the exe has that exact sequence.
 - Running agents in parallel (a workflow) needs the maintainer's explicit opt-in each time.
 
 ## Comments

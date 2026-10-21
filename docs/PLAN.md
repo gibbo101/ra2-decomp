@@ -1,16 +1,15 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 11 October 2026: spike done and priced (see "Budget"); going ahead: tier 0 and a permuter first, then batches module by module.
+Status, 21 October 2026: 13,996 of 19,366 game functions match (72%; 48% of game code
+by size), landed in batches module by module. The rounds below record each one.
 
 ## The goal
 
 Rebuild the source of `gamemd.exe` (Yuri's Revenge 1.001) as C++ that the original
 compiler turns back into the shipped bytes, function by function. Matched source is
-readable, provably faithful, and portable afterwards: a Linux and Steam Deck build of
-Westwood's own engine, in the mould of `../opents-linux` and `../opents-pad`, and an
-authoritative reference for RA2 unit ports into Tiberian Factions.
+readable and provably faithful.
 
-## Scope: v1 is the game as shipped
+## Scope: the game as shipped
 
 Decided 11 October 2026.
 
@@ -21,15 +20,11 @@ Decided 11 October 2026.
 - **Goal, not a gate: a matching MD5.** The rebuilt `gamemd.exe` hashes to
   `2a1307f6f57c9c492f985b4e3afb88e6`. That also needs data sections, BSS order,
   vtable/RTTI placement, link order, imports and resources to line up. Track it as a
-  separate score next to the function count; v1 ships without it if it proves out of reach.
+  separate score next to the function count; the project ships without it if it proves
+  out of reach.
 - **No changes to the game.** No enhancements, features or bug fixes. Every bug, desync and
   bit of undefined behaviour stays as shipped. Matching enforces most of this by itself,
   because a fixed function no longer matches.
-- **v1 is then frozen.** Once v1 is done, this repo becomes an unmaintained reference.
-  It can keep taking pure matching work toward the MD5 goal, but nothing else.
-- **v2 onwards lives in a separate repo** that starts from v1. That is where changes go:
-  the Linux and Steam Deck port, controller support, fixes and features. This is the same
-  split as OpenTS (the reference) and `opents-linux` / `opents-pad` (the forks).
 
 ## The model: Byte Tactics (Total Annihilation)
 
@@ -74,8 +69,8 @@ Their agent guide (`AGENTS.md`) in short:
 
 ### OpenTS is most of the way there already
 
-`../cnc-remastered-mods/reference/OpenTS` (and the maintainer's forks `../opents-linux`,
-`../opents-pad`) is a per-function matching reconstruction of Tiberian Sun 2.03. Its
+[OpenTS](https://github.com/OpenTS-Developers) is a per-function matching
+reconstruction of Tiberian Sun 2.03. Its
 `docs/RATIONALE.md` says the goal was "to binary-match every function, the data they
 reference"; about 500 functions don't match and most data sections don't. It also says
 a future RA2 decompilation may reveal how to match some of those.
@@ -95,7 +90,7 @@ will be OpenTS functions with RA2 edits, and OpenTS also gives us:
 Read `RATIONALE.md`'s "Why the binary does not match exactly" before scoping: MSVC-era
 inlining, `static const` values, BSS ordering by name hash, include order and vtable/RTTI
 placement are the known traps, and a whole-exe match may be out of reach without the
-original `.dbg`. That is why v1 requires per-function matching, as OpenTS chose, and
+original `.dbg`. That is why this project requires per-function matching, as OpenTS chose, and
 treats the whole-exe MD5 as a goal (see "Scope").
 
 ### The YR modding community's maps
@@ -110,9 +105,9 @@ treats the whole-exe MD5 as a goal (see "Scope").
 
 ### The Westwood lineage in the open
 
-EA's GPL source for TD and RA (`../CnC_Red_Alert`, `../CnC_Tiberian_Dawn`), Renegade
-(`../CnC_Renegade`, sharing `wwlib`) and Generals (`../CnC_Generals_Zero_Hour`, same
-compiler era). Many RA2 classes are the RA classes grown up: same names, same patterns.
+[EA's GPL source](https://github.com/electronicarts) for TD and RA (CnC_Red_Alert,
+CnC_Tiberian_Dawn), Renegade (CnC_Renegade, sharing `wwlib`) and Generals
+(CnC_Generals_Zero_Hour, same compiler era). Many RA2 classes are the RA classes grown up: same names, same patterns.
 
 ### Other matching decomps to learn from
 
@@ -150,9 +145,9 @@ compiler era). Many RA2 classes are the RA classes grown up: same names, same pa
 - **CnCNet's YR spawner and patches**: more reversed addresses, mostly networking and
   startup.
 - **DirectX 7/8 SDK and WOLAPI headers**: needed to compile at all, since struct layouts
-  must match the era. WOLAPI may already be in `../CnC_Renegade`.
+  must match the era. WOLAPI may already be in EA's Renegade release.
 - **VC6 CRT/STL Function ID (FLIRT) signatures** for Ghidra: tag the ~200 prebuilt library
-  objects so no agent spends tokens on them.
+  objects so no agent spends effort on them.
 - **`game.exe`** (RA2 without YR), already installed: a second build of nearly the same
   code five months earlier. Diffing a function across both separates compiler quirks
   from source differences.
@@ -205,7 +200,7 @@ extracts it from the player's own exe.
 No DRM wrapper (checked 11 October 2026): the exe has only `.text`, `.rdata`, `.data` and
 `.rsrc`, none of SafeDisc's extra sections or helper files. Westwood's own CD lookup is
 still compiled in (`Calling Force_CD_Available`, `Init CDROM`, `TXT_INSERT_CD_DIALOG`), the
-same logic as `Force_CD_Available` in EA's GPL Red Alert source. v1 matches it like any
+same logic as `Force_CD_Available` in EA's GPL Red Alert source. The rebuild matches it like any
 other code. It is plain game logic, not protection, but tag those functions in the queue
 so a refusal goes to a by-hand batch instead of stalling a bulk run.
 
@@ -228,7 +223,7 @@ but Westwood's 1.001 patch (`YR1001EN.EXE`, 2.38 MB) is an RTPatch 5.20 binary d
 only updates an installed retail 1.000 `gamemd.exe`; it does not carry the exe.
 
 **Decided 11 October 2026: the target is the Steam exe.**
-- The source is Westwood's 1.001, CD check included; v1 still means the game as shipped.
+- The source is Westwood's 1.001, CD check included; the source is still the game as shipped.
 - Each EA patch site is recorded in the repo: address, the bytes Westwood's code would
   have, the bytes EA wrote, and the evidence. EA likely changed more than the CD check
   (compatibility for newer systems), so sites also surface during matching: a function
@@ -283,7 +278,6 @@ footing:
   script fetches the compiler;
 - source code only: the README says plainly that you must own the game to build or run
   anything, and that the project is not affiliated with EA;
-- a repo of its own, kept separate from Tiberian Factions' Workshop presence;
 - private through the spike. The OpenTS Discord already favours byte matching (October
   2026: "verify identical ASM with the same compiler and options" is how to do it) and is
   cool on non-matching AI ports and the recomp, so open with the checker, not with the
@@ -294,15 +288,13 @@ data MIT** (`COPYING.md`, `LICENSE`, header convention in the README). Tier 0 co
 OpenTS's functions unchanged, and Westwood's GPL'd wwlib code is the source of many
 matches, so the game source must be GPL-3 anyway; a no-licence stance like Byte
 Tactics' would mean keeping agents away from OpenTS, its biggest head start. GPL-3 also
-matches OpenTS, Vinifera, Phobos and `opents-linux`, so fixes can flow both ways. No
+matches OpenTS, Vinifera and Phobos. No
 licence choice changes EA's position; the footing above does that work.
 
 YRpp and Ares carry no licence file: use them for facts (addresses, layouts, behaviour),
 never paste their headers verbatim.
 
 ## First session: the spike
-
-Goal: a cost per matched function, so the whole job can be priced before committing.
 
 1. **Toolchain. Done 11 October 2026.** No original disc is available, so the compiler is
    downloaded, the same way the other decomps get theirs. `tools/setup_toolchain.sh`
@@ -465,10 +457,6 @@ Goal: a cost per matched function, so the whole job can be priced before committ
      776 bytes), solved by source shape: writing a member access out at each use instead
      of caching a pointer, temporaries built with the TibSun constructor, sums kept
      inline. These go into `docs/AGENTS.md` as the guide grows.
-   - **Cost:** about $16-20 at API rates (Sonnet input side $6.24, Opus $5.14, 440k
-     output tokens derived from the workflow's total; transcripts log a streamed
-     message's usage before it ends, so per-agent output is not measurable), 15 minutes
-     wall-clock, 57 agent-minutes.
    - **Caveats:** agents matched against self-contained class stubs (padding, dummy
      virtuals), not shared YR headers, so the sources are proof, not `src/` material;
      about 200 references stay unverified for want of names; the draw excluded functions
@@ -478,14 +466,12 @@ Goal: a cost per matched function, so the whole job can be priced before committ
      struct's `Save`, `MapClass::In_Local_Radar`) were TibSun's code unchanged once the
      headers carried YR's layout: minutes each by hand. The fourth,
      `BaseClass::Mark_Node_Placed` (name invented), needed YR's object and type
-     hierarchies; on them it matched in three checks with no stubs (Sonnet, 74k
-     tokens).
+     hierarchies; on them it matched in three checks with no stubs (Sonnet).
    - **Headers are the real cost, once.** `tools/headercheck.py` proves a class's size,
      member offsets and every vtable slot against the exe through RTTI; Sonnet alone
      took ObjectClass, MissionClass, RadioClass, TechnoClass, BuildingClass,
      ObjectTypeClass, TechnoTypeClass and BuildingTypeClass to PASS (YR added about
-     100 virtuals to the object chain and about 250 members to TechnoTypeClass). About
-     0.8M agent tokens for the checker, the layout fix and those eight classes. Names
+     100 virtuals to the object chain and about 250 members to TechnoTypeClass). Names
      the agents mapped from TS to YR by position are marked as guesses for matches to
      settle.
    - **Per-function consolidation is cheap once a class's header exists;** a header is a
@@ -497,13 +483,9 @@ Goal: a cost per matched function, so the whole job can be priced before committ
      (2,404). Two stalled close: a 5,648-byte dialog procedure at 85.5% (full length,
      about 98% of instructions) and `AnimClass`'s constructor at 87.9%, each on a couple
      of register choices after 60-90 Opus checks; an RA2-only PlanMgr function stayed
-     at 39.9%. About 2.3M agent tokens, roughly $55-65 at API rates, 47 minutes: about
-     $4 per KB attempted and $12-14 per KB matched, against $3 per KB for the small set.
-     Large functions are reconstructed almost whole and stall on register allocation:
-     the tier-3 residue, for Fable by hand or a permuter (Byte Tactics' at 90% and up),
+     at 39.9%. Large functions are reconstructed almost whole and stall on register
+     allocation: the tier-3 residue, for Fable by hand or a permuter (Byte Tactics' at 90% and up),
      with near misses banked as `partial` in the meantime.
-7. **Price it.** Scale the measured cost to about 20k game functions (less what OpenTS
-   carries over), and decide.
 
 ### After the spike
 
@@ -518,7 +500,7 @@ The whole-exe build, in Byte Tactics' order (their `docs/linking.md` is the map)
   are rebuilt, and EA's patch sites are applied after linking.
 
 Steps 1 to 5 are one interactive session with an Opus coordinator: tooling, no fan-out.
-Step 6 is where parallel agents pay, if the maintainer opts in to a workflow for it.
+Step 6 is where parallel agents pay.
 
 ### Tier 0, measured (11 October 2026)
 
@@ -565,15 +547,14 @@ Per-function outcomes are in `data/tier0.csv`. The first run's leftovers, since 
 ### The permuter (12 October 2026)
 
 `tools/permute.py` (Byte Tactics' MIT-licensed tree-sitter mutation catalogue and search,
-ported onto check.py; uncommitted pending the maintainer's call on keeping their
-copyright line, which names their author) and `check.py --score`, an instruction-level
+ported onto check.py) and `check.py --score`, an instruction-level
 score with addresses, local jump targets and stack slots masked. It recovers a
 deliberately broken matched function in under a second, and runs about 2,400-4,500
 variants a minute on 14 workers. On the near misses Opus left (the campaign-score
 dialog at 97.8% normalised, `AnimClass`'s constructor at 93.4%, a dialog text function
 at 97.8%) it found nothing in about 260,000 compiles: what remains is register and x87
 scheduling ties no source rearrangement reaches, as Byte Tactics found for functions
-agents had already worked over. Use: a token-free sweep after Opus stops at 95% or more
+agents had already worked over. Use: a sweep that needs no model after Opus stops at 95% or more
 with only register or order differences left (`--stall 5`); never before Opus, where the
 gaps are semantic. A lower penalty score with a falling raw percentage is noise.
 
@@ -588,14 +569,13 @@ headers YR's real layout (RulesClass, HouseClass, CellClass, FootClass, the file
 classes, GadgetClass and its subclasses, the surfaces, ConvertClass, ...; headercheck
 PASS where YRpp has the class) and landed all 30. **99 of 110 matched**; 11 stay banked
 in `build/batch/` (register near misses, three wrong extents in `data/functions.csv`,
-one overload the checker resolves by undecorated name). Cost: about 1.6M tokens for the
-batch and 0.5M for the header merge. Merge gate: 1,426 of 1,427.
+one overload the checker resolves by undecorated name). Merge gate: 1,426 of 1,427.
 
 Lesson: shared headers, not matching, held back a quarter of the batch. Later batches
 merge requested header changes between the Sonnet and Opus tiers, so header-gated
 functions land without spending Opus on them.
 
-Backlog (12 October 2026, one Opus agent, about 0.3M tokens): eight of the eleven
+Backlog (12 October 2026, one Opus agent): eight of the eleven
 landed, plus AbstractTypeClass::Read_INI (a missing `else`, not a regression). The
 three wrong extents had one cause: a function nothing calls directly, aligned straight
 after a `ret` with no padding. `functions.py` now follows each function's flow and
@@ -606,7 +586,7 @@ StageClass (28 bytes) and BANIM_COUNT (21) are fixed from the exe. Still banked:
 two stats queue functions (an inline-and-call mix of Grow and Shrink) and the 0x004A65C0
 / 0x004A66D0 twins at 95.5%. Merge gate: 1,435 of 1,435.
 
-Spike consolidation (12 October 2026, one Sonnet agent, about 0.44M tokens): 15 of the
+Spike consolidation (12 October 2026, one Sonnet agent): 15 of the
 18 stub-based spike matches now match in `src/` on real headers, plus one function
 found on the way; twelve new headers (AnimClass, AnimTypeClass and UnitTypeClass PASS
 headercheck). Three identities came from the vtable the constructor stores last:
@@ -636,7 +616,7 @@ a rules function on Is_Present's inlining, and team's 0x006EAA90 at about 82%; t
 rules agent skipped one function and lost another. A wrong
 extent there showed the map missed functions that follow a switch table and are named
 only by a vtable pointer; `functions.py` now takes those where the table ends exactly
-(7 new starts). Cost: about 2.65M tokens, 1 hour 45 minutes. Merge gate: 1,562 of 1,562
+(7 new starts). Merge gate: 1,562 of 1,562
 (202.6 KB).
 
 Lesson: the header merge between tiers worked. It turned a quarter of the batch from
@@ -657,8 +637,7 @@ hiding the callback, and a switch table preceded by padding was taken for a func
 (10 starts added, 16 removed, each checked by hand). The checker resolved `toupper` to
 the CRT's `__toupper`; a C symbol now loses one prefix character, not all. Banked: four
 register or layout near misses (93.9% to 97.6%), two building functions waiting on
-SuperClass and a CounterClass, and the initialiser now split from its callback. Cost:
-about 3.2M tokens, 82 minutes. Merge gate: 1,670 of 1,670 (234.2 KB).
+SuperClass and a CounterClass, and the initialiser now split from its callback. Merge gate: 1,670 of 1,670 (234.2 KB).
 
 ### Batch 4 (12 October 2026)
 
@@ -674,7 +653,7 @@ function waited a record pass: the checker resolves an overloaded callee by deco
 name only once progress.csv holds it. Banked: CellClass's two bridge setters (71.5%,
 bitfield spill order), its placement cursor (37%, this and the type swap registers),
 the shroud shape (EBP frame), BulletClass::Unlimbo (72.8%, x87 spill), and
-BuildingClass's barrel pitch (98.5%). Cost: about 2.9M tokens, 65 minutes. Merge gate:
+BuildingClass's barrel pitch (98.5%). Merge gate:
 1,774 of 1,774 (262.1 KB).
 
 ### Batch 5 (12 October 2026)
@@ -690,8 +669,8 @@ SideClass and the 12-argument Bit_Blit. The checker now takes operator names in 
 which landed `TPoint2D<int>::operator==`. The merge deleted an earlier batch's overlay
 along with this batch's; the banked AnimClass constructor now lists the five
 declarations it needs, and the merge brief keeps other batches' files. Banked: two
-aircraft missions (76%, registers and inline budget) and the voxel blitter (51%).
-Cost: about 2.0M tokens, 54 minutes. Merge gate: 1,880 of 1,880 (286.1 KB).
+aircraft missions (76%, registers and inline budget) and the voxel blitter (51%). Merge gate: 1,880 of
+1,880 (286.1 KB).
 
 ### Batch 6 (12 October 2026)
 
@@ -701,8 +680,8 @@ RadarEventClass YR's layout, found that a requested InputManagerClass was TibSun
 Keyboard and that a requested key table was two Options fields, and moved the Options
 object to YR's address. Opus landed seven of the merge's near misses, including the
 Tactical constructor after 40 checks. Banked: TechnoClass's pre-render (77.5%, inline
-budget), a trajectory function (45.1%) and the team patrol mission (61.3%). Cost: about
-2.3M tokens, 58 minutes. Merge gate: 1,988 of 1,988 (306.0 KB).
+budget), a trajectory function (45.1%) and the team patrol mission (61.3%). Merge gate:
+1,988 of 1,988 (306.0 KB).
 
 The merge also found a checker gap. A reference to a global object whose address the
 checker does not know is reported as unverified, so a wrong member offset passes. With
@@ -717,20 +696,7 @@ its IPXAddressClass is 2 bytes short. The same test found four name tables sized
 TS (RTTI names, movement zones, pips, superweapon names) and fixed them;
 `tools/refaudit.py` now runs that test. Left open: the particle behaviour-name table,
 which has the same TS count but whose fix flips 0x0073CEC0 for compiler-internal
-reasons. Cost: about 0.5M tokens, 39 minutes.
-
-### Batch 7 (12 October 2026)
-
-map, Display, Radar, Sidebar, Session, Tactical, cell, Infantry, Unit, the first batch
-on the corrected map and session layouts. **103 of 108 matched**; most of the display
-modules' functions were the small compiler-generated helpers at their starts. The merge
-corrected TechnoClass::Captured's signature (a second `announce` argument, from the
-`ret 8` of all four overrides), adopted SmudgeTypeClass, and rejected a request to make
-DirType::Direction out of line, since a landed function inlines it twice. Its refaudit
-pass found no new offset errors; the one new object it named, TacticalDimensions, now
-has a names.csv row. Banked: a tile-shadow renderer (76.4%), CellClass's Draw_It and
-wall update (62%, 41%) and UnitClass's load direction (64.8%, inline budget); the
-cell agent never started Draw_Overlay. Cost: about 1.9M tokens, 49 minutes. Merge
+reasons. Merge
 gate: 2,091 of 2,091 (321.8 KB).
 
 The batch agents had matched 109 compiler-generated initialisers as hand-written
@@ -741,8 +707,7 @@ moved them into `include/geometry.h`, converted 105 to markers on the compiler's
 initialisers, and found 51 more copies in files that already include the header. Four
 stay as stand-ins: one belongs to a file not yet started, three are other initialisers.
 check.py now fails a file in which two markers resolve to the same compiled function,
-which a prefix-matched `$E` name could do silently. Cost: about 0.24M tokens, 25 minutes.
-Merge gate: 2,142 of 2,142 (323.1 KB).
+which a prefix-matched `$E` name could do silently. Merge gate: 2,142 of 2,142 (323.1 KB).
 
 ### Batch 8 (12 October 2026)
 
@@ -755,7 +720,7 @@ holds the geometry run pkstraw.cpp had kept as a stand-in (13 functions). Twenty
 type-array and INI globals and both HasFreeLink overloads got names.csv rows from
 YRpp's symbols, so their references are verified. Banked: House's money check (72.1%),
 Techno's area modify (96.8%), and INIClass::Is_Present's out-of-line copy, which
-appears once Read_File matches. Cost: about 2.0M tokens, 49 minutes. Merge gate:
+appears once Read_File matches. Merge gate:
 2,275 of 2,275 (344.7 KB).
 
 ### Batch 9 (12 October 2026)
@@ -770,8 +735,7 @@ a case label that a data pointer names was taken for a function, splitting
 SuperClass::NameReadiness. `functions.py` now drops a start whose only evidence is a
 data pointer when flow from the function before it jumps there; fall-through does not
 count, since a call that never returns runs into the next function. Seven starts went,
-all checked, and NameReadiness landed. Banked: two techtype functions (76.4%, 18.5%).
-Cost: about 2.1M tokens, 52 minutes. Merge gate: 2,380 of 2,380 (366.8 KB).
+all checked, and NameReadiness landed. Banked: two techtype functions (76.4%, 18.5%). Merge gate: 2,380 of 2,380 (366.8 KB).
 
 ### Batch 10 (13 October 2026)
 
@@ -785,7 +749,7 @@ them, set WAYPT_HOME to 699 from the pushed constants, and through refaudit foun
 Start_Scenario called INIClass::Get_Int where the original calls Get_VQType. A cell.h
 declaration flipped UnitClass::Draw_It again; three more real radiation members, read
 from the exe, restored it. Banked: a jumpjet function at 99.6% and an INI lookup
-(26.8%). Cost: about 1.4M tokens, 41 minutes. Merge gate: 2,486 of 2,486 (381.0 KB).
+(26.8%). Merge gate: 2,486 of 2,486 (381.0 KB).
 
 ### Batch 11 (13 October 2026)
 
@@ -797,8 +761,7 @@ ToggleClass's toggle type proved to be a dword, and HashTableClass got its itera
 The merge renumbered static-initialiser markers in nine files after one new static in
 sidebar.h. Banked: three palette and hash functions that need an inline `First`
 nobody has proven, a tooltip lookup (56.6%), and SuperClass's deleting destructor,
-whose call to the out-of-line destructor ours inlines. Cost: about 1.4M tokens,
-36 minutes. Merge gate: 2,591 of 2,591 (392.4 KB).
+whose call to the out-of-line destructor ours inlines. Merge gate: 2,591 of 2,591 (392.4 KB).
 
 ### Batch 12 (13 October 2026)
 
@@ -814,7 +777,7 @@ both functions landed. Banked: six Tactical and cell functions on register
 allocation (41% to 91%), and two others. The header merge broke the delete rule and
 removed the whole session scratchpad: only other agents' scratch copies were lost,
 since the coordinator's files live in build/coord/, and the rule is now explicit about
-recursive deletes. Cost: about 1.8M tokens, 47 minutes. Merge gate: 2,689 of 2,689
+recursive deletes. Merge gate: 2,689 of 2,689
 (407.8 KB).
 
 ### Batch 13 (13 October 2026)
@@ -833,8 +796,7 @@ function moved. 0x4912B0 looked like a padding fault, but the original is Westwo
 inline asm; it landed once that asm, copied unchanged from the archive, was allowed.
 Special_Weapon_AI landed too (`::Buildings`, since HouseClass has its own member). Banked: four House, building and UI command functions
 (66% to 93%). Wstring::get has the same twin problem (0x7B5400 and 0x7B5440), still
-open. The project's delete hook had nothing to stop. Cost: about 2.4M tokens, 55
-minutes. Merge gate: 2,792 of 2,792 (430.3 KB).
+open. The project's delete hook had nothing to stop. Merge gate: 2,792 of 2,792 (430.3 KB).
 
 ### Batch 14 (13 October 2026)
 
@@ -846,7 +808,7 @@ alphashp.h, and fixed Draw_Voxel's and Record_The_Kill's signatures, each proved
 exe. Tactical's Cell_Shadow and Flag_Cell now have names.csv rows. Banked: three Tactical
 functions (inline budget, registers, frame), RevealArea1 at 99.2% and two register
 misses. The same session fixed the map generator (switch tables, int3 padding) and
-allowed Westwood's own inline asm. Cost: about 2.8M tokens, 73 minutes. Merge gate:
+allowed Westwood's own inline asm. Merge gate:
 2,935 of 2,935 (456.0 KB).
 
 ### Batches 15 and 16 (13 October 2026)
@@ -862,14 +824,11 @@ team, Ini, teamtype, anim); Tactical (5) and Ini (5) were the weak modules: Ini'
 all hinge on how Find_Entry inlines, and the map splits Put_TextBlock (0x5271C0) in two
 at 0x5271E0, a map fault still open. The merges ran side by side without a collision.
 Agents' scratch roots symlinked into the repo (orig, toolchain, src, data); the links
-are gone and the rule is in AGENTS.md. Cost: about 6.1M tokens; 67 and 111 minutes.
-Merge gate: 3,189 of 3,189 (505.7 KB).
+are gone and the rule is in AGENTS.md. Merge gate: 3,189 of 3,189 (505.7 KB).
 
 ### Batches 17 and 18 (13 October 2026)
 
-The second pair, interrupted by a PC crash during both header merges and resumed from
-the workflow journal: all 24 module agents' results replayed from cache and only the
-merges and Opus reran, on top of the half-merged tree, with no damage. **Batch 17: 137
+The second pair. **Batch 17: 137
 of 144** (House's ten untried functions all landed, as did TAction's timers and the
 Destroy_All family). **Batch 18: 139 of 144**; the merge gave MapSeedClass and
 MapGeneratorClass YR's layouts, proved by the save routine's INI keys and the
@@ -877,7 +836,7 @@ constructor, and LoadOptionsClass its 0x38 bytes, which fixed RandomMapGen's off
 (now a names.csv row). Open: three voc functions match only with `SoundNode::Retired`
 declared `volatile`; the archive has no SoundNode, so there is no Westwood source to show
 the qualifier is original, and they stay banked. 0x005F5B4C is a padding byte, not a
-function. Cost: about 6.5M tokens. Merge gate: 3,470 of 3,470 (554.3 KB).
+function. Merge gate: 3,470 of 3,470 (554.3 KB).
 
 ### Batches 19 and 20 (13 October 2026)
 
@@ -890,7 +849,7 @@ landed six more under the RGB name, one of which claimed the same compiled funct
 an older marker. checkall never saw that, because check.py reports a duplicate claim on
 a line of its own: checkall now fails on it. Its first run found an older pair, two bare
 `$E` thunk markers in builtype.cpp, now given exact names. MovieHandle (YR's movie
-player base) and CLSID_ShipLocomotion are proven. Cost: about 5.0M tokens. Merge gate:
+player base) and CLSID_ShipLocomotion are proven. Merge gate:
 3,733 of 3,733 (593.0 KB).
 
 ### Batches 21 and 22 (13 October 2026)
@@ -907,7 +866,7 @@ tested data-pointer starts) and merged five split pairs, none matched. The coopc
 agent had used `#pragma auto_inline(off)` to keep a helper out of line; the pragma is
 gone and the helper banked, since the rules ban it. Still open: 0x4FF700 hides
 Factory_Counter at 0x4FF8F0 after a jump table, and Put_TextBlock (0x5271C0) needs a
-retry now that its extent is right. Cost: about 4.1M tokens. Merge gate: 4,009 of 4,009
+retry now that its extent is right. Merge gate: 4,009 of 4,009
 (626.2 KB).
 
 ### Batches 23 and 24 (13 October 2026)
@@ -919,13 +878,11 @@ counts from their `ret` sizes; the wonline and convert modules landed all 12. **
 locomotor headers were adopted to keep the abstract base satisfiable, and FlyLocomotion
 gained AirportBound. Put_TextBlock landed on its retry after the map fix. Ini's misses
 all hinge on how Find_Entry inlines; coopcamp's are register swaps. A map fault is still
-open: 0x453840 ends in a Ghidra-only tail at 0x4539E0 that the flow pass did not reach.
-Cost: about 4.6M tokens. Merge gate: 4,279 of 4,279 (660.2 KB).
+open: 0x453840 ends in a Ghidra-only tail at 0x4539E0 that the flow pass did not reach. Merge gate: 4,279 of 4,279 (660.2 KB).
 
 ### Batches 25, 26 and 27 (14 October 2026)
 
-The first round of three side by side, interrupted once by a lost connection and resumed
-from the journals. **407 of 419 real functions** (142, 124 of 131, 141). Batch 27 opened
+The first round of three side by side. **407 of 419 real functions** (142, 124 of 131, 141). Batch 27 opened
 new modules (Startup, Init, ipxmgr, tab, WDTSel, netshare, MPCoop) and landed all 12 in
 nine of them, with YR's IPX and Winsock headers proved by their constructors. Batch 25
 took YR's trigger and trigger-type layouts. Batch 26 settled that palette's vectors are
@@ -937,7 +894,7 @@ different function (0x577C90), now declared as such. The coordinator replaced tw
 in tactical.cpp. A map-fix agent made the F rule accept after-table starts the sweep had
 run through and re-test labels after each F round: six hidden functions found,
 0x453840 whole. Still open: houstype's three VectorClass operator= labels disagree with
-their callers (byte-identical twins). Cost: about 5.8M tokens. Merge gate: 4,689 of
+their callers (byte-identical twins). Merge gate: 4,689 of
 4,689 (710.2 KB).
 
 ### Batches 28, 29 and 30 (14 October 2026)
@@ -955,7 +912,7 @@ for subagents was blocked as self-modification and is left for the maintainer. T
 merges gave YR's wide LoadDlg file entries, YR's CellClass flag words (by bit, from the
 constructor and the generated copy), wide serial packets and Cell::As_Int's 74x stride.
 LoadOptionsClass's plain destructor (0x558790) got a names.csv row, which landed
-0x52D640. Cost: about 6.8M tokens plus the recovery. Merge gate: 5,099 of 5,099
+0x52D640. Merge gate: 5,099 of 5,099
 (779.2 KB).
 
 ### Batches 31, 32 and 33 (14 October 2026)
@@ -970,23 +927,20 @@ OutList, the two command-bar buttons) exposed TabClass::Activate still using the
 buttons, now fixed. check.py now removes an asm block before its ban only when the block
 appears verbatim, comments and whitespace aside, in reference/tibsun/code; Westwood's
 surface_quick_fill went into xsurface.cpp as it was and XSurface::Fill_Rect landed, and a
-one-instruction change to it is refused. Cost: about 7.8M tokens. Merge gate: 5,505 of
+one-instruction change to it is refused. Merge gate: 5,505 of
 5,505 (850.5 KB).
 
 ### Batches 34 and 35 (14 October 2026)
 
-The week's last pair, two batches instead of three to stop near 84% of the weekly
-allowance. **269 of 288** (131, 138). Batch 34's merge adopted CommandClass with YR's
+Two batches. **269 of 288** (131, 138). Batch 34's merge adopted CommandClass with YR's
 nine-slot vtable and landed Shroud_The_Map and BuildingClass::Infiltrate; batch 35's gave
 IonBlastClass its DisableIonBeam flag, made MSFont's API wide and filled in WideWstring's
 accessors, landing the whole MSPrintAnim family. The no-argument TerrainClass constructor
 got a names.csv row, landing its class factory.
 
-**This week:** batches 4 to 35, from 1,670 to 5,779 matched functions (900 KB, about 30%
+**Progress:** batches 4 to 35, from 1,670 to 5,779 matched functions (900 KB, about 30%
 of game functions). Rounds of two and then three batches side by side, with the header
-merges coordinating through small edits, roughly tripled throughput, at about 1% of the
-weekly allowance per million agent tokens. Re-measured from the week, first matches for
-the whole game come to about 5-6 full weekly allowances, against the first estimate's 8-9.
+merges coordinating through small edits, roughly tripled throughput.
 Merge gate: 5,779 of 5,779 (899.8 KB).
 
 ### Batches 36, 37 and 38 (19 October 2026)
@@ -1002,7 +956,7 @@ Get_Point overloads and the five-argument ReadStringtableEntry, gave NetCommandT
 netshare and multiplayer onto MultiMission. Recording the round exposed Seed_Land calling
 0x0057A0C0 under Build_All_Cliffs' name, now its own declaration; empulse.h's static
 vector renumbered startup.cpp's two `$E` markers. Ini's eight cached Find_Entry readers
-stay near 30-50% on inline depth. Cost: about 6.6M tokens. Merge gate: 6,183 of 6,183
+stay near 30-50% on inline depth. Merge gate: 6,183 of 6,183
 (957.9 KB).
 
 ### Batches 39, 40 and 41 (19 October 2026)
@@ -1017,7 +971,7 @@ functions that only `new`ed the command classes to emit their vtables were remov
 twelve functions wait on Init_Commands. RTTI renamed movies.cpp's `IngameVQ` to a
 `DynamicVectorClass<char const *>`. Recording exposed Input_Name calling 0x0054F530, not
 To_ASCII; declaring it flipped UnitClass::Draw_It, which a dead `= 0` had left at the
-mercy of VC6's symbol table, and removing that store holds it under any added declaration. Cost: about 6.35M tokens. Merge gate: 6,582 of 6,582 (986.6 KB).
+mercy of VC6's symbol table, and removing that store holds it under any added declaration. Merge gate: 6,582 of 6,582 (986.6 KB).
 
 ### Batches 42, 43 and 44 (19 October 2026)
 
@@ -1030,7 +984,7 @@ test. Fixing them added four missed functions. Scenario's seven functions first 
 behind local structs cast over Map and other real objects; they now use real
 declarations (MapClass's zone functions, Kamikaze, the Write_INI statics). Both batch
 merges declined point.h changes that would have regressed 15 and 229 matched functions.
-Five unvq routines are Westwood's hand-written assembly. Cost: about 7.7M tokens. Merge
+Five unvq routines are Westwood's hand-written assembly. Merge
 gate: 6,993 of 6,993 (1,054.5 KB), about 36% of game functions.
 
 ### Batches 45, 46 and 47 (20 October 2026)
@@ -1044,7 +998,7 @@ plus a new include/rcptr.h from RTTI. The planning-token cleanup reaches PlanTok
 committed earlier behind such casts; it stays until that decision is made, and the new
 0x006370B0 waits. UnitClass::Draw_It flipped again: a sweep of dummy declarations shows
 VC6 orders its two reloads by heap address, so no form pins it, and the chosen form fails
-at about 3% of offsets against 16% before. Cost: about 7.3M tokens. Merge gate: 7,414
+at about 3% of offsets against 16% before. Merge gate: 7,414
 of 7,414 (1,112.5 KB), about 38% of game functions.
 
 ### Batches 48, 49 and 50 (20 October 2026)
@@ -1057,8 +1011,7 @@ phantom Addon byte from the game-list node, proved by the join code's stores. Ba
 RadarRect public, which retired two absolute-address externs in beacon.cpp. Landing found
 that last round's AircraftClass::Good_LZ read `Technos` where the exe walks `Objects`
 (0x00A8E360): both vectors now have names rows and Good_LZ uses Objects. Three mouse-thread
-functions match only with volatile fields and wait for a ruling. Cost: about 5.3M tokens.
-Merge gate: 7,832 of 7,832 (1,153.4 KB), about 40% of game functions.
+functions match only with volatile fields and wait for a ruling. Merge gate: 7,832 of 7,832 (1,153.4 KB), about 40% of game functions.
 
 ### Batches 51, 52 and 53 (20 October 2026)
 
@@ -1070,8 +1023,7 @@ proving its 0x18 layout by landing the constructor; batch 51's added TemporalCla
 default constructor. Landing found two batches had labelled template instances
 `VectorClass<int>` where the RTTI says MultiplayerTeam and MapRegionClass pointers, which
 broke an older caller's reference, and that netshare and gdlgsupp reached Session through
-raw addresses and byte offsets; both now use Session's members. Cost: about 6.2M tokens.
-Merge gate: 8,251 of 8,251 (1,210.0 KB), about 42% of game functions.
+raw addresses and byte offsets; both now use Session's members. Merge gate: 8,251 of 8,251 (1,210.0 KB), about 42% of game functions.
 
 ### Batches 54, 55 and 56 (20 October 2026)
 
@@ -1085,7 +1037,7 @@ called through a fake mouse vtable back out until the two Mouse classes become o
 dropped a YRpp-only function start that was the tail of Save_File. The maintainer allowed
 volatile on data another thread writes, which landed the mouse thread's three functions.
 A named CellClass reference pinned Generate_Rural_Buildings against declaration-order
-flips. Cost: about 5.9M tokens. Merge gate: 8,676 of 8,676 (1,260.2 KB), about 45% of
+flips. Merge gate: 8,676 of 8,676 (1,260.2 KB), about 45% of
 game functions.
 
 ### Batches 57, 58 and 59, and the first cleanup round (20 October 2026)
@@ -1099,7 +1051,7 @@ which landed the keyboard's Message_Handler; seven files lost their Session DAT_
 MPTeam became MultiplayerTeam by RTTI. Batch 58's merge refused to run, reading an
 unrelated question as its trigger, so its headers and four functions were landed by hand.
 Landing also fixed two train-bridge functions that called Set_Under_Bridge where the exe
-calls its byte-identical twin Set_Under_Rail_Bridge. Cost: about 6.3M tokens. Merge gate:
+calls its byte-identical twin Set_Under_Rail_Bridge. Merge gate:
 9,113 of 9,113 (1,311.8 KB), about 47% of game functions.
 
 ### Batches 60, 61 and 62, and the second cleanup round (20 October 2026)
@@ -1112,8 +1064,7 @@ every overridden virtual. rc_ptr's stand-ins became rcptr.h's template across st
 wdtsel and netshare, the World Domination handles now rc_ptr<T> of their RTTI types. The
 checker can assemble Westwood's .asm files and refuses any that is not a verbatim archive
 copy; no assembler is installed yet. Landing found two UI functions calling the mouse's
-Get_Mouse_Current_Frame where the exe calls Get_Mouse_Start_Frame. Cost: about 4.8M tokens.
-Merge gate: 9,849 of 9,849 (1,360.0 KB), about 51% of game functions.
+Get_Mouse_Current_Frame where the exe calls Get_Mouse_Start_Frame. Merge gate: 9,849 of 9,849 (1,360.0 KB), about 51% of game functions.
 
 ### Batches 63, 64 and 65 (20 October 2026)
 
@@ -1123,7 +1074,7 @@ YR's scenario-info flags, a MultiplayerTeam constructor and TibSun's priority qu
 landed RAMFileClass, MixFileClass's constructor and the modem guest dialog; batch 64's gave
 the IPX global connection its real Send_To and fixed the manager's signature its header
 change had broken; batch 63's settled the mouse's Set_Mouse_Point as two ints from its call
-sites. Cost: about 5.2M tokens. Merge gate: 10,274 of 10,274 (1,406.8 KB), about 53% of
+sites. Merge gate: 10,274 of 10,274 (1,406.8 KB), about 53% of
 game functions.
 
 ### Batches 66, 67 and 68 (20 October 2026)
@@ -1133,8 +1084,7 @@ pinned two GlobalPacketType layouts byte by byte from the exe (the chat message'
 bitmask, the player-info flag), which landed two network dialog functions; batch 66's gave
 SHPStruct its GetPixels; batch 68's corrected two World Domination return types and found
 by RTTI that _rtti.cpp's vector was Scripts, a ScriptClass vector. Landing replaced
-builtype.cpp's local copy of SHPStruct with msanim.h's and init.cpp's alias with Scripts.
-Cost: about 4.5M tokens. Merge gate: 10,694 of 10,694 (1,449.1 KB), about 55% of game
+builtype.cpp's local copy of SHPStruct with msanim.h's and init.cpp's alias with Scripts. Merge gate: 10,694 of 10,694 (1,449.1 KB), about 55% of game
 functions.
 
 ### Batches 69, 70 and 71 (20 October 2026)
@@ -1145,8 +1095,7 @@ is 10), which landed ScrollClass::What_Action; batch 71's adopted TibSun's IPX i
 a new wspipx.cpp (link order puts it between writepcx and wsproto) and gave Main_Game its
 argc/argv, landing it with Westwood's own exception-return asm; batch 69's named the
 owner-draw dialog controls and WOLOptionsClass by RTTI and call sites, retiring three local
-copies, and WOLAPI's real channel layout landed the last wonline near-miss. Cost: about
-5.3M tokens. Merge gate: 11,129 of 11,129 (1,496.4 KB), about 57% of game functions.
+copies, and WOLAPI's real channel layout landed the last wonline near-miss. Merge gate: 11,129 of 11,129 (1,496.4 KB), about 57% of game functions.
 
 ### Batches 72, 73 and 74 (20 October 2026)
 
@@ -1158,7 +1107,7 @@ preview.h and face.h and held back ScenarioClass::WasGameSaved, whose static ren
 it back in its passing band, and batch 72's new Session aliases in the same file became
 Session.Players. Recording then exposed three UI-command functions building char * and
 ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; their RTTI
-fixed them. Cost: about 5.6M tokens. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
+fixed them. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
 
 ### Batches 99, 100 and 101 (21 October 2026)
@@ -1170,7 +1119,7 @@ were turned down at landing as stand-ins and banked: wonline's ATL module Init (
 layout cast over AtlModule) and high-score handler (an entry struct reinterpreted as
 LadderB), and ownrdraw's RegisterWindow, which matched only through an eight-deep chain of
 inline wrappers. The easy tail is now nearly spent: most modules have two or three small
-functions left. Cost: about 3.0M tokens. Merge gate: 14,000 of 14,000 (1,795.0 KB), about
+functions left. Merge gate: 14,000 of 14,000 (1,795.0 KB), about
 72% of game functions.
 
 ### Batches 96, 97 and 98 (21 October 2026)
@@ -1182,7 +1131,7 @@ constructors UnitTypeClass's and InfantryTypeClass's, not TeamClass's and int's.
 those exposed HouseTypeClass building the non-const vectors where the exe builds
 VectorClass<InfantryTypeClass const *> and <UnitTypeClass const *>, so its veteran lists
 now hold const pointers, as RTTI says and YRpp drops. Four aliases into Session in
-wonline.cpp became Slots and its per-slot arrays. Cost: about 3.4M tokens. Merge gate:
+wonline.cpp became Slots and its per-slot arrays. Merge gate:
 13,879 of 13,879 (1,782.9 KB), about 71% of game functions.
 
 ### Batches 93, 94 and 95 (21 October 2026)
@@ -1193,7 +1142,7 @@ stand-in in sendfile.cpp with wolapi's User::name. Batch 93's put msgloop's two 
 vectors back in TibSun's order, matching the vtables their initialisers install, and reached
 the tooltip manager through TibSun's ToolTips rather than a new static. Batch 95's landed
 ZBuffer::Pan by ending each arm with its own return. Landing named PlayerInfo's field at
-+0x24 and replaced netdlg2's byte offsets with it and Flag. Cost: about 3.4M tokens. Merge
++0x24 and replaced netdlg2's byte offsets with it and Flag. Merge
 gate: 13,724 of 13,724 (1,764.5 KB), about 70% of game functions.
 
 ### Batches 90, 91 and 92 (21 October 2026)
@@ -1205,8 +1154,7 @@ options.h used up three `$E` numbers in every file including goptions.h, so the 
 it into options.cpp, its only user, as the exe's numbering implies. Bounce's Init sums its
 axis length in a different order from Axis_To_Quat, so bounce.cpp normalises through its
 own inline helper rather than the shared one. Three Get_Field overloads byte-identical to
-their signed twins wait on check.py preferring an unclaimed overload. Cost: about 4.4M
-tokens. Merge gate: 13,536 of 13,536 (1,743.0 KB), about 69% of game functions.
+their signed twins wait on check.py preferring an unclaimed overload. Merge gate: 13,536 of 13,536 (1,743.0 KB), about 69% of game functions.
 
 ### Batches 87, 88 and 89 (21 October 2026)
 
@@ -1218,8 +1166,7 @@ DynamicVectorClass<AnimClass const *> the exe's RTTI names. Real declarations ad
 event.h and session.h flipped UnitClass::Draw_It again; moving unit.cpp's one later
 declaration before it holds it under both header states. Overlays reach only directly
 included headers, which had hidden that cause. One function, vein 0x0074EF10, waits on a
-ruling: it matches only with Westwood's `volatile int div_zero` idiom as a local. Cost:
-about 4.0M tokens. Merge gate: 13,332 of 13,332 (1,720.7 KB), about 68% of game functions.
+ruling: it matches only with Westwood's `volatile int div_zero` idiom as a local. Merge gate: 13,332 of 13,332 (1,720.7 KB), about 68% of game functions.
 
 ### Batches 84, 85 and 86 (21 October 2026)
 
@@ -1229,8 +1176,7 @@ and turned down a timer.h change the exe disproves (YR's BasicTimerClass has a d
 Batch 84's merge moved one include in astar.cpp to keep Build_Final_Path in its heap-order
 band after real House members were declared. Reading vtable slots at landing relabelled
 0x0050E7E0 as TypeList<TeamTypeClass const *>'s destructor and 0x00510310 as
-VectorClass<TeamTypeClass const *>'s, retiring a VectorClass<AbstractClass *> stand-in.
-Cost: about 4.1M tokens. Merge gate: 13,079 of 13,079 (1,698.0 KB), about 67% of game
+VectorClass<TeamTypeClass const *>'s, retiring a VectorClass<AbstractClass *> stand-in. Merge gate: 13,079 of 13,079 (1,698.0 KB), about 67% of game
 functions.
 
 ### Batches 81, 82 and 83 (20 to 21 October 2026)
@@ -1244,7 +1190,7 @@ now src/progress.cpp and src/progress2.cpp; the second name is provisional. Batc
 merge typed the blitters' tint parameters as unsigned short, as the exe tests them. The
 non-record re-run caught the rules batch labelling VectorClass<TerrainTypeClass const *>
 as AnimTypeClass; reading the vtable slots also showed 0x0067AA30 is TypeList's
-destructor, not VectorClass's. Cost: about 4.9M tokens. Merge gate: 12,764 of 12,764
+destructor, not VectorClass's. Merge gate: 12,764 of 12,764
 (1,674.9 KB), about 66% of game functions.
 
 ### Batches 78, 79 and 80 (20 October 2026)
@@ -1256,20 +1202,18 @@ Build_Final_Path in its heap-order band. Batch 79 landed Queue's IndexClass<int,
 ObjectClass *> instance, typed from the exe's RTTI. The non-record re-run caught Main_Game
 calling 0x0072DFB0 under the name Stop_Ingame_Movie, exposed once the real one landed.
 Landing split Session's 0x2A14 blob into the arrays wonline reads, which retired four
-aliases into Session. Cost: about 4.5M tokens. Merge gate: 12,386 of 12,386 (1,627.9 KB),
+aliases into Session. Merge gate: 12,386 of 12,386 (1,627.9 KB),
 about 64% of game functions.
 
 ### Batches 75, 76 and 77 (20 October 2026)
 
-**419 of 432 functions** (138, 142, 139), plus two found along the way. A system crash cut
-batches 75 and 77 short after their Sonnet phase; resuming the workflows replayed the
-finished agents from cache and ran only the merges again. Batch 77's merge laid out YR's SHP
+**419 of 432 functions** (138, 142, 139), plus two found along the way.  Batch 77's merge laid out YR's SHP
 classes (SHPStruct, SHPFrame, SHPFile, SHPReference) and landed the shape pipeline; batch
 76's made TextLabelClass and the message list wide; batch 75's adopted TibSun's zone.hh with
 SubzoneTrackingStruct's operator=, and moved one of wonline's real declarations to keep
 0x00788180 in its heap-order band. Landing shifted two files' `$E` markers down by one and
 replaced aliases into Session and Options (EnableMultiplayerDebug, IsSidebarOnRight) in
-gscreen, init and radar. Cost: about 5.5M tokens. Merge gate: 11,964 of 11,964 (1,589.1 KB),
+gscreen, init and radar. Merge gate: 11,964 of 11,964 (1,589.1 KB),
 about 61% of game functions.
 
 ### Decide before the first batch
@@ -1303,20 +1247,17 @@ whole `gamemd.exe`, not before.
 - **Baseline first.** Run the original `gamemd.exe` from the copy before swapping ours in,
   so any difference is down to the build. After that the copy is an A/B rig: the same
   folder, swapping between the two exes.
-- The same copy goes to the Steam Deck later.
 
 ## Agent line-up
 
 The checker is the judge, so coordination is bookkeeping (queue, claim, check, record,
-escalate) and needs no premium model. Prices are API rates per million tokens
-(input/output), cached 2026-09-25; on the Max plan they show up as relative burn rate.
-
+escalate) and needs no premium model. 
 | Tier | Who | Takes |
 |---|---|---|
 | 0 | A script, no model | Every YR function with a TS counterpart: compile the TibSun archive's version unchanged and diff it. Exact matches are free. |
-| 1 | Sonnet 5.5, medium effort ($2/$10) | Fresh functions and tier-0 near misses. Expected to land most small and mid-sized ones. |
-| 2 | Opus 5.5, high or xhigh ($4/$20) | Tier-1 stalls (no gain in about 30 checks) and large functions. |
-| 3 | Fable 5.1 ($10/$50) | The residue: register allocation and instruction order. |
+| 1 | Sonnet 5.5, medium effort | Fresh functions and tier-0 near misses. Expected to land most small and mid-sized ones. |
+| 2 | Opus 5.5, high or xhigh | Tier-1 stalls (no gain in about 30 checks) and large functions. |
+| 3 | Fable 5.1 | The residue: register allocation and instruction order. |
 
 Alongside them:
 
@@ -1329,50 +1270,7 @@ Alongside them:
   tight beside a large function plus the guide.
 
 The spike runs the 20 functions two ways: the tier ladder, and Opus 5.5 alone at medium
-effort (one model, one prompt cache, often fewer retries). Cost per matched function
-picks the line-up.
-
-## Budget: run it piecemeal
-
-The plan's usage is shared with other work, so this project never runs flat out against
-the weekly limit. It is built to be stopped and resumed at any point:
-
-- **The queue lives in the repo** (one GitHub issue, or one row in a tracked CSV, per few
-  functions), never in a session. Any session picks up where the last stopped.
-- **Batches, not marathons.** One batch = a fixed number of issues at a fixed concurrency
-  (start at 3 to 5 agents). Check `/usage` before each batch; stop at the share of the week
-  set aside for it.
-- **Off-peak first.** Batches run when the plan isn't needed for other work.
-- **Fable only by hand.** Tier 3 runs only when the maintainer OKs a residue batch.
-
-Sizing comes from the spike, not a guess: plan usage spent on the 20 test functions,
-divided by the number matched, times the functions left after tier 0, gives the total in
-"weeks of spare budget".
-
-**First measure, 11 October 2026:** the 20-function run moved weekly usage from 2% to 3%
-(the meter shows whole percents, and the coordinator's own work is in it), so about 1%
-of a week per 20 matched functions. With 16-18k functions left after tier 0, first
-matches alone come to roughly 8-9 weeks of a full weekly allowance, or about 8 months at
-a quarter of each week. A floor, not a price: consolidation onto real headers, the large
-functions and EA's patch sites are not in it yet.
-
-The meter counts every session on the account, and other agents ran alongside the spike
-(the week read 4% after the consolidation pilot), so these percentages are upper bounds.
-Agent token counts are this project's own: about 1.75M for the 20 matches, 0.8M for the
-pilot's one-off headers and tools, 74k to consolidate a function once its headers exist.
-Measure the weekly share again in a window with nothing else running.
-
-**First price, 11 October 2026 (API-rate equivalents, first matches).** Game code left
-after tier 0 and the CRT is 3.64 MB in 17,991 functions: 17,590 under 1.5 KB (2.34 MB),
-133 of 1.5-2 KB (0.23 MB), 228 of 2-6 KB (0.71 MB), 40 over 6 KB (0.35 MB). At the
-measured rates: small functions about $7k (about $3 per KB, all matched in the sample);
-1.5-6 KB about $8-12k (about $4 per KB attempted, 40% matched, residue extra); over 6 KB
-unmeasured, at least $3-5k; class headers, one-off, about $1-3k. Roughly $20-27k in all.
-Twenty small functions cost at most 1% of a week, so a week's allowance is worth at
-least about $1.6-2k of agent work: roughly 10-15 full weeks, or about a year at a quarter
-of each week. The largest uncertainties: the register-allocation residue (a permuter
-could cut it sharply), how much tier 0 saves (1,300 to 4,300 functions), and the
-weekly-meter calibration.
+effort (one model, one prompt cache, often fewer retries).
 
 ## Open questions
 
@@ -1385,4 +1283,3 @@ weekly-meter calibration.
   a whole-exe match possible.
 - Is the whole-exe MD5 reachable? Matching one module's data section during the spike
   would show early whether data layout is a wall.
-- v2's port route: OpenTS's and Vanilla Conquer's, as `opents-linux` took?
