@@ -29,3 +29,7 @@ playtest/
 
 # Third-party reference clones.
 reference/
+
+# Built locally from YRpp by tools/setup_toolchain.sh; YRpp is a guide, not shipped.
+data/symbols.csv
+data/layouts.csv

@@ -136,6 +136,20 @@ if [ "$(git -C "$ROOT/reference/tibsun" rev-parse HEAD)" != "$TIBSUN_COMMIT" ]; 
     git -C "$ROOT/reference/tibsun" checkout -q "$TIBSUN_COMMIT"
 fi
 
+# YRpp is a naming and layout guide, not shipped: its address and layout tables are built
+# here from a pinned checkout (clang compiles its headers for MSVC record layout).
+YRPP_COMMIT=b22f1860dd7b100cad57123d4ca5d459b9020d88
+if [ ! -d "$ROOT/reference/YRpp/.git" ]; then
+    git clone -q https://github.com/Phobos-developers/YRpp.git "$ROOT/reference/YRpp"
+fi
+if [ "$(git -C "$ROOT/reference/YRpp" rev-parse HEAD)" != "$YRPP_COMMIT" ]; then
+    git -C "$ROOT/reference/YRpp" fetch -q origin "$YRPP_COMMIT"
+    git -C "$ROOT/reference/YRpp" checkout -q "$YRPP_COMMIT"
+fi
+command -v clang >/dev/null || { echo "missing: clang" >&2; exit 1; }
+python3 -I "$ROOT/tools/yrpp_symbols.py" "$ROOT/reference/YRpp" "$ROOT/data/symbols.csv"
+python3 -I "$ROOT/tools/yrpp_layouts.py" "$ROOT/reference/YRpp" "$ROOT/data/layouts.csv"
+
 # Gate: a compiled object must carry the stamp the Rich header records for the game's
 # C++ modules (product 11, build 8447).
 probe="$ROOT/build/probe"
