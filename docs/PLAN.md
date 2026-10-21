@@ -284,10 +284,10 @@ footing:
 - source code only: the README says plainly that you must own the game to build or run
   anything, and that the project is not affiliated with EA;
 - a repo of its own, kept separate from Tiberian Factions' Workshop presence;
-- private through the spike; talk to the Phobos community before it goes public. The
-  OpenTS Discord already favours byte matching (October 2026: "verify identical ASM with
-  the same compiler and options" is how to do it) and is cool on non-matching AI ports
-  and the recomp, so open with the checker, not with the agents.
+- private through the spike. The OpenTS Discord already favours byte matching (October
+  2026: "verify identical ASM with the same compiler and options" is how to do it) and is
+  cool on non-matching AI ports and the recomp, so open with the checker, not with the
+  agents.
 
 **Licence, decided 11 October 2026: `src/` and `include/` GPL-3.0-or-later, tooling and
 data MIT** (`COPYING.md`, `LICENSE`, header convention in the README). Tier 0 compiles
