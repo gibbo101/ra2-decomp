@@ -191,6 +191,276 @@ ConvertClass::~ConvertClass(void)
 	Drawers.Delete(this);
 }
 
+// FUNCTION: GAMEMD 0x00490490
+void ConvertClass::Destroy_Blitters(void)
+{
+	delete PlainBlitter;
+	PlainBlitter = NULL;
+
+	delete TransBlitter;
+	TransBlitter = NULL;
+
+	delete ShadowBlitter;
+	ShadowBlitter = NULL;
+
+	delete RemapBlitter;
+	RemapBlitter = NULL;
+
+	delete Translucent1Blitter;
+	Translucent1Blitter = NULL;
+
+	delete Translucent2Blitter;
+	Translucent2Blitter = NULL;
+
+	delete Translucent3Blitter;
+	Translucent3Blitter = NULL;
+
+	delete BlitPlainXlatZReadPtr;
+	BlitPlainXlatZReadPtr = NULL;
+
+	delete BlitTransXlatZReadPtr;
+	BlitTransXlatZReadPtr = NULL;
+
+	delete BlitTransDarkenZReadPtr;
+	BlitTransDarkenZReadPtr = NULL;
+
+	delete BlitTransZRemapXlatZReadPtr;
+	BlitTransZRemapXlatZReadPtr = NULL;
+
+	delete BlitTransLucent75ZReadPtr;
+	BlitTransLucent75ZReadPtr = NULL;
+
+	delete BlitTransLucent50ZReadPtr;
+	BlitTransLucent50ZReadPtr = NULL;
+
+	delete BlitTransLucent25ZReadPtr;
+	BlitTransLucent25ZReadPtr = NULL;
+
+	delete BlitTransLucent75ZReadWarpPtr;
+	BlitTransLucent75ZReadWarpPtr = NULL;
+
+	delete BlitTransLucent50ZReadWarpPtr;
+	BlitTransLucent50ZReadWarpPtr = NULL;
+
+	delete BlitTransLucent25ZReadWarpPtr;
+	BlitTransLucent25ZReadWarpPtr = NULL;
+
+	delete BlitPlainXlatZReadWritePtr;
+	BlitPlainXlatZReadWritePtr = NULL;
+
+	delete BlitTransXlatZReadWritePtr;
+	BlitTransXlatZReadWritePtr = NULL;
+
+	delete BlitTransDarkenZReadWritePtr;
+	BlitTransDarkenZReadWritePtr = NULL;
+
+	delete BlitTransZRemapXlatZReadWritePtr;
+	BlitTransZRemapXlatZReadWritePtr = NULL;
+
+	delete BlitTransLucent75ZReadWritePtr;
+	BlitTransLucent75ZReadWritePtr = NULL;
+
+	delete BlitTransLucent50ZReadWritePtr;
+	BlitTransLucent50ZReadWritePtr = NULL;
+
+	delete BlitTransLucent25ZReadWritePtr;
+	BlitTransLucent25ZReadWritePtr = NULL;
+
+	delete BlitPlainXlatAlphaPtr;
+	BlitPlainXlatAlphaPtr = NULL;
+
+	delete BlitTransXlatAlphaPtr;
+	BlitTransXlatAlphaPtr = NULL;
+
+	delete BlitTransZRemapXlatAlphaPtr;
+	BlitTransZRemapXlatAlphaPtr = NULL;
+
+	delete BlitTransLucent75AlphaPtr;
+	BlitTransLucent75AlphaPtr = NULL;
+
+	delete BlitTransLucent50AlphaPtr;
+	BlitTransLucent50AlphaPtr = NULL;
+
+	delete BlitTransLucent25AlphaPtr;
+	BlitTransLucent25AlphaPtr = NULL;
+
+	delete BlitTranslucent50NonzeroAlphaPtr;
+	BlitTranslucent50NonzeroAlphaPtr = NULL;
+
+	delete BlitTranslucent50ZeroAlphaPtr;
+	BlitTranslucent50ZeroAlphaPtr = NULL;
+
+	delete BlitTransXlatWriteAlphaPtr;
+	BlitTransXlatWriteAlphaPtr = NULL;
+
+	delete BlitTransXlatMultWriteAlphaPtr;
+	BlitTransXlatMultWriteAlphaPtr = NULL;
+
+	delete BlitTranslucentWriteAlphaPtr;
+	BlitTranslucentWriteAlphaPtr = NULL;
+
+	delete BlitPlainXlatAlphaZReadPtr;
+	BlitPlainXlatAlphaZReadPtr = NULL;
+
+	delete BlitTransXlatAlphaZReadPtr;
+	BlitTransXlatAlphaZReadPtr = NULL;
+
+	delete BlitTransZRemapXlatAlphaZReadPtr;
+	BlitTransZRemapXlatAlphaZReadPtr = NULL;
+
+	delete BlitTransLucent75AlphaZReadPtr;
+	BlitTransLucent75AlphaZReadPtr = NULL;
+
+	delete BlitTransLucent50AlphaZReadPtr;
+	BlitTransLucent50AlphaZReadPtr = NULL;
+
+	delete BlitTransLucent25AlphaZReadPtr;
+	BlitTransLucent25AlphaZReadPtr = NULL;
+
+	delete BlitTransLucent75AlphaZReadWarpPtr;
+	BlitTransLucent75AlphaZReadWarpPtr = NULL;
+
+	delete BlitTransLucent50AlphaZReadWarpPtr;
+	BlitTransLucent50AlphaZReadWarpPtr = NULL;
+
+	delete BlitTransLucent25AlphaZReadWarpPtr;
+	BlitTransLucent25AlphaZReadWarpPtr = NULL;
+
+	delete BlitPlainXlatAlphaZReadWritePtr;
+	BlitPlainXlatAlphaZReadWritePtr = NULL;
+
+	delete BlitTransXlatAlphaZReadWritePtr;
+	BlitTransXlatAlphaZReadWritePtr = NULL;
+
+	delete BlitTransZRemapXlatAlphaZReadWritePtr;
+	BlitTransZRemapXlatAlphaZReadWritePtr = NULL;
+
+	delete BlitTransLucent75AlphaZReadWritePtr;
+	BlitTransLucent75AlphaZReadWritePtr = NULL;
+
+	delete BlitTransLucent50AlphaZReadWritePtr;
+	BlitTransLucent50AlphaZReadWritePtr = NULL;
+
+	delete BlitTransLucent25AlphaZReadWritePtr;
+	BlitTransLucent25AlphaZReadWritePtr = NULL;
+
+	delete RLETransBlitter;
+	RLETransBlitter = NULL;
+
+	delete RLEShadowBlitter;
+	RLEShadowBlitter = NULL;
+
+	delete RLERemapBlitter;
+	RLERemapBlitter = NULL;
+
+	delete RLETranslucent1Blitter;
+	RLETranslucent1Blitter = NULL;
+
+	delete RLETranslucent2Blitter;
+	RLETranslucent2Blitter = NULL;
+
+	delete RLETranslucent3Blitter;
+	RLETranslucent3Blitter = NULL;
+
+	delete RLEBlitTransXlatZReadPtr;
+	RLEBlitTransXlatZReadPtr = NULL;
+
+	delete RLEBlitTransZRemapXlatZReadPtr;
+	RLEBlitTransZRemapXlatZReadPtr = NULL;
+
+	delete RLEBlitTransDarkenZReadPtr;
+	RLEBlitTransDarkenZReadPtr = NULL;
+
+	delete RLEBlitTransLucent75ZReadPtr;
+	RLEBlitTransLucent75ZReadPtr = NULL;
+
+	delete RLEBlitTransLucent50ZReadPtr;
+	RLEBlitTransLucent50ZReadPtr = NULL;
+
+	delete RLEBlitTransLucent25ZReadPtr;
+	RLEBlitTransLucent25ZReadPtr = NULL;
+
+	delete RLEBlitTransLucent75ZReadWarpPtr;
+	RLEBlitTransLucent75ZReadWarpPtr = NULL;
+
+	delete RLEBlitTransLucent50ZReadWarpPtr;
+	RLEBlitTransLucent50ZReadWarpPtr = NULL;
+
+	delete RLEBlitTransLucent25ZReadWarpPtr;
+	RLEBlitTransLucent25ZReadWarpPtr = NULL;
+
+	delete RLEBlitTransXlatZReadWritePtr;
+	RLEBlitTransXlatZReadWritePtr = NULL;
+
+	delete RLEBlitTransZRemapXlatZReadWritePtr;
+	RLEBlitTransZRemapXlatZReadWritePtr = NULL;
+
+	delete RLEBlitTransDarkenZReadWritePtr;
+	RLEBlitTransDarkenZReadWritePtr = NULL;
+
+	delete RLEBlitTransLucent75ZReadWritePtr;
+	RLEBlitTransLucent75ZReadWritePtr = NULL;
+
+	delete RLEBlitTransLucent50ZReadWritePtr;
+	RLEBlitTransLucent50ZReadWritePtr = NULL;
+
+	delete RLEBlitTransLucent25ZReadWritePtr;
+	RLEBlitTransLucent25ZReadWritePtr = NULL;
+
+	delete RLEBlitTransXlatAlphaPtr;
+	RLEBlitTransXlatAlphaPtr = NULL;
+
+	delete RLEBlitTransZRemapXlatAlphaPtr;
+	RLEBlitTransZRemapXlatAlphaPtr = NULL;
+
+	delete RLEBlitTransLucent75AlphaPtr;
+	RLEBlitTransLucent75AlphaPtr = NULL;
+
+	delete RLEBlitTransLucent50AlphaPtr;
+	RLEBlitTransLucent50AlphaPtr = NULL;
+
+	delete RLEBlitTransLucent25AlphaPtr;
+	RLEBlitTransLucent25AlphaPtr = NULL;
+
+	delete RLEBlitTransXlatAlphaZReadPtr;
+	RLEBlitTransXlatAlphaZReadPtr = NULL;
+
+	delete RLEBlitTransZRemapXlatAlphaZReadPtr;
+	RLEBlitTransZRemapXlatAlphaZReadPtr = NULL;
+
+	delete RLEBlitTransLucent75AlphaZReadPtr;
+	RLEBlitTransLucent75AlphaZReadPtr = NULL;
+
+	delete RLEBlitTransLucent50AlphaZReadPtr;
+	RLEBlitTransLucent50AlphaZReadPtr = NULL;
+
+	delete RLEBlitTransLucent25AlphaZReadPtr;
+	RLEBlitTransLucent25AlphaZReadPtr = NULL;
+
+	delete RLEBlitTransLucent75AlphaZReadWarpPtr;
+	RLEBlitTransLucent75AlphaZReadWarpPtr = NULL;
+
+	delete RLEBlitTransLucent50AlphaZReadWarpPtr;
+	RLEBlitTransLucent50AlphaZReadWarpPtr = NULL;
+
+	delete RLEBlitTransLucent25AlphaZReadWarpPtr;
+	RLEBlitTransLucent25AlphaZReadWarpPtr = NULL;
+
+	delete RLEBlitTransXlatAlphaZReadWritePtr;
+	RLEBlitTransXlatAlphaZReadWritePtr = NULL;
+
+	delete RLEBlitTransZRemapXlatAlphaZReadWritePtr;
+	RLEBlitTransZRemapXlatAlphaZReadWritePtr = NULL;
+
+	delete RLEBlitTransLucent75AlphaZReadWritePtr;
+	RLEBlitTransLucent75AlphaZReadWritePtr = NULL;
+
+	delete RLEBlitTransLucent50AlphaZReadWritePtr;
+	RLEBlitTransLucent50AlphaZReadWritePtr = NULL;
+
+	delete RLEBlitTransLucent25AlphaZReadWritePtr;
+	RLEBlitTransLucent25AlphaZReadWritePtr = NULL;
+}
 // FUNCTION: GAMEMD 0x00490B90
 Blitter const * ConvertClass::Blitter_From_Flags(ShapeFlags_Type flags) const
 {
@@ -1692,3 +1962,36 @@ template class RLEBlitTransLucent25AlphaZReadWrite<unsigned short>;
 
 // SYNTHETIC: GAMEMD 0x00499F60
 // ??_G?$BlitTransDarken@G@@UAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x00499F80
+// ??_G?$BlitTransLucent75@G@@UAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x00499FA0
+// ??_G?$BlitTransLucent50@G@@UAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x00499FC0
+// ??_G?$BlitTransLucent25@G@@UAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x00499FE0
+// ??_G?$BlitPlainXlatZRead@G@@UAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x0049A000
+// ??_G?$BlitTransXlatZRead@G@@UAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x0049A020
+// ??_G?$BlitTransZRemapXlatZRead@G@@UAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x0049A040
+// ??_G?$BlitTransDarkenZRead@G@@UAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x0049A060
+// ??_G?$BlitTransLucent75ZRead@G@@UAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x0049A080
+// ??_G?$BlitTransLucent50ZRead@G@@UAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x0049A0A0
+// ??_G?$BlitTransLucent25ZRead@G@@UAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x0049A0C0
+// ??_G?$BlitTransLucent75ZReadWarp@G@@UAEPAXI@Z

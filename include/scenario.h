@@ -89,7 +89,7 @@ class ScenarioClass {
 		bool ReadStartPoints(CCINIClass const & ini);
 		bool Write_Local_INI(CCINIClass & ini) const;
 
-		bool Read_INI(CCINIClass const & ini);
+		bool Read_INI(CCINIClass & ini);
 		bool Write_INI(CCINIClass & ini, bool mplayer=false) const;
 
 		void Save(IStream * stream) const;

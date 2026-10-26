@@ -10,8 +10,8 @@ when the checker shows its compiled bytes equal the original's, and stand-ins su
 over real objects or hard-coded addresses are rejected however well they score.
 `docs/AGENTS.md` holds the rules the agents follow and every lesson learned.
 
-**Status (21 October 2026):** 13,996 of the game's 19,366 functions match byte for byte
-(72%), covering 1.84 MB of its 3.81 MB of game code (48%). Each function is checked on
+**Status (26 October 2026):** 14,108 of the game's 19,366 functions match byte for byte
+(73%), covering 2.00 MB of its 3.81 MB of game code (53%). Each function is checked on
 its own; linking a whole executable that matches comes later. `docs/PLAN.md` has the
 method and a record of every batch.
 

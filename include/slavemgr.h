@@ -44,11 +44,14 @@ class SlaveManagerClass : public AbstractClass
 		virtual void Compute_CRC(CRCEngine & crc) const override;
 		virtual void AI(void) override;
 
+		void SetOwner(TechnoClass * owner);
 		bool FUN_006B0880(TechnoClass * slave, CellClass * cell);
 		void LostSlave(InfantryClass * slave);
 		void Killed(TechnoClass * killer, HouseClass * owner = NULL);
 		void AllGuard(void);
 		bool ShouldWakeUpNow(void);
 		void FUN_006B0CC0(void);
+		void FUN_006B0D10(void);
+		void FUN_006B0DB0(void);
 		void Deploy2(void);
 };

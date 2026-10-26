@@ -38,6 +38,16 @@ struct ShortPair {
 	ShortPair() { A = 0; B = 0; }
 };
 
+struct IntQuad {
+	int A, B, C, D;
+	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
+};
+
+struct IntTripleHalf {
+	int A, B, C;
+	IntTripleHalf() { C = 0; A = 128; B = 128; }
+};
+
 struct IntTriple {
 	int A, B, C;
 	IntTriple() { A = 0; B = 0; C = 0; }
@@ -336,6 +346,163 @@ void Init_Deform_Grid_RMG(void)
 			deform_point.Height = point_height;
 		}
 	}
+}
+
+// FUNCTION: GAMEMD 0x006B2F30
+bool Commit_Deform_Grid(Cell center, bool forced)
+{
+	Cell top_left = center - Cell(MAX_TERRAIN_HEIGHT + 2, MAX_TERRAIN_HEIGHT + 2);
+	Cell bottom_right = center + Cell(MAX_TERRAIN_HEIGHT + 2, MAX_TERRAIN_HEIGHT + 2);
+
+	top_left.X = MAX(0, top_left.X);
+	top_left.Y = MAX(0, top_left.Y);
+
+	bottom_right.X = MIN(Map.MapRect.Width - Map.MapRect.X, bottom_right.X);
+	bottom_right.Y = MIN(Map.MapRect.Height - Map.MapRect.Y, bottom_right.Y);
+
+	Rect bound_rect(0, 0, 0, 0);
+
+	Cell least_cell(32767, 32767);
+	Cell most_cell(0, 0);
+
+	DynamicVectorClass<ObjectClass *> objects;
+
+	for (int y = top_left.Y; y <= bottom_right.Y; y++) {
+		for (int x = top_left.X; x <= bottom_right.X; x++) {
+
+			CellClass * cellptr = &Map[Cell(x + DeformPointXAdd, y + DeformPointYAdd)];
+
+			if (!Can_Deform_Cell(cellptr, forced)) continue;
+
+			DeformPointStruct & deform_point1 = DeformPoints[x + y * DeformPointWidth];
+			DeformPointStruct & deform_point2 = DeformPoints[x + 1 + y * DeformPointWidth];
+			DeformPointStruct & deform_point3 = DeformPoints[x + 1 + (y + 1) * DeformPointWidth];
+			DeformPointStruct & deform_point4 = DeformPoints[x + (y + 1) * DeformPointWidth];
+
+			if (deform_point1.Done || deform_point2.Done || deform_point3.Done || deform_point4.Done) {
+
+				int desired_corners[NUM_CORNERS];
+				desired_corners[0] = deform_point1.Height;
+				desired_corners[1] = deform_point2.Height;
+				desired_corners[2] = deform_point3.Height;
+				desired_corners[3] = deform_point4.Height;
+
+				int min_height = 1000;
+				int max_height = 0;
+
+				for (int i = 0; i < NUM_CORNERS; i++) {
+					if (desired_corners[i] < min_height) min_height = desired_corners[i];
+					if (desired_corners[i] > max_height) max_height = desired_corners[i];
+				}
+
+				if (max_height - min_height > RAMP_HALF_HEIGHT) continue;
+
+				objects.Clear();
+				ObjectClass * obj = cellptr->Cell_Occupier();
+				while (obj) {
+					objects.Add(obj);
+					obj = obj->Next;
+				}
+				int objindex;
+				for (objindex = 0; objindex < objects.Count(); objindex++) {
+					objects[objindex]->Mark(MARK_UP);
+				}
+
+				Rect cell_bound;
+
+				cell_bound = cellptr->Cell_Render_Rect();
+				int oldheight = cellptr->Height;
+				cellptr->Height = (char)(min_height / RAMP_HALF_HEIGHT);
+				Map.FUN_00588960(cellptr->Height);
+
+				if (oldheight != cellptr->Height) {
+					cellptr->Remove_Fogged_Objects();
+				}
+				cellptr->Recalc_Attributes();
+
+				if (cellptr->Smudge != SMUDGE_NONE) {
+					SmudgeTypeClass * smudge_type = SmudgeTypes[cellptr->Smudge];
+					Cell smudge_cell = cellptr->CellID;
+					smudge_cell -= Cell(cellptr->SmudgeData % smudge_type->Width, cellptr->SmudgeData / smudge_type->Width);
+					for (int iindex = 0; iindex < smudge_type->Height; iindex++) {
+						for (int jindex = 0; jindex < smudge_type->Width; jindex++) {
+							Map[smudge_cell + Cell(jindex, iindex)].Smudge = SMUDGE_NONE;
+						}
+					}
+				}
+
+				Cell cur_cell(cellptr->Fetch_CellID());
+				Map.Flag_Background_Update(cur_cell);
+
+				if (cur_cell.X < least_cell.X) least_cell.X = cur_cell.X;
+				if (cur_cell.X > most_cell.X) most_cell.X = cur_cell.X;
+				if (cur_cell.Y < least_cell.Y) least_cell.Y = cur_cell.Y;
+				if (cur_cell.Y > most_cell.Y) most_cell.Y = cur_cell.Y;
+
+				for (int j = 0; j < NUM_CORNERS; j++) {
+					desired_corners[j] -= min_height;
+				}
+
+				for (int ramp = 0; ramp < RAMP_COUNT - 2; ramp++) {
+					int * ramptype = _ramp_corners[ramp];
+					if (
+						ramptype[0] == desired_corners[0] &&
+						ramptype[1] == desired_corners[1] &&
+						ramptype[2] == desired_corners[2] &&
+						ramptype[3] == desired_corners[3]
+					) {
+						cellptr->Ramp = (char)ramp;
+						if (ramp == RAMP_NONE) {
+							cellptr->ITType = TILE_CLEAR;
+						} else {
+							cellptr->ITType = IsometricTileType(ramp - 1 + IsometricTileTypeClass::RampStart);
+						}
+						cellptr->Recalc_Attributes();
+						Cell id(cellptr->Fetch_CellID());
+						Map.Flag_Background_Update(id);
+
+						cell_bound = Union(cell_bound, cellptr->Cell_Render_Rect());
+						if (id.X < least_cell.X) least_cell.X = id.X;
+						if (id.X > most_cell.X) most_cell.X = id.X;
+						if (id.Y < least_cell.Y) least_cell.Y = id.Y;
+						if (id.Y > most_cell.Y) most_cell.Y = id.Y;
+						break;
+					}
+				}
+				bound_rect = Union(bound_rect, cell_bound);
+
+				for (objindex = 0; objindex < objects.Count(); objindex++) {
+					objects[objindex]->Mark(MARK_DOWN);
+					objects[objindex]->HeightAGL = 0;
+				}
+			}
+		}
+	}
+
+	delete[] DeformPoints;
+	DeformPoints = NULL;
+
+	bound_rect.Y -= TacticalRect.Y;
+
+	TacticalMap->Register_Dirty_Area(bound_rect);
+
+	for (int i = least_cell.Y - 1; i <= most_cell.Y + 1; i++) {
+		for (int j = least_cell.X - 1; j <= most_cell.X + 1; j++) {
+			Cell cell(j, i);
+			CellClass * cptr = &Map[cell];
+			Rect lat_rect = cptr->Cell_Render_Rect();
+
+			if (cptr->Fixup_LAT()) {
+				lat_rect = Union(lat_rect, cptr->Cell_Render_Rect());
+				lat_rect = lat_rect - TacticalRect.Top_Left();
+				if (lat_rect.Is_Valid()) {
+					TacticalMap->Register_Dirty_Area(lat_rect);
+				}
+			}
+		}
+	}
+
+	return(true);
 }
 
 // FUNCTION: GAMEMD 0x006B3850
@@ -730,3 +897,11 @@ ShortPair DAT_00B0B708;
 // SYNTHETIC: GAMEMD 0x006B49F0 SYMBOL
 // _$E190
 IntTriple DAT_00B0B728;
+
+// SYNTHETIC: GAMEMD 0x006B4A10 SYMBOL
+// _$E193
+IntTripleHalf DAT_00B0B750;
+
+// SYNTHETIC: GAMEMD 0x006B4A30 SYMBOL
+// _$E196
+IntQuad DAT_00B0B6F8;

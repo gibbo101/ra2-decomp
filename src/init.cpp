@@ -210,6 +210,9 @@ struct Game {
 	static int Seed;
 	static unsigned char RecordingFlag;
 	static void InitRandom(void);
+	static HWND hWnd;
+	static HINSTANCE hInstance;
+	static unsigned __int64 __fastcall AudioGetTime(void);
 };
 
 // FUNCTION: GAMEMD 0x0052CB50
@@ -272,6 +275,118 @@ void FUN_0052CB90(void)
 			delete ini;
 		}
 	}
+}
+
+BOOL CALLBACK Rules_Choice_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+
+// FUNCTION: GAMEMD 0x0052CD70
+bool FUN_0052CD70(void)
+{
+	DynamicVectorClass<CCINIClass *> Rules;
+
+	bool found = false;
+	WIN32_FIND_DATA fd;
+	HANDLE handle = FindFirstFile("RULEMD*.INI", &fd);
+
+	while (handle != INVALID_HANDLE_VALUE) {
+		if ((fd.dwFileAttributes & (FILE_ATTRIBUTE_DIRECTORY | FILE_ATTRIBUTE_HIDDEN | FILE_ATTRIBUTE_SYSTEM | FILE_ATTRIBUTE_TEMPORARY)) == 0) {
+			const char * name = &fd.cAlternateFileName[0];
+			if (*name == '\0') {
+				name = &fd.cFileName[0];
+			}
+
+			CCFileClass file(name);
+			CCINIClass * rule = new CCINIClass;
+			rule->ReadCCFile(file, false, false);
+
+			if (stricmp(name, "RULESMD.INI") == 0) {
+				found = true;
+				Rules.Add_Head(rule);
+			} else {
+				Rules.Add(rule);
+			}
+		}
+
+		if (FindNextFile(handle, &fd) == 0) {
+			break;
+		}
+	}
+
+	if (handle != INVALID_HANDLE_VALUE) {
+		FindClose(handle);
+	}
+
+	if (!found) {
+		CCFileClass file("RULESMD.INI");
+		CCINIClass * rule = new CCINIClass;
+		rule->ReadCCFile(file, false, false);
+		Rules.Add_Head(rule);
+	}
+
+	if (Rules.Count() <= 0) {
+		return false;
+	}
+
+	CCFileClass art_file("ARTMD.INI");
+	if (!ArtINI.ReadCCFile(art_file, false, false)) {
+		FUN_004068E0("Failed to load ARTMD.INI!\n");
+		return false;
+	}
+
+	if (Rules.Count() == 1) {
+		RuleINI = Rules[0];
+	} else {
+		int rules_choice = DialogBoxParam(Game::hInstance, MAKEINTRESOURCE(147), Game::hWnd, (DLGPROC)Rules_Choice_Dialog_Proc, (LPARAM)&Rules);
+		if (rules_choice == -1) {
+			rules_choice = 0;
+		}
+		RuleINI = Rules[rules_choice];
+	}
+
+	Rule->Color_Schemes(*RuleINI);
+	Rule->Read_ColorAdd(*RuleINI);
+	Rule->Do_Movies(ArtINI);
+	Rule->Audio_Visual_Rules(*RuleINI);
+	Rule->MPlayer(*RuleINI);
+
+	Session.Options.Credits = Rule->MPMoney;
+	Session.Options.UnitCount = Rule->MPUnitCount;
+	BuildLevel = Rule->MPBuildLevel;
+	Session.Options.GameSpeed = Rule->GameSpeed;
+	Session.Options.AIDifficulty = (DiffType)Rule->AIDifficultyStruct;
+	Session.Options.AIPlayers = Rule->AIPlayers;
+	Session.Options.BridgeDestruction = Rule->IsMPBridgeDestruction;
+	Session.Options.Bases = Rule->IsMPBasesOn;
+	Session.Options.Goodies = Rule->IsMPCrates;
+	Session.Options.CTF = Rule->IsMPCaptureTheFlag;
+	Session.Options.HarvTruce = Rule->HarvesterTruce;
+	Session.Options.CrapEngineers = Rule->MultiEngineer;
+	Session.Options.AlliesAllowed = Rule->AlliesAllowed;
+	Session.Options.ShortGame = Rule->ShortGame;
+	Session.Options.SWAllowed = Rule->SuperWeaponsAllowed;
+	Session.Options.BuildOffAlly = Rule->BuildOffAlly;
+	Session.Options.FogOfWar = Rule->FogOfWar;
+	Session.Options.MCVRedeploy = Rule->MCVRedeploys;
+
+	CCFileClass lang_file("LANGRULE.INI");
+	if (lang_file.Is_Available() == true) {
+		CCINIClass lang_ini;
+		if (lang_ini.ReadCCFile(lang_file, true, false) > 1) {
+			return false;
+		}
+		Rule->Addition(lang_ini);
+	}
+
+	for (int index = 0; index < Rules.Count(); index++) {
+		if (Rules[index] != RuleINI) {
+			delete Rules[index];
+		}
+	}
+
+	CCFileClass ai_file("AIMD.INI");
+	AIINI.ReadCCFile(ai_file, true, false);
+
+	return true;
 }
 
 // FUNCTION: GAMEMD 0x0052D430
@@ -517,6 +632,259 @@ BOOL CALLBACK FUN_0052D870(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 				*result = data;
 			}
 		}
+	}
+	return(0);
+}
+
+struct CampaignPick {
+	int Choice;
+	bool Done;
+};
+
+extern const char * DAT_00822774[];
+extern int DAT_00A8F7A8;
+extern HWND DAT_00A8F7B0;
+extern unsigned __int64 DAT_00A8F7A0;
+extern int DAT_00825C20;
+extern int DAT_00825C74;
+extern int DAT_00825C78;
+extern int DAT_00825C7C;
+extern const char * DAT_00825C68;
+extern const char * DAT_00825C6C;
+extern const char * DAT_00825C70;
+extern unsigned char DAT_00A8F7AD;
+extern AudioController DAT_00A8F300;
+extern unsigned char DAT_00ABCE08;
+
+static inline HWND Child_At(HWND window, LPARAM lparam)
+{
+	POINT pt = { LOWORD(lparam), HIWORD(lparam) };
+	RECT rect;
+	GetWindowRect(window, &rect);
+	pt.x -= rect.left;
+	pt.y -= rect.top;
+	return ChildWindowFromPointEx(window, pt, CWP_SKIPINVISIBLE);
+}
+
+// FUNCTION: GAMEMD 0x0052EC00
+BOOL CALLBACK FUN_0052EC00(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	int rc = UI::StandardWndProc(window, message, wparam, lparam);
+	if (rc) {
+		return rc;
+	}
+
+	switch (message) {
+		case WM_HSCROLL:
+			if ((HWND)lparam == GetDlgItem(window, 0x50F)) {
+				const char * label = DAT_00822774[HIWORD(wparam)];
+				HWND item = GetDlgItem(window, 0x670);
+				SendMessage(item, 0x4B2, 0, (LPARAM)StringTable::LoadString(label, NULL, "D:\\ra2mdpost\\Init.CPP", 0x4E5));
+				return(0);
+			}
+			break;
+
+		case WM_COMMAND:
+			switch (LOWORD(wparam)) {
+				case 0x686: {
+					CampaignPick * pick = (CampaignPick *)GetWindowLong(window, 8);
+					if (pick) {
+						pick->Choice = -1;
+						pick->Done = true;
+						return(0);
+					}
+					break;
+				}
+
+				case 0x40E:
+					if (HIWORD(wparam) == 0) {
+						CampaignPick * pick = (CampaignPick *)GetWindowLong(window, 8);
+						if (pick) {
+							HWND list = GetDlgItem(window, 0x455);
+							if (list) {
+								pick->Choice = SendMessage(list, LB_GETCURSEL, 0, 0);
+								pick->Done = true;
+							}
+						}
+						HWND item = GetDlgItem(window, 0x50F);
+						if (item) {
+							Options.Difficulty = SendMessage(item, 0x400, 0, 0);
+							return(0);
+						}
+					}
+					break;
+			}
+			break;
+
+		case WM_NCHITTEST:
+			if (DAT_00A8F7B0 == NULL) {
+				HWND child = Child_At(window, lparam);
+				if (child) {
+					int id = GetDlgCtrlID(child);
+					if (DAT_00A8F7A8 != id) {
+						SendDlgItemMessage(window, DAT_00A8F7A8, 0x4D5, 0, 0);
+						SendDlgItemMessage(window, DAT_00A8F7A8, 0x4D4, 0, 0);
+						DAT_00A8F7A0 = Game::AudioGetTime() + 500;
+						DAT_00825C20 = -1;
+						DAT_00A8F7A8 = 0;
+					}
+					if (id == 0x6EA) {
+						if (DAT_00A8F7A8 != id) {
+							DAT_00825C20 = DAT_00825C78;
+							SendDlgItemMessage(window, id, 0x4D3, 0, 0);
+							DAT_00A8F7A8 = id;
+						}
+					} else if (id == 0x6EC) {
+						if (DAT_00A8F7A8 != id) {
+							DAT_00825C20 = DAT_00825C74;
+							SendDlgItemMessage(window, id, 0x4D3, 0, 0);
+							DAT_00A8F7A8 = id;
+						}
+					} else if (id == 0x6EB) {
+						if (DAT_00A8F7A8 != id) {
+							DAT_00825C20 = DAT_00825C7C;
+						}
+						SendDlgItemMessage(window, 0x6EB, 0x4D3, 0, 0);
+						DAT_00A8F7A8 = 0x6EB;
+					}
+				} else if (DAT_00A8F7A8) {
+					SendDlgItemMessage(window, DAT_00A8F7A8, 0x4D5, 0, 0);
+					SendDlgItemMessage(window, DAT_00A8F7A8, 0x4D4, 0, 0);
+				}
+			}
+			break;
+
+		case WM_LBUTTONDOWN: {
+			HWND child = Child_At(window, lparam);
+			if (child) {
+				int id = GetDlgCtrlID(child);
+				if (id == 0x6EA || id == 0x6EC || id == 0x6EB) {
+					VocClass::PlayGlobal(Rule->GUIMainButtonSound, 1.0f, 0x2000);
+					DAT_00A8F7B0 = child;
+					SetCapture(window);
+				}
+			}
+			break;
+		}
+
+		case WM_LBUTTONUP: {
+			HWND child = Child_At(window, lparam);
+			if (child) {
+				int id = GetDlgCtrlID(child);
+				if (child == DAT_00A8F7B0) {
+					CampaignPick * pick = (CampaignPick *)GetWindowLong(window, 8);
+					if (pick) {
+						if (id == 0x6EA) {
+							pick->Choice = CampaignClass::From_Name(DAT_00825C68);
+							pick->Done = true;
+						} else if (id == 0x6EC) {
+							pick->Choice = CampaignClass::From_Name(DAT_00825C6C);
+							pick->Done = true;
+						} else if (id == 0x6EB) {
+							pick->Choice = CampaignClass::From_Name(DAT_00825C70);
+							pick->Done = true;
+						}
+						if (pick->Done) {
+							DAT_00ABCE08 = 0;
+							SendDlgItemMessage(window, DAT_00A8F7A8, 0x4D5, 0, 0);
+							SendDlgItemMessage(window, DAT_00A8F7A8, 0x4D4, 0, 0);
+							HWND item = GetDlgItem(window, 0x50F);
+							if (item) {
+								Options.Difficulty = SendMessage(item, 0x400, 0, 0);
+							}
+							if (DAT_00825C20 != -1) {
+								DAT_00A8F300.Stop();
+								VocClass::PlayGlobal(DAT_00825C20, 1.0f, 0x2000, &DAT_00A8F300);
+								DAT_00825C20 = -1;
+							}
+						}
+					}
+				} else if (id == 0x6EA || id == 0x6EC || id == 0x6EB) {
+					if (DAT_00A8F7A8) {
+						SendDlgItemMessage(window, DAT_00A8F7A8, 0x4D5, 0, 0);
+						SendDlgItemMessage(window, DAT_00A8F7A8, 0x4D4, 0, 0);
+					}
+					SendDlgItemMessage(window, id, 0x4D5, 0, 0);
+					SendDlgItemMessage(window, id, 0x4D3, 0, 0);
+					DAT_00A8F7A8 = id;
+				} else if (DAT_00A8F7A8) {
+					SendDlgItemMessage(window, DAT_00A8F7A8, 0x4D5, 0, 0);
+					SendDlgItemMessage(window, DAT_00A8F7A8, 0x4D4, 0, 0);
+					DAT_00A8F7A8 = 0;
+				}
+			} else if (DAT_00A8F7A8) {
+				SendDlgItemMessage(window, DAT_00A8F7A8, 0x4D5, 0, 0);
+				SendDlgItemMessage(window, DAT_00A8F7A8, 0x4D4, 0, 0);
+				DAT_00A8F7A8 = 0;
+			}
+			if (GetCapture() == window) {
+				ReleaseCapture();
+			}
+			DAT_00A8F7B0 = NULL;
+			break;
+		}
+
+		case 0x497: {
+			DAT_00825C74 = VocClass::FindIndex("SovietCampaignSelect");
+			DAT_00825C78 = VocClass::FindIndex("AlliedCampaignSelect");
+			DAT_00825C7C = VocClass::FindIndex("BootCampSelect");
+
+			HWND list = GetDlgItem(window, 0x455);
+			if (DAT_00A8F7AD) {
+				if (list) {
+					for (int index = 0; index < Campaigns.Count(); index++) {
+						SendMessage(list, 0x4CD, 0, (LPARAM)Campaigns[index]->Description);
+					}
+					SendMessage(list, LB_SETCURSEL, 0, 0);
+				}
+			} else {
+				ShowWindow(list, SW_HIDE);
+				HWND ok = GetDlgItem(window, 0x40E);
+				ShowWindow(ok, SW_HIDE);
+				EnableWindow(ok, FALSE);
+			}
+
+			HWND icon = GetDlgItem(window, 0x7A7);
+			if (icon) {
+				SendMessage(icon, 0x4B2, 0, (LPARAM)StringTable::LoadString("STT:AlliedCampaignIcon", NULL, "D:\\ra2mdpost\\Init.CPP", 0x4A6));
+			}
+			icon = GetDlgItem(window, 0x7A8);
+			if (icon) {
+				SendMessage(icon, 0x4B2, 0, (LPARAM)StringTable::LoadString("STT:SovietCampaignIcon", NULL, "D:\\ra2mdpost\\Init.CPP", 0x4AB));
+			}
+
+			HWND item = GetDlgItem(window, 0x50F);
+			if (item) {
+				PostMessage(item, 0x4AC, 0, 0);
+				PostMessage(item, 0x406, 1, 0x20000);
+				PostMessage(item, 0x405, 1, Options.Difficulty);
+			}
+
+			SendDlgItemMessage(window, 0x6EA, 0x4D5, 0, 0);
+			SendDlgItemMessage(window, 0x6EA, 0x4D4, 0, 0);
+			SendDlgItemMessage(window, 0x6EC, 0x4D5, 0, 0);
+			SendDlgItemMessage(window, 0x6EC, 0x4D4, 0, 0);
+			SendDlgItemMessage(window, 0x6EB, 0x4D5, 0, 0);
+			SendDlgItemMessage(window, 0x6EB, 0x4D4, 0, 0);
+
+			item = GetDlgItem(window, 0x6EA);
+			if (item) {
+				PostMessage(item, 0x4D7, 0, (LPARAM)window);
+			}
+			item = GetDlgItem(window, 0x6EC);
+			if (item) {
+				PostMessage(item, 0x4D7, 0, (LPARAM)window);
+				return(0);
+			}
+			break;
+		}
+
+		case 0x4D8:
+			if (wparam == 0) {
+				SendDlgItemMessage(window, DAT_00A8F7A8, 0x4D4, 0, 0);
+				return(0);
+			}
+			break;
 	}
 	return(0);
 }

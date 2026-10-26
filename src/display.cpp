@@ -76,7 +76,8 @@
 
 #include <cmath>
 
-namespace Unsorted { extern bool MoveFeedback; }
+namespace Unsorted { extern bool MoveFeedback; extern bool ArmageddonMode; }
+extern bool DAT_00A8ED5D;
 template<class T> inline T Bound2(T original, T minval, T maxval)
 {
 	T ret = original;
@@ -1329,6 +1330,172 @@ void DisplayClass::Shroud_Cell(Cell const & cell)
 			}
 		}
 	}
+}
+
+// FUNCTION: GAMEMD 0x004ACE70
+void DisplayClass::Read_INI(CCINIClass & ini)
+{
+	ini.Reset();
+
+	char const * const name = "Map";
+
+	Rect rect = ini.Get_Rect(name, "Size", Rect(1, 1, 50, 50));
+
+	Init_Cells();
+
+	Set_Map_Dimensions(rect, true, 0, true);
+
+	int cell_height = ini.Get_Int(name, "Level", 0);
+
+	char fill[32];
+	IsometricTileType ittype = IsometricTileTypeClass::ClearTile;
+	int variants = 0;
+	ini.Get_String(name, "Fill", "Clear", fill, sizeof(fill));
+	if (stricmp(fill, "Water") == 0) {
+		variants = 3;
+		ittype = IsometricTileTypeClass::WaterSet;
+	}
+
+	Reset_Iterator();
+	CellClass *cptr = Iterate();
+	while (cptr != NULL) {
+		cptr->ITType = (IsometricTileType)(ittype + Random_Pick(0, variants));
+		cptr->SubTile = 0;
+		cptr->Height += cell_height;
+		cptr = Iterate();
+	}
+
+	Scen->Theater = ini.Get_TheaterType(name, "Theater", THEATER_TEMPERATE);
+
+	Init(Scen->Theater);
+
+	Session.Update_Progress(63);
+	Call_Back();
+
+	int uniqueid = Scen->UniqueID;
+	TerrainTypeClass::Init(Scen->Theater);
+	if (Scen->Theater != LastTheater) {
+		IsometricTileTypeClass::Read_Control_File(Scen->Theater, true);
+	} else {
+		IsometricTileTypeClass::Clear_Use_Counts();
+	}
+	Scen->UniqueID = uniqueid + 10000;
+	OverlayTypeClass::Init(Scen->Theater);
+	BuildingTypeClass::Init(Scen->Theater);
+	AnimTypeClass::Init(Scen->Theater);
+	SmudgeTypeClass::Init(Scen->Theater);
+
+	Session.Update_Progress(65);
+	Call_Back();
+
+	Scen->Read_Waypoints(ini);
+
+	if (!Scen->Is_Valid_Waypoint(Scen->Home)) {
+		Scen->Set_Waypoint(Scen->Home, Cell((PlayRect.Width + PlayRect.Height) / 2, (PlayRect.Width + PlayRect.Height) / 2));
+	}
+
+	Cell homecell = Scen->Get_Waypoint_Cell(Scen->GlobalFlags[0].Value ? Scen->AltHome : Scen->Home);
+	Scen->Views[0] = Scen->Views[1] = Scen->Views[2] = Scen->Views[3] = homecell;
+	Coord homecoord = homecell;
+	TacticalMap->Set_Tactical_Position(homecoord);
+
+	char const * const celltags = "CellTags";
+	int len = ini.Entry_Count(celltags);
+	for (int index = 0; index < len; index++) {
+		char const * cellentry = ini.Get_Entry(celltags, index);
+		TagTypeClass * tp;
+		Cell cell;
+
+		char buffer[128];
+		if (ini.Get_String(celltags, cellentry, "", buffer, sizeof(buffer))) {
+			tp = TagTypeClass::Find_Or_Make(buffer);
+		} else {
+			tp = NULL;
+		}
+
+		int val = atoi(cellentry);
+
+		if (NewINIFormat >= 4) {
+			cell = Cell(val % 1000, val / 1000);
+		} else {
+			cell = Cell(val % 128, val / 128);
+		}
+
+		if (tp != NULL && !(*this)[cell].Tag) {
+			TagClass * tt = Find_Or_Make(tp);
+			if (tt) {
+				tt->Set_Position(cell);
+				(*this)[cell].Attach_Tag(tt);
+				TaggedCells.Add(cell);
+			}
+		}
+	}
+	Session.Update_Progress(67);
+	Call_Back();
+
+	BSurface staging_buffer(640, 400, 2);
+
+	int size = (staging_buffer.Width * staging_buffer.BBP) * staging_buffer.Height;
+
+	static char const * const ISOMAPPACK1 = "IsoMapPack";
+	len = ini.Get_UUBlock(ISOMAPPACK1, staging_buffer.Lock(), size);
+	if (len > 0) {
+		BufferStraw bstraw(staging_buffer.Lock(), len);
+		Map.Read_Binary_1(bstraw);
+		staging_buffer.Unlock();
+	}
+	staging_buffer.Unlock();
+
+	static char const * const ISOMAPPACK2 = "IsoMapPack2";
+	len = ini.Get_UUBlock(ISOMAPPACK2, staging_buffer.Lock(), size);
+	if (len > 0) {
+		BufferStraw bstraw(staging_buffer.Lock(), len);
+		Map.Read_Binary_2(bstraw);
+		staging_buffer.Unlock();
+	}
+	staging_buffer.Unlock();
+
+	static char const * const ISOMAPPACK3 = "IsoMapPack3";
+	len = ini.Get_UUBlock(ISOMAPPACK3, staging_buffer.Lock(), size);
+	if (len > 0) {
+		BufferStraw bstraw(staging_buffer.Lock(), len);
+		Map.Read_Binary_3(bstraw);
+		staging_buffer.Unlock();
+	}
+	staging_buffer.Unlock();
+
+	static char const * const ISOMAPPACK4 = "IsoMapPack4";
+	len = ini.Get_UUBlock(ISOMAPPACK4, staging_buffer.Lock(), size);
+	if (len > 0) {
+		BufferStraw bstraw(staging_buffer.Lock(), len);
+		Map.Read_Binary_4(bstraw);
+		staging_buffer.Unlock();
+	}
+	staging_buffer.Unlock();
+
+	static char const * const ISOMAPPACK5 = "IsoMapPack5";
+	len = ini.Get_UUBlock(ISOMAPPACK5, staging_buffer.Lock(), size);
+	if (len > 0) {
+		BufferStraw bstraw(staging_buffer.Lock(), len);
+		Map.Read_Binary_5(bstraw);
+		staging_buffer.Unlock();
+	}
+	staging_buffer.Unlock();
+
+	Session.Update_Progress(68);
+	Call_Back();
+
+	IsometricTileTypeClass::Load_Tiles(Unsorted::ArmageddonMode || DAT_00A8ED5D, Scen->IsRandom);
+
+	Session.Update_Progress(69);
+	Call_Back();
+
+	LocalRect = ini.Get_Rect(name, "LocalSize", PlayRect);
+
+	Map.Set_Local_Dimensions(LocalRect);
+	Map.FUN_00588990();
+
+	LastTheater = Scen->Theater;
 }
 
 // FUNCTION: GAMEMD 0x004AD7E0

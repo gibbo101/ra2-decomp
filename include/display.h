@@ -65,7 +65,7 @@ class DisplayClass: public MapClass
 		DisplayClass(void);
 		DisplayClass(NoInitClass const & x) : BASECLASS(x), WaypointColor(), Band(x) {};
 
-		virtual void Read_INI(CCINIClass const & ini);
+		virtual void Read_INI(CCINIClass & ini);
 		void Write_INI(CCINIClass & ini);
 
 		virtual void One_Time(void) override;

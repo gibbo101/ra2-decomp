@@ -14,8 +14,10 @@
 #include "globals.h"
 #include "goptions.h"
 #include "mixfile.h"
+#include "stringtable.h"
 
 int FUN_00407000(void);
+WideWstring __fastcall FUN_007B7ED0(Wstring const & text);
 
 // FUNCTION: GAMEMD 0x005CEDD0
 MapChoice::MapChoice(void)
@@ -29,6 +31,114 @@ MapChoice::MapChoice(void)
 MapChoice::~MapChoice(void)
 {
 	Deinit();
+}
+
+// FUNCTION: GAMEMD 0x005CEEF0
+bool MapChoice::Initialize(Wstring const & side_name)
+{
+	CCFileClass file;
+	INIClass ini;
+	Wstring section;
+	Wstring buffer;
+	int index;
+
+	Deinit();
+
+	file.Open("MAPSELMD.INI");
+
+	if (!ini.Load(file)) {
+		DebugString("Failed to load MAPSELMD.INI\n");
+		return(false);
+	}
+
+	for (index = 1; index <= 100; index++) {
+
+		if (!ini.Get_String(side_name, Wstring_FromInt(index), NULL, buffer)) {
+			break;
+		}
+
+		MapStage * stage = new MapStage(ini, buffer);
+		if (stage == NULL) {
+			DebugString("MapSelect: Failed to create stage %s\n", buffer.c_str());
+			return(false);
+		}
+
+		Stages.Add(stage);
+	}
+
+	if (Stages.Count() == 0) {
+		DebugString("MapSelect: There isn't any stages!\n");
+		return(false);
+	}
+
+	if (ini.Get_String(side_name, "Anims", NULL, section) > 0) {
+
+		if (ini.Get_String(section, "TextRect", NULL, buffer) > 0) {
+
+			Wstring token;
+			int pos = buffer.getToken(0, ",", token);
+			if (token.length() > 0) {
+				TextRect.X = token.toInt();
+			}
+
+			pos = buffer.getToken(pos, ",", token);
+			if (token.length() > 0) {
+				TextRect.Y = token.toInt();
+			}
+
+			pos = buffer.getToken(pos, ",", token);
+			if (token.length() > 0) {
+				TextRect.Width = token.toInt();
+			}
+
+			buffer.getToken(pos, ",", token);
+			if (token.length() > 0) {
+				TextRect.Height = token.toInt();
+			}
+		}
+
+		if (ini.Get_String(section, "Palette", NULL, buffer) > 0) {
+			AnimPaletteName = buffer;
+		}
+
+		for (index = 1; index <= 100; index++) {
+
+			if (!ini.Get_String(section, Wstring_FromInt(index), NULL, buffer)) {
+				break;
+			}
+
+			MSAnimEntry * anim = new MSAnimEntry(buffer);
+			if (anim == NULL) {
+				DebugString("Failed to create anim %s\n", buffer.c_str());
+				return(false);
+			}
+
+			AnimEntries.Add(anim);
+		}
+	}
+
+	if (FUN_00407000()) {
+		Wstring entry;
+
+		if (ini.Get_String(side_name, "Sounds", NULL, section) > 0) {
+			for (index = 0; index < ini.Entry_Count(section); index++) {
+				entry = ini.Get_Entry(section, index);
+
+				if (entry != (char const *)NULL && ini.Get_String(section, entry, NULL, buffer) > 0) {
+
+					MSSfxEntry * sfx = new MSSfxEntry(entry, buffer);
+
+					if (sfx->Get_Name() == (char const *)NULL) {
+						delete sfx;
+					} else {
+						Add_Sound(sfx);
+					}
+				}
+			}
+		}
+	}
+
+	return(true);
 }
 
 // FUNCTION: GAMEMD 0x005CF5F0
@@ -124,6 +234,113 @@ MSSfxEntry * MapChoice::Find_Sound(Wstring const & name)
 		}
 	}
 	return(NULL);
+}
+
+// FUNCTION: GAMEMD 0x005CF8E0
+MapStage::MapStage(INIClass const & ini, Wstring const & label) :
+	Targets(),
+	TextEntries(),
+	Selections()
+{
+	Wstring buffer;
+	int index;
+	WideWstring text;
+	Wstring key;
+	int pos;
+	int count;
+	Point2D point;
+
+	StageLabel = label;
+
+	ScenarioName = (char const *)NULL;
+	if (ini.Get_String(label, "Scenario", NULL, buffer) > 0) {
+		ScenarioName = buffer;
+	}
+
+	Description = (wchar_t const *)NULL;
+	if (ini.Get_String(label, "Description", NULL, buffer) > 0) {
+		Description = StringTable::LoadString(buffer.get(), NULL, "D:\\ra2mdpost\\MSChoice.cpp", 0x1e2);
+	}
+
+	VoiceOver = (char const *)NULL;
+	if (ini.Get_String(label, "VoiceOver", NULL, buffer) > 0) {
+		VoiceOver = buffer;
+	}
+
+	MapVQName = (char const *)NULL;
+	if (ini.Get_String(label, "MapVQ", NULL, buffer) > 0) {
+		MapVQName = buffer;
+	}
+
+	OverlayCount = 0;
+	for (index = 0; index < 2; index++) {
+		OverlayNames[index] = (char const *)NULL;
+	}
+
+	if (ini.Get_String(label, "Overlays", NULL, buffer) > 0) {
+		index = 0;
+		Wstring token;
+		pos = buffer.getToken(0, ",", token);
+		while (token.length() > 0 && index < 2) {
+			OverlayNames[index] = token;
+			pos = buffer.getToken(pos, ",", token);
+			index++;
+		}
+
+		OverlayCount = index;
+	}
+
+	ClickMapName = (char const *)NULL;
+	if (ini.Get_String(label, "ClickMap", NULL, buffer) > 0) {
+		ClickMapName = buffer;
+	}
+
+	for (index = 1; index < 8; index++) {
+		if (ini.Get_String(label, "Text" + Wstring_FromInt(index), NULL, buffer) > 0) {
+			text = FUN_007B7ED0(buffer);
+			MSTextEntry * entry = new MSTextEntry(text);
+			if (entry) {
+				TextEntries.Add(entry);
+			}
+		}
+	}
+
+	if (ini.Get_String(label, "Targets", NULL, buffer) > 0) {
+
+		count = 0;
+		Wstring token;
+		pos = buffer.getToken(0, ",", token);
+		if (token.length() > 0) {
+			count = token.toInt();
+		}
+
+		for (index = 0; index < count; index++) {
+			point.X = -1;
+			point.Y = -1;
+
+			pos = buffer.getToken(pos, ",", token);
+			if (token.length() > 0) {
+				point.X = token.toInt();
+			}
+
+			pos = buffer.getToken(pos, ",", token);
+			if (token.length() > 0) {
+				point.Y = token.toInt();
+			}
+
+			Targets.Add(point);
+		}
+	}
+
+	for (index = 0; index < 256; index++) {
+		if (ini.Get_String(label, Wstring_FromInt(index), NULL, buffer) > 0) {
+
+			MapSelection * selection = new MapSelection(buffer, index);
+			if (selection) {
+				Selections.Add(selection);
+			}
+		}
+	}
 }
 
 // FUNCTION: GAMEMD 0x005D0070
@@ -428,3 +645,9 @@ template class VectorClass<MSSfxEntry *>;
 // SYNTHETIC: GAMEMD 0x005D19E0
 // ??_G?$VectorClass@PAVMSSfxEntry@@@@UAEPAXI@Z
 template class VectorClass<MapStage *>;
+// SYNTHETIC: GAMEMD 0x005D1A30
+// ??_G?$DynamicVectorClass@PAVMSSfxEntry@@@@UAEPAXI@Z
+template class DynamicVectorClass<MSSfxEntry *>;
+
+// SYNTHETIC: GAMEMD 0x005D1A80 SYMBOL
+// _$E2

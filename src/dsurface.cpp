@@ -687,6 +687,516 @@ int DSurface::Get_Primary_Color_Mode(void)
 	return(PrimaryColorMode);
 }
 
+// FUNCTION: GAMEMD 0x004BBCA0
+bool DSurface::Draw_Depth_Glow_Line(Rect const & cliprect, Point2D const & startpoint, Point2D const & endpoint, int glow_strength, int start_depth, int end_depth, bool write_depth)
+{
+	Point2D start;
+	Point2D end;
+
+	Rect rect = Intersect(cliprect, Get_Rect());
+	if (rect.Width != 0 || rect.Height != 0) {
+
+	start = Bias_To(startpoint, rect);
+	end = Bias_To(endpoint, rect);
+	int z2 = end_depth;
+	int z1 = start_depth;
+
+	if (start.X > end.X) {
+		swap(start, end);
+		z1 = end_depth;
+		z2 = start_depth;
+	}
+
+	int px = start.X;
+	int py = start.Y;
+	Point2D origend = end;
+
+	if (Clip_Line_To_Rect(start, end, rect)) {
+
+	int zend = z2;
+	int zstart = z1;
+
+	if (end.X != origend.X || end.Y != origend.Y) {
+		unsigned int amount = abs((int)((double)Distance(Point2D(px, py), end) / (double)Distance(Point2D(px, py), origend) * (double)(z1 - z2)));
+		if (z1 < z2) {
+			zend = z1 + amount;
+		} else {
+			zend = z1 - amount;
+		}
+	}
+
+	if (start.X != px || start.Y != py) {
+		Point2D clipped_point(start.X - origend.X, start.Y - origend.Y);
+		int clipped = clipped_point.Length();
+		Point2D full_point(px - origend.X, py - origend.Y);
+		unsigned int amount = abs((int)((double)clipped / (double)full_point.Length() * (double)(z1 - z2)));
+		if (z2 > z1) {
+			zstart = z2 - amount;
+		} else {
+			zstart = z2 + amount;
+		}
+	}
+
+	Bytes_Per_Pixel();
+	void * buffer = Lock(start);
+
+	if (DepthBuffer != NULL) {
+
+	Point2D point = start;
+	point.Y -= DepthBuffer->Get_Bounds().Y;
+	unsigned short * zbuffer = (unsigned short *)DepthBuffer->Get_Buffer_Offset(point);
+
+	int start_y = start.Y;
+	int zwrap = -1;
+	ZBuffer * depth_buffer = DepthBuffer;
+	unsigned short z = (unsigned short)(zstart + (short)(depth_buffer->Get_Bounds().Y + depth_buffer->Get_Scroll()) - start_y - rect.Y);
+	int zwidth = depth_buffer->Get_Buffer_Width();
+
+	if (buffer != NULL) {
+
+	int dx = end.X - start.X;
+	int xcount = dx;
+	int dy = end.Y - start.Y;
+	int dz = zend - zstart;
+
+	int pitch = Stride();
+	if (dy < 0) {
+		pitch = -pitch;
+		zwidth = -zwidth;
+		zwrap = 1;
+	}
+
+	int zstep = 1;
+	int abs_dy = abs(dy);
+	if (dz < 0) {
+		zstep = -1;
+	}
+
+	int dy2 = 2 * abs_dy;
+	int abs_dz = abs(dz);
+	int dx2 = 2 * dx;
+	int dz2 = 2 * abs_dz;
+
+	if (abs_dz > dx && abs_dz > abs_dy) {
+
+		int xdelta = dy2 - abs_dz;
+		int ydelta = dx2 - abs_dz;
+		if (abs_dz > 0) {
+			int offset = 0;
+			for (int i = abs_dz; i != 0; i--) {
+
+				if ((unsigned short)z < *zbuffer) {
+					RGBClass rgb = Deconstruct_Hicolor_Pixel(*(unsigned short *)((char *)buffer + offset));
+					int red = rgb.Get_Red();
+					int green = rgb.Get_Green();
+					red += (glow_strength * red) >> 8;
+					green += (glow_strength * green) >> 8;
+					int blue = rgb.Get_Blue();
+					blue += (glow_strength * blue) >> 8;
+					*(unsigned short *)((char *)buffer + offset) = (unsigned short)Build_Hicolor_Pixel((red > 255) ? 255 : red, (green > 255) ? 255 : green, (blue > 255) ? 255 : blue);
+					if (write_depth) {
+						*zbuffer = (unsigned short)z;
+					}
+				}
+
+				if (xdelta > 0) {
+					buffer = (unsigned char *)buffer + pitch;
+					xdelta -= dz2;
+					zbuffer += zwidth;
+					if (zwidth > 0) {
+						zbuffer = Blit_Wrap_Z_Buffer(zbuffer);
+					} else {
+						zbuffer = (unsigned short *)DepthBuffer->Wrap_Underflow((unsigned int)zbuffer);
+					}
+					z += zwrap;
+				}
+
+				if (ydelta > 0) {
+					zbuffer++;
+					offset += 2;
+					zbuffer = Blit_Wrap_Z_Buffer(zbuffer);
+					ydelta -= dz2;
+				}
+
+				z += zstep;
+				ydelta += dx2;
+				xdelta += dy2;
+			}
+		}
+
+	} else if (dx > abs_dy) {
+
+		int offset = 0;
+		int ydelta = dy2 - dx;
+		int zdelta = dz2 - dx;
+		if (dx > 0) {
+			do {
+
+				if ((unsigned short)z < *zbuffer) {
+					RGBClass rgb = Deconstruct_Hicolor_Pixel(*((unsigned short *)buffer + offset));
+					int red = rgb.Get_Red();
+					int green = rgb.Get_Green();
+					red += (glow_strength * red) >> 8;
+					green += (glow_strength * green) >> 8;
+					int blue = rgb.Get_Blue();
+					blue += (glow_strength * blue) >> 8;
+					*((unsigned short *)buffer + offset) = (unsigned short)Build_Hicolor_Pixel((red > 255) ? 255 : red, (green > 255) ? 255 : green, (blue > 255) ? 255 : blue);
+					if (write_depth) {
+						*zbuffer = (unsigned short)z;
+					}
+				}
+
+				if (ydelta > 0) {
+					buffer = (unsigned char *)buffer + pitch;
+					ydelta -= dx2;
+					zbuffer += zwidth;
+					if (zwidth > 0) {
+						zbuffer = Blit_Wrap_Z_Buffer(zbuffer);
+					} else {
+						zbuffer = (unsigned short *)DepthBuffer->Wrap_Underflow((unsigned int)zbuffer);
+					}
+					z += zwrap;
+				}
+
+				if (zdelta > 0) {
+					z += zstep;
+					zdelta -= dx2;
+				}
+
+				zbuffer++;
+				ydelta += dy2;
+				zdelta += dz2;
+				zbuffer = Blit_Wrap_Z_Buffer(zbuffer);
+
+			} while (++offset < xcount);
+		}
+	} else {
+
+		int xdelta = dx2 - abs_dy;
+		int zdelta = dz2 - abs_dy;
+		if (abs_dy > 0) {
+			int offset = 0;
+			for (int i = abs_dy; i != 0; i--) {
+
+				if ((unsigned short)z < *zbuffer) {
+					RGBClass rgb = Deconstruct_Hicolor_Pixel(*(unsigned short *)((char *)buffer + offset));
+					int red = rgb.Get_Red();
+					int green = rgb.Get_Green();
+					red += (glow_strength * red) >> 8;
+					green += (glow_strength * green) >> 8;
+					int blue = rgb.Get_Blue();
+					blue += (glow_strength * blue) >> 8;
+					*(unsigned short *)((char *)buffer + offset) = (unsigned short)Build_Hicolor_Pixel((red > 255) ? 255 : red, (green > 255) ? 255 : green, (blue > 255) ? 255 : blue);
+					if (write_depth) {
+						*zbuffer = (unsigned short)z;
+					}
+				}
+
+				if (xdelta > 0) {
+					zbuffer++;
+					offset += 2;
+					zbuffer = Blit_Wrap_Z_Buffer(zbuffer);
+					xdelta -= dy2;
+				}
+
+				if (zdelta > 0) {
+					z += zstep;
+					zdelta -= dy2;
+				}
+
+				xdelta += dx2;
+				zdelta += dz2;
+				buffer = (unsigned char *)buffer + pitch;
+				zbuffer += zwidth;
+				if (zwidth > 0) {
+					zbuffer = Blit_Wrap_Z_Buffer(zbuffer);
+				} else {
+					zbuffer = (unsigned short *)DepthBuffer->Wrap_Underflow((unsigned int)zbuffer);
+				}
+				z += zwrap;
+			}
+		}
+
+	}
+
+	Unlock();
+	return(true);
+
+	}
+	}
+	}
+	}
+
+	return(false);
+}
+
+int __fastcall Brighten_Hicolor_Pixel(RGBClass const * rgb, int red_add, int green_add, int blue_add);
+
+// FUNCTION: GAMEMD 0x004BDF00
+bool DSurface::DrawRGBMultiplyingLine(Rect const & cliprect, Point2D const & startpoint, Point2D const & endpoint, RGBClass const & color, float intensity, int start_depth, int end_depth)
+{
+	int r = (int)(color.Get_Red() * intensity);
+	int g = (int)(color.Get_Green() * intensity);
+	int b = (int)(color.Get_Blue() * intensity);
+
+	Point2D start;
+	Point2D end;
+
+	if (r >= 8 || g >= 8 || b >= 8) {
+
+	Rect clipped_rect = Intersect(cliprect, Get_Rect());
+	if (clipped_rect.Width != 0 || clipped_rect.Height != 0) {
+
+	start = Bias_To(startpoint, clipped_rect);
+	end = Bias_To(endpoint, clipped_rect);
+
+	int z2 = end_depth;
+	int z1 = start_depth;
+	if (start.X > end.X) {
+		swap(start, end);
+		z1 = end_depth;
+		z2 = start_depth;
+	}
+
+	Point2D unclipped = end;
+	int px = start.X;
+	int py = start.Y;
+
+	if (Clip_Line_To_Rect(start, end, clipped_rect)) {
+
+	int zend = z2;
+	int zstart = z1;
+
+	if (end.X != unclipped.X || end.Y != unclipped.Y) {
+		Point2D clipped_point;
+		clipped_point.X = px - end.X;
+		double clipped_dx = (double)clipped_point.X;
+		clipped_point.Y = py - end.Y;
+		int clipped = (int)(int)fastmath::sqrt((double)clipped_point.Y * (double)clipped_point.Y + clipped_dx * clipped_dx);
+		Point2D full_point;
+		full_point.X = px - unclipped.X;
+		double full_dx = (double)full_point.X;
+		full_point.Y = py - unclipped.Y;
+		int amount = abs((int)(int)((double)clipped
+			/ (double)(int)(int)fastmath::sqrt((double)full_point.Y * (double)full_point.Y + full_dx * full_dx)
+			* (double)(z1 - z2)));
+		if (z1 < z2) {
+			zend = z1 + amount;
+		} else {
+			zend = z1 - amount;
+		}
+	}
+
+	if (start.X != px || start.Y != py) {
+		Point2D clipped_point;
+		clipped_point.X = start.X - unclipped.X;
+		double clipped_dx = (double)clipped_point.X;
+		clipped_point.Y = start.Y - unclipped.Y;
+		int clipped = (int)(int)fastmath::sqrt((double)clipped_point.Y * (double)clipped_point.Y + clipped_dx * clipped_dx);
+		Point2D full_point;
+		full_point.X = px - unclipped.X;
+		double full_dx = (double)full_point.X;
+		full_point.Y = py - unclipped.Y;
+		int amount = abs((int)(int)((double)clipped
+			/ (double)(int)(int)fastmath::sqrt((double)full_point.Y * (double)full_point.Y + full_dx * full_dx)
+			* (double)(z1 - z2)));
+		if (z2 > z1) {
+			zstart = z2 - amount;
+		} else {
+			zstart = z2 + amount;
+		}
+	}
+
+	Bytes_Per_Pixel();
+	void * buffer = Lock(start);
+
+	if (DepthBuffer != NULL) {
+
+	Point2D point = start;
+	point.Y -= DepthBuffer->Get_Bounds().Y;
+	unsigned short * zbuffer = (unsigned short *)DepthBuffer->Get_Buffer_Offset(point);
+	point = start;
+	point.Y -= AlphaBuffer->Get_Bounds().Y;
+	unsigned short * abuffer = (unsigned short *)AlphaBuffer->Get_Buffer_Offset(point);
+
+	int start_y = start.Y;
+	int zwrap = -1;
+	ZBuffer * depth_buffer = DepthBuffer;
+	unsigned short z = (unsigned short)(zstart + (short)(depth_buffer->Get_Bounds().Y + depth_buffer->Get_Scroll()) - start_y - clipped_rect.Y);
+	int zwidth = depth_buffer->Get_Buffer_Width();
+
+	if (buffer != NULL) {
+
+	int dx = end.X - start.X;
+	int dy = end.Y - start.Y;
+	int dz = zend - zstart;
+
+	int pitch = Stride();
+	if (dy < 0) {
+		pitch = -pitch;
+		zwidth = -zwidth;
+		zwrap = 1;
+	}
+
+	int zstep = 1;
+	int abs_dy = abs(dy);
+	if (dz < 0) {
+		zstep = -1;
+	}
+
+	RGBClass rgb;
+	int abs_dz = abs(dz);
+	int dx2 = 2 * dx;
+	int dy2 = 2 * abs_dy;
+	int dz2 = 2 * abs_dz;
+
+	if (abs_dz > dx && abs_dz > abs_dy) {
+
+		int xdelta = dy2 - abs_dz;
+		int ydelta = dx2 - abs_dz;
+		if (abs_dz > 0) {
+			int offset = 0;
+			for (int i = abs_dz; i != 0; i--) {
+
+				int alpha = *abuffer;
+				if (z < *zbuffer) {
+					rgb = Deconstruct_Hicolor_Pixel(*(unsigned short *)((char *)buffer + offset));
+					*(unsigned short *)((char *)buffer + offset) = (unsigned short)Brighten_Hicolor_Pixel(&rgb, (alpha * r) >> 7, (alpha * g) >> 7, (alpha * b) >> 7);
+				}
+
+				if (xdelta > 0) {
+					buffer = (unsigned char *)buffer + pitch;
+					xdelta -= dz2;
+					zbuffer += zwidth;
+					if (zwidth > 0) {
+						zbuffer = (unsigned short *)DepthBuffer->Wrap_Overflow((unsigned int)zbuffer);
+					} else {
+						zbuffer = (unsigned short *)DepthBuffer->Wrap_Underflow((unsigned int)zbuffer);
+					}
+					abuffer += zwidth;
+					if (zwidth > 0) {
+						abuffer = (unsigned short *)AlphaBuffer->Wrap_Overflow((unsigned int)abuffer);
+					} else {
+						abuffer = (unsigned short *)AlphaBuffer->Wrap_Underflow((unsigned int)abuffer);
+					}
+					z += zwrap;
+				}
+
+				if (ydelta > 0) {
+					zbuffer++;
+					offset += 2;
+					zbuffer = (unsigned short *)DepthBuffer->Wrap_Overflow((unsigned int)zbuffer);
+					ydelta -= dz2;
+				}
+
+				z += zstep;
+				ydelta += dx2;
+				xdelta += dy2;
+			}
+		}
+	} else if (dx > abs_dy) {
+
+		int ydelta = dy2 - dx;
+		int zdelta = dz2 - dx;
+		int i = 0;
+		if (dx > 0) {
+			for (; i < dx; i++) {
+
+				int alpha = *abuffer;
+				if (z < *zbuffer) {
+					rgb = Deconstruct_Hicolor_Pixel(*((unsigned short *)buffer + i));
+					*((unsigned short *)buffer + i) = (unsigned short)Brighten_Hicolor_Pixel(&rgb, (alpha * r) >> 7, (alpha * g) >> 7, (alpha * b) >> 7);
+				}
+
+				if (ydelta > 0) {
+					buffer = (unsigned char *)buffer + pitch;
+					ydelta -= 2 * dx;
+					zbuffer += zwidth;
+					if (zwidth > 0) {
+						zbuffer = (unsigned short *)DepthBuffer->Wrap_Overflow((unsigned int)zbuffer);
+					} else {
+						zbuffer = (unsigned short *)DepthBuffer->Wrap_Underflow((unsigned int)zbuffer);
+					}
+					abuffer += zwidth;
+					if (zwidth > 0) {
+						abuffer = (unsigned short *)AlphaBuffer->Wrap_Overflow((unsigned int)abuffer);
+					} else {
+						abuffer = (unsigned short *)AlphaBuffer->Wrap_Underflow((unsigned int)abuffer);
+					}
+					z += zwrap;
+				}
+
+				if (zdelta > 0) {
+					z += zstep;
+					zdelta -= 2 * dx;
+				}
+
+				zbuffer++;
+				ydelta += dy2;
+				zdelta += dz2;
+				zbuffer = (unsigned short *)DepthBuffer->Wrap_Overflow((unsigned int)zbuffer);
+			}
+		}
+	} else {
+
+		int xdelta = dx2 - abs_dy;
+		int zdelta = 2 * abs_dz - abs_dy;
+		if (abs_dy > 0) {
+			int offset = 0;
+			for (int i = abs_dy; i != 0; i--) {
+
+				int alpha = *abuffer;
+				if (z < *zbuffer) {
+					rgb = Deconstruct_Hicolor_Pixel(*(unsigned short *)((char *)buffer + offset));
+					*(unsigned short *)((char *)buffer + offset) = (unsigned short)Brighten_Hicolor_Pixel(&rgb, (alpha * r) >> 7, (alpha * g) >> 7, (alpha * b) >> 7);
+				}
+
+				if (xdelta > 0) {
+					zbuffer++;
+					offset += 2;
+					zbuffer = (unsigned short *)DepthBuffer->Wrap_Overflow((unsigned int)zbuffer);
+					xdelta -= dy2;
+				}
+
+				if (zdelta > 0) {
+					z += zstep;
+					zdelta -= dy2;
+				}
+
+				xdelta += dx2;
+				zdelta += dz2;
+				buffer = (unsigned char *)buffer + pitch;
+
+				zbuffer += zwidth;
+				if (zwidth > 0) {
+					zbuffer = (unsigned short *)DepthBuffer->Wrap_Overflow((unsigned int)zbuffer);
+				} else {
+					zbuffer = (unsigned short *)DepthBuffer->Wrap_Underflow((unsigned int)zbuffer);
+				}
+				abuffer += zwidth;
+				if (zwidth > 0) {
+					abuffer = (unsigned short *)AlphaBuffer->Wrap_Overflow((unsigned int)abuffer);
+				} else {
+					abuffer = (unsigned short *)AlphaBuffer->Wrap_Underflow((unsigned int)abuffer);
+				}
+				z += zwrap;
+
+			}
+		}
+	}
+
+	Unlock();
+	return(true);
+
+	}
+	}
+	}
+	}
+	}
+
+	return(false);
+}
+
 // FUNCTION: GAMEMD 0x004BE9D0
 int __fastcall Brighten_Hicolor_Pixel(RGBClass const * rgb, int red_add, int green_add, int blue_add)
 {
@@ -868,6 +1378,838 @@ bool DSurface::Draw_Ping_Pong_Gradient_Line(Rect const & cliprect, Point2D const
 			return(true);
 		}
 	}
+	return(false);
+}
+
+// FUNCTION: GAMEMD 0x004BFD30
+bool DSurface::Draw_Depth_Shaded_Line(Rect const & cliprect, Point2D const & startpoint, Point2D const & endpoint, unsigned color, int start_depth, int end_depth, bool write_depth)
+{
+	Rect clipped_rect = Intersect(cliprect, Get_Rect());
+	if (clipped_rect.Width == 0 && clipped_rect.Height == 0) {
+		return(false);
+	}
+
+	Point2D start = Bias_To(startpoint, clipped_rect);
+	Point2D end = Bias_To(endpoint, clipped_rect);
+
+	int zfirst = start_depth;
+	int zlast = end_depth;
+	if (start.X > end.X) {
+		swap(start, end);
+		zfirst = end_depth;
+		zlast = start_depth;
+	}
+
+	Point2D unclipped = end;
+	int px = start.X;
+	int py = start.Y;
+
+	if (!Clip_Line_To_Rect(start, end, clipped_rect)) {
+		return(false);
+	}
+
+	int zend = zlast;
+	int zstart = zfirst;
+
+	if (end.X != unclipped.X || end.Y != unclipped.Y) {
+		Point2D clipped_point;
+		clipped_point.X = px - end.X;
+		double clipped_dx = (double)clipped_point.X;
+		clipped_point.Y = py - end.Y;
+		int clipped = (int)(int)fastmath::sqrt((double)clipped_point.Y * (double)clipped_point.Y + clipped_dx * clipped_dx);
+		Point2D full_point;
+		full_point.X = px - unclipped.X;
+		double full_dx = (double)full_point.X;
+		full_point.Y = py - unclipped.Y;
+		int amount = abs((int)(int)((double)clipped
+			/ (double)(int)(int)fastmath::sqrt((double)full_point.Y * (double)full_point.Y + full_dx * full_dx)
+			* (double)(zfirst - zlast)));
+		if (zfirst < zlast) {
+			zend = zfirst + amount;
+		} else {
+			zend = zfirst - amount;
+		}
+	}
+
+	if (start.X != px || start.Y != py) {
+		Point2D clipped_point;
+		clipped_point.X = start.X - unclipped.X;
+		double clipped_dx = (double)clipped_point.X;
+		clipped_point.Y = start.Y - unclipped.Y;
+		int clipped = (int)(int)fastmath::sqrt((double)clipped_point.Y * (double)clipped_point.Y + clipped_dx * clipped_dx);
+		Point2D full_point;
+		full_point.X = px - unclipped.X;
+		double full_dx = (double)full_point.X;
+		full_point.Y = py - unclipped.Y;
+		int amount = abs((int)(int)((double)clipped
+			/ (double)(int)(int)fastmath::sqrt((double)full_point.Y * (double)full_point.Y + full_dx * full_dx)
+			* (double)(zfirst - zlast)));
+		if (zlast > zfirst) {
+			zstart = zlast - amount;
+		} else {
+			zstart = zlast + amount;
+		}
+	}
+
+	Bytes_Per_Pixel();
+	void * buffer = Lock(start);
+
+	if (DepthBuffer == NULL) {
+		return(false);
+	}
+
+	Point2D point = start;
+	point.Y -= DepthBuffer->Get_Bounds().Y;
+	unsigned short * zbuffer = (unsigned short *)DepthBuffer->Get_Buffer_Offset(point);
+	point = start;
+	point.Y -= AlphaBuffer->Get_Bounds().Y;
+	unsigned short * abuffer = (unsigned short *)AlphaBuffer->Get_Buffer_Offset(point);
+
+	int start_y = start.Y;
+	int zwrap = -1;
+	unsigned short z = (unsigned short)(zstart + (short)DepthBuffer->Get_Scroll_Delta(start_y + clipped_rect.Y - DepthBuffer->Get_Bounds().Y));
+	int zwidth = DepthBuffer->Get_Buffer_Width();
+
+	int red;
+	int green;
+	int blue;
+
+	if (buffer != NULL) {
+		/// Decompose the source color into its gun components so each plotted pixel
+		/// can be darkened by the alpha-buffer brightness value.
+		RGBClass rgb(
+			(unsigned char)(((unsigned short)color >> RedRight) << RedLeft),
+			(unsigned char)(((unsigned short)color >> GreenRight) << GreenLeft),
+			(unsigned char)(((unsigned short)color >> BlueRight) << BlueLeft));
+		red = rgb.Get_Red();
+		green = rgb.Get_Green();
+		blue = rgb.Get_Blue();
+	} else {
+		return(false);
+	}
+
+	int dy = end.Y - start.Y;
+	int dx = end.X - start.X;
+	int dz = zend - zstart;
+
+	int pitch = Stride();
+	if (dy < 0) {
+		pitch = -pitch;
+		zwidth = -zwidth;
+		zwrap = 1;
+	}
+
+	int zstep = 1;
+	int abs_dy = abs(dy);
+	if (dz < 0) {
+		zstep = -1;
+	}
+
+	int abs_dz = abs(dz);
+	int dx2 = 2 * dx;
+	int dy2 = 2 * abs_dy;
+	int dz2 = 2 * abs_dz;
+
+	if (abs_dz > dx && abs_dz > abs_dy) {
+
+		int xdelta = dy2 - abs_dz;
+		int ydelta = dx2 - abs_dz;
+		if (abs_dz > 0) {
+			int offset = 0;
+			for (int i = abs_dz; i != 0; i--) {
+
+				int v = *abuffer;
+				if (z < *zbuffer && v != 0) {
+					if (v != 127) {
+						*(unsigned short *)((char *)buffer + offset) = (unsigned short)((((red * v) >> 7 >> RedLeft) << RedRight) | (((green * v) >> 7 >> GreenLeft) << GreenRight) | (((blue * v) >> 7 >> BlueLeft) << BlueRight));
+					} else {
+						*(unsigned short *)((char *)buffer + offset) = (unsigned short)color;
+					}
+					if (write_depth) {
+						*zbuffer = z;
+					}
+				}
+
+				if (xdelta > 0) {
+					buffer = (unsigned char *)buffer + pitch;
+					xdelta -= dz2;
+					zbuffer += zwidth;
+					if (zwidth > 0) {
+						zbuffer = (unsigned short *)DepthBuffer->Wrap_Overflow((unsigned int)zbuffer);
+					} else {
+						zbuffer = (unsigned short *)DepthBuffer->Wrap_Underflow((unsigned int)zbuffer);
+					}
+					abuffer += zwidth;
+					if (zwidth > 0) {
+						abuffer = (unsigned short *)AlphaBuffer->Wrap_Overflow((unsigned int)abuffer);
+					} else {
+						abuffer = (unsigned short *)AlphaBuffer->Wrap_Underflow((unsigned int)abuffer);
+					}
+					z += zwrap;
+				}
+
+				if (ydelta > 0) {
+					zbuffer++;
+					offset += 2;
+					zbuffer = (unsigned short *)DepthBuffer->Wrap_Overflow((unsigned int)zbuffer);
+					abuffer++;
+					abuffer = (unsigned short *)AlphaBuffer->Wrap_Overflow((unsigned int)abuffer);
+					ydelta -= dz2;
+				}
+
+				z += zstep;
+				ydelta += dx2;
+				xdelta += dy2;
+			}
+		}
+	} else if (dx > abs_dy) {
+
+		int ydelta = dy2 - dx;
+		int i = 0;
+		int zdelta = dz2 - dx;
+		if (dx > 0) {
+			for (; i < dx; i++) {
+
+				int v = *abuffer;
+				if (z < *zbuffer && v != 0) {
+					if (v != 127) {
+						*(unsigned short *)((char *)buffer + 2 * i) = (unsigned short)((((red * v) >> 7 >> RedLeft) << RedRight) | (((green * v) >> 7 >> GreenLeft) << GreenRight) | (((blue * v) >> 7 >> BlueLeft) << BlueRight));
+					} else {
+						*(unsigned short *)((char *)buffer + 2 * i) = (unsigned short)color;
+					}
+					if (write_depth) {
+						*zbuffer = z;
+					}
+				}
+
+				if (ydelta > 0) {
+					buffer = (unsigned char *)buffer + pitch;
+					ydelta -= 2 * dx;
+					zbuffer += zwidth;
+					if (zwidth > 0) {
+						zbuffer = (unsigned short *)DepthBuffer->Wrap_Overflow((unsigned int)zbuffer);
+					} else {
+						zbuffer = (unsigned short *)DepthBuffer->Wrap_Underflow((unsigned int)zbuffer);
+					}
+					z += zwrap;
+					abuffer += zwidth;
+					if (zwidth > 0) {
+						abuffer = (unsigned short *)AlphaBuffer->Wrap_Overflow((unsigned int)abuffer);
+					} else {
+						abuffer = (unsigned short *)AlphaBuffer->Wrap_Underflow((unsigned int)abuffer);
+					}
+				}
+
+				if (zdelta > 0) {
+					z += zstep;
+					zdelta -= 2 * dx;
+				}
+
+				zbuffer++;
+				ydelta += dy2;
+				zdelta += dz2;
+				zbuffer = (unsigned short *)DepthBuffer->Wrap_Overflow((unsigned int)zbuffer);
+				abuffer++;
+				abuffer = (unsigned short *)AlphaBuffer->Wrap_Overflow((unsigned int)abuffer);
+			}
+		}
+	} else {
+
+		int xdelta = dx2 - abs_dy;
+		int zdelta = 2 * abs_dz - abs_dy;
+		if (abs_dy > 0) {
+			int i = abs_dy;
+			int offset = 0;
+			do {
+
+				int v = *abuffer;
+				if (z < *zbuffer && v != 0) {
+					if (v != 127) {
+						*(unsigned short *)((char *)buffer + offset) = (unsigned short)((((red * v) >> 7 >> RedLeft) << RedRight) | (((green * v) >> 7 >> GreenLeft) << GreenRight) | (((blue * v) >> 7 >> BlueLeft) << BlueRight));
+					} else {
+						*(unsigned short *)((char *)buffer + offset) = (unsigned short)color;
+					}
+					if (write_depth) {
+						*zbuffer = z;
+					}
+				}
+
+				if (xdelta > 0) {
+					zbuffer++;
+					offset += 2;
+					zbuffer = (unsigned short *)DepthBuffer->Wrap_Overflow((unsigned int)zbuffer);
+					abuffer++;
+					abuffer = (unsigned short *)AlphaBuffer->Wrap_Overflow((unsigned int)abuffer);
+					xdelta -= dy2;
+				}
+
+				if (zdelta > 0) {
+					z += zstep;
+					zdelta -= dy2;
+				}
+
+				xdelta += dx2;
+				zdelta += dz2;
+				buffer = (unsigned char *)buffer + pitch;
+
+				zbuffer += zwidth;
+				if (zwidth > 0) {
+					zbuffer = (unsigned short *)DepthBuffer->Wrap_Overflow((unsigned int)zbuffer);
+				} else {
+					zbuffer = (unsigned short *)DepthBuffer->Wrap_Underflow((unsigned int)zbuffer);
+				}
+				z += zwrap;
+				abuffer += zwidth;
+				if (zwidth > 0) {
+					abuffer = (unsigned short *)AlphaBuffer->Wrap_Overflow((unsigned int)abuffer);
+				} else {
+					abuffer = (unsigned short *)AlphaBuffer->Wrap_Underflow((unsigned int)abuffer);
+				}
+
+				i--;
+			} while (i != 0);
+		}
+	}
+
+	Unlock();
+	return(true);
+}
+
+// FUNCTION: GAMEMD 0x004C0750
+int DSurface::Draw_Masked_Dashed_Line(Point2D const & startpoint, Point2D const & endpoint, unsigned color, bool pattern[], int offset, bool draw_on_zero_alpha)
+{
+	Point2D start = startpoint;
+	Point2D end = endpoint;
+	int pattern_step = 1;
+
+	if (Bytes_Per_Pixel() != 2) return(0);
+
+	if (start.X > end.X) {
+		swap(start, end);
+		int dx = abs(start.X - end.X);
+		int dy = abs(start.Y - end.Y) + 1;
+		if (dx < dy) {
+			dx = dy;
+		}
+		offset = (offset + dx) % 16;
+		pattern_step = -1;
+	}
+
+	Point2D point = start;
+	point.Y -= AlphaBuffer->Get_Bounds().Y;
+	unsigned short * abuffer = (unsigned short *)AlphaBuffer->Get_Buffer_Offset(point);
+	int astride = AlphaBuffer->Get_Buffer_Width();
+	if (start.Y > end.Y) astride = -astride;
+
+	void * buffer = (unsigned short *)Lock(start);
+	if (buffer != NULL) {
+		if (draw_on_zero_alpha) {
+
+			if (start.Y == end.Y) {
+
+				for (int i = 0; i <= end.X - start.X; i++, offset += pattern_step) {
+					if (offset < 0) {
+						offset += 16;
+					}
+					if (offset >= 16) {
+						offset -= 16;
+					}
+
+					if (pattern[offset] && *abuffer == 0) {
+						*((unsigned short *)buffer + i) = color;
+					}
+
+					if (astride > 0) {
+						abuffer++;
+						abuffer = (unsigned short *)AlphaBuffer->Wrap_Overflow((unsigned int)abuffer);
+					} else {
+						abuffer++;
+						abuffer = (unsigned short *)AlphaBuffer->Wrap_Underflow((unsigned int)abuffer);
+					}
+				}
+			} else if (start.X == end.X) {
+				int pitch = start.Y > end.Y ? -Stride() : Stride();
+
+				int dy = abs(end.Y - start.Y);
+				for (int i = 0; i <= dy; i++, offset += pattern_step) {
+					if (offset < 0) {
+						offset += 16;
+					}
+					if (offset >= 16) {
+						offset -= 16;
+					}
+
+					if (pattern[offset] && *abuffer == 0) {
+						*(unsigned short *)buffer = color;
+					}
+
+					buffer = (unsigned char *)buffer + pitch;
+
+					if (astride > 0) {
+						abuffer += astride;
+						abuffer = (unsigned short *)AlphaBuffer->Wrap_Overflow((unsigned int)abuffer);
+					} else {
+						abuffer += astride;
+						abuffer = (unsigned short *)AlphaBuffer->Wrap_Underflow((unsigned int)abuffer);
+					}
+				}
+			} else {
+				int dx = end.X - start.X;
+				int dy = end.Y - start.Y;
+				int pitch = Stride();
+				if (dy < 0) {
+					pitch = -pitch;
+				}
+
+				dy = abs(dy);
+				int dx2 = 2 * dx;
+				int dy2 = 2 * dy;
+
+				if (dx > dy) {
+
+					int delta = dy2 - dx;
+
+					for (int i = 0; i < dx; i++, offset += pattern_step) {
+						if (offset < 0) {
+							offset += 16;
+						}
+						if (offset >= 16) {
+							offset -= 16;
+						}
+
+						if (pattern[offset] && *abuffer == 0) {
+							*((unsigned short *)buffer + i) = color;
+						}
+
+						if (delta > 0) {
+							buffer = (unsigned char *)buffer + pitch;
+							abuffer += astride;
+							abuffer = (unsigned short *)AlphaBuffer->Wrap_Overflow((unsigned int)abuffer);
+							delta -= dx2;
+						}
+
+						delta += dy2;
+
+						if (astride > 0) {
+							abuffer++;
+							abuffer = (unsigned short *)AlphaBuffer->Wrap_Overflow((unsigned int)abuffer);
+						} else {
+							abuffer++;
+							abuffer = (unsigned short *)AlphaBuffer->Wrap_Underflow((unsigned int)abuffer);
+						}
+					}
+				} else {
+					int delta = dx2 - dy;
+					int k = 0;
+
+					for (int i = 0; i < dy; i++, offset += pattern_step) {
+						if (offset < 0) {
+							offset += 16;
+						}
+						if (offset >= 16) {
+							offset -= 16;
+						}
+
+						if (pattern[offset] && *abuffer == 0) {
+							*((unsigned short *)buffer + k) = color;
+						}
+
+						if (delta > 0) {
+							k++;
+							abuffer++;
+							abuffer = (unsigned short *)AlphaBuffer->Wrap_Overflow((unsigned int)abuffer);
+							delta -= dy2;
+						}
+
+						delta += dx2;
+						buffer = (unsigned char *)buffer + pitch;
+
+						if (astride > 0) {
+							abuffer += astride;
+							abuffer = (unsigned short *)AlphaBuffer->Wrap_Overflow((unsigned int)abuffer);
+						} else {
+							abuffer += astride;
+							abuffer = (unsigned short *)AlphaBuffer->Wrap_Underflow((unsigned int)abuffer);
+						}
+					}
+				}
+			}
+		} else {
+
+			if (start.Y == end.Y) {
+
+				for (int i = 0; i <= end.X - start.X; i++, offset += pattern_step) {
+					if (offset < 0) {
+						offset += 16;
+					}
+					if (offset >= 16) {
+						offset -= 16;
+					}
+
+					if (pattern[offset] && *abuffer != 0) {
+						*((unsigned short *)buffer + i) = color;
+					}
+
+					if (astride > 0) {
+						abuffer++;
+						abuffer = (unsigned short *)AlphaBuffer->Wrap_Overflow((unsigned int)abuffer);
+					} else {
+						abuffer++;
+						abuffer = (unsigned short *)AlphaBuffer->Wrap_Underflow((unsigned int)abuffer);
+					}
+				}
+			} else if (start.X == end.X) {
+				int pitch = start.Y > end.Y ? -Stride() : Stride();
+
+				int dy = abs(end.Y - start.Y);
+				for (int i = 0; i <= dy; i++, offset += pattern_step) {
+					if (offset < 0) {
+						offset += 16;
+					}
+					if (offset >= 16) {
+						offset -= 16;
+					}
+
+					if (pattern[offset] && *abuffer != 0) {
+						*(unsigned short *)buffer = color;
+					}
+
+					buffer = (unsigned char *)buffer + pitch;
+
+					if (astride > 0) {
+						abuffer += astride;
+						abuffer = (unsigned short *)AlphaBuffer->Wrap_Overflow((unsigned int)abuffer);
+					} else {
+						abuffer += astride;
+						abuffer = (unsigned short *)AlphaBuffer->Wrap_Underflow((unsigned int)abuffer);
+					}
+				}
+			} else {
+				int dx = end.X - start.X;
+				int dy = end.Y - start.Y;
+				int pitch = Stride();
+				if (dy < 0) {
+					pitch = -pitch;
+				}
+
+				dy = abs(dy);
+				int dx2 = 2 * dx;
+				int dy2 = 2 * dy;
+
+				if (dx > dy) {
+
+					int delta = dy2 - dx;
+
+					for (int i = 0; i < dx; i++, offset += pattern_step) {
+						if (offset < 0) {
+							offset += 16;
+						}
+						if (offset >= 16) {
+							offset -= 16;
+						}
+
+						if (pattern[offset] && *abuffer != 0) {
+							*((unsigned short *)buffer + i) = color;
+						}
+
+						if (delta > 0) {
+							buffer = (unsigned char *)buffer + pitch;
+							abuffer += astride;
+							abuffer = (unsigned short *)AlphaBuffer->Wrap_Overflow((unsigned int)abuffer);
+							delta -= dx2;
+						}
+
+						delta += dy2;
+
+						if (astride > 0) {
+							abuffer++;
+							abuffer = (unsigned short *)AlphaBuffer->Wrap_Overflow((unsigned int)abuffer);
+						} else {
+							abuffer++;
+							abuffer = (unsigned short *)AlphaBuffer->Wrap_Underflow((unsigned int)abuffer);
+						}
+					}
+				} else {
+					int delta = dx2 - dy;
+					int k = 0;
+
+					for (int i = 0; i < dy; i++, offset += pattern_step) {
+						if (offset < 0) {
+							offset += 16;
+						}
+						if (offset >= 16) {
+							offset -= 16;
+						}
+
+						if (pattern[offset] && *abuffer != 0) {
+							*((unsigned short *)buffer + k) = color;
+						}
+
+						if (delta > 0) {
+							k++;
+							abuffer++;
+							abuffer = (unsigned short *)AlphaBuffer->Wrap_Overflow((unsigned int)abuffer);
+							delta -= dy2;
+						}
+
+						delta += dx2;
+						buffer = (unsigned char *)buffer + pitch;
+
+						if (astride > 0) {
+							abuffer += astride;
+							abuffer = (unsigned short *)AlphaBuffer->Wrap_Overflow((unsigned int)abuffer);
+						} else {
+							abuffer += astride;
+							abuffer = (unsigned short *)AlphaBuffer->Wrap_Underflow((unsigned int)abuffer);
+						}
+					}
+				}
+			}
+		}
+
+		Unlock();
+		return(offset);
+	}
+
+	return(offset);
+}
+
+// FUNCTION: GAMEMD 0x004C0E30
+bool DSurface::Draw_Masked_Line(Point2D const & startpoint, Point2D const & endpoint, unsigned color, bool draw_on_zero_alpha)
+{
+	if (Bytes_Per_Pixel() == 2) {
+		Rect cliprect = Get_Rect();
+
+		Point2D start = Bias_To(startpoint, cliprect);
+		Point2D end = Bias_To(endpoint, cliprect);
+
+		if (!Clip_Line_To_Rect(start, end, cliprect)) return(false);
+
+		if (start.X > end.X) {
+			swap(start, end);
+		}
+
+		Point2D point = start;
+		point.Y -= AlphaBuffer->Get_Bounds().Y;
+		unsigned short * abuffer = (unsigned short *)AlphaBuffer->Get_Buffer_Offset(point);
+		int astride = AlphaBuffer->Get_Buffer_Width();
+		if (start.Y > end.Y) astride = -astride;
+
+		void * buffer = (unsigned short *)Lock(start);
+		if (buffer != NULL) {
+			if (draw_on_zero_alpha) {
+
+				if (start.Y == end.Y) {
+
+					for (int i = 0; i <= end.X - start.X; i++) {
+						if (*abuffer == 0) {
+							*((unsigned short *)buffer + i) = color;
+						}
+
+						if (astride > 0) {
+							abuffer++;
+							abuffer = (unsigned short *)AlphaBuffer->Wrap_Overflow((unsigned int)abuffer);
+						} else {
+							abuffer++;
+							abuffer = (unsigned short *)AlphaBuffer->Wrap_Underflow((unsigned int)abuffer);
+						}
+					}
+				} else if (start.X == end.X) {
+					int pitch = start.Y > end.Y ? -Stride() : Stride();
+
+					int dy = abs(end.Y - start.Y);
+					for (int i = 0; i <= dy; i++) {
+						if (*abuffer == 0) {
+							*(unsigned short *)buffer = color;
+						}
+
+						if (astride > 0) {
+							abuffer += astride;
+							abuffer = (unsigned short *)AlphaBuffer->Wrap_Overflow((unsigned int)abuffer);
+						} else {
+							abuffer += astride;
+							abuffer = (unsigned short *)AlphaBuffer->Wrap_Underflow((unsigned int)abuffer);
+						}
+
+						buffer = (unsigned char *)buffer + pitch;
+					}
+				} else {
+					int dx = end.X - start.X;
+					int dy = end.Y - start.Y;
+					int pitch = Stride();
+					if (dy < 0) {
+						pitch = -pitch;
+					}
+
+					dy = abs(dy);
+					int dx2 = 2 * dx;
+					int dy2 = 2 * dy;
+
+					if (dx > dy) {
+
+						int delta = dy2 - dx;
+
+						for (int i = 0; i < dx; i++) {
+							if (*abuffer == 0) {
+								*((unsigned short *)buffer + i) = color;
+							}
+
+							if (delta > 0) {
+								buffer = (unsigned char *)buffer + pitch;
+								abuffer += astride;
+								abuffer = (unsigned short *)AlphaBuffer->Wrap_Overflow((unsigned int)abuffer);
+								delta -= dx2;
+							}
+
+							if (astride > 0) {
+								abuffer++;
+								abuffer = (unsigned short *)AlphaBuffer->Wrap_Overflow((unsigned int)abuffer);
+							} else {
+								abuffer++;
+								abuffer = (unsigned short *)AlphaBuffer->Wrap_Underflow((unsigned int)abuffer);
+							}
+
+							delta += dy2;
+						}
+					} else {
+						int delta = dx2 - dy;
+						int k = 0;
+
+						for (int i = 0; i < dy; i++) {
+							if (*abuffer == 0) {
+								*((unsigned short *)buffer + k) = color;
+							}
+
+							if (delta > 0) {
+								k++;
+								delta -= dy2;
+								abuffer++;
+								abuffer = (unsigned short *)AlphaBuffer->Wrap_Overflow((unsigned int)abuffer);
+							}
+
+							delta += dx2;
+							buffer = (unsigned char *)buffer + pitch;
+
+							if (astride > 0) {
+								abuffer += astride;
+								abuffer = (unsigned short *)AlphaBuffer->Wrap_Overflow((unsigned int)abuffer);
+							} else {
+								abuffer += astride;
+								abuffer = (unsigned short *)AlphaBuffer->Wrap_Underflow((unsigned int)abuffer);
+							}
+						}
+					}
+				}
+			} else {
+
+				if (start.Y == end.Y) {
+
+					for (int i = 0; i <= end.X - start.X; i++) {
+						if (*abuffer != 0) {
+							*((unsigned short *)buffer + i) = color;
+						}
+
+						if (astride > 0) {
+							abuffer++;
+							abuffer = (unsigned short *)AlphaBuffer->Wrap_Overflow((unsigned int)abuffer);
+						} else {
+							abuffer++;
+							abuffer = (unsigned short *)AlphaBuffer->Wrap_Underflow((unsigned int)abuffer);
+						}
+					}
+				} else if (start.X == end.X) {
+					int pitch = start.Y > end.Y ? -Stride() : Stride();
+
+					int dy = abs(end.Y - start.Y);
+					for (int i = 0; i <= dy; i++) {
+						if (*abuffer != 0) {
+							*(unsigned short *)buffer = color;
+						}
+
+						if (astride > 0) {
+							abuffer += astride;
+							abuffer = (unsigned short *)AlphaBuffer->Wrap_Overflow((unsigned int)abuffer);
+						} else {
+							abuffer += astride;
+							abuffer = (unsigned short *)AlphaBuffer->Wrap_Underflow((unsigned int)abuffer);
+						}
+
+						buffer = (unsigned char *)buffer + pitch;
+					}
+				} else {
+					int dx = end.X - start.X;
+					int dy = end.Y - start.Y;
+					int pitch = Stride();
+					if (dy < 0) {
+						pitch = -pitch;
+					}
+
+					dy = abs(dy);
+					int dx2 = 2 * dx;
+					int dy2 = 2 * dy;
+
+					if (dx > dy) {
+
+						int delta = dy2 - dx;
+
+						for (int i = 0; i < dx; i++) {
+							if (*abuffer != 0) {
+								*((unsigned short *)buffer + i) = color;
+							}
+
+							if (delta > 0) {
+								buffer = (unsigned char *)buffer + pitch;
+								abuffer += astride;
+								abuffer = (unsigned short *)AlphaBuffer->Wrap_Overflow((unsigned int)abuffer);
+								delta -= dx2;
+							}
+
+							if (astride > 0) {
+								abuffer++;
+								abuffer = (unsigned short *)AlphaBuffer->Wrap_Overflow((unsigned int)abuffer);
+							} else {
+								abuffer++;
+								abuffer = (unsigned short *)AlphaBuffer->Wrap_Underflow((unsigned int)abuffer);
+							}
+
+							delta += dy2;
+						}
+					} else {
+						int delta = dx2 - dy;
+						int k = 0;
+
+						for (int i = 0; i < dy; i++) {
+							if (*abuffer != 0) {
+								*((unsigned short *)buffer + k) = color;
+							}
+
+							if (delta > 0) {
+								k++;
+								delta -= dy2;
+								abuffer++;
+								abuffer = (unsigned short *)AlphaBuffer->Wrap_Overflow((unsigned int)abuffer);
+							}
+
+							delta += dx2;
+							buffer = (unsigned char *)buffer + pitch;
+
+							if (astride > 0) {
+								abuffer += astride;
+								abuffer = (unsigned short *)AlphaBuffer->Wrap_Overflow((unsigned int)abuffer);
+							} else {
+								abuffer += astride;
+								abuffer = (unsigned short *)AlphaBuffer->Wrap_Underflow((unsigned int)abuffer);
+							}
+						}
+					}
+				}
+			}
+
+			Unlock();
+			return(true);
+		}
+	}
+
 	return(false);
 }
 

@@ -45,6 +45,8 @@ char * __fastcall FUN_007350C0(wchar_t const * text);
 void __cdecl FUN_004068E0(char const * format, ...);
 void __fastcall FUN_00684240(void);
 void __fastcall FUN_00407150(void * p, int value);
+extern int DAT_00B73E44[0x800];
+extern int DAT_00B76338[0x40];
 extern void * DAT_0087E758;
 extern int DAT_0083ED20;
 extern int DAT_00B07784;
@@ -185,6 +187,150 @@ SessionOptionsClass::SessionOptionsClass(void)
 		SlotData[i][1] = 0;
 		SlotData[i][2] = 0;
 	}
+}
+
+// FUNCTION: GAMEMD 0x006970A0
+SessionClass::SessionClass(void) :
+	MPGameMode(0)
+{
+	Type = GAME_NORMAL;
+	CommProtocol = DEFAULT_COMM_PROTOCOL;
+
+	Options.ScenarioIndex = 0;
+	Options.Bases = true;
+	Options.Credits = 0;
+	Options.BridgeDestruction = false;
+	Options.Goodies = false;
+	Options.Ghosts = false;
+	Options.UnitCount = 0;
+	Options.ShortGame = false;
+	Options.SWAllowed = false;
+	Options.BuildOffAlly = false;
+	Options.GameSpeed = 0;
+	Options.CrapEngineers = false;
+	Options.AlliesAllowed = false;
+	Options.HarvTruce = false;
+	Options.CTF = false;
+	Options.FogOfWar = false;
+	Options.MCVRedeploy = false;
+	Options.AIDifficulty = DIFF_NORMAL;
+
+	UniqueID = 0;
+	Handle[0] = 0;
+	House = 0;
+	idxSide2 = -1;
+	PrefColor = 2;
+	ColorIdx = -1;
+	Side = House;
+	Side2 = idxSide2;
+	Color = PrefColor;
+	Color2 = ColorIdx;
+
+	WOLTaunts = true;
+	LANTaunts = true;
+	WOLScrollText = true;
+	LANScrollText = true;
+
+	for (int p = 0; p < 8; p++) {
+		PlayerPorts[p] = 0;
+	}
+	unknown_3078 = false;
+	unknown_306C = false;
+	unknown_306E = 0;
+	unknown_3070 = 0;
+	PortBase = 1250;
+	ForcePortBase = 0;
+	unknown_3018 = true;
+	unknown_2F48 = false;
+	unknown_301C = 0;
+	memset(DAT_00B73E44, 0, sizeof(DAT_00B73E44));
+	memset(DAT_00B76338, 0, sizeof(DAT_00B76338));
+
+	MultiplayerObserver = 0;
+	Unknown_304 = 0;
+	LastNicknameSlot = -1;
+	WOLLimitResolution = false;
+	ViaPacketRouter = false;
+	MasterPlayerID = -1;
+	memset(MasterPlayerName, 0, sizeof(MasterPlayerName));
+	unknown_308C = 0;
+	unknown_3090 = true;
+	unknown_3094 = -1;
+	unknown_3098 = false;
+	unknown_309C = 20;
+	unknown_30A0 = 0;
+	unknown_30A4 = 0;
+	unknown_30A8 = -1;
+	*(unsigned short *)unknown_2984 = 0;
+
+	SquadAlliances = false;
+	SawGameCompletion = false;
+	OutOfSync = false;
+	MaxPlayers = 8;
+	NumPlayers = 0;
+	FrameSendRate = DEFAULT_FRAME_SEND_RATE;
+	MaxAhead = FrameSendRate * 3;
+	MaxMaxAhead = MaxAhead;
+	memset(ConnectionStats, 0, sizeof(ConnectionStats));
+	PrecalcMaxAhead = 0;
+	PrecalcDesiredFrameRate = 0;
+	EnableMultiplayerDebug = false;
+	DrawMPDebugStats = false;
+	LoadGame = 0;
+	EmergencySave = 0;
+	LastMessage[0] = 0;
+	WWChat = 0;
+
+	RecordFile.Set_Name("RECORD.BIN");
+	Record = 0;
+	Play = 0;
+	Attract = 0;
+
+	IsBridge = 0;
+	NetStealth = false;
+	NetProtect = true;
+	NetOpen = false;
+	GameName[0] = 0;
+	GProductID = 0;
+	Suspended = 0;
+	LatencyFudge = 1;
+	MetaSize = MAX_IPX_PACKET_SIZE;
+
+	memset(KickVoteCount, 0, sizeof(KickVoteCount));
+	memset(KickVoteWho, -1, sizeof(KickVoteWho));
+
+	ModemService = true;
+	CurPhoneIdx = 0;
+	SerialDefaults.Port = 0x2f8;
+	SerialDefaults.IRQ = 3;
+	SerialDefaults.Baud = 9600;
+	SerialDefaults.DialMethod = DIAL_TOUCH_TONE;
+	SerialDefaults.InitStringIndex = -1;
+	SerialDefaults.CallWaitStringIndex = 0;
+	strcpy(SerialDefaults.CallWaitString, DAT_00889F64);
+	ModemType = MODEM_NULL_HOST;
+
+	TrapFrame = 0x7fffffff;
+	TrapObjType = RTTI_NONE;
+	TrapObject.Ptr.All = NULL;
+	TrapCoord = COORD_NONE;
+	TrapTarget.Invalidate();
+	TrapCell = NULL;
+	TrapCheckHeap = 0;
+	TrapPrintCRC = 0;
+
+	unknown_2878 = false;
+	Options.AIPlayers = 0;
+	for (int i = 0; i < 8; i++) {
+		Options.AISlots.Countries[i] = -1;
+		Options.AISlots.Colors[i] = -1;
+	}
+	unknown_0C = 0;
+	unknown_10 = 0;
+	ScenarioFileName[0] = 0;
+	ScenarioFileLength = 0;
+	ScenarioIsOfficial = false;
+	unknown_8D4 = 0;
 }
 
 // FUNCTION: GAMEMD 0x006977C0
@@ -615,7 +761,7 @@ unsigned int SessionClass::Compute_Unique_ID(void)
 }
 
 // FUNCTION: GAMEMD 0x0069A3B0
-MultiMission::MultiMission(CCINIClass const & ini, char const * name)
+MultiMission::MultiMission(INIClass const & ini, char const * name)
 {
 	char buffer[128];
 	char *token;

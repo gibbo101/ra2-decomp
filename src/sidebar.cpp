@@ -1866,3 +1866,17 @@ void SidebarClass::StripClass::FUN_006AC740(int id, int frames)
 // TEMPLATE: GAMEMD 0x006AC8D0
 // ??0?$DynamicVectorClass@VPoint2D@@@@QAE@IPBVPoint2D@@@Z
 template class DynamicVectorClass<Point2D>;
+
+extern int DAT_00B0B528;
+extern int DAT_00B0B52C;
+extern int DAT_00B0B530;
+extern int DAT_00B0B534;
+
+// FUNCTION: GAMEMD 0x006AC950
+void FUN_006AC950(void)
+{
+	DAT_00B0B528 = 0;
+	DAT_00B0B52C = 0;
+	DAT_00B0B530 = 0;
+	DAT_00B0B534 = 0;
+}

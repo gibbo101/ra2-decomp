@@ -30,6 +30,7 @@
 #include "msgloop.h"
 #include "rgb.h"
 #include "rules.h"
+#include "scenario.h"
 #include "session.h"
 #include "srfcache.h"
 #include "swap.h"
@@ -49,6 +50,10 @@ int _mouse_counter;
 
 char const * __fastcall GetTooltipStringLabel(int type, int id);
 extern wchar_t const DAT_00887734[];
+
+bool Is_Owner_Draw_Message(unsigned int msg);
+bool __fastcall FUN_0069BBE0(SessionClass *session);
+bool __fastcall FUN_00602AE0(unsigned int msg);
 
 void ODInitMasks(void);
 
@@ -243,6 +248,68 @@ bool Focus_Next_Tab_Item(HWND window, bool previous)
 	return false;
 }
 
+inline bool Is_Quick_Control_B(int id)
+{
+	return id == 0x411 ||
+		id == 0x412 ||
+		id == 0x419 ||
+		id == 0x41a ||
+		id == 0x6a3 ||
+		id == 0x6a4 ||
+		id == 0x6a5 ||
+		id == 0x6a7 ||
+		id == 0x6a6 ||
+		id == 0x6a8 ||
+		id == 0x73a ||
+		id == 0x739 ||
+		id == 0x73b ||
+		id == 0x738;
+}
+
+inline bool Is_Quick_Control_D(int id)
+{
+	return id == 0x419 ||
+		id == 0x41a ||
+		id == 0x41b ||
+		id == 0x41c ||
+		id == 0x41d ||
+		id == 0x41e ||
+		id == 0x41f ||
+		id == 0x420 ||
+		id == 0x6a3 ||
+		id == 0x6a4 ||
+		id == 0x6a9 ||
+		id == 0x6ac ||
+		id == 0x6af ||
+		id == 0x6b2 ||
+		id == 0x6b5 ||
+		id == 0x6b8 ||
+		id == 0x6a5 ||
+		id == 0x6a7 ||
+		id == 0x6aa ||
+		id == 0x6ad ||
+		id == 0x6b0 ||
+		id == 0x6b3 ||
+		id == 0x6b6 ||
+		id == 0x6b9 ||
+		id == 0x6a6 ||
+		id == 0x6a8 ||
+		id == 0x6ab ||
+		id == 0x6ae ||
+		id == 0x6b1 ||
+		id == 0x6b4 ||
+		id == 0x6b7 ||
+		id == 0x6ba ||
+		id == 0x70a ||
+		id == 0x70b ||
+		id == 0x70c ||
+		id == 0x70d ||
+		id == 0x70e ||
+		id == 0x70f ||
+		id == 0x710 ||
+		id == 0x711;
+}
+
 // FUNCTION: GAMEMD 0x00601360
 bool Is_Owner_Draw_Message(unsigned int msg)
 {
@@ -309,6 +376,315 @@ bool Is_Owner_Draw_Message(unsigned int msg)
 	return false;
 }
 
+// FUNCTION: GAMEMD 0x006015E0
+int FUN_006015E0(HWND dialog, HWND control)
+{
+	OwnerDraw::WinData *data = NULL;
+	int type;
+
+	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
+		type = *(int *)((char *)data + 0x6c);
+	} else {
+		type = 0;
+	}
+	int id = GetDlgCtrlID(control);
+	if ((type == 0x10c ||
+			type == 0x94 ||
+			type == 0xa3 ||
+			type == 0x73 ||
+			type == 0xd8 ||
+			type == 0xbbb ||
+			type == 0xf5 ||
+			type == 0x105 ||
+			type == 0xe2 ||
+			type == 0xd5 ||
+			type == 0x2b5 ||
+			type == 0xb7 ||
+			type == 0x2b4 ||
+			type == 0xbc7 ||
+			type == 0x101 ||
+			type == 0x129 ||
+			type == 0xbc6 ||
+			type == 0xd7 ||
+			type == 0x108 ||
+			type == 0xbc ||
+			type == 0xbd ||
+			type == 0xbb ||
+			type == 0xb5 ||
+			type == 0xbba ||
+			type == 0xff ||
+			type == 0x6b ||
+			type == 0x100 ||
+			type == 0x102 ||
+			type == 0xb8 ||
+			type == 0xd6 ||
+			type == 0x103 ||
+			type == 0x125 ||
+			type == 0xe7 ||
+			type == 0x116 ||
+			type == 0xc2 ||
+			type == 0xc9 ||
+			type == 0x11d ||
+			type == 0x11c ||
+			type == 0x114 ||
+			type == 0x2bc ||
+			type == 0x113 ||
+			type == 0x109 ||
+			type == 0x10f ||
+			type == 0x117 ||
+			type == 0xe6 ||
+			type == 0xf3 ||
+			type == 0xf4 ||
+			type == 0x10e ||
+			type == 0x112) && id == 0x694) {
+		return 1;
+	}
+	if ((type == 0xbc ||
+			type == 0xbd ||
+			type == 0x102 ||
+			type == 0xc2 ||
+			type == 0xc9 ||
+			type == 0xbc6) && (id == 0x6ec ||
+			id == 0x5a8)) {
+		return 1;
+	}
+	if (type == 0x103 || type == 0xbc7) {
+		if (id == 0x6f4) {
+			return 3;
+		}
+		if (id == 0x6f3 ||
+			id == 0x69f ||
+			id == 0x6f6 ||
+			id == 0x6ef ||
+			id == 0x6f1 ||
+			id == 0x6f0 ||
+			id == 0x6f2 ||
+			id == 0x733 ||
+			id == 0x735 ||
+			id == 0x732 ||
+			id == 0x3ea ||
+			id == 0x73c ||
+			id == 0x73d ||
+			id == 0x73e ||
+			id == 0x73f ||
+			id == 0x740 ||
+			id == 0x736 ||
+			id == 0x737 ||
+			id == 0x411 ||
+			id == 0x412 ||
+			id == 0x419 ||
+			id == 0x41a ||
+			id == 0x6a3 ||
+			id == 0x6a4 ||
+			id == 0x6a5 ||
+			id == 0x6a7 ||
+			id == 0x6a6 ||
+			id == 0x6a8 ||
+			id == 0x73a ||
+			id == 0x739 ||
+			id == 0x73b ||
+			id == 0x738) {
+			return 1;
+		}
+	}
+	if (type == 0x108 || type == 0xbc6) {
+		if (id == 0x6d2 ||
+			id == 0x3ea ||
+			id == 0x733 ||
+			id == 0x71b ||
+			id == 0x732 ||
+			id == 0x69d ||
+			id == 0x69f ||
+			id == 0x69e ||
+			id == 0x6a0 ||
+			id == 0x78b ||
+			id == 0x5c8 ||
+			id == 0x411 ||
+			id == 0x412 ||
+			id == 0x413 ||
+			id == 0x414 ||
+			id == 0x415 ||
+			id == 0x416 ||
+			id == 0x417 ||
+			id == 0x418 ||
+			id == 0x419 ||
+			id == 0x41a ||
+			id == 0x41b ||
+			id == 0x41c ||
+			id == 0x41d ||
+			id == 0x41e ||
+			id == 0x41f ||
+			id == 0x420 ||
+			id == 0x6a3 ||
+			id == 0x6a4 ||
+			id == 0x6a9 ||
+			id == 0x6ac ||
+			id == 0x6af ||
+			id == 0x6b2 ||
+			id == 0x6b5 ||
+			id == 0x6b8 ||
+			id == 0x6a5 ||
+			id == 0x6a7 ||
+			id == 0x6aa ||
+			id == 0x6ad ||
+			id == 0x6b0 ||
+			id == 0x6b3 ||
+			id == 0x6b6 ||
+			id == 0x6b9 ||
+			id == 0x6a6 ||
+			id == 0x6a8 ||
+			id == 0x6ab ||
+			id == 0x6ae ||
+			id == 0x6b1 ||
+			id == 0x6b4 ||
+			id == 0x6b7 ||
+			id == 0x6ba ||
+			id == 0x70a ||
+			id == 0x70b ||
+			id == 0x70c ||
+			id == 0x70d ||
+			id == 0x70e ||
+			id == 0x70f ||
+			id == 0x710 ||
+			id == 0x711) {
+			return 1;
+		}
+	}
+	return (Is_Owner_Draw_Message(type) && id == 0x695) ? 3 : 1;
+}
+
+// FUNCTION: GAMEMD 0x00601D20
+int FUN_00601D20(HWND dialog, HWND control)
+{
+	OwnerDraw::WinData *data = NULL;
+	int type;
+
+	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
+		type = *(int *)((char *)data + 0x6c);
+	} else {
+		type = 0;
+	}
+	int id = GetDlgCtrlID(control);
+	if ((type == 0x10c ||
+			type == 0x94 ||
+			type == 0xa3 ||
+			type == 0x73 ||
+			type == 0xd8 ||
+			type == 0xbbb ||
+			type == 0xf5 ||
+			type == 0x105 ||
+			type == 0xe2 ||
+			type == 0xd5 ||
+			type == 0x2b5 ||
+			type == 0xb7 ||
+			type == 0x2b4 ||
+			type == 0xbc7 ||
+			type == 0x101 ||
+			type == 0x129 ||
+			type == 0xbc6 ||
+			type == 0xd7 ||
+			type == 0x108 ||
+			type == 0xbc ||
+			type == 0xbd ||
+			type == 0xbb ||
+			type == 0xb5 ||
+			type == 0xbba ||
+			type == 0xff ||
+			type == 0x6b ||
+			type == 0x100 ||
+			type == 0x102 ||
+			type == 0xb8 ||
+			type == 0xd6 ||
+			type == 0x103 ||
+			type == 0x125 ||
+			type == 0xe7 ||
+			type == 0x116 ||
+			type == 0xc2 ||
+			type == 0xc9 ||
+			type == 0x11d ||
+			type == 0x11c ||
+			type == 0x114 ||
+			type == 0x2bc ||
+			type == 0x113 ||
+			type == 0x109 ||
+			type == 0x10f ||
+			type == 0x117 ||
+			type == 0xe6 ||
+			type == 0xf3 ||
+			type == 0xf4 ||
+			type == 0x10e ||
+			type == 0x112) && id == 0x694) {
+		return 8;
+	}
+	if ((type == 0xbc ||
+			type == 0xbd ||
+			type == 0x102 ||
+			type == 0xc2 ||
+			type == 0xc9 ||
+			type == 0xbc6) && (id == 0x6ec ||
+			id == 0x5a8)) {
+		return 8;
+	}
+	if (type == 0x103 || type == 0xbc7) {
+		if (id == 0x6f4) {
+			return 0x10;
+		}
+		if (id == 0x6f3 ||
+			id == 0x69f ||
+			id == 0x6f6 ||
+			id == 0x6ef ||
+			id == 0x6f1 ||
+			id == 0x6f0 ||
+			id == 0x6f2 ||
+			id == 0x733 ||
+			id == 0x735 ||
+			id == 0x732 ||
+			id == 0x3ea) {
+			return 8;
+		}
+		if (id == 0x73c ||
+			id == 0x73d ||
+			id == 0x73e ||
+			id == 0x73f ||
+			id == 0x740) {
+			return 0x10;
+		}
+		if (Is_Quick_Control_B(id)) {
+			return 0x20;
+		}
+	}
+	if (type == 0x108 || type == 0xbc6) {
+		if (id == 0x6d2 ||
+			id == 0x3ea ||
+			id == 0x733 ||
+			id == 0x71b ||
+			id == 0x732 ||
+			id == 0x69d ||
+			id == 0x69f ||
+			id == 0x69e ||
+			id == 0x6a0 ||
+			id == 0x78b ||
+			id == 0x5c8 ||
+			id == 0x411 ||
+			id == 0x412 ||
+			id == 0x413 ||
+			id == 0x414 ||
+			id == 0x415 ||
+			id == 0x416 ||
+			id == 0x417 ||
+			id == 0x418) {
+			return 0x20;
+		}
+		if (Is_Quick_Control_D(id)) {
+			return 0x40;
+		}
+	}
+	if (Is_Owner_Draw_Message(type) && id == 0x695) {
+		return 0x10;
+	}
+	return 8;
+}
+
 // FUNCTION: GAMEMD 0x006023F0
 int Typed_Char_Sound(HWND dialog, HWND control)
 {
@@ -325,6 +701,189 @@ int Typed_Char_Sound(HWND dialog, HWND control)
 		return Rule->MessageCharTyped;
 	}
 	return -1;
+}
+
+inline bool Is_Flag_Control_A(int type, int id)
+{
+	return (type == 0x10c ||
+		type == 0x94 ||
+		type == 0xa3 ||
+		type == 0x73 ||
+		type == 0xd8 ||
+		type == 0xbbb ||
+		type == 0xf5 ||
+		type == 0x105 ||
+		type == 0xe2 ||
+		type == 0xd5 ||
+		type == 0x2b5 ||
+		type == 0xb7 ||
+		type == 0x2b4 ||
+		type == 0xbc7 ||
+		type == 0x101 ||
+		type == 0x129 ||
+		type == 0xbc6 ||
+		type == 0xd7 ||
+		type == 0x108 ||
+		type == 0xbc ||
+		type == 0xbd ||
+		type == 0xbb ||
+		type == 0xb5 ||
+		type == 0xbba ||
+		type == 0xff ||
+		type == 0x6b ||
+		type == 0x100 ||
+		type == 0x102 ||
+		type == 0xb8 ||
+		type == 0xd6 ||
+		type == 0x103 ||
+		FUN_00602AE0(type)) && id == 0x694;
+}
+
+inline bool Is_Flag_Control_B(int type, int id)
+{
+	return (type == 0xbc ||
+			type == 0xbd ||
+			type == 0x102 ||
+			type == 0xc2 ||
+			type == 0xc9 ||
+			type == 0xbc6) && (id == 0x6ec ||
+			id == 0x5a8);
+}
+
+inline bool Is_Flag_Control_C(int type, int id)
+{
+	return (type == 0x103 || type == 0xbc7) && (id == 0x6f3 ||
+			id == 0x6f4 ||
+			id == 0x69f ||
+			id == 0x6f6 ||
+			id == 0x6ef ||
+			id == 0x6f1 ||
+			id == 0x6f0 ||
+			id == 0x6f2 ||
+			id == 0x733 ||
+			id == 0x735 ||
+			id == 0x732 ||
+			id == 0x3ea ||
+			id == 0x736 ||
+			id == 0x737 ||
+			id == 0x73c ||
+			id == 0x73d ||
+			id == 0x73e ||
+			id == 0x73f ||
+			id == 0x740 ||
+			id == 0x411 ||
+			id == 0x412 ||
+			id == 0x419 ||
+			id == 0x41a ||
+			id == 0x6a3 ||
+			id == 0x6a4 ||
+			id == 0x6a5 ||
+			id == 0x6a7 ||
+			id == 0x6a6 ||
+			id == 0x6a8 ||
+			id == 0x73a ||
+			id == 0x739 ||
+			id == 0x73b ||
+			id == 0x738);
+}
+
+inline bool Is_Flag_Control_D(int type, int id)
+{
+	return (type == 0x108 || type == 0xbc6) && (id == 0x6d2 ||
+			id == 0x3ea ||
+			id == 0x69d ||
+			id == 0x69f ||
+			id == 0x69e ||
+			id == 0x6a0 ||
+			id == 0x78b ||
+			id == 0x5c8 ||
+			id == 0x411 ||
+			id == 0x412 ||
+			id == 0x413 ||
+			id == 0x414 ||
+			id == 0x415 ||
+			id == 0x416 ||
+			id == 0x417 ||
+			id == 0x418 ||
+			id == 0x419 ||
+			id == 0x41a ||
+			id == 0x41b ||
+			id == 0x41c ||
+			id == 0x41d ||
+			id == 0x41e ||
+			id == 0x41f ||
+			id == 0x420 ||
+			id == 0x6a3 ||
+			id == 0x6a4 ||
+			id == 0x6a9 ||
+			id == 0x6ac ||
+			id == 0x6af ||
+			id == 0x6b2 ||
+			id == 0x6b5 ||
+			id == 0x6b8 ||
+			id == 0x6a5 ||
+			id == 0x6a7 ||
+			id == 0x6aa ||
+			id == 0x6ad ||
+			id == 0x6b0 ||
+			id == 0x6b3 ||
+			id == 0x6b6 ||
+			id == 0x6b9 ||
+			id == 0x6a6 ||
+			id == 0x6a8 ||
+			id == 0x6ab ||
+			id == 0x6ae ||
+			id == 0x6b1 ||
+			id == 0x6b4 ||
+			id == 0x6b7 ||
+			id == 0x6ba ||
+			id == 0x70a ||
+			id == 0x70b ||
+			id == 0x70c ||
+			id == 0x70d ||
+			id == 0x70e ||
+			id == 0x70f ||
+			id == 0x710 ||
+			id == 0x711 ||
+			id == 0x733 ||
+			id == 0x732 ||
+			id == 0x71b ||
+			id == 0x735);
+}
+
+inline bool Is_Flag_Control_E(int type, int id)
+{
+	return Is_Owner_Draw_Message(type) && id == 0x695 && !FUN_0069BBE0(&Session);
+}
+
+// FUNCTION: GAMEMD 0x00602490
+bool FUN_00602490(HWND dialog, HWND control)
+{
+	OwnerDraw::WinData *data = NULL;
+	int type;
+
+	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
+		type = *(int *)((char *)data + 0x6c);
+	} else {
+		type = 0;
+	}
+	int id = GetDlgCtrlID(control);
+	if (Is_Flag_Control_A(type, id)) {
+		return true;
+	}
+	if (Is_Flag_Control_B(type, id)) {
+		return true;
+	}
+	if (Is_Flag_Control_C(type, id)) {
+		return true;
+	}
+	if (Is_Flag_Control_D(type, id)) {
+		return true;
+	}
+	if (Is_Flag_Control_E(type, id)) {
+		return true;
+	}
+	return false;
 }
 
 // FUNCTION: GAMEMD 0x00602AE0
@@ -1071,6 +1630,7 @@ BOOL CALLBACK ResetControlDrawModeAndTimerProc(HWND window, LPARAM lparam);
 BOOL CALLBACK InitCompactDialogControlsProc(HWND window, LPARAM lparam);
 }
 
+
 inline OwnerDraw::WinData *Get_Data(HWND window)
 {
 	OwnerDraw::WinData *data = NULL;
@@ -1194,7 +1754,510 @@ void FUN_006084A0(HWND dialog)
 	}
 }
 
-bool __fastcall FUN_00608CD0(HWND parent, HWND child);
+namespace Drawing { extern int RenderWidth; }
+extern int DAT_007F5BE0;
+extern int DAT_007F5BE4;
+extern int DAT_007F5BE8;
+
+inline int Get_Layout_Dialog_Type(HWND dialog)
+{
+	OwnerDraw::WinData *data = NULL;
+	HWND key = dialog;
+
+	OwnerDraw::Dialogs.getPointer(key, &data);
+	if (data != NULL) {
+		return *(int *)((char *)data + 0x6c);
+	}
+	return 0;
+}
+
+// FUNCTION: GAMEMD 0x00608500
+bool __fastcall FUN_00608500(HWND parent, HWND child, Rect *out)
+{
+	OwnerDraw::WinData *data = NULL;
+	Rect *rect = NULL;
+	int type;
+
+	type = Get_Layout_Dialog_Type(parent);
+	int id = GetDlgCtrlID(child);
+	if (type == 0x94) {
+		if (Drawing::RenderWidth >= DAT_007F5BE4) {
+			if (id == 0x6ea) {
+				rect = new Rect(0x8d, 0x3a, 0x15c, 0x88);
+			} else if (id == 0x6ec) {
+				rect = new Rect(0x8d, 0x16c, 0x15c, 0x88);
+			} else if (id == 0x50f) {
+				rect = new Rect(0xb1, 0x109, 0x110, 0x16);
+			} else if (id == 0x71e) {
+				rect = new Rect(0xb1, 0x123, 0x8d, 0x14);
+			} else if (id == 0x670) {
+				rect = new Rect(0x135, 0x123, 0x8d, 0x14);
+			} else if (id == 0x7a7) {
+				rect = new Rect(0xa, 0xc6, 0x262, 0x14);
+			} else if (id == 0x7a8) {
+				rect = new Rect(0xa, 0x1f9, 0x262, 0x14);
+			}
+		}
+	} else if (type == 0x103) {
+		if (id == 0x72b) {
+			int side = Scen->PlayerSideIndex;
+			if (Drawing::RenderWidth >= DAT_007F5BE4) {
+				if (side == 0) {
+					rect = new Rect(0x68, 0x8e, 0x1a8, 0xdc);
+				} else if (side == 1) {
+					rect = new Rect(0x67, 0x82, 0x1a8, 0xe6);
+				} else {
+					rect = new Rect(0x67, 0x82, 0x1a8, 0xe6);
+				}
+			} else {
+				if (side == 0) {
+					rect = new Rect(0x18, 0x8e, 0x1a8, 0xdc);
+				} else if (side == 1) {
+					rect = new Rect(0x17, 0x82, 0x1a8, 0xe6);
+				} else {
+					rect = new Rect(0x17, 0x82, 0x1a8, 0xe6);
+				}
+			}
+		}
+	} else if (type == 0xbc7) {
+		if (id == 0x72b) {
+			int side = Scen->PlayerSideIndex;
+			if (Drawing::RenderWidth >= DAT_007F5BE4) {
+				if (side == 0) {
+					rect = new Rect(0x68, 0x8e, 0x1a8, 0xdc);
+				} else if (side == 1) {
+					rect = new Rect(0x67, 0x82, 0x1a8, 0xe6);
+				} else {
+					rect = new Rect(0x67, 0x82, 0x1a8, 0xe6);
+				}
+			} else {
+				if (side == 0) {
+					rect = new Rect(0x18, 0x8e, 0x1a8, 0xdc);
+				} else if (side == 1) {
+					rect = new Rect(0x17, 0x82, 0x1a8, 0xe6);
+				} else {
+					rect = new Rect(0x17, 0x82, 0x1a8, 0xe6);
+				}
+			}
+		}
+	} else if (type == 0xbc) {
+		if (id == 0x72f) {
+			if (Drawing::RenderWidth == DAT_007F5BE0) {
+				rect = new Rect(0x34, 0x4e, 0x18c, 0x8f);
+			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == DAT_007F5BE8) {
+				rect = new Rect(0x3c, 0x62, 0x21c, 0x8f);
+			}
+		} else if (id == 0x732) {
+			if (Drawing::RenderWidth == DAT_007F5BE0) {
+				rect = new Rect(0x6e, 0xd7, 0x10a, 0x15);
+			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == DAT_007F5BE8) {
+				rect = new Rect(0xb4, 0xd7, 0x10a, 0x16);
+			}
+		} else if (id == 0x78e) {
+			if (Drawing::RenderWidth == DAT_007F5BE0) {
+				rect = new Rect(0x50, 0xbe, 0x4b, 0x14);
+			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == DAT_007F5BE8) {
+				rect = new Rect(0xaa, 0xbe, 0x4b, 0x14);
+			}
+		} else if (id == 0x78d) {
+			if (Drawing::RenderWidth == DAT_007F5BE0) {
+				rect = new Rect(0xe4, 0xbe, 0x4b, 0x14);
+			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == DAT_007F5BE8) {
+				rect = new Rect(0x127, 0xbe, 0x4b, 0x14);
+			}
+		} else if (id == 0x78c) {
+			if (Drawing::RenderWidth == DAT_007F5BE0) {
+				rect = new Rect(0x15a, 0xbe, 0x4b, 0x14);
+			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == DAT_007F5BE8) {
+				rect = new Rect(0x1ae, 0xbe, 0x4b, 0x14);
+			}
+		}
+	} else if (type == 0xbd) {
+		if (id == 0x72f) {
+			if (Drawing::RenderWidth == DAT_007F5BE0) {
+				rect = new Rect(0x34, 0x4e, 0x18c, 0x8f);
+			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == DAT_007F5BE8) {
+				rect = new Rect(0x3c, 0x62, 0x21c, 0x8f);
+			}
+		} else if (id == 0x732) {
+			if (Drawing::RenderWidth == DAT_007F5BE0) {
+				rect = new Rect(0x6e, 0xd7, 0x10a, 0x15);
+			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == DAT_007F5BE8) {
+				rect = new Rect(0xb4, 0xd7, 0x10a, 0x16);
+			}
+		} else if (id == 0x78e) {
+			if (Drawing::RenderWidth == DAT_007F5BE0) {
+				rect = new Rect(0x50, 0xbe, 0x4b, 0x14);
+			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == DAT_007F5BE8) {
+				rect = new Rect(0xaa, 0xbe, 0x4b, 0x14);
+			}
+		} else if (id == 0x78d) {
+			if (Drawing::RenderWidth == DAT_007F5BE0) {
+				rect = new Rect(0xe4, 0xbe, 0x4b, 0x14);
+			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == DAT_007F5BE8) {
+				rect = new Rect(0x127, 0xbe, 0x4b, 0x14);
+			}
+		} else if (id == 0x78c) {
+			if (Drawing::RenderWidth == DAT_007F5BE0) {
+				rect = new Rect(0x15a, 0xbe, 0x4b, 0x14);
+			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == DAT_007F5BE8) {
+				rect = new Rect(0x1ae, 0xbe, 0x4b, 0x14);
+			}
+		}
+	} else if (type == 0xc2) {
+		if (id == 0x72f) {
+			if (Drawing::RenderWidth == DAT_007F5BE0) {
+				rect = new Rect(0x34, 0x4e, 0x18c, 0x8f);
+			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == DAT_007F5BE8) {
+				rect = new Rect(0x3c, 0x62, 0x21c, 0x8f);
+			}
+		} else if (id == 0x732) {
+			if (Drawing::RenderWidth == DAT_007F5BE0) {
+				rect = new Rect(0x6e, 0xd7, 0x10a, 0x16);
+			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == DAT_007F5BE8) {
+				rect = new Rect(0xb4, 0xd7, 0x10a, 0x15);
+			}
+		} else if (id == 0x78e) {
+			if (Drawing::RenderWidth == DAT_007F5BE0) {
+				rect = new Rect(0x50, 0xbe, 0x4b, 0x14);
+			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == DAT_007F5BE8) {
+				rect = new Rect(0xaa, 0xbe, 0x4b, 0x14);
+			}
+		} else if (id == 0x78d) {
+			if (Drawing::RenderWidth == DAT_007F5BE0) {
+				rect = new Rect(0xe4, 0xbe, 0x4b, 0x14);
+			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == DAT_007F5BE8) {
+				rect = new Rect(0x127, 0xbe, 0x4b, 0x14);
+			}
+		} else if (id == 0x78c) {
+			if (Drawing::RenderWidth == DAT_007F5BE0) {
+				rect = new Rect(0x15a, 0xbe, 0x4b, 0x14);
+			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == DAT_007F5BE8) {
+				rect = new Rect(0x1ae, 0xbe, 0x4b, 0x14);
+			}
+		}
+	} else if (type == 0xc9) {
+		if (id == 0x72f) {
+			if (Drawing::RenderWidth == DAT_007F5BE0) {
+				rect = new Rect(0x34, 0x4e, 0x18c, 0x8f);
+			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == DAT_007F5BE8) {
+				rect = new Rect(0x3c, 0x62, 0x21c, 0x8f);
+			}
+		} else if (id == 0x732) {
+			if (Drawing::RenderWidth == DAT_007F5BE0) {
+				rect = new Rect(0x6e, 0xd7, 0x10a, 0x15);
+			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == DAT_007F5BE8) {
+				rect = new Rect(0xb4, 0xd7, 0x10a, 0x16);
+			}
+		} else if (id == 0x78e) {
+			if (Drawing::RenderWidth == DAT_007F5BE0) {
+				rect = new Rect(0x50, 0xbe, 0x4b, 0x14);
+			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == DAT_007F5BE8) {
+				rect = new Rect(0xaa, 0xbe, 0x4b, 0x14);
+			}
+		} else if (id == 0x78d) {
+			if (Drawing::RenderWidth == DAT_007F5BE0) {
+				rect = new Rect(0xe4, 0xbe, 0x4b, 0x14);
+			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == DAT_007F5BE8) {
+				rect = new Rect(0x127, 0xbe, 0x4b, 0x14);
+			}
+		} else if (id == 0x78c) {
+			if (Drawing::RenderWidth == DAT_007F5BE0) {
+				rect = new Rect(0x15a, 0xbe, 0x4b, 0x14);
+			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == DAT_007F5BE8) {
+				rect = new Rect(0x1ae, 0xbe, 0x4b, 0x14);
+			}
+		}
+	}
+	if (rect != NULL) {
+		*out = *rect;
+		delete rect;
+		return true;
+	}
+	return false;
+}
+
+// FUNCTION: GAMEMD 0x00608CD0
+bool __fastcall FUN_00608CD0(HWND parent, HWND child)
+{
+	OwnerDraw::WinData *data = NULL;
+	int type;
+
+	if (OwnerDraw::Dialogs.getPointer(parent, &data) && data != NULL) {
+		type = *(int *)((char *)data + 0x6c);
+	} else {
+		type = 0;
+	}
+	int id = GetDlgCtrlID(child);
+	if ((type == 0x10c ||
+			type == 0x94 ||
+			type == 0xa3 ||
+			type == 0x73 ||
+			type == 0xd8 ||
+			type == 0xbbb ||
+			type == 0xf5 ||
+			type == 0x105 ||
+			type == 0xe2 ||
+			type == 0xd5 ||
+			type == 0x2b5 ||
+			type == 0xb7 ||
+			type == 0x2b4 ||
+			type == 0xbc7 ||
+			type == 0x101 ||
+			type == 0x129 ||
+			type == 0xbc6 ||
+			type == 0xd7 ||
+			type == 0x108 ||
+			type == 0xbc ||
+			type == 0xbd ||
+			type == 0xbb ||
+			type == 0xb5 ||
+			type == 0xbba ||
+			type == 0xff ||
+			type == 0x6b ||
+			type == 0x100 ||
+			type == 0x102 ||
+			type == 0xb8 ||
+			type == 0xd6 ||
+			type == 0x103 ||
+			type == 0x125 ||
+			type == 0xe7 ||
+			type == 0x116 ||
+			type == 0xc2 ||
+			type == 0xc9 ||
+			type == 0x11d ||
+			type == 0x11c ||
+			type == 0x114 ||
+			type == 0x2bc ||
+			type == 0x113 ||
+			type == 0x109 ||
+			type == 0x10f ||
+			type == 0x117 ||
+			type == 0xe6 ||
+			type == 0xf3 ||
+			type == 0xf4 ||
+			type == 0x10e ||
+			type == 0x112) && id == 0x694) {
+		return true;
+	}
+	if ((type == 0x94 ||
+			type == 0xd8 ||
+			type == 0xf5 ||
+			type == 0xe2 ||
+			type == 0xd5 ||
+			type == 0x101 ||
+			type == 0x129 ||
+			type == 0xd7 ||
+			type == 0xbb ||
+			type == 0x100 ||
+			type == 0xd6 ||
+			type == 0x125 ||
+			type == 0x122 ||
+			type == 0x112 ||
+			type == 0xe7 ||
+			type == 0x116 ||
+			type == 0x11d ||
+			type == 0x11c ||
+			type == 0xfe ||
+			type == 0x10f ||
+			type == 0x117 ||
+			type == 0x114 ||
+			type == 0xe6 ||
+			type == 0xf3 ||
+			type == 0xf4 ||
+			type == 0x2bc ||
+			type == 0x10e ||
+			type == 0x108 ||
+			type == 0xbc6 ||
+			type == 0xbc7) && id == 0x71c) {
+		return true;
+	}
+	if ((type == 0xbc ||
+			type == 0xbd ||
+			type == 0x102 ||
+			type == 0xc2 ||
+			type == 0xc9 ||
+			type == 0xbc6 ||
+			type == 0x105 ||
+			type == 0x6b ||
+			type == 0x113) && id == 0x468) {
+		return true;
+	}
+	if (type == 0xe2) {
+		return id == 0x686 ||
+			id == 0x578 ||
+			id == 0x55c ||
+			id == 0x683 ||
+			id == 0x55f ||
+			id == 0x684;
+	}
+	if (type == 0x101) {
+		return id == 0x68e ||
+			id == 0x68d ||
+			id == 0x68f;
+	}
+	if (type == 0x129) {
+		return id == 0x745;
+	}
+	if (type == 0x100) {
+		return id == 0x689 ||
+			id == 0x688 ||
+			id == 0x579;
+	}
+	if (type == 0x94) {
+		return id == 0x40e;
+	}
+	if (type == 0xb7) {
+		return id == 0x40f;
+	}
+	if (type == 0x2b4) {
+		return id == 0x6c7;
+	}
+	if (type == 0x2b5) {
+		return id == 0x6c8;
+	}
+	if (type == 0x105) {
+		return id == 0x6c4 ||
+			id == 0x6c2 ||
+			id == 0x6c3 ||
+			id == 0x6c5;
+	}
+	if (type == 0x102) {
+		return id == 0x6ec ||
+			id == 0x5aa ||
+			id == 0x5a8 ||
+			id == 0x617;
+	}
+	if (type == 0xb5) {
+		return id == 0x522 ||
+			id == 0x521 ||
+			id == 0x51e ||
+			id == 0x51f ||
+			id == 0x520;
+	}
+	if (type == 0xbba) {
+		return id == 0x522 ||
+			id == 0x521;
+	}
+	if (type == 0xbbb) {
+		return id == 0x52c ||
+			id == 0x52d;
+	}
+	if (type == 0xd5) {
+		return id == 0x5ce ||
+			id == 0x5cd;
+	}
+	if (type == 0xfb) {
+		return id == 0x6 ||
+			id == 0x1;
+	}
+	if (type == 0xd8) {
+		return id == 0x6cb;
+	}
+	if (type == 0xd7) {
+		return id == 0x1;
+	}
+	if (type == 0xbc || type == 0xc2) {
+		return id == 0x6ec ||
+			id == 0x588 ||
+			id == 0x5aa ||
+			id == 0x5a8 ||
+			id == 0x5c2;
+	}
+	if (type == 0xbd || type == 0xc9) {
+		return id == 0x59f ||
+			id == 0x6ec ||
+			id == 0x5a8 ||
+			id == 0x5c2;
+	}
+	if (type == 0xbb) {
+		return id == 0x6cd ||
+			id == 0x6cc ||
+			id == 0x6ce;
+	}
+	if (type == 0xb6) {
+		return id == 0x6c9 ||
+			id == 0x712 ||
+			id == 0x524;
+	}
+	if (type == 0x6b) {
+		return id == 0x583 ||
+			id == 0x6c5;
+	}
+	if (type == 0xbc6) {
+		return id == 0x6d1 ||
+			id == 0x6ec ||
+			id == 0x5a8;
+	}
+	if (type == 0x10f || type == 0x11d) {
+		return id == 0x539 ||
+			id == 0x6ec ||
+			id == 0x6eb;
+	}
+	if (type == 0x109) {
+		return id == 0x1 ||
+			id == 0x625 ||
+			id == 0x53b;
+	}
+	if (type == 0x10e || type == 0x11c) {
+		return id == 0x6e0 ||
+			id == 0x6e1 ||
+			id == 0x6e2 ||
+			id == 0x6e4 ||
+			id == 0x771 ||
+			id == 0x55f;
+	}
+	if (type == 0x114) {
+		return id == 0x687 ||
+			id == 0x6ec ||
+			id == 0x6eb ||
+			id == 0x688 ||
+			id == 0x7a3;
+	}
+	if (type == 0x113) {
+		return id == 0x61f ||
+			id == 0x688 ||
+			id == 0x7a3 ||
+			id == 0x7a6 ||
+			id == 0x689 ||
+			id == 0x62d ||
+			id == 0x62b ||
+			id == 0x53d ||
+			id == 0x5c2;
+	}
+	if (type == 0x2bc) {
+		return id == 0x1 ||
+			id == 0x63a;
+	}
+	if (type == 0x116) {
+		return id == 0x62b ||
+			id == 0x62d ||
+			id == 0x5c2 ||
+			id == 0x702 ||
+			id == 0x703;
+	}
+	if (type == 0xff) {
+		return id == 0x521 ||
+			id == 0x522;
+	}
+	if (type == 0x122) {
+		return id == 0x1;
+	}
+	if (type == 0x112) {
+		return id == 0x1;
+	}
+	if (type == 0xe7) {
+		return id == 0x1 ||
+			id == 0x576;
+	}
+	if (type == 0xfe) {
+		return id == 0x1;
+	}
+	if (type == 0xe6 || type == 0xf3 || type == 0xf4) {
+		return id == 0x1;
+	}
+	return false;
+}
 
 // FUNCTION: GAMEMD 0x006096A0
 bool FUN_006096A0(HWND parent, HWND child)
@@ -1290,6 +2353,7 @@ bool FUN_00609B30(HWND dialog, HWND control)
 	}
 	return false;
 }
+
 
 inline bool Is_Plain_Control(HWND window)
 {
@@ -1714,10 +2778,8 @@ bool __fastcall FUN_0060B880(HWND dialog, HWND control)
 	return false;
 }
 
-bool __fastcall FUN_00608500(HWND parent, HWND child, RECT *rect);
 void __fastcall FUN_0060B000(HWND window, LPARAM lparam);
 void __fastcall FUN_0060B1D0(HWND window, LPARAM lparam);
-void __fastcall FUN_0060B950(HWND window);
 
 namespace Drawing {
 extern int RenderWidth;
@@ -1729,6 +2791,8 @@ extern int RedShiftLeft;
 extern int GreenShiftLeft;
 extern int BlueShiftLeft;
 }
+
+void __fastcall FUN_0060B950(HWND window);
 
 namespace OwnerDraw {
 // FUNCTION: GAMEMD 0x0060C4A0

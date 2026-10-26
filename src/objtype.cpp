@@ -396,6 +396,197 @@ void ObjectTypeClass::Free_Voxels(void)
 	}
 }
 
+// FUNCTION: GAMEMD 0x005F8110
+void ObjectTypeClass::Fetch_Voxel_Image(void)
+{
+	char buffer[256];
+	char name[260];
+
+	bool failed = false;
+
+	_makepath(name, 0, 0, (const char *)GraphicName, ".VXL");
+	CCFileClass vxl(name);
+
+	if (vxl.Is_Available()) {
+		delete Voxel.VoxLib;
+		Voxel.VoxLib = new VoxelLibrary(vxl);
+		if (Voxel.VoxLib == NULL || Voxel.VoxLib->Load_Failed()) {
+			failed = true;
+		}
+		_makepath(name, 0, 0, (const char *)GraphicName, ".HVA");
+		CCFileClass hva(name);
+		delete Voxel.MotLib;
+		Voxel.MotLib = new MotionLibrary(hva);
+		if (Voxel.MotLib == NULL || Voxel.MotLib->Load_Failed()) {
+			failed = true;
+		} else {
+			Voxel.MotLib->Scale(Voxel.VoxLib->Get_Layer_Info(0, 0).Scale);
+		}
+	} else {
+		failed = true;
+	}
+
+	TechnoTypeClass * ttype = (TechnoTypeClass *)this;
+	UnitTypeClass * utype = (UnitTypeClass *)this;
+
+	if (RTTI == RTTI_UNITTYPE && !ttype->IsTurretEquipped) {
+		if (strcmp((const char *)IniName, "APC") == 0) {
+		sprintf(buffer, "%sW", (const char *)GraphicName);
+		_makepath(name, 0, 0, buffer, ".VXL");
+		CCFileClass wvxl(name);
+
+		if (wvxl.Is_Available()) {
+			delete AuxVoxel.VoxLib;
+			AuxVoxel.VoxLib = new VoxelLibrary(wvxl);
+			if (AuxVoxel.VoxLib == NULL || AuxVoxel.VoxLib->Load_Failed()) {
+				failed = true;
+			}
+			sprintf(buffer, "%sW", (const char *)GraphicName);
+			_makepath(name, 0, 0, buffer, ".HVA");
+			CCFileClass whva(name);
+
+			delete AuxVoxel.MotLib;
+			AuxVoxel.MotLib = new MotionLibrary(whva);
+			if (AuxVoxel.MotLib == NULL || AuxVoxel.MotLib->Load_Failed()) {
+				failed = true;
+			} else {
+				AuxVoxel.MotLib->Scale(AuxVoxel.VoxLib->Get_Layer_Info(0, 0).Scale);
+			}
+		}
+		}
+
+		if (NoSpawnAlt) {
+			sprintf(buffer, "%sWO", (const char *)GraphicName);
+			_makepath(name, 0, 0, buffer, ".VXL");
+			CCFileClass wovxl(name);
+
+			if (wovxl.Is_Available()) {
+				delete AuxVoxel.VoxLib;
+				AuxVoxel.VoxLib = new VoxelLibrary(wovxl);
+				if (AuxVoxel.VoxLib == NULL || AuxVoxel.VoxLib->Load_Failed()) {
+					failed = true;
+				}
+				sprintf(buffer, "%sWO", (const char *)GraphicName);
+				_makepath(name, 0, 0, buffer, ".HVA");
+				CCFileClass wohva(name);
+
+				delete AuxVoxel.MotLib;
+				AuxVoxel.MotLib = new MotionLibrary(wohva);
+				if (AuxVoxel.MotLib == NULL || AuxVoxel.MotLib->Load_Failed()) {
+					failed = true;
+				} else {
+					AuxVoxel.MotLib->Scale(AuxVoxel.VoxLib->Get_Layer_Info(0, 0).Scale);
+				}
+			}
+		}
+	} else if (RTTI == RTTI_UNITTYPE && ttype->HasMultipleTurrets() && !ttype->IsGattling) {
+		int count = ttype->TurretCount;
+		for (int i = 0; i < count; i++) {
+			if (!Fetch_Charger_Turret((const char *)GraphicName, i)) {
+				failed = true;
+				break;
+			}
+		}
+	} else {
+		sprintf(buffer, "%sTUR", (const char *)GraphicName);
+		_makepath(name, 0, 0, buffer, ".VXL");
+		CCFileClass tvxl(name);
+
+		if (tvxl.Is_Available()) {
+			delete AuxVoxel.VoxLib;
+			AuxVoxel.VoxLib = new VoxelLibrary(tvxl);
+			if (AuxVoxel.VoxLib == NULL || AuxVoxel.VoxLib->Load_Failed()) {
+				failed = true;
+			}
+
+			sprintf(buffer, "%sTUR", (const char *)GraphicName);
+			_makepath(name, 0, 0, buffer, ".HVA");
+			CCFileClass thva(name);
+
+			delete AuxVoxel.MotLib;
+			AuxVoxel.MotLib = new MotionLibrary(thva);
+			if (AuxVoxel.MotLib == NULL || AuxVoxel.MotLib->Load_Failed()) {
+				failed = true;
+			} else {
+				AuxVoxel.MotLib->Scale(AuxVoxel.VoxLib->Get_Layer_Info(0, 0).Scale);
+			}
+		}
+	}
+
+	if (RTTI == RTTI_UNITTYPE && !ttype->IsTurretEquipped) {
+	} else if (RTTI == RTTI_UNITTYPE && ttype->HasMultipleTurrets() && !ttype->IsGattling) {
+		int count = ttype->TurretCount;
+		for (int i = 0; i < count; i++) {
+			if (!Fetch_Charger_Barrel((const char *)GraphicName, i)) {
+				failed = true;
+				break;
+			}
+		}
+	} else {
+		sprintf(buffer, "%sBARL", (const char *)GraphicName);
+		_makepath(name, 0, 0, buffer, ".VXL");
+		CCFileClass bvxl(name);
+
+		if (bvxl.Is_Available()) {
+			delete AuxVoxel2.VoxLib;
+			AuxVoxel2.VoxLib = new VoxelLibrary(bvxl);
+			if (AuxVoxel2.VoxLib == NULL || AuxVoxel2.VoxLib->Load_Failed()) {
+				failed = true;
+			}
+
+			sprintf(buffer, "%sBARL", (const char *)GraphicName);
+			_makepath(name, 0, 0, buffer, ".HVA");
+			CCFileClass bhva(name);
+
+			delete AuxVoxel2.MotLib;
+			AuxVoxel2.MotLib = new MotionLibrary(bhva);
+			if (AuxVoxel2.MotLib == NULL || AuxVoxel2.MotLib->Load_Failed()) {
+				failed = true;
+			} else {
+				AuxVoxel2.MotLib->Scale(AuxVoxel2.VoxLib->Get_Layer_Info(0, 0).Scale);
+			}
+		}
+	}
+
+	if (failed) {
+		if (Voxel.VoxLib != NULL) {
+			delete Voxel.VoxLib;
+			Voxel.VoxLib = NULL;
+		}
+		if (Voxel.MotLib != NULL) {
+			delete Voxel.MotLib;
+			Voxel.MotLib = NULL;
+		}
+		if (RTTI == RTTI_UNITTYPE && ttype->HasMultipleTurrets() && !ttype->IsGattling) {
+			Free_Voxels();
+		} else {
+			if (AuxVoxel.VoxLib != NULL) {
+				delete AuxVoxel.VoxLib;
+				AuxVoxel.VoxLib = NULL;
+			}
+			if (AuxVoxel.MotLib != NULL) {
+				delete AuxVoxel.MotLib;
+				AuxVoxel.MotLib = NULL;
+			}
+		}
+	} else {
+		int largest = Voxel.VoxLib->Get_Layer_Info(0, 0).XSize;
+		for (int i = 0; i < (int)Voxel.VoxLib->Get_Layer_Count(); i++) {
+			if (largest <= Voxel.VoxLib->Get_Layer_Info(i, 0).XSize) {
+				largest = Voxel.VoxLib->Get_Layer_Info(i, 0).XSize;
+			}
+			if (largest <= Voxel.VoxLib->Get_Layer_Info(i, 0).YSize) {
+				largest = Voxel.VoxLib->Get_Layer_Info(i, 0).YSize;
+			}
+			if (largest <= Voxel.VoxLib->Get_Layer_Info(i, 0).ZSize) {
+				largest = Voxel.VoxLib->Get_Layer_Info(i, 0).ZSize;
+			}
+		}
+		MaxSize = max(largest, 8);
+		Clear_Voxel_Index();
+	}
+}
+
 // FUNCTION: GAMEMD 0x005F8CE0
 void ObjectTypeClass::Fetch_Aux_Voxel_Image(void)
 {
@@ -664,3 +855,16 @@ ObjectTypeClass const * ObjectTypeClass::From_Name(char const * name)
 	}
 	return(NULL);
 }
+
+// FUNCTION: GAMEMD 0x005F99E0
+void ObjectTypeClass::Clear_Voxel_Indexes(void)
+{
+	for (int classid = 0; classid < ObjectTypes.Count(); classid++) {
+		ObjectTypes[classid]->Clear_Voxel_Index();
+	}
+
+	VoxelStaticBuffer.Reset();
+}
+
+// SYNTHETIC: GAMEMD 0x005F9AE0
+// ??_GObjectTypeClass@@UAEPAXI@Z

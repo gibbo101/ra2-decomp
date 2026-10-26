@@ -68,8 +68,19 @@ extern ObjectClass const * DAT_00880978;
 extern int DAT_0088097C;
 extern int DAT_00880980;
 namespace Unsorted { extern bool ArmageddonMode; }
+namespace Game { extern HWND hWnd; }
 namespace FileSystem { extern ShapeSet * GRFXTXT_SHP; extern ConvertClass * GRFXTXT_Convert; }
 Point2D Lerp(Point2D const & a, Point2D const & b, float t);
+
+static inline bool Is_Foot_Object(ObjectClass const * object)
+{
+	if (object == NULL) {
+		return(false);
+	}
+	unsigned char flag = (object->AbstractFlags >> 2) & 1;
+	return(flag != 0);
+}
+
 
 DynamicVectorClass<DirtyAreaStruct> Tactical::DirtyAreas;
 
@@ -589,14 +600,14 @@ void Tactical::Render_Shroud(Rect const & xpanrect, Rect const & ypanrect, Rect 
 	}
 }
 
-BitFont * __fastcall FUN_004A60D0(int flags);
-namespace Game { unsigned __int64 __fastcall AudioGetTime(void); }
-
 struct TimerFlashSource {
 	int Unused[5];
 	ColorScheme * Scheme;
 };
 extern TimerFlashSource * DAT_00B054D4;
+
+BitFont * __fastcall FUN_004A60D0(int flags);
+namespace Game { unsigned __int64 __fastcall AudioGetTime(void); }
 
 static inline Point2D * Print_Timer(wchar_t const * text, Point2D const & pt, ColorScheme * scheme)
 {
@@ -1083,6 +1094,118 @@ void Tactical::Draw_Render_Hooks(ObjectClass * object, Rect const & cliprect)
 	if (TacticalMap->Coord_To_Pixel(object->Center_Coord(), pixel)) {
 		object->Draw_Pre_Render(pixel, cliprect);
 		object->Draw_Post_Render(pixel, cliprect);
+	}
+}
+
+// FUNCTION: GAMEMD 0x006D8DB0
+void Tactical::Draw_Objects(bool forced)
+{
+	int width = TacticalRect.Width;
+	int pixelx = TacPixelX;
+	int pixely = TacPixelY;
+	int height = TacticalRect.Height;
+	Point2D top = Pixel_To_Lepton(Point2D(pixelx + width / 2, pixely - height));
+	Point2D right = Pixel_To_Lepton(Point2D(pixelx + width * 2, pixely + height / 2));
+	Point2D left = Pixel_To_Lepton(Point2D(pixelx - width, pixely + height / 2));
+	Rect view(top.X, top.Y, (right.X - top.X) * 2, (left.Y - top.Y) * 2);
+	Coord position;
+
+	for (int layer = LAYER_FIRST; layer < LAYER_COUNT; layer++) {
+		for (int index = 0; index < DisplayClass::Layer[layer].Count(); index++) {
+			ObjectClass * obj = DisplayClass::Layer[layer][index];
+			obj->IsVisible = false;
+
+			if (Is_Foot_Object(obj)) {
+				position = obj->PositionCoord;
+				if (view.Is_Point_Within(Point2D(position.X, position.Y))) {
+					obj->Destination_Coord();
+					if (Scen->Special.IsFogOfWar && Map.IsLocationFogged(position)) {
+						continue;
+					}
+					Point2D pixel;
+					if (TacticalMap->Coord_To_Pixel(obj->Center_Coord(), pixel)) {
+						obj->IsVisible = true;
+						obj->Draw_Pre_Render(pixel, TacticalRect);
+						obj->Render(TacticalRect, forced, false);
+					}
+				}
+			} else if (obj->Is_Techno()) {
+				position = obj->PositionCoord;
+				if (view.Is_Point_Within(Point2D(position.X, position.Y))) {
+					obj->IsVisible = true;
+					Draw_Render_Hooks(obj, TacticalRect);
+					obj->Render(TacticalRect, forced, true);
+				}
+			} else {
+				RTTIType rtti = obj->Fetch_RTTI();
+				if (rtti == RTTI_ANIM) {
+					position = obj->Center_Coord();
+					if (view.Is_Point_Within(Point2D(position.X, position.Y))) {
+						AnimClass * anim = (AnimClass *)obj;
+						obj->IsVisible = true;
+						if (!anim->IsBuildingAnim && anim->Type->ShouldFogRemove && Map.IsLocationFogged(obj->Center_Coord())) {
+							continue;
+						}
+						obj->Render(TacticalRect, forced, false);
+					}
+				} else if (rtti == RTTI_TERRAIN) {
+					if (((TerrainClass *)obj)->Is_Animating()) {
+						position = obj->PositionCoord;
+						if (view.Is_Point_Within(Point2D(position.X, position.Y))) {
+							if (Map.IsLocationFogged(position)) {
+								continue;
+							}
+							obj->IsVisible = true;
+							obj->Render(TacticalRect, forced, false);
+						}
+					}
+				} else {
+					position = obj->PositionCoord;
+					if (view.Is_Point_Within(Point2D(position.X, position.Y))) {
+						Point2D pixel;
+						if (TacticalMap->Coord_To_Pixel(obj->Center_Coord(), pixel)) {
+							obj->IsVisible = true;
+							obj->Draw_Pre_Render(pixel, TacticalRect);
+							obj->Render(TacticalRect, forced, false);
+						}
+					}
+				}
+			}
+		}
+
+		if (layer == LAYER_GROUND) {
+			for (int bindex = 0; bindex < Buildings.Count(); bindex++) {
+				BuildingClass * bptr = Buildings[bindex];
+				if (bptr->IsDown && bptr->IsVisible) {
+					Point2D pixel;
+					if (TacticalMap->Coord_To_Pixel(bptr->Render_Coord(), pixel)) {
+						Rect rect = TacticalRect;
+						if (rect.X > TacticalRect.X) pixel.X += TacticalRect.X - rect.X;
+						if (rect.Y > TacticalRect.Y) pixel.Y += TacticalRect.Y - rect.Y;
+						bptr->DrawInfoTipAndSpiedSelection(&pixel, &rect);
+					}
+				}
+			}
+		}
+	}
+
+	for (int layer2 = LAYER_FIRST; layer2 < LAYER_COUNT; layer2++) {
+		int count = DisplayClass::Layer[layer2].Count();
+		for (int index2 = 0; index2 < count; index2++) {
+			ObjectClass * obj2 = DisplayClass::Layer[layer2][index2];
+			if (obj2->IsVisible && obj2 != NULL && obj2->Is_Techno()) {
+				if (Is_Foot_Object(obj2)) {
+					obj2->Destination_Coord();
+					if (Game::hWnd && !Unsorted::ArmageddonMode && Scen->Special.IsFogOfWar && Map.IsLocationFogged(obj2->PositionCoord)) {
+						continue;
+					}
+				}
+				Point2D pixel;
+				if (TacticalMap->Coord_To_Pixel(obj2->Center_Coord(), pixel)) {
+					obj2->Draw_Post_Render(pixel, TacticalRect);
+				}
+			}
+		}
 	}
 }
 

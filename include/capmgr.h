@@ -36,6 +36,11 @@ class CaptureManagerClass : public AbstractClass
 		bool FUN_00471F90(AbstractClass * ptr);
 		int GetControlledCount(void) const;
 		HouseClass * GetOriginalOwner(TechnoClass * techno) const;
+		bool CanCapture(TechnoClass * techno);
+		bool IsControllingSomething(void) const;
+		bool IsOverloading(bool * flag);
+		bool NeedsToDrawLinks(void) const;
+		void DrawLinks(void) const;
 
 		virtual HRESULT STDMETHODCALLTYPE GetClassID(CLSID * retval) override;
 		virtual HRESULT STDMETHODCALLTYPE Load(IStream * stream) override;

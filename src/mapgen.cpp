@@ -62,6 +62,8 @@ double Random_Fraction(void);
 
 unsigned int Pick_Random_UInt(unsigned int minval, unsigned int maxval);
 
+double Sample_Normal(double mean, double standard_dev);
+
 extern char const * DAT_0082B180[7];
 
 MapGeneratorClass RandomMapGen;
@@ -1220,6 +1222,201 @@ void MapRegionClass::Make_Region_Connections(void)
 			}
 		}
 	}
+}
+
+// FUNCTION: GAMEMD 0x00590970
+bool MapRegionClass::Connect_Regions_With_Ramp(Cell const & cell, int region_id, float threshold)
+{
+	bool valid = true;
+	unsigned mask = Build_Neighbor_Region_Mask(cell, valid, region_id, threshold);
+	if (!valid) {
+		return(false);
+	}
+
+	bool result = false;
+
+	if (mask == (MG_FACINGF_N | MG_FACINGF_NE | MG_FACINGF_E | MG_FACINGF_SE | MG_FACINGF_S | MG_FACINGF_SW | MG_FACINGF_W | MG_FACINGF_NW)) {
+		return(false);
+	}
+
+	{
+		Cell c1;
+		Cell c2;
+
+		if ((mask & (MG_FACINGF_N | MG_FACINGF_E)) == (MG_FACINGF_N | MG_FACINGF_E)
+			&& (mask & (MG_FACINGF_S | MG_FACINGF_SW | MG_FACINGF_W)) == 0) {
+			c1.X = cell.X - 1;
+			c1.Y = cell.Y - 5;
+			c2.X = cell.X + 5;
+			c2.Y = cell.Y + 1;
+			if ((mask & MG_FACINGF_NW) != 0) {
+				++c1.Y;
+			}
+			if ((mask & MG_FACINGF_SE) != 0) {
+				--c2.X;
+			}
+			result = Build_Corner_Ramp_SW(c1, c2, region_id);
+		}
+
+		if (!result && (mask & (MG_FACINGF_E | MG_FACINGF_S)) == (MG_FACINGF_E | MG_FACINGF_S)
+			&& (mask & (MG_FACINGF_NE | MG_FACINGF_SW)) == 0) {
+			c1.X = cell.X + 5;
+			c1.Y = cell.Y - 1;
+			c2.X = cell.X - 1;
+			c2.Y = cell.Y + 5;
+			if ((mask & MG_FACINGF_SW) != 0) {
+				--c2.Y;
+			}
+			if ((mask & MG_FACINGF_NE) != 0) {
+				--c1.X;
+			}
+			result = Build_Corner_Ramp_NW(c1, c2, region_id);
+		}
+
+		if (!result && (mask & (MG_FACINGF_S | MG_FACINGF_W)) == (MG_FACINGF_S | MG_FACINGF_W)
+			&& (mask & (MG_FACINGF_N | MG_FACINGF_NE | MG_FACINGF_E)) == 0) {
+			c1.X = cell.X + 1;
+			c1.Y = cell.Y + 5;
+			c2.X = cell.X - 5;
+			c2.Y = cell.Y - 1;
+			if ((mask & MG_FACINGF_NW) != 0) {
+				--c2.X;
+			}
+			if ((mask & MG_FACINGF_SE) != 0) {
+				--c1.Y;
+			}
+			result = Build_Corner_Ramp_NE(c1, c2, region_id);
+		}
+
+		if (!result && (mask & (MG_FACINGF_N | MG_FACINGF_W)) == (MG_FACINGF_N | MG_FACINGF_W)
+			&& (mask & (MG_FACINGF_E | MG_FACINGF_SE | MG_FACINGF_S)) == 0) {
+			c1.X = cell.X - 5;
+			c1.Y = cell.Y + 1;
+			c2.X = cell.X + 1;
+			c2.Y = cell.Y - 5;
+			if ((mask & MG_FACINGF_NE) != 0) {
+				++c2.Y;
+			}
+			if ((mask & MG_FACINGF_SW) != 0) {
+				++c1.X;
+			}
+			result = Build_Corner_Ramp_NE(c1, c2, region_id);
+		}
+
+		if (!result && (mask & (MG_FACINGF_SW | MG_FACINGF_W | MG_FACINGF_NW)) == 0
+			&& (mask & (MG_FACINGF_N | MG_FACINGF_S)) != 0) {
+			c1.X = cell.X - 1;
+			c1.Y = cell.Y - 4;
+			c2.X = c1.X;
+			c2.Y = cell.Y + 4;
+			if ((mask & MG_FACINGF_N) != 0) {
+				++c1.Y;
+				++c2.Y;
+			}
+			if ((mask & MG_FACINGF_S) != 0) {
+				--c2.Y;
+				--c1.Y;
+			}
+
+			c1.X += Pick_Random_UInt(0, 1);
+			c2.X += Pick_Random_UInt(0, 1);
+
+			result = Build_West_Ramp(c1, c2, region_id);
+		}
+
+		if (!result && (mask & (MG_FACINGF_NE | MG_FACINGF_E | MG_FACINGF_SE)) == 0
+			&& (mask & (MG_FACINGF_N | MG_FACINGF_S)) != 0) {
+			c1.X = cell.X + 1;
+			c1.Y = cell.Y + 4;
+			c2.X = c1.X;
+			c2.Y = cell.Y - 4;
+			if ((mask & MG_FACINGF_N) != 0) {
+				++c2.Y;
+				++c1.Y;
+			}
+			if ((mask & MG_FACINGF_S) != 0) {
+				--c1.Y;
+				--c2.Y;
+			}
+
+			c1.X += Pick_Random_UInt(0, 1) - 1;
+			c2.X += Pick_Random_UInt(0, 1) - 1;
+
+			result = Build_East_Ramp(c1, c2, region_id);
+		}
+
+		if (!result && (mask & (MG_FACINGF_N | MG_FACINGF_NE | MG_FACINGF_NW)) == 0
+			&& (mask & (MG_FACINGF_E | MG_FACINGF_W)) != 0) {
+			c1.X = cell.X + 4;
+			c1.Y = cell.Y - 1;
+			c2.X = cell.X - 4;
+			c2.Y = c1.Y;
+			if ((mask & MG_FACINGF_W) != 0) {
+				++c2.X;
+				++c1.X;
+			}
+			if ((mask & MG_FACINGF_E) != 0) {
+				--c1.X;
+				--c2.X;
+			}
+
+			c1.Y += Pick_Random_UInt(0, 1);
+			c2.Y += Pick_Random_UInt(0, 1);
+
+			result = Build_North_Ramp(c1, c2, region_id);
+		}
+
+		if (!result && (mask & (MG_FACINGF_SE | MG_FACINGF_S | MG_FACINGF_SW)) == 0
+			&& (mask & (MG_FACINGF_E | MG_FACINGF_W)) != 0) {
+			c1.X = cell.X - 4;
+			c1.Y = cell.Y + 1;
+			c2.X = cell.X + 4;
+			c2.Y = c1.Y;
+			if ((mask & MG_FACINGF_W) != 0) {
+				++c1.X;
+				++c2.X;
+			}
+			if ((mask & MG_FACINGF_E) != 0) {
+				--c2.X;
+				--c1.X;
+			}
+
+			c1.Y += Pick_Random_UInt(0, 1) - 1;
+			c2.Y += Pick_Random_UInt(0, 1) - 1;
+
+			result = Build_South_Ramp(c1, c2, region_id);
+		}
+	}
+
+	if (threshold > 0.5f) {
+		if (!result) {
+			if ((mask & MG_FACINGF_S) == 0) {
+				Cell first(cell.X - 4, cell.Y + 1);
+				Cell second(cell.X + 4, cell.Y + 1);
+				result = Build_South_Ramp(first, second, region_id);
+			}
+
+			if (!result && (mask & MG_FACINGF_E) == 0) {
+				Cell first(cell.X + 1, cell.Y + 4);
+				Cell second(cell.X + 1, cell.Y - 4);
+				result = Build_East_Ramp(first, second, region_id);
+			}
+
+			if (!result && (mask & MG_FACINGF_S) == 0) {
+				Cell first(cell.X + 4, cell.Y - 1);
+				Cell second(cell.X - 4, cell.Y - 1);
+				result = Build_North_Ramp(first, second, region_id);
+			}
+
+			if (!result && (mask & MG_FACINGF_W) == 0) {
+				Cell first(cell.X - 1, cell.Y - 4);
+				Cell second(cell.X - 1, cell.Y + 4);
+				result = Build_West_Ramp(first, second, region_id);
+			}
+		}
+	}
+
+	return(result);
 }
 
 // FUNCTION: GAMEMD 0x00590FD0

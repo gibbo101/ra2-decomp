@@ -46,7 +46,7 @@ class AnimClass : public ObjectClass
 
 		BounceClass Bounce;
 
-		unsigned char TranslucencyLevel;
+		char TranslucencyLevel;
 		bool TimeToDie;
 		BulletClass * AttachedBullet;
 		HouseClass * Owner;

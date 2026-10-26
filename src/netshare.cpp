@@ -2968,7 +2968,7 @@ void __fastcall FUN_005EBDD0(HWND dialog, int start, int end, MPGameModeClass * 
 	FUN_005EBA00(dialog);
 }
 
-void __fastcall FUN_005EC9F0(HWND dialog, int id, NodeNameType * node, bool flag);
+void __fastcall FUN_005EC9F0(HWND dialog, int id, NodeNameType * node, int mode);
 void FUN_005DAFD0(void);
 
 // FUNCTION: GAMEMD 0x005EBEC0
@@ -3173,8 +3173,33 @@ bool __fastcall FUN_005EC880(HWND dialog, int limit, bool arg1, bool arg2)
 	return(false);
 }
 
-// FUNCTION: GAMEMD 0x005ED270
-void __fastcall FUN_005ED270(HWND dialog, int id, int kind)
+namespace Game { extern int ObserverMode; }
+void __fastcall FUN_004E5260(HWND dialog, int id);
+void __fastcall FUN_004E50C0(HWND dialog, int id);
+void __fastcall FUN_004E5B60(HWND dialog, int id);
+void __fastcall FUN_005EE510(int arg);
+void FUN_0078F000(void);
+void __fastcall FUN_007A28B0(NodeNameType * node);
+void __fastcall FUN_005DB600(NodeNameType * node);
+void FUN_0077DB90(void);
+void FUN_005DAF30(void);
+void __fastcall FUN_005ED270(HWND dialog, int id, int kind);
+
+static inline void Select_Node_Item(HWND dialog, int id, NodeNameType * node)
+{
+	HWND item = GetDlgItem(dialog, id);
+	ShowWindow(item, SW_HIDE);
+	int count = SendDlgItemMessage(dialog, id, CB_GETCOUNT, 0, 0);
+	for (int i = 0; i < count; i++) {
+		if ((NodeNameType *)SendDlgItemMessage(dialog, id, CB_GETITEMDATA, i, 0) == node) {
+			SendDlgItemMessage(dialog, id, CB_SETCURSEL, i, 0);
+			break;
+		}
+	}
+	ShowWindow(item, SW_SHOW);
+}
+
+static inline void Select_Slot_Node(HWND dialog, int id, int kind)
 {
 	NodeNameType * node;
 	if (kind == 2) {
@@ -3192,17 +3217,14 @@ void __fastcall FUN_005ED270(HWND dialog, int id, int kind)
 	} else {
 		node = NULL;
 	}
-	HWND item = GetDlgItem(dialog, id);
-	ShowWindow(item, SW_HIDE);
-	int count = SendDlgItemMessage(dialog, id, CB_GETCOUNT, 0, 0);
-	for (int i = 0; i < count; i++) {
-		if ((NodeNameType *)SendDlgItemMessage(dialog, id, CB_GETITEMDATA, i, 0) == node) {
-			SendDlgItemMessage(dialog, id, CB_SETCURSEL, i, 0);
-			break;
-		}
-	}
-	ShowWindow(item, SW_SHOW);
+	Select_Node_Item(dialog, id, node);
 	FUN_005EC9F0(dialog, id, node, false);
+}
+
+// FUNCTION: GAMEMD 0x005ED270
+void __fastcall FUN_005ED270(HWND dialog, int id, int kind)
+{
+	Select_Slot_Node(dialog, id, kind);
 }
 
 // FUNCTION: GAMEMD 0x005ED370
@@ -3266,6 +3288,153 @@ void __fastcall FUN_005ED400(HWND dialog, SessionOptionsClass * out)
 	out->BuildOffAlly = Session.Options.BuildOffAlly;
 	out->MCVRepacks = Session.Options.MCVRedeploy;
 	out->CratesAppear = Session.Options.Goodies;
+}
+
+int Game_Mode_Total(void);
+int FUN_0058B7D0(void);
+
+static inline MPGameModeClass * Mode_Or_First(MPGameModeClass * mode)
+{
+	return(mode ? mode : First_Game_Mode());
+}
+
+// FUNCTION: GAMEMD 0x005ED5A0
+void __fastcall FUN_005ED5A0(HWND dialog, SessionOptionsClass * opts)
+{
+	if (opts->MPGameMode < 1 || opts->MPGameMode > Game_Mode_Total()) {
+		opts->MPGameMode = First_Game_Mode()->MPModeIndex;
+	}
+	MPGameModeClass * mode = MPGameModeClass::Get(GameModeOptionsClass::Instance = opts->MPGameMode);
+	if (mode == NULL) {
+		mode = First_Game_Mode();
+	}
+	if ((FUN_0077D940() || FUN_0077D970()) && mode && mode->vt_entry_04()) {
+		mode = Mode_Or_First(MPGameModeClass::Get(GameModeOptionsClass::Instance = opts->MPGameMode = First_Game_Mode()->MPModeIndex));
+	}
+	opts->MPGameMode = mode->MPModeIndex;
+	GameModeOptionsClass::Instance = mode->MPModeIndex;
+
+	if (opts->ScenIndex < 0 || opts->ScenIndex >= Session.Scenarios.Count()) {
+		opts->ScenIndex = 0;
+	}
+	Session.Options.ScenarioIndex = Set_Scenario_Info_From_Index(opts->ScenIndex) ? opts->ScenIndex : 0;
+
+	bool regenerate = false;
+	MultiMission * map = Session.Scenarios[Session.Options.ScenarioIndex];
+	if (map != NULL && map->Is_Random_Map()) {
+		if (FUN_0058B7D0() == 0) {
+			regenerate = true;
+		} else {
+			FUN_0058BB30();
+		}
+	}
+	if (!mode->FUN_005D63E0(map) || regenerate) {
+		int index = mode->FirstValidMapIndex();
+		if (index == -1) {
+			mode = First_Game_Mode();
+			opts->MPGameMode = mode->MPModeIndex;
+			GameModeOptionsClass::Instance = mode->MPModeIndex;
+			index = mode->FirstValidMapIndex();
+		}
+		opts->ScenIndex = index;
+		Session.Options.ScenarioIndex = index;
+		Set_Scenario_Info_From_Index(index);
+	}
+
+	Session.MPGameMode = mode;
+	Set_Scenario_Info_From_Index(Session.Options.ScenarioIndex);
+	Session.MPGameMode->vt_entry_20();
+	Session.MPGameMode->vt_entry_24();
+	mode->vt_entry_18();
+	mode->UnfixAlliances();
+
+	int limit = 8;
+	if (Session.Type == GAME_INTERNET) {
+		limit = (FUN_0077D940() && !FUN_0077D970()) ? 2 : 6;
+	}
+	if (DAT_008316A4 == 0 && limit < 8) {
+		limit++;
+	}
+	for (int i = 1; i < 8; i++) {
+		int id = FUN_005E98F0(i);
+		int kind = opts->SlotData[i][0];
+		if (FUN_0077D940() || DAT_008316A4 == 0 || Game::ObserverMode) {
+			if (kind == 4 || kind == 5 || kind == 6) {
+				kind = 2;
+			}
+		}
+		NodeNameType * node;
+		if (i >= limit) {
+			node = DAT_00AC11A0;
+			kind = 3;
+		} else if (kind == 7) {
+			node = DAT_00AC119C;
+			kind = 2;
+		} else if (kind == 2) {
+			node = DAT_00AC119C;
+		} else if (kind == 3) {
+			node = DAT_00AC11A0;
+		} else if (kind == 4) {
+			node = DAT_00AC11A4;
+		} else if (kind == 5) {
+			node = DAT_00AC11A8;
+		} else if (kind == 6) {
+			node = DAT_00AC11AC;
+		} else {
+			node = NULL;
+		}
+		Select_Node_Item(dialog, id, node);
+		FUN_005EC9F0(dialog, id, node, false);
+
+		int country_id = FUN_004E37D0(i);
+		int color_id = FUN_004E41D0(i);
+		int start_id = FUN_004E4E60(i);
+		int team_id = FUN_004E5940(i);
+		if (kind == 2 || kind == 3) {
+			FUN_004E3F70(dialog, country_id, Session.MPGameMode->vt_entry_28());
+			FUN_004E49A0(dialog, color_id, -2);
+			FUN_004E5480(dialog, start_id, -2);
+			FUN_004E5ED0(dialog, team_id, Session.MPGameMode->vt_entry_2C());
+			HWND country_box = GetDlgItem(dialog, country_id);
+			HWND color_box = GetDlgItem(dialog, color_id);
+			HWND start_box = GetDlgItem(dialog, start_id);
+			HWND team_box = GetDlgItem(dialog, team_id);
+			EnableWindow(country_box, FALSE);
+			EnableWindow(color_box, FALSE);
+			EnableWindow(start_box, FALSE);
+			EnableWindow(team_box, FALSE);
+		} else if (kind == 7) {
+			FUN_004E3F70(dialog, country_id, -3);
+			FUN_004E49A0(dialog, color_id, -2);
+			FUN_004E5480(dialog, start_id, -2);
+			FUN_004E5ED0(dialog, team_id, Session.MPGameMode->vt_entry_2C());
+			HWND country_box = GetDlgItem(dialog, country_id);
+			HWND color_box = GetDlgItem(dialog, color_id);
+			HWND start_box = GetDlgItem(dialog, start_id);
+			HWND team_box = GetDlgItem(dialog, team_id);
+			EnableWindow(country_box, FALSE);
+			EnableWindow(color_box, FALSE);
+			EnableWindow(start_box, FALSE);
+			EnableWindow(team_box, FALSE);
+		} else {
+			FUN_004E3F70(dialog, country_id, opts->SlotData[i][1]);
+			FUN_005E9B60(dialog, country_id);
+			FUN_004E49A0(dialog, color_id, opts->SlotData[i][2]);
+			FUN_005E9C00(dialog, color_id);
+			FUN_004E5480(dialog, start_id, -2);
+			FUN_005E9CE0(dialog, start_id);
+			FUN_004E5ED0(dialog, team_id, Session.MPGameMode->vt_entry_30());
+			FUN_005E9DB0(dialog, team_id);
+		}
+	}
+	Session.Options.GameSpeed = opts->GameSpeed;
+	Session.Options.Credits = opts->Credits;
+	Session.Options.UnitCount = opts->UnitCount;
+	Session.Options.ShortGame = opts->ShortGame;
+	Session.Options.SWAllowed = opts->SuperWeaponsAllowed;
+	Session.Options.BuildOffAlly = opts->BuildOffAlly;
+	Session.Options.MCVRedeploy = opts->MCVRepacks;
+	Session.Options.Goodies = opts->CratesAppear;
 }
 
 int __fastcall FUN_00623EA0(HWND window, WideWstring * text);

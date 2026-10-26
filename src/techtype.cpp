@@ -51,6 +51,12 @@ extern const double DAT_007E1740;
 extern const double DAT_007F4FC8;
 extern const double DAT_007F4FD0;
 
+extern char DAT_00889F64[];
+
+struct FileSystem {
+	static void const * LoadFile(char const * name, bool flag);
+};
+
 DynamicVectorClass<TechnoTypeClass *> TechnoTypeClass::Array;
 
 // FUNCTION: GAMEMD 0x00711840
@@ -300,6 +306,126 @@ int TechnoTypeClass::Max_Pips(void) const
 	return(0);
 }
 
+// FUNCTION: GAMEMD 0x007162F0
+HRESULT STDMETHODCALLTYPE TechnoTypeClass::Load(IStream * stream)
+{
+	int i;
+
+	Dock.Clear();
+	DebrisTypes.Clear();
+	DebrisAnims.Clear();
+	VoiceSelect.Clear();
+	VoiceSelectEnslaved.Clear();
+	VoiceSelectDeactivated.Clear();
+	VoiceMove.Clear();
+	VoiceAttack.Clear();
+	VoiceSpecialAttack.Clear();
+	VoiceDie.Clear();
+	VoiceFeedback.Clear();
+	MoveSound.Clear();
+	DieSound.Clear();
+	Explosion.Clear();
+	DestroyAnim.Clear();
+	Prerequisite.Clear();
+	PrerequisiteOverride.Clear();
+	DebrisMaximums.Clear();
+
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		Swizzle_Pointer(&DeploysInto);
+		Swizzle_Pointer(&UndeploysInto);
+		Swizzle_Pointer(&PowersUnit);
+		Swizzle_Pointer(&NaturalParticleSystem);
+		Swizzle_Pointer(&RefinerySmokeParticleSystem);
+		Swizzle_Pointer(&Spawns);
+		Swizzle_Pointer(&Enslaves);
+		Swizzle_Pointer(&DeathWeapon);
+		Swizzle_Pointer(&AirstrikeTeamType);
+		Swizzle_Pointer(&EliteAirstrikeTeamType);
+		Swizzle_Pointer(&UnloadingClass);
+		Swizzle_Pointer(&DeployingAnim);
+
+		Dock.Load(stream);
+		DebrisTypes.Load(stream);
+		DebrisAnims.Load(stream);
+		VoiceSelect.Load(stream);
+		VoiceSelectEnslaved.Load(stream);
+		VoiceSelectDeactivated.Load(stream);
+		VoiceMove.Load(stream);
+		VoiceAttack.Load(stream);
+		VoiceSpecialAttack.Load(stream);
+		VoiceDie.Load(stream);
+		VoiceFeedback.Load(stream);
+		MoveSound.Load(stream);
+		DieSound.Load(stream);
+		Explosion.Load(stream);
+		DestroyAnim.Load(stream);
+		DebrisMaximums.Load(stream);
+		Prerequisite.Load(stream);
+		PrerequisiteOverride.Load(stream);
+		DamageParticleSystems.Load(stream);
+		DestroyParticleSystems.Load(stream);
+
+		for (i = 0; i < Dock.Count(); i++) {
+			Swizzle_Pointer(&Dock[i]);
+		}
+		for (i = 0; i < Explosion.Count(); i++) {
+			Swizzle_Pointer(&Explosion[i]);
+		}
+		for (i = 0; i < DestroyAnim.Count(); i++) {
+			Swizzle_Pointer(&DestroyAnim[i]);
+		}
+		for (i = 0; i < DebrisTypes.Count(); i++) {
+			Swizzle_Pointer(&DebrisTypes[i]);
+		}
+		for (i = 0; i < DebrisAnims.Count(); i++) {
+			Swizzle_Pointer(&DebrisAnims[i]);
+		}
+		for (i = 0; i < MAX_WEAPONS; i++) {
+			Swizzle_Pointer(&Weapons[i].Weapon);
+		}
+		for (i = 0; i < MAX_WEAPONS; i++) {
+			Swizzle_Pointer(&EliteWeapons[i].Weapon);
+		}
+		for (i = 0; i < DamageParticleSystems.Count(); i++) {
+			Swizzle_Pointer(&DamageParticleSystems[i]);
+		}
+		for (i = 0; i < DestroyParticleSystems.Count(); i++) {
+			Swizzle_Pointer(&DestroyParticleSystems[i]);
+		}
+
+		char buffer[256];
+		char fname[_MAX_PATH];
+
+		_makepath(fname, NULL, NULL, (const char *)GraphicName, ".SHP");
+		ImageData = FileSystem::LoadFile(fname, false);
+
+		ArtINI.Get_String((const char *)GraphicName, "Cameo", "XXICON", buffer, sizeof(buffer));
+		if (stricmp(buffer, "XXICON") == 0) {
+			ArtINI.Get_String((const char *)IniName, "Cameo", "XXICON", buffer, sizeof(buffer));
+		}
+		_makepath(fname, NULL, NULL, buffer, ".SHP");
+		CameoData = NULL;
+		CameoData = FileSystem::LoadFile(fname, false);
+		if (CameoData == NULL) {
+			CameoData = FileSystem::LoadFile("XXICON.SHP", false);
+		}
+
+		ArtINI.Get_String((const char *)GraphicName, "AltCameo", DAT_00889F64, buffer, sizeof(buffer));
+		_makepath(fname, NULL, NULL, buffer, ".SHP");
+		AltCameoData = NULL;
+		AltCameoData = FileSystem::LoadFile(fname, false);
+
+		ArtINI.Get_String((const char *)GraphicName, "Palette", DAT_00889F64, PaletteFile, sizeof(PaletteFile));
+		if (PaletteFile[0] != '\0') {
+			Palette = ColorScheme::GeneratePalette(PaletteFile);
+		}
+
+		result = S_OK;
+	}
+	return(result);
+}
+
 // FUNCTION: GAMEMD 0x00716DC0
 HRESULT STDMETHODCALLTYPE TechnoTypeClass::Save(IStream *stream, BOOL cleardirty)
 {
@@ -357,6 +483,115 @@ HRESULT STDMETHODCALLTYPE TechnoTypeClass::GetSizeMax(ULARGE_INTEGER *pcbSize)
 		res = S_OK;
 	}
 	return(res);
+}
+
+// FUNCTION: GAMEMD 0x007171A0
+void TechnoTypeClass::Compute_CRC(class CRCEngine & crc) const
+{
+	BASECLASS::Compute_CRC(crc);
+	crc(ThreatAvoidanceCoefficient);
+	crc(SlowdownDistance);
+	crc(DeaccelerationFactor);
+	crc(AccelerationFactor);
+	crc(CloakingSpeed);
+	crc(DebrisTypes.Count());
+	crc(DebrisAnims.Count());
+	crc(Dock.Count());
+	crc(DebrisMaximums.Count());
+	crc((char*)&Locomotor, sizeof(Locomotor));
+	crc(VoxelCenterY);
+	crc(VoxelCenterX);
+	crc(Weight);
+	crc(PhysicalSize);
+	crc(Size);
+	crc(SizeLimit);
+	crc(HoverAttack);
+	crc(InitialMission);
+	crc(IsImmuneToVeins);
+	crc(IsTiberiumHeal);
+	crc(IsTargetLaser);
+	crc(RollAngle);
+	crc(PitchAngle);
+	crc(PitchSpeed);
+	crc(FlightLevel);
+	crc(BuildLimit);
+	crc(Category);
+	crc(DeployTime);
+	crc(FireAngle);
+	crc(PipScale);
+	crc(VoiceSelect.Count());
+	crc(VoiceSelectEnslaved.Count());
+	crc(VoiceMove.Count());
+	crc(VoiceAttack.Count());
+	crc(VoiceSpecialAttack.Count());
+	crc(VoiceDie.Count());
+	crc(VoiceFeedback.Count());
+	crc(MoveSound.Count());
+	crc(DieSound.Count());
+	crc(DamageParticleSystems.Count());
+	crc(DestroyParticleSystems.Count());
+	crc(MZone);
+	crc(ThreatRange);
+	crc(MaxDebris);
+	crc(MinDebris);
+	crc(MaxPassengers);
+	crc(SightRange);
+	crc(Cost);
+	crc(Soylent);
+	crc(Level);
+	crc(Prerequisite.Count());
+	crc(PrerequisiteOverride.Count());
+	crc(Risk);
+	crc(Reward);
+	crc(MaxSpeed);
+	crc(Speed);
+	crc(MaxAmmo);
+	crc(AirRangeBonus);
+	crc((int)Ownable);
+	crc(AIBasePlanningSide);
+	crc(Rotation);
+	crc(ROT);
+	crc(TurretOffset);
+	crc(Points);
+	crc(Explosion.Count());
+	crc(DestroyAnim.Count());
+	crc(ShadowIndex);
+	crc(Capacity);
+	crc(IsTrain);
+	crc(IsDropship);
+	crc(IsToProtect);
+	crc(IsDisableable);
+	crc(IsUnbuildable);
+	crc(IsDoubleOwned);
+	crc(IsInvisible);
+	crc(IsRadarVisible);
+	crc(IsLeader);
+	crc(IsScanner);
+	crc(IsNominal);
+	crc(DontScore);
+	crc(DamageSelf);
+	crc(IsTurretEquipped);
+	crc(IsRepairable);
+	crc(IsCrew);
+	crc(IsRemappable);
+	crc(IsCloakable);
+	crc(GapGenerator);
+	crc(GapRadiusInCells);
+	crc(SuperGapRadiusInCells);
+	crc(Teleporter);
+	crc(IsSelfHealing);
+	crc(IsExploding);
+	crc(IsNoAutoFire);
+	crc(TurretSpins);
+	crc(Normalized);
+	crc(IsManualReload);
+	crc(IsVisibleLoad);
+	crc(IsLightningRod);
+	crc(DisableVoxelCache);
+	crc(DisableShadowCache);
+	crc(MobileFire);
+	crc(OpportunityFire);
+	crc(DistributedFire);
 }
 
 // FUNCTION: GAMEMD 0x007177C0

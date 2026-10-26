@@ -159,7 +159,8 @@ HouseClass::HouseClass(NoInitClass const & x) :
 	SpeakPowerDelay(x),
 	SpeakMoneyDelay(x),
 	SpeakMaxedDelay(x),
-	IniName(x)
+	IniName(x),
+	UINameString(x)
 {
 
 }
@@ -474,6 +475,62 @@ DiffType HouseClass::Assign_Handicap(DiffType handicap)
 	TeamTime = 175 * HeapID + Rule->TeamDelays[handicap];
 
 	return(old);
+}
+
+extern HouseClass * DAT_0089C374;
+
+// FUNCTION: GAMEMD 0x004F7140
+HouseClass::~HouseClass(void)
+{
+	int index;
+
+	Detach_This_From_All(this, true);
+	Class = NULL;
+	for (index = 0; index < ARRAY_SIZE(Paths); index++) {
+		delete Paths[index];
+		Paths[index] = NULL;
+	}
+
+	for (index = 0; index < SuperWeapon.Count(); index++) {
+		delete SuperWeapon[index];
+	}
+	SuperWeapon.Clear();
+
+	if (AIGeneral != NULL && Game::IsActive) {
+		AIGeneral->Release();
+		AIGeneral = NULL;
+	}
+
+	while (HouseTags.Count() > 0) {
+		delete HouseTags[0];
+	}
+
+	for (index = StartingUnits.Count() - 1; index >= 0; index--) {
+		delete StartingUnits[index];
+	}
+	StartingUnits.Clear();
+
+	for (index = 0; index < PowerEventConnectionPoints.Count(); index++) {
+		while (PowerEventConnectionPoints[index]->Release() > 0) {
+			;
+		}
+		PowerEventConnectionPoints[index] = NULL;
+	}
+	PowerEventConnectionPoints.Clear();
+
+	PowerEvents = NULL;
+
+	PointerExpiredNotification::NotifyInvalidType.Delete(this);
+	PointerExpiredNotification::NotifyInvalidFactory.Delete(this);
+	PointerExpiredNotification::NotifyInvalidWaypoint.Delete(this);
+	PointerExpiredNotification::NotifyInvalidTag.Delete(this);
+	PointerExpiredNotification::NotifyInvalidObject.Delete(this);
+
+	if (DAT_0089C374 == this) {
+		DAT_0089C374 = NULL;
+	}
+
+	Houses.Delete(this);
 }
 
 // FUNCTION: GAMEMD 0x004F7850
@@ -2890,6 +2947,244 @@ void HouseClass::Compute_CRC(CRCEngine & crc) const
 	crc(WhoLastHurtMe);
 	crc(Enemy);
 	Base.Compute_CRC(crc);
+}
+
+// FUNCTION: GAMEMD 0x00504080
+HRESULT STDMETHODCALLTYPE HouseClass::Save(IStream * stream, BOOL cleardirty)
+{
+	int index;
+	int count;
+
+	HRESULT result = BASECLASS::Save(stream, cleardirty);
+	if (SUCCEEDED(result)) {
+
+		BaseClass * base = &Base;
+		base->Save(stream);
+
+		BQuantity.Save(stream);
+		UQuantity.Save(stream);
+		IQuantity.Save(stream);
+		AQuantity.Save(stream);
+
+		ABQuantity.Save(stream);
+		AUQuantity.Save(stream);
+		AIQuantity.Save(stream);
+		AAQuantity.Save(stream);
+
+		PBQuantity.Save(stream);
+		PUQuantity.Save(stream);
+		PIQuantity.Save(stream);
+		PAQuantity.Save(stream);
+
+		count = SuperWeapon.Count();
+		result = stream->Write(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+		for (index = 0; index < count; index++) {
+			result = stream->Write(&SuperWeapon[index], sizeof(SuperWeapon[index]), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+		}
+
+		count = HouseTags.Count();
+		result = stream->Write(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+		for (index = 0; index < count; index++) {
+			result = stream->Write(&HouseTags[index], sizeof(HouseTags[index]), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+		}
+
+		count = AngerNodes.Count();
+		result = stream->Write(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+		for (index = 0; index < count; index++) {
+			result = stream->Write(&AngerNodes[index], sizeof(AngerNodes[index]), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+		}
+
+		count = ScoutNodes.Count();
+		result = stream->Write(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+		for (index = 0; index < count; index++) {
+			result = stream->Write(&ScoutNodes[index], sizeof(ScoutNodes[index]), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+		}
+
+		count = ConYards.Count();
+		result = stream->Write(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+		for (index = 0; index < count; index++) {
+			result = stream->Write(&ConYards[index], sizeof(ConYards[index]), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+		}
+
+		count = Buildings.Count();
+		result = stream->Write(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+		for (index = 0; index < count; index++) {
+			result = stream->Write(&Buildings[index], sizeof(Buildings[index]), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+		}
+
+		count = UnitRepairStations.Count();
+		result = stream->Write(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+		for (index = 0; index < count; index++) {
+			result = stream->Write(&UnitRepairStations[index], sizeof(UnitRepairStations[index]), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+		}
+
+		count = Grinders.Count();
+		result = stream->Write(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+		for (index = 0; index < count; index++) {
+			result = stream->Write(&Grinders[index], sizeof(Grinders[index]), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+		}
+
+		count = Absorbers.Count();
+		result = stream->Write(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+		for (index = 0; index < count; index++) {
+			result = stream->Write(&Absorbers[index], sizeof(Absorbers[index]), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+		}
+
+		count = Bunkers.Count();
+		result = stream->Write(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+		for (index = 0; index < count; index++) {
+			result = stream->Write(&Bunkers[index], sizeof(Bunkers[index]), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+		}
+
+		count = Occupiables.Count();
+		result = stream->Write(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+		for (index = 0; index < count; index++) {
+			result = stream->Write(&Occupiables[index], sizeof(Occupiables[index]), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+		}
+
+		count = CloningVats.Count();
+		result = stream->Write(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+		for (index = 0; index < count; index++) {
+			result = stream->Write(&CloningVats[index], sizeof(CloningVats[index]), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+		}
+
+		count = SecretLabs.Count();
+		result = stream->Write(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+		for (index = 0; index < count; index++) {
+			result = stream->Write(&SecretLabs[index], sizeof(SecretLabs[index]), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+		}
+
+		count = PsychicDetectionBuildings.Count();
+		result = stream->Write(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+		for (index = 0; index < count; index++) {
+			result = stream->Write(&PsychicDetectionBuildings[index], sizeof(PsychicDetectionBuildings[index]), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+		}
+
+		count = FactoryPlants.Count();
+		result = stream->Write(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+		for (index = 0; index < count; index++) {
+			result = stream->Write(&FactoryPlants[index], sizeof(FactoryPlants[index]), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+		}
+
+		count = StartingUnits.Count();
+		result = stream->Write(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+		for (index = 0; index < count; index++) {
+			StartingTechnoStruct * unit = StartingUnits[index];
+			result = stream->Write(unit, sizeof(unit->Type), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+			result = stream->Write(&unit->CellID.X, sizeof(unit->CellID.X), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+			result = stream->Write(&unit->CellID.Y, sizeof(unit->CellID.Y), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+		}
+
+		int hasaigen = AIGeneral != NULL;
+		result = stream->Write(&hasaigen, sizeof(hasaigen), NULL);
+		if (SUCCEEDED(result) && hasaigen) {
+			IPersistStreamPtr ptr(AIGeneral);
+			result = OleSaveToStream(ptr, stream);
+		}
+	}
+	return(result);
 }
 
 // FUNCTION: GAMEMD 0x005046F0

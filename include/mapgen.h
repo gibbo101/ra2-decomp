@@ -270,7 +270,7 @@ class MapGeneratorClass
 		~MapGeneratorClass(void);
 
 		void Generate_Random_Map(bool full_init, HWND dialog);
-		void Init_Map(bool full_init);
+		void Init_Map(HWND dialog);
 		void Cleanup(void);
 		void Update_Progress(int percent_progress);
 		void Seed_Land(void);
@@ -403,8 +403,8 @@ class MapGeneratorClass
 		int RMGMinimumTiberium;
 		int RMGMaximumTiberium;
 
-		TypeList<BuildingTypeClass *> TemperateOrePatchLamps;
-		TypeList<BuildingTypeClass *> SnowOrePatchLamps;
+		TypeList<BuildingTypeClass const *> TemperateOrePatchLamps;
+		TypeList<BuildingTypeClass const *> SnowOrePatchLamps;
 
 		int MaxTrees;
 

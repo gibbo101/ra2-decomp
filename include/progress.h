@@ -6,6 +6,7 @@
 
 #include "always.h"
 
+#include "notice.h"
 #include "point.h"
 #include "sun.h"
 #include "win.h"
@@ -15,18 +16,12 @@ class ColorScheme;
 class Surface;
 class ConvertClass;
 
-class ProgressCallback
-{
-	public:
-		virtual void Notify(int message, int * data) = 0;
-};
-
 class ProgressNotifier
 {
 	public:
-		virtual void Set_Callback(ProgressCallback * callback);
+		virtual void Set_Callback(INoticeSink * callback);
 
-		ProgressCallback * Callback;
+		INoticeSink * Callback;
 };
 
 class ProgressScreenClass : public ProgressNotifier

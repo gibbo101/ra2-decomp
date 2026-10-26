@@ -133,12 +133,13 @@ void FUN_00552A20(void)
 }
 
 // FUNCTION: GAMEMD 0x00552A40
-void LoadProgressManager::Create(void)
+LoadProgressManager * LoadProgressManager::Create(void)
 {
 	if (Instance == NULL) {
 		LoadProgressManager * manager = new LoadProgressManager;
 		Instance = manager;
 	}
+	return Instance;
 }
 
 // FUNCTION: GAMEMD 0x00552AA0
@@ -196,7 +197,7 @@ Point2D LoadProgressManager::Text_Origin(void)
 }
 
 // FUNCTION: GAMEMD 0x00552C90
-int FUN_00552C90(void)
+int LoadProgressManager::FUN_00552C90(void)
 {
 	int result = -1;
 	if (Session.Type != GAME_NORMAL) {
@@ -307,7 +308,7 @@ void LoadProgressManager::FUN_00554370(void)
 }
 
 // FUNCTION: GAMEMD 0x00554400
-bool LoadProgressManager::FUN_00554400(int message, int extra)
+bool LoadProgressManager::INoticeSink_Unknown(DWORD message, DWORD extra)
 {
 	if (message == 0x11ae) {
 		FUN_00554350(HiddenSurface);

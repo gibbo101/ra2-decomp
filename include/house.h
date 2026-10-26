@@ -507,6 +507,7 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 
 		void Begin_Construction(void);
 		BuildingTypeClass const * Get_First_Ownable(DynamicVectorClass<BuildingTypeClass const *> const & owned) const;
+		UnitTypeClass const * Get_First_Ownable(DynamicVectorClass<UnitTypeClass const *> const & owned) const;
 		bool AI_Has_Prerequisites(TechnoTypeClass const * type, DynamicVectorClass<BuildingTypeClass const *> & owned, int ownedcount) const;
 		void Make_Base_Nodes(void);
 		static int Base_Cell_Weight_By_Distance(HouseClass const & house, Cell const & cell, int tie_breaker, int context);
@@ -736,7 +737,8 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 	public:
 
 		TStringID<HOUSE_NAME_MAX> IniName;
-		char UINameString[33];
+		TStringID<31> UINameString;
+		unsigned char : 8;
 		wchar_t UIName[21];
 
 		int Scheme;

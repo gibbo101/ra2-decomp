@@ -56,6 +56,8 @@ class MapChoice
 class MapSelection
 {
 	public:
+		MapSelection(Wstring const & stage_label, char index) : StageLabel(stage_label), Index(index) {}
+
 		Wstring const & Get_Stage_Label(void) {return(StageLabel);}
 		void Set_Stage_Label(Wstring const & stage_label) {StageLabel = stage_label;}
 
@@ -76,7 +78,7 @@ class MapSelection
 class MapStage
 {
 	public:
-		MapStage(INIClass const & ini, char const * label);
+		MapStage(INIClass const & ini, Wstring const & label);
 		~MapStage(void);
 
 		Wstring const & Get_Stage_Label(void) const {return(StageLabel);}

@@ -51,6 +51,7 @@ class DSurface : public XSurface
 		virtual int Draw_Masked_Dashed_Line(Point2D const & startpoint, Point2D const & endpoint, unsigned color, bool pattern[], int offset, bool draw_on_zero_alpha) override;
 		virtual bool Draw_Masked_Line(Point2D const & startpoint, Point2D const & endpoint, unsigned color, bool draw_on_zero_alpha) override;
 		virtual bool Draw_Ping_Pong_Gradient_Line(Rect const & cliprect, Point2D const & startpoint, Point2D const & endpoint, RGBClass const & start_color, RGBClass const & end_color, float & gradient_step, float & gradient_position) const;
+		bool FUN_004BEAC0(Rect const & cliprect, Point2D & startpoint, Point2D & endpoint, RGBClass & color, int alpha, int start_height, int end_height);
 
 		virtual void * Lock(Point2D point = Point2D(0, 0)) const override;
 		virtual bool Unlock(void) const override;

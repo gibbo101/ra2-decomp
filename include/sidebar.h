@@ -214,6 +214,7 @@ class SidebarClass : public PowerClass
 					BuildType(int id, RTTIType type, FactoryClass *factory=NULL) :
 						BuildableID(id),
 						BuildableType(type),
+						IsAlt(0),
 						Factory(factory)
 					{}
 

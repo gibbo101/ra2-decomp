@@ -39,4 +39,5 @@ class ParasiteClass : public AbstractClass
 		virtual void AI(void) override;
 
 		void ExitUnit(void);
+		bool CanInfect(FootClass * victim);
 };

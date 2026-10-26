@@ -71,6 +71,16 @@ void FUN_006269A0(void);
 void __fastcall FUN_00626AB0(char const * name, HSVClass & hsv);
 void Difficulty_Get(CCINIClass const & ini, DifficultyClass & diff, char const * section);
 
+// FUNCTION: GAMEMD 0x00664D20
+RulesClass::RulesClass(NoInitClass const & x) :
+	RadColor(x),
+	LineTrailColorOverride(x),
+	ChronoBeamColor(x),
+	MagnaBeamColor(x)
+{
+	x();
+}
+
 // FUNCTION: GAMEMD 0x006686C0
 void RulesClass::Initialize(CCINIClass & ini)
 {
@@ -747,6 +757,121 @@ bool RulesClass::Read_AdvancedCommandBar(CCINIClass const & ini, bool multiplaye
 		return(true);
 	}
 	return(false);
+}
+
+// FUNCTION: GAMEMD 0x00674730
+void RulesClass::Save(IStream * stream)
+{
+	stream->Write(this, sizeof(*this), NULL);
+	AIIonCannonConYardValue.Save(stream);
+	AIIonCannonWarFactoryValue.Save(stream);
+	AIIonCannonPowerValue.Save(stream);
+	AIIonCannonTechCenterValue.Save(stream);
+	AIIonCannonEngineerValue.Save(stream);
+	AIIonCannonThiefValue.Save(stream);
+	AIIonCannonHarvesterValue.Save(stream);
+	AIIonCannonMCVValue.Save(stream);
+	AIIonCannonAPCValue.Save(stream);
+	AIIonCannonBaseDefenseValue.Save(stream);
+	AIIonCannonPlugValue.Save(stream);
+	AIIonCannonHelipadValue.Save(stream);
+	AIIonCannonTempleValue.Save(stream);
+	FillEarliestTeamProbability.Save(stream);
+	TeamDelays.Save(stream);
+	AIForcePredictionFudge.Save(stream);
+	AlliedBaseDefenseCounts.Save(stream);
+	SovietBaseDefenseCounts.Save(stream);
+	ThirdBaseDefenseCounts.Save(stream);
+	OverloadCount.Save(stream);
+	OverloadDamage.Save(stream);
+	OverloadFrames.Save(stream);
+	DisabledDisguiseDetectionPercent.Save(stream);
+	AISuperDefenseProbability.Save(stream);
+	AIAutoDeployFrameDelay.Save(stream);
+	AIPickWallDefensePercent.Save(stream);
+	MinimumAIDefensiveTeams.Save(stream);
+	MaximumAIDefensiveTeams.Save(stream);
+	AICaptureNormal.Save(stream);
+	AICaptureWounded.Save(stream);
+	AICaptureLowPower.Save(stream);
+	AICaptureLowMoney.Save(stream);
+	MultiplayerAICreditMultipliers.Save(stream);
+	AIVirtualPurifiers.Save(stream);
+	AISlaveMinerNumber.Save(stream);
+	HarvestersPerRefinery.Save(stream);
+	AIExtraRefineries.Save(stream);
+	TotalAITeamCap.Save(stream);
+	AIHateDelays.Save(stream);
+	RadarEventSuppressionDistances.Save(stream);
+	RadarEventVisibilityDurations.Save(stream);
+	RadarEventDurations.Save(stream);
+	BarrelDebris.Save(stream);
+	ExplosiveVoxelDebris.Save(stream);
+	PrerequisitePower.Save(stream);
+	PrerequisiteFactory.Save(stream);
+	PrerequisiteBarracks.Save(stream);
+	PrerequisiteRadar.Save(stream);
+	PrerequisiteTech.Save(stream);
+	PrerequisiteProc.Save(stream);
+	CreditTicks.Save(stream);
+	LightningSounds.Save(stream);
+	Scorches.Save(stream);
+	Scorches1.Save(stream);
+	Scorches2.Save(stream);
+	Scorches3.Save(stream);
+	Scorches4.Save(stream);
+	RepairBay.Save(stream);
+	Shipyard.Save(stream);
+	BuildConst.Save(stream);
+	BuildPower.Save(stream);
+	BuildRefinery.Save(stream);
+	BuildBarracks.Save(stream);
+	BuildTech.Save(stream);
+	BuildWeapons.Save(stream);
+	AlliedBaseDefenses.Save(stream);
+	SovietBaseDefenses.Save(stream);
+	ThirdBaseDefenses.Save(stream);
+	BuildDefense.Save(stream);
+	BuildPDefense.Save(stream);
+	BuildAA.Save(stream);
+	BuildHelipad.Save(stream);
+	BuildRadar.Save(stream);
+	ConcreteWalls.Save(stream);
+	NSGates.Save(stream);
+	EWGates.Save(stream);
+	BuildNavalYard.Save(stream);
+	BuildDummy.Save(stream);
+	NeutralTechBuildings.Save(stream);
+	PadAircraft.Save(stream);
+	OnFire.Save(stream);
+	TreeFire.Save(stream);
+	SplashList.Save(stream);
+	BaseUnit.Save(stream);
+	DefaultMirageDisguises.Save(stream);
+	HarvesterUnit.Save(stream);
+	SecretInfantry.Save(stream);
+	SecretUnits.Save(stream);
+	SecretBuildings.Save(stream);
+	DeadBodies.Save(stream);
+	DropPod.Save(stream);
+	MetallicDebris.Save(stream);
+	BridgeExplosions.Save(stream);
+	IceCrackSounds.Save(stream);
+	AmerParaDropInf.Save(stream);
+	AmerParaDropNum.Save(stream);
+	AllyParaDropInf.Save(stream);
+	AllyParaDropNum.Save(stream);
+	SovParaDropInf.Save(stream);
+	SovParaDropNum.Save(stream);
+	YuriParaDropInf.Save(stream);
+	YuriParaDropNum.Save(stream);
+	AnimToInfantry.Save(stream);
+	DamageFireTypes.Save(stream);
+	WeatherConClouds.Save(stream);
+	WeatherConBolts.Save(stream);
+	for (int index = 0; index < 16; index++) {
+		ColorAdd[index].Save(stream);
+	}
 }
 
 extern unsigned int DAT_00B053B4;

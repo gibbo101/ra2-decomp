@@ -26,12 +26,15 @@ class QueueClass
 		int Next(void);
 
 		int Add(T const &);
+		int Add(T const &, unsigned long timing);
 
 		int Add_Head(T const &);
 
 		int Get_Head(void);
 		int Get_Tail(void);
 		T * Get_Array(void);
+		unsigned long * Get_Timings(void);
+		unsigned long & Timing(int);
 
 	private:
 		int Head;
@@ -62,6 +65,19 @@ inline int QueueClass<T,size>::Add(T const &q)
 	if (Count < size) {
 		Array[Tail] = q;
 		Timings[Tail] = timeGetTime();
+		Tail = (Tail + 1) & (size-1);
+		((int &)Count) = Count + 1;
+		return(true);
+	}
+	return(false);
+}
+
+template<class T, int size>
+inline int QueueClass<T,size>::Add(T const &q, unsigned long timing)
+{
+	if (Count < size) {
+		Array[Tail] = q;
+		Timings[Tail] = timing;
 		Tail = (Tail + 1) & (size-1);
 		((int &)Count) = Count + 1;
 		return(true);
@@ -124,6 +140,18 @@ template<class T, int size>
 inline T * QueueClass<T,size>::Get_Array(void)
 {
 	return(Array);
+}
+
+template<class T, int size>
+inline unsigned long * QueueClass<T,size>::Get_Timings(void)
+{
+	return(Timings);
+}
+
+template<class T, int size>
+inline unsigned long & QueueClass<T,size>::Timing(int index)
+{
+	return(Timings[(Head + index) & (size-1)]);
 }
 
 bool Queue_Mission(TargetClass whom, MissionType mission, TargetClass & target, TargetClass & destination);

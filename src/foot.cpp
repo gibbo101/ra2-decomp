@@ -10,6 +10,7 @@
 #include "_convert.h"
 #include "_keyboar.h"
 #include "_map.h"
+#include "_rand.h"
 #include "_rect.h"
 #include "_rtti.h"
 #include "_rules.h"
@@ -27,6 +28,7 @@
 #include "convert.h"
 #include "ddist.h"
 #include "dsurface.h"
+#include "event.h"
 #include "goptions.h"
 #include "house.h"
 #include "incdec.h"
@@ -39,6 +41,7 @@
 #include "notify.h"
 #include "parasite.h"
 #include "partsys.h"
+#include "queue.h"
 #include "revent.h"
 #include "rules.h"
 #include "session.h"
@@ -243,6 +246,157 @@ int FootClass::Do_MISSION_MOVE(void)
 	if (NavCom == NULL && !Locomotion->Is_Moving() && MissionQueue == MISSION_NONE) {
 		Enter_Idle_Mode();
 		return(1);
+	}
+
+	return(Current_Mission_Control().Normal_Delay() + Random_Pick(0, 2));
+}
+
+static inline ObjectClass * To_Object(AbstractClass * a)
+{
+	return(a == NULL ? NULL : ((a->AbstractFlags & 2) ? (ObjectClass *)a : NULL));
+}
+// FUNCTION: GAMEMD 0x004D4280
+int FootClass::Do_MISSION_PATROL(void)
+{
+	int trange = Threat_Range(2);
+	unknown_bool_430 = true;
+	int dist = (trange / CELL_LEPTON_W) + 6;
+
+	enum {
+		PATROL_FIND_TARGET,
+		PATROL_ENGAGE_TARGET,
+		PATROL_RETURN,
+		PATROL_RESET
+	};
+
+	switch (Status) {
+
+		case PATROL_RESET:
+			if (NavCom != NULL) {
+				Status = PATROL_FIND_TARGET;
+				return(1);
+			}
+			break;
+
+		case PATROL_FIND_TARGET: {
+			AbstractClass * target = Greatest_Threat(THREAT_AREA, Get_Coord(), false);
+			ObjectClass * optr = To_Object(target);
+			int primary = What_Weapon_Should_I_Use(optr);
+
+			if (optr != NULL && (In_Range(optr, primary) || Search.Test_Cell_Walk(Cell(Destination_Coord()), Cell(optr->Destination_Coord()), this, Is_Moving_Onto_Bridge(), optr->Is_Moving_Onto_Bridge(), MZONE_NONE) < dist)) {
+				PatrolCell = Get_Target_Cell_Ptr();
+				if (PatrolCell->IsUnderBridge && !Is_Moving_Onto_Bridge()) {
+					Cell cell = Map.Nearby_Location(PatrolCell->CellID, Techno_Type_Class()->Speed, Map.Get_Cell_Zone(PatrolCell->CellID, Techno_Type_Class()->MZone, false), Techno_Type_Class()->MZone, false, Point2D(1,1), false, true, false, false);
+					if (cell != CELL_NONE) {
+						PatrolCell = &Map[cell];
+					} else {
+						PatrolCell = NULL;
+						return(60);
+					}
+				}
+
+				if (ArchiveTarget == NULL) {
+					if (RouteQueue.Count() > 0) {
+						ArchiveTarget = RouteQueue[RouteQueue.Count()-1];
+					} else if (NavCom != NULL) {
+						ArchiveTarget = NavCom;
+					} else {
+						ArchiveTarget = PatrolCell;
+					}
+				}
+
+				Assign_Destination(NULL);
+				Assign_Target(target);
+				Status = PATROL_ENGAGE_TARGET;
+
+			} else if (NavCom == NULL || !Locomotion->Is_Moving()) {
+				Enter_Idle_Mode();
+				Status = PATROL_RESET;
+				return(1);
+			}
+			break;
+		}
+
+		case PATROL_ENGAGE_TARGET: {
+			ObjectClass * optr = To_Object(TarCom);
+			int primary = What_Weapon_Should_I_Use(optr);
+
+			if (Is_Renovator() && optr != NULL && optr->RTTI == RTTI_BUILDING && House->Is_Ally(((TechnoClass *)optr)->House) && optr->HealthRatio > Rule->ConditionRed) {
+				Assign_Target(NULL);
+			} else if (optr != NULL && (In_Range(optr, primary) || Search.Test_Cell_Walk(PatrolCell->CellID, Cell(optr->Destination_Coord()), this, PatrolCell->IsUnderBridge, optr->Is_Moving_Onto_Bridge(), MZONE_NONE) < dist)) {
+				Approach_Target();
+				if (TarCom != NULL) {
+					break;
+				}
+				Assign_Destination(ArchiveTarget);
+				ArchiveTarget = NULL;
+				PatrolCell = NULL;
+				Status = PATROL_FIND_TARGET;
+				return(45);
+			}
+
+			if (TarCom == NULL) {
+				AbstractClass * target = Greatest_Threat(THREAT_AREA, PatrolCell->Center_Coord(), false);
+				ObjectClass * scanptr = To_Object(target);
+				int scanweapon = What_Weapon_Should_I_Use(scanptr);
+				if (scanptr != NULL && (In_Range(scanptr, scanweapon) || Search.Test_Cell_Walk(PatrolCell->CellID, Cell(scanptr->Destination_Coord()), this, PatrolCell->IsUnderBridge, scanptr->Is_Moving_Onto_Bridge(), MZONE_NONE) < dist)) {
+					Assign_Target(target);
+					Assign_Destination(NULL);
+					return(1);
+				}
+			}
+
+			Status = PATROL_RETURN;
+			Assign_Target(NULL);
+			if (ArchiveTarget != NULL) {
+				CellClass * tcell = Get_Target_Cell_Ptr();
+				bool onbridge = Is_Moving_Onto_Bridge();
+				CellClass * acell = &Map[ArchiveTarget->Center_Coord()];
+				int patrolwalk = Search.Test_Cell_Walk(tcell->CellID, PatrolCell->CellID, this, onbridge, PatrolCell->IsUnderBridge, MZONE_NONE);
+				if (patrolwalk < Search.Test_Cell_Walk(tcell->CellID, acell->CellID, this, onbridge, acell->IsUnderBridge, MZONE_NONE)) {
+					Assign_Destination(PatrolCell);
+				} else {
+					Assign_Destination(ArchiveTarget);
+				}
+				return(1);
+			}
+			Status = PATROL_FIND_TARGET;
+			Enter_Idle_Mode();
+			Status = PATROL_RESET;
+			return(1);
+		}
+
+		case PATROL_RETURN: {
+			AbstractClass * target = Greatest_Threat(THREAT_AREA, PatrolCell->Center_Coord(), false);
+			ObjectClass * optr = To_Object(target);
+			int primary = What_Weapon_Should_I_Use(optr);
+
+			if (optr != NULL && (In_Range(optr, primary) || Search.Test_Cell_Walk(PatrolCell->CellID, Cell(optr->Destination_Coord()), this, PatrolCell->IsUnderBridge, optr->Is_Moving_Onto_Bridge(), MZONE_NONE) < dist)) {
+				Assign_Target(target);
+				Assign_Destination(NULL);
+				Status = PATROL_ENGAGE_TARGET;
+				break;
+			}
+
+			if (NavCom == NULL) {
+				Assign_Target(NULL);
+				if (ArchiveTarget != NULL) {
+					Assign_Destination(ArchiveTarget);
+					ArchiveTarget = NULL;
+					Status = PATROL_FIND_TARGET;
+					PatrolCell = NULL;
+				} else {
+					Status = PATROL_FIND_TARGET;
+					Enter_Idle_Mode();
+					Status = PATROL_RESET;
+					return(1);
+				}
+			}
+			break;
+		}
+
+		default:
+			break;
 	}
 
 	return(Current_Mission_Control().Normal_Delay() + Random_Pick(0, 2));
@@ -477,6 +631,140 @@ inline Cell Adjacent_Cell_By_Value(Cell cell, FacingType dir)
 {
 	return(cell + AdjacentCell[(int)dir & 0x07]);
 }
+
+static inline bool Is_Foot_Object(AbstractClass const * object)
+{
+	if (object == NULL) {
+		return(false);
+	}
+	unsigned char flag = (object->AbstractFlags >> 2) & 1;
+	return(flag != 0);
+}
+
+static inline int Point_Distance(Point2D const & a, Point2D const & b)
+{
+	Point2D diff = a - b;
+	return(diff.Length());
+}
+
+static inline void Nav_Pop(FootClass * foot)
+{
+	AbstractClass * target = foot->NavQueue[0];
+	if (target != NULL) {
+		foot->Assign_Destination(target);
+		foot->NavQueue.Delete_Index(0);
+		if (foot->IsNavQueueLoop) {
+			foot->NavQueue.Add(target);
+		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x004D6AA0
+int FootClass::Do_MISSION_GUARD_AREA(void)
+{
+	if (BunkerLinkedItem != NULL) {
+		QueueMission(MISSION_GUARD, true);
+		return(1);
+	}
+
+	if ((unsigned char&)ShouldEnterAbsorber != 0) {
+		EnterBioReactor();
+	} else if (ShouldEnterOccupiable != false) {
+		EnterBattleBunker();
+	} else if (ShouldGarrisonStructure != false) {
+		GarrisonStructure();
+	} else {
+		if (!House->Is_Human_Player()) {
+			if (NavQueue.Count() > 0 && NavCom == NULL && NavQueue[0] == ArchiveTarget) {
+				Nav_Pop(this);
+			}
+		}
+
+		if (Is_Target_Cell(ArchiveTarget)) {
+			BuildingClass * building = Map[ArchiveTarget->Center_Coord()].Cell_Building();
+			if (building != NULL && House->Is_Ally(building->House) && !House->Is_Human_Player() && (RTTI != RTTI_UNIT || !static_cast<UnitClass *>(this)->Class->Harvester)) {
+				Cell nearby = Map.Nearby_Location((Cell)ArchiveTarget->Center_Coord(), SPEED_TRACK, Map.Get_Cell_Zone((Cell)PositionCoord));
+				if (nearby != CELL_NONE) {
+					ArchiveTarget = &Map[nearby];
+				}
+			}
+		}
+
+		if (RTTI == RTTI_UNIT && static_cast<UnitClass *>(this)->Class->Harvester) {
+			QueueMission(MISSION_HARVEST, false);
+			Commence();
+			return(1 + Random_Pick(1, 10));
+		}
+		if (SlaveManager != NULL) {
+			SlaveManager->FUN_006B0CC0();
+		}
+
+		if (ArchiveTarget == NULL && MissionQueue == MISSION_NONE) {
+			ArchiveTarget = &Map[(Coord const &)PositionCoord];
+		}
+
+		InfantryClass * infantry = (this == NULL) ? NULL : (RTTI == RTTI_INFANTRY) ? (InfantryClass *)this : NULL;
+		if (!House->Is_Human_Player() && infantry != NULL && (infantry->Class->IsBomber || infantry->Has_Ability(ABILITY_C4)) && Get_Mission() != MISSION_SABOTAGE && TarCom != NULL && TarCom->RTTI == RTTI_BUILDING) {
+			QueueMission(MISSION_SABOTAGE, false);
+			return(1);
+		}
+
+		int maxrange = (int)(Threat_Range(1) * 1.1);
+
+		if (Is_Foot_Object(ArchiveTarget)) {
+			maxrange = Rule->GuardModeStray;
+		}
+		if (ArchiveTarget != NULL) {
+			if (!IsFiring && NavCom == NULL && Distance(ArchiveTarget) > maxrange) {
+				Assign_Target(NULL);
+				Assign_Destination(ArchiveTarget);
+			}
+
+			if (TarCom == NULL) {
+				if (CanPassiveAcquireTargets() && TargetingTimerFinished()) {
+					Target_Something_Nearby(ArchiveTarget->Center_Coord(), THREAT_AREA);
+				}
+				if (TarCom != NULL) {
+					return(1);
+				}
+				Random_Animate();
+			} else {
+				Approach_Target();
+			}
+		}
+
+		if (TarCom == NULL) {
+			if (Get_Secondary_Weapon() != NULL && Get_Secondary_Weapon()->WarheadPtr->ElectricAssault) {
+				BuildingClass * building = Adjacent_Overpowerable(this);
+				if (building != NULL) {
+					Assign_Target(building);
+					unknown_bool_68E = true;
+					QueueMission(MISSION_ATTACK, false);
+				}
+			}
+		}
+
+		int dtime = Current_Mission_Control().Normal_Delay();
+		if (RTTI == RTTI_AIRCRAFT) {
+			dtime *= 2;
+		}
+		dtime += Random_Pick(1, 5);
+
+		if (TarCom != NULL) {
+			if ((this != NULL && RTTI == RTTI_INFANTRY && (RTTI == RTTI_INFANTRY ? (InfantryClass *)this : NULL)->Class->CloseRange) || (PrimaryWeapon != NULL && PrimaryWeapon->Range <= 0x200)) {
+				int dist = Point_Distance((Point2D)Center_Coord(), (Point2D)TarCom->Center_Coord());
+				if (dist <= 0x300) {
+					if ((double)dist >= 281.6) {
+						dtime /= 6;
+					}
+				}
+			}
+		}
+		return(dtime);
+	}
+	return(Current_Mission_Control().Normal_Delay());
+}
+
 
 // FUNCTION: GAMEMD 0x004D7170
 bool FootClass::Unlimbo(Coord const & coord, Dir256 dir)
@@ -1392,6 +1680,163 @@ VisualType FootClass::Visual_Character(bool raw, HouseClass const * house) const
 	return(visual);
 }
 
+AudioEvent * __fastcall FUN_00750D40(Coord const & coord, AudioController * controller);
+// FUNCTION: GAMEMD 0x004DA530
+void FootClass::AI(void)
+{
+	BASECLASS::AI();
+
+	if (IsActive) {
+		IsIdle = false;
+
+		if (Frame % Rule->RadApplicationDelay == 0 && !Techno_Type_Class()->ImmuneToRadiation && !In_Air() && !IsInLimbo) {
+			Cell cell = Center_Coord();
+			int rad = Map[cell].GetRadLevel();
+			if (rad > 0) {
+				int damage = (int)(rad * Rule->RadLevelFactor);
+				Take_Damage(damage, 0, Rule->RadSiteWarhead, NULL, false, true, NULL);
+				if (!IsActive) {
+					return;
+				}
+			}
+		}
+
+		if (!IsInPlayfield && Techno_Type_Class()->BalloonHover) {
+			if (Map.In_Local_Radar(Get_Cell_Ptr(), true)) {
+				IsInPlayfield = true;
+			}
+		}
+
+		if (Locomotion->Is_Moving_Now() && In_Air() && House->Is_Ally(PlayerPtr)) {
+			if (SightTimer == 0) {
+				vt_entry_48C(0, 0, 0, 0);
+				UpdateSight(0, 0, 0, 0, 0);
+				if (LastSightHeight != Get_Height_AGL()) {
+					Map.RevealArea3(PositionCoord, 0, LastSightRange + 3, 0);
+				} else {
+					Map.RevealArea3(PositionCoord, LastSightRange - 3, LastSightRange + 3, 0);
+				}
+				LastSightHeight = Get_Height_AGL();
+				SightTimer = 15;
+			}
+		}
+
+		if (Frame % 16 == 0 && In_Air() && Get_Cell_Ptr()->Tag != NULL) {
+			Get_Cell_Ptr()->Tag->Spring((TEventType)0x3b, this, Get_Cell());
+		}
+
+		int oldwalked = TotalFramesWalked;
+		if (Locomotion != NULL && !IsSinking && !IsFalling && (DirectRockerLinkedUnit == NULL || Techno_Type_Class()->Pushy) && !IsInLimbo) {
+			Locomotion->Process();
+			if (!IsActive) {
+				return;
+			}
+			UnitClass * unit = (this == NULL) ? NULL : (RTTI == RTTI_UNIT) ? (UnitClass *)this : NULL;
+			if ((Locomotion->Is_Moving_Now() && !IsWarpingIn()) || (TarCom != NULL && Techno_Type_Class()->HoverAttack && unit != NULL && !unit->FUN_00746D80())) {
+				if (Frame % Techno_Type_Class()->WalkRate == 0 && !IsBeingWarpedOut() && !IsWarpingIn() && !IsAttackedByLocomotor) {
+					TotalFramesWalked++;
+					goto walked;
+				}
+			}
+			if (Techno_Type_Class()->IdleRate != 0 && !Locomotion->Is_Moving_Now() && Frame % Techno_Type_Class()->IdleRate == 0 && !IsBeingWarpedOut() && !IsWarpingIn() && !IsAttackedByLocomotor) {
+				TotalFramesWalked++;
+				goto walked;
+			}
+			if (Techno_Type_Class()->DeployToLand && Get_Height_AGL() > 0 && !IsBeingWarpedOut() && !IsWarpingIn() && !IsAttackedByLocomotor) {
+				TotalFramesWalked++;
+			}
+		}
+walked:
+
+		if (oldwalked == TotalFramesWalked && !Locomotion->Is_Moving_Now() || IsFalling || IsCrashing || (DirectRockerLinkedUnit != NULL && Techno_Type_Class()->Pushy)) {
+			if (IsMoveSoundPlaying) {
+				if (MoveSoundDelay != 0 && !IsFalling && !IsCrashing) {
+					MoveSoundDelay--;
+				} else {
+					MoveSoundAudioController.EndLooping();
+					IsMoveSoundPlaying = false;
+					MoveSoundDelay = 0;
+				}
+			}
+		} else {
+			if (!IsMoveSoundPlaying) {
+				if (Techno_Type_Class()->MoveSound.Count() > 0) {
+					MoveSoundAudioController.Stop();
+					Coord coord = PositionCoord;
+					TypeList<int> const & sounds = Techno_Type_Class()->MoveSound;
+					unsigned int rnd = NonCriticalRandomNumber();
+					VocClass::PlayAt(sounds[rnd % (unsigned int)sounds.Count()], coord, &MoveSoundAudioController);
+					IsMoveSoundPlaying = true;
+				}
+			}
+			MoveSoundDelay = 3;
+		}
+
+		if (IsFalling != IsABomb) {
+			if (IsFalling) {
+				if (Techno_Type_Class()->VoiceFalling != -1 && IsToExplode) {
+					VocClass::PlayAt(Techno_Type_Class()->VoiceFalling, PositionCoord, NULL);
+				}
+			}
+			IsABomb = IsFalling;
+		}
+
+		if (IsSinking != WasSinkingAlready) {
+			if (IsSinking) {
+				if (Techno_Type_Class()->VoiceSinking != -1) {
+					VocClass::PlayAt(Techno_Type_Class()->VoiceSinking, PositionCoord, NULL);
+				}
+				if (Techno_Type_Class()->SinkingSound != -1) {
+					VocClass::PlayAt(Techno_Type_Class()->SinkingSound, PositionCoord, &MoveSoundAudioController);
+				} else if (Rule->SinkingSound != -1) {
+					VocClass::PlayAt(Rule->SinkingSound, PositionCoord, &MoveSoundAudioController);
+				}
+			} else if (!IsMoveSoundPlaying) {
+				MoveSoundAudioController.EndLooping();
+			}
+			WasSinkingAlready = IsSinking;
+		}
+
+		if (IsCrashing != WasCrashingAlready) {
+			if (IsCrashing) {
+				MoveSoundAudioController.EndLooping();
+				if (Techno_Type_Class()->VoiceCrashing != -1 && House->Is_Player_Control()) {
+					VocClass::PlayAt(Techno_Type_Class()->VoiceCrashing, PositionCoord, NULL);
+				}
+				if (Techno_Type_Class()->CrashingSound != -1) {
+					VocClass::PlayAt(Techno_Type_Class()->CrashingSound, PositionCoord, &MoveSoundAudioController);
+				}
+			} else if (!IsMoveSoundPlaying) {
+				MoveSoundAudioController.EndLooping();
+			}
+			WasCrashingAlready = IsCrashing;
+		}
+
+		FUN_00750D40(PositionCoord, &MoveSoundAudioController);
+
+		if ((Frame & 63) == 63 && NavCom == NULL && !IsOnBridge && Get_Cell_Ptr()->Ramp == 0 && Is_On_Elevation() && Get_Height_AGL() == 0) {
+			Scatter(Coord(0, 0, 0), true);
+		}
+
+		IPiggybackPtr piggy(Locomotion);
+		if (piggy != NULL) {
+			if (piggy->Is_Ok_To_End()) {
+				piggy->End_Piggyback(&Locomotion);
+			}
+		}
+
+		IonBlastYDrawOffset = 0;
+
+		if (!IsWarpingIn()) {
+			Enter_Object_Nearby();
+		}
+
+		if (ParasiteEatingMe != NULL) {
+			ParasiteEatingMe->ParasiteImUsing->AI();
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x004DAF10
 void FootClass::Draw_A_VXL(VoxelDataStruct const & voxeldata, int frame, int key, VoxelIndexClass * cache, Rect const & cliprect, Point2D const & point, Matrix3D const & matrix, int brightness, ShapeFlags_Type flags, int unknown) const
 {
@@ -2095,7 +2540,7 @@ bool FootClass::Tiberium_Check(Cell & center)
 }
 
 // FUNCTION: GAMEMD 0x004DCFE0
-bool FootClass::Goto_Tiberium(int rad, unsigned allow_weighted)
+bool FootClass::Goto_Tiberium(int rad, bool allow_weighted)
 {
 	if (NavCom == NULL) {
 		Cell newcell = ScanForTiberium(rad, allow_weighted);
@@ -2110,7 +2555,7 @@ bool FootClass::Goto_Tiberium(int rad, unsigned allow_weighted)
 }
 
 // FUNCTION: GAMEMD 0x004DD0A0
-Cell FootClass::ScanForTiberium(int rad, unsigned unk)
+Cell FootClass::ScanForTiberium(int rad, bool allow_weighted)
 {
 	Cell bestcell = CELL_NONE;
 

@@ -86,6 +86,63 @@ CellClass::CellClass(NoInitClass const & x) :
 
 }
 
+// FUNCTION: GAMEMD 0x0047B3A0
+LEPTON CellClass::Get_Height(Point2D const & point) const
+{
+	static double _level_height = LEVEL_LEPTON_H;
+	static double _level_slope = _level_height / CELL_LEPTON_W;
+
+	static struct {
+		double XChange;
+		double YChange;
+		double Base;
+		double Max;
+		double Extra;
+	} _ramp_control[RAMP_COUNT-1] = {
+		{  1.0,	 0.0,	 0.0,							_level_height,					0.0 },
+		{  0.0,	 1.0,	 0.0,							_level_height,					0.0 },
+		{ -1.0,	 0.0,	 _level_height,					_level_height,					0.0 },
+		{  0.0,	-1.0,	 _level_height,					_level_height,					0.0 },
+		{  1.0,	 1.0,	-_level_height,					_level_height,					0.0 },
+		{ -1.0,	 1.0,	 0.0,							_level_height,					0.0 },
+		{ -1.0,	-1.0,	 _level_height,					_level_height,					0.0 },
+		{  1.0,	-1.0,	 0.0,							_level_height,					0.0 },
+		{  1.0,	 1.0,	 0.0,							_level_height,					0.0 },
+		{ -1.0,	 1.0,	 _level_height,					_level_height,					0.0 },
+		{ -1.0,	-1.0,	 _level_height + _level_height, _level_height,					0.0 },
+		{  1.0,	-1.0,	 _level_height,					_level_height,					0.0 },
+		{  1.0,	 1.0,	 0.0,							_level_height + _level_height,	0.0 },
+		{ -1.0,	 1.0,	 _level_height,					_level_height + _level_height,	0.0 },
+		{ -1.0,	-1.0,	 _level_height + _level_height, _level_height + _level_height,	0.0 },
+		{  1.0,	-1.0,	 _level_height,					_level_height + _level_height,	0.0 },
+		{  0.0,	 0.0,	 0.0,							_level_height * 0.5,			_level_height * 0.5	 },
+		{  0.0,	 0.0,	 _level_height,					_level_height * 0.5,			_level_height * -0.5 },
+		{  0.0,	 0.0,	 0.0,							_level_height * 0.5,			_level_height * 0.5	 },
+		{  0.0,	 0.0,	 _level_height,					_level_height * 0.5,			_level_height * -0.5 }
+	};
+
+	LEPTON height = LEPTON(LEVEL_LEPTON_H * Height + 0.5);
+
+	if (Ramp > 0) {
+		int ramp = Ramp - 1;
+		double rampheight = ((point.X & (CELL_LEPTON_W - 1)) * _ramp_control[ramp].XChange * _level_slope) +
+							((point.Y & (CELL_LEPTON_H - 1)) * _ramp_control[ramp].YChange * _level_slope) +
+							_ramp_control[ramp].Base +
+							_ramp_control[ramp].Extra;
+
+		if (rampheight < 0.0) {
+			rampheight = 0.0;
+		}
+		if (rampheight > _ramp_control[ramp].Max) {
+			rampheight = _ramp_control[ramp].Max;
+		}
+
+		height += rampheight;
+	}
+
+	return(height);
+}
+
 // FUNCTION: GAMEMD 0x0047BB60
 CellClass::~CellClass(void)
 {
@@ -2936,5 +2993,5 @@ template class VectorClass<ObjectClass *>;
 template class VectorClass<FoggedObjectClass *>;
 
 // SYNTHETIC: GAMEMD 0x004880D0 SYMBOL
-// _$E222
+// _$E223
 Rect DAT_0089E7C8(0, 0, 0, 0);

@@ -51,7 +51,7 @@ class CCINIClass;
 #define MODEM_MIN_MAX_AHEAD			5
 #define NETWORK_MIN_MAX_AHEAD		2
 
-#define DEFAULT_FRAME_SEND_RATE		3
+#define DEFAULT_FRAME_SEND_RATE		5
 
 #define	PORTBUF_MAX					64
 #define	IRQBUF_MAX					3
@@ -419,7 +419,7 @@ struct TrapObjectType {
 class MultiMission
 {
 	public:
-		MultiMission(CCINIClass const & ini, char const * filename);
+		MultiMission(INIClass const & ini, char const * filename);
 		MultiMission(char const * filename, wchar_t const * description, char const * digest, bool official, char const * game_modes, int min_players, int max_players);
 
 		void Set_Description(wchar_t const * description);
@@ -435,6 +435,8 @@ class MultiMission
 		bool Supports_Game_Mode(Wstring & mode) const;
 		bool Is_On_CD(DiskID cd) const;
 		DiskID On_Which_CD(void) const;
+
+	friend class SessionClass;
 
 	private:
 		wchar_t ScenarioDescription[DESCRIP_MAX];
@@ -555,6 +557,7 @@ class SessionClass
 		void Resume(void);
 		void FUN_0069BB40(void);
 		unsigned short FUN_0069BC20(int connection_id);
+		int FUN_0069BC60(int index);
 
 		void Trap_Object(void);
 		bool Log_To_File(FILE *out);
@@ -711,23 +714,32 @@ class SessionClass
 		unsigned char unknown_2969[3];
 		IPXAddressClass unknown_296C;
 		IPXAddressClass unknown_2978;
-		unsigned char unknown_2984[0x10];
+		unsigned char unknown_2984[4];
+		IPXAddressClass unknown_2988;
 		IPXAddressClass unknown_2994[MAX_PLAYERS];
 		int unknown_29F4[MAX_PLAYERS];
 		int unknown_2A14[64][2];
 		int unknown_2C14[64][2];
 		int unknown_2E14;
 		unsigned short unknown_2E18[MAX_PLAYERS];
-		unsigned char unknown_2E28[0x144];
+		unsigned char unknown_2E28[0x120];
+		bool unknown_2F48;
+		unsigned char unknown_2F49[0x23];
 		int unknown_2F6C[MAX_PLAYERS];
 		CDTimerClass<SystemTimerClass> unknown_2F8C[MAX_PLAYERS];
 		int unknown_2FEC;
-		unsigned char unknown_2FF0[8];
+		int PortBase;
+		int ForcePortBase;
 		int unknown_2FF8[MAX_PLAYERS];
-		unsigned char unknown_3018[8];
+		bool unknown_3018;
+		int unknown_301C;
 		wchar_t MasterPlayerName[MPLAYER_NAME_MAX + 1];
 		unsigned int unknown_304C[8];
-		unsigned char unknown_306C[8];
+		bool unknown_306C;
+		unsigned char : 8;
+		unsigned short unknown_306E;
+		unsigned short unknown_3070;
+		unsigned short : 16;
 		int MasterPlayerID;
 		bool unknown_3078;
 		unsigned short PlayerPorts[MAX_PLAYERS];
@@ -735,9 +747,11 @@ class SessionClass
 		int unknown_308C;
 		bool unknown_3090;
 		int unknown_3094;
-		int unknown_3098;
+		bool unknown_3098;
 		unsigned int unknown_309C;
-		unsigned char unknown_30A0[0xC];
+		int unknown_30A0;
+		int unknown_30A4;
+		int unknown_30A8;
 
 		int TrapFrame;
 		RTTIType TrapObjType;

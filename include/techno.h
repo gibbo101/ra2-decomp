@@ -158,7 +158,7 @@ class TechnoClass : public RadioClass
 
 		float WarpFactor;
 		bool unknown_bool_250;
-		int LastSightCoords[3];
+		Coord LastSightCoords;
 		int LastSightRange;
 		int LastSightHeight;
 		bool GapSuperCharged;
@@ -173,7 +173,7 @@ class TechnoClass : public RadioClass
 		bool IsImmobilized;
 		unsigned unknown_280;
 		int ChronoLockRemaining;
-		int ChronoDestCoords[3];
+		Coord ChronoDestCoords;
 		AirstrikeClass * Airstrike;
 		bool Berzerk;
 		int BerzerkDurationLeft;
@@ -293,9 +293,9 @@ class TechnoClass : public RadioClass
 		bool unknown_bool_43A;
 		unsigned unknown_43C;
 
-		DynamicVectorClass<int> CurrentTargetThreatValues;
-		DynamicVectorClass<AbstractClass *> CurrentTargets;
-		DynamicVectorClass<AbstractClass *> AttackedTargets;
+		mutable DynamicVectorClass<int> CurrentTargetThreatValues;
+		mutable DynamicVectorClass<AbstractClass *> CurrentTargets;
+		mutable DynamicVectorClass<AbstractClass *> AttackedTargets;
 
 		AudioController TurretRotateSoundController;
 		int IsTurretRotateSoundPlaying;
@@ -437,7 +437,7 @@ class TechnoClass : public RadioClass
 		virtual bool Is_Sensed_By_House(HouseClass const * house) const;
 		virtual bool Is_Renovator(void) const;
 		virtual void Advance_Waypoint_Path(void);
-		virtual Cell ScanForTiberium(int range, unsigned unk);
+		virtual Cell ScanForTiberium(int range, bool allow_weighted);
 		virtual bool EnterGrinder(void);
 		virtual bool EnterBioReactor(void);
 		virtual bool EnterTankBunker(void);
@@ -623,6 +623,7 @@ class TechnoClass : public RadioClass
 		void StartReloading(void);
 		void Base_Is_Attacked(TechnoClass const * enemy);
 		void Kill_Cargo(TechnoClass * source);
+		void MarkPassengersAsExited(void);
 		virtual void Record_The_Kill(HouseClass * source) override;
 		virtual bool In_Range(Coord const & coord, int which=0) const override;
 		virtual void Override_Mission(MissionType mission, AbstractClass * tarcom, AbstractClass * navcom) override;
@@ -664,7 +665,7 @@ class TechnoClass : public RadioClass
 		virtual void Debug_Dump(MonoClass *mono) const override;
 #endif
 
-		void Techno_Draw_Object(ShapeSet const * shapefile, int shapenum, Point2D const & drawpoint, Rect const & rect, Dir256 rotation=DIR_N, int scale=0x0100, int zadjust=0, ZGradientType zgrad=ZGRAD_GROUND, bool=false, int brightness=0, int tint=0, ShapeSet const * zshapefile=0, int zshapenum=0, Point2D zoff = Point2D(0,0), ShapeFlags_Type negflags=SHAPE_NORMAL) const;
+		void Techno_Draw_Object(ShapeSet const * shapefile, int shapenum, Point2D const & drawpoint, Rect const & rect, Dir256 rotation=DIR_N, int scale=0x0100, int zadjust=0, ZGradientType zgrad=ZGRAD_GROUND, bool=false, int brightness=0, unsigned short tint=0, ShapeSet const * zshapefile=0, int zshapenum=0, Point2D zoff = Point2D(0,0), ShapeFlags_Type negflags=SHAPE_NORMAL) const;
 
 		virtual void Draw_Pre_Render(Point2D const & point, Rect const & cliprect) const override;
 		virtual void Draw_Post_Render(Point2D const & point, Rect const & cliprect) const override;

@@ -351,6 +351,476 @@ LONG Top_Level_Exception_Filter(EXCEPTION_POINTERS *e_info)
 	return(Exception_Handler(e_info->ExceptionRecord->ExceptionCode, e_info));
 }
 
+struct VirtualObject { virtual ~VirtualObject(); };
+class BitText { public: virtual ~BitText(); static BitText * Instance; };
+namespace FileSystem { extern SHPStruct * GRFXTXT_SHP; extern ConvertClass * GRFXTXT_Convert; extern unsigned char * GRFXTXT_PAL; }
+extern CCINIClass INI_AI, INI_UIMD, DAT_00887058, INI_RA2MD;
+struct OutOfLineDtor { ~OutOfLineDtor(); };
+extern OutOfLineDtor * DAT_00A83DB8;
+extern HINSTANCE DAT_0089F974;
+extern HANDLE DAT_00B0BCE8;
+extern DWORD DAT_00B0BCEC;
+namespace Unsorted { extern HANDLE AppMutex; }
+namespace StringTable { void Unload(void); }
+namespace CopyProtection { void ShutDown(void); }
+extern DynamicVectorClass<VirtualObject *> DAT_0087F698;
+extern DynamicVectorClass<VirtualObject *> DAT_00884D90;
+extern DynamicVectorClass<VirtualObject *> DAT_00884DC0;
+extern VirtualObject * DAT_0087F6B0;
+extern VirtualObject * DAT_0087F6B4;
+extern VirtualObject * DAT_0087F6B8;
+extern VirtualObject * DAT_0087F6C0;
+extern VirtualObject * DAT_0087F6C4;
+extern VirtualObject * DAT_0087F6C8;
+extern VirtualObject * DAT_0087F6CC;
+extern VirtualObject * DAT_0087F6D0;
+extern VirtualObject * DAT_00884DD8;
+extern VirtualObject * DAT_00884DDC;
+extern VirtualObject * DAT_00884DF8;
+extern VirtualObject * DAT_00884DFC;
+extern VirtualObject * DAT_00884E00;
+extern VirtualObject * DAT_00884E04;
+extern VirtualObject * DAT_00884E08;
+extern VirtualObject * DAT_00884E0C;
+extern VirtualObject * DAT_00884E10;
+extern VirtualObject * DAT_00884E14;
+extern VirtualObject * DAT_00884E18;
+extern VirtualObject * DAT_00884E1C;
+extern VirtualObject * DAT_00884E20;
+extern VirtualObject * DAT_00884E24;
+extern VirtualObject * DAT_00884E28;
+extern VirtualObject * DAT_00884E2C;
+extern VirtualObject * DAT_00884E30;
+extern VirtualObject * DAT_00884E34;
+extern VirtualObject * DAT_00884E38;
+extern VirtualObject * DAT_00884E3C;
+extern VirtualObject * DAT_00884E40;
+extern VirtualObject * DAT_00884E44;
+extern VirtualObject * DAT_00884E48;
+extern VirtualObject * DAT_00884E4C;
+extern VirtualObject * DAT_00884E50;
+extern VirtualObject * DAT_00884E54;
+extern VirtualObject * DAT_00884E58;
+extern VirtualObject * DAT_00884E5C;
+extern VirtualObject * DAT_00884E60;
+extern VirtualObject * DAT_00884E64;
+extern VirtualObject * DAT_00884E68;
+extern VirtualObject * DAT_00884E6C;
+extern VirtualObject * DAT_00884E70;
+extern VirtualObject * DAT_00884E74;
+extern VirtualObject * DAT_00884E78;
+extern VirtualObject * DAT_00887320;
+extern VirtualObject * DAT_00887640;
+extern VirtualObject * DAT_0089DDC0;
+extern VirtualObject * DAT_00B1D13C;
+extern VirtualObject * DAT_00B1D140;
+extern unsigned char * DAT_0087F770;
+extern unsigned char * DAT_0089DDBC;
+extern unsigned char * DAT_00AA1060;
+extern unsigned char * DAT_00AA1064;
+extern unsigned char * DAT_00AA1068;
+extern unsigned char * DAT_00AA106C;
+extern unsigned char * DAT_00ABC554;
+void FUN_007531A0(void);
+void FUN_00534450(void);
+void FUN_0069E180(void);
+void FUN_0069E210(void);
+void FUN_005FF800(void);
+void FUN_0053D550(void);
+void FUN_0065FD50(void);
+void FUN_006D0270(MouseClass *);
+void FUN_00626FF0(void);
+void FUN_005BC300(void);
+void FUN_005F77F0(void);
+void FUN_0060D440(void);
+void FUN_006370A0(void);
+void FUN_0072AC40(void);
+void FUN_00730970(void);
+void FUN_00552AA0(void);
+void FUN_005BE940(void);
+void FUN_005DB6F0(void);
+void FUN_007513F0(void);
+void FUN_0047ADC0(void);
+void FUN_005DA720(void);
+void FUN_0053E1D0(void);
+void FUN_00406D40(void);
+void FUN_007B86B0(void);
+
+// FUNCTION: GAMEMD 0x006BE1C0
+void __cdecl Prog_End(void)
+{
+	int i;
+
+	GameActive = false;
+
+	if (FileSystem::GRFXTXT_SHP != NULL) {
+		delete FileSystem::GRFXTXT_SHP;
+		FileSystem::GRFXTXT_SHP = NULL;
+	}
+	if (FileSystem::GRFXTXT_Convert != NULL) {
+		delete FileSystem::GRFXTXT_Convert;
+		FileSystem::GRFXTXT_Convert = NULL;
+	}
+	if (FileSystem::GRFXTXT_PAL != NULL) {
+		delete FileSystem::GRFXTXT_PAL;
+		FileSystem::GRFXTXT_PAL = NULL;
+	}
+
+	Session.Free_Scenario_Descriptions();
+
+	while (ColorSchemes.Count()) {
+		delete ColorSchemes[0];
+	}
+	ColorSchemes.Clear();
+
+	FUN_00534450();
+	FUN_0069E180();
+	FUN_0069E210();
+	MixFileClass::DestroyCache();
+
+	while (Movies.Count()) {
+		free((void *)Movies[0]);
+		Movies.Delete_Index(0);
+	}
+	Movies.Clear();
+
+	for (i = 0; i < AllCommands.Count(); i++) {
+		delete AllCommands[i];
+	}
+	AllCommands.Clear();
+
+	if (RuleINI != NULL) {
+		delete RuleINI;
+		RuleINI = NULL;
+	}
+	INI_AI.Clear();
+	ArtINI.Clear();
+	INI_UIMD.Clear();
+	DAT_00887058.Clear();
+	INI_RA2MD.Clear();
+	INI_RA2MD.Clear();
+
+	FUN_005FF800();
+	FUN_0053D550();
+	if (DAT_00887640 != NULL) {
+		delete DAT_00887640;
+		DAT_00887640 = NULL;
+	}
+
+	Map.Free_Cells();
+	Map.Clear_Radar();
+	DirectDrawWrap::DisposeOfStuff();
+
+	if (DepthBuffer != NULL) {
+		delete DepthBuffer;
+		DepthBuffer = NULL;
+	}
+	if (AlphaBuffer != NULL) {
+		delete AlphaBuffer;
+		AlphaBuffer = NULL;
+	}
+	if (BitText::Instance != NULL) {
+		delete BitText::Instance;
+		BitText::Instance = NULL;
+	}
+
+	if (DAT_0087F6B8 != NULL) {
+		delete DAT_0087F6B8;
+		DAT_0087F6B8 = NULL;
+	}
+	if (DAT_0087F6C0 != NULL) {
+		delete DAT_0087F6C0;
+		DAT_0087F6C0 = NULL;
+	}
+	if (DAT_0087F6C4 != NULL) {
+		delete DAT_0087F6C4;
+		DAT_0087F6C4 = NULL;
+	}
+	if (DAT_0087F6B4 != NULL) {
+		delete DAT_0087F6B4;
+		DAT_0087F6B4 = NULL;
+	}
+	if (DAT_0087F6C8 != NULL) {
+		delete DAT_0087F6C8;
+		DAT_0087F6C8 = NULL;
+	}
+	if (DAT_0087F6CC != NULL) {
+		delete DAT_0087F6CC;
+		DAT_0087F6CC = NULL;
+	}
+	if (DAT_0087F6D0 != NULL) {
+		delete DAT_0087F6D0;
+		DAT_0087F6D0 = NULL;
+	}
+	if (DAT_0087F6B0 != NULL) {
+		delete DAT_0087F6B0;
+		DAT_0087F6B0 = NULL;
+	}
+	if (DAT_00B1D140 != NULL) {
+		delete DAT_00B1D140;
+		DAT_00B1D140 = NULL;
+	}
+	if (DAT_00B1D13C != NULL) {
+		delete DAT_00B1D13C;
+		DAT_00B1D13C = NULL;
+	}
+	if (DAT_0089DDC0 != NULL) {
+		delete DAT_0089DDC0;
+		DAT_0089DDC0 = NULL;
+	}
+	if (DAT_0089DDBC != NULL) {
+		delete DAT_0089DDBC;
+		DAT_0089DDBC = NULL;
+	}
+
+	Map.Shutdown();
+
+	for (i = 0; i < DAT_0087F698.Count(); i++) {
+		delete DAT_0087F698[i];
+	}
+	DAT_0087F698.Clear();
+
+	if (DAT_00884E08 != NULL) {
+		delete DAT_00884E08;
+		DAT_00884E08 = NULL;
+	}
+	if (DAT_00884E0C != NULL) {
+		delete DAT_00884E0C;
+		DAT_00884E0C = NULL;
+	}
+	if (DAT_00884E10 != NULL) {
+		delete DAT_00884E10;
+		DAT_00884E10 = NULL;
+	}
+	if (DAT_00884E14 != NULL) {
+		delete DAT_00884E14;
+		DAT_00884E14 = NULL;
+	}
+	if (DAT_00884E18 != NULL) {
+		delete DAT_00884E18;
+		DAT_00884E18 = NULL;
+	}
+	if (DAT_00884E1C != NULL) {
+		delete DAT_00884E1C;
+		DAT_00884E1C = NULL;
+	}
+	if (DAT_00884E20 != NULL) {
+		delete DAT_00884E20;
+		DAT_00884E20 = NULL;
+	}
+	if (DAT_00884E24 != NULL) {
+		delete DAT_00884E24;
+		DAT_00884E24 = NULL;
+	}
+	if (DAT_00884E28 != NULL) {
+		delete DAT_00884E28;
+		DAT_00884E28 = NULL;
+	}
+	if (DAT_00ABC554 != NULL) {
+		delete DAT_00ABC554;
+		DAT_00ABC554 = NULL;
+	}
+	if (DAT_00AA1060 != NULL) {
+		delete DAT_00AA1060;
+		DAT_00AA1060 = NULL;
+	}
+	if (DAT_00AA1064 != NULL) {
+		delete DAT_00AA1064;
+		DAT_00AA1064 = NULL;
+	}
+	if (DAT_00AA1068 != NULL) {
+		delete DAT_00AA1068;
+		DAT_00AA1068 = NULL;
+	}
+	if (DAT_00AA106C != NULL) {
+		delete DAT_00AA106C;
+		DAT_00AA106C = NULL;
+	}
+	if (DAT_00887320 != NULL) {
+		delete DAT_00887320;
+		DAT_00887320 = NULL;
+	}
+	if (DAT_00884E2C != NULL) {
+		delete DAT_00884E2C;
+		DAT_00884E2C = NULL;
+	}
+	if (DAT_00884E30 != NULL) {
+		delete DAT_00884E30;
+		DAT_00884E30 = NULL;
+	}
+	if (DAT_00884E34 != NULL) {
+		delete DAT_00884E34;
+		DAT_00884E34 = NULL;
+	}
+	if (DAT_00884E3C != NULL) {
+		delete DAT_00884E3C;
+		DAT_00884E3C = NULL;
+	}
+	if (DAT_00884E38 != NULL) {
+		delete DAT_00884E38;
+		DAT_00884E38 = NULL;
+	}
+	if (DAT_00884E44 != NULL) {
+		delete DAT_00884E44;
+		DAT_00884E44 = NULL;
+	}
+	if (DAT_00884E40 != NULL) {
+		delete DAT_00884E40;
+		DAT_00884E40 = NULL;
+	}
+	while (DAT_00884D90.Count() > 0) {
+		delete DAT_00884D90[0];
+		DAT_00884D90.Delete_Index(0);
+	}
+	if (DAT_00884E4C != NULL) {
+		delete DAT_00884E4C;
+		DAT_00884E4C = NULL;
+	}
+	if (DAT_00884E48 != NULL) {
+		delete DAT_00884E48;
+		DAT_00884E48 = NULL;
+	}
+	if (DAT_00884E54 != NULL) {
+		delete DAT_00884E54;
+		DAT_00884E54 = NULL;
+	}
+	if (DAT_00884E50 != NULL) {
+		delete DAT_00884E50;
+		DAT_00884E50 = NULL;
+	}
+	if (DAT_00884E5C != NULL) {
+		delete DAT_00884E5C;
+		DAT_00884E5C = NULL;
+	}
+	if (DAT_00884E58 != NULL) {
+		delete DAT_00884E58;
+		DAT_00884E58 = NULL;
+	}
+	if (DAT_00884E68 != NULL) {
+		delete DAT_00884E68;
+		DAT_00884E68 = NULL;
+	}
+	if (DAT_00884E6C != NULL) {
+		delete DAT_00884E6C;
+		DAT_00884E6C = NULL;
+	}
+	while (DAT_00884DC0.Count() > 0) {
+		delete DAT_00884DC0[0];
+		DAT_00884DC0.Delete_Index(0);
+	}
+	if (DAT_00884E64 != NULL) {
+		delete DAT_00884E64;
+		DAT_00884E64 = NULL;
+	}
+	if (DAT_00884E60 != NULL) {
+		delete DAT_00884E60;
+		DAT_00884E60 = NULL;
+	}
+	if (DAT_00884DDC != NULL) {
+		delete DAT_00884DDC;
+		DAT_00884DDC = NULL;
+	}
+	if (DAT_00884DD8 != NULL) {
+		delete DAT_00884DD8;
+		DAT_00884DD8 = NULL;
+	}
+	if (DAT_00884E74 != NULL) {
+		delete DAT_00884E74;
+		DAT_00884E74 = NULL;
+	}
+	if (DAT_00884E70 != NULL) {
+		delete DAT_00884E70;
+		DAT_00884E70 = NULL;
+	}
+	if (DAT_00884E78 != NULL) {
+		delete DAT_00884E78;
+		DAT_00884E78 = NULL;
+	}
+	if (DAT_00884DFC != NULL) {
+		delete DAT_00884DFC;
+		DAT_00884DFC = NULL;
+	}
+	if (DAT_00884DF8 != NULL) {
+		delete DAT_00884DF8;
+		DAT_00884DF8 = NULL;
+	}
+	if (DAT_00884E00 != NULL) {
+		delete DAT_00884E00;
+		DAT_00884E00 = NULL;
+	}
+	if (DAT_00884E04 != NULL) {
+		delete DAT_00884E04;
+		DAT_00884E04 = NULL;
+	}
+
+	if (TacticalMap != NULL) {
+		delete TacticalMap;
+		TacticalMap = NULL;
+	}
+
+	FUN_0065FD50();
+	FUN_006D0270(&Map);
+	FUN_00626FF0();
+	FUN_005BC300();
+	FUN_005F77F0();
+	FUN_0060D440();
+	FUN_006370A0();
+	FUN_0072AC40();
+	FUN_00730970();
+	FUN_00552AA0();
+	FUN_005BE940();
+	FUN_005DB6F0();
+	FUN_007513F0();
+	FUN_007531A0();
+	FUN_0047ADC0();
+
+	if (DAT_0087F770 != NULL) {
+		delete DAT_0087F770;
+		DAT_0087F770 = NULL;
+	}
+
+	FUN_005DA720();
+
+	if (DAT_00A83DB8 != NULL) {
+		delete DAT_00A83DB8;
+		DAT_00A83DB8 = NULL;
+	}
+	if (Rule != NULL) {
+		delete Rule;
+		Rule = NULL;
+	}
+	if (Scen != NULL) {
+		delete Scen;
+		Scen = NULL;
+	}
+
+	for (i = 0; i < RegisteredClasses.Count(); i++) {
+		CoRevokeClassObject(RegisteredClasses[i]);
+	}
+	RegisteredClasses.Clear();
+
+	RevokeActiveObject(DAT_00B0BCEC, NULL);
+
+	if (DAT_0089F974 != NULL) {
+		FreeLibrary(DAT_0089F974);
+	}
+	if (DAT_00B0BCE8 != NULL) {
+		CloseHandle(DAT_00B0BCE8);
+		DAT_00B0BCE8 = NULL;
+	}
+	if (Unsorted::AppMutex != NULL) {
+		CloseHandle(Unsorted::AppMutex);
+		Unsorted::AppMutex = NULL;
+	}
+
+	FUN_0053E1D0();
+	Theme.Free_Themes();
+	FUN_00406D40();
+	StringTable::Unload();
+	CopyProtection::ShutDown();
+	FUN_007B86B0();
+}
+
 // FUNCTION: GAMEMD 0x006BEC50
 void Exit_Process(int code)
 {
@@ -1097,3 +1567,31 @@ template class TClassFactory<BuildingClass>;
 // TEMPLATE: GAMEMD 0x006C3790
 // ?LockServer@?$TClassFactory@VAircraftClass@@@@UAGJH@Z
 template class TClassFactory<AircraftClass>;
+
+// TEMPLATE: GAMEMD 0x006C37C0
+// ??0?$TClassFactory@VInfantryClass@@@@QAE@XZ
+// TEMPLATE: GAMEMD 0x006C37D0
+// ?QueryInterface@?$TClassFactory@VInfantryClass@@@@UAGJABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C3840
+// ?AddRef@?$TClassFactory@VInfantryClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C3860
+// ?Release@?$TClassFactory@VInfantryClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C3890
+// ?CreateInstance@?$TClassFactory@VInfantryClass@@@@UAGJPAUIUnknown@@ABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C3910
+// ?LockServer@?$TClassFactory@VInfantryClass@@@@UAGJH@Z
+template class TClassFactory<InfantryClass>;
+
+// TEMPLATE: GAMEMD 0x006C3940
+// ??0?$TClassFactory@VAnimClass@@@@QAE@XZ
+// TEMPLATE: GAMEMD 0x006C3950
+// ?QueryInterface@?$TClassFactory@VAnimClass@@@@UAGJABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C39C0
+// ?AddRef@?$TClassFactory@VAnimClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C39E0
+// ?Release@?$TClassFactory@VAnimClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C3A10
+// ?CreateInstance@?$TClassFactory@VAnimClass@@@@UAGJPAUIUnknown@@ABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C3A90
+// ?LockServer@?$TClassFactory@VAnimClass@@@@UAGJH@Z
+template class TClassFactory<AnimClass>;

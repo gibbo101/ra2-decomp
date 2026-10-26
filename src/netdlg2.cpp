@@ -3,6 +3,7 @@
 // Copyright 2025 Electronic Arts Inc.; 2026 OpenTS contributors
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
+#define NDEBUG
 #include "always.h"
 #include "netdlg2.h"
 #include "_map.h"
@@ -27,6 +28,7 @@
 #include "netshare.h"
 #include "newmenu.h"
 #include "ownrdraw.h"
+#include "progress.h"
 #include "rules.h"
 #include "scenario.h"
 #include "sendfile.h"
@@ -843,6 +845,9 @@ void FUN_005DAF30(void)
 	}
 }
 
+extern int DAT_007EEF2C;
+extern int DAT_007EEF44;
+
 // FUNCTION: GAMEMD 0x005DAFD0
 void Net2DisplayUsers(void)
 {
@@ -1246,6 +1251,230 @@ bool Net2ReadyToGo(int load_game)
 	return(true);
 }
 
+namespace OwnerDraw {
+	void __fastcall DrawItem(LPDRAWITEMSTRUCT item);
+	void __fastcall Paint(HWND window);
+	char const * __fastcall GetTooltipStringLabel(HWND dialog, HWND control);
+}
+namespace Game { extern int ObserverMode; extern int PlayerColor; }
+void __fastcall FUN_00607FD0(HWND window);
+void __fastcall FUN_0060AAA0(HWND window);
+void __fastcall FUN_005EE350(HWND window);
+void FUN_005EE1B0(void);
+void __fastcall FUN_005DE360(HWND window, int printcolor, int color);
+void __fastcall FUN_00600C70(LPARAM lparam, bool flag);
+WideWstring __fastcall FUN_005EDD00(HWND edit);
+void __fastcall FUN_005C6120(DynamicVectorClass<NodeNameType *> * vec);
+char * __fastcall FUN_007350C0(wchar_t const * text);
+extern wchar_t DAT_008304FC[];
+extern bool DAT_00AC0269;
+
+// FUNCTION: GAMEMD 0x005DDBD0
+BOOL CALLBACK MPlayer_Game_List_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	switch (message) {
+	case OD_SUBCLASSED: {
+		CurGame = 0;
+		Net2IsGameListActive = true;
+		FUN_005EE350(window);
+
+		SendDlgItemMessage(window, 0x541, EM_SETLIMITTEXT, 16, 0);
+		SendDlgItemMessage(window, 0x541, 0x4eb, 0, (LPARAM)DAT_008304FC);
+		SendDlgItemMessage(window, 0x541, 0x4d1, 1, 0);
+		wchar_t * handle = FUN_00735120(Session.Handle);
+		HWND edit = GetDlgItem(window, 0x541);
+		SendMessage(edit, 0x4b2, 0, (LPARAM)handle);
+
+		Session.Options.ScenarioDescription[0] = 0;
+		int color = Session.Color;
+		int color2 = Session.Color2;
+		Game::PlayerColor = color;
+		Session.ColorIdx = color2;
+
+		FUN_005C6120(&Session.Games);
+		FUN_005C6120(&Session.Players);
+		FUN_005C6120(&Session.Chat);
+
+		NodeNameType * who = new NodeNameType;
+		wcscpy(who->Name, FUN_00735120(Session.Handle));
+		who->Chat.LastTime = 0;
+		who->Chat.LastChance = 0;
+		who->Chat.Color = Session.GPacket.PlayerInfo.Color;
+		Session.Chat.Add(who);
+
+		NodeNameType * game = new NodeNameType;
+		wcscpy(game->Name, DAT_00887734);
+		game->Game.IsOpen = 0;
+		game->Game.LastTime = 0;
+		Session.Games.Add(game);
+
+		Send_Join_Queries(1, 0, 1, 1);
+		Net2DisplayGameList();
+		FUN_005DAFE0(false);
+		OwnerDraw::Paint(window);
+		SetFocus(GetDlgItem(window, 0x540));
+		return(0);
+	}
+
+	case WM_COMMAND:
+		switch (LOWORD(wparam)) {
+		case 0x541: {
+			if (!IsWindowEnabled(window)) {
+				return(0);
+			}
+			if (_netresponse != 0) {
+				return(0);
+			}
+			wchar_t name[20];
+			name[0] = 0;
+			HWND edit = GetDlgItem(window, 0x541);
+			SendMessage(edit, 0x4b3, 20, (LPARAM)name);
+			wchar_t first = name[0];
+			wchar_t * p = name;
+			while (first != 0 && *p == L' ') {
+				p++;
+				if (*p == 0) {
+					break;
+				}
+			}
+			if (*p == 0 && first != 0) {
+				name[0] = 0;
+				edit = GetDlgItem(window, 0x541);
+				SendMessage(edit, 0x4b2, 0, (LPARAM)name);
+			}
+			if (strcmp(FUN_007350C0(name), Session.Handle) != 0) {
+				strcpy(Session.Handle, FUN_007350C0(name));
+				Send_Join_Queries(0, 0, 1, 0);
+				FUN_005DAFE0(false);
+			}
+			return(0);
+		}
+
+		case 0x549: {
+			if (JoinState > JOIN_NOTHING) {
+				return(0);
+			}
+			int old_game = CurGame;
+			int sel = SendDlgItemMessage(window, 0x549, LB_GETCURSEL, 0, 0);
+			if (sel >= 0 && Net2IsGameListActive) {
+				CurGame = sel;
+				wcscpy(Session.GameName, Session.Games[sel]->Name);
+			}
+			if (HIWORD(wparam) == LBN_SELCHANGE) {
+				FUN_005C6120(&Session.Players);
+				if (old_game != CurGame) {
+					Send_Join_Queries(1, 1, 1, 0);
+				}
+				FUN_005DAFE0(false);
+				return(0);
+			}
+			if (HIWORD(wparam) == LBN_DBLCLK) {
+				EnableWindow(window, FALSE);
+				HWND name = GetDlgItem(window, 0x541);
+				if (name) {
+					EnableWindow(name, FALSE);
+				}
+				_netresponse = (Game::ObserverMode == 1) ? 0x6ce : 0x6cd;
+				return(0);
+			}
+			return(0);
+		}
+
+		case 0x540: {
+			FUN_005EDD00((HWND)lparam);
+			if (HIWORD(wparam) == EN_MAXTEXT) {
+				FUN_005DE360(window, DAT_007EEF44, DAT_007EEF2C);
+			}
+			return(0);
+		}
+
+		case 0x5c0:
+			_netresponse = 0x5c0;
+			FUN_005EE1B0();
+			return(0);
+
+		case 0x6cc:
+			_netresponse = LOWORD(wparam);
+			DAT_00AC0269 = (Game::ObserverMode == 1);
+			return(0);
+
+		case 0x6cd:
+		case 0x6ce: {
+			EnableWindow(window, FALSE);
+			HWND name = GetDlgItem(window, 0x541);
+			if (name) {
+				EnableWindow(name, FALSE);
+			}
+			_netresponse = LOWORD(wparam);
+			return(0);
+		}
+
+		case 0x75f:
+		case 0x760: {
+			int state = 0;
+			HWND item = GetDlgItem(window, 0x760);
+			if (item) {
+				state = SendMessage(item, BM_GETCHECK, 0, 0);
+			}
+			if (LOWORD(wparam) == 0x75f) {
+				state = (state == 0);
+			}
+			Game::ObserverMode = state;
+			FUN_005EE350(NULL);
+			return(0);
+		}
+		}
+		return(0);
+
+	case WM_MOUSEMOVE: {
+		HWND tip = GetDlgItem(window, 0x695);
+		if (tip == NULL) {
+			return(0);
+		}
+		POINT pt;
+		pt.x = LOWORD(lparam);
+		pt.y = HIWORD(lparam);
+		RECT rect;
+		GetWindowRect(window, &rect);
+		pt.x -= rect.left;
+		pt.y -= rect.top;
+		wchar_t const * text = DAT_00887734;
+		HWND child = ChildWindowFromPointEx(window, pt, CWP_SKIPINVISIBLE);
+		if (child) {
+			char const * label = OwnerDraw::GetTooltipStringLabel(window, child);
+			if (label) {
+				text = StringTable::LoadString(label, NULL, "D:\\ra2mdpost\\netdlg2.cpp", 0x987);
+			}
+		}
+		SendMessage(tip, 0x4b2, 0, (LPARAM)text);
+		return(0);
+	}
+
+	case 0x4db:
+		FUN_00600C70(lparam, wparam != 0);
+		return(0);
+
+	case 0x4ec:
+		FUN_0060AAA0(window);
+		return(0);
+
+	case WM_DRAWITEM:
+		OwnerDraw::DrawItem((LPDRAWITEMSTRUCT)lparam);
+		return(1);
+
+	case WM_PAINT:
+		OwnerDraw::Paint(window);
+		FUN_00607FD0(window);
+		ValidateRect(window, NULL);
+		return(0);
+
+	case WM_ERASEBKGND:
+		return(1);
+	}
+
+	return(0);
+}
+
 // FUNCTION: GAMEMD 0x005DE360
 void __fastcall FUN_005DE360(HWND window, int printcolor, int color)
 {
@@ -1285,6 +1514,379 @@ void __fastcall FUN_005DE360(HWND window, int printcolor, int color)
 			}
 		}
 	}
+}
+
+struct TooltipRequest {
+	HWND Window;
+	int Index;
+	WideWstring Text;
+};
+
+void __fastcall FUN_004E3B90(HWND dialog);
+void FUN_004E43C0(void);
+void __fastcall FUN_004E4820(HWND dialog);
+void FUN_004E4F50(void);
+void __fastcall FUN_004E5310(HWND dialog);
+void FUN_004E5AC0(void);
+void __fastcall FUN_004E5D60(HWND dialog);
+void __fastcall FUN_005EE510(int arg);
+void __fastcall FUN_005EA180(HWND dialog, int arg);
+void __fastcall FUN_004E3CE0(HWND dialog, int side);
+void __fastcall FUN_004E48E0(HWND dialog, int side);
+bool __fastcall FUN_005E7BF0(int slot);
+int __fastcall FUN_004E3830(int id);
+int __fastcall FUN_004E4230(int id);
+int __fastcall FUN_004E4EC0(int id);
+int __fastcall FUN_004E59A0(int id);
+void __fastcall FUN_005E9B60(HWND dialog, int combo);
+void __fastcall FUN_005E9C00(HWND dialog, int combo);
+void __fastcall FUN_005E9CE0(HWND dialog, int combo);
+void __fastcall FUN_005E9DB0(HWND dialog, int combo);
+int __fastcall FUN_004E4E20(HWND dialog, int id, int index);
+int __fastcall FUN_004E5900(HWND dialog, int id, int index);
+int __fastcall FUN_004E6030(HWND dialog, int id, int index);
+void __fastcall FUN_005E3850(char const * name, char const * options);
+void __fastcall FUN_005E3720(char const * options);
+int __fastcall FUN_005E9950(int id);
+wchar_t const * __fastcall FUN_004E42A0(int color);
+wchar_t const * __fastcall FUN_004E38A0(int side);
+NodeNameType * __fastcall FUN_005E9B20(HWND dialog, int id, int index);
+wchar_t const * __fastcall FUN_005E99C0(NodeNameType * slot);
+extern bool DAT_00AC11C2;
+extern bool Net2GameStarted;
+
+wchar_t * __fastcall FUN_00735120(char const * text);
+void __fastcall FUN_005ED5A0(HWND dialog, SessionOptionsClass * options);
+void __fastcall FUN_005EE6A0(HWND dialog);
+void FUN_005EE3A0(void);
+void __fastcall FUN_005E9E70(HWND dialog, int slot, bool enable);
+void __fastcall FUN_005EC3A0(HWND dialog, int sel, int scenario);
+void __fastcall FUN_005EA2A0(HWND dialog);
+void __fastcall FUN_005E2EF0(HWND dialog, MPGameModeClass * mode);
+void __fastcall FUN_005E2F60(HWND dialog);
+void __fastcall FUN_005ED370(HWND dialog);
+int __fastcall FUN_005E6520(int value);
+void __fastcall FUN_004E4FC0(int count);
+void __fastcall FUN_005EC030(HWND dialog);
+bool __fastcall FUN_005EB660(HWND dialog);
+int __fastcall FUN_005E68A0(HWND window);
+void __fastcall FUN_005E74E0(HWND dialog);
+bool FUN_00608070(HWND dialog);
+void __fastcall FUN_005ED400(HWND dialog, SessionOptionsClass * out);
+void __fastcall FUN_005EC9F0(HWND dialog, int id, NodeNameType * node, int flag);
+bool FUN_005E8760(void);
+void FUN_005DAF30(void);
+namespace UI { void __fastcall CenterWindow(HWND window); }
+namespace Game { extern HWND hWnd; }
+void __fastcall FUN_005E32D0(bool force, bool now);
+namespace Randomizer { extern Random2Class Global; }
+BOOL CALLBACK FUN_005DF180(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+extern int DAT_008316A4;
+extern bool DAT_008316D4;
+
+static inline int Net2_Spot_Limit(int count)
+{
+	if (Session.MPGameMode && Session.MPGameMode->vt_entry_04() && Scen->NumCoopHumanStartSpots <= count) {
+		return(Scen->NumCoopHumanStartSpots);
+	}
+	return(count);
+}
+
+// FUNCTION: GAMEMD 0x005DE520
+BOOL CALLBACK MPlayer_Host_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	if (message != OD_SUBCLASSED) {
+		FUN_005DF180(window, message, wparam, lparam);
+	}
+
+	switch (message) {
+	case WM_NCHITTEST: {
+		HWND tip = GetDlgItem(window, 0x695);
+		if (tip == NULL) {
+			break;
+		}
+		POINT pt;
+		pt.x = LOWORD(lparam);
+		pt.y = HIWORD(lparam);
+		RECT rect;
+		GetWindowRect(window, &rect);
+		pt.x -= rect.left;
+		pt.y -= rect.top;
+		wchar_t const * text = DAT_00887734;
+		HWND child = ChildWindowFromPointEx(window, pt, CWP_SKIPINVISIBLE);
+		if (child) {
+			char const * label = OwnerDraw::GetTooltipStringLabel(window, child);
+			if (label) {
+				text = StringTable::LoadString(label, NULL, "D:\\ra2mdpost\\netdlg2.cpp", 0xb29);
+			}
+		}
+		SendMessage(tip, 0x4b2, 0, (LPARAM)text);
+		break;
+	}
+
+	case WM_DRAWITEM:
+		OwnerDraw::DrawItem((LPDRAWITEMSTRUCT)lparam);
+		return(1);
+
+	case WM_PAINT:
+		OwnerDraw::Paint(window);
+		if (MultiplayerMapPreview) {
+			MultiplayerMapPreview->DrawStartPoints(window);
+		}
+		if (Progress.Has_Dialog()) {
+			Progress.Display_Progress();
+		}
+		FUN_00607FD0(window);
+		ValidateRect(window, NULL);
+		break;
+
+	case WM_DESTROY:
+		if (Progress.Has_Dialog()) {
+			Progress.Clear_Dialog();
+		}
+		break;
+
+	case WM_COMMAND:
+		switch (LOWORD(wparam)) {
+		case IDCANCEL:
+			if (Net2GameStarted) {
+				break;
+			}
+			if (MultiplayerMapPreview) {
+				delete MultiplayerMapPreview;
+				MultiplayerMapPreview = NULL;
+			}
+			FUN_005ED400(window, &Session.LAN);
+			_netresponse = IDCANCEL;
+			break;
+
+		case 0x411: case 0x412: case 0x413: case 0x414: case 0x415: case 0x416: case 0x417: case 0x418:
+			if (HIWORD(wparam) != 1) {
+				break;
+			}
+			if (Net2GameStarted) {
+				break;
+			}
+			if (FUN_005E8760()) {
+				NodeNameType * node = FUN_005E9B20(window, LOWORD(wparam), -1);
+				FUN_005EC9F0(window, LOWORD(wparam), node, 2);
+			}
+			break;
+
+		case 0x540:
+			FUN_005EDD00((HWND)lparam);
+			if (HIWORD(wparam) == EN_MAXTEXT) {
+				FUN_005DE360(window, DAT_007EEF44, DAT_007EEF2C);
+			}
+			break;
+
+		case 0x588:
+			EnableWindow(GetDlgItem(window, 0x588), FALSE);
+			Net2GameStarted = true;
+			FUN_005ED400(window, &Session.LAN);
+			_netresponse = 0x588;
+			break;
+
+		case 0x510: case 0x513: case 0x514:
+		case 0x51e: case 0x51f: case 0x520: case 0x521:
+		case 0x6a1:
+			if (HIWORD(wparam) == 1 && !Net2GameStarted) {
+				FUN_005E9B60(window, LOWORD(wparam));
+				FUN_005E32D0(true, false);
+				FUN_005DAFE0(false);
+			}
+			break;
+
+		case 0x522: case 0x523: case 0x524: case 0x525: case 0x526: case 0x527: case 0x528:
+		case 0x6a2:
+			if (HIWORD(wparam) == 1 && !Net2GameStarted) {
+				FUN_005E9C00(window, LOWORD(wparam));
+				FUN_005E32D0(true, false);
+				FUN_005DAFE0(false);
+			}
+			break;
+
+		case 0x5aa: {
+			if (Net2GameStarted) {
+				break;
+			}
+			int scenario = Session.Options.ScenarioIndex;
+			bool wasfirst = (Session.MPGameMode == NULL) || Session.MPGameMode->vt_entry_40();
+			bool wassecond = (Session.MPGameMode == NULL) || Session.MPGameMode->vt_entry_BC();
+			FUN_00608070(window);
+			ShowWindow(window, SW_HIDE);
+			DAT_008316D4 = false;
+			if (FUN_005E68A0(Game::hWnd) == 2) {
+				Session.Options.ScenarioIndex = scenario;
+				FUN_005E7BF0(scenario);
+				FUN_005E74E0(window);
+				DAT_008316D4 = true;
+				ShowWindow(window, SW_SHOW);
+				FUN_005ED370(window);
+				FUN_005E32D0(true, false);
+				InvalidateRect(window, NULL, FALSE);
+				break;
+			}
+			if (!FUN_005E7BF0(Session.Options.ScenarioIndex)) {
+				Session.Options.ScenarioIndex = scenario;
+			} else {
+				FUN_005EC3A0(window, scenario, Session.Options.ScenarioIndex);
+			}
+			DAT_008316D4 = true;
+			ShowWindow(window, SW_SHOW);
+			FUN_005E2F60(window);
+			FUN_005ED370(window);
+			{
+				FUN_004E4FC0(Net2_Spot_Limit(FUN_005E6520(Session.Options.ScenarioIndex)));
+			}
+			FUN_004E5310(window);
+			FUN_004E5D60(window);
+			FUN_005EE6A0(window);
+			FUN_005EE3A0();
+			FUN_005EE510(-1);
+			bool isfirst = (Session.MPGameMode == NULL) || Session.MPGameMode->vt_entry_40();
+			bool issecond = (Session.MPGameMode == NULL) || Session.MPGameMode->vt_entry_BC();
+			if (wassecond && !issecond) {
+				FUN_005EC030(window);
+			}
+			if (wasfirst && !isfirst && FUN_005EB660(window)) {
+				Session.Options.AIPlayers = 0;
+				FUN_005DAF30();
+				FUN_005DAFE0(false);
+				FUN_005E32D0(true, false);
+				break;
+			}
+			FUN_005DAFE0(true);
+			break;
+		}
+
+		case 0x6a3: case 0x6a4: case 0x6a5: case 0x6a6: case 0x6a7: case 0x6a8:
+		case 0x6aa: case 0x6ab:
+			if (HIWORD(wparam) == 1 && !Net2GameStarted) {
+				FUN_005E9CE0(window, LOWORD(wparam));
+				FUN_005E32D0(true, false);
+				FUN_005DAFE0(false);
+			}
+			break;
+
+		case 0x76d: case 0x76e: case 0x76f: case 0x770: case 0x771: case 0x772: case 0x773: case 0x774:
+			if (HIWORD(wparam) == 1 && !Net2GameStarted) {
+				FUN_005E9DB0(window, LOWORD(wparam));
+				FUN_005E32D0(true, false);
+				FUN_005DAFE0(false);
+			}
+			break;
+		}
+		break;
+
+	case OD_SUBCLASSED: {
+		VerNum.Init_Clipping();
+		srand(Randomizer::Global(1, 0x7fff));
+		Seed = rand();
+		UI::CenterWindow(window);
+		FUN_004E3B90(window);
+		FUN_004E43C0();
+		FUN_004E4820(window);
+		FUN_004E3CE0(window, Session.unknown_2854);
+		FUN_004E48E0(window, Session.unknown_2854);
+		FUN_004E4F50();
+		for (int i = 0; i < 8; i++) {
+			Session.Options.AISlots.Starts[i] = -2;
+		}
+		FUN_004E5AC0();
+		for (int j = 0; j < 8; j++) {
+			Session.Options.AISlots.Allies[j] = -2;
+		}
+		FUN_005ED5A0(window, &Session.LAN);
+		FUN_004E5D60(window);
+		FUN_005EE510(-1);
+		FUN_005DAFE0(false);
+		if (Session.MPGameMode && !Session.MPGameMode->vt_entry_BC()) {
+			DAT_008316A4 = -1;
+			Game::ObserverMode = 0;
+			FUN_005EE350(NULL);
+			Session.Slots[0]->Slot.SpectatorFlag = 0;
+			Session.Slots[0]->Set_Country(Session.MPGameMode->vt_entry_28());
+			Session.Slots[0]->Set_Color(-2);
+			Session.Slots[0]->Set_Start(-2);
+			Session.Slots[0]->Set_Team(-2);
+			FUN_004E4820(window);
+		}
+		FUN_005E9E70(window, 0, true);
+		FUN_005EC3A0(window, -1, Session.Options.ScenarioIndex);
+		if (DAT_008316A4 == 0 && Session.MPGameMode && Session.MPGameMode->vt_entry_BC()) {
+			Session.Slots[0]->Set_Country(-3);
+			Session.Slots[0]->Slot.SpectatorFlag = -1;
+		}
+		FUN_005EA2A0(window);
+		FUN_005E2EF0(window, Session.MPGameMode);
+		FUN_005E2F60(window);
+		FUN_005ED370(window);
+		{
+			FUN_004E4FC0(Net2_Spot_Limit(FUN_005E6520(Session.Options.ScenarioIndex)));
+		}
+		FUN_004E5310(window);
+		FUN_005DF180(window, OD_SUBCLASSED, wparam, lparam);
+		Net2DisplayGameList();
+		break;
+	}
+
+	case WM_HSCROLL:
+	case WM_VSCROLL:
+		if (lparam == (LPARAM)GetDlgItem(window, 0x732)) {
+			if (Net2GameStarted) {
+				break;
+			}
+			Options.CampDifficulty = SendDlgItemMessage(window, 0x732, 0x400, 0, 0);
+		}
+		if (Net2GameStarted) {
+			break;
+		}
+		Session.Options.GameSpeed = 6 - SendDlgItemMessage(window, 0x529, 0x400, 0, 0);
+		Session.Options.Credits = SendDlgItemMessage(window, 0x402, 0x400, 0, 0);
+		Session.Options.UnitCount = SendDlgItemMessage(window, 0x54f, 0x400, 0, 0);
+		break;
+
+	case 0x49b: {
+		HWND item = GetDlgItem(window, wparam);
+		SendMessage(item, 0x4b3, 0x7f, lparam);
+		return(0);
+	}
+
+	default:
+		return(0);
+
+	case 0x4ec:
+		FUN_0060AAA0(window);
+		break;
+
+	case 0x4e9: {
+		TooltipRequest * request = (TooltipRequest *)lparam;
+		request->Text = (wchar_t const *)NULL;
+		if (request->Window && request->Index != -1) {
+			int id = GetDlgCtrlID(request->Window);
+			if (FUN_005E9950(id) == -1) {
+				if (FUN_004E3830(id) == -1) {
+					if (FUN_004E4230(id) != -1) {
+						request->Text = FUN_004E42A0(FUN_004E4E20(window, id, request->Index));
+					}
+				} else {
+					int side = FUN_004E4170(window, id, request->Index);
+					if (side != -1) {
+						request->Text = FUN_004E38A0(side);
+					}
+				}
+			} else {
+				request->Text = FUN_005E99C0(FUN_005E9B20(window, id, request->Index));
+			}
+		}
+	}
+
+	case WM_ERASEBKGND:
+		return(1);
+	}
+
+	return(0);
 }
 
 // FUNCTION: GAMEMD 0x005DF180
@@ -1546,7 +2148,6 @@ void Send_Join_Queries(int gamenow, int playernow, int chatnow, int init)
 // _$E129
 
 extern int DAT_008316A4;
-void __fastcall FUN_005E32D0(bool force, bool now);
 
 // FUNCTION: GAMEMD 0x005DFE00
 bool Process_Global_Packet(GlobalPacketType * packet, IPXAddressClass * address)
@@ -1604,6 +2205,196 @@ bool Process_Global_Packet(GlobalPacketType * packet, IPXAddressClass * address)
 }
 
 HWND FUN_00775B10(void);
+
+// FUNCTION: GAMEMD 0x005E1CA0
+BOOL CALLBACK MPlayer_Guest_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	switch (message) {
+	case WM_DESTROY:
+		if (Progress.Has_Dialog()) {
+			Progress.Clear_Dialog();
+		}
+		if (MultiplayerMapPreview) {
+			delete MultiplayerMapPreview;
+			MultiplayerMapPreview = NULL;
+		}
+		return(0);
+
+	case WM_DRAWITEM:
+		OwnerDraw::DrawItem((LPDRAWITEMSTRUCT)lparam);
+	case WM_ERASEBKGND:
+		return(1);
+
+	case WM_PAINT:
+		OwnerDraw::Paint(window);
+		if (MultiplayerMapPreview) {
+			MultiplayerMapPreview->DrawStartPoints(window);
+		}
+		if (Progress.Has_Dialog()) {
+			Progress.Display_Progress();
+		}
+		FUN_00607FD0(window);
+		ValidateRect(window, NULL);
+		return(0);
+
+	case WM_NCHITTEST: {
+		HWND tip = GetDlgItem(window, 0x695);
+		if (tip == NULL) {
+			return(0);
+		}
+		POINT pt;
+		pt.x = LOWORD(lparam);
+		pt.y = HIWORD(lparam);
+		RECT rect;
+		GetWindowRect(window, &rect);
+		pt.x -= rect.left;
+		pt.y -= rect.top;
+		wchar_t const * text = DAT_00887734;
+		HWND child = ChildWindowFromPointEx(window, pt, CWP_SKIPINVISIBLE);
+		if (child) {
+			char const * label = OwnerDraw::GetTooltipStringLabel(window, child);
+			if (label) {
+				text = StringTable::LoadString(label, NULL, "D:\\ra2mdpost\\netdlg2.cpp", 0xd3c);
+			}
+		}
+		SendMessage(tip, 0x4b2, 0, (LPARAM)text);
+		return(0);
+	}
+
+	case 0x4e9: {
+		TooltipRequest * request = (TooltipRequest *)lparam;
+		request->Text = (wchar_t const *)NULL;
+		if (request->Window && request->Index != -1) {
+			int id = GetDlgCtrlID(request->Window);
+			if (FUN_005E9950(id) == -1) {
+				if (FUN_004E3830(id) == -1) {
+					if (FUN_004E4230(id) != -1) {
+						request->Text = FUN_004E42A0(FUN_004E4E20(window, id, request->Index));
+						return(1);
+					}
+				} else {
+					int side = FUN_004E4170(window, id, request->Index);
+					if (side != -1) {
+						request->Text = FUN_004E38A0(side);
+						return(1);
+					}
+				}
+			} else {
+				request->Text = FUN_005E99C0(FUN_005E9B20(window, id, request->Index));
+			}
+		}
+		return(1);
+	}
+
+	case 0x4ec:
+		FUN_0060AAA0(window);
+		return(0);
+
+	case OD_SUBCLASSED: {
+		FUN_004E3B90(window);
+		FUN_004E43C0();
+		FUN_004E4820(window);
+		FUN_004E4F50();
+		FUN_004E5310(window);
+		FUN_004E5AC0();
+		for (int i = 0; i < 8; i++) {
+			Session.Options.AISlots.Allies[i] = -2;
+		}
+		FUN_004E5D60(window);
+		FUN_005EE510(-1);
+		FUN_005EA180(window, Session.unknown_2854);
+		FUN_004E3CE0(window, Session.unknown_2854);
+		FUN_004E48E0(window, Session.unknown_2854);
+		EnableWindow(GetDlgItem(window, 0x59f), FALSE);
+		DAT_00AC11C2 = false;
+		Net2SetAccept(NULL, 0);
+		FUN_005DAFE0(false);
+		Net2DisplayGameList();
+		FUN_005E3010(window, 1);
+		FUN_005E7BF0(-1);
+		Session.unknown_8D4 = 8;
+		return(0);
+	}
+
+	case WM_COMMAND:
+		switch (LOWORD(wparam)) {
+		case IDCANCEL:
+			if (!Net2GameStarted) {
+				_netresponse = IDCANCEL;
+			}
+			return(0);
+
+		case 0x540:
+			FUN_005EDD00((HWND)lparam);
+			if (HIWORD(wparam) == EN_MAXTEXT) {
+				FUN_005DE360(window, DAT_007EEF44, DAT_007EEF2C);
+			}
+			return(0);
+
+		case 0x59f: {
+			if (Session.Players.Count() == 0) {
+				return(0);
+			}
+			char buffer[64];
+			Session.Players[0]->Slot.Unknown77 = 1;
+			sprintf(buffer, "A1");
+			FUN_005E3720(buffer);
+			FUN_005EDDE0(window, 0);
+			HWND accept = GetDlgItem(window, 0x59f);
+			EnableWindow(accept, FALSE);
+			InvalidateRect(accept, NULL, FALSE);
+			SendMessage(accept, 0x4dc, 0, 0);
+			FUN_005DAFE0(false);
+			return(0);
+		}
+
+		case 0x510:
+		case 0x513:
+		case 0x514:
+		case 0x51e: case 0x51f: case 0x520: case 0x521: case 0x522: case 0x523: case 0x524: case 0x525: case 0x526: case 0x527: case 0x528:
+		case 0x6a1: case 0x6a2: case 0x6a3: case 0x6a4: case 0x6a5: case 0x6a6: case 0x6a7: case 0x6a8:
+		case 0x6aa:
+		case 0x6ab:
+		case 0x76d: case 0x76e: case 0x76f: case 0x770: case 0x771: case 0x772: case 0x773: case 0x774: {
+			if (HIWORD(wparam) != 1) {
+				return(0);
+			}
+			int id = LOWORD(wparam);
+			int a = FUN_004E3830(id);
+			int b = FUN_004E4230(id);
+			int c = FUN_004E4EC0(id);
+			int d = FUN_004E59A0(id);
+			int m = (a > b) ? a : b;
+			m = (m > c) ? m : c;
+			m = (m > d) ? m : d;
+			int sa = FUN_004E37D0(m);
+			int sb = FUN_004E41D0(m);
+			int sc = FUN_004E4E60(m);
+			int sd = FUN_004E5940(m);
+			if (m == a) {
+				FUN_005E9B60(window, sa);
+			} else if (m == b) {
+				FUN_005E9C00(window, sb);
+			} else if (m == c) {
+				FUN_005E9CE0(window, sc);
+			} else {
+				FUN_005E9DB0(window, sd);
+			}
+			int x = FUN_004E4170(window, sa, -1);
+			int y = FUN_004E4E20(window, sb, -1);
+			int z = FUN_004E5900(window, sc, -1);
+			int w = FUN_004E6030(window, sd, -1);
+			char buffer[64];
+			sprintf(buffer, "R%d,%d,%d,%d", x, y, z, w);
+			FUN_005E3850(FUN_007350C0(Session.GameName), buffer);
+			return(0);
+		}
+		}
+		return(0);
+	}
+
+	return(0);
+}
 
 // FUNCTION: GAMEMD 0x005E2340
 void FUN_005E2340(void)

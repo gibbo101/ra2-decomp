@@ -58,6 +58,7 @@
 #include "overlay.h"
 #include "overtype.h"
 #include "partsys.h"
+#include "psystype.h"
 #include "queue.h"
 #include "revent.h"
 #include "rules.h"
@@ -273,6 +274,230 @@ void BuildingClass::FUN_0043C2A0(void)
 	}
 }
 
+bool FUN_004722C0(CaptureManagerClass const * manager);
+
+// FUNCTION: GAMEMD 0x0043C2D0
+RadioMessageType BuildingClass::Receive_Message(RadioClass * from, RadioMessageType message, int & param)
+{
+	switch (message) {
+
+		case RADIO_CAN_LOAD:
+			BASECLASS::Receive_Message(from, message, param);
+			if (!House->Is_Ally(from)) return(RADIO_STATIC);
+			if (Mission == MISSION_CONSTRUCTION || Mission == MISSION_DECONSTRUCTION || BState == BSTATE_CONSTRUCTION || (!ScenarioInit && !HasFreeLink((TechnoClass *)from) && !Class->UnitAbsorb && !Class->InfantryAbsorb)) return(RADIO_NEGATIVE);
+			if (((TechnoClass *)from)->Techno_Type_Class()->MZone != 5) {
+				if ((Techno_Type_Class()->Naval && !((TechnoClass *)from)->Techno_Type_Class()->Naval) || (!Techno_Type_Class()->Naval && ((TechnoClass *)from)->Techno_Type_Class()->Naval)) {
+					return(RADIO_NEGATIVE);
+				}
+			}
+			if (((TechnoClass *)from)->Techno_Type_Class()->BalloonHover) return(RADIO_NEGATIVE);
+			if (!IsOn) return(RADIO_NEGATIVE);
+			if (Class->UnitAbsorb || Class->InfantryAbsorb) {
+				if ((from->Fetch_RTTI() == RTTI_UNIT && !Class->UnitAbsorb) || (from->Fetch_RTTI() == RTTI_INFANTRY && !Class->InfantryAbsorb)) {
+					return(RADIO_NEGATIVE);
+				}
+				if (((TechnoClass *)from)->CaptureManager != NULL && FUN_004722C0(((TechnoClass *)from)->CaptureManager)) return(RADIO_NEGATIVE);
+				if (Cargo.How_Many() + 1 <= Class->MaxPassengers && ((TechnoClass *)from)->Techno_Type_Class()->Size <= Class->SizeLimit) {
+					goto roger;
+				}
+			}
+			if (Class->Grinding) goto roger;
+			if (Class->Bunker) {
+				if (((TechnoClass *)from)->FUN_0070FB50()) {
+					if (Transmit_Message(RADIO_ON_DEPOT, from) != RADIO_ROGER) {
+						return(RADIO_ROGER);
+					}
+				}
+				return(RADIO_NEGATIVE);
+			}
+			if (Class->IsCanUnitRepair) {
+				if (from->Fetch_RTTI() == RTTI_UNIT || from->Fetch_RTTI() == RTTI_AIRCRAFT) {
+					if (Transmit_Message(RADIO_ON_DEPOT, from) != RADIO_ROGER) {
+						return(RADIO_ROGER);
+					}
+				}
+				return(RADIO_NEGATIVE);
+			}
+			if (Class->IsArmory || Class->IsHospital) {
+				if (from->Fetch_RTTI() == RTTI_INFANTRY) {
+					InfantryClass * infantry = !from ? NULL : (from->Fetch_RTTI() == RTTI_INFANTRY ? (InfantryClass *)from : NULL);
+					if (infantry->CaptureManager != NULL && FUN_004722C0(infantry->CaptureManager)) return(RADIO_NEGATIVE);
+					if (infantry->IsMindControlled()) return(RADIO_NEGATIVE);
+					return(Ammo != 0 ? RADIO_ROGER : RADIO_NEGATIVE);
+				}
+			}
+			if (Class->IsHelipad) {
+				return(from->What_Am_I() == RTTI_AIRCRAFT ? RADIO_ROGER : RADIO_NEGATIVE);
+			}
+			if (Class->IsDockUnload && from->Fetch_RTTI() == RTTI_UNIT && ((UnitClass *)from)->Class->Harvester && (ScenarioInit || !Cargo.Is_Something_Attached())) {
+				goto roger;
+			}
+			if (Class->IsWeeder && from->Fetch_RTTI() == RTTI_UNIT && ((UnitClass *)from)->Class->Weeder) {
+				if (ScenarioInit) goto roger;
+				if (!Cargo.Is_Something_Attached()) return(RADIO_ROGER);
+			}
+			return(RADIO_STATIC);
+
+		case RADIO_IM_IN:
+			if (Mission == MISSION_DECONSTRUCTION) {
+				return(RADIO_NEGATIVE);
+			}
+			if (Class->UnitAbsorb || Class->InfantryAbsorb) {
+				goto roger;
+			}
+			if (Class->IsCanUnitRepair || Class->IsCanUnitReload || Class->IsHospital || Class->IsArmory) {
+				IsReadyToCommence = true;
+				QueueMission(MISSION_REPAIR, false);
+				from->QueueMission(MISSION_SLEEP, false);
+				return(RADIO_ROGER);
+			}
+			if (Class->Bunker) {
+				IsReadyToCommence = true;
+				QueueMission(MISSION_REPAIR, false);
+				return(RADIO_ROGER);
+			}
+			if (Class->IsDockUnload) {
+				from->QueueMission(MISSION_UNLOAD, false);
+				return(RADIO_ROGER);
+			}
+			break;
+
+		case RADIO_DOCKING: {
+			BASECLASS::Receive_Message(from, message, param);
+
+			if (!IsOn) {
+				return(RADIO_NEGATIVE);
+			}
+
+			if (Class->IsCanUnitRepair && ContainsLink((TechnoClass *)from)) {
+				if (Transmit_Message(RADIO_NEED_REPAIR, from) == RADIO_NEGATIVE) {
+					return(RADIO_NEGATIVE);
+				}
+			}
+
+			if (Class->Bunker && ContainsLink((TechnoClass *)from)) {
+				if (!((TechnoClass *)from)->FUN_0070FB50()) {
+					return(RADIO_NEGATIVE);
+				}
+			}
+
+			if (Class->IsHospital || Class->IsArmory) {
+				if (!HasFreeLink((TechnoClass *)from)) {
+					for (int i = 0; i < RadioLinks.Length(); i++) {
+						TechnoClass * link = FUN_0065AD30(i);
+						if (Transmit_Message(RADIO_NEED_REPAIR, link) == RADIO_NEGATIVE) {
+							Transmit_Message(RADIO_RUN_AWAY, link);
+						}
+					}
+					if (HasFreeLink((TechnoClass *)from)) goto roger;
+					return(RADIO_NEGATIVE);
+				}
+				param = (int)&Map[Get_Coord()];
+				Transmit_Message(RADIO_MOVE_HERE, param, from);
+				return(RADIO_ROGER);
+			}
+
+			if (!ContainsLink((TechnoClass *)from) && HasFreeLink((TechnoClass *)from)) {
+				Transmit_Message(RADIO_HELLO, from);
+				ContainsLink((TechnoClass *)from);
+			}
+
+			bool needs_to_move = false;
+
+			if (ContainsLink((TechnoClass *)from)) {
+				if (Class->IsDockUnload || Class->IsWeeder) {
+					FootClass * foot = !from ? NULL : ((from->AbstractFlags & 4) ? (FootClass *)from : NULL);
+					CellClass * docking_cell = &Map[Docking_Coord(foot)];
+					AbstractClass * navcom = foot->NavCom;
+					if (navcom != NULL && docking_cell != navcom) {
+						needs_to_move = true;
+					}
+				}
+			}
+
+			if (FUN_0065AD30(0) != NULL) {
+				if (Class->IsCanUnitRepair || Class->Bunker) {
+					if (Distance_To(FUN_0065AD30(0)) > CELL_LEPTON / 2) {
+						needs_to_move = true;
+					}
+				}
+			}
+
+			if (Transmit_Message(RADIO_NEED_TO_MOVE, from) == RADIO_ROGER || needs_to_move) {
+				param = (int)this;
+				if (Class->IsDockUnload || Class->IsWeeder) {
+					param = (int)&Map[Get_Cell() + Cell(3, 1)];
+
+					if (Transmit_Message(RADIO_MOVE_HERE, param, from) == RADIO_YEA_NOW_WHAT) {
+						Transmit_Message(RADIO_TETHER, from);
+						if (Transmit_Message(RADIO_BACKUP_NOW, from) != RADIO_ROGER) {
+							from->Scatter(COORD_NONE, true, true);
+						}
+					}
+				} else if (Class->IsHelipad) {
+					param = (int)this;
+					if (Transmit_Message(RADIO_MOVE_HERE, param, from) == RADIO_YEA_NOW_WHAT) {
+						Transmit_Message(RADIO_TETHER);
+					}
+				}
+			}
+			return(RADIO_ROGER);
+		}
+
+		case RADIO_ARE_REFINERY:
+			if (Cargo.Is_Something_Attached() || !HasFreeLink((TechnoClass *)from) || IsInLimbo || House != from->Owner_HouseClass() || (!Class->IsRefinery && !Class->IsCanUnitRepair && !Class->IsWeeder)) {
+				return(RADIO_NEGATIVE);
+			}
+			return(RADIO_ROGER);
+
+		case RADIO_BUILDING:
+			QueueMission(MISSION_REPAIR, false);
+			BASECLASS::Receive_Message(from, message, param);
+			return(RADIO_ROGER);
+
+		case RADIO_COMPLETE:
+			if (Mission != MISSION_DECONSTRUCTION) {
+				QueueMission(MISSION_GUARD, false);
+				if (Class->IsConstructionYard) {
+					DestroyNthAnim(BANIM_PRE_PRODUCTION);
+					DestroyNthAnim(BANIM_IDLE);
+					PlayNthAnim(BANIM_PRODUCTION, HealthRatio <= Rule->ConditionYellow, false, 0);
+				}
+			}
+		base:
+			BASECLASS::Receive_Message(from, message, param);
+		roger:
+			return(RADIO_ROGER);
+
+		case RADIO_OVER_OUT:
+			Begin_Mode(BSTATE_IDLE);
+			BASECLASS::Receive_Message(from, message, param);
+			return(RADIO_ROGER);
+
+		case RADIO_UNLOADED:
+			if (Class->IsCanUnitRepair || Class->Bunker) {
+				if (Distance_To((TechnoClass *)from) < 3 * CELL_LEPTON / 2) {
+					return(RADIO_ROGER);
+				}
+			}
+			BASECLASS::Receive_Message(from, message, param);
+			if (Class->IsWeaponsFactory || Class->IsCanUnitRepair || Class->Bunker) return(RADIO_RUN_AWAY);
+			return(RADIO_ROGER);
+
+		case RADIO_REDRAW:
+			if (Class->IsWeaponsFactory) {
+				return(RADIO_ROGER);
+			}
+			break;
+
+		default:
+			break;
+	}
+
+	return(BASECLASS::Receive_Message(from, message, param));
+}
+
+
 // FUNCTION: GAMEMD 0x0043CEA0
 bool BuildingClass::Render(Rect & rect, bool forced, bool extras_only) const
 {
@@ -485,6 +710,128 @@ inline void Register_Dirty(Rect const & area)
 	TacticalMap->Register_Dirty_Area(area, false);
 }
 
+extern FacingType DAT_00818CB8[4];
+
+// FUNCTION: GAMEMD 0x004415F0
+void BuildingClass::Do_Destruction(TechnoClass * last_contact, TechnoClass * source, bool forced, Cell const * offset)
+{
+	FUN_0043C2A0();
+
+	if (SpiedBy) {
+		SpiedBy = 0;
+		if (Class->IsRadar) {
+			Update_Radar_Spied();
+		}
+	}
+
+	if (Class->IsCloakGenerator) {
+		Disable_Cloak_Generator();
+		CurrentCloakRadius = 1;
+		Cloaking_AI(true);
+	}
+
+	if (Class->IsLaserFencePost) {
+		Update_Laser_Fence_Connections(true);
+	}
+
+	if (Class->RevealToAll && !House->Is_Player_Control()) {
+		vt_entry_48C(0, 0, 1, PlayerPtr);
+	}
+
+	if (Techno_Type_Class()->DieSound.Count() == 0) {
+		VocClass::PlayIndexAtPos(Rule->BuildingDieSound, PositionCoord, 0);
+	}
+
+	if (Class->Width() >= 2 && Class->Height(false) >= 2) {
+		if (Class->Width() > 2) {
+			Random_Pick(0, Class->Width() - 2);
+		}
+		if (Class->Height(false) > 2) {
+			Random_Pick(0, Class->Height(false) - 2);
+		}
+		if (Percent_Chance(50)) {
+			SmudgeTypeClass::Scorch_The_Ground(Coord(PositionCoord.As_Cell()), 100, 100, true);
+		} else {
+			SmudgeTypeClass::Crater_The_Ground(Coord(PositionCoord.As_Cell()), 100, 100, true);
+		}
+	}
+
+	while (*offset != REFRESH_EOL) {
+		Coord pos;
+		Coord coord(0, 0, 0);
+		Cell cell = Render_Coord().As_Cell() + *offset++;
+		if (Class->Explosion.Count() > 0) {
+			coord.Z = PositionCoord.Z;
+			Coord ccoord = cell;
+			pos = coord + Coord_Scatter(ccoord, CELL_LEPTON / 4);
+			new AnimClass(Class->Explosion.Pick(Scen->RandomNumber), pos, Random_Pick(0, 3), 1, (ShapeFlags_Type)0x600, 0, false);
+		}
+	}
+
+	if (Class->IsExploding) {
+		for (int i = 0; i < 4; i++) {
+			Coord coord = Adjacent_Coord_With_Height(PositionCoord, DAT_00818CB8[i]);
+			if (Map[coord].Overlay != OVERLAY_NONE) {
+				if (OverlayTypes[Map[coord].Overlay]->IsExplosive) {
+					new AnimClass(AnimTypes[AnimTypeClass::From_Name("FIRE3")], coord, Random_Pick(1, 3) + 3, 1, (ShapeFlags_Type)0x600, 0, false);
+				}
+			}
+		}
+	}
+
+	while (Storage.Get_Total_Amount() >= 1.0f) {
+		int slot = Storage.First_Used_Slot();
+		Storage.Decrease_Amount(1.0f, slot);
+		House->Tiberium.Decrease_Amount(1.0f, slot);
+		Coord coord = Coord_Scatter(PositionCoord, Random_Pick(CELL_LEPTON, 3 * CELL_LEPTON), true);
+		Map[coord].Place_Tiberium((TiberiumType)slot, 1);
+	}
+
+	int shakes = Class->Cost_Of(House) / Rule->ShakeScreen;
+	if (shakes > 0) {
+		Shake_The_Screen(shakes);
+	}
+
+	if (Get_Mission() == MISSION_DECONSTRUCTION || Class->IsExploding) {
+		CountDown = 0;
+		Animation.Set_Rate(0);
+	} else {
+		CountDown = 8;
+	}
+
+	if (Class->DestroyAnim.Count() > 0) {
+		AnimTypeClass const * type = Class->DestroyAnim.Pick(Scen->RandomNumber);
+		if (type != NULL) {
+			AnimClass * anim = new AnimClass(type, Render_Coord(), 0, 1, (ShapeFlags_Type)0x600, 0, false);
+			if (Techno_Type_Class()->Palette != NULL) {
+				anim->LightConvert = (LightConvertClass *)GetRemapColour();
+				if (Class->PaletteFile[0]) {
+					strncpy(anim->PaletteName, Class->PaletteFile, 32);
+				}
+			}
+		}
+	}
+
+	DynamicVectorClass<ParticleSystemTypeClass const *> list;
+	for (int i = Techno_Type_Class()->DestroyParticleSystems.Count() - 1; i >= 0; i--) {
+		if (Techno_Type_Class()->DestroyParticleSystems[i]->BehavesLike == 0) {
+			list.Add(Techno_Type_Class()->DestroyParticleSystems[i]);
+		}
+	}
+
+	if (ParticleSystems[7] == NULL && list.Count() > 0 && Get_Height_AGL() > -10) {
+		Coord off = Techno_Type_Class()->DestroySmokeOffset;
+		ParticleSystems[7] = new ParticleSystemClass(list[Random_Pick(0, list.Count() - 1)], PositionCoord + off, NULL, this, (Coord const &)DAT_0089C848, NULL);
+	}
+
+	Strength = 0;
+	if (forced) {
+		IsSurvivorless = true;
+	}
+	Drop_Debris(WhomToRepay);
+	Kill_Cargo(source);
+}
+
 // FUNCTION: GAMEMD 0x00441F60
 void BuildingClass::AfterDestruction(void)
 {
@@ -522,6 +869,165 @@ void BuildingClass::AfterDestruction(void)
 			Map.PlacePowerupCrate(cell, 20);
 		}
 	}
+}
+
+// FUNCTION: GAMEMD 0x00442230
+ResultType BuildingClass::Take_Damage(int & damage, int distance, WarheadTypeClass const * warhead, TechnoClass * source, bool forced, bool no_crew, HouseClass * house)
+{
+	ResultType res = RESULT_NONE;
+
+	if (this != source || source->Techno_Type_Class()->DamageSelf) {
+		float healthratio = HealthRatio;
+		int shapenum = Shape_Number();
+
+		if (source != NULL && !IsStrange()) {
+			House->LATime = Frame;
+			House->LAEnemy = source->Owner_HouseClass()->HeapID;
+			Base_Is_Attacked(source);
+		}
+
+		Cell const * offset = Occupy_List(false);
+		DynamicVectorClass<TechnoClass *> contacts;
+		int i;
+		for (i = 0; i < RadioLinks.Length(); i++) {
+			TechnoClass * link = FUN_0065AD30(i);
+			if (link != NULL) {
+				contacts.Add(link);
+			}
+		}
+
+		if (Class->IsLaserFence && !forced) {
+			return(RESULT_NONE);
+		}
+
+		if (Class->IsBridgeRepairHut && Class->IsImmune) {
+			return(RESULT_NONE);
+		}
+
+		if (Strength != 0) {
+			res = BASECLASS::Take_Damage(damage, distance, warhead, source, forced, no_crew, house);
+			if (!IsActive) {
+				return(res);
+			}
+			switch (res) {
+				case RESULT_ALREADY_DESTROYED:
+					return(res);
+
+				case RESULT_DESTROYED:
+					if (BunkerLinkedItem != NULL) {
+						contacts.Delete(BunkerLinkedItem);
+						UnloadBunker();
+					}
+					if (CaptureManager != NULL) {
+						CaptureManager->FreeAll();
+					}
+					if (LocomotorTarget != NULL) {
+						ReleaseLocomotor(true);
+					}
+					for (i = 0; i < contacts.Count(); i++) {
+						TechnoClass * tech = contacts[i];
+						if (Center_Coord().Distance_To(tech->Center_Coord()) >= CELL_LEPTON && !Class->IsHelipad) {
+							Transmit_Message(RADIO_RUN_AWAY, tech);
+							tech->QueueUpToEnter = NULL;
+						} else {
+							int strength = tech->Techno_Type_Class()->MaxStrength * 10;
+							tech->Take_Damage(strength, 0, Rule->C4Warhead, NULL, true, true, NULL);
+						}
+					}
+					contacts.Delete_All();
+					if (Class->CanBeOccupied) {
+						FUN_00457DE0(false, false);
+					}
+					if (LightSource != NULL) {
+						LightSource->Disable(false);
+					}
+					Do_Destruction(NULL, source, forced, offset);
+					if (CountDown > 0) {
+						Delete_Me();
+						AfterDestruction();
+					}
+					break;
+
+				case RESULT_HALF:
+					if (ParticleSystems[2] != NULL) {
+						ParticleSystems[2]->SpawnFrames *= 1.5f;
+					}
+
+				case RESULT_MAJOR:
+					if (Techno_Type_Class()->DamageSound == -1) {
+						VocClass::PlayIndexAtPos(Rule->BuildingDamageSound, PositionCoord, 0);
+					}
+					while (*offset != REFRESH_EOL) {
+						Cell cell = Get_Cell() + Cell(*offset++);
+						Coord coord(cell);
+						coord.Z = Map.Get_Height_GL(coord);
+						if (warhead->IsSparky) {
+							AnimClass * anim = NULL;
+							switch (Random_Pick(0, 5 + Class->Height(false) + Class->Width())) {
+								case 1:
+								case 2:
+								case 3:
+								case 4:
+								case 5:
+									anim = new AnimClass(Rule->OnFire[0], Coord_Scatter(coord, 3 * CELL_LEPTON / 8, false), 0, Random_Pick(1, 3), (ShapeFlags_Type)0x600, 0, false);
+									break;
+
+								case 6:
+								case 7:
+								case 8:
+									anim = new AnimClass(Rule->OnFire[1], Coord_Scatter(coord, 3 * CELL_LEPTON / 8, false), 0, Random_Pick(1, 3), (ShapeFlags_Type)0x600, 0, false);
+									break;
+
+								case 9:
+									anim = new AnimClass(Rule->OnFire[2], Coord_Scatter(coord, 3 * CELL_LEPTON / 8, false), 0, 1, (ShapeFlags_Type)0x600, 0, false);
+									break;
+							}
+							if (anim) {
+								anim->SetOwnerObject(this);
+							}
+						}
+					}
+					break;
+
+				default:
+					break;
+			}
+		}
+
+		if (!IsActive) {
+			return(RESULT_DESTROYED);
+		}
+
+		if (source != NULL && res != RESULT_NONE) {
+			if (!Class->IsInsignificant && !IsStrange()) {
+				House->Attacked(this);
+			}
+			WhoLastHurtMe = source->Owner_HouseClass()->HeapID;
+			if (CurrentMission != MISSION_DECONSTRUCTION &&
+				!House->Is_Ally(source) &&
+				Get_Class_Weapon_Data(0)->Weapon != NULL &&
+				!Get_Class_Weapon_Data(0)->Weapon->Bullet->IsAntiAircraft &&
+				(TarCom == NULL || !IsCloseEnoughToAttack(TarCom))) {
+				if (source->Fetch_RTTI() != RTTI_AIRCRAFT && (!House->FUN_0050B730() || Rule->IsSmartDefense)) {
+					Assign_Target(source);
+				} else if (!PrimaryFacing.Is_Rotating() && IsPowerOnline()) {
+					PrimaryFacing.Set_Desired(Random_Dir(DIR_N, DIR_MAX));
+				}
+			}
+		}
+
+		if (res != RESULT_NONE) {
+			Set_Anim_Damage_State(HealthRatio <= Rule->ConditionYellow);
+		}
+
+		if (shapenum != Shape_Number()) {
+			IsToDisplay = true;
+			Set_Anim_Damage_State(HealthRatio <= Rule->ConditionYellow);
+		}
+		int remaining = contacts.Count();
+	}
+
+	return(res);
 }
 
 // FUNCTION: GAMEMD 0x00442C40

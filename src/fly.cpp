@@ -327,6 +327,275 @@ bool FlyLocomotionClass::Edge_Of_World_AI(void)
 	return(false);
 }
 
+static inline AircraftClass * Aircraft_Of(FootClass * foot)
+{
+	if (foot == NULL) {
+		return(NULL);
+	}
+	return((foot->Fetch_RTTI() == RTTI_AIRCRAFT) ? (AircraftClass *)foot : NULL);
+}
+
+// FUNCTION: GAMEMD 0x004CD600
+void FlyLocomotionClass::Movement_AI(void)
+{
+	Cell lastcell = LinkedTo->Get_Cell();
+	if (lastcell != LinkedTo->LastFlightMapCoords) {
+		if (Is_Moving_Now()) {
+			AircraftTracker.Update(LinkedTo, LinkedTo->LastFlightMapCoords, lastcell);
+		}
+	}
+
+	if (LinkedTo->Mission == MISSION_ENTER && IsElevating) {
+		IsElevating = false;
+	}
+
+	if ((!Is_Powered() || LinkedTo->Strength == 0) && LinkedTo->HeightAGL != 0) {
+		if (LinkedTo->Strength == 0) {
+			Riser += 1;
+		} else {
+			Riser += 3;
+		}
+
+		Coord newcoord = LinkedTo->Get_Coord();
+		Coord coord = newcoord;
+		newcoord.Z -= Riser;
+
+		Map.Get_Height_GL(newcoord);
+		Map[newcoord];
+
+		if (Map.In_Radar(newcoord.As_Cell())) {
+			Map.Remove(LinkedTo);
+			LinkedTo->Mark(MARK_UP);
+			LinkedTo->Set_Coord(newcoord);
+			LinkedTo->Mark(MARK_DOWN);
+			Map.Submit(LinkedTo);
+		}
+
+		if (LinkedTo->HeightAGL <= 0) {
+			AircraftTracker.Remove(LinkedTo);
+			LinkedTo->Set_Height_AGL(0);
+
+			int damage = LinkedTo->Strength;
+			Cell anim_cell;
+			if (damage == 0) {
+				Cell cell = newcoord.As_Cell();
+				LinkedTo->FireDeathWeapon(0);
+				int voc;
+				if (Map[cell].Land_Type() != LAND_WATER) {
+					voc = LinkedTo->TClass->ImpactLandSound;
+					if (voc == -1) voc = Rule->ImpactLandSound;
+				} else {
+					voc = LinkedTo->TClass->ImpactWaterSound;
+					if (voc == -1) voc = Rule->ImpactWaterSound;
+				}
+				if (voc != -1) {
+					VocClass::PlayAt(voc, LinkedTo->PositionCoord, NULL);
+				}
+				LinkedTo->Delete_Me();
+				return;
+			} else {
+				LinkedTo->Take_Damage(LinkedTo->Strength, 0, Rule->C4Warhead, NULL, true, true, false);
+				anim_cell = newcoord.As_Cell();
+
+				new AnimClass(Combat_Anim(damage, Rule->C4Warhead, Map[anim_cell].Land_Type(), coord), newcoord, 0, 1, ShapeFlags_Type(0x2600), Get_Explosion_Z(newcoord));
+				Combat_Lighting(newcoord, damage, Rule->C4Warhead, false);
+				Explosion_Damage(newcoord, damage, NULL, Rule->C4Warhead, true);
+			}
+			return;
+		}
+	} else {
+		if (LinkedTo->Strength > 0) {
+			if (LinkedTo->NavCom != NULL && LinkedTo->Mission == MISSION_GUARD && LinkedTo->MissionQueue == MISSION_NONE && !AirportBound) {
+				LinkedTo->QueueMission(MISSION_MOVE, false);
+			}
+		}
+	}
+
+	if (Is_Moving()) {
+		const TechnoTypeClass *ttype = LinkedTo->TClass;
+		bool is_dropship = ttype->IsDropship;
+
+		LinkedTo->Mark(MARK_UP);
+
+		Coord coord = LinkedTo->PositionCoord;
+		Physics(coord, LinkedTo->PrimaryFacing.Current());
+
+		if (!Map.In_Radar(coord.As_Cell())) {
+			if (LinkedTo->Should_Delete_Off_Map() && !(LinkedTo != NULL && LinkedTo->Fetch_RTTI() == RTTI_AIRCRAFT && Aircraft_Of(LinkedTo)->Class->IsFlyBy)) {
+				Cell here = coord.As_Cell();
+				Cell edge = Map.Cell_To_LocalRect(here);
+				if (edge.X < Map.MapRect.Width / 2) {
+					coord.X += CELL_LEPTON_W / 2;
+				} else {
+					coord.X -= CELL_LEPTON_W / 2;
+				}
+
+				if (!Map.In_Radar(coord.As_Cell())) {
+					coord = Coord_Scatter(coord, CELL_LEPTON / 4, false);
+					if (!Map.In_Radar(coord.As_Cell())) goto skip_set;
+				}
+			}
+		}
+		LinkedTo->Set_Coord(coord);
+	skip_set:
+
+		int bridge_height = 0;
+		int current_height = LinkedTo->HeightAGL;
+		if (!LinkedTo->IsOnBridge && current_height >= BRIDGE_LEPTON_HEIGHT && Map[(Coord const &)LinkedTo->PositionCoord].IsUnderBridge) {
+			current_height -= BRIDGE_LEPTON_HEIGHT;
+			bridge_height = BRIDGE_LEPTON_HEIGHT;
+		}
+
+		Coord dest = DestinationCoord;
+		Coord cur = LinkedTo->PositionCoord;
+		Point2D dd = Point2D(dest) - Point2D(cur);
+		int dist = (int)fastmath::sqrt((double)dd.Y * (double)dd.Y + (double)dd.X * (double)dd.X);
+
+		if (current_height < FlightLevel && LinkedTo->Strength > 0) {
+			bool is_loaded = false;
+			IFlyControlPtr flyctrl(LinkedTo);
+			if (flyctrl != NULL) {
+				is_loaded = flyctrl->Is_Loaded() != 0;
+			}
+
+			if (is_dropship) {
+				int climb = FlightLevel - current_height;
+				if (climb > 16) {
+					climb = 16;
+				}
+				LinkedTo->Set_Height_AGL(bridge_height + current_height + climb);
+			} else {
+				int climb = FlightLevel - current_height;
+				climb = MIN(is_loaded ? 10 : 20, climb);
+				LinkedTo->Set_Height_AGL(bridge_height + current_height + climb);
+			}
+
+			LinkedTo->IsOnBridge = false;
+		}
+
+		if (current_height > FlightLevel || LinkedTo->Strength == 0) {
+			int descent = current_height - FlightLevel;
+
+			if (is_dropship) {
+				if (IsLanding) {
+					int limit = descent / 20 + 10;
+					descent = MIN(MIN(limit, 48), descent);
+				} else if (FlightLevel == LinkedTo->TClass->GetFlightLevel()) {
+					if (current_height > 16) {
+						descent = 16;
+					} else {
+						descent = current_height;
+					}
+				} else {
+					if (current_height > 6) {
+						descent = 6;
+					} else {
+						descent = current_height;
+					}
+				}
+			} else {
+				if (descent / 20 < descent) {
+					descent /= 20;
+				}
+				if (descent >= 50) {
+					descent = 50;
+				} else if (descent <= 20) {
+					descent = 20;
+				}
+			}
+
+			current_height -= descent;
+			if (LinkedTo->Strength == 0 && current_height <= 1) {
+				current_height = 1;
+			} else if (current_height < 0) {
+				current_height = 0;
+			}
+
+			if (current_height == 0 && bridge_height > 0) {
+				LinkedTo->IsOnBridge = true;
+				bridge_height = 0;
+			}
+
+			LinkedTo->Set_Height_AGL(bridge_height + current_height);
+
+			if (LinkedTo->Strength > 0 && DestinationCoord != COORD_NONE) {
+				if (LinkedTo->Mission != MISSION_ENTER || LinkedTo->NavCom == NULL ||
+					LinkedTo->NavCom->Fetch_RTTI() != RTTI_BUILDING ||
+					!((BuildingClass *)LinkedTo->NavCom)->Class->IsHelipad) {
+
+					Coord center = Coord(Cell(DestinationCoord), 0);
+					Coord current = LinkedTo->PositionCoord;
+					DirType dir = Direction(current, center);
+					LinkedTo->Set_Coord(Move_Coord(current, dir, 5));
+				}
+			}
+		}
+
+		if (LinkedTo->Strength > 0 && Is_In_Flight() && DestinationCoord != COORD_NONE) {
+			IFlyControlPtr flyctrl(LinkedTo);
+
+			if (!Needs_To_Land()) {
+				TargetSpeed = 1.0;
+			} else {
+				if (LinkedTo->TClass->IsHunterSeeker) {
+					if (!IsTakingOff && LinkedTo->TarCom != NULL) {
+						TargetSpeed = 1.0;
+					} else {
+						TargetSpeed = 0.0;
+					}
+				} else {
+					double speed = (double)dist / (double)ttype->SlowdownDistance;
+					if (1.0 < speed) {
+						speed = 1.0;
+					}
+					TargetSpeed = speed;
+
+					if (TargetSpeed < 0.1) {
+						if (dist > CELL_LEPTON / 3) {
+							TargetSpeed = 0.1;
+						} else {
+							TargetSpeed = 0.0;
+							CurrentSpeed *= 0.5;
+						}
+					}
+
+					if ((double)dist < CurrentSpeed) {
+						CurrentSpeed = (double)dist;
+					}
+
+					if (TargetSpeed == 0.0 && CurrentSpeed == 0.0 && dist > 0) {
+						CurrentSpeed = 0.05;
+					}
+				}
+			}
+		}
+
+		if (is_dropship && LinkedTo->Strength > 0 && CurrentSpeed > 0.0 && !IsTakingOff) {
+			int slowdown = ttype->SlowdownDistance;
+			if (dist < slowdown) {
+				double factor = 1.0 - ((double)dist - ((double)slowdown * 0.6)) / ((double)slowdown * 0.4);
+				LinkedTo->PitchAngle = MIN(LinkedTo->TClass->PitchAngle, factor * LinkedTo->TClass->PitchAngle);
+			}
+		}
+
+		if (!IsElevating && LinkedTo->Strength > 0 && !IsLanding && !IsTakingOff) {
+			if (DestinationCoord.As_Cell() == LinkedTo->Get_Cell() && TargetSpeed == 0.0 && (!LinkedTo->TarCom || !LinkedTo->Ammo)) {
+				Land();
+			}
+		}
+
+		if (LinkedTo->Strength > 0) {
+			if (CurrentSpeed < TargetSpeed) {
+				CurrentSpeed = MIN(CurrentSpeed + 0.1, TargetSpeed);
+			} else if (CurrentSpeed > TargetSpeed) {
+				CurrentSpeed = MAX(CurrentSpeed - 0.1, TargetSpeed);
+			}
+		}
+
+		LinkedTo->Mark(MARK_DOWN);
+	}
+}
+
 // FUNCTION: GAMEMD 0x004CE4B0
 ImpactType FlyLocomotionClass::Physics(Coord & coord, DirType facing)
 {
@@ -396,6 +665,136 @@ bool FlyLocomotionClass::Process_Take_Off(void)
 	}
 
 	return(true);
+}
+
+static inline Cell Adjacent_Cell_By_Value(Cell const & cell, FacingType dir)
+{
+	return(cell + AdjacentCell[(int)dir & 0x07]);
+}
+
+// FUNCTION: GAMEMD 0x004CE840
+bool FlyLocomotionClass::Process_Landing(void)
+{
+	if (!IsLanding) {
+		return(true);
+	}
+
+	bool has_landed = false;
+
+	int height = LinkedTo->HeightAGL;
+	if (Map[(Coord const &)LinkedTo->PositionCoord].IsUnderBridge && height >= BRIDGE_LEPTON_HEIGHT) {
+		height -= BRIDGE_LEPTON_HEIGHT;
+	}
+
+	if (LinkedTo->TClass->IsDropship) {
+		if (height == 0) {
+			if (LinkedTo->PitchAngle > 0) {
+				LinkedTo->PitchAngle = MAX(0.0, LinkedTo->PitchAngle - 0.02);
+			}
+		}
+		TargetSpeed = 0;
+	} else {
+		TargetSpeed = 0;
+	}
+
+	int landing_altitude = 0;
+	IFlyControlPtr flyctrl(LinkedTo);
+	if (flyctrl) {
+		landing_altitude = flyctrl->Landing_Altitude();
+	}
+
+	bool ok = false;
+	CellClass * dest = &Map[DestinationCoord];
+	if ((!AirportBound || LinkedTo->ContainsLink(dest->Cell_Building())) && (AirportBound || LinkedTo->Can_Enter_Cell(dest) == MOVE_OK)) {
+		ok = true;
+	} else {
+		Take_Off();
+		Cell pos = LinkedTo->PositionCoord.As_Cell();
+		Cell nearby = Map.Nearby_Location(pos, SPEED_TRACK, -1, MZONE_FLYER);
+		if (nearby != CELL_NONE) {
+			Coord nearby_coord = nearby.As_Coord();
+			nearby_coord.Z = Map.Get_Height_GL(nearby_coord);
+			if (Map[nearby].IsUnderBridge) {
+				nearby_coord.Z += BRIDGE_LEPTON_HEIGHT;
+			}
+			Move_To(nearby_coord);
+			ok = true;
+		}
+	}
+
+	if (!ok) {
+		LinkedTo->Take_Damage(LinkedTo->Strength, 0, Rule->C4Warhead, NULL, true, true, false);
+		DestinationCoord = COORD_NONE;
+		bool result = false;
+		return(result);
+	}
+
+	if (!CommencedLanding && height < 300) {
+		Coord coord = LinkedTo->PositionCoord;
+		coord.Z = Map.Get_Height_GL(coord);
+		CommencedLanding = true;
+
+		if (LinkedTo->TClass->IsDropship) {
+			new AnimClass(AnimTypes[AnimTypeClass::From_Name("DROPLAND")], coord);
+		} else if (LinkedTo->Fetch_RTTI() == RTTI_AIRCRAFT && ((AircraftClass *)LinkedTo)->Class->IsCarryall) {
+			new AnimClass(AnimTypes[AnimTypeClass::From_Name("CARYLAND")], coord);
+		}
+
+		if (LinkedTo->Strength > 0) {
+			VocClass::PlayAt(LinkedTo->TClass->AuxSound2, coord, NULL);
+		}
+	}
+
+	int grounded = height <= landing_altitude;
+	if (grounded) {
+		if (LinkedTo->PitchAngle <= 0) {
+
+			Coord coord = LinkedTo->Get_Coord();
+			if (Map[coord].IsUnderBridge) {
+				if (coord.Z >= BRIDGE_LEPTON_HEIGHT + Map.Get_Height_GL(coord)) {
+					LinkedTo->IsOnBridge = true;
+				}
+			}
+
+			LinkedTo->HeightAGL = landing_altitude;
+			IsLanding = false;
+			IsTakingOff = false;
+			has_landed = true;
+			AircraftTracker.Remove(LinkedTo);
+			LinkedTo->Set_Speed(0);
+			CurrentSpeed = 0;
+			TargetSpeed = 0;
+
+			if (LinkedTo->LastAdjacencyCell != Cell(0, 0)) {
+				for (int fa = FACING_FIRST; fa < FACING_COUNT; fa++) {
+					Cell adjacent = Adjacent_Cell_By_Value(LinkedTo->LastAdjacencyCell, FacingType(fa));
+					CellClass * cptr = &Map[adjacent];
+					cptr->AdjacentObjectCount--;
+				}
+				LinkedTo->LastAdjacencyCell = LinkedTo->Get_Cell();
+				for (int fb = FACING_FIRST; fb < FACING_COUNT; fb++) {
+					Cell adjacent = Adjacent_Cell_By_Value(LinkedTo->LastAdjacencyCell, FacingType(fb));
+					CellClass * cptr = &Map[adjacent];
+					cptr->AdjacentObjectCount++;
+				}
+			} else {
+				LinkedTo->LastAdjacencyCell = LinkedTo->Get_Cell();
+				for (int fc = FACING_FIRST; fc < FACING_COUNT; fc++) {
+					Cell adjacent = Adjacent_Cell_By_Value(LinkedTo->LastAdjacencyCell, FacingType(fc));
+					CellClass * cptr = &Map[adjacent];
+					cptr->AdjacentObjectCount++;
+				}
+			}
+
+			if (LinkedTo->Center_Coord().As_Cell() == DestinationCoord.As_Cell() || Map[DestinationCoord.As_Cell()].Cell_Building() == LinkedTo->FUN_0065AD30(0)) {
+				IsMoving = false;
+				Move_To(COORD_NONE);
+				LinkedTo->Assign_Destination(NULL, true);
+			}
+		}
+	}
+
+	return(has_landed);
 }
 
 // FUNCTION: GAMEMD 0x004CF610

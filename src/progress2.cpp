@@ -197,7 +197,7 @@ void ProgressScreenClass::Set_Progress_Percent(int index, double value, Point2D 
 		int data[2];
 		Fill_Notice(data, before, Get_Current_Progress());
 		if (Callback != 0 && IsActive) {
-			Callback->Notify(0x11AE, data);
+			Callback->INoticeSink_Unknown(0x11AE, (DWORD)data);
 		}
 		if (Dialog != 0) {
 			SendMessage((HWND)Dialog, WM_PAINT, 0, 0);
@@ -227,7 +227,7 @@ void ProgressScreenClass::Add_Progress_Percent(int index, double value, Point2D 
 	int data[2];
 	Fill_Notice(data, before, Get_Current_Progress());
 	if (Callback != 0) {
-		Callback->Notify(0x11AE, data);
+		Callback->INoticeSink_Unknown(0x11AE, (DWORD)data);
 	}
 }
 
@@ -247,7 +247,7 @@ void ProgressScreenClass::Clear_Dialog(void)
 
 // FUNCTION: GAMEMD 0x00643E80
 // ProgressNotifier::Set_Callback
-void ProgressNotifier::Set_Callback(ProgressCallback * callback)
+void ProgressNotifier::Set_Callback(INoticeSink * callback)
 {
 	Callback = callback;
 }

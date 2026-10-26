@@ -47,4 +47,6 @@ class SpawnManagerClass : public AbstractClass
 		void SetTarget(AbstractClass * target);
 		void ResetTarget(void);
 		int CountLaunchingSpawns(void);
+		int CountAliveSpawns(void);
+		int CountDockedSpawns(void);
 };

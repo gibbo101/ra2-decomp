@@ -13,6 +13,11 @@ CounterClass::CounterClass(void)
 	TotalCount = 0;
 }
 
+// FUNCTION: GAMEMD 0x0049F9D0
+CounterClass::~CounterClass(void)
+{
+}
+
 // FUNCTION: GAMEMD 0x0049FAE0
 int CounterClass::Value(int index) const
 {

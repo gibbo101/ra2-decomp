@@ -37,6 +37,7 @@
 #include "crc.h"
 #include "data.h"
 #include "dbgprint.h"
+#include "dsurface.h"
 #include "egos.h"
 #include "empulse.h"
 #include "enviro.h"
@@ -49,10 +50,12 @@
 #include "infatype.h"
 #include "init.h"
 #include "inline.h"
+#include "ipxmgr.h"
 #include "ion.h"
 #include "isotype.h"
 #include "kamikaze.h"
 #include "language\language.h"
+#include "ldprgmgr.h"
 #include "light.h"
 #include "logic.h"
 #include "mainopt.h"
@@ -102,6 +105,7 @@
 #include "waypoint.h"
 #include "wincomm.h"
 #include "wonline.h"
+#include "wspipx.h"
 #include "wsproto.h"
 #include "bench.hh"
 #include <stddef.h>
@@ -586,6 +590,198 @@ namespace Game { extern bool IsActive; extern HWND hWnd; bool __cdecl CallBack(v
 void __fastcall FUN_0055AF40(int value);
 void __fastcall FUN_0055AF50(int value);
 
+struct FileSystem { static char TEMPERAT_PAL[]; };
+void __fastcall FUN_004A3C30(void * palette, int rate, bool (__cdecl * callback)(void));
+bool Wait_For_Players_To_Load(void);
+namespace Game { namespace Network { extern int Tournament; extern int WOLGameID; } }
+struct Unknown_00B052D0 { bool FUN_00664610(int, int); };
+extern Unknown_00B052D0 DAT_00B052D0;
+int __fastcall FUN_0072B380(void);
+void __fastcall Multiplayer_Last_Minute_Fixups(bool official);
+
+// FUNCTION: GAMEMD 0x00684620
+bool Read_Scenario(char const * fname)
+{
+	bool read_ok = true;
+	char name[_MAX_PATH];
+
+	strcpy(name, fname);
+
+	Frame = 0;
+
+	Scen->IsReadingScenario = true;
+	ScenarioInit++;
+
+	char * ext = name + strlen(name) - 4;
+
+	if (stricmp(ext, ".SED") == 0) {
+		Scen->IsRandom = true;
+		DebugString("Scen->IsRandom = true\n");
+	} else {
+		Scen->IsRandom = false;
+		DebugString("Scen->IsRandom = false\n");
+	}
+
+	LoadProgressManager * manager = NULL;
+
+	if (!Debug_Map) {
+		int players = 1;
+
+		if (Session.Type != GAME_NORMAL && Session.Type != GAME_SKIRMISH) {
+			players = Session.Players.Count();
+		}
+
+		Progress.Initialize(100.0, players, NULL);
+
+		wchar_t const * prog_msg = NULL;
+		wchar_t prog_msg_buffer[129];
+
+		if (Session.Type == GAME_INTERNET && Game::Network::Tournament) {
+			swprintf(prog_msg_buffer, StringTable::LoadString("TXT_GAME_ID", NULL, "D:\\ra2mdpost\\Scenario.CPP", 0x4af), Game::Network::WOLGameID);
+			prog_msg = prog_msg_buffer;
+		}
+
+		manager = LoadProgressManager::Create();
+		manager->Compute_Rects();
+		Progress.Set_Callback(manager);
+
+		int side = 0;
+		if (Session.Type == GAME_NORMAL) {
+			if (Scen->Campaign != CAMPAIGN_NONE) {
+				side = Campaigns[Scen->Campaign]->CDNumber;
+			}
+		} else {
+			int house = Session.Players[0]->Player.House;
+			if (house == -3) {
+				house = 0;
+			}
+			side = HouseTypes[house]->Side;
+		}
+		Scen->PlayerSideIndex = side;
+		Progress.Set_Side(side);
+
+		LoadProgressManager::Create()->Load_Mixes();
+
+		if (Session.Type == GAME_NORMAL) {
+			Progress.Set_Graphic_Data("SPLDBR.SHP", NULL, FUN_0072B380());
+		} else {
+			Progress.Set_Graphic_Data("PROGBARM.SHP", NULL, 0);
+		}
+
+		bool single = (Session.Type == GAME_NORMAL);
+		Progress.Set_Layout(manager->Text_Origin(), prog_msg, !single, !single);
+		Progress.Set_Field78(manager->FUN_00552C90());
+
+		if (PacketTransport != NULL && Session.Type == GAME_INTERNET && Session.Players.Count() > 1) {
+			DebugString("Setting addresses for UDP broadcast\n");
+			PacketTransport->Clear_Broadcast_Addresses();
+
+			char address[32] = {"xxx.xxx.xxx.xxx"};
+			unsigned char net[4];
+			unsigned char node[6];
+
+			for (int p = 1; p < Session.Players.Count(); p++) {
+				Session.Players[p]->Address.Get_Address(net, node);
+				sprintf(address, "%d.%d.%d.%d", node[0], node[1], node[2], node[3]);
+				DebugString("Adding broadcast address %s\n", address);
+				PacketTransport->Set_Broadcast_Address(address, Session.PlayerPorts[p]);
+			}
+		}
+	}
+
+	if (Scen->IsRandom) {
+		read_ok = RandomMapGen.SeedData.Load(name);
+
+		if (read_ok) {
+			RandomMapGen.Generate_Random_Map(false, NULL);
+			Multiplayer_Last_Minute_Fixups(true);
+		}
+		strcpy(Scen->ScenarioName, name);
+	} else {
+		read_ok = Read_Scenario_INI(name, true);
+	}
+
+	if (!Rule->Shroud) {
+		Map.Reveal_The_Map(NULL);
+	}
+
+	if (!read_ok) {
+		DebugString("Error - Unable to read scenario: %s\n", name);
+		FUN_004A3C30(&FileSystem::TEMPERAT_PAL, 7, Game::CallBack);
+		WWMessageBox().Process(StringTable::LoadString("TXT_UNABLE_READ_SCENARIO", NULL, "D:\\ra2mdpost\\Scenario.CPP", 0x50d), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\Scenario.CPP", 0x50d), NULL, NULL, false);
+
+		ScenarioInit--;
+		Scen->IsReadingScenario = false;
+		if (manager != NULL) {
+			Progress.Set_Callback(NULL);
+			LoadProgressManager::Destroy();
+		}
+		return(false);
+	}
+
+	Session.Messages.Init(
+		DSurface::ViewBounds.X + 3, DSurface::ViewBounds.Y,
+		6,
+		98,
+		7 * 2,
+		-1, -1,
+		0,
+		20,
+		98,
+		DSurface::ViewBounds.Width - 6);
+
+	Fill_In_Data();
+
+	if (Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) {
+		Session.Update_Progress(99);
+		if (Session.Type == GAME_INTERNET && Session.ViaPacketRouter) {
+			DAT_00B052D0.FUN_00664610(15000, true);
+		}
+	}
+
+	Session.Update_Progress(100 + (Scen->IsRandom ? 100 : 0));
+
+	Session.SawGameCompletion = false;
+	Session.OutOfSync = false;
+
+	bool all_loaded = Wait_For_Players_To_Load();
+
+	if (Session.Type == GAME_INTERNET) {
+		Session.Init_Fixed_Alliances();
+	}
+
+	ScenarioInit--;
+
+	if (!Debug_Map) {
+		if (all_loaded) {
+			Game::CallBack();
+			double progress = Progress.Get_Current_Progress();
+
+			while (progress < 1.0) {
+				for (int i = 0; i < Session.Players.Count(); i++) {
+					Progress.Set_Progress_Percent(i, 100.0);
+				}
+				progress = Progress.Get_Current_Progress();
+			}
+		}
+	}
+
+	Scen->IsReadingScenario = false;
+
+	Progress.End();
+
+	if (manager != NULL) {
+		Progress.Set_Callback(NULL);
+		manager->FUN_00554370();
+	}
+
+	for (int house = Houses.Count() - 1; house >= 0; house--) {
+		Houses[house]->FUN_0050D610();
+	}
+
+	return(true);
+}
+
 // FUNCTION: GAMEMD 0x00684C30
 void Fill_In_Data(void)
 {
@@ -837,6 +1033,400 @@ void __fastcall FUN_005BF450(void);
 void __fastcall FUN_00406E80(void);
 void __fastcall FUN_007529A0(bool a);
 void __fastcall FUN_00752CA0(void);
+void __fastcall FUN_00407070(void * p);
+void __fastcall FUN_004070B0(void * p);
+bool __fastcall FUN_007529E0(void);
+void __fastcall FUN_0052FEC0(Surface * surface, bool flag);
+bool Net2Init_Network(void);
+namespace Game { namespace Network { extern int PreCalcFrameRate; } }
+namespace CopyProtection { bool CheckProtectedData(void); }
+void FUN_0055CF10(void);
+class MPScoreScreen { public: MPScoreScreen(void); void Present(void); };
+class STLScoreScreen { public: STLScoreScreen(void); void Present(void); };
+
+// FUNCTION: GAMEMD 0x00685670
+void Do_Win(void)
+{
+	if (Session.Type != GAME_NORMAL && Session.Type != GAME_SKIRMISH) {
+		if (!Session.Play) {
+			Wait_For_End_Of_Queue();
+			FUN_0055CF10();
+		}
+	}
+
+	ScenarioStarted = false;
+	TacticalActive = false;
+
+	Scen->ElapsedTimer.Stop();
+	FUN_005BF450();
+
+	MouseCursor->Erase_Mouse(HiddenSurface);
+	MouseCursor->Release_Mouse();
+	Map.Set_Default_Mouse(MOUSE_NORMAL, false);
+	MouseCursor->Hide_Mouse();
+
+	FUN_00407070(DAT_0087E758);
+	FUN_004070B0(DAT_0087E758);
+
+	int timeout = TickCount + 300;
+
+	while (FUN_007529E0() && timeout > TickCount) {
+		Game::CallBack();
+	}
+
+	FUN_007529A0(true);
+	FUN_00752CA0();
+	FUN_00406E80();
+	FUN_00750FA0();
+	FUN_00407150(DAT_0087E758, 0x4000);
+	Toggle_Display_Mode(false);
+
+	if (Session.Type != GAME_NORMAL) {
+		bool finished = false;
+
+		if (!Session.Play) {
+			Session.GamesPlayed++;
+
+			if (Session.Type == GAME_INTERNET) {
+				FUN_0078ABF0(true, StringTable::LoadString("TXT_AWAY_SCORESCREEN", NULL, "D:\\ra2mdpost\\Scenario.CPP", 0x7e8));
+			}
+
+			if (Session.MPGameMode != NULL) {
+				if ((Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) && Session.MPGameMode->vt_entry_08()) {
+					FUN_0052FEC0(NULL, true);
+				} else {
+					Session.GameName[0] = 0;
+					MPScoreScreen().Present();
+				}
+			} else {
+				Session.GameName[0] = 0;
+				MPScoreScreen().Present();
+			}
+
+			if (Session.MPGameMode != NULL) {
+				finished = Session.MPGameMode->vt_entry_A8();
+			}
+
+			Session.CurGame++;
+			if (Session.CurGame >= 4) {
+				Session.CurGame = 3;
+			}
+		}
+
+		if (!finished) {
+			Session.GameName[0] = 0;
+			if (Session.MPGameMode != NULL) {
+				Session.MPGameMode->vt_entry_A4(true);
+			}
+			Game::IsActive = false;
+			FUN_0078ABF0(false, L"");
+			return;
+		}
+
+		Session.MPGameMode->vt_entry_AC();
+		FUN_0078ABF0(false, L"");
+	}
+
+	FUN_005BF260(Scen->WinMovie, -1, true, true, true);
+
+	if (!Session.Play) {
+		InputManagerClass::Instance->DoSomething();
+
+		if (!Scen->IsSkipScore) {
+			STLScoreScreen().Present();
+		}
+
+		if (Scen->PostScoreMovie != VQ_NONE) {
+			FUN_005BF260(Scen->PostScoreMovie, -1, true, true, true);
+		}
+		if (Scen->PreMapSelectMovie != VQ_NONE) {
+			FUN_005BF260(Scen->PreMapSelectMovie, -1, true, true, true);
+		}
+
+		if (!CopyProtection::CheckProtectedData() || Scen->IsOneTimeOnly) {
+			Game::IsActive = false;
+			MouseCursor->Show_Mouse();
+			return;
+		}
+
+		if (Scen->IsEndOfGame) {
+			if (Scen->Campaign != CAMPAIGN_NONE) {
+				FUN_005BF260(Campaigns[Scen->Campaign]->FinalMovie, -1, true, true, true);
+			}
+			Show_Who_Was_Responsible();
+			Game::IsActive = false;
+			MouseCursor->Show_Mouse();
+			return;
+		}
+
+		bool skip = false;
+		if (Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) {
+			if (Session.MPGameMode != NULL && Session.MPGameMode->vt_entry_08()) {
+				skip = true;
+			}
+		}
+
+		if (!skip) {
+			if (Scen->IsNoMapSel) {
+				if (Scen->GlobalFlags[1].Value) {
+					Map_Select_Advance(Scen, Scen->AltNextScenarioName);
+				} else {
+					Map_Select_Advance(Scen, Scen->NextScenarioName);
+				}
+			} else {
+				MouseCursor->Show_Mouse();
+				Map_Selection(Scen);
+				MouseCursor->Hide_Mouse();
+			}
+		}
+
+		InputManagerClass::Instance->DoSomething();
+	}
+
+	MouseCursor->Show_Mouse();
+
+	Environment.Store();
+
+	Scen->Scenario++;
+
+	int saved_ai_players;
+	int saved_difficulties[8];
+	int saved_countries[8];
+	int saved_colors[8];
+	NodeNameType * saved_slots[8];
+
+	if ((Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) && Session.MPGameMode != NULL && Session.MPGameMode->vt_entry_08()) {
+		if (Session.Type == GAME_IPX) {
+			PacketTransport->Close_Socket();
+			if (PacketTransport != NULL) {
+				delete PacketTransport;
+			}
+			PacketTransport = NULL;
+			PacketTransport = new IPXInterfaceClass;
+		}
+
+		PacketTransport->Init();
+
+		saved_ai_players = Session.Options.AIPlayers;
+		memcpy(saved_slots, Session.Slots, sizeof(saved_slots));
+		memcpy(saved_colors, Session.Options.AISlots.Colors, sizeof(saved_colors));
+		memcpy(saved_countries, Session.Options.AISlots.Countries, sizeof(saved_countries));
+		memcpy(saved_difficulties, Session.Options.AISlots.Difficulties, sizeof(saved_difficulties));
+
+		if (!Net2Init_Network()) {
+			if (PacketTransport != NULL) {
+				delete PacketTransport;
+				PacketTransport = NULL;
+			}
+			Game::IsActive = false;
+			return;
+		}
+
+		Session.Options.AIPlayers = saved_ai_players;
+		for (int i = 0; i < 8; i++) {
+			Session.Options.AISlots.Difficulties[i] = saved_difficulties[i];
+			Session.Options.AISlots.Countries[i] = saved_countries[i];
+			Session.Options.AISlots.Colors[i] = saved_colors[i];
+			Session.Slots[i] = saved_slots[i];
+		}
+		InputManagerClass::Instance->DoSomething();
+	}
+
+	Game::IsActive = CopyProtection::CheckProtectedData();
+	if (!Game::IsActive) {
+		MouseCursor->Show_Mouse();
+		return;
+	}
+
+	while (!Start_Scenario(Scen->ScenarioName, true, Scen->Campaign)) {
+	}
+
+	if ((Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) && Session.MPGameMode != NULL && Session.MPGameMode->vt_entry_08()) {
+		Session.Create_Connections();
+
+		if (Session.Type == GAME_IPX) {
+			Ipx.Set_Timing((Ipx.Global_Response_Time() + 2 < 15 ? 15 : Ipx.Global_Response_Time() + 2), -1, 600, true);
+			Ipx.Set_External_Timing((Ipx.Global_Response_Time() + 2 < 60 ? 60 : Ipx.Global_Response_Time() + 2), -1, 600);
+		} else if (Session.Type == GAME_INTERNET && Game::Network::PreCalcFrameRate == 0) {
+			Ipx.Set_Timing((Ipx.Global_Response_Time() + 2 < 60 ? 60 : Ipx.Global_Response_Time() + 2), -1, 600, true);
+		}
+	}
+
+	Environment.Restore();
+
+	if (ToolTips != NULL) {
+		ToolTips->Activate(Options.ToolTips);
+	}
+
+	Map.Render();
+	FUN_004A3C30(&FileSystem::TEMPERAT_PAL, 7, Game::CallBack);
+}
+
+// FUNCTION: GAMEMD 0x00685DC0
+void Do_Lose(void)
+{
+	if (Session.Type != GAME_NORMAL && Session.Type != GAME_SKIRMISH) {
+		if (!Session.Play) {
+			Wait_For_End_Of_Queue();
+			FUN_0055CF10();
+		}
+	}
+
+	ScenarioStarted = false;
+	TacticalActive = false;
+
+	Scen->ElapsedTimer.Stop();
+	FUN_005BF450();
+
+	MouseCursor->Erase_Mouse(HiddenSurface);
+	MouseCursor->Release_Mouse();
+	Map.Set_Default_Mouse(MOUSE_NORMAL, false);
+	MouseCursor->Hide_Mouse();
+	Toggle_Display_Mode(false);
+
+	FUN_00407070(DAT_0087E758);
+	FUN_004070B0(DAT_0087E758);
+
+	int timeout = TickCount + 300;
+
+	while (FUN_007529E0() && timeout > TickCount) {
+		Game::CallBack();
+	}
+
+	FUN_007529A0(true);
+	FUN_00752CA0();
+	FUN_00406E80();
+	FUN_00750FA0();
+	FUN_00407150(DAT_0087E758, 0x4000);
+
+	bool finished = false;
+
+	if (Session.Type != GAME_NORMAL) {
+		if (!Session.Play) {
+			Session.GamesPlayed++;
+
+			if (Session.Type == GAME_INTERNET) {
+				FUN_0078ABF0(true, StringTable::LoadString("TXT_AWAY_SCORESCREEN", NULL, "D:\\ra2mdpost\\Scenario.CPP", 0x9bc));
+			}
+
+			if (Session.MPGameMode != NULL) {
+				if ((Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) && Session.MPGameMode->vt_entry_08()) {
+					FUN_0052FEC0(NULL, true);
+				} else {
+					Session.GameName[0] = 0;
+					MPScoreScreen().Present();
+				}
+			} else {
+				Session.GameName[0] = 0;
+				MPScoreScreen().Present();
+			}
+
+			if (Session.MPGameMode != NULL) {
+				finished = Session.MPGameMode->vt_entry_A8();
+			}
+
+			Session.CurGame++;
+			if (Session.CurGame >= 4) {
+				Session.CurGame = 3;
+			}
+		}
+
+		if (!finished) {
+			Session.GameName[0] = 0;
+			if (Session.MPGameMode != NULL) {
+				Session.MPGameMode->vt_entry_A4(false);
+			}
+			Game::IsActive = false;
+			FUN_0078ABF0(false, L"");
+			return;
+		}
+
+		Session.MPGameMode->vt_entry_AC();
+		FUN_0078ABF0(false, L"");
+	}
+
+	FUN_005BF260(Scen->LoseMovie, -1, true, true, true);
+	FUN_0052FEC0(NULL, true);
+
+	if ((Session.Type == GAME_NORMAL && !Session.Play && WWMessageBox().Process(StringTable::LoadString("TXT_TO_REPLAY", NULL, "D:\\ra2mdpost\\Scenario.CPP", 0x9ff), StringTable::LoadString("TXT_YES", NULL, "D:\\ra2mdpost\\Scenario.CPP", 0x9ff), StringTable::LoadString("TXT_NO", NULL, "D:\\ra2mdpost\\Scenario.CPP", 0x9ff), NULL, false) == 0) || finished) {
+		if (Session.Type == GAME_INTERNET) {
+			FUN_0078ABF0(true, StringTable::LoadString("TXT_AWAY_LOADING", NULL, "D:\\ra2mdpost\\Scenario.CPP", 0xa06));
+		}
+
+		int saved_ai_players;
+		int saved_difficulties[8];
+		int saved_countries[8];
+		int saved_colors[8];
+		NodeNameType * saved_slots[8];
+
+		if ((Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) && Session.MPGameMode != NULL && Session.MPGameMode->vt_entry_08()) {
+			if (Session.Type == GAME_IPX) {
+				PacketTransport->Close_Socket();
+				if (PacketTransport != NULL) {
+					delete PacketTransport;
+				}
+				PacketTransport = NULL;
+				PacketTransport = new IPXInterfaceClass;
+			}
+
+			PacketTransport->Init();
+
+			saved_ai_players = Session.Options.AIPlayers;
+			memcpy(saved_slots, Session.Slots, sizeof(saved_slots));
+			memcpy(saved_colors, Session.Options.AISlots.Colors, sizeof(saved_colors));
+			memcpy(saved_countries, Session.Options.AISlots.Countries, sizeof(saved_countries));
+			memcpy(saved_difficulties, Session.Options.AISlots.Difficulties, sizeof(saved_difficulties));
+
+			if (!Net2Init_Network()) {
+				if (PacketTransport != NULL) {
+					delete PacketTransport;
+					PacketTransport = NULL;
+				}
+				Game::IsActive = false;
+				if (Session.Type == GAME_INTERNET) {
+					FUN_0078ABF0(false, L"");
+				}
+				return;
+			}
+
+			Session.Options.AIPlayers = saved_ai_players;
+			for (int i = 0; i < 8; i++) {
+				Session.Options.AISlots.Difficulties[i] = saved_difficulties[i];
+				Session.Options.AISlots.Countries[i] = saved_countries[i];
+				Session.Options.AISlots.Colors[i] = saved_colors[i];
+				Session.Slots[i] = saved_slots[i];
+			}
+			InputManagerClass::Instance->DoSomething();
+		}
+
+		Start_Scenario(Scen->ScenarioName, false, Scen->Campaign);
+
+		if ((Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) && Session.MPGameMode != NULL && Session.MPGameMode->vt_entry_08()) {
+			Session.Create_Connections();
+
+			if (Session.Type == GAME_IPX) {
+				Ipx.Set_Timing(Ipx.Global_Response_Time() + 2 < 15 ? 15 : Ipx.Global_Response_Time() + 2, -1, 600, true);
+				Ipx.Set_External_Timing(Ipx.Global_Response_Time() + 2 < 60 ? 60 : Ipx.Global_Response_Time() + 2, -1, 600);
+			} else if (Session.Type == GAME_INTERNET && Game::Network::PreCalcFrameRate == 0) {
+				Ipx.Set_Timing(Ipx.Global_Response_Time() + 2 < 60 ? 60 : Ipx.Global_Response_Time() + 2, -1, 600, true);
+			}
+		}
+
+		Environment.Restore();
+
+		if (ToolTips != NULL) {
+			ToolTips->Activate(Options.ToolTips);
+		}
+
+		Map.Render();
+
+		if (Session.Type == GAME_INTERNET) {
+			FUN_0078ABF0(false, L"");
+		}
+	} else {
+		Game::IsActive = false;
+	}
+}
 
 // FUNCTION: GAMEMD 0x006863E0
 void Do_Restart(void)
@@ -877,10 +1467,6 @@ void Do_Restart(void)
 	}
 	Map.Render();
 }
-
-bool __fastcall FUN_007529E0(void);
-void __fastcall FUN_00407070(void * p);
-void __fastcall FUN_004070B0(void * p);
 
 // FUNCTION: GAMEMD 0x00686570
 void Do_Abort(void)
@@ -1243,6 +1829,185 @@ DynamicVectorClass<Cell> Build_Start_Waypoint_List(void)
 	return(waypts);
 }
 
+DynamicVectorClass<Cell> __fastcall FUN_00688380(char arg);
+
+static inline bool Is_Base_Unit(UnitTypeClass const * type)
+{
+	for (int i = 0; i < Rule->BaseUnit.Count(); i++) {
+		if (Rule->BaseUnit[i] == type) {
+			return true;
+		}
+	}
+	return false;
+}
+
+// FUNCTION: GAMEMD 0x006886B0
+void Create_Units(bool official)
+{
+	Cell centroid;
+	DynamicVectorClass<TechnoClass *> deployed_list;
+	int unit_count = Session.Options.UnitCount;
+
+	if (Session.Options.Bases) {
+		unit_count--;
+	}
+
+	DebugString("Creating %d units - Random seed is %08x\n", unit_count, Scen->RandomNumber);
+	DebugString("UniqueID is %08x\n", Scen->UniqueID);
+
+	int total_cost = 0;
+	int total_objs = 0;
+	for (int u = 0; u < UnitTypes.Count(); u++) {
+		UnitTypeClass * utype = UnitTypes[u];
+		if (utype->IsAllowedToStartInMultiplayer) {
+			if (!Is_Base_Unit(utype)) {
+				total_cost += utype->Raw_Cost();
+				total_objs++;
+			}
+		}
+	}
+
+	for (int inf = 0; inf < InfantryTypes.Count(); inf++) {
+		InfantryTypeClass * itype = InfantryTypes[inf];
+		if (itype->IsAllowedToStartInMultiplayer) {
+			total_cost += itype->Raw_Cost();
+			total_objs++;
+		}
+	}
+
+	int average_cost = total_cost / total_objs;
+	int max_value = unit_count * average_cost;
+
+	DynamicVectorClass<Cell> waypts = FUN_00688380(official);
+	bool taken[16];
+	for (int index = 0; index < ARRAY_SIZE(taken); index++) {
+		taken[index] = false;
+	}
+
+	int numtaken = 0;
+	for (int house = 0; house < Houses.Count(); house++) {
+		HouseClass * hptr = Houses[house];
+
+		if (hptr->Class->IsMultiplayPassive) continue;
+
+		DebugString("Generating units for house %d (%s)\n", house, (char const *)hptr->Class->IniName);
+
+		DynamicVectorClass<UnitTypeClass *> units;
+		DynamicVectorClass<InfantryTypeClass *> infantry;
+		unsigned int mask = 1 << hptr->Class->HeapID;
+
+		for (int unit = 0; unit < UnitTypes.Count(); unit++) {
+			UnitTypeClass * utype = UnitTypes[unit];
+			if (utype->IsAllowedToStartInMultiplayer) {
+				if (utype->Level <= hptr->Control.TechLevel && (utype->Ownable & mask)) {
+					if (!Is_Base_Unit(utype)) {
+						units.Add(utype);
+					}
+				}
+			}
+		}
+
+		for (int inf = 0; inf < InfantryTypes.Count(); inf++) {
+			InfantryTypeClass * itype = InfantryTypes[inf];
+			if (itype->IsAllowedToStartInMultiplayer) {
+				if (itype->Level <= hptr->Control.TechLevel && (itype->Ownable & mask)) {
+					infantry.Add(itype);
+				}
+			}
+		}
+
+		if (numtaken == 0) {
+			int pick = Scen->RandomNumber(0, waypts.Count() - 1);
+			centroid = waypts[pick];
+			taken[pick] = true;
+			numtaken++;
+		} else {
+			int score[26];
+			memset(score, '\0', sizeof(score));
+
+			for (int index = 0; index < waypts.Count(); index++) {
+				if (!taken[index]) {
+					for (int trypoint = 0; trypoint < waypts.Count(); trypoint++) {
+						if (taken[trypoint]) {
+							score[index] += Distance(waypts[index], waypts[trypoint]);
+						}
+					}
+				}
+			}
+
+			int best = 0;
+			int bestvalue = 0;
+			for (int searchindex = 0; searchindex < waypts.Count(); searchindex++) {
+				if (score[searchindex] > bestvalue || bestvalue == 0) {
+					bestvalue = score[searchindex];
+					best = searchindex;
+				}
+			}
+
+			centroid = waypts[best];
+			taken[best] = true;
+			numtaken++;
+		}
+
+		hptr->Set_Base_Spawn_Cell(centroid);
+
+		if (Session.Options.Bases) {
+			TechnoClass * obj = new UnitClass(hptr->Get_First_Ownable(Rule->BaseUnit), hptr);
+			if (!obj->Unlimbo(Coord(centroid), DIR_N)) {
+				if (!Scan_Place_Object(obj, centroid, 1)) {
+					delete obj;
+					obj = NULL;
+				}
+			}
+			if (obj != NULL) {
+				hptr->FlagHome = CELL_NONE;
+				hptr->FlagLocation = NULL;
+				if (Scen->Special.IsCaptureTheFlag) {
+					hptr->Flag_Attach((UnitClass *)obj, true);
+				}
+			}
+		}
+
+		int deployed_value = 0;
+		deployed_list.Clear();
+
+		while (deployed_value < max_value) {
+			TechnoTypeClass const * tech = NULL;
+
+			if (deployed_value < (max_value * 2) / 3 && units.Count() > 0) {
+				tech = units[Scen->RandomNumber(0, units.Count() - 1)];
+			} else if (infantry.Count() > 0) {
+				tech = infantry[Scen->RandomNumber(0, infantry.Count() - 1)];
+			}
+
+			ObjectClass * obj = tech->Create_One_Of(hptr);
+			TechnoClass * tobj = Dynamic_Cast<TechnoClass *>(obj);
+
+			if (!Scan_Place_Object(obj, centroid, 4)) {
+				delete obj;
+			} else {
+				DebugString("House %s deployed object %s\n", (char const *)hptr->Class->IniName, (char const *)tech->IniName);
+
+				deployed_value += tech->Raw_Cost();
+				deployed_list.Add(tobj);
+
+				if (Scen->Special.IsInitialVeteran) {
+					tobj->Veterancy.Set_Elite(true);
+				}
+
+				if (!hptr->FUN_0050B730()) {
+					tobj->Set_Mission(MISSION_GUARD_AREA);
+				} else {
+					tobj->Set_Mission(MISSION_GUARD);
+				}
+			}
+		}
+
+		deployed_list.Clear();
+	}
+	DebugString("Finished unit generation. Random number is %d\n", Scen->RandomNumber(0, 65535));
+}
+
 // FUNCTION: GAMEMD 0x00689310
 void ScenarioClass::Save(IStream * stream) const
 {
@@ -1513,6 +2278,297 @@ bool ScenarioClass::ReadStartPoints(CCINIClass const & ini)
 		sprintf(buffer, "Waypoint%d", i + 1);
 		StartingPoints[i] = ini.Get_Point(SECTION, buffer, StartingPoints[i]);
 	}
+	return(true);
+}
+
+extern char DAT_00889F64[];
+
+// FUNCTION: GAMEMD 0x00689E90
+bool ScenarioClass::Read_INI(CCINIClass & ini)
+{
+	char const * const BASIC = "Basic";
+
+	int i;
+
+	ini.Reset();
+	Special.Read_INI(ini);
+
+	char const * const HEADER = "Header";
+	StartX = ini.Get_Int(HEADER, "StartX", StartX);
+	StartY = ini.Get_Int(HEADER, "StartY", StartY);
+	Width = ini.Get_Int(HEADER, "Width", Width);
+	Height = ini.Get_Int(HEADER, "Height", Height);
+	NumberStartingPoints = ini.Get_Int(HEADER, "NumberStartingPoints", NumberStartingPoints);
+	NumCoopHumanStartSpots = ini.Get_Int(HEADER, "NumCoopHumanStartSpots", NumCoopHumanStartSpots);
+	char name[12];
+	for (i = 0; i < NumberStartingPoints; i++) {
+		sprintf(name, "Waypoint%d", i + 1);
+		StartingPoints[i] = ini.Get_Point(HEADER, name, StartingPoints[i]);
+	}
+
+	ini.Get_String(BASIC, "NextScenario", NextScenarioName, NextScenarioName, sizeof(NextScenarioName));
+	ini.Get_String(BASIC, "AltNextScenario", AltNextScenarioName, AltNextScenarioName, sizeof(AltNextScenarioName));
+	IntroMovie = ini.Get_VQType(BASIC, "Intro", IntroMovie);
+	BriefMovie = ini.Get_VQType(BASIC, "Brief", BriefMovie);
+	WinMovie = ini.Get_VQType(BASIC, "Win", WinMovie);
+	LoseMovie = ini.Get_VQType(BASIC, "Lose", LoseMovie);
+	ActionMovie = ini.Get_VQType(BASIC, "Action", ActionMovie);
+	PostScoreMovie = ini.Get_VQType(BASIC, "PostScore", PostScoreMovie);
+	PreMapSelectMovie = ini.Get_VQType(BASIC, "PreMapSelect", PreMapSelectMovie);
+
+	IsMultiplayerOnly = ini.Get_Bool(BASIC, "MultiplayerOnly", IsMultiplayerOnly);
+	IsInheritTimer = ini.Get_Bool(BASIC, "TimerInherit", IsInheritTimer);
+	IsEndOfGame = ini.Get_Bool(BASIC, "EndOfGame", IsEndOfGame);
+	TransitTheme = ini.Get_ThemeType(BASIC, "Theme", TransitTheme);
+	NewINIFormat = ini.Get_Int(BASIC, "NewINIFormat", 0);
+	CarryOverPercent = ini.Get_Float(BASIC, "CarryOverMoney", CarryOverPercent);
+	CarryOverPercent = MIN(CarryOverPercent, 1.0);
+	CarryOverCap = ini.Get_Int(BASIC, "CarryOverCap", CarryOverCap);
+	IsSkipScore = ini.Get_Bool(BASIC, "SkipScore", IsSkipScore);
+	IsOneTimeOnly = ini.Get_Bool(BASIC, "OneTimeOnly", IsOneTimeOnly);
+	IsNoMapSel = ini.Get_Bool(BASIC, "SkipMapSelect", IsNoMapSel);
+	IsTruckCrate = ini.Get_Bool(BASIC, "TruckCrate", IsTruckCrate);
+	IsTrainCargo = ini.Get_Bool(BASIC, "TrainCrate", IsTrainCargo);
+	IsMoneyTiberium = ini.Get_Bool(BASIC, "FillSilos", IsMoneyTiberium);
+	IsIgnoreGlobalAITriggers = ini.Get_Bool(BASIC, "IgnoreGlobalAITriggers", IsIgnoreGlobalAITriggers);
+	Percent = ini.Get_Int(BASIC, "Percent", Percent);
+	StartingDropships = ini.Get_Int(BASIC, "StartingDropships", StartingDropships);
+	AllowableUnits = ini.Get_TechnoType_List(BASIC, "AllowableUnits", AllowableUnits);
+	AllowableUnitMaximums = ini.Get_IntList(BASIC, "AllowableUnitMaximums", AllowableUnitMaximums);
+	IsTibGrowth = ini.Get_Bool(BASIC, "TiberiumGrowthEnabled", IsTibGrowth);
+	IsVeinGrowth = ini.Get_Bool(BASIC, "VeinGrowthEnabled", IsVeinGrowth);
+	IsIceGrowth = ini.Get_Bool(BASIC, "IceGrowthEnabled", IsIceGrowth);
+	IsTiberiumDeathToVisceroid = ini.Get_Bool(BASIC, "TiberiumDeathToVisceroid", IsTiberiumDeathToVisceroid);
+	IsFreeRadar = ini.Get_Bool(BASIC, "FreeRadar", IsFreeRadar);
+	Home = ini.Get_Int(BASIC, "HomeCell", Home);
+	AltHome = ini.Get_Int(BASIC, "AltHomeCell", AltHome);
+
+	ini.Get_Bool(BASIC, "CivEvac", false);
+
+	for (i = 0; i < AllowableUnits.Count() - AllowableUnitMaximums.Count(); i++) {
+		AllowableUnitMaximums.Add(-1);
+	}
+
+	for (i = 0; i < AllowableUnitMaximums.Count(); i++) {
+		AllowableUnitCounts.Add(0);
+	}
+
+	Read_Local_INI(ini);
+	Game::CallBack();
+
+	char const * const RANKING = "Ranking";
+	ParTimeEasy = ini.ReadTime(RANKING, "ParTimeEasy", ParTimeEasy);
+	ParTimeMedium = ini.ReadTime(RANKING, "ParTimeMedium", ParTimeMedium);
+	ParTimeDifficult = ini.ReadTime(RANKING, "ParTimeHard", ParTimeDifficult);
+	ini.Get_String(RANKING, "UnderParTitle", "GUI:NoUnderParTitle", UnderParTitle, sizeof(UnderParTitle));
+	ini.Get_String(RANKING, "UnderParMessage", "GUI:NoUnderParMessage", UnderParMessage, sizeof(UnderParMessage));
+	ini.Get_String(RANKING, "OverParTitle", "GUI:NoOverParTitle", OverParTitle, sizeof(OverParTitle));
+	ini.Get_String(RANKING, "OverParMessage", "GUI:NoOverParMessage", OverParMessage, sizeof(OverParMessage));
+
+	char const * const LIGHTING = "Lighting";
+	AmbientLight = (int)(100.0 * ini.Get_Float(LIGHTING, "Ambient", AmbientLight / 100.0) + 0.01);
+	CurrentAmbientLight = AmbientLight;
+	DesiredAmbientLight = AmbientLight;
+	NormalLighting.RedTint = (int)(100.0 * ini.Get_Float(LIGHTING, "Red", NormalLighting.RedTint / 100.0) + 0.01);
+	NormalLighting.GreenTint = (int)(100.0 * ini.Get_Float(LIGHTING, "Green", NormalLighting.GreenTint / 100.0) + 0.01);
+	NormalLighting.BlueTint = (int)(100.0 * ini.Get_Float(LIGHTING, "Blue", NormalLighting.BlueTint / 100.0) + 0.01);
+	NormalLighting.GroundLight = (int)(1000.0 * ini.Get_Float(LIGHTING, "Ground", NormalLighting.GroundLight / 1000.0f) + 0.01);
+	NormalLighting.LevelLight = (int)(1000.0 * ini.Get_Float(LIGHTING, "Level", NormalLighting.LevelLight / 1000.0f) + 0.01);
+	IonAmbientLight = (int)(100.0 * ini.Get_Float(LIGHTING, "IonAmbient", IonAmbientLight / 100.0) + 0.01);
+	IonLighting.RedTint = (int)(100.0 * ini.Get_Float(LIGHTING, "IonRed", IonLighting.RedTint / 100.0) + 0.01);
+	IonLighting.GreenTint = (int)(100.0 * ini.Get_Float(LIGHTING, "IonGreen", IonLighting.GreenTint / 100.0) + 0.01);
+	IonLighting.BlueTint = (int)(100.0 * ini.Get_Float(LIGHTING, "IonBlue", IonLighting.BlueTint / 100.0) + 0.01);
+	IonLighting.GroundLight = (int)(1000.0 * ini.Get_Float(LIGHTING, "IonGround", IonLighting.GroundLight / 1000.0f) + 0.01);
+	IonLighting.LevelLight = (int)(1000.0 * ini.Get_Float(LIGHTING, "IonLevel", IonLighting.LevelLight / 1000.0f) + 0.01);
+	NukeAmbientChangeRate = (int)ini.Get_Float(LIGHTING, "NukeAmbientChangeRate", NukeAmbientChangeRate);
+	DominatorAmbient = (int)(100.0 * ini.Get_Float(LIGHTING, "DominatorAmbient", DominatorAmbient / 100.0) + 0.01);
+	DominatorLighting.RedTint = (int)(100.0 * ini.Get_Float(LIGHTING, "DominatorRed", DominatorLighting.RedTint / 100.0) + 0.01);
+	DominatorLighting.GreenTint = (int)(100.0 * ini.Get_Float(LIGHTING, "DominatorGreen", DominatorLighting.GreenTint / 100.0) + 0.01);
+	DominatorLighting.BlueTint = (int)(100.0 * ini.Get_Float(LIGHTING, "DominatorBlue", DominatorLighting.BlueTint / 100.0) + 0.01);
+	DominatorLighting.GroundLight = (int)(1000.0 * ini.Get_Float(LIGHTING, "DominatorGround", DominatorLighting.GroundLight / 1000.0f) + 0.01);
+	DominatorLighting.LevelLight = (int)(1000.0 * ini.Get_Float(LIGHTING, "DominatorLevel", DominatorLighting.LevelLight / 1000.0f) + 0.01);
+	DominatorAmbientChangeRate = (int)(1000.0 * ini.Get_Float(LIGHTING, "DominatorAmbientChangeRate", DominatorAmbientChangeRate / 1000.0f) + 0.01);
+
+	Session.Update_Progress(55);
+	Game::CallBack();
+
+	if (Session.Type == GAME_NORMAL) {
+		char player[20];
+		ini.Get_String(BASIC, "Player", DAT_00889F64, player, sizeof(player));
+		int index = HouseClass::FindIndexByName(player);
+		if (index == -1) {
+			index = 0;
+		}
+		PlayerPtr = Houses[index];
+		PlayerHouse = PlayerPtr->Class->House;
+	} else {
+		Assign_Houses();
+	}
+
+	PlayerPtr->IsHuman = true;
+	PlayerPtr->IsPlayerControl = true;
+	PlayerPtr->CurrentDropship = 0;
+
+	Session.Update_Progress(58);
+	Game::CallBack();
+
+	if (Debug_Map) {
+		IsometricTileTypeClass::Init_Drawers();
+	}
+
+	Session.Update_Progress(60);
+	Game::CallBack();
+
+	return(true);
+}
+
+static inline Point2D Header_Point(CellClass & cell)
+{
+	int px;
+	int py;
+	TacticalMap->Lepton_To_Map_Pixel(cell.Center_Coord().X, cell.Center_Coord().Y, px, py);
+	return Point2D(px / 60, py / 30);
+}
+
+// FUNCTION: GAMEMD 0x0068AD70
+bool ScenarioClass::Write_INI(CCINIClass & ini, bool mplayer) const
+{
+	static char const * const BASIC = "Basic";
+	ini.Clear(BASIC);
+
+	ini.Clear(BASIC, "CivEvac");
+
+	if (strlen(Scen->BriefingCSF)) {
+		ini.Put_String(BASIC, "Briefing", Scen->BriefingCSF);
+	}
+	if (strlen(Scen->UIName)) {
+		ini.Put_String(BASIC, "UIName", Scen->UIName);
+	}
+
+	Map.Reset_Iterator();
+	int minx, miny, maxx, maxy;
+	minx = miny = 10000;
+	maxy = maxx = 0;
+	CellClass * cell = Map.Iterate();
+	while (cell != NULL) {
+		if (Map.In_Local_Radar(cell->CellID, false)) {
+			Point2D p = Header_Point(*cell);
+			int x = p.X;
+			int y = p.Y;
+			if (x < minx) minx = x;
+			if (x > maxx) maxx = x;
+			if (y < miny) miny = y;
+			if (y > maxy) maxy = y;
+		}
+		cell = Map.Iterate();
+	}
+
+	char const * const HEADER = "Header";
+	ini.Put_Int(HEADER, "StartX", minx);
+	ini.Put_Int(HEADER, "StartY", miny);
+	ini.Put_Int(HEADER, "Width", maxx - minx);
+	ini.Put_Int(HEADER, "Height", maxy - miny);
+
+	int count = 0;
+	for (int w = 0; w < 8; w++) {
+		if (Scen->Is_Valid_Waypoint(w)) {
+			count++;
+		}
+	}
+	ini.Put_Int(HEADER, "NumberStartingPoints", count);
+	ini.Put_Int(HEADER, "NumCoopHumanStartSpots", NumCoopHumanStartSpots);
+
+	char name[12];
+	for (int i = 0; i < 8; i++) {
+		sprintf(name, "Waypoint%d", i + 1);
+		if (i < count) {
+			Cell wcell = Scen->Waypoint[i];
+			ini.Put_Point(HEADER, name, Header_Point(Map[wcell]));
+		} else {
+			ini.Put_Point(HEADER, name, Point2D(0, 0));
+		}
+	}
+
+	Special.Write_INI(ini);
+
+	ini.Put_String(BASIC, "NextScenario", NextScenarioName);
+	ini.Put_String(BASIC, "AltNextScenario", AltNextScenarioName);
+	ini.Put_UnicodeString(BASIC, "Name", Description);
+	ini.Put_Int(BASIC, "NewINIFormat", 4);
+	ini.Put_Int(BASIC, "CarryOverCap", CarryOverCap / 100);
+	ini.Put_Bool(BASIC, "EndOfGame", IsEndOfGame);
+	ini.Put_Bool(BASIC, "SkipScore", IsSkipScore);
+	ini.Put_Bool(BASIC, "OneTimeOnly", IsOneTimeOnly);
+	ini.Put_Bool(BASIC, "SkipMapSelect", IsNoMapSel);
+	ini.Put_Bool(BASIC, "Official", true);
+	ini.Put_Bool(BASIC, "IgnoreGlobalAITriggers", IsIgnoreGlobalAITriggers);
+	ini.Put_Bool(BASIC, "TruckCrate", IsTruckCrate);
+	ini.Put_Bool(BASIC, "TrainCrate", IsTrainCargo);
+	ini.Put_Int(BASIC, "Percent", Percent);
+	ini.Put_TechnoType_List(BASIC, "AllowableUnits", AllowableUnits);
+	ini.Put_IntList(BASIC, "AllowableUnitMaximums", AllowableUnitMaximums);
+	ini.Put_ThemeType(BASIC, "Theme", TransitTheme);
+
+	if (!mplayer) {
+		char player[32];
+		strcpy(player, PlayerPtr->IniName);
+		ini.Put_String(BASIC, "Player", player);
+		ini.Put_VQType(BASIC, "Intro", IntroMovie);
+		ini.Put_VQType(BASIC, "Brief", BriefMovie);
+		ini.Put_VQType(BASIC, "Win", WinMovie);
+		ini.Put_VQType(BASIC, "Lose", LoseMovie);
+		ini.Put_VQType(BASIC, "Action", ActionMovie);
+		ini.Put_VQType(BASIC, "PostScore", PostScoreMovie);
+		ini.Put_VQType(BASIC, "PreMapSelect", PreMapSelectMovie);
+		ini.Put_Float(BASIC, "CarryOverMoney", CarryOverPercent);
+		ini.Put_Bool(BASIC, "TimerInherit", IsInheritTimer);
+		ini.Put_Bool(BASIC, "FillSilos", IsMoneyTiberium);
+		ini.Put_Int(BASIC, "StartingDropships", StartingDropships);
+		ini.Put_Int(BASIC, "HomeCell", Home);
+		ini.Put_Int(BASIC, "AltHomeCell", AltHome);
+	}
+
+	ini.Put_Int(BASIC, "MultiplayerOnly", IsMultiplayerOnly);
+	ini.Put_Bool(BASIC, "TiberiumGrowthEnabled", IsTibGrowth);
+	ini.Put_Bool(BASIC, "VeinGrowthEnabled", IsVeinGrowth);
+	ini.Put_Bool(BASIC, "IceGrowthEnabled", IsIceGrowth);
+	ini.Put_Bool(BASIC, "TiberiumDeathToVisceroid", IsTiberiumDeathToVisceroid);
+	ini.Put_Bool(BASIC, "FreeRadar", IsFreeRadar);
+
+	ini.Put_Int(BASIC, "InitTime", InitTime);
+
+	Write_Local_INI(ini);
+
+	char const * const RANKING = "Ranking";
+	ini.WriteTime(RANKING, "ParTimeEasy", ParTimeEasy);
+	ini.WriteTime(RANKING, "ParTimeMedium", ParTimeMedium);
+	ini.WriteTime(RANKING, "ParTimeHard", ParTimeDifficult);
+	ini.Put_String(RANKING, "UnderParTitle", UnderParTitle);
+	ini.Put_String(RANKING, "UnderParMessage", UnderParMessage);
+	ini.Put_String(RANKING, "OverParTitle", OverParTitle);
+	ini.Put_String(RANKING, "OverParMessage", OverParMessage);
+
+	char const * const LIGHTING = "Lighting";
+	ini.Clear(LIGHTING);
+	ini.Put_Float(LIGHTING, "Ambient", ((double)AmbientLight) / 100.0);
+	ini.Put_Float(LIGHTING, "Red", ((double)NormalLighting.RedTint) / 100.0);
+	ini.Put_Float(LIGHTING, "Green", ((double)NormalLighting.GreenTint) / 100.0);
+	ini.Put_Float(LIGHTING, "Blue", ((double)NormalLighting.BlueTint) / 100.0);
+	ini.Put_Float(LIGHTING, "Ground", ((double)NormalLighting.GroundLight) / 1000.0);
+	ini.Put_Float(LIGHTING, "Level", ((double)NormalLighting.LevelLight) / 1000.0);
+	ini.Put_Float(LIGHTING, "IonAmbient", ((double)IonAmbientLight) / 100.0);
+	ini.Put_Float(LIGHTING, "IonRed", ((double)IonLighting.RedTint) / 100.0);
+	ini.Put_Float(LIGHTING, "IonGreen", ((double)IonLighting.GreenTint) / 100.0);
+	ini.Put_Float(LIGHTING, "IonBlue", ((double)IonLighting.BlueTint) / 100.0);
+	ini.Put_Float(LIGHTING, "IonGround", ((double)IonLighting.GroundLight) / 1000.0);
+	ini.Put_Float(LIGHTING, "IonLevel", ((double)IonLighting.LevelLight) / 1000.0);
+	ini.Put_Float(LIGHTING, "DominatorAmbient", ((double)DominatorAmbient) / 100.0);
+	ini.Put_Float(LIGHTING, "DominatorRed", ((double)DominatorLighting.RedTint) / 100.0);
+	ini.Put_Float(LIGHTING, "DominatorGreen", ((double)DominatorLighting.GreenTint) / 100.0);
+	ini.Put_Float(LIGHTING, "DominatorBlue", ((double)DominatorLighting.BlueTint) / 100.0);
+	ini.Put_Float(LIGHTING, "DominatorGround", ((double)DominatorLighting.GroundLight) / 1000.0);
+	ini.Put_Float(LIGHTING, "DominatorLevel", ((double)DominatorLighting.LevelLight) / 1000.0);
+	ini.Put_Float(LIGHTING, "DominatorAmbientChangeRate", ((double)DominatorAmbientChangeRate) / 1000.0);
 	return(true);
 }
 

@@ -132,7 +132,7 @@ namespace FPSCounter { extern unsigned CurrentFrameRate; }
 namespace Detail { unsigned GetMinFrameRate(void); }
 
 // FUNCTION: GAMEMD 0x0048A620
-void Combat_Lighting(int damage, WarheadTypeClass const * warhead, Coord coord, bool forced, unsigned int disable_flags)
+void Combat_Lighting(Coord coord, int damage, WarheadTypeClass const * warhead, bool forced, unsigned int disable_flags)
 {
 	if ((Options.DetailLevel && FPSCounter::CurrentFrameRate >= Detail::GetMinFrameRate()) || (disable_flags & 0xF)) {
 		if (forced || warhead != NULL && warhead->IsBright) {

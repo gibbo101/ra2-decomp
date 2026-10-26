@@ -7,6 +7,7 @@
 #include "always.h"
 #include "infantry.h"
 #include "_bench.h"
+#include "_keyboar.h"
 #include "_convert.h"
 #include "_mixfile.h"
 #include "_rtti.h"
@@ -24,6 +25,7 @@
 #include "combat.h"
 #include "data.h"
 #include "draw.h"
+#include "dsurface.h"
 #include "fly.h"
 #include "fog.h"
 #include "goptions.h"
@@ -41,6 +43,8 @@
 #include "mono.h"
 #include "overlay.h"
 #include "overtype.h"
+#include "parasite.h"
+#include "partsys.h"
 #include "radsite.h"
 #include "rules.h"
 #include "slavemgr.h"
@@ -162,6 +166,234 @@ InfantryClass::~InfantryClass(void)
 	IsActive = false;
 }
 
+static inline UnitClass * Cast_Unit(AbstractClass * object)
+{
+	if (object == NULL) return(NULL);
+	return((object->Fetch_RTTI() == RTTI_UNIT) ? (UnitClass *)object : NULL);
+}
+
+extern ParticleSystemClass * DAT_00A8ED78;
+
+// FUNCTION: GAMEMD 0x00517FA0
+ResultType InfantryClass::Take_Damage(int & damage, int distance, WarheadTypeClass const * warhead, TechnoClass * source, bool forced, bool no_crew, HouseClass * house)
+{
+	if (IsProne && damage > 0 && !forced) {
+		damage = (int)(damage * warhead->ProneDamage);
+
+		if (damage < 1) {
+			damage = 1;
+		}
+	}
+
+	if (warhead != NULL && warhead->InfantryDeath == 9 && HeightAGL > 0) {
+		damage = 0;
+	}
+
+	ResultType res = BASECLASS::Take_Damage(damage, distance, warhead, source, forced, no_crew, house);
+
+	if (res == RESULT_ALREADY_DESTROYED) return(res);
+
+	if (res == RESULT_NONE) return(res);
+
+	if (res == RESULT_DESTROYED) {
+		if (SlaveOwner != NULL && SlaveOwner->SlaveManager != NULL) {
+			SlaveOwner->SlaveManager->LostSlave(this);
+		}
+
+		if (Transporter != NULL && Transporter->Fetch_RTTI() == RTTI_UNIT && Transporter->Techno_Type_Class()->Gunner) {
+			Cast_Unit(Transporter)->RemoveGunner(this);
+		}
+
+		Death_Announcement(source);
+		Stop_Driver();
+		Stun();
+		QueueMission(MISSION_NONE, false);
+		QueueMission(MISSION_GUARD, false);
+		Commence();
+		Kill_Cargo(source);
+
+		bool delthis = false;
+		if (forced && Class->IsCyborg) {
+			delthis = true;
+			if (IsToExplode) {
+				new AnimClass(Rule->InfantryExplode, PositionCoord);
+			}
+		}
+
+		if (HeightAGL <= 10 && Map[(Coord const &)PositionCoord].Land_Type() == LAND_WATER && IsToExplode) {
+			new AnimClass(Rule->Wake, PositionCoord);
+			new AnimClass(Rule->SplashList[0], PositionCoord + Coord(0,0,3));
+			delthis = true;
+		} else if (Class->IsCyborg && IsProne) {
+			new AnimClass(Rule->InfantryExplode, PositionCoord);
+			delthis = true;
+		} else if (Class->JumpJet) {
+			new AnimClass(Rule->InfantryExplode, PositionCoord);
+			delthis = true;
+		} else {
+			int infdeath = warhead->InfantryDeath;
+
+			if (Doing == 0x21) {
+				if (infdeath == 8) {
+					AnimClass * anim = new AnimClass(Rule->InfantryVirus, PositionCoord);
+					DAT_00A8ED78->Spawn_Particle(ParticleTypes[anim->Type->SpawnsParticle], PositionCoord);
+					if (anim != NULL) {
+						delete anim;
+					}
+				}
+				infdeath = 3;
+			}
+
+			if (source != NULL && source->Fetch_RTTI() == RTTI_BUILDING && reinterpret_cast<BuildingClass *>(source)->Class->IsLaserFence) {
+				infdeath = 5;
+			}
+
+			if (Class->DeathAnims.Count() > 0) {
+				if (infdeath < 0 || infdeath >= Class->DeathAnims.Count() || Class->DeathAnims[infdeath] == NULL) {
+					infdeath = 0;
+				}
+				if (Class->DeathAnims[infdeath] != NULL) {
+					new AnimClass(Class->DeathAnims[infdeath], PositionCoord);
+				}
+				delthis = true;
+			} else if (Class->NotHuman) {
+				Do_Action(DO_GUN_DEATH, true);
+				if (infdeath == 8) {
+					AnimClass * anim = new AnimClass(Rule->InfantryVirus, PositionCoord);
+					DAT_00A8ED78->Spawn_Particle(ParticleTypes[anim->Type->SpawnsParticle], PositionCoord);
+					if (anim != NULL) {
+						delete anim;
+					}
+				}
+			} else {
+				switch (infdeath) {
+					default:
+					case 0:
+						delthis = true;
+						break;
+
+					case 1:
+						Do_Action(DO_GUN_DEATH, true);
+						break;
+
+					case 2:
+						Do_Action(DO_EXPLOSION_DEATH, true);
+						break;
+
+					case 3:
+						new AnimClass(Rule->InfantryExplode, PositionCoord);
+						delthis = true;
+						break;
+
+					case 4:
+						new AnimClass(Rule->FlamingInfantry, PositionCoord);
+						delthis = true;
+						break;
+
+					case 5:
+						new AnimClass(AnimTypes[1], PositionCoord);
+						delthis = true;
+						break;
+
+					case 6:
+						new AnimClass(Rule->InfantryHeadPop, PositionCoord);
+						delthis = true;
+						break;
+
+					case 7:
+						new AnimClass(Rule->InfantryNuked, PositionCoord);
+						delthis = true;
+						break;
+
+					case 8: {
+						AnimClass * anim = new AnimClass(Rule->InfantryVirus, PositionCoord);
+						if (source != NULL) {
+							anim->FUN_00424CA0(source->House);
+						} else if (house != NULL) {
+							anim->FUN_00424CA0(house);
+						}
+						delthis = true;
+						break;
+					}
+
+					case 9: {
+						Clear_Occupy_Bit(PositionCoord);
+						CellClass * cellptr = &Map[Center_Coord().As_Cell()];
+						bool has_building = false;
+						for (ObjectClass * object = cellptr->Cell_Occupier(); object != NULL; object = object->Next) {
+							if (object != NULL && object->Fetch_RTTI() == RTTI_BUILDING) {
+								has_building = true;
+							}
+						}
+						if ((Ground[cellptr->Land_Type()].Cost[SPEED_FOOT] == 0 && !IsOnBridge) || Map[(Coord const &)PositionCoord].Closest_Free_Spot(PositionCoord, false, false, false) == COORD_NONE || has_building) {
+							Do_Action(DO_EXPLOSION_DEATH, true);
+							break;
+						}
+						Set_Occupy_Bit(PositionCoord);
+						AnimClass * anim = new AnimClass(Rule->InfantryMutate, PositionCoord);
+						if (source != NULL) {
+							anim->FUN_00424CA0(source->House);
+							anim->LightConvert = ColorSchemes[source->House->Scheme]->Converter;
+						} else if (house != NULL) {
+							anim->FUN_00424CA0(house);
+							anim->LightConvert = ColorSchemes[house->Scheme]->Converter;
+						}
+						anim->Set_Occupy_Bit(anim->PositionCoord);
+						delthis = true;
+						break;
+					}
+
+					case 10:
+						new AnimClass(Rule->InfantryBrute, PositionCoord);
+						delthis = true;
+						break;
+				}
+			}
+		}
+
+		if (delthis) {
+			if (Class->Crashable) {
+				if (!Crash(NULL)) {
+					Delete_Me();
+					return(res);
+				}
+			} else {
+				Delete_Me();
+			}
+		}
+		return(res);
+	}
+
+	if (res != RESULT_DESTROYED) {
+		Coord source_coord = (source != NULL) ? source->PositionCoord : COORD_NONE;
+
+		if (!House->FUN_0050B730() && Class->IsEngineer && (Get_Mission() == MISSION_GUARD || Get_Mission() == MISSION_GUARD_AREA)) {
+			QueueMission(MISSION_HUNT, false);
+		}
+
+		if (source != NULL) {
+			Scatter(source_coord, false, false);
+		}
+
+		if (source != NULL && Fear < 100) {
+			if (Class->IsFraidyCat) {
+				Fear = 300;
+			} else if (!Class->IsFearless && !Has_Ability(ABILITY_FEARLESS)) {
+				Fear = 100;
+			}
+		} else {
+			if (!Class->IsFearless && !Has_Ability(ABILITY_FEARLESS)) {
+				int morefear = 50;
+				if (HealthRatio > Rule->ConditionRed) morefear /= 2;
+				if (HealthRatio > Rule->ConditionYellow) morefear /= 2;
+				Fear = MIN(Fear + morefear, 300);
+			}
+		}
+
+	}
+	return(res);
+}
+
 // FUNCTION: GAMEMD 0x00522100
 bool InfantryClass::Is_JumpJet(void) const
 {
@@ -206,6 +438,144 @@ int InfantryClass::Shape_Number(void) const
 
 	shapenum += type->DoControls[doit].Frame;
 	return(shapenum);
+}
+
+struct FileSystem {
+	static void const * LoadFile(char const * name, bool flag);
+	static ConvertClass * PALETTE_PAL;
+};
+
+extern ShapeSet const * DAT_00A8F244;
+
+class PsyDom
+{
+	public:
+		static bool Active(void);
+};
+
+class NukeFlash
+{
+	public:
+		static bool IsFadingIn(void);
+};
+
+// FUNCTION: GAMEMD 0x00518F90
+void InfantryClass::Draw_It(Point2D const & xpoint, Rect const & cliprect) const
+{
+	static int _zadj = -10;
+
+	Point2D point = xpoint;
+	Cell cell = Get_Target_Cell();
+
+	WORD tint = 0;
+	if (TechnoClass::Berzerk) {
+		BYTE red = Rule->ColorAdd[Rule->BerserkColor].Get_Red();
+		BYTE green = Rule->ColorAdd[Rule->BerserkColor].Get_Green();
+		BYTE blue = Rule->ColorAdd[Rule->BerserkColor].Get_Blue();
+		switch (DSurface::Get_Primary_Color_Mode()) {
+		case 2:
+			tint = (((red << 6) | green) << 5) | blue;
+		case 1:
+			tint |= (((green >> 1) | (red << 5)) << 6) | blue;
+		default:
+			tint |= (((green >> 1) | (red << 5)) << 5) | blue;
+		}
+	}
+
+	if (Map[Center_Coord().As_Cell()].Is_Shrouded()) tint = 0;
+
+	if (CurrentTube == -1) {
+		IPersistPtr persist = Locomotion;
+		CLSID clsid;
+		persist->GetClassID(&clsid);
+
+		if (HeightAGL > 0 && clsid == CLSID_BallisticLocomotion) {
+			ShapeSet const * shapefile = (ShapeSet const *)FileSystem::LoadFile("POD.SHP", false);
+			Point2D spoint = xpoint + Point2D(Locomotion->Shadow_Point());
+			Draw_Shape(
+				*DSurface::Temp,
+				*FileSystem::PALETTE_PAL,
+				shapefile,
+				Locomotion->Drawing_Code(),
+				spoint,
+				cliprect,
+				ShapeFlags_Type(SHAPE_ZGRAD|SHAPE_ALPHA|SHAPE_WIN_REL|SHAPE_CENTER|SHAPE_DARKEN),
+				NULL,
+				Get_Z_Adjust() - 2,
+				ZGRAD_GROUND,
+				1000,
+				tint
+			);
+
+			Map[cell];
+			Map[cell];
+
+			Draw_Object(shapefile, Locomotion->Drawing_Code(), xpoint, cliprect, DIR_N, 256, 0, ZGRAD_90DEG, false, 1000);
+		} else {
+			ShapeSet const * shapefile = (ShapeSet const *)Get_Image_Data();
+
+			if (shapefile == NULL) return;
+
+			Cell tcell = Get_Target_Cell();
+
+			TacticalMap->Add_To_Selectables((ObjectClass *)this, point);
+
+			int level;
+			if (IonStormClass::Is_Ion_Storm_Active()) {
+				level = Scen->IonLighting.LevelLight;
+			} else if (PsyDom::Active()) {
+				level = Scen->DominatorLighting.LevelLight;
+			} else if (NukeFlash::IsFadingIn()) {
+				level = Scen->NukeLighting.LevelLight;
+			} else {
+				level = Scen->NormalLighting.LevelLight;
+			}
+
+			int brightness;
+			if (IsOnBridge || (Map[(Coord const &)PositionCoord].IsOvershadowed && PositionCoord.Z > Map.Get_Height_GL(PositionCoord) + (BRIDGE_LEPTON_HEIGHT / 2))) {
+				int light = level * (HeightAGL / (2 * LEVEL_LEPTON_H));
+				brightness = Map[tcell].Brightness + light;
+			} else {
+				brightness = Map[tcell].Brightness + (Map[(Coord const &)PositionCoord].IsOvershadowed ? -500 : 0);
+			}
+			brightness += Rule->ExtraInfantryLight;
+
+			int height = HeightAGL;
+			CellClass *cellptr = &Map[(Coord const &)PositionCoord];
+
+			if (cellptr->IsUnderBridge && height >= BRIDGE_LEPTON_HEIGHT) {
+				if ((cellptr->IsBridgeEastWest && cellptr->Adjacent_Cell(FACING_N).IsUnderBridge) ||
+					(!cellptr->IsBridgeEastWest && cellptr->Adjacent_Cell(FACING_W).IsUnderBridge)) {
+					height -= BRIDGE_LEPTON_HEIGHT;
+				}
+			}
+
+			if (height > 0) {
+				if (DAT_00A8F244 == NULL) {
+					DAT_00A8F244 = (ShapeSet const *)FileSystem::LoadFile("INFSHDW.SHP", false);
+				}
+				if (DAT_00A8F244 != NULL) {
+					Draw_Shape(
+						*DSurface::Temp,
+						*FileSystem::PALETTE_PAL,
+						DAT_00A8F244,
+						1,
+						point + Point2D(0, -IonBlastYDrawOffset) + Point2D(0, TacticalMap->Z_Lepton_To_Pixel(height)),
+						cliprect,
+						ShapeFlags_Type(SHAPE_ZGRAD|SHAPE_WIN_REL|SHAPE_CENTER|SHAPE_DARKEN),
+						NULL,
+						-5 - TacticalMap->Z_Lepton_To_Pixel(PositionCoord.Z - height)
+					);
+				}
+			}
+
+			Draw_Object(shapefile, Shape_Number(), point + Point2D(0, -IonBlastYDrawOffset), cliprect, DIR_N, 256, _zadj, ZGRAD_90DEG, false, brightness, tint);
+		}
+	} else {
+		TacticalMap->Add_To_Selectables((ObjectClass *)this, point);
+	}
+
+	BASECLASS::Draw_It(point, cliprect);
 }
 
 // FUNCTION: GAMEMD 0x0051AA10
@@ -421,6 +791,280 @@ deploy_fire:
 	Movement_AI();
 }
 
+// FUNCTION: GAMEMD 0x0051BF90
+MoveType InfantryClass::Can_Enter_Cell(CellClass const * cellptr, FacingType dir, int cell_height, CellClass const * adj_cellptr, bool) const
+{
+	bool isbridge = cellptr->IsUnderBridge && (cell_height == -1 || abs(cell_height - cellptr->Height) > 1);
+	unsigned char flag = cellptr->Flag.Composite;
+	bool vehicleflag = cellptr->Flag.Occupy.Vehicle;
+	HousesType inftype = cellptr->InfType;
+
+	TubeClass * tube = cellptr->Get_Tunnel();
+
+	if (dir == FACING_COUNT) {
+		if (tube != NULL && Cell(tube->Exit) != Cell(tube->Enter)) {
+			return(MOVE_OK);
+		}
+		return(MOVE_NO);
+	}
+
+	if (tube != NULL) {
+		int a = abs(dir - tube->EnterDir);
+		if (a > 2 && a < 6 && dir != FACING_NONE) {
+			return(MOVE_NO);
+		}
+	}
+
+	TubeClass * tube_adj = cellptr->Adjacent_Cell(Facing_Sub(dir, FACING_180)).Get_Tunnel();
+	if (tube_adj != NULL) {
+		int a = abs(Facing_Sub(dir, FACING_180) - tube_adj->EnterDir);
+		if (a > 2 && a < 6 && dir != FACING_NONE) {
+			return(MOVE_NO);
+		}
+	}
+
+	if (cell_height - cellptr->Height > 4) {
+		return(MOVE_OK);
+	}
+
+	if (Can_Reach(cellptr, dir, cell_height, isbridge, adj_cellptr) == MOVE_NO) {
+		return(MOVE_NO);
+	}
+
+	if (cell_height != -1 && cellptr->IsUnderBridge && cell_height == cellptr->Height + BRIDGE_CELL_HEIGHT) {
+		flag = cellptr->BridgeFlag.Composite;
+		vehicleflag = cellptr->BridgeFlag.Occupy.Vehicle;
+		inftype = cellptr->BridgeInfType;
+	}
+
+	if (IsInPlayfield && !ScenarioInit && !Map.In_Local_Radar(cellptr) && !Is_Allowed_To_Leave_Map()) {
+		return(MOVE_NO);
+	}
+
+	MoveType retval = MOVE_OK;
+
+	if (cellptr->Overlay != OVERLAY_NONE) {
+		OverlayTypeClass const & otype = *OverlayTypes[cellptr->Overlay];
+
+		if (otype.IsCrate && !House->FUN_0050B730()) {
+			return(MOVE_NO);
+		}
+
+		if (otype.IsWall) {
+			if ((cellptr->OverlayData / 16) != otype.DamageLevels) {
+				if (Is_Weapon_Equipped() && PrimaryWeapon->Is_Wall_Destroyer()) {
+					if (House->Is_Ally(cellptr->Owner)) {
+						retval = MOVE_FRIENDLY_DESTROYABLE;
+					} else {
+						retval = MOVE_DESTROYABLE;
+					}
+				} else {
+					return(MOVE_NO);
+				}
+			}
+		}
+	}
+
+	int trynum = 0;
+	ObjectClass * obj = cellptr->Cell_Occupier(isbridge);
+	while (obj != NULL) {
+
+		if (obj != (ObjectClass *)this) {
+
+			if (ParasiteImUsing != NULL && ParasiteImUsing->Victim != NULL) {
+				if (obj->Get_Cell() == ParasiteImUsing->Victim->Get_Cell()) {
+					return(MOVE_OK);
+				}
+			}
+
+			if (SlaveOwner != NULL && SlaveOwner->SlaveManager != NULL && obj == SlaveOwner && SlaveOwner->SlaveManager->FUN_006B0880((TechnoClass *)this, (CellClass *)cellptr)) {
+				vehicleflag = false;
+				obj = obj->Next;
+				continue;
+			}
+
+			if (!obj->IsBeingWarpedOut() &&
+				(Get_Mission() == MISSION_ENTER || Get_Mission() == MISSION_CAPTURE || Get_Mission() == MISSION_EATEN ||
+				(Get_Mission() == MISSION_SABOTAGE && Class->IsBomber) ||
+				((Get_Mission() == MISSION_GUARD_AREA || Get_Mission() == MISSION_PATROL || Get_Mission() == MISSION_GUARD) && Class->IsEngineer))) {
+				if (obj == NavCom || (&Map[(Coord const &)obj->PositionCoord] == NavCom || obj == TarCom)) {
+					if (!obj->IsIronCurtained()) {
+						float cost = Ground[cellptr->Land_Type()].Cost[Class->Speed];
+						bool blocked = !IsTethered && !isbridge;
+						if (blocked && cost == 0) {
+							return(MOVE_NO);
+						}
+						return(MOVE_OK);
+					}
+					return(MOVE_NO);
+				}
+				BuildingClass * building = cellptr->Cell_Building();
+				if (building != NULL && obj != building) {
+					if (building == NavCom) {
+						obj = obj->Next;
+						continue;
+					}
+
+					if (&Map[building->Center_Coord()] == NavCom || building == TarCom) {
+						obj = obj->Next;
+						continue;
+					}
+				}
+			}
+
+			if (Get_Mission() == MISSION_GUARD_AREA && ArchiveTarget == obj && ArchiveTarget->Fetch_RTTI() == RTTI_UNIT) {
+				return(MOVE_NO);
+			}
+
+			if (Class->IsVehicleThief && obj->IsStrange() && NavCom == obj && !obj->Techno_Type_Class()->IsTrain) {
+				return(MOVE_OK);
+			}
+
+			if (obj->Fetch_RTTI() == RTTI_BUILDING) {
+				BuildingClass * building = (BuildingClass *)obj;
+				if (building->Class->IsInvisibleInGame) {
+					obj = obj->Next;
+					continue;
+				}
+
+				if (building->Class->IsLaserFence && (building->LaserFenceFrame == 12 || building->LaserFenceFrame == 8)) {
+					obj = obj->Next;
+					continue;
+				}
+
+				if (building->Class->IsFirestormWall) {
+					if (building->House->FirestormDefenseActivated) {
+						return(MOVE_NO);
+					}
+					obj = obj->Next;
+					continue;
+				}
+
+				if (building->Class->IsGate) {
+					if (!building->Is_Gate_Open()) {
+						if (building->House->Is_Ally(House)) {
+							if (retval < MOVE_CLOSED_GATE) {
+								retval = MOVE_CLOSED_GATE;
+							}
+						} else {
+							if (!Is_Weapon_Equipped()) {
+								return(MOVE_NO);
+							}
+							if (retval < MOVE_DESTROYABLE) {
+								retval = MOVE_DESTROYABLE;
+							}
+						}
+					}
+					obj = obj->Next;
+					continue;
+				}
+			}
+
+			if (Get_Mission() == MISSION_ENTER && obj == NavCom && IsTethered) {
+				return(MOVE_OK);
+			}
+
+			if (House->Is_Ally(obj) || ScenarioInit) {
+				switch ((RTTIType)obj->Fetch_RTTI()) {
+					case RTTI_UNIT:
+						if (((UnitClass *)obj)->Locomotion->Is_Moving() || ((UnitClass *)obj)->NavCom != NULL) {
+							if (((UnitClass *)obj)->IsOccupyingCell || ((UnitClass *)obj)->Locomotion->Will_Jump_Tracks()) {
+								if (retval < MOVE_MOVING_BLOCK) retval = MOVE_MOVING_BLOCK;
+							}
+						} else {
+							if (retval < MOVE_TEMP) retval = MOVE_TEMP;
+						}
+						break;
+
+					case RTTI_AIRCRAFT:
+					case RTTI_BUILDING:
+						return(MOVE_NO);
+
+					case RTTI_INFANTRY:
+						if (!((InfantryClass *)obj)->Locomotion->Is_Moving()) {
+							trynum++;
+						}
+						break;
+
+					default:
+						break;
+				}
+
+			} else {
+				TechnoClass * tech = Dynamic_Cast<TechnoClass *>(obj);
+				if (tech == NULL || tech->Cloak != CLOAKED) {
+
+					RTTIType rtti = obj->Fetch_RTTI();
+
+					if (Combat_Damage(-1) <= 0 && rtti != RTTI_TERRAIN) return(MOVE_NO);
+
+					switch (rtti) {
+						case RTTI_TERRAIN:
+							break;
+
+						case RTTI_INFANTRY:
+							if (obj->IsDisguisedAs(House)) {
+								retval = MOVE_TEMP;
+							}
+							break;
+
+						case RTTI_BUILDING:
+							if (((BuildingClass *)obj)->Class->IsBridgeRepairHut) {
+								return(MOVE_NO);
+							}
+							if (retval < MOVE_DESTROYABLE) retval = MOVE_DESTROYABLE;
+							break;
+
+						default:
+							if (retval < MOVE_DESTROYABLE) retval = MOVE_DESTROYABLE;
+							break;
+					}
+				} else {
+					if (retval < MOVE_CLOAK) retval = MOVE_CLOAK;
+				}
+			}
+		}
+
+		obj = obj->Next;
+	}
+
+	if (!IsTethered && !isbridge && Ground[cellptr->Land_Type()].Cost[Class->Speed] == 0) {
+		return(MOVE_NO);
+	}
+
+	if (retval == MOVE_OK && vehicleflag) {
+		return(MOVE_MOVING_BLOCK);
+	}
+
+	if (inftype != HOUSE_NONE) {
+		if (House->Is_Ally(inftype)) {
+			if ((flag & 0x1C) == 0x1C) {
+				if (retval < MOVE_MOVING_BLOCK) {
+					if (trynum == 3) {
+						retval = MOVE_TEMP;
+					} else {
+						retval = MOVE_MOVING_BLOCK;
+					}
+				}
+			}
+		} else {
+			if (Combat_Damage(-1) > 0) {
+				if (retval < MOVE_DESTROYABLE) {
+					retval = MOVE_DESTROYABLE;
+				}
+			} else {
+				return(MOVE_NO);
+			}
+		}
+	}
+
+	if (retval == MOVE_OK && (flag & 0x1C) == 0x1C) {
+		return(MOVE_NO);
+	}
+
+	return(retval);
+}
+
 // FUNCTION: GAMEMD 0x0051CBA0
 bool InfantryClass::Enter_Idle_Mode(bool initial, bool resume_waypoint)
 {
@@ -543,6 +1187,100 @@ bool InfantryClass::Random_Animate(void)
 		return(true);
 	}
 	return(false);
+}
+
+static inline Point2D Cell_Fraction(Coord const & x, Coord const & y)
+{
+	return Point2D(x.X & (CELL_LEPTON_W - 1), y.Y & (CELL_LEPTON_H - 1));
+}
+
+static inline DirType Coord_Direction(Coord const & coord1, Coord const & coord2)
+{
+	return(fastmath::atan2((double)coord1.Y - (double)coord2.Y, (double)coord2.X - (double)coord1.X));
+}
+
+// FUNCTION: GAMEMD 0x0051D0D0
+void InfantryClass::Scatter(Coord const & threat, bool forced, bool nokidding)
+{
+	if ((Doing == 0x1b || Doing == 0x1c || Doing == 0x1d || Doing == 0x1e) && forced && nokidding) {
+		Do_Action((DoType)0x1f, false, false);
+	} else if (House->FUN_0050B730()) {
+		if (Doing == 0x1b || Doing == 0x1c || Doing == 0x1d || Doing == 0x1e) return;
+	}
+
+	if (Locomotion->Is_Moving()) forced = false;
+
+	if (!Current_Mission_Control().IsScatter && !forced) return;
+
+	if (!Class->IsFraidyCat && TarCom != NULL && !forced) return;
+
+	if (Doing != DO_NOTHING && Doing != 0x1f && !MasterDoControls[Doing].Interrupt) return;
+
+	if (!Rule->IsScatter && !Has_Ability(ABILITY_SCATTER) && !nokidding && House->FUN_0050B730() && !forced && Team == NULL) return;
+
+	if (forced || Class->IsFraidyCat) {
+		FacingType toface;
+
+		if (threat != COORD_NONE) {
+			toface = Dir_Facing(Coord_Direction(threat, PositionCoord));
+			toface = (FacingType)(toface + Random_Pick(FACING_FIRST, FACING_180) - FACING_90);
+		} else {
+			Point2D coord = Cell_Fraction(Center_Coord(), Center_Coord());
+
+			if (coord != Point2D(CELL_LEPTON_W / 2, CELL_LEPTON_H / 2)) {
+				toface = ::Direction(Point2D(CELL_LEPTON_W / 2, CELL_LEPTON_H / 2), coord).As_Dir8();
+			} else {
+				toface = PrimaryFacing.Current().As_Dir8();
+			}
+			toface = (FacingType)(toface + FacingType(Random_Pick(FACING_FIRST, FACING_180) - FACING_90));
+			Cell nearbyloc = Map.Nearby_Location(Destination_Coord().As_Cell(), Class->Speed, -1, MZONE_NORMAL, IsOnBridge, Point2D(1, 1), false, true);
+
+			if (nearbyloc != CELL_NONE) {
+				Assign_Destination(&Map[nearbyloc]);
+				Locomotion->Process();
+				return;
+			}
+		}
+
+		Cell altcell(0, 0);
+		Cell newcell(0, 0);
+		Cell _cell(Destination_Coord());
+
+		CellClass *cellptr = &Map[_cell];
+
+		int z = cellptr->Height + Is_Moving_Onto_Bridge() ? BRIDGE_CELL_HEIGHT : 0;
+		Coord destcoord = Destination_Coord();
+		destcoord.Z = z * LEVEL_LEPTON_H;
+
+		FacingType face;
+		for (face = FACING_N; face < FACING_COUNT; face++) {
+			FacingType newface = Facing_Add(toface, face);
+			Cell checkcell = Adjacent_Cell(_cell, newface);
+			CellClass *cptr = &Map[checkcell];
+
+			if (Map.In_Local_Radar(checkcell) && Can_Enter_Cell(cptr, newface, Get_Cell_Height()) == MOVE_OK) {
+				if (altcell == CELL_NONE) altcell = checkcell;
+				if (CELL_NONE == Cell(0,0)) {
+					Coord checkcoord = checkcell.As_Coord();
+					checkcoord.Z = destcoord.Z;
+					if (checkcell == TacticalMap->Coord_To_Cell(checkcoord) && !Map[checkcell].IsUnderBridge) {
+						newcell = checkcell;
+						break;
+					}
+				}
+			}
+		}
+
+		Cell destination = newcell;
+		if (destination == CELL_NONE) {
+			destination = altcell;
+		}
+
+		if (destination != CELL_NONE) {
+			QueueMission(MISSION_MOVE, false);
+			Assign_Destination(&Map[destination]);
+		}
+	}
 }
 
 // FUNCTION: GAMEMD 0x0051D6F0
@@ -804,6 +1542,297 @@ AbstractClass * InfantryClass::Greatest_Threat(ThreatType threat, Coord const & 
 		threat = ThreatType(threat | THREAT_CAPTURE | THREAT_TIBERIUM);
 	}
 	return(BASECLASS::Greatest_Threat(threat, coord, onlyenemy));
+}
+
+extern bool __fastcall FUN_00637DB0(int action);
+
+static inline UnitClass const * Cast_Object_Unit(ObjectClass const * object)
+{
+	if (object == NULL) return(NULL);
+	return((object->Fetch_RTTI() == RTTI_UNIT) ? (UnitClass const *)object : NULL);
+}
+
+// FUNCTION: GAMEMD 0x0051E3B0
+ActionType InfantryClass::What_Action(ObjectClass const * object, bool disallow_force) const
+{
+	bool shift = !disallow_force && (Keyboard->Down(Options.KeySelect1) || Keyboard->Down(Options.KeySelect2));
+	bool control = !disallow_force && (Keyboard->Down(Options.KeyForceAttack1) || Keyboard->Down(Options.KeyForceAttack2));
+	if (shift && control) {
+		control = false;
+	}
+
+	ActionType action = BASECLASS::What_Action(object, disallow_force);
+
+	if (action == ACTION_TOGGLE_SELECT) {
+		return(action);
+	}
+
+	if (Class->IsEngineer && House->Is_Player_Control() && object->AttachedBomb != NULL && object->BombVisible) {
+		return(ACTION_DISARM_BOMB);
+	}
+
+	if (Class->IsEngineer && object->Fetch_RTTI() == RTTI_BUILDING && House->Is_Player_Control() && !object->IsStrange() && ((BuildingClass const *)object)->Class->IsRepairable) {
+		BuildingClass const * bldg = (BuildingClass const *)object;
+		if (bldg->Class->IsBridgeRepairHut) {
+			return(Map.Can_Repair_Bridge(bldg->Center_Coord().As_Cell()) ? ACTION_GREPAIR : ACTION_NO_GREPAIR);
+		}
+		if (!House->Is_Ally(bldg)) {
+			if (!bldg->House->Class->IsMultiplayPassive || !bldg->Class->CanBeOccupied || bldg->IsBeingWarpedOut()) {
+				if (bldg->Class->IsCaptureable) {
+					if (bldg->HealthRatio > Rule->EngineerCaptureLevel) {
+						return(ACTION_DAMAGE);
+					}
+					return(ACTION_CAPTURE);
+				}
+				goto not_engineer_building;
+			}
+		}
+		if (bldg->Class->IsHospital) {
+			if (HealthRatio < Rule->ConditionGreen) {
+				return(ACTION_ENTER);
+			}
+		}
+		if (bldg->HealthRatio == Rule->ConditionGreen) {
+			return(bldg->Class->Grinding ? ACTION_EATEN : ACTION_NO_GREPAIR);
+		}
+		return(ACTION_GREPAIR);
+	}
+not_engineer_building:
+
+	if (object->Fetch_RTTI() == RTTI_BUILDING && House->Is_Player_Control() && !object->IsBeingWarpedOut() && ((BuildingClass const *)object)->CanBeOccupiedBy((InfantryClass *)this) && !control) {
+		return(ACTION_CAPTURE);
+	}
+
+	if (Class->IsEngineer && action == ACTION_ATTACK) {
+		return(ACTION_NOMOVE);
+	}
+
+	if (Combat_Damage(-1) < 0 && House->Is_Player_Control()) {
+		if (House->Is_Ally(object)) {
+			if (object->Fetch_RTTI() == RTTI_INFANTRY) {
+				if (object != this) {
+					if (object->HealthRatio < Rule->ConditionGreen) {
+						return(ACTION_HEAL);
+					}
+				} else {
+					return(ACTION_GUARD_AREA);
+				}
+			}
+			TechnoClass const * tech = Dynamic_Cast<TechnoClass const *>(object);
+			if (tech == NULL || !tech->Techno_Type_Class()->MaxPassengers) {
+				if (action == ACTION_GUARD_AREA || action == ACTION_MOVE) {
+					return(action);
+				}
+				return(ACTION_SELECT);
+			}
+		} else {
+			return(ACTION_ATTACK_SUPPORT);
+		}
+	}
+
+	if (House->Is_Player_Control() && Class->IsVehicleThief && object->IsStrange()) {
+		if (object->Techno_Type_Class()->IsTrain) {
+			return(ACTION_SELECT);
+		}
+		if (((TechnoClass const *)object)->House != House) {
+			if (Scen->Special.IsHarvesterImmune && Rule->HarvesterUnit.Is_In_List((UnitTypeClass const *)object)) {
+				return(ACTION_SELECT);
+			}
+			return(ACTION_CAPTURE);
+		}
+	}
+
+	if (object->Fetch_RTTI() == RTTI_BUILDING && House->Is_Ally(object) && House->Is_Player_Control() && !object->IsBeingWarpedOut() && ((BuildingClass const *)object)->Class->IsHospital && !control) {
+		if (Strength < Class->MaxStrength) {
+			if (!Class->Deployer || (Doing != 0x1b && Doing != 0x1c && Doing != 0x1d && Doing != 0x1e)) {
+				switch (((InfantryClass *)this)->Transmit_Message(RADIO_CAN_LOAD, (RadioClass *)object)) {
+					case RADIO_ROGER:
+						action = ACTION_ENTER;
+						break;
+
+					case RADIO_NEGATIVE:
+						action = ACTION_NO_ENTER;
+						break;
+				}
+			}
+		} else {
+			action = ACTION_NO_ENTER;
+		}
+	}
+
+	if (object->Fetch_RTTI() == RTTI_BUILDING && House->Is_Ally(object) && House->Is_Player_Control() && !object->IsBeingWarpedOut() && ((BuildingClass const *)object)->Class->IsArmory) {
+		if (!Veterancy.Is_Elite()) {
+			if (!Class->Deployer || (Doing != 0x1b && Doing != 0x1c && Doing != 0x1d && Doing != 0x1e)) {
+				switch (((InfantryClass *)this)->Transmit_Message(RADIO_CAN_LOAD, (RadioClass *)object)) {
+					case RADIO_ROGER:
+						action = ACTION_ENTER;
+						break;
+
+					case RADIO_NEGATIVE:
+						action = ACTION_NO_ENTER;
+						break;
+				}
+			}
+		} else {
+			action = ACTION_NO_ENTER;
+		}
+	}
+
+	if (House->Is_Player_Control() && (Class->IsBomber || Has_Ability(ABILITY_C4)) && action == ACTION_ATTACK && object->Fetch_RTTI() == RTTI_BUILDING && !object->IsStrange()) {
+		if (object != NULL && object->Fetch_RTTI() == RTTI_BUILDING && ((BuildingClass const *)object)->Class->CanC4 && !((BuildingClass const *)object)->Class->IsInvisibleInGame) {
+			return(ACTION_SABOTAGE);
+		}
+		return(ACTION_ATTACK);
+	}
+
+	WeaponTypeClass const * weapon = Get_Class_Weapon_Data(What_Weapon_Should_I_Use((AbstractClass *)object))->Weapon;
+	if (action == ACTION_ATTACK && weapon != NULL) {
+		if (weapon->SabotageCursor) {
+			if (object != NULL && object->Fetch_RTTI() == RTTI_UNIT && Cast_Object_Unit(object)->BunkerLinkedItem != NULL) {
+				return(ACTION_SELECT);
+			}
+			return((ActionType)0x40);
+		}
+		if (weapon->MigAttackCursor) {
+			if (object != NULL && object->Fetch_RTTI() == RTTI_BUILDING && ((BuildingClass const *)object)->Class->CanC4 && !((BuildingClass const *)object)->Class->IsInvisibleInGame) {
+				return((ActionType)0x47);
+			}
+			return(ACTION_ATTACK);
+		}
+	}
+
+	if (House->Is_Player_Control() && action == ACTION_ATTACK && Class->Ivan) {
+		if (object->Class_Of()->IsBombable && object->AttachedBomb == NULL) {
+			return((ActionType)0x35);
+		}
+		return((ActionType)0x36);
+	}
+
+	if (House->Is_Player_Control() && Class->Deployer && (Doing == 0x1b || Doing == 0x1c || Doing == 0x1d || Doing == 0x1e)) {
+		if (action == ACTION_MOVE) {
+			return(ACTION_NOMOVE);
+		}
+		if (action == ACTION_ATTACK) {
+			bool in_range = false;
+			if (Class->DeployFire) {
+				int widx = What_Weapon_Should_I_Use(NULL);
+				in_range = In_Range((AbstractClass *)object, widx);
+			}
+			if (!in_range) {
+				return(ACTION_NOMOVE);
+			}
+		} else if (action == ACTION_SELF) {
+			if (!FUN_00637DB0(ACTION_SELF)) {
+				return(ACTION_NO_DEPLOY);
+			}
+			if (Class->UndeployDelay > -1) {
+				return(ACTION_NO_DEPLOY);
+			}
+		}
+	}
+
+	if (House->Is_Player_Control() && action == ACTION_SELF && Class->Deployer && Class->UndeployDelay > -1 && Doing == 0x1f) {
+		return(ACTION_NO_DEPLOY);
+	}
+
+	if (action == ACTION_SELF) {
+		if (FUN_00637DB0(ACTION_SELF)) {
+			if (!House->Is_Player_Control()) {
+				action = ACTION_NONE;
+			} else if (GetDeployWeapon()->Weapon != NULL && GetDeployWeapon()->Weapon->AreaFire) {
+				action = (ActionType)0x34;
+			} else if (!Class->Deployer) {
+				action = ACTION_NONE;
+			}
+		} else {
+			action = ACTION_NO_DEPLOY;
+		}
+	}
+
+	if (action != ACTION_NO_ENTER && House->Is_Ally(object) && House->Is_Player_Control() && Dynamic_Cast<TechnoClass const *>(object) != NULL && !object->IsBeingWarpedOut() && !object->IsWarpingIn() && action != ACTION_ATTACK && action != ACTION_GUARD_AREA) {
+		TechnoTypeClass const * tclass = object->Techno_Type_Class();
+		if (tclass != NULL && tclass->MaxPassengers > 0 && Can_Player_Move()) {
+			if (Class->BalloonHover) {
+				action = ACTION_NO_ENTER;
+			} else {
+				bool try_enter = true;
+				if (object->Is_Foot()) {
+					FootClass const * foot = (FootClass const *)object;
+					if ((foot->Team != NULL && !foot->Team->Class->IsLoadable) || foot->Locomotion->Is_Moving()) {
+						action = ACTION_NO_ENTER;
+						try_enter = false;
+					}
+				}
+				if (try_enter) {
+					switch (((InfantryClass *)this)->Transmit_Message(RADIO_CAN_LOAD, (RadioClass *)object)) {
+						case RADIO_ROGER:
+							action = ACTION_ENTER;
+							break;
+
+						case RADIO_NEGATIVE:
+							action = ACTION_NO_ENTER;
+							break;
+					}
+				}
+			}
+		}
+	}
+
+	if (House->Is_Player_Control() && Class->IsCapture) {
+		if (action == ACTION_ATTACK) {
+			if ((!Class->IsAgent && !House->Is_Ally(object) && object->Fetch_RTTI() == RTTI_BUILDING && ((BuildingClass const *)object)->Class->IsCaptureable) ||
+				(Class->IsAgent && !House->Is_Ally(object) && object->Fetch_RTTI() == RTTI_BUILDING && ((BuildingClass const *)object)->Class->Spyable)) {
+				action = ACTION_CAPTURE;
+				if (object->Fetch_RTTI() == RTTI_BUILDING) {
+					Cell cell = object->Center_Coord().As_Cell();
+					int targzone = Map.Get_Cell_Zone(Get_Target_Cell(), Class->MZone, IsOnBridge);
+					Cell const * list = ((BuildingClass const *)object)->Class->Occupy_List(false);
+					bool found = false;
+					while (*list != REFRESH_EOL && !found) {
+						Cell newcell = *list++ + cell;
+						for (FacingType i = FACING_N; i < FACING_COUNT; i++) {
+							Cell const & adj = AdjacentCell[(int)i & 7];
+							Cell adjcell = adj + newcell;
+							if (Map.Get_Cell_Zone(adjcell, Class->MZone, false) == targzone) {
+								found = true;
+								break;
+							}
+						}
+					}
+				}
+			} else if (!Is_Weapon_Equipped()) {
+				action = ACTION_NONE;
+			}
+		}
+	}
+
+	if (action == ACTION_ATTACK) {
+		if (!Is_Weapon_Equipped()) {
+			action = ACTION_ATTACK_SUPPORT;
+		}
+	}
+
+	if (action == ACTION_SELECT && object->Fetch_RTTI() == RTTI_BUILDING && House->Is_Player_Control() && !object->IsStrange() && ((BuildingClass const *)object)->Class->Grinding) {
+		return((object->Owner_HouseClass() == PlayerPtr) ? ACTION_EATEN : ACTION_NO_ENTER);
+	}
+
+	if (House->Is_Player_Control() && action == ACTION_NONE) {
+		if (Can_Player_Move()) {
+			action = ACTION_NOMOVE;
+		}
+	}
+
+	if (action == ACTION_NOMOVE) {
+		if (object->IsDisguised() && object->GetDisguiseHouse(true) == NULL && object->GetDisguise(true)->Fetch_RTTI() == (RTTIType)0x15) {
+			action = ACTION_MOVE;
+		}
+	} else if (action == ACTION_ATTACK) {
+		if (object->Class_Of()->IsImmune) {
+			action = ACTION_NOMOVE;
+		}
+	}
+
+	return(action);
 }
 
 // FUNCTION: GAMEMD 0x0051F190
@@ -2423,43 +3452,43 @@ extern const double DAT_007EB5D0;
 extern const double DAT_007EB5D8;
 
 // SYNTHETIC: GAMEMD 0x00523490 SYMBOL
-// _$E203
+// _$E222
 double DAT_00A8F268 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
 // SYNTHETIC: GAMEMD 0x005234C0 SYMBOL
-// _$E206
+// _$E225
 double DAT_00A8F2C0 = DAT_00A8F268 / DAT_007EB5D0;
 
 // SYNTHETIC: GAMEMD 0x005234E0 SYMBOL
-// _$E209
+// _$E228
 double DAT_00A8F2A8 = DAT_007E1718 / DAT_00A8F2C0;
 
 // SYNTHETIC: GAMEMD 0x00523500 SYMBOL
-// _$E212
+// _$E231
 double DAT_00A8F2A0 = DAT_007E1720 * DAT_007EB5D8;
 
 // SYNTHETIC: GAMEMD 0x00523520 SYMBOL
-// _$E215
+// _$E234
 double DAT_00A8F270 = DAT_007E1728 * DAT_007EB5D8;
 
 // SYNTHETIC: GAMEMD 0x00523540 SYMBOL
-// _$E218
+// _$E237
 double DAT_00A8F248 = DAT_007E1730 * DAT_007EB5D8;
 
 // SYNTHETIC: GAMEMD 0x00523560 SYMBOL
-// _$E221
+// _$E240
 int DAT_00A8F2CC = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00A8F248 - DAT_00A8F270) * DAT_00A8F268));
 
 // SYNTHETIC: GAMEMD 0x005235A0 SYMBOL
-// _$E224
+// _$E243
 double DAT_00A8F278 = FUN_004CADE0(DAT_00A8F2CC * DAT_007E1740);
 
 // SYNTHETIC: GAMEMD 0x005235D0 SYMBOL
-// _$E227
+// _$E246
 double DAT_00A8F298 = FUN_004CADE0((DAT_00A8F2CC * 2) / DAT_00A8F268);
 
 // SYNTHETIC: GAMEMD 0x00523600 SYMBOL
-// _$E230
+// _$E249
 int DAT_00A8F2BC = (int)(DAT_00A8F2CC * 4 + DAT_007E1738);
 
 struct InfShortPair { short A, B; InfShortPair() : A(0), B(0) {} };
@@ -2468,17 +3497,17 @@ struct InfIntSplit { int A, B, C; InfIntSplit() : A(128), B(128), C(0) {} };
 struct InfIntQuad { int A, B, C, D; InfIntQuad() : A(0), B(0), C(0), D(0) {} };
 
 // SYNTHETIC: GAMEMD 0x00523630 SYMBOL
-// _$E233
+// _$E252
 InfShortPair DAT_00A8F260;
 
 // SYNTHETIC: GAMEMD 0x00523640 SYMBOL
-// _$E236
+// _$E255
 InfIntTriple DAT_00A8F280;
 
 // SYNTHETIC: GAMEMD 0x00523660 SYMBOL
-// _$E239
+// _$E258
 InfIntSplit DAT_00A8F2B0;
 
 // SYNTHETIC: GAMEMD 0x00523680 SYMBOL
-// _$E242
+// _$E261
 InfIntQuad DAT_00A8F250;

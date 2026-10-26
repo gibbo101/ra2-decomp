@@ -56,6 +56,8 @@ class INIClass {
 		int Get_String(char const * section, char const * entry, char const * defvalue, char * buffer, int size) const;
 		int Get_String(Wstring const & section, Wstring const & entry, Wstring const & defvalue, Wstring & result) const;
 		int Get_UnicodeString(char const * section, char const * entry, wchar_t const * defvalue, wchar_t * buffer, int size) const;
+		int ReadStringtableEntry(char const * section, char const * entry, wchar_t * buffer, int size) const;
+		int ReadStringtableEntry(char const * section, char const * entry, wchar_t * buffer, char const * deflabel, int size) const;
 		int Get_TextBlock(char const * section, char * buffer, int len) const;
 		int Get_UUBlock(char const * section, void * buffer, int len) const;
 		Rect const Get_Rect(char const * section, char const * entry, Rect const & defvalue) const;

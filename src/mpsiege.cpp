@@ -26,13 +26,6 @@ extern int DAT_00ABFA8C;
 extern int DAT_00ABFA90;
 extern int DAT_00ABFA94;
 
-class MPSpawnHouse
-{
-	public:
-		Cell FUN_0050DEF0(void);
-		Coord FUN_0050DF30(void);
-};
-
 // FUNCTION: GAMEMD 0x005CA630
 MPSiegeClass::MPSiegeClass(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex) :
 	MPGameModeClass(title, tooltip, inifile, mapfilter, aiallowed, modeindex)
@@ -185,7 +178,7 @@ bool MPSiegeClass::SpawnBaseUnits(HouseClass * house, unsigned unused)
 	if (type != NULL) {
 		BuildingClass * building = new BuildingClass(type, house);
 		if (building != NULL) {
-			if (building->Unlimbo(((MPSpawnHouse *)house)->FUN_0050DF30()) || FUN_00688ED0(building, ((MPSpawnHouse *)house)->FUN_0050DEF0(), 1)) {
+			if (building->Unlimbo(house->FUN_0050DF30()) || FUN_00688ED0(building, house->Get_Base_Center(), 1)) {
 				return(true);
 			}
 			delete building;

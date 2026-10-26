@@ -85,7 +85,9 @@ Wstring DAT_00B73AE0;
 
 struct Server {
 	char Pad[0x18];
-	char name[0xE0];
+	char name[0xCC];
+	char login[10];
+	char password[10];
 };
 
 // FUNCTION: GAMEMD 0x0077B900
@@ -328,6 +330,8 @@ public:
 	virtual ~FUN_007EF738_Class(void);
 	int A;
 	char B;
+	bool FUN_006241C0(void);
+	int FUN_006241D0(void);
 };
 
 class FUN_007F7624_Class : public FUN_007EF738_Class {
@@ -346,7 +350,7 @@ FUN_007F7624_Class::~FUN_007F7624_Class(void)
 {
 }
 
-void FUN_0077F900(void);
+bool FUN_0077F900(void);
 
 // FUNCTION: GAMEMD 0x0077D200
 void FUN_0077D200(void)
@@ -715,9 +719,9 @@ struct ChatSink {
 	virtual long __stdcall V00(IID const & iid, void ** object);
 	virtual void V01(void);
 	virtual unsigned long __stdcall V02(void);
-	virtual void V03(void);
+	virtual long __stdcall V03(void);
 	virtual long __stdcall V04(unsigned long sku, unsigned long version, char const * name, char const * password, int timeout);
-	virtual void V05(void);
+	virtual long __stdcall V05(Server * server, int timeout, int plain);
 	virtual long __stdcall V06(int type, int ping);
 	virtual void V07(void);
 	virtual long __stdcall V08(WolChannel * channel);
@@ -754,18 +758,18 @@ struct ChatSink {
 	virtual void V39(void);
 	virtual void V40(void);
 	virtual long __stdcall V41(char const * name, char const * value);
-	virtual void V42(void);
+	virtual long __stdcall V42(char * info);
 	virtual void V43(void);
 	virtual void V44(void);
 	virtual void V45(void);
-	virtual void V46(void);
-	virtual void V47(void);
-	virtual void V48(void);
+	virtual long __stdcall V46(int locale);
+	virtual long __stdcall V47(User * users);
+	virtual long __stdcall V48(User * users);
 	virtual void V49(void);
 	virtual long __stdcall V50(int slot, int locale);
 	virtual void V51(void);
 	virtual long __stdcall V52(int * count);
-	virtual void V53(void);
+	virtual long __stdcall V53(int mask);
 	virtual void V54(void);
 	virtual long __stdcall V55(void);
 	virtual long __stdcall V56(User * user);
@@ -1350,8 +1354,14 @@ bool __fastcall FUN_0077F710(unsigned char ping, bool wait)
 }
 
 extern int DAT_00B7646C;
-extern int DAT_00B7617C;
-extern int DAT_00B76180;
+extern unsigned int DAT_00B7617C;
+extern unsigned int DAT_00B76180;
+struct DownloadObject : IUnknown {
+	virtual long __stdcall DownloadFile(char const * server, char const * login, char const * password, char const * remote, char const * local, char const * registry) = 0;
+	virtual long __stdcall Abort(void) = 0;
+	virtual long __stdcall Pump(void) = 0;
+};
+
 extern Dictionary<Wstring, LadderA> * DAT_00B77E0C;
 extern int DAT_00B779C8;
 extern int DAT_00B736F0;
@@ -1380,7 +1390,7 @@ struct NetUtilSink {
 	virtual void V04(void);
 	virtual long __stdcall V05(char const * a, int b, char const * c, unsigned long d, int e, int f, int g);
 	virtual long __stdcall V06(char const * address, int timeout, int * handle);
-	virtual void V07(void);
+	virtual long __stdcall V07(void);
 	virtual long __stdcall V08(unsigned long address, int * ping);
 	virtual void V09(void);
 	virtual void V10(void);
@@ -1405,6 +1415,24 @@ extern int DAT_00B77E60;
 extern int DAT_00B77E64;
 extern int DAT_00B77E20;
 
+
+extern int DAT_00AA0430;
+extern int __fastcall FUN_0053E770(MSG * msg, HWND window, unsigned int filter_min, unsigned int filter_max, unsigned int remove);
+void Title_Screen_Restore(bool force);
+void __cdecl FUN_005E2700(int color, wchar_t const * text, ...);
+void __fastcall FUN_005E32D0(bool force, bool now);
+int FUN_00775B20(void);
+void FUN_00794BA0(void);
+void Call_Back(void);
+bool FUN_00796710(void);
+bool FUN_00786270(void);
+extern int DAT_00B77E6C;
+extern int DAT_00B77E70;
+extern char DAT_00B77E26;
+extern char DAT_00B77E27;
+extern HANDLE DAT_00B73698;
+
+bool FUN_0077F900(void);
 
 // FUNCTION: GAMEMD 0x00780110
 void FUN_00780110(void)
@@ -1796,6 +1824,26 @@ struct UserSort {
 	int Flag;
 };
 
+struct PCX {
+	static PCX Instance;
+	int GetSurface(char const * name, void * palette);
+};
+namespace Game { extern int ObserverMode; }
+extern int DAT_00B77A8C;
+extern char DAT_00B77E74;
+extern int DAT_007EEF28;
+extern int DAT_00B778D0;
+extern int DAT_00B778CC;
+extern int DAT_00B76AF4;
+extern int DAT_00B7643C;
+extern int DAT_007EEF48;
+extern wchar_t DAT_0084A724[];
+extern wchar_t DAT_0084A6E0[];
+int __fastcall FUN_00623F00(HWND list, int index, Wstring * text);
+HWND FUN_00775B10(void);
+
+void FUN_00781480(void);
+
 // FUNCTION: GAMEMD 0x00781CC0
 int __cdecl FUN_00781CC0(UserSort const * a, UserSort const * b)
 {
@@ -1923,6 +1971,8 @@ void __fastcall FUN_00781D20(bool ascending)
 
 void __fastcall FUN_00782BB0(User * user, bool ascending);
 extern int DAT_00B77E48;
+void __fastcall FUN_00782320(User * user, bool ascending);
+
 void __fastcall FUN_00782320(User * user, bool ascending);
 
 // FUNCTION: GAMEMD 0x00783070
@@ -2105,11 +2155,6 @@ void __fastcall FUN_00783800(bool ascending)
 	delete sorted;
 }
 
-struct PCX {
-	static PCX Instance;
-	int GetSurface(char const * name, void * palette);
-};
-
 // FUNCTION: GAMEMD 0x00783A90
 int __fastcall FUN_00783A90(int digit)
 {
@@ -2259,6 +2304,25 @@ static inline void Close_Logout_Wait(unsigned int event)
 	}
 }
 
+namespace OwnerDraw {
+	void __stdcall SetNeedsControlImage(HWND window, int value);
+}
+int __fastcall FUN_00788A30(bool flag);
+void __fastcall FUN_00735060(wchar_t * dest, char const * source, int limit);
+void __cdecl FUN_005E2700(int color, wchar_t const * text, ...);
+void __fastcall FUN_005E9340(char const * nick);
+void FUN_005E9850(void);
+void __fastcall FUN_005E32D0(bool force, bool now);
+int FUN_00775B20(void);
+void FUN_0072CF90(void);
+extern char DAT_00B76E40[0x940];
+extern int DAT_007EEF28;
+int FUN_0077CF40(void);
+void __fastcall FUN_007A0EA0(char const * name, int ping);
+#include "multiplayer.h"
+
+void __fastcall FUN_00785740(User * user);
+
 // FUNCTION: GAMEMD 0x00785EA0
 void FUN_00785EA0(void)
 {
@@ -2402,6 +2466,67 @@ int FUN_00786390(void)
 	return FUN_00785370(Game::hInstance);
 }
 
+class SimpleWonlineDialogControl : public OwnerDraw::SimpleDialogControl
+{
+	public:
+		virtual ~SimpleWonlineDialogControl(void) {}
+};
+
+static inline void Focus_Chat_Input_After(unsigned int event)
+{
+	HWND dialog = FUN_00775940(0xC4);
+	if (dialog) {
+		DAT_00B77DC8 &= ~event;
+		if (DAT_00B77DC8 == 0) {
+			FUN_007757E0(dialog, 0);
+		}
+	}
+	HWND top = FUN_00775B10();
+	HWND input = GetDlgItem(top, 0x540);
+	if (input) {
+		SetFocus(input);
+	}
+}
+
+int __fastcall FUN_006241F0(int id, DLGPROC proc, OwnerDraw::DialogControl * control);
+BOOL CALLBACK FUN_00796B90(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+rc_ptr<PlayerProfile> __fastcall FUN_00778A20(Wstring const * name);
+extern char DAT_0084A238;
+extern int DAT_00B77A90;
+extern char DAT_00B761A8[];
+extern char DAT_00B75E4C;
+void __fastcall FUN_00779F10(Wstring const * value);
+#include "wolopt.h"
+
+static inline int Pick_Locale(void)
+{
+	FUN_007F7624_Class dialog;
+	int result = FUN_006241F0(0xFE, FUN_00796B90, (OwnerDraw::DialogControl *)&dialog);
+	if (result < 0) {
+		return 0;
+	}
+	return result;
+}
+
+static inline Wstring Strip_Server_Prefix(Server * server)
+{
+	Wstring text(server->name);
+	Wstring prefix;
+	int pos = text.getToken(0, ":", prefix);
+	if (pos >= 0) {
+		text.remove(0, pos + 1);
+	}
+	return text;
+}
+
+static inline void Set_Locale_Entry(Wstring & key, int locale)
+{
+	int old;
+	if (DAT_00B76530.remove(key, old)) {
+		DAT_00B76530.add(key, locale);
+	}
+}
+
 bool __fastcall FUN_007864C0(Server * server);
 
 // FUNCTION: GAMEMD 0x00786D90
@@ -2492,6 +2617,31 @@ bool FUN_00786EF0(void)
 	return result;
 }
 
+namespace UI {
+	void __fastcall FocusOnWindow(HWND window);
+	void __fastcall EndDialog(HWND window);
+}
+void FUN_0072C600(void);
+void FUN_0072C650(void);
+void FUN_0072BCA0(void);
+void FUN_0072BCF0(void);
+BOOL CALLBACK FUN_00799EA0(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+Wstring __fastcall FUN_00779B50(void);
+Wstring __fastcall FUN_00779DD0(void);
+bool FUN_00779730(void);
+extern char DAT_00B77E68;
+extern int DAT_00B76468;
+extern long DAT_00B77DF8;
+int __fastcall FUN_00789500(char const * login, char const * password, int plain, int locale);
+void __fastcall FUN_0052FEC0(Surface * surface, bool flag);
+void __fastcall FUN_00779C90(Wstring const * value);
+extern char DAT_00889F64[];
+extern char DAT_0084A238;
+int __fastcall FUN_00797640(int sku);
+BOOL CALLBACK FUN_0079AE00(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+
+int FUN_00787010(void);
+
 #include "_mixfile.h"
 #include "_pk.h"
 #include "ccfile.h"
@@ -2514,7 +2664,7 @@ bool __fastcall FUN_0069BBE0(SessionClass * session);
 wchar_t * __fastcall FUN_00735120(char const * text);
 void __cdecl FUN_005E2700(int color, wchar_t const * text, ...);
 extern int DAT_007EEF2C;
-void __cdecl FUN_005E2790(int color, wchar_t const * text);
+void __cdecl FUN_005E2790(int color, wchar_t const * text, ...);
 extern int DAT_00B76C20;
 extern int DAT_00B77E90;
 bool __fastcall FUN_0079BA60(WolChannel * chan, bool flag, int extra);
@@ -2620,22 +2770,6 @@ int __fastcall FUN_00788180(bool flag)
 	return best;
 }
 
-static inline void Focus_Chat_Input_After(unsigned int event)
-{
-	HWND dialog = FUN_00775940(0xC4);
-	if (dialog) {
-		DAT_00B77DC8 &= ~event;
-		if (DAT_00B77DC8 == 0) {
-			FUN_007757E0(dialog, 0);
-		}
-	}
-	HWND top = FUN_00775B10();
-	HWND input = GetDlgItem(top, 0x540);
-	if (input) {
-		SetFocus(input);
-	}
-}
-
 // FUNCTION: GAMEMD 0x00788710
 bool __fastcall FUN_00788710(int id, int flag)
 {
@@ -2697,6 +2831,258 @@ int __fastcall FUN_00788A30(bool flag)
 	}
 	FUN_00781480();
 	return -1;
+}
+
+namespace Game { extern HWND hWnd; }
+HWND WS_Create_Dialog(HINSTANCE instance, int id, HWND parent, DLGPROC proc, BOOL force_show);
+namespace UI { void __fastcall RegisterWindow(HWND window, int id); }
+namespace OwnerDraw {
+	void __fastcall DrawCampaignMenuTransition(HWND window, bool reverse);
+}
+void FUN_0072C240(void);
+void FUN_0072C290(void);
+void FUN_0072C420(void);
+void FUN_0072C470(void);
+BOOL CALLBACK FUN_0078E230(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+BOOL CALLBACK FUN_0078E950(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+extern int DAT_00B73A1C;
+extern int DAT_00B73AB8;
+extern int DAT_00B7782C;
+extern int DAT_00B76228;
+extern long DAT_00B77DF0;
+extern int DAT_00B77DF4;
+extern char DAT_00889F64[];
+
+struct NetUtilAccount {
+	virtual void S00(void);
+	virtual void S01(void);
+	virtual void S02(void);
+	virtual void S03(void);
+	virtual void S04(void);
+	virtual void S05(void);
+	virtual void S06(void);
+	virtual void S07(void);
+	virtual void S08(void);
+	virtual long __stdcall V09(char const * nick, char const * password, char const * email, char const * parent_email, int newsletter, int shareinfo);
+	virtual long __stdcall V10(int month, int day, int year, char const * email);
+};
+
+static inline void Set_Item_Text(HWND dialog, int id, char const * text)
+{
+	HWND item = GetDlgItem(dialog, id);
+	SendMessage(item, 0x4B4, 0, (LPARAM)text);
+}
+
+// FUNCTION: GAMEMD 0x00788B00
+void __fastcall FUN_00788B00(HWND win)
+{
+	char nick[32];
+	char pass[32];
+	char verify[32];
+	char email[128];
+	char parent_email[128];
+	int newsletter;
+	int shareinfo;
+	int month;
+	int day;
+	int year;
+	int dialog_id;
+	HWND dlg;
+	int wait;
+
+	OwnerDraw::DrawCampaignMenuTransition(win, false);
+	FUN_0052FEC0(NULL, true);
+	newsletter = 1;
+	month = 1;
+	day = 0;
+	year = 0;
+	for (int i = 0; i < 18; i++) {
+		ResetEvent(DAT_00B73684[i]);
+	}
+	memset(nick, 0, sizeof(nick));
+	memset(pass, 0, sizeof(pass));
+	memset(verify, 0, sizeof(verify));
+	memset(email, 0, sizeof(email));
+	memset(parent_email, 0, sizeof(parent_email));
+	FUN_00792BE0(0x80, StringTable::LoadString("WOL:NewAccountFetch", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2A4A), 0);
+	FUN_004068E0("Newnick update check\n");
+	DAT_00AC116C->V04(DAT_0084A234, 0x10001, "TibSun", "TibPass99", 0x23);
+	do {
+		wait = WaitForMultipleObjects(18, DAT_00B73684, FALSE, 100);
+		while (wait == WAIT_TIMEOUT) {
+			FUN_0077F900();
+			wait = WaitForMultipleObjects(18, DAT_00B73684, FALSE, 100);
+		}
+		ResetEvent(DAT_00B73684[wait]);
+	} while (wait != 0 && wait != 1);
+	Focus_Chat_Input_After(0xFFFFFFFF);
+	if (wait == 0) {
+		ShowWindow(win, SW_SHOW);
+		OwnerDraw::SetNeedsControlImage(win, 0);
+		return;
+	}
+	if (wait == 8) {
+		SetEvent(DAT_00B73684[8]);
+		ShowWindow(win, SW_SHOW);
+		OwnerDraw::SetNeedsControlImage(win, 0);
+		return;
+	}
+
+first_nick_retry:
+	FUN_0072C240();
+	FUN_0052FEC0(NULL, true);
+	dlg = WS_Create_Dialog(Game::hInstance, 0xE7, Game::hWnd, FUN_0078E230, FALSE);
+	UI::RegisterWindow(dlg, 0xE7);
+	SendDlgItemMessage(dlg, 0x62E, 0x14E, month - 1, 0);
+	if (day > 0) {
+		Wstring text = Wstring_FromInt(day);
+		Set_Item_Text(dlg, 0x62F, text.get());
+	} else {
+		Set_Item_Text(dlg, 0x62F, DAT_00889F64);
+	}
+	if (year > 0) {
+		Wstring text = Wstring_FromInt(year);
+		Set_Item_Text(dlg, 0x630, text.get());
+	} else {
+		Set_Item_Text(dlg, 0x630, DAT_00889F64);
+	}
+	SendDlgItemMessage(dlg, 0x626, 0x4B4, 0, (LPARAM)email);
+	SendDlgItemMessage(dlg, 0x631, 0xF1, newsletter, 0);
+	ShowWindow(win, SW_HIDE);
+	ShowWindow(dlg, SW_SHOWNORMAL);
+	if (FUN_007759E0(dlg, (bool (*)(void))FUN_0077D710, 0, 1, 1) == 1) {
+	email[0] = 0;
+	strcpy(email, DAT_00B76E34.get());
+	month = DAT_00B73A1C + 1;
+	day = DAT_00B73AB8;
+	year = DAT_00B7782C;
+	newsletter = DAT_00B76228;
+	if (month <= 0) {
+		goto invalid_month;
+	}
+	if (day <= 0 || year <= 0 || strlen(email) < 6) {
+		goto date_chain;
+	}
+	DAT_00B77E64 = 0;
+	DAT_00B77E60 = -1;
+	if (((NetUtilAccount *)DAT_00AC1170)->V10(month, day, year, email) != 0) {
+		ODMessageBox(StringTable::LoadString("TXT_CANT_CONNECT", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2ABB), 0, FUN_0077D710, 0);
+		goto pick_dialog;
+	}
+	FUN_00792BE0(0x100, StringTable::LoadString("WOL:RequestingNickname", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2ABE), 1);
+	if (DAT_00B77E60 < 0) {
+		if (DAT_00B77DF4 == 0x80040100) {
+			ODMessageBox(StringTable::LoadString("TXT_REQUIRED_FIELD", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2AC2), 0, FUN_0077D710, 0);
+		} else {
+			ODMessageBox(StringTable::LoadString("TXT_CANT_CONNECT", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2AC4), 0, FUN_0077D710, 0);
+		}
+		goto first_nick_retry;
+	}
+	if (DAT_00B77E60 < 13 && DAT_00B77E64 == 0) {
+		if (ODMessageBox(StringTable::LoadString("TXT_CONSENT_REQUIRED", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2ACD), 4, FUN_0077D710, 0) == IDYES) {
+			char url[256];
+			sprintf(url, "http://apiregister.westwood.com/consent_form/index_%d.html", DAT_00B77E50);
+			FUN_0077DC90(url, 1);
+		}
+		goto first_nick_retry;
+	}
+pick_dialog:
+	FUN_0072C420();
+	if (DAT_00B77E60 < 13) {
+		dialog_id = 0xE6;
+	} else {
+		dialog_id = (DAT_00B77E60 >= 18) + 0xF3;
+	}
+	dlg = WS_Create_Dialog(Game::hInstance, dialog_id, Game::hWnd, FUN_0078E950, FALSE);
+	UI::RegisterWindow(dlg, dialog_id);
+	if (DAT_00B77794.length() > 0) {
+		Set_Item_Text(dlg, 0x628, DAT_00B77794.get());
+	} else {
+		Set_Item_Text(dlg, 0x628, DAT_00889F64);
+	}
+	if (DAT_00B765EC.length() > 0) {
+		Set_Item_Text(dlg, 0x5E5, DAT_00B765EC.get());
+	} else {
+		Set_Item_Text(dlg, 0x5E5, DAT_00889F64);
+	}
+	if (DAT_00B778F4.length() > 0) {
+		Set_Item_Text(dlg, 0x72C, DAT_00B778F4.get());
+	} else {
+		Set_Item_Text(dlg, 0x72C, DAT_00889F64);
+	}
+	if (DAT_00B778FC.length() > 0) {
+		Set_Item_Text(dlg, 0x627, DAT_00B778FC.get());
+	} else {
+		Set_Item_Text(dlg, 0x627, DAT_00889F64);
+	}
+	ShowWindow(dlg, SW_SHOWNORMAL);
+	SendMessage(dlg, 0x4A9, 0, 1);
+	if (FUN_007759E0(dlg, (bool (*)(void))FUN_0077D710, 0, 1, 1) != 1) {
+		goto first_nick_retry;
+	}
+	nick[0] = 0;
+	strcpy(nick, DAT_00B77794.get());
+	pass[0] = 0;
+	strcpy(pass, DAT_00B778F4.get());
+	verify[0] = 0;
+	strcpy(verify, DAT_00B778FC.get());
+	parent_email[0] = 0;
+	if (dialog_id == 0xF3) {
+		strcpy(parent_email, DAT_00B765EC.get());
+	}
+	shareinfo = 0;
+	if (dialog_id == 0xF4) {
+		shareinfo = DAT_00B76C20;
+	}
+	if (strcmp(pass, verify) != 0) {
+		ODMessageBox(StringTable::LoadString("TXT_PASSWORD_VERIFY", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2B41), 0, FUN_0077D710, 0);
+		goto pick_dialog;
+	}
+	if (strlen(pass) != 8) {
+		ODMessageBox(StringTable::LoadString("TXT_PASSWORD_TOO_SHORT", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2B46), 0, FUN_0077D710, 0);
+		goto pick_dialog;
+	}
+	if (((NetUtilAccount *)DAT_00AC1170)->V09(nick, pass, email, parent_email, newsletter, shareinfo) != 0) {
+		goto cant_connect;
+	}
+	FUN_00792BE0(0x100, StringTable::LoadString("TXT_REQ_NICK", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2B4D), 1);
+	if (DAT_00B77DF0 >= 0) {
+		goto done;
+	}
+	goto pick_dialog;
+
+date_chain:
+	if (month < 12) {
+		if (day > 0 && day <= 31) {
+			if (year <= 0) {
+				ODMessageBox(StringTable::LoadString("TXT_INVALID_YEAR", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2AAE), 0, FUN_0077D710, 0);
+				goto first_nick_retry;
+			}
+			if (strlen(email) < 6) {
+				ODMessageBox(StringTable::LoadString("TXT_INVALID_EMAIL", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2AB0), 0, FUN_0077D710, 0);
+			} else {
+				ODMessageBox(StringTable::LoadString("TXT_REQUIRED_FIELD", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2AB2), 0, FUN_0077D710, 0);
+			}
+		} else {
+			ODMessageBox(StringTable::LoadString("TXT_INVALID_DAY", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2AAC), 0, FUN_0077D710, 0);
+		}
+		goto first_nick_retry;
+	}
+invalid_month:
+	ODMessageBox(StringTable::LoadString("TXT_INVALID_MONTH", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2AAA), 0, FUN_0077D710, 0);
+	goto first_nick_retry;
+cant_connect:
+	ODMessageBox(StringTable::LoadString("TXT_CANT_CONNECT", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2B4B), 0, FUN_0077D710, 0);
+done:
+	ShowWindow(win, SW_SHOW);
+	OwnerDraw::SetNeedsControlImage(win, 0);
+	FUN_0072C470();
+	} else {
+		ShowWindow(win, SW_SHOWNORMAL);
+		ShowWindow(win, SW_SHOW);
+		OwnerDraw::SetNeedsControlImage(win, 0);
+		FUN_0072C290();
+	}
 }
 
 // FUNCTION: GAMEMD 0x00789500
@@ -2827,15 +3213,10 @@ bool __fastcall FUN_007896A0(HWND win, bool combo)
 	return true;
 }
 
-class SimpleWonlineDialogControl : public OwnerDraw::SimpleDialogControl
-{
-	public:
-		virtual ~SimpleWonlineDialogControl(void) {}
-};
-
 class WonlineStringDialogControl : public SimpleWonlineDialogControl
 {
 	public:
+		WonlineStringDialogControl(void);
 		virtual ~WonlineStringDialogControl(void) {}
 
 		Wstring Text;
@@ -3041,10 +3422,216 @@ namespace OwnerDraw {
 }
 void __fastcall FUN_00607FD0(HWND window);
 
-struct DownloadObject : IUnknown {
-	virtual long __stdcall DownloadFile(char const * server, char const * login, char const * password, char const * remote, char const * local, char const * registry) = 0;
-	virtual long __stdcall Abort(void) = 0;
-};
+
+void __fastcall FUN_00623E40(HWND window, Wstring & text);
+int __fastcall FUN_00623EA0(HWND window, WideWstring * text);
+WideWstring __fastcall FUN_005EDD00(HWND edit);
+bool __fastcall Focus_Next_Tab_Item(HWND window, bool previous);
+void __cdecl FUN_005E2790(int color, wchar_t const * text, ...);
+extern int DAT_00B77E8C;
+extern int DAT_007EEF44;
+extern wchar_t DAT_0084B94C[];
+extern char DAT_0082BFAC[];
+
+// FUNCTION: GAMEMD 0x0078D120
+BOOL CALLBACK FUN_0078D120(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	User user;
+	int rc = UI::StandardWndProc(window, message, wparam, lparam);
+	if (rc) {
+		return rc;
+	}
+	switch (message) {
+		case WM_COMMAND:
+			switch (LOWORD(wparam)) {
+				case 0x5C1: {
+					Wstring name;
+					FUN_00623E40((HWND)lparam, name);
+					WideWstring text;
+					FUN_00623EA0(GetDlgItem(window, 0x540), &text);
+					EnableWindow(GetDlgItem(window, 0x5C2), name.length() > 0 && text.length() > 0);
+					DAT_00B77E8C = 0x5C1;
+					HWND item = GetDlgItem(window, 0x5C8);
+					if (item) {
+						SendMessage(item, 0x4B2, 0, (LPARAM)DAT_00887734);
+					}
+					return FALSE;
+				}
+
+				case 0x540: {
+					WideWstring text = FUN_005EDD00((HWND)lparam);
+					Wstring name;
+					FUN_00623E40(GetDlgItem(window, 0x5C1), name);
+					EnableWindow(GetDlgItem(window, 0x5C2), text.length() > 0 && name.length() > 0);
+					if (DAT_00B77E8C == 0x5C1) {
+						if (DAT_00AC116C) {
+							User userL;
+							memset(&userL, 0, sizeof(userL));
+							strcpy(userL.Nick, name.get());
+							DAT_00AC116C->V24(&userL);
+						}
+						HWND item = GetDlgItem(window, 0x5C8);
+						if (item) {
+							SendMessage(item, 0x4B2, 0, (LPARAM)DAT_00887734);
+						}
+					}
+					DAT_00B77E8C = 0x540;
+					return FALSE;
+				}
+
+				case IDCANCEL:
+					FUN_007757E0(window, 2);
+					return FALSE;
+
+				case 0x5C2: {
+					if (DAT_00B77E8C == 0x5C1) {
+						if (DAT_00AC116C) {
+							HWND item = GetDlgItem(window, 0x5C1);
+							if (item) {
+								char name[10];
+								SendMessage(item, 0x4B5, 10, (LPARAM)name);
+								name[9] = 0;
+								memset(&user, 0, sizeof(user));
+								strcpy(user.Nick, name);
+								DAT_00AC116C->V24(&user);
+							}
+						}
+						HWND item = GetDlgItem(window, 0x5C8);
+						if (item) {
+							SendMessage(item, 0x4B2, 0, (LPARAM)DAT_00887734);
+						}
+					}
+					DAT_00B77E8C = 0x5C2;
+					HWND input = GetDlgItem(window, 0x540);
+					WideWstring text = FUN_005EDD00(input);
+					SendMessage(input, 0x4B2, 0, (LPARAM)DAT_00887734);
+					EnableWindow(GetDlgItem(window, 0x5C2), FALSE);
+					SetFocus(input);
+					if (!DAT_00AC116C) {
+						return FALSE;
+					}
+					{
+						Wstring name;
+						FUN_00623E40(GetDlgItem(window, 0x5C1), name);
+						name.truncate((unsigned int)9);
+						User userL;
+						strcpy(userL.Nick, name.get());
+						if (text.length() > 0 && strlen(userL.Nick) != 0) {
+							bool muted = false;
+							if (Unsorted::MuteSWLaunches) {
+								for (int i = 0; i < Session.Players.Count(); i++) {
+									NodeNameType * who = Session.Players[i];
+									if (stricmp(FUN_007350C0(who->Name), userL.Nick) == 0) {
+										muted = true;
+										break;
+									}
+								}
+							}
+							if (muted) {
+								FUN_005E2790(-1, StringTable::LoadString("TXT_OBSERVER_CANT_PAGE", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x3746));
+							} else {
+								DAT_00AC116C->V62(&userL, text.get());
+								wchar_t * body = text.get();
+								FUN_005E2790(DAT_007EEF44, DAT_0084B94C, DAT_00B73E40.c_str(), body);
+							}
+						} else if (strlen(userL.Nick) == 0) {
+							FUN_005E2790(-1, StringTable::LoadString("TXT_NAME_ERROR", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x3752));
+						} else {
+							FUN_005E2790(-1, StringTable::LoadString("TXT_ENTER_MESSAGE", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x3754));
+						}
+					}
+					return FALSE;
+				}
+
+				case 0x607:
+					if (DAT_00AC116C) {
+						if (DAT_00B77DE4 == 0) {
+							FUN_005E2790(-1, StringTable::LoadString("TXT_NOSQUAD", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x3760));
+							return FALSE;
+						}
+						WideWstring text;
+						HWND input = GetDlgItem(window, 0x540);
+						FUN_00623EA0(input, &text);
+						SendMessage(input, 0x4B2, 0, (LPARAM)DAT_00887734);
+						SetFocus(input);
+						strcpy(user.Nick, DAT_0082BFAC);
+						if (text.length() > 0) {
+							DAT_00AC116C->V62(&user, text.get());
+						} else {
+							FUN_005E2790(-1, StringTable::LoadString("TXT_ENTER_MESSAGE", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x3773));
+						}
+						return FALSE;
+					}
+					break;
+
+				case 0x5C3:
+					if (DAT_00AC116C) {
+						char name[64];
+						memset(name, 0, sizeof(name));
+						SendDlgItemMessage(window, 0x5C1, 0x4B5, 60, (LPARAM)name);
+						name[9] = 0;
+						strcpy(user.Nick, name);
+						if (strlen(user.Nick) != 0) {
+							DAT_00AC116C->V24(&user);
+							return FALSE;
+						}
+						FUN_005E2790(-1, StringTable::LoadString("TXT_NAME_ERROR", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x3700));
+						return FALSE;
+					}
+					break;
+			}
+			break;
+
+		case WM_DRAWITEM:
+			OwnerDraw::DrawItem((LPDRAWITEMSTRUCT)lparam);
+			return TRUE;
+
+		case WM_PAINT:
+			OwnerDraw::Paint(window);
+			FUN_00607FD0(window);
+			ValidateRect(window, NULL);
+			return FALSE;
+
+		case 0x497: {
+			SendDlgItemMessage(window, 0x5C1, 0xC5, 9, 0);
+			HWND item = GetDlgItem(window, 0x5C1);
+			SendMessage(item, 0x4D1, 1, 0);
+			item = GetDlgItem(window, 0x5C1);
+			SendMessage(item, 0x4B4, 0, (LPARAM)DAT_00889F64);
+			if (DAT_00B76478 > 0) {
+				item = GetDlgItem(window, 0x5C1);
+				SendMessage(item, 0x4B4, 0, (LPARAM)DAT_00B77E30);
+				SetFocus(GetDlgItem(window, 0x540));
+				DAT_00B76478 = 0;
+			}
+			return FALSE;
+		}
+
+		case 0x4DB:
+			Focus_Next_Tab_Item((HWND)lparam, wparam != 0);
+			if ((HWND)lparam == GetDlgItem(window, 0x5C1)) {
+				if (DAT_00AC116C) {
+					char name[10];
+					SendMessage((HWND)lparam, 0x4B5, 10, (LPARAM)name);
+					name[9] = 0;
+					memset(&user, 0, sizeof(user));
+					strcpy(user.Nick, name);
+					DAT_00AC116C->V24(&user);
+				}
+				HWND item = GetDlgItem(window, 0x5C8);
+				if (item) {
+					SendMessage(item, 0x4B2, 0, (LPARAM)DAT_00887734);
+				}
+				DAT_00B77E8C = 0x540;
+			}
+			break;
+
+		case 0x4DA:
+			PostMessage(GetDlgItem(window, 0x5C2), 0xF5, 0, 0);
+			break;
+	}
+	return FALSE;
+}
 
 // FUNCTION: GAMEMD 0x0078DA30
 BOOL CALLBACK FUN_0078DA30(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
@@ -3306,6 +3893,130 @@ BOOL CALLBACK FUN_0078E030(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 
 int __fastcall FUN_0060D320(HWND dialog);
 bool __fastcall Focus_Next_Tab_Item(HWND window, bool previous);
+
+extern int DAT_00B73A1C;
+extern int DAT_00B73AB8;
+extern int DAT_00B7782C;
+extern int DAT_00B76228;
+
+// FUNCTION: GAMEMD 0x0078E230
+BOOL CALLBACK FUN_0078E230(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	switch (message) {
+		case WM_DRAWITEM:
+			OwnerDraw::DrawItem((LPDRAWITEMSTRUCT)lparam);
+			return TRUE;
+
+		case WM_PAINT:
+			OwnerDraw::Paint(window);
+			FUN_00607FD0(window);
+			ValidateRect(window, NULL);
+			return FALSE;
+
+		case WM_COMMAND:
+			switch (LOWORD(wparam)) {
+				case IDOK:
+					{
+						DAT_00B76E34.clear();
+						HWND item = GetDlgItem(window, 0x626);
+						if (item) {
+							FUN_00623E40(item, DAT_00B76E34);
+						}
+						DAT_00B73B30.clear();
+						item = GetDlgItem(window, 0x62E);
+						if (item) {
+							FUN_00623E40(item, DAT_00B73B30);
+							if (stricmp(DAT_00B73B30.get(), FUN_007350C0(StringTable::LoadString("TXT_JANUARY", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x3ADF))) == 0) {
+								DAT_00B73A1C = 0;
+							} else if (stricmp(DAT_00B73B30.get(), FUN_007350C0(StringTable::LoadString("TXT_FEBRUARY", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x3AE1))) == 0) {
+								DAT_00B73A1C = 1;
+							} else if (stricmp(DAT_00B73B30.get(), FUN_007350C0(StringTable::LoadString("TXT_MARCH", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x3AE3))) == 0) {
+								DAT_00B73A1C = 2;
+							} else if (stricmp(DAT_00B73B30.get(), FUN_007350C0(StringTable::LoadString("TXT_APRIL", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x3AE5))) == 0) {
+								DAT_00B73A1C = 3;
+							} else if (stricmp(DAT_00B73B30.get(), FUN_007350C0(StringTable::LoadString("TXT_MAY", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x3AE7))) == 0) {
+								DAT_00B73A1C = 4;
+							} else if (stricmp(DAT_00B73B30.get(), FUN_007350C0(StringTable::LoadString("TXT_JUNE", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x3AE9))) == 0) {
+								DAT_00B73A1C = 5;
+							} else if (stricmp(DAT_00B73B30.get(), FUN_007350C0(StringTable::LoadString("TXT_JULY", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x3AEB))) == 0) {
+								DAT_00B73A1C = 6;
+							} else if (stricmp(DAT_00B73B30.get(), FUN_007350C0(StringTable::LoadString("TXT_AUGUST", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x3AED))) == 0) {
+								DAT_00B73A1C = 7;
+							} else if (stricmp(DAT_00B73B30.get(), FUN_007350C0(StringTable::LoadString("TXT_SEPTEMBER", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x3AEF))) == 0) {
+								DAT_00B73A1C = 8;
+							} else if (stricmp(DAT_00B73B30.get(), FUN_007350C0(StringTable::LoadString("TXT_OCTOBER", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x3AF1))) == 0) {
+								DAT_00B73A1C = 9;
+							} else if (stricmp(DAT_00B73B30.get(), FUN_007350C0(StringTable::LoadString("TXT_NOVEMBER", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x3AF3))) == 0) {
+								DAT_00B73A1C = 10;
+							} else if (stricmp(DAT_00B73B30.get(), FUN_007350C0(StringTable::LoadString("TXT_DECEMBER", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x3AF5))) == 0) {
+								DAT_00B73A1C = 11;
+							}
+						} else {
+							DAT_00B73A1C = 0;
+						}
+						DAT_00B7622C.clear();
+						item = GetDlgItem(window, 0x62F);
+						if (item) {
+							FUN_00623E40(item, DAT_00B7622C);
+							DAT_00B73AB8 = atol(DAT_00B7622C.get());
+						}
+						DAT_00B76908.clear();
+						item = GetDlgItem(window, 0x630);
+						if (item) {
+							FUN_00623E40(item, DAT_00B76908);
+							DAT_00B7782C = atol(DAT_00B76908.get());
+						}
+						DAT_00B76228 = 0;
+						item = GetDlgItem(window, 0x631);
+						if (item) {
+							DAT_00B76228 = SendMessage(item, 0xF0, 0, 0);
+						}
+						FUN_007757E0(window, 1);
+					}
+					return FALSE;
+
+				case IDCANCEL:
+					FUN_007757E0(window, 2);
+					return FALSE;
+
+				case 0x576:
+					FUN_0077DC90("http://privacypolicy.westwood.com", 0);
+					return FALSE;
+			}
+			return FALSE;
+
+		case 0x497:
+			{
+				HWND item = GetDlgItem(window, 0x626);
+				SendMessage(item, 0x4D1, 1, 0);
+				SendMessage(GetDlgItem(window, 0x62F), 0xC5, 2, 0);
+				SendMessage(GetDlgItem(window, 0x630), 0xC5, 4, 0);
+				SetFocus(GetDlgItem(window, 0x62F));
+				HWND combo = GetDlgItem(window, 0x62E);
+				FUN_00623840(combo);
+				SendMessage(combo, 0x4C2, 0, (LPARAM)StringTable::LoadString("TXT_JANUARY", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x3B3A));
+				SendMessage(combo, 0x4C2, 0, (LPARAM)StringTable::LoadString("TXT_FEBRUARY", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x3B3B));
+				SendMessage(combo, 0x4C2, 0, (LPARAM)StringTable::LoadString("TXT_MARCH", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x3B3C));
+				SendMessage(combo, 0x4C2, 0, (LPARAM)StringTable::LoadString("TXT_APRIL", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x3B3D));
+				SendMessage(combo, 0x4C2, 0, (LPARAM)StringTable::LoadString("TXT_MAY", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x3B3E));
+				SendMessage(combo, 0x4C2, 0, (LPARAM)StringTable::LoadString("TXT_JUNE", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x3B3F));
+				SendMessage(combo, 0x4C2, 0, (LPARAM)StringTable::LoadString("TXT_JULY", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x3B40));
+				SendMessage(combo, 0x4C2, 0, (LPARAM)StringTable::LoadString("TXT_AUGUST", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x3B41));
+				SendMessage(combo, 0x4C2, 0, (LPARAM)StringTable::LoadString("TXT_SEPTEMBER", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x3B42));
+				SendMessage(combo, 0x4C2, 0, (LPARAM)StringTable::LoadString("TXT_OCTOBER", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x3B43));
+				SendMessage(combo, 0x4C2, 0, (LPARAM)StringTable::LoadString("TXT_NOVEMBER", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x3B44));
+				SendMessage(combo, 0x4C2, 0, (LPARAM)StringTable::LoadString("TXT_DECEMBER", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x3B45));
+				SendDlgItemMessage(window, 0x62E, 0x14E, 0, 0);
+				SendMessage(window, 0x4A9, 0, 1);
+			}
+			return FALSE;
+
+		case 0x4DB:
+			Focus_Next_Tab_Item((HWND)lparam, wparam != 0);
+			return FALSE;
+	}
+	return FALSE;
+}
 
 // FUNCTION: GAMEMD 0x0078E950
 BOOL CALLBACK FUN_0078E950(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
@@ -5309,7 +6020,7 @@ void FUN_0079BE70(void)
 	UI::RegisterWindow(dialog, 0x11E);
 	SendMessage(dialog, 0x4A9, 0, 1);
 	ShowWindow(dialog, SW_SHOWNORMAL);
-	FUN_007759E0(dialog, (bool (*)(void))FUN_0077F900, 0, 1, 1);
+	FUN_007759E0(dialog, FUN_0077F900, 0, 1, 1);
 }
 
 // FUNCTION: GAMEMD 0x0079BED0
@@ -6747,3 +7458,8 @@ long __stdcall FUN_007A4EC0(void * sink, long result, unsigned long id, SquadEnt
 
 // SYNTHETIC: GAMEMD 0x007AC5D0
 // ??_GWonlineStringDialogControl@@UAEPAXI@Z
+
+// FUNCTION: GAMEMD 0x007AC610
+WonlineStringDialogControl::WonlineStringDialogControl(void)
+{
+}

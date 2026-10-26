@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 #pragma once
 
+#include "notice.h"
 #include "point.h"
 #include "rect.h"
 
@@ -12,7 +13,7 @@ class DSurface;
 class SHPStruct;
 class Surface;
 
-class LoadProgressManager
+class LoadProgressManager : public INoticeSink
 {
 	public:
 		LoadProgressManager(void);
@@ -20,14 +21,15 @@ class LoadProgressManager
 		void FUN_00554350(Surface * target);
 		void FUN_00554370(void);
 
-		virtual bool FUN_00554400(int message, int extra);
+		virtual bool INoticeSink_Unknown(DWORD message, DWORD extra);
 
 
-		static void Create(void);
+		static LoadProgressManager * Create(void);
 		static void Destroy(void);
 
 		void Compute_Rects(void);
 		Point2D Text_Origin(void);
+		int FUN_00552C90(void);
 		void Load_Mixes(void);
 
 		static LoadProgressManager * Instance;

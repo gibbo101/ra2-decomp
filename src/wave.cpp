@@ -640,6 +640,83 @@ void WaveClass::FUN_00762AE0(void)
 {
 }
 
+// FUNCTION: GAMEMD 0x00762AF0
+void WaveClass::Update_Wave(void)
+{
+	if (WaveProgress - FadeProgress > 0.1 && Type == 0) {
+		ShouldEnd = true;
+	}
+
+	if (WaveEC == (int)(1.0 / WaveStep) && Type == 3) {
+		WaveEC = 64;
+		WaveCount++;
+	}
+
+	if (Target != NULL && Source != NULL && WaveEC != (int)(1.0 / WaveStep) && Source->TarCom == Target) {
+		if (Type != 3) {
+			if ((Source->PositionCoord - Target->As_Coord()).Length() > CELL_LEPTON_DIAG * 6.0) {
+				IsWaveActive = false;
+				ShouldEnd = true;
+			}
+		}
+	} else {
+		IsWaveActive = false;
+		ShouldEnd = true;
+	}
+
+	if (IsWaveActive) {
+		if (Type == 3 && Target != NULL && Target->RTTI == RTTI_UNIT) {
+			Draw_Magnetic(Target->As_Coord(), Source->Fire_Coord(0, Coord(0, 0, 0)));
+		} else if (Type == 3) {
+			Draw_Magnetic(Source->Fire_Coord(0, Coord(0, 0, 0)), Target->As_Coord());
+		} else {
+			Draw_NonMagnetic(Source->Fire_Coord(0, Coord(0, 0, 0)), Target->As_Coord());
+		}
+	}
+
+	if (Type == 3) {
+		if (WaveProgress < 1.0 && IsWaveActive) {
+			WaveProgress += WaveStep;
+			if (WaveProgress > 0.98) {
+				WaveProgress = 1.0;
+			}
+			WaveShape.Vertices[0] = Lerp(WaveStartLeft, WaveEndLeft, WaveProgress);
+			WaveShape.Vertices[1] = Lerp(WaveStartRight, WaveEndRight, WaveProgress);
+		}
+		if (ShouldEnd && WaveStep * 0.5 + WaveProgress >= FadeProgress) {
+			FadeProgress += WaveStep;
+			if (FadeProgress >= WaveProgress) {
+				Delete_Me();
+				return;
+			}
+			WaveShape.Vertices[2] = Lerp(WaveStartRight, WaveEndRight, FadeProgress);
+			WaveShape.Vertices[3] = Lerp(WaveStartLeft, WaveEndLeft, FadeProgress);
+		}
+	} else {
+		if (WaveProgress < 1.0 && IsWaveActive) {
+			WaveProgress += WaveStep;
+			if (WaveProgress > 0.98) {
+				WaveProgress = 1.0;
+			}
+			WaveShape.Vertices[PolygonShapeStruct::END_LEFT] = Lerp(WaveStartLeft, WaveEndLeft, WaveProgress);
+			WaveShape.Vertices[PolygonShapeStruct::END_MIDDLE] = Lerp(WaveStartMiddle, WaveEndMiddle, WaveProgress);
+			WaveShape.Vertices[PolygonShapeStruct::END_RIGHT] = Lerp(WaveStartRight, WaveEndRight, WaveProgress);
+		}
+		if (ShouldEnd && WaveStep * 0.5 + WaveProgress >= FadeProgress) {
+			FadeProgress += WaveStep;
+			if (FadeProgress >= WaveProgress) {
+				Delete_Me();
+				return;
+			}
+			WaveShape.Vertices[PolygonShapeStruct::START_RIGHT] = Lerp(WaveStartRight, WaveEndRight, FadeProgress);
+			WaveShape.Vertices[PolygonShapeStruct::START_MIDDLE] = Lerp(WaveStartMiddle, WaveEndMiddle, FadeProgress);
+			WaveShape.Vertices[PolygonShapeStruct::START_LEFT] = Lerp(WaveStartLeft, WaveEndLeft, FadeProgress);
+		}
+	}
+
+	Wave_Recalc_Affected_Cells();
+}
+
 // FUNCTION: GAMEMD 0x007631F0
 RTTIType WaveClass::Fetch_RTTI(void) const
 {

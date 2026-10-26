@@ -528,14 +528,6 @@ bool MPGameModeClass::FUN_005D6D80(void)
 	return(true);
 }
 
-class MPSpawnHouse
-{
-	public:
-		UnitTypeClass const * FUN_00505310(TypeList<UnitTypeClass const *> * list);
-		Cell FUN_0050DEF0(void);
-		Coord FUN_0050DF30(void);
-};
-
 int __fastcall FUN_00688ED0(ObjectClass * object, Cell const & cell, int flag);
 
 // FUNCTION: GAMEMD 0x005D7030
@@ -544,14 +536,14 @@ bool MPGameModeClass::SpawnBaseUnits(HouseClass * house, unsigned unused)
 	if (!Session.Options.Bases) {
 		return(true);
 	}
-	UnitTypeClass const * type = ((MPSpawnHouse *)house)->FUN_00505310(&Rule->BaseUnit);
+	UnitTypeClass const * type = house->Get_First_Ownable(Rule->BaseUnit);
 	if (type != NULL) {
 		UnitClass * unit = new UnitClass(type, house);
 		if (unit != NULL) {
-			if (unit->Unlimbo(((MPSpawnHouse *)house)->FUN_0050DF30())) {
+			if (unit->Unlimbo(house->FUN_0050DF30())) {
 				return(true);
 			}
-			if (FUN_00688ED0(unit, ((MPSpawnHouse *)house)->FUN_0050DEF0(), 1)) {
+			if (FUN_00688ED0(unit, house->Get_Base_Center(), 1)) {
 				return(true);
 			}
 			delete unit;
@@ -602,7 +594,7 @@ bool MPGameModeClass::GenerateStartingUnits(HouseClass * house, int & amount)
 			}
 			ObjectClass * object = type->Create_One_Of(house);
 			TechnoClass * techno = dynamic_cast<TechnoClass *>(object);
-			if (!FUN_00688ED0(techno, ((MPSpawnHouse *)house)->FUN_0050DEF0(), 4)) {
+			if (!FUN_00688ED0(techno, house->Get_Base_Center(), 4)) {
 				delete techno;
 				tries--;
 			} else {

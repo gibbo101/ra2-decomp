@@ -235,6 +235,7 @@ struct ShpHeader {
 	short Zero;
 	short Width;
 	short Height;
+	short Count;
 };
 
 struct FileSystem {
@@ -399,6 +400,127 @@ void RadarClass::Init_IO(void)
 		RadarStatics::DAT_00B04910.Set_Position(DAT_00B048C8.X, DAT_00B048C8.Y);
 		RadarStatics::DAT_00B04910.Set_Shape((ShapeSet const *)DAT_00B048AC, 0, 0);
 		RadarStatics::DAT_00B04910.Flag_To_Redraw();
+	}
+}
+
+extern void * DAT_00B0F9E0;
+extern bool DAT_00B04964;
+extern bool DAT_00B049CC;
+extern bool DAT_00B0B518;
+extern ShapeButtonClass DAT_00B0B3A0;
+extern ShapeButtonClass DAT_00B07DF8;
+
+// FUNCTION: GAMEMD 0x00653100
+void RadarClass::Draw_It(bool forced)
+{
+	bool timer_fired = false;
+
+	if (Debug_Map) {
+		FullRedraw = false;
+		IsToRedraw = false;
+		return;
+	}
+
+	FullRedraw = FullRedraw == true || forced == true;
+	IsToRedraw = IsToRedraw == true || FullRedraw == true;
+
+	if (IsToRedraw) {
+		ShapeSet const * frame_shape = (ShapeSet const *)DAT_00B0F9E0;
+		Draw_Shape(*DAT_00887300, *FileSystem::SIDEBAR_PAL, frame_shape, 0, Point2D(RadX, RadY), DAT_00887300->Get_Rect());
+		RadarStatics::DAT_00B04978.Draw_Me(true);
+		RadarStatics::DAT_00B04910.Draw_Me(true);
+	}
+
+	if (RadarState != RSTATE_ACTIVE) {
+		if (RadarState != RSTATE_INACTIVE) {
+			if (!RadarAnimTimer) {
+				RadarAnimTimer = 4;
+				timer_fired = true;
+
+				if (RadarState == RSTATE_DEACTIVATING) {
+					if (--RadarAnimFrame <= 0) {
+						RadarState = RSTATE_INACTIVE;
+						unknown_14C0.EndLooping();
+						RadarAnimFrame = 0;
+					}
+				} else {
+					if (++RadarAnimFrame >= 32) {
+						unknown_14C0.EndLooping();
+						RadarState = RSTATE_ACTIVE;
+						FullRedraw = true;
+						RadarAnimFrame = 32;
+					}
+				}
+			}
+		}
+
+		if (RadarState != RSTATE_ACTIVE) {
+			if (IsToRedraw == true || timer_fired) {
+				if (RadarAnimFrame >= 0 && RadarAnimFrame < ((ShpHeader *)DAT_00B04A38)->Count) {
+					ConvertClass * drawer = FUN_0072F510();
+					Draw_Shape(*DAT_00887300, *drawer, (ShapeSet const *)DAT_00B04A38, RadarAnimFrame, Point2D(RadX, RadWidth), DAT_00887300->Get_Rect());
+					LastDrawRect = Rect(RadX, RadWidth, DAT_007F5BF8, 110);
+				}
+			}
+		}
+	}
+
+	Process_Radar_Events();
+	Render_Radar();
+
+	if (RadarState == RSTATE_ACTIVE) {
+		switch (RadarMode) {
+			case RMODE_TACTICAL:
+				break;
+
+			case RMODE_PLAYER_NAMES:
+				if (IsToRedraw) {
+					bool full = FullRedraw;
+					IsToRedraw = false;
+					if (full) {
+						ConvertClass * drawer = FUN_0072F510();
+						Draw_Shape(*DAT_00887300, *drawer, (ShapeSet const *)DAT_00B04A38, 32, Point2D(RadX, RadWidth), DAT_00887300->Get_Rect());
+						Draw_Names();
+						LastDrawRect = Rect(RadX, RadWidth, DAT_007F5BF8, 110);
+					} else {
+						Draw_Names();
+						LastDrawRect = Rect(RadHeight, RadOffX, RadIHeight, RadPWidth);
+					}
+				}
+				break;
+
+			case RMODE_MOVIE:
+				Play_Movie();
+				break;
+
+			case RMODE_4:
+				break;
+
+			default:
+				if (IsToRedraw) {
+					IsToRedraw = false;
+					ConvertClass * drawer = FUN_0072F510();
+					Draw_Shape(*DAT_00887300, *drawer, (ShapeSet const *)DAT_00B04A38, 0, Point2D(RadX, RadWidth), DAT_00887300->Get_Rect());
+					LastDrawRect = Rect(RadX, RadWidth, DAT_007F5BF8, 110);
+				}
+				break;
+		}
+	}
+
+	if (FullRedraw) {
+		FullRedraw = false;
+		DAT_00B0B3A0.Draw_Me(true);
+		DAT_00B07DF8.Draw_Me(true);
+	}
+
+	if (DAT_00B049CC) {
+		LastDrawRect = Union(LastDrawRect, DAT_00B04A00);
+		DAT_00B0B518 = true;
+	}
+
+	if (DAT_00B04964) {
+		LastDrawRect = Union(LastDrawRect, DAT_00B048C8);
+		DAT_00B0B518 = true;
 	}
 }
 

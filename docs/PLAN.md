@@ -1,6 +1,6 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 21 October 2026: 13,996 of 19,366 game functions match (72%; 48% of game code
+Status, 26 October 2026: 14,108 of 19,366 game functions match (73%; 53% of game code
 by size), landed in batches module by module. The rounds below record each one.
 
 ## The goal
@@ -1109,6 +1109,20 @@ Session.Players. Recording then exposed three UI-command functions building char
 ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; their RTTI
 fixed them. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
+
+### Batches 102, 103 and 104 (21 to 26 October 2026)
+
+**105 of 221 functions** (40, 29, 36), plus functions the merges landed beside them. The
+size cap was raised to 4 KB for this round only, so the near misses include 2 to 4 KB
+functions; TechnoClass::Greatest_Threat (4 KB), FlyLocomotionClass::Movement_AI and
+AircraftClass::Do_MISSION_ATTACK landed whole. The merges retired three stand-ins: RTTI
+showed LoadProgressMgr derives from INoticeSink, which removed the progress callback class;
+a second HouseClass::Get_First_Ownable overload, folded with the first, replaced the local
+house structs in scenario, multiplayer and mpsiege; and INIClass, not CCINIClass, owns
+ReadStringtableEntry, which removed a cast. Combat_Lighting took TibSun's parameter order,
+the draw tint became 16-bit and HouseClass::UINameString became a TStringID<31>, each read
+from the exe. Two Options aliases were retired at landing. Merge gate: 14,108 of 14,108
+(1,956.6 KB), about 73% of game functions.
 
 ### Batches 99, 100 and 101 (21 October 2026)
 

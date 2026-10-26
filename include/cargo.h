@@ -31,6 +31,7 @@ class CargoClass {
 		void Detach(FootClass * object);
 		void Attach(FootClass * object);
 		int IndexOf(ObjectClass const * object) const;
+		int GetTotalSize(void) const;
 
 	private:
 

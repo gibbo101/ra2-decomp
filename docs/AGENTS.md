@@ -282,6 +282,10 @@ Each entry: what the diff showed, then the source change that fixed it.
   under one symbol (`VectorClass<int>::Clear`) mean one label has the wrong element type.
   For a virtual, that is the vtable whose slot points at it: a derived template's deleting
   destructor stores only the base vptr (TypeList's is byte-identical to VectorClass's).
+- One address called with two argument types is two overloads the linker folded: declare
+  both (HouseClass::Get_First_Ownable takes unit and building type vectors at 0x00505310).
+- A class's RTTI also names its real base: LoadProgressMgr derives from INoticeSink, which
+  retired a stand-in callback class that only matched through a cast.
 - YRpp's enum values can be wrong for 1.001 (ACTION_REPAIR is 10, EATEN 11): prove an enum
   value from a switch or compare in the exe before trusting it.
 - An early `return` that the original tail-merges with a real branch: assign the result in

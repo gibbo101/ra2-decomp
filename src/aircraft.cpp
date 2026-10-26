@@ -43,6 +43,7 @@
 #include "tag.h"
 #include "tagtype.h"
 #include "team.h"
+#include "temporal.h"
 #include "tracker.h"
 #include "unit.h"
 #include "waypoint.h"
@@ -396,6 +397,130 @@ int AircraftClass::Do_MISSION_HUNT(void)
 	}
 	return(Current_Mission_Control().Normal_Delay() + Random_Pick(0, 2));
 }
+// FUNCTION: GAMEMD 0x00414BB0
+void AircraftClass::AI(void)
+{
+	switch (CurrentMission) {
+		case MISSION_ATTACK:
+		case MISSION_PARADROP_OVERFLY:
+		case MISSION_SPYPLANE_APPROACH:
+		case MISSION_SPYPLANE_OVERFLY:
+			break;
+
+		default:
+			IsLockedStraight = false;
+			break;
+	}
+
+	if (TemporalTargetingMe != NULL) {
+		TemporalTargetingMe->AI();
+	}
+
+	if (IsBeingWarpedOut() || IsWarpingIn()) {
+		if (Frame % 24 == 0 && Rule->ChronoSparkle1 != NULL) {
+			new AnimClass(Rule->ChronoSparkle1, PositionCoord, 0, 1, (ShapeFlags_Type)0x600, 0, false);
+		}
+	}
+
+	if (IsWarpingIn() || (IsBeingWarpedOut() && IsImmobilized)) {
+		Locomotion->Process();
+		if (!IsActive) {
+			return;
+		}
+	}
+
+	if ((IsWarpingIn() && TemporalTargetingMe != NULL) || IsBeingWarpedOut()) {
+		if (TarCom != NULL) {
+			Assign_Target(NULL);
+		}
+		if (NavCom != NULL) {
+			Assign_Destination(NULL, true);
+		}
+		return;
+	}
+
+	if (TarCom != NULL) {
+		if (TarCom->In_Air()) {
+			Assign_Target(NULL);
+		} else if (TarCom->Is_Techno() && !House->CanOverpower(TarCom) && ((TechnoClass *)TarCom)->Cloak == CLOAKED && !((TechnoClass *)TarCom)->Is_Sensed_By_House(House)) {
+			Assign_Target(NULL);
+		}
+	}
+
+	BASECLASS::AI();
+	if (!IsActive) {
+		return;
+	}
+
+	if (IsSinking) {
+		Coord coord = PositionCoord;
+		Set_Coord(Coord(coord.X, coord.Y, coord.Z - 5));
+		if (HeightAGL < -400) {
+			RegisterDestruction(NULL);
+			Delete_Me();
+			return;
+		}
+		if ((Frame & 3) == 0) {
+			int dy = Scen->RandomNumber(-170, 170);
+			int dx = Scen->RandomNumber(-170, 170);
+			coord = PositionCoord + Coord(dx, dy, -HeightAGL);
+			new AnimClass(Rule->Wake, coord, 0, 1, (ShapeFlags_Type)0x600, 0, false);
+		}
+	}
+
+	Coord trail = PositionCoord;
+	if (Class->Trailer != NULL && Frame % Class->SpawnDelay == 0) {
+		new AnimClass(Class->Trailer, trail, 1, 1, (ShapeFlags_Type)0x600, 0, false);
+	}
+
+	if (!Class->IsFlyBy && !Class->IsFlyBack) {
+		if (!Map.In_Local_Radar(PositionCell) && Should_Delete_Off_Map()) {
+			Delete_Me();
+			return;
+		}
+	}
+
+	if (!Map.In_Radar(PositionCell) && Should_Delete_Off_Map()) {
+		Delete_Me();
+		return;
+	}
+
+	if (NavCom == &InvalidCell) {
+		Assign_Destination(NULL);
+		Assign_Target(NULL);
+		Enter_Idle_Mode();
+	}
+
+	if (TarCom == &InvalidCell) {
+		Assign_Destination(NULL);
+		Assign_Target(NULL);
+		Enter_Idle_Mode();
+	}
+
+	if (Ready_To_Next_Mission()) {
+		Commence();
+	}
+
+	if (IsToSpendAmmo) {
+		if (CurrentMission != MISSION_ATTACK) {
+			IsToSpendAmmo = false;
+			Ammo--;
+		}
+	}
+
+	if (HealthRatio < Rule->ConditionRed && HeightAGL > 0) {
+		if (Percent_Chance(Strength != 0 ? 10 : 80)) {
+			new AnimClass(AnimTypes[AnimTypeClass::From_Name("SGRYSMK1")], PositionCoord, 0, 1, (ShapeFlags_Type)0x600, 0, false);
+		}
+	}
+
+	if (Cargo.Is_Something_Attached() && Class->IsCarryall) {
+		Cargo.Attached_Object()->PrimaryFacing = SecondaryFacing;
+		Cargo.Attached_Object()->SecondaryFacing = SecondaryFacing;
+		Cargo.Attached_Object()->PositionCoord = PositionCoord;
+	}
+}
+
 // FUNCTION: GAMEMD 0x004151E0
 int AircraftClass::Do_MISSION_UNLOAD(void)
 {
@@ -1275,6 +1400,383 @@ Dir256 AircraftClass::Pose_Dir(void) const
 	return(Rule->PoseDir);
 }
 
+template<class T>
+bool TPoint2D<T>::operator == (TPoint2D<T> const & rvalue) const
+{
+	return(X==rvalue.X && Y==rvalue.Y);
+}
+
+// FUNCTION: GAMEMD 0x00417FE0
+int AircraftClass::Do_MISSION_ATTACK(void)
+{
+	enum {
+		VALIDATE_AZ,
+		PICK_ATTACK_LOCATION,
+		TAKE_OFF,
+		FLY_TO_POSITION,
+		FIRE_AT_TARGET,
+		FIRE_AT_TARGET2,
+		STRAFE_SHOT2,
+		STRAFE_SHOT3,
+		STRAFE_SHOT4,
+		STRAFE_LAST_SHOT,
+		RETURN_TO_BASE
+	};
+
+	int burst;
+
+	switch (Status) {
+		case VALIDATE_AZ:
+			IsLockedStraight = false;
+			if (TarCom == NULL) {
+				Status = RETURN_TO_BASE;
+			} else {
+				Status = PICK_ATTACK_LOCATION;
+			}
+			return(1);
+
+		case PICK_ATTACK_LOCATION:
+			IsLockedStraight = false;
+			if (IsToSpendAmmo) {
+				IsToSpendAmmo = false;
+				Ammo--;
+			}
+
+			if (TarCom == NULL || Ammo == 0) {
+				Status = RETURN_TO_BASE;
+			} else {
+				Assign_Destination(Good_Fire_Location(TarCom), true);
+				if (NavCom != NULL) {
+					Status = FLY_TO_POSITION;
+				} else {
+					Status = RETURN_TO_BASE;
+				}
+			}
+			break;
+
+		case FLY_TO_POSITION:
+			if (IsToSpendAmmo) {
+				IsToSpendAmmo = false;
+				Ammo--;
+			}
+			IsLockedStraight = false;
+
+			if (TarCom != NULL && Ammo) {
+				if (Is_Strafe()) {
+					if (Planar_Distance(TarCom) < Get_Class_Weapon_Data(0)->Weapon->Range) {
+						Status = FIRE_AT_TARGET;
+						return(1);
+					}
+					Assign_Destination(TarCom, true);
+				} else {
+					if (Is_Fighter() || !Locomotion->Is_Moving_Now()) {
+						Status = FIRE_AT_TARGET;
+						return(1);
+					}
+				}
+
+				if (NavCom == NULL) {
+					Status = PICK_ATTACK_LOCATION;
+					return(1);
+				}
+
+				int distance = Planar_Distance(NavCom);
+				if (distance < 2 * CELL_LEPTON_W) {
+					SecondaryFacing.Set_Desired(GetTargetDirection(TarCom));
+					if (distance < 0x0010) {
+						Status = FIRE_AT_TARGET;
+						Assign_Destination(NULL, true);
+					}
+				} else {
+					SecondaryFacing.Set_Desired(DirType().Direction(Fire_Coord(0, Coord(0, 0, 0)), NavCom->Center_Coord()));
+					return(1);
+				}
+			} else {
+				Status = RETURN_TO_BASE;
+			}
+			return(1);
+
+		case FIRE_AT_TARGET:
+			if (TarCom == NULL || Ammo == 0) {
+				Status = RETURN_TO_BASE;
+				return(1);
+			}
+
+			if (!Is_Strafe()) {
+				PrimaryFacing.Set_Desired(GetTargetDirection(TarCom));
+				SecondaryFacing.Set_Desired(GetTargetDirection(TarCom));
+			}
+
+			switch (Can_Fire(TarCom, What_Weapon_Should_I_Use(TarCom), true)) {
+				case FIRE_CLOAKED:
+					Do_Uncloak(false);
+					break;
+
+				case FIRE_REARM:
+					break;
+
+				case FIRE_FACING:
+					if (!Ammo) {
+						Status = RETURN_TO_BASE;
+					} else {
+						if (IsCloseEnoughToAttack(TarCom) && !Is_Strafe()) {
+							if (Is_Fighter()) {
+								Status = FIRE_AT_TARGET;
+							} else {
+								Status = Rule->IsCurleyShuffle ? PICK_ATTACK_LOCATION : FIRE_AT_TARGET;
+							}
+						} else {
+							Status = PICK_ATTACK_LOCATION;
+						}
+						if (Is_Strafe()) {
+							return(45);
+						}
+					}
+					break;
+
+				case FIRE_OK:
+					IsToSpendAmmo = true;
+					for (burst = 0; burst < Get_Class_Weapon_Data(What_Weapon_Should_I_Use(TarCom))->Weapon->Burst; burst++) {
+						Fire_At(TarCom, What_Weapon_Should_I_Use(TarCom));
+					}
+					Map[TarCom->Center_Coord()].Incoming(PositionCoord, true);
+					if (Is_Strafe()) {
+						Status = STRAFE_SHOT2;
+						IsLockedStraight = true;
+						return(Get_Class_Weapon_Data(0)->Weapon->ROF);
+					}
+					if (Is_Fighter()) {
+						Status = (Ammo <= 0) ? RETURN_TO_BASE : PICK_ATTACK_LOCATION;
+						IsLockedStraight = true;
+						return(Get_Class_Weapon_Data(0)->Weapon->ROF);
+					}
+					Status = FIRE_AT_TARGET2;
+					break;
+
+				default:
+					if (!Ammo) {
+						Status = RETURN_TO_BASE;
+					} else {
+						if (!Is_Strafe()) {
+							Status = FIRE_AT_TARGET2;
+						}
+					}
+					break;
+			}
+			return(1);
+
+		case FIRE_AT_TARGET2:
+			if (TarCom == NULL) {
+				Status = RETURN_TO_BASE;
+				return(1);
+			}
+
+			PrimaryFacing.Set_Desired(GetTargetDirection(TarCom));
+			SecondaryFacing.Set_Desired(GetTargetDirection(TarCom));
+
+			switch (Can_Fire(TarCom, What_Weapon_Should_I_Use(TarCom), true)) {
+				case FIRE_CLOAKED:
+					Do_Uncloak(false);
+					break;
+
+				case FIRE_REARM:
+					break;
+
+				case FIRE_FACING:
+					if (!Ammo) {
+						Status = RETURN_TO_BASE;
+					} else {
+						if (IsCloseEnoughToAttack(TarCom) && !Is_Strafe()) {
+							Status = Rule->IsCurleyShuffle ? PICK_ATTACK_LOCATION : FIRE_AT_TARGET;
+						} else {
+							Status = PICK_ATTACK_LOCATION;
+						}
+						if (Is_Strafe()) {
+							return(45);
+						}
+					}
+					break;
+
+				case FIRE_OK:
+					Fire_At(TarCom, What_Weapon_Should_I_Use(TarCom));
+					Map[TarCom->Center_Coord()].Incoming(PositionCoord, true);
+					if (Ammo) {
+						Status = Rule->IsCurleyShuffle ? PICK_ATTACK_LOCATION : FIRE_AT_TARGET;
+					} else {
+						Status = RETURN_TO_BASE;
+					}
+					break;
+
+				default:
+					if (!Ammo) {
+						Status = RETURN_TO_BASE;
+					} else {
+						if (!IsCloseEnoughToAttack(TarCom)) {
+							Status = PICK_ATTACK_LOCATION;
+						} else {
+							Status = Rule->IsCurleyShuffle ? PICK_ATTACK_LOCATION : FIRE_AT_TARGET;
+						}
+					}
+					break;
+			}
+			break;
+
+		case STRAFE_SHOT2:
+			if (TarCom == NULL) {
+				Status = RETURN_TO_BASE;
+				return(1);
+			}
+
+			switch (Can_Fire(TarCom, What_Weapon_Should_I_Use(TarCom), true)) {
+				case FIRE_OK:
+				case FIRE_FACING:
+				case FIRE_CLOAKED:
+					break;
+
+				case FIRE_RANGE:
+					Assign_Destination(TarCom, true);
+					break;
+
+				default:
+					if (!Ammo) {
+						Status = RETURN_TO_BASE;
+						IsLockedStraight = false;
+					}
+					return(1);
+			}
+
+			Fire_At(TarCom, What_Weapon_Should_I_Use(TarCom));
+			Map[TarCom->Center_Coord()].Incoming(PositionCoord, true);
+			Assign_Destination(TarCom, true);
+			Status = STRAFE_SHOT3;
+			return(Get_Class_Weapon_Data(0)->Weapon->ROF);
+
+		case STRAFE_SHOT3:
+			if (TarCom == NULL) {
+				Status = RETURN_TO_BASE;
+				return(1);
+			}
+
+			switch (Can_Fire(TarCom, What_Weapon_Should_I_Use(TarCom), true)) {
+				case FIRE_OK:
+				case FIRE_FACING:
+				case FIRE_CLOAKED:
+					break;
+
+				case FIRE_RANGE:
+					Assign_Destination(TarCom, true);
+					break;
+
+				default:
+					if (!Ammo) {
+						Status = RETURN_TO_BASE;
+						IsLockedStraight = false;
+					}
+					return(1);
+			}
+
+			Fire_At(TarCom, What_Weapon_Should_I_Use(TarCom));
+			Map[TarCom->Center_Coord()].Incoming(PositionCoord, true);
+			Assign_Destination(TarCom, true);
+			Status = STRAFE_SHOT4;
+			return(Get_Class_Weapon_Data(0)->Weapon->ROF);
+
+		case STRAFE_SHOT4:
+			if (TarCom == NULL) {
+				Status = RETURN_TO_BASE;
+				return(1);
+			}
+
+			switch (Can_Fire(TarCom, What_Weapon_Should_I_Use(TarCom), true)) {
+				case FIRE_OK:
+				case FIRE_FACING:
+				case FIRE_CLOAKED:
+					break;
+
+				case FIRE_RANGE:
+					Assign_Destination(TarCom, true);
+					break;
+
+				default:
+					if (!Ammo) {
+						Status = RETURN_TO_BASE;
+						IsLockedStraight = false;
+					}
+					return(1);
+			}
+
+			Fire_At(TarCom, What_Weapon_Should_I_Use(TarCom));
+			Map[TarCom->Center_Coord()].Incoming(PositionCoord, true);
+			Assign_Destination(TarCom, true);
+			Status = STRAFE_LAST_SHOT;
+			return(Get_Class_Weapon_Data(0)->Weapon->ROF);
+
+		case STRAFE_LAST_SHOT:
+			if (TarCom == NULL) {
+				Status = RETURN_TO_BASE;
+				return(1);
+			}
+
+			switch (Can_Fire(TarCom, What_Weapon_Should_I_Use(TarCom), true)) {
+				case FIRE_OK:
+				case FIRE_FACING:
+				case FIRE_RANGE:
+				case FIRE_CLOAKED:
+					Fire_At(TarCom, What_Weapon_Should_I_Use(TarCom));
+					Map[TarCom->Center_Coord()].Incoming(PositionCoord, true);
+					Status = FLY_TO_POSITION;
+					return((Get_Class_Weapon_Data(0)->Weapon->Range + 4 * CELL_LEPTON_W) / Class->MaxSpeed);
+
+				default:
+					if (!Ammo) {
+						Status = RETURN_TO_BASE;
+						IsLockedStraight = false;
+					}
+					break;
+			}
+			return(1);
+
+		case RETURN_TO_BASE:
+			IsLockedStraight = false;
+			if (IsToSpendAmmo) {
+				IsToSpendAmmo = false;
+				if (Ammo > 0) {
+					Ammo--;
+				}
+			}
+
+			if (!Ammo) {
+				if (IsALoaner || House->Is_Human_Player()) {
+					Assign_Target(NULL);
+				}
+			} else if (TarCom != NULL) {
+				Status = PICK_ATTACK_LOCATION;
+				return(1);
+			}
+
+			{
+				IsLockedStraight = false;
+				int edge = FUN_0050DA80(House);
+				Cell cell = Map.Calculated_Cell((SourceType)edge, CELL_NONE, CELL_NONE, SPEED_WINGED, true, MZONE_NORMAL);
+				Assign_Destination(&Map[cell], true);
+			}
+			IsReturningFromAttackRun = false;
+			if (Airstrike != NULL && Ammo > 0) {
+				QueueMission(MISSION_RETREAT, false);
+			} else {
+				Enter_Idle_Mode(false, true);
+			}
+			IsReturningFromAttackRun = true;
+			return(1);
+
+		default:
+			break;
+	}
+
+	return(Current_Mission_Control().Normal_Delay() + Random_Pick(0, 2));
+}
+
+
 // FUNCTION: GAMEMD 0x00418E20
 AbstractClass * AircraftClass::New_LZ(AbstractClass * oldlz) const
 {
@@ -1986,7 +2488,7 @@ void TechnoClass::ClearDisguise(void)
 // FootClass::JumpJet_To_Walk
 
 // TEMPLATE: GAMEMD 0x0041C090
-// ?Draw_Object@FootClass@@UBEXPBVShapeSet@@HABVPoint2D@@ABV?$TRect@H@@W4Dir256@@HHW4ZGradientType@@_NHH0HV3@W4ShapeFlags_Type@@@Z
+// ?Draw_Object@FootClass@@UBEXPBVShapeSet@@HABVPoint2D@@ABV?$TRect@H@@W4Dir256@@HHW4ZGradientType@@_NHG0HV3@W4ShapeFlags_Type@@@Z
 
 // FUNCTION: GAMEMD 0x0041C0F0
 // FootClass::Berzerk

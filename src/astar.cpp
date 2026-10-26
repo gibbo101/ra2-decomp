@@ -799,6 +799,130 @@ void AStarClass::Reset(void)
 	}
 }
 
+// FUNCTION: GAMEMD 0x0042C290
+bool AStarClass::Find_Path_Hierarchical(Cell const & from, Cell const & to, MZoneType mzone, FootClass const * foot)
+{
+	int *pass_table = (int *)MZonePassability[mzone];
+
+	double threat_avoidance = foot != NULL ? foot->Threat_Avoidance_Value() : threat_avoidance = 0.0;
+
+	HouseClass * house = foot != NULL ? foot->House : NULL;
+
+	bool avoid_threats = threat_avoidance > 0.00001;
+
+	for (int subzone_level = SUBZONE_COARSE; subzone_level >= SUBZONE_FINE; subzone_level--) {
+		HierQueue->Clear();
+
+		CellSubzoneStruct & start_cell_subzones = Map.CellSubzones[Map.Get_Cell_Zone_Index(from)];
+		int start_subzone = start_cell_subzones.SubzoneID[subzone_level];
+		CellSubzoneStruct & end_cell_subzones = Map.CellSubzones[Map.Get_Cell_Zone_Index(to)];
+		int end_subzone = end_cell_subzones.SubzoneID[subzone_level];
+
+		bool is_coarse = subzone_level == SUBZONE_COARSE;
+		int * coarser_final_ids;
+		if (!is_coarse) {
+			coarser_final_ids = HierOnPath[subzone_level + 1];
+		} else {
+			coarser_final_ids = NULL;
+		}
+
+		int * final_ids = HierOnPath[subzone_level];
+		int * working_ids = HierOpened[subzone_level];
+		float * costs = HierCosts[subzone_level];
+		final_ids[start_subzone] = UniqueID;
+		final_ids[end_subzone] = UniqueID;
+
+		if (start_subzone == end_subzone) {
+			if (subzone_level == SUBZONE_FINE) {
+				AStarHierarchicalNode * node = &HierNodePool[0];
+				node->Depth = 0;
+				node->SubzoneID = start_subzone;
+			}
+			HierSubzonePath[subzone_level][0] = start_subzone;
+			HierSubzonePathCount[subzone_level] = 1;
+		} else {
+			int node_count = 0;
+			AStarHierarchicalNode * start_node = &HierNodePool[0];
+			start_node->ParentIndex = -1;
+			start_node->SubzoneID = start_subzone;
+			start_node->Score = 0.0;
+			start_node->Depth = 0;
+
+			HierQueue->Insert(*start_node);
+			node_count++;
+			working_ids[start_subzone] = UniqueID;
+			costs[start_subzone] = 0.0;
+
+			AStarHierarchicalNode * best_node = HierQueue->Extract_Min();
+			bool no_banned_edges = HierBannedEdges[subzone_level].Count() == 0;
+
+			while (best_node != NULL) {
+				int from_subzone = best_node->SubzoneID;
+				if (from_subzone == end_subzone) {
+					break;
+				}
+
+				SubzoneConnectionStruct * connection = &Map.SubzoneTracking[subzone_level][from_subzone].Connections[0];
+
+				int conn_count = Map.SubzoneTracking[subzone_level][from_subzone].Connections.Count();
+				for (int conn_idx = 0; conn_idx < conn_count; conn_idx++) {
+					int threat = 0;
+					int to_subzone = connection[conn_idx].SubzoneID;
+					bool is_cross_block = connection[conn_idx].IsCrossBlock;
+					PassabilityType passability = Map.SubzoneTracking[subzone_level][to_subzone].Passability;
+					int to_coarser_subzone = Map.SubzoneTracking[subzone_level][to_subzone].ParentSubzoneID;
+
+					if (avoid_threats) {
+						threat = Map.Region_Threat(house, subzone_level, from_subzone, to_subzone) * threat_avoidance;
+					}
+
+					double extra_score = is_cross_block ? 0.001 : 0.0;
+
+					static const float _passability_scores[PASSABLE_COUNT] = {1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0};
+					float score = _passability_scores[passability] + best_node->Score + (double)threat + extra_score;
+
+					if ((working_ids[to_subzone] != UniqueID || costs[to_subzone] > score) && (is_coarse || coarser_final_ids[to_coarser_subzone] == UniqueID || passability == PASSABLE_CRUSH) && pass_table[passability] == TRAVERSAL_PASSABLE) {
+						if (no_banned_edges || !Subzone_Edge_Banned(from_subzone, to_subzone, subzone_level)) {
+							AStarHierarchicalNode * new_node = &HierNodePool[node_count];
+							new_node->ParentIndex = best_node - HierNodePool;
+							new_node->SubzoneID = to_subzone;
+							new_node->Score = score;
+							new_node->Depth = best_node->Depth + 1;
+							HierQueue->Insert(*new_node);
+							working_ids[to_subzone] = UniqueID;
+							costs[to_subzone] = score;
+							node_count++;
+						}
+					}
+				}
+				best_node = HierQueue->Extract_Min();
+			}
+
+			if (best_node == NULL) {
+				return(false);
+			}
+
+			AStarHierarchicalNode * tail_node = best_node;
+			while (best_node->ParentIndex != -1) {
+				final_ids[best_node->SubzoneID] = UniqueID;
+				best_node = &HierNodePool[best_node->ParentIndex];
+			}
+
+			int path_count = tail_node->Depth + 1;
+			HierSubzonePathCount[subzone_level] = path_count;
+			path_count--;
+			while (path_count > 0) {
+				HierSubzonePath[subzone_level][path_count] = tail_node->SubzoneID;
+				tail_node = &HierNodePool[tail_node->ParentIndex];
+				path_count--;
+			}
+
+			HierSubzonePath[subzone_level][0] = tail_node->SubzoneID;
+		}
+	}
+	return(true);
+}
+
 // FUNCTION: GAMEMD 0x0042C900
 PathStruct * AStarClass::Find_Path(Cell const & from, Cell const & to, FootClass * foot, FacingType * moves, int max_loops, MZoneType mzone, ObstacleAvoidanceType avoidance)
 {

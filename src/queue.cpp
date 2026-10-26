@@ -1316,6 +1316,280 @@ void Add_CRC(unsigned int *crc, unsigned int val)
 	(*crc) += hibit;
 }
 
+#pragma pack(push, 1)
+struct SyncHouseRecord {
+	char Name[0x14];
+	unsigned char IsHuman;
+	char Color[0x1f];
+	unsigned char ColorEnd;
+	unsigned char Gap35[3];
+	int ID;
+	char TypeName[0x1f];
+	unsigned char TypeNameEnd;
+};
+
+struct SyncObjectRecord {
+	int Coord;
+	int TypeID;
+	char TypeName[0x17];
+	unsigned char TypeNameEnd;
+	signed char Owner;
+	unsigned char Gap21[3];
+	int TarComIndex;
+	char TarComName[0x17];
+	unsigned char TarComNameEnd;
+	int NavComIndex;
+	char NavComName[0x17];
+	unsigned char NavComNameEnd;
+	int SpeedAccum;
+	short TrackNumber;
+	short TrackIndex;
+	unsigned char Facing;
+	unsigned char Facing2;
+	unsigned char Mission;
+	signed char Speed;
+};
+
+struct SyncLayerRecord {
+	int Coord;
+	int TypeID;
+	char TypeName[0x17];
+	unsigned char TypeNameEnd;
+	unsigned char Owner;
+	unsigned char Gap21[3];
+	short RTTI;
+	unsigned char Gap26[2];
+};
+
+struct SyncFrameLog {
+	unsigned int CRC;
+	int Random;
+	int Frame;
+	SyncHouseRecord Houses[8];
+	int Total;
+	int InfantryCount;
+	int UnitCount;
+	int AircraftCount;
+	int BuildingCount;
+	SyncObjectRecord *Objects;
+	int LayerCount[5];
+	SyncLayerRecord *LayerObjects[5];
+	int LogicCount;
+	SyncLayerRecord *LogicObjects;
+	void *Buffer;
+	unsigned int BufferSize;
+};
+#pragma pack(pop)
+
+extern SyncFrameLog DAT_00AC6660[256];
+
+namespace FPSCounter { extern unsigned TotalFramesElapsed; extern unsigned TotalTimeElapsed; }
+extern WinsockInterfaceClass * PacketTransport;
+extern unsigned int DAT_00B04474[256];
+const char * FUN_004E62B0(void);
+
+// FUNCTION: GAMEMD 0x006516F0
+void __fastcall FUN_006516F0(int slot, EventClass *ev)
+{
+	SyncFrameLog *log = &DAT_00AC6660[slot];
+	FILE *fp;
+	int i, j;
+	int house;
+	char filename[512];
+
+	sprintf(filename, "SYNC%01d_%03d.TXT", PlayerPtr->HeapID, slot);
+	DebugString("Writing sync data to file %s\n", filename);
+
+	fp = fopen(filename, "wt");
+	if (fp == NULL) {
+		DebugString("Error - failed to open sync file for writing. Error code %d - %s\n", GetLastError(), fp);
+		return;
+	}
+
+	fprintf(fp, "RA2 Sync\n");
+
+	fprintf(fp, "\nVersion %s\n", Version_Name());
+	fprintf(fp, "Internal Version %s\n", VerNum.Version_Name());
+
+	char date[128];
+	char builder[128];
+	char number[128];
+
+	date[0] = 0;
+	Build_Date_String(date, sizeof(date));
+	fprintf(fp, "Release Build: %s by %s - %s\r\n", Build_Number_String(number, sizeof(number)), Build_By_String(builder, sizeof(builder)), date);
+
+	int cpu_type = 5;
+	bool mmx = false;
+	Get_CPU_Type(cpu_type, mmx, 0, 0);
+	fprintf(fp, "CPU %s, MMX %s, Vendor: %s\r\n", FUN_004E62B0(), mmx ? "Yes" : "No", "Not available");
+
+	fprintf(fp, "Frames: %d\n", Frame);
+	fprintf(fp, "Average FPS: %d\n", FPSCounter::TotalTimeElapsed != 0 ? FPSCounter::TotalFramesElapsed / FPSCounter::TotalTimeElapsed : 0);
+	fprintf(fp, "Max MaxAhead: %d\n", Session.MaxMaxAhead);
+	fprintf(fp, "Latency setting: %d\n", Session.LatencyFudge);
+	fprintf(fp, "Game speed setting: %d\n", Options.GameSpeed);
+	fprintf(fp, "FrameSendRate: %d\n", Session.FrameSendRate);
+	fprintf(fp, "\nFrame: %d\n", log->Frame);
+	fprintf(fp, "Slot: %d\n", slot);
+
+	if (PacketTransport != NULL) {
+		for (i = 0; i < PacketTransport->Get_Num_Local_Addresses(); i++) {
+			unsigned char *addr = PacketTransport->Get_Local_Address(i);
+			if (addr != NULL) {
+				unsigned int a = *(unsigned int *)addr;
+				fprintf(fp, "Local address: %d.%d.%d.%d\n", (a) & 0xFF, (a >> 8) & 0xFF, (a >> 16) & 0xFF, (a >> 24) & 0xFF);
+			}
+		}
+	}
+
+	for (i = 0; i < MAX_PLAYERS; i++) {
+		MPStatsType *stat = &Session.ConnectionStats[i];
+		if (*stat->Name != '\0') {
+			NetNumType net;
+			NetNodeType node;
+			stat->Address.Get_Address(net, node);
+			fprintf(fp, "\nName: %s\n", stat->Name);
+			fprintf(fp, "Address: %d.%d.%d.%d\n", node[0], node[1], node[2], node[3]);
+			fprintf(fp, "Max avg round trip: %d\n", stat->MaxAvgRoundTrip);
+			fprintf(fp, "Max round trip: %d\n", stat->MaxRoundTrip);
+			fprintf(fp, "Resends: %d\n", stat->Resends);
+			fprintf(fp, "Frame sync stalls: %d\n", stat->FrameSyncStalls);
+			fprintf(fp, "Command cound stalls: %d\n", stat->CommandCountStalls);
+			fprintf(fp, "Lost: %d\n", stat->Lost);
+			fprintf(fp, "Percent lost: %d\n", stat->PercentLost);
+		}
+	}
+
+	for (i = 0; i < 256; i++) {
+		if (i == slot) {
+			fprintf(fp, "CRC[%d]=%x  *****\n", i, DAT_00B04474[i]);
+		} else {
+			fprintf(fp, "CRC[%d]=%x\n", i, DAT_00B04474[i]);
+		}
+	}
+
+	int housecount = 0;
+	for (house = 0; house < 8; house++) {
+		SyncHouseRecord *housep = &log->Houses[house];
+		if (housep->ID != -1) {
+			housecount = housep->ID;
+			fprintf(fp, "%s: IsHuman:%d  Color:%s  ID:%d  HouseType:%s\n",
+				housep->Name, housep->IsHuman, housep->Color, housep->ID, housep->TypeName);
+		}
+	}
+
+	SyncObjectRecord *objects = log->Objects;
+
+	for (house = 0; house < housecount; house++) {
+		if (log->Houses[house].ID != -1) {
+			fprintf(fp, "-------------------- %s Infantry -------------------\n", log->Houses[house].Name);
+			SyncObjectRecord *rec = objects;
+			for (j = 0; j < log->InfantryCount; rec++, j++) {
+				if (rec->Owner == house) {
+					fprintf(fp, "COORD:%x   Facing:%d   Mission:%d   Type:%d(%s)   Tgt:%s(%d) Speed:%d NavCom:%s(%d)\n",
+						rec->Coord, rec->Facing, rec->Mission, rec->TypeID, rec->TypeName,
+						rec->TarComName, rec->TarComIndex, rec->Speed, rec->NavComName, rec->NavComIndex);
+				}
+			}
+		}
+	}
+	objects += log->InfantryCount;
+
+	for (house = 0; house < housecount; house++) {
+		if (log->Houses[house].ID != -1) {
+			fprintf(fp, "-------------------- %s Units -------------------\n", log->Houses[house].Name);
+			SyncObjectRecord *rec = objects;
+			for (j = 0; j < log->UnitCount; rec++, j++) {
+				if (rec->Owner == house) {
+					fprintf(fp, "COORD:%x   Facing:%d   Facing2:%d   Mission:%d   Type:%d(%s)   Tgt:%s(%d)  NavCom:%s(%d)   TrkNum:%d TrkInd:%d SpdAc:%d\n",
+						rec->Coord, rec->Facing, rec->Facing2, rec->Mission, rec->TypeID, rec->TypeName,
+						rec->TarComName, rec->TarComIndex, rec->NavComName, rec->NavComIndex,
+						rec->TrackNumber, rec->TrackIndex, rec->SpeedAccum);
+				}
+			}
+		}
+	}
+	objects += log->UnitCount;
+
+	for (house = 0; house < housecount; house++) {
+		if (log->Houses[house].ID != -1) {
+			fprintf(fp, "-------------------- %s Aircraft -------------------\n", log->Houses[house].Name);
+			SyncObjectRecord *rec = objects;
+			for (j = 0; j < log->AircraftCount; rec++, j++) {
+				if (rec->Owner == house) {
+					fprintf(fp, "COORD:%x   Facing:%d   Mission:%d   Type:%d(%s)   Tgt:%s(%d)  NavCom:%s(%d)\n",
+						rec->Coord, rec->Facing, rec->Mission, rec->TypeID, rec->TypeName,
+						rec->TarComName, rec->TarComIndex, rec->NavComName, rec->NavComIndex);
+				}
+			}
+		}
+	}
+	objects += log->AircraftCount;
+
+	for (house = 0; house < housecount; house++) {
+		if (log->Houses[house].ID != -1) {
+			fprintf(fp, "-------------------- %s Buildings -------------------\n", log->Houses[house].Name);
+			SyncObjectRecord *rec = objects;
+			for (j = 0; j < log->BuildingCount; rec++, j++) {
+				if (rec->Owner == house) {
+					fprintf(fp, "COORD:%x   Facing:%d   Mission:%d   Type:%d(%s)   Tgt:%s(%d)\n",
+						rec->Coord, rec->Facing, rec->Mission, rec->TypeID, rec->TypeName,
+						rec->TarComName, rec->TarComIndex);
+				}
+			}
+		}
+	}
+
+	for (i = 0; i < 5; i++) {
+		fprintf(fp, ">>>> MAP LAYER %d <<<<\n", i);
+		for (j = 0; j < log->LayerCount[i]; j++) {
+			SyncLayerRecord *rec = &log->LayerObjects[i][j];
+			fprintf(fp, "Object %d: %x ", j, rec->Coord);
+			if (rec->RTTI != RTTI_WAVE && rec->RTTI != RTTI_LIGHT) {
+				fprintf(fp, "%s\t(Type:%d(%s)) ", Name_From_RTTI((RTTIType)rec->RTTI), rec->TypeID, rec->TypeName);
+			} else {
+				fprintf(fp, "%s\t(Type:%d) ", Name_From_RTTI((RTTIType)rec->RTTI), 0);
+			}
+			if (rec->Owner != 0xff) {
+				fprintf(fp, "Owner: %s\n", log->Houses[(signed char)rec->Owner].Name);
+			} else {
+				fprintf(fp, "Owner: None\n");
+			}
+		}
+	}
+
+	fprintf(fp, ">>>> LOGIC LAYER <<<<\n");
+	for (j = 0; j < log->LogicCount; j++) {
+		SyncLayerRecord *rec = j + log->LogicObjects;
+		fprintf(fp, "Object %d: %x ", j, rec->Coord);
+		if (rec->RTTI != RTTI_WAVE && rec->RTTI != RTTI_LIGHT) {
+			fprintf(fp, "%s\t(Type:%d(%s)) ", Name_From_RTTI((RTTIType)rec->RTTI), rec->TypeID, rec->TypeName);
+		} else {
+			fprintf(fp, "%s\t(Type:%d) ", Name_From_RTTI((RTTIType)rec->RTTI), 0);
+		}
+		if (rec->Owner != 0xff) {
+			fprintf(fp, "Owner: %s\n", log->Houses[(signed char)rec->Owner].Name);
+		} else {
+			fprintf(fp, "Owner: None\n");
+		}
+	}
+
+	fprintf(fp, "\nRandom Number:%d\n", log->Random);
+
+	if (ev != NULL) {
+		fprintf(fp, "Offending event:\n");
+		fprintf(fp, "Type:         %d\n", ev->Type);
+		fprintf(fp, "Frame:        %d\n", ev->Frame);
+		fprintf(fp, "ID:           %x\n", ev->ID);
+		fprintf(fp, "CRC:          %x\n", ev->Data.FrameInfo.CRC);
+		fprintf(fp, "CommandCount: %d\n", ev->Data.FrameInfo.CommandCount);
+		fprintf(fp, "Delay:        %d\n", ev->Data.FrameInfo.Delay);
+	}
+
+	fclose(fp);
+}
+
 // FUNCTION: GAMEMD 0x00652070
 void __fastcall Dump_Packet_Too_Late_Stuff(EventClass *event)
 {

@@ -667,6 +667,120 @@ int AnimClass::Get_Height(void) const
 	return(z);
 }
 
+static inline DirType _Direction(ObjectClass * object, Coord const & to)
+{
+	return(DirType().Direction(object->Center_Coord(), to));
+}
+
+static inline TPoint3D<int> _Flat_Diff(Coord b, Coord a)
+{
+	return(TPoint3D<int>(a.X - b.X, a.Y - b.Y, 0));
+}
+
+static inline int _Flat_Distance(Coord b, Coord a)
+{
+	return(_Flat_Diff(b, a).Length());
+}
+
+static inline Coord _Move_Coord(Coord const & start, DirType const & dir, int distance)
+{
+	double radians = dir.As_Radian();
+	int y = start.Y - fastmath::sin(radians) * distance;
+	int x = start.X + fastmath::cos(radians) * distance;
+	Coord c;
+	c.X = x;
+	c.Y = y;
+	c.Z = start.Z;
+	return(c);
+}
+
+// FUNCTION: GAMEMD 0x00425670
+void AnimClass::Flaming_Guy_AI(void)
+{
+	static const int _max_distance = 18;
+	static const int _max_tries = 7;
+	static const int _frame_divisor = 3;
+	static const int _min_stage = 0;
+
+	if (!FlamingGuyExpire) {
+		Animation.Set_Rate(0);
+	}
+
+	if (FlamingGuyCoords != DAT_0089A178 && !FlamingGuyExpire) {
+		if (_Flat_Distance(FlamingGuyCoords, PositionCoord) <= _max_distance) {
+			if (!IsFalling) {
+				Coord nextcoord = Next_Flaming_Guy_Coord();
+				bool sink = (Map[FlamingGuyCoords].Land_Type() == LAND_WATER || Map[FlamingGuyCoords].Land_Type() == LAND_BEACH) && HeightAGL <= DAT_0089A1C0;
+				if (nextcoord != DAT_0089A178 && FlamingGuyRetries < _max_tries && !sink) {
+					FlamingGuyRetries++;
+					int z = PositionCoord.Z;
+					Coord oldcoord = FlamingGuyCoords;
+					if (z <= Map.Get_Height_GL(oldcoord) + 2 * DAT_0089A1C0) {
+						oldcoord.Z = Map.Get_Height_GL(oldcoord);
+					} else {
+						oldcoord.Z = Map.Get_Height_GL(oldcoord) + DAT_0089A1B4;
+					}
+					PositionCoord = oldcoord;
+					FlamingGuyCoords = nextcoord;
+				} else {
+					FlamingGuyCoords = DAT_0089A178;
+					FlamingGuyExpire = true;
+					Animation.Set_Rate(1);
+					Animation.Set_Stage(Type->RunningFrames * FACING_COUNT + 1);
+					return;
+				}
+			}
+		} else {
+			int z = PositionCoord.Z;
+			DirType direction = _Direction(this, FlamingGuyCoords);
+			Coord newcoord = _Move_Coord(PositionCoord, direction, _max_distance);
+			if (z <= Map.Get_Height_GL(newcoord) + 2 * DAT_0089A1C0) {
+				newcoord.Z = Map.Get_Height_GL(newcoord);
+			} else {
+				newcoord.Z = Map.Get_Height_GL(newcoord) + DAT_0089A1B4;
+			}
+			PositionCoord = newcoord;
+		}
+
+		if (!IsFalling) {
+			Cell position = PositionCoord.As_Cell();
+			if (PositionCoord.Z >= Map.Get_Height_GL(PositionCoord) + DAT_0089A1B4) {
+				if (!Map[Get_Coord()].IsUnderBridge && !Map[Adjacent_Cell(position, FACING_W)].IsUnderBridge && !Map[Adjacent_Cell(position, FACING_N)].IsUnderBridge) {
+					IsFalling = true;
+				}
+			}
+		}
+	} else {
+		if (!IsFalling) {
+			if (!FlamingGuyExpire) {
+				Coord nextcoord = Next_Flaming_Guy_Coord();
+				if (nextcoord != DAT_0089A178) {
+					FlamingGuyCoords = nextcoord;
+				} else {
+					FlamingGuyCoords = DAT_0089A178;
+					FlamingGuyExpire = true;
+					Animation.Set_Rate(1);
+					Animation.Set_Stage(Type->RunningFrames * FACING_COUNT + 1);
+				}
+			}
+		}
+	}
+
+	if (!FlamingGuyExpire) {
+		int stage = _min_stage;
+		if (FlamingGuyCoords != DAT_0089A178) {
+			stage = Type->RunningFrames * (Facing_Sub(-1, ::Direction(Center_Coord(), FlamingGuyCoords).As_Dir8()));
+		}
+		Animation.Set_Stage(stage + Frame / _frame_divisor % Type->RunningFrames);
+		return;
+	} else {
+		int stage = ((ShapeSet const *)Get_Image_Data())->Get_Count() / 2 - 1;
+		if (Animation.Fetch_Stage() >= stage) {
+			Delete_Me();
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x004260F0
 bool AnimClass::Is_Valid_Flaming_Guy_Cell(Cell const & cell)
 {

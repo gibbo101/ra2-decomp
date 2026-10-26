@@ -22,6 +22,8 @@ class AircraftTrackerClass
 		void Update(FootClass * foot, Cell oldcell, Cell newcell);
 		bool IsJumpjet(FootClass * foot);
 		void Clear(void);
+		void FillCurrentVector(CellClass * cell, int range);
+		FootClass * Get(void);
 };
 
 class ParasiteClass;
@@ -142,7 +144,7 @@ class FootClass : public TechnoClass
 		virtual int Do_MISSION_UNLOAD(void) override;
 		virtual Cell GetLastFlightMapCoords(void) const override;
 		virtual void SetLastFlightMapCoords(Cell coord) override;
-		virtual Cell ScanForTiberium(int range, unsigned unk) override;
+		virtual Cell ScanForTiberium(int range, bool allow_weighted) override;
 		virtual bool EnterGrinder(void) override;
 		virtual bool EnterBioReactor(void) override;
 		virtual bool EnterTankBunker(void) override;
@@ -181,7 +183,7 @@ class FootClass : public TechnoClass
 		virtual bool Stop_Driver(void);
 		virtual bool Is_Docked_For_Repair(void);
 		virtual bool ChronoWarpTo(Coord dest);
-		virtual void Draw_Object(ShapeSet const * shapefile, int shapenum, Point2D const & xy, Rect const & rect, Dir256 rotation=DIR_N, int scale=0x0100, int zadjust=0, ZGradientType zgrad=ZGRAD_GROUND, bool=false, int brightness=0, int tint=0, ShapeSet const * zshapefile=0, int zshapenum=0, Point2D zoff=Point2D(0,0), ShapeFlags_Type flags=SHAPE_NORMAL) const;
+		virtual void Draw_Object(ShapeSet const * shapefile, int shapenum, Point2D const & xy, Rect const & rect, Dir256 rotation=DIR_N, int scale=0x0100, int zadjust=0, ZGradientType zgrad=ZGRAD_GROUND, bool=false, int brightness=0, unsigned short tint=0, ShapeSet const * zshapefile=0, int zshapenum=0, Point2D zoff=Point2D(0,0), ShapeFlags_Type flags=SHAPE_NORMAL) const;
 		virtual void Draw_A_VXL(VoxelDataStruct const & voxeldata, int frame, int key, VoxelIndexClass * cache, Rect const & cliprect, Point2D const & point, Matrix3D const & matrix, int brightness, ShapeFlags_Type flags, int unknown) const;
 		virtual void Berzerk(void) {};
 		virtual void Start_Fear(void) {};
@@ -299,7 +301,7 @@ class FootClass : public TechnoClass
 		Cell Safety_Point(Cell const & src, Cell const & dst, int start, int max);
 		int Rescue_Mission(AbstractClass * tarcom);
 		bool Tiberium_Check(Cell & center);
-		bool Goto_Tiberium(int rad, unsigned allow_weighted = false);
+		bool Goto_Tiberium(int rad, bool allow_weighted = false);
 		Cell Search_For_Tiberium(int rad, bool allow_weighted = false);
 		Cell Search_For_Tiberium_Weighted(int rad);
 
@@ -311,7 +313,7 @@ class FootClass : public TechnoClass
 		PathStruct * Find_Path(Cell const & dest, FacingType * final_moves, int maxlen, MoveType threshhold, int path_offset, int avoidance);
 };
 
-inline void FootClass::Draw_Object(ShapeSet const * shapefile, int shapenum, Point2D const & xy, Rect const & rect, Dir256 rotation, int scale, int zadjust, ZGradientType zgrad, bool zwrite, int brightness, int tint, ShapeSet const * zshapefile, int zshapenum, Point2D zoff, ShapeFlags_Type negflags) const
+inline void FootClass::Draw_Object(ShapeSet const * shapefile, int shapenum, Point2D const & xy, Rect const & rect, Dir256 rotation, int scale, int zadjust, ZGradientType zgrad, bool zwrite, int brightness, unsigned short tint, ShapeSet const * zshapefile, int zshapenum, Point2D zoff, ShapeFlags_Type negflags) const
 {
 	Techno_Draw_Object(shapefile, shapenum, xy, rect, rotation, scale, zadjust, zgrad, zwrite, brightness, tint, zshapefile, zshapenum, zoff, negflags);
 }

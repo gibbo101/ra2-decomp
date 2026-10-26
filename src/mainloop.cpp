@@ -459,3 +459,20 @@ void Multiplayer_Debug_Print(void)
 // TEMPLATE: GAMEMD 0x0055F6C0
 // ?Is_Archive_Same@?$IndexClass@HPBVCommandClass@@@@ABE_NABH@Z
 template class IndexClass<int, CommandClass const *>;
+
+// TEMPLATE: GAMEMD 0x0055F6E0
+// ?Search_For_Node@?$IndexClass@HPBVCommandClass@@@@ABEPBUNodeElement@1@ABH@Z
+
+extern int DAT_00ABCE28;
+extern int DAT_00ABCE2C;
+extern int DAT_00ABCE30;
+extern int DAT_00ABCE34;
+
+// FUNCTION: GAMEMD 0x0055F760
+void FUN_0055F760(void)
+{
+	DAT_00ABCE28 = 0;
+	DAT_00ABCE2C = 0;
+	DAT_00ABCE30 = 0;
+	DAT_00ABCE34 = 0;
+}
