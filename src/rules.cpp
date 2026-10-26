@@ -81,6 +81,11 @@ RulesClass::RulesClass(NoInitClass const & x) :
 	x();
 }
 
+// FUNCTION: GAMEMD 0x00667A30
+RulesClass::~RulesClass(void)
+{
+}
+
 // FUNCTION: GAMEMD 0x006686C0
 void RulesClass::Initialize(CCINIClass & ini)
 {

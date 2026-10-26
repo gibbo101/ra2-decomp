@@ -5227,14 +5227,14 @@ template class DynamicVectorClass<BuildingTypeClass const *>;
 // ?GetItem@?$VectorClass@PBVBuildingTypeClass@@@@UBEPBVBuildingTypeClass@@H@Z
 
 // TEMPLATE: GAMEMD 0x0050E500
-// ?Clear@?$DynamicVectorClass@PBVTeamTypeClass@@@@UAEXXZ
+// ?Clear@?$DynamicVectorClass@PAUStartingTechnoStruct@@@@UAEXXZ
 template class DynamicVectorClass<TeamTypeClass const *>;
 
 // TEMPLATE: GAMEMD 0x0050E530
-// ?ID@?$DynamicVectorClass@PBVTeamTypeClass@@@@UAEHPBQBVTeamTypeClass@@@Z
+// ?ID@?$DynamicVectorClass@PAUStartingTechnoStruct@@@@UAEHPBQAUStartingTechnoStruct@@@Z
 
 // TEMPLATE: GAMEMD 0x0050E550
-// ?GetItem@?$VectorClass@PBVTeamTypeClass@@@@UBEPBVTeamTypeClass@@H@Z
+// ?GetItem@?$VectorClass@PAUStartingTechnoStruct@@@@UBEPAUStartingTechnoStruct@@H@Z
 
 // TEMPLATE: GAMEMD 0x0050E560
 // ?Clear@?$DynamicVectorClass@UAngerStruct@@@@UAEXXZ
@@ -5257,24 +5257,24 @@ template class DynamicVectorClass<ScoutStruct>;
 // ?GetItem@?$VectorClass@UScoutStruct@@@@UBE?AUScoutStruct@@H@Z
 
 // TEMPLATE: GAMEMD 0x0050E640
-// ?Clear@?$DynamicVectorClass@PAVBuildingTypeClass@@@@UAEXXZ
+// ?Clear@?$DynamicVectorClass@PAUBuildChoiceClass@HouseClass@@@@UAEXXZ
 template class DynamicVectorClass<BuildingTypeClass *>;
 
 // TEMPLATE: GAMEMD 0x0050E670
-// ?ID@?$DynamicVectorClass@PAVBuildingTypeClass@@@@UAEHPBQAVBuildingTypeClass@@@Z
+// ?ID@?$DynamicVectorClass@PAUBuildChoiceClass@HouseClass@@@@UAEHPBQAUBuildChoiceClass@HouseClass@@@Z
 
 // TEMPLATE: GAMEMD 0x0050E690
-// ?GetItem@?$VectorClass@PAVBuildingTypeClass@@@@UBEPAVBuildingTypeClass@@H@Z
+// ?GetItem@?$VectorClass@PAUBuildChoiceClass@HouseClass@@@@UBEPAUBuildChoiceClass@HouseClass@@H@Z
 
 // TEMPLATE: GAMEMD 0x0050E6A0
-// ?Clear@?$DynamicVectorClass@PAVAbstractClass@@@@UAEXXZ
+// ?Clear@?$DynamicVectorClass@PBVTeamTypeClass@@@@UAEXXZ
 template class DynamicVectorClass<AbstractClass *>;
 
 // TEMPLATE: GAMEMD 0x0050E6D0
-// ?ID@?$DynamicVectorClass@PAVAbstractClass@@@@UAEHPBQAVAbstractClass@@@Z
+// ?ID@?$DynamicVectorClass@PBVTeamTypeClass@@@@UAEHPBQBVTeamTypeClass@@@Z
 
 // TEMPLATE: GAMEMD 0x0050E6F0
-// ?GetItem@?$VectorClass@PAVAbstractClass@@@@UBEPAVAbstractClass@@H@Z
+// ?GetItem@?$VectorClass@PBVTeamTypeClass@@@@UBEPBVTeamTypeClass@@H@Z
 
 // TEMPLATE: GAMEMD 0x0050E700
 // ?Clear@?$DynamicVectorClass@_N@@UAEXXZ
@@ -5305,19 +5305,19 @@ template class DynamicVectorClass<BUILDING_DIST_OBJ>;
 // SYNTHETIC: GAMEMD 0x0050E8C0
 // ??_G?$DynamicVectorClass@PBVTeamTypeClass@@@@UAEPAXI@Z
 // TEMPLATE: GAMEMD 0x0050E910
-// ??8?$VectorClass@PBVTeamTypeClass@@@@UBE_NABV0@@Z
+// ??8?$VectorClass@PBVBuildingTypeClass@@@@UBE_NABV0@@Z
 // TEMPLATE: GAMEMD 0x0050E950
-// ?Resize@?$VectorClass@PBVTeamTypeClass@@@@UAE_NHPBQBVTeamTypeClass@@@Z
+// ?Resize@?$VectorClass@PBVBuildingTypeClass@@@@UAE_NHPBQBVBuildingTypeClass@@@Z
 // TEMPLATE: GAMEMD 0x0050EA00
-// ?Clear@?$VectorClass@PBVTeamTypeClass@@@@UAEXXZ
+// ?Clear@?$VectorClass@PBVBuildingTypeClass@@@@UAEXXZ
 // TEMPLATE: GAMEMD 0x0050EA30
-// ?ID@?$VectorClass@PBVTeamTypeClass@@@@UAEHABQBVTeamTypeClass@@@Z
+// ?ID@?$VectorClass@PBVBuildingTypeClass@@@@UAEHABQBVBuildingTypeClass@@@Z
 // TEMPLATE: GAMEMD 0x0050EA70
-// ?ID@?$VectorClass@PBVTeamTypeClass@@@@UAEHPBQBVTeamTypeClass@@@Z
+// ?ID@?$VectorClass@PBVBuildingTypeClass@@@@UAEHPBQBVBuildingTypeClass@@@Z
 // TEMPLATE: GAMEMD 0x0050EA90
-// ?Resize@?$DynamicVectorClass@PBVTeamTypeClass@@@@UAE_NHPBQBVTeamTypeClass@@@Z
+// ?Resize@?$DynamicVectorClass@PBVBuildingTypeClass@@@@UAE_NHPBQBVBuildingTypeClass@@@Z
 // TEMPLATE: GAMEMD 0x0050EB40
-// ?ID@?$DynamicVectorClass@PBVTeamTypeClass@@@@UAEHABQBVTeamTypeClass@@@Z
+// ?ID@?$DynamicVectorClass@PBVBuildingTypeClass@@@@UAEHABQBVBuildingTypeClass@@@Z
 template class VectorClass<TeamTypeClass const *>;
 
 // TEMPLATE: GAMEMD 0x0050EB70
@@ -5325,19 +5325,19 @@ template class VectorClass<TeamTypeClass const *>;
 template class DynamicVectorClass<BaseNodeClass>;
 
 // TEMPLATE: GAMEMD 0x0050EC20
-// ??8?$VectorClass@PBVBuildingTypeClass@@@@UBE_NABV0@@Z
+// ??8?$VectorClass@PAUStartingTechnoStruct@@@@UBE_NABV0@@Z
 // TEMPLATE: GAMEMD 0x0050EC60
-// ?Resize@?$VectorClass@PBVBuildingTypeClass@@@@UAE_NHPBQBVBuildingTypeClass@@@Z
+// ?Resize@?$VectorClass@PAUStartingTechnoStruct@@@@UAE_NHPBQAUStartingTechnoStruct@@@Z
 // TEMPLATE: GAMEMD 0x0050ED10
-// ?Clear@?$VectorClass@PBVBuildingTypeClass@@@@UAEXXZ
+// ?Clear@?$VectorClass@PAUStartingTechnoStruct@@@@UAEXXZ
 // TEMPLATE: GAMEMD 0x0050ED40
-// ?ID@?$VectorClass@PBVBuildingTypeClass@@@@UAEHABQBVBuildingTypeClass@@@Z
+// ?ID@?$VectorClass@PAUStartingTechnoStruct@@@@UAEHABQAUStartingTechnoStruct@@@Z
 // TEMPLATE: GAMEMD 0x0050ED80
-// ?ID@?$VectorClass@PBVBuildingTypeClass@@@@UAEHPBQBVBuildingTypeClass@@@Z
+// ?ID@?$VectorClass@PAUStartingTechnoStruct@@@@UAEHPBQAUStartingTechnoStruct@@@Z
 // TEMPLATE: GAMEMD 0x0050EDA0
-// ?Resize@?$DynamicVectorClass@PBVBuildingTypeClass@@@@UAE_NHPBQBVBuildingTypeClass@@@Z
+// ?Resize@?$DynamicVectorClass@PAUStartingTechnoStruct@@@@UAE_NHPBQAUStartingTechnoStruct@@@Z
 // TEMPLATE: GAMEMD 0x0050EE50
-// ?ID@?$DynamicVectorClass@PBVBuildingTypeClass@@@@UAEHABQBVBuildingTypeClass@@@Z
+// ?ID@?$DynamicVectorClass@PAUStartingTechnoStruct@@@@UAEHABQAUStartingTechnoStruct@@@Z
 template class VectorClass<BuildingTypeClass const *>;
 
 // TEMPLATE: GAMEMD 0x0050EE80
@@ -5390,19 +5390,19 @@ template class VectorClass<HouseClass::BuildChoiceClass *>;
 template class DynamicVectorClass<HouseClass::BuildChoiceClass *>;
 
 // TEMPLATE: GAMEMD 0x0050F740
-// ??8?$VectorClass@PAVBuildingTypeClass@@@@UBE_NABV0@@Z
+// ??8?$VectorClass@PBVTeamTypeClass@@@@UBE_NABV0@@Z
 // TEMPLATE: GAMEMD 0x0050F780
-// ?Resize@?$VectorClass@PAVBuildingTypeClass@@@@UAE_NHPBQAVBuildingTypeClass@@@Z
+// ?Resize@?$VectorClass@PBVTeamTypeClass@@@@UAE_NHPBQBVTeamTypeClass@@@Z
 // TEMPLATE: GAMEMD 0x0050F830
-// ?Clear@?$VectorClass@PAVBuildingTypeClass@@@@UAEXXZ
+// ?Clear@?$VectorClass@PBVTeamTypeClass@@@@UAEXXZ
 // TEMPLATE: GAMEMD 0x0050F860
-// ?ID@?$VectorClass@PAVBuildingTypeClass@@@@UAEHABQAVBuildingTypeClass@@@Z
+// ?ID@?$VectorClass@PBVTeamTypeClass@@@@UAEHABQBVTeamTypeClass@@@Z
 // TEMPLATE: GAMEMD 0x0050F8A0
-// ?ID@?$VectorClass@PAVBuildingTypeClass@@@@UAEHPBQAVBuildingTypeClass@@@Z
+// ?ID@?$VectorClass@PBVTeamTypeClass@@@@UAEHPBQBVTeamTypeClass@@@Z
 // TEMPLATE: GAMEMD 0x0050F8C0
-// ?Resize@?$DynamicVectorClass@PAVBuildingTypeClass@@@@UAE_NHPBQAVBuildingTypeClass@@@Z
+// ?Resize@?$DynamicVectorClass@PBVTeamTypeClass@@@@UAE_NHPBQBVTeamTypeClass@@@Z
 // TEMPLATE: GAMEMD 0x0050F970
-// ?ID@?$DynamicVectorClass@PAVBuildingTypeClass@@@@UAEHABQAVBuildingTypeClass@@@Z
+// ?ID@?$DynamicVectorClass@PBVTeamTypeClass@@@@UAEHABQBVTeamTypeClass@@@Z
 template class VectorClass<BuildingTypeClass *>;
 
 // TEMPLATE: GAMEMD 0x0050F9A0
