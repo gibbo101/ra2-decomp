@@ -5,6 +5,12 @@
 #include "abstract.h"
 #include "ftimer.h"
 #include "timer.h"
+#include "vector.h"
+
+EXTERN_C const CLSID CLSID_TemporalClass;
+
+class TemporalClass;
+extern DynamicVectorClass<TemporalClass *> Temporals;
 
 class SuperClass;
 class TechnoClass;
@@ -38,6 +44,8 @@ class TemporalClass : public AbstractClass
 		virtual void Compute_CRC(CRCEngine & crc) const override;
 		virtual void AI(void) override;
 
+		int GetWarpPerStep(int helpercount = 0);
+		void Detach(void);
 		void LetGo(void);
 		void JustLetGo(void);
 		void FUN_0071AB60(AbstractClass * ptr);

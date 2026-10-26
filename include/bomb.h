@@ -6,6 +6,7 @@
 #include "audioctl.h"
 
 class HouseClass;
+class NoInitClass;
 class ObjectClass;
 class TechnoClass;
 
@@ -26,6 +27,7 @@ class BombClass : public AbstractClass
 		bool Harmless;
 
 		BombClass(void);
+		BombClass(NoInitClass const & x);
 		virtual ~BombClass(void) override;
 
 		virtual HRESULT STDMETHODCALLTYPE GetClassID(CLSID * retval) override;

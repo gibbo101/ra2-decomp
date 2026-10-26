@@ -112,7 +112,7 @@ class EventClass
 			} General;
 			struct {
 				xTargetClass	Whom;
-				unsigned char	Mission;
+				char			Mission;
 				unsigned char	: 8;
 				xTargetClass	Target;
 				xTargetClass	Destination;

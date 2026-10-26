@@ -2034,3 +2034,6 @@ void DisplayClass::Set_To_Follow(ObjectClass * object)
 
 // SYNTHETIC: GAMEMD 0x004AEBF0
 // ??_GDisplayClass@@UAEPAXI@Z
+
+// FUNCTION: GAMEMD 0x004AEC60
+// Surface::Surface

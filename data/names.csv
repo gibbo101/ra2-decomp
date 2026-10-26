@@ -172,3 +172,14 @@ address,name,symbol,evidence
 0x00ABFC90,_ModelessDialogs,,initialiser 0x005D4C50 stores vtable 0x007EEC8C (DynamicVectorClass<HWND__ *>); 4-byte dialog loop in 0x005D4D50
 0x00ABFCB8,_Accelerators,,initialiser 0x005D4CD0 stores vtable 0x007EECCC (DynamicVectorClass<AcceleratorTracker>); 8-byte loop in 0x005D4D50
 0x00ABFD34,Message_Intercept_Handler,,TibSun msgloop.cpp; 0x005D4D50 calls through it with ECX = &msg
+0x00ABC5F8,KamikazeInstance,,YRpp Kamikaze::Instance; constructed by _$E74 0x0054E260, destroyed by _$E72 0x0054E2D0 with no $S guard, so a plain global
+0x00889FB8,Airstrikes,,YRpp AirstrikeClass::Array; AirstrikeClass's constructors and destructor add and remove themselves through it
+0x007E98E0,CLSID_AirstrikeClass,,read by AirstrikeClass::GetClassID
+0x0089C668,Bombs,,DynamicVectorClass<BombClass *> built by _$E150 0x00438550; separate from BombListClass's instance at 0x0087F5D8
+0x00B0B5F0,SlaveManagers,,YRpp SlaveManagerClass::Array; _$E80 0x006AF120 builds it with vtable 0x007F315C (DynamicVectorClass<SlaveManagerClass *>)
+0x00B0EC60,Temporals,,YRpp TemporalClass::Array; TemporalClass's constructors and destructor add and remove themselves through it
+0x007E98D0,CLSID_TemporalClass,,read by TemporalClass::GetClassID
+0x00AC4910,Parasites,,YRpp ParasiteClass::Array; initialiser _$E25 0x00629190, atexit stub _$E23 0x006291D0
+0x007E98A0,CLSID_ParasiteClass,,read by ParasiteClass::GetClassID
+0x00B0B880,SpawnManagers,,YRpp SpawnManagerClass::Array; initialiser _$E36 0x006B6C10 and atexit stub 0x006B6C50
+0x007E98B0,CLSID_BombClass,,read by BombClass::GetClassID

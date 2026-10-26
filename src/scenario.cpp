@@ -996,7 +996,7 @@ void Clear_Scenario(void)
 	TiberiumClass::Deinit_Tiberium_Spread_System();
 	TiberiumClass::Deinit_Tiberium_Growth_System();
 	BombListClass::Instance.FUN_00439110();
-	Kamikaze::Instance.Clear();
+	KamikazeInstance.Clear();
 	AircraftTracker.Clear();
 	FUN_006370B0();
 

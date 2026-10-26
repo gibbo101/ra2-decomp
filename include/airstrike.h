@@ -3,6 +3,7 @@
 #pragma once
 
 #include "abstract.h"
+#include "vector.h"
 #include "ftimer.h"
 #include "timer.h"
 
@@ -48,4 +49,6 @@ class AirstrikeClass : public AbstractClass
 		virtual void AI(void) override;
 		void ClearTarget(void);
 		void InvalidatePointer(AbstractClass * ptr);
+		void FUN_0041DC80(FootClass * foot);
+		bool FUN_0041D7E0(ObjectClass * target);
 };

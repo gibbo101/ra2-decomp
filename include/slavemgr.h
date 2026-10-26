@@ -7,6 +7,7 @@
 #include "timer.h"
 #include "vector.h"
 
+class Cell;
 class CellClass;
 class HouseClass;
 class InfantryClass;
@@ -18,7 +19,14 @@ class SlaveManagerClass : public AbstractClass
 		typedef AbstractClass BASECLASS;
 
 	public:
-		struct SlaveControl;
+		struct SlaveControl
+		{
+			InfantryClass * Slave;
+			int State;
+			CDTimerClass<FrameTimerClass> RespawnTimer;
+
+			SlaveControl(void) : RespawnTimer(0) {}
+		};
 
 		TechnoClass * Owner;
 		InfantryTypeClass * SlaveType;
@@ -45,6 +53,14 @@ class SlaveManagerClass : public AbstractClass
 		virtual void AI(void) override;
 
 		void SetOwner(TechnoClass * owner);
+		void CreateSlave(SlaveControl * node);
+		void FUN_006AF6C0(void);
+		void FUN_006AFD60(void);
+		Cell FUN_006B0300(Cell cell);
+		void FUN_006B0490(void);
+		void FUN_006B04C0(void);
+		bool FUN_006B0260(void);
+		Cell FUN_006B02C0(void);
 		bool FUN_006B0880(TechnoClass * slave, CellClass * cell);
 		void LostSlave(InfantryClass * slave);
 		void Killed(TechnoClass * killer, HouseClass * owner = NULL);
@@ -55,3 +71,5 @@ class SlaveManagerClass : public AbstractClass
 		void FUN_006B0DB0(void);
 		void Deploy2(void);
 };
+
+extern DynamicVectorClass<SlaveManagerClass *> SlaveManagers;

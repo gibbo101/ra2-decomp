@@ -3,9 +3,12 @@
 #pragma once
 
 #include "abstract.h"
+#include "noinit.h"
+#include "point.h"
 
 class TechnoClass;
 class WeaponTypeClass;
+template<class T> class DynamicVectorClass;
 
 class DiskLaserClass : public AbstractClass
 {
@@ -15,12 +18,13 @@ class DiskLaserClass : public AbstractClass
 		TechnoClass * Owner;
 		TechnoClass * Target;
 		WeaponTypeClass * Weapon;
-		DWORD unknown_30;
-		DWORD unknown_34;
-		DWORD unknown_38;
+		int unknown_30;
+		int unknown_34;
+		int unknown_38;
 		int Damage;
 
 		DiskLaserClass(void);
+		DiskLaserClass(NoInitClass const & x);
 		virtual ~DiskLaserClass(void) override;
 
 		virtual HRESULT STDMETHODCALLTYPE GetClassID(CLSID * retval) override;
@@ -32,5 +36,11 @@ class DiskLaserClass : public AbstractClass
 		virtual void Compute_CRC(CRCEngine & crc) const override;
 		virtual void AI(void) override;
 
+		void Mark_For_Removal(void);
+		void PointerGotInvalid(AbstractClass * invalid);
 		void Fire(TechnoClass * owner, TechnoClass * target, WeaponTypeClass * weapon, int damage);
+
+		static Point2D DrawCoords[16];
 };
+
+extern DynamicVectorClass<DiskLaserClass *> DiskLasers;

@@ -7,9 +7,27 @@
 #include "timer.h"
 #include "vector.h"
 
+class AircraftClass;
 class AircraftTypeClass;
 class TechnoClass;
-struct SpawnControl;
+
+enum SpawnNodeStatus {
+	SPAWN_IDLE = 0,
+	SPAWN_TAKEOFF = 1,
+	SPAWN_PREPARING = 2,
+	SPAWN_ATTACKING = 3,
+	SPAWN_RETURNING = 4,
+	SPAWN_RELOADING = 6,
+	SPAWN_DEAD = 7
+};
+
+struct SpawnControl
+{
+	AircraftClass * Unit;
+	int Status;
+	CDTimerClass<FrameTimerClass> SpawnTimer;
+	BOOL IsSpawnMissile;
+};
 
 class SpawnManagerClass : public AbstractClass
 {
@@ -43,6 +61,7 @@ class SpawnManagerClass : public AbstractClass
 		virtual void AI(void) override;
 
 		void KillNodes(void);
+		bool UpdateTarget(void);
 		void UnlinkPointer(AbstractClass * ptr);
 		void SetTarget(AbstractClass * target);
 		void ResetTarget(void);
@@ -50,3 +69,5 @@ class SpawnManagerClass : public AbstractClass
 		int CountAliveSpawns(void);
 		int CountDockedSpawns(void);
 };
+
+extern DynamicVectorClass<SpawnManagerClass *> SpawnManagers;

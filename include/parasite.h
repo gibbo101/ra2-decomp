@@ -3,11 +3,17 @@
 #pragma once
 
 #include "abstract.h"
+#include "vector.h"
 #include "ftimer.h"
 #include "timer.h"
 
 class AnimClass;
 class FootClass;
+
+class ParasiteClass;
+
+EXTERN_C const CLSID CLSID_ParasiteClass;
+extern DynamicVectorClass<ParasiteClass *> Parasites;
 
 class ParasiteClass : public AbstractClass
 {
@@ -25,6 +31,7 @@ class ParasiteClass : public AbstractClass
 		bool GrappleAnimGotInvalid;
 
 		ParasiteClass(void);
+		ParasiteClass(NoInitClass const & x);
 		ParasiteClass(FootClass * owner);
 		virtual ~ParasiteClass(void) override;
 
@@ -38,6 +45,8 @@ class ParasiteClass : public AbstractClass
 		virtual void Compute_CRC(CRCEngine & crc) const override;
 		virtual void AI(void) override;
 
+		void FUN_00629530(void);
+		void FUN_00629710(void);
 		void ExitUnit(void);
 		bool CanInfect(FootClass * victim);
 };

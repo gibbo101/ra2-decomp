@@ -286,6 +286,10 @@ Each entry: what the diff showed, then the source change that fixed it.
   both (HouseClass::Get_First_Ownable takes unit and building type vectors at 0x00505310).
 - A class's RTTI also names its real base: LoadProgressMgr derives from INoticeSink, which
   retired a stand-in callback class that only matched through a cast.
+- A call kept out of line only by a declared, never-defined overload (a `User const *`
+  copy of wonline's FUN_0077D4C0) is a stand-in: bank the function.
+- `return (a && b);` in a bool function gives `mov eax,1` / `xor eax,eax`; `if` with
+  `return 1;` and `return 0;` gives `mov al,1` (MPUnholyAllianceClass::vt_entry_14).
 - YRpp's enum values can be wrong for 1.001 (ACTION_REPAIR is 10, EATEN 11): prove an enum
   value from a switch or compare in the exe before trusting it.
 - An early `return` that the original tail-merges with a real branch: assign the result in
@@ -301,9 +305,13 @@ Each entry: what the diff showed, then the source change that fixed it.
 - A function start missing from data/functions.csv is fixed in tools/functions.py, then the
   CSV regenerated; never edit the CSV by hand.
 - A run of about 13 small initialisers per file (CELL_LEPTON_DIAG through COORD_NONE)
-  is `include/geometry.h`'s per-file constants: include it right after `always.h`
-  (before any `extern` of the same names) and mark them; never write `Init_` stand-ins.
+  is `include/geometry.h`'s per-file constants: include it where the exe's `_$E` numbers
+  put it (usually right after `always.h`; after `wdtnet.h` in wdtconflict and wdtstate),
+  before any `extern` of the same names, and mark them; never write `Init_` or
+  `ShortPair`/`IntTriple` stand-ins.
 - TibSun's `dynamic_cast<ObjectClass *>` is `AbstractFlags & 2` in YR.
+- An atexit stub with no `$S` guard byte destroys a plain global, not a static member
+  (`Kamikaze KamikazeInstance;`, not `Kamikaze::Instance`).
 - Consecutive static members with destructors share one `$S` guard byte; a function
   definition between two of them starts a new byte. Order definitions to match the
   original's guard bits (0x006A4C80).

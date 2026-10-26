@@ -1,0 +1,209 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright 2026 ra2-decomp contributors
+
+#define INCLUDE_COM
+#include "always.h"
+#include "spawnmgr.h"
+#include "aircraft.h"
+#include "airctype.h"
+#include "globals.h"
+#include "house.h"
+#include "kamikaze.h"
+#include "_rules.h"
+#include "rules.h"
+#include "swizzle.h"
+#include "techno.h"
+#include "techtype.h"
+
+namespace Game { extern bool IsActive; }
+namespace Unsorted { extern int CurrentFrame; }
+
+// SYNTHETIC: GAMEMD 0x006B6C10 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x006B6C50 SYMBOL
+// _$E33
+DynamicVectorClass<SpawnManagerClass *> SpawnManagers;
+
+// FUNCTION: GAMEMD 0x006B6C90
+SpawnManagerClass::SpawnManagerClass(TechnoClass * owner, AircraftTypeClass * type, int number, int regen, int reload) :
+	SpawnedNodes(),
+	UpdateTimer(),
+	SpawnTimer()
+{
+	Owner = owner;
+	SpawnType = type;
+	SpawnCount = number;
+	RegenRate = regen;
+	ReloadRate = reload;
+	for (int index = 0; index < SpawnCount; index++) {
+		SpawnControl * control = new SpawnControl;
+		if (!control) {
+			break;
+		}
+		control->Unit = (AircraftClass *)SpawnType->Create_One_Of(Owner->Owner_HouseClass());
+		if (control->Unit) {
+			if (SpawnType == Rule->V3Rocket.Type || SpawnType == Rule->DMisl.Type || SpawnType == Rule->CMisl.Type) {
+				control->IsSpawnMissile = 1;
+			} else {
+				control->IsSpawnMissile = 0;
+			}
+			control->Unit->Limbo();
+			control->Unit->SpawnOwner = Owner;
+			control->Status = SPAWN_IDLE;
+			control->SpawnTimer = 0;
+			SpawnedNodes.Add(control);
+		}
+	}
+	UpdateTimer = 20;
+	Target = 0;
+	NewTarget = 0;
+	Status = 0;
+	SpawnTimer = 0;
+	SpawnManagers.Add(this);
+}
+
+// FUNCTION: GAMEMD 0x006B6EA0
+SpawnManagerClass::SpawnManagerClass(void) :
+	SpawnedNodes(),
+	UpdateTimer(),
+	SpawnTimer()
+{
+	Owner = 0;
+	SpawnType = 0;
+	SpawnCount = 0;
+	UpdateTimer = 0;
+	Target = 0;
+	NewTarget = 0;
+	Status = 0;
+	SpawnTimer = 0;
+	SpawnManagers.Add(this);
+}
+
+// FUNCTION: GAMEMD 0x006B6FA0
+SpawnManagerClass::SpawnManagerClass(NoInitClass const & x) :
+	AbstractClass(x),
+	SpawnedNodes(),
+	UpdateTimer(),
+	SpawnTimer()
+{
+}
+
+// FUNCTION: GAMEMD 0x006B7010
+SpawnManagerClass::~SpawnManagerClass(void)
+{
+	if (Game::IsActive) {
+		KillNodes();
+	}
+	for (int index = SpawnedNodes.Count() - 1; index >= 0; index--) {
+		delete SpawnedNodes[index];
+	}
+	SpawnedNodes.Delete_All();
+	SpawnManagers.Delete(this);
+}
+
+// FUNCTION: GAMEMD 0x006B7100
+void SpawnManagerClass::KillNodes(void)
+{
+	int delay = (Owner->Strength > 0 && Owner->IsActive) ? 0 : RegenRate;
+	for (int index = SpawnedNodes.Count() - 1; index >= 0; index--) {
+		if (SpawnedNodes[index]->Status == SPAWN_DEAD) {
+			continue;
+		}
+		if (SpawnedNodes[index]->Status == SPAWN_IDLE || SpawnedNodes[index]->Status == SPAWN_RELOADING) {
+			SpawnedNodes[index]->Status = SPAWN_DEAD;
+			SpawnedNodes[index]->Unit->Delete_Me();
+			SpawnedNodes[index]->Unit = 0;
+			SpawnedNodes[index]->SpawnTimer = delay;
+		} else if (SpawnedNodes[index]->Status == SPAWN_TAKEOFF) {
+			KamikazeInstance.Remove(SpawnedNodes[index]->Unit);
+			SpawnedNodes[index]->Status = SPAWN_DEAD;
+			SpawnedNodes[index]->Unit->Delete_Me();
+			SpawnedNodes[index]->Unit = 0;
+			SpawnedNodes[index]->SpawnTimer = delay;
+		} else {
+			SpawnedNodes[index]->Status = SPAWN_DEAD;
+			KamikazeInstance.Add(SpawnedNodes[index]->Unit, Target);
+			SpawnedNodes[index]->Unit = 0;
+			SpawnedNodes[index]->SpawnTimer = delay;
+		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x006B7B90
+void SpawnManagerClass::SetTarget(AbstractClass * target)
+{
+	if (target != Target) {
+		NewTarget = target;
+	}
+}
+
+// FUNCTION: GAMEMD 0x006B7BB0
+void SpawnManagerClass::ResetTarget(void)
+{
+	for (int index = 0; index < SpawnedNodes.Count(); index++) {
+		SpawnControl * node = SpawnedNodes[index];
+		if (node->Status == SPAWN_PREPARING && node->Unit->Class->MissileSpawn) {
+			KamikazeInstance.Add(node->Unit, Target);
+			KamikazeInstance.UpdateTimer = 2;
+			UnlinkPointer(SpawnedNodes[index]->Unit);
+		}
+	}
+	Status = 0;
+	NewTarget = 0;
+	Target = 0;
+}
+
+// FUNCTION: GAMEMD 0x006B7C40
+bool SpawnManagerClass::UpdateTarget(void)
+{
+	if (NewTarget) {
+		Target = NewTarget;
+		NewTarget = 0;
+		return true;
+	}
+	return false;
+}
+
+// FUNCTION: GAMEMD 0x006B7C60
+void SpawnManagerClass::UnlinkPointer(AbstractClass * ptr)
+{
+	if (ptr == Target) {
+		Target = 0;
+		if (!NewTarget) {
+			ResetTarget();
+		}
+		return;
+	}
+	if (ptr == NewTarget) {
+		NewTarget = 0;
+		return;
+	}
+	for (int index = SpawnedNodes.Count() - 1; index >= 0; index--) {
+		if (ptr == SpawnedNodes[index]->Unit) {
+			SpawnControl * node = SpawnedNodes[index];
+			if (node->Unit->Strength > 0 && !node->Unit->IsKamikaze && node->IsSpawnMissile != 1) {
+				return;
+			}
+			node->Unit = 0;
+			SpawnedNodes[index]->Status = SPAWN_DEAD;
+			SpawnedNodes[index]->SpawnTimer = RegenRate;
+			return;
+		}
+	}
+	if (ptr == Owner) {
+		KillNodes();
+		ResetTarget();
+	}
+}
+
+// FUNCTION: GAMEMD 0x006B7D30
+int SpawnManagerClass::CountAliveSpawns(void)
+{
+	int count = 0;
+	for (int index = 0; index < SpawnedNodes.Count(); index++) {
+		if (SpawnedNodes[index]->Status != SPAWN_DEAD) {
+			count++;
+		}
+	}
+	return count;
+}

@@ -17,6 +17,7 @@
 #include "house.h"
 #include "tactical.h"
 #include "techno.h"
+#include "foot.h"
 #include "event.h"
 #include "target.h"
 #include "planning.h"
@@ -2294,4 +2295,200 @@ void __fastcall FUN_0063AD30(PlanningNodeClass * node)
 PlanningNodeClass * __fastcall FUN_0063AD40(void)
 {
 	return DAT_00AC4C38;
+}
+
+// FUNCTION: GAMEMD 0x0063B050
+AbstractClass * __fastcall FUN_0063B050(EventClass * event)
+{
+	AbstractClass * result = 0;
+	if (event->Data.MegaMission.Target.Is_Valid()) {
+		result = event->Data.MegaMission.Target.As_Abstract();
+	} else if (event->Data.MegaMission.Follow.Is_Valid()) {
+		result = event->Data.MegaMission.Follow.As_Abstract();
+	} else if (event->Data.MegaMission.Destination.Is_Valid()) {
+		result = event->Data.MegaMission.Destination.As_Abstract();
+	}
+	return result;
+}
+
+// FUNCTION: GAMEMD 0x0063B080
+void __fastcall FUN_0063B080(PlanningNodeClass * node)
+{
+	DAT_00AC4BF0 = node;
+}
+
+// FUNCTION: GAMEMD 0x0063B090
+void __fastcall FUN_0063B090(void)
+{
+	DAT_00AC4BF0 = 0;
+}
+
+extern char * DAT_00AC4C1C;
+extern int DAT_00AC4C28;
+extern bool DAT_00AC4C25;
+extern int DAT_00AC4C20;
+
+void __fastcall FUN_0063B550(TechnoClass * techno);
+
+// FUNCTION: GAMEMD 0x0063B0A0
+void __fastcall FUN_0063B0A0(void)
+{
+	DAT_00AC4C28 = 0;
+	if (DAT_00AC4C1C && DAT_00AC4C25) {
+		delete DAT_00AC4C1C;
+		DAT_00AC4C1C = 0;
+	}
+	DAT_00AC4C25 = false;
+	DAT_00AC4C20 = 0;
+	int nodes = PlanningNodeClass::Unknown1.Count();
+	for (int i = 0; i < nodes; i++) {
+		PlanningNodeClass * node = PlanningNodeClass::Unknown1[i];
+		HouseClass * house = node->PlanningMembers[0]->Owner->House;
+		if (house->Is_Ally(PlayerPtr)) {
+			node->FUN_0063C690();
+		}
+	}
+	int count = Technos.Count();
+	for (int j = 0; j < count; j++) {
+		TechnoClass * techno = Technos[j];
+		HouseClass * house = techno->House;
+		if (house->Is_Ally(PlayerPtr)) {
+			FUN_0063B550(techno);
+		}
+	}
+}
+
+void __fastcall FUN_0063BE60(TechnoClass * techno);
+
+// FUNCTION: GAMEMD 0x0063B150
+void __fastcall FUN_0063B150(void)
+{
+	int nodes = PlanningNodeClass::Unknown1.Count();
+	for (int i = 0; i < nodes; i++) {
+		PlanningNodeClass * node = PlanningNodeClass::Unknown1[i];
+		HouseClass * house = node->PlanningMembers[0]->Owner->House;
+		if (house->Is_Ally(PlayerPtr)) {
+			node->FUN_0063CAE0();
+		}
+	}
+	for (int j = 0; j < nodes; j++) {
+		PlanningNodeClass * node = PlanningNodeClass::Unknown1[j];
+		HouseClass * house = node->PlanningMembers[0]->Owner->House;
+		if (house->Is_Ally(PlayerPtr)) {
+			int color = node->Node_Color();
+			Rect clip = FUN_0072AD20();
+			Rect rect = Around(8, Pixel_Of(Node_Lead_7(node)));
+			Shrink_Rect(rect);
+			DSurface::Composite->Fill_Rect(clip, rect, color);
+		}
+	}
+	int count = Technos.Count();
+	for (int k = 0; k < count; k++) {
+		TechnoClass * techno = Technos[k];
+		HouseClass * house = techno->House;
+		if (house->Is_Ally(PlayerPtr)) {
+			FUN_0063BE60(techno);
+		}
+	}
+}
+
+static inline int Pixel_Color(RGBClass const & c)
+{
+	return (c.Get_Red() >> Drawing::RedShiftRight << Drawing::RedShiftLeft)
+		| (c.Get_Green() >> Drawing::GreenShiftRight << Drawing::GreenShiftLeft)
+		| (c.Get_Blue() >> Drawing::BlueShiftRight << Drawing::BlueShiftLeft);
+}
+
+static inline Point2D Node_Pixel_0(PlanningNodeClass * n) { return n->Lead_Pixel(); }
+static inline Point2D Node_Pixel_1(PlanningNodeClass * n) { return Node_Pixel_0(n); }
+static inline Point2D Node_Pixel_2(PlanningNodeClass * n) { return Node_Pixel_1(n); }
+static inline Point2D Node_Pixel_3(PlanningNodeClass * n) { return Node_Pixel_2(n); }
+static inline Point2D Node_Pixel_4(PlanningNodeClass * n) { return Node_Pixel_3(n); }
+static inline Point2D Node_Pixel_5(PlanningNodeClass * n) { return Node_Pixel_4(n); }
+static inline Point2D Node_Pixel_6(PlanningNodeClass * n) { return Node_Pixel_5(n); }
+static inline Point2D Node_Pixel_7(PlanningNodeClass * n) { return Node_Pixel_6(n); }
+static inline Rect Node_Rect_0(PlanningNodeClass * n) { return n->Lead_Rect(); }
+static inline Rect Node_Rect_1(PlanningNodeClass * n) { return Node_Rect_0(n); }
+static inline Rect Node_Rect_2(PlanningNodeClass * n) { return Node_Rect_1(n); }
+static inline Rect Node_Rect_3(PlanningNodeClass * n) { return Node_Rect_2(n); }
+static inline Rect Node_Rect_4(PlanningNodeClass * n) { return Node_Rect_3(n); }
+static inline Rect Node_Rect_5(PlanningNodeClass * n) { return Node_Rect_4(n); }
+static inline Rect Node_Rect_6(PlanningNodeClass * n) { return Node_Rect_5(n); }
+static inline Rect Node_Rect_7(PlanningNodeClass * n) { return Node_Rect_6(n); }
+static inline void Widen_0(Rect * r) { FUN_006357D0(r, 4); }
+static inline void Widen_1(Rect * r) { Widen_0(r); }
+static inline void Widen_2(Rect * r) { Widen_1(r); }
+static inline void Widen_3(Rect * r) { Widen_2(r); }
+static inline void Widen_4(Rect * r) { Widen_3(r); }
+static inline void Widen_5(Rect * r) { Widen_4(r); }
+static inline void Widen_6(Rect * r) { Widen_5(r); }
+static inline Rect Grown(Rect r) { Widen_6(&r); return r; }
+
+// FUNCTION: GAMEMD 0x0063B2F0
+void __fastcall FUN_0063B2F0(void)
+{
+	int color = Pixel_Color(DAT_00A80220);
+	PlanningNodeClass * hover = DAT_00AC4CCC;
+	if (hover) {
+		Rect clip = FUN_0072AD20();
+		Rect rect = Inflated(Around(8, Node_Pixel_7(hover)), 4);
+		for (int i = 0; i < 3; i++) {
+			DSurface::Composite->Draw_Rect(clip, rect, color);
+			Shrink_Rect(rect);
+		}
+	}
+	PlanningNodeClass * sel = DAT_00AC4BF0;
+	if (sel) {
+		Rect clip = FUN_0072AD20();
+		Rect rect = Grown(Grown(Node_Rect_7(sel)));
+		for (int i = 0; i < 3; i++) {
+			DSurface::Composite->Draw_Rect(clip, rect, color);
+			Shrink_Rect(rect);
+		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x0063BE10
+bool __fastcall FUN_0063BE10(TechnoClass * techno)
+{
+	if (techno->Get_Mission() == MISSION_GUARD_AREA) {
+		if (techno->Is_Foot()) {
+			FootClass * foot = (FootClass *)techno;
+			if (foot->NavCom != 0 || foot->TarCom != 0) {
+				return false;
+			}
+		}
+		return true;
+	}
+	return false;
+}
+// FUNCTION: GAMEMD 0x0063CA80
+Coord __fastcall FUN_0063CA80(EventClass const & event, TechnoClass * owner)
+{
+	Coord coord = FUN_00633BC0(event);
+	if (coord == Coord(-1, -1, -1) && owner) {
+		coord = owner->As_Coord();
+	}
+	return coord;
+}
+
+// FUNCTION: GAMEMD 0x0063CE40
+void __fastcall FUN_0063CE40(PlanningNodeClass * node)
+{
+	int color = node->Node_Color();
+	Rect clip = FUN_0072AD20();
+	Rect rect = FUN_00634510(8, node->Lead_Pixel());
+	Shrink_Rect(rect);
+	DSurface::Composite->Fill_Rect(clip, rect, color);
+}
+
+// FUNCTION: GAMEMD 0x0063CF10
+int __fastcall FUN_0063CF10(TechnoClass * techno)
+{
+	int slot = FUN_006339B0(techno);
+	RGBClass mixed = Houses[slot]->RemapColorRGB;
+	mixed.Adjust(0x50, DAT_00A83CD9);
+	return (mixed.Get_Green() >> Drawing::GreenShiftRight << Drawing::GreenShiftLeft)
+		| (mixed.Get_Red() >> Drawing::RedShiftRight << Drawing::RedShiftLeft)
+		| (mixed.Get_Blue() >> Drawing::BlueShiftRight << Drawing::BlueShiftLeft);
 }

@@ -27,20 +27,31 @@ class BitFont
 			int Lines;
 			int Count;
 			int SymbolDataSize;
-			short * SymbolTable;
+			unsigned short * SymbolTable;
 			char * Bitmaps;
 			int ValidSymbolCount;
+
+			void Destroy(void);
 		};
 
 		BitFont(char const * filename);
 		virtual ~BitFont(void);
 
+		bool Load(char const * filename);
+		void FUN_00434700(void);
 		bool GetTextDimension(wchar_t const * text, int * width, int * height, int maxwidth);
 		int FUN_00433ED0(wchar_t const * text, int maxwidth);
 		int FUN_00433F50(wchar_t const * text, int maxwidth, int unknown1, int unknown2);
 		int FUN_004349B0(wchar_t ch);
 		unsigned short SetColor(unsigned short color);
+		unsigned short SetShadowColor(unsigned short color);
 		bool SetClipMode(bool clipped);
+		bool SetFlag40(bool flag);
+		void Lock(Surface * surface);
+		void UnLock(Surface * surface);
+		void FUN_00434110(int x);
+		int FUN_00434500(wchar_t const * text, int x, int y, int w, int h);
+		int Blit(unsigned short ch, int x, int y, int unknown);
 		void SetBounds(LTRBStruct * bounds);
 
 		static InternalData * LoadInternalData(char const * filename);
@@ -52,7 +63,7 @@ class BitFont
 		short * pGraphBuffer;
 		int PitchDiv2;
 		int Unknown_14;
-		wchar_t * field_18;
+		int field_18;
 		int field_1C;
 		int field_20;
 		unsigned short Color;
@@ -73,7 +84,11 @@ class BitText
 		virtual ~BitText(void);
 
 		int Print(BitFont * font, Surface * surface, wchar_t const * text, int x, int y, int w, int h);
-		void DrawText(BitFont * font, Surface * surface, wchar_t const * text, int x, int y, int w, int h, int a8, int a9, int a10);
+		bool DrawText(BitFont * font, Surface * surface, wchar_t const * text, int x, int y, int w, int h, int a8, int a9, int a10);
+		int PrintChar(BitFont * font, Surface * surface, unsigned short ch, int x, int y);
+		int PrintBold(BitFont * font, Surface * surface, wchar_t const * text, int x, int y, int w);
+		bool DrawShadow(BitFont * font, Surface * surface, wchar_t const * text, int x, int y, int w, int h, int a8, int a9, int a10);
+		bool DrawBold(BitFont * font, Surface * surface, wchar_t const * text, int x, int y, int w, int h, int a8, int a9, int a10);
 
 		static BitText * Instance;
 };

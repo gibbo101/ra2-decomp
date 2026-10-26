@@ -1038,7 +1038,7 @@ extern int DAT_00B76B1C;
 extern int DAT_00B76B14;
 struct ChannelUserInfo {
 	int House;
-	char Pad[4];
+	int Unknown;
 	int Accepted;
 	char Rest[0x88];
 };
@@ -7453,6 +7453,118 @@ long __stdcall FUN_007A4EC0(void * sink, long result, unsigned long id, SquadEnt
 	if (DAT_00B77DDC == 0) {
 		FUN_00783C80(0, false);
 	}
+	return 0;
+}
+
+// FUNCTION: GAMEMD 0x007A5220
+long __stdcall FUN_007A5220(void * sink, long result, User * user)
+{
+	if (result >= 0) {
+		FUN_00785740(user);
+	}
+	return 0;
+}
+
+// FUNCTION: GAMEMD 0x007A5240
+long __stdcall FUN_007A5240(void * sink, long result, void * unused)
+{
+	wchar_t text[512];
+	if (!DAT_00B77DC1) {
+		swprintf(text, L"%s", StringTable::LoadString("TXT_SERVER_ERROR", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x1617));
+		FUN_005E2700(-1, text);
+	}
+	return 0;
+}
+
+
+extern char DAT_0083F328[];
+extern wchar_t DAT_00830174[];
+
+// FUNCTION: GAMEMD 0x007A55F0
+long __stdcall FUN_007A55F0(void * sink, long result, char const * motd)
+{
+	if (result < 0) {
+		return 0;
+	}
+	char * buffer = strdup(motd);
+	char * line = strtok(buffer, DAT_0083F328);
+	while (line) {
+		wchar_t wide[1024];
+		FUN_00735060(wide, line, -1);
+		FUN_005E2700(DAT_007EEF28, wide);
+		line = strtok(NULL, DAT_0083F328);
+	}
+	free(buffer);
+	FUN_005E2700(DAT_007EEF28, DAT_00830174);
+	return 0;
+}
+
+wchar_t * __fastcall FUN_00735120(char const * narrow);
+extern char DAT_0084ACA0[];
+extern int DAT_00B76E54;
+
+static inline void Close_Wait_Window(unsigned int event)
+{
+	HWND dialog = FUN_00775940(0xC4);
+	if (dialog) {
+		DAT_00B77DC8 &= ~event;
+		if (DAT_00B77DC8 == 0) {
+			FUN_007757E0(dialog, 0);
+		}
+	}
+	HWND top = FUN_00775B10();
+	HWND input = GetDlgItem(top, 0x540);
+	if (input) {
+		SetFocus(input);
+	}
+}
+
+// FUNCTION: GAMEMD 0x007A5690
+long __stdcall FUN_007A5690(void * sink, long result, WolChannel * channel)
+{
+	if (result < 0) {
+		FUN_005E2700(DAT_007EEF28, StringTable::LoadString("TXT_CHANCREATE_FAILED", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x16C1));
+		DAT_00B77E4C = 0;
+		DAT_00B76B10.Name[0] = 0;
+		Close_Wait_Window(4);
+		return 0;
+	}
+	if (channel->Type == 0) {
+		FUN_005E2700(DAT_007EEF28, StringTable::LoadString("TXT_CREATED_CHAN", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x16CB), FUN_00735120(channel->Name));
+		memcpy(&DAT_00B76B10, channel, 0x10C);
+	} else {
+		memset(DAT_00B76E40, 0, 0x940);
+		strcpy(DAT_00B76E40, DAT_00B73E40.get());
+		DAT_00B76E58[0].House = Session.House;
+		DAT_00B76E58[0].Unknown = 0;
+		DAT_00B76E54 = Game::PlayerColor;
+		DAT_00B76E58[0].Accepted = 1;
+		memcpy(&DAT_00B76B10, channel, 0x10C);
+	}
+	DAT_00B77E4C = 1;
+	DAT_00B77DD0++;
+	FUN_004068E0(DAT_0084ACA0);
+	if (DAT_00AC116C && channel->Type != 0) {
+		char info[80];
+		memset(info, 0, sizeof(info));
+		FUN_0077E7A0(info);
+		info[40] = 0;
+		DAT_00AC116C->V42(info);
+	}
+	Close_Wait_Window(4);
+	return 0;
+}
+
+extern char DAT_0084AD84[];
+
+// FUNCTION: GAMEMD 0x007A70E0
+long __stdcall FUN_007A70E0(void * sink, long result, void * unused, User * user)
+{
+	if (result < 0) {
+		FUN_004068E0(DAT_0084AD84);
+		return 0;
+	}
+	FUN_00785740(user);
 	return 0;
 }
 

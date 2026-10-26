@@ -113,6 +113,8 @@ class PlanningNodeClass
 		void Frame_Lead_Box(int color);
 		int Node_Color(void);
 		void Reset_Colors(bool all);
+		void FUN_0063C690(void);
+		void FUN_0063CAE0(void);
 		static void FUN_00637640(PlanningNodeClass * node);
 
 		DynamicVectorClass<PlanningMemberClass *> PlanningMembers;

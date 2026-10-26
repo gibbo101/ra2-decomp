@@ -9,7 +9,13 @@
 
 class HouseClass;
 class TechnoClass;
-struct ControlNode;
+
+struct ControlNode
+{
+		TechnoClass * Unit;
+		HouseClass * OriginalOwner;
+		CDTimerClass<FrameTimerClass> LinkDrawTimer;
+};
 
 class CaptureManagerClass : public AbstractClass
 {
@@ -29,6 +35,9 @@ class CaptureManagerClass : public AbstractClass
 		CaptureManagerClass(NoInitClass const & x);
 		virtual ~CaptureManagerClass(void) override;
 
+		bool CaptureUnit(AbstractClass * target);
+		void HandleOverload(void);
+		void DecideUnitFate(TechnoClass * techno);
 		void FreeAll(void);
 		bool FreeUnit(TechnoClass * techno);
 		bool FUN_00472330(TechnoClass * techno);
@@ -50,3 +59,5 @@ class CaptureManagerClass : public AbstractClass
 		virtual int Fetch_Object_Size(void) const override;
 		virtual void Compute_CRC(CRCEngine & crc) const override;
 };
+
+extern DynamicVectorClass<CaptureManagerClass *> CaptureManagerArray;

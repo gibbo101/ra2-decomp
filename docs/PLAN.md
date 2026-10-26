@@ -1,6 +1,6 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 26 October 2026: 14,108 of 19,366 game functions match (73%; 53% of game code
+Status, 26 October 2026: 14,507 of 19,366 game functions match (75%; 53% of game code
 by size), landed in batches module by module. The rounds below record each one.
 
 ## The goal
@@ -1109,6 +1109,19 @@ Session.Players. Recording then exposed three UI-command functions building char
 ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; their RTTI
 fixed them. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
+
+### Batches 105, 106 and 107 (26 October 2026)
+
+**396 of 424 functions** (121, 141, 134), plus functions the merges landed beside them. With
+few untried functions left in modules that already had source files, the round opened new
+files for YR's own classes: the capture, slave and spawn managers, temporal, parasite,
+airstrike, bomb, kamikaze, rocket, the electric bolt, the disk laser, the WDT screens and two
+multiplayer modes, plus globals.cpp's template vectors, each labelled from its vtable's RTTI.
+The 12 unvq functions are hand-written assembly and wait on an assembler. EventClass's
+MegaMission.Mission became a signed char, read from the exe's movsx. At landing, 15 files
+that rebuilt geometry.h's constants with local structs were converted to the header, and
+four wonline chat callbacks that matched only through a declared, never-defined const
+overload were banked. Merge gate: 14,507 of 14,507 (1,993.5 KB), about 75% of game functions.
 
 ### Batches 102, 103 and 104 (21 to 26 October 2026)
 

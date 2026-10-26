@@ -174,9 +174,9 @@ struct SHPStruct
 // SYNTHETIC: GAMEMD 0x006BB240 SYMBOL
 // _$E38
 // SYNTHETIC: GAMEMD 0x006BB260 SYMBOL
-// _$E329
+// _$E330
 // SYNTHETIC: GAMEMD 0x006BB2A0 SYMBOL
-// _$E327
+// _$E328
 
 namespace DirectDrawWrap { extern bool DoSmth; void DisposeOfStuff(void); }
 void FUN_004C19B0(void);
@@ -1595,3 +1595,31 @@ template class TClassFactory<InfantryClass>;
 // TEMPLATE: GAMEMD 0x006C3A90
 // ?LockServer@?$TClassFactory@VAnimClass@@@@UAGJH@Z
 template class TClassFactory<AnimClass>;
+
+// TEMPLATE: GAMEMD 0x006C3AC0
+// ??0?$TClassFactory@VAnimTypeClass@@@@QAE@XZ
+// TEMPLATE: GAMEMD 0x006C3AD0
+// ?QueryInterface@?$TClassFactory@VAnimTypeClass@@@@UAGJABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C3B40
+// ?AddRef@?$TClassFactory@VAnimTypeClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C3B60
+// ?Release@?$TClassFactory@VAnimTypeClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C3B90
+// ?CreateInstance@?$TClassFactory@VAnimTypeClass@@@@UAGJPAUIUnknown@@ABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C3C10
+// ?LockServer@?$TClassFactory@VAnimTypeClass@@@@UAGJH@Z
+template class TClassFactory<AnimTypeClass>;
+
+// TEMPLATE: GAMEMD 0x006C3C40
+// ??0?$TClassFactory@VHouseTypeClass@@@@QAE@XZ
+// TEMPLATE: GAMEMD 0x006C3C50
+// ?QueryInterface@?$TClassFactory@VHouseTypeClass@@@@UAGJABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C3CC0
+// ?AddRef@?$TClassFactory@VHouseTypeClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C3CE0
+// ?Release@?$TClassFactory@VHouseTypeClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C3D10
+// ?CreateInstance@?$TClassFactory@VHouseTypeClass@@@@UAGJPAUIUnknown@@ABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C3D90
+// ?LockServer@?$TClassFactory@VHouseTypeClass@@@@UAGJH@Z
+template class TClassFactory<HouseTypeClass>;
