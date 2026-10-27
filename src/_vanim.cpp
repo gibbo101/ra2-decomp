@@ -35,3 +35,38 @@
 // _$E35
 // SYNTHETIC: GAMEMD 0x0040EDE0 SYMBOL
 // _$E38
+
+// SYNTHETIC: GAMEMD 0x0040EE00 SYMBOL
+// _$E41
+
+const Rect SecondRectNone(0, 0, 0, 0);
+
+// SYNTHETIC: GAMEMD 0x0040EE20 SYMBOL
+// _$E44
+
+DynamicVectorClass<VoxelAnimClass *> VoxelAnims;
+
+// SYNTHETIC: GAMEMD 0x0040EE40 SYMBOL
+// _$E49
+// SYNTHETIC: GAMEMD 0x0040EE80 SYMBOL
+// _$E47
+
+// TEMPLATE: GAMEMD 0x0040EEC0
+// ?Clear@?$DynamicVectorClass@PAVVoxelAnimClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0040EEF0
+// ?ID@?$DynamicVectorClass@PAVVoxelAnimClass@@@@UAEHPBQAVVoxelAnimClass@@@Z
+template class DynamicVectorClass<VoxelAnimClass *>;
+
+// TEMPLATE: GAMEMD 0x0040EF10
+// ?GetItem@?$VectorClass@PAVVoxelAnimClass@@@@UBEPAVVoxelAnimClass@@H@Z
+// TEMPLATE: GAMEMD 0x0040EF20
+// ??8?$VectorClass@PAVVoxelAnimClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x0040EF60
+// ?Resize@?$VectorClass@PAVVoxelAnimClass@@@@UAE_NHPBQAVVoxelAnimClass@@@Z
+// TEMPLATE: GAMEMD 0x0040F010
+// ?Clear@?$VectorClass@PAVVoxelAnimClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0040F040
+// ?ID@?$VectorClass@PAVVoxelAnimClass@@@@UAEHABQAVVoxelAnimClass@@@Z
+// TEMPLATE: GAMEMD 0x0040F080
+// ?ID@?$VectorClass@PAVVoxelAnimClass@@@@UAEHPBQAVVoxelAnimClass@@@Z
+template class VectorClass<VoxelAnimClass *>;

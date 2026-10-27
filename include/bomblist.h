@@ -4,6 +4,7 @@
 
 #include "vector.h"
 
+struct IStream;
 class AbstractClass;
 class BombClass;
 class ObjectClass;
@@ -13,11 +14,15 @@ class BombListClass
 {
 	public:
 		void Update(void);
+		void FUN_00438E60(void);
 		void Plant(TechnoClass * source, ObjectClass * target);
 		void AddDetector(TechnoClass * detector);
 		void RemoveDetector(TechnoClass * detector);
 		void PointerGotInvalid(AbstractClass * target);
+		void FUN_00439030(BombClass * bomb);
 		void FUN_00439110(void);
+		HRESULT Save(IStream * stream);
+		HRESULT Load(IStream * stream);
 
 		static BombListClass Instance;
 

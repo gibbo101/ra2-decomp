@@ -212,3 +212,87 @@ ULONG STDMETHODCALLTYPE WebBrowser::AddRef(void)
 {
 	return ++RefCount;
 }
+
+// FUNCTION: GAMEMD 0x00773AB0
+ULONG STDMETHODCALLTYPE WebBrowser::Release(void)
+{
+	if (--RefCount == 0) {
+		delete this;
+		return 0;
+	}
+	return RefCount;
+}
+
+// FUNCTION: GAMEMD 0x00773AD0
+HRESULT STDMETHODCALLTYPE WebBrowser::OnScriptQuit(void)
+{
+	if (Window) {
+		*(int *)GetWindowLong(Window, 8) = 1;
+	}
+	return S_OK;
+}
+
+// FUNCTION: GAMEMD 0x00773B00
+HRESULT STDMETHODCALLTYPE WebBrowser::OnBeforeNavigate(const wchar_t *, const wchar_t *)
+{
+	return S_OK;
+}
+
+extern wchar_t DAT_008496B8[];
+
+// FUNCTION: GAMEMD 0x00773B10
+HRESULT STDMETHODCALLTYPE WebBrowser::OnDocumentComplete(const wchar_t *, BOOL isTopFrame)
+{
+	if (isTopFrame) {
+		Browser->Navigate(PendingURL, 0, DAT_008496B8);
+	}
+	return S_OK;
+}
+
+// FUNCTION: GAMEMD 0x00773B40
+HRESULT STDMETHODCALLTYPE WebBrowser::OnDownloadBegin(void)
+{
+	return S_OK;
+}
+
+// FUNCTION: GAMEMD 0x00773B50
+HRESULT STDMETHODCALLTYPE WebBrowser::OnProgressChange(LONG, LONG)
+{
+	return S_OK;
+}
+
+// FUNCTION: GAMEMD 0x00773B60
+HRESULT STDMETHODCALLTYPE WebBrowser::OnDownloadComplete(void)
+{
+	return S_OK;
+}
+
+// FUNCTION: GAMEMD 0x00773B70
+HRESULT STDMETHODCALLTYPE WebBrowser::OnNavigateComplete(const wchar_t *)
+{
+	return S_OK;
+}
+
+// FUNCTION: GAMEMD 0x00773B80
+HRESULT STDMETHODCALLTYPE WebBrowser::OnStatusTextChange(const wchar_t *)
+{
+	return S_OK;
+}
+
+// FUNCTION: GAMEMD 0x00773B90
+HRESULT STDMETHODCALLTYPE WebBrowser::OnTitleChange(const wchar_t *)
+{
+	return S_OK;
+}
+
+// FUNCTION: GAMEMD 0x00773BA0
+HRESULT STDMETHODCALLTYPE WebBrowser::OnNewWindow(void)
+{
+	return E_FAIL;
+}
+
+// FUNCTION: GAMEMD 0x00773BB0
+HRESULT STDMETHODCALLTYPE WebBrowser::OnShowMessage(const wchar_t *, const wchar_t *, ULONG, LONG *)
+{
+	return S_OK;
+}

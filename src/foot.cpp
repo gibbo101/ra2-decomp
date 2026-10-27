@@ -3516,6 +3516,10 @@ bool MissionClass::Ready_To_Next_Mission(void) const
 // ?ID@?$DynamicVectorClass@PAVAbstractClass@@@@UAEHPBQAVAbstractClass@@@Z
 // TEMPLATE: GAMEMD 0x004E01E0
 // ?GetItem@?$VectorClass@PAVAbstractClass@@@@UBEPAVAbstractClass@@H@Z
+// TEMPLATE: GAMEMD 0x004E04A0
+// ?Resize@?$DynamicVectorClass@PAVAbstractClass@@@@UAE_NHPBQAVAbstractClass@@@Z
+// TEMPLATE: GAMEMD 0x004E0550
+// ?ID@?$DynamicVectorClass@PAVAbstractClass@@@@UAEHABQAVAbstractClass@@@Z
 template class DynamicVectorClass<AbstractClass *>;
 
 // TEMPLATE: GAMEMD 0x004E01F0
@@ -3524,6 +3528,10 @@ template class DynamicVectorClass<AbstractClass *>;
 // ?ID@?$DynamicVectorClass@PAVFootClass@@@@UAEHPBQAVFootClass@@@Z
 // TEMPLATE: GAMEMD 0x004E0240
 // ?GetItem@?$VectorClass@PAVFootClass@@@@UBEPAVFootClass@@H@Z
+// TEMPLATE: GAMEMD 0x004E0700
+// ?Resize@?$DynamicVectorClass@PAVFootClass@@@@UAE_NHPBQAVFootClass@@@Z
+// TEMPLATE: GAMEMD 0x004E07B0
+// ?ID@?$DynamicVectorClass@PAVFootClass@@@@UAEHABQAVFootClass@@@Z
 template class DynamicVectorClass<FootClass *>;
 
 typedef DiscreteDistributionClass<CellClass>::DIST_OBJ CELL_DIST_OBJ;
@@ -3543,4 +3551,22 @@ template class DynamicVectorClass<CELL_DIST_OBJ>;
 // ??8?$VectorClass@PAVAbstractClass@@@@UBE_NABV0@@Z
 // TEMPLATE: GAMEMD 0x004E0360
 // ?Resize@?$VectorClass@PAVAbstractClass@@@@UAE_NHPBQAVAbstractClass@@@Z
+// TEMPLATE: GAMEMD 0x004E0410
+// ?Clear@?$VectorClass@PAVAbstractClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004E0440
+// ?ID@?$VectorClass@PAVAbstractClass@@@@UAEHABQAVAbstractClass@@@Z
+// TEMPLATE: GAMEMD 0x004E0480
+// ?ID@?$VectorClass@PAVAbstractClass@@@@UAEHPBQAVAbstractClass@@@Z
 template class VectorClass<AbstractClass *>;
+
+// TEMPLATE: GAMEMD 0x004E0580
+// ??8?$VectorClass@PAVFootClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x004E05C0
+// ?Resize@?$VectorClass@PAVFootClass@@@@UAE_NHPBQAVFootClass@@@Z
+// TEMPLATE: GAMEMD 0x004E0670
+// ?Clear@?$VectorClass@PAVFootClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004E06A0
+// ?ID@?$VectorClass@PAVFootClass@@@@UAEHABQAVFootClass@@@Z
+// TEMPLATE: GAMEMD 0x004E06E0
+// ?ID@?$VectorClass@PAVFootClass@@@@UAEHPBQAVFootClass@@@Z
+template class VectorClass<FootClass *>;

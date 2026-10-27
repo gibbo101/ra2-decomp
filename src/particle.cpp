@@ -52,6 +52,42 @@ LEPTON ParticleClass::SmokeWindY[FACING_COUNT] = { -2, -2, 0, 2, 2, 2, 0, -2 };
 LEPTON ParticleClass::GasWindX[FACING_COUNT] = { 0, 2, 2, 2, 0, -2, -2, -2 };
 LEPTON ParticleClass::GasWindY[FACING_COUNT] = { -2, -2, 0, 2, 2, 2, 0, -2 };
 
+// SYNTHETIC: GAMEMD 0x0062B3D0 SYMBOL
+// _$E2
+
+// SYNTHETIC: GAMEMD 0x0062B400 SYMBOL
+// _$E5
+
+// SYNTHETIC: GAMEMD 0x0062B420 SYMBOL
+// _$E8
+
+// SYNTHETIC: GAMEMD 0x0062B440 SYMBOL
+// _$E11
+
+// SYNTHETIC: GAMEMD 0x0062B460 SYMBOL
+// _$E14
+
+// SYNTHETIC: GAMEMD 0x0062B480 SYMBOL
+// _$E17
+
+// SYNTHETIC: GAMEMD 0x0062B4A0 SYMBOL
+// _$E20
+
+// SYNTHETIC: GAMEMD 0x0062B4E0 SYMBOL
+// _$E23
+
+// SYNTHETIC: GAMEMD 0x0062B510 SYMBOL
+// _$E26
+
+// SYNTHETIC: GAMEMD 0x0062B540 SYMBOL
+// _$E29
+
+// SYNTHETIC: GAMEMD 0x0062B570 SYMBOL
+// _$E32
+
+// SYNTHETIC: GAMEMD 0x0062B580 SYMBOL
+// _$E35
+
 // FUNCTION: GAMEMD 0x0062B5E0
 ParticleClass::ParticleClass(ParticleTypeClass const * type, Coord const & origin, Coord const & target, ParticleSystemClass * partsys) :
 	Class(type),

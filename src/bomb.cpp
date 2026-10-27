@@ -22,6 +22,9 @@
 #include "noinit.h"
 #include "rules.h"
 #include "techno.h"
+#include "swizzle.h"
+#include "techtype.h"
+#include "voc.h"
 
 // SYNTHETIC: GAMEMD 0x00438340 SYMBOL
 // _$E2
@@ -53,6 +56,8 @@
 // _$E47
 
 namespace Unsorted { extern int CurrentFrame; }
+
+AudioEvent * __fastcall FUN_00750D40(Coord const & coord, AudioController * controller);
 
 extern "C" const CLSID CLSID_BombClass;
 
@@ -187,4 +192,218 @@ HRESULT STDMETHODCALLTYPE BombClass::GetClassID(CLSID * retval)
 	if (retval == NULL) return(E_POINTER);
 	*retval = CLSID_BombClass;
 	return(S_OK);
+}
+
+// FUNCTION: GAMEMD 0x00438B40
+HRESULT STDMETHODCALLTYPE BombClass::Load(IStream * stream)
+{
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		new (this) BombClass(NoInitClass());
+		Audio.FUN_00405BE0();
+		ShouldPlayTickingSound = false;
+		Swizzle_Pointer(&OwnerHouse);
+		Swizzle_Pointer(&Owner);
+		Swizzle_Pointer(&Target);
+	}
+	return(result);
+}
+
+// FUNCTION: GAMEMD 0x00438BD0
+HRESULT STDMETHODCALLTYPE BombClass::Save(IStream * stream, BOOL cleardirty)
+{
+	return(BASECLASS::Save(stream, cleardirty));
+}
+
+// FUNCTION: GAMEMD 0x00438BF0
+void BombListClass::Update(void)
+{
+	int i;
+	for (i = Bombs.Count() - 1; i >= 0; i--) {
+		BombClass * bomb = Bombs[i];
+		if (bomb == NULL) {
+			Bombs.Delete_Index(i);
+		} else if (bomb->Target == NULL) {
+			delete bomb;
+			Bombs.Delete_Index(i);
+		}
+	}
+
+	for (i = Bombs.Count() - 1; i >= 0; i--) {
+		BombClass * bomb = Bombs[i];
+		if (bomb->TickSound != -1) {
+			if (bomb->Target->IsInLimbo) {
+				bomb->Audio.Stop();
+				bomb->ShouldPlayTickingSound = false;
+			} else if (!bomb->ShouldPlayTickingSound) {
+				Coord coord = bomb->Target->Position;
+				VocClass::PlayAt(bomb->TickSound, coord, &bomb->Audio);
+				bomb->ShouldPlayTickingSound = true;
+			} else {
+				Coord coord = bomb->Target->Position;
+				FUN_00750D40(coord, &bomb->Audio);
+			}
+		}
+	}
+
+	if (UpdateDelay > 0) {
+		UpdateDelay--;
+		return;
+	}
+	UpdateDelay = 45;
+
+	for (int k = Bombs.Count() - 1; k >= 0; k--) {
+		BombClass * bomb = Bombs[k];
+		bool wasvisible = bomb->Target->BombVisible;
+		bool visible = false;
+		if (bomb->OwnerHouse->Is_Player_Control()) {
+			visible = true;
+		} else {
+			for (int d = 0; d < Detectors.Count(); d++) {
+				TechnoClass * detector = Detectors[d];
+				if (detector->Owner_HouseClass()->Is_Player_Control()) {
+					Coord diff = detector->Center_Coord() - bomb->Target->Center_Coord();
+					int dist = (int)fastmath::sqrt((double)diff.X * diff.X + (double)diff.Y * diff.Y + (double)diff.Z * diff.Z);
+					if (dist < ((TechnoTypeClass *)detector->Techno_Type_Class())->BombSight << 8) {
+						visible = true;
+					}
+				}
+				if (visible) break;
+			}
+		}
+		bomb->Target->BombVisible = visible;
+		if (visible != wasvisible) {
+			bomb->Target->IsToDisplay = true;
+		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x00438E60
+void BombListClass::FUN_00438E60(void)
+{
+}
+
+// FUNCTION: GAMEMD 0x00438E70
+void BombListClass::Plant(TechnoClass * source, ObjectClass * target)
+{
+	if (source != NULL && source->Fetch_RTTI() == RTTI_INFANTRY) {
+		if (target != NULL && target->AttachedBomb == NULL) {
+			BombClass * bomb = new BombClass;
+			bomb->OwnerHouse = source->Owner_HouseClass();
+			bomb->Owner = source;
+			bomb->Target = target;
+			bomb->PlantingFrame = Unsorted::CurrentFrame;
+			bomb->DetonationFrame = Rule->IvanTimedDelay + bomb->PlantingFrame;
+			bomb->DeathBomb = false;
+			target->AttachedBomb = bomb;
+			Bombs.Add(bomb);
+			UpdateDelay = 1;
+			if (Rule->BombAttachSound != -1 && source->House->Is_Player_Control()) {
+				Coord coord = target->Position;
+				VocClass::PlayAt(Rule->BombAttachSound, coord, NULL);
+			}
+		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x00439030
+void BombListClass::FUN_00439030(BombClass * bomb)
+{
+	Bombs.Add(bomb);
+}
+
+// FUNCTION: GAMEMD 0x00439080
+void BombListClass::AddDetector(TechnoClass * detector)
+{
+	Detectors.Add(detector);
+}
+
+// FUNCTION: GAMEMD 0x004390D0
+void BombListClass::RemoveDetector(TechnoClass * detector)
+{
+	Detectors.Delete(detector);
+}
+
+// FUNCTION: GAMEMD 0x00439110
+void BombListClass::FUN_00439110(void)
+{
+	UpdateDelay = 45;
+	Bombs.Delete_All();
+	Detectors.Delete_All();
+}
+
+// FUNCTION: GAMEMD 0x00439150
+void BombListClass::PointerGotInvalid(AbstractClass * target)
+{
+	Bombs.Delete((BombClass *)target);
+	for (int index = 0; index < Bombs.Count(); index++) {
+		BombClass * bomb = Bombs[index];
+		if (bomb != NULL && bomb->Owner == target) {
+			bomb->Owner = NULL;
+		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x004391C0
+HRESULT BombListClass::Save(IStream * stream)
+{
+	int count = Bombs.Count();
+	HRESULT result = stream->Write(&count, sizeof(count), NULL);
+	if (SUCCEEDED(result)) {
+		for (int index = 0; index < count; index++) {
+			result = stream->Write(&Bombs[index], sizeof(BombClass *), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+		}
+		count = Detectors.Count();
+		result = stream->Write(&count, sizeof(count), NULL);
+		if (SUCCEEDED(result)) {
+			for (int index = 0; index < count; index++) {
+				result = stream->Write(&Detectors[index], sizeof(TechnoClass *), NULL);
+				if (FAILED(result)) {
+					return(result);
+				}
+			}
+		}
+	}
+	return(result);
+}
+
+// FUNCTION: GAMEMD 0x00439260
+HRESULT BombListClass::Load(IStream * stream)
+{
+	int count;
+	int index;
+	BombClass * bomb;
+	TechnoClass * detector;
+	HRESULT result = stream->Read(&count, sizeof(count), NULL);
+	if (FAILED(result)) {
+		return(result);
+	}
+	for (index = 0; index < count; index++) {
+		result = stream->Read(&bomb, sizeof(bomb), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+		Bombs.Add(bomb);
+	}
+	for (index = 0; index < count; index++) {
+		Swizzle_Pointer(&Bombs[index]);
+	}
+
+	result = stream->Read(&count, sizeof(count), NULL);
+	if (SUCCEEDED(result)) {
+		for (int item = 0; item < count; item++) {
+			result = stream->Read(&detector, sizeof(detector), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+			Detectors.Add(detector);
+		}
+		for (index = 0; index < count; index++) {
+			Swizzle_Pointer(&Detectors[index]);
+		}
+	}
+	return(result);
 }

@@ -75,7 +75,7 @@ class WebBrowser : public IWOLBrowserEvent
 {
 	public:
 		WebBrowser(void);
-		~WebBrowser(void);
+		virtual ~WebBrowser(void);
 
 		bool Init(HWND window, RECT *rect);
 		void Show(void);

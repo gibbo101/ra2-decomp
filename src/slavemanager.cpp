@@ -10,6 +10,7 @@
 #include "rules.h"
 #include "coord.h"
 #include "slavemgr.h"
+#include "swizzle.h"
 #include "infantry.h"
 #include "infatype.h"
 #include "techno.h"
@@ -43,6 +44,7 @@
 // SYNTHETIC: GAMEMD 0x006AF100 SYMBOL
 // _$E55
 
+extern "C" const CLSID CLSID_SlaveManagerClass;
 namespace Unsorted { extern int CurrentFrame; }
 namespace Game { extern bool IsActive; }
 extern SideType FUN_006A46D0(char const * name);
@@ -62,11 +64,18 @@ DynamicVectorClass<SlaveManagerClass *> SlaveManagers;
 #include "cell.h"
 #include "_map.h"
 #include "map.h"
+#include "unit.h"
 
 static inline BuildingClass * Cast_Building(AbstractClass * object)
 {
 	if (object == NULL) return(NULL);
 	return((object->Fetch_RTTI() == RTTI_BUILDING) ? (BuildingClass *)object : NULL);
+}
+
+static inline UnitClass * Cast_Unit(AbstractClass * object)
+{
+	if (object == NULL) return(NULL);
+	return((object->Fetch_RTTI() == RTTI_UNIT) ? (UnitClass *)object : NULL);
 }
 
 // FUNCTION: GAMEMD 0x006AF1A0
@@ -393,3 +402,166 @@ void SlaveManagerClass::FUN_006B0D10(void)
 		}
 	}
 }
+
+// FUNCTION: GAMEMD 0x006B0D60
+void SlaveManagerClass::Deploy2(void)
+{
+	if (State == 0) {
+		State = 4;
+		LastScanFrame = 0x7FFFFFFF;
+		for (int index = SlaveNodes.Count() - 1; index >= 0; index--) {
+			SlaveControl * node = SlaveNodes[index];
+			int state = node->State;
+			InfantryClass * slave = node->Slave;
+			if (state != 6 && slave != NULL) {
+				slave->Guard();
+			}
+		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x006B0DB0
+void SlaveManagerClass::FUN_006B0DB0(void)
+{
+	if (Owner != NULL && Owner->Fetch_RTTI() == RTTI_UNIT && Cast_Unit(Owner)->NavCom != NULL) {
+		Cell target = Cast_Unit(Owner)->NavCom->Center_Coord();
+		Cell cell;
+		cell = FUN_006B0300(target);
+		if (cell == CELL_NONE) {
+			FUN_006B10D0(0);
+			Owner->QueueMission(MISSION_GUARD, false);
+			return;
+		}
+		Owner->Assign_Destination(&Map[cell]);
+		Owner->QueueMission(MISSION_MOVE, false);
+		FUN_006B10D0(2);
+		FUN_006B0490();
+	} else if (Owner != NULL && Owner->Fetch_RTTI() == RTTI_BUILDING && Owner->ArchiveTarget != NULL) {
+		Cell target = Owner->ArchiveTarget->Center_Coord();
+		Cell cell;
+		cell = FUN_006B0300(target);
+		if (cell != CELL_NONE) {
+			Owner->Assign_Archive_Target(&Map[cell]);
+			FUN_006B10D0(6);
+			FUN_006B0490();
+		}
+	} else {
+		Owner->QueueMission(MISSION_GUARD, false);
+		FUN_006B10D0(0);
+	}
+}
+
+// FUNCTION: GAMEMD 0x006B1020
+bool SlaveManagerClass::ShouldWakeUpNow(void)
+{
+	if (Owner != NULL && State == 0) {
+		if (!Owner->House->IsHuman) {
+			return true;
+		}
+		if (Owner->Get_Cell_Ptr()->Land_Type() == LAND_TIBERIUM) {
+			return true;
+		}
+		if (Rule->SlaveMinerKickFrameDelay + LastScanFrame < Unsorted::CurrentFrame) {
+			Cell cell = Owner->ScanForTiberium(Rule->SlaveMinerShortScan / 256, false);
+			if (cell != CELL_NONE) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+// FUNCTION: GAMEMD 0x006B10D0
+void SlaveManagerClass::FUN_006B10D0(int state)
+{
+	State = state;
+	if (state == 0) {
+		LastScanFrame = Unsorted::CurrentFrame;
+	} else {
+		LastScanFrame = 0x7FFFFFFF;
+	}
+}
+
+// FUNCTION: GAMEMD 0x006B10F0
+void SlaveManagerClass::Compute_CRC(CRCEngine & crc) const
+{
+	BASECLASS::Compute_CRC(crc);
+	crc(State);
+	for (int index = SlaveNodes.Count() - 1; index >= 0; index--) {
+		crc(SlaveNodes[index]->State);
+	}
+}
+
+// FUNCTION: GAMEMD 0x006B1130
+HRESULT STDMETHODCALLTYPE SlaveManagerClass::GetClassID(CLSID * retval)
+{
+	if (retval == NULL) return(E_POINTER);
+	*retval = CLSID_SlaveManagerClass;
+	return(S_OK);
+}
+
+// FUNCTION: GAMEMD 0x006B1170
+HRESULT STDMETHODCALLTYPE SlaveManagerClass::Load(IStream * stream)
+{
+	int count;
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		new (this) SlaveManagerClass(NoInitClass());
+		result = stream->Read(&count, sizeof(count), NULL);
+		if (SUCCEEDED(result)) {
+			new (&SlaveNodes) DynamicVectorClass<SlaveControl *>();
+			int index;
+			for (index = 0; index < count; index++) {
+				SlaveControl * node = new SlaveControl;
+				result = stream->Read(node, sizeof(SlaveControl), NULL);
+				if (FAILED(result)) {
+					return result;
+				}
+				SlaveNodes.Add(node);
+			}
+			for (index = 0; index < count; index++) {
+				Swizzle_Pointer(&SlaveNodes[index]->Slave);
+			}
+			Swizzle_Pointer(&Owner);
+			Swizzle_Pointer(&SlaveType);
+		}
+	}
+	return result;
+}
+
+// FUNCTION: GAMEMD 0x006B1300
+HRESULT STDMETHODCALLTYPE SlaveManagerClass::Save(IStream * stream, BOOL cleardirty)
+{
+	HRESULT result = BASECLASS::Save(stream, cleardirty);
+	if (SUCCEEDED(result)) {
+		int count = SlaveNodes.Count();
+		result = stream->Write(&count, sizeof(count), NULL);
+		if (SUCCEEDED(result)) {
+			for (int index = 0; index < count; index++) {
+				result = stream->Write(SlaveNodes[index], sizeof(SlaveControl), NULL);
+				if (FAILED(result)) {
+					break;
+				}
+			}
+		}
+	}
+	return result;
+}
+
+// FUNCTION: GAMEMD 0x006B1370
+int SlaveManagerClass::Fetch_Object_Size(void) const
+{
+	return(sizeof(*this));
+}
+
+// FUNCTION: GAMEMD 0x006B1380
+RTTIType SlaveManagerClass::Fetch_RTTI(void) const
+{
+	return(RTTI_SLAVEMANAGER);
+}
+
+// SYNTHETIC: GAMEMD 0x006B1390
+// ??_GSlaveManagerClass@@UAEPAXI@Z
+
+// TEMPLATE: GAMEMD 0x006B13B0
+// ?Clear@?$DynamicVectorClass@PAUSlaveControl@SlaveManagerClass@@@@UAEXXZ

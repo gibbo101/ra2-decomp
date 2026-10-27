@@ -150,7 +150,6 @@ class TerritoryRef : public RefPtrBase
 TerritoryRef __fastcall WDT_Get_Territory_Ref(int index);
 char * CalcRandomMapDigest(void);
 void __fastcall FUN_005E7EB0(MapPreviewClass * preview);
-extern Cell DAT_00ABE300;
 extern int FUN_00734FD0(void);
 extern int DAT_00ABED0C;
 extern int DAT_00ABDFD0;
@@ -1563,7 +1562,7 @@ void MapRegionClass::Pick_Start_Points(int first_waypoint)
 	}
 
 	for (int k = 0; k < 8; k++) {
-		Scen->HouseHomeCells[k] = DAT_00ABE300;
+		Scen->HouseHomeCells[k] = CELL_NONE;
 	}
 
 	int wp = first_waypoint;
@@ -4862,3 +4861,35 @@ template class VectorClass<TRect<int> >;
 // TEMPLATE: GAMEMD 0x005ADAB0
 // ??0?$VectorClass@N@@QAE@HPBN@Z
 template class VectorClass<double>;
+
+#include "geometry.h"
+
+// SYNTHETIC: GAMEMD 0x0058B530 SYMBOL
+// _$E205
+// SYNTHETIC: GAMEMD 0x0058B560 SYMBOL
+// _$E208
+// SYNTHETIC: GAMEMD 0x0058B580 SYMBOL
+// _$E211
+// SYNTHETIC: GAMEMD 0x0058B5A0 SYMBOL
+// _$E214
+// SYNTHETIC: GAMEMD 0x0058B5C0 SYMBOL
+// _$E217
+// SYNTHETIC: GAMEMD 0x0058B5E0 SYMBOL
+// _$E220
+// SYNTHETIC: GAMEMD 0x0058B600 SYMBOL
+// _$E223
+// SYNTHETIC: GAMEMD 0x0058B640 SYMBOL
+// _$E226
+// SYNTHETIC: GAMEMD 0x0058B670 SYMBOL
+// _$E229
+// SYNTHETIC: GAMEMD 0x0058B6A0 SYMBOL
+// _$E232
+// SYNTHETIC: GAMEMD 0x0058B6D0 SYMBOL
+// _$E235
+// SYNTHETIC: GAMEMD 0x0058B6E0 SYMBOL
+// _$E238
+// SYNTHETIC: GAMEMD 0x0058B700 SYMBOL
+// _$E241
+// SYNTHETIC: GAMEMD 0x0058B720 SYMBOL
+// _$E244
+const Rect RECT_NONE_2(0, 0, 0, 0);

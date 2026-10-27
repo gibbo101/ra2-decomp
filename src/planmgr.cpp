@@ -215,6 +215,24 @@ void __fastcall FUN_0063D630(int outline, int fill, Point2D a, Point2D b, int fr
 // SYNTHETIC: GAMEMD 0x0063D9C0
 // ??_GPlanningNodeClass@@QAEPAXI@Z
 
+// TEMPLATE: GAMEMD 0x0063DB60
+// ?Clear@?$DynamicVectorClass@PAVPlanningMemberClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0063DB90
+// ?ID@?$DynamicVectorClass@PAVPlanningMemberClass@@@@UAEHPBQAVPlanningMemberClass@@@Z
+// TEMPLATE: GAMEMD 0x0063DBB0
+// ?GetItem@?$VectorClass@PAVPlanningMemberClass@@@@UBEPAVPlanningMemberClass@@H@Z
+// TEMPLATE: GAMEMD 0x0063DBC0
+// ?Clear@?$DynamicVectorClass@PAVPlanningBranchClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0063DBF0
+// ?ID@?$DynamicVectorClass@PAVPlanningBranchClass@@@@UAEHPBQAVPlanningBranchClass@@@Z
+// TEMPLATE: GAMEMD 0x0063DC10
+// ?GetItem@?$VectorClass@PAVPlanningBranchClass@@@@UBEPAVPlanningBranchClass@@H@Z
+// TEMPLATE: GAMEMD 0x0063DC20
+// ?Clear@?$DynamicVectorClass@PAVPlanningNodeClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0063DC50
+// ?ID@?$DynamicVectorClass@PAVPlanningNodeClass@@@@UAEHPBQAVPlanningNodeClass@@@Z
+// TEMPLATE: GAMEMD 0x0063DC70
+// ?GetItem@?$VectorClass@PAVPlanningNodeClass@@@@UBEPAVPlanningNodeClass@@H@Z
 // TEMPLATE: GAMEMD 0x0063DE30
 // ?Clear@?$VectorClass@PAVPlanningMemberClass@@@@UAEXXZ
 // TEMPLATE: GAMEMD 0x0063DFD0
@@ -2664,3 +2682,39 @@ void __fastcall FUN_0063D910(int width, int color, Point2D p1, Point2D p2)
 		FUN_0063D810(p1, i, color, p2, false);
 	}
 }
+
+// FUNCTION: GAMEMD 0x0063D960
+void __fastcall FUN_0063D960(int width, int color, Point2D p1, Point2D p2)
+{
+	int span = width - 2;
+	int high;
+	int low;
+	if (span <= 0) {
+		low = 0;
+		high = 0;
+	} else {
+		high = span / 2;
+		low = high - span + 1;
+	}
+	for (int i = low; i <= high; i++) {
+		FUN_0063D810(p1, i, color, p2, true);
+	}
+}
+
+struct PlanRGB {
+	unsigned char Red;
+	unsigned char Green;
+	unsigned char Blue;
+};
+
+// FUNCTION: GAMEMD 0x0063DAD0
+int __fastcall FUN_0063DAD0(PlanRGB const & c)
+{
+	return (c.Red >> Drawing::RedShiftRight << Drawing::RedShiftLeft)
+		| (c.Green >> Drawing::GreenShiftRight << Drawing::GreenShiftLeft)
+		| (c.Blue >> Drawing::BlueShiftRight << Drawing::BlueShiftLeft);
+}
+
+// FUNCTION: GAMEMD 0x0063DB20
+// ?Is_Point_Within@?$TRect@H@@QBE_NABV?$TPoint2D@H@@@Z
+template class TRect<int>;

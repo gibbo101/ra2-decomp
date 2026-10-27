@@ -8,11 +8,16 @@
 #include "data.h"
 #include "language\language.h"
 #include "wdtnet.h"
+#undef LoadString
+#include "stringtable.h"
+#include <stdio.h>
 #include "rect.h"
 #include "geometry.h"
 #include <math.h>
 
 using namespace WorldDominationTour;
+
+WideWstring __fastcall FUN_007B8170(const WideWstring & a, const WideWstring & b);
 
 
 // SYNTHETIC: GAMEMD 0x00765D50 SYMBOL
@@ -134,13 +139,58 @@ void Conflict::Deinit_Game_Options(void)
 	WDTGameOptionList.Clear();
 }
 
+// FUNCTION: GAMEMD 0x007665D0
+// WorldDominationTour::Conflict::FUN_007665D0
+WideWstring Conflict::FUN_007665D0(void)
+{
+	if (WDTGameOptionList.Count() == 0) {
+		Init_Game_Options();
+	}
+
+	int left = 6;
+	unsigned int value = 0;
+	WideWstring text;
+	VectorCursor<rc_ptr<GameOption>, WDT_GAME_OPTION_LIST> it = WDTGameOptionList;
+
+	for (; left && it; it++) {
+		rc_ptr<GameOption> opt = *it;
+		if ((value & opt->Bitmask) == 0 && opt->Get_Display_Priority(Territory) == WDT_GAME_OPT_PRIORITY) {
+			text = opt->Get_String(Territory, text);
+			left--;
+			value |= opt->Bitmask;
+		}
+	}
+
+	it.Reset();
+	for (; left && it; it++) {
+		rc_ptr<GameOption> opt = *it;
+		if ((value & opt->Bitmask) == 0 && opt->Get_Display_Priority(Territory) != WDT_GAME_OPT_USER_MOD) {
+			text = opt->Get_String(Territory, text);
+			left--;
+			value |= opt->Bitmask;
+		}
+	}
+
+	return(text);
+}
+
+// SYNTHETIC: GAMEMD 0x007667A0
+// ??_GConflict@WorldDominationTour@@UAEPAXI@Z
+
 template class DynamicVectorClass<rc_ptr<GameOption> >;
+template class VectorCursor<rc_ptr<GameOption>, WDT_GAME_OPTION_LIST>;
 
 // FUNCTION: GAMEMD 0x007667E0
 // WDTTerritory::FUN_007667E0
 
 // FUNCTION: GAMEMD 0x007667F0
 // WDTTerritory::FUN_007667F0
+
+// TEMPLATE: GAMEMD 0x00766800
+// ?Clear@?$DynamicVectorClass@V?$rc_ptr@VGameOption@WorldDominationTour@@@@@@UAEXXZ
+
+// TEMPLATE: GAMEMD 0x00766830
+// ?ID@?$DynamicVectorClass@V?$rc_ptr@VGameOption@WorldDominationTour@@@@@@UAEHPBV?$rc_ptr@VGameOption@WorldDominationTour@@@@@Z
 
 // TEMPLATE: GAMEMD 0x00766880
 // ?FUN_00766880@WorldDominationTour@@YI?AV?$rc_ptr@V?$ValueGameOption@E@WorldDominationTour@@@@IP8WDTTerritory@@AEHXZVWstring@@H@Z
@@ -162,6 +212,46 @@ template class DynamicVectorClass<rc_ptr<GameOption> >;
 
 // TEMPLATE: GAMEMD 0x00766910
 // ??1?$rc_ptr@VMapSizeGameOption@WorldDominationTour@@@@UAE@XZ
+
+// TEMPLATE: GAMEMD 0x00766920
+// ??B?$VectorCursor@V?$rc_ptr@VGameOption@WorldDominationTour@@@@V?$DynamicVectorClass@V?$rc_ptr@VGameOption@WorldDominationTour@@@@@@@@UBE_NXZ
+
+// SYNTHETIC: GAMEMD 0x00766930
+// ??_G?$rc_ptr@VConflict@WorldDominationTour@@@@UAEPAXI@Z
+template class rc_ptr<Conflict>;
+
+// SYNTHETIC: GAMEMD 0x00766960
+// ??_G?$rc_ptr@V?$ValueGameOption@E@WorldDominationTour@@@@UAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x00766990
+// ??_G?$rc_ptr@VFlagGameOption@WorldDominationTour@@@@UAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x007669C0
+// ??_G?$rc_ptr@VMapSizeGameOption@WorldDominationTour@@@@UAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x007669F0
+// ??_G?$VectorCursor@V?$rc_ptr@VGameOption@WorldDominationTour@@@@V?$DynamicVectorClass@V?$rc_ptr@VGameOption@WorldDominationTour@@@@@@@@UAEPAXI@Z
+
+// TEMPLATE: GAMEMD 0x00766AA0
+// ?Get_String@?$ValueGameOption@E@WorldDominationTour@@UAE?AVWideWstring@@ABV?$rc_ptr@VWDTTerritory@@@@ABV3@@Z
+template<class T>
+WideWstring ValueGameOption<T>::Get_String(const rc_ptr<WDTTerritory> & territory, const WideWstring & prefix)
+{
+	wchar_t buffer[64];
+
+	Wstring value = Wstring_FromInt((territory.Get()->*Getter)());
+	WideWstring format(StringTable::LoadString(StringID.text(), 0, "D:\\ra2mdpost\\wdtgameoptions.h", 161));
+	swprintf(buffer, format.get(), value.c_str());
+	if (prefix.length() != 0) {
+		WideWstring comma(L", ");
+		FUN_007B8170(prefix, comma) + buffer;
+	}
+	return(WideWstring(buffer));
+}
+
+
+// TEMPLATE: GAMEMD 0x00766BC0
+// ??8?$VectorClass@V?$rc_ptr@VGameOption@WorldDominationTour@@@@@@UBE_NABV0@@Z
 
 // SYNTHETIC: GAMEMD 0x00766A60
 // ??_GGameOption@WorldDominationTour@@UAEPAXI@Z

@@ -32,6 +32,20 @@ long __cdecl VQACCFileHandler(VQAHandle * vqa, long action, void * buffer, long 
 long __cdecl VQAEventHandler(VQAHandle * vqa, long action, void * buffer, long nbytes);
 long __cdecl VQAMemoryHandler(VQAHandle * vqa, long action, void * buffer, long nbytes);
 
+extern int DAT_00B45B18;
+extern int DAT_00B45B1C;
+extern int DAT_00B45B20;
+extern int DAT_00B45B24;
+
+// FUNCTION: GAMEMD 0x00758F70
+void FUN_00758F70(void)
+{
+	DAT_00B45B18 = 0;
+	DAT_00B45B1C = 0;
+	DAT_00B45B20 = 0;
+	DAT_00B45B24 = 0;
+}
+
 // SYNTHETIC: GAMEMD 0x00758F90 SYMBOL
 // _$E36
 // SYNTHETIC: GAMEMD 0x00758FC0 SYMBOL
@@ -889,3 +903,83 @@ long __cdecl VQAMemoryHandler(VQAHandle * vqa, long action, void * buffer, long 
 	}
 	return(error);
 }
+
+static void VQAScalePalette(unsigned char *palette)
+{
+	for (int i = 0; i < SIZE_OF_PALETTE; i++) {
+		palette[i] <<= 2;
+	}
+}
+
+// FUNCTION: GAMEMD 0x0075A350
+long __cdecl VQAEventHandler(VQAHandle * vqa, long action, void * buffer, long nbytes)
+{
+	VQAHandleP *vqap = (VQAHandleP *)vqa;
+	VQAConfig *config = &vqap->Config;
+	VQAClass *_this = config->Owner;
+
+	long error = 0;
+
+	switch (action) {
+		case VQAEVENT_PALETTE:
+			VQAScalePalette((unsigned char *)buffer);
+			_this->Handle_Palette_Event((unsigned char *)buffer);
+			error = 0;
+			break;
+
+		case VQAEVENT_CODEBOOK:
+			_this->Handle_Codebook_Event(buffer, nbytes);
+			error = 0;
+			break;
+
+		case VQAEVENT_LOCK:
+			error = (int)_this->Handle_Lock_Event();
+			break;
+
+		case VQAEVENT_UNLOCK:
+			_this->Handle_Unlock_Event();
+			error = 0;
+			break;
+
+		default:
+			error = 0;
+			break;
+	}
+
+	return(error);
+}
+
+// FUNCTION: GAMEMD 0x0075A400
+int vqanoop1(void)
+{
+	return(0);
+}
+
+// FUNCTION: GAMEMD 0x0075A410
+void vqanoop2(void)
+{
+	return;
+}
+
+// FUNCTION: GAMEMD 0x0075A420
+void vqanoop3(void)
+{
+	return;
+}
+
+// TEMPLATE: GAMEMD 0x0075A430
+// ?$DynamicVectorClass@PAVMovieHandle@@::Clear
+// TEMPLATE: GAMEMD 0x0075A460
+// ?ID@?$DynamicVectorClass@PAVMovieHandle@@@@UAEHPBQAVMovieHandle@@@Z
+// TEMPLATE: GAMEMD 0x0075A480
+// ?$VectorClass@PAVMovieHandle@@::GetItem
+// TEMPLATE: GAMEMD 0x0075A490
+// ?$VectorClass@PAVMovieHandle@@::operator==
+// TEMPLATE: GAMEMD 0x0075A4D0
+// ?$VectorClass@PAVMovieHandle@@::Resize
+// TEMPLATE: GAMEMD 0x0075A580
+// ?$VectorClass@PAVMovieHandle@@::Clear
+// TEMPLATE: GAMEMD 0x0075A5B0
+// ?$VectorClass@PAVMovieHandle@@::ID
+
+template class DynamicVectorClass<MovieHandle *>;

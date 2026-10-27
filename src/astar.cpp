@@ -1201,3 +1201,39 @@ int AStarClass::Test_Cell_Walk(Cell const & from, Cell const & to, FootClass con
 
 // FUNCTION: GAMEMD 0x0042D6F0
 // ?Clear@?$VectorClass@I@@UAEXXZ
+
+// FUNCTION: GAMEMD 0x0042D720
+// ?ID@?$VectorClass@I@@UAEHABI@Z
+
+// FUNCTION: GAMEMD 0x0042D760
+// ?ID@?$VectorClass@I@@UAEHPBI@Z
+
+// FUNCTION: GAMEMD 0x0042D780
+// ?Resize@?$DynamicVectorClass@I@@UAE_NHPBI@Z
+
+// FUNCTION: GAMEMD 0x0042D830
+// ?Add@?$DynamicVectorClass@I@@QAE_NABI@Z
+
+// FUNCTION: GAMEMD 0x0042D880
+// ?ID@?$DynamicVectorClass@I@@UAEHABI@Z
+
+// FUNCTION: GAMEMD 0x0042D8B0
+// ??8?$VectorClass@G@@UBE_NABV0@@Z
+
+// FUNCTION: GAMEMD 0x0042D8F0
+// ?Resize@?$VectorClass@G@@UAE_NHPBG@Z
+
+// FUNCTION: GAMEMD 0x0042D9A0
+// ?Clear@?$VectorClass@G@@UAEXXZ
+
+// FUNCTION: GAMEMD 0x0042D9D0
+// ?ID@?$VectorClass@G@@UAEHABG@Z
+
+// FUNCTION: GAMEMD 0x0042DA10
+// ?ID@?$VectorClass@G@@UAEHPBG@Z
+
+// FUNCTION: GAMEMD 0x0042DA30
+// ?Resize@?$DynamicVectorClass@G@@UAE_NHPBG@Z
+
+// FUNCTION: GAMEMD 0x0042DAE0
+// ?ID@?$DynamicVectorClass@G@@UAEHABG@Z

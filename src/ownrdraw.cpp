@@ -4511,3 +4511,153 @@ int __fastcall FUN_00623840(HWND list)
 	}
 	return 0;
 }
+
+int CALLBACK FUN_00623DA0(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+namespace UI { int __fastcall StandardWndProc(HWND window, UINT message, WPARAM wparam, LPARAM lparam); }
+
+// FUNCTION: GAMEMD 0x00623CD0
+int __fastcall FUN_00623CD0(wchar_t const * text)
+{
+	int result = -1;
+	HWND dialog = UI::BeginDialog(0x10d, (DLGPROC)FUN_00623DA0, 0);
+	if (dialog != NULL) {
+		HWND item = GetDlgItem(dialog, 0x5b0);
+		SendMessage(item, 0x4b2, 0, (LPARAM)text);
+		SetWindowLong(dialog, 8, (LONG)&result);
+		ShowWindow(dialog, 1);
+		SetForegroundWindow(dialog);
+		InputManagerClass::Instance->DoSomething();
+		while (result < 0) {
+			FUN_005D4D50();
+			if (Session.Type != GAME_NORMAL && Session.Type != GAME_SKIRMISH && !Session.NetOpen && !Session.Suspended) {
+				if (!FUN_0055CBF0() && Game::MainLoop()) {
+					break;
+				}
+			}
+		}
+		UI::EndDialog(dialog);
+	}
+	return result == 0x5c1;
+}
+
+// FUNCTION: GAMEMD 0x00623DA0
+int CALLBACK FUN_00623DA0(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	int handled = UI::StandardWndProc(window, message, wparam, lparam);
+	if (handled) {
+		return handled;
+	}
+	int *result = (int *)GetWindowLong(window, 8);
+	if (message == WM_COMMAND) {
+		int id = wparam & 0xffff;
+		if (id >= 0x5c0 && id <= 0x5c1) {
+			*result = id;
+		}
+	}
+	return 0;
+}
+
+// FUNCTION: GAMEMD 0x00623E00
+int __fastcall FUN_00623E00(HWND list)
+{
+	int count = SendMessage(list, 0x18b, 0, 0);
+	while (count--) {
+		SendMessage(list, 0x182, count, 0);
+	}
+	return 0;
+}
+
+// FUNCTION: GAMEMD 0x00623E40
+int __fastcall FUN_00623E40(HWND edit, Wstring * out)
+{
+	int length = SendMessage(edit, 0xe, 0, 0);
+	if (length <= 0) {
+		out->clear();
+		return 0;
+	}
+	char * buffer = new char[length + 2];
+	int result = SendMessage(edit, 0x4b5, length + 1, (LPARAM)buffer);
+	*out = buffer;
+	delete[] buffer;
+	return result;
+}
+
+// FUNCTION: GAMEMD 0x00623EA0
+int __fastcall FUN_00623EA0(HWND edit, WideWstring * out)
+{
+	int length = SendMessage(edit, 0xe, 0, 0);
+	if (length <= 0) {
+		out->clear();
+		return 0;
+	}
+	wchar_t * buffer = new wchar_t[length + 2];
+	int result = SendMessage(edit, 0x4b3, length + 1, (LPARAM)buffer);
+	*out = buffer;
+	delete[] buffer;
+	return result;
+}
+
+// FUNCTION: GAMEMD 0x00623F00
+int __fastcall FUN_00623F00(HWND list, int index, Wstring * out)
+{
+	int length = SendMessage(list, 0x18a, index, 0);
+	if (length <= 0) {
+		out->clear();
+	}
+	char * buffer = new char[length + 2];
+	int result = SendMessage(list, 0x4b7, index, (LPARAM)buffer);
+	*out = buffer;
+	delete[] buffer;
+	return result;
+}
+
+// FUNCTION: GAMEMD 0x00623F60
+int __fastcall FUN_00623F60(HWND list, int index, WideWstring * out)
+{
+	int length = SendMessage(list, 0x18a, index, 0);
+	if (length <= 0) {
+		out->clear();
+	}
+	wchar_t * buffer = new wchar_t[length + 2];
+	int result = SendMessage(list, 0x4b6, index, (LPARAM)buffer);
+	*out = buffer;
+	delete[] buffer;
+	return result;
+}
+
+// FUNCTION: GAMEMD 0x00623FC0
+int __fastcall FUN_00623FC0(HWND combo, int index, Wstring * out)
+{
+	int length = SendMessage(combo, 0x149, index, 0);
+	if (length <= 0) {
+		out->clear();
+	}
+	char * buffer = new char[length + 2];
+	int result = SendMessage(combo, 0x4bd, index, (LPARAM)buffer);
+	*out = buffer;
+	delete[] buffer;
+	return result;
+}
+
+// FUNCTION: GAMEMD 0x00624020
+int __fastcall FUN_00624020(HWND combo, int index, WideWstring * out)
+{
+	int length = SendMessage(combo, 0x149, index, 0);
+	if (length <= 0) {
+		out->clear();
+	}
+	wchar_t * buffer = new wchar_t[length + 2];
+	int result = SendMessage(combo, 0x4c3, index, (LPARAM)buffer);
+	*out = buffer;
+	delete[] buffer;
+	return result;
+}
+
+// FUNCTION: GAMEMD 0x006240A0
+void CALLBACK FUN_006240A0(HWND dialog, int unused)
+{
+	OwnerDraw::WinData *data = Get_Data(dialog);
+	if (data != NULL) {
+		*((char *)data + 0xd4) = 1;
+	}
+}

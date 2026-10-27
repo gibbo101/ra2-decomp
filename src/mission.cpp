@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
 #include "mission.h"
 #include "_bench.h"
 #include "_mission.h"
@@ -13,6 +14,31 @@
 #include "incdec.h"
 #include "mono.h"
 #include "bench.hh"
+
+// SYNTHETIC: GAMEMD 0x005B2B90 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x005B2BC0 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x005B2BE0 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x005B2C00 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x005B2C20 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x005B2C40 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x005B2C60 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x005B2CA0 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x005B2CD0 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x005B2D00 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x005B2D30 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x005B2D40 SYMBOL
+// _$E35
 
 namespace Unsorted { extern int CurrentFrame; }
 

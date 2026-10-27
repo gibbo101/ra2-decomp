@@ -22,6 +22,7 @@
 #include "voc.h"
 
 extern SideType FUN_006A46D0(char const * name);
+extern "C" const CLSID CLSID_CaptureManagerClass;
 
 // SYNTHETIC: GAMEMD 0x00471540 SYMBOL
 // _$E2
@@ -367,3 +368,71 @@ void CaptureManagerClass::Compute_CRC(CRCEngine & crc) const
 		crc(Owner->Fetch_ID());
 	}
 }
+
+// FUNCTION: GAMEMD 0x004728E0
+HRESULT STDMETHODCALLTYPE CaptureManagerClass::Save(IStream * stream, BOOL cleardirty)
+{
+	HRESULT result = BASECLASS::Save(stream, cleardirty);
+	if (SUCCEEDED(result)) {
+		int count = ControlNodes.Count();
+		HRESULT written = stream->Write(&count, sizeof(count), NULL);
+		if (FAILED(written)) {
+			return written;
+		}
+		for (int index = 0; index < count; index++) {
+			ControlNode * node = ControlNodes[index];
+			stream->Write(&node->OriginalOwner, sizeof(node->OriginalOwner), NULL);
+			written = stream->Write(&node->Unit, sizeof(node->Unit), NULL);
+			if (FAILED(written)) {
+				return written;
+			}
+		}
+	}
+	return result;
+}
+
+// FUNCTION: GAMEMD 0x00472960
+HRESULT STDMETHODCALLTYPE CaptureManagerClass::GetClassID(CLSID * retval)
+{
+	if (retval == NULL) return(E_POINTER);
+	*retval = CLSID_CaptureManagerClass;
+	return(S_OK);
+}
+
+// FUNCTION: GAMEMD 0x004729A0
+int CaptureManagerClass::Fetch_Object_Size(void) const
+{
+	return(sizeof(CaptureManagerClass));
+}
+
+// FUNCTION: GAMEMD 0x004729B0
+RTTIType CaptureManagerClass::Fetch_RTTI(void) const
+{
+	return(RTTI_CAPTUREMANAGER);
+}
+
+// SYNTHETIC: GAMEMD 0x004729C0
+// ??_GCaptureManagerClass@@UAEPAXI@Z
+
+// TEMPLATE: GAMEMD 0x00472A80
+// ?Clear@?$DynamicVectorClass@PAUControlNode@@@@UAEXXZ
+template class DynamicVectorClass<ControlNode *>;
+
+// TEMPLATE: GAMEMD 0x00472AB0
+// ?ID@?$DynamicVectorClass@PAUControlNode@@@@UAEHPBQAUControlNode@@@Z
+
+// TEMPLATE: GAMEMD 0x00472AD0
+// ?GetItem@?$VectorClass@PAUControlNode@@@@UBEPAUControlNode@@H@Z
+
+// TEMPLATE: GAMEMD 0x00472AE0
+// ?Clear@?$DynamicVectorClass@PAVCaptureManagerClass@@@@UAEXXZ
+template class DynamicVectorClass<CaptureManagerClass *>;
+
+// TEMPLATE: GAMEMD 0x00472B10
+// ?ID@?$DynamicVectorClass@PAVCaptureManagerClass@@@@UAEHPBQAVCaptureManagerClass@@@Z
+
+// TEMPLATE: GAMEMD 0x00472B30
+// ?GetItem@?$VectorClass@PAVCaptureManagerClass@@@@UBEPAVCaptureManagerClass@@H@Z
+
+// TEMPLATE: GAMEMD 0x00472B40
+// ??8?$VectorClass@PAUControlNode@@@@UBE_NABV0@@Z

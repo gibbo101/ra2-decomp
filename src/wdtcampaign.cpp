@@ -158,3 +158,48 @@ void WorldDominationTour::Campaign::Set_Faction(int faction)
 		ini.Save(file);
 	}
 }
+
+// FUNCTION: GAMEMD 0x00765580
+void __stdcall Load_History_Out(INIClass & ini)
+{
+	CDFileClass file;
+	file.Open("WDTHist.ini", 1);
+	if (!file.Is_Available()) {
+		file.Create();
+		file.Close();
+		file.Open("WDTHist.ini", 1);
+	}
+	ini.Load(file);
+	file.Close();
+}
+
+// SYNTHETIC: GAMEMD 0x00765600
+// ??_GCampaign@WorldDominationTour@@UAEPAXI@Z
+
+// TEMPLATE: GAMEMD 0x00765680
+// ?Clear@?$DynamicVectorClass@V?$rc_ptr@VConflict@WorldDominationTour@@@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x007656B0
+// ?ID@?$DynamicVectorClass@V?$rc_ptr@VConflict@WorldDominationTour@@@@@@UAEHPBV?$rc_ptr@VConflict@WorldDominationTour@@@@@Z
+// TEMPLATE: GAMEMD 0x007656D0
+// ?GetItem@?$VectorClass@V?$rc_ptr@VConflict@WorldDominationTour@@@@@@UBE?AV?$rc_ptr@VConflict@WorldDominationTour@@@@H@Z
+template class DynamicVectorClass<rc_ptr<WorldDominationTour::Conflict> >;
+
+// TEMPLATE: GAMEMD 0x00765700
+// ??B?$VectorCursor@V?$rc_ptr@VConflict@WorldDominationTour@@@@V?$DynamicVectorClass@V?$rc_ptr@VConflict@WorldDominationTour@@@@@@@@UBE_NXZ
+// SYNTHETIC: GAMEMD 0x00765710
+// ??_G?$rc_ptr@VCampaignProperties@WorldDominationTour@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00765740
+// ??_G?$rc_ptr@VHistory@WorldDominationTour@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00765770
+// ??_G?$VectorCursor@V?$rc_ptr@VConflict@WorldDominationTour@@@@V?$DynamicVectorClass@V?$rc_ptr@VConflict@WorldDominationTour@@@@@@@@UAEPAXI@Z
+template class VectorCursor<rc_ptr<WorldDominationTour::Conflict>, DynamicVectorClass<rc_ptr<WorldDominationTour::Conflict> > >;
+
+// SYNTHETIC: GAMEMD 0x00765790
+// ??_G?$rc_ptr@VCampaign@WorldDominationTour@@@@UAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x007657C0
+// ??_G?$rc_ptr@VState@WorldDominationTour@@@@UAEPAXI@Z
+template class rc_ptr<WorldDominationTour::State>;
+
+// TEMPLATE: GAMEMD 0x007657F0
+// ??8?$VectorClass@V?$rc_ptr@VConflict@WorldDominationTour@@@@@@UBE_NABV0@@Z

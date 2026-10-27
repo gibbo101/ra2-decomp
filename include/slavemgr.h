@@ -72,6 +72,7 @@ class SlaveManagerClass : public AbstractClass
 		void FUN_006B0CC0(void);
 		void FUN_006B0D10(void);
 		void FUN_006B0DB0(void);
+		void FUN_006B10D0(int state);
 		void Deploy2(void);
 };
 

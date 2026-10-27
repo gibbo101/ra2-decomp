@@ -120,3 +120,45 @@ DynamicVectorClass<TerrainClass *> Terrains;
 
 // SYNTHETIC: GAMEMD 0x004E6AA0 SYMBOL
 // _$E105
+
+// SYNTHETIC: GAMEMD 0x004E6AE0 SYMBOL
+// _$E112
+DynamicVectorClass<InfantryClass *> Infantry;
+
+// SYNTHETIC: GAMEMD 0x004E6B20 SYMBOL
+// _$E110
+
+// SYNTHETIC: GAMEMD 0x004E6B60 SYMBOL
+// _$E117
+DynamicVectorClass<BuildingClass *> Buildings;
+
+// SYNTHETIC: GAMEMD 0x004E6BA0 SYMBOL
+// _$E115
+
+// SYNTHETIC: GAMEMD 0x004E6BE0 SYMBOL
+// _$E122
+DynamicVectorClass<AircraftClass *> Aircraft;
+
+// SYNTHETIC: GAMEMD 0x004E6C20 SYMBOL
+// _$E120
+
+// SYNTHETIC: GAMEMD 0x004E6C60 SYMBOL
+// _$E127
+DynamicVectorClass<UnitClass *> Units;
+
+// SYNTHETIC: GAMEMD 0x004E6CA0 SYMBOL
+// _$E125
+
+// SYNTHETIC: GAMEMD 0x004E6CE0 SYMBOL
+// _$E132
+DynamicVectorClass<HouseClass *> Houses;
+
+// SYNTHETIC: GAMEMD 0x004E6D20 SYMBOL
+// _$E130
+
+// SYNTHETIC: GAMEMD 0x004E6D60 SYMBOL
+// _$E137
+DynamicVectorClass<AnimClass *> Anims;
+
+// SYNTHETIC: GAMEMD 0x004E6DA0 SYMBOL
+// _$E135

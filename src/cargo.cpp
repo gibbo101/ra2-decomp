@@ -4,12 +4,42 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include <math.h>
+#include "geometry.h"
+#include "rect.h"
+
+// SYNTHETIC: GAMEMD 0x00473190 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x004731C0 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x004731E0 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x00473200 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x00473220 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x00473240 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x00473260 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x004732A0 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x004732D0 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x00473300 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x00473330 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x00473340 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x00473360 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x00473380 SYMBOL
+// _$E41
+
 #include "cargo.h"
 #include "foot.h"
 #include "techtype.h"
-#include "geometry.h"
-#include <math.h>
-
 
 // FUNCTION: GAMEMD 0x004733A0
 void CargoClass::Attach(FootClass * object)

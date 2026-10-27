@@ -102,6 +102,11 @@ public:
 // _$E74
 // SYNTHETIC: GAMEMD 0x0077B840 SYMBOL
 // _$E77
+// SYNTHETIC: GAMEMD 0x0077B860 SYMBOL
+// _$E80
+// SYNTHETIC: GAMEMD 0x0077B880 SYMBOL
+// _$E83
+const Rect RECT_NONE_2(0, 0, 0, 0);
 
 // FUNCTION: GAMEMD 0x0077B8A0
 // FUNCTION: GAMEMD 0x0077B8C0
@@ -425,10 +430,10 @@ bool __fastcall FUN_0077D2A0(User * user)
 	return DAT_00B779C0 != 0;
 }
 
-unsigned char __fastcall FUN_007B7D90(Wstring * text);
+unsigned char __fastcall FUN_007B7D90(WideWstring * text);
 
 // FUNCTION: GAMEMD 0x0077D2E0
-bool __fastcall FUN_0077D2E0(User * user, Wstring * text)
+bool __fastcall FUN_0077D2E0(User * user, WideWstring * text)
 {
 	if (!user)
 		return false;
@@ -498,6 +503,7 @@ bool __fastcall FUN_0077D4C0(User * user)
 		if (WS_Find_Dialog(0x113)) {
 			int index = FUN_0077D240(&DAT_00B73E40);
 			User * host = NULL;
+			int count = DAT_00B77900.length();
 			if (index >= 0) {
 				DAT_00B77900.getPointer(&host, index);
 				if (DAT_00B76AF0) {
@@ -5522,7 +5528,7 @@ void FUN_00797C20(void)
 }
 
 // SYNTHETIC: GAMEMD 0x00798120 SYMBOL
-// _$E363
+// _$E366
 // FUNCTION: GAMEMD 0x00798140
 void FUN_00798140(void)
 {
@@ -7593,6 +7599,300 @@ long __stdcall FUN_007A70E0(void * sink, long result, void * unused, User * user
 		return 0;
 	}
 	FUN_00785740(user);
+	return 0;
+}
+
+extern int DAT_007EEF40;
+extern int DAT_007EEF34;
+extern int DAT_007EEF38;
+extern wchar_t DAT_0084B020[];
+extern wchar_t DAT_0084B224[];
+HWND WS_Next_Lower_Dialog(HWND window);
+
+static inline void Set_Item_Text(HWND item, Wstring const & text)
+{
+	SendMessage(item, 0x4B4, 0, (LPARAM)text.text());
+}
+
+static inline WideWstring Widen(char const * text)
+{
+	Wstring narrow(text);
+	return FUN_007B7ED0(narrow);
+}
+
+// FUNCTION: GAMEMD 0x007A9200
+long __stdcall FUN_007A9200(void * sink, long result, User * user, char const * text)
+{
+	if (result < 0) {
+		return 0;
+	}
+	WideWstring wide = Widen(text);
+	if (!FUN_0077D2E0(user, &wide)) {
+		return 0;
+	}
+	if (!FUN_0077D4C0(user)) {
+		return 0;
+	}
+	strcpy(DAT_00B77E30, user->Nick);
+	if (DAT_00B77DC1) {
+		wchar_t message[256];
+		swprintf(message, DAT_0084B020, user->Nick, wide.get());
+		int scheme = GadgetClass::Get_Color_Scheme();
+		Session.Messages.Add_Message(NULL, 0, message, scheme, TextPrintType(0x16), int(Rule->MessageDelay * TICKS_PER_MINUTE), false);
+		Session.Messages.Add_Message(NULL, 0, StringTable::LoadString("TXT_HOW_TO_REPLY", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x1F82), scheme, TextPrintType(0x16), int(Rule->MessageDelay * TICKS_PER_MINUTE), false);
+		Map.Flag_To_Redraw(GS_REDRAW_DIRTY);
+		FUN_005E2790(DAT_007EEF40, DAT_0084B020, user->Nick, wide.get());
+		DAT_00B76478 = 300;
+	} else {
+		HWND top = FUN_00775B10();
+		while (top) {
+			if (GetDlgItem(top, 0x53F)) {
+				FUN_005E2700(DAT_007EEF40, DAT_0084B020, user->Nick, wide.get());
+				break;
+			}
+			if (GetDlgItem(top, 0x5B5)) {
+				FUN_005E2790(DAT_007EEF40, DAT_0084B020, user->Nick, wide.get());
+			}
+			top = WS_Next_Lower_Dialog(top);
+		}
+		if (!top) {
+			ReleaseCapture();
+			FUN_0052FEC0(NULL, true);
+			top = UI::BeginDialog(0x11E, (DLGPROC)FUN_0079DB50, 0);
+			if (top) {
+				SetFocus(top);
+				FUN_005E2700(DAT_007EEF40, DAT_0084B020, user->Nick, wide.get());
+				ShowWindow(top, SW_SHOWNORMAL);
+			}
+		}
+		Set_Item_Text(GetDlgItem(top, 0x718), FUN_0079DA90(GetDlgItem(top, 0x53F)));
+	}
+	if (DAT_00B77E40) {
+		DAT_00AC116C->V59(user, DAT_00B76230.get());
+	}
+	VocClass::PlayGlobal(Rule->IncomingMessage, 1.0f, 0x2000);
+	return 0;
+}
+
+// FUNCTION: GAMEMD 0x007A9550
+long __stdcall FUN_007A9550(void * sink, long result, User * user, wchar_t const * text)
+{
+	if (result < 0) {
+		return 0;
+	}
+	bool allowed;
+	{
+		WideWstring wide(text);
+		allowed = FUN_0077D2E0(user, &wide);
+	}
+	if (!allowed) {
+		return 0;
+	}
+	if (!FUN_0077D4C0(user)) {
+		return 0;
+	}
+	if (DAT_00B77DC1) {
+		wchar_t message[256];
+		swprintf(message, DAT_0084B020, user->Nick, text);
+		int scheme = GadgetClass::Get_Color_Scheme();
+		Session.Messages.Add_Message(NULL, 0, message, scheme, TextPrintType(0x16), int(Rule->MessageDelay * TICKS_PER_MINUTE), false);
+		Map.Flag_To_Redraw(GS_REDRAW_DIRTY);
+		FUN_005E2790(DAT_007EEF40, DAT_0084B020, user->Nick, text);
+	} else {
+		HWND top = FUN_00775B10();
+		while (top) {
+			if (GetDlgItem(top, 0x53F)) {
+				FUN_005E2700(DAT_007EEF40, DAT_0084B020, user->Nick, text);
+				break;
+			}
+			if (GetDlgItem(top, 0x5B5)) {
+				FUN_005E2790(DAT_007EEF40, DAT_0084B020, user->Nick, text);
+			}
+			top = WS_Next_Lower_Dialog(top);
+		}
+		if (!top) {
+			ReleaseCapture();
+			FUN_0052FEC0(NULL, true);
+			top = UI::BeginDialog(0x11E, (DLGPROC)FUN_0079DB50, 0);
+			SetFocus(top);
+			FUN_005E2700(DAT_007EEF40, DAT_0084B020, user->Nick, text);
+			ShowWindow(top, SW_SHOWNORMAL);
+		}
+		Set_Item_Text(GetDlgItem(top, 0x718), FUN_0079DA90(GetDlgItem(top, 0x53F)));
+	}
+	if (DAT_00B77E40) {
+		DAT_00AC116C->V59(user, DAT_00B76230.get());
+	}
+	VocClass::PlayGlobal(Rule->IncomingMessage, 1.0f, 0x2000);
+	return 0;
+}
+
+// FUNCTION: GAMEMD 0x007A9800
+long __stdcall FUN_007A9800(void * sink, long result)
+{
+	wchar_t message[128];
+	if (result == 0) {
+		FUN_005E2790(DAT_007EEF28, StringTable::LoadString("TXT_PAGESENT", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x1FFD));
+		return 0;
+	}
+	if (result == 0x40134) {
+		swprintf(message, StringTable::LoadString("TXT_PAGEDISABLED", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2001));
+	} else if (result == 0x40133) {
+		swprintf(message, StringTable::LoadString("TXT_PAGEUSERGONE", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2003));
+	} else {
+		swprintf(message, StringTable::LoadString("TXT_PAGEFAILED", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2005));
+	}
+	HWND top = FUN_00775B10();
+	if (top) {
+		if (GetDlgItem(top, 0x53F)) {
+			FUN_005E2700(DAT_007EEF28, message);
+			return 0;
+		}
+		if (GetDlgItem(top, 0x5B5)) {
+			FUN_005E2790(DAT_007EEF28, message);
+			return 0;
+		}
+	}
+	if (FUN_0069BBE0(&Session)) {
+		int scheme = GadgetClass::Get_Color_Scheme();
+		Session.Messages.Add_Message(NULL, 0, message, scheme, TextPrintType(0x16), int(Rule->MessageDelay * TICKS_PER_MINUTE), false);
+	}
+	return 0;
+}
+
+extern wchar_t DAT_0084B128[];
+extern char DAT_0084B170[];
+extern char DAT_0084B138[];
+
+// FUNCTION: GAMEMD 0x007AA6A0
+long __stdcall FUN_007AA6A0(void * sink, long result, int value)
+{
+	if (!DAT_00B77DC1 && result >= 0) {
+		FUN_005E2700(DAT_007EEF28, DAT_0084B128, value);
+	}
+	return 0;
+}
+
+static inline void Clear_Channel(WolChannel & channel)
+{
+	memset(&channel, 0, 0x10C);
+}
+
+// FUNCTION: GAMEMD 0x007AA6D0
+long __stdcall FUN_007AA6D0(void * sink, long result)
+{
+	wchar_t message[256];
+	if (DAT_00B77DC0) {
+		SetEvent(DAT_00B73684[9]);
+		DAT_00B77DE8 = result;
+		return 0;
+	}
+	if (result == 0x4012F) {
+		if (DAT_00B77DC1 && DAT_00B77DC2) {
+		} else if (DAT_00B77DC1) {
+			message[0] = 0;
+			swprintf(message, StringTable::LoadString("TXT_WOL_CONNLOST", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x210C));
+			int scheme = GadgetClass::Get_Color_Scheme();
+			Session.Messages.Add_Message(NULL, 0, message, scheme, TextPrintType(0x16), int(Rule->MessageDelay * TICKS_PER_MINUTE), false);
+			Map.Flag_To_Redraw(GS_REDRAW_DIRTY);
+			DAT_00B77DC2 = 1;
+			DAT_00B77DD0 = 0;
+			Clear_Channel(DAT_00B76B10);
+			Clear_Channel(DAT_00B73BE8);
+			FUN_004068E0(DAT_0084B170);
+		} else {
+			if (FUN_00775940(0x113)) {
+				ODMessageBox(StringTable::LoadString("TXT_YOURE_DISCON", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x211E), 0, FUN_0077D710, 0);
+			}
+			DAT_00B77DC0 = 1;
+			DAT_00B77DC2 = 1;
+			SetEvent(DAT_00B73684[0]);
+			DAT_00B77DD0 = 0;
+			Clear_Channel(DAT_00B76B10);
+			Clear_Channel(DAT_00B73BE8);
+			FUN_004068E0(DAT_0084B138);
+		}
+	}
+	return 0;
+}
+
+// FUNCTION: GAMEMD 0x007AAFB0
+long __stdcall FUN_007AAFB0(void * sink, long result, User * user, char const * text)
+{
+	if (!DAT_00B77DC1 && result >= 0) {
+		bool allowed;
+		{
+			Wstring narrow(text);
+			allowed = FUN_0077D2A0(user);
+		}
+		if (allowed && FUN_0077D4C0(user)) {
+			WideWstring wide = Widen(text);
+			if (stricmp(Session.Handle, user->Nick) != 0) {
+				FUN_005E2700(DAT_007EEF34, DAT_0084B224, user->Nick, wide.get());
+			}
+		}
+	}
+	return 0;
+}
+
+// FUNCTION: GAMEMD 0x007AB0A0
+long __stdcall FUN_007AB0A0(void * sink, long result, User * user, wchar_t const * text)
+{
+	if (!DAT_00B77DC1 && result >= 0) {
+		bool allowed;
+		{
+			WideWstring wide(text);
+			allowed = FUN_0077D2E0(user, &wide);
+		}
+		if (allowed && FUN_0077D4C0(user)) {
+			if (stricmp(Session.Handle, user->Nick) != 0) {
+				FUN_005E2700(DAT_007EEF34, DAT_0084B224, user->Nick, text);
+			}
+		}
+	}
+	return 0;
+}
+
+// FUNCTION: GAMEMD 0x007AB170
+long __stdcall FUN_007AB170(void * sink, long result, void * channel, User * user, char const * text)
+{
+	if (!DAT_00B77DC1 && result >= 0) {
+		bool allowed;
+		{
+			Wstring narrow(text);
+			allowed = FUN_0077D2A0(user);
+		}
+		if (allowed && FUN_0077D4C0(user)) {
+			WideWstring wide = Widen(text);
+			if (stricmp(Session.Handle, user->Nick) != 0) {
+				FUN_005E2700(DAT_007EEF38, DAT_0084B224, user->Nick, wide.get());
+			}
+		}
+	}
+	return 0;
+}
+
+// FUNCTION: GAMEMD 0x007AB260
+long __stdcall FUN_007AB260(void * sink, long result, void * channel, User * user, wchar_t const * text)
+{
+	if (!DAT_00B77DC1 && result >= 0) {
+		bool allowed;
+		{
+			WideWstring wide(text);
+			allowed = FUN_0077D2E0(user, &wide);
+		}
+		if (allowed && FUN_0077D4C0(user)) {
+			if (stricmp(Session.Handle, user->Nick) != 0) {
+				FUN_005E2700(DAT_007EEF38, DAT_0084B224, user->Nick, text);
+			}
+		}
+	}
+	return 0;
+}
+
+// FUNCTION: GAMEMD 0x007AB330
+long __stdcall FUN_007AB330(void * sink, long result, int first, int second)
+{
 	return 0;
 }
 

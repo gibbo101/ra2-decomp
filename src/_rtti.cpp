@@ -4,9 +4,35 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include <math.h>
 #include "geometry.h"
 #include "_rtti.h"
 #include "object.h"
+
+// SYNTHETIC: GAMEMD 0x0040DAA0 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x0040DAD0 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x0040DAF0 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x0040DB10 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x0040DB30 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x0040DB50 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x0040DB70 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x0040DBB0 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x0040DBE0 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x0040DC10 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x0040DC40 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x0040DC50 SYMBOL
+// _$E35
 
 struct {
 	char const *Name;

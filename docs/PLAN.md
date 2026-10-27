@@ -1,6 +1,6 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 27 October 2026: 14,935 of 19,366 game functions match (77%; 54% of game code
+Status, 27 October 2026: 15,373 of 19,366 game functions match (79%; 55% of game code
 by size), landed in batches module by module. The rounds below record each one.
 
 ## The goal
@@ -1113,6 +1113,17 @@ Session.Players. Recording then exposed three UI-command functions building char
 ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; their RTTI
 fixed them. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
+
+### Batches 111, 112 and 113 (27 October 2026)
+
+**429 of 432 functions** (141, 144, 144), plus markers for header-run items the stand-ins had
+left unclaimed. Six wonline chat callbacks landed once a dead local in FUN_0077D4C0 spent
+enough inline budget to keep its calls out of line, as the exe has them. VectorCursor gained
+the Reset the exe's Conflict summary uses. At landing, eight files' header runs moved from
+stand-in structs onto geometry.h, a Session.Handle alias was retired, and a file-local
+DialogControlBase was banked: RTTI names its vtable OwnerDraw::DialogControl, and its
+destructor label contradicted wonline's 28 calls to 0x00624130. Merge gate: 15,373 of
+15,373 (2,055.3 KB).
 
 ### Batches 108, 109 and 110 (27 October 2026)
 

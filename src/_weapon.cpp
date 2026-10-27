@@ -34,3 +34,34 @@
 // _$E32
 // SYNTHETIC: GAMEMD 0x0040FAF0 SYMBOL
 // _$E35
+
+// SYNTHETIC: GAMEMD 0x0040FB10 SYMBOL
+// _$E38
+
+// SYNTHETIC: GAMEMD 0x0040FB30 SYMBOL
+// _$E43
+
+// SYNTHETIC: GAMEMD 0x0040FB70 SYMBOL
+// _$E41
+DynamicVectorClass<WeaponTypeClass *> Weapons;
+
+// TEMPLATE: GAMEMD 0x0040FBB0
+// ?Clear@?$DynamicVectorClass@PAVWeaponTypeClass@@@@UAEXXZ
+template class DynamicVectorClass<WeaponTypeClass *>;
+
+// TEMPLATE: GAMEMD 0x0040FBE0
+// ?ID@?$DynamicVectorClass@PAVWeaponTypeClass@@@@UAEHPBQAVWeaponTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x0040FC00
+// ?GetItem@?$VectorClass@PAVWeaponTypeClass@@@@UBEPAVWeaponTypeClass@@H@Z
+// TEMPLATE: GAMEMD 0x0040FC10
+// ??8?$VectorClass@PAVWeaponTypeClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x0040FC50
+// ?Resize@?$VectorClass@PAVWeaponTypeClass@@@@UAE_NHPBQAVWeaponTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x0040FD00
+// ?Clear@?$VectorClass@PAVWeaponTypeClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0040FD30
+// ?ID@?$VectorClass@PAVWeaponTypeClass@@@@UAEHABQAVWeaponTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x0040FD70
+// ?ID@?$VectorClass@PAVWeaponTypeClass@@@@UAEHPBQAVWeaponTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x0040FD90
+// ?Resize@?$DynamicVectorClass@PAVWeaponTypeClass@@@@UAE_NHPBQAVWeaponTypeClass@@@Z

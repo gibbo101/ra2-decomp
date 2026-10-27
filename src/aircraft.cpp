@@ -5,6 +5,7 @@
 
 #define INCLUDE_COM
 #include "always.h"
+#include <math.h>
 #include "aircraft.h"
 #include "_map.h"
 #include "_rtti.h"
@@ -58,6 +59,36 @@ template class TVelocity3D<double>;
 template class IndexClass<int, AbstractClass *>;
 
 extern int __fastcall FUN_0050C170(char const * name);
+
+// SYNTHETIC: GAMEMD 0x00413AC0 SYMBOL
+// _$E116
+// SYNTHETIC: GAMEMD 0x00413AF0 SYMBOL
+// _$E119
+// SYNTHETIC: GAMEMD 0x00413B10 SYMBOL
+// _$E122
+// SYNTHETIC: GAMEMD 0x00413B30 SYMBOL
+// _$E125
+// SYNTHETIC: GAMEMD 0x00413B50 SYMBOL
+// _$E128
+// SYNTHETIC: GAMEMD 0x00413B70 SYMBOL
+// _$E131
+// SYNTHETIC: GAMEMD 0x00413B90 SYMBOL
+// _$E134
+// SYNTHETIC: GAMEMD 0x00413BD0 SYMBOL
+// _$E137
+// SYNTHETIC: GAMEMD 0x00413C00 SYMBOL
+// _$E140
+// SYNTHETIC: GAMEMD 0x00413C30 SYMBOL
+// _$E143
+// SYNTHETIC: GAMEMD 0x00413C60 SYMBOL
+// _$E146
+// SYNTHETIC: GAMEMD 0x00413C70 SYMBOL
+// _$E149
+// SYNTHETIC: GAMEMD 0x00413C90 SYMBOL
+// _$E152
+// SYNTHETIC: GAMEMD 0x00413CB0 SYMBOL
+// _$E155
+const Rect RECT_NONE_2(0, 0, 0, 0);
 
 // FUNCTION: GAMEMD 0x00413CD0
 bool Counts_As_Civ_Evac(ObjectClass const * candidate)
@@ -317,7 +348,6 @@ void AircraftClass::Draw_It(Point2D const & xpoint, Rect const & cliprect) const
 
 int __fastcall FUN_0050DA80(HouseClass * house);
 int __fastcall FUN_0050DAC0(HouseClass * house);
-extern Coord DAT_00889E88;
 
 // FUNCTION: GAMEMD 0x00414A10
 void AircraftClass::Draw_Rotors(Point2D const & xy, Rect const & cliprect) const
@@ -723,7 +753,7 @@ int AircraftClass::Paradrop_Cargo(void)
 
 		if (passenger->Can_Enter_Cell(cell) == MOVE_OK) {
 			Coord sub = cell->Closest_Free_Spot(drop, false, false, false);
-			if (sub != DAT_00889E88) {
+			if (sub != COORD_NONE) {
 				drop.X = sub.X;
 				drop.Y = sub.Y;
 				if (passenger->Paradrop(drop)) {

@@ -1654,3 +1654,31 @@ template class TClassFactory<HouseClass>;
 // TEMPLATE: GAMEMD 0x006C4090
 // ?LockServer@?$TClassFactory@VDriveLocomotionClass@@@@UAGJH@Z
 template class TClassFactory<DriveLocomotionClass>;
+
+// TEMPLATE: GAMEMD 0x006C40C0
+// ??0?$TClassFactory@VJumpjetLocomotionClass@@@@QAE@XZ
+// TEMPLATE: GAMEMD 0x006C40D0
+// ?QueryInterface@?$TClassFactory@VJumpjetLocomotionClass@@@@UAGJABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C4140
+// ?AddRef@?$TClassFactory@VJumpjetLocomotionClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C4160
+// ?Release@?$TClassFactory@VJumpjetLocomotionClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C4190
+// ?CreateInstance@?$TClassFactory@VJumpjetLocomotionClass@@@@UAGJPAUIUnknown@@ABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C4210
+// ?LockServer@?$TClassFactory@VJumpjetLocomotionClass@@@@UAGJH@Z
+template class TClassFactory<JumpjetLocomotionClass>;
+
+// TEMPLATE: GAMEMD 0x006C4240
+// ??0?$TClassFactory@VHoverLocomotionClass@@@@QAE@XZ
+// TEMPLATE: GAMEMD 0x006C4250
+// ?QueryInterface@?$TClassFactory@VHoverLocomotionClass@@@@UAGJABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C42C0
+// ?AddRef@?$TClassFactory@VHoverLocomotionClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C42E0
+// ?Release@?$TClassFactory@VHoverLocomotionClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C4310
+// ?CreateInstance@?$TClassFactory@VHoverLocomotionClass@@@@UAGJPAUIUnknown@@ABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C4390
+// ?LockServer@?$TClassFactory@VHoverLocomotionClass@@@@UAGJH@Z
+template class TClassFactory<HoverLocomotionClass>;

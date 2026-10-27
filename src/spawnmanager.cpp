@@ -363,3 +363,34 @@ RTTIType SpawnManagerClass::Fetch_RTTI(void) const
 
 // SYNTHETIC: GAMEMD 0x006B8140
 // ??_GSpawnManagerClass@@UAEPAXI@Z
+
+// TEMPLATE: GAMEMD 0x006B8160
+// ?Clear@?$DynamicVectorClass@PAUSpawnControl@SpawnManagerClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x006B8190
+// ?ID@?$DynamicVectorClass@PAUSpawnControl@SpawnManagerClass@@@@UAEHPBQAUSpawnControl@SpawnManagerClass@@@Z
+// TEMPLATE: GAMEMD 0x006B81B0
+// ?GetItem@?$VectorClass@PAUSpawnControl@SpawnManagerClass@@@@UBEPAUSpawnControl@SpawnManagerClass@@H@Z
+template class DynamicVectorClass<SpawnManagerClass::SpawnControl *>;
+
+// TEMPLATE: GAMEMD 0x006B81C0
+// ?Clear@?$DynamicVectorClass@PAVSpawnManagerClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x006B81F0
+// ?ID@?$DynamicVectorClass@PAVSpawnManagerClass@@@@UAEHPBQAVSpawnManagerClass@@@Z
+// TEMPLATE: GAMEMD 0x006B8210
+// ?GetItem@?$VectorClass@PAVSpawnManagerClass@@@@UBEPAVSpawnManagerClass@@H@Z
+template class DynamicVectorClass<SpawnManagerClass *>;
+
+// TEMPLATE: GAMEMD 0x006B8220
+// ??8?$VectorClass@PAUSpawnControl@SpawnManagerClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x006B8260
+// ?Resize@?$VectorClass@PAUSpawnControl@SpawnManagerClass@@@@UAE_NHPBQAUSpawnControl@SpawnManagerClass@@@Z
+// TEMPLATE: GAMEMD 0x006B8310
+// ?Clear@?$VectorClass@PAUSpawnControl@SpawnManagerClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x006B8340
+// ?ID@?$VectorClass@PAUSpawnControl@SpawnManagerClass@@@@UAEHABQAUSpawnControl@SpawnManagerClass@@@Z
+// TEMPLATE: GAMEMD 0x006B8380
+// ?ID@?$VectorClass@PAUSpawnControl@SpawnManagerClass@@@@UAEHPBQAUSpawnControl@SpawnManagerClass@@@Z
+template class VectorClass<SpawnManagerClass::SpawnControl *>;
+
+// TEMPLATE: GAMEMD 0x006B83A0
+// ??0?$DynamicVectorClass@PAUSpawnControl@SpawnManagerClass@@@@QAE@IPBQAUSpawnControl@SpawnManagerClass@@@Z

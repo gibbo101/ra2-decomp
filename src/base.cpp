@@ -503,3 +503,39 @@ template class DynamicVectorClass<Cell>;
 
 // TEMPLATE: GAMEMD 0x0042F6F0
 // ?Resize@?$VectorClass@VCell@@@@UAE_NHPBVCell@@@Z
+
+// TEMPLATE: GAMEMD 0x0042F7C0
+// ?Clear@?$VectorClass@VCell@@@@UAEXXZ
+
+// TEMPLATE: GAMEMD 0x0042F7F0
+// ?ID@?$VectorClass@VCell@@@@UAEHABVCell@@@Z
+
+// TEMPLATE: GAMEMD 0x0042F840
+// ?ID@?$VectorClass@VCell@@@@UAEHPBVCell@@@Z
+
+// TEMPLATE: GAMEMD 0x0042F860
+// ?Resize@?$DynamicVectorClass@VCell@@@@UAE_NHPBVCell@@@Z
+
+// TEMPLATE: GAMEMD 0x0042F930
+// ?ID@?$DynamicVectorClass@VCell@@@@UAEHABVCell@@@Z
+
+// SYNTHETIC: GAMEMD 0x0042F970
+// ??_G?$DynamicVectorClass@VBaseNodeClass@@@@UAEPAXI@Z
+
+// TEMPLATE: GAMEMD 0x0042F9C0
+// ?Resize@?$VectorClass@VBaseNodeClass@@@@UAE_NHPBVBaseNodeClass@@@Z
+
+// TEMPLATE: GAMEMD 0x0042FAB0
+// ?Clear@?$VectorClass@VBaseNodeClass@@@@UAEXXZ
+
+// TEMPLATE: GAMEMD 0x0042FAE0
+// ?ID@?$VectorClass@VBaseNodeClass@@@@UAEHABVBaseNodeClass@@@Z
+
+// TEMPLATE: GAMEMD 0x0042FB30
+// ?ID@?$VectorClass@VBaseNodeClass@@@@UAEHPBVBaseNodeClass@@@Z
+
+// SYNTHETIC: GAMEMD 0x0042FB50
+// ??_G?$VectorClass@VBaseNodeClass@@@@UAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x0042FBA0
+// ??_G?$VectorClass@VCell@@@@UAEPAXI@Z

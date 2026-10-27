@@ -1394,3 +1394,37 @@ template class VectorClass<DiskID>;
 // TEMPLATE: GAMEMD 0x0069C560
 // ?ID@?$DynamicVectorClass@VWstring@@@@UAEHPBVWstring@@@Z
 template class DynamicVectorClass<Wstring>;
+
+// TEMPLATE: GAMEMD 0x0069C580
+// ?GetItem@?$VectorClass@VWstring@@@@UBE?AVWstring@@H@Z
+// TEMPLATE: GAMEMD 0x0069C5A0
+// ?Clear@?$DynamicVectorClass@PAVMultiMission@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0069C5D0
+// ?ID@?$DynamicVectorClass@PAVMultiMission@@@@UAEHPBQAVMultiMission@@@Z
+// TEMPLATE: GAMEMD 0x0069C5F0
+// ?GetItem@?$VectorClass@PAVMultiMission@@@@UBEPAVMultiMission@@H@Z
+template class DynamicVectorClass<MultiMission *>;
+template class VectorClass<MultiMission *>;
+
+// TEMPLATE: GAMEMD 0x0069C600
+// ?Clear@?$DynamicVectorClass@PAUGlobalPacketType@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0069C630
+// ?ID@?$DynamicVectorClass@PAUGlobalPacketType@@@@UAEHPBQAUGlobalPacketType@@@Z
+// TEMPLATE: GAMEMD 0x0069C650
+// ?GetItem@?$VectorClass@PAUGlobalPacketType@@@@UBEPAUGlobalPacketType@@H@Z
+template class DynamicVectorClass<GlobalPacketType *>;
+template class VectorClass<GlobalPacketType *>;
+
+// TEMPLATE: GAMEMD 0x0069C660
+// ?Clear@?$DynamicVectorClass@PAVPhoneEntryClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0069C690
+// ?ID@?$DynamicVectorClass@PAVPhoneEntryClass@@@@UAEHPBQAVPhoneEntryClass@@@Z
+// TEMPLATE: GAMEMD 0x0069C6B0
+// ?GetItem@?$VectorClass@PAVPhoneEntryClass@@@@UBEPAVPhoneEntryClass@@H@Z
+template class DynamicVectorClass<PhoneEntryClass *>;
+template class VectorClass<PhoneEntryClass *>;
+
+// SYNTHETIC: GAMEMD 0x0069C6C0
+// ??_G?$TypeList@W4DiskID@@@@UAEPAXI@Z
+// TEMPLATE: GAMEMD 0x0069C710
+// ??8?$VectorClass@W4DiskID@@@@UBE_NABV0@@Z

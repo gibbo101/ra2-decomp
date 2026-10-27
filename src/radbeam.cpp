@@ -6,8 +6,12 @@
 #include "always.h"
 #include "geometry.h"
 #include "rect.h"
+#include <stdlib.h>
 #include "radbeam.h"
+#include "object.h"
 #include "techno.h"
+#include "surface.h"
+#include "_tactica.h"
 
 // SYNTHETIC: GAMEMD 0x00658E80 SYMBOL
 // _$E2
@@ -73,9 +77,7 @@ RadBeam::RadBeam(int type) :
 	unknown_54(1),
 	unknown_58(false),
 	unknown_7C(0),
-	unknown_C0(0),
-	unknown_C1(0),
-	unknown_C2(0)
+	Tint(0, 0, 0)
 {
 }
 
@@ -119,4 +121,126 @@ void RadBeam::FUN_006594F0(double amplitude)
 void RadBeam::FUN_00659510(double value)
 {
 	unknown_48 = value;
+}
+
+// FUNCTION: GAMEMD 0x00659530
+void RadBeam::FUN_00659530(int value)
+{
+	unknown_50 = value;
+}
+
+// FUNCTION: GAMEMD 0x00659540
+void RadBeam::FUN_00659540(int value)
+{
+	unknown_54 = value;
+}
+
+// FUNCTION: GAMEMD 0x00659550
+void RadBeam::FUN_00659550(bool value)
+{
+	unknown_58 = value;
+}
+
+// FUNCTION: GAMEMD 0x00659560
+void RadBeam::FUN_00659560(void)
+{
+	unknown_9 = 0;
+}
+
+// FUNCTION: GAMEMD 0x00659570
+unsigned char RadBeam::FUN_00659570(void)
+{
+	return(unknown_9);
+}
+
+// FUNCTION: GAMEMD 0x00659580
+void RadBeam::FUN_00659580(int value)
+{
+	unknown_18 = value;
+}
+
+class Tactical
+{
+	public:
+		static int Z_Lepton_To_Pixel(int lepton);
+		bool Coord_To_Pixel(Coord const & coord, Point2D & pixel);
+};
+
+class DSurface : public Surface
+{
+	public:
+		static DSurface * Temp;
+		static Rect ViewBounds;
+};
+
+extern bool __fastcall Line_In_Bounds(Point2D & start, Point2D & end, Rect const & bounds);
+extern const double DAT_007F04C0;
+extern const double DAT_007E2800;
+extern const double DAT_00839530;
+extern const double DAT_007E1738;
+
+struct Drawing {
+	static unsigned char RedShiftRight;
+	static unsigned char GreenShiftRight;
+	static unsigned char BlueShiftRight;
+	static int RedShiftLeft;
+	static int GreenShiftLeft;
+	static int BlueShiftLeft;
+};
+
+// FUNCTION: GAMEMD 0x00659590
+void RadBeam::FUN_00659590(Coord const & from, Coord const & to, short color)
+{
+	Point2D p1;
+	TacticalMap->Coord_To_Pixel(from, p1);
+	Point2D p2;
+	TacticalMap->Coord_To_Pixel(to, p2);
+	Rect bounds = DSurface::ViewBounds;
+	if (Line_In_Bounds(p1, p2, bounds)) {
+		int d1 = ZAdjust - Tactical::Z_Lepton_To_Pixel(from.Z) - 2;
+		int d2 = -2 - Tactical::Z_Lepton_To_Pixel(to.Z);
+		DSurface::Temp->Draw_Depth_Shaded_Line(DSurface::ViewBounds, p1, p2, color, d1, d2, false);
+	}
+}
+
+// FUNCTION: GAMEMD 0x006599C0
+void RadBeam::FUN_006599C0(void)
+{
+	Delta = TargetLocation - SourceLocation;
+	Length = fastmath::sqrt(Delta.X * Delta.X + Delta.Y * Delta.Y + Delta.Z * Delta.Z);
+}
+
+// FUNCTION: GAMEMD 0x00659CA0
+bool RadBeam::FUN_00659CA0(void)
+{
+	if (!unknown_8) {
+		unknown_8 = 1;
+		FUN_00659E30();
+	}
+	if (unknown_9) {
+		FUN_00659EE0();
+		unknown_88 = 0;
+		if (unknown_8C > 0) {
+			do {
+				FUN_00659FF0();
+				short color = (Tint.Get_Blue() >> Drawing::BlueShiftRight << Drawing::BlueShiftLeft)
+					| (Tint.Get_Red() >> Drawing::RedShiftRight << Drawing::RedShiftLeft)
+					| (Tint.Get_Green() >> Drawing::GreenShiftRight << Drawing::GreenShiftLeft);
+				Coord * b = &PointB;
+				Coord * a = &PointA;
+				Point2D p1;
+				TacticalMap->Coord_To_Pixel(*a, p1);
+				Point2D p2;
+				TacticalMap->Coord_To_Pixel(*b, p2);
+				Rect bounds = DSurface::ViewBounds;
+				if (Line_In_Bounds(p1, p2, bounds)) {
+					int d1 = ZAdjust - Tactical::Z_Lepton_To_Pixel(a->Z) - 2;
+					int d2 = -2 - Tactical::Z_Lepton_To_Pixel(b->Z);
+					DSurface::Temp->Draw_Depth_Shaded_Line(DSurface::ViewBounds, p1, p2, color, d1, d2, false);
+				}
+				unknown_88++;
+			} while (unknown_88 < unknown_8C);
+		}
+	}
+	return ++unknown_7C >= Period;
 }

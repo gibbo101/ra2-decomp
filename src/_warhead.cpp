@@ -35,3 +35,61 @@
 // _$E34
 // SYNTHETIC: GAMEMD 0x0040F450 SYMBOL
 // _$E37
+
+// SYNTHETIC: GAMEMD 0x0040F470 SYMBOL
+// _$E40
+
+// SYNTHETIC: GAMEMD 0x0040F490 SYMBOL
+// _$E45
+
+DynamicVectorClass<WarheadTypeClass *> Warheads;
+
+// SYNTHETIC: GAMEMD 0x0040F4D0 SYMBOL
+// _$E43
+
+// FUNCTION: GAMEMD 0x0040F510
+WarheadType Warhead_From_Name(char const * name)
+{
+	if (stricmp(name, "<none>") != 0 && stricmp(name, "none") != 0) {
+		for (int index = WARHEAD_FIRST; index < Warheads.Count(); index++) {
+			if (stricmp(name, Warheads[index]->Name()) == 0) {
+				return(WarheadType(index));
+			}
+		}
+		WarheadTypeClass *ptr = new WarheadTypeClass(name);
+		return(WarheadType(Warheads.ID(ptr)));
+
+	}
+	return(WARHEAD_NONE);
+}
+
+// FUNCTION: GAMEMD 0x0040F5C0
+char const * Warhead_Name(WarheadType warhead)
+{
+	if (warhead == WARHEAD_NONE || (unsigned)warhead >= (unsigned)Warheads.Count()) return(NULL);
+
+	return(Warheads[warhead]->Name());
+}
+
+// TEMPLATE: GAMEMD 0x0040F5E0
+// ?Clear@?$DynamicVectorClass@PAVWarheadTypeClass@@@@UAEXXZ
+
+// TEMPLATE: GAMEMD 0x0040F610
+// ?ID@?$DynamicVectorClass@PAVWarheadTypeClass@@@@UAEHPBQAVWarheadTypeClass@@@Z
+
+// TEMPLATE: GAMEMD 0x0040F630
+// ?GetItem@?$VectorClass@PAVWarheadTypeClass@@@@UBEPAVWarheadTypeClass@@H@Z
+
+// TEMPLATE: GAMEMD 0x0040F640
+// ??8?$VectorClass@PAVWarheadTypeClass@@@@UBE_NABV0@@Z
+
+// TEMPLATE: GAMEMD 0x0040F680
+// ?Resize@?$VectorClass@PAVWarheadTypeClass@@@@UAE_NHPBQAVWarheadTypeClass@@@Z
+
+// TEMPLATE: GAMEMD 0x0040F730
+// ?Clear@?$VectorClass@PAVWarheadTypeClass@@@@UAEXXZ
+
+// TEMPLATE: GAMEMD 0x0040F760
+// ?ID@?$VectorClass@PAVWarheadTypeClass@@@@UAEHABQAVWarheadTypeClass@@@Z
+
+template class DynamicVectorClass<WarheadTypeClass *>;

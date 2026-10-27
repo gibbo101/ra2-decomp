@@ -577,6 +577,8 @@ class VectorCursor
 		VectorCursor & operator++(int) { return(++(*this)); }
 		VectorCursor & operator--(int) { return(--(*this)); }
 
+		void Reset(void) { Cursor = 0; }
+
 		T & operator *(void) const { return((*Vector)[Cursor]); }
 		T & operator->(void) const { return((*Vector)[Cursor]); }
 
