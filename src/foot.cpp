@@ -3509,3 +3509,38 @@ bool MissionClass::Ready_To_Next_Mission(void) const
 
 // SYNTHETIC: GAMEMD 0x004E0170
 // ??_GFootClass@@UAEPAXI@Z
+
+// TEMPLATE: GAMEMD 0x004E0190
+// ?Clear@?$DynamicVectorClass@PAVAbstractClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004E01C0
+// ?ID@?$DynamicVectorClass@PAVAbstractClass@@@@UAEHPBQAVAbstractClass@@@Z
+// TEMPLATE: GAMEMD 0x004E01E0
+// ?GetItem@?$VectorClass@PAVAbstractClass@@@@UBEPAVAbstractClass@@H@Z
+template class DynamicVectorClass<AbstractClass *>;
+
+// TEMPLATE: GAMEMD 0x004E01F0
+// ?Clear@?$DynamicVectorClass@PAVFootClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004E0220
+// ?ID@?$DynamicVectorClass@PAVFootClass@@@@UAEHPBQAVFootClass@@@Z
+// TEMPLATE: GAMEMD 0x004E0240
+// ?GetItem@?$VectorClass@PAVFootClass@@@@UBEPAVFootClass@@H@Z
+template class DynamicVectorClass<FootClass *>;
+
+typedef DiscreteDistributionClass<CellClass>::DIST_OBJ CELL_DIST_OBJ;
+
+// TEMPLATE: GAMEMD 0x004E0250
+// ?GetItem@?$VectorClass@V?$DistributionObject@PAVCellClass@@@?$DiscreteDistributionClass@VCellClass@@@@@@UBE?AV?$DistributionObject@PAVCellClass@@@?$DiscreteDistributionClass@VCellClass@@@@H@Z
+template class DynamicVectorClass<CELL_DIST_OBJ>;
+
+// SYNTHETIC: GAMEMD 0x004E0270
+// ??_G?$DynamicVectorClass@PAVAbstractClass@@@@UAEPAXI@Z
+
+
+// SYNTHETIC: GAMEMD 0x004E02D0
+// ??_G?$VectorClass@PAVAbstractClass@@@@UAEPAXI@Z
+
+// TEMPLATE: GAMEMD 0x004E0320
+// ??8?$VectorClass@PAVAbstractClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x004E0360
+// ?Resize@?$VectorClass@PAVAbstractClass@@@@UAE_NHPBQAVAbstractClass@@@Z
+template class VectorClass<AbstractClass *>;

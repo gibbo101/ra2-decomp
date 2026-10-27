@@ -49,4 +49,10 @@ class TemporalClass : public AbstractClass
 		void LetGo(void);
 		void JustLetGo(void);
 		void FUN_0071AB60(AbstractClass * ptr);
+		void FUN_0071ACB0(void);
+		void FUN_0071ACD0(void);
+		void FUN_0071AD30(void);
+		void FUN_0071ADB0(void);
+		bool CanWarpTarget(TechnoClass * target);
+		void Fire(TechnoClass * target);
 };

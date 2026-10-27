@@ -69,6 +69,7 @@ const RadarEventInfo RadarEventTable[RADAREVENT_COUNT] = {
 // _$E49
 Cell DAT_00B04D48[8];
 int DAT_00B04D88;
+extern Cell DAT_00B04D68;
 int DAT_00B04DD8;
 
 // SYNTHETIC: GAMEMD 0x0065F9B0 SYMBOL
@@ -336,3 +337,109 @@ bool RadarEventClass::Load(IStream * stream)
 
 	return(false);
 }
+
+// FUNCTION: GAMEMD 0x00660950
+RGBClass RadarEventClass::Get_Max_Color(void) const
+{
+	switch (Type) {
+		case RADAREVENT_COMBAT:
+		case RADAREVENT_BASE_ATTACKED:
+		case RADAREVENT_HARVESTER_ATTACKED:
+			return(RGBClass(255,0,255));
+
+		case RADAREVENT_NONCOMBAT:
+		case RADAREVENT_DROPZONE:
+		case RADAREVENT_BEACON_PLACED:
+		case RADAREVENT_SUPERWEAPON_DETECTED:
+			return(RGBClass(255,255,0));
+
+		case RADAREVENT_ENEMY_SENSED:
+			return(RGBClass(0,255,255));
+
+		default:
+			return(RGBClass(0,0,0));
+	}
+}
+
+// FUNCTION: GAMEMD 0x00660A10
+RGBClass RadarEventClass::Get_Min_Color(void) const
+{
+	switch (Type) {
+		case RADAREVENT_COMBAT:
+		case RADAREVENT_BASE_ATTACKED:
+		case RADAREVENT_HARVESTER_ATTACKED:
+			return(RGBClass(128,0,128));
+
+		case RADAREVENT_NONCOMBAT:
+		case RADAREVENT_DROPZONE:
+		case RADAREVENT_BEACON_PLACED:
+		case RADAREVENT_SUPERWEAPON_DETECTED:
+			return(RGBClass(128,128,0));
+
+		case RADAREVENT_ENEMY_SENSED:
+			return(RGBClass(0,128,128));
+
+		default:
+			return(RGBClass(0,0,0));
+	}
+}
+
+// FUNCTION: GAMEMD 0x00660AD0
+int RadarEventClass::Get_Visibility_Duration(void)
+{
+	return(RadarEventTable[Type].VisibilityDuration);
+}
+
+// FUNCTION: GAMEMD 0x00660AE0
+int RadarEventClass::Get_Duration(void)
+{
+	return(RadarEventTable[Type].Duration);
+}
+
+// FUNCTION: GAMEMD 0x00660AF0
+int RadarEventClass::Get_Suppression_Distance(void)
+{
+	return(RadarEventTable[Type].SuppressionDistance);
+}
+
+// FUNCTION: GAMEMD 0x00660B00
+void Clear_Radar_Events(void)
+{
+	for (int i = RadarEventClass::RadarEvents.Count() - 1; i >= 0; i--) {
+		delete RadarEventClass::RadarEvents[i];
+	}
+}
+
+// FUNCTION: GAMEMD 0x00660B80
+void Remember_Radar_Event_Cell(Cell const & cell)
+{
+	DAT_00B04D88 = (DAT_00B04D88 + 1) % 8;
+	DAT_00B04D48[DAT_00B04D88] = cell;
+	DAT_00B04DD8 = DAT_00B04D88;
+}
+
+// FUNCTION: GAMEMD 0x00660BB0
+Cell Recall_Radar_Event_Cell(void)
+{
+	if (DAT_00B04D88 == -1) {
+		return(DAT_00B04D68);
+	}
+	DAT_00B04DD8 = DAT_00B04D88;
+	return(DAT_00B04D48[DAT_00B04D88]);
+}
+
+// FUNCTION: GAMEMD 0x00660C50
+void Reset_Radar_Event_Cells(void)
+{
+	DAT_00B04D88 = -1;
+	DAT_00B04DD8 = -1;
+	for (int i = 0; i < 8; i++) {
+		DAT_00B04D48[i] = DAT_00B04D68;
+	}
+}
+
+// TEMPLATE: GAMEMD 0x00660C80
+// ?Clear@?$DynamicVectorClass@PAVRadarEventClass@@@@UAEXXZ
+
+// TEMPLATE: GAMEMD 0x00660CB0
+// ?ID@?$DynamicVectorClass@PAVRadarEventClass@@@@UAEHPBQAVRadarEventClass@@@Z

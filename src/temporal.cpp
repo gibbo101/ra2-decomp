@@ -252,3 +252,271 @@ int TemporalClass::GetWarpPerStep(int helpercount)
 	WarpPerStep = Owner->Get_Class_Weapon_Data(Owner->What_Weapon_Should_I_Use(NULL))->Weapon->Attack;
 	return(WarpPerStep + helpers);
 }
+
+#include "cell.h"
+#include "unit.h"
+#include "unittype.h"
+#include "spawnmgr.h"
+#include "capmgr.h"
+#include "revent.h"
+#include "vox.h"
+
+// FUNCTION: GAMEMD 0x0071AB60
+void TemporalClass::FUN_0071AB60(AbstractClass * ptr)
+{
+	if (ptr == Owner) {
+		if (Target != NULL) {
+			LetGo();
+			Target = NULL;
+		}
+	} else if (ptr == Target) {
+		Target = NULL;
+		PrevTemporal = NULL;
+		NextTemporal = NULL;
+		SourceSW = NULL;
+		unknown_pointer_38 = NULL;
+		if (Owner != NULL) {
+			Owner->Enter_Idle_Mode(false, true);
+		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x0071ABC0
+void TemporalClass::LetGo(void)
+{
+	if (NextTemporal == NULL) {
+		if (PrevTemporal != NULL) {
+			if (Target != NULL) {
+				Target->TemporalTargetingMe = PrevTemporal;
+			}
+			PrevTemporal->NextTemporal = NULL;
+			PrevTemporal->WarpRemaining = WarpRemaining;
+		} else if (Target != NULL) {
+			Target->TemporalTargetingMe = NULL;
+			Target->BeingWarpedOut = false;
+			if (Target->Fetch_RTTI() == RTTI_BUILDING) {
+				BuildingClass * building = (BuildingClass *)Target;
+				building->House->RecalcPower = true;
+				building->EnableTemporal();
+				building->House->IsRecalcNeeded = true;
+			}
+			Target->Mark(MARK_CHANGE);
+		}
+	} else {
+		if (PrevTemporal != NULL) {
+			PrevTemporal->NextTemporal = NextTemporal;
+			if (NextTemporal != NULL) {
+				NextTemporal->PrevTemporal = PrevTemporal;
+			}
+		} else {
+			NextTemporal->PrevTemporal = NULL;
+		}
+	}
+	Target = NULL;
+	PrevTemporal = NULL;
+	NextTemporal = NULL;
+	SourceSW = NULL;
+	unknown_pointer_38 = NULL;
+}
+
+// FUNCTION: GAMEMD 0x0071ACB0
+void TemporalClass::FUN_0071ACB0(void)
+{
+	if (Target != NULL) {
+		Target->TemporalTargetingMe = NULL;
+		Target->BeingWarpedOut = false;
+		Target = NULL;
+	}
+}
+
+// FUNCTION: GAMEMD 0x0071ACD0
+void TemporalClass::FUN_0071ACD0(void)
+{
+	if (Target != NULL) {
+		Target->TemporalTargetingMe = NULL;
+		Target->BeingWarpedOut = false;
+		if (Target->Fetch_RTTI() == RTTI_BUILDING) {
+			BuildingClass * building = (BuildingClass *)Target;
+			building->House->RecalcPower = true;
+			building->EnableTemporal();
+			building->House->IsRecalcNeeded = true;
+		}
+		Target->Mark(MARK_CHANGE);
+	}
+}
+
+// FUNCTION: GAMEMD 0x0071AD30
+void TemporalClass::FUN_0071AD30(void)
+{
+}
+
+// FUNCTION: GAMEMD 0x0071AD40
+void TemporalClass::JustLetGo(void)
+{
+	if (Target != NULL) {
+		Target->BeingWarpedOut = false;
+		Target->TemporalTargetingMe = NULL;
+		Target = NULL;
+	}
+	if (PrevTemporal != NULL) {
+		if (PrevTemporal->NextTemporal == this) {
+			PrevTemporal->NextTemporal = NULL;
+		}
+		PrevTemporal->Detach();
+		PrevTemporal = NULL;
+	}
+	if (NextTemporal != NULL) {
+		if (NextTemporal->PrevTemporal == this) {
+			NextTemporal->PrevTemporal = NULL;
+		}
+		NextTemporal->Detach();
+		NextTemporal = NULL;
+	}
+	PrevTemporal = NULL;
+	NextTemporal = NULL;
+	SourceSW = NULL;
+	unknown_pointer_38 = NULL;
+}
+
+// FUNCTION: GAMEMD 0x0071ADB0
+void TemporalClass::FUN_0071ADB0(void)
+{
+	Target = NULL;
+	PrevTemporal = NULL;
+	NextTemporal = NULL;
+	SourceSW = NULL;
+	unknown_pointer_38 = NULL;
+	if (Owner != NULL) {
+		Owner->Enter_Idle_Mode(false, true);
+	}
+}
+
+// FUNCTION: GAMEMD 0x0071ADE0
+void TemporalClass::Detach(void)
+{
+	Target->BeingWarpedOut = false;
+	Target->TemporalTargetingMe = NULL;
+	Target = NULL;
+	if (PrevTemporal != NULL) {
+		if (PrevTemporal->NextTemporal == this) {
+			PrevTemporal->NextTemporal = NULL;
+		}
+		PrevTemporal->Detach();
+	}
+	if (NextTemporal != NULL) {
+		if (NextTemporal->PrevTemporal == this) {
+			NextTemporal->PrevTemporal = NULL;
+		}
+		NextTemporal->Detach();
+	}
+	PrevTemporal = NULL;
+	NextTemporal = NULL;
+	SourceSW = NULL;
+	unknown_pointer_38 = NULL;
+	if (Owner != NULL) {
+		Owner->Enter_Idle_Mode(false, true);
+	}
+}
+
+// FUNCTION: GAMEMD 0x0071AE50
+bool TemporalClass::CanWarpTarget(TechnoClass * target)
+{
+	if (target == NULL) {
+		return(false);
+	}
+	if (!target->Techno_Type_Class()->Warpable) {
+		return(false);
+	}
+	if (target->IsIronCurtained()) {
+		return(false);
+	}
+	if (target->Fetch_RTTI() == RTTI_UNIT) {
+		RadioClass * contact = target->FUN_0065AD30(0);
+		if (contact != NULL && contact->Fetch_RTTI() == RTTI_BUILDING && ((BuildingClass *)contact)->Class->IsWeaponsFactory) {
+			if (Map[target->Get_Coord()].Cell_Building() == contact) {
+				return(false);
+			}
+		}
+	}
+	return(true);
+}
+
+static inline UnitClass * Unit_Cast(TechnoClass * techno)
+{
+	if (techno == NULL) {
+		return(NULL);
+	}
+	return((techno->RTTI == RTTI_UNIT) ? (UnitClass *)techno : NULL);
+}
+
+// FUNCTION: GAMEMD 0x0071AF20
+void TemporalClass::Fire(TechnoClass * target)
+{
+	if (target != NULL) {
+		if (target->SpawnManager != NULL) {
+			target->SpawnManager->KillNodes();
+		}
+		if (target->CaptureManager != NULL) {
+			target->CaptureManager->FreeAll();
+		}
+	}
+
+	if (Owner->TemporalImUsing != NULL && Owner->TemporalImUsing->Target != NULL) {
+		Owner->TemporalImUsing->LetGo();
+	}
+
+	if (CanWarpTarget(target) && Owner->TemporalTargetingMe == NULL) {
+		Target = target;
+		if (Target->TemporalTargetingMe == NULL) {
+			Target->TemporalTargetingMe = this;
+			WarpRemaining = Target->Techno_Type_Class()->MaxStrength * 10;
+			if (Target != NULL && Target->Fetch_RTTI() == RTTI_UNIT) {
+				if (Unit_Cast(Target)->Class->Harvester && Target->House == PlayerPtr) {
+					if (RadarEventClass::Create(RADAREVENT_HARVESTER_ATTACKED, Target->Destination_Coord().As_Cell())) {
+						VoxClass::Play("EVA_OreMinerUnderAttack", -1, -1);
+					}
+				}
+			}
+			if (Target->Fetch_RTTI() == RTTI_BUILDING && !Target->Techno_Type_Class()->IsInsignificant && !Target->IsStrange()) {
+				Target->House->Attacked(Building_Cast(Target));
+			}
+		} else {
+			NextTemporal = Target->TemporalTargetingMe;
+			PrevTemporal = NextTemporal->PrevTemporal;
+			NextTemporal->PrevTemporal = this;
+			if (PrevTemporal != NULL) {
+				PrevTemporal->NextTemporal = this;
+			}
+		}
+
+		Target->BeingWarpedOut = true;
+		if (Target->Techno_Type_Class()->IsGattling) {
+			Target->GattlingRateDown(1);
+		}
+		if (Target->Fetch_RTTI() == RTTI_BUILDING) {
+			BuildingClass * building = (BuildingClass *)Target;
+			building->House->RecalcPower = true;
+			building->DisableTemporal();
+			building->House->IsRecalcNeeded = true;
+		}
+		Target->Mark(MARK_CHANGE);
+		if (Target->TemporalImUsing != NULL && Target->TemporalImUsing->Target != NULL) {
+			Target->TemporalImUsing->LetGo();
+		}
+		if (PlayerPtr != NULL) {
+			Target->Unselect();
+		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x0071B190
+int TemporalClass::Fetch_Object_Size(void) const
+{
+	return(sizeof(*this));
+}
+
+// FUNCTION: GAMEMD 0x0071B1A0
+RTTIType TemporalClass::Fetch_RTTI(void) const
+{
+	return(RTTI_TEMPORAL);
+}

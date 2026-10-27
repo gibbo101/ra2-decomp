@@ -9,6 +9,8 @@
 #include "cctooltip.h"
 #include "vector.h"
 
+// SYNTHETIC: GAMEMD 0x005D4C30 SYMBOL
+// _$E2
 // SYNTHETIC: GAMEMD 0x005D4C50 SYMBOL
 // _$E7
 // SYNTHETIC: GAMEMD 0x005D4C90 SYMBOL
@@ -32,6 +34,7 @@ struct AcceleratorTracker {
 static DynamicVectorClass<AcceleratorTracker> _Accelerators;
 
 bool (*Message_Intercept_Handler)(MSG &msg);
+
 
 namespace Game { extern HWND hWnd; }
 namespace CopyProtection { void __fastcall DispatchLauncherMessage(MSG *msg); }
@@ -126,3 +129,31 @@ void Remove_Accelerator(HACCEL accelerator)
 		}
 	}
 }
+
+template class DynamicVectorClass<HWND>;
+template class VectorClass<HWND>;
+template class DynamicVectorClass<AcceleratorTracker>;
+template class VectorClass<AcceleratorTracker>;
+
+// TEMPLATE: GAMEMD 0x005D5080
+// ?$DynamicVectorClass@PAUHWND__@@::Clear
+// TEMPLATE: GAMEMD 0x005D50B0
+// ?$DynamicVectorClass@PAUHWND__@@::ID
+// TEMPLATE: GAMEMD 0x005D50D0
+// ?$VectorClass@PAUHWND__@@::GetItem
+// TEMPLATE: GAMEMD 0x005D50E0
+// ?$DynamicVectorClass@UAcceleratorTracker@@::Clear
+// TEMPLATE: GAMEMD 0x005D5110
+// ?$DynamicVectorClass@UAcceleratorTracker@@::ID
+// TEMPLATE: GAMEMD 0x005D5130
+// ?$VectorClass@UAcceleratorTracker@@::GetItem
+// TEMPLATE: GAMEMD 0x005D5150
+// ?$VectorClass@PAUHWND__@@::operator==
+// TEMPLATE: GAMEMD 0x005D5190
+// ?$VectorClass@PAUHWND__@@::Resize
+// TEMPLATE: GAMEMD 0x005D5240
+// ?$VectorClass@PAUHWND__@@::Clear
+// TEMPLATE: GAMEMD 0x005D5270
+// ?$VectorClass@PAUHWND__@@::ID
+// TEMPLATE: GAMEMD 0x005D52B0
+// ?$VectorClass@PAUHWND__@@::ID

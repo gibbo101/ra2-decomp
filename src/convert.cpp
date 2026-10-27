@@ -2034,3 +2034,39 @@ template class RLEBlitTransLucent25AlphaZReadWrite<unsigned short>;
 
 // SYNTHETIC: GAMEMD 0x0049A280
 // ??_G?$BlitTransZRemapXlatAlpha@G@@UAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x0049A2C0
+// ??_G?$BlitTransLucent75Alpha@G@@UAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x0049A300
+// ??_G?$BlitTransLucent50Alpha@G@@UAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x0049A340
+// ??_G?$BlitTransLucent25Alpha@G@@UAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x0049A380
+// ??_G?$BlitTransXlatWriteAlpha@G@@UAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x0049A3A0
+// ??_G?$BlitTransXlatMultWriteAlpha@G@@UAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x0049A3C0
+// ??_G?$BlitTranslucentWriteAlpha@G@@UAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x0049A3E0
+// ??_G?$BlitTranslucent50NonzeroAlpha@G@@UAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x0049A400
+// ??_G?$BlitTranslucent50ZeroAlpha@G@@UAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x0049A420
+// ??_G?$BlitTransXlatAlphaZRead@G@@UAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x0049A460
+// ??_G?$BlitTransZRemapXlatAlphaZRead@G@@UAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x0049A4A0
+// ??_G?$BlitTransLucent75AlphaZRead@G@@UAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x0049A4E0
+// ??_G?$BlitTransLucent50AlphaZRead@G@@UAEPAXI@Z

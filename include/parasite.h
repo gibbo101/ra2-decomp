@@ -47,6 +47,11 @@ class ParasiteClass : public AbstractClass
 
 		void FUN_00629530(void);
 		void FUN_00629710(void);
+		Coord FUN_0062AC30(void);
+		bool UpdateGrapple(void);
+		void UpdateSquid(void);
 		void ExitUnit(void);
-		bool CanInfect(FootClass * victim);
+		bool CanInfect(FootClass * victim) const;
+		void TryInfect(FootClass * target);
+		bool CanExistOnVictimCell(void) const;
 };

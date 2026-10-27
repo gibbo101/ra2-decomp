@@ -7,6 +7,7 @@
 #include <windows.h>
 #include "bitfont.h"
 #include "ccfile.h"
+#include "rgb.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -25,6 +26,20 @@ static inline void Reset_Defaults(BitFont * font)
 	font->Pointer_8 = 0;
 	SetRect((RECT *)&font->Bounds, 0, 0, 0, 0);
 	font->State_2C = 1;
+}
+
+extern int DAT_0089C4A8;
+extern int DAT_0089C4AC;
+extern int DAT_0089C4B0;
+extern int DAT_0089C4B4;
+
+// FUNCTION: GAMEMD 0x00433860
+void FUN_00433860(void)
+{
+	DAT_0089C4A8 = 0;
+	DAT_0089C4AC = 0;
+	DAT_0089C4B0 = 0;
+	DAT_0089C4B4 = 0;
 }
 
 // FUNCTION: GAMEMD 0x00433880
@@ -121,4 +136,147 @@ int BitFont::FUN_00433ED0(wchar_t const * text, int maxwidth)
 {
 	GetTextDimension(text, &maxwidth, 0, maxwidth);
 	return maxwidth;
+}
+
+// FUNCTION: GAMEMD 0x00433EF0
+int BitFont::FUN_00433EF0(wchar_t const * text, int maxwidth)
+{
+	if (Bool_40) {
+		State_2C = 2;
+		GetTextDimension(text, &maxwidth, 0, maxwidth);
+		State_2C = 1;
+	} else {
+		GetTextDimension(text, &maxwidth, 0, maxwidth);
+	}
+	return maxwidth;
+}
+
+// FUNCTION: GAMEMD 0x004340A0
+bool BitFont::FUN_004340A0(wchar_t const * text, int * width, int * height, int maxwidth)
+{
+	if (Bool_40) {
+		State_2C = 2;
+		bool r = GetTextDimension(text, width, height, maxwidth);
+		State_2C = 1;
+		return r;
+	}
+	return GetTextDimension(text, width, height, maxwidth);
+}
+
+// FUNCTION: GAMEMD 0x00434100
+int BitFont::FUN_00434100(int x)
+{
+	int old = Unknown_28;
+	Unknown_28 = x;
+	return old;
+}
+
+// FUNCTION: GAMEMD 0x00434110
+void BitFont::FUN_00434110(int x)
+{
+	field_20 = x;
+}
+
+struct Drawing {
+	static int RedShiftLeft;
+	static int RedShiftRight;
+	static int BlueShiftLeft;
+	static int BlueShiftRight;
+	static int GreenShiftLeft;
+	static int GreenShiftRight;
+};
+
+extern RGBClass const DAT_00A80220;
+
+// FUNCTION: GAMEMD 0x00434500
+int BitFont::FUN_00434500(wchar_t const * text, int x, int y, int w, int h)
+{
+	int count = 0;
+	unsigned short ch = *text++;
+	unsigned short saved = Color;
+	if (ch) {
+		int t = h - 1;
+		int ratio = (9 - h) * 31;
+		while (ch) {
+			if (h) {
+				if (count >= h) {
+					Color = saved;
+					int width;
+					GetTextDimension(text, &width, 0, 0);
+					return x + width;
+				}
+				if (t < 8) {
+					unsigned char r = (saved >> Drawing::RedShiftLeft) << Drawing::RedShiftRight;
+					unsigned char b = (saved >> Drawing::BlueShiftLeft) << Drawing::BlueShiftRight;
+					unsigned char g = (saved >> Drawing::GreenShiftLeft) << Drawing::GreenShiftRight;
+					RGBClass c = RGBClass(r, g, b);
+					c.Adjust(ratio, DAT_00A80220);
+					Color = (unsigned short)(((c.Get_Green() >> Drawing::GreenShiftRight) << Drawing::GreenShiftLeft)
+						| ((c.Get_Blue() >> Drawing::BlueShiftRight) << Drawing::BlueShiftLeft)
+						| ((c.Get_Red() >> Drawing::RedShiftRight) << Drawing::RedShiftLeft));
+				}
+				count++;
+				ratio += 31;
+				t--;
+			}
+			if (ch != 13 && ch != 10) {
+				x = Blit(ch, x, y, -1);
+			}
+			if (w && --w == 0) break;
+			ch = *text++;
+		}
+	}
+	Color = saved;
+	return x;
+}
+
+// FUNCTION: GAMEMD 0x004346C0
+unsigned char * BitFont::GetCharacterBitmap(wchar_t ch)
+{
+	unsigned char * result = 0;
+	InternalData * data = InternalPTR;
+	if (data) {
+		int index = data->SymbolTable[ch];
+		if (index) {
+			result = (unsigned char *)(data->SymbolDataSize * (index - 1) + data->Bitmaps);
+		}
+	}
+	return result;
+}
+
+// FUNCTION: GAMEMD 0x00434700
+void BitFont::FUN_00434700(void)
+{
+	Pointer_8 = malloc(InternalPTR->FontHeight * InternalPTR->Stride + 2);
+	if (InternalPTR) {
+		unsigned char * src = GetCharacterBitmap(0x58);
+		if (src) {
+			*(unsigned char *)Pointer_8 = *src++;
+			unsigned char * dst = (unsigned char *)Pointer_8 + 1;
+			for (unsigned y = 0; y < (unsigned)InternalPTR->FontHeight; y++) {
+				for (unsigned x = 0; x < (unsigned)InternalPTR->Stride; x++) {
+					*dst++ = ~*src++;
+				}
+			}
+		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x00434790
+void * BitFont::FUN_00434790(unsigned short * color)
+{
+	if (color) *color ^= 0x5555;
+	return Pointer_8;
+}
+
+// FUNCTION: GAMEMD 0x004347B0
+void BitFont::FUN_004347B0(void)
+{
+	if (InternalPTR) {
+		field_1C++;
+		unsigned char * p = 0;
+		int index = InternalPTR->SymbolTable[0x20];
+		if (index) p = (unsigned char *)(InternalPTR->SymbolDataSize * (index - 1) + InternalPTR->Bitmaps);
+		(*p)++;
+	}
 }

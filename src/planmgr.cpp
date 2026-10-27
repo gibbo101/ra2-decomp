@@ -2492,3 +2492,175 @@ int __fastcall FUN_0063CF10(TechnoClass * techno)
 		| (mixed.Get_Red() >> Drawing::RedShiftRight << Drawing::RedShiftLeft)
 		| (mixed.Get_Blue() >> Drawing::BlueShiftRight << Drawing::BlueShiftLeft);
 }
+
+extern int DAT_008A0DD4;
+extern int DAT_008A0DE4;
+extern int DAT_008A0DDC;
+
+static inline int Pack_Wide(RGBClass const & c)
+{
+	unsigned char rr = DAT_008A0DD4;
+	unsigned char gr = DAT_008A0DE4;
+	unsigned char br = DAT_008A0DDC;
+	return (c.Get_Red() >> rr << Drawing::RedShiftLeft)
+		| (c.Get_Green() >> gr << Drawing::GreenShiftLeft)
+		| (c.Get_Blue() >> br << Drawing::BlueShiftLeft);
+}
+
+
+extern int FUN_00731CE0(void);
+extern int FUN_00731CD0(void);
+
+
+extern "C" __declspec(dllimport) unsigned long __stdcall timeGetTime(void);
+extern bool DAT_00836880[];
+extern bool __fastcall Line_In_Bounds(Point2D & start, Point2D & end, Rect const & bounds);
+
+// FUNCTION: GAMEMD 0x0063CFC0
+int __fastcall FUN_0063CFC0(TechnoClass * techno)
+{
+	int slot = FUN_006339B0(techno);
+	RGBClass mixed = Houses[slot]->RemapColorRGB;
+	mixed.Adjust(0x64, DAT_00A80220);
+	return (mixed.Get_Green() >> Drawing::GreenShiftRight << Drawing::GreenShiftLeft)
+		| (mixed.Get_Red() >> Drawing::RedShiftRight << Drawing::RedShiftLeft)
+		| (mixed.Get_Blue() >> Drawing::BlueShiftRight << Drawing::BlueShiftLeft);
+}
+
+// FUNCTION: GAMEMD 0x0063D0F0
+int __fastcall FUN_0063D0F0(TechnoClass * techno)
+{
+	int result = Pack_Wide(DAT_00A83CD9);
+	if (techno) {
+		int highlight = Pack_Wide(DAT_00A80220);
+		if (DAT_00AC4BF0) {
+			if (DAT_00AC4BF0->Has_Member(techno)) {
+				result = highlight;
+			}
+		} else if (techno->IsSelected) {
+			result = highlight;
+		}
+	}
+	return result;
+}
+
+// FUNCTION: GAMEMD 0x0063D210
+Point2D __fastcall FUN_0063D210(EventClass const * event, TechnoClass * owner)
+{
+	Point2D pixel(-1, -1);
+	if (event) {
+		EventClass copy = *event;
+		Coord coord = FUN_0063CA80(copy, owner);
+		pixel = FUN_006339E0(coord);
+	}
+	return pixel;
+}
+
+// FUNCTION: GAMEMD 0x0063D2D0
+int PlanningNodeClass::Lead_Color(void)
+{
+	TechnoClass * techno = PlanningMembers[0]->Owner;
+	int result = Pack_Wide(DAT_00A83CD9);
+	if (techno) {
+		int highlight = Pack_Wide(DAT_00A80220);
+		if (DAT_00AC4BF0) {
+			if (DAT_00AC4BF0->Has_Member(techno)) {
+				result = highlight;
+			}
+		} else if (techno->IsSelected) {
+			result = highlight;
+		}
+	}
+	return result;
+}
+
+// FUNCTION: GAMEMD 0x0063D400
+void __fastcall FUN_0063D400(int color, int unused, int x, int y)
+{
+	Rect clip = FUN_0072AD20();
+	Rect rect = FUN_00634510(6, Point2D(x, y));
+	DSurface::Composite->Draw_Rect(clip, rect, color);
+}
+
+// FUNCTION: GAMEMD 0x0063D480
+void __fastcall FUN_0063D480(int color, int unused, int x, int y)
+{
+	Rect clip = FUN_0072AD20();
+	Rect rect = FUN_00634510(6, Point2D(x, y));
+	Shrink_Rect(rect);
+	DSurface::Composite->Fill_Rect(clip, rect, color);
+}
+
+// FUNCTION: GAMEMD 0x0063D500
+int __fastcall FUN_0063D500(TechnoClass * techno)
+{
+	if (techno->Get_Mission() == MISSION_GUARD_AREA) {
+		return FUN_00731CE0();
+	}
+	return -1;
+}
+
+// FUNCTION: GAMEMD 0x0063D520
+int __fastcall FUN_0063D520(TechnoClass * techno)
+{
+	if (techno->GetMegaMission() == 0x1d) {
+		return FUN_00731CD0();
+	}
+	return -1;
+}
+
+// FUNCTION: GAMEMD 0x0063D540
+int __fastcall FUN_0063D540(EventClass const & event)
+{
+	int mission = event.Data.MegaMission.Mission;
+	if (mission == MISSION_GUARD_AREA) {
+		return FUN_00731CE0();
+	}
+	if (mission == 0x1d) {
+		return FUN_00731CD0();
+	}
+	return -1;
+}
+
+// FUNCTION: GAMEMD 0x0063D560
+void __fastcall FUN_0063D560(int color, int unused, Point2D a, Point2D b)
+{
+	Point2D delta(a.X - b.X, a.Y - b.Y);
+	double fx = delta.X;
+	double fy = delta.Y;
+	if ((int)FUN_004CAC40(fy * fy + fx * fx) >= 0x25) {
+		Rect clip = FUN_0072AD20();
+		Rect rect((a.X + b.X) / 2 - 10, (a.Y + b.Y) / 2 - 10, 0x15, 0x15);
+		DSurface::Composite->Draw_Rect(clip, rect, color);
+	}
+}
+
+// FUNCTION: GAMEMD 0x0063D810
+void __fastcall FUN_0063D810(Point2D p1, int spread, int color, Point2D p2, bool dashed)
+{
+	bool horizontal = abs(p2.X - p1.X) > abs(p2.Y - p1.Y);
+	int shiftX = horizontal ? 0 : spread;
+	int shiftY = horizontal ? spread : 0;
+	p1.X += shiftX;
+	p1.Y += shiftY;
+	p2.X += shiftX;
+	p2.Y += shiftY;
+	Rect bounds = DSurface::ViewBounds;
+	if (Line_In_Bounds(p1, p2, bounds)) {
+		if (dashed) {
+			int phase = -(int)timeGetTime() >> 5;
+			DSurface::Composite->Draw_Dashed_Line(p1, p2, color, DAT_00836880, phase & 0xf);
+		} else {
+			DSurface::Composite->Draw_Line(p1, p2, color);
+		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x0063D910
+void __fastcall FUN_0063D910(int width, int color, Point2D p1, Point2D p2)
+{
+	int high = width / 2;
+	for (int i = high - width + 1; i <= high; i++) {
+		FUN_0063D810(p1, i, color, p2, false);
+	}
+}

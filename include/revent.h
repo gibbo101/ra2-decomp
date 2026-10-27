@@ -39,9 +39,9 @@ class RadarEventClass
 		void Process(void);
 		void Draw(void);
 		void Plot(void);
-		int Get_Visibility_Duration(void) {return(RadarEventTable[Type].VisibilityDuration);}
-		int Get_Duration(void) {return(RadarEventTable[Type].Duration);}
-		int Get_Suppression_Distance(void) {return(RadarEventTable[Type].SuppressionDistance);}
+		int Get_Visibility_Duration(void);
+		int Get_Duration(void);
+		int Get_Suppression_Distance(void);
 		RGBClass Get_Max_Color(void) const;
 		RGBClass Get_Min_Color(void) const;
 		void Get_Event_Rect(Point2D (& event_rect)[4]) const;

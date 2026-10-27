@@ -3652,3 +3652,302 @@ void __fastcall FUN_005EE200(HWND dialog)
 		}
 	}
 }
+
+// FUNCTION: GAMEMD 0x005EE350
+void __fastcall FUN_005EE350(HWND dialog)
+{
+	if (dialog) {
+		FUN_005EE200(dialog);
+	}
+	HWND window = FUN_00775940(0x116);
+	if (window) {
+		FUN_005EE200(window);
+	}
+	window = FUN_00775940(0x113);
+	if (window) {
+		FUN_005EE200(window);
+	}
+	window = FUN_00775940(0xbb);
+	if (window) {
+		FUN_005EE200(window);
+	}
+}
+
+int __fastcall FUN_004E5940(int id);
+int __fastcall FUN_004E4E60(int index);
+void __fastcall FUN_004E5700(HWND dialog, int id);
+int __fastcall FUN_004E5900(HWND dialog, int id, int index);
+void __fastcall FUN_004E5ED0(HWND dialog, int id, int value);
+
+static inline bool Handle_Is_Game_Name(void)
+{
+	wchar_t * name = FUN_00735120(Session.Handle);
+	return(wcscmp(name, Session.GameName) == 0);
+}
+
+// FUNCTION: GAMEMD 0x005EE3A0
+void FUN_005EE3A0(void)
+{
+	bool enabled = true;
+	HWND dialog = FUN_00775940(0xc2);
+	if (!dialog) {
+		dialog = FUN_00775940(0xc9);
+		if (!dialog) {
+			dialog = FUN_00775940(0xbc);
+			if (!dialog) {
+				dialog = FUN_00775940(0xbd);
+				if (!dialog) {
+					return;
+				}
+			}
+		}
+	}
+	if (Session.MPGameMode) {
+		enabled = Session.MPGameMode->AlliesAllowed;
+	}
+	for (int i = 0; i < 8; i++) {
+		NodeNameType * slot = Session.Slots[i];
+		int id = FUN_004E5940(i);
+		if (id >= 0) {
+			HWND item = GetDlgItem(dialog, id);
+			if (item) {
+				if (slot && (slot == DAT_00AC11A4 || slot == DAT_00AC11A8 || slot == DAT_00AC11AC) && Handle_Is_Game_Name()) {
+					if (enabled) {
+						EnableWindow(item, 1);
+					} else {
+						Session.Options.AISlots.Allies[i] = -2;
+						EnableWindow(item, 0);
+					}
+				} else if (slot == DAT_00AC119C || slot == DAT_00AC11A0) {
+					EnableWindow(item, 0);
+				} else {
+					if (i == Session.unknown_2854) {
+						if (enabled) {
+							EnableWindow(item, 1);
+						} else {
+							EnableWindow(item, 0);
+						}
+					}
+					if (!enabled) {
+						if (Handle_Is_Game_Name()) {
+							slot->Set_Team(-2);
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x005EE510
+void __fastcall FUN_005EE510(int arg)
+{
+	HWND dialog = FUN_00775940(0xc2);
+	if (!dialog) {
+		dialog = FUN_00775940(0xc9);
+		if (!dialog) {
+			dialog = FUN_00775940(0xbc);
+			if (!dialog) {
+				dialog = FUN_00775940(0xbd);
+			}
+		}
+	}
+	if (dialog && Session.MPGameMode) {
+		int first = 0;
+		int end = 8;
+		if (arg < 8 && arg >= 0) {
+			first = arg;
+			end = arg + 1;
+		}
+		for (int i = first; i < end; i++) {
+			NodeNameType * slot = Session.Slots[i];
+			int id = FUN_004E5940(i);
+			if (id >= 0) {
+				HWND item = GetDlgItem(dialog, id);
+				if (item) {
+					if (slot && (slot == DAT_00AC11A4 || slot == DAT_00AC11A8 || slot == DAT_00AC11AC)) {
+						Session.Options.AISlots.Allies[i] = Session.MPGameMode->vt_entry_30();
+						FUN_004E5ED0(dialog, id, Session.MPGameMode->vt_entry_30());
+					} else if (slot == DAT_00AC119C || slot == DAT_00AC11B4) {
+						Session.Options.AISlots.Allies[i] = Session.MPGameMode->vt_entry_2C();
+						FUN_004E5ED0(dialog, id, Session.MPGameMode->vt_entry_2C());
+					} else if (slot == DAT_00AC11A0) {
+						Session.Options.AISlots.Allies[i] = Session.MPGameMode->vt_entry_2C();
+						FUN_004E5ED0(dialog, id, Session.MPGameMode->vt_entry_2C());
+					} else {
+						Session.Options.AISlots.Allies[i] = Session.MPGameMode->vt_entry_2C();
+						FUN_004E5ED0(dialog, id, Session.MPGameMode->vt_entry_2C());
+						slot->Set_Team(Session.MPGameMode->vt_entry_2C());
+					}
+				}
+			}
+		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x005EE6A0
+void __fastcall FUN_005EE6A0(HWND dialog)
+{
+	if (dialog) {
+		for (int i = 0; i < 8; i++) {
+			int id = FUN_004E4E60(i);
+			FUN_004E5700(dialog, id);
+			int value = FUN_004E5900(dialog, id, -1);
+			if (Session.Slots[i]) {
+				Session.Slots[i]->Set_Start(value);
+			}
+		}
+	}
+}
+
+double __cdecl FUN_004CAC40(double);
+
+// FUNCTION: GAMEMD 0x005EE6F0
+Cell * __fastcall FUN_005EE6F0(Cell * result, int house, DynamicVectorClass<Cell> * coords, unsigned char * satisfied, bool random)
+{
+	int taken = 0;
+	for (int k = 0; k < coords->Count(); k++) {
+		if (satisfied[k]) {
+			taken++;
+		}
+	}
+	if (taken == 0) {
+		if (random) {
+			int index = Scen->RandomNumber(0, coords->Count() - 1);
+			satisfied[index] = 1;
+			Scen->HouseIndices[index] = house;
+			*result = (*coords)[index];
+			return(result);
+		}
+	} else if (taken == 2 && !random) {
+		int pick = Scen->RandomNumber(0, coords->Count() - 3);
+		int free = 0;
+		for (int p = 0; p < coords->Count(); p++) {
+			if (!satisfied[p]) {
+				free++;
+				if (free == pick + 1) {
+					satisfied[p] = 1;
+					Scen->HouseIndices[p] = house;
+					*result = (*coords)[p];
+					return(result);
+				}
+			}
+		}
+	}
+	int best = -1;
+	int chosen = -1;
+	if (taken == 1) {
+		for (int q = 0; q < coords->Count(); q++) {
+			if (!satisfied[q]) {
+				int sum = 0;
+				for (int jq = 0; jq < coords->Count(); jq++) {
+					if (satisfied[jq]) {
+						short dx = (*coords)[q].X - (*coords)[jq].X;
+						short dy = (*coords)[q].Y - (*coords)[jq].Y;
+						sum += (short)FUN_004CAC40((double)dx * dx + (double)dy * dy);
+					}
+				}
+				if (sum < best || best < 0) {
+					best = sum;
+					chosen = q;
+				}
+			}
+		}
+		satisfied[chosen] = 1;
+		Scen->HouseIndices[chosen] = house;
+		*result = (*coords)[chosen];
+		return(result);
+	}
+	int furthest = -1;
+	int farIndex = -1;
+	for (int r = 0; r < coords->Count(); r++) {
+		if (!satisfied[r]) {
+			int sum = 0;
+			for (int jr = 0; jr < coords->Count(); jr++) {
+				if (satisfied[jr]) {
+					short dx = (*coords)[r].X - (*coords)[jr].X;
+					short dy = (*coords)[r].Y - (*coords)[jr].Y;
+					sum += (short)FUN_004CAC40((double)dx * dx + (double)dy * dy);
+				}
+			}
+			if (sum > furthest) {
+				furthest = sum;
+				farIndex = r;
+			}
+		}
+	}
+	satisfied[farIndex] = 1;
+	Scen->HouseIndices[farIndex] = house;
+	*result = (*coords)[farIndex];
+	return(result);
+}
+
+DynamicVectorClass<Cell> __fastcall FUN_00688380(char arg);
+void __cdecl FUN_004068E0(char const * format, ...);
+
+// FUNCTION: GAMEMD 0x005EE9D0
+void __fastcall FUN_005EE9D0(bool arg)
+{
+	DynamicVectorClass<Cell> cells = FUN_00688380(arg);
+	unsigned char used[16];
+	for (int slot = 0; slot < 16; slot++) {
+		if (Scen->HouseIndices[slot] == -1) {
+			used[slot] = 0;
+		} else {
+			used[slot] = 1;
+		}
+	}
+	for (int i = 0; i < Houses.Count(); i++) {
+		HouseClass * house = Houses[i];
+		HouseTypeClass * type = house->Class;
+		if (!type->IsMultiplayPassive && house->IsHuman) {
+			bool found = false;
+			int point = -1;
+			for (int j = 0; j < 16; j++) {
+				if (Scen->HouseIndices[j] == i) {
+					found = true;
+					point = j;
+				}
+			}
+			if (!found) {
+				FUN_004068E0("Assigning Starting Points for house %d (%s)\n", i, type->Name());
+				Cell cell;
+				Cell chosen = *FUN_005EE6F0(&cell, i, &cells, used, true);
+				house->Set_Base_Spawn_Cell(chosen);
+				FUN_004068E0("Starting point for house %d is x=%d y=%d\n", house->Get_Base_Center().X, house->Get_Base_Center().Y);
+			} else {
+				house->Set_Base_Spawn_Cell(cells[point]);
+			}
+		}
+	}
+	for (int n = 0; n < Houses.Count(); n++) {
+		HouseClass * house = Houses[n];
+		HouseTypeClass * type = house->Class;
+		if (!type->IsMultiplayPassive && !house->IsHuman) {
+			FUN_004068E0("Assigning Starting Points for house %d (%s)\n", n, type->Name());
+			Cell cell;
+			Cell chosen = *FUN_005EE6F0(&cell, n, &cells, used, false);
+			house->Set_Base_Spawn_Cell(chosen);
+			FUN_004068E0("Starting point for house %d is x=%d y=%d\n", house->Get_Base_Center().X, house->Get_Base_Center().Y);
+		}
+	}
+}
+
+// TEMPLATE: GAMEMD 0x005EEBB0
+// ?Clear@?$DynamicVectorClass@PBVMultiMission@@@@UAEXXZ
+template class DynamicVectorClass<MultiMission const *>;
+
+// TEMPLATE: GAMEMD 0x005EEBE0
+// ?ID@?$DynamicVectorClass@PBVMultiMission@@@@UAEHPBQBVMultiMission@@@Z
+
+// TEMPLATE: GAMEMD 0x005EEC00
+// ?GetItem@?$VectorClass@PBVMultiMission@@@@UBEPBVMultiMission@@H@Z
+
+// TEMPLATE: GAMEMD 0x005EEC10
+// ??8?$VectorClass@PBVMultiMission@@@@UBE_NABV0@@Z
+
+// TEMPLATE: GAMEMD 0x005EEC50
+// ?Resize@?$VectorClass@PBVMultiMission@@@@UAE_NHPBQBVMultiMission@@@Z
+
+// TEMPLATE: GAMEMD 0x005EED00
+// ?Clear@?$VectorClass@PBVMultiMission@@@@UAEXXZ

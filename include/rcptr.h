@@ -18,6 +18,7 @@ class rc_ptr : public rc_ptr_base
 	public:
 		rc_ptr(void) {}
 		rc_ptr(T * ptr) { FUN_0065D480(ptr); }
+		template<class U> rc_ptr(rc_ptr<U> const & that) { FUN_0065D480(that.Ptr); }
 		rc_ptr(rc_ptr const & that) { FUN_0065D480(that.Ptr); }
 		virtual ~rc_ptr(void) {}
 		rc_ptr & operator=(rc_ptr const & that) { FUN_0065D480(that.Ptr); return(*this); }

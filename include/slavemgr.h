@@ -58,7 +58,10 @@ class SlaveManagerClass : public AbstractClass
 		void FUN_006AFD60(void);
 		Cell FUN_006B0300(Cell cell);
 		void FUN_006B0490(void);
+		void FUN_006B0A90(int index);
 		void FUN_006B04C0(void);
+		Cell FUN_006B0690(void);
+		Cell FUN_006B0750(void);
 		bool FUN_006B0260(void);
 		Cell FUN_006B02C0(void);
 		bool FUN_006B0880(TechnoClass * slave, CellClass * cell);

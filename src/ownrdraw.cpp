@@ -4371,6 +4371,14 @@ int OwnerDraw::Move_Dialog(HWND window, int x, int y)
 	return(MoveWindow(window, rect2.left, rect2.top, rect2.right, rect2.bottom, FALSE));
 }
 
+// FUNCTION: GAMEMD 0x00623310
+void OwnerDraw::Set_Custom_Message_Box_Text(HWND window, wchar_t const * text)
+{
+	HWND label = GetDlgItem(window, 0x5B0);
+	SendMessage(label, WM_USER + 178, 0, (LPARAM)text);
+	UpdateWindow(window);
+}
+
 // FUNCTION: GAMEMD 0x00623340
 OwnerDraw::WinData::WinData(void)
 {
@@ -4381,4 +4389,125 @@ OwnerDraw::WinData::WinData(void)
 	*(int *)((char *)this + 0x40) = 0;
 	*(int *)((char *)this + 0x5c) = 0;
 	*(int *)((char *)this + 0x90) = -1;
+}
+
+// FUNCTION: GAMEMD 0x006233A0
+// OwnerDraw::WinData::~WinData
+
+// FUNCTION: GAMEMD 0x00623420
+OwnerDraw::WinNode * OwnerDraw::WinData::Add_Node(int length)
+{
+	WinNode * node = (WinNode *)operator new(length * 2 + 0x12);
+	if (node) {
+		node->text = (wchar_t *)(node + 1);
+		node->next = Wide.nodes;
+		node->id = 0;
+		Wide.nodes = node;
+	}
+	return node;
+}
+
+// FUNCTION: GAMEMD 0x00623460
+void OwnerDraw::WinData::Remove_Node(WinNode * node)
+{
+	WinNode * prev = NULL;
+	WinNode * cur = Wide.nodes;
+	while (cur) {
+		if (node == cur) {
+			break;
+		}
+		prev = cur;
+		cur = cur->next;
+	}
+	if (cur) {
+		if (prev) {
+			prev->next = cur->next;
+		} else {
+			Wide.nodes = cur->next;
+		}
+		delete cur;
+	}
+}
+
+// FUNCTION: GAMEMD 0x006234B0
+void OwnerDraw::WinData::Copy_Nodes(WinNode const * source)
+{
+	while (Wide.nodes) {
+		Remove_Node(Wide.nodes);
+	}
+	while (source) {
+		WinNode * node = Add_Node(wcslen(source->text));
+		node->data = source->data;
+		node->id = source->id;
+		wcscpy(node->text, source->text);
+		source = source->next;
+	}
+}
+
+// FUNCTION: GAMEMD 0x00623560
+void OwnerDraw::WinData::Set_Text(wchar_t const * str)
+{
+	if (Wide.text) {
+		delete Wide.text;
+		Wide.text = NULL;
+	}
+	if (str && *str) {
+		Wide.text = new wchar_t[wcslen(str) + 1];
+		wcscpy(Wide.text, str);
+	}
+}
+
+// FUNCTION: GAMEMD 0x006235B0
+void OwnerDraw::WinData::Set_Text(char const * str)
+{
+	if (Wide.text) {
+		delete Wide.text;
+		Wide.text = NULL;
+	}
+	if (str && *str) {
+		Wide.text = new wchar_t[strlen(str) + 1];
+		swprintf(Wide.text, L"%hs", str);
+	}
+}
+
+// FUNCTION: GAMEMD 0x00623610
+OwnerDraw::WinData & OwnerDraw::WinData::operator=(WinData const & that)
+{
+	WinNode * nodes = Wide.nodes;
+	wchar_t * text = Wide.text;
+	WideWstring * edit = Wide.editText;
+	if (this == &that) {
+		return *this;
+	}
+	memcpy(this, &that, sizeof(*this));
+	Wide.text = text;
+	Wide.editText = edit;
+	Wide.nodes = nodes;
+	Set_Text(that.Wide.text);
+	Copy_Nodes(that.Wide.nodes);
+	return *this;
+}
+
+// FUNCTION: GAMEMD 0x00623730
+OwnerDraw::WinData::WinData(WinData const & that)
+{
+	WinNode * nodes = Wide.nodes;
+	wchar_t * text = Wide.text;
+	WideWstring * edit = Wide.editText;
+	memcpy(this, &that, sizeof(*this));
+	Wide.editText = edit;
+	Wide.text = text;
+	Wide.nodes = nodes;
+	Set_Text(that.Wide.text);
+	Copy_Nodes(that.Wide.nodes);
+}
+
+// FUNCTION: GAMEMD 0x00623840
+int __fastcall FUN_00623840(HWND list)
+{
+	int count = SendMessage(list, 0x146, 0, 0);
+	while (count--) {
+		SendMessage(list, 0x144, count, 0);
+	}
+	return 0;
 }

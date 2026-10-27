@@ -38,6 +38,9 @@ class WDTTerritory : public ReferenceCounted {
 
 		char *To_String(void);
 
+		int FUN_007667E0(void) { return(UnitCount); }
+		int FUN_007667F0(void) { return(TechLevel); }
+
 	public:
 		int Index;
 		unsigned short Seed;
@@ -240,8 +243,17 @@ namespace WorldDominationTour
 
 	class Conflict : public ReferenceCounted {
 		public:
+			Conflict(rc_ptr<WDTTerritory> const & territory);
+			virtual ~Conflict(void);
+			bool operator==(Conflict const & that) const;
+			bool Is_Territory_Set(void) const;
 			int FUN_00766060(void);
+			static void Init_Game_Options(void);
+			static void Deinit_Game_Options(void);
 			WideWstring FUN_007665D0(void);
+
+		public:
+			rc_ptr<WDTTerritory> Territory;
 	};
 
 	typedef DynamicVectorClass<rc_ptr<Conflict> > CONFLICT_LIST;
@@ -265,19 +277,25 @@ namespace WorldDominationTour
 
 	class Campaign : public ReferenceCounted {
 		public:
+			Campaign(Wstring const & name, rc_ptr<CampaignProperties> const & props);
+			virtual ~Campaign(void);
 			int Get_Current_Tick(void) { return(Properties.Get()->FUN_0076BFE0()); }
-			int FUN_00764FC0(bool vq_anim);
-			int FUN_00764FF0(int index);
-			void FUN_00765000(int index);
-			bool FUN_00764FA0(void);
-			void FUN_00765410(int faction);
+			bool Is_Different_Cycle(void);
+			bool Is_Different(int index);
+			int Get_Previous_Tick(int index);
+			void Write_INI(int index);
+			void Reset_INI(void);
+			CONFLICT_ITER Get_Conflict_Iterator(int index);
+			void Set_Faction(int faction);
 
 		public:
 			rc_ptr<CampaignProperties> Properties;
 			rc_ptr<History> CycleHistory;
 			CONFLICT_LIST Conflicts;
-			char Pad1[0x44 - 0x18 - sizeof(CONFLICT_LIST)];
+			int CycleID;
+			int PreviousTicks[4];
 			int PlayerFaction;
+			Wstring Name;
 	};
 
 	class Territory : public ReferenceCounted {
@@ -446,6 +464,37 @@ namespace WorldDominationTour
 			Wstring OffString;
 	};
 
+	template<class T>
+	class ValueGameOption : public GameOption {
+		public:
+			ValueGameOption(unsigned int bitmask, int (WDTTerritory::*getter)(void), Wstring string, int priority) :
+				GameOption(bitmask),
+				Priority(priority),
+				Getter(getter),
+				StringID(string)
+			{
+			}
+			virtual int Get_Display_Priority(const rc_ptr<WDTTerritory> & territory)
+			{
+				if (Is_User_Modifiable(territory)) {
+					return(WDT_GAME_OPT_USER_MOD);
+				}
+				return(Priority);
+			}
+			virtual WideWstring Get_String(const rc_ptr<WDTTerritory> & territory, const WideWstring & prefix);
+
+		public:
+			int Priority;
+			int (WDTTerritory::*Getter)(void);
+			Wstring StringID;
+	};
+
+	template<class T>
+	rc_ptr<ValueGameOption<T> > __fastcall FUN_00766880(unsigned int bitmask, int (WDTTerritory::*getter)(void), Wstring string, int priority)
+	{
+		return(rc_ptr<ValueGameOption<T> >(new ValueGameOption<T>(bitmask, getter, string, priority)));
+	}
+
 	class NumberOfPlayersGameOption : public GameOption {
 		public:
 			NumberOfPlayersGameOption(unsigned int bitmask) :
@@ -466,6 +515,9 @@ namespace WorldDominationTour
 			virtual int Get_Display_Priority(const rc_ptr<WDTTerritory> & territory);
 			virtual WideWstring Get_String(const rc_ptr<WDTTerritory> & territory, const WideWstring & prefix);
 	};
+
+	typedef DynamicVectorClass<rc_ptr<GameOption> > WDT_GAME_OPTION_LIST;
+	extern WDT_GAME_OPTION_LIST WDTGameOptionList;
 
 	typedef DynamicVectorClass<unsigned int> VOICEINDEX_LIST;
 
@@ -732,6 +784,9 @@ namespace WorldDominationTour
 	void Write_Map_INI(char const * map_name, char const * pcx1_file_name, char const * pcx2_file_name);
 };
 
+rc_ptr<WorldDominationTour::History> __fastcall FUN_00767B00(rc_ptr<WDTState> const & state);
+rc_ptr<WorldDominationTour::Conflict> __fastcall FUN_00765F60(rc_ptr<WDTTerritory> const & territory);
+rc_ptr<WorldDominationTour::Campaign> __fastcall FUN_00764B30(Wstring const & name, rc_ptr<WorldDominationTour::CampaignProperties> const & props);
 void WDT_Review_Campaign(WorldDominationTour::Campaign * campaign);
 bool WDT_Select_Campaign(WorldDominationTour::Campaign * campaign, bool vq_anim);
 void __fastcall FUN_0076ECD0(rc_ptr<WorldDominationTour::Campaign> * campaign, int theater);

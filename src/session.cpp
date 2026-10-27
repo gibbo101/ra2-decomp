@@ -30,6 +30,7 @@
 #include "special.h"
 #include "wonline.h"
 #include "stringtable.h"
+#include "cctooltip.h"
 #include "multiplayer.h"
 #include "xstraw.h"
 #include <ctime> // for station ID computation
@@ -49,6 +50,13 @@ extern int DAT_00B73E44[0x800];
 extern int DAT_00B76338[0x40];
 extern void * DAT_0087E758;
 extern int DAT_0083ED20;
+extern CCToolTip * ToolTips;
+void FUN_00532130(void);
+void FUN_005BF450(void);
+void FUN_00406E80(void);
+void FUN_00750FA0(void);
+void FUN_007535D0(void);
+void FUN_00752CA0(void);
 extern int DAT_00B07784;
 namespace Game { extern int PlayerColor; extern bool IsActive; }
 namespace Unsorted { extern int CurrentFrame; }
@@ -1279,3 +1287,110 @@ void SessionClass::Resume(void)
 		FUN_00407150(DAT_0087E758, 0x4000);
 	}
 }
+
+// FUNCTION: GAMEMD 0x0069BB40
+void SessionClass::FUN_0069BB40(void)
+{
+	if (CurrentlyInGame) {
+		CurrentlyInGame = false;
+		if (DAT_0083ED20 != -1) {
+			::Options.GameSpeed = DAT_0083ED20;
+			DAT_0083ED20 = -1;
+		}
+		FUN_00532130();
+		FUN_005BF450();
+		FUN_00406E80();
+		FUN_00750FA0();
+		FUN_007535D0();
+		FUN_00752CA0();
+		FUN_00407150(DAT_0087E758, 0x4000);
+		if (ToolTips) {
+			ToolTips->Activate(false);
+		}
+		if (MouseCursor->Is_Captured()) {
+			MouseCursor->Release_Mouse();
+		}
+		MouseCursor->Hide_Mouse();
+		DAT_00B07784 = 0;
+	}
+}
+
+// FUNCTION: GAMEMD 0x0069BBE0
+bool SessionClass::FUN_0069BBE0(void) const
+{
+	return CurrentlyInGame;
+}
+
+// FUNCTION: GAMEMD 0x0069BBF0
+void SessionClass::FUN_0069BBF0(int index)
+{
+	for (int i = index; i < MAX_PLAYERS - 1; i++) {
+		PlayerPorts[i] = PlayerPorts[i + 1];
+	}
+}
+
+// FUNCTION: GAMEMD 0x0069BC20
+unsigned short SessionClass::FUN_0069BC20(int connection_id)
+{
+	int count = Session.Players.Count();
+	for (int i = 0; i < count; i++) {
+		if (Session.Players[i]->Player.ID == connection_id) {
+			return PlayerPorts[i];
+		}
+	}
+	return 0;
+}
+
+// FUNCTION: GAMEMD 0x0069BC60
+int SessionClass::FUN_0069BC60(int index)
+{
+	int i = 0;
+	for (NodeNameType ** slot = Session.Slots; (int)slot < (int)&Session.Slots[8]; slot++, i++) {
+		NodeNameType * node = *slot;
+		char * a = FUN_007350C0(Session.Players[index]->Name);
+		if (stricmp(a, FUN_007350C0(node->Name)) == 0) {
+			return i;
+		}
+	}
+	return 0;
+}
+
+// FUNCTION: GAMEMD 0x0069BCC0
+int SessionClass::FUN_0069BCC0(char const * name)
+{
+	int i = 0;
+	for (NodeNameType ** slot = Session.Slots; (int)slot < (int)&Session.Slots[8]; slot++, i++) {
+		if (stricmp(name, FUN_007350C0((*slot)->Name)) == 0) {
+			return i;
+		}
+	}
+	return 0;
+}
+
+// FUNCTION: GAMEMD 0x0069BD00
+int SessionClass::FUN_0069BD00(int slot)
+{
+	for (int i = 0; i < Session.Players.Count(); i++) {
+		NodeNameType * node = Session.Slots[slot];
+		char * a = FUN_007350C0(Session.Players[i]->Name);
+		if (stricmp(a, FUN_007350C0(node->Name)) == 0) {
+			return i;
+		}
+	}
+	return 0;
+}
+
+// TEMPLATE: GAMEMD 0x0069C4A0
+// ?Clear@?$DynamicVectorClass@W4DiskID@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0069C4D0
+// ?ID@?$DynamicVectorClass@W4DiskID@@@@UAEHPBW4DiskID@@@Z
+// TEMPLATE: GAMEMD 0x0069C4F0
+// ?GetItem@?$VectorClass@W4DiskID@@@@UBE?AW4DiskID@@H@Z
+template class DynamicVectorClass<DiskID>;
+template class VectorClass<DiskID>;
+
+// TEMPLATE: GAMEMD 0x0069C500
+// ?Clear@?$DynamicVectorClass@VWstring@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0069C560
+// ?ID@?$DynamicVectorClass@VWstring@@@@UAEHPBVWstring@@@Z
+template class DynamicVectorClass<Wstring>;

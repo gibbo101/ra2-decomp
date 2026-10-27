@@ -1626,3 +1626,31 @@ template class TClassFactory<AnimTypeClass>;
 // TEMPLATE: GAMEMD 0x006C3D90
 // ?LockServer@?$TClassFactory@VHouseTypeClass@@@@UAGJH@Z
 template class TClassFactory<HouseTypeClass>;
+
+// TEMPLATE: GAMEMD 0x006C3DC0
+// ??0?$TClassFactory@VHouseClass@@@@QAE@XZ
+// TEMPLATE: GAMEMD 0x006C3DD0
+// ?QueryInterface@?$TClassFactory@VHouseClass@@@@UAGJABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C3E40
+// ?AddRef@?$TClassFactory@VHouseClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C3E60
+// ?Release@?$TClassFactory@VHouseClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C3E90
+// ?CreateInstance@?$TClassFactory@VHouseClass@@@@UAGJPAUIUnknown@@ABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C3F10
+// ?LockServer@?$TClassFactory@VHouseClass@@@@UAGJH@Z
+template class TClassFactory<HouseClass>;
+
+// TEMPLATE: GAMEMD 0x006C3F40
+// ??0?$TClassFactory@VDriveLocomotionClass@@@@QAE@XZ
+// TEMPLATE: GAMEMD 0x006C3F50
+// ?QueryInterface@?$TClassFactory@VDriveLocomotionClass@@@@UAGJABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C3FC0
+// ?AddRef@?$TClassFactory@VDriveLocomotionClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C3FE0
+// ?Release@?$TClassFactory@VDriveLocomotionClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C4010
+// ?CreateInstance@?$TClassFactory@VDriveLocomotionClass@@@@UAGJPAUIUnknown@@ABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C4090
+// ?LockServer@?$TClassFactory@VDriveLocomotionClass@@@@UAGJH@Z
+template class TClassFactory<DriveLocomotionClass>;

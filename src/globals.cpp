@@ -78,3 +78,45 @@ DynamicVectorClass<TubeClass *> Tubes;
 
 // SYNTHETIC: GAMEMD 0x004E67A0 SYMBOL
 // _$E75
+
+// SYNTHETIC: GAMEMD 0x004E67E0 SYMBOL
+// _$E82
+DynamicVectorClass<WaveClass *> Waves;
+
+// SYNTHETIC: GAMEMD 0x004E6820 SYMBOL
+// _$E80
+
+// SYNTHETIC: GAMEMD 0x004E6860 SYMBOL
+// _$E87
+DynamicVectorClass<BulletClass *> Bullets;
+
+// SYNTHETIC: GAMEMD 0x004E68A0 SYMBOL
+// _$E85
+
+// SYNTHETIC: GAMEMD 0x004E68E0 SYMBOL
+// _$E92
+DynamicVectorClass<OverlayClass *> Overlays;
+
+// SYNTHETIC: GAMEMD 0x004E6920 SYMBOL
+// _$E90
+
+// SYNTHETIC: GAMEMD 0x004E6960 SYMBOL
+// _$E97
+DynamicVectorClass<ParticleClass *> Particles;
+
+// SYNTHETIC: GAMEMD 0x004E69A0 SYMBOL
+// _$E95
+
+// SYNTHETIC: GAMEMD 0x004E69E0 SYMBOL
+// _$E102
+DynamicVectorClass<SmudgeClass *> Smudges;
+
+// SYNTHETIC: GAMEMD 0x004E6A20 SYMBOL
+// _$E100
+
+// SYNTHETIC: GAMEMD 0x004E6A60 SYMBOL
+// _$E107
+DynamicVectorClass<TerrainClass *> Terrains;
+
+// SYNTHETIC: GAMEMD 0x004E6AA0 SYMBOL
+// _$E105

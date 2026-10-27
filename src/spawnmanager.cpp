@@ -38,7 +38,14 @@
 // _$E29
 // SYNTHETIC: GAMEMD 0x006B6BA0 SYMBOL
 // _$E32
+// SYNTHETIC: GAMEMD 0x006B6BB0 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x006B6BD0 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x006B6BF0 SYMBOL
+// _$E47
 
+extern "C" const CLSID CLSID_SpawnManagerClass;
 namespace Game { extern bool IsActive; }
 namespace Unsorted { extern int CurrentFrame; }
 
@@ -231,3 +238,128 @@ int SpawnManagerClass::CountAliveSpawns(void)
 	}
 	return count;
 }
+
+// FUNCTION: GAMEMD 0x006B7D50
+int SpawnManagerClass::CountDockedSpawns(void)
+{
+	int count = 0;
+	for (int index = 0; index < SpawnedNodes.Count(); index++) {
+		int status = SpawnedNodes[index]->Status;
+		if (status == SPAWN_RELOADING || status == SPAWN_IDLE) {
+			count++;
+		}
+	}
+	return count;
+}
+
+// FUNCTION: GAMEMD 0x006B7D80
+int SpawnManagerClass::CountLaunchingSpawns(void)
+{
+	int count = 0;
+	for (int index = 0; index < SpawnedNodes.Count(); index++) {
+		SpawnControl * node = SpawnedNodes[index];
+		if (node->Status == SPAWN_TAKEOFF) {
+			count++;
+		}
+		if (node->Status == SPAWN_PREPARING && node->Unit && !node->Unit->IsInLimbo && node->Unit->Techno_Type_Class()->MissileSpawn) {
+			count++;
+		}
+	}
+	return count;
+}
+
+// FUNCTION: GAMEMD 0x006B7DE0
+void SpawnManagerClass::Compute_CRC(CRCEngine & crc) const
+{
+	BASECLASS::Compute_CRC(crc);
+	crc(Status);
+	if (NewTarget) {
+		crc(NewTarget->Fetch_ID());
+	}
+	if (Target) {
+		crc(Target->Fetch_ID());
+	}
+	crc((int)SpawnTimer);
+	crc((int)UpdateTimer);
+	crc(SpawnedNodes.Count());
+	crc(SpawnCount);
+	if (SpawnType) {
+		crc(SpawnType->Fetch_ID());
+	}
+	if (Owner) {
+		crc(Owner->Fetch_ID());
+	}
+}
+
+// FUNCTION: GAMEMD 0x006B7ED0
+HRESULT STDMETHODCALLTYPE SpawnManagerClass::GetClassID(CLSID * retval)
+{
+	if (retval == NULL) return(E_POINTER);
+	*retval = CLSID_SpawnManagerClass;
+	return(S_OK);
+}
+
+// FUNCTION: GAMEMD 0x006B7F10
+HRESULT STDMETHODCALLTYPE SpawnManagerClass::Load(IStream * stream)
+{
+	int count;
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		new (this) SpawnManagerClass(NoInitClass());
+		result = stream->Read(&count, sizeof(count), NULL);
+		if (SUCCEEDED(result)) {
+			new (&SpawnedNodes) DynamicVectorClass<SpawnControl *>();
+			int index;
+			for (index = 0; index < count; index++) {
+				SpawnControl * node = new SpawnControl;
+				result = stream->Read(node, sizeof(SpawnControl), NULL);
+				if (FAILED(result)) {
+					return result;
+				}
+				SpawnedNodes.Add(node);
+			}
+			for (index = 0; index < count; index++) {
+				Swizzle_Pointer(&SpawnedNodes[index]->Unit);
+			}
+			Swizzle_Pointer(&Owner);
+			Swizzle_Pointer(&SpawnType);
+			Swizzle_Pointer(&Target);
+			Swizzle_Pointer(&NewTarget);
+		}
+	}
+	return result;
+}
+
+// FUNCTION: GAMEMD 0x006B80B0
+HRESULT STDMETHODCALLTYPE SpawnManagerClass::Save(IStream * stream, BOOL cleardirty)
+{
+	HRESULT result = BASECLASS::Save(stream, cleardirty);
+	if (SUCCEEDED(result)) {
+		int count = SpawnedNodes.Count();
+		result = stream->Write(&count, sizeof(count), NULL);
+		if (SUCCEEDED(result)) {
+			for (int index = 0; index < count; index++) {
+				result = stream->Write(SpawnedNodes[index], sizeof(SpawnControl), NULL);
+				if (FAILED(result)) {
+					break;
+				}
+			}
+		}
+	}
+	return result;
+}
+
+// FUNCTION: GAMEMD 0x006B8120
+int SpawnManagerClass::Fetch_Object_Size(void) const
+{
+	return(sizeof(*this));
+}
+
+// FUNCTION: GAMEMD 0x006B8130
+RTTIType SpawnManagerClass::Fetch_RTTI(void) const
+{
+	return(RTTI_SPAWNMANAGER);
+}
+
+// SYNTHETIC: GAMEMD 0x006B8140
+// ??_GSpawnManagerClass@@UAEPAXI@Z

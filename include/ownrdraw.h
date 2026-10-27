@@ -97,6 +97,9 @@ namespace OwnerDraw {
 
 	struct WinNode {
 		WinNode *next;
+		int id;
+		wchar_t *text;
+		int data;
 	};
 
 	struct WinData {
@@ -218,21 +221,31 @@ namespace OwnerDraw {
 		unsigned char reserved[0xC0];
 
 		WinData(void);
+		WinData(WinData const & that);
 		~WinData(void)
 		{
 			if (Wide.text) {
 				delete Wide.text;
 				Wide.text = NULL;
 			}
-			while (Wide.nodes) {
-				Remove_Node(Wide.nodes);
-			}
+			Remove_All_Nodes();
 			if (Wide.editText) {
 				delete Wide.editText;
 			}
 		}
+		WinData & operator=(WinData const & that);
 
+		WinNode *Add_Node(int length);
+		void Copy_Nodes(WinNode const *source);
+		void Set_Text(wchar_t const *text);
+		void Set_Text(char const *text);
 		void Remove_Node(WinNode *node);
+		void Remove_All_Nodes(void)
+		{
+			while (Wide.nodes) {
+				Remove_Node(Wide.nodes);
+			}
+		}
 	};
 
 	class DialogControl {

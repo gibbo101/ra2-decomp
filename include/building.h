@@ -123,8 +123,8 @@ class BuildingClass : public TechnoClass
 		int StorageFilledSlots;
 		TechnoTypeClass * SecretProduction;
 		unsigned char ColorAdd;
-		unsigned char ColorAddG : 8;
-		unsigned char ColorAddB : 8;
+		unsigned char ColorAddG;
+		unsigned char ColorAddB;
 		int unknown_int_6FC;
 		unsigned short Brightness;
 		char UpgradeLevel;

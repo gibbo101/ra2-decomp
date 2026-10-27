@@ -538,6 +538,9 @@ class SessionClass
 		void FUN_0069BB40(void);
 		unsigned short FUN_0069BC20(int connection_id);
 		int FUN_0069BC60(int index);
+		int FUN_0069BCC0(char const * name);
+		int FUN_0069BD00(int slot);
+		bool FUN_0069BBE0(void) const;
 
 		void Trap_Object(void);
 		bool Log_To_File(FILE *out);

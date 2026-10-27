@@ -43,6 +43,7 @@
 // SYNTHETIC: GAMEMD 0x004A6C50 SYMBOL
 // _$E49
 
+extern const CLSID CLSID_DiskLaserClass;
 extern DynamicVectorClass<AbstractClass *> DAT_00B0F698;
 extern const double DAT_007E5ED0;
 
@@ -175,3 +176,55 @@ HRESULT STDMETHODCALLTYPE DiskLaserClass::Load(IStream * stream)
 	}
 	return(result);
 }
+
+// FUNCTION: GAMEMD 0x004A7C10
+HRESULT STDMETHODCALLTYPE DiskLaserClass::Save(IStream * stream, BOOL cleardirty)
+{
+	return(BASECLASS::Save(stream, cleardirty));
+}
+
+// FUNCTION: GAMEMD 0x004A7C30
+HRESULT STDMETHODCALLTYPE DiskLaserClass::GetClassID(CLSID * retval)
+{
+	if (retval == NULL) return(E_POINTER);
+	*retval = CLSID_DiskLaserClass;
+	return(S_OK);
+}
+
+// FUNCTION: GAMEMD 0x004A7C70
+int DiskLaserClass::Fetch_Object_Size(void) const
+{
+	return(sizeof(*this));
+}
+
+// FUNCTION: GAMEMD 0x004A7C80
+RTTIType DiskLaserClass::Fetch_RTTI(void) const
+{
+	return(RTTI_DISKLASER);
+}
+
+// SYNTHETIC: GAMEMD 0x004A7C90
+// ??_GDiskLaserClass@@UAEPAXI@Z
+
+// TEMPLATE: GAMEMD 0x004A7D20
+// ?Clear@?$DynamicVectorClass@PAVDiskLaserClass@@@@UAEXXZ
+template class DynamicVectorClass<DiskLaserClass *>;
+
+// TEMPLATE: GAMEMD 0x004A7D50
+// ?ID@?$DynamicVectorClass@PAVDiskLaserClass@@@@UAEHPBQAVDiskLaserClass@@@Z
+
+// TEMPLATE: GAMEMD 0x004A7D70
+// ?GetItem@?$VectorClass@PAVDiskLaserClass@@@@UBEPAVDiskLaserClass@@H@Z
+
+// TEMPLATE: GAMEMD 0x004A7D80
+// ??8?$VectorClass@PAVDiskLaserClass@@@@UBE_NABV0@@Z
+
+// TEMPLATE: GAMEMD 0x004A7DC0
+// ?Resize@?$VectorClass@PAVDiskLaserClass@@@@UAE_NHPBQAVDiskLaserClass@@@Z
+
+// TEMPLATE: GAMEMD 0x004A7E70
+// ?Clear@?$VectorClass@PAVDiskLaserClass@@@@UAEXXZ
+
+// TEMPLATE: GAMEMD 0x004A7EA0
+// ?ID@?$VectorClass@PAVDiskLaserClass@@@@UAEHABQAVDiskLaserClass@@@Z
+template class VectorClass<DiskLaserClass *>;

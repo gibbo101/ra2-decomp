@@ -465,3 +465,41 @@ int BaseClass::FailedToPlaceNode(BaseNodeClass * node)
 	}
 	return(++node->Attempts);
 }
+
+// TEMPLATE: GAMEMD 0x0042F3A0
+// ?Clear@?$DynamicVectorClass@VBaseNodeClass@@@@UAEXXZ
+template class DynamicVectorClass<BaseNodeClass>;
+
+// TEMPLATE: GAMEMD 0x0042F3D0
+// ?ID@?$DynamicVectorClass@VBaseNodeClass@@@@UAEHPBVBaseNodeClass@@@Z
+
+// TEMPLATE: GAMEMD 0x0042F3F0
+// ?GetItem@?$VectorClass@VBaseNodeClass@@@@UBE?AVBaseNodeClass@@H@Z
+
+// TEMPLATE: GAMEMD 0x0042F420
+// ?Clear@?$DynamicVectorClass@VCell@@@@UAEXXZ
+template class DynamicVectorClass<Cell>;
+
+// TEMPLATE: GAMEMD 0x0042F450
+// ?ID@?$DynamicVectorClass@VCell@@@@UAEHPBVCell@@@Z
+
+// TEMPLATE: GAMEMD 0x0042F470
+// ?GetItem@?$VectorClass@VCell@@@@UBE?AVCell@@H@Z
+
+// TEMPLATE: GAMEMD 0x0042F490
+// ??8?$VectorClass@VBaseNodeClass@@@@UBE_NABV0@@Z
+
+// TEMPLATE: GAMEMD 0x0042F4F0
+// ?Resize@?$DynamicVectorClass@VBaseNodeClass@@@@UAE_NHPBVBaseNodeClass@@@Z
+
+// TEMPLATE: GAMEMD 0x0042F5E0
+// ?ID@?$DynamicVectorClass@VBaseNodeClass@@@@UAEHABVBaseNodeClass@@@Z
+
+// TEMPLATE: GAMEMD 0x0042F620
+// ??8?$VectorClass@VCell@@@@UBE_NABV0@@Z
+
+// TEMPLATE: GAMEMD 0x0042F670
+// ??0?$DynamicVectorClass@VCell@@@@QAE@IPBVCell@@@Z
+
+// TEMPLATE: GAMEMD 0x0042F6F0
+// ?Resize@?$VectorClass@VCell@@@@UAE_NHPBVCell@@@Z

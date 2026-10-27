@@ -25,6 +25,7 @@ class BaseNodeClass
 	public:
 		BaseNodeClass(void) {};
 		BaseNodeClass(StructType building, Cell const & cell) : Type(building), CellID(cell), Placed(false), Attempts(0) {};
+		BaseNodeClass(BaseNodeClass const & node) : Type(node.Type), CellID(node.CellID), Placed(node.Placed), Attempts(node.Attempts) {};
 		bool operator == (BaseNodeClass const & node);
 		bool operator != (BaseNodeClass const & node);
 		bool operator > (BaseNodeClass const & node);

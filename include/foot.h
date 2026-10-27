@@ -133,6 +133,8 @@ class FootClass : public TechnoClass
 		bool IsToPathAroundBlockage;
 		bool IsDroppedFromTeam;
 
+		void CreateWakes(Coord coords);
+
 		FootClass(NoInitClass const & x);
 		FootClass(HouseClass * house);
 		virtual ~FootClass(void) override;

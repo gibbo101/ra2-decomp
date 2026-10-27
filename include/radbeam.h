@@ -4,13 +4,18 @@
 
 #include "coord.h"
 #include "rgb.h"
+#include "vector.h"
 
 class TechnoClass;
+class AbstractClass;
 
 class RadBeam
 {
 	public:
+		RadBeam(int type = 0);
+
 		static RadBeam * Allocate(int type);
+		static void FUN_006591B0(void);
 
 		void FUN_00659470(RGBClass const & color);
 		void FUN_00659490(int zadjust);
@@ -22,10 +27,13 @@ class RadBeam
 		void FUN_00659530(int value);
 		void FUN_00659540(int value);
 		void FUN_00659550(bool value);
+		bool FUN_00659650(void);
+		bool FUN_00659CA0(void);
 
-		unsigned unknown_0;
-		TechnoClass * Owner;
+		TechnoClass * unknown_0;
+		AbstractClass * Owner;
 		unsigned char unknown_8;
+		unsigned char unknown_9;
 		int ZAdjust;
 		int Type;
 		unsigned unknown_14;
@@ -58,5 +66,7 @@ class RadBeam
 		unsigned unknown_B4;
 		double unknown_B8;
 		unsigned char unknown_C0;
+		unsigned char unknown_C1;
+		unsigned char unknown_C2;
 		unsigned unknown_C4;
 };

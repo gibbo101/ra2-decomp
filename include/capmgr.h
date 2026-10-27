@@ -41,6 +41,7 @@ class CaptureManagerClass : public AbstractClass
 		void FreeAll(void);
 		bool FreeUnit(TechnoClass * techno);
 		bool FUN_00472330(TechnoClass * techno);
+		bool FUN_004722E0(void) const;
 		bool CannotControlAnyMore(void);
 		bool FUN_00471F90(AbstractClass * ptr);
 		int GetControlledCount(void) const;

@@ -1165,3 +1165,39 @@ int AStarClass::Test_Cell_Walk(Cell const & from, Cell const & to, FootClass con
 	}
 	return(INT_MAX);
 }
+
+// FUNCTION: GAMEMD 0x0042D470
+// ??0Cell@@QAE@HH@Z
+
+// FUNCTION: GAMEMD 0x0042D490
+// ?Next_Cell@@YI?AVCell@@ABV1@W4FacingType@@@Z
+
+// FUNCTION: GAMEMD 0x0042D510
+// ??H?$TPoint2D@F@@QBE?BV0@ABV0@@Z
+
+// FUNCTION: GAMEMD 0x0042D540
+// ?Clear@?$DynamicVectorClass@I@@UAEXXZ
+
+// FUNCTION: GAMEMD 0x0042D570
+// ?ID@?$DynamicVectorClass@I@@UAEHPBI@Z
+
+// FUNCTION: GAMEMD 0x0042D590
+// ?GetItem@?$VectorClass@I@@UBEIH@Z
+
+// FUNCTION: GAMEMD 0x0042D5A0
+// ?Clear@?$DynamicVectorClass@G@@UAEXXZ
+
+// FUNCTION: GAMEMD 0x0042D5D0
+// ?ID@?$DynamicVectorClass@G@@UAEHPBG@Z
+
+// FUNCTION: GAMEMD 0x0042D5F0
+// ?GetItem@?$VectorClass@G@@UBEGH@Z
+
+// FUNCTION: GAMEMD 0x0042D600
+// ??8?$VectorClass@I@@UBE_NABV0@@Z
+
+// FUNCTION: GAMEMD 0x0042D640
+// ?Resize@?$VectorClass@I@@UAE_NHPBI@Z
+
+// FUNCTION: GAMEMD 0x0042D6F0
+// ?Clear@?$VectorClass@I@@UAEXXZ

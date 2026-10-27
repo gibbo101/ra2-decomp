@@ -380,7 +380,7 @@ class TechnoClass : public RadioClass
 		void Create_Planning_Token(void);
 		static void __stdcall FUN_00705860(Coord start, Coord end);
 		static void __stdcall FUN_00705270(Coord src, Coord dst, RGBClass color, unsigned char shadow);
-		static void Draw_A_Link_To(Coord src, Coord dst, RGBClass color);
+		void Draw_A_Link_To(Coord src, Coord dst, RGBClass color);
 		void FUN_00705D10(PlanningTokenClass * token);
 		PlanningTokenClass * FUN_00705D20(void);
 		bool FUN_00705D30(void);

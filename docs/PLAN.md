@@ -1,6 +1,6 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 27 October 2026: 14,503 of 19,366 game functions match (75%; 53% of game code
+Status, 27 October 2026: 14,935 of 19,366 game functions match (77%; 54% of game code
 by size), landed in batches module by module. The rounds below record each one.
 
 ## The goal
@@ -1113,6 +1113,20 @@ Session.Players. Recording then exposed three UI-command functions building char
 ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; their RTTI
 fixed them. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
+
+### Batches 108, 109 and 110 (27 October 2026)
+
+**419 of 432 functions** (137, 142, 140), plus 14 the merges landed beside them; the first
+round on the corrected module map, so several modules began with their own header run.
+The merges proved a template converting constructor in rc_ptr (rc_ptr<GameOption> from
+rc_ptr<MapSizeGameOption>, out of line at 0x00766F70), WorldDominationTour's
+ValueGameOption<unsigned char> from its RTTI, and a float AICaptureWoundedMark. At landing,
+header runs in six new files and wonline moved onto geometry.h (which restored wonline's
+heap-sensitive 0x00788180), airstrike reads RulesClass::ColorAdd through RGBClass, and
+radbeam's doubles are zeroed in its init list rather than through casts. One label was
+removed: 0x004E02C0 is byte-identical to 0x0045A160, the folded `_Release` that the
+IPiggyback temporary in InfantryClass::JumpJet_To_Walk calls. Merge gate: 14,935 of
+14,935 (2,029.4 KB).
 
 ### Cleanup after round 105 to 107 (26 to 27 October 2026)
 

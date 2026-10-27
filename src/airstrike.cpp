@@ -193,3 +193,226 @@ bool AirstrikeClass::FUN_0041D7E0(ObjectClass * target)
 	}
 	return false;
 }
+
+// FUNCTION: GAMEMD 0x0041D830
+void AirstrikeClass::StartMission(ObjectClass * target)
+{
+	if (!IsOnMission) {
+		FUN_0041D860(target);
+	} else if (target != Target) {
+		ResetTarget(target);
+	}
+}
+
+#include "airctype.h"
+#include "building.h"
+#include "_map.h"
+#include "cell.h"
+#include "infatype.h"
+#include "map.h"
+
+extern int __fastcall FUN_0065E850(HouseClass * house, int type, int count, int mission, AbstractClass * target, AbstractClass * destination, int infantrytype, int infantrycount, AirstrikeClass * sender);
+
+// FUNCTION: GAMEMD 0x0041D860
+void AirstrikeClass::FUN_0041D860(ObjectClass * target)
+{
+	IsOnMission = true;
+	unknown_bool_3D = true;
+	PlanesReleased = 0;
+	int type = AirstrikeTeamType->HeapID;
+	int infantrytype = Rule->SovParaDropInf[0]->HeapID;
+	int count;
+	if (Owner->Veterancy.Is_Elite()) {
+		count = EliteAirstrikeTeam;
+		type = EliteAirstrikeTeamType->HeapID;
+	} else {
+		count = AirstrikeTeam;
+	}
+	Cell cell(target->Center_Coord());
+	CellClass * cellptr = &Map[cell];
+	PlanesLeft = PlaneCount = FUN_0065E850(Owner->Owner_HouseClass(), type, count, MISSION_ATTACK, cellptr, NULL, infantrytype, 0, this);
+	if (PlanesLeft != 0) {
+		if (FirstObject != NULL) {
+			VocClass::PlayAt(Rule->AirstrikeAttackVoice, FirstObject->Get_Coord());
+		}
+		Target = target;
+		if (target != NULL && target->Fetch_RTTI() == RTTI_BUILDING) {
+			BuildingClass * building = (BuildingClass *)target;
+			building->Airstrike = this;
+			building->StartAirstrikeTimer(100000);
+			building->ColorAdd = Rule->ColorAdd[Rule->LaserTargetColor].Get_Red();
+			building->ColorAddG = Rule->ColorAdd[Rule->LaserTargetColor].Get_Green();
+			building->ColorAddB = Rule->ColorAdd[Rule->LaserTargetColor].Get_Blue();
+			building->unknown_int_6FC = 1;
+			building->Mark(MARK_CHANGE);
+		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x0041DA20
+void AirstrikeClass::ResetTarget(ObjectClass * target)
+{
+	FootClass * member = FirstObject;
+	if (member != NULL) {
+		FootClass * next = member->Member;
+		for (; next != NULL; next = next->Member) {
+			if (next->Ammo != member->Ammo) {
+				ClearTarget();
+				return;
+			}
+		}
+	}
+
+	TechnoClass * oldbuilding;
+	TechnoClass * newbuilding;
+	ObjectClass * old = Target;
+	if (old == NULL) {
+		oldbuilding = NULL;
+	} else {
+		oldbuilding = (old->Fetch_RTTI() == RTTI_BUILDING) ? (TechnoClass *)old : NULL;
+	}
+	if (target == NULL) {
+		newbuilding = NULL;
+	} else {
+		newbuilding = (target->Fetch_RTTI() == RTTI_BUILDING) ? (TechnoClass *)target : NULL;
+	}
+	if (oldbuilding != NULL) {
+		oldbuilding->Airstrike = NULL;
+		oldbuilding->StopAirstrikeTimer();
+		oldbuilding->Mark(MARK_CHANGE);
+	}
+	Target = NULL;
+	if (newbuilding != NULL) {
+		newbuilding->Airstrike = this;
+		newbuilding->StartAirstrikeTimer(100000);
+		newbuilding->Mark(MARK_CHANGE);
+	}
+	FootClass * foot = FirstObject;
+	Target = target;
+	for (int i = 0; i < PlanesLeft; i++) {
+		if (foot != NULL) {
+			if (foot->Ammo > 0) {
+				foot->Assign_Target(target);
+				foot->QueueMission(MISSION_ATTACK, false);
+				unknown_bool_3D = true;
+			}
+			foot = foot->Member;
+		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x0041DB40
+void AirstrikeClass::ClearTarget(void)
+{
+	if (Game::IsActive) {
+		FootClass * foot = FirstObject;
+		if (foot != NULL) {
+			while (foot != NULL && foot->Ammo != 0) {
+				foot = foot->Member;
+			}
+			if (foot != NULL) {
+				for (foot = FirstObject; foot != NULL; foot = foot->Member) {
+					foot->Ammo = 0;
+				}
+			}
+		}
+		foot = FirstObject;
+		for (int i = 0; foot != NULL; ) {
+			foot->QueueMission(MISSION_RETREAT, false);
+			foot->Assign_Target(NULL);
+			foot->Assign_Destination(NULL, true);
+			foot = foot->Member;
+			if (++i > 100) break;
+		}
+		ObjectClass * target = Target;
+		unknown_bool_3D = false;
+		if (target != NULL && target->Fetch_RTTI() == RTTI_BUILDING && ((TechnoClass *)target)->Airstrike == this) {
+			AirstrikeClass * other = NULL;
+			for (int i = 0; i < Airstrikes.Count(); i++) {
+				AirstrikeClass * strike = Airstrikes[i];
+				if (strike != this && strike->Target == target) other = strike;
+			}
+			((TechnoClass *)target)->Airstrike = other;
+			if (other == NULL && Game::IsActive) {
+				target->Mark(MARK_CHANGE);
+			}
+			if (((TechnoClass *)target)->Airstrike == this) {
+				((TechnoClass *)target)->Airstrike = NULL;
+			}
+		}
+		Target = NULL;
+	}
+}
+
+// FUNCTION: GAMEMD 0x0041DC50
+void AirstrikeClass::AI(void)
+{
+}
+
+// FUNCTION: GAMEMD 0x0041DC60
+void AirstrikeClass::FUN_0041DC60(void)
+{
+	PlanesReleased++;
+	if (PlanesReleased >= PlanesLeft) {
+		unknown_bool_3D = false;
+	}
+}
+
+// FUNCTION: GAMEMD 0x0041DC80
+void AirstrikeClass::FUN_0041DC80(FootClass * foot)
+{
+	FootClass * current = FirstObject;
+	int i = 0;
+	if (current == foot) {
+		FirstObject = foot->Member;
+		foot->Member = NULL;
+		PlanesLeft--;
+		foot->Airstrike = NULL;
+	} else {
+		while (current != NULL) {
+			FootClass * next = current->Member;
+			if (next == foot) {
+				current->Member = foot->Member;
+				foot->Member = NULL;
+				current = NULL;
+				PlanesLeft--;
+				foot->Airstrike = NULL;
+			} else {
+				current = next;
+			}
+			if (++i > 100) break;
+		}
+	}
+	if (PlanesLeft <= 0) {
+		TeamDissolveFrame = Unsorted::CurrentFrame;
+		IsOnMission = false;
+		unknown_bool_3D = false;
+	}
+}
+
+// FUNCTION: GAMEMD 0x0041DD10
+void AirstrikeClass::FUN_0041DD10(void)
+{
+	TeamDissolveFrame = Unsorted::CurrentFrame;
+	IsOnMission = false;
+	unknown_bool_3D = false;
+}
+
+// FUNCTION: GAMEMD 0x0041DD30
+int AirstrikeClass::Fetch_Object_Size(void) const
+{
+	return(sizeof(AirstrikeClass));
+}
+
+// FUNCTION: GAMEMD 0x0041DD40
+RTTIType AirstrikeClass::Fetch_RTTI(void) const
+{
+	return(RTTI_AIRSTRIKE);
+}
+
+// SYNTHETIC: GAMEMD 0x0041DD50
+// ??_GAirstrikeClass@@UAEPAXI@Z
+
+// TEMPLATE: GAMEMD 0x0041DDE0
+// ?Clear@?$DynamicVectorClass@PAVAirstrikeClass@@@@UAEXXZ
+template class DynamicVectorClass<AirstrikeClass *>;

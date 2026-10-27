@@ -19,9 +19,9 @@ class AirstrikeClass : public AbstractClass
 	public:
 		int AirstrikeTeam;
 		int EliteAirstrikeTeam;
-		int AirstrikeTeamTypeIndex;
-		int EliteAirstrikeTeamTypeIndex;
-		DWORD unknown_34;
+		int PlaneCount;
+		int PlanesLeft;
+		int PlanesReleased;
 		DWORD unknown_38;
 		bool IsOnMission;
 		bool unknown_bool_3D;
@@ -47,7 +47,12 @@ class AirstrikeClass : public AbstractClass
 		virtual int Fetch_Object_Size(void) const override;
 		virtual void Compute_CRC(CRCEngine & crc) const override;
 		virtual void AI(void) override;
+		void StartMission(ObjectClass * target);
+		void FUN_0041D860(ObjectClass * target);
+		void ResetTarget(ObjectClass * target);
 		void ClearTarget(void);
+		void FUN_0041DC60(void);
+		void FUN_0041DD10(void);
 		void InvalidatePointer(AbstractClass * ptr);
 		void FUN_0041DC80(FootClass * foot);
 		bool FUN_0041D7E0(ObjectClass * target);

@@ -183,3 +183,4 @@ address,name,symbol,evidence
 0x007E98A0,CLSID_ParasiteClass,,read by ParasiteClass::GetClassID
 0x00B0B880,SpawnManagers,,YRpp SpawnManagerClass::Array; initialiser _$E36 0x006B6C10 and atexit stub 0x006B6C50
 0x007E98B0,CLSID_BombClass,,read by BombClass::GetClassID
+0x00B72760,WorldDominationTour::WDTGameOptionList,,read by Conflict::Init_Game_Options 0x007660F0 (Clear, then Add of each game option)

@@ -21,6 +21,8 @@
 #include "techno.h"
 #include "voc.h"
 
+extern SideType FUN_006A46D0(char const * name);
+
 // SYNTHETIC: GAMEMD 0x00471540 SYMBOL
 // _$E2
 // SYNTHETIC: GAMEMD 0x00471570 SYMBOL
@@ -232,5 +234,136 @@ void CaptureManagerClass::FreeAll(void)
 {
 	for (int index = ControlNodes.Count() - 1; index >= 0; index--) {
 		FreeUnit(ControlNodes[index]->Unit);
+	}
+}
+
+// FUNCTION: GAMEMD 0x00472160
+void CaptureManagerClass::DrawLinks(void) const
+{
+	bool ownerSelected = false;
+	if (Owner->IsSelected) {
+		ownerSelected = true;
+	}
+	for (int index = ControlNodes.Count() - 1; index >= 0; index--) {
+		ControlNode * node = ControlNodes[index];
+		TechnoClass * unit = node->Unit;
+		bool draw = false;
+		if (node->LinkDrawTimer.Value() > 0) {
+			draw = true;
+		}
+		if (unit->IsSelected) {
+			draw = true;
+		}
+		if (Owner != NULL && unit != NULL && (ownerSelected || draw)) {
+			Coord target = unit->Position;
+			target.Z += unit->Techno_Type_Class()->LeptonMindControlOffset;
+			Owner->Draw_A_Link_To(Owner->Fire_Coord(-1 - index % 5, Coord(0, 0, 0)), target, Owner->House->RemapColorRGB);
+		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x004722A0
+bool CaptureManagerClass::CannotControlAnyMore(void)
+{
+	if (InfiniteMindControl) {
+		return false;
+	}
+	if (ControlNodes.Count() >= MaxControlNodes) {
+		return true;
+	}
+	return false;
+}
+
+// FUNCTION: GAMEMD 0x004722C0
+bool CaptureManagerClass::IsControllingSomething(void) const
+{
+	return ControlNodes.Count() > 0;
+}
+
+// FUNCTION: GAMEMD 0x004722D0
+int CaptureManagerClass::GetControlledCount(void) const
+{
+	return ControlNodes.Count();
+}
+
+// FUNCTION: GAMEMD 0x004722E0
+bool CaptureManagerClass::FUN_004722E0(void) const
+{
+	return MaxControlNodes == 1;
+}
+
+// FUNCTION: GAMEMD 0x004722F0
+HouseClass * CaptureManagerClass::GetOriginalOwner(TechnoClass * techno) const
+{
+	for (int index = ControlNodes.Count() - 1; index >= 0; index--) {
+		if (ControlNodes[index]->Unit == techno) {
+			return ControlNodes[index]->OriginalOwner;
+		}
+	}
+	return NULL;
+}
+
+#include "houstype.h"
+
+// FUNCTION: GAMEMD 0x00472330
+bool CaptureManagerClass::FUN_00472330(TechnoClass * techno)
+{
+	int count = Houses.Count();
+	SideType side = FUN_006A46D0("Civilian");
+	HouseClass * civilian = NULL;
+	for (int i = 0; i < count; i++) {
+		if (Houses[i]->Class->Side == side) {
+			civilian = Houses[i];
+			break;
+		}
+	}
+	if (civilian == NULL) {
+		return false;
+	}
+	for (int index = ControlNodes.Count() - 1; index >= 0; index--) {
+		if (ControlNodes[index]->Unit == techno) {
+			ControlNodes[index]->OriginalOwner = civilian;
+		}
+	}
+	return true;
+}
+
+// FUNCTION: GAMEMD 0x00472640
+bool CaptureManagerClass::NeedsToDrawLinks(void) const
+{
+	if (Owner->IsSelected) {
+		return true;
+	}
+	if (Owner->Transporter != NULL && Owner->Transporter->IsSelected) {
+		return true;
+	}
+	for (int index = ControlNodes.Count() - 1; index >= 0; index--) {
+		ControlNode * node = ControlNodes[index];
+		if (node->Unit->IsSelected) {
+			return true;
+		}
+		if (node->LinkDrawTimer.Value() > 0) {
+			return true;
+		}
+	}
+	return false;
+}
+
+// FUNCTION: GAMEMD 0x004726C0
+bool CaptureManagerClass::IsOverloading(bool * flag)
+{
+	if (InfiniteMindControl && ControlNodes.Count() > MaxControlNodes) {
+		*flag = OverloadPipState > 0;
+		return true;
+	}
+	return false;
+}
+
+// FUNCTION: GAMEMD 0x004726F0
+void CaptureManagerClass::Compute_CRC(CRCEngine & crc) const
+{
+	BASECLASS::Compute_CRC(crc);
+	if (Owner != NULL) {
+		crc(Owner->Fetch_ID());
 	}
 }

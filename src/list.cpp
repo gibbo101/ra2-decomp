@@ -19,6 +19,9 @@
 #include "vector.h"
 #include "wwmouse.h"
 
+// SYNTHETIC: GAMEMD 0x00557210 SYMBOL
+// _$E2
+
 // FUNCTION: GAMEMD 0x00557230
 ListClass::ListClass(int id, int x, int y, int w, int h, TextPrintType flags, ShapeSet const * up, ShapeSet const * down) :
 	BASECLASS(id, x, y, w, h, LEFTPRESS | LEFTRELEASE | KEYBOARD, false),
@@ -423,3 +426,46 @@ void ListClass::Flag_To_Redraw(void)
 	}
 	BASECLASS::Flag_To_Redraw();
 }
+
+// FUNCTION: GAMEMD 0x00558010
+void ListClass::Set_Selected_Index(wchar_t const * text)
+{
+	if (text && List.Count() > 0) {
+		for (int index = 0; index < List.Count(); index++) {
+			if (wcsicmp(List[index], text) == 0) {
+				Set_Selected_Index(index);
+				break;
+			}
+		}
+	}
+}
+
+// SYNTHETIC: GAMEMD 0x00558060
+// ??_GListClass@@UAEPAXI@Z
+
+// FUNCTION: GAMEMD 0x00558120
+// SliderClass::Thumb_Pixels
+
+// SYNTHETIC: GAMEMD 0x00558130
+// ??_G?$DynamicVectorClass@PBG@@UAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x00558180
+// ??_GSliderClass@@UAEPAXI@Z
+
+// FUNCTION: GAMEMD 0x005581A0
+// GaugeClass::GaugeClass
+
+// TEMPLATE: GAMEMD 0x005581E0
+// ?$DynamicVectorClass@PBG::Clear
+
+// TEMPLATE: GAMEMD 0x00558210
+// ?$DynamicVectorClass@PBG::ID
+
+// TEMPLATE: GAMEMD 0x00558230
+// ?$VectorClass@PBG::GetItem
+
+// TEMPLATE: GAMEMD 0x00558240
+// ?$VectorClass@PBG::operator==
+
+// TEMPLATE: GAMEMD 0x00558280
+// ?$VectorClass@PBG::Resize
