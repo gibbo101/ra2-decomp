@@ -6,6 +6,9 @@
 #include "always.h"
 #include "rect.h"
 #include "geometry.h"
+#include "scroll.h"
+#include "mouse.h"
+#include "imap.h"
 
 // SYNTHETIC: GAMEMD 0x0040CF80 SYMBOL
 // _$E2
@@ -31,3 +34,31 @@
 // _$E32
 // SYNTHETIC: GAMEMD 0x0040D140 SYMBOL
 // _$E35
+// SYNTHETIC: GAMEMD 0x0040D150 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x0040D170 SYMBOL
+// _$E41
+// SYNTHETIC: GAMEMD 0x0040D190 SYMBOL
+// _$E91
+// SYNTHETIC: GAMEMD 0x0040D1B0 SYMBOL
+// _$E89
+// SYNTHETIC: GAMEMD 0x0040D200 SYMBOL
+// _$E96
+// SYNTHETIC: GAMEMD 0x0040D220 SYMBOL
+// _$E94
+// FUNCTION: GAMEMD 0x0040D230
+// GScreenClass::AddRef
+// FUNCTION: GAMEMD 0x0040D240
+// GScreenClass::Release
+// FUNCTION: GAMEMD 0x0040D250
+// DisplayClass::Put_Place_Back
+// FUNCTION: GAMEMD 0x0040D260
+// SidebarClass::StripClass::BuildType::~BuildType
+// FUNCTION: GAMEMD 0x0040D270
+// ScrollClass::Init_IO
+// FUNCTION: GAMEMD 0x0040D280
+// MouseClass::Get_Mouse_Shape
+
+MouseClass Map;
+
+IGameMapPtr GameMap;

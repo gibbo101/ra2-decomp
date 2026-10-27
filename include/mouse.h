@@ -20,6 +20,7 @@ class MouseClass: public ScrollClass
 	public:
 		MouseClass(void);
 		MouseClass(NoInitClass const & x);
+		virtual ~MouseClass(void) override {}
 
 		virtual void One_Time(void) override;
 		virtual void Init_Clear(void) override;

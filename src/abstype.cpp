@@ -11,6 +11,34 @@
 #include "stringtable.h"
 #include "vector.h"
 #include <cstdio>
+#include <math.h>
+#include "geometry.h"
+#include "rect.h"
+
+// SYNTHETIC: GAMEMD 0x00410610 SYMBOL
+// _$E10
+// SYNTHETIC: GAMEMD 0x00410640 SYMBOL
+// _$E13
+// SYNTHETIC: GAMEMD 0x00410660 SYMBOL
+// _$E16
+// SYNTHETIC: GAMEMD 0x00410680 SYMBOL
+// _$E19
+// SYNTHETIC: GAMEMD 0x004106A0 SYMBOL
+// _$E22
+// SYNTHETIC: GAMEMD 0x004106C0 SYMBOL
+// _$E25
+// SYNTHETIC: GAMEMD 0x004106E0 SYMBOL
+// _$E28
+// SYNTHETIC: GAMEMD 0x00410720 SYMBOL
+// _$E31
+// SYNTHETIC: GAMEMD 0x00410750 SYMBOL
+// _$E34
+// SYNTHETIC: GAMEMD 0x00410780 SYMBOL
+// _$E37
+// SYNTHETIC: GAMEMD 0x004107B0 SYMBOL
+// _$E40
+// SYNTHETIC: GAMEMD 0x004107C0 SYMBOL
+// _$E43
 
 // The display name of a type whose INI section gives no UIName label: empty.
 static wchar_t NoUIName_00887734[2];

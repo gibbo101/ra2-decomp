@@ -394,3 +394,30 @@ template class VectorClass<SpawnManagerClass::SpawnControl *>;
 
 // TEMPLATE: GAMEMD 0x006B83A0
 // ??0?$DynamicVectorClass@PAUSpawnControl@SpawnManagerClass@@@@QAE@IPBQAUSpawnControl@SpawnManagerClass@@@Z
+
+// TEMPLATE: GAMEMD 0x006B8400
+// ?Resize@?$DynamicVectorClass@PAUSpawnControl@SpawnManagerClass@@@@UAE_NHPBQAUSpawnControl@SpawnManagerClass@@@Z
+// TEMPLATE: GAMEMD 0x006B84B0
+// ?ID@?$DynamicVectorClass@PAUSpawnControl@SpawnManagerClass@@@@UAEHABQAUSpawnControl@SpawnManagerClass@@@Z
+
+// TEMPLATE: GAMEMD 0x006B84E0
+// ??8?$VectorClass@PAVSpawnManagerClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x006B8520
+// ?Resize@?$VectorClass@PAVSpawnManagerClass@@@@UAE_NHPBQAVSpawnManagerClass@@@Z
+// TEMPLATE: GAMEMD 0x006B85D0
+// ?Clear@?$VectorClass@PAVSpawnManagerClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x006B8600
+// ?ID@?$VectorClass@PAVSpawnManagerClass@@@@UAEHABQAVSpawnManagerClass@@@Z
+// TEMPLATE: GAMEMD 0x006B8640
+// ?ID@?$VectorClass@PAVSpawnManagerClass@@@@UAEHPBQAVSpawnManagerClass@@@Z
+// TEMPLATE: GAMEMD 0x006B8660
+// ?Resize@?$DynamicVectorClass@PAVSpawnManagerClass@@@@UAE_NHPBQAVSpawnManagerClass@@@Z
+// TEMPLATE: GAMEMD 0x006B8710
+// ?ID@?$DynamicVectorClass@PAVSpawnManagerClass@@@@UAEHABQAVSpawnManagerClass@@@Z
+// SYNTHETIC: GAMEMD 0x006B8740
+// ??_G?$VectorClass@PAUSpawnControl@SpawnManagerClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x006B8790
+// ??_G?$DynamicVectorClass@PAUSpawnControl@SpawnManagerClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x006B87E0
+// ??_G?$VectorClass@PAVSpawnManagerClass@@@@UAEPAXI@Z
+template class VectorClass<SpawnManagerClass *>;

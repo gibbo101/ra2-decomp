@@ -436,3 +436,39 @@ template class DynamicVectorClass<CaptureManagerClass *>;
 
 // TEMPLATE: GAMEMD 0x00472B40
 // ??8?$VectorClass@PAUControlNode@@@@UBE_NABV0@@Z
+
+// TEMPLATE: GAMEMD 0x00472B80
+// ?Resize@?$VectorClass@PAUControlNode@@@@UAE_NHPBQAUControlNode@@@Z
+
+// TEMPLATE: GAMEMD 0x00472C30
+// ?Clear@?$VectorClass@PAUControlNode@@@@UAEXXZ
+
+// TEMPLATE: GAMEMD 0x00472C60
+// ?ID@?$VectorClass@PAUControlNode@@@@UAEHABQAUControlNode@@@Z
+
+// TEMPLATE: GAMEMD 0x00472CA0
+// ?ID@?$VectorClass@PAUControlNode@@@@UAEHPBQAUControlNode@@@Z
+
+// TEMPLATE: GAMEMD 0x00472CC0
+// ?Resize@?$DynamicVectorClass@PAUControlNode@@@@UAE_NHPBQAUControlNode@@@Z
+
+// TEMPLATE: GAMEMD 0x00472D70
+// ?ID@?$DynamicVectorClass@PAUControlNode@@@@UAEHABQAUControlNode@@@Z
+
+// TEMPLATE: GAMEMD 0x00472DA0
+// ??8?$VectorClass@PAVCaptureManagerClass@@@@UBE_NABV0@@Z
+
+// TEMPLATE: GAMEMD 0x00472DE0
+// ?Resize@?$VectorClass@PAVCaptureManagerClass@@@@UAE_NHPBQAVCaptureManagerClass@@@Z
+
+// TEMPLATE: GAMEMD 0x00472E90
+// ?Clear@?$VectorClass@PAVCaptureManagerClass@@@@UAEXXZ
+
+// TEMPLATE: GAMEMD 0x00472EC0
+// ?ID@?$VectorClass@PAVCaptureManagerClass@@@@UAEHABQAVCaptureManagerClass@@@Z
+
+// TEMPLATE: GAMEMD 0x00472F00
+// ?ID@?$VectorClass@PAVCaptureManagerClass@@@@UAEHPBQAVCaptureManagerClass@@@Z
+
+// TEMPLATE: GAMEMD 0x00472F20
+// ?Resize@?$DynamicVectorClass@PAVCaptureManagerClass@@@@UAE_NHPBQAVCaptureManagerClass@@@Z

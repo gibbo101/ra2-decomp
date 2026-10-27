@@ -175,3 +175,38 @@ EBolt::~EBolt(void)
 {
 	ClearOwner();
 }
+
+// TEMPLATE: GAMEMD 0x004C2C40
+// ?Clear@?$DynamicVectorClass@PAVEBolt@@@@UAEXXZ
+template class DynamicVectorClass<EBolt *>;
+
+// TEMPLATE: GAMEMD 0x004C2C70
+// ?ID@?$DynamicVectorClass@PAVEBolt@@@@UAEHPBQAVEBolt@@@Z
+
+// TEMPLATE: GAMEMD 0x004C2C90
+// ?GetItem@?$VectorClass@PAVEBolt@@@@UBEPAVEBolt@@H@Z
+
+// TEMPLATE: GAMEMD 0x004C2CA0
+// ??8?$VectorClass@PAVEBolt@@@@UBE_NABV0@@Z
+
+// TEMPLATE: GAMEMD 0x004C2CE0
+// ?Resize@?$VectorClass@PAVEBolt@@@@UAE_NHPBQAVEBolt@@@Z
+
+// TEMPLATE: GAMEMD 0x004C2D90
+// ?Clear@?$VectorClass@PAVEBolt@@@@UAEXXZ
+template class VectorClass<EBolt *>;
+
+// TEMPLATE: GAMEMD 0x004C2DC0
+// ?ID@?$VectorClass@PAVEBolt@@@@UAEHABQAVEBolt@@@Z
+
+// TEMPLATE: GAMEMD 0x004C2E00
+// ?ID@?$VectorClass@PAVEBolt@@@@UAEHPBQAVEBolt@@@Z
+
+// TEMPLATE: GAMEMD 0x004C2E20
+// ?Resize@?$DynamicVectorClass@PAVEBolt@@@@UAE_NHPBQAVEBolt@@@Z
+
+// TEMPLATE: GAMEMD 0x004C2ED0
+// ?ID@?$DynamicVectorClass@PAVEBolt@@@@UAEHABQAVEBolt@@@Z
+
+// SYNTHETIC: GAMEMD 0x004C2F00
+// ??_G?$VectorClass@PAVEBolt@@@@UAEPAXI@Z

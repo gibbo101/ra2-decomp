@@ -110,3 +110,32 @@ void EgoClass::Wipe (Surface *background)
 	Rect r(0, YPos, Drawing::RenderWidth, 18);
 	DSurface::Temp->Blit_From(r, *background, r);
 }
+
+// TEMPLATE: GAMEMD 0x004C49A0
+// ?Clear@?$DynamicVectorClass@PAVEgoClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004C49D0
+// ?ID@?$DynamicVectorClass@PAVEgoClass@@@@UAEHPBQAVEgoClass@@@Z
+// TEMPLATE: GAMEMD 0x004C49F0
+// ?GetItem@?$VectorClass@PAVEgoClass@@@@UBEPAVEgoClass@@H@Z
+template class DynamicVectorClass<EgoClass *>;
+
+// TEMPLATE: GAMEMD 0x004C4A00
+// ??8?$VectorClass@PAVEgoClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x004C4A40
+// ?Resize@?$VectorClass@PAVEgoClass@@@@UAE_NHPBQAVEgoClass@@@Z
+// TEMPLATE: GAMEMD 0x004C4AF0
+// ?Clear@?$VectorClass@PAVEgoClass@@@@UAEXXZ
+template class VectorClass<EgoClass *>;
+
+// TEMPLATE: GAMEMD 0x004C4B20
+// ?ID@?$VectorClass@PAVEgoClass@@@@UAEHABQAVEgoClass@@@Z
+// TEMPLATE: GAMEMD 0x004C4B60
+// ?ID@?$VectorClass@PAVEgoClass@@@@UAEHPBQAVEgoClass@@@Z
+// TEMPLATE: GAMEMD 0x004C4B80
+// ?Resize@?$DynamicVectorClass@PAVEgoClass@@@@UAE_NHPBQAVEgoClass@@@Z
+// TEMPLATE: GAMEMD 0x004C4C30
+// ?ID@?$DynamicVectorClass@PAVEgoClass@@@@UAEHABQAVEgoClass@@@Z
+// SYNTHETIC: GAMEMD 0x004C4C60
+// ??_G?$VectorClass@PAVEgoClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004C4CB0
+// ??_G?$DynamicVectorClass@PAVEgoClass@@@@UAEPAXI@Z

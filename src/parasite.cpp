@@ -498,3 +498,41 @@ RTTIType ParasiteClass::Fetch_RTTI(void) const
 
 // SYNTHETIC: GAMEMD 0x0062AF70
 // ??_GParasiteClass@@UAEPAXI@Z
+
+// TEMPLATE: GAMEMD 0x0062B070
+// ?Clear@?$DynamicVectorClass@PAVParasiteClass@@@@UAEXXZ
+template class DynamicVectorClass<ParasiteClass *>;
+
+// TEMPLATE: GAMEMD 0x0062B0A0
+// ?ID@?$DynamicVectorClass@PAVParasiteClass@@@@UAEHPBQAVParasiteClass@@@Z
+
+// TEMPLATE: GAMEMD 0x0062B0C0
+// ?GetItem@?$VectorClass@PAVParasiteClass@@@@UBEPAVParasiteClass@@H@Z
+
+// TEMPLATE: GAMEMD 0x0062B0D0
+// ??8?$VectorClass@PAVParasiteClass@@@@UBE_NABV0@@Z
+
+// TEMPLATE: GAMEMD 0x0062B110
+// ?Resize@?$VectorClass@PAVParasiteClass@@@@UAE_NHPBQAVParasiteClass@@@Z
+
+// TEMPLATE: GAMEMD 0x0062B1C0
+// ?Clear@?$VectorClass@PAVParasiteClass@@@@UAEXXZ
+
+// TEMPLATE: GAMEMD 0x0062B1F0
+// ?ID@?$VectorClass@PAVParasiteClass@@@@UAEHABQAVParasiteClass@@@Z
+
+// TEMPLATE: GAMEMD 0x0062B230
+// ?ID@?$VectorClass@PAVParasiteClass@@@@UAEHPBQAVParasiteClass@@@Z
+
+// TEMPLATE: GAMEMD 0x0062B250
+// ?Resize@?$DynamicVectorClass@PAVParasiteClass@@@@UAE_NHPBQAVParasiteClass@@@Z
+
+// TEMPLATE: GAMEMD 0x0062B300
+// ?ID@?$DynamicVectorClass@PAVParasiteClass@@@@UAEHABQAVParasiteClass@@@Z
+
+// SYNTHETIC: GAMEMD 0x0062B330
+// ??_G?$VectorClass@PAVParasiteClass@@@@UAEPAXI@Z
+template class VectorClass<ParasiteClass *>;
+
+// SYNTHETIC: GAMEMD 0x0062B380
+// ??_G?$DynamicVectorClass@PAVParasiteClass@@@@UAEPAXI@Z

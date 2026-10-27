@@ -94,3 +94,45 @@ DynamicVectorClass<AbstractClass *> FactoryPtrTracker;
 
 // SYNTHETIC: GAMEMD 0x00725590 SYMBOL
 // _$E157
+
+// SYNTHETIC: GAMEMD 0x007255D0 SYMBOL
+// _$E164
+DynamicVectorClass<AbstractClass *> EventActionPtrTracker;
+
+// SYNTHETIC: GAMEMD 0x00725610 SYMBOL
+// _$E162
+
+// SYNTHETIC: GAMEMD 0x00725650 SYMBOL
+// _$E169
+DynamicVectorClass<AbstractClass *> WaypointPathPtrTracker;
+
+// SYNTHETIC: GAMEMD 0x00725690 SYMBOL
+// _$E167
+
+// SYNTHETIC: GAMEMD 0x007256D0 SYMBOL
+// _$E174
+DynamicVectorClass<AbstractClass *> TeamPtrTracker;
+
+// SYNTHETIC: GAMEMD 0x00725710 SYMBOL
+// _$E172
+
+// SYNTHETIC: GAMEMD 0x00725750 SYMBOL
+// _$E179
+DynamicVectorClass<AbstractClass *> HousePtrTracker;
+
+// SYNTHETIC: GAMEMD 0x00725790 SYMBOL
+// _$E177
+
+// SYNTHETIC: GAMEMD 0x007257D0 SYMBOL
+// _$E184
+DynamicVectorClass<AbstractClass *> NeuronPtrTracker;
+
+// SYNTHETIC: GAMEMD 0x00725810 SYMBOL
+// _$E182
+
+// SYNTHETIC: GAMEMD 0x00725850 SYMBOL
+// _$E189
+DynamicVectorClass<AbstractClass *> ObjectsToDelete;
+
+// SYNTHETIC: GAMEMD 0x00725890 SYMBOL
+// _$E187

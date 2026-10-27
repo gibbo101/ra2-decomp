@@ -487,3 +487,32 @@ void Recalc_House_Factories(HouseClass *house)
 
 // SYNTHETIC: GAMEMD 0x004CA770
 // ??_GFactoryClass@@UAEPAXI@Z
+
+// TEMPLATE: GAMEMD 0x004CA890
+// ?Clear@?$DynamicVectorClass@PBVTechnoTypeClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004CA8C0
+// ?ID@?$DynamicVectorClass@PBVTechnoTypeClass@@@@UAEHPBQBVTechnoTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x004CA8E0
+// ?GetItem@?$VectorClass@PBVTechnoTypeClass@@@@UBEPBVTechnoTypeClass@@H@Z
+template class DynamicVectorClass<TechnoTypeClass const *>;
+
+// TEMPLATE: GAMEMD 0x004CA8F0
+// ??8?$VectorClass@PBVTechnoTypeClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x004CA930
+// ?Resize@?$VectorClass@PBVTechnoTypeClass@@@@UAE_NHPBQBVTechnoTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x004CA9E0
+// ?Clear@?$VectorClass@PBVTechnoTypeClass@@@@UAEXXZ
+template class VectorClass<TechnoTypeClass const *>;
+
+// TEMPLATE: GAMEMD 0x004CAA10
+// ?ID@?$VectorClass@PBVTechnoTypeClass@@@@UAEHABQBVTechnoTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x004CAA50
+// ?ID@?$VectorClass@PBVTechnoTypeClass@@@@UAEHPBQBVTechnoTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x004CAA70
+// ?Resize@?$DynamicVectorClass@PBVTechnoTypeClass@@@@UAE_NHPBQBVTechnoTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x004CAB20
+// ?ID@?$DynamicVectorClass@PBVTechnoTypeClass@@@@UAEHABQBVTechnoTypeClass@@@Z
+// SYNTHETIC: GAMEMD 0x004CAB50
+// ??_G?$VectorClass@PBVTechnoTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004CABA0
+// ??_G?$DynamicVectorClass@PBVTechnoTypeClass@@@@UAEPAXI@Z

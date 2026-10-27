@@ -145,7 +145,9 @@ struct User {
 	char Nick[10];
 	char Login[0x57 - 0x2E];
 	char Abbrev[10];
-	char Rest[0x6C - 0x61];
+	char Rest[0x64 - 0x61];
+	int Locale;
+	char Tail[4];
 };
 
 // FUNCTION: GAMEMD 0x0077B9C0
@@ -7892,6 +7894,171 @@ long __stdcall FUN_007AB260(void * sink, long result, void * channel, User * use
 
 // FUNCTION: GAMEMD 0x007AB330
 long __stdcall FUN_007AB330(void * sink, long result, int first, int second)
+{
+	return 0;
+}
+
+// FUNCTION: GAMEMD 0x007AB340
+long __stdcall FUN_007AB340(void * sink, long result, void * arg)
+{
+	return 0;
+}
+
+void __fastcall FUN_005E2CD0(wchar_t const * text, int type, void (*callback)(void), bool large);
+
+// FUNCTION: GAMEMD 0x007AB350
+long __stdcall FUN_007AB350(void * sink, long result, time_t bannedTill)
+{
+	if (!DAT_00B77DC1 && result == 0) {
+		wchar_t text[200];
+		swprintf(text, StringTable::LoadString("TXT_BANNEDTILL", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2269), ctime(&bannedTill));
+		FUN_005E2CD0(text, 0, FUN_0077D710, 0);
+	}
+	return 0;
+}
+
+// FUNCTION: GAMEMD 0x007AB3C0
+long __stdcall FUN_007AB3C0(void * sink, long result, char const * name, int banned)
+{
+	if (!DAT_00B77DC1) {
+		if (banned) {
+			FUN_005E2700(DAT_007EEF28, StringTable::LoadString("TXT_CHAN_BAN", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2276), FUN_00735120(name));
+		} else {
+			FUN_005E2700(DAT_007EEF28, StringTable::LoadString("TXT_CHAN_UNBAN", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2279), FUN_00735120(name));
+		}
+	}
+	return 0;
+}
+
+// FUNCTION: GAMEMD 0x007AB440
+long __stdcall FUN_007AB440(void * sink, long result, char const * name, unsigned int flags, unsigned int mask)
+{
+	if (result == 0) {
+		for (int i = 0; i < DAT_00B77900.length(); i++) {
+			User user;
+			if (DAT_00B77900.get(user, i) && stricmp(user.Nick, name) == 0) {
+				user.Flags = (user.Flags & mask) | flags;
+				DAT_00B77900.remove(i);
+				User copy = user;
+				copy.Next = NULL;
+				FUN_00783070(&copy);
+			}
+		}
+		FUN_00783C80(0, false);
+		return 0;
+	}
+	return 0;
+}
+
+extern char DAT_00B785C0[64];
+bool FUN_005E95E0(void);
+bool FUN_005E9510(void);
+void _DrawMessage(int color, const wchar_t * message, HWND window);
+
+// FUNCTION: GAMEMD 0x007AB670
+long __stdcall FUN_007AB670(void * sink, long result, WolChannel * channel, User * kicked, User * kicker)
+{
+	if (DAT_00B77DC1) {
+		return 0;
+	}
+	if (result < 0) {
+		return 0;
+	}
+	memset(DAT_00B785C0, 0, sizeof(DAT_00B785C0));
+	if (strnicmp(channel->Name, "Lob_41_", strlen("Lob_41_")) == 0) {
+		int lobby = atol(channel->Name + strlen("Lob_41_"));
+		int copy = lobby / 8;
+		int slot = lobby % 8;
+		if (copy == 0) {
+			sprintf(DAT_00B785C0, "%s", DAT_00B73E1C[slot]);
+		} else {
+			sprintf(DAT_00B785C0, "%s %d", DAT_00B73E1C[slot], copy + 1);
+		}
+	} else {
+		sprintf(DAT_00B785C0, "%s", channel->Name);
+	}
+	if (kicked->Flags & 0x8000) {
+		WideWstring wide;
+		if (DAT_00B76B10.Type && FUN_005E95E0()) {
+			wide = StringTable::LoadString("TXT_CHANNEL_FULL", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x22D0);
+		} else {
+			wchar_t message[1024];
+			memset(message, 0, sizeof(message));
+			swprintf(message, StringTable::LoadString("TXT_YOURE_KICKED", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x22D4), FUN_00735120(channel->Name), FUN_00735120(kicker->Nick));
+			wide = message;
+		}
+		if (!DAT_00B76B10.Type) {
+			FUN_005E2CD0(wide.get(), 0, FUN_0077D710, 0);
+			DAT_00B77DD4++;
+		} else {
+			HWND dialog = FUN_00775940(0x113);
+			if (dialog) {
+				_DrawMessage(DAT_007EEF28, wide.get(), GetDlgItem(dialog, 0x53F));
+			}
+		}
+	} else if (!FUN_005E9510()) {
+		FUN_005E2700(DAT_007EEF28, StringTable::LoadString("TXT_USER_KICKED", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x22EC), FUN_00735120(kicked->Nick), FUN_00735120(channel->Name), FUN_00735120(kicker->Nick));
+	}
+	FUN_00785740(kicked);
+	FUN_00783C80(0, false);
+	FUN_00781480();
+	return 0;
+}
+
+static inline void Forget_Locale(Wstring & name)
+{
+	int old;
+	DAT_00B76530.remove(name, old);
+}
+
+// FUNCTION: GAMEMD 0x007AB8E0
+long __stdcall FUN_007AB8E0(void * sink, long result, User * users)
+{
+	bool found = false;
+	if (result < 0) {
+		FUN_004068E0("OnUserLocale callback failed!\n");
+		return 0;
+	}
+	User * user = users;
+	while (user != NULL) {
+		Wstring name;
+		name.set(user->Nick);
+		name.toLower();
+		Forget_Locale(name);
+		int locale = user->Locale;
+		DAT_00B76530.add(name, locale);
+		if (stricmp(users->Nick, DAT_00B73E40.get()) == 0) {
+			WOLOptionsClass options;
+			rc_ptr<PlayerProfile> profile;
+			if (options.Is_Bit1_Clear()) {
+				profile = FUN_00778A20(&DAT_00B73E40);
+			} else {
+				profile = DAT_00B75E48;
+			}
+			profile->SetLocale(users->Locale, 2);
+			if (options.Is_Bit1_Clear()) {
+				profile->Save(&DAT_00B73E40);
+			}
+			FUN_004068E0("OnUserLocale callback - Locale is %d\n", users->Locale);
+			found = true;
+		}
+		user = user->Next;
+	}
+	if (found) {
+		SetEvent(DAT_00B73684[14]);
+	}
+	return 0;
+}
+
+
+// FUNCTION: GAMEMD 0x007AC4A0
+long __stdcall FUN_007AC4A0(void * sink, long result, void * arg)
+{
+	return 0;
+}
+
+// FUNCTION: GAMEMD 0x007AC4B0
+long __stdcall FUN_007AC4B0(void * sink, long result, void * arg)
 {
 	return 0;
 }

@@ -162,3 +162,45 @@ DynamicVectorClass<AnimClass *> Anims;
 
 // SYNTHETIC: GAMEMD 0x004E6DA0 SYMBOL
 // _$E135
+
+// SYNTHETIC: GAMEMD 0x004E6DE0 SYMBOL
+// _$E142
+DynamicVectorClass<TeamClass *> Teams;
+
+// SYNTHETIC: GAMEMD 0x004E6E20 SYMBOL
+// _$E140
+
+// SYNTHETIC: GAMEMD 0x004E6E60 SYMBOL
+// _$E147
+DynamicVectorClass<FactoryClass *> Factories;
+
+// SYNTHETIC: GAMEMD 0x004E6EA0 SYMBOL
+// _$E145
+
+// SYNTHETIC: GAMEMD 0x004E6EE0 SYMBOL
+// _$E152
+DynamicVectorClass<CampaignClass *> Campaigns;
+
+// SYNTHETIC: GAMEMD 0x004E6F20 SYMBOL
+// _$E150
+
+// SYNTHETIC: GAMEMD 0x004E6F60 SYMBOL
+// _$E157
+DynamicVectorClass<SideClass *> Sides;
+
+// SYNTHETIC: GAMEMD 0x004E6FA0 SYMBOL
+// _$E155
+
+// SYNTHETIC: GAMEMD 0x004E6FE0 SYMBOL
+// _$E162
+DynamicVectorClass<HouseTypeClass *> HouseTypes;
+
+// SYNTHETIC: GAMEMD 0x004E7020 SYMBOL
+// _$E160
+
+// SYNTHETIC: GAMEMD 0x004E7060 SYMBOL
+// _$E167
+DynamicVectorClass<TaskForceClass *> TaskForces;
+
+// SYNTHETIC: GAMEMD 0x004E70A0 SYMBOL
+// _$E165

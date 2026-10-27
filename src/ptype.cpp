@@ -5,6 +5,7 @@
 
 #define INCLUDE_COM
 #include "always.h"
+#include "geometry.h"
 #include "ptype.h"
 #include "ccini.h"
 #include "findmake.h"
@@ -14,6 +15,31 @@
 #include "swizzle.h"
 #include "tracker.h"
 #include "warhead.h"
+
+// SYNTHETIC: GAMEMD 0x006449F0 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x00644A20 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x00644A40 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x00644A60 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x00644A80 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x00644AA0 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x00644AC0 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x00644B00 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x00644B30 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x00644B60 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x00644B90 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x00644BA0 SYMBOL
+// _$E35
 
 extern char DAT_00889F64[];
 

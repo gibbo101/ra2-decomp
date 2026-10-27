@@ -58,6 +58,7 @@
 #include "house.h"
 #include "houstype.h"
 #include "hover.h"
+#include "rocket.h"
 #include "iblowfish.h"
 #include "infantry.h"
 #include "infatype.h"
@@ -1682,3 +1683,31 @@ template class TClassFactory<JumpjetLocomotionClass>;
 // TEMPLATE: GAMEMD 0x006C4390
 // ?LockServer@?$TClassFactory@VHoverLocomotionClass@@@@UAGJH@Z
 template class TClassFactory<HoverLocomotionClass>;
+
+// TEMPLATE: GAMEMD 0x006C43C0
+// ??0?$TClassFactory@VRocketLocomotionClass@@@@QAE@XZ
+// TEMPLATE: GAMEMD 0x006C43D0
+// ?QueryInterface@?$TClassFactory@VRocketLocomotionClass@@@@UAGJABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C4440
+// ?AddRef@?$TClassFactory@VRocketLocomotionClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C4460
+// ?Release@?$TClassFactory@VRocketLocomotionClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C4490
+// ?CreateInstance@?$TClassFactory@VRocketLocomotionClass@@@@UAGJPAUIUnknown@@ABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C4510
+// ?LockServer@?$TClassFactory@VRocketLocomotionClass@@@@UAGJH@Z
+template class TClassFactory<RocketLocomotionClass>;
+
+// TEMPLATE: GAMEMD 0x006C4540
+// ??0?$TClassFactory@VTunnelLocomotionClass@@@@QAE@XZ
+// TEMPLATE: GAMEMD 0x006C4550
+// ?QueryInterface@?$TClassFactory@VTunnelLocomotionClass@@@@UAGJABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C45C0
+// ?AddRef@?$TClassFactory@VTunnelLocomotionClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C45E0
+// ?Release@?$TClassFactory@VTunnelLocomotionClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C4610
+// ?CreateInstance@?$TClassFactory@VTunnelLocomotionClass@@@@UAGJPAUIUnknown@@ABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C4690
+// ?LockServer@?$TClassFactory@VTunnelLocomotionClass@@@@UAGJH@Z
+template class TClassFactory<TunnelLocomotionClass>;

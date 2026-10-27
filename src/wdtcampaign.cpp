@@ -203,3 +203,29 @@ template class rc_ptr<WorldDominationTour::State>;
 
 // TEMPLATE: GAMEMD 0x007657F0
 // ??8?$VectorClass@V?$rc_ptr@VConflict@WorldDominationTour@@@@@@UBE_NABV0@@Z
+
+// TEMPLATE: GAMEMD 0x00765840
+// ?Resize@?$VectorClass@V?$rc_ptr@VConflict@WorldDominationTour@@@@@@UAE_NHPBV?$rc_ptr@VConflict@WorldDominationTour@@@@@Z
+// TEMPLATE: GAMEMD 0x00765960
+// ?Clear@?$VectorClass@V?$rc_ptr@VConflict@WorldDominationTour@@@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x00765990
+// ?ID@?$VectorClass@V?$rc_ptr@VConflict@WorldDominationTour@@@@@@UAEHABV?$rc_ptr@VConflict@WorldDominationTour@@@@@Z
+// TEMPLATE: GAMEMD 0x007659D0
+// ?ID@?$VectorClass@V?$rc_ptr@VConflict@WorldDominationTour@@@@@@UAEHPBV?$rc_ptr@VConflict@WorldDominationTour@@@@@Z
+// TEMPLATE: GAMEMD 0x007659F0
+// ?Resize@?$DynamicVectorClass@V?$rc_ptr@VConflict@WorldDominationTour@@@@@@UAE_NHPBV?$rc_ptr@VConflict@WorldDominationTour@@@@@Z
+// TEMPLATE: GAMEMD 0x00765B10
+// ?ID@?$DynamicVectorClass@V?$rc_ptr@VConflict@WorldDominationTour@@@@@@UAEHABV?$rc_ptr@VConflict@WorldDominationTour@@@@@Z
+// TEMPLATE: GAMEMD 0x00765B40
+// ??E?$VectorCursor@V?$rc_ptr@VConflict@WorldDominationTour@@@@V?$DynamicVectorClass@V?$rc_ptr@VConflict@WorldDominationTour@@@@@@@@UAEAAV0@XZ
+// TEMPLATE: GAMEMD 0x00765B50
+// ??F?$VectorCursor@V?$rc_ptr@VConflict@WorldDominationTour@@@@V?$DynamicVectorClass@V?$rc_ptr@VConflict@WorldDominationTour@@@@@@@@UAEAAV0@XZ
+// SYNTHETIC: GAMEMD 0x00765B60
+// ??_G?$VectorClass@V?$rc_ptr@VConflict@WorldDominationTour@@@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00765BB0
+// ??_E?$rc_ptr@VConflict@WorldDominationTour@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00765C20
+// ??_G?$DynamicVectorClass@V?$rc_ptr@VConflict@WorldDominationTour@@@@@@UAEPAXI@Z
+// TEMPLATE: GAMEMD 0x00765C70
+// ??0?$rc_ptr@VConflict@WorldDominationTour@@@@QAE@XZ
+

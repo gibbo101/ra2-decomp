@@ -17,6 +17,7 @@
 #include "combat.h"
 #include "draw.h"
 #include "findmake.h"
+#include "geometry.h"
 #include "globals.h"
 #include "incdec.h"
 #include "inline.h"
@@ -36,6 +37,31 @@
 #include "warhead.h"
 #include "draw.hh"
 #include <cstdio>
+
+// SYNTHETIC: GAMEMD 0x0071B5A0 SYMBOL
+// _$E59
+// SYNTHETIC: GAMEMD 0x0071B5D0 SYMBOL
+// _$E62
+// SYNTHETIC: GAMEMD 0x0071B5F0 SYMBOL
+// _$E65
+// SYNTHETIC: GAMEMD 0x0071B610 SYMBOL
+// _$E68
+// SYNTHETIC: GAMEMD 0x0071B630 SYMBOL
+// _$E71
+// SYNTHETIC: GAMEMD 0x0071B650 SYMBOL
+// _$E74
+// SYNTHETIC: GAMEMD 0x0071B670 SYMBOL
+// _$E77
+// SYNTHETIC: GAMEMD 0x0071B6B0 SYMBOL
+// _$E80
+// SYNTHETIC: GAMEMD 0x0071B6E0 SYMBOL
+// _$E83
+// SYNTHETIC: GAMEMD 0x0071B710 SYMBOL
+// _$E86
+// SYNTHETIC: GAMEMD 0x0071B740 SYMBOL
+// _$E89
+// SYNTHETIC: GAMEMD 0x0071B750 SYMBOL
+// _$E92
 
 // FUNCTION: GAMEMD 0x0071B7B0
 TerrainClass::~TerrainClass(void)

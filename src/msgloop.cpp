@@ -157,3 +157,27 @@ template class VectorClass<AcceleratorTracker>;
 // ?$VectorClass@PAUHWND__@@::ID
 // TEMPLATE: GAMEMD 0x005D52B0
 // ?$VectorClass@PAUHWND__@@::ID
+// TEMPLATE: GAMEMD 0x005D52D0
+// ?$DynamicVectorClass@PAUHWND__@@::Resize
+// TEMPLATE: GAMEMD 0x005D5380
+// ?$DynamicVectorClass@PAUHWND__@@::ID
+// TEMPLATE: GAMEMD 0x005D53B0
+// ?$VectorClass@UAcceleratorTracker@@::operator==
+// TEMPLATE: GAMEMD 0x005D5410
+// ?$VectorClass@UAcceleratorTracker@@::Resize
+// TEMPLATE: GAMEMD 0x005D5500
+// ?$VectorClass@UAcceleratorTracker@@::Clear
+// TEMPLATE: GAMEMD 0x005D5530
+// ?$VectorClass@UAcceleratorTracker@@::ID
+// TEMPLATE: GAMEMD 0x005D5580
+// ?$VectorClass@UAcceleratorTracker@@::ID
+// TEMPLATE: GAMEMD 0x005D55A0
+// ?$DynamicVectorClass@UAcceleratorTracker@@::Resize
+// TEMPLATE: GAMEMD 0x005D56A0
+// ?$DynamicVectorClass@UAcceleratorTracker@@::ID
+// SYNTHETIC: GAMEMD 0x005D56E0
+// ??_G?$VectorClass@PAUHWND__@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x005D5730
+// ??_G?$DynamicVectorClass@PAUHWND__@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x005D5780
+// ??_G?$VectorClass@UAcceleratorTracker@@@@UAEPAXI@Z

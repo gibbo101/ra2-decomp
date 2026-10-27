@@ -520,3 +520,31 @@ RTTIType TemporalClass::Fetch_RTTI(void) const
 {
 	return(RTTI_TEMPORAL);
 }
+
+// SYNTHETIC: GAMEMD 0x0071B1B0
+// ??_GTemporalClass@@UAEPAXI@Z
+
+// TEMPLATE: GAMEMD 0x0071B240
+// ?Clear@?$DynamicVectorClass@PAVTemporalClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0071B270
+// ?ID@?$DynamicVectorClass@PAVTemporalClass@@@@UAEHPBQAVTemporalClass@@@Z
+// TEMPLATE: GAMEMD 0x0071B290
+// ?GetItem@?$VectorClass@PAVTemporalClass@@@@UBEPAVTemporalClass@@H@Z
+// TEMPLATE: GAMEMD 0x0071B2A0
+// ??8?$VectorClass@PAVTemporalClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x0071B2E0
+// ?Resize@?$VectorClass@PAVTemporalClass@@@@UAE_NHPBQAVTemporalClass@@@Z
+// TEMPLATE: GAMEMD 0x0071B390
+// ?Clear@?$VectorClass@PAVTemporalClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0071B3C0
+// ?ID@?$VectorClass@PAVTemporalClass@@@@UAEHABQAVTemporalClass@@@Z
+// TEMPLATE: GAMEMD 0x0071B400
+// ?ID@?$VectorClass@PAVTemporalClass@@@@UAEHPBQAVTemporalClass@@@Z
+// TEMPLATE: GAMEMD 0x0071B420
+// ?Resize@?$DynamicVectorClass@PAVTemporalClass@@@@UAE_NHPBQAVTemporalClass@@@Z
+// TEMPLATE: GAMEMD 0x0071B4D0
+// ?ID@?$DynamicVectorClass@PAVTemporalClass@@@@UAEHABQAVTemporalClass@@@Z
+// SYNTHETIC: GAMEMD 0x0071B500
+// ??_G?$VectorClass@PAVTemporalClass@@@@UAEPAXI@Z
+template class DynamicVectorClass<TemporalClass *>;
+template class VectorClass<TemporalClass *>;

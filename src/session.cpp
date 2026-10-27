@@ -1428,3 +1428,28 @@ template class VectorClass<PhoneEntryClass *>;
 // ??_G?$TypeList@W4DiskID@@@@UAEPAXI@Z
 // TEMPLATE: GAMEMD 0x0069C710
 // ??8?$VectorClass@W4DiskID@@@@UBE_NABV0@@Z
+
+// TEMPLATE: GAMEMD 0x0069C750
+// ?Resize@?$VectorClass@W4DiskID@@@@UAE_NHPBW4DiskID@@@Z
+// TEMPLATE: GAMEMD 0x0069C800
+// ?Clear@?$VectorClass@W4DiskID@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0069C830
+// ?ID@?$VectorClass@W4DiskID@@@@UAEHABW4DiskID@@@Z
+// TEMPLATE: GAMEMD 0x0069C870
+// ?ID@?$VectorClass@W4DiskID@@@@UAEHPBW4DiskID@@@Z
+// TEMPLATE: GAMEMD 0x0069C890
+// ?Resize@?$DynamicVectorClass@W4DiskID@@@@UAE_NHPBW4DiskID@@@Z
+// TEMPLATE: GAMEMD 0x0069C940
+// ?ID@?$DynamicVectorClass@W4DiskID@@@@UAEHABW4DiskID@@@Z
+// TEMPLATE: GAMEMD 0x0069C970
+// ??8?$VectorClass@VWstring@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x0069C9C0
+// ?Resize@?$VectorClass@VWstring@@@@UAE_NHPBVWstring@@@Z
+// TEMPLATE: GAMEMD 0x0069CB00
+// ?Clear@?$VectorClass@VWstring@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0069CB50
+// ?ID@?$VectorClass@VWstring@@@@UAEHABVWstring@@@Z
+// TEMPLATE: GAMEMD 0x0069CBA0
+// ?ID@?$VectorClass@VWstring@@@@UAEHPBVWstring@@@Z
+// TEMPLATE: GAMEMD 0x0069CBC0
+// ?Resize@?$DynamicVectorClass@VWstring@@@@UAE_NHPBVWstring@@@Z

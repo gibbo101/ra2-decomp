@@ -244,3 +244,62 @@ bool RadBeam::FUN_00659CA0(void)
 	}
 	return ++unknown_7C >= Period;
 }
+
+// FUNCTION: GAMEMD 0x00659E30
+void RadBeam::FUN_00659E30(void)
+{
+	Delta = TargetLocation - SourceLocation;
+	Length = fastmath::sqrt(Delta.X * Delta.X + Delta.Y * Delta.Y + Delta.Z * Delta.Z);
+	unknown_8C = (int)(Length / unknown_18);
+	Coord step(Delta.X, Delta.Y, Delta.Z);
+	step /= unknown_8C;
+	AnotherLocation = step;
+}
+
+// FUNCTION: GAMEMD 0x00659EE0
+void RadBeam::FUN_00659EE0(void)
+{
+	int period = Period;
+	double phase;
+	if (unknown_7C < period / 2) {
+		phase = unknown_7C * 2;
+	} else {
+		phase = period - (unknown_7C * 2) % period;
+	}
+	unknown_80 = phase / (double)period * Amplitude;
+	Delta = Delta + AnotherLocation * (int)(unknown_50 * unknown_7C * unknown_48);
+	Length = fastmath::sqrt(Delta.X * Delta.X + Delta.Y * Delta.Y + Delta.Z * Delta.Z);
+	unknown_8C = (int)(Length / unknown_18);
+	Coord step(Delta.X, Delta.Y, Delta.Z);
+	step /= unknown_8C;
+	AndAnotherLocation = step;
+}
+
+// TEMPLATE: GAMEMD 0x0065A1B0
+// ??_0?$TPoint3D@H@@QAEABV0@H@Z
+template class TPoint3D<int>;
+
+// TEMPLATE: GAMEMD 0x0065A1E0
+// ?Clear@?$DynamicVectorClass@PAVRadBeam@@@@UAEXXZ
+template class DynamicVectorClass<RadBeam *>;
+
+// TEMPLATE: GAMEMD 0x0065A210
+// ?ID@?$DynamicVectorClass@PAVRadBeam@@@@UAEHPBQAVRadBeam@@@Z
+
+// TEMPLATE: GAMEMD 0x0065A230
+// ?GetItem@?$VectorClass@PAVRadBeam@@@@UBEPAVRadBeam@@H@Z
+
+// TEMPLATE: GAMEMD 0x0065A240
+// ??8?$VectorClass@PAVRadBeam@@@@UBE_NABV0@@Z
+
+// TEMPLATE: GAMEMD 0x0065A280
+// ?Resize@?$VectorClass@PAVRadBeam@@@@UAE_NHPBQAVRadBeam@@@Z
+
+// TEMPLATE: GAMEMD 0x0065A330
+// ?Clear@?$VectorClass@PAVRadBeam@@@@UAEXXZ
+
+// TEMPLATE: GAMEMD 0x0065A360
+// ?ID@?$VectorClass@PAVRadBeam@@@@UAEHABQAVRadBeam@@@Z
+
+// TEMPLATE: GAMEMD 0x0065A3A0
+// ?ID@?$VectorClass@PAVRadBeam@@@@UAEHPBQAVRadBeam@@@Z

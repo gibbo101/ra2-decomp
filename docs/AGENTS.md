@@ -288,6 +288,8 @@ Each entry: what the diff showed, then the source change that fixed it.
   range: the run after a module's last function belongs to the next file.
 - Byte-identical template instances with no vtable (`_com_ptr_t::_Release`) can be folded:
   label one only from a caller whose type proves it, or leave it unlabelled.
+- A null test then `push 1; call` on a class with no virtual destructor is `delete p`:
+  annotate the callee as SYNTHETIC `??_GClass@@QAEPAXI@Z`, never a new member.
 - One address called with two argument types is two overloads the linker folded: declare
   both (HouseClass::Get_First_Ownable takes unit and building type vectors at 0x00505310).
 - A class's RTTI also names its real base: LoadProgressMgr derives from INoticeSink, which

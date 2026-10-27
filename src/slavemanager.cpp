@@ -565,3 +565,40 @@ RTTIType SlaveManagerClass::Fetch_RTTI(void) const
 
 // TEMPLATE: GAMEMD 0x006B13B0
 // ?Clear@?$DynamicVectorClass@PAUSlaveControl@SlaveManagerClass@@@@UAEXXZ
+
+// TEMPLATE: GAMEMD 0x006B13E0
+// ?ID@?$DynamicVectorClass@PAUSlaveControl@SlaveManagerClass@@@@UAEHPBQAUSlaveControl@SlaveManagerClass@@@Z
+
+// TEMPLATE: GAMEMD 0x006B1400
+// ?GetItem@?$VectorClass@PAUSlaveControl@SlaveManagerClass@@@@UBEPAUSlaveControl@SlaveManagerClass@@H@Z
+
+// TEMPLATE: GAMEMD 0x006B1410
+// ?Clear@?$DynamicVectorClass@PAVSlaveManagerClass@@@@UAEXXZ
+template class DynamicVectorClass<SlaveManagerClass *>;
+
+// TEMPLATE: GAMEMD 0x006B1440
+// ?ID@?$DynamicVectorClass@PAVSlaveManagerClass@@@@UAEHPBQAVSlaveManagerClass@@@Z
+
+// TEMPLATE: GAMEMD 0x006B1460
+// ?GetItem@?$VectorClass@PAVSlaveManagerClass@@@@UBEPAVSlaveManagerClass@@H@Z
+
+// TEMPLATE: GAMEMD 0x006B1470
+// ??8?$VectorClass@PAUSlaveControl@SlaveManagerClass@@@@UBE_NABV0@@Z
+
+// TEMPLATE: GAMEMD 0x006B14B0
+// ?Resize@?$VectorClass@PAUSlaveControl@SlaveManagerClass@@@@UAE_NHPBQAUSlaveControl@SlaveManagerClass@@@Z
+
+// TEMPLATE: GAMEMD 0x006B1560
+// ?Clear@?$VectorClass@PAUSlaveControl@SlaveManagerClass@@@@UAEXXZ
+
+// TEMPLATE: GAMEMD 0x006B1590
+// ?ID@?$VectorClass@PAUSlaveControl@SlaveManagerClass@@@@UAEHABQAUSlaveControl@SlaveManagerClass@@@Z
+
+// TEMPLATE: GAMEMD 0x006B15D0
+// ?ID@?$VectorClass@PAUSlaveControl@SlaveManagerClass@@@@UAEHPBQAUSlaveControl@SlaveManagerClass@@@Z
+
+// TEMPLATE: GAMEMD 0x006B15F0
+// ?Resize@?$DynamicVectorClass@PAUSlaveControl@SlaveManagerClass@@@@UAE_NHPBQAUSlaveControl@SlaveManagerClass@@@Z
+
+// TEMPLATE: GAMEMD 0x006B16A0
+// ?ID@?$DynamicVectorClass@PAUSlaveControl@SlaveManagerClass@@@@UAEHABQAUSlaveControl@SlaveManagerClass@@@Z

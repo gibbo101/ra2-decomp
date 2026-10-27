@@ -955,3 +955,41 @@ HRESULT STDMETHODCALLTYPE VeinholeMonsterClass::GetClassID(CLSID * retval)
 
 // SYNTHETIC: GAMEMD 0x0074F340
 // ??_GVeinholeMonsterClass@@UAEPAXI@Z
+
+// TEMPLATE: GAMEMD 0x0074F360
+// ?Clear@?$DynamicVectorClass@PAVVeinholeMonsterClass@@@@UAEXXZ
+template class DynamicVectorClass<VeinholeMonsterClass *>;
+
+// TEMPLATE: GAMEMD 0x0074F390
+// ?ID@?$DynamicVectorClass@PAVVeinholeMonsterClass@@@@UAEHPBQAVVeinholeMonsterClass@@@Z
+
+// TEMPLATE: GAMEMD 0x0074F3B0
+// ?GetItem@?$VectorClass@PAVVeinholeMonsterClass@@@@UBEPAVVeinholeMonsterClass@@H@Z
+
+// TEMPLATE: GAMEMD 0x0074F3C0
+// ??8?$VectorClass@PAVVeinholeMonsterClass@@@@UBE_NABV0@@Z
+
+// TEMPLATE: GAMEMD 0x0074F400
+// ?Resize@?$VectorClass@PAVVeinholeMonsterClass@@@@UAE_NHPBQAVVeinholeMonsterClass@@@Z
+
+// TEMPLATE: GAMEMD 0x0074F4B0
+// ?Clear@?$VectorClass@PAVVeinholeMonsterClass@@@@UAEXXZ
+
+// TEMPLATE: GAMEMD 0x0074F4E0
+// ?ID@?$VectorClass@PAVVeinholeMonsterClass@@@@UAEHABQAVVeinholeMonsterClass@@@Z
+
+// TEMPLATE: GAMEMD 0x0074F520
+// ?ID@?$VectorClass@PAVVeinholeMonsterClass@@@@UAEHPBQAVVeinholeMonsterClass@@@Z
+
+// TEMPLATE: GAMEMD 0x0074F540
+// ?Resize@?$DynamicVectorClass@PAVVeinholeMonsterClass@@@@UAE_NHPBQAVVeinholeMonsterClass@@@Z
+
+// TEMPLATE: GAMEMD 0x0074F5F0
+// ?ID@?$DynamicVectorClass@PAVVeinholeMonsterClass@@@@UAEHABQAVVeinholeMonsterClass@@@Z
+
+// TEMPLATE: GAMEMD 0x0074F620
+// ?Clear@?$PriorityQueueClass@UCellNode@@@@QAEXXZ
+template class PriorityQueueClass<CellNode>;
+
+// SYNTHETIC: GAMEMD 0x0074F650
+// ??_G?$VectorClass@PAVVeinholeMonsterClass@@@@UAEPAXI@Z

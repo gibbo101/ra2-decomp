@@ -4,9 +4,47 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
+#include "rect.h"
 #include "storage.h"
 #include "tiberium.h"
 #include "vector.h"
+
+// SYNTHETIC: GAMEMD 0x006C93F0 SYMBOL
+// _$E2
+
+// SYNTHETIC: GAMEMD 0x006C9420 SYMBOL
+// _$E5
+
+// SYNTHETIC: GAMEMD 0x006C9440 SYMBOL
+// _$E8
+
+// SYNTHETIC: GAMEMD 0x006C9460 SYMBOL
+// _$E11
+
+// SYNTHETIC: GAMEMD 0x006C9480 SYMBOL
+// _$E14
+
+// SYNTHETIC: GAMEMD 0x006C94A0 SYMBOL
+// _$E17
+
+// SYNTHETIC: GAMEMD 0x006C94C0 SYMBOL
+// _$E20
+
+// SYNTHETIC: GAMEMD 0x006C9500 SYMBOL
+// _$E23
+
+// SYNTHETIC: GAMEMD 0x006C9530 SYMBOL
+// _$E26
+
+// SYNTHETIC: GAMEMD 0x006C9560 SYMBOL
+// _$E29
+
+// SYNTHETIC: GAMEMD 0x006C9590 SYMBOL
+// _$E32
+
+// SYNTHETIC: GAMEMD 0x006C95A0 SYMBOL
+// _$E35
 
 // FUNCTION: GAMEMD 0x006C95E0
 StorageClass::StorageClass(void)

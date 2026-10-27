@@ -1,6 +1,6 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 27 October 2026: 15,373 of 19,366 game functions match (79%; 55% of game code
+Status, 27 October 2026: 15,798 of 19,366 game functions match (82%; 56% of game code
 by size), landed in batches module by module. The rounds below record each one.
 
 ## The goal
@@ -1113,6 +1113,16 @@ Session.Players. Recording then exposed three UI-command functions building char
 ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; their RTTI
 fixed them. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
+
+### Batches 114, 115 and 116 (27 October 2026)
+
+**425 of 432 functions** (138, 143, 144). The batch brief now names the header run's real
+form (geometry.h with bodiless markers), and this round brought no stand-in structs, casts
+or aliases to land. The merges gave MouseClass the destructor TibSun's mouse.h declares
+(the atexit stub for Map stores its vptrs), annotated a non-virtual `delete` as
+`??_GWideWstring`, and took back an out-of-line CellData destructor that had pushed three
+recorded functions in other files off their inlined WideWstring destructors. Merge gate:
+15,798 of 15,798 (2,079.1 KB).
 
 ### Batches 111, 112 and 113 (27 October 2026)
 

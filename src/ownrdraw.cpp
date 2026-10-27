@@ -4661,3 +4661,102 @@ void CALLBACK FUN_006240A0(HWND dialog, int unused)
 		*((char *)data + 0xd4) = 1;
 	}
 }
+
+// FUNCTION: GAMEMD 0x00624110
+OwnerDraw::SimpleDialogControl::SimpleDialogControl(void)
+	: Field4(0), Field8(false)
+{
+}
+
+// FUNCTION: GAMEMD 0x00624130
+OwnerDraw::DialogControl::~DialogControl(void)
+{
+}
+
+// FUNCTION: GAMEMD 0x00624140
+void OwnerDraw::SimpleDialogControl::F1(HWND window, int value)
+{
+	Field4 = value;
+	OwnerDraw::WinData *data = Get_Data(window);
+	if (data != NULL) {
+		*((char *)data + 0xd4) = 1;
+	}
+	Field8 = true;
+}
+
+// FUNCTION: GAMEMD 0x006241C0
+bool OwnerDraw::SimpleDialogControl::F2(void)
+{
+	return Field8;
+}
+
+// FUNCTION: GAMEMD 0x006241D0
+int OwnerDraw::SimpleDialogControl::F3(void)
+{
+	return Field4;
+}
+
+// FUNCTION: GAMEMD 0x006241E0
+bool OwnerDraw::SimpleDialogControl::F4(void)
+{
+	return false;
+}
+
+void __fastcall Title_Screen_Restore(bool force);
+
+// FUNCTION: GAMEMD 0x006241F0
+int __fastcall Run_Dialog_Control(int resource, DLGPROC proc, OwnerDraw::DialogControl *control)
+{
+	HWND dialog = UI::BeginDialog(resource, proc, (int)control);
+	if (dialog == NULL) {
+		control->F1(NULL, 0);
+		return 0;
+	}
+	ShowWindow(dialog, SW_SHOWNORMAL);
+	SetForegroundWindow(dialog);
+	InputManagerClass::Instance->DoSomething();
+	while (!control->F2() && !control->F4()) {
+		FUN_005D4D50();
+		if (Session.Type == GAME_NORMAL || Session.Type == GAME_SKIRMISH || Session.NetOpen || Session.Suspended) {
+			Game::CallBack();
+		} else if (!FUN_0055CBF0() && Game::MainLoop()) {
+			break;
+		}
+		Title_Screen_Restore(false);
+	}
+	UI::EndDialog(dialog);
+	return control->F3();
+}
+
+// FUNCTION: GAMEMD 0x006242B0
+bool __fastcall FUN_006242B0(HWND control)
+{
+	HWND key = control;
+	char name[128];
+	GetClassName(control, name, 128);
+	if (strcmp(name, "Edit") == 0) {
+		return true;
+	}
+	if (strcmp(name, "NewEdit") == 0) {
+		return true;
+	}
+	if (strcmp(name, "ListBox") == 0) {
+		OwnerDraw::WinData *data = NULL;
+		if (OwnerDraw::Dialogs.getPointer(key, &data)) {
+			return *(int *)((char *)data + 0x68) == 1;
+		}
+	}
+	if (strcmp(name, "ComboBox") == 0) {
+		return (GetWindowLong(key, GWL_STYLE) & 3) != 3;
+	}
+	return false;
+}
+
+// SYNTHETIC: GAMEMD 0x00624480
+// ??_GWideWstring@@QAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x006244A0
+// ??_GDialogControl@OwnerDraw@@UAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x006244C0
+// ??_GSimpleDialogControl@OwnerDraw@@UAEPAXI@Z

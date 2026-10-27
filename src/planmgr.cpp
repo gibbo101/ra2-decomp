@@ -2718,3 +2718,35 @@ int __fastcall FUN_0063DAD0(PlanRGB const & c)
 // FUNCTION: GAMEMD 0x0063DB20
 // ?Is_Point_Within@?$TRect@H@@QBE_NABV?$TPoint2D@H@@@Z
 template class TRect<int>;
+
+// TEMPLATE: GAMEMD 0x0063DC80
+// ?Clear@?$DynamicVectorClass@PAVEventClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0063DCB0
+// ?ID@?$DynamicVectorClass@PAVEventClass@@@@UAEHPBQAVEventClass@@@Z
+// TEMPLATE: GAMEMD 0x0063DCD0
+// ?GetItem@?$VectorClass@PAVEventClass@@@@UBEPAVEventClass@@H@Z
+template class DynamicVectorClass<EventClass *>;
+
+// TEMPLATE: GAMEMD 0x0063DCE0
+// ?Clear@?$DynamicVectorClass@PAVPlanningTokenClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0063DD10
+// ?ID@?$DynamicVectorClass@PAVPlanningTokenClass@@@@UAEHPBQAVPlanningTokenClass@@@Z
+// TEMPLATE: GAMEMD 0x0063DD30
+// ?GetItem@?$VectorClass@PAVPlanningTokenClass@@@@UBEPAVPlanningTokenClass@@H@Z
+template class DynamicVectorClass<PlanningTokenClass *>;
+
+// TEMPLATE: GAMEMD 0x0063DD40
+// ??8?$VectorClass@PAVPlanningMemberClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x0063DD80
+// ?Resize@?$VectorClass@PAVPlanningMemberClass@@@@UAE_NHPBQAVPlanningMemberClass@@@Z
+// TEMPLATE: GAMEMD 0x0063DE60
+// ?ID@?$VectorClass@PAVPlanningMemberClass@@@@UAEHABQAVPlanningMemberClass@@@Z
+// TEMPLATE: GAMEMD 0x0063DEA0
+// ?ID@?$VectorClass@PAVPlanningMemberClass@@@@UAEHPBQAVPlanningMemberClass@@@Z
+template class VectorClass<PlanningMemberClass *>;
+
+// TEMPLATE: GAMEMD 0x0063DEC0
+// ??0?$DynamicVectorClass@PAVPlanningMemberClass@@@@QAE@IPBQAVPlanningMemberClass@@@Z
+// TEMPLATE: GAMEMD 0x0063DF20
+// ?Resize@?$DynamicVectorClass@PAVPlanningMemberClass@@@@UAE_NHPBQAVPlanningMemberClass@@@Z
+template class DynamicVectorClass<PlanningMemberClass *>;

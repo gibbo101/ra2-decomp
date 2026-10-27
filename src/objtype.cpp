@@ -898,3 +898,34 @@ void ObjectTypeClass::Clear_Voxel_Indexes(void)
 
 // SYNTHETIC: GAMEMD 0x005F9AE0
 // ??_GObjectTypeClass@@UAEPAXI@Z
+
+// TEMPLATE: GAMEMD 0x005F9B00
+// ?Clear@?$DynamicVectorClass@PAVObjectTypeClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x005F9B30
+// ?ID@?$DynamicVectorClass@PAVObjectTypeClass@@@@UAEHPBQAVObjectTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x005F9B50
+// ?GetItem@?$VectorClass@PAVObjectTypeClass@@@@UBEPAVObjectTypeClass@@H@Z
+template class DynamicVectorClass<ObjectTypeClass *>;
+
+// TEMPLATE: GAMEMD 0x005F9B60
+// ?Clear@?$IndexClass@HPAUEntry@StaticBufferClass@@@@QAEXXZ
+template class IndexClass<int, StaticBufferClass::Entry *>;
+
+// TEMPLATE: GAMEMD 0x005F9B80
+// ??8?$VectorClass@PAVObjectTypeClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x005F9BC0
+// ?Resize@?$VectorClass@PAVObjectTypeClass@@@@UAE_NHPBQAVObjectTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x005F9C70
+// ?Clear@?$VectorClass@PAVObjectTypeClass@@@@UAEXXZ
+template class VectorClass<ObjectTypeClass *>;
+
+// TEMPLATE: GAMEMD 0x005F9CA0
+// ?ID@?$VectorClass@PAVObjectTypeClass@@@@UAEHABQAVObjectTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x005F9CE0
+// ?ID@?$VectorClass@PAVObjectTypeClass@@@@UAEHPBQAVObjectTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x005F9D00
+// ?Resize@?$DynamicVectorClass@PAVObjectTypeClass@@@@UAE_NHPBQAVObjectTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x005F9DB0
+// ?ID@?$DynamicVectorClass@PAVObjectTypeClass@@@@UAEHABQAVObjectTypeClass@@@Z
+// SYNTHETIC: GAMEMD 0x005F9DE0
+// ??_G?$VectorClass@PAVObjectTypeClass@@@@UAEPAXI@Z

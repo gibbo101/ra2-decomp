@@ -22,6 +22,7 @@
 #include "convert.h"
 #include "dbgprint.h"
 #include "findmake.h"
+#include "geometry.h"
 #include "globals.h"
 #include "house.h"
 #include "houstype.h"
@@ -32,6 +33,7 @@
 #include "multiplayer.h"
 #include "overtype.h"
 #include "psystype.h"
+#include "rect.h"
 #include "ptype.h"
 #include "scheme.h"
 #include "session.h"
@@ -70,6 +72,42 @@ template<> void VectorClass<ColorScheme *>::Clear(void);
 void FUN_006269A0(void);
 void __fastcall FUN_00626AB0(char const * name, HSVClass & hsv);
 void Difficulty_Get(CCINIClass const & ini, DifficultyClass & diff, char const * section);
+
+// SYNTHETIC: GAMEMD 0x00664B10 SYMBOL
+// _$E35
+
+// SYNTHETIC: GAMEMD 0x00664B40 SYMBOL
+// _$E38
+
+// SYNTHETIC: GAMEMD 0x00664B60 SYMBOL
+// _$E41
+
+// SYNTHETIC: GAMEMD 0x00664B80 SYMBOL
+// _$E44
+
+// SYNTHETIC: GAMEMD 0x00664BA0 SYMBOL
+// _$E47
+
+// SYNTHETIC: GAMEMD 0x00664BC0 SYMBOL
+// _$E50
+
+// SYNTHETIC: GAMEMD 0x00664BE0 SYMBOL
+// _$E53
+
+// SYNTHETIC: GAMEMD 0x00664C20 SYMBOL
+// _$E56
+
+// SYNTHETIC: GAMEMD 0x00664C50 SYMBOL
+// _$E59
+
+// SYNTHETIC: GAMEMD 0x00664C80 SYMBOL
+// _$E62
+
+// SYNTHETIC: GAMEMD 0x00664CB0 SYMBOL
+// _$E65
+
+// SYNTHETIC: GAMEMD 0x00664CC0 SYMBOL
+// _$E68
 
 // FUNCTION: GAMEMD 0x00664D20
 RulesClass::RulesClass(NoInitClass const & x) :

@@ -6,6 +6,7 @@
 #define INCLUDE_COM
 #include "always.h"
 #include "geometry.h"
+#include "rect.h"
 #include "campaign.h"
 #include "assert.h"
 #include "ccini.h"
@@ -19,6 +20,31 @@
 void __fastcall FUN_00735060(wchar_t * dest, char const * source, int limit);
 extern wchar_t DAT_00887734[];
 extern char DAT_00889F64[];
+
+// SYNTHETIC: GAMEMD 0x0046C970 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x0046C9A0 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x0046C9C0 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x0046C9E0 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x0046CA00 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x0046CA20 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x0046CA40 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x0046CA80 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x0046CAB0 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x0046CAE0 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x0046CB10 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x0046CB20 SYMBOL
+// _$E35
 
 // FUNCTION: GAMEMD 0x0046CB60
 CampaignClass::CampaignClass(char const * name) :
