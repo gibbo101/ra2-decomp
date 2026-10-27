@@ -320,16 +320,5 @@ bool WDTState::Create_History(void *data, int count)
 // TEMPLATE: GAMEMD 0x0076BC60
 // ??0?$rc_ptr@VWDTTerritory@@@@QAE@XZ
 
-extern int DAT_00B72998, DAT_00B7299C, DAT_00B729A0, DAT_00B729A4;
-
-// FUNCTION: GAMEMD 0x0076BC80
-void FUN_0076BC80(void)
-{
-	DAT_00B72998 = 0;
-	DAT_00B7299C = 0;
-	DAT_00B729A0 = 0;
-	DAT_00B729A4 = 0;
-}
-
 template class DynamicVectorClass<rc_ptr<WDTTerritory> >;
 template class rc_ptr<WDTTerritory>;

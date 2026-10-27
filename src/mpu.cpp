@@ -4,8 +4,6 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
-#include "geometry.h"
-#include "rect.h"
 #include "mpu.h"
 #include "win.h"
 #include <math.h>
@@ -150,32 +148,3 @@ int Get_RDTSC_CPU_Speed(void)
 	return (norm_freq);
 
 }
-
-// SYNTHETIC: GAMEMD 0x005CB190 SYMBOL
-// _$E2
-// SYNTHETIC: GAMEMD 0x005CB1C0 SYMBOL
-// _$E5
-// SYNTHETIC: GAMEMD 0x005CB1E0 SYMBOL
-// _$E8
-// SYNTHETIC: GAMEMD 0x005CB200 SYMBOL
-// _$E11
-// SYNTHETIC: GAMEMD 0x005CB220 SYMBOL
-// _$E14
-// SYNTHETIC: GAMEMD 0x005CB240 SYMBOL
-// _$E17
-// SYNTHETIC: GAMEMD 0x005CB260 SYMBOL
-// _$E20
-// SYNTHETIC: GAMEMD 0x005CB2A0 SYMBOL
-// _$E23
-// SYNTHETIC: GAMEMD 0x005CB2D0 SYMBOL
-// _$E26
-// SYNTHETIC: GAMEMD 0x005CB300 SYMBOL
-// _$E29
-// SYNTHETIC: GAMEMD 0x005CB330 SYMBOL
-// _$E32
-// SYNTHETIC: GAMEMD 0x005CB340 SYMBOL
-// _$E35
-// SYNTHETIC: GAMEMD 0x005CB360 SYMBOL
-// _$E38
-// SYNTHETIC: GAMEMD 0x005CB380 SYMBOL
-// _$E41

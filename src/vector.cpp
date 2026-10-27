@@ -123,11 +123,5 @@ template class VectorClass<unsigned char>;
 // TEMPLATE: GAMEMD 0x0074C110
 // ?ID@?$VectorClass@E@@UAEHABE@Z
 
-#include "rect.h"
-
-// SYNTHETIC: GAMEMD 0x0074C170 SYMBOL
-// _$E2
-
 // TEMPLATE: GAMEMD 0x0074C150
 // ?ID@?$VectorClass@E@@UAEHPBE@Z
-

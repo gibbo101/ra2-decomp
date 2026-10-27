@@ -855,11 +855,6 @@ void XMP_Randomize(digit * result, Straw & rng, digit const * minval, digit cons
 	XMP_Add(result, result, minval, 0, precision);
 }
 
-#include "rect.h"
-
-// SYNTHETIC: GAMEMD 0x005C91D0 SYMBOL
-// _$E2
-
 // FUNCTION: GAMEMD 0x005C9020
 bool XMP_Is_Prime(digit const * prime, int precision)
 {

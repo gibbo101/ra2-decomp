@@ -37,6 +37,9 @@
 #include <commctrl.h>
 #include <math.h>
 
+// SYNTHETIC: GAMEMD 0x007771B0 SYMBOL
+// _$E2
+
 extern double __cdecl FUN_004CAC40(double);
 extern double __cdecl FUN_004CAD50(double);
 extern double __cdecl FUN_004CADE0(double);
@@ -739,17 +742,3 @@ void __fastcall Load_Title_Screen(char const * name, Surface * surface, PaletteC
 
 // SYNTHETIC: GAMEMD 0x007784A0
 // ??_GCCToolTip@@UAEPAXI@Z
-
-extern int DAT_00B73580;
-extern int DAT_00B73584;
-extern int DAT_00B73588;
-extern int DAT_00B7358C;
-
-// FUNCTION: GAMEMD 0x007784D0
-void FUN_007784D0(void)
-{
-	DAT_00B73580 = 0;
-	DAT_00B73584 = 0;
-	DAT_00B73588 = 0;
-	DAT_00B7358C = 0;
-}

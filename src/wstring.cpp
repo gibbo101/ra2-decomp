@@ -1431,17 +1431,3 @@ WideWstring __fastcall FUN_007B83E0(Wstring const & text)
 	delete[](wide);
 	return(tmp);
 }
-
-int DAT_00B78128;
-int DAT_00B7812C;
-int DAT_00B78130;
-int DAT_00B78134;
-
-// FUNCTION: GAMEMD 0x007B84B0
-void FUN_007B84B0(void)
-{
-	DAT_00B78128 = 0;
-	DAT_00B7812C = 0;
-	DAT_00B78130 = 0;
-	DAT_00B78134 = 0;
-}

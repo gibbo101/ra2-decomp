@@ -4,13 +4,15 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
-#include "geometry.h"
 #include "interpal.h"
 #include "ccfile.h"
 #include "hsv.h"
 #include "misc.h"
 #include "surface.h"
 #include <cmath>
+
+// SYNTHETIC: GAMEMD 0x00538C20 SYMBOL
+// _$E7
 
 bool	InterpolationPaletteChanged = false;
 extern "C" {
@@ -212,32 +214,3 @@ void Interpolate_2X_Scale( Surface * source, Surface * dest , char const * palet
 	if (source_locked) source->Unlock();
 	if (dest_locked) dest->Unlock();
 }
-
-// SYNTHETIC: GAMEMD 0x00539110 SYMBOL
-// _$E2
-// SYNTHETIC: GAMEMD 0x00539140 SYMBOL
-// _$E5
-// SYNTHETIC: GAMEMD 0x00539160 SYMBOL
-// _$E8
-// SYNTHETIC: GAMEMD 0x00539180 SYMBOL
-// _$E11
-// SYNTHETIC: GAMEMD 0x005391A0 SYMBOL
-// _$E14
-// SYNTHETIC: GAMEMD 0x005391C0 SYMBOL
-// _$E17
-// SYNTHETIC: GAMEMD 0x005391E0 SYMBOL
-// _$E20
-// SYNTHETIC: GAMEMD 0x00539220 SYMBOL
-// _$E23
-// SYNTHETIC: GAMEMD 0x00539250 SYMBOL
-// _$E26
-// SYNTHETIC: GAMEMD 0x00539280 SYMBOL
-// _$E29
-// SYNTHETIC: GAMEMD 0x005392B0 SYMBOL
-// _$E32
-// SYNTHETIC: GAMEMD 0x005392C0 SYMBOL
-// _$E35
-// SYNTHETIC: GAMEMD 0x005392E0 SYMBOL
-// _$E38
-// SYNTHETIC: GAMEMD 0x00539300 SYMBOL
-// _$E46

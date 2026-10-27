@@ -4862,17 +4862,3 @@ template class VectorClass<TRect<int> >;
 // TEMPLATE: GAMEMD 0x005ADAB0
 // ??0?$VectorClass@N@@QAE@HPBN@Z
 template class VectorClass<double>;
-
-extern int DAT_00ABED60;
-extern int DAT_00ABED64;
-extern int DAT_00ABED68;
-extern int DAT_00ABED6C;
-
-// FUNCTION: GAMEMD 0x005ADB00
-void FUN_005ADB00(void)
-{
-	DAT_00ABED60 = 0;
-	DAT_00ABED64 = 0;
-	DAT_00ABED68 = 0;
-	DAT_00ABED6C = 0;
-}

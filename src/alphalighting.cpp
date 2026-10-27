@@ -93,17 +93,3 @@ template class VectorClass<AlphaLightingRemapClass *>;
 
 // SYNTHETIC: GAMEMD 0x00420680
 // ??_G?$DynamicVectorClass@PAVAlphaLightingRemapClass@@@@UAEPAXI@Z
-
-struct AlphaRectBlock {
-	int A, B, C, D;
-};
-extern AlphaRectBlock DAT_0088A0A8;
-
-// FUNCTION: GAMEMD 0x004206D0
-void FUN_004206D0(void)
-{
-	DAT_0088A0A8.A = 0;
-	DAT_0088A0A8.B = 0;
-	DAT_0088A0A8.C = 0;
-	DAT_0088A0A8.D = 0;
-}

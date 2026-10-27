@@ -7,21 +7,14 @@
 
 #include <math.h>
 
+// SYNTHETIC: GAMEMD 0x00552830 SYMBOL
+// _$E38
+
 extern double __cdecl FUN_004CAC40(double);
 extern double __cdecl FUN_004CAD50(double);
 extern double __cdecl FUN_004CADE0(double);
 extern const double DAT_007ECF50;
 extern const double DAT_007ECF58;
-extern const double DAT_007ECF68;
-extern const double DAT_007ECF70;
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
 
 // SYNTHETIC: GAMEMD 0x00552850 SYMBOL
 // _$E2
@@ -108,9 +101,6 @@ extern int DAT_007F5BF0;
 extern int DAT_00ABC9A0;
 extern int DAT_00ABC9A4;
 extern int DAT_00ABC9A8;
-extern int DAT_00ABCA58;
-extern int DAT_00ABCA5C;
-extern int DAT_00ABCA60;
 extern PKey DAT_00886980;
 
 void __cdecl FUN_0072B460(void);
@@ -316,64 +306,3 @@ bool LoadProgressManager::INoticeSink_Unknown(DWORD message, DWORD extra)
 	}
 	return false;
 }
-
-// SYNTHETIC: GAMEMD 0x00554430 SYMBOL
-// _$E96
-double DAT_00ABC9E8 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
-// SYNTHETIC: GAMEMD 0x00554460 SYMBOL
-// _$E99
-double DAT_00ABCA68 = DAT_00ABC9E8 / DAT_007ECF68;
-
-// SYNTHETIC: GAMEMD 0x00554480 SYMBOL
-// _$E102
-double DAT_00ABCA38 = DAT_007E1718 / DAT_00ABCA68;
-
-// SYNTHETIC: GAMEMD 0x005544A0 SYMBOL
-// _$E105
-double DAT_00ABCA30 = DAT_007E1720 * DAT_007ECF70;
-
-// SYNTHETIC: GAMEMD 0x005544C0 SYMBOL
-// _$E108
-double DAT_00ABC9F0 = DAT_007E1728 * DAT_007ECF70;
-
-// SYNTHETIC: GAMEMD 0x005544E0 SYMBOL
-// _$E111
-double DAT_00ABC9C8 = DAT_007E1730 * DAT_007ECF70;
-
-// SYNTHETIC: GAMEMD 0x00554500 SYMBOL
-// _$E114
-int DAT_00ABCA70 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00ABC9C8 - DAT_00ABC9F0) * DAT_00ABC9E8));
-
-// SYNTHETIC: GAMEMD 0x00554540 SYMBOL
-// _$E117
-double DAT_00ABC9F8 = FUN_004CADE0(DAT_00ABCA70 * DAT_007E1740);
-
-// SYNTHETIC: GAMEMD 0x00554570 SYMBOL
-// _$E120
-double DAT_00ABCA28 = FUN_004CADE0((DAT_00ABCA70 * 2) / DAT_00ABC9E8);
-
-// SYNTHETIC: GAMEMD 0x005545A0 SYMBOL
-// _$E123
-int DAT_00ABCA64 = (int)(DAT_00ABCA70 * 4 + DAT_007E1738);
-
-// SYNTHETIC: GAMEMD 0x005545D0 SYMBOL
-// _$E126
-ShortPair DAT_00ABC9E0;
-
-// FUNCTION: GAMEMD 0x00554600
-void FUN_00554600(void)
-{
-	DAT_00ABCA60 = 0;
-	DAT_00ABCA58 = 128;
-	DAT_00ABCA5C = 128;
-}
-
-struct IntQuad {
-	int A, B, C, D;
-	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
-};
-
-// SYNTHETIC: GAMEMD 0x00554620 SYMBOL
-// _$E129
-IntQuad DAT_00ABC9D0;

@@ -4,7 +4,6 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
-#include "geometry.h"
 #include "slider.h"
 #include "_mixfile.h"
 #include "control.h"
@@ -193,31 +192,3 @@ void SliderClass::Peer_To_Peer(unsigned flags, KeyNumType & , ControlClass & who
 }
 
 // Initialisers of geometry.h constants.
-// SYNTHETIC: GAMEMD 0x006B21A0 SYMBOL
-// _$E2
-// SYNTHETIC: GAMEMD 0x006B21D0 SYMBOL
-// _$E5
-// SYNTHETIC: GAMEMD 0x006B21F0 SYMBOL
-// _$E8
-// SYNTHETIC: GAMEMD 0x006B2210 SYMBOL
-// _$E11
-// SYNTHETIC: GAMEMD 0x006B2230 SYMBOL
-// _$E14
-// SYNTHETIC: GAMEMD 0x006B2250 SYMBOL
-// _$E17
-// SYNTHETIC: GAMEMD 0x006B2270 SYMBOL
-// _$E20
-// SYNTHETIC: GAMEMD 0x006B22B0 SYMBOL
-// _$E23
-// SYNTHETIC: GAMEMD 0x006B22E0 SYMBOL
-// _$E26
-// SYNTHETIC: GAMEMD 0x006B2310 SYMBOL
-// _$E29
-// SYNTHETIC: GAMEMD 0x006B2340 SYMBOL
-// _$E32
-// SYNTHETIC: GAMEMD 0x006B2350 SYMBOL
-// _$E35
-// SYNTHETIC: GAMEMD 0x006B2370 SYMBOL
-// _$E38
-// SYNTHETIC: GAMEMD 0x006B2390 SYMBOL
-// _$E41

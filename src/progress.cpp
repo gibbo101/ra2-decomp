@@ -14,6 +14,9 @@
 #include "msanim.h"
 #include "bitfont.h"
 
+// SYNTHETIC: GAMEMD 0x00642770 SYMBOL
+// _$E41
+
 struct FileSystem {
 	static void * __fastcall LoadWholeFileEx(char const * name, bool & allocated);
 };

@@ -24,6 +24,9 @@
 #include <stdio.h>
 #include <wchar.h>
 
+// SYNTHETIC: GAMEMD 0x004A59C0 SYMBOL
+// _$E4
+
 // FUNCTION: GAMEMD 0x004A59E0
 Rect * Drawing_GetTextDimensions(Rect * out, wchar_t const * text, Point2D loc, unsigned short flags, int marginX, int marginY)
 {
@@ -242,18 +245,4 @@ unsigned char * Font_Palette(int color)
 	memset(_fpalette, '\0', sizeof(_fpalette));
 	memset(&_fpalette[11], color, 5);
 	return(_fpalette);
-}
-
-extern int DAT_008A0170;
-extern int DAT_008A0174;
-extern int DAT_008A0178;
-extern int DAT_008A017C;
-
-// FUNCTION: GAMEMD 0x004A6820
-void FUN_004A6820()
-{
-	DAT_008A0170 = 0;
-	DAT_008A0174 = 0;
-	DAT_008A0178 = 0;
-	DAT_008A017C = 0;
 }

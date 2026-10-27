@@ -7,6 +7,9 @@
 
 #include <math.h>
 
+// SYNTHETIC: GAMEMD 0x0076BC80 SYMBOL
+// _$E38
+
 extern double __cdecl FUN_004CAC40(double);
 extern double __cdecl FUN_004CAD50(double);
 extern double __cdecl FUN_004CADE0(double);
@@ -164,12 +167,3 @@ Wstring WorldDominationTour::CampaignProperties::FUN_0076BFF0(void)
 
 // SYNTHETIC: GAMEMD 0x0076C030
 // ??_GCampaignProperties@WorldDominationTour@@UAEPAXI@Z
-
-// FUNCTION: GAMEMD 0x0076C080
-void FUN_0076C080(void)
-{
-	DAT_00B72A18 = 0;
-	DAT_00B72A1C = 0;
-	DAT_00B72A20 = 0;
-	DAT_00B72A24 = 0;
-}

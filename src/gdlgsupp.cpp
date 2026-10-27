@@ -13,6 +13,9 @@
 #include "multiplayer.h"
 #include "session.h"
 
+// SYNTHETIC: GAMEMD 0x004E3110 SYMBOL
+// _$E5
+
 namespace fastmath { double __cdecl sqrt(double x); double __cdecl tan(double x); double __cdecl atan(double x); }
 extern const double DAT_007E1708;
 extern const double DAT_007E1710;

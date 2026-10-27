@@ -41,6 +41,9 @@
 #include <wchar.h>
 #include "stringtable.h"
 
+// SYNTHETIC: GAMEMD 0x005B75D0 SYMBOL
+// _$E54
+
 char * __fastcall FUN_007350C0(wchar_t const * text);
 wchar_t * __fastcall FUN_00735120(char const * narrow);
 void __fastcall FUN_00694760(char * name, int type, bool a, bool b);

@@ -34,6 +34,9 @@
 
 #include <math.h>
 
+// SYNTHETIC: GAMEMD 0x00692030 SYMBOL
+// _$E2
+
 
 extern FacingType Facing_Between_Points(Point2D const & pt1, Point2D const & pt2);
 extern ObjectClass * __fastcall FUN_005353D0(Cell const * cell, ObjectClass const * target);

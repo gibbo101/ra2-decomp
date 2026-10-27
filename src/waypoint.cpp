@@ -5,6 +5,8 @@
 
 #define INCLUDE_COM
 #include "always.h"
+#include "geometry.h"
+#include "rect.h"
 #include "waypoint.h"
 #include "crc.h"
 #include "noinit.h"
@@ -12,10 +14,38 @@
 #include "tracker.h"
 #include "vector.h"
 
-// SYNTHETIC: GAMEMD 0x00763590 SYMBOL
+// SYNTHETIC: GAMEMD 0x00763380 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x007633B0 SYMBOL
 // _$E5
+// SYNTHETIC: GAMEMD 0x007633D0 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x007633F0 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x00763410 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x00763430 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x00763450 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x00763490 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x007634C0 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x007634F0 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x00763520 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x00763530 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x00763550 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x00763570 SYMBOL
+// _$E41
+// SYNTHETIC: GAMEMD 0x00763590 SYMBOL
+// _$E53
 // SYNTHETIC: GAMEMD 0x007635D0 SYMBOL
-// _$E3
+// _$E51
 DynamicVectorClass<WaypointPathClass *> WaypointPaths;
 
 // FUNCTION: GAMEMD 0x00763610
@@ -318,10 +348,3 @@ template class DynamicVectorClass<WaypointClass>;
 template class DynamicVectorClass<WaypointPathClass *>;
 template class VectorClass<WaypointPathClass *>;
 template class VectorClass<WaypointClass>;
-
-
-struct WaypointIntQuad { int A; int B; int C; int D; WaypointIntQuad(int a, int b, int c, int d) { A = a; B = b; C = c; D = d; } };
-
-// SYNTHETIC: GAMEMD 0x00764810 SYMBOL
-// _$E8
-WaypointIntQuad DAT_00B72678(0, 0, 0, 0);

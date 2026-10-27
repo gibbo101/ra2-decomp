@@ -15,6 +15,9 @@
 #include <commctrl.h>
 #include <windows.h>
 
+// SYNTHETIC: GAMEMD 0x00775670 SYMBOL
+// _$E2
+
 BOOL CALLBACK Resize_Dialog(HWND window, LPARAM lParam);
 
 extern bool g_PlayingNetGame;
@@ -383,14 +386,3 @@ HFONT Ez_Create_Font (HDC hdc, const char * face_name, int decipt_width,
 	RestoreDC (hdc, -1);
 	return(hFont);
 }
-
-struct WindlgSlots {
-	int A;
-	int B;
-	int C;
-	int D;
-	WindlgSlots() { A = 0; B = 0; C = 0; D = 0; }
-};
-
-// FUNCTION: GAMEMD 0x00776210
-WindlgSlots DAT_00B73088;

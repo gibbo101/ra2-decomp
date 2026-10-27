@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
 #include "scenario.h"
 #include "_bench.h"
 #include "_keyboar.h"
@@ -110,6 +111,35 @@
 #include "bench.hh"
 #include <stddef.h>
 #include "stringtable.h"
+
+// SYNTHETIC: GAMEMD 0x00683070 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x006830A0 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x006830C0 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x006830E0 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x00683100 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x00683120 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x00683140 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x00683180 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x006831B0 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x006831E0 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x00683210 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x00683220 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x00683240 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x00683260 SYMBOL
+// _$E49
 
 bool Read_Scenario(char const * fname);
 int __fastcall FUN_004790A0(int timeout);

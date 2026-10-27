@@ -14,6 +14,9 @@
 #include "scheme.h"
 #include "vector.h"
 
+// SYNTHETIC: GAMEMD 0x00488740 SYMBOL
+// _$E2
+
 // FUNCTION: GAMEMD 0x00488760
 ColorListClass::ColorListClass (int id, int x, int y, int w, int h,
 	TextPrintType flags, ShapeSet const * up, ShapeSet const * down) :
@@ -119,6 +122,3 @@ void ColorListClass::Draw_Entry(int index, int x, int y, int width, int selected
 
 // SYNTHETIC: GAMEMD 0x00488F00
 // ??_GColorListClass@@UAEPAXI@Z
-
-// SYNTHETIC: GAMEMD 0x00488F70 SYMBOL
-// _$E2

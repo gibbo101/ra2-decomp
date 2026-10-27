@@ -402,13 +402,8 @@ BOOL CALLBACK Abort_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM
 // ?Add@?$QueueClass@VEventClass@@$0IA@@@QAEHABVEventClass@@@Z
 template class QueueClass<EventClass, 128>;
 
-// SYNTHETIC: GAMEMD 0x004F1B60 SYMBOL
-// _$E112
-const Rect RECT_NONE_2(0, 0, 0, 0);
-
 // TEMPLATE: GAMEMD 0x004F1B00
 // ??0?$CDTimerClass@VSystemTimerClass@@@@QAE@H@Z
 // TEMPLATE: GAMEMD 0x004F1B20
 // ?Value@?$CDTimerClass@VSystemTimerClass@@@@QBEHXZ
 template class CDTimerClass<SystemTimerClass>;
-

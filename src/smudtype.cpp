@@ -366,10 +366,6 @@ void SmudgeTypeClass::Place(Cell const & origin) const
 	}
 }
 
-// SYNTHETIC: GAMEMD 0x006B6210 SYMBOL
-// _$E176
-const Rect RECT_NONE_2(0, 0, 0, 0);
-
 // FUNCTION: GAMEMD 0x006B6130
 // SmudgeTypeClass::Fetch_RTTI
 // FUNCTION: GAMEMD 0x006B6140
@@ -378,4 +374,3 @@ const Rect RECT_NONE_2(0, 0, 0, 0);
 // SmudgeTypeClass::Fetch_Heap_ID
 // SYNTHETIC: GAMEMD 0x006B6160
 // ??_GSmudgeTypeClass@@UAEPAXI@Z
-

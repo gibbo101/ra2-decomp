@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
 #include "ccini.h"
 #include "_rtti.h"
 #include "_source.h"
@@ -32,6 +33,35 @@
 #include "weapon.h"
 #include "xpipe.h"
 #include "xstraw.h"
+
+// SYNTHETIC: GAMEMD 0x00473FE0 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x00474010 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x00474030 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x00474050 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x00474070 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x00474090 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x004740B0 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x004740F0 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x00474120 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x00474150 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x00474180 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x00474190 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x004741B0 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x004741D0 SYMBOL
+// _$E55
 
 namespace Powerups {
 extern char const * Effects[19];
@@ -1428,6 +1458,3 @@ template class DynamicVectorClass<RGBClass>;
 // ??0?$VectorClass@VRGBClass@@@@QAE@HPBVRGBClass@@@Z
 // TEMPLATE: GAMEMD 0x004788E0
 // ??4?$VectorClass@VRGBClass@@@@QAEAAV0@ABV0@@Z
-
-// SYNTHETIC: GAMEMD 0x00478990 SYMBOL
-// _$E10

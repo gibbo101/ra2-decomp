@@ -174,6 +174,3 @@ void CheckListClass::Draw_Entry(int index, int x, int y, int width, int selected
 
 // SYNTHETIC: GAMEMD 0x004886E0
 // ??_GCheckListClass@@UAEPAXI@Z
-
-// SYNTHETIC: GAMEMD 0x00488740 SYMBOL
-// _$E2

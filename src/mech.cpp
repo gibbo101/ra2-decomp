@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
 #include "mech.h"
 #include "_map.h"
 #include "_rules.h"
@@ -20,6 +21,35 @@
 #include "tube.h"
 #include "layer.hh"
 #include <new.h>
+
+// SYNTHETIC: GAMEMD 0x005AFCE0 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x005AFD10 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x005AFD30 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x005AFD50 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x005AFD70 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x005AFD90 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x005AFDB0 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x005AFDF0 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x005AFE20 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x005AFE50 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x005AFE80 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x005AFE90 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x005AFEB0 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x005AFED0 SYMBOL
+// _$E52
 
 // FUNCTION: GAMEMD 0x005AFEF0
 MechLocomotionClass::MechLocomotionClass(void) :
@@ -192,17 +222,3 @@ boolean STDMETHODCALLTYPE MechLocomotionClass::Is_Moving_Here(CoordStruct to)
 
 // FUNCTION: GAMEMD 0x005B1B40
 // MechLocomotionClass::Fetch_Object_Size
-
-extern int DAT_00ABEE60;
-extern int DAT_00ABEE64;
-extern int DAT_00ABEE68;
-extern int DAT_00ABEE6C;
-
-// FUNCTION: GAMEMD 0x005B1B80
-void FUN_005B1B80(void)
-{
-	DAT_00ABEE60 = 0;
-	DAT_00ABEE64 = 0;
-	DAT_00ABEE68 = 0;
-	DAT_00ABEE6C = 0;
-}

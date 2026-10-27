@@ -5,6 +5,7 @@
 
 #define INCLUDE_COM
 #include "always.h"
+#include "geometry.h"
 #include "weapon.h"
 #include "_rules.h"
 #include "_weapon.h"
@@ -22,6 +23,35 @@
 #include "tracker.h"
 #include "warhead.h"
 #include <cstring>
+
+// SYNTHETIC: GAMEMD 0x00771A60 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x00771A90 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x00771AB0 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x00771AD0 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x00771AF0 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x00771B10 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x00771B30 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x00771B70 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x00771BA0 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x00771BD0 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x00771C00 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x00771C10 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x00771C30 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x00771C50 SYMBOL
+// _$E49
 
 // FUNCTION: GAMEMD 0x00771C70
 WeaponTypeClass::WeaponTypeClass(char const * ininame) :
@@ -283,17 +313,3 @@ int WeaponTypeClass::Get_Speed(int range) const
 
 // SYNTHETIC: GAMEMD 0x007730F0
 // ??_GWeaponTypeClass@@UAEPAXI@Z
-
-extern int DAT_00B72C98;
-extern int DAT_00B72C9C;
-extern int DAT_00B72CA0;
-extern int DAT_00B72CA4;
-
-// FUNCTION: GAMEMD 0x00773240
-void FUN_00773240(void)
-{
-	DAT_00B72C98 = 0;
-	DAT_00B72C9C = 0;
-	DAT_00B72CA0 = 0;
-	DAT_00B72CA4 = 0;
-}

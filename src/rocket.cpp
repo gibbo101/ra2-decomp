@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
 #include "rocket.h"
 #include "fastmath.h"
 #include "_map.h"
@@ -17,6 +18,35 @@
 #include "inline.h"
 #include "globals.h"
 #include "rules.h"
+
+// SYNTHETIC: GAMEMD 0x00661CB0 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x00661CE0 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x00661D00 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x00661D20 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x00661D40 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x00661D60 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x00661D80 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x00661DC0 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x00661DF0 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x00661E20 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x00661E50 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x00661E60 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x00661E80 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x00661EA0 SYMBOL
+// _$E66
 
 // FUNCTION: GAMEMD 0x00661EC0
 RocketLocomotionClass::RocketLocomotionClass(void) :

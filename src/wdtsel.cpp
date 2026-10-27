@@ -30,6 +30,9 @@
 #define IID_DEFINED
 #include "wolapi\wolapi.h"
 
+// SYNTHETIC: GAMEMD 0x0076C080 SYMBOL
+// _$E8
+
 namespace fastmath { double __cdecl sqrt(double x); double __cdecl tan(double x); double __cdecl atan(double x); }
 
 using namespace WorldDominationTour;
@@ -340,17 +343,3 @@ template class VectorCursor<MSAnim *, DynamicVectorClass<MSAnim *> >;
 template class VectorClass<MSAnim *>;
 template class VectorClass<MSSfxEntry *>;
 template class VectorCursor<MSSfxEntry *, DynamicVectorClass<MSSfxEntry *> >;
-
-int DAT_00B72A98;
-int DAT_00B72A9C;
-int DAT_00B72AA0;
-int DAT_00B72AA4;
-
-// FUNCTION: GAMEMD 0x0076F260
-void FUN_0076F260(void)
-{
-	DAT_00B72A98 = 0;
-	DAT_00B72A9C = 0;
-	DAT_00B72AA0 = 0;
-	DAT_00B72AA4 = 0;
-}

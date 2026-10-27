@@ -14,6 +14,9 @@
 #include <cstdio>
 #include <math.h>
 
+// SYNTHETIC: GAMEMD 0x007B17B0 SYMBOL
+// _$E2
+
 extern double __cdecl FUN_004CAC40(double);
 extern double __cdecl FUN_004CAD50(double);
 extern double __cdecl FUN_004CADE0(double);
@@ -22,7 +25,6 @@ extern const double DAT_007F79B0;
 extern int DAT_00B780A0;
 extern bool DAT_00B7809C;
 extern int DAT_00B78088, DAT_00B78080, DAT_00B78084;
-extern int DAT_00B78110, DAT_00B78108, DAT_00B7810C;
 namespace Game { extern HWND hWnd; }
 extern void Add_CRC(unsigned int *crc, unsigned int val);
 extern "C" int __stdcall EnumProtocolsA(int *protocols, void *buffer, unsigned long *len);
@@ -661,69 +663,3 @@ template class DynamicVectorClass<WinsockInterfaceClass::WinsockBufferType *>;
 // ??_G?$VectorClass@PAUWinsockBufferType@WinsockInterfaceClass@@@@UAEPAXI@Z
 // SYNTHETIC: GAMEMD 0x007B2B50
 // ??_G?$DynamicVectorClass@PAUWinsockBufferType@WinsockInterfaceClass@@@@UAEPAXI@Z
-
-extern const double DAT_007F7A58;
-extern const double DAT_007F7A60;
-
-// SYNTHETIC: GAMEMD 0x007B2BA0 SYMBOL
-// _$E42
-double DAT_00B780C8 = FUN_004CAC40(pow(256.0, 2.0) * 2);
-
-// SYNTHETIC: GAMEMD 0x007B2BD0 SYMBOL
-// _$E45
-double DAT_00B78118 = DAT_00B780C8 / DAT_007F7A58;
-
-// SYNTHETIC: GAMEMD 0x007B2BF0 SYMBOL
-// _$E48
-double DAT_00B78100 = 1.0 / DAT_00B78118;
-
-// SYNTHETIC: GAMEMD 0x007B2C10 SYMBOL
-// _$E51
-double DAT_00B780F8 = DAT_007F7A60 * 45.0;
-
-// SYNTHETIC: GAMEMD 0x007B2C30 SYMBOL
-// _$E54
-double DAT_00B780D0 = DAT_007F7A60 * 60.0;
-
-// SYNTHETIC: GAMEMD 0x007B2C50 SYMBOL
-// _$E57
-double DAT_00B780A8 = DAT_007F7A60 * 90.0;
-
-// SYNTHETIC: GAMEMD 0x007B2C70 SYMBOL
-// _$E60
-int DAT_00B78120 = (int)(FUN_004CAD50(DAT_00B780A8 - DAT_00B780D0) * DAT_00B780C8 * 0.5);
-
-// SYNTHETIC: GAMEMD 0x007B2CB0 SYMBOL
-// _$E63
-double DAT_00B780D8 = FUN_004CADE0(DAT_00B78120 * 0.00390625);
-
-// SYNTHETIC: GAMEMD 0x007B2CE0 SYMBOL
-// _$E66
-double DAT_00B780F0 = FUN_004CADE0((DAT_00B78120 * 2) / DAT_00B780C8);
-
-// SYNTHETIC: GAMEMD 0x007B2D10 SYMBOL
-// _$E69
-int DAT_00B78114 = (int)(DAT_00B78120 * 4 + 0.5);
-
-// SYNTHETIC: GAMEMD 0x007B2D40 SYMBOL
-// _$E72
-ShortPair DAT_00B780C0;
-
-// SYNTHETIC: GAMEMD 0x007B2D50 SYMBOL
-// _$E75
-IntTriple DAT_00B780E0;
-
-// FUNCTION: GAMEMD 0x007B2D70
-void FUN_007B2D70(void)
-{
-	DAT_00B78110 = 0;
-	DAT_00B78108 = 128;
-	DAT_00B7810C = 128;
-}
-
-// SYNTHETIC: GAMEMD 0x007B2D90 SYMBOL
-// _$E78
-struct IntQuad {
-	int A, B, C, D;
-	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
-} DAT_00B780B0;

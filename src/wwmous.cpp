@@ -16,6 +16,9 @@
 #include "surface.h"
 #include "win.h"
 
+// SYNTHETIC: GAMEMD 0x007B84B0 SYMBOL
+// _$E2
+
 void __cdecl FUN_004068E0(char const * format, ...);
 
 struct MouseThreadInfo {

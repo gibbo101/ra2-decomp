@@ -27,40 +27,8 @@
 
 #include <math.h>
 
-extern double __cdecl FUN_004CAC40(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007F54F8;
-extern const double DAT_007F5500;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
-
-struct IntQuad {
-	int A, B, C, D;
-	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
-};
-
-struct CenterTriple {
-	int A, B, C;
-	CenterTriple() { C = 0; A = 128; B = 128; }
-};
-
+// SYNTHETIC: GAMEMD 0x0071D370 SYMBOL
+// _$E41
 // SYNTHETIC: GAMEMD 0x0071D390 SYMBOL
 // _$E2
 // SYNTHETIC: GAMEMD 0x0071D3C0 SYMBOL
@@ -87,7 +55,6 @@ struct CenterTriple {
 // _$E35
 // SYNTHETIC: GAMEMD 0x0071D560 SYMBOL
 // _$E38
-
 // SYNTHETIC: GAMEMD 0x0071D580 SYMBOL
 // _$E115
 static Cell const _OccupyLists[BSIZE_COUNT][10] = {
@@ -348,59 +315,3 @@ int TerrainTypeClass::Fetch_Heap_ID(void) const
 
 // SYNTHETIC: GAMEMD 0x0071E360
 // ??_GTerrainTypeClass@@UAEPAXI@Z
-
-// SYNTHETIC: GAMEMD 0x0071E410 SYMBOL
-// _$E120
-double DAT_00B0F170 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
-// SYNTHETIC: GAMEMD 0x0071E440 SYMBOL
-// _$E123
-double DAT_00B0F1D8 = DAT_00B0F170 / DAT_007F54F8;
-
-// SYNTHETIC: GAMEMD 0x0071E460 SYMBOL
-// _$E126
-double DAT_00B0F1C0 = DAT_007E1718 / DAT_00B0F1D8;
-
-// SYNTHETIC: GAMEMD 0x0071E480 SYMBOL
-// _$E129
-double DAT_00B0F1B8 = DAT_007E1720 * DAT_007F5500;
-
-// SYNTHETIC: GAMEMD 0x0071E4A0 SYMBOL
-// _$E132
-double DAT_00B0F178 = DAT_007E1728 * DAT_007F5500;
-
-// SYNTHETIC: GAMEMD 0x0071E4C0 SYMBOL
-// _$E135
-double DAT_00B0F150 = DAT_007E1730 * DAT_007F5500;
-
-// SYNTHETIC: GAMEMD 0x0071E4E0 SYMBOL
-// _$E138
-int DAT_00B0F1E0 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B0F150 - DAT_00B0F178) * DAT_00B0F170));
-
-// SYNTHETIC: GAMEMD 0x0071E520 SYMBOL
-// _$E141
-double DAT_00B0F180 = FUN_004CADE0(DAT_00B0F1E0 * DAT_007E1740);
-
-// SYNTHETIC: GAMEMD 0x0071E550 SYMBOL
-// _$E144
-double DAT_00B0F198 = FUN_004CADE0((DAT_00B0F1E0 * 2) / DAT_00B0F170);
-
-// SYNTHETIC: GAMEMD 0x0071E580 SYMBOL
-// _$E147
-int DAT_00B0F1D4 = (int)(DAT_00B0F1E0 * 4 + DAT_007E1738);
-
-// SYNTHETIC: GAMEMD 0x0071E5B0 SYMBOL
-// _$E150
-ShortPair DAT_00B0F168;
-
-// SYNTHETIC: GAMEMD 0x0071E5C0 SYMBOL
-// _$E153
-IntTriple DAT_00B0F188;
-
-// SYNTHETIC: GAMEMD 0x0071E5E0 SYMBOL
-// _$E156
-CenterTriple DAT_00B0F1C8;
-
-// SYNTHETIC: GAMEMD 0x0071E600 SYMBOL
-// _$E159
-IntQuad DAT_00B0F158;

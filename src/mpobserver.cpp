@@ -6,6 +6,9 @@
 #include "always.h"
 #include <math.h>
 
+// SYNTHETIC: GAMEMD 0x005C91D0 SYMBOL
+// _$E38
+
 extern double __cdecl FUN_004CAC40(double);
 extern double __cdecl FUN_004CAD50(double);
 extern double __cdecl FUN_004CADE0(double);
@@ -88,10 +91,6 @@ IntTriple DAT_00ABF910;
 extern int DAT_00ABF938;
 extern int DAT_00ABF93C;
 extern int DAT_00ABF940;
-extern int DAT_00ABF980;
-extern int DAT_00ABF984;
-extern int DAT_00ABF988;
-extern int DAT_00ABF98C;
 class HouseClass;
 
 class MPRevealMap
@@ -146,12 +145,3 @@ bool MPObserverTeam::IsTeamIncluded(int index)
 
 // SYNTHETIC: GAMEMD 0x005C94D0
 // ??_GMPObserverTeam@@UAEPAXI@Z
-
-// FUNCTION: GAMEMD 0x005C94F0
-void Clear_Observer_Stats(void)
-{
-	DAT_00ABF980 = 0;
-	DAT_00ABF984 = 0;
-	DAT_00ABF988 = 0;
-	DAT_00ABF98C = 0;
-}

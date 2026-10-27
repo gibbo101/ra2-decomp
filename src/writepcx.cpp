@@ -6,11 +6,13 @@
 #include "always.h"
 
 #include "dsurface.h"
-#include "geometry.h"
 #include "pcx.h"
 #include <math.h>
 
 #include "wsproto.h"
+
+// SYNTHETIC: GAMEMD 0x007B05A0 SYMBOL
+// _$E2
 
 static void Write_Pcx_ScanLine(FileClass & file, int scansize, char * ptr);
 static int Write_Pcx_ScanLine_Buf(int scansize, char * ptr, char * file_ptr);
@@ -213,30 +215,3 @@ static int Write_Pcx_ScanLine_Buf( int scansize, char * ptr, char * file_ptr )
 
 	return(size);
 }
-
-// SYNTHETIC: GAMEMD 0x007B0BA0 SYMBOL
-// _$E23
-// SYNTHETIC: GAMEMD 0x007B0BD0 SYMBOL
-// _$E26
-// SYNTHETIC: GAMEMD 0x007B0BF0 SYMBOL
-// _$E29
-// SYNTHETIC: GAMEMD 0x007B0C10 SYMBOL
-// _$E32
-// SYNTHETIC: GAMEMD 0x007B0C30 SYMBOL
-// _$E35
-// SYNTHETIC: GAMEMD 0x007B0C50 SYMBOL
-// _$E38
-// SYNTHETIC: GAMEMD 0x007B0C70 SYMBOL
-// _$E41
-// SYNTHETIC: GAMEMD 0x007B0CB0 SYMBOL
-// _$E44
-// SYNTHETIC: GAMEMD 0x007B0CE0 SYMBOL
-// _$E47
-// SYNTHETIC: GAMEMD 0x007B0D10 SYMBOL
-// _$E50
-// SYNTHETIC: GAMEMD 0x007B0D40 SYMBOL
-// _$E53
-// SYNTHETIC: GAMEMD 0x007B0D50 SYMBOL
-// _$E56
-// SYNTHETIC: GAMEMD 0x007B0D70 SYMBOL
-// _$E59

@@ -5,6 +5,7 @@
 
 #define INCLUDE_COM
 #include "always.h"
+#include "geometry.h"
 #include "airstrike.h"
 #include "_rules.h"
 #include "aircraft.h"
@@ -17,14 +18,43 @@
 #include "techtype.h"
 #include "voc.h"
 
+// SYNTHETIC: GAMEMD 0x0041D070 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x0041D0A0 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x0041D0C0 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x0041D0E0 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x0041D100 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x0041D120 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x0041D140 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x0041D180 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x0041D1B0 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x0041D1E0 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x0041D210 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x0041D220 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x0041D240 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x0041D260 SYMBOL
+// _$E47
+
 extern "C" const CLSID CLSID_AirstrikeClass;
 namespace Game { extern bool IsActive; }
 namespace Unsorted { extern int CurrentFrame; }
 
 // SYNTHETIC: GAMEMD 0x0041D280 SYMBOL
-// _$E33
+// _$E78
 // SYNTHETIC: GAMEMD 0x0041D2C0 SYMBOL
-// _$E31
+// _$E76
 DynamicVectorClass<AirstrikeClass *> Airstrikes;
 
 static inline TechnoClass * Cast_Techno(ObjectClass * object)

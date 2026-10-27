@@ -8,8 +8,10 @@
 #include "font.h"
 #include "shapeset.h"
 #include "bitfont.h"
-#include "geometry.h"
 #include "fastmath.h"
+
+// SYNTHETIC: GAMEMD 0x004B4DF0 SYMBOL
+// _$E2
 
 // FUNCTION: GAMEMD 0x004B4E10
 DropListClass::DropListClass(int id, wchar_t * text, int max_len, TextPrintType flags, int x, int y, int w, int h, ShapeSet const * up, ShapeSet const * down) :
@@ -225,51 +227,3 @@ void DropListClass::Set_Selected_Index(wchar_t const * text)
 
 // TEMPLATE: GAMEMD 0x004B5830
 // ??4?$VectorClass@PBG@@QAEAAV0@ABV0@@Z
-
-// SYNTHETIC: GAMEMD 0x004B58A0 SYMBOL
-// _$E11
-
-// SYNTHETIC: GAMEMD 0x004B58D0 SYMBOL
-// _$E14
-
-// SYNTHETIC: GAMEMD 0x004B58F0 SYMBOL
-// _$E17
-
-// SYNTHETIC: GAMEMD 0x004B5910 SYMBOL
-// _$E20
-
-// SYNTHETIC: GAMEMD 0x004B5930 SYMBOL
-// _$E23
-
-// SYNTHETIC: GAMEMD 0x004B5950 SYMBOL
-// _$E26
-
-// SYNTHETIC: GAMEMD 0x004B5970 SYMBOL
-// _$E29
-
-// SYNTHETIC: GAMEMD 0x004B59B0 SYMBOL
-// _$E32
-
-// SYNTHETIC: GAMEMD 0x004B59E0 SYMBOL
-// _$E35
-
-// SYNTHETIC: GAMEMD 0x004B5A10 SYMBOL
-// _$E38
-
-// SYNTHETIC: GAMEMD 0x004B5A40 SYMBOL
-// _$E41
-
-// SYNTHETIC: GAMEMD 0x004B5A50 SYMBOL
-// _$E44
-
-// SYNTHETIC: GAMEMD 0x004B5A70 SYMBOL
-// _$E47
-
-struct DropIntQuad {
-	int A, B, C, D;
-	DropIntQuad() { A = 0; B = 0; C = 0; D = 0; }
-};
-
-// SYNTHETIC: GAMEMD 0x004B5A90 SYMBOL
-// _$E50
-DropIntQuad DAT_008A07F0;

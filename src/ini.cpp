@@ -23,6 +23,9 @@
 #include <cstdlib>
 #include <cstring>
 
+// SYNTHETIC: GAMEMD 0x005256D0 SYMBOL
+// _$E7
+
 // FUNCTION: GAMEMD 0x005256F0
 INIClass::~INIClass(void)
 {
@@ -909,15 +912,6 @@ template IndexClass<int, INIClass::INIEntry *>::NodeElement * Binary_Search(Inde
 // TEMPLATE: GAMEMD 0x0052B750
 // ?Binary_Search@@YIPAUNodeElement@?$IndexClass@HPAUINISection@INIClass@@@@PAU12@HABU12@@Z
 template IndexClass<int, INIClass::INISection *>::NodeElement * Binary_Search(IndexClass<int, INIClass::INISection *>::NodeElement *, int, IndexClass<int, INIClass::INISection *>::NodeElement const &);
-
-struct IniZeroQuad {
-	int A, B, C, D;
-	IniZeroQuad() { A = 0; B = 0; C = 0; D = 0; }
-};
-
-// SYNTHETIC: GAMEMD 0x0052B7A0 SYMBOL
-// _$E10
-IniZeroQuad DAT_00A8F2E8;
 
 template class List<INIClass::INIEntry *>;
 template class IndexClass<int, INIClass::INIEntry *>;

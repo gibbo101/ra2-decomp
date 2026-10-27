@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
 #include "queue.h"
 #include "_keyboar.h"
 #include "_logic.h"
@@ -103,6 +104,35 @@
 #include "special.hh"
 #include <ctime>
 
+// SYNTHETIC: GAMEMD 0x00646A80 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x00646AB0 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x00646AD0 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x00646AF0 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x00646B10 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x00646B30 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x00646B50 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x00646B90 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x00646BC0 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x00646BF0 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x00646C20 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x00646C30 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x00646C50 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x00646C70 SYMBOL
+// _$E55
+
 void Add_CRC(unsigned int *crc, unsigned int val);
 HWND FUN_00775B10(void);
 extern int DAT_00B779C4;
@@ -168,7 +198,7 @@ FrameSyncStruct::FrameSyncStruct(void)
 }
 
 // SYNTHETIC: GAMEMD 0x00646D20 SYMBOL
-// _$E163
+// _$E208
 FrameSyncStruct SyncBarFrameSync[7];
 
 void __fastcall FUN_00543090(IPXManagerClass *ipx);
@@ -191,13 +221,13 @@ void Queue_Ipx_Clear(void)
 }
 
 // SYNTHETIC: GAMEMD 0x00646D90 SYMBOL
-// _$E168
+// _$E213
 // SYNTHETIC: GAMEMD 0x00646DB0 SYMBOL
-// _$E166
+// _$E47
 BasicTimerClass<SystemTimerClass> SentFrameSyncTimer;
 
 // SYNTHETIC: GAMEMD 0x00646DC0 SYMBOL
-// _$E171
+// _$E216
 FrameSyncStruct TheirFrameSync[7];
 
 // FUNCTION: GAMEMD 0x00646DF0
@@ -207,9 +237,9 @@ void __fastcall Stamp_Their_Timing(int index)
 }
 
 // SYNTHETIC: GAMEMD 0x00646E10 SYMBOL
-// _$E176
+// _$E221
 // SYNTHETIC: GAMEMD 0x00646E60 SYMBOL
-// _$E174
+// _$E219
 QueueRecord QueueRecords[256];
 
 
@@ -1740,17 +1770,3 @@ template class IndexClass<int, ObjectClass *>;
 
 // TEMPLATE: GAMEMD 0x00652630
 // ?search_compfunc@?$IndexClass@HPAVObjectClass@@@@CAHPBX0@Z
-
-extern int DAT_00B048B0;
-extern int DAT_00B048B4;
-extern int DAT_00B048B8;
-extern int DAT_00B048BC;
-
-// FUNCTION: GAMEMD 0x00652660
-void FUN_00652660(void)
-{
-	DAT_00B048B0 = 0;
-	DAT_00B048B4 = 0;
-	DAT_00B048B8 = 0;
-	DAT_00B048BC = 0;
-}

@@ -70,6 +70,3 @@ int ControlClass::Draw_Me(int forced)
 
 // SYNTHETIC: GAMEMD 0x0048E660
 // ??_GControlClass@@UAEPAXI@Z
-
-// SYNTHETIC: GAMEMD 0x0048E680 SYMBOL
-// _$E2

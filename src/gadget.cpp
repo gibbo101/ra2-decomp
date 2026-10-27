@@ -13,6 +13,9 @@
 #include "xmouse.h"
 #include "rect.h"
 
+// SYNTHETIC: GAMEMD 0x004E12B0 SYMBOL
+// _$E2
+
 class InputManagerClass
 {
 	public:

@@ -9,7 +9,9 @@
 #include "init.h"
 #include "goptions.h"
 #include <math.h>
-#include "geometry.h"
+
+// SYNTHETIC: GAMEMD 0x006B6210 SYMBOL
+// _$E2
 
 
 void __cdecl FUN_004068E0(char const * format, ...);
@@ -52,36 +54,3 @@ void SoundControlsClass::Dialog(void)
 
 	FUN_004068E0("SoundControls: GameSpeed = %d, ScrollRate = %d, Detail = %d\n", Options.GameSpeed, Options.ScrollRate, Options.DetailLevel);
 }
-
-// SYNTHETIC: GAMEMD 0x006B6A00 SYMBOL
-// _$E10
-
-// SYNTHETIC: GAMEMD 0x006B6A30 SYMBOL
-// _$E13
-
-// SYNTHETIC: GAMEMD 0x006B6A50 SYMBOL
-// _$E16
-
-// SYNTHETIC: GAMEMD 0x006B6A70 SYMBOL
-// _$E19
-
-// SYNTHETIC: GAMEMD 0x006B6A90 SYMBOL
-// _$E22
-
-// SYNTHETIC: GAMEMD 0x006B6AB0 SYMBOL
-// _$E25
-
-// SYNTHETIC: GAMEMD 0x006B6AD0 SYMBOL
-// _$E28
-
-// SYNTHETIC: GAMEMD 0x006B6B10 SYMBOL
-// _$E31
-
-// SYNTHETIC: GAMEMD 0x006B6B40 SYMBOL
-// _$E34
-
-// SYNTHETIC: GAMEMD 0x006B6B70 SYMBOL
-// _$E37
-
-// SYNTHETIC: GAMEMD 0x006B6BA0 SYMBOL
-// _$E40

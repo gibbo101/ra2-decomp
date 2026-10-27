@@ -3,6 +3,7 @@
 
 #define INCLUDE_COM
 #include "always.h"
+#include "geometry.h"
 #include "spawnmgr.h"
 #include "aircraft.h"
 #include "airctype.h"
@@ -15,13 +16,36 @@
 #include "techno.h"
 #include "techtype.h"
 
+// SYNTHETIC: GAMEMD 0x006B6A00 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x006B6A30 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x006B6A50 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x006B6A70 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x006B6A90 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x006B6AB0 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x006B6AD0 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x006B6B10 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x006B6B40 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x006B6B70 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x006B6BA0 SYMBOL
+// _$E32
+
 namespace Game { extern bool IsActive; }
 namespace Unsorted { extern int CurrentFrame; }
 
 // SYNTHETIC: GAMEMD 0x006B6C10 SYMBOL
-// _$E35
+// _$E80
 // SYNTHETIC: GAMEMD 0x006B6C50 SYMBOL
-// _$E33
+// _$E78
 DynamicVectorClass<SpawnManagerClass *> SpawnManagers;
 
 // FUNCTION: GAMEMD 0x006B6C90

@@ -16,7 +16,6 @@
 #include "zgrad.hh"
 
 #include <math.h>
-#include "geometry.h"
 
 
 // SYNTHETIC: GAMEMD 0x004AED50 SYMBOL
@@ -115,33 +114,3 @@ void Blit_Block(Surface & surface, ConvertClass & convert, Surface const & sourc
 
 	Bit_Blit(surface, clipwindow, Rect(point.X, point.Y, sourcerect.Width, sourcerect.Height), source, source.Get_Rect(), sourcerect, *blitter, height_offset, zgrad, intensity, tint, unknown);
 }
-
-// SYNTHETIC: GAMEMD 0x004AF330 SYMBOL
-// _$E25
-
-// SYNTHETIC: GAMEMD 0x004AF360 SYMBOL
-// _$E28
-
-// SYNTHETIC: GAMEMD 0x004AF380 SYMBOL
-// _$E31
-
-// SYNTHETIC: GAMEMD 0x004AF3A0 SYMBOL
-// _$E34
-
-// SYNTHETIC: GAMEMD 0x004AF3C0 SYMBOL
-// _$E37
-
-// SYNTHETIC: GAMEMD 0x004AF3E0 SYMBOL
-// _$E40
-
-// SYNTHETIC: GAMEMD 0x004AF400 SYMBOL
-// _$E43
-
-// SYNTHETIC: GAMEMD 0x004AF440 SYMBOL
-// _$E46
-
-// SYNTHETIC: GAMEMD 0x004AF470 SYMBOL
-// _$E49
-
-// SYNTHETIC: GAMEMD 0x004AF4A0 SYMBOL
-// _$E52

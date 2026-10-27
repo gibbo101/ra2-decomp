@@ -6,6 +6,9 @@
 #include "always.h"
 #include <math.h>
 
+// SYNTHETIC: GAMEMD 0x005CAC00 SYMBOL
+// _$E38
+
 extern double __cdecl FUN_004CAC40(double);
 extern double __cdecl FUN_004CAD50(double);
 extern double __cdecl FUN_004CADE0(double);

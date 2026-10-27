@@ -4,10 +4,14 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "rect.h"
 #include "voxlib.h"
 #include "voxdrsys.h"
 #include "wwfile.h"
 #include <climits>
+
+// SYNTHETIC: GAMEMD 0x00755C90 SYMBOL
+// _$E2
 
 extern const Vector3 * VoxelNormalTables[];
 extern int VoxelNormalTableEntryCount[];

@@ -4,13 +4,42 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
 #include "coord.h"
 #include "_map.h"
 #include "inline.h"
 #include "mouse.h"
 
+// SYNTHETIC: GAMEMD 0x0049F0E0 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x0049F110 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x0049F130 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x0049F150 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x0049F170 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x0049F190 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x0049F1B0 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x0049F1F0 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x0049F220 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x0049F250 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x0049F280 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x0049F290 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x0049F2B0 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x0049F2D0 SYMBOL
+// _$E41
 // SYNTHETIC: GAMEMD 0x0049F2F0 SYMBOL
-// _$E46
+// _$E91
 Cell const AdjacentCell[FACING_COUNT] = {
 	Cell(0,  -1),
 	Cell(1,  -1),
@@ -23,7 +52,7 @@ Cell const AdjacentCell[FACING_COUNT] = {
 };
 
 // SYNTHETIC: GAMEMD 0x0049F3A0 SYMBOL
-// _$E49
+// _$E94
 Point2D const AdjacentPoint[FACING_COUNT] = {
 	Point2D(0,              -CELL_LEPTON_H),
 	Point2D(CELL_LEPTON_W,  -CELL_LEPTON_H),

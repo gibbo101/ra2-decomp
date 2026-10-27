@@ -34,6 +34,9 @@
 #define ListBox_GetText(h, i, s) ((int)SendMessage((h), 0x4b7, (i), (LPARAM)(s)))
 #define ListBox_AddString(h, s) ((int)SendMessage((h), 0x4c8, 0, (LPARAM)(s)))
 #define ComboBox_GetLBText(h, i, s) ((int)SendMessage((h), 0x4bd, (i), (LPARAM)(s)))
+
+// SYNTHETIC: GAMEMD 0x006954C0 SYMBOL
+// _$E9
 static inline int ComboBox_AddString(HWND h, const void *s) { return (int)SendMessage(h, 0x4c2, 0, (LPARAM)s); }
 #define ComboBox_FindString(h, i, s) ((int)SendMessage((h), 0x4b8, (i), (LPARAM)(s)))
 static inline int ComboBox_AddStringA(HWND h, const void *s) { return (int)SendMessage(h, 0x4bc, 0, (LPARAM)s); }

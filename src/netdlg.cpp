@@ -100,7 +100,6 @@ ShortPair DAT_00ABFF08;
 IntTriple DAT_00ABFF28;
 
 extern int DAT_00ABFF50, DAT_00ABFF54, DAT_00ABFF58;
-extern int DAT_00AC01A8, DAT_00AC01AC, DAT_00AC01B0, DAT_00AC01B4;
 
 // FUNCTION: GAMEMD 0x005DA6A0
 void Init_Net_Pad(void)
@@ -296,13 +295,4 @@ void Clear_Listbox(ListClass *list)
 		delete item;
 	}
 	list->Flag_To_Redraw();
-}
-
-// FUNCTION: GAMEMD 0x005DACD0
-void Clear_Net_Counters(void)
-{
-	DAT_00AC01A8 = 0;
-	DAT_00AC01AC = 0;
-	DAT_00AC01B0 = 0;
-	DAT_00AC01B4 = 0;
 }

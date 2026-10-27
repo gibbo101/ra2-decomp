@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
 
 #include "_map.h"
 #include "aircraft.h"
@@ -25,6 +26,35 @@
 #include "techtype.h"
 #include "unit.h"
 #include "unittype.h"
+
+// SYNTHETIC: GAMEMD 0x0065D6C0 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x0065D6F0 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x0065D710 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x0065D730 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x0065D750 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x0065D770 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x0065D790 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x0065D7D0 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x0065D800 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x0065D830 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x0065D860 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x0065D870 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x0065D890 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x0065D8B0 SYMBOL
+// _$E41
 
 class FootClass;
 class TechnoClass;
@@ -297,7 +327,3 @@ int __fastcall Create_Spy_Planes(HouseClass * house, int air, int number, Missio
 	}
 	return sub;
 }
-
-// SYNTHETIC: GAMEMD 0x0065F310 SYMBOL
-// _$E89
-const Rect RECT_NONE_2(0, 0, 0, 0);

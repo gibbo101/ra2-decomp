@@ -20,6 +20,9 @@
 #include "tracker.h"
 #include "vector.h"
 
+// SYNTHETIC: GAMEMD 0x004206D0 SYMBOL
+// _$E2
+
 static bool BrightnessCalculated = false;
 
 #include <math.h>
@@ -236,7 +239,3 @@ template class DynamicVectorClass<AlphaShapeClass *>;
 // TEMPLATE: GAMEMD 0x00421B60
 // ?Intersect@@YI?BV?$TRect@H@@ABV1@0PAH1@Z
 template Rect const Intersect<int>(Rect const &, Rect const &, int *, int *);
-
-// SYNTHETIC: GAMEMD 0x00421C90 SYMBOL
-// _$E60
-Rect DAT_0089A140(0, 0, 0, 0);

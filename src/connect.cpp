@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
 #include "connect.h"
 #include "_timer.h"
 #include "dbgprint.h"
@@ -16,34 +17,32 @@
 extern ConnectionClass *DAT_00A8EA0C;
 
 
-#include "geometry.h"
-
 // SYNTHETIC: GAMEMD 0x0048BC70 SYMBOL
-// _$E3
+// _$E2
 // SYNTHETIC: GAMEMD 0x0048BCA0 SYMBOL
-// _$E6
+// _$E5
 // SYNTHETIC: GAMEMD 0x0048BCC0 SYMBOL
-// _$E9
+// _$E8
 // SYNTHETIC: GAMEMD 0x0048BCE0 SYMBOL
-// _$E12
+// _$E11
 // SYNTHETIC: GAMEMD 0x0048BD00 SYMBOL
-// _$E15
+// _$E14
 // SYNTHETIC: GAMEMD 0x0048BD20 SYMBOL
-// _$E18
+// _$E17
 // SYNTHETIC: GAMEMD 0x0048BD40 SYMBOL
-// _$E21
+// _$E20
 // SYNTHETIC: GAMEMD 0x0048BD80 SYMBOL
-// _$E24
+// _$E23
 // SYNTHETIC: GAMEMD 0x0048BDB0 SYMBOL
-// _$E27
+// _$E26
 // SYNTHETIC: GAMEMD 0x0048BDE0 SYMBOL
-// _$E30
+// _$E29
 // SYNTHETIC: GAMEMD 0x0048BE10 SYMBOL
-// _$E33
+// _$E32
 // SYNTHETIC: GAMEMD 0x0048BE20 SYMBOL
-// _$E36
+// _$E35
 // SYNTHETIC: GAMEMD 0x0048BE40 SYMBOL
-// _$E39
+// _$E38
 
 // FUNCTION: GAMEMD 0x0048BE60
 ConnectionClass::ConnectionClass (int numsend, int numreceive,
@@ -451,7 +450,3 @@ const char *ConnectionClass::Command_Name(int command)
 
 // SYNTHETIC: GAMEMD 0x0048C650
 // ??_GConnectionClass@@UAEPAXI@Z
-
-// SYNTHETIC: GAMEMD 0x0048C690 SYMBOL
-// _$E75
-const Rect RECT_NONE_2(0, 0, 0, 0);

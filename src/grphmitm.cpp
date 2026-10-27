@@ -8,6 +8,9 @@
 #include "ini.h"
 #include "mschoice.h"
 
+// SYNTHETIC: GAMEMD 0x004F3890 SYMBOL
+// _$E2
+
 GraphicMenuItem * __fastcall GM_Read_Image_Item(Wstring const & name, INIClass const & ini, MSEngine & engine, Point2D & image_size);
 GraphicMenuItem * __fastcall GM_Read_Shortcut_Item(Wstring const & name, INIClass const & ini);
 GraphicMenuItem * __fastcall GM_Read_Anim_Item(Wstring const & name, INIClass const & ini, MSEngine & engine, Point2D & image_size);
@@ -113,6 +116,3 @@ void GraphicMenuItem::Action(MSEngine * engine)
 
 // SYNTHETIC: GAMEMD 0x004F3B20
 // ??_GGraphicMenuItem@@UAEPAXI@Z
-
-// SYNTHETIC: GAMEMD 0x004F3B60 SYMBOL
-// _$E2

@@ -227,10 +227,6 @@ bool Receive_Remote_File(char * file_name, unsigned int file_length, int gametyp
 
 int __fastcall FUN_004790A0(int timeout);
 
-// SYNTHETIC: GAMEMD 0x006954C0 SYMBOL
-// _$E84
-const Rect RECT_NONE_2(0, 0, 0, 0);
-
 // FUNCTION: GAMEMD 0x006951F0
 bool Find_Local_Scenario(char * filename, unsigned int length, char * digest, bool official, bool checkcd)
 {
@@ -269,4 +265,3 @@ bool Find_Local_Scenario(char * filename, unsigned int length, char * digest, bo
 	}
 	return false;
 }
-

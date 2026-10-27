@@ -21,6 +21,9 @@
 #include <stddef.h>
 #include "stringtable.h"
 
+// SYNTHETIC: GAMEMD 0x006AC950 SYMBOL
+// _$E5
+
 extern double __cdecl FUN_004CAC40(double);
 extern double __cdecl FUN_004CAD50(double);
 extern double __cdecl FUN_004CADE0(double);
@@ -406,17 +409,6 @@ bool FUN_006AE2C0(void)
 	return false;
 }
 
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007F3148;
-extern const double DAT_007F3150;
-
 namespace UI {
 	int __fastcall StandardWndProc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 }
@@ -509,72 +501,3 @@ BOOL CALLBACK FUN_006AE3F0(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 	}
 	return FALSE;
 }
-
-// SYNTHETIC: GAMEMD 0x006AEF10 SYMBOL
-// _$E106
-double DAT_00B0B5C0 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
-// SYNTHETIC: GAMEMD 0x006AEF40 SYMBOL
-// _$E109
-double DAT_00B0B628 = DAT_00B0B5C0 / DAT_007F3148;
-
-// SYNTHETIC: GAMEMD 0x006AEF60 SYMBOL
-// _$E112
-double DAT_00B0B610 = DAT_007E1718 / DAT_00B0B628;
-
-// SYNTHETIC: GAMEMD 0x006AEF80 SYMBOL
-// _$E115
-double DAT_00B0B608 = DAT_007E1720 * DAT_007F3150;
-
-// SYNTHETIC: GAMEMD 0x006AEFA0 SYMBOL
-// _$E118
-double DAT_00B0B5C8 = DAT_007E1728 * DAT_007F3150;
-
-// SYNTHETIC: GAMEMD 0x006AEFC0 SYMBOL
-// _$E121
-double DAT_00B0B5A0 = DAT_007E1730 * DAT_007F3150;
-
-// SYNTHETIC: GAMEMD 0x006AEFE0 SYMBOL
-// _$E124
-int DAT_00B0B630 = (int)(FUN_004CAD50(DAT_00B0B5A0 - DAT_00B0B5C8) * DAT_007E1738 * DAT_00B0B5C0);
-
-// SYNTHETIC: GAMEMD 0x006AF020 SYMBOL
-// _$E127
-double DAT_00B0B5D0 = FUN_004CADE0(DAT_00B0B630 * DAT_007E1740);
-
-// SYNTHETIC: GAMEMD 0x006AF050 SYMBOL
-// _$E130
-double DAT_00B0B5E8 = FUN_004CADE0((DAT_00B0B630 * 2) / DAT_00B0B5C0);
-
-// SYNTHETIC: GAMEMD 0x006AF080 SYMBOL
-// _$E133
-int DAT_00B0B624 = (int)(DAT_00B0B630 * 4 + DAT_007E1738);
-
-// SYNTHETIC: GAMEMD 0x006AF0B0 SYMBOL
-// _$E136
-ShortPair DAT_00B0B5B8;
-
-// SYNTHETIC: GAMEMD 0x006AF0C0 SYMBOL
-// _$E139
-IntTriple DAT_00B0B5D8;
-
-extern int DAT_00B0B618;
-extern int DAT_00B0B61C;
-extern int DAT_00B0B620;
-
-// FUNCTION: GAMEMD 0x006AF0E0
-void FUN_006AF0E0(void)
-{
-	DAT_00B0B620 = 0;
-	DAT_00B0B618 = 0x80;
-	DAT_00B0B61C = 0x80;
-}
-
-struct IntQuad {
-	int A, B, C, D;
-	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
-};
-
-// SYNTHETIC: GAMEMD 0x006AF100 SYMBOL
-// _$E142
-IntQuad DAT_00B0B5A8;

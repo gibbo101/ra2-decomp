@@ -5,6 +5,7 @@
 
 #define INCLUDE_COM
 #include "always.h"
+#include "geometry.h"
 #include "tactical.h"
 #include "_alpha.h"
 #include "_convert.h"
@@ -62,6 +63,35 @@
 #include "scrspeed.hh"
 #include "fastmath.h"
 
+// SYNTHETIC: GAMEMD 0x006D1830 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x006D1860 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x006D1880 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x006D18A0 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x006D18C0 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x006D18E0 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x006D1900 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x006D1940 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x006D1970 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x006D19A0 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x006D19D0 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x006D19E0 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x006D1A00 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x006D1A20 SYMBOL
+// _$E47
+
 extern Rect TacticalDimensions;
 void __fastcall FUN_00731D00(int mode);
 extern ObjectClass const * DAT_00880978;
@@ -93,25 +123,25 @@ static double ZPixelsPerLepton = fastmath::sin(RAD_60) * (PixelsPerLepton = 60.0
 static double ZLeptonsPerPixel = CELL_LEPTON_DIAG / (fastmath::sin(RAD_60) * 60.0);
 
 // SYNTHETIC: GAMEMD 0x006D1A60 SYMBOL
-// _$E198
+// _$E243
 
 // SYNTHETIC: GAMEMD 0x006D1AA0 SYMBOL
-// _$E195
+// _$E240
 
 // SYNTHETIC: GAMEMD 0x006D1B00 SYMBOL
-// _$E201
+// _$E41
 
 // SYNTHETIC: GAMEMD 0x006D1B10 SYMBOL
-// _$E207
+// _$E252
 
 // SYNTHETIC: GAMEMD 0x006D1B50 SYMBOL
-// _$E204
+// _$E249
 
 // SYNTHETIC: GAMEMD 0x006D1BB0 SYMBOL
-// _$E210
+// _$E255
 
 // SYNTHETIC: GAMEMD 0x006D1BF0 SYMBOL
-// _$E213
+// _$E258
 
 // FUNCTION: GAMEMD 0x006D1C20
 Tactical::Tactical(void) :
@@ -924,7 +954,7 @@ void Tactical::Scroll_Map(FacingType facing, int distance)
 }
 
 // SYNTHETIC: GAMEMD 0x006D8630 SYMBOL
-// _$E216
+// _$E44
 
 // FUNCTION: GAMEMD 0x006D8640
 bool Tactical::Clamp_To_Tactical_Rect(Point2D & pixel)
@@ -1446,7 +1476,7 @@ FacingType Tactical::Scroll_Dir(FacingType dir)
 }
 
 // SYNTHETIC: GAMEMD 0x006DA350 SYMBOL
-// _$E218
+// _$E246
 
 // FUNCTION: GAMEMD 0x006DA360
 Cell Tactical::Clamp_Cursor_To_Tactical(Cell const & cell, Cell const * list)

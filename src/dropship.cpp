@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
 #include "dropship.h"
 #include "_alpha.h"
 #include "_convert.h"
@@ -50,6 +51,35 @@
 #include "zbuffer.h"
 #include <climits>
 #include <cstring>
+
+// SYNTHETIC: GAMEMD 0x004B67A0 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x004B67D0 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x004B67F0 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x004B6810 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x004B6830 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x004B6850 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x004B6870 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x004B68B0 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x004B68E0 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x004B6910 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x004B6940 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x004B6950 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x004B6970 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x004B6990 SYMBOL
+// _$E41
 
 // FUNCTION: GAMEMD 0x004B69B0
 DropshipLoadoutClass::DropshipLoadoutClass(void) :
@@ -345,5 +375,3 @@ template class VectorClass<CrossDissolveEffect *>;
 
 // TEMPLATE: GAMEMD 0x004BA340
 // ??0?$VectorClass@PAUCrossDissolveEffect@@@@QAE@HPBQAUCrossDissolveEffect@@@Z
-
-// FUNCTION: GAMEMD 0x004BA390

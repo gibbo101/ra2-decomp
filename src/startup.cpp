@@ -141,6 +141,9 @@
 #include <io.h>
 #include <cfloat>
 
+// SYNTHETIC: GAMEMD 0x006BB050 SYMBOL
+// _$E41
+
 struct SHPStruct
 {
 	char Data[0x24];

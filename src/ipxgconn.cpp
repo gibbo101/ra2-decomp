@@ -17,17 +17,9 @@
 #include "geometry.h"
 #include "wsproto.h"
 
-namespace fastmath { double __cdecl sqrt(double x); double __cdecl tan(double x); double __cdecl atan(double x); }
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007EC158;
-extern const double DAT_007EC160;
+// SYNTHETIC: GAMEMD 0x0053F880 SYMBOL
+// _$E13
+
 void __cdecl FUN_004068E0(char const * format, ...);
 extern int DAT_00841F3C;
 extern WinsockInterfaceClass * DAT_00887628;
@@ -401,59 +393,3 @@ int IPXGlobalConnClass::Get_Packet (void * buf, int * buflen)
 {
 	return BASECLASS::Get_Packet(buf, buflen);
 }
-
-// SYNTHETIC: GAMEMD 0x005406E0 SYMBOL
-// _$E80
-double DAT_00AA0650 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
-
-// SYNTHETIC: GAMEMD 0x00540710 SYMBOL
-// _$E83
-double DAT_00AA06A0 = DAT_00AA0650 / DAT_007EC158;
-
-// SYNTHETIC: GAMEMD 0x00540730 SYMBOL
-// _$E86
-double DAT_00AA0688 = DAT_007E1718 / DAT_00AA06A0;
-
-// SYNTHETIC: GAMEMD 0x00540750 SYMBOL
-// _$E89
-double DAT_00AA0680 = DAT_007E1720 * DAT_007EC160;
-
-// SYNTHETIC: GAMEMD 0x00540770 SYMBOL
-// _$E92
-double DAT_00AA0658 = DAT_007E1728 * DAT_007EC160;
-
-// SYNTHETIC: GAMEMD 0x00540790 SYMBOL
-// _$E95
-double DAT_00AA0630 = DAT_007E1730 * DAT_007EC160;
-
-// SYNTHETIC: GAMEMD 0x005407B0 SYMBOL
-// _$E98
-int DAT_00AA06A8 = (int)(DAT_007E1738 * (fastmath::tan(DAT_00AA0630 - DAT_00AA0658) * DAT_00AA0650));
-
-// SYNTHETIC: GAMEMD 0x005407F0 SYMBOL
-// _$E101
-double DAT_00AA0660 = fastmath::atan(DAT_00AA06A8 * DAT_007E1740);
-
-// SYNTHETIC: GAMEMD 0x00540820 SYMBOL
-// _$E104
-double DAT_00AA0678 = fastmath::atan((DAT_00AA06A8 * 2) / DAT_00AA0650);
-
-// SYNTHETIC: GAMEMD 0x00540850 SYMBOL
-// _$E107
-int DAT_00AA069C = (int)((DAT_00AA06A8 * 4) + DAT_007E1738);
-
-// SYNTHETIC: GAMEMD 0x00540880 SYMBOL
-// _$E110
-Cell DAT_00AA0648(0, 0);
-
-// SYNTHETIC: GAMEMD 0x00540890 SYMBOL
-// _$E113
-Coord DAT_00AA0668(0, 0, 0);
-
-// SYNTHETIC: GAMEMD 0x005408B0 SYMBOL
-// _$E116
-Coord DAT_00AA0690(128, 128, 0);
-
-// SYNTHETIC: GAMEMD 0x005408D0 SYMBOL
-// _$E119
-TRect<int> DAT_00AA0638(0, 0, 0, 0);

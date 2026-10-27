@@ -4,6 +4,8 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
+#include "rect.h"
 
 #include "wspudp.h"
 
@@ -15,6 +17,35 @@
 #include "vector.h"
 
 #include <cstdio>
+
+// SYNTHETIC: GAMEMD 0x007B2BA0 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x007B2BD0 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x007B2BF0 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x007B2C10 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x007B2C30 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x007B2C50 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x007B2C70 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x007B2CB0 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x007B2CE0 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x007B2D10 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x007B2D40 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x007B2D50 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x007B2D70 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x007B2D90 SYMBOL
+// _$E41
 
 namespace Game { extern HWND hWnd; }
 extern int DAT_00841F38;

@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
 #include "tunnel.h"
 #include "_map.h"
 #include "_rules.h"
@@ -27,6 +28,31 @@
 #include "layer.hh"
 #include "visual.hh"
 #include <new.h>
+
+// SYNTHETIC: GAMEMD 0x007287F0 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x00728820 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x00728840 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x00728860 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x00728880 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x007288A0 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x007288C0 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x00728900 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x00728930 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x00728960 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x00728990 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x007289A0 SYMBOL
+// _$E35
 
 // FUNCTION: GAMEMD 0x00728A00
 TunnelLocomotionClass::TunnelLocomotionClass(void) :

@@ -4,10 +4,40 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
 #include "effects.h"
 #include "palette.h"
 #include "rect.h"
 #include "win.h"
+
+// SYNTHETIC: GAMEMD 0x004C35A0 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x004C35D0 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x004C35F0 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x004C3610 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x004C3630 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x004C3650 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x004C3670 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x004C36B0 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x004C36E0 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x004C3710 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x004C3740 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x004C3750 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x004C3770 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x004C3790 SYMBOL
+// _$E41
 
 void * Build_Fading_Table(PaletteClass const & palette, void * dest, int color, int frac);
 
@@ -126,6 +156,3 @@ void * Build_Fading_Table(PaletteClass const & palette, void * dest, int color, 
 
 	return(ptr);
 }
-
-// SYNTHETIC: GAMEMD 0x004C3BF0 SYMBOL
-// _$E2

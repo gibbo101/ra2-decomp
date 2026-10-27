@@ -12,7 +12,8 @@
 #include "swizzle.h"
 #include <math.h>
 
-
+// SYNTHETIC: GAMEMD 0x00428FF0 SYMBOL
+// _$E2
 // SYNTHETIC: GAMEMD 0x00429010 SYMBOL
 // _$E46
 // SYNTHETIC: GAMEMD 0x00429040 SYMBOL
@@ -39,7 +40,6 @@
 // _$E79
 // SYNTHETIC: GAMEMD 0x004291E0 SYMBOL
 // _$E82
-
 // SYNTHETIC: GAMEMD 0x00429200 SYMBOL
 // _$E85
 ApplicationClass ApplicationInstance;
@@ -202,13 +202,8 @@ HRESULT STDMETHODCALLTYPE ApplicationClass::get_FrameCount(LONG *retval)
 	return(S_OK);
 }
 
-// SYNTHETIC: GAMEMD 0x00429570 SYMBOL
-// _$E88
-const Rect RECT_NONE_2(0, 0, 0, 0);
-
 // FUNCTION: GAMEMD 0x00429550
 HRESULT STDMETHODCALLTYPE ApplicationClass::get_Swizzle_Interface(ISwizzle **pVal)
 {
 	return(Swizzler.QueryInterface(IID_ISwizzle, (void**)pVal));
 }
-

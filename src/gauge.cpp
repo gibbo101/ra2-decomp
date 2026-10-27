@@ -268,17 +268,3 @@ void GaugeClass::Use_Thumb(int value)
 // ??_GGaugeClass@@UAEPAXI@Z
 // SYNTHETIC: GAMEMD 0x004E30F0
 // ??_GTriColorGaugeClass@@UAEPAXI@Z
-
-extern int DAT_008B3F90;
-extern int DAT_008B3F94;
-extern int DAT_008B3F98;
-extern int DAT_008B3F9C;
-
-// FUNCTION: GAMEMD 0x004E3110
-void FUN_004E3110(void)
-{
-	DAT_008B3F90 = 0;
-	DAT_008B3F94 = 0;
-	DAT_008B3F98 = 0;
-	DAT_008B3F9C = 0;
-}

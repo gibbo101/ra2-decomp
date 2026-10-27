@@ -53,6 +53,9 @@
 #include "dsurface.h"
 #include "bench.hh"
 
+// SYNTHETIC: GAMEMD 0x004F4010 SYMBOL
+// _$E41
+
 GadgetClass * GScreenClass::Buttons = NULL;
 
 class Texture3D {

@@ -5,6 +5,7 @@
 
 
 #include "always.h"
+#include "geometry.h"
 #include "mouse.h"
 #include "_mixfile.h"
 #include "animtype.h"
@@ -27,15 +28,44 @@
 #define MOUSE_HOTSPOT_CENTER 12345
 #define MOUSE_HOTSPOT_MAX 54321
 
+// SYNTHETIC: GAMEMD 0x005BD7E0 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x005BD810 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x005BD830 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x005BD850 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x005BD870 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x005BD890 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x005BD8B0 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x005BD8F0 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x005BD920 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x005BD950 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x005BD980 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x005BD990 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x005BD9B0 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x005BD9D0 SYMBOL
+// _$E41
+
 ShapeSet const * MouseClass::MouseShapes;
 
 static bool MouseShapesLoaded;
 void * __fastcall FileSystem_LoadWholeFileEx(char const * name, bool & loaded);
 
 // SYNTHETIC: GAMEMD 0x005BD9F0 SYMBOL
-// _$E133
+// _$E178
 // SYNTHETIC: GAMEMD 0x005BDA20 SYMBOL
-// _$E130
+// _$E175
 CDTimerClass<SystemTimerClass> MouseClass::Timer = 0;
 
 // FUNCTION: GAMEMD 0x005BDA40
@@ -308,7 +338,3 @@ MouseClass::MouseClass(NoInitClass const & x) :
 // TEMPLATE: GAMEMD 0x005BEA30
 // ??0?$DynamicVectorClass@U?$HashObject@II@@@@QAE@IPBU?$HashObject@II@@@Z
 template class DynamicVectorClass<HashObject<unsigned int, unsigned int> >;
-
-// SYNTHETIC: GAMEMD 0x005BEAB0 SYMBOL
-// _$E136
-Rect MouseRect(0, 0, 0, 0);

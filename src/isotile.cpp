@@ -5,6 +5,7 @@
 
 #define INCLUDE_COM
 #include "always.h"
+#include "geometry.h"
 #include "isotile.h"
 #include "_isotile.h"
 #include "_map.h"
@@ -16,6 +17,35 @@
 #include "swizzle.h"
 #include "tracker.h"
 #include "vector.h"
+
+// SYNTHETIC: GAMEMD 0x00543120 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x00543150 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x00543170 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x00543190 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x005431B0 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x005431D0 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x005431F0 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x00543230 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x00543260 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x00543290 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x005432C0 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x005432D0 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x005432F0 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x00543310 SYMBOL
+// _$E47
 
 // FUNCTION: GAMEMD 0x00543780
 IsometricTileClass::IsometricTileClass(IsometricTileType type, Cell const & cell) :
@@ -116,6 +146,3 @@ ObjectTypeClass const * IsometricTileClass::Class_Of(void) const
 void IsometricTileClass::Draw_It(Point2D const & point, Rect const & cliprect) const
 {
 }
-
-// SYNTHETIC: GAMEMD 0x00543C40 SYMBOL
-// _$E2

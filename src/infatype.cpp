@@ -5,6 +5,7 @@
 
 #define INCLUDE_COM
 #include "always.h"
+#include "geometry.h"
 #include "infatype.h"
 #include "_map.h"
 #include "_rules.h"
@@ -17,6 +18,35 @@
 #include "sun.h"
 #include "tracker.h"
 #include <cstdio>
+
+// SYNTHETIC: GAMEMD 0x00523490 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x005234C0 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x005234E0 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x00523500 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x00523520 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x00523540 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x00523560 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x005235A0 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x005235D0 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x00523600 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x00523630 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x00523640 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x00523660 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x00523680 SYMBOL
+// _$E41
 
 enum { DOINFO_COUNT = 42 };
 
@@ -168,9 +198,6 @@ InfantryType InfantryTypeClass::From_Name(char const * name)
 	}
 	return(INFANTRY_NONE);
 }
-
-struct Z4 { int a, b, c, d; Z4(void) : a(0), b(0), c(0), d(0) {} };
-static Z4 Unused_Zero;
 
 char const * SequenceName[DOINFO_COUNT] = {
 	"Ready", "Guard", "Prone", "Walk", "FireUp", "Down", "Crawl", "Up", "FireProne",
@@ -431,6 +458,3 @@ template class TypeList<AnimTypeClass const *>;
 // TEMPLATE: GAMEMD 0x00525680
 // ??0?$VectorClass@PBVAnimTypeClass@@@@QAE@HPBQBVAnimTypeClass@@@Z
 template class VectorClass<AnimTypeClass const *>;
-
-// SYNTHETIC: GAMEMD 0x005256D0 SYMBOL
-// _$E74

@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
 #include "hover.h"
 #include "_map.h"
 #include "_rules.h"
@@ -23,6 +24,35 @@
 #include "tube.h"
 #include "unit.h"
 #include "tube.hh"
+
+// SYNTHETIC: GAMEMD 0x00513A10 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x00513A40 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x00513A60 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x00513A80 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x00513AA0 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x00513AC0 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x00513AE0 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x00513B20 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x00513B50 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x00513B80 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x00513BB0 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x00513BC0 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x00513BE0 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x00513C00 SYMBOL
+// _$E52
 
 // FUNCTION: GAMEMD 0x00513C20
 HoverLocomotionClass::HoverLocomotionClass(void) :

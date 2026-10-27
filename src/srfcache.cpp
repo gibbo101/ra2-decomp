@@ -127,12 +127,3 @@ template class Dictionary<Wstring, SurfaceCacheEntry>;
 
 // TEMPLATE: GAMEMD 0x006BAFA0
 // ?expand@?$Dictionary@VWstring@@USurfaceCacheEntry@@@@AAEXXZ
-
-struct SurfaceCacheZero {
-	int a, b, c, d;
-	SurfaceCacheZero(void) { a = 0; b = 0; c = 0; d = 0; }
-};
-
-// SYNTHETIC: GAMEMD 0x006BB050 SYMBOL
-// _$E29
-SurfaceCacheZero DAT_00B0BC58;

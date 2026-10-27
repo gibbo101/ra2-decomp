@@ -408,11 +408,5 @@ HRESULT CStreamClass::Compress(void)
 // FUNCTION: GAMEMD 0x004A3230
 // CStreamClass::AddRef
 
-#include "rect.h"
-
-// SYNTHETIC: GAMEMD 0x004A3250 SYMBOL
-// _$E2
-
 // FUNCTION: GAMEMD 0x004A3240
 // CStreamClass::Release
-

@@ -13,6 +13,9 @@
 #include <windows.h>
 #include <stdio.h>
 
+// SYNTHETIC: GAMEMD 0x0053DDE0 SYMBOL
+// _$E2
+
 struct StreamRing {
 	unsigned int FUN_00409320(void);
 };
@@ -39,10 +42,6 @@ extern int DAT_00AA0434;
 extern int DAT_00AA0438;
 extern short DAT_00AA0168[256];
 extern int DAT_00828140;
-extern int DAT_00AA0510;
-extern int DAT_00AA0514;
-extern int DAT_00AA0518;
-extern int DAT_00AA051C;
 extern int DAT_00AA0430;
 extern int DAT_00AA043C;
 extern int DAT_00AA0440;
@@ -545,13 +544,4 @@ void IPXAddressClass::Set_Port(unsigned short port)
 	if (DAT_00828140 == 2) {
 		*(unsigned short *)NetworkNumber = port;
 	}
-}
-
-// FUNCTION: GAMEMD 0x0053F220
-void __fastcall FUN_0053F220(void)
-{
-	DAT_00AA0510 = 0;
-	DAT_00AA0514 = 0;
-	DAT_00AA0518 = 0;
-	DAT_00AA051C = 0;
 }

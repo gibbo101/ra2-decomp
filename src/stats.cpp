@@ -4,6 +4,8 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
+#include "rect.h"
 #include "playerprofile.h"
 #include "rcptr.h"
 #include "stimer.h"
@@ -11,6 +13,35 @@
 #include "wolapi\wolapi.h"
 #include <string.h>
 #include <new.h>
+
+// SYNTHETIC: GAMEMD 0x006C68C0 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x006C68F0 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x006C6910 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x006C6930 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x006C6950 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x006C6970 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x006C6990 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x006C69D0 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x006C6A00 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x006C6A30 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x006C6A60 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x006C6A70 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x006C6A90 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x006C6AB0 SYMBOL
+// _$E41
 
 bool GameTimerInUse;
 int GameEndTime;
@@ -37,15 +68,6 @@ struct PacketQueue {
 	}
 	bool Shrink(void);
 	bool Grow(void);
-};
-
-struct StatsCounters {
-	int A;
-	int B;
-	int C;
-	int D;
-
-	StatsCounters(void) : A(0), B(0), C(0), D(0) {}
 };
 
 // FUNCTION: GAMEMD 0x006C6AD0
@@ -157,6 +179,3 @@ bool PacketQueue::Grow(void)
 	Data = p;
 	return true;
 }
-
-// FUNCTION: GAMEMD 0x006C8990
-StatsCounters Counters;

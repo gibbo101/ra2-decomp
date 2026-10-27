@@ -5,7 +5,6 @@
 
 #include "always.h"
 #include "tooltip.h"
-#include "geometry.h"
 #include "data.h"
 #include "dbgprint.h"
 #include "point.h"
@@ -15,6 +14,9 @@
 #include "stringtable.h"
 #include "bsearch.h"
 #include <math.h>
+
+// SYNTHETIC: GAMEMD 0x00723FE0 SYMBOL
+// _$E2
 
 
 extern bool DAT_00A8F7D8;
@@ -357,34 +359,3 @@ template class DynamicVectorClass<ToolTip const *>;
 // TEMPLATE: GAMEMD 0x00725070
 // ?Binary_Search@@YIPAUNodeElement@?$IndexClass@IPBVToolTip@@@@PAU12@HABU12@@Z
 template class IndexClass<unsigned, ToolTip const *>;
-
-// SYNTHETIC: GAMEMD 0x007250C0 SYMBOL
-// _$E5
-// SYNTHETIC: GAMEMD 0x007250F0 SYMBOL
-// _$E8
-// SYNTHETIC: GAMEMD 0x00725110 SYMBOL
-// _$E11
-// SYNTHETIC: GAMEMD 0x00725130 SYMBOL
-// _$E14
-// SYNTHETIC: GAMEMD 0x00725150 SYMBOL
-// _$E17
-// SYNTHETIC: GAMEMD 0x00725170 SYMBOL
-// _$E20
-// SYNTHETIC: GAMEMD 0x00725190 SYMBOL
-// _$E23
-// SYNTHETIC: GAMEMD 0x007251D0 SYMBOL
-// _$E26
-// SYNTHETIC: GAMEMD 0x00725200 SYMBOL
-// _$E29
-// SYNTHETIC: GAMEMD 0x00725230 SYMBOL
-// _$E32
-// SYNTHETIC: GAMEMD 0x00725260 SYMBOL
-// _$E35
-// SYNTHETIC: GAMEMD 0x00725270 SYMBOL
-// _$E38
-// SYNTHETIC: GAMEMD 0x00725290 SYMBOL
-// _$E41
-
-// SYNTHETIC: GAMEMD 0x007252B0 SYMBOL
-// _$E44
-TRect<int> DAT_00B0F608(0, 0, 0, 0);

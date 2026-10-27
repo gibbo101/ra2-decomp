@@ -4,14 +4,12 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
-#include "geometry.h"
 #include "palette.h"
 #include "hashstr.h"
 #include "hashtable.h"
 #include "vector.h"
 #include "scheme.h"
 #include "_theater.h"
-#include "rect.h"
 #include <cstring>
 
 // FUNCTION: GAMEMD 0x00626020
@@ -565,33 +563,3 @@ template class DynamicVectorClass<HashObject<HashString, SchemeNode *> >;
 // TEMPLATE: GAMEMD 0x00628ED0
 // ??0?$VectorClass@U?$HashObject@VHashString@@PAVSchemeNode@@@@@@QAE@HPBU?$HashObject@VHashString@@PAVSchemeNode@@@@@Z
 template class VectorClass<HashObject<HashString, SchemeNode *> >;
-
-// SYNTHETIC: GAMEMD 0x00628F80 SYMBOL
-// _$E2
-// SYNTHETIC: GAMEMD 0x00628FB0 SYMBOL
-// _$E5
-// SYNTHETIC: GAMEMD 0x00628FD0 SYMBOL
-// _$E8
-// SYNTHETIC: GAMEMD 0x00628FF0 SYMBOL
-// _$E11
-
-// SYNTHETIC: GAMEMD 0x00629010 SYMBOL
-// _$E14
-// SYNTHETIC: GAMEMD 0x00629030 SYMBOL
-// _$E17
-// SYNTHETIC: GAMEMD 0x00629050 SYMBOL
-// _$E20
-// SYNTHETIC: GAMEMD 0x00629090 SYMBOL
-// _$E23
-// SYNTHETIC: GAMEMD 0x006290C0 SYMBOL
-// _$E26
-// SYNTHETIC: GAMEMD 0x006290F0 SYMBOL
-// _$E29
-// SYNTHETIC: GAMEMD 0x00629120 SYMBOL
-// _$E32
-// SYNTHETIC: GAMEMD 0x00629130 SYMBOL
-// _$E35
-// SYNTHETIC: GAMEMD 0x00629150 SYMBOL
-// _$E38
-// SYNTHETIC: GAMEMD 0x00629170 SYMBOL
-// _$E42

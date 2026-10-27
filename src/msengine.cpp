@@ -22,6 +22,9 @@
 #include "color.hh"
 #include <climits>
 
+// SYNTHETIC: GAMEMD 0x005D1A80 SYMBOL
+// _$E2
+
 extern int FUN_00407000(void);
 
 // FUNCTION: GAMEMD 0x005D1AA0
@@ -367,6 +370,3 @@ template class DynamicVectorClass<MSSfx *>;
 
 // SYNTHETIC: GAMEMD 0x005D2D90
 // ??_G?$DynamicVectorClass@PAVMSSfx@@@@UAEPAXI@Z
-
-// SYNTHETIC: GAMEMD 0x005D2DE0 SYMBOL
-// _$E2

@@ -32,6 +32,9 @@
 #include "dialog.hh"
 #include <cstring>
 
+// SYNTHETIC: GAMEMD 0x004C3BF0 SYMBOL
+// _$E6
+
 namespace OwnerDraw {
 int __fastcall PrintTextFixedLength(unsigned color, BitFont * font, Rect const & rect, wchar_t const * text, int length, int x_alignment, int y_alignment, Surface * surface, int unknown);
 }

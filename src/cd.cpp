@@ -20,6 +20,9 @@
 #include "theme.h"
 #include "stringtable.h"
 
+// SYNTHETIC: GAMEMD 0x00479080 SYMBOL
+// _$E4
+
 bool __fastcall FUN_00623CD0(wchar_t const * text);
 
 struct CDDriveManagerClass {

@@ -8,18 +8,12 @@
 #include "ccini.h"
 #include "crc.h"
 #include "globals.h"
-#include "rect.h"
 #include "stringtable.h"
 #include "vector.h"
 #include <cstdio>
 
 // The display name of a type whose INI section gives no UIName label: empty.
 static wchar_t NoUIName_00887734[2];
-
-int DAT_00887738;
-int DAT_0088773C;
-int DAT_00887740;
-int DAT_00887744;
 
 // FUNCTION: GAMEMD 0x00410800
 AbstractTypeClass::AbstractTypeClass(char const * ininame) :
@@ -116,12 +110,3 @@ void AbstractTypeClass::Init_Theater(TheaterType theater)
 
 // SYNTHETIC: GAMEMD 0x00410C30
 // ??_GAbstractTypeClass@@UAEPAXI@Z
-
-// FUNCTION: GAMEMD 0x00410CC0
-void FUN_00410CC0(void)
-{
-	DAT_00887738 = 0;
-	DAT_0088773C = 0;
-	DAT_00887740 = 0;
-	DAT_00887744 = 0;
-}

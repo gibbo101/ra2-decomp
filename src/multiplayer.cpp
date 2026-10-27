@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
 #include "multiplayer.h"
 #include "ccini.h"
 #include "ccfile.h"
@@ -21,6 +22,35 @@
 #include <wchar.h>
 #include <windows.h>
 #undef LoadString
+
+// SYNTHETIC: GAMEMD 0x005D58B0 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x005D58E0 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x005D5900 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x005D5920 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x005D5940 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x005D5960 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x005D5980 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x005D59C0 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x005D59F0 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x005D5A20 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x005D5A50 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x005D5A60 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x005D5A80 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x005D5AA0 SYMBOL
+// _$E41
 
 extern char const * DAT_007EED18;
 
@@ -56,7 +86,7 @@ DynamicVectorClass<MultiplayerGameMode *> & Game_Modes(void)
 }
 
 // SYNTHETIC: GAMEMD 0x005D5B20 SYMBOL
-// _$E89
+// _$E134
 
 static int Game_Mode_Count(void)
 {
@@ -837,17 +867,3 @@ template class VectorClass<InfantryTypeClass *>;
 // TEMPLATE: GAMEMD 0x005D89F0
 // ??0?$VectorClass@PAVMultiplayerGameMode@@@@QAE@HPBQAVMultiplayerGameMode@@@Z
 template class VectorClass<MultiplayerGameMode *>;
-
-extern int DAT_00ABFDE0;
-extern int DAT_00ABFDE4;
-extern int DAT_00ABFDE8;
-extern int DAT_00ABFDEC;
-
-// FUNCTION: GAMEMD 0x005D8A40
-void __cdecl FUN_005D8A40(void)
-{
-	DAT_00ABFDE0 = 0;
-	DAT_00ABFDE4 = 0;
-	DAT_00ABFDE8 = 0;
-	DAT_00ABFDEC = 0;
-}

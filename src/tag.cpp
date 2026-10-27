@@ -23,18 +23,6 @@
 #include "vector.h"
 #include <math.h>
 
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007F4540;
-extern const double DAT_007F4548;
-
 // SYNTHETIC: GAMEMD 0x006E4B50 SYMBOL
 // _$E2
 // SYNTHETIC: GAMEMD 0x006E4B80 SYMBOL
@@ -448,67 +436,3 @@ bool TagClass::Is_One_Of_A_Kind(void)
 // TagClass::Fetch_RTTI
 // SYNTHETIC: GAMEMD 0x006E58B0
 // ??_GTagClass@@UAEPAXI@Z
-
-// SYNTHETIC: GAMEMD 0x006E58D0 SYMBOL
-// _$E110
-double DAT_00B0E7B8 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
-// SYNTHETIC: GAMEMD 0x006E5900 SYMBOL
-// _$E113
-double DAT_00B0E808 = DAT_00B0E7B8 / DAT_007F4540;
-
-// SYNTHETIC: GAMEMD 0x006E5920 SYMBOL
-// _$E116
-double DAT_00B0E7F0 = DAT_007E1718 / DAT_00B0E808;
-
-// SYNTHETIC: GAMEMD 0x006E5940 SYMBOL
-// _$E119
-double DAT_00B0E7E8 = DAT_007E1720 * DAT_007F4548;
-
-// SYNTHETIC: GAMEMD 0x006E5960 SYMBOL
-// _$E122
-double DAT_00B0E7C0 = DAT_007E1728 * DAT_007F4548;
-
-// SYNTHETIC: GAMEMD 0x006E5980 SYMBOL
-// _$E125
-double DAT_00B0E798 = DAT_007E1730 * DAT_007F4548;
-
-// SYNTHETIC: GAMEMD 0x006E59A0 SYMBOL
-// _$E128
-int DAT_00B0E810 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B0E798 - DAT_00B0E7C0) * DAT_00B0E7B8));
-
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1740;
-
-// SYNTHETIC: GAMEMD 0x006E59E0 SYMBOL
-// _$E131
-double DAT_00B0E7C8 = FUN_004CADE0(DAT_00B0E810 * DAT_007E1740);
-
-// SYNTHETIC: GAMEMD 0x006E5A10 SYMBOL
-// _$E134
-double DAT_00B0E7E0 = FUN_004CADE0((DAT_00B0E810 * 2) / DAT_00B0E7B8);
-
-// SYNTHETIC: GAMEMD 0x006E5A40 SYMBOL
-// _$E137
-int DAT_00B0E804 = (int)(DAT_00B0E810 * 4 + DAT_007E1738);
-
-struct TagZero2S { short a, b; TagZero2S() : a(0), b(0) {} };
-struct TagZero3I { int a, b, c; TagZero3I() : a(0), b(0), c(0) {} };
-struct TagInit128 { int a, b, c; TagInit128() { c = 0; a = 128; b = 128; } };
-struct TagZero4I { int a, b, c, d; TagZero4I() : a(0), b(0), c(0), d(0) {} };
-
-// SYNTHETIC: GAMEMD 0x006E5A70 SYMBOL
-// _$E140
-TagZero2S DAT_00B0E7B0;
-
-// SYNTHETIC: GAMEMD 0x006E5A80 SYMBOL
-// _$E143
-TagZero3I DAT_00B0E7D0;
-
-// SYNTHETIC: GAMEMD 0x006E5AA0 SYMBOL
-// _$E146
-TagInit128 DAT_00B0E7F8;
-
-// SYNTHETIC: GAMEMD 0x006E5AC0 SYMBOL
-// _$E149
-TagZero4I DAT_00B0E7A0;

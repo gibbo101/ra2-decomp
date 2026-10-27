@@ -5,6 +5,7 @@
 
 #define INCLUDE_COM
 #include "always.h"
+#include "geometry.h"
 #include "smudge.h"
 #include "_map.h"
 #include "ccini.h"
@@ -15,6 +16,35 @@
 #include "tracker.h"
 #include "vector.h"
 #include <cstdio>
+
+// SYNTHETIC: GAMEMD 0x006B4840 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x006B4870 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x006B4890 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x006B48B0 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x006B48D0 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x006B48F0 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x006B4910 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x006B4950 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x006B4980 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x006B49B0 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x006B49E0 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x006B49F0 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x006B4A10 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x006B4A30 SYMBOL
+// _$E47
 
 // FUNCTION: GAMEMD 0x006B4A50
 SmudgeClass::SmudgeClass(SmudgeTypeClass const * type, Coord const & pos, HousesType house) :

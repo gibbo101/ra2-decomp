@@ -5,6 +5,7 @@
 
 #define INCLUDE_COM
 #include "always.h"
+#include "geometry.h"
 #include "bullet.h"
 #include "_convert.h"
 #include "_map.h"
@@ -47,6 +48,35 @@
 #include "warhead.h"
 #include "weapon.h"
 
+// SYNTHETIC: GAMEMD 0x004660D0 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x00466100 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x00466120 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x00466140 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x00466160 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x00466180 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x004661A0 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x004661E0 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x00466210 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x00466240 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x00466270 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x00466280 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x004662A0 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x004662C0 SYMBOL
+// _$E47
+
 DynamicVectorClass<BulletClass *> BulletClass::ScalableBullets;
 
 extern Cell DAT_0089DDF0;
@@ -56,9 +86,9 @@ extern ULONG COMRefCount;
 
 
 // SYNTHETIC: GAMEMD 0x004662E0 SYMBOL
-// _$E120
+// _$E165
 // SYNTHETIC: GAMEMD 0x00466320 SYMBOL
-// _$E117
+// _$E162
 
 // FUNCTION: GAMEMD 0x00466380
 BulletClass::BulletClass(void) :
@@ -146,7 +176,7 @@ Cell const * BulletClass::Occupy_List(bool) const
 }
 
 // SYNTHETIC: GAMEMD 0x004666B0 SYMBOL
-// _$E123
+// _$E41
 
 // FUNCTION: GAMEMD 0x004666C0
 bool BulletClass::Mark(MarkType mark)

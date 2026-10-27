@@ -25,6 +25,9 @@
 #include <cstdio>
 #include <math.h>
 
+// SYNTHETIC: GAMEMD 0x005D37C0 SYMBOL
+// _$E2
+
 void FUN_00778170(void);
 void FUN_00778180(void);
 void FUN_007781A0(void);

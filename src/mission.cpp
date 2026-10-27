@@ -449,6 +449,3 @@ int MissionClass::Mission_Timer_Value(void) const
 
 // SYNTHETIC: GAMEMD 0x005B3A60
 // ??_GMissionClass@@UAEPAXI@Z
-
-// SYNTHETIC: GAMEMD 0x005B3AA0 SYMBOL
-// _$E10

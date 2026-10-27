@@ -14,6 +14,9 @@
 #include <cstdio>
 #include <cstring>
 
+// SYNTHETIC: GAMEMD 0x0048B0C0 SYMBOL
+// _$E3
+
 // FUNCTION: GAMEMD 0x0048B0E0
 CommBufferClass::CommBufferClass(int numsend, int numreceive, int maxlen,
 	int extralen)

@@ -51,6 +51,9 @@
 #include "coord.h"
 #include <math.h>
 
+// SYNTHETIC: GAMEMD 0x00421C90 SYMBOL
+// _$E2
+
 extern DynamicVectorClass<AnimClass *> DAT_00A83E00;
 extern const double DAT_007E3308;
 extern const double DAT_007E3310;
@@ -973,17 +976,3 @@ RTTIType AnimClass::Fetch_RTTI(void) const
 // TEMPLATE: GAMEMD 0x00426630
 // ?Value@?$CDTimerClass@VFrameTimerClass@@@@QBEHXZ
 template class CDTimerClass<FrameTimerClass>;
-
-extern int DAT_0089A1C8;
-extern int DAT_0089A1CC;
-extern int DAT_0089A1D0;
-extern int DAT_0089A1D4;
-
-// FUNCTION: GAMEMD 0x00426650
-void FUN_00426650(void)
-{
-	DAT_0089A1C8 = 0;
-	DAT_0089A1CC = 0;
-	DAT_0089A1D0 = 0;
-	DAT_0089A1D4 = 0;
-}

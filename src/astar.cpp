@@ -31,6 +31,9 @@
 
 #include <math.h>
 
+// SYNTHETIC: GAMEMD 0x00429570 SYMBOL
+// _$E2
+
 
 static unsigned int CellHeights[2000];
 unsigned int MapCellStride;

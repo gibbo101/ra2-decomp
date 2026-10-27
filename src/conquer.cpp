@@ -70,6 +70,9 @@
 #include <io.h>
 #include <share.h>
 
+// SYNTHETIC: GAMEMD 0x0048C690 SYMBOL
+// _$E2
+
 extern double __cdecl FUN_004CAC40(double);
 extern double __cdecl FUN_004CAD50(double);
 extern double __cdecl FUN_004CADE0(double);
@@ -807,15 +810,4 @@ void Print_MP_Stats(void)
 			fclose(file);
 		}
 	}
-}
-
-extern int DAT_0089E9C0, DAT_0089E9C4, DAT_0089E9C8, DAT_0089E9CC;
-
-// FUNCTION: GAMEMD 0x0048E270
-void Clear_Conquer_Counters(void)
-{
-	DAT_0089E9C0 = 0;
-	DAT_0089E9C4 = 0;
-	DAT_0089E9C8 = 0;
-	DAT_0089E9CC = 0;
 }

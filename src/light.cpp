@@ -5,6 +5,7 @@
 
 #define INCLUDE_COM
 #include "always.h"
+#include "geometry.h"
 #include "light.h"
 #include "_map.h"
 #include "_milsectmr.h"
@@ -20,15 +21,41 @@
 #include "tracker.h"
 #include "vector.h"
 
+// SYNTHETIC: GAMEMD 0x00554430 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x00554460 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x00554480 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x005544A0 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x005544C0 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x005544E0 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x00554500 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x00554540 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x00554570 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x005545A0 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x005545D0 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x00554600 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x00554620 SYMBOL
+// _$E49
 // SYNTHETIC: GAMEMD 0x00554640 SYMBOL
-// _$E125
+// _$E170
 // SYNTHETIC: GAMEMD 0x00554680 SYMBOL
-// _$E123
+// _$E168
 DynamicVectorClass<LightSourceClass *> LightSources;
 // SYNTHETIC: GAMEMD 0x005546C0 SYMBOL
-// _$E131
+// _$E176
 // SYNTHETIC: GAMEMD 0x00554700 SYMBOL
-// _$E128
+// _$E173
 DynamicVectorClass<LightSourceClass::PendingCellClass *> LightSourceClass::PendingCells;
 
 bool LightSourceClass::Recalc = true;
@@ -340,10 +367,6 @@ template class VectorClass<LightSourceClass::PendingCellClass *>;
 // ?ID@?$DynamicVectorClass@PAVPendingCellClass@LightSourceClass@@@@UAEHABQAVPendingCellClass@LightSourceClass@@@Z
 template class DynamicVectorClass<LightSourceClass::PendingCellClass *>;
 
-// SYNTHETIC: GAMEMD 0x005558C0 SYMBOL
-// _$E134
-const Rect RECT_NONE_2(0, 0, 0, 0);
-
 // SYNTHETIC: GAMEMD 0x00555780
 // ??_G?$VectorClass@PAVLightSourceClass@@@@UAEPAXI@Z
 // SYNTHETIC: GAMEMD 0x005557D0
@@ -352,4 +375,3 @@ const Rect RECT_NONE_2(0, 0, 0, 0);
 // ??_G?$VectorClass@PAVPendingCellClass@LightSourceClass@@@@UAEPAXI@Z
 // SYNTHETIC: GAMEMD 0x00555870
 // ??_G?$DynamicVectorClass@PAVPendingCellClass@LightSourceClass@@@@UAEPAXI@Z
-

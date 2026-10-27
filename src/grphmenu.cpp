@@ -16,6 +16,9 @@
 #include "ownrdraw.h"
 #include "theme.h"
 
+// SYNTHETIC: GAMEMD 0x004F1B60 SYMBOL
+// _$E2
+
 
 GraphicMenu * _Graphic_Menu(INIClass & ini, Wstring const & name);
 

@@ -5,6 +5,7 @@
 
 #define INCLUDE_COM
 #include "always.h"
+#include "geometry.h"
 #include "trigtype.h"
 #include "_map.h"
 #include "_rules.h"
@@ -22,6 +23,35 @@
 #include "tracker.h"
 #include "persist.hh"
 #include <cstdio>
+
+// SYNTHETIC: GAMEMD 0x00726A70 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x00726AA0 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x00726AC0 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x00726AE0 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x00726B00 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x00726B20 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x00726B40 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x00726B80 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x00726BB0 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x00726BE0 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x00726C10 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x00726C20 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x00726C40 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x00726C60 SYMBOL
+// _$E50
 
 static char const * PersistentName[3] = {
 	"Volatile",

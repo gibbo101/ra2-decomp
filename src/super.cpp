@@ -44,10 +44,6 @@
 extern Cell DAT_00B0C038[9];
 extern wchar_t DAT_00887734[];
 extern int DAT_008809A0;
-extern int DAT_00B0C098;
-extern int DAT_00B0C09C;
-extern int DAT_00B0C0A0;
-extern int DAT_00B0C0A4;
 
 class LightningStorm
 {
@@ -730,11 +726,6 @@ done:
 template class DynamicVectorClass<SuperClass *>;
 template class TPoint3D<int>;
 
-// FUNCTION: GAMEMD 0x006CE360
-void FUN_006CE360(void)
-{
-	DAT_00B0C098 = 0;
-	DAT_00B0C09C = 0;
-	DAT_00B0C0A0 = 0;
-	DAT_00B0C0A4 = 0;
-}
+// TEMPLATE: GAMEMD 0x006CE270
+// ?_AddRef@?$_com_ptr_t@V?$_com_IIID@UILocomotion@@$1?_GUID_070f3290_9841_11d1_b709_00a024ddafd1@@3U__s_GUID@@A@@@@AAEXXZ
+template class _com_ptr_t<_com_IIID<ILocomotion, &__uuidof(ILocomotion)> >;

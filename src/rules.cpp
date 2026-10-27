@@ -1278,6 +1278,3 @@ DynamicVectorClass<SmudgeTypeClass const *> * Copy_Smudge_Vector(DynamicVectorCl
 {
 	return new DynamicVectorClass<SmudgeTypeClass const *>(src);
 }
-
-// SYNTHETIC: GAMEMD 0x0067C480 SYMBOL
-// _$E10

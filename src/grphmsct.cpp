@@ -11,6 +11,9 @@
 #include "ini.h"
 #include "keyboard.h"
 
+// SYNTHETIC: GAMEMD 0x004F3B60 SYMBOL
+// _$E2
+
 unsigned int __fastcall GM_Build_Key(Wstring const & list);
 
 // FUNCTION: GAMEMD 0x004F3B80
@@ -151,6 +154,3 @@ bool GraphicMenuShortcutItem::Is_Input_Key(KeyNumType key)
 // TEMPLATE: GAMEMD 0x004F4000
 // ??F?$VectorCursor@IV?$DynamicVectorClass@I@@@@UAEAAV0@XZ
 template class VectorCursor<unsigned int, DynamicVectorClass<unsigned int> >;
-
-// SYNTHETIC: GAMEMD 0x004F4010 SYMBOL
-// _$E2

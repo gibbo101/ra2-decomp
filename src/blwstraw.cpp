@@ -4,8 +4,6 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
-#include "geometry.h"
-#include "rect.h"
 #include "blwstraw.h"
 #include "assert.h"
 #include <cstring>
@@ -65,33 +63,3 @@ void BlowStraw::Key(void const * key, int length)
 		BF->Submit_Key(key, length);
 	}
 }
-
-// SYNTHETIC: GAMEMD 0x00438340 SYMBOL
-// _$E2
-// SYNTHETIC: GAMEMD 0x00438370 SYMBOL
-// _$E5
-// SYNTHETIC: GAMEMD 0x00438390 SYMBOL
-// _$E8
-// SYNTHETIC: GAMEMD 0x004383B0 SYMBOL
-// _$E11
-// SYNTHETIC: GAMEMD 0x004383D0 SYMBOL
-// _$E14
-// SYNTHETIC: GAMEMD 0x004383F0 SYMBOL
-// _$E17
-// SYNTHETIC: GAMEMD 0x00438410 SYMBOL
-// _$E20
-// SYNTHETIC: GAMEMD 0x00438450 SYMBOL
-// _$E23
-// SYNTHETIC: GAMEMD 0x00438480 SYMBOL
-// _$E26
-// SYNTHETIC: GAMEMD 0x004384B0 SYMBOL
-// _$E29
-// SYNTHETIC: GAMEMD 0x004384E0 SYMBOL
-// _$E32
-// SYNTHETIC: GAMEMD 0x004384F0 SYMBOL
-// _$E35
-// SYNTHETIC: GAMEMD 0x00438510 SYMBOL
-// _$E38
-// SYNTHETIC: GAMEMD 0x00438530 SYMBOL
-// _$E41
-

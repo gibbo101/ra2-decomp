@@ -5,6 +5,7 @@
 
 #define INCLUDE_COM
 #include "always.h"
+#include "geometry.h"
 #include "cell.h"
 #include "_alpha.h"
 #include "_bench.h"
@@ -64,6 +65,35 @@
 #include "bench.hh"
 #include "ramp.hh"
 #include "tube.hh"
+
+// SYNTHETIC: GAMEMD 0x0047B150 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x0047B180 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x0047B1A0 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x0047B1C0 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x0047B1E0 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x0047B200 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x0047B220 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x0047B260 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x0047B290 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x0047B2C0 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x0047B2F0 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x0047B300 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x0047B320 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x0047B340 SYMBOL
+// _$E41
 
 void __cdecl FUN_004068E0(char const * format, ...);
 
@@ -2991,7 +3021,3 @@ template class VectorClass<ObjectClass *>;
 // TEMPLATE: GAMEMD 0x00488080
 // ??0?$VectorClass@PAVFoggedObjectClass@@@@QAE@HPBQAVFoggedObjectClass@@@Z
 template class VectorClass<FoggedObjectClass *>;
-
-// SYNTHETIC: GAMEMD 0x004880D0 SYMBOL
-// _$E223
-Rect DAT_0089E7C8(0, 0, 0, 0);

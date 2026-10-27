@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
 
 #include "carry.h"
 
@@ -12,6 +13,19 @@
 #include "houstype.h"
 #include "infantry.h"
 #include "unit.h"
+
+// SYNTHETIC: GAMEMD 0x00473540 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x00473570 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x00473590 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x004735B0 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x004735D0 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x004735F0 SYMBOL
+// _$E17
 
 // FUNCTION: GAMEMD 0x00473750
 CarryoverClass::CarryoverClass(TechnoClass * techno) :

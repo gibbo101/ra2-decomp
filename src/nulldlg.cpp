@@ -31,7 +31,8 @@
 #include "wincomm.h"
 #include <ctime>
 
-
+// SYNTHETIC: GAMEMD 0x005EF2D0 SYMBOL
+// _$E9
 // SYNTHETIC: GAMEMD 0x005EF2F0 SYMBOL
 // _$E69
 // SYNTHETIC: GAMEMD 0x005EF320 SYMBOL
@@ -470,11 +471,6 @@ void Modem_Echo(char c)
 	}
 }
 
-// SYNTHETIC: GAMEMD 0x005F13B0 SYMBOL
-// _$E112
-const Rect RECT_NONE_2(0, 0, 0, 0);
-
 // TEMPLATE: GAMEMD 0x005F1390
 // ?Value@?$TTimerClass@VSystemTimerClass@@@@QBEHXZ
 template class TTimerClass<SystemTimerClass>;
-

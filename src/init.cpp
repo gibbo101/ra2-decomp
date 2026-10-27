@@ -140,6 +140,8 @@
 #include <ctime>
 #include <dos.h>
 
+// SYNTHETIC: GAMEMD 0x0052B7A0 SYMBOL
+// _$E2
 // SYNTHETIC: GAMEMD 0x0052B7C0 SYMBOL
 // _$E112
 // SYNTHETIC: GAMEMD 0x0052B7F0 SYMBOL
@@ -4465,18 +4467,4 @@ void __fastcall XMP_Init(unsigned long * number, unsigned long value, int precis
 void FUN_00538C10(void)
 {
 	XMP_Init(DAT_00A8F7F8, 0, 64);
-}
-
-extern int DAT_00A8F908;
-extern int DAT_00A8F90C;
-extern int DAT_00A8F910;
-extern int DAT_00A8F914;
-
-// FUNCTION: GAMEMD 0x00538C20
-void FUN_00538C20(void)
-{
-	DAT_00A8F908 = 0;
-	DAT_00A8F90C = 0;
-	DAT_00A8F910 = 0;
-	DAT_00A8F914 = 0;
 }

@@ -5,6 +5,7 @@
 
 #define INCLUDE_COM
 #include "always.h"
+#include "geometry.h"
 #include "ramfile.h"
 #include "radsite.h"
 #include "cell.h"
@@ -17,14 +18,43 @@
 #include "tracker.h"
 #include <cstring>
 
+// SYNTHETIC: GAMEMD 0x0065AF50 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x0065AF80 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x0065AFA0 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x0065AFC0 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x0065AFE0 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x0065B000 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x0065B020 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x0065B060 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x0065B090 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x0065B0C0 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x0065B0F0 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x0065B100 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x0065B120 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x0065B140 SYMBOL
+// _$E49
+
 namespace Unsorted { extern int CurrentFrame; }
 
 DynamicVectorClass<RadSiteClass *> RadSites;
 
 // SYNTHETIC: GAMEMD 0x0065B160 SYMBOL
-// _$E56
+// _$E101
 // SYNTHETIC: GAMEMD 0x0065B1A0 SYMBOL
-// _$E54
+// _$E99
 
 // FUNCTION: GAMEMD 0x0065B1E0
 RadSiteClass::RadSiteClass(void) :

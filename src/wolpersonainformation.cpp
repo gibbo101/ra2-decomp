@@ -8,6 +8,7 @@
 #include "cdfile.h"
 #include "ini.h"
 #include "geometry.h"
+#include "rect.h"
 #include "playerprofile.h"
 #include "rcptr.h"
 #include "wolopt.h"
@@ -15,6 +16,9 @@
 #include "stringtable.h"
 #include <time.h>
 #include <stdlib.h>
+
+// SYNTHETIC: GAMEMD 0x007784D0 SYMBOL
+// _$E46
 
 namespace fastmath { double __cdecl sqrt(double x); double __cdecl tan(double x); double __cdecl atan(double x); }
 wchar_t * __fastcall FUN_00735120(char const * text);
@@ -54,9 +58,9 @@ static inline int WOL_Int(INIClass & ini, Wstring const & section, char const * 
 // _$E43
 
 // SYNTHETIC: GAMEMD 0x007786E0 SYMBOL
-// _$E48
+// _$E51
 // SYNTHETIC: GAMEMD 0x00778700 SYMBOL
-// _$E46
+// _$E49
 Wstring DAT_00B73590("_Default_");
 
 // FUNCTION: GAMEMD 0x00778710

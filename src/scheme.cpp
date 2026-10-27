@@ -179,13 +179,3 @@ int Fetch_Scheme_Index_By_Name(char const * name, int intensity_levels)
 	}
 	return(-1);
 }
-
-struct SchemeQuad
-{
-	int A, B, C, D;
-	SchemeQuad(void) : A(0), B(0), C(0), D(0) {}
-};
-
-// SYNTHETIC: GAMEMD 0x0068CB10 SYMBOL
-// _$E4
-SchemeQuad SchemeQuadInstance;

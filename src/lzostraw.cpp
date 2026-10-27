@@ -90,12 +90,3 @@ int LZOStraw::Get(void * destbuf, int slen)
 
 // SYNTHETIC: GAMEMD 0x0055C990
 // ??_GLZOStraw@@UAEPAXI@Z
-
-struct DAT_00ABCD68_Type {
-	int A, B, C, D;
-	DAT_00ABCD68_Type() : A(0), B(0), C(0), D(0) {}
-};
-
-// SYNTHETIC: GAMEMD 0x0055C9E0 SYMBOL
-// _$E2
-DAT_00ABCD68_Type DAT_00ABCD68;

@@ -5,6 +5,7 @@
 
 #define INCLUDE_COM
 #include "always.h"
+#include "geometry.h"
 #include "vanimtype.h"
 #include "animtype.h"
 #include "ccfile.h"
@@ -19,6 +20,35 @@
 #include "tracker.h"
 #include "vector.h"
 #include "warhead.h"
+
+// SYNTHETIC: GAMEMD 0x0074AB70 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x0074ABA0 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x0074ABC0 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x0074ABE0 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x0074AC00 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x0074AC20 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x0074AC40 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x0074AC80 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x0074ACB0 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x0074ACE0 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x0074AD10 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x0074AD20 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x0074AD40 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x0074AD60 SYMBOL
+// _$E41
 
 // FUNCTION: GAMEMD 0x0074AD80
 VoxelAnimTypeClass::VoxelAnimTypeClass(char const * ininame) :

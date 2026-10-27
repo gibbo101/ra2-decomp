@@ -21,6 +21,8 @@
 #include <stddef.h>
 #include "stringtable.h"
 
+// SYNTHETIC: GAMEMD 0x005C94F0 SYMBOL
+// _$E41
 // SYNTHETIC: GAMEMD 0x005C9510 SYMBOL
 // _$E2
 // SYNTHETIC: GAMEMD 0x005C9540 SYMBOL
@@ -472,94 +474,3 @@ int __fastcall FUN_005CA110(int index)
 	}
 	return 0;
 }
-
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007EE6E8;
-namespace fastmath { double __cdecl sqrt(double x); }
-
-// SYNTHETIC: GAMEMD 0x005CA420 SYMBOL
-// _$E79
-double DAT_00ABFA20 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
-
-// SYNTHETIC: GAMEMD 0x005CA450 SYMBOL
-// _$E82
-double DAT_00ABFA70 = DAT_00ABFA20 / DAT_007EE6E8;
-
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007EE6F0;
-
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
-
-struct IntQuad {
-	int A, B, C, D;
-	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
-};
-
-struct Gray {
-	int A, B, C;
-	Gray() { C = 0; A = 128; B = 128; }
-};
-
-// SYNTHETIC: GAMEMD 0x005CA470 SYMBOL
-// _$E85
-double DAT_00ABFA58 = DAT_007E1718 / DAT_00ABFA70;
-
-// SYNTHETIC: GAMEMD 0x005CA490 SYMBOL
-// _$E88
-double DAT_00ABFA50 = DAT_007E1720 * DAT_007EE6F0;
-
-// SYNTHETIC: GAMEMD 0x005CA4B0 SYMBOL
-// _$E91
-double DAT_00ABFA28 = DAT_007E1728 * DAT_007EE6F0;
-
-// SYNTHETIC: GAMEMD 0x005CA4D0 SYMBOL
-// _$E94
-double DAT_00ABFA00 = DAT_007E1730 * DAT_007EE6F0;
-
-// SYNTHETIC: GAMEMD 0x005CA4F0 SYMBOL
-// _$E97
-int DAT_00ABFA78 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00ABFA00 - DAT_00ABFA28) * DAT_00ABFA20));
-
-// SYNTHETIC: GAMEMD 0x005CA530 SYMBOL
-// _$E100
-double DAT_00ABFA30 = FUN_004CADE0(DAT_00ABFA78 * DAT_007E1740);
-
-// SYNTHETIC: GAMEMD 0x005CA560 SYMBOL
-// _$E103
-double DAT_00ABFA48 = FUN_004CADE0((DAT_00ABFA78 * 2) / DAT_00ABFA20);
-
-// SYNTHETIC: GAMEMD 0x005CA590 SYMBOL
-// _$E106
-int DAT_00ABFA6C = (int)(DAT_00ABFA78 * 4 + DAT_007E1738);
-
-// SYNTHETIC: GAMEMD 0x005CA5C0 SYMBOL
-// _$E109
-ShortPair DAT_00ABFA18;
-
-// SYNTHETIC: GAMEMD 0x005CA5D0 SYMBOL
-// _$E112
-IntTriple DAT_00ABFA38;
-
-// SYNTHETIC: GAMEMD 0x005CA5F0 SYMBOL
-// _$E115
-Gray DAT_00ABFA60;
-
-// SYNTHETIC: GAMEMD 0x005CA610 SYMBOL
-// _$E118
-IntQuad DAT_00ABFA08;

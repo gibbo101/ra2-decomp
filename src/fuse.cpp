@@ -43,17 +43,3 @@ FuseResultType FuseClass::Fuse_Checkup(Coord const & newlocation)
 	}
 	return(FUSE_WAIT);
 }
-
-int DAT_008B3E78;
-int DAT_008B3E7C;
-int DAT_008B3E80;
-int DAT_008B3E84;
-
-// FUNCTION: GAMEMD 0x004E12B0
-void FUN_004E12B0(void)
-{
-	DAT_008B3E78 = 0;
-	DAT_008B3E7C = 0;
-	DAT_008B3E80 = 0;
-	DAT_008B3E84 = 0;
-}

@@ -4,8 +4,6 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
-#include "geometry.h"
-#include "rect.h"
 #include "getcpu.h"
 #include <cstdio>
 #include <cstring>
@@ -93,32 +91,3 @@ const char * FUN_004E62B0(void)
 	}
 	return "Unknown";
 }
-// SYNTHETIC: GAMEMD 0x004E62D0 SYMBOL
-// _$E2
-// SYNTHETIC: GAMEMD 0x004E6300 SYMBOL
-// _$E5
-// SYNTHETIC: GAMEMD 0x004E6320 SYMBOL
-// _$E8
-// SYNTHETIC: GAMEMD 0x004E6340 SYMBOL
-// _$E11
-// SYNTHETIC: GAMEMD 0x004E6360 SYMBOL
-// _$E14
-// SYNTHETIC: GAMEMD 0x004E6380 SYMBOL
-// _$E17
-// SYNTHETIC: GAMEMD 0x004E63A0 SYMBOL
-// _$E20
-// SYNTHETIC: GAMEMD 0x004E63E0 SYMBOL
-// _$E23
-// SYNTHETIC: GAMEMD 0x004E6410 SYMBOL
-// _$E26
-// SYNTHETIC: GAMEMD 0x004E6440 SYMBOL
-// _$E29
-// SYNTHETIC: GAMEMD 0x004E6470 SYMBOL
-// _$E32
-// SYNTHETIC: GAMEMD 0x004E6480 SYMBOL
-// _$E35
-// SYNTHETIC: GAMEMD 0x004E64A0 SYMBOL
-// _$E38
-// SYNTHETIC: GAMEMD 0x004E64C0 SYMBOL
-// _$E41
-

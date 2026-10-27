@@ -838,7 +838,3 @@ template class BlitPlain<unsigned char>;
 template class BlitPlain<unsigned short>;
 template class BlitTrans<unsigned char>;
 template class BlitTrans<unsigned short>;
-
-// SYNTHETIC: GAMEMD 0x007BC950 SYMBOL
-// _$E24
-Rect DAT_00B78188(0, 0, 0, 0);

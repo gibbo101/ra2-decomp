@@ -106,17 +106,3 @@ bool CounterClass::Reserve(int index)
 
 // SYNTHETIC: GAMEMD 0x0049FCE0
 // ??_GCounterClass@@UAEPAXI@Z
-
-int DAT_0089F768;
-int DAT_0089F76C;
-int DAT_0089F770;
-int DAT_0089F774;
-
-// FUNCTION: GAMEMD 0x0049FD30
-void FUN_0049FD30(void)
-{
-	DAT_0089F768 = 0;
-	DAT_0089F76C = 0;
-	DAT_0089F770 = 0;
-	DAT_0089F774 = 0;
-}

@@ -12,6 +12,9 @@
 #include "xmouse.h"
 #include <commctrl.h>
 
+// SYNTHETIC: GAMEMD 0x00776210 SYMBOL
+// _$E3
+
 char *TreeView_Text;
 
 HWND TreeView_LastHandle;
@@ -649,18 +652,4 @@ void Prefetch_Audio_Buffer(char *src, int size)
 			}
 		}
 	}
-}
-
-int DAT_00B730B8;
-int DAT_00B730BC;
-int DAT_00B730C0;
-int DAT_00B730C4;
-
-// FUNCTION: GAMEMD 0x007771B0
-void Reset_Winfix_Globals(void)
-{
-	DAT_00B730B8 = 0;
-	DAT_00B730BC = 0;
-	DAT_00B730C0 = 0;
-	DAT_00B730C4 = 0;
 }

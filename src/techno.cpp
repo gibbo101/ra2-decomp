@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
 #include "techno.h"
 #include "_bench.h"
 #include "_convert.h"
@@ -98,18 +99,43 @@
 #include "bench.hh"
 #include "tube.hh"
 
+// SYNTHETIC: GAMEMD 0x006F28A0 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x006F28D0 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x006F28F0 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x006F2910 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x006F2930 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x006F2950 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x006F2970 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x006F29B0 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x006F29E0 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x006F2A10 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x006F2A40 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x006F2A50 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x006F2A70 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x006F2A90 SYMBOL
+// _$E41
+
 namespace Unsorted { extern int CurrentFrame; }
 extern Coord DAT_00B0EA90;
 
 template class TPoint3D<int>;
 template class IndexClass<int, StaticBufferClass::Entry *>;
 
-// TEMPLATE: GAMEMD 0x006CE270
-// ?_AddRef@?$_com_ptr_t@V?$_com_IIID@UILocomotion@@$1?_GUID_070f3290_9841_11d1_b709_00a024ddafd1@@3U__s_GUID@@A@@@@AAEXXZ
-template class _com_ptr_t<_com_IIID<ILocomotion, &__uuidof(ILocomotion)> >;
-
 // SYNTHETIC: GAMEMD 0x006F2AD0 SYMBOL
-// _$E233
+// _$E278
 CDTimerClass<FrameTimerClass> TechnoClass::ActionLineTimer;
 
 // FUNCTION: GAMEMD 0x006F2AF0
@@ -6569,37 +6595,3 @@ void TechnoClass::AddPassenger(FootClass * passenger)
 
 // TEMPLATE: GAMEMD 0x00710890
 // ?Binary_Search@@YIPAUNodeElement@?$IndexClass@HPAUEntry@StaticBufferClass@@@@PAU12@HABU12@@Z
-
-#include "geometry.h"
-
-// SYNTHETIC: GAMEMD 0x007108E0 SYMBOL
-// _$E245
-// SYNTHETIC: GAMEMD 0x00710910 SYMBOL
-// _$E248
-// SYNTHETIC: GAMEMD 0x00710930 SYMBOL
-// _$E251
-// SYNTHETIC: GAMEMD 0x00710950 SYMBOL
-// _$E254
-// SYNTHETIC: GAMEMD 0x00710970 SYMBOL
-// _$E257
-// SYNTHETIC: GAMEMD 0x00710990 SYMBOL
-// _$E260
-// SYNTHETIC: GAMEMD 0x007109B0 SYMBOL
-// _$E263
-// SYNTHETIC: GAMEMD 0x007109F0 SYMBOL
-// _$E266
-// SYNTHETIC: GAMEMD 0x00710A20 SYMBOL
-// _$E269
-// SYNTHETIC: GAMEMD 0x00710A50 SYMBOL
-// _$E272
-// SYNTHETIC: GAMEMD 0x00710A80 SYMBOL
-// _$E275
-// SYNTHETIC: GAMEMD 0x00710A90 SYMBOL
-// _$E278
-// SYNTHETIC: GAMEMD 0x00710AB0 SYMBOL
-// _$E281
-
-// SYNTHETIC: GAMEMD 0x00710AD0 SYMBOL
-// _$E284
-const Rect RECT_NONE_2(0, 0, 0, 0);
-

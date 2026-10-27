@@ -12,6 +12,9 @@
 #define ABUFFER_MAX    0x8000
 #define ABUFFER_BPP    2
 
+// SYNTHETIC: GAMEMD 0x00410CC0 SYMBOL
+// _$E2
+
 // FUNCTION: GAMEMD 0x00410CE0
 ABuffer::ABuffer(Rect rect) :
 	BufferWidth(rect.Width),
@@ -250,15 +253,3 @@ unsigned int ABuffer::Get_Buffer_Offset(Point2D pos)
 // BSurface::Stride
 // SYNTHETIC: GAMEMD 0x00411650
 // ??_GBSurface@@UAEPAXI@Z
-
-struct Dat4 { int a, b, c, d; };
-extern Dat4 DAT_00887748;
-
-// FUNCTION: GAMEMD 0x00411680
-void FUN_00411680(void)
-{
-	DAT_00887748.a = 0;
-	DAT_00887748.b = 0;
-	DAT_00887748.c = 0;
-	DAT_00887748.d = 0;
-}

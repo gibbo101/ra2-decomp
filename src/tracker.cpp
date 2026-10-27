@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
 
 #include "tracker.h"
 
@@ -24,44 +25,72 @@
 
 #include <typeinfo>
 
+// SYNTHETIC: GAMEMD 0x007250C0 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x007250F0 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x00725110 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x00725130 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x00725150 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x00725170 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x00725190 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x007251D0 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x00725200 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x00725230 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x00725260 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x00725270 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x00725290 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x007252B0 SYMBOL
+// _$E47
 // SYNTHETIC: GAMEMD 0x007252D0 SYMBOL
-// _$E89
+// _$E134
 DynamicVectorClass<AbstractClass *> ObjectPtrTracker;
 
 // SYNTHETIC: GAMEMD 0x00725310 SYMBOL
-// _$E87
+// _$E132
 
 // SYNTHETIC: GAMEMD 0x00725350 SYMBOL
-// _$E94
+// _$E139
 DynamicVectorClass<AbstractClass *> AbstractTypePtrTracker;
 
 // SYNTHETIC: GAMEMD 0x00725390 SYMBOL
-// _$E92
+// _$E137
 
 // SYNTHETIC: GAMEMD 0x007253D0 SYMBOL
-// _$E99
+// _$E144
 DynamicVectorClass<AbstractClass *> TagPtrTracker;
 
 // SYNTHETIC: GAMEMD 0x00725410 SYMBOL
-// _$E97
+// _$E142
 
 // SYNTHETIC: GAMEMD 0x00725450 SYMBOL
-// _$E104
+// _$E149
 DynamicVectorClass<AbstractClass *> TriggerPtrTracker;
 
 // SYNTHETIC: GAMEMD 0x00725490 SYMBOL
-// _$E102
+// _$E147
 
 // SYNTHETIC: GAMEMD 0x007254D0 SYMBOL
-// _$E109
+// _$E154
 DynamicVectorClass<AbstractClass *> AnimPtrTracker;
 
 // SYNTHETIC: GAMEMD 0x00725510 SYMBOL
-// _$E107
+// _$E152
 
 // SYNTHETIC: GAMEMD 0x00725550 SYMBOL
-// _$E114
+// _$E159
 DynamicVectorClass<AbstractClass *> FactoryPtrTracker;
 
 // SYNTHETIC: GAMEMD 0x00725590 SYMBOL
-// _$E112
+// _$E157

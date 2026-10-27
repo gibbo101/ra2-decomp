@@ -5,6 +5,7 @@
 
 #define INCLUDE_COM
 #include "always.h"
+#include "geometry.h"
 #include "partsys.h"
 #include "_map.h"
 #include "_rtti.h"
@@ -27,6 +28,35 @@
 #include "tracker.h"
 #include "vector.h"
 #include "wave.h"
+
+// SYNTHETIC: GAMEMD 0x0062DA40 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x0062DA70 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x0062DA90 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x0062DAB0 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x0062DAD0 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x0062DAF0 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x0062DB10 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x0062DB50 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x0062DB80 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x0062DBB0 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x0062DBE0 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x0062DBF0 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x0062DC10 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x0062DC30 SYMBOL
+// _$E47
 
 static inline void _Add_System(ParticleSystemClass * system)
 {
@@ -505,6 +535,3 @@ ObjectTypeClass const * ParticleSystemClass::Class_Of(void) const
 // TEMPLATE: GAMEMD 0x006302A0
 // ??0?$VectorClass@PAVParticleClass@@@@QAE@HPBQAVParticleClass@@@Z
 template class DynamicVectorClass<ParticleClass *>;
-
-// SYNTHETIC: GAMEMD 0x006302F0 SYMBOL
-// _$E2

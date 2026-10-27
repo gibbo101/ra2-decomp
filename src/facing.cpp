@@ -7,6 +7,9 @@
 #include "facing.h"
 #include <math.h>
 
+// SYNTHETIC: GAMEMD 0x004C81D0 SYMBOL
+// _$E45
+
 namespace fastmath { double __cdecl sqrt(double x); double __cdecl tan(double x); double __cdecl atan(double x); }
 extern const double DAT_007E1708;
 extern const double DAT_007E1710;
@@ -18,7 +21,6 @@ extern const double DAT_007E1738;
 extern const double DAT_007E1740;
 extern const double DAT_007E8828;
 extern const double DAT_007E8830;
-extern const double DAT_007E8890;
 
 // SYNTHETIC: GAMEMD 0x004C81F0 SYMBOL
 // _$E2
@@ -401,66 +403,3 @@ void FacingClass::Set_ROT(int rate)
 {
 	ROT.From_Dir256((Dir256)MIN(rate, DIR_S - 1));
 }
-
-// SYNTHETIC: GAMEMD 0x004C96A0 SYMBOL
-// _$E48
-double DAT_008B3AD0 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
-
-// SYNTHETIC: GAMEMD 0x004C96D0 SYMBOL
-// _$E51
-double DAT_008B3B20 = DAT_008B3AD0 / DAT_007E8890;
-
-// SYNTHETIC: GAMEMD 0x004C96F0 SYMBOL
-// _$E54
-double DAT_008B3B08 = DAT_007E1718 / DAT_008B3B20;
-
-extern const double DAT_007E8898;
-
-// SYNTHETIC: GAMEMD 0x004C9710 SYMBOL
-// _$E57
-double DAT_008B3B00 = DAT_007E1720 * DAT_007E8898;
-
-// SYNTHETIC: GAMEMD 0x004C9730 SYMBOL
-// _$E60
-double DAT_008B3AD8 = DAT_007E1728 * DAT_007E8898;
-
-// SYNTHETIC: GAMEMD 0x004C9750 SYMBOL
-// _$E63
-double DAT_008B3AB0 = DAT_007E1730 * DAT_007E8898;
-
-// SYNTHETIC: GAMEMD 0x004C9770 SYMBOL
-// _$E66
-int DAT_008B3B28 = (int)(fastmath::tan(DAT_008B3AB0 - DAT_008B3AD8) * DAT_007E1738 * DAT_008B3AD0);
-
-// SYNTHETIC: GAMEMD 0x004C97B0 SYMBOL
-// _$E69
-double DAT_008B3AE0 = fastmath::atan(DAT_008B3B28 * DAT_007E1740);
-
-// SYNTHETIC: GAMEMD 0x004C97E0 SYMBOL
-// _$E72
-double DAT_008B3AF8 = fastmath::atan((DAT_008B3B28 * 2) / DAT_008B3AD0);
-
-// SYNTHETIC: GAMEMD 0x004C9810 SYMBOL
-// _$E75
-int DAT_008B3B1C = (int)(DAT_008B3B28 * 4 + DAT_007E1738);
-
-struct FacingShortPair2 { short a; short b; FacingShortPair2(void) { a = 0; b = 0; } };
-struct FacingIntTriple2 { int a; int b; int c; FacingIntTriple2(void) { a = 0; b = 0; c = 0; } };
-struct FacingIntQuad { int a; int b; int c; int d; FacingIntQuad(void) { a = 0; b = 0; c = 0; d = 0; } };
-struct FacingInit80 { int a; int b; int c; FacingInit80(void) { c = 0; a = 0x80; b = 0x80; } };
-
-// SYNTHETIC: GAMEMD 0x004C9840 SYMBOL
-// _$E78
-FacingShortPair2 DAT_008B3AC8;
-
-// SYNTHETIC: GAMEMD 0x004C9850 SYMBOL
-// _$E81
-FacingIntTriple2 DAT_008B3AE8;
-
-// SYNTHETIC: GAMEMD 0x004C9870 SYMBOL
-// _$E84
-FacingInit80 DAT_008B3B10;
-
-// SYNTHETIC: GAMEMD 0x004C9890 SYMBOL
-// _$E87
-FacingIntQuad DAT_008B3AB8;

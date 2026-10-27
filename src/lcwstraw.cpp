@@ -7,7 +7,6 @@
 #include "lcwstraw.h"
 #include "assert.h"
 #include "lcw.h"
-#include "rect.h"
 #include <cstring>
 
 // FUNCTION: GAMEMD 0x005523E0
@@ -173,6 +172,3 @@ unsigned long __cdecl LCW_Uncompress (void * source, void * dest, unsigned long 
 }
 
 }
-
-// SYNTHETIC: GAMEMD 0x00552830 SYMBOL
-// _$E2

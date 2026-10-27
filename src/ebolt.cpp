@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
 #include "ebolt.h"
 #include "_rect.h"
 #include "_rules.h"
@@ -20,6 +21,35 @@
 #include "unit.h"
 #include "xsurface.h"
 
+// SYNTHETIC: GAMEMD 0x004C1B80 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x004C1BB0 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x004C1BD0 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x004C1BF0 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x004C1C10 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x004C1C30 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x004C1C50 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x004C1C90 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x004C1CC0 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x004C1CF0 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x004C1D20 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x004C1D30 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x004C1D50 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x004C1D70 SYMBOL
+// _$E42
+
 namespace Randomizer { extern Random2Class Global; }
 
 struct FileSystem {
@@ -29,9 +59,9 @@ struct FileSystem {
 DynamicVectorClass<EBolt *> EBoltArray;
 
 // SYNTHETIC: GAMEMD 0x004C1D90 SYMBOL
-// _$E58
+// _$E103
 // SYNTHETIC: GAMEMD 0x004C1DD0 SYMBOL
-// _$E56
+// _$E101
 
 // FUNCTION: GAMEMD 0x004C1E10
 EBolt::EBolt(void)

@@ -4,9 +4,40 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
+#include "rect.h"
 #include "event.h"
 #include "dbgprint.h"
 #include "globals.h"
+
+// SYNTHETIC: GAMEMD 0x004C6360 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x004C6390 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x004C63B0 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x004C63D0 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x004C63F0 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x004C6410 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x004C6430 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x004C6470 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x004C64A0 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x004C64D0 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x004C6500 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x004C6510 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x004C6530 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x004C6550 SYMBOL
+// _$E41
 
 // FUNCTION: GAMEMD 0x004C65A0
 EventClass::EventClass(int index, SpecialClass data)
@@ -290,11 +321,3 @@ EventClass::EventClass(int index, IPXAddressClass & addr, signed char value)
 		Frame = ::Frame;
 	}
 }
-
-// SYNTHETIC: GAMEMD 0x004C81D0 SYMBOL
-// _$E4
-struct ZeroQuad {
-	int A, B, C, D;
-	ZeroQuad(void) : A(0), B(0), C(0), D(0) {}
-};
-ZeroQuad DAT_008B3A08;

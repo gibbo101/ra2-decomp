@@ -11,6 +11,9 @@
 #define ZBUFFER_COLOR  0xFFFF
 #define ZBUFFER_BPP    2
 
+// SYNTHETIC: GAMEMD 0x007BC950 SYMBOL
+// _$E2
+
 // FUNCTION: GAMEMD 0x007BC970
 ZBuffer::ZBuffer(Rect rect) :
 	BufferWidth(rect.Width),

@@ -44,6 +44,8 @@
 #include "mph.hh"
 #include <windef.h>
 
+// SYNTHETIC: GAMEMD 0x00488F70 SYMBOL
+// _$E41
 // SYNTHETIC: GAMEMD 0x00488F90 SYMBOL
 // _$E2
 // SYNTHETIC: GAMEMD 0x00488FC0 SYMBOL
@@ -350,6 +352,3 @@ template class DynamicVectorClass<DamageGroup *>;
 // TEMPLATE: GAMEMD 0x0048B070
 // ??0?$VectorClass@PAUDamageGroup@@@@QAE@HPBQAUDamageGroup@@@Z
 template class VectorClass<DamageGroup *>;
-
-// SYNTHETIC: GAMEMD 0x0048B0C0 SYMBOL
-// _$E41

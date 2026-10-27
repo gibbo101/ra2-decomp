@@ -143,6 +143,3 @@ void GraphicMenuImageItem::Action(MSEngine * engine)
 
 // SYNTHETIC: GAMEMD 0x004F3840
 // ??_GGraphicMenuImageItem@@UAEPAXI@Z
-
-// SYNTHETIC: GAMEMD 0x004F3890 SYMBOL
-// _$E2

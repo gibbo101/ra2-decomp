@@ -40,6 +40,9 @@
 #define NUMFAMENAMES				9
 #define MAX_FAMENAME_LENGTH	104
 
+// SYNTHETIC: GAMEMD 0x0068CB10 SYMBOL
+// _$E41
+
 bool StillUpdating;
 
 // SYNTHETIC: GAMEMD 0x0068CB30 SYMBOL
@@ -783,89 +786,3 @@ ScoreAnimClass::ScoreAnimClass(int x, int y, void const * data) :
 // TEMPLATE: GAMEMD 0x00691160
 // ?Add@?$DynamicVectorClass@PAVSfxEntry@@@@QAE_NABQAVSfxEntry@@@Z
 template class DynamicVectorClass<SfxEntry *>;
-
-extern double __cdecl FUN_004CAC40(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007F0F38;
-
-// SYNTHETIC: GAMEMD 0x006911B0 SYMBOL
-// _$E109
-double DAT_00B055C8 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2.0);
-
-// SYNTHETIC: GAMEMD 0x006911E0 SYMBOL
-// _$E112
-double DAT_00B05618 = DAT_00B055C8 / DAT_007F0F38;
-
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007F0F40;
-
-struct ScoreShortPair {
-	unsigned short A, B;
-	ScoreShortPair() { A = 0; B = 0; }
-};
-
-struct ScoreIntTriple {
-	int A, B, C;
-	ScoreIntTriple() { A = 0; B = 0; C = 0; }
-};
-
-struct ScoreIntQuad {
-	int A, B, C, D;
-	ScoreIntQuad() { A = 0; B = 0; C = 0; D = 0; }
-};
-
-// SYNTHETIC: GAMEMD 0x00691200 SYMBOL
-// _$E115
-double DAT_00B05600 = DAT_007E1718 / DAT_00B05618;
-
-// SYNTHETIC: GAMEMD 0x00691220 SYMBOL
-// _$E118
-double DAT_00B055F8 = DAT_007E1720 * DAT_007F0F40;
-
-// SYNTHETIC: GAMEMD 0x00691240 SYMBOL
-// _$E121
-double DAT_00B055D0 = DAT_007E1728 * DAT_007F0F40;
-
-// SYNTHETIC: GAMEMD 0x00691260 SYMBOL
-// _$E124
-double DAT_00B055A8 = DAT_007E1730 * DAT_007F0F40;
-
-// SYNTHETIC: GAMEMD 0x00691280 SYMBOL
-// _$E127
-int DAT_00B05620 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B055A8 - DAT_00B055D0) * DAT_00B055C8));
-
-// SYNTHETIC: GAMEMD 0x006912C0 SYMBOL
-// _$E130
-double DAT_00B055D8 = FUN_004CADE0(DAT_00B05620 * DAT_007E1740);
-
-// SYNTHETIC: GAMEMD 0x006912F0 SYMBOL
-// _$E133
-double DAT_00B055F0 = FUN_004CADE0((DAT_00B05620 * 2) / DAT_00B055C8);
-
-// SYNTHETIC: GAMEMD 0x00691320 SYMBOL
-// _$E136
-int DAT_00B05614 = (int)(DAT_00B05620 * 4 + DAT_007E1738);
-
-// SYNTHETIC: GAMEMD 0x00691350 SYMBOL
-// _$E139
-ScoreShortPair DAT_00B055C0;
-
-// SYNTHETIC: GAMEMD 0x00691360 SYMBOL
-// _$E142
-ScoreIntTriple DAT_00B055E0;
-
-// SYNTHETIC: GAMEMD 0x00691380 SYMBOL
-// _$E145
-Coord DAT_00B05608(128, 128, 0);
-
-// SYNTHETIC: GAMEMD 0x006913A0 SYMBOL
-// _$E148
-ScoreIntQuad DAT_00B055B0;

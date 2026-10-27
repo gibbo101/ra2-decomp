@@ -2979,17 +2979,3 @@ DirType UnitClass::Turret_Facing(void) const
 
 // TEMPLATE: GAMEMD 0x00746EA0
 // ?Is_Archive_Same@?$IndexClass@HPAUEntry@StaticBufferClass@@@@ABE_NABH@Z
-
-extern int DAT_00B1D0C8;
-extern int DAT_00B1D0CC;
-extern int DAT_00B1D0D0;
-extern int DAT_00B1D0D4;
-
-// FUNCTION: GAMEMD 0x00746EC0
-void __cdecl FUN_00746EC0(void)
-{
-	DAT_00B1D0C8 = 0;
-	DAT_00B1D0CC = 0;
-	DAT_00B1D0D0 = 0;
-	DAT_00B1D0D4 = 0;
-}

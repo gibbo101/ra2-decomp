@@ -41,6 +41,8 @@
 #include "vector.h"
 #include "zbuffer.h"
 
+// SYNTHETIC: GAMEMD 0x00543C40 SYMBOL
+// _$E41
 // SYNTHETIC: GAMEMD 0x00543C60 SYMBOL
 // _$E2
 // SYNTHETIC: GAMEMD 0x00543C90 SYMBOL
@@ -962,17 +964,3 @@ ShadowCasterInfo::ShadowCasterInfo(int frame, int index, int x, int y) : Frame(f
 
 // TEMPLATE: GAMEMD 0x0054A850
 // ??0?$VectorClass@PAG@@QAE@HPBQAG@Z
-
-struct IsoZeroQuad {
-	int A;
-	int B;
-	int C;
-	int D;
-
-	IsoZeroQuad() : A(0), B(0), C(0), D(0) {}
-};
-
-IsoZeroQuad IsoZeroQuadInstance;
-
-// SYNTHETIC: GAMEMD 0x0054A8A0 SYMBOL
-// _$E210

@@ -4,7 +4,6 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
-#include "geometry.h"
 #include "crc.h"
 #include <cctype>
 #include <cstring>
@@ -108,28 +107,3 @@ int Obfuscate(char const * string)
 
 	return(code);
 }
-
-// SYNTHETIC: GAMEMD 0x005FA0D0 SYMBOL
-// _$E2
-// SYNTHETIC: GAMEMD 0x005FA100 SYMBOL
-// _$E5
-// SYNTHETIC: GAMEMD 0x005FA120 SYMBOL
-// _$E8
-// SYNTHETIC: GAMEMD 0x005FA140 SYMBOL
-// _$E11
-// SYNTHETIC: GAMEMD 0x005FA160 SYMBOL
-// _$E14
-// SYNTHETIC: GAMEMD 0x005FA180 SYMBOL
-// _$E17
-// SYNTHETIC: GAMEMD 0x005FA1A0 SYMBOL
-// _$E20
-// SYNTHETIC: GAMEMD 0x005FA1E0 SYMBOL
-// _$E23
-// SYNTHETIC: GAMEMD 0x005FA210 SYMBOL
-// _$E26
-// SYNTHETIC: GAMEMD 0x005FA240 SYMBOL
-// _$E29
-// SYNTHETIC: GAMEMD 0x005FA270 SYMBOL
-// _$E32
-// SYNTHETIC: GAMEMD 0x005FA280 SYMBOL
-// _$E35

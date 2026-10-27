@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
 #include "ovrlight.h"
 #include "_map.h"
 #include "_rect.h"
@@ -19,12 +20,40 @@
 #include "surface.h"
 #include "tactical.h"
 
+// SYNTHETIC: GAMEMD 0x005FEFC0 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x005FEFF0 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x005FF010 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x005FF030 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x005FF050 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x005FF070 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x005FF090 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x005FF0D0 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x005FF100 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x005FF130 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x005FF160 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x005FF170 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x005FF190 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x005FF1B0 SYMBOL
+// _$E41
 // SYNTHETIC: GAMEMD 0x005FF1D0 SYMBOL
-// _$E75
+// _$E120
 DynamicVectorClass<SpotLightClass *> SpotLights;
 
 // SYNTHETIC: GAMEMD 0x005FF210 SYMBOL
-// _$E73
+// _$E118
 
 int *SpotLightMMXBuffer;
 
@@ -120,17 +149,3 @@ template class DynamicVectorClass<SpotLightClass *>;
 
 // SYNTHETIC: GAMEMD 0x006002D0
 // ??_G?$DynamicVectorClass@PAVSpotLightClass@@@@UAEPAXI@Z
-
-int DAT_00AC18B0;
-int DAT_00AC18B4;
-int DAT_00AC18B8;
-int DAT_00AC18BC;
-
-// FUNCTION: GAMEMD 0x00600320
-void FUN_00600320(void)
-{
-	DAT_00AC18B0 = 0;
-	DAT_00AC18B4 = 0;
-	DAT_00AC18B8 = 0;
-	DAT_00AC18BC = 0;
-}

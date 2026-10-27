@@ -45,6 +45,9 @@
 #include <cstdio>
 #include <math.h>
 
+// SYNTHETIC: GAMEMD 0x0074C170 SYMBOL
+// _$E2
+
 static bool * GlobalGrowthState = NULL;
 
 struct FileSystem {

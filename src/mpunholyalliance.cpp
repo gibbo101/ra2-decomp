@@ -5,6 +5,7 @@
 #pragma once
 
 #include "always.h"
+#include "geometry.h"
 #include "mpunholyalliance.h"
 #include "session.h"
 #include "house.h"
@@ -15,11 +16,36 @@
 #undef LoadString
 #include <stddef.h>
 
+// SYNTHETIC: GAMEMD 0x005CB190 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x005CB1C0 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x005CB1E0 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x005CB200 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x005CB220 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x005CB240 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x005CB260 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x005CB2A0 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x005CB2D0 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x005CB300 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x005CB330 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x005CB340 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x005CB360 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x005CB380 SYMBOL
+// _$E41
+
 int __fastcall FUN_00688ED0(ObjectClass * object, Cell const & cell, int flag);
-extern int DAT_00ABFB88;
-extern int DAT_00ABFB8C;
-extern int DAT_00ABFB90;
-extern int DAT_00ABFB94;
 
 static inline Cell Base_Spot(Cell const & base)
 {
@@ -88,12 +114,3 @@ bool MPUnholyAllianceClass::SpawnBaseUnits(HouseClass * house, unsigned unused)
 
 // SYNTHETIC: GAMEMD 0x005CB540
 // ??_GMPUnholyAllianceClass@@UAEPAXI@Z
-
-// FUNCTION: GAMEMD 0x005CB570
-void Clear_Unholy_Stats(void)
-{
-	DAT_00ABFB88 = 0;
-	DAT_00ABFB8C = 0;
-	DAT_00ABFB90 = 0;
-	DAT_00ABFB94 = 0;
-}

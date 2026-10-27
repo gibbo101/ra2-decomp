@@ -15,6 +15,9 @@
 #include "swap.h"
 #include <math.h>
 
+// SYNTHETIC: GAMEMD 0x004BA390 SYMBOL
+// _$E41
+
 extern LPDIRECTDRAW DirectDrawObject;
 extern LPDIRECTDRAWSURFACE PaletteSurface;
 extern bool WindowedMode;
@@ -29,20 +32,6 @@ extern const GUID DAT_007F8070;
 extern const GUID DAT_007F80B0;
 extern const double DAT_007E3D90;
 extern double __cdecl FUN_004CAC40(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E8678;
-extern const double DAT_007E8680;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern double DAT_008A0E38;
-extern double DAT_008A0EA8;
 
 class Texture3D {
 	public:
@@ -2424,79 +2413,3 @@ void FUN_004C19B0(void)
 // TEMPLATE: GAMEMD 0x004C1B50
 // ?Length@?$TPoint2D@H@@QBEHXZ
 template class TPoint2D<int>;
-
-// SYNTHETIC: GAMEMD 0x004C1B80 SYMBOL
-// _$E63
-double DAT_008A0E38 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
-// SYNTHETIC: GAMEMD 0x004C1BB0 SYMBOL
-// _$E66
-double DAT_008A0EA8 = DAT_008A0E38 / DAT_007E8678;
-
-// SYNTHETIC: GAMEMD 0x004C1BD0 SYMBOL
-// _$E69
-double DAT_008A0E70 = DAT_007E1718 / DAT_008A0EA8;
-
-// SYNTHETIC: GAMEMD 0x004C1BF0 SYMBOL
-// _$E72
-double DAT_008A0E68 = DAT_007E1720 * DAT_007E8680;
-
-// SYNTHETIC: GAMEMD 0x004C1C10 SYMBOL
-// _$E75
-double DAT_008A0E40 = DAT_007E1728 * DAT_007E8680;
-
-// SYNTHETIC: GAMEMD 0x004C1C30 SYMBOL
-// _$E78
-double DAT_008A0E18 = DAT_007E1730 * DAT_007E8680;
-
-// SYNTHETIC: GAMEMD 0x004C1C50 SYMBOL
-// _$E81
-int DAT_008A0EB0 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_008A0E18 - DAT_008A0E40) * DAT_008A0E38));
-
-// SYNTHETIC: GAMEMD 0x004C1C90 SYMBOL
-// _$E84
-double DAT_008A0E48 = FUN_004CADE0(DAT_008A0EB0 * DAT_007E1740);
-
-// SYNTHETIC: GAMEMD 0x004C1CC0 SYMBOL
-// _$E87
-double DAT_008A0E60 = FUN_004CADE0((DAT_008A0EB0 * 2) / DAT_008A0E38);
-
-// SYNTHETIC: GAMEMD 0x004C1CF0 SYMBOL
-// _$E90
-int DAT_008A0EA0 = (int)(DAT_008A0EB0 * 4 + DAT_007E1738);
-
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-// SYNTHETIC: GAMEMD 0x004C1D20 SYMBOL
-// _$E93
-ShortPair DAT_008A0E30;
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
-
-// SYNTHETIC: GAMEMD 0x004C1D30 SYMBOL
-// _$E96
-IntTriple DAT_008A0E50;
-
-struct IntSeed {
-	int X, Y, Z;
-	IntSeed() { Z = 0; X = 0x80; Y = 0x80; }
-};
-
-// SYNTHETIC: GAMEMD 0x004C1D50 SYMBOL
-// _$E99
-IntSeed DAT_008A0E78;
-
-struct IntQuad {
-	int A, B, C, D;
-	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
-};
-
-// SYNTHETIC: GAMEMD 0x004C1D70 SYMBOL
-// _$E102
-IntQuad DAT_008A0E20;

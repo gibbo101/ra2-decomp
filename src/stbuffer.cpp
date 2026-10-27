@@ -10,6 +10,9 @@
 #include <cstring>
 #include "win.h"
 
+// SYNTHETIC: GAMEMD 0x006C8990 SYMBOL
+// _$E2
+
 // FUNCTION: GAMEMD 0x006C89B0
 StaticBufferClass::StaticBufferClass(int size)
 {
@@ -32,11 +35,6 @@ StaticBufferClass::~StaticBufferClass(void)
 struct SystemTimer {
 	static unsigned long GetTime(void);
 };
-
-extern int DAT_00B0BED8;
-extern int DAT_00B0BEDC;
-extern int DAT_00B0BEE0;
-extern int DAT_00B0BEE4;
 
 static char CompressionBuffer[256];
 
@@ -121,13 +119,4 @@ unsigned long SystemTimer::GetTime(void)
 unsigned long FUN_006C8C50(void)
 {
 	return timeGetTime() >> 4;
-}
-
-// FUNCTION: GAMEMD 0x006C8C60
-void FUN_006C8C60(void)
-{
-	DAT_00B0BED8 = 0;
-	DAT_00B0BEDC = 0;
-	DAT_00B0BEE0 = 0;
-	DAT_00B0BEE4 = 0;
 }

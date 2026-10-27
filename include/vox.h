@@ -21,6 +21,25 @@ extern char const * Speech[VOX_COUNT];
 
 class INIClass;
 
+struct SoundLink
+{
+	SoundLink * Next;
+	SoundLink * Prev;
+	SoundLink * Sentinel;
+
+	void FUN_004072C0(void);
+	void FUN_004072D0(void);
+	int FUN_004073B0(void);
+	SoundLink * FUN_004073C0(void);
+	SoundLink * FUN_004073E0(void);
+	void __fastcall FUN_00407420(SoundLink * node);
+	void FUN_00407450(void);
+};
+
+template<class T> class DynamicVectorClass;
+class VocClass;
+extern DynamicVectorClass<VocClass *> Vocs;
+
 class VoxClass
 {
 	public:

@@ -39,6 +39,9 @@
 
 #include <math.h>
 
+// SYNTHETIC: GAMEMD 0x005B47A0 SYMBOL
+// _$E9
+
 namespace OwnerDraw {
 char * __fastcall WideToCharString(char * dest, wchar_t const * src, int count);
 }
@@ -836,12 +839,3 @@ void ModemGuest::ReceivePreview(void)
 	delete [] preview;
 	delete [] buffer;
 }
-
-struct IntQuad {
-	int A, B, C, D;
-	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
-};
-
-// SYNTHETIC: GAMEMD 0x005B75D0 SYMBOL
-// _$E79
-IntQuad DAT_00ABF098;

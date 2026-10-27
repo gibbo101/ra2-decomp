@@ -4,7 +4,11 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "rect.h"
 #include "bench.h"
+
+// SYNTHETIC: GAMEMD 0x004318D0 SYMBOL
+// _$E2
 
 // FUNCTION: GAMEMD 0x004318F0
 Benchmark::Benchmark(void) :

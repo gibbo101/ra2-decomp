@@ -328,14 +328,3 @@ WorldDominationTour::FactionSelectDialogControl::FactionSelectDialogControl(void
 	}
 	Current = Image1;
 }
-
-int DAT_00B77FA0, DAT_00B77FA4, DAT_00B77FA8, DAT_00B77FAC;
-
-// FUNCTION: GAMEMD 0x007B05A0
-void __cdecl FUN_007B05A0(void)
-{
-	DAT_00B77FA0 = 0;
-	DAT_00B77FA4 = 0;
-	DAT_00B77FA8 = 0;
-	DAT_00B77FAC = 0;
-}

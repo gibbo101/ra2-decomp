@@ -11,6 +11,9 @@
 #include "wsproto.h"
 #include <math.h>
 
+// SYNTHETIC: GAMEMD 0x0053F220 SYMBOL
+// _$E13
+
 extern double __cdecl FUN_004CAC40(double);
 extern double __cdecl FUN_004CAD50(double);
 extern double __cdecl FUN_004CADE0(double);
@@ -269,12 +272,3 @@ int IPXConnClass::Broadcast(char *buf, int buflen)
 
 // SYNTHETIC: GAMEMD 0x0053F850
 // ??_GIPXConnClass@@UAEPAXI@Z
-
-// FUNCTION: GAMEMD 0x0053F880
-void FUN_0053F880(void)
-{
-	DAT_00AA05B8 = 0;
-	DAT_00AA05BC = 0;
-	DAT_00AA05C0 = 0;
-	DAT_00AA05C4 = 0;
-}

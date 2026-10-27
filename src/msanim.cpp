@@ -25,6 +25,9 @@
 #include "srfcache.h"
 #include "wstring.h"
 
+// SYNTHETIC: GAMEMD 0x005CB570 SYMBOL
+// _$E2
+
 extern ShapeFlags_Type FadeStages[4];
 
 struct Drawing {
@@ -1215,7 +1218,3 @@ bool MSPCXAnim::Has_Finished(void) const
 
 // SYNTHETIC: GAMEMD 0x005CED70
 // ??_GMSPCXAnim@@UAEPAXI@Z
-
-// SYNTHETIC: GAMEMD 0x005CEDB0 SYMBOL
-// _$E20
-Rect DAT_00ABFBB0(0, 0, 0, 0);

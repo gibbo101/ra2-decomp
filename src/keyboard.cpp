@@ -22,23 +22,6 @@ extern const double DAT_007E1738;
 extern const double DAT_007E1740;
 extern const double DAT_007ECEB8;
 extern const double DAT_007ECEC0;
-extern const double DAT_007ECEC8;
-extern const double DAT_007ECED0;
-
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
-
-struct IntTriple128 {
-	int A, B, C;
-	IntTriple128() { C = 0; A = 128; B = 128; }
-};
 
 
 // SYNTHETIC: GAMEMD 0x0054EC60 SYMBOL
@@ -531,58 +514,3 @@ int WWKeyboardClass::Available_Buffer_Room(void) const
 {
 	return(ARRAY_SIZE(Buffer) - abs(Tail - Head));
 }
-
-// SYNTHETIC: GAMEMD 0x0054FBB0 SYMBOL
-// _$E69
-
-
-
-double DAT_00ABC7C0 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
-
-// SYNTHETIC: GAMEMD 0x0054FBE0 SYMBOL
-// _$E72
-double DAT_00ABC8B0 = DAT_00ABC7C0 / DAT_007ECEC8;
-
-// SYNTHETIC: GAMEMD 0x0054FC00 SYMBOL
-// _$E75
-double DAT_00ABC898 = DAT_007E1718 / DAT_00ABC8B0;
-
-// SYNTHETIC: GAMEMD 0x0054FC20 SYMBOL
-// _$E78
-double DAT_00ABC890 = DAT_007E1720 * DAT_007ECED0;
-
-// SYNTHETIC: GAMEMD 0x0054FC40 SYMBOL
-// _$E81
-double DAT_00ABC7D0 = DAT_007E1728 * DAT_007ECED0;
-
-// SYNTHETIC: GAMEMD 0x0054FC60 SYMBOL
-// _$E84
-double DAT_00ABC720 = DAT_007E1730 * DAT_007ECED0;
-
-// SYNTHETIC: GAMEMD 0x0054FC80 SYMBOL
-// _$E87
-int DAT_00ABC8BC = (int)(DAT_007E1738 * (fastmath::tan(DAT_00ABC720 - DAT_00ABC7D0) * DAT_00ABC7C0));
-
-// SYNTHETIC: GAMEMD 0x0054FCC0 SYMBOL
-// _$E90
-double DAT_00ABC7D8 = fastmath::atan(DAT_00ABC8BC * DAT_007E1740);
-
-// SYNTHETIC: GAMEMD 0x0054FCF0 SYMBOL
-// _$E93
-double DAT_00ABC7F0 = fastmath::atan((DAT_00ABC8BC * 2) / DAT_00ABC7C0);
-
-// SYNTHETIC: GAMEMD 0x0054FD20 SYMBOL
-// _$E96
-int DAT_00ABC8AC = (int)(DAT_00ABC8BC * 4 + DAT_007E1738);
-
-// SYNTHETIC: GAMEMD 0x0054FD50 SYMBOL
-// _$E99
-ShortPair DAT_00ABC7B8;
-
-// SYNTHETIC: GAMEMD 0x0054FD60 SYMBOL
-// _$E102
-IntTriple DAT_00ABC7E0;
-
-// SYNTHETIC: GAMEMD 0x0054FD80 SYMBOL
-// _$E105
-IntTriple128 DAT_00ABC8A0;

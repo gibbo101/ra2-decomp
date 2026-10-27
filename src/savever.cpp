@@ -8,7 +8,6 @@
 #include "dbgprint.h"
 #include "session.h"
 #include <comdef.h>
-#include "geometry.h"
 #include "fastmath.h"
 
 // FUNCTION: GAMEMD 0x00682150
@@ -486,77 +485,3 @@ template class _com_ptr_t<_com_IIID<IStream, &__uuidof(IStream)> >;
 // TEMPLATE: GAMEMD 0x00683060
 // ?_Release@?$_com_ptr_t@V?$_com_IIID@UIPropertyStorage@@$1?_GUID_00000138_0000_0000_c000_000000000046@@3U__s_GUID@@A@@@@AAEXXZ
 template class _com_ptr_t<_com_IIID<IPropertyStorage, &__uuidof(IPropertyStorage)> >;
-
-// SYNTHETIC: GAMEMD 0x00683070 SYMBOL
-// _$E30
-// SYNTHETIC: GAMEMD 0x006830A0 SYMBOL
-// _$E33
-// SYNTHETIC: GAMEMD 0x006830C0 SYMBOL
-// _$E36
-// SYNTHETIC: GAMEMD 0x006830E0 SYMBOL
-// _$E39
-// SYNTHETIC: GAMEMD 0x00683100 SYMBOL
-// _$E42
-
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007F0E40;
-extern double DAT_00B05460;
-extern double DAT_00B05468;
-
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
-
-struct IntQuad {
-	int A, B, C, D;
-	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
-};
-
-struct PlayfieldDefaults {
-	int A, B, C;
-	PlayfieldDefaults() { C = 0; A = 128; B = 128; }
-};
-
-// SYNTHETIC: GAMEMD 0x00683120 SYMBOL
-// _$E69
-double DAT_00B05440 = DAT_007E1730 * DAT_007F0E40;
-
-// SYNTHETIC: GAMEMD 0x00683140 SYMBOL
-// _$E72
-int DAT_00B054C8 = (int)(DAT_007E1738 * (fastmath::tan(DAT_00B05440 - DAT_00B05468) * DAT_00B05460));
-
-// SYNTHETIC: GAMEMD 0x00683180 SYMBOL
-// _$E75
-double DAT_00B05470 = fastmath::atan(DAT_00B054C8 * DAT_007E1740);
-
-// SYNTHETIC: GAMEMD 0x006831B0 SYMBOL
-// _$E78
-double DAT_00B05498 = fastmath::atan((DAT_00B054C8 * 2) / DAT_00B05460);
-
-// SYNTHETIC: GAMEMD 0x006831E0 SYMBOL
-// _$E81
-int DAT_00B054BC = (int)(DAT_00B054C8 * 4 + DAT_007E1738);
-
-// SYNTHETIC: GAMEMD 0x00683210 SYMBOL
-// _$E84
-ShortPair DAT_00B05458;
-
-// SYNTHETIC: GAMEMD 0x00683220 SYMBOL
-// _$E87
-IntTriple DAT_00B05488;
-
-// SYNTHETIC: GAMEMD 0x00683240 SYMBOL
-// _$E90
-PlayfieldDefaults DAT_00B054B0;
-
-// SYNTHETIC: GAMEMD 0x00683260 SYMBOL
-// _$E93
-IntQuad DAT_00B05448;

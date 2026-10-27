@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
 #include "mpcoop.h"
 #include "ccfile.h"
 #include "ccini.h"
@@ -29,6 +30,35 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include "stringtable.h"
+
+// SYNTHETIC: GAMEMD 0x005C10F0 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x005C1120 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x005C1140 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x005C1160 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x005C1180 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x005C11A0 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x005C11C0 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x005C1200 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x005C1230 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x005C1260 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x005C1290 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x005C12A0 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x005C12C0 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x005C12E0 SYMBOL
+// _$E55
 
 extern int DAT_008316A4;
 extern wchar_t DAT_00887734[];
@@ -1819,6 +1849,3 @@ template class VectorClass<NodeNameType *>;
 // ??0?$VectorClass@PAUNodeNameType@@@@QAE@HPBQAUNodeNameType@@@Z
 // TEMPLATE: GAMEMD 0x005C5A80
 // ??0?$VectorClass@PAVCoopCampaignClass@@@@QAE@HPBQAVCoopCampaignClass@@@Z
-
-// SYNTHETIC: GAMEMD 0x005C5AD0 SYMBOL
-// _$E10

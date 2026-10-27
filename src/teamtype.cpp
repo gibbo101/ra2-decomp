@@ -33,6 +33,35 @@
 #include "vector.h"
 #include "waypoint.h"
 
+// SYNTHETIC: GAMEMD 0x006F0470 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x006F04A0 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x006F04C0 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x006F04E0 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x006F0500 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x006F0520 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x006F0540 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x006F0580 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x006F05B0 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x006F05E0 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x006F0610 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x006F0620 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x006F0640 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x006F0660 SYMBOL
+// _$E58
+
 DynamicVectorClass<TeamTypeClass *> TeamTypeClass::Array;
 
 // FUNCTION: GAMEMD 0x006F0680
@@ -635,72 +664,3 @@ template class VectorClass<TRIGGER_DIST_OBJ>;
 template class VectorClass<TeamTypeClass const *>;
 // TEMPLATE: GAMEMD 0x006F27F0
 // ??0?$VectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@@@QAE@HPBV?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@@Z
-
-// SYNTHETIC: GAMEMD 0x006F28A0 SYMBOL
-// _$E2
-// SYNTHETIC: GAMEMD 0x006F28D0 SYMBOL
-// _$E5
-
-namespace fastmath { double __cdecl tan(double x); double __cdecl atan(double x); }
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007F4888;
-extern double DAT_00B0EB28;
-extern double DAT_00B0EA58;
-
-struct TTShortPair { short a; short b; TTShortPair(void) { a = 0; b = 0; } };
-struct TTIntTriple { int a; int b; int c; TTIntTriple(void) { a = 0; b = 0; c = 0; } };
-struct TTIntQuad { int a; int b; int c; int d; TTIntQuad(void) { a = 0; b = 0; c = 0; d = 0; } };
-struct TTCenterTriple { int a; int b; int c; TTCenterTriple(void) { c = 0; a = 128; b = 128; } };
-
-// SYNTHETIC: GAMEMD 0x006F28F0 SYMBOL
-// _$E8
-double DAT_00B0EB10 = DAT_007E1718 / DAT_00B0EB28;
-
-// SYNTHETIC: GAMEMD 0x006F2910 SYMBOL
-// _$E11
-double DAT_00B0EB08 = DAT_007F4888 * DAT_007E1720;
-
-// SYNTHETIC: GAMEMD 0x006F2930 SYMBOL
-// _$E14
-double DAT_00B0EA60 = DAT_007F4888 * DAT_007E1728;
-
-// SYNTHETIC: GAMEMD 0x006F2950 SYMBOL
-// _$E17
-double DAT_00B0EA30 = DAT_007F4888 * DAT_007E1730;
-
-// SYNTHETIC: GAMEMD 0x006F2970 SYMBOL
-// _$E20
-int DAT_00B0EB34 = (int)(fastmath::tan(DAT_00B0EA30 - DAT_00B0EA60) * DAT_00B0EA58 * DAT_007E1738);
-
-// SYNTHETIC: GAMEMD 0x006F29B0 SYMBOL
-// _$E23
-double DAT_00B0EA68 = fastmath::atan(DAT_00B0EB34 * DAT_007E1740);
-
-// SYNTHETIC: GAMEMD 0x006F29E0 SYMBOL
-// _$E26
-double DAT_00B0EAA0 = fastmath::atan((DAT_00B0EB34 * 2) / DAT_00B0EA58);
-
-// SYNTHETIC: GAMEMD 0x006F2A10 SYMBOL
-// _$E29
-int DAT_00B0EB24 = (int)(DAT_00B0EB34 * 4 + DAT_007E1738);
-
-// SYNTHETIC: GAMEMD 0x006F2A40 SYMBOL
-// _$E32
-TTShortPair DAT_00B0EA50;
-
-// SYNTHETIC: GAMEMD 0x006F2A50 SYMBOL
-// _$E35
-TTIntTriple DAT_00B0EA90;
-
-// SYNTHETIC: GAMEMD 0x006F2A70 SYMBOL
-// _$E38
-TTCenterTriple DAT_00B0EB18;
-
-// SYNTHETIC: GAMEMD 0x006F2A90 SYMBOL
-// _$E144
-TTIntQuad DAT_00B0EA40;

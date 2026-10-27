@@ -5,6 +5,7 @@
 
 #include "always.h"
 #include "geometry.h"
+#include "rect.h"
 
 #include "milsectmr.h"
 
@@ -14,7 +15,8 @@
 #include "win.h"
 #include <math.h>
 
-
+// SYNTHETIC: GAMEMD 0x005B1B80 SYMBOL
+// _$E41
 // SYNTHETIC: GAMEMD 0x005B1BA0 SYMBOL
 // _$E2
 // SYNTHETIC: GAMEMD 0x005B1BD0 SYMBOL
@@ -70,11 +72,6 @@ MillisecondTimerClass::~MillisecondTimerClass(void)
 	}
 }
 
-#include "rect.h"
-
-// SYNTHETIC: GAMEMD 0x005B1EE0 SYMBOL
-// _$E41
-
 // FUNCTION: GAMEMD 0x005B1E40
 MillisecondTimerClass::operator double () const
 {
@@ -97,4 +94,3 @@ MillisecondTimerClass::operator double () const
 
 	return(timeGetTime());
 }
-

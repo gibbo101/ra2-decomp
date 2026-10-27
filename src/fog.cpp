@@ -38,20 +38,8 @@
 #include "vector.h"
 #include <math.h>
 
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007E8BE0;
-extern const double DAT_007E8BE8;
-
+// SYNTHETIC: GAMEMD 0x004D0540 SYMBOL
+// _$E47
 // SYNTHETIC: GAMEMD 0x004D0560 SYMBOL
 // _$E2
 // SYNTHETIC: GAMEMD 0x004D0590 SYMBOL
@@ -76,7 +64,6 @@ extern const double DAT_007E8BE8;
 // _$E32
 // SYNTHETIC: GAMEMD 0x004D0710 SYMBOL
 // _$E35
-
 // SYNTHETIC: GAMEMD 0x004D0730 SYMBOL
 // _$E38
 // SYNTHETIC: GAMEMD 0x004D0750 SYMBOL
@@ -470,76 +457,3 @@ template class IndexClass<int, FoggedObjectClass *>;
 // TEMPLATE: GAMEMD 0x004D2F00
 // ?Binary_Search@@YIPAUNodeElement@?$IndexClass@HPAVFoggedObjectClass@@@@PAU12@HABU12@@Z
 template IndexClass<int, FoggedObjectClass *>::NodeElement * Binary_Search(IndexClass<int, FoggedObjectClass *>::NodeElement *, int, IndexClass<int, FoggedObjectClass *>::NodeElement const &);
-
-// SYNTHETIC: GAMEMD 0x004D2F50 SYMBOL
-// _$E143
-double DAT_008B3D90 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
-// SYNTHETIC: GAMEMD 0x004D2F80 SYMBOL
-// _$E146
-double DAT_008B3DF8 = DAT_008B3D90 / DAT_007E8BE0;
-
-// SYNTHETIC: GAMEMD 0x004D2FA0 SYMBOL
-// _$E149
-double DAT_008B3DE0 = DAT_007E1718 / DAT_008B3DF8;
-
-// SYNTHETIC: GAMEMD 0x004D2FC0 SYMBOL
-// _$E152
-double DAT_008B3DD8 = DAT_007E1720 * DAT_007E8BE8;
-
-// SYNTHETIC: GAMEMD 0x004D2FE0 SYMBOL
-// _$E155
-double DAT_008B3D98 = DAT_007E1728 * DAT_007E8BE8;
-
-// SYNTHETIC: GAMEMD 0x004D3000 SYMBOL
-// _$E158
-double DAT_008B3D70 = DAT_007E1730 * DAT_007E8BE8;
-
-// SYNTHETIC: GAMEMD 0x004D3020 SYMBOL
-// _$E161
-int DAT_008B3E00 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_008B3D70 - DAT_008B3D98) * DAT_008B3D90));
-
-// SYNTHETIC: GAMEMD 0x004D3060 SYMBOL
-// _$E164
-double DAT_008B3DA0 = FUN_004CADE0(DAT_008B3E00 * DAT_007E1740);
-
-// SYNTHETIC: GAMEMD 0x004D3090 SYMBOL
-// _$E167
-double DAT_008B3DB8 = FUN_004CADE0((DAT_008B3E00 * 2) / DAT_008B3D90);
-
-// SYNTHETIC: GAMEMD 0x004D30C0 SYMBOL
-// _$E170
-int DAT_008B3DF4 = (int)(DAT_008B3E00 * 4 + DAT_007E1738);
-
-struct Fog_Short2 {
-	short X, Y;
-	Fog_Short2(void) : X(0), Y(0) {}
-};
-struct Fog_Int3 {
-	int X, Y, Z;
-	Fog_Int3(void) : X(0), Y(0), Z(0) {}
-};
-struct Fog_Int4 {
-	int A, B, C, D;
-	Fog_Int4(void) : A(0), B(0), C(0), D(0) {}
-};
-struct Fog_Half {
-	int X, Y, Z;
-	Fog_Half(void) : X(128), Y(128), Z(0) {}
-};
-
-// SYNTHETIC: GAMEMD 0x004D30F0 SYMBOL
-// _$E173
-Fog_Short2 DAT_008B3D88;
-
-// SYNTHETIC: GAMEMD 0x004D3100 SYMBOL
-// _$E176
-Fog_Int3 DAT_008B3DA8;
-
-// SYNTHETIC: GAMEMD 0x004D3120 SYMBOL
-// _$E179
-Fog_Half DAT_008B3DE8;
-
-// SYNTHETIC: GAMEMD 0x004D3140 SYMBOL
-// _$E182
-Fog_Int4 DAT_008B3D78;

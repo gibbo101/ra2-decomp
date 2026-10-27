@@ -5,6 +5,7 @@
 
 #define INCLUDE_COM
 #include "always.h"
+#include "geometry.h"
 #include "building.h"
 #include "_convert.h"
 #include "_keyboar.h"
@@ -83,6 +84,35 @@
 #include "warhead.h"
 #include "weapon.h"
 #include "color.hh"
+
+// SYNTHETIC: GAMEMD 0x0043AF40 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x0043AF70 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x0043AF90 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x0043AFB0 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x0043AFD0 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x0043AFF0 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x0043B010 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x0043B050 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x0043B080 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x0043B0B0 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x0043B0E0 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x0043B0F0 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x0043B110 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x0043B130 SYMBOL
+// _$E41
 
 class Reestablish;
 extern Point2D DAT_0089C848;
@@ -4413,7 +4443,7 @@ void BuildingClass::Draw_Radial_Indicator(DWORD which)
 }
 
 // SYNTHETIC: GAMEMD 0x00456970 SYMBOL
-// _$E254
+// _$E44
 
 namespace Unsorted { extern int CurrentFrame; }
 
@@ -5648,37 +5678,3 @@ template class VectorClass<BuildingClass *>;
 // ??0?$VectorClass@PAVReestablish@@@@QAE@HPBQAVReestablish@@@Z
 template class VectorClass<Reestablish *>;
 template class DynamicVectorClass<AbstractClass *>;
-
-
-#include "geometry.h"
-
-// SYNTHETIC: GAMEMD 0x0045AFA0 SYMBOL
-// _$E256
-// SYNTHETIC: GAMEMD 0x0045AFD0 SYMBOL
-// _$E259
-// SYNTHETIC: GAMEMD 0x0045AFF0 SYMBOL
-// _$E262
-// SYNTHETIC: GAMEMD 0x0045B010 SYMBOL
-// _$E265
-// SYNTHETIC: GAMEMD 0x0045B030 SYMBOL
-// _$E268
-// SYNTHETIC: GAMEMD 0x0045B050 SYMBOL
-// _$E271
-// SYNTHETIC: GAMEMD 0x0045B070 SYMBOL
-// _$E274
-// SYNTHETIC: GAMEMD 0x0045B0B0 SYMBOL
-// _$E277
-// SYNTHETIC: GAMEMD 0x0045B0E0 SYMBOL
-// _$E280
-// SYNTHETIC: GAMEMD 0x0045B110 SYMBOL
-// _$E283
-// SYNTHETIC: GAMEMD 0x0045B140 SYMBOL
-// _$E286
-// SYNTHETIC: GAMEMD 0x0045B150 SYMBOL
-// _$E289
-// SYNTHETIC: GAMEMD 0x0045B170 SYMBOL
-// _$E292
-
-// SYNTHETIC: GAMEMD 0x0045B190 SYMBOL
-// _$E295
-Rect DAT_0089C8A0(0, 0, 0, 0);

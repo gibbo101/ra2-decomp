@@ -579,7 +579,3 @@ bool BeaconManagerClass::RadarBeaconPulsing(void)
 	}
 	return false;
 }
-
-// SYNTHETIC: GAMEMD 0x004318D0 SYMBOL
-// _$E154
-Rect DAT_0089C480(0, 0, 0, 0);

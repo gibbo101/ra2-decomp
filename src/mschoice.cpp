@@ -16,6 +16,9 @@
 #include "mixfile.h"
 #include "stringtable.h"
 
+// SYNTHETIC: GAMEMD 0x005CEDB0 SYMBOL
+// _$E2
+
 int FUN_00407000(void);
 WideWstring __fastcall FUN_007B7ED0(Wstring const & text);
 
@@ -648,6 +651,3 @@ template class VectorClass<MapStage *>;
 // SYNTHETIC: GAMEMD 0x005D1A30
 // ??_G?$DynamicVectorClass@PAVMSSfxEntry@@@@UAEPAXI@Z
 template class DynamicVectorClass<MSSfxEntry *>;
-
-// SYNTHETIC: GAMEMD 0x005D1A80 SYMBOL
-// _$E2

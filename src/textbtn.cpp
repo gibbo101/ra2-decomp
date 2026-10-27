@@ -7,11 +7,6 @@
 #include "textbtn.h"
 #include "_surface.h"
 #include "dsurface.h"
-#include "geometry.h"
-
-// SYNTHETIC: GAMEMD 0x00720420 SYMBOL
-// _$E66
-const Rect RECT_NONE_2(0, 0, 0, 0);
 
 #include "dialog.h"
 #include "bitfont.h"
@@ -19,6 +14,9 @@ const Rect RECT_NONE_2(0, 0, 0, 0);
 #include "scheme.h"
 #include "surface.h"
 #include "vector.h"
+
+// SYNTHETIC: GAMEMD 0x0071FF00 SYMBOL
+// _$E2
 
 // FUNCTION: GAMEMD 0x0071FF20
 TextButtonClass::TextButtonClass(unsigned id, wchar_t const * text, TextPrintType style, int x, int y, int w, int h, bool blackborder, bool nobackground) :
@@ -133,30 +131,3 @@ void TextButtonClass::Draw_Text(wchar_t const * text)
 
 // SYNTHETIC: GAMEMD 0x00720210
 // ??_GTextButtonClass@@UAEPAXI@Z
-
-// SYNTHETIC: GAMEMD 0x00720230 SYMBOL
-// _$E27
-// SYNTHETIC: GAMEMD 0x00720260 SYMBOL
-// _$E30
-// SYNTHETIC: GAMEMD 0x00720280 SYMBOL
-// _$E33
-// SYNTHETIC: GAMEMD 0x007202A0 SYMBOL
-// _$E36
-// SYNTHETIC: GAMEMD 0x007202C0 SYMBOL
-// _$E39
-// SYNTHETIC: GAMEMD 0x007202E0 SYMBOL
-// _$E42
-// SYNTHETIC: GAMEMD 0x00720300 SYMBOL
-// _$E45
-// SYNTHETIC: GAMEMD 0x00720340 SYMBOL
-// _$E48
-// SYNTHETIC: GAMEMD 0x00720370 SYMBOL
-// _$E51
-// SYNTHETIC: GAMEMD 0x007203A0 SYMBOL
-// _$E54
-// SYNTHETIC: GAMEMD 0x007203D0 SYMBOL
-// _$E57
-// SYNTHETIC: GAMEMD 0x007203E0 SYMBOL
-// _$E60
-// SYNTHETIC: GAMEMD 0x00720400 SYMBOL
-// _$E63

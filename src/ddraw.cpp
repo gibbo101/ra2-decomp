@@ -15,6 +15,9 @@
 #include "vector.h"
 #include <cstdio>
 
+// SYNTHETIC: GAMEMD 0x004A3C10 SYMBOL
+// _$E2
+
 static PALETTEENTRY PaletteEntries[256];
 
 static LPDIRECTDRAWPALETTE	PalettePtr;

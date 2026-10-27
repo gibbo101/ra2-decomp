@@ -51,6 +51,9 @@
 #include <wchar.h>
 #include "widewstring.h"
 
+// SYNTHETIC: GAMEMD 0x005E2410 SYMBOL
+// _$E51
+
 void FUN_00623F60(HWND listbox, int index, WideWstring & text);
 void FUN_0060B350(HWND button);
 void FUN_00607FD0(HWND dialog);

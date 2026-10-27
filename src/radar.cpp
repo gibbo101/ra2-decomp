@@ -44,6 +44,9 @@
 #include "fastmath.h"
 #include "coord.h"
 
+// SYNTHETIC: GAMEMD 0x00652660 SYMBOL
+// _$E2
+
 extern const double ONE_RAD;
 extern const double DAT_007F02A8;
 extern const double DAT_00B048D8;
@@ -1685,7 +1688,6 @@ class InputManagerClass {
 };
 extern bool UserInputLocked;
 #include "scenario.h"
-#include "geometry.h"
 LRESULT CALLBACK FUN_00657DA0(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 
 // FUNCTION: GAMEMD 0x006586D0
@@ -1758,34 +1760,3 @@ template class DynamicVectorClass<HashObject<RadarTrackingStruct, TechnoClass *>
 // ??0?$VectorClass@VPoint2D@@@@QAE@HPBVPoint2D@@@Z
 // TEMPLATE: GAMEMD 0x00658DE0
 // ??0?$DynamicVectorClass@U?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@@@QAE@IPBU?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@@Z
-
-// SYNTHETIC: GAMEMD 0x00658E80 SYMBOL
-// _$E192
-// SYNTHETIC: GAMEMD 0x00658EB0 SYMBOL
-// _$E195
-// SYNTHETIC: GAMEMD 0x00658ED0 SYMBOL
-// _$E198
-// SYNTHETIC: GAMEMD 0x00658EF0 SYMBOL
-// _$E201
-// SYNTHETIC: GAMEMD 0x00658F10 SYMBOL
-// _$E204
-// SYNTHETIC: GAMEMD 0x00658F30 SYMBOL
-// _$E207
-// SYNTHETIC: GAMEMD 0x00658F50 SYMBOL
-// _$E210
-// SYNTHETIC: GAMEMD 0x00658F90 SYMBOL
-// _$E213
-// SYNTHETIC: GAMEMD 0x00658FC0 SYMBOL
-// _$E216
-// SYNTHETIC: GAMEMD 0x00658FF0 SYMBOL
-// _$E219
-// SYNTHETIC: GAMEMD 0x00659020 SYMBOL
-// _$E222
-// SYNTHETIC: GAMEMD 0x00659030 SYMBOL
-// _$E225
-// SYNTHETIC: GAMEMD 0x00659050 SYMBOL
-// _$E228
-
-// SYNTHETIC: GAMEMD 0x00659070 SYMBOL
-// _$E231
-Rect DAT_00B04A48(0, 0, 0, 0);

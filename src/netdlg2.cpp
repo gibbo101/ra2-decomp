@@ -42,6 +42,9 @@
 #include "wsproto.h"
 #include "wstring.h"
 
+// SYNTHETIC: GAMEMD 0x005DACD0 SYMBOL
+// _$E2
+
 void Send_Join_Queries(int gamenow, int playernow, int chatnow, int init = 0);
 
 static void Get_Join_Responses(void);
@@ -2418,17 +2421,3 @@ void FUN_005E23A0(void)
 // TEMPLATE: GAMEMD 0x005E23D0
 // ?Delete_Index@?$DynamicVectorClass@PAUNodeNameType@@@@QAE_NH@Z
 template class DynamicVectorClass<NodeNameType *>;
-
-int DAT_00AC0B38;
-int DAT_00AC0B3C;
-int DAT_00AC0B40;
-int DAT_00AC0B44;
-
-// FUNCTION: GAMEMD 0x005E2410
-void FUN_005E2410(void)
-{
-	DAT_00AC0B38 = 0;
-	DAT_00AC0B3C = 0;
-	DAT_00AC0B40 = 0;
-	DAT_00AC0B44 = 0;
-}

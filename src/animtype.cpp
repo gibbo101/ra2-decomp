@@ -5,6 +5,7 @@
 
 #define INCLUDE_COM
 #include "always.h"
+#include "geometry.h"
 #include "animtype.h"
 #include "_mixfile.h"
 #include "_rules.h"
@@ -24,6 +25,33 @@
 #include "swizzle.h"
 #include "tracker.h"
 #include "warhead.h"
+
+// SYNTHETIC: GAMEMD 0x00427320 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x00427350 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x00427370 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x00427390 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x004273B0 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x004273D0 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x004273F0 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x00427430 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x00427460 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x00427490 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x004274C0 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x004274D0 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x004274F0 SYMBOL
+// _$E38
 
 extern char DAT_00889F64[];
 namespace Unsorted { extern bool ArmageddonMode; }
@@ -427,6 +455,3 @@ void AnimTypeClass::Free_Image(void)
 // TEMPLATE: GAMEMD 0x00428F70
 // ?TFind_Or_Make@@YIPAVAnimTypeClass@@PBDABV?$DynamicVectorClass@PAVAnimTypeClass@@@@@Z
 template AnimTypeClass * TFind_Or_Make<AnimTypeClass>(char const *, DynamicVectorClass<AnimTypeClass *> const &);
-
-// SYNTHETIC: GAMEMD 0x00428FF0 SYMBOL
-// _$E2

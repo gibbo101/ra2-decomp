@@ -57,6 +57,9 @@
 
 #include <math.h>
 
+// SYNTHETIC: GAMEMD 0x0055C9E0 SYMBOL
+// _$E2
+
 extern double __cdecl FUN_004CAC40(double);
 extern double __cdecl FUN_004CAD50(double);
 extern double __cdecl FUN_004CADE0(double);
@@ -462,17 +465,3 @@ template class IndexClass<int, CommandClass const *>;
 
 // TEMPLATE: GAMEMD 0x0055F6E0
 // ?Search_For_Node@?$IndexClass@HPBVCommandClass@@@@ABEPBUNodeElement@1@ABH@Z
-
-extern int DAT_00ABCE28;
-extern int DAT_00ABCE2C;
-extern int DAT_00ABCE30;
-extern int DAT_00ABCE34;
-
-// FUNCTION: GAMEMD 0x0055F760
-void FUN_0055F760(void)
-{
-	DAT_00ABCE28 = 0;
-	DAT_00ABCE2C = 0;
-	DAT_00ABCE30 = 0;
-	DAT_00ABCE34 = 0;
-}

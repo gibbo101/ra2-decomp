@@ -81,17 +81,3 @@ int ToggleClass::Action(unsigned flags, KeyNumType &key, int modifier)
 
 	return BASECLASS::Action(flags, key, 0);
 }
-
-int DAT_00B0F5A8;
-int DAT_00B0F5AC;
-int DAT_00B0F5B0;
-int DAT_00B0F5B4;
-
-// FUNCTION: GAMEMD 0x00723FE0
-void FUN_00723FE0(void)
-{
-	DAT_00B0F5A8 = 0;
-	DAT_00B0F5AC = 0;
-	DAT_00B0F5B0 = 0;
-	DAT_00B0F5B4 = 0;
-}

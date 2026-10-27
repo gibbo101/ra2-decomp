@@ -5,6 +5,7 @@
 
 #define INCLUDE_COM
 #include "always.h"
+#include "geometry.h"
 #include <math.h>
 #include "disklaser.h"
 #include "crc.h"
@@ -13,17 +14,46 @@
 #include "techno.h"
 #include "weapon.h"
 
+// SYNTHETIC: GAMEMD 0x004A6A60 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x004A6A90 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x004A6AB0 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x004A6AD0 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x004A6AF0 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x004A6B10 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x004A6B30 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x004A6B70 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x004A6BA0 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x004A6BD0 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x004A6C00 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x004A6C10 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x004A6C30 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x004A6C50 SYMBOL
+// _$E49
+
 extern DynamicVectorClass<AbstractClass *> DAT_00B0F698;
 extern const double DAT_007E5ED0;
 
 // SYNTHETIC: GAMEMD 0x004A6C70 SYMBOL
-// _$E33
+// _$E78
 // SYNTHETIC: GAMEMD 0x004A6CB0 SYMBOL
-// _$E31
+// _$E76
 DynamicVectorClass<DiskLaserClass *> DiskLasers;
 
 // SYNTHETIC: GAMEMD 0x004A6CF0 SYMBOL
-// _$E36
+// _$E81
 Point2D DiskLaserClass::DrawCoords[16] = {
 	Point2D((int)(fastmath::cos(DAT_007E5ED0 * 270.0) * 240.0), (int)(fastmath::sin(DAT_007E5ED0 * 270.0) * 240.0)),
 	Point2D((int)(fastmath::cos(DAT_007E5ED0 * 292.0) * 240.0), (int)(fastmath::sin(DAT_007E5ED0 * 292.0) * 240.0)),

@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
 #include "objtype.h"
 #include "sun.h"
 #include "_mixfile.h"
@@ -29,6 +30,35 @@
 #include "techtype.h"
 #include "msanim.h"
 
+// SYNTHETIC: GAMEMD 0x005F6DE0 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x005F6E10 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x005F6E30 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x005F6E50 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x005F6E70 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x005F6E90 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x005F6EB0 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x005F6EF0 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x005F6F20 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x005F6F50 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x005F6F80 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x005F6F90 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x005F6FB0 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x005F6FD0 SYMBOL
+// _$E41
+
 extern char DAT_00889F64[];
 extern int DAT_00AC1474;
 
@@ -46,9 +76,9 @@ struct FileSystem {
 };
 
 // SYNTHETIC: GAMEMD 0x005F6FF0 SYMBOL
-// _$E55
+// _$E100
 // SYNTHETIC: GAMEMD 0x005F7030 SYMBOL
-// _$E52
+// _$E97
 DynamicVectorClass<ObjectTypeClass *> ObjectTypeClass::ObjectTypes;
 
 static inline bool _Add_Type(DynamicVectorClass<ObjectTypeClass *> & v, ObjectTypeClass * p) { return v.Add(p); }
@@ -163,7 +193,7 @@ Cell const * ObjectTypeClass::Occupy_List(bool) const
 }
 
 // SYNTHETIC: GAMEMD 0x005F76A0 SYMBOL
-// _$E58
+// _$E44
 
 // FUNCTION: GAMEMD 0x005F76B0
 void FUN_005F76B0(void)

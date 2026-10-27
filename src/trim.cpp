@@ -4,7 +4,6 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
-#include "geometry.h"
 #include <cstring>
 
 // FUNCTION: GAMEMD 0x00727CF0
@@ -54,36 +53,3 @@ wchar_t * wcstrim(wchar_t * buffer)
 	}
 	return(buffer);
 }
-
-// SYNTHETIC: GAMEMD 0x00727DC0 SYMBOL
-// _$E2
-// SYNTHETIC: GAMEMD 0x00727DF0 SYMBOL
-// _$E5
-// SYNTHETIC: GAMEMD 0x00727E10 SYMBOL
-// _$E8
-// SYNTHETIC: GAMEMD 0x00727E30 SYMBOL
-// _$E11
-// SYNTHETIC: GAMEMD 0x00727E50 SYMBOL
-// _$E14
-// SYNTHETIC: GAMEMD 0x00727E70 SYMBOL
-// _$E17
-// SYNTHETIC: GAMEMD 0x00727E90 SYMBOL
-// _$E20
-// SYNTHETIC: GAMEMD 0x00727ED0 SYMBOL
-// _$E23
-// SYNTHETIC: GAMEMD 0x00727F00 SYMBOL
-// _$E26
-// SYNTHETIC: GAMEMD 0x00727F30 SYMBOL
-// _$E29
-// SYNTHETIC: GAMEMD 0x00727F60 SYMBOL
-// _$E32
-// SYNTHETIC: GAMEMD 0x00727F70 SYMBOL
-// _$E35
-// SYNTHETIC: GAMEMD 0x00727F90 SYMBOL
-// _$E38
-
-struct TrimZero4I { int a, b, c, d; TrimZero4I() : a(0), b(0), c(0), d(0) {} };
-
-// SYNTHETIC: GAMEMD 0x00727FB0 SYMBOL
-// _$E41
-TrimZero4I DAT_00B0F860;

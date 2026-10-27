@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
 #include "mpsiege.h"
 #include "session.h"
 #include "scenario.h"
@@ -18,13 +19,38 @@
 #include <string.h>
 #include "stringtable.h"
 
+// SYNTHETIC: GAMEMD 0x005CA420 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x005CA450 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x005CA470 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x005CA490 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x005CA4B0 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x005CA4D0 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x005CA4F0 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x005CA530 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x005CA560 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x005CA590 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x005CA5C0 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x005CA5D0 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x005CA5F0 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x005CA610 SYMBOL
+// _$E41
+
 void __cdecl FUN_004068E0(char const * format, ...);
 DynamicVectorClass<Cell> __fastcall FUN_00688380(char arg);
 int __fastcall FUN_00688ED0(ObjectClass * object, Cell const & cell, int flag);
-extern int DAT_00ABFA88;
-extern int DAT_00ABFA8C;
-extern int DAT_00ABFA90;
-extern int DAT_00ABFA94;
 
 // FUNCTION: GAMEMD 0x005CA630
 MPSiegeClass::MPSiegeClass(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex) :
@@ -189,12 +215,3 @@ bool MPSiegeClass::SpawnBaseUnits(HouseClass * house, unsigned unused)
 
 // SYNTHETIC: GAMEMD 0x005CABD0
 // ??_GMPSiegeClass@@UAEPAXI@Z
-
-// FUNCTION: GAMEMD 0x005CAC00
-void Clear_Siege_Stats(void)
-{
-	DAT_00ABFA88 = 0;
-	DAT_00ABFA8C = 0;
-	DAT_00ABFA90 = 0;
-	DAT_00ABFA94 = 0;
-}

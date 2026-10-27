@@ -18,7 +18,8 @@
 #include "color.hh"
 #include <math.h>
 
-
+// SYNTHETIC: GAMEMD 0x00478990 SYMBOL
+// _$E2
 // SYNTHETIC: GAMEMD 0x004789B0 SYMBOL
 // _$E64
 // SYNTHETIC: GAMEMD 0x004789E0 SYMBOL
@@ -83,6 +84,3 @@ const char * CCToolTip::ToolTip_Text(int id)
 	}
 	return(Map.Help_Text(id));
 }
-
-// SYNTHETIC: GAMEMD 0x00479080 SYMBOL
-// _$E2

@@ -13,6 +13,9 @@
 #include "rlerle.h"
 #include "vector.h"
 
+// SYNTHETIC: GAMEMD 0x0048E680 SYMBOL
+// _$E3
+
 DynamicVectorClass<ConvertClass *> ConvertClass::Drawers;
 
 // SYNTHETIC: GAMEMD 0x0048E6A0 SYMBOL

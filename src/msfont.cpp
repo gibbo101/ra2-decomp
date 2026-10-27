@@ -24,6 +24,9 @@
 
 #include <cstring>
 
+// SYNTHETIC: GAMEMD 0x005D2DE0 SYMBOL
+// _$E2
+
 struct FileSystem {
 	static void const * LoadFile(char const * name, bool flag);
 };
@@ -282,6 +285,3 @@ void MSFont::Draw_String(Surface * surface, wchar_t const * string, int x, int y
 
 // SYNTHETIC: GAMEMD 0x005D3450
 // ??_GMSFont@@UAEPAXI@Z
-
-// SYNTHETIC: GAMEMD 0x005D3470 SYMBOL
-// _$E2

@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
 #include "revent.h"
 #include "_map.h"
 #include "_rules.h"
@@ -14,6 +15,35 @@
 #include "mouse.h"
 #include "rules.h"
 #include "vector.h"
+
+// SYNTHETIC: GAMEMD 0x0065F7A0 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x0065F7D0 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x0065F7F0 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x0065F810 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x0065F830 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x0065F850 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x0065F870 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x0065F8B0 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x0065F8E0 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x0065F910 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x0065F940 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x0065F950 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x0065F970 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x0065F990 SYMBOL
+// _$E42
 
 const RadarEventInfo RadarEventTable[RADAREVENT_COUNT] = {
 	{8, 200, 400, true},
@@ -36,19 +66,19 @@ const RadarEventInfo RadarEventTable[RADAREVENT_COUNT] = {
 };
 
 // SYNTHETIC: GAMEMD 0x0065FA60 SYMBOL
-// _$E71
+// _$E49
 Cell DAT_00B04D48[8];
 int DAT_00B04D88;
 int DAT_00B04DD8;
 
 // SYNTHETIC: GAMEMD 0x0065F9B0 SYMBOL
-// _$E77
+// _$E122
 // SYNTHETIC: GAMEMD 0x0065F9F0 SYMBOL
-// _$E74
+// _$E119
 DynamicVectorClass<RadarEventClass *> RadarEventClass::RadarEvents;
 
 // SYNTHETIC: GAMEMD 0x0065FA50 SYMBOL
-// _$E80
+// _$E125
 Cell LastRadarEventCell(0,0);
 
 // FUNCTION: GAMEMD 0x0065FA70

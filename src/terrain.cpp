@@ -620,14 +620,3 @@ RTTIType TerrainClass::Fetch_RTTI(void) const
 
 // SYNTHETIC: GAMEMD 0x0071D350
 // ??_GTerrainClass@@UAEPAXI@Z
-
-
-struct IntQuad {
-	int A, B, C, D;
-	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
-};
-
-static IntQuad ZeroQuad;
-
-// SYNTHETIC: GAMEMD 0x0071D370 SYMBOL
-// _$E2

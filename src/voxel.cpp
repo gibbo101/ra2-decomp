@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
 #include "_voxel.h"
 #include "globals.h"
 #include "inline.h"
@@ -11,6 +12,35 @@
 #include "objtype.h"
 #include "quat.h"
 #include "ramp.hh"
+
+// SYNTHETIC: GAMEMD 0x00754910 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x00754940 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x00754960 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x00754980 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x007549A0 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x007549C0 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x007549E0 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x00754A20 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x00754A50 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x00754A80 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x00754AB0 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x00754AC0 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x00754AE0 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x00754B00 SYMBOL
+// _$E41
 
 int SomeNumbers[17] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 5, 6, 7, 8, 9, 10, 11, 12 };
 
@@ -35,21 +65,21 @@ Vector3 LightDirectionVectors[256];
 Vector3 LightTiltVectors[256];
 
 // SYNTHETIC: GAMEMD 0x00754B20 SYMBOL
-// _$E12
+// _$E44
 // SYNTHETIC: GAMEMD 0x00754B30 SYMBOL
-// _$E15
+// _$E47
 // SYNTHETIC: GAMEMD 0x00754B40 SYMBOL
-// _$E18
+// _$E63
 // SYNTHETIC: GAMEMD 0x00754B70 SYMBOL
-// _$E21
+// _$E66
 // SYNTHETIC: GAMEMD 0x00754BA0 SYMBOL
-// _$E24
+// _$E57
 // SYNTHETIC: GAMEMD 0x00754BB0 SYMBOL
-// _$E27
+// _$E60
 // SYNTHETIC: GAMEMD 0x00754BC0 SYMBOL
-// _$E30
+// _$E69
 // SYNTHETIC: GAMEMD 0x00754BD0 SYMBOL
-// _$E33
+// _$E72
 
 // FUNCTION: GAMEMD 0x00754C00
 void Set_Voxel_Light_Angle(float angle)
@@ -143,16 +173,3 @@ Matrix3D Get_Bounce_Matrix(FacingType facing)
 	}
 	return(BounceMatrices[facing]);
 }
-
-struct VoxelZeroed {
-	int A;
-	int B;
-	int C;
-	int D;
-	VoxelZeroed(void) : A(0), B(0), C(0), D(0) {}
-};
-
-VoxelZeroed DAT_00B45580;
-
-// SYNTHETIC: GAMEMD 0x00755C90 SYMBOL
-// _$E36

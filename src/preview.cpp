@@ -37,6 +37,8 @@
 
 #include <math.h>
 
+// SYNTHETIC: GAMEMD 0x006404D0 SYMBOL
+// _$E2
 // SYNTHETIC: GAMEMD 0x006404F0 SYMBOL
 // _$E83
 // SYNTHETIC: GAMEMD 0x00640520 SYMBOL
@@ -405,10 +407,6 @@ unsigned * MapPreviewClass::Create_Paletted_Preview(int colorcount, int & size)
 	return((unsigned *)block);
 }
 
-// SYNTHETIC: GAMEMD 0x00642770 SYMBOL
-// _$E123
-const Rect RECT_NONE_2(0, 0, 0, 0);
-
 // FUNCTION: GAMEMD 0x006425F0
 void MapPreviewClass::Create_Preview_Surface(char * buffer)
 {
@@ -436,4 +434,3 @@ void MapPreviewClass::Create_Preview_Surface(char * buffer)
 		}
 	}
 }
-

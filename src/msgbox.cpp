@@ -11,6 +11,9 @@
 #include <windows.h>
 #undef LoadString
 
+// SYNTHETIC: GAMEMD 0x005D3470 SYMBOL
+// _$E2
+
 class Surface;
 void __fastcall FUN_0052FEC0(Surface * surface, bool flag);
 
@@ -156,13 +159,4 @@ void __fastcall FUN_005D3760(HWND window, int id, int control, int notify_code)
 			}
 			break;
 	}
-}
-
-// FUNCTION: GAMEMD 0x005D37C0
-void FUN_005D37C0(void)
-{
-	FUN_00ABFC18 = 0;
-	FUN_00ABFC1C = 0;
-	FUN_00ABFC20 = 0;
-	FUN_00ABFC24 = 0;
 }

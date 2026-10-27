@@ -129,21 +129,3 @@ int CargoClass::IndexOf(ObjectClass const * object) const
 	if (o == NULL) index = 0;
 	return index;
 }
-
-// SYNTHETIC: GAMEMD 0x00473540 SYMBOL
-// _$E30
-
-// SYNTHETIC: GAMEMD 0x00473570 SYMBOL
-// _$E33
-
-// SYNTHETIC: GAMEMD 0x00473590 SYMBOL
-// _$E36
-
-// SYNTHETIC: GAMEMD 0x004735B0 SYMBOL
-// _$E39
-
-// SYNTHETIC: GAMEMD 0x004735D0 SYMBOL
-// _$E42
-
-// SYNTHETIC: GAMEMD 0x004735F0 SYMBOL
-// _$E45

@@ -6,6 +6,7 @@
 #define NDEBUG
 
 #include "always.h"
+#include "rect.h"
 #include "mixfile.h"
 #include "bsearch.h"
 #include "buff.h"
@@ -20,6 +21,9 @@
 #include "shastraw.h"
 #include "xstraw.h"
 #include "blwstraw.h"
+
+// SYNTHETIC: GAMEMD 0x005B3AA0 SYMBOL
+// _$E2
 
 
 struct CacheNode {
@@ -43,9 +47,9 @@ struct FileSystem {
 };
 
 // SYNTHETIC: GAMEMD 0x005B3AC0 SYMBOL
-// _$E19
+// _$E22
 // SYNTHETIC: GAMEMD 0x005B3B10 SYMBOL
-// _$E16
+// _$E19
 List<MixFileClass *> MixFileClass::List;
 
 // FUNCTION: GAMEMD 0x005B3C00
@@ -340,12 +344,3 @@ bool MixFileClass::Offset(char const * filename, void ** realptr, MixFileClass *
 
 // SYNTHETIC: GAMEMD 0x005B46E0
 // ??_G?$List@PAVMixFileClass@@@@UAEPAXI@Z
-
-struct Quad4 {
-	int A, B, C, D;
-	Quad4(void) : A(0), B(0), C(0), D(0) {}
-};
-
-// SYNTHETIC: GAMEMD 0x005B47A0 SYMBOL
-// _$E22
-Quad4 DAT_00ABF018;

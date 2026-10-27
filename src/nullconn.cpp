@@ -99,12 +99,3 @@ NullModemConnClass *NullConnDeleteProbe (NullModemConnClass *p)
 	delete p;
 	return p;
 }
-
-struct NullConnProbe {
-	int A, B, C, D;
-	NullConnProbe () : A(0), B(0), C(0), D(0) {}
-};
-
-// SYNTHETIC: GAMEMD 0x005EF2D0 SYMBOL
-// _$E3
-NullConnProbe NullConnProbeObj;

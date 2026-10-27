@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
 
 #include "wspipx.h"
 
@@ -15,6 +16,33 @@
 #include "vector.h"
 
 #include <cstdio>
+
+// SYNTHETIC: GAMEMD 0x007B0BA0 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x007B0BD0 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x007B0BF0 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x007B0C10 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x007B0C30 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x007B0C50 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x007B0C70 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x007B0CB0 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x007B0CE0 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x007B0D10 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x007B0D40 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x007B0D50 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x007B0D70 SYMBOL
+// _$E38
 
 namespace Randomizer { extern Random2Class Global; }
 extern int __cdecl FUN_007B2730(void);
@@ -366,15 +394,3 @@ int IPXInterfaceClass::Message_Handler(HWND , UINT message, UINT , LONG lParam)
 
 // SYNTHETIC: GAMEMD 0x007B1790
 // ??_GIPXInterfaceClass@@UAEPAXI@Z
-
-struct WspIPXQuad {
-	int A;
-	int B;
-	int C;
-	int D;
-	WspIPXQuad(void) : A(0), B(0), C(0), D(0) {}
-};
-
-// SYNTHETIC: GAMEMD 0x007B17B0 SYMBOL
-// _$E4
-WspIPXQuad DAT_00B78028;

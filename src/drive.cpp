@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
 #include "drive.h"
 #include "_map.h"
 #include "_rules.h"
@@ -25,6 +26,27 @@
 #include "layer.hh"
 #include "tube.hh"
 #include <new.h>
+
+// SYNTHETIC: GAMEMD 0x004AF330 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x004AF360 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x004AF380 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x004AF3A0 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x004AF3C0 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x004AF3E0 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x004AF400 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x004AF440 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x004AF470 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x004AF4A0 SYMBOL
+// _$E29
 
 static const double _deaccel = 0.3f;
 
@@ -766,17 +788,3 @@ template class CDTimerClass<FrameTimerClass>;
 
 // FUNCTION: GAMEMD 0x004B4DE0
 // DriveLocomotionClass::Release
-
-struct ZeroQuad {
-	int A;
-	int B;
-	int C;
-	int D;
-
-	ZeroQuad() : A(0), B(0), C(0), D(0) {}
-};
-
-ZeroQuad DriveZeroQuad;
-
-// SYNTHETIC: GAMEMD 0x004B4DF0 SYMBOL
-// _$E106

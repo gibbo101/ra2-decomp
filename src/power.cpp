@@ -4,91 +4,36 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
 #include <math.h>
-
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007EFF40;
-extern const double DAT_007EFF48;
-
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
 
 // SYNTHETIC: GAMEMD 0x0063F4C0 SYMBOL
 // _$E2
-double DAT_00AC4D18 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x0063F4F0 SYMBOL
 // _$E5
-double DAT_00AC4E68 = DAT_00AC4D18 / DAT_007EFF40;
-
 // SYNTHETIC: GAMEMD 0x0063F510 SYMBOL
 // _$E8
-double DAT_00AC4E50 = DAT_007E1718 / DAT_00AC4E68;
-
 // SYNTHETIC: GAMEMD 0x0063F530 SYMBOL
 // _$E11
-double DAT_00AC4E48 = DAT_007E1720 * DAT_007EFF48;
-
 // SYNTHETIC: GAMEMD 0x0063F550 SYMBOL
 // _$E14
-double DAT_00AC4D20 = DAT_007E1728 * DAT_007EFF48;
-
 // SYNTHETIC: GAMEMD 0x0063F570 SYMBOL
 // _$E17
-double DAT_00AC4CF8 = DAT_007E1730 * DAT_007EFF48;
-
 // SYNTHETIC: GAMEMD 0x0063F590 SYMBOL
 // _$E20
-int DAT_00AC4E70 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00AC4CF8 - DAT_00AC4D20) * DAT_00AC4D18));
-
 // SYNTHETIC: GAMEMD 0x0063F5D0 SYMBOL
 // _$E23
-double DAT_00AC4D28 = FUN_004CADE0(DAT_00AC4E70 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x0063F600 SYMBOL
 // _$E26
-double DAT_00AC4E40 = FUN_004CADE0((DAT_00AC4E70 * 2) / DAT_00AC4D18);
-
 // SYNTHETIC: GAMEMD 0x0063F630 SYMBOL
 // _$E29
-int DAT_00AC4E64 = (int)(DAT_00AC4E70 * 4 + DAT_007E1738);
-
 // SYNTHETIC: GAMEMD 0x0063F660 SYMBOL
 // _$E32
-ShortPair DAT_00AC4D10;
-
 // SYNTHETIC: GAMEMD 0x0063F670 SYMBOL
 // _$E35
-IntTriple DAT_00AC4E30;
-
-struct PowerGlobalA {
-	int A, B, C;
-	PowerGlobalA() { C = 0; A = 128; B = 128; }
-};
-
 // SYNTHETIC: GAMEMD 0x0063F690 SYMBOL
 // _$E38
-PowerGlobalA DAT_00AC4E58;
 
-#include "rect.h"
-#include "geometry.h"
 #include "power.h"
 #include "_convert.h"
 #include "_map.h"
@@ -358,6 +303,3 @@ char const * PowerClass::Help_Text(int id)
 
 // SYNTHETIC: GAMEMD 0x006404B0
 // ??_GPowerClass@@UAEPAXI@Z
-
-// SYNTHETIC: GAMEMD 0x006404D0 SYMBOL
-// _$E41

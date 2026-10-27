@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
 #include "ionblast.h"
 #include "_rect.h"
 #include "_rules.h"
@@ -26,6 +27,35 @@
 #include "vector3.h"
 #include "zbuffer.h"
 
+// SYNTHETIC: GAMEMD 0x0053C820 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x0053C850 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x0053C870 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x0053C890 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x0053C8B0 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x0053C8D0 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x0053C8F0 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x0053C930 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x0053C960 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x0053C990 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x0053C9C0 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x0053C9D0 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x0053C9F0 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x0053CA10 SYMBOL
+// _$E42
+
 int SpiralIndexToSurfaceLUT[289];
 
 int BlastSurfaceStride = 0;
@@ -41,19 +71,15 @@ const double WaveSpeedScale = 0.0125;
 const double WaveRange = 256.0;
 
 // SYNTHETIC: GAMEMD 0x0053CA30 SYMBOL
-// _$E89
+// _$E134
 double WaveSpeed = ((WaveRange - WaveStartDistance) + WaveBandWidth) * WaveSpeedScale;
 // SYNTHETIC: GAMEMD 0x0053CA50 SYMBOL
-// _$E92
+// _$E137
 double WavePhaseSpeed = WaveSpeed;
 
 // SYNTHETIC: GAMEMD 0x0053CA70 SYMBOL
-// _$E98
+// _$E143
 DynamicVectorClass<IonBlastClass *> IonBlastClass::IonBlasts;
-
-// SYNTHETIC: GAMEMD 0x0053DDE0 SYMBOL
-// _$E101
-Rect BlastBounds(0, 0, 0, 0);
 
 int Point_To_Spiral_Index(Point2D point);
 
@@ -62,7 +88,7 @@ void Calculate_Index_To_Surface_LUT(int stride);
 Point2D Spiral_Index_To_Point(int index);
 
 // SYNTHETIC: GAMEMD 0x0053CAB0 SYMBOL
-// _$E95
+// _$E140
 
 // FUNCTION: GAMEMD 0x0053CB10
 IonBlastClass::IonBlastClass(Coord coord) :

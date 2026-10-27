@@ -47,6 +47,9 @@
 #undef LoadString
 #include "stringtable.h"
 
+// SYNTHETIC: GAMEMD 0x00600320 SYMBOL
+// _$E2
+
 int _mouse_counter;
 
 char const * __fastcall GetTooltipStringLabel(int type, int id);

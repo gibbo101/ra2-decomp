@@ -13,6 +13,9 @@
 #include "zbuffer.h"
 #include <new.h>
 
+// SYNTHETIC: GAMEMD 0x004A3250 SYMBOL
+// _$E2
+
 HINSTANCE LanguageResources;
 
 extern LPDIRECTDRAW2 DAT_008A0E00;
@@ -428,11 +431,6 @@ void * Hires_Load(FileClass & file)
 	}
 }
 
-extern DWORD DAT_0089F980;
-extern DWORD DAT_0089F984;
-extern DWORD DAT_0089F988;
-extern DWORD DAT_0089F98C;
-
 struct Flag3D {
 	void FUN_004A3C00(void);
 
@@ -449,13 +447,4 @@ bool FUN_004A3BF0(void)
 void Flag3D::FUN_004A3C00(void)
 {
 	Value = 0;
-}
-
-// FUNCTION: GAMEMD 0x004A3C10
-void FUN_004A3C10(void)
-{
-	DAT_0089F980 = 0;
-	DAT_0089F984 = 0;
-	DAT_0089F988 = 0;
-	DAT_0089F98C = 0;
 }

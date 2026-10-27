@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
 
 #include "base.h"
 
@@ -20,6 +21,35 @@
 #include "vector.h"
 
 #include <cstdio>
+
+// SYNTHETIC: GAMEMD 0x0042E430 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x0042E460 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x0042E480 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x0042E4A0 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x0042E4C0 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x0042E4E0 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x0042E500 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x0042E540 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x0042E570 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x0042E5A0 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x0042E5D0 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x0042E5E0 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x0042E600 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x0042E620 SYMBOL
+// _$E41
 
 // FUNCTION: GAMEMD 0x0042E640
 bool BaseNodeClass::operator == (BaseNodeClass const & node)

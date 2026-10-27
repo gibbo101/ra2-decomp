@@ -16,6 +16,8 @@
 #include "rules.h"
 #include "tactical.h"
 
+// SYNTHETIC: GAMEMD 0x004A1540 SYMBOL
+// _$E47
 // SYNTHETIC: GAMEMD 0x004A1560 SYMBOL
 // _$E2
 // SYNTHETIC: GAMEMD 0x004A1590 SYMBOL

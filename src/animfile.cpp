@@ -7,7 +7,6 @@
 #include "animfile.h"
 #include "assert.h"
 #include "bsurface.h"
-#include "geometry.h"
 #include "palette.h"
 #include "wwfile.h"
 #include <math.h>
@@ -16,6 +15,9 @@
 #define LP_HEADER_SIZE(nRecords) ( (sizeof(LPDescriptor) + sizeof(unsigned short)) + (nRecords) * sizeof(unsigned short) )
 
 #define LP_HEADER_SIZE(nRecords) ( (sizeof(LPDescriptor) + sizeof(unsigned short)) + (nRecords) * sizeof(unsigned short) )
+
+// SYNTHETIC: GAMEMD 0x00426650 SYMBOL
+// _$E2
 
 // FUNCTION: GAMEMD 0x00426670
 AnimFile::AnimFile(void) :
@@ -402,30 +404,3 @@ bool AnimFile::Decode_Frame(void *source, int nBytes, void *dest, int dlength)
 
 // SYNTHETIC: GAMEMD 0x004272A0
 // ??_GAnimFile@@UAEPAXI@Z
-
-// SYNTHETIC: GAMEMD 0x00427320 SYMBOL
-// _$E5
-// SYNTHETIC: GAMEMD 0x00427350 SYMBOL
-// _$E8
-// SYNTHETIC: GAMEMD 0x00427370 SYMBOL
-// _$E11
-// SYNTHETIC: GAMEMD 0x00427390 SYMBOL
-// _$E14
-// SYNTHETIC: GAMEMD 0x004273B0 SYMBOL
-// _$E17
-// SYNTHETIC: GAMEMD 0x004273D0 SYMBOL
-// _$E20
-// SYNTHETIC: GAMEMD 0x004273F0 SYMBOL
-// _$E23
-// SYNTHETIC: GAMEMD 0x00427430 SYMBOL
-// _$E26
-// SYNTHETIC: GAMEMD 0x00427460 SYMBOL
-// _$E29
-// SYNTHETIC: GAMEMD 0x00427490 SYMBOL
-// _$E32
-// SYNTHETIC: GAMEMD 0x004274C0 SYMBOL
-// _$E35
-// SYNTHETIC: GAMEMD 0x004274D0 SYMBOL
-// _$E38
-// SYNTHETIC: GAMEMD 0x004274F0 SYMBOL
-// _$E41

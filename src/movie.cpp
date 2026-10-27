@@ -24,6 +24,9 @@
 #include "msglist.h"
 #include <math.h>
 
+// SYNTHETIC: GAMEMD 0x005BEAB0 SYMBOL
+// _$E2
+
 extern double __cdecl FUN_004CAC40(double);
 extern double __cdecl FUN_004CAD50(double);
 extern double __cdecl FUN_004CADE0(double);

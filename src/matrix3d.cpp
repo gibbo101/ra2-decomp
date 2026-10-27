@@ -4,8 +4,6 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
-#include "geometry.h"
-#include "rect.h"
 #include "matrix3d.h"
 #include "fastmath.h"
 #include <cstring>
@@ -581,33 +579,3 @@ Matrix3D Matrix3D::Orthogonal_Inverse(Matrix3D const & src)
 
 	return(inv);
 }
-
-// SYNTHETIC: GAMEMD 0x005AFCE0 SYMBOL
-// _$E2
-// SYNTHETIC: GAMEMD 0x005AFD10 SYMBOL
-// _$E5
-// SYNTHETIC: GAMEMD 0x005AFD30 SYMBOL
-// _$E8
-// SYNTHETIC: GAMEMD 0x005AFD50 SYMBOL
-// _$E11
-// SYNTHETIC: GAMEMD 0x005AFD70 SYMBOL
-// _$E14
-// SYNTHETIC: GAMEMD 0x005AFD90 SYMBOL
-// _$E17
-// SYNTHETIC: GAMEMD 0x005AFDB0 SYMBOL
-// _$E20
-// SYNTHETIC: GAMEMD 0x005AFDF0 SYMBOL
-// _$E23
-// SYNTHETIC: GAMEMD 0x005AFE20 SYMBOL
-// _$E26
-// SYNTHETIC: GAMEMD 0x005AFE50 SYMBOL
-// _$E29
-// SYNTHETIC: GAMEMD 0x005AFE80 SYMBOL
-// _$E32
-// SYNTHETIC: GAMEMD 0x005AFE90 SYMBOL
-// _$E35
-// SYNTHETIC: GAMEMD 0x005AFEB0 SYMBOL
-// _$E38
-// SYNTHETIC: GAMEMD 0x005AFED0 SYMBOL
-// _$E41
-

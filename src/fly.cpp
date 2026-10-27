@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
 #include "fly.h"
 #include "_map.h"
 #include "_rand.h"
@@ -38,6 +39,35 @@
 #include "weapon.h"
 #include "layer.hh"
 #include <new.h>
+
+// SYNTHETIC: GAMEMD 0x004CC790 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x004CC7C0 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x004CC7E0 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x004CC800 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x004CC820 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x004CC840 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x004CC860 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x004CC8A0 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x004CC8D0 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x004CC900 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x004CC930 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x004CC940 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x004CC960 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x004CC980 SYMBOL
+// _$E52
 
 // FUNCTION: GAMEMD 0x004CC9A0
 FlyLocomotionClass::FlyLocomotionClass(void) :
@@ -1122,6 +1152,3 @@ template class _com_ptr_t<_com_IIID<IFlyControl, &__uuidof(IFlyControl)> >;
 
 // FUNCTION: GAMEMD 0x004D0530
 // LocomotionClass::Release
-
-// SYNTHETIC: GAMEMD 0x004D0540 SYMBOL
-// _$E13
