@@ -92,4 +92,19 @@ char const * Warhead_Name(WarheadType warhead)
 // TEMPLATE: GAMEMD 0x0040F760
 // ?ID@?$VectorClass@PAVWarheadTypeClass@@@@UAEHABQAVWarheadTypeClass@@@Z
 
+// TEMPLATE: GAMEMD 0x0040F7A0
+// ?ID@?$VectorClass@PAVWarheadTypeClass@@@@UAEHPBQAVWarheadTypeClass@@@Z
+
+// TEMPLATE: GAMEMD 0x0040F7C0
+// ?Resize@?$DynamicVectorClass@PAVWarheadTypeClass@@@@UAE_NHPBQAVWarheadTypeClass@@@Z
+
+// TEMPLATE: GAMEMD 0x0040F870
+// ?ID@?$DynamicVectorClass@PAVWarheadTypeClass@@@@UAEHABQAVWarheadTypeClass@@@Z
+
+// SYNTHETIC: GAMEMD 0x0040F8A0
+// ??_G?$VectorClass@PAVWarheadTypeClass@@@@UAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x0040F8F0
+// ??_G?$DynamicVectorClass@PAVWarheadTypeClass@@@@UAEPAXI@Z
+
 template class DynamicVectorClass<WarheadTypeClass *>;

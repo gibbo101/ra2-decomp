@@ -3594,3 +3594,24 @@ template class VectorClass<AbstractClass *>;
 // TEMPLATE: GAMEMD 0x004E06E0
 // ?ID@?$VectorClass@PAVFootClass@@@@UAEHPBQAVFootClass@@@Z
 template class VectorClass<FootClass *>;
+
+// SYNTHETIC: GAMEMD 0x004E0CE0
+// ??_G?$VectorClass@PAVFootClass@@@@UAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x004E0D30
+// ??_G?$DynamicVectorClass@PAVFootClass@@@@UAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x004E0D80
+// ??_G?$VectorClass@V?$DistributionObject@PAVCellClass@@@?$DiscreteDistributionClass@VCellClass@@@@@@UAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x004E0DE0
+// ??_E?$DistributionObject@PAVCellClass@@@?$DiscreteDistributionClass@VCellClass@@@@QAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x004E0E20
+// ??_G?$DynamicVectorClass@V?$DistributionObject@PAVCellClass@@@?$DiscreteDistributionClass@VCellClass@@@@@@UAEPAXI@Z
+
+// TEMPLATE: GAMEMD 0x004E0E80
+// ??0?$VectorClass@PAVAbstractClass@@@@QAE@HPBQAVAbstractClass@@@Z
+
+// TEMPLATE: GAMEMD 0x004E0ED0
+// ?Delete_Index@?$DynamicVectorClass@PAVFootClass@@@@QAE_NH@Z

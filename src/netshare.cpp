@@ -3951,3 +3951,24 @@ template class DynamicVectorClass<MultiMission const *>;
 
 // TEMPLATE: GAMEMD 0x005EED00
 // ?Clear@?$VectorClass@PBVMultiMission@@@@UAEXXZ
+
+// TEMPLATE: GAMEMD 0x005EED30
+// ?ID@?$VectorClass@PBVMultiMission@@@@UAEHABQBVMultiMission@@@Z
+
+// TEMPLATE: GAMEMD 0x005EED70
+// ?ID@?$VectorClass@PBVMultiMission@@@@UAEHPBQBVMultiMission@@@Z
+
+// TEMPLATE: GAMEMD 0x005EED90
+// ?Resize@?$DynamicVectorClass@PBVMultiMission@@@@UAE_NHPBQBVMultiMission@@@Z
+
+// TEMPLATE: GAMEMD 0x005EEE40
+// ?Add@?$DynamicVectorClass@PBVMultiMission@@@@QAE_NABQBVMultiMission@@@Z
+
+// TEMPLATE: GAMEMD 0x005EEE90
+// ?ID@?$DynamicVectorClass@PBVMultiMission@@@@UAEHABQBVMultiMission@@@Z
+
+// TEMPLATE: GAMEMD 0x005EEEC0
+// ??_G?$VectorClass@PBVMultiMission@@@@UAEPAXI@Z
+
+// TEMPLATE: GAMEMD 0x005EEF10
+// ??_G?$DynamicVectorClass@PBVMultiMission@@@@UAEPAXI@Z

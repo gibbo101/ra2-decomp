@@ -5,6 +5,7 @@
 
 #include "always.h"
 #include "geometry.h"
+#include "rect.h"
 
 #include "carry.h"
 
@@ -26,6 +27,30 @@
 // _$E14
 // SYNTHETIC: GAMEMD 0x004735F0 SYMBOL
 // _$E17
+
+// SYNTHETIC: GAMEMD 0x00473610 SYMBOL
+// _$E20
+
+// SYNTHETIC: GAMEMD 0x00473650 SYMBOL
+// _$E23
+
+// SYNTHETIC: GAMEMD 0x00473680 SYMBOL
+// _$E26
+
+// SYNTHETIC: GAMEMD 0x004736B0 SYMBOL
+// _$E29
+
+// SYNTHETIC: GAMEMD 0x004736E0 SYMBOL
+// _$E32
+
+// SYNTHETIC: GAMEMD 0x004736F0 SYMBOL
+// _$E35
+
+// SYNTHETIC: GAMEMD 0x00473710 SYMBOL
+// _$E38
+
+// SYNTHETIC: GAMEMD 0x00473730 SYMBOL
+// _$E41
 
 // FUNCTION: GAMEMD 0x00473750
 CarryoverClass::CarryoverClass(TechnoClass * techno) :

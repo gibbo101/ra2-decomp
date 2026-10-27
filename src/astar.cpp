@@ -1237,3 +1237,29 @@ int AStarClass::Test_Cell_Walk(Cell const & from, Cell const & to, FootClass con
 
 // FUNCTION: GAMEMD 0x0042DAE0
 // ?ID@?$DynamicVectorClass@G@@UAEHABG@Z
+
+// SYNTHETIC: GAMEMD 0x0042DB10
+// ??_G?$VectorClass@I@@UAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x0042DB60
+// ??_G?$DynamicVectorClass@I@@UAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x0042DBB0
+// ??_G?$VectorClass@G@@UAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x0042DC00
+// ??_G?$DynamicVectorClass@G@@UAEPAXI@Z
+
+// TEMPLATE: GAMEMD 0x0042DC50
+// ??0?$VectorClass@I@@QAE@HPBI@Z
+
+// TEMPLATE: GAMEMD 0x0042DCA0
+// ?Heapify@?$PriorityQueueClass@UAStarHierarchicalNode@@@@QAEXH@Z
+
+// TEMPLATE: GAMEMD 0x0042DD60
+// ??0?$VectorClass@G@@QAE@HPBG@Z
+
+template class VectorClass<unsigned int>;
+template class DynamicVectorClass<unsigned int>;
+template class VectorClass<unsigned short>;
+template class DynamicVectorClass<unsigned short>;

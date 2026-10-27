@@ -48,3 +48,27 @@ template class DynamicVectorClass<MFCD *>;
 
 // TEMPLATE: GAMEMD 0x0040D5A0
 // ??8?$VectorClass@PAVMixFileClass@@@@UBE_NABV0@@Z
+
+// TEMPLATE: GAMEMD 0x0040D5E0
+// ?Resize@?$VectorClass@PAVMixFileClass@@@@UAE_NHPBQAVMixFileClass@@@Z
+
+// TEMPLATE: GAMEMD 0x0040D690
+// ?Clear@?$VectorClass@PAVMixFileClass@@@@UAEXXZ
+
+// TEMPLATE: GAMEMD 0x0040D6C0
+// ?ID@?$VectorClass@PAVMixFileClass@@@@UAEHABQAVMixFileClass@@@Z
+
+// TEMPLATE: GAMEMD 0x0040D700
+// ?ID@?$VectorClass@PAVMixFileClass@@@@UAEHPBQAVMixFileClass@@@Z
+
+// TEMPLATE: GAMEMD 0x0040D720
+// ?Resize@?$DynamicVectorClass@PAVMixFileClass@@@@UAE_NHPBQAVMixFileClass@@@Z
+
+// TEMPLATE: GAMEMD 0x0040D7D0
+// ?ID@?$DynamicVectorClass@PAVMixFileClass@@@@UAEHABQAVMixFileClass@@@Z
+
+// SYNTHETIC: GAMEMD 0x0040D800
+// ??_G?$VectorClass@PAVMixFileClass@@@@UAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x0040D850
+// ??_G?$DynamicVectorClass@PAVMixFileClass@@@@UAEPAXI@Z

@@ -267,3 +267,36 @@ WideWstring ValueGameOption<T>::Get_String(const rc_ptr<WDTTerritory> & territor
 
 // TEMPLATE: GAMEMD 0x00766F70
 // ??0?$rc_ptr@VGameOption@WorldDominationTour@@@@QAE@ABV?$rc_ptr@VMapSizeGameOption@WorldDominationTour@@@@@Z
+
+// TEMPLATE: GAMEMD 0x00766C10
+// ?Resize@?$VectorClass@V?$rc_ptr@VGameOption@WorldDominationTour@@@@@@UAE_NHPBV?$rc_ptr@VGameOption@WorldDominationTour@@@@@Z
+
+// TEMPLATE: GAMEMD 0x00766D60
+// ?ID@?$VectorClass@V?$rc_ptr@VGameOption@WorldDominationTour@@@@@@UAEHABV?$rc_ptr@VGameOption@WorldDominationTour@@@@@Z
+
+// TEMPLATE: GAMEMD 0x00766DA0
+// ?ID@?$VectorClass@V?$rc_ptr@VGameOption@WorldDominationTour@@@@@@UAEHPBV?$rc_ptr@VGameOption@WorldDominationTour@@@@@Z
+
+// TEMPLATE: GAMEMD 0x00766DC0
+// ?Resize@?$DynamicVectorClass@V?$rc_ptr@VGameOption@WorldDominationTour@@@@@@UAE_NHPBV?$rc_ptr@VGameOption@WorldDominationTour@@@@@Z
+
+// TEMPLATE: GAMEMD 0x00766F40
+// ?ID@?$DynamicVectorClass@V?$rc_ptr@VGameOption@WorldDominationTour@@@@@@UAEHABV?$rc_ptr@VGameOption@WorldDominationTour@@@@@Z
+
+// TEMPLATE: GAMEMD 0x00766FA0
+// ??E?$VectorCursor@V?$rc_ptr@VGameOption@WorldDominationTour@@@@V?$DynamicVectorClass@V?$rc_ptr@VGameOption@WorldDominationTour@@@@@@@@UAEAAV0@XZ
+
+// TEMPLATE: GAMEMD 0x00766FB0
+// ??F?$VectorCursor@V?$rc_ptr@VGameOption@WorldDominationTour@@@@V?$DynamicVectorClass@V?$rc_ptr@VGameOption@WorldDominationTour@@@@@@@@UAEAAV0@XZ
+
+// SYNTHETIC: GAMEMD 0x00766FC0
+// ??_G?$VectorClass@V?$rc_ptr@VGameOption@WorldDominationTour@@@@@@UAEPAXI@Z
+
+// TEMPLATE: GAMEMD 0x00767010
+// ??_E?$rc_ptr@VGameOption@WorldDominationTour@@@@UAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x00767080
+// ??_G?$DynamicVectorClass@V?$rc_ptr@VGameOption@WorldDominationTour@@@@@@UAEPAXI@Z
+
+// TEMPLATE: GAMEMD 0x007670D0
+// ??0?$rc_ptr@VGameOption@WorldDominationTour@@@@QAE@XZ

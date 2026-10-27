@@ -7,6 +7,9 @@
 #include "geometry.h"
 #include "rect.h"
 #include <math.h>
+#include "velocity.h"
+
+template class TVelocity3D<double>;
 
 // SYNTHETIC: GAMEMD 0x005B1EE0 SYMBOL
 // _$E41
@@ -34,3 +37,9 @@
 // _$E32
 // SYNTHETIC: GAMEMD 0x005B20B0 SYMBOL
 // _$E35
+
+// SYNTHETIC: GAMEMD 0x005B20D0 SYMBOL
+// _$E38
+
+// TEMPLATE: GAMEMD 0x005B2A30
+// ?Set_Pitch@?$TVelocity3D@N@@QAEXABVDirType@@@Z

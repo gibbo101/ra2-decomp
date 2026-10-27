@@ -1711,3 +1711,31 @@ template class TClassFactory<RocketLocomotionClass>;
 // TEMPLATE: GAMEMD 0x006C4690
 // ?LockServer@?$TClassFactory@VTunnelLocomotionClass@@@@UAGJH@Z
 template class TClassFactory<TunnelLocomotionClass>;
+
+// TEMPLATE: GAMEMD 0x006C46C0
+// ??0?$TClassFactory@VWalkLocomotionClass@@@@QAE@XZ
+// TEMPLATE: GAMEMD 0x006C46D0
+// ?QueryInterface@?$TClassFactory@VWalkLocomotionClass@@@@UAGJABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C4740
+// ?AddRef@?$TClassFactory@VWalkLocomotionClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C4760
+// ?Release@?$TClassFactory@VWalkLocomotionClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C4790
+// ?CreateInstance@?$TClassFactory@VWalkLocomotionClass@@@@UAGJPAUIUnknown@@ABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C4810
+// ?LockServer@?$TClassFactory@VWalkLocomotionClass@@@@UAGJH@Z
+template class TClassFactory<WalkLocomotionClass>;
+
+// TEMPLATE: GAMEMD 0x006C4840
+// ??0?$TClassFactory@VDropPodLocomotionClass@@@@QAE@XZ
+// TEMPLATE: GAMEMD 0x006C4850
+// ?QueryInterface@?$TClassFactory@VDropPodLocomotionClass@@@@UAGJABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C48C0
+// ?AddRef@?$TClassFactory@VDropPodLocomotionClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C48E0
+// ?Release@?$TClassFactory@VDropPodLocomotionClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C4910
+// ?CreateInstance@?$TClassFactory@VDropPodLocomotionClass@@@@UAGJPAUIUnknown@@ABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C4990
+// ?LockServer@?$TClassFactory@VDropPodLocomotionClass@@@@UAGJH@Z
+template class TClassFactory<DropPodLocomotionClass>;

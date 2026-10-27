@@ -472,3 +472,22 @@ template class DynamicVectorClass<CaptureManagerClass *>;
 
 // TEMPLATE: GAMEMD 0x00472F20
 // ?Resize@?$DynamicVectorClass@PAVCaptureManagerClass@@@@UAE_NHPBQAVCaptureManagerClass@@@Z
+
+// TEMPLATE: GAMEMD 0x00472FD0
+// ?ID@?$DynamicVectorClass@PAVCaptureManagerClass@@@@UAEHABQAVCaptureManagerClass@@@Z
+
+// TEMPLATE: GAMEMD 0x00473000
+// ??_G?$VectorClass@PAUControlNode@@@@UAEPAXI@Z
+
+// TEMPLATE: GAMEMD 0x00473050
+// ??_G?$DynamicVectorClass@PAUControlNode@@@@UAEPAXI@Z
+
+// TEMPLATE: GAMEMD 0x004730A0
+// ??_G?$VectorClass@PAVCaptureManagerClass@@@@UAEPAXI@Z
+
+// TEMPLATE: GAMEMD 0x004730F0
+// ??_G?$DynamicVectorClass@PAVCaptureManagerClass@@@@UAEPAXI@Z
+
+// TEMPLATE: GAMEMD 0x00473140
+// ??0?$VectorClass@PAUControlNode@@@@QAE@HPBQAUControlNode@@@Z
+template class VectorClass<ControlNode *>;

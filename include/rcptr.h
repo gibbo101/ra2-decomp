@@ -2,14 +2,26 @@
 // Copyright 2026 ra2-decomp contributors
 #pragma once
 
+class rc_object
+{
+	public:
+		virtual void vt_0(void) = 0;
+		virtual void vt_1(void) = 0;
+		virtual void Release(void) = 0;
+
+		int RefCount;
+};
+
 class rc_ptr_base
 {
 	public:
 		rc_ptr_base(void);
 		virtual ~rc_ptr_base(void);
+		rc_ptr_base(rc_object * ptr);
+		rc_ptr_base(rc_ptr_base const & that);
 		void FUN_0065D480(void * ptr);
 
-		void * Ptr;
+		rc_object * Ptr;
 };
 
 template<class T>

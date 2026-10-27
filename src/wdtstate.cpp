@@ -34,3 +34,42 @@
 // _$E35
 // SYNTHETIC: GAMEMD 0x0076F430 SYMBOL
 // _$E38
+
+// SYNTHETIC: GAMEMD 0x0076F450 SYMBOL
+// _$E41
+
+// FUNCTION: GAMEMD 0x0076F470
+rc_ptr<WorldDominationTour::State> __fastcall WorldDominationTour::FUN_0076F470(rc_ptr<WDTState> const & state, unsigned int tick)
+{
+	return rc_ptr<State>(new State(state, tick));
+}
+
+// FUNCTION: GAMEMD 0x0076F500
+rc_ptr<WorldDominationTour::State> __fastcall WorldDominationTour::FUN_0076F500(void)
+{
+	return rc_ptr<State>(new State());
+}
+
+// FUNCTION: GAMEMD 0x0076F560
+WorldDominationTour::State::State(void) :
+	Owners(NULL)
+{
+}
+
+// FUNCTION: GAMEMD 0x0076F5A0
+WorldDominationTour::State::State(rc_ptr<WDTState> const & state, unsigned int tick) :
+	TourState(state),
+	Owners(NULL)
+{
+	if (TourState.Get() != NULL && tick < TourState->NumTicks) {
+		Owners = TourState->OwnerHistory[tick];
+	}
+}
+
+// FUNCTION: GAMEMD 0x0076F650
+WorldDominationTour::State::~State(void)
+{
+}
+
+// SYNTHETIC: GAMEMD 0x0076F6C0
+// ??_GState@WorldDominationTour@@UAEPAXI@Z

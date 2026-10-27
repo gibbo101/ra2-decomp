@@ -224,11 +224,10 @@ namespace OwnerDraw {
 		WinData(WinData const & that);
 		~WinData(void)
 		{
-			if (Wide.text) {
-				delete Wide.text;
-				Wide.text = NULL;
+			Set_Text((wchar_t const *)0);
+			while (Wide.nodes) {
+				Remove_Node(Wide.nodes);
 			}
-			Remove_All_Nodes();
 			if (Wide.editText) {
 				delete Wide.editText;
 			}

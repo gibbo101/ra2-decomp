@@ -469,3 +469,21 @@ void ListClass::Set_Selected_Index(wchar_t const * text)
 
 // TEMPLATE: GAMEMD 0x00558280
 // ?$VectorClass@PBG::Resize
+
+// TEMPLATE: GAMEMD 0x00558330
+// ?$VectorClass@PBG::Clear
+
+// TEMPLATE: GAMEMD 0x00558360
+// ?$VectorClass@PBG::ID
+
+// TEMPLATE: GAMEMD 0x005583A0
+// ?$VectorClass@PBG::ID
+
+// TEMPLATE: GAMEMD 0x005583C0
+// ?$DynamicVectorClass@PBG::Resize
+
+// TEMPLATE: GAMEMD 0x00558470
+// ?$DynamicVectorClass@PBG::ID
+
+// SYNTHETIC: GAMEMD 0x005584A0
+// ??_G?$VectorClass@PBG@@UAEPAXI@Z

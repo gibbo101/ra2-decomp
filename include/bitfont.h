@@ -56,6 +56,7 @@ class BitFont
 		unsigned char * GetCharacterBitmap(wchar_t ch);
 		void * FUN_00434790(unsigned short * color);
 		void FUN_004347B0(void);
+		void FUN_004349F0(void);
 		int FUN_00434500(wchar_t const * text, int x, int y, int w, int h);
 		bool FUN_00434840(LTRBStruct * out, LTRBStruct * rect, LTRBStruct * bounds);
 		int Blit(unsigned short ch, int x, int y, int unknown);

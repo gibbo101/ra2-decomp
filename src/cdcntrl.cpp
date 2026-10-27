@@ -209,3 +209,219 @@ bool CDControlClass::Unlock_CD_Drive(char drive)
 
 	return (true);
 }
+
+// FUNCTION: GAMEMD 0x0047A080
+void CDControlClass::Eject_CD_Win95(char drive)
+{
+	HANDLE vwin32 = INVALID_HANDLE_VALUE;
+
+	drive++;
+	vwin32 = Open_VWin32();
+
+	bool drive_locked = Lock_Logical_Volume(vwin32, drive, 0, 0);
+	if (!drive_locked) {
+		DebugString("Unable to lock volume %c:\n", 'A' + drive - 1);
+		return;
+	}
+
+	if (!Unlock_Volume_95(vwin32, drive)) {
+		DebugString("Could not unlock media from drive %c:\n", 'A' + drive - 1);
+		Unlock_Logical_Volume(vwin32, drive);
+		return;
+	}
+
+	if (!Auto_Eject_Volume_95(vwin32, drive)) {
+		DebugString("Could not eject media from drive %c:\n", 'A' + drive - 1);
+	}
+
+	Unlock_Logical_Volume(vwin32, drive);
+	Close_VWin32(vwin32);
+}
+
+// FUNCTION: GAMEMD 0x0047A1B0
+bool CDControlClass::Lock_CD_Drive_95(char drive)
+{
+	DebugString("CDControlClass::Lock_CD_Drive_95\n");
+
+	bool retval = true;
+	HANDLE vwin32 = INVALID_HANDLE_VALUE;
+
+	DebugString("Preventing ejection on CD drive %c\n", drive + 'A');
+
+	drive++;
+	vwin32 = Open_VWin32();
+
+	DebugString("About to lock logical volume to enable exclusive access\n");
+
+	bool drive_locked = Lock_Logical_Volume(vwin32, drive, 0, 0);
+	if (!drive_locked) {
+		DebugString("Unable to lock volume %c:\n", 'A' + drive - 1);
+		return (false);
+	}
+	DebugString("Volume locked OK\n");
+
+	DebugString("About to prevent CD tray ejection\n");
+
+	if (!Lock_Volume_95(vwin32, drive)) {
+		DebugString("Could not lock CD tray in drive %c:\n", 'A' + drive - 1);
+		retval = false;
+	} else {
+		DebugString("CD tray ejection disabled OK\n");
+	}
+
+	Unlock_Logical_Volume(vwin32, drive);
+	Close_VWin32(vwin32);
+
+	DebugString("CDControlClass::Lock_CD_Drive_95 returning %s\n", retval ? "true" : "false");
+
+	return (retval);
+}
+
+// FUNCTION: GAMEMD 0x0047A2D0
+bool CDControlClass::Unlock_CD_Drive_95(char drive)
+{
+	DebugString("CDControlClass::Unlock_CD_Drive_95\n");
+
+	bool retval = true;
+	HANDLE vwin32 = INVALID_HANDLE_VALUE;
+
+	DebugString("Allowing ejection on CD drive %c\n", drive + 'A');
+
+	drive++;
+	vwin32 = Open_VWin32();
+
+	DebugString("About to lock logical volume to enable exclusive access\n");
+
+	bool drive_locked = Lock_Logical_Volume(vwin32, drive, 0, 0);
+	if (!drive_locked) {
+		DebugString("Unable to lock volume %c:\n", 'A' + drive - 1);
+		return (false);
+	}
+	DebugString("Volume locked OK\n");
+
+	DebugString("About to allow CD tray ejection\n");
+
+	if (!Unlock_Volume_95(vwin32, drive)) {
+		DebugString("Could not unlock CD tray in drive %c:\n", 'A' + drive - 1);
+		retval = false;
+	} else {
+		DebugString("CD tray ejection enabled OK\n");
+	}
+
+	Unlock_Logical_Volume(vwin32, drive);
+	Close_VWin32(vwin32);
+
+	DebugString("CDControlClass::Unlock_CD_Drive_95 returning %s\n", retval ? "true" : "false");
+	return (retval);
+}
+
+// FUNCTION: GAMEMD 0x0047A3F0
+bool CDControlClass::Unlock_Volume_95(HANDLE vwin32, char drive)
+{
+	DIOC_REGISTERS regs = {0};
+	PARAMBLOCK unlock_params = {0};
+	bool result;
+	DWORD cb;
+
+	unlock_params.bOperation = 2;
+
+	regs.reg_EAX = 0x440D;
+	regs.reg_EBX = drive;
+	regs.reg_ECX = MAKEWORD(0x48, 0x08);
+	regs.reg_EDX = (DWORD)&unlock_params;
+
+	result = (DeviceIoControl(vwin32, VWIN32_DIOC_DOS_IOCTL, &regs, sizeof(regs), &regs, sizeof(regs), &cb, 0)) ? true : false;
+
+	if (result) {
+		if (regs.reg_Flags & CARRY_FLAG) {
+			result = (regs.reg_EAX == 0xB0) || (regs.reg_EAX == 0x01);
+		}
+
+	} else {
+		DebugString("DeviceIoControl failed to perform DOS IO control function. Error %d - %s\n", GetLastError(), Last_Error_Text());
+	}
+
+	if (!result) return (false);
+
+	DebugString("Apparent number of locks to undo = %d\n", unlock_params.bNumLocks);
+
+	if (unlock_params.bNumLocks == 0) {
+		unlock_params.bNumLocks = 1;
+	}
+
+	for (int i = 0; i < unlock_params.bNumLocks; ++i) {
+		unlock_params.bOperation = 1;
+		regs.reg_EAX = 0x440D;
+		regs.reg_EBX = drive;
+		regs.reg_ECX = MAKEWORD(0x48, 0x08);
+		regs.reg_EDX = (DWORD)&unlock_params;
+
+		result = (DeviceIoControl(vwin32, VWIN32_DIOC_DOS_IOCTL, &regs, sizeof(regs), &regs, sizeof(regs), &cb, 0)) ? true : false;
+		if (result == false) {
+			DebugString("DeviceIoControl failed to perform DOS IO control function. Error %d - %s\n", GetLastError(), Last_Error_Text());
+		}
+
+		result = result && !(regs.reg_Flags & CARRY_FLAG);
+		if (!result) break;
+	}
+	return (result);
+}
+
+// FUNCTION: GAMEMD 0x0047A560
+bool CDControlClass::Lock_Volume_95(HANDLE vwin32, char drive)
+{
+	DIOC_REGISTERS regs = {0};
+	PARAMBLOCK unlock_params = {0};
+	bool result;
+	DWORD cb;
+
+	Unlock_Volume_95(vwin32, drive);
+
+	unlock_params.bOperation = 0;
+	regs.reg_EAX = 0x440D;
+	regs.reg_EBX = drive;
+	regs.reg_ECX = MAKEWORD(0x48, 0x08);
+	regs.reg_EDX = (DWORD)&unlock_params;
+
+	result = (DeviceIoControl(vwin32, VWIN32_DIOC_DOS_IOCTL, &regs, sizeof(regs), &regs, sizeof(regs), &cb, 0)) ? true : false;
+	if (result == false) {
+		DebugString("DeviceIoControl failed to perform DOS IO control function. Error %d - %s\n", GetLastError(), Last_Error_Text());
+	}
+
+	result = result && !(regs.reg_Flags & CARRY_FLAG);
+	return (result);
+}
+
+// FUNCTION: GAMEMD 0x0047A620
+bool CDControlClass::Auto_Eject_Volume_95(HANDLE vwin32, char drive)
+{
+	DIOC_REGISTERS regs = {0};
+	bool result;
+	DWORD cb;
+
+	regs.reg_EAX = 0x440D;
+	regs.reg_EBX = drive;
+	regs.reg_ECX = MAKEWORD(0x49, 0x08);
+
+	result = (DeviceIoControl(vwin32, VWIN32_DIOC_DOS_IOCTL, &regs, sizeof(regs), &regs, sizeof(regs), &cb, 0)) ? true : false;
+	if (result == false) {
+		DebugString("DeviceIoControl failed to perform DOS IO control function. Error %d - %s\n", GetLastError(), Last_Error_Text());
+	}
+
+	result = result && !(regs.reg_Flags & CARRY_FLAG);
+
+	return (result);
+}
+
+// FUNCTION: GAMEMD 0x0047A6B0
+HANDLE WINAPI CDControlClass::Open_VWin32(void)
+{
+	HANDLE result = CreateFile(TEXT("\\\\.\\vwin32"), 0, 0, NULL, 0, FILE_FLAG_DELETE_ON_CLOSE, NULL);
+	return (result);
+}
+
+// FUNCTION: GAMEMD 0x0047A6D0
+bool WINAPI CDControlClass::Close_VWin32(HANDLE vwin32)
+{
+	return ((CloseHandle(vwin32)) ? true : false);
+}

@@ -232,9 +232,19 @@ namespace WorldDominationTour
 
 	class State : public ReferenceCounted {
 		public:
+			State(void);
+			State(rc_ptr<WDTState> const & state, unsigned int tick);
+			virtual ~State(void);
 			int FUN_0076F600(int territory);
 			int FUN_0076F670(int faction);
+
+		public:
+			rc_ptr<WDTState> TourState;
+			unsigned char * Owners;
 	};
+
+	rc_ptr<State> __fastcall FUN_0076F470(rc_ptr<WDTState> const & state, unsigned int tick);
+	rc_ptr<State> __fastcall FUN_0076F500(void);
 
 	class History : public ReferenceCounted {
 		public:

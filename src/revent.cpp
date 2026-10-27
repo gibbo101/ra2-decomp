@@ -443,3 +443,38 @@ void Reset_Radar_Event_Cells(void)
 
 // TEMPLATE: GAMEMD 0x00660CB0
 // ?ID@?$DynamicVectorClass@PAVRadarEventClass@@@@UAEHPBQAVRadarEventClass@@@Z
+
+// TEMPLATE: GAMEMD 0x00660CD0
+// ?GetItem@?$VectorClass@PAVRadarEventClass@@@@UBEPAVRadarEventClass@@H@Z
+
+// TEMPLATE: GAMEMD 0x00660CE0
+// ??8?$VectorClass@PAVRadarEventClass@@@@UBE_NABV0@@Z
+
+// TEMPLATE: GAMEMD 0x00660D20
+// ?Resize@?$VectorClass@PAVRadarEventClass@@@@UAE_NHPBQAVRadarEventClass@@@Z
+
+// TEMPLATE: GAMEMD 0x00660DD0
+// ?Clear@?$VectorClass@PAVRadarEventClass@@@@UAEXXZ
+
+// TEMPLATE: GAMEMD 0x00660E00
+// ?ID@?$VectorClass@PAVRadarEventClass@@@@UAEHABQAVRadarEventClass@@@Z
+
+// TEMPLATE: GAMEMD 0x00660E40
+// ?ID@?$VectorClass@PAVRadarEventClass@@@@UAEHPBQAVRadarEventClass@@@Z
+
+// TEMPLATE: GAMEMD 0x00660E60
+// ?Resize@?$DynamicVectorClass@PAVRadarEventClass@@@@UAE_NHPBQAVRadarEventClass@@@Z
+
+// TEMPLATE: GAMEMD 0x00660F10
+// ?Delete_Index@?$DynamicVectorClass@PAVRadarEventClass@@@@QAE_NH@Z
+
+// TEMPLATE: GAMEMD 0x00660F50
+// ?ID@?$DynamicVectorClass@PAVRadarEventClass@@@@UAEHABQAVRadarEventClass@@@Z
+
+// SYNTHETIC: GAMEMD 0x00660F80
+// ??_G?$VectorClass@PAVRadarEventClass@@@@UAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x00660FD0
+// ??_G?$DynamicVectorClass@PAVRadarEventClass@@@@UAEPAXI@Z
+
+template class DynamicVectorClass<RadarEventClass *>;

@@ -415,4 +415,29 @@ RTTIType AirstrikeClass::Fetch_RTTI(void) const
 
 // TEMPLATE: GAMEMD 0x0041DDE0
 // ?Clear@?$DynamicVectorClass@PAVAirstrikeClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0041DE10
+// ?ID@?$DynamicVectorClass@PAVAirstrikeClass@@@@UAEHPBQAVAirstrikeClass@@@Z
+// TEMPLATE: GAMEMD 0x0041DE30
+// ?GetItem@?$VectorClass@PAVAirstrikeClass@@@@UBEPAVAirstrikeClass@@H@Z
 template class DynamicVectorClass<AirstrikeClass *>;
+
+// TEMPLATE: GAMEMD 0x0041DE40
+// ??8?$VectorClass@PAVAirstrikeClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x0041DE80
+// ?Resize@?$VectorClass@PAVAirstrikeClass@@@@UAE_NHPBQAVAirstrikeClass@@@Z
+// TEMPLATE: GAMEMD 0x0041DF30
+// ?Clear@?$VectorClass@PAVAirstrikeClass@@@@UAEXXZ
+template class VectorClass<AirstrikeClass *>;
+
+// TEMPLATE: GAMEMD 0x0041DF60
+// ?ID@?$VectorClass@PAVAirstrikeClass@@@@UAEHABQAVAirstrikeClass@@@Z
+// TEMPLATE: GAMEMD 0x0041DFA0
+// ?ID@?$VectorClass@PAVAirstrikeClass@@@@UAEHPBQAVAirstrikeClass@@@Z
+// TEMPLATE: GAMEMD 0x0041DFC0
+// ?Resize@?$DynamicVectorClass@PAVAirstrikeClass@@@@UAE_NHPBQAVAirstrikeClass@@@Z
+// TEMPLATE: GAMEMD 0x0041E070
+// ?ID@?$DynamicVectorClass@PAVAirstrikeClass@@@@UAEHABQAVAirstrikeClass@@@Z
+// SYNTHETIC: GAMEMD 0x0041E0A0
+// ??_G?$VectorClass@PAVAirstrikeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x0041E0F0
+// ??_G?$DynamicVectorClass@PAVAirstrikeClass@@@@UAEPAXI@Z

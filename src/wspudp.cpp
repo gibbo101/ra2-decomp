@@ -450,3 +450,32 @@ unsigned short UDPInterfaceClass::Get_Port (void)
 
 // SYNTHETIC: GAMEMD 0x007B4170
 // ??_GUDPInterfaceClass@@UAEPAXI@Z
+
+// TEMPLATE: GAMEMD 0x007B42C0
+// ?Clear@?$DynamicVectorClass@PAE@@UAEXXZ
+// TEMPLATE: GAMEMD 0x007B42F0
+// ?ID@?$DynamicVectorClass@PAE@@UAEHPBQAE@Z
+// TEMPLATE: GAMEMD 0x007B4310
+// ?GetItem@?$VectorClass@PAE@@UBEPAEH@Z
+template class DynamicVectorClass<unsigned char *>;
+
+// TEMPLATE: GAMEMD 0x007B4320
+// ??8?$VectorClass@PAE@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x007B4360
+// ?Resize@?$VectorClass@PAE@@UAE_NHPBQAE@Z
+// TEMPLATE: GAMEMD 0x007B4410
+// ?Clear@?$VectorClass@PAE@@UAEXXZ
+template class VectorClass<unsigned char *>;
+
+// TEMPLATE: GAMEMD 0x007B4440
+// ?ID@?$VectorClass@PAE@@UAEHABQAE@Z
+// TEMPLATE: GAMEMD 0x007B4480
+// ?ID@?$VectorClass@PAE@@UAEHPBQAE@Z
+// TEMPLATE: GAMEMD 0x007B44A0
+// ?Resize@?$DynamicVectorClass@PAE@@UAE_NHPBQAE@Z
+// TEMPLATE: GAMEMD 0x007B4550
+// ?ID@?$DynamicVectorClass@PAE@@UAEHABQAE@Z
+// SYNTHETIC: GAMEMD 0x007B4580
+// ??_G?$VectorClass@PAE@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x007B45D0
+// ??_G?$DynamicVectorClass@PAE@@UAEPAXI@Z

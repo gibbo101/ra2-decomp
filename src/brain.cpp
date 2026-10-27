@@ -41,6 +41,8 @@
 // SYNTHETIC: GAMEMD 0x0043A310 SYMBOL
 // _$E36
 
+// SYNTHETIC: GAMEMD 0x0043A330 SYMBOL
+// _$E39
 
 // FUNCTION: GAMEMD 0x0043A350
 NeuronClass::NeuronClass(void):
@@ -202,3 +204,26 @@ HRESULT BrainClass::Load(IStream * stream)
 
 // SYNTHETIC: GAMEMD 0x0043AA90
 // ??_GBrainClass@@UAEPAXI@Z
+
+// TEMPLATE: GAMEMD 0x0043AB20
+// ?GetItem@?$VectorClass@PAVNeuronClass@@@@UBEPAVNeuronClass@@H@Z
+
+// TEMPLATE: GAMEMD 0x0043AB30
+// ??8?$VectorClass@PAVNeuronClass@@@@UBE_NABV0@@Z
+
+// TEMPLATE: GAMEMD 0x0043AB70
+// ?Resize@?$VectorClass@PAVNeuronClass@@@@UAE_NHPBQAVNeuronClass@@@Z
+
+// TEMPLATE: GAMEMD 0x0043AC20
+// ?Clear@?$VectorClass@PAVNeuronClass@@@@UAEXXZ
+
+// TEMPLATE: GAMEMD 0x0043AC50
+// ?ID@?$VectorClass@PAVNeuronClass@@@@UAEHABQAVNeuronClass@@@Z
+
+// TEMPLATE: GAMEMD 0x0043AC90
+// ?ID@?$VectorClass@PAVNeuronClass@@@@UAEHPBQAVNeuronClass@@@Z
+
+// TEMPLATE: GAMEMD 0x0043ACB0
+// ??_G?$VectorClass@PAVNeuronClass@@@@UAEPAXI@Z
+
+template class VectorClass<NeuronClass *>;

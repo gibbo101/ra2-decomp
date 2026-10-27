@@ -17,7 +17,7 @@ class SpecialClass
 		void Apply_To_Game(void);
 		void Initialize(void);
 
-		void Read_INI(CCINIClass const & ini);
+		void Read_INI(CCINIClass & ini);
 		void Write_INI(CCINIClass & ini) const;
 
 		unsigned IsShadowGrow:1;
@@ -25,7 +25,7 @@ class SpecialClass
 		unsigned IsSpeedBuild:1;
 
 		unsigned IsFromInstall:1;
-		unsigned :1;
+		unsigned Bit3:1;
 
 		unsigned IsCaptureTheFlag:1;
 

@@ -1453,3 +1453,27 @@ template class VectorClass<PhoneEntryClass *>;
 // ?ID@?$VectorClass@VWstring@@@@UAEHPBVWstring@@@Z
 // TEMPLATE: GAMEMD 0x0069CBC0
 // ?Resize@?$DynamicVectorClass@VWstring@@@@UAE_NHPBVWstring@@@Z
+// TEMPLATE: GAMEMD 0x0069CD00
+// ?ID@?$DynamicVectorClass@VWstring@@@@UAEHABVWstring@@@Z
+// TEMPLATE: GAMEMD 0x0069CD40
+// ??8?$VectorClass@PAVMultiMission@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x0069CD80
+// ?Resize@?$VectorClass@PAVMultiMission@@@@UAE_NHPBQAVMultiMission@@@Z
+// TEMPLATE: GAMEMD 0x0069CE30
+// ?Clear@?$VectorClass@PAVMultiMission@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0069CE60
+// ?ID@?$VectorClass@PAVMultiMission@@@@UAEHABQAVMultiMission@@@Z
+// TEMPLATE: GAMEMD 0x0069CEA0
+// ?ID@?$VectorClass@PAVMultiMission@@@@UAEHPBQAVMultiMission@@@Z
+// TEMPLATE: GAMEMD 0x0069CEC0
+// ?Resize@?$DynamicVectorClass@PAVMultiMission@@@@UAE_NHPBQAVMultiMission@@@Z
+// TEMPLATE: GAMEMD 0x0069CF70
+// ?ID@?$DynamicVectorClass@PAVMultiMission@@@@UAEHABQAVMultiMission@@@Z
+// TEMPLATE: GAMEMD 0x0069CFA0
+// ??8?$VectorClass@PAUGlobalPacketType@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x0069CFE0
+// ?Resize@?$VectorClass@PAUGlobalPacketType@@@@UAE_NHPBQAUGlobalPacketType@@@Z
+// TEMPLATE: GAMEMD 0x0069D090
+// ?Clear@?$VectorClass@PAUGlobalPacketType@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0069D0C0
+// ?ID@?$VectorClass@PAUGlobalPacketType@@@@UAEHABQAUGlobalPacketType@@@Z

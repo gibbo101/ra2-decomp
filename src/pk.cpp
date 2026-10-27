@@ -119,3 +119,33 @@ int PKey::Decrypt(void const * source, int slen, void * dest) const
 
 	return(total);
 }
+
+// TEMPLATE: GAMEMD 0x006329C0
+// ??G?$Int@$0EA@@@QBE?AV0@G@Z
+
+// TEMPLATE: GAMEMD 0x00632A20
+// ?Inverse@?$Int@$0EA@@@QBE?AV1@ABV1@@Z
+
+// TEMPLATE: GAMEMD 0x00632A70
+// ?Randomize@?$Int@$0EA@@@QAEXAAVStraw@@ABV1@1@Z
+
+// TEMPLATE: GAMEMD 0x00632AA0
+// ??Y?$Int@$0EA@@@QAEAAV0@ABV0@@Z
+
+// TEMPLATE: GAMEMD 0x00632AC0
+// ??H?$Int@$0EA@@@QBE?AV0@G@Z
+
+// TEMPLATE: GAMEMD 0x00632B20
+// ??D?$Int@$0EA@@@QBE?AV0@G@Z
+
+// TEMPLATE: GAMEMD 0x00632B70
+// ??6?$Int@$0EA@@@QBE?AV0@H@Z
+
+// TEMPLATE: GAMEMD 0x00632BC0
+// ??O?$Int@$0EA@@@QBE_NABV0@@Z
+
+// TEMPLATE: GAMEMD 0x00632BE0
+// ??0RemainderTable@?$Int@$0EA@@@QAE@ABV1@@Z
+
+// TEMPLATE: GAMEMD 0x00632C40
+// ?Increment@RemainderTable@?$Int@$0EA@@@QAEXG@Z

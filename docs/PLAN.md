@@ -1,6 +1,6 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 27 October 2026: 15,798 of 19,366 game functions match (82%; 56% of game code
+Status, 27 October 2026: 16,107 of 19,366 game functions match (83%; 56% of game code
 by size), landed in batches module by module. The rounds below record each one.
 
 ## The goal
@@ -1113,6 +1113,15 @@ Session.Players. Recording then exposed three UI-command functions building char
 ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; their RTTI
 fixed them. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
+
+### Batches 117 and 118 (27 October 2026)
+
+**307 of 320 functions** (136, 171), the last of the small functions in named modules, so
+the round ran as two batches, the second with 24 modules. Most were template instances and
+the vectors globals.cpp defines. The misses wait on larger callers that would emit them:
+wonline's 0x00785370 (six CComObject and smart-pointer helpers), ListBoxHandler 0x00618D40
+(four ArrayList<CellData> members) and missile's Projectile_Motion 0x005B20F0 (six DirType
+inlines). Merge gate: 16,107 of 16,107 (2,103.7 KB).
 
 ### Batches 114, 115 and 116 (27 October 2026)
 

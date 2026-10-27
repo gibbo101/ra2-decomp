@@ -2267,47 +2267,289 @@ void FUN_00785360(void)
 	FUN_00783C80(0, false);
 }
 
+struct AtlObjectEntry;
+
+struct AtlExitNode {
+	void (__stdcall * Function)(void * argument);
+	void * Argument;
+	AtlExitNode * Next;
+};
+
 struct AtlModule {
 	unsigned int cbSize;
-	char Pad0[0x10];
+	char Pad0[0xC];
+	AtlObjectEntry * Entries;
 	long LockCount;
-	char Pad1[0x64 - 0x18];
+	HANDLE Heap;
+	CRITICAL_SECTION Lock0;
+	CRITICAL_SECTION Lock1;
+	CRITICAL_SECTION Lock2;
 	unsigned int BuildVersion;
 	char Pad2[4];
-	char Pad3[4];
+	bool OwnsHeaps;
+	char Pad3[3];
 	GUID const * VersionGuid;
-	char Pad4[0x84 - 0x74];
+	unsigned int HeapCount;
+	HANDLE * Heaps;
+	char Pad4[4];
+	AtlExitNode * ExitList;
+
+	long Init(void * objects, HINSTANCE instance, GUID const * libid = NULL);
+	long Lock(void);
+	long Unlock(void);
 };
 
 extern AtlModule DAT_00B76488;
-void __stdcall FUN_007AC500(AtlModule * module);
+long __stdcall FUN_007AC500(AtlModule * module);
 
-struct PointContainerPtr {
-	IConnectionPointContainer * p;
-	PointContainerPtr(void) { p = NULL; }
-	~PointContainerPtr(void)
-	{
-		if (p) {
-			p->Release();
-		}
-	}
+struct AtlIntMapEntry {
+	IID const * piid;
+	DWORD dw;
+	long (__stdcall * pFunc)(void * pThis, IID const & iid, void ** object, DWORD dw);
 };
 
-struct PointPtr {
-	IConnectionPoint * p;
-	PointPtr(void) { p = NULL; }
-	~PointPtr(void)
+extern AtlIntMapEntry DAT_007F7698[];
+extern AtlIntMapEntry DAT_007F7650[];
+extern AtlIntMapEntry DAT_007F7638[];
+extern AtlModule * DAT_00A8F7F0;
+extern GUID const DAT_00825CD0;
+long __stdcall FUN_007A2F30(AtlModule * module, void * objects, HINSTANCE instance);
+
+namespace ATL {
+
+template <class T>
+class _NoAddRefReleaseOnCComPtr : public T
+{
+	private:
+		virtual unsigned long __stdcall AddRef(void) = 0;
+		virtual unsigned long __stdcall Release(void) = 0;
+};
+
+template <class T>
+class CComPtr
+{
+	public:
+		CComPtr(void) { p = NULL; }
+		~CComPtr(void)
+		{
+			if (p) {
+				p->Release();
+			}
+		}
+		T ** operator&(void) { return &p; }
+		_NoAddRefReleaseOnCComPtr<T> * operator->(void) const { return (_NoAddRefReleaseOnCComPtr<T> *)p; }
+
+		T * p;
+};
+
+}
+
+inline long __stdcall FUN_007A2EA0(IUnknown * source, IUnknown * sink, IID const & iid, DWORD * cookie)
+{
+	ATL::CComPtr<IConnectionPointContainer> container;
+	ATL::CComPtr<IConnectionPoint> point;
+	HRESULT result = source->QueryInterface(IID_IConnectionPointContainer, (void **)&container);
+	if (SUCCEEDED(result)) {
+		result = container->FindConnectionPoint(iid, &point);
+	}
+	if (SUCCEEDED(result)) {
+		result = point->Advise(sink, cookie);
+	}
+	return result;
+}
+
+static inline bool Is_Unknown_Iid(IID const & iid)
+{
+	long const * words = (long const *)&iid;
+	return words[0] == 0 && words[1] == 0 && words[2] == 0xC0 && words[3] == 0x46000000;
+}
+
+static inline bool Same_Iid(IID const & a, IID const & b)
+{
+	long const * x = (long const *)&a;
+	long const * y = (long const *)&b;
+	return x[0] == y[0] && x[1] == y[1] && x[2] == y[2] && x[3] == y[3];
+}
+
+static inline long Atl_Internal_Query_Interface(void * pThis, AtlIntMapEntry * entries, IID const & iid, void ** object)
+{
+	if (object == NULL) {
+		return E_POINTER;
+	}
+	*object = NULL;
+	if (Is_Unknown_Iid(iid)) {
+		IUnknown * unknown = (IUnknown *)((int)pThis + entries->dw);
+		unknown->AddRef();
+		*object = unknown;
+		return 0;
+	}
+	while (entries->pFunc != NULL) {
+		BOOL blind = (entries->piid == NULL);
+		if (blind || Same_Iid(*entries->piid, iid)) {
+			if (entries->pFunc == (void *)1) {
+				IUnknown * unknown = (IUnknown *)((int)pThis + entries->dw);
+				unknown->AddRef();
+				*object = unknown;
+				return 0;
+			}
+			long result = entries->pFunc(pThis, iid, object, entries->dw);
+			if (result == 0 || (!blind && result < 0)) {
+				return result;
+			}
+		}
+		entries++;
+	}
+	return E_NOINTERFACE;
+}
+
+struct AtlCriticalSection {
+	CRITICAL_SECTION Section;
+	AtlCriticalSection(void) { InitializeCriticalSection(&Section); }
+	~AtlCriticalSection(void) { DeleteCriticalSection(&Section); }
+};
+
+struct AtlThreadModel {
+	static unsigned long __stdcall Increment(long * p) { return InterlockedIncrement(p); }
+	static unsigned long __stdcall Decrement(long * p) { return InterlockedDecrement(p); }
+};
+
+inline long AtlModule::Init(void * objects, HINSTANCE instance, GUID const * libid)
+{
+	VersionGuid = &DAT_00825CD0;
+	DAT_00A8F7F0 = this;
+	cbSize = 0x84;
+	BuildVersion = 0x300;
+	FUN_007A2F30(this, objects, instance);
+	return S_OK;
+}
+
+inline long AtlModule::Lock(void)
+{
+	return AtlThreadModel::Increment(&LockCount);
+}
+
+inline long AtlModule::Unlock(void)
+{
+	return AtlThreadModel::Decrement(&LockCount);
+}
+
+struct AtlRootBase {
+	AtlRootBase(void) { RefCount = 0; }
+	long FinalConstruct(void) { return S_OK; }
+	void FinalRelease(void) {}
+	void SetVoid(void *) {}
+	void InternalFinalConstructAddRef(void) {}
+	void InternalFinalConstructRelease(void) {}
+	static long __stdcall InternalQueryInterface(void * pThis, AtlIntMapEntry * entries, IID const & iid, void ** object)
 	{
-		if (p) {
-			p->Release();
+		return Atl_Internal_Query_Interface(pThis, entries, iid, object);
+	}
+
+	long RefCount;
+};
+
+struct AtlSinkRoot : AtlRootBase {
+	unsigned long InternalAddRef(void) { return AtlThreadModel::Increment(&RefCount); }
+	unsigned long InternalRelease(void) { return AtlThreadModel::Decrement(&RefCount); }
+
+	AtlCriticalSection Lock;
+};
+
+class CNetUtilEventSink : public AtlSinkRoot, public IUnknown
+{
+	public:
+		CNetUtilEventSink(void);
+		static AtlIntMapEntry * __stdcall _GetEntries(void) { return DAT_007F7650; }
+		IUnknown * _GetRawUnknown(void) { return (IUnknown *)((int)this + _GetEntries()->dw); }
+		IUnknown * GetUnknown(void) { return _GetRawUnknown(); }
+		long _InternalQueryInterface(IID const & iid, void ** object) { return InternalQueryInterface(this, _GetEntries(), iid, object); }
+};
+
+class CChatEventSink : public AtlSinkRoot, public IUnknown
+{
+	public:
+		CChatEventSink(void);
+		static AtlIntMapEntry * __stdcall _GetEntries(void) { return DAT_007F7698; }
+		IUnknown * _GetRawUnknown(void) { return (IUnknown *)((int)this + _GetEntries()->dw); }
+		IUnknown * GetUnknown(void) { return _GetRawUnknown(); }
+		long _InternalQueryInterface(IID const & iid, void ** object) { return InternalQueryInterface(this, _GetEntries(), iid, object); }
+};
+
+class CDownloadEventSink : public AtlSinkRoot, public IUnknown
+{
+	public:
+		CDownloadEventSink(void) {}
+		static AtlIntMapEntry * __stdcall _GetEntries(void) { return DAT_007F7638; }
+		IUnknown * _GetRawUnknown(void) { return (IUnknown *)((int)this + _GetEntries()->dw); }
+		IUnknown * GetUnknown(void) { return _GetRawUnknown(); }
+		long _InternalQueryInterface(IID const & iid, void ** object) { return InternalQueryInterface(this, _GetEntries(), iid, object); }
+};
+
+namespace ATL {
+
+template <class Base>
+class CComObject : public Base
+{
+	public:
+		CComObject(void * = NULL) { InterlockedIncrement(&DAT_00B76488.LockCount); }
+		~CComObject(void)
+		{
+			RefCount = 1;
+			FinalRelease();
+			DAT_00B76488.Unlock();
+		}
+		virtual unsigned long __stdcall AddRef(void) { return InternalAddRef(); }
+		virtual unsigned long __stdcall Release(void)
+		{
+			unsigned long count = InternalRelease();
+			if (count == 0) {
+				delete this;
+			}
+			return count;
+		}
+		virtual long __stdcall QueryInterface(IID const & iid, void ** object) { return _InternalQueryInterface(iid, object); }
+		static long __stdcall CreateInstance(CComObject<Base> ** pp);
+};
+
+template <class Base>
+long __stdcall CComObject<Base>::CreateInstance(CComObject<Base> ** pp)
+{
+	long result = E_OUTOFMEMORY;
+	CComObject<Base> * p = NULL;
+	p = new CComObject<Base>();
+	if (p != NULL) {
+		p->SetVoid(NULL);
+		p->InternalFinalConstructAddRef();
+		result = p->FinalConstruct();
+		p->InternalFinalConstructRelease();
+		if (result != S_OK) {
+			delete p;
+			p = NULL;
 		}
 	}
-};
+	*pp = p;
+	return result;
+}
+
+}
+
+extern GUID const DAT_007F75E0;
+extern GUID const DAT_007F7600;
+extern GUID const DAT_007F75F0;
+extern IID const DAT_007F7540;
+extern IID const DAT_007F7580;
+extern IID const DAT_007F7560;
+extern IID const DAT_007F7550;
+extern IID const DAT_007F7590;
+extern IID const DAT_007F7570;
+extern ATL::CComObject<CChatEventSink> * DAT_00B778F8;
+extern ATL::CComObject<CNetUtilEventSink> * DAT_00B736EC;
+extern ATL::CComObject<CDownloadEventSink> * DAT_00B75F68;
 
 static inline HRESULT Unadvise_Sink(IUnknown * source, IID const & iid, DWORD cookie)
 {
-	PointContainerPtr container;
-	PointPtr point;
+	ATL::CComPtr<IConnectionPointContainer> container;
+	ATL::CComPtr<IConnectionPoint> point;
 	HRESULT result = source->QueryInterface(IID_IConnectionPointContainer, (void **)&container.p);
 	if (SUCCEEDED(result)) {
 		result = container.p->FindConnectionPoint(iid, &point.p);
@@ -2319,6 +2561,68 @@ static inline HRESULT Unadvise_Sink(IUnknown * source, IID const & iid, DWORD co
 }
 
 #define APP_REG_KEY "SOFTWARE\\Westwood\\Yuri's Revenge"
+
+// FUNCTION: GAMEMD 0x00785370
+int __fastcall FUN_00785370(HINSTANCE instance)
+{
+	HRESULT result = 0;
+	DAT_00B76488.Init(NULL, instance);
+	DAT_00AC116C = NULL;
+	DAT_00AC1170 = NULL;
+	DAT_00AC1174 = NULL;
+	DAT_00B77E54 = 0;
+	DAT_00B77E58 = 0;
+	DAT_00B77E5C = 0;
+	CoCreateInstance(DAT_007F75E0, NULL, CLSCTX_INPROC_SERVER, DAT_007F7540, (void **)&DAT_00AC116C);
+	if (DAT_00AC116C) {
+		ATL::CComObject<CChatEventSink>::CreateInstance(&DAT_00B778F8);
+		result = FUN_007A2EA0((IUnknown *)DAT_00AC116C, DAT_00B778F8->GetUnknown(), DAT_007F7550, &DAT_00B77E54);
+	}
+	if (DAT_00AC116C == NULL || result != S_OK) {
+		ODMessageBox(StringTable::LoadString("TXT_APIMISSING", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x23DC), 0, (bool (*)(void))NULL, 0);
+		return -2;
+	}
+	CoCreateInstance(DAT_007F7600, NULL, CLSCTX_INPROC_SERVER, DAT_007F7580, (void **)&DAT_00AC1170);
+	if (DAT_00AC1170) {
+		ATL::CComObject<CNetUtilEventSink>::CreateInstance(&DAT_00B736EC);
+		result = FUN_007A2EA0((IUnknown *)DAT_00AC1170, DAT_00B736EC->GetUnknown(), DAT_007F7590, &DAT_00B77E58);
+	}
+	if (DAT_00AC1170 == NULL || result != S_OK) {
+		ODMessageBox(StringTable::LoadString("TXT_APIMISSING", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x23EC), 0, (bool (*)(void))NULL, 0);
+		return -2;
+	}
+	CoCreateInstance(DAT_007F75F0, NULL, CLSCTX_INPROC_SERVER, DAT_007F7560, (void **)&DAT_00AC1174);
+	if (DAT_00AC1174) {
+		ATL::CComObject<CDownloadEventSink>::CreateInstance(&DAT_00B75F68);
+		result = FUN_007A2EA0(DAT_00AC1174, DAT_00B75F68->GetUnknown(), DAT_007F7570, &DAT_00B77E5C);
+	}
+	if (DAT_00AC1174 == NULL || result != S_OK) {
+		ODMessageBox(StringTable::LoadString("TXT_APIMISSING", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x23FC), 0, (bool (*)(void))NULL, 0);
+		return -2;
+	}
+	unsigned long version;
+	DAT_00AC116C->V20(&version);
+	if (version < 0x10010) {
+		ODMessageBox(StringTable::LoadString("TXT_APIWRONGVERSION", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2408), 0, (bool (*)(void))NULL, 0);
+		return -2;
+	}
+	DAT_00AC116C->V41("RegPath", APP_REG_KEY);
+	HKEY key;
+	char path[256];
+	if (APP_REG_KEY != NULL && strlen(APP_REG_KEY)) {
+		strcpy(path, APP_REG_KEY);
+		if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, path, 0, KEY_READ, &key) == ERROR_SUCCESS) {
+			DWORD type;
+			DWORD value;
+			DWORD size = sizeof(value);
+			if (RegQueryValueEx(key, "SKU", NULL, &type, (LPBYTE)&value, &size) == ERROR_SUCCESS) {
+				DAT_00AC116C->V35(value);
+			}
+			RegCloseKey(key);
+		}
+	}
+	return 1;
+}
 
 static inline void Close_Logout_Wait(unsigned int event)
 {
@@ -7122,34 +7426,13 @@ struct AtlObjectEntry {
 	void * UpdateRegistry;
 	void * GetClassObject;
 	void * CreateInstance;
-	void * Factory;
+	IUnknown * Factory;
 	DWORD Register;
 	void * GetObjectDescription;
 	void * GetCategoryMap;
 	void (__stdcall * ObjectMain)(BOOL start);
 };
 
-
-struct AtlCriticalSection {
-	CRITICAL_SECTION Section;
-	AtlCriticalSection(void) { InitializeCriticalSection(&Section); }
-};
-
-struct AtlSinkRoot {
-	long RefCount;
-	AtlCriticalSection Lock;
-	AtlSinkRoot(void) : RefCount(0) {}
-};
-
-struct NetUtilEventSink : AtlSinkRoot {
-	NetUtilEventSink(void);
-	virtual long __stdcall V00(IID const & iid, void ** object);
-};
-
-struct ChatEventSink : AtlSinkRoot {
-	ChatEventSink(void);
-	virtual long __stdcall V00(IID const & iid, void ** object);
-};
 
 extern int DAT_00B77DF4;
 extern int DAT_00B77DCC;
@@ -7169,23 +7452,10 @@ void __fastcall FUN_007B02A0(rc_ptr<WDTState> const & state);
 void __fastcall FUN_007B0220(rc_ptr<WDTState> const & state);
 
 // FUNCTION: GAMEMD 0x007A2EA0
-long __stdcall FUN_007A2EA0(IUnknown * source, IUnknown * sink, IID const & iid, DWORD * cookie)
-{
-	PointContainerPtr container;
-	PointPtr point;
-	HRESULT result = source->QueryInterface(IID_IConnectionPointContainer, (void **)&container.p);
-	if (SUCCEEDED(result)) {
-		result = container.p->FindConnectionPoint(iid, &point.p);
-	}
-	if (SUCCEEDED(result)) {
-		result = point.p->Advise(sink, cookie);
-	}
-	return result;
-}
+// FUN_007A2EA0
 
 // FUNCTION: GAMEMD 0x007A2FC0
-// NetUtilEventSink::NetUtilEventSink
-NetUtilEventSink::NetUtilEventSink(void)
+CNetUtilEventSink::CNetUtilEventSink(void)
 {
 }
 
@@ -7368,8 +7638,7 @@ counted:
 }
 
 // FUNCTION: GAMEMD 0x007A41A0
-// ChatEventSink::ChatEventSink
-ChatEventSink::ChatEventSink(void)
+CChatEventSink::CChatEventSink(void)
 {
 }
 
@@ -8070,3 +8339,88 @@ long __stdcall FUN_007AC4B0(void * sink, long result, void * arg)
 WonlineStringDialogControl::WonlineStringDialogControl(void)
 {
 }
+
+// FUNCTION: GAMEMD 0x007AC4C0
+long __stdcall FUN_007AC4C0(void * sink, long result, void * arg)
+{
+	return 0;
+}
+
+// FUNCTION: GAMEMD 0x007AC4D0
+long __stdcall FUN_007AC4D0(void * sink, long result, void * arg)
+{
+	return 0;
+}
+
+// FUNCTION: GAMEMD 0x007AC4E0
+long __stdcall FUN_007AC4E0(void * sink, long result, void * arg)
+{
+	return 0;
+}
+
+// FUNCTION: GAMEMD 0x007AC4F0
+void __stdcall FUN_007AC4F0(void)
+{
+}
+
+// FUNCTION: GAMEMD 0x007AC500
+long __stdcall FUN_007AC500(AtlModule * module)
+{
+	if (module == NULL) {
+		return E_INVALIDARG;
+	}
+	AtlObjectEntry * entry = module->Entries;
+	if (entry != NULL) {
+		while (entry->Clsid != NULL) {
+			if (entry->Factory != NULL) {
+				entry->Factory->Release();
+			}
+			entry->Factory = NULL;
+			entry->ObjectMain(FALSE);
+			if (module->cbSize == 0x64) {
+				entry = (AtlObjectEntry *)((char *)entry + 0x1C);
+			} else {
+				entry = (AtlObjectEntry *)((char *)entry + 0x24);
+			}
+		}
+	}
+	DeleteCriticalSection(&module->Lock0);
+	DeleteCriticalSection(&module->Lock1);
+	DeleteCriticalSection(&module->Lock2);
+	AtlExitNode * node = module->ExitList;
+	while (node != NULL) {
+		node->Function(node->Argument);
+		AtlExitNode * next = node->Next;
+		delete node;
+		node = next;
+	}
+	if (module->Heap != NULL && module->OwnsHeaps) {
+		if (module->Heaps != NULL) {
+			unsigned int i = 0;
+			do {
+				HeapDestroy(module->Heaps[i]);
+				i++;
+			} while (i <= module->HeapCount);
+		}
+		HeapDestroy(module->Heap);
+	}
+	return 0;
+}
+
+// TEMPLATE: GAMEMD 0x007AC670
+// ??1?$CComPtr@UIConnectionPointContainer@@@ATL@@QAE@XZ
+
+// TEMPLATE: GAMEMD 0x007AC680
+// ??1?$CComPtr@UIConnectionPoint@@@ATL@@QAE@XZ
+
+// TEMPLATE: GAMEMD 0x007AC690
+// ?AddRef@?$CComObject@VCChatEventSink@@@ATL@@UAGKXZ
+
+// TEMPLATE: GAMEMD 0x007AC6B0
+// ?Release@?$CComObject@VCChatEventSink@@@ATL@@UAGKXZ
+
+// TEMPLATE: GAMEMD 0x007AC700
+// ?QueryInterface@?$CComObject@VCChatEventSink@@@ATL@@UAGJABU_GUID@@PAPAX@Z
+
+// TEMPLATE: GAMEMD 0x007AC800
+// ?AddRef@?$CComObject@VCNetUtilEventSink@@@ATL@@UAGKXZ

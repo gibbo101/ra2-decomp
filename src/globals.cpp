@@ -204,3 +204,45 @@ DynamicVectorClass<TaskForceClass *> TaskForces;
 
 // SYNTHETIC: GAMEMD 0x004E70A0 SYMBOL
 // _$E165
+
+// SYNTHETIC: GAMEMD 0x004E70E0 SYMBOL
+// _$E172
+DynamicVectorClass<TeamTypeClass *> TeamTypes;
+
+// SYNTHETIC: GAMEMD 0x004E7120 SYMBOL
+// _$E170
+
+// SYNTHETIC: GAMEMD 0x004E7160 SYMBOL
+// _$E177
+DynamicVectorClass<ScriptTypeClass *> ScriptTypes;
+
+// SYNTHETIC: GAMEMD 0x004E71A0 SYMBOL
+// _$E175
+
+// SYNTHETIC: GAMEMD 0x004E71E0 SYMBOL
+// _$E182
+DynamicVectorClass<OverlayTypeClass *> OverlayTypes;
+
+// SYNTHETIC: GAMEMD 0x004E7220 SYMBOL
+// _$E180
+
+// SYNTHETIC: GAMEMD 0x004E7260 SYMBOL
+// _$E187
+DynamicVectorClass<SmudgeTypeClass *> SmudgeTypes;
+
+// SYNTHETIC: GAMEMD 0x004E72A0 SYMBOL
+// _$E185
+
+// SYNTHETIC: GAMEMD 0x004E72E0 SYMBOL
+// _$E192
+DynamicVectorClass<TerrainTypeClass *> TerrainTypes;
+
+// SYNTHETIC: GAMEMD 0x004E7320 SYMBOL
+// _$E190
+
+// SYNTHETIC: GAMEMD 0x004E7360 SYMBOL
+// _$E197
+DynamicVectorClass<BuildingTypeClass *> BuildingTypes;
+
+// SYNTHETIC: GAMEMD 0x004E73A0 SYMBOL
+// _$E195

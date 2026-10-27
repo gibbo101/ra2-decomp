@@ -228,3 +228,21 @@ template class DynamicVectorClass<DiskLaserClass *>;
 // TEMPLATE: GAMEMD 0x004A7EA0
 // ?ID@?$VectorClass@PAVDiskLaserClass@@@@UAEHABQAVDiskLaserClass@@@Z
 template class VectorClass<DiskLaserClass *>;
+
+// TEMPLATE: GAMEMD 0x004A7EE0
+// ?ID@?$VectorClass@PAVDiskLaserClass@@@@UAEHPBQAVDiskLaserClass@@@Z
+
+// TEMPLATE: GAMEMD 0x004A7F00
+// ?Resize@?$DynamicVectorClass@PAVDiskLaserClass@@@@UAE_NHPBQAVDiskLaserClass@@@Z
+
+// TEMPLATE: GAMEMD 0x004A7FB0
+// ?ID@?$DynamicVectorClass@PAVDiskLaserClass@@@@UAEHABQAVDiskLaserClass@@@Z
+
+// TEMPLATE: GAMEMD 0x004A7FE0
+// ?Add@?$DynamicVectorClass@PAVDiskLaserClass@@@@QAE_NABQAVDiskLaserClass@@@Z
+
+// TEMPLATE: GAMEMD 0x004A8030
+// ??_G?$VectorClass@PAVDiskLaserClass@@@@UAEPAXI@Z
+
+// TEMPLATE: GAMEMD 0x004A8080
+// ??_G?$DynamicVectorClass@PAVDiskLaserClass@@@@UAEPAXI@Z

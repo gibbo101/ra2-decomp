@@ -43,3 +43,14 @@ template class DynamicVectorClass<CommandClass const *>;
 // ?Clear@?$VectorClass@PBVCommandClass@@@@UAEXXZ
 // TEMPLATE: GAMEMD 0x0040BFD0
 // ?ID@?$VectorClass@PBVCommandClass@@@@UAEHABQBVCommandClass@@@Z
+
+// TEMPLATE: GAMEMD 0x0040C010
+// ?ID@?$VectorClass@PBVCommandClass@@@@UAEHPBQBVCommandClass@@@Z
+// TEMPLATE: GAMEMD 0x0040C030
+// ?Resize@?$DynamicVectorClass@PBVCommandClass@@@@UAE_NHPBQBVCommandClass@@@Z
+// TEMPLATE: GAMEMD 0x0040C0E0
+// ?ID@?$DynamicVectorClass@PBVCommandClass@@@@UAEHABQBVCommandClass@@@Z
+// SYNTHETIC: GAMEMD 0x0040C110
+// ??_G?$VectorClass@PBVCommandClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x0040C160
+// ??_G?$DynamicVectorClass@PBVCommandClass@@@@UAEPAXI@Z

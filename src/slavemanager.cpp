@@ -602,3 +602,40 @@ template class DynamicVectorClass<SlaveManagerClass *>;
 
 // TEMPLATE: GAMEMD 0x006B16A0
 // ?ID@?$DynamicVectorClass@PAUSlaveControl@SlaveManagerClass@@@@UAEHABQAUSlaveControl@SlaveManagerClass@@@Z
+
+// TEMPLATE: GAMEMD 0x006B16D0
+// ??8?$VectorClass@PAVSlaveManagerClass@@@@UBE_NABV0@@Z
+
+// TEMPLATE: GAMEMD 0x006B1710
+// ?Resize@?$VectorClass@PAVSlaveManagerClass@@@@UAE_NHPBQAVSlaveManagerClass@@@Z
+
+// TEMPLATE: GAMEMD 0x006B17C0
+// ?Clear@?$VectorClass@PAVSlaveManagerClass@@@@UAEXXZ
+
+// TEMPLATE: GAMEMD 0x006B17F0
+// ?ID@?$VectorClass@PAVSlaveManagerClass@@@@UAEHABQAVSlaveManagerClass@@@Z
+
+// TEMPLATE: GAMEMD 0x006B1830
+// ?ID@?$VectorClass@PAVSlaveManagerClass@@@@UAEHPBQAVSlaveManagerClass@@@Z
+
+// TEMPLATE: GAMEMD 0x006B1850
+// ?Resize@?$DynamicVectorClass@PAVSlaveManagerClass@@@@UAE_NHPBQAVSlaveManagerClass@@@Z
+
+// TEMPLATE: GAMEMD 0x006B1900
+// ?ID@?$DynamicVectorClass@PAVSlaveManagerClass@@@@UAEHABQAVSlaveManagerClass@@@Z
+
+// SYNTHETIC: GAMEMD 0x006B1930
+// ??_G?$VectorClass@PAUSlaveControl@SlaveManagerClass@@@@UAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x006B1980
+// ??_G?$DynamicVectorClass@PAUSlaveControl@SlaveManagerClass@@@@UAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x006B19D0
+// ??_G?$VectorClass@PAVSlaveManagerClass@@@@UAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x006B1A20
+// ??_G?$DynamicVectorClass@PAVSlaveManagerClass@@@@UAEPAXI@Z
+
+// TEMPLATE: GAMEMD 0x006B1A70
+// ?Length@?$TPoint2D@F@@QBEFXZ
+template class TPoint2D<short>;

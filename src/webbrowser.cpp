@@ -12,8 +12,27 @@
 #include <stdlib.h>
 #include <string.h>
 #include <wchar.h>
+#include "wstring.h"
+#include "rcptr.h"
+#include "playerprofile.h"
+#include "wolopt.h"
+#include "session.h"
 
 bool __fastcall FUN_00551630(const char *url);
+rc_ptr<PlayerProfile> __fastcall FUN_00778A20(Wstring const * name);
+int __fastcall FUN_00789500(char const * login, char const * password, int plain, int locale);
+void __fastcall FUN_00606740(HWND dialog, bool value);
+extern Wstring DAT_00B73E40;
+extern Wstring DAT_00B7778C;
+extern WebBrowser *DAT_00B72D0C;
+namespace UI {
+	int __fastcall StandardWndProc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+	HWND __fastcall BeginDialog(int resource, DLGPROC proc, int param);
+	void __fastcall FocusOnWindow(HWND window);
+	void __fastcall EndDialog(HWND window);
+	bool Updated(void);
+}
+namespace OwnerDraw { void __fastcall UpdateControlPosition(HWND dialog, LPARAM lparam); }
 
 // SYNTHETIC: GAMEMD 0x00773240 SYMBOL
 // _$E41
@@ -296,3 +315,127 @@ HRESULT STDMETHODCALLTYPE WebBrowser::OnShowMessage(const wchar_t *, const wchar
 {
 	return S_OK;
 }
+
+// FUNCTION: GAMEMD 0x00773BC0
+HRESULT STDMETHODCALLTYPE WebBrowser::OnFailedPageCertification(void)
+{
+	DebugString("!!!!! PAGE FAILED CERTIFICATION !!!!!\n");
+
+	char path[MAX_PATH];
+	if (Get_HTML_Path(path, MAX_PATH)) {
+		mbstowcs(PendingURL, path, MAX_PATH);
+		wcscat(PendingURL, L"BadPage.htm");
+
+		wchar_t framePage[MAX_PATH];
+		mbstowcs(framePage, path, MAX_PATH);
+		wcscat(framePage, L"frame.htm");
+		return Browser->Navigate(framePage, 0, NULL);
+	}
+	return S_OK;
+}
+
+// FUNCTION: GAMEMD 0x00773D20
+HRESULT STDMETHODCALLTYPE WebBrowser::OnErrorMsg(const wchar_t *error)
+{
+	DebugString("OnErrorMsg- %S\n", error);
+	return S_OK;
+}
+
+// FUNCTION: GAMEMD 0x00773D40
+HRESULT STDMETHODCALLTYPE WebBrowser::OnRegisterLogin(const wchar_t *nick, const wchar_t *pass)
+{
+	char nickName[64];
+	char password[64];
+	wcstombs(nickName, nick, 64);
+	wcstombs(password, pass, 64);
+
+	Wstring name(nickName);
+	DebugString("Register WWOnline login: %s - %s\n", nickName, password);
+	rc_ptr<PlayerProfile> profile = FUN_00778A20(&name);
+
+	WOLOptionsClass options;
+	if (options.Is_Bit1_Clear()) {
+		int nicknum = FUN_00789500(nickName, password, 1, profile->Field10);
+		Session.Write_MultiPlayer_Settings();
+	}
+	DAT_00B73E40 = nickName;
+	DAT_00B7778C = password;
+	return S_OK;
+}
+
+// FUNCTION: GAMEMD 0x00773E30
+BOOL CALLBACK Web_Page_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	BOOL rc = UI::StandardWndProc(window, message, wparam, lparam);
+	if (rc) {
+		return rc;
+	}
+	if (message == WM_INITDIALOG) {
+		POINT size = { 800, 600 };
+		OwnerDraw::UpdateControlPosition(window, (LPARAM)&size);
+	}
+	return FALSE;
+}
+
+// FUNCTION: GAMEMD 0x00773E90
+void __fastcall Do_Web_Page_Dialog(const char *page)
+{
+	if (page == NULL || strlen(page) == 0) {
+		DebugString("DoWebPageDialog: Invalid parameter.\n");
+		return;
+	}
+
+	DebugString("Creating WebBrowser Dialog for %s.\n", page);
+	HWND dialog = UI::BeginDialog(0x131, (DLGPROC)Web_Page_Dialog_Proc, 0);
+	if (dialog == NULL) {
+		return;
+	}
+
+	int quit = 0;
+	SetWindowLong(dialog, 8, (LONG)&quit);
+	FUN_00606740(dialog, true);
+	UI::FocusOnWindow(dialog);
+
+	RECT client;
+	GetClientRect(dialog, &client);
+	RECT rect;
+	rect.left = ((client.right - client.left) - 800) / 2 + client.left;
+	rect.right = rect.left + 800;
+	rect.top = ((client.bottom - client.top) - 600) / 2 + client.top;
+	rect.bottom = rect.top + 600;
+
+	WebBrowser *browser = new WebBrowser;
+	if (browser) {
+		browser->Window = dialog;
+		DebugString("Creating WOLBrowser component.\n");
+		if (SUCCEEDED(CoCreateInstance(CLSID_WOLBrowser, NULL, CLSCTX_INPROC_SERVER, IID_IWOLBrowser, (void **)&browser->Browser))) {
+			DebugString("Starting up WOLBrowser\n");
+			browser->Browser->AddObserver(browser);
+			browser->Browser->Startup(dialog, &rect);
+			browser->Browser->AllowPageCertification(TRUE);
+		}
+	}
+	DAT_00B72D0C = browser;
+	if (browser) {
+		if (browser->Show_Page((char *)page)) {
+			while (!quit && !UI::Updated()) {
+			}
+		}
+		DAT_00B72D0C->Release();
+		DAT_00B72D0C = NULL;
+	}
+	UI::EndDialog(dialog);
+}
+
+// FUNCTION: GAMEMD 0x00774070
+int __fastcall Is_Web_Browser_Visible(void)
+{
+	WebBrowser *browser = DAT_00B72D0C;
+	if (browser && browser->Browser && browser->Visible) {
+		return 1;
+	}
+	return 0;
+}
+
+// SYNTHETIC: GAMEMD 0x007740A0
+// ??_GWebBrowser@@UAEPAXI@Z

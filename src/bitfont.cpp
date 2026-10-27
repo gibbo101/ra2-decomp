@@ -7,6 +7,7 @@
 #include <windows.h>
 #include "bitfont.h"
 #include "ccfile.h"
+#include "surface.h"
 #include "rgb.h"
 #include <stdlib.h>
 #include <string.h>
@@ -280,3 +281,84 @@ void BitFont::FUN_004347B0(void)
 		(*p)++;
 	}
 }
+
+// FUNCTION: GAMEMD 0x00434840
+bool BitFont::FUN_00434840(LTRBStruct * out, LTRBStruct * rect, LTRBStruct * bounds)
+{
+	if (rect->Top > bounds->Bottom || bounds->Top > rect->Bottom || rect->Left > bounds->Right || bounds->Left > rect->Right) {
+		out->Left = 0;
+		out->Top = 0;
+		out->Right = -1;
+		out->Bottom = -1;
+		return false;
+	}
+	*out = *rect;
+	if (out->Top < bounds->Top) out->Top = bounds->Top;
+	if (out->Left < bounds->Left) out->Left = bounds->Left;
+	if (out->Bottom > bounds->Bottom) out->Bottom = bounds->Bottom;
+	if (out->Right > bounds->Right) out->Right = bounds->Right;
+	return true;
+}
+
+// FUNCTION: GAMEMD 0x004348F0
+void BitFont::Lock(Surface * surface)
+{
+	pGraphBuffer = (short *)surface->Lock(Point2D(0, 0));
+	PitchDiv2 = (unsigned)surface->Stride() >> 1;
+	LTRBStruct area;
+	area.Left = 0;
+	area.Top = 0;
+	area.Right = surface->Get_Width() - 1;
+	area.Bottom = surface->Get_Height() - 1;
+	if (!(Bounds.Right | Bounds.Bottom | Bounds.Top | Bounds.Left)) {
+		Bounds.Left = area.Left;
+		Bounds.Top = area.Top;
+		Bounds.Right = area.Right;
+		Bounds.Bottom = area.Bottom;
+	} else {
+		FUN_00434840(&Bounds, &Bounds, &area);
+	}
+}
+
+// FUNCTION: GAMEMD 0x00434990
+void BitFont::UnLock(Surface * surface)
+{
+	surface->Unlock();
+	pGraphBuffer = 0;
+	PitchDiv2 = 0;
+}
+
+// FUNCTION: GAMEMD 0x004349B0
+int BitFont::FUN_004349B0(wchar_t ch)
+{
+	InternalData * data = InternalPTR;
+	if (data) {
+		int index = data->SymbolTable[ch];
+		if (index) {
+			unsigned char * bitmap = (unsigned char *)(data->SymbolDataSize * (index - 1) + data->Bitmaps);
+			if (bitmap) return *bitmap;
+		}
+	}
+	return 0;
+}
+
+// FUNCTION: GAMEMD 0x004349F0
+void BitFont::FUN_004349F0(void)
+{
+	InternalPTR = 0;
+	field_20 = 0;
+	pGraphBuffer = 0;
+	Pointer_8 = 0;
+	Color = 0x7FFF;
+	DefaultColor2 = 0x3555;
+	Unknown_28 = 0x40;
+	Bool_40 = true;
+	field_41 = true;
+	field_18 = 1;
+	field_1C = 1;
+	SetRect((RECT *)&Bounds, 0, 0, 0, 0);
+	State_2C = 1;
+}
+
+// SYNTHETIC: GAMEMD 0x00434A40
+// ??_GBitFont@@UAEPAXI@Z

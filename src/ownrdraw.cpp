@@ -181,7 +181,6 @@ bool OwnerDraw::CtrlMsgData::operator ==(CtrlMsgData const & that) const
 	return(false);
 }
 
-
 // SYNTHETIC: GAMEMD 0x006006B0 SYMBOL
 // _$E102
 // SYNTHETIC: GAMEMD 0x00600750 SYMBOL
@@ -1592,7 +1591,6 @@ BOOL CALLBACK ResetControlDrawModeAndTimerProc(HWND window, LPARAM lparam);
 BOOL CALLBACK InitCompactDialogControlsProc(HWND window, LPARAM lparam);
 }
 
-
 inline OwnerDraw::WinData *Get_Data(HWND window)
 {
 	OwnerDraw::WinData *data = NULL;
@@ -2316,7 +2314,6 @@ bool FUN_00609B30(HWND dialog, HWND control)
 	return false;
 }
 
-
 inline bool Is_Plain_Control(HWND window)
 {
 	OwnerDraw::WinData *data = NULL;
@@ -2523,7 +2520,6 @@ void __fastcall FUN_0060AA50(HWND dialog)
 {
 	EnumChildWindows(dialog, OwnerDraw::ResetControlDrawModeAndTimerProc, 0);
 }
-
 
 namespace OwnerDraw {
 // FUNCTION: GAMEMD 0x0060AA60
@@ -4760,3 +4756,29 @@ bool __fastcall FUN_006242B0(HWND control)
 
 // SYNTHETIC: GAMEMD 0x006244C0
 // ??_GSimpleDialogControl@OwnerDraw@@UAEPAXI@Z
+
+// TEMPLATE: GAMEMD 0x00624530
+// ?add@?$Dictionary@PAUHWND__@@UWinData@OwnerDraw@@@@QAEDAAPAUHWND__@@AAUWinData@OwnerDraw@@@Z
+template class Dictionary<HWND, OwnerDraw::WinData>;
+template class Dictionary<HWND, WNDPROC>;
+
+// TEMPLATE: GAMEMD 0x00624760
+// ?getPointer@?$Dictionary@PAUHWND__@@UWinData@OwnerDraw@@@@QAEDAAPAUHWND__@@PAPAUWinData@OwnerDraw@@@Z
+
+// TEMPLATE: GAMEMD 0x00624930
+// ?getPointer@?$Dictionary@PAUHWND__@@P6GJPAU1@IIJ@Z@@QAEDAAPAUHWND__@@PAPAP6GJPAU2@IIJ@Z@Z
+
+// TEMPLATE: GAMEMD 0x006249A0
+// ?remove@?$Dictionary@PAUHWND__@@P6GJPAU1@IIJ@Z@@QAEDAAPAUHWND__@@AAP6GJPAU2@IIJ@Z@Z
+
+// TEMPLATE: GAMEMD 0x00624BE0
+// ?expand@?$Dictionary@PAUHWND__@@P6GJPAU1@IIJ@Z@@AAEXXZ
+
+// TEMPLATE: GAMEMD 0x00624C80
+// ?keyHash@?$Dictionary@PAUHWND__@@UWinData@OwnerDraw@@@@AAEIAAPAUHWND__@@@Z
+
+// TEMPLATE: GAMEMD 0x00624CA0
+// ?remove@?$Dictionary@PAUHWND__@@UWinData@OwnerDraw@@@@QAEDAAPAUHWND__@@AAUWinData@OwnerDraw@@@Z
+
+// TEMPLATE: GAMEMD 0x00624FC0
+// ?expand@?$Dictionary@PAUHWND__@@UWinData@OwnerDraw@@@@AAEXXZ

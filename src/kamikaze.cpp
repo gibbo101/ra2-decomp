@@ -180,4 +180,37 @@ long Kamikaze::Load(IStream * stream)
 // FUNCTION: GAMEMD 0x0054E8C0
 // ?ID@?$DynamicVectorClass@PAUKamikazeControl@@@@UAEHPBQAUKamikazeControl@@@Z
 
+// TEMPLATE: GAMEMD 0x0054E8E0
+// ?GetItem@?$VectorClass@PAUKamikazeControl@@@@UBEPAUKamikazeControl@@H@Z
+
+// TEMPLATE: GAMEMD 0x0054E8F0
+// ??8?$VectorClass@PAUKamikazeControl@@@@UBE_NABV0@@Z
+
+// TEMPLATE: GAMEMD 0x0054E930
+// ?Resize@?$VectorClass@PAUKamikazeControl@@@@UAE_NHPBQAUKamikazeControl@@@Z
+
+// TEMPLATE: GAMEMD 0x0054E9E0
+// ?Clear@?$VectorClass@PAUKamikazeControl@@@@UAEXXZ
+
+// TEMPLATE: GAMEMD 0x0054EA10
+// ?ID@?$VectorClass@PAUKamikazeControl@@@@UAEHABQAUKamikazeControl@@@Z
+
+// TEMPLATE: GAMEMD 0x0054EA50
+// ?ID@?$VectorClass@PAUKamikazeControl@@@@UAEHPBQAUKamikazeControl@@@Z
+
+// TEMPLATE: GAMEMD 0x0054EA70
+// ?Resize@?$DynamicVectorClass@PAUKamikazeControl@@@@UAE_NHPBQAUKamikazeControl@@@Z
+
+// TEMPLATE: GAMEMD 0x0054EB20
+// ?ID@?$DynamicVectorClass@PAUKamikazeControl@@@@UAEHABQAUKamikazeControl@@@Z
+
+// SYNTHETIC: GAMEMD 0x0054EB50
+// ??_G?$VectorClass@PAUKamikazeControl@@@@UAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x0054EBA0
+// ??_G?$DynamicVectorClass@PAUKamikazeControl@@@@UAEPAXI@Z
+
+// TEMPLATE: GAMEMD 0x0054EBF0
+// ??0?$VectorClass@PAUKamikazeControl@@@@QAE@HPBQAUKamikazeControl@@@Z
+
 template class DynamicVectorClass<KamikazeControl *>;
