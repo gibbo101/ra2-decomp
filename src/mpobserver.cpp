@@ -113,7 +113,7 @@ void Reset_Observer_View(void)
 
 // FUNCTION: GAMEMD 0x005C93E0
 MPMegawealthClass::MPMegawealthClass(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex) :
-	MPGameModeClass(title, tooltip, inifile, mapfilter, aiallowed, modeindex)
+	MultiplayerGameMode(title, tooltip, inifile, mapfilter, aiallowed, modeindex)
 {
 }
 

@@ -37,6 +37,7 @@
 #include "sun.h"
 #include "swizzle.h"
 #include "tactical.h"
+#include "geometry.h"
 #include "terrtype.h"
 #include "tracker.h"
 #include "vector.h"
@@ -60,86 +61,33 @@ inline VeinholeLogic::VeinholeLogic(bool) :
 {
 }
 
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007F6610;
-extern const double DAT_007F6618;
-
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-struct SizeCenter {
-	int A, B, C;
-	SizeCenter() { C = 0; A = 0x80; B = 0x80; }
-};
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
 
 // SYNTHETIC: GAMEMD 0x0074C190 SYMBOL
 // _$E158
-double DAT_00B1D278 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x0074C1C0 SYMBOL
 // _$E161
-double DAT_00B1D2E0 = DAT_00B1D278 / DAT_007F6610;
-
 // SYNTHETIC: GAMEMD 0x0074C1E0 SYMBOL
 // _$E164
-double DAT_00B1D2C8 = DAT_007E1718 / DAT_00B1D2E0;
-
 // SYNTHETIC: GAMEMD 0x0074C200 SYMBOL
 // _$E167
-double DAT_00B1D2C0 = DAT_007E1720 * DAT_007F6618;
-
 // SYNTHETIC: GAMEMD 0x0074C220 SYMBOL
 // _$E170
-double DAT_00B1D280 = DAT_007E1728 * DAT_007F6618;
-
 // SYNTHETIC: GAMEMD 0x0074C240 SYMBOL
 // _$E173
-double DAT_00B1D258 = DAT_007E1730 * DAT_007F6618;
-
 // SYNTHETIC: GAMEMD 0x0074C260 SYMBOL
 // _$E176
-int DAT_00B1D2E8 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B1D258 - DAT_00B1D280) * DAT_00B1D278));
-
 // SYNTHETIC: GAMEMD 0x0074C2A0 SYMBOL
 // _$E179
-double DAT_00B1D288 = FUN_004CADE0(DAT_00B1D2E8 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x0074C2D0 SYMBOL
 // _$E182
-double DAT_00B1D2B8 = FUN_004CADE0((DAT_00B1D2E8 * 2) / DAT_00B1D278);
-
 // SYNTHETIC: GAMEMD 0x0074C300 SYMBOL
 // _$E185
-int DAT_00B1D2DC = (int)(DAT_00B1D2E8 * 4 + DAT_007E1738);
-
 // SYNTHETIC: GAMEMD 0x0074C330 SYMBOL
 // _$E188
-ShortPair DAT_00B1D270;
-
 // SYNTHETIC: GAMEMD 0x0074C340 SYMBOL
 // _$E191
-IntTriple DAT_00B1D2A8;
-
 // SYNTHETIC: GAMEMD 0x0074C360 SYMBOL
 // _$E194
-SizeCenter DAT_00B1D2D0;
 
 // SYNTHETIC: GAMEMD 0x0074C3C0 SYMBOL
 // _$E197

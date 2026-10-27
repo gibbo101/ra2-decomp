@@ -470,14 +470,11 @@ void Modem_Echo(char c)
 	}
 }
 
+// SYNTHETIC: GAMEMD 0x005F13B0 SYMBOL
+// _$E112
+const Rect RECT_NONE_2(0, 0, 0, 0);
+
 // TEMPLATE: GAMEMD 0x005F1390
 // ?Value@?$TTimerClass@VSystemTimerClass@@@@QBEHXZ
 template class TTimerClass<SystemTimerClass>;
 
-// SYNTHETIC: GAMEMD 0x005F13B0 SYMBOL
-// _$E112
-struct IntQuad {
-	int A, B, C, D;
-	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
-};
-IntQuad DAT_00AC1278;

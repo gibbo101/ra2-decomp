@@ -21,6 +21,7 @@
 #include "ownrdraw.h"
 #include "pcx.h"
 #include "session.h"
+#include "geometry.h"
 #include "theme.h"
 #include "vector.h"
 #include "wdtnet.h"
@@ -30,75 +31,34 @@
 #include "wolapi\wolapi.h"
 
 namespace fastmath { double __cdecl sqrt(double x); double __cdecl tan(double x); double __cdecl atan(double x); }
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007F72A0;
-extern const double DAT_007F72A8;
-
-// SYNTHETIC: GAMEMD 0x0076C0A0 SYMBOL
-// _$E31
-double DAT_00B72A30 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
-
-// SYNTHETIC: GAMEMD 0x0076C0D0 SYMBOL
-// _$E34
-double DAT_00B72A80 = DAT_00B72A30 / DAT_007F72A0;
-
-// SYNTHETIC: GAMEMD 0x0076C0F0 SYMBOL
-// _$E37
-double DAT_00B72A68 = DAT_007E1718 / DAT_00B72A80;
-
-// SYNTHETIC: GAMEMD 0x0076C110 SYMBOL
-// _$E40
-double DAT_00B72A60 = DAT_007E1720 * DAT_007F72A8;
-
-// SYNTHETIC: GAMEMD 0x0076C130 SYMBOL
-// _$E43
-double DAT_00B72A38 = DAT_007E1728 * DAT_007F72A8;
-
-// SYNTHETIC: GAMEMD 0x0076C150 SYMBOL
-// _$E46
-double DAT_00B72A10 = DAT_007E1730 * DAT_007F72A8;
-
-// SYNTHETIC: GAMEMD 0x0076C170 SYMBOL
-// _$E49
-int DAT_00B72A88 = (int)(fastmath::tan(DAT_00B72A10 - DAT_00B72A38) * DAT_007E1738 * DAT_00B72A30);
-
-// SYNTHETIC: GAMEMD 0x0076C1B0 SYMBOL
-// _$E52
-double DAT_00B72A40 = fastmath::atan(DAT_00B72A88 * DAT_007E1740);
-
-// SYNTHETIC: GAMEMD 0x0076C1E0 SYMBOL
-// _$E55
-double DAT_00B72A58 = fastmath::atan((DAT_00B72A88 * 2) / DAT_00B72A30);
-
-// SYNTHETIC: GAMEMD 0x0076C210 SYMBOL
-// _$E58
-int DAT_00B72A7C = (int)(DAT_00B72A88 * 4 + DAT_007E1738);
-
-struct WDTShortPair { short a; short b; WDTShortPair(void) { a = 0; b = 0; } };
-struct WDTIntTriple { int a; int b; int c; WDTIntTriple(void) { a = 0; b = 0; c = 0; } };
-
-// SYNTHETIC: GAMEMD 0x0076C240 SYMBOL
-// _$E61
-WDTShortPair DAT_00B72A28;
-
-// SYNTHETIC: GAMEMD 0x0076C250 SYMBOL
-// _$E64
-WDTIntTriple DAT_00B72A48;
-
-struct WDTAnchor { int a; int b; int c; WDTAnchor(void) { c = 0; a = 0x80; b = 0x80; } };
-
-// SYNTHETIC: GAMEMD 0x0076C270 SYMBOL
-// _$E67
-WDTAnchor DAT_00B72A70;
 
 using namespace WorldDominationTour;
+// SYNTHETIC: GAMEMD 0x0076C0A0 SYMBOL
+// _$E31
+// SYNTHETIC: GAMEMD 0x0076C0D0 SYMBOL
+// _$E34
+// SYNTHETIC: GAMEMD 0x0076C0F0 SYMBOL
+// _$E37
+// SYNTHETIC: GAMEMD 0x0076C110 SYMBOL
+// _$E40
+// SYNTHETIC: GAMEMD 0x0076C130 SYMBOL
+// _$E43
+// SYNTHETIC: GAMEMD 0x0076C150 SYMBOL
+// _$E46
+// SYNTHETIC: GAMEMD 0x0076C170 SYMBOL
+// _$E49
+// SYNTHETIC: GAMEMD 0x0076C1B0 SYMBOL
+// _$E52
+// SYNTHETIC: GAMEMD 0x0076C1E0 SYMBOL
+// _$E55
+// SYNTHETIC: GAMEMD 0x0076C210 SYMBOL
+// _$E58
+// SYNTHETIC: GAMEMD 0x0076C240 SYMBOL
+// _$E61
+// SYNTHETIC: GAMEMD 0x0076C250 SYMBOL
+// _$E64
+// SYNTHETIC: GAMEMD 0x0076C270 SYMBOL
+// _$E67
 
 // FUNCTION: GAMEMD 0x0076C970
 // WorldDominationTour::Selection::Init_Voices
@@ -344,35 +304,35 @@ template class rc_ptr<Territory>;
 template class rc_ptr<Map>;
 
 // TEMPLATE: GAMEMD 0x0076F090
-// ??0?$VectorCursor@V?$TRect@H@@V?$DynamicVectorClass@V?$TRect@H@@@@@@QAE@AAV?$DynamicVectorClass@V?$TRect@H@@@@H@Z
+// ??0?$VectorCursor@PAVMSSfxEntry@@V?$DynamicVectorClass@PAVMSSfxEntry@@@@@@QAE@AAV?$DynamicVectorClass@PAVMSSfxEntry@@@@H@Z
 // TEMPLATE: GAMEMD 0x0076F0B0
-// ??B?$VectorCursor@V?$TRect@H@@V?$DynamicVectorClass@V?$TRect@H@@@@@@UBE_NXZ
-// TEMPLATE: GAMEMD 0x0076F0C0
-// ??0?$VectorCursor@VPoint2D@@V?$DynamicVectorClass@VPoint2D@@@@@@QAE@AAV?$DynamicVectorClass@VPoint2D@@@@H@Z
-// TEMPLATE: GAMEMD 0x0076F0E0
-// ??B?$VectorCursor@VPoint2D@@V?$DynamicVectorClass@VPoint2D@@@@@@UBE_NXZ
-// TEMPLATE: GAMEMD 0x0076F0F0
 // ??B?$VectorCursor@PAVMSSfxEntry@@V?$DynamicVectorClass@PAVMSSfxEntry@@@@@@UBE_NXZ
+// TEMPLATE: GAMEMD 0x0076F0C0
+// ??0?$VectorCursor@V?$rc_ptr@VTerritory@WorldDominationTour@@@@V?$DynamicVectorClass@V?$rc_ptr@VTerritory@WorldDominationTour@@@@@@@@QAE@AAV?$DynamicVectorClass@V?$rc_ptr@VTerritory@WorldDominationTour@@@@@@H@Z
+// TEMPLATE: GAMEMD 0x0076F0E0
+// ??B?$VectorCursor@V?$rc_ptr@VTerritory@WorldDominationTour@@@@V?$DynamicVectorClass@V?$rc_ptr@VTerritory@WorldDominationTour@@@@@@@@UBE_NXZ
+// TEMPLATE: GAMEMD 0x0076F0F0
+// ??B?$VectorCursor@PAVMSAnim@@V?$DynamicVectorClass@PAVMSAnim@@@@@@UBE_NXZ
 // SYNTHETIC: GAMEMD 0x0076F100
-// ??_G?$VectorCursor@V?$TRect@H@@V?$DynamicVectorClass@V?$TRect@H@@@@@@UAEPAXI@Z
-// SYNTHETIC: GAMEMD 0x0076F120
-// ??_G?$VectorCursor@VPoint2D@@V?$DynamicVectorClass@VPoint2D@@@@@@UAEPAXI@Z
-// SYNTHETIC: GAMEMD 0x0076F140
 // ??_G?$VectorCursor@PAVMSSfxEntry@@V?$DynamicVectorClass@PAVMSSfxEntry@@@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x0076F120
+// ??_G?$VectorCursor@V?$rc_ptr@VTerritory@WorldDominationTour@@@@V?$DynamicVectorClass@V?$rc_ptr@VTerritory@WorldDominationTour@@@@@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x0076F140
+// ??_G?$VectorCursor@PAVMSAnim@@V?$DynamicVectorClass@PAVMSAnim@@@@@@UAEPAXI@Z
 // TEMPLATE: GAMEMD 0x0076F160
-// ??E?$VectorCursor@V?$TRect@H@@V?$DynamicVectorClass@V?$TRect@H@@@@@@UAEAAV0@XZ
-// TEMPLATE: GAMEMD 0x0076F170
-// ??F?$VectorCursor@V?$TRect@H@@V?$DynamicVectorClass@V?$TRect@H@@@@@@UAEAAV0@XZ
-// TEMPLATE: GAMEMD 0x0076F180
-// ??E?$VectorCursor@VPoint2D@@V?$DynamicVectorClass@VPoint2D@@@@@@UAEAAV0@XZ
-// TEMPLATE: GAMEMD 0x0076F190
-// ??F?$VectorCursor@VPoint2D@@V?$DynamicVectorClass@VPoint2D@@@@@@UAEAAV0@XZ
-template class VectorCursor<Rect, DynamicVectorClass<Rect> >;
-template class VectorCursor<Point2D, DynamicVectorClass<Point2D> >;
-// TEMPLATE: GAMEMD 0x0076F1A0
 // ??E?$VectorCursor@PAVMSSfxEntry@@V?$DynamicVectorClass@PAVMSSfxEntry@@@@@@UAEAAV0@XZ
-// TEMPLATE: GAMEMD 0x0076F1B0
+// TEMPLATE: GAMEMD 0x0076F170
 // ??F?$VectorCursor@PAVMSSfxEntry@@V?$DynamicVectorClass@PAVMSSfxEntry@@@@@@UAEAAV0@XZ
+// TEMPLATE: GAMEMD 0x0076F180
+// ??E?$VectorCursor@V?$rc_ptr@VTerritory@WorldDominationTour@@@@V?$DynamicVectorClass@V?$rc_ptr@VTerritory@WorldDominationTour@@@@@@@@UAEAAV0@XZ
+// TEMPLATE: GAMEMD 0x0076F190
+// ??F?$VectorCursor@V?$rc_ptr@VTerritory@WorldDominationTour@@@@V?$DynamicVectorClass@V?$rc_ptr@VTerritory@WorldDominationTour@@@@@@@@UAEAAV0@XZ
+template class VectorCursor<rc_ptr<Territory>, DynamicVectorClass<rc_ptr<Territory> > >;
+template class VectorCursor<MSAnim *, DynamicVectorClass<MSAnim *> >;
+// TEMPLATE: GAMEMD 0x0076F1A0
+// ??E?$VectorCursor@PAVMSAnim@@V?$DynamicVectorClass@PAVMSAnim@@@@@@UAEAAV0@XZ
+// TEMPLATE: GAMEMD 0x0076F1B0
+// ??F?$VectorCursor@PAVMSAnim@@V?$DynamicVectorClass@PAVMSAnim@@@@@@UAEAAV0@XZ
 // TEMPLATE: GAMEMD 0x0076F1C0
 // ??0?$VectorClass@PAVMSAnim@@@@QAE@HPBQAVMSAnim@@@Z
 // TEMPLATE: GAMEMD 0x0076F210

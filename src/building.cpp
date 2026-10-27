@@ -5506,19 +5506,19 @@ BuildingClass * __fastcall FUN_00459F40(AbstractClass * object)
 template class TPoint3D<int>;
 
 // TEMPLATE: GAMEMD 0x00459F90
-// ?Clear@?$DynamicVectorClass@PAVInfantryClass@@@@UAEXXZ
+// ?Clear@?$DynamicVectorClass@PBVParticleSystemTypeClass@@@@UAEXXZ
 // TEMPLATE: GAMEMD 0x00459FC0
-// ?ID@?$DynamicVectorClass@PAVInfantryClass@@@@UAEHPBQAVInfantryClass@@@Z
+// ?ID@?$DynamicVectorClass@PBVParticleSystemTypeClass@@@@UAEHPBQBVParticleSystemTypeClass@@@Z
 // TEMPLATE: GAMEMD 0x00459FE0
-// ?GetItem@?$VectorClass@PAVInfantryClass@@@@UBEPAVInfantryClass@@H@Z
+// ?GetItem@?$VectorClass@PBVParticleSystemTypeClass@@@@UBEPBVParticleSystemTypeClass@@H@Z
 template class DynamicVectorClass<InfantryClass *>;
 
 // TEMPLATE: GAMEMD 0x00459FF0
-// ?Clear@?$DynamicVectorClass@PAVBuildingClass@@@@UAEXXZ
+// ?Clear@?$DynamicVectorClass@PAVInfantryClass@@@@UAEXXZ
 // TEMPLATE: GAMEMD 0x0045A020
-// ?ID@?$DynamicVectorClass@PAVBuildingClass@@@@UAEHPBQAVBuildingClass@@@Z
+// ?ID@?$DynamicVectorClass@PAVInfantryClass@@@@UAEHPBQAVInfantryClass@@@Z
 // TEMPLATE: GAMEMD 0x0045A040
-// ?GetItem@?$VectorClass@PAVBuildingClass@@@@UBEPAVBuildingClass@@H@Z
+// ?GetItem@?$VectorClass@PAVInfantryClass@@@@UBEPAVInfantryClass@@H@Z
 template class DynamicVectorClass<BuildingClass *>;
 
 // TEMPLATE: GAMEMD 0x0045A050
@@ -5598,32 +5598,32 @@ template class VectorClass<FoggedObjectClass *>;
 // ?ID@?$DynamicVectorClass@PAVFoggedObjectClass@@@@UAEHABQAVFoggedObjectClass@@@Z
 
 // TEMPLATE: GAMEMD 0x0045A760
-// ??8?$VectorClass@PAVBuildingClass@@@@UBE_NABV0@@Z
+// ??8?$VectorClass@PAVReestablish@@@@UBE_NABV0@@Z
 // TEMPLATE: GAMEMD 0x0045A7A0
-// ?Resize@?$VectorClass@PAVBuildingClass@@@@UAE_NHPBQAVBuildingClass@@@Z
+// ?Resize@?$VectorClass@PAVReestablish@@@@UAE_NHPBQAVReestablish@@@Z
 // TEMPLATE: GAMEMD 0x0045A850
-// ?Clear@?$VectorClass@PAVBuildingClass@@@@UAEXXZ
+// ?Clear@?$VectorClass@PAVReestablish@@@@UAEXXZ
 // TEMPLATE: GAMEMD 0x0045A880
-// ?ID@?$VectorClass@PAVBuildingClass@@@@UAEHABQAVBuildingClass@@@Z
+// ?ID@?$VectorClass@PAVReestablish@@@@UAEHABQAVReestablish@@@Z
 // TEMPLATE: GAMEMD 0x0045A8C0
-// ?ID@?$VectorClass@PAVBuildingClass@@@@UAEHPBQAVBuildingClass@@@Z
+// ?ID@?$VectorClass@PAVReestablish@@@@UAEHPBQAVReestablish@@@Z
 template class VectorClass<BuildingClass *>;
 
 // TEMPLATE: GAMEMD 0x0045A8E0
-// ?Resize@?$DynamicVectorClass@PAVBuildingClass@@@@UAE_NHPBQAVBuildingClass@@@Z
+// ?Resize@?$DynamicVectorClass@PAVReestablish@@@@UAE_NHPBQAVReestablish@@@Z
 // TEMPLATE: GAMEMD 0x0045A990
-// ?ID@?$DynamicVectorClass@PAVBuildingClass@@@@UAEHABQAVBuildingClass@@@Z
+// ?ID@?$DynamicVectorClass@PAVReestablish@@@@UAEHABQAVReestablish@@@Z
 
 // SYNTHETIC: GAMEMD 0x0045A9C0
-// ??_G?$DynamicVectorClass@PBVParticleSystemTypeClass@@@@UAEPAXI@Z
-// SYNTHETIC: GAMEMD 0x0045AA10
 // ??_G?$VectorClass@PBVParticleSystemTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x0045AA10
+// ??_G?$DynamicVectorClass@PBVParticleSystemTypeClass@@@@UAEPAXI@Z
 // SYNTHETIC: GAMEMD 0x0045AA60
 // ??_G?$VectorClass@PAVInfantryClass@@@@UAEPAXI@Z
 // SYNTHETIC: GAMEMD 0x0045AAB0
 // ??_G?$DynamicVectorClass@PAVInfantryClass@@@@UAEPAXI@Z
 // SYNTHETIC: GAMEMD 0x0045AB00
-// ??_G?$VectorClass@PAVFoggedObjectClass@@@@UAEPAXI@Z
+// ??_G?$DynamicVectorClass@PAVFoggedObjectClass@@@@UAEPAXI@Z
 // TEMPLATE: GAMEMD 0x0045AB50
 // ?Resize@?$VectorClass@PAVFoggedObjectClass@@@@UAE_NHPBQAVFoggedObjectClass@@@Z
 // TEMPLATE: GAMEMD 0x0045AC00
@@ -5633,7 +5633,7 @@ template class VectorClass<BuildingClass *>;
 // TEMPLATE: GAMEMD 0x0045AC70
 // ?ID@?$VectorClass@PAVFoggedObjectClass@@@@UAEHPBQAVFoggedObjectClass@@@Z
 // SYNTHETIC: GAMEMD 0x0045AC90
-// ??_G?$DynamicVectorClass@PAVFoggedObjectClass@@@@UAEPAXI@Z
+// ??_G?$VectorClass@PAVFoggedObjectClass@@@@UAEPAXI@Z
 // SYNTHETIC: GAMEMD 0x0045ACE0
 // ??_G?$VectorClass@PAVReestablish@@@@UAEPAXI@Z
 // SYNTHETIC: GAMEMD 0x0045AD30
@@ -5649,71 +5649,35 @@ template class VectorClass<BuildingClass *>;
 template class VectorClass<Reestablish *>;
 template class DynamicVectorClass<AbstractClass *>;
 
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007E4530;
-extern const double DAT_007E4538;
+
+#include "geometry.h"
 
 // SYNTHETIC: GAMEMD 0x0045AFA0 SYMBOL
 // _$E256
-double DAT_0089C8B8 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x0045AFD0 SYMBOL
 // _$E259
-double DAT_0089D360 = DAT_0089C8B8 / DAT_007E4530;
-
 // SYNTHETIC: GAMEMD 0x0045AFF0 SYMBOL
 // _$E262
-double DAT_0089C8F8 = DAT_007E1718 / DAT_0089D360;
-
 // SYNTHETIC: GAMEMD 0x0045B010 SYMBOL
 // _$E265
-double DAT_0089C8F0 = DAT_007E1720 * DAT_007E4538;
-
 // SYNTHETIC: GAMEMD 0x0045B030 SYMBOL
 // _$E268
-double DAT_0089C8C0 = DAT_007E1728 * DAT_007E4538;
-
 // SYNTHETIC: GAMEMD 0x0045B050 SYMBOL
 // _$E271
-double DAT_0089C898 = DAT_007E1730 * DAT_007E4538;
-
 // SYNTHETIC: GAMEMD 0x0045B070 SYMBOL
 // _$E274
-int DAT_0089DDB8 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_0089C898 - DAT_0089C8C0) * DAT_0089C8B8));
-
 // SYNTHETIC: GAMEMD 0x0045B0B0 SYMBOL
 // _$E277
-double DAT_0089C8C8 = FUN_004CADE0(DAT_0089DDB8 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x0045B0E0 SYMBOL
 // _$E280
-double DAT_0089C8E0 = FUN_004CADE0((DAT_0089DDB8 * 2) / DAT_0089C8B8);
-
 // SYNTHETIC: GAMEMD 0x0045B110 SYMBOL
 // _$E283
-int DAT_0089D35C = (int)(DAT_007E1738 + DAT_0089DDB8 * 4);
-
 // SYNTHETIC: GAMEMD 0x0045B140 SYMBOL
 // _$E286
-Cell DAT_0089C8B0(0, 0);
-
 // SYNTHETIC: GAMEMD 0x0045B150 SYMBOL
 // _$E289
-Coord DAT_0089C8D0(0, 0, 0);
-
 // SYNTHETIC: GAMEMD 0x0045B170 SYMBOL
 // _$E292
-Coord DAT_0089D350(128, 128, 0);
 
 // SYNTHETIC: GAMEMD 0x0045B190 SYMBOL
 // _$E295

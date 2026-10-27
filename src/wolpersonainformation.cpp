@@ -7,6 +7,7 @@
 #include <math.h>
 #include "cdfile.h"
 #include "ini.h"
+#include "geometry.h"
 #include "playerprofile.h"
 #include "rcptr.h"
 #include "wolopt.h"
@@ -16,16 +17,6 @@
 #include <stdlib.h>
 
 namespace fastmath { double __cdecl sqrt(double x); double __cdecl tan(double x); double __cdecl atan(double x); }
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007F74E0;
-extern const double DAT_007F74E8;
 wchar_t * __fastcall FUN_00735120(char const * text);
 char * __fastcall FUN_007350C0(wchar_t const * text);
 extern "C" wchar_t * __cdecl wcsstr(wchar_t const *, wchar_t const *);
@@ -35,64 +26,32 @@ static inline int WOL_Int(INIClass & ini, Wstring const & section, char const * 
 {
 	return ini.Get_Int(section, key, def);
 }
-
-
 // SYNTHETIC: GAMEMD 0x007784F0 SYMBOL
 // _$E7
-double DAT_00B73598 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x00778520 SYMBOL
 // _$E10
-double DAT_00B735E8 = DAT_00B73598 / DAT_007F74E0;
-
 // SYNTHETIC: GAMEMD 0x00778540 SYMBOL
 // _$E13
-double DAT_00B735D0 = DAT_007E1718 / DAT_00B735E8;
-
 // SYNTHETIC: GAMEMD 0x00778560 SYMBOL
 // _$E16
-double DAT_00B735C8 = DAT_007E1720 * DAT_007F74E8;
-
 // SYNTHETIC: GAMEMD 0x00778580 SYMBOL
 // _$E19
-double DAT_00B735A0 = DAT_007E1728 * DAT_007F74E8;
-
 // SYNTHETIC: GAMEMD 0x007785A0 SYMBOL
 // _$E22
-double DAT_00B73578 = DAT_007E1730 * DAT_007F74E8;
-
 // SYNTHETIC: GAMEMD 0x007785C0 SYMBOL
 // _$E25
-int DAT_00B735F0 = (int)(fastmath::tan(DAT_00B73578 - DAT_00B735A0) * DAT_007E1738 * DAT_00B73598);
-
 // SYNTHETIC: GAMEMD 0x00778600 SYMBOL
 // _$E28
-double DAT_00B735A8 = fastmath::atan(DAT_00B735F0 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x00778630 SYMBOL
 // _$E31
-double DAT_00B735C0 = fastmath::atan((DAT_00B735F0 * 2) / DAT_00B73598);
-
 // SYNTHETIC: GAMEMD 0x00778660 SYMBOL
 // _$E34
-int DAT_00B735E4 = (int)(DAT_00B735F0 * 4 + DAT_007E1738);
-
-struct WOLShortPair { short a; short b; WOLShortPair(void) { a = 0; b = 0; } };
-struct WOLIntTriple { int a; int b; int c; WOLIntTriple(void) { a = 0; b = 0; c = 0; } };
-
 // SYNTHETIC: GAMEMD 0x00778690 SYMBOL
 // _$E37
-WOLShortPair DAT_00B73594;
-
 // SYNTHETIC: GAMEMD 0x007786A0 SYMBOL
 // _$E40
-WOLIntTriple DAT_00B735B0;
-
-struct WOLWindowSize { int W; int H; int Z; WOLWindowSize(void) { Z = 0; W = 0x80; H = 0x80; } };
-
 // SYNTHETIC: GAMEMD 0x007786C0 SYMBOL
 // _$E43
-WOLWindowSize DAT_00B735D8;
 
 // SYNTHETIC: GAMEMD 0x007786E0 SYMBOL
 // _$E48

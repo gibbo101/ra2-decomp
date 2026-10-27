@@ -100,7 +100,6 @@
 
 namespace Unsorted { extern int CurrentFrame; }
 extern Coord DAT_00B0EA90;
-extern int DAT_00B0EB34;
 
 template class TPoint3D<int>;
 template class IndexClass<int, StaticBufferClass::Entry *>;
@@ -108,7 +107,6 @@ template class IndexClass<int, StaticBufferClass::Entry *>;
 // TEMPLATE: GAMEMD 0x006CE270
 // ?_AddRef@?$_com_ptr_t@V?$_com_IIID@UILocomotion@@$1?_GUID_070f3290_9841_11d1_b709_00a024ddafd1@@3U__s_GUID@@A@@@@AAEXXZ
 template class _com_ptr_t<_com_IIID<ILocomotion, &__uuidof(ILocomotion)> >;
-
 
 // SYNTHETIC: GAMEMD 0x006F2AD0 SYMBOL
 // _$E233
@@ -5129,7 +5127,6 @@ void TechnoClass::Reduce_Ammunition(void)
 }
 
 extern BulletClass * __fastcall FUN_0046B050(BulletTypeClass const * type, AbstractClass * target, TechnoClass * payback, int strength, WarheadTypeClass const * warhead, int max_speed, bool bright);
-extern const double DAT_007E1738;
 
 // FUNCTION: GAMEMD 0x0070D690
 int TechnoClass::FireDeathWeapon(int additional_damage)
@@ -5149,7 +5146,7 @@ int TechnoClass::FireDeathWeapon(int additional_damage)
 			damage = (int)(weapon->Attack * type->DeathWeaponDamageModifier);
 		} else {
 			weapon = Rule->DeathWeapon;
-			damage = (int)(Techno_Type_Class()->MaxStrength * DAT_007E1738);
+			damage = (int)(Techno_Type_Class()->MaxStrength * RAD_90);
 		}
 	}
 	if (weapon == NULL) {
@@ -6554,15 +6551,6 @@ void TechnoClass::AddPassenger(FootClass * passenger)
 	}
 }
 
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007F4E98;
-extern const double DAT_007F4EA0;
-extern double __cdecl FUN_004CAC40(double);
 
 // SYNTHETIC: GAMEMD 0x007106E0
 // ??_GTechnoClass@@UAEPAXI@Z
@@ -6582,83 +6570,36 @@ extern double __cdecl FUN_004CAC40(double);
 // TEMPLATE: GAMEMD 0x00710890
 // ?Binary_Search@@YIPAUNodeElement@?$IndexClass@HPAUEntry@StaticBufferClass@@@@PAU12@HABU12@@Z
 
+#include "geometry.h"
+
 // SYNTHETIC: GAMEMD 0x007108E0 SYMBOL
 // _$E245
-double DAT_00B0EB60 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x00710910 SYMBOL
 // _$E248
-double DAT_00B0EBB0 = DAT_00B0EB60 / DAT_007F4E98;
-
 // SYNTHETIC: GAMEMD 0x00710930 SYMBOL
 // _$E251
-double DAT_00B0EB98 = DAT_007E1718 / DAT_00B0EBB0;
-
 // SYNTHETIC: GAMEMD 0x00710950 SYMBOL
 // _$E254
-double DAT_00B0EB90 = DAT_007E1720 * DAT_007F4EA0;
-
 // SYNTHETIC: GAMEMD 0x00710970 SYMBOL
 // _$E257
-double DAT_00B0EB68 = DAT_007E1728 * DAT_007F4EA0;
-
 // SYNTHETIC: GAMEMD 0x00710990 SYMBOL
 // _$E260
-double DAT_00B0EB40 = DAT_007E1730 * DAT_007F4EA0;
-
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
-
-struct IntQuad {
-	int A, B, C, D;
-	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
-};
-
-struct CenterTriple {
-	int A, B, C;
-	CenterTriple() { C = 0; A = 128; B = 128; }
-};
-
 // SYNTHETIC: GAMEMD 0x007109B0 SYMBOL
 // _$E263
-int DAT_00B0EBB8 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B0EB40 - DAT_00B0EB68) * DAT_00B0EB60));
-
 // SYNTHETIC: GAMEMD 0x007109F0 SYMBOL
 // _$E266
-double DAT_00B0EB70 = FUN_004CADE0(DAT_00B0EBB8 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x00710A20 SYMBOL
 // _$E269
-double DAT_00B0EB88 = FUN_004CADE0((DAT_00B0EBB8 * 2) / DAT_00B0EB60);
-
 // SYNTHETIC: GAMEMD 0x00710A50 SYMBOL
 // _$E272
-int DAT_00B0EBAC = (int)(DAT_00B0EBB8 * 4 + DAT_007E1738);
-
 // SYNTHETIC: GAMEMD 0x00710A80 SYMBOL
 // _$E275
-ShortPair DAT_00B0EB58;
-
 // SYNTHETIC: GAMEMD 0x00710A90 SYMBOL
 // _$E278
-IntTriple DAT_00B0EB78;
-
 // SYNTHETIC: GAMEMD 0x00710AB0 SYMBOL
 // _$E281
-CenterTriple DAT_00B0EBA0;
 
 // SYNTHETIC: GAMEMD 0x00710AD0 SYMBOL
 // _$E284
-IntQuad DAT_00B0EB48;
+const Rect RECT_NONE_2(0, 0, 0, 0);
+

@@ -514,27 +514,27 @@ template class DynamicVectorClass<MSTextEntry *>;
 template class DynamicVectorClass<MapSelection *>;
 
 // TEMPLATE: GAMEMD 0x005D06D0
-// ?Clear@?$DynamicVectorClass@PAVMSAnimEntry@@@@UAEXXZ
+// ?Clear@?$DynamicVectorClass@PAVMapStage@@@@UAEXXZ
 // TEMPLATE: GAMEMD 0x005D0700
-// ?ID@?$DynamicVectorClass@PAVMSAnimEntry@@@@UAEHPBQAVMSAnimEntry@@@Z
+// ?ID@?$DynamicVectorClass@PAVMapStage@@@@UAEHPBQAVMapStage@@@Z
 // TEMPLATE: GAMEMD 0x005D0720
-// ?GetItem@?$VectorClass@PAVMSAnimEntry@@@@UBEPAVMSAnimEntry@@H@Z
+// ?GetItem@?$VectorClass@PAVMapStage@@@@UBEPAVMapStage@@H@Z
 template class DynamicVectorClass<MSAnimEntry *>;
 
 // TEMPLATE: GAMEMD 0x005D0730
-// ?Clear@?$DynamicVectorClass@PAVMSSfxEntry@@@@UAEXXZ
+// ?Clear@?$DynamicVectorClass@PAVMSAnimEntry@@@@UAEXXZ
 // TEMPLATE: GAMEMD 0x005D0760
-// ?ID@?$DynamicVectorClass@PAVMSSfxEntry@@@@UAEHPBQAVMSSfxEntry@@@Z
+// ?ID@?$DynamicVectorClass@PAVMSAnimEntry@@@@UAEHPBQAVMSAnimEntry@@@Z
 // TEMPLATE: GAMEMD 0x005D0780
-// ?GetItem@?$VectorClass@PAVMSSfxEntry@@@@UBEPAVMSSfxEntry@@H@Z
+// ?GetItem@?$VectorClass@PAVMSAnimEntry@@@@UBEPAVMSAnimEntry@@H@Z
 template class DynamicVectorClass<MSSfxEntry *>;
 
 // TEMPLATE: GAMEMD 0x005D0790
-// ?Clear@?$DynamicVectorClass@PAVMapStage@@@@UAEXXZ
+// ?Clear@?$DynamicVectorClass@PAVMSSfxEntry@@@@UAEXXZ
 // TEMPLATE: GAMEMD 0x005D07C0
-// ?ID@?$DynamicVectorClass@PAVMapStage@@@@UAEHPBQAVMapStage@@@Z
+// ?ID@?$DynamicVectorClass@PAVMSSfxEntry@@@@UAEHPBQAVMSSfxEntry@@@Z
 // TEMPLATE: GAMEMD 0x005D07E0
-// ?GetItem@?$VectorClass@PAVMapStage@@@@UBEPAVMapStage@@H@Z
+// ?GetItem@?$VectorClass@PAVMSSfxEntry@@@@UBEPAVMSSfxEntry@@H@Z
 template class DynamicVectorClass<MapStage *>;
 
 // TEMPLATE: GAMEMD 0x005D07F0
@@ -578,50 +578,50 @@ template class VectorClass<MapSelection *>;
 // TEMPLATE: GAMEMD 0x005D0F70
 // ?ID@?$DynamicVectorClass@PAVMapSelection@@@@UAEHABQAVMapSelection@@@Z
 // TEMPLATE: GAMEMD 0x005D0FA0
-// ??8?$VectorClass@PAVMSAnimEntry@@@@UBE_NABV0@@Z
+// ??8?$VectorClass@PAVMapStage@@@@UBE_NABV0@@Z
 // TEMPLATE: GAMEMD 0x005D0FE0
-// ?Resize@?$VectorClass@PAVMSAnimEntry@@@@UAE_NHPBQAVMSAnimEntry@@@Z
+// ?Resize@?$VectorClass@PAVMapStage@@@@UAE_NHPBQAVMapStage@@@Z
 // TEMPLATE: GAMEMD 0x005D1090
-// ?Clear@?$VectorClass@PAVMSAnimEntry@@@@UAEXXZ
+// ?Clear@?$VectorClass@PAVMapStage@@@@UAEXXZ
 // TEMPLATE: GAMEMD 0x005D10C0
-// ?ID@?$VectorClass@PAVMSAnimEntry@@@@UAEHABQAVMSAnimEntry@@@Z
+// ?ID@?$VectorClass@PAVMapStage@@@@UAEHABQAVMapStage@@@Z
 // TEMPLATE: GAMEMD 0x005D1100
-// ?ID@?$VectorClass@PAVMSAnimEntry@@@@UAEHPBQAVMSAnimEntry@@@Z
+// ?ID@?$VectorClass@PAVMapStage@@@@UAEHPBQAVMapStage@@@Z
 // TEMPLATE: GAMEMD 0x005D1120
-// ?Resize@?$DynamicVectorClass@PAVMSAnimEntry@@@@UAE_NHPBQAVMSAnimEntry@@@Z
+// ?Resize@?$DynamicVectorClass@PAVMapStage@@@@UAE_NHPBQAVMapStage@@@Z
 // TEMPLATE: GAMEMD 0x005D11D0
-// ?ID@?$DynamicVectorClass@PAVMSAnimEntry@@@@UAEHABQAVMSAnimEntry@@@Z
+// ?ID@?$DynamicVectorClass@PAVMapStage@@@@UAEHABQAVMapStage@@@Z
 // TEMPLATE: GAMEMD 0x005D1200
-// ??8?$VectorClass@PAVMSSfxEntry@@@@UBE_NABV0@@Z
+// ??8?$VectorClass@PAVMSAnimEntry@@@@UBE_NABV0@@Z
 // TEMPLATE: GAMEMD 0x005D1240
-// ?Resize@?$VectorClass@PAVMSSfxEntry@@@@UAE_NHPBQAVMSSfxEntry@@@Z
+// ?Resize@?$VectorClass@PAVMSAnimEntry@@@@UAE_NHPBQAVMSAnimEntry@@@Z
 // TEMPLATE: GAMEMD 0x005D12F0
-// ?Clear@?$VectorClass@PAVMSSfxEntry@@@@UAEXXZ
+// ?Clear@?$VectorClass@PAVMSAnimEntry@@@@UAEXXZ
 // TEMPLATE: GAMEMD 0x005D1320
-// ?ID@?$VectorClass@PAVMSSfxEntry@@@@UAEHABQAVMSSfxEntry@@@Z
+// ?ID@?$VectorClass@PAVMSAnimEntry@@@@UAEHABQAVMSAnimEntry@@@Z
 // TEMPLATE: GAMEMD 0x005D1360
-// ?ID@?$VectorClass@PAVMSSfxEntry@@@@UAEHPBQAVMSSfxEntry@@@Z
+// ?ID@?$VectorClass@PAVMSAnimEntry@@@@UAEHPBQAVMSAnimEntry@@@Z
 // TEMPLATE: GAMEMD 0x005D1380
-// ?Resize@?$DynamicVectorClass@PAVMSSfxEntry@@@@UAE_NHPBQAVMSSfxEntry@@@Z
+// ?Resize@?$DynamicVectorClass@PAVMSAnimEntry@@@@UAE_NHPBQAVMSAnimEntry@@@Z
 // TEMPLATE: GAMEMD 0x005D1430
-// ?ID@?$DynamicVectorClass@PAVMSSfxEntry@@@@UAEHABQAVMSSfxEntry@@@Z
+// ?ID@?$DynamicVectorClass@PAVMSAnimEntry@@@@UAEHABQAVMSAnimEntry@@@Z
 template class VectorClass<MSAnimEntry *>;
 template class VectorClass<MSSfxEntry *>;
 
 // TEMPLATE: GAMEMD 0x005D1460
-// ??8?$VectorClass@PAVMapStage@@@@UBE_NABV0@@Z
+// ??8?$VectorClass@PAVMSSfxEntry@@@@UBE_NABV0@@Z
 // TEMPLATE: GAMEMD 0x005D14A0
-// ?Resize@?$VectorClass@PAVMapStage@@@@UAE_NHPBQAVMapStage@@@Z
+// ?Resize@?$VectorClass@PAVMSSfxEntry@@@@UAE_NHPBQAVMSSfxEntry@@@Z
 // TEMPLATE: GAMEMD 0x005D1550
-// ?Clear@?$VectorClass@PAVMapStage@@@@UAEXXZ
+// ?Clear@?$VectorClass@PAVMSSfxEntry@@@@UAEXXZ
 // TEMPLATE: GAMEMD 0x005D1580
-// ?ID@?$VectorClass@PAVMapStage@@@@UAEHABQAVMapStage@@@Z
+// ?ID@?$VectorClass@PAVMSSfxEntry@@@@UAEHABQAVMSSfxEntry@@@Z
 // TEMPLATE: GAMEMD 0x005D15C0
-// ?ID@?$VectorClass@PAVMapStage@@@@UAEHPBQAVMapStage@@@Z
+// ?ID@?$VectorClass@PAVMSSfxEntry@@@@UAEHPBQAVMSSfxEntry@@@Z
 // TEMPLATE: GAMEMD 0x005D15E0
-// ?Resize@?$DynamicVectorClass@PAVMapStage@@@@UAE_NHPBQAVMapStage@@@Z
+// ?Resize@?$DynamicVectorClass@PAVMSSfxEntry@@@@UAE_NHPBQAVMSSfxEntry@@@Z
 // TEMPLATE: GAMEMD 0x005D1690
-// ?ID@?$DynamicVectorClass@PAVMapStage@@@@UAEHABQAVMapStage@@@Z
+// ?ID@?$DynamicVectorClass@PAVMSSfxEntry@@@@UAEHABQAVMSSfxEntry@@@Z
 // SYNTHETIC: GAMEMD 0x005D16C0
 // ??_G?$VectorClass@VPoint2D@@@@UAEPAXI@Z
 // SYNTHETIC: GAMEMD 0x005D1710

@@ -8,95 +8,41 @@
 #include <math.h>
 
 #include "wdtnet.h"
+#include "geometry.h"
 #undef LoadString
 #include "stringtable.h"
 
 using namespace WorldDominationTour;
 
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007F7078;
-extern const double DAT_007F7080;
-
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
-
-// SYNTHETIC: GAMEMD 0x00767110 SYMBOL
-// _$E5
-double DAT_00B727B0 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2.0);
-
-// SYNTHETIC: GAMEMD 0x00767140 SYMBOL
-// _$E8
-double DAT_00B72800 = DAT_00B727B0 / DAT_007F7078;
-
-// SYNTHETIC: GAMEMD 0x00767160 SYMBOL
-// _$E11
-double DAT_00B727E8 = DAT_007E1718 / DAT_00B72800;
-
-// SYNTHETIC: GAMEMD 0x00767180 SYMBOL
-// _$E14
-double DAT_00B727E0 = DAT_007E1720 * DAT_007F7080;
-
-// SYNTHETIC: GAMEMD 0x007671A0 SYMBOL
-// _$E17
-double DAT_00B727B8 = DAT_007E1728 * DAT_007F7080;
-
-// SYNTHETIC: GAMEMD 0x007671C0 SYMBOL
-// _$E20
-double DAT_00B72790 = DAT_007E1730 * DAT_007F7080;
-
-// SYNTHETIC: GAMEMD 0x007671E0 SYMBOL
-// _$E23
-int DAT_00B72808 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B72790 - DAT_00B727B8) * DAT_00B727B0));
-
-// SYNTHETIC: GAMEMD 0x00767220 SYMBOL
-// _$E26
-double DAT_00B727C0 = FUN_004CADE0(DAT_00B72808 * DAT_007E1740);
-
-// SYNTHETIC: GAMEMD 0x00767250 SYMBOL
-// _$E29
-double DAT_00B727D8 = FUN_004CADE0((DAT_00B72808 * 2) / DAT_00B727B0);
-
-// SYNTHETIC: GAMEMD 0x00767280 SYMBOL
-// _$E32
-int DAT_00B727FC = (int)(DAT_00B72808 * 4 + DAT_007E1738);
-
-// SYNTHETIC: GAMEMD 0x007672B0 SYMBOL
-// _$E35
-ShortPair DAT_00B727A8;
-
-// SYNTHETIC: GAMEMD 0x007672C0 SYMBOL
-// _$E38
-IntTriple DAT_00B727C8;
 
 WideWstring __fastcall FUN_007B8170(const WideWstring & a, const WideWstring & b);
-
 Wstring __fastcall operator+(Wstring const & a, Wstring const & b);
-
-struct IntTripleB {
-	int A, B, C;
-	IntTripleB() { C = 0; A = 128; B = 128; }
-};
-
+// SYNTHETIC: GAMEMD 0x00767110 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x00767140 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x00767160 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x00767180 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x007671A0 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x007671C0 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x007671E0 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x00767220 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x00767250 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x00767280 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x007672B0 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x007672C0 SYMBOL
+// _$E38
 // SYNTHETIC: GAMEMD 0x007672E0 SYMBOL
 // _$E41
-IntTripleB DAT_00B727F0;
 
 // FUNCTION: GAMEMD 0x00767300
 // WorldDominationTour::GameOption::~GameOption
@@ -229,14 +175,10 @@ int MapSizeGameOption::Get_Display_Priority(const rc_ptr<WDTTerritory> & territo
 // SYNTHETIC: GAMEMD 0x00767880
 // ??_GFlagGameOption@WorldDominationTour@@UAEPAXI@Z
 
+// SYNTHETIC: GAMEMD 0x007678F0 SYMBOL
+// _$E44
+const Rect RECT_NONE_2(0, 0, 0, 0);
+
 // SYNTHETIC: GAMEMD 0x007678C0
 // ??_GMapSizeGameOption@WorldDominationTour@@UAEPAXI@Z
 
-struct IntQuad {
-	int A, B, C, D;
-	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
-};
-
-// SYNTHETIC: GAMEMD 0x007678F0 SYMBOL
-// _$E44
-IntQuad DAT_00B72818;

@@ -327,7 +327,7 @@ template class DynamicVectorClass<MSSfx *>;
 // ?ID@?$VectorClass@PAVMSAnim@@@@UAEHABQAVMSAnim@@@Z
 
 // TEMPLATE: GAMEMD 0x005D2940
-// ?ID@?$VectorClass@PAVMSSfx@@@@UAEHPBQAVMSSfx@@@Z
+// ?ID@?$VectorClass@PAVMSAnim@@@@UAEHPBQAVMSAnim@@@Z
 
 // TEMPLATE: GAMEMD 0x005D2960
 // ?Resize@?$DynamicVectorClass@PAVMSAnim@@@@UAE_NHPBQAVMSAnim@@@Z
@@ -348,7 +348,7 @@ template class DynamicVectorClass<MSSfx *>;
 // ?ID@?$VectorClass@PAVMSSfx@@@@UAEHABQAVMSSfx@@@Z
 
 // TEMPLATE: GAMEMD 0x005D2BA0
-// ?ID@?$VectorClass@PAVMSAnim@@@@UAEHPBQAVMSAnim@@@Z
+// ?ID@?$VectorClass@PAVMSSfx@@@@UAEHPBQAVMSSfx@@@Z
 
 // TEMPLATE: GAMEMD 0x005D2BC0
 // ?Resize@?$DynamicVectorClass@PAVMSSfx@@@@UAE_NHPBQAVMSSfx@@@Z

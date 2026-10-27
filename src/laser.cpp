@@ -110,7 +110,7 @@ void LaserDrawClass::Draw_All(void)
 template class DynamicVectorClass<LaserDrawClass *>;
 
 // TEMPLATE: GAMEMD 0x00551300
-// ?ID@?$VectorClass@PAVLaserDrawClass@@@@UAEHPBQAVLaserDrawClass@@@Z
+// ?ID@?$DynamicVectorClass@PAVLaserDrawClass@@@@UAEHPBQAVLaserDrawClass@@@Z
 // TEMPLATE: GAMEMD 0x00551320
 // ?GetItem@?$VectorClass@PAVLaserDrawClass@@@@UBEPAVLaserDrawClass@@H@Z
 // TEMPLATE: GAMEMD 0x00551330
@@ -123,7 +123,7 @@ template class DynamicVectorClass<LaserDrawClass *>;
 // TEMPLATE: GAMEMD 0x00551450
 // ?ID@?$VectorClass@PAVLaserDrawClass@@@@UAEHABQAVLaserDrawClass@@@Z
 // TEMPLATE: GAMEMD 0x00551490
-// ?ID@?$DynamicVectorClass@PAVLaserDrawClass@@@@UAEHPBQAVLaserDrawClass@@@Z
+// ?ID@?$VectorClass@PAVLaserDrawClass@@@@UAEHPBQAVLaserDrawClass@@@Z
 // TEMPLATE: GAMEMD 0x005514B0
 // ?Resize@?$DynamicVectorClass@PAVLaserDrawClass@@@@UAE_NHPBQAVLaserDrawClass@@@Z
 // TEMPLATE: GAMEMD 0x00551560

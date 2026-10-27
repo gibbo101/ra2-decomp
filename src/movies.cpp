@@ -679,15 +679,15 @@ void __fastcall Game::BlitMovie(void)
 // ??_GVQMovieHandle@@UAEPAXI@Z
 
 // TEMPLATE: GAMEMD 0x005C0A70
-// ?Clear@?$DynamicVectorClass@PAVMovieHandle@@@@UAEXXZ
+// ?Clear@?$DynamicVectorClass@PBD@@UAEXXZ
 // TEMPLATE: GAMEMD 0x005C0AA0
-// ?ID@?$DynamicVectorClass@PAVMovieHandle@@@@UAEHPBQAVMovieHandle@@@Z
+// ?ID@?$DynamicVectorClass@PBD@@UAEHPBQBD@Z
 // TEMPLATE: GAMEMD 0x005C0AC0
-// ?GetItem@?$VectorClass@PAVMovieHandle@@@@UBEPAVMovieHandle@@H@Z
+// ?GetItem@?$VectorClass@PBD@@UBEPBDH@Z
 template class DynamicVectorClass<MovieHandle *>;
 
 // TEMPLATE: GAMEMD 0x005C0AD0
-// ??8?$VectorClass@PAVMovieHandle@@@@UBE_NABV0@@Z
+// ??8?$VectorClass@PBD@@UBE_NABV0@@Z
 template class VectorClass<MovieHandle *>;
 
 // TEMPLATE: GAMEMD 0x005C0B10
@@ -705,12 +705,12 @@ template class VectorClass<char const *>;
 // TEMPLATE: GAMEMD 0x005C0D00
 // ?ID@?$DynamicVectorClass@PBD@@UAEHABQBD@Z
 // SYNTHETIC: GAMEMD 0x005C0D30
-// ??_G?$DynamicVectorClass@PBD@@UAEPAXI@Z
-// SYNTHETIC: GAMEMD 0x005C0D80
 // ??_G?$VectorClass@PBD@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x005C0D80
+// ??_G?$DynamicVectorClass@PBD@@UAEPAXI@Z
 template class DynamicVectorClass<char const *>;
 
-class MPBattleClass : public MPGameModeClass
+class MPBattleClass : public MultiplayerGameMode
 {
 	public:
 		MPBattleClass(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex);
@@ -744,7 +744,7 @@ class MPBattleClass : public MPGameModeClass
 
 // FUNCTION: GAMEMD 0x005C0DD0
 MPBattleClass::MPBattleClass(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex) :
-	MPGameModeClass(title, tooltip, inifile, mapfilter, aiallowed, modeindex)
+	MultiplayerGameMode(title, tooltip, inifile, mapfilter, aiallowed, modeindex)
 {
 }
 

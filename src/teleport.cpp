@@ -8,6 +8,7 @@
 #include "foot.h"
 #include "techno.h"
 #include "_map.h"
+#include "geometry.h"
 #include "_rules.h"
 #include "house.h"
 #include "rules.h"
@@ -21,39 +22,6 @@
 #include <new.h>
 #include <math.h>
 
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007F5100;
-extern const double DAT_007F5108;
-
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
-
-struct IntInit {
-	int A, B, C;
-	IntInit() { C = 0; A = 0x80; B = 0x80; }
-};
-
-struct IntQuad {
-	int A, B, C, D;
-	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
-};
 
 // FUNCTION: GAMEMD 0x00718000
 TeleportLocomotionClass::TeleportLocomotionClass(void) :
@@ -381,58 +349,34 @@ void STDMETHODCALLTYPE TeleportLocomotionClass::Mark_All_Occupation_Bits(int mar
 // FUNCTION: GAMEMD 0x0071A1B0
 // TeleportLocomotionClass::Release
 
-// SYNTHETIC: GAMEMD 0x0071A1C0 SYMBOL
-// _$E80
-double DAT_00B0EC78 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
-// SYNTHETIC: GAMEMD 0x0071A1F0 SYMBOL
-// _$E83
-double DAT_00B0ECC8 = DAT_00B0EC78 / DAT_007F5100;
-
-// SYNTHETIC: GAMEMD 0x0071A210 SYMBOL
-// _$E86
-double DAT_00B0ECB0 = DAT_007E1718 / DAT_00B0ECC8;
-
-// SYNTHETIC: GAMEMD 0x0071A230 SYMBOL
-// _$E89
-double DAT_00B0ECA8 = DAT_007E1720 * DAT_007F5108;
-
-// SYNTHETIC: GAMEMD 0x0071A250 SYMBOL
-// _$E92
-double DAT_00B0EC80 = DAT_007E1728 * DAT_007F5108;
-
-// SYNTHETIC: GAMEMD 0x0071A270 SYMBOL
-// _$E95
-double DAT_00B0EC40 = DAT_007E1730 * DAT_007F5108;
-
-// SYNTHETIC: GAMEMD 0x0071A290 SYMBOL
-// _$E98
-int DAT_00B0ECD0 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B0EC40 - DAT_00B0EC80) * DAT_00B0EC78));
-
-// SYNTHETIC: GAMEMD 0x0071A2D0 SYMBOL
-// _$E101
-double DAT_00B0EC88 = FUN_004CADE0(DAT_00B0ECD0 * DAT_007E1740);
-
-// SYNTHETIC: GAMEMD 0x0071A300 SYMBOL
-// _$E104
-double DAT_00B0ECA0 = FUN_004CADE0((DAT_00B0ECD0 * 2) / DAT_00B0EC78);
-
-// SYNTHETIC: GAMEMD 0x0071A330 SYMBOL
-// _$E107
-int DAT_00B0ECC4 = (int)(DAT_00B0ECD0 * 4 + DAT_007E1738);
-
-// SYNTHETIC: GAMEMD 0x0071A360 SYMBOL
-// _$E110
-ShortPair DAT_00B0EC58;
-
-// SYNTHETIC: GAMEMD 0x0071A370 SYMBOL
-// _$E113
-IntTriple DAT_00B0EC90;
-
-// SYNTHETIC: GAMEMD 0x0071A390 SYMBOL
-// _$E116
-IntInit DAT_00B0ECB8;
-
 // SYNTHETIC: GAMEMD 0x0071A3B0 SYMBOL
 // _$E119
-IntQuad DAT_00B0EC48;
+const Rect RECT_NONE_2(0, 0, 0, 0);
+
+// SYNTHETIC: GAMEMD 0x0071A1C0 SYMBOL
+// _$E80
+// SYNTHETIC: GAMEMD 0x0071A1F0 SYMBOL
+// _$E83
+// SYNTHETIC: GAMEMD 0x0071A210 SYMBOL
+// _$E86
+// SYNTHETIC: GAMEMD 0x0071A230 SYMBOL
+// _$E89
+// SYNTHETIC: GAMEMD 0x0071A250 SYMBOL
+// _$E92
+// SYNTHETIC: GAMEMD 0x0071A270 SYMBOL
+// _$E95
+// SYNTHETIC: GAMEMD 0x0071A290 SYMBOL
+// _$E98
+// SYNTHETIC: GAMEMD 0x0071A2D0 SYMBOL
+// _$E101
+// SYNTHETIC: GAMEMD 0x0071A300 SYMBOL
+// _$E104
+// SYNTHETIC: GAMEMD 0x0071A330 SYMBOL
+// _$E107
+// SYNTHETIC: GAMEMD 0x0071A360 SYMBOL
+// _$E110
+// SYNTHETIC: GAMEMD 0x0071A370 SYMBOL
+// _$E113
+// SYNTHETIC: GAMEMD 0x0071A390 SYMBOL
+// _$E116
+

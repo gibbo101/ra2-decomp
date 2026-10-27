@@ -258,24 +258,24 @@ void Draw_Unit_Info(Surface * surface, ConvertClass * drawer, TechnoTypeClass * 
 }
 
 // TEMPLATE: GAMEMD 0x004B9BE0
-// ?Clear@?$DynamicVectorClass@PAVTechnoTypeClass@@@@UAEXXZ
+// ?Clear@?$DynamicVectorClass@PAUButtonFadeEffect@@@@UAEXXZ
 template class DynamicVectorClass<TechnoTypeClass *>;
 
 // TEMPLATE: GAMEMD 0x004B9C10
-// ?ID@?$DynamicVectorClass@PAVTechnoTypeClass@@@@UAEHPBQAVTechnoTypeClass@@@Z
+// ?ID@?$DynamicVectorClass@PAUButtonFadeEffect@@@@UAEHPBQAUButtonFadeEffect@@@Z
 
 // TEMPLATE: GAMEMD 0x004B9C30
-// ?GetItem@?$VectorClass@PAVTechnoTypeClass@@@@UBEPAVTechnoTypeClass@@H@Z
+// ?GetItem@?$VectorClass@PAUButtonFadeEffect@@@@UBEPAUButtonFadeEffect@@H@Z
 
 // TEMPLATE: GAMEMD 0x004B9C40
-// ?Clear@?$DynamicVectorClass@PAUButtonFadeEffect@@@@UAEXXZ
+// ?Clear@?$DynamicVectorClass@PAUCrossDissolveEffect@@@@UAEXXZ
 template class DynamicVectorClass<ButtonFadeEffect *>;
 
 // TEMPLATE: GAMEMD 0x004B9C70
-// ?ID@?$DynamicVectorClass@PAUButtonFadeEffect@@@@UAEHPBQAUButtonFadeEffect@@@Z
+// ?ID@?$DynamicVectorClass@PAUCrossDissolveEffect@@@@UAEHPBQAUCrossDissolveEffect@@@Z
 
 // TEMPLATE: GAMEMD 0x004B9C90
-// ?GetItem@?$VectorClass@PAUButtonFadeEffect@@@@UBEPAUButtonFadeEffect@@H@Z
+// ?GetItem@?$VectorClass@PAUCrossDissolveEffect@@@@UBEPAUCrossDissolveEffect@@H@Z
 
 // TEMPLATE: GAMEMD 0x004B9CA0
 // ??8?$VectorClass@PAUButtonFadeEffect@@@@UBE_NABV0@@Z
@@ -323,7 +323,7 @@ template class DynamicVectorClass<CrossDissolveEffect *>;
 // ?ID@?$DynamicVectorClass@PAUCrossDissolveEffect@@@@UAEHABQAUCrossDissolveEffect@@@Z
 
 // SYNTHETIC: GAMEMD 0x004BA160
-// ??_G?$VectorClass@PAVTechnoTypeClass@@@@UAEPAXI@Z
+// ??_G?$DynamicVectorClass@PAVTechnoTypeClass@@@@UAEPAXI@Z
 template class VectorClass<TechnoTypeClass *>;
 
 // SYNTHETIC: GAMEMD 0x004BA1B0

@@ -873,7 +873,7 @@ void Emergency_Exit(void)
 // TEMPLATE: GAMEMD 0x006BED50
 // ?Clear@?$DynamicVectorClass@K@@UAEXXZ
 // TEMPLATE: GAMEMD 0x006BED80
-// ?ID@?$VectorClass@K@@UAEHPBK@Z
+// ?ID@?$DynamicVectorClass@K@@UAEHPBK@Z
 // TEMPLATE: GAMEMD 0x006BEDA0
 // ?GetItem@?$VectorClass@K@@UBEKH@Z
 template class DynamicVectorClass<DWORD>;

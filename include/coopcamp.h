@@ -8,23 +8,23 @@
 #include "vector.h"
 #include "wstring.h"
 
-struct CoopPlayerStats;
+struct MPlayerScoreType;
 
-class CoopCamp_0049B610
+class CoopCampaignClass
 {
 	public:
-		CoopCamp_0049B610 * FUN_0049B610(void);
-		CoopCamp_0049B610 * FUN_0049B660(wchar_t const * name, wchar_t const * map);
+		CoopCampaignClass * FUN_0049B610(void);
+		CoopCampaignClass * FUN_0049B660(wchar_t const * name, wchar_t const * map);
 		void FUN_0049B720(void);
 		void FUN_0049B760(wchar_t const * name, wchar_t const * map);
 		bool FUN_0049BC80(int * out);
 		bool FUN_0049BCA0(int * out);
 		bool FUN_0049BCC0(int * out);
-		bool FUN_0049BCE0(DynamicVectorClass<CoopPlayerStats *> * list, int * out);
+		bool FUN_0049BCE0(DynamicVectorClass<MPlayerScoreType *> * list, int * out);
 		bool FUN_0049BE40(void);
 		bool FUN_0049C0D0(void);
 		bool FUN_0049C5A0(void);
-		bool FUN_0049CC50(int index, int time, CoopPlayerStats first, CoopPlayerStats second);
+		bool FUN_0049CC50(int index, int time, MPlayerScoreType first, MPlayerScoreType second);
 		bool FUN_0049CCF0(int index, DynamicVectorClass<int> picks, char const * map, char const * name);
 		bool FUN_0049D070(void ** out, int index);
 		bool FUN_0049D0C0(int * house, int * color);
@@ -54,21 +54,6 @@ class CoopCamp_0049B610
 		int Field64;
 		int Field68;
 		bool Field6C;
-};
-
-struct CoopPlayerStats
-{
-	wchar_t Name[0x14];
-	int Scheme;
-	int Alive;
-	int Lost;
-	int Pad34[3];
-	int Kills;
-	int Pad44[3];
-	int Built;
-	int Pad54[3];
-	int Score;
-	int Pad64[3];
 };
 
 typedef DynamicVectorClass<char *> CoopCampNameList;

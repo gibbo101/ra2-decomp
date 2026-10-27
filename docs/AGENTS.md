@@ -282,6 +282,10 @@ Each entry: what the diff showed, then the source change that fixed it.
   under one symbol (`VectorClass<int>::Clear`) mean one label has the wrong element type.
   For a virtual, that is the vtable whose slot points at it: a derived template's deleting
   destructor stores only the base vptr (TypeList's is byte-identical to VectorClass's).
+- check.py fails a template label whose address sits in a vtable of another instance, by
+  RTTI; a non-template class mismatch is a warning, and checkall counts them.
+- A module's header initialisers (geometry.h's run, the 23-byte initialiser) start its
+  range: the run after a module's last function belongs to the next file.
 - One address called with two argument types is two overloads the linker folded: declare
   both (HouseClass::Get_First_Ownable takes unit and building type vectors at 0x00505310).
 - A class's RTTI also names its real base: LoadProgressMgr derives from INoticeSink, which

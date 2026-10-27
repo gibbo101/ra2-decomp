@@ -23,6 +23,7 @@
 #include "surface.h"
 #include "tactical.h"
 #include "terrain.h"
+#include "geometry.h"
 #include "windlg.h"
 #include "xpipe.h"
 #include "xstraw.h"
@@ -36,86 +37,32 @@
 
 #include <math.h>
 
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007F0030;
-extern const double DAT_007F0038;
-
 // SYNTHETIC: GAMEMD 0x006404F0 SYMBOL
 // _$E83
-double DAT_00AC4EB0 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x00640520 SYMBOL
 // _$E86
-double DAT_00AC4F00 = DAT_00AC4EB0 / DAT_007F0030;
-
 // SYNTHETIC: GAMEMD 0x00640540 SYMBOL
 // _$E89
-double DAT_00AC4EE8 = DAT_007E1718 / DAT_00AC4F00;
-
 // SYNTHETIC: GAMEMD 0x00640560 SYMBOL
 // _$E92
-double DAT_00AC4EE0 = DAT_007E1720 * DAT_007F0038;
-
 // SYNTHETIC: GAMEMD 0x00640580 SYMBOL
 // _$E95
-double DAT_00AC4EB8 = DAT_007E1728 * DAT_007F0038;
-
 // SYNTHETIC: GAMEMD 0x006405A0 SYMBOL
 // _$E98
-double DAT_00AC4E88 = DAT_007E1730 * DAT_007F0038;
-
 // SYNTHETIC: GAMEMD 0x006405C0 SYMBOL
 // _$E101
-int DAT_00AC4F08 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00AC4E88 - DAT_00AC4EB8) * DAT_00AC4EB0));
-
 // SYNTHETIC: GAMEMD 0x00640600 SYMBOL
 // _$E104
-double DAT_00AC4EC0 = FUN_004CADE0(DAT_00AC4F08 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x00640630 SYMBOL
 // _$E107
-double DAT_00AC4ED8 = FUN_004CADE0((DAT_00AC4F08 * 2) / DAT_00AC4EB0);
-
 // SYNTHETIC: GAMEMD 0x00640660 SYMBOL
 // _$E110
-int DAT_00AC4EFC = (int)(DAT_00AC4F08 * 4 + DAT_007E1738);
-
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
-
 // SYNTHETIC: GAMEMD 0x00640690 SYMBOL
 // _$E113
-ShortPair DAT_00AC4EA8;
-
 // SYNTHETIC: GAMEMD 0x006406A0 SYMBOL
 // _$E116
-IntTriple DAT_00AC4EC8;
-
-struct IntTripleB {
-	int A, B, C;
-	IntTripleB() { A = 128; B = 128; C = 0; }
-};
-
 // SYNTHETIC: GAMEMD 0x006406C0 SYMBOL
 // _$E119
-IntTripleB DAT_00AC4EF0;
 
 // FUNCTION: GAMEMD 0x006406E0
 MapPreviewClass::MapPreviewClass(void) :
@@ -458,6 +405,10 @@ unsigned * MapPreviewClass::Create_Paletted_Preview(int colorcount, int & size)
 	return((unsigned *)block);
 }
 
+// SYNTHETIC: GAMEMD 0x00642770 SYMBOL
+// _$E123
+const Rect RECT_NONE_2(0, 0, 0, 0);
+
 // FUNCTION: GAMEMD 0x006425F0
 void MapPreviewClass::Create_Preview_Surface(char * buffer)
 {
@@ -486,11 +437,3 @@ void MapPreviewClass::Create_Preview_Surface(char * buffer)
 	}
 }
 
-struct IntQuad {
-	int A, B, C, D;
-	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
-};
-
-// SYNTHETIC: GAMEMD 0x00642770 SYMBOL
-// _$E123
-IntQuad DAT_00AC4F18;

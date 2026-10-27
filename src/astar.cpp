@@ -19,6 +19,7 @@
 #include "tube.h"
 #include "unit.h"
 #include "unittype.h"
+#include "geometry.h"
 #include "vector.h"
 #include "_map.h"
 #include "tube.hh"
@@ -30,91 +31,9 @@
 
 #include <math.h>
 
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007E3700;
-extern const double DAT_007E3708;
-
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
-
-// SYNTHETIC: GAMEMD 0x00429590 SYMBOL
-// _$E78
-double DAT_0089C280 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
-// SYNTHETIC: GAMEMD 0x004295C0 SYMBOL
-// _$E81
-double DAT_0089C2D0 = DAT_0089C280 / DAT_007E3700;
-
-// SYNTHETIC: GAMEMD 0x004295E0 SYMBOL
-// _$E84
-double DAT_0089C2B8 = DAT_007E1718 / DAT_0089C2D0;
-
-// SYNTHETIC: GAMEMD 0x00429600 SYMBOL
-// _$E87
-double DAT_0089C2B0 = DAT_007E1720 * DAT_007E3708;
-
-// SYNTHETIC: GAMEMD 0x00429620 SYMBOL
-// _$E90
-double DAT_0089C288 = DAT_007E1728 * DAT_007E3708;
-
-// SYNTHETIC: GAMEMD 0x00429640 SYMBOL
-// _$E93
-double DAT_0089A2F8 = DAT_007E1730 * DAT_007E3708;
-
-// SYNTHETIC: GAMEMD 0x00429660 SYMBOL
-// _$E96
-int DAT_0089C2D8 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_0089A2F8 - DAT_0089C288) * DAT_0089C280));
-
-// SYNTHETIC: GAMEMD 0x004296A0 SYMBOL
-// _$E99
-double DAT_0089C290 = FUN_004CADE0(DAT_0089C2D8 * DAT_007E1740);
-
-// SYNTHETIC: GAMEMD 0x004296D0 SYMBOL
-// _$E102
-double DAT_0089C2A8 = FUN_004CADE0((DAT_0089C2D8 * 2) / DAT_0089C280);
-
-// SYNTHETIC: GAMEMD 0x00429700 SYMBOL
-// _$E105
-int DAT_0089C2CC = (int)(DAT_0089C2D8 * 4 + DAT_007E1738);
-
-// SYNTHETIC: GAMEMD 0x00429730 SYMBOL
-// _$E108
-ShortPair DAT_0089C278;
-
-// SYNTHETIC: GAMEMD 0x00429740 SYMBOL
-// _$E111
-IntTriple DAT_0089C298;
 
 static unsigned int CellHeights[2000];
-
 unsigned int MapCellStride;
-
-struct PlayfieldDefaults {
-	int A, B, C;
-	PlayfieldDefaults() { C = 0; A = 128; B = 128; }
-};
-
-// SYNTHETIC: GAMEMD 0x00429760 SYMBOL
-// _$E114
-PlayfieldDefaults DAT_0089C2C0;
-
 inline Cell Next_Cell(Cell const & cell, FacingType facing)
 {
 	if (facing == TUNNEL) {
@@ -126,6 +45,32 @@ inline Cell Next_Cell(Cell const & cell, FacingType facing)
 	}
 	return(cell + (AdjacentCell[facing]));
 }
+// SYNTHETIC: GAMEMD 0x00429590 SYMBOL
+// _$E78
+// SYNTHETIC: GAMEMD 0x004295C0 SYMBOL
+// _$E81
+// SYNTHETIC: GAMEMD 0x004295E0 SYMBOL
+// _$E84
+// SYNTHETIC: GAMEMD 0x00429600 SYMBOL
+// _$E87
+// SYNTHETIC: GAMEMD 0x00429620 SYMBOL
+// _$E90
+// SYNTHETIC: GAMEMD 0x00429640 SYMBOL
+// _$E93
+// SYNTHETIC: GAMEMD 0x00429660 SYMBOL
+// _$E96
+// SYNTHETIC: GAMEMD 0x004296A0 SYMBOL
+// _$E99
+// SYNTHETIC: GAMEMD 0x004296D0 SYMBOL
+// _$E102
+// SYNTHETIC: GAMEMD 0x00429700 SYMBOL
+// _$E105
+// SYNTHETIC: GAMEMD 0x00429730 SYMBOL
+// _$E108
+// SYNTHETIC: GAMEMD 0x00429740 SYMBOL
+// _$E111
+// SYNTHETIC: GAMEMD 0x00429760 SYMBOL
+// _$E114
 
 // FUNCTION: GAMEMD 0x00429780
 Cell Follow_Path(Cell const & cell, int count, FacingType const * path)

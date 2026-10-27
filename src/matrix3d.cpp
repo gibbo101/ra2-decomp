@@ -4,6 +4,8 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
+#include "rect.h"
 #include "matrix3d.h"
 #include "fastmath.h"
 #include <cstring>
@@ -580,89 +582,32 @@ Matrix3D Matrix3D::Orthogonal_Inverse(Matrix3D const & src)
 	return(inv);
 }
 
-extern const double DAT_007EDB58;
-extern const double DAT_007EDB60;
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-
 // SYNTHETIC: GAMEMD 0x005AFCE0 SYMBOL
 // _$E2
-double DAT_00ABEDF8 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x005AFD10 SYMBOL
 // _$E5
-double DAT_00ABEE48 = DAT_00ABEDF8 / DAT_007EDB58;
-
 // SYNTHETIC: GAMEMD 0x005AFD30 SYMBOL
 // _$E8
-double DAT_00ABEE30 = DAT_007E1718 / DAT_00ABEE48;
-
 // SYNTHETIC: GAMEMD 0x005AFD50 SYMBOL
 // _$E11
-double DAT_00ABEE28 = DAT_007E1720 * DAT_007EDB60;
-
 // SYNTHETIC: GAMEMD 0x005AFD70 SYMBOL
 // _$E14
-double DAT_00ABEE00 = DAT_007E1728 * DAT_007EDB60;
-
 // SYNTHETIC: GAMEMD 0x005AFD90 SYMBOL
 // _$E17
-double DAT_00ABEDD8 = DAT_007E1730 * DAT_007EDB60;
-
 // SYNTHETIC: GAMEMD 0x005AFDB0 SYMBOL
 // _$E20
-int DAT_00ABEE50 = (int)(fastmath::tan(DAT_00ABEDD8 - DAT_00ABEE00) * DAT_007E1738 * DAT_00ABEDF8);
-
 // SYNTHETIC: GAMEMD 0x005AFDF0 SYMBOL
 // _$E23
-double DAT_00ABEE08 = fastmath::atan(DAT_00ABEE50 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x005AFE20 SYMBOL
 // _$E26
-double DAT_00ABEE20 = fastmath::atan((DAT_00ABEE50 * 2) / DAT_00ABEDF8);
-
 // SYNTHETIC: GAMEMD 0x005AFE50 SYMBOL
 // _$E29
-int DAT_00ABEE44 = (int)(DAT_00ABEE50 * 4 + DAT_007E1738);
-
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
-
-struct IntPairZ {
-	int A, B, C;
-	IntPairZ() { C = 0; A = 128; B = 128; }
-};
-
-struct IntQuad {
-	int A, B, C, D;
-	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
-};
-
 // SYNTHETIC: GAMEMD 0x005AFE80 SYMBOL
 // _$E32
-ShortPair DAT_00ABEDF0;
-
 // SYNTHETIC: GAMEMD 0x005AFE90 SYMBOL
 // _$E35
-IntTriple DAT_00ABEE10;
-
 // SYNTHETIC: GAMEMD 0x005AFEB0 SYMBOL
 // _$E38
-IntPairZ DAT_00ABEE38;
-
 // SYNTHETIC: GAMEMD 0x005AFED0 SYMBOL
 // _$E41
-IntQuad DAT_00ABEDE0;
+

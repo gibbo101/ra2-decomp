@@ -27,8 +27,8 @@ class InfantryTypeClass : public TechnoTypeClass
 		int ProneLaunch;
 		int SecondaryFire;
 		int SecondaryProne;
-		TypeList<AnimTypeClass *> DeadBodies;
-		TypeList<AnimTypeClass *> DeathAnims;
+		TypeList<AnimTypeClass const *> DeadBodies;
+		TypeList<AnimTypeClass const *> DeathAnims;
 		TypeList<int> VoiceComment;
 		int EnterWaterSound;
 		int LeaveWaterSound;

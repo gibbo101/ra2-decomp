@@ -427,13 +427,13 @@ void SchemeLibrary::Set_Mode(int mode)
 }
 
 // TEMPLATE: GAMEMD 0x00627D20
-// ?Clear@?$DynamicVectorClass@PAD@@UAEXXZ
+// ?Clear@?$DynamicVectorClass@PAVColorScheme@@@@UAEXXZ
 template class DynamicVectorClass<char *>;
 
 // TEMPLATE: GAMEMD 0x00627D50
-// ?ID@?$VectorClass@PAD@@UAEHPBQAD@Z
+// ?ID@?$DynamicVectorClass@PAVColorScheme@@@@UAEHPBQAVColorScheme@@@Z
 // TEMPLATE: GAMEMD 0x00627D70
-// ?GetItem@?$VectorClass@PAD@@UBEPADH@Z
+// ?GetItem@?$VectorClass@PAVColorScheme@@@@UBEPAVColorScheme@@H@Z
 
 // TEMPLATE: GAMEMD 0x00627D80
 // ?Clear@?$DynamicVectorClass@VHSVClass@@@@UAEXXZ

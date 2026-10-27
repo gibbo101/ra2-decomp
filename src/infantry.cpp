@@ -3437,77 +3437,37 @@ RTTIType InfantryClass::Fetch_RTTI(void) const
 // TEMPLATE: GAMEMD 0x00523440
 // ?Binary_Search@@YIPAUNodeElement@?$IndexClass@HPAVAbstractClass@@@@PAU12@HABU12@@Z
 
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007EB5D0;
-extern const double DAT_007EB5D8;
+
+#include "geometry.h"
 
 // SYNTHETIC: GAMEMD 0x00523490 SYMBOL
 // _$E222
-double DAT_00A8F268 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x005234C0 SYMBOL
 // _$E225
-double DAT_00A8F2C0 = DAT_00A8F268 / DAT_007EB5D0;
-
 // SYNTHETIC: GAMEMD 0x005234E0 SYMBOL
 // _$E228
-double DAT_00A8F2A8 = DAT_007E1718 / DAT_00A8F2C0;
-
 // SYNTHETIC: GAMEMD 0x00523500 SYMBOL
 // _$E231
-double DAT_00A8F2A0 = DAT_007E1720 * DAT_007EB5D8;
-
 // SYNTHETIC: GAMEMD 0x00523520 SYMBOL
 // _$E234
-double DAT_00A8F270 = DAT_007E1728 * DAT_007EB5D8;
-
 // SYNTHETIC: GAMEMD 0x00523540 SYMBOL
 // _$E237
-double DAT_00A8F248 = DAT_007E1730 * DAT_007EB5D8;
-
 // SYNTHETIC: GAMEMD 0x00523560 SYMBOL
 // _$E240
-int DAT_00A8F2CC = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00A8F248 - DAT_00A8F270) * DAT_00A8F268));
-
 // SYNTHETIC: GAMEMD 0x005235A0 SYMBOL
 // _$E243
-double DAT_00A8F278 = FUN_004CADE0(DAT_00A8F2CC * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x005235D0 SYMBOL
 // _$E246
-double DAT_00A8F298 = FUN_004CADE0((DAT_00A8F2CC * 2) / DAT_00A8F268);
-
 // SYNTHETIC: GAMEMD 0x00523600 SYMBOL
 // _$E249
-int DAT_00A8F2BC = (int)(DAT_00A8F2CC * 4 + DAT_007E1738);
-
-struct InfShortPair { short A, B; InfShortPair() : A(0), B(0) {} };
-struct InfIntTriple { int A, B, C; InfIntTriple() : A(0), B(0), C(0) {} };
-struct InfIntSplit { int A, B, C; InfIntSplit() : A(128), B(128), C(0) {} };
-struct InfIntQuad { int A, B, C, D; InfIntQuad() : A(0), B(0), C(0), D(0) {} };
-
 // SYNTHETIC: GAMEMD 0x00523630 SYMBOL
 // _$E252
-InfShortPair DAT_00A8F260;
-
 // SYNTHETIC: GAMEMD 0x00523640 SYMBOL
 // _$E255
-InfIntTriple DAT_00A8F280;
-
 // SYNTHETIC: GAMEMD 0x00523660 SYMBOL
 // _$E258
-InfIntSplit DAT_00A8F2B0;
 
 // SYNTHETIC: GAMEMD 0x00523680 SYMBOL
 // _$E261
-InfIntQuad DAT_00A8F250;
+const Rect RECT_NONE_2(0, 0, 0, 0);
+

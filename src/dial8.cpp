@@ -154,14 +154,10 @@ void Dial8Class::Set_Direction(Dir256 dir)
 	Flag_To_Redraw();
 }
 
+// SYNTHETIC: GAMEMD 0x004A59C0 SYMBOL
+// _$E31
+const Rect RECT_NONE_2(0, 0, 0, 0);
+
 // SYNTHETIC: GAMEMD 0x004A59A0
 // ??_GDial8Class@@UAEPAXI@Z
 
-struct IntQuad {
-	int A, B, C, D;
-	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
-};
-
-// SYNTHETIC: GAMEMD 0x004A59C0 SYMBOL
-// _$E31
-IntQuad DAT_008A0160;

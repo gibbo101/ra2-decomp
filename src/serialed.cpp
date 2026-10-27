@@ -13,6 +13,7 @@
 #include "modemreg.h"
 #include "msgbox.h"
 #include "nullmgr.h"
+#include "geometry.h"
 #include "ownrdraw.h"
 #include "trim.h"
 #include "winfix.h"
@@ -20,86 +21,6 @@
 
 #include <math.h>
 
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007F1180;
-extern const double DAT_007F1188;
-
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
-
-// SYNTHETIC: GAMEMD 0x006954E0 SYMBOL
-// _$E33
-double DAT_00B05768 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
-// SYNTHETIC: GAMEMD 0x00695510 SYMBOL
-// _$E36
-double DAT_00B057B8 = DAT_00B05768 / DAT_007F1180;
-
-// SYNTHETIC: GAMEMD 0x00695530 SYMBOL
-// _$E39
-double DAT_00B057A0 = DAT_007E1718 / DAT_00B057B8;
-
-// SYNTHETIC: GAMEMD 0x00695550 SYMBOL
-// _$E42
-double DAT_00B05798 = DAT_007E1720 * DAT_007F1188;
-
-// SYNTHETIC: GAMEMD 0x00695570 SYMBOL
-// _$E45
-double DAT_00B05770 = DAT_007E1728 * DAT_007F1188;
-
-// SYNTHETIC: GAMEMD 0x00695590 SYMBOL
-// _$E48
-double DAT_00B05748 = DAT_007E1730 * DAT_007F1188;
-
-// SYNTHETIC: GAMEMD 0x006955B0 SYMBOL
-// _$E51
-int DAT_00B057C0 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B05748 - DAT_00B05770) * DAT_00B05768));
-
-// SYNTHETIC: GAMEMD 0x006955F0 SYMBOL
-// _$E54
-double DAT_00B05778 = FUN_004CADE0(DAT_00B057C0 * DAT_007E1740);
-
-// SYNTHETIC: GAMEMD 0x00695620 SYMBOL
-// _$E57
-double DAT_00B05790 = FUN_004CADE0((DAT_00B057C0 * 2) / DAT_00B05768);
-
-// SYNTHETIC: GAMEMD 0x00695650 SYMBOL
-// _$E60
-int DAT_00B057B4 = (int)(DAT_00B057C0 * 4 + DAT_007E1738);
-
-// SYNTHETIC: GAMEMD 0x00695680 SYMBOL
-// _$E63
-ShortPair DAT_00B05760;
-
-// SYNTHETIC: GAMEMD 0x00695690 SYMBOL
-// _$E66
-IntTriple DAT_00B05780;
-
-struct IntTripleB {
-	int A, B, C;
-	IntTripleB() { C = 0; A = 0x80; B = 0x80; }
-};
-
-// SYNTHETIC: GAMEMD 0x006956B0 SYMBOL
-// _$E69
-IntTripleB DAT_00B057A8;
 
 #undef Edit_SetText
 #undef Edit_GetText
@@ -116,9 +37,7 @@ IntTripleB DAT_00B057A8;
 static inline int ComboBox_AddString(HWND h, const void *s) { return (int)SendMessage(h, 0x4c2, 0, (LPARAM)s); }
 #define ComboBox_FindString(h, i, s) ((int)SendMessage((h), 0x4b8, (i), (LPARAM)(s)))
 static inline int ComboBox_AddStringA(HWND h, const void *s) { return (int)SendMessage(h, 0x4bc, 0, (LPARAM)s); }
-
 #define LS(name, line) StringTable::LoadString(name, NULL, "D:\\ra2mdpost\\SerialEd.cpp", line)
-
 static wchar_t const *baudname[] = {
 	L"14400",
 	L"19200",
@@ -127,8 +46,33 @@ static wchar_t const *baudname[] = {
 	L"57600",
 	L"115200",
 };
-
 BOOL CALLBACK Com_Settings_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+// SYNTHETIC: GAMEMD 0x006954E0 SYMBOL
+// _$E33
+// SYNTHETIC: GAMEMD 0x00695510 SYMBOL
+// _$E36
+// SYNTHETIC: GAMEMD 0x00695530 SYMBOL
+// _$E39
+// SYNTHETIC: GAMEMD 0x00695550 SYMBOL
+// _$E42
+// SYNTHETIC: GAMEMD 0x00695570 SYMBOL
+// _$E45
+// SYNTHETIC: GAMEMD 0x00695590 SYMBOL
+// _$E48
+// SYNTHETIC: GAMEMD 0x006955B0 SYMBOL
+// _$E51
+// SYNTHETIC: GAMEMD 0x006955F0 SYMBOL
+// _$E54
+// SYNTHETIC: GAMEMD 0x00695620 SYMBOL
+// _$E57
+// SYNTHETIC: GAMEMD 0x00695650 SYMBOL
+// _$E60
+// SYNTHETIC: GAMEMD 0x00695680 SYMBOL
+// _$E63
+// SYNTHETIC: GAMEMD 0x00695690 SYMBOL
+// _$E66
+// SYNTHETIC: GAMEMD 0x006956B0 SYMBOL
+// _$E69
 
 // FUNCTION: GAMEMD 0x006956D0
 bool SerialEdit::Dialog(SerialSettingsType *settings)

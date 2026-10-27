@@ -14,6 +14,7 @@
 #include "_timer.h"
 #include "globals.h"
 #include "session.h"
+#include "geometry.h"
 #include "wsproto.h"
 
 namespace fastmath { double __cdecl sqrt(double x); double __cdecl tan(double x); double __cdecl atan(double x); }
@@ -25,8 +26,6 @@ extern const double DAT_007E1728;
 extern const double DAT_007E1730;
 extern const double DAT_007E1738;
 extern const double DAT_007E1740;
-extern const double DAT_007EC0F8;
-extern const double DAT_007EC100;
 extern const double DAT_007EC158;
 extern const double DAT_007EC160;
 void __cdecl FUN_004068E0(char const * format, ...);
@@ -36,58 +35,32 @@ struct Unknown_00B052D0 {
 	unsigned char FUN_00663D60(int);
 };
 extern Unknown_00B052D0 DAT_00B052D0;
-
 // SYNTHETIC: GAMEMD 0x0053F8A0 SYMBOL
 // _$E40
-double DAT_00AA05D0 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x0053F8D0 SYMBOL
 // _$E43
-double DAT_00AA0620 = DAT_00AA05D0 / DAT_007EC0F8;
-
 // SYNTHETIC: GAMEMD 0x0053F8F0 SYMBOL
 // _$E46
-double DAT_00AA0608 = DAT_007E1718 / DAT_00AA0620;
-
 // SYNTHETIC: GAMEMD 0x0053F910 SYMBOL
 // _$E49
-double DAT_00AA0600 = DAT_007E1720 * DAT_007EC100;
-
 // SYNTHETIC: GAMEMD 0x0053F930 SYMBOL
 // _$E52
-double DAT_00AA05D8 = DAT_007E1728 * DAT_007EC100;
-
 // SYNTHETIC: GAMEMD 0x0053F950 SYMBOL
 // _$E55
-double DAT_00AA05B0 = DAT_007E1730 * DAT_007EC100;
-
 // SYNTHETIC: GAMEMD 0x0053F970 SYMBOL
 // _$E58
-int DAT_00AA0628 = (int)(DAT_007E1738 * (fastmath::tan(DAT_00AA05B0 - DAT_00AA05D8) * DAT_00AA05D0));
-
 // SYNTHETIC: GAMEMD 0x0053F9B0 SYMBOL
 // _$E61
-double DAT_00AA05E0 = fastmath::atan(DAT_00AA0628 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x0053F9E0 SYMBOL
 // _$E64
-double DAT_00AA05F8 = fastmath::atan((DAT_00AA0628 * 2) / DAT_00AA05D0);
-
 // SYNTHETIC: GAMEMD 0x0053FA10 SYMBOL
 // _$E67
-int DAT_00AA061C = (int)((DAT_00AA0628 * 4) + DAT_007E1738);
-
 // SYNTHETIC: GAMEMD 0x0053FA40 SYMBOL
 // _$E70
-Cell DAT_00AA05C8(0, 0);
-
 // SYNTHETIC: GAMEMD 0x0053FA50 SYMBOL
 // _$E73
-Coord DAT_00AA05E8(0, 0, 0);
-
 // SYNTHETIC: GAMEMD 0x0053FA70 SYMBOL
 // _$E76
-Coord DAT_00AA0610(128, 128, 0);
 
 // FUNCTION: GAMEMD 0x0053FA90
 IPXGlobalConnClass::IPXGlobalConnClass (int numsend, int numreceive, int maxlen,

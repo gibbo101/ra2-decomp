@@ -28,24 +28,12 @@
 #include "suprtype.h"
 #include "surface.h"
 #include "tactical.h"
+#include "geometry.h"
 #include "waypoint.h"
 #include "special.hh"
 
 #include <math.h>
 
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007F1078;
-extern const double DAT_007F1080;
 
 extern FacingType Facing_Between_Points(Point2D const & pt1, Point2D const & pt2);
 extern ObjectClass * __fastcall FUN_005353D0(Cell const * cell, ObjectClass const * target);
@@ -58,72 +46,32 @@ extern bool __stdcall FUN_0063AB60(int x, int y);
 
 #define SCROLL_DELAY 1
 
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
-
-struct CenterTriple {
-	int A, B, C;
-	CenterTriple() { A = 128; B = 128; C = 0; }
-};
-
 // SYNTHETIC: GAMEMD 0x00692050 SYMBOL
 // _$E81
-double DAT_00B05660 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x00692080 SYMBOL
 // _$E84
-double DAT_00B056B8 = DAT_00B05660 / DAT_007F1078;
-
 // SYNTHETIC: GAMEMD 0x006920A0 SYMBOL
 // _$E87
-double DAT_00B056A0 = DAT_007E1718 / DAT_00B056B8;
-
 // SYNTHETIC: GAMEMD 0x006920C0 SYMBOL
 // _$E90
-double DAT_00B05698 = DAT_007E1720 * DAT_007F1080;
-
 // SYNTHETIC: GAMEMD 0x006920E0 SYMBOL
 // _$E93
-double DAT_00B05668 = DAT_007E1728 * DAT_007F1080;
-
 // SYNTHETIC: GAMEMD 0x00692100 SYMBOL
 // _$E96
-double DAT_00B05630 = DAT_007E1730 * DAT_007F1080;
-
 // SYNTHETIC: GAMEMD 0x00692120 SYMBOL
 // _$E99
-int DAT_00B056C0 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B05630 - DAT_00B05668) * DAT_00B05660));
-
 // SYNTHETIC: GAMEMD 0x00692160 SYMBOL
 // _$E102
-double DAT_00B05670 = FUN_004CADE0(DAT_00B056C0 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x00692190 SYMBOL
 // _$E105
-double DAT_00B05688 = FUN_004CADE0((DAT_00B056C0 * 2) / DAT_00B05660);
-
 // SYNTHETIC: GAMEMD 0x006921C0 SYMBOL
 // _$E108
-int DAT_00B056B4 = (int)(DAT_00B056C0 * 4 + DAT_007E1738);
-
 // SYNTHETIC: GAMEMD 0x006921F0 SYMBOL
 // _$E111
-ShortPair DAT_00B05658;
-
 // SYNTHETIC: GAMEMD 0x00692200 SYMBOL
 // _$E114
-IntTriple DAT_00B05678;
-
 // SYNTHETIC: GAMEMD 0x00692220 SYMBOL
 // _$E117
-CenterTriple DAT_00B056A8;
 
 // SYNTHETIC: GAMEMD 0x00692240 SYMBOL
 // _$E123
@@ -231,7 +179,7 @@ ActionType ScrollClass::What_Action(Cell const & cell, ObjectClass * object, boo
 				action = ACTION_SELECT;
 			}
 
-			Coord beacon_coord = Coord(cell, Map[cell].Height * DAT_00B056C0);
+			Coord beacon_coord = Coord(cell, Map[cell].Height * LEVEL_LEPTON_H);
 			if (BeaconManager.FindBeaconAt(beacon_coord) != NULL) {
 				action = ACTION_SELECT_BEACON;
 			}

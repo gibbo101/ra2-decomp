@@ -49,9 +49,9 @@ class MultiplayerObserverTeam : public MultiplayerTeam
 
 
 // FUNCTION: GAMEMD 0x005D5AC0
-DynamicVectorClass<MPGameModeClass *> & Game_Modes(void)
+DynamicVectorClass<MultiplayerGameMode *> & Game_Modes(void)
 {
-	static DynamicVectorClass<MPGameModeClass *> modes;
+	static DynamicVectorClass<MultiplayerGameMode *> modes;
 	return(modes);
 }
 
@@ -82,7 +82,7 @@ static inline bool Must_Ally_Without_Allies(bool must, bool allies)
 }
 
 // FUNCTION: GAMEMD 0x005D5B60
-MPGameModeClass::MPGameModeClass(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex) :
+MultiplayerGameMode::MultiplayerGameMode(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex) :
 	MPTeams(),
 	UIName(title),
 	CSFTooltip(tooltip),
@@ -115,7 +115,7 @@ MPGameModeClass::MPGameModeClass(WideWstring const & title, WideWstring const & 
 	}
 }
 
-static inline void Delete_Teams(MPGameModeClass * mode)
+static inline void Delete_Teams(MultiplayerGameMode * mode)
 {
 	for (int i = 0; i < mode->MPTeams.Count(); i++) {
 		delete mode->MPTeams[i];
@@ -123,7 +123,7 @@ static inline void Delete_Teams(MPGameModeClass * mode)
 }
 
 // FUNCTION: GAMEMD 0x005D5D20
-MPGameModeClass::~MPGameModeClass(void)
+MultiplayerGameMode::~MultiplayerGameMode(void)
 {
 	Delete_Teams(this);
 	MPTeams.Clear();
@@ -131,25 +131,25 @@ MPGameModeClass::~MPGameModeClass(void)
 }
 
 // FUNCTION: GAMEMD 0x005D5DB0
-int MPGameModeClass::vt_entry_28(void)
+int MultiplayerGameMode::vt_entry_28(void)
 {
 	return(-2);
 }
 
 // FUNCTION: GAMEMD 0x005D5DC0
-int MPGameModeClass::vt_entry_2C(void)
+int MultiplayerGameMode::vt_entry_2C(void)
 {
 	return(MustAlly ? 0 : -2);
 }
 
 // FUNCTION: GAMEMD 0x005D5DD0
-int MPGameModeClass::vt_entry_30(void)
+int MultiplayerGameMode::vt_entry_30(void)
 {
 	return(AlliesAllowed ? 3 : -2);
 }
 
 // FUNCTION: GAMEMD 0x005D5DE0
-bool MPGameModeClass::CanAllyWith(int index)
+bool MultiplayerGameMode::CanAllyWith(int index)
 {
 	if (MustAlly && index == -2) {
 		return(false);
@@ -158,7 +158,7 @@ bool MPGameModeClass::CanAllyWith(int index)
 }
 
 // FUNCTION: GAMEMD 0x005D5E10
-MPGameModeClass * First_Game_Mode(void)
+MultiplayerGameMode * First_Game_Mode(void)
 {
 	if (Game_Modes().Count() == 0) {
 		return(NULL);
@@ -173,10 +173,10 @@ int Game_Mode_Total(void)
 }
 
 // FUNCTION: GAMEMD 0x005D5F30
-MPGameModeClass * __fastcall MPGameModeClass::Get(int index)
+MultiplayerGameMode * __fastcall MultiplayerGameMode::Get(int index)
 {
 	for (int i = 0; i < Game_Mode_Count(); i++) {
-		MPGameModeClass * mode = Game_Modes()[i];
+		MultiplayerGameMode * mode = Game_Modes()[i];
 		if (mode->MPModeIndex == index) {
 			return(mode);
 		}
@@ -185,7 +185,7 @@ MPGameModeClass * __fastcall MPGameModeClass::Get(int index)
 }
 
 // FUNCTION: GAMEMD 0x005D62C0
-bool MPGameModeClass::vt_entry_10(void)
+bool MultiplayerGameMode::vt_entry_10(void)
 {
 	for (int i = 0; i < Session.Players.Count(); i++) {
 		if (Session.Players[i]->Get_Country() == -3) {
@@ -198,43 +198,43 @@ bool MPGameModeClass::vt_entry_10(void)
 }
 
 // FUNCTION: GAMEMD 0x005D6310
-bool MPGameModeClass::vt_entry_14(unsigned a)
+bool MultiplayerGameMode::vt_entry_14(unsigned a)
 {
 	return(true);
 }
 
 // FUNCTION: GAMEMD 0x005D6320
-bool MPGameModeClass::vt_entry_04(void)
+bool MultiplayerGameMode::vt_entry_04(void)
 {
 	return(true);
 }
 
 // FUNCTION: GAMEMD 0x005D6330
-bool MPGameModeClass::vt_entry_08(void)
+bool MultiplayerGameMode::vt_entry_08(void)
 {
 	return(true);
 }
 
 // FUNCTION: GAMEMD 0x005D6340
-bool MPGameModeClass::vt_entry_18(void)
+bool MultiplayerGameMode::vt_entry_18(void)
 {
 	return(true);
 }
 
 // FUNCTION: GAMEMD 0x005D6350
-bool MPGameModeClass::IsAIAllowed(void)
+bool MultiplayerGameMode::IsAIAllowed(void)
 {
 	return(AIAllowed);
 }
 
 // FUNCTION: GAMEMD 0x005D6360
-bool MPGameModeClass::vt_entry_40(void)
+bool MultiplayerGameMode::vt_entry_40(void)
 {
 	return(false);
 }
 
 // FUNCTION: GAMEMD 0x005D6370
-int MPGameModeClass::FirstValidMapIndex(void)
+int MultiplayerGameMode::FirstValidMapIndex(void)
 {
 	int count = Session.Scenarios.Count();
 	for (int i = 0; i < count; i++) {
@@ -256,7 +256,7 @@ int MPGameModeClass::FirstValidMapIndex(void)
 }
 
 // FUNCTION: GAMEMD 0x005D63E0
-bool MPGameModeClass::FUN_005D63E0(MultiMission * map)
+bool MultiplayerGameMode::FUN_005D63E0(MultiMission * map)
 {
 	if (map->Is_Random_Map()) {
 		return(IsAIAllowed());
@@ -268,19 +268,19 @@ bool MPGameModeClass::FUN_005D63E0(MultiMission * map)
 }
 
 // FUNCTION: GAMEMD 0x005D6430
-int MPGameModeClass::RandomHumanCountryIndex(void)
+int MultiplayerGameMode::RandomHumanCountryIndex(void)
 {
 	return(FUN_0069B670(&Session));
 }
 
 // FUNCTION: GAMEMD 0x005D6440
-int MPGameModeClass::RandomAICountryIndex(void)
+int MultiplayerGameMode::RandomAICountryIndex(void)
 {
 	return(RandomHumanCountryIndex());
 }
 
 // FUNCTION: GAMEMD 0x005D6450
-void MPGameModeClass::PopulateTeamDropdown(HWND hwnd, DynamicVectorClass<MultiplayerTeam *> * teams, MultiplayerTeam * team)
+void MultiplayerGameMode::PopulateTeamDropdown(HWND hwnd, DynamicVectorClass<MultiplayerTeam *> * teams, MultiplayerTeam * team)
 {
 	FUN_00623840(hwnd);
 	for (int i = 0; i < teams->Count(); i++) {
@@ -294,7 +294,7 @@ void MPGameModeClass::PopulateTeamDropdown(HWND hwnd, DynamicVectorClass<Multipl
 }
 
 // FUNCTION: GAMEMD 0x005D64C0
-void MPGameModeClass::DrawTeamDropdown(HWND hwnd, DynamicVectorClass<MultiplayerTeam *> * teams, MultiplayerTeam * team)
+void MultiplayerGameMode::DrawTeamDropdown(HWND hwnd, DynamicVectorClass<MultiplayerTeam *> * teams, MultiplayerTeam * team)
 {
 	SendMessage(hwnd, LB_RESETCONTENT, 0, 0);
 	for (int i = 0; i < teams->Count(); i++) {
@@ -308,7 +308,7 @@ void MPGameModeClass::DrawTeamDropdown(HWND hwnd, DynamicVectorClass<Multiplayer
 }
 
 // FUNCTION: GAMEMD 0x005D6540
-void MPGameModeClass::PopulateTeamDropdownForPlayer(HWND hwnd, int index)
+void MultiplayerGameMode::PopulateTeamDropdownForPlayer(HWND hwnd, int index)
 {
 	FUN_00623840(hwnd);
 	for (int i = 0; i < MPTeams.Count(); i++) {
@@ -330,7 +330,7 @@ void MPGameModeClass::PopulateTeamDropdownForPlayer(HWND hwnd, int index)
 }
 
 // FUNCTION: GAMEMD 0x005D6620
-MultiplayerTeam * MPGameModeClass::FUN_005D6620(int index)
+MultiplayerTeam * MultiplayerGameMode::FUN_005D6620(int index)
 {
 	if (MPTeams.Count() < 3) {
 		for (int i = 0; i < MPTeams.Count(); i++) {
@@ -349,7 +349,7 @@ MultiplayerTeam * MPGameModeClass::FUN_005D6620(int index)
 }
 
 // FUNCTION: GAMEMD 0x005D6690
-void MPGameModeClass::CreateMPTeams(DynamicVectorClass<MultiplayerTeam *> * teams)
+void MultiplayerGameMode::CreateMPTeams(DynamicVectorClass<MultiplayerTeam *> * teams)
 {
 	teams->Add(new MultiplayerObserverTeam);
 	for (int i = 1; i <= Session.MaxPlayers; i++) {
@@ -358,7 +358,7 @@ void MPGameModeClass::CreateMPTeams(DynamicVectorClass<MultiplayerTeam *> * team
 }
 
 // FUNCTION: GAMEMD 0x005D6750
-void MPGameModeClass::FUN_005D6750(void)
+void MultiplayerGameMode::FUN_005D6750(void)
 {
 	for (int i = 0; i < MPTeams.Count(); i++) {
 		delete MPTeams[i];
@@ -367,20 +367,20 @@ void MPGameModeClass::FUN_005D6750(void)
 }
 
 // FUNCTION: GAMEMD 0x005D6790
-bool MPGameModeClass::UnfixAlliances(void)
+bool MultiplayerGameMode::UnfixAlliances(void)
 {
 	Scen->Special.IsAllianceFixed = false;
 	return(true);
 }
 
 // FUNCTION: GAMEMD 0x005D67A0
-bool MPGameModeClass::vt_entry_1C(unsigned a)
+bool MultiplayerGameMode::vt_entry_1C(unsigned a)
 {
 	return(true);
 }
 
 // FUNCTION: GAMEMD 0x005D67B0
-CCINIClass * MPGameModeClass::FUN_005D67B0(void)
+CCINIClass * MultiplayerGameMode::FUN_005D67B0(void)
 {
 	if (INI == NULL) {
 		INI = New_INI();
@@ -393,7 +393,7 @@ CCINIClass * MPGameModeClass::FUN_005D67B0(void)
 }
 
 // FUNCTION: GAMEMD 0x005D6BE0
-bool MPGameModeClass::StartingPositionsToHouseBaseCells(char unused)
+bool MultiplayerGameMode::StartingPositionsToHouseBaseCells(char unused)
 {
 	DynamicVectorClass<Cell> cells = FUN_00688380(unused);
 	for (int i = 0; i < Houses.Count(); i++) {
@@ -410,7 +410,7 @@ bool MPGameModeClass::StartingPositionsToHouseBaseCells(char unused)
 }
 
 // FUNCTION: GAMEMD 0x005D6C70
-bool MPGameModeClass::StartingPositionsToHouseBaseCells2(bool arg)
+bool MultiplayerGameMode::StartingPositionsToHouseBaseCells2(bool arg)
 {
 	DynamicVectorClass<Cell> cells = FUN_00688380(arg);
 	unsigned char used[16];
@@ -457,7 +457,7 @@ static inline void Player_Owner_Mask(int & mask)
 }
 
 // FUNCTION: GAMEMD 0x005D6D80
-bool MPGameModeClass::FUN_005D6D80(void)
+bool MultiplayerGameMode::FUN_005D6D80(void)
 {
 	int credits = 0;
 	int amount;
@@ -531,7 +531,7 @@ bool MPGameModeClass::FUN_005D6D80(void)
 int __fastcall FUN_00688ED0(ObjectClass * object, Cell const & cell, int flag);
 
 // FUNCTION: GAMEMD 0x005D7030
-bool MPGameModeClass::SpawnBaseUnits(HouseClass * house, unsigned unused)
+bool MultiplayerGameMode::SpawnBaseUnits(HouseClass * house, unsigned unused)
 {
 	if (!Session.Options.Bases) {
 		return(true);
@@ -553,7 +553,7 @@ bool MPGameModeClass::SpawnBaseUnits(HouseClass * house, unsigned unused)
 }
 
 // FUNCTION: GAMEMD 0x005D70F0
-bool MPGameModeClass::GenerateStartingUnits(HouseClass * house, int & amount)
+bool MultiplayerGameMode::GenerateStartingUnits(HouseClass * house, int & amount)
 {
 	if (amount > 0) {
 		int total = amount;
@@ -620,22 +620,22 @@ int __stdcall House_Team(int index)
 }
 
 // FUNCTION: GAMEMD 0x005D7570
-bool MPGameModeClass::vt_entry_8C(void)
+bool MultiplayerGameMode::vt_entry_8C(void)
 {
 	return(true);
 }
 
 // FUNCTION: GAMEMD 0x005D7580
-MPGameModeClass::InitializerBase::InitializerBase(void)
+MultiplayerGameMode::InitializerBase::InitializerBase(void)
 {
 }
 
 // FUNCTION: GAMEMD 0x005D7CD0
-MPGameModeClass::InitializerBase::~InitializerBase(void)
+MultiplayerGameMode::InitializerBase::~InitializerBase(void)
 {
 }
 
-class MPBattleInit : public MPGameModeClass::InitializerBase
+class MPBattleInit : public MultiplayerGameMode::InitializerBase
 {
 	public:
 		MPBattleInit(void);
@@ -655,16 +655,16 @@ void Free_Game_Modes(void)
 }
 
 // SYNTHETIC: GAMEMD 0x005D7F20
-// ??_GMPGameModeClass@@UAEPAXI@Z
+// ??_GMultiplayerGameMode@@UAEPAXI@Z
 
 // SYNTHETIC: GAMEMD 0x005D7FD0
-// ??_GInitializerBase@MPGameModeClass@@UAEPAXI@Z
+// ??_GInitializerBase@MultiplayerGameMode@@UAEPAXI@Z
 
 // SYNTHETIC: GAMEMD 0x005D7FF0
 // ??_GMPBattleInit@@UAEPAXI@Z
 
 #define MP_INIT_CLASS(name) \
-class name : public MPGameModeClass::InitializerBase \
+class name : public MultiplayerGameMode::InitializerBase \
 { \
 	public: \
 		name(void); \
@@ -698,14 +698,14 @@ MP_INIT_CLASS(MPMegawealthInit)
 // TEMPLATE: GAMEMD 0x005D8100
 // ?GetItem@?$VectorClass@PAVMultiplayerTeam@@@@UBEPAVMultiplayerTeam@@H@Z
 // TEMPLATE: GAMEMD 0x005D8110
-// ?Clear@?$DynamicVectorClass@PAVMPGameModeClass@@@@UAEXXZ
+// ?Clear@?$DynamicVectorClass@PAVMultiplayerGameMode@@@@UAEXXZ
 // TEMPLATE: GAMEMD 0x005D8140
-// ?ID@?$DynamicVectorClass@PAVMPGameModeClass@@@@UAEHPBQAVMPGameModeClass@@@Z
+// ?ID@?$DynamicVectorClass@PAVMultiplayerGameMode@@@@UAEHPBQAVMultiplayerGameMode@@@Z
 // TEMPLATE: GAMEMD 0x005D8160
-// ?GetItem@?$VectorClass@PAVMPGameModeClass@@@@UBEPAVMPGameModeClass@@H@Z
-template class DynamicVectorClass<MPGameModeClass *>;
+// ?GetItem@?$VectorClass@PAVMultiplayerGameMode@@@@UBEPAVMultiplayerGameMode@@H@Z
+template class DynamicVectorClass<MultiplayerGameMode *>;
 
-class MPBattleClass : public MPGameModeClass
+class MPBattleClass : public MultiplayerGameMode
 {
 	public:
 		MPBattleClass * FUN_005C0DD0(wchar_t ** title, wchar_t ** tooltip, char ** inifile, char ** mapfilter, bool aiallowed, int modeindex);
@@ -718,7 +718,7 @@ MPBattleClass * __stdcall Allocate_MPBattle(wchar_t ** title, wchar_t ** tooltip
 	return(mode ? mode->FUN_005C0DD0(title, tooltip, inifile, mapfilter, aiallowed, modeindex) : NULL);
 }
 
-class MPManBattleClass : public MPGameModeClass
+class MPManBattleClass : public MultiplayerGameMode
 {
 	public:
 		MPManBattleClass * FUN_005C6150(wchar_t ** title, wchar_t ** tooltip, char ** inifile, char ** mapfilter, bool aiallowed, int modeindex);
@@ -731,7 +731,7 @@ MPManBattleClass * __stdcall Allocate_MPManBattle(wchar_t ** title, wchar_t ** t
 	return(mode ? mode->FUN_005C6150(title, tooltip, inifile, mapfilter, aiallowed, modeindex) : NULL);
 }
 
-class MPSiegeClass : public MPGameModeClass
+class MPSiegeClass : public MultiplayerGameMode
 {
 	public:
 		MPSiegeClass * FUN_005CA630(wchar_t ** title, wchar_t ** tooltip, char ** inifile, char ** mapfilter, bool aiallowed, int modeindex);
@@ -744,7 +744,7 @@ MPSiegeClass * __stdcall Allocate_MPSiege(wchar_t ** title, wchar_t ** tooltip, 
 	return(mode ? mode->FUN_005CA630(title, tooltip, inifile, mapfilter, aiallowed, modeindex) : NULL);
 }
 
-class MPUnholyAllianceClass : public MPGameModeClass
+class MPUnholyAllianceClass : public MultiplayerGameMode
 {
 	public:
 		MPUnholyAllianceClass * FUN_005CB3A0(wchar_t ** title, wchar_t ** tooltip, char ** inifile, char ** mapfilter, bool aiallowed, int modeindex);
@@ -757,7 +757,7 @@ MPUnholyAllianceClass * __stdcall Allocate_MPUnholyAlliance(wchar_t ** title, wc
 	return(mode ? mode->FUN_005CB3A0(title, tooltip, inifile, mapfilter, aiallowed, modeindex) : NULL);
 }
 
-class MPFreeForAllClass : public MPGameModeClass
+class MPFreeForAllClass : public MultiplayerGameMode
 {
 	public:
 		MPFreeForAllClass * FUN_005C5CE0(wchar_t ** title, wchar_t ** tooltip, char ** inifile, char ** mapfilter, bool aiallowed, int modeindex);
@@ -770,7 +770,7 @@ MPFreeForAllClass * __stdcall Allocate_MPFreeForAll(wchar_t ** title, wchar_t **
 	return(mode ? mode->FUN_005C5CE0(title, tooltip, inifile, mapfilter, aiallowed, modeindex) : NULL);
 }
 
-class MPCoopMode : public MPGameModeClass
+class MPCoopMode : public MultiplayerGameMode
 {
 	public:
 		MPCoopMode * FUN_005C1470(wchar_t ** title, wchar_t ** tooltip, char ** inifile, char ** mapfilter, bool aiallowed, int modeindex);
@@ -800,30 +800,30 @@ MPCoopMode * __stdcall Allocate_MPCoop(wchar_t ** title, wchar_t ** tooltip, cha
 template class DynamicVectorClass<MultiplayerTeam *>;
 
 // TEMPLATE: GAMEMD 0x005D8550
-// ??8?$VectorClass@PAVMPGameModeClass@@@@UBE_NABV0@@Z
+// ??8?$VectorClass@PAVMultiplayerGameMode@@@@UBE_NABV0@@Z
 // TEMPLATE: GAMEMD 0x005D8590
-// ?Resize@?$VectorClass@PAVMPGameModeClass@@@@UAE_NHPBQAVMPGameModeClass@@@Z
+// ?Resize@?$VectorClass@PAVMultiplayerGameMode@@@@UAE_NHPBQAVMultiplayerGameMode@@@Z
 // TEMPLATE: GAMEMD 0x005D8640
-// ?Clear@?$VectorClass@PAVMPGameModeClass@@@@UAEXXZ
+// ?Clear@?$VectorClass@PAVMultiplayerGameMode@@@@UAEXXZ
 // TEMPLATE: GAMEMD 0x005D8670
-// ?ID@?$VectorClass@PAVMPGameModeClass@@@@UAEHABQAVMPGameModeClass@@@Z
+// ?ID@?$VectorClass@PAVMultiplayerGameMode@@@@UAEHABQAVMultiplayerGameMode@@@Z
 // TEMPLATE: GAMEMD 0x005D86B0
-// ?ID@?$VectorClass@PAVMPGameModeClass@@@@UAEHPBQAVMPGameModeClass@@@Z
+// ?ID@?$VectorClass@PAVMultiplayerGameMode@@@@UAEHPBQAVMultiplayerGameMode@@@Z
 // TEMPLATE: GAMEMD 0x005D86D0
-// ??0?$DynamicVectorClass@PAVMPGameModeClass@@@@QAE@IPBQAVMPGameModeClass@@@Z
+// ??0?$DynamicVectorClass@PAVMultiplayerGameMode@@@@QAE@IPBQAVMultiplayerGameMode@@@Z
 // TEMPLATE: GAMEMD 0x005D8730
-// ?Resize@?$DynamicVectorClass@PAVMPGameModeClass@@@@UAE_NHPBQAVMPGameModeClass@@@Z
+// ?Resize@?$DynamicVectorClass@PAVMultiplayerGameMode@@@@UAE_NHPBQAVMultiplayerGameMode@@@Z
 // TEMPLATE: GAMEMD 0x005D87E0
-// ?ID@?$DynamicVectorClass@PAVMPGameModeClass@@@@UAEHABQAVMPGameModeClass@@@Z
+// ?ID@?$DynamicVectorClass@PAVMultiplayerGameMode@@@@UAEHABQAVMultiplayerGameMode@@@Z
 // SYNTHETIC: GAMEMD 0x005D8810
 // ??_G?$VectorClass@PAVMultiplayerTeam@@@@UAEPAXI@Z
 // SYNTHETIC: GAMEMD 0x005D8860
 // ??_G?$DynamicVectorClass@PAVMultiplayerTeam@@@@UAEPAXI@Z
 // SYNTHETIC: GAMEMD 0x005D88B0
-// ??_G?$VectorClass@PAVMPGameModeClass@@@@UAEPAXI@Z
+// ??_G?$VectorClass@PAVMultiplayerGameMode@@@@UAEPAXI@Z
 // SYNTHETIC: GAMEMD 0x005D8900
-// ??_G?$DynamicVectorClass@PAVMPGameModeClass@@@@UAEPAXI@Z
-template class DynamicVectorClass<MPGameModeClass *>;
+// ??_G?$DynamicVectorClass@PAVMultiplayerGameMode@@@@UAEPAXI@Z
+template class DynamicVectorClass<MultiplayerGameMode *>;
 template class DynamicVectorClass<MultiplayerTeam *>;
 
 // TEMPLATE: GAMEMD 0x005D8950
@@ -835,8 +835,8 @@ template class VectorClass<UnitTypeClass *>;
 template class VectorClass<InfantryTypeClass *>;
 
 // TEMPLATE: GAMEMD 0x005D89F0
-// ??0?$VectorClass@PAVMPGameModeClass@@@@QAE@HPBQAVMPGameModeClass@@@Z
-template class VectorClass<MPGameModeClass *>;
+// ??0?$VectorClass@PAVMultiplayerGameMode@@@@QAE@HPBQAVMultiplayerGameMode@@@Z
+template class VectorClass<MultiplayerGameMode *>;
 
 extern int DAT_00ABFDE0;
 extern int DAT_00ABFDE4;

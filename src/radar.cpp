@@ -1685,6 +1685,7 @@ class InputManagerClass {
 };
 extern bool UserInputLocked;
 #include "scenario.h"
+#include "geometry.h"
 LRESULT CALLBACK FUN_00657DA0(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 
 // FUNCTION: GAMEMD 0x006586D0
@@ -1758,68 +1759,32 @@ template class DynamicVectorClass<HashObject<RadarTrackingStruct, TechnoClass *>
 // TEMPLATE: GAMEMD 0x00658DE0
 // ??0?$DynamicVectorClass@U?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@@@QAE@IPBU?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@@Z
 
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007F0470;
-extern const double DAT_007F0478;
-
 // SYNTHETIC: GAMEMD 0x00658E80 SYMBOL
 // _$E192
-double DAT_00B04A78 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x00658EB0 SYMBOL
 // _$E195
-double DAT_00B04AC8 = DAT_00B04A78 / DAT_007F0470;
-
 // SYNTHETIC: GAMEMD 0x00658ED0 SYMBOL
 // _$E198
-double DAT_00B04AB0 = DAT_007E1718 / DAT_00B04AC8;
-
 // SYNTHETIC: GAMEMD 0x00658EF0 SYMBOL
 // _$E201
-double DAT_00B04AA8 = DAT_007E1720 * DAT_007F0478;
-
 // SYNTHETIC: GAMEMD 0x00658F10 SYMBOL
 // _$E204
-double DAT_00B04A80 = DAT_007E1728 * DAT_007F0478;
-
 // SYNTHETIC: GAMEMD 0x00658F30 SYMBOL
 // _$E207
-double DAT_00B04A40 = DAT_007E1730 * DAT_007F0478;
-
 // SYNTHETIC: GAMEMD 0x00658F50 SYMBOL
 // _$E210
-int DAT_00B04AD0 = (int)(fastmath::tan(DAT_00B04A40 - DAT_00B04A80) * DAT_007E1738 * DAT_00B04A78);
-
 // SYNTHETIC: GAMEMD 0x00658F90 SYMBOL
 // _$E213
-double DAT_00B04A88 = fastmath::atan(DAT_00B04AD0 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x00658FC0 SYMBOL
 // _$E216
-double DAT_00B04AA0 = fastmath::atan((DAT_00B04AD0 * 2) / DAT_00B04A78);
-
 // SYNTHETIC: GAMEMD 0x00658FF0 SYMBOL
 // _$E219
-int DAT_00B04AC4 = (int)(DAT_00B04AD0 * 4 + DAT_007E1738);
-
 // SYNTHETIC: GAMEMD 0x00659020 SYMBOL
 // _$E222
-Cell DAT_00B04A58(0, 0);
-
 // SYNTHETIC: GAMEMD 0x00659030 SYMBOL
 // _$E225
-Coord DAT_00B04A90(0, 0, 0);
-
 // SYNTHETIC: GAMEMD 0x00659050 SYMBOL
 // _$E228
-Coord DAT_00B04AB8(128, 128, 0);
 
 // SYNTHETIC: GAMEMD 0x00659070 SYMBOL
 // _$E231

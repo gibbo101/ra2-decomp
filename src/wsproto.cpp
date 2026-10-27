@@ -631,7 +631,7 @@ int __cdecl FUN_007B2730(void)
 template class DynamicVectorClass<WinsockInterfaceClass::WinsockBufferType *>;
 
 // TEMPLATE: GAMEMD 0x007B2870
-// ?ID@?$VectorClass@PAUWinsockBufferType@WinsockInterfaceClass@@@@UAEHPBQAUWinsockBufferType@WinsockInterfaceClass@@@Z
+// ?ID@?$DynamicVectorClass@PAUWinsockBufferType@WinsockInterfaceClass@@@@UAEHPBQAUWinsockBufferType@WinsockInterfaceClass@@@Z
 
 // TEMPLATE: GAMEMD 0x007B2890
 // ?GetItem@?$VectorClass@PAUWinsockBufferType@WinsockInterfaceClass@@@@UBEPAUWinsockBufferType@WinsockInterfaceClass@@H@Z
@@ -649,7 +649,7 @@ template class DynamicVectorClass<WinsockInterfaceClass::WinsockBufferType *>;
 // ?ID@?$VectorClass@PAUWinsockBufferType@WinsockInterfaceClass@@@@UAEHABQAUWinsockBufferType@WinsockInterfaceClass@@@Z
 
 // TEMPLATE: GAMEMD 0x007B2A00
-// ?ID@?$DynamicVectorClass@PAUWinsockBufferType@WinsockInterfaceClass@@@@UAEHPBQAUWinsockBufferType@WinsockInterfaceClass@@@Z
+// ?ID@?$VectorClass@PAUWinsockBufferType@WinsockInterfaceClass@@@@UAEHPBQAUWinsockBufferType@WinsockInterfaceClass@@@Z
 
 // TEMPLATE: GAMEMD 0x007B2A20
 // ?Resize@?$DynamicVectorClass@PAUWinsockBufferType@WinsockInterfaceClass@@@@UAE_NHPBQAUWinsockBufferType@WinsockInterfaceClass@@@Z

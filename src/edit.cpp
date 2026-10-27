@@ -21,24 +21,6 @@
 #include <ctype.h>
 #include <wchar.h>
 
-extern double __cdecl FUN_004CAC40(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E86C8;
-extern const double DAT_007E86D0;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern double DAT_008A0EC8;
-extern double DAT_008A0EE8;
-extern double DAT_008A0EF0;
-extern int DAT_008A0F40;
-extern double DAT_008A0F38;
 
 class InputManagerClass : public KeyboardClass {
 	public:
@@ -238,63 +220,36 @@ void EditClass::Set_Focus(void)
 	BASECLASS::Set_Focus();
 }
 
+#include "geometry.h"
+
 // SYNTHETIC: GAMEMD 0x004C35A0 SYMBOL
 // _$E31
-double DAT_008A0EE8 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x004C35D0 SYMBOL
 // _$E34
-double DAT_008A0F38 = DAT_008A0EE8 / DAT_007E86C8;
-
 // SYNTHETIC: GAMEMD 0x004C35F0 SYMBOL
 // _$E37
-double DAT_008A0F20 = DAT_007E1718 / DAT_008A0F38;
-
 // SYNTHETIC: GAMEMD 0x004C3610 SYMBOL
 // _$E40
-double DAT_008A0F18 = DAT_007E1720 * DAT_007E86D0;
-
 // SYNTHETIC: GAMEMD 0x004C3630 SYMBOL
 // _$E43
-double DAT_008A0EF0 = DAT_007E1728 * DAT_007E86D0;
-
 // SYNTHETIC: GAMEMD 0x004C3650 SYMBOL
 // _$E46
-double DAT_008A0EC8 = DAT_007E1730 * DAT_007E86D0;
-
 // SYNTHETIC: GAMEMD 0x004C3670 SYMBOL
 // _$E49
-int DAT_008A0F40 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_008A0EC8 - DAT_008A0EF0) * DAT_008A0EE8));
-
 // SYNTHETIC: GAMEMD 0x004C36B0 SYMBOL
 // _$E52
-double DAT_008A0EF8 = FUN_004CADE0(DAT_008A0F40 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x004C36E0 SYMBOL
 // _$E55
-double DAT_008A0F10 = FUN_004CADE0((DAT_008A0F40 * 2) / DAT_008A0EE8);
-
 // SYNTHETIC: GAMEMD 0x004C3710 SYMBOL
 // _$E58
-int DAT_008A0F34 = (int)((DAT_008A0F40 * 4) + DAT_007E1738);
-
-struct Pair16 { short a, b; Pair16() : a(0), b(0) {} };
-struct Triple32 { int a, b, c; Triple32() : a(0), b(0), c(0) {} };
-struct Quad32 { int a, b, c, d; Quad32() : a(0), b(0), c(0), d(0) {} };
-struct Odd32 { int a, b, c; Odd32() : a(128), b(128), c(0) {} };
-
 // SYNTHETIC: GAMEMD 0x004C3740 SYMBOL
 // _$E61
-Pair16 DAT_008A0EE0;
-
 // SYNTHETIC: GAMEMD 0x004C3750 SYMBOL
 // _$E64
-Triple32 DAT_008A0F00;
-
 // SYNTHETIC: GAMEMD 0x004C3770 SYMBOL
 // _$E67
-Odd32 DAT_008A0F28;
 
 // SYNTHETIC: GAMEMD 0x004C3790 SYMBOL
 // _$E70
-Quad32 DAT_008A0ED0;
+const Rect RECT_NONE_2(0, 0, 0, 0);
+

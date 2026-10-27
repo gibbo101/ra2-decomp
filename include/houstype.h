@@ -61,7 +61,7 @@ class HouseTypeClass : public AbstractTypeClass
 		float IncomeMult;
 		TypeList<InfantryTypeClass const *> VeteranInfantry;
 		TypeList<UnitTypeClass const *> VeteranUnits;
-		TypeList<AircraftTypeClass *> VeteranAircraft;
+		TypeList<AircraftTypeClass const *> VeteranAircraft;
 		char Suffix[4];
 		char Prefix;
 		bool IsMultiplay;

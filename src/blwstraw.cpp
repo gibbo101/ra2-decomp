@@ -4,24 +4,13 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
+#include "rect.h"
 #include "blwstraw.h"
 #include "assert.h"
 #include <cstring>
 #include <math.h>
 
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007E3CD0;
-extern const double DAT_007E3CD8;
 
 // FUNCTION: GAMEMD 0x00438210
 int BlowStraw::Get(void * source, int slen)
@@ -79,84 +68,30 @@ void BlowStraw::Key(void const * key, int length)
 
 // SYNTHETIC: GAMEMD 0x00438340 SYMBOL
 // _$E2
-double DAT_0089C6A0 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x00438370 SYMBOL
 // _$E5
-double DAT_0089C6F0 = DAT_0089C6A0 / DAT_007E3CD0;
-
 // SYNTHETIC: GAMEMD 0x00438390 SYMBOL
 // _$E8
-double DAT_0089C6D8 = DAT_007E1718 / DAT_0089C6F0;
-
 // SYNTHETIC: GAMEMD 0x004383B0 SYMBOL
 // _$E11
-double DAT_0089C6D0 = DAT_007E1720 * DAT_007E3CD8;
-
 // SYNTHETIC: GAMEMD 0x004383D0 SYMBOL
 // _$E14
-double DAT_0089C6A8 = DAT_007E1728 * DAT_007E3CD8;
-
 // SYNTHETIC: GAMEMD 0x004383F0 SYMBOL
 // _$E17
-double DAT_0089C680 = DAT_007E1730 * DAT_007E3CD8;
-
 // SYNTHETIC: GAMEMD 0x00438410 SYMBOL
 // _$E20
-int DAT_0089C6F8 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_0089C680 - DAT_0089C6A8) * DAT_0089C6A0));
-
 // SYNTHETIC: GAMEMD 0x00438450 SYMBOL
 // _$E23
-double DAT_0089C6B0 = FUN_004CADE0(DAT_0089C6F8 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x00438480 SYMBOL
 // _$E26
-double DAT_0089C6C8 = FUN_004CADE0((DAT_0089C6F8 * 2) / DAT_0089C6A0);
-
 // SYNTHETIC: GAMEMD 0x004384B0 SYMBOL
 // _$E29
-int DAT_0089C6EC = (int)(DAT_0089C6F8 * 4 + DAT_007E1738);
-
-struct ShortPair_89C698 {
-	short X;
-	short Y;
-	ShortPair_89C698(void) : X(0), Y(0) {}
-};
-
 // SYNTHETIC: GAMEMD 0x004384E0 SYMBOL
 // _$E32
-ShortPair_89C698 DAT_0089C698;
-
-struct Triple_89C6B8 {
-	int A;
-	int B;
-	int C;
-	Triple_89C6B8(void) : A(0), B(0), C(0) {}
-};
-
 // SYNTHETIC: GAMEMD 0x004384F0 SYMBOL
 // _$E35
-Triple_89C6B8 DAT_0089C6B8;
-
-struct Triple_89C6E0 {
-	int A;
-	int B;
-	int C;
-	Triple_89C6E0(void) : A(128), B(128), C(0) {}
-};
-
 // SYNTHETIC: GAMEMD 0x00438510 SYMBOL
 // _$E38
-Triple_89C6E0 DAT_0089C6E0;
-
-struct Quad_89C688 {
-	int A;
-	int B;
-	int C;
-	int D;
-	Quad_89C688(void) : A(0), B(0), C(0), D(0) {}
-};
-
 // SYNTHETIC: GAMEMD 0x00438530 SYMBOL
 // _$E41
-Quad_89C688 DAT_0089C688;
+

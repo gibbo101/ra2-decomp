@@ -26,10 +26,10 @@ class MPSiegeAttackerTeam : public MultiplayerTeam
 		MPSiegeAttackerTeam(void);
 };
 
-class MPSiegeClass : public MPGameModeClass
+class MPSiegeClass : public MultiplayerGameMode
 {
 	public:
-		MPSiegeClass(NoInitClass const & x) : MPGameModeClass(x) {}
+		MPSiegeClass(NoInitClass const & x) : MultiplayerGameMode(x) {}
 		MPSiegeClass(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex);
 		virtual ~MPSiegeClass(void);
 		virtual bool vt_entry_10(void) override;

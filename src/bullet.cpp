@@ -570,9 +570,9 @@ template class VectorClass<BulletClass *>;
 // TEMPLATE: GAMEMD 0x0046B890
 // ?ID@?$DynamicVectorClass@PAVBulletClass@@@@UAEHABQAVBulletClass@@@Z
 // SYNTHETIC: GAMEMD 0x0046B8C0
-// ??_G?$DynamicVectorClass@PAVBulletClass@@@@UAEPAXI@Z
-// SYNTHETIC: GAMEMD 0x0046B910
 // ??_G?$VectorClass@PAVBulletClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x0046B910
+// ??_G?$DynamicVectorClass@PAVBulletClass@@@@UAEPAXI@Z
 
 // TEMPLATE: GAMEMD 0x0046B960
 // ??Y?$TVelocity3D@N@@QAEAAV0@ABV0@@Z

@@ -28,7 +28,7 @@ static inline Cell Base_Spot(Cell const & base)
 
 // FUNCTION: GAMEMD 0x005CB3A0
 MPUnholyAllianceClass::MPUnholyAllianceClass(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex) :
-	MPGameModeClass(title, tooltip, inifile, mapfilter, aiallowed, modeindex)
+	MultiplayerGameMode(title, tooltip, inifile, mapfilter, aiallowed, modeindex)
 {
 }
 
@@ -47,7 +47,7 @@ bool MPUnholyAllianceClass::vt_entry_10(void)
 // FUNCTION: GAMEMD 0x005CB400
 bool MPUnholyAllianceClass::vt_entry_14(unsigned a)
 {
-	return(Session.Options.Bases && MPGameModeClass::vt_entry_14(a));
+	return(Session.Options.Bases && MultiplayerGameMode::vt_entry_14(a));
 }
 
 // FUNCTION: GAMEMD 0x005CB430

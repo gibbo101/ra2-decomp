@@ -4,6 +4,8 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
+#include "rect.h"
 #include "getcpu.h"
 #include <cstdio>
 #include <cstring>
@@ -32,19 +34,6 @@ void Get_CPU_Type(int & cpu_type, bool & mmx, char * vendor_id, int vendor_id_le
 }
 
 extern char DAT_0084E864;
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007E9B50;
-extern const double DAT_007E9B58;
 
 // FUNCTION: GAMEMD 0x004E6190
 int FUN_004E6190(void)
@@ -104,64 +93,32 @@ const char * FUN_004E62B0(void)
 	}
 	return "Unknown";
 }
-
 // SYNTHETIC: GAMEMD 0x004E62D0 SYMBOL
 // _$E2
-double DAT_00A83D40 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x004E6300 SYMBOL
 // _$E5
-double DAT_00A8EC98 = DAT_00A83D40 / DAT_007E9B50;
-
 // SYNTHETIC: GAMEMD 0x004E6320 SYMBOL
 // _$E8
-double DAT_00A8EB58 = DAT_007E1718 / DAT_00A8EC98;
-
 // SYNTHETIC: GAMEMD 0x004E6340 SYMBOL
 // _$E11
-double DAT_00A8EB20 = DAT_007E1720 * DAT_007E9B58;
-
 // SYNTHETIC: GAMEMD 0x004E6360 SYMBOL
 // _$E14
-double DAT_00A83DB0 = DAT_007E1728 * DAT_007E9B58;
-
 // SYNTHETIC: GAMEMD 0x004E6380 SYMBOL
 // _$E17
-double DAT_008B4168 = DAT_007E1730 * DAT_007E9B58;
-
 // SYNTHETIC: GAMEMD 0x004E63A0 SYMBOL
 // _$E20
-int DAT_00A8ED58 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_008B4168 - DAT_00A83DB0) * DAT_00A83D40));
-
 // SYNTHETIC: GAMEMD 0x004E63E0 SYMBOL
 // _$E23
-double DAT_00A83DE0 = FUN_004CADE0(DAT_00A8ED58 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x004E6410 SYMBOL
 // _$E26
-double DAT_00A8E958 = FUN_004CADE0((DAT_00A8ED58 * 2) / DAT_00A83D40);
-
 // SYNTHETIC: GAMEMD 0x004E6440 SYMBOL
 // _$E29
-int DAT_00A8EC94 = (int)(DAT_00A8ED58 * 4 + DAT_007E1738);
-
-struct Short2 { short a; short b; Short2() : a(0), b(0) {} };
-struct Int3 { int a; int b; int c; Int3() : a(0), b(0), c(0) {} };
-struct Int3B { int a; int b; int c; Int3B() : a(128), b(128), c(0) {} };
-struct Int4 { int a; int b; int c; int d; Int4() : a(0), b(0), c(0), d(0) {} };
-
 // SYNTHETIC: GAMEMD 0x004E6470 SYMBOL
 // _$E32
-Short2 DAT_00A83CD0;
-
 // SYNTHETIC: GAMEMD 0x004E6480 SYMBOL
 // _$E35
-Int3 DAT_00A8E380;
-
 // SYNTHETIC: GAMEMD 0x004E64A0 SYMBOL
 // _$E38
-Int3B DAT_00A8EC68;
-
 // SYNTHETIC: GAMEMD 0x004E64C0 SYMBOL
 // _$E41
-Int4 DAT_00A83C58;
+

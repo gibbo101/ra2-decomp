@@ -11,6 +11,7 @@
 #include "assert.h"
 #include "globals.h"
 #include "goptions.h"
+#include "geometry.h"
 #include "dbgprint.h"
 #include "gametime.h"
 #include "vqaplayp.h"
@@ -21,39 +22,6 @@
 LPDIRECTSOUND FUN_0040A7A0(void);
 int FUN_00407000(void);
 
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007E2228;
-extern const double DAT_007E2230;
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
-
-struct IntPairSized {
-	int A, B, C;
-	IntPairSized() { C = 0; A = 128; B = 128; }
-};
-
-struct IntQuad {
-	int A, B, C, D;
-	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
-};
-
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
 
 Ahandle _handles[Ahandle::MAX_HANDLES];
 
@@ -677,58 +645,34 @@ int ahtoi(const char *str)
 	return(integer);
 }
 
-// SYNTHETIC: GAMEMD 0x00412660 SYMBOL
-// _$E10
-double DAT_00887858 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
-// SYNTHETIC: GAMEMD 0x00412690 SYMBOL
-// _$E13
-double DAT_00889E40 = DAT_00887858 / DAT_007E2228;
-
-// SYNTHETIC: GAMEMD 0x004126B0 SYMBOL
-// _$E16
-double DAT_00889E28 = DAT_007E1718 / DAT_00889E40;
-
-// SYNTHETIC: GAMEMD 0x004126D0 SYMBOL
-// _$E19
-double DAT_00889E20 = DAT_007E1720 * DAT_007E2230;
-
-// SYNTHETIC: GAMEMD 0x004126F0 SYMBOL
-// _$E22
-double DAT_00887860 = DAT_007E1728 * DAT_007E2230;
-
-// SYNTHETIC: GAMEMD 0x00412710 SYMBOL
-// _$E25
-double DAT_00887838 = DAT_007E1730 * DAT_007E2230;
-
-// SYNTHETIC: GAMEMD 0x00412730 SYMBOL
-// _$E28
-int DAT_00889E48 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00887838 - DAT_00887860) * DAT_00887858));
-
-// SYNTHETIC: GAMEMD 0x00412770 SYMBOL
-// _$E31
-double DAT_00887868 = FUN_004CADE0(DAT_00889E48 * DAT_007E1740);
-
-// SYNTHETIC: GAMEMD 0x004127A0 SYMBOL
-// _$E34
-double DAT_00887880 = FUN_004CADE0((DAT_00889E48 * 2) / DAT_00887858);
-
-// SYNTHETIC: GAMEMD 0x004127D0 SYMBOL
-// _$E37
-int DAT_00889E3C = (int)(DAT_00889E48 * 4 + DAT_007E1738);
-
-// SYNTHETIC: GAMEMD 0x00412800 SYMBOL
-// _$E40
-ShortPair DAT_00887850;
-
-// SYNTHETIC: GAMEMD 0x00412810 SYMBOL
-// _$E43
-IntTriple DAT_00887870;
-
-// SYNTHETIC: GAMEMD 0x00412830 SYMBOL
-// _$E46
-IntPairSized DAT_00889E30;
-
 // SYNTHETIC: GAMEMD 0x00412850 SYMBOL
 // _$E49
-IntQuad DAT_00887840;
+const Rect RECT_NONE_2(0, 0, 0, 0);
+
+// SYNTHETIC: GAMEMD 0x00412660 SYMBOL
+// _$E10
+// SYNTHETIC: GAMEMD 0x00412690 SYMBOL
+// _$E13
+// SYNTHETIC: GAMEMD 0x004126B0 SYMBOL
+// _$E16
+// SYNTHETIC: GAMEMD 0x004126D0 SYMBOL
+// _$E19
+// SYNTHETIC: GAMEMD 0x004126F0 SYMBOL
+// _$E22
+// SYNTHETIC: GAMEMD 0x00412710 SYMBOL
+// _$E25
+// SYNTHETIC: GAMEMD 0x00412730 SYMBOL
+// _$E28
+// SYNTHETIC: GAMEMD 0x00412770 SYMBOL
+// _$E31
+// SYNTHETIC: GAMEMD 0x004127A0 SYMBOL
+// _$E34
+// SYNTHETIC: GAMEMD 0x004127D0 SYMBOL
+// _$E37
+// SYNTHETIC: GAMEMD 0x00412800 SYMBOL
+// _$E40
+// SYNTHETIC: GAMEMD 0x00412810 SYMBOL
+// _$E43
+// SYNTHETIC: GAMEMD 0x00412830 SYMBOL
+// _$E46
+

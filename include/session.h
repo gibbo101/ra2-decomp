@@ -30,7 +30,7 @@ class UnitClass;
 class PhoneEntryClass;
 class CellClass;
 class INIClass;
-class MPGameModeClass;
+class MultiplayerGameMode;
 class CCINIClass;
 
 #define	MPLAYER_BUILD_LEVEL_MAX		10
@@ -39,14 +39,9 @@ class CCINIClass;
 #define	MAX_IPX_PACKET_SIZE			558
 #define	MAX_SERIAL_PACKET_SIZE		256
 
-#ifdef HOUSE_NAME_MAX
-#define	MPLAYER_NAME_MAX			HOUSE_NAME_MAX
-#else
-#define	MPLAYER_NAME_MAX			12
-#endif
+#include "mplayerscore.h"
 
 #define	MAX_MULTI_NAMES	8
-#define	MAX_MULTI_GAMES	4
 
 #define MODEM_MIN_MAX_AHEAD			5
 #define NETWORK_MIN_MAX_AHEAD		2
@@ -166,21 +161,6 @@ enum NetCommandType {
 	NET_PREVIEW_ACK,
 	NET_REQ_PREVIEW,
 	NET_PROPOSE_KICK,
-};
-
-struct MPlayerScoreType {
-	wchar_t Name[MPLAYER_NAME_MAX];
-
-	int Scheme;
-
-	int Wins;
-
-	int Lost[MAX_MULTI_GAMES];
-	int Kills[MAX_MULTI_GAMES];
-
-	int Built[MAX_MULTI_GAMES];
-
-	int Score[MAX_MULTI_GAMES];
 };
 
 struct SerialSettingsType {
@@ -563,7 +543,7 @@ class SessionClass
 		bool Log_To_File(FILE *out);
 
 		GameType Type;
-		MPGameModeClass * MPGameMode;
+		MultiplayerGameMode * MPGameMode;
 		int unknown_08;
 		int unknown_0C;
 		int unknown_10;
@@ -703,7 +683,7 @@ class SessionClass
 		ModemGameType ModemType;
 		DynamicVectorClass<PhoneEntryClass *> PhoneBook;
 		DynamicVectorClass <char *> InitStrings;
-		DynamicVectorClass <char const *> CallWaitStrings;
+		DynamicVectorClass <wchar_t const *> CallWaitStrings;
 		static char const * DialMethodCheck[ DIAL_METHODS ];
 		static char const * const CallWaitStringIDs[ CALL_WAIT_STRINGS_NUM ];
 

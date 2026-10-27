@@ -843,13 +843,13 @@ INIClass::INISection::~INISection(void)
 // ??_GBufferStraw@@UAEPAXI@Z
 
 // SYNTHETIC: GAMEMD 0x0052AEA0
-// ??_GStraw@@UAEPAXI@Z
+// ??_GBase64Straw@@UAEPAXI@Z
 
 // FUNCTION: GAMEMD 0x0052AEC0
 // CRCEngine::CRCEngine
 
 // SYNTHETIC: GAMEMD 0x0052AEE0
-// ??_GPipe@@UAEPAXI@Z
+// ??_GBase64Pipe@@UAEPAXI@Z
 
 // FUNCTION: GAMEMD 0x0052AF00
 // INIClass::INIEntry::INIEntry

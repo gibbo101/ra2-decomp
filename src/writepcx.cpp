@@ -6,6 +6,7 @@
 #include "always.h"
 
 #include "dsurface.h"
+#include "geometry.h"
 #include "pcx.h"
 #include <math.h>
 
@@ -213,88 +214,29 @@ static int Write_Pcx_ScanLine_Buf( int scansize, char * ptr, char * file_ptr )
 	return(size);
 }
 
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007F7938;
-extern const double DAT_007F7940;
-
 // SYNTHETIC: GAMEMD 0x007B0BA0 SYMBOL
 // _$E23
-double DAT_00B77FC0 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2.0);
-
 // SYNTHETIC: GAMEMD 0x007B0BD0 SYMBOL
 // _$E26
-double DAT_00B78010 = DAT_00B77FC0 / DAT_007F7938;
-
 // SYNTHETIC: GAMEMD 0x007B0BF0 SYMBOL
 // _$E29
-double DAT_00B77FF8 = DAT_007E1718 / DAT_00B78010;
-
 // SYNTHETIC: GAMEMD 0x007B0C10 SYMBOL
 // _$E32
-double DAT_00B77FF0 = DAT_007E1720 * DAT_007F7940;
-
 // SYNTHETIC: GAMEMD 0x007B0C30 SYMBOL
 // _$E35
-double DAT_00B77FC8 = DAT_007E1728 * DAT_007F7940;
-
 // SYNTHETIC: GAMEMD 0x007B0C50 SYMBOL
 // _$E38
-double DAT_00B77FB0 = DAT_007E1730 * DAT_007F7940;
-
 // SYNTHETIC: GAMEMD 0x007B0C70 SYMBOL
 // _$E41
-int DAT_00B78018 = (int)(FUN_004CAD50(DAT_00B77FB0 - DAT_00B77FC8) * DAT_007E1738 * DAT_00B77FC0);
-
 // SYNTHETIC: GAMEMD 0x007B0CB0 SYMBOL
 // _$E44
-double DAT_00B77FD0 = FUN_004CADE0(DAT_00B78018 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x007B0CE0 SYMBOL
 // _$E47
-double DAT_00B77FE8 = FUN_004CADE0((DAT_00B78018 * 2) / DAT_00B77FC0);
-
 // SYNTHETIC: GAMEMD 0x007B0D10 SYMBOL
 // _$E50
-int DAT_00B7800C = (int)(DAT_00B78018 * 4 + DAT_007E1738);
-
-struct WritePcxShortPair {
-	short A;
-	short B;
-	WritePcxShortPair(void) : A(0), B(0) {}
-};
-
-struct WritePcxZeroTriple {
-	int A;
-	int B;
-	int C;
-	WritePcxZeroTriple(void) : A(0), B(0), C(0) {}
-};
-
-struct WritePcxHalfTriple {
-	int A;
-	int B;
-	int C;
-	WritePcxHalfTriple(void) : A(0x80), B(0x80), C(0) {}
-};
-
 // SYNTHETIC: GAMEMD 0x007B0D40 SYMBOL
 // _$E53
-WritePcxShortPair DAT_00B77FB8;
-
 // SYNTHETIC: GAMEMD 0x007B0D50 SYMBOL
 // _$E56
-WritePcxZeroTriple DAT_00B77FD8;
-
 // SYNTHETIC: GAMEMD 0x007B0D70 SYMBOL
 // _$E59
-WritePcxHalfTriple DAT_00B78000;

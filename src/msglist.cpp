@@ -21,92 +21,40 @@
 #include "vector.h"
 #include "bitfont.h"
 #include "dsurface.h"
+#include "geometry.h"
 #include <cstdio>
 #include <math.h>
 
 void FUN_00778170(void);
 void FUN_00778180(void);
 void FUN_007781A0(void);
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007EEC78;
-extern const double DAT_007EEC80;
-
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
 
 // SYNTHETIC: GAMEMD 0x005D37E0 SYMBOL
 // _$E37
-double DAT_00ABFC30 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2.0);
-
 // SYNTHETIC: GAMEMD 0x005D3810 SYMBOL
 // _$E40
-double DAT_00ABFC80 = DAT_00ABFC30 / DAT_007EEC78;
-
 // SYNTHETIC: GAMEMD 0x005D3830 SYMBOL
 // _$E43
-double DAT_00ABFC68 = DAT_007E1718 / DAT_00ABFC80;
-
 // SYNTHETIC: GAMEMD 0x005D3850 SYMBOL
 // _$E46
-double DAT_00ABFC60 = DAT_007E1720 * DAT_007EEC80;
-
 // SYNTHETIC: GAMEMD 0x005D3870 SYMBOL
 // _$E49
-double DAT_00ABFC38 = DAT_007E1728 * DAT_007EEC80;
-
 // SYNTHETIC: GAMEMD 0x005D3890 SYMBOL
 // _$E52
-double DAT_00ABFC10 = DAT_007E1730 * DAT_007EEC80;
-
 // SYNTHETIC: GAMEMD 0x005D38B0 SYMBOL
 // _$E55
-int DAT_00ABFC88 = (int)(FUN_004CAD50(DAT_00ABFC10 - DAT_00ABFC38) * DAT_007E1738 * DAT_00ABFC30);
-
 // SYNTHETIC: GAMEMD 0x005D38F0 SYMBOL
 // _$E58
-double DAT_00ABFC40 = FUN_004CADE0(DAT_00ABFC88 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x005D3920 SYMBOL
 // _$E61
-double DAT_00ABFC58 = FUN_004CADE0((DAT_00ABFC88 * 2) / DAT_00ABFC30);
-
 // SYNTHETIC: GAMEMD 0x005D3950 SYMBOL
 // _$E64
-int DAT_00ABFC7C = (int)(DAT_00ABFC88 * 4 + DAT_007E1738);
-
 // SYNTHETIC: GAMEMD 0x005D3980 SYMBOL
 // _$E67
-ShortPair DAT_00ABFC28;
-
 // SYNTHETIC: GAMEMD 0x005D3990 SYMBOL
 // _$E70
-IntTriple DAT_00ABFC48;
-
-struct HalfTriple {
-	int A, B, C;
-	HalfTriple() { C = 0; A = 0x80; B = 0x80; }
-};
-
 // SYNTHETIC: GAMEMD 0x005D39B0 SYMBOL
 // _$E73
-HalfTriple DAT_00ABFC70;
 
 // FUNCTION: GAMEMD 0x005D39D0
 MessageListClass::MessageListClass(void)

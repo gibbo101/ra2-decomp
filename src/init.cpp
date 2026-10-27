@@ -4449,11 +4449,11 @@ template class VectorClass<CommandClass const *>;
 // SYNTHETIC: GAMEMD 0x00538A20
 // ??_E?$rc_ptr@VWDTTerritory@@@@UAEPAXI@Z
 // SYNTHETIC: GAMEMD 0x00538A90
-// ??_G?$VectorClass@PBVCommandClass@@@@UAEPAXI@Z
+// ??_G?$VectorClass@PAVCCINIClass@@@@UAEPAXI@Z
 // SYNTHETIC: GAMEMD 0x00538AE0
-// ??_G?$DynamicVectorClass@PBVCommandClass@@@@UAEPAXI@Z
+// ??_G?$DynamicVectorClass@PAVCCINIClass@@@@UAEPAXI@Z
 // TEMPLATE: GAMEMD 0x00538B30
-// ??0?$VectorClass@PBVCommandClass@@@@QAE@HPBQBVCommandClass@@@Z
+// ??0?$VectorClass@PAVCCINIClass@@@@QAE@HPBQAVCCINIClass@@@Z
 // TEMPLATE: GAMEMD 0x00538B80
 // ?Increase_Table_Size@?$IndexClass@HPBVCommandClass@@@@AAE_NH@Z
 template class IndexClass<int, CommandClass const *>;

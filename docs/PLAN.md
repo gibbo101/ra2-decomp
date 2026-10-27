@@ -1,6 +1,6 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 26 October 2026: 14,507 of 19,366 game functions match (75%; 53% of game code
+Status, 27 October 2026: 14,503 of 19,366 game functions match (75%; 53% of game code
 by size), landed in batches module by module. The rounds below record each one.
 
 ## The goal
@@ -420,6 +420,10 @@ never paste their headers verbatim.
      spanning a segment end: 14,348 of 19,283 game functions are named; 4,935 are not,
      mostly whole segments with no evidence yet (the twelve before `abstract`). Direct
      calls barely help (8% go to a function within 20 places).
+     Corrected 27 October 2026: the 23-byte initialiser and the header's 13-initialiser
+     run start a module rather than end one, since a compiled object emits its header
+     initialisers first; `tools/modules.py` now cuts before them and, with four new kinds
+     of evidence, names 18,044 functions, leaving 62 provisional `seg_` ranges.
    - **Data probe: AbsType.cpp (11 October 2026).** `src/abstype.cpp`, from the TibSun
      archive's version with YR's changes, matches 7 of the module's 8 written functions
      (691 of 990 bytes); `Read_INI` is a register-allocation near miss (42.6%, `this` in
@@ -1109,6 +1113,17 @@ Session.Players. Recording then exposed three UI-command functions building char
 ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; their RTTI
 fixed them. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
+
+### Cleanup after round 105 to 107 (26 to 27 October 2026)
+
+Three agents between rounds. Template-instance labels: 288 in 40 files now name the class
+their vtable's RTTI gives (wrong element types, VectorClass and DynamicVectorClass swapped),
+MPGameModeClass became the exe's MultiplayerGameMode, and check.py fails a template label
+the exe's vtables contradict (tools/rtti.py; 58 warnings remain for classes needing
+modelling work). About 75 more files moved their per-file constants onto geometry.h; about
+60 keep stand-ins, most because they claim the next module's header run. Module map: see
+the correction under "Module layout". Four duplicated markers were removed, so the gate
+reads 14,503 of 14,503 (1,993.5 KB).
 
 ### Batches 105, 106 and 107 (26 October 2026)
 

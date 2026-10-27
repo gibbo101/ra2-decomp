@@ -15,6 +15,7 @@
 #include "language\language.h"
 #include "mapgen.h"
 #include "mixfile.h"
+#include "geometry.h"
 #include "ownrdraw.h"
 #include "pcx.h"
 #include "rcptr.h"
@@ -25,73 +26,32 @@
 #include <cmath>
 
 namespace fastmath { double __cdecl sqrt(double x); double __cdecl tan(double x); double __cdecl atan(double x); }
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007F7908;
-extern const double DAT_007F7910;
-
 // SYNTHETIC: GAMEMD 0x007AF0B0 SYMBOL
 // _$E35
-double DAT_00B77EE8 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x007AF0E0 SYMBOL
 // _$E38
-double DAT_00B77F88 = DAT_00B77EE8 / DAT_007F7908;
-
 // SYNTHETIC: GAMEMD 0x007AF100 SYMBOL
 // _$E41
-double DAT_00B77F40 = DAT_007E1718 / DAT_00B77F88;
-
 // SYNTHETIC: GAMEMD 0x007AF120 SYMBOL
 // _$E44
-double DAT_00B77F38 = DAT_007E1720 * DAT_007F7910;
-
 // SYNTHETIC: GAMEMD 0x007AF140 SYMBOL
 // _$E47
-double DAT_00B77EF8 = DAT_007E1728 * DAT_007F7910;
-
 // SYNTHETIC: GAMEMD 0x007AF160 SYMBOL
 // _$E50
-double DAT_00B77EB8 = DAT_007E1730 * DAT_007F7910;
-
 // SYNTHETIC: GAMEMD 0x007AF180 SYMBOL
 // _$E53
-int DAT_00B77F90 = (int)(DAT_007E1738 * (fastmath::tan(DAT_00B77EB8 - DAT_00B77EF8) * DAT_00B77EE8));
-
 // SYNTHETIC: GAMEMD 0x007AF1C0 SYMBOL
 // _$E56
-double DAT_00B77F00 = fastmath::atan(DAT_00B77F90 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x007AF1F0 SYMBOL
 // _$E59
-double DAT_00B77F28 = fastmath::atan((DAT_00B77F90 * 2) / DAT_00B77EE8);
-
 // SYNTHETIC: GAMEMD 0x007AF220 SYMBOL
 // _$E62
-int DAT_00B77F80 = (int)(DAT_00B77F90 * 4 + DAT_007E1738);
-
-struct WDTShortPair { short a; short b; WDTShortPair(void) { a = 0; b = 0; } };
-struct WDTIntTriple { int a; int b; int c; WDTIntTriple(void) { a = 0; b = 0; c = 0; } };
-
 // SYNTHETIC: GAMEMD 0x007AF250 SYMBOL
 // _$E65
-WDTShortPair DAT_00B77EE0;
-
 // SYNTHETIC: GAMEMD 0x007AF260 SYMBOL
 // _$E68
-WDTIntTriple DAT_00B77F10;
-
-struct WDTCenter { int x; int y; int z; WDTCenter(void) { z = 0; x = 0x80; y = 0x80; } };
-
 // SYNTHETIC: GAMEMD 0x007AF280 SYMBOL
 // _$E71
-WDTCenter DAT_00B77F48;
 
 // FUNCTION: GAMEMD 0x007AF2A0
 Wstring & __fastcall WDT_Faction_Name(int side)
@@ -257,17 +217,17 @@ rc_ptr<WDTState> DAT_00B77F70;
 // _$E106
 // SYNTHETIC: GAMEMD 0x007B01B0 SYMBOL
 // _$E104
-rc_ptr<WorldDominationTour::History> DAT_00B77F68;
+rc_ptr<WorldDominationTour::Campaign> DAT_00B77F68;
 
 // SYNTHETIC: GAMEMD 0x007B01D0 SYMBOL
 // _$E111
 // SYNTHETIC: GAMEMD 0x007B01F0 SYMBOL
 // _$E109
-rc_ptr<WorldDominationTour::History> DAT_00B77F78;
+rc_ptr<WorldDominationTour::Campaign> DAT_00B77F78;
 
 extern Wstring DAT_00B73E40;
 rc_ptr<WorldDominationTour::CampaignProperties> __fastcall FUN_0076BE90(rc_ptr<WDTState> const & state);
-rc_ptr<WorldDominationTour::History> __fastcall FUN_00764B30(Wstring const & name, rc_ptr<WorldDominationTour::CampaignProperties> const & props);
+rc_ptr<WorldDominationTour::Campaign> __fastcall FUN_00764B30(Wstring const & name, rc_ptr<WorldDominationTour::CampaignProperties> const & props);
 
 // FUNCTION: GAMEMD 0x007B0210
 rc_ptr<WDTState> * __cdecl FUN_007B0210(void)
@@ -330,13 +290,13 @@ void __fastcall FUN_007B0350(char * state)
 }
 
 // FUNCTION: GAMEMD 0x007B0370
-rc_ptr<WorldDominationTour::History> * __cdecl FUN_007B0370(void)
+rc_ptr<WorldDominationTour::Campaign> * __cdecl FUN_007B0370(void)
 {
 	return &DAT_00B77F68;
 }
 
 // FUNCTION: GAMEMD 0x007B0380
-rc_ptr<WorldDominationTour::History> * __cdecl FUN_007B0380(void)
+rc_ptr<WorldDominationTour::Campaign> * __cdecl FUN_007B0380(void)
 {
 	return &DAT_00B77F78;
 }

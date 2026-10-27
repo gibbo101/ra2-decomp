@@ -621,75 +621,42 @@ template class VectorClass<TiberiumClass *>;
 template class DynamicVectorClass<TiberiumClass *>;
 
 // SYNTHETIC: GAMEMD 0x007239F0
-// ??_G?$DynamicVectorClass@PAVTiberiumClass@@@@UAEPAXI@Z
-// SYNTHETIC: GAMEMD 0x00723A40
 // ??_G?$VectorClass@PAVTiberiumClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00723A40
+// ??_G?$DynamicVectorClass@PAVTiberiumClass@@@@UAEPAXI@Z
 
 namespace fastmath { double __cdecl sqrt(double x); }
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007F5798;
+
+namespace fastmath { double __cdecl tan(double x); double __cdecl atan(double x); }
+
+#include "geometry.h"
 
 // SYNTHETIC: GAMEMD 0x00723A90 SYMBOL
 // _$E64
-double DAT_00B0F538 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x00723AC0 SYMBOL
 // _$E67
-double DAT_00B0F588 = DAT_00B0F538 / DAT_007F5798;
-
 // SYNTHETIC: GAMEMD 0x00723AE0 SYMBOL
 // _$E70
-double DAT_00B0F570 = DAT_007E1718 / DAT_00B0F588;
-
-namespace fastmath { double __cdecl tan(double x); double __cdecl atan(double x); }
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007F57A0;
-
 // SYNTHETIC: GAMEMD 0x00723B00 SYMBOL
 // _$E73
-double DAT_00B0F568 = DAT_007E1720 * DAT_007F57A0;
-
 // SYNTHETIC: GAMEMD 0x00723B20 SYMBOL
 // _$E76
-double DAT_00B0F540 = DAT_007E1728 * DAT_007F57A0;
-
 // SYNTHETIC: GAMEMD 0x00723B40 SYMBOL
 // _$E79
-double DAT_00B0F518 = DAT_007E1730 * DAT_007F57A0;
-
 // SYNTHETIC: GAMEMD 0x00723B60 SYMBOL
 // _$E82
-int DAT_00B0F590 = (int)(fastmath::tan(DAT_00B0F518 - DAT_00B0F540) * DAT_007E1738 * DAT_00B0F538);
-
 // SYNTHETIC: GAMEMD 0x00723BA0 SYMBOL
 // _$E85
-double DAT_00B0F548 = fastmath::atan(DAT_00B0F590 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x00723BD0 SYMBOL
 // _$E88
-double DAT_00B0F560 = fastmath::atan((DAT_00B0F590 * 2) / DAT_00B0F538);
-
 // SYNTHETIC: GAMEMD 0x00723C00 SYMBOL
 // _$E91
-int DAT_00B0F584 = (int)((DAT_00B0F590 * 4) + DAT_007E1738);
-
 // SYNTHETIC: GAMEMD 0x00723C30 SYMBOL
 // _$E94
-Cell DAT_00B0F530(0, 0);
-
 // SYNTHETIC: GAMEMD 0x00723C40 SYMBOL
 // _$E97
-Coord DAT_00B0F550(0, 0, 0);
-
 // SYNTHETIC: GAMEMD 0x00723C60 SYMBOL
 // _$E100
-Coord DAT_00B0F578(128, 128, 0);
 
 // SYNTHETIC: GAMEMD 0x00723C80 SYMBOL
 // _$E103

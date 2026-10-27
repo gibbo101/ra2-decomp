@@ -14,6 +14,7 @@
 #include "partsys.h"
 #include "psystype.h"
 #include "session.h"
+#include "geometry.h"
 #include "stimer.h"
 #include "sun.h"
 #include "swizzle.h"
@@ -98,7 +99,7 @@ WarheadTypeClass::WarheadTypeClass(char const * ininame) :
 {
 	Make_ID(this);
 
-	TypeList<VoxelAnimTypeClass *> * debris = &DebrisTypes;
+	TypeList<VoxelAnimTypeClass const *> * debris = &DebrisTypes;
 	TypeList<int> * maximums = &DebrisMaximums;
 	debris->Clear();
 	maximums->Clear();
@@ -252,84 +253,41 @@ RTTIType WarheadTypeClass::Fetch_RTTI(void) const
 // ??_GWarheadTypeClass@@UAEPAXI@Z
 
 // TEMPLATE: GAMEMD 0x0075E690
-// ??0?$TypeList@PAVVoxelAnimTypeClass@@@@QAE@ABVNoInitClass@@@Z
+// ??0?$TypeList@PBVVoxelAnimTypeClass@@@@QAE@ABVNoInitClass@@@Z
 
 // TEMPLATE: GAMEMD 0x0075E6A0
 // ??0?$TypeList@H@@QAE@ABVNoInitClass@@@Z
 
 #include <math.h>
 
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007F6BA0;
-extern const double DAT_007F6BA8;
-
 // SYNTHETIC: GAMEMD 0x0075E740 SYMBOL
 // _$E35
-double DAT_00B45D80 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x0075E770 SYMBOL
 // _$E38
-double DAT_00B725C0 = DAT_00B45D80 / DAT_007F6BA0;
-
 // SYNTHETIC: GAMEMD 0x0075E790 SYMBOL
 // _$E41
-double DAT_00B46688 = DAT_007E1718 / DAT_00B725C0;
-
 // SYNTHETIC: GAMEMD 0x0075E7B0 SYMBOL
 // _$E44
-double DAT_00B46680 = DAT_007E1720 * DAT_007F6BA8;
-
 // SYNTHETIC: GAMEMD 0x0075E7D0 SYMBOL
 // _$E47
-double DAT_00B45D90 = DAT_007E1728 * DAT_007F6BA8;
-
 // SYNTHETIC: GAMEMD 0x0075E7F0 SYMBOL
 // _$E50
-double DAT_00B45D60 = DAT_007E1730 * DAT_007F6BA8;
-
 // SYNTHETIC: GAMEMD 0x0075E810 SYMBOL
 // _$E53
-int DAT_00B725C8 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B45D60 - DAT_00B45D90) * DAT_00B45D80));
-
 // SYNTHETIC: GAMEMD 0x0075E850 SYMBOL
 // _$E56
-double DAT_00B45D98 = FUN_004CADE0(DAT_00B725C8 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x0075E880 SYMBOL
 // _$E59
-double DAT_00B46640 = FUN_004CADE0((DAT_00B725C8 * 2) / DAT_00B45D80);
-
 // SYNTHETIC: GAMEMD 0x0075E8B0 SYMBOL
 // _$E62
-int DAT_00B725BC = (int)(DAT_00B725C8 * 4 + DAT_007E1738);
-
-struct Pair16 { short a; short b; Pair16() : a(0), b(0) {} };
-struct Trio { int a; int b; int c; Trio() : a(0), b(0), c(0) {} };
-struct Quad { int a; int b; int c; int d; Quad() : a(0), b(0), c(0), d(0) {} };
-struct Mid { int a; int b; int c; Mid() : c(0), a(128), b(128) {} };
-
 // SYNTHETIC: GAMEMD 0x0075E8E0 SYMBOL
 // _$E65
-Pair16 DAT_00B45D78;
-
 // SYNTHETIC: GAMEMD 0x0075E8F0 SYMBOL
 // _$E68
-Trio DAT_00B46248;
-
 // SYNTHETIC: GAMEMD 0x0075E910 SYMBOL
 // _$E71
-Mid DAT_00B46690;
 
 // SYNTHETIC: GAMEMD 0x0075E930 SYMBOL
 // _$E74
-Quad DAT_00B45D68;
+const Rect RECT_NONE_2(0, 0, 0, 0);
+

@@ -10,6 +10,7 @@
 #include "coopcamp.h"
 #include "house.h"
 #include "houstype.h"
+#include "mplayerscore.h"
 #include <cstring>
 #include <cctype>
 #include <math.h>
@@ -22,7 +23,7 @@ void __fastcall FUN_005E3720(char const * text);
 extern DynamicVectorClass<HouseClass *> DAT_00A80228;
 
 char __fastcall FUN_0049B430(int nibble);
-void __fastcall FUN_0049B7E0(CoopPlayerStats * stats, bool second);
+void __fastcall FUN_0049B7E0(MPlayerScoreType * stats, bool second);
 
 static inline char HexDigit(int nibble)
 {
@@ -106,7 +107,7 @@ char * __fastcall FUN_0049B540(char const * text)
 }
 
 // FUNCTION: GAMEMD 0x0049B610
-CoopCamp_0049B610 * CoopCamp_0049B610::FUN_0049B610(void)
+CoopCampaignClass * CoopCampaignClass::FUN_0049B610(void)
 {
 	Name[0] = 0;
 	Map[0] = 0;
@@ -132,7 +133,7 @@ CoopCamp_0049B610 * CoopCamp_0049B610::FUN_0049B610(void)
 }
 
 // FUNCTION: GAMEMD 0x0049B660
-CoopCamp_0049B610 * CoopCamp_0049B610::FUN_0049B660(wchar_t const * name, wchar_t const * map)
+CoopCampaignClass * CoopCampaignClass::FUN_0049B660(wchar_t const * name, wchar_t const * map)
 {
 	if (name) {
 		strcpy(Name, FUN_007350C0(name));
@@ -166,7 +167,7 @@ CoopCamp_0049B610 * CoopCamp_0049B610::FUN_0049B660(wchar_t const * name, wchar_
 }
 
 // FUNCTION: GAMEMD 0x0049B720
-void CoopCamp_0049B610::FUN_0049B720(void)
+void CoopCampaignClass::FUN_0049B720(void)
 {
 	if (Items) {
 		for (int i = 0; i < ItemCount; i++) {
@@ -179,7 +180,7 @@ void CoopCamp_0049B610::FUN_0049B720(void)
 }
 
 // FUNCTION: GAMEMD 0x0049B760
-void CoopCamp_0049B610::FUN_0049B760(wchar_t const * name, wchar_t const * map)
+void CoopCampaignClass::FUN_0049B760(wchar_t const * name, wchar_t const * map)
 {
 	if (name) {
 		strcpy(Name, FUN_007350C0(name));
@@ -194,22 +195,22 @@ void CoopCamp_0049B610::FUN_0049B760(wchar_t const * name, wchar_t const * map)
 }
 
 // FUNCTION: GAMEMD 0x0049B7E0
-void __fastcall FUN_0049B7E0(CoopPlayerStats * stats, bool second)
+void __fastcall FUN_0049B7E0(MPlayerScoreType * stats, bool second)
 {
 	int count = DAT_00A80228.Count();
 	for (int i = 0; i < count; i++) {
 		HouseClass * house = DAT_00A80228[i];
 		if (house && house->Class->IsMultiplayPassive != true && house->IsHuman) {
 			if (!second) {
-				stats->Alive = 0;
+				stats->Wins = 0;
 				wcscpy(stats->Name, house->UIName);
-				stats->Lost = 0;
-				stats->Kills = 0;
-				stats->Built = 0;
-				stats->Score = 0;
+				stats->Lost[0] = 0;
+				stats->Kills[0] = 0;
+				stats->Built[0] = 0;
+				stats->Score[0] = 0;
 				stats->Scheme = house->Scheme;
 				if (!house->IsDefeated) {
-					stats->Alive++;
+					stats->Wins++;
 				}
 				int kills = 0;
 				for (int k = 0; k < 20; k++) {
@@ -218,23 +219,23 @@ void __fastcall FUN_0049B7E0(CoopPlayerStats * stats, bool second)
 				for (int m = 0; m < count; m++) {
 					kills += house->BuildingsKilled[m];
 				}
-				stats->Kills = kills;
-				stats->Lost = house->UnitsLost + house->BuildingsLost;
+				stats->Kills[0] = kills;
+				stats->Lost[0] = house->UnitsLost + house->BuildingsLost;
 				int built = house->ABQuantity.Total();
 				built += house->AUQuantity.Total();
 				built += house->AIQuantity.Total();
 				built += house->AAQuantity.Total();
-				stats->Built = house->UnitsLost + house->BuildingsLost + built;
+				stats->Built[0] = house->UnitsLost + house->BuildingsLost + built;
 				if (house->PointTotal > 0) {
-					stats->Score += house->PointTotal;
+					stats->Score[0] += house->PointTotal;
 				}
 				char const * result = "Winner";
-				if (stats->Alive <= 0) {
+				if (stats->Wins <= 0) {
 					result = "Loser";
 				}
 				char * name = FUN_007350C0(stats->Name);
 				FUN_004068E0("@@@@ %s: %s\n Scheme: %d\n Lost = %d\n Kills = %d\n Built = %d\n Score = %d\n",
-					name, result, stats->Scheme, stats->Lost, stats->Kills, stats->Built, stats->Score);
+					name, result, stats->Scheme, stats->Lost[0], stats->Kills[0], stats->Built[0], stats->Score[0]);
 				return;
 			}
 			second = false;
@@ -243,7 +244,7 @@ void __fastcall FUN_0049B7E0(CoopPlayerStats * stats, bool second)
 }
 
 // FUNCTION: GAMEMD 0x0049BC80
-bool CoopCamp_0049B610::FUN_0049BC80(int * out)
+bool CoopCampaignClass::FUN_0049BC80(int * out)
 {
 	if (!Field6C) {
 		return false;
@@ -253,7 +254,7 @@ bool CoopCamp_0049B610::FUN_0049BC80(int * out)
 }
 
 // FUNCTION: GAMEMD 0x0049BCA0
-bool CoopCamp_0049B610::FUN_0049BCA0(int * out)
+bool CoopCampaignClass::FUN_0049BCA0(int * out)
 {
 	if (!Field6C) {
 		return false;
@@ -263,7 +264,7 @@ bool CoopCamp_0049B610::FUN_0049BCA0(int * out)
 }
 
 // FUNCTION: GAMEMD 0x0049BCC0
-bool CoopCamp_0049B610::FUN_0049BCC0(int * out)
+bool CoopCampaignClass::FUN_0049BCC0(int * out)
 {
 	if (!Field6C) {
 		return false;
@@ -273,7 +274,7 @@ bool CoopCamp_0049B610::FUN_0049BCC0(int * out)
 }
 
 // FUNCTION: GAMEMD 0x0049BCE0
-bool CoopCamp_0049B610::FUN_0049BCE0(DynamicVectorClass<CoopPlayerStats *> * list, int * out)
+bool CoopCampaignClass::FUN_0049BCE0(DynamicVectorClass<MPlayerScoreType *> * list, int * out)
 {
 	if (!Field6C) {
 		return false;
@@ -282,22 +283,22 @@ bool CoopCamp_0049B610::FUN_0049BCE0(DynamicVectorClass<CoopPlayerStats *> * lis
 		operator delete((*list)[0]);
 		list->Delete_Index(0);
 	}
-	CoopPlayerStats * a = (CoopPlayerStats *)operator new(0x70);
+	MPlayerScoreType * a = (MPlayerScoreType *)operator new(0x70);
 	FUN_0049B7E0(a, false);
-	CoopPlayerStats * b = (CoopPlayerStats *)operator new(0x70);
+	MPlayerScoreType * b = (MPlayerScoreType *)operator new(0x70);
 	FUN_0049B7E0(b, true);
 	if (strcmp(Name, FUN_007350C0(a->Name)) != 0) {
-		CoopPlayerStats * t = a;
+		MPlayerScoreType * t = a;
 		a = b;
 		b = t;
 	}
 	for (int i = 0; i < 2; i++) {
-		CoopPlayerStats * s = (i == 0) ? a : b;
-		s->Kills = (&Field48)[i];
-		s->Built = (&Field50)[i];
-		s->Lost = (&Field58)[i];
-		s->Alive = Field38;
-		s->Score = (&Field60)[i];
+		MPlayerScoreType * s = (i == 0) ? a : b;
+		s->Kills[0] = (&Field48)[i];
+		s->Built[0] = (&Field50)[i];
+		s->Lost[0] = (&Field58)[i];
+		s->Wins = Field38;
+		s->Score[0] = (&Field60)[i];
 		list->Add(s);
 	}
 	*out = Field68;
@@ -305,7 +306,7 @@ bool CoopCamp_0049B610::FUN_0049BCE0(DynamicVectorClass<CoopPlayerStats *> * lis
 }
 
 // FUNCTION: GAMEMD 0x0049BE40
-bool CoopCamp_0049B610::FUN_0049BE40(void)
+bool CoopCampaignClass::FUN_0049BE40(void)
 {
 	if (!Name[0] || !Map[0]) {
 		return true;
@@ -358,7 +359,7 @@ bool CoopCamp_0049B610::FUN_0049BE40(void)
 }
 
 // FUNCTION: GAMEMD 0x0049C0D0
-bool CoopCamp_0049B610::FUN_0049C0D0(void)
+bool CoopCampaignClass::FUN_0049C0D0(void)
 {
 	if (!Name[0] || !Map[0]) {
 		return false;
@@ -441,7 +442,7 @@ bool CoopCamp_0049B610::FUN_0049C0D0(void)
 }
 
 // FUNCTION: GAMEMD 0x0049D070
-bool CoopCamp_0049B610::FUN_0049D070(void ** out, int index)
+bool CoopCampaignClass::FUN_0049D070(void ** out, int index)
 {
 	bool result = false;
 	*out = 0;
@@ -463,7 +464,7 @@ bool CoopCamp_0049B610::FUN_0049D070(void ** out, int index)
 }
 
 // FUNCTION: GAMEMD 0x0049D0C0
-bool CoopCamp_0049B610::FUN_0049D0C0(int * house, int * color)
+bool CoopCampaignClass::FUN_0049D0C0(int * house, int * color)
 {
 	if (Field6C) {
 		*house = Field14;
@@ -474,7 +475,7 @@ bool CoopCamp_0049B610::FUN_0049D0C0(int * house, int * color)
 }
 
 // FUNCTION: GAMEMD 0x0049D0F0
-bool CoopCamp_0049B610::FUN_0049D0F0(int * house, int * color)
+bool CoopCampaignClass::FUN_0049D0F0(int * house, int * color)
 {
 	if (Field6C) {
 		*house = Field30;
@@ -485,7 +486,7 @@ bool CoopCamp_0049B610::FUN_0049D0F0(int * house, int * color)
 }
 
 // FUNCTION: GAMEMD 0x0049D120
-bool CoopCamp_0049B610::FUN_0049D120(void)
+bool CoopCampaignClass::FUN_0049D120(void)
 {
 	if (!Name[0] || !Map[0]) {
 		return false;
@@ -536,7 +537,7 @@ bool CoopCamp_0049B610::FUN_0049D120(void)
 }
 
 // FUNCTION: GAMEMD 0x0049D390
-bool CoopCamp_0049B610::FUN_0049D390(char * out)
+bool CoopCampaignClass::FUN_0049D390(char * out)
 {
 	if (!Name[0] || !Map[0]) {
 		return false;
@@ -593,7 +594,7 @@ bool CoopCamp_0049B610::FUN_0049D390(char * out)
 }
 
 // FUNCTION: GAMEMD 0x0049D680
-bool CoopCamp_0049B610::FUN_0049D680(void)
+bool CoopCampaignClass::FUN_0049D680(void)
 {
 	if (!Field6C) {
 		return false;
@@ -813,7 +814,7 @@ template class VectorClass<CoopCampNameList *>;
 // TEMPLATE: GAMEMD 0x0049EDE0
 // ?ID@?$DynamicVectorClass@PAV?$DynamicVectorClass@PAD@@@@UAEHABQAV?$DynamicVectorClass@PAD@@@Z
 // SYNTHETIC: GAMEMD 0x0049EE10
-// ??_G?$VectorClass@PAV?$DynamicVectorClass@PAD@@@@UAEPAXI@Z
+// ??_G?$DynamicVectorClass@PAD@@UAEPAXI@Z
 // TEMPLATE: GAMEMD 0x0049EE60
 // ?Resize@?$VectorClass@PAD@@UAE_NHPBQAD@Z
 // TEMPLATE: GAMEMD 0x0049EF10
@@ -825,77 +826,41 @@ template class VectorClass<CoopCampNameList *>;
 // SYNTHETIC: GAMEMD 0x0049EFA0
 // ??_G?$VectorClass@PAD@@UAEPAXI@Z
 // SYNTHETIC: GAMEMD 0x0049EFF0
-// ??_G?$DynamicVectorClass@PAD@@UAEPAXI@Z
+// ??_G?$VectorClass@PAV?$DynamicVectorClass@PAD@@@@UAEPAXI@Z
 // SYNTHETIC: GAMEMD 0x0049F040
 // ??_G?$DynamicVectorClass@PAV?$DynamicVectorClass@PAD@@@@UAEPAXI@Z
 // TEMPLATE: GAMEMD 0x0049F090
 // ??0?$VectorClass@PAV?$DynamicVectorClass@PAD@@@@QAE@HPBQAV?$DynamicVectorClass@PAD@@@Z
 
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007E5C40;
-extern const double DAT_007E5C48;
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
+
+#include "geometry.h"
 
 // SYNTHETIC: GAMEMD 0x0049F0E0 SYMBOL
 // _$E26
-double DAT_0089F6C0 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x0049F110 SYMBOL
 // _$E29
-double DAT_0089F750 = DAT_0089F6C0 / DAT_007E5C40;
-
 // SYNTHETIC: GAMEMD 0x0049F130 SYMBOL
 // _$E32
-double DAT_0089F738 = DAT_007E1718 / DAT_0089F750;
-
 // SYNTHETIC: GAMEMD 0x0049F150 SYMBOL
 // _$E35
-double DAT_0089F730 = DAT_007E1720 * DAT_007E5C48;
-
 // SYNTHETIC: GAMEMD 0x0049F170 SYMBOL
 // _$E38
-double DAT_0089F6C8 = DAT_007E1728 * DAT_007E5C48;
-
 // SYNTHETIC: GAMEMD 0x0049F190 SYMBOL
 // _$E41
-double DAT_0089F680 = DAT_007E1730 * DAT_007E5C48;
-
 // SYNTHETIC: GAMEMD 0x0049F1B0 SYMBOL
 // _$E44
-int DAT_0089F758 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_0089F680 - DAT_0089F6C8) * DAT_0089F6C0));
-
 // SYNTHETIC: GAMEMD 0x0049F1F0 SYMBOL
 // _$E47
-double DAT_0089F6D0 = FUN_004CADE0(DAT_0089F758 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x0049F220 SYMBOL
 // _$E50
-double DAT_0089F728 = FUN_004CADE0((DAT_0089F758 * 2) / DAT_0089F6C0);
-
 // SYNTHETIC: GAMEMD 0x0049F250 SYMBOL
 // _$E53
-int DAT_0089F74C = (int)(DAT_0089F758 * 4 + DAT_007E1738);
-
 // SYNTHETIC: GAMEMD 0x0049F280 SYMBOL
 // _$E56
-TPoint2D<short> DAT_0089F6B8(0, 0);
-
 // SYNTHETIC: GAMEMD 0x0049F290 SYMBOL
 // _$E59
-TPoint3D<int> DAT_0089F718(0, 0, 0);
-
 // SYNTHETIC: GAMEMD 0x0049F2B0 SYMBOL
 // _$E62
-TPoint3D<int> DAT_0089F740(128, 128, 0);
 
 // SYNTHETIC: GAMEMD 0x0049F2D0 SYMBOL
 // _$E65

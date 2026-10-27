@@ -306,8 +306,8 @@ MouseClass::MouseClass(NoInitClass const & x) :
 }
 
 // TEMPLATE: GAMEMD 0x005BEA30
-// ??0?$DynamicVectorClass@VPoint2D@@@@QAE@IPBVPoint2D@@@Z
-template class DynamicVectorClass<Point2D>;
+// ??0?$DynamicVectorClass@U?$HashObject@II@@@@QAE@IPBU?$HashObject@II@@@Z
+template class DynamicVectorClass<HashObject<unsigned int, unsigned int> >;
 
 // SYNTHETIC: GAMEMD 0x005BEAB0 SYMBOL
 // _$E136

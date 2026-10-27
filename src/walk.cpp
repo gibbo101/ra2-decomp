@@ -21,74 +21,39 @@
 #include "tactical.h"
 #include "tube.h"
 #include "unit.h"
+#include "geometry.h"
 #include "layer.hh"
 #include "fastmath.h"
 #include "coord.h"
 #include "slavemgr.h"
 #include <new.h>
 
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007F69C0;
-extern const double DAT_007F69C8;
-
 // SYNTHETIC: GAMEMD 0x0075A8A0 SYMBOL
 // _$E96
-double DAT_00B45BD0 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x0075A8D0 SYMBOL
 // _$E99
-double DAT_00B45C20 = DAT_00B45BD0 / DAT_007F69C0;
-
 // SYNTHETIC: GAMEMD 0x0075A8F0 SYMBOL
 // _$E102
-double DAT_00B45C08 = DAT_007E1718 / DAT_00B45C20;
-
 // SYNTHETIC: GAMEMD 0x0075A910 SYMBOL
 // _$E105
-double DAT_00B45C00 = DAT_007E1720 * DAT_007F69C8;
-
 // SYNTHETIC: GAMEMD 0x0075A930 SYMBOL
 // _$E108
-double DAT_00B45BD8 = DAT_007E1728 * DAT_007F69C8;
-
 // SYNTHETIC: GAMEMD 0x0075A950 SYMBOL
 // _$E111
-double DAT_00B45BB0 = DAT_007E1730 * DAT_007F69C8;
-
 // SYNTHETIC: GAMEMD 0x0075A970 SYMBOL
 // _$E114
-int DAT_00B45C28 = (int)(fastmath::tan(DAT_00B45BB0 - DAT_00B45BD8) * DAT_007E1738 * DAT_00B45BD0);
-
 // SYNTHETIC: GAMEMD 0x0075A9B0 SYMBOL
 // _$E117
-double DAT_00B45BE0 = fastmath::atan(DAT_00B45C28 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x0075A9E0 SYMBOL
 // _$E120
-double DAT_00B45BF8 = fastmath::atan((DAT_00B45C28 * 2) / DAT_00B45BD0);
-
 // SYNTHETIC: GAMEMD 0x0075AA10 SYMBOL
 // _$E123
-int DAT_00B45C1C = (int)(DAT_00B45C28 * 4 + DAT_007E1738);
-
 // SYNTHETIC: GAMEMD 0x0075AA40 SYMBOL
 // _$E126
-Cell DAT_00B45BC8(0, 0);
-
 // SYNTHETIC: GAMEMD 0x0075AA50 SYMBOL
 // _$E129
-Coord DAT_00B45BE8(0, 0, 0);
-
 // SYNTHETIC: GAMEMD 0x0075AA70 SYMBOL
 // _$E132
-Coord DAT_00B45C10(128, 128, 0);
 
 // FUNCTION: GAMEMD 0x0075AA90
 WalkLocomotionClass::WalkLocomotionClass(void) :

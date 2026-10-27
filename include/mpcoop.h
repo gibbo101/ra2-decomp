@@ -15,7 +15,7 @@ class MPCoopObject
 	public:
 		MPCoopObject(void);
 		virtual ~MPCoopObject(void);
-		virtual void Send(DynamicVectorClass<CoopPlayerStats *> stats, unsigned time, bool partial, int side, wchar_t const * title);
+		virtual void Send(DynamicVectorClass<MPlayerScoreType *> stats, unsigned time, bool partial, int side, wchar_t const * title);
 
 		int Field4;
 };
@@ -25,13 +25,13 @@ class MPCoopReporter
 	public:
 		MPCoopReporter(void);
 		virtual ~MPCoopReporter(void);
-		virtual void Send(DynamicVectorClass<CoopPlayerStats *> stats, int total, int duration, int campaign, wchar_t const * title);
+		virtual void Send(DynamicVectorClass<MPlayerScoreType *> stats, int total, int duration, int campaign, wchar_t const * title);
 };
 
-class MPCooperative : public MPGameModeClass
+class MPCooperative : public MultiplayerGameMode
 {
 	public:
-		MPCooperative(NoInitClass const & x) : MPGameModeClass(x) {}
+		MPCooperative(NoInitClass const & x) : MultiplayerGameMode(x) {}
 		MPCooperative(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex);
 		virtual ~MPCooperative(void);
 		virtual bool vt_entry_04(void) override;
@@ -80,7 +80,7 @@ class MPCooperative : public MPGameModeClass
 		int FUN_005C35F0(void);
 		void FUN_005C23B0(HWND dialog, int control);
 
-		CoopCamp_0049B610 * Current;
+		CoopCampaignClass * Current;
 		int Field44;
 		bool Field48;
 		bool Field49;
@@ -117,7 +117,7 @@ class MPCooperative : public MPGameModeClass
 		char Field194[16];
 		DynamicVectorClass<int> Lists[8];
 		DynamicVectorClass<int> Lists2[8];
-		DynamicVectorClass<CoopCamp_0049B610 *> Campaigns;
+		DynamicVectorClass<CoopCampaignClass *> Campaigns;
 		int CampaignIndex;
 		bool Field340;
 };

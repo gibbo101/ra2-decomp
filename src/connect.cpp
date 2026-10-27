@@ -12,93 +12,38 @@
 #include <sys\timeb.h>
 #include <math.h>
 
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007E51A0;
-extern const double DAT_007E51A8;
-
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-struct IntTripleB {
-	int A, B, C;
-	IntTripleB() { C = 0; A = 0x80; B = 0x80; }
-};
-
-struct IntQuad {
-	int A, B, C, D;
-	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
-};
 
 extern ConnectionClass *DAT_00A8EA0C;
 
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
+
+#include "geometry.h"
 
 // SYNTHETIC: GAMEMD 0x0048BC70 SYMBOL
 // _$E3
-double DAT_0089E8B8 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x0048BCA0 SYMBOL
 // _$E6
-double DAT_0089E908 = DAT_0089E8B8 / DAT_007E51A0;
-
 // SYNTHETIC: GAMEMD 0x0048BCC0 SYMBOL
 // _$E9
-double DAT_0089E8F0 = DAT_007E1718 / DAT_0089E908;
-
 // SYNTHETIC: GAMEMD 0x0048BCE0 SYMBOL
 // _$E12
-double DAT_0089E8E8 = DAT_007E1720 * DAT_007E51A8;
-
 // SYNTHETIC: GAMEMD 0x0048BD00 SYMBOL
 // _$E15
-double DAT_0089E8C0 = DAT_007E1728 * DAT_007E51A8;
-
 // SYNTHETIC: GAMEMD 0x0048BD20 SYMBOL
 // _$E18
-double DAT_0089E898 = DAT_007E1730 * DAT_007E51A8;
-
 // SYNTHETIC: GAMEMD 0x0048BD40 SYMBOL
 // _$E21
-int DAT_0089E910 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_0089E898 - DAT_0089E8C0) * DAT_0089E8B8));
-
 // SYNTHETIC: GAMEMD 0x0048BD80 SYMBOL
 // _$E24
-double DAT_0089E8C8 = FUN_004CADE0(DAT_0089E910 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x0048BDB0 SYMBOL
 // _$E27
-double DAT_0089E8E0 = FUN_004CADE0((DAT_0089E910 * 2) / DAT_0089E8B8);
-
 // SYNTHETIC: GAMEMD 0x0048BDE0 SYMBOL
 // _$E30
-int DAT_0089E904 = (int)(DAT_0089E910 * 4 + DAT_007E1738);
-
 // SYNTHETIC: GAMEMD 0x0048BE10 SYMBOL
 // _$E33
-ShortPair DAT_0089E8B0;
-
 // SYNTHETIC: GAMEMD 0x0048BE20 SYMBOL
 // _$E36
-IntTriple DAT_0089E8D0;
-
 // SYNTHETIC: GAMEMD 0x0048BE40 SYMBOL
 // _$E39
-IntTripleB DAT_0089E8F8;
 
 // FUNCTION: GAMEMD 0x0048BE60
 ConnectionClass::ConnectionClass (int numsend, int numreceive,
@@ -503,9 +448,10 @@ const char *ConnectionClass::Command_Name(int command)
 	}
 }
 
+
 // SYNTHETIC: GAMEMD 0x0048C650
 // ??_GConnectionClass@@UAEPAXI@Z
 
 // SYNTHETIC: GAMEMD 0x0048C690 SYMBOL
-// _$E48
-IntQuad DAT_0089E930;
+// _$E75
+const Rect RECT_NONE_2(0, 0, 0, 0);

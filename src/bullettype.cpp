@@ -10,6 +10,7 @@
 #include "_rules.h"
 #include "animtype.h"
 #include "findmake.h"
+#include "geometry.h"
 #include "globals.h"
 #include "incdec.h"
 #include "rules.h"
@@ -24,81 +25,36 @@
 
 extern char DAT_00889F64[];
 
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E4908;
-extern const double DAT_007E4910;
-
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
 
 // SYNTHETIC: GAMEMD 0x0046B9B0 SYMBOL
 // _$E2
 
 // SYNTHETIC: GAMEMD 0x0046B9D0 SYMBOL
 // _$E57
-double DAT_0089DE98 = FUN_004CAC40(pow(256.0, 2.0) * 2);
-
 // SYNTHETIC: GAMEMD 0x0046BA00 SYMBOL
 // _$E60
-double DAT_0089DEE8 = DAT_0089DE98 / DAT_007E4908;
-
 // SYNTHETIC: GAMEMD 0x0046BA20 SYMBOL
 // _$E63
-double DAT_0089DED0 = 1.0 / DAT_0089DEE8;
-
 // SYNTHETIC: GAMEMD 0x0046BA40 SYMBOL
 // _$E66
-double DAT_0089DEC8 = DAT_007E4910 * 45.0;
-
 // SYNTHETIC: GAMEMD 0x0046BA60 SYMBOL
 // _$E69
-double DAT_0089DEA0 = DAT_007E4910 * 60.0;
-
 // SYNTHETIC: GAMEMD 0x0046BA80 SYMBOL
 // _$E72
-double DAT_0089DE78 = DAT_007E4910 * 90.0;
-
 // SYNTHETIC: GAMEMD 0x0046BAA0 SYMBOL
 // _$E75
-int DAT_0089DEF0 = (int)(FUN_004CAD50(DAT_0089DE78 - DAT_0089DEA0) * DAT_0089DE98 * 0.5);
-
 // SYNTHETIC: GAMEMD 0x0046BAE0 SYMBOL
 // _$E78
-double DAT_0089DEA8 = FUN_004CADE0(DAT_0089DEF0 * 0.00390625);
-
 // SYNTHETIC: GAMEMD 0x0046BB10 SYMBOL
 // _$E81
-double DAT_0089DEC0 = FUN_004CADE0((DAT_0089DEF0 * 2) / DAT_0089DE98);
-
 // SYNTHETIC: GAMEMD 0x0046BB40 SYMBOL
 // _$E84
-int DAT_0089DEE4 = (int)(DAT_0089DEF0 * 4 + 0.5);
-
 // SYNTHETIC: GAMEMD 0x0046BB70 SYMBOL
 // _$E87
-ShortPair DAT_0089DE90;
-
 // SYNTHETIC: GAMEMD 0x0046BB80 SYMBOL
 // _$E90
-IntTriple DAT_0089DEB0;
-
-struct IntTriple2 {
-	int A, B, C;
-	IntTriple2() { C = 0; A = 128; B = 128; }
-};
-
 // SYNTHETIC: GAMEMD 0x0046BBA0 SYMBOL
 // _$E93
-IntTriple2 DAT_0089DED8;
 
 // FUNCTION: GAMEMD 0x0046BBC0
 BulletTypeClass::BulletTypeClass(char const * name) :

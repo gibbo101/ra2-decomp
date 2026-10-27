@@ -344,9 +344,9 @@ template class DynamicVectorClass<DamageGroup *>;
 // TEMPLATE: GAMEMD 0x0048AFA0
 // ?ID@?$DynamicVectorClass@PAUDamageGroup@@@@UAEHABQAUDamageGroup@@@Z
 // SYNTHETIC: GAMEMD 0x0048AFD0
-// ??_G?$DynamicVectorClass@PAUDamageGroup@@@@UAEPAXI@Z
-// SYNTHETIC: GAMEMD 0x0048B020
 // ??_G?$VectorClass@PAUDamageGroup@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x0048B020
+// ??_G?$DynamicVectorClass@PAUDamageGroup@@@@UAEPAXI@Z
 // TEMPLATE: GAMEMD 0x0048B070
 // ??0?$VectorClass@PAUDamageGroup@@@@QAE@HPBQAUDamageGroup@@@Z
 template class VectorClass<DamageGroup *>;

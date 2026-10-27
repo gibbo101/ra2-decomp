@@ -4,42 +4,10 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
 #include "buffer.h"
 #include <math.h>
 
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007E3E78;
-extern const double DAT_007E3E80;
-
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
-
-struct Int3Init {
-	int A, B, C;
-	Int3Init() { C = 0; A = 0x80; B = 0x80; }
-};
-
-struct IntQuad {
-	int A, B, C, D;
-	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
-};
 
 // FUNCTION: GAMEMD 0x0043AEB0
 BufferClass::BufferClass(void *buffer, int size)
@@ -79,58 +47,35 @@ BufferClass::~BufferClass(void)
 	}
 }
 
-// SYNTHETIC: GAMEMD 0x0043AF40 SYMBOL
-// _$E2
-double DAT_0089C820 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
-// SYNTHETIC: GAMEMD 0x0043AF70 SYMBOL
-// _$E5
-double DAT_0089C880 = DAT_0089C820 / DAT_007E3E78;
-
-// SYNTHETIC: GAMEMD 0x0043AF90 SYMBOL
-// _$E8
-double DAT_0089C868 = DAT_007E1718 / DAT_0089C880;
-
-// SYNTHETIC: GAMEMD 0x0043AFB0 SYMBOL
-// _$E11
-double DAT_0089C860 = DAT_007E1720 * DAT_007E3E80;
-
-// SYNTHETIC: GAMEMD 0x0043AFD0 SYMBOL
-// _$E14
-double DAT_0089C830 = DAT_007E1728 * DAT_007E3E80;
-
-// SYNTHETIC: GAMEMD 0x0043AFF0 SYMBOL
-// _$E17
-double DAT_0089C7F8 = DAT_007E1730 * DAT_007E3E80;
-
-// SYNTHETIC: GAMEMD 0x0043B010 SYMBOL
-// _$E20
-int DAT_0089C888 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_0089C7F8 - DAT_0089C830) * DAT_0089C820));
-
-// SYNTHETIC: GAMEMD 0x0043B050 SYMBOL
-// _$E23
-double DAT_0089C840 = FUN_004CADE0(DAT_0089C888 * DAT_007E1740);
-
-// SYNTHETIC: GAMEMD 0x0043B080 SYMBOL
-// _$E26
-double DAT_0089C858 = FUN_004CADE0((DAT_0089C888 * 2) / DAT_0089C820);
-
-// SYNTHETIC: GAMEMD 0x0043B0B0 SYMBOL
-// _$E29
-int DAT_0089C87C = (int)(DAT_0089C888 * 4 + DAT_007E1738);
-
-// SYNTHETIC: GAMEMD 0x0043B0E0 SYMBOL
-// _$E32
-ShortPair DAT_0089C818;
-
-// SYNTHETIC: GAMEMD 0x0043B0F0 SYMBOL
-// _$E35
-IntTriple DAT_0089C848;
-
-// SYNTHETIC: GAMEMD 0x0043B110 SYMBOL
-// _$E38
-Int3Init DAT_0089C870;
+#include "rect.h"
 
 // SYNTHETIC: GAMEMD 0x0043B130 SYMBOL
 // _$E41
-IntQuad DAT_0089C808;
+
+// SYNTHETIC: GAMEMD 0x0043AF40 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x0043AF70 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x0043AF90 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x0043AFB0 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x0043AFD0 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x0043AFF0 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x0043B010 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x0043B050 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x0043B080 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x0043B0B0 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x0043B0E0 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x0043B0F0 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x0043B110 SYMBOL
+// _$E38
+

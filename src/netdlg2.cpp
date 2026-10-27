@@ -1562,7 +1562,7 @@ void FUN_005EE3A0(void);
 void __fastcall FUN_005E9E70(HWND dialog, int slot, bool enable);
 void __fastcall FUN_005EC3A0(HWND dialog, int sel, int scenario);
 void __fastcall FUN_005EA2A0(HWND dialog);
-void __fastcall FUN_005E2EF0(HWND dialog, MPGameModeClass * mode);
+void __fastcall FUN_005E2EF0(HWND dialog, MultiplayerGameMode * mode);
 void __fastcall FUN_005E2F60(HWND dialog);
 void __fastcall FUN_005ED370(HWND dialog);
 int __fastcall FUN_005E6520(int value);

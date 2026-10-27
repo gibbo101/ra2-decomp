@@ -38,6 +38,12 @@ right target:
 A name with no known address is reported as unverified, not as a mismatch.
 Bytes EA patched after linking are first put back from data/exe_patches.csv.
 
+Labels are also checked against the exe's RTTI. A member of a template instance that stores
+a vftable the RTTI names for another class does not match. A function the exe's vtables
+hold must be held there for a class whose vftable holds it in our object (or, with none
+here, the class of a virtual symbol); a template instance's label naming another class
+fails like a double claim. Either finding for any other function is printed as a warning.
+
 --score adds a line with a normalised similarity: the instruction lists compared with every
 address in the image, every jump target inside the function and every stack-slot
 displacement ([esp+N], [ebp-N], and [ebp+N] in a function with a frame) masked, so a
@@ -61,6 +67,7 @@ import pefile
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from coff import REL_DIR32, REL_REL32, CoffObject  # noqa: E402
+from rtti import VIRTUAL_CODES, Rtti, vftable_type  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 FLAGS = ["/c", "/O2", "/Ob2", "/Gr", "/GR", "/MT", "/DWIN32"]
@@ -80,6 +87,7 @@ class Original:
     def __init__(self, path: Path = ROOT / "orig/gamemd.exe"):
         self.pe = pefile.PE(str(path), fast_load=True)
         self._imports = None
+        self._rtti = None
         self.base = self.pe.OPTIONAL_HEADER.ImageBase
         self.end = self.base + self.pe.OPTIONAL_HEADER.SizeOfImage
         self.image = self.pe.get_memory_mapped_image()
@@ -108,6 +116,12 @@ class Original:
         self._imports = {imp.name.decode(): imp.address
                          for dll in self.pe.DIRECTORY_ENTRY_IMPORT for imp in dll.imports if imp.name}
         return self._imports
+
+    def rtti(self) -> Rtti:
+        """The exe's vtables, by the classes their RTTI names."""
+        if self._rtti is None:
+            self._rtti = Rtti(self, None)
+        return self._rtti
 
     def read(self, va: int, size: int) -> bytes:
         return self.image[va - self.base:va - self.base + size]
@@ -344,6 +358,7 @@ class Result:
     bytes_match: bool
     symbol: str = ""
     refs: list[str] = field(default_factory=list)
+    warnings: list[str] = field(default_factory=list)
     mismatched_refs: int = 0
     unverified: int = 0
     ratio: float = 0.0
@@ -465,6 +480,13 @@ def compare_one(orig, obj, raw, address, name, names, local, pick, score=False) 
 
     # Field offsets line up with the original's only when the bytes do.
     for ref in ref_checks(orig, obj, raw, pick, ours, theirs, address, names, local) if same else []:
+        body = vftable_type(ref.target.name)
+        exe_class = orig.rtti().type_of_vtable(ref.got) if body else None
+        if exe_class and exe_class[4:] != body and (body.startswith("?$") or orig.rtti().type_of_body(body)):
+            if body.startswith("?$") and template_member(sym.name):
+                ref.status = "mismatch"
+            elif f"warning: stores the vftable of {exe_class}, not of .?AV{body}" not in res.warnings:
+                res.warnings.append(f"warning: stores the vftable of {exe_class}, not of .?AV{body}")
         if ref.status == "mismatch":
             res.mismatched_refs += 1
         if ref.status == "unverified":
@@ -472,6 +494,7 @@ def compare_one(orig, obj, raw, address, name, names, local, pick, score=False) 
         if ref.status != "ok":
             res.refs.append(f"  +0x{ref.offset:X} {qualified(ref.target.name)}: original 0x{ref.got:08X}"
                             + (f", expected 0x{ref.want:08X}" if ref.want is not None else "")
+                            + (f", the vftable of {exe_class}" if exe_class else "")
                             + f" [{ref.status}]")
 
     if not res.matched:
@@ -591,6 +614,60 @@ def check_ref(orig, obj, raw, target, sec, start, address, got, names, local):
     return "unverified", None
 
 
+def template_member(symbol: str) -> bool:
+    """Whether a decorated symbol is a member of a template instance."""
+    if symbol.startswith(("??_G", "??_E")):
+        return symbol[4:].startswith("?$")
+    if symbol.startswith("??"):
+        return symbol[3:].startswith("?$")
+    return symbol.startswith("?") and "@" in symbol[1:] and symbol[symbol.index("@", 1) + 1:].startswith("?$")
+
+
+def vftable_holders(obj: CoffObject) -> dict[str, set[str]]:
+    """Function symbol -> the class bodies of the vftables in `obj` that hold it."""
+    out: dict[str, set[str]] = {}
+    by_section: dict[int, list] = {}
+    for s in obj.symbols:
+        by_section.setdefault(s.section, []).append(s)
+    for number, defs in by_section.items():
+        if number <= 0 or not any(vftable_type(s.name) for s in defs):
+            continue
+        sec = obj.sections[number - 1]
+        defs.sort(key=lambda s: s.value)
+        for k, s in enumerate(defs):
+            body = vftable_type(s.name)
+            if body is None:
+                continue
+            end = defs[k + 1].value if k + 1 < len(defs) else len(sec.data)
+            for r in sec.relocs:
+                if s.value <= r.offset < end:
+                    out.setdefault(obj.by_index[r.symbol].name, set()).add(body)
+    return out
+
+
+def class_problem(rtti: Rtti, held: dict[str, set[str]], symbol: str, address: int) -> tuple[str, bool] | None:
+    """Where the exe's vtables hold `address` for none of the classes `symbol` belongs to:
+    what to print, and whether that is a failure rather than a warning."""
+    theirs = set(rtti.slot_of.get(address, ()))
+    if not theirs or address == rtti.purecall:
+        return None
+    bodies = held.get(symbol)
+    if not bodies:
+        name, access = rtti.class_of(symbol)
+        if name is None or access not in VIRTUAL_CODES:
+            return None
+        bodies = {name[4:]}
+    if any(rtti.type_of_body(b) in theirs for b in bodies):
+        return None
+    listed = sorted(theirs)
+    exe = ", ".join(listed[:3]) + (f" and {len(listed) - 3} more" if len(listed) > 3 else "")
+    ours = ", ".join(sorted(".?AV" + b for b in bodies))
+    if any(b.startswith("?$") for b in bodies):
+        return f"a slot of {exe} in the exe, not of {ours}", True
+    known = any(rtti.type_of_body(b) for b in bodies)
+    return f"warning: a slot of {exe} in the exe, not of {ours}" + ("" if known else ", which has no RTTI there"), False
+
+
 OPERATORS = {"==": "8", "!=": "9", "=": "4", "[]": "A", "()": "R", "<": "M", ">": "O",
              "<=": "N", ">=": "P", "+": "H", "-": "G", "*": "D", "/": "K", "new": "2",
              "delete": "3", "->": "C", "+=": "Y", "-=": "Z"}
@@ -645,6 +722,7 @@ def main() -> None:
     for line in duplicates:
         print(line)
     failed = len(duplicates)
+    held = vftable_holders(obj)
     for address, name in targets:
         res = compare(orig, obj, raw, address, name, names, local, score, prefer=local)
         if res.matched:
@@ -661,6 +739,12 @@ def main() -> None:
             print(f"normalised score: {res.norm_ratio * 100:.1f}% (raw {raw_ratio * 100:.1f}%)")
         for line in res.refs:
             print(line)
+        problem = class_problem(orig.rtti(), held, res.symbol, address) if res.bytes_match else None
+        if problem:
+            print(f"0x{address:08X} {name.lstrip('=') or res.symbol}: {problem[0]}")
+            failed += problem[1]
+        for line in res.warnings:
+            print(f"0x{address:08X} {name.lstrip('=') or res.symbol}: {line}")
         if not res.matched:
             failed += 1
             print("\n".join(res.diff[:400]))

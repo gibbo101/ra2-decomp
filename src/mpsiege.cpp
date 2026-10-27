@@ -28,7 +28,7 @@ extern int DAT_00ABFA94;
 
 // FUNCTION: GAMEMD 0x005CA630
 MPSiegeClass::MPSiegeClass(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex) :
-	MPGameModeClass(title, tooltip, inifile, mapfilter, aiallowed, modeindex)
+	MultiplayerGameMode(title, tooltip, inifile, mapfilter, aiallowed, modeindex)
 {
 }
 
@@ -40,7 +40,7 @@ MPSiegeClass::~MPSiegeClass(void)
 // FUNCTION: GAMEMD 0x005CA680
 bool MPSiegeClass::vt_entry_10(void)
 {
-	if (!MPGameModeClass::vt_entry_10()) {
+	if (!MultiplayerGameMode::vt_entry_10()) {
 		return(false);
 	}
 	if (Session.Players.Count() > 0) {
@@ -56,7 +56,7 @@ bool MPSiegeClass::vt_entry_10(void)
 bool MPSiegeClass::vt_entry_14(unsigned a)
 {
 	WideWstring * message = (WideWstring *)a;
-	if (!MPGameModeClass::vt_entry_14(a)) {
+	if (!MultiplayerGameMode::vt_entry_14(a)) {
 		return(false);
 	}
 	bool defender = false;
@@ -94,7 +94,7 @@ bool MPSiegeClass::vt_entry_14(unsigned a)
 // FUNCTION: GAMEMD 0x005CA7D0
 bool MPSiegeClass::vt_entry_18(void)
 {
-	return(MPGameModeClass::vt_entry_18());
+	return(MultiplayerGameMode::vt_entry_18());
 }
 
 // FUNCTION: GAMEMD 0x005CA7E0
@@ -106,7 +106,7 @@ bool MPSiegeClass::IsAIAllowed(void)
 // FUNCTION: GAMEMD 0x005CA7F0
 bool MPSiegeClass::UnfixAlliances(void)
 {
-	return(MPGameModeClass::UnfixAlliances());
+	return(MultiplayerGameMode::UnfixAlliances());
 }
 
 // FUNCTION: GAMEMD 0x005CA800
@@ -168,11 +168,11 @@ bool MPSiegeClass::SpawnBaseUnits(HouseClass * house, unsigned unused)
 		i++;
 	}
 	if (i >= Session.Players.Count()) {
-		MPGameModeClass::SpawnBaseUnits(house, unused);
+		MultiplayerGameMode::SpawnBaseUnits(house, unused);
 		return(false);
 	}
 	if (Session.Players[i]->Slot.SpectatorFlag != 1) {
-		return(MPGameModeClass::SpawnBaseUnits(house, unused));
+		return(MultiplayerGameMode::SpawnBaseUnits(house, unused));
 	}
 	BuildingTypeClass const * type = (BuildingTypeClass const *)house->FirstBuildableFromArray(Rule->BuildConst);
 	if (type != NULL) {

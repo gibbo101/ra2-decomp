@@ -15,6 +15,7 @@
 #include "queue.h"
 #include "scheme.h"
 #include "session.h"
+#include "geometry.h"
 #include "stimer.h"
 #include "stringtable.h"
 #include "surface.h"
@@ -938,93 +939,34 @@ void IPXManagerClass::Global_Channel_Op_44(unsigned a1)
 // SYNTHETIC: GAMEMD 0x00543100
 // ??_GConnManClass@@UAEPAXI@Z
 
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007EC218;
-extern double __cdecl FUN_004CAC40(double);
-
 // SYNTHETIC: GAMEMD 0x00543120 SYMBOL
 // _$E40
-double DAT_00AA06D8 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x00543150 SYMBOL
 // _$E43
-double DAT_00AA0728 = DAT_00AA06D8 / DAT_007EC218;
-
 // SYNTHETIC: GAMEMD 0x00543170 SYMBOL
 // _$E46
-double DAT_00AA0710 = DAT_007E1718 / DAT_00AA0728;
-
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007EC220;
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
-
-struct IntQuad {
-	int A, B, C, D;
-	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
-};
-
-struct IntInit {
-	int A, B, C;
-	IntInit() { C = 0; A = 0x80; B = 0x80; }
-};
-
 // SYNTHETIC: GAMEMD 0x00543190 SYMBOL
 // _$E49
-double DAT_00AA0708 = DAT_007E1720 * DAT_007EC220;
-
 // SYNTHETIC: GAMEMD 0x005431B0 SYMBOL
 // _$E52
-double DAT_00AA06E0 = DAT_007E1728 * DAT_007EC220;
-
 // SYNTHETIC: GAMEMD 0x005431D0 SYMBOL
 // _$E55
-double DAT_00AA06B8 = DAT_007E1730 * DAT_007EC220;
-
 // SYNTHETIC: GAMEMD 0x005431F0 SYMBOL
 // _$E58
-int DAT_00AA0730 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00AA06B8 - DAT_00AA06E0) * DAT_00AA06D8));
-
 // SYNTHETIC: GAMEMD 0x00543230 SYMBOL
 // _$E61
-double DAT_00AA06E8 = FUN_004CADE0(DAT_00AA0730 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x00543260 SYMBOL
 // _$E64
-double DAT_00AA0700 = FUN_004CADE0((DAT_00AA0730 * 2) / DAT_00AA06D8);
-
 // SYNTHETIC: GAMEMD 0x00543290 SYMBOL
 // _$E67
-int DAT_00AA0724 = (int)(DAT_00AA0730 * 4 + DAT_007E1738);
-
 // SYNTHETIC: GAMEMD 0x005432C0 SYMBOL
 // _$E70
-ShortPair DAT_00AA06D0;
-
 // SYNTHETIC: GAMEMD 0x005432D0 SYMBOL
 // _$E73
-IntTriple DAT_00AA06F0;
-
 // SYNTHETIC: GAMEMD 0x005432F0 SYMBOL
 // _$E76
-IntInit DAT_00AA0718;
 
 // SYNTHETIC: GAMEMD 0x00543310 SYMBOL
 // _$E79
-IntQuad DAT_00AA06C0;
+const Rect RECT_NONE_2(0, 0, 0, 0);
+

@@ -13,6 +13,7 @@
 #include "mixfile.h"
 #include "movies.h"
 #include "session.h"
+#include "geometry.h"
 #include "setpal.h"
 #include "unvqtblc.h"
 #include "vector.h"
@@ -31,88 +32,32 @@ long __cdecl VQACCFileHandler(VQAHandle * vqa, long action, void * buffer, long 
 long __cdecl VQAEventHandler(VQAHandle * vqa, long action, void * buffer, long nbytes);
 long __cdecl VQAMemoryHandler(VQAHandle * vqa, long action, void * buffer, long nbytes);
 
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007F6970;
-extern const double DAT_007F6978;
-
 // SYNTHETIC: GAMEMD 0x00758F90 SYMBOL
 // _$E36
-double DAT_00B45B30 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x00758FC0 SYMBOL
 // _$E39
-double DAT_00B45B98 = DAT_00B45B30 / DAT_007F6970;
-
 // SYNTHETIC: GAMEMD 0x00758FE0 SYMBOL
 // _$E42
-double DAT_00B45B80 = DAT_007E1718 / DAT_00B45B98;
-
 // SYNTHETIC: GAMEMD 0x00759000 SYMBOL
 // _$E45
-double DAT_00B45B78 = DAT_007E1720 * DAT_007F6978;
-
 // SYNTHETIC: GAMEMD 0x00759020 SYMBOL
 // _$E48
-double DAT_00B45B38 = DAT_007E1728 * DAT_007F6978;
-
 // SYNTHETIC: GAMEMD 0x00759040 SYMBOL
 // _$E51
-double DAT_00B45B10 = DAT_007E1730 * DAT_007F6978;
-
 // SYNTHETIC: GAMEMD 0x00759060 SYMBOL
 // _$E54
-int DAT_00B45BA0 = (int)(fastmath::tan(DAT_00B45B10 - DAT_00B45B38) * DAT_007E1738 * DAT_00B45B30);
-
 // SYNTHETIC: GAMEMD 0x007590A0 SYMBOL
 // _$E57
-double DAT_00B45B40 = fastmath::atan(DAT_00B45BA0 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x007590D0 SYMBOL
 // _$E60
-double DAT_00B45B70 = fastmath::atan((DAT_00B45BA0 * 2) / DAT_00B45B30);
-
 // SYNTHETIC: GAMEMD 0x00759100 SYMBOL
 // _$E63
-int DAT_00B45B94 = (int)(DAT_00B45BA0 * 4 + DAT_007E1738);
-
-struct VQAShortPair {
-	short A;
-	short B;
-	VQAShortPair() : A(0), B(0) {}
-};
-
-struct VQAIntTriple {
-	int A;
-	int B;
-	int C;
-	VQAIntTriple() : A(0), B(0), C(0) {}
-};
-
 // SYNTHETIC: GAMEMD 0x00759130 SYMBOL
 // _$E66
-VQAShortPair DAT_00B45B28;
-
 // SYNTHETIC: GAMEMD 0x00759140 SYMBOL
 // _$E69
-VQAIntTriple DAT_00B45B48;
-
-struct VQAColorInit {
-	int A;
-	int B;
-	int C;
-	VQAColorInit() { C = 0; A = 0x80; B = 0x80; }
-};
-
 // SYNTHETIC: GAMEMD 0x00759160 SYMBOL
 // _$E72
-VQAColorInit DAT_00B45B88;
 
 // SYNTHETIC: GAMEMD 0x00759180 SYMBOL
 // _$E77

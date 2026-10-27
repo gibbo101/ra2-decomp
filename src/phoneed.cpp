@@ -6,6 +6,7 @@
 #include "always.h"
 
 #include "phoneed.h"
+#include "geometry.h"
 
 #include "data.h"
 #include "dbgprint.h"
@@ -19,86 +20,6 @@
 
 #include <math.h>
 
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007EFD90;
-extern const double DAT_007EFD98;
-
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
-
-// SYNTHETIC: GAMEMD 0x006309A0 SYMBOL
-// _$E30
-double DAT_00AC4AD0 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
-// SYNTHETIC: GAMEMD 0x006309D0 SYMBOL
-// _$E33
-double DAT_00AC4B20 = DAT_00AC4AD0 / DAT_007EFD90;
-
-// SYNTHETIC: GAMEMD 0x006309F0 SYMBOL
-// _$E36
-double DAT_00AC4B08 = DAT_007E1718 / DAT_00AC4B20;
-
-// SYNTHETIC: GAMEMD 0x00630A10 SYMBOL
-// _$E39
-double DAT_00AC4B00 = DAT_007E1720 * DAT_007EFD98;
-
-// SYNTHETIC: GAMEMD 0x00630A30 SYMBOL
-// _$E42
-double DAT_00AC4AD8 = DAT_007E1728 * DAT_007EFD98;
-
-// SYNTHETIC: GAMEMD 0x00630A50 SYMBOL
-// _$E45
-double DAT_00AC4AB0 = DAT_007E1730 * DAT_007EFD98;
-
-// SYNTHETIC: GAMEMD 0x00630A70 SYMBOL
-// _$E48
-int DAT_00AC4B28 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00AC4AB0 - DAT_00AC4AD8) * DAT_00AC4AD0));
-
-// SYNTHETIC: GAMEMD 0x00630AB0 SYMBOL
-// _$E51
-double DAT_00AC4AE0 = FUN_004CADE0(DAT_00AC4B28 * DAT_007E1740);
-
-// SYNTHETIC: GAMEMD 0x00630AE0 SYMBOL
-// _$E54
-double DAT_00AC4AF8 = FUN_004CADE0((DAT_00AC4B28 * 2) / DAT_00AC4AD0);
-
-// SYNTHETIC: GAMEMD 0x00630B10 SYMBOL
-// _$E57
-int DAT_00AC4B1C = (int)(DAT_00AC4B28 * 4 + DAT_007E1738);
-
-// SYNTHETIC: GAMEMD 0x00630B40 SYMBOL
-// _$E60
-ShortPair DAT_00AC4AC8;
-
-// SYNTHETIC: GAMEMD 0x00630B50 SYMBOL
-// _$E63
-IntTriple DAT_00AC4AE8;
-
-struct IntTripleB {
-	int A, B, C;
-	IntTripleB() { C = 0; A = 0x80; B = 0x80; }
-};
-
-// SYNTHETIC: GAMEMD 0x00630B70 SYMBOL
-// _$E66
-IntTripleB DAT_00AC4B10;
 
 #undef Edit_SetText
 #undef Edit_GetText
@@ -108,38 +29,55 @@ IntTripleB DAT_00AC4B10;
 #define Edit_SetTextW(h, s) ((int)SendMessage((h), 0x4b2, 0, (LPARAM)(s)))
 #define Edit_GetTextW(h, s, n) ((int)SendMessage((h), 0x4b3, (n), (LPARAM)(s)))
 #define ListBox_AddStringW(h, s) ((int)SendMessage((h), 0x4cd, 0, (LPARAM)(s)))
-
 #define LS(name, line) StringTable::LoadString(name, NULL, "D:\\ra2mdpost\\PhoneEd.cpp", line)
-
-extern char DAT_00889F64;
 wchar_t * __fastcall wcstrim(wchar_t * buffer);
-
 namespace UI {
 	int __fastcall StandardWndProc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 }
-
 extern int __cdecl Phone_Compare(const void *p1, const void *p2);
-
 class PhoneEntryEdit
 {
 		friend BOOL CALLBACK Edit_Phone_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 	public:
 		PhoneEntryEdit(void) {};
 		bool Dialog(PhoneEntryClass *phone);
-
 	private:
 		void Save(void);
 		void Init(void);
-
 	private:
 		HWND _Dialog;
 		int RC;
 		PhoneEntryClass * Phone;
 		SerialSettingsType TempSettings;
 };
-
 BOOL CALLBACK Phone_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 BOOL CALLBACK Edit_Phone_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+// SYNTHETIC: GAMEMD 0x006309A0 SYMBOL
+// _$E30
+// SYNTHETIC: GAMEMD 0x006309D0 SYMBOL
+// _$E33
+// SYNTHETIC: GAMEMD 0x006309F0 SYMBOL
+// _$E36
+// SYNTHETIC: GAMEMD 0x00630A10 SYMBOL
+// _$E39
+// SYNTHETIC: GAMEMD 0x00630A30 SYMBOL
+// _$E42
+// SYNTHETIC: GAMEMD 0x00630A50 SYMBOL
+// _$E45
+// SYNTHETIC: GAMEMD 0x00630A70 SYMBOL
+// _$E48
+// SYNTHETIC: GAMEMD 0x00630AB0 SYMBOL
+// _$E51
+// SYNTHETIC: GAMEMD 0x00630AE0 SYMBOL
+// _$E54
+// SYNTHETIC: GAMEMD 0x00630B10 SYMBOL
+// _$E57
+// SYNTHETIC: GAMEMD 0x00630B40 SYMBOL
+// _$E60
+// SYNTHETIC: GAMEMD 0x00630B50 SYMBOL
+// _$E63
+// SYNTHETIC: GAMEMD 0x00630B70 SYMBOL
+// _$E66
 
 // FUNCTION: GAMEMD 0x00630B90
 bool PhoneEdit::Dialog(void)
@@ -248,7 +186,7 @@ BOOL CALLBACK Phone_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM
 							if (Session.CurPhoneIdx == -1) {
 								handle = GetDlgItem(_this->_Dialog, IDC_PHONE_NAME);
 								if (handle != 0) {
-									Edit_SetText(handle, &DAT_00889F64);
+									Edit_SetText(handle, &CELL_CENTER_COORD);
 								}
 							}
 						}
@@ -498,7 +436,7 @@ void PhoneEdit::Delete(void)
 	if (Session.CurPhoneIdx == -1) {
 		handle = GetDlgItem(_Dialog, IDC_PHONE_NAME);
 		if (handle != 0) {
-			Edit_SetText(handle, &DAT_00889F64);
+			Edit_SetText(handle, &CELL_CENTER_COORD);
 		}
 	}
 }

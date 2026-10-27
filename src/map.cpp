@@ -6647,19 +6647,19 @@ template class DynamicVectorClass<HashObject<unsigned int, SubzoneConnectionStru
 // ?Add@?$DynamicVectorClass@W4PassabilityType@@@@QAE_NABW4PassabilityType@@@Z
 
 // TEMPLATE: GAMEMD 0x00589CA0
-// ??8?$VectorClass@W4PassabilityType@@@@UBE_NABV0@@Z
+// ??8?$VectorClass@PAVCellClass@@@@UBE_NABV0@@Z
 
 // TEMPLATE: GAMEMD 0x00589CE0
-// ?Resize@?$VectorClass@W4PassabilityType@@@@UAE_NHPBW4PassabilityType@@@Z
+// ?Resize@?$VectorClass@PAVCellClass@@@@UAE_NHPBQAVCellClass@@@Z
 
 // TEMPLATE: GAMEMD 0x00589D90
-// ?Clear@?$VectorClass@W4PassabilityType@@@@UAEXXZ
+// ?Clear@?$VectorClass@PAVCellClass@@@@UAEXXZ
 
 // TEMPLATE: GAMEMD 0x00589DC0
-// ?ID@?$VectorClass@W4PassabilityType@@@@UAEHABW4PassabilityType@@@Z
+// ?ID@?$VectorClass@PAVCellClass@@@@UAEHABQAVCellClass@@@Z
 
 // TEMPLATE: GAMEMD 0x00589E00
-// ?ID@?$VectorClass@W4PassabilityType@@@@UAEHPBW4PassabilityType@@@Z
+// ?ID@?$VectorClass@PAVCellClass@@@@UAEHPBQAVCellClass@@@Z
 
 // TEMPLATE: GAMEMD 0x00589E20
 // ?Add_Object@?$HashTableClass@IUSubzoneConnectionStruct@@@@QAE_NHABU?$HashObject@IUSubzoneConnectionStruct@@@@@Z
@@ -6679,27 +6679,27 @@ bool HashTableClass<unsigned int, SubzoneConnectionStruct>::Add_Object(int bucke
 }
 
 // TEMPLATE: GAMEMD 0x00589EB0
-// ??8?$VectorClass@PAVCellClass@@@@UBE_NABV0@@Z
+// ??8?$VectorClass@W4PassabilityType@@@@UBE_NABV0@@Z
 
 // TEMPLATE: GAMEMD 0x00589EF0
-// ?Resize@?$VectorClass@PAVCellClass@@@@UAE_NHPBQAVCellClass@@@Z
+// ?Resize@?$VectorClass@W4PassabilityType@@@@UAE_NHPBW4PassabilityType@@@Z
 
 // TEMPLATE: GAMEMD 0x00589FA0
-// ?Clear@?$VectorClass@PAVCellClass@@@@UAEXXZ
+// ?Clear@?$VectorClass@W4PassabilityType@@@@UAEXXZ
 
 // TEMPLATE: GAMEMD 0x00589FD0
-// ?ID@?$VectorClass@PAVCellClass@@@@UAEHABQAVCellClass@@@Z
+// ?ID@?$VectorClass@W4PassabilityType@@@@UAEHABW4PassabilityType@@@Z
 
 // TEMPLATE: GAMEMD 0x0058A010
-// ?ID@?$VectorClass@PAVCellClass@@@@UAEHPBQAVCellClass@@@Z
+// ?ID@?$VectorClass@W4PassabilityType@@@@UAEHPBW4PassabilityType@@@Z
 
 template class DynamicVectorClass<int>;
 
 // TEMPLATE: GAMEMD 0x0058A030
-// ?Resize@?$DynamicVectorClass@H@@UAE_NHPBH@Z
+// ?Resize@?$DynamicVectorClass@W4PassabilityType@@@@UAE_NHPBW4PassabilityType@@@Z
 
 // TEMPLATE: GAMEMD 0x0058A0E0
-// ?ID@?$DynamicVectorClass@H@@UAEHABH@Z
+// ?ID@?$DynamicVectorClass@W4PassabilityType@@@@UAEHABW4PassabilityType@@@Z
 
 template class VectorClass<HashObject<unsigned int, unsigned int> >;
 

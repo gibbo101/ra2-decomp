@@ -881,7 +881,7 @@ bool __fastcall FUN_004E5B40(int slot)
 	return DAT_008B3FC0[slot].Owner != -1;
 }
 
-MPGameModeClass * FUN_005E2F80(void);
+MultiplayerGameMode * FUN_005E2F80(void);
 bool __cdecl FUN_0077D970(void);
 
 // FUNCTION: GAMEMD 0x004E5B60
@@ -897,7 +897,7 @@ void __fastcall FUN_004E5B60(HWND dialog, int id)
 			Add_Item(item, (char const *)StringTable::LoadString("GUI:NoneAsSymbols", NULL, "D:\\ra2mdpost\\GDlgSupp.cpp", 0x456), -2);
 		}
 	} else {
-		MPGameModeClass * mode = FUN_005E2F80();
+		MultiplayerGameMode * mode = FUN_005E2F80();
 		if (mode && mode->vt_entry_2C() < 0) {
 			Add_Item(item, (char const *)StringTable::LoadString("GUI:NoneAsSymbols", NULL, "D:\\ra2mdpost\\GDlgSupp.cpp", 0x45f), -2);
 		}

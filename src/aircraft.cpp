@@ -46,6 +46,7 @@
 #include "temporal.h"
 #include "tracker.h"
 #include "unit.h"
+#include "geometry.h"
 #include "waypoint.h"
 #include "weapon.h"
 
@@ -57,39 +58,6 @@ template class TVelocity3D<double>;
 template class IndexClass<int, AbstractClass *>;
 
 extern int __fastcall FUN_0050C170(char const * name);
-extern double __cdecl FUN_004CAC40(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E2828;
-extern const double DAT_007E2830;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
-
-struct Int3Pad {
-	int A, B, C;
-	Int3Pad() { C = 0; A = 128; B = 128; }
-};
-
-struct Int4Zero {
-	int A, B, C, D;
-	Int4Zero() { A = 0; B = 0; C = 0; D = 0; }
-};
 
 // FUNCTION: GAMEMD 0x00413CD0
 bool Counts_As_Civ_Evac(ObjectClass const * candidate)
@@ -142,7 +110,7 @@ void AircraftClass::Init(void)
 	BASECLASS::Init();
 	if (Class != NULL) {
 		if (House != NULL) {
-			TypeList<AircraftTypeClass *> & list = House->Class->VeteranAircraft;
+			TypeList<AircraftTypeClass const *> & list = House->Class->VeteranAircraft;
 			for (int index = 0; index < list.Count(); index++) {
 				if (list[index] == Class) {
 					Veterancy.Set_Veteran(true);
@@ -2620,59 +2588,35 @@ ObjectTypeClass const * AircraftClass::Class_Of(void) const
 
 // SYNTHETIC: GAMEMD 0x0041C6A0 SYMBOL
 // _$E116
-double DAT_00889EF0 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x0041C6D0 SYMBOL
 // _$E119
-double DAT_00889F50 = DAT_00889EF0 / DAT_007E2828;
-
 // SYNTHETIC: GAMEMD 0x0041C6F0 SYMBOL
 // _$E122
-double DAT_00889F30 = DAT_007E1718 / DAT_00889F50;
-
 // SYNTHETIC: GAMEMD 0x0041C710 SYMBOL
 // _$E125
-double DAT_00889F28 = DAT_007E1720 * DAT_007E2830;
-
 // SYNTHETIC: GAMEMD 0x0041C730 SYMBOL
 // _$E128
-double DAT_00889EF8 = DAT_007E1728 * DAT_007E2830;
-
 // SYNTHETIC: GAMEMD 0x0041C750 SYMBOL
 // _$E131
-double DAT_00889ED0 = DAT_007E1730 * DAT_007E2830;
-
 // SYNTHETIC: GAMEMD 0x0041C770 SYMBOL
 // _$E134
-int DAT_00889F58 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00889ED0 - DAT_00889EF8) * DAT_00889EF0));
-
 // SYNTHETIC: GAMEMD 0x0041C7B0 SYMBOL
 // _$E137
-double DAT_00889F00 = FUN_004CADE0(DAT_00889F58 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x0041C7E0 SYMBOL
 // _$E140
-double DAT_00889F18 = FUN_004CADE0((DAT_00889F58 * 2) / DAT_00889EF0);
-
 // SYNTHETIC: GAMEMD 0x0041C810 SYMBOL
 // _$E143
-int DAT_00889F4C = (int)(DAT_00889F58 * 4 + DAT_007E1738);
-
 // SYNTHETIC: GAMEMD 0x0041C840 SYMBOL
 // _$E146
-ShortPair DAT_00889EE8;
-
 // SYNTHETIC: GAMEMD 0x0041C850 SYMBOL
 // _$E149
-IntTriple DAT_00889F08;
-
 // SYNTHETIC: GAMEMD 0x0041C870 SYMBOL
 // _$E152
-Int3Pad DAT_00889F40;
+
 
 // SYNTHETIC: GAMEMD 0x0041C890 SYMBOL
 // _$E155
-Int4Zero DAT_00889ED8;
+const Rect RECT_NONE_2(0, 0, 0, 0);
 
 // FUNCTION: GAMEMD 0x004196B0
 MoveType AircraftClass::Can_Enter_Cell(CellClass const * cell, FacingType, int cell_height, CellClass const *, bool) const

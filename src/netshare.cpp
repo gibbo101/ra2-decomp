@@ -59,7 +59,7 @@ namespace UI { void RegisterWindow(HWND window, int id); }
 namespace Game { extern HWND hWnd; extern HINSTANCE hInstance; extern int PlayerColor; }
 
 class GameModeOptionsClass { public: static int Instance; };
-MPGameModeClass * First_Game_Mode(void);
+MultiplayerGameMode * First_Game_Mode(void);
 HWND FUN_00775B10(void);
 int FUN_00775B20(void);
 
@@ -471,7 +471,7 @@ int CALLBACK ODMessageBox_Proc(HWND window, UINT message, WPARAM wparam, LPARAM 
 }
 
 // FUNCTION: GAMEMD 0x005E2EF0
-void FUN_005E2EF0(HWND dialog, MPGameModeClass * mode)
+void FUN_005E2EF0(HWND dialog, MultiplayerGameMode * mode)
 {
 	if (mode != NULL) {
 		HWND item = GetDlgItem(dialog, 0x6ec);
@@ -499,9 +499,9 @@ void __fastcall FUN_005E2F60(HWND dialog)
 }
 
 // FUNCTION: GAMEMD 0x005E2F80
-MPGameModeClass * FUN_005E2F80(void)
+MultiplayerGameMode * FUN_005E2F80(void)
 {
-	MPGameModeClass * mode = MPGameModeClass::Get(GameModeOptionsClass::Instance);
+	MultiplayerGameMode * mode = MultiplayerGameMode::Get(GameModeOptionsClass::Instance);
 	if (mode == NULL) {
 		mode = First_Game_Mode();
 	}
@@ -515,7 +515,7 @@ void FUN_005E2FA0(void)
 		HWND dialog = FUN_00775B10();
 		int sel = SendDlgItemMessage(dialog, 0x6eb, LB_GETCURSEL, 0, 0);
 		if (sel != -1) {
-			MPGameModeClass * mode = (MPGameModeClass *)SendDlgItemMessage(dialog, 0x6eb, LB_GETITEMDATA, sel, 0);
+			MultiplayerGameMode * mode = (MultiplayerGameMode *)SendDlgItemMessage(dialog, 0x6eb, LB_GETITEMDATA, sel, 0);
 			if (mode != NULL) {
 				mode->vt_entry_94();
 			}
@@ -1121,11 +1121,11 @@ bool FUN_005E7160(HWND dialog)
 	}
 
 	HWND list = DAT_00AC0D40;
-	MPGameModeClass * previous = Session.MPGameMode;
-	MPGameModeClass * mode = NULL;
+	MultiplayerGameMode * previous = Session.MPGameMode;
+	MultiplayerGameMode * mode = NULL;
 	int modeindex = SendDlgItemMessage(DAT_00AC0D40, 0x6eb, LB_GETCURSEL, 0, 0);
 	if (modeindex != -1) {
-		mode = (MPGameModeClass *)SendDlgItemMessage(list, 0x6eb, 0x199, modeindex, 0);
+		mode = (MultiplayerGameMode *)SendDlgItemMessage(list, 0x6eb, 0x199, modeindex, 0);
 	}
 	Session.MPGameMode = mode;
 	bool first = mode->vt_entry_40();
@@ -2945,7 +2945,7 @@ void __fastcall FUN_005EBC00(HWND dialog, int start)
 }
 
 // FUNCTION: GAMEMD 0x005EBDD0
-void __fastcall FUN_005EBDD0(HWND dialog, int start, int end, MPGameModeClass * mode)
+void __fastcall FUN_005EBDD0(HWND dialog, int start, int end, MultiplayerGameMode * mode)
 {
 	if (Session.MPGameMode != NULL && !Session.MPGameMode->vt_entry_40() && !FUN_0077D940()) {
 		int limit = FUN_005E6440();
@@ -3293,7 +3293,7 @@ void __fastcall FUN_005ED400(HWND dialog, SessionOptionsClass * out)
 int Game_Mode_Total(void);
 int FUN_0058B7D0(void);
 
-static inline MPGameModeClass * Mode_Or_First(MPGameModeClass * mode)
+static inline MultiplayerGameMode * Mode_Or_First(MultiplayerGameMode * mode)
 {
 	return(mode ? mode : First_Game_Mode());
 }
@@ -3304,12 +3304,12 @@ void __fastcall FUN_005ED5A0(HWND dialog, SessionOptionsClass * opts)
 	if (opts->MPGameMode < 1 || opts->MPGameMode > Game_Mode_Total()) {
 		opts->MPGameMode = First_Game_Mode()->MPModeIndex;
 	}
-	MPGameModeClass * mode = MPGameModeClass::Get(GameModeOptionsClass::Instance = opts->MPGameMode);
+	MultiplayerGameMode * mode = MultiplayerGameMode::Get(GameModeOptionsClass::Instance = opts->MPGameMode);
 	if (mode == NULL) {
 		mode = First_Game_Mode();
 	}
 	if ((FUN_0077D940() || FUN_0077D970()) && mode && mode->vt_entry_04()) {
-		mode = Mode_Or_First(MPGameModeClass::Get(GameModeOptionsClass::Instance = opts->MPGameMode = First_Game_Mode()->MPModeIndex));
+		mode = Mode_Or_First(MultiplayerGameMode::Get(GameModeOptionsClass::Instance = opts->MPGameMode = First_Game_Mode()->MPModeIndex));
 	}
 	opts->MPGameMode = mode->MPModeIndex;
 	GameModeOptionsClass::Instance = mode->MPModeIndex;

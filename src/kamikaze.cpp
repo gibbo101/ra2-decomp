@@ -146,9 +146,9 @@ long Kamikaze::Load(IStream * stream)
 }
 
 // FUNCTION: GAMEMD 0x0054E890
-// ?Clear@?$DynamicVectorClass@PAUKamikazeControl@Kamikaze@@@@UAEXXZ
+// ?Clear@?$DynamicVectorClass@PAUKamikazeControl@@@@UAEXXZ
 
 // FUNCTION: GAMEMD 0x0054E8C0
-// ?ID@?$VectorClass@PAUKamikazeControl@Kamikaze@@@@UAEHPBQAUKamikazeControl@Kamikaze@@@Z
+// ?ID@?$DynamicVectorClass@PAUKamikazeControl@@@@UAEHPBQAUKamikazeControl@@@Z
 
-template class DynamicVectorClass<Kamikaze::KamikazeControl *>;
+template class DynamicVectorClass<KamikazeControl *>;

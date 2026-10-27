@@ -52,7 +52,6 @@ class TechnoClass;
 class TagClass;
 class BuildingClass;
 class WaypointPathClass;
-struct StartingTechnoStruct;
 class WaypointClass;
 class SuperClass;
 class AbstractClass;
@@ -79,11 +78,6 @@ class HouseStaticClass {
 		SourceType Edge;
 };
 
-struct StartingTechnoStruct {
-	TechnoTypeClass const * Type;
-	Cell CellID;
-};
-
 struct BasePlanningCell {
 	int Weight;
 	CellStruct Position;
@@ -105,6 +99,11 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 		typedef AbstractClass BASECLASS;
 
 	public:
+
+		struct StartingTechnoStruct {
+			TechnoTypeClass const * Type;
+			Cell CellID;
+		};
 
 		HousesType HeapID;
 

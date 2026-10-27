@@ -8,94 +8,37 @@
 #include "_map.h"
 #include "globals.h"
 #include "scenario.h"
+#include "geometry.h"
 #include "swizzle.h"
 #include <math.h>
 
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007E36B0;
-extern const double DAT_007E36B8;
-
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
-
-struct Int3Pad {
-	int A, B, C;
-	Int3Pad() { C = 0; A = 128; B = 128; }
-};
-
-struct Int4Zero {
-	int A, B, C, D;
-	Int4Zero() { A = 0; B = 0; C = 0; D = 0; }
-};
 
 // SYNTHETIC: GAMEMD 0x00429010 SYMBOL
 // _$E46
-double DAT_0089A278 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x00429040 SYMBOL
 // _$E49
-double DAT_0089A2C8 = DAT_0089A278 / DAT_007E36B0;
-
 // SYNTHETIC: GAMEMD 0x00429060 SYMBOL
 // _$E52
-double DAT_0089A2B0 = DAT_007E1718 / DAT_0089A2C8;
-
 // SYNTHETIC: GAMEMD 0x00429080 SYMBOL
 // _$E55
-double DAT_0089A2A8 = DAT_007E1720 * DAT_007E36B8;
-
 // SYNTHETIC: GAMEMD 0x004290A0 SYMBOL
 // _$E58
-double DAT_0089A280 = DAT_007E1728 * DAT_007E36B8;
-
 // SYNTHETIC: GAMEMD 0x004290C0 SYMBOL
 // _$E61
-double DAT_0089A258 = DAT_007E1730 * DAT_007E36B8;
-
 // SYNTHETIC: GAMEMD 0x004290E0 SYMBOL
 // _$E64
-int DAT_0089A2D0 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_0089A258 - DAT_0089A280) * DAT_0089A278));
-
 // SYNTHETIC: GAMEMD 0x00429120 SYMBOL
 // _$E67
-double DAT_0089A288 = FUN_004CADE0(DAT_0089A2D0 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x00429150 SYMBOL
 // _$E70
-double DAT_0089A2A0 = FUN_004CADE0((DAT_0089A2D0 * 2) / DAT_0089A278);
-
 // SYNTHETIC: GAMEMD 0x00429180 SYMBOL
 // _$E73
-int DAT_0089A2C4 = (int)(DAT_0089A2D0 * 4 + DAT_007E1738);
-
 // SYNTHETIC: GAMEMD 0x004291B0 SYMBOL
 // _$E76
-ShortPair DAT_0089A270;
-
 // SYNTHETIC: GAMEMD 0x004291C0 SYMBOL
 // _$E79
-IntTriple DAT_0089A290;
-
 // SYNTHETIC: GAMEMD 0x004291E0 SYMBOL
 // _$E82
-Int3Pad DAT_0089A2B8;
 
 // SYNTHETIC: GAMEMD 0x00429200 SYMBOL
 // _$E85
@@ -259,12 +202,13 @@ HRESULT STDMETHODCALLTYPE ApplicationClass::get_FrameCount(LONG *retval)
 	return(S_OK);
 }
 
+// SYNTHETIC: GAMEMD 0x00429570 SYMBOL
+// _$E88
+const Rect RECT_NONE_2(0, 0, 0, 0);
+
 // FUNCTION: GAMEMD 0x00429550
 HRESULT STDMETHODCALLTYPE ApplicationClass::get_Swizzle_Interface(ISwizzle **pVal)
 {
 	return(Swizzler.QueryInterface(IID_ISwizzle, (void**)pVal));
 }
 
-// SYNTHETIC: GAMEMD 0x00429570 SYMBOL
-// _$E88
-Int4Zero DAT_0089C268;

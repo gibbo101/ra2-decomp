@@ -7,92 +7,40 @@
 #include "cpoint.h"
 #include "globals.h"
 #include "scenario.h"
+#include "geometry.h"
 #include "vector.h"
 #include "win.h"
 #include <math.h>
 
 extern ULONG COMRefCount;
 
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007E5C70;
-extern const double DAT_007E5C78;
-
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
 
 // SYNTHETIC: GAMEMD 0x0049FD50 SYMBOL
 // _$E4
-double DAT_0089F780 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2.0);
-
 // SYNTHETIC: GAMEMD 0x0049FD80 SYMBOL
 // _$E7
-double DAT_0089F7D0 = DAT_0089F780 / DAT_007E5C70;
-
 // SYNTHETIC: GAMEMD 0x0049FDA0 SYMBOL
 // _$E10
-double DAT_0089F7B8 = DAT_007E1718 / DAT_0089F7D0;
-
 // SYNTHETIC: GAMEMD 0x0049FDC0 SYMBOL
 // _$E13
-double DAT_0089F7B0 = DAT_007E1720 * DAT_007E5C78;
-
 // SYNTHETIC: GAMEMD 0x0049FDE0 SYMBOL
 // _$E16
-double DAT_0089F788 = DAT_007E1728 * DAT_007E5C78;
-
 // SYNTHETIC: GAMEMD 0x0049FE00 SYMBOL
 // _$E19
-double DAT_0089F760 = DAT_007E1730 * DAT_007E5C78;
-
 // SYNTHETIC: GAMEMD 0x0049FE20 SYMBOL
 // _$E22
-int DAT_0089F7D8 = (int)(FUN_004CAD50(DAT_0089F760 - DAT_0089F788) * DAT_007E1738 * DAT_0089F780);
-
 // SYNTHETIC: GAMEMD 0x0049FE60 SYMBOL
 // _$E25
-double DAT_0089F790 = FUN_004CADE0(DAT_0089F7D8 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x0049FE90 SYMBOL
 // _$E28
-double DAT_0089F7A8 = FUN_004CADE0((DAT_0089F7D8 * 2) / DAT_0089F780);
-
 // SYNTHETIC: GAMEMD 0x0049FEC0 SYMBOL
 // _$E31
-int DAT_0089F7CC = (int)(DAT_0089F7D8 * 4 + DAT_007E1738);
-
 // SYNTHETIC: GAMEMD 0x0049FEF0 SYMBOL
 // _$E34
-ShortPair DAT_0089F778;
-
 // SYNTHETIC: GAMEMD 0x0049FF00 SYMBOL
 // _$E37
-IntTriple DAT_0089F798;
-
-struct InitPair {
-	int A, B, C;
-	InitPair() { C = 0; A = 0x80; B = 0x80; }
-};
-
 // SYNTHETIC: GAMEMD 0x0049FF20 SYMBOL
 // _$E40
-InitPair DAT_0089F7C0;
 
 // FUNCTION: GAMEMD 0x0049FF40
 bool operator!=(CONNECTDATA const &left, CONNECTDATA const &right)
@@ -520,10 +468,15 @@ EnumConnectionPointsClass::~EnumConnectionPointsClass(void)
 	List.Clear();
 }
 
+#include "rect.h"
+
+// SYNTHETIC: GAMEMD 0x004A1540 SYMBOL
+// _$E43
+
 // SYNTHETIC: GAMEMD 0x004A0E10
-// ??_G?$VectorClass@UtagCONNECTDATA@@@@UAEPAXI@Z
+// ??_G?$DynamicVectorClass@UtagCONNECTDATA@@@@UAEPAXI@Z
 // SYNTHETIC: GAMEMD 0x004A0E60
-// ??_G?$VectorClass@PAUIConnectionPoint@@@@UAEPAXI@Z
+// ??_G?$DynamicVectorClass@PAUIConnectionPoint@@@@UAEPAXI@Z
 // TEMPLATE: GAMEMD 0x004A0EB0
 // ?Clear@?$DynamicVectorClass@UtagCONNECTDATA@@@@UAEXXZ
 // TEMPLATE: GAMEMD 0x004A0EE0
@@ -565,19 +518,11 @@ EnumConnectionPointsClass::~EnumConnectionPointsClass(void)
 // TEMPLATE: GAMEMD 0x004A1470
 // ?ID@?$DynamicVectorClass@PAUIConnectionPoint@@@@UAEHABQAUIConnectionPoint@@@Z
 // SYNTHETIC: GAMEMD 0x004A14A0
-// ??_G?$DynamicVectorClass@UtagCONNECTDATA@@@@UAEPAXI@Z
+// ??_G?$VectorClass@UtagCONNECTDATA@@@@UAEPAXI@Z
 // SYNTHETIC: GAMEMD 0x004A14F0
-// ??_G?$DynamicVectorClass@PAUIConnectionPoint@@@@UAEPAXI@Z
+// ??_G?$VectorClass@PAUIConnectionPoint@@@@UAEPAXI@Z
 template class VectorClass<CONNECTDATA>;
 template class DynamicVectorClass<CONNECTDATA>;
 template class VectorClass<IConnectionPoint *>;
 template class DynamicVectorClass<IConnectionPoint *>;
 
-struct IntQuad {
-	int A, B, C, D;
-	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
-};
-
-// SYNTHETIC: GAMEMD 0x004A1540 SYMBOL
-// _$E43
-IntQuad DAT_0089F7E8;

@@ -29,7 +29,7 @@ class MultiplayerTeam
 		int Index;
 };
 
-class MPGameModeClass
+class MultiplayerGameMode
 {
 	public:
 		class InitializerBase
@@ -40,16 +40,16 @@ class MPGameModeClass
 				virtual void Allocate(void) = 0;
 		};
 
-		static MPGameModeClass * __fastcall Get(int index);
+		static MultiplayerGameMode * __fastcall Get(int index);
 		CCINIClass * FUN_005D67B0(void);
 		bool FUN_005D63E0(MultiMission * map);
 		MultiplayerTeam * FUN_005D6620(int index);
 		void FUN_005D6750(void);
 		bool FUN_005D6D80(void);
 
-		MPGameModeClass(NoInitClass const &) {}
-		MPGameModeClass(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex);
-		virtual ~MPGameModeClass(void);
+		MultiplayerGameMode(NoInitClass const &) {}
+		MultiplayerGameMode(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex);
+		virtual ~MultiplayerGameMode(void);
 		virtual bool vt_entry_04(void);
 		virtual bool vt_entry_08(void);
 		virtual bool vt_entry_0C(unsigned a);

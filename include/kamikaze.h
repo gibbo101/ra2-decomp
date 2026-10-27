@@ -11,14 +11,14 @@ class AbstractClass;
 class CellClass;
 struct IStream;
 
+struct KamikazeControl {
+	AircraftClass * Item;
+	CellClass * Cell;
+};
+
 class Kamikaze
 {
 	public:
-		struct KamikazeControl {
-			AircraftClass * Item;
-			CellClass * Cell;
-		};
-
 		Kamikaze(void);
 		~Kamikaze(void);
 

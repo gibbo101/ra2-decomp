@@ -340,20 +340,16 @@ template class VectorClass<LightSourceClass::PendingCellClass *>;
 // ?ID@?$DynamicVectorClass@PAVPendingCellClass@LightSourceClass@@@@UAEHABQAVPendingCellClass@LightSourceClass@@@Z
 template class DynamicVectorClass<LightSourceClass::PendingCellClass *>;
 
-// SYNTHETIC: GAMEMD 0x00555780
-// ??_G?$DynamicVectorClass@PAVLightSourceClass@@@@UAEPAXI@Z
-// SYNTHETIC: GAMEMD 0x005557D0
-// ??_G?$VectorClass@PAVLightSourceClass@@@@UAEPAXI@Z
-// SYNTHETIC: GAMEMD 0x00555820
-// ??_G?$DynamicVectorClass@PAVPendingCellClass@LightSourceClass@@@@UAEPAXI@Z
-// SYNTHETIC: GAMEMD 0x00555870
-// ??_G?$VectorClass@PAVPendingCellClass@LightSourceClass@@@@UAEPAXI@Z
-
-struct IntQuad {
-	int A, B, C, D;
-	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
-};
-
 // SYNTHETIC: GAMEMD 0x005558C0 SYMBOL
 // _$E134
-IntQuad DAT_00ABCA88;
+const Rect RECT_NONE_2(0, 0, 0, 0);
+
+// SYNTHETIC: GAMEMD 0x00555780
+// ??_G?$VectorClass@PAVLightSourceClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x005557D0
+// ??_G?$DynamicVectorClass@PAVLightSourceClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00555820
+// ??_G?$VectorClass@PAVPendingCellClass@LightSourceClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00555870
+// ??_G?$DynamicVectorClass@PAVPendingCellClass@LightSourceClass@@@@UAEPAXI@Z
+

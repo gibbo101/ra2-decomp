@@ -372,49 +372,49 @@ char const * __fastcall FUN_00524EC0(char const * string)
 }
 
 // TEMPLATE: GAMEMD 0x00524ED0
-// ?Clear@?$DynamicVectorClass@PAVAnimTypeClass@@@@UAEXXZ
+// ?Clear@?$DynamicVectorClass@PBVAnimTypeClass@@@@UAEXXZ
 template class DynamicVectorClass<AnimTypeClass *>;
 template class VectorClass<AnimTypeClass *>;
 template class TypeList<AnimTypeClass *>;
 
 // TEMPLATE: GAMEMD 0x00524F00
-// ?ID@?$DynamicVectorClass@PAVAnimTypeClass@@@@UAEHPBQAVAnimTypeClass@@@Z
+// ?ID@?$DynamicVectorClass@PBVAnimTypeClass@@@@UAEHPBQBVAnimTypeClass@@@Z
 
 // TEMPLATE: GAMEMD 0x00524F20
 // ??4?$DynamicVectorClass@PAVAnimTypeClass@@@@QAEAAV0@ABV0@@Z
 
 // TEMPLATE: GAMEMD 0x00524FB0
-// ?GetItem@?$VectorClass@PAVAnimTypeClass@@@@UBEPAVAnimTypeClass@@H@Z
+// ?GetItem@?$VectorClass@PBVAnimTypeClass@@@@UBEPBVAnimTypeClass@@H@Z
 
 // SYNTHETIC: GAMEMD 0x00524FC0
-// ??_G?$DynamicVectorClass@PAVAnimTypeClass@@@@UAEPAXI@Z
+// ??_G?$TypeList@PBVAnimTypeClass@@@@UAEPAXI@Z
 
 // SYNTHETIC: GAMEMD 0x00525010
-// ??_G?$VectorClass@PAVAnimTypeClass@@@@UAEPAXI@Z
+// ??_G?$VectorClass@PBVAnimTypeClass@@@@UAEPAXI@Z
 
 // TEMPLATE: GAMEMD 0x00525060
 // ??4?$VectorClass@PAVAnimTypeClass@@@@QAEAAV0@ABV0@@Z
 
 // TEMPLATE: GAMEMD 0x005250D0
-// ??8?$VectorClass@PAVAnimTypeClass@@@@UBE_NABV0@@Z
+// ??8?$VectorClass@PBVAnimTypeClass@@@@UBE_NABV0@@Z
 
 // TEMPLATE: GAMEMD 0x00525110
-// ?Resize@?$VectorClass@PAVAnimTypeClass@@@@UAE_NHPBQAVAnimTypeClass@@@Z
+// ?Resize@?$VectorClass@PBVAnimTypeClass@@@@UAE_NHPBQBVAnimTypeClass@@@Z
 
 // TEMPLATE: GAMEMD 0x005251C0
-// ?Clear@?$VectorClass@PAVAnimTypeClass@@@@UAEXXZ
+// ?Clear@?$VectorClass@PBVAnimTypeClass@@@@UAEXXZ
 
 // TEMPLATE: GAMEMD 0x005251F0
-// ?ID@?$VectorClass@PAVAnimTypeClass@@@@UAEHABQAVAnimTypeClass@@@Z
+// ?ID@?$VectorClass@PBVAnimTypeClass@@@@UAEHABQBVAnimTypeClass@@@Z
 
 // TEMPLATE: GAMEMD 0x00525230
-// ?ID@?$VectorClass@PAVAnimTypeClass@@@@UAEHPBQAVAnimTypeClass@@@Z
+// ?ID@?$VectorClass@PBVAnimTypeClass@@@@UAEHPBQBVAnimTypeClass@@@Z
 
 // TEMPLATE: GAMEMD 0x00525250
-// ??0?$DynamicVectorClass@PAVAnimTypeClass@@@@QAE@IPBQAVAnimTypeClass@@@Z
+// ??0?$DynamicVectorClass@PBVAnimTypeClass@@@@QAE@IPBQBVAnimTypeClass@@@Z
 
 // SYNTHETIC: GAMEMD 0x005252B0
-// ??_G?$TypeList@PAVAnimTypeClass@@@@UAEPAXI@Z
+// ??_G?$DynamicVectorClass@PBVAnimTypeClass@@@@UAEPAXI@Z
 
 // TEMPLATE: GAMEMD 0x00525300
 // ?Resize@?$DynamicVectorClass@PBVAnimTypeClass@@@@UAE_NHPBQBVAnimTypeClass@@@Z

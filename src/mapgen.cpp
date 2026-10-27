@@ -4809,7 +4809,7 @@ template class VectorClass<Rect>;
 // SYNTHETIC: GAMEMD 0x005AD520
 // ??_G?$DynamicVectorClass@V?$TRect@H@@@@UAEPAXI@Z
 // SYNTHETIC: GAMEMD 0x005AD570
-// ??_G?$VectorClass@PAVCellClass@@@@UAEPAXI@Z
+// ??_G?$DynamicVectorClass@PAVCellClass@@@@UAEPAXI@Z
 template class VectorClass<CellClass *>;
 template class VectorClass<double>;
 

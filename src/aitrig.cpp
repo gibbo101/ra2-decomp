@@ -29,6 +29,7 @@
 #include "vector.h"
 #include "map.h"
 #include "_map.h"
+#include "geometry.h"
 #include "teamtype.h"
 
 #include <math.h>
@@ -36,86 +37,33 @@
 extern char const * DAT_00818114;
 extern char const * DAT_00818118;
 extern SideType FUN_006A46D0(char const * name);
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007E2A08;
-extern const double DAT_007E2A10;
-
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
 
 // SYNTHETIC: GAMEMD 0x0041E160 SYMBOL
 // _$E104
-double DAT_0088A020 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x0041E190 SYMBOL
 // _$E107
-double DAT_0088A070 = DAT_0088A020 / DAT_007E2A08;
-
 // SYNTHETIC: GAMEMD 0x0041E1B0 SYMBOL
 // _$E110
-double DAT_0088A058 = DAT_007E1718 / DAT_0088A070;
-
 // SYNTHETIC: GAMEMD 0x0041E1D0 SYMBOL
 // _$E113
-double DAT_0088A050 = DAT_007E1720 * DAT_007E2A10;
-
 // SYNTHETIC: GAMEMD 0x0041E1F0 SYMBOL
 // _$E116
-double DAT_0088A028 = DAT_007E1728 * DAT_007E2A10;
-
 // SYNTHETIC: GAMEMD 0x0041E210 SYMBOL
 // _$E119
-double DAT_0088A000 = DAT_007E1730 * DAT_007E2A10;
-
 // SYNTHETIC: GAMEMD 0x0041E230 SYMBOL
 // _$E122
-int DAT_0088A078 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_0088A000 - DAT_0088A028) * DAT_0088A020));
-
 // SYNTHETIC: GAMEMD 0x0041E270 SYMBOL
 // _$E125
-double DAT_0088A030 = FUN_004CADE0(DAT_0088A078 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x0041E2A0 SYMBOL
 // _$E128
-double DAT_0088A048 = FUN_004CADE0((DAT_0088A078 * 2) / DAT_0088A020);
-
 // SYNTHETIC: GAMEMD 0x0041E2D0 SYMBOL
 // _$E131
-int DAT_0088A06C = (int)(DAT_0088A078 * 4 + DAT_007E1738);
-
 // SYNTHETIC: GAMEMD 0x0041E300 SYMBOL
 // _$E134
-ShortPair DAT_0088A018;
-
 // SYNTHETIC: GAMEMD 0x0041E310 SYMBOL
 // _$E137
-IntTriple DAT_0088A038;
-
-struct IntTriple2 {
-	int A, B, C;
-	IntTriple2() { C = 0; A = 128; B = 128; }
-};
-
 // SYNTHETIC: GAMEMD 0x0041E330 SYMBOL
 // _$E140
-IntTriple2 DAT_0088A060;
 
 // FUNCTION: GAMEMD 0x0041E350
 AITriggerTypeClass::AITriggerTypeClass(const char *name) :

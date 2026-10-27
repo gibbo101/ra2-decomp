@@ -19,39 +19,7 @@
 #include "ramp.hh"
 #include <math.h>
 
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007F32B8;
-extern const double DAT_007F32C0;
 
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-struct IntQuad {
-	int A, B, C, D;
-	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
-};
-
-struct IntTripleHalf {
-	int A, B, C;
-	IntTripleHalf() { C = 0; A = 128; B = 128; }
-};
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
 #define MAX_TERRAIN_HEIGHT (12)
 #define NUM_CORNERS 4
 #define RAMP_FULL_HEIGHT (30)
@@ -92,21 +60,21 @@ extern int DeformPointHeight;
 extern bool Asm_Ripple_Deform_Points(int startpointx, int startpointy, int general_direction, bool forced);
 }
 
-struct DeformUndoStruct {
-	DeformUndoStruct(void)
+struct UndoInfoStruct {
+	UndoInfoStruct(void)
 	{
 		CellPoint = Point2D(0, 0);
 		OldHeight = 0;
 	};
 
-	DeformUndoStruct(const Point2D & point, int oldheight)
+	UndoInfoStruct(const Point2D & point, int oldheight)
 	{
 		CellPoint = point;
 		OldHeight = oldheight;
 	};
 
-	bool operator==(DeformUndoStruct const & rvalue) const { return(CellPoint == rvalue.CellPoint && OldHeight == rvalue.OldHeight); }
-	bool operator!=(DeformUndoStruct const & rvalue) const { return(CellPoint != rvalue.CellPoint || OldHeight != rvalue.OldHeight); }
+	bool operator==(UndoInfoStruct const & rvalue) const { return(CellPoint == rvalue.CellPoint && OldHeight == rvalue.OldHeight); }
+	bool operator!=(UndoInfoStruct const & rvalue) const { return(CellPoint != rvalue.CellPoint || OldHeight != rvalue.OldHeight); }
 
 	Point2D CellPoint;
 	int OldHeight;
@@ -116,14 +84,14 @@ struct DeformUndoStruct {
 // _$E152
 // SYNTHETIC: GAMEMD 0x006B23F0 SYMBOL
 // _$E150
-DynamicVectorClass<DeformUndoStruct> UndoRecords;
+DynamicVectorClass<UndoInfoStruct> UndoRecords;
 
 bool Commit_Deform_Grid(Cell center, bool forced);
 
 // FUNCTION: GAMEMD 0x006B2430
 void Record_Deform_Undo(const Point2D & point, int oldheight)
 {
-	UndoRecords.Add(DeformUndoStruct(point, oldheight));
+	UndoRecords.Add(UndoInfoStruct(point, oldheight));
 }
 
 // FUNCTION: GAMEMD 0x006B24A0
@@ -822,86 +790,64 @@ int Get_Deformable_Cell_Corners(CellClass * cellptr, int direction)
 }
 
 // TEMPLATE: GAMEMD 0x006B43B0
-// ?Clear@?$DynamicVectorClass@UDeformUndoStruct@@@@UAEXXZ
+// ?Clear@?$DynamicVectorClass@UUndoInfoStruct@@@@UAEXXZ
 // TEMPLATE: GAMEMD 0x006B43E0
-// ?ID@?$DynamicVectorClass@UDeformUndoStruct@@@@UAEHPBUDeformUndoStruct@@@Z
+// ?ID@?$DynamicVectorClass@UUndoInfoStruct@@@@UAEHPBUUndoInfoStruct@@@Z
 // TEMPLATE: GAMEMD 0x006B4410
-// ?GetItem@?$VectorClass@UDeformUndoStruct@@@@UBE?AUDeformUndoStruct@@H@Z
+// ?GetItem@?$VectorClass@UUndoInfoStruct@@@@UBE?AUUndoInfoStruct@@H@Z
 // TEMPLATE: GAMEMD 0x006B4440
-// ??8?$VectorClass@UDeformUndoStruct@@@@UBE_NABV0@@Z
+// ??8?$VectorClass@UUndoInfoStruct@@@@UBE_NABV0@@Z
 // TEMPLATE: GAMEMD 0x006B44A0
-// ?Resize@?$VectorClass@UDeformUndoStruct@@@@UAE_NHPBUDeformUndoStruct@@@Z
+// ?Resize@?$VectorClass@UUndoInfoStruct@@@@UAE_NHPBUUndoInfoStruct@@@Z
 // TEMPLATE: GAMEMD 0x006B45A0
-// ?Clear@?$VectorClass@UDeformUndoStruct@@@@UAEXXZ
+// ?Clear@?$VectorClass@UUndoInfoStruct@@@@UAEXXZ
 // TEMPLATE: GAMEMD 0x006B45D0
-// ?ID@?$VectorClass@UDeformUndoStruct@@@@UAEHABUDeformUndoStruct@@@Z
+// ?ID@?$VectorClass@UUndoInfoStruct@@@@UAEHABUUndoInfoStruct@@@Z
 // TEMPLATE: GAMEMD 0x006B4620
-// ?ID@?$VectorClass@UDeformUndoStruct@@@@UAEHPBUDeformUndoStruct@@@Z
-template class VectorClass<DeformUndoStruct>;
+// ?ID@?$VectorClass@UUndoInfoStruct@@@@UAEHPBUUndoInfoStruct@@@Z
+template class VectorClass<UndoInfoStruct>;
 
 // TEMPLATE: GAMEMD 0x006B4650
-// ?Resize@?$DynamicVectorClass@UDeformUndoStruct@@@@UAE_NHPBUDeformUndoStruct@@@Z
+// ?Resize@?$DynamicVectorClass@UUndoInfoStruct@@@@UAE_NHPBUUndoInfoStruct@@@Z
 // TEMPLATE: GAMEMD 0x006B4760
-// ?ID@?$DynamicVectorClass@UDeformUndoStruct@@@@UAEHABUDeformUndoStruct@@@Z
-template class DynamicVectorClass<DeformUndoStruct>;
+// ?ID@?$DynamicVectorClass@UUndoInfoStruct@@@@UAEHABUUndoInfoStruct@@@Z
+template class DynamicVectorClass<UndoInfoStruct>;
 
 // SYNTHETIC: GAMEMD 0x006B47A0
-// ??_G?$VectorClass@UDeformUndoStruct@@@@UAEPAXI@Z
+// ??_G?$VectorClass@UUndoInfoStruct@@@@UAEPAXI@Z
 // SYNTHETIC: GAMEMD 0x006B47F0
-// ??_G?$DynamicVectorClass@UDeformUndoStruct@@@@UAEPAXI@Z
+// ??_G?$DynamicVectorClass@UUndoInfoStruct@@@@UAEPAXI@Z
+
+#include "geometry.h"
 
 // SYNTHETIC: GAMEMD 0x006B4840 SYMBOL
 // _$E157
-double DAT_00B0B710 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x006B4870 SYMBOL
 // _$E160
-double DAT_00B0B760 = DAT_00B0B710 / DAT_007F32B8;
-
 // SYNTHETIC: GAMEMD 0x006B4890 SYMBOL
 // _$E163
-double DAT_00B0B748 = DAT_007E1718 / DAT_00B0B760;
-
 // SYNTHETIC: GAMEMD 0x006B48B0 SYMBOL
 // _$E166
-double DAT_00B0B740 = DAT_007E1720 * DAT_007F32C0;
-
 // SYNTHETIC: GAMEMD 0x006B48D0 SYMBOL
 // _$E169
-double DAT_00B0B718 = DAT_007E1728 * DAT_007F32C0;
-
 // SYNTHETIC: GAMEMD 0x006B48F0 SYMBOL
 // _$E172
-double DAT_00B0B6F0 = DAT_007E1730 * DAT_007F32C0;
-
 // SYNTHETIC: GAMEMD 0x006B4910 SYMBOL
 // _$E175
-int DAT_00B0B768 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B0B6F0 - DAT_00B0B718) * DAT_00B0B710));
-
 // SYNTHETIC: GAMEMD 0x006B4950 SYMBOL
 // _$E178
-double DAT_00B0B720 = FUN_004CADE0(DAT_00B0B768 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x006B4980 SYMBOL
 // _$E181
-double DAT_00B0B738 = FUN_004CADE0((DAT_00B0B768 * 2) / DAT_00B0B710);
-
 // SYNTHETIC: GAMEMD 0x006B49B0 SYMBOL
 // _$E184
-int DAT_00B0B75C = (int)(DAT_00B0B768 * 4 + DAT_007E1738);
-
 // SYNTHETIC: GAMEMD 0x006B49E0 SYMBOL
 // _$E187
-ShortPair DAT_00B0B708;
-
 // SYNTHETIC: GAMEMD 0x006B49F0 SYMBOL
 // _$E190
-IntTriple DAT_00B0B728;
-
 // SYNTHETIC: GAMEMD 0x006B4A10 SYMBOL
 // _$E193
-IntTripleHalf DAT_00B0B750;
 
 // SYNTHETIC: GAMEMD 0x006B4A30 SYMBOL
 // _$E196
-IntQuad DAT_00B0B6F8;
+const Rect RECT_NONE_2(0, 0, 0, 0);
+

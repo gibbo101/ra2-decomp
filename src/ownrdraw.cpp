@@ -39,6 +39,7 @@
 #include "vox.h"
 #include "windlg.h"
 #include "bitfont.h"
+#include "geometry.h"
 #include <commctrl.h>
 #include <ctime>
 #include <mbstring.h>
@@ -64,74 +65,32 @@ int WINAPI ODUpdateWindowRect(HWND window, RECT *rect);
 BOOL CALLBACK ODAddWindowToList(HWND window, ArrayList<HWND> * list);
 
 namespace fastmath { double __cdecl sqrt(double x); double __cdecl tan(double x); double __cdecl atan(double x); }
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007EF700;
-extern const double DAT_007EF708;
-
 // SYNTHETIC: GAMEMD 0x00600340 SYMBOL
 // _$E56
-double DAT_00AC1B40 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x00600370 SYMBOL
 // _$E59
-double DAT_00AC48A0 = DAT_00AC1B40 / DAT_007EF700;
-
 // SYNTHETIC: GAMEMD 0x00600390 SYMBOL
 // _$E62
-double DAT_00AC4838 = DAT_007E1718 / DAT_00AC48A0;
-
 // SYNTHETIC: GAMEMD 0x006003B0 SYMBOL
 // _$E65
-double DAT_00AC4830 = DAT_007E1720 * DAT_007EF708;
-
 // SYNTHETIC: GAMEMD 0x006003D0 SYMBOL
 // _$E68
-double DAT_00AC1B88 = DAT_007E1728 * DAT_007EF708;
-
 // SYNTHETIC: GAMEMD 0x006003F0 SYMBOL
 // _$E71
-double DAT_00AC1898 = DAT_007E1730 * DAT_007EF708;
-
 // SYNTHETIC: GAMEMD 0x00600410 SYMBOL
 // _$E74
-int DAT_00AC48AC = (int)(fastmath::tan(DAT_00AC1898 - DAT_00AC1B88) * DAT_007E1738 * DAT_00AC1B40);
-
 // SYNTHETIC: GAMEMD 0x00600450 SYMBOL
 // _$E77
-double DAT_00AC1CA0 = fastmath::atan(DAT_00AC48AC * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x00600480 SYMBOL
 // _$E80
-double DAT_00AC4610 = fastmath::atan((DAT_00AC48AC * 2) / DAT_00AC1B40);
-
 // SYNTHETIC: GAMEMD 0x006004B0 SYMBOL
 // _$E83
-int DAT_00AC489C = (int)(DAT_00AC48AC * 4 + DAT_007E1738);
-
-struct ODShortPair { short a; short b; ODShortPair(void) { a = 0; b = 0; } };
-struct ODIntTriple { int a; int b; int c; ODIntTriple(void) { a = 0; b = 0; c = 0; } };
-
 // SYNTHETIC: GAMEMD 0x006004E0 SYMBOL
 // _$E86
-ODShortPair DAT_00AC1B38;
-
 // SYNTHETIC: GAMEMD 0x006004F0 SYMBOL
 // _$E89
-ODIntTriple DAT_00AC1DF8;
-
-
-struct ODCenterTriple { int a; int b; int c; ODCenterTriple(void) { c = 0; a = 128; b = 128; } };
-
 // SYNTHETIC: GAMEMD 0x00600510 SYMBOL
 // _$E92
-ODCenterTriple DAT_00AC4888;
 
 // SYNTHETIC: GAMEMD 0x00600530 SYMBOL
 // _$E97
@@ -4351,7 +4310,6 @@ void __fastcall FUN_0060CF00(HWND dialog);
 void __fastcall Resize_Dialogs(HWND window);
 void __fastcall Center_Window_Within_Window(HWND window);
 extern int DAT_007F5BE0;
-extern int DAT_007F5BEC;
 
 namespace UI { bool Updated(void); }
 void __fastcall FUN_005D4D50(void);

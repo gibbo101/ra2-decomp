@@ -13,25 +13,13 @@
 #include "surface.h"
 #include "vector.h"
 #include "bitfont.h"
+#include "geometry.h"
 #include "dsurface.h"
 #include "color.hh"
 
 #include <math.h>
 
 static inline Point2D * Scratch(Point2D const & p) { return (Point2D *)&p; }
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007F3F30;
-extern const double DAT_007F3F38;
 
 // FUNCTION: GAMEMD 0x006C6540
 StaticButtonClass::StaticButtonClass(unsigned , wchar_t const * text, TextPrintType style, int x, int y, int w, int h) :
@@ -142,76 +130,32 @@ void StaticButtonClass::Draw_Text(wchar_t const * text)
 
 // SYNTHETIC: GAMEMD 0x006C68C0 SYMBOL
 // _$E31
-double DAT_00B0BD30 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x006C68F0 SYMBOL
 // _$E34
-double DAT_00B0BDA8 = DAT_00B0BD30 / DAT_007F3F30;
-
 // SYNTHETIC: GAMEMD 0x006C6910 SYMBOL
 // _$E37
-double DAT_00B0BD88 = DAT_007E1718 / DAT_00B0BDA8;
-
 // SYNTHETIC: GAMEMD 0x006C6930 SYMBOL
 // _$E40
-double DAT_00B0BD80 = DAT_007E1720 * DAT_007F3F38;
-
 // SYNTHETIC: GAMEMD 0x006C6950 SYMBOL
 // _$E43
-double DAT_00B0BD38 = DAT_007E1728 * DAT_007F3F38;
-
 // SYNTHETIC: GAMEMD 0x006C6970 SYMBOL
 // _$E46
-double DAT_00B0BD08 = DAT_007E1730 * DAT_007F3F38;
-
 // SYNTHETIC: GAMEMD 0x006C6990 SYMBOL
 // _$E49
-int DAT_00B0BDB0 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B0BD08 - DAT_00B0BD38) * DAT_00B0BD30));
-
 // SYNTHETIC: GAMEMD 0x006C69D0 SYMBOL
 // _$E52
-double DAT_00B0BD40 = FUN_004CADE0(DAT_00B0BDB0 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x006C6A00 SYMBOL
 // _$E55
-double DAT_00B0BD70 = FUN_004CADE0((DAT_00B0BDB0 * 2) / DAT_00B0BD30);
-
 // SYNTHETIC: GAMEMD 0x006C6A30 SYMBOL
 // _$E58
-int DAT_00B0BDA4 = (int)(DAT_00B0BDB0 * 4 + DAT_007E1738);
-
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
-
-struct IntQuad {
-	int A, B, C, D;
-	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
-};
-
-struct Centre {
-	int A, B, C;
-	Centre() { C = 0; A = 128; B = 128; }
-};
-
 // SYNTHETIC: GAMEMD 0x006C6A60 SYMBOL
 // _$E61
-ShortPair DAT_00B0BD20;
-
 // SYNTHETIC: GAMEMD 0x006C6A70 SYMBOL
 // _$E64
-IntTriple DAT_00B0BD60;
-
 // SYNTHETIC: GAMEMD 0x006C6A90 SYMBOL
 // _$E67
-Centre DAT_00B0BD98;
 
 // SYNTHETIC: GAMEMD 0x006C6AB0 SYMBOL
 // _$E70
-IntQuad DAT_00B0BD10;
+const Rect RECT_NONE_2(0, 0, 0, 0);
+

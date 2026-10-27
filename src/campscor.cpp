@@ -737,7 +737,7 @@ bool FUN_0046FBD0(void)
 	return false;
 }
 
-extern CoopPlayerStats * DAT_0089DFE0[];
+extern MPlayerScoreType * DAT_0089DFE0[];
 extern int DAT_0089E008;
 extern int DAT_0089E020;
 extern int DAT_0089DFD4;
@@ -747,7 +747,7 @@ class CampScoreResults
 	public:
 		CampScoreResults(void);
 		virtual ~CampScoreResults(void);
-		virtual void Show(DynamicVectorClass<CoopPlayerStats *> list, int a6, int a7, int a8, wchar_t const * name);
+		virtual void Show(DynamicVectorClass<MPlayerScoreType *> list, int a6, int a7, int a8, wchar_t const * name);
 };
 
 // FUNCTION: GAMEMD 0x00470C00
@@ -805,7 +805,7 @@ extern int DAT_0089DFC0;
 int CALLBACK FUN_00470D30(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 
 // FUNCTION: GAMEMD 0x00471420
-void CampScoreResults::Show(DynamicVectorClass<CoopPlayerStats *> list, int a6, int a7, int a8, wchar_t const * name)
+void CampScoreResults::Show(DynamicVectorClass<MPlayerScoreType *> list, int a6, int a7, int a8, wchar_t const * name)
 {
 	DAT_0089E020 = list.Count();
 	wcscpy(DAT_0089E0A4, name);
@@ -833,92 +833,36 @@ void CampScoreResults::Show(DynamicVectorClass<CoopPlayerStats *> list, int a6, 
 // SYNTHETIC: GAMEMD 0x00471520
 // ??_GCampScoreResults@@UAEPAXI@Z
 
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007E4AC0;
-extern const double DAT_007E4AC8;
 
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
+
+#include "geometry.h"
 
 // SYNTHETIC: GAMEMD 0x00471540 SYMBOL
 // _$E82
-double DAT_0089E120 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x00471570 SYMBOL
 // _$E85
-double DAT_0089E170 = DAT_0089E120 / DAT_007E4AC0;
-
 // SYNTHETIC: GAMEMD 0x00471590 SYMBOL
 // _$E88
-double DAT_0089E158 = DAT_007E1718 / DAT_0089E170;
-
 // SYNTHETIC: GAMEMD 0x004715B0 SYMBOL
 // _$E91
-double DAT_0089E150 = DAT_007E1720 * DAT_007E4AC8;
-
 // SYNTHETIC: GAMEMD 0x004715D0 SYMBOL
 // _$E94
-double DAT_0089E128 = DAT_007E1728 * DAT_007E4AC8;
-
 // SYNTHETIC: GAMEMD 0x004715F0 SYMBOL
 // _$E97
-double DAT_0089E0E8 = DAT_007E1730 * DAT_007E4AC8;
-
 // SYNTHETIC: GAMEMD 0x00471610 SYMBOL
 // _$E100
-int DAT_0089E178 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_0089E0E8 - DAT_0089E128) * DAT_0089E120));
-
 // SYNTHETIC: GAMEMD 0x00471650 SYMBOL
 // _$E103
-double DAT_0089E130 = FUN_004CADE0(DAT_0089E178 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x00471680 SYMBOL
 // _$E106
-double DAT_0089E148 = FUN_004CADE0((DAT_0089E178 * 2) / DAT_0089E120);
-
 // SYNTHETIC: GAMEMD 0x004716B0 SYMBOL
 // _$E109
-int DAT_0089E16C = (int)(DAT_0089E178 * 4 + DAT_007E1738);
-
 // SYNTHETIC: GAMEMD 0x004716E0 SYMBOL
 // _$E112
-ShortPair DAT_0089E118;
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
-
 // SYNTHETIC: GAMEMD 0x004716F0 SYMBOL
 // _$E115
-IntTriple DAT_0089E138;
-
-struct IntTripleHalf {
-	int A, B, C;
-	IntTripleHalf() { A = 0x80; B = 0x80; C = 0; }
-};
-
 // SYNTHETIC: GAMEMD 0x00471710 SYMBOL
 // _$E118
-IntTripleHalf DAT_0089E160;
-
-struct IntQuad {
-	int A, B, C, D;
-	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
-};
-
 // SYNTHETIC: GAMEMD 0x00471730 SYMBOL
 // _$E121
-IntQuad DAT_0089E108;
+const Rect RECT_NONE_2(0, 0, 0, 0);

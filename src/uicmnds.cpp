@@ -692,28 +692,28 @@ TechnoList * __fastcall FUN_00731EB0(bool (__fastcall * test)(TechnoClass *, int
 }
 
 // FUNCTION: GAMEMD 0x00731F70
-ObjectList * __fastcall FUN_00731F70(bool (__fastcall * test)(ObjectClass *, int), int arg)
+TechnoList * __fastcall FUN_00731F70(bool (__fastcall * test)(ObjectClass *, int), int arg)
 {
-	ObjectList * result = new ObjectList;
+	TechnoList * result = new TechnoList;
 	int count = TacticalSelectionInstance->Count();
 	for (int i = 0; i < count; i++) {
 		ObjectClass * object = TacticalSelectionInstance->Get(i);
 		if (object && object->Is_Techno() && test(object, arg)) {
-			result->Add(object);
+			result->Add((TechnoClass *)object);
 		}
 	}
 	return result;
 }
 
 // FUNCTION: GAMEMD 0x00732050
-ObjectList * FUN_00732050(void)
+TechnoList * FUN_00732050(void)
 {
-	ObjectList * result = new ObjectList;
+	TechnoList * result = new TechnoList;
 	int count = DAT_00A8ECC8;
 	for (int i = 0; i < count; i++) {
 		ObjectClass * object = DAT_00A8ECB8[i];
 		if (object && object->Is_Techno()) {
-			result->Add(object);
+			result->Add((TechnoClass *)object);
 		}
 	}
 	return result;
@@ -1019,12 +1019,12 @@ static inline int Cycle_Step(int value)
 	return value == 1 ? 2 : 0;
 }
 
-static inline ObjectList * Wrap_All(void)
+static inline TechnoList * Wrap_All(void)
 {
 	return FUN_00732050();
 }
 
-static inline ObjectList * Wrap_Filter(bool (__fastcall * test)(ObjectClass *, int), int arg)
+static inline TechnoList * Wrap_Filter(bool (__fastcall * test)(ObjectClass *, int), int arg)
 {
 	return FUN_00731F70(test, arg);
 }
@@ -1072,7 +1072,7 @@ void __fastcall FUN_00733380(bool redraw)
 	}
 	if (Unsorted::NavCycleMode != 3) {
 		FUN_00730970();
-		ObjectList * list = Wrap_All();
+		TechnoList * list = Wrap_All();
 		DAT_00B0FE6C = (UICommandHolder *)list;
 		if (list->Count() == 0) {
 			if (list) {
@@ -1196,7 +1196,7 @@ void __fastcall FUN_007336C0(bool redraw)
 	}
 	if (Unsorted::NavCycleMode != 4) {
 		FUN_00730970();
-		ObjectList * list = Wrap_All();
+		TechnoList * list = Wrap_All();
 		DAT_00B0FE6C = (UICommandHolder *)list;
 		if (list->Count() == 0) {
 			if (list) {
@@ -1332,7 +1332,7 @@ void __fastcall FUN_007339B0(bool redraw)
 	}
 	if (Unsorted::NavCycleMode != 5) {
 		FUN_00730970();
-		ObjectList * list = Wrap_All();
+		TechnoList * list = Wrap_All();
 		DAT_00B0FE6C = (UICommandHolder *)list;
 		if (list->Count() == 0) {
 			if (list) {

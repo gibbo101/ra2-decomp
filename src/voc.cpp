@@ -557,17 +557,17 @@ void __fastcall FUN_007518C0(bool enabled)
 }
 
 // TEMPLATE: GAMEMD 0x007518D0
-// ?Clear@?$DynamicVectorClass@PAVVocEntry@@@@UAEXXZ
+// ?Clear@?$DynamicVectorClass@PAVVocClass@@@@UAEXXZ
 // TEMPLATE: GAMEMD 0x00751900
-// ?ID@?$DynamicVectorClass@PAVVocEntry@@@@UAEHPBQAVVocEntry@@@Z
+// ?ID@?$DynamicVectorClass@PAVVocClass@@@@UAEHPBQAVVocClass@@@Z
 // TEMPLATE: GAMEMD 0x00751920
-// ?GetItem@?$VectorClass@PAVVocEntry@@@@UBEPAVVocEntry@@H@Z
+// ?GetItem@?$VectorClass@PAVVocClass@@@@UBEPAVVocClass@@H@Z
 template class DynamicVectorClass<VocEntry *>;
 
 // TEMPLATE: GAMEMD 0x00751930
-// ??8?$VectorClass@PAVVocEntry@@@@UBE_NABV0@@Z
+// ??8?$VectorClass@PAVVocClass@@@@UBE_NABV0@@Z
 // TEMPLATE: GAMEMD 0x00751970
-// ?Resize@?$VectorClass@PAVVocEntry@@@@UAE_NHPBQAVVocEntry@@@Z
+// ?Resize@?$VectorClass@PAVVocClass@@@@UAE_NHPBQAVVocClass@@@Z
 template class VectorClass<VocEntry *>;
 
 // TEMPLATE: GAMEMD 0x00751A20
@@ -581,9 +581,9 @@ template class VectorClass<VocEntry *>;
 // TEMPLATE: GAMEMD 0x00751B60
 // ?ID@?$DynamicVectorClass@PAVVocClass@@@@UAEHABQAVVocClass@@@Z
 // SYNTHETIC: GAMEMD 0x00751B90
-// ??_G?$DynamicVectorClass@PAVVocClass@@@@UAEPAXI@Z
-// SYNTHETIC: GAMEMD 0x00751BE0
 // ??_G?$VectorClass@PAVVocClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x00751BE0
+// ??_G?$DynamicVectorClass@PAVVocClass@@@@UAEPAXI@Z
 template class VectorClass<VocClass *>;
 template class DynamicVectorClass<VocClass *>;
 
@@ -737,25 +737,11 @@ IntTriple2 DAT_00B1D410;
 // _$E113
 IntTriple3 DAT_00B1D440;
 
-struct VoxEntry
-{
-	VoxEntry(char const * name);
-	~VoxEntry(void);
-	bool LoadFromINI(INIClass & ini);
-	char const * GetFilename(void) const;
-
-	char Name[0x28];
-	float Volume;
-	char Files[3][9];
-	int Priority;
-	int Type;
-	int State;
-};
 // SYNTHETIC: GAMEMD 0x00752210 SYMBOL
 // _$E118
 // SYNTHETIC: GAMEMD 0x00752250 SYMBOL
 // _$E116
-DynamicVectorClass<VoxEntry *> VoxArray;
+DynamicVectorClass<VoxClass *> VoxArray;
 
 struct AudioStream
 {
@@ -780,7 +766,7 @@ extern unsigned __int64 __fastcall FUN_004093B0(void);
 
 struct VoxNode : SoundLink
 {
-	VoxEntry * Vox;
+	VoxClass * Vox;
 	int Unused;
 	int Priority;
 	int Type;
@@ -795,7 +781,7 @@ extern SoundLink DAT_00B1D450[4];
 extern VoxNode * DAT_00B1D4B8;
 extern int DAT_00B1D4BC;
 extern int DAT_00B1D4C0;
-extern VoxEntry * DAT_00B1D4C4;
+extern VoxClass * DAT_00B1D4C4;
 extern int DAT_00B1D4C8;
 extern AudioStream * DAT_00B1D4CC;
 extern unsigned __int64 DAT_00B1D4D0;
@@ -805,8 +791,8 @@ extern char DAT_00A8ED64;
 extern int DAT_0087E740;
 extern int DAT_0087E750;
 void FUN_00752370(void);
-VoxNode * __fastcall FUN_00752680(VoxEntry * vox);
-void __fastcall FUN_00752590(VoxEntry * vox, int type, int priority);
+VoxNode * __fastcall FUN_00752680(VoxClass * vox);
+void __fastcall FUN_00752590(VoxClass * vox, int type, int priority);
 void FUN_00752760(void);
 
 // FUNCTION: GAMEMD 0x00752290
@@ -888,7 +874,7 @@ char const * __fastcall FUN_00752460(int index)
 void VoxClass::PlayIndex(int index, int a, int b)
 {
 	if (DAT_00B1D4CC && index >= 0 && index < VoxArray.Count() && !DAT_00B1D3D8) {
-		VoxEntry * vox = VoxArray[index];
+		VoxClass * vox = VoxArray[index];
 		if (vox != DAT_00B1D4C4) {
 			if (a == -1) {
 				a = vox->Type;
@@ -923,7 +909,7 @@ void VoxClass::PlayIndex(int index, int a, int b)
 }
 
 // FUNCTION: GAMEMD 0x00752590
-void __fastcall FUN_00752590(VoxEntry * vox, int type, int priority)
+void __fastcall FUN_00752590(VoxClass * vox, int type, int priority)
 {
 	VoxNode * node = (VoxNode *)operator new(0x20);
 	node->FUN_004072D0();
@@ -956,7 +942,7 @@ void __fastcall FUN_00752590(VoxEntry * vox, int type, int priority)
 }
 
 // FUNCTION: GAMEMD 0x00752680
-VoxNode * __fastcall FUN_00752680(VoxEntry * vox)
+VoxNode * __fastcall FUN_00752680(VoxClass * vox)
 {
 	VoxNode * node;
 	for (node = (VoxNode *)DAT_00B1D3F0.FUN_004073C0(); node; node = (VoxNode *)node->FUN_004073E0()) {
@@ -1151,7 +1137,7 @@ void FUN_00752CA0(void)
 }
 
 // FUNCTION: GAMEMD 0x00752CB0
-VoxEntry::VoxEntry(char const * name)
+VoxClass::VoxClass(char const * name)
 {
 	Volume = 1.0f;
 	strcpy(Name, name);
@@ -1165,13 +1151,13 @@ VoxEntry::VoxEntry(char const * name)
 }
 
 // FUNCTION: GAMEMD 0x00752D60
-VoxEntry::~VoxEntry(void)
+VoxClass::~VoxClass(void)
 {
 	VoxArray.Delete(this);
 }
 
 // FUNCTION: GAMEMD 0x00752DB0
-bool VoxEntry::LoadFromINI(INIClass & ini)
+bool VoxClass::LoadFromINI(INIClass & ini)
 {
 	char buffer[500];
 
@@ -1233,10 +1219,10 @@ void __fastcall FUN_00753000(INIClass & ini)
 		for (int i = 0; i < count; i++) {
 			char name[200];
 			if (ini.Get_String(SECTION, ini.Get_Entry(SECTION, i), DAT_00889F64, name, sizeof(name))) {
-				VoxEntry * vox;
+				VoxClass * vox;
 				int index = FindVoxChecked(name);
 				if (index == -1) {
-					vox = new VoxEntry(name);
+					vox = new VoxClass(name);
 				} else {
 					vox = VoxArray[index];
 				}
@@ -1258,7 +1244,7 @@ void FUN_007531A0(void)
 	}
 	FUN_00752370();
 	while (VoxArray.Count() > 0) {
-		VoxEntry * vox = VoxArray[0];
+		VoxClass * vox = VoxArray[0];
 		delete vox;
 	}
 }
@@ -1304,13 +1290,13 @@ char const * Voc_Name(VocType voc)
 }
 
 // FUNCTION: GAMEMD 0x00753350
-int __fastcall FUN_00753350(VoxEntry * vox)
+int __fastcall FUN_00753350(VoxClass * vox)
 {
 	return VoxArray.ID(vox);
 }
 
 // FUNCTION: GAMEMD 0x00753380
-char const * VoxEntry::GetFilename(void) const
+char const * VoxClass::GetFilename(void) const
 {
 	if (DAT_00B1D4C8 == 0) {
 		return Files[2];
@@ -1443,34 +1429,32 @@ void FUN_007535D0(void)
 }
 
 // TEMPLATE: GAMEMD 0x00753650
-// ?Clear@?$DynamicVectorClass@PAUVoxEntry@@@@UAEXXZ
+// ?Clear@?$DynamicVectorClass@PAVVoxClass@@@@UAEXXZ
 // TEMPLATE: GAMEMD 0x00753680
-// ?ID@?$VectorClass@PAUVoxEntry@@@@UAEHPBQAUVoxEntry@@@Z
+// ?ID@?$DynamicVectorClass@PAVVoxClass@@@@UAEHPBQAVVoxClass@@@Z
 // TEMPLATE: GAMEMD 0x007536A0
-// ?GetItem@?$VectorClass@PAUVoxEntry@@@@UBEPAUVoxEntry@@H@Z
+// ?GetItem@?$VectorClass@PAVVoxClass@@@@UBEPAVVoxClass@@H@Z
 // TEMPLATE: GAMEMD 0x007536B0
-// ??8?$VectorClass@PAUVoxEntry@@@@UBE_NABV0@@Z
+// ??8?$VectorClass@PAVVoxClass@@@@UBE_NABV0@@Z
 // TEMPLATE: GAMEMD 0x007536F0
-// ?Resize@?$VectorClass@PAUVoxEntry@@@@UAE_NHPBQAUVoxEntry@@@Z
-template class VectorClass<VoxEntry *>;
-template class DynamicVectorClass<VoxEntry *>;
+// ?Resize@?$VectorClass@PAVVoxClass@@@@UAE_NHPBQAVVoxClass@@@Z
+template class VectorClass<VoxClass *>;
+template class DynamicVectorClass<VoxClass *>;
 
 // TEMPLATE: GAMEMD 0x007537A0
-// ?Clear@?$VectorClass@PAUVoxNode@@@@UAEXXZ
+// ?Clear@?$VectorClass@PAVVoxClass@@@@UAEXXZ
 // TEMPLATE: GAMEMD 0x007537D0
-// ?ID@?$VectorClass@PAUVoxNode@@@@UAEHABQAUVoxNode@@@Z
+// ?ID@?$VectorClass@PAVVoxClass@@@@UAEHABQAVVoxClass@@@Z
 // TEMPLATE: GAMEMD 0x00753810
-// ?ID@?$VectorClass@PAUVoxNode@@@@UAEHPBQAUVoxNode@@@Z
+// ?ID@?$VectorClass@PAVVoxClass@@@@UAEHPBQAVVoxClass@@@Z
 // TEMPLATE: GAMEMD 0x00753830
-// ?Resize@?$DynamicVectorClass@PAUVoxNode@@@@UAE_NHPBQAUVoxNode@@@Z
+// ?Resize@?$DynamicVectorClass@PAVVoxClass@@@@UAE_NHPBQAVVoxClass@@@Z
 // TEMPLATE: GAMEMD 0x007538E0
-// ?ID@?$DynamicVectorClass@PAUVoxNode@@@@UAEHABQAUVoxNode@@@Z
+// ?ID@?$DynamicVectorClass@PAVVoxClass@@@@UAEHABQAVVoxClass@@@Z
 // SYNTHETIC: GAMEMD 0x00753910
-// ??_G?$DynamicVectorClass@PAUVoxNode@@@@UAEPAXI@Z
+// ??_G?$VectorClass@PAVVoxClass@@@@UAEPAXI@Z
 // SYNTHETIC: GAMEMD 0x00753960
-// ??_G?$VectorClass@PAUVoxNode@@@@UAEPAXI@Z
-template class VectorClass<VoxNode *>;
-template class DynamicVectorClass<VoxNode *>;
+// ??_G?$DynamicVectorClass@PAVVoxClass@@@@UAEPAXI@Z
 
 int DAT_00B2D810;
 int DAT_00B2D814;

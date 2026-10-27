@@ -27,94 +27,42 @@
 #include "smudge.h"
 #include "sun.h"
 #include "tactical.h"
+#include "geometry.h"
 #include "tracker.h"
 
 #include <math.h>
 
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007F34E8;
-extern const double DAT_007F34F0;
 
 struct FileSystem {
 	static void const * LoadFile(char const * name, bool flag);
 };
 
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
-
 // SYNTHETIC: GAMEMD 0x006B5070 SYMBOL
 // _$E137
-double DAT_00B0B790 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x006B50A0 SYMBOL
 // _$E140
-double DAT_00B0B7E0 = DAT_00B0B790 / DAT_007F34E8;
-
 // SYNTHETIC: GAMEMD 0x006B50C0 SYMBOL
 // _$E143
-double DAT_00B0B7C8 = DAT_007E1718 / DAT_00B0B7E0;
-
 // SYNTHETIC: GAMEMD 0x006B50E0 SYMBOL
 // _$E146
-double DAT_00B0B7C0 = DAT_007E1720 * DAT_007F34F0;
-
 // SYNTHETIC: GAMEMD 0x006B5100 SYMBOL
 // _$E149
-double DAT_00B0B798 = DAT_007E1728 * DAT_007F34F0;
-
 // SYNTHETIC: GAMEMD 0x006B5120 SYMBOL
 // _$E152
-double DAT_00B0B770 = DAT_007E1730 * DAT_007F34F0;
-
 // SYNTHETIC: GAMEMD 0x006B5140 SYMBOL
 // _$E155
-int DAT_00B0B7E8 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B0B770 - DAT_00B0B798) * DAT_00B0B790));
-
 // SYNTHETIC: GAMEMD 0x006B5180 SYMBOL
 // _$E158
-double DAT_00B0B7A0 = FUN_004CADE0(DAT_00B0B7E8 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x006B51B0 SYMBOL
 // _$E161
-double DAT_00B0B7B8 = FUN_004CADE0((DAT_00B0B7E8 * 2) / DAT_00B0B790);
-
 // SYNTHETIC: GAMEMD 0x006B51E0 SYMBOL
 // _$E164
-int DAT_00B0B7DC = (int)(DAT_00B0B7E8 * 4 + DAT_007E1738);
-
 // SYNTHETIC: GAMEMD 0x006B5210 SYMBOL
 // _$E167
-ShortPair DAT_00B0B788;
-
 // SYNTHETIC: GAMEMD 0x006B5220 SYMBOL
 // _$E170
-IntTriple DAT_00B0B7A8;
-
-struct SmudgeTypeInit {
-	int A, B, C;
-	SmudgeTypeInit() { C = 0; A = 128; B = 128; }
-};
-
 // SYNTHETIC: GAMEMD 0x006B5240 SYMBOL
 // _$E173
-SmudgeTypeInit DAT_00B0B7D0;
 
 // FUNCTION: GAMEMD 0x006B5260
 SmudgeTypeClass::SmudgeTypeClass(char const * ini) :
@@ -418,6 +366,10 @@ void SmudgeTypeClass::Place(Cell const & origin) const
 	}
 }
 
+// SYNTHETIC: GAMEMD 0x006B6210 SYMBOL
+// _$E176
+const Rect RECT_NONE_2(0, 0, 0, 0);
+
 // FUNCTION: GAMEMD 0x006B6130
 // SmudgeTypeClass::Fetch_RTTI
 // FUNCTION: GAMEMD 0x006B6140
@@ -427,11 +379,3 @@ void SmudgeTypeClass::Place(Cell const & origin) const
 // SYNTHETIC: GAMEMD 0x006B6160
 // ??_GSmudgeTypeClass@@UAEPAXI@Z
 
-struct SmudgeTypeZero {
-	int A, B, C, D;
-	SmudgeTypeZero() { A = 0; B = 0; C = 0; D = 0; }
-};
-
-// SYNTHETIC: GAMEMD 0x006B6210 SYMBOL
-// _$E176
-SmudgeTypeZero DAT_00B0B7F0;

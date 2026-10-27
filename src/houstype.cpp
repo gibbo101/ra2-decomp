@@ -288,54 +288,54 @@ ULONG STDMETHODCALLTYPE HouseTypeClass::Release(void)
 // ??_GHouseTypeClass@@UAEPAXI@Z
 
 // TEMPLATE: GAMEMD 0x005128A0
-// ?Clear@?$DynamicVectorClass@PAVInfantryTypeClass@@@@UAEXXZ
+// ?Clear@?$DynamicVectorClass@PBVInfantryTypeClass@@@@UAEXXZ
 template class DynamicVectorClass<InfantryTypeClass *>;
 
 // TEMPLATE: GAMEMD 0x005128D0
-// ?ID@?$VectorClass@PAVInfantryTypeClass@@@@UAEHPBQAVInfantryTypeClass@@@Z
+// ?ID@?$DynamicVectorClass@PBVInfantryTypeClass@@@@UAEHPBQBVInfantryTypeClass@@@Z
 // TEMPLATE: GAMEMD 0x005128F0
-// ?GetItem@?$VectorClass@PAVInfantryTypeClass@@@@UBEPAVInfantryTypeClass@@H@Z
+// ?GetItem@?$VectorClass@PBVInfantryTypeClass@@@@UBEPBVInfantryTypeClass@@H@Z
 
 // TEMPLATE: GAMEMD 0x00512900
-// ?Clear@?$DynamicVectorClass@PAVUnitTypeClass@@@@UAEXXZ
+// ?Clear@?$DynamicVectorClass@PBVUnitTypeClass@@@@UAEXXZ
 template class DynamicVectorClass<UnitTypeClass *>;
 
 // TEMPLATE: GAMEMD 0x00512930
-// ?ID@?$VectorClass@PAVUnitTypeClass@@@@UAEHPBQAVUnitTypeClass@@@Z
+// ?ID@?$DynamicVectorClass@PBVUnitTypeClass@@@@UAEHPBQBVUnitTypeClass@@@Z
 // TEMPLATE: GAMEMD 0x00512950
-// ?GetItem@?$VectorClass@PAVUnitTypeClass@@@@UBEPAVUnitTypeClass@@H@Z
+// ?GetItem@?$VectorClass@PBVUnitTypeClass@@@@UBEPBVUnitTypeClass@@H@Z
 
 // TEMPLATE: GAMEMD 0x00512960
-// ??0?$TypeList@PAVAircraftTypeClass@@@@QAE@XZ
+// ??0?$TypeList@PBVAircraftTypeClass@@@@QAE@XZ
 template class TypeList<AircraftTypeClass *>;
 
 // TEMPLATE: GAMEMD 0x00512990
-// ?Clear@?$DynamicVectorClass@PAVAircraftTypeClass@@@@UAEXXZ
+// ?Clear@?$DynamicVectorClass@PBVAircraftTypeClass@@@@UAEXXZ
 template class DynamicVectorClass<AircraftTypeClass *>;
 
 // TEMPLATE: GAMEMD 0x005129C0
-// ?ID@?$VectorClass@PAVAircraftTypeClass@@@@UAEHPBQAVAircraftTypeClass@@@Z
+// ?ID@?$DynamicVectorClass@PBVAircraftTypeClass@@@@UAEHPBQBVAircraftTypeClass@@@Z
 // TEMPLATE: GAMEMD 0x005129E0
-// ?GetItem@?$VectorClass@PAVAircraftTypeClass@@@@UBEPAVAircraftTypeClass@@H@Z
+// ?GetItem@?$VectorClass@PBVAircraftTypeClass@@@@UBEPBVAircraftTypeClass@@H@Z
 
 // SYNTHETIC: GAMEMD 0x005129F0
-// ??_G?$VectorClass@PAVInfantryTypeClass@@@@UAEPAXI@Z
+// ??_G?$TypeList@PBVInfantryTypeClass@@@@UAEPAXI@Z
 // SYNTHETIC: GAMEMD 0x00512A40
-// ??_G?$VectorClass@PAVUnitTypeClass@@@@UAEPAXI@Z
+// ??_G?$TypeList@PBVUnitTypeClass@@@@UAEPAXI@Z
 // SYNTHETIC: GAMEMD 0x00512A90
-// ??_G?$VectorClass@PAVAircraftTypeClass@@@@UAEPAXI@Z
+// ??_G?$TypeList@PBVAircraftTypeClass@@@@UAEPAXI@Z
 // SYNTHETIC: GAMEMD 0x00512AE0
-// ??_G?$DynamicVectorClass@PAVInfantryTypeClass@@@@UAEPAXI@Z
+// ??_G?$VectorClass@PBVInfantryTypeClass@@@@UAEPAXI@Z
 // SYNTHETIC: GAMEMD 0x00512B30
-// ??_G?$DynamicVectorClass@PAVUnitTypeClass@@@@UAEPAXI@Z
+// ??_G?$VectorClass@PBVUnitTypeClass@@@@UAEPAXI@Z
 // SYNTHETIC: GAMEMD 0x00512B80
-// ??_G?$DynamicVectorClass@PAVAircraftTypeClass@@@@UAEPAXI@Z
+// ??_G?$VectorClass@PBVAircraftTypeClass@@@@UAEPAXI@Z
 // TEMPLATE: GAMEMD 0x00512BD0
 // ??4?$VectorClass@PAVAircraftTypeClass@@@@QAEAAV0@ABV0@@Z
 // TEMPLATE: GAMEMD 0x00512C40
-// ??8?$VectorClass@PAVAircraftTypeClass@@@@UBE_NABV0@@Z
+// ??8?$VectorClass@PBVInfantryTypeClass@@@@UBE_NABV0@@Z
 // TEMPLATE: GAMEMD 0x00512C80
-// ?Resize@?$VectorClass@PAVAircraftTypeClass@@@@UAE_NHPBQAVAircraftTypeClass@@@Z
+// ?Resize@?$VectorClass@PBVInfantryTypeClass@@@@UAE_NHPBQBVInfantryTypeClass@@@Z
 template class VectorClass<AircraftTypeClass *>;
 
 // TEMPLATE: GAMEMD 0x00512D30
@@ -347,7 +347,7 @@ template class VectorClass<AircraftTypeClass *>;
 // TEMPLATE: GAMEMD 0x00512DC0
 // ??0?$DynamicVectorClass@PBVInfantryTypeClass@@@@QAE@IPBQBVInfantryTypeClass@@@Z
 // SYNTHETIC: GAMEMD 0x00512E20
-// ??_G?$VectorClass@PBVInfantryTypeClass@@@@UAEPAXI@Z
+// ??_G?$DynamicVectorClass@PBVInfantryTypeClass@@@@UAEPAXI@Z
 // TEMPLATE: GAMEMD 0x00512E70
 // ?Resize@?$DynamicVectorClass@PBVInfantryTypeClass@@@@UAE_NHPBQBVInfantryTypeClass@@@Z
 // TEMPLATE: GAMEMD 0x00512F20
@@ -357,9 +357,9 @@ template class VectorClass<AircraftTypeClass *>;
 // TEMPLATE: GAMEMD 0x00512FA0
 // ??4?$VectorClass@PBVInfantryTypeClass@@@@QAEAAV0@ABV0@@Z
 // TEMPLATE: GAMEMD 0x00513010
-// ??8?$VectorClass@PBVInfantryTypeClass@@@@UBE_NABV0@@Z
+// ??8?$VectorClass@PBVUnitTypeClass@@@@UBE_NABV0@@Z
 // TEMPLATE: GAMEMD 0x00513050
-// ?Resize@?$VectorClass@PBVInfantryTypeClass@@@@UAE_NHPBQBVInfantryTypeClass@@@Z
+// ?Resize@?$VectorClass@PBVUnitTypeClass@@@@UAE_NHPBQBVUnitTypeClass@@@Z
 template class VectorClass<InfantryTypeClass const *>;
 template class DynamicVectorClass<InfantryTypeClass const *>;
 
@@ -372,7 +372,7 @@ template class DynamicVectorClass<InfantryTypeClass const *>;
 // TEMPLATE: GAMEMD 0x00513190
 // ??0?$DynamicVectorClass@PBVUnitTypeClass@@@@QAE@IPBQBVUnitTypeClass@@@Z
 // SYNTHETIC: GAMEMD 0x005131F0
-// ??_G?$VectorClass@PBVUnitTypeClass@@@@UAEPAXI@Z
+// ??_G?$DynamicVectorClass@PBVUnitTypeClass@@@@UAEPAXI@Z
 // TEMPLATE: GAMEMD 0x00513240
 // ?Resize@?$DynamicVectorClass@PBVUnitTypeClass@@@@UAE_NHPBQBVUnitTypeClass@@@Z
 // TEMPLATE: GAMEMD 0x005132F0
@@ -382,9 +382,9 @@ template class DynamicVectorClass<InfantryTypeClass const *>;
 // TEMPLATE: GAMEMD 0x00513370
 // ??4?$VectorClass@PBVUnitTypeClass@@@@QAEAAV0@ABV0@@Z
 // TEMPLATE: GAMEMD 0x005133E0
-// ??8?$VectorClass@PBVUnitTypeClass@@@@UBE_NABV0@@Z
+// ??8?$VectorClass@PBVAircraftTypeClass@@@@UBE_NABV0@@Z
 // TEMPLATE: GAMEMD 0x00513420
-// ?Resize@?$VectorClass@PBVUnitTypeClass@@@@UAE_NHPBQBVUnitTypeClass@@@Z
+// ?Resize@?$VectorClass@PBVAircraftTypeClass@@@@UAE_NHPBQBVAircraftTypeClass@@@Z
 template class VectorClass<UnitTypeClass const *>;
 template class DynamicVectorClass<UnitTypeClass const *>;
 
@@ -397,7 +397,7 @@ template class DynamicVectorClass<UnitTypeClass const *>;
 // TEMPLATE: GAMEMD 0x00513560
 // ??0?$DynamicVectorClass@PBVAircraftTypeClass@@@@QAE@IPBQBVAircraftTypeClass@@@Z
 // SYNTHETIC: GAMEMD 0x005135C0
-// ??_G?$VectorClass@PBVAircraftTypeClass@@@@UAEPAXI@Z
+// ??_G?$DynamicVectorClass@PBVAircraftTypeClass@@@@UAEPAXI@Z
 // TEMPLATE: GAMEMD 0x00513610
 // ?Resize@?$DynamicVectorClass@PBVAircraftTypeClass@@@@UAE_NHPBQBVAircraftTypeClass@@@Z
 // TEMPLATE: GAMEMD 0x005136C0
@@ -416,7 +416,7 @@ template class TypeList<UnitTypeClass const *>;
 template class TypeList<AircraftTypeClass const *>;
 
 // TEMPLATE: GAMEMD 0x00513860
-// ??0?$TypeList@PBVInfantryTypeClass@@@@QAE@ABV0@@Z
+// ??0?$DynamicVectorClass@PBVInfantryTypeClass@@@@QAE@ABV0@@Z
 template class TypeList<InfantryTypeClass const *>;
 
 // TEMPLATE: GAMEMD 0x005138F0
@@ -425,15 +425,6 @@ template class TypeList<InfantryTypeClass const *>;
 // ??0?$VectorClass@PBVUnitTypeClass@@@@QAE@HPBQBVUnitTypeClass@@@Z
 // TEMPLATE: GAMEMD 0x00513990
 // ??0?$VectorClass@PBVAircraftTypeClass@@@@QAE@HPBQBVAircraftTypeClass@@@Z
-
-// FUNCTION: GAMEMD 0x005139E0
-// HouseTypeClass::QueryInterface
-
-// FUNCTION: GAMEMD 0x005139F0
-// HouseTypeClass::AddRef
-
-// FUNCTION: GAMEMD 0x00513A00
-// HouseTypeClass::Release
 
 // FUNCTION: GAMEMD 0x005139E0
 // HouseTypeClass::QueryInterface

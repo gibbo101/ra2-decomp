@@ -889,76 +889,76 @@ ShadowCasterInfo::ShadowCasterInfo(int frame, int index, int x, int y) : Frame(f
 // ??_GIsometricTileTypeClass@@UAEPAXI@Z
 
 // TEMPLATE: GAMEMD 0x0054A190
-// ?Clear@?$DynamicVectorClass@PAUTileInsertType@IsometricTileTypeClass@@@@UAEXXZ
-
-// TEMPLATE: GAMEMD 0x0054A1C0
-// ?ID@?$DynamicVectorClass@PAUTileInsertType@IsometricTileTypeClass@@@@UAEHPBQAUTileInsertType@IsometricTileTypeClass@@@Z
-
-// TEMPLATE: GAMEMD 0x0054A1E0
-// ?GetItem@?$VectorClass@PAUTileInsertType@IsometricTileTypeClass@@@@UBEPAUTileInsertType@IsometricTileTypeClass@@H@Z
-
-// TEMPLATE: GAMEMD 0x0054A1F0
 // ?Clear@?$DynamicVectorClass@PAG@@UAEXXZ
 
-// TEMPLATE: GAMEMD 0x0054A220
+// TEMPLATE: GAMEMD 0x0054A1C0
 // ?ID@?$DynamicVectorClass@PAG@@UAEHPBQAG@Z
 
-// TEMPLATE: GAMEMD 0x0054A240
+// TEMPLATE: GAMEMD 0x0054A1E0
 // ?GetItem@?$VectorClass@PAG@@UBEPAGH@Z
 
+// TEMPLATE: GAMEMD 0x0054A1F0
+// ?Clear@?$DynamicVectorClass@PAUTileInsertType@IsometricTileTypeClass@@@@UAEXXZ
+
+// TEMPLATE: GAMEMD 0x0054A220
+// ?ID@?$DynamicVectorClass@PAUTileInsertType@IsometricTileTypeClass@@@@UAEHPBQAUTileInsertType@IsometricTileTypeClass@@@Z
+
+// TEMPLATE: GAMEMD 0x0054A240
+// ?GetItem@?$VectorClass@PAUTileInsertType@IsometricTileTypeClass@@@@UBEPAUTileInsertType@IsometricTileTypeClass@@H@Z
+
 // TEMPLATE: GAMEMD 0x0054A250
-// ??8?$VectorClass@PAUTileInsertType@IsometricTileTypeClass@@@@UBE_NABV0@@Z
-
-// TEMPLATE: GAMEMD 0x0054A290
-// ?Resize@?$VectorClass@PAUTileInsertType@IsometricTileTypeClass@@@@UAE_NHPBQAUTileInsertType@IsometricTileTypeClass@@@Z
-
-// TEMPLATE: GAMEMD 0x0054A340
-// ?Clear@?$VectorClass@PAUTileInsertType@IsometricTileTypeClass@@@@UAEXXZ
-
-// TEMPLATE: GAMEMD 0x0054A370
-// ?ID@?$VectorClass@PAUTileInsertType@IsometricTileTypeClass@@@@UAEHABQAUTileInsertType@IsometricTileTypeClass@@@Z
-
-// TEMPLATE: GAMEMD 0x0054A3B0
-// ?ID@?$VectorClass@PAUTileInsertType@IsometricTileTypeClass@@@@UAEHPBQAUTileInsertType@IsometricTileTypeClass@@@Z
-
-// TEMPLATE: GAMEMD 0x0054A3D0
-// ?Resize@?$DynamicVectorClass@PAUTileInsertType@IsometricTileTypeClass@@@@UAE_NHPBQAUTileInsertType@IsometricTileTypeClass@@@Z
-
-// TEMPLATE: GAMEMD 0x0054A480
-// ?ID@?$DynamicVectorClass@PAUTileInsertType@IsometricTileTypeClass@@@@UAEHABQAUTileInsertType@IsometricTileTypeClass@@@Z
-
-// TEMPLATE: GAMEMD 0x0054A4B0
 // ??8?$VectorClass@PAG@@UBE_NABV0@@Z
 
-// TEMPLATE: GAMEMD 0x0054A4F0
+// TEMPLATE: GAMEMD 0x0054A290
 // ?Resize@?$VectorClass@PAG@@UAE_NHPBQAG@Z
 
-// TEMPLATE: GAMEMD 0x0054A5A0
+// TEMPLATE: GAMEMD 0x0054A340
 // ?Clear@?$VectorClass@PAG@@UAEXXZ
 
-// TEMPLATE: GAMEMD 0x0054A5D0
+// TEMPLATE: GAMEMD 0x0054A370
 // ?ID@?$VectorClass@PAG@@UAEHABQAG@Z
 
-// TEMPLATE: GAMEMD 0x0054A610
+// TEMPLATE: GAMEMD 0x0054A3B0
 // ?ID@?$VectorClass@PAG@@UAEHPBQAG@Z
 
-// TEMPLATE: GAMEMD 0x0054A630
+// TEMPLATE: GAMEMD 0x0054A3D0
 // ?Resize@?$DynamicVectorClass@PAG@@UAE_NHPBQAG@Z
 
-// TEMPLATE: GAMEMD 0x0054A6E0
+// TEMPLATE: GAMEMD 0x0054A480
 // ?ID@?$DynamicVectorClass@PAG@@UAEHABQAG@Z
 
-// SYNTHETIC: GAMEMD 0x0054A710
-// ??_G?$DynamicVectorClass@PAG@@UAEPAXI@Z
+// TEMPLATE: GAMEMD 0x0054A4B0
+// ??8?$VectorClass@PAUTileInsertType@IsometricTileTypeClass@@@@UBE_NABV0@@Z
 
-// SYNTHETIC: GAMEMD 0x0054A760
+// TEMPLATE: GAMEMD 0x0054A4F0
+// ?Resize@?$VectorClass@PAUTileInsertType@IsometricTileTypeClass@@@@UAE_NHPBQAUTileInsertType@IsometricTileTypeClass@@@Z
+
+// TEMPLATE: GAMEMD 0x0054A5A0
+// ?Clear@?$VectorClass@PAUTileInsertType@IsometricTileTypeClass@@@@UAEXXZ
+
+// TEMPLATE: GAMEMD 0x0054A5D0
+// ?ID@?$VectorClass@PAUTileInsertType@IsometricTileTypeClass@@@@UAEHABQAUTileInsertType@IsometricTileTypeClass@@@Z
+
+// TEMPLATE: GAMEMD 0x0054A610
+// ?ID@?$VectorClass@PAUTileInsertType@IsometricTileTypeClass@@@@UAEHPBQAUTileInsertType@IsometricTileTypeClass@@@Z
+
+// TEMPLATE: GAMEMD 0x0054A630
+// ?Resize@?$DynamicVectorClass@PAUTileInsertType@IsometricTileTypeClass@@@@UAE_NHPBQAUTileInsertType@IsometricTileTypeClass@@@Z
+
+// TEMPLATE: GAMEMD 0x0054A6E0
+// ?ID@?$DynamicVectorClass@PAUTileInsertType@IsometricTileTypeClass@@@@UAEHABQAUTileInsertType@IsometricTileTypeClass@@@Z
+
+// SYNTHETIC: GAMEMD 0x0054A710
 // ??_G?$VectorClass@PAG@@UAEPAXI@Z
 
+// SYNTHETIC: GAMEMD 0x0054A760
+// ??_G?$DynamicVectorClass@PAG@@UAEPAXI@Z
+
 // SYNTHETIC: GAMEMD 0x0054A7B0
-// ??_G?$DynamicVectorClass@PAUTileInsertType@IsometricTileTypeClass@@@@UAEPAXI@Z
+// ??_G?$VectorClass@PAUTileInsertType@IsometricTileTypeClass@@@@UAEPAXI@Z
 
 // SYNTHETIC: GAMEMD 0x0054A800
-// ??_G?$VectorClass@PAUTileInsertType@IsometricTileTypeClass@@@@UAEPAXI@Z
+// ??_G?$DynamicVectorClass@PAUTileInsertType@IsometricTileTypeClass@@@@UAEPAXI@Z
 
 // TEMPLATE: GAMEMD 0x0054A850
 // ??0?$VectorClass@PAG@@QAE@HPBQAG@Z

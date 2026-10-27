@@ -970,7 +970,7 @@ int RulesClass::Get_Rule_Unique_ID(void)
 	int id = RuleINI->Get_Unique_ID();
 	int count = FUN_005D5ED0();
 	for (int index = 1; index <= count; index++) {
-		MPGameModeClass * mode = MPGameModeClass::Get(index);
+		MultiplayerGameMode * mode = MultiplayerGameMode::Get(index);
 		if (mode != NULL) {
 			id += mode->FUN_005D67B0()->Get_Unique_ID();
 		}
@@ -1174,7 +1174,7 @@ template class TypeList<TerrainTypeClass const *>;
 // TEMPLATE: GAMEMD 0x0067AD80
 // ?Add@?$DynamicVectorClass@PBVVoxelAnimTypeClass@@@@QAE_NABQBVVoxelAnimTypeClass@@@Z
 // TEMPLATE: GAMEMD 0x0067C1F0
-// ??0?$DynamicVectorClass@PBVVoxelAnimTypeClass@@@@QAE@ABV0@@Z
+// ??0?$TypeList@PBVVoxelAnimTypeClass@@@@QAE@ABV0@@Z
 // TEMPLATE: GAMEMD 0x0067C360
 // ?Delete_Index@?$DynamicVectorClass@PBVVoxelAnimTypeClass@@@@QAE_NH@Z
 template class DynamicVectorClass<VoxelAnimTypeClass const *>;
@@ -1202,7 +1202,7 @@ template class DynamicVectorClass<VoxelAnimTypeClass const *>;
 // TEMPLATE: GAMEMD 0x0067B150
 // ?ID@?$DynamicVectorClass@PBVSmudgeTypeClass@@@@UAEHABQBVSmudgeTypeClass@@@Z
 // TEMPLATE: GAMEMD 0x0067C280
-// ??0?$DynamicVectorClass@PBVSmudgeTypeClass@@@@QAE@ABV0@@Z
+// ??0?$TypeList@PBVSmudgeTypeClass@@@@QAE@ABV0@@Z
 // TEMPLATE: GAMEMD 0x0067C3F0
 // ?Delete_Index@?$DynamicVectorClass@PBVSmudgeTypeClass@@@@QAE_NH@Z
 template class DynamicVectorClass<SmudgeTypeClass const *>;

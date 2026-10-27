@@ -116,10 +116,10 @@ template class DynamicVectorClass<SpotLightClass *>;
 // ?ID@?$DynamicVectorClass@PAVSpotLightClass@@@@UAEHABQAVSpotLightClass@@@Z
 
 // SYNTHETIC: GAMEMD 0x00600280
-// ??_G?$DynamicVectorClass@PAVSpotLightClass@@@@UAEPAXI@Z
+// ??_G?$VectorClass@PAVSpotLightClass@@@@UAEPAXI@Z
 
 // SYNTHETIC: GAMEMD 0x006002D0
-// ??_G?$VectorClass@PAVSpotLightClass@@@@UAEPAXI@Z
+// ??_G?$DynamicVectorClass@PAVSpotLightClass@@@@UAEPAXI@Z
 
 int DAT_00AC18B0;
 int DAT_00AC18B4;

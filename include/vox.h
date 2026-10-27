@@ -19,10 +19,24 @@ char const * Speech_Name(VoxType speech);
 
 extern char const * Speech[VOX_COUNT];
 
+class INIClass;
+
 class VoxClass
 {
 	public:
+		VoxClass(char const * name);
+		~VoxClass(void);
+		bool LoadFromINI(INIClass & ini);
+		char const * GetFilename(void) const;
+
 		static void Play(char const * name, int a = -1, int b = -1);
 		static void PlayIndex(int index, int a = -1, int b = -1);
 		static void SilenceIndex(int index);
+
+		char Name[0x28];
+		float Volume;
+		char Files[3][9];
+		int Priority;
+		int Type;
+		int State;
 };

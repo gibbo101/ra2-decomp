@@ -13,6 +13,7 @@
 #include "ipxmgr.h"
 #include "msgloop.h"
 #include "nullmgr.h"
+#include "geometry.h"
 #include "progress.h"
 #include "rawfile.h"
 #include "session.h"
@@ -21,86 +22,33 @@
 #undef LoadString
 #include "stringtable.h"
 
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007F1170;
-extern const double DAT_007F1178;
-
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
 
 // SYNTHETIC: GAMEMD 0x00693960 SYMBOL
 // _$E45
-double DAT_00B056E8 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x00693990 SYMBOL
 // _$E48
-double DAT_00B05738 = DAT_00B056E8 / DAT_007F1170;
-
 // SYNTHETIC: GAMEMD 0x006939B0 SYMBOL
 // _$E51
-double DAT_00B05720 = DAT_007E1718 / DAT_00B05738;
-
 // SYNTHETIC: GAMEMD 0x006939D0 SYMBOL
 // _$E54
-double DAT_00B05718 = DAT_007E1720 * DAT_007F1178;
-
 // SYNTHETIC: GAMEMD 0x006939F0 SYMBOL
 // _$E57
-double DAT_00B056F0 = DAT_007E1728 * DAT_007F1178;
-
 // SYNTHETIC: GAMEMD 0x00693A10 SYMBOL
 // _$E60
-double DAT_00B056C8 = DAT_007E1730 * DAT_007F1178;
-
 // SYNTHETIC: GAMEMD 0x00693A30 SYMBOL
 // _$E63
-int DAT_00B05740 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B056C8 - DAT_00B056F0) * DAT_00B056E8));
-
 // SYNTHETIC: GAMEMD 0x00693A70 SYMBOL
 // _$E66
-double DAT_00B056F8 = FUN_004CADE0(DAT_00B05740 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x00693AA0 SYMBOL
 // _$E69
-double DAT_00B05710 = FUN_004CADE0((DAT_00B05740 * 2) / DAT_00B056E8);
-
 // SYNTHETIC: GAMEMD 0x00693AD0 SYMBOL
 // _$E72
-int DAT_00B05734 = (int)(DAT_00B05740 * 4 + DAT_007E1738);
-
 // SYNTHETIC: GAMEMD 0x00693B00 SYMBOL
 // _$E75
-ShortPair DAT_00B056E0;
-
 // SYNTHETIC: GAMEMD 0x00693B10 SYMBOL
 // _$E78
-IntTriple DAT_00B05700;
-
-struct SendTriple {
-	int A, B, C;
-	SendTriple() { C = 0; A = 0x80; B = 0x80; }
-};
-
 // SYNTHETIC: GAMEMD 0x00693B30 SYMBOL
 // _$E81
-SendTriple DAT_00B05728;
 
 // FUNCTION: GAMEMD 0x00693B50
 int Send_Timeout_For_Type(int type)
@@ -279,6 +227,10 @@ bool Receive_Remote_File(char * file_name, unsigned int file_length, int gametyp
 
 int __fastcall FUN_004790A0(int timeout);
 
+// SYNTHETIC: GAMEMD 0x006954C0 SYMBOL
+// _$E84
+const Rect RECT_NONE_2(0, 0, 0, 0);
+
 // FUNCTION: GAMEMD 0x006951F0
 bool Find_Local_Scenario(char * filename, unsigned int length, char * digest, bool official, bool checkcd)
 {
@@ -318,11 +270,3 @@ bool Find_Local_Scenario(char * filename, unsigned int length, char * digest, bo
 	return false;
 }
 
-struct SendQuad {
-	int A, B, C, D;
-	SendQuad() { A = 0; B = 0; C = 0; D = 0; }
-};
-
-// SYNTHETIC: GAMEMD 0x006954C0 SYMBOL
-// _$E84
-SendQuad DAT_00B05750;

@@ -708,6 +708,7 @@ void FUN_0053B3F0(void)
 }
 
 #include "dsurface.h"
+#include "geometry.h"
 
 extern DSurface * DAT_00A9FA9C_Surface;
 extern float DAT_00A9FAA0;
@@ -987,92 +988,35 @@ template class VectorClass<AnimClass const *>;
 
 #include <math.h>
 
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007EC018;
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007EC010;
 
 // SYNTHETIC: GAMEMD 0x0053C820 SYMBOL
 // _$E158
-double DAT_00A9FF90 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x0053C850 SYMBOL
 // _$E161
-double DAT_00AA0140 = DAT_00A9FF90 / DAT_007EC010;
-
 // SYNTHETIC: GAMEMD 0x0053C870 SYMBOL
 // _$E164
-double DAT_00AA0110 = DAT_007E1718 / DAT_00AA0140;
-
 // SYNTHETIC: GAMEMD 0x0053C890 SYMBOL
 // _$E167
-double DAT_00AA0108 = DAT_007E1720 * DAT_007EC018;
-
 // SYNTHETIC: GAMEMD 0x0053C8B0 SYMBOL
 // _$E170
-double DAT_00A9FF98 = DAT_007E1728 * DAT_007EC018;
-
 // SYNTHETIC: GAMEMD 0x0053C8D0 SYMBOL
 // _$E173
-double DAT_00A9FAE0 = DAT_007E1730 * DAT_007EC018;
-
 // SYNTHETIC: GAMEMD 0x0053C8F0 SYMBOL
 // _$E176
-int DAT_00AA0148 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00A9FAE0 - DAT_00A9FF98) * DAT_00A9FF90));
-
 // SYNTHETIC: GAMEMD 0x0053C930 SYMBOL
 // _$E179
-double DAT_00A9FFA0 = FUN_004CADE0(DAT_00AA0148 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x0053C960 SYMBOL
 // _$E182
-double DAT_00A9FFC0 = FUN_004CADE0((DAT_00AA0148 * 2) / DAT_00A9FF90);
-
 // SYNTHETIC: GAMEMD 0x0053C990 SYMBOL
 // _$E185
-int DAT_00AA013C = (int)(DAT_00AA0148 * 4 + DAT_007E1738);
-
-struct IonShortPair {
-	unsigned short A, B;
-	IonShortPair() { A = 0; B = 0; }
-};
-
-struct IonIntTriple {
-	int A, B, C;
-	IonIntTriple() { A = 0; B = 0; C = 0; }
-};
-
-struct IonDefaults {
-	int A, B, C;
-	IonDefaults() { C = 0; A = 128; B = 128; }
-};
-
-struct IonIntQuad {
-	int A, B, C, D;
-	IonIntQuad() { A = 0; B = 0; C = 0; D = 0; }
-};
-
 // SYNTHETIC: GAMEMD 0x0053C9C0 SYMBOL
 // _$E188
-IonShortPair DAT_00A9FF88;
-
 // SYNTHETIC: GAMEMD 0x0053C9D0 SYMBOL
 // _$E191
-IonIntTriple DAT_00A9FFB0;
-
 // SYNTHETIC: GAMEMD 0x0053C9F0 SYMBOL
 // _$E194
-IonDefaults DAT_00AA0130;
 
 // SYNTHETIC: GAMEMD 0x0053CA10 SYMBOL
 // _$E197
-IonIntQuad DAT_00A9FF70;
+const Rect RECT_NONE_2(0, 0, 0, 0);
+

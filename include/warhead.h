@@ -91,7 +91,7 @@ class WarheadTypeClass : public AbstractTypeClass
 		int ShakeXhi;
 		int ShakeYlo;
 		int ShakeYhi;
-		TypeList<VoxelAnimTypeClass *> DebrisTypes;
+		TypeList<VoxelAnimTypeClass const *> DebrisTypes;
 		TypeList<int> DebrisMaximums;
 		int MaxDebris;
 		int MinDebris;

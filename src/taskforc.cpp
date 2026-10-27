@@ -15,25 +15,13 @@
 #include "session.h"
 #include "swizzle.h"
 #include "techtype.h"
+#include "geometry.h"
 #include "tracker.h"
 #include "trim.h"
 #include "vector.h"
 #include <cstdio>
 #include <math.h>
 
-extern double __cdecl FUN_004CAC40(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007F46F0;
-extern const double DAT_007F46F8;
 
 // FUNCTION: GAMEMD 0x006E7E80
 TaskForceClass::TaskForceClass(char const *name) :
@@ -303,55 +291,30 @@ int TaskForceClass::Needed_Tech_Level(void) const
 
 // SYNTHETIC: GAMEMD 0x006E8880 SYMBOL
 // _$E37
-double DAT_00B0E950 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x006E88B0 SYMBOL
 // _$E40
-double DAT_00B0E9A0 = DAT_00B0E950 / DAT_007F46F0;
-
 // SYNTHETIC: GAMEMD 0x006E88D0 SYMBOL
 // _$E43
-double DAT_00B0E988 = DAT_007E1718 / DAT_00B0E9A0;
-
 // SYNTHETIC: GAMEMD 0x006E88F0 SYMBOL
 // _$E46
-double DAT_00B0E980 = DAT_007E1720 * DAT_007F46F8;
-
 // SYNTHETIC: GAMEMD 0x006E8910 SYMBOL
 // _$E49
-double DAT_00B0E958 = DAT_007E1728 * DAT_007F46F8;
-
 // SYNTHETIC: GAMEMD 0x006E8930 SYMBOL
 // _$E52
-double DAT_00B0E930 = DAT_007E1730 * DAT_007F46F8;
-
 // SYNTHETIC: GAMEMD 0x006E8950 SYMBOL
 // _$E55
-int DAT_00B0E9A8 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B0E930 - DAT_00B0E958) * DAT_00B0E950));
-
 // SYNTHETIC: GAMEMD 0x006E8990 SYMBOL
 // _$E58
-double DAT_00B0E960 = FUN_004CADE0(DAT_00B0E9A8 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x006E89C0 SYMBOL
 // _$E61
-double DAT_00B0E978 = FUN_004CADE0((DAT_00B0E9A8 * 2) / DAT_00B0E950);
-
 // SYNTHETIC: GAMEMD 0x006E89F0 SYMBOL
 // _$E64
-int DAT_00B0E99C = (int)(DAT_00B0E9A8 * 4 + DAT_007E1738);
-
 // SYNTHETIC: GAMEMD 0x006E8A20 SYMBOL
 // _$E67
-Cell DAT_00B0E948(0, 0);
-
 // SYNTHETIC: GAMEMD 0x006E8A30 SYMBOL
 // _$E70
-Coord DAT_00B0E968(0, 0, 0);
-
 // SYNTHETIC: GAMEMD 0x006E8A50 SYMBOL
 // _$E73
-Coord DAT_00B0E990(128, 128, 0);
 
 // SYNTHETIC: GAMEMD 0x006E8A70 SYMBOL
 // _$E76

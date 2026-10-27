@@ -16,6 +16,7 @@
 #include "sun.h"
 #include "swizzle.h"
 #include "tactical.h"
+#include "geometry.h"
 #include "tracker.h"
 #include "vector.h"
 
@@ -23,85 +24,32 @@ static bool BrightnessCalculated = false;
 
 #include <math.h>
 
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007E2B10;
-extern const double DAT_007E2B18;
-
 // SYNTHETIC: GAMEMD 0x004206F0 SYMBOL
 // _$E16
-double DAT_0088A0C0 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x00420720 SYMBOL
 // _$E19
-double DAT_0089A128 = DAT_0088A0C0 / DAT_007E2B10;
-
 // SYNTHETIC: GAMEMD 0x00420740 SYMBOL
 // _$E22
-double DAT_0088A110 = DAT_007E1718 / DAT_0089A128;
-
 // SYNTHETIC: GAMEMD 0x00420760 SYMBOL
 // _$E25
-double DAT_0088A108 = DAT_007E1720 * DAT_007E2B18;
-
 // SYNTHETIC: GAMEMD 0x00420780 SYMBOL
 // _$E28
-double DAT_0088A0C8 = DAT_007E1728 * DAT_007E2B18;
-
 // SYNTHETIC: GAMEMD 0x004207A0 SYMBOL
 // _$E31
-double DAT_0088A0A0 = DAT_007E1730 * DAT_007E2B18;
-
 // SYNTHETIC: GAMEMD 0x004207C0 SYMBOL
 // _$E34
-int DAT_0089A130 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_0088A0A0 - DAT_0088A0C8) * DAT_0088A0C0));
-
 // SYNTHETIC: GAMEMD 0x00420800 SYMBOL
 // _$E37
-double DAT_0088A0D0 = FUN_004CADE0(DAT_0089A130 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x00420830 SYMBOL
 // _$E40
-double DAT_0088A0E8 = FUN_004CADE0((DAT_0089A130 * 2) / DAT_0088A0C0);
-
 // SYNTHETIC: GAMEMD 0x00420860 SYMBOL
 // _$E43
-int DAT_0089A124 = (int)(DAT_0089A130 * 4 + DAT_007E1738);
-
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
-
 // SYNTHETIC: GAMEMD 0x00420890 SYMBOL
 // _$E46
-ShortPair DAT_0088A0B8;
-
 // SYNTHETIC: GAMEMD 0x004208A0 SYMBOL
 // _$E49
-IntTriple DAT_0088A0D8;
-
 // SYNTHETIC: GAMEMD 0x004208C0 SYMBOL
 // _$E52
-struct IntTriple2 {
-	int A, B, C;
-	IntTriple2() { C = 0; A = 0x80; B = 0x80; }
-};
-IntTriple2 DAT_0089A118;
 
 // SYNTHETIC: GAMEMD 0x004208E0 SYMBOL
 // _$E57
@@ -280,10 +228,10 @@ template class DynamicVectorClass<AlphaShapeClass *>;
 // ?ID@?$DynamicVectorClass@PAVAlphaShapeClass@@@@UAEHABQAVAlphaShapeClass@@@Z
 
 // SYNTHETIC: GAMEMD 0x00421AC0
-// ??_G?$DynamicVectorClass@PAVAlphaShapeClass@@@@UAEPAXI@Z
+// ??_G?$VectorClass@PAVAlphaShapeClass@@@@UAEPAXI@Z
 
 // SYNTHETIC: GAMEMD 0x00421B10
-// ??_G?$VectorClass@PAVAlphaShapeClass@@@@UAEPAXI@Z
+// ??_G?$DynamicVectorClass@PAVAlphaShapeClass@@@@UAEPAXI@Z
 
 // TEMPLATE: GAMEMD 0x00421B60
 // ?Intersect@@YI?BV?$TRect@H@@ABV1@0PAH1@Z

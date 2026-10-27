@@ -37,19 +37,6 @@
 #include "vanimtype.h"
 #include "weapon.h"
 
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007F4FC8;
-extern const double DAT_007F4FD0;
 
 extern char DAT_00889F64[];
 
@@ -716,7 +703,7 @@ bool FUN_00717AE0(VoxelLibrary * library)
 // TEMPLATE: GAMEMD 0x00717B20
 // ?Save@?$TypeList@PBVParticleSystemTypeClass@@@@QBEXPAUIStream@@@Z
 // SYNTHETIC: GAMEMD 0x00717B70
-// ??_G?$VectorClass@PBVParticleSystemTypeClass@@@@UAEPAXI@Z
+// ??_G?$TypeList@PBVParticleSystemTypeClass@@@@UAEPAXI@Z
 // TEMPLATE: GAMEMD 0x00717BC0
 // ??0?$DynamicVectorClass@PBVVoxelAnimTypeClass@@@@QAE@ABVNoInitClass@@@Z
 // TEMPLATE: GAMEMD 0x00717BD0
@@ -744,63 +731,36 @@ template class DynamicVectorClass<ParticleSystemTypeClass const *>;
 // ?Delete_Index@?$DynamicVectorClass@PAVTechnoTypeClass@@@@QAE_NH@Z
 template class DynamicVectorClass<TechnoTypeClass *>;
 
+#include "geometry.h"
+
 // SYNTHETIC: GAMEMD 0x00717DF0 SYMBOL
 // _$E116
-double DAT_00B0EBE0 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x00717E20 SYMBOL
 // _$E119
-double DAT_00B0EC30 = DAT_00B0EBE0 / DAT_007F4FC8;
-
 // SYNTHETIC: GAMEMD 0x00717E40 SYMBOL
 // _$E122
-double DAT_00B0EC18 = DAT_007E1718 / DAT_00B0EC30;
-
 // SYNTHETIC: GAMEMD 0x00717E60 SYMBOL
 // _$E125
-double DAT_00B0EC10 = DAT_007E1720 * DAT_007F4FD0;
-
 // SYNTHETIC: GAMEMD 0x00717E80 SYMBOL
 // _$E128
-double DAT_00B0EBE8 = DAT_007E1728 * DAT_007F4FD0;
-
 // SYNTHETIC: GAMEMD 0x00717EA0 SYMBOL
 // _$E131
-double DAT_00B0EBC0 = DAT_007E1730 * DAT_007F4FD0;
-
 // SYNTHETIC: GAMEMD 0x00717EC0 SYMBOL
 // _$E134
-int DAT_00B0EC38 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B0EBC0 - DAT_00B0EBE8) * DAT_00B0EBE0));
-
 // SYNTHETIC: GAMEMD 0x00717F00 SYMBOL
 // _$E137
-double DAT_00B0EBF0 = FUN_004CADE0(DAT_00B0EC38 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x00717F30 SYMBOL
 // _$E140
-double DAT_00B0EC08 = FUN_004CADE0((DAT_00B0EC38 * 2) / DAT_00B0EBE0);
-
 // SYNTHETIC: GAMEMD 0x00717F60 SYMBOL
 // _$E143
-int DAT_00B0EC2C = (int)(DAT_00B0EC38 * 4 + DAT_007E1738);
-
-struct TT_Short2 { short A; short B; TT_Short2() : A(0), B(0) {} };
-struct TT_Int3 { int A; int B; int C; TT_Int3() : A(0), B(0), C(0) {} };
-struct TT_Int3b { int A; int B; int C; TT_Int3b() : A(128), B(128), C(0) {} };
-struct TT_Int4 { int A; int B; int C; int D; TT_Int4() : A(0), B(0), C(0), D(0) {} };
-
 // SYNTHETIC: GAMEMD 0x00717F90 SYMBOL
 // _$E146
-TT_Short2 DAT_00B0EBD8;
-
 // SYNTHETIC: GAMEMD 0x00717FA0 SYMBOL
 // _$E149
-TT_Int3 DAT_00B0EBF8;
-
 // SYNTHETIC: GAMEMD 0x00717FC0 SYMBOL
 // _$E152
-TT_Int3b DAT_00B0EC20;
 
 // SYNTHETIC: GAMEMD 0x00717FE0 SYMBOL
 // _$E155
-TT_Int4 DAT_00B0EBC8;
+const Rect RECT_NONE_2(0, 0, 0, 0);
+

@@ -5,22 +5,11 @@
 
 #include "always.h"
 #include "cdfile.h"
+#include "geometry.h"
+#include "rect.h"
 #include "diskswap.h"
 #include <math.h>
 
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007E4EA8;
-extern const double DAT_007E4EB0;
 
 HANDLE FindFileHandle = INVALID_HANDLE_VALUE;
 
@@ -285,88 +274,32 @@ void CDFileClass::Find_Close(void)
 		FindFileHandle = INVALID_HANDLE_VALUE;
 	}
 }
-
 // SYNTHETIC: GAMEMD 0x0047B150 SYMBOL
 // _$E6
-double DAT_0089E750 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x0047B180 SYMBOL
 // _$E9
-double DAT_0089E7B8 = DAT_0089E750 / DAT_007E4EA8;
-
 // SYNTHETIC: GAMEMD 0x0047B1A0 SYMBOL
 // _$E12
-double DAT_0089E7A0 = DAT_007E1718 / DAT_0089E7B8;
-
 // SYNTHETIC: GAMEMD 0x0047B1C0 SYMBOL
 // _$E15
-double DAT_0089E798 = DAT_007E1720 * DAT_007E4EB0;
-
 // SYNTHETIC: GAMEMD 0x0047B1E0 SYMBOL
 // _$E18
-double DAT_0089E758 = DAT_007E1728 * DAT_007E4EB0;
-
 // SYNTHETIC: GAMEMD 0x0047B200 SYMBOL
 // _$E21
-double DAT_0089E728 = DAT_007E1730 * DAT_007E4EB0;
-
 // SYNTHETIC: GAMEMD 0x0047B220 SYMBOL
 // _$E24
-int DAT_0089E7C0 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_0089E728 - DAT_0089E758) * DAT_0089E750));
-
 // SYNTHETIC: GAMEMD 0x0047B260 SYMBOL
 // _$E27
-double DAT_0089E768 = FUN_004CADE0(DAT_0089E7C0 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x0047B290 SYMBOL
 // _$E30
-double DAT_0089E788 = FUN_004CADE0((DAT_0089E7C0 * 2) / DAT_0089E750);
-
 // SYNTHETIC: GAMEMD 0x0047B2C0 SYMBOL
 // _$E33
-int DAT_0089E7B4 = (int)((DAT_0089E7C0 * 4) + DAT_007E1738);
-
-struct CdZero2S {
-	short A;
-	short B;
-	CdZero2S(void) : A(0), B(0) {}
-};
-
-struct CdZero3 {
-	int A;
-	int B;
-	int C;
-	CdZero3(void) : A(0), B(0), C(0) {}
-};
-
-struct CdInit128 {
-	int Unused;
-	int B;
-	int C;
-	int A;
-	CdInit128(void) : A(0), B(128), C(128) {}
-};
-
-struct CdZero4 {
-	int A;
-	int B;
-	int C;
-	int D;
-	CdZero4(void) : A(0), B(0), C(0), D(0) {}
-};
-
 // SYNTHETIC: GAMEMD 0x0047B2F0 SYMBOL
 // _$E36
-CdZero2S DAT_0089E748;
-
 // SYNTHETIC: GAMEMD 0x0047B300 SYMBOL
 // _$E39
-CdZero3 DAT_0089E778;
-
 // SYNTHETIC: GAMEMD 0x0047B320 SYMBOL
 // _$E42
-CdInit128 DAT_0089E7A4;
-
 // SYNTHETIC: GAMEMD 0x0047B340 SYMBOL
 // _$E45
-CdZero4 DAT_0089E730;
+

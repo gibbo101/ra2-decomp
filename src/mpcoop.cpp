@@ -41,7 +41,7 @@ extern MPLobbyEntry ** DAT_00A8022C;
 extern int DAT_00A80238;
 void __fastcall FUN_004E3B90(HWND dialog);
 void __fastcall FUN_005E74E0(HWND dialog);
-void __fastcall FUN_005E2EF0(HWND dialog, MPGameModeClass * mode);
+void __fastcall FUN_005E2EF0(HWND dialog, MultiplayerGameMode * mode);
 void __fastcall FUN_005E2F60(HWND dialog);
 void __fastcall FUN_005E32D0(bool force, bool now);
 void __fastcall FUN_005C6120(DynamicVectorClass<NodeNameType *> * vec);
@@ -55,7 +55,7 @@ int __fastcall FUN_005E6520(int value);
 extern int DAT_0088098C;
 extern int DAT_00880990;
 extern int DAT_00880994;
-void __fastcall FUN_0049B930(CoopCamp_0049B610 * camp);
+void __fastcall FUN_0049B930(CoopCampaignClass * camp);
 struct Game {
 	static int TechLevel;
 	static int Seed;
@@ -119,21 +119,21 @@ int __fastcall FUN_005C1300(char const * name)
 static inline void Reload_Campaigns(MPCooperative * coop)
 {
 	for (int j = coop->Campaigns.Count() - 1; j >= 0; --j) {
-		CoopCamp_0049B610 * camp = coop->Campaigns[j];
+		CoopCampaignClass * camp = coop->Campaigns[j];
 		if (camp) {
 			camp->FUN_0049B720();
 			operator delete(camp);
 		}
 	}
-	DynamicVectorClass<CoopCamp_0049B610 *> * vec = &coop->Campaigns;
+	DynamicVectorClass<CoopCampaignClass *> * vec = &coop->Campaigns;
 	int max = vec->Length();
 	vec->Clear();
 	vec->Resize(max, 0);
 	int count;
 	DAT_0089F518.FUN_0049E4F0(&count);
 	for (int i = 0; i < count; ++i) {
-		CoopCamp_0049B610 * raw = (CoopCamp_0049B610 *)operator new(sizeof(CoopCamp_0049B610));
-		CoopCamp_0049B610 * camp = raw ? raw->FUN_0049B610() : 0;
+		CoopCampaignClass * raw = (CoopCampaignClass *)operator new(sizeof(CoopCampaignClass));
+		CoopCampaignClass * camp = raw ? raw->FUN_0049B610() : 0;
 		camp->FUN_0049CAF0(i);
 		vec->Add(camp);
 	}
@@ -141,7 +141,7 @@ static inline void Reload_Campaigns(MPCooperative * coop)
 
 // FUNCTION: GAMEMD 0x005C1470
 MPCooperative::MPCooperative(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex) :
-	MPGameModeClass(title, tooltip, inifile, mapfilter, false, modeindex)
+	MultiplayerGameMode(title, tooltip, inifile, mapfilter, false, modeindex)
 {
 	Current = NULL;
 	Field44 = 0;
@@ -154,21 +154,21 @@ MPCooperative::MPCooperative(WideWstring const & title, WideWstring const & tool
 	Field340 = true;
 
 	for (int j = Campaigns.Count() - 1; j >= 0; --j) {
-		CoopCamp_0049B610 * camp = Campaigns[j];
+		CoopCampaignClass * camp = Campaigns[j];
 		if (camp) {
 			camp->FUN_0049B720();
 			operator delete(camp);
 		}
 	}
-	DynamicVectorClass<CoopCamp_0049B610 *> * vec = &Campaigns;
+	DynamicVectorClass<CoopCampaignClass *> * vec = &Campaigns;
 	int max = vec->Length();
 	vec->Clear();
 	vec->Resize(max, 0);
 	int count;
 	DAT_0089F518.FUN_0049E4F0(&count);
 	for (int i = 0; i < count; ++i) {
-		CoopCamp_0049B610 * raw = (CoopCamp_0049B610 *)operator new(sizeof(CoopCamp_0049B610));
-		CoopCamp_0049B610 * camp = raw ? raw->FUN_0049B610() : 0;
+		CoopCampaignClass * raw = (CoopCampaignClass *)operator new(sizeof(CoopCampaignClass));
+		CoopCampaignClass * camp = raw ? raw->FUN_0049B610() : 0;
 		camp->FUN_0049CAF0(i);
 		vec->Add(camp);
 	}
@@ -177,14 +177,14 @@ MPCooperative::MPCooperative(WideWstring const & title, WideWstring const & tool
 // FUNCTION: GAMEMD 0x005C1640
 MPCooperative::~MPCooperative(void)
 {
-	CoopCamp_0049B610 * current = Current;
+	CoopCampaignClass * current = Current;
 	if (current) {
 		current->FUN_0049B720();
 		operator delete(current);
 		Current = NULL;
 	}
 	for (int j = Campaigns.Count() - 1; j >= 0; --j) {
-		CoopCamp_0049B610 * camp = Campaigns[j];
+		CoopCampaignClass * camp = Campaigns[j];
 		if (camp) {
 			camp->FUN_0049B720();
 			operator delete(camp);
@@ -285,7 +285,7 @@ void MPCooperative::vt_entry_20(void)
 				remove = true;
 			}
 			if (remove) {
-				CoopCamp_0049B610 * old = Current;
+				CoopCampaignClass * old = Current;
 				if (old) {
 					old->FUN_0049B720();
 					operator delete(old);
@@ -302,7 +302,7 @@ void MPCooperative::vt_entry_20(void)
 		}
 	}
 	if (Current == NULL) {
-		CoopCamp_0049B610 * raw = (CoopCamp_0049B610 *)operator new(sizeof(CoopCamp_0049B610));
+		CoopCampaignClass * raw = (CoopCampaignClass *)operator new(sizeof(CoopCampaignClass));
 		Current = raw ? raw->FUN_0049B610() : 0;
 		if (Current == NULL) {
 			return;
@@ -364,7 +364,7 @@ int MPCooperative::FirstValidMapIndex(void)
 	DAT_0089F518.FUN_0049E4F0(&count);
 	if (count != 0) {
 		if (Current == NULL) {
-			CoopCamp_0049B610 * raw = (CoopCamp_0049B610 *)operator new(sizeof(CoopCamp_0049B610));
+			CoopCampaignClass * raw = (CoopCampaignClass *)operator new(sizeof(CoopCampaignClass));
 			Current = raw ? raw->FUN_0049B610() : 0;
 		}
 		Current->FUN_0049CAF0(0);
@@ -385,7 +385,7 @@ bool MPCooperative::vt_entry_14(unsigned a)
 	if (Session.Players.Count() == 2 && Current != NULL) {
 		Current->FUN_0049B760(Session.Players[0]->Name, Session.Players[1]->Name);
 	}
-	return(MPGameModeClass::vt_entry_14(a));
+	return(MultiplayerGameMode::vt_entry_14(a));
 }
 
 static inline void Set_Player_Country(int index, int country)
@@ -411,13 +411,13 @@ bool MPCooperative::vt_entry_18(void)
 		}
 		Field48 = true;
 	} else if (FUN_00775B20() == 0x6b) {
-		CoopCamp_0049B610 * old = Current;
+		CoopCampaignClass * old = Current;
 		if (old) {
 			old->FUN_0049B720();
 			operator delete(old);
 		}
 		Current = Campaigns[selected];
-		CoopCamp_0049B610 * raw = (CoopCamp_0049B610 *)operator new(sizeof(CoopCamp_0049B610));
+		CoopCampaignClass * raw = (CoopCampaignClass *)operator new(sizeof(CoopCampaignClass));
 		Campaigns[selected] = raw ? raw->FUN_0049B610() : 0;
 		Campaigns[selected]->FUN_0049CAF0(selected);
 		Field4C = selected;
@@ -516,7 +516,7 @@ bool MPCooperative::vt_entry_5C(unsigned a, unsigned b, unsigned c)
 	}
 	int index;
 	Current->FUN_0049BCC0(&index);
-	CoopPlayerStats * stats = (CoopPlayerStats *)c;
+	MPlayerScoreType * stats = (MPlayerScoreType *)c;
 	bool result = Current->FUN_0049CC50(a, b, stats[0], stats[1]);
 	if (index != (int)a || Field340) {
 		HWND dialog = GameoptWindow();
@@ -850,7 +850,7 @@ bool MPCooperative::UnfixAlliances(void)
 // FUNCTION: GAMEMD 0x005C2CE0
 void MPCooperative::PopulateTeamDropdownForPlayer(HWND hwnd, int index)
 {
-	MPGameModeClass::PopulateTeamDropdownForPlayer(hwnd, index);
+	MultiplayerGameMode::PopulateTeamDropdownForPlayer(hwnd, index);
 }
 
 
@@ -1142,7 +1142,7 @@ int MPCooperative::FUN_005C35F0(void)
 // FUNCTION: GAMEMD 0x005C36F0
 bool MPCooperative::vt_entry_8C(void)
 {
-	return(MPGameModeClass::vt_entry_8C());
+	return(MultiplayerGameMode::vt_entry_8C());
 }
 
 // FUNCTION: GAMEMD 0x005C3700
@@ -1238,13 +1238,13 @@ void MPCooperative::vt_entry_A0(unsigned a)
 // FUNCTION: GAMEMD 0x005C3EC0
 bool MPCooperative::FUN_005C3EC0(void)
 {
-	CoopCamp_0049B610 * old = Current;
+	CoopCampaignClass * old = Current;
 	if (old) {
 		old->FUN_0049B720();
 		operator delete(old);
 	}
 	Current = NULL;
-	CoopCamp_0049B610 * raw = (CoopCamp_0049B610 *)operator new(sizeof(CoopCamp_0049B610));
+	CoopCampaignClass * raw = (CoopCampaignClass *)operator new(sizeof(CoopCampaignClass));
 	Current = raw ? raw->FUN_0049B610() : 0;
 	Current->FUN_0049CAF0(0);
 	if (Session.Players.Count() == 2) {
@@ -1331,7 +1331,7 @@ void MPCooperative::vt_entry_90(void)
 void MPCooperative::vt_entry_94(void)
 {
 	if (Current == NULL) {
-		CoopCamp_0049B610 * raw = (CoopCamp_0049B610 *)operator new(sizeof(CoopCamp_0049B610));
+		CoopCampaignClass * raw = (CoopCampaignClass *)operator new(sizeof(CoopCampaignClass));
 		Current = raw ? raw->FUN_0049B610() : 0;
 		Current->FUN_0049CAF0(0);
 	}
@@ -1393,7 +1393,7 @@ bool MPCooperative::vt_entry_A8(void)
 	if (Current == NULL) {
 		return(false);
 	}
-	DynamicVectorClass<CoopPlayerStats *> stats;
+	DynamicVectorClass<MPlayerScoreType *> stats;
 	int unused;
 	Current->FUN_0049BCE0(&stats, &unused);
 	CoopCampEntry * entry = NULL;
@@ -1452,7 +1452,7 @@ void MPCooperative::vt_entry_A4(unsigned a)
 	if (reporter == NULL) {
 		return;
 	}
-	DynamicVectorClass<CoopPlayerStats *> stats;
+	DynamicVectorClass<MPlayerScoreType *> stats;
 	int unused;
 	Current->FUN_0049BCE0(&stats, &unused);
 	CoopCampEntry * entry = NULL;
@@ -1731,17 +1731,17 @@ bool MPCooperative::vt_entry_BC(void)
 // ??_GMPCooperative@@UAEPAXI@Z
 
 // TEMPLATE: GAMEMD 0x005C4F30
-// ??0?$DynamicVectorClass@PAUCoopPlayerStats@@@@QAE@ABV0@@Z
+// ??0?$DynamicVectorClass@PAUMPlayerScoreType@@@@QAE@ABV0@@Z
 // SYNTHETIC: GAMEMD 0x005C4FC0
-// ??_G?$DynamicVectorClass@PAUCoopPlayerStats@@@@UAEPAXI@Z
+// ??_G?$DynamicVectorClass@PAUMPlayerScoreType@@@@UAEPAXI@Z
 // TEMPLATE: GAMEMD 0x005C5010
-// ?Clear@?$DynamicVectorClass@PAUCoopPlayerStats@@@@UAEXXZ
+// ?Clear@?$DynamicVectorClass@PAUMPlayerScoreType@@@@UAEXXZ
 // TEMPLATE: GAMEMD 0x005C5040
-// ?ID@?$DynamicVectorClass@PAUCoopPlayerStats@@@@UAEHPBQAUCoopPlayerStats@@@Z
+// ?ID@?$DynamicVectorClass@PAUMPlayerScoreType@@@@UAEHPBQAUMPlayerScoreType@@@Z
 // TEMPLATE: GAMEMD 0x005C5060
-// ?GetItem@?$VectorClass@PAUCoopPlayerStats@@@@UBEPAUCoopPlayerStats@@H@Z
-template class VectorClass<CoopPlayerStats *>;
-template class DynamicVectorClass<CoopPlayerStats *>;
+// ?GetItem@?$VectorClass@PAUMPlayerScoreType@@@@UBEPAUMPlayerScoreType@@H@Z
+template class VectorClass<MPlayerScoreType *>;
+template class DynamicVectorClass<MPlayerScoreType *>;
 
 // TEMPLATE: GAMEMD 0x005C5070
 // ?Clear@?$DynamicVectorClass@PAUNodeNameType@@@@UAEXXZ
@@ -1752,27 +1752,27 @@ template class DynamicVectorClass<CoopPlayerStats *>;
 template class DynamicVectorClass<NodeNameType *>;
 
 // TEMPLATE: GAMEMD 0x005C50D0
-// ?Clear@?$DynamicVectorClass@PAVCoopCamp_0049B610@@@@UAEXXZ
+// ?Clear@?$DynamicVectorClass@PAVCoopCampaignClass@@@@UAEXXZ
 // TEMPLATE: GAMEMD 0x005C5100
-// ?ID@?$DynamicVectorClass@PAVCoopCamp_0049B610@@@@UAEHPBQAVCoopCamp_0049B610@@@Z
+// ?ID@?$DynamicVectorClass@PAVCoopCampaignClass@@@@UAEHPBQAVCoopCampaignClass@@@Z
 // TEMPLATE: GAMEMD 0x005C5120
-// ?GetItem@?$VectorClass@PAVCoopCamp_0049B610@@@@UBEPAVCoopCamp_0049B610@@H@Z
+// ?GetItem@?$VectorClass@PAVCoopCampaignClass@@@@UBEPAVCoopCampaignClass@@H@Z
 // TEMPLATE: GAMEMD 0x005C5130
-// ??8?$VectorClass@PAUCoopPlayerStats@@@@UBE_NABV0@@Z
+// ??8?$VectorClass@PAUMPlayerScoreType@@@@UBE_NABV0@@Z
 // TEMPLATE: GAMEMD 0x005C5170
-// ?Resize@?$VectorClass@PAUCoopPlayerStats@@@@UAE_NHPBQAUCoopPlayerStats@@@Z
+// ?Resize@?$VectorClass@PAUMPlayerScoreType@@@@UAE_NHPBQAUMPlayerScoreType@@@Z
 // TEMPLATE: GAMEMD 0x005C5220
-// ?Clear@?$VectorClass@PAUCoopPlayerStats@@@@UAEXXZ
+// ?Clear@?$VectorClass@PAUMPlayerScoreType@@@@UAEXXZ
 // TEMPLATE: GAMEMD 0x005C5250
-// ?ID@?$VectorClass@PAUCoopPlayerStats@@@@UAEHABQAUCoopPlayerStats@@@Z
+// ?ID@?$VectorClass@PAUMPlayerScoreType@@@@UAEHABQAUMPlayerScoreType@@@Z
 // TEMPLATE: GAMEMD 0x005C5290
-// ?ID@?$VectorClass@PAUCoopPlayerStats@@@@UAEHPBQAUCoopPlayerStats@@@Z
+// ?ID@?$VectorClass@PAUMPlayerScoreType@@@@UAEHPBQAUMPlayerScoreType@@@Z
 // TEMPLATE: GAMEMD 0x005C52B0
-// ?Resize@?$DynamicVectorClass@PAUCoopPlayerStats@@@@UAE_NHPBQAUCoopPlayerStats@@@Z
+// ?Resize@?$DynamicVectorClass@PAUMPlayerScoreType@@@@UAE_NHPBQAUMPlayerScoreType@@@Z
 // TEMPLATE: GAMEMD 0x005C5360
-// ?ID@?$DynamicVectorClass@PAUCoopPlayerStats@@@@UAEHABQAUCoopPlayerStats@@@Z
-template class VectorClass<CoopCamp_0049B610 *>;
-template class DynamicVectorClass<CoopCamp_0049B610 *>;
+// ?ID@?$DynamicVectorClass@PAUMPlayerScoreType@@@@UAEHABQAUMPlayerScoreType@@@Z
+template class VectorClass<CoopCampaignClass *>;
+template class DynamicVectorClass<CoopCampaignClass *>;
 
 // TEMPLATE: GAMEMD 0x005C5390
 // ??8?$VectorClass@PAUNodeNameType@@@@UBE_NABV0@@Z
@@ -1789,36 +1789,36 @@ template class DynamicVectorClass<CoopCamp_0049B610 *>;
 // TEMPLATE: GAMEMD 0x005C55C0
 // ?ID@?$DynamicVectorClass@PAUNodeNameType@@@@UAEHABQAUNodeNameType@@@Z
 // TEMPLATE: GAMEMD 0x005C55F0
-// ??8?$VectorClass@PAVCoopCamp_0049B610@@@@UBE_NABV0@@Z
+// ??8?$VectorClass@PAVCoopCampaignClass@@@@UBE_NABV0@@Z
 // TEMPLATE: GAMEMD 0x005C5630
-// ?Resize@?$VectorClass@PAVCoopCamp_0049B610@@@@UAE_NHPBQAVCoopCamp_0049B610@@@Z
+// ?Resize@?$VectorClass@PAVCoopCampaignClass@@@@UAE_NHPBQAVCoopCampaignClass@@@Z
 // TEMPLATE: GAMEMD 0x005C56E0
-// ?Clear@?$VectorClass@PAVCoopCamp_0049B610@@@@UAEXXZ
+// ?Clear@?$VectorClass@PAVCoopCampaignClass@@@@UAEXXZ
 // TEMPLATE: GAMEMD 0x005C5710
-// ?ID@?$VectorClass@PAVCoopCamp_0049B610@@@@UAEHABQAVCoopCamp_0049B610@@@Z
+// ?ID@?$VectorClass@PAVCoopCampaignClass@@@@UAEHABQAVCoopCampaignClass@@@Z
 // TEMPLATE: GAMEMD 0x005C5750
-// ?ID@?$VectorClass@PAVCoopCamp_0049B610@@@@UAEHPBQAVCoopCamp_0049B610@@@Z
+// ?ID@?$VectorClass@PAVCoopCampaignClass@@@@UAEHPBQAVCoopCampaignClass@@@Z
 // TEMPLATE: GAMEMD 0x005C5770
-// ?Resize@?$DynamicVectorClass@PAVCoopCamp_0049B610@@@@UAE_NHPBQAVCoopCamp_0049B610@@@Z
+// ?Resize@?$DynamicVectorClass@PAVCoopCampaignClass@@@@UAE_NHPBQAVCoopCampaignClass@@@Z
 // TEMPLATE: GAMEMD 0x005C5820
-// ?ID@?$DynamicVectorClass@PAVCoopCamp_0049B610@@@@UAEHABQAVCoopCamp_0049B610@@@Z
+// ?ID@?$DynamicVectorClass@PAVCoopCampaignClass@@@@UAEHABQAVCoopCampaignClass@@@Z
 // SYNTHETIC: GAMEMD 0x005C5850
-// ??_G?$VectorClass@PAUCoopPlayerStats@@@@UAEPAXI@Z
+// ??_G?$VectorClass@PAUMPlayerScoreType@@@@UAEPAXI@Z
 // SYNTHETIC: GAMEMD 0x005C58A0
 // ??_G?$VectorClass@PAUNodeNameType@@@@UAEPAXI@Z
 template class VectorClass<NodeNameType *>;
 // SYNTHETIC: GAMEMD 0x005C58F0
 // ??_G?$DynamicVectorClass@PAUNodeNameType@@@@UAEPAXI@Z
 // SYNTHETIC: GAMEMD 0x005C5940
-// ??_G?$DynamicVectorClass@PAVCoopCamp_0049B610@@@@UAEPAXI@Z
+// ??_G?$VectorClass@PAVCoopCampaignClass@@@@UAEPAXI@Z
 // SYNTHETIC: GAMEMD 0x005C5990
-// ??_G?$VectorClass@PAVCoopCamp_0049B610@@@@UAEPAXI@Z
+// ??_G?$DynamicVectorClass@PAVCoopCampaignClass@@@@UAEPAXI@Z
 // TEMPLATE: GAMEMD 0x005C59E0
-// ??0?$VectorClass@PAUCoopPlayerStats@@@@QAE@HPBQAUCoopPlayerStats@@@Z
+// ??0?$VectorClass@PAUMPlayerScoreType@@@@QAE@HPBQAUMPlayerScoreType@@@Z
 // TEMPLATE: GAMEMD 0x005C5A30
 // ??0?$VectorClass@PAUNodeNameType@@@@QAE@HPBQAUNodeNameType@@@Z
 // TEMPLATE: GAMEMD 0x005C5A80
-// ??0?$VectorClass@PAVCoopCamp_0049B610@@@@QAE@HPBQAVCoopCamp_0049B610@@@Z
+// ??0?$VectorClass@PAVCoopCampaignClass@@@@QAE@HPBQAVCoopCampaignClass@@@Z
 
 // SYNTHETIC: GAMEMD 0x005C5AD0 SYMBOL
 // _$E10

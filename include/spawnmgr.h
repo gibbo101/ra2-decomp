@@ -21,19 +21,19 @@ enum SpawnNodeStatus {
 	SPAWN_DEAD = 7
 };
 
-struct SpawnControl
-{
-	AircraftClass * Unit;
-	int Status;
-	CDTimerClass<FrameTimerClass> SpawnTimer;
-	BOOL IsSpawnMissile;
-};
-
 class SpawnManagerClass : public AbstractClass
 {
 		typedef AbstractClass BASECLASS;
 
 	public:
+		struct SpawnControl
+		{
+			AircraftClass * Unit;
+			int Status;
+			CDTimerClass<FrameTimerClass> SpawnTimer;
+			BOOL IsSpawnMissile;
+		};
+
 		TechnoClass * Owner;
 		AircraftTypeClass * SpawnType;
 		int SpawnCount;

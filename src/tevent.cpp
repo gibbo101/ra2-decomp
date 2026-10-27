@@ -400,6 +400,10 @@ void TEventClass::Set_Event_House(HouseClass * house)
 // SYNTHETIC: GAMEMD 0x0071FA80
 // ??_GTEventClass@@UAEPAXI@Z
 
+// SYNTHETIC: GAMEMD 0x0071FF00 SYMBOL
+// _$E43
+const Rect RECT_NONE_2(0, 0, 0, 0);
+
 // TEMPLATE: GAMEMD 0x0071FBA0
 // ?Clear@?$DynamicVectorClass@PAVTEventClass@@@@UAEXXZ
 // TEMPLATE: GAMEMD 0x0071FBD0
@@ -426,11 +430,3 @@ void TEventClass::Set_Event_House(HouseClass * house)
 // ??_G?$DynamicVectorClass@PAVTEventClass@@@@UAEPAXI@Z
 template class DynamicVectorClass<TEventClass *>;
 
-struct IntQuad {
-	int A, B, C, D;
-	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
-};
-
-// SYNTHETIC: GAMEMD 0x0071FF00 SYMBOL
-// _$E43
-IntQuad DAT_00B0F1E8;

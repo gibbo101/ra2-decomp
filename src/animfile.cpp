@@ -7,23 +7,11 @@
 #include "animfile.h"
 #include "assert.h"
 #include "bsurface.h"
+#include "geometry.h"
 #include "palette.h"
 #include "wwfile.h"
 #include <math.h>
 
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007E35C8;
-extern const double DAT_007E35D0;
 
 #define LP_HEADER_SIZE(nRecords) ( (sizeof(LPDescriptor) + sizeof(unsigned short)) + (nRecords) * sizeof(unsigned short) )
 
@@ -417,56 +405,27 @@ bool AnimFile::Decode_Frame(void *source, int nBytes, void *dest, int dlength)
 
 // SYNTHETIC: GAMEMD 0x00427320 SYMBOL
 // _$E5
-double DAT_0089A1F8 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x00427350 SYMBOL
 // _$E8
-double DAT_0089A248 = DAT_0089A1F8 / DAT_007E35C8;
-
 // SYNTHETIC: GAMEMD 0x00427370 SYMBOL
 // _$E11
-double DAT_0089A230 = DAT_007E1718 / DAT_0089A248;
-
 // SYNTHETIC: GAMEMD 0x00427390 SYMBOL
 // _$E14
-double DAT_0089A228 = DAT_007E1720 * DAT_007E35D0;
-
 // SYNTHETIC: GAMEMD 0x004273B0 SYMBOL
 // _$E17
-double DAT_0089A200 = DAT_007E1728 * DAT_007E35D0;
-
 // SYNTHETIC: GAMEMD 0x004273D0 SYMBOL
 // _$E20
-double DAT_0089A1D8 = DAT_007E1730 * DAT_007E35D0;
-
 // SYNTHETIC: GAMEMD 0x004273F0 SYMBOL
 // _$E23
-int DAT_0089A250 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_0089A1D8 - DAT_0089A200) * DAT_0089A1F8));
-
 // SYNTHETIC: GAMEMD 0x00427430 SYMBOL
 // _$E26
-double DAT_0089A208 = FUN_004CADE0(DAT_0089A250 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x00427460 SYMBOL
 // _$E29
-double DAT_0089A220 = FUN_004CADE0((DAT_0089A250 * 2) / DAT_0089A1F8);
-
 // SYNTHETIC: GAMEMD 0x00427490 SYMBOL
 // _$E32
-int DAT_0089A244 = (int)(DAT_0089A250 * 4 + DAT_007E1738);
-
-struct S35 { short a; short b; S35() : a(0), b(0) {} };
-struct S38 { int a; int b; int c; S38() : a(0), b(0), c(0) {} };
-struct S41 { int x; int y; int z; S41() : z(0) { x = 128; y = 128; } };
-
 // SYNTHETIC: GAMEMD 0x004274C0 SYMBOL
 // _$E35
-S35 DAT_0089A1F0;
-
 // SYNTHETIC: GAMEMD 0x004274D0 SYMBOL
 // _$E38
-S38 DAT_0089A210;
-
 // SYNTHETIC: GAMEMD 0x004274F0 SYMBOL
 // _$E41
-S41 DAT_0089A238;

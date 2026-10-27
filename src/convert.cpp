@@ -942,7 +942,7 @@ template class BlitTransXlat<unsigned short>;
 template class DynamicVectorClass<ConvertClass *>;
 
 // TEMPLATE: GAMEMD 0x004913C0
-// ?ID@?$VectorClass@PAVConvertClass@@@@UAEHPBQAVConvertClass@@@Z
+// ?ID@?$DynamicVectorClass@PAVConvertClass@@@@UAEHPBQAVConvertClass@@@Z
 // TEMPLATE: GAMEMD 0x004913E0
 // ?GetItem@?$VectorClass@PAVConvertClass@@@@UBEPAVConvertClass@@H@Z
 

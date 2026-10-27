@@ -408,14 +408,11 @@ HRESULT CStreamClass::Compress(void)
 // FUNCTION: GAMEMD 0x004A3230
 // CStreamClass::AddRef
 
-// FUNCTION: GAMEMD 0x004A3240
-// CStreamClass::Release
-
-struct IntQuad {
-	int A, B, C, D;
-	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
-};
+#include "rect.h"
 
 // SYNTHETIC: GAMEMD 0x004A3250 SYMBOL
 // _$E2
-IntQuad DAT_0089F960;
+
+// FUNCTION: GAMEMD 0x004A3240
+// CStreamClass::Release
+

@@ -4,7 +4,9 @@ Usage: uv run tools/checkall.py [--record]
 
 Prints one line per function. Fails if a function data/progress.csv records as MATCH no
 longer matches, since a header edit can change the code of functions it never touches,
-or if two annotations in one file claim the same compiled function.
+if two annotations in one file claim the same compiled function, or if a template
+instance's label names a class whose vtables in the exe do not hold the function
+(check.py's class check). The class check's warnings are counted.
 --record rewrites data/progress.csv with the results.
 """
 
@@ -18,6 +20,8 @@ ROOT = Path(__file__).resolve().parent.parent
 PROGRESS = ROOT / "data/progress.csv"
 LINE = re.compile(r"^(0x[0-9A-F]{8}) (.+?): (MATCH|WRONG TARGETS|[\d.]+%) \((\d+)/(\d+) bytes[^)]*\) (\S+)")
 DUPLICATE = re.compile(r"^(0x[0-9A-F]{8}) .+: same compiled function as ")
+WRONG_CLASS = re.compile(r"^(0x[0-9A-F]{8}) .+: a slot of .+ in the exe, not of ")
+WARNING = re.compile(r"^(0x[0-9A-F]{8}) .+: warning: ")
 
 
 def main() -> None:
@@ -27,13 +31,17 @@ def main() -> None:
         with PROGRESS.open() as f:
             before = {r["address"]: r["result"] for r in csv.DictReader(f)}
     sources = sorted(f for ext in ("*.cpp", "*.asm") for f in (ROOT / "src").rglob(ext))
-    rows, broken = [], []
+    rows, broken, warnings = [], [], 0
     for src in sources:
         proc = subprocess.run([sys.executable, str(ROOT / "tools/check.py"), str(src)],
                               capture_output=True, text=True, cwd=ROOT)
         found = False
         for line in proc.stdout.splitlines():
-            if DUPLICATE.match(line):
+            if WARNING.match(line):
+                print(line)
+                warnings += 1
+                continue
+            if DUPLICATE.match(line) or WRONG_CLASS.match(line):
                 print(line)
                 broken.append(line)
                 continue
@@ -50,6 +58,8 @@ def main() -> None:
             print(f"{src.relative_to(ROOT)}: {(proc.stdout + proc.stderr).strip()}")
             broken.append(str(src.relative_to(ROOT)))
     matched = [r for r in rows if r[2] == "MATCH"]
+    if warnings:
+        print(f"{warnings} class warnings: labels or stored vftables of a class the exe's RTTI does not name there")
     print(f"{len(matched)} of {len(rows)} functions match "
           f"({sum(int(r[3]) for r in matched)} of {sum(int(r[3]) for r in rows)} bytes)")
     if broken:

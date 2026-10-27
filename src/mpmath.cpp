@@ -855,6 +855,11 @@ void XMP_Randomize(digit * result, Straw & rng, digit const * minval, digit cons
 	XMP_Add(result, result, minval, 0, precision);
 }
 
+#include "rect.h"
+
+// SYNTHETIC: GAMEMD 0x005C91D0 SYMBOL
+// _$E2
+
 // FUNCTION: GAMEMD 0x005C9020
 bool XMP_Is_Prime(digit const * prime, int precision)
 {
@@ -869,14 +874,6 @@ bool XMP_Is_Prime(digit const * prime, int precision)
 	return(true);
 }
 
-struct IntQuad {
-	int A, B, C, D;
-	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
-};
-
-// SYNTHETIC: GAMEMD 0x005C91D0 SYMBOL
-// _$E2
-IntQuad DAT_00ABF8E0;
 
 unsigned short primeTable[3511] = {
 	0x0002,0x0003,0x0005,0x0007,0x000B,0x000D,0x0011,0x0013,0x0017,0x001D,0x001F,0x0025,0x0029,0x002B,0x002F,0x0035,

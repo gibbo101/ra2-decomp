@@ -36,7 +36,7 @@
 #include <dos.h> // for station ID computation
 #include <math.h>
 
-MPGameModeClass * First_Game_Mode(void);
+MultiplayerGameMode * First_Game_Mode(void);
 extern CCINIClass DAT_008870C0;
 extern signed char PlayerColorToColorSchemeLUT[9];
 extern char DAT_00889F64[];
@@ -337,7 +337,7 @@ SessionClass::SessionClass(void) :
 void SessionClass::Load_Call_Wait_Strings(void)
 {
 	for (int i = 0; i < CALL_WAIT_STRINGS_NUM; i++) {
-		CallWaitStrings.Add((char const *)_wcsdup(StringTable::LoadString(CallWaitStringIDs[i], NULL, "D:\\ra2mdpost\\Session.CPP", 593)));
+		CallWaitStrings.Add(_wcsdup(StringTable::LoadString(CallWaitStringIDs[i], NULL, "D:\\ra2mdpost\\Session.CPP", 593)));
 	}
 }
 

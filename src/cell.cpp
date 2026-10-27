@@ -2985,7 +2985,7 @@ int CellClass::Fetch_Object_Size(void) const
 template TRect<int> const Union<int>(TRect<int> const &, TRect<int> const &);
 
 // SYNTHETIC: GAMEMD 0x00488030
-// ??_G?$VectorClass@PAVObjectClass@@@@UAEPAXI@Z
+// ??_G?$DynamicVectorClass@PAVObjectClass@@@@UAEPAXI@Z
 template class VectorClass<ObjectClass *>;
 
 // TEMPLATE: GAMEMD 0x00488080

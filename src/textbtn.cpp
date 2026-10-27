@@ -9,14 +9,9 @@
 #include "dsurface.h"
 #include "geometry.h"
 
-struct IntQuad {
-	int A, B, C, D;
-	IntQuad() { A = 0; B = 0; C = 0; D = 0; }
-};
-
 // SYNTHETIC: GAMEMD 0x00720420 SYMBOL
 // _$E66
-IntQuad DAT_00B0F400;
+const Rect RECT_NONE_2(0, 0, 0, 0);
 
 #include "dialog.h"
 #include "bitfont.h"
@@ -165,5 +160,3 @@ void TextButtonClass::Draw_Text(wchar_t const * text)
 // _$E60
 // SYNTHETIC: GAMEMD 0x00720400 SYMBOL
 // _$E63
-// SYNTHETIC: GAMEMD 0x00720420 SYMBOL
-// _$E66

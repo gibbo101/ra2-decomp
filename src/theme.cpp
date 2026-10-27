@@ -15,6 +15,7 @@
 #include "houstype.h"
 #include "incdec.h"
 #include "session.h"
+#include "geometry.h"
 #include "house.h"
 #include "scenario.h"
 #include "vector.h"
@@ -444,7 +445,7 @@ void ThemeClass::Set_Volume(int volume)
 template class DynamicVectorClass<ThemeControl *>;
 
 // TEMPLATE: GAMEMD 0x007212E0
-// ?ID@?$VectorClass@PAUThemeControl@@@@UAEHPBQAUThemeControl@@@Z
+// ?ID@?$DynamicVectorClass@PAUThemeControl@@@@UAEHPBQAUThemeControl@@@Z
 
 // TEMPLATE: GAMEMD 0x00721300
 // ?Resize@?$DynamicVectorClass@PAUThemeControl@@@@UAE_NHPBQAUThemeControl@@@Z
@@ -453,75 +454,36 @@ template class DynamicVectorClass<ThemeControl *>;
 // ?ID@?$DynamicVectorClass@PAUThemeControl@@@@UAEHABQAUThemeControl@@@Z
 
 // SYNTHETIC: GAMEMD 0x007213E0
-// ??_G?$VectorClass@PAUThemeControl@@@@UAEPAXI@Z
+// ??_G?$DynamicVectorClass@PAUThemeControl@@@@UAEPAXI@Z
 
 template class VectorClass<ThemeControl *>;
 
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007F56A8;
-extern const double DAT_007F56B0;
-
 // SYNTHETIC: GAMEMD 0x00721430 SYMBOL
 // _$E36
-double DAT_00B0F498 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x00721460 SYMBOL
 // _$E39
-double DAT_00B0F508 = DAT_00B0F498 / DAT_007F56A8;
-
 // SYNTHETIC: GAMEMD 0x00721480 SYMBOL
 // _$E42
-double DAT_00B0F4D0 = DAT_007E1718 / DAT_00B0F508;
-
 // SYNTHETIC: GAMEMD 0x007214A0 SYMBOL
 // _$E45
-double DAT_00B0F4C8 = DAT_007E1720 * DAT_007F56B0;
-
 // SYNTHETIC: GAMEMD 0x007214C0 SYMBOL
 // _$E48
-double DAT_00B0F4A0 = DAT_007E1728 * DAT_007F56B0;
-
 // SYNTHETIC: GAMEMD 0x007214E0 SYMBOL
 // _$E51
-double DAT_00B0F478 = DAT_007E1730 * DAT_007F56B0;
-
 // SYNTHETIC: GAMEMD 0x00721500 SYMBOL
 // _$E54
-int DAT_00B0F510 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B0F478 - DAT_00B0F4A0) * DAT_00B0F498));
-
 // SYNTHETIC: GAMEMD 0x00721540 SYMBOL
 // _$E57
-double DAT_00B0F4A8 = FUN_004CADE0(DAT_00B0F510 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x00721570 SYMBOL
 // _$E60
-double DAT_00B0F4C0 = FUN_004CADE0((DAT_00B0F510 * 2) / DAT_00B0F498);
-
 // SYNTHETIC: GAMEMD 0x007215A0 SYMBOL
 // _$E63
-int DAT_00B0F500 = (int)(DAT_00B0F510 * 4 + DAT_007E1738);
-
 // SYNTHETIC: GAMEMD 0x007215D0 SYMBOL
 // _$E66
-TPoint2D<short> DAT_00B0F490(0, 0);
-
 // SYNTHETIC: GAMEMD 0x007215E0 SYMBOL
 // _$E69
-Point3D DAT_00B0F4B0(0, 0, 0);
-
 // SYNTHETIC: GAMEMD 0x00721600 SYMBOL
 // _$E72
-Point3D DAT_00B0F4D8(0x80, 0x80, 0);
 
 // SYNTHETIC: GAMEMD 0x00721620 SYMBOL
 // _$E75

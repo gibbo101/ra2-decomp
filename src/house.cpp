@@ -2334,10 +2334,10 @@ void HouseClass::Write_All(CCINIClass & ini)
 
 SideType FUN_006A46D0(char const * name);
 
-class MPGameModeClass
+class MultiplayerGameMode
 {
 	public:
-		virtual ~MPGameModeClass(void);
+		virtual ~MultiplayerGameMode(void);
 		virtual bool vt_entry_04(void);
 };
 
@@ -5227,14 +5227,14 @@ template class DynamicVectorClass<BuildingTypeClass const *>;
 // ?GetItem@?$VectorClass@PBVBuildingTypeClass@@@@UBEPBVBuildingTypeClass@@H@Z
 
 // TEMPLATE: GAMEMD 0x0050E500
-// ?Clear@?$DynamicVectorClass@PAUStartingTechnoStruct@@@@UAEXXZ
+// ?Clear@?$DynamicVectorClass@PAUStartingTechnoStruct@HouseClass@@@@UAEXXZ
 template class DynamicVectorClass<TeamTypeClass const *>;
 
 // TEMPLATE: GAMEMD 0x0050E530
-// ?ID@?$DynamicVectorClass@PAUStartingTechnoStruct@@@@UAEHPBQAUStartingTechnoStruct@@@Z
+// ?ID@?$DynamicVectorClass@PAUStartingTechnoStruct@HouseClass@@@@UAEHPBQAUStartingTechnoStruct@HouseClass@@@Z
 
 // TEMPLATE: GAMEMD 0x0050E550
-// ?GetItem@?$VectorClass@PAUStartingTechnoStruct@@@@UBEPAUStartingTechnoStruct@@H@Z
+// ?GetItem@?$VectorClass@PAUStartingTechnoStruct@HouseClass@@@@UBEPAUStartingTechnoStruct@HouseClass@@H@Z
 
 // TEMPLATE: GAMEMD 0x0050E560
 // ?Clear@?$DynamicVectorClass@UAngerStruct@@@@UAEXXZ
@@ -5325,19 +5325,19 @@ template class VectorClass<TeamTypeClass const *>;
 template class DynamicVectorClass<BaseNodeClass>;
 
 // TEMPLATE: GAMEMD 0x0050EC20
-// ??8?$VectorClass@PAUStartingTechnoStruct@@@@UBE_NABV0@@Z
+// ??8?$VectorClass@PAUStartingTechnoStruct@HouseClass@@@@UBE_NABV0@@Z
 // TEMPLATE: GAMEMD 0x0050EC60
-// ?Resize@?$VectorClass@PAUStartingTechnoStruct@@@@UAE_NHPBQAUStartingTechnoStruct@@@Z
+// ?Resize@?$VectorClass@PAUStartingTechnoStruct@HouseClass@@@@UAE_NHPBQAUStartingTechnoStruct@HouseClass@@@Z
 // TEMPLATE: GAMEMD 0x0050ED10
-// ?Clear@?$VectorClass@PAUStartingTechnoStruct@@@@UAEXXZ
+// ?Clear@?$VectorClass@PAUStartingTechnoStruct@HouseClass@@@@UAEXXZ
 // TEMPLATE: GAMEMD 0x0050ED40
-// ?ID@?$VectorClass@PAUStartingTechnoStruct@@@@UAEHABQAUStartingTechnoStruct@@@Z
+// ?ID@?$VectorClass@PAUStartingTechnoStruct@HouseClass@@@@UAEHABQAUStartingTechnoStruct@HouseClass@@@Z
 // TEMPLATE: GAMEMD 0x0050ED80
-// ?ID@?$VectorClass@PAUStartingTechnoStruct@@@@UAEHPBQAUStartingTechnoStruct@@@Z
+// ?ID@?$VectorClass@PAUStartingTechnoStruct@HouseClass@@@@UAEHPBQAUStartingTechnoStruct@HouseClass@@@Z
 // TEMPLATE: GAMEMD 0x0050EDA0
-// ?Resize@?$DynamicVectorClass@PAUStartingTechnoStruct@@@@UAE_NHPBQAUStartingTechnoStruct@@@Z
+// ?Resize@?$DynamicVectorClass@PAUStartingTechnoStruct@HouseClass@@@@UAE_NHPBQAUStartingTechnoStruct@HouseClass@@@Z
 // TEMPLATE: GAMEMD 0x0050EE50
-// ?ID@?$DynamicVectorClass@PAUStartingTechnoStruct@@@@UAEHABQAUStartingTechnoStruct@@@Z
+// ?ID@?$DynamicVectorClass@PAUStartingTechnoStruct@HouseClass@@@@UAEHABQAUStartingTechnoStruct@HouseClass@@@Z
 template class VectorClass<BuildingTypeClass const *>;
 
 // TEMPLATE: GAMEMD 0x0050EE80
@@ -5445,9 +5445,9 @@ template class VectorClass<BUILDING_DIST_OBJ>;
 // SYNTHETIC: GAMEMD 0x00510040
 // ??_G?$DynamicVectorClass@PBVBuildingTypeClass@@@@UAEPAXI@Z
 // SYNTHETIC: GAMEMD 0x00510090
-// ??_G?$VectorClass@PAUStartingTechnoStruct@@@@UAEPAXI@Z
+// ??_G?$VectorClass@PAUStartingTechnoStruct@HouseClass@@@@UAEPAXI@Z
 // SYNTHETIC: GAMEMD 0x005100E0
-// ??_G?$DynamicVectorClass@PAUStartingTechnoStruct@@@@UAEPAXI@Z
+// ??_G?$DynamicVectorClass@PAUStartingTechnoStruct@HouseClass@@@@UAEPAXI@Z
 // SYNTHETIC: GAMEMD 0x00510130
 // ??_G?$VectorClass@UAngerStruct@@@@UAEPAXI@Z
 // SYNTHETIC: GAMEMD 0x00510180
@@ -5489,8 +5489,8 @@ template class VectorClass<IConnectionPoint *>;
 // ??0?$VectorClass@PAVTagClass@@@@QAE@HPBQAVTagClass@@@Z
 template class VectorClass<TagClass *>;
 // TEMPLATE: GAMEMD 0x00510690
-// ??0?$VectorClass@PAUStartingTechnoStruct@@@@QAE@HPBQAUStartingTechnoStruct@@@Z
-template class VectorClass<StartingTechnoStruct *>;
+// ??0?$VectorClass@PAUStartingTechnoStruct@HouseClass@@@@QAE@HPBQAUStartingTechnoStruct@HouseClass@@@Z
+template class VectorClass<HouseClass::StartingTechnoStruct *>;
 // TEMPLATE: GAMEMD 0x005106E0
 // ??0?$VectorClass@UAngerStruct@@@@QAE@HPBUAngerStruct@@@Z
 template class VectorClass<AngerStruct>;

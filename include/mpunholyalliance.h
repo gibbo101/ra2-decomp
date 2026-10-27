@@ -6,10 +6,10 @@
 
 #include "multiplayer.h"
 
-class MPUnholyAllianceClass : public MPGameModeClass
+class MPUnholyAllianceClass : public MultiplayerGameMode
 {
 	public:
-		MPUnholyAllianceClass(NoInitClass const & x) : MPGameModeClass(x) {}
+		MPUnholyAllianceClass(NoInitClass const & x) : MultiplayerGameMode(x) {}
 		MPUnholyAllianceClass(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex);
 		virtual ~MPUnholyAllianceClass(void);
 		virtual bool vt_entry_10(void) override;

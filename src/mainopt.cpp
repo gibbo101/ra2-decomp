@@ -29,6 +29,7 @@
 #include "sidebar.h"
 #include "sounddlg.h"
 #include "techno.h"
+#include "geometry.h"
 #include "theme.h"
 #include "stimer.h"
 #include "surface.h"
@@ -42,86 +43,33 @@
 
 #include <math.h>
 
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007ED3B0;
-extern const double DAT_007ED3B8;
-
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
 
 // SYNTHETIC: GAMEMD 0x0055F780 SYMBOL
 // _$E104
-double DAT_00ABCE40 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2.0);
-
 // SYNTHETIC: GAMEMD 0x0055F7B0 SYMBOL
 // _$E107
-double DAT_00ABCF48 = DAT_00ABCE40 / DAT_007ED3B0;
-
 // SYNTHETIC: GAMEMD 0x0055F7D0 SYMBOL
 // _$E110
-double DAT_00ABCF30 = DAT_007E1718 / DAT_00ABCF48;
-
 // SYNTHETIC: GAMEMD 0x0055F7F0 SYMBOL
 // _$E113
-double DAT_00ABCF28 = DAT_007E1720 * DAT_007ED3B8;
-
 // SYNTHETIC: GAMEMD 0x0055F810 SYMBOL
 // _$E116
-double DAT_00ABCE48 = DAT_007E1728 * DAT_007ED3B8;
-
 // SYNTHETIC: GAMEMD 0x0055F830 SYMBOL
 // _$E119
-double DAT_00ABCE20 = DAT_007E1730 * DAT_007ED3B8;
-
 // SYNTHETIC: GAMEMD 0x0055F850 SYMBOL
 // _$E122
-int DAT_00ABCF50 = (int)(FUN_004CAD50(DAT_00ABCE20 - DAT_00ABCE48) * DAT_007E1738 * DAT_00ABCE40);
-
 // SYNTHETIC: GAMEMD 0x0055F890 SYMBOL
 // _$E125
-double DAT_00ABCE50 = FUN_004CADE0(DAT_00ABCF50 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x0055F8C0 SYMBOL
 // _$E128
-double DAT_00ABCE68 = FUN_004CADE0((DAT_00ABCF50 * 2) / DAT_00ABCE40);
-
 // SYNTHETIC: GAMEMD 0x0055F8F0 SYMBOL
 // _$E131
-int DAT_00ABCF44 = (int)(DAT_00ABCF50 * 4 + DAT_007E1738);
-
 // SYNTHETIC: GAMEMD 0x0055F920 SYMBOL
 // _$E134
-ShortPair DAT_00ABCE38;
-
 // SYNTHETIC: GAMEMD 0x0055F930 SYMBOL
 // _$E137
-IntTriple DAT_00ABCE58;
-
-struct ModeSize {
-	int Width, Height, Flag;
-	ModeSize() { Flag = 0; Width = 0x80; Height = 0x80; }
-};
-
 // SYNTHETIC: GAMEMD 0x0055F950 SYMBOL
 // _$E140
-ModeSize DAT_00ABCF38;
 
 // SYNTHETIC: GAMEMD 0x0055F970 SYMBOL
 // _$E143

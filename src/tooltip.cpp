@@ -5,6 +5,7 @@
 
 #include "always.h"
 #include "tooltip.h"
+#include "geometry.h"
 #include "data.h"
 #include "dbgprint.h"
 #include "point.h"
@@ -15,19 +16,6 @@
 #include "bsearch.h"
 #include <math.h>
 
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007F5808;
-extern const double DAT_007F5810;
 
 extern bool DAT_00A8F7D8;
 
@@ -328,7 +316,7 @@ bool ToolTipManager::IsToolTipShowing(void)
 // ?Clear@?$DynamicVectorClass@PBVToolTip@@@@UAEXXZ
 
 // TEMPLATE: GAMEMD 0x00724C60
-// ?ID@?$VectorClass@PBVToolTip@@@@UAEHPBQBVToolTip@@@Z
+// ?ID@?$DynamicVectorClass@PBVToolTip@@@@UAEHPBQBVToolTip@@@Z
 // TEMPLATE: GAMEMD 0x00724C80
 // ?GetItem@?$VectorClass@PBVToolTip@@@@UBEPBVToolTip@@H@Z
 // TEMPLATE: GAMEMD 0x00724C90
@@ -342,17 +330,17 @@ bool ToolTipManager::IsToolTipShowing(void)
 template class VectorClass<ToolTip const *>;
 
 // TEMPLATE: GAMEMD 0x00724DF0
-// ?ID@?$DynamicVectorClass@PBVToolTip@@@@UAEHPBQBVToolTip@@@Z
+// ?ID@?$VectorClass@PBVToolTip@@@@UAEHPBQBVToolTip@@@Z
 // TEMPLATE: GAMEMD 0x00724E10
 // ?Resize@?$DynamicVectorClass@PBVToolTip@@@@UAE_NHPBQBVToolTip@@@Z
 // TEMPLATE: GAMEMD 0x00724EC0
 // ?ID@?$DynamicVectorClass@PBVToolTip@@@@UAEHABQBVToolTip@@@Z
 // SYNTHETIC: GAMEMD 0x00724EF0
-// ??_G?$DynamicVectorClass@PBVToolTip@@@@UAEPAXI@Z
+// ??_G?$VectorClass@PBVToolTip@@@@UAEPAXI@Z
 template class DynamicVectorClass<ToolTip const *>;
 
 // SYNTHETIC: GAMEMD 0x00724F40
-// ??_G?$VectorClass@PBVToolTip@@@@UAEPAXI@Z
+// ??_G?$DynamicVectorClass@PBVToolTip@@@@UAEPAXI@Z
 
 // TEMPLATE: GAMEMD 0x00724F90
 // ??0NodeElement@?$IndexClass@IPBVToolTip@@@@QAE@XZ
@@ -372,55 +360,30 @@ template class IndexClass<unsigned, ToolTip const *>;
 
 // SYNTHETIC: GAMEMD 0x007250C0 SYMBOL
 // _$E5
-double DAT_00B0F638 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x007250F0 SYMBOL
 // _$E8
-double DAT_00B0F748 = DAT_00B0F638 / DAT_007F5808;
-
 // SYNTHETIC: GAMEMD 0x00725110 SYMBOL
 // _$E11
-double DAT_00B0F6E8 = DAT_007E1718 / DAT_00B0F748;
-
 // SYNTHETIC: GAMEMD 0x00725130 SYMBOL
 // _$E14
-double DAT_00B0F6E0 = DAT_007E1720 * DAT_007F5810;
-
 // SYNTHETIC: GAMEMD 0x00725150 SYMBOL
 // _$E17
-double DAT_00B0F688 = DAT_007E1728 * DAT_007F5810;
-
 // SYNTHETIC: GAMEMD 0x00725170 SYMBOL
 // _$E20
-double DAT_00B0F5D0 = DAT_007E1730 * DAT_007F5810;
-
 // SYNTHETIC: GAMEMD 0x00725190 SYMBOL
 // _$E23
-int DAT_00B0F750 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B0F5D0 - DAT_00B0F688) * DAT_00B0F638));
-
 // SYNTHETIC: GAMEMD 0x007251D0 SYMBOL
 // _$E26
-double DAT_00B0F690 = FUN_004CADE0(DAT_00B0F750 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x00725200 SYMBOL
 // _$E29
-double DAT_00B0F6C0 = FUN_004CADE0(DAT_00B0F750 * 2 / DAT_00B0F638);
-
 // SYNTHETIC: GAMEMD 0x00725230 SYMBOL
 // _$E32
-int DAT_00B0F744 = (int)(DAT_00B0F750 * 4 + DAT_007E1738);
-
 // SYNTHETIC: GAMEMD 0x00725260 SYMBOL
 // _$E35
-TPoint2D<short> DAT_00B0F630(0, 0);
-
 // SYNTHETIC: GAMEMD 0x00725270 SYMBOL
 // _$E38
-Point3D DAT_00B0F6B0(0, 0, 0);
-
 // SYNTHETIC: GAMEMD 0x00725290 SYMBOL
 // _$E41
-Point3D DAT_00B0F738(0x80, 0x80, 0);
 
 // SYNTHETIC: GAMEMD 0x007252B0 SYMBOL
 // _$E44

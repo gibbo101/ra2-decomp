@@ -6,10 +6,10 @@
 
 #include "multiplayer.h"
 
-class MPMegawealthClass : public MPGameModeClass
+class MPMegawealthClass : public MultiplayerGameMode
 {
 	public:
-		MPMegawealthClass(NoInitClass const & x) : MPGameModeClass(x) {}
+		MPMegawealthClass(NoInitClass const & x) : MultiplayerGameMode(x) {}
 		MPMegawealthClass(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex);
 		virtual ~MPMegawealthClass(void);
 		virtual bool vt_entry_8C(void) override;
