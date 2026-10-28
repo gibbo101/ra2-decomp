@@ -2,6 +2,18 @@
 // Copyright 2026 ra2-decomp contributors
 #pragma once
 
+struct PixelFXTypeStruct
+{
+	int Color[3];
+	int Dim[3];
+	int Jitter;
+	int LifeMask;
+	int RateMax;
+	int RateMin;
+};
+
+extern PixelFXTypeStruct DAT_008367C8[];
+
 class PixelFXClass
 {
 	public:

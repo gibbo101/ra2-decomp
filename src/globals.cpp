@@ -616,3 +616,243 @@ RGBClass DAT_00A8E980(255,255,0);
 // ?Clear@?$DynamicVectorClass@PAVTubeClass@@@@UAEXXZ
 // TEMPLATE: GAMEMD 0x004E8630
 // ?ID@?$DynamicVectorClass@PAVTubeClass@@@@UAEHPBQAVTubeClass@@@Z
+// TEMPLATE: GAMEMD 0x004E8650
+// ?GetItem@?$VectorClass@PAVTubeClass@@@@UBEPAVTubeClass@@H@Z
+// TEMPLATE: GAMEMD 0x004E8660
+// ?Clear@?$DynamicVectorClass@PAVParticleSystemClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004E8690
+// ?ID@?$DynamicVectorClass@PAVParticleSystemClass@@@@UAEHPBQAVParticleSystemClass@@@Z
+// TEMPLATE: GAMEMD 0x004E86B0
+// ?GetItem@?$VectorClass@PAVParticleSystemClass@@@@UBEPAVParticleSystemClass@@H@Z
+// TEMPLATE: GAMEMD 0x004E86C0
+// ?Clear@?$DynamicVectorClass@PAVWaveClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004E86F0
+// ?ID@?$DynamicVectorClass@PAVWaveClass@@@@UAEHPBQAVWaveClass@@@Z
+// TEMPLATE: GAMEMD 0x004E8710
+// ?GetItem@?$VectorClass@PAVWaveClass@@@@UBEPAVWaveClass@@H@Z
+// TEMPLATE: GAMEMD 0x004E8720
+// ?Clear@?$DynamicVectorClass@PAVOverlayClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004E8750
+// ?ID@?$DynamicVectorClass@PAVOverlayClass@@@@UAEHPBQAVOverlayClass@@@Z
+// TEMPLATE: GAMEMD 0x004E8770
+// ?GetItem@?$VectorClass@PAVOverlayClass@@@@UBEPAVOverlayClass@@H@Z
+// TEMPLATE: GAMEMD 0x004E8780
+// ?Clear@?$DynamicVectorClass@PAVSmudgeClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004E87B0
+// ?ID@?$DynamicVectorClass@PAVSmudgeClass@@@@UAEHPBQAVSmudgeClass@@@Z
+// TEMPLATE: GAMEMD 0x004E87D0
+// ?GetItem@?$VectorClass@PAVSmudgeClass@@@@UBEPAVSmudgeClass@@H@Z
+// TEMPLATE: GAMEMD 0x004E87E0
+// ?Clear@?$DynamicVectorClass@PAVTerrainClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004E8810
+// ?ID@?$DynamicVectorClass@PAVTerrainClass@@@@UAEHPBQAVTerrainClass@@@Z
+// TEMPLATE: GAMEMD 0x004E8830
+// ?GetItem@?$VectorClass@PAVTerrainClass@@@@UBEPAVTerrainClass@@H@Z
+// TEMPLATE: GAMEMD 0x004E8840
+// ?Clear@?$DynamicVectorClass@PAVAircraftClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004E8870
+// ?ID@?$DynamicVectorClass@PAVAircraftClass@@@@UAEHPBQAVAircraftClass@@@Z
+// TEMPLATE: GAMEMD 0x004E8890
+// ?GetItem@?$VectorClass@PAVAircraftClass@@@@UBEPAVAircraftClass@@H@Z
+// TEMPLATE: GAMEMD 0x004E88A0
+// ?Clear@?$DynamicVectorClass@PAVUnitClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004E88D0
+// ?ID@?$DynamicVectorClass@PAVUnitClass@@@@UAEHPBQAVUnitClass@@@Z
+// TEMPLATE: GAMEMD 0x004E88F0
+// ?GetItem@?$VectorClass@PAVUnitClass@@@@UBEPAVUnitClass@@H@Z
+// TEMPLATE: GAMEMD 0x004E8900
+// ?Clear@?$DynamicVectorClass@PAVHouseClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004E8930
+// ?ID@?$DynamicVectorClass@PAVHouseClass@@@@UAEHPBQAVHouseClass@@@Z
+// TEMPLATE: GAMEMD 0x004E8950
+// ?GetItem@?$VectorClass@PAVHouseClass@@@@UBEPAVHouseClass@@H@Z
+// TEMPLATE: GAMEMD 0x004E8960
+// ?Clear@?$DynamicVectorClass@PAVAnimClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004E8990
+// ?ID@?$DynamicVectorClass@PAVAnimClass@@@@UAEHPBQAVAnimClass@@@Z
+// TEMPLATE: GAMEMD 0x004E89B0
+// ?GetItem@?$VectorClass@PAVAnimClass@@@@UBEPAVAnimClass@@H@Z
+// TEMPLATE: GAMEMD 0x004E89C0
+// ?Clear@?$DynamicVectorClass@PAVFactoryClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004E89F0
+// ?ID@?$DynamicVectorClass@PAVFactoryClass@@@@UAEHPBQAVFactoryClass@@@Z
+// TEMPLATE: GAMEMD 0x004E8A10
+// ?GetItem@?$VectorClass@PAVFactoryClass@@@@UBEPAVFactoryClass@@H@Z
+// TEMPLATE: GAMEMD 0x004E8A20
+// ?Clear@?$DynamicVectorClass@PAVCampaignClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004E8A50
+// ?ID@?$DynamicVectorClass@PAVCampaignClass@@@@UAEHPBQAVCampaignClass@@@Z
+// TEMPLATE: GAMEMD 0x004E8A70
+// ?GetItem@?$VectorClass@PAVCampaignClass@@@@UBEPAVCampaignClass@@H@Z
+// TEMPLATE: GAMEMD 0x004E8A80
+// ?Clear@?$DynamicVectorClass@PAVSideClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004E8AB0
+// ?ID@?$DynamicVectorClass@PAVSideClass@@@@UAEHPBQAVSideClass@@@Z
+// TEMPLATE: GAMEMD 0x004E8AD0
+// ?GetItem@?$VectorClass@PAVSideClass@@@@UBEPAVSideClass@@H@Z
+// TEMPLATE: GAMEMD 0x004E8AE0
+// ?Clear@?$DynamicVectorClass@PAVHouseTypeClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004E8B10
+// ?ID@?$DynamicVectorClass@PAVHouseTypeClass@@@@UAEHPBQAVHouseTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x004E8B30
+// ?GetItem@?$VectorClass@PAVHouseTypeClass@@@@UBEPAVHouseTypeClass@@H@Z
+// TEMPLATE: GAMEMD 0x004E8B40
+// ?Clear@?$DynamicVectorClass@PAVTaskForceClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004E8B70
+// ?ID@?$DynamicVectorClass@PAVTaskForceClass@@@@UAEHPBQAVTaskForceClass@@@Z
+// TEMPLATE: GAMEMD 0x004E8B90
+// ?GetItem@?$VectorClass@PAVTaskForceClass@@@@UBEPAVTaskForceClass@@H@Z
+// TEMPLATE: GAMEMD 0x004E8BA0
+// ?Clear@?$DynamicVectorClass@PAVTeamTypeClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004E8BD0
+// ?ID@?$DynamicVectorClass@PAVTeamTypeClass@@@@UAEHPBQAVTeamTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x004E8BF0
+// ?GetItem@?$VectorClass@PAVTeamTypeClass@@@@UBEPAVTeamTypeClass@@H@Z
+// TEMPLATE: GAMEMD 0x004E8C00
+// ?Clear@?$DynamicVectorClass@PAVScriptTypeClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004E8C30
+// ?ID@?$DynamicVectorClass@PAVScriptTypeClass@@@@UAEHPBQAVScriptTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x004E8C50
+// ?GetItem@?$VectorClass@PAVScriptTypeClass@@@@UBEPAVScriptTypeClass@@H@Z
+// TEMPLATE: GAMEMD 0x004E8C60
+// ?Clear@?$DynamicVectorClass@PAVOverlayTypeClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004E8C90
+// ?ID@?$DynamicVectorClass@PAVOverlayTypeClass@@@@UAEHPBQAVOverlayTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x004E8CB0
+// ?GetItem@?$VectorClass@PAVOverlayTypeClass@@@@UBEPAVOverlayTypeClass@@H@Z
+// TEMPLATE: GAMEMD 0x004E8CC0
+// ?Clear@?$DynamicVectorClass@PAVSmudgeTypeClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004E8CF0
+// ?ID@?$DynamicVectorClass@PAVSmudgeTypeClass@@@@UAEHPBQAVSmudgeTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x004E8D10
+// ?GetItem@?$VectorClass@PAVSmudgeTypeClass@@@@UBEPAVSmudgeTypeClass@@H@Z
+// TEMPLATE: GAMEMD 0x004E8D20
+// ?Clear@?$DynamicVectorClass@PAVTerrainTypeClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004E8D50
+// ?ID@?$DynamicVectorClass@PAVTerrainTypeClass@@@@UAEHPBQAVTerrainTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x004E8D70
+// ?GetItem@?$VectorClass@PAVTerrainTypeClass@@@@UBEPAVTerrainTypeClass@@H@Z
+// TEMPLATE: GAMEMD 0x004E8D80
+// ?Clear@?$DynamicVectorClass@PAVBuildingTypeClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004E8DB0
+// ?ID@?$DynamicVectorClass@PAVBuildingTypeClass@@@@UAEHPBQAVBuildingTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x004E8DD0
+// ?GetItem@?$VectorClass@PAVBuildingTypeClass@@@@UBEPAVBuildingTypeClass@@H@Z
+// TEMPLATE: GAMEMD 0x004E8DE0
+// ?Clear@?$DynamicVectorClass@PAVAircraftTypeClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004E8E10
+// ?ID@?$DynamicVectorClass@PAVAircraftTypeClass@@@@UAEHPBQAVAircraftTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x004E8E30
+// ?GetItem@?$VectorClass@PAVAircraftTypeClass@@@@UBEPAVAircraftTypeClass@@H@Z
+// TEMPLATE: GAMEMD 0x004E8E40
+// ?Clear@?$DynamicVectorClass@PAVUnitTypeClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004E8E70
+// ?ID@?$DynamicVectorClass@PAVUnitTypeClass@@@@UAEHPBQAVUnitTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x004E8E90
+// ?GetItem@?$VectorClass@PAVUnitTypeClass@@@@UBEPAVUnitTypeClass@@H@Z
+// TEMPLATE: GAMEMD 0x004E8EA0
+// ?Clear@?$DynamicVectorClass@PAVAnimTypeClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004E8ED0
+// ?ID@?$DynamicVectorClass@PAVAnimTypeClass@@@@UAEHPBQAVAnimTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x004E8EF0
+// ?GetItem@?$VectorClass@PAVAnimTypeClass@@@@UBEPAVAnimTypeClass@@H@Z
+// TEMPLATE: GAMEMD 0x004E8F00
+// ?Clear@?$DynamicVectorClass@PAVInfantryTypeClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004E8F30
+// ?ID@?$DynamicVectorClass@PAVInfantryTypeClass@@@@UAEHPBQAVInfantryTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x004E8F50
+// ?GetItem@?$VectorClass@PAVInfantryTypeClass@@@@UBEPAVInfantryTypeClass@@H@Z
+// TEMPLATE: GAMEMD 0x004E8F60
+// ?Clear@?$DynamicVectorClass@PAVBulletTypeClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004E8F90
+// ?ID@?$DynamicVectorClass@PAVBulletTypeClass@@@@UAEHPBQAVBulletTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x004E8FB0
+// ?GetItem@?$VectorClass@PAVBulletTypeClass@@@@UBEPAVBulletTypeClass@@H@Z
+// TEMPLATE: GAMEMD 0x004E8FC0
+// ?Clear@?$DynamicVectorClass@PAVVoxelAnimTypeClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004E8FF0
+// ?ID@?$DynamicVectorClass@PAVVoxelAnimTypeClass@@@@UAEHPBQAVVoxelAnimTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x004E9010
+// ?GetItem@?$VectorClass@PAVVoxelAnimTypeClass@@@@UBEPAVVoxelAnimTypeClass@@H@Z
+// TEMPLATE: GAMEMD 0x004E9020
+// ?Clear@?$DynamicVectorClass@PAVIsometricTileTypeClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004E9050
+// ?ID@?$DynamicVectorClass@PAVIsometricTileTypeClass@@@@UAEHPBQAVIsometricTileTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x004E9070
+// ?GetItem@?$VectorClass@PAVIsometricTileTypeClass@@@@UBEPAVIsometricTileTypeClass@@H@Z
+// TEMPLATE: GAMEMD 0x004E9080
+// ?Clear@?$DynamicVectorClass@PAVParticleTypeClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004E90B0
+// ?ID@?$DynamicVectorClass@PAVParticleTypeClass@@@@UAEHPBQAVParticleTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x004E90D0
+// ?GetItem@?$VectorClass@PAVParticleTypeClass@@@@UBEPAVParticleTypeClass@@H@Z
+// TEMPLATE: GAMEMD 0x004E90E0
+// ?Clear@?$DynamicVectorClass@PAVParticleSystemTypeClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004E9110
+// ?ID@?$DynamicVectorClass@PAVParticleSystemTypeClass@@@@UAEHPBQAVParticleSystemTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x004E9130
+// ?GetItem@?$VectorClass@PAVParticleSystemTypeClass@@@@UBEPAVParticleSystemTypeClass@@H@Z
+// TEMPLATE: GAMEMD 0x004E9140
+// ?Clear@?$DynamicVectorClass@PAVSuperWeaponTypeClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004E9170
+// ?ID@?$DynamicVectorClass@PAVSuperWeaponTypeClass@@@@UAEHPBQAVSuperWeaponTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x004E9190
+// ?GetItem@?$VectorClass@PAVSuperWeaponTypeClass@@@@UBEPAVSuperWeaponTypeClass@@H@Z
+// TEMPLATE: GAMEMD 0x004E91A0
+// ?Clear@?$DynamicVectorClass@PAVAbstractTypeClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004E91D0
+// ?ID@?$DynamicVectorClass@PAVAbstractTypeClass@@@@UAEHPBQAVAbstractTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x004E91F0
+// ?GetItem@?$VectorClass@PAVAbstractTypeClass@@@@UBEPAVAbstractTypeClass@@H@Z
+// TEMPLATE: GAMEMD 0x004E9200
+// ??8?$VectorClass@PAVTagClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x004E9240
+// ?Resize@?$VectorClass@PAVTagClass@@@@UAE_NHPBQAVTagClass@@@Z
+// TEMPLATE: GAMEMD 0x004E92F0
+// ?Clear@?$VectorClass@PAVTagClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004E9320
+// ?ID@?$VectorClass@PAVTagClass@@@@UAEHABQAVTagClass@@@Z
+// TEMPLATE: GAMEMD 0x004E9360
+// ?ID@?$VectorClass@PAVTagClass@@@@UAEHPBQAVTagClass@@@Z
+// TEMPLATE: GAMEMD 0x004E9380
+// ?Resize@?$DynamicVectorClass@PAVTagClass@@@@UAE_NHPBQAVTagClass@@@Z
+// TEMPLATE: GAMEMD 0x004E9430
+// ?ID@?$DynamicVectorClass@PAVTagClass@@@@UAEHABQAVTagClass@@@Z
+// TEMPLATE: GAMEMD 0x004E9460
+// ??8?$VectorClass@PAVBuildingClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x004E94A0
+// ?Resize@?$VectorClass@PAVBuildingClass@@@@UAE_NHPBQAVBuildingClass@@@Z
+// TEMPLATE: GAMEMD 0x004E9550
+// ?Clear@?$VectorClass@PAVBuildingClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004E9580
+// ?ID@?$VectorClass@PAVBuildingClass@@@@UAEHABQAVBuildingClass@@@Z
+// TEMPLATE: GAMEMD 0x004E95C0
+// ?ID@?$VectorClass@PAVBuildingClass@@@@UAEHPBQAVBuildingClass@@@Z
+// TEMPLATE: GAMEMD 0x004E95E0
+// ?Resize@?$DynamicVectorClass@PAVBuildingClass@@@@UAE_NHPBQAVBuildingClass@@@Z
+// TEMPLATE: GAMEMD 0x004E9690
+// ?ID@?$DynamicVectorClass@PAVBuildingClass@@@@UAEHABQAVBuildingClass@@@Z
+// TEMPLATE: GAMEMD 0x004E96C0
+// ??8?$VectorClass@PAVSuperClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x004E9700
+// ?Resize@?$VectorClass@PAVSuperClass@@@@UAE_NHPBQAVSuperClass@@@Z
+// TEMPLATE: GAMEMD 0x004E97B0
+// ?Clear@?$VectorClass@PAVSuperClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004E97E0
+// ?ID@?$VectorClass@PAVSuperClass@@@@UAEHABQAVSuperClass@@@Z
+// TEMPLATE: GAMEMD 0x004E9820
+// ?ID@?$VectorClass@PAVSuperClass@@@@UAEHPBQAVSuperClass@@@Z
+// TEMPLATE: GAMEMD 0x004E9840
+// ?Resize@?$DynamicVectorClass@PAVSuperClass@@@@UAE_NHPBQAVSuperClass@@@Z
+// TEMPLATE: GAMEMD 0x004E98F0
+// ?ID@?$DynamicVectorClass@PAVSuperClass@@@@UAEHABQAVSuperClass@@@Z
+// TEMPLATE: GAMEMD 0x004E9920
+// ??8?$VectorClass@PAVAITriggerTypeClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x004E9960
+// ?Resize@?$VectorClass@PAVAITriggerTypeClass@@@@UAE_NHPBQAVAITriggerTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x004E9A10
+// ?Clear@?$VectorClass@PAVAITriggerTypeClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004E9A40
+// ?ID@?$VectorClass@PAVAITriggerTypeClass@@@@UAEHABQAVAITriggerTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x004E9A80
+// ?ID@?$VectorClass@PAVAITriggerTypeClass@@@@UAEHPBQAVAITriggerTypeClass@@@Z

@@ -1,6 +1,6 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 28 October 2026: 16,753 of 19,366 game functions match (87%; 58% of game code
+Status, 28 October 2026: 16,987 of 19,366 game functions match (88%; 58% of game code
 by size), landed in batches module by module. The rounds below record each one.
 
 ## The goal
@@ -1113,6 +1113,20 @@ Session.Players. Recording then exposed three UI-command functions building char
 ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; their RTTI
 fixed them. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
+
+### Batches 123 and 124 (28 October 2026)
+
+**234 of 256 functions** (223 of 225, 11 of 31). Batch 123 took the next run of globals'
+vector instances, Startup's factories, wdtmap, saveload and subtitle; its merges renamed
+SubTitleClass to SubTitle (the exe's RTTI names `VectorClass<SubTitle *>`), gave
+WDTMap::Map its real fields and made VectorCursor's assignment copy field by field.
+Batch 124 put Opus on eight larger callers: Modem_Host_Dialog_Proc (2,428 bytes),
+WarheadTypeClass::Read_INI (2,846), CellClass::Is_Near_Tunnel_NW, PixelFXClass::Init and
+three wonline list handlers landed, each bringing the helpers it keeps out of line.
+Projectile_Motion (95.3%), MouseClass::Load (83.4%) and BounceClass's update (33.6%) still
+wait on VC6's inline budget, and their helpers with them. The wdtnet.h merge flipped
+wonline's 0x00788180 again; moving 14 of the file's own declarations below it restored
+it. Merge gate: 16,987 of 16,987 (2,172.8 KB).
 
 ### Batches 121 and 122 (28 October 2026)
 

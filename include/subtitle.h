@@ -7,11 +7,11 @@
 #include "always.h"
 #include <wchar.h>
 
-class SubTitleClass
+class SubTitle
 {
 public:
-	SubTitleClass();
-	~SubTitleClass();
+	SubTitle();
+	~SubTitle();
 
 	// Display time and duration are in ticks (1/60 seconds).
 	void Set_Display_Time(unsigned long time) { mTimeStamp = time; }

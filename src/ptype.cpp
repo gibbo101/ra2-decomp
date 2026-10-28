@@ -349,3 +349,7 @@ ObjectClass * ParticleTypeClass::Create_One_Of(HouseClass *) const
 // TEMPLATE: GAMEMD 0x00645A70
 // ??0?$DynamicVectorClass@VRGBClass@@@@QAE@IPBVRGBClass@@@Z
 template class DynamicVectorClass<RGBClass>;
+
+// SYNTHETIC: GAMEMD 0x00645B10
+// ??_G?$DynamicVectorClass@VRGBClass@@@@UAEPAXI@Z
+template class VectorClass<RGBClass>;

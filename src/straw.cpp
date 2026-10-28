@@ -53,7 +53,7 @@ int Straw::Get(void * source, int slen)
 }
 
 // FUNCTION: GAMEMD 0x006C9900
-SubTitleClass::SubTitleClass()
+SubTitle::SubTitle()
 	:
 	mTimeStamp(0),
 	mDuration(20 * 60),
@@ -65,7 +65,7 @@ SubTitleClass::SubTitleClass()
 }
 
 // FUNCTION: GAMEMD 0x006C9930
-SubTitleClass::~SubTitleClass()
+SubTitle::~SubTitle()
 {
 	if (mCaption != NULL) {
 		delete[] mCaption;
@@ -73,13 +73,13 @@ SubTitleClass::~SubTitleClass()
 }
 
 // FUNCTION: GAMEMD 0x006C9940
-void SubTitleClass::Set_RGB_Color(unsigned char red, unsigned char green, unsigned char blue)
+void SubTitle::Set_RGB_Color(unsigned char red, unsigned char green, unsigned char blue)
 {
 	mRGBColor = (((unsigned long)red << 16) | ((unsigned long)green << 8) | (unsigned long)blue);
 }
 
 // FUNCTION: GAMEMD 0x006C9960
-void SubTitleClass::Set_Caption(wchar_t * string)
+void SubTitle::Set_Caption(wchar_t * string)
 {
 	if (mCaption != NULL) {
 		delete[] mCaption;

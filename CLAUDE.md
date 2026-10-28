@@ -1,7 +1,7 @@
 # ra2-decomp: Claude context
 
 A matching decompilation of Red Alert 2: Yuri's Revenge (`gamemd.exe` 1.001), modelled on
-Byte Tactics (Total Annihilation). Active: about 87% of the game's functions match, landed
+Byte Tactics (Total Annihilation). Active: about 88% of the game's functions match, landed
 in rounds of agent batches.
 
 **Read `docs/PLAN.md` first** for the method, the binary's measured facts, the prior art

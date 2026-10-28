@@ -158,6 +158,135 @@ bool ModemHost::Dialog(void)
 	return(started);
 }
 
+// FUNCTION: GAMEMD 0x005B7970
+BOOL CALLBACK Modem_Host_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	int rc = OwnerDraw::Default_Dialog_Proc(window, message, wparam, lparam);
+
+	if (rc != 0) {
+		return(rc);
+	}
+
+	ModemHost * _this = (ModemHost *)GetWindowLong(window, DWL_USER);
+
+	switch (message) {
+		case WM_COMMAND: {
+			switch (LOWORD(wparam)) {
+				case IDC_MODEM_YOURSIDE:
+					if (HIWORD(wparam) == CBN_SELCHANGE)
+						_this->SetHouse();
+					break;
+
+				case IDC_NAME:
+					if (HIWORD(wparam) == EN_MAXTEXT || HIWORD(wparam) == EN_CHANGE)
+						_this->SetName(HIWORD(wparam) == EN_CHANGE);
+					break;
+
+				case IDC_MODEM_REDEPLOY_MCV:
+					_this->SetMCVRedeploy();
+					break;
+
+				case IDC_MODEM_BASES:
+					_this->SetBases();
+					break;
+
+				case IDC_BRIDGE_DESTROY:
+					_this->SetBridgeDestruction();
+					break;
+
+				case IDC_HARVTRUCE:
+					_this->SetHarvTruce();
+					break;
+
+				case 0x69a:
+					_this->SetSWAllowed();
+					break;
+
+				case 0x69d:
+					_this->SetBuildOffAlly();
+					break;
+
+				case IDC_MULTIMAP:
+					if (!HIWORD(wparam))
+						_this->SelectMultiMap();
+					break;
+
+				case IDC_MODEM_FOG:
+					_this->SetFogOfWar();
+					break;
+
+				case IDC_SHORT_GAME:
+					_this->SetShortGame();
+					break;
+
+				case IDC_MULTI_ENGINEER:
+					_this->SetCrapEngineers();
+					break;
+
+				case IDC_GOODIES:
+					_this->SetGoodies();
+					break;
+
+				case IDC_INPUT:
+					if (HIWORD(wparam) == EN_MAXTEXT)
+						_this->SendCurrentMessage();
+					break;
+
+				case IDC_MODEM_YOURCOLOR:
+					if (HIWORD(wparam) == CBN_SELCHANGE)
+						_this->SetColor();
+					break;
+
+				case IDOK:
+					if (!HIWORD(wparam) && _this->ReadDialog() == true) {
+						_this->SendGameOptions();
+						_this->RC = IDOK;
+					}
+					break;
+
+				case IDCANCEL:
+					if (!HIWORD(wparam)) {
+						_this->ReadDialog();
+						_this->RC = IDCANCEL;
+					}
+					break;
+			}
+		}
+		break;
+
+		case WM_HSCROLL:
+		case WM_VSCROLL:
+			if (GetDlgItem(window, IDC_MODEM_UNITCOUNT) == (HWND)lparam)
+				_this->SetUnitCount();
+			else if (GetDlgItem(window, IDC_TECHLEVEL) == (HWND)lparam)
+				_this->SetBuildLevel();
+			else if (GetDlgItem(window, IDC_CREDITS) == (HWND)lparam)
+				_this->SetCredits();
+			else if (GetDlgItem(window, IDC_AIPLAYERS) == (HWND)lparam)
+				_this->SetAIPlayers();
+			else if (GetDlgItem(window, IDC_AILEVEL_SLIDER) == (HWND)lparam)
+				_this->SetAIDifficulty();
+			else if (GetDlgItem(window, IDC_GAME_SPEED_SLIDER) == (HWND)lparam)
+				_this->SetGameSpeed();
+			break;
+
+		case WM_DESTROY:
+			if (MultiplayerMapPreview != NULL) {
+				delete MultiplayerMapPreview;
+				MultiplayerMapPreview = NULL;
+			}
+			break;
+
+		case WM_PAINT:
+			if (MultiplayerMapPreview != NULL)
+				MultiplayerMapPreview->DrawStartPoints(window);
+			ValidateRect(window, NULL);
+			break;
+	}
+
+	return(0);
+}
+
 // FUNCTION: GAMEMD 0x005B8CE0
 bool ModemHost::ReadDialog(void)
 {
@@ -1193,3 +1322,6 @@ void ModemHost::SendPreview(void)
 		Send_Remote_File("Preview.bin", GAME_MODEM, false, false);
 	}
 }
+
+// SYNTHETIC: GAMEMD 0x005BB560
+// ??_GMapPreviewClass@@QAEPAXI@Z

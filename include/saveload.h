@@ -5,6 +5,7 @@
 #pragma once
 
 #include <stddef.h>
+#include "win.h"
 
 struct IStream;
 class SaveVersionInfo;
@@ -16,3 +17,26 @@ bool Load_Game(const char *file_name);
 bool Save_Game(const char *file_name, wchar_t const * descr, bool bargraph=false);
 
 extern unsigned int ExpectedGameVersion;
+
+class SavegameInformation
+{
+	public:
+		SavegameInformation(void);
+
+		void Set_Version(int num);
+		int Get_Version(void);
+
+		int InternalVersion;
+		int Version;
+		wchar_t ScenarioDescription[128];
+		wchar_t PlayerHouse[64];
+		int Campaign;
+		int ScenarioNumber;
+		char UnknownString[260];
+		char PlayerName[64];
+		char ExecutableName[260];
+		FILETIME StartTime;
+		FILETIME PlayTime;
+		FILETIME LastSaveTime;
+		int GameType;
+};

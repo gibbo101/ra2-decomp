@@ -1839,3 +1839,81 @@ template class TClassFactory<FactoryClass>;
 // TEMPLATE: GAMEMD 0x006C5410
 // ?LockServer@?$TClassFactory@VWarheadTypeClass@@@@UAGJH@Z
 template class TClassFactory<WarheadTypeClass>;
+
+// TEMPLATE: GAMEMD 0x006C5440
+// ??0?$TClassFactory@VWeaponTypeClass@@@@QAE@XZ
+// TEMPLATE: GAMEMD 0x006C5450
+// ?QueryInterface@?$TClassFactory@VWeaponTypeClass@@@@UAGJABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C54C0
+// ?AddRef@?$TClassFactory@VWeaponTypeClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C54E0
+// ?Release@?$TClassFactory@VWeaponTypeClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C5510
+// ?CreateInstance@?$TClassFactory@VWeaponTypeClass@@@@UAGJPAUIUnknown@@ABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C5590
+// ?LockServer@?$TClassFactory@VWeaponTypeClass@@@@UAGJH@Z
+template class TClassFactory<WeaponTypeClass>;
+
+// TEMPLATE: GAMEMD 0x006C55C0
+// ??0?$TClassFactory@VParticleClass@@@@QAE@XZ
+// TEMPLATE: GAMEMD 0x006C55D0
+// ?QueryInterface@?$TClassFactory@VParticleClass@@@@UAGJABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C5640
+// ?AddRef@?$TClassFactory@VParticleClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C5660
+// ?Release@?$TClassFactory@VParticleClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C5690
+// ?CreateInstance@?$TClassFactory@VParticleClass@@@@UAGJPAUIUnknown@@ABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C5710
+// ?LockServer@?$TClassFactory@VParticleClass@@@@UAGJH@Z
+template class TClassFactory<ParticleClass>;
+
+// TEMPLATE: GAMEMD 0x006C5740
+// ??0?$TClassFactory@VParticleTypeClass@@@@QAE@XZ
+// TEMPLATE: GAMEMD 0x006C5750
+// ?QueryInterface@?$TClassFactory@VParticleTypeClass@@@@UAGJABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C57C0
+// ?AddRef@?$TClassFactory@VParticleTypeClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C57E0
+// ?Release@?$TClassFactory@VParticleTypeClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C5810
+// ?CreateInstance@?$TClassFactory@VParticleTypeClass@@@@UAGJPAUIUnknown@@ABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C5890
+// ?LockServer@?$TClassFactory@VParticleTypeClass@@@@UAGJH@Z
+template class TClassFactory<ParticleTypeClass>;
+
+// TEMPLATE: GAMEMD 0x006C58C0
+// ??0?$TClassFactory@VParticleSystemClass@@@@QAE@XZ
+// TEMPLATE: GAMEMD 0x006C58D0
+// ?QueryInterface@?$TClassFactory@VParticleSystemClass@@@@UAGJABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C5940
+// ?AddRef@?$TClassFactory@VParticleSystemClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C5960
+// ?Release@?$TClassFactory@VParticleSystemClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C5990
+// ?CreateInstance@?$TClassFactory@VParticleSystemClass@@@@UAGJPAUIUnknown@@ABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C5A10
+// ?LockServer@?$TClassFactory@VParticleSystemClass@@@@UAGJH@Z
+template class TClassFactory<ParticleSystemClass>;
+
+// TEMPLATE: GAMEMD 0x006C5A40
+// ??0?$TClassFactory@VParticleSystemTypeClass@@@@QAE@XZ
+// TEMPLATE: GAMEMD 0x006C5A50
+// ?QueryInterface@?$TClassFactory@VParticleSystemTypeClass@@@@UAGJABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C5AC0
+// ?AddRef@?$TClassFactory@VParticleSystemTypeClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C5AE0
+// ?Release@?$TClassFactory@VParticleSystemTypeClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C5B10
+// ?CreateInstance@?$TClassFactory@VParticleSystemTypeClass@@@@UAGJPAUIUnknown@@ABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C5B90
+// ?LockServer@?$TClassFactory@VParticleSystemTypeClass@@@@UAGJH@Z
+template class TClassFactory<ParticleSystemTypeClass>;
+
+// TEMPLATE: GAMEMD 0x006C5BC0
+// ??0?$TClassFactory@VAITriggerTypeClass@@@@QAE@XZ
+// TEMPLATE: GAMEMD 0x006C5BD0
+// ?QueryInterface@?$TClassFactory@VAITriggerTypeClass@@@@UAGJABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C5C40
+// ?AddRef@?$TClassFactory@VAITriggerTypeClass@@@@UAGKXZ
+template class TClassFactory<AITriggerTypeClass>;

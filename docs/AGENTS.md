@@ -66,8 +66,8 @@ original compiler turns into that function's exact bytes. MATCH means
      `// ??_GClass@@UAEPAXI@Z`; a static initialiser: `// SYNTHETIC: GAMEMD <ADDR> SYMBOL`
      then `// _$E12`.
 4. `uv run tools/check.py build/spike/<ADDR>/<module>.cpp <ADDR> --overlay build/spike/<ADDR>/include`
-   An overlay header reaches only direct includes: one included from another include/
-   header resolves in include/ first, so test a nested header by editing it in place.
+   check.py merges the archive's headers, include/ and the overlay into one directory,
+   so an overlay header replaces its include/ copy for nested includes too.
 5. Read the diff, change the source, repeat.
 
 Stop at MATCH, or after 30 checks without the score rising, or after 45 minutes (for a
@@ -371,8 +371,8 @@ Each entry: what the diff showed, then the source change that fixed it.
   compiled out is built (ownrdraw.cpp, wonline.cpp).
 - A match that flips with unrelated header declarations is VC6 ordering spill reloads by
   heap address: sweep dummy declarations and keep the form that fails at fewest offsets.
-- When no body form helps, moving real declarations the file already uses to before the
-  function shifts its heap offsets too (wonline 0x00788180); never add unused declarations.
+- When no body form helps, moving real declarations the file already uses to before or
+  after the function shifts its heap offsets too (wonline 0x00788180); never add unused ones.
 - A shared-header layout change can flip it as well: an equally true form with fewer new
   names (`int X[64][2]` rather than a new pair struct) held wonline 0x00788180.
 - A named reference to an object indexed more than once (`CellClass & center = Map[cell]`)

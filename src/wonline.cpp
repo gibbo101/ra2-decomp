@@ -149,7 +149,7 @@ struct User {
 	char Abbrev[10];
 	char Rest[0x64 - 0x61];
 	int Locale;
-	char Tail[4];
+	int Team;
 };
 
 // FUNCTION: GAMEMD 0x0077B9C0
@@ -2996,20 +2996,6 @@ extern wchar_t * DAT_00B75E50;
 extern int DAT_00B77DD4;
 rc_ptr<WDTState> * __cdecl FUN_007B0210(void);
 void __fastcall FUN_00735060(wchar_t * dest, char const * source, int limit);
-void __fastcall FUN_0052FEC0(Surface * surface, bool flag);
-int __fastcall FUN_006241F0(int id, DLGPROC proc, OwnerDraw::DialogControl * control);
-BOOL CALLBACK FUN_0078E030(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
-namespace Unsorted { extern int MuteSWLaunches; }
-extern int DAT_007EEF28;
-extern char DAT_00B77E30[];
-bool __fastcall FUN_0069BBE0(SessionClass * session);
-wchar_t * __fastcall FUN_00735120(char const * text);
-void __cdecl FUN_005E2700(int color, wchar_t const * text, ...);
-extern int DAT_007EEF2C;
-void __cdecl FUN_005E2790(int color, wchar_t const * text, ...);
-extern int DAT_00B76C20;
-extern int DAT_00B77E90;
-bool __fastcall FUN_0079BA60(WolChannel * chan, bool flag, int extra);
 
 static inline void Set_Lobby_Number(WolChannel & chan)
 {
@@ -3111,6 +3097,21 @@ int __fastcall FUN_00788180(bool flag)
 	}
 	return best;
 }
+
+void __fastcall FUN_0052FEC0(Surface * surface, bool flag);
+int __fastcall FUN_006241F0(int id, DLGPROC proc, OwnerDraw::DialogControl * control);
+BOOL CALLBACK FUN_0078E030(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+namespace Unsorted { extern int MuteSWLaunches; }
+extern int DAT_007EEF28;
+extern char DAT_00B77E30[];
+bool __fastcall FUN_0069BBE0(SessionClass * session);
+wchar_t * __fastcall FUN_00735120(char const * text);
+void __cdecl FUN_005E2700(int color, wchar_t const * text, ...);
+extern int DAT_007EEF2C;
+void __cdecl FUN_005E2790(int color, wchar_t const * text, ...);
+extern int DAT_00B76C20;
+extern int DAT_00B77E90;
+bool __fastcall FUN_0079BA60(WolChannel * chan, bool flag, int extra);
 
 // FUNCTION: GAMEMD 0x00788710
 bool __fastcall FUN_00788710(int id, int flag)
@@ -8322,6 +8323,73 @@ long __stdcall FUN_007AB8E0(void * sink, long result, User * users)
 }
 
 
+static inline void Uncache_Locale(Wstring & name)
+{
+	DAT_00B76530.remove(name);
+}
+
+// FUNCTION: GAMEMD 0x007ABAF0
+long __stdcall FUN_007ABAF0(void * sink, long result, int newlocale)
+{
+	Wstring name;
+	char handle[64];
+	strcpy(handle, Session.Handle);
+	name.set(handle);
+	name.toLower();
+	if (DAT_00B76530.contains(name)) {
+		Uncache_Locale(name);
+	}
+	DAT_00B76530.add(name, newlocale);
+	return 0;
+}
+
+static inline void Forget_Team(Wstring & name)
+{
+	DAT_00B76680.remove(name);
+}
+
+// FUNCTION: GAMEMD 0x007ABD40
+long __stdcall FUN_007ABD40(void * sink, long result, User * users)
+{
+	if (result >= 0) {
+		User * user = users;
+		Wstring name;
+		while (user != NULL) {
+			name.set(user->Nick);
+			if (DAT_00B76680.contains(name)) {
+				Forget_Team(name);
+			}
+			int team = user->Team;
+			DAT_00B76680.add(name, team);
+			user = user->Next;
+		}
+		FUN_00783C80(0, false);
+		return 0;
+	}
+	FUN_004068E0("OnUserTeam FAILED!\n");
+	return 0;
+}
+
+// FUNCTION: GAMEMD 0x007ABFA0
+long __stdcall FUN_007ABFA0(void * sink, long result, int newteam)
+{
+	if (result == 0) {
+		Session.House = newteam;
+		Wstring name;
+		char handle[64];
+		strcpy(handle, Session.Handle);
+		name.set(handle);
+		name.toLower();
+		if (DAT_00B76680.contains(name)) {
+			Forget_Team(name);
+		}
+		DAT_00B76680.add(name, newteam);
+		return 0;
+	}
+	FUN_004068E0("OnSetTeam FAILED: %d\n", newteam);
+	return 0;
+}
+
 // FUNCTION: GAMEMD 0x007AC4A0
 long __stdcall FUN_007AC4A0(void * sink, long result, void * arg)
 {
@@ -8481,6 +8549,8 @@ template class VectorClass<tConnInfoStruct *>;
 // ?ID@?$DynamicVectorClass@PAUtConnInfoStruct@@@@UAEHABQAUtConnInfoStruct@@@Z
 // SYNTHETIC: GAMEMD 0x007AD2F0
 // ??_G?$DNode@VWstring@@ULadderA@@@@QAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x007AD310
+// ??_G?$DNode@VWstring@@H@@QAEPAXI@Z
 // SYNTHETIC: GAMEMD 0x007AD330
 // ??_GWstring@@QAEPAXI@Z
 // SYNTHETIC: GAMEMD 0x007AD350

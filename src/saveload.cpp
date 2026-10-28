@@ -5,6 +5,7 @@
 
 #define INCLUDE_COM
 #include "always.h"
+#include "rect.h"
 #include "saveload.h"
 #include "_logic.h"
 #include "_map.h"
@@ -88,81 +89,43 @@
 #include "waypoint.h"
 #include "weapon.h"
 #include <math.h>
+#include "geometry.h"
+#include "airstrike.h"
+#include "bomb.h"
+#include "capmgr.h"
+#include "parasite.h"
+#include "slavemgr.h"
+#include "spawnmgr.h"
+#include "temporal.h"
+#include "disklaser.h"
+#include "radsite.h"
 
 // SYNTHETIC: GAMEMD 0x0067C480 SYMBOL
 // _$E2
-
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007F0E28;
-extern const double DAT_007F0E30;
-
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
-
 // SYNTHETIC: GAMEMD 0x0067C4A0 SYMBOL
 // _$E154
-double DAT_00B053E0 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x0067C4D0 SYMBOL
 // _$E157
-double DAT_00B05430 = DAT_00B053E0 / DAT_007F0E28;
-
 // SYNTHETIC: GAMEMD 0x0067C4F0 SYMBOL
 // _$E160
-double DAT_00B05418 = DAT_007E1718 / DAT_00B05430;
-
 // SYNTHETIC: GAMEMD 0x0067C510 SYMBOL
 // _$E163
-double DAT_00B05410 = DAT_007E1720 * DAT_007F0E30;
-
 // SYNTHETIC: GAMEMD 0x0067C530 SYMBOL
 // _$E166
-double DAT_00B053E8 = DAT_007E1728 * DAT_007F0E30;
-
 // SYNTHETIC: GAMEMD 0x0067C550 SYMBOL
 // _$E169
-double DAT_00B053C0 = DAT_007E1730 * DAT_007F0E30;
-
 // SYNTHETIC: GAMEMD 0x0067C570 SYMBOL
 // _$E172
-int DAT_00B05438 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B053C0 - DAT_00B053E8) * DAT_00B053E0));
-
 // SYNTHETIC: GAMEMD 0x0067C5B0 SYMBOL
 // _$E175
-double DAT_00B053F0 = FUN_004CADE0(DAT_00B05438 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x0067C5E0 SYMBOL
 // _$E178
-double DAT_00B05408 = FUN_004CADE0((DAT_00B05438 * 2) / DAT_00B053E0);
-
 // SYNTHETIC: GAMEMD 0x0067C610 SYMBOL
 // _$E181
-int DAT_00B0542C = (int)(DAT_00B05438 * 4 + DAT_007E1738);
-
 // SYNTHETIC: GAMEMD 0x0067C640 SYMBOL
 // _$E184
-ShortPair DAT_00B053D8;
-
 // SYNTHETIC: GAMEMD 0x0067C650 SYMBOL
 // _$E187
-IntTriple DAT_00B053F8;
 
 #define	SAVE_BLOCK_SIZE	4096
 #define	SAVEGAME_VERSION		(DESCRIP_MAX + 0x01000006)
@@ -546,3 +509,119 @@ template HRESULT Save_Vector<OverlayTypeClass *>(IStream *, const DynamicVectorC
 // TEMPLATE: GAMEMD 0x006804F0
 // ?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVLightSourceClass@@@@@Z
 template HRESULT Save_Vector<LightSourceClass *>(IStream *, const DynamicVectorClass<LightSourceClass *> &);
+
+// TEMPLATE: GAMEMD 0x00680570
+// ?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVBuildingLightClass@@@@@Z
+template HRESULT Save_Vector<BuildingLightClass *>(IStream *, const DynamicVectorClass<BuildingLightClass *> &);
+
+// TEMPLATE: GAMEMD 0x006805F0
+// ?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVSideClass@@@@@Z
+template HRESULT Save_Vector<SideClass *>(IStream *, const DynamicVectorClass<SideClass *> &);
+
+// TEMPLATE: GAMEMD 0x00680670
+// ?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVTiberiumClass@@@@@Z
+template HRESULT Save_Vector<TiberiumClass *>(IStream *, const DynamicVectorClass<TiberiumClass *> &);
+
+// TEMPLATE: GAMEMD 0x006806F0
+// ?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVEMPulseClass@@@@@Z
+template HRESULT Save_Vector<EMPulseClass *>(IStream *, const DynamicVectorClass<EMPulseClass *> &);
+
+// TEMPLATE: GAMEMD 0x00680770
+// ?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVSuperWeaponTypeClass@@@@@Z
+template HRESULT Save_Vector<SuperWeaponTypeClass *>(IStream *, const DynamicVectorClass<SuperWeaponTypeClass *> &);
+
+// TEMPLATE: GAMEMD 0x006807F0
+// ?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVSuperClass@@@@@Z
+template HRESULT Save_Vector<SuperClass *>(IStream *, const DynamicVectorClass<SuperClass *> &);
+
+// TEMPLATE: GAMEMD 0x00680870
+// ?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVTerrainTypeClass@@@@@Z
+template HRESULT Save_Vector<TerrainTypeClass *>(IStream *, const DynamicVectorClass<TerrainTypeClass *> &);
+
+// TEMPLATE: GAMEMD 0x006808F0
+// ?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVTerrainClass@@@@@Z
+template HRESULT Save_Vector<TerrainClass *>(IStream *, const DynamicVectorClass<TerrainClass *> &);
+
+// TEMPLATE: GAMEMD 0x00680970
+// ?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVFoggedObjectClass@@@@@Z
+template HRESULT Save_Vector<FoggedObjectClass *>(IStream *, const DynamicVectorClass<FoggedObjectClass *> &);
+
+// TEMPLATE: GAMEMD 0x006809F0
+// ?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVAlphaShapeClass@@@@@Z
+template HRESULT Save_Vector<AlphaShapeClass *>(IStream *, const DynamicVectorClass<AlphaShapeClass *> &);
+
+// TEMPLATE: GAMEMD 0x00680A70
+// ?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVWaveClass@@@@@Z
+template HRESULT Save_Vector<WaveClass *>(IStream *, const DynamicVectorClass<WaveClass *> &);
+
+// TEMPLATE: GAMEMD 0x00680AF0
+// ?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVCaptureManagerClass@@@@@Z
+template HRESULT Save_Vector<CaptureManagerClass *>(IStream *, const DynamicVectorClass<CaptureManagerClass *> &);
+
+// TEMPLATE: GAMEMD 0x00680B70
+// ?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVDiskLaserClass@@@@@Z
+template HRESULT Save_Vector<DiskLaserClass *>(IStream *, const DynamicVectorClass<DiskLaserClass *> &);
+
+// TEMPLATE: GAMEMD 0x00680BF0
+// ?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVParasiteClass@@@@@Z
+template HRESULT Save_Vector<ParasiteClass *>(IStream *, const DynamicVectorClass<ParasiteClass *> &);
+
+// TEMPLATE: GAMEMD 0x00680C70
+// ?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVTemporalClass@@@@@Z
+template HRESULT Save_Vector<TemporalClass *>(IStream *, const DynamicVectorClass<TemporalClass *> &);
+
+// TEMPLATE: GAMEMD 0x00680CF0
+// ?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVAirstrikeClass@@@@@Z
+template HRESULT Save_Vector<AirstrikeClass *>(IStream *, const DynamicVectorClass<AirstrikeClass *> &);
+
+// TEMPLATE: GAMEMD 0x00680D70
+// ?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVSpawnManagerClass@@@@@Z
+template HRESULT Save_Vector<SpawnManagerClass *>(IStream *, const DynamicVectorClass<SpawnManagerClass *> &);
+
+// TEMPLATE: GAMEMD 0x00680DF0
+// ?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVSlaveManagerClass@@@@@Z
+template HRESULT Save_Vector<SlaveManagerClass *>(IStream *, const DynamicVectorClass<SlaveManagerClass *> &);
+
+// TEMPLATE: GAMEMD 0x00680E70
+// ?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVBombClass@@@@@Z
+template HRESULT Save_Vector<BombClass *>(IStream *, const DynamicVectorClass<BombClass *> &);
+
+// TEMPLATE: GAMEMD 0x00680EF0
+// ?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVRadSiteClass@@@@@Z
+template HRESULT Save_Vector<RadSiteClass *>(IStream *, const DynamicVectorClass<RadSiteClass *> &);
+
+// TEMPLATE: GAMEMD 0x00680F70
+// ?_QueryInterface@?$_com_ptr_t@V?$_com_IIID@UIStorage@@$1?_GUID_0000000b_0000_0000_c000_000000000046@@3U__s_GUID@@A@@@@AAEJABQAUIUnknown@@@Z
+
+// FUNCTION: GAMEMD 0x00680FF0
+SavegameInformation::SavegameInformation(void)
+{
+	InternalVersion = 0;
+	Version = 0;
+	Campaign = -1;
+	ScenarioNumber = 0;
+	GameType = 0;
+	ScenarioDescription[0] = 0;
+	PlayerHouse[0] = 0;
+	UnknownString[0] = 0;
+	PlayerName[0] = 0;
+	ExecutableName[0] = 0;
+	StartTime.dwLowDateTime = 0;
+	StartTime.dwHighDateTime = 0;
+	PlayTime.dwLowDateTime = 0;
+	PlayTime.dwHighDateTime = 0;
+	LastSaveTime.dwLowDateTime = 0;
+	LastSaveTime.dwHighDateTime = 0;
+}
+
+// FUNCTION: GAMEMD 0x00681060
+void SavegameInformation::Set_Version(int num)
+{
+	Version = num;
+}
+
+// FUNCTION: GAMEMD 0x00681070
+int SavegameInformation::Get_Version(void)
+{
+	return Version;
+}

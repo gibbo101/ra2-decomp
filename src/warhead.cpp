@@ -3,6 +3,7 @@
 // Copyright 2025 Electronic Arts Inc.; 2026 OpenTS contributors
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
+#define NDEBUG
 #define INCLUDE_COM
 #include "always.h"
 #include "warhead.h"
@@ -20,6 +21,8 @@
 #include "swizzle.h"
 #include "tracker.h"
 #include "vector.h"
+#include "vanimtype.h"
+#include "incdec.h"
 
 // SYNTHETIC: GAMEMD 0x0075CC90 SYMBOL
 // _$E35
@@ -155,6 +158,100 @@ WarheadTypeClass::~WarheadTypeClass(void)
 	AbstractTypePtrTracker.Delete(this);
 }
 
+// FUNCTION: GAMEMD 0x0075D3A0
+bool WarheadTypeClass::Read_INI(CCINIClass & ini)
+{
+	ini.Reset();
+	if (ini.Is_Present(Name())) {
+		SpreadFactor = ini.Get_Float(Name(), "CellSpread", SpreadFactor);
+		CellInset = ini.Get_Float(Name(), "CellInset", CellInset);
+		PercentAtMax = ini.Get_Float(Name(), "PercentAtMax", PercentAtMax);
+		CausesDelayKill = ini.Get_Bool(Name(), "CausesDelayKill", CausesDelayKill);
+		DelayKillFrames = ini.Get_Int(Name(), "DelayKillFrames", DelayKillFrames);
+		DelayKillAtMax = ini.Get_Float(Name(), "DelayKillAtMax", DelayKillAtMax);
+		CombatLightSize = ini.Get_Float(Name(), "CombatLightSize", CombatLightSize);
+		Particle = TGet_Class(ini, Name(), "Particle", Particle);
+
+		IsConventional = ini.Get_Bool(Name(), "Conventional", IsConventional);
+		IsWallDestroyer = ini.Get_Bool(Name(), "Wall", IsWallDestroyer);
+		WallAbsoluteDestroyer = ini.Get_Bool(Name(), "WallAbsoluteDestroyer", WallAbsoluteDestroyer);
+		PenetratesBunker = ini.Get_Bool(Name(), "PenetratesBunker", PenetratesBunker);
+		IsWoodDestroyer = ini.Get_Bool(Name(), "Wood", IsWoodDestroyer);
+		IsTiberiumDestroyer = ini.Get_Bool(Name(), "Tiberium", IsTiberiumDestroyer);
+		IsSparky = ini.Get_Bool(Name(), "Sparky", IsSparky);
+		Sonic = ini.Get_Bool(Name(), "Sonic", Sonic);
+		IsRocker = ini.Get_Bool(Name(), "Rocker", IsRocker);
+		DirectRocker = ini.Get_Bool(Name(), "DirectRocker", DirectRocker);
+		IsFire = ini.Get_Bool(Name(), "Fire", IsFire);
+		IsBright = ini.Get_Bool(Name(), "Bright", IsBright);
+		CLDisableRed = ini.Get_Bool(Name(), "CLDisableRed", CLDisableRed);
+		CLDisableGreen = ini.Get_Bool(Name(), "CLDisableGreen", CLDisableGreen);
+		CLDisableBlue = ini.Get_Bool(Name(), "CLDisableBlue", CLDisableBlue);
+
+		ExplosionSet = TGet_TypeList<AnimTypeClass>(ini, Name(), "AnimList", ExplosionSet);
+
+		InfantryDeath = ini.Get_Int(Name(), "InfDeath", InfantryDeath);
+
+		Deform = ini.Get_Float(Name(), "Deform", Deform);
+		DeformThreshhold = ini.Get_Int(Name(), "DeformThreshhold", DeformThreshhold);
+
+		IsEMEffect = ini.Get_Bool(Name(), "EMEffect", IsEMEffect);
+		MindControl = ini.Get_Bool(Name(), "MindControl", MindControl);
+		Poison = ini.Get_Bool(Name(), "Poison", Poison);
+		IvanBomb = ini.Get_Bool(Name(), "IvanBomb", IvanBomb);
+		ElectricAssault = ini.Get_Bool(Name(), "ElectricAssault", ElectricAssault);
+		Parasite = ini.Get_Bool(Name(), "Parasite", Parasite);
+		Temporal = ini.Get_Bool(Name(), "Temporal", Temporal);
+		IsLocomotor = ini.Get_Bool(Name(), "IsLocomotor", IsLocomotor);
+		Locomotor = ini.Get_CLSID(Name(), "Locomotor", Locomotor);
+		Airstrike = ini.Get_Bool(Name(), "Airstrike", Airstrike);
+		Psychedelic = ini.Get_Bool(Name(), "Psychedelic", Psychedelic);
+		BombDisarm = ini.Get_Bool(Name(), "BombDisarm", BombDisarm);
+		Paralyzes = ini.Get_Int(Name(), "Paralyzes", Paralyzes);
+		Culling = ini.Get_Bool(Name(), "Culling", Culling);
+		MakesDisguise = ini.Get_Bool(Name(), "MakesDisguise", MakesDisguise);
+		NukeMaker = ini.Get_Bool(Name(), "NukeMaker", NukeMaker);
+
+		ProneDamage = ini.Get_Float(Name(), "ProneDamage", ProneDamage);
+		Radiation = ini.Get_Bool(Name(), "Radiation", Radiation);
+		PsychicDamage = ini.Get_Bool(Name(), "PsychicDamage", PsychicDamage);
+		AffectsAllies = ini.Get_Bool(Name(), "AffectsAllies", AffectsAllies);
+		Bullets = ini.Get_Bool(Name(), "Bullets", Bullets);
+		IsVeinhole = ini.Get_Bool(Name(), "Veinhole", IsVeinhole);
+
+		ShakeXlo = ini.Get_Int(Name(), "ShakeXlo", ShakeXlo);
+		ShakeXhi = ini.Get_Int(Name(), "ShakeXhi", ShakeXhi);
+		ShakeYlo = ini.Get_Int(Name(), "ShakeYlo", ShakeYlo);
+		ShakeYhi = ini.Get_Int(Name(), "ShakeYhi", ShakeYhi);
+
+		MaxDebris = ini.Get_Int(Name(), "MaxDebris", MaxDebris);
+		MinDebris = ini.Get_Int(Name(), "MinDebris", MinDebris);
+		if (MinDebris < 0) {
+			MinDebris = 0;
+		}
+		if (MaxDebris < MinDebris) {
+			MaxDebris = MinDebris;
+		}
+
+		DebrisTypes = TGet_TypeList<VoxelAnimTypeClass>(ini, Name(), "DebrisTypes", DebrisTypes);
+		DebrisMaximums = ini.Get_IntList(IniName, "DebrisMaximums", DebrisMaximums);
+
+		char buffer[128];
+		if (ini.Get_String(Name(), "Verses", "100%%,100%%,100%%,100%%,100%%,100%%,100%%,100%%,100%%,100%%,100%%", buffer, sizeof(buffer))) {
+			char * aval = strtok(buffer, ",");
+			for (ArmorType armor = ARMOR_FIRST; armor < ARMOR_COUNT; armor++) {
+				Modifier[armor] = _Parse_Percentage(aval);
+				aval = strtok(NULL, ",");
+			}
+		}
+
+		IsOrganic = (Modifier[ARMOR_MEDIUM] == 0 && Modifier[ARMOR_WOOD] == 0);
+
+		return(true);
+	}
+	return(false);
+}
+
 // FUNCTION: GAMEMD 0x0075DEC0
 void WarheadTypeClass::Compute_CRC(CRCEngine & crc) const
 {
@@ -284,5 +381,8 @@ RTTIType WarheadTypeClass::Fetch_RTTI(void) const
 
 // TEMPLATE: GAMEMD 0x0075E6A0
 // ??0?$TypeList@H@@QAE@ABVNoInitClass@@@Z
+
+// TEMPLATE: GAMEMD 0x0075E6B0
+// ??0?$DynamicVectorClass@PBVVoxelAnimTypeClass@@@@QAE@ABV0@@Z
 
 #include <math.h>

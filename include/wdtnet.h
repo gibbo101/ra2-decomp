@@ -344,6 +344,18 @@ namespace WorldDominationTour
 
 	class Map : public ReferenceCounted {
 		public:
+			struct AnimationPalette {
+					AnimationPalette(Wstring const & name, ConvertClass * drawer);
+					~AnimationPalette(void);
+
+					Wstring Name;
+					ConvertClass * Drawer;
+			};
+
+			typedef DynamicVectorClass<AnimationPalette *> PALETTE_LIST;
+
+			Map(int id, int vq_anim, int faction);
+			virtual ~Map(void);
 			int FUN_00769330(Point2D const & point);
 			bool FUN_00769440(Point2D const & point);
 			void FUN_007693A0(Selection * selection, bool hovered);
@@ -351,18 +363,36 @@ namespace WorldDominationTour
 			void FUN_007681E0(INIClass const & ini, Selection * selection, int value);
 			void FUN_007692F0(Selection * selection, YRVoices * voices);
 			rc_ptr<Territory> FUN_0076F000(int id);
+			ConvertClass * FUN_007691E0(Wstring const & name);
+			MSShapeAnim * FUN_00768F50(INIClass const & ini, Wstring const & section, Wstring const & entry, ConvertClass * fallback);
 
 		public:
-			char Pad0[0x2c - 0x8];
+			int ID;
+			int VQAnim;
+			int Faction;
+			MSAnim * BackgroundAnim;
+			MSAnim * IntroAnim;
+			MSAnim * OutroAnim;
+			void * Unused20;
+			Surface * MaskSurface;
+			Wstring Name;
 			TERR_LIST Territories;
 			Point2D Origin;
-			char Pad1[0x68 - 0x44 - sizeof(Point2D)];
+			char Pad1[0x54 - 0x44 - sizeof(Point2D)];
+			Rect CancelRect;
+			MSOverlayAnim * CancelAnim;
+			bool CancelActive;
+			char Pad2[0x6c - 0x69];
+			int CancelFrame;
+			int CancelHoverFrame;
 			bool CancelHovered;
-			char Pad2[0x7c - 0x69];
+			char Pad3[0x78 - 0x75];
+			MSAnim * CancelHelp;
 			Rect TextRect;
 			Rect TooltipRect;
 			Rect PlayRect;
 			Rect BackRect;
+			PALETTE_LIST Palettes;
 	};
 
 	class Centroid {
@@ -710,7 +740,7 @@ namespace WorldDominationTour
 			YRVoiceStream * Stream;
 	};
 
-	rc_ptr<Map> __fastcall FUN_00767FB0(int map_id, bool vq_anim, int faction);
+	rc_ptr<Map> __fastcall FUN_00767FB0(int map_id, int vq_anim, int faction);
 
 	class YRTextAnim : public MSAnim {
 		public:

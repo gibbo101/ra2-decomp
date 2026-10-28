@@ -565,9 +565,8 @@ class VectorCursor
 
 		VectorCursor & operator = (const VectorCursor & that)
 		{
-			VectorCursor tmp(*that.Vector, that.Cursor);
-			Vector = tmp.Vector;
-			Cursor = tmp.Cursor;
+			Vector = that.Vector;
+			Cursor = that.Cursor;
 			return(*this);
 		}
 

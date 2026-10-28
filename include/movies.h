@@ -27,18 +27,18 @@ void Movie_Queue_Ingame(VQHandle * handle);
 void Movie_Update_Visible_Surface(void);
 
 class Straw;
-class SubTitleClass;
+class SubTitle;
 
 class SubTitleParserClass
 {
 	public:
 		SubTitleParserClass(Straw & input);
 		~SubTitleParserClass(void);
-		DynamicVectorClass<SubTitleClass *> * Get_Sub_Titles(char const * moviename);
+		DynamicVectorClass<SubTitle *> * Get_Sub_Titles(char const * moviename);
 
 	private:
 		bool Find_Movie_Entry(char const * moviename);
-		bool Parse_Sub_Title(wchar_t * string, SubTitleClass * subtitle);
+		bool Parse_Sub_Title(wchar_t * string, SubTitle * subtitle);
 		wchar_t * Get_Next_Line(void);
 
 		Straw & mInput;
@@ -55,11 +55,11 @@ class MovieSubtitles
 		bool Process(unsigned long movietime);
 		void Reset(void);
 		void SetCallback(void (__fastcall * callback)(void *));
-		void Draw_Sub_Title(SubTitleClass * subtitle);
+		void Draw_Sub_Title(SubTitle * subtitle);
 
-		DynamicVectorClass<SubTitleClass *> * mSubTitles;
+		DynamicVectorClass<SubTitle *> * mSubTitles;
 		int mSubTitleIndex;
-		SubTitleClass * mActiveSubTitle;
+		SubTitle * mActiveSubTitle;
 		void (__fastcall * Callback)(void *);
 		Surface * SubSurface;
 		Rect CaptionRect;

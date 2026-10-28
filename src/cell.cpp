@@ -1908,7 +1908,50 @@ void CellClass::Dec_Drawer_Ref_Count(LightConvertClass * convert) const
 // FUNCTION: GAMEMD 0x00484AB0
 bool CellClass::Has_Tunnel(void) const
 {
-	return(Tube >= TUBE_FIRST && Tube < Tubes.Count() && Land == LAND_TUNNEL);
+	int count = Tubes.Count();
+	return(Tube >= TUBE_FIRST && Tube < count && Land == LAND_TUNNEL);
+}
+
+// FUNCTION: GAMEMD 0x00484AE0
+bool CellClass::Is_Near_Tunnel_NW(void) const
+{
+	if (Has_Tunnel()) {
+		return(true);
+	}
+
+	CellClass const * north1 = &Adjacent_Cell(FACING_N);
+	if (north1 != NULL) {
+		CellClass const * north2 = &north1->Adjacent_Cell(FACING_N);
+		if (north2 != NULL) {
+			if (north1->Has_Tunnel() && !north2->Has_Tunnel()) {
+				return(true);
+			}
+			CellClass const * north3 = &north2->Adjacent_Cell(FACING_N);
+			if (north3 != NULL) {
+				if (north2->Has_Tunnel() && !north3->Has_Tunnel()) {
+					return(true);
+				}
+			}
+		}
+	}
+
+	CellClass const * west1 = &Adjacent_Cell(FACING_W);
+	if (west1 != NULL) {
+		CellClass const * west2 = &west1->Adjacent_Cell(FACING_W);
+		if (west2 != NULL) {
+			if (west1->Has_Tunnel() && !west2->Has_Tunnel()) {
+				return(true);
+			}
+			CellClass const * west3 = &west2->Adjacent_Cell(FACING_W);
+			if (west3 != NULL) {
+				if (west2->Has_Tunnel() && !west3->Has_Tunnel()) {
+					return(true);
+				}
+			}
+		}
+	}
+
+	return(false);
 }
 
 // FUNCTION: GAMEMD 0x00484D60
@@ -2998,6 +3041,9 @@ int CellClass::Fetch_Object_Size(void) const
 
 // SYNTHETIC: GAMEMD 0x00487E80
 // ??_GCellClass@@UAEPAXI@Z
+
+// FUNCTION: GAMEMD 0x00487EA0
+// Adjacent_Cell
 
 // TEMPLATE: GAMEMD 0x00487EE0
 // ??G?$TRect@H@@QBE?BV0@ABV?$TPoint2D@H@@@Z
