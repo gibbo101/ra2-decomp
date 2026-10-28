@@ -45,6 +45,8 @@ extern char DAT_00889F64[];
 // _$E32
 // SYNTHETIC: GAMEMD 0x0046CB20 SYMBOL
 // _$E35
+// SYNTHETIC: GAMEMD 0x0046CB40 SYMBOL
+// _$E38
 
 // FUNCTION: GAMEMD 0x0046CB60
 CampaignClass::CampaignClass(char const * name) :

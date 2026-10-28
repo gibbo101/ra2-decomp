@@ -14,6 +14,12 @@ void VQA_SetTimer(VQAHandleP *vqap, long time)
 	vqap->TickOffset = (time - curtime);
 }
 
+// FUNCTION: GAMEMD 0x007C3950
+void VQA_StepTimer(VQAHandleP *vqap, long step)
+{
+	vqap->TickOffset += step;
+}
+
 // FUNCTION: GAMEMD 0x007C3960
 unsigned long VQA_GetTime(VQAHandleP *vqap)
 {

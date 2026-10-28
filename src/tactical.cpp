@@ -91,6 +91,8 @@
 // _$E38
 // SYNTHETIC: GAMEMD 0x006D1A20 SYMBOL
 // _$E47
+// SYNTHETIC: GAMEMD 0x006D1A40 SYMBOL
+// _$E265
 
 extern Rect TacticalDimensions;
 void __fastcall FUN_00731D00(int mode);
@@ -1877,3 +1879,4 @@ template class VectorClass<ShadowControlClass *>;
 
 // SYNTHETIC: GAMEMD 0x006DCD20
 // ??_G?$DynamicVectorClass@PAVShadowControlClass@@@@UAEPAXI@Z
+Rect TacticalDimensions(0,0,0,0);

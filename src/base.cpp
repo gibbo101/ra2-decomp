@@ -539,3 +539,12 @@ template class DynamicVectorClass<Cell>;
 
 // SYNTHETIC: GAMEMD 0x0042FBA0
 // ??_G?$VectorClass@VCell@@@@UAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x0042FBF0
+// ??_G?$DynamicVectorClass@VCell@@@@UAEPAXI@Z
+
+// TEMPLATE: GAMEMD 0x0042FC40
+// ??0?$VectorClass@VBaseNodeClass@@@@QAE@HPBVBaseNodeClass@@@Z
+
+// TEMPLATE: GAMEMD 0x0042FCB0
+// ??0?$VectorClass@VCell@@@@QAE@HPBVCell@@@Z

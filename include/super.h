@@ -73,9 +73,6 @@ class SuperClass : public AbstractClass
 		void ResetRechargeTime(void);
 
 	public:
-		static DynamicVectorClass<SuperClass *> Array;
-		static DynamicVectorClass<SuperClass *> ShowTimers;
-
 		int CustomChargeTime;
 
 		SuperWeaponTypeClass *Class;

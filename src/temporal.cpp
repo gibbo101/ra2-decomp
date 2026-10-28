@@ -62,9 +62,9 @@
 DynamicVectorClass<TemporalClass *> Temporals;
 
 // SYNTHETIC: GAMEMD 0x0071A3D0 SYMBOL
-// _$E99
-// SYNTHETIC: GAMEMD 0x0071A410 SYMBOL
 // _$E97
+// SYNTHETIC: GAMEMD 0x0071A410 SYMBOL
+// _$E95
 
 // FUNCTION: GAMEMD 0x0071A450
 TemporalClass::TemporalClass(void) :
@@ -546,5 +546,7 @@ RTTIType TemporalClass::Fetch_RTTI(void) const
 // ?ID@?$DynamicVectorClass@PAVTemporalClass@@@@UAEHABQAVTemporalClass@@@Z
 // SYNTHETIC: GAMEMD 0x0071B500
 // ??_G?$VectorClass@PAVTemporalClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x0071B550
+// ??_G?$DynamicVectorClass@PAVTemporalClass@@@@UAEPAXI@Z
 template class DynamicVectorClass<TemporalClass *>;
 template class VectorClass<TemporalClass *>;

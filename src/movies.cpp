@@ -36,6 +36,8 @@ extern const double DAT_007EE0A8;
 struct DatShorts { short X; short Y; DatShorts(short x, short y) : X(x), Y(y) {} };
 struct DatInts { int X; int Y; int Z; DatInts(int x, int y, int z) : X(x), Y(y), Z(z) {} };
 
+// SYNTHETIC: GAMEMD 0x005BF5C0 SYMBOL
+// _$E2
 // SYNTHETIC: GAMEMD 0x005BF5E0 SYMBOL
 // _$E67
 double DAT_00ABF380 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);

@@ -22,12 +22,15 @@
 #include "tube.h"
 #include "unit.h"
 #include "geometry.h"
+#include "rect.h"
 #include "layer.hh"
 #include "fastmath.h"
 #include "coord.h"
 #include "slavemgr.h"
 #include <new.h>
 
+// SYNTHETIC: GAMEMD 0x0075A880 SYMBOL
+// _$E13
 // SYNTHETIC: GAMEMD 0x0075A8A0 SYMBOL
 // _$E96
 // SYNTHETIC: GAMEMD 0x0075A8D0 SYMBOL

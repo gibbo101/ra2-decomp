@@ -6806,3 +6806,6 @@ SubzoneTrackingStruct & SubzoneTrackingStruct::operator=(const SubzoneTrackingSt
 // TEMPLATE: GAMEMD 0x0058AFF0
 // ??0?$VectorClass@U?$HashObject@II@@@@QAE@HPBU?$HashObject@II@@@Z
 
+
+// TEMPLATE: GAMEMD 0x0058B070
+// ??0?$VectorClass@U?$HashObject@IUSubzoneConnectionStruct@@@@@@QAE@HPBU?$HashObject@IUSubzoneConnectionStruct@@@@@Z

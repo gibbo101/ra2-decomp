@@ -21,7 +21,7 @@ class AlphaLightingRemapClass
 {
 public:
 	AlphaLightingRemapClass(int count);
-	~AlphaLightingRemapClass(void) {}
+	~AlphaLightingRemapClass(void);
 
 	unsigned short *Get_Table(int level)
 	{

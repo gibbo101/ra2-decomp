@@ -739,3 +739,6 @@ void ScrollClass::Abort_Drag_Select(void)
 		ReleaseCapture();
 	}
 }
+
+// SYNTHETIC: GAMEMD 0x006938F0
+// ??_GScrollClass@@UAEPAXI@Z

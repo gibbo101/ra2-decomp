@@ -46,6 +46,8 @@ struct IntTriple {
 int DAT_00ABF580, DAT_00ABF584, DAT_00ABF588;
 namespace UI { int __fastcall StandardWndProc(HWND window, UINT message, WPARAM wparam, LPARAM lparam); }
 
+// SYNTHETIC: GAMEMD 0x005C5E70 SYMBOL
+// _$E9
 // SYNTHETIC: GAMEMD 0x005C5E90 SYMBOL
 // _$E30
 double DAT_00ABF540 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);

@@ -26,6 +26,8 @@
 #include <cmath>
 
 namespace fastmath { double __cdecl sqrt(double x); double __cdecl tan(double x); double __cdecl atan(double x); }
+// SYNTHETIC: GAMEMD 0x007AF090 SYMBOL
+// _$E2
 // SYNTHETIC: GAMEMD 0x007AF0B0 SYMBOL
 // _$E35
 // SYNTHETIC: GAMEMD 0x007AF0E0 SYMBOL

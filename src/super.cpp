@@ -135,7 +135,7 @@ SuperClass::SuperClass(void) :
 	ChargeDrainState(SUSPENDED)
 {
 	UIName = DAT_00887734;
-	Array.Add(this);
+	SuperWeapons.Add(this);
 }
 
 // FUNCTION: GAMEMD 0x006CAF90
@@ -160,7 +160,7 @@ SuperClass::SuperClass(SuperWeaponTypeClass * type, HouseClass * owner) :
 	ChargeDrainState(SUSPENDED)
 {
 	Create_ID();
-	Array.Add(this);
+	SuperWeapons.Add(this);
 	PointerExpiredNotification::NotifyInvalidType.Add(this);
 	PointerExpiredNotification::NotifyInvalidHouse.Add(this);
 }
@@ -171,7 +171,7 @@ SuperClass::~SuperClass(void)
 {
 	Release_Animation(this);
 	ShowTimers.Delete(this);
-	Array.Delete(this);
+	SuperWeapons.Delete(this);
 	PointerExpiredNotification::NotifyInvalidType.Delete(this);
 	PointerExpiredNotification::NotifyInvalidHouse.Delete(this);
 }

@@ -5,6 +5,7 @@
 
 #include "always.h"
 #include "geometry.h"
+#include "rect.h"
 #include "motlib.h"
 #include "wwfile.h"
 #include "voxel.hh"
@@ -17,6 +18,8 @@
 #include <wchar.h>
 #include <math.h>
 
+// SYNTHETIC: GAMEMD 0x005BBF70 SYMBOL
+// _$E41
 // SYNTHETIC: GAMEMD 0x005BBF90 SYMBOL
 // _$E2
 // SYNTHETIC: GAMEMD 0x005BBFC0 SYMBOL

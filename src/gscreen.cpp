@@ -438,3 +438,6 @@ void GScreenClass::AI(KeyNumType &, Point2D const &)
 		}
 	}
 }
+
+// FUNCTION: GAMEMD 0x004F4C00
+// GScreenClass::~GScreenClass

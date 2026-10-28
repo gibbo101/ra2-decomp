@@ -1926,7 +1926,7 @@ int BuildingClass::Do_MISSION_GUARD(void)
 		IsReadyToCommence = true;
 		if (!Class->IsEMPulseCannon) {
 			bool idle = false;
-			if (Class->SuperWeapon != -1 && SuperClass::Array[Class->SuperWeapon]->Class->AuxBuilding && House->ABQuantity.Value(SuperClass::Array[Class->SuperWeapon]->Class->AuxBuilding->HeapID) == 0) {
+			if (Class->SuperWeapon != -1 && SuperWeapons[Class->SuperWeapon]->Class->AuxBuilding && House->ABQuantity.Value(SuperWeapons[Class->SuperWeapon]->Class->AuxBuilding->HeapID) == 0) {
 				idle = true;
 			} else if (Class->SuperWeapon == -1) {
 				idle = true;

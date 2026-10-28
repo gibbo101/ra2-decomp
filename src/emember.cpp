@@ -39,6 +39,8 @@
 // _$E32
 // SYNTHETIC: GAMEMD 0x004C4EB0 SYMBOL
 // _$E35
+// SYNTHETIC: GAMEMD 0x004C4ED0 SYMBOL
+// _$E38
 
 // FUNCTION: GAMEMD 0x004C4EF0
 EnlistedMemberClass::EnlistedMemberClass(char const * entry)

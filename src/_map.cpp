@@ -58,6 +58,8 @@
 // ScrollClass::Init_IO
 // FUNCTION: GAMEMD 0x0040D280
 // MouseClass::Get_Mouse_Shape
+// FUNCTION: GAMEMD 0x0040D290
+// MouseClass::~MouseClass
 
 MouseClass Map;
 

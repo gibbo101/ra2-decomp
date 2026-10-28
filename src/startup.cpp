@@ -178,9 +178,9 @@ struct SHPStruct
 // SYNTHETIC: GAMEMD 0x006BB240 SYMBOL
 // _$E38
 // SYNTHETIC: GAMEMD 0x006BB260 SYMBOL
-// _$E330
-// SYNTHETIC: GAMEMD 0x006BB2A0 SYMBOL
 // _$E328
+// SYNTHETIC: GAMEMD 0x006BB2A0 SYMBOL
+// _$E326
 
 namespace DirectDrawWrap { extern bool DoSmth; void DisposeOfStuff(void); }
 void FUN_004C19B0(void);
@@ -1739,3 +1739,45 @@ template class TClassFactory<WalkLocomotionClass>;
 // TEMPLATE: GAMEMD 0x006C4990
 // ?LockServer@?$TClassFactory@VDropPodLocomotionClass@@@@UAGJH@Z
 template class TClassFactory<DropPodLocomotionClass>;
+
+// TEMPLATE: GAMEMD 0x006C49C0
+// ??0?$TClassFactory@VFlyLocomotionClass@@@@QAE@XZ
+// TEMPLATE: GAMEMD 0x006C49D0
+// ?QueryInterface@?$TClassFactory@VFlyLocomotionClass@@@@UAGJABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C4A40
+// ?AddRef@?$TClassFactory@VFlyLocomotionClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C4A60
+// ?Release@?$TClassFactory@VFlyLocomotionClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C4A90
+// ?CreateInstance@?$TClassFactory@VFlyLocomotionClass@@@@UAGJPAUIUnknown@@ABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C4B10
+// ?LockServer@?$TClassFactory@VFlyLocomotionClass@@@@UAGJH@Z
+template class TClassFactory<FlyLocomotionClass>;
+
+// TEMPLATE: GAMEMD 0x006C4B40
+// ??0?$TClassFactory@VTeleportLocomotionClass@@@@QAE@XZ
+// TEMPLATE: GAMEMD 0x006C4B50
+// ?QueryInterface@?$TClassFactory@VTeleportLocomotionClass@@@@UAGJABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C4BC0
+// ?AddRef@?$TClassFactory@VTeleportLocomotionClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C4BE0
+// ?Release@?$TClassFactory@VTeleportLocomotionClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C4C10
+// ?CreateInstance@?$TClassFactory@VTeleportLocomotionClass@@@@UAGJPAUIUnknown@@ABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C4C90
+// ?LockServer@?$TClassFactory@VTeleportLocomotionClass@@@@UAGJH@Z
+template class TClassFactory<TeleportLocomotionClass>;
+
+// TEMPLATE: GAMEMD 0x006C4CC0
+// ??0?$TClassFactory@VMechLocomotionClass@@@@QAE@XZ
+// TEMPLATE: GAMEMD 0x006C4CD0
+// ?QueryInterface@?$TClassFactory@VMechLocomotionClass@@@@UAGJABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C4D40
+// ?AddRef@?$TClassFactory@VMechLocomotionClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C4D60
+// ?Release@?$TClassFactory@VMechLocomotionClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C4D90
+// ?CreateInstance@?$TClassFactory@VMechLocomotionClass@@@@UAGJPAUIUnknown@@ABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C4E10
+// ?LockServer@?$TClassFactory@VMechLocomotionClass@@@@UAGJH@Z
+template class TClassFactory<MechLocomotionClass>;

@@ -17,6 +17,8 @@ using namespace WorldDominationTour;
 
 WideWstring __fastcall FUN_007B8170(const WideWstring & a, const WideWstring & b);
 Wstring __fastcall operator+(Wstring const & a, Wstring const & b);
+// SYNTHETIC: GAMEMD 0x007670F0 SYMBOL
+// _$E2
 // SYNTHETIC: GAMEMD 0x00767110 SYMBOL
 // _$E5
 // SYNTHETIC: GAMEMD 0x00767140 SYMBOL

@@ -92,3 +92,40 @@ int SHAEngine::Result(void * result) const
 	memcpy(result, &FinalResult, sizeof(FinalResult));
 	return(sizeof(FinalResult));
 }
+
+template<class T>
+T _rotl(T X, int n)
+{
+	return(T)( ( X << n ) | ( (unsigned)X >> ((sizeof(T)*8) - n) ) );
+}
+
+// FUNCTION: GAMEMD 0x0069DB30
+void SHAEngine::Process_Block(void const * source, SHADigest & acc) const
+{
+	int block[PROC_BLOCK_SIZE/sizeof(int)];
+
+	int const * data = (int const *)source;
+	int index;
+	for (index = 0; index < SRC_BLOCK_SIZE/sizeof(int); index++) {
+		block[index] = Reverse_LONG(data[index]);
+	}
+
+	for (index = SRC_BLOCK_SIZE/sizeof(int); index < PROC_BLOCK_SIZE/sizeof(int); index++) {
+		block[index] = _rotl(block[index-3] ^ block[index-8] ^ block[index-14] ^ block[index-16], 1);
+	}
+
+	SHADigest alt = acc;
+	for (index = 0; index < PROC_BLOCK_SIZE/sizeof(int); index++) {
+		int temp = _rotl(alt.Long[0], 5) + Do_Function(index, alt.Long[1], alt.Long[2], alt.Long[3]) + alt.Long[4] + block[index] + Get_Constant(index);
+		alt.Long[4] = alt.Long[3];
+		alt.Long[3] = alt.Long[2];
+		alt.Long[2] = _rotl(alt.Long[1], 30);
+		alt.Long[1] = alt.Long[0];
+		alt.Long[0] = temp;
+	}
+	acc.Long[0] += alt.Long[0];
+	acc.Long[1] += alt.Long[1];
+	acc.Long[2] += alt.Long[2];
+	acc.Long[3] += alt.Long[3];
+	acc.Long[4] += alt.Long[4];
+}

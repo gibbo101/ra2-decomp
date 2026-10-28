@@ -237,6 +237,12 @@ ModemRegistryEntryClass::ModemRegistryEntryClass (int modem_number)
 	}
 }
 
+// FUNCTION: GAMEMD 0x005BBED0
+ModemRegistryEntryClass::~ModemRegistryEntryClass (void)
+{
+	Clear();
+}
+
 // FUNCTION: GAMEMD 0x005BBEE0
 void ModemRegistryEntryClass::Clear (void)
 {

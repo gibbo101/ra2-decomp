@@ -12,10 +12,15 @@
 #include "dsurface.h"
 #include "xmouse.h"
 #include <math.h>
+#include "geometry.h"
+#include "rect.h"
 
 extern int DAT_0089C358;
 extern int DAT_0089C35C;
 extern int DAT_0089C360;
+
+// SYNTHETIC: GAMEMD 0x0042E090 SYMBOL
+// _$E2
 
 // FUNCTION: GAMEMD 0x0042E0B0
 ProgressBarClass::ProgressBarClass(int x, int y, int width, int height, int forecolor, int backcolor, int bordercolor) :

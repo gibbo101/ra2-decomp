@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "rect.h"
 #include "statbtn.h"
 #include "_surface.h"
 #include "blit.h"
@@ -17,6 +18,9 @@
 #include "color.hh"
 
 #include <math.h>
+
+// SYNTHETIC: GAMEMD 0x006C6520 SYMBOL
+// _$E2
 
 static inline Point2D * Scratch(Point2D const & p) { return (Point2D *)&p; }
 

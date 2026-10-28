@@ -56,3 +56,53 @@ int RGBClass::Difference(RGBClass const & rgb) const
 
 	return(4*g + 3*b + 2*r);
 }
+
+// FUNCTION: GAMEMD 0x006613A0
+RGBClass::operator HSVClass (void) const
+{
+	int hue;
+	int saturation;
+	int value;
+	int red = Get_Red();
+	int green = Get_Green();
+	int blue = Get_Blue();
+	hue = 0;
+	value = (red > green) ? red : green;
+	if (blue > value) value = blue;
+	int white = (red < green) ? red : green;
+	if (blue < white) white = blue;
+	saturation = 0;
+	if (value) {
+		saturation = ((value - white) * 255) / value;
+	}
+	if (saturation != 0) {
+		unsigned int tmp = value - white;
+	 	unsigned int r1 = ((value - red) * 255) / tmp;
+	 	unsigned int g1 = ((value - green) * 255) / tmp;
+	 	unsigned int b1 = ((value - blue) * 255) / tmp;
+		if (value == red) {
+		 	if (white == green) {
+				tmp = 5 * 256 + b1;
+			} else {
+				tmp = 1 * 256 - g1;
+			}
+		} else {
+			if (value == green) {
+			 	if (white == blue) {
+					tmp = 1 * 256 + r1;
+				} else {
+					tmp = 3 * 256 - b1;
+				}
+			} else {
+			 	if (white == red) {
+					tmp = 3 * 256 + g1;
+				} else {
+					tmp = 5 * 256 - r1;
+				}
+			}
+		}
+		hue = tmp / 6;
+	}
+	HSVClass hsv((unsigned char)hue, (unsigned char)saturation, (unsigned char)value);
+	return(hsv);
+}

@@ -68,3 +68,85 @@ int TeamMissionClass::Build_INI_Entry(char * ptr) const
 
 	return(0);
 }
+
+// FUNCTION: GAMEMD 0x00723D20
+NeedType TeamMission_Needs(TeamMissionType tmtype)
+{
+	switch (tmtype) {
+		case TMISSION_ATTACK:
+		case 57:
+			return(NEED_QUARRY);
+
+		case TMISSION_MOVECELL:
+			return(NEED_HEX_NUMBER);
+
+		case TMISSION_CENTER_VIEWPOINT:
+			return(NEED_VELOCITY);
+
+		case TMISSION_SET_GLOBAL:
+		case TMISSION_CLEAR_GLOBAL:
+			return(NEED_GLOBAL);
+
+		case TMISSION_SET_LOCAL:
+		case TMISSION_CLEAR_LOCAL:
+			return(NEED_LOCAL);
+
+		case TMISSION_GUARD:
+		case TMISSION_LOOP:
+		case TMISSION_IDLE_ANIM:
+		case TMISSION_ION_STORM_START:
+		case TMISSION_FORCE_FACING:
+		case TMISSION_FLASH:
+			return(NEED_NUMBER);
+
+		case TMISSION_PATROL:
+		case TMISSION_MOVE:
+		case TMISSION_ATT_WAYPT:
+		case TMISSION_SPY:
+		case 59:
+			return(NEED_WAYPOINT);
+
+		case TMISSION_CHANGE_HOUSE:
+			return(NEED_HOUSE);
+
+		case TMISSION_DO:
+			return(NEED_MISSION);
+
+		case TMISSION_SCRIPT:
+			return(NEED_SCRIPT);
+
+		case TMISSION_TEAMCHANGE:
+			return(NEED_TEAM);
+
+		case TMISSION_PLAY_SPEECH:
+			return(NEED_SPEECH);
+
+		case TMISSION_PLAY_SOUND:
+			return(NEED_SOUND);
+
+		case TMISSION_PLAY_MOVIE:
+			return(NEED_MOVIE);
+
+		case TMISSION_PLAY_MUSIC:
+			return(NEED_THEME);
+
+		case TMISSION_ATTACK_BUILDING_WITH_PROPERTY:
+		case TMISSION_MOVETO_BUILDING_WITH_PROPERTY:
+		case 56:
+		case 58:
+			return(NEED_BUILDING_ATTACK);
+
+		case TMISSION_UNLOAD:
+			return(NEED_SPLIT);
+
+		case TMISSION_PLAY_ANIM:
+			return(NEED_ANIM);
+
+		case TMISSION_TALK_BUBBLE:
+			return(NEED_TALK_BUBBLE);
+
+		default:
+			break;
+	}
+	return(NEED_NONE);
+}

@@ -4,8 +4,20 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
+#include "rect.h"
 #include "bitfont.h"
 #include "rgb.h"
+
+struct Drawing {
+	static int RedShiftLeft;
+	static int RedShiftRight;
+	static int GreenShiftLeft;
+	static int GreenShiftRight;
+	static int BlueShiftLeft;
+	static int BlueShiftRight;
+	static int RGB_To_Int(int red, int green, int blue);
+};
 
 // FUNCTION: GAMEMD 0x00435530
 void __stdcall Release_Font(BitFont * font)
@@ -27,6 +39,9 @@ void Destroy_Font(void)
 {
 	Release_Font(BitFont::Instance);
 }
+
+// SYNTHETIC: GAMEMD 0x00434AB0 SYMBOL
+// _$E41
 
 // FUNCTION: GAMEMD 0x00434AD0
 BitText::BitText(void)
@@ -129,3 +144,11 @@ bool BitText::DrawBold(BitFont * font, Surface * surface, wchar_t const * text, 
 
 // SYNTHETIC: GAMEMD 0x00435560
 // ??_GBitText@@UAEPAXI@Z
+
+// FUNCTION: GAMEMD 0x004355D0
+int Drawing::RGB_To_Int(int red, int green, int blue)
+{
+	return ((red >> RedShiftRight) << RedShiftLeft)
+		| ((green >> GreenShiftRight) << GreenShiftLeft)
+		| ((blue >> BlueShiftRight) << BlueShiftLeft);
+}

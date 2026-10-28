@@ -51,6 +51,8 @@
 // _$E35
 // SYNTHETIC: GAMEMD 0x0054FD80 SYMBOL
 // _$E38
+// SYNTHETIC: GAMEMD 0x0054FDA0 SYMBOL
+// _$E42
 
 DynamicVectorClass<LaserDrawClass *> LaserDrawClass::LaserDraws;
 

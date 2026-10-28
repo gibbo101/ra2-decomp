@@ -11,6 +11,9 @@
 #include <string.h>
 #include <stdlib.h>
 
+// SYNTHETIC: GAMEMD 0x0069E070 SYMBOL
+// _$E2
+
 SHPReference * SHPHead;
 SHPStruct * SHPCache;
 int SHPCacheSize;
@@ -137,6 +140,17 @@ bool SHPStruct::HasTransparency(int frame) const
 	if (file && (unsigned)frame < (unsigned)file->Count) {
 		SHPFrame * header = &file->Frames[frame];
 		if (header) return(header->Flags & 1);
+	}
+	return(false);
+}
+
+// FUNCTION: GAMEMD 0x0069E900
+bool SHPStruct::HasCompression(int frame) const
+{
+	SHPFile * file = (SHPFile *)((SHPStruct *)this)->GetData();
+	if (file && (unsigned)frame < (unsigned)file->Count) {
+		SHPFrame * header = &file->Frames[frame];
+		if (header) return((char)(header->Flags & 2) >> 1);
 	}
 	return(false);
 }

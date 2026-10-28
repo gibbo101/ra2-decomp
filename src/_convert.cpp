@@ -39,3 +39,8 @@ template class VectorClass<LightConvertClass *>;
 // ?Resize@?$DynamicVectorClass@PAVLightConvertClass@@@@UAE_NHPBQAVLightConvertClass@@@Z
 // TEMPLATE: GAMEMD 0x0040C4C0
 // ?ID@?$DynamicVectorClass@PAVLightConvertClass@@@@UAEHABQAVLightConvertClass@@@Z
+
+// SYNTHETIC: GAMEMD 0x0040C4F0
+// ??_G?$VectorClass@PAVLightConvertClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x0040C540
+// ??_G?$DynamicVectorClass@PAVLightConvertClass@@@@UAEPAXI@Z

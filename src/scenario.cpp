@@ -2736,3 +2736,23 @@ bool ScenarioClass::Is_Valid_Waypoint(WAYPOINT waypoint) const
 	}
 	return(false);
 }
+
+// FUNCTION: GAMEMD 0x0068BDC0
+void ScenarioClass::Read_Waypoints(CCINIClass const & ini)
+{
+	char buf[20];
+
+	for (int i = 0; i < WAYPT_COUNT; i++) {
+		wsprintf(buf, "%d", i);
+		int val = ini.Get_Int("Waypoints", buf, 0);
+		if (val == 0) {
+			Waypoint[i] = CELL_NONE;
+		} else {
+			Waypoint[i] = Cell(val % 1000, val / 1000);
+		}
+
+		if (Is_Valid_Waypoint(i)) {
+			Map[Waypoint[i]].IsWaypoint = 1;
+		}
+	}
+}

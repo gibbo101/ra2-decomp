@@ -4782,3 +4782,23 @@ template class Dictionary<HWND, WNDPROC>;
 
 // TEMPLATE: GAMEMD 0x00624FC0
 // ?expand@?$Dictionary@PAUHWND__@@UWinData@OwnerDraw@@@@AAEXXZ
+
+// TEMPLATE: GAMEMD 0x00625070
+// ?keyHash@?$Dictionary@PAUHWND__@@P6GJPAU1@IIJ@Z@@AAEIAAPAUHWND__@@@Z
+
+// TEMPLATE: GAMEMD 0x00625090
+// ?remove@?$Dictionary@UCtrlMsgData@OwnerDraw@@_N@@QAEDAAUCtrlMsgData@OwnerDraw@@AA_N@Z
+
+// TEMPLATE: GAMEMD 0x006252F0
+// ?expand@?$Dictionary@UCtrlMsgData@OwnerDraw@@_N@@AAEXXZ
+
+// TEMPLATE: GAMEMD 0x00625390
+// ?keyHash@?$Dictionary@UCtrlMsgData@OwnerDraw@@_N@@AAEIAAUCtrlMsgData@OwnerDraw@@@Z
+template class Dictionary<OwnerDraw::CtrlMsgData, bool>;
+
+// TEMPLATE: GAMEMD 0x006253B0
+// ?growVector@?$ArrayList@H@@AAEDXZ
+
+// TEMPLATE: GAMEMD 0x00625440
+// ?shrinkVector@?$ArrayList@H@@AAEDXZ
+template class ArrayList<int>;

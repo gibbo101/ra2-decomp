@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "rect.h"
 #include "edit.h"
 #include "_keyboar.h"
 #include "_surface.h"
@@ -20,6 +21,9 @@
 #include <math.h>
 #include <ctype.h>
 #include <wchar.h>
+
+// SYNTHETIC: GAMEMD 0x004C2FA0 SYMBOL
+// _$E2
 
 
 class InputManagerClass : public KeyboardClass {

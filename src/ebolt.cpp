@@ -210,3 +210,6 @@ template class VectorClass<EBolt *>;
 
 // SYNTHETIC: GAMEMD 0x004C2F00
 // ??_G?$VectorClass@PAVEBolt@@@@UAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x004C2F50
+// ??_G?$DynamicVectorClass@PAVEBolt@@@@UAEPAXI@Z

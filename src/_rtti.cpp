@@ -6,6 +6,7 @@
 #include "always.h"
 #include <math.h>
 #include "geometry.h"
+#include "rect.h"
 #include "_rtti.h"
 #include "object.h"
 
@@ -33,6 +34,10 @@
 // _$E32
 // SYNTHETIC: GAMEMD 0x0040DC50 SYMBOL
 // _$E35
+// SYNTHETIC: GAMEMD 0x0040DC70 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x0040DC90 SYMBOL
+// _$E41
 
 struct {
 	char const *Name;

@@ -5,6 +5,7 @@
 
 #include "always.h"
 #include "geometry.h"
+#include "rect.h"
 #include "connect.h"
 #include "_timer.h"
 #include "dbgprint.h"
@@ -17,6 +18,8 @@
 extern ConnectionClass *DAT_00A8EA0C;
 
 
+// SYNTHETIC: GAMEMD 0x0048BC50 SYMBOL
+// _$E41
 // SYNTHETIC: GAMEMD 0x0048BC70 SYMBOL
 // _$E2
 // SYNTHETIC: GAMEMD 0x0048BCA0 SYMBOL

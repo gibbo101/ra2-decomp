@@ -5,6 +5,7 @@
 
 #include "always.h"
 #include "geometry.h"
+#include "rect.h"
 #include "drive.h"
 #include "_map.h"
 #include "_rules.h"
@@ -47,6 +48,14 @@
 // _$E26
 // SYNTHETIC: GAMEMD 0x004AF4A0 SYMBOL
 // _$E29
+// SYNTHETIC: GAMEMD 0x004AF4D0 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x004AF4E0 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x004AF500 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x004AF520 SYMBOL
+// _$E41
 
 static const double _deaccel = 0.3f;
 

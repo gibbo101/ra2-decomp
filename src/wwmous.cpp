@@ -566,3 +566,6 @@ void __cdecl FUN_007BA2F0(void)
 {
 	Unblock_Mouse();
 }
+
+// SYNTHETIC: GAMEMD 0x007BA300
+// ??_GMouse@@UAEPAXI@Z

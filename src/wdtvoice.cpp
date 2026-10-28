@@ -15,80 +15,38 @@
 #include "ini.h"
 #include "mixfile.h"
 #include "wdtnet.h"
+#include "geometry.h"
 
 #include <math.h>
 
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007F7340;
-extern const double DAT_007F7348;
-
+// SYNTHETIC: GAMEMD 0x00770060 SYMBOL
+// _$E8
 // SYNTHETIC: GAMEMD 0x00770080 SYMBOL
 // _$E18
-double DAT_00B72BB0 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x007700B0 SYMBOL
 // _$E21
-double DAT_00B72C00 = DAT_00B72BB0 / DAT_007F7340;
-
 // SYNTHETIC: GAMEMD 0x007700D0 SYMBOL
 // _$E24
-double DAT_00B72BE8 = DAT_007E1718 / DAT_00B72C00;
-
 // SYNTHETIC: GAMEMD 0x007700F0 SYMBOL
 // _$E27
-double DAT_00B72BE0 = DAT_007E1720 * DAT_007F7348;
-
 // SYNTHETIC: GAMEMD 0x00770110 SYMBOL
 // _$E30
-double DAT_00B72BB8 = DAT_007E1728 * DAT_007F7348;
-
 // SYNTHETIC: GAMEMD 0x00770130 SYMBOL
 // _$E33
-double DAT_00B72B90 = DAT_007E1730 * DAT_007F7348;
-
 // SYNTHETIC: GAMEMD 0x00770150 SYMBOL
 // _$E36
-int DAT_00B72C08 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B72B90 - DAT_00B72BB8) * DAT_00B72BB0));
-
 // SYNTHETIC: GAMEMD 0x00770190 SYMBOL
 // _$E39
-double DAT_00B72BC0 = FUN_004CADE0(DAT_00B72C08 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x007701C0 SYMBOL
 // _$E42
-double DAT_00B72BD8 = FUN_004CADE0((DAT_00B72C08 * 2) / DAT_00B72BB0);
-
 // SYNTHETIC: GAMEMD 0x007701F0 SYMBOL
 // _$E45
-int DAT_00B72BFC = (int)(DAT_00B72C08 * 4 + DAT_007E1738);
-
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
-
 // SYNTHETIC: GAMEMD 0x00770220 SYMBOL
 // _$E48
-ShortPair DAT_00B72BA8;
-
 // SYNTHETIC: GAMEMD 0x00770230 SYMBOL
 // _$E51
-IntTriple DAT_00B72BC8;
+// SYNTHETIC: GAMEMD 0x00770250 SYMBOL
+// _$E54
 
 using namespace WorldDominationTour;
 
@@ -99,15 +57,6 @@ extern void * FUN_00407010(void);
 void __fastcall Parse_Index_List(Wstring const & text, VOICEINDEX_LIST & list);
 bool __fastcall WDT_Make_Sound_Filename(int side, int index, Wstring & out);
 bool __fastcall WDT_Random_Pick_Sound_Filename(int side, VOICEINDEX_LIST & list, Wstring & out);
-
-struct IntPairTail {
-	int A, B, C;
-	IntPairTail() { C = 0; A = 0x80; B = 0x80; }
-};
-
-// SYNTHETIC: GAMEMD 0x00770250 SYMBOL
-// _$E54
-IntPairTail DAT_00B72BF0;
 
 // FUNCTION: GAMEMD 0x00770270
 // WorldDominationTour::YRVoices::YRVoices

@@ -99,7 +99,7 @@ void TEventClass::Build_INI_Entry(char * ptr) const
 		code = 1;
 		ptr += strlen(ptr);
 		wsprintf(ptr, "%d,%d,%s", Event, code, (char const *)Team->IniName);
-	} else if (need == NeedType(0x2b)) {
+	} else if (need == NEED_NUMBER_AND_TECHNO) {
 		code = 2;
 		ptr += strlen(ptr);
 		wsprintf(ptr, "%d,%d,%d,%s", Event, code, val, (char const *)String);
@@ -202,7 +202,7 @@ NeedType Event_Needs(TEventType event)
 
 		case 60:
 		case 61:
-			return(NeedType(0x2b));
+			return(NEED_NUMBER_AND_TECHNO);
 
 		default:
 			break;

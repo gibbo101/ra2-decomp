@@ -137,6 +137,12 @@ Point2D Simple_Text_Print_Wide(wchar_t const * text, Surface * surface, Rect con
 	return Simple_Text_Print_Wide(text, surface, bounds, pt, fore, back, flags, unused);
 }
 
+// FUNCTION: GAMEMD 0x004A60D0
+BitFont * Font_From_TPF(TextPrintType flags)
+{
+	return BitFont::Instance;
+}
+
 // FUNCTION: GAMEMD 0x004A60E0
 Point2D * __cdecl Fancy_Text_Print_Wide(Point2D * ret, wchar_t const * text, Surface * surface, Rect const * bounds, Point2D const * pt, unsigned fore, unsigned back, TextPrintType flags, ...)
 {

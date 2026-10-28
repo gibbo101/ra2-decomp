@@ -71,6 +71,8 @@ DynamicVectorClass<VocEntry *> VocArray;
 
 DynamicVectorClass<VocClass *> Vocs;
 
+// SYNTHETIC: GAMEMD 0x007500F0 SYMBOL
+// _$E55
 // SYNTHETIC: GAMEMD 0x00750110 SYMBOL
 // _$E2
 // SYNTHETIC: GAMEMD 0x00750140 SYMBOL

@@ -5,6 +5,7 @@
 
 #include "always.h"
 #include "geometry.h"
+#include "rect.h"
 #include "mission.h"
 #include "_bench.h"
 #include "_mission.h"
@@ -39,6 +40,10 @@
 // _$E32
 // SYNTHETIC: GAMEMD 0x005B2D40 SYMBOL
 // _$E35
+// SYNTHETIC: GAMEMD 0x005B2D60 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x005B2D80 SYMBOL
+// _$E41
 
 namespace Unsorted { extern int CurrentFrame; }
 

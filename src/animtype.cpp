@@ -52,6 +52,10 @@
 // _$E35
 // SYNTHETIC: GAMEMD 0x004274F0 SYMBOL
 // _$E38
+// SYNTHETIC: GAMEMD 0x00427510 SYMBOL
+// _$E41
+// SYNTHETIC: GAMEMD 0x00427510 SYMBOL
+// _$E41
 
 extern char DAT_00889F64[];
 namespace Unsorted { extern bool ArmageddonMode; }

@@ -62,3 +62,7 @@ AStarClass Search;
 // ?Clear@?$VectorClass@USubzoneConnectionStruct@@@@UAEXXZ
 // FUNCTION: GAMEMD 0x0040B2A0
 // ?ID@?$VectorClass@USubzoneConnectionStruct@@@@UAEHABUSubzoneConnectionStruct@@@Z
+// TEMPLATE: GAMEMD 0x0040B2E0
+// ?ID@?$VectorClass@USubzoneConnectionStruct@@@@UAEHPBUSubzoneConnectionStruct@@@Z
+// SYNTHETIC: GAMEMD 0x0040B300
+// ??_G?$VectorClass@USubzoneConnectionStruct@@@@UAEPAXI@Z

@@ -36,3 +36,15 @@
 // _$E32
 // SYNTHETIC: GAMEMD 0x0048E440 SYMBOL
 // _$E35
+// SYNTHETIC: GAMEMD 0x0048E460 SYMBOL
+// _$E38
+
+// SYNTHETIC: GAMEMD 0x0048E480 SYMBOL
+// _$E50
+Coord const StoppingCoordAbs[5] = {
+	Coord(CELL_LEPTON_W / 2,     CELL_LEPTON_H / 2, 0),
+	Coord(CELL_LEPTON_W / 4,     CELL_LEPTON_H / 4, 0),
+	Coord(3 * CELL_LEPTON_W / 4, CELL_LEPTON_H / 4, 0),
+	Coord(CELL_LEPTON_W / 4,     3 * CELL_LEPTON_H / 4, 0),
+	Coord(3 * CELL_LEPTON_W / 4, 3 * CELL_LEPTON_H / 4, 0)
+};

@@ -7,6 +7,23 @@
 #include "alphalighting.h"
 #include "vector.h"
 
+// SYNTHETIC: GAMEMD 0x00420080 SYMBOL
+// _$E6
+
+// SYNTHETIC: GAMEMD 0x004200C0 SYMBOL
+// _$E3
+DynamicVectorClass<AlphaLightingRemapClass *> AlphaLightingRemapClass::AlphaLightingRemaps;
+
+// FUNCTION: GAMEMD 0x00420120
+AlphaLightingRemapInitClass::AlphaLightingRemapInitClass(void)
+{
+}
+
+// FUNCTION: GAMEMD 0x00420130
+AlphaLightingRemapInitClass::~AlphaLightingRemapInitClass(void)
+{
+}
+
 // FUNCTION: GAMEMD 0x00420140
 AlphaLightingRemapClass *AlphaLightingRemapInitClass::Init(int count)
 {
@@ -52,7 +69,7 @@ AlphaLightingRemapClass::AlphaLightingRemapClass(int count)
 }
 
 // FUNCTION: GAMEMD 0x00420360
-AlphaLightingRemapInitClass::~AlphaLightingRemapInitClass(void)
+AlphaLightingRemapClass::~AlphaLightingRemapClass(void)
 {
 }
 

@@ -3,89 +3,6 @@
 // Copyright 2025 Electronic Arts Inc.; 2026 OpenTS contributors
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
-#include <math.h>
-
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007F7320;
-extern const double DAT_007F7328;
-
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
-
-// SYNTHETIC: GAMEMD 0x0076F720 SYMBOL
-// _$E2
-double DAT_00B72B30 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
-// SYNTHETIC: GAMEMD 0x0076F750 SYMBOL
-// _$E5
-double DAT_00B72B80 = DAT_00B72B30 / DAT_007F7320;
-
-// SYNTHETIC: GAMEMD 0x0076F770 SYMBOL
-// _$E8
-double DAT_00B72B68 = DAT_007E1718 / DAT_00B72B80;
-
-// SYNTHETIC: GAMEMD 0x0076F790 SYMBOL
-// _$E11
-double DAT_00B72B60 = DAT_007E1720 * DAT_007F7328;
-
-// SYNTHETIC: GAMEMD 0x0076F7B0 SYMBOL
-// _$E14
-double DAT_00B72B38 = DAT_007E1728 * DAT_007F7328;
-
-// SYNTHETIC: GAMEMD 0x0076F7D0 SYMBOL
-// _$E17
-double DAT_00B72B10 = DAT_007E1730 * DAT_007F7328;
-
-// SYNTHETIC: GAMEMD 0x0076F7F0 SYMBOL
-// _$E20
-int DAT_00B72B88 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B72B10 - DAT_00B72B38) * DAT_00B72B30));
-
-// SYNTHETIC: GAMEMD 0x0076F830 SYMBOL
-// _$E23
-double DAT_00B72B40 = FUN_004CADE0(DAT_00B72B88 * DAT_007E1740);
-
-// SYNTHETIC: GAMEMD 0x0076F860 SYMBOL
-// _$E26
-double DAT_00B72B58 = FUN_004CADE0((DAT_00B72B88 * 2) / DAT_00B72B30);
-
-// SYNTHETIC: GAMEMD 0x0076F890 SYMBOL
-// _$E29
-int DAT_00B72B7C = (int)(DAT_00B72B88 * 4 + DAT_007E1738);
-
-// SYNTHETIC: GAMEMD 0x0076F8C0 SYMBOL
-// _$E32
-ShortPair DAT_00B72B28;
-
-// SYNTHETIC: GAMEMD 0x0076F8D0 SYMBOL
-// _$E35
-IntTriple DAT_00B72B48;
-
-struct Triple2 {
-	int A, B, C;
-	Triple2() { C = 0; A = 128; B = 128; }
-};
-
-// SYNTHETIC: GAMEMD 0x0076F8F0 SYMBOL
-// _$E38
-Triple2 DAT_00B72B70;
-
 #include "always.h"
 
 #include <stddef.h>
@@ -94,6 +11,37 @@ Triple2 DAT_00B72B70;
 #include "ini.h"
 #include "stringtable.h"
 #include "wdtnet.h"
+#include "rect.h"
+#include "geometry.h"
+
+// SYNTHETIC: GAMEMD 0x0076F700 SYMBOL
+// _$E7
+// SYNTHETIC: GAMEMD 0x0076F720 SYMBOL
+// _$E10
+// SYNTHETIC: GAMEMD 0x0076F750 SYMBOL
+// _$E13
+// SYNTHETIC: GAMEMD 0x0076F770 SYMBOL
+// _$E16
+// SYNTHETIC: GAMEMD 0x0076F790 SYMBOL
+// _$E19
+// SYNTHETIC: GAMEMD 0x0076F7B0 SYMBOL
+// _$E22
+// SYNTHETIC: GAMEMD 0x0076F7D0 SYMBOL
+// _$E25
+// SYNTHETIC: GAMEMD 0x0076F7F0 SYMBOL
+// _$E28
+// SYNTHETIC: GAMEMD 0x0076F830 SYMBOL
+// _$E31
+// SYNTHETIC: GAMEMD 0x0076F860 SYMBOL
+// _$E34
+// SYNTHETIC: GAMEMD 0x0076F890 SYMBOL
+// _$E37
+// SYNTHETIC: GAMEMD 0x0076F8C0 SYMBOL
+// _$E40
+// SYNTHETIC: GAMEMD 0x0076F8D0 SYMBOL
+// _$E43
+// SYNTHETIC: GAMEMD 0x0076F8F0 SYMBOL
+// _$E46
 
 using namespace WorldDominationTour;
 

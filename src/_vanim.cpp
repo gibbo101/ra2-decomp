@@ -70,3 +70,12 @@ template class DynamicVectorClass<VoxelAnimClass *>;
 // TEMPLATE: GAMEMD 0x0040F080
 // ?ID@?$VectorClass@PAVVoxelAnimClass@@@@UAEHPBQAVVoxelAnimClass@@@Z
 template class VectorClass<VoxelAnimClass *>;
+
+// TEMPLATE: GAMEMD 0x0040F0A0
+// ?Resize@?$DynamicVectorClass@PAVVoxelAnimClass@@@@UAE_NHPBQAVVoxelAnimClass@@@Z
+// TEMPLATE: GAMEMD 0x0040F150
+// ?ID@?$DynamicVectorClass@PAVVoxelAnimClass@@@@UAEHABQAVVoxelAnimClass@@@Z
+// SYNTHETIC: GAMEMD 0x0040F180
+// ??_G?$VectorClass@PAVVoxelAnimClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x0040F1D0
+// ??_G?$DynamicVectorClass@PAVVoxelAnimClass@@@@UAEPAXI@Z

@@ -39,18 +39,10 @@ using namespace WorldDominationTour;
 // _$E32
 // SYNTHETIC: GAMEMD 0x007649E0 SYMBOL
 // _$E35
+// SYNTHETIC: GAMEMD 0x00764A00 SYMBOL
+// _$E38
 
 Wstring & __fastcall WDT_Country_Name(int index);
-extern int DAT_00B726D0, DAT_00B726D4, DAT_00B726D8;
-
-// FUNCTION: GAMEMD 0x00764A00
-void FUN_00764A00(void)
-{
-	DAT_00B726D8 = 0;
-	DAT_00B726D0 = 0x80;
-	DAT_00B726D4 = 0x80;
-}
-
 // FUNCTION: GAMEMD 0x00764A20
 int WDT_Get_Campaign_ID(Wstring const & section)
 {
@@ -229,3 +221,7 @@ template class rc_ptr<WorldDominationTour::State>;
 // TEMPLATE: GAMEMD 0x00765C70
 // ??0?$rc_ptr@VConflict@WorldDominationTour@@@@QAE@XZ
 
+
+// TEMPLATE: GAMEMD 0x00765C90
+// ??0?$VectorClass@V?$rc_ptr@VConflict@WorldDominationTour@@@@@@QAE@HPBV?$rc_ptr@VConflict@WorldDominationTour@@@@@Z
+template class VectorClass<rc_ptr<WorldDominationTour::Conflict> >;

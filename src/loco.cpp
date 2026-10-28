@@ -21,6 +21,8 @@
 #include "visual.hh"
 #include "zgrad.hh"
 
+// SYNTHETIC: GAMEMD 0x0055A4B0 SYMBOL
+// _$E52
 // SYNTHETIC: GAMEMD 0x0055A4D0 SYMBOL
 // _$E2
 // SYNTHETIC: GAMEMD 0x0055A500 SYMBOL

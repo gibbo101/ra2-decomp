@@ -1129,3 +1129,67 @@ bool ModemHostCallback(void)
 	Call_Back();
 	return(false);
 }
+
+// FUNCTION: GAMEMD 0x005BB290
+void ModemHost::SendPreview(void)
+{
+	CDTimerClass<SystemTimerClass> response_timer;
+
+	if (stricmp(Session.ScenarioFileName, RANDOM_MAP_FILE_NAME) == 0) {
+		DebugString("Starting map preview upload\n");
+
+		SerialPacketType sendpacket;
+		memset((void *)&sendpacket, 0, sizeof(sendpacket));
+		sendpacket.Command = SERIAL_PREVIEW_MODE;
+
+		NullModem.Send_Message(&sendpacket, sizeof(sendpacket), 1);
+		response_timer = 10 * TIMER_SECOND;
+		while (NullModem.Num_Send() > 0 && response_timer) {
+			Call_Back();
+		}
+		response_timer = PACKET_SENDING_TIMEOUT;
+
+		while (true) {
+			Call_Back();
+
+			SerialPacketType receivepacket;
+			int packetlen;
+			if (NullModem.Get_Message(&receivepacket, &packetlen) > 0 && receivepacket.Command == SERIAL_PREVIEW_ACK) {
+				break;
+			}
+
+			if (response_timer == 0) {
+				DebugString("Failed to get SERIAL_PREVIEW_ACK\n");
+				return;
+			}
+		}
+
+		int size = 0;
+		unsigned * preview = MultiplayerMapPreview->Create_Paletted_Preview(64, size);
+		DebugString("Preview size is %d bytes\n", size);
+
+		unsigned * buffer = new unsigned[size];
+		BufferPipe bpipe(buffer, size * sizeof(unsigned));
+
+		LZOPipe lzopipe(LZOPipe::COMPRESS);
+		lzopipe.Put_To(&bpipe);
+		int comp_size = lzopipe.Put(preview, size);
+		comp_size += lzopipe.End();
+
+		DebugString("Compressed preview image is %d bytes\n", comp_size);
+
+		RawFileClass file("Preview.bin");
+		if (file.Is_Available()) {
+			file.Delete();
+		}
+
+		file.Open(RawFileClass::WRITE);
+		file.Write(&size, sizeof(size));
+		file.Write(buffer, comp_size);
+		file.Close();
+		delete [] buffer;
+
+		DebugString("Calling Send_Remote_File to send the preview\n");
+		Send_Remote_File("Preview.bin", GAME_MODEM, false, false);
+	}
+}

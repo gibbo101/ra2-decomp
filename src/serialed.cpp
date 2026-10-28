@@ -26,6 +26,7 @@
 #undef Edit_GetText
 #undef ListBox_GetText
 #undef ListBox_AddString
+#undef ListBox_FindString
 #undef ComboBox_GetLBText
 #undef ComboBox_AddString
 #undef ComboBox_FindString
@@ -33,6 +34,7 @@
 #define Edit_GetText(h, s, n) ((int)SendMessage((h), 0x4b5, (n), (LPARAM)(s)))
 #define ListBox_GetText(h, i, s) ((int)SendMessage((h), 0x4b7, (i), (LPARAM)(s)))
 #define ListBox_AddString(h, s) ((int)SendMessage((h), 0x4c8, 0, (LPARAM)(s)))
+#define ListBox_FindString(h, i, s) ((int)SendMessage((h), 0x4c4, (i), (LPARAM)(s)))
 #define ComboBox_GetLBText(h, i, s) ((int)SendMessage((h), 0x4bd, (i), (LPARAM)(s)))
 
 // SYNTHETIC: GAMEMD 0x006954C0 SYMBOL
@@ -742,6 +744,60 @@ void SerialEdit::Set_Init_String(void)
 		strtrim(TempBuf);
 		strupr(TempBuf);
 		Set_Custom_Port(IDC_SERIAL_CALLWAITING, 3, TempBuf);
+	}
+}
+
+// FUNCTION: GAMEMD 0x006969C0
+void SerialEdit::Set_Custom_Port(int id, int port, char *str)
+{
+	int item;
+	char *temp;
+	char buf[128];
+
+	HWND handle = GetDlgItem(_Dialog, id);
+	if (handle) {
+		item = ComboBox_Find_Item_Data(handle, -1, port);
+		ComboBox_GetLBText(handle, item, buf);
+		temp = strchr(buf, '-');
+		if (temp != NULL && stricmp(str, temp + 1)) {
+			sprintf(buf, "%ls ", LS("TXT_CUSTOM", 0x4a3));
+			strcat(buf, str);
+			ComboBox_DeleteString(handle, item);
+			int index = ComboBox_AddStringA(handle, buf);
+			ComboBox_SetItemData(handle, index, port);
+			ComboBox_SetCurSel(handle, index);
+		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x00696AE0
+void SerialEdit::Add_Init_String(void)
+{
+	int initstr_index;
+
+	HWND handle1 = GetDlgItem(_Dialog, IDC_SERIAL_INITSTRING);
+	HWND handle2 = GetDlgItem(_Dialog, IDC_SERIAL_INITLIST);
+
+	if (handle1 && handle2) {
+		Edit_GetText(handle1, TempBuf, sizeof(TempBuf));
+		Edit_SetText(handle1, "");
+		strtrim(TempBuf);
+		if (strlen(TempBuf)) {
+			strupr(TempBuf);
+			initstr_index = ListBox_FindString(handle2, -1, TempBuf);
+			if (initstr_index == LB_ERR) {
+				char * item = new char[INITSTRBUF_MAX];
+				strcpy(item, TempBuf);
+				initstr_index = ListBox_AddString(handle2, item);
+				if (initstr_index == LB_ERR) {
+					return;
+				}
+				Session.InitStrings.Add(item);
+			}
+			ListBox_SetCurSel(handle2, initstr_index);
+			ListBox_SetTopIndex(handle2, initstr_index);
+			TempSettings.InitStringIndex = initstr_index;
+		}
 	}
 }
 

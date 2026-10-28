@@ -303,3 +303,15 @@ template class DynamicVectorClass<RadBeam *>;
 
 // TEMPLATE: GAMEMD 0x0065A3A0
 // ?ID@?$VectorClass@PAVRadBeam@@@@UAEHPBQAVRadBeam@@@Z
+
+// TEMPLATE: GAMEMD 0x0065A3C0
+// ?Resize@?$DynamicVectorClass@PAVRadBeam@@@@UAE_NHPBQAVRadBeam@@@Z
+
+// TEMPLATE: GAMEMD 0x0065A470
+// ?ID@?$DynamicVectorClass@PAVRadBeam@@@@UAEHABQAVRadBeam@@@Z
+
+// SYNTHETIC: GAMEMD 0x0065A4A0
+// ??_G?$VectorClass@PAVRadBeam@@@@UAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x0065A4F0
+// ??_G?$DynamicVectorClass@PAVRadBeam@@@@UAEPAXI@Z

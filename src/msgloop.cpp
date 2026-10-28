@@ -181,3 +181,5 @@ template class VectorClass<AcceleratorTracker>;
 // ??_G?$DynamicVectorClass@PAUHWND__@@@@UAEPAXI@Z
 // SYNTHETIC: GAMEMD 0x005D5780
 // ??_G?$VectorClass@UAcceleratorTracker@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x005D57D0
+// ??_G?$DynamicVectorClass@UAcceleratorTracker@@@@UAEPAXI@Z

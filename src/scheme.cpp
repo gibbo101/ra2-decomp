@@ -42,6 +42,13 @@ bool _indexes[256] =
 	0,	0,	0,	0,	0,	1
 };
 
+// SYNTHETIC: GAMEMD 0x0068C330 SYMBOL
+// _$E6
+// SYNTHETIC: GAMEMD 0x0068C370 SYMBOL
+// _$E4
+DynamicVectorClass<ColorScheme *> ColorSchemes;
+
+// FUNCTION: GAMEMD 0x0068C3B0
 ConvertClass *Build_Light_Converter(HSVClass & hsv, const PaletteClass & base, const PaletteClass & screenpalette, PaletteClass * remapped, Surface const & typicalsurface, int intensity_levels, int r, int g, int b, bool *indexes)
 {
 	int hue = hsv.Get_Hue();
@@ -50,8 +57,8 @@ ConvertClass *Build_Light_Converter(HSVClass & hsv, const PaletteClass & base, c
 
 	*remapped = base;
 
-	double cos_step = DEG_TO_RAD(14.0 / 3.0);
-	double sin_step = DEG_TO_RAD(8.0 / 3.0);
+	double cos_step = 14.0 * M_PI / (180.0 * 3.0);
+	double sin_step = 8.0 * M_PI / (180.0 * 3.0);
 
 	for (int i = 0; i < 16; i++) {
 		double cosval = DEG_TO_RAD(20) + (i * cos_step);
@@ -67,6 +74,38 @@ ConvertClass *Build_Light_Converter(HSVClass & hsv, const PaletteClass & base, c
 	}
 
 	return(new LightConvertClass(*remapped, screenpalette, typicalsurface, r, g, b, false, indexes, intensity_levels));
+}
+
+// FUNCTION: GAMEMD 0x0068C500
+ConvertClass *Build_Converter(HSVClass & hsv, const PaletteClass & base, const PaletteClass & screenpalette, Surface const & typicalsurface, PaletteClass *remapped)
+{
+	int hue = hsv.Get_Hue();
+	int saturation = hsv.Get_Saturation();
+	int value = hsv.Get_Value();
+
+	PaletteClass pal = base;
+
+	double cos_step = 14.0 * M_PI / (180.0 * 3.0);
+	double sin_step = 8.0 * M_PI / (180.0 * 3.0);
+
+	for (int i = 0; i < 16; i++) {
+		double cosval = DEG_TO_RAD(20) + (i * cos_step);
+		double sinval = DEG_TO_RAD(50) + (i * sin_step);
+		if (i == 0) {
+			cosval = DEG_TO_RAD(360.0/32.0);
+		}
+
+		int sat = int(fastmath::sin(sinval) * saturation);
+		int val = int(fastmath::cos(cosval) * value);
+
+		pal[i + 16] = HSVClass(hue, sat, val);
+	}
+
+	if (remapped != NULL) {
+		*remapped = pal;
+	}
+
+	return(new ConvertClass(pal, screenpalette, typicalsurface));
 }
 
 // FUNCTION: GAMEMD 0x0068C650

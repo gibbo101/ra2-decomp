@@ -249,3 +249,12 @@ bool ParticleSystemTypeClass::Create_And_Place(Cell const & , HouseClass * house
 {
 	return(false);
 }
+
+// FUNCTION: GAMEMD 0x00644950
+ObjectClass * ParticleSystemTypeClass::Create_One_Of(HouseClass *) const
+{
+	return(NULL);
+}
+
+// SYNTHETIC: GAMEMD 0x00644960
+// ??_GParticleSystemTypeClass@@UAEPAXI@Z

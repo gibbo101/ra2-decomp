@@ -39,4 +39,13 @@ template class DynamicVectorClass<ObjectClass *>;
 // ?Clear@?$VectorClass@PAVObjectClass@@@@UAEXXZ
 // TEMPLATE: GAMEMD 0x0040CDF0
 // ?ID@?$VectorClass@PAVObjectClass@@@@UAEHABQAVObjectClass@@@Z
+// TEMPLATE: GAMEMD 0x0040CE30
+// ?ID@?$VectorClass@PAVObjectClass@@@@UAEHPBQAVObjectClass@@@Z
 template class VectorClass<ObjectClass *>;
+
+// TEMPLATE: GAMEMD 0x0040CE50
+// ?Resize@?$DynamicVectorClass@PAVObjectClass@@@@UAE_NHPBQAVObjectClass@@@Z
+// TEMPLATE: GAMEMD 0x0040CF00
+// ?ID@?$DynamicVectorClass@PAVObjectClass@@@@UAEHABQAVObjectClass@@@Z
+// SYNTHETIC: GAMEMD 0x0040CF30
+// ??_G?$VectorClass@PAVObjectClass@@@@UAEPAXI@Z

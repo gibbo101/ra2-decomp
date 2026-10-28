@@ -7,6 +7,14 @@
 #include "swizzle.h"
 #include "vector.h"
 
+SwizzleManagerClass Swizzler;
+
+// SYNTHETIC: GAMEMD 0x006CF070 SYMBOL
+// _$E4
+
+// SYNTHETIC: GAMEMD 0x006CF0F0 SYMBOL
+// _$E2
+
 // FUNCTION: GAMEMD 0x006CF180
 SwizzleManagerClass::SwizzleManagerClass(void)
 {

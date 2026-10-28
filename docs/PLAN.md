@@ -1,6 +1,6 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 27 October 2026: 16,107 of 19,366 game functions match (83%; 56% of game code
+Status, 28 October 2026: 16,439 of 19,366 game functions match (85%; 57% of game code
 by size), landed in batches module by module. The rounds below record each one.
 
 ## The goal
@@ -1113,6 +1113,20 @@ Session.Players. Recording then exposed three UI-command functions building char
 ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; their RTTI
 fixed them. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
+
+### Batches 119 and 120 (28 October 2026)
+
+**331 of 343 functions** (164, 167). The small-function pool in named modules was larger
+than it looked: 1,106 functions, most in globals (577), Startup and wonline, the rest in
+about 130 modules holding one to five each. One agent now owns a group of small modules.
+The merges gave YR its NeedType (need.hh, checked against TActionClass::GetMode) and
+AircraftTrackerClass its real 20x20 vector grid, and made SuperClass's two vectors the
+plain globals SuperWeapons and ShowTimers that globals.cpp builds. Alongside the round, the
+module map named 309 functions of the seg_ ranges (wdtmap, wdthistory, subtitle, pixelfx,
+_rect, mssfx, lzo1x_d, rle, quarry) from RTTI, string tables and calls from matched code;
+33 seg_ ranges remain (832 functions). At landing, a new constructor in cdfile.h flipped
+wonline's heap-sensitive 0x00788180 through its `#include "wstring.h"`; a forward
+declaration restored it. Merge gate: 16,439 of 16,439 (2,130.5 KB).
 
 ### Batches 117 and 118 (27 October 2026)
 

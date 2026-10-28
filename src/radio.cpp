@@ -40,6 +40,10 @@
 // _$E62
 // SYNTHETIC: GAMEMD 0x0065A6F0 SYMBOL
 // _$E65
+// SYNTHETIC: GAMEMD 0x0065A710 SYMBOL
+// _$E68
+// SYNTHETIC: GAMEMD 0x0065A730 SYMBOL
+// _$E10
 
 static inline int Index_Of(VectorClass<TechnoClass *> const & links, TechnoClass * link)
 {

@@ -4,6 +4,8 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
+#include "rect.h"
 
 #include "gamedlg.h"
 
@@ -27,90 +29,12 @@
 #include <math.h>
 
 namespace fastmath { double __cdecl sqrt(double x); double __cdecl tan(double x); double __cdecl atan(double x); }
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007E9370;
-extern const double DAT_007E9378;
-
 namespace Unsorted { extern int MuteSWLaunches; }
 namespace Game { extern int SpecialDialog; }
 extern char const * DAT_00822730[];
 extern char const * DAT_0082274C[];
 extern char const * DAT_00822768[];
 extern char const * DAT_00822774[];
-
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
-
-// SYNTHETIC: GAMEMD 0x004E1B10 SYMBOL
-// _$E84
-double DAT_008B3EB8 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
-
-// SYNTHETIC: GAMEMD 0x004E1B40 SYMBOL
-// _$E87
-double DAT_008B3F08 = DAT_008B3EB8 / DAT_007E9370;
-
-// SYNTHETIC: GAMEMD 0x004E1B60 SYMBOL
-// _$E90
-double DAT_008B3EF0 = DAT_007E1718 / DAT_008B3F08;
-
-// SYNTHETIC: GAMEMD 0x004E1B80 SYMBOL
-// _$E93
-double DAT_008B3EE8 = DAT_007E1720 * DAT_007E9378;
-
-// SYNTHETIC: GAMEMD 0x004E1BA0 SYMBOL
-// _$E96
-double DAT_008B3EC0 = DAT_007E1728 * DAT_007E9378;
-
-// SYNTHETIC: GAMEMD 0x004E1BC0 SYMBOL
-// _$E99
-double DAT_008B3E98 = DAT_007E1730 * DAT_007E9378;
-
-// SYNTHETIC: GAMEMD 0x004E1BE0 SYMBOL
-// _$E102
-int DAT_008B3F10 = (int)(fastmath::tan(DAT_008B3E98 - DAT_008B3EC0) * DAT_007E1738 * DAT_008B3EB8);
-
-// SYNTHETIC: GAMEMD 0x004E1C20 SYMBOL
-// _$E105
-double DAT_008B3EC8 = fastmath::atan(DAT_008B3F10 * DAT_007E1740);
-
-// SYNTHETIC: GAMEMD 0x004E1C50 SYMBOL
-// _$E108
-double DAT_008B3EE0 = fastmath::atan((DAT_008B3F10 * 2) / DAT_008B3EB8);
-
-// SYNTHETIC: GAMEMD 0x004E1C80 SYMBOL
-// _$E111
-int DAT_008B3F04 = (int)(DAT_008B3F10 * 4 + DAT_007E1738);
-
-// SYNTHETIC: GAMEMD 0x004E1CB0 SYMBOL
-// _$E114
-ShortPair DAT_008B3EB0;
-
-// SYNTHETIC: GAMEMD 0x004E1CC0 SYMBOL
-// _$E117
-IntTriple DAT_008B3ED0;
-
-struct SizePair {
-	int W, H, Z;
-	SizePair() { Z = 0; W = 128; H = 128; }
-};
-
-// SYNTHETIC: GAMEMD 0x004E1CE0 SYMBOL
-// _$E120
-SizePair DAT_008B3EF8;
 
 namespace UI {
 	HWND __fastcall BeginDialog(int id, DLGPROC proc, int extra);
@@ -121,6 +45,48 @@ extern CCToolTip * ToolTips;
 extern unsigned char DAT_00A8EDDC;
 extern int FUN_00407000(void);
 extern BOOL CALLBACK Game_Controls_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+
+// SYNTHETIC: GAMEMD 0x004E1AF0 SYMBOL
+// _$E41
+
+// SYNTHETIC: GAMEMD 0x004E1B10 SYMBOL
+// _$E2
+
+// SYNTHETIC: GAMEMD 0x004E1B40 SYMBOL
+// _$E5
+
+// SYNTHETIC: GAMEMD 0x004E1B60 SYMBOL
+// _$E8
+
+// SYNTHETIC: GAMEMD 0x004E1B80 SYMBOL
+// _$E11
+
+// SYNTHETIC: GAMEMD 0x004E1BA0 SYMBOL
+// _$E14
+
+// SYNTHETIC: GAMEMD 0x004E1BC0 SYMBOL
+// _$E17
+
+// SYNTHETIC: GAMEMD 0x004E1BE0 SYMBOL
+// _$E20
+
+// SYNTHETIC: GAMEMD 0x004E1C20 SYMBOL
+// _$E23
+
+// SYNTHETIC: GAMEMD 0x004E1C50 SYMBOL
+// _$E26
+
+// SYNTHETIC: GAMEMD 0x004E1C80 SYMBOL
+// _$E29
+
+// SYNTHETIC: GAMEMD 0x004E1CB0 SYMBOL
+// _$E32
+
+// SYNTHETIC: GAMEMD 0x004E1CC0 SYMBOL
+// _$E35
+
+// SYNTHETIC: GAMEMD 0x004E1CE0 SYMBOL
+// _$E38
 
 // FUNCTION: GAMEMD 0x004E1D00
 void GameControlsClass::Dialog(void)

@@ -407,3 +407,18 @@ HRESULT BombListClass::Load(IStream * stream)
 	}
 	return(result);
 }
+
+// FUNCTION: GAMEMD 0x004393D0
+int BombClass::Fetch_Object_Size(void) const
+{
+	return sizeof(BombClass);
+}
+
+// FUNCTION: GAMEMD 0x004393E0
+RTTIType BombClass::Fetch_RTTI(void) const
+{
+	return RTTI_BOMB;
+}
+
+// SYNTHETIC: GAMEMD 0x004393F0
+// ??_GBombClass@@UAEPAXI@Z

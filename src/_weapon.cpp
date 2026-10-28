@@ -65,3 +65,10 @@ template class DynamicVectorClass<WeaponTypeClass *>;
 // ?ID@?$VectorClass@PAVWeaponTypeClass@@@@UAEHPBQAVWeaponTypeClass@@@Z
 // TEMPLATE: GAMEMD 0x0040FD90
 // ?Resize@?$DynamicVectorClass@PAVWeaponTypeClass@@@@UAE_NHPBQAVWeaponTypeClass@@@Z
+
+// TEMPLATE: GAMEMD 0x0040FE40
+// ?ID@?$DynamicVectorClass@PAVWeaponTypeClass@@@@UAEHABQAVWeaponTypeClass@@@Z
+// SYNTHETIC: GAMEMD 0x0040FE70
+// ??_G?$VectorClass@PAVWeaponTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x0040FEC0
+// ??_G?$DynamicVectorClass@PAVWeaponTypeClass@@@@UAEPAXI@Z

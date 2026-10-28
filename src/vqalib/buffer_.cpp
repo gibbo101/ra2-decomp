@@ -399,6 +399,192 @@ STATIC long AllocBuffers(VQAHandleP *vqap)
 	return(VQAERR_NONE);
 }
 
+// FUNCTION: GAMEMD 0x007BDF80
+STATIC void FreeBuffers(VQAHandleP *vqap)
+{
+	VQACBNode    *cb_this,
+	             *cb_next;
+	VQAFrameNode *frame_this,
+	             *frame_next;
+	long         i;
+
+	VQAAudio *audio;
+	VQAConfig *config;
+	VQALoader *loader;
+	VQAHeader *header;
+
+	config = &vqap->Config;
+	header = &vqap->Header;
+	loader = &vqap->Loader;
+	audio = &vqap->Audio;
+
+	if (vqap->LoopCache.Ptr != NULL) {
+		config->MemoryHandler((VQAHandle *)vqap, VQAMEM_UNLOCK, vqap->LoopCache.Ptr, vqap->LoopCache.Size);
+		config->MemoryHandler((VQAHandle *)vqap, VQAMEM_FREE, vqap->LoopCache.Ptr, NULL);
+	}
+
+		if (vqap->Foff) {
+		config->MemoryHandler((VQAHandle *)vqap, VQAMEM_UNLOCK, vqap->Foff, header->Frames * sizeof(*vqap->Foff));
+		config->MemoryHandler((VQAHandle *)vqap, VQAMEM_FREE, vqap->Foff, NULL);
+	}
+
+	if (config->AudioBuf == NULL && audio->Buffer != NULL) {
+		config->MemoryHandler((VQAHandle *)vqap, VQAMEM_UNLOCK, audio->Buffer, config->AudioBufSize);
+		config->MemoryHandler((VQAHandle *)vqap, VQAMEM_FREE, audio->Buffer, NULL);
+	}
+
+		if (audio->IsLoaded) {
+		config->MemoryHandler((VQAHandle *)vqap, VQAMEM_UNLOCK, audio->IsLoaded, audio->NumAudBlocks * sizeof(*audio->IsLoaded));
+		config->MemoryHandler((VQAHandle *)vqap, VQAMEM_FREE, audio->IsLoaded, NULL);
+	}
+
+	if (audio->BlockRepeats != NULL) {
+		config->MemoryHandler((VQAHandle *)vqap, VQAMEM_UNLOCK, audio->BlockRepeats, audio->NumAudBlocks * sizeof(*audio->BlockRepeats));
+		config->MemoryHandler((VQAHandle *)vqap, VQAMEM_FREE, audio->BlockRepeats, NULL);
+	}
+
+		if (audio->TempBuf != NULL) {
+		config->MemoryHandler((VQAHandle *)vqap, VQAMEM_UNLOCK, audio->TempBuf, audio->TempBufSize);
+		config->MemoryHandler((VQAHandle *)vqap, VQAMEM_FREE, audio->TempBuf, NULL);
+	}
+
+	if (audio->HMIBuffer != NULL) {
+		config->MemoryHandler((VQAHandle *)vqap, VQAMEM_UNLOCK, audio->HMIBuffer, config->HMIBufSize);
+		config->MemoryHandler((VQAHandle *)vqap, VQAMEM_FREE, audio->HMIBuffer, NULL);
+	}
+
+	frame_this = vqap->FrameData;
+
+	for (i = 0; i < config->NumFrameBufs; i++) {
+		if (frame_this) {
+			frame_next = frame_this->Next;
+
+			vqap->Max_Pal_Size += 4;
+			vqap->Max_Ptr_Size += 4;
+
+			config->MemoryHandler((VQAHandle *)vqap, VQAMEM_UNLOCK, frame_this, sizeof(VQAFrameNode) + vqap->Max_Ptr_Size
+					+ vqap->Max_Pal_Size);
+			config->MemoryHandler((VQAHandle *)vqap, VQAMEM_FREE, frame_this, NULL);
+			frame_this = frame_next;
+		} else {
+			break;
+		}
+	}
+
+	if (vqap->AltBufferFlags & VQAABUFF_ALTPTR) {
+		if (vqap->AltPtrBuffer != NULL) {
+			config->MemoryHandler((VQAHandle *)vqap, VQAMEM_UNLOCK, vqap->AltPtrBuffer, vqap->PtrBufferSize);
+			config->MemoryHandler((VQAHandle *)vqap, VQAMEM_FREE, vqap->AltPtrBuffer, NULL);
+			vqap->AltPtrBuffer = NULL;
+		}
+	}
+
+		cb_this = vqap->CBData;
+
+	for (i = 0; i < config->NumCBBufs; i++) {
+		if (cb_this) {
+			cb_next = cb_this->Next;
+
+			vqap->Max_CB_Size += 4;
+
+			config->MemoryHandler((VQAHandle *)vqap, VQAMEM_UNLOCK, cb_this, sizeof(VQACBNode) + vqap->Max_CB_Size);
+			config->MemoryHandler((VQAHandle *)vqap, VQAMEM_FREE, cb_this, NULL);
+			cb_this = cb_next;
+		} else {
+			break;
+		}
+	}
+
+	if (vqap->AltBufferFlags & VQAABUFF_ALTCB) {
+		if (vqap->AltCBBuffer != NULL) {
+			config->MemoryHandler((VQAHandle *)vqap, VQAMEM_UNLOCK, vqap->AltCBBuffer, vqap->CBBufferSize);
+			config->MemoryHandler((VQAHandle *)vqap, VQAMEM_FREE, vqap->AltCBBuffer, NULL);
+			vqap->AltCBBuffer = NULL;
+		}
+	}
+
+	
+
+	if (vqap->PaletteInfo.Data != NULL) {
+		config->MemoryHandler((VQAHandle *)vqap, VQAMEM_UNLOCK, vqap->PaletteInfo.Data, vqap->PaletteInfo.Header.Count * sizeof(*vqap->PaletteInfo.Data));
+		config->MemoryHandler((VQAHandle *)vqap, VQAMEM_FREE, vqap->PaletteInfo.Data, NULL);
+	}
+
+	if (vqap->CodebookInfo.Data != NULL) {
+		config->MemoryHandler((VQAHandle *)vqap, VQAMEM_UNLOCK, vqap->CodebookInfo.Data, vqap->CodebookInfo.Header.Count * sizeof(*vqap->CodebookInfo.Data));
+		config->MemoryHandler((VQAHandle *)vqap, VQAMEM_FREE, vqap->CodebookInfo.Data, NULL);
+	}
+
+	unsigned long count;
+	unsigned long tablecount;
+	unsigned long tablecount2;
+	unsigned long k;
+	unsigned long staticcount;
+
+	tablecount = vqap->MSCInfo.Header.Count;
+	for (k = 0; k < tablecount; k++) {
+		count = vqap->MSCInfo.Data2[k].Count;
+		VQAMSCInfo::DATA2::DATA *data = vqap->MSCInfo.Data2[k].Data;
+		void *buf = data->Buffer;
+		if (buf != NULL) {
+			VQAMSCInfo::TABLE *table = &vqap->MSCInfo.Table[k];
+			config->MemoryHandler((VQAHandle *)vqap, VQAMEM_UNLOCK, buf, count * PADSIZE(table->EntrySize));
+			config->MemoryHandler((VQAHandle *)vqap, VQAMEM_FREE, buf, NULL);
+		}
+		if (data != NULL) {
+			config->MemoryHandler((VQAHandle *)vqap, VQAMEM_UNLOCK, data, count * sizeof(*data));
+			config->MemoryHandler((VQAHandle *)vqap, VQAMEM_FREE, data, NULL);
+		}
+	}
+
+	if (vqap->MSCInfo.Data2 != NULL) {
+		config->MemoryHandler((VQAHandle *)vqap, VQAMEM_UNLOCK, vqap->MSCInfo.Data2, tablecount * sizeof(*vqap->MSCInfo.Data2));
+		config->MemoryHandler((VQAHandle *)vqap, VQAMEM_FREE, vqap->MSCInfo.Data2, NULL);
+	}
+
+	if (vqap->MSCInfo.Table != NULL) {
+		config->MemoryHandler((VQAHandle *)vqap, VQAMEM_UNLOCK, vqap->MSCInfo.Table, tablecount * sizeof(*vqap->MSCInfo.Table));
+		config->MemoryHandler((VQAHandle *)vqap, VQAMEM_FREE, vqap->MSCInfo.Table, NULL);
+	}
+
+	tablecount2 = vqap->MFCInfo.Header.Count;
+	for (k = 0; k < tablecount2; k++) {
+		count = vqap->MFCInfo.Data2[k].Count;
+		VQAMFCInfo::DATA2::DATA *data = vqap->MFCInfo.Data2[k].Data;
+		void *buf = data->Buffer;
+		if (buf != NULL) {
+			VQAMFCInfo::TABLE *table = &vqap->MFCInfo.Table[k];
+			config->MemoryHandler((VQAHandle *)vqap, VQAMEM_UNLOCK, buf, count * PADSIZE(table->EntrySize));
+			config->MemoryHandler((VQAHandle *)vqap, VQAMEM_FREE, buf, NULL);
+		}
+		if (data != NULL) {
+			config->MemoryHandler((VQAHandle *)vqap, VQAMEM_UNLOCK, data, count * sizeof(*data));
+			config->MemoryHandler((VQAHandle *)vqap, VQAMEM_FREE, data, NULL);
+		}
+	}
+
+	if (vqap->MFCInfo.Data2 != NULL) {
+		config->MemoryHandler((VQAHandle *)vqap, VQAMEM_UNLOCK, vqap->MFCInfo.Data2, tablecount2 * sizeof(*vqap->MFCInfo.Data2));
+		config->MemoryHandler((VQAHandle *)vqap, VQAMEM_FREE, vqap->MFCInfo.Data2, NULL);
+	}
+
+	if (vqap->MFCInfo.Table != NULL) {
+		config->MemoryHandler((VQAHandle *)vqap, VQAMEM_UNLOCK, vqap->MFCInfo.Table, tablecount2 * sizeof(*vqap->MFCInfo.Table));
+		config->MemoryHandler((VQAHandle *)vqap, VQAMEM_FREE, vqap->MFCInfo.Table, NULL);
+	}
+
+	staticcount = vqap->MFCInfo.Header.StaticCount;
+	if (vqap->MFCInfo.StaticData != NULL) {
+		config->MemoryHandler((VQAHandle *)vqap, VQAMEM_UNLOCK, vqap->MFCInfo.StaticData, staticcount * sizeof(*vqap->MFCInfo.StaticData));
+		config->MemoryHandler((VQAHandle *)vqap, VQAMEM_FREE, vqap->MFCInfo.StaticData, NULL);
+	}
+
+	if (vqap->LoopInfo.Data != NULL) {
+		config->MemoryHandler((VQAHandle *)vqap, VQAMEM_UNLOCK, vqap->LoopInfo.Data, vqap->LoopInfo.Header.Count * sizeof(*vqap->LoopInfo.Data));
+		config->MemoryHandler((VQAHandle *)vqap, VQAMEM_FREE, vqap->LoopInfo.Data, NULL);
+	}
+}
+
 // FUNCTION: GAMEMD 0x007BE4A0
 long VQA_Configure_Buffer(VQAHandleP *vqap)
 {

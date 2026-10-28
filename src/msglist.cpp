@@ -594,6 +594,54 @@ void MessageListClass::Set_Width(int width)
 	}
 }
 
+// FUNCTION: GAMEMD 0x005D4B20
+int MessageListClass::Trim_Message(wchar_t * dest, wchar_t * src, int min_chars,
+	int max_chars, int scandir)
+{
+	int i;
+	int len;
+	int found;
+
+	if (min_chars <= 0) {
+		return(0);
+	}
+
+	len = wcslen(src);
+	if (max_chars > len) {
+		max_chars = len;
+	}
+
+	found = 0;
+	if (scandir == 0) {
+		for (i = min_chars; i <= max_chars; i++) {
+			if (src[i - 1] != 0 && (unsigned)src[i - 1] <= _CONTROL) {
+				found = 1;
+				break;
+			}
+		}
+	}
+	else {
+		for (i = max_chars; i >= min_chars; i--) {
+			if (src[i - 1] != 0 && (unsigned)src[i - 1] <= _CONTROL) {
+				found = 1;
+				break;
+			}
+		}
+	}
+	if (!found) {
+		i = min_chars;
+	}
+
+	if (dest) {
+		memcpy (dest, src, i * sizeof(dest[0]));
+		dest[i] = 0;
+	}
+
+	memmove (src, src + i, (len - i + 1) * sizeof(src[0]));
+
+	return(i);
+}
+
 // FUNCTION: GAMEMD 0x005D4BF0
 void MessageListClass::Compute_Y(void)
 {

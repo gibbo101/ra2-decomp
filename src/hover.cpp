@@ -497,6 +497,9 @@ boolean STDMETHODCALLTYPE HoverLocomotionClass::Is_Moving_Here(CoordStruct to)
 // SYNTHETIC: GAMEMD 0x005172C0
 // ??_GHoverLocomotionClass@@UAEPAXI@Z
 
+// SYNTHETIC: GAMEMD 0x005172F0
+// ??_GLocomotionClass@@UAEPAXI@Z
+
 // TEMPLATE: GAMEMD 0x00517310
 // ??8?$TPoint2D@H@@QBE_NABV0@@Z
 template<class T>

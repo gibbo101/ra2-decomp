@@ -38,6 +38,9 @@
 // _$E38
 // SYNTHETIC: GAMEMD 0x004C3790 SYMBOL
 // _$E41
+// SYNTHETIC: GAMEMD 0x004C37B0 SYMBOL
+// _$E44
+const Rect RECT_NONE_2(0, 0, 0, 0);
 
 void * Build_Fading_Table(PaletteClass const & palette, void * dest, int color, int frac);
 

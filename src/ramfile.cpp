@@ -611,3 +611,12 @@ int RAMFileClass::Write(void const * buffer, int size)
 
 // SYNTHETIC: GAMEMD 0x0065C5A0
 // ??_GRAMFileClass@@UAEPAXI@Z
+
+// FUNCTION: GAMEMD 0x0065C5F0
+// FileClass::Get_Date_Time
+
+// FUNCTION: GAMEMD 0x0065C600
+// FileClass::Set_Date_Time
+
+// SYNTHETIC: GAMEMD 0x0065C610
+// ??_GFileClass@@UAEPAXI@Z

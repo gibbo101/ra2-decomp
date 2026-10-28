@@ -2780,3 +2780,43 @@ template class DynamicVectorClass<PlanningBranchClass *>;
 // TEMPLATE: GAMEMD 0x0063E430
 // ?ID@?$VectorClass@PAVPlanningNodeClass@@@@UAEHABQAVPlanningNodeClass@@@Z
 template class VectorClass<PlanningNodeClass *>;
+
+// TEMPLATE: GAMEMD 0x0063E470
+// ?ID@?$VectorClass@PAVPlanningNodeClass@@@@UAEHPBQAVPlanningNodeClass@@@Z
+template class VectorClass<PlanningNodeClass *>;
+
+// TEMPLATE: GAMEMD 0x0063E490
+// ?Resize@?$DynamicVectorClass@PAVPlanningNodeClass@@@@UAE_NHPBQAVPlanningNodeClass@@@Z
+// TEMPLATE: GAMEMD 0x0063E620
+// ?ID@?$DynamicVectorClass@PAVPlanningNodeClass@@@@UAEHABQAVPlanningNodeClass@@@Z
+template class DynamicVectorClass<PlanningNodeClass *>;
+
+// TEMPLATE: GAMEMD 0x0063E650
+// ??8?$VectorClass@PAVEventClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x0063E690
+// ?Resize@?$VectorClass@PAVEventClass@@@@UAE_NHPBQAVEventClass@@@Z
+// TEMPLATE: GAMEMD 0x0063E740
+// ?Clear@?$VectorClass@PAVEventClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0063E770
+// ?ID@?$VectorClass@PAVEventClass@@@@UAEHABQAVEventClass@@@Z
+// TEMPLATE: GAMEMD 0x0063E7B0
+// ?ID@?$VectorClass@PAVEventClass@@@@UAEHPBQAVEventClass@@@Z
+template class VectorClass<EventClass *>;
+
+// TEMPLATE: GAMEMD 0x0063E7D0
+// ?Resize@?$DynamicVectorClass@PAVEventClass@@@@UAE_NHPBQAVEventClass@@@Z
+// TEMPLATE: GAMEMD 0x0063E880
+// ?Add@?$DynamicVectorClass@PAVEventClass@@@@QAE_NABQAVEventClass@@@Z
+// TEMPLATE: GAMEMD 0x0063E8D0
+// ?ID@?$DynamicVectorClass@PAVEventClass@@@@UAEHABQAVEventClass@@@Z
+template class DynamicVectorClass<EventClass *>;
+
+// TEMPLATE: GAMEMD 0x0063E950
+// ??8?$VectorClass@PAVPlanningTokenClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x0063E990
+// ?Resize@?$VectorClass@PAVPlanningTokenClass@@@@UAE_NHPBQAVPlanningTokenClass@@@Z
+// TEMPLATE: GAMEMD 0x0063EA40
+// ?Clear@?$VectorClass@PAVPlanningTokenClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x0063EA70
+// ?ID@?$VectorClass@PAVPlanningTokenClass@@@@UAEHABQAVPlanningTokenClass@@@Z
+template class VectorClass<PlanningTokenClass *>;

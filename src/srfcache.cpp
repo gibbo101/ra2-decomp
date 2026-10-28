@@ -5,12 +5,16 @@
 
 #define NDEBUG
 #include "always.h"
+#include "rect.h"
 #include "srfcache.h"
 #include "ccfile.h"
 #include "dsurface.h"
 #include "ownrdraw.h"
 #include "pcx.h"
 #include <new>
+
+// SYNTHETIC: GAMEMD 0x006B9350 SYMBOL
+// _$E2
 
 // FUNCTION: GAMEMD 0x006B9370
 int SurfaceCacheConvertPixel(int red, int green, int blue)

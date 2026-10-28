@@ -29,6 +29,9 @@ namespace Unsorted { extern int MuteSWLaunches; }
 extern BOOL CALLBACK Game_Options_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 extern BOOL CALLBACK Abort_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 extern void __fastcall FUN_0065F520(ScenarioClass * scen);
+// SYNTHETIC: GAMEMD 0x004F0ED0 SYMBOL
+// _$E2
+
 // SYNTHETIC: GAMEMD 0x004F0EF0 SYMBOL
 // _$E70
 // SYNTHETIC: GAMEMD 0x004F0F20 SYMBOL

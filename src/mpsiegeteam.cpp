@@ -127,3 +127,14 @@ MPSiegeAttackerTeam::MPSiegeAttackerTeam(void) :
 	MultiplayerTeam(StringTable::LoadString("MP:AttackerTeam", NULL, "D:\\ra2mdpost\\MPSiegeTeam.cpp", 22), 1)
 {
 }
+
+// FUNCTION: GAMEMD 0x005CAF00
+MPSiegeAttackerTeam::~MPSiegeAttackerTeam(void)
+{
+}
+
+// SYNTHETIC: GAMEMD 0x005CAF10
+// ??_GMPSiegeDefenderTeam@@UAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x005CAF40
+// ??_GMPSiegeAttackerTeam@@UAEPAXI@Z

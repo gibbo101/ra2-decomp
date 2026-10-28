@@ -18,6 +18,28 @@ CounterClass::~CounterClass(void)
 {
 }
 
+// FUNCTION: GAMEMD 0x0049FA00
+int CounterClass::Increment(int index)
+{
+	if (Reserve(index)) {
+		++Vector[index];
+		++TotalCount;
+		return(Vector[index]);
+	}
+	return(0);
+}
+
+// FUNCTION: GAMEMD 0x0049FA70
+int CounterClass::Decrement(int index)
+{
+	if (Reserve(index)) {
+		--Vector[index];
+		--TotalCount;
+		return(Vector[index]);
+	}
+	return(0);
+}
+
 // FUNCTION: GAMEMD 0x0049FAE0
 int CounterClass::Value(int index) const
 {

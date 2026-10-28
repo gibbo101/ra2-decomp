@@ -11,6 +11,7 @@
 #include <cctype>
 #include <cstring>
 
+// FUNCTION: GAMEMD 0x007B4630
 Wstring::Wstring(IN char const* string) :str(NULL)
 {
 	set(string);

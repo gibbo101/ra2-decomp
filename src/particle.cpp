@@ -6,6 +6,7 @@
 #define INCLUDE_COM
 #include "always.h"
 #include "geometry.h"
+#include "rect.h"
 #include "particle.h"
 #include "_alpha.h"
 #include "_convert.h"
@@ -87,6 +88,12 @@ LEPTON ParticleClass::GasWindY[FACING_COUNT] = { -2, -2, 0, 2, 2, 2, 0, -2 };
 
 // SYNTHETIC: GAMEMD 0x0062B580 SYMBOL
 // _$E35
+
+// SYNTHETIC: GAMEMD 0x0062B5A0 SYMBOL
+// _$E38
+
+// SYNTHETIC: GAMEMD 0x0062B5C0 SYMBOL
+// _$E41
 
 // FUNCTION: GAMEMD 0x0062B5E0
 ParticleClass::ParticleClass(ParticleTypeClass const * type, Coord const & origin, Coord const & target, ParticleSystemClass * partsys) :

@@ -27,6 +27,7 @@
 #include "smudge.h"
 #include "sun.h"
 #include "tactical.h"
+#include "rect.h"
 #include "geometry.h"
 #include "tracker.h"
 
@@ -37,6 +38,8 @@ struct FileSystem {
 	static void const * LoadFile(char const * name, bool flag);
 };
 
+// SYNTHETIC: GAMEMD 0x006B5050 SYMBOL
+// _$E2
 // SYNTHETIC: GAMEMD 0x006B5070 SYMBOL
 // _$E137
 // SYNTHETIC: GAMEMD 0x006B50A0 SYMBOL

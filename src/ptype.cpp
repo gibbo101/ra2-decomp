@@ -6,6 +6,7 @@
 #define INCLUDE_COM
 #include "always.h"
 #include "geometry.h"
+#include "rect.h"
 #include "ptype.h"
 #include "ccini.h"
 #include "findmake.h"
@@ -40,6 +41,9 @@
 // _$E32
 // SYNTHETIC: GAMEMD 0x00644BA0 SYMBOL
 // _$E35
+
+// SYNTHETIC: GAMEMD 0x00644BC0 SYMBOL
+// _$E38
 
 extern char DAT_00889F64[];
 

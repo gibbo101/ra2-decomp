@@ -109,6 +109,12 @@ void Difficulty_Get(CCINIClass const & ini, DifficultyClass & diff, char const *
 // SYNTHETIC: GAMEMD 0x00664CC0 SYMBOL
 // _$E68
 
+// SYNTHETIC: GAMEMD 0x00664CE0 SYMBOL
+// _$E71
+
+// SYNTHETIC: GAMEMD 0x00664D00 SYMBOL
+// _$E10
+
 // FUNCTION: GAMEMD 0x00664D20
 RulesClass::RulesClass(NoInitClass const & x) :
 	RadColor(x),

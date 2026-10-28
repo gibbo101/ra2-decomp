@@ -10,6 +10,9 @@
 #include "blitblit.h"
 #include "swap.h"
 
+// SYNTHETIC: GAMEMD 0x007BA5C0 SYMBOL
+// _$E2
+
 typedef int OutCode;
 
 const int CODE_INSIDE = 0;

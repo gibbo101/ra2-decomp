@@ -420,4 +420,8 @@ template class VectorClass<SpawnManagerClass::SpawnControl *>;
 // ??_G?$DynamicVectorClass@PAUSpawnControl@SpawnManagerClass@@@@UAEPAXI@Z
 // SYNTHETIC: GAMEMD 0x006B87E0
 // ??_G?$VectorClass@PAVSpawnManagerClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x006B8830
+// ??_G?$DynamicVectorClass@PAVSpawnManagerClass@@@@UAEPAXI@Z
+// TEMPLATE: GAMEMD 0x006B8880
+// ??0?$VectorClass@PAUSpawnControl@SpawnManagerClass@@@@QAE@HPBQAUSpawnControl@SpawnManagerClass@@@Z
 template class VectorClass<SpawnManagerClass *>;

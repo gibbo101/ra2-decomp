@@ -19,11 +19,15 @@ class AircraftTrackerClass
 	public:
 		void Add(FootClass * foot);
 		void Remove(FootClass * foot);
+		void FUN_00413490(AbstractClass * target);
 		void Update(FootClass * foot, Cell oldcell, Cell newcell);
 		bool IsJumpjet(FootClass * foot);
 		void Clear(void);
 		void FillCurrentVector(CellClass * cell, int range);
 		FootClass * Get(void);
+
+		DynamicVectorClass<TechnoClass *> TrackerVectors[20][20];
+		DynamicVectorClass<TechnoClass *> CurrentVector;
 };
 
 class ParasiteClass;

@@ -73,6 +73,9 @@ struct PacketQueue {
 // FUNCTION: GAMEMD 0x006C6AD0
 BasicTimerClass<SystemTimerClass> GameTimer;
 
+// SYNTHETIC: GAMEMD 0x006C6AF0 SYMBOL
+// _$E44
+
 // FUNCTION: GAMEMD 0x006C6B00
 PacketEntry::PacketEntry(PacketEntry const * rhs)
 {

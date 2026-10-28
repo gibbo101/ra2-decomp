@@ -15,6 +15,9 @@
 #include "dsurface.h"
 #include "shapeset.h"
 
+// SYNTHETIC: GAMEMD 0x0069DCD0 SYMBOL
+// _$E2
+
 // FUNCTION: GAMEMD 0x0069DCF0
 ShapeButtonClass::ShapeButtonClass(void) :
 	BASECLASS(0, 0, 0, 0, 0),

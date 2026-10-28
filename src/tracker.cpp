@@ -136,3 +136,156 @@ DynamicVectorClass<AbstractClass *> ObjectsToDelete;
 
 // SYNTHETIC: GAMEMD 0x00725890 SYMBOL
 // _$E187
+
+#include "bomblist.h"
+#include "disklaser.h"
+#include "foot.h"
+#include "kamikaze.h"
+
+void __fastcall FUN_00733160(AbstractClass * target);
+
+static inline bool Is_Object(AbstractClass const * a)
+{
+	if (a == NULL) return(false);
+	unsigned char flag = (a->AbstractFlags >> 1) & 1;
+	return(flag != 0);
+}
+
+// FUNCTION: GAMEMD 0x007258D0
+void Detach_This_From_All(AbstractClass const * target, bool all)
+{
+	int index = 0;
+	RTTIType rtti = target->RTTI;
+
+	if (Map.PendingObjectPtr == target) {
+		Map.PendingObjectPtr = NULL;
+	}
+
+	if (Map.PendingObject == target) {
+		Map.PendingObject = NULL;
+		Map.SetActiveFoundation(NULL);
+	}
+
+	if (rtti == RTTI_PARTICLESYSTEM && target == GasSystem) {
+		GasSystem = NULL;
+	}
+
+	if (rtti == RTTI_HOUSE) {
+		for (index = 0; index < HousePtrTracker.Count(); index++) {
+			HousePtrTracker[index]->Detach(target, all);
+		}
+		Logic.Detach(target, all);
+		return;
+	}
+
+	if (rtti == RTTI_ANIM) {
+		for (index = 0; index < AnimPtrTracker.Count(); index++) {
+			AnimPtrTracker[index]->Detach(target, all);
+		}
+		return;
+	}
+
+	if (Is_Object(target)) {
+		for (index = 0; index < ObjectPtrTracker.Count(); index++) {
+			ObjectPtrTracker[index]->Detach(target, all);
+		}
+		BombListClass::Instance.PointerGotInvalid((AbstractClass *)target);
+		KamikazeInstance.Remove((AbstractClass *)target);
+		for (index = DiskLasers.Count() - 1; index >= 0; index--) {
+			DiskLasers[index]->PointerGotInvalid((AbstractClass *)target);
+		}
+		if (rtti == RTTI_INFANTRY || rtti == RTTI_UNIT || rtti == RTTI_AIRCRAFT) {
+			AircraftTracker.FUN_00413490((AbstractClass *)target);
+		}
+		FUN_00733160((AbstractClass *)target);
+		if (TacticalMap != NULL) {
+			TacticalMap->Detach(target, true);
+		}
+		Logic.Detach(target, all);
+		return;
+	}
+
+	if (target->As_AbstractTypeClass() != NULL) {
+		for (index = 0; index < AbstractTypePtrTracker.Count(); index++) {
+			AbstractTypePtrTracker[index]->Detach(target, all);
+		}
+		Rule->Detach(target, all);
+		return;
+	}
+
+	switch (rtti)
+	{
+		case RTTI_TAG:
+			for (index = 0; index < TagPtrTracker.Count(); index++) {
+				TagPtrTracker[index]->Detach(target, all);
+			}
+			Map.Detach(target, true);
+			Logic.Detach(target, all);
+			break;
+
+		case RTTI_TRIGGER:
+			for (index = 0; index < TriggerPtrTracker.Count(); index++) {
+				TriggerPtrTracker[index]->Detach(target, all);
+			}
+			break;
+
+		case RTTI_FACTORY:
+			for (index = 0; index < FactoryPtrTracker.Count(); index++) {
+				FactoryPtrTracker[index]->Detach(target, all);
+			}
+			Map.Detach(target, true);
+			break;
+
+		case RTTI_EVENT:
+		case RTTI_ACTION:
+			for (index = 0; index < EventActionPtrTracker.Count(); index++) {
+				EventActionPtrTracker[index]->Detach(target, all);
+			}
+			break;
+
+		case RTTI_WAYPOINT:
+			for (index = 0; index < WaypointPathPtrTracker.Count(); index++) {
+				WaypointPathPtrTracker[index]->Detach(target, all);
+			}
+			break;
+
+		case RTTI_TEAM:
+			for (index = 0; index < TeamPtrTracker.Count(); index++) {
+				TeamPtrTracker[index]->Detach(target, all);
+			}
+			break;
+
+		case RTTI_NEURON:
+			for (index = 0; index < NeuronPtrTracker.Count(); index++) {
+				NeuronPtrTracker[index]->Detach(target, all);
+			}
+			break;
+	}
+}
+
+// FUNCTION: GAMEMD 0x00725C70
+void Process_Deferred_Deletion(void)
+{
+	int index = 0;
+	while (index < ObjectsToDelete.Count()) {
+		AbstractClass *obj = ObjectsToDelete[index];
+		if (obj->Is_Inactive()) {
+			while (true) {
+				if (!ObjectsToDelete.Delete(obj)) {
+					break;
+				}
+			}
+			if (obj->Release()) {
+				if (typeid(BuildingClass) == typeid(*obj)
+				 || typeid(UnitClass) == typeid(*obj)
+				 || typeid(InfantryClass) == typeid(*obj)
+				 || typeid(AircraftClass) == typeid(*obj)) {
+					((ObjectClass *)obj)->IsActive = true;
+				}
+				delete obj;
+			}
+		} else {
+			++index;
+		}
+	}
+}

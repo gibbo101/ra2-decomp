@@ -4,6 +4,8 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
+#include "rect.h"
 #include "cheklist.h"
 #include "_convert.h"
 #include "_surface.h"
@@ -13,6 +15,9 @@
 #include "scheme.h"
 #include "vector.h"
 #include <cstdio>
+
+// SYNTHETIC: GAMEMD 0x00488260 SYMBOL
+// _$E41
 
 // FUNCTION: GAMEMD 0x00488280
 CheckListClass::CheckListClass(int id, int x, int y, int w, int h, TextPrintType flags,

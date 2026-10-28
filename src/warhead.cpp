@@ -45,6 +45,8 @@
 // _$E65
 // SYNTHETIC: GAMEMD 0x0075CE40 SYMBOL
 // _$E68
+// SYNTHETIC: GAMEMD 0x0075CE60 SYMBOL
+// _$E71
 
 // FUNCTION: GAMEMD 0x0075CE80
 float _Parse_Percentage(const char * string)

@@ -638,4 +638,7 @@ template class DynamicVectorClass<SlaveManagerClass *>;
 
 // TEMPLATE: GAMEMD 0x006B1A70
 // ?Length@?$TPoint2D@F@@QBEFXZ
+
+// TEMPLATE: GAMEMD 0x006B1AB0
+// ??0?$VectorClass@PAUSlaveControl@SlaveManagerClass@@@@QAE@HPBQAUSlaveControl@SlaveManagerClass@@@Z
 template class TPoint2D<short>;

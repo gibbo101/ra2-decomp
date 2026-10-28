@@ -4,6 +4,8 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "rect.h"
+#include "geometry.h"
 #include "bounce.h"
 #include "_map.h"
 #include "_tactica.h"
@@ -16,86 +18,47 @@
 #include "vector3.h"
 #include <math.h>
 
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007E3D70;
-extern const double DAT_007E3D78;
-
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
+// SYNTHETIC: GAMEMD 0x00439480 SYMBOL
+// _$E2
 
 // SYNTHETIC: GAMEMD 0x004394A0 SYMBOL
-// _$E80
-double DAT_0089C720 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
+// _$E5
 
 // SYNTHETIC: GAMEMD 0x004394D0 SYMBOL
-// _$E83
-double DAT_0089C770 = DAT_0089C720 / DAT_007E3D70;
+// _$E8
 
 // SYNTHETIC: GAMEMD 0x004394F0 SYMBOL
-// _$E86
-double DAT_0089C758 = DAT_007E1718 / DAT_0089C770;
+// _$E11
 
 // SYNTHETIC: GAMEMD 0x00439510 SYMBOL
-// _$E89
-double DAT_0089C750 = DAT_007E1720 * DAT_007E3D78;
+// _$E14
 
 // SYNTHETIC: GAMEMD 0x00439530 SYMBOL
-// _$E92
-double DAT_0089C728 = DAT_007E1728 * DAT_007E3D78;
+// _$E17
 
 // SYNTHETIC: GAMEMD 0x00439550 SYMBOL
-// _$E95
-double DAT_0089C700 = DAT_007E1730 * DAT_007E3D78;
+// _$E20
 
 // SYNTHETIC: GAMEMD 0x00439570 SYMBOL
-// _$E98
-int DAT_0089C778 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_0089C700 - DAT_0089C728) * DAT_0089C720));
+// _$E23
 
 // SYNTHETIC: GAMEMD 0x004395B0 SYMBOL
-// _$E101
-double DAT_0089C730 = FUN_004CADE0(DAT_0089C778 * DAT_007E1740);
+// _$E26
 
 // SYNTHETIC: GAMEMD 0x004395E0 SYMBOL
-// _$E104
-double DAT_0089C748 = FUN_004CADE0((DAT_0089C778 * 2) / DAT_0089C720);
+// _$E29
 
 // SYNTHETIC: GAMEMD 0x00439610 SYMBOL
-// _$E107
-int DAT_0089C76C = (int)(DAT_0089C778 * 4 + DAT_007E1738);
+// _$E32
 
 // SYNTHETIC: GAMEMD 0x00439640 SYMBOL
-// _$E110
-ShortPair DAT_0089C718;
+// _$E35
 
 // SYNTHETIC: GAMEMD 0x00439650 SYMBOL
-// _$E113
-IntTriple DAT_0089C738;
-
-struct IntTripleXYZ {
-	int X, Y, Z;
-	IntTripleXYZ(int x, int y, int z) { X = x; Y = y; Z = z; }
-};
+// _$E38
 
 // SYNTHETIC: GAMEMD 0x00439670 SYMBOL
-// _$E116
-IntTripleXYZ DAT_0089C760(0x80, 0x80, 0);
+// _$E41
 
 static inline Vector3 Normalize_Axis(const Vector3 & vec)
 {

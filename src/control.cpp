@@ -7,6 +7,9 @@
 #include "control.h"
 #include "rect.h"
 
+// SYNTHETIC: GAMEMD 0x0048E500 SYMBOL
+// _$E2
+
 // FUNCTION: GAMEMD 0x0048E520
 ControlClass::ControlClass(unsigned id, int x, int y, int w, int h, unsigned flags, bool sticky) :
 	BASECLASS(x, y, w, h, flags, sticky),

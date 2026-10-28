@@ -57,6 +57,10 @@
 // _$E32
 // SYNTHETIC: GAMEMD 0x005FA280 SYMBOL
 // _$E35
+// SYNTHETIC: GAMEMD 0x005FA2A0 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x005FA2C0 SYMBOL
+// _$E41
 
 struct MovieUnlockableInfo {
 	char const * Filename;

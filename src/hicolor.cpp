@@ -31,6 +31,19 @@ void rgb32_to_rgb24_clamped(unsigned char *buf, int len)
 	}
 }
 
+// FUNCTION: GAMEMD 0x004F4DF0
+void rgb24_to_rgb555(unsigned char *buf, int rows, int columns, int count)
+{
+	unsigned len = rows * columns * count;
+
+	unsigned char *src = buf;
+	for (unsigned i = 0; i < len; i++) {
+		*(unsigned short *)buf = PIXEL_RGB555(src[0], src[1], src[2]);
+		buf += 2;
+		src += 3;
+	}
+}
+
 // FUNCTION: GAMEMD 0x004F4EB0
 void rgb32_to_rgb24(unsigned char *buf, int rows, int columns, int count)
 {

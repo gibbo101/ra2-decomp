@@ -6,6 +6,7 @@
 #define INCLUDE_COM
 #include "always.h"
 #include "geometry.h"
+#include "rect.h"
 #include "trigger.h"
 #include "ccrand.h"
 #include "crc.h"
@@ -45,6 +46,10 @@
 // _$E32
 // SYNTHETIC: GAMEMD 0x00725F40 SYMBOL
 // _$E35
+// SYNTHETIC: GAMEMD 0x00725F60 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x00725F80 SYMBOL
+// _$E41
 
 // FUNCTION: GAMEMD 0x00725FA0
 TriggerClass::TriggerClass(TriggerTypeClass * trigtype) :

@@ -21,7 +21,7 @@ class RocketLocomotionClass : public LocomotionClass
 	public:
 
 		RocketLocomotionClass(void);
-		RocketLocomotionClass(NoInitClass const & x) : BASECLASS(x), MissionTimer(x), TrailerTimer(x) {}
+		RocketLocomotionClass(NoInitClass const & x) : BASECLASS(x), MissionTimer(x) {}
 		virtual ~RocketLocomotionClass(void) override;
 
 		virtual HRESULT STDMETHODCALLTYPE GetClassID(CLSID * retval) override;
@@ -30,6 +30,7 @@ class RocketLocomotionClass : public LocomotionClass
 
 		virtual boolean STDMETHODCALLTYPE Is_Moving(void) override;
 		virtual CoordStruct STDMETHODCALLTYPE Destination(void) override;
+		virtual Matrix3DStruct STDMETHODCALLTYPE Draw_Matrix(int * key) override;
 		virtual boolean STDMETHODCALLTYPE Process(void) override;
 		virtual void STDMETHODCALLTYPE Move_To(CoordStruct to) override;
 		virtual void STDMETHODCALLTYPE Stop_Moving(void) override;

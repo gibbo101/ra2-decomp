@@ -5,6 +5,7 @@
 #pragma once
 
 #include "bfiofile.h"
+class Wstring;
 
 class CDFileClass : public BufferIOFileClass
 {
@@ -12,6 +13,7 @@ class CDFileClass : public BufferIOFileClass
 
 	public:
 		CDFileClass(char const *filename);
+		CDFileClass(Wstring const & filename);
 		CDFileClass(void);
 		virtual ~CDFileClass(void) override {};
 

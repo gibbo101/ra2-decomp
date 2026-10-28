@@ -246,3 +246,130 @@ DynamicVectorClass<BuildingTypeClass *> BuildingTypes;
 
 // SYNTHETIC: GAMEMD 0x004E73A0 SYMBOL
 // _$E195
+
+// SYNTHETIC: GAMEMD 0x004E73E0 SYMBOL
+// _$E202
+DynamicVectorClass<AircraftTypeClass *> AircraftTypes;
+
+// SYNTHETIC: GAMEMD 0x004E7420 SYMBOL
+// _$E200
+
+// SYNTHETIC: GAMEMD 0x004E7460 SYMBOL
+// _$E207
+DynamicVectorClass<UnitTypeClass *> UnitTypes;
+
+// SYNTHETIC: GAMEMD 0x004E74A0 SYMBOL
+// _$E205
+
+// SYNTHETIC: GAMEMD 0x004E74E0 SYMBOL
+// _$E212
+DynamicVectorClass<AnimTypeClass *> AnimTypes;
+
+// SYNTHETIC: GAMEMD 0x004E7520 SYMBOL
+// _$E210
+
+// SYNTHETIC: GAMEMD 0x004E7560 SYMBOL
+// _$E217
+DynamicVectorClass<InfantryTypeClass *> InfantryTypes;
+
+// SYNTHETIC: GAMEMD 0x004E75A0 SYMBOL
+// _$E215
+
+// SYNTHETIC: GAMEMD 0x004E75E0 SYMBOL
+// _$E222
+DynamicVectorClass<BulletTypeClass *> BulletTypes;
+
+// SYNTHETIC: GAMEMD 0x004E7620 SYMBOL
+// _$E220
+
+// SYNTHETIC: GAMEMD 0x004E7660 SYMBOL
+// _$E227
+DynamicVectorClass<VoxelAnimTypeClass *> VoxelAnimTypes;
+
+// SYNTHETIC: GAMEMD 0x004E76A0 SYMBOL
+// _$E225
+
+// SYNTHETIC: GAMEMD 0x004E76E0 SYMBOL
+// _$E232
+DynamicVectorClass<IsometricTileTypeClass *> IsometricTileTypes;
+
+// SYNTHETIC: GAMEMD 0x004E7720 SYMBOL
+// _$E230
+
+// SYNTHETIC: GAMEMD 0x004E7760 SYMBOL
+// _$E237
+DynamicVectorClass<ParticleTypeClass *> ParticleTypes;
+
+// SYNTHETIC: GAMEMD 0x004E77A0 SYMBOL
+// _$E235
+
+// SYNTHETIC: GAMEMD 0x004E77E0 SYMBOL
+// _$E242
+DynamicVectorClass<ParticleSystemTypeClass *> ParticleSystemTypes;
+
+// SYNTHETIC: GAMEMD 0x004E7820 SYMBOL
+// _$E240
+
+// SYNTHETIC: GAMEMD 0x004E7860 SYMBOL
+// _$E247
+DynamicVectorClass<SuperWeaponTypeClass *> SuperWeaponTypes;
+
+// SYNTHETIC: GAMEMD 0x004E78A0 SYMBOL
+// _$E245
+
+// SYNTHETIC: GAMEMD 0x004E78E0 SYMBOL
+// _$E252
+DynamicVectorClass<SuperClass *> SuperWeapons;
+
+// SYNTHETIC: GAMEMD 0x004E7920 SYMBOL
+// _$E250
+
+// SYNTHETIC: GAMEMD 0x004E7960 SYMBOL
+// _$E257
+DynamicVectorClass<SuperClass *> ShowTimers;
+
+// SYNTHETIC: GAMEMD 0x004E79A0 SYMBOL
+// _$E255
+
+// SYNTHETIC: GAMEMD 0x004E79E0 SYMBOL
+// _$E262
+DynamicVectorClass<TechnoClass *> Technos;
+
+// SYNTHETIC: GAMEMD 0x004E7A20 SYMBOL
+// _$E260
+
+// SYNTHETIC: GAMEMD 0x004E7A60 SYMBOL
+// _$E267
+DynamicVectorClass<TechnoTypeClass *> TechnoTypes;
+
+// SYNTHETIC: GAMEMD 0x004E7AA0 SYMBOL
+// _$E265
+
+// SYNTHETIC: GAMEMD 0x004E7AE0 SYMBOL
+// _$E272
+DynamicVectorClass<ObjectClass *> Objects;
+
+// SYNTHETIC: GAMEMD 0x004E7B20 SYMBOL
+// _$E270
+
+// SYNTHETIC: GAMEMD 0x004E7B60 SYMBOL
+// _$E277
+DynamicVectorClass<AbstractTypeClass *> AbstractTypes;
+
+// SYNTHETIC: GAMEMD 0x004E7BA0 SYMBOL
+// _$E275
+
+// SYNTHETIC: GAMEMD 0x004E7BE0 SYMBOL
+// _$E282
+DynamicVectorClass<BuildingClass *> DAT_008B41E0;
+
+// SYNTHETIC: GAMEMD 0x004E7C20 SYMBOL
+// _$E280
+
+// SYNTHETIC: GAMEMD 0x004E7C60 SYMBOL
+// _$E287
+DynamicVectorClass<AnimClass *> MoveFlashes;
+
+// SYNTHETIC: GAMEMD 0x004E7CA0 SYMBOL
+// _$E285
+

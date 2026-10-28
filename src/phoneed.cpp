@@ -7,6 +7,7 @@
 
 #include "phoneed.h"
 #include "geometry.h"
+#include "rect.h"
 
 #include "data.h"
 #include "dbgprint.h"
@@ -52,6 +53,9 @@ class PhoneEntryEdit
 };
 BOOL CALLBACK Phone_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 BOOL CALLBACK Edit_Phone_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+// SYNTHETIC: GAMEMD 0x00630980 SYMBOL
+// _$E9
+
 // SYNTHETIC: GAMEMD 0x006309A0 SYMBOL
 // _$E30
 // SYNTHETIC: GAMEMD 0x006309D0 SYMBOL

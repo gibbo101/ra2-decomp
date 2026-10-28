@@ -51,6 +51,9 @@ struct IntTriple {
 	IntTriple() { A = 0; B = 0; C = 0; }
 };
 
+// SYNTHETIC: GAMEMD 0x005DA4B0 SYMBOL
+// _$E2
+
 // SYNTHETIC: GAMEMD 0x005DA4D0 SYMBOL
 // _$E80
 double DAT_00ABFF10 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);

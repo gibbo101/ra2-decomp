@@ -62,6 +62,14 @@ DynamicVectorClass<IsometricTileClass *> IsometricTiles;
 // ?ID@?$VectorClass@PAVIsometricTileClass@@@@UAEHABQAVIsometricTileClass@@@Z
 // TEMPLATE: GAMEMD 0x0040C9E0
 // ?ID@?$VectorClass@PAVIsometricTileClass@@@@UAEHPBQAVIsometricTileClass@@@Z
+// TEMPLATE: GAMEMD 0x0040CA00
+// ?Resize@?$DynamicVectorClass@PAVIsometricTileClass@@@@UAE_NHPBQAVIsometricTileClass@@@Z
+// TEMPLATE: GAMEMD 0x0040CAB0
+// ?ID@?$DynamicVectorClass@PAVIsometricTileClass@@@@UAEHABQAVIsometricTileClass@@@Z
+// SYNTHETIC: GAMEMD 0x0040CAE0
+// ??_G?$VectorClass@PAVIsometricTileClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x0040CB30
+// ??_G?$DynamicVectorClass@PAVIsometricTileClass@@@@UAEPAXI@Z
 
 template class VectorClass<IsometricTileClass *>;
 template class DynamicVectorClass<IsometricTileClass *>;

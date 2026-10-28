@@ -53,6 +53,10 @@
 // _$E32
 // SYNTHETIC: GAMEMD 0x007289A0 SYMBOL
 // _$E35
+// SYNTHETIC: GAMEMD 0x007289C0 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x007289E0 SYMBOL
+// _$E53
 
 // FUNCTION: GAMEMD 0x00728A00
 TunnelLocomotionClass::TunnelLocomotionClass(void) :
@@ -539,3 +543,6 @@ boolean STDMETHODCALLTYPE TunnelLocomotionClass::Is_Surfacing(void)
 
 // FUNCTION: GAMEMD 0x0072A200
 // TunnelLocomotionClass::Fetch_Object_Size
+
+// SYNTHETIC: GAMEMD 0x0072A210
+// ??_GTunnelLocomotionClass@@UAEPAXI@Z

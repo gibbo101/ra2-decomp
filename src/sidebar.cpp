@@ -92,9 +92,9 @@ SidebarClass::StripClass::SelectClass::SelectClass(void) :
 }
 
 // SYNTHETIC: GAMEMD 0x006A4C10 SYMBOL
-// _$E175
+// _$E173
 // SYNTHETIC: GAMEMD 0x006A4C40 SYMBOL
-// _$E172
+// _$E170
 SidebarClass::SBGadgetClass SidebarClass::Background;
 
 // FUNCTION: GAMEMD 0x006A4E40
@@ -104,35 +104,35 @@ SidebarClass::SBGadgetClass::SBGadgetClass(void) :
 }
 
 // SYNTHETIC: GAMEMD 0x006A4C60 SYMBOL
-// _$E181
+// _$E179
 // SYNTHETIC: GAMEMD 0x006A4C80 SYMBOL
-// _$E178
+// _$E176
 ShapeButtonClass SidebarClass::Power;
 // SYNTHETIC: GAMEMD 0x006A4CA0 SYMBOL
-// _$E186
-// SYNTHETIC: GAMEMD 0x006A4CC0 SYMBOL
 // _$E184
+// SYNTHETIC: GAMEMD 0x006A4CC0 SYMBOL
+// _$E182
 ShapeButtonClass SidebarClass::Repair;
 // SYNTHETIC: GAMEMD 0x006A4CE0 SYMBOL
-// _$E191
-// SYNTHETIC: GAMEMD 0x006A4D10 SYMBOL
 // _$E189
+// SYNTHETIC: GAMEMD 0x006A4D10 SYMBOL
+// _$E187
 ShapeButtonClass SidebarClass::TabButtons[4];
 // SYNTHETIC: GAMEMD 0x006A4D40 SYMBOL
-// _$E196
-// SYNTHETIC: GAMEMD 0x006A4D60 SYMBOL
 // _$E194
+// SYNTHETIC: GAMEMD 0x006A4D60 SYMBOL
+// _$E192
 ShapeButtonClass SidebarClass::Upgrade;
 // SYNTHETIC: GAMEMD 0x006A4D80 SYMBOL
-// _$E201
-// SYNTHETIC: GAMEMD 0x006A4DA0 SYMBOL
 // _$E199
+// SYNTHETIC: GAMEMD 0x006A4DA0 SYMBOL
+// _$E197
 ShapeButtonClass SidebarClass::Waypoint;
 
 // SYNTHETIC: GAMEMD 0x006A4DC0 SYMBOL
-// _$E206
-// SYNTHETIC: GAMEMD 0x006A4E10 SYMBOL
 // _$E204
+// SYNTHETIC: GAMEMD 0x006A4E10 SYMBOL
+// _$E202
 SidebarClass::StripClass::SelectClass SidebarClass::StripClass::SelectButton[SidebarClass::StripClass::SELECT_BUTTONS];
 
 // FUNCTION: GAMEMD 0x006A4E60

@@ -5,6 +5,7 @@
 
 #include "always.h"
 #include "geometry.h"
+#include "rect.h"
 #include "ship.h"
 #include "_map.h"
 #include "_rules.h"
@@ -51,6 +52,10 @@
 // _$E32
 // SYNTHETIC: GAMEMD 0x0069EBF0 SYMBOL
 // _$E35
+// SYNTHETIC: GAMEMD 0x0069EC10 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x0069EC30 SYMBOL
+// _$E41
 
 // FUNCTION: GAMEMD 0x0069EC50
 ShipLocomotionClass::ShipLocomotionClass(void) :

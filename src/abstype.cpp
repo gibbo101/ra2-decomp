@@ -39,6 +39,8 @@
 // _$E40
 // SYNTHETIC: GAMEMD 0x004107C0 SYMBOL
 // _$E43
+// SYNTHETIC: GAMEMD 0x004107E0 SYMBOL
+// _$E46
 
 // The display name of a type whose INI section gives no UIName label: empty.
 static wchar_t NoUIName_00887734[2];

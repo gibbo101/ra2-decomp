@@ -194,3 +194,58 @@ HRESULT STDMETHODCALLTYPE RocketLocomotionClass::GetClassID(CLSID * retval)
 	*retval = CLSIDs::Rocket;
 	return(S_OK);
 }
+
+// FUNCTION: GAMEMD 0x00663410
+HRESULT STDMETHODCALLTYPE RocketLocomotionClass::Load(IStream * stream)
+{
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		new (this) RocketLocomotionClass(NoInitClass());
+	}
+	return(result);
+}
+
+// FUNCTION: GAMEMD 0x00663460
+LayerType STDMETHODCALLTYPE RocketLocomotionClass::In_Which_Layer(void)
+{
+	return(LAYER_AIR);
+}
+
+// FUNCTION: GAMEMD 0x00663470
+Matrix3DStruct STDMETHODCALLTYPE RocketLocomotionClass::Draw_Matrix(int * key)
+{
+	Matrix3D mtx(true);
+	mtx.Rotate_Z(LinkedTo->PrimaryFacing.Current().As_Radian32());
+	if (CurrentPitch != 0.0f) {
+		mtx.Rotate_Y(-CurrentPitch);
+		AircraftTypeClass const * type = ((AircraftClass *)LinkedTo)->Class;
+		RocketStruct const * data;
+		if (type == Rule->V3Rocket.Type) {
+			data = &Rule->V3Rocket;
+		} else if (type == Rule->CMisl.Type) {
+			data = &Rule->CMisl;
+		} else {
+			data = &Rule->DMisl;
+		}
+		float final = data->PitchFinal * 1.5707963267948966;
+		if (key != NULL) {
+			if ((float)(data->PitchInitial * 1.5707963267948966) == CurrentPitch) {
+				*key |= 0x20;
+			} else if (CurrentPitch == final) {
+				*key |= 0x40;
+			} else {
+				*key = -1;
+			}
+		}
+	}
+	if (key != NULL) {
+		*key |= LinkedTo->PrimaryFacing.Current().As_Dir32();
+	}
+	return((Matrix3DStruct &)mtx);
+}
+
+// FUNCTION: GAMEMD 0x006635B0
+// RocketLocomotionClass::Fetch_Object_Size
+
+// SYNTHETIC: GAMEMD 0x006635C0
+// ??_GRocketLocomotionClass@@UAEPAXI@Z

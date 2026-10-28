@@ -184,6 +184,7 @@ extern DynamicVectorClass<ParticleTypeClass *>			ParticleTypes;
 extern DynamicVectorClass<ParticleSystemTypeClass *>	ParticleSystemTypes;
 extern DynamicVectorClass<SuperWeaponTypeClass *>		SuperWeaponTypes;
 extern DynamicVectorClass<SuperClass *>					SuperWeapons;
+extern DynamicVectorClass<SuperClass *>					ShowTimers;
 extern DynamicVectorClass<TechnoClass *>				Technos;
 extern DynamicVectorClass<TechnoTypeClass *>			TechnoTypes;
 extern DynamicVectorClass<ObjectClass *>				Objects;

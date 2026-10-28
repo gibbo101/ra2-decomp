@@ -9,7 +9,11 @@
 #include "globals.h"
 #include "stimer.h"
 #include "timer.h"
+#include "rect.h"
 #include <cstdio>
+
+// SYNTHETIC: GAMEMD 0x00774100 SYMBOL
+// _$E2
 
 // FUNCTION: GAMEMD 0x00774120
 WinModemClass::WinModemClass(void)

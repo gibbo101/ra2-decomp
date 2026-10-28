@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "rect.h"
 #include "slider.h"
 #include "_mixfile.h"
 #include "control.h"
@@ -17,6 +18,9 @@
 struct FileSystem {
 	static void const * LoadFile(char const * name, bool flag);
 };
+
+// SYNTHETIC: GAMEMD 0x006B1B00 SYMBOL
+// _$E2
 
 // FUNCTION: GAMEMD 0x006B1B20
 SliderClass::SliderClass(unsigned id, int x, int y, int w, int h, int belong_to_list)

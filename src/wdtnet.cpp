@@ -5,9 +5,8 @@
 
 #include "always.h"
 
-#include "wdtnet.h"
 #include "geometry.h"
-#include "rect.h"
+#include "wdtnet.h"
 
 #include "packet.h"
 #include "session.h"
@@ -16,40 +15,46 @@
 #include <new>
 
 // SYNTHETIC: GAMEMD 0x0076A8A0 SYMBOL
-// _$E5
+// _$E2
 
 // SYNTHETIC: GAMEMD 0x0076A8D0 SYMBOL
-// _$E8
+// _$E5
 
 // SYNTHETIC: GAMEMD 0x0076A8F0 SYMBOL
-// _$E11
+// _$E8
 
 // SYNTHETIC: GAMEMD 0x0076A910 SYMBOL
-// _$E14
+// _$E11
 
 // SYNTHETIC: GAMEMD 0x0076A930 SYMBOL
-// _$E17
+// _$E14
 
 // SYNTHETIC: GAMEMD 0x0076A950 SYMBOL
-// _$E20
+// _$E17
 
 // SYNTHETIC: GAMEMD 0x0076A970 SYMBOL
-// _$E23
+// _$E20
 
 // SYNTHETIC: GAMEMD 0x0076A9B0 SYMBOL
-// _$E26
+// _$E23
 
 // SYNTHETIC: GAMEMD 0x0076A9E0 SYMBOL
-// _$E29
+// _$E26
 
 // SYNTHETIC: GAMEMD 0x0076AA10 SYMBOL
-// _$E32
+// _$E29
 
 // SYNTHETIC: GAMEMD 0x0076AA40 SYMBOL
-// _$E35
+// _$E32
 
 // SYNTHETIC: GAMEMD 0x0076AA50 SYMBOL
+// _$E35
+
+// SYNTHETIC: GAMEMD 0x0076AA70 SYMBOL
 // _$E38
+
+// SYNTHETIC: GAMEMD 0x0076AA90 SYMBOL
+// _$E41
 
 #define PEEK_AT(data, pos) (*((unsigned char*)(data) + pos))
 

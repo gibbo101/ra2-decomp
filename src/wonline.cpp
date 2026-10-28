@@ -8424,3 +8424,47 @@ long __stdcall FUN_007AC500(AtlModule * module)
 
 // TEMPLATE: GAMEMD 0x007AC800
 // ?AddRef@?$CComObject@VCNetUtilEventSink@@@ATL@@UAGKXZ
+
+// TEMPLATE: GAMEMD 0x007AC820
+// ?Release@?$CComObject@VCNetUtilEventSink@@@ATL@@UAGKXZ
+
+// TEMPLATE: GAMEMD 0x007AC870
+// ?QueryInterface@?$CComObject@VCNetUtilEventSink@@@ATL@@UAGJABU_GUID@@PAPAX@Z
+
+// TEMPLATE: GAMEMD 0x007AC970
+// ?Clear@?$DynamicVectorClass@PAUtConnInfoStruct@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x007AC9A0
+// ?ID@?$DynamicVectorClass@PAUtConnInfoStruct@@@@UAEHPBQAUtConnInfoStruct@@@Z
+// TEMPLATE: GAMEMD 0x007AC9C0
+// ?GetItem@?$VectorClass@PAUtConnInfoStruct@@@@UBEPAUtConnInfoStruct@@H@Z
+struct tConnInfoStruct;
+template class DynamicVectorClass<tConnInfoStruct *>;
+
+// TEMPLATE: GAMEMD 0x007AD090
+// ??8?$VectorClass@PAUtConnInfoStruct@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x007AD0D0
+// ?Resize@?$VectorClass@PAUtConnInfoStruct@@@@UAE_NHPBQAUtConnInfoStruct@@@Z
+// TEMPLATE: GAMEMD 0x007AD180
+// ?Clear@?$VectorClass@PAUtConnInfoStruct@@@@UAEXXZ
+template class VectorClass<tConnInfoStruct *>;
+
+// TEMPLATE: GAMEMD 0x007ACA00
+// ?add@?$ArrayList@UUser@@@@QAEDAAUUser@@H@Z
+
+// TEMPLATE: GAMEMD 0x007ACB90
+// ?get@?$ArrayList@UUser@@@@QBEDAAUUser@@H@Z
+
+// TEMPLATE: GAMEMD 0x007ACBD0
+// ?clear@?$ArrayList@H@@QAEXXZ
+
+// TEMPLATE: GAMEMD 0x007ACD30
+// ?clear@?$ArrayList@VWstring@@@@QAEXXZ
+
+// TEMPLATE: GAMEMD 0x007ACD60
+// ?remove@?$ArrayList@VWstring@@@@QAEDH@Z
+
+// TEMPLATE: GAMEMD 0x007ACE30
+// ?get@?$ArrayList@VWstring@@@@QBEDAAVWstring@@H@Z
+
+// TEMPLATE: GAMEMD 0x007ACE60
+// ?clear@?$Dictionary@VWstring@@H@@QAEXXZ

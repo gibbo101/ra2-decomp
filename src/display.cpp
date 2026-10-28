@@ -2035,5 +2035,17 @@ void DisplayClass::Set_To_Follow(ObjectClass * object)
 // SYNTHETIC: GAMEMD 0x004AEBF0
 // ??_GDisplayClass@@UAEPAXI@Z
 
+// SYNTHETIC: GAMEMD 0x004AEC10
+// ??_GStraw@@UAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x004AEC30
+// ??_GBufferStraw@@UAEPAXI@Z
+
 // FUNCTION: GAMEMD 0x004AEC60
 // Surface::Surface
+
+// SYNTHETIC: GAMEMD 0x004AEC80
+// ??_GPipe@@UAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x004AECA0
+// ??_GBufferPipe@@UAEPAXI@Z

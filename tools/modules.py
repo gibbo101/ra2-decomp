@@ -31,12 +31,16 @@ Code that leaves unnamed takes weaker evidence, counted like O or V, where the n
 strictly between the kept labels around it and no module, nor src/ file holding none of
 its range, has it yet; Y and L may also name the module of a kept label beside it in its
 segment, and G either module around it:
-  Y  the function's class (RTTI, YRpp or data/names.csv name, or the class whose pointers
-     a static vector it builds holds) has no OpenTS file; the name is made from the class
-     name (FooClass foo, FooTypeClass footype, FooLocomotionClass foo), and two functions
-     there must agree on it unless it names a neighbour
-  L  a TibSun file shares a distinctive string literal or function name with the function,
-     defines its class, or gave tier 0 a find there
+  Y  the function's class (RTTI, YRpp or data/names.csv name, the class whose pointers
+     a static vector it builds holds, the class of a vtable only code of its segment holds,
+     or, in a segment naming no other class, the class whose pointers the vector template
+     holding it is over) has no OpenTS file; the name is made from the class name (FooClass
+     foo, FooTypeClass footype, FooLocomotionClass foo), and two functions there must agree
+     on it unless it names a neighbour
+  L  a TibSun file shares a distinctive string literal (or one of a table of strings the
+     function holds) or function name with the function, defines its class (or that of an
+     RTTI vtable holding it) or a file-scope object it initialises, or gave tier 0 a find
+     there
   G  a static initialiser (one that registers an atexit function), or the function it
      registers, builds at a fixed address an object of a type that only one TibSun file
      defines a file-scope object of
@@ -46,12 +50,18 @@ Then code still unnamed takes the name of a module beside it in its segment:
   C  code the module before it instantiated, which the linker keeps with its first user:
      a virtual that a vtable referenced by the module's code holds (unless the class's own
      file sorts in between), or a class template instance the module calls
-G, B and C replace labels of a function that were all overruled. Modules named only by
-Y, L or G (with B or C) are not certain. An unnamed range then takes the one TibSun file
-sorting between its named neighbours that it has evidence for, or, as a whole segment alone
-between them with no class OpenTS lacks and no object whose type TibSun defines elsewhere,
-the one TibSun file sorting there at all. A game range still unnamed takes the provisional
-name seg_<first address>; the VQA library's unnamed ranges stay "?".
+G, B and C replace labels of a function that were all overruled. Code no TibSun file
+claims below then takes the name of a module beside it in its segment that alone uses it:
+  U  every function calling it or holding its address is in that module, and no data
+     holds its address
+  D  else it holds a data address that, of other code, only that module's holds (an
+     address just past another the same code holds may end that object, and is skipped)
+Modules named only by Y, L or G (with B, C, U or D) are not certain. An unnamed range
+then takes the one TibSun file sorting between its named neighbours that it has evidence
+for, or, as a whole segment alone between them with no class OpenTS lacks and no object
+whose type TibSun defines elsewhere, the one TibSun file sorting there at all. A game
+range still unnamed takes the provisional name seg_<first address>; the VQA library's
+unnamed ranges stay "?".
 """
 
 import bisect
@@ -66,7 +76,7 @@ import capstone
 import pefile
 
 ROOT = Path(__file__).resolve().parent.parent
-WEIGHT = {"F": 10, "T": 10, "O": 1, "V": 1, "Y": 1, "L": 1, "G": 1, "C": 1, "B": 1}
+WEIGHT = {"F": 10, "T": 10, "O": 1, "V": 1, "Y": 1, "L": 1, "G": 1, "C": 1, "B": 1, "U": 1, "D": 1}
 LIBRARIES = ("vqalib",)
 END_MARKER = re.compile(rb"\x33\xc0\xa3....\xa3....\xa3....\xa3....\xc3", re.S)
 HEADER_MARKER = re.compile(rb"\xdd\x05....\xdd\x05....\xe8....\xdc\xc0\x83\xec\x08\xdd\x1c\x24"
@@ -374,24 +384,27 @@ def type_key(text: str, typedefs=None) -> tuple:
     return (m.group(1), frozenset(args))
 
 
-def tibsun_globals(code_dir: Path) -> dict[tuple, set[str]]:
-    """Type key -> the TibSun files defining a file-scope object of that type."""
+def tibsun_globals(code_dir: Path) -> tuple[dict[tuple, set[str]], dict[str, set[str]]]:
+    """(type key -> the TibSun files defining a file-scope object of that type, object name ->
+    the TibSun files defining it)."""
     typedefs = {}
     for f in code_dir.glob("*.h*"):
         for m in re.finditer(r"^typedef\s+([\w<>\s,\*:]+?)\s+(\w+)\s*;", f.read_text(errors="replace"), re.M):
             typedefs[m.group(2)] = m.group(1).strip()
-    found = re.compile(r"^(?:static\s+)?(?:const\s+)?([A-Za-z_]\w*(?:\s*<[^;()]*>)?)\s+[A-Za-z_][\w:]*"
+    found = re.compile(r"^(?:static\s+)?(?:const\s+)?([A-Za-z_]\w*(?:\s*<[^;()]*>)?)\s+([A-Za-z_][\w:]*)"
                        r"\s*(?:\[[^\]]*\]\s*)?(?:;|=|\(([^;]*)\)\s*;)", re.M)
     out = collections.defaultdict(set)
+    named = collections.defaultdict(set)
     for f in code_dir.glob("*.cpp"):
         for m in found.finditer(f.read_text(errors="replace")):
-            typ, args = m.groups()
+            typ, name, args = m.groups()
             # A parameter list (a type then a name) makes it a prototype, not an object.
             if typ in ("return", "typedef", "using", "class", "struct", "enum", "extern", "friend",
                        "delete", "goto", "const", "static") or (args and re.search(r"\w[\s\*&]+\w", args)):
                 continue
             out[type_key(typ, typedefs)].add(f.stem.lower())
-    return out
+            named[name].add(f.stem.lower())
+    return out, named
 
 
 def initialiser_types(pe, functions, size, names) -> dict[int, set[tuple]]:
@@ -449,15 +462,29 @@ def initialiser_types(pe, functions, size, names) -> dict[int, set[tuple]]:
 
 
 def referenced_strings(img: bytes, base: int, start: int, size: int) -> set[str]:
-    """The NUL-terminated ASCII strings outside the code whose start a function's bytes hold."""
+    """The NUL-terminated ASCII strings outside the code whose start a function's bytes hold,
+    or that a table of two or more string addresses at an address its bytes hold lists."""
+
+    def text(o):
+        if not 0x1000 < o < len(img) or img[o - 1] != 0:
+            return None
+        m = re.match(rb"[\x20-\x7e]{3,120}\x00", img[o:o + 121])
+        return m.group()[:-1].decode() if m else None
+
     out = set()
     body = img[start - base:start - base + size]
     for i in range(len(body) - 3):
         o = struct.unpack_from("<I", body, i)[0] - base
-        if 0x1000 < o < len(img) and img[o - 1] == 0:
-            m = re.match(rb"[\x20-\x7e]{4,120}\x00", img[o:o + 121])
-            if m:
-                out.add(m.group()[:-1].decode())
+        if text(o) and len(text(o)) >= 4:
+            out.add(text(o))
+        elif 0x1000 < o < len(img) - 8:
+            table = []
+            while o + 4 * len(table) < len(img) - 4 and len(table) < 64:
+                entry = text(struct.unpack_from("<I", img, o + 4 * len(table))[0] - base)
+                if entry is None:
+                    break
+                table.append(entry)
+            out |= set(table) if len(table) > 1 else set()
     return out
 
 
@@ -563,8 +590,8 @@ def build_ranges(cuts, functions, kept_at, kinds, display, landed):
                 start = first
             got = set().union(*(kinds[fn, key.lower()] for fn in fns[start:end]
                                  if kept_at.get(fn) == key))
-            weak = ("tibsun" if got <= {"Y", "L", "G", "B", "C"} and got & {"L", "G"}
-                    else "class" if got <= {"Y", "B", "C"} and "Y" in got else "")
+            weak = ("tibsun" if got <= {"Y", "L", "G", "B", "C", "U", "D"} and got & {"L", "G"}
+                    else "class" if got <= {"Y", "B", "C", "U", "D"} and "Y" in got else "")
             certain = (r == 0 or start == first) and not weak
             ranges.append([display[key], fns[start:end], certain, weak, False])
             start = end
@@ -599,12 +626,12 @@ def neighbour_statics(statics, kept, kept_at, module_at, segment_of) -> dict[int
     return out
 
 
-def instantiated(pe, functions, size, templates, classes, kept, module_at, segment_of) -> dict[int, str]:
+def instantiated(pe, size, slots, templates, classes, kept, module_at, segment_of) -> dict[int, str]:
     """Unnamed code after a kept module in its segment -> that module, where the module's code
     references a vtable holding it or calls it as a class template instance."""
     base = pe.OPTIONAL_HEADER.ImageBase
     img = pe.get_memory_mapped_image()
-    held, owner = vtable_slots(pe, functions)
+    held, owner = slots
     members = collections.defaultdict(list)
     for fn, name in module_at.items():
         members[name].append(fn)
@@ -634,6 +661,69 @@ def instantiated(pe, functions, size, templates, classes, kept, module_at, segme
             continue
         if any(held.get(fn, set()) & used(u)[0] or fn in templates and fn in used(u)[1] for u in members[mod]):
             out[fn] = mod
+    return out
+
+
+def references(pe, functions, size):
+    """({function: the functions whose code calls it or holds its address}, the functions
+    whose address data outside the code holds, {function: the data addresses its code holds})."""
+    base = pe.OPTIONAL_HEADER.ImageBase
+    img = pe.get_memory_mapped_image()
+    fset = set(functions)
+    data = [s for s in pe.sections[1:] if s.Name.startswith((b".rdata", b".data"))]
+    lo = min(base + s.VirtualAddress for s in data)
+    hi = max(base + s.VirtualAddress + s.Misc_VirtualSize for s in data)
+    users = collections.defaultdict(set)
+    reads = collections.defaultdict(set)
+    for fn in functions:
+        body = img[fn - base:fn - base + size[fn]]
+        for k in range(len(body) - 3):
+            word = struct.unpack_from("<I", body, k)[0]
+            near = fn + k + 4 + struct.unpack_from("<i", body, k)[0] if k and body[k - 1] in (0xE8, 0xE9) else None
+            for target in (word, near):
+                if target in fset and target != fn:
+                    users[target].add(fn)
+            if lo <= word < hi:
+                reads[fn].add(word)
+    held = set()
+    for section in pe.sections[1:]:
+        raw = section.get_data()
+        held |= set(struct.unpack_from(f"<{len(raw) // 4}I", raw)) & fset
+    return users, held, reads
+
+
+def sole_users(refs, kept, module_at, segment_of, open_fns) -> dict[int, tuple[str, str]]:
+    """Unnamed code -> (the module beside it in its segment that alone uses it, U), where every
+    function calling it or holding its address is there and no data holds it; else (that
+    module, D), where it shares data with that module's code and no other's."""
+    users, from_data, held = refs
+    # An address just past another the same code holds may be the end of that object's table.
+    reads = {fn: {w for w in words if not any(w - 256 <= v < w for v in words)} for fn, words in held.items()}
+    readers = collections.defaultdict(set)
+    for fn, words in reads.items():
+        for word in words:
+            readers[word].add(fn)
+    at = [p[3] for p in kept]
+    placed = dict(module_at)
+    out = {}
+    pending = sorted(open_fns)
+    while pending:
+        left = []
+        for fn in pending:
+            k = bisect.bisect_left(at, fn)
+            sides = {kept[j][5] for j in (k - 1, k) if 0 <= j < len(kept) and kept[j][0] == segment_of.get(fn)}
+            mods = {placed.get(u) for u in users.get(fn, ())}
+            shared = [{placed.get(u) for u in readers[w] - {fn}} for w in reads.get(fn, ())]
+            private = {m.pop() for m in shared if len(m) == 1 and None not in m}
+            if fn not in from_data and len(mods) == 1 and mods <= sides:
+                out[fn] = (mods.pop(), "U")
+            elif len(private) == 1 and private <= sides:
+                out[fn] = (private.pop(), "D")
+            else:
+                left.append(fn)
+                continue
+            placed[fn] = out[fn][0]
+        pending = left if len(left) < len(pending) else []
     return out
 
 
@@ -707,7 +797,8 @@ def main() -> None:
     with (ROOT / "data/progress.csv").open() as f:
         for r in csv.DictReader(f):
             landed_names[int(r["address"], 16)].add(r["name"])
-    globals_in = tibsun_globals(ROOT / "reference/tibsun/code")
+    globals_in, objects_in = tibsun_globals(ROOT / "reference/tibsun/code")
+    held, owner = vtable_slots(pe, functions)
     tier0_files = collections.defaultdict(set)
     tier0_symbols = collections.defaultdict(set)
     with (ROOT / "data/tier0.csv").open() as f:
@@ -720,9 +811,17 @@ def main() -> None:
 
     def ties(fn):
         """TibSun file -> what ties this function to it: the file's distinctive literals or
-        function names, its class, or a tier 0 find."""
+        function names, its class, an object it initialises, or a tier 0 find."""
         if fn not in tie_cache:
             out = collections.defaultdict(list)
+            vt_classes = {owner[vt].split("@")[0] for vt in held.get(fn, ()) if not owner[vt].startswith("?$")}
+            vt_files = {index[3][c].lower() for c in vt_classes if c in index[3]}
+            if len(vt_files) == 1:
+                out[vt_files.pop()].append(f"vtable of {', '.join(sorted(vt_classes))}")
+            for name in (n for a in statics.get(fn, ()) for n in fn_names.get(a, ())):
+                files = objects_in.get(name.rsplit("::", 1)[-1], ())
+                if len(files) == 1:
+                    out[next(iter(files))].append(f"initialises {name}")
             for text in referenced_strings(img, base, fn, size[fn]):
                 for stem in index[1].get(text, ()):
                     out[stem].append(f"string {text!r}")
@@ -758,6 +857,26 @@ def main() -> None:
         for name, args in types:
             if name == "DynamicVectorClass" and len(args) == 1 and not args <= set(classes):
                 yr_classes[fn] += [c for c in args if c not in yr_classes[fn]]
+    # A class's vtable that only code of one segment holds is that code's class.
+    refs = references(pe, functions, size)
+    holders = collections.defaultdict(set)
+    vtables = {vt for vt, name in owner.items() if re.fullmatch(r"\w+@@", name)}
+    for fn, words in refs[2].items():
+        for vt in words & vtables:
+            holders[vt].add(fn)
+    for vt, fns in holders.items():
+        cls = owner[vt][:-2]
+        if len({segment_of.get(fn) for fn in fns}) == 1 and cls not in classes:
+            for fn in fns:
+                yr_classes[fn] += [cls] if cls not in yr_classes[fn] else []
+    # So is a vector template's code over a class's pointers, in a segment naming no other class.
+    named_segments = {segment_of.get(fn) for fn, c in yr_classes.items() if c and fn in unknown}
+    for fn, vts in held.items():
+        args = {m.group(1) if m else None for vt in vts
+                for m in [re.fullmatch(r"\?\$(?:Dynamic)?VectorClass@PA[VU](\w+)@@@@", owner[vt])]}
+        if len(args) == 1 and None not in args and not args <= set(classes) \
+                and segment_of.get(fn) not in named_segments:
+            yr_classes[fn] += [c for c in args if c not in yr_classes[fn]]
     yr = {fn: c for fn, c in yr_classes.items() if fn in unknown}
 
     def beside(fn, stem):
@@ -802,7 +921,7 @@ def main() -> None:
         module_at[fn] = name
     templates = {fn for fn, names in fn_names.items() if any("<" in n for n in names)}
     templates |= {fn for fn, symbols in tier0_symbols.items() if any("?$" in n for n in symbols)}
-    for fn, name in instantiated(pe, functions, size, templates, classes, kept, module_at, segment_of).items():
+    for fn, name in instantiated(pe, size, (held, owner), templates, classes, kept, module_at, segment_of).items():
         relabel(fn, name, "C")
     points, kept, rejected = assign(labels, kinds, segment_of)
     kept_at = {p[3]: p[5] for p in kept}
@@ -817,6 +936,16 @@ def main() -> None:
         return any(yr_classes.get(fn) and not labels.get(fn)
                    or any(globals_in.get(t) for t in built.get(fn, ())) for fn in fns)
 
+    names_now |= {r[0].lower() for r in ranges if r[0] != "?"}
+    # Code no TibSun file claims goes to the only module beside it that uses it.
+    claimed = tibsun_files(ranges, index, evidence, contrary, taken)
+    open_fns = {fn for k, rng in enumerate(ranges) if rng[0] == "?" and k not in claimed for fn in rng[1]}
+    module_at = {fn: rng[0].lower() for rng in ranges if rng[0] != "?" for fn in rng[1]}
+    for fn, (name, kind) in sole_users(refs, kept, module_at, segment_of, open_fns).items():
+        relabel(fn, name, kind)
+    points, kept, rejected = assign(labels, kinds, segment_of)
+    kept_at = {p[3]: p[5] for p in kept}
+    ranges = build_ranges(cuts, functions, kept_at, kinds, display, landed)
     names_now |= {r[0].lower() for r in ranges if r[0] != "?"}
     for k, (stem, how) in tibsun_files(ranges, index, evidence, contrary, taken).items():
         ranges[k][0], ranges[k][3] = stem, how

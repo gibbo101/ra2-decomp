@@ -4,6 +4,8 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "geometry.h"
+#include "rect.h"
 #include "gauge.h"
 #include "_convert.h"
 #include "_surface.h"
@@ -16,6 +18,9 @@
 #include "vector.h"
 #include "xmouse.h"
 #include "color.hh"
+
+// SYNTHETIC: GAMEMD 0x004E24E0 SYMBOL
+// _$E41
 
 // FUNCTION: GAMEMD 0x004E2500
 GaugeClass::GaugeClass(unsigned id, int x, int y, int w, int h)
@@ -258,11 +263,17 @@ int TriColorGaugeClass::Draw_Me(int forced)
 	return(false);
 }
 
+// FUNCTION: GAMEMD 0x004E30A0
+// GaugeClass::Get_Value
+
 // FUNCTION: GAMEMD 0x004E30B0
 void GaugeClass::Use_Thumb(int value)
 {
 	HasThumb = value ? true : false;
 }
+
+// FUNCTION: GAMEMD 0x004E30C0
+// GaugeClass::Thumb_Pixels
 
 // SYNTHETIC: GAMEMD 0x004E30D0
 // ??_GGaugeClass@@UAEPAXI@Z

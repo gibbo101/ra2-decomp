@@ -5,7 +5,11 @@
 
 #include "always.h"
 #include "geometry.h"
+#include "rect.h"
 #include <math.h>
+
+// SYNTHETIC: GAMEMD 0x0063F4A0 SYMBOL
+// _$E41
 
 // SYNTHETIC: GAMEMD 0x0063F4C0 SYMBOL
 // _$E2

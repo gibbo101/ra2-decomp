@@ -981,5 +981,15 @@ void vqanoop3(void)
 // ?$VectorClass@PAVMovieHandle@@::Clear
 // TEMPLATE: GAMEMD 0x0075A5B0
 // ?$VectorClass@PAVMovieHandle@@::ID
+// TEMPLATE: GAMEMD 0x0075A5F0
+// ?ID@?$VectorClass@PAVMovieHandle@@@@UAEHPBQAVMovieHandle@@@Z
+// TEMPLATE: GAMEMD 0x0075A610
+// ?Resize@?$DynamicVectorClass@PAVMovieHandle@@@@UAE_NHPBQAVMovieHandle@@@Z
+// TEMPLATE: GAMEMD 0x0075A6C0
+// ?ID@?$DynamicVectorClass@PAVMovieHandle@@@@UAEHABQAVMovieHandle@@@Z
+// SYNTHETIC: GAMEMD 0x0075A6F0
+// ??_G?$VectorClass@PAVMovieHandle@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x0075A740
+// ??_G?$DynamicVectorClass@PAVMovieHandle@@@@UAEPAXI@Z
 
 template class DynamicVectorClass<MovieHandle *>;

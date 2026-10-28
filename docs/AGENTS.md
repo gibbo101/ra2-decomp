@@ -238,6 +238,10 @@ Each entry: what the diff showed, then the source change that fixed it.
   after the statements before it; placement new adds the test.
 
 ### Constructs
+- `(x & 2) >> 1` that the exe computes as `and eax,2; shr eax,1`: write
+  `(char)(x & 2) >> 1`; without the cast VC6 folds it differently.
+- A double expression compared with a float member: cast it to `(float)` for the
+  exe's `fcomp dword ptr [mem]`; without the cast VC6 emits fld/fcompp.
 - A non-void function the original lets fall off its end (ObjectClass::IronCurtain is a
   bare `ret`): an empty body, with warning 4716 disabled in a push/pop around the class.
 - An inline constructor the original calls out of line in one function only: route the
@@ -412,6 +416,10 @@ Each entry: what the diff showed, then the source change that fixed it.
 - YR signatures: Exit_Coord takes an int index; Shroud_The_Map and Reveal_The_Map take a
   `HouseClass *`; EventClass's MegaMission constructor has 6 arguments.
 - LightSourceClass has a DetailLevel at +0x34, compared with `Options.DetailLevel`.
+- Every static data member a header declares, even a `static int`, uses up one `$E` number
+  in each file including it; static member functions do not.
+- A header that needs a type only by reference forward-declares it (`class Wstring;`):
+  a new `#include` there flipped wonline 0x00788180; the .cpp includes the full header.
 
 ## Known dead ends
 

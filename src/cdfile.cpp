@@ -6,6 +6,7 @@
 #include "always.h"
 #include "cdfile.h"
 #include "diskswap.h"
+#include "wstring.h"
 #include <math.h>
 
 
@@ -16,6 +17,13 @@ CDFileClass::CDFileClass(char const * filename) :
 	IsDisabled(false)
 {
 	CDFileClass::Set_Name(filename);
+}
+
+// FUNCTION: GAMEMD 0x0047AA00
+CDFileClass::CDFileClass(Wstring const & filename) :
+	IsDisabled(false)
+{
+	CDFileClass::Set_Name(filename.text());
 }
 
 // FUNCTION: GAMEMD 0x0047AA30

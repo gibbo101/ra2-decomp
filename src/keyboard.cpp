@@ -24,6 +24,8 @@ extern const double DAT_007ECEB8;
 extern const double DAT_007ECEC0;
 
 
+// SYNTHETIC: GAMEMD 0x0054EC40 SYMBOL
+// _$E2
 // SYNTHETIC: GAMEMD 0x0054EC60 SYMBOL
 // _$E30
 

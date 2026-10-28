@@ -115,3 +115,9 @@ int PKStraw::Plain_Key_Length(void) const
 	if (CipherKey == NULL) return(0);
 	return(CipherKey->Block_Count(BLOWFISH_KEY_SIZE) * CipherKey->Plain_Block_Size());
 }
+
+// FUNCTION: GAMEMD 0x00633360
+// PKStraw::Get_From
+
+// SYNTHETIC: GAMEMD 0x00633370
+// ??_GPKStraw@@UAEPAXI@Z

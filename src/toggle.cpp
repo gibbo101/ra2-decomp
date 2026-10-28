@@ -7,6 +7,8 @@
 #include "toggle.h"
 #include "_xmouse.h"
 
+// SYNTHETIC: GAMEMD 0x00723E40 SYMBOL
+// _$E2
 // FUNCTION: GAMEMD 0x00723E60
 ToggleClass::ToggleClass(unsigned id, int x, int y, int w, int h) :
 	BASECLASS(id, x, y, w, h, LEFTPRESS|LEFTRELEASE, true),

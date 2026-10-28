@@ -929,3 +929,5 @@ template class VectorClass<ObjectTypeClass *>;
 // ?ID@?$DynamicVectorClass@PAVObjectTypeClass@@@@UAEHABQAVObjectTypeClass@@@Z
 // SYNTHETIC: GAMEMD 0x005F9DE0
 // ??_G?$VectorClass@PAVObjectTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x005F9E30
+// ??_G?$DynamicVectorClass@PAVObjectTypeClass@@@@UAEPAXI@Z
