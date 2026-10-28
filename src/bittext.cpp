@@ -19,6 +19,69 @@ struct Drawing {
 	static int RGB_To_Int(int red, int green, int blue);
 };
 
+extern RGBClass DAT_00A80220;
+
+inline RGBClass Int_To_RGB(int color)
+{
+	return RGBClass(
+		(unsigned char)((unsigned short)color >> Drawing::RedShiftLeft) << Drawing::RedShiftRight,
+		(unsigned char)((unsigned short)color >> Drawing::GreenShiftLeft) << Drawing::GreenShiftRight,
+		(unsigned char)((unsigned short)color >> Drawing::BlueShiftLeft) << Drawing::BlueShiftRight);
+}
+
+inline int RGB_To_Int(RGBClass const & rgb)
+{
+	return Drawing::RGB_To_Int(rgb.Get_Red(), rgb.Get_Green(), rgb.Get_Blue());
+}
+
+inline int Align_Offset(int w, int width, int flags)
+{
+	int offset = 0;
+	if (w > width) {
+		if (flags & 1) {
+			offset = (w - width) / 2;
+		} else if (flags & 2) {
+			offset = w - width;
+		}
+	}
+	return offset;
+}
+
+inline unsigned char * Char_Bitmap(BitFont * font, wchar_t ch)
+{
+	unsigned char * bmp = font->GetCharacterBitmap(ch);
+	if (!bmp) {
+		bmp = font->GetCharacterBitmap('?');
+	}
+	return bmp;
+}
+
+inline bool Draw_Line(BitFont * font, wchar_t const * & start, wchar_t const * end, int x, int y, int w, int width, int flags, int & index, int & xpos, int color, int count, int fade)
+{
+	xpos = x + Align_Offset(w, width, flags);
+	while (start < end) {
+		index++;
+		int c = color;
+		if (count) {
+			if (index >= count) {
+				c = -1;
+			} else {
+				int remain = count - index - 1;
+				if (remain < fade) {
+					RGBClass rgb = Int_To_RGB(color);
+					rgb.Adjust((255 / fade) * (fade - remain), DAT_00A80220);
+					c = RGB_To_Int(rgb);
+				}
+			}
+		}
+		if (c == -1) {
+			return false;
+		}
+		xpos = font->Blit(*start++, xpos, y, c);
+	}
+	return true;
+}
+
 // FUNCTION: GAMEMD 0x00435530
 void __stdcall Release_Font(BitFont * font)
 {
@@ -108,6 +171,146 @@ int BitText::PrintBold(BitFont * font, Surface * surface, wchar_t const * text, 
 	return result;
 }
 
+// FUNCTION: GAMEMD 0x00434CD0
+bool BitText::DrawText(BitFont * font, Surface * surface, wchar_t const * text, int x, int y, int w, int h, int a8, int a9, int a10)
+{
+	int width = 0;
+	if (!font || !text) {
+		return false;
+	}
+
+	font->Lock(surface);
+	font->FUN_00434110(x);
+
+	wchar_t const * start = text;
+	int height = 0;
+	int savedwidth = 0;
+	wchar_t const * saved = 0;
+	wchar_t prev = 0;
+	int count = 0;
+	int color = font->Color;
+	int index = 0;
+	int xpos;
+	wchar_t ch = *text;
+
+	while (ch) {
+		switch (ch) {
+			case '\r':
+			case '\n':
+				if (prev != '\r') {
+					if (!Draw_Line(font, start, text, x, y, w, width, a8, index, xpos, color, a9, a10)) {
+						font->UnLock(surface);
+						return true;
+					}
+					width = 0;
+					count = 0;
+					height += font->field_1C;
+					if (h && height >= h) {
+						font->UnLock(surface);
+						return true;
+					}
+					y += font->field_1C;
+				}
+				start++;
+				break;
+
+			case '\t':
+				width += font->Unknown_28;
+				width -= width % font->Unknown_28;
+				break;
+
+			case ' ':
+				savedwidth = width;
+				saved = text;
+
+			default:
+				{
+					unsigned char * bmp = Char_Bitmap(font, ch);
+					if (!bmp) {
+						break;
+					}
+					count++;
+					int cw = *bmp + font->State_2C;
+					width += cw;
+					if (w && width > w) {
+						if (saved) {
+							if (count > 1) {
+								width = savedwidth;
+								text = saved;
+							}
+						} else if (count > 1) {
+							width -= cw;
+							text--;
+						}
+						xpos = x + Align_Offset(w, width, a8);
+						while (start < text) {
+							index++;
+							int c = color;
+							if (a9) {
+								if (index >= a9) {
+									c = -1;
+								} else {
+									int remain = a9 - index - 1;
+									if (remain < a10) {
+										RGBClass rgb = Int_To_RGB(color);
+										rgb.Adjust((255 / a10) * (a10 - remain), DAT_00A80220);
+										c = RGB_To_Int(rgb);
+									}
+								}
+							}
+							if (c == -1) {
+								font->UnLock(surface);
+								return true;
+							}
+							xpos = font->Blit(*start++, xpos, y, c);
+						}
+						if (text == saved) {
+							saved = 0;
+							start++;
+						}
+						width = 0;
+						count = 0;
+						height += font->field_1C;
+						if (h && height >= h) {
+							font->UnLock(surface);
+							return true;
+						}
+						y += font->field_1C;
+					}
+				}
+				break;
+		}
+		prev = ch;
+		text++;
+		ch = *text;
+	}
+
+	xpos = x + Align_Offset(w, width, a8);
+	while (start < text) {
+		index++;
+		int c = color;
+		if (a9) {
+			if (index >= a9) {
+				c = -1;
+			} else {
+				int remain = a9 - index - 1;
+				if (remain < a10) {
+					RGBClass rgb = Int_To_RGB(color);
+					rgb.Adjust((255 / a10) * (a10 - remain), DAT_00A80220);
+					c = RGB_To_Int(rgb);
+				}
+			}
+		}
+		if (c == -1) {
+			font->UnLock(surface);
+			return true;
+		}
+		xpos = font->Blit(*start++, xpos, y, c);
+	}
+	font->UnLock(surface);
+	return true;
+}
+
 // FUNCTION: GAMEMD 0x00435340
 bool BitText::DrawShadow(BitFont * font, Surface * surface, wchar_t const * text, int x, int y, int w, int h, int a8, int a9, int a10)
 {
@@ -144,6 +347,9 @@ bool BitText::DrawBold(BitFont * font, Surface * surface, wchar_t const * text, 
 
 // SYNTHETIC: GAMEMD 0x00435560
 // ??_GBitText@@UAEPAXI@Z
+
+// FUNCTION: GAMEMD 0x004355B0
+// ??0RGBClass@@QAE@EEE@Z
 
 // FUNCTION: GAMEMD 0x004355D0
 int Drawing::RGB_To_Int(int red, int green, int blue)

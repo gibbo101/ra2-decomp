@@ -281,6 +281,109 @@ unsigned int __fastcall FUN_00769540(unsigned int value)
 	return value;
 }
 
+#include "cdfile.h"
+#include "pcx.h"
+#include "wstring.h"
+
+Wstring operator+(Wstring const & a, Wstring const & b);
+
+struct Drawing {
+	static int RenderWidth;
+};
+
+typedef VectorClass<Rect> RECT_LIST;
+typedef VectorCursor<Rect, RECT_LIST> RECT_ITER;
+
+inline RECT_ITER Rect_Cursor(RECT_LIST & list)
+{
+	return RECT_ITER(list);
+}
+
+inline void Rewind(RECT_ITER & it, RECT_LIST & list)
+{
+	it = Rect_Cursor(list);
+}
+
+// FUNCTION: GAMEMD 0x00769550
+void __fastcall FUN_00769550(Wstring const & map_name, Wstring const & pcx_file_name)
+{
+	CDFileClass ifile;
+	ifile.Open("WDTMapMD.ini", 1);
+	INIClass ini;
+	ini.Load(ifile);
+	ifile.Close();
+	CDFileClass pfile(pcx_file_name);
+	Surface * surf = Read_PCX_File(pfile);
+
+	int height = surf->Get_Height();
+	int width = surf->Get_Width();
+
+	RECT_LIST rects(30);
+	CENTROID_LIST centroids(30);
+
+	RECT_ITER riter = rects;
+	for (; riter; ++riter) {
+		Rect & rect = *riter;
+		rect.X = 0;
+		rect.Y = 0;
+		rect.Width = 0;
+		rect.Height = 0;
+	}
+
+	Point2D point;
+	for (point.Y = 0; point.Y < height; point.Y++) {
+		for (point.X = 0; point.X < width; point.X++) {
+			unsigned n = FUN_00769540(surf->Get_Pixel(point));
+			if (n >= 0xFF) {
+				continue;
+			}
+
+			if ((unsigned)centroids.Length() < n + 1) {
+				centroids.Resize(n + 1);
+			}
+			centroids[n] += point;
+
+			if ((unsigned)rects.Length() < n + 1) {
+				int length = rects.Length();
+				rects.Resize(n + 1);
+				RECT_ITER iter(rects, length);
+				for (; iter; ++iter) {
+					Rect & blank = *iter;
+					blank.X = 0;
+					blank.Y = 0;
+					blank.Width = 0;
+					blank.Height = 0;
+				}
+			}
+			Rect & rect = rects[n];
+			if (rect.Width == 0) {
+				rect.Height = 0;
+			}
+			if (!rect.Is_Point_Within(point)) {
+				rect = Union(rect, Rect(point.X, point.Y, 1, 1));
+			}
+		}
+	}
+
+	Rewind(riter, rects);
+
+	int ci = 0;
+	while (riter) {
+		Wstring section = operator+(map_name, Wstring_FromInt(ci, 2));
+		Wstring width_text = Wstring_FromInt(Drawing::RenderWidth);
+		Point2D target = centroids[ci].Center_Point();
+		Point2D center = target;
+		ini.Put_Point(section, Wstring("Target_").operator+(width_text), center);
+		++riter;
+		ci++;
+	}
+
+	ifile.Open("WDTMapMD.ini", 2);
+	ini.Save(ifile);
+	ifile.Open("..\\code\\wdtmapMD.ini", 2);
+	ini.Save(ifile);
+}
+
 // SYNTHETIC: GAMEMD 0x00769BD0
 // ??_GMSFrameAnim@@UAEPAXI@Z
 
@@ -321,6 +424,9 @@ template class TRect<int>;
 
 // TEMPLATE: GAMEMD 0x00769D60
 // ??B?$VectorCursor@V?$TRect@H@@V?$VectorClass@V?$TRect@H@@@@@@UBE_NXZ
+
+// FUNCTION: GAMEMD 0x00769D70
+// Rect_Cursor
 
 // SYNTHETIC: GAMEMD 0x00769D90
 // ??_G?$rc_ptr@VMap@WorldDominationTour@@@@UAEPAXI@Z

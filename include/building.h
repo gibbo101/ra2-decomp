@@ -390,7 +390,7 @@ class BuildingClass : public TechnoClass
 		virtual void Debug_Dump(MonoClass *mono) const override;
 #endif
 
-		static void Read_INI(CCINIClass const & ini);
+		static void Read_INI(CCINIClass & ini);
 		static void Write_All(CCINIClass & ini);
 		void Write_INI(CCINIClass & ini);
 

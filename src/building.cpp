@@ -117,6 +117,7 @@
 class Reestablish;
 extern Point2D DAT_0089C848;
 extern Cell DAT_0089C818;
+extern int __fastcall FUN_0050C170(char const * name);
 extern TPoint3D<int> DAT_0089C870;
 SideType FUN_006A46D0(char const * name);
 void __fastcall FUN_00750D40(Coord const & coord, AudioController * controller);
@@ -649,8 +650,7 @@ int BuildingClass::Set_Turret_Frame(void)
 	int stage = 0;
 
 	if (Is_Turret_Equipped() && Anims[BANIM_TURRET] != NULL) {
-		DirType dir = PrimaryFacing.Current();
-		stage = BASECLASS::BodyShape[dir.As_Dir32()];
+		stage = BASECLASS::BodyShape[PrimaryFacing.Current().As_Dir32()];
 		AnimClass * anim = Anims[BANIM_TURRET];
 		if (anim != NULL) {
 			anim->Animation.Set_Stage(stage);
@@ -2576,6 +2576,171 @@ void BuildingClass::Update_Radar_Spied(void)
 	Map.Flag_To_Redraw(GS_REDRAW_ALL);
 }
 
+// FUNCTION: GAMEMD 0x0044F820
+void BuildingClass::Read_INI(CCINIClass & ini)
+{
+	BuildingClass * b;
+	HouseClass * bhptr;
+	StructType classid;
+	Cell cell;
+	char buf[128];
+	char * trigname;
+
+	int i;
+	StructType upgrades[BUILDING_UPGRADE_MAX];
+
+	ini.Reset();
+
+	for (i = 0; i < BUILDING_UPGRADE_MAX; i++) {
+		upgrades[i] = STRUCT_NONE;
+	}
+
+	int len = ini.Entry_Count(INI_NAME);
+	for (int index = 0; index < len; index++) {
+		char const * entry = ini.Get_Entry(INI_NAME, index);
+
+		ini.Get_String(INI_NAME, entry, NULL, buf, sizeof(buf));
+
+		int bhouse = FUN_0050C170(strtok(buf, ","));
+		if (bhouse == -1) {
+			continue;
+		}
+		bhptr = Houses[bhouse];
+		if (bhptr == NULL) {
+			continue;
+		}
+
+		if (Session.Type != GAME_NORMAL && bhptr == PlayerPtr) {
+			continue;
+		}
+
+		classid = BuildingTypeClass::From_Name(strtok(NULL, ","));
+
+		if (classid != STRUCT_NONE) {
+			int strength;
+			Dir256 facing;
+
+			strength = atoi(strtok(NULL, ","));
+
+			if (NewINIFormat >= 4) {
+				int x = atoi(strtok(NULL, ","));
+				int y = atoi(strtok(NULL, ","));
+				cell = Cell(x, y);
+			} else {
+				cell = Cell(atoi(strtok(NULL, ",")));
+			}
+
+			facing = (Dir256)atoi(strtok(NULL, ","));
+
+			trigname = strtok(NULL, ",");
+
+			bool sellable = false;
+			char * token_pointer = strtok(NULL, ",");
+			if (token_pointer) {
+				sellable = atoi(token_pointer) != 0;
+			}
+
+			bool rebuild = false;
+			token_pointer = strtok(NULL, ",");
+			if (token_pointer) {
+				rebuild = atoi(token_pointer) != 0;
+			}
+
+			bool online = true;
+			token_pointer = strtok(NULL, ",");
+			if (token_pointer) {
+				online = atoi(token_pointer) != 0;
+			}
+
+			int upgradecount = 0;
+			token_pointer = strtok(NULL, ",");
+			if (token_pointer) {
+				upgradecount = atoi(token_pointer);
+			}
+
+			int spotlight = LIGHT_BEHAVIOR_SWEEP;
+			token_pointer = strtok(NULL, ",");
+			if (token_pointer) {
+				spotlight = atoi(token_pointer);
+			}
+
+			for (i = 0; i < BUILDING_UPGRADE_MAX; i++) {
+				token_pointer = strtok(NULL, ",");
+				if (token_pointer) {
+					upgrades[i] = BuildingTypeClass::From_Name(token_pointer);
+				}
+			}
+
+			bool repair = false;
+			token_pointer = strtok(NULL, ",");
+			if (token_pointer) {
+				repair = atoi(token_pointer) != 0;
+			}
+
+			bool nominal = false;
+			token_pointer = strtok(NULL, ",");
+			if (token_pointer) {
+				nominal = atoi(token_pointer) != 0;
+			}
+
+			b = new BuildingClass(BuildingTypes[classid], bhptr);
+			if (b) {
+
+				TagTypeClass * tp = TagTypeClass::From_Name(trigname);
+				if (tp) {
+					TagClass * tt = Find_Or_Make(tp);
+					if (tt) {
+						b->Attach_Tag(tt);
+					}
+				}
+				b->IsAllowedToSell = sellable;
+				b->IsToRebuild = rebuild;
+				b->IsToRepair = repair;
+				b->IsNominal = nominal;
+
+				strength = MIN(strength, 256);
+				b->Strength = b->Class->MaxStrength * (strength / 256.0);
+				if (b->Strength > b->Class->MaxStrength-3) b->Strength = b->Class->MaxStrength;
+				b->EstimatedHealth = b->Strength;
+
+				if (b->Unlimbo(Coord(cell), facing)) {
+
+					if (b->BuildingLight) {
+						b->BuildingLight->Set_Behavior_Type((LightBehaviorType)spotlight);
+					}
+
+					if (online) {
+						b->Turn_On();
+					} else {
+						b->Turn_Off();
+					}
+
+					b->unknown_bool_41D = false;
+
+					if (b->Class->NeedsEngineer && !b->HasEngineer) {
+						b->DisableStuff();
+					}
+
+					if (upgradecount) {
+						for (i = 0; i < upgradecount; i++) {
+							if (upgrades[i] != STRUCT_NONE) {
+								BuildingTypeClass * utype = BuildingTypes[upgrades[i]];
+								BuildingClass * u = new BuildingClass(utype, bhptr);
+								u->Unlimbo(Coord(cell), facing);
+							}
+						}
+					}
+					if (b->Is_Turret_Equipped()) {
+						b->Set_Turret_Frame();
+					}
+				} else {
+					delete b;
+				}
+			}
+		}
+	}
+}
+
 char const * const BuildingClass::INI_NAME = "Structures";
 
 // FUNCTION: GAMEMD 0x0044FE60
@@ -3196,21 +3361,7 @@ void BuildingClass::Turn_On(void)
 		House->RecalcPower = true;
 		House->RecalcRadar = true;
 		House->IsRecalcNeeded = true;
-		IsPoweredOn = true;
-
-		if (LightSource) {
-			LightSource->Enable();
-		}
-
-		if (Class->IsLaserFencePost) {
-			Toggle_Laser_Fence_Post(false);
-		}
-
-		for (int i = 0; i < BANIM_COUNT; i++) {
-			if (Class->AnimData[i].Powered && Anims[i] != NULL) {
-				Anims[i]->Enable();
-			}
-		}
+		EnableStuff();
 
 		if (Class->ToBuild != RTTI_NONE) {
 			House->Update_Factories(Class->ToBuild, Class->Naval, 0);

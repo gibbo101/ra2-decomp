@@ -1,6 +1,6 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 28 October 2026: 17,252 of 19,367 game functions match (89%; 59% of game code
+Status, 28 October 2026: 17,399 of 19,367 game functions match (90%; 60% of game code
 by size), landed in batches module by module. The rounds below record each one.
 
 ## The goal
@@ -1113,6 +1113,17 @@ Session.Players. Recording then exposed three UI-command functions building char
 ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; their RTTI
 fixed them. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
+
+### Batches 127 and 128 (28 October 2026)
+
+**147 functions** (140 of 140, 5 of 8 with two helpers they keep out of line). Batch 127
+took globals' next 140 vector instances, all marker-only. Batch 128 put Opus on eight more
+functions of 1.6 to 1.7 KB: BitText::DrawText, BuildingClass::Read_INI, parasite,
+wdtmap's map loader and a wonline connection query matched. DrawText needed VC6's inline
+order: calls written in a function are inlined first, and those a helper exposes take
+what budget is left. Read_INI needed Turn_On to call EnableStuff, without which VC6 would
+not inline Turn_On anywhere. pcx (90.5%), preview (98.3%) and slavemanager (48.3%) remain.
+Merge gate: 17,399 of 17,399 (2,224.7 KB).
 
 ### Batches 125 and 126 (28 October 2026)
 

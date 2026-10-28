@@ -120,7 +120,9 @@ Wstring DAT_00B73AE0;
 
 struct Server {
 	char Pad[0x18];
-	char name[0xCC];
+	char name[71];
+	char connlabel[5];
+	char conndata[128];
 	char login[10];
 	char password[10];
 };
@@ -5245,6 +5247,249 @@ void __fastcall FUN_00793CD0(int slot)
 	Session.unknown_2F6C[Session.unknown_2FEC] = slot;
 	Session.unknown_2F8C[Session.unknown_2FEC] = 1200;
 	Session.unknown_2FEC++;
+}
+
+#include <snmp.h>
+
+struct tConnInfoStruct {
+	unsigned int State;
+	unsigned long LocalIP;
+	unsigned short LocalPort;
+	unsigned long RemoteIP;
+	unsigned short RemotePort;
+};
+
+extern BOOL (__stdcall * DAT_00B7792C)(DWORD uptime, HANDLE * trap_event, AsnObjectIdentifier * first_region);
+extern BOOL (__stdcall * DAT_00B76678)(BYTE pdu_type, SnmpVarBindList * bind_list, AsnInteger32 * error_status, AsnInteger32 * error_index);
+extern LPVOID (__stdcall * DAT_00B778F0)(DWORD bytes);
+extern VOID (__stdcall * DAT_00B77AC0)(LPVOID mem);
+hostent * __stdcall FUN_007C8980(char const * name);
+int __stdcall FUN_007C897A(void);
+
+// FUNCTION: GAMEMD 0x00795650
+bool __fastcall FUN_00795650(IPXAddressClass * address)
+{
+	enum {
+		ESTABLISHED = 5
+	};
+
+	enum {
+		tcpConnState = 1,
+		tcpConnLocalAddress,
+		tcpConnLocalPort,
+		tcpConnRemAddress,
+		tcpConnRemPort
+	};
+
+	char server_name[128];
+	unsigned char server_address[4];
+	unsigned char remote_address[4];
+	HANDLE trap_handle;
+	AsnObjectIdentifier first_supported_region;
+	DynamicVectorClass<tConnInfoStruct *> connection_list;
+	int last_field;
+	int index;
+	AsnInteger error_status;
+	AsnInteger error_index;
+	int conn_entry_type_index;
+	int conn_entry_type;
+	bool found;
+	unsigned int server_port = 0;
+	NetNumType net;
+	NetNodeType node;
+
+	if (DAT_00B76468 < 1 || DAT_00B76468 >= DAT_00B778D8.length()) {
+		return(false);
+	}
+
+	FUN_004068E0("Finding local address used to talk to the chat server\n");
+
+	Server * server = NULL;
+	DAT_00B778D8.getPointer(&server, DAT_00B76468);
+	memset(server_name, 0, sizeof(server_name));
+	strncpy(server_name, server->conndata + 4, sizeof(server_name));
+
+	char * semi_colon_ptr = strchr(server_name, ';');
+	if (semi_colon_ptr) {
+		*semi_colon_ptr = 0;
+		sscanf(semi_colon_ptr + 1, "%d", &server_port);
+	} else {
+		FUN_004068E0("Failed to parse server name\n");
+		return(false);
+	}
+	FUN_004068E0("Current chat server name is %s\n", server_name);
+	FUN_004068E0("Chat server port is %d\n", server_port);
+
+	FUN_004068E0("About to call gethostbyname\n");
+	hostent * host_info = FUN_007C8980(server_name);
+
+	if (!host_info) {
+		FUN_004068E0("gethostbyname failed! Error code %d\n", FUN_007C897A());
+		return(false);
+	}
+
+	memcpy(server_address, &host_info->h_addr_list[0][0], 4);
+	unsigned long temp = *((unsigned long *)(&server_address[0]));
+	temp = FUN_007C896E(temp);
+	*((unsigned long *)(&server_address[0])) = temp;
+
+	FUN_004068E0("Host address is %d.%d.%d.%d\n", server_address[3], server_address[2], server_address[1], server_address[0]);
+
+	FUN_004068E0("About to load INETMIB1.DLL\n");
+
+	HINSTANCE mib_ii_dll = LoadLibraryA("inetmib1.dll");
+	if (mib_ii_dll == NULL) {
+		FUN_004068E0("Failed to load INETMIB1.DLL\n");
+		return(false);
+	}
+
+	FUN_004068E0("About to load SNMPAPI.DLL\n");
+
+	HINSTANCE snmpapi_dll = LoadLibraryA("snmpapi.dll");
+	if (snmpapi_dll == NULL) {
+		FUN_004068E0("Failed to load SNMPAPI.DLL\n");
+		FreeLibrary(mib_ii_dll);
+		return(false);
+	}
+
+	DAT_00B7792C = (BOOL (__stdcall *)(DWORD, HANDLE *, AsnObjectIdentifier *))GetProcAddress(mib_ii_dll, "SnmpExtensionInit");
+	DAT_00B76678 = (BOOL (__stdcall *)(BYTE, SnmpVarBindList *, AsnInteger32 *, AsnInteger32 *))GetProcAddress(mib_ii_dll, "SnmpExtensionQuery");
+	DAT_00B778F0 = (LPVOID (__stdcall *)(DWORD))GetProcAddress(snmpapi_dll, "SnmpUtilMemAlloc");
+	DAT_00B77AC0 = (VOID (__stdcall *)(LPVOID))GetProcAddress(snmpapi_dll, "SnmpUtilMemFree");
+	if (DAT_00B7792C == NULL || DAT_00B76678 == NULL || DAT_00B778F0 == NULL || DAT_00B77AC0 == NULL) {
+		FUN_004068E0("Failed to get proc addresses for linked functions\n");
+		FreeLibrary(snmpapi_dll);
+		FreeLibrary(mib_ii_dll);
+		return(false);
+	}
+
+	SnmpVarBindList * bind_list_ptr = (SnmpVarBindList *)DAT_00B778F0(sizeof(SnmpVarBindList));
+	SnmpVarBind * bind_ptr = (SnmpVarBind *)DAT_00B778F0(sizeof(SnmpVarBind));
+
+	FUN_004068E0("About to init INETMIB1.DLL\n");
+	int ok = DAT_00B7792C(GetTickCount(), &trap_handle, &first_supported_region);
+
+	if (!ok) {
+		FUN_004068E0("Failed to init the .dll\n");
+		DAT_00B77AC0(bind_list_ptr);
+		DAT_00B77AC0(bind_ptr);
+		FreeLibrary(snmpapi_dll);
+		FreeLibrary(mib_ii_dll);
+		return(false);
+	}
+
+	unsigned int mib_ii_name[] = {1,3,6,1,2,1,6,13,1,1};
+	unsigned int * mib_ii_name_ptr = (unsigned int *)DAT_00B778F0(sizeof(mib_ii_name));
+	memcpy(mib_ii_name_ptr, mib_ii_name, sizeof(mib_ii_name));
+
+	conn_entry_type_index = ARRAY_SIZE(mib_ii_name) - 1;
+
+	bind_ptr->name.idLength = ARRAY_SIZE(mib_ii_name);
+	bind_ptr->name.ids = mib_ii_name;
+	bind_list_ptr->list = bind_ptr;
+	bind_list_ptr->len = 1;
+
+	last_field = 1;
+	index = 0;
+
+	while (true) {
+
+		if (!DAT_00B76678(SNMP_PDU_GETNEXT, bind_list_ptr, &error_status, &error_index)) {
+			FUN_004068E0("SnmpExtensionQuery returned false\n");
+			DAT_00B77AC0(bind_list_ptr);
+			DAT_00B77AC0(bind_ptr);
+			FreeLibrary(snmpapi_dll);
+			FreeLibrary(mib_ii_dll);
+			return(false);
+		}
+
+		if (bind_ptr->name.idLength < ARRAY_SIZE(mib_ii_name)) {
+			break;
+		}
+
+		conn_entry_type = bind_ptr->name.ids[conn_entry_type_index];
+
+		if (last_field != conn_entry_type) {
+			index = 0;
+			last_field = conn_entry_type;
+		}
+
+		switch (conn_entry_type) {
+
+			case tcpConnState:
+			{
+				tConnInfoStruct * new_conn = new tConnInfoStruct;
+				new_conn->State = bind_ptr->value.asnValue.number;
+				connection_list.Add(new_conn);
+				break;
+			}
+
+			case tcpConnLocalAddress:
+				connection_list[index]->LocalIP = *((unsigned long *)bind_ptr->value.asnValue.address.stream);
+				index++;
+				break;
+
+			case tcpConnLocalPort:
+				connection_list[index]->LocalPort = (unsigned short)bind_ptr->value.asnValue.number;
+				index++;
+				break;
+
+			case tcpConnRemAddress:
+				connection_list[index]->RemoteIP = *((unsigned long *)bind_ptr->value.asnValue.address.stream);
+				index++;
+				break;
+
+			case tcpConnRemPort:
+				connection_list[index]->RemotePort = (unsigned short)bind_ptr->value.asnValue.number;
+				index++;
+				break;
+		}
+	}
+
+	DAT_00B77AC0(bind_list_ptr);
+	DAT_00B77AC0(bind_ptr);
+	DAT_00B77AC0(mib_ii_name_ptr);
+
+	FUN_004068E0("Got %d connections in list, parsing...\n", connection_list.Count());
+
+	found = false;
+	while (connection_list.Count()) {
+		tConnInfoStruct * connection = connection_list[0];
+
+		temp = FUN_007C896E(connection->RemoteIP);
+		memcpy(remote_address, (unsigned char *)&temp, 4);
+
+		if (!found && memcmp(remote_address, server_address, 4) == 0) {
+			FUN_004068E0("Found connection with same remote address as server\n");
+
+			if (server_port == 0 || server_port == (unsigned int)connection->RemotePort) {
+
+				FUN_004068E0("Connection has same port\n");
+				if (connection->State == ESTABLISHED) {
+					FUN_004068E0("Connection is ESTABLISHED\n");
+					memcpy(node, &connection->LocalIP, 4);
+					address->Set_Address(net, node, connection->LocalPort);
+					found = true;
+				} else {
+					FUN_004068E0("Connection is not ESTABLISHED - skipping\n");
+				}
+			} else {
+				FUN_004068E0("Connection has different port. Port is %d, looking for %d\n", connection->RemotePort, server_port);
+			}
+		}
+
+		delete connection_list[0];
+		connection_list.Delete_Index(0);
+	}
+
+	if (found) {
+		FUN_004068E0("Using address %s to talk to chat server\n", address->As_String(NULL));
+	}
+
+	FreeLibrary(snmpapi_dll);
+	FreeLibrary(mib_ii_dll);
+
+	return(found);
 }
 
 #include "conquer.h"

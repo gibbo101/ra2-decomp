@@ -314,6 +314,10 @@ Each entry: what the diff showed, then the source change that fixed it.
   costs the same: write the accessor calls the original made (planmgr's Get_Count, Set_Event).
 - An inline call the original leaves out of line goes out of line when wrapped in a file-local
   inline helper one level deeper (bullet's Coord_Dist, building's _Usable).
+- An unnamed `seg_` range that opens with a header run is a module of its own: it lands in
+  `src/<previous module>2.cpp` (3 for a second such range), a provisional name that keeps the
+  linker's alphabetical order. One with no header run is the end of the module before it and
+  lands in that module's file.
 - A function start missing from data/functions.csv is fixed in tools/functions.py, then the
   CSV regenerated; never edit the CSV by hand.
   A score where every byte matches up to a `ret` and only a short tail after it differs is

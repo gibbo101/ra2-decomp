@@ -10,6 +10,7 @@
 
 class Surface;
 class XSurface;
+class DSurface;
 class CCINIClass;
 class Cell;
 
@@ -28,6 +29,7 @@ public:
 	void Create_Preview(void);
 	void Blit_Preview(HWND window);
 	void DrawStartPoints(HWND window);
+	void DrawMap(DSurface & surface);
 
 	unsigned * Create_Paletted_Preview(int, int & size);
 	void Create_Preview_Surface(char * buffer);

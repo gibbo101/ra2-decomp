@@ -195,6 +195,133 @@ bool ParasiteClass::UpdateGrapple(void)
 	return false;
 }
 
+// FUNCTION: GAMEMD 0x006297F0
+void ParasiteClass::UpdateSquid(void)
+{
+	WeaponTypeClass * weapon = Owner->Get_Class_Weapon_Data(0)->Weapon;
+	int damage;
+	WarheadTypeClass const * warhead = weapon->WarheadPtr;
+	Coord coord = Victim->Position;
+	CellClass * cell = Victim->Get_Cell_Ptr();
+	double factor = 1.0;
+	if (cell != NULL && !cell->Is_Tile_Water()) {
+		ExitUnit();
+		if (Owner != NULL) {
+			Owner->ParalysisTimer = 0;
+		}
+		return;
+	}
+	Victim->ParalysisTimer = warhead->Paralyzes;
+
+	switch (GrappleState) {
+		case 0:
+		{
+			Victim->AngleRotatedSideways = 0;
+			AnimType anim = AnimTypeClass::From_Name("SQDG");
+			if (anim != -1) {
+				AnimTypeClass * type = AnimTypes[anim];
+				if (type != NULL) {
+					AnimClass * grapple = new AnimClass(type, coord, 0, 1, ShapeFlags_Type(0x600), 0, false);
+					if (grapple != NULL) {
+						GrappleAnim = grapple;
+						PointerExpiredNotification::NotifyInvalidAnim.Add(this);
+					}
+				}
+			}
+			GrappleState = 1;
+			FUN_00629710();
+			UpdateGrapple();
+			break;
+		}
+
+		case 1:
+			if (UpdateGrapple()) {
+				GrappleState = Scen->RandomNumber(0, 1) ? 2 : 3;
+				FUN_00629710();
+				UpdateGrapple();
+				Victim->CreateWakes(coord);
+			}
+			break;
+
+		case 2:
+			factor = -1.0;
+
+		case 3:
+			if (UpdateGrapple()) {
+				GrappleState = 4;
+				FUN_00629710();
+				UpdateGrapple();
+			}
+			{
+				double angle = GrappleAnimFrame * factor * 0.31415926535897931;
+				Victim->AngleRotatedSideways = (float)fastmath::sin(angle) * 0.78539819f;
+			}
+			break;
+
+		case 4:
+		{
+			Victim->AngleRotatedSideways = 0;
+			int count = Rule->SplashList.Count();
+			double rad = -Victim->PrimaryFacing.Current().As_Radian();
+			double cosine = fastmath::cos(rad);
+			double sine = fastmath::sin(rad);
+			for (int i = 0; i < 3; i++) {
+				double dx = i * 128.0 - 128.0;
+				double dy = 64.0;
+				if (Scen->RandomNumber(0, 1)) {
+					dy = -64.0;
+				}
+				int ox = (int)(dx * cosine - dy * sine);
+				int oy = (int)(dx * sine + dy * cosine);
+				Coord splash = coord + Coord(ox, oy, 0);
+				new AnimClass(Rule->SplashList[Scen->RandomNumber(0, count - 1)], splash, 2, 1, ShapeFlags_Type(0x600), -10, false);
+			}
+			if (warhead->Culling && (Victim->GetHealthStatus() == HEALTH_RED || (Victim->GetHealthStatus() == HEALTH_YELLOW && Owner->Veterancy.Is_Elite()))) {
+				if (Owner->Techno_Type_Class()->IsTrainable) {
+					TechnoTypeClass const * victimtype = Victim->Techno_Type_Class();
+					TechnoTypeClass const * ownertype = Owner->Techno_Type_Class();
+					Owner->Veterancy.Made_A_Kill(ownertype->Cost_Of(Owner->House), victimtype->Cost_Of(Victim->House));
+				}
+				FootClass * victim = Victim;
+				ExitUnit();
+				victim->IsSinking = true;
+				victim->Death_Announcement(Owner);
+				victim->Stun();
+				FUN_00629530();
+				Owner->ParalysisTimer = 0;
+				return;
+			}
+			damage = weapon->Attack;
+			Victim->Take_Damage(damage, 0, warhead, Owner, false, true, NULL);
+			if (Victim != NULL) {
+				GrappleState = Scen->RandomNumber(0, 1) ? 2 : 3;
+				FUN_00629710();
+				UpdateGrapple();
+				Victim->CreateWakes(coord);
+			} else {
+				FUN_00629530();
+			}
+			break;
+		}
+
+		default:
+			ExitUnit();
+			break;
+	}
+
+	AnimClass * grapple = GrappleAnim;
+	if (grapple != NULL && Owner != NULL && Victim != NULL) {
+		CellClass * vcell = Victim->Get_Cell_Ptr();
+		if (Victim != grapple->OwnerObject) {
+			grapple->SetOwnerObject(Victim);
+			grapple->LightConvert = (LightConvertClass *)Owner->GetRemapColour();
+			if (vcell != NULL) {
+				grapple->TintColor = vcell->Brightness;
+			}
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x00629E90
 void FootClass::CreateWakes(Coord coords)
 {
