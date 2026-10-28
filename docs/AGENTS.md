@@ -197,6 +197,8 @@ Each entry: what the diff showed, then the source change that fixed it.
   them members of one local struct.
 - A buffer declared inside the loop body gives `push ecx`; one at function level does not.
 - One variable shared by two branches shares a slot; one per branch gets its own.
+- A frame too big by a fixed amount with every `[esp+N]` matching: a local buffer has the
+  wrong size (name[200], not [256], in 0x00542620).
 - A call's return temporary gets a function-level slot; one inside an inlined body is
   scoped to it and can share a slot (0x004361D0's 8-byte excess).
 - A class returned by value: a temporary and a named local give different frames
@@ -384,6 +386,7 @@ Each entry: what the diff showed, then the source change that fixed it.
 - When no body form helps, moving real declarations the file already uses to before or
   after the function shifts its heap offsets too (wonline 0x00788180); never add unused ones.
   One move may not be enough: move several together (six held it against a new inline).
+  Removing declarations nothing uses works too (nine held it); results jump with set size.
 - A shared-header layout change can flip it as well: an equally true form with fewer new
   names (`int X[64][2]` rather than a new pair struct) held wonline 0x00788180.
 - A named reference to an object indexed more than once (`CellClass & center = Map[cell]`)

@@ -4316,6 +4316,150 @@ void __fastcall Cloak_Cell_Occupiers(CellClass * cellptr)
 	}
 }
 
+// FUNCTION: GAMEMD 0x00454DB0
+void BuildingClass::Cloaking_AI(bool fast)
+{
+	if (Class == NULL) {
+		return;
+	}
+
+	Cell center = Center_Coord().As_Cell();
+
+	if (Cloak == CLOAKING) {
+		if (TranslucencyLevel < 15) {
+			TranslucencyLevel++;
+			if (TranslucencyLevel == 1 || TranslucencyLevel == 6 || TranslucencyLevel == 11) {
+				IsToDisplay = true;
+			}
+			Set_Anim_Translucency(TranslucencyLevel);
+			if (TranslucencyLevel == 15) {
+				Cloak = CLOAKED;
+				if (ParticleSystems[2] != NULL) {
+					delete ParticleSystems[2];
+					ParticleSystems[2] = NULL;
+				}
+			}
+		}
+	}
+	else if (Cloak == UNCLOAKING) {
+		if (TranslucencyLevel >= 0) {
+			if (TranslucencyLevel > 0) {
+				TranslucencyLevel--;
+			}
+			if (TranslucencyLevel == 0 || TranslucencyLevel == 5 || TranslucencyLevel == 10) {
+				IsToDisplay = true;
+			}
+			Set_Anim_Translucency(TranslucencyLevel);
+			if (TranslucencyLevel == 0) {
+				Cloak = UNCLOAKED;
+				if (ParticleSystems[2] == NULL && Class->NaturalParticleLocation != (Coord const &)DAT_0089C848) {
+					Coord coord = Coord(Class->NaturalParticleLocation);
+					ParticleSystems[2] = new ParticleSystemClass(Class->NaturalParticleSystem, PositionCoord + coord, &Map[Get_Coord()], NULL, (Coord const &)DAT_0089C848, NULL);
+				}
+			}
+		}
+	}
+
+	if (Cloak == CLOAKED && Should_Uncloak()) {
+		Do_Uncloak();
+	}
+
+	if (Cloak == UNCLOAKED && Is_Ready_To_Cloak()) {
+		Do_Cloak();
+	}
+
+	if (CloakGeneratorState != 0 && Class->IsCloakGenerator) {
+		HousesType houseid = House->HeapID;
+		BSurface * cloaking_surface = CloakingSurface;
+		int width = cloaking_surface->Get_Width();
+		int width_half = width / 2;
+
+		if (CloakGeneratorState > 0) {
+			if (CurrentCloakRadius == Class->CloakRadiusInCells) {
+				CloakGeneratorState = 0;
+			} else {
+				CurrentCloakRadius++;
+				cloaking_surface->Fill(0);
+				cloaking_surface->Draw_Circle(Point2D(width_half, width_half), CurrentCloakRadius, cloaking_surface->Get_Rect(), 1);
+				char * data = (char *)cloaking_surface->Lock();
+				Cell origin = center - Cell(width_half, width_half);
+
+				for (int y = 0; y < width; y++) {
+					for (int x = 0; x < width; x++) {
+						if (*data++ != 0) {
+							Cell current = origin + Cell(x, y);
+							CellClass * cellptr = &Map[current];
+							if (!cellptr->Is_Cloaked(houseid)) {
+								cellptr->Cloaked_By(houseid);
+								Cloak_Cell_Occupiers(cellptr);
+								BuildingClass * building = cellptr->Cell_Building();
+								if (building != NULL && building->House->HeapID == houseid) {
+									if (building->Center_Coord().As_Cell() == current) {
+										CurrentCloakRadius--;
+										return;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		else if (CurrentCloakRadius == 0) {
+			CloakGeneratorState = 0;
+		}
+		else {
+			CurrentCloakRadius--;
+			cloaking_surface->Fill(2);
+			cloaking_surface->Draw_Circle(Point2D(width_half, width_half), Class->CloakRadiusInCells, cloaking_surface->Get_Rect(), 0);
+			if (CurrentCloakRadius != 0) {
+				cloaking_surface->Draw_Circle(Point2D(width_half, width_half), CurrentCloakRadius, cloaking_surface->Get_Rect(), 1);
+			}
+			char * data = (char *)cloaking_surface->Lock();
+			Cell origin = center - Cell(width_half, width_half);
+
+			for (int y = 0; y < width; y++) {
+				for (int x = 0; x < width; x++) {
+					if (*data++ == 0) {
+						Cell current = origin + Cell(x, y);
+						CellClass * cellptr = &Map[current];
+						if (cellptr->Is_Cloaked(houseid)) {
+							cellptr->Uncloaked_By(houseid);
+							Cloak_Cell_Occupiers(cellptr);
+							BuildingClass * building = cellptr->Cell_Building();
+							if (building != NULL && building->House->HeapID == houseid) {
+								if (building->Center_Coord().As_Cell() == current && !fast) {
+									CurrentCloakRadius++;
+									return;
+								}
+							}
+						}
+					}
+				}
+			}
+
+			if (CurrentCloakRadius == 0) {
+				for (int i = 0; i < ::Buildings.Count(); i++) {
+					BuildingClass * building = ::Buildings[i];
+					if (building->IsActive && building != this && building->Class->IsCloakGenerator && building->IsPowerOnline()) {
+						if (building->CloakGeneratorState == 0) {
+							Cell diff = center - building->Center_Coord().As_Cell();
+							int dy = diff.Y;
+							int dx = diff.X;
+							if (dy*dy + dx*dx < 4 * ((Class->CloakRadiusInCells + 2) * (Class->CloakRadiusInCells + 2))) {
+								building->Enable_Cloak_Generator();
+								if (building->CurrentCloakRadius != 0) {
+									building->CurrentCloakRadius--;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x004555D0
 bool BuildingClass::IsPowerOnline(void) const
 {

@@ -501,3 +501,219 @@ BOOL CALLBACK FUN_006AE3F0(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 	}
 	return FALSE;
 }
+
+#include "scenario.h"
+
+MultiplayerGameMode * First_Game_Mode(void);
+int Game_Mode_Total(void);
+MultiplayerGameMode * FUN_005E2F80(void);
+void Clear_Vector(DynamicVectorClass<NodeNameType *> * vector);
+void FUN_004E3B90(HWND dialog);
+void FUN_004E43C0(void);
+void __fastcall FUN_004E4820(HWND dialog);
+void FUN_004E4F50(void);
+void __fastcall FUN_004E5310(HWND dialog);
+void FUN_004E5AC0(void);
+void __fastcall FUN_004E5D60(HWND dialog);
+void __fastcall FUN_004E3CE0(HWND dialog, int side);
+void __fastcall FUN_004E48E0(HWND dialog, int side);
+void __fastcall FUN_004E53D0(HWND dialog, int slot);
+void __fastcall FUN_004E5E20(HWND dialog, int slot);
+void __fastcall FUN_004E4FC0(int count);
+void __fastcall FUN_005E2EF0(HWND dialog, MultiplayerGameMode * mode);
+void __fastcall FUN_005E2F60(HWND dialog);
+void __fastcall FUN_005E74E0(HWND dialog);
+void FUN_0058BB30(void);
+
+inline int Skirmish_Slot_Level(int type)
+{
+	if (type == 1) return -1;
+	if (type == 4) return 0;
+	if (type == 5) return 1;
+	if (type == 6) return 2;
+	return -1;
+}
+
+inline int Skirmish_Spot_Limit(int count)
+{
+	if (Session.MPGameMode->vt_entry_04() && Scen->NumCoopHumanStartSpots <= count) {
+		return(Scen->NumCoopHumanStartSpots);
+	}
+	return(count);
+}
+
+// FUNCTION: GAMEMD 0x006AE6E0
+int __fastcall FUN_006AE6E0(HWND window, WPARAM wparam, LPARAM lparam)
+{
+	Session.Options.FUN_0069B540();
+
+	HWND handle = GetDlgItem(window, 0x6a0);
+	if (handle) {
+		SendMessage(handle, EM_LIMITTEXT, 0x13, 0);
+		SendMessage(handle, 0x4b2, 0, (LPARAM)FUN_00735120(Session.Handle));
+		SendMessage(handle, 0x4d1, 1, 0);
+	}
+
+	for (int slot = 0; slot < 7; slot++) {
+		HWND combo = GetDlgItem(window, FUN_006ACB60(slot));
+		SendMessage(combo, CB_RESETCONTENT, 0, 0);
+		int index;
+		index = SendMessage(combo, 0x4c2, 0, (LPARAM)StringTable::LoadString("GUI:None", NULL, "D:\\ra2mdpost\\Skirmish.cpp", 0x9e));
+		SendMessage(combo, CB_SETITEMDATA, index, -1);
+		index = SendMessage(combo, 0x4c2, 0, (LPARAM)StringTable::LoadString("GUI:AIEasy", NULL, "D:\\ra2mdpost\\Skirmish.cpp", 0xa1));
+		SendMessage(combo, CB_SETITEMDATA, index, 2);
+		index = SendMessage(combo, 0x4c2, 0, (LPARAM)StringTable::LoadString("GUI:AINormal", NULL, "D:\\ra2mdpost\\Skirmish.cpp", 0xa4));
+		SendMessage(combo, CB_SETITEMDATA, index, 1);
+		index = SendMessage(combo, 0x4c2, 0, (LPARAM)StringTable::LoadString("GUI:AIHard", NULL, "D:\\ra2mdpost\\Skirmish.cpp", 0xa7));
+		SendMessage(combo, CB_SETITEMDATA, index, 0);
+		SendMessage(combo, CB_SETCURSEL, 0, 0);
+	}
+
+	FUN_004E3B90(window);
+	FUN_004E43C0();
+	FUN_004E4820(window);
+	FUN_004E4F50();
+	FUN_004E5310(window);
+	FUN_004E5AC0();
+	FUN_004E5D60(window);
+	FUN_004E3CE0(window, 0);
+	FUN_004E48E0(window, 0);
+	FUN_004E53D0(window, 0);
+	FUN_004E5E20(window, 0);
+
+	for (int i = 1; i < 8; i++) {
+		int id = FUN_006ACB60(i - 1);
+		int level = Skirmish_Slot_Level(Session.Skirmish.SlotData[i][0]);
+		int count = SendDlgItemMessage(window, id, CB_GETCOUNT, 0, 0);
+		for (int k = 0; k < count; k++) {
+			if (SendDlgItemMessage(window, id, CB_GETITEMDATA, k, 0) == level) {
+				SendDlgItemMessage(window, id, CB_SETCURSEL, k, 0);
+				break;
+			}
+		}
+		int country = FUN_004E37D0(i);
+		int color = FUN_004E41D0(i);
+		int start = FUN_004E4E60(i);
+		int team = FUN_004E5940(i);
+		if (level == -1) {
+			FUN_004E3F70(window, country, -2);
+			FUN_004E49A0(window, color, -2);
+			FUN_004E5480(window, start, -2);
+			FUN_004E5ED0(window, team, -2);
+			HWND countryItem = GetDlgItem(window, country);
+			HWND colorItem = GetDlgItem(window, color);
+			HWND startItem = GetDlgItem(window, start);
+			HWND teamItem = GetDlgItem(window, team);
+			EnableWindow(countryItem, FALSE);
+			EnableWindow(colorItem, FALSE);
+			EnableWindow(startItem, FALSE);
+			EnableWindow(teamItem, FALSE);
+		} else {
+			FUN_004E3F70(window, country, Session.Skirmish.SlotData[i][1]);
+			FUN_004E49A0(window, color, Session.Skirmish.SlotData[i][2]);
+		}
+	}
+
+	if (Session.Skirmish.MPGameMode <= 0 || Session.Skirmish.MPGameMode > Game_Mode_Total()) {
+		Session.Skirmish.MPGameMode = First_Game_Mode()->MPModeIndex;
+	}
+	Session.Options.MPModeIndex = Session.Skirmish.MPGameMode;
+
+	MultiplayerGameMode * mode = FUN_005E2F80();
+	Session.Skirmish.MPGameMode = mode->MPModeIndex;
+	Session.Options.MPModeIndex = mode->MPModeIndex;
+	FUN_004E5AC0();
+	FUN_004E5D60(window);
+	FUN_004E5E20(window, 0);
+
+	if (Session.Skirmish.ScenIndex < 0 || Session.Skirmish.ScenIndex >= Session.Scenarios.Count()) {
+		Session.Skirmish.ScenIndex = 0;
+	}
+	Session.Options.ScenarioIndex = Set_Scenario_Info_From_Index(Session.Skirmish.ScenIndex) ? Session.Skirmish.ScenIndex : 0;
+
+	MultiMission * map = Session.Scenarios[Session.Options.ScenarioIndex];
+	if (!mode->FUN_005D63E0(map)) {
+		int index = mode->FirstValidMapIndex();
+		if (index == -1) {
+			mode = First_Game_Mode();
+			Session.Skirmish.MPGameMode = mode->MPModeIndex;
+			Session.Options.MPModeIndex = mode->MPModeIndex;
+			index = mode->FirstValidMapIndex();
+		}
+		map = Session.Scenarios[index];
+		Session.Skirmish.ScenIndex = index;
+		Session.Options.ScenarioIndex = index;
+		strcpy(Session.ScenarioFileName, map->Get_Filename());
+	}
+
+	Session.MPGameMode = mode;
+	FUN_004E4FC0(Skirmish_Spot_Limit(RandomMapWaypointCount(Session.Options.ScenarioIndex)));
+	FUN_004E5310(window);
+	FUN_004E5D60(window);
+	FUN_006ACE80(window, 0);
+	FUN_006ADDF0(window, -1, Session.Options.ScenarioIndex);
+
+	Session.MPGameMode = mode;
+	mode->vt_entry_20();
+	FUN_006ACD60(window);
+	FUN_005E2EF0(window, mode);
+	FUN_005E2F60(window);
+	Clear_Vector(&Session.Players);
+
+	Session.Options.GameSpeed = Session.Skirmish.GameSpeed;
+	Session.Options.Credits = Session.Skirmish.Credits;
+	Session.Options.UnitCount = Session.Skirmish.UnitCount;
+
+	handle = GetDlgItem(window, 0x529);
+	if (handle) {
+		int speed = 6 - Session.Options.GameSpeed;
+		SendMessage(handle, 0x406, 1, MAKELONG(0, 6));
+		SendMessage(handle, 0x405, 1, speed);
+	}
+
+	handle = GetDlgItem(window, 0x511);
+	if (handle) {
+		SendMessage(handle, 0x406, 1, MAKELONG(Rule->MinMoney, Rule->MPMaxMoney));
+		SendMessage(handle, 0x405, 1, Session.Options.Credits);
+		SendMessage(handle, 0x4ab, 0, Rule->MoneyIncrement);
+	}
+
+	handle = GetDlgItem(window, 0x50c);
+	if (handle) {
+		SendMessage(handle, 0x406, 1, MAKELONG(Rule->MinUnitCount, Rule->MaxUnitCount));
+		SendMessage(handle, 0x405, 1, Session.Options.UnitCount);
+	}
+
+	Session.Options.ShortGame = Session.Skirmish.ShortGame;
+	Session.Options.SWAllowed = Session.Skirmish.SuperWeaponsAllowed;
+	Session.Options.BuildOffAlly = Session.Skirmish.BuildOffAlly;
+	Session.Options.MCVRedeploy = Session.Skirmish.MCVRepacks;
+	Session.Options.Goodies = Session.Skirmish.CratesAppear;
+
+	handle = GetDlgItem(window, 0x54e);
+	if (handle) SendMessage(handle, BM_SETCHECK, Session.Options.ShortGame ? BST_CHECKED : BST_UNCHECKED, 0);
+
+	handle = GetDlgItem(window, 0x69a);
+	if (handle) SendMessage(handle, BM_SETCHECK, Session.Options.SWAllowed ? BST_CHECKED : BST_UNCHECKED, 0);
+
+	handle = GetDlgItem(window, 0x69d);
+	if (handle) SendMessage(handle, BM_SETCHECK, Session.Options.BuildOffAlly ? BST_CHECKED : BST_UNCHECKED, 0);
+
+	handle = GetDlgItem(window, 0x693);
+	if (handle) SendMessage(handle, BM_SETCHECK, Session.Options.MCVRedeploy ? BST_CHECKED : BST_UNCHECKED, 0);
+
+	handle = GetDlgItem(window, 0x696);
+	if (handle) SendMessage(handle, BM_SETCHECK, Session.Options.Goodies ? BST_CHECKED : BST_UNCHECKED, 0);
+
+	if (map->Is_Random_Map()) {
+		FUN_0058BB30();
+		delete MultiplayerMapPreview;
+		MultiplayerMapPreview = new MapPreviewClass;
+		MultiplayerMapPreview->Read_PCX_Preview("RandMap.img");
+		if (MultiplayerMapPreview->Get_Preview_Surface() != NULL) {
+			return FALSE;
+		}
+	}
+	FUN_005E74E0(window);
+	return FALSE;
+}

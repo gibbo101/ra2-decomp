@@ -60,14 +60,14 @@ typedef DynamicVectorClass<char *> CoopCampNameList;
 
 struct CoopCampEntry
 {
-	int Pad0;
+	int Index;
 	wchar_t * Title;
 	char MapCount;
 	char Pad9[3];
 	char * Names;
 	DynamicVectorClass<CoopCampNameList *> ListA;
 	DynamicVectorClass<CoopCampNameList *> ListB;
-	wchar_t * Extra;
+	char * Extra;
 	Wstring Text44;
 	Wstring Text48;
 };

@@ -24,6 +24,8 @@ class HouseTypeClass : public AbstractTypeClass
 			char Buffer[25];
 			CountryName(void) { Buffer[0] = '\0'; }
 			CountryName(NoInitClass const &) {}
+			CountryName(char const * name) { if (name == NULL) { Buffer[0] = '\0'; } else { strncpy(Buffer, name, sizeof(Buffer)-1); Buffer[sizeof(Buffer)-1] = '\0'; } }
+			CountryName & operator=(CountryName const & that) { if (&that != this) { memcpy(Buffer, that.Buffer, sizeof(Buffer)); } return(*this); }
 			operator char const *(void) const { return(Buffer); }
 			operator char *(void) { return(Buffer); }
 		};

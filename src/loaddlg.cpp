@@ -30,9 +30,17 @@
 
 namespace UI {
 	int __fastcall StandardWndProc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+	HWND __fastcall BeginDialog(int resource, DLGPROC proc, int param);
+	void __fastcall FocusOnWindow(HWND window);
+	void __fastcall EndDialog(HWND window);
+	bool Updated(void);
 }
 bool On_WM_MOVING(HWND window, WPARAM wparam, LPARAM lparam);
 void FUN_00607FD0(HWND dialog);
+void FUN_00606740(HWND dialog, bool value);
+void FUN_006083E0(HWND dialog);
+void FUN_00608380(HWND dialog);
+wchar_t * __fastcall wcstrim(wchar_t * buffer);
 
 // SYNTHETIC: GAMEMD 0x00558530 SYMBOL
 // _$E9
@@ -291,6 +299,234 @@ LRESULT CALLBACK LoadOptionsClass::Delete_Dialog_Proc(HWND window, UINT message,
 		return(FALSE);
 	}
 	return(rc);
+}
+
+// FUNCTION: GAMEMD 0x00558DD0
+bool LoadOptionsClass::Dialog(void)
+{
+	HWND dialog = 0;
+	HWND list = 0;
+	HWND button = 0;
+
+	wchar_t buffer[256];
+
+	switch (Style) {
+		case LOAD: {
+				dialog = UI::BeginDialog(0xB7, (DLGPROC)Load_Dialog_Proc, 0);
+				list = GetDlgItem(dialog, 0x525);
+				button = GetDlgItem(dialog, 0x40F);
+				HWND title = GetDlgItem(dialog, 0x694);
+				SendMessage(title, 0x4B2, 0, (LPARAM)GetUIString_Load());
+				if (!Session.FUN_0069BBE0()) {
+					HWND hide = GetDlgItem(dialog, 0x40C);
+					ShowWindow(hide, SW_HIDE);
+				}
+			}
+			break;
+
+		case SAVE: {
+				if (Disk_Space_Available() < MinSpaceRequired) {
+					WWMessageBox().Process(StringTable::LoadString("TXT_DISKFULL", NULL, "D:\\ra2mdpost\\LoadDlg.CPP", 0x1B0), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\LoadDlg.CPP", 0x1B0), NULL, NULL);
+					return(false);
+				}
+				dialog = UI::BeginDialog(0x2B4, (DLGPROC)Save_Dialog_Proc, 0);
+				list = GetDlgItem(dialog, 0x527);
+				wchar_t * text = Description;
+				HWND edit = GetDlgItem(dialog, 0x526);
+				SendMessage(edit, 0x4B2, 0, (LPARAM)text);
+				button = GetDlgItem(dialog, 0x6C7);
+				HWND title = GetDlgItem(dialog, 0x694);
+				SendMessage(title, 0x4B2, 0, (LPARAM)GetUIString_Save());
+				if (!Session.FUN_0069BBE0()) {
+					HWND hide = GetDlgItem(dialog, 0x40C);
+					ShowWindow(hide, SW_HIDE);
+				}
+			}
+			break;
+
+		case WWDELETE: {
+				dialog = UI::BeginDialog(0x2B5, (DLGPROC)Delete_Dialog_Proc, 0);
+				list = GetDlgItem(dialog, 0x528);
+				button = GetDlgItem(dialog, 0x6C8);
+				HWND title = GetDlgItem(dialog, 0x694);
+				SendMessage(title, 0x4B2, 0, (LPARAM)GetUIString_Delete());
+				if (!Session.FUN_0069BBE0()) {
+					HWND hide = GetDlgItem(dialog, 0x40C);
+					ShowWindow(hide, SW_HIDE);
+				}
+			}
+			break;
+	}
+
+	State = STATE_PENDING;
+
+	if (dialog) {
+
+		SetWindowLong(dialog, DWL_USER, (LONG)this);
+
+		if (list != 0) {
+			Fill_List(list);
+			EnableWindow(button, bool(ListBox_GetCount(list) > 0));
+		}
+
+		UI::FocusOnWindow(dialog);
+
+		do {
+			while (State == STATE_PENDING) {
+				if (UI::Updated() == true) {
+					State = STATE_CLOSE;
+				}
+
+				if (Callback) {
+					Callback();
+				}
+
+				if (!GameActive) {
+					Title_Screen_Restore(false);
+				}
+			}
+
+			if (State == STATE_OK || State == (LoadDialogState)0x40F || State == (LoadDialogState)0x6C7 || State == (LoadDialogState)0x6C8) {
+				LRESULT row = ListBox_GetCurSel(list);
+
+				if (row != LB_ERR) {
+					FileEntryClass * entry = (FileEntryClass *)ListBox_GetItemData(list, row);
+
+					switch (Style) {
+						case LOAD: {
+							if (!entry->Old) {
+								DiskID old_disk = CD::Get_Current_Disk(60);
+								CD::Set_Required_Disk(entry->Num == -1 ? DISK_ANY : (DiskID)Campaigns[entry->Num]->CDNumber);
+
+								if (!CD::Force_Available()) {
+									CD::Set_Required_Disk(old_disk);
+									State = STATE_PENDING;
+								} else {
+									ShowWindow(dialog, SW_HIDE);
+									MouseCursor->Hide_Mouse();
+									if (!Load_File(entry->Filename)) {
+										MouseCursor->Show_Mouse();
+										ShowWindow(dialog, SW_SHOW);
+										WWMessageBox().Process(StringTable::LoadString("TXT_ERROR_LOADING_GAME", NULL, "D:\\ra2mdpost\\LoadDlg.CPP", 0x226), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\LoadDlg.CPP", 0x226), NULL, NULL);
+										ShowWindow(dialog, SW_HIDE);
+										State = STATE_PENDING;
+									}
+								}
+							}
+							break;
+						}
+
+						case SAVE: {
+							HWND savelist = GetDlgItem(dialog, 0x527);
+							HWND frame = 0;
+							if (savelist != 0) {
+								frame = (HWND)SendMessage(savelist, 0x4EF, 0, 0);
+								if (frame != 0) {
+									FUN_00606740(frame, true);
+								}
+							}
+
+							HWND edit = GetDlgItem(dialog, 0x526);
+							SendMessage(edit, 0x4B3, 80, (LPARAM)buffer);
+							wcstrim(buffer);
+
+							if (wcslen(buffer) == 0) {
+								WWMessageBox().Process(StringTable::LoadString("TXT_MUSTENTER_DESCRIPTION", NULL, "D:\\ra2mdpost\\LoadDlg.CPP", 0x23E), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\LoadDlg.CPP", 0x23E), NULL, NULL);
+								SetFocus(GetDlgItem(dialog, 0x526));
+								Edit_SetSel(GetDlgItem(dialog, 0x526), -1, -1);
+								State = STATE_PENDING;
+								break;
+							}
+
+							const char * filename = NULL;
+
+							if (entry && entry->Valid) {
+								filename = entry->Filename;
+							} else {
+								char test_filename[256];
+
+								{
+									CCFileClass temp_file;
+									do {
+										sprintf(test_filename, "SAVE%04lX.%3s", rand(), Extension);
+										temp_file.Set_Name(test_filename);
+									} while (temp_file.Is_Available() == true);
+								}
+
+								filename = test_filename;
+							}
+
+							if (filename != NULL) {
+								bool exists = RawFileClass(filename).Is_Available() == true;
+								if (exists && WWMessageBox().Process(StringTable::LoadString("TXT_CONFIRM_SAVE", NULL, "D:\\ra2mdpost\\LoadDlg.CPP", 0x252), StringTable::LoadString("TXT_YES", NULL, "D:\\ra2mdpost\\LoadDlg.CPP", 0x252), StringTable::LoadString("TXT_NO", NULL, "D:\\ra2mdpost\\LoadDlg.CPP", 0x252), NULL)) {
+									State = STATE_PENDING;
+								} else {
+									ShowWindow(dialog, SW_HIDE);
+									if (!Save_File(filename, buffer)) {
+										ShowWindow(dialog, SW_SHOW);
+										WWMessageBox().Process(StringTable::LoadString("TXT_ERROR_SAVING_GAME", NULL, "D:\\ra2mdpost\\LoadDlg.CPP", 0x261), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\LoadDlg.CPP", 0x261), NULL, NULL);
+										State = STATE_PENDING;
+									} else {
+										ShowWindow(dialog, SW_SHOW);
+										FUN_006083E0(dialog);
+										wchar_t const * saved = GetUIString_GameSaved();
+										WWMessageBox().Process(saved, StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\LoadDlg.CPP", 0x269), NULL, NULL);
+										FUN_00608380(dialog);
+										ShowWindow(dialog, SW_HIDE);
+										if (Description) {
+											wcscpy(buffer, Description);
+										}
+									}
+								}
+							}
+
+							if (frame != 0) {
+								FUN_00606740(frame, false);
+							}
+							break;
+						}
+
+						case WWDELETE: {
+							swprintf(buffer, L"%s\n\n%s", StringTable::LoadString("TXT_DELETE_FILE_QUERY", NULL, "D:\\ra2mdpost\\LoadDlg.CPP", 0x27B), entry->Descr);
+
+							HWND deletelist = GetDlgItem(dialog, 0x528);
+							HWND frame = 0;
+							if (deletelist != 0) {
+								frame = (HWND)SendMessage(deletelist, 0x4EF, 0, 0);
+								if (frame != 0) {
+									FUN_00606740(frame, true);
+								}
+							}
+
+							if (!WWMessageBox().Process(buffer, StringTable::LoadString("TXT_YES", NULL, "D:\\ra2mdpost\\LoadDlg.CPP", 0x286), StringTable::LoadString("TXT_NO", NULL, "D:\\ra2mdpost\\LoadDlg.CPP", 0x286), NULL)) {
+								Delete_File(entry->Filename);
+								ListBox_DeleteString(list, row);
+								ListBox_SetCurSel(list, 0);
+								if (ListBox_GetCount(list) > 0) {
+									State = STATE_PENDING;
+								}
+							} else {
+								State = STATE_PENDING;
+							}
+
+							if (frame != 0) {
+								FUN_00606740(frame, false);
+							}
+							break;
+						}
+					}
+				} else {
+					State = STATE_PENDING;
+				}
+			}
+		} while (State == STATE_PENDING);
+
+		Clear_List();
+
+		UI::EndDialog(dialog);
+	}
+
+	return(State == (LoadDialogState)0x40F ? true : false);
 }
 
 // FUNCTION: GAMEMD 0x005595F0

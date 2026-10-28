@@ -239,6 +239,108 @@ void ScoreClass::Do_Graphs(void)
 	}
 }
 
+// FUNCTION: GAMEMD 0x0068F060
+void ScoreClass::Do_Graph(int gkilled, int nkilled, int xpos)
+{
+	Rect rect1(0,0,0,0);
+	Rect rect2(0,0,0,0);
+
+	int maxval;
+
+	xpos = XPos + xpos;
+	int ypos = YPos + 244;
+
+	int gdikilled = gkilled, nodkilled=nkilled;
+
+	maxval = MAX(gdikilled, nodkilled);
+	if (!maxval) maxval=1;
+
+	gdikilled = (gdikilled * SIZEGBAR) / maxval;
+	nodkilled = (nodkilled * SIZEGBAR) / maxval;
+	if (maxval < 20) {
+		gdikilled = gkilled * 5;
+		nodkilled = nkilled * 5;
+	}
+
+	maxval = MAX(gdikilled, nodkilled);
+	if (!maxval) maxval=1;
+
+	Rect trect;
+
+	trect.Set(xpos, ypos - gdikilled, 4, gdikilled);
+	SurfacePtr->Fill_Rect_Trans(trect, RGBClass(253, 181, 28), 25);
+	trect.Set(xpos + 4, ypos - gdikilled, 7, gdikilled);
+	SurfacePtr->Fill_Rect_Trans(trect, RGBClass(253, 181, 28), 50);
+	trect.Set(xpos + 11, ypos - gdikilled, 4, gdikilled);
+	SurfacePtr->Fill_Rect_Trans(trect, RGBClass(253, 181, 28), 25);
+
+	trect.Set(xpos + 132, ypos - nodkilled, 4, nodkilled);
+	SurfacePtr->Fill_Rect_Trans(trect, RGBClass(250, 28, 28), 25);
+	trect.Set(xpos + 132 + 4, ypos - nodkilled, 7, nodkilled);
+	SurfacePtr->Fill_Rect_Trans(trect, RGBClass(250, 28, 28), 50);
+	trect.Set(xpos + 132 + 11, ypos - nodkilled, 4, nodkilled);
+	SurfacePtr->Fill_Rect_Trans(trect, RGBClass(250, 28, 28), 25);
+
+	int count = 1;
+	int nodrun = nkilled;
+	int gdirun = gkilled;
+	int nodadd = 2 * nkilled;
+	int gdiadd = 2 * gkilled;
+
+	for (int i = ypos - 1; count <= MAX(gdikilled, nodkilled); ) {
+
+		if (rect1.Is_Valid()) {
+			HiddenSurface->Blit_From(rect1, *AlternateSurface, rect1);
+		}
+
+		if (count <= gdikilled) {
+			trect.Set(xpos, i, 15, count);
+			HiddenSurface->Blit_From(trect, *SurfacePtr, trect);
+			rect1 = Count_Up_Print(HiddenSurface, L"%d", gdirun / maxval, gkilled, xpos, i);
+		} else {
+			rect1 = Count_Up_Print(HiddenSurface, L"%d", gkilled, gkilled, xpos, ypos - gdikilled);
+		}
+
+		if (rect2.Is_Valid()) {
+			HiddenSurface->Blit_From(rect2, *AlternateSurface, rect2);
+		}
+
+		if (count <= nodkilled) {
+			trect.Set(xpos + 132, i, 15, count);
+			HiddenSurface->Blit_From(trect, *SurfacePtr, trect);
+			rect2 = Count_Up_Print(HiddenSurface, L"%d", nodrun / maxval, nkilled, xpos + 132, i);
+		} else {
+			rect2 = Count_Up_Print(HiddenSurface, L"%d", nkilled, nkilled, xpos + 132, ypos - nodkilled);
+		}
+
+		DoSound("BarGraph", 96);
+		Call_Back_Delay(1);
+
+		count += 2;
+		gdirun += gdiadd;
+		i -= 2;
+		nodrun += nodadd;
+	}
+
+	if (rect1.Is_Valid()) {
+		HiddenSurface->Blit_From(rect1, *AlternateSurface, rect1);
+	}
+	trect.Set(xpos, ypos - gdikilled, 15, gdikilled);
+	AlternateSurface->Blit_From(trect, *SurfacePtr, trect);
+	Count_Up_Print(HiddenSurface, L"%d", gkilled, gkilled, xpos, ypos - gdikilled);
+	Count_Up_Print(AlternateSurface, L"%d", gkilled, gkilled, xpos, ypos - gdikilled);
+
+	if (rect2.Is_Valid()) {
+		HiddenSurface->Blit_From(rect2, *AlternateSurface, rect2);
+	}
+	trect.Set(xpos + 132, ypos - nodkilled, 15, nodkilled);
+	AlternateSurface->Blit_From(trect, *SurfacePtr, trect);
+	Count_Up_Print(HiddenSurface, L"%d", nkilled, nkilled, xpos + 132, ypos - nodkilled);
+	Count_Up_Print(AlternateSurface, L"%d", nkilled, nkilled, xpos + 132, ypos - nodkilled);
+
+	Call_Back_Delay(20);
+}
+
 // FUNCTION: GAMEMD 0x0068F8A0
 void ScoreClass::Show_Credits(void)
 {

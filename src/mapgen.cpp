@@ -6,7 +6,6 @@
 #define NDEBUG
 
 #include "always.h"
-#include "mapgen.h"
 #include "_map.h"
 #include "_palette.h"
 #include "_rules.h"
@@ -32,6 +31,7 @@
 #include "inline.h"
 #include "isotype.h"
 #include "language\language.h"
+#include "mapgen.h"
 #include "netshare.h"
 #include "nodes.h"
 #include "overtype.h"
@@ -553,7 +553,7 @@ void MapRegionClass::CellData::Clear_Inviolates(void)
 // FUNCTION: GAMEMD 0x0058C2A0
 MapRegionClass::CellData & MapRegionClass::Get_Cell_Data(Cell const & cell)
 {
-	return(RMGCellData[cell.X + cell.Y * MapCellStride]);
+	return(RMGCellData[cell.X + cell.Y * (int)MapCellStride]);
 }
 
 // FUNCTION: GAMEMD 0x0058C2C0
@@ -3762,6 +3762,112 @@ void MapGeneratorClass::Generate_Urban_Areas(void)
 	}
 }
 
+// FUNCTION: GAMEMD 0x005A5360
+DynamicVectorClass<Cell> * MapGeneratorClass::Create_Urban_Area(Cell const & cell, int size)
+{
+	DynamicVectorClass<Cell> * cells;
+	CellNode * nodes = new CellNode[10 * size];
+	PriorityQueueClass<CellNode> * queue = new PriorityQueueClass<CellNode>(10 * size);
+	int processed = 0;
+	queue->Clear();
+
+	Map.Reset_Iterator();
+	CellClass * cptr = Map.Iterate();
+	while (cptr != NULL) {
+		Cell c = cptr->CellID;
+		Set_Cell_Data_Spread(c, 0);
+		cptr = Map.Iterate();
+	}
+
+	int node_count = 0;
+	nodes[node_count].Element = cell;
+	nodes[node_count].Score = 0;
+	Set_Cell_Data_Spread(cell, 1);
+	node_count++;
+	queue->Insert(nodes[0]);
+
+	CellNode * node = queue->Extract_Min();
+
+	cells = new DynamicVectorClass<Cell>;
+	cells->Set_Growth_Step(size + 2);
+
+	while (processed < size && node != NULL) {
+		Map[node->Element].ITType = IsometricTileTypeClass::PaveTile;
+		cells->Add(node->Element);
+
+		CellNode * newnode = &nodes[node_count];
+		for (FacingType dir = FACING_FIRST; dir < FACING_COUNT; dir++) {
+			Cell newcell = Adjacent_Cell(node->Element, dir);
+			if (My_In_Radar(newcell)) {
+				CellClass * newcellptr = &Map[newcell];
+				if (newcellptr->Is_Tile_Clear() && newcellptr->Overlay == OVERLAY_NONE) {
+					if (Get_Cell_Data_Spread(newcell) != 1 && MapRegionClass::CellData::Is_Not_Inviolate(newcell)) {
+						newnode->Element = newcell;
+						newnode->Score = Get_Urban_Score(cell, newcell);
+						Set_Cell_Data_Spread(newcell, 1);
+						node_count++;
+						queue->Insert(*newnode++);
+					}
+				}
+			}
+		}
+
+		processed++;
+		node = queue->Extract_Min();
+	}
+
+	delete[] nodes;
+	delete queue;
+
+	Rect bounds = Get_Cell_Bounding_Rect(*cells);
+
+	if (processed <= 100 || (double)(bounds.Width * bounds.Height) >= (double)cells->Count() * 1.6) {
+		for (int j = cells->Count() - 1; j >= 0; j--) {
+			Map[(*cells)[j]].ITType = ISOTILE_NONE;
+		}
+		delete cells;
+		return(NULL);
+	}
+
+	for (int cell_index = cells->Count() - 1; cell_index >= 0; cell_index--) {
+		Cell c = (*cells)[cell_index];
+		for (FacingType dir = FACING_FIRST; dir < FACING_COUNT; dir++) {
+			Cell newcell = Adjacent_Cell(c, dir);
+			if (My_In_Radar(newcell) && Map[newcell].ITType != IsometricTileTypeClass::PaveTile) {
+				cells->Delete_Index(cell_index);
+			}
+		}
+	}
+
+	for (int k = 0; k < cells->Count(); k++) {
+		MapRegionClass::CellData::Set_Inviolate((*cells)[k]);
+	}
+
+	int patch_count = cells->Count() / 3;
+	for (int i = 0; i < patch_count; i++) {
+		Cell base = (*cells)[Pick_Random_UInt(0, cells->Count() - 1)];
+		int tile_variant = Pick_Random_UInt(0, 6);
+
+		bool place = true;
+		if (tile_variant > 3) {
+			for (int m = 0; m < 2; m++) {
+				for (int n = 0; n < 2; n++) {
+					Cell c = base + Cell(m, n);
+					if (!MapRegionClass::Get_Cell_Data(c).Inviolate || Map[c].ITType != IsometricTileTypeClass::PaveTile) {
+						place = false;
+					}
+				}
+			}
+		}
+
+		if (place) {
+			Place_Tile((IsometricTileType)(IsometricTileTypeClass::MiscPaveTile + tile_variant), base, -1, -1);
+		}
+	}
+
+	return(cells);
+}
+
 // FUNCTION: GAMEMD 0x005A5AE0
 double MapGeneratorClass::Get_Urban_Score(const Cell & cell1, const Cell & cell2) const
 {
@@ -4613,9 +4719,9 @@ DirtRoadTile::~DirtRoadTile(void)
 }
 
 // SYNTHETIC: GAMEMD 0x005A9C20 SYMBOL
-// _$E203
+// _$E204
 // SYNTHETIC: GAMEMD 0x005AC190 SYMBOL
-// _$E201
+// _$E202
 DirtRoadTile DirtRoadTiles[] = {
 	/* 0 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_N), DirtRoadLink(Cell(2, 0), FACING_NE)),
 	/* 1 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_N), DirtRoadLink(Cell(1, 0), FACING_E)),
@@ -4951,31 +5057,31 @@ template class VectorClass<double>;
 #include "geometry.h"
 
 // SYNTHETIC: GAMEMD 0x0058B530 SYMBOL
-// _$E206
+// _$E207
 // SYNTHETIC: GAMEMD 0x0058B560 SYMBOL
-// _$E209
+// _$E210
 // SYNTHETIC: GAMEMD 0x0058B580 SYMBOL
-// _$E212
+// _$E213
 // SYNTHETIC: GAMEMD 0x0058B5A0 SYMBOL
-// _$E215
+// _$E216
 // SYNTHETIC: GAMEMD 0x0058B5C0 SYMBOL
-// _$E218
+// _$E219
 // SYNTHETIC: GAMEMD 0x0058B5E0 SYMBOL
-// _$E221
+// _$E222
 // SYNTHETIC: GAMEMD 0x0058B600 SYMBOL
-// _$E224
+// _$E225
 // SYNTHETIC: GAMEMD 0x0058B640 SYMBOL
-// _$E227
+// _$E228
 // SYNTHETIC: GAMEMD 0x0058B670 SYMBOL
-// _$E230
+// _$E231
 // SYNTHETIC: GAMEMD 0x0058B6A0 SYMBOL
-// _$E233
+// _$E234
 // SYNTHETIC: GAMEMD 0x0058B6D0 SYMBOL
-// _$E236
+// _$E237
 // SYNTHETIC: GAMEMD 0x0058B6E0 SYMBOL
-// _$E239
+// _$E240
 // SYNTHETIC: GAMEMD 0x0058B700 SYMBOL
-// _$E242
+// _$E243
 // SYNTHETIC: GAMEMD 0x0058B720 SYMBOL
-// _$E245
+// _$E246
 const Rect RECT_NONE_2(0, 0, 0, 0);

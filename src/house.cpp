@@ -4085,6 +4085,167 @@ void HouseClass::FUN_0050A350(SuperClass * super)
 	}
 }
 
+// FUNCTION: GAMEMD 0x0050A5C0
+void HouseClass::AI_Takeover(void)
+{
+	if (!Is_Human_Player()) {
+		return;
+	}
+
+	IsHuman = false;
+	IsPlayerControl = false;
+	IQ = Rule->MaxIQ;
+
+	IniName = TStringID<HOUSE_NAME_MAX>("Computer");
+	wcscpy(UIName, StringTable::LoadString("TXT_COMPUTER", NULL, "D:\\ra2mdpost\\House.CPP", 13744));
+
+	int index;
+	for (index = Factories.Count() - 1; index >= 0; index--) {
+		FactoryClass * factory = Factories[index];
+		if (factory->House == this) {
+			Factories[index]->Suspend(true);
+			Factories[index]->Abandon();
+			delete Factories[index];
+		}
+	}
+
+	Assign_Handicap((DiffType)(2 - Difficulty));
+
+	BuildingClass * conyard = NULL;
+	for (index = Buildings.Count() - 1; index >= 0; index--) {
+		BuildingClass * bptr = Buildings[index];
+		if (Rule->BuildConst.Is_In_List(bptr->Class) && !bptr->IsInLimbo) {
+			conyard = bptr;
+			break;
+		}
+	}
+	if (conyard == NULL) {
+		return;
+	}
+
+	Cell center = conyard->PositionCoord.As_Cell();
+	BaseSpawnCell = center;
+	Begin_Construction();
+	Base.Nodes[0].CellID = center;
+	Base.PlacementCenter = center;
+	IsStarted = true;
+	IsAITriggersOn = true;
+	IsBaseBuilding = true;
+
+	for (int j = Base.Nodes.Count() - 1; j >= 0; j--) {
+		int type = Base.Nodes[j].Type;
+		if (type >= STRUCT_FIRST && ABQuantity.Value(type) > 0) {
+			BuildingTypeClass * btype = BuildingTypes[type];
+			for (int k = Buildings.Count() - 1; k >= 0; k--) {
+				BuildingClass * building = Buildings[k];
+				if (!building->IsInLimbo
+					&& (building->Class == btype || building->Upgrades[0] == btype
+						|| building->Upgrades[1] == btype || building->Upgrades[2] == btype)) {
+					Base.Nodes[j].CellID = building->PositionCoord.As_Cell();
+				}
+			}
+		}
+	}
+
+	Map.Reset_Iterator();
+	CellClass * cell = Map.Iterate();
+	while (cell != NULL) {
+		if (cell->Owner == HeapID) {
+			OverlayType overlay = cell->Overlay;
+			if (overlay != OVERLAY_NONE && OverlayTypes[overlay]->IsWall) {
+				Sell_Wall(cell->CellID, true);
+			}
+		}
+		cell = Map.Iterate();
+	}
+
+	int l = 0;
+	int bcount = Buildings.Count();
+	for (index = 0; index < bcount; index++) {
+		BuildingClass * building = Buildings[index];
+		if (building->IsInLimbo) {
+			continue;
+		}
+		if (!building->Class->IsBaseDefense && !(building->Class == Rule->WallTower && building->UpgradeLevel > 0)) {
+			continue;
+		}
+		if (!building->Class->Who_Can_Build_Me(true, false, true, this)) {
+			continue;
+		}
+		int count = Base.Nodes.Count();
+		while (l < count) {
+			if (Base.Nodes[l].Type == STRUCT_NONE) {
+				if (building->Class == Rule->WallTower) {
+					Base.Nodes.Insert_After(l, BaseNodeClass(building->Upgrades[building->UpgradeLevel - 1]->HeapID, building->PositionCoord.As_Cell()));
+					Base.Nodes[l].Type = building->Class->HeapID;
+					Base.Nodes[l].CellID = building->PositionCoord.As_Cell();
+					l++;
+				} else {
+					Base.Nodes[l].Type = building->Class->HeapID;
+					Base.Nodes[l].CellID = building->PositionCoord.As_Cell();
+				}
+				l++;
+				break;
+			}
+			l++;
+		}
+	}
+
+	int node_index = 0;
+	int power_add = 0;
+	int drain_add = 0;
+	bcount = Buildings.Count();
+	for (index = 0; index < bcount; index++) {
+		BuildingClass * building = Buildings[index];
+		if (!building->IsInLimbo && building->Class->Drain < 0
+			&& !(building->PositionCoord.As_Cell() == Base.Nodes[1].CellID)
+			&& building->Class->Who_Can_Build_Me(true, false, true, this)) {
+
+			int count = Base.Nodes.Count();
+			while (node_index < count) {
+				if (Base.Nodes[node_index].Type >= STRUCT_FIRST) {
+					BuildingTypeClass * ntype = BuildingTypes[Base.Nodes[node_index].Type];
+					power_add += ntype->Power;
+					drain_add += ntype->Drain;
+					if (node_index > 0 && power_add < drain_add + PowerSurplus) {
+						Base.Nodes.Insert_After(node_index - 1, BaseNodeClass(building->Class->HeapID, building->PositionCoord.As_Cell()));
+						power_add += building->Class->Power;
+						drain_add -= ntype->Drain;
+						node_index++;
+						break;
+					}
+				}
+				node_index++;
+			}
+		}
+	}
+
+	if (stricmp(Class->IniName, "GDI") == 0) {
+		int bindex = 0;
+		int power = 0;
+		int drain = 0;
+		for (index = 0; index < ::Buildings.Count(); index++) {
+			BuildingClass * building = ::Buildings[index];
+			if (building->House == this && !building->IsInLimbo && building->Class == Rule->GDIPowerPlant && building->UpgradeLevel > 0) {
+				for (int upgrade = 0; upgrade < building->UpgradeLevel; upgrade++) {
+					while (bindex < Base.Nodes.Count()) {
+						if (Base.Nodes[bindex].Type >= STRUCT_FIRST) {
+							BuildingTypeClass * ntype = BuildingTypes[Base.Nodes[bindex].Type];
+							power += ntype->Power;
+							drain += ntype->Drain;
+							if (bindex > 0 && power < drain + PowerSurplus) {
+								bindex++;
+								break;
+							}
+						}
+						bindex++;
+					}
+				}
+			}
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x0050B1D0
 void HouseClass::AISupers(void)
 {

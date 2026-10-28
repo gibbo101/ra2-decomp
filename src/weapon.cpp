@@ -3,6 +3,7 @@
 // Copyright 2025 Electronic Arts Inc.; 2026 OpenTS contributors
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
+#define NDEBUG
 #define INCLUDE_COM
 #include "always.h"
 #include "geometry.h"
@@ -144,6 +145,93 @@ WeaponTypeClass::~WeaponTypeClass(void)
 	WarheadPtr = NULL;
 
 	Weapons.Delete(this);
+}
+
+// FUNCTION: GAMEMD 0x00772080
+bool WeaponTypeClass::Read_INI(CCINIClass & ini)
+{
+	ini.Reset();
+	if (ini.Is_Present(IniName)) {
+		AmbientDamage = ini.Get_Int(IniName, "AmbientDamage", AmbientDamage);
+		IsSonic = ini.Get_Bool(IniName, "IsSonic", IsSonic);
+		Spawner = ini.Get_Bool(IniName, "Spawner", Spawner);
+		LimboLaunch = ini.Get_Bool(IniName, "LimboLaunch", LimboLaunch);
+		DecloakToFire = ini.Get_Bool(IniName, "DecloakToFire", DecloakToFire);
+		CellRangefinding = ini.Get_Bool(IniName, "CellRangefinding", CellRangefinding);
+		FireOnce = ini.Get_Bool(IniName, "FireOnce", FireOnce);
+		NeverUse = ini.Get_Bool(IniName, "NeverUse", NeverUse);
+		RevealOnFire = ini.Get_Bool(IniName, "RevealOnFire", RevealOnFire);
+		TerrainFire = ini.Get_Bool(IniName, "TerrainFire", TerrainFire);
+		SabotageCursor = ini.Get_Bool(IniName, "SabotageCursor", SabotageCursor);
+		MigAttackCursor = ini.Get_Bool(IniName, "MigAttackCursor", MigAttackCursor);
+		DisguiseFireOnly = ini.Get_Bool(IniName, "DisguiseFireOnly", DisguiseFireOnly);
+		InfiniteMindControl = ini.Get_Bool(IniName, "InfiniteMindControl", InfiniteMindControl);
+		FireWhileMoving = ini.Get_Bool(IniName, "FireWhileMoving", FireWhileMoving);
+		DrainWeapon = ini.Get_Bool(IniName, "DrainWeapon", DrainWeapon);
+		FireInTransport = ini.Get_Bool(IniName, "FireInTransport", FireInTransport);
+		DisguiseFakeBlinkTime = ini.Get_Int(IniName, "DisguiseFakeBlinkTime", DisguiseFakeBlinkTime);
+		Suicide = ini.Get_Bool(IniName, "Suicide", Suicide);
+		IsSupressed = ini.Get_Bool(IniName, "Supress", IsSupressed);
+		Burst = ini.Get_Int(IniName, "Burst", Burst);
+		Attack = ini.Get_Int(IniName, "Damage", Attack);
+		MaxSpeed = ini.Get_MPHType(IniName, "Speed", MaxSpeed);
+		ROF = ini.Get_Int(IniName, "ROF", ROF);
+		Range = ini.Get_Lepton(IniName, "Range", Range);
+		MinimumRange = ini.Get_Lepton(IniName, "MinimumRange", MinimumRange);
+
+		Sound = ini.Get_VocType_List(ini, IniName, "Report", Sound);
+		DownReport = ini.Get_VocType_List(ini, IniName, "DownReport", DownReport);
+		Anim = TGet_TypeList<AnimTypeClass>(ini, IniName, "Anim", Anim);
+		AssaultAnim = TGet_Class(ini, IniName, "AssaultAnim", AssaultAnim);
+		OccupantAnim = TGet_Class(ini, IniName, "OccupantAnim", OccupantAnim);
+		OpenToppedAnim = TGet_Class(ini, IniName, "OpenToppedAnim", OpenToppedAnim);
+
+		IsCamera = ini.Get_Bool(IniName, "Camera", IsCamera);
+		IsLaser = ini.Get_Bool(IniName, "IsLaser", IsLaser);
+		DiskLaser = ini.Get_Bool(IniName, "DiskLaser", DiskLaser);
+		IsLine = ini.Get_Bool(IniName, "IsLine", IsLine);
+		IsHouseColor = ini.Get_Bool(IniName, "IsHouseColor", IsHouseColor);
+		IsElectric = ini.Get_Bool(IniName, "Charges", IsElectric);
+		IsTurboBoosted = ini.Get_Bool(IniName, "TurboBoost", IsTurboBoosted);
+
+		UseFireParticles = ini.Get_Bool(IniName, "UseFireParticles", UseFireParticles);
+		UseSparkParticles = ini.Get_Bool(IniName, "UseSparkParticles", UseSparkParticles);
+		OmniFire = ini.Get_Bool(IniName, "OmniFire", OmniFire);
+		DistributedWeaponFire = ini.Get_Bool(IniName, "DistributedWeaponFire", DistributedWeaponFire);
+		IsRailgun = ini.Get_Bool(IniName, "IsRailgun", IsRailgun);
+		IsLobber = ini.Get_Bool(IniName, "Lobber", IsLobber);
+
+		LaserInnerColor = ini.Get_RGBClass(IniName, "LaserInnerColor", LaserInnerColor);
+		LaserOuterColor = ini.Get_RGBClass(IniName, "LaserOuterColor", LaserOuterColor);
+		LaserOuterSpread = ini.Get_RGBClass(IniName, "LaserOuterSpread", LaserOuterSpread);
+		LaserDuration = ini.Get_Int(IniName, "LaserDuration", LaserDuration);
+		IsBigLaser = ini.Get_Bool(IniName, "IsBigLaser", IsBigLaser);
+
+		IsBright = ini.Get_Bool(IniName, "Bright", IsBright);
+		IsIonSensitive = ini.Get_Bool(IniName, "IonSensitive", IsIonSensitive);
+		AreaFire = ini.Get_Bool(IniName, "AreaFire", AreaFire);
+		IsElectricBolt = ini.Get_Bool(IniName, "IsElectricBolt", IsElectricBolt);
+		DrawBoltAsLaser = ini.Get_Bool(IniName, "DrawBoltAsLaser", DrawBoltAsLaser);
+		IsAlternateColor = ini.Get_Bool(IniName, "IsAlternateColor", IsAlternateColor);
+		IsRadBeam = ini.Get_Bool(IniName, "IsRadBeam", IsRadBeam);
+		IsRadEruption = ini.Get_Bool(IniName, "IsRadEruption", IsRadEruption);
+		RadLevel = ini.Get_Int(IniName, "RadLevel", RadLevel);
+		IsMagBeam = ini.Get_Bool(IniName, "IsMagBeam", IsMagBeam);
+
+		char buffer[20];
+		buffer[0] = '\0';
+		ini.Get_String(IniName, "AttachedParticleSystem", buffer, buffer, sizeof(buffer));
+		ParticleSystemType ps = ParticleSystemTypeClass::From_Name(buffer);
+		if (ps != PARTSYS_NONE) {
+			AttachedParticleSystem = ParticleSystemTypes[ps];
+		}
+
+		WarheadPtr = TGet_Class(ini, IniName, "Warhead", WarheadPtr);
+		Bullet = TGet_Class(ini, IniName, "Projectile", Bullet);
+
+		return(true);
+	}
+	return(false);
 }
 
 // FUNCTION: GAMEMD 0x007729F0

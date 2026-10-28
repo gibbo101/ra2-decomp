@@ -50,13 +50,13 @@
 // SYNTHETIC: GAMEMD 0x004C1D70 SYMBOL
 // _$E42
 
-namespace Randomizer { extern Random2Class Global; }
-
 struct FileSystem {
 	static ConvertClass * PALETTE_PAL;
 };
 
 DynamicVectorClass<EBolt *> EBoltArray;
+
+#include "ccrand.h"
 
 // SYNTHETIC: GAMEMD 0x004C1D90 SYMBOL
 // _$E103
@@ -95,6 +95,113 @@ void __stdcall FUN_004C1E70(Coord start, Coord end, int color, int start_depth, 
 	int d1 = start_depth - Tactical::Z_Lepton_To_Pixel(start.Z) - 2;
 	int d2 = end_depth - Tactical::Z_Lepton_To_Pixel(end.Z) - 2;
 	DSurface::Composite->Draw_Depth_Shaded_Line(DSurface::ViewBounds, p1, p2, FileSystem::PALETTE_PAL->Convert_Pixel(color), d1, d2);
+}
+
+struct BoltSegment
+{
+	Coord Start[3];
+	Coord End[3];
+	int Length;
+	int Deviation;
+	int StartDepth;
+	int EndDepth;
+};
+
+// FUNCTION: GAMEMD 0x004C1F20
+void EBolt::FUN_004C1F20(Coord start, Coord end, int color)
+{
+	BoltSegment stack[8];
+	Coord mids[3];
+	Coord starts[3];
+	Coord ends[3];
+	int offsets[6];
+	bool first = true;
+	int depth = 0;
+
+	int length = start.Distance_To(end);
+	if (length != 0) {
+		int threshold = (length * 102) >> 8;
+		int deviation = (length * 23) >> 8;
+		int start_z = unknown_18;
+		BoltSegment * seg = stack;
+		int end_z = 0;
+		for (int i = 0; i < 3; i++) {
+			starts[i] = start;
+			ends[i] = end;
+		}
+
+		for (;;) {
+			if (length > 64 && depth < 8) {
+				for (int j = 0; j < 3; j++) {
+					mids[j].X = (starts[j].X + ends[j].X) >> 1;
+					mids[j].Y = (starts[j].Y + ends[j].Y) >> 1;
+					mids[j].Z = (starts[j].Z + ends[j].Z) >> 1;
+				}
+				if (first) {
+					first = false;
+					double dev = deviation;
+					for (int k = 0; k < 6; k++) {
+						offsets[k] = fastmath::sin(Random * M_PI / (k + 7)) * dev;
+					}
+					int zoff = (offsets[2] + offsets[4] + deviation * 2) >> 1;
+					for (int m = 0; m < 3; m++) {
+						mids[m].X += offsets[0] + offsets[3];
+						mids[m].Y += offsets[1] + offsets[5];
+						mids[m].Z += zoff;
+					}
+				}
+				if (length <= 128) {
+					mids[0].X += NonCriticalRandomNumber(-1, 1) * deviation * 2;
+					mids[0].Y += NonCriticalRandomNumber(-1, 1) * deviation * 2;
+					mids[0].Z += NonCriticalRandomNumber(-1, 1) * deviation * 2;
+				} else {
+					mids[0].X += Sim_Random_Pick(-deviation, deviation);
+					mids[0].Y += Sim_Random_Pick(-deviation, deviation);
+					mids[0].Z += Sim_Random_Pick(-deviation, deviation);
+				}
+				if (length > threshold) {
+					for (int n = 1; n < 3; n++) {
+						mids[n].X = mids[0].X + (Sim_Random_Pick(-deviation, deviation) >> 1);
+						mids[n].Y = mids[0].Y + (Sim_Random_Pick(-deviation, deviation) >> 1);
+						mids[n].Z = mids[0].Z + (Sim_Random_Pick(-deviation, deviation) >> 1);
+					}
+				} else {
+					for (int n2 = 1; n2 < 3; n2++) {
+						mids[n2].X += Sim_Random_Pick(-deviation, deviation);
+						mids[n2].Y += Sim_Random_Pick(-deviation, deviation);
+						mids[n2].Z += Sim_Random_Pick(-deviation, deviation);
+					}
+				}
+				length >>= 1;
+				deviation >>= 1;
+				int mid_z = (end_z + start_z) >> 1;
+				for (int p = 0; p < 3; p++) {
+					seg->Start[p] = mids[p];
+					seg->End[p] = ends[p];
+				}
+				seg->Length = length;
+				seg->Deviation = deviation;
+				seg->StartDepth = mid_z;
+				seg->EndDepth = end_z;
+				seg++;
+				depth++;
+				memcpy(ends, mids, sizeof(ends));
+				end_z = mid_z;
+			} else {
+				FUN_004C1E70(starts[1], ends[1], color, start_z, end_z);
+				FUN_004C1E70(starts[2], ends[2], color, start_z, end_z);
+				FUN_004C1E70(starts[0], ends[0], 15, start_z, end_z);
+				if (--depth < 0) break;
+				seg--;
+				memcpy(ends, seg->End, sizeof(ends));
+				memcpy(starts, seg->Start, sizeof(starts));
+				length = seg->Length;
+				deviation = seg->Deviation;
+				start_z = seg->StartDepth;
+				end_z = seg->EndDepth;
+			}
+		}
+	}
 }
 
 // FUNCTION: GAMEMD 0x004C2790
@@ -147,7 +254,7 @@ void EBolt::Fire(Coord start, Coord end, int zadjust)
 	Point1 = start;
 	Point2 = end;
 	unknown_18 = zadjust;
-	Random = Randomizer::Global(0, 0x100);
+	Random = NonCriticalRandomNumber(0, 0x100);
 	EBoltArray.Add(this);
 	new ParticleSystemClass(Rule->DefaultSparkSystem, end, NULL, NULL, COORD_NONE, NULL);
 }
@@ -175,6 +282,9 @@ EBolt::~EBolt(void)
 {
 	ClearOwner();
 }
+
+// FUNCTION: GAMEMD 0x004C2C30
+// Coord::Coord
 
 // TEMPLATE: GAMEMD 0x004C2C40
 // ?Clear@?$DynamicVectorClass@PAVEBolt@@@@UAEXXZ

@@ -3,6 +3,7 @@
 // Copyright 2025 Electronic Arts Inc.; 2026 OpenTS contributors
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
+#define NDEBUG
 #define INCLUDE_COM
 #include "always.h"
 #include "rect.h"
@@ -20,6 +21,10 @@
 #include <cmath>
 
 DynamicVectorClass<HouseTypeClass *> HouseTypeClass::Array;
+
+#include "airctype.h"
+#include "infatype.h"
+#include "unittype.h"
 
 // SYNTHETIC: GAMEMD 0x005111E0 SYMBOL
 // _$E2
@@ -128,6 +133,84 @@ HousesType HouseTypeClass::From_Name(char const * name)
 		}
 	}
 	return(HOUSE_NONE);
+}
+
+// FUNCTION: GAMEMD 0x00511850
+bool HouseTypeClass::Read_INI(CCINIClass & ini)
+{
+	ini.Reset();
+
+	if (BASECLASS::Read_INI(ini)) {
+		char buffer[32];
+		ini.Get_String(Name(), "Suffix", "", buffer, sizeof(Suffix));
+		if (strlen(buffer) != 0) {
+			strcpy(Suffix, buffer);
+		}
+
+		ini.Get_String(Name(), "ParentCountry", Name(), buffer, sizeof(ParentCountry));
+		ParentCountry = CountryName(buffer);
+
+		Scheme = ini.Get_Scheme_Index(Name(), "Color", Scheme);
+
+		char prefix[2];
+		buffer[0] = Prefix;
+		buffer[1] = '\0';
+		ini.Get_String(Name(), "Prefix", buffer, prefix, sizeof(prefix));
+		char & p = Prefix;
+		p = prefix[0];
+
+		FirepowerBias = ini.Get_Float(Name(), "Firepower", FirepowerBias);
+		GroundspeedBias = ini.Get_Float(Name(), "Groundspeed", GroundspeedBias);
+		AirspeedBias = ini.Get_Float(Name(), "Airspeed", AirspeedBias);
+		ArmorBias = ini.Get_Float(Name(), "Armor", ArmorBias);
+		ROFBias = ini.Get_Float(Name(), "ROF", ROFBias);
+		CostBias = ini.Get_Float(Name(), "Cost", CostBias);
+		BuildSpeedBias = ini.Get_Float(Name(), "BuildTime", BuildSpeedBias);
+
+		IsMultiplay = ini.Get_Bool(Name(), "Multiplay", IsMultiplay);
+		IsMultiplayPassive = ini.Get_Bool(Name(), "MultiplayPassive", IsMultiplayPassive);
+		IsWallOwner = ini.Get_Bool(Name(), "WallOwner", IsWallOwner);
+		IsSmartAI = ini.Get_Bool(Name(), "SmartAI", IsSmartAI);
+
+		ArmorInfantryMult = ini.Get_Float(Name(), "ArmorInfantryMult", ArmorInfantryMult);
+		ArmorUnitsMult = ini.Get_Float(Name(), "ArmorUnitsMult", ArmorUnitsMult);
+		ArmorAircraftMult = ini.Get_Float(Name(), "ArmorAircraftMult", ArmorAircraftMult);
+		ArmorBuildingsMult = ini.Get_Float(Name(), "ArmorBuildingsMult", ArmorBuildingsMult);
+		ArmorDefensesMult = ini.Get_Float(Name(), "ArmorDefensesMult", ArmorDefensesMult);
+		CostInfantryMult = ini.Get_Float(Name(), "CostInfantryMult", CostInfantryMult);
+		CostUnitsMult = ini.Get_Float(Name(), "CostUnitsMult", CostUnitsMult);
+		CostAircraftMult = ini.Get_Float(Name(), "CostAircraftMult", CostAircraftMult);
+		CostBuildingsMult = ini.Get_Float(Name(), "CostBuildingsMult", CostBuildingsMult);
+		CostDefensesMult = ini.Get_Float(Name(), "CostDefensesMult", CostDefensesMult);
+		SpeedInfantryMult = ini.Get_Float(Name(), "SpeedInfantryMult", SpeedInfantryMult);
+		SpeedUnitsMult = ini.Get_Float(Name(), "SpeedUnitsMult", SpeedUnitsMult);
+		SpeedAircraftMult = ini.Get_Float(Name(), "SpeedAircraftMult", SpeedAircraftMult);
+		BuildtimeInfantryMult = ini.Get_Float(Name(), "BuildTimeInfantryMult", BuildtimeInfantryMult);
+		BuildtimeUnitsMult = ini.Get_Float(Name(), "BuildTimeUnitsMult", BuildtimeUnitsMult);
+		BuildtimeAircraftMult = ini.Get_Float(Name(), "BuildTimeAircraftMult", BuildtimeAircraftMult);
+		BuildtimeBuildingsMult = ini.Get_Float(Name(), "BuildTimeBuildingsMult", BuildtimeBuildingsMult);
+		BuildtimeDefensesMult = ini.Get_Float(Name(), "BuildTimeDefensesMult", BuildtimeDefensesMult);
+		IncomeMult = ini.Get_Float(Name(), "IncomeMult", IncomeMult);
+
+		VeteranInfantry = TGet_TypeList<InfantryTypeClass>(ini, Name(), "VeteranInfantry", VeteranInfantry);
+		VeteranUnits = TGet_TypeList<UnitTypeClass>(ini, Name(), "VeteranUnits", VeteranUnits);
+		VeteranAircraft = TGet_TypeList<AircraftTypeClass>(ini, Name(), "VeteranAircraft", VeteranAircraft);
+
+		SideType oldside = Side;
+		Side = ini.Get_Side(Name(), "Side", Side);
+
+		if (Side != oldside) {
+			int & house = (int &)House;
+			if (oldside != SIDE_NONE) {
+				Sides[oldside]->Houses.Delete_Index(house);
+			}
+			if (Side != SIDE_NONE) {
+				Sides[Side]->Houses.Add(house);
+			}
+		}
+		return(true);
+	}
+	return(false);
 }
 
 // FUNCTION: GAMEMD 0x00512170
@@ -331,12 +414,11 @@ template class DynamicVectorClass<AircraftTypeClass *>;
 // SYNTHETIC: GAMEMD 0x00512B80
 // ??_G?$VectorClass@PBVAircraftTypeClass@@@@UAEPAXI@Z
 // TEMPLATE: GAMEMD 0x00512BD0
-// ??4?$VectorClass@PAVAircraftTypeClass@@@@QAEAAV0@ABV0@@Z
+// ??4?$VectorClass@PBVInfantryTypeClass@@@@QAEAAV0@ABV0@@Z
 // TEMPLATE: GAMEMD 0x00512C40
 // ??8?$VectorClass@PBVInfantryTypeClass@@@@UBE_NABV0@@Z
 // TEMPLATE: GAMEMD 0x00512C80
 // ?Resize@?$VectorClass@PBVInfantryTypeClass@@@@UAE_NHPBQBVInfantryTypeClass@@@Z
-template class VectorClass<AircraftTypeClass *>;
 
 // TEMPLATE: GAMEMD 0x00512D30
 // ?Clear@?$VectorClass@PBVInfantryTypeClass@@@@UAEXXZ
@@ -355,7 +437,7 @@ template class VectorClass<AircraftTypeClass *>;
 // TEMPLATE: GAMEMD 0x00512F70
 // ?ID@?$DynamicVectorClass@PBVInfantryTypeClass@@@@UAEHABQBVInfantryTypeClass@@@Z
 // TEMPLATE: GAMEMD 0x00512FA0
-// ??4?$VectorClass@PBVInfantryTypeClass@@@@QAEAAV0@ABV0@@Z
+// ??4?$VectorClass@PBVUnitTypeClass@@@@QAEAAV0@ABV0@@Z
 // TEMPLATE: GAMEMD 0x00513010
 // ??8?$VectorClass@PBVUnitTypeClass@@@@UBE_NABV0@@Z
 // TEMPLATE: GAMEMD 0x00513050
@@ -380,7 +462,7 @@ template class DynamicVectorClass<InfantryTypeClass const *>;
 // TEMPLATE: GAMEMD 0x00513340
 // ?ID@?$DynamicVectorClass@PBVUnitTypeClass@@@@UAEHABQBVUnitTypeClass@@@Z
 // TEMPLATE: GAMEMD 0x00513370
-// ??4?$VectorClass@PBVUnitTypeClass@@@@QAEAAV0@ABV0@@Z
+// ??4?$VectorClass@PBVAircraftTypeClass@@@@QAEAAV0@ABV0@@Z
 // TEMPLATE: GAMEMD 0x005133E0
 // ??8?$VectorClass@PBVAircraftTypeClass@@@@UBE_NABV0@@Z
 // TEMPLATE: GAMEMD 0x00513420

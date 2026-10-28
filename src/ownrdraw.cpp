@@ -3478,6 +3478,250 @@ inline Rect Rect_From_RECT(RECT const & r)
 	return Rect(r.left, r.top, r.right - r.left, r.bottom - r.top);
 }
 
+int __fastcall FUN_006149B0(HWND window, wchar_t *out, int size, int *cursor);
+void __fastcall FUN_00623880(Surface * surface, Rect * rect, wchar_t * text, int cursor, BitFont * font, unsigned color, int * scroll, int focused, int mask, int draw, int unknown);
+namespace OwnerDraw {
+void __fastcall DrawBeveledBorder(Surface & surface, Rect const & rect, int offset, int color);
+char * __fastcall WideToCharString(char * dest, wchar_t const * src, int count);
+}
+
+// FUNCTION: GAMEMD 0x00614190
+// OwnerDraw::EditHandler
+LRESULT CALLBACK OwnerDraw::EditHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	WNDPROC proc = NULL;
+	WNDPROC *found = NULL;
+	if (OwnerDraw::DialogProcs.getPointer(window, &found) && found) {
+		proc = *found;
+	}
+
+	OwnerDraw::WinData *data = Find_Data(window);
+	if (data == NULL) {
+		return CallWindowProc(proc, window, message, wparam, lparam);
+	}
+
+	if (GetFocus() == window && !data->Edit.focusEnabled) {
+		data->Edit.focusPending = 1;
+		SetFocus(MainWindow);
+	}
+
+	LONG style = GetWindowLong(window, GWL_STYLE);
+	char class_name[32];
+	char narrow[0x800];
+	wchar_t wide[0x800];
+
+	if ((message == WM_KEYUP || message == WM_KEYDOWN) && wparam == VK_TAB) {
+		return(0);
+	}
+
+	if (message == OD_SUBCLASSED) {
+		RECT window_rect;
+		GetWindowRect(window, &window_rect);
+
+		RECT client_rect;
+		GetClientRect(window, &client_rect);
+
+		RECT parent_rect;
+		GetWindowRect(GetParent(window), &parent_rect);
+
+		MoveWindow(window, window_rect.left - parent_rect.left + 1, window_rect.top - parent_rect.top + 1, client_rect.right - 2, client_rect.bottom - 2, FALSE);
+
+		if (GetFocus() == window) {
+			data->Edit.focusPending = 1;
+			SetFocus(MainWindow);
+		}
+
+		if (style & WS_TABSTOP) {
+			data->Edit.hadTabStop = 1;
+			style &= ~WS_TABSTOP;
+			SetWindowLong(window, GWL_STYLE, style);
+		}
+		return(0);
+	}
+
+	else if (message == WM_SETFOCUS) {
+		SendMessage(window, EM_SETSEL, (WPARAM)-1, (LPARAM)-1);
+		if (!data->Edit.focusEnabled) {
+			PostMessage(window, OD_REFOCUS, 0, 0);
+		}
+		goto invalidate_and_default;
+	}
+
+	else if (message == WM_USER + 181 || message == WM_USER + 179 || message == WM_GETTEXTLENGTH) {
+		wide[0] = 0;
+		FUN_006149B0(window, wide, 0x800, NULL);
+		if (message == WM_GETTEXTLENGTH) {
+			return(wcslen(wide));
+		}
+		if (message == WM_USER + 179) {
+			wcsncpy((wchar_t *)lparam, wide, wparam);
+			((wchar_t *)lparam)[wparam - 1] = 0;
+			return(wcslen((wchar_t *)lparam));
+		}
+		OwnerDraw::WideToCharString((char *)lparam, wide, wparam);
+		((char *)lparam)[wparam - 1] = 0;
+		return(strlen((char *)lparam));
+	}
+
+	else if (message == WM_USER + 180 || message == WM_USER + 178) {
+		narrow[0] = 0;
+		if (data->Wide.text != NULL) {
+			WideCharToMultiByte(CP_ACP, 0, data->Wide.text, -1, narrow, sizeof(narrow), NULL, NULL);
+		}
+		return(CallWindowProc(proc, window, WM_SETTEXT, 0, (LPARAM)narrow));
+	}
+
+	else if (message == WM_CHAR) {
+		if (wparam == VK_RETURN) {
+			if (style & ES_MULTILINE) {
+				WPARAM len = CallWindowProc(proc, window, WM_GETTEXTLENGTH, 0, 0) + 3;
+				char * text = new char[len];
+				CallWindowProc(proc, window, WM_GETTEXT, len, (LPARAM)text);
+				strcat(text, "\r\n");
+				CallWindowProc(proc, window, WM_SETTEXT, 0, (LPARAM)text);
+				delete[] text;
+
+				WPARAM command = (unsigned short)GetWindowLong(window, GWL_ID) | 0x5010000;
+				SendMessage(GetParent(window), WM_COMMAND, command, (LPARAM)window);
+				return(0);
+			}
+		} else if (wparam == VK_TAB) {
+			HWND next = window;
+			HWND parent = GetParent(next);
+			HWND tab_item = GetNextDlgTabItem(parent, next, FALSE);
+			if (tab_item != NULL) {
+				next = tab_item;
+			}
+			SetFocus(next);
+			return(0);
+		}
+		goto call_default;
+	}
+
+	else if (message == OD_ACTIVATE) {
+
+		int focus_state = data->Edit.focusPending;
+		data->Edit.focusEnabled = 1;
+		if (focus_state) {
+			SetFocus(window);
+			data->Edit.focusPending = 0;
+		}
+		if (data->Edit.hadTabStop) {
+			style |= WS_TABSTOP;
+			SetWindowLong(window, GWL_STYLE, style);
+		}
+		return(0);
+	}
+
+	else {
+		if (message == WM_PAINT || message == WM_ERASEBKGND) {
+			RECT display_rect;
+			Get_Display_Rect(window, &display_rect);
+
+			GetClassName(GetParent(window), class_name, sizeof(class_name)/2);
+			bool is_combo = strcmp(class_name, "ComboBox") == 0;
+
+			RECT update_rect;
+			if (message == WM_PAINT && GetUpdateRect(window, &update_rect, FALSE)) {
+				update_rect.left += display_rect.left;
+				update_rect.right += display_rect.left;
+				update_rect.top += display_rect.top;
+				update_rect.bottom += display_rect.top;
+			}
+
+			Rect draw_rect;
+			draw_rect.X = display_rect.left;
+			draw_rect.Y = display_rect.top;
+			draw_rect.Width = display_rect.right - display_rect.left + 1;
+			draw_rect.Height = display_rect.bottom - display_rect.top + 1;
+
+			OwnerDraw::CopyDimmedBackground(draw_rect, window, data->Edit.alpha);
+			if (!is_combo) {
+				OwnerDraw::DrawBeveledBorder(*DAT_00887310, draw_rect, 2, -1);
+			}
+
+			static wchar_t _buffer[0x1400];
+			int cursor = 0;
+			FUN_006149B0(window, _buffer, 0x1400, &cursor);
+
+			Rect text_rect;
+			text_rect.X = display_rect.left;
+			text_rect.Y = display_rect.top;
+			text_rect.Width = display_rect.right - display_rect.left + 1;
+			text_rect.Height = display_rect.bottom - display_rect.top + 1;
+
+			LONG text_style = GetWindowLong(window, GWL_STYLE);
+			FUN_00623880(DAT_00887310, &text_rect, _buffer, cursor, data->Wide.font, OwnerDraw::PrimaryTextColor, &data->Edit.scrollStart, data->Wide.hasFocus, (text_style & ES_PASSWORD) != 0, 0, 0);
+
+			ValidateRect(window, NULL);
+		}
+
+		if (message == WM_CONTEXTMENU) {
+			return(1);
+		}
+
+		if (message == WM_MOUSEMOVE) {
+			return(1);
+		}
+
+		if (message == WM_KEYDOWN || message == WM_KEYUP || message == WM_SYSKEYDOWN || message == WM_SYSKEYUP || message == WM_SYSCHAR || message == WM_SYSDEADCHAR || message == WM_KILLFOCUS || message == WM_LBUTTONDOWN) {
+		invalidate_and_default:
+			GetClassName(GetParent(window), class_name, sizeof(class_name));
+			if (strcmp(class_name, "ComboBox") == 0) {
+				InvalidateRect(GetParent(window), NULL, FALSE);
+			}
+			InvalidateRect(window, NULL, FALSE);
+		}
+
+	call_default:
+		return(CallWindowProc(proc, window, message, wparam, lparam));
+	}
+	return(0);
+}
+
+// FUNCTION: GAMEMD 0x006149B0
+int __fastcall FUN_006149B0(HWND window, wchar_t *out, int size, int *cursor)
+{
+	WNDPROC proc = NULL;
+	WNDPROC *found = NULL;
+	if (OwnerDraw::DialogProcs.getPointer(window, &found) && found) {
+		proc = *found;
+	}
+	char buffer[0x400];
+	DWORD sel_start;
+	DWORD sel_end;
+	unsigned int sel = 0;
+	buffer[0] = 0;
+	CallWindowProc(proc, window, WM_GETTEXT, sizeof(buffer), (LPARAM)buffer);
+	if (cursor) {
+		sel = (unsigned int)CallWindowProc(proc, window, EM_GETSEL, (WPARAM)&sel_start, (LPARAM)&sel_end) >> 16;
+	}
+	out[0] = 0;
+	MultiByteToWideChar(0, 0, buffer, -1, out, size);
+	if (cursor) {
+		*cursor = _mbsnccnt((unsigned char *)buffer, sel);
+	}
+	if (size > 0) {
+		out[size - 1] = 0;
+	}
+	int length = wcslen(out);
+	wchar_t *clean = new wchar_t[length + 3];
+	memset(clean, 0, (length + 3) * 2);
+	int kept = 0;
+	int i = 0;
+	for (; i < length; ++i) {
+		if (out[i] != L'\r' && out[i] != L'\n') {
+			clean[kept++] = out[i];
+		}
+	}
+	if (i != kept) {
+		wcscat(clean, L"\r\n");
+	}
+	wcscpy(out, clean);
+	delete clean;
+	return wcslen(out);
+}
+
 // FUNCTION: GAMEMD 0x006163A0
 // OwnerDraw::CheckBoxButtonHandler
 LRESULT CALLBACK OwnerDraw::CheckBoxButtonHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam)

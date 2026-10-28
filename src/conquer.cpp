@@ -497,10 +497,281 @@ bool MapGen_Call_Back(void)
 	return(false);
 }
 
-// FUNCTION: GAMEMD 0x0048DB70
-void Conquer_Nop2(void)
-{
+#include "wspudp.h"
+#include "_timer.h"
+
+namespace OwnerDraw {
+	char * __fastcall WideToCharString(char * dest, wchar_t const * src, int count);
 }
+char * __fastcall FUN_007350C0(wchar_t const * text);
+wchar_t * __fastcall FUN_00735120(char const * narrow);
+void Windows_Message_Handler(void);
+void Queue_Ipx_Clear(void);
+void __fastcall Stamp_Their_Timing(int index);
+unsigned int Compute_Name_CRC_W(wchar_t * name);
+void Destroy_Connection(int id, int error);
+bool Process_Global_Packet(GlobalPacketType * packet, IPXAddressClass * address);
+void __fastcall FUN_00752B70(unsigned char taunt);
+
+struct Unknown_00B052D0 {
+	unsigned char FUN_00663D60(int id);
+	IPXAddressClass * FUN_006642A0(char const * name);
+};
+extern Unknown_00B052D0 DAT_00B052D0;
+extern int DAT_0081D4E4;
+
+static inline bool Same_Name(NodeNameType * a, NodeNameType * b)
+{
+	char * name = FUN_007350C0(a->Name);
+	return stricmp(name, FUN_007350C0(b->Name)) == 0;
+}
+
+// FUNCTION: GAMEMD 0x0048D1E0
+void IPX_Call_Back(void)
+{
+	static CDTimerClass<SystemTimerClass> _probe_timer(DAT_0081D4E4);
+
+	Windows_Message_Handler();
+	Ipx.Service();
+
+	if (Session.Type == GAME_INTERNET && !Session.NetOpen) {
+		if ((_probe_timer == 0 || Session.unknown_306C) && Session.Players.Count()) {
+			Windows_Message_Handler();
+			Ipx.Service();
+			if (Ipx.Global_Num_Send() == 0) {
+				GlobalPacketType packet;
+				memset(&packet, 0, 0x5b);
+				packet.Command = NET_PORT_PROBE;
+				OwnerDraw::WideToCharString(packet.Name, Session.Players[0]->Name, -1);
+				Queue_Ipx_Clear();
+				DebugString("Sending NET_PORT_PROBE packets in Call_Back\n");
+
+				for (int i = 1; i < Session.Players.Count(); i++) {
+					unsigned short port = Session.PlayerPorts[i];
+					if (port) {
+						DebugString("Sending to %s\n", FUN_007350C0(Session.Players[i]->Name));
+						Ipx.Send_Global_Message(&packet, 0x5b, 0, &Session.Players[i]->Address, port, 0);
+						Windows_Message_Handler();
+						Ipx.Service();
+
+						for (int index = 0; index < 8; index++) {
+							if (Same_Name(Session.Slots[index], Session.Players[i])) {
+								if (TickCount() - Session.unknown_304C[index] > 2400) {
+									DebugString("No PORT_PROBE from %s in the last 40 seconds\n", FUN_007350C0(Session.Players[i]->Name));
+									if (Session.Players[i]->Slot.Port != port && Session.Players[i]->Slot.Port >= 0x400) {
+										DebugString("Sending to %s on mangled port from pserver\n", FUN_007350C0(Session.Players[i]->Name));
+										Ipx.Send_Global_Message(&packet, 0x5b, 0, &Session.Players[i]->Address, Session.Players[i]->Slot.Port, 0);
+									}
+								}
+								break;
+							}
+						}
+					}
+				}
+
+				CDTimerClass<SystemTimerClass> timer(120);
+				while (Ipx.Global_Num_Send() > 0 && timer > 0) {
+					Windows_Message_Handler();
+					Ipx.Service();
+				}
+
+				_probe_timer = DAT_0081D4E4;
+				Session.unknown_306C = false;
+				Ipx.Global_Channel_Set_FieldC8();
+			}
+		}
+	}
+
+	if (!Session.NetOpen) {
+		while (Ipx.Get_Global_Message(&Session.GPacket, &Session.GPacketlen, &Session.GAddress, &Session.GProductID)) {
+
+			if (Session.GProductID == IPXGlobalConnClass::COMMAND_AND_CONQUER4) {
+
+				switch (Session.GPacket.Command) {
+
+					case NET_PROPOSE_KICK:
+					{
+						Kick_Packet_Received(Session.GPacket, Session.GAddress);
+						break;
+					}
+
+					case NET_IM_STILL_HERE:
+					{
+						if (Session.Type == GAME_INTERNET && Session.ViaPacketRouter) {
+							for (int i = 0; i < Ipx.Num_Connections(); i++) {
+								if (Ipx.Connection_ID(i) == Session.GPacket.Chat.ID) {
+									DebugString("Got NET_IM_STILL_HERE packet from %s.\n", FUN_007350C0(Ipx.Connection_Name(Session.GPacket.Chat.ID)));
+									Stamp_Their_Timing(i);
+									break;
+								}
+							}
+						}
+						break;
+					}
+
+					case NET_PORT_PROBE:
+					{
+						DebugString("Got NET_PORT_PROBE packet from %s - port = %d\n", Session.GPacket.Name, Session.GAddress.Get_Port());
+						for (int i = 0; i < Session.Players.Count(); i++) {
+							if (Session.Players[i]->Address.FUN_0053EF30(Session.GAddress) && stricmp(FUN_007350C0(Session.Players[i]->Name), Session.GPacket.Name) == 0) {
+								for (int index = 0; index < 8; index++) {
+									if (Same_Name(Session.Slots[index], Session.Players[i])) {
+										Session.unknown_304C[index] = TickCount();
+										break;
+									}
+								}
+								unsigned short port = Session.GAddress.Get_Port();
+								if (port != Session.Players[i]->Address.Get_Port() || port != Session.PlayerPorts[i]) {
+									DebugString("Strange port number in PORT_PROBE packet\n");
+									int old = Session.PlayerPorts[i];
+									if (port == 0) {
+										port = 1234;
+									}
+									Session.PlayerPorts[i] = port;
+									Session.Players[i]->Address.Set_Port(port);
+									DebugString("Adjusting port number for player %s from %d to %d\n", Session.GPacket.Name, old, port);
+								}
+							}
+						}
+						break;
+					}
+
+					case 32:
+					{
+						BeaconManager.PlaceBeacon(Session.GPacket.Beacon.House, Coord(Session.GPacket.Beacon.X, Session.GPacket.Beacon.Y, Session.GPacket.Beacon.Z), Session.GPacket.Beacon.ID);
+						break;
+					}
+
+					case 33:
+					{
+						BeaconManager.DeleteBeacon(Session.GPacket.Beacon.House, Session.GPacket.Beacon.ID);
+						break;
+					}
+
+					case 34:
+					{
+						BeaconManager.EditBeaconMessage(Session.GPacket.BeaconText.Text, Session.GPacket.BeaconText.House, Session.GPacket.BeaconText.ID, false);
+						break;
+					}
+
+					case NET_SIGN_OFF:
+					{
+						for (int i = 0; i < Ipx.Num_Connections(); i++) {
+							int id = Ipx.Connection_ID(i);
+							if (Session.GAddress == (*Ipx.Connection_Address(id))) {
+								Destroy_Connection(id, 0);
+							}
+						}
+						break;
+					}
+
+					case NET_PORT_UNREACHABLE:
+					{
+						DebugString("Got NET_PORT_UNREACHABLE message from %s\n", Session.GPacket.Name);
+						if (Session.Type == GAME_INTERNET && PacketTransport != NULL) {
+							NetNumType net;
+							NetNodeType node;
+							unsigned short port;
+							IPXAddressClass * address = DAT_00B052D0.FUN_006642A0(Session.GPacket.Name);
+							address->Get_Address(net, node, &port);
+							((UDPInterfaceClass *)PacketTransport)->Add_Peer(node, port);
+						}
+						break;
+					}
+
+					case NET_MESSAGE:
+					{
+						bool msg_ok = false;
+						if (!Session.NetProtect) {
+							msg_ok = true;
+						} else {
+							if (Session.GPacket.Message.NameCRC == Compute_Name_CRC_W(Session.GameName)) {
+								msg_ok = true;
+							} else {
+								msg_ok = false;
+							}
+						}
+						if (msg_ok && Session.ViaPacketRouter) {
+							msg_ok = (Session.GPacket.Message.Recipients & DAT_00B052D0.FUN_00663D60(Session.Players[0]->Player.ID)) != 0;
+						}
+
+						if (msg_ok) {
+							wchar_t * name = FUN_00735120(Session.GPacket.Name);
+							Session.Messages.Add_Message(name,
+								Session.GPacket.Message.Color,
+								(wchar_t *)Session.GPacket.Message.Buf,
+								Session.Color_Index_To_Scheme(Session.GPacket.Message.Color),
+								(TextPrintType)(TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_FULLSHADOW),
+								int(Rule->MessageDelay * TICKS_PER_MINUTE), false);
+
+							VocClass::PlayGlobal(Rule->IncomingMessage, 1.0f, 0x2000);
+
+							Map.Flag_To_Redraw(GS_REDRAW_ALL);
+
+							wcscpy(Session.LastMessage, (wchar_t *)Session.GPacket.Message.Buf);
+						}
+						break;
+					}
+
+					case 29:
+					{
+						bool msg_ok = false;
+						if (!Session.NetProtect) {
+							msg_ok = true;
+						} else {
+							if (Session.GPacket.Taunt.NameCRC == Compute_Name_CRC_W(Session.GameName)) {
+								msg_ok = true;
+							} else {
+								msg_ok = false;
+							}
+						}
+						if (msg_ok && Session.ViaPacketRouter) {
+							msg_ok = (Session.GPacket.Taunt.Recipients & DAT_00B052D0.FUN_00663D60(Session.Players[0]->Player.ID)) != 0;
+						}
+						if (msg_ok) {
+							if ((Session.LANTaunts && Session.Type == GAME_IPX) || (Session.WOLTaunts && Session.Type == GAME_INTERNET)) {
+								FUN_00752B70(Session.GPacket.Taunt.ID);
+							}
+						}
+						break;
+					}
+
+					case NET_PROGRESS_REPORT:
+					{
+						DebugString("Processing NET_PROGRESS_REPORT\n");
+						for (int i = 0; i < Session.Players.Count(); i++) {
+							if (Session.Players[i]->Address.FUN_0053EF30(Session.GAddress) && stricmp(FUN_007350C0(Session.Players[i]->Name), Session.GPacket.Name) == 0) {
+								Progress.Set_Progress_Percent(i, Session.GPacket.Progress.Percent);
+								break;
+							}
+						}
+						break;
+					}
+
+					case NET_REQ_SCENARIO:
+					{
+						break;
+					}
+
+					case NET_READY_TO_GO:
+					{
+						break;
+					}
+
+					default:
+						Process_Global_Packet(&Session.GPacket, &Session.GAddress);
+						break;
+				}
+			}
+
+			Windows_Message_Handler();
+			Ipx.Service();
+		}
+	}
+}
+
+// SYNTHETIC: GAMEMD 0x0048DB70 SYMBOL
+// _$E125
 
 // FUNCTION: GAMEMD 0x0048DB80
 SourceType Source_From_Name(char const * name)

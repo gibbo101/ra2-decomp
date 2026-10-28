@@ -531,6 +531,193 @@ void ModemGuest::Send(bool force)
 	}
 }
 
+// FUNCTION: GAMEMD 0x005B6020
+bool ModemGuest::Receive(void)
+{
+	SerialPacketType receivepacket;
+	SerialPacketType sendpacket;
+	unsigned int version;
+	unsigned int starttime;
+	int packetlen;
+	wchar_t * name;
+
+	NullModem.Service();
+	if (NullModem.Get_Message(&receivepacket, &packetlen) > 0) {
+
+		LastMsgTime = TickCount;
+		MsgTimeout = 20 * TIMER_SECOND;
+
+		if (receivepacket.Command >= SERIAL_CONNECT &&
+			receivepacket.Command < SERIAL_LAST_COMMAND &&
+			receivepacket.Command != SERIAL_MESSAGE &&
+			receivepacket.ID == Session.ModemType) {
+
+			DebugString("Received own packet back\n");
+
+			WWMessageBox().Process(StringTable::LoadString("TXT_SYSTEM_NOT_RESPONDING", NULL, "D:\\ra2mdpost\\ModemGst.cpp", 0x499), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\ModemGst.cpp", 0x499), NULL, NULL);
+
+			return(true);
+		}
+
+		switch (receivepacket.Command) {
+			case (SERIAL_SIGN_OFF):
+				DebugString("Received SignOff\n");
+				starttime = TickCount;
+				while (TickCount - starttime < TIMER_SECOND) {
+					Call_Back();
+					NullModem.Service();
+				}
+
+				WWMessageBox().Process(StringTable::LoadString("TXT_USER_SIGNED_OFF", NULL, "D:\\ra2mdpost\\ModemGst.cpp", 0x4a9), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\ModemGst.cpp", 0x4a9), NULL, NULL);
+
+				LastMsgTime = TickCount;
+
+				Shutdown_Modem();
+				return(true);
+
+			case (SERIAL_GAME_OPTIONS):
+				DebugString("Received game options\n");
+
+				version = VerNum.Clip_Version(receivepacket.ScenarioInfo.MinVersion,
+					receivepacket.ScenarioInfo.MaxVersion);
+				if (version == 0) {
+					WWMessageBox().Process(StringTable::LoadString("TXT_DESTGAME_OUTDATED", NULL, "D:\\ra2mdpost\\ModemGst.cpp", 0x4b9), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\ModemGst.cpp", 0x4b9), NULL, NULL);
+
+					LastMsgTime = TickCount;
+
+					return(true);
+				} else if (version == 0xffffffff) {
+					WWMessageBox().Process(StringTable::LoadString("TXT_YOURGAME_OUTDATED", NULL, "D:\\ra2mdpost\\ModemGst.cpp", 0x4bf), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\ModemGst.cpp", 0x4bf), NULL, NULL);
+
+					LastMsgTime = TickCount;
+
+					return(true);
+				} else {
+
+					bool ok = true;
+
+					if (receivepacket.ScenarioInfo.CheatCheck != CheatCheck) {
+						ok = false;
+					}
+					if (receivepacket.ScenarioInfo.AICheatCheck != AICheatCheck) {
+						ok = false;
+					}
+					if (receivepacket.ScenarioInfo.ArtCheatCheck != ArtCheatCheck) {
+						ok = false;
+					}
+
+					if (!ok) {
+
+						WWMessageBox().Process(StringTable::LoadString("TXT_MISMATCH", NULL, "D:\\ra2mdpost\\ModemGst.cpp", 0x4ee), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\ModemGst.cpp", 0x4ee), NULL, NULL);
+
+						LastMsgTime = TickCount;
+
+						return(true);
+					}
+
+					Session.CommProtocol = VerNum.Version_Protocol(version);
+
+					name = FUN_00735120(receivepacket.Name);
+					SetOther(name, receivepacket.ScenarioInfo.Color, receivepacket.ScenarioInfo.House);
+					if (SetGameOptions(&receivepacket) == true) {
+						SetSettings();
+					}
+				}
+				break;
+
+			case (SERIAL_LOADGAME):
+			case (SERIAL_GO):
+				DebugString("Received go\n");
+
+				if (Find_Local_Scenario(Session.ScenarioFileName,
+										Session.ScenarioFileLength,
+										Session.ScenarioDigest,
+										Session.ScenarioIsOfficial,
+										true) == true) {
+
+					memset((void *)&sendpacket, 0, sizeof(sendpacket));
+					sendpacket.Command = SERIAL_READY_TO_GO;
+					NullModem.Send_Message(&sendpacket, sizeof(sendpacket), 1);
+				} else {
+					if (Session.ScenarioIsOfficial && stricmp(Session.ScenarioFileName, RANDOM_MAP_FILE_NAME) != 0) {
+						memset((void *)&sendpacket, 0, sizeof(sendpacket));
+						sendpacket.Command = SERIAL_NO_SCENARIO;
+						NullModem.Send_Message(&sendpacket, sizeof(sendpacket), 1);
+						Call_Back();
+						NullModem.Service();
+						WWMessageBox().Process(StringTable::LoadString("TXT_UNABLE_PLAY_WAAUGH", NULL, "D:\\ra2mdpost\\ModemGst.cpp", 0x51c), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\ModemGst.cpp", 0x51c), NULL, NULL);
+						LastMsgTime = TickCount;
+						return(true);
+					} else {
+						if (!Get_File_From_Host(Session.ScenarioFileName, GAME_MODEM, false)) {
+							return(true);
+						} else {
+							LastMsgTime = TickCount;
+						}
+					}
+				}
+
+				strcpy(Scen->ScenarioName, Session.ScenarioFileName);
+
+				Session.FrameSendRate = 5;
+				Session.LatencyFudge = 0;
+				Session.PrecalcMaxAhead = 0;
+				Session.PrecalcDesiredFrameRate = 0;
+
+				if (Session.CommProtocol == COMM_PROTOCOL_MULTI_E_COMP) {
+					Session.MaxAhead = MAX(((receivepacket.ScenarioInfo.ResponseTime / 8 + 4) / 5) * 5, 10);
+				} else {
+					Session.MaxAhead = receivepacket.ScenarioInfo.ResponseTime / 8;
+					Session.MaxAhead = MAX((int)(Session.MaxAhead), 5);
+				}
+
+				if (StartGame(receivepacket.Command == SERIAL_LOADGAME) == true) {
+					RC = IDOK;
+				} else {
+					RC = IDCANCEL;
+				}
+				break;
+
+			case (SERIAL_MESSAGE):
+				DebugString("Received serial message\n");
+				name = FUN_00735120(receivepacket.Name);
+				DrawMessage(name, receivepacket.ID, receivepacket.Message.Message);
+				VocClass::PlayGlobal(Rule->IncomingMessage, 1.0f, 0x2000);
+				break;
+
+			case (SERIAL_TIMING):
+				DebugString("Received timing packet\n");
+				break;
+
+			case (SERIAL_SCORE_SCREEN):
+				DebugString("Received score screen packet\n");
+				Transmit = true;
+				TransmitTime = TickCount;
+				break;
+
+			case SERIAL_PREVIEW_MODE:
+				DebugString("Received SERIAL_PREVIEW_MODE packet\n");
+				ReceivePreview();
+				LastMsgTime = TickCount;
+				break;
+
+			default:
+				DebugString("Received packet\n");
+				break;
+		}
+	}
+
+	unsigned int time = TickCount - LastMsgTime;
+	if (time > MsgTimeout) {
+		DebugString("Timeout! %d ticks since last incoming message\n", time);
+
+		WWMessageBox().Process(StringTable::LoadString("TXT_SYSTEM_NOT_RESPONDING", NULL, "D:\\ra2mdpost\\ModemGst.cpp", 0x56f), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\ModemGst.cpp", 0x56f), NULL, NULL);
+
+		return(true);
+	}
+	return(false);
+}
+
 // FUNCTION: GAMEMD 0x005B67F0
 bool ModemGuest::SetGameOptions(SerialPacketType * packet)
 {

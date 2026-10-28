@@ -162,8 +162,11 @@ enum NetCommandType {
 	NET_REQ_PREVIEW,
 	NET_PROPOSE_KICK,
 
+	NET_IM_STILL_HERE = 39,
+	NET_PORT_PROBE = 41,
 	NET_MANGLER_REQUEST = 43,
 	NET_MANGLER_RESPONSE = 44,
+	NET_PORT_UNREACHABLE = 47,
 };
 
 struct SerialSettingsType {
@@ -226,7 +229,7 @@ struct NodeNameType {
 			int Unknown77;
 			int Clan;
 			int Unknown7F;
-			char Unknown83[2];
+			unsigned short Port;
 		} Slot;
 	};
 
@@ -377,6 +380,27 @@ struct GlobalPacketType {
 			unsigned int KickeeID;
 			unsigned int KickerID;
 		} Kick;
+
+		struct {
+			unsigned char Recipients;
+			unsigned char ID;
+			unsigned int : 32;
+			unsigned int NameCRC;
+		} Taunt;
+
+		struct {
+			int X;
+			int Y;
+			int Z;
+			char ID;
+			char House;
+		} Beacon;
+
+		struct {
+			char ID;
+			char House;
+			wchar_t Text[128];
+		} BeaconText;
 
 		struct {
 			char Buf[400];
@@ -728,7 +752,7 @@ class SessionClass
 		bool unknown_3018;
 		int unknown_301C;
 		wchar_t MasterPlayerName[MPLAYER_NAME_MAX + 1];
-		unsigned int unknown_304C[8];
+		int unknown_304C[8];
 		bool unknown_306C;
 		unsigned char : 8;
 		unsigned short unknown_306E;

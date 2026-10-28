@@ -2545,19 +2545,25 @@ int __fastcall FUN_0063CFC0(TechnoClass * techno)
 		| (mixed.Get_Blue() >> Drawing::BlueShiftRight << Drawing::BlueShiftLeft);
 }
 
+int __fastcall FUN_0063DAD0(RGBClass const & c);
+
 // FUNCTION: GAMEMD 0x0063D0F0
 int __fastcall FUN_0063D0F0(TechnoClass * techno)
 {
-	int result = Pack_Wide(DAT_00A83CD9);
+	int normal = FUN_0063DAD0(DAT_00A83CD9);
+	int result;
 	if (techno) {
-		int highlight = Pack_Wide(DAT_00A80220);
+		int highlight = FUN_0063DAD0(DAT_00A80220);
 		if (DAT_00AC4BF0) {
-			if (DAT_00AC4BF0->Has_Member(techno)) {
-				result = highlight;
-			}
+			if (DAT_00AC4BF0->Has_Member(techno)) result = highlight;
+			else result = normal;
 		} else if (techno->IsSelected) {
 			result = highlight;
+		} else {
+			result = normal;
 		}
+	} else {
+		result = normal;
 	}
 	return result;
 }
@@ -2593,10 +2599,10 @@ int PlanningNodeClass::Lead_Color(void)
 }
 
 // FUNCTION: GAMEMD 0x0063D400
-void __fastcall FUN_0063D400(int color, int unused, int x, int y)
+void __fastcall FUN_0063D400(int color, Point2D p)
 {
 	Rect clip = FUN_0072AD20();
-	Rect rect = FUN_00634510(6, Point2D(x, y));
+	Rect rect = FUN_00634510(6, p);
 	DSurface::Composite->Draw_Rect(clip, rect, color);
 }
 
@@ -2641,14 +2647,13 @@ int __fastcall FUN_0063D540(EventClass const & event)
 }
 
 // FUNCTION: GAMEMD 0x0063D560
-void __fastcall FUN_0063D560(int color, int unused, Point2D a, Point2D b)
+void __fastcall FUN_0063D560(int color, Point2D a, Point2D b)
 {
-	Point2D delta(a.X - b.X, a.Y - b.Y);
-	double fx = delta.X;
-	double fy = delta.Y;
-	if ((int)FUN_004CAC40(fy * fy + fx * fx) >= 0x25) {
+	if (Distance(a, b) >= 0x25) {
+		int x = (a.X + b.X) / 2 - 10;
+		int y = (a.Y + b.Y) / 2 - 10;
 		Rect clip = FUN_0072AD20();
-		Rect rect((a.X + b.X) / 2 - 10, (a.Y + b.Y) / 2 - 10, 0x15, 0x15);
+		Rect rect(x, y, 0x15, 0x15);
 		DSurface::Composite->Draw_Rect(clip, rect, color);
 	}
 }
@@ -2701,18 +2706,15 @@ void __fastcall FUN_0063D960(int width, int color, Point2D p1, Point2D p2)
 	}
 }
 
-struct PlanRGB {
-	unsigned char Red;
-	unsigned char Green;
-	unsigned char Blue;
-};
-
 // FUNCTION: GAMEMD 0x0063DAD0
-int __fastcall FUN_0063DAD0(PlanRGB const & c)
+int __fastcall FUN_0063DAD0(RGBClass const & c)
 {
-	return (c.Red >> Drawing::RedShiftRight << Drawing::RedShiftLeft)
-		| (c.Green >> Drawing::GreenShiftRight << Drawing::GreenShiftLeft)
-		| (c.Blue >> Drawing::BlueShiftRight << Drawing::BlueShiftLeft);
+	unsigned char rr = DAT_008A0DD4;
+	unsigned char gr = DAT_008A0DE4;
+	unsigned char br = DAT_008A0DDC;
+	return (c.Get_Red() >> rr << Drawing::RedShiftLeft)
+		| (c.Get_Green() >> gr << Drawing::GreenShiftLeft)
+		| (c.Get_Blue() >> br << Drawing::BlueShiftLeft);
 }
 
 // FUNCTION: GAMEMD 0x0063DB20

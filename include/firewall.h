@@ -18,7 +18,7 @@ public:
 	void Save_Detected(void);
 	int Detect(bool * detected);
 	unsigned short Next_Port(int step);
-	bool Send_Probe(IPXAddressClass * address, int port, int packet_id, unsigned char flag);
+	bool Send_Probe(IPXAddressClass * address, unsigned short port, int packet_id, unsigned char flag);
 	unsigned short Find_Mangled_Port(int id, int duration);
 	int Analyse_Ports(int count, unsigned short * original, unsigned short * sorted, bool & relative, bool & reliable);
 	int Rank_A(int flags);

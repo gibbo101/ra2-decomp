@@ -34,6 +34,12 @@ extern CCINIClass DAT_008870C0;
 extern WinsockInterfaceClass * PacketTransport;
 extern IPXManagerClass Ipx;
 void __cdecl FUN_004068E0(char const * format, ...);
+hostent * __stdcall FUN_007C8980(char const * name);
+int __stdcall FUN_007C897A(void);
+extern int DAT_00B77E1C;
+extern int DAT_00B77E18;
+extern char DAT_00B73E44[64][128];
+extern int DAT_00B76338[64];
 
 // SYNTHETIC: GAMEMD 0x005D8D80 SYMBOL
 // _$E2
@@ -117,7 +123,7 @@ unsigned short FirewallHelperClass::Next_Port(int step)
 }
 
 // FUNCTION: GAMEMD 0x005D90E0
-bool FirewallHelperClass::Send_Probe(IPXAddressClass * address, int port, int packet_id, unsigned char flag)
+bool FirewallHelperClass::Send_Probe(IPXAddressClass * address, unsigned short port, int packet_id, unsigned char flag)
 {
 	GlobalPacketType packet;
 
@@ -191,6 +197,271 @@ void FirewallHelperClass::Read_Settings(void)
 {
 	Settings = DAT_008870C0.Get_Int("MultiPlayer", "FirewallSettings", 0);
 	ReadDelta = DAT_008870C0.Get_Int("MultiPlayer", "FirewallDelta", 1);
+}
+
+// FUNCTION: GAMEMD 0x005D9410
+int FirewallHelperClass::Detect(bool * detected)
+{
+	unsigned short mangler_port = 4321;
+	unsigned long packet_id = 0x7f000000;
+
+	static char _manglername[5][32] = {
+		"mangler1.westwood.com",
+		"mangler2.westwood.com",
+		"mangler3.westwood.com",
+		"mangler.westwood.com",
+		""
+	};
+
+	*detected = false;
+	unsigned char mangler_addresses[4][4];
+	int num_mangler_addresses = 0;
+	int behavior;
+	IPXAddressClass manglers[4];
+	CDTimerClass<SystemTimerClass> timeout;
+
+	unsigned short source_ports[4];
+	unsigned short mangled_ports[4];
+	int delta;
+	bool looks_good;
+
+	if (Session.unknown_301C) {
+		behavior = 1;
+		FUN_004068E0("Source port %d specified by user\n", Session.unknown_301C);
+		if (Session.unknown_2F48) {
+			behavior |= 8;
+			FUN_004068E0("Netgear bug specified by command line or SendDelay flag\n");
+		}
+		return(behavior);
+	}
+
+	timeout = 300;
+	FUN_004068E0("About to call gethostbyname for the mangler address\n");
+	int namenum = 0;
+
+	do {
+		char * mangler_name_ptr = &_manglername[namenum][0];
+		if (DAT_00B77E1C > namenum) {
+			mangler_name_ptr = DAT_00B73E44[namenum];
+			mangler_port = DAT_00B76338[namenum];
+			FUN_004068E0("Using mangler from servserv\n");
+		}
+		namenum++;
+
+		if (strlen(mangler_name_ptr) == 0) {
+			break;
+		}
+
+		char temp_name[256];
+		strcpy(temp_name, mangler_name_ptr);
+		hostent * host_info = FUN_007C8980(temp_name);
+
+		if (!host_info) {
+			FUN_004068E0("gethostbyname failed! Error code %d\n", FUN_007C897A());
+			break;
+		}
+
+		bool found = false;
+		for (int i = 0; i < num_mangler_addresses; i++) {
+			if (memcmp(mangler_addresses[i], &host_info->h_addr_list[0][0], 4) == 0) {
+				found = true;
+				break;
+			}
+		}
+		if (!found) {
+			int m = num_mangler_addresses++;
+			memcpy(&mangler_addresses[m][0], &host_info->h_addr_list[0][0], 4);
+			FUN_004068E0("Found mangler address at %d.%d.%d.%d\n", mangler_addresses[m][0], mangler_addresses[m][1], mangler_addresses[m][2], mangler_addresses[m][3]);
+		}
+	} while (num_mangler_addresses < 4 && timeout());
+
+	if (num_mangler_addresses < 3) {
+		return(1);
+	}
+
+	for (int i = 0; i < num_mangler_addresses; i++) {
+		NetNodeType addr;
+		memcpy(addr, &mangler_addresses[i][0], 4);
+		manglers[i].Set_Node(addr);
+		manglers[i].Set_Port(mangler_port);
+	}
+
+	unsigned short port = Next_Port(0);
+	if (!((UDPInterfaceClass *)PacketTransport)->Open_Port_Socket(port)) {
+		return(1);
+	}
+	PacketTransport->Start_Listening();
+
+	timeout = 360;
+	unsigned short mangled_port = 0;
+	while (timeout() && mangled_port == 0) {
+		Send_Probe(&manglers[0], port, packet_id, 0);
+		mangled_port = Find_Mangled_Port(packet_id, 0);
+	}
+
+	if (mangled_port == 0 || mangled_port == port) {
+		((UDPInterfaceClass *)PacketTransport)->Close_Port_Socket(port);
+		if (mangled_port == port) {
+			Delta = 0;
+			*detected = true;
+		}
+		return(1);
+	}
+
+	timeout = 360;
+	unsigned short second_ip_mangled_port = 0;
+	while (timeout() && second_ip_mangled_port == 0) {
+		Send_Probe(&manglers[1], port, packet_id + 1, 0);
+		second_ip_mangled_port = Find_Mangled_Port(packet_id + 1, 0);
+	}
+
+	((UDPInterfaceClass *)PacketTransport)->Close_Port_Socket(port);
+
+	if (second_ip_mangled_port == 0 || second_ip_mangled_port == port) {
+		return(1);
+	}
+
+	if (mangled_port == second_ip_mangled_port) {
+		behavior = 2;
+	} else {
+		behavior = 4;
+	}
+
+	int try_again;
+	for (try_again = 0; try_again < 3; try_again++) {
+		memset(source_ports, 0, sizeof(source_ports));
+		memset(mangled_ports, 0, sizeof(source_ports));
+
+		for (i = 0; i < 4; i++) {
+			source_ports[i] = Next_Port(i);
+			if (!((UDPInterfaceClass *)PacketTransport)->Open_Port_Socket(source_ports[i])) {
+				for (int j = 0; j < i; j++) {
+					if (source_ports[j]) {
+						((UDPInterfaceClass *)PacketTransport)->Close_Port_Socket(source_ports[j]);
+					}
+				}
+				return(behavior);
+			}
+		}
+		PacketTransport->Start_Listening();
+
+		int num_responses = 0;
+		packet_id = packet_id + 10;
+		timeout = 720;
+
+		while (timeout() && num_responses < 4) {
+			for (i = 0; i < 4; i++) {
+				if (mangled_ports[i] == 0) {
+					Send_Probe(&manglers[0], source_ports[i], packet_id + i, 0);
+					mangled_ports[i] = Find_Mangled_Port(packet_id + i, 0);
+					if (mangled_ports[i] != 0) {
+						num_responses++;
+					}
+				}
+			}
+		}
+
+		for (int j = 0; j < i; j++) {
+			if (source_ports[j]) {
+				((UDPInterfaceClass *)PacketTransport)->Close_Port_Socket(source_ports[j]);
+			}
+		}
+
+		if (num_responses < 4) {
+			if (ReadDelta != 0 && Settings > 1) {
+				Delta = ReadDelta;
+			}
+			return(behavior);
+		}
+
+		bool relative_delta = false;
+		looks_good = false;
+		delta = Analyse_Ports(num_responses, source_ports, mangled_ports, relative_delta, looks_good);
+
+		if (delta) {
+			unsigned long addbehavior = 0;
+			if (relative_delta) {
+				addbehavior = 0x20;
+			} else {
+				addbehavior = 0x10;
+			}
+			addbehavior |= behavior;
+			behavior = addbehavior;
+			Delta = delta;
+			if (looks_good) {
+				*detected = true;
+			}
+			break;
+		} else {
+			if (ReadDelta != 0 && Settings > 1) {
+				Delta = ReadDelta;
+			}
+		}
+	}
+
+	if ((behavior & 4) != 0) {
+		if ((behavior & 0x10) != 0) {
+			FUN_004068E0("Testing to see if the NAT mangles differently per destination port at the same IP\n");
+
+			unsigned short port1 = Next_Port(0);
+			if (!((UDPInterfaceClass *)PacketTransport)->Open_Port_Socket(port1)) {
+				return(behavior);
+			}
+
+			unsigned short port2 = Next_Port(0);
+			if (!((UDPInterfaceClass *)PacketTransport)->Open_Port_Socket(port2)) {
+				return(behavior);
+			}
+			PacketTransport->Start_Listening();
+
+			timeout = 240;
+			mangled_port = 0;
+			packet_id = packet_id + 10;
+
+			while (timeout() && mangled_port == 0) {
+				Send_Probe(&manglers[0], port1, packet_id, 0);
+				mangled_port = Find_Mangled_Port(packet_id, 0);
+			}
+
+			if (mangled_port == 0) {
+				((UDPInterfaceClass *)PacketTransport)->Close_Port_Socket(port1);
+				((UDPInterfaceClass *)PacketTransport)->Close_Port_Socket(port2);
+				return(behavior);
+			}
+
+			IPXAddressClass addr = manglers[0];
+			addr.Set_Port(addr.Get_Port() + 1);
+			Send_Probe(&addr, port1, packet_id, 0);
+			Send_Probe(&addr, port1, packet_id, 0);
+			Send_Probe(&addr, port1, packet_id, 0);
+
+			packet_id++;
+			unsigned short new_mangled_port = 0;
+			timeout = 240;
+			while (timeout() && new_mangled_port == 0) {
+				Send_Probe(&manglers[0], port2, packet_id, 0);
+				new_mangled_port = Find_Mangled_Port(packet_id, 0);
+			}
+
+			if (new_mangled_port != 0) {
+				if (new_mangled_port != mangled_port + Delta) {
+					FUN_004068E0("NAT uses different source ports for different destination ports\n");
+					behavior |= 0x40;
+				} else {
+					FUN_004068E0("NAT uses the same source port for different destination ports\n");
+				}
+			}
+		} else {
+			behavior |= 0x40;
+		}
+	}
+
+	FUN_004068E0("Testing for Netgear bug\n");
+	if (DAT_00B77E18 == 2 || Session.unknown_2F48) {
+		behavior |= 8;
+		FUN_004068E0("Netgear bug specified by command line or SendDelay flag\n");
+	}
+	return(behavior);
 }
 
 // FUNCTION: GAMEMD 0x005D9DB0

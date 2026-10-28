@@ -159,6 +159,242 @@ int BuildCat_From_Name(char const * name)
 	return(0);
 }
 
+// FUNCTION: GAMEMD 0x0045DD90
+BuildingTypeClass::BuildingTypeClass(char const * ininame) :
+	BASECLASS(ininame, SPEED_FOOT),
+	HeapID(STRUCT_NONE),
+	OccupyList(NULL),
+	BuildupData(NULL),
+	BuildupLoaded(false),
+	BuildCat(0),
+	HalfDamageSmokeLocation1(COORD_NONE),
+	HalfDamageSmokeLocation2(COORD_NONE),
+	GateCloseDelay(0.0),
+	LightVisibility(5000),
+	LightIntensity(0),
+	LightRedTint(1000000),
+	LightGreenTint(1000000),
+	LightBlueTint(1000000),
+	PrimaryFirePixelOffset(Point2D(0xFFFF, 0xFFFF)),
+	SecondaryFirePixelOffset(Point2D(0xFFFF, 0xFFFF)),
+	ToOverlay(NULL),
+	ToTile(NULL),
+	BuildupFilename(NoInitClass()),
+	BuildupSound(-1),
+	PackupSound(-1),
+	CreateUnitSound(-1),
+	UnitEnterSound(-1),
+	UnitExitSound(-1),
+	WorkingSound(-1),
+	NotWorkingSound(-1),
+	PowersUpBuilding(NoInitClass()),
+	FreeUnit(NULL),
+	SecretInfantry(NULL),
+	SecretUnit(NULL),
+	SecretBuilding(NULL),
+	FoundationFace(FACING_NONE),
+	Adjacent(3),
+	ToBuild(RTTI_NONE),
+	TargetCoordOffset(0, 0, 0),
+	ExitCoordinate(0, 0, 0),
+	ExitList(NULL),
+	StartFace(DIR_N),
+	DeployFacing(0x80),
+	Power(0),
+	Drain(0),
+	ExtraPower(0),
+	ExtraDrain(0),
+	Size(BSIZE_11),
+	ZHeight(2),
+	OccupyHeight(2),
+	MidPoint(0),
+	DoorStages(0),
+	Upgrades(0),
+	DeployingAnim(NULL),
+	UnderDoorAnim(NULL),
+	Rubble(NULL),
+	RoofDeployingAnim(NULL),
+	UnderRoofDoorAnim(NULL),
+	DoorAnim(NULL),
+	SpecialZOverlay(NULL),
+	SpecialZOverlayZAdjust(0),
+	BibShape(NULL),
+	BibShapeLoaded(false),
+	NormalZAdjust(0),
+	AntiAirValue(0),
+	AntiArmorValue(0),
+	AntiInfantryValue(0),
+	ZShapePointMove(Point2D(0, 0)),
+	DrawRect(RECT_NONE),
+	ExtraLight(0),
+	IsCanTogglePower(true),
+	HasSpotlight(false),
+	IsTemple(false),
+	IsPlug(false),
+	IsHoverPad(false),
+	IsBase(true),
+	EligibleForAllyBuilding(false),
+	EligibleForDelayKill(false),
+	NeedsEngineer(false),
+	CaptureEvaEvent(-1),
+	ProduceCashStartup(0),
+	ProduceCashAmount(0),
+	ProduceCashDelay(0),
+	InfantryGainSelfHeal(0),
+	UnitsGainSelfHeal(0),
+	RefinerySmokeFrames(25),
+	IsBibbed(false),
+	IsWall(false),
+	IsCaptureable(false),
+	IsPowered(false),
+	PoweredSpecial(false),
+	Overpowerable(false),
+	Spyable(false),
+	CanC4(true),
+	WantsExtraSpace(false),
+	IsUnsellable(false),
+	ClickRepairable(true),
+	CanBeOccupied(false),
+	CanOccupyFire(false),
+	MaxNumberOccupants(0),
+	ShowOccupantPips(true),
+	QueueingCell(Point2D(0, 0)),
+	NumberImpassableRows(-1),
+	IsRadar(false),
+	SpySat(false),
+	IsHasChargeAnim(false),
+	IsAnimDelayedFire(false),
+	IsSiloDamage(false),
+	IsCanUnitRepair(false),
+	IsCanUnitReload(false),
+	Bunker(false),
+	Cloning(false),
+	Grinding(false),
+	UnitAbsorb(false),
+	InfantryAbsorb(false),
+	SecretLab(false),
+	DoubleThick(false),
+	IsFlat(false),
+	IsDockUnload(false),
+	IsRecoilless(false),
+	IsHasStupidGuardMode(true),
+	IsBridgeRepairHut(false),
+	IsGate(false),
+	IsSAM(false),
+	IsConstructionYard(false),
+	IsNukeSilo(false),
+	IsRefinery(false),
+	IsWeeder(false),
+	IsWeaponsFactory(false),
+	IsLaserFencePost(false),
+	IsLaserFence(false),
+	IsFirestormWall(false),
+	IsHospital(false),
+	IsArmory(false),
+	IsEMPulseCannon(false),
+	IsTickTank(false),
+	IsTurretAnimAVoxel(false),
+	IsBarrelAnimAVoxel(false),
+	IsCloakGenerator(false),
+	IsSensorArray(false),
+	IsICBMLauncher(false),
+	IsArtillary(false),
+	IsHelipad(false),
+	OrePurifier(false),
+	FactoryPlant(false),
+	InfantryCostBonus(1.0f),
+	UnitsCostBonus(1.0f),
+	AircraftCostBonus(1.0f),
+	BuildingsCostBonus(1.0f),
+	DefensesCostBonus(1.0f),
+	IsGDIBarracks(false),
+	IsNODBarracks(false),
+	IsYuriBarracks(false),
+	ChargedAnimTime(999.0f),
+	DelayedFireDelay(0),
+	SuperWeapon(SUPER_NONE),
+	SuperWeapon2(SUPER_NONE),
+	GateStages(9),
+	PowersUpToLevel(-1),
+	IsDamagedDoor(false),
+	IsInvisibleInGame(false),
+	IsTerrainPalette(false),
+	IsCanPlaceAnywhere(false),
+	IsExtraDamageStage(true),
+	CanAIBuildThis(false),
+	IsBaseDefense(false),
+	CloakRadiusInCells(20),
+	ConcentricRadialIndicator(false),
+	PsychicDetectionRadius(0),
+	StartPitch(DIR_E),
+	IsDemandLoad(false),
+	IsDemandLoadBuildup(false),
+	IsFreeBuildup(false),
+	IsThreatRatingNode(false),
+	PrimaryFireDualOffset(false),
+	ProtectWithWall(false),
+	CanHideThings(true),
+	CrateBeneath(false),
+	LeaveRubble(false),
+	CrateBeneathIsMoney(false),
+	NumberOfDocks(1),
+	DockingOffsets(1)
+{
+	Create_ID();
+	BuildingTypes.Add(this);
+	HeapID = (StructType)BuildingTypes.ID(this);
+
+	Init_Anim(BSTATE_CONSTRUCTION, 0, 1, 0);
+	Init_Anim(BSTATE_IDLE, 0, 1, 0);
+	Init_Anim(BSTATE_ACTIVE, 0, 1, 0);
+	Init_Anim(BSTATE_AUX1, 0, 1, 0);
+	Init_Anim(BSTATE_AUX2, 0, 1, 0);
+
+	for (int i = 0; i < BANIM_COUNT; i++) {
+		memset(AnimData[i].Anim, 0, sizeof(AnimData[i].Anim));
+		memset(AnimData[i].AnimDamaged, 0, sizeof(AnimData[i].AnimDamaged));
+		memset(AnimData[i].AnimGarrisoned, 0, sizeof(AnimData[i].AnimGarrisoned));
+		AnimData[i].Location = Point2D(0, 0);
+		AnimData[i].ZAdjust = 0;
+		AnimData[i].YSort = 0;
+		AnimData[i].Powered = true;
+		AnimData[i].PoweredLight = false;
+		AnimData[i].PoweredEffect = false;
+		AnimData[i].PoweredSpecial = false;
+	}
+
+	BuildupFilename[0] = '\0';
+	PowersUpBuilding[0] = '\0';
+	TheaterImageFile[0] = '\0';
+	VoxelBarrelFile[0] = '\0';
+	IsTrainable = false;
+	DeployingAnimLoaded = false;
+	UnderDoorAnimLoaded = false;
+	RubbleLoaded = false;
+	RoofDeployingAnimLoaded = false;
+	UnderRoofDoorAnimLoaded = false;
+
+	for (int j = 0; j < 10; j++) {
+		MuzzleFlash[j] = COORD_NONE;
+	}
+	for (int k = 0; k < 8; k++) {
+		DamageFireOffset[k] = COORD_NONE;
+	}
+	for (int l = 0; l < 8; l++) {
+		RemoveOccupy[l] = Point2D(0xFFFF, 0xFFFF);
+		AddOccupy[l] = Point2D(0xFFFF, 0xFFFF);
+	}
+	DockingOffsets[0] = Coord(0, 0, 0);
+
+	ImmuneToPsionics = true;
+	ImmuneToPsionicWeapons = true;
+	ImmuneToPoison = false;
+	Parasiteable = false;
+	Organic = false;
+	ConsideredAircraft = false;
+	Bunkerable = false;
+}
+
 // FUNCTION: GAMEMD 0x0045E520
 BuildingTypeClass::BuildingTypeClass(NoInitClass const & x) :
 	BASECLASS(x),

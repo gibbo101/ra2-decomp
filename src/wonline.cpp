@@ -993,8 +993,6 @@ void FUN_0077E110(void)
 	}
 }
 
-HWND FUN_00775B10(void);
-
 // FUNCTION: GAMEMD 0x0077E1D0
 int __fastcall FUN_0077E1D0(WideWstring const & msg)
 {
@@ -1066,7 +1064,6 @@ int __fastcall FUN_0077E300(WideWstring const & msg)
 #include "goptions.h"
 namespace Game { extern int Seed; }
 extern char DAT_00889F64[];
-Wstring __fastcall FUN_007B82E0(WideWstring const & string);
 
 extern int DAT_00B77E00;
 extern int DAT_00B77E04;
@@ -1138,7 +1135,6 @@ extern int DAT_00B73A20;
 extern int DAT_00B77D70;
 extern int DAT_00B77A88;
 HWND __fastcall FUN_00775940(int id);
-void __fastcall FUN_005EDDE0(HWND window, char flag);
 void __fastcall FUN_00783C80(int arg, bool flag);
 
 WideWstring __fastcall FUN_007B7ED0(Wstring const & text);
@@ -1269,7 +1265,6 @@ extern wchar_t DAT_00B77AD0[];
 extern char DAT_0084A584[];
 void __fastcall FUN_00792BE0(int id, WideWstring const & text, char flag);
 void __fastcall FUN_007757E0(HWND window, int flag);
-HWND FUN_00775B10(void);
 
 static inline void Focus_Chat_Input(void)
 {
@@ -1334,6 +1329,8 @@ bool FUN_0077F120(void)
 }
 
 
+void FUN_00798340(void);
+
 // FUNCTION: GAMEMD 0x0077F320
 bool __fastcall FUN_0077F320(int type, unsigned char ping, bool wait)
 {
@@ -1342,9 +1339,7 @@ bool __fastcall FUN_0077F320(int type, unsigned char ping, bool wait)
 			return false;
 		}
 	}
-	for (int i = 0; i < 18; i++) {
-		ResetEvent(DAT_00B73684[i]);
-	}
+	FUN_00798340();
 	if (!FUN_0077EF90(type, ping)) {
 		SetEvent(DAT_00B73684[0]);
 		return false;
@@ -1358,22 +1353,7 @@ bool __fastcall FUN_0077F320(int type, unsigned char ping, bool wait)
 // FUNCTION: GAMEMD 0x0077F520
 bool __fastcall FUN_0077F520(bool wait)
 {
-	if (DAT_00B76520.length() != 0) {
-		if (!FUN_0077F120()) {
-			return false;
-		}
-	}
-	for (int i = 0; i < 18; i++) {
-		ResetEvent(DAT_00B73684[i]);
-	}
-	if (!FUN_0077EF90(0, 0)) {
-		SetEvent(DAT_00B73684[0]);
-		return false;
-	}
-	if (wait) {
-		return FUN_0077F120();
-	}
-	return true;
+	return FUN_0077F320(0, 0, wait);
 }
 
 // FUNCTION: GAMEMD 0x0077F710
@@ -1460,17 +1440,12 @@ extern int DAT_00B77E64;
 extern int DAT_00B77E20;
 
 
-extern int DAT_00AA0430;
-extern int __fastcall FUN_0053E770(MSG * msg, HWND window, unsigned int filter_min, unsigned int filter_max, unsigned int remove);
-void Title_Screen_Restore(bool force);
 void __cdecl FUN_005E2700(int color, wchar_t const * text, ...);
 void __fastcall FUN_005E32D0(bool force, bool now);
 int FUN_00775B20(void);
-void FUN_00794BA0(void);
 void Call_Back(void);
 bool FUN_00796710(void);
 bool FUN_00786270(void);
-extern int DAT_00B77E6C;
 extern int DAT_00B77E70;
 extern char DAT_00B77E26;
 extern char DAT_00B77E27;
@@ -7154,6 +7129,170 @@ void __fastcall FUN_0079FC10(int a, int b, int c)
 	DAT_00B77A88 = time(NULL);
 }
 
+void FUN_0052F3F0(void);
+void FUN_0072BE80(void);
+void FUN_0072BED0(void);
+void FUN_0079CE70(void);
+void FUN_007A0430(void);
+bool FUN_007A0690(void);
+void FUN_007A1060(void);
+bool FUN_007A1BB0(void);
+BOOL CALLBACK FUN_007A2110(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+BOOL CALLBACK FUN_007A2600(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+
+static inline void Reset_Ladder_Lists(void)
+{
+	DAT_00B73AA8.clear();
+	DAT_00B76980.clear();
+	DAT_00B76990.clear();
+	DAT_00B76608.clear();
+	DAT_00AC116C->V55();
+	if (Session.unknown_0C != 3 && Session.unknown_0C != 1 && Session.unknown_0C != 2) {
+		FUN_0079CE70();
+	}
+	FUN_0079D2F0();
+}
+
+// FUNCTION: GAMEMD 0x0079FC40
+int FUN_0079FC40(void)
+{
+	if (Game::ObserverMode) {
+		Game::ObserverMode = 0;
+		FUN_005EE350(0);
+	}
+	DAT_00B77DC1 = 0;
+	FUN_0079FC10(1, -1, 0);
+	FUN_0078ABF0(true, StringTable::LoadString("TXT_AWAY_QUICKMATCH", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x6D63));
+	DAT_00B77E28 = 0;
+	FUN_0052F3F0();
+	FUN_0079FC10(2, 30, 0);
+	DAT_00B73E10.clear();
+	DAT_00B76AC4.clear();
+	if (!FUN_0077F520(true)) {
+		FUN_0078ABF0(false, L"");
+		return 0;
+	}
+	if (DAT_00B73E10.length() == 0) {
+		ODMessageBox(StringTable::LoadString("WOL:NoMatchingAgentFound", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x6D8D), 0, FUN_0077D710, 0);
+		FUN_0078ABF0(false, L"");
+		return 0;
+	}
+
+	WolChannel chan;
+	memset(&chan, 0, sizeof(chan));
+	char const * prefix = "Lob_39_";
+	if (Session.unknown_0C != 2) {
+		prefix = "Lob_40_";
+	}
+	int i;
+	for (i = 0; i < DAT_00B73E10.length(); i++) {
+		DAT_00B73E10.get(chan, i);
+		if (strnicmp(chan.Name, prefix, strlen(prefix)) == 0) {
+			break;
+		}
+	}
+	if (i >= DAT_00B73E10.length()) {
+		ODMessageBox(StringTable::LoadString("WOL:MatchingServerUnavailable", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x6DA5), 0, FUN_0077D710, 0);
+		return 0;
+	}
+
+	FUN_0072BE80();
+	HWND dialog = WS_Create_Dialog(Game::hInstance, 0x117, Game::hWnd, FUN_007A2110, FALSE);
+	UI::RegisterWindow(dialog, 0x117);
+	SendMessage(dialog, 0x4A9, 0, 1);
+	ShowWindow(dialog, SW_SHOWNORMAL);
+	FUN_00798340();
+	int result = 0;
+	Reset_Ladder_Lists();
+
+	while (true) {
+		if (DAT_00B73A20 == 2) {
+			long joined;
+			{
+				Wstring key("zotclot9");
+				joined = FUN_00788800(&chan, key, WideWstring(StringTable::LoadString("TXT_JOINLOB", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x6DBF)));
+			}
+			if (joined != 0) {
+				FUN_0079FC10(0, -1, 1);
+				ODMessageBox(StringTable::LoadString("WOL:ChannelJoinFailure", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x6DC2), 0, FUN_0077D710, 0);
+				goto cleanup;
+			}
+			FUN_0079FC10(3, 20, 0);
+		}
+		if (DAT_00B73A20 == 3) {
+			if (strcmp(chan.Name, DAT_00B76B10.Name) == 0) {
+				FUN_007A0690();
+			}
+		}
+		DWORD index;
+		while ((index = WaitForMultipleObjects(18, DAT_00B73684, FALSE, 20)) == WAIT_TIMEOUT) {
+			FUN_0077F900();
+		}
+		ResetEvent(DAT_00B73684[index]);
+		if (index == 0 || index == 6) {
+			goto cleanup;
+		}
+		if (index == 0x11) {
+			FUN_007A0430();
+			FUN_007A1060();
+			continue;
+		}
+		if (index == 5) {
+			if (DAT_00B73A20 == 0) {
+				FUN_00788710(0x40, 0);
+				switch (DAT_00B77E14) {
+					case 1:
+						ODMessageBox(StringTable::LoadString("WOL:NoMatchingAgentFound", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x6E0E), 0, FUN_0077D710, 0);
+						break;
+					case 2:
+						ODMessageBox(StringTable::LoadString("WOL:MatchTimeout", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x6E14), 0, FUN_0077D710, 0);
+						break;
+					default:
+						ODMessageBox(StringTable::LoadString("WOL:MatchFailExit", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x6E19), 0, FUN_0077D710, 0);
+						break;
+				}
+cleanup:
+				FUN_0078ABF0(false, L"");
+				goto done;
+			}
+			continue;
+		}
+		if (index == 0x10) {
+			if (FUN_007A1BB0() && Session.unknown_0C == 3) {
+				HWND match = UI::BeginDialog(0x11F, FUN_007A2600, 0);
+				FUN_0079FC10(10, 180, 0);
+				SendMessage(match, 0x4A9, 0, 1);
+				ShowWindow(match, SW_SHOWNORMAL);
+			}
+			continue;
+		}
+		if (index == 7) {
+			break;
+		}
+	}
+
+	FUN_005E2700(DAT_007EEF28, StringTable::LoadString("WOL:MatchGameStarting", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x6E33));
+	DAT_00B77DEC = 0;
+	result = 1;
+
+done:
+	FUN_007757E0(dialog, 0);
+	FUN_0072BED0();
+	HWND match = FUN_00775940(0x11F);
+	if (match) {
+		FUN_007757E0(match, 0);
+	}
+	if (DAT_00B73A20 != 11) {
+		FUN_0079FC10(1, -1, 0);
+	}
+	FUN_00788710(0x40, 1);
+	if (MultiplayerMapPreview) {
+		delete MultiplayerMapPreview;
+		MultiplayerMapPreview = NULL;
+	}
+	return result;
+}
+
 // FUNCTION: GAMEMD 0x007A0430
 void FUN_007A0430(void)
 {
@@ -7174,12 +7313,10 @@ void FUN_007A0430(void)
 	}
 }
 
-void FUN_0052F3F0(void);
 int FUN_005355D0(void);
 rc_ptr<WorldDominationTour::Campaign> * __cdecl FUN_007B0370(void);
 extern int DAT_007EEF30;
 extern int DAT_00B736F4;
-void FUN_007A1060(void);
 
 // FUNCTION: GAMEMD 0x007A0690
 bool FUN_007A0690(void)
@@ -9060,6 +9197,9 @@ template class VectorClass<tConnInfoStruct *>;
 
 // TEMPLATE: GAMEMD 0x007ACE60
 // ?clear@?$Dictionary@VWstring@@H@@QAEXXZ
+
+// TEMPLATE: GAMEMD 0x007ACF70
+// ?clear@?$Dictionary@VWstring@@UWolChannel@@@@QAEXXZ
 
 // TEMPLATE: GAMEMD 0x007AD1B0
 // ?ID@?$VectorClass@PAUtConnInfoStruct@@@@UAEHABQAUtConnInfoStruct@@@Z

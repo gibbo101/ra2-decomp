@@ -1,6 +1,6 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 28 October 2026: 18,045 of 19,367 game functions match (93%; 62% of game code
+Status, 28 October 2026: 18,069 of 19,367 game functions match (93%; 63% of game code
 by size), landed in batches module by module. The rounds below record each one.
 
 ## The goal
@@ -1113,6 +1113,17 @@ Session.Players. Recording then exposed three UI-command functions building char
 ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; their RTTI
 fixed them. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
+
+### Batches 135 to 137 (28 October 2026)
+
+**24 functions** (7 of 8, 7 of 8, 6 of 8, and four helpers). All three batches put Opus on
+functions of 1.9 to 2.4 KB, one per module: building, builtype, Conquer's IPX callback,
+coopcamp, ebolt, House, houstype, ipxmgr's debug print, isotype's shadow casters, LoadDlg,
+MapGen's urban areas, ModemGst, multiplayerteam2, ownrdraw, saveload's Object_CRCs,
+Score, Skirmish, teleport, weapon and wonline matched. Conquer's match added three packet
+types to session.h, which flipped wonline 0x00788180 once more; removing nine
+declarations the file never used held it. ahandle2 (97.6%), laser (86.2%), spawnmanager
+(82.8%) and PlanMgr (60.3%) remain. Merge gate: 18,071 of 18,071 (2,344.1 KB).
 
 ### Batches 132 to 134 (28 October 2026)
 

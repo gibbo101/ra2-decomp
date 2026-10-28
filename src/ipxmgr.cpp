@@ -834,6 +834,98 @@ void IPXManagerClass::Store_Stats(void)
 	}
 }
 
+#include "dsurface.h"
+
+extern unsigned int DAT_00AC5210[];
+
+static inline Point2D * Scratch(Point2D const & p) { return (Point2D *)&p; }
+
+// FUNCTION: GAMEMD 0x00542620
+void IPXManagerClass::Multiplayer_Debug_Print(void)
+{
+	wchar_t buffer[256];
+	Surface * surface = DSurface::Composite;
+
+	swprintf(buffer, L"Rtry delta: %d", 1000 * RetryDelta / TIMER_SECOND);
+	Fancy_Text_Print_Wide(Scratch(Point2D()), buffer, surface, &surface->Get_Rect(), &Point2D(0, 402), Fetch_Scheme_By_Name("Grey"), 0, TextPrintType(0x19));
+
+	swprintf(buffer, L"Rtry timeout: %d", 1000 * Timeout / TIMER_SECOND);
+	Fancy_Text_Print_Wide(Scratch(Point2D()), buffer, surface, &surface->Get_Rect(), &Point2D(0, 412), Fetch_Scheme_By_Name("Grey"), 0, TextPrintType(0x19));
+
+	swprintf(buffer, L"Lat Fudge : %d", Session.LatencyFudge);
+	Fancy_Text_Print_Wide(Scratch(Point2D()), buffer, surface, &surface->Get_Rect(), &Point2D(0, 422), Fetch_Scheme_By_Name("Grey"), 0, TextPrintType(0x19));
+
+	if (SentFrameSyncTimer / TIMER_SECOND) {
+		swprintf(buffer, L"FSPS : %d", SentFrameSyncCount / (SentFrameSyncTimer / TIMER_SECOND));
+		Fancy_Text_Print_Wide(Scratch(Point2D()), buffer, surface, &surface->Get_Rect(), &Point2D(0, 432), Fetch_Scheme_By_Name("Grey"), 0, TextPrintType(0x19));
+		if ((Frame & 0x7F) == 0x7F) {
+			SentFrameSyncTimer = 0;
+			SentFrameSyncCount = 0;
+		}
+	}
+
+	if (Session.Type == GAME_INTERNET && Session.ViaPacketRouter) {
+		swprintf(buffer, L"MC resp: %d", 1000 * Ipx.Multicast_Response_Time() / TIMER_SECOND);
+		Fancy_Text_Print_Wide(Scratch(Point2D()), buffer, surface, &surface->Get_Rect(), &Point2D(0, 442), Fetch_Scheme_By_Name("Grey"), 0, TextPrintType(0x19));
+	}
+
+	for (int i = 0; i < NumConnections; i++) {
+		HouseClass * house = Houses[Connection[i]->ID];
+		if (house != NULL && house != PlayerPtr) {
+			int scheme = house->Scheme;
+			int x = (i + 1) * 100;
+			wchar_t name[200];
+
+			swprintf(name, L"%s", Connection[i]->Name);
+			Fancy_Text_Print_Wide(Scratch(Point2D()), name, surface, &surface->Get_Rect(), &Point2D(x, 302), ColorSchemes[scheme], 0, TextPrintType(0x19));
+
+			int avg = Connection[i]->Queue->Avg_Response_Time();
+			swprintf(buffer, L"Average  : %d", 1000 * avg / TIMER_SECOND);
+			Fancy_Text_Print_Wide(Scratch(Point2D()), buffer, surface, &surface->Get_Rect(), &Point2D(x, 311), ColorSchemes[scheme], 0, TextPrintType(0x19));
+
+			int max = Connection[i]->Queue->Max_Response_Time();
+			swprintf(buffer, L"Max      : %d", 1000 * max / TIMER_SECOND);
+			Fancy_Text_Print_Wide(Scratch(Point2D()), buffer, surface, &surface->Get_Rect(), &Point2D(x, 319), ColorSchemes[scheme], 0, TextPrintType(0x19));
+
+			int resends = Connection[i]->Num_Resends();
+			swprintf(buffer, L"Resends  : %d", resends);
+			Fancy_Text_Print_Wide(Scratch(Point2D()), buffer, surface, &surface->Get_Rect(), &Point2D(x, 327), ColorSchemes[scheme], 0, TextPrintType(0x19));
+
+			int numlost = MAX(0, Connection[i]->Num_Lost());
+			swprintf(buffer, L"Num lost : %d", numlost);
+			Fancy_Text_Print_Wide(Scratch(Point2D()), buffer, surface, &surface->Get_Rect(), &Point2D(x, 335), ColorSchemes[scheme], 0, TextPrintType(0x19));
+
+			int pcnt_lost = Connection[i]->Percent_Lost();
+			swprintf(buffer, L"Pcnt lost: %d", pcnt_lost);
+			Fancy_Text_Print_Wide(Scratch(Point2D()), buffer, surface, &surface->Get_Rect(), &Point2D(x, 343), ColorSchemes[scheme], 0, TextPrintType(0x19));
+
+			int process_time = 0;
+			for (int j = 0; j < Session.Players.Count(); ++j) {
+				if (Connection[i]->ID == Session.Players[j]->Player.ID) {
+					process_time = Session.Players[j]->Player.ProcessTime;
+					break;
+				}
+			}
+			swprintf(buffer, L"Process : %d", process_time);
+			Fancy_Text_Print_Wide(Scratch(Point2D()), buffer, surface, &surface->Get_Rect(), &Point2D(x, 351), ColorSchemes[scheme], 0, TextPrintType(0x19));
+
+			swprintf(buffer, L"Frame   : %d", -Session.PlayerLatency[i]);
+			Fancy_Text_Print_Wide(Scratch(Point2D()), buffer, surface, &surface->Get_Rect(), &Point2D(x, 359), ColorSchemes[scheme], 0, TextPrintType(0x19));
+
+			swprintf(buffer, L"Queue s/r: %d/%d", Connection[i]->Queue->Num_Send(), Connection[i]->Queue->Num_Receive());
+			Fancy_Text_Print_Wide(Scratch(Point2D()), buffer, surface, &surface->Get_Rect(), &Point2D(x, 367), ColorSchemes[scheme], 0, TextPrintType(0x19));
+
+			swprintf(buffer, L"Missed o/m: %d/%d", Connection[i]->Missed_Overall(), Connection[i]->Missed_Magic());
+			Fancy_Text_Print_Wide(Scratch(Point2D()), buffer, surface, &surface->Get_Rect(), &Point2D(x, 375), ColorSchemes[scheme], 0, TextPrintType(0x19));
+
+			if (Session.Type == GAME_INTERNET && Session.ViaPacketRouter) {
+				swprintf(buffer, L"Rout resp: %d", 1000 * DAT_00AC5210[i] / TIMER_SECOND);
+				Fancy_Text_Print_Wide(Scratch(Point2D()), buffer, surface, &surface->Get_Rect(), &Point2D(x, 383), ColorSchemes[scheme], 0, TextPrintType(0x19));
+			}
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x00542EC0
 void IPXManagerClass::Reset_Response_Time(bool zero)
 {

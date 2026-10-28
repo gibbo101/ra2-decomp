@@ -277,6 +277,193 @@ void STDMETHODCALLTYPE TeleportLocomotionClass::Do_Turn(DirStruct coord)
 	LinkedTo->PrimaryFacing.Set_Desired(coord);
 }
 
+#include "anim.h"
+#include "bullet.h"
+#include "parasite.h"
+#include "unit.h"
+#include "unittype.h"
+#include "voc.h"
+
+static inline void Chrono_Out_Sound(FootClass * object)
+{
+	int sound = object->Techno_Type_Class()->ChronoOutSound;
+	if (sound != -1 || (sound = Rule->ChronoOutSound) != -1) {
+		VocClass::PlayAt(sound, object->PositionCoord);
+	}
+}
+
+static inline void Chrono_In_Sound(FootClass * object)
+{
+	int sound = object->Techno_Type_Class()->ChronoInSound;
+	if (sound != -1 || (sound = Rule->ChronoInSound) != -1) {
+		VocClass::PlayAt(sound, object->PositionCoord);
+	}
+}
+
+// FUNCTION: GAMEMD 0x007192F0
+boolean STDMETHODCALLTYPE TeleportLocomotionClass::Process(void)
+{
+	if (LinkedTo->WarpingOut && State == 0 && LinkedTo->unknown_280 == 0) {
+		Process_Delay();
+		return(false);
+	}
+
+	if (State == 0 && LinkedTo->unknown_280 != 0) {
+		State = LinkedTo->unknown_280;
+		return(false);
+	}
+
+	if (!LinkedTo->IsImmobilized) {
+		if (State <= 0) {
+			if (Is_Moving()) {
+				if (LinkedTo->PositionCoord == LastCoords || LastCoords == COORD_NONE) {
+					LinkedTo->Assign_Destination(NULL, true);
+					Stop_Moving();
+					return(false);
+				}
+
+				LinkedTo->BecomeUntargetable();
+				for (int index = Bullets.Count() - 1; index >= 0; index--) {
+					if (Bullets[index]->TarCom == LinkedTo) {
+						Bullets[index]->LoseTarget();
+					}
+				}
+
+				new AnimClass(Rule->WarpOut, LinkedTo->PositionCoord);
+
+				int distance = (LinkedTo->Center_Coord() - LastCoords).Length();
+				Timer = 0;
+				if (Rule->ChronoTrigger) {
+					Timer = distance / Rule->ChronoDistanceFactor;
+				}
+				Timer = (Timer > Rule->ChronoMinimumDelay) ? Timer : Rule->ChronoMinimumDelay;
+				if (distance < Rule->ChronoRangeMinimum) {
+					Timer = Rule->ChronoMinimumDelay;
+				}
+
+				LinkedTo->WarpingOut = true;
+				if (LinkedTo->Fetch_RTTI() == RTTI_UNIT && ((UnitClass *)LinkedTo)->Class->Harvester) {
+					Timer = 0;
+					LinkedTo->WarpingOut = false;
+				}
+
+				if (LinkedTo->ParasiteEatingMe != NULL) {
+					LinkedTo->ParasiteEatingMe->ParasiteImUsing->ExitUnit();
+				}
+
+				LinkedTo->Mark(MARK_UP);
+				Chrono_Out_Sound(LinkedTo);
+
+				LinkedTo->Set_Coord(LastCoords);
+				Cell cellid = LastCoords.As_Cell();
+				CellClass * cell = &Map[cellid];
+				LinkedTo->Set_Coord(LastCoords);
+				if (cell->IsUnderBridge) {
+					LinkedTo->IsOnBridge = true;
+				} else {
+					LinkedTo->IsOnBridge = false;
+				}
+				LinkedTo->Set_Height_AGL(0);
+				LinkedTo->Mark(MARK_DOWN);
+				Chrono_In_Sound(LinkedTo);
+				LinkedTo->Per_Cell_Process(PCP_END);
+				Stop_Moving();
+				cell->Goodie_Check(LinkedTo);
+				LinkedTo->Assign_Destination(NULL, true);
+				new AnimClass(Rule->WarpOut, LinkedTo->PositionCoord);
+				LinkedTo->unknown_280 = 0;
+				return(false);
+			}
+			return(false);
+		}
+	} else if (State == 0) {
+		LinkedTo->BeingWarpedOut = true;
+		Timer = 60;
+		State++;
+		return(false);
+	}
+
+	if (State == 1) {
+		Process_Delay();
+		return(false);
+	}
+
+	if (State == 2) {
+		new AnimClass(Rule->WarpOut, LinkedTo->PositionCoord);
+		LinkedTo->Mark(MARK_UP);
+		Chrono_Out_Sound(LinkedTo);
+		LinkedTo->WarpingOut = true;
+		LinkedTo->IsImmobilized = false;
+		LinkedTo->BeingWarpedOut = false;
+		LinkedTo->IsOnBridge = false;
+		bool done = FUN_00718260(LinkedTo->ChronoDestCoords, false);
+		State++;
+		if (done) {
+			State++;
+			return(false);
+		}
+		return(false);
+	}
+
+	if (State == 3) {
+		if (FUN_00718260(LinkedTo->ChronoDestCoords, false)) {
+			State++;
+		}
+		LinkedTo->ChronoLockRemaining = Rule->ChronoDelay;
+		return(false);
+	}
+
+	if (State == 4) {
+		FUN_00718260(LinkedTo->ChronoDestCoords, true);
+		LinkedTo->Set_Coord(LastCoords);
+		LinkedTo->Set_Height_AGL(0);
+		LinkedTo->Mark(MARK_DOWN);
+		State++;
+		return(false);
+	}
+
+	if (State == 5) {
+		LinkedTo->Set_Coord(LastCoords);
+		LinkedTo->Set_Height_AGL(0);
+		LinkedTo->Mark(MARK_DOWN);
+		Chrono_In_Sound(LinkedTo);
+		if (!Map.In_Local_Radar(LinkedTo->PositionCell)) {
+			LinkedTo->IsInPlayfield = false;
+		}
+		if (LinkedTo->unknown_280 == 0) {
+			Check_Landing(LastCoords);
+		}
+		if (LinkedTo->IsActive) {
+			LinkedTo->Per_Cell_Process(PCP_END);
+			Stop_Moving();
+			LinkedTo->BeingManipulatedBy = NULL;
+			LinkedTo->ChronoWarpedByHouse = NULL;
+			LinkedTo->Assign_Archive_Target(NULL);
+			LinkedTo->Assign_Destination(NULL, true);
+			Timer = LinkedTo->ChronoLockRemaining;
+			new AnimClass(Rule->WarpOut, LinkedTo->PositionCoord);
+			State++;
+			return(false);
+		}
+		return(false);
+	}
+
+	if (State == 6) {
+		Process_Delay();
+		return(false);
+	}
+
+	if (State == 7) {
+		LinkedTo->WarpingOut = false;
+		LinkedTo->Assign_Archive_Target(NULL);
+		LinkedTo->Assign_Destination(NULL, true);
+		IsMoving = false;
+		LinkedTo->unknown_280 = 0;
+		State = 0;
+	}
+	return(false);
+}
+
 // FUNCTION: GAMEMD 0x00719BF0
 void STDMETHODCALLTYPE TeleportLocomotionClass::Process_Delay(void)
 {

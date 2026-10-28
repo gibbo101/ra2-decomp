@@ -184,8 +184,11 @@ namespace OwnerDraw {
 			} CheckBox;
 
 			struct {
-				int reserved28;
-				int reserved2C;
+				unsigned char reserved28[0x1C];
+				int scrollStart;
+				unsigned char reserved48[0x80];
+				int alpha;
+				unsigned char reservedCC[0x24];
 				int focusPending;
 				int focusEnabled;
 				int hadTabStop;
@@ -270,6 +273,7 @@ namespace OwnerDraw {
 
 	void Initialize(void);
 	LRESULT CALLBACK SysListViewHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+	LRESULT CALLBACK EditHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 	LRESULT CALLBACK CheckBoxButtonHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 	LRESULT CALLBACK ProgressHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 	LRESULT CALLBACK GroupBoxButtonHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam);

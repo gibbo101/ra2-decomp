@@ -22,6 +22,7 @@ char * __fastcall FUN_007350C0(wchar_t const * text);
 void __cdecl FUN_004068E0(char const * format, ...);
 void __fastcall FUN_005E3720(char const * text);
 extern DynamicVectorClass<HouseClass *> DAT_00A80228;
+extern char DAT_0089F5D8[];
 
 char __fastcall FUN_0049B430(int nibble);
 void __fastcall FUN_0049B7E0(MPlayerScoreType * stats, bool second);
@@ -85,6 +86,8 @@ const Rect RECT_NONE_2(0, 0, 0, 0);
 // SYNTHETIC: GAMEMD 0x0049B420 SYMBOL
 // _$E63
 CoopCampSource_0049E4F0 DAT_0089F518;
+
+#include "stringtable.h"
 
 // FUNCTION: GAMEMD 0x0049B450
 int __fastcall FUN_0049B450(char c)
@@ -703,6 +706,111 @@ int __fastcall FUN_0049D9F0(char const * name)
 CoopCampSource_0049E4F0::CoopCampSource_0049E4F0(void)
 {
 	Loaded = false;
+}
+
+// FUNCTION: GAMEMD 0x0049DB00
+void CoopCampSource_0049E4F0::FUN_0049DB00(void)
+{
+	char key[48];
+	char section[0x80];
+	CCFileClass file("CoopCampMD.ini");
+	if (!Ini.ReadCCFile(file, false, false)) {
+		EntryCount = 0;
+		Entries = 0;
+		Loaded = false;
+		return;
+	}
+	EntryCount = Ini.Entry_Count("Campaigns");
+	if (EntryCount <= 0) {
+		EntryCount = 0;
+		Entries = 0;
+	} else {
+		Entries = new CoopCampEntry[EntryCount];
+		if (Entries) {
+			for (int i = 0; i < EntryCount; i++) {
+				char const * name = Ini.Get_Entry("Campaigns", i);
+				if (!name) {
+					continue;
+				}
+				Ini.Get_String("Campaigns", name, NULL, section, 0x80);
+				int maps = Ini.Get_Int(section, "NumberOfCampaignMaps", 0);
+				if (Ini.Get_String(section, "CampaignName", NULL, DAT_0089F5D8, 0x80)) {
+#line 1048 "D:\\ra2mdpost\\coopcamp.cpp"
+					wchar_t const * title = StringTable::LoadString(DAT_0089F5D8, NULL, __FILE__, __LINE__);
+					Entries[i].Title = new wchar_t[0x81];
+					if (Entries[i].Title) {
+						wcscpy(Entries[i].Title, title);
+					}
+				}
+				Ini.Get_String(section, "CampaignLoadScreen", NULL, DAT_0089F5D8, 0x80);
+				Entries[i].Text44 = DAT_0089F5D8;
+				Ini.Get_String(section, "CampaignLoadScreenPallet", NULL, DAT_0089F5D8, 0x80);
+				Entries[i].Text48 = DAT_0089F5D8;
+				Ini.Get_String(section, "CampaignAI", "Easy", DAT_0089F5D8, 0x80);
+				Entries[i].Extra = new char[strlen(DAT_0089F5D8) + 1];
+				strcpy(Entries[i].Extra, DAT_0089F5D8);
+				Entries[i].Index = i;
+				Entries[i].MapCount = (char)maps;
+				Entries[i].Names = new char[maps * 0x30c];
+				for (int j = 1; j < maps + 1; j++) {
+					sprintf(key, "Map%d", j);
+					if (Ini.Get_String(section, key, NULL, DAT_0089F5D8, 0x80)) {
+						char * tok = strtok(DAT_0089F5D8, ",");
+						if (tok) {
+							strcpy(&Entries[i].Names[(j - 1) * 0x30c], tok);
+						}
+						tok = strtok(NULL, ",");
+						if (tok) {
+							strcpy(&Entries[i].Names[(j - 1) * 0x30c + 0x104], tok);
+						}
+						tok = strtok(NULL, ",");
+						if (tok) {
+							strcpy(&Entries[i].Names[(j - 1) * 0x30c + 0x208], tok);
+						}
+					}
+					CoopCampNameList * list = new CoopCampNameList;
+					if (!list) {
+						continue;
+					}
+					Entries[i].ListA.Add(list);
+					sprintf(key, "%s%d", "CampaignPlayer", j);
+					if (Ini.Get_String(section, key, NULL, DAT_0089F5D8, 0x80)) {
+						char * tok = strtok(DAT_0089F5D8, ",");
+						if (tok) {
+							char * s = new char[strlen(tok) + 1];
+							strcpy(s, tok);
+							Entries[i].ListA[j - 1]->Add(s);
+						}
+						while ((tok = strtok(NULL, ",")) != NULL) {
+							char * s = new char[strlen(tok) + 1];
+							strcpy(s, tok);
+							Entries[i].ListA[j - 1]->Add(s);
+						}
+					}
+					list = new CoopCampNameList;
+					if (!list) {
+						continue;
+					}
+					Entries[i].ListB.Add(list);
+					sprintf(key, "%s%d", "CampaignEnemy", j);
+					if (Ini.Get_String(section, key, NULL, DAT_0089F5D8, 0x80)) {
+						char * tok = strtok(DAT_0089F5D8, ",");
+						if (tok) {
+							char * s = new char[strlen(tok) + 1];
+							strcpy(s, tok);
+							Entries[i].ListB[j - 1]->Add(s);
+						}
+						while ((tok = strtok(NULL, ",")) != NULL) {
+							char * s = new char[strlen(tok) + 1];
+							strcpy(s, tok);
+							Entries[i].ListB[j - 1]->Add(s);
+						}
+					}
+				}
+			}
+		}
+	}
+	Loaded = true;
 }
 
 // FUNCTION: GAMEMD 0x0049E3B0
