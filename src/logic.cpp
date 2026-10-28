@@ -269,3 +269,7 @@ void LogicClass::Remove(ObjectClass * object)
 		object->IsSubmittedToLayer = false;
 	}
 }
+
+// TEMPLATE: GAMEMD 0x0055BB40
+// ??0?$VectorClass@PAVTeamClass@@@@QAE@HPBQAVTeamClass@@@Z
+template class VectorClass<TeamClass *>;

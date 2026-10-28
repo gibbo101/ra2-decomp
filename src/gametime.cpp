@@ -7,6 +7,10 @@
 #include "gametime.h"
 #include "win.h"
 
+// SYNTHETIC: GAMEMD 0x004E2440 SYMBOL
+// _$E2
+GameTimeClass Game_Time;
+
 // FUNCTION: GAMEMD 0x004E2450
 GameTimeClass::GameTimeClass( void )
 {

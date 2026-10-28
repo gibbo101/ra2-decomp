@@ -25,6 +25,146 @@ extern unsigned short primeTable[3511];
 void memrev(char * buffer, size_t length);
 unsigned short mp_quo_digit(unsigned short * dividend);
 
+// FUNCTION: GAMEMD 0x005C61D0
+unsigned short const * XMP_Fetch_Prime_Table(void)
+{
+	return(primeTable);
+}
+
+// FUNCTION: GAMEMD 0x005C61E0
+int XMP_Fetch_Prime_Size(void)
+{
+	return(ARRAY_SIZE(primeTable));
+}
+
+// FUNCTION: GAMEMD 0x005C61F0
+bool XMP_Test_Eq_Int(digit const * r, int i, int p)
+{
+	return( (*r == (digit)i ) && XMP_Significance(r,p) <= 1 );
+}
+
+static int _Byte_Precision(unsigned int value)
+{
+	int byte_count;
+	for (byte_count = sizeof(value); byte_count; byte_count--) {
+		if (value >> ((byte_count-1)*8)) break;
+	}
+	return(byte_count);
+}
+
+// FUNCTION: GAMEMD 0x005C6230
+int XMP_DER_Length_Encode(unsigned int length, unsigned char * output)
+{
+	int header_length = 0;
+	if (length <= SCHAR_MAX) {
+		output[header_length++] = (unsigned char)length;
+	} else {
+		output[header_length++] = (unsigned char)(_Byte_Precision(length) | 0x80);
+		for (int byte_counter = _Byte_Precision(length); byte_counter; --byte_counter) {
+			output[header_length++] = (unsigned char)(length >> ((byte_counter-1)*8));
+		}
+	}
+	return(header_length);
+}
+
+// FUNCTION: GAMEMD 0x005C62B0
+int XMP_DER_Encode(digit const * from, unsigned char * output, int precision)
+{
+	unsigned char buffer[MAX_UNIT_PRECISION*sizeof(digit)+1];
+	int header_count = 0;
+	unsigned number_count = XMP_Encode(buffer, from, precision);
+	output[header_count++] = 0x02;
+	header_count += XMP_DER_Length_Encode(number_count, &output[header_count]);
+	memcpy(&output[header_count], buffer, number_count);
+	return(header_count+number_count);
+}
+
+// FUNCTION: GAMEMD 0x005C6370
+void XMP_DER_Decode(digit * result, unsigned char const * input, int precision)
+{
+	if (*input++ == 0x02) {
+		unsigned byte_count;
+		if ((*input & 0x80) == 0) {
+			byte_count = *input++;
+		} else {
+			int length = *input++ & 0x7f;
+			if (length > 2) return;
+			byte_count = *input++;
+			if (length > 1) byte_count = (byte_count << 8) | *input++;
+		}
+		if (byte_count <= (precision * sizeof(digit))) {
+			XMP_Signed_Decode(result, input, byte_count, precision);
+		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x005C63F0
+unsigned XMP_Encode(unsigned char * to, unsigned tobytes, digit const * from, int precision)
+{
+	unsigned frombytes = precision * sizeof(digit);
+	unsigned char filler = (unsigned char)(XMP_Is_Negative(from, precision) ? 0xff : 0);
+	unsigned index;
+	for (index = 0; index < (tobytes-frombytes); index++) {
+		*to++ = filler;
+	}
+	const unsigned char * fptr = ((const unsigned char *)from) + MIN(tobytes, frombytes);
+	for (index = 0; index < MIN(tobytes, frombytes); index++) {
+		*to++ = *--fptr;
+	}
+	return(tobytes);
+}
+
+// FUNCTION: GAMEMD 0x005C6490
+unsigned XMP_Encode(unsigned char * to, digit const * from, int precision)
+{
+	bool is_negative = XMP_Is_Negative(from, precision);
+	unsigned char filler = (unsigned char)(is_negative ? 0xff : 0);
+	unsigned char * number_ptr;
+	unsigned char * const end = (unsigned char *)from;
+	for (number_ptr = (unsigned char *)end + precision - 1; number_ptr > (unsigned char *)end; number_ptr--) {
+		if (*number_ptr != filler) break;
+	}
+	unsigned index = 0;
+	if (((*number_ptr & 0x80) && !is_negative) || (!(*number_ptr & 0x80) && is_negative)) {
+		to[index++] = filler;
+	}
+	to[index++] = *number_ptr;
+	while (number_ptr != end) {
+		to[index++] = *--number_ptr;
+	}
+	return(index);
+}
+
+// FUNCTION: GAMEMD 0x005C6500
+void XMP_Signed_Decode(digit * result, const unsigned char * from, int frombytes, int precision)
+{
+	unsigned char filler = (unsigned char)((*from & 0x80) ? 0xff : 0);
+	int fillcount = precision * sizeof(digit) - frombytes;
+	unsigned char * dest = (unsigned char *)&result[precision];
+	int index;
+	for (index = 0; index < fillcount; index++) {
+		*--dest = filler;
+	}
+	for (index = 0; index < frombytes; index++) {
+		*--dest = *from++;
+	}
+}
+
+// FUNCTION: GAMEMD 0x005C6550
+void XMP_Unsigned_Decode(digit * result, const unsigned char * from, int frombytes, int precision)
+{
+	int fillcount = precision * sizeof(digit) - frombytes;
+	unsigned char * dest = (unsigned char *)&result[precision];
+	int index;
+	for (index = 0; index < fillcount; index++) {
+		*--dest = '\0';
+	}
+	for (index = 0; index < frombytes; index++) {
+		*--dest = *from++;
+	}
+}
+
+// FUNCTION: GAMEMD 0x005C6590
 int XMP_Significance(const digit * number, int precision)
 {
 	number += precision;
@@ -36,6 +176,7 @@ int XMP_Significance(const digit * number, int precision)
 	return(precision);
 }
 
+// FUNCTION: GAMEMD 0x005C65B0
 void XMP_Inc(digit * number, int precision)
 {
 	do {
@@ -46,6 +187,7 @@ void XMP_Inc(digit * number, int precision)
 	} while (precision);
 }
 
+// FUNCTION: GAMEMD 0x005C65D0
 void XMP_Dec(digit * number, int precision)
 {
 	do {
@@ -56,6 +198,123 @@ void XMP_Dec(digit * number, int precision)
 	} while (precision);
 }
 
+// FUNCTION: GAMEMD 0x005C65F0
+void XMP_Neg(digit * number, int precision)
+{
+	XMP_Not(number, precision);
+	XMP_Inc(number, precision);
+}
+
+// FUNCTION: GAMEMD 0x005C6620
+void XMP_Abs(digit * number, int precision)
+{
+	if (XMP_Is_Negative(number, precision)) {
+		XMP_Neg(number, precision);
+	}
+}
+
+// FUNCTION: GAMEMD 0x005C6660
+void XMP_Shift_Right_Bits(digit * number, int bits, int precision)
+{
+	if (bits == 0) return;
+	if (bits == UNITSIZE) {
+		number += precision;
+		digit carry = 0;
+		while (precision--) {
+			number--;
+			digit temp = *number;
+		  	*number = carry;
+			carry = temp;
+		}
+		return;
+	}
+	if (bits < UNITSIZE) {
+		number += precision;
+		digit carry = 0;
+		digit bitmask = (1L << bits) - 1;
+		int unbits = UNITSIZE - bits;
+		while (precision--) {
+			number--;
+			digit temp = *number & bitmask;
+			*number >>= bits;
+			*number |= carry << unbits;
+			carry = temp;
+		}
+		return;
+	}
+	int digits_to_shift = bits / UNITSIZE;
+	int bits_to_shift = bits % UNITSIZE;
+	int index;
+	for (index = digits_to_shift; index < (precision-1); index++) {
+		*number = (*(number + digits_to_shift) >> bits_to_shift) | (*(number + (digits_to_shift + 1)) << (UNITSIZE - bits_to_shift));
+		number++;
+	}
+	if (digits_to_shift < precision) {
+		*number = (*(number + digits_to_shift) >> bits_to_shift);
+		number++;
+	}
+	for (index= 0; index < MIN(digits_to_shift, precision); index++) {
+		*number++ = 0;
+	}
+}
+
+// FUNCTION: GAMEMD 0x005C67A0
+void XMP_Shift_Left_Bits(digit * number, int bits, int precision)
+{
+	if (bits == 0) return;
+	if (bits == UNITSIZE) {
+		digit carry = 0;
+		while (precision--) {
+			digit temp = *number;
+			*number = carry;
+			carry = temp;
+			number++;
+		}
+		return;
+	}
+	if (bits < UNITSIZE) {
+		digit carry = 0;
+		digit bitmask = ~(((digit)-1) >> bits);
+		int unbits = UNITSIZE - bits;
+		while (precision--) {
+			digit temp = *number & bitmask;
+			*number = (*number << bits) | (carry >> unbits);
+			carry = temp;
+			number++;
+		}
+		return;
+	}
+	int digits_to_shift = bits / UNITSIZE;
+	int bits_to_shift = bits % UNITSIZE;
+	int index;
+	number += precision-1;
+	for (index = digits_to_shift; index < (precision-1); index++) {
+		*number = (*(number - digits_to_shift) << bits_to_shift) | (*(number - (digits_to_shift + 1)) >> (UNITSIZE - bits_to_shift));
+		number--;
+	}
+	if (digits_to_shift < precision) {
+		*number = (*(number - digits_to_shift) << bits_to_shift);
+		number--;
+	}
+	for (index = 0; index < MIN(digits_to_shift, precision); index++) {
+		*number-- = 0;
+	}
+}
+
+// FUNCTION: GAMEMD 0x005C68E0
+bool XMP_Rotate_Left(digit * number, bool carry, int precision)
+{
+	while (precision--) {
+		bool temp = ((*number & UPPER_MOST_BIT) != 0);
+		*number = (*number << 1);
+		if (carry) *number = *number + 1;
+		carry = temp;
+		number++;
+	}
+	return(carry);
+}
+
+// FUNCTION: GAMEMD 0x005C6920
 void XMP_Not(digit * number, int precision)
 {
 	for (int index = 0; index < precision; index++) {
@@ -64,23 +323,14 @@ void XMP_Not(digit * number, int precision)
 	}
 }
 
-void XMP_Neg(digit * number, int precision)
-{
-	XMP_Not(number, precision);
-	XMP_Inc(number, precision);
-}
-
-bool XMP_Test_Eq_Int(digit const * r, int i, int p)
-{
-	return( (*r == (digit)i ) && XMP_Significance(r,p) <= 1 );
-}
-
+// FUNCTION: GAMEMD 0x005C6940
 void XMP_Init(digit * number, digit value, int precision)
 {
 	memset(number, '\0', precision * sizeof(digit));
 	*number = value;
 }
 
+// FUNCTION: GAMEMD 0x005C6960
 unsigned XMP_Count_Bits(const digit * number, int precision)
 {
 	int sub_precision = XMP_Significance(number, precision);

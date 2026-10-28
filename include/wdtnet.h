@@ -248,7 +248,13 @@ namespace WorldDominationTour
 
 	class History : public ReferenceCounted {
 		public:
+			History(rc_ptr<WDTState> const & state);
+			virtual ~History(void);
 			rc_ptr<State> FUN_00767BB0(int tick);
+			bool Is_Tick_Valid(unsigned int ticks);
+
+		public:
+			rc_ptr<WDTState> TourState;
 	};
 
 	class Conflict : public ReferenceCounted {

@@ -420,6 +420,12 @@ Each entry: what the diff showed, then the source change that fixed it.
   in each file including it; static member functions do not.
 - A header that needs a type only by reference forward-declares it (`class Wstring;`):
   a new `#include` there flipped wonline 0x00788180; the .cpp includes the full header.
+- An `#include` a new function needs goes after the file's last global definition: in
+  the include block its headers' static members renumber every `$E` marker after it.
+- A class only one module uses (MSFrameAnim in wdtmap) is declared in that .cpp, which
+  keeps it out of shared headers whose changes flip heap-sensitive matches.
+- Read a matched caller's reference lines before declaring a destructor: wdtmap's
+  0x0040D300 is BasicTimerClass<FrameTimerClass>'s, not StageClass's.
 
 ## Known dead ends
 

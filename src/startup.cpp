@@ -1781,3 +1781,61 @@ template class TClassFactory<TeleportLocomotionClass>;
 // TEMPLATE: GAMEMD 0x006C4E10
 // ?LockServer@?$TClassFactory@VMechLocomotionClass@@@@UAGJH@Z
 template class TClassFactory<MechLocomotionClass>;
+
+#include "ship.h"
+
+// TEMPLATE: GAMEMD 0x006C4E40
+// ??0?$TClassFactory@VShipLocomotionClass@@@@QAE@XZ
+// TEMPLATE: GAMEMD 0x006C4E50
+// ?QueryInterface@?$TClassFactory@VShipLocomotionClass@@@@UAGJABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C4EC0
+// ?AddRef@?$TClassFactory@VShipLocomotionClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C4EE0
+// ?Release@?$TClassFactory@VShipLocomotionClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C4F10
+// ?CreateInstance@?$TClassFactory@VShipLocomotionClass@@@@UAGJPAUIUnknown@@ABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C4F90
+// ?LockServer@?$TClassFactory@VShipLocomotionClass@@@@UAGJH@Z
+template class TClassFactory<ShipLocomotionClass>;
+
+// TEMPLATE: GAMEMD 0x006C4FC0
+// ??0?$TClassFactory@VBulletClass@@@@QAE@XZ
+// TEMPLATE: GAMEMD 0x006C4FD0
+// ?QueryInterface@?$TClassFactory@VBulletClass@@@@UAGJABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C5040
+// ?AddRef@?$TClassFactory@VBulletClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C5060
+// ?Release@?$TClassFactory@VBulletClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C5090
+// ?CreateInstance@?$TClassFactory@VBulletClass@@@@UAGJPAUIUnknown@@ABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C5110
+// ?LockServer@?$TClassFactory@VBulletClass@@@@UAGJH@Z
+template class TClassFactory<BulletClass>;
+
+// TEMPLATE: GAMEMD 0x006C5140
+// ??0?$TClassFactory@VFactoryClass@@@@QAE@XZ
+// TEMPLATE: GAMEMD 0x006C5150
+// ?QueryInterface@?$TClassFactory@VFactoryClass@@@@UAGJABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C51C0
+// ?AddRef@?$TClassFactory@VFactoryClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C51E0
+// ?Release@?$TClassFactory@VFactoryClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C5210
+// ?CreateInstance@?$TClassFactory@VFactoryClass@@@@UAGJPAUIUnknown@@ABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C5290
+// ?LockServer@?$TClassFactory@VFactoryClass@@@@UAGJH@Z
+template class TClassFactory<FactoryClass>;
+
+// TEMPLATE: GAMEMD 0x006C52C0
+// ??0?$TClassFactory@VWarheadTypeClass@@@@QAE@XZ
+// TEMPLATE: GAMEMD 0x006C52D0
+// ?QueryInterface@?$TClassFactory@VWarheadTypeClass@@@@UAGJABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C5340
+// ?AddRef@?$TClassFactory@VWarheadTypeClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C5360
+// ?Release@?$TClassFactory@VWarheadTypeClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C5390
+// ?CreateInstance@?$TClassFactory@VWarheadTypeClass@@@@UAGJPAUIUnknown@@ABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C5410
+// ?LockServer@?$TClassFactory@VWarheadTypeClass@@@@UAGJH@Z
+template class TClassFactory<WarheadTypeClass>;

@@ -425,3 +425,97 @@ bool WINAPI CDControlClass::Close_VWin32(HANDLE vwin32)
 {
 	return ((CloseHandle(vwin32)) ? true : false);
 }
+
+// FUNCTION: GAMEMD 0x0047A6F0
+bool WINAPI CDControlClass::Lock_Logical_Volume(HANDLE vwin32, char drive, char lock_level, short permissions)
+{
+	bool result;
+	DIOC_REGISTERS regs = {0};
+	char device_cat;
+	DWORD cb;
+
+	int retry_count = 5;
+	while (retry_count > 0) {
+		device_cat = 0;
+
+		do {
+			if (device_cat == 0) {
+				device_cat = 0x48;
+			} else {
+				device_cat = 0x08;
+			}
+
+			regs.reg_EAX = 0x440D;
+			regs.reg_EBX = MAKEWORD(drive, lock_level);
+			regs.reg_ECX = MAKEWORD(0x4A, device_cat);
+			regs.reg_EDX = permissions;
+
+			result = (DeviceIoControl(vwin32, VWIN32_DIOC_DOS_IOCTL, &regs, sizeof(regs), &regs, sizeof(regs), &cb, 0)) ? true : false;
+			if (result == false) {
+				DebugString("DeviceIoControl failed to perform DOS IO control function. Error %d - %s\n", GetLastError(), Last_Error_Text());
+			} else {
+				result = result && !(regs.reg_Flags & CARRY_FLAG);
+				if (result != false) {
+					return (result);
+				}
+			}
+
+		} while (result == false && device_cat != 0x08);
+
+		retry_count--;
+
+		switch (regs.reg_EAX) {
+			case 1:
+				DebugString("LOCK return eax error 'Function not supported'\n");
+				break;
+			case 0xB0:
+				DebugString("LOCK return eax error 'Volume not locked in drive'\n");
+				break;
+			case 0xB2:
+				DebugString("LOCK return eax error 'Volume not removable'\n");
+				break;
+			case 0xB4:
+				DebugString("LOCK return eax error 'Lock count exceeded'\n");
+				break;
+			default:
+				DebugString("LOCK return eax error %d\n", regs.reg_EAX);
+				break;
+		}
+
+		Sleep(LOCK_TIMEOUT * 2);
+	}
+
+	return (result);
+}
+
+// FUNCTION: GAMEMD 0x0047A920
+bool WINAPI CDControlClass::Unlock_Logical_Volume(HANDLE vwin32, char drive)
+{
+	bool result;
+	DIOC_REGISTERS regs = {0};
+	char device_cat;
+	DWORD cb;
+
+	device_cat = 0;
+
+	do {
+		if (device_cat == 0) {
+			device_cat = 0x48;
+		} else {
+			device_cat = 0x08;
+		}
+
+		regs.reg_EAX = 0x440D;
+		regs.reg_EBX = drive;
+		regs.reg_ECX = MAKEWORD(0x6A, device_cat);
+
+		result = (DeviceIoControl(vwin32, VWIN32_DIOC_DOS_IOCTL, &regs, sizeof(regs), &regs, sizeof(regs), &cb, 0)) ? true : false;
+		if (result == false) {
+			DebugString("DeviceIoControl failed to perform DOS IO control function. Error %d - %s\n", GetLastError(), Last_Error_Text());
+		}
+		result = result && !(regs.reg_Flags & CARRY_FLAG);
+
+	} while (result == false && device_cat != 0x08);
+
+	return (result);
+}

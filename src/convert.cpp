@@ -2214,3 +2214,31 @@ template class RLEBlitTransLucent25AlphaZReadWrite<unsigned short>;
 
 // SYNTHETIC: GAMEMD 0x0049AE40
 // ??_G?$RLEBlitTransLucent25AlphaZReadWrite@G@@UAEPAXI@Z
+
+// TEMPLATE: GAMEMD 0x0049AE80
+// ??8?$VectorClass@PAVConvertClass@@@@UBE_NABV0@@Z
+
+// TEMPLATE: GAMEMD 0x0049AEC0
+// ?Resize@?$VectorClass@PAVConvertClass@@@@UAE_NHPBQAVConvertClass@@@Z
+
+// TEMPLATE: GAMEMD 0x0049AF70
+// ?Clear@?$VectorClass@PAVConvertClass@@@@UAEXXZ
+
+// TEMPLATE: GAMEMD 0x0049AFA0
+// ?ID@?$VectorClass@PAVConvertClass@@@@UAEHABQAVConvertClass@@@Z
+
+// TEMPLATE: GAMEMD 0x0049AFE0
+// ?ID@?$VectorClass@PAVConvertClass@@@@UAEHPBQAVConvertClass@@@Z
+
+// TEMPLATE: GAMEMD 0x0049B000
+// ?Resize@?$DynamicVectorClass@PAVConvertClass@@@@UAE_NHPBQAVConvertClass@@@Z
+
+// TEMPLATE: GAMEMD 0x0049B0B0
+// ?ID@?$DynamicVectorClass@PAVConvertClass@@@@UAEHABQAVConvertClass@@@Z
+
+// SYNTHETIC: GAMEMD 0x0049B0E0
+// ??_G?$VectorClass@PAVConvertClass@@@@UAEPAXI@Z
+template class VectorClass<ConvertClass *>;
+
+// SYNTHETIC: GAMEMD 0x0049B130
+// ??_G?$DynamicVectorClass@PAVConvertClass@@@@UAEPAXI@Z

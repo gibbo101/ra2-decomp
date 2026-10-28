@@ -8,6 +8,16 @@
 #include <cstring>
 #include <new.h>
 
+// FUNCTION: GAMEMD 0x0074BBA0
+BooleanVectorClass::BooleanVectorClass(unsigned size, unsigned char * array) :
+	BitCount(size),
+	Copy(false),
+	LastIndex(-1),
+	BitArray(0, 0)
+{
+	BitArray.Resize(((size + (8-1)) / 8), array);
+}
+
 // FUNCTION: GAMEMD 0x0074BBF0
 BooleanVectorClass::BooleanVectorClass(BooleanVectorClass const & vector)
 {

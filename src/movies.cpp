@@ -156,7 +156,7 @@ void Movie_Blit_Subtitled(void)
 	if (!Get_Option(OPTION_NO_BUFFER)) {
 		HiddenSurface->Blit_From(CurrentVQ->InitialRect, *CurrentVQ->DrawSurface, CurrentVQ->InitialRect);
 
-		if (CurrentVQ->Subtitles != NULL && CurrentVQ->Subtitles->Active != 0) {
+		if (CurrentVQ->Subtitles != NULL && CurrentVQ->Subtitles->mSubTitles != NULL) {
 			Surface *sub = CurrentVQ->Subtitles->SubSurface;
 			Rect src = sub->Get_Rect();
 			Rect dest;

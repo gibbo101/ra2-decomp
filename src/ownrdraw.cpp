@@ -4802,3 +4802,16 @@ template class Dictionary<OwnerDraw::CtrlMsgData, bool>;
 // TEMPLATE: GAMEMD 0x00625440
 // ?shrinkVector@?$ArrayList@H@@AAEDXZ
 template class ArrayList<int>;
+
+// TEMPLATE: GAMEMD 0x00625780
+// ?shrink@?$Dictionary@PAUHWND__@@P6GJPAU1@IIJ@Z@@AAEXXZ
+
+// TEMPLATE: GAMEMD 0x00625830
+// ?shrink@?$Dictionary@PAUHWND__@@UWinData@OwnerDraw@@@@AAEXXZ
+
+// TEMPLATE: GAMEMD 0x006258E0
+// ?shrink@?$Dictionary@UCtrlMsgData@OwnerDraw@@_N@@AAEXXZ
+
+// TEMPLATE: GAMEMD 0x00625990
+// ?growVector@?$ArrayList@PAUHWND__@@@@AAEDXZ
+template class ArrayList<HWND>;

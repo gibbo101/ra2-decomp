@@ -42,6 +42,7 @@
 #include "mixfile.h"
 #include "overlay.h"
 #include "overtype.h"
+#include "pixelfx.h"
 #include "rules.h"
 #include "scheme.h"
 #include "session.h"
@@ -100,12 +101,6 @@ void __cdecl FUN_004068E0(char const * format, ...);
 inline IsometricTileTypeClass * Next_Tile_In_Set(IsometricTileTypeClass * type, int index) { return type->Next_Tile_From_Set(index); }
 inline unsigned short * Preview_Tile_Of(IsometricTileTypeClass * type, int tile, int level) { return type->Preview_Tile(tile, level); }
 inline VisualType Building_Visual(BuildingClass * building) { return building->Visual_Character(false, NULL); }
-
-class PixelFXClass
-{
-	public:
-		virtual ~PixelFXClass(void);
-};
 
 // FUNCTION: GAMEMD 0x0047B360
 CellClass::CellClass(NoInitClass const & x) :

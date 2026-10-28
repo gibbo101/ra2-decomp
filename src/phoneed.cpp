@@ -595,3 +595,51 @@ void PhoneEntryEdit::Save(void)
 
 	DebugString("Settings: Port %d, Baud %d\n", Phone->Settings.Port, Phone->Settings.Baud);
 }
+
+// FUNCTION: GAMEMD 0x00631B20
+void PhoneEntryEdit::Init(void)
+{
+	bool custom;
+
+	HWND handle = GetDlgItem(_Dialog, IDC_PHONE_NAME);
+	Edit_SetTextW(handle, Phone->Name);
+	handle = GetDlgItem(_Dialog, IDC_PHONE_NUMBER);
+	Edit_SetText(handle, Phone->Number);
+
+	if (Phone->Settings.Port == 0 || Phone->Settings.IRQ == -1 ||
+		Phone->Settings.Baud == -1) {
+		TempSettings = Session.SerialDefaults;
+		custom = false;
+	} else {
+		TempSettings = Phone->Settings;
+		custom = true;
+	}
+
+	handle = GetDlgItem(_Dialog, IDC_PHONE_CUSTOM);
+	if (handle != 0) {
+		Button_SetCheck(handle, custom == true);
+	}
+
+	handle = GetDlgItem(_Dialog, IDC_PHONE_DEFAULT);
+	if (handle != 0) {
+		Button_SetCheck(handle, custom == false);
+	}
+}
+
+// FUNCTION: GAMEMD 0x00631C10
+int __cdecl Phone_Compare(const void *p1, const void *p2)
+{
+	class PhoneEntryClass *pe1,*pe2;
+	int result;
+
+	pe1 = *((class PhoneEntryClass **)p1);
+	pe2 = *((class PhoneEntryClass **)p2);
+
+	result = wcscmp( pe1->Name, pe2->Name );
+
+	if ( !result ) {
+		result = strcmp( pe1->Number, pe2->Number );
+	}
+
+	return(result);
+}

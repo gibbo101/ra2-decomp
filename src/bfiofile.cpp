@@ -7,6 +7,28 @@
 #include "bfiofile.h"
 #include <cstring>
 
+// FUNCTION: GAMEMD 0x00431A30
+BufferIOFileClass::BufferIOFileClass(char const * filename) :
+	IsAllocated(false),
+	IsOpen(false),
+	IsDiskOpen(false),
+	IsCached(false),
+	IsChanged(false),
+	UseBuffer(false),
+	BufferRights(0),
+	Buffer(0),
+	BufferSize(0),
+	BufferPos(0),
+	BufferFilePos(0),
+	BufferChangeBeg(-1),
+	BufferChangeEnd(-1),
+	FileSize(0),
+	FilePos(0),
+	TrueFileStart(0)
+{
+	BufferIOFileClass::Set_Name(filename);
+}
+
 // FUNCTION: GAMEMD 0x00431B20
 BufferIOFileClass::BufferIOFileClass(void) :
 	IsAllocated(false),

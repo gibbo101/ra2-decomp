@@ -106,3 +106,57 @@ float StorageClass::Decrease_Amount(float by, int slot)
 	Values[slot] -= amount;
 	return(amount);
 }
+
+// FUNCTION: GAMEMD 0x006C96E0
+StorageClass StorageClass::operator+(StorageClass &that) const
+{
+	StorageClass tmp;
+	for (int i = 0; i < ARRAY_SIZE(Values); i++) {
+		tmp.Values[i] = Values[i] + that.Values[i];
+	}
+
+	return(tmp);
+}
+
+// FUNCTION: GAMEMD 0x006C9740
+StorageClass StorageClass::operator+=(StorageClass &that)
+{
+	for (int i = 0; i < ARRAY_SIZE(Values); i++) {
+		Values[i] += that.Values[i];
+	}
+
+	return(*this);
+}
+
+// FUNCTION: GAMEMD 0x006C9780
+StorageClass StorageClass::operator-(StorageClass &that) const
+{
+	StorageClass tmp;
+	for (int i = 0; i < ARRAY_SIZE(Values); i++) {
+		tmp.Values[i] = Values[i] - that.Values[i];
+	}
+
+	return(tmp);
+}
+
+// FUNCTION: GAMEMD 0x006C97E0
+StorageClass StorageClass::operator-=(StorageClass &that)
+{
+	for (int i = 0; i < ARRAY_SIZE(Values); i++) {
+		Values[i] -= that.Values[i];
+	}
+
+	return(*this);
+}
+
+// FUNCTION: GAMEMD 0x006C9820
+int StorageClass::First_Used_Slot(void) const
+{
+	for (int i = 0; i < ARRAY_SIZE(Values); i++) {
+		if (Values[i] > 0) {
+			return(i);
+		}
+	}
+
+	return(-1);
+}

@@ -2756,3 +2756,121 @@ void ScenarioClass::Read_Waypoints(CCINIClass const & ini)
 		}
 	}
 }
+
+// FUNCTION: GAMEMD 0x0068BE90
+void ScenarioClass::Write_Waypoints(CCINIClass & ini) const
+{
+	static char const * const WAYNAME = "Waypoints";
+	char entry[32];
+
+	ini.Clear(WAYNAME);
+	for (int i = 0; i < WAYPT_COUNT; i++) {
+		if (Waypoint[i] != CELL_NONE) {
+			wsprintf(entry, "%d", i);
+			ini.Put_Int(WAYNAME, entry, Waypoint[i].Y * 1000 + Waypoint[i].X);
+		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x0068BF30
+void ScenarioClass::Clear_Waypoint(WAYPOINT waypoint)
+{
+	Waypoint[waypoint] = CELL_NONE;
+}
+
+// FUNCTION: GAMEMD 0x0068BF50
+void ScenarioClass::Set_Waypoint(WAYPOINT waypoint, Cell cell)
+{
+	Waypoint[waypoint] = cell;
+}
+
+// FUNCTION: GAMEMD 0x0068BF70
+CellClass * ScenarioClass::Get_Waypoint_CellClass(WAYPOINT waypoint) const
+{
+	return(&Map[Waypoint[waypoint]]);
+}
+
+// FUNCTION: GAMEMD 0x0068BF90
+char const * ScenarioClass::First_Unused_Waypoint_Name(void) const
+{
+	for (int index = 0; index < ARRAY_SIZE(Waypoint); index++) {
+		if (!Is_Valid_Waypoint(index)) {
+			return(Waypoint_To_Name(index));
+		}
+	}
+	return("");
+}
+
+// FUNCTION: GAMEMD 0x0068BFE0
+int FUN_0068BFE0(void)
+{
+	int result = 0;
+
+	if (!Session.Type) {
+		if (Scen->Campaign != CAMPAIGN_NONE) {
+			result = Campaigns[Scen->Campaign]->CDNumber;
+		}
+	} else {
+		int country = Session.Players[0]->Slot.Country;
+		if (country == -3) {
+			country = 0;
+		}
+		result = HouseTypes[country]->Side;
+	}
+	return(result);
+}
+
+// FUNCTION: GAMEMD 0x0068C030
+int ScenarioClass::FUN_0068C030(int index) const
+{
+	if (index >= 0 && index < 16) {
+		return(HouseIndices[index]);
+	}
+	return(-1);
+}
+
+extern DynamicVectorClass<BuildingClass *> DAT_008B41E0;
+
+// FUNCTION: GAMEMD 0x0068C050
+void ScenarioClass::FUN_0068C050(void)
+{
+	TechnoTypeClass const * type = NULL;
+	if (DAT_008B41E0.Count() > 0 && Rule->SecretSum > 0 && Rule->SecretSum >= DAT_008B41E0.Count()) {
+		DynamicVectorClass<int> choices;
+		for (int index = 0; index < Rule->SecretSum; index++) {
+			choices.Add(index);
+		}
+
+		for (int lab = 0; lab < DAT_008B41E0.Count(); lab++) {
+			int pick = Scen->RandomNumber(0, choices.Count() - 1);
+			choices.Delete_Index(pick);
+
+			if (pick + 1 > Rule->SecretInfantry.Count()) {
+				pick -= Rule->SecretInfantry.Count();
+				if (pick + 1 > Rule->SecretUnits.Count()) {
+					pick -= Rule->SecretUnits.Count();
+					if (pick + 1 <= Rule->SecretBuildings.Count()) {
+						type = Rule->SecretBuildings[pick];
+					}
+				} else {
+					type = Rule->SecretUnits[pick];
+				}
+			} else {
+				type = Rule->SecretInfantry[pick];
+			}
+			if (type != NULL) {
+				DAT_008B41E0[lab]->SecretProduction = const_cast<TechnoTypeClass *>(type);
+			}
+		}
+	}
+}
+
+// TEMPLATE: GAMEMD 0x0068C200
+// ??0?$DynamicVectorClass@PAVTechnoTypeClass@@@@QAE@IPBQAVTechnoTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x0068C260
+// ?Add@?$DynamicVectorClass@PAVTechnoTypeClass@@@@QAE_NABQAVTechnoTypeClass@@@Z
+template class DynamicVectorClass<TechnoTypeClass *>;
+
+// TEMPLATE: GAMEMD 0x0068C2B0
+// ??4?$VectorClass@VCell@@@@QAEAAV0@ABV0@@Z
+template class DynamicVectorClass<Cell>;

@@ -60,6 +60,8 @@
 // MouseClass::Get_Mouse_Shape
 // FUNCTION: GAMEMD 0x0040D290
 // MouseClass::~MouseClass
+// TEMPLATE: GAMEMD 0x0040D300
+// ??1?$BasicTimerClass@VFrameTimerClass@@@@QAE@XZ
 
 MouseClass Map;
 

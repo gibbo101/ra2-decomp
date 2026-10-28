@@ -112,6 +112,7 @@ class ScenarioClass {
 		void Clear_Waypoint(WAYPOINT waypoint);
 		void Clear_All_Waypoints(void);
 
+		int FUN_0068C030(int index) const;
 		void FUN_0068C050(void);
 
 	public:

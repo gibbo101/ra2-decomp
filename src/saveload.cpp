@@ -447,3 +447,102 @@ bool Get_Savefile_Info(char const * name, SaveVersionInfo * info)
 
 	return(true);
 }
+
+// FUNCTION: GAMEMD 0x0067FDC0
+void FUN_0067FDC0(void)
+{
+}
+
+// TEMPLATE: GAMEMD 0x0067FDD0
+// ?_Release@?$_com_ptr_t@V?$_com_IIID@UIStorage@@$1?_GUID_0000000b_0000_0000_c000_000000000046@@3U__s_GUID@@A@@@@AAEXXZ
+template class _com_ptr_t<_com_IIID<IStorage, &__uuidof(IStorage)> >;
+
+// TEMPLATE: GAMEMD 0x0067FDE0
+// ?_Release@?$_com_ptr_t@V?$_com_IIID@UIStream@@$1?_GUID_0000000c_0000_0000_c000_000000000046@@3U__s_GUID@@A@@@@AAEXXZ
+template class _com_ptr_t<_com_IIID<IStream, &__uuidof(IStream)> >;
+
+template<class T>
+HRESULT Save_Vector(IStream * stream, const DynamicVectorClass<T> &list)
+{
+	int count = list.Count();
+	HRESULT result = stream->Write(&count, sizeof(count), NULL);
+	if (SUCCEEDED(result)) {
+		for (int index = 0; index < count; index++) {
+			LPPERSISTSTREAM lpPS = NULL;
+			result = list[index]->QueryInterface(IID_IPersistStream, (LPVOID *)&lpPS);
+			if (FAILED(result)) {
+				return(result);
+			}
+			result = OleSaveToStream(lpPS, stream);
+			if (FAILED(result)) {
+				return(result);
+			}
+			result = lpPS->Release();
+			if (FAILED(result)) {
+				return(result);
+			}
+		}
+		result = S_OK;
+	}
+	return(result);
+}
+
+// TEMPLATE: GAMEMD 0x0067FDF0
+// ?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVFactoryClass@@@@@Z
+template HRESULT Save_Vector<FactoryClass *>(IStream *, const DynamicVectorClass<FactoryClass *> &);
+
+// TEMPLATE: GAMEMD 0x0067FE70
+// ?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVVoxelAnimTypeClass@@@@@Z
+template HRESULT Save_Vector<VoxelAnimTypeClass *>(IStream *, const DynamicVectorClass<VoxelAnimTypeClass *> &);
+
+// TEMPLATE: GAMEMD 0x0067FEF0
+// ?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVVoxelAnimClass@@@@@Z
+template HRESULT Save_Vector<VoxelAnimClass *>(IStream *, const DynamicVectorClass<VoxelAnimClass *> &);
+
+// TEMPLATE: GAMEMD 0x0067FF70
+// ?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVWarheadTypeClass@@@@@Z
+template HRESULT Save_Vector<WarheadTypeClass *>(IStream *, const DynamicVectorClass<WarheadTypeClass *> &);
+
+// TEMPLATE: GAMEMD 0x0067FFF0
+// ?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVWeaponTypeClass@@@@@Z
+template HRESULT Save_Vector<WeaponTypeClass *>(IStream *, const DynamicVectorClass<WeaponTypeClass *> &);
+
+// TEMPLATE: GAMEMD 0x00680070
+// ?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVParticleTypeClass@@@@@Z
+template HRESULT Save_Vector<ParticleTypeClass *>(IStream *, const DynamicVectorClass<ParticleTypeClass *> &);
+
+// TEMPLATE: GAMEMD 0x006800F0
+// ?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVParticleClass@@@@@Z
+template HRESULT Save_Vector<ParticleClass *>(IStream *, const DynamicVectorClass<ParticleClass *> &);
+
+// TEMPLATE: GAMEMD 0x00680170
+// ?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVParticleSystemTypeClass@@@@@Z
+template HRESULT Save_Vector<ParticleSystemTypeClass *>(IStream *, const DynamicVectorClass<ParticleSystemTypeClass *> &);
+
+// TEMPLATE: GAMEMD 0x006801F0
+// ?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVParticleSystemClass@@@@@Z
+template HRESULT Save_Vector<ParticleSystemClass *>(IStream *, const DynamicVectorClass<ParticleSystemClass *> &);
+
+// TEMPLATE: GAMEMD 0x00680270
+// ?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVBulletTypeClass@@@@@Z
+template HRESULT Save_Vector<BulletTypeClass *>(IStream *, const DynamicVectorClass<BulletTypeClass *> &);
+
+// TEMPLATE: GAMEMD 0x006802F0
+// ?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVBulletClass@@@@@Z
+template HRESULT Save_Vector<BulletClass *>(IStream *, const DynamicVectorClass<BulletClass *> &);
+
+// TEMPLATE: GAMEMD 0x00680370
+// ?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVWaypointPathClass@@@@@Z
+template HRESULT Save_Vector<WaypointPathClass *>(IStream *, const DynamicVectorClass<WaypointPathClass *> &);
+
+// TEMPLATE: GAMEMD 0x006803F0
+// ?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVSmudgeTypeClass@@@@@Z
+template HRESULT Save_Vector<SmudgeTypeClass *>(IStream *, const DynamicVectorClass<SmudgeTypeClass *> &);
+
+// TEMPLATE: GAMEMD 0x00680470
+// ?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVOverlayTypeClass@@@@@Z
+template HRESULT Save_Vector<OverlayTypeClass *>(IStream *, const DynamicVectorClass<OverlayTypeClass *> &);
+
+// TEMPLATE: GAMEMD 0x006804F0
+// ?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVLightSourceClass@@@@@Z
+template HRESULT Save_Vector<LightSourceClass *>(IStream *, const DynamicVectorClass<LightSourceClass *> &);

@@ -6,6 +6,42 @@
 #include "always.h"
 #include "buff.h"
 
+// FUNCTION: GAMEMD 0x0043AD00
+Buffer::Buffer(void * buffer, int size) :
+	BufferPtr(buffer),
+	Size(size),
+	IsAllocated(false)
+{
+	if (buffer == NULL && size > 0) {
+		BufferPtr = new char[size];
+		IsAllocated = true;
+	}
+}
+
+// FUNCTION: GAMEMD 0x0043AD40
+Buffer::Buffer(char * buffer, int size) :
+	BufferPtr(buffer),
+	Size(size),
+	IsAllocated(false)
+{
+	if (buffer == NULL && size > 0) {
+		BufferPtr = new char[size];
+		IsAllocated = true;
+	}
+}
+
+// FUNCTION: GAMEMD 0x0043AD80
+Buffer::Buffer(void const * buffer, int size) :
+	BufferPtr((void *)buffer),
+	Size(size),
+	IsAllocated(false)
+{
+	if (buffer == NULL && size > 0) {
+		BufferPtr = new char[size];
+		IsAllocated = true;
+	}
+}
+
 // FUNCTION: GAMEMD 0x0043ADC0
 Buffer::Buffer(int size) :
 	BufferPtr(NULL),
@@ -38,4 +74,15 @@ Buffer & Buffer::operator = (Buffer const & buffer)
 		Size = buffer.Size;
 	}
 	return(*this);
+}
+
+// FUNCTION: GAMEMD 0x0043AE50
+Buffer::~Buffer(void)
+{
+	if (IsAllocated) {
+		delete [] BufferPtr;
+	}
+	BufferPtr = NULL;
+	Size = 0;
+	IsAllocated = false;
 }

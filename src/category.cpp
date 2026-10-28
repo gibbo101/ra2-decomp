@@ -25,6 +25,24 @@ static struct {
 	{ "Air Transport", "AirLift" }
 };
 
+// FUNCTION: GAMEMD 0x00473940
+char const * Description_From_Category(CategoryType category)
+{
+	if ((unsigned)category < (unsigned)CATEGORY_COUNT) {
+		return(_categories[category].Description);
+	}
+	return("<none>");
+}
+
+// FUNCTION: GAMEMD 0x00473960
+char const * Name_From_Category(CategoryType category)
+{
+	if ((unsigned)category < (unsigned)CATEGORY_COUNT) {
+		return(_categories[category].Name);
+	}
+	return("<none>");
+}
+
 // FUNCTION: GAMEMD 0x00473980
 CategoryType Category_From_Name(char const * name)
 {

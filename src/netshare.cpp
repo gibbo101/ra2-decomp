@@ -3972,3 +3972,14 @@ template class DynamicVectorClass<MultiMission const *>;
 
 // TEMPLATE: GAMEMD 0x005EEF10
 // ??_G?$DynamicVectorClass@PBVMultiMission@@@@UAEPAXI@Z
+
+// TEMPLATE: GAMEMD 0x005EEF60
+// ?shrink@?$Dictionary@VWideWstring@@_N@@AAEXXZ
+
+// TEMPLATE: GAMEMD 0x005EF010
+// ?expand@?$Dictionary@VWideWstring@@_N@@AAEXXZ
+template class Dictionary<WideWstring, bool>;
+
+// TEMPLATE: GAMEMD 0x005EF0B0
+// ??0?$VectorClass@PBVMultiMission@@@@QAE@HPBQBVMultiMission@@@Z
+template class VectorClass<MultiMission const *>;

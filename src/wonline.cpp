@@ -39,6 +39,8 @@
 #include "stringtable.h"
 
 HWND WS_Find_Dialog(int id);
+HWND FUN_00775B10(void);
+extern long DAT_00B77EA8;
 void __fastcall FUN_004E34A0(HWND dialog, int side, int flag);
 void __fastcall FUN_005E3720(char const * text);
 extern int DAT_00B76440[];
@@ -8468,3 +8470,91 @@ template class VectorClass<tConnInfoStruct *>;
 
 // TEMPLATE: GAMEMD 0x007ACE60
 // ?clear@?$Dictionary@VWstring@@H@@QAEXXZ
+
+// TEMPLATE: GAMEMD 0x007AD1B0
+// ?ID@?$VectorClass@PAUtConnInfoStruct@@@@UAEHABQAUtConnInfoStruct@@@Z
+// TEMPLATE: GAMEMD 0x007AD1F0
+// ?ID@?$VectorClass@PAUtConnInfoStruct@@@@UAEHPBQAUtConnInfoStruct@@@Z
+// TEMPLATE: GAMEMD 0x007AD210
+// ?Resize@?$DynamicVectorClass@PAUtConnInfoStruct@@@@UAE_NHPBQAUtConnInfoStruct@@@Z
+// TEMPLATE: GAMEMD 0x007AD2C0
+// ?ID@?$DynamicVectorClass@PAUtConnInfoStruct@@@@UAEHABQAUtConnInfoStruct@@@Z
+// SYNTHETIC: GAMEMD 0x007AD2F0
+// ??_G?$DNode@VWstring@@ULadderA@@@@QAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x007AD330
+// ??_GWstring@@QAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x007AD350
+// ??_G?$DNode@VWstring@@UWolChannel@@@@QAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x007AD370
+// ??_G?$VectorClass@PAUtConnInfoStruct@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x007AD3C0
+// ??_G?$DynamicVectorClass@PAUtConnInfoStruct@@@@UAEPAXI@Z
+
+// TEMPLATE: GAMEMD 0x007AD410
+// ??0?$CComObject@VCDownloadEventSink@@@ATL@@QAE@PAX@Z
+
+// TEMPLATE: GAMEMD 0x007AD620
+// ?AddRef@?$CComObject@VCDownloadEventSink@@@ATL@@UAGKXZ
+
+// TEMPLATE: GAMEMD 0x007AD640
+// ?Release@?$CComObject@VCDownloadEventSink@@@ATL@@UAGKXZ
+
+// FUNCTION: GAMEMD 0x007AD440
+long __stdcall FUN_007AD440(void * sink)
+{
+	SendMessage(FUN_00775B10(), 0x5F4, 0, 0);
+	return 0;
+}
+
+// FUNCTION: GAMEMD 0x007AD460
+long __stdcall FUN_007AD460(void * sink, LPARAM param)
+{
+	SendMessage(FUN_00775B10(), 0x5F5, 0, param);
+	return 0;
+}
+
+// FUNCTION: GAMEMD 0x007AD480
+long __stdcall FUN_007AD480(void * sink, unsigned int done, unsigned int total, long unused, long seconds)
+{
+	wchar_t buffer[200];
+
+	buffer[0] = 0;
+	SendDlgItemMessage(FUN_00775B10(), 0x5C6, 0x402, done * 100 / total, 0);
+	if (seconds > 0) {
+		swprintf(buffer, StringTable::LoadString("TXT_BYTES_W_TIME", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x142F), done, total, seconds);
+	} else {
+		swprintf(buffer, StringTable::LoadString("TXT_BYTES_WO_TIME", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x1434), done, total);
+	}
+	if (time(NULL) - DAT_00B77EA8 != 0) {
+		HWND item = GetDlgItem(FUN_00775B10(), 0x5C8);
+		SendMessage(item, 0x4B2, 0, (LPARAM)buffer);
+		DAT_00B77EA8 = time(NULL);
+	}
+	return 0;
+}
+
+// FUNCTION: GAMEMD 0x007AD580
+long __stdcall FUN_007AD580(void * sink, int state)
+{
+	wchar_t buffer[200];
+
+	buffer[0] = 0;
+	switch (state) {
+		case 2:
+			swprintf(buffer, StringTable::LoadString("TXT_CONNECTING", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x1447));
+			break;
+
+		case 4:
+			swprintf(buffer, StringTable::LoadString("TXT_FINDING_PATCH", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x144B));
+			break;
+	}
+	HWND item = GetDlgItem(FUN_00775B10(), 0x5C8);
+	SendMessage(item, 0x4B2, 0, (LPARAM)buffer);
+	return 0;
+}
+
+// FUNCTION: GAMEMD 0x007AD610
+long __stdcall FUN_007AD610(void * sink)
+{
+	return 0;
+}

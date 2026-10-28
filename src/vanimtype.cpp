@@ -304,3 +304,6 @@ VoxelAnimTypeClass * VoxelAnimTypeClass::Find_Or_Make(char const * name)
 
 // FUNCTION: GAMEMD 0x0074BA20
 // VoxelAnimTypeClass::Create_One_Of
+
+// TEMPLATE: GAMEMD 0x0074BB20
+// ?TFind_Or_Make@@YIPAVVoxelAnimTypeClass@@PBDABV?$DynamicVectorClass@PAVVoxelAnimTypeClass@@@@@Z

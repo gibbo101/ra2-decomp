@@ -66,3 +66,61 @@ CreditClass::CreditClass(void) :
 	Countdown(0)
 {
 }
+
+extern HouseClass * DAT_00AC1198;
+
+// FUNCTION: GAMEMD 0x004A2600
+void CreditClass::AI(bool forced)
+{
+	static int _last = 0;
+
+	_last = Frame;
+
+	if (PlayerPtr == DAT_00AC1198) {
+		int c = Scen->ElapsedTimer() / 60;
+		Credits = c;
+		if (c == Current && !forced) return;
+		Current = c;
+		IsToRedraw = true;
+		Map.Flag_To_Redraw();
+		Map.IsToRedrawCredits = true;
+		return;
+	}
+	Credits = PlayerPtr->Available_Money();
+	Credits = MAX(Credits, 0L);
+
+	if (Scen->MissionTimer.Is_Active() || Scen->MissionTimer) {
+		IsToRedraw = true;
+		Map.Flag_To_Redraw();
+	}
+
+	if (Current == Credits) return;
+
+	if (forced) {
+		IsAudible = false;
+		Current = Credits;
+	} else {
+		if (Countdown) Countdown--;
+
+		int adder = Credits - Current;
+
+		if (adder > 0) {
+			Countdown = 1;
+		} else {
+			Countdown = 3;
+		}
+
+		adder = abs(adder);
+		adder >>= 3;
+		adder = Bound(adder, 1, 71+72);
+		if (Current > Credits) adder = -adder;
+		Current += adder;
+		if (Current-adder != Current) {
+			IsAudible = true;
+			IsUp = (adder > 0);
+		}
+	}
+	IsToRedraw = true;
+	Map.Flag_To_Redraw();
+	Map.IsToRedrawCredits = true;
+}

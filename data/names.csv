@@ -220,3 +220,5 @@ address,name,symbol,evidence
 0x00A83D50,ShowTimers,,"plain global vector built by initialiser 0x004E7960 with atexit stub 0x004E79A0, matched in globals.cpp"
 0x008A0208,DiskLasers,,"YRpp DiskLaserClass::Array; walked by 0x007258D0 Detach_This_From_All, matched"
 0x00A8ED78,GasSystem,,"TibSun globals.cpp ParticleSystemClass pointer; cleared by 0x007258D0 Detach_This_From_All, matched with TibSun source"
+0x007CB9B8,wcstol,,"LIBCMT wcstol.obj: calls _wcstoxl 0x007CB9CF with flags 0; called by 0x007B7D80, matched"
+0x007CBB76,wcstoul,,"LIBCMT wcstol.obj: calls _wcstoxl 0x007CB9CF with flags 1; called by 0x006CA5A0, matched"

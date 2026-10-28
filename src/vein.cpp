@@ -996,3 +996,6 @@ template class PriorityQueueClass<CellNode>;
 
 // SYNTHETIC: GAMEMD 0x0074F6A0
 // ??_G?$DynamicVectorClass@PAVVeinholeMonsterClass@@@@UAEPAXI@Z
+
+// TEMPLATE: GAMEMD 0x0074F6F0
+// ?Delete_Index@?$DynamicVectorClass@PAVVeinholeMonsterClass@@@@QAE_NH@Z

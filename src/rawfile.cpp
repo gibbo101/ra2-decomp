@@ -14,6 +14,17 @@
 
 namespace Game { extern bool IsReadingAudioFile; }
 
+// FUNCTION: GAMEMD 0x0065CA00
+RawFileClass::~RawFileClass(void)
+{
+	Close();
+	if (Allocated && Filename) {
+		free((char *)Filename);
+		((char *&)Filename) = 0;
+		Allocated = false;
+	}
+}
+
 // FUNCTION: GAMEMD 0x0065CA70
 void RawFileClass::Error(int , int , char const * )
 {
@@ -396,16 +407,8 @@ int RawFileClass::Raw_Seek(int pos, int dir)
 	return(pos);
 }
 
-// FUNCTION: GAMEMD 0x0065D3A0
-RawFileClass::~RawFileClass(void)
-{
-	Close();
-	if (Allocated && Filename) {
-		free((char *)Filename);
-		((char *&)Filename) = 0;
-		Allocated = false;
-	}
-}
+// SYNTHETIC: GAMEMD 0x0065D3A0
+// ??_GRawFileClass@@UAEPAXI@Z
 
 // FUNCTION: GAMEMD 0x0065D420
 // RawFileClass::Is_Open

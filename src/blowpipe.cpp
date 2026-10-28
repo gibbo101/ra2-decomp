@@ -69,3 +69,14 @@ int BlowPipe::Put(void const * source, int slen)
 
 	return(total);
 }
+
+// FUNCTION: GAMEMD 0x004381D0
+void BlowPipe::Key(void const * key, int length)
+{
+	if (BF == NULL) {
+		BF = new BlowfishEngine;
+	}
+	if (BF != NULL) {
+		BF->Submit_Key(key, length);
+	}
+}

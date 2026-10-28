@@ -3,6 +3,7 @@
 // Copyright 2025 Electronic Arts Inc.; 2026 OpenTS contributors
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
+#define NDEBUG
 #include "always.h"
 #include "lzo1x.h"
 #include "lzo_conf.h"
@@ -34,23 +35,42 @@
 #define UPDATE_D(dict,cycle,dv,p)		dict[ DINDEX(dv,p) ] = (p)
 #define UPDATE_I(dict,cycle,index,p)	dict[index] = (p)
 
-#define M2_MAX_OFFSET	0x0800
-#define M2_MAX_OFFSET	0x0400
-#define M3_MAX_OFFSET	0x4000
-#define M4_MAX_OFFSET	0xbfff
-#define M3_MARKER		32
-#define M4_MARKER		16
-#define _DV2(p,shift1,shift2) \
-		(((( (lzo_uint)(p[2]) << shift1) ^ p[1]) << shift2) ^ p[0])
-#define DVAL_NEXT(dv,p) \
-		dv ^= p[-1]; dv = (((dv) >> 5) ^ ((lzo_uint)(p[2]) << (2*5)))
-#define _DV(p,shift) 		_DV2(p,shift,shift)
-#define DVAL_FIRST(dv,p)	dv = _DV((p),5)
-#define _DINDEX(dv,p)		((40799u * (dv)) >> 5)
-#define DINDEX(dv,p)		(((_DINDEX(dv,p)) & 0x3fff) << 0)
-#define UPDATE_D(dict,cycle,dv,p)		dict[ DINDEX(dv,p) ] = (p)
-#define UPDATE_I(dict,cycle,index,p)	dict[index] = (p)
+static int do_compress(const lzo_byte * in, lzo_uint  in_len,
+	lzo_byte *out, lzo_uint *out_len,
+	lzo_voidp wrkmem );
 
+// FUNCTION: GAMEMD 0x0055BB90
+int lzo1x_1_compress     ( const lzo_byte * in, lzo_uint  in_len,
+                                 lzo_byte * out, lzo_uint *out_len,
+                                 lzo_voidp wrkmem )
+{
+	lzo_byte *op = out;
+	int r = LZO_E_OK;
+
+	if (in_len <= 0) {
+		*out_len = 0;
+	} else {
+		if (in_len <= 9 + 4) {
+			*op++ = LZO_BYTE(17 + in_len);
+			do *op++ = *in++; while (--in_len > 0);
+			*out_len = op - out;
+		} else {
+			r = do_compress(in,in_len,out,out_len,wrkmem);
+		}
+	}
+
+	if (r == LZO_E_OK) {
+		op = out + *out_len;
+		*op++ = M4_MARKER | 1;
+		*op++ = 0;
+		*op = 0;
+		*out_len += 3;
+	}
+
+	return(r);
+}
+
+// FUNCTION: GAMEMD 0x0055BC00
 static int do_compress(const lzo_byte * in, lzo_uint  in_len,
 	lzo_byte *out, lzo_uint *out_len,
 	lzo_voidp wrkmem )
@@ -59,7 +79,7 @@ static int do_compress(const lzo_byte * in, lzo_uint  in_len,
 	lzo_uint dv;
 	lzo_byte *op;
 	const lzo_byte * const in_end = in + in_len;
-	const lzo_byte * const ip_end = in + in_len - 9 - 4;
+	const lzo_byte * const ip_end = in_end - 9 - 4;
 	const lzo_byte *ii;
 	const lzo_bytepp const dict = (const lzo_bytepp) wrkmem;
 
@@ -256,35 +276,4 @@ m3_m4_offset:
 
 	*out_len = op - out;
 	return(LZO_E_OK);
-}
-
-// FUNCTION: GAMEMD 0x0055BB90
-int lzo1x_1_compress     ( const lzo_byte * in, lzo_uint  in_len,
-                                 lzo_byte * out, lzo_uint *out_len,
-                                 lzo_voidp wrkmem )
-{
-	lzo_byte *op = out;
-	int r = LZO_E_OK;
-
-	if (in_len <= 0) {
-		*out_len = 0;
-	} else {
-		if (in_len <= 9 + 4) {
-			*op++ = LZO_BYTE(17 + in_len);
-			do *op++ = *in++; while (--in_len > 0);
-			*out_len = op - out;
-		} else {
-			r = do_compress(in,in_len,out,out_len,wrkmem);
-		}
-	}
-
-	if (r == LZO_E_OK) {
-		op = out + *out_len;
-		*op++ = M4_MARKER | 1;
-		*op++ = 0;
-		*op = 0;
-		*out_len += 3;
-	}
-
-	return(r);
 }

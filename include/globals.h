@@ -88,6 +88,8 @@ class TiberianSunClassFactory;
 class SpecialClass;
 class EventClass;
 class FrameTimerClass;
+class CreditClass;
+struct VoxelDataStruct;
 
 extern bool ScenarioActive;
 extern bool Debug_ForceScenario;
@@ -142,6 +144,8 @@ extern void *						SpeechBuffer[1];
 extern GameOptionsClass 			Options;
 extern ThemeClass 					Theme;
 extern SpecialClass 				Special;
+extern CreditClass 					CreditDisplay;
+extern VoxelDataStruct				DropPodVoxel;
 
 extern DynamicVectorClass<AITriggerTypeClass *>			AITriggerTypes;
 extern DynamicVectorClass<TriggerTypeClass *>			TriggerTypes;
@@ -196,7 +200,7 @@ extern QueueClass<EventClass, MAX_EVENTS>				OutList;
 extern QueueClass<EventClass, (MAX_EVENTS * 128)>		DoList;
 
 #ifdef MIRROR_QUEUE
-extern QueueClass<EventClass, (MAX_EVENTS * 64)>		MirrorList;
+extern QueueClass<EventClass, (MAX_EVENTS * 2)>		MirrorList;
 #endif
 
 extern DynamicVectorClass<ObjectClass *>				CurrentObject;

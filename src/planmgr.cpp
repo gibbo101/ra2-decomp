@@ -2820,3 +2820,59 @@ template class DynamicVectorClass<EventClass *>;
 // TEMPLATE: GAMEMD 0x0063EA70
 // ?ID@?$VectorClass@PAVPlanningTokenClass@@@@UAEHABQAVPlanningTokenClass@@@Z
 template class VectorClass<PlanningTokenClass *>;
+
+// TEMPLATE: GAMEMD 0x0063EAB0
+// ?ID@?$VectorClass@PAVPlanningTokenClass@@@@UAEHPBQAVPlanningTokenClass@@@Z
+template class VectorClass<PlanningTokenClass *>;
+
+// TEMPLATE: GAMEMD 0x0063EAD0
+// ?Resize@?$DynamicVectorClass@PAVPlanningTokenClass@@@@UAE_NHPBQAVPlanningTokenClass@@@Z
+// TEMPLATE: GAMEMD 0x0063EB80
+// ?Add@?$DynamicVectorClass@PAVPlanningTokenClass@@@@QAE_NABQAVPlanningTokenClass@@@Z
+// TEMPLATE: GAMEMD 0x0063EC20
+// ?ID@?$DynamicVectorClass@PAVPlanningTokenClass@@@@UAEHABQAVPlanningTokenClass@@@Z
+template class DynamicVectorClass<PlanningTokenClass *>;
+
+// SYNTHETIC: GAMEMD 0x0063EC50
+// ??_G?$VectorClass@PAVPlanningMemberClass@@@@UAEPAXI@Z
+template class VectorClass<PlanningMemberClass *>;
+
+// SYNTHETIC: GAMEMD 0x0063ECA0
+// ??_G?$DynamicVectorClass@PAVPlanningMemberClass@@@@UAEPAXI@Z
+template class DynamicVectorClass<PlanningMemberClass *>;
+
+// SYNTHETIC: GAMEMD 0x0063ECF0
+// ??_G?$VectorClass@PAVPlanningBranchClass@@@@UAEPAXI@Z
+template class VectorClass<PlanningBranchClass *>;
+
+// SYNTHETIC: GAMEMD 0x0063ED40
+// ??_G?$DynamicVectorClass@PAVPlanningBranchClass@@@@UAEPAXI@Z
+template class DynamicVectorClass<PlanningBranchClass *>;
+
+// SYNTHETIC: GAMEMD 0x0063ED90
+// ??_G?$VectorClass@PAVPlanningNodeClass@@@@UAEPAXI@Z
+template class VectorClass<PlanningNodeClass *>;
+
+// SYNTHETIC: GAMEMD 0x0063EDE0
+// ??_G?$DynamicVectorClass@PAVPlanningNodeClass@@@@UAEPAXI@Z
+template class DynamicVectorClass<PlanningNodeClass *>;
+
+// SYNTHETIC: GAMEMD 0x0063EE80
+// ??_G?$DynamicVectorClass@PAVEventClass@@@@UAEPAXI@Z
+template class DynamicVectorClass<EventClass *>;
+
+// SYNTHETIC: GAMEMD 0x0063EED0
+// ??_G?$VectorClass@PAVPlanningTokenClass@@@@UAEPAXI@Z
+template class VectorClass<PlanningTokenClass *>;
+
+// SYNTHETIC: GAMEMD 0x0063EF20
+// ??_G?$DynamicVectorClass@PAVPlanningTokenClass@@@@UAEPAXI@Z
+template class DynamicVectorClass<PlanningTokenClass *>;
+
+// TEMPLATE: GAMEMD 0x0063EFB0
+// ??0?$VectorClass@PAVPlanningNodeClass@@@@QAE@HPBQAVPlanningNodeClass@@@Z
+template class VectorClass<PlanningNodeClass *>;
+
+// TEMPLATE: GAMEMD 0x0063F000
+// ?Delete_Index@?$DynamicVectorClass@PAVTechnoClass@@@@QAE_NH@Z
+template class DynamicVectorClass<TechnoClass *>;

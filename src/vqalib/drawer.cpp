@@ -741,3 +741,14 @@ STATIC long PageFlip_MCGABuf(VQAHandle *vqa)
 
 	return(VQAERR_NONE);
 }
+
+// FUNCTION: GAMEMD 0x007BF220
+void __cdecl UnVQ_Nop(unsigned char *codebook, unsigned char *pointers, unsigned char *buffer, unsigned long blocksperrow, unsigned long numrows, unsigned long bufwidth)
+{
+}
+
+// FUNCTION: GAMEMD 0x007BF230
+long PageFlip_Nop(VQAHandle *vqa)
+{
+	return(VQAERR_NONE);
+}

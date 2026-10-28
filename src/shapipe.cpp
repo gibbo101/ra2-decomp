@@ -164,3 +164,9 @@ int SHAPipe::Put(void const * source, int slen)
 	SHA.Hash(source, slen);
 	return(BASECLASS::Put(source, slen));
 }
+
+// FUNCTION: GAMEMD 0x0069E9E0
+int SHAPipe::Result(void * result) const
+{
+	return(SHA.Result(result));
+}

@@ -485,7 +485,7 @@ int VQAClass::Play_VQA(int last_frame_to_play, bool nobreakout)
 					HasPaletteChanged = false;
 				}
 				if (Subtitles != NULL) {
-					Subtitles->FUN_006C9C60(FUN_007C3990(Handle));
+					Subtitles->Process(FUN_007C3990(Handle));
 				}
 				if (SurfaceDrawCallback) {
 					SurfaceDrawCallback();
@@ -576,7 +576,7 @@ bool VQAClass::Advance_Frame(bool & finished)
 				HasPaletteChanged = false;
 			}
 			if (Subtitles != NULL) {
-				Subtitles->FUN_006C9C60(FUN_007C3990(Handle));
+				Subtitles->Process(FUN_007C3990(Handle));
 			}
 			if (SurfaceDrawCallback) {
 				SurfaceDrawCallback();
@@ -632,7 +632,7 @@ void VQAClass::Reset_VQA(void)
 {
 	VQA_Reset(Handle);
 	if (Subtitles != NULL) {
-		Subtitles->FUN_006C9D20();
+		Subtitles->Reset();
 	}
 }
 

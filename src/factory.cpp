@@ -516,3 +516,6 @@ template class VectorClass<TechnoTypeClass const *>;
 // ??_G?$VectorClass@PBVTechnoTypeClass@@@@UAEPAXI@Z
 // SYNTHETIC: GAMEMD 0x004CABA0
 // ??_G?$DynamicVectorClass@PBVTechnoTypeClass@@@@UAEPAXI@Z
+
+// TEMPLATE: GAMEMD 0x004CABF0
+// ??0?$VectorClass@PBVTechnoTypeClass@@@@QAE@HPBQBVTechnoTypeClass@@@Z

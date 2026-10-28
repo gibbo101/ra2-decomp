@@ -929,10 +929,66 @@ void __fastcall FUN_004E5CB0(HWND dialog, int id)
 	SendMessage(item, CB_RESETCONTENT, 0, 0);
 	SendMessage(item, 0x4dd, 0, 1);
 	SendMessage(item, 0x4de, 0, 9);
-	int index = Add_Item(item, (char const *)StringTable::LoadString("GUI:NoneAsSymbols", NULL, "D:\\ra2mdpost\\GDlgSupp.cpp", 0x48d), -2);
+	int index = SendMessage(item, 0x4c2, 0, (LPARAM)StringTable::LoadString("GUI:NoneAsSymbols", NULL, "D:\\ra2mdpost\\GDlgSupp.cpp", 0x48d));
+	SendMessage(item, CB_SETITEMDATA, index, -2);
 	SendMessage(item, 0x498, index, -1);
 	SendMessage(item, CB_SETCURSEL, 0, 0);
 	SendMessage(item, 0x4f1, 0, 1);
+	if (!was_hidden) {
+		ShowWindow(item, SW_SHOW);
+	}
+}
+
+// FUNCTION: GAMEMD 0x004E5D60
+void __fastcall FUN_004E5D60(HWND dialog)
+{
+	for (int i = 0; i < 8; i++) {
+		int id = FUN_004E5940(i);
+		if ((Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) && (Session.Slots[i] == DAT_00AC11B4 || Session.Slots[i]->Slot.SpectatorFlag == -1)) {
+			FUN_004E5CB0(dialog, id);
+		} else {
+			FUN_004E5B60(dialog, id);
+		}
+	}
+}
+
+void __fastcall FUN_004E5ED0(HWND dialog, int id, int wanted);
+
+// FUNCTION: GAMEMD 0x004E5E20
+void __fastcall FUN_004E5E20(HWND dialog, int slot)
+{
+	int wanted = -1;
+	int id = FUN_004E5940(slot);
+	if (Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) {
+		if (Session.Slots[slot] == DAT_00AC11B4 && Session.Slots[slot]->Slot.SpectatorFlag == -1) {
+			wanted = 4;
+		}
+	}
+	FUN_004E5ED0(dialog, id, wanted);
+}
+
+// FUNCTION: GAMEMD 0x004E5ED0
+void __fastcall FUN_004E5ED0(HWND dialog, int id, int wanted)
+{
+	HWND item = GetDlgItem(dialog, id);
+	bool was_hidden = !ShowWindow(item, SW_HIDE);
+	int count = SendDlgItemMessage(dialog, id, CB_GETCOUNT, 0, 0);
+	for (int i = 0; i < count; i++) {
+		int data = SendDlgItemMessage(dialog, id, CB_GETITEMDATA, i, 0);
+		if (data == wanted) {
+			SendDlgItemMessage(dialog, id, CB_SETCURSEL, i, 0);
+			if (data != -2) {
+				DAT_008B3FC0[data].Owner = FUN_004E59A0(id);
+			}
+			break;
+		}
+	}
+	if (Session.Type == GAME_INTERNET && FUN_0077D970()) {
+		ShowWindow(item, SW_HIDE);
+		HWND other = GetDlgItem(dialog, 0x794);
+		ShowWindow(other, SW_HIDE);
+		return;
+	}
 	if (!was_hidden) {
 		ShowWindow(item, SW_SHOW);
 	}

@@ -15,6 +15,7 @@
 #include "overlay.h"
 #include "rules.h"
 #include "tactical.h"
+#include "dsurface.h"
 
 // SYNTHETIC: GAMEMD 0x004A1540 SYMBOL
 // _$E47
@@ -54,4 +55,76 @@ bool CrateClass::Remove_It(void)
 		return(true);
 	}
 	return(false);
+}
+
+// FUNCTION: GAMEMD 0x004A17C0
+bool CrateClass::Create_Crate(Cell const & cell)
+{
+	Remove_It();
+
+	Cell loc = cell;
+	if (Put_Crate(loc)) {
+		TacticalMap->Flag_Cell(Map[cell]);
+		Location = loc;
+		Timer = int(Random_Double(Rule->CrateTime * (TICKS_PER_MINUTE / 2), Rule->CrateTime * (TICKS_PER_MINUTE * 2)));
+		Timer.Start();
+		return (true);
+	}
+	return (false);
+}
+
+// FUNCTION: GAMEMD 0x004A18F0
+bool CrateClass::Put_Crate(Cell & cell)
+{
+	int old = ScenarioInit;
+	ScenarioInit = 0;
+
+	if (Map.In_Local_Radar(cell)) {
+		CellClass * cellptr = &Map[cell];
+
+		if (cellptr->Overlay == OVERLAY_NONE) {
+			if (Map[cell].Land_Type() == LAND_WATER) {
+				new OverlayClass(Rule->WaterCrateImg, cell);
+			} else {
+				new OverlayClass(Rule->WoodCrateImg, cell);
+			}
+
+			Rect rect = Union(cellptr->Overlay_Render_Rect(), cellptr->Overlay_Shadow_Render_Rect());
+			Point2D pt = DSurface::ViewBounds.Top_Left();
+			TacticalMap->Register_Dirty_Area(Rect(rect.X - pt.X, rect.Y - pt.Y, rect.Width, rect.Height));
+
+			ScenarioInit = old;
+			return (true);
+		} else {
+			ScenarioInit = old;
+			return (false);
+		}
+	}
+
+	ScenarioInit = old;
+	return (false);
+}
+
+// FUNCTION: GAMEMD 0x004A1AA0
+bool CrateClass::Get_Crate(Cell const & cell)
+{
+	if (Map.In_Radar(cell)) {
+		CellClass * cellptr = &Map[cell];
+
+		if (cellptr->Overlay != OVERLAY_NONE) {
+			if (OverlayTypes[cellptr->Overlay] == Rule->WoodCrateImg ||
+				OverlayTypes[cellptr->Overlay] == Rule->CrateImg ||
+				OverlayTypes[cellptr->Overlay] == Rule->WaterCrateImg) {
+
+				Rect dirty = Union(cellptr->Overlay_Render_Rect(), cellptr->Overlay_Shadow_Render_Rect());
+				dirty.Y -= DSurface::ViewBounds.Y;
+				TacticalMap->Register_Dirty_Area(dirty);
+
+				cellptr->Overlay = OVERLAY_NONE;
+				cellptr->OverlayData = 0;
+				return (true);
+			}
+		}
+	}
+	return (false);
 }

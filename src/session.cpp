@@ -1501,3 +1501,25 @@ template class VectorClass<PhoneEntryClass *>;
 // ??_G?$VectorClass@W4DiskID@@@@UAEPAXI@Z
 // SYNTHETIC: GAMEMD 0x0069D4B0
 // ??_G?$VectorClass@VWstring@@@@UAEPAXI@Z
+
+// SYNTHETIC: GAMEMD 0x0069D520
+// ??_G?$DynamicVectorClass@VWstring@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x0069D590
+// ??_G?$VectorClass@PAVMultiMission@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x0069D5E0
+// ??_G?$DynamicVectorClass@PAVMultiMission@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x0069D630
+// ??_G?$VectorClass@PAUGlobalPacketType@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x0069D680
+// ??_G?$DynamicVectorClass@PAUGlobalPacketType@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x0069D6D0
+// ??_G?$VectorClass@PAVPhoneEntryClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x0069D720
+// ??_G?$DynamicVectorClass@PAVPhoneEntryClass@@@@UAEPAXI@Z
+// TEMPLATE: GAMEMD 0x0069D770
+// ??0?$VectorClass@W4DiskID@@@@QAE@HPBW4DiskID@@@Z
+// TEMPLATE: GAMEMD 0x0069D7C0
+// ??0?$VectorClass@VWstring@@@@QAE@HPBVWstring@@@Z
+// TEMPLATE: GAMEMD 0x0069D870
+// ??0?$VectorClass@PAVHouseClass@@@@QAE@HPBQAVHouseClass@@@Z
+template class VectorClass<HouseClass *>;

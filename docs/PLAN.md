@@ -1,6 +1,6 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 28 October 2026: 16,439 of 19,366 game functions match (85%; 57% of game code
+Status, 28 October 2026: 16,753 of 19,366 game functions match (87%; 58% of game code
 by size), landed in batches module by module. The rounds below record each one.
 
 ## The goal
@@ -1113,6 +1113,17 @@ Session.Players. Recording then exposed three UI-command functions building char
 ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; their RTTI
 fixed them. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
+
+### Batches 121 and 122 (28 October 2026)
+
+**312 of 324 functions** (153, 159), the first round in the newly named modules. The merges
+gave MovieSubtitles YR's 0x34-byte layout and SubTitleParserClass Renegade's names (its
+BinkMovie source has the same class), adopted TibSun's quarry.hh with YR's two extra
+quarries (the exe's 12-entry name table), split a `wcstol` label into wcstol and wcstoul
+by their _wcstoxl flags, and landed lcw.cpp's LCW_Comp with Westwood's inline asm copied
+unchanged. Startup's TClassFactory instances needed ship.h; included in the header block
+it renumbered 15 `$E` markers, so it moved below the file's globals. Merge gate: 16,753
+of 16,753 (2,153.0 KB).
 
 ### Batches 119 and 120 (28 October 2026)
 

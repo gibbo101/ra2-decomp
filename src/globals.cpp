@@ -373,3 +373,246 @@ DynamicVectorClass<AnimClass *> MoveFlashes;
 // SYNTHETIC: GAMEMD 0x004E7CA0 SYMBOL
 // _$E285
 
+
+#include "app.h"
+#include "_voxel.h"
+#include "credits.h"
+#include "event.h"
+#include "goptions.h"
+#include "index.h"
+#include "ipxmgr.h"
+#include "mission.h"
+#include "nullmgr.h"
+#include "playcd.h"
+#include "queue.h"
+#include "rndstraw.h"
+#include "rgb.h"
+#include "session.h"
+#include "special.h"
+#include "tag.h"
+#include "theme.h"
+#include "version.h"
+
+// SYNTHETIC: GAMEMD 0x004E7CE0 SYMBOL
+// _$E333
+TiberianSunClassFactory TibSunFactory;
+
+// SYNTHETIC: GAMEMD 0x004E7CF0 SYMBOL
+// _$E336
+MissionControlClass MissionControl[MISSION_COUNT];
+
+// SYNTHETIC: GAMEMD 0x004E7D10 SYMBOL
+// _$E341
+RandomStraw CryptRandom;
+
+// SYNTHETIC: GAMEMD 0x004E7D30 SYMBOL
+// _$E339
+
+// SYNTHETIC: GAMEMD 0x004E7D40 SYMBOL
+// _$E346
+DynamicVectorClass<ObjectClass *> CurrentObject;
+
+// SYNTHETIC: GAMEMD 0x004E7D80 SYMBOL
+// _$E344
+
+// SYNTHETIC: GAMEMD 0x004E7DC0 SYMBOL
+// _$E351
+VersionClass VerNum;
+
+// SYNTHETIC: GAMEMD 0x004E7DE0 SYMBOL
+// _$E349
+
+// SYNTHETIC: GAMEMD 0x004E7DF0 SYMBOL
+// _$E356
+VoxelDataStruct DropPodVoxel;
+
+// SYNTHETIC: GAMEMD 0x004E7E10 SYMBOL
+// _$E354
+
+// SYNTHETIC: GAMEMD 0x004E7E20 SYMBOL
+// _$E359
+GameOptionsClass Options;
+
+// SYNTHETIC: GAMEMD 0x004E7E30 SYMBOL
+// _$E364
+ThemeClass Theme;
+
+// SYNTHETIC: GAMEMD 0x004E7E50 SYMBOL
+// _$E362
+
+// SYNTHETIC: GAMEMD 0x004E7E90 SYMBOL
+// _$E367
+CreditClass CreditDisplay;
+
+// SYNTHETIC: GAMEMD 0x004E7EA0 SYMBOL
+// _$E370
+QueueClass<EventClass, MAX_EVENTS> OutList;
+
+// SYNTHETIC: GAMEMD 0x004E7ED0 SYMBOL
+// _$E373
+QueueClass<EventClass, (MAX_EVENTS * 128)> DoList;
+
+// SYNTHETIC: GAMEMD 0x004E7F00 SYMBOL
+// _$E376
+QueueClass<EventClass, (MAX_EVENTS * 2)> MirrorList;
+
+// SYNTHETIC: GAMEMD 0x004E7F30 SYMBOL
+// _$E381
+DynamicVectorClass<TagClass *> MapTags;
+
+// SYNTHETIC: GAMEMD 0x004E7F70 SYMBOL
+// _$E379
+
+// SYNTHETIC: GAMEMD 0x004E7FB0 SYMBOL
+// _$E386
+DynamicVectorClass<TagClass *> LogicTags;
+
+// SYNTHETIC: GAMEMD 0x004E7FF0 SYMBOL
+// _$E384
+
+// SYNTHETIC: GAMEMD 0x004E8030 SYMBOL
+// _$E391
+SessionClass Session;
+
+// SYNTHETIC: GAMEMD 0x004E8050 SYMBOL
+// _$E389
+
+// SYNTHETIC: GAMEMD 0x004E8060 SYMBOL
+// _$E396
+NullModemClass NullModem(16, 16, 0xEC, 0x1234);
+
+// SYNTHETIC: GAMEMD 0x004E8090 SYMBOL
+// _$E394
+
+// SYNTHETIC: GAMEMD 0x004E80A0 SYMBOL
+// _$E401
+IPXManagerClass Ipx(0x1C7, 0x22E, 0xA0, 0x20, 0x8813, 0xAA04);
+
+// SYNTHETIC: GAMEMD 0x004E80E0 SYMBOL
+// _$E399
+
+// SYNTHETIC: GAMEMD 0x004E80F0 SYMBOL
+// _$E406
+GetCDClass CDList;
+
+// SYNTHETIC: GAMEMD 0x004E8110 SYMBOL
+// _$E404
+
+// SYNTHETIC: GAMEMD 0x004E8120 SYMBOL
+// _$E409
+RGBClass DAT_00A83CD9(0,0,0);
+
+// SYNTHETIC: GAMEMD 0x004E8140 SYMBOL
+// _$E412
+RGBClass DAT_00A83CD4(127,127,127);
+
+// SYNTHETIC: GAMEMD 0x004E8160 SYMBOL
+// _$E415
+RGBClass DAT_00A80220(255,255,255);
+
+// SYNTHETIC: GAMEMD 0x004E8180 SYMBOL
+// _$E418
+RGBClass DAT_00A8EAE4(255,0,0);
+
+// SYNTHETIC: GAMEMD 0x004E81A0 SYMBOL
+// _$E421
+RGBClass DAT_00A83EC8(0,255,0);
+
+// SYNTHETIC: GAMEMD 0x004E81C0 SYMBOL
+// _$E424
+RGBClass DAT_00A8E8C4(0,0,255);
+
+// SYNTHETIC: GAMEMD 0x004E81E0 SYMBOL
+// _$E427
+RGBClass DAT_00A83DC0(0,255,255);
+
+// SYNTHETIC: GAMEMD 0x004E8200 SYMBOL
+// _$E430
+RGBClass DAT_008B40E0(255,0,255);
+
+// SYNTHETIC: GAMEMD 0x004E8220 SYMBOL
+// _$E433
+RGBClass DAT_00A8E980(255,255,0);
+
+// FUNCTION: GAMEMD 0x004E8240
+// TiberianSunClassFactory::AddRef
+
+// FUNCTION: GAMEMD 0x004E8250
+// TiberianSunClassFactory::Release
+
+// FUNCTION: GAMEMD 0x004E8260
+// TiberianSunClassFactory::LockServer
+
+// SYNTHETIC: GAMEMD 0x004E8270
+// ??_GVersionClass@@UAEPAXI@Z
+
+// TEMPLATE: GAMEMD 0x004E8290
+// ?Clear@?$DynamicVectorClass@PAVTagClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004E82C0
+// ?ID@?$DynamicVectorClass@PAVTagClass@@@@UAEHPBQAVTagClass@@@Z
+// TEMPLATE: GAMEMD 0x004E82E0
+// ?GetItem@?$VectorClass@PAVTagClass@@@@UBEPAVTagClass@@H@Z
+
+// TEMPLATE: GAMEMD 0x004E82F0
+// ?Clear@?$DynamicVectorClass@PAVBuildingClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004E8320
+// ?ID@?$DynamicVectorClass@PAVBuildingClass@@@@UAEHPBQAVBuildingClass@@@Z
+// TEMPLATE: GAMEMD 0x004E8340
+// ?GetItem@?$VectorClass@PAVBuildingClass@@@@UBEPAVBuildingClass@@H@Z
+
+// TEMPLATE: GAMEMD 0x004E8350
+// ?Clear@?$DynamicVectorClass@PAVSuperClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004E8380
+// ?ID@?$DynamicVectorClass@PAVSuperClass@@@@UAEHPBQAVSuperClass@@@Z
+// TEMPLATE: GAMEMD 0x004E83A0
+// ?GetItem@?$VectorClass@PAVSuperClass@@@@UBEPAVSuperClass@@H@Z
+
+// TEMPLATE: GAMEMD 0x004E83B0
+// ?Clear@?$DynamicVectorClass@PAVAITriggerTypeClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004E83E0
+// ?ID@?$DynamicVectorClass@PAVAITriggerTypeClass@@@@UAEHPBQAVAITriggerTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x004E8400
+// ?GetItem@?$VectorClass@PAVAITriggerTypeClass@@@@UBEPAVAITriggerTypeClass@@H@Z
+
+// TEMPLATE: GAMEMD 0x004E8410
+// ?Clear@?$DynamicVectorClass@PAVBuildingLightClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004E8440
+// ?ID@?$DynamicVectorClass@PAVBuildingLightClass@@@@UAEHPBQAVBuildingLightClass@@@Z
+// TEMPLATE: GAMEMD 0x004E8460
+// ?GetItem@?$VectorClass@PAVBuildingLightClass@@@@UBEPAVBuildingLightClass@@H@Z
+
+// TEMPLATE: GAMEMD 0x004E8470
+// ?Clear@?$DynamicVectorClass@PAVParticleClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004E84A0
+// ?ID@?$DynamicVectorClass@PAVParticleClass@@@@UAEHPBQAVParticleClass@@@Z
+// TEMPLATE: GAMEMD 0x004E84C0
+// ?GetItem@?$VectorClass@PAVParticleClass@@@@UBEPAVParticleClass@@H@Z
+
+// TEMPLATE: GAMEMD 0x004E84D0
+// ?Clear@?$DynamicVectorClass@PAVTeamClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004E8500
+// ?ID@?$DynamicVectorClass@PAVTeamClass@@@@UAEHPBQAVTeamClass@@@Z
+// TEMPLATE: GAMEMD 0x004E8520
+// ?GetItem@?$VectorClass@PAVTeamClass@@@@UBEPAVTeamClass@@H@Z
+
+// TEMPLATE: GAMEMD 0x004E8530
+// ?GetItem@?$VectorClass@PAUThemeControl@@@@UBEPAUThemeControl@@H@Z
+
+// TEMPLATE: GAMEMD 0x004E8540
+// ?Clear@?$DynamicVectorClass@PAVTriggerClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004E8570
+// ?ID@?$DynamicVectorClass@PAVTriggerClass@@@@UAEHPBQAVTriggerClass@@@Z
+// TEMPLATE: GAMEMD 0x004E8590
+// ?GetItem@?$VectorClass@PAVTriggerClass@@@@UBEPAVTriggerClass@@H@Z
+
+// TEMPLATE: GAMEMD 0x004E85A0
+// ?Clear@?$DynamicVectorClass@PAVTriggerTypeClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004E85D0
+// ?ID@?$DynamicVectorClass@PAVTriggerTypeClass@@@@UAEHPBQAVTriggerTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x004E85F0
+// ?GetItem@?$VectorClass@PAVTriggerTypeClass@@@@UBEPAVTriggerTypeClass@@H@Z
+
+// TEMPLATE: GAMEMD 0x004E8600
+// ?Clear@?$DynamicVectorClass@PAVTubeClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004E8630
+// ?ID@?$DynamicVectorClass@PAVTubeClass@@@@UAEHPBQAVTubeClass@@@Z
