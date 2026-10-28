@@ -14,6 +14,8 @@
 #include "ipxaddr.h"
 #include "misc.h"
 #include "msgloop.h"
+#include "random.h"
+#include "session.h"
 #include "vector.h"
 
 #include <cstdio>
@@ -48,7 +50,12 @@
 // _$E41
 
 namespace Game { extern HWND hWnd; }
+namespace Randomizer { extern Random2Class Global; }
+extern int __cdecl FUN_007B2730(void);
+extern int DAT_00841F34;
 extern int DAT_00841F38;
+extern int DAT_00841F3C;
+extern bool DAT_00B78124;
 
 // FUNCTION: GAMEMD 0x007B2DB0
 UDPInterfaceClass::UDPInterfaceClass (void) : BASECLASS()
@@ -396,7 +403,7 @@ void UDPInterfaceClass::Add_Peer (unsigned char *address, unsigned short port)
 bool UDPInterfaceClass::Is_Reachable (unsigned char *address, unsigned short port)
 {
 	for (int i = 0; i < PeerCount; i++) {
-		if (port == PeerPorts[i] && *(unsigned int *)address == PeerAddresses[i]) {
+		if (port == PeerPorts[i] && !memcmp(address, &PeerAddresses[i], 4)) {
 			return(false);
 		}
 	}
@@ -413,6 +420,193 @@ void UDPInterfaceClass::Close_All_Port_Sockets (void)
 	}
 	PortCount = 0;
 	SelectedSocket = INVALID_SOCKET;
+}
+
+// FUNCTION: GAMEMD 0x007B3AA0
+int UDPInterfaceClass::Message_Handler(HWND, UINT message, UINT wParam, LONG lParam)
+{
+	struct sockaddr_in addr;
+	int rc;
+	int addr_len;
+	WinsockBufferType *packet;
+	bool alternate = false;
+	SOCKET socket;
+
+	if (message == WM_UDPASYNCEVENT) {
+		socket = Socket;
+		if (wParam != socket) {
+			for (int i = 0; i < PortCount; i++) {
+				if (PortSockets[i] == wParam) {
+					socket = PortSockets[i];
+					break;
+				}
+			}
+		}
+	} else if (message == WM_UDPASYNCEVENT + 1) {
+		socket = AlternateSocket;
+		alternate = true;
+	} else {
+		return(1);
+	}
+
+	switch (WSAGETSELECTEVENT(lParam)) {
+
+		case FD_READ:
+			rc = WSAGETSELECTERROR(lParam);
+			if (rc != 0) {
+				DebugString("FD_READ - Got error code %d\n", rc);
+				Clear_Socket_Error(socket);
+				return(0);
+			}
+
+			addr_len = sizeof(addr);
+			rc = recvfrom(socket, (char *)ReceiveBuffer, sizeof(ReceiveBuffer), 0, (LPSOCKADDR)&addr, &addr_len);
+			if (rc == SOCKET_ERROR) {
+				Clear_Socket_Error(socket);
+				return(0);
+			}
+
+			if (rc) {
+				if (!alternate && !Session.ViaPacketRouter) {
+					for (int i = 0; i < LocalAddresses.Count(); i++) {
+						if (!memcmp(LocalAddresses[i], &addr.sin_addr.s_addr, 4)) return(0);
+					}
+				}
+
+				int loss = FUN_007B2730();
+				if (loss > 0) {
+					if (Randomizer::Global(0, 99) <= loss) {
+						return(0);
+					}
+				}
+
+				packet = (WinsockBufferType *)Get_New_In_Buffer();
+				packet->BufferLen = rc - sizeof(packet->CRC);
+				packet->CRC = *((unsigned int *)(&ReceiveBuffer[0]));
+				packet->Bool1 = alternate;
+				packet->Bool2 = false;
+				memcpy(packet->Buffer, ReceiveBuffer + sizeof(packet->CRC), packet->BufferLen);
+
+				if (!Passes_CRC_Check(packet)) {
+					memcpy(packet->Address + 4, &addr.sin_addr.s_addr, 4);
+					unsigned int address = addr.sin_addr.s_addr;
+					DebugString("Throwing away malformed packet from %d . %d . %d . %d ; %d\n", address & 0xff, (address >> 8) & 0xff, (address >> 16) & 0xff, address >> 24, ntohs(addr.sin_port));
+					if (!DAT_00B78124) {
+						DAT_00B78124 = true;
+					}
+					if (packet->IsAllocated) {
+						delete packet;
+					} else {
+						packet->InUse = false;
+						OutBuffersUsed--;
+					}
+					return(0);
+				} else {
+					memset(packet->Address, 0, sizeof(packet->Address));
+					if (addr.sin_addr.s_addr == htonl(INADDR_LOOPBACK)) {
+						packet->SrcPort = 0;
+						*(IPXAddressClass *)packet->Address = Session.unknown_2978;
+					} else {
+						packet->SrcPort = ntohs(addr.sin_port);
+						memcpy(packet->Address + 4, &addr.sin_addr.s_addr, 4);
+					}
+					InBuffers.Add(packet);
+				}
+			}
+			return(0);
+
+		case FD_WRITE:
+			if (SelectedSocket != INVALID_SOCKET) {
+				for (int i = 0; i < PortCount; i++) {
+					if (PortSockets[i] == SelectedSocket) {
+						socket = SelectedSocket;
+						DebugString("FD_WRITE - Using socket %d\n", socket);
+					}
+				}
+			}
+
+			rc = WSAGETSELECTERROR(lParam);
+			if (rc != 0) {
+				DebugString("FD_WRITE - Got error code %d\n", rc);
+				Clear_Socket_Error(socket);
+				return(0);
+			}
+
+			if (alternate) {
+				if (AltOutBuffers.Count() == 0) {
+					DebugString("FD_WRITE - No AltOutBuffers left - nothing to do\n");
+					return(0);
+				}
+				packet = AltOutBuffers[0];
+			} else {
+				if (OutBuffers.Count() == 0) {
+					DebugString("FD_WRITE - No OutBuffers left - nothing to do\n");
+					return(0);
+				}
+				packet = OutBuffers[0];
+			}
+
+			memcpy(&addr.sin_addr.s_addr, packet->Address + 4, 4);
+			addr.sin_port = htons(packet->SrcPort);
+			addr.sin_family = AF_INET;
+
+			if (alternate) {
+				if (addr.sin_addr.s_addr != htonl(INADDR_LOOPBACK)) {
+					addr.sin_port = htons((unsigned short)DAT_00841F34);
+					addr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+				}
+			} else {
+				if (packet->SrcPort) {
+					addr.sin_port = htons(packet->SrcPort);
+				} else {
+					addr.sin_port = htons((unsigned short)UDPListenPort);
+				}
+				if (!memcmp(packet->Address + 4, (unsigned char *)&Session.unknown_2978 + 4, 4)
+					&& (Session.Players.Count() == 0 || Session.unknown_2978 == Session.Players[0]->Address)) {
+					addr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+					addr.sin_port = htons((unsigned short)DAT_00841F3C);
+				}
+			}
+
+			{
+				unsigned char ip[4];
+				memcpy(ip, &addr.sin_addr.s_addr, 4);
+				if (Is_Reachable(ip, ntohs(addr.sin_port))) {
+					DebugString("sendto %d.%d.%d.%d ; %d\n", ip[0], ip[1], ip[2], ip[3], ntohs(addr.sin_port));
+					rc = sendto(socket, ((char const *)packet->Buffer) - sizeof(packet->CRC), packet->BufferLen + sizeof(packet->CRC), 0, (LPSOCKADDR)&addr, sizeof(addr));
+					if (rc == SOCKET_ERROR) {
+						if (LAST_ERROR != WSAEWOULDBLOCK) {
+							DebugString("sendto returned error %d\n", LAST_ERROR);
+							Clear_Socket_Error(socket);
+							return(0);
+						}
+					}
+				} else {
+					DebugString("FD_WRITE - %d.%d.%d.%d ; %d is unreachable\n", ip[0], ip[1], ip[2], ip[3], ntohs(addr.sin_port));
+				}
+			}
+
+			if (alternate) {
+				AltOutBuffers.Delete_Index(0);
+				if (packet->IsAllocated) {
+					delete packet;
+				} else {
+					packet->InUse = false;
+					AltOutBuffersUsed--;
+				}
+			} else {
+				OutBuffers.Delete_Index(0);
+				if (packet->IsAllocated) {
+					delete packet;
+				} else {
+					packet->InUse = false;
+					OutBuffersUsed--;
+				}
+			}
+			return(0);
+	}
+
+	return(0);
 }
 
 // FUNCTION: GAMEMD 0x007B40F0

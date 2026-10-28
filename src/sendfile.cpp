@@ -73,6 +73,146 @@ int Send_Timeout_For_Type(int type)
 void __cdecl FUN_004068E0(char const * format, ...);
 User * FUN_007931A0(void);
 void __fastcall FUN_0052FEC0(Surface * surface, bool flag);
+char * __fastcall FUN_007350C0(wchar_t const * text);
+wchar_t * __fastcall FUN_00735120(char const * text);
+bool Receive_Remote_File(char * file_name, unsigned int file_length, int gametype, bool show_progress);
+
+namespace OwnerDraw {
+char * __fastcall WideToCharString(char * dest, wchar_t const * src, int count);
+}
+
+// FUNCTION: GAMEMD 0x00693B70
+bool Get_File_From_Host(char * return_name, int gametype, bool show_progress)
+{
+	unsigned int file_length = 0;
+
+	SerialPacketType send_packet;
+	SerialPacketType receive_packet;
+	GlobalPacketType net_send_packet;
+	GlobalPacketType net_receive_packet;
+	int packet_len;
+	unsigned short product_id;
+
+	IPXAddressClass sender_address;
+
+	FUN_004068E0("Getting file from host\n");
+
+	CDTimerClass<SystemTimerClass> response_timer;
+
+	FUN_004068E0("Requesting file download\n");
+
+	response_timer = 0xE10;
+
+	if (gametype == GAME_MODEM || gametype == GAME_NULL_MODEM) {
+		memset((void *)&send_packet, 0, sizeof(send_packet));
+		send_packet.Command = SERIAL_REQ_SCENARIO;
+		NullModem.Send_Message(&send_packet, sizeof(send_packet), 1);
+		while (NullModem.Num_Send() > 0 && response_timer) {
+			Call_Back();
+		}
+	} else {
+		memset((void *)&net_send_packet, 0, sizeof(net_send_packet));
+		net_send_packet.Command = NET_REQ_SCENARIO;
+		OwnerDraw::WideToCharString(net_send_packet.Name, Session.Players[0]->Name, -1);
+		if (Session.Type == GAME_IPX) {
+			Ipx.Send_Global_Message(&net_send_packet, sizeof(net_send_packet), 1, &Session.HostAddress);
+		} else {
+			User * owner = FUN_007931A0();
+			if (owner != NULL) {
+				Ipx.Send_Global_Message_To_Name(&net_send_packet, sizeof(net_send_packet), 1, FUN_00735120((char *)owner->name));
+			}
+		}
+		while (Ipx.Global_Num_Send() > 0 && response_timer) {
+			Call_Back();
+		}
+	}
+
+	if (!response_timer) {
+		FUN_004068E0("Timeout waiting for REQ_SCENARIO packet send\n");
+		return(false);
+	}
+
+	response_timer = 0xE10;
+	if (gametype == GAME_MODEM || gametype == GAME_NULL_MODEM) {
+		do {
+			Call_Back();
+
+			if (NullModem.Get_Message((void *)&receive_packet, &packet_len) > 0) {
+				if (receive_packet.Command == SERIAL_FILE_INFO) {
+					strcpy(return_name, receive_packet.ScenarioInfo.ShortFileName);
+					file_length = receive_packet.ScenarioInfo.FileLength;
+					FUN_004068E0("Host responded with file info\n");
+					FUN_004068E0("File name is %s\n", return_name);
+					break;
+				}
+			}
+		} while (response_timer);
+	} else {
+		do {
+			Call_Back();
+			int receive_packet_length = sizeof(net_receive_packet);
+			if (Ipx.Get_Global_Message(&net_receive_packet, &receive_packet_length, &sender_address, &product_id)) {
+				bool from_host = sender_address.FUN_0053EF30(Session.HostAddress);
+				if (Session.Type == GAME_INTERNET) {
+					User * owner = FUN_007931A0();
+					if (owner != NULL && stricmp((char *)owner->name, net_receive_packet.Name) == 0) {
+						from_host = true;
+					} else {
+						from_host = false;
+					}
+				}
+				if (net_receive_packet.Command == NET_FILE_INFO && from_host) {
+					strcpy(return_name, net_receive_packet.ScenarioInfo.ShortFileName);
+					file_length = net_receive_packet.ScenarioInfo.FileLength;
+					FUN_004068E0("Host responded with file info\n");
+					FUN_004068E0("File name is %s\n", return_name);
+					break;
+				}
+			}
+		} while (response_timer);
+	}
+
+	if (!response_timer) {
+		FUN_004068E0("Timeout waiting for host to respond to file info request\n");
+		return(false);
+	}
+
+	FUN_004068E0("Sending file info received ack\n");
+
+	response_timer = 0xE10;
+	if (gametype == GAME_MODEM || gametype == GAME_NULL_MODEM) {
+		memset((void *)&send_packet, 0, sizeof(send_packet));
+		send_packet.Command = SERIAL_FILE_INFO_ACK;
+		NullModem.Send_Message(&send_packet, sizeof(send_packet), 1);
+		while (NullModem.Num_Send() > 0 && response_timer) {
+			Call_Back();
+		}
+	} else {
+		memset((void *)&net_send_packet, 0, sizeof(net_send_packet));
+		net_send_packet.Command = NET_FILE_INFO_ACK;
+		strcpy(net_send_packet.Name, FUN_007350C0(Session.Players[0]->Name));
+		if (Session.Type == GAME_INTERNET) {
+			User * owner = FUN_007931A0();
+			if (owner != NULL) {
+				Ipx.Send_Global_Message_To_Name(&net_send_packet, sizeof(net_send_packet), 1, FUN_00735120((char *)owner->name));
+			}
+		} else {
+			Ipx.Send_Global_Message(&net_send_packet, sizeof(net_send_packet), 1, &Session.HostAddress);
+		}
+		while (Ipx.Global_Num_Send() > 0 && response_timer) {
+			Call_Back();
+		}
+	}
+
+	if (!response_timer) {
+		FUN_004068E0("Timeout waiting for FILE_INFO_ACK send\n");
+		return(false);
+	}
+
+	bool res = Receive_Remote_File(return_name, file_length, gametype, show_progress);
+	FUN_004068E0("Receive_Remote_File returned %s\n", res != 0 ? "true" : "false");
+	return(res);
+}
 
 #pragma pack(push, 1)
 struct FileChunkPacket {

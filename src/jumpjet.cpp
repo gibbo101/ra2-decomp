@@ -24,6 +24,7 @@
 #include <new.h>
 #include "ccrand.h"
 #include <math.h>
+#include "slavemgr.h"
 
 // SYNTHETIC: GAMEMD 0x0054AA30 SYMBOL
 // _$E102
@@ -577,6 +578,139 @@ void JumpjetLocomotionClass::Process_Descent(void)
 					LinkedTo->InAir = false;
 				}
 			}
+		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x0054CA90
+void JumpjetLocomotionClass::Process_Crashing(void)
+{
+	Coord coord = LinkedTo->Position;
+	int oldz = LinkedTo->PositionCoord.Z;
+
+	if (LinkedTo->IsAttackedByLocomotor) {
+		CurrentSpeed = 0;
+		TargetSpeed = 0;
+		coord.Z -= Crash;
+		Crash += 1.0f;
+	} else {
+		coord.Z -= Crash;
+		Facing.Set_Desired(Facing.Current() + DirType((Dir256)0x2D));
+	}
+
+	int bridge_height = Map.Get_Height_GL(coord) + BRIDGE_LEPTON_HEIGHT;
+	bool hit_bridge = Map[coord].IsUnderBridge && oldz >= bridge_height && coord.Z < bridge_height;
+
+	if (Map.In_Radar(coord.As_Cell())) {
+		Map.Remove(LinkedTo);
+		LinkedTo->Mark(MARK_UP);
+		LinkedTo->Set_Coord(coord);
+		LinkedTo->Mark(MARK_DOWN);
+		Map.Submit(LinkedTo);
+	}
+
+	bool destroyed = false;
+	if (LinkedTo->HeightAGL <= 0 || hit_bridge) {
+		if (LinkedTo->IsBeingManipulated) {
+			bool landed = false;
+			Cell cell = LinkedTo->Center_Coord().As_Cell();
+			ObjectClass * obj = Map[cell].Cell_Occupier();
+			if (obj == LinkedTo) {
+				obj = obj->Next;
+			}
+			if (obj != NULL && (obj->RTTI == RTTI_UNIT || obj->RTTI == RTTI_BUILDING)) {
+				destroyed = true;
+			} else {
+				if (obj == NULL) {
+					landed = true;
+				} else {
+					if (obj->RTTI == RTTI_INFANTRY) {
+						while (obj != NULL) {
+							ObjectClass * next = obj->Next;
+							VocClass::PlayAt(obj->Class_Of()->CrushSound, LinkedTo->PositionCoord);
+							if (LinkedTo->BeingManipulatedBy != NULL) {
+								obj->RegisterDestruction(LinkedTo->BeingManipulatedBy);
+							} else if (LinkedTo->ChronoWarpedByHouse != NULL) {
+								obj->Record_The_Kill(LinkedTo->ChronoWarpedByHouse);
+							} else {
+								obj->RegisterDestruction(LinkedTo);
+							}
+							obj->Mark(MARK_UP);
+							obj->Limbo();
+							obj->Delete_Me();
+							obj = next;
+						}
+						landed = true;
+					} else {
+						if (LinkedTo->BeingManipulatedBy != NULL) {
+							obj->Take_Damage(obj->Strength, 0, Rule->CrushWarhead, LinkedTo->BeingManipulatedBy, true, false, NULL);
+						} else if (LinkedTo->ChronoWarpedByHouse != NULL) {
+							obj->Take_Damage(obj->Strength, 0, Rule->CrushWarhead, LinkedTo, true, false, LinkedTo->ChronoWarpedByHouse);
+						} else {
+							obj->Take_Damage(obj->Strength, 0, Rule->CrushWarhead, LinkedTo, true, false, NULL);
+						}
+						landed = true;
+					}
+				}
+
+				CellClass * cellptr = &Map[LinkedTo->Get_Coord()];
+				bool water = cellptr->Land_Type() == LAND_WATER && !hit_bridge;
+				bool beach = cellptr->Land_Type() == LAND_BEACH && !hit_bridge;
+				MoveType move = LinkedTo->Can_Enter_Cell(cellptr, FACING_NONE, -1, 0, true);
+				if (LinkedTo != NULL && LinkedTo->RTTI == RTTI_AIRCRAFT && !cellptr->Is_Clear_To_Move(SPEED_WHEEL, true, true, -1, MZONE_NORMAL, -1, true)) {
+					move = MOVE_NO;
+				}
+
+				if ((LinkedTo->Techno_Type_Class()->JumpJet && !cellptr->Is_Clear_To_Move(SPEED_WHEEL, true, true, -1, MZONE_NORMAL, -1, true)) || move != MOVE_OK) {
+					if (water && !beach) {
+						LinkedTo->IsSinking = true;
+						LinkedTo->Stun();
+						if (LinkedTo->SlaveManager != NULL) {
+							LinkedTo->SlaveManager->Killed(LinkedTo->BeingManipulatedBy);
+							delete LinkedTo->SlaveManager;
+							LinkedTo->SlaveManager = NULL;
+						}
+						if (LinkedTo->BeingManipulatedBy != NULL) {
+							LinkedTo->RegisterDestruction(LinkedTo->BeingManipulatedBy);
+						} else if (LinkedTo->ChronoWarpedByHouse != NULL) {
+							LinkedTo->Record_The_Kill(LinkedTo->ChronoWarpedByHouse);
+						}
+					} else {
+						destroyed = true;
+					}
+				} else if ((LinkedTo->Speed == 5.0 || LinkedTo->Speed == 7.0) && (!water || beach)) {
+					destroyed = true;
+				} else {
+					if (LinkedTo->Get_Cell_Ptr()->Jumpjet == LinkedTo) {
+						LinkedTo->Get_Cell_Ptr()->TryAssignJumpjet(NULL);
+					}
+					CurrentState = DESCENDING;
+					LinkedTo->Assign_Destination(NULL, true);
+				}
+			}
+
+			if (LinkedTo != NULL && LinkedTo->HeightAGL > 0 && !hit_bridge) {
+				if (!LinkedTo->IsAttackedByLocomotor || destroyed) {
+					LinkedTo->BeingManipulatedBy = NULL;
+					LinkedTo->ChronoWarpedByHouse = NULL;
+				}
+			} else if (hit_bridge && landed) {
+				LinkedTo->IsOnBridge = true;
+			}
+		}
+	}
+
+	if ((LinkedTo->HeightAGL <= 0 || hit_bridge) && (!LinkedTo->IsAttackedByLocomotor || destroyed)) {
+		if (LinkedTo->Get_Cell_Ptr()->Jumpjet == LinkedTo) {
+			LinkedTo->Get_Cell_Ptr()->TryAssignJumpjet(NULL);
+		}
+		AircraftTracker.Remove(LinkedTo);
+		CurrentState = UNKNOWN;
+		TargetSpeed = 0;
+		LinkedTo->INoticeSink_Unknown(0x117C, 0);
+		if (LinkedTo != NULL) {
+			LinkedTo->BeingManipulatedBy = NULL;
+			LinkedTo->ChronoWarpedByHouse = NULL;
 		}
 	}
 }

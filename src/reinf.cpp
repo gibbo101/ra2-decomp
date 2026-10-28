@@ -167,6 +167,153 @@ transporter:
 	return transport;
 }
 
+#include "ilocos.h"
+#include "incdec.h"
+#include "inline.h"
+
+// Can every object in the chain travel by tunnel?
+inline bool _Can_Burrow(FootClass * object)
+{
+	while (object != NULL) {
+		TechnoTypeClass const * tclass = object->Techno_Type_Class();
+		if (tclass->Locomotor != CLSID_TunnelLocomotion) {
+			return(false);
+		}
+		object = (FootClass *)object->Next;
+	}
+	return(true);
+}
+
+// FUNCTION: GAMEMD 0x0065E010
+bool Create_Reinforcement(TeamTypeClass const * teamtype, FootClass * object, Cell const & xcell, bool atwaypoint)
+{
+	bool drop_pod = false;
+	if (teamtype->IsDroppod) {
+		drop_pod = true;
+	}
+
+	bool burrow = _Can_Burrow(object);
+
+	FacingType eface = FACING_N;
+
+	Cell cell = xcell;
+
+	if (!drop_pod && !burrow && !atwaypoint) {
+		SourceType source = teamtype->Get_House() ? teamtype->Get_House()->Control.Edge : SOURCE_NONE;
+		if (source == SOURCE_NONE) {
+			source = SOURCE_NORTH;
+		}
+
+		eface = (FacingType)(source << 1);
+	} else {
+		cell = Map.Nearby_Location(cell, object->Techno_Type_Class()->Speed);
+	}
+
+	Cell newcell = cell;
+
+	FootClass * o = (FootClass *)object->Next;
+	object->Next = NULL;
+	bool okvoice = false;
+	if (newcell != CELL_NONE) {
+		while (newcell != CELL_NONE && object != NULL) {
+			DirType desiredfacing(eface);
+			if (object->RTTI == RTTI_AIRCRAFT) {
+				desiredfacing = DirType(DirType(eface).As_Int() - DirType(FACING_135).As_Int() - 1).Snap_To_8();
+			}
+
+			ScenarioInit++;
+
+			bool placed = false;
+
+			if (drop_pod) {
+				object->PositionCoord = newcell;
+				object->Assign_Destination(&Map[newcell]);
+				object->Locomotion->Move_To(newcell.As_Coord());
+				object->UpdateSight(false, false, false, NULL, 0);
+				Coord c = object->Position;
+				Map.RevealArea3(c, 0, object->LastSightRange + 3, 0);
+				placed = true;
+			} else if (burrow) {
+				Coord coord = Map[newcell].Cell_Coord() - Coord(0, 0, 400);
+				placed = object->Unlimbo(coord, desiredfacing.As_Dir256());
+				if (placed) {
+					object->PositionCoord += Coord(0, 0, -CELL_LEPTON - object->Height);
+					object->Assign_Destination(&Map[newcell]);
+					object->Set_Speed(1);
+					object->Locomotion->Move_To(newcell.As_Coord());
+				}
+			} else {
+				placed = object->Unlimbo(Map[newcell].Cell_Coord(), desiredfacing.As_Dir256());
+			}
+
+			if (placed) {
+				okvoice = true;
+
+				if (object->RTTI != RTTI_AIRCRAFT) {
+					object->QueueMission(MISSION_GUARD, false);
+					object->Commence();
+				}
+
+				if (drop_pod) {
+					FacingType adj;
+					for (adj = FACING_N; adj < FACING_COUNT; adj++) {
+						Cell trycell = Cell(newcell + AdjacentCell[(int)adj & 7]);
+						if (Map.In_Radar(trycell)) {
+							newcell = trycell;
+							break;
+						}
+					}
+					if (adj >= FACING_COUNT) {
+						newcell = CELL_NONE;
+					}
+				}
+
+			} else {
+				FacingType adj;
+				for (adj = FACING_N; adj < FACING_COUNT; adj++) {
+					Cell trycell = Cell(newcell + AdjacentCell[(int)adj & 7]);
+					if (!Map.In_Radar(trycell) && object->Can_Enter_Cell(&Map[trycell], adj) == MOVE_OK) {
+						newcell = trycell;
+						break;
+					}
+				}
+
+				if (adj >= FACING_COUNT) {
+					newcell = CELL_NONE;
+				} else if (newcell != CELL_NONE) {
+					ScenarioInit--;
+					continue;
+				}
+
+				delete object;
+			}
+
+			ScenarioInit--;
+
+			object = o;
+			if (object != NULL) {
+				o = (FootClass *)(ObjectClass *)object->Next;
+				object->Next = NULL;
+			}
+		}
+
+	} else if (object != NULL) {
+		delete object;
+	}
+
+	if (o != NULL) {
+		while (o != NULL) {
+			FootClass * old = o;
+			o = (FootClass *)(ObjectClass *)o->Next;
+			old->Next = 0;
+
+			delete old;
+		}
+	}
+
+	return(okvoice);
+}
+
 // FUNCTION: GAMEMD 0x0065E650
 bool Create_Special_Reinforcement(HouseClass * house, TechnoTypeClass const * type, TechnoTypeClass const * another, TeamMissionType mission, int argument)
 {

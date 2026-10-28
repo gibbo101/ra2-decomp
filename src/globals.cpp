@@ -856,3 +856,283 @@ RGBClass DAT_00A8E980(255,255,0);
 // ?ID@?$VectorClass@PAVAITriggerTypeClass@@@@UAEHABQAVAITriggerTypeClass@@@Z
 // TEMPLATE: GAMEMD 0x004E9A80
 // ?ID@?$VectorClass@PAVAITriggerTypeClass@@@@UAEHPBQAVAITriggerTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x004E9AA0
+// ?Resize@?$DynamicVectorClass@PAVAITriggerTypeClass@@@@UAE_NHPBQAVAITriggerTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x004E9B50
+// ?ID@?$DynamicVectorClass@PAVAITriggerTypeClass@@@@UAEHABQAVAITriggerTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x004E9B80
+// ??8?$VectorClass@PAVBuildingLightClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x004E9BC0
+// ?Resize@?$VectorClass@PAVBuildingLightClass@@@@UAE_NHPBQAVBuildingLightClass@@@Z
+// TEMPLATE: GAMEMD 0x004E9C70
+// ?Clear@?$VectorClass@PAVBuildingLightClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004E9CA0
+// ?ID@?$VectorClass@PAVBuildingLightClass@@@@UAEHABQAVBuildingLightClass@@@Z
+// TEMPLATE: GAMEMD 0x004E9CE0
+// ?ID@?$VectorClass@PAVBuildingLightClass@@@@UAEHPBQAVBuildingLightClass@@@Z
+// TEMPLATE: GAMEMD 0x004E9D00
+// ?Resize@?$DynamicVectorClass@PAVBuildingLightClass@@@@UAE_NHPBQAVBuildingLightClass@@@Z
+// TEMPLATE: GAMEMD 0x004E9DB0
+// ?ID@?$DynamicVectorClass@PAVBuildingLightClass@@@@UAEHABQAVBuildingLightClass@@@Z
+// TEMPLATE: GAMEMD 0x004E9DE0
+// ??8?$VectorClass@PAVParticleClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x004E9E20
+// ?Resize@?$VectorClass@PAVParticleClass@@@@UAE_NHPBQAVParticleClass@@@Z
+// TEMPLATE: GAMEMD 0x004E9ED0
+// ?Clear@?$VectorClass@PAVParticleClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004E9F00
+// ?ID@?$VectorClass@PAVParticleClass@@@@UAEHABQAVParticleClass@@@Z
+// TEMPLATE: GAMEMD 0x004E9F40
+// ?ID@?$VectorClass@PAVParticleClass@@@@UAEHPBQAVParticleClass@@@Z
+// TEMPLATE: GAMEMD 0x004E9F60
+// ?Resize@?$DynamicVectorClass@PAVParticleClass@@@@UAE_NHPBQAVParticleClass@@@Z
+// TEMPLATE: GAMEMD 0x004EA010
+// ?ID@?$DynamicVectorClass@PAVParticleClass@@@@UAEHABQAVParticleClass@@@Z
+// TEMPLATE: GAMEMD 0x004EA040
+// ??8?$VectorClass@PAVTeamClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x004EA080
+// ?Resize@?$VectorClass@PAVTeamClass@@@@UAE_NHPBQAVTeamClass@@@Z
+// TEMPLATE: GAMEMD 0x004EA130
+// ?Clear@?$VectorClass@PAVTeamClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004EA160
+// ?ID@?$VectorClass@PAVTeamClass@@@@UAEHABQAVTeamClass@@@Z
+// TEMPLATE: GAMEMD 0x004EA1A0
+// ?ID@?$VectorClass@PAVTeamClass@@@@UAEHPBQAVTeamClass@@@Z
+// TEMPLATE: GAMEMD 0x004EA1C0
+// ?Resize@?$DynamicVectorClass@PAVTeamClass@@@@UAE_NHPBQAVTeamClass@@@Z
+// TEMPLATE: GAMEMD 0x004EA270
+// ?ID@?$DynamicVectorClass@PAVTeamClass@@@@UAEHABQAVTeamClass@@@Z
+// TEMPLATE: GAMEMD 0x004EA2A0
+// ??8?$VectorClass@PAUThemeControl@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x004EA2E0
+// ?Resize@?$VectorClass@PAUThemeControl@@@@UAE_NHPBQAUThemeControl@@@Z
+// TEMPLATE: GAMEMD 0x004EA390
+// ?Clear@?$VectorClass@PAUThemeControl@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004EA3C0
+// ?ID@?$VectorClass@PAUThemeControl@@@@UAEHABQAUThemeControl@@@Z
+// TEMPLATE: GAMEMD 0x004EA400
+// ?ID@?$VectorClass@PAUThemeControl@@@@UAEHPBQAUThemeControl@@@Z
+// TEMPLATE: GAMEMD 0x004EA420
+// ??8?$VectorClass@PAVTriggerClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x004EA460
+// ?Resize@?$VectorClass@PAVTriggerClass@@@@UAE_NHPBQAVTriggerClass@@@Z
+// TEMPLATE: GAMEMD 0x004EA510
+// ?Clear@?$VectorClass@PAVTriggerClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004EA540
+// ?ID@?$VectorClass@PAVTriggerClass@@@@UAEHABQAVTriggerClass@@@Z
+// TEMPLATE: GAMEMD 0x004EA580
+// ?ID@?$VectorClass@PAVTriggerClass@@@@UAEHPBQAVTriggerClass@@@Z
+// TEMPLATE: GAMEMD 0x004EA5A0
+// ?Resize@?$DynamicVectorClass@PAVTriggerClass@@@@UAE_NHPBQAVTriggerClass@@@Z
+// TEMPLATE: GAMEMD 0x004EA650
+// ?ID@?$DynamicVectorClass@PAVTriggerClass@@@@UAEHABQAVTriggerClass@@@Z
+// TEMPLATE: GAMEMD 0x004EA680
+// ??8?$VectorClass@PAVTriggerTypeClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x004EA6C0
+// ?Resize@?$VectorClass@PAVTriggerTypeClass@@@@UAE_NHPBQAVTriggerTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x004EA770
+// ?Clear@?$VectorClass@PAVTriggerTypeClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004EA7A0
+// ?ID@?$VectorClass@PAVTriggerTypeClass@@@@UAEHABQAVTriggerTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x004EA7E0
+// ?ID@?$VectorClass@PAVTriggerTypeClass@@@@UAEHPBQAVTriggerTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x004EA800
+// ?Resize@?$DynamicVectorClass@PAVTriggerTypeClass@@@@UAE_NHPBQAVTriggerTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x004EA8B0
+// ?ID@?$DynamicVectorClass@PAVTriggerTypeClass@@@@UAEHABQAVTriggerTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x004EA8E0
+// ??8?$VectorClass@PAVTubeClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x004EA920
+// ?Resize@?$VectorClass@PAVTubeClass@@@@UAE_NHPBQAVTubeClass@@@Z
+// TEMPLATE: GAMEMD 0x004EA9D0
+// ?Clear@?$VectorClass@PAVTubeClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004EAA00
+// ?ID@?$VectorClass@PAVTubeClass@@@@UAEHABQAVTubeClass@@@Z
+// TEMPLATE: GAMEMD 0x004EAA40
+// ?ID@?$VectorClass@PAVTubeClass@@@@UAEHPBQAVTubeClass@@@Z
+// TEMPLATE: GAMEMD 0x004EAA60
+// ?Resize@?$DynamicVectorClass@PAVTubeClass@@@@UAE_NHPBQAVTubeClass@@@Z
+// TEMPLATE: GAMEMD 0x004EAB10
+// ?ID@?$DynamicVectorClass@PAVTubeClass@@@@UAEHABQAVTubeClass@@@Z
+// TEMPLATE: GAMEMD 0x004EAB40
+// ??8?$VectorClass@PAVParticleSystemClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x004EAB80
+// ?Resize@?$VectorClass@PAVParticleSystemClass@@@@UAE_NHPBQAVParticleSystemClass@@@Z
+// TEMPLATE: GAMEMD 0x004EAC30
+// ?Clear@?$VectorClass@PAVParticleSystemClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004EAC60
+// ?ID@?$VectorClass@PAVParticleSystemClass@@@@UAEHABQAVParticleSystemClass@@@Z
+// TEMPLATE: GAMEMD 0x004EACA0
+// ?ID@?$VectorClass@PAVParticleSystemClass@@@@UAEHPBQAVParticleSystemClass@@@Z
+// TEMPLATE: GAMEMD 0x004EACC0
+// ?Resize@?$DynamicVectorClass@PAVParticleSystemClass@@@@UAE_NHPBQAVParticleSystemClass@@@Z
+// TEMPLATE: GAMEMD 0x004EAD70
+// ?ID@?$DynamicVectorClass@PAVParticleSystemClass@@@@UAEHABQAVParticleSystemClass@@@Z
+// TEMPLATE: GAMEMD 0x004EADA0
+// ??8?$VectorClass@PAVWaveClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x004EADE0
+// ?Resize@?$VectorClass@PAVWaveClass@@@@UAE_NHPBQAVWaveClass@@@Z
+// TEMPLATE: GAMEMD 0x004EAE90
+// ?Clear@?$VectorClass@PAVWaveClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004EAEC0
+// ?ID@?$VectorClass@PAVWaveClass@@@@UAEHABQAVWaveClass@@@Z
+// TEMPLATE: GAMEMD 0x004EAF00
+// ?ID@?$VectorClass@PAVWaveClass@@@@UAEHPBQAVWaveClass@@@Z
+// TEMPLATE: GAMEMD 0x004EAF20
+// ?Resize@?$DynamicVectorClass@PAVWaveClass@@@@UAE_NHPBQAVWaveClass@@@Z
+// TEMPLATE: GAMEMD 0x004EAFD0
+// ?ID@?$DynamicVectorClass@PAVWaveClass@@@@UAEHABQAVWaveClass@@@Z
+// TEMPLATE: GAMEMD 0x004EB000
+// ??8?$VectorClass@PAVOverlayClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x004EB040
+// ?Resize@?$VectorClass@PAVOverlayClass@@@@UAE_NHPBQAVOverlayClass@@@Z
+// TEMPLATE: GAMEMD 0x004EB0F0
+// ?Clear@?$VectorClass@PAVOverlayClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004EB120
+// ?ID@?$VectorClass@PAVOverlayClass@@@@UAEHABQAVOverlayClass@@@Z
+// TEMPLATE: GAMEMD 0x004EB160
+// ?ID@?$VectorClass@PAVOverlayClass@@@@UAEHPBQAVOverlayClass@@@Z
+// TEMPLATE: GAMEMD 0x004EB180
+// ?Resize@?$DynamicVectorClass@PAVOverlayClass@@@@UAE_NHPBQAVOverlayClass@@@Z
+// TEMPLATE: GAMEMD 0x004EB230
+// ?ID@?$DynamicVectorClass@PAVOverlayClass@@@@UAEHABQAVOverlayClass@@@Z
+// TEMPLATE: GAMEMD 0x004EB260
+// ??8?$VectorClass@PAVSmudgeClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x004EB2A0
+// ?Resize@?$VectorClass@PAVSmudgeClass@@@@UAE_NHPBQAVSmudgeClass@@@Z
+// TEMPLATE: GAMEMD 0x004EB350
+// ?Clear@?$VectorClass@PAVSmudgeClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004EB380
+// ?ID@?$VectorClass@PAVSmudgeClass@@@@UAEHABQAVSmudgeClass@@@Z
+// TEMPLATE: GAMEMD 0x004EB3C0
+// ?ID@?$VectorClass@PAVSmudgeClass@@@@UAEHPBQAVSmudgeClass@@@Z
+// TEMPLATE: GAMEMD 0x004EB3E0
+// ?Resize@?$DynamicVectorClass@PAVSmudgeClass@@@@UAE_NHPBQAVSmudgeClass@@@Z
+// TEMPLATE: GAMEMD 0x004EB490
+// ?ID@?$DynamicVectorClass@PAVSmudgeClass@@@@UAEHABQAVSmudgeClass@@@Z
+// TEMPLATE: GAMEMD 0x004EB4C0
+// ??8?$VectorClass@PAVTerrainClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x004EB500
+// ?Resize@?$VectorClass@PAVTerrainClass@@@@UAE_NHPBQAVTerrainClass@@@Z
+// TEMPLATE: GAMEMD 0x004EB5B0
+// ?Clear@?$VectorClass@PAVTerrainClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004EB5E0
+// ?ID@?$VectorClass@PAVTerrainClass@@@@UAEHABQAVTerrainClass@@@Z
+// TEMPLATE: GAMEMD 0x004EB620
+// ?ID@?$VectorClass@PAVTerrainClass@@@@UAEHPBQAVTerrainClass@@@Z
+// TEMPLATE: GAMEMD 0x004EB640
+// ?Resize@?$DynamicVectorClass@PAVTerrainClass@@@@UAE_NHPBQAVTerrainClass@@@Z
+// TEMPLATE: GAMEMD 0x004EB6F0
+// ?ID@?$DynamicVectorClass@PAVTerrainClass@@@@UAEHABQAVTerrainClass@@@Z
+// TEMPLATE: GAMEMD 0x004EB720
+// ??8?$VectorClass@PAVAircraftClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x004EB760
+// ?Resize@?$VectorClass@PAVAircraftClass@@@@UAE_NHPBQAVAircraftClass@@@Z
+// TEMPLATE: GAMEMD 0x004EB810
+// ?Clear@?$VectorClass@PAVAircraftClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004EB840
+// ?ID@?$VectorClass@PAVAircraftClass@@@@UAEHABQAVAircraftClass@@@Z
+// TEMPLATE: GAMEMD 0x004EB880
+// ?ID@?$VectorClass@PAVAircraftClass@@@@UAEHPBQAVAircraftClass@@@Z
+// TEMPLATE: GAMEMD 0x004EB8A0
+// ?Resize@?$DynamicVectorClass@PAVAircraftClass@@@@UAE_NHPBQAVAircraftClass@@@Z
+// TEMPLATE: GAMEMD 0x004EB950
+// ?ID@?$DynamicVectorClass@PAVAircraftClass@@@@UAEHABQAVAircraftClass@@@Z
+// TEMPLATE: GAMEMD 0x004EB980
+// ??8?$VectorClass@PAVUnitClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x004EB9C0
+// ?Resize@?$VectorClass@PAVUnitClass@@@@UAE_NHPBQAVUnitClass@@@Z
+// TEMPLATE: GAMEMD 0x004EBA70
+// ?Clear@?$VectorClass@PAVUnitClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004EBAA0
+// ?ID@?$VectorClass@PAVUnitClass@@@@UAEHABQAVUnitClass@@@Z
+// TEMPLATE: GAMEMD 0x004EBAE0
+// ?ID@?$VectorClass@PAVUnitClass@@@@UAEHPBQAVUnitClass@@@Z
+// TEMPLATE: GAMEMD 0x004EBB00
+// ?Resize@?$DynamicVectorClass@PAVUnitClass@@@@UAE_NHPBQAVUnitClass@@@Z
+// TEMPLATE: GAMEMD 0x004EBBB0
+// ?ID@?$DynamicVectorClass@PAVUnitClass@@@@UAEHABQAVUnitClass@@@Z
+// TEMPLATE: GAMEMD 0x004EBBE0
+// ??8?$VectorClass@PAVHouseClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x004EBC20
+// ?Resize@?$VectorClass@PAVHouseClass@@@@UAE_NHPBQAVHouseClass@@@Z
+// TEMPLATE: GAMEMD 0x004EBCD0
+// ?Clear@?$VectorClass@PAVHouseClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004EBD00
+// ?ID@?$VectorClass@PAVHouseClass@@@@UAEHABQAVHouseClass@@@Z
+// TEMPLATE: GAMEMD 0x004EBD40
+// ?ID@?$VectorClass@PAVHouseClass@@@@UAEHPBQAVHouseClass@@@Z
+// TEMPLATE: GAMEMD 0x004EBD60
+// ?Resize@?$DynamicVectorClass@PAVHouseClass@@@@UAE_NHPBQAVHouseClass@@@Z
+// TEMPLATE: GAMEMD 0x004EBE10
+// ?ID@?$DynamicVectorClass@PAVHouseClass@@@@UAEHABQAVHouseClass@@@Z
+// TEMPLATE: GAMEMD 0x004EBE40
+// ??8?$VectorClass@PAVAnimClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x004EBE80
+// ?Resize@?$VectorClass@PAVAnimClass@@@@UAE_NHPBQAVAnimClass@@@Z
+// TEMPLATE: GAMEMD 0x004EBF30
+// ?Clear@?$VectorClass@PAVAnimClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004EBF60
+// ?ID@?$VectorClass@PAVAnimClass@@@@UAEHABQAVAnimClass@@@Z
+// TEMPLATE: GAMEMD 0x004EBFA0
+// ?ID@?$VectorClass@PAVAnimClass@@@@UAEHPBQAVAnimClass@@@Z
+// TEMPLATE: GAMEMD 0x004EBFC0
+// ?Resize@?$DynamicVectorClass@PAVAnimClass@@@@UAE_NHPBQAVAnimClass@@@Z
+// TEMPLATE: GAMEMD 0x004EC070
+// ?ID@?$DynamicVectorClass@PAVAnimClass@@@@UAEHABQAVAnimClass@@@Z
+// TEMPLATE: GAMEMD 0x004EC0A0
+// ??8?$VectorClass@PAVFactoryClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x004EC0E0
+// ?Resize@?$VectorClass@PAVFactoryClass@@@@UAE_NHPBQAVFactoryClass@@@Z
+// TEMPLATE: GAMEMD 0x004EC190
+// ?Clear@?$VectorClass@PAVFactoryClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004EC1C0
+// ?ID@?$VectorClass@PAVFactoryClass@@@@UAEHABQAVFactoryClass@@@Z
+// TEMPLATE: GAMEMD 0x004EC200
+// ?ID@?$VectorClass@PAVFactoryClass@@@@UAEHPBQAVFactoryClass@@@Z
+// TEMPLATE: GAMEMD 0x004EC220
+// ?Resize@?$DynamicVectorClass@PAVFactoryClass@@@@UAE_NHPBQAVFactoryClass@@@Z
+// TEMPLATE: GAMEMD 0x004EC2D0
+// ?ID@?$DynamicVectorClass@PAVFactoryClass@@@@UAEHABQAVFactoryClass@@@Z
+// TEMPLATE: GAMEMD 0x004EC300
+// ??8?$VectorClass@PAVCampaignClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x004EC340
+// ?Resize@?$VectorClass@PAVCampaignClass@@@@UAE_NHPBQAVCampaignClass@@@Z
+// TEMPLATE: GAMEMD 0x004EC3F0
+// ?Clear@?$VectorClass@PAVCampaignClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004EC420
+// ?ID@?$VectorClass@PAVCampaignClass@@@@UAEHABQAVCampaignClass@@@Z
+// TEMPLATE: GAMEMD 0x004EC460
+// ?ID@?$VectorClass@PAVCampaignClass@@@@UAEHPBQAVCampaignClass@@@Z
+// TEMPLATE: GAMEMD 0x004EC480
+// ?Resize@?$DynamicVectorClass@PAVCampaignClass@@@@UAE_NHPBQAVCampaignClass@@@Z
+// TEMPLATE: GAMEMD 0x004EC530
+// ?ID@?$DynamicVectorClass@PAVCampaignClass@@@@UAEHABQAVCampaignClass@@@Z
+// TEMPLATE: GAMEMD 0x004EC560
+// ??8?$VectorClass@PAVSideClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x004EC5A0
+// ?Resize@?$VectorClass@PAVSideClass@@@@UAE_NHPBQAVSideClass@@@Z
+// TEMPLATE: GAMEMD 0x004EC650
+// ?Clear@?$VectorClass@PAVSideClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004EC680
+// ?ID@?$VectorClass@PAVSideClass@@@@UAEHABQAVSideClass@@@Z
+// TEMPLATE: GAMEMD 0x004EC6C0
+// ?ID@?$VectorClass@PAVSideClass@@@@UAEHPBQAVSideClass@@@Z
+// TEMPLATE: GAMEMD 0x004EC6E0
+// ?Resize@?$DynamicVectorClass@PAVSideClass@@@@UAE_NHPBQAVSideClass@@@Z
+// TEMPLATE: GAMEMD 0x004EC790
+// ?ID@?$DynamicVectorClass@PAVSideClass@@@@UAEHABQAVSideClass@@@Z
+// TEMPLATE: GAMEMD 0x004EC7C0
+// ??8?$VectorClass@PAVHouseTypeClass@@@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x004EC800
+// ?Resize@?$VectorClass@PAVHouseTypeClass@@@@UAE_NHPBQAVHouseTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x004EC8B0
+// ?Clear@?$VectorClass@PAVHouseTypeClass@@@@UAEXXZ
+// TEMPLATE: GAMEMD 0x004EC8E0
+// ?ID@?$VectorClass@PAVHouseTypeClass@@@@UAEHABQAVHouseTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x004EC920
+// ?ID@?$VectorClass@PAVHouseTypeClass@@@@UAEHPBQAVHouseTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x004EC940
+// ?Resize@?$DynamicVectorClass@PAVHouseTypeClass@@@@UAE_NHPBQAVHouseTypeClass@@@Z
+// TEMPLATE: GAMEMD 0x004EC9F0
+// ?ID@?$DynamicVectorClass@PAVHouseTypeClass@@@@UAEHABQAVHouseTypeClass@@@Z

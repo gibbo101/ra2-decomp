@@ -149,7 +149,7 @@ class BuildingClass : public TechnoClass
 		virtual void Compute_CRC(CRCEngine &) const override;
 		virtual void const * Get_Image_Data(void) const override;
 		virtual int How_Many_Survivors(void) const override;
-		virtual void Scatter_Incoming_Infantry(void) const override;
+		virtual Cell Find_Exit_Cell(TechnoClass * techno, Cell preferred) const;
 		virtual int DistanceToDockingCoord(TechnoClass * docker) const;
 		virtual int Get_Z_Adjust(void) const override;
 		virtual bool Is_Move_Override(void) const override;

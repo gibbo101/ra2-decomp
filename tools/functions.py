@@ -258,7 +258,7 @@ def main() -> None:
         for a in pending:
             i = bisect.bisect_right(ordered, a)
             nxt = ordered[i] if i < len(ordered) else end
-            # Data pointers into the code before a candidate (unwind funclets) extend the
+            # Data pointers to instructions before a candidate (unwind funclets) extend the
             # flow; those past it point into the second function, those into a table at nothing.
             roots, data = set(), set()
             while True:
@@ -266,7 +266,7 @@ def main() -> None:
                 after_data = any(e == at for _, e in data)
                 while at < nxt and code[at - base] == NOP:
                     at += 1
-                more = {p for p in ptrs if a < p < at
+                more = {p for p in ptrs if a < p < at and p in starts
                         and not any(s <= p < e for s, e in data)} - roots
                 if not more:
                     break

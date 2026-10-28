@@ -316,6 +316,8 @@ Each entry: what the diff showed, then the source change that fixed it.
   inline helper one level deeper (bullet's Coord_Dist, building's _Usable).
 - A function start missing from data/functions.csv is fixed in tools/functions.py, then the
   CSV regenerated; never edit the CSV by hand.
+  A score where every byte matches up to a `ret` and only a short tail after it differs is
+  that case: the next function hides in this one's extent (saveload's Get_Player_Name).
 - A run of about 13 small initialisers per file (CELL_LEPTON_DIAG through COORD_NONE)
   is `include/geometry.h`'s per-file constants: include it where the exe's `_$E` numbers
   put it (usually right after `always.h`; after `wdtnet.h` in wdtconflict and wdtstate),

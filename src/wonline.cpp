@@ -175,6 +175,10 @@ struct LadderB {
 	char Data[0x44];
 };
 
+enum WolEntryState {
+	WOL_ENTRY_STATE_NONE
+};
+
 // FUNCTION: GAMEMD 0x0077BA40
 // FUNCTION: GAMEMD 0x0077BAE0
 Dictionary<Wstring, LadderA> DAT_00B768C0 HASH_ARG;
@@ -261,7 +265,7 @@ Wstring DAT_00B76E24;
 
 // FUNCTION: GAMEMD 0x0077CA60
 // FUNCTION: GAMEMD 0x0077CB00
-Dictionary<Wstring, int> DAT_00B76990 HASH_ARG;
+Dictionary<Wstring, WolEntryState> DAT_00B76990 HASH_ARG;
 
 typedef WolChannel LadderC;
 
@@ -6372,7 +6376,7 @@ bool FUN_0079BED0(void)
 	if (DAT_00B76E24.length() == 0) {
 		return false;
 	}
-	int * state;
+	WolEntryState * state;
 	if (!DAT_00B76990.getPointer(DAT_00B76E24, &state)) {
 		return false;
 	}
@@ -8568,6 +8572,123 @@ template class VectorClass<tConnInfoStruct *>;
 
 // TEMPLATE: GAMEMD 0x007AD640
 // ?Release@?$CComObject@VCDownloadEventSink@@@ATL@@UAGKXZ
+
+// TEMPLATE: GAMEMD 0x007AD690
+// ?QueryInterface@?$CComObject@VCDownloadEventSink@@@ATL@@UAGJABU_GUID@@PAPAX@Z
+
+// TEMPLATE: GAMEMD 0x007AD790
+// ?add@?$ArrayList@UWolChannel@@@@QAEDAAUWolChannel@@H@Z
+
+// TEMPLATE: GAMEMD 0x007AD930
+// ?shrinkVector@?$ArrayList@UWolChannel@@@@AAEDXZ
+
+// TEMPLATE: GAMEMD 0x007AD9D0
+// ?growVector@?$ArrayList@UUser@@@@AAEDXZ
+
+// TEMPLATE: GAMEMD 0x007ADA70
+// ?shrinkVector@?$ArrayList@UUser@@@@AAEDXZ
+bool operator==(WolChannel const &, WolChannel const &);
+bool operator<=(WolChannel const &, WolChannel const &);
+bool operator<(WolChannel const &, WolChannel const &);
+template class ArrayList<WolChannel>;
+bool operator==(Server const &, Server const &);
+bool operator<=(Server const &, Server const &);
+bool operator<(Server const &, Server const &);
+template class ArrayList<Server>;
+bool operator==(User const &, User const &);
+bool operator<=(User const &, User const &);
+bool operator<(User const &, User const &);
+template class ArrayList<User>;
+
+// TEMPLATE: GAMEMD 0x007ADB00
+// ?add@?$ArrayList@H@@QAEDAAHH@Z
+template class ArrayList<int>;
+
+// TEMPLATE: GAMEMD 0x007ADC60
+// ?getPointer@?$Dictionary@VWstring@@ULadderA@@@@QAEDAAVWstring@@PAPAULadderA@@@Z
+
+// TEMPLATE: GAMEMD 0x007ADCD0
+// ?remove@?$Dictionary@VWstring@@ULadderA@@@@QAEDAAVWstring@@AAULadderA@@@Z
+
+// TEMPLATE: GAMEMD 0x007ADF70
+// ?shrink@?$Dictionary@VWstring@@ULadderA@@@@AAEXXZ
+
+// TEMPLATE: GAMEMD 0x007AE020
+// ?expand@?$Dictionary@VWstring@@ULadderA@@@@AAEXXZ
+
+// TEMPLATE: GAMEMD 0x007AE0C0
+// ?keyHash@?$Dictionary@VWstring@@ULadderA@@@@AAEIAAVWstring@@@Z
+template class Dictionary<Wstring, LadderA>;
+
+// TEMPLATE: GAMEMD 0x007AE0E0
+// ?expand@?$Dictionary@VWstring@@ULadderB@@@@AAEXXZ
+
+// TEMPLATE: GAMEMD 0x007AE180
+// ?getPointer@?$Dictionary@VWstring@@H@@QAEDAAVWstring@@PAPAH@Z
+
+// TEMPLATE: GAMEMD 0x007AE1F0
+// ?remove@?$Dictionary@VWstring@@H@@QAEDAAVWstring@@AAH@Z
+
+// TEMPLATE: GAMEMD 0x007AE460
+// ?shrink@?$Dictionary@VWstring@@H@@AAEXXZ
+
+// TEMPLATE: GAMEMD 0x007AE510
+// ?expand@?$Dictionary@VWstring@@H@@AAEXXZ
+
+// TEMPLATE: GAMEMD 0x007AE5B0
+// ?keyHash@?$Dictionary@VWstring@@H@@AAEIAAVWstring@@@Z
+template class Dictionary<Wstring, LadderB>;
+template class Dictionary<Wstring, int>;
+
+// TEMPLATE: GAMEMD 0x007AE5D0
+// ?add@?$ArrayList@VWstring@@@@QAEDAAVWstring@@H@Z
+
+// TEMPLATE: GAMEMD 0x007AE730
+// ?shrinkVector@?$ArrayList@VWstring@@@@AAEDXZ
+bool operator<=(Wstring const &, Wstring const &);
+bool operator<(Wstring const &, Wstring const &);
+template class ArrayList<Wstring>;
+
+// TEMPLATE: GAMEMD 0x007AE7C0
+// ?getPointer@?$Dictionary@VWstring@@W4WolEntryState@@@@QAEDAAVWstring@@PAPAW4WolEntryState@@@Z
+
+// TEMPLATE: GAMEMD 0x007AE830
+// ?shrink@?$Dictionary@VWstring@@W4WolEntryState@@@@AAEXXZ
+template class Dictionary<Wstring, WolEntryState>;
+
+// TEMPLATE: GAMEMD 0x007AE8E0
+// ?getPointer@?$Dictionary@VWstring@@UWolChannel@@@@QAEDAAVWstring@@PAPAUWolChannel@@@Z
+
+// TEMPLATE: GAMEMD 0x007AE950
+// ?remove@?$Dictionary@VWstring@@UWolChannel@@@@QAEDAAVWstring@@AAUWolChannel@@@Z
+
+// TEMPLATE: GAMEMD 0x007AEC00
+// ?shrink@?$Dictionary@VWstring@@UWolChannel@@@@AAEXXZ
+
+// TEMPLATE: GAMEMD 0x007AECB0
+// ?keyHash@?$Dictionary@VWstring@@UWolChannel@@@@AAEIAAVWstring@@@Z
+template class Dictionary<Wstring, WolChannel>;
+
+// TEMPLATE: GAMEMD 0x007AECD0
+// ??0?$VectorClass@PAUtConnInfoStruct@@@@QAE@HPBQAUtConnInfoStruct@@@Z
+
+// TEMPLATE: GAMEMD 0x007AED40
+// ?growVector@?$ArrayList@UServer@@@@AAEDXZ
+
+// TEMPLATE: GAMEMD 0x007AEDD0
+// ?remove@?$ArrayList@H@@QAEDH@Z
+
+// TEMPLATE: GAMEMD 0x007AEE90
+// ?get@?$ArrayList@H@@QBEDAAHH@Z
+
+// TEMPLATE: GAMEMD 0x007AEEC0
+// ?growVector@?$ArrayList@H@@AAEDXZ
+
+// TEMPLATE: GAMEMD 0x007AEF50
+// ?shrink@?$Dictionary@VWstring@@ULadderB@@@@AAEXXZ
+
+// TEMPLATE: GAMEMD 0x007AF000
+// ?growVector@?$ArrayList@VWstring@@@@AAEDXZ
 
 // FUNCTION: GAMEMD 0x007AD440
 long __stdcall FUN_007AD440(void * sink)

@@ -1,6 +1,6 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 28 October 2026: 16,987 of 19,366 game functions match (88%; 58% of game code
+Status, 28 October 2026: 17,252 of 19,367 game functions match (89%; 59% of game code
 by size), landed in batches module by module. The rounds below record each one.
 
 ## The goal
@@ -1113,6 +1113,20 @@ Session.Players. Recording then exposed three UI-command functions building char
 ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; their RTTI
 fixed them. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
+
+### Batches 125 and 126 (28 October 2026)
+
+**264 of 267 functions** (258 of 259, 6 of 8), and a 265th the function map had missed.
+Batch 125 took the named modules' last small functions outside globals (wonline, Startup,
+wdtmap, saveload) and globals' next 140 vector instances. Batch 126 tested Opus on
+functions just over 1.5 KB, one each in eight modules, and six matched:
+BuildingClass::Find_Exit_Cell (a YR virtual that building.h had misnamed), jumpjet's
+Process_Crashing, MapGen, reinf, wspudp and SendFile's Get_File_From_Host, whose
+ScenarioInfo packet layout the merge checked against both sides of the exchange. A stray
+data pointer into the middle of a call had made tools/functions.py merge
+SaveVersionInfo's Get_Player_Name into the function before it; the finder now follows
+only data pointers that land on an instruction. Merge gate: 17,252 of 17,252
+(2,205.6 KB).
 
 ### Batches 123 and 124 (28 October 2026)
 

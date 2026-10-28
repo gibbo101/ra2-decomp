@@ -1916,4 +1916,75 @@ template class TClassFactory<ParticleSystemTypeClass>;
 // ?QueryInterface@?$TClassFactory@VAITriggerTypeClass@@@@UAGJABU_GUID@@PAPAX@Z
 // TEMPLATE: GAMEMD 0x006C5C40
 // ?AddRef@?$TClassFactory@VAITriggerTypeClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C5C60
+// ?Release@?$TClassFactory@VAITriggerTypeClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C5C90
+// ?CreateInstance@?$TClassFactory@VAITriggerTypeClass@@@@UAGJPAUIUnknown@@ABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C5D10
+// ?LockServer@?$TClassFactory@VAITriggerTypeClass@@@@UAGJH@Z
 template class TClassFactory<AITriggerTypeClass>;
+
+// TEMPLATE: GAMEMD 0x006C5D40
+// ??0?$TClassFactory@VNeuronClass@@@@QAE@XZ
+// TEMPLATE: GAMEMD 0x006C5D50
+// ?QueryInterface@?$TClassFactory@VNeuronClass@@@@UAGJABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C5DC0
+// ?AddRef@?$TClassFactory@VNeuronClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C5DE0
+// ?Release@?$TClassFactory@VNeuronClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C5E10
+// ?CreateInstance@?$TClassFactory@VNeuronClass@@@@UAGJPAUIUnknown@@ABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C5E90
+// ?LockServer@?$TClassFactory@VNeuronClass@@@@UAGJH@Z
+template class TClassFactory<NeuronClass>;
+
+// TEMPLATE: GAMEMD 0x006C5EC0
+// ??0?$TClassFactory@VFoggedObjectClass@@@@QAE@XZ
+// TEMPLATE: GAMEMD 0x006C5ED0
+// ?QueryInterface@?$TClassFactory@VFoggedObjectClass@@@@UAGJABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C5F40
+// ?AddRef@?$TClassFactory@VFoggedObjectClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C5F60
+// ?Release@?$TClassFactory@VFoggedObjectClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C5F90
+// ?CreateInstance@?$TClassFactory@VFoggedObjectClass@@@@UAGJPAUIUnknown@@ABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C6010
+// ?LockServer@?$TClassFactory@VFoggedObjectClass@@@@UAGJH@Z
+template class TClassFactory<FoggedObjectClass>;
+
+// TEMPLATE: GAMEMD 0x006C6040
+// ??0?$TClassFactory@VAlphaShapeClass@@@@QAE@XZ
+// TEMPLATE: GAMEMD 0x006C6050
+// ?QueryInterface@?$TClassFactory@VAlphaShapeClass@@@@UAGJABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C60C0
+// ?AddRef@?$TClassFactory@VAlphaShapeClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C60E0
+// ?Release@?$TClassFactory@VAlphaShapeClass@@@@UAGKXZ
+// TEMPLATE: GAMEMD 0x006C6110
+// ?CreateInstance@?$TClassFactory@VAlphaShapeClass@@@@UAGJPAUIUnknown@@ABU_GUID@@PAPAX@Z
+// TEMPLATE: GAMEMD 0x006C6190
+// ?LockServer@?$TClassFactory@VAlphaShapeClass@@@@UAGJH@Z
+template class TClassFactory<AlphaShapeClass>;
+
+// TEMPLATE: GAMEMD 0x006C61C0
+// ?_Release@?$_com_ptr_t@V?$_com_IIID@UIUnknown@@$1?_GUID_00000000_0000_0000_c000_000000000046@@3U__s_GUID@@A@@@@AAEXXZ
+// TEMPLATE: GAMEMD 0x006C61D0
+// ??8?$VectorClass@K@@UBE_NABV0@@Z
+// TEMPLATE: GAMEMD 0x006C6210
+// ?Resize@?$VectorClass@K@@UAE_NHPBK@Z
+// TEMPLATE: GAMEMD 0x006C62C0
+// ?Clear@?$VectorClass@K@@UAEXXZ
+// TEMPLATE: GAMEMD 0x006C62F0
+// ?ID@?$VectorClass@K@@UAEHABK@Z
+// TEMPLATE: GAMEMD 0x006C6330
+// ?ID@?$VectorClass@K@@UAEHPBK@Z
+// TEMPLATE: GAMEMD 0x006C6350
+// ?Resize@?$DynamicVectorClass@K@@UAE_NHPBK@Z
+// TEMPLATE: GAMEMD 0x006C6400
+// ?Add@?$DynamicVectorClass@K@@QAE_NABK@Z
+// TEMPLATE: GAMEMD 0x006C6450
+// ?ID@?$DynamicVectorClass@K@@UAEHABK@Z
+// TEMPLATE: GAMEMD 0x006C6480
+// ??_G?$VectorClass@K@@UAEPAXI@Z
+// TEMPLATE: GAMEMD 0x006C64D0
+// ??_G?$DynamicVectorClass@K@@UAEPAXI@Z

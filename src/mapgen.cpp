@@ -3322,6 +3322,92 @@ bool MapGeneratorClass::Init_Start_Points(void)
 	return(true);
 }
 
+// FUNCTION: GAMEMD 0x005A28C0
+void MapGeneratorClass::Create_Tiberium_Patch(Cell const &cell, int count, int patch_id, bool use_gems)
+{
+	int marker_index = 0;
+	CellNode *nodes = new CellNode[10 * count];
+	PriorityQueueClass<CellNode> *queue = new PriorityQueueClass<CellNode>(10 * count);
+
+	bool queue_was_reset_for_spread = false;
+	Cell spread_origin = cell;
+	int placed_count = 0;
+	int restart_count = 0;
+	int overlay_base = use_gems ? 27 : 102;
+
+	queue->Clear();
+	CellNode *node = NULL;
+
+	while (placed_count < count) {
+		if (restart_count >= 10) {
+			break;
+		}
+
+		if (node == NULL) {
+			queue->Clear();
+			Clear_Cell_Data_Spreads();
+
+			marker_index = 0;
+			nodes[marker_index].Element = cell;
+			nodes[marker_index].Score = 0;
+			marker_index++;
+			Set_Cell_Data_Spread(cell, patch_id);
+			queue->Insert(nodes[0]);
+			node = queue->Extract_Min();
+			queue_was_reset_for_spread = false;
+			restart_count++;
+			spread_origin = cell;
+		}
+
+		CellClass *cellptr = &Map[node->Element];
+		if (MapRegionClass::CellData::Is_Not_Inviolate(node->Element)) {
+			if (!queue_was_reset_for_spread) {
+				spread_origin = node->Element;
+				queue_was_reset_for_spread = true;
+				queue->Clear();
+				marker_index = 0;
+
+				if (!use_gems) {
+					char name[20];
+					sprintf(name, "TIBTRE0%d", (int)Pick_Random_UInt(1, 3) % 10);
+					new TerrainClass(TerrainTypes[TerrainTypeClass::From_Name(name)], spread_origin);
+				}
+			}
+
+			if (cellptr->Overlay == OVERLAY_NONE) {
+				cellptr->Overlay = OverlayType(Pick_Random_UInt(0, 11) + overlay_base);
+				placed_count++;
+			} else if (cellptr->OverlayData < 11) {
+				cellptr->OverlayData++;
+				placed_count++;
+			}
+		}
+
+		CellNode *newnode = &nodes[marker_index];
+		for (int dir = FACING_FIRST; dir < FACING_COUNT; dir++) {
+			Cell newcell = Adjacent_Cell(node->Element, (FacingType)dir);
+			if (Map.In_Local_Radar(newcell, true)) {
+				CellClass *newcellptr = &Map[newcell];
+				if (newcellptr->Is_Tile_Clear()) {
+					if ((newcellptr->Overlay == OVERLAY_NONE && Get_Cell_Data_Spread(newcell) != patch_id)
+							|| (newcellptr->OverlayData < 11 && newcellptr->Tiberium_Type_Here() != TIBERIUM_NONE)) {
+						newnode->Element = newcell;
+						newnode->Score = Get_Tiberium_Score(spread_origin, newcell);
+						Set_Cell_Data_Spread(newcell, patch_id);
+						marker_index++;
+						queue->Insert(*newnode++);
+					}
+				}
+			}
+		}
+
+		node = queue->Extract_Min();
+	}
+
+	delete[] nodes;
+	delete queue;
+}
+
 // FUNCTION: GAMEMD 0x005A2ED0
 double MapGeneratorClass::Get_Tiberium_Score(const Cell & cell1, const Cell & cell2) const
 {
@@ -4527,9 +4613,9 @@ DirtRoadTile::~DirtRoadTile(void)
 }
 
 // SYNTHETIC: GAMEMD 0x005A9C20 SYMBOL
-// _$E202
+// _$E203
 // SYNTHETIC: GAMEMD 0x005AC190 SYMBOL
-// _$E200
+// _$E201
 DirtRoadTile DirtRoadTiles[] = {
 	/* 0 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_N), DirtRoadLink(Cell(2, 0), FACING_NE)),
 	/* 1 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_N), DirtRoadLink(Cell(1, 0), FACING_E)),
@@ -4865,31 +4951,31 @@ template class VectorClass<double>;
 #include "geometry.h"
 
 // SYNTHETIC: GAMEMD 0x0058B530 SYMBOL
-// _$E205
+// _$E206
 // SYNTHETIC: GAMEMD 0x0058B560 SYMBOL
-// _$E208
+// _$E209
 // SYNTHETIC: GAMEMD 0x0058B580 SYMBOL
-// _$E211
+// _$E212
 // SYNTHETIC: GAMEMD 0x0058B5A0 SYMBOL
-// _$E214
+// _$E215
 // SYNTHETIC: GAMEMD 0x0058B5C0 SYMBOL
-// _$E217
+// _$E218
 // SYNTHETIC: GAMEMD 0x0058B5E0 SYMBOL
-// _$E220
+// _$E221
 // SYNTHETIC: GAMEMD 0x0058B600 SYMBOL
-// _$E223
+// _$E224
 // SYNTHETIC: GAMEMD 0x0058B640 SYMBOL
-// _$E226
+// _$E227
 // SYNTHETIC: GAMEMD 0x0058B670 SYMBOL
-// _$E229
+// _$E230
 // SYNTHETIC: GAMEMD 0x0058B6A0 SYMBOL
-// _$E232
+// _$E233
 // SYNTHETIC: GAMEMD 0x0058B6D0 SYMBOL
-// _$E235
+// _$E236
 // SYNTHETIC: GAMEMD 0x0058B6E0 SYMBOL
-// _$E238
+// _$E239
 // SYNTHETIC: GAMEMD 0x0058B700 SYMBOL
-// _$E241
+// _$E242
 // SYNTHETIC: GAMEMD 0x0058B720 SYMBOL
-// _$E244
+// _$E245
 const Rect RECT_NONE_2(0, 0, 0, 0);

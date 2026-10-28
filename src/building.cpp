@@ -2415,6 +2415,95 @@ int BuildingClass::Flush_For_Placement(TechnoClass * techno, Cell const & cell)
 	return(-1);
 }
 
+// FUNCTION: GAMEMD 0x0044EFB0
+Cell BuildingClass::Find_Exit_Cell(TechnoClass * techno, Cell preferred) const
+{
+	Cell const * ptr;
+	Cell cell;
+	Cell origin = PositionCell;
+
+	if (Class->IsGDIBarracks) {
+		cell = origin + Cell(1, 2);
+		if (Map.In_Radar(cell) && techno->Can_Enter_Cell(&Map[cell]) == MOVE_OK) {
+			return(cell);
+		}
+	}
+
+	if (Class->IsNODBarracks) {
+		cell = origin + Cell(2, 2);
+		if (Map.In_Radar(cell) && techno->Can_Enter_Cell(&Map[cell]) == MOVE_OK) {
+			return(cell);
+		}
+	}
+
+	if (Class->IsYuriBarracks) {
+		cell = origin + Cell(2, 1);
+		if (Map.In_Radar(cell) && techno->Can_Enter_Cell(&Map[cell]) == MOVE_OK) {
+			return(cell);
+		}
+	}
+
+	if (Class->Naval && Class->IsWeaponsFactory) {
+		cell = Docking_Coord(techno).As_Cell();
+		cell.X++;
+		cell.Y++;
+		if (Map.In_Radar(cell) && techno->Can_Enter_Cell(&Map[cell], FACING_NONE, -1, NULL, false) == MOVE_OK) {
+			return(cell);
+		}
+		cell.Y--;
+		if (Map.In_Radar(cell) && techno->Can_Enter_Cell(&Map[cell], FACING_NONE, -1, NULL, false) == MOVE_OK) {
+			return(cell);
+		}
+		cell.Y++;
+		cell.X--;
+		if (Map.In_Radar(cell) && techno->Can_Enter_Cell(&Map[cell], FACING_NONE, -1, NULL, false) == MOVE_OK) {
+			return(cell);
+		}
+	}
+
+	if (preferred != DAT_0089C818 && Map.In_Radar(preferred) && techno->Can_Enter_Cell(&Map[preferred], FACING_NONE, -1, NULL, false) == MOVE_OK) {
+		return(preferred);
+	}
+
+	ptr = Class->ExitList;
+	if (ptr != NULL && !Class->IsHospital) {
+		while (*ptr != REFRESH_EOL) {
+			cell = *ptr++ + origin;
+			if (Map.In_Radar(cell) && techno->Can_Enter_Cell(&Map[cell], FACING_NONE, -1, NULL, false) == MOVE_OK) {
+				return(cell);
+			}
+		}
+	} else {
+		int x1, x2;
+		int y1, y2;
+
+		y2 = Class->Height();
+		for (x1 = -1; x1 <= Class->Width(); x1++) {
+			cell = origin + Cell(x1, y2);
+			if (Map.In_Radar(cell) && techno->Can_Enter_Cell(&Map[cell]) == MOVE_OK) {
+				return(cell);
+			}
+			cell = origin + Cell(x1, -1);
+			if (Map.In_Radar(cell) && techno->Can_Enter_Cell(&Map[cell]) == MOVE_OK) {
+				return(cell);
+			}
+		}
+
+		x2 = Class->Width();
+		for (y1 = -1; y1 <= Class->Height(); y1++) {
+			cell = origin + Cell(x2, y1);
+			if (Map.In_Radar(cell) && techno->Can_Enter_Cell(&Map[cell]) == MOVE_OK) {
+				return(cell);
+			}
+			cell = origin + Cell(-1, y1);
+			if (Map.In_Radar(cell) && techno->Can_Enter_Cell(&Map[cell]) == MOVE_OK) {
+				return(cell);
+			}
+		}
+	}
+	return(DAT_0089C818);
+}
+
 // FUNCTION: GAMEMD 0x0044F5C0
 bool BuildingClass::Can_Player_Move(void) const
 {

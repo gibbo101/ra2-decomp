@@ -343,7 +343,7 @@ struct GlobalPacketType {
 			unsigned int GameSpeed;
 			unsigned int Version;
 			#endif
-			char pad[0x83 - 0x2F];
+			char pad[0xAF - 0x2F];
 			unsigned int FileLength;
 			char ShortFileName[13];
 			unsigned char FileDigest[32];
