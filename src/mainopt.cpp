@@ -257,6 +257,205 @@ void Main_Options_Dialog(void)
 	}
 }
 
+#include "ccini.h"
+#include "rawfile.h"
+#include "firewall.h"
+
+extern WinsockInterfaceClass * PacketTransport;
+extern CCINIClass DAT_008870C0;
+
+namespace UI {
+	int __fastcall StandardWndProc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+}
+bool __fastcall Focus_Next_Tab_Item(HWND window, bool previous);
+
+// FUNCTION: GAMEMD 0x00560480
+BOOL CALLBACK FUN_00560480(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	static int _current_ipx = -1;
+
+	HWND handle;
+	int i;
+	bool inited;
+	int *result;
+	char socket_string[16];
+	char addr_string[32];
+
+	int rc = UI::StandardWndProc(window, message, wparam, lparam);
+
+	if (rc == 0) {
+		result = (int *)GetWindowLong(window, DWL_USER);
+
+		switch (message) {
+			case 0x497: {
+				char addr_str[64];
+				HWND combobox = GetDlgItem(window, 0x5D4);
+
+				inited = false;
+				if (PacketTransport == NULL) {
+					PacketTransport = new IPXInterfaceClass;
+					PacketTransport->Init();
+					inited = true;
+				}
+
+				if (PacketTransport != NULL) {
+					DebugString("Creating IPX Interface\n");
+					IPXInterfaceClass *ipxi = (IPXInterfaceClass *)PacketTransport;
+					for (i = 0; i < 20; i++) {
+						if (ipxi->Get_Network_Card_Address_As_String(i, addr_str, sizeof(addr_str))) {
+							DebugString("Got address for network card %d\n", i);
+							DebugString("Address is %s\n", addr_str);
+							if (SendMessage(combobox, 0x4B8, 0, (LPARAM)addr_str) == -1) {
+								SendMessage(combobox, 0x4BC, 0, (LPARAM)addr_str);
+							}
+						}
+					}
+				}
+
+				if (inited) {
+					delete PacketTransport;
+					PacketTransport = NULL;
+				}
+
+				if (SendMessage(combobox, CB_GETCOUNT, 0, 0) == 0) {
+					SendMessage(combobox, 0x4C2, 0, (LPARAM)StringTable::LoadString("TXT_NO_BOUND_NET_CARD", NULL, "D:\\ra2mdpost\\MainOpt.cpp", 0x37E));
+				}
+				int netcard = Options.NetCard;
+				if (netcard < 0 || netcard >= SendMessage(combobox, CB_GETCOUNT, 0, 0)) {
+					netcard = 0;
+				}
+				SendMessage(combobox, CB_SETCURSEL, netcard, 0);
+				SendMessage(window, 0x464, 0, 0);
+
+				_current_ipx = -1;
+				handle = GetDlgItem(window, 0x5D1);
+				if (Options.Socket != 0xFFFF) {
+					sprintf(socket_string, "%d", Options.Socket);
+					SendMessage(handle, 0x4B4, 0, (LPARAM)socket_string);
+				}
+				SendMessage(handle, EM_LIMITTEXT, 5, 0);
+				handle = GetDlgItem(window, 0x5D3);
+				if (strlen(Options.DestNet)) {
+					SendMessage(handle, 0x4B4, 0, (LPARAM)Options.DestNet);
+				}
+				SendMessage(handle, EM_LIMITTEXT, 11, 0);
+				if (Session.unknown_2F48) {
+					SendDlgItemMessage(window, 0x762, BM_SETCHECK, 1, 0);
+				} else {
+					SendDlgItemMessage(window, 0x762, BM_SETCHECK, 0, 0);
+				}
+				handle = GetDlgItem(window, 0x5D7);
+				if (handle != (HWND)-1 && Session.unknown_301C) {
+					sprintf(socket_string, "%d", Session.unknown_301C);
+					SendMessage(handle, 0x4B4, 0, (LPARAM)socket_string);
+				}
+				return(0);
+			}
+
+			case 0x4DB:
+				Focus_Next_Tab_Item((HWND)lparam, wparam != 0);
+				return(0);
+
+			case WM_COMMAND: {
+				switch (LOWORD(wparam)) {
+					case IDOK: {
+						handle = GetDlgItem(window, 0x5D1);
+						SendMessage(handle, 0x4B5, sizeof(socket_string), (LPARAM)socket_string);
+						unsigned short socket;
+						if (strlen(socket_string)) {
+							socket = atoi(socket_string);
+							if (strlen(socket_string) > 5 || socket > 16383) {
+								WWMessageBox().Process(StringTable::LoadString("TXT_INVALID_SOCKET", NULL, "D:\\ra2mdpost\\MainOpt.cpp", 0x3D7), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\MainOpt.cpp", 0x3D7), NULL, NULL);
+								return(0);
+							}
+						} else {
+							socket = -1;
+						}
+						handle = GetDlgItem(window, 0x5D3);
+						SendMessage(handle, 0x4B5, sizeof(addr_string), (LPARAM)addr_string);
+						char dest_net[32];
+						strncpy(dest_net, addr_string, sizeof(addr_string));
+
+						if (strlen(addr_string)) {
+							int i = 0;
+							char *octet = strtok(addr_string, ".");
+							int net[4];
+							net[0] = -1;
+							net[1] = -1;
+							net[2] = -1;
+							net[3] = -1;
+							if (octet != NULL) {
+								while (octet) {
+									sscanf(octet, "%x", &net[i]);
+									i++;
+									octet = strtok(NULL, ".");
+								}
+							}
+							if ((unsigned char)net[0] != net[0] || (unsigned char)net[1] != net[1] || (unsigned char)net[2] != net[2] || (unsigned char)net[3] != net[3]) {
+								WWMessageBox().Process(StringTable::LoadString("TXT_DESTNET_ADDR_ERROR", NULL, "D:\\ra2mdpost\\MainOpt.cpp", 0x3F9), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\MainOpt.cpp", 0x3F9), NULL, NULL);
+								return(0);
+							}
+						}
+
+						handle = GetDlgItem(window, 0x5D4);
+						Options.NetCard = SendMessage(handle, CB_GETCURSEL, 0, 0);
+						Options.Socket = socket;
+						strcpy(Options.DestNet, dest_net);
+
+						handle = GetDlgItem(window, 0x5D7);
+						char port_string[32];
+						memset(port_string, 0, sizeof(port_string));
+						SendMessage(handle, 0x4B5, 8, (LPARAM)port_string);
+						char port_copy[32];
+						strncpy(port_copy, port_string, sizeof(port_string));
+						int port = atoi(port_copy);
+						if (port > 0xFFFF) {
+							WWMessageBox().Process(StringTable::LoadString("TXT_PORT_NUMBER_ERROR", NULL, "D:\\ra2mdpost\\MainOpt.cpp", 0x422), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\MainOpt.cpp", 0x422), NULL, NULL);
+							return(0);
+						}
+
+						if (SendDlgItemMessage(window, 0x762, BM_GETCHECK, 0, 0) == 1) {
+							if (!Session.unknown_2F48) {
+								WWMessageBox().Process(StringTable::LoadString("TXT_FIREWALL_SETTINGS_WARNING1", NULL, "D:\\ra2mdpost\\MainOpt.cpp", 0x42B), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\MainOpt.cpp", 0x42B), NULL, NULL);
+							}
+							Session.unknown_2F48 = true;
+						} else {
+							Session.unknown_2F48 = false;
+						}
+
+						if (port > 0 && Session.unknown_301C == 0) {
+							WWMessageBox().Process(StringTable::LoadString("TXT_FIREWALL_SETTINGS_WARNING2", NULL, "D:\\ra2mdpost\\MainOpt.cpp", 0x436), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\MainOpt.cpp", 0x436), NULL, NULL);
+						}
+						Session.unknown_301C = port;
+						DAT_00ABFEC8.Clear();
+
+						RawFileClass file("RA2MD.INI");
+						DAT_008870C0.Put_Bool("MultiPlayer", "SendDelay", Session.unknown_2F48);
+						DAT_008870C0.Put_Int("MultiPlayer", "PortNumberOverride", Session.unknown_301C, 0);
+						DAT_008870C0.Save(file, false);
+						break;
+					}
+
+					case IDCANCEL:
+						break;
+
+					case 0x5D4:
+						handle = GetDlgItem(window, 0x5D4);
+						_current_ipx = SendMessage(handle, CB_GETCURSEL, 0, 0);
+						return(0);
+
+					default:
+						return(0);
+				}
+				*result = 2;
+			}
+		}
+		rc = 0;
+	}
+
+	return(rc);
+}
+
 struct FileSystem {
 	static void const * LoadFile(char const * name, bool flag);
 };

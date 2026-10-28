@@ -134,6 +134,116 @@ void LaserDrawClass::Draw_All(void)
 	}
 }
 
+// FUNCTION: GAMEMD 0x00550260
+void LaserDrawClass::Draw_It(void)
+{
+	if (Duration > 0) {
+		if (IsHouseColor) {
+			FUN_005509F0();
+			return;
+		}
+
+		static Point2D _glow_offsets[16] = {
+			Point2D(0, -1),
+			Point2D(1, 0),
+			Point2D(0, -1),
+			Point2D(0, 1),
+			Point2D(1, 0),
+			Point2D(0, 1),
+			Point2D(-1, 0),
+			Point2D(1, 0),
+			Point2D(-1, 0),
+			Point2D(0, 1),
+			Point2D(0, -1),
+			Point2D(1, 0),
+			Point2D(0, -1),
+			Point2D(-1, 0),
+			Point2D(-1, 0),
+			Point2D(1, 0)
+		};
+
+		if (!BlinkState) {
+			DirType dir = Direction(Start, End);
+			FacingType facing = dir.As_Facing();
+
+			Point2D start_pixel;
+			TacticalMap->Coord_To_Pixel(Start, start_pixel);
+			Point2D end_pixel;
+			TacticalMap->Coord_To_Pixel(End, end_pixel);
+
+			int start_z = ZAdjust - TacticalMap->Z_Lepton_To_Pixel(Start.Z) - 2;
+			int end_z = -TacticalMap->Z_Lepton_To_Pixel(End.Z) - 2;
+
+			RGBClass outer_color;
+			int outer_hicolor = 0;
+			bool has_outer_glow = true;
+
+			if (OuterColor.Get_Red() == 0 && OuterColor.Get_Green() == 0 && OuterColor.Get_Blue() == 0) {
+				has_outer_glow = false;
+			} else {
+				int red = Sim_Random_Pick(-OuterSpread.Get_Red(), OuterSpread.Get_Red());
+				int green = Sim_Random_Pick(-OuterSpread.Get_Green(), OuterSpread.Get_Green());
+				int blue = Sim_Random_Pick(-OuterSpread.Get_Blue(), OuterSpread.Get_Blue());
+
+				red += OuterColor.Get_Red();
+				red = MAX(0, red);
+				red = MIN(255, red);
+
+				green += OuterColor.Get_Green();
+				green = MAX(0, green);
+				green = MIN(255, green);
+
+				blue += OuterColor.Get_Blue();
+				blue = MAX(0, blue);
+				blue = MIN(255, blue);
+
+				outer_hicolor = DSurface::Build_Hicolor_Pixel(red, green, blue);
+				outer_color.Set_Red(red);
+				outer_color.Set_Green(green);
+				outer_color.Set_Blue(blue);
+			}
+
+			float current_intensity = 1.0;
+
+			bool has_r = InnerColor.Get_Red() > 0;
+			bool has_g = InnerColor.Get_Green() > 0;
+			bool has_b = InnerColor.Get_Blue() > 0;
+
+			if (Fades) {
+				current_intensity = (StartIntensity - EndIntensity) * (Duration - Fetch_Stage()) / Duration + EndIntensity;
+			}
+
+			if (Options.DetailLevel != 0) {
+				if (Blinks) {
+					DSurface::Temp->Draw_Depth_Antialiased_Line(DSurface::ViewBounds, start_pixel, end_pixel, InnerColor, start_z, end_z, false, true, true, true, current_intensity);
+					if (has_outer_glow) {
+						DSurface::Temp->Draw_Depth_Antialiased_Line(DSurface::ViewBounds, _glow_offsets[2 * facing] + start_pixel, _glow_offsets[2 * facing] + end_pixel, outer_color, start_z, end_z, false, true, true, true, 1.0f);
+						DSurface::Temp->Draw_Depth_Antialiased_Line(DSurface::ViewBounds, start_pixel + _glow_offsets[2 * facing + 1], _glow_offsets[2 * facing + 1] + end_pixel, outer_color, start_z, end_z, false, true, true, true, 1.0f);
+					}
+				} else if (has_outer_glow) {
+					DSurface::Temp->DrawRGBMultiplyingLine(DSurface::ViewBounds, _glow_offsets[2 * facing] + start_pixel, _glow_offsets[2 * facing] + end_pixel, outer_color, current_intensity, start_z, end_z);
+					DSurface::Temp->DrawRGBMultiplyingLine(DSurface::ViewBounds, _glow_offsets[2 * facing + 1] + start_pixel, _glow_offsets[2 * facing + 1] + end_pixel, outer_color, current_intensity, start_z, end_z);
+					DSurface::Temp->DrawRGBMultiplyingLine(DSurface::ViewBounds, start_pixel, end_pixel, InnerColor, current_intensity, start_z, end_z);
+				} else {
+					DSurface::Temp->Draw_Depth_Antialiased_Line(DSurface::ViewBounds, start_pixel, end_pixel, InnerColor, start_z, end_z, false, has_r, has_g, has_b, current_intensity);
+				}
+			} else {
+				DSurface::Temp->Draw_Depth_Shaded_Line(DSurface::ViewBounds, start_pixel, end_pixel,
+					DSurface::Build_Hicolor_Pixel(InnerColor.Get_Red(), InnerColor.Get_Green(), InnerColor.Get_Blue()),
+					start_z, end_z, false);
+
+				if (has_outer_glow) {
+					DSurface::Temp->Draw_Depth_Shaded_Line(DSurface::ViewBounds, _glow_offsets[2 * facing] + start_pixel, _glow_offsets[2 * facing] + end_pixel, outer_hicolor, start_z, end_z);
+					DSurface::Temp->Draw_Depth_Shaded_Line(DSurface::ViewBounds, start_pixel + _glow_offsets[2 * facing + 1], _glow_offsets[2 * facing + 1] + end_pixel, outer_hicolor, start_z, end_z);
+				}
+			}
+		}
+	}
+}
+
+// SYNTHETIC: GAMEMD 0x005509E0 SYMBOL
+// _$E120
+
 // TEMPLATE: GAMEMD 0x005512D0
 // ?Clear@?$DynamicVectorClass@PAVLaserDrawClass@@@@UAEXXZ
 template class DynamicVectorClass<LaserDrawClass *>;

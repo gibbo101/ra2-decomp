@@ -550,6 +550,7 @@ class SessionClass
 		int FUN_0069BC60(int index);
 		int FUN_0069BCC0(char const * name);
 		int FUN_0069BD00(int slot);
+		void FUN_0069BD60(void);
 		bool FUN_0069BBE0(void) const;
 
 		void Trap_Object(void);
@@ -715,7 +716,7 @@ class SessionClass
 		int unknown_2C14[64][2];
 		int unknown_2E14;
 		unsigned short unknown_2E18[MAX_PLAYERS];
-		unsigned char unknown_2E28[0x120];
+		char unknown_2E28[MAX_PLAYERS][36];
 		bool unknown_2F48;
 		unsigned char unknown_2F49[0x23];
 		int unknown_2F6C[MAX_PLAYERS];

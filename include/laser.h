@@ -19,6 +19,7 @@ class LaserDrawClass : public StageClass
 		~LaserDrawClass(void);
 
 		void Draw_It(void);
+		void FUN_005509F0(void);
 		void AI(void);
 
 		static void Update_All(void);

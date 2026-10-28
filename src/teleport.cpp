@@ -183,6 +183,94 @@ void TeleportLocomotionClass::Check_Landing(Coord to)
 	}
 }
 
+// FUNCTION: GAMEMD 0x00718B70
+bool TeleportLocomotionClass::FUN_00718B70(Coord const & coord)
+{
+	if (LastCoords != COORD_NONE) {
+		LinkedTo->Clear_Occupy_Bit(LastCoords);
+	} else {
+		LinkedTo->Clear_Occupy_Bit(LinkedTo->PositionCoord);
+	}
+
+	Coord crd = coord;
+
+	if (coord != COORD_NONE) {
+		bool isbridge = Map[crd].IsUnderBridge && LinkedTo->PositionCoord.Z > 3 * LEVEL_LEPTON_H + Map.Get_Height_GL(crd);
+
+		if (LinkedTo->Fetch_RTTI() == RTTI_INFANTRY) {
+			bool any_spot = false;
+			if (LinkedTo->Ready_To_Next_Mission()) {
+				LinkedTo->Commence();
+			}
+			if (LinkedTo->Get_Mission() == MISSION_CAPTURE || LinkedTo->Get_Mission() == MISSION_EATEN || LinkedTo->Get_Mission() == MISSION_ENTER || LinkedTo->Get_Mission() == MISSION_PATROL) {
+				ObjectClass * unit = (ObjectClass *)LinkedTo->NavCom;
+				unit = (unit != NULL && ((AbstractClass *)unit)->Fetch_RTTI() == RTTI_UNIT) ? unit : NULL;
+				if (unit != NULL && unit->PositionCell == coord.As_Cell()) {
+					any_spot = true;
+				}
+				ObjectClass * aircraft = (ObjectClass *)LinkedTo->NavCom;
+				aircraft = (aircraft != NULL && ((AbstractClass *)aircraft)->Fetch_RTTI() == RTTI_AIRCRAFT) ? aircraft : NULL;
+				if (aircraft != NULL && aircraft->PositionCell == coord.As_Cell()) {
+					any_spot = true;
+				}
+				BuildingClass * building = (BuildingClass *)LinkedTo->NavCom;
+				building = (building != NULL && ((AbstractClass *)building)->Fetch_RTTI() == RTTI_BUILDING) ? building : NULL;
+				if (building != NULL && Map[coord].Cell_Building() == building) {
+					any_spot = true;
+				}
+			}
+
+			Coord old = LastCoords;
+			LastCoords = Map[crd].Closest_Free_Spot(crd, any_spot, isbridge);
+			if (LinkedTo->Can_Enter_Cell(&Map[LastCoords.As_Cell()])) {
+				LastCoords = COORD_NONE;
+			}
+			Map[old].Center_Coord();
+
+			if (LastCoords == COORD_NONE) {
+				ObjectClass * obj = (ObjectClass *)LinkedTo->NavCom;
+				if (obj != NULL && (obj->AbstractFlags & 2)) {
+					MZoneType mzone = LinkedTo->Techno_Type_Class()->MZone;
+					Cell navcell = obj->Destination_Coord().As_Cell();
+					CellClass * cellptr = &Map[LinkedTo->Destination_Coord()];
+					bool onbridge = LinkedTo->Is_Moving_Onto_Bridge();
+					Cell nearcell = Map.Nearby_Location(navcell, LinkedTo->Techno_Type_Class()->Speed, Map.Get_Cell_Zone(cellptr->CellID, mzone, onbridge), mzone, Map[navcell].IsUnderBridge, Point2D(1, 1), false, true);
+					if (nearcell != CELL_NONE) {
+						LastCoords = Map[nearcell].Closest_Free_Spot(Map[nearcell].Center_Coord(), any_spot, isbridge);
+					}
+				}
+			}
+		} else if (LinkedTo->IsImmobilized) {
+			LinkedTo->Set_Occupy_Bit(LastCoords);
+		} else {
+			MZoneType mzone = LinkedTo->Techno_Type_Class()->MZone;
+			Cell cell = coord.As_Cell();
+			if (cell != CELL_NONE) {
+				if (LinkedTo->Can_Enter_Cell(&Map[cell])) {
+					int zone = Map.Get_Cell_Zone(cell, mzone, isbridge);
+					cell = Map.Nearby_Location(cell, LinkedTo->Techno_Type_Class()->Speed, zone, mzone, isbridge);
+				}
+			}
+			if (cell != CELL_NONE) {
+				LinkedTo->Clear_Occupy_Bit(LastCoords);
+				LastCoords = Coord(Map[cell].Center_Coord().As_Cell());
+				LastCoords.Z = Map.Get_Height_GL(LastCoords);
+				LinkedTo->Set_Occupy_Bit(LastCoords);
+			}
+		}
+	} else {
+		LastCoords = coord;
+	}
+
+	if (LastCoords != COORD_NONE) {
+		LinkedTo->Set_Occupy_Bit(LastCoords);
+		return(true);
+	}
+
+	LinkedTo->Set_Occupy_Bit(LinkedTo->PositionCoord);
+	return(false);
+}
+
 // FUNCTION: GAMEMD 0x007192C0
 void STDMETHODCALLTYPE TeleportLocomotionClass::Do_Turn(DirStruct coord)
 {

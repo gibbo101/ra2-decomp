@@ -7,24 +7,17 @@
 #include "geometry.h"
 #include "rect.h"
 
-class ConnectionRanker {
-public:
-	ConnectionRanker(void);
-	int Rank_A(int flags);
-	int Rank_B(int flags);
+#include "firewall.h"
 
-	int A, B, C, D;
-};
-
-ConnectionRanker::ConnectionRanker(void)
+FirewallHelperClass::FirewallHelperClass(void)
 {
-	A = 0;
-	B = 0;
-	C = 0;
-	D = 0;
+	Detected = 0;
+	Settings = 0;
+	Delta = 0;
+	ReadDelta = 0;
 }
 
-ConnectionRanker DAT_00ABFEC8;
+FirewallHelperClass DAT_00ABFEC8;
 
 #include "ccini.h"
 #include "conquer.h"
@@ -41,25 +34,6 @@ extern CCINIClass DAT_008870C0;
 extern WinsockInterfaceClass * PacketTransport;
 extern IPXManagerClass Ipx;
 void __cdecl FUN_004068E0(char const * format, ...);
-
-class FirewallHelperClass {
-public:
-	void Clear(void);
-	void Write_Settings(void);
-	void Read_Settings(void);
-	void Save_Detected(void);
-	int Detect(bool * detected);
-	unsigned short Next_Port(int step);
-	bool Send_Probe(IPXAddressClass * address, int port, int packet_id, unsigned char flag);
-	unsigned short Find_Mangled_Port(int id, int duration);
-	int Analyse_Ports(int count, unsigned short * original, unsigned short * sorted, bool & relative, bool & reliable);
-
-	int Detected;
-	int Settings;
-	int Delta;
-	int ReadDelta;
-	int Port;
-};
 
 // SYNTHETIC: GAMEMD 0x005D8D80 SYMBOL
 // _$E2
@@ -93,7 +67,7 @@ public:
 // _$E44
 
 // FUNCTION: GAMEMD 0x005D8FB0
-// ConnectionRanker::ConnectionRanker
+// FirewallHelperClass::FirewallHelperClass
 
 // FUNCTION: GAMEMD 0x005D8FC0
 void FirewallHelperClass::Clear(void)
@@ -319,7 +293,7 @@ int FirewallHelperClass::Analyse_Ports(int num_ports, unsigned short * original_
 }
 
 // FUNCTION: GAMEMD 0x005DA040
-int ConnectionRanker::Rank_A(int flags)
+int FirewallHelperClass::Rank_A(int flags)
 {
 	int rank = 0;
 	if (flags & 1) {
@@ -344,7 +318,7 @@ int ConnectionRanker::Rank_A(int flags)
 }
 
 // FUNCTION: GAMEMD 0x005DA080
-int ConnectionRanker::Rank_B(int flags)
+int FirewallHelperClass::Rank_B(int flags)
 {
 	int rank = 2;
 	if (flags & 1) {

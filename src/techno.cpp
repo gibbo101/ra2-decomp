@@ -4710,6 +4710,176 @@ void TechnoClass::vt_entry_48C(bool incremental, bool flag, bool use_house, Hous
 	}
 }
 
+// FUNCTION: GAMEMD 0x0070B570
+void TechnoClass::Try_To_Cloak(void)
+{
+	bool positive = AngleRotatedSideways > 2e-05;
+	bool negative = AngleRotatedSideways < -2e-05;
+
+	if (IsSinking) {
+		if ((AngleRotatedForwards < 0.0f ? -AngleRotatedForwards : AngleRotatedForwards) < (float)(M_PI / 4)) {
+			switch (PrimaryFacing.Current().As_Dir8()) {
+				case 0:
+				case 6:
+				case 7:
+					AngleRotatedForwards -= 0.01;
+					return;
+
+				default:
+					AngleRotatedForwards += 0.01;
+					return;
+			}
+		}
+		return;
+	}
+
+	if (IsCrashing) {
+		AngleRotatedForwards += RockingForwardsPerFrame;
+		AngleRotatedSideways += RockingSidewaysPerFrame;
+		if (Techno_Type_Class()->BalloonHover) {
+			AngleRotatedForwards = MAX(AngleRotatedForwards, (float)(-M_PI / 4));
+			AngleRotatedSideways = MAX(AngleRotatedSideways, (float)(-M_PI / 4));
+			AngleRotatedSideways = MIN(AngleRotatedSideways, (float)(M_PI / 4));
+		}
+		return;
+	}
+
+	bool over = false;
+	if (AngleRotatedSideways > (float)(M_PI / 2)) over = true;
+	if (AngleRotatedSideways < (float)(-M_PI / 2)) over = true;
+
+	if (RockingSidewaysPerFrame != 0.0f) {
+		float old = AngleRotatedSideways;
+		AngleRotatedSideways += RockingSidewaysPerFrame;
+		if (AngleRotatedSideways > (float)(M_PI / 4) && DirectRockerLinkedUnit == NULL && !over && old < (float)(M_PI / 4)) {
+			AngleRotatedSideways = (float)(M_PI / 4);
+			RockingSidewaysPerFrame = 0.0f;
+		} else if (AngleRotatedSideways < (float)(-M_PI / 4) && DirectRockerLinkedUnit == NULL && !over && old > (float)(-M_PI / 4)) {
+			AngleRotatedSideways = (float)(-M_PI / 4);
+			RockingSidewaysPerFrame = 0.0f;
+		}
+
+		if (positive) {
+			if (RockingSidewaysPerFrame > 0.0f) {
+				if (DirectRockerLinkedUnit != NULL && !over) {
+					RockingSidewaysPerFrame -= Rule->FallBackCoefficient * 0.002f;
+				} else if (over) {
+					RockingSidewaysPerFrame += 0.002f;
+				} else {
+					RockingSidewaysPerFrame -= 0.002f;
+				}
+			} else {
+				if (DirectRockerLinkedUnit != NULL && !over) {
+					RockingSidewaysPerFrame -= Rule->FallBackCoefficient * 0.002f;
+				} else if (over) {
+					RockingSidewaysPerFrame += 0.002f;
+				} else {
+					RockingSidewaysPerFrame -= 0.002f * 2.5;
+				}
+			}
+		} else {
+			if (RockingSidewaysPerFrame < 0.0f) {
+				if (DirectRockerLinkedUnit != NULL && !over) {
+					RockingSidewaysPerFrame += Rule->FallBackCoefficient * 0.002f;
+				} else if (over) {
+					RockingSidewaysPerFrame -= 0.002f;
+				} else {
+					RockingSidewaysPerFrame += 0.002f;
+				}
+			} else {
+				if (DirectRockerLinkedUnit != NULL && !over) {
+					RockingSidewaysPerFrame += Rule->FallBackCoefficient * 0.002f;
+				} else if (over) {
+					RockingSidewaysPerFrame -= 0.002f;
+				} else {
+					RockingSidewaysPerFrame += 0.002f * 2.5;
+				}
+			}
+		}
+	} else {
+		AngleRotatedSideways = 0.0f;
+	}
+
+	if ((positive && AngleRotatedSideways < 2e-05) || (negative && AngleRotatedSideways > -2e-05)) {
+		RockingSidewaysPerFrame = 0.0f;
+		AngleRotatedSideways = 0.0f;
+	}
+
+	positive = AngleRotatedForwards > 2e-05;
+	negative = AngleRotatedForwards < -2e-05;
+
+	over = false;
+	if (AngleRotatedForwards > (float)(M_PI / 2)) over = true;
+	if (AngleRotatedForwards < (float)(-M_PI / 2)) over = true;
+
+	if (RockingForwardsPerFrame != 0.0f) {
+		float old = AngleRotatedForwards;
+		float angle = RockingForwardsPerFrame + AngleRotatedForwards;
+		AngleRotatedForwards = angle;
+		float limit = (float)(M_PI / 4);
+		if (Is_Foot() && ((FootClass *)this)->IsCrushing) {
+			limit = (float)(M_PI / 10);
+		}
+		if (angle > limit && DirectRockerLinkedUnit == NULL && !over && old < limit) {
+			AngleRotatedForwards = limit;
+			RockingForwardsPerFrame = 0.0f;
+		} else if (angle < -limit && DirectRockerLinkedUnit == NULL && !over && old > -limit) {
+			AngleRotatedForwards = -limit;
+			RockingForwardsPerFrame = 0.0f;
+		}
+
+		if (positive) {
+			if (RockingForwardsPerFrame > 0.0f) {
+				if (DirectRockerLinkedUnit != NULL && !over) {
+					RockingForwardsPerFrame -= Rule->FallBackCoefficient * 0.002f;
+				} else if (over) {
+					RockingForwardsPerFrame += 0.002f;
+				} else {
+					RockingForwardsPerFrame -= 0.002f * 2.5;
+				}
+			} else {
+				if (DirectRockerLinkedUnit != NULL && !over) {
+					RockingForwardsPerFrame -= Rule->FallBackCoefficient * 0.002f;
+				} else if (over) {
+					RockingForwardsPerFrame += 0.002f;
+				} else {
+					RockingForwardsPerFrame -= 0.002f * 2.5;
+				}
+			}
+		} else {
+			if (RockingForwardsPerFrame < 0.0f) {
+				if (DirectRockerLinkedUnit != NULL && !over) {
+					RockingForwardsPerFrame += Rule->FallBackCoefficient * 0.002f;
+				} else if (over) {
+					RockingForwardsPerFrame -= 0.002f;
+				} else {
+					RockingForwardsPerFrame += 0.002f * 2.5;
+				}
+			} else {
+				if (DirectRockerLinkedUnit != NULL && !over) {
+					RockingForwardsPerFrame += Rule->FallBackCoefficient * 0.002f;
+				} else if (over) {
+					RockingForwardsPerFrame -= 0.002f;
+				} else {
+					RockingForwardsPerFrame += 0.002f * 2.5;
+				}
+			}
+		}
+	} else {
+		AngleRotatedForwards = 0.0f;
+	}
+
+	if ((positive && AngleRotatedForwards < 2e-05) || (negative && AngleRotatedForwards > -2e-05)) {
+		RockingForwardsPerFrame = 0.0f;
+		AngleRotatedForwards = 0.0f;
+	}
+
+	if (AngleRotatedSideways > (float)M_PI || AngleRotatedSideways < (float)-M_PI || AngleRotatedForwards > (float)M_PI || AngleRotatedForwards < (float)-M_PI) {
+		int damage = Techno_Type_Class()->MaxStrength;
+		Take_Damage(damage, 0, Rule->C4Warhead, NULL, true, false, NULL);
+	}
+}
+
 // FUNCTION: GAMEMD 0x0070BE50
 int TechnoClass::Get_Predator_Offset(void) const
 {

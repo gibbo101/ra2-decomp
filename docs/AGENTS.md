@@ -189,12 +189,16 @@ Each entry: what the diff showed, then the source change that fixed it.
 - Moving a few statements into a small function that /Ob2 inlines changes allocation
   around them; try it when the original treats a block as separate.
 - Declare variables used across `case`s once at function scope, TibSun style.
+- A global the original loads before a branch: copy it to a local with two uses. One use,
+  or the global read directly, leaves the load after the branch (0x005FF850).
 
 ### Stack frame
 - Locals are laid out by size, not declaration order. To fix two objects' order, make
   them members of one local struct.
 - A buffer declared inside the loop body gives `push ecx`; one at function level does not.
 - One variable shared by two branches shares a slot; one per branch gets its own.
+- A call's return temporary gets a function-level slot; one inside an inlined body is
+  scoped to it and can share a slot (0x004361D0's 8-byte excess).
 - A class returned by value: a temporary and a named local give different frames
   (Wstring in 0x0046DFD0 needed the temporary).
 - `Coord c = p->F();` copies from the return pointer; a `const &` argument does not.
@@ -450,6 +454,8 @@ Each entry: what the diff showed, then the source change that fixed it.
 - For 0x00421EA0's x87 order: removing uses of 0, Vector3 constructor or member forms.
 - An EBP frame pointer in a function with no floating point (0x0047EFE0): nothing tried
   made VC6 emit one.
+- Keeping a small same-file callee out of line where other callers inline it (txtlabel2
+  0x0072D730, 0x0072E450, 0x0072F540): helpers, budget fillers and call forms all failed.
 - `DynamicVectorClass<T>`'s constructor and Add are called for some T and inlined for
   others in the original; no instantiation order tried reproduces it.
 

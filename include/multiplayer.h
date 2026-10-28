@@ -39,7 +39,7 @@ class MultiplayerGameMode
 			public:
 				InitializerBase(void);
 				virtual ~InitializerBase(void);
-				virtual void Allocate(void) = 0;
+				virtual MultiplayerGameMode * Allocate(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex) = 0;
 		};
 
 		static MultiplayerGameMode * __fastcall Get(int index);

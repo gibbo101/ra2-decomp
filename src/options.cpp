@@ -214,6 +214,121 @@ void OptionsClass::Set_Voice_Volume(float volume, bool feedback)
 	DebugString("VoiceVolume = %f\n", VoiceVolume);
 }
 
+extern wchar_t const DAT_00887734[];
+extern char DAT_00889F64[];
+
+// FUNCTION: GAMEMD 0x005FA620
+void OptionsClass::Load_Settings(void)
+{
+	DebugString("--------- Loading SUN.INI settings ---------------\n");
+
+	GameSpeed = DAT_008870C0.Get_Int("Options", "GameSpeed", GameSpeed);
+	DebugString("GameSpeed = %d\n", GameSpeed);
+
+	Difficulty = DAT_008870C0.Get_Int("Options", "Difficulty", Difficulty);
+	Difficulty = MIN(Difficulty, 4);
+	Difficulty = MAX(Difficulty, 0);
+	DebugString("Difficulty = %d\n", Difficulty);
+
+	CampDifficulty = DAT_008870C0.Get_Int("Options", "CampDifficulty", CampDifficulty);
+	CampDifficulty = MIN(CampDifficulty, 2);
+	CampDifficulty = MAX(CampDifficulty, 0);
+	DebugString("CampDifficulty = %d\n", CampDifficulty);
+
+	ScrollMethod = DAT_008870C0.Get_Int("Options", "ScrollMethod", ScrollMethod);
+	DebugString("ScrollMethod = %d\n", ScrollMethod);
+
+	ScrollRate = DAT_008870C0.Get_Int("Options", "ScrollRate", ScrollRate);
+	DebugString("ScrollRate = %d\n", ScrollRate);
+
+	AutoScroll = DAT_008870C0.Get_Bool("Options", "AutoScroll", AutoScroll);
+	DebugString("AutoScroll is %s\n", AutoScroll == true ? "ON" : "OFF");
+
+	DetailLevel = DAT_008870C0.Get_Int("Options", "DetailLevel", DetailLevel);
+	DetailLevel = MIN(DetailLevel, 2);
+	DetailLevel = MAX(DetailLevel, 0);
+	DebugString("DetailLevel = %d\n", DetailLevel);
+
+	IsSidebarOnRight = true;
+	DebugString("SideBar on %s\n", IsSidebarOnRight == true ? "RIGHT" : "LEFT");
+
+	SidebarCameoText = DAT_008870C0.Get_Bool("Options", "SidebarCameoText", SidebarCameoText);
+	DebugString("Sidebar Text is %s\n", SidebarCameoText == true ? "ON" : "OFF");
+
+	ActionLines = DAT_008870C0.Get_Bool("Options", "UnitActionLines", ActionLines);
+	DebugString("ActionLines are %s\n", ActionLines == true ? "ON" : "OFF");
+
+	ShowHidden = DAT_008870C0.Get_Bool("Options", "ShowHidden", ShowHidden);
+	DebugString("ShowHidden is %s\n", ShowHidden == true ? "ON" : "OFF");
+
+	ToolTips = DAT_008870C0.Get_Bool("Options", "ToolTips", ToolTips);
+	DebugString("ToolTips are %s\n", ToolTips == true ? "ON" : "OFF");
+
+	ScreenWidth = DAT_008870C0.Get_Int("Video", "ScreenWidth", ScreenWidth);
+	ScreenHeight = DAT_008870C0.Get_Int("Video", "ScreenHeight", ScreenHeight);
+	DebugString("Resolution = %d X %d\n", ScreenWidth, ScreenHeight);
+
+	StretchMovies = DAT_008870C0.Get_Bool("Video", "StretchMovies", StretchMovies);
+	StretchMovies = StretchMovies == true && DSurface::AllowStretchBlits == true;
+	DebugString("StretchMovies is %s\n", StretchMovies == true ? "ON" : "OFF");
+
+	AllowHiResModes = DAT_008870C0.Get_Bool("Video", "AllowHiResModes", AllowHiResModes);
+	DebugString("AllowHiRes is %s\n", AllowHiResModes == true ? "ON" : "OFF");
+
+	Debug_IngameModeChange = DAT_008870C0.Get_Bool("Video", "AllowModeToggle", Debug_IngameModeChange);
+
+	AllowVRAMSidebar = DAT_008870C0.Get_Bool("Video", "AllowVRAMSidebar", AllowVRAMSidebar);
+
+	Set_Sound_Volume(DAT_008870C0.Get_Float("Audio", "SoundVolume", SoundVolume), false);
+	Set_Voice_Volume(DAT_008870C0.Get_Float("Audio", "VoiceVolume", VoiceVolume), false);
+	Set_Score_Volume(DAT_008870C0.Get_Float("Audio", "ScoreVolume", ScoreVolume), false);
+
+	Set_Repeat(DAT_008870C0.Get_Bool("Audio", "IsScoreRepeat", IsScoreRepeat));
+	Set_Shuffle(DAT_008870C0.Get_Bool("Audio", "IsScoreShuffle", IsScoreShuffle));
+
+	InGameMusic = DAT_008870C0.Get_Bool("Audio", "InGameMusic", InGameMusic);
+
+	LastUnlockedSovMovie = -1;
+	LastUnlockedAllMovie = -1;
+	wchar_t netid[200];
+	DAT_008870C0.Get_UnicodeString("Network", "NetID", DAT_00887734, netid, 200);
+	if (netid[0] != 0) {
+		for (wchar_t * c = netid; *c; c++) {
+			*c = ~*c;
+			if (*c == 0) {
+				*c = 0xFFFF;
+			}
+		}
+		wchar_t * token = wcstok(netid, L" ");
+		if (token != NULL) {
+			LastUnlockedSovMovie = wcstol(token, NULL, 10) - 1;
+			token = wcstok(NULL, L" ");
+			if (token != NULL) {
+				LastUnlockedAllMovie = wcstol(token, NULL, 10) - 1;
+			}
+		}
+	}
+	if (LastUnlockedSovMovie < -1 || LastUnlockedSovMovie >= 8) {
+		LastUnlockedSovMovie = -1;
+	}
+	if (LastUnlockedAllMovie < -1 || LastUnlockedAllMovie >= 8) {
+		LastUnlockedAllMovie = -1;
+	}
+
+	SoundLatency = DAT_008870C0.Get_Int("Audio", "SoundLatency", SoundLatency);
+	DebugString("Emulated sound card latency default = %d\n", SoundLatency);
+
+	Socket = DAT_008870C0.Get_Int("Network", "Socket", Socket);
+	NetCard = DAT_008870C0.Get_Int("Network", "NetCard", NetCard);
+	DAT_008870C0.Get_String("Network", "DestNet", DAT_00889F64, DestNet, sizeof(DestNet));
+
+	DebugString("--------- Complete -------------------------------\n");
+
+	Map.Toggle_Cameo_Text(SidebarCameoText);
+	TechnoClass::Set_Action_Lines(ActionLines);
+	Setup_Dest_Net();
+}
+
 // FUNCTION: GAMEMD 0x005FB2E0
 int OptionsClass::Normalize_Delay(int delay) const
 {

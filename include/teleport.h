@@ -46,7 +46,7 @@ class TeleportLocomotionClass : public LocomotionClass, public IPiggyback
 		virtual void STDMETHODCALLTYPE Process_Delay(void);
 		virtual boolean Is_Stationary(void);
 
-		void FUN_00718B70(Coord & dest);
+		bool FUN_00718B70(Coord const & coord);
 		void Check_Landing(Coord to);
 		bool FUN_00718260(Coord to, bool flag);
 

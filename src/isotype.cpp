@@ -75,8 +75,10 @@
 // _$E202
 // SYNTHETIC: GAMEMD 0x00543EB0 SYMBOL
 // _$E199
-// SYNTHETIC: GAMEMD 0x00544690 SYMBOL
+// SYNTHETIC: GAMEMD 0x00543F10 SYMBOL
 // _$E205
+// SYNTHETIC: GAMEMD 0x00544690 SYMBOL
+// _$E208
 
 enum {
 	ISO_WIDTH = 48,
@@ -102,6 +104,49 @@ struct ShadowCasterInfo {
 	int YOffset;
 
 	ShadowCasterInfo(int frame = 0, int index = 0, int x = 0, int y = 0);
+};
+
+ShadowCasterInfo ShadowCasterCliffInfo[40] = {
+	ShadowCasterInfo(),
+	ShadowCasterInfo(),
+	ShadowCasterInfo(),
+	ShadowCasterInfo(),
+	ShadowCasterInfo(),
+	ShadowCasterInfo(),
+	ShadowCasterInfo(),
+	ShadowCasterInfo(),
+	ShadowCasterInfo(),
+	ShadowCasterInfo(),
+	ShadowCasterInfo(),
+	ShadowCasterInfo(),
+	ShadowCasterInfo(),
+	ShadowCasterInfo(),
+	ShadowCasterInfo(),
+	ShadowCasterInfo(),
+	ShadowCasterInfo(),
+	ShadowCasterInfo(0,0,30,30),
+	ShadowCasterInfo(0,0,30,30),
+	ShadowCasterInfo(0,0,30,30),
+	ShadowCasterInfo(1,0,30,30),
+	ShadowCasterInfo(1,0,30,30),
+	ShadowCasterInfo(2,1,60,15),
+	ShadowCasterInfo(3,1,60,15),
+	ShadowCasterInfo(4,1,60,15),
+	ShadowCasterInfo(5,0,90,30),
+	ShadowCasterInfo(6,0,60,15),
+	ShadowCasterInfo(7,1,30,0),
+	ShadowCasterInfo(8,0,60,15),
+	ShadowCasterInfo(9,0,60,15),
+	ShadowCasterInfo(10,1,0,-15),
+	ShadowCasterInfo(11,1,0,-15),
+	ShadowCasterInfo(12,0,60,15),
+	ShadowCasterInfo(),
+	ShadowCasterInfo(),
+	ShadowCasterInfo(),
+	ShadowCasterInfo(),
+	ShadowCasterInfo(),
+	ShadowCasterInfo(),
+	ShadowCasterInfo(),
 };
 
 ShadowCasterInfo ShadowCasterSlopeInfo[10] = {
@@ -293,7 +338,7 @@ Cell const * IsometricTileTypeClass::Occupy_List(bool placement) const
 }
 
 // SYNTHETIC: GAMEMD 0x00544DF0 SYMBOL
-// _$E208
+// _$E211
 
 // FUNCTION: GAMEMD 0x00544E00
 IsometricTileTypeClass * IsometricTileTypeClass::Next_Tile_From_Set(int index)

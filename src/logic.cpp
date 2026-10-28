@@ -44,94 +44,39 @@
 #include "bench.hh"
 
 #include <math.h>
-
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007ED368;
-extern const double DAT_007ED370;
-
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
+#include "geometry.h"
 
 // SYNTHETIC: GAMEMD 0x0055AD30 SYMBOL
 // _$E2
 // SYNTHETIC: GAMEMD 0x0055AD50 SYMBOL
 // _$E122
-double DAT_00ABCCE0 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x0055AD80 SYMBOL
 // _$E125
-double DAT_00ABCD30 = DAT_00ABCCE0 / DAT_007ED368;
-
 // SYNTHETIC: GAMEMD 0x0055ADA0 SYMBOL
 // _$E128
-double DAT_00ABCD18 = DAT_007E1718 / DAT_00ABCD30;
-
 // SYNTHETIC: GAMEMD 0x0055ADC0 SYMBOL
 // _$E131
-double DAT_00ABCD10 = DAT_007E1720 * DAT_007ED370;
-
 // SYNTHETIC: GAMEMD 0x0055ADE0 SYMBOL
 // _$E134
-double DAT_00ABCCE8 = DAT_007E1728 * DAT_007ED370;
-
 // SYNTHETIC: GAMEMD 0x0055AE00 SYMBOL
 // _$E137
-double DAT_00ABCCC0 = DAT_007E1730 * DAT_007ED370;
-
 // SYNTHETIC: GAMEMD 0x0055AE20 SYMBOL
 // _$E140
-int DAT_00ABCD38 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00ABCCC0 - DAT_00ABCCE8) * DAT_00ABCCE0));
-
 // SYNTHETIC: GAMEMD 0x0055AE60 SYMBOL
 // _$E143
-double DAT_00ABCCF0 = FUN_004CADE0(DAT_00ABCD38 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x0055AE90 SYMBOL
 // _$E146
-double DAT_00ABCD08 = FUN_004CADE0((DAT_00ABCD38 * 2) / DAT_00ABCCE0);
-
 // SYNTHETIC: GAMEMD 0x0055AEC0 SYMBOL
 // _$E149
-int DAT_00ABCD2C = (int)(DAT_00ABCD38 * 4 + DAT_007E1738);
-
 // SYNTHETIC: GAMEMD 0x0055AEF0 SYMBOL
 // _$E152
-ShortPair DAT_00ABCCD8;
-
 // SYNTHETIC: GAMEMD 0x0055AF00 SYMBOL
 // _$E155
-IntTriple DAT_00ABCCF8;
+// SYNTHETIC: GAMEMD 0x0055AF20 SYMBOL
+// _$E158
 
 namespace Detail { extern unsigned MinFrameRate; extern unsigned BufferZoneWidth; unsigned GetMinFrameRate(void); }
 namespace FPSCounter { extern unsigned CurrentFrameRate; extern bool ReducedEffects; }
-extern int DAT_00ABCD28;
-extern int DAT_00ABCD20;
-extern int DAT_00ABCD24;
-
-// FUNCTION: GAMEMD 0x0055AF20
-void __cdecl FUN_0055AF20(void)
-{
-	DAT_00ABCD28 = 0;
-	DAT_00ABCD20 = 0x80;
-	DAT_00ABCD24 = 0x80;
-}
 
 // FUNCTION: GAMEMD 0x0055AF40
 void __fastcall FUN_0055AF40(int value)
@@ -160,6 +105,162 @@ unsigned Detail::GetMinFrameRate(void)
 		return Detail::MinFrameRate + Detail::BufferZoneWidth;
 	}
 	return Detail::MinFrameRate;
+}
+
+#include "bomblist.h"
+#include "disklaser.h"
+#include "kamikaze.h"
+#include "radsite.h"
+
+bool FUN_0053A110(void);
+bool FUN_0053A120(void);
+bool FUN_0053BAD0(void);
+bool FUN_0053B400(void);
+void FUN_0053A6C0(void);
+
+// FUNCTION: GAMEMD 0x0055AFB0
+void LogicClass::AI(void)
+{
+	int index;
+
+	FramesThisSecond++;
+
+	for (LogicTriggerID = 0; LogicTriggerID < LogicTags.Count(); LogicTriggerID++) {
+		TagClass * trig = LogicTags[LogicTriggerID];
+
+		if (Scen->IsCrateBeenPickedUp) {
+			if (trig->Spring(TEVENT_PICKUP_CRATE_ANY)) continue;
+		}
+
+		if (Scen->IsGlobalChanged) {
+			if (trig->Spring(TEVENT_GLOBAL_SET)) continue;
+			if (trig->Spring(TEVENT_GLOBAL_CLEAR)) continue;
+			if (trig->Spring(TEVENT_LOCAL_SET)) continue;
+			if (trig->Spring(TEVENT_LOCAL_CLEAR)) continue;
+		}
+
+		if (Scen->IsAmbientLightChanged) {
+			if (trig->Spring(TEVENT_AMBIENT_LESS_THAN)) continue;
+			if (trig->Spring(TEVENT_AMBIENT_GREATER_THAN)) continue;
+		}
+
+		if (trig->Spring(TEVENT_TIME)) continue;
+		if (trig->Spring(TEVENT_RANDOM_TIME)) continue;
+
+		if (Scen->MissionTimer.Is_Active() && Scen->MissionTimer == 0) {
+			if (trig->Spring(TEVENT_MISSION_TIMER_EXPIRED)) continue;
+		}
+	}
+
+	if (Scen->MissionTimer.Is_Active() && Scen->MissionTimer == 0) {
+		Scen->MissionTimer.Stop();
+		Map.Flag_To_Redraw(GS_REDRAW_ALL);
+	}
+
+	Scen->IsGlobalChanged = false;
+	Scen->IsBridgeChanged = false;
+	Scen->IsAmbientLightChanged = false;
+	Scen->IsCrateBeenPickedUp = false;
+
+	if (Rule->IsShroudGrow && Rule->ShroudRate != 0 && Scen->ShroudTimer == 0) {
+		Scen->ShroudTimer = TICKS_PER_MINUTE * Rule->ShroudRate;
+		Map.Encroach_Shadow();
+	}
+
+	if (Frame % 120 == 0) {
+		Map.FUN_00578100();
+	}
+
+	if (Scen->Special.IsFogOfWar && Rule->FogRate != 0 && Scen->FogTimer == 0) {
+		Scen->FogTimer = TICKS_PER_MINUTE * Rule->FogRate;
+		Map.Encroach_Fog();
+	}
+
+	if (Scen->DesiredAmbientLight != Scen->CurrentAmbientLight && Rule->AmbientLightChangeRate != 0 && Scen->AmbientChangeTimer == 0) {
+		if (FUN_0053A110() || FUN_0053A120() || FUN_0053BAD0()) {
+			Scen->AmbientChangeTimer = Scen->NukeAmbientChangeRate;
+		} else if (FUN_0053B400()) {
+			Scen->AmbientChangeTimer = Scen->DominatorAmbientChangeRate;
+		} else {
+			Scen->AmbientChangeTimer = TICKS_PER_MINUTE * Rule->AmbientLightChangeRate;
+		}
+
+		Scen->DesiredAmbientLight = MAX(Scen->DesiredAmbientLight, 0);
+
+		int value = 100.0 * Rule->AmbientLightChangeStep;
+
+		if (Scen->DesiredAmbientLight < Scen->CurrentAmbientLight) {
+			Scen->CurrentAmbientLight -= value;
+			Scen->CurrentAmbientLight = MAX(Scen->CurrentAmbientLight, Scen->DesiredAmbientLight);
+		} else {
+			Scen->CurrentAmbientLight += value;
+			Scen->CurrentAmbientLight = MIN(Scen->CurrentAmbientLight, Scen->DesiredAmbientLight);
+		}
+		Scen->IsAmbientLightChanged = true;
+		Map.Update_Cell_Colors();
+		Map.Flag_To_Redraw(GS_REDRAW_TACTICAL);
+	}
+
+	TiberiumClass::Tiberium_Growth();
+	TiberiumClass::Tiberium_Spread();
+	BombListInstance.Update();
+	KamikazeInstance.Update();
+
+	DynamicVectorClass<TeamClass *> teams;
+	for (index = 0; index < Teams.Count(); index++) {
+		teams.Add(Teams[index]);
+	}
+
+	for (index = 0; index < teams.Count(); index++) {
+		teams[index]->AI();
+	}
+
+	for (index = DiskLasers.Count() - 1; index >= 0; index--) {
+		DiskLasers[index]->AI();
+	}
+
+	SpotLightClass::Update_All();
+	LaserDrawClass::Update_All();
+	FUN_0053A6C0();
+
+	for (index = RadSites.Count() - 1; index >= 0; index--) {
+		RadSites[index]->AI();
+	}
+
+	LightSourceClass::Process_Lighting(6);
+	EMPulseClass::Update_All();
+
+	for (index = 0; index < Count(); index++) {
+		(*this)[index]->AI();
+	}
+
+	if (Session.Type != GAME_NORMAL && Session.Type != GAME_SKIRMISH) {
+		for (index = 0; index < MoveFlashes.Count(); index++) {
+			MoveFlashes[index]->AI();
+		}
+	}
+
+	IonBlastClass::Update_All();
+	AlphaShapeClass::Update_All();
+
+	Map.Logic();
+
+	TacticalMap->AI();
+
+	for (index = 0; index < Factories.Count(); index++) {
+		Factories[index]->AI();
+	}
+
+	for (HousesType house = HOUSE_FIRST; house < Houses.Count(); house++) {
+		HouseClass * hptr = Houses[house];
+		if (hptr) {
+			hptr->AI();
+		}
+	}
+
+	if (Map.Object_To_Follow() != NULL) {
+		TacticalMap->Set_Tactical_Position(Coord(Map.Object_To_Follow()->Position));
+	}
 }
 
 // FUNCTION: GAMEMD 0x0055B720

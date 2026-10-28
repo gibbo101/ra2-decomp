@@ -22,6 +22,7 @@
 #include <wchar.h>
 #include <windows.h>
 #undef LoadString
+#include "stringtable.h"
 
 // SYNTHETIC: GAMEMD 0x005D58B0 SYMBOL
 // _$E2
@@ -53,6 +54,7 @@
 // _$E41
 
 extern char const * DAT_007EED18;
+extern char DAT_00889F64[];
 
 class MPHouse
 {
@@ -660,6 +662,81 @@ MultiplayerGameMode::InitializerBase::InitializerBase(void)
 {
 }
 
+static inline void Trim_Trailing(Wstring & string)
+{
+	string.trimTrailing(" ");
+}
+
+// FUNCTION: GAMEMD 0x005D7590
+void __fastcall Read_Game_Modes(Wstring const & section, MultiplayerGameMode::InitializerBase & init)
+{
+	CCFileClass file("MPModesMD.ini");
+	if (file.Is_Available(false)) {
+		INIClass ini;
+		if (ini.Load(file, false) > 0) {
+			int count = ini.Entry_Count(section);
+			for (int i = 0; i < count; i++) {
+				Wstring entry = ini.Get_Entry(section, i);
+				int index = entry.toInt();
+				Wstring value;
+				int length = ini.Get_String(section, entry, DAT_00889F64, value);
+				if (length <= 0) continue;
+
+				Wstring name;
+				int pos = value.getToken(0, ",", name);
+				if (!name.length()) continue;
+				name.trimLeading(" ");
+				Trim_Trailing(name);
+#line 1030 "D:\\ra2mdpost\\Multiplayer.cpp"
+				WideWstring title(StringTable::LoadString(name.get(), NULL, __FILE__, __LINE__));
+
+				Wstring tip;
+				pos = value.getToken(pos, ",", tip);
+				if (!tip.length()) continue;
+				tip.trimLeading(" ");
+				Trim_Trailing(tip);
+#line 1041 "D:\\ra2mdpost\\Multiplayer.cpp"
+				WideWstring tooltip(StringTable::LoadString(tip.get(), NULL, __FILE__, __LINE__));
+
+				Wstring inifile;
+				pos = value.getToken(pos, ",", inifile);
+				if (!inifile.length()) continue;
+				inifile.trimLeading(" ");
+				Trim_Trailing(inifile);
+
+				Wstring mapfilter;
+				pos = value.getToken(pos, ",", mapfilter);
+				mapfilter.trimLeading(" ");
+				Trim_Trailing(mapfilter);
+
+				Wstring ai;
+				value.getToken(pos, ",", ai);
+				ai.trimLeading(" ");
+				Trim_Trailing(ai);
+				bool aiallowed = true;
+				if (ai.length() > 0) {
+					aiallowed = stricmp(ai.get(), "false") != 0;
+				}
+
+				if (title.length() <= 0 || inifile.length() <= 0 || mapfilter.length() <= 0) continue;
+
+				MultiplayerGameMode * mode = init.Allocate(title, tooltip, inifile, mapfilter, aiallowed, index);
+				int at;
+				for (at = 0; at < Game_Modes().Count(); at++) {
+					if (Game_Modes()[at]->MPModeIndex > mode->MPModeIndex) {
+						break;
+					}
+				}
+				if (at == 0) {
+					Game_Modes().Add_Head(mode);
+				} else {
+					Game_Modes().Insert_After(at - 1, mode);
+				}
+			}
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x005D7CD0
 MultiplayerGameMode::InitializerBase::~InitializerBase(void)
 {
@@ -669,7 +746,7 @@ class MPBattleInit : public MultiplayerGameMode::InitializerBase
 {
 	public:
 		MPBattleInit(void);
-		virtual void Allocate(void) {}
+		virtual MultiplayerGameMode * Allocate(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex);
 };
 
 MPBattleInit::MPBattleInit(void)
@@ -698,7 +775,7 @@ class name : public MultiplayerGameMode::InitializerBase \
 { \
 	public: \
 		name(void); \
-		virtual void Allocate(void) {} \
+		virtual MultiplayerGameMode * Allocate(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex); \
 }; \
 name::name(void) \
 { \

@@ -1887,6 +1887,7 @@ int __fastcall FUN_00623F00(HWND list, int index, Wstring * text);
 HWND FUN_00775B10(void);
 
 void FUN_00781480(void);
+void __fastcall FUN_0079AF10(HWND dialog);
 
 // FUNCTION: GAMEMD 0x00781CC0
 int __cdecl FUN_00781CC0(UserSort const * a, UserSort const * b)
@@ -2969,19 +2970,8 @@ namespace UI {
 	void __fastcall FocusOnWindow(HWND window);
 	void __fastcall EndDialog(HWND window);
 }
-void FUN_0072C600(void);
-void FUN_0072C650(void);
-void FUN_0072BCA0(void);
-void FUN_0072BCF0(void);
-BOOL CALLBACK FUN_00799EA0(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
-Wstring __fastcall FUN_00779B50(void);
-Wstring __fastcall FUN_00779DD0(void);
-bool FUN_00779730(void);
-extern char DAT_00B77E68;
 extern int DAT_00B76468;
 extern long DAT_00B77DF8;
-int __fastcall FUN_00789500(char const * login, char const * password, int plain, int locale);
-void __fastcall FUN_0052FEC0(Surface * surface, bool flag);
 
 
 #include "_mixfile.h"
@@ -3097,6 +3087,18 @@ int __fastcall FUN_00788180(bool flag)
 	}
 	return best;
 }
+
+void FUN_0072C600(void);
+void FUN_0072C650(void);
+void FUN_0072BCA0(void);
+void FUN_0072BCF0(void);
+BOOL CALLBACK FUN_00799EA0(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+Wstring __fastcall FUN_00779B50(void);
+Wstring __fastcall FUN_00779DD0(void);
+bool FUN_00779730(void);
+extern char DAT_00B77E68;
+int __fastcall FUN_00789500(char const * login, char const * password, int plain, int locale);
+void __fastcall FUN_0052FEC0(Surface * surface, bool flag);
 void __fastcall FUN_00779C90(Wstring const * value);
 extern char DAT_00889F64[];
 extern char DAT_0084A238;
@@ -5125,13 +5127,7 @@ unsigned short __fastcall FUN_00793710(int send_port, int mangled_port, int unus
 	return result;
 }
 
-struct ConnectionRanker {
-	int FUN_005DA040(int flags);
-	int FUN_005DA080(int flags);
-
-	int Behavior;
-};
-extern ConnectionRanker DAT_00ABFEC8;
+#include "firewall.h"
 
 // FUNCTION: GAMEMD 0x007937B0
 int __fastcall FUN_007937B0(int (*pairs)[2])
@@ -5149,7 +5145,7 @@ int __fastcall FUN_007937B0(int (*pairs)[2])
 		for (int b = 0; b < Session.Players.Count() - 1; b++) {
 			int cur_value = Session.unknown_29F4[order[b]];
 			int next_value = Session.unknown_29F4[order[b + 1]];
-			if (DAT_00ABFEC8.FUN_005DA040(cur_value) < DAT_00ABFEC8.FUN_005DA040(next_value)) {
+			if (DAT_00ABFEC8.Rank_A(cur_value) < DAT_00ABFEC8.Rank_A(next_value)) {
 				int temp = order[b];
 				order[b] = order[b + 1];
 				order[b + 1] = temp;
@@ -7300,7 +7296,7 @@ bool FUN_007A0690(void)
 	request += ", ADR=";
 	request += Wstring_FromInt(address);
 	request += ", NAT=";
-	request += Wstring_FromInt((unsigned short)DAT_00ABFEC8.Behavior);
+	request += Wstring_FromInt((unsigned short)DAT_00ABFEC8.Detected);
 	request += ", PRT=";
 	request += Wstring_FromInt(Session.PortBase);
 	request += wdt;
@@ -8469,6 +8465,148 @@ long __stdcall FUN_007AA6D0(void * sink, long result)
 			Clear_Channel(DAT_00B76B10);
 			Clear_Channel(DAT_00B73BE8);
 			FUN_004068E0(DAT_0084B138);
+		}
+	}
+	return 0;
+}
+
+// FUNCTION: GAMEMD 0x007AA870
+long __stdcall FUN_007AA870(void * sink, long result, WolChannel * channels)
+{
+	Wstring name;
+	char keys[512 + 1];
+	memset(keys, 0, sizeof(keys));
+	int counter = 0;
+	ArrayList<WolChannel> pinged;
+
+	if (DAT_00B77DC1) {
+		return 0;
+	}
+
+	int type = 0;
+	if (result == 0x4013B) {
+		type = 0x29;
+	} else {
+		DAT_00B76520.removeHead(type);
+		if (result < 0) {
+			return 0;
+		}
+		if (type == 0) {
+			DAT_00B73E10.clear();
+		} else {
+			FUN_004068E0("clearing game list\n");
+			WolChannel chan;
+			memset(&chan, 0, sizeof(chan));
+			for (int i = 0; i < DAT_00B76AE0.length(); i++) {
+				DAT_00B76AE0.get(chan, i);
+				if (chan.Ping != -1) {
+					pinged.addTail(chan);
+				}
+			}
+			DAT_00B76AE0.clear();
+		}
+	}
+
+	while (channels != NULL) {
+		if (channels->Type == 0) {
+			DAT_00B73E10.addTail(*channels);
+		} else if (result == 0x4013B) {
+			if (channels->Ping != -1) {
+				WolChannel * game = NULL;
+				for (int j = 0; j < DAT_00B76AE0.length(); j++) {
+					DAT_00B76AE0.getPointer(&game, j);
+					if (game && strcmp(game->Name, channels->Name) == 0) {
+						FUN_004068E0("Setting ping %d for %s\n", channels->Ping, channels->Name);
+						game->Ping = channels->Ping;
+						break;
+					}
+				}
+			}
+		} else {
+			DAT_00B76AE0.addTail(*channels);
+			for (int k = 0; k < pinged.length(); k++) {
+				WolChannel old;
+				pinged.get(old, k);
+				if (strcmp(old.Name, channels->Name) == 0) {
+					FUN_004068E0("restoring ping %d for channel %s\n", old.Ping, channels->Name);
+					channels->Ping = old.Ping;
+					break;
+				}
+			}
+
+			name.set(channels->Name);
+			name.truncate('\'');
+			name.toLower();
+			if (Session.Type == GAME_INTERNET && Session.unknown_0C == 3) {
+				Wstring temp;
+				bool found = false;
+				for (int m = 0; m < DAT_00B777A0.length(); m++) {
+					DAT_00B777A0.get(temp, m);
+					if (temp == name) {
+						found = true;
+						break;
+					}
+				}
+				if (!found) {
+					DAT_00B777A0.addHead(name);
+				}
+			}
+
+			if (!DAT_00B76530.contains(name)) {
+				Wstring temp;
+				bool found = false;
+				for (int n = 0; n < DAT_00B765F8.length(); n++) {
+					DAT_00B765F8.get(temp, n);
+					if (temp == name) {
+						found = true;
+						break;
+					}
+				}
+				if (!found) {
+					DAT_00B765F8.addHead(name);
+				}
+			}
+
+			if (!DAT_00B77E0C->contains(name)) {
+				strcat(keys, name.get());
+				strcat(keys, ":");
+				counter++;
+			}
+		}
+
+		if (counter > 20) {
+			DAT_00AC1170->V05(DAT_00B761A8, DAT_00B77A90, keys, DAT_0084A234 & 0xFFFF00, -1, 0, 0);
+			DAT_00AC1170->V14(DAT_00B761A8, DAT_00B77A90, keys, DAT_0084A234 & 0xFFFF00);
+			counter = 0;
+			memset(keys, 0, sizeof(keys) - 1);
+		}
+		channels = channels->Next;
+	}
+
+	if (counter != 0) {
+		DAT_00AC1170->V05(DAT_00B761A8, DAT_00B77A90, keys, DAT_0084A234 & 0xFFFF00, -1, 0, 0);
+		DAT_00AC1170->V14(DAT_00B761A8, DAT_00B77A90, keys, DAT_0084A234 & 0xFFFF00);
+		memset(keys, 0, sizeof(keys) - 1);
+	}
+
+	SetEvent(DAT_00B73684[3]);
+
+	if (FUN_0077CF40()) {
+		FUN_004068E0("Received channel list, user list is %d long\n", DAT_00B77900.length());
+	} else {
+		HWND games = FUN_00775940(0x116);
+		if (games) {
+			FUN_0079AF10(games);
+		}
+		if (type == 0) {
+			FUN_007806C0();
+			HWND lobby = FUN_00775940(0x113);
+			if (lobby) {
+				KillTimer(lobby, 0x55D);
+				EnableWindow(GetDlgItem(lobby, 0x55D), TRUE);
+			}
+		} else {
+			FUN_00781480();
 		}
 	}
 	return 0;

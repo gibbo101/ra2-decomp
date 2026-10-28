@@ -1,6 +1,6 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 28 October 2026: 17,906 of 19,367 game functions match (92%; 61% of game code
+Status, 28 October 2026: 18,045 of 19,367 game functions match (93%; 62% of game code
 by size), landed in batches module by module. The rounds below record each one.
 
 ## The goal
@@ -1113,6 +1113,18 @@ Session.Players. Recording then exposed three UI-command functions building char
 ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; their RTTI
 fixed them. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
+
+### Batches 132 to 134 (28 October 2026)
+
+**139 functions** (127 of 133, 6 of 8 and a helper, 5 of 8). Batch 132 took txtlabel2's
+last small functions. Three of its misses match only while a small same-file loader is
+left undefined: the exe calls it there but inlines it in other callers, which suggests
+the range holds more than one source file. Batches 133 and 134 put Opus on sixteen
+functions of 1.8 to 1.9 KB: Options, isotype, logic, MainOpt, Multiplayer, laser,
+sounddlg, Techno, teleport, ovrlight's spotlight draw and a wonline dialog matched.
+MainOpt showed that multiplayerteam2's firewall helper and wonline's connection ranker
+are one class, now FirewallHelperClass in include/firewall.h. blight (98.8%), Session
+(92.8%), ionblast, partsys and preview remain. Merge gate: 18,047 of 18,047 (2,300.9 KB).
 
 ### Batches 129 to 131 (28 October 2026)
 
