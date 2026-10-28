@@ -41,3 +41,8 @@ GetCDClass::GetCDClass(void)
 		DebugString("No CD drives found\n");
 	}
 }
+
+// FUNCTION: GAMEMD 0x004E6140
+GetCDClass::~GetCDClass(void)
+{
+}

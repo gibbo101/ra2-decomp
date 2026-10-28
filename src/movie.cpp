@@ -126,14 +126,6 @@ void Movie_Audio_Resume(void);
 void Movie_Audio_Suspend(void);
 void __fastcall Ingame_Movie_Subtitle(void * data);
 
-struct BinkPlayer {
-	bool Flag;
-	char Rest[0x33];
-	BinkPlayer * FUN_00432690(char const * name);
-	void FUN_00432C70(void);
-	void FUN_00432700(void);
-};
-
 bool __fastcall FUN_005C0640(char const * name, char * out, bool unused);
 MovieHandle * __fastcall OwnerDraw_InitMovieHandle(char const * name, Surface * surface, Rect * bounds);
 void Play_Movie(char const * name, ThemeType theme, bool clrscrn_after, bool stretch, bool clrscrn_before, bool fullscreen);
@@ -181,8 +173,7 @@ void Play_Movie(char const * name, ThemeType theme, bool clrscrn_after, bool str
 			HiddenSurface->Fill(0);
 			Update_Visible_Surface(true, HiddenSurface);
 		}
-		BinkPlayer bink;
-		bink.FUN_00432690(buffer);
+		BinkHandle bink(buffer);
 		if (fullscreen == true) {
 			bink.Flag = true;
 		}
@@ -200,7 +191,6 @@ void Play_Movie(char const * name, ThemeType theme, bool clrscrn_after, bool str
 		Keyboard->Clear();
 		MouseCursor->Show_Mouse();
 		Map.Flag_To_Redraw(GS_REDRAW_ALL);
-		bink.FUN_00432700();
 		return;
 	}
 

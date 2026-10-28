@@ -149,7 +149,7 @@ ObjectClass::~ObjectClass(void)
 	AmbientSoundController.FUN_00405C00();
 	CustomSoundController.FUN_00405C00();
 	if (LineTrailer != NULL) {
-		LineTrailer->~LineTrail();
+		LineTrailer->Release_Owner();
 		LineTrailer = NULL;
 	}
 	if (IsSubmittedToLayer) {
@@ -161,7 +161,7 @@ ObjectClass::~ObjectClass(void)
 void ObjectClass::Clear_Line_Trail(void)
 {
 	if (LineTrailer != NULL) {
-		LineTrailer->~LineTrail();
+		LineTrailer->Release_Owner();
 		LineTrailer = NULL;
 	}
 }
@@ -732,7 +732,7 @@ void ObjectClass::Detach(AbstractClass const * target, bool all)
 void ObjectClass::Detach_All(bool all)
 {
 	if (LineTrailer != NULL) {
-		LineTrailer->~LineTrail();
+		LineTrailer->Release_Owner();
 		LineTrailer = NULL;
 	}
 

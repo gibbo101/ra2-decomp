@@ -772,7 +772,7 @@ struct ChatSink {
 	virtual long __stdcall V09(void);
 	virtual void V10(void);
 	virtual long __stdcall V11(char const * text);
-	virtual void V12(void);
+	virtual long __stdcall V12(User * users, char * text);
 	virtual long __stdcall V13(void);
 	virtual long __stdcall V14(User * user, char * text);
 	virtual long __stdcall V15(char * text);
@@ -2982,13 +2982,7 @@ extern int DAT_00B76468;
 extern long DAT_00B77DF8;
 int __fastcall FUN_00789500(char const * login, char const * password, int plain, int locale);
 void __fastcall FUN_0052FEC0(Surface * surface, bool flag);
-void __fastcall FUN_00779C90(Wstring const * value);
-extern char DAT_00889F64[];
-extern char DAT_0084A238;
-int __fastcall FUN_00797640(int sku);
-BOOL CALLBACK FUN_0079AE00(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 
-int FUN_00787010(void);
 
 #include "_mixfile.h"
 #include "_pk.h"
@@ -3103,6 +3097,12 @@ int __fastcall FUN_00788180(bool flag)
 	}
 	return best;
 }
+void __fastcall FUN_00779C90(Wstring const * value);
+extern char DAT_00889F64[];
+extern char DAT_0084A238;
+int __fastcall FUN_00797640(int sku);
+BOOL CALLBACK FUN_0079AE00(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+int FUN_00787010(void);
 
 void __fastcall FUN_0052FEC0(Surface * surface, bool flag);
 int __fastcall FUN_006241F0(int id, DLGPROC proc, OwnerDraw::DialogControl * control);
@@ -5128,6 +5128,8 @@ unsigned short __fastcall FUN_00793710(int send_port, int mangled_port, int unus
 struct ConnectionRanker {
 	int FUN_005DA040(int flags);
 	int FUN_005DA080(int flags);
+
+	int Behavior;
 };
 extern ConnectionRanker DAT_00ABFEC8;
 
@@ -7174,6 +7176,139 @@ void FUN_007A0430(void)
 			DAT_00B76AD0.addTail(name);
 		}
 	}
+}
+
+void FUN_0052F3F0(void);
+int FUN_005355D0(void);
+rc_ptr<WorldDominationTour::Campaign> * __cdecl FUN_007B0370(void);
+extern int DAT_007EEF30;
+extern int DAT_00B736F4;
+void FUN_007A1060(void);
+
+// FUNCTION: GAMEMD 0x007A0690
+bool FUN_007A0690(void)
+{
+	DAT_00B76AC4.clear();
+	HWND dialog = FUN_00775940(0x11F);
+	if (dialog) {
+		FUN_007757E0(dialog, 0);
+	}
+	DAT_00B77E28 = 0;
+	FUN_0052F3F0();
+	if (DAT_00B77900.length() < 2) {
+		FUN_0079FC10(0, -1, 1);
+		return false;
+	}
+	DAT_00B76AD0.clear();
+	DAT_00B76970.clear();
+	DAT_00B736F4 = 0;
+	FUN_007A0430();
+
+	User user;
+	memset(&user, 0, sizeof(user));
+	int host_index = -1;
+	FUN_004068E0("User list is %d long, adding to ping request queue\n", DAT_00B77900.length());
+	for (int i = 0; i < DAT_00B77900.length(); i++) {
+		DAT_00B77900.get(user, i);
+		if (user.Flags & 1) {
+			host_index = i;
+		}
+	}
+	if (host_index == -1) {
+		FUN_0079FC10(0, -1, 1);
+		return false;
+	}
+
+	User host;
+	memset(&host, 0, sizeof(host));
+	DAT_00B77900.get(host, host_index);
+	host.Next = NULL;
+
+	WOLOptionsClass options;
+	rc_ptr<PlayerProfile> profile;
+	if (options.Is_Bit1_Clear()) {
+		profile = FUN_00778A20(&DAT_00B73E40);
+	} else {
+		profile = DAT_00B75E48;
+	}
+	int country = profile->Field1C;
+	Wstring game("Match ");
+	Wstring wdt;
+
+	if (Session.unknown_0C == 3) {
+		game = "MatchWDT ";
+		rc_ptr<WorldDominationTour::Campaign> campaign = *FUN_007B0370();
+		if (campaign.Get() == NULL) {
+			wdt = ", WDS=0";
+		} else {
+			switch (campaign->PlayerFaction) {
+				case 2:
+					wdt = ", WDS=0";
+					if (country > 4) {
+						country = -1;
+					}
+					break;
+
+				case 3:
+					wdt = ", WDS=1";
+					if (country >= 0 && country <= 4) {
+						country = -1;
+					}
+					break;
+
+				default:
+					FUN_0079FC10(0, -1, 0);
+					return false;
+			}
+		}
+		wdt += ", WDT=";
+		wdt += Wstring_FromInt(Session.unknown_08);
+	}
+
+	FUN_005E2700(DAT_007EEF30, StringTable::LoadString("WOL:RequestingMatch", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x6EEB));
+
+	Wstring request(game);
+	request += "COU=";
+	request += Wstring_FromInt(country);
+	request += ", COL=";
+	request += Wstring_FromInt(profile->Field20);
+	request += ", MBR=";
+	if (profile->Field38) {
+		request += "1";
+	} else {
+		request += "0";
+	}
+
+	Wstring nick(DAT_00B73E40);
+	nick.toLower();
+	if (DAT_00B76530.contains(nick)) {
+		int locale = 0;
+		DAT_00B76530.getValue(nick, locale);
+		request += ", LOC=";
+		request += Wstring_FromInt(locale);
+	}
+	request += ", RAT=";
+	request += Wstring_FromInt(FUN_005355D0());
+	request += ", RES=";
+	request += Wstring_FromInt(Options.ScreenWidth);
+
+	NetNumType net;
+	NetNodeType node;
+	unsigned short port;
+	Session.unknown_2988.Get_Address(net, node, &port);
+	int address = *(int *)node;
+	request += ", ADR=";
+	request += Wstring_FromInt(address);
+	request += ", NAT=";
+	request += Wstring_FromInt((unsigned short)DAT_00ABFEC8.Behavior);
+	request += ", PRT=";
+	request += Wstring_FromInt(Session.PortBase);
+	request += wdt;
+
+	DAT_00AC116C->V12(&host, request.get());
+	FUN_0079FC10(4, 180, 0);
+	FUN_007A1060();
+	return true;
 }
 
 // FUNCTION: GAMEMD 0x007A0D10

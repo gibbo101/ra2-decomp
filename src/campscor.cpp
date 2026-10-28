@@ -817,6 +817,144 @@ void __fastcall FUN_00470C90(wchar_t * buffer, int seconds)
 	}
 }
 
+#include "scheme.h"
+
+namespace UI {
+	int __fastcall StandardWndProc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+}
+namespace OwnerDraw {
+	void __fastcall Paint(HWND window);
+	void __stdcall SetNeedsControlImage(HWND window, int value);
+}
+void __fastcall FUN_00607FD0(HWND window);
+extern wchar_t DAT_0089E0A4[];
+extern int DAT_0089DFC0;
+
+static int DAT_0081B1EC[8][6] = {
+	{ 0x781, 0x783, 0x785, 0x787, 0x789, 0x70a },
+	{ 0x782, 0x784, 0x786, 0x788, 0x78a, 0x70b },
+};
+
+// FUNCTION: GAMEMD 0x00470D30
+int CALLBACK FUN_00470D30(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	wchar_t text[32];
+	HWND item;
+	int i;
+	int rc = UI::StandardWndProc(window, message, wparam, lparam);
+	if (rc != 0) {
+		return rc;
+	}
+	int * result = (int *)GetWindowLong(window, DWL_USER);
+	switch (message) {
+		case WM_INITDIALOG:
+			text[0] = 0;
+			item = GetDlgItem(window, 0x733);
+			SendMessage(item, 0x4b2, 0, (LPARAM)DAT_0089E0A4);
+			swprintf(text, StringTable::LoadString("GUI:CampaignLabel", NULL, "D:\\ra2mdpost\\CampScor.cpp", 0x700), DAT_0089DFC0);
+			item = GetDlgItem(window, 0x735);
+			SendMessage(item, 0x4b2, 0, (LPARAM)text);
+			if (DAT_0089E008 == 0) {
+				swprintf(text, StringTable::LoadString("GUI:DifficultyString", NULL, "D:\\ra2mdpost\\CampScor.cpp", 0x704), StringTable::LoadString("TXT_DIFFICULTY_EASY", NULL, "D:\\ra2mdpost\\CampScor.cpp", 0x704));
+			} else if (DAT_0089E008 == 1) {
+				swprintf(text, StringTable::LoadString("GUI:DifficultyString", NULL, "D:\\ra2mdpost\\CampScor.cpp", 0x706), StringTable::LoadString("TXT_DIFFICULTY_MEDIUM", NULL, "D:\\ra2mdpost\\CampScor.cpp", 0x706));
+			} else if (DAT_0089E008 == 2) {
+				swprintf(text, StringTable::LoadString("GUI:DifficultyString", NULL, "D:\\ra2mdpost\\CampScor.cpp", 0x708), StringTable::LoadString("TXT_DIFFICULTY_BRUTAL", NULL, "D:\\ra2mdpost\\CampScor.cpp", 0x708));
+			} else {
+				swprintf(text, StringTable::LoadString("GUI:Blank", NULL, "D:\\ra2mdpost\\CampScor.cpp", 0x70a));
+			}
+			item = GetDlgItem(window, 0x732);
+			SendMessage(item, 0x4b2, 0, (LPARAM)text);
+			FUN_00470C90(text, DAT_0089DFD4 / 60);
+			item = GetDlgItem(window, 0x3ea);
+			SendMessage(item, 0x4b2, 0, (LPARAM)text);
+			for (i = 0; i < DAT_0089E020; i++) {
+				ColorScheme * scheme = ColorSchemes[DAT_0089DFE0[i]->Scheme];
+				RGBClass rgb = scheme->HSV;
+				COLORREF color = RGB(rgb.Get_Red(), rgb.Get_Green(), rgb.Get_Blue());
+				int id = DAT_0081B1EC[i][0];
+				wchar_t * name = DAT_0089DFE0[i]->Name;
+				item = GetDlgItem(window, id);
+				SendMessage(item, 0x4b2, 0, (LPARAM)name);
+				item = GetDlgItem(window, id);
+				SendMessage(item, 0x498, 0, color);
+				id = DAT_0081B1EC[i][1];
+				FUN_00470C40(window, id, DAT_0089DFE0[i]->Kills[0]);
+				item = GetDlgItem(window, id);
+				SendMessage(item, 0x498, 0, color);
+				id = DAT_0081B1EC[i][2];
+				FUN_00470C40(window, id, DAT_0089DFE0[i]->Lost[0]);
+				item = GetDlgItem(window, id);
+				SendMessage(item, 0x498, 0, color);
+				id = DAT_0081B1EC[i][3];
+				FUN_00470C40(window, id, DAT_0089DFE0[i]->Built[0]);
+				item = GetDlgItem(window, id);
+				SendMessage(item, 0x498, 0, color);
+				id = DAT_0081B1EC[i][4];
+				FUN_00470C40(window, id, DAT_0089DFE0[i]->Score[0]);
+				item = GetDlgItem(window, id);
+				SendMessage(item, 0x498, 0, color);
+				if (i == 0) {
+					name = DAT_0089DFE0[0]->Name;
+					item = GetDlgItem(window, 0x73a);
+					SendMessage(item, 0x4b2, 0, (LPARAM)name);
+					item = GetDlgItem(window, 0x73a);
+					SendMessage(item, 0x498, 0, color);
+					swprintf(text, L"%d", DAT_0089DFE0[0]->Score[0]);
+					item = GetDlgItem(window, 0x73b);
+					SendMessage(item, 0x4b2, 0, (LPARAM)text);
+					item = GetDlgItem(window, 0x73b);
+					SendMessage(item, 0x498, 0, color);
+				} else if (i == 1) {
+					name = DAT_0089DFE0[1]->Name;
+					item = GetDlgItem(window, 0x739);
+					SendMessage(item, 0x4b2, 0, (LPARAM)name);
+					item = GetDlgItem(window, 0x739);
+					SendMessage(item, 0x498, 0, color);
+					swprintf(text, L"%d", DAT_0089DFE0[1]->Score[0]);
+					item = GetDlgItem(window, 0x738);
+					SendMessage(item, 0x4b2, 0, (LPARAM)text);
+					item = GetDlgItem(window, 0x738);
+					SendMessage(item, 0x498, 0, color);
+				}
+			}
+			break;
+
+		case WM_COMMAND:
+			if (LOWORD(wparam) == 0x6d1) {
+				*result = 1;
+			}
+			break;
+
+		case WM_PAINT:
+			OwnerDraw::Paint(window);
+			FUN_00607FD0(window);
+			break;
+
+		case 0x497:
+			item = GetDlgItem(window, 0x72b);
+			PostMessage(item, 0x4d7, 0, (LPARAM)window);
+			break;
+
+		case 0x4d8:
+			if (wparam == 0) {
+				SendDlgItemMessage(window, 0x72b, 0x4d5, 0, 0x1d);
+			}
+			break;
+
+		case 0x4ec:
+			SendDlgItemMessage(window, 0x72b, 0x4d3, 0, 0);
+			break;
+
+		case 0x4ed:
+			FUN_0052FEC0(NULL, true);
+			ShowWindow(window, 0);
+			OwnerDraw::SetNeedsControlImage(window, 1);
+			break;
+	}
+	return 0;
+}
+
 // FUNCTION: GAMEMD 0x00471400
 void FUN_00471400(void)
 {

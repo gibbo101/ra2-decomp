@@ -13,6 +13,9 @@ class TechnoClass;
 class BombListClass
 {
 	public:
+		BombListClass(void) : UpdateDelay(100) {}
+		~BombListClass(void) {FUN_00439110();}
+
 		void Update(void);
 		void FUN_00438E60(void);
 		void Plant(TechnoClass * source, ObjectClass * target);
@@ -24,9 +27,9 @@ class BombListClass
 		HRESULT Save(IStream * stream);
 		HRESULT Load(IStream * stream);
 
-		static BombListClass Instance;
-
 		DynamicVectorClass<BombClass *> Bombs;
 		DynamicVectorClass<TechnoClass *> Detectors;
 		int UpdateDelay;
 };
+
+extern BombListClass BombListInstance;

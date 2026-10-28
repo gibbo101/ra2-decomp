@@ -7,7 +7,7 @@
 class StringTable
 {
 	public:
-		static wchar_t const * LoadString(char const * label, char * extra, char const * file, int line);
+		static wchar_t const * LoadString(char const * label, char ** extra, char const * file, int line);
 };
 
 char * __fastcall FUN_007350C0(wchar_t const * text);

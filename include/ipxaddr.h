@@ -25,6 +25,7 @@ class IPXAddressClass
 		void Get_Node(NetNodeType node);
 		void Set_Node(NetNodeType node);
 		void Set_Port(unsigned short port);
+		unsigned short Get_Port(void) { return(*(unsigned short *)NetworkNumber); }
 
 		int Is_Broadcast(void);
 

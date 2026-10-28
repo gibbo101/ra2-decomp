@@ -379,6 +379,7 @@ Each entry: what the diff showed, then the source change that fixed it.
   heap address: sweep dummy declarations and keep the form that fails at fewest offsets.
 - When no body form helps, moving real declarations the file already uses to before or
   after the function shifts its heap offsets too (wonline 0x00788180); never add unused ones.
+  One move may not be enough: move several together (six held it against a new inline).
 - A shared-header layout change can flip it as well: an equally true form with fewer new
   names (`int X[64][2]` rather than a new pair struct) held wonline 0x00788180.
 - A named reference to an object indexed more than once (`CellClass & center = Map[cell]`)
@@ -423,7 +424,10 @@ Each entry: what the diff showed, then the source change that fixed it.
   `HouseClass *`; EventClass's MegaMission constructor has 6 arguments.
 - LightSourceClass has a DetailLevel at +0x34, compared with `Options.DetailLevel`.
 - Every static data member a header declares, even a `static int`, uses up one `$E` number
-  in each file including it; static member functions do not.
+  in each file including it; static member functions do not. Statics only the class's
+  own .cpp uses stay out of the shared header: that file declares the full class itself.
+- An inline constructor or destructor in a shared header on a class with vector members
+  shifts `$E` and `$S` numbers in every includer: declare it, define it inline in its file.
 - A header that needs a type only by reference forward-declares it (`class Wstring;`):
   a new `#include` there flipped wonline 0x00788180; the .cpp includes the full header.
 - An `#include` a new function needs goes after the file's last global definition: in

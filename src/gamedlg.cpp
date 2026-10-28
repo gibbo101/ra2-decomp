@@ -322,3 +322,28 @@ BOOL CALLBACK Game_Controls_Dialog_Proc(HWND window, UINT message, WPARAM wparam
 	}
 	return FALSE;
 }
+
+// FUNCTION: GAMEMD 0x004E23C0
+void __fastcall FUN_004E23C0(HWND window, int id, int unused, int code)
+{
+	int * retval = (int *)GetWindowLong(window, DWL_USER);
+	switch (id) {
+		case 0x52C:
+			if (code == 0 && GameActive == true) {
+				Game::SpecialDialog = SDLG_KEYBOARD;
+				*retval = 1;
+			}
+			break;
+
+		case 0x52D:
+			if (code == 0 && GameActive == true) {
+				Game::SpecialDialog = SDLG_SOUND;
+				*retval = 1;
+			}
+			break;
+
+		case 0x686:
+			*retval = 1;
+			break;
+	}
+}

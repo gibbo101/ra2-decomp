@@ -222,3 +222,6 @@ address,name,symbol,evidence
 0x00A8ED78,GasSystem,,"TibSun globals.cpp ParticleSystemClass pointer; cleared by 0x007258D0 Detach_This_From_All, matched with TibSun source"
 0x007CB9B8,wcstol,,"LIBCMT wcstol.obj: calls _wcstoxl 0x007CB9CF with flags 0; called by 0x007B7D80, matched"
 0x007CBB76,wcstoul,,"LIBCMT wcstol.obj: calls _wcstoxl 0x007CB9CF with flags 1; called by 0x006CA5A0, matched"
+0x0087F5D8,BombListInstance,,BombListClass global (YRpp BombListClass::Instance); built by _$E43 0x0040B540 and destroyed by _$E41 0x0040B5C0 with no $S guard
+0x00887308,VisibleSurface,,TibSun _surface.h VisibleSurface (YRpp DSurface::Primary); its neighbours sit at TibSun's surface offsets
+0x00ABCB78,LineTrailArray,,DynamicVectorClass<LineTrail *> (YRpp LineTrail::Array); walked by LineTrail::Process_All

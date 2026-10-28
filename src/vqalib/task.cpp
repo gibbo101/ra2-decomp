@@ -44,11 +44,356 @@ long VQA_SeekGroup(VQAHandleP *vqap, long framenum, long groupsize, VQABool prel
 
 long PrimeBuffers(VQAHandle *vqa);
 
+long Load_FINF(VQAHandleP *vqap, unsigned long iffsize);
+long Load_CINF(VQAHandleP *vqap);
+long Load_PINF(VQAHandleP *vqap);
+long Load_LINF(VQAHandleP *vqap);
+long Load_CLIP(VQAHandleP *vqap, unsigned long iffsize);
+long Load_MFCI(VQAHandleP *vqap);
+long Load_MSCI(VQAHandleP *vqap);
+
+long __cdecl VQA_Memory_Handler(VQAHandle *vqa, long action, void *buffer, long nbytes);
+long __cdecl Disk_VQA_Stream_Handler(VQAHandle *vqa, long action, void *buffer, long nbytes);
+
 long VQA_LargestLoop(VQAHandleP *vqap, long);
 
 extern void __cdecl UnVQ_Nop(unsigned char *codebook, unsigned char *pointers,
 		unsigned char *buffer, unsigned long blocksperrow,
 		unsigned long numrows, unsigned long bufwidth);
+
+// FUNCTION: GAMEMD 0x007C2590
+long VQA_Open(char const *filename, VQAConfig *_config, VQAHandle **handle)
+{
+	VQAHandle   *vqa;
+	VQAHandleP  *vqap;
+	VQAHeader   *header;
+	VQAConfig   *config;
+	ChunkHeader chunk;
+	bool        done;
+
+	*handle = NULL;
+
+	if (!_config) {
+		return(VQAERR_NOCONFIG);
+	}
+
+	if (!_config->TimerCallback) {
+		return(VQAERR_NOTIMER);
+	}
+
+	if (_config->RefreshRate == 0) {
+		return(VQAERR_NORATE);
+	}
+
+	if (_config->MemoryHandler == NULL) {
+		vqa = (VQAHandle *)VQA_Memory_Handler(NULL, VQAMEM_ALLOC, 0, sizeof(VQAHandleP));
+		if (vqa != NULL) {
+			VQA_Memory_Handler(vqa, VQAMEM_LOCK, vqa, sizeof(VQAHandleP));
+		} else {
+			return(VQAERR_NOMEM);
+		}
+	} else {
+		vqa = (VQAHandle *)_config->MemoryHandler(NULL, VQAMEM_ALLOC, 0, sizeof(VQAHandleP));
+		if (vqa != NULL) {
+			_config->MemoryHandler(vqa, VQAMEM_LOCK, vqa, sizeof(VQAHandleP));
+		} else {
+			return(VQAERR_NOMEM);
+		}
+
+	}
+
+	vqap = (VQAHandleP *)vqa;
+
+	memset(vqap, 0, sizeof(VQAHandleP));
+	vqap->MemUsed = sizeof(VQAHandleP);
+
+	if (_config != NULL) {
+		memcpy(&vqap->Config, _config, sizeof(VQAConfig));
+	}
+
+	config = &vqap->Config;
+
+	if (config->MemoryHandler == NULL) {
+		config->MemoryHandler = VQA_Memory_Handler;
+	}
+
+	if (config->StreamHandler == NULL) {
+		config->StreamHandler = Disk_VQA_Stream_Handler;
+	}
+
+	header = &vqap->Header;
+
+	if (config->StreamHandler(vqa, VQACMD_OPEN, (void *)filename, 0)) {
+		config->MemoryHandler(vqa, VQAMEM_UNLOCK, vqa, sizeof(VQAHandleP));
+		config->MemoryHandler(vqa, VQAMEM_FREE, vqa, NULL);
+		return(VQAERR_OPEN);
+	}
+
+	int pos = strlen(filename) - 31;
+	if (pos < 0) pos = 0;
+	strcpy(vqap->Filename, filename + pos);
+
+	if (config->StreamHandler(vqa, VQACMD_READ, &chunk, sizeof(chunk))) {
+		VQA_Close(vqa);
+		return(VQAERR_READ);
+	}
+
+	if ((chunk.id != ID_FORM) || (chunk.size == 0)) {
+		VQA_Close(vqa);
+		return(VQAERR_NOTVQA);
+	}
+
+	if (config->StreamHandler(vqa, VQACMD_READ, &chunk, sizeof(chunk.id))) {
+		VQA_Close(vqa);
+		return(VQAERR_READ);
+	}
+
+	if (chunk.id != ID_WVQA) {
+		VQA_Close(vqa);
+		return(VQAERR_NOTVQA);
+	}
+
+	done = 0;
+
+	while (!done) {
+		if (config->StreamHandler(vqa, VQACMD_READ, &chunk, sizeof(chunk))) {
+			VQA_Close(vqa);
+			return(VQAERR_READ);
+		}
+
+		chunk.size = REVERSE_LONG(chunk.size);
+
+		switch (chunk.id) {
+
+			case ID_VQHD:
+				if (chunk.size != sizeof(VQAHeader)) {
+					VQA_Close(vqa);
+					return(VQAERR_NOTVQA);
+				}
+
+				if (config->StreamHandler(vqa, VQACMD_READ, header, PADSIZE(chunk.size))) {
+					VQA_Close(vqa);
+					return(VQAERR_READ);
+				}
+
+				vqap->Version = header->Version;
+				vqap->NumFrames = header->Frames;
+				vqap->ImageWidth = header->ImageWidth;
+				vqap->ImageHeight = header->ImageHeight;
+				vqap->ColorMode = header->ColorMode;
+				vqap->FrameRate = header->FPS;
+
+				if (config->FrameRate == -1) {
+					config->FrameRate = header->FPS;
+				}
+
+				if (config->DrawRate == -1) {
+					config->DrawRate = header->FPS;
+				}
+
+				if ((config->DrawRate == -1) || (config->DrawRate == 0)) {
+					config->DrawRate = header->FPS;
+				}
+
+				#if(VQAAUDIO_ON)
+				// Without an alternate track the primary one plays.
+				if ((header->Version > VQAHD_VER1)
+						&& !(header->Flags & VQAHDF_ALTAUDIO)) {
+					config->OptionFlags &= ~VQAOPTF_ALTAUDIO;
+				}
+				#endif
+
+				break;
+
+			case ID_CLIP:
+				if (Load_CLIP(vqap, chunk.size) != VQAERR_NONE) {
+					VQA_Close(vqa);
+					return(VQAERR_READ);
+				}
+				break;
+
+			case ID_LINF:
+				if (Load_LINF(vqap) != VQAERR_NONE) {
+					VQA_Close(vqa);
+					return(VQAERR_READ);
+				}
+				break;
+
+			case ID_MFCI:
+				if (Load_MFCI(vqap) != VQAERR_NONE) {
+					VQA_Close(vqa);
+					return(VQAERR_READ);
+				}
+				break;
+
+			case ID_CINF:
+				if (Load_CINF(vqap) != VQAERR_NONE) {
+					VQA_Close(vqa);
+					return(VQAERR_READ);
+				}
+				break;
+
+			case ID_PINF:
+				if (Load_PINF(vqap) != VQAERR_NONE) {
+					VQA_Close(vqa);
+					return(VQAERR_READ);
+				}
+				break;
+
+			case ID_FINF:
+				if (AllocBuffers(vqap) != VQAERR_NONE) {
+					VQA_Close(vqa);
+					return(VQAERR_NOMEM);
+				}
+
+				if (Load_FINF(vqap, chunk.size) != VQAERR_NONE) {
+					VQA_Close(vqa);
+					return(VQAERR_READ);
+				}
+
+				done = true;
+				break;
+
+			case ID_MSCI:
+				if (Load_MSCI(vqap) != VQAERR_NONE) {
+					VQA_Close(vqa);
+					return(VQAERR_READ);
+				}
+				break;
+
+			default:
+				if (config->StreamHandler(vqa, VQACMD_SEEK, (void *)SEEK_CUR,
+						PADSIZE(chunk.size))) {
+					VQA_Close(vqa);
+					return(VQAERR_SEEK);
+				}
+				break;
+		}
+	}
+
+	if (header->ColorMode == 0 && vqap->PaletteInfo.Header.Count == 0) {
+		vqap->PaletteInfo.Header.Count = (unsigned short)VQA_NumFramesWithPalettes(vqap);
+	}
+
+	VQA_Reset((VQAHandle *)vqap);
+
+	// A movie without an audio track never tries to play one.
+	if (((header->Flags & VQAHDF_AUDIO) == 0)) {
+		config->OptionFlags &= (~VQAOPTF_AUDIO);
+	}
+
+	#if(VQAAUDIO_ON)
+	if (config->OptionFlags & VQAOPTF_AUDIO) {
+		VQAAudio *audio;
+
+		if (config->AudioHandler == NULL) {
+			VQA_Close(vqa);
+			return(VQAERR_NOAHANDL);
+		}
+
+		audio = &vqap->Audio;
+
+		if (config->OptionFlags & VQAOPTF_ALTAUDIO) {
+			vqap->SampleRate = header->AltSampleRate;
+			vqap->Channels = header->AltChannels;
+			vqap->BitsPerSample = header->AltBitsPerSample;
+		} else {
+			vqap->SampleRate = header->SampleRate;
+			vqap->Channels = header->Channels;
+			vqap->BitsPerSample = header->BitsPerSample;
+		}
+
+		if (VQA_OpenAudio(vqap) != VQAERR_NONE) {
+			VQA_Close(vqa);
+			return(VQAERR_AUDIO);
+		}
+
+		Lock_Audio_Handler();
+		audio->Flags |= VQAAUDF_MEMLOCKED;
+
+		VQA_sosCODECInitStream(&audio->ADPCM_Info);
+
+
+	} else {
+		if (config->AudioHandler != NULL) {
+			vqap->Config.AudioHandler(vqa, VQAAUDIO_INIT, NULL, NULL);
+		}
+	}
+	#endif
+
+	if (config->OptionFlags & VQAOPTF_LOOPS) {
+
+		if ((config->OptionFlags & VQAOPTF_LOOPCACHE)) {
+			VQALoopInfo *info = &vqap->LoopInfo;
+			if (info->Header.Count > 0) {
+				long cached;
+				long size;
+				if (config->StreamHandler(vqa, VQACMD_SIZE, &size, 0) != 0) {
+					size = 0;
+				}
+
+				VQALoopCache *cache = &vqap->LoopCache;
+
+				cache->Size = VQA_LargestLoop(vqap, size);
+				config->MemoryHandler(vqa, VQAMEM_QUERYSIZE, &cached, 0);
+				if (cached < 0) {
+					if (size > 0) {
+						cached = size;
+					} else {
+						cached = 0;
+					}
+				}
+				if (cache->Size > cached) {
+					cache->Size = cached;
+				}
+
+				if (cache->Size > 0) {
+					void *ptr = (void *)config->MemoryHandler(vqa, VQAMEM_ALLOC, NULL, vqap->LoopCache.Size);
+					cache->Ptr = (char *)ptr;
+					if (ptr == NULL) {
+						VQA_Close(vqa);
+						return(VQAERR_NOMEM);
+					}
+					config->MemoryHandler(vqa, VQAMEM_LOCK, vqap->LoopCache.Ptr, vqap->LoopCache.Size);
+					vqap->AltBufferFlags |= VQAABUFF_ALTLOOP;
+					vqap->MemUsed += vqap->LoopCache.Size;
+					VQA_ResetCache(vqap);
+				}
+			}
+		}
+
+		if (config->InitialLoopID >= 0) {
+			if (VQA_SetLoop(vqa, config->InitialLoopID, config->InitialLoopIterations, 2) != VQAERR_NONE) {
+				VQA_Close(vqa);
+				return(VQAERR_SETLOOP);
+			}
+		} else {
+			if (VQA_SetLoop_Internal(vqa, 0, vqap->StopFrame, 0, 0) != VQAERR_NONE) {
+				VQA_Close(vqa);
+				return(VQAERR_SETLOOP);
+			}
+		}
+
+
+	} else {
+		vqap->LoopEndFrameMode2 = vqap->StopFrame;
+	}
+
+	if (VQA_Configure_Drawer(vqap) != VQAERR_NONE) {
+		return(VQAERR_OPEN);
+	}
+
+	if (!(config->OptionFlags & VQAOPTF_LOOPS) || config->InitialLoopID < 0) {
+		if (PrimeBuffers(vqa) != VQAERR_NONE) {
+			VQA_Close(vqa);
+			return(VQAERR_READ);
+		}
+	}
+
+	*handle = vqa;
+
+	return(VQAERR_NONE);
+}
 
 // FUNCTION: GAMEMD 0x007C2C60
 void VQA_Close(VQAHandle *vqa)

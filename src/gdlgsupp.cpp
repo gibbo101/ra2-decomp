@@ -993,3 +993,12 @@ void __fastcall FUN_004E5ED0(HWND dialog, int id, int wanted)
 		ShowWindow(item, SW_SHOW);
 	}
 }
+
+// FUNCTION: GAMEMD 0x004E6030
+int __fastcall FUN_004E6030(HWND dialog, int id, int index)
+{
+	if (index == -1) {
+		index = SendDlgItemMessage(dialog, id, CB_GETCURSEL, 0, 0);
+	}
+	return SendDlgItemMessage(dialog, id, CB_GETITEMDATA, index, 0);
+}

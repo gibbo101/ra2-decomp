@@ -5,6 +5,7 @@
 
 #include "always.h"
 #include "quarry.h"
+#include "threat.hh"
 #include "win.h"
 
 char const * const QuarryName[QUARRY_COUNT] = {
@@ -37,4 +38,34 @@ QuarryType Quarry_From_Name(char const * name)
 char const * Name_From_Quarry(QuarryType quarry)
 {
 	return(QuarryName[quarry]);
+}
+
+// FUNCTION: GAMEMD 0x00645BB0
+ThreatType __fastcall FUN_00645BB0(QuarryType quarry)
+{
+	switch (quarry) {
+		case QUARRY_ANYTHING:
+		case QUARRY_THREAT:
+			goto none;
+		case QUARRY_BUILDINGS:
+			return(THREAT_BUILDINGS);
+		case QUARRY_HARVESTERS:
+			return(THREAT_TIBERIUM);
+		case QUARRY_INFANTRY:
+			return(THREAT_INFANTRY);
+		case QUARRY_VEHICLES:
+			return(THREAT_VEHICLES);
+		case QUARRY_FACTORIES:
+			return(THREAT_FACTORIES);
+		case QUARRY_DEFENSE:
+			return(THREAT_BASE_DEFENSE);
+		case QUARRY_POWER:
+			return(THREAT_POWER);
+		case QUARRY_OCCUPIABLE_BUILDINGS:
+			return(ThreatType(0x8000));
+		case QUARRY_TECH_BUILDINGS:
+			return(ThreatType(0x10000));
+	}
+none:
+	return(THREAT_NORMAL);
 }

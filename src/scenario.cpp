@@ -1025,7 +1025,7 @@ void Clear_Scenario(void)
 	VeinholeMonsterClass::Reset();
 	TiberiumClass::Deinit_Tiberium_Spread_System();
 	TiberiumClass::Deinit_Tiberium_Growth_System();
-	BombListClass::Instance.FUN_00439110();
+	BombListInstance.FUN_00439110();
 	KamikazeInstance.Clear();
 	AircraftTracker.Clear();
 	FUN_006370B0();

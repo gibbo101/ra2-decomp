@@ -509,3 +509,15 @@ bool TPoint2D<T>::operator == (TPoint2D<T> const & rvalue) const
 }
 
 template class TPoint2D<int>;
+
+extern unsigned char DAT_00A8F1C4;
+extern unsigned char DAT_00A8F1C5;
+extern unsigned char DAT_00A8F1C6;
+
+// FUNCTION: GAMEMD 0x00517340
+void FUN_00517340(void)
+{
+	DAT_00A8F1C4 = 0;
+	DAT_00A8F1C5 = 0;
+	DAT_00A8F1C6 = 0;
+}

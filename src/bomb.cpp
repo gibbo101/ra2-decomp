@@ -64,10 +64,10 @@ extern "C" const CLSID CLSID_BombClass;
 DynamicVectorClass<BombClass *> Bombs;
 
 // SYNTHETIC: GAMEMD 0x00438550 SYMBOL
-// _$E195
+// _$E194
 
 // SYNTHETIC: GAMEMD 0x00438590 SYMBOL
-// _$E193
+// _$E192
 
 // FUNCTION: GAMEMD 0x004385D0
 BombClass::BombClass(void) :

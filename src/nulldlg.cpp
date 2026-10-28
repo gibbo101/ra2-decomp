@@ -65,6 +65,7 @@ void Modem_Echo(char c);
 bool Reconnect_Null_Modem(void);
 bool Dial_Modem(SerialSettingsType *settings, bool reconnect);
 bool Answer_Modem(SerialSettingsType *settings, bool reconnect);
+static char DialString[CWAITSTRBUF_MAX + PhoneEntryClass::PHONE_MAX_NUM - 1];
 SerialSettingsType *DialSettings;
 
 // FUNCTION: GAMEMD 0x005EFF00
@@ -321,6 +322,162 @@ bool Reconnect_Null_Modem(void)
 	}
 
 	return(retval);
+}
+
+// FUNCTION: GAMEMD 0x005F0690
+bool Dial_Modem(SerialSettingsType *settings, bool reconnect)
+{
+	bool connected = false;
+	DialStatusType dialstatus;
+	int modemstatus;
+
+	DebugString("Dial Modem\n");
+
+	Session.ModemService = false;
+
+	DialSettings = settings;
+
+	modemstatus = NullModem.Get_Modem_Status();
+
+	DebugString("Get_Modem_Status indicates the following...\n");
+	DebugString("CTS: %s\n", (modemstatus & WinModemClass::CTS_SET) ? "SET" : "CLEAR");
+	DebugString("DSR: %s\n", (modemstatus & WinModemClass::DSR_SET) ? "SET" : "CLEAR");
+	DebugString(" RI: %s\n", (modemstatus & WinModemClass::RI_SET) ? "SET" : "CLEAR");
+	DebugString(" CD: %s\n", (modemstatus & WinModemClass::CD_SET) ? "SET" : "CLEAR");
+
+	if (reconnect) {
+		if ((modemstatus & WinModemClass::CD_SET)) {
+			connected = true;
+			Session.ModemService = true;
+			return(connected);
+		}
+	} else if ((modemstatus & WinModemClass::CD_SET)) {
+		DebugString("Modem already on-line - hanging up\n");
+		NullModem.Hangup_Modem();
+		Session.ModemService = false;
+	}
+
+	NullModem.Setup_Modem_Echo(Modem_Echo);
+
+	modemstatus = NullModem.Detect_Modem(settings, reconnect);
+	if (!modemstatus) {
+		DebugString("Detect_Modem failed\n");
+		NullModem.Remove_Modem_Echo();
+		NullModem.Print_EchoBuf();
+		NullModem.Reset_EchoBuf();
+
+		switch (settings->Baud) {
+			case 14400:
+				DebugString("Upshifting to 19200\n");
+				settings->Baud = 19200;
+				Shutdown_Modem();
+				Init_Null_Modem(settings);
+				NullModem.Setup_Modem_Echo(Modem_Echo);
+				modemstatus = NullModem.Detect_Modem(settings, reconnect);
+				if (!modemstatus) {
+					DebugString("Detect_Modem failed at 19200\n");
+					NullModem.Remove_Modem_Echo();
+					NullModem.Print_EchoBuf();
+					NullModem.Reset_EchoBuf();
+					WWMessageBox().Process(StringTable::LoadString("TXT_UNABLE_FIND_MODEM", NULL, "D:\\ra2mdpost\\NullDlg.CPP", 6664), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\NullDlg.CPP", 6664), NULL, NULL);
+					Session.ModemService = true;
+					return(connected);
+				}
+				break;
+
+			case 28800:
+				DebugString("Upshifting to 38400\n");
+				settings->Baud = 38400;
+				Shutdown_Modem();
+				Init_Null_Modem(settings);
+				NullModem.Setup_Modem_Echo(Modem_Echo);
+				modemstatus = NullModem.Detect_Modem(settings, reconnect);
+				if (!modemstatus) {
+					DebugString("Detect_Modem failed at 38400\n");
+					NullModem.Remove_Modem_Echo();
+					NullModem.Print_EchoBuf();
+					NullModem.Reset_EchoBuf();
+					WWMessageBox().Process(StringTable::LoadString("TXT_UNABLE_FIND_MODEM", NULL, "D:\\ra2mdpost\\NullDlg.CPP", 6685), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\NullDlg.CPP", 6685), NULL, NULL);
+					Session.ModemService = true;
+					return(connected);
+				}
+				break;
+
+			default:
+				WWMessageBox().Process(StringTable::LoadString("TXT_UNABLE_FIND_MODEM", NULL, "D:\\ra2mdpost\\NullDlg.CPP", 6692), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\NullDlg.CPP", 6692), NULL, NULL);
+				Session.ModemService = true;
+				return(connected);
+		}
+	} else if (modemstatus == -1) {
+		NullModem.Remove_Modem_Echo();
+		NullModem.Print_EchoBuf();
+		NullModem.Reset_EchoBuf();
+		WWMessageBox().Process(StringTable::LoadString("TXT_ERROR_IN_INITSTRING", NULL, "D:\\ra2mdpost\\NullDlg.CPP", 6705), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\NullDlg.CPP", 6705), NULL, NULL);
+		Session.ModemService = true;
+		return(connected);
+	}
+
+	DebugString("Ready to dial\n");
+
+	dialstatus = NullModem.Dial_Modem(DialString, settings->DialMethod, reconnect);
+
+	if (reconnect) {
+		Map.Flag_To_Redraw(GS_REDRAW_ALL);
+		Map.Render();
+	}
+
+	switch (dialstatus) {
+		case DIAL_CONNECTED:
+			DebugString("Dial_Modem returned 'DIAL_CONNECTED'\n");
+			connected = true;
+			break;
+
+		case DIAL_NO_CARRIER:
+			DebugString("Dial_Modem returned 'DIAL_NO_CARRIER'\n");
+			WWMessageBox().Process(StringTable::LoadString("TXT_NO_CARRIER", NULL, "D:\\ra2mdpost\\NullDlg.CPP", 6758), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\NullDlg.CPP", 6758), NULL, NULL);
+			connected = false;
+			break;
+
+		case DIAL_BUSY:
+			DebugString("Dial_Modem returned 'DIAL_BUSY'\n");
+			WWMessageBox().Process(StringTable::LoadString("TXT_LINE_BUSY", NULL, "D:\\ra2mdpost\\NullDlg.CPP", 6764), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\NullDlg.CPP", 6764), NULL, NULL);
+			connected = false;
+			break;
+
+		case DIAL_ERROR:
+			DebugString("Dial_Modem returned 'DIAL_ERROR'\n");
+			WWMessageBox().Process(StringTable::LoadString("TXT_NUMBER_INVALID", NULL, "D:\\ra2mdpost\\NullDlg.CPP", 6770), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\NullDlg.CPP", 6770), NULL, NULL);
+			connected = false;
+			break;
+
+		case DIAL_TIMEOUT:
+			DebugString("Dial_Modem returned 'DIAL_TIMEOUT'\n");
+			WWMessageBox().Process(StringTable::LoadString("TXT_ERROR_TIMEOUT", NULL, "D:\\ra2mdpost\\NullDlg.CPP", 6776), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\NullDlg.CPP", 6776), NULL, NULL);
+			connected = false;
+			break;
+
+		case DIAL_NO_DIAL_TONE:
+			DebugString("Dial_Modem returned 'DIAL_NO_DIAL_TONE'\n");
+			WWMessageBox().Process(StringTable::LoadString("TXT_NO_DIAL_TONE", NULL, "D:\\ra2mdpost\\NullDlg.CPP", 6782), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\NullDlg.CPP", 6782), NULL, NULL);
+			connected = false;
+			break;
+
+		case DIAL_CANCELED:
+			DebugString("Dial_Modem returned 'DIAL_CANCELLED'\n");
+			NullModem.Hangup_Modem();
+			Session.ModemService = false;
+			WWMessageBox().Process(StringTable::LoadString("TXT_DIALING_CANCELED", NULL, "D:\\ra2mdpost\\NullDlg.CPP", 6790), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\NullDlg.CPP", 6790), NULL, NULL);
+			connected = false;
+			break;
+	}
+
+	NullModem.Remove_Modem_Echo();
+	NullModem.Print_EchoBuf();
+	NullModem.Reset_EchoBuf();
+
+	Session.ModemService = true;
+
+	return(connected);
 }
 
 // FUNCTION: GAMEMD 0x005F0D60

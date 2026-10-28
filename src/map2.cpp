@@ -1,0 +1,51 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright 2026 ra2-decomp contributors
+// Copyright 2025 Electronic Arts Inc.; 2026 OpenTS contributors
+// Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
+
+
+#include "always.h"
+#include "rect.h"
+#include "geometry.h"
+
+// SYNTHETIC: GAMEMD 0x0058B110 SYMBOL
+// _$E2
+
+// SYNTHETIC: GAMEMD 0x0058B130 SYMBOL
+// _$E5
+
+// SYNTHETIC: GAMEMD 0x0058B160 SYMBOL
+// _$E8
+
+// SYNTHETIC: GAMEMD 0x0058B180 SYMBOL
+// _$E11
+
+// SYNTHETIC: GAMEMD 0x0058B1A0 SYMBOL
+// _$E14
+
+// SYNTHETIC: GAMEMD 0x0058B1C0 SYMBOL
+// _$E17
+
+// SYNTHETIC: GAMEMD 0x0058B1E0 SYMBOL
+// _$E20
+
+// SYNTHETIC: GAMEMD 0x0058B200 SYMBOL
+// _$E23
+
+// SYNTHETIC: GAMEMD 0x0058B240 SYMBOL
+// _$E26
+
+// SYNTHETIC: GAMEMD 0x0058B270 SYMBOL
+// _$E29
+
+// SYNTHETIC: GAMEMD 0x0058B2A0 SYMBOL
+// _$E32
+
+// SYNTHETIC: GAMEMD 0x0058B2D0 SYMBOL
+// _$E35
+
+// SYNTHETIC: GAMEMD 0x0058B2E0 SYMBOL
+// _$E38
+
+// SYNTHETIC: GAMEMD 0x0058B300 SYMBOL
+// _$E41

@@ -3,6 +3,7 @@
 // Copyright 2025 Electronic Arts Inc.; 2026 OpenTS contributors
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
+#define NDEBUG
 #define INCLUDE_COM
 #include "always.h"
 #include "geometry.h"
@@ -264,6 +265,62 @@ void InfantryTypeClass::Read_Sequence_INI(void)
 	}
 }
 
+#include "animtype.h"
+#include "weapon.h"
+
+// FUNCTION: GAMEMD 0x005240A0
+bool InfantryTypeClass::Read_INI(CCINIClass & ini)
+{
+	ini.Reset();
+	IsDamageSparks = false;
+
+	if (BASECLASS::Read_INI(ini)) {
+		Pip = ini.Get_PipEnum(IniName, "Pip", Pip);
+		OccupyPip = ini.Get_PipEnum(IniName, "OccupyPip", OccupyPip);
+		OccupyWeapon.Weapon = TGet_Class(ini, IniName, "OccupyWeapon", OccupyWeapon.Weapon);
+		EliteOccupyWeapon.Weapon = TGet_Class(ini, IniName, "EliteOccupyWeapon", EliteOccupyWeapon.Weapon);
+		VoiceComment = ini.Get_VocType_List(ini, IniName, "VoiceComment", VoiceComment);
+		DeadBodies = TGet_TypeList<AnimTypeClass>(ini, IniName, "DeadBodies", DeadBodies);
+		DeathAnims = TGet_TypeList<AnimTypeClass>(ini, IniName, "DeathAnims", DeathAnims);
+		IsCyborg = ini.Get_Bool(IniName, "Cyborg", IsCyborg);
+		NotHuman = ini.Get_Bool(IniName, "NotHuman", NotHuman);
+		if (IsCyborg) IsDamageSparks = true;
+		EnterWaterSound = ini.Get_VocType(IniName, "EnterWaterSound", (VocType)EnterWaterSound);
+		LeaveWaterSound = ini.Get_VocType(IniName, "LeaveWaterSound", (VocType)LeaveWaterSound);
+		IsFearless = ini.Get_Bool(IniName, "Fearless", IsFearless);
+		IsFraidyCat = ini.Get_Bool(IniName, "Fraidycat", IsFraidyCat);
+		IsCapture = ini.Get_Bool(IniName, "Infiltrate", IsCapture);
+		Ivan = ini.Get_Bool(IniName, "Ivan", Ivan);
+		Occupier = ini.Get_Bool(IniName, "Occupier", Occupier);
+		Assaulter = ini.Get_Bool(IniName, "Assaulter", Assaulter);
+		DirectionDistance = ini.Get_Int(IniName, "DetectionDistance", DirectionDistance);
+		HarvestRate = ini.Get_Int(IniName, "HarvestRate", HarvestRate);
+		IsBomber = ini.Get_Bool(IniName, "C4", IsBomber);
+		IsCivilian = ini.Get_Bool(IniName, "Civilian", IsCivilian);
+		IsEngineer = ini.Get_Bool(IniName, "Engineer", IsEngineer);
+		IsTiberiumProof = ini.Get_Bool(IniName, "TiberiumProof", IsTiberiumProof);
+		IsAgent = ini.Get_Bool(IniName, "Agent", IsAgent);
+		IsThief = ini.Get_Bool(IniName, "Thief", IsThief);
+		IsVehicleThief = ini.Get_Bool(IniName, "VehicleThief", IsVehicleThief);
+		IsDoggie = ini.Get_Bool(IniName, "Doggie", IsDoggie);
+		Deployer = ini.Get_Bool(IniName, "Deployer", Deployer);
+		DeployedCrushable = ini.Get_Bool(IniName, "DeployedCrushable", DeployedCrushable);
+		UseOwnName = ini.Get_Bool(IniName, "UseOwnName", UseOwnName);
+		JumpJetTurn = ini.Get_Bool(IniName, "JumpJetTurn", JumpJetTurn);
+		if (IsBomber) IsCapture = true;
+		if (IsEngineer) IsCapture = true;
+		if (IsAgent) IsCapture = true;
+		IsCrawling = ArtINI.Get_Bool(Graphic_Name(), "Crawls", IsCrawling);
+		FireLaunch = ArtINI.Get_Int(Graphic_Name(), "FireUp", FireLaunch);
+		ProneLaunch = ArtINI.Get_Int(Graphic_Name(), "FireProne", ProneLaunch);
+		SecondaryFire = ArtINI.Get_Int(Graphic_Name(), "SecondaryFire", SecondaryFire);
+		SecondaryProne = ArtINI.Get_Int(Graphic_Name(), "SecondaryProne", SecondaryProne);
+		Read_Sequence_INI();
+		return(true);
+	}
+	return(false);
+}
+
 // FUNCTION: GAMEMD 0x00524760
 Point3D InfantryTypeClass::Lepton_Dimensions(void) const
 {
@@ -392,11 +449,8 @@ int InfantryTypeClass::Fetch_Heap_ID(void) const
 // SYNTHETIC: GAMEMD 0x00524D70
 // ??_GInfantryTypeClass@@UAEPAXI@Z
 
-// FUNCTION: GAMEMD 0x00524EC0
-char const * __fastcall FUN_00524EC0(char const * string)
-{
-	return(string);
-}
+// TEMPLATE: GAMEMD 0x00524EC0
+// ??B?$TStringID@$0BI@@@QAEPADXZ
 
 // TEMPLATE: GAMEMD 0x00524ED0
 // ?Clear@?$DynamicVectorClass@PBVAnimTypeClass@@@@UAEXXZ
@@ -408,7 +462,7 @@ template class TypeList<AnimTypeClass *>;
 // ?ID@?$DynamicVectorClass@PBVAnimTypeClass@@@@UAEHPBQBVAnimTypeClass@@@Z
 
 // TEMPLATE: GAMEMD 0x00524F20
-// ??4?$DynamicVectorClass@PAVAnimTypeClass@@@@QAEAAV0@ABV0@@Z
+// ??4?$DynamicVectorClass@PBVAnimTypeClass@@@@QAEAAV0@ABV0@@Z
 
 // TEMPLATE: GAMEMD 0x00524FB0
 // ?GetItem@?$VectorClass@PBVAnimTypeClass@@@@UBEPBVAnimTypeClass@@H@Z
@@ -420,7 +474,7 @@ template class TypeList<AnimTypeClass *>;
 // ??_G?$VectorClass@PBVAnimTypeClass@@@@UAEPAXI@Z
 
 // TEMPLATE: GAMEMD 0x00525060
-// ??4?$VectorClass@PAVAnimTypeClass@@@@QAEAAV0@ABV0@@Z
+// ??4?$VectorClass@PBVAnimTypeClass@@@@QAEAAV0@ABV0@@Z
 
 // TEMPLATE: GAMEMD 0x005250D0
 // ??8?$VectorClass@PBVAnimTypeClass@@@@UBE_NABV0@@Z
@@ -450,6 +504,9 @@ template class TypeList<AnimTypeClass *>;
 // TEMPLATE: GAMEMD 0x00525400
 // ?ID@?$DynamicVectorClass@PBVAnimTypeClass@@@@UAEHABQBVAnimTypeClass@@@Z
 template class DynamicVectorClass<AnimTypeClass const *>;
+
+// FUNCTION: GAMEMD 0x00525430
+// CCINIClass::Get_VocType_List
 
 // TEMPLATE: GAMEMD 0x005255F0
 // ??0?$TypeList@PBVAnimTypeClass@@@@QAE@ABV0@@Z

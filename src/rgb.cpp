@@ -6,6 +6,7 @@
 #include "always.h"
 #include "rgb.h"
 #include "hsv.h"
+#include <objidl.h>
 
 // FUNCTION: GAMEMD 0x00661020
 RGBClass & RGBClass::Lerp(RGBClass const & a, RGBClass const & b, float t)
@@ -105,4 +106,16 @@ RGBClass::operator HSVClass (void) const
 	}
 	HSVClass hsv((unsigned char)hue, (unsigned char)saturation, (unsigned char)value);
 	return(hsv);
+}
+
+// FUNCTION: GAMEMD 0x006614F0
+void RGBClass::Save(IStream * stream) const
+{
+	stream->Write(this, 3, NULL);
+}
+
+// FUNCTION: GAMEMD 0x00661510
+void RGBClass::Load(IStream * stream)
+{
+	stream->Read(this, 3, NULL);
 }

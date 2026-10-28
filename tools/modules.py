@@ -60,7 +60,8 @@ Modules named only by Y, L or G (with B, C, U or D) are not certain. An unnamed 
 then takes the one TibSun file sorting between its named neighbours that it has evidence
 for, or, as a whole segment alone between them with no class OpenTS lacks and no object
 whose type TibSun defines elsewhere, the one TibSun file sorting there at all. A game
-range still unnamed takes the provisional name seg_<first address>; the VQA library's
+range still unnamed takes the name of the one src/ file its landed functions are in, if
+no module has it, else the provisional name seg_<first address>; the VQA library's
 unnamed ranges stay "?".
 """
 
@@ -959,7 +960,13 @@ def main() -> None:
     libraries = min((r[1][0] for r in ranges if sort_key(r[0])[0]), default=library_start)
     for rng in ranges:
         if rng[0] == "?" and rng[1][0] < libraries:
-            rng[0], rng[3] = f"seg_{rng[1][0]:08X}", "seg"
+            stems = {landed[fn] for fn in rng[1] if fn in landed}
+            stem = stems.pop() if len(stems) == 1 else None
+            if stem and stem not in names_now:
+                rng[0], rng[3] = stem, "src"
+                names_now.add(stem)
+            else:
+                rng[0], rng[3] = f"seg_{rng[1][0]:08X}", "seg"
 
     out = ROOT / "data/modules.csv"
     with out.open("w", newline="") as f:
@@ -970,14 +977,14 @@ def main() -> None:
             w.writerow([name, f"0x{fns[0]:08X}", f"0x{last + size[last] - 1:08X}", len(fns),
                         "yes" if certain else "no"])
     module_at = {fn: name for name, fns, *_ in ranges for fn in fns}
-    named = sum(len(r[1]) for r in ranges if r[0] != "?" and r[3] != "seg")
+    named = sum(len(r[1]) for r in ranges if r[0] != "?" and r[3] not in ("seg", "src"))
     how = collections.Counter()
     for r in ranges:
         how[r[3]] += len(r[1])
     print(f"{len(cuts) - 1} segments -> {out}: {named} of {game} game functions named by evidence"
           f" ({how['class']} by class names only, {how['tibsun'] + how['evidence'] + how['order']}"
           f" by TibSun files),"
-          f" {how['seg']} provisional (seg_), "
+          f" {how['seg']} provisional (seg_), {how['src']} by their src/ file only, "
           f"{sum(len(r[1]) for r in ranges if r[0] == '?')} not; {len(points) - len(kept)} of "
           f"{len(points)} labels overruled, {len(rejected)} of them runs inside another module")
     kept_set = set(kept_at)

@@ -135,7 +135,7 @@ template class TPoint3D<int>;
 template class IndexClass<int, StaticBufferClass::Entry *>;
 
 // SYNTHETIC: GAMEMD 0x006F2AD0 SYMBOL
-// _$E278
+// _$E277
 CDTimerClass<FrameTimerClass> TechnoClass::ActionLineTimer;
 
 // FUNCTION: GAMEMD 0x006F2AF0
@@ -1131,7 +1131,7 @@ bool TechnoClass::Limbo(void)
 			DestroyGap();
 		}
 		if (TClass->BombSight != 0) {
-			BombListClass::Instance.RemoveDetector(this);
+			BombListInstance.RemoveDetector(this);
 		}
 		if (TClass->OpenTopped) {
 			TechnoClass * passenger = Cargo.Attached_Object();
@@ -1190,7 +1190,7 @@ bool TechnoClass::Unlimbo(Coord const & coord, Dir256 dir)
 		UpdateSight(0, 0, 0, 0, 0);
 		Map.RevealArea3(Coord(Position), 0, LastSightRange + 3, false);
 		if (TClass->BombSight != 0) {
-			BombListClass::Instance.AddDetector(this);
+			BombListInstance.AddDetector(this);
 		}
 		House->Tracking_Active_Add(this, false);
 		PrimaryFacing.Set(dir);

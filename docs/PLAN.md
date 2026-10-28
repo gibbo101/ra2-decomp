@@ -1,6 +1,6 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 28 October 2026: 17,399 of 19,367 game functions match (90%; 60% of game code
+Status, 28 October 2026: 17,906 of 19,367 game functions match (92%; 61% of game code
 by size), landed in batches module by module. The rounds below record each one.
 
 ## The goal
@@ -1113,6 +1113,23 @@ Session.Players. Recording then exposed three UI-command functions building char
 ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; their RTTI
 fixed them. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
+
+### Batches 129 to 131 (28 October 2026)
+
+**508 functions** (244 of 254, 254 of 260, 6 of 8, and four helpers). Batches 129 and 130
+were the first on the unnamed ranges: each that opens with a header run landed in a new
+provisional file (txtlabel2, rocket2, _astar2 and twelve more), and the short tails in
+their neighbours' files. Batch 130 also took globals' last 69 vector instances. Batch
+131's Opus jobs matched CampScor's score dialog, InfantryTypeClass::Read_INI,
+Do_Chrono_Reinforcements, Dial_Modem, VQA_Open and a wonline dialog; MainOpt (96.2%) and
+voxlib (93.5%) remain.
+Three batches' header changes met only at landing. StringTable's ten statics, which only
+its own file uses, moved out of the shared header into that file; an inline
+AircraftTrackerClass destructor in foot.h renumbered planmgr's `$E` and `$S` symbols, so
+it is declared there and defined in ahandle2.cpp. wonline 0x00788180 flipped again with
+IPXAddressClass::Get_Port and held once six of the file's declarations moved after it.
+tools/modules.py now names an unnamed range after the one src/ file holding its landed
+functions. Merge gate: 17,908 of 17,908 (2,269.8 KB).
 
 ### Batches 127 and 128 (28 October 2026)
 

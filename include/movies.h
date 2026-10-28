@@ -147,13 +147,28 @@ struct BinkInfo
 {
 	int Width;
 	int Height;
+	unsigned int Frames;
+	unsigned int FrameNum;
+	unsigned int LastFrameNum;
+	unsigned int FrameRate;
+	unsigned int FrameRateDiv;
 };
 
 class BinkHandle
 {
 	public:
+		BinkHandle(char const * name);
 		BinkHandle(char const * name, Surface * surface);
 		~BinkHandle(void);
+		bool FUN_00432750(char const * name);
+		void FUN_00432A60(void);
+		bool FUN_00432E40(Surface * surface, int x, int y);
+		void FUN_00433180(Surface * surface, int x, int y);
+		void FUN_004331F0(Surface * surface, int x, int y, bool subtitle);
+		void FUN_00433270(Surface * surface);
+		void FUN_00433330(Surface * surface);
+		int FUN_004333E0(void);
+		void FUN_004333F0(void);
 		void FUN_00432C30(bool pause);
 		void FUN_00432C70(void);
 		bool FUN_00432C50(void);
@@ -165,9 +180,17 @@ class BinkHandle
 		int FUN_00432BF0(void);
 		void FUN_00433060(void);
 
-		int field_0;
+		bool Flag;
 		BinkInfo * Bink;
-		char field_8[0x2C];
+		int CopyFlags;
+		Surface * DrawSurface;
+		Rect DestRect;
+		MovieSubtitles * Subtitles;
+		int FrameDelay;
+		void * FileHandle;
+		bool Playing;
+		bool Finished;
+		unsigned int StartFrame;
 };
 
 class BinkMovieHandle : public MovieHandle

@@ -105,6 +105,8 @@ class WinsockInterfaceClass {
 
 		inline ConnectStatusEnum Get_Connection_Status(void) {return(ConnectStatus);}
 
+		friend class FirewallHelperClass;
+
 	protected:
 
 		struct WinsockBufferType {

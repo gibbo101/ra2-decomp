@@ -86,3 +86,14 @@ Buffer::~Buffer(void)
 	Size = 0;
 	IsAllocated = false;
 }
+
+// FUNCTION: GAMEMD 0x0043AE80
+void Buffer::Reset(void)
+{
+	if (IsAllocated) {
+		delete [] BufferPtr;
+	}
+	BufferPtr = NULL;
+	Size = 0;
+	IsAllocated = false;
+}

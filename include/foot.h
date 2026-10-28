@@ -17,16 +17,22 @@ struct PathStruct;
 class AircraftTrackerClass
 {
 	public:
-		void Add(FootClass * foot);
-		void Remove(FootClass * foot);
+		~AircraftTrackerClass(void);
+		void Add(TechnoClass * foot);
+		void Remove(TechnoClass * foot);
 		void FUN_00413490(AbstractClass * target);
-		void Update(FootClass * foot, Cell oldcell, Cell newcell);
-		bool IsJumpjet(FootClass * foot);
+		void Update(TechnoClass * foot, Cell oldcell, Cell newcell);
+		bool IsJumpjet(TechnoClass * foot);
 		void Clear(void);
 		void FillCurrentVector(CellClass * cell, int range);
 		FootClass * Get(void);
+		int GetVectorIndex(Cell pos);
+		void FUN_004129C0(int index);
+		HRESULT Load(IStream * stream);
+		HRESULT Save(IStream * stream);
 
-		DynamicVectorClass<TechnoClass *> TrackerVectors[20][20];
+		// Indexed x + 20 * y over a 20 by 20 grid of map regions.
+		DynamicVectorClass<TechnoClass *> TrackerVectors[400];
 		DynamicVectorClass<TechnoClass *> CurrentVector;
 };
 

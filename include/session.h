@@ -161,6 +161,9 @@ enum NetCommandType {
 	NET_PREVIEW_ACK,
 	NET_REQ_PREVIEW,
 	NET_PROPOSE_KICK,
+
+	NET_MANGLER_REQUEST = 43,
+	NET_MANGLER_RESPONSE = 44,
 };
 
 struct SerialSettingsType {
@@ -380,6 +383,13 @@ struct GlobalPacketType {
 			int Color;
 			unsigned int NameCRC;
 		} Options;
+
+		struct {
+			unsigned short MangledPortNumber;
+			unsigned char MangledAddress[4];
+			unsigned short OriginalPortNumber;
+			unsigned char BlitzMe;
+		} ManglerData;
 	};
 };
 #pragma pack()

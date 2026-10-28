@@ -1416,3 +1416,141 @@ RGBClass DAT_00A8E980(255,255,0);
 // ??_G?$VectorClass@PAVTeamClass@@@@UAEPAXI@Z
 // SYNTHETIC: GAMEMD 0x004EF8F0
 // ??_G?$DynamicVectorClass@PAVTeamClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004EF940
+// ??_G?$VectorClass@PAUThemeControl@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004EF990
+// ??_G?$VectorClass@PAVTriggerClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004EF9E0
+// ??_G?$DynamicVectorClass@PAVTriggerClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004EFA30
+// ??_G?$VectorClass@PAVTriggerTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004EFA80
+// ??_G?$DynamicVectorClass@PAVTriggerTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004EFAD0
+// ??_G?$VectorClass@PAVTubeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004EFB20
+// ??_G?$DynamicVectorClass@PAVTubeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004EFB70
+// ??_G?$VectorClass@PAVParticleSystemClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004EFBC0
+// ??_G?$DynamicVectorClass@PAVParticleSystemClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004EFC10
+// ??_G?$VectorClass@PAVWaveClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004EFC60
+// ??_G?$DynamicVectorClass@PAVWaveClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004EFCB0
+// ??_G?$VectorClass@PAVOverlayClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004EFD00
+// ??_G?$DynamicVectorClass@PAVOverlayClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004EFD50
+// ??_G?$VectorClass@PAVSmudgeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004EFDA0
+// ??_G?$DynamicVectorClass@PAVSmudgeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004EFDF0
+// ??_G?$VectorClass@PAVTerrainClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004EFE40
+// ??_G?$DynamicVectorClass@PAVTerrainClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004EFE90
+// ??_G?$VectorClass@PAVAircraftClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004EFEE0
+// ??_G?$DynamicVectorClass@PAVAircraftClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004EFF30
+// ??_G?$VectorClass@PAVUnitClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004EFF80
+// ??_G?$DynamicVectorClass@PAVUnitClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004EFFD0
+// ??_G?$VectorClass@PAVHouseClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004F0020
+// ??_G?$DynamicVectorClass@PAVHouseClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004F0070
+// ??_G?$VectorClass@PAVAnimClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004F00C0
+// ??_G?$DynamicVectorClass@PAVAnimClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004F0110
+// ??_G?$VectorClass@PAVFactoryClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004F0160
+// ??_G?$DynamicVectorClass@PAVFactoryClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004F01B0
+// ??_G?$VectorClass@PAVCampaignClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004F0200
+// ??_G?$DynamicVectorClass@PAVCampaignClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004F0250
+// ??_G?$VectorClass@PAVSideClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004F02A0
+// ??_G?$DynamicVectorClass@PAVSideClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004F02F0
+// ??_G?$VectorClass@PAVHouseTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004F0340
+// ??_G?$DynamicVectorClass@PAVHouseTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004F0390
+// ??_G?$VectorClass@PAVTaskForceClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004F03E0
+// ??_G?$DynamicVectorClass@PAVTaskForceClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004F0430
+// ??_G?$VectorClass@PAVTeamTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004F0480
+// ??_G?$DynamicVectorClass@PAVTeamTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004F04D0
+// ??_G?$VectorClass@PAVScriptTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004F0520
+// ??_G?$DynamicVectorClass@PAVScriptTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004F0570
+// ??_G?$VectorClass@PAVOverlayTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004F05C0
+// ??_G?$DynamicVectorClass@PAVOverlayTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004F0610
+// ??_G?$VectorClass@PAVSmudgeTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004F0660
+// ??_G?$DynamicVectorClass@PAVSmudgeTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004F06B0
+// ??_G?$VectorClass@PAVTerrainTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004F0700
+// ??_G?$DynamicVectorClass@PAVTerrainTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004F0750
+// ??_G?$VectorClass@PAVBuildingTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004F07A0
+// ??_G?$DynamicVectorClass@PAVBuildingTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004F07F0
+// ??_G?$VectorClass@PAVAircraftTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004F0840
+// ??_G?$DynamicVectorClass@PAVAircraftTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004F0890
+// ??_G?$VectorClass@PAVUnitTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004F08E0
+// ??_G?$DynamicVectorClass@PAVUnitTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004F0930
+// ??_G?$VectorClass@PAVAnimTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004F0980
+// ??_G?$DynamicVectorClass@PAVAnimTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004F09D0
+// ??_G?$VectorClass@PAVInfantryTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004F0A20
+// ??_G?$DynamicVectorClass@PAVInfantryTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004F0A70
+// ??_G?$VectorClass@PAVBulletTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004F0AC0
+// ??_G?$DynamicVectorClass@PAVBulletTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004F0B10
+// ??_G?$VectorClass@PAVVoxelAnimTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004F0B60
+// ??_G?$DynamicVectorClass@PAVVoxelAnimTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004F0BB0
+// ??_G?$VectorClass@PAVIsometricTileTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004F0C00
+// ??_G?$DynamicVectorClass@PAVIsometricTileTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004F0C50
+// ??_G?$VectorClass@PAVParticleTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004F0CA0
+// ??_G?$DynamicVectorClass@PAVParticleTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004F0CF0
+// ??_G?$VectorClass@PAVParticleSystemTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004F0D40
+// ??_G?$DynamicVectorClass@PAVParticleSystemTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004F0D90
+// ??_G?$VectorClass@PAVSuperWeaponTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004F0DE0
+// ??_G?$DynamicVectorClass@PAVSuperWeaponTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004F0E30
+// ??_G?$VectorClass@PAVAbstractTypeClass@@@@UAEPAXI@Z
+// SYNTHETIC: GAMEMD 0x004F0E80
+// ??_G?$DynamicVectorClass@PAVAbstractTypeClass@@@@UAEPAXI@Z

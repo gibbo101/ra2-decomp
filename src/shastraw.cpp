@@ -8,6 +8,20 @@
 
 #include <math.h>
 
+// FUNCTION: GAMEMD 0x0069E9F0
+int SHAStraw::Get(void * source, int slen)
+{
+	if (source == NULL || slen < 1) {
+		return(0);
+	}
+
+	int counter = BASECLASS::Get(source, slen);
+	if (!IsDisabled) {
+		SHA.Hash(source, counter);
+	}
+	return(counter);
+}
+
 // FUNCTION: GAMEMD 0x0069EA30
 int SHAStraw::Result(void * result) const
 {

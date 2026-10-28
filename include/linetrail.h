@@ -4,6 +4,7 @@
 
 #include "coord.h"
 #include "rgb.h"
+#include "vector.h"
 
 class ObjectClass;
 
@@ -25,6 +26,13 @@ class LineTrail
 		LineTrail(void);
 		~LineTrail(void);
 
+		void Release_Owner(void);
 		void Set_Decrement(int value);
+		void Update(void);
+		void Draw(void);
+		bool Is_Expired(void) const;
+		static void Process_All(void);
 		static void Delete_All(void);
 };
+
+extern DynamicVectorClass<LineTrail *> LineTrailArray;

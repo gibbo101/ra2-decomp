@@ -620,3 +620,10 @@ int RAMFileClass::Write(void const * buffer, int size)
 
 // SYNTHETIC: GAMEMD 0x0065C610
 // ??_GFileClass@@UAEPAXI@Z
+
+// FUNCTION: GAMEMD 0x0065C630
+int * __fastcall FUN_0065C630(int * self, int, int value)
+{
+	*self = value;
+	return(self);
+}

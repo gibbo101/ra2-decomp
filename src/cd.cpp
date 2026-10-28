@@ -231,3 +231,17 @@ bool CD::Swap(DiskID disk)
 
 	return(FUN_00751C30());
 }
+
+struct CDDriveTable {
+	int Drive[26];
+
+	CDDriveTable(void) { memset(Drive, 0, sizeof(Drive)); }
+	~CDDriveTable(void) {}
+};
+
+// SYNTHETIC: GAMEMD 0x004796E0 SYMBOL
+// _$E14
+
+// SYNTHETIC: GAMEMD 0x00479700 SYMBOL
+// _$E12
+CDDriveTable DAT_0089E3A8;

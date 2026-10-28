@@ -441,3 +441,63 @@ void GScreenClass::AI(KeyNumType &, Point2D const &)
 
 // FUNCTION: GAMEMD 0x004F4C00
 // GScreenClass::~GScreenClass
+
+#include <string.h>
+#include "hashstr.h"
+
+// FUNCTION: GAMEMD 0x004F4C20
+HashString::HashString(void)
+{
+	Str[0] = '\0';
+}
+
+// FUNCTION: GAMEMD 0x004F4C30
+HashString::HashString(char const * str)
+{
+	strcpy(Str, str);
+	strupr(Str);
+}
+
+// FUNCTION: GAMEMD 0x004F4C70
+HashString::HashString(HashString const & that)
+{
+	strcpy(Str, that.Str);
+}
+
+// FUNCTION: GAMEMD 0x004F4CA0
+// ??7HashString@@QBE_NXZ
+bool HashString::operator!(void) const
+{
+	return Str[0] == '\0';
+}
+
+// FUNCTION: GAMEMD 0x004F4CB0
+HashString & HashString::operator = (HashString const & that)
+{
+	strcpy(Str, that.Str);
+	return *this;
+}
+
+// FUNCTION: GAMEMD 0x004F4CE0
+bool HashString::operator == (HashString const & that)
+{
+	return strcmp(Str, that.Str) == 0;
+}
+
+// FUNCTION: GAMEMD 0x004F4D30
+bool HashString::operator != (HashString const & that)
+{
+	return strcmp(Str, that.Str) != 0;
+}
+
+// FUNCTION: GAMEMD 0x004F4D80
+bool operator==(HashString const & a, HashString const & b)
+{
+	return a == b;
+}
+
+// FUNCTION: GAMEMD 0x004F4D90
+bool operator!=(HashString const & a, HashString const & b)
+{
+	return !(a == b);
+}

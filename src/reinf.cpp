@@ -474,3 +474,135 @@ int __fastcall Create_Spy_Planes(HouseClass * house, int air, int number, Missio
 	}
 	return sub;
 }
+
+#include "ipiggy.h"
+#include "_rules.h"
+#include "rules.h"
+
+namespace LocomotionClass { namespace CLSIDs { extern const CLSID Teleport; } }
+void __fastcall FUN_00660B80(Cell const & cell);
+
+// FUNCTION: GAMEMD 0x0065EC30
+bool __fastcall Do_Chrono_Reinforcements(TeamTypeClass const * teamtype, WAYPOINT wp)
+{
+	if (!teamtype || !teamtype->TaskForce->ClassCount) return(false);
+
+	ScriptTypeClass * script = teamtype->Script;
+	if (!script || script->MissionCount == 0) {
+		TeamMissionClass tmission(TMISSION_GUARD, 0);
+		if (!script) {
+			((TeamTypeClass *)teamtype)->Script = new ScriptTypeClass(NULL);
+		}
+		script = teamtype->Script;
+		int count = script->MissionCount;
+		if (count < MAX_TEAM_MISSIONS) {
+			script->MissionList[count] = tmission;
+			script->MissionCount++;
+		}
+	}
+
+	FootClass * object = _Create_Group(teamtype);
+	object->Team->IsDeleteTypeWhenDone = false;
+	if (!object) {
+		return(false);
+	}
+
+	Cell origin = teamtype->Get_Origin();
+	if (wp != -1) {
+		origin = Scen->Get_Waypoint_Cell(wp);
+	}
+
+	FootClass * next = (FootClass *)(ObjectClass *)object->Next;
+	object->Next = NULL;
+	FootClass * placed = NULL;
+
+	while (object != NULL) {
+		bool isunit = false;
+		bool isair = false;
+		if (object != NULL) {
+			if (object->Fetch_RTTI() == RTTI_UNIT) isunit = true;
+			if (object->Fetch_RTTI() == RTTI_AIRCRAFT) isair = true;
+		}
+
+		Coord coord = Map[origin].Center_Coord();
+		if (!isunit && !isair) {
+			coord.X += ((object->Ammo & 3) - 2) << 8;
+			coord.Y += ((object->Ammo & 0xC) - 4) << 6;
+		}
+		if (!isair) {
+			object->Ammo--;
+		}
+
+		Coord dest = COORD_NONE;
+		CellClass * cellptr = &Map[coord];
+		int tries = 0;
+		while (dest == COORD_NONE && tries < 255) {
+			Cell nearcell;
+			if (isair) {
+				nearcell = Map.Nearby_Location(Cell(cellptr->Center_Coord()), SPEED_TRACK);
+			} else {
+				nearcell = Map.Nearby_Location(Cell(cellptr->Center_Coord()), object->Techno_Type_Class()->Speed);
+			}
+			cellptr = &Map[nearcell];
+			if (!isunit && !isair) {
+				dest = cellptr->Closest_Free_Spot(cellptr->Center_Coord());
+			} else {
+				dest = cellptr->Center_Coord();
+			}
+			tries++;
+		}
+
+		coord.X = dest.X;
+		coord.Y = dest.Y;
+		ScenarioInit++;
+		int ok = object->Unlimbo(coord, DIR_N);
+		ScenarioInit--;
+		if (ok) {
+			IPiggybackPtr piggy(object->Locomotion);
+			ILocomotionPtr teleport(LocomotionClass::CLSIDs::Teleport);
+			teleport->Link_To_Object(object);
+			piggy = IPiggybackPtr(teleport);
+			if (piggy != NULL) {
+				piggy->Begin_Piggyback(object->Locomotion);
+				object->Locomotion = teleport;
+			}
+			object->ChronoDestCoords = coord;
+			object->Locomotion->Move_To(coord);
+			object->WarpingOut = true;
+			object->ChronoLockRemaining = Rule->ChronoReinfDelay;
+			object->Next = placed;
+			placed = object;
+			object = next;
+			if (object != NULL) {
+				next = (FootClass *)(ObjectClass *)object->Next;
+				object->Next = NULL;
+			}
+		} else {
+			delete object;
+			object = next;
+			if (object != NULL) {
+				next = (FootClass *)(ObjectClass *)object->Next;
+				object->Next = NULL;
+			}
+		}
+	}
+
+	object = placed;
+	placed = (FootClass *)(ObjectClass *)object->Next;
+	object->Next = NULL;
+	while (object != NULL) {
+		object->Mark(MARK_UP);
+		object->unknown_280 = 3;
+		object->Commence();
+		object = placed;
+		if (object != NULL) {
+			placed = (FootClass *)(ObjectClass *)object->Next;
+			object->Next = NULL;
+		}
+	}
+
+	if (teamtype->Get_House() && teamtype->Get_House()->Is_Ally(PlayerPtr)) {
+		FUN_00660B80(origin);
+	}
+	return(true);
+}

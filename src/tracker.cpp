@@ -189,7 +189,7 @@ void Detach_This_From_All(AbstractClass const * target, bool all)
 		for (index = 0; index < ObjectPtrTracker.Count(); index++) {
 			ObjectPtrTracker[index]->Detach(target, all);
 		}
-		BombListClass::Instance.PointerGotInvalid((AbstractClass *)target);
+		BombListInstance.PointerGotInvalid((AbstractClass *)target);
 		KamikazeInstance.Remove((AbstractClass *)target);
 		for (index = DiskLasers.Count() - 1; index >= 0; index--) {
 			DiskLasers[index]->PointerGotInvalid((AbstractClass *)target);
