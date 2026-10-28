@@ -67,6 +67,7 @@ class BulletClass : public ObjectClass
 		void Detonate(Coord const & coord);
 		void InitScalable(void);
 		WeaponTypeClass * Get_Weapon_Type(void) const;
+		void Shrapnel(void);
 		void NukeMaker(void);
 		void ApplyRadiationToCell(Cell cell, int radius, int amount);
 

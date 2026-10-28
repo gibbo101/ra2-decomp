@@ -123,7 +123,13 @@ namespace OwnerDraw {
 				WinNode *nodes;
 				int hasFocus;
 				WideWstring *editText;
-				unsigned char reserved40[0x24];
+				int caretIndex;
+				int scrollStart;
+				int textLimit;
+				int caretBlink;
+				wchar_t *rejectChars;
+				int styleFlags;
+				unsigned char reserved58[0xC];
 				BitFont *font;
 			} Wide;
 
@@ -274,6 +280,7 @@ namespace OwnerDraw {
 	void Initialize(void);
 	LRESULT CALLBACK SysListViewHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 	LRESULT CALLBACK EditHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+	LRESULT CALLBACK NewEditHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 	LRESULT CALLBACK CheckBoxButtonHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 	LRESULT CALLBACK ProgressHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 	LRESULT CALLBACK GroupBoxButtonHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam);

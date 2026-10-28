@@ -64,6 +64,8 @@ class IPXManagerClass : public ConnManClass
 		virtual int Lobby_Num_Send(void);
 		virtual int Lobby_Num_Receive(void);
 		void Set_Connection_Address(int id, IPXAddressClass *address);
+		bool FUN_00541680(CommHeaderType *packet, void *buf, int buflen,
+			char *from, unsigned short port);
 		void FUN_00543050(IPXAddressClass *address);
 		void Global_Channel_Clear_FieldC8(void);
 		void Global_Channel_Set_FieldC8(void);

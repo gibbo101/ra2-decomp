@@ -49,8 +49,8 @@ class AnimTypeClass : public ObjectTypeClass
 		int Translucency;
 		AnimTypeClass * Spawns;
 		int SpawnCount;
-		int Report;
-		int StopSound;
+		VocType Report;
+		VocType StopSound;
 		AnimTypeClass * BounceAnim;
 		AnimTypeClass * ExpireAnim;
 		AnimTypeClass * TrailerAnim;

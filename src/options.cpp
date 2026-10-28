@@ -3,6 +3,7 @@
 // Copyright 2025 Electronic Arts Inc.; 2026 OpenTS contributors
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
+#define NDEBUG
 #include "always.h"
 #include "geometry.h"
 #include "options.h"
@@ -100,7 +101,7 @@ int __fastcall Hotkey_To_Key(int hotkey)
 }
 
 // FUNCTION: GAMEMD 0x005FA310
-int __fastcall Key_To_Hotkey(int key)
+int __fastcall Key_To_Hotkey(unsigned short key)
 {
 	int mods = 0;
 	if (key & KN_ALT_BIT) {
@@ -456,14 +457,233 @@ int OptionsClass::Normalize_Volume(int volume) const
 	return(volume * SoundVolume);
 }
 
-BOOL CALLBACK FUN_005FB320(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+namespace UI {
+	int __fastcall StandardWndProc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+	void __fastcall GetKeyboardKeyString(unsigned short key, wchar_t * buffer);
+}
+
+bool __fastcall FUN_0048BB40(CommandClass const * command, int key);
+bool __fastcall FUN_0048BB60(int key);
+
+// FUNCTION: GAMEMD 0x005FB320
+BOOL CALLBACK Hotkey_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	wchar_t buffer[64];
+	int * retval;
+	static int current_selection = -1;
+
+	int result = UI::StandardWndProc(window, message, wparam, lparam);
+	if (result) {
+		return(result);
+	}
+
+	retval = (int *)GetWindowLong(window, DWL_USER);
+
+	switch (message) {
+		case 0x466: {
+			HWND list_commands = GetDlgItem(window, 0x4C8);
+			int selection = SendMessage(list_commands, LB_GETCURSEL, 0, 0);
+			if (selection != LB_ERR) {
+				CommandClass const * cmd = (CommandClass const *)SendMessage(list_commands, LB_GETITEMDATA, selection, 0);
+				HWND hotkey = GetDlgItem(window, 0x4CD);
+				int key = Hotkey_To_Key(SendMessage(hotkey, 0x402, 0, 0));
+
+				if (!FUN_0048BB40(cmd, key)) {
+					HWND error = GetDlgItem(window, 0x63D);
+					SendMessage(error, 0x4B2, 0, (LPARAM)StringTable::LoadString("Error:CannotMap", NULL, "D:\\ra2mdpost\\Options.CPP", 0x3EC));
+				} else if (!FUN_0048BB60(key)) {
+					HWND error = GetDlgItem(window, 0x63D);
+					SendMessage(error, 0x4B2, 0, (LPARAM)StringTable::LoadString("Error:CannotRemap", NULL, "D:\\ra2mdpost\\Options.CPP", 0x3F4));
+					return(TRUE);
+				} else {
+					for (int i = 0; i < HotkeyCommands.Count(); i++) {
+						if (HotkeyCommands.Fetch_By_Position(i) == cmd) {
+							HotkeyCommands.Remove_Index(HotkeyCommands.Fetch_ID_By_Position(i));
+							break;
+						}
+					}
+					if (key != 0) {
+						HotkeyCommands.Remove_Index(key);
+						HotkeyCommands.Add_Index(key, cmd);
+						return(TRUE);
+					}
+				}
+			}
+			return(TRUE);
+		}
+
+		case 0x467: {
+			HWND cmb_category = GetDlgItem(window, 0x4C7);
+			SendMessage(cmb_category, CB_RESETCONTENT, 0, 0);
+			for (int i = 0; i < AllCommands.Count(); i++) {
+				CommandClass const * cmd = AllCommands[i];
+				if (SendMessage(cmb_category, 0x4BE, 0, (LPARAM)cmd->Get_Category()) == -1) {
+					SendMessage(cmb_category, 0x4C2, 0, (LPARAM)cmd->Get_Category());
+				}
+			}
+			SendMessage(cmb_category, CB_SETCURSEL, 0, 0);
+			current_selection = -1;
+			SendMessage(window, 0x464, 0, 0);
+			return(TRUE);
+		}
+
+		case 0x465: {
+			HWND list_commands = GetDlgItem(window, 0x4C8);
+			int selection = SendMessage(list_commands, LB_GETCURSEL, 0, 0);
+			if (selection != LB_ERR) {
+				CommandClass const * cmd = (CommandClass const *)SendMessage(list_commands, LB_GETITEMDATA, selection, 0);
+				HWND description = GetDlgItem(window, 0x4CB);
+				SendMessage(description, 0x4B2, 0, (LPARAM)cmd->Get_Description());
+
+				int key = 0;
+				for (int i = 0; i < HotkeyCommands.Count(); i++) {
+					if (HotkeyCommands.Fetch_By_Position(i) == cmd) {
+						key = HotkeyCommands.Fetch_ID_By_Position(i);
+						break;
+					}
+				}
+
+				HWND key_label = GetDlgItem(window, 0x63C);
+				UI::GetKeyboardKeyString(Key_To_Hotkey(key), buffer);
+				SendMessage(key_label, 0x4B2, 0, (LPARAM)buffer);
+
+				HWND hotkey = GetDlgItem(window, 0x4CD);
+				SendMessage(hotkey, 0x401, 0, 0);
+
+				HWND hotkey_name = GetDlgItem(window, 0x63B);
+				SendMessage(hotkey_name, 0x4B2, 0, (LPARAM)DAT_00887734);
+				return(TRUE);
+			}
+			return(TRUE);
+		}
+
+		case 0x464: {
+			HWND cmb_category = GetDlgItem(window, 0x4C7);
+			if (SendMessage(cmb_category, CB_GETCURSEL, 0, 0) != current_selection) {
+				current_selection = SendMessage(cmb_category, CB_GETCURSEL, 0, 0);
+				SendMessage(cmb_category, 0x4B3, ARRAY_SIZE(buffer), (LPARAM)buffer);
+				HWND list_commands = GetDlgItem(window, 0x4C8);
+				SendMessage(list_commands, LB_RESETCONTENT, 0, 0);
+				for (int i = 0; i < AllCommands.Count(); i++) {
+					CommandClass const * cmd = AllCommands[i];
+					if (wcsicmp(cmd->Get_Category(), buffer) == 0) {
+						int index = SendMessage(list_commands, 0x4CD, 0, (LPARAM)cmd->Get_Display_Name());
+						if (index != LB_ERR) {
+							SendMessage(list_commands, LB_SETITEMDATA, index, (LPARAM)cmd);
+						}
+					}
+				}
+				HWND description = GetDlgItem(window, 0x4CB);
+				SendMessage(description, 0x4B2, 0, (LPARAM)DAT_00887734);
+				HWND key_label = GetDlgItem(window, 0x63C);
+				SendMessage(key_label, 0x4B2, 0, (LPARAM)DAT_00887734);
+				HWND hotkey_name = GetDlgItem(window, 0x63B);
+				SendMessage(hotkey_name, 0x4B2, 0, (LPARAM)DAT_00887734);
+				SendMessage(hotkey_name, LB_SETCURSEL, 0, 0);
+				SendMessage(window, 0x465, 0, 0);
+				return(TRUE);
+			}
+			return(TRUE);
+		}
+
+		case WM_COMMAND:
+			switch (LOWORD(wparam)) {
+				case 0x686:
+					if (HIWORD(wparam) == BN_CLICKED) {
+						CCINIClass ini;
+						ini.Clear();
+
+						for (int i = 0; i < HotkeyCommands.Count(); i++) {
+							CommandClass const * cmd = HotkeyCommands.Fetch_By_Position(i);
+							int key = HotkeyCommands.Fetch_ID_By_Position(i);
+							ini.Put_Int("Hotkey", cmd->Get_Unique_Name(), key);
+						}
+
+						RawFileClass file("KeyboardMD.ini");
+						ini.Save(file, false);
+						*retval = 1;
+						return(TRUE);
+					}
+					break;
+
+				case IDCANCEL:
+					if (HIWORD(wparam) == BN_CLICKED) {
+						Init_Hotkeys();
+						*retval = 2;
+						return(TRUE);
+					}
+					break;
+
+				case 0x4C8:
+					if (HIWORD(wparam) == LBN_SELCHANGE) {
+						SendMessage(window, 0x465, 0, 0);
+						HWND hotkey = GetDlgItem(window, 0x4CD);
+						if (hotkey != NULL) {
+							SetFocus(hotkey);
+							return(TRUE);
+						}
+					}
+					break;
+
+				case 0x4CF:
+					SendMessage(window, 0x466, 0, 0);
+					SendMessage(window, 0x465, 0, 0);
+					return(TRUE);
+
+				case 0x4D0:
+					if (HIWORD(wparam) == BN_CLICKED) {
+						DebugString("Deleting users KEYBOARDMD.INI\n");
+						CCFileClass file("KEYBOARDMD.INI");
+						file.Delete();
+						Init_Hotkeys();
+						SendMessage(window, 0x467, 0, 0);
+						return(TRUE);
+					}
+					break;
+
+				case 0x4C7:
+					if (HIWORD(wparam) == CBN_SELCHANGE) {
+						SendMessage(window, 0x464, 0, 0);
+						return(TRUE);
+					}
+					break;
+
+				case 0x4CD:
+					if (HIWORD(wparam) == EN_CHANGE) {
+						HWND error = GetDlgItem(window, 0x63D);
+						SendMessage(error, 0x4B2, 0, (LPARAM)DAT_00887734);
+						int key = Hotkey_To_Key(SendMessage((HWND)lparam, 0x402, 0, 0));
+						wchar_t const * key_name;
+						if (HotkeyCommands.Is_Present(key)) {
+							key_name = HotkeyCommands[key]->Get_Display_Name();
+							if (key_name == NULL) {
+								key_name = DAT_00887734;
+							}
+						} else {
+							key_name = DAT_00887734;
+						}
+						HWND hotkey_name = GetDlgItem(window, 0x63B);
+						SendMessage(hotkey_name, 0x4B2, 0, (LPARAM)key_name);
+						return(TRUE);
+					}
+					break;
+			}
+			return(TRUE);
+
+		case 0x497:
+			SendMessage(window, 0x467, 0, 0);
+			return(FALSE);
+	}
+
+	return(FALSE);
+}
 
 // FUNCTION: GAMEMD 0x005FBEF0
 bool OptionsClass::Hotkey_Dialog(void)
 {
 	int res = -1;
 
-	HWND handle = OwnerDraw::Begin_Dialog(163, FUN_005FB320, 0);
+	HWND handle = OwnerDraw::Begin_Dialog(163, Hotkey_Dialog_Proc, 0);
 	if (handle != NULL) {
 		SetWindowLong(handle, DWL_USER, (LONG)&res);
 		OwnerDraw::Display_Dialog(handle);

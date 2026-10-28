@@ -302,13 +302,16 @@ struct SerialPacketType {
 };
 
 #define MAX_SEND_FILE_PACKET_SIZE MAX_SERIAL_PACKET_SIZE - 64
+#pragma pack(push, 1)
 struct RemoteFileTransferType {
 	SerialCommandType	Command;
+	char				Name[MPLAYER_NAME_MAX];
 	unsigned short 	BlockNumber;
 	unsigned short		BlockLength;
 
-	unsigned char 		RawData	[546 - 64 - 3];
+	unsigned char 		RawData	[546 - 64 - 3 - MPLAYER_NAME_MAX];
 };
+#pragma pack(pop)
 
 struct GlobalPacketType {
 	NetCommandType Command;

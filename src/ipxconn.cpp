@@ -33,10 +33,7 @@ extern int DAT_00AA05B8, DAT_00AA05BC, DAT_00AA05C0, DAT_00AA05C4;
 extern const double DAT_007EC0B8;
 extern int DAT_00841F3C;
 extern WinsockInterfaceClass * DAT_00887628;
-struct Unknown_00B052D0 {
-	unsigned char FUN_00663D60(int);
-};
-extern Unknown_00B052D0 DAT_00B052D0;
+#include "ownertalk.h"
 
 extern const double DAT_007EC0C0;
 
@@ -206,7 +203,7 @@ int IPXConnClass::Send_To(char *buf, int buflen, IPXAddressClass *address,
 	dest_port = 0;
 	if (!flag && Session.ViaPacketRouter) {
 		if (!((GlobalHeaderType *)buf)->Field3) {
-			unsigned char result = DAT_00B052D0.FUN_00663D60(ID);
+			unsigned char result = OwnerTalk.Mask_From_ID(ID);
 			if (!result) {
 				return 0;
 			}

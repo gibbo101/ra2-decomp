@@ -59,6 +59,10 @@ char * __fastcall WideToCharString(char * dest, wchar_t const * src, int count);
 }
 void __cdecl FUN_004068E0(char const * format, ...);
 
+#include "ownertalk.h"
+
+extern int DAT_00841F3C;
+
 // FUNCTION: GAMEMD 0x005408F0
 IPXManagerClass::IPXManagerClass (int glb_maxlen, int pvt_maxlen,
 	int glb_num_packets, int pvt_num_packets, unsigned short socket,
@@ -628,6 +632,45 @@ int IPXManagerClass::Get_Private_Message(void *buf, int *buflen, int *conn_id)
 	}
 
 	return 0;
+}
+
+// FUNCTION: GAMEMD 0x00541680
+bool IPXManagerClass::FUN_00541680(CommHeaderType *packet, void *buf, int buflen,
+	char *from, unsigned short port)
+{
+	static unsigned long loopback[2] = {0, htonl(0x7F000001)};
+
+	if (Session.Type == GAME_INTERNET && Session.ViaPacketRouter && OwnerTalk.RouterProcess) {
+		if (packet->FieldC == DAT_00841F3C) {
+			packet->FieldC = port;
+			memcpy(&packet->Field8, from + 4, 4);
+			FUN_004068E0("Forwarding packet from %s ; %d to forwarder\n", ((IPXAddressClass *)from)->As_String(0), port);
+			PacketTransport->WriteTo(buf, buflen, loopback, 12, false, true, DAT_00841F3C);
+			return true;
+		}
+		if (packet->FieldC) {
+			NetNodeType node;
+			Session.Players[0]->Address.Get_Node(node);
+			if (memcmp(node, &packet->Field8, 4) == 0 && Session.PlayerPorts[0] == packet->FieldC) {
+				FUN_004068E0("Packet is supposed to be forwarded to us - just adding it to our queue\n");
+				return false;
+			}
+			if (packet->Field8) {
+				unsigned short oldport = packet->FieldC;
+				IPXAddressClass address;
+				NetNodeType dest;
+				memcpy(dest, &packet->Field8, 4);
+				address.Set_Node(dest);
+				address.Set_Port(oldport);
+				packet->FieldC = 0;
+				memset(&packet->Field8, 0, 4);
+				FUN_004068E0("Forwarding packet from router to %s\n", address.As_String(0));
+				PacketTransport->WriteTo(buf, buflen, &address, 12, false, true, oldport);
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 // FUNCTION: GAMEMD 0x00542280

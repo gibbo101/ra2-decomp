@@ -1,6 +1,6 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 28 October 2026: 18,069 of 19,367 game functions match (93%; 63% of game code
+Status, 28 October 2026: 18,085 of 19,367 game functions match (93%; 64% of game code
 by size), landed in batches module by module. The rounds below record each one.
 
 ## The goal
@@ -1113,6 +1113,18 @@ Session.Players. Recording then exposed three UI-command functions building char
 ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; their RTTI
 fixed them. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
+
+### Batches 138 to 140 (28 October 2026)
+
+**15 functions** (14 of 24 and their helpers). Opus took functions of 2.0 to 3.3 KB:
+AnimTypeClass::Read_INI, BuildingClass::Animation_AI, builtype, facing's exception dump,
+fog, INIClass::Load, MapGen's vegetation, ModemHost, NullModem's detection, the hotkey
+dialog, SendFile, tevent, a wonline ladder query and a savegame routine matched. The last
+showed that 29 functions filed under saveload belong to savever. Stand-ins gave way to
+real types: OwnerTalkClass (include/ownertalk.h), YR's second low-bridge overlays, the
+remote-file packet and wolapi's Ladder. wonline 0x00788180 flipped once more and held
+after 36 duplicate or unused declarations were removed. Egos (99.3%) needs a mask layout
+that breaks two ownrdraw matches. Merge gate: 18,086 of 18,086 (2,379.1 KB).
 
 ### Batches 135 to 137 (28 October 2026)
 

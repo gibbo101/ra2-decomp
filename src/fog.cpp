@@ -3,6 +3,7 @@
 // Copyright 2025 Electronic Arts Inc.; 2026 OpenTS contributors
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
+#define NDEBUG
 #define INCLUDE_COM
 #include "always.h"
 #include "geometry.h"
@@ -267,6 +268,192 @@ FoggedObjectClass::~FoggedObjectClass(void)
 		Rect rect = BoundingRect;
 		rect -= Point2D(TacticalMap->TacPixelX, TacticalMap->TacPixelY);
 		TacticalMap->Register_Dirty_Area(rect);
+	}
+}
+
+// FUNCTION: GAMEMD 0x004D1890
+void Draw_Fogged_Objects(Rect const & rect)
+{
+	if (MainWindow == NULL) {
+		return;
+	}
+
+	for (int index = 0; index < FoggedObjectClass::FoggedObjectIndex.Count(); index++) {
+
+		FoggedObjectClass * data = FoggedObjectClass::FoggedObjectIndex.Fetch_By_Position(index);
+
+		if (!data->CanDraw) {
+			continue;
+		}
+
+		Rect rectangle = data->BoundingRect;
+		rectangle.X -= TacticalMap->TacPixelX;
+		rectangle.Y -= TacticalMap->TacPixelY;
+		rectangle += TacticalRect.Top_Left();
+
+		Rect clipped = Intersect(rect, rectangle);
+		if (!clipped.Is_Valid()) {
+			continue;
+		}
+
+		switch (data->RTTI) {
+
+			case RTTI_OVERLAY: {
+				CellClass * cellptr = &Map[(Coord)data->Position];
+
+				OverlayType saveoverlay = cellptr->Overlay;
+				int saveoverlaydata = cellptr->OverlayData;
+				cellptr->Overlay = data->Overlay;
+				cellptr->OverlayData = data->OverlayData;
+
+				Point2D point;
+				TacticalMap->Coord_To_Pixel(Coord_Whole(cellptr->CellID), point);
+				point.X += ISO_TILE_PIXEL_W / -2;
+
+				cellptr->Draw_Overlay(point, rect);
+				cellptr->Draw_Overlay_Shadow(point, rect);
+
+				cellptr->Overlay = saveoverlay;
+				cellptr->OverlayData = saveoverlaydata;
+				break;
+			}
+
+			case RTTI_TERRAIN: {
+				Coord * position = &data->Position;
+				ObjectTypeClass * type = data->Records[0].TypeClass;
+				CellClass * cellptr = &Map[(Coord)*position];
+				int shapenum = data->Records[0].FrameNumber;
+				ShapeSet const * shape = (ShapeSet const *)type->Get_Image_Data();
+
+				Point2D xy;
+				TacticalMap->Coord_To_Pixel((Coord)*position, xy);
+				xy += TacticalRect.Top_Left() - rect.Top_Left();
+
+				int zadjust = -TacticalMap->Z_Lepton_To_Pixel(((Coord)*position).Z);
+
+				if (cellptr->Drawer == NULL) {
+					cellptr->Init_Drawer(NULL, 0x10000, 0, NORMAL_LIGHT, NORMAL_LIGHT, NORMAL_LIGHT);
+				}
+
+				Draw_Shape(*LogicalSurface, *cellptr->Drawer, shape, shapenum, xy, rect, ShapeFlags_Type(SHAPE_CENTER|SHAPE_WIN_REL|SHAPE_ALPHA|SHAPE_ZWRITE), NULL, zadjust - 4, ZGRAD_90DEG, cellptr->TileBrightness);
+
+				if (DrawShapeShadows) {
+					Draw_Shape(*LogicalSurface, *cellptr->Drawer, shape, shapenum + shape->Get_Count() / 2, xy, rect, ShapeFlags_Type(SHAPE_DARKEN|SHAPE_CENTER|SHAPE_WIN_REL|SHAPE_ZWRITE), NULL, zadjust - 2, ZGRAD_GROUND, NORMAL_LIGHT);
+				}
+				break;
+			}
+
+			case RTTI_BUILDING: {
+				for (int record = 0; record < data->Records.Count(); record++) {
+
+					BuildingTypeClass * type = (BuildingTypeClass *)data->Records[record].TypeClass;
+					int shapenum = data->Records[record].FrameNumber;
+					ShapeSet const * shape = (ShapeSet const *)type->Get_Image_Data();
+					unsigned char heightadjust = data->Records[record].HeightAdjust;
+					LightConvertClass * converter = ColorSchemes[data->House->Scheme]->Converter;
+
+					if (record == 0) {
+
+						Coord * position = &data->Position;
+						Point2D drawpoint;
+						TacticalMap->Coord_To_Pixel((Coord)*position - Coord(CELL_LEPTON_W / 2, CELL_LEPTON_H / 2, 0), drawpoint);
+						CellClass * cellptr = &Map[(Coord)*position];
+						drawpoint += TacticalRect.Top_Left() - rect.Top_Left();
+
+						if (type->IsInvisibleInGame) {
+							break;
+						}
+
+						int zadjust = type->NormalZAdjust;
+
+						Point2D shapepoint = drawpoint;
+						int height = drawpoint.Y + shape->Get_Height() / 2;
+						Rect cliprect = rect;
+						if (cliprect.Height > height) {
+							cliprect.Height = height;
+						}
+
+						Point2D zdrawpoint(144, 172);
+						zdrawpoint += type->ZShapePointMove;
+						Point2D zsizeoffset(type->Width() * CELL_LEPTON - CELL_LEPTON, type->Height() * CELL_LEPTON - CELL_LEPTON);
+						zdrawpoint -= TacticalMap->Coord_To_Pixel_Absolute(zsizeoffset);
+
+						ShapeSet const * zshapefile = (ShapeSet const *)BuildingTypeClass::BuildingZShape;
+
+						int zlepton = -TacticalMap->Z_Lepton_To_Pixel(((Coord)*position).Z);
+						int brightness = Map[(Coord)*position].Brightness + type->ExtraLight;
+
+						if (cellptr->Drawer == NULL) {
+							cellptr->Init_Drawer(NULL, 0x10000, 0, NORMAL_LIGHT, NORMAL_LIGHT, NORMAL_LIGHT);
+						}
+						ConvertClass * drawconvert = type->IsTerrainPalette ? (ConvertClass *)cellptr->Drawer : (ConvertClass *)converter;
+
+						if (cliprect.Height > 0) {
+							if (heightadjust) {
+								Draw_Shape(*LogicalSurface, *drawconvert, shape, shapenum, shapepoint, cliprect, ShapeFlags_Type(SHAPE_CENTER|SHAPE_WIN_REL|SHAPE_ALPHA|SHAPE_ZWRITE), NULL, zlepton - 2, ZGRAD_GROUND, brightness);
+								Draw_Shape(*LogicalSurface, *drawconvert, shape, shapenum + shape->Get_Count() / 2, shapepoint, cliprect, ShapeFlags_Type(SHAPE_DARKEN|SHAPE_CENTER|SHAPE_WIN_REL|SHAPE_ALPHA|SHAPE_ZWRITE), NULL, zlepton - 2, ZGRAD_GROUND, NORMAL_LIGHT);
+							} else {
+								Draw_Shape(*LogicalSurface, *drawconvert, shape, shapenum, shapepoint, cliprect, ShapeFlags_Type(SHAPE_CENTER|SHAPE_WIN_REL|SHAPE_ALPHA|SHAPE_ZWRITE), NULL, zlepton + zadjust - 2, ZGRAD_90DEG, brightness, 0, zshapefile, 0, zdrawpoint);
+								Draw_Shape(*LogicalSurface, *drawconvert, shape, shapenum + shape->Get_Count() / 2, shapepoint, cliprect, ShapeFlags_Type(SHAPE_DARKEN|SHAPE_CENTER|SHAPE_WIN_REL|SHAPE_ALPHA|SHAPE_ZWRITE), NULL, zlepton - 2, ZGRAD_GROUND, NORMAL_LIGHT);
+							}
+						}
+
+						if (type->BibShape != NULL) {
+							Draw_Shape(*LogicalSurface, *drawconvert, type->BibShape, shapenum, drawpoint, rect, ShapeFlags_Type(SHAPE_CENTER|SHAPE_WIN_REL|SHAPE_ALPHA|SHAPE_ZWRITE), NULL, zlepton - 3, ZGRAD_GROUND, brightness);
+						}
+
+					} else {
+
+						AnimTypeClass * anim = (AnimTypeClass *)type;
+
+						if (anim != NULL && anim->Fetch_RTTI() == RTTI_ANIMTYPE && anim->DetailLevel <= Options.DetailLevel && shape != NULL) {
+
+							Point3D * position = &data->Position;
+							Point2D drawpoint;
+							TacticalMap->Coord_To_Pixel((Coord)*position - Coord(CELL_LEPTON_W / 2, CELL_LEPTON_H / 2, 0), drawpoint);
+							drawpoint += TacticalRect.Top_Left() - rect.Top_Left();
+
+							int brightness = NORMAL_LIGHT;
+							if (!anim->UseNormalLight) {
+								brightness = Map[(Coord)*position].Brightness;
+							}
+
+							ConvertClass * animconvert;
+							if (converter != NULL && anim->ShouldUseCellDrawer) {
+								animconvert = (ConvertClass *)converter;
+							} else {
+								animconvert = AnimDrawer;
+							}
+
+							int zadjust = data->Records[record].ZAdjust;
+
+							if (anim->Flat) {
+								Draw_Shape(*LogicalSurface, *animconvert, shape, shapenum, drawpoint, rect, ShapeFlags_Type(SHAPE_CENTER|SHAPE_WIN_REL|SHAPE_ALPHA|SHAPE_ZGRAD), NULL, zadjust - TacticalMap->Z_Lepton_To_Pixel(((Coord)*position).Z) - 2, ZGRAD_GROUND, brightness);
+							} else {
+								Draw_Shape(*LogicalSurface, *animconvert, shape, shapenum, drawpoint, rect, ShapeFlags_Type(SHAPE_CENTER|SHAPE_WIN_REL|SHAPE_ALPHA|SHAPE_ZGRAD), NULL, zadjust - TacticalMap->Z_Lepton_To_Pixel(((Coord)*position).Z) - 2, ZGRAD_90DEG, brightness);
+							}
+						}
+					}
+				}
+				break;
+			}
+
+			case RTTI_SMUDGE: {
+				Point2D point = data->BoundingRect.Top_Left() - Point2D(TacticalMap->TacPixelX, TacticalMap->TacPixelY) + (TacticalRect.Top_Left() + Point2D(ISO_TILE_PIXEL_W / 2, 0)) - rect.Top_Left();
+
+				ShapeSet const * shape = (ShapeSet const *)SmudgeTypes[data->Smudge]->Get_Image_Data();
+				if (shape != NULL) {
+					Point3D * position = &data->Position;
+					CellClass * cellptr = &Map[(Coord)*position];
+					int brightness = cellptr->TileBrightness;
+					Draw_Shape(*LogicalSurface, *cellptr->Drawer, shape, data->SmudgeData, point, rect, ShapeFlags_Type(SHAPE_CENTER|SHAPE_WIN_REL|SHAPE_ALPHA), NULL, -TacticalMap->Z_Lepton_To_Pixel(((Coord)*position).Z), ZGRAD_90DEG, brightness);
+				}
+				break;
+			}
+
+			default:
+				break;
+		}
 	}
 }
 

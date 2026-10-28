@@ -805,6 +805,174 @@ bool BuildingTypeClass::FUN_0045F1D0(ShapeSet const ** shape, int * frame)
 	return(false);
 }
 
+extern char DAT_00889F64[];
+void FUN_005F96B0(char * name, TheaterType theater);
+void * __fastcall FileSystem_LoadWholeFileEx(char const * name, bool & allocated);
+
+// FUNCTION: GAMEMD 0x0045F230
+void BuildingTypeClass::Fetch_Building_Normal_Image(TheaterType theater)
+{
+	char fullname[MAX_PATH];
+	char buffer[64];
+
+	if (!IsDemandLoadBuildup) {
+		if (strlen(BuildupFilename) != 0) {
+			_makepath(fullname, NULL, NULL, BuildupFilename, ".SHP");
+			FUN_005F96B0(fullname, theater);
+			void const * data = FileSystem::LoadFile(fullname, false);
+			if (data == NULL) {
+				FUN_005F9710(fullname);
+				data = FileSystem::LoadFile(fullname, false);
+			}
+			BuildupData = data;
+			if (BuildupData != NULL) {
+				int timedelay = 1;
+				int count = ((ShapeSet const *)BuildupData)->Get_Count()/2;
+				if (IsGate) {
+					count = GateStages + 1;
+				}
+				if (count > 0) {
+					timedelay = (Rule->BuildupTime * TICKS_PER_MINUTE) / count;
+				}
+				Init_Anim(BSTATE_CONSTRUCTION, 0, count, timedelay);
+			}
+		}
+	}
+
+	ArtINI.Get_String(Graphic_Name(), "DeployingAnim", DAT_00889F64, buffer, sizeof(buffer));
+	if (strlen(buffer) != 0) {
+		_makepath(fullname, NULL, NULL, buffer, ".SHP");
+		FUN_005F96B0(fullname, theater);
+		Free_Deploying_Anim();
+		DeployingAnim = (ShapeSet const *)FileSystem_LoadWholeFileEx(fullname, DeployingAnimLoaded);
+		if (DeployingAnim == NULL) {
+			FUN_005F9710(fullname);
+			Free_Deploying_Anim();
+			DeployingAnim = (ShapeSet const *)FileSystem_LoadWholeFileEx(fullname, DeployingAnimLoaded);
+		}
+	}
+
+	ArtINI.Get_String(Graphic_Name(), "RoofDeployingAnim", DAT_00889F64, buffer, sizeof(buffer));
+	if (strlen(buffer) != 0) {
+		_makepath(fullname, NULL, NULL, buffer, ".SHP");
+		FUN_005F96B0(fullname, theater);
+		Free_Roof_Deploying_Anim();
+		RoofDeployingAnim = (ShapeSet const *)FileSystem_LoadWholeFileEx(fullname, RoofDeployingAnimLoaded);
+		if (RoofDeployingAnim == NULL) {
+			FUN_005F9710(fullname);
+			Free_Roof_Deploying_Anim();
+			RoofDeployingAnim = (ShapeSet const *)FileSystem_LoadWholeFileEx(fullname, DeployingAnimLoaded);
+		}
+	}
+
+	ArtINI.Get_String(Graphic_Name(), "DoorAnim", DAT_00889F64, buffer, sizeof(buffer));
+	if (strlen(buffer) != 0) {
+		_makepath(fullname, NULL, NULL, buffer, ".SHP");
+		FUN_005F96B0(fullname, theater);
+		DoorAnim = (ShapeSet const *)FileSystem::LoadFile(fullname, false);
+		if (DoorAnim == NULL) {
+			FUN_005F9710(fullname);
+			DoorAnim = (ShapeSet const *)FileSystem::LoadFile(fullname, false);
+		}
+	}
+
+	ArtINI.Get_String(Graphic_Name(), "UnderDoorAnim", DAT_00889F64, buffer, sizeof(buffer));
+	if (strlen(buffer) != 0) {
+		_makepath(fullname, NULL, NULL, buffer, ".SHP");
+		FUN_005F96B0(fullname, theater);
+		Free_Under_Door_Anim();
+		UnderDoorAnim = (ShapeSet const *)FileSystem_LoadWholeFileEx(fullname, UnderDoorAnimLoaded);
+		if (UnderDoorAnim == NULL) {
+			FUN_005F9710(fullname);
+			Free_Under_Door_Anim();
+			UnderDoorAnim = (ShapeSet const *)FileSystem::LoadFile(fullname, false);
+		}
+	}
+
+	Free_Rubble();
+	ArtINI.Get_String(Graphic_Name(), "Rubble", DAT_00889F64, buffer, sizeof(buffer));
+	if (strlen(buffer) != 0) {
+		_makepath(fullname, NULL, NULL, buffer, ".SHP");
+		FUN_005F96B0(fullname, theater);
+		Rubble = (ShapeSet const *)FileSystem_LoadWholeFileEx(fullname, RubbleLoaded);
+		if (Rubble == NULL) {
+			FUN_005F9710(fullname);
+			Free_Rubble();
+			Rubble = (ShapeSet const *)FileSystem::LoadFile(fullname, false);
+		}
+	}
+
+	ArtINI.Get_String(Graphic_Name(), "UnderRoofDoorAnim", DAT_00889F64, buffer, sizeof(buffer));
+	if (strlen(buffer) != 0) {
+		_makepath(fullname, NULL, NULL, buffer, ".SHP");
+		FUN_005F96B0(fullname, theater);
+		Free_Under_Roof_Door_Anim();
+		UnderRoofDoorAnim = (ShapeSet const *)FileSystem_LoadWholeFileEx(fullname, UnderRoofDoorAnimLoaded);
+		if (UnderRoofDoorAnim == NULL) {
+			FUN_005F9710(fullname);
+			Free_Under_Roof_Door_Anim();
+			UnderRoofDoorAnim = (ShapeSet const *)FileSystem::LoadFile(fullname, false);
+		}
+	}
+
+	ArtINI.Get_String(Graphic_Name(), "SpecialZOverlay", DAT_00889F64, buffer, sizeof(buffer));
+	if (strlen(buffer) != 0) {
+		_makepath(fullname, NULL, NULL, buffer, ".SHP");
+		FUN_005F96B0(fullname, theater);
+		SpecialZOverlay = (ShapeSet const *)FileSystem::LoadFile(fullname, false);
+		if (SpecialZOverlay == NULL) {
+			FUN_005F9710(fullname);
+			SpecialZOverlay = (ShapeSet const *)FileSystem::LoadFile(fullname, false);
+		}
+	}
+
+	ArtINI.Get_String(Graphic_Name(), "BibShape", DAT_00889F64, buffer, sizeof(buffer));
+	if (strlen(buffer) != 0) {
+		_makepath(fullname, NULL, NULL, buffer, ".SHP");
+		FUN_005F96B0(fullname, theater);
+		Free_Bib_Shape();
+		BibShape = (ShapeSet const *)FileSystem_LoadWholeFileEx(fullname, BibShapeLoaded);
+		if (BibShape == NULL) {
+			FUN_005F9710(fullname);
+			Free_Bib_Shape();
+			BibShape = (ShapeSet const *)FileSystem::LoadFile(fullname, false);
+		}
+	}
+
+	char ext[16];
+	ArtINI.Get_String(Graphic_Name(), "Image", DAT_00889F64, buffer, sizeof(buffer));
+	if (IsTheater && theater != THEATER_NONE) {
+		strcpy(ext, Theaters[theater].Suffix);
+	} else {
+		strcpy(ext, ".SHP");
+	}
+
+	if (strlen(buffer)) {
+		_makepath(fullname, NULL, NULL, buffer, ext);
+	} else {
+		_makepath(fullname, NULL, NULL, Graphic_Name(), ext);
+	}
+
+	FUN_005F96B0(fullname, theater);
+	strncpy(TheaterImageFile, fullname, sizeof(TheaterImageFile));
+
+	if (!IsDemandLoad) {
+		ImageData = FileSystem::LoadFile(fullname, false);
+		if (ImageData == NULL) {
+			FUN_005F9710(fullname);
+			strncpy(TheaterImageFile, fullname, sizeof(TheaterImageFile));
+			ImageData = FileSystem::LoadFile(fullname, false);
+		}
+		if (ImageData == NULL) {
+			FUN_005F9710(fullname);
+			strncpy(TheaterImageFile, fullname, sizeof(TheaterImageFile));
+			ImageData = FileSystem::LoadFile(fullname, false);
+		}
+	}
+
+	Fetch_Building_Voxel_Image();
+}
+
 // FUNCTION: GAMEMD 0x0045FA90
 void BuildingTypeClass::Fetch_Building_Voxel_Image(void)
 {

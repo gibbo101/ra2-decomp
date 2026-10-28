@@ -226,3 +226,7 @@ address,name,symbol,evidence
 0x00887308,VisibleSurface,,TibSun _surface.h VisibleSurface (YRpp DSurface::Primary); its neighbours sit at TibSun's surface offsets
 0x00ABCB78,LineTrailArray,,DynamicVectorClass<LineTrail *> (YRpp LineTrail::Array); walked by LineTrail::Process_All
 0x00ABFEC8,FirewallHelper,,FirewallHelperClass global (Renegade nat.cpp FirewallHelper); built by $E44 0x005D8F90 and Clear()ed by MainOpt 0x00560480
+0x00B052D0,OwnerTalk,,OwnerTalkClass global (rocket2.cpp); built by its initialiser 0x00663800 and called with mov ecx 0xB052D0 from IPXManagerClass::Service
+0x00ABC2B8,IsometricTileTypeClass::RoughTile,,stored from the RoughTile lookup result in 0x00545150 (isotype.h static)
+0x00ABB104,IsometricTileTypeClass::SandTile,,stored from the SandTile lookup result in 0x00545150 (isotype.h static)
+0x00AA0E18,IsometricTileTypeClass::GreenTile,,stored from the GreenTile lookup result in 0x00545150 (isotype.h static)

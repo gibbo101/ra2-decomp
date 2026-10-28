@@ -513,11 +513,7 @@ void Destroy_Connection(int id, int error);
 bool Process_Global_Packet(GlobalPacketType * packet, IPXAddressClass * address);
 void __fastcall FUN_00752B70(unsigned char taunt);
 
-struct Unknown_00B052D0 {
-	unsigned char FUN_00663D60(int id);
-	IPXAddressClass * FUN_006642A0(char const * name);
-};
-extern Unknown_00B052D0 DAT_00B052D0;
+#include "ownertalk.h"
 extern int DAT_0081D4E4;
 
 static inline bool Same_Name(NodeNameType * a, NodeNameType * b)
@@ -672,7 +668,7 @@ void IPX_Call_Back(void)
 							NetNumType net;
 							NetNodeType node;
 							unsigned short port;
-							IPXAddressClass * address = DAT_00B052D0.FUN_006642A0(Session.GPacket.Name);
+							IPXAddressClass * address = OwnerTalk.Address_From_Name(Session.GPacket.Name);
 							address->Get_Address(net, node, &port);
 							((UDPInterfaceClass *)PacketTransport)->Add_Peer(node, port);
 						}
@@ -692,7 +688,7 @@ void IPX_Call_Back(void)
 							}
 						}
 						if (msg_ok && Session.ViaPacketRouter) {
-							msg_ok = (Session.GPacket.Message.Recipients & DAT_00B052D0.FUN_00663D60(Session.Players[0]->Player.ID)) != 0;
+							msg_ok = (Session.GPacket.Message.Recipients & OwnerTalk.Mask_From_ID(Session.Players[0]->Player.ID)) != 0;
 						}
 
 						if (msg_ok) {
@@ -726,7 +722,7 @@ void IPX_Call_Back(void)
 							}
 						}
 						if (msg_ok && Session.ViaPacketRouter) {
-							msg_ok = (Session.GPacket.Taunt.Recipients & DAT_00B052D0.FUN_00663D60(Session.Players[0]->Player.ID)) != 0;
+							msg_ok = (Session.GPacket.Taunt.Recipients & OwnerTalk.Mask_From_ID(Session.Players[0]->Player.ID)) != 0;
 						}
 						if (msg_ok) {
 							if ((Session.LANTaunts && Session.Type == GAME_IPX) || (Session.WOLTaunts && Session.Type == GAME_INTERNET)) {

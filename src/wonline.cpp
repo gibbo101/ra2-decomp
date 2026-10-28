@@ -162,15 +162,25 @@ ArrayList<User> DAT_00B77900;
 // FUNCTION: GAMEMD 0x0077BA20
 ArrayList<int> DAT_00B76520;
 
-struct LadderA {
-	char Pad[8];
-	int Field08;
-	int Field0C;
-	int Field10;
-	char Pad2[8];
-	int Rung;
-	int Field20;
-	char Data[0x6C - 0x24];
+struct Ladder {
+	unsigned int sku;
+	unsigned int team_no;
+	unsigned int wins;
+	unsigned int losses;
+	unsigned int points;
+	unsigned int kills;
+	unsigned int rank;
+	unsigned int rung;
+	unsigned int disconnects;
+	unsigned int team_rung;
+	unsigned int provisional;
+	unsigned int last_game_date;
+	unsigned int win_streak;
+	unsigned int reserved1;
+	unsigned int reserved2;
+	Ladder * next;
+	unsigned char login_name[40];
+	int locale;
 };
 
 struct LadderB {
@@ -183,15 +193,15 @@ enum WolEntryState {
 
 // FUNCTION: GAMEMD 0x0077BA40
 // FUNCTION: GAMEMD 0x0077BAE0
-Dictionary<Wstring, LadderA> DAT_00B768C0 HASH_ARG;
+Dictionary<Wstring, Ladder> DAT_00B768C0 HASH_ARG;
 
 // FUNCTION: GAMEMD 0x0077BC10
 // FUNCTION: GAMEMD 0x0077BCB0
-Dictionary<Wstring, LadderA> DAT_00B73AF8 HASH_ARG;
+Dictionary<Wstring, Ladder> DAT_00B73AF8 HASH_ARG;
 
 // FUNCTION: GAMEMD 0x0077BDE0
 // FUNCTION: GAMEMD 0x0077BE80
-Dictionary<Wstring, LadderA> DAT_00B77D80 HASH_ARG;
+Dictionary<Wstring, Ladder> DAT_00B77D80 HASH_ARG;
 
 // FUNCTION: GAMEMD 0x0077BFB0
 // FUNCTION: GAMEMD 0x0077C050
@@ -731,19 +741,18 @@ Wstring DAT_00B73E40;
 Wstring DAT_00B7778C;
 
 extern int DAT_00B779C4;
-char * __fastcall FUN_007350C0(wchar_t const * text);
 
 // FUNCTION: GAMEMD 0x0077DA50
-LadderA * __fastcall FUN_0077DA50(wchar_t const * name)
+Ladder * __fastcall FUN_0077DA50(wchar_t const * name)
 {
 	Wstring key(FUN_007350C0(name));
 	key.toLower();
-	LadderA * result = new LadderA;
+	Ladder * result = new Ladder;
 	if (!result) {
 		return NULL;
 	}
-	memset(result, 0, sizeof(LadderA));
-	LadderA * found = NULL;
+	memset(result, 0, sizeof(Ladder));
+	Ladder * found = NULL;
 	if (DAT_00B779C4 != 2) {
 		if (DAT_00B77D80.getPointer(key, &found) && found) {
 			*result = *found;
@@ -933,8 +942,6 @@ extern int DAT_00B779F0;
 extern int DAT_00B779BC;
 extern int DAT_00B7690C;
 extern int DAT_00B77784;
-extern int DAT_00B779DC;
-extern int DAT_00B779C0;
 void FUN_005EE190(void);
 void FUN_005EE1B0(void);
 void __fastcall FUN_005EE350(int arg);
@@ -1386,7 +1393,7 @@ struct DownloadObject : IUnknown {
 	virtual long __stdcall Pump(void) = 0;
 };
 
-extern Dictionary<Wstring, LadderA> * DAT_00B77E0C;
+extern Dictionary<Wstring, Ladder> * DAT_00B77E0C;
 extern int DAT_00B779C8;
 extern int DAT_00B736F0;
 extern int DAT_0084A234;
@@ -1446,12 +1453,6 @@ int FUN_00775B20(void);
 void Call_Back(void);
 bool FUN_00796710(void);
 bool FUN_00786270(void);
-extern int DAT_00B77E70;
-extern char DAT_00B77E26;
-extern char DAT_00B77E27;
-extern HANDLE DAT_00B73698;
-
-bool FUN_0077F900(void);
 
 // FUNCTION: GAMEMD 0x00780110
 void FUN_00780110(void)
@@ -1629,10 +1630,10 @@ WideWstring __fastcall FUN_00780A90(User * user)
 	Wstring name(user->Nick);
 	WideWstring text = FUN_007B7ED0(name) + L" : ";
 	name.toLower();
-	LadderA ladder;
+	Ladder ladder;
 	memset(&ladder, 0, sizeof(ladder));
 	if (DAT_00B77E0C && DAT_00B77E0C->getValue(name, ladder)) {
-		text += WideWstring(StringTable::LoadString("TXT_RANK", NULL, "D:\\ra2mdpost\\wonline.cpp", 0xB79)) + WideWstring(L" ") + FUN_007B7DD0(ladder.Rung);
+		text += WideWstring(StringTable::LoadString("TXT_RANK", NULL, "D:\\ra2mdpost\\wonline.cpp", 0xB79)) + WideWstring(L" ") + FUN_007B7DD0(ladder.rung);
 	} else {
 		text += StringTable::LoadString("TXT_UNRANKED", NULL, "D:\\ra2mdpost\\wonline.cpp", 0xB7B);
 	}
@@ -1848,18 +1849,7 @@ struct PCX {
 	int GetSurface(char const * name, void * palette);
 };
 namespace Game { extern int ObserverMode; }
-extern int DAT_00B77A8C;
-extern char DAT_00B77E74;
 extern int DAT_007EEF28;
-extern int DAT_00B778D0;
-extern int DAT_00B778CC;
-extern int DAT_00B76AF4;
-extern int DAT_00B7643C;
-extern int DAT_007EEF48;
-extern wchar_t DAT_0084A724[];
-extern wchar_t DAT_0084A6E0[];
-int __fastcall FUN_00623F00(HWND list, int index, Wstring * text);
-HWND FUN_00775B10(void);
 
 void FUN_00781480(void);
 void __fastcall FUN_0079AF10(HWND dialog);
@@ -1993,8 +1983,6 @@ void __fastcall FUN_00782BB0(User * user, bool ascending);
 extern int DAT_00B77E48;
 void __fastcall FUN_00782320(User * user, bool ascending);
 
-void __fastcall FUN_00782320(User * user, bool ascending);
-
 // FUNCTION: GAMEMD 0x00783070
 void __fastcall FUN_00783070(User * user)
 {
@@ -2078,12 +2066,12 @@ void __fastcall FUN_00783270(bool ascending)
 		sorted[i].Index = i;
 		sorted[i].Key = -1;
 		Wstring name;
-		LadderA info;
+		Ladder info;
 		memset(&info, 0, sizeof(info));
 		name.set(temp.Nick);
 		name.toLower();
 		if (DAT_00B77E0C && DAT_00B77E0C->getValue(name, info)) {
-			sorted[i].Key = info.Rung;
+			sorted[i].Key = info.rung;
 		}
 		sorted[i].Flag = temp.Flags & 1;
 		copy.addTail(temp);
@@ -2633,14 +2621,7 @@ namespace OwnerDraw {
 }
 int __fastcall FUN_00788A30(bool flag);
 void __fastcall FUN_00735060(wchar_t * dest, char const * source, int limit);
-void __cdecl FUN_005E2700(int color, wchar_t const * text, ...);
-void __fastcall FUN_005E9340(char const * nick);
-void FUN_005E9850(void);
-void __fastcall FUN_005E32D0(bool force, bool now);
-int FUN_00775B20(void);
-void FUN_0072CF90(void);
 extern char DAT_00B76E40[0x940];
-extern int DAT_007EEF28;
 int FUN_0077CF40(void);
 void __fastcall FUN_007A0EA0(char const * name, int ping);
 #include "multiplayer.h"
@@ -2677,9 +2658,6 @@ void FUN_00785EA0(void)
 	int budget = DAT_00B77900.length();
 }
 
-extern IID const DAT_007F7550;
-extern IID const DAT_007F7590;
-extern IID const DAT_007F7570;
 extern char DAT_00B77E75;
 void FUN_005E8A20(void);
 
@@ -2750,7 +2728,6 @@ bool FUN_00786270(void)
 	return false;
 }
 
-extern char DAT_00B77E75;
 void FUN_005E87A0(void);
 void FUN_005E8B40(void);
 void FUN_005E8B60(void);
@@ -2819,7 +2796,6 @@ extern char DAT_0084A238;
 extern int DAT_00B77A90;
 extern char DAT_00B761A8[];
 extern char DAT_00B75E4C;
-void __fastcall FUN_00779F10(Wstring const * value);
 #include "wolopt.h"
 
 static inline int Pick_Locale(void)
@@ -2863,8 +2839,6 @@ bool FUN_00786D90(void)
 	}
 	return false;
 }
-
-extern char DAT_0084A238;
 
 // FUNCTION: GAMEMD 0x00786DC0
 bool __fastcall FUN_00786DC0(Wstring & name)
@@ -2945,9 +2919,6 @@ namespace UI {
 	void __fastcall FocusOnWindow(HWND window);
 	void __fastcall EndDialog(HWND window);
 }
-extern int DAT_00B76468;
-extern long DAT_00B77DF8;
-
 
 #include "_mixfile.h"
 #include "_pk.h"
@@ -2956,7 +2927,6 @@ extern long DAT_00B77DF8;
 #include "worlddom.h"
 #include "wdtnet.h"
 
-extern wchar_t const * DAT_00B73E1C[8];
 extern wchar_t * DAT_00B75E50;
 extern int DAT_00B77DD4;
 rc_ptr<WDTState> * __cdecl FUN_007B0210(void);
@@ -6642,15 +6612,15 @@ void __fastcall FUN_0079C040(HWND dialog)
 	HWND name_item = GetDlgItem(dialog, 0x6EF);
 	Set_Text(name_item, text);
 	delete text;
-	LadderA ladder;
+	Ladder ladder;
 	memset(&ladder, 0, sizeof(ladder));
 	Wstring key = ((Wstring const &)DAT_00B76E24).toLower();
 	if (DAT_00B77D80.getValue(key, ladder)) {
-		Set_Text(rank_label, FUN_007B7DD0(ladder.Rung).text());
-		Set_Text(field10_label, FUN_007B7DD0(ladder.Field10).text());
-		Set_Text(field08_label, FUN_007B7DD0(ladder.Field08).text());
-		Set_Text(field0C_label, FUN_007B7DD0(ladder.Field0C).text());
-		Set_Text(field20_label, FUN_007B7DD0(ladder.Field20).text());
+		Set_Text(rank_label, FUN_007B7DD0(ladder.rung).text());
+		Set_Text(field10_label, FUN_007B7DD0(ladder.points).text());
+		Set_Text(field08_label, FUN_007B7DD0(ladder.wins).text());
+		Set_Text(field0C_label, FUN_007B7DD0(ladder.losses).text());
+		Set_Text(field20_label, FUN_007B7DD0(ladder.disconnects).text());
 	} else {
 		WideWstring unknown(StringTable::LoadString("GUI:UnknownStats", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x6913));
 		Set_Text(rank_label, unknown.text());
@@ -7677,7 +7647,7 @@ void FUN_007A19E0(void)
 {
 	FUN_005E2700(0xC0FFFF, StringTable::LoadString("WOL:MatchFoundWith", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x7066), DAT_00B76AC4.c_str());
 	Wstring lower = ((Wstring const &)DAT_00B76AC4).toLower();
-	LadderA * found = NULL;
+	Ladder * found = NULL;
 	DAT_00B77D80.getPointer(lower, &found);
 	int index;
 	{
@@ -8013,6 +7983,171 @@ long __stdcall FUN_007A30D0(void * sink, long result)
 		FUN_006C6D00();
 	}
 	FUN_006C6DE0();
+	return 0;
+}
+
+extern char DAT_00884CF4;
+extern int DAT_00B779D8;
+extern int DAT_00B73E08;
+extern int DAT_00B76904;
+extern int DAT_00B77CE4;
+extern int DAT_00B73AB4;
+extern int DAT_00B76AEC;
+
+static inline char Remove_Ladder(Dictionary<Wstring, Ladder> & dict, Wstring & key, Ladder & value)
+{
+	return dict.remove(key, value);
+}
+
+// FUNCTION: GAMEMD 0x007A3100
+long __stdcall FUN_007A3100(void * sink, long result, Ladder * list, int, long, int key_rung)
+{
+	Ladder * temp = NULL;
+	if (result != 0) {
+		list = NULL;
+	}
+	if (DAT_00B77DC1) {
+		DAT_00884CF4 = 1;
+		return 0;
+	}
+	HWND rung_list = GetDlgItem(FUN_00775940(0xC1), 0x57F);
+	if (rung_list && key_rung == -1 && result == 0) {
+		rung_list = NULL;
+	}
+	if (rung_list) {
+		SendMessage(rung_list, LB_RESETCONTENT, 0, 0);
+		if (list == NULL) {
+			SendMessage(rung_list, 0x4CC, (WPARAM)-1, (LPARAM)StringTable::LoadString("TXT_NOT_IN_LADDER", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x12B1));
+			InvalidateRect(rung_list, NULL, FALSE);
+			return 0;
+		}
+	} else if (list == NULL) {
+		return 0;
+	}
+
+	temp = list;
+	wchar_t list_string[128];
+	int top_rung = list->rung;
+	OwnerDraw::CellData thecell;
+
+	if (list->sku == 0x802100) {
+		if (DAT_00B768C0.getEntries() > 2000) {
+			DAT_00B768C0.clear();
+		}
+	} else if (list->sku == 0x2300) {
+		if (DAT_00B73AF8.getEntries() > 2000) {
+			DAT_00B73AF8.clear();
+		}
+	} else {
+		if (DAT_00B77D80.getEntries() > 2000) {
+			DAT_00B77D80.clear();
+		}
+	}
+
+	if (list && rung_list) {
+		DAT_00B76E38 = list->rung;
+	}
+
+	Wstring my_name = ((Wstring const &)DAT_00B73E40).toLower();
+	int row = 0;
+	while (temp) {
+		if (temp->points == -1) {
+			temp = temp->next;
+			continue;
+		}
+
+		if (rung_list) {
+			thecell.type = OwnerDraw::CellData::PRIMARY;
+			swprintf(list_string, L"%d", temp->rung);
+			SendMessage(rung_list, 0x4CC, (WPARAM)-1, (LPARAM)list_string);
+			SendMessage(rung_list, 0x4A8, MAKEWPARAM(DAT_00B779D8, row), (LPARAM)&thecell);
+
+			thecell.type = OwnerDraw::CellData::TEXT;
+			wchar_t wide_name[0x1400];
+			FUN_00735060(wide_name, (char *)temp->login_name, -1);
+			thecell.string.set(wide_name);
+			SendMessage(rung_list, 0x4A8, MAKEWPARAM(DAT_00B73E08, row), (LPARAM)&thecell);
+
+			swprintf(list_string, L"%d", temp->points);
+			thecell.string.set(list_string);
+			SendMessage(rung_list, 0x4A8, MAKEWPARAM(DAT_00B76904, row), (LPARAM)&thecell);
+
+			swprintf(list_string, L"%d", temp->wins);
+			thecell.string.set(list_string);
+			SendMessage(rung_list, 0x4A8, MAKEWPARAM(DAT_00B77CE4, row), (LPARAM)&thecell);
+
+			swprintf(list_string, L"%d", temp->losses);
+			thecell.string.set(list_string);
+			SendMessage(rung_list, 0x4A8, MAKEWPARAM(DAT_00B73AB4, row), (LPARAM)&thecell);
+
+			swprintf(list_string, L"%d", temp->disconnects);
+			thecell.string.set(list_string);
+			SendMessage(rung_list, 0x4A8, MAKEWPARAM(DAT_00B76AEC, row), (LPARAM)&thecell);
+
+			row++;
+		}
+
+		Wstring ladder_name((char *)temp->login_name);
+		ladder_name.toLower();
+
+		if (list->sku == 0x802100) {
+			Ladder old;
+			Remove_Ladder(DAT_00B768C0, ladder_name, old);
+			DAT_00B768C0.add(ladder_name, *temp);
+		} else if (list->sku == 0x2300) {
+			Ladder old;
+			Remove_Ladder(DAT_00B73AF8, ladder_name, old);
+			DAT_00B73AF8.add(ladder_name, *temp);
+		} else {
+			Ladder old;
+			Remove_Ladder(DAT_00B77D80, ladder_name, old);
+			DAT_00B77D80.add(ladder_name, *temp);
+		}
+
+		if (DAT_00B76B10.Type == 0 && (DAT_00B77E48 == 2 || DAT_00B77E48 == 3)) {
+			int count = DAT_00B77900.length();
+			User user;
+			for (int i = 0; i < count; i++) {
+				DAT_00B77900.get(user, i);
+				if (stricmp((char *)temp->login_name, user.Nick) == 0) {
+					break;
+				}
+			}
+			if (i < count) {
+				DAT_00B77900.remove(i);
+				FUN_00783070(&user);
+			}
+		}
+
+		if (my_name == ladder_name) {
+			rc_ptr<PlayerProfile> profile = FUN_00778A20(&DAT_00B73E40);
+			if (profile.Get() && profile->StatsDiffer(temp)) {
+				profile->UpdateStats(temp);
+				profile->Save(&ladder_name);
+				HWND dialog = FUN_00775940(0x10E);
+				if (dialog == NULL) {
+					dialog = FUN_00775940(0x114);
+				}
+				if (dialog) {
+					profile->FUN_0077A9F0(dialog, &DAT_00B73E40, false);
+				}
+			}
+		}
+
+		temp = temp->next;
+	}
+
+	if (rung_list) {
+		SendMessage(rung_list, LB_SETCURSEL, (WPARAM)key_rung - top_rung, 0);
+		InvalidateRect(rung_list, NULL, FALSE);
+	} else {
+		FUN_00783C80(0, false);
+	}
+	FUN_0079D110();
+	HWND dialog = FUN_00775940(0x116);
+	if (dialog) {
+		FUN_0079C040(dialog);
+	}
 	return 0;
 }
 
@@ -9210,7 +9345,7 @@ template class VectorClass<tConnInfoStruct *>;
 // TEMPLATE: GAMEMD 0x007AD2C0
 // ?ID@?$DynamicVectorClass@PAUtConnInfoStruct@@@@UAEHABQAUtConnInfoStruct@@@Z
 // SYNTHETIC: GAMEMD 0x007AD2F0
-// ??_G?$DNode@VWstring@@ULadderA@@@@QAEPAXI@Z
+// ??_G?$DNode@VWstring@@ULadder@@@@QAEPAXI@Z
 // SYNTHETIC: GAMEMD 0x007AD310
 // ??_G?$DNode@VWstring@@H@@QAEPAXI@Z
 // SYNTHETIC: GAMEMD 0x007AD330
@@ -9263,20 +9398,20 @@ template class ArrayList<User>;
 template class ArrayList<int>;
 
 // TEMPLATE: GAMEMD 0x007ADC60
-// ?getPointer@?$Dictionary@VWstring@@ULadderA@@@@QAEDAAVWstring@@PAPAULadderA@@@Z
+// ?getPointer@?$Dictionary@VWstring@@ULadder@@@@QAEDAAVWstring@@PAPAULadder@@@Z
 
 // TEMPLATE: GAMEMD 0x007ADCD0
-// ?remove@?$Dictionary@VWstring@@ULadderA@@@@QAEDAAVWstring@@AAULadderA@@@Z
+// ?remove@?$Dictionary@VWstring@@ULadder@@@@QAEDAAVWstring@@AAULadder@@@Z
 
 // TEMPLATE: GAMEMD 0x007ADF70
-// ?shrink@?$Dictionary@VWstring@@ULadderA@@@@AAEXXZ
+// ?shrink@?$Dictionary@VWstring@@ULadder@@@@AAEXXZ
 
 // TEMPLATE: GAMEMD 0x007AE020
-// ?expand@?$Dictionary@VWstring@@ULadderA@@@@AAEXXZ
+// ?expand@?$Dictionary@VWstring@@ULadder@@@@AAEXXZ
 
 // TEMPLATE: GAMEMD 0x007AE0C0
-// ?keyHash@?$Dictionary@VWstring@@ULadderA@@@@AAEIAAVWstring@@@Z
-template class Dictionary<Wstring, LadderA>;
+// ?keyHash@?$Dictionary@VWstring@@ULadder@@@@AAEIAAVWstring@@@Z
+template class Dictionary<Wstring, Ladder>;
 
 // TEMPLATE: GAMEMD 0x007AE0E0
 // ?expand@?$Dictionary@VWstring@@ULadderB@@@@AAEXXZ

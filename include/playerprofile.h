@@ -10,10 +10,7 @@
 #include "wstring.h"
 
 
-struct PlayerStatsRecord
-{
-	int Pad0, Pad4, Field8, FieldC, Field10, Pad14, Pad18, Field1C, Field20;
-};
+struct Ladder;
 
 class PlayerProfile : public ReferenceCounted
 {
@@ -26,8 +23,8 @@ class PlayerProfile : public ReferenceCounted
 		void SetMatchByRes(bool value);
 		void SetUpdateStamp(void);
 		void SetField20(int value);
-		void UpdateStats(PlayerStatsRecord const * record);
-		bool StatsDiffer(PlayerStatsRecord const * record) const;
+		void UpdateStats(Ladder const * record);
+		bool StatsDiffer(Ladder const * record) const;
 		void AddField2C(int delta);
 		void AddField30(int delta);
 		void AddField34(int delta);

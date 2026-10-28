@@ -672,9 +672,217 @@ void NullModemClass::Configure_Debug(int, int type_offset, int type_size,
 }
 
 extern char ModemRXString[80];
+extern char _send_resp[NullModemClass::MODEM_CMD_0+1][20];
 
 namespace OwnerDraw {
 	HWND Custom_Message_Box(wchar_t const * btn1txt, wchar_t const * btn2txt, bool * cancelled);
+}
+
+// FUNCTION: GAMEMD 0x005F1FA0
+bool NullModemClass::Detect_Modem( SerialSettingsType *settings, bool reconnect )
+{
+	int status;
+	int error_count = 0;
+
+	char buffer[80*3];
+
+	DebugString("Detecting modem\n");
+
+	if (SerialPort->Enter_Failsafe_Mode()) {
+
+#line 1134 "D:\\ra2mdpost\\NullMgr.CPP"
+		HWND dialog = OwnerDraw::Custom_Message_Box( StringTable::LoadString("TXT_INITIALIZING_MODEM", NULL, __FILE__, __LINE__) );
+
+		if (dialog != NULL) {
+
+			OwnerDraw::Display_Dialog(dialog);
+
+			DebugString("Sending echo on command\n");
+			status = Send_Modem_Command ( "ATE1", '\r', buffer, 81, DETECT_DEFAULT_TIMEOUT / 2, 2);
+			DebugString("Command response was %s\n", _send_resp[status]);
+
+			DebugString("Sending result codes on command\n");
+			status = Send_Modem_Command ( "ATQ0", '\r', buffer, 81, DETECT_DEFAULT_TIMEOUT / 2, 2);
+			DebugString("Command response was %s\n", _send_resp[status]);
+
+			DebugString("Sending verbose result codes command\n");
+			status = Send_Modem_Command ( "ATV1", '\r', buffer, 81, DETECT_DEFAULT_TIMEOUT / 2, 2);
+			DebugString("Command response was %s\n", _send_resp[status]);
+
+			ModemVerboseOn = true;
+			ModemEchoOn = true;
+
+			status = Send_Modem_Command( "AT", '\r', buffer, 81, DETECT_DEFAULT_TIMEOUT, 2 );
+
+			if (status < MODEM_CMD_OK) {
+				DebugString("Modem failed to respond to 'AT' command\n");
+				OwnerDraw::End_Dialog(dialog);
+				SerialPort->Leave_Failsafe_Mode();
+				return(false);
+			}
+
+			if (settings->InitStringIndex == -1) {
+				status = Send_Modem_Command( "", '\r', buffer, 81, 5 * TIMER_SECOND, 1 );
+			} else {
+				DebugString("Sending init strings\n");
+
+				char *istr = new char [2 + strlen( Session.InitStrings [settings->InitStringIndex] )];
+				char *tokenptr;
+				strcpy (istr, Session.InitStrings [settings->InitStringIndex] );
+
+				tokenptr = strtok ( istr, "|" );
+				while ( tokenptr ) {
+					DebugString("Sending %s\n", tokenptr);
+					status = Send_Modem_Command( tokenptr, '\r', buffer, 81, 90, 1 );
+					DebugString("Command response was %s\n", _send_resp[status]);
+
+					if (status < MODEM_CMD_OK) {
+#line 1215 "D:\\ra2mdpost\\NullMgr.CPP"
+						if (WWMessageBox().Process(StringTable::LoadString("TXT_ERROR_NO_INIT", NULL, __FILE__, __LINE__), StringTable::LoadString("TXT_IGNORE", NULL, __FILE__, __LINE__), StringTable::LoadString("TXT_CANCEL", NULL, __FILE__, __LINE__), NULL)) {
+							delete istr;
+							OwnerDraw::End_Dialog(dialog);
+							SerialPort->Leave_Failsafe_Mode();
+							return( false );
+						}
+						error_count++;
+						break;
+					}
+
+					tokenptr = strtok ( NULL, "|");
+
+				}
+				delete [] istr;
+			}
+
+			if (settings->Port == 1 && ModemRegistry) {
+				char send_string[256] = {"AT"};
+
+				if (ModemRegistry->Get_Modem_Hardware_Flow_Control()) {
+					DebugString("Sending flow control init\n");
+					strcpy (&send_string[2], ModemRegistry->Get_Modem_Hardware_Flow_Control());
+					status = Send_Modem_Command (send_string, '\r', buffer, 81, TIMER_SECOND, 1);
+					DebugString("Command response was %s\n", _send_resp[status]);
+
+					if (status != MODEM_CMD_OK && status != MODEM_CMD_0) {
+#line 1247 "D:\\ra2mdpost\\NullMgr.CPP"
+						if (WWMessageBox().Process(StringTable::LoadString("TXT_NO_FLOW_CONTROL_RESPONSE", NULL, __FILE__, __LINE__), StringTable::LoadString("TXT_IGNORE", NULL, __FILE__, __LINE__), StringTable::LoadString("TXT_CANCEL", NULL, __FILE__, __LINE__), NULL)) {
+							OwnerDraw::End_Dialog(dialog);
+							SerialPort->Leave_Failsafe_Mode();
+							return( false );
+						}
+					}
+				}
+
+				if (settings->Compression){
+
+					if (ModemRegistry->Get_Modem_Compression_Enable()) {
+						DebugString("Sending data compression enable init\n");
+						strcpy (&send_string[2], ModemRegistry->Get_Modem_Compression_Enable());
+						Send_Modem_Command (send_string, '\r', buffer, 81, TIMER_SECOND, 1);
+						DebugString("Command response was %s\n", _send_resp[status]);
+
+						if (status != MODEM_CMD_OK && status != MODEM_CMD_0) {
+#line 1266 "D:\\ra2mdpost\\NullMgr.CPP"
+							if (WWMessageBox().Process(StringTable::LoadString("TXT_NO_COMP_ENABLE_RESPONSE", NULL, __FILE__, __LINE__), StringTable::LoadString("TXT_IGNORE", NULL, __FILE__, __LINE__), StringTable::LoadString("TXT_CANCEL", NULL, __FILE__, __LINE__), NULL)) {
+								OwnerDraw::End_Dialog(dialog);
+								SerialPort->Leave_Failsafe_Mode();
+								return( false );
+							}
+						}
+					}
+				}else{
+
+					if (ModemRegistry->Get_Modem_Compression_Disable()) {
+						DebugString("Sending data compression disable init\n");
+						strcpy (&send_string[2], ModemRegistry->Get_Modem_Compression_Disable());
+						Send_Modem_Command (send_string, '\r', buffer, 81, TIMER_SECOND, 1);
+						DebugString("Command response was %s\n", _send_resp[status]);
+
+						if (status != MODEM_CMD_OK && status != MODEM_CMD_0) {
+#line 1281 "D:\\ra2mdpost\\NullMgr.CPP"
+							if (WWMessageBox().Process(StringTable::LoadString("TXT_NO_COMP_DISABLE_RESPONSE", NULL, __FILE__, __LINE__), StringTable::LoadString("TXT_IGNORE", NULL, __FILE__, __LINE__), StringTable::LoadString("TXT_CANCEL", NULL, __FILE__, __LINE__), NULL)) {
+								OwnerDraw::End_Dialog(dialog);
+								SerialPort->Leave_Failsafe_Mode();
+								return( false );
+							}
+						}
+					}
+				}
+
+				if (settings->ErrorCorrection){
+
+					if (ModemRegistry->Get_Modem_Error_Correction_Enable()) {
+						DebugString("Sending error correction enable init\n");
+						strcpy (&send_string[2], ModemRegistry->Get_Modem_Error_Correction_Enable());
+						Send_Modem_Command (send_string, '\r', buffer, 81, TIMER_SECOND, 1);
+						DebugString("Command response was %s\n", _send_resp[status]);
+
+						if (status != MODEM_CMD_OK && status != MODEM_CMD_0) {
+#line 1301 "D:\\ra2mdpost\\NullMgr.CPP"
+							if (WWMessageBox().Process(StringTable::LoadString("TXT_NO_EC_ENABLE_RESPONSE", NULL, __FILE__, __LINE__), StringTable::LoadString("TXT_IGNORE", NULL, __FILE__, __LINE__), StringTable::LoadString("TXT_CANCEL", NULL, __FILE__, __LINE__), NULL)) {
+								OwnerDraw::End_Dialog(dialog);
+								SerialPort->Leave_Failsafe_Mode();
+								return( false );
+							}
+						}
+					}
+				}else{
+					if (ModemRegistry->Get_Modem_Error_Correction_Disable()) {
+						DebugString("Sending error correction disable init\n");
+						strcpy (&send_string[2], ModemRegistry->Get_Modem_Error_Correction_Disable());
+						Send_Modem_Command (send_string, '\r', buffer, 81, TIMER_SECOND, 1);
+						DebugString("Command response was %s\n", _send_resp[status]);
+
+						if (status != MODEM_CMD_OK && status != MODEM_CMD_0) {
+#line 1316 "D:\\ra2mdpost\\NullMgr.CPP"
+							if (WWMessageBox().Process(StringTable::LoadString("TXT_NO_EC_DISABLE_RESPONSE", NULL, __FILE__, __LINE__), StringTable::LoadString("TXT_IGNORE", NULL, __FILE__, __LINE__), StringTable::LoadString("TXT_CANCEL", NULL, __FILE__, __LINE__), NULL)) {
+								OwnerDraw::End_Dialog(dialog);
+								SerialPort->Leave_Failsafe_Mode();
+								return( false );
+							}
+						}
+					}
+				}
+			}
+
+			DebugString("Sending disable auto-answer\n");
+			status = Send_Modem_Command( "ATS0=0", '\r', buffer, 81, DETECT_DEFAULT_TIMEOUT / 2, 2 );
+			DebugString("Command response was %s\n", _send_resp[status]);
+
+			if (status != MODEM_CMD_OK) {
+#line 1334 "D:\\ra2mdpost\\NullMgr.CPP"
+				if (WWMessageBox().Process(StringTable::LoadString("TXT_ERROR_NO_DISABLE", NULL, __FILE__, __LINE__), StringTable::LoadString("TXT_IGNORE", NULL, __FILE__, __LINE__), StringTable::LoadString("TXT_CANCEL", NULL, __FILE__, __LINE__), NULL)) {
+					OwnerDraw::End_Dialog(dialog);
+					SerialPort->Leave_Failsafe_Mode();
+					return( false );
+				}
+				error_count++;
+			}
+
+			if (error_count >= 3) {
+#line 1347 "D:\\ra2mdpost\\NullMgr.CPP"
+				WWMessageBox().Process(StringTable::LoadString("TXT_ERROR_TOO_MANY", NULL, __FILE__, __LINE__), StringTable::LoadString("TXT_OK", NULL, __FILE__, __LINE__), NULL, NULL);
+				OwnerDraw::End_Dialog(dialog);
+				SerialPort->Leave_Failsafe_Mode();
+				return(false);
+			}
+
+			OwnerDraw::End_Dialog(dialog);
+			DebugString("Modem detected OK\n");
+			SerialPort->Leave_Failsafe_Mode();
+
+			status = Send_Modem_Command("AT", '\r', buffer, 81, DETECT_DEFAULT_TIMEOUT / 2, 2);
+			if (status < 2) {
+				DebugString("Modem failed to respond to 'AT' command\n");
+				return(false);
+			}
+
+			return( true );
+		} else {
+			SerialPort->Leave_Failsafe_Mode();
+		}
+	}
+	return( false );
 }
 
 // FUNCTION: GAMEMD 0x005F2950

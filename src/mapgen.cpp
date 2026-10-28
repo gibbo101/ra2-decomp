@@ -3649,6 +3649,75 @@ void MapGeneratorClass::Seed_Arctic_Vegetation(void)
 	}
 }
 
+// FUNCTION: GAMEMD 0x005A3AE0
+void MapGeneratorClass::Generate_Vegetation(void)
+{
+	CellClass * cptr;
+
+	Clear_Cell_Data_Spreads();
+
+	Map.Reset_Iterator();
+	cptr = Map.Iterate();
+
+	int rough_mean = Pick_Random_UInt(20, 40);
+	int sand_mean = Pick_Random_UInt(20, 40);
+	int green_mean = Pick_Random_UInt(20, 40);
+
+	while (cptr != NULL) {
+		MapRegionClass::CellData & data = MapRegionClass::Get_Cell_Data(cptr->Fetch_CellID());
+		if (cptr->Is_Tile_Clear() && cptr->Ramp == RAMP_NONE && cptr->Overlay == OVERLAY_NONE && cptr->Cell_Occupier() == NULL && !data.Inviolate) {
+			Cell cell = cptr->Fetch_CellID();
+			int origin_id = cell.X + cell.Y * MAP_CELL_W;
+			if (Random_Fraction() < data.GreenTileChance) {
+				Place_Tile_Patch(cptr, IsometricTileTypeClass::RoughTile, Sample_Truncated_Normal_Inline(rough_mean, 20, 4, 80), origin_id, false);
+			} else {
+				if (Random_Fraction() < data.RoughTileChance) {
+					Place_Tile_Patch(cptr, IsometricTileTypeClass::SandTile, Sample_Truncated_Normal_Inline(sand_mean, 20, 4, 80), origin_id, false);
+				} else {
+					if (Random_Fraction() < data.SandTileChance) {
+						Place_Tile_Patch(cptr, IsometricTileTypeClass::GreenTile, Sample_Truncated_Normal_Inline(green_mean, 20, 4, 80), origin_id, false);
+					}
+				}
+			}
+		}
+		cptr = Map.Iterate();
+	}
+
+	Map.Reset_Iterator();
+	cptr = Map.Iterate();
+	while (cptr != NULL) {
+		cptr->Fixup_LAT();
+		cptr = Map.Iterate();
+	}
+
+	int tree_count = (int)((SeedData.Width * 0.1 + 0.7) * (SeedData.Vegetation * 0.01) * MaxTrees);
+	for (int tries = 0; tree_count > 0 && tries < 100; tries++) {
+		Cell cell = MapRegionClass::Pick_Random_Clear_Map_Cell();
+		tree_count -= Place_Forest(&Map[cell], Sample_Truncated_Normal_Inline(25, 10, 10, 35), Sample_Truncated_Normal_Inline(0.2, 0.1, 0.05, 0.4));
+	}
+
+	int overlay_count = Pick_Random_UInt(0, Map_Cell_Count() / 200);
+
+	int placed = 0;
+	for (tries = 0; tries < overlay_count * 5 && placed < overlay_count; tries++) {
+		Cell cell = MapRegionClass::Pick_Random_Map_Cell();
+		CellClass * cellptr = &Map[cell];
+		MapRegionClass::CellData & data = MapRegionClass::Get_Cell_Data(cell);
+		if (cellptr->Overlay == OVERLAY_NONE) {
+			if (cellptr->Is_Tile_Clear_To_Sand_LAT()) {
+				cellptr->Overlay = OverlayType(Pick_Random_UInt(0, 4) + OVERLAY_SAND_ROCK_01);
+			} else {
+				if (cellptr->Is_Tile_Clear() || cellptr->Is_Tile_Clear_To_Green_LAT()) {
+					cellptr->Overlay = OverlayType(Pick_Random_UInt(0, 4) + OVERLAY_CLEAR_ROCK_01);
+				}
+			}
+			cellptr->OverlayData = 0;
+			cellptr->Recalc_Attributes();
+			placed++;
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x005A4280
 void MapGeneratorClass::Generate_Arctic_Vegetation(void)
 {

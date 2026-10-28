@@ -2994,6 +2994,146 @@ void BuildingClass::Repair_AI(void)
 	}
 }
 
+// FUNCTION: GAMEMD 0x004509D0
+void BuildingClass::Animation_AI(void)
+{
+	bool stagechange = Animation.Graphic_Logic();
+	bool toloop = false;
+
+	Update_Anim_Appearance();
+
+	if (Class->IsCanUnitRepair && Get_Mission() != MISSION_REPAIR && (Anims[BANIM_PRODUCTION] != NULL || Anims[BANIM_SPECIAL_TWO] != NULL) && !Class->Naval) {
+		Replay_Anim(this, BANIM_SPECIAL_THREE, HealthRatio <= Rule->ConditionYellow);
+		DestroyNthAnim(BANIM_PRODUCTION);
+		DestroyNthAnim(BANIM_SPECIAL_TWO);
+	}
+
+	if (Class->ExtraPower > 0 && Class->InfantryAbsorb && ActuallyPlacedOnMap && BState != BSTATE_CONSTRUCTION) {
+		if (Cargo.GetTotalSize() > 0) {
+			if (Anim_Active(BANIM_ACTIVE_ONE)) {
+				DestroyNthAnim(BANIM_ACTIVE_ONE);
+			}
+			if (!Anim_Active(BANIM_ACTIVE_TWO)) {
+				Begin_Anim(BANIM_ACTIVE_TWO, HealthRatio <= Rule->ConditionYellow);
+			}
+		} else {
+			if (Anim_Active(BANIM_ACTIVE_TWO)) {
+				DestroyNthAnim(BANIM_ACTIVE_TWO);
+			}
+			if (!Anim_Active(BANIM_ACTIVE_ONE)) {
+				Begin_Anim(BANIM_ACTIVE_ONE, HealthRatio <= Rule->ConditionYellow);
+			}
+		}
+	}
+
+	if (Class->IsSiloDamage) {
+		int amount = 0;
+		if (Class->Capacity > 0) {
+			amount = (int)((double)(4 * (int)Storage.Get_Total_Amount()) / Class->Capacity + 0.5);
+		}
+		int stage = amount < 0 ? 0 : (amount > 3 ? 3 : amount);
+		AnimClass * anim = Anims[BANIM_SPECIAL_ONE];
+		if (stage != 0) {
+			if (anim == NULL) {
+				Replay_Anim(this, BANIM_SPECIAL_ONE, HealthRatio <= Rule->ConditionYellow);
+			}
+			Anims[BANIM_SPECIAL_ONE]->Animation.Set_Stage(stage);
+		} else {
+			if (anim != NULL) {
+				DestroyNthAnim(BANIM_SPECIAL_ONE);
+			}
+		}
+	}
+
+	if (Class->IsRefinery) {
+		int level = (int)Storage.Get_Total_Amount();
+		if (level != 0) {
+			level = (4 * (int)Storage.Get_Total_Amount()) / Class->Capacity;
+		}
+		if (StorageFilledSlots != level) {
+			if (StorageFilledSlots >= 3) {
+				DestroyNthAnim(BANIM_ACTIVE_FOUR);
+			} else if (StorageFilledSlots >= 2) {
+				DestroyNthAnim(BANIM_ACTIVE_THREE);
+			} else if (StorageFilledSlots >= 1) {
+				DestroyNthAnim(BANIM_ACTIVE_TWO);
+			} else if (StorageFilledSlots >= 0) {
+				DestroyNthAnim(BANIM_ACTIVE_ONE);
+			}
+
+			level = (int)Storage.Get_Total_Amount();
+			if (level != 0) {
+				level = (4 * (int)Storage.Get_Total_Amount()) / Class->Capacity;
+			}
+			StorageFilledSlots = level;
+			if (StorageFilledSlots >= 3) {
+				Replay_Anim(this, BANIM_ACTIVE_FOUR, HealthRatio <= Rule->ConditionYellow);
+			} else if (StorageFilledSlots >= 2) {
+				Replay_Anim(this, BANIM_ACTIVE_THREE, HealthRatio <= Rule->ConditionYellow);
+			} else if (StorageFilledSlots >= 1) {
+				Replay_Anim(this, BANIM_ACTIVE_TWO, HealthRatio <= Rule->ConditionYellow);
+			} else if (StorageFilledSlots >= 0) {
+				Replay_Anim(this, BANIM_ACTIVE_ONE, HealthRatio <= Rule->ConditionYellow);
+			}
+		}
+	}
+
+	if (Class->SuperWeapon != SUPER_NONE && Get_Mission() != MISSION_CONSTRUCTION && Get_Mission() != MISSION_DECONSTRUCTION && Class->ChargedAnimTime <= 990.0f) {
+		for (int i = 0; i < House->SuperWeapon.Count(); i++) {
+			SuperClass * super = House->SuperWeapon[i];
+			if (super->Class->Type == Class->SuperWeapon) {
+				if (super->Control.Value() * (1.0f / 900.0f) <= Class->ChargedAnimTime) {
+					if (Anim_Active(BANIM_SUPER_ONE)) {
+						DestroyNthAnim(BANIM_SUPER_ONE);
+						Replay_Anim(this, BANIM_SUPER_TWO, HealthRatio <= Rule->ConditionYellow);
+					}
+				} else {
+					if (Anim_Active(BANIM_SUPER_THREE)) {
+						DestroyNthAnim(BANIM_SUPER_THREE);
+						Replay_Anim(this, BANIM_SUPER_FOUR, HealthRatio <= Rule->ConditionYellow);
+					}
+				}
+			}
+		}
+	}
+
+	if (!Is_Turret_Equipped() || Get_Mission() == MISSION_CONSTRUCTION || Get_Mission() == MISSION_DECONSTRUCTION) {
+		if (stagechange) {
+			BuildingTypeClass::AnimControlType const * ctrl = Fetch_Anim_Control();
+			if (Animation.Fetch_Stage() == ctrl->Start+ctrl->Count-1 || (ArchiveTarget == NULL && Class->UndeploysInto != NULL && Get_Mission() == MISSION_DECONSTRUCTION && Animation.Fetch_Stage() == (42-19))) {
+				IsReadyToCommence = true;
+			}
+			if (Animation.Fetch_Stage() >= ctrl->Start+ctrl->Count) {
+				toloop = true;
+			}
+			IsToDisplay = true;
+		} else {
+			if (BState == BSTATE_NONE || Animation.Fetch_Rate() == 0) {
+				IsReadyToCommence = true;
+			}
+		}
+	}
+
+	if (IsIronCurtained()) {
+		IsToDisplay = true;
+	}
+
+	if (Is_Turret_Equipped()) {
+		Set_Turret_Frame();
+	}
+
+	if (toloop) {
+		BuildingTypeClass::AnimControlType const * ctrl = Fetch_Anim_Control();
+		if (BState == BSTATE_CONSTRUCTION || BState == BSTATE_IDLE) {
+			Animation.Set_Rate(Options.Normalize_Delay(ctrl->Rate));
+		} else {
+			Animation.Set_Rate(ctrl->Rate);
+		}
+		Animation.Set_Stage(ctrl->Start);
+		Mark(MARK_CHANGE);
+	}
+}
+
 // FUNCTION: GAMEMD 0x00451330
 int BuildingClass::How_Many_Survivors(void) const
 {
@@ -3292,12 +3432,7 @@ void BuildingClass::Set_Anim_Drawer(ConvertClass * drawer, int brightness)
 void BuildingClass::Update_Anim_Appearance(void)
 {
 	ConvertClass * drawer = (ConvertClass *)GetRemapColour();
-	int cellbrightness = Get_Cell_Ptr()->Brightness;
-	int brightness = Apparent_Brightness(cellbrightness);
-	if (IsIronCurtained() || (Airstrike != NULL && Airstrike->Target == Building_Of(this))) {
-		brightness = GetEffectTintIntensity(brightness);
-	}
-	Brightness = brightness;
+	Brightness = Tinted_Brightness(Get_Cell_Ptr()->Brightness);
 	Set_Anim_Drawer(drawer, Brightness);
 	Set_Anim_Translucency(TranslucencyLevel);
 }

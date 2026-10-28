@@ -56,6 +56,8 @@
 // _$E83
 DynamicVectorClass<TEventClass *> Events;
 
+namespace Unsorted { extern bool ArmageddonMode; }
+
 // FUNCTION: GAMEMD 0x0071E6A0
 TEventClass::TEventClass(void) :
 	HeapID(-1),
@@ -87,6 +89,275 @@ TEventClass::~TEventClass(void)
 	EventActionPtrTracker.Delete(this);
 	AbstractTypePtrTracker.Delete(this);
 	Events.Delete(this);
+}
+
+// FUNCTION: GAMEMD 0x0071E940
+bool TEventClass::operator () (TEventType event, HouseClass const * house, ObjectClass const * object, CDTimerClass<FrameTimerClass> & timer, bool & tripped, TechnoClass * source)
+{
+	switch (Event) {
+		case 60: {
+			int found = -1;
+			for (int index = TechnoTypes.Count() - 1; index >= 0; index--) {
+				if (String == TechnoTypes[index]->IniName) {
+					found = index;
+					break;
+				}
+			}
+			if (found < TechnoTypes.Count() && found >= 0) {
+				TechnoTypeClass * type = TechnoTypes[found];
+				int count = 0;
+				int needed = Data.Value;
+				for (int i = Technos.Count() - 1; i >= 0; i--) {
+					if (Technos[i]->Techno_Type_Class() == type) {
+						count++;
+					}
+					if (count >= needed) {
+						return(true);
+					}
+				}
+			}
+			return(false);
+		}
+
+		case 61: {
+			int found = -1;
+			for (int index = TechnoTypes.Count() - 1; index >= 0; index--) {
+				if (String == TechnoTypes[index]->IniName) {
+					found = index;
+					break;
+				}
+			}
+			if (found < TechnoTypes.Count() && found >= 0) {
+				TechnoTypeClass * type = TechnoTypes[found];
+				for (int i = Technos.Count() - 1; i >= 0; i--) {
+					if (Technos[i]->Techno_Type_Class() == type) {
+						return(false);
+					}
+				}
+				return(true);
+			}
+			return(false);
+		}
+
+		case TEVENT_AMBIENT_LESS_THAN:
+			return(Scen->CurrentAmbientLight <= Data.Value);
+
+		case TEVENT_AMBIENT_GREATER_THAN:
+			return(Scen->CurrentAmbientLight >= Data.Value);
+
+		case TEVENT_GAME_TIME:
+			if (Data.Value > (Frame / TICKS_PER_SECOND)) {
+				return(false);
+			} else {
+				return(true);
+			}
+
+		case TEVENT_GLOBAL_SET: {
+			bool value;
+			Scen->Fetch_Global_Value(Data.Value, value);
+			return(value);
+		}
+
+		case TEVENT_GLOBAL_CLEAR: {
+			bool value;
+			Scen->Fetch_Global_Value(Data.Value, value);
+			return(!value);
+		}
+
+		case TEVENT_LOCAL_SET: {
+			bool value;
+			Scen->Fetch_Local_Value(Data.Value, value);
+			return(value);
+		}
+
+		case TEVENT_LOCAL_CLEAR: {
+			bool value;
+			Scen->Fetch_Local_Value(Data.Value, value);
+			return(!value);
+		}
+
+		case TEVENT_MISSION_TIMER_EXPIRED:
+			if (!Scen->MissionTimer.Is_Active() || Scen->MissionTimer != 0) return(false);
+			return(true);
+
+		case TEVENT_TIME:
+		case TEVENT_RANDOM_TIME:
+			if (timer != 0) return(false);
+			return(true);
+	}
+
+	if (Event == TEVENT_NONE) {
+		return(false);
+	}
+
+	if (Event != TEVENT_BUILD &&
+		Event != TEVENT_BUILD_UNIT &&
+		Event != TEVENT_BUILD_INFANTRY &&
+		Event != TEVENT_BUILD_AIRCRAFT &&
+		Is_Time_Based()) {
+		if ((event != Event) || Unsorted::ArmageddonMode) {
+			return(false);
+		}
+	}
+
+	if (Event == TEVENT_PLAYER_ENTERED || Event == TEVENT_CROSS_HORIZONTAL || Event == TEVENT_CROSS_VERTICAL || Event == TEVENT_ENTERS_ZONE || Event == 59) {
+		if (event != Event || (Data.House != HOUSE_NONE && HouseClass::FindByCountryIndex(Data.House) == NULL) || !object || (Data.House != HOUSE_NONE && object->Owner() != HouseClass::FindByCountryIndex(Data.House)->HeapID)) return(false);
+		tripped = true;
+		EventHouse = object->Owner_HouseClass();
+		return(true);
+	}
+	else if (Event == 53) {
+		if (event != Event || object == NULL || Data.House == HOUSE_NONE || HouseClass::FindByCountryIndex(Data.House) == NULL || object->GetDisguiseHouse(true) == NULL || object->GetDisguiseHouse(true)->HeapID != HouseClass::FindByCountryIndex(Data.House)->HeapID) return(false);
+		tripped = true;
+		return(true);
+	}
+	else if (Event == 54) {
+		if (event != Event || object == NULL) return(false);
+		ObjectTypeClass * disguise = object->GetDisguise(true);
+		if (disguise->Fetch_RTTI() != RTTI_INFANTRYTYPE || Data.Value == -1 || disguise->Fetch_Heap_ID() != Data.Value) return(false);
+		tripped = true;
+		return(true);
+	}
+	else if (Event == TEVENT_NEAR_WAYPOINT) {
+		if (event != Event) return(false);
+		Coord waypoint_coord(Scen->Get_Waypoint_Coord(Data.Value));
+		if (object->Distance(waypoint_coord) > (CELL_LEPTON_W*5)) {
+			return(false);
+		}
+		return(true);
+	}
+	else if (Event == TEVENT_ATTACKED_BY) {
+		if (event != Event || source == NULL || Data.House != source->House->HeapID) {
+			return(false);
+		}
+	}
+
+	int index;
+	if (house != NULL) {
+		switch (Event) {
+			case TEVENT_LEAVES_MAP:
+				for (index = 0; index < Teams.Count(); index++) {
+					TeamClass * ptr = Teams[index];
+					if (ptr->Class == Team && ptr->Is_Empty() && ptr->IsLeaveMap) {
+						tripped = true;
+						break;
+					}
+				}
+				if (index == Teams.Count()) return(false);
+				break;
+
+			case TEVENT_CREDITS:
+				if (((HouseClass *)house)->Available_Money() < Data.Value) return(false);
+				break;
+
+			case TEVENT_CREDITS_BELOW:
+				if (((HouseClass *)house)->Available_Money() > Data.Value) return(false);
+				break;
+
+			case TEVENT_NOFACTORIES:
+				if (house->CurBuildings > 0) {
+					for (int index = 0; index < house->Buildings.Count(); index++) {
+						BuildingClass * ptr = house->Buildings[index];
+						if (ptr != NULL && !ptr->IsInLimbo && ptr->Class->ToBuild != RTTI_NONE) {
+							return(false);
+						}
+					}
+				}
+				break;
+
+			case TEVENT_EVAC_CIVILIAN:
+				if (!house->IsCivEvacuated) return(false);
+				break;
+
+			case TEVENT_BUILDING_EXISTS:
+				if (house->ABQuantity.Value(Data.Structure) == 0) return(false);
+				tripped = true;
+				break;
+
+			case 57:
+				if (house->ABQuantity.Value(Data.Structure) != 0) return(false);
+				tripped = true;
+				break;
+
+			case TEVENT_BUILD:
+				if (house->JustBuiltStructure != Data.Structure) return(false);
+				tripped = true;
+				break;
+
+			case TEVENT_BUILD_UNIT:
+				if (house->JustBuiltUnit != Data.Unit) return(false);
+				tripped = true;
+				break;
+
+			case TEVENT_BUILD_INFANTRY:
+				if (house->JustBuiltInfantry != Data.Infantry) return(false);
+				tripped = true;
+				break;
+
+			case TEVENT_BUILD_AIRCRAFT:
+				if (house->JustBuiltAircraft != Data.Aircraft) return(false);
+				tripped = true;
+				break;
+
+			case TEVENT_NBUILDINGS_DESTROYED:
+				if (house->BuildingsLost < Data.Value) return(false);
+				break;
+
+			case TEVENT_NUNITS_DESTROYED:
+				if (house->UnitsLost < Data.Value) return(false);
+				break;
+
+			default:
+				break;
+		}
+	}
+
+	house = HouseClass::FindByCountryIndex(Data.House);
+	if (house != NULL) {
+		switch (Event) {
+			case TEVENT_LOW_POWER:
+				if (house->Power_Fraction() >= 1) return(false);
+				break;
+
+			case 58:
+				if (house->Power_Fraction() < 1) return(false);
+				break;
+
+			case TEVENT_THIEVED:
+				if (!house->IsThieved) return(false);
+				break;
+
+			case TEVENT_HOUSE_DISCOVERED:
+				if (!house->IsDiscovered) return(false);
+				break;
+
+			case TEVENT_BUILDINGS_DESTROYED:
+				if (house->CurBuildings > 0) return(false);
+				break;
+
+			case TEVENT_UNITS_DESTROYED:
+				if (house->AUQuantity.Total() > 0 || house->AIQuantity.Total() > 0) return(false);
+				break;
+
+			case 55:
+				if (house->OwnedNavy > 0) return(false);
+				break;
+
+			case 56:
+				if (house->CurUnits - house->OwnedNavy > 0) return(false);
+				if (house->CurInfantry > 0) return(false);
+				break;
+
+			case TEVENT_ALL_DESTROYED:
+				if (house->CurBuildings > 0 || house->AUQuantity.Total() > 0 || house->AIQuantity.Total() > 0) return(false);
+				break;
+
+			default:
+				break;
+		}
+	}
+
+	return(true);
 }
 
 // FUNCTION: GAMEMD 0x0071F390

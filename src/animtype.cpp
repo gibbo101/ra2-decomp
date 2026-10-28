@@ -18,6 +18,7 @@
 #include "incdec.h"
 #include "mixfile.h"
 #include "overtype.h"
+#include "ptype.h"
 #include "rules.h"
 #include "scenario.h"
 #include "shapeset.h"
@@ -52,8 +53,6 @@
 // _$E35
 // SYNTHETIC: GAMEMD 0x004274F0 SYMBOL
 // _$E38
-// SYNTHETIC: GAMEMD 0x00427510 SYMBOL
-// _$E41
 // SYNTHETIC: GAMEMD 0x00427510 SYMBOL
 // _$E41
 
@@ -92,8 +91,8 @@ AnimTypeClass::AnimTypeClass(char const * ininame) :
 	Translucency(0),
 	Spawns(NULL),
 	SpawnCount(0),
-	Report(-1),
-	StopSound(-1),
+	Report(VOC_NONE),
+	StopSound(VOC_NONE),
 	BounceAnim(NULL),
 	ExpireAnim(NULL),
 	TrailerAnim(NULL),
@@ -287,6 +286,136 @@ AnimType AnimTypeClass::From_Name(char const * name)
 		}
 	}
 	return(ANIM_NONE);
+}
+
+// FUNCTION: GAMEMD 0x00427D00
+bool AnimTypeClass::Read_INI(CCINIClass & ini)
+{
+	ini.Reset();
+	if (BASECLASS::Read_INI(ini)) {
+		bool shadow = ini.Get_Bool(Name(), "Shadow", Shadow);
+		if (shadow != Shadow) {
+			Shadow = shadow;
+			if (Shadow) {
+				End /= 2;
+			} else {
+				End *= 2;
+			}
+			if (LoopEnd > End) {
+				LoopEnd = End;
+			}
+		}
+
+		if (GraphicName[0] != '\0') {
+			if (ImageData == NULL) {
+				IsTheater = ArtINI.Get_Bool(Name(), "Theater", IsTheater);
+				IsNewTheater = ArtINI.Get_Bool(Name(), "NewTheater", IsNewTheater);
+			}
+			Load_Image(THEATER_NONE);
+		}
+
+		Layer = ini.Get_LayerType(Name(), "Layer", Layer);
+		AltPalette = ArtINI.Get_Bool(Name(), "AltPalette", AltPalette);
+		DoubleThick = ini.Get_Bool(Name(), "DoubleThick", DoubleThick);
+		Flat = ini.Get_Bool(Name(), "Flat", Flat);
+		Flamer = ini.Get_Bool(Name(), "Flamer", Flamer);
+		Normalized = ini.Get_Bool(Name(), "Normalized", Normalized);
+		Translucent = ini.Get_Bool(Name(), "Translucent", Translucent);
+		Scorch = ini.Get_Bool(Name(), "Scorch", Scorch);
+		Crater = ini.Get_Bool(Name(), "Crater", Crater);
+		ForceBigCraters = ini.Get_Bool(Name(), "ForceBigCraters", ForceBigCraters);
+		Sticky = ini.Get_Bool(Name(), "Sticky", Sticky);
+		PingPong = ini.Get_Bool(Name(), "PingPong", PingPong);
+		Reverse = ini.Get_Bool(Name(), "Reverse", Reverse);
+		PsiWarning = ini.Get_Bool(Name(), "PsiWarning", PsiWarning);
+		TiberiumChainReaction = ini.Get_Bool(Name(), "TiberiumChainReaction", TiberiumChainReaction);
+
+		int delay = ini.Get_Int(Name(), "Rate", -1);
+		if (delay != -1) {
+			Rate = (delay > 0) ? TICKS_PER_MINUTE / delay : 0;
+		}
+
+		Damage = ini.Get_Float(Name(), "Damage", Damage);
+		Start = ini.Get_Int(Name(), "Start", Start);
+		End = ini.Get_Int(Name(), "End", End);
+		LoopStart = ini.Get_Int(Name(), "LoopStart", LoopStart);
+		LoopEnd = ini.Get_Int(Name(), "LoopEnd", LoopEnd);
+		LoopCount = ini.Get_Int(Name(), "LoopCount", LoopCount);
+		Next = TGet_Class(ini, Name(), "Next", Next);
+
+		DetailLevel = ini.Get_Int(Name(), "DetailLevel", DetailLevel);
+		TranslucencyDetailLevel = ini.Get_Int(Name(), "TranslucencyDetailLevel", TranslucencyDetailLevel);
+
+		Point2D loop_random_delay = ini.Get_Point(Name(), "RandomLoopDelay", Point2D(RandomLoopDelay.Min, RandomLoopDelay.Max));
+		RandomLoopDelay.Min = loop_random_delay.X;
+		RandomLoopDelay.Max = loop_random_delay.Y;
+
+		Translucency = ini.Get_Int(Name(), "Translucency", Translucency);
+		IsTiberium = ini.Get_Bool(Name(), "IsTiberium", IsTiberium);
+		HideIfNoOre = ini.Get_Bool(Name(), "HideIfNoOre", HideIfNoOre);
+		YSortAdjust = ini.Get_Int(Name(), "YSortAdjust", YSortAdjust);
+
+		Elasticity = ini.Get_Float(Name(), "Elasticity", Elasticity);
+		MaxXYVel = ini.Get_Float(Name(), "MaxXYVel", MaxXYVel);
+		MinZVel = ini.Get_Float(Name(), "MinZVel", MinZVel);
+		MakeInfantry = ini.Get_Int(Name(), "MakeInfantry", MakeInfantry);
+
+		Spawns = TGet_Class(ini, Name(), "Spawns", Spawns);
+		SpawnCount = ini.Get_Int(Name(), "SpawnCount", SpawnCount);
+		IsMeteor = ini.Get_Bool(Name(), "IsMeteor", IsMeteor);
+		IsVeins = ini.Get_Bool(Name(), "IsVeins", IsVeins);
+		TiberiumSpreadRadius = ini.Get_Int(Name(), "TiberiumSpreadRadius", TiberiumSpreadRadius);
+		TiberiumSpawnType = TGet_Class(ini, Name(), "TiberiumSpawnType", TiberiumSpawnType);
+
+		IsAnimatedTiberium = ini.Get_Bool(Name(), "IsAnimatedTiberium", IsAnimatedTiberium);
+		ShouldFogRemove = ini.Get_Bool(Name(), "ShouldFogRemove", ShouldFogRemove);
+		IsFlamingGuy = ini.Get_Bool(Name(), "IsFlamingGuy", IsFlamingGuy);
+		RunningFrames = ini.Get_Int(Name(), "RunningFrames", RunningFrames);
+		YDrawOffset = ini.Get_Int(Name(), "YDrawOffset", YDrawOffset);
+		ZAdjust = ini.Get_Int(Name(), "ZAdjust", ZAdjust);
+
+		Report = ini.Get_VocType(Name(), "StartSound", Report);
+		if (Report == VOC_NONE) {
+			Report = ini.Get_VocType(Name(), "Report", VOC_NONE);
+		}
+		StopSound = ini.Get_VocType(Name(), "StopSound", StopSound);
+
+		BounceAnim = TGet_Class(ini, Name(), "BounceAnim", BounceAnim);
+		ExpireAnim = TGet_Class(ini, Name(), "ExpireAnim", ExpireAnim);
+		TrailerAnim = TGet_Class(ini, Name(), "TrailerAnim", TrailerAnim);
+
+		TrailerSeperation = ini.Get_Int(Name(), "TrailerSeperation", TrailerSeperation);
+		DamageRadius = ini.Get_Int(Name(), "DamageRadius", DamageRadius);
+		Warhead = TGet_Class(ini, Name(), "Warhead", Warhead);
+
+		Bouncer = ini.Get_Bool(Name(), "Bouncer", Bouncer);
+		Tiled = ini.Get_Bool(Name(), "Tiled", Tiled);
+		ShouldUseCellDrawer = ini.Get_Bool(Name(), "ShouldUseCellDrawer", ShouldUseCellDrawer);
+		UseNormalLight = ini.Get_Bool(Name(), "UseNormalLight", UseNormalLight);
+
+		char particle[32];
+		if (ini.Get_String(Name(), "SpawnsParticle", NULL, particle, sizeof(particle))) {
+			SpawnsParticle = ParticleTypeClass::From_Name(particle);
+		}
+		NumParticles = ini.Get_Int(Name(), "NumParticles", NumParticles);
+
+		Point2D random_rate = ini.Get_Point(Name(), "RandomRate", Point2D(-1, -1));
+		if (random_rate.X != -1) {
+			RandomRate.Min = (random_rate.X > 0) ? TICKS_PER_MINUTE / random_rate.X : 0;
+		}
+		if (random_rate.Y != -1) {
+			RandomRate.Max = (random_rate.Y > 0) ? TICKS_PER_MINUTE / random_rate.Y : 0;
+		}
+		if (RandomRate.Max < 0) {
+			RandomRate.Max = 0;
+		}
+		if (RandomRate.Min > RandomRate.Max) {
+			RandomRate.Min = RandomRate.Max;
+		}
+
+		return(true);
+	}
+	return(false);
 }
 
 // FUNCTION: GAMEMD 0x00428800

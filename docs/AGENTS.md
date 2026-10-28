@@ -387,6 +387,8 @@ Each entry: what the diff showed, then the source change that fixed it.
   after the function shifts its heap offsets too (wonline 0x00788180); never add unused ones.
   One move may not be enough: move several together (six held it against a new inline).
   Removing declarations nothing uses works too (nine held it); results jump with set size.
+- A short global is read as a dword only at offset 0 of an extern aggregate, or where its
+  definition lands 4-aligned in .bss, which VC6 orders by a hash of the name.
 - A shared-header layout change can flip it as well: an equally true form with fewer new
   names (`int X[64][2]` rather than a new pair struct) held wonline 0x00788180.
 - A named reference to an object indexed more than once (`CellClass & center = Map[cell]`)

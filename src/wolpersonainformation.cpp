@@ -10,6 +10,7 @@
 #include "geometry.h"
 #include "rect.h"
 #include "playerprofile.h"
+#include "wolapi/wolapi.h"
 #include "rcptr.h"
 #include "wolopt.h"
 #undef LoadString
@@ -587,31 +588,31 @@ void PlayerProfile::SetField20(int value)
 }
 
 // FUNCTION: GAMEMD 0x0077A7C0
-void PlayerProfile::UpdateStats(PlayerStatsRecord const * record)
+void PlayerProfile::UpdateStats(Ladder const * record)
 {
 	char changed = 0;
-	if (record->Field1C != Field24) {
-		Field24 = record->Field1C;
+	if (record->rung != Field24) {
+		Field24 = record->rung;
 		Field8 = 1;
 		changed = 1;
 	}
-	if (record->Field10 != Field28) {
-		Field28 = record->Field10;
+	if (record->points != Field28) {
+		Field28 = record->points;
 		Field8 = 1;
 		changed = 1;
 	}
-	if (record->Field8 != Field2C) {
-		Field2C = record->Field8;
+	if (record->wins != Field2C) {
+		Field2C = record->wins;
 		Field8 = 1;
 		changed = 1;
 	}
-	if (record->FieldC != Field30) {
-		Field30 = record->FieldC;
+	if (record->losses != Field30) {
+		Field30 = record->losses;
 		Field8 = 1;
 		changed = 1;
 	}
-	if (record->Field20 != Field34) {
-		Field34 = record->Field20;
+	if (record->disconnects != Field34) {
+		Field34 = record->disconnects;
 		Field8 = 1;
 		SetUpdateStamp();
 		return;
@@ -622,12 +623,12 @@ void PlayerProfile::UpdateStats(PlayerStatsRecord const * record)
 }
 
 // FUNCTION: GAMEMD 0x0077A840
-bool PlayerProfile::StatsDiffer(PlayerStatsRecord const * record) const
+bool PlayerProfile::StatsDiffer(Ladder const * record) const
 {
-	if (record->Field1C != Field24) {
+	if (record->rung != Field24) {
 		return true;
 	} else {
-		if (record->Field10 != Field28) {
+		if (record->points != Field28) {
 			return true;
 		} else {
 			return false;

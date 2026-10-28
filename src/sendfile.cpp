@@ -214,16 +214,6 @@ bool Get_File_From_Host(char * return_name, int gametype, bool show_progress)
 	return(res);
 }
 
-#pragma pack(push, 1)
-struct FileChunkPacket {
-	int Command;
-	char Name[20];
-	unsigned short BlockNumber;
-	unsigned short BlockLength;
-	unsigned char RawData[459];
-};
-#pragma pack(pop)
-
 // FUNCTION: GAMEMD 0x006941A0
 bool Receive_Remote_File(char * file_name, unsigned int file_length, int gametype, bool show_progress)
 {
@@ -235,7 +225,7 @@ bool Receive_Remote_File(char * file_name, unsigned int file_length, int gametyp
 	int progress;
 	int packet_len;
 
-	FileChunkPacket * receive_packet = new FileChunkPacket;
+	RemoteFileTransferType * receive_packet = new RemoteFileTransferType;
 
 	FUN_004068E0("Receiving download of file %s\n", file_name);
 
@@ -302,7 +292,7 @@ bool Receive_Remote_File(char * file_name, unsigned int file_length, int gametyp
 			Windows_Message_Handler();
 			Call_Back();
 
-			int receive_packet_length = sizeof(FileChunkPacket);
+			int receive_packet_length = sizeof(RemoteFileTransferType);
 			if (Ipx.Get_Global_Message(receive_packet, &receive_packet_length, &sender_address, &product_id)) {
 				bool from_host = sender_address.FUN_0053EF30(Session.HostAddress);
 				if (Session.Type == GAME_INTERNET) {
@@ -313,7 +303,7 @@ bool Receive_Remote_File(char * file_name, unsigned int file_length, int gametyp
 						from_host = false;
 					}
 				}
-				if (receive_packet->Command == NET_FILE_CHUNK && from_host) {
+				if (receive_packet->Command == (SerialCommandType)NET_FILE_CHUNK && from_host) {
 					if (!block_received[receive_packet->BlockNumber]) {
 						block_received[receive_packet->BlockNumber] = true;
 						received_count++;
@@ -365,6 +355,252 @@ bool Receive_Remote_File(char * file_name, unsigned int file_length, int gametyp
 
 	delete receive_packet;
 	return return_code;
+}
+
+// FUNCTION: GAMEMD 0x00694760
+bool Send_Remote_File(char const * file_name, int gametype, bool send_to_all, bool show_progress)
+{
+	CDTimerClass<SystemTimerClass> response_timer;
+	bool return_code = false;
+
+	FUN_004068E0("Send file %s to clients\n", file_name);
+
+	int file_length;
+	int block_number;
+	int total_blocks;
+	int progress;
+
+	int packetlen;
+	unsigned short product_id;
+
+	char send_packet[offsetof(RemoteFileTransferType, RawData) + MAX_SEND_FILE_PACKET_SIZE];
+	SerialPacketType file_info;
+	GlobalPacketType net_file_info;
+
+	GlobalPacketType net_receive_packet;
+	SerialPacketType serial_receive_packet;
+
+	CCFileClass send_file(file_name);
+
+	if (!send_file.Is_Available()) {
+		return(false);
+	}
+	file_length = send_file.Size();
+
+	response_timer = 0xE10;
+
+	FUN_004068E0("Sending file info to clients\n");
+
+	if (gametype == GAME_MODEM || gametype == GAME_NULL_MODEM) {
+		file_info.Command = SERIAL_FILE_INFO;
+		strcpy(file_info.ScenarioInfo.ShortFileName, file_name);
+		file_info.ScenarioInfo.FileLength = file_length;
+
+		NullModem.Send_Message(&file_info, sizeof(file_info), 1);
+		while (NullModem.Num_Send() > 0 && response_timer) {
+			Call_Back();
+		}
+	} else {
+		net_file_info.Command = NET_FILE_INFO;
+		strcpy(net_file_info.ScenarioInfo.ShortFileName, file_name);
+		net_file_info.ScenarioInfo.FileLength = file_length;
+		strcpy(net_file_info.Name, FUN_007350C0(Session.Players[0]->Name));
+
+		if (send_to_all) {
+			for (int i = 1; i < Session.Players.Count(); i++) {
+				do {
+					Call_Back();
+				} while (Ipx.Send_Global_Message_To_Name(&net_file_info, sizeof(GlobalPacketType),
+					1, Session.Players[i]->Name) == 0 && response_timer);
+			}
+		} else {
+			for (int i = 0; i < Session.RequestCount; i++) {
+				do {
+					Call_Back();
+					FUN_004068E0("Sending file info packet to player %d\n", Session.Players[Session.ScenarioRequests[i]]->Name);
+				} while (Ipx.Send_Global_Message_To_Name(&net_file_info, sizeof(GlobalPacketType),
+					1, Session.Players[Session.ScenarioRequests[i]]->Name) == 0 && response_timer);
+			}
+		}
+
+		while (Ipx.Global_Num_Send() > 0 && response_timer) {
+			Call_Back();
+		}
+	}
+
+	if (!response_timer) {
+		FUN_004068E0("File info send timed out\n");
+		return(false);
+	}
+
+	IPXAddressClass sender_address;
+
+	int count;
+	int acks = 0;
+	if (send_to_all) {
+		count = Session.Players.Count() - 1;
+	} else {
+		count = Session.RequestCount;
+	}
+
+	response_timer = 0xE10;
+
+	if (gametype == GAME_MODEM || gametype == GAME_NULL_MODEM) {
+		do {
+			Call_Back();
+			if (NullModem.Get_Message(&serial_receive_packet, &packetlen) > 0) {
+				if (serial_receive_packet.Command == SERIAL_FILE_INFO_ACK) {
+					FUN_004068E0("Client responded with file info ack\n");
+					break;
+				}
+			}
+		} while (response_timer && !(count <= 0));
+	} else {
+		int net_packetlen;
+		do {
+			Call_Back();
+			net_packetlen = sizeof(net_receive_packet);
+			if (Ipx.Get_Global_Message(&net_receive_packet, &net_packetlen, &sender_address, &product_id)) {
+				if (net_receive_packet.Command == NET_FILE_INFO_ACK) {
+					acks++;
+				}
+			}
+		} while (response_timer && acks < count);
+	}
+
+	total_blocks = (file_length + (MAX_SEND_FILE_PACKET_SIZE) - 1) / (MAX_SEND_FILE_PACKET_SIZE);
+
+	send_file.Open(FileClass::READ);
+
+	block_number = 0;
+
+	if (show_progress) {
+		Progress.Initialize(100, 1, NULL);
+		Progress.Set_Graphic_Data("PROGBARM.SHP", NULL, 0);
+		Progress.Set_Layout(Point2D(-1, -1), StringTable::LoadString("GUI:MapTransfer", NULL, "D:\\ra2mdpost\\SendFile.CPP", 0x292), false, true);
+		FUN_0052FEC0(NULL, true);
+		Progress.Display_Progress();
+		Progress.Set_Progress_Percent(0, 0);
+	}
+
+	response_timer = Send_Timeout_For_Type(gametype);
+	if (Session.Type == GAME_INTERNET) {
+		Ipx.Save_Timing();
+		Ipx.Set_External_Timing(240, -1, 1200);
+	}
+	response_timer = Send_Timeout_For_Type(gametype);
+	progress = 0;
+
+	RemoteFileTransferType & packet = (RemoteFileTransferType &)send_packet;
+	while (response_timer) {
+		if (gametype == GAME_MODEM || gametype == GAME_NULL_MODEM) {
+			Windows_Message_Handler();
+			Call_Back();
+
+			if (block_number < total_blocks) {
+				if (NullModem.Num_Send() < 2) {
+					packet.Command = SERIAL_FILE_CHUNK;
+					packet.BlockNumber = block_number;
+					if (file_length < (MAX_SEND_FILE_PACKET_SIZE)) {
+						packet.BlockLength = file_length;
+					} else {
+						packet.BlockLength = MAX_SEND_FILE_PACKET_SIZE;
+					}
+
+					file_length -= packet.BlockLength;
+
+					if (send_file.Read(&packet.RawData[0], packet.BlockLength) == packet.BlockLength) {
+						FUN_004068E0("Sending file chunk %d/%d, %d sec left\n", block_number, total_blocks, (int)response_timer);
+						NullModem.Send_Message(&send_packet, sizeof(send_packet), 1);
+					}
+
+					block_number++;
+					progress += 100;
+
+					if (show_progress) {
+						Progress.Set_Progress_Percent(0, progress / total_blocks);
+					}
+				}
+			} else {
+				if (NullModem.Num_Send() == 0) {
+					return_code = true;
+					if (show_progress) {
+						Progress.Set_Progress_Percent(0, 100);
+					}
+					break;
+				}
+			}
+		} else {
+			Windows_Message_Handler();
+			Call_Back();
+			if (block_number < total_blocks) {
+				if (Ipx.Global_Num_Send() < 10) {
+					packet.Command = (SerialCommandType)NET_FILE_CHUNK;
+					packet.BlockNumber = block_number;
+					if (file_length < (MAX_SEND_FILE_PACKET_SIZE)) {
+						packet.BlockLength = file_length;
+					} else {
+						packet.BlockLength = MAX_SEND_FILE_PACKET_SIZE;
+					}
+					strcpy(packet.Name, FUN_007350C0(Session.Players[0]->Name));
+
+					file_length -= packet.BlockLength;
+
+					if (send_file.Read(&packet.RawData[0], packet.BlockLength) == packet.BlockLength) {
+						FUN_004068E0("Sending file chunk %d/%d, %d sec left\n", block_number, total_blocks, (int)response_timer);
+
+						if (send_to_all) {
+							for (int i = 1; i < Session.Players.Count(); i++) {
+								int ret;
+								do {
+									ret = Ipx.Send_Global_Message_To_Name(&send_packet, sizeof(send_packet),
+										1, Session.Players[i]->Name);
+									Call_Back();
+								} while (ret == 0);
+							}
+						} else {
+							for (int i = 0; i < Session.RequestCount; i++) {
+								int ret;
+								do {
+									ret = Ipx.Send_Global_Message_To_Name(&send_packet, sizeof(send_packet),
+										1, Session.Players[Session.ScenarioRequests[i]]->Name);
+									Call_Back();
+								} while (ret == 0);
+							}
+						}
+					}
+
+					block_number++;
+					progress += 100;
+
+					if (show_progress) {
+						Progress.Set_Progress_Percent(0, progress / total_blocks);
+					}
+				}
+			} else {
+				if (Ipx.Global_Num_Send() != 0) {
+					continue;
+				}
+
+				if (Ipx.Global_Num_Send() == 0) {
+					FUN_004068E0("We sent the file properly with %d seconds left!\n", (int)response_timer);
+					return_code = true;
+					if (show_progress) {
+						Progress.Set_Progress_Percent(0, 100);
+					}
+					break;
+				}
+			}
+		}
+	}
+
+	if (Session.Type == GAME_INTERNET) {
+		Ipx.Restore_Timing();
+	}
+
+	FUN_004068E0("File upload completed - %s\n", return_code ? "success" : "failure");
+
+	return(return_code);
 }
 
 int __fastcall FUN_004790A0(int timeout);

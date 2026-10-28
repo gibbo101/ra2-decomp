@@ -74,6 +74,253 @@ int INIClass::Load(FileClass & file, bool keepcomments)
 	return(Load(fs, keepcomments));
 }
 
+// FUNCTION: GAMEMD 0x00525A60
+int INIClass::Load(Straw & ffile, bool keepcomments)
+{
+	Reset();
+
+	bool end_of_file = false;
+	char buffer[MAX_LINE_LENGTH];
+
+	INIComment * rootcomment = NULL;
+	INIComment * currentcomment = NULL;
+	INIComment * nextcomment = NULL;
+
+	bool merge = false;
+	if (Section_Count() > 0) {
+		merge = true;
+		keepcomments = false;
+	}
+
+	CacheStraw file;
+	file.Get_From(ffile);
+
+	while (!end_of_file) {
+		Read_Line(file, buffer, sizeof(buffer), end_of_file);
+		if (end_of_file) {
+			if (keepcomments) {
+				TailComment = rootcomment;
+				return(true);
+			}
+
+			while (rootcomment != NULL) {
+				free(rootcomment->Comment);
+				INIComment * next = rootcomment->Next;
+				delete rootcomment;
+				rootcomment = next;
+			}
+			return(false);
+		}
+		if (Is_A_Section(buffer)) break;
+
+		if (keepcomments) {
+			nextcomment = new INIComment;
+			if (nextcomment == NULL) {
+				keepcomments = false;
+			}
+		}
+
+		if (keepcomments) {
+			if (currentcomment) {
+				currentcomment->Next = nextcomment;
+				currentcomment = nextcomment;
+			} else {
+				currentcomment = nextcomment;
+				rootcomment = nextcomment;
+			}
+			currentcomment->Comment = strdup(buffer);
+		}
+	}
+
+	if (merge) {
+
+		while (!end_of_file) {
+
+			char section[MAX_LINE_LENGTH];
+			section[0] = '\0';
+			strtrim(buffer);
+
+			if (buffer[0] == '[') {
+				char * ptr = strchr(buffer, ']');
+				if (ptr != NULL) *ptr = '\0';
+				strcpy(section, buffer + 1);
+			}
+
+			while (!end_of_file) {
+
+				int len = Read_Line(file, buffer, sizeof(buffer), end_of_file);
+				if (Is_A_Section(buffer)) break;
+
+				Strip_Comments(buffer);
+				if (len == 0 || buffer[0] == ';' || buffer[0] == '=') continue;
+
+				char * divider = strchr(buffer, '=');
+				if (!divider) continue;
+
+				*divider++ = '\0';
+				strtrim(buffer);
+				if (!strlen(buffer)) continue;
+
+				strtrim(divider);
+				if (!strlen(divider)) continue;
+
+				if (Put_String(section, buffer, divider) == false) {
+					return(false);
+				}
+			}
+		}
+
+	} else {
+
+		while (TailComment != NULL) {
+			free(TailComment->Comment);
+			INIComment * next = TailComment->Next;
+			delete TailComment;
+			TailComment = next;
+		};
+
+		while (!end_of_file) {
+
+			strtrim(buffer);
+			if (buffer[0] == '[') {
+				char * ptr = strchr(buffer, ']');
+				if (ptr != NULL) *ptr = '\0';
+			} else {
+				buffer[0] = '\0';
+				buffer[1] = '\0';
+			}
+
+			INISection * secptr = new INISection(strdup(buffer + 1), rootcomment);
+
+			if (secptr == NULL) {
+				while (rootcomment != NULL) {
+					free(rootcomment->Comment);
+					INIComment * next = rootcomment->Next;
+					delete rootcomment;
+					rootcomment = next;
+				};
+				currentcomment = NULL;
+
+				Clear();
+				return(false);
+			}
+
+			currentcomment = NULL;
+			rootcomment = NULL;
+
+			while (!end_of_file) {
+
+				int len = Read_Line(file, buffer, sizeof(buffer), end_of_file);
+				if (end_of_file) break;
+				if (Is_A_Section(buffer)) break;
+
+				if (keepcomments) {
+					nextcomment = new INIComment;
+					if (nextcomment == NULL) {
+						keepcomments = false;
+					}
+				}
+
+				if (keepcomments) {
+					if (currentcomment) {
+						currentcomment->Next = nextcomment;
+						currentcomment = nextcomment;
+					} else {
+						currentcomment = nextcomment;
+						rootcomment = nextcomment;
+					}
+
+					currentcomment->Comment = strdup(buffer);
+				}
+
+				int assign_col = 0;
+				int value_col = 0;
+				int comment_col = 0;
+				char *line_comment = NULL;
+
+				if (keepcomments) {
+					line_comment = Scan_Line_For_Columns(buffer, assign_col, value_col, comment_col);
+					if (line_comment != NULL) {
+						line_comment = strdup(line_comment);
+					}
+				}
+
+				Strip_Comments(buffer);
+				if (len == 0 || buffer[0] == ';' || buffer[0] == '=') {
+					free(line_comment);
+					continue;
+				}
+
+				char * divider = strchr(buffer, '=');
+				if (!divider) {
+					free(line_comment);
+					continue;
+				}
+
+				*divider++ = '\0';
+				strtrim(buffer);
+				if (!strlen(buffer)) {
+					free(line_comment);
+					continue;
+				}
+
+				strtrim(divider);
+				if (!strlen(divider)) {
+					free(line_comment);
+					continue;
+				}
+
+				if (keepcomments && (currentcomment != NULL) && (currentcomment->Comment != NULL)) {
+					free(currentcomment->Comment);
+					currentcomment->Comment = NULL;
+				}
+
+				INIEntry * entryptr = new INIEntry(strdup(buffer), strdup(divider), rootcomment, line_comment, comment_col, assign_col, value_col);
+
+				if (entryptr == NULL) {
+					free(line_comment);
+					while (rootcomment != NULL) {
+						free(rootcomment->Comment);
+						INIComment * next = rootcomment->Next;
+						delete rootcomment;
+						rootcomment = next;
+					};
+					currentcomment = NULL;
+
+					delete secptr;
+					Clear();
+					return(false);
+				}
+
+				currentcomment = NULL;
+				rootcomment = NULL;
+
+				secptr->EntryIndex.Add_Index(entryptr->Index_ID(), entryptr);
+				secptr->EntryList.Add_Tail(entryptr);
+			}
+
+			if (!keepcomments && secptr->EntryList.Is_Empty()) {
+				while (rootcomment != NULL) {
+					free(rootcomment->Comment);
+					INIComment * next = rootcomment->Next;
+					delete rootcomment;
+					rootcomment = next;
+				};
+				currentcomment = NULL;
+
+				delete secptr;
+			} else {
+				SectionIndex.Add_Index(secptr->Index_ID(), secptr);
+				SectionList.Add_Tail(secptr);
+			}
+		}
+	}
+
+	TailComment = rootcomment;
+
+	return(true);
+}
+
 // FUNCTION: GAMEMD 0x00526420
 int INIClass::Save(FileClass & file) const
 {
@@ -833,6 +1080,9 @@ INIClass::INISection::~INISection(void)
 	}
 }
 
+// FUNCTION: GAMEMD 0x0052ACE0
+// GenericList::GenericList
+
 // SYNTHETIC: GAMEMD 0x0052AD50
 // ??_GINIEntry@INIClass@@UAEPAXI@Z
 
@@ -843,7 +1093,7 @@ INIClass::INISection::~INISection(void)
 // ??_G?$Node@PAUINISection@INIClass@@@@UAEPAXI@Z
 
 // SYNTHETIC: GAMEMD 0x0052AE70
-// ??_GBufferStraw@@UAEPAXI@Z
+// ??_GCacheStraw@@UAEPAXI@Z
 
 // SYNTHETIC: GAMEMD 0x0052AEA0
 // ??_GBase64Straw@@UAEPAXI@Z
