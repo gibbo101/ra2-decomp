@@ -34,7 +34,7 @@ class MPSiegeClass : public MultiplayerGameMode
 		MPSiegeClass(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex);
 		virtual ~MPSiegeClass(void);
 		virtual bool vt_entry_10(void) override;
-		virtual bool vt_entry_14(unsigned a) override;
+		virtual bool vt_entry_14(WideWstring * message) override;
 		virtual bool vt_entry_18(void) override;
 		virtual bool IsAIAllowed(void) override;
 		virtual bool UnfixAlliances(void) override;

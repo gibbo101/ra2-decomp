@@ -71,9 +71,9 @@ bool MPUnholyAllianceClass::vt_entry_10(void)
 }
 
 // FUNCTION: GAMEMD 0x005CB400
-bool MPUnholyAllianceClass::vt_entry_14(unsigned a)
+bool MPUnholyAllianceClass::vt_entry_14(WideWstring * message)
 {
-	return(Session.Options.Bases && MultiplayerGameMode::vt_entry_14(a));
+	return(Session.Options.Bases && MultiplayerGameMode::vt_entry_14(message));
 }
 
 // FUNCTION: GAMEMD 0x005CB430

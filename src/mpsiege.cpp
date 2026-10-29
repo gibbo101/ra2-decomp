@@ -79,10 +79,9 @@ bool MPSiegeClass::vt_entry_10(void)
 }
 
 // FUNCTION: GAMEMD 0x005CA6D0
-bool MPSiegeClass::vt_entry_14(unsigned a)
+bool MPSiegeClass::vt_entry_14(WideWstring * message)
 {
-	WideWstring * message = (WideWstring *)a;
-	if (!MultiplayerGameMode::vt_entry_14(a)) {
+	if (!MultiplayerGameMode::vt_entry_14(message)) {
 		return(false);
 	}
 	bool defender = false;

@@ -410,12 +410,12 @@ int MPCooperative::FirstValidMapIndex(void)
 }
 
 // FUNCTION: GAMEMD 0x005C1D80
-bool MPCooperative::vt_entry_14(unsigned a)
+bool MPCooperative::vt_entry_14(WideWstring * message)
 {
 	if (Session.Players.Count() == 2 && Current != NULL) {
 		Current->FUN_0049B760(Session.Players[0]->Name, Session.Players[1]->Name);
 	}
-	return(MultiplayerGameMode::vt_entry_14(a));
+	return(MultiplayerGameMode::vt_entry_14(message));
 }
 
 static inline void Set_Player_Country(int index, int country)

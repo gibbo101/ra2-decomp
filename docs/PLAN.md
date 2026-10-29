@@ -1,6 +1,6 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 28 October 2026: 18,085 of 19,367 game functions match (93%; 64% of game code
+Status, 29 October 2026: 18,089 of 19,367 game functions match (93%; 64% of game code
 by size), landed in batches module by module. The rounds below record each one.
 
 ## The goal
@@ -1113,6 +1113,17 @@ Session.Players. Recording then exposed three UI-command functions building char
 ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; their RTTI
 fixed them. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
+
+### Batch 141 (29 October 2026)
+
+**4 functions** (3 of 8 and a helper). Opus took the eight smallest untried functions left
+in modules no other job held, 2.2 to 4.1 KB: CampaignScoreClass::Show (4,088 bytes, which
+also gave campscor's class its RTTI name), Skirmish's 0x006ACEE0,
+OwnerDraw::AutoRadioButtonHandler and a WDT map anim loader matched. Multiplayer's vt_entry_14
+takes the WideWstring it is passed, and include/ddist.h carries YR's Sample. wonline
+0x00788180 flipped once more, on one new Point2D member of WDT's Map; two ints in its place
+held it. House, MapGen, rocket, team (89.7%) and the WDT map loader stay banked. Merge
+gate: 18,090 of 18,090 (2,389.3 KB).
 
 ### Batches 138 to 140 (28 October 2026)
 

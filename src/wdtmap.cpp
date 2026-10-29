@@ -123,10 +123,10 @@ Map::Map(int id, int vq_anim, int faction) :
 	ID(id),
 	VQAnim(vq_anim),
 	Faction(faction),
-	BackgroundAnim(NULL),
+	OverlayDrawer(NULL),
 	IntroAnim(NULL),
-	OutroAnim(NULL),
-	Unused20(NULL),
+	BackgroundAnim(NULL),
+	HelpBarAnim(NULL),
 	MaskSurface(NULL),
 	Name(DAT_00889F64),
 	Origin(0, 0),
@@ -135,7 +135,7 @@ Map::Map(int id, int vq_anim, int faction) :
 	CancelFrame(0),
 	CancelHoverFrame(0),
 	CancelHovered(false),
-	CancelHelp(NULL)
+	CancelDrawer(NULL)
 {
 }
 
@@ -144,26 +144,71 @@ Map::Map(int id, int vq_anim, int faction) :
 Map::~Map(void)
 {
 	delete MaskSurface;
-	delete BackgroundAnim;
+	delete OverlayDrawer;
 	for (int i = 0; i < Palettes.Count(); i++) {
 		delete Palettes[i];
 	}
 	AlternateSurface->Fill(0);
 	HiddenSurface->Fill(0);
 	VisibleSurface->Blit_From(*HiddenSurface);
-	delete CancelHelp;
+	delete CancelDrawer;
+}
+
+// FUNCTION: GAMEMD 0x00768F50
+// WorldDominationTour::Map::FUN_00768F50
+MSShapeAnim * Map::FUN_00768F50(INIClass const & ini, Wstring const & section, Wstring const & entry, ConvertClass * fallback)
+{
+	Wstring buffer;
+	bool found;
+	{
+		Wstring none((char const *)NULL);
+		found = ini.Get_String(section, entry, none, buffer) > 0;
+	}
+	if (found) {
+		Wstring name;
+		Wstring xs;
+		Wstring ys;
+		Wstring rate_text;
+		Wstring palette_name;
+		int pos = buffer.getToken(0, ",", name);
+		pos = buffer.getToken(pos, ",", xs);
+		pos = buffer.getToken(pos, ",", ys);
+		pos = buffer.getToken(pos, ",", rate_text);
+		buffer.getToken(pos, ",", palette_name);
+		if (ys != (char const *)NULL) {
+			int x = xs.toInt() + Origin.X;
+			int y = ys.toInt() + Origin.Y;
+			int rate = 5;
+			if (rate_text != (char const *)NULL && rate_text.length() > 0) {
+				rate = rate_text.toInt();
+			}
+			ConvertClass * drawer = NULL;
+			if (palette_name != (char const *)NULL && palette_name.length() > 0) {
+				drawer = FUN_007691E0(palette_name);
+			}
+			if (drawer == NULL) {
+				drawer = fallback;
+			}
+			bool available = CCFileClass(name).Is_Available(0);
+			if (available && drawer) {
+				return new MSShapeAnim(name, x, y, drawer, rate, true, SHAPE_NORMAL);
+			}
+		}
+	}
+	return NULL;
 }
 
 // FUNCTION: GAMEMD 0x007691E0
 // WorldDominationTour::Map::FUN_007691E0
 ConvertClass * Map::FUN_007691E0(Wstring const & name)
 {
+	ConvertClass * drawer = NULL;
 	for (int i = 0; i < Palettes.Count(); i++) {
 		if (Palettes[i]->Name == name) {
 			return Palettes[i]->Drawer;
 		}
 	}
-	ConvertClass * drawer = Create_Drawer(name);
+	drawer = Create_Drawer(name);
 	if (drawer) {
 		Palettes.Add(new AnimationPalette(name, drawer));
 	}
@@ -193,8 +238,8 @@ void Map::FUN_007692F0(Selection * selection, YRVoices * voices)
 		voices->FUN_007714B0(0, true, 0);
 		selection->Wait_For_Anim(IntroAnim);
 	}
-	if (OutroAnim) {
-		OutroAnim->Set_Active(true);
+	if (BackgroundAnim) {
+		BackgroundAnim->Set_Active(true);
 	}
 }
 

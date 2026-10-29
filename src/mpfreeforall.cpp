@@ -62,9 +62,9 @@ bool MPFreeForAllClass::vt_entry_10(void)
 }
 
 // FUNCTION: GAMEMD 0x005C5D40
-bool MPFreeForAllClass::vt_entry_14(unsigned a)
+bool MPFreeForAllClass::vt_entry_14(WideWstring * message)
 {
-	if (!MultiplayerGameMode::vt_entry_14(a)) {
+	if (!MultiplayerGameMode::vt_entry_14(message)) {
 		return(false);
 	}
 	NodeNameType * node;

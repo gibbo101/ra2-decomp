@@ -571,6 +571,7 @@ class SessionClass
 		int FUN_0069B740(void) const;
 		void FUN_0069B760(int side, bool random);
 		void FUN_0069B7E0(int color, bool random);
+		void FUN_0069B8C0(void);
 		void Resume(void);
 		void FUN_0069BB40(void);
 		unsigned short FUN_0069BC20(int connection_id);
@@ -580,7 +581,6 @@ class SessionClass
 		void FUN_0069BD60(void);
 		bool FUN_0069BBE0(void) const;
 
-		void Trap_Object(void);
 		bool Log_To_File(FILE *out);
 
 		GameType Type;

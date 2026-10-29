@@ -53,17 +53,19 @@
 extern int DAT_0089E050;
 extern int DAT_0081B1E8;
 
-class CampScoreLink
+class CampaignScoreClass
 {
 	public:
-		CampScoreLink(void);
-		virtual ~CampScoreLink(void);
+		CampaignScoreClass(void);
+		virtual ~CampaignScoreClass(void);
+		virtual void Show(DynamicVectorClass<MPlayerScoreType *> list, int a6, bool a7, int a8, wchar_t const * name);
+		void FUN_0046DA70(void);
 
 		int Field4;
 };
 
 // FUNCTION: GAMEMD 0x0046D330
-CampScoreLink::CampScoreLink(void)
+CampaignScoreClass::CampaignScoreClass(void)
 {
 	Field4 = 0;
 	DAT_0089E050 = 0;
@@ -71,7 +73,7 @@ CampScoreLink::CampScoreLink(void)
 }
 
 // FUNCTION: GAMEMD 0x0046D350
-CampScoreLink::~CampScoreLink(void)
+CampaignScoreClass::~CampaignScoreClass(void)
 {
 }
 
@@ -307,7 +309,7 @@ void __fastcall FUN_0046DA20(HWND dialog, int id, int value)
 }
 
 // FUNCTION: GAMEMD 0x0046DA70
-void FUN_0046DA70(void)
+void CampaignScoreClass::FUN_0046DA70(void)
 {
 	Session.NumScores = 0;
 	int count = DAT_00A80228.Count();
@@ -532,7 +534,7 @@ int __fastcall FUN_0046F5E0(int index)
 }
 
 // FUNCTION: GAMEMD 0x0046F600
-void __fastcall FUN_0046F600(HWND dialog)
+inline void __fastcall FUN_0046F600(HWND dialog)
 {
 	for (int i = 0; i < 8; i++) {
 		int id = FUN_0046F5E0(i);
@@ -601,7 +603,8 @@ void __fastcall FUN_0046F6D0(HWND dialog)
 	}
 }
 
-inline int _Player_Color(int index)
+// FUNCTION: GAMEMD 0x0046F810
+int __fastcall FUN_0046F810(int index)
 {
 	NodeNameType * player = Session.Slots[index];
 	if (FUN_005E9440(player)) {
@@ -622,7 +625,8 @@ inline int _Player_Color(int index)
 	return player->Get_Color();
 }
 
-inline int _Player_Start(int index)
+// FUNCTION: GAMEMD 0x0046F880
+int __fastcall FUN_0046F880(int index)
 {
 	NodeNameType * player = Session.Slots[index];
 	if (FUN_005E9440(player)) {
@@ -641,18 +645,6 @@ inline int _Player_Start(int index)
 		return -2;
 	}
 	return player->Get_Start();
-}
-
-// FUNCTION: GAMEMD 0x0046F810
-int __fastcall FUN_0046F810(int index)
-{
-	return _Player_Color(index);
-}
-
-// FUNCTION: GAMEMD 0x0046F880
-int __fastcall FUN_0046F880(int index)
-{
-	return _Player_Start(index);
 }
 
 struct PCX
@@ -678,12 +670,42 @@ void __fastcall FUN_0046F8F0(HWND dialog)
 	int own = Session.unknown_2854;
 	if (own != -1) {
 		int combo = FUN_004E41D0(own);
-		FUN_004E49A0(dialog, combo, _Player_Color(own));
+		int color;
+		NodeNameType * player = Session.Slots[own];
+		if (FUN_005E9440(player)) {
+			color = Session.Options.AISlots.Colors[own];
+		} else if (player == DAT_00AC119C) {
+			color = -2;
+		} else if (player == DAT_00AC11A0) {
+			color = -2;
+		} else if (player == DAT_00AC11B0) {
+			color = -2;
+		} else if (player == DAT_00AC11B4) {
+			color = -2;
+		} else {
+			color = player->Get_Color();
+		}
+		FUN_004E49A0(dialog, combo, color);
 	}
 	for (int i = 0; i < 8; i++) {
 		if (i != own) {
 			int combo = FUN_004E41D0(i);
-			FUN_004E49A0(dialog, combo, _Player_Color(i));
+			int color;
+			NodeNameType * player = Session.Slots[i];
+			if (FUN_005E9440(player)) {
+				color = Session.Options.AISlots.Colors[i];
+			} else if (player == DAT_00AC119C) {
+				color = -2;
+			} else if (player == DAT_00AC11A0) {
+				color = -2;
+			} else if (player == DAT_00AC11B0) {
+				color = -2;
+			} else if (player == DAT_00AC11B4) {
+				color = -2;
+			} else {
+				color = player->Get_Color();
+			}
+			FUN_004E49A0(dialog, combo, color);
 		}
 	}
 }
@@ -728,7 +750,7 @@ void __fastcall FUN_0046FAC0(HWND dialog)
 {
 	for (int i = 0; i < 8; i++) {
 		int combo = FUN_004E4E60(i);
-		FUN_004E5480(dialog, combo, _Player_Start(i));
+		FUN_004E5480(dialog, combo, FUN_0046F880(i));
 	}
 }
 
@@ -765,6 +787,265 @@ bool FUN_0046FBD0(void)
 	}
 	Game::CallBack();
 	return false;
+}
+
+static int DAT_0081B1EC[8][6] = {
+	{ 0x781, 0x783, 0x785, 0x787, 0x789, 0x70a },
+	{ 0x782, 0x784, 0x786, 0x788, 0x78a, 0x70b },
+};
+
+extern int DAT_0089E054;
+extern int DAT_0089E058;
+extern bool DAT_0089E05C;
+extern bool DAT_0089E05D;
+extern wchar_t DAT_0089E060[];
+extern bool DAT_0089E04C;
+bool FUN_0046D8B0(void);
+BOOL CALLBACK FUN_0046DFD0(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+void __fastcall FUN_0072D300(int side);
+void FUN_0072D350(void);
+void __fastcall FUN_00543080(IPXManagerClass * ipx);
+void __fastcall FUN_00543090(IPXManagerClass * ipx);
+void Windows_Message_Handler(void);
+bool __fastcall Process_Global_Packet(GlobalPacketType * packet, IPXAddressClass * address);
+unsigned int __fastcall FUN_005DAC00(wchar_t const * name);
+void __cdecl PMessagePrintf(int color, wchar_t const * text, ...);
+wchar_t * __fastcall FUN_00735120(char const * text);
+
+namespace UI {
+	HWND __fastcall BeginDialog(int resource, DLGPROC proc, int param);
+	void __fastcall FocusOnWindow(HWND window);
+	void __fastcall EndDialog(HWND window);
+}
+
+inline void _Set_Text(HWND dialog, int id, wchar_t const * text)
+{
+	HWND item = GetDlgItem(dialog, id);
+	SendMessage(item, 0x4b2, 0, (LPARAM)text);
+}
+
+inline void _Send_To_Players(NetCommandType command)
+{
+	GlobalPacketType packet;
+	memset(&packet, 0, sizeof(packet));
+	packet.Command = command;
+	strcpy(packet.Name, FUN_007350C0(Session.Players[0]->Name));
+	for (int i = 1; i < Session.Players.Count(); i++) {
+		Ipx.Send_Global_Message_To_Name(&packet, 0x2f, 1, Session.Players[i]->Name);
+		Ipx.Service();
+	}
+}
+
+inline void _Refresh_Dialog(void)
+{
+	HWND window = WS_Find_Dialog(0xbc6);
+	if (window != NULL) {
+		FUN_0046F600(window);
+		FUN_0046F6D0(window);
+		FUN_0046F8F0(window);
+		FUN_0046FAC0(window);
+		FUN_0046FA20(window);
+		FUN_0046FB50(window);
+	}
+}
+
+// FUNCTION: GAMEMD 0x0046FC00
+void CampaignScoreClass::Show(DynamicVectorClass<MPlayerScoreType *> list, int a6, bool a7, int a8, wchar_t const * name)
+{
+	DAT_0089E054 = list.Count();
+	DAT_0089E05D = a7;
+	DAT_0089E058 = 0;
+	DAT_0089E050 = a6;
+	DAT_0081B1E8 = a8;
+	bool requested = false;
+	wcscpy(DAT_0089E060, name);
+	FUN_0046D400(8);
+	for (int i = 0; i < DAT_0089E054; i++) {
+		DAT_0089DF80[i] = list[i];
+	}
+	FUN_0046DA70();
+	FUN_0046DC50();
+	FUN_0072D300(Scen->PlayerSideIndex);
+	FUN_0052FEC0(NULL, true);
+	if (Session.Type == GAME_INTERNET) {
+		FUN_00543080(&Ipx);
+	}
+
+	HWND dialog = UI::BeginDialog(0xbc6, FUN_0046DFD0, 0);
+	int result = 0;
+	if (dialog != NULL) {
+		SetWindowLong(dialog, DWL_USER, (LONG)&result);
+		UI::FocusOnWindow(dialog);
+		while (result == 0 || result == 1) {
+			Windows_Message_Handler();
+			if (result == 1) {
+				if (DAT_0089E05C) {
+					FUN_0046D480(Session.unknown_2854, true);
+					if (Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) {
+						if (FUN_005E8760() && a7) {
+							FUN_0046D4A0();
+						}
+						_Send_To_Players((NetCommandType)0x26);
+					}
+					_Refresh_Dialog();
+				} else {
+					FUN_0046D480(Session.unknown_2854, false);
+					if (Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) {
+						_Send_To_Players((NetCommandType)0x25);
+					}
+				}
+				if (FUN_005E8760() && FUN_0046D460()) {
+					if (!a7) {
+						DAT_0089E04C = false;
+						break;
+					}
+					_Send_To_Players((NetCommandType)0x34);
+					Session.MPGameMode->vt_entry_68();
+					Session.FUN_0069B8C0();
+					DAT_0089E058++;
+					FUN_0046D4A0();
+				}
+				if (!a7) {
+					DAT_0089E04C = false;
+					break;
+				}
+				result = 0;
+			}
+
+			Ipx.Service();
+			if (!Ipx.Get_Global_Message(&Session.GPacket, &Session.GPacketlen, &Session.GAddress, &Session.GProductID)) {
+				continue;
+			}
+			if (Session.GProductID != 0xaa04) {
+				continue;
+			}
+			if (Process_Global_Packet(&Session.GPacket, &Session.GAddress)) {
+				continue;
+			}
+
+			if (Session.GPacket.Command == 0x26) {
+				int i;
+				for (i = 0; i < Session.NumScores; i++) {
+					if (strcmp(Session.GPacket.Name, FUN_007350C0(DAT_0089DF80[i]->Name)) == 0) {
+						int id = DAT_0081B1EC[i][5];
+						_Set_Text(dialog, id, StringTable::LoadString("TXT_READY", NULL, "D:\\ra2mdpost\\CampScor.cpp", 0x628));
+						break;
+					}
+				}
+				for (i = 0; i < 8; i++) {
+					if (strcmp(Session.GPacket.Name, FUN_007350C0(Session.Slots[i]->Name)) == 0) {
+						FUN_0046D480(i, true);
+						break;
+					}
+				}
+				_Refresh_Dialog();
+				if (FUN_005E8760() && FUN_0046D460() && a7) {
+					_Send_To_Players((NetCommandType)0x34);
+					Session.MPGameMode->vt_entry_68();
+					Session.FUN_0069B8C0();
+					DAT_0089E058++;
+					FUN_0046D4A0();
+				}
+				continue;
+			} else if (Session.GPacket.Command == 0x23) {
+				DAT_0089E058++;
+				if (DAT_0089E058 == Session.NumScores) {
+					DAT_0089E04C = true;
+					_Send_To_Players((NetCommandType)0x31);
+					break;
+				}
+			} else if (Session.GPacket.Command == 0x34) {
+				requested = true;
+			} else if (Session.GPacket.Command == 0x24) {
+				int i;
+				for (i = 0; i < Session.NumScores; i++) {
+					if (strcmp(Session.GPacket.Name, FUN_007350C0(DAT_0089DF80[i]->Name)) == 0) {
+						int id = DAT_0081B1EC[i][5];
+						_Set_Text(dialog, id, StringTable::LoadString("TXT_ABORTED", NULL, "D:\\ra2mdpost\\CampScor.cpp", 0x653));
+						break;
+					}
+				}
+				for (i = 0; i < 8; i++) {
+					if (strcmp(Session.GPacket.Name, FUN_007350C0(Session.Slots[i]->Name)) == 0) {
+						FUN_0046D480(i, false);
+						FUN_0046FA20(dialog);
+						Session.Slots[i] = DAT_00AC119C;
+						break;
+					}
+				}
+				for (i = 0; i < Session.Players.Count(); i++) {
+					if (strcmp(Session.GPacket.Name, FUN_007350C0(Session.Players[i]->Name)) == 0) {
+						delete Session.Players[i];
+						Session.Players.Delete(Session.Players[i]);
+						break;
+					}
+				}
+				_Refresh_Dialog();
+				EnableWindow(GetDlgItem(dialog, 0x6d1), FALSE);
+				EnableWindow(GetDlgItem(dialog, 0x5c0), TRUE);
+				PMessagePrintf(-1, StringTable::LoadString("GUI:PlayerLeftCoop", NULL, "D:\\ra2mdpost\\CampScor.cpp", 0x66f), FUN_00735120(Session.GPacket.Name));
+				continue;
+			} else if (Session.GPacket.Command == 0x25) {
+				int i;
+				for (i = 0; i < Session.NumScores; i++) {
+					if (strcmp(Session.GPacket.Name, FUN_007350C0(DAT_0089DF80[i]->Name)) == 0) {
+						int id = DAT_0081B1EC[i][5];
+						_Set_Text(dialog, id, StringTable::LoadString("TXT_WAITING", NULL, "D:\\ra2mdpost\\CampScor.cpp", 0x677));
+						break;
+					}
+				}
+				for (i = 0; i < 8; i++) {
+					if (strcmp(Session.GPacket.Name, FUN_007350C0(Session.Slots[i]->Name)) == 0) {
+						FUN_0046D480(i, false);
+						break;
+					}
+				}
+				continue;
+			} else if (Session.GPacket.Command == 0x31) {
+				DAT_0089E04C = true;
+				break;
+			} else if (Session.GPacket.Command == NET_MESSAGE) {
+				if (Session.GPacket.Message.NameCRC == FUN_005DAC00(Session.GameName)) {
+					PMessagePrintf(Session.GPacket.Message.Color, L"[%s] %s", FUN_00735120(Session.GPacket.Name), Session.GPacket.Message.Buf);
+				}
+				continue;
+			} else if (Session.GPacket.Command == 0x32) {
+				if (FUN_0046D650()) {
+					FUN_0046DD70(dialog, true);
+					DAT_0089E05C = false;
+					FUN_0046D430();
+					_Refresh_Dialog();
+				}
+				if (requested) {
+					EnableWindow(GetDlgItem(dialog, 0x5c0), 0);
+					_Send_To_Players((NetCommandType)0x23);
+				}
+				continue;
+			} else if (Session.GPacket.Command == 0x33) {
+				if (FUN_0046D8B0()) {
+					FUN_0046D4A0();
+					FUN_0046DD70(dialog, true);
+					DAT_0089E05C = false;
+					FUN_0046D430();
+					_Refresh_Dialog();
+				}
+				continue;
+			}
+
+			if (FUN_005E8760() && FUN_0046D460() && a7) {
+				DAT_0089E04C = true;
+				_Send_To_Players((NetCommandType)0x31);
+				break;
+			}
+		}
+		FUN_0052FEC0(NULL, true);
+		UI::EndDialog(dialog);
+		FUN_0052FEC0(NULL, true);
+	}
+	if (Session.Type == GAME_INTERNET) {
+		FUN_00543090(&Ipx);
+	}
+	FUN_0072D350();
 }
 
 extern MPlayerScoreType * DAT_0089DFE0[];
@@ -829,11 +1110,6 @@ namespace OwnerDraw {
 void __fastcall FUN_00607FD0(HWND window);
 extern wchar_t DAT_0089E0A4[];
 extern int DAT_0089DFC0;
-
-static int DAT_0081B1EC[8][6] = {
-	{ 0x781, 0x783, 0x785, 0x787, 0x789, 0x70a },
-	{ 0x782, 0x784, 0x786, 0x788, 0x78a, 0x70b },
-};
 
 // FUNCTION: GAMEMD 0x00470D30
 int CALLBACK FUN_00470D30(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
@@ -996,7 +1272,7 @@ void CampScoreResults::Show(DynamicVectorClass<MPlayerScoreType *> list, int a6,
 }
 
 // SYNTHETIC: GAMEMD 0x00471500
-// ??_GCampScoreLink@@UAEPAXI@Z
+// ??_GCampaignScoreClass@@UAEPAXI@Z
 
 // SYNTHETIC: GAMEMD 0x00471520
 // ??_GCampScoreResults@@UAEPAXI@Z

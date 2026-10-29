@@ -230,7 +230,7 @@ bool MultiplayerGameMode::vt_entry_10(void)
 }
 
 // FUNCTION: GAMEMD 0x005D6310
-bool MultiplayerGameMode::vt_entry_14(unsigned a)
+bool MultiplayerGameMode::vt_entry_14(WideWstring * message)
 {
 	return(true);
 }

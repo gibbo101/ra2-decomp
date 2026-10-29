@@ -370,15 +370,16 @@ namespace WorldDominationTour
 			int ID;
 			int VQAnim;
 			int Faction;
-			MSAnim * BackgroundAnim;
+			ConvertClass * OverlayDrawer;
 			MSAnim * IntroAnim;
-			MSAnim * OutroAnim;
-			void * Unused20;
+			MSAnim * BackgroundAnim;
+			MSAnim * HelpBarAnim;
 			Surface * MaskSurface;
 			Wstring Name;
 			TERR_LIST Territories;
 			Point2D Origin;
-			char Pad1[0x54 - 0x44 - sizeof(Point2D)];
+			int HelpBarX;
+			int HelpBarY;
 			Rect CancelRect;
 			MSOverlayAnim * CancelAnim;
 			bool CancelActive;
@@ -387,11 +388,11 @@ namespace WorldDominationTour
 			int CancelHoverFrame;
 			bool CancelHovered;
 			char Pad3[0x78 - 0x75];
-			MSAnim * CancelHelp;
+			ConvertClass * CancelDrawer;
 			Rect TextRect;
 			Rect TooltipRect;
-			Rect PlayRect;
-			Rect BackRect;
+			Rect TitleRect;
+			Rect BackTextRect;
 			PALETTE_LIST Palettes;
 	};
 

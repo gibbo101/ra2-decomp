@@ -227,6 +227,314 @@ void __fastcall FUN_006ACE80(HWND dialog, int first)
 	}
 }
 
+#include "goptions.h"
+#include "msgbox.h"
+#include "scenario.h"
+
+#include <stdio.h>
+
+namespace OwnerDraw {
+	char * __fastcall WideToCharString(char * dest, wchar_t const * src, int count);
+}
+namespace Game { extern HWND hWnd; }
+
+MultiplayerGameMode * First_Game_Mode(void);
+void __fastcall FUN_006ADC20(HWND dialog, int id);
+void __fastcall FUN_006ADDF0(HWND dialog, int from, int to);
+int __fastcall FUN_004E3830(int id);
+void __fastcall FUN_004E3690(HWND dialog, int side);
+void __fastcall FUN_004E4C20(HWND dialog, int id);
+void __fastcall FUN_004E5700(HWND dialog, int id);
+int __fastcall FUN_004E4170(HWND dialog, int id, int index);
+int __fastcall FUN_004E4E20(HWND dialog, int id, int index);
+int __fastcall FUN_004E5900(HWND dialog, int id, int index);
+int __fastcall FUN_004E6030(HWND dialog, int id, int index);
+void __fastcall FUN_004E4FC0(int count);
+void __fastcall FUN_004E5310(HWND dialog);
+void __fastcall FUN_004E5D60(HWND dialog);
+void __fastcall FUN_005E2EF0(HWND dialog, MultiplayerGameMode * mode);
+void __fastcall FUN_005E2F60(HWND dialog);
+void __fastcall FUN_005E74E0(HWND dialog);
+bool FUN_00608070(HWND dialog);
+
+inline int Skirmish_Slot_Type(int level)
+{
+	if (level == -1) return 1;
+	if (level == 0) return 4;
+	if (level == 1) return 5;
+	if (level == 2) return 6;
+	return 0;
+}
+
+inline int Skirmish_Spot_Limit(int count)
+{
+	if (Session.MPGameMode->vt_entry_04() && Scen->NumCoopHumanStartSpots <= count) {
+		return(Scen->NumCoopHumanStartSpots);
+	}
+	return(count);
+}
+
+// FUNCTION: GAMEMD 0x006ACEE0
+void __fastcall FUN_006ACEE0(HWND window, int id, LPARAM lparam, int code)
+{
+	int * rc = (int *)GetWindowLong(window, DWL_USER);
+	wchar_t buffer[256];
+	wchar_t name[20];
+	HWND handle;
+	int i;
+
+	switch (id) {
+		case 0x50b: case 0x50e: case 0x516: case 0x51a: case 0x51b: case 0x51c: case 0x51d:
+			FUN_006ADC20(window, id);
+			FUN_006ACD60(NULL);
+			break;
+
+		case 0x617:
+		case 0x5c0: {
+			if (code != 0) {
+				break;
+			}
+			if (id == 0x617) {
+				EnableWindow(GetDlgItem(window, 0x617), FALSE);
+			}
+			int waypoints = RandomMapWaypointCount(Session.Options.ScenarioIndex);
+			int computers = 0;
+			for (i = 0; i < 7; i++) {
+				int combo = FUN_006ACB60(i);
+				int sel = SendDlgItemMessage(window, combo, CB_GETCURSEL, 0, 0);
+				int data = SendDlgItemMessage(window, combo, CB_GETITEMDATA, sel, 0);
+				if (data == 0 || data == 1 || data == 2) {
+					computers++;
+				}
+			}
+			int players = computers + 1;
+			Session.Options.AIPlayers = computers;
+
+			if (id == 0x617) {
+				if (waypoints < players) {
+					swprintf(buffer, StringTable::LoadString("TXT_SCENARIO_TOO_SMALL", NULL, "D:\\ra2mdpost\\Skirmish.cpp", 0x437), waypoints);
+					WWMessageBox().Process(buffer, StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\Skirmish.cpp", 0x438), NULL, NULL);
+					EnableWindow(GetDlgItem(window, 0x617), TRUE);
+					return;
+				}
+				if (players <= 1) {
+					swprintf(buffer, StringTable::LoadString("TXT_NEED_AT_LEAST_TWO_PLAYERS", NULL, "D:\\ra2mdpost\\Skirmish.cpp", 0x43f), waypoints);
+					WWMessageBox().Process(buffer, StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\Skirmish.cpp", 0x440), NULL, NULL);
+					EnableWindow(GetDlgItem(window, 0x617), TRUE);
+					return;
+				}
+				if (FUN_004E6030(window, 0x76d, -1) >= 0) {
+					for (i = 0; i < 7; i++) {
+						int combo = FUN_006ACB60(i);
+						int sel = SendDlgItemMessage(window, combo, CB_GETCURSEL, 0, 0);
+						int data = SendDlgItemMessage(window, combo, CB_GETITEMDATA, sel, 0);
+						if (data == 0 || data == 1 || data == 2) {
+							int team = FUN_004E6030(window, FUN_004E5940(i + 1), -1);
+							if (FUN_004E6030(window, 0x76d, -1) != team) {
+								goto allied;
+							}
+						}
+					}
+					swprintf(buffer, StringTable::LoadString("TXT_CANNOT_ALLY", NULL, "D:\\ra2mdpost\\Skirmish.cpp", 0x457), waypoints);
+					WWMessageBox().Process(buffer, StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\Skirmish.cpp", 0x458), NULL, NULL);
+					EnableWindow(GetDlgItem(window, 0x617), TRUE);
+					return;
+				}
+			}
+allied:
+			MultiplayerGameMode * mode = Session.MPGameMode;
+			WideWstring message;
+			if (!mode->vt_entry_14(&message)) {
+				if (id == 0x617) {
+					WWMessageBox().Process(message.get(), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\Skirmish.cpp", 0x469), NULL, NULL);
+					EnableWindow(GetDlgItem(window, 0x617), TRUE);
+					return;
+				}
+				First_Game_Mode();
+			}
+
+			Session.Skirmish.MPGameMode = Session.Options.MPModeIndex;
+			Session.Skirmish.ScenIndex = Session.Options.ScenarioIndex;
+			if (Session.Skirmish.ScenIndex >= Session.Scenarios.Count()) {
+				Session.Skirmish.ScenIndex = 0;
+			}
+
+			handle = GetDlgItem(window, 0x6a0);
+			SendMessage(handle, 0x4b3, 20, (LPARAM)name);
+			OwnerDraw::WideToCharString(Session.Handle, name, -1);
+			int side = FUN_004E4170(window, 0x6a1, -1);
+			Session.FUN_0069B760(side, true);
+
+			for (i = 0; i < 7; i++) {
+				int slot = i + 1;
+				int combo = FUN_006ACB60(i);
+				int country = FUN_004E37D0(slot);
+				int color = FUN_004E41D0(slot);
+				int start = FUN_004E4E60(slot);
+				int team = FUN_004E5940(slot);
+				int sel = SendDlgItemMessage(window, combo, CB_GETCURSEL, 0, 0);
+				int data = SendDlgItemMessage(window, combo, CB_GETITEMDATA, sel, 0);
+				if (data == 0 || data == 1 || data == 2) {
+					sel = SendDlgItemMessage(window, combo, CB_GETCURSEL, 0, 0);
+					Session.Options.AISlots.Difficulties[slot] = SendDlgItemMessage(window, combo, CB_GETITEMDATA, sel, 0);
+					Session.Options.AISlots.Countries[slot] = FUN_004E4170(window, country, -1);
+					Session.Options.AISlots.Colors[slot] = FUN_004E4E20(window, color, -1);
+					Session.Options.AISlots.Starts[slot] = FUN_004E5900(window, start, -1);
+					Session.Options.AISlots.Allies[slot] = FUN_004E6030(window, team, -1);
+				}
+			}
+
+			for (i = 1; i < 8; i++) {
+				int combo = FUN_006ACB60(i - 1);
+				int country = FUN_004E37D0(i);
+				int color = FUN_004E41D0(i);
+				int sel = SendDlgItemMessage(window, combo, CB_GETCURSEL, 0, 0);
+				int data = SendDlgItemMessage(window, combo, CB_GETITEMDATA, sel, 0);
+				int side = FUN_004E4170(window, country, -1);
+				int colour = FUN_004E4E20(window, color, -1);
+				Session.Skirmish.SlotData[i][0] = Skirmish_Slot_Type(data);
+				Session.Skirmish.SlotData[i][1] = side;
+				Session.Skirmish.SlotData[i][2] = colour;
+			}
+
+			int color = FUN_004E4E20(window, 0x6a2, -1);
+			int start = FUN_004E5900(window, 0x6a3, -1);
+			int team = FUN_004E6030(window, 0x76d, -1);
+			Session.FUN_0069B7E0(color, true);
+			Session.unknown_164 = start;
+			Session.unknown_16C = team;
+
+			NodeNameType * who = new NodeNameType;
+			if (who) {
+				wcscpy(who->Name, FUN_00735120(Session.Handle));
+				who->Slot.Country = Session.House;
+				who->Slot.ColorIdx = Session.PrefColor;
+				who->Slot.Start = Session.unknown_164;
+				who->Slot.Team = Session.unknown_16C;
+				who->Slot.Time = -1;
+				Session.Players.Add(who);
+			}
+			Session.FUN_0069B8C0();
+
+			handle = GetDlgItem(window, 0x529);
+			if (handle) {
+				Session.Options.GameSpeed = 6 - SendMessage(handle, 0x400, 0, 0);
+				Options.GameSpeed = Session.Options.GameSpeed;
+			}
+			handle = GetDlgItem(window, 0x511);
+			if (handle) Session.Options.Credits = SendMessage(handle, 0x400, 0, 0);
+			handle = GetDlgItem(window, 0x50c);
+			if (handle) Session.Options.UnitCount = SendMessage(handle, 0x400, 0, 0);
+			Session.Skirmish.GameSpeed = Session.Options.GameSpeed;
+			Session.Skirmish.Credits = Session.Options.Credits;
+			Session.Skirmish.UnitCount = Session.Options.UnitCount;
+
+			handle = GetDlgItem(window, 0x54e);
+			if (handle) Session.Options.ShortGame = SendMessage(handle, BM_GETCHECK, 0, 0) == BST_CHECKED;
+			handle = GetDlgItem(window, 0x69a);
+			if (handle) Session.Options.SWAllowed = SendMessage(handle, BM_GETCHECK, 0, 0) == BST_CHECKED;
+			handle = GetDlgItem(window, 0x69d);
+			if (handle) Session.Options.BuildOffAlly = SendMessage(handle, BM_GETCHECK, 0, 0) == BST_CHECKED;
+			handle = GetDlgItem(window, 0x693);
+			if (handle) Session.Options.MCVRedeploy = SendMessage(handle, BM_GETCHECK, 0, 0) == BST_CHECKED;
+			handle = GetDlgItem(window, 0x696);
+			if (handle) Session.Options.Goodies = SendMessage(handle, BM_GETCHECK, 0, 0) == BST_CHECKED;
+			Session.Skirmish.ShortGame = Session.Options.ShortGame;
+			Session.Skirmish.SuperWeaponsAllowed = Session.Options.SWAllowed;
+			Session.Skirmish.BuildOffAlly = Session.Options.BuildOffAlly;
+			Session.Skirmish.MCVRepacks = Session.Options.MCVRedeploy;
+			Session.Skirmish.CratesAppear = Session.Options.Goodies;
+			Session.Options.FogOfWar = false;
+			Session.Options.BridgeDestruction = true;
+			Session.Options.HarvTruce = false;
+			Session.Options.CrapEngineers = false;
+
+			if (MultiplayerMapPreview) {
+				delete MultiplayerMapPreview;
+				MultiplayerMapPreview = NULL;
+			}
+			*rc = id;
+			break;
+		}
+
+		case 0x5aa: {
+			int old_scen = Session.Options.ScenarioIndex;
+			int old_mode = Session.Options.MPModeIndex;
+			strcpy((char *)buffer, Session.ScenarioFileName);
+			wcscpy(buffer, Session.Options.ScenarioDescription);
+			FUN_00608070(window);
+			ShowWindow(window, SW_HIDE);
+			if (Scenario_Dialog(Game::hWnd) == IDCANCEL) {
+				Session.Options.MPModeIndex = old_mode;
+				Session.Options.ScenarioIndex = old_scen;
+				Set_Scenario_Info_From_Index(old_scen);
+				FUN_005E74E0(window);
+				ShowWindow(window, SW_SHOW);
+				if (Session.Scenarios[Session.Options.ScenarioIndex]->Is_Random_Map()) {
+					delete MultiplayerMapPreview;
+					MultiplayerMapPreview = new MapPreviewClass;
+					MultiplayerMapPreview->Read_PCX_Preview("RandMap.img");
+					if (MultiplayerMapPreview->Get_Preview_Surface() == NULL) {
+						FUN_005E74E0(window);
+					}
+					InvalidateRect(window, NULL, FALSE);
+				} else {
+					FUN_005E74E0(window);
+				}
+				InvalidateRect(window, NULL, FALSE);
+			} else {
+				FUN_004E4FC0(Skirmish_Spot_Limit(RandomMapWaypointCount(Session.Options.ScenarioIndex)));
+				FUN_004E5310(window);
+				FUN_004E5D60(window);
+				FUN_006ADDF0(window, old_scen, Session.Options.ScenarioIndex);
+				ShowWindow(window, SW_SHOW);
+				if (Set_Scenario_Info_From_Index(Session.Options.ScenarioIndex)) {
+					FUN_005E2EF0(window, MultiplayerGameMode::Get(Session.Options.MPModeIndex));
+					FUN_005E2F60(window);
+					FUN_006ACD60(NULL);
+					if (Session.Scenarios[Session.Options.ScenarioIndex]->Is_Random_Map()) {
+						if (MultiplayerMapPreview != NULL) {
+							delete MultiplayerMapPreview;
+							MultiplayerMapPreview = new MapPreviewClass;
+							MultiplayerMapPreview->Read_PCX_Preview("RandMap.img");
+						}
+						if (MultiplayerMapPreview->Get_Preview_Surface() == NULL) {
+							FUN_005E74E0(window);
+						}
+						InvalidateRect(window, NULL, FALSE);
+					} else {
+						FUN_005E74E0(window);
+					}
+				} else {
+					Session.Options.ScenarioIndex = old_scen;
+					Session.Options.MPModeIndex = old_mode;
+				}
+			}
+			break;
+		}
+
+		case 0x510: case 0x513: case 0x514:
+		case 0x51e: case 0x51f: case 0x520: case 0x521:
+		case 0x6a1:
+			FUN_004E3690(window, FUN_004E3830(id));
+			break;
+
+		case 0x522: case 0x523: case 0x524: case 0x525: case 0x526: case 0x527: case 0x528:
+		case 0x6a2:
+			if (code == 1) {
+				FUN_004E4C20(window, id);
+			}
+			break;
+
+		case 0x6a3: case 0x6a4: case 0x6a5: case 0x6a6: case 0x6a7: case 0x6a8:
+		case 0x6aa: case 0x6ab:
+			if (code == 1) {
+				FUN_004E5700(window, id);
+			}
+			break;
+	}
+}
+
 // FUNCTION: GAMEMD 0x006ADC20
 void __fastcall FUN_006ADC20(HWND dialog, int id)
 {
@@ -419,7 +727,7 @@ struct TooltipRequest {
 	WideWstring Text;
 };
 
-int __fastcall FUN_006ACEE0(HWND window, int id, LPARAM lparam, int code);
+void __fastcall FUN_006ACEE0(HWND window, int id, LPARAM lparam, int code);
 int __fastcall FUN_006AE6E0(HWND window, WPARAM wparam, LPARAM lparam);
 char FUN_006067A0(HWND dialog);
 int __fastcall FUN_004E3830(int id);
@@ -502,8 +810,6 @@ BOOL CALLBACK FUN_006AE3F0(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 	return FALSE;
 }
 
-#include "scenario.h"
-
 MultiplayerGameMode * First_Game_Mode(void);
 int Game_Mode_Total(void);
 MultiplayerGameMode * FUN_005E2F80(void);
@@ -532,14 +838,6 @@ inline int Skirmish_Slot_Level(int type)
 	if (type == 5) return 1;
 	if (type == 6) return 2;
 	return -1;
-}
-
-inline int Skirmish_Spot_Limit(int count)
-{
-	if (Session.MPGameMode->vt_entry_04() && Scen->NumCoopHumanStartSpots <= count) {
-		return(Scen->NumCoopHumanStartSpots);
-	}
-	return(count);
 }
 
 // FUNCTION: GAMEMD 0x006AE6E0

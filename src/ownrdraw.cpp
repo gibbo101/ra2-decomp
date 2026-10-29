@@ -3863,6 +3863,207 @@ LRESULT CALLBACK OwnerDraw::CheckBoxButtonHandler(HWND window, UINT message, WPA
 	return 0;
 }
 
+namespace OwnerDraw {
+LRESULT CALLBACK AutoRadioButtonHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+}
+
+// FUNCTION: GAMEMD 0x00616980
+// OwnerDraw::AutoRadioButtonHandler
+LRESULT CALLBACK OwnerDraw::AutoRadioButtonHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	OwnerDraw::WinData *data = Find_Data(window);
+
+	RECT drect;
+	memset(&drect, 0, sizeof(drect));
+	Get_Display_Rect(window, &drect);
+
+	Rect origin;
+	origin.X = drect.left;
+	origin.Y = drect.top;
+	origin.Width = drect.right - drect.left;
+	origin.Height = drect.bottom - drect.top;
+
+	RECT crect;
+	memset(&crect, 0, sizeof(crect));
+	GetClientRect(window, &crect);
+
+	int state = data->CheckBox.checkState;
+	LONG style = GetWindowLong(window, GWL_STYLE);
+
+	switch (message) {
+	case WM_PAINT: {
+		Rect rect = origin;
+		unsigned color = OwnerDraw::PrimaryTextColor;
+		Surface *image;
+
+		if (data->cachedSurface == NULL) {
+			Surface *surface = new BSurface(crect.right + 1, crect.bottom + 1, 2);
+			data->cachedSurface = surface;
+			OwnerDraw::CachedSurfaceCount++;
+
+			Rect dest(0, 0, crect.right + 1, crect.bottom + 1);
+			Rect src(drect.left, drect.top, crect.right + 1, crect.bottom + 1);
+
+			surface->Blit_From(dest, *DAT_00887310, src);
+		}
+
+		if (data->image != NULL) {
+			image = data->image;
+			if ((state & 1) && data->altImage != NULL) {
+				image = data->altImage;
+			}
+
+			Rect src = rect;
+			src.X = 0;
+			src.Y = 0;
+			DAT_00887310->Blit_From(rect, *image, src);
+
+		} else {
+			char updown = 'u';
+			if (state & 1) {
+				updown = 'd';
+			}
+			if (style & WS_DISABLED) {
+				updown = 'u';
+			}
+
+			int widths[2] = {7, 7};
+			int margins[2] = {10, 10};
+			int heights[2] = {24, 30};
+
+			int index = 0;
+			for (unsigned int i = 0; i < 2; i++) {
+				if (heights[i] > rect.Height && i != 0) {
+					break;
+				}
+				index = i;
+			}
+
+			int height = heights[index];
+			int w = widths[index];
+			int margin = margins[index];
+
+			if (data->cachedSurface != NULL) {
+				Rect cachesrc(0, 0, crect.right + 1, crect.bottom + 1);
+				Rect cachedest(drect.left, drect.top, crect.right + 1, crect.bottom + 1);
+				DAT_00887310->Blit_From(cachedest, *data->cachedSurface, cachesrc);
+				InvalidateRect(window, NULL, FALSE);
+			}
+
+			origin.Y += (rect.Height - height) / 2;
+			if (state & 1) {
+				origin.Y += 2;
+			}
+
+			Rect destrect;
+			Rect sourcerect;
+			char buffer[40];
+
+			sprintf(buffer, "b%c%c_li%d.pcx", updown, 'e', height);
+			image = SurfaceCache.GetSurface(buffer);
+			origin.Height = image->Get_Height();
+			destrect = origin;
+			destrect.Width = w;
+			sourcerect.Width = w;
+			sourcerect.Y = 0;
+			sourcerect.X = 0;
+			destrect.Height = height;
+			sourcerect.Height = height;
+			DAT_00887310->Blit_From(destrect, *image, sourcerect);
+
+			sprintf(buffer, "b%c%c_mi%d.pcx", updown, 'e', height);
+			image = SurfaceCache.GetSurface(buffer);
+			Rect midrect = origin;
+			midrect.X += w;
+			midrect.Width -= margin;
+			midrect.Height = image->Get_Height();
+			SurfaceCache.Draw(midrect, *DAT_00887310, *image, 0, 0);
+
+			sprintf(buffer, "b%c%c_ri%d.pcx", updown, 'e', height);
+			image = SurfaceCache.GetSurface(buffer);
+			destrect = origin;
+			destrect.X += origin.Width - margin;
+			destrect.Width = margin;
+			destrect.Height = image->Get_Height();
+			sourcerect.Height = destrect.Height;
+			sourcerect.Y = 0;
+			sourcerect.X = 0;
+			sourcerect.Width = destrect.Width;
+			DAT_00887310->Blit_From(destrect, *image, sourcerect);
+		}
+
+		if (data->image == NULL && data->Wide.text) {
+			RECT client;
+			GetClientRect(window, &client);
+
+			Rect text_rect(
+				origin.X,
+				origin.Y + 1,
+				origin.Width + origin.X - 2,
+				origin.Height + origin.Y - 2);
+			if (state & 1) {
+				text_rect.X += 2;
+				text_rect.Y += 4;
+			}
+			OwnerDraw::DrawWideText(DAT_00887310, data->Wide.text, (LTRBStruct *)&text_rect, data->Wide.font, color, 5, 0xc, 0, 0, 0);
+		}
+
+		if (style & WS_DISABLED) {
+			FUN_00621B80(&rect, DAT_00887310, 0, 128);
+		}
+		ValidateRect(window, NULL);
+		return 0;
+	}
+
+	case BM_GETCHECK:
+		return data->CheckBox.checkState;
+
+	case BM_SETCHECK:
+		data->CheckBox.checkState = wparam;
+		InvalidateRect(window, NULL, TRUE);
+		break;
+
+	case WM_LBUTTONDOWN:
+	case WM_LBUTTONDBLCLK:
+		if (data->CheckBox.checkState == 0) {
+			data->CheckBox.checkState = 1;
+			InvalidateRect(window, NULL, TRUE);
+			VocClass::PlayGlobal(Rule->GenericClick, 1.0f, 0x2000);
+			break;
+		}
+		return 0;
+
+	case WM_LBUTTONUP: {
+		LockWindowUpdate(GetParent(window));
+		WNDPROC proc = NULL;
+		WNDPROC *found = NULL;
+		if (OwnerDraw::DialogProcs.getPointer(window, &found) && found) {
+			proc = *found;
+		}
+		LRESULT result = CallWindowProc(proc, window, WM_LBUTTONUP, wparam, lparam);
+		LockWindowUpdate(NULL);
+		return result;
+	}
+
+	case OD_SUBCLASSED: {
+		WNDPROC proc = NULL;
+		WNDPROC *found = NULL;
+		if (OwnerDraw::DialogProcs.getPointer(window, &found) && found) {
+			proc = *found;
+		}
+		data->CheckBox.checkState = CallWindowProc(proc, window, BM_GETCHECK, 0, 0);
+		break;
+	}
+	}
+
+	WNDPROC proc = NULL;
+	WNDPROC *found = NULL;
+	if (OwnerDraw::DialogProcs.getPointer(window, &found) && found) {
+		proc = *found;
+	}
+	return CallWindowProc(proc, window, message, wparam, lparam);
+}
+
 // FUNCTION: GAMEMD 0x0061D6D0
 // OwnerDraw::ProgressHandler
 LRESULT CALLBACK OwnerDraw::ProgressHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam)

@@ -13,7 +13,7 @@ class MPFreeForAllClass : public MultiplayerGameMode
 		MPFreeForAllClass(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex);
 		virtual ~MPFreeForAllClass(void);
 		virtual bool vt_entry_10(void) override;
-		virtual bool vt_entry_14(unsigned a) override;
+		virtual bool vt_entry_14(WideWstring * message) override;
 		virtual bool vt_entry_18(void) override;
 		virtual bool vt_entry_40(void) override;
 		virtual void PopulateTeamDropdownForPlayer(HWND hwnd, int index) override;

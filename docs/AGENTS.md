@@ -391,6 +391,10 @@ Each entry: what the diff showed, then the source change that fixed it.
   definition lands 4-aligned in .bss, which VC6 orders by a hash of the name.
 - A shared-header layout change can flip it as well: an equally true form with fewer new
   names (`int X[64][2]` rather than a new pair struct) held wonline 0x00788180.
+  A member whose type has a constructor (`Point2D`) flipped it where two `int` members did
+  not: bisect a header change one field at a time before moving declarations.
+- Two checks of one source file at the same time overwrite each other's output: give each
+  parallel check its own copy of the file, outside any overlay directory.
 - A named reference to an object indexed more than once (`CellClass & center = Map[cell]`)
   can pin the order: it took Generate_Rural_Buildings from 24 of 64 failing offsets to 0.
 - Never remove a function data/progress.csv records from src/: report the stand-in instead.

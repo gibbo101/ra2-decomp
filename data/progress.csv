@@ -1977,8 +1977,8 @@ address,name,result,size,source,symbol
 0x0046D2D0,_$E35,MATCH,18,src/campscor.cpp,_$E35
 0x0046D2F0,_$E38,MATCH,26,src/campscor.cpp,_$E38
 0x0046D310,_$E55,MATCH,23,src/campscor.cpp,_$E55
-0x0046D330,CampScoreLink::CampScoreLink,MATCH,30,src/campscor.cpp,??0CampScoreLink@@QAE@XZ
-0x0046D350,CampScoreLink::~CampScoreLink,MATCH,7,src/campscor.cpp,??1CampScoreLink@@UAE@XZ
+0x0046D330,CampaignScoreClass::CampaignScoreClass,MATCH,30,src/campscor.cpp,??0CampaignScoreClass@@QAE@XZ
+0x0046D350,CampaignScoreClass::~CampaignScoreClass,MATCH,7,src/campscor.cpp,??1CampaignScoreClass@@UAE@XZ
 0x0046D360,FUN_0046D360,MATCH,152,src/campscor.cpp,?FUN_0046D360@@YIXPAGH@Z
 0x0046D400,FUN_0046D400,MATCH,43,src/campscor.cpp,?FUN_0046D400@@YIXH@Z
 0x0046D430,FUN_0046D430,MATCH,42,src/campscor.cpp,?FUN_0046D430@@YIXXZ
@@ -1989,7 +1989,7 @@ address,name,result,size,source,symbol
 0x0046D650,FUN_0046D650,MATCH,446,src/campscor.cpp,?FUN_0046D650@@YI_NXZ
 0x0046D810,FUN_0046D810,MATCH,155,src/campscor.cpp,?FUN_0046D810@@YIXXZ
 0x0046DA20,FUN_0046DA20,MATCH,67,src/campscor.cpp,?FUN_0046DA20@@YIXPAUHWND__@@HH@Z
-0x0046DA70,FUN_0046DA70,MATCH,465,src/campscor.cpp,?FUN_0046DA70@@YIXXZ
+0x0046DA70,CampaignScoreClass::FUN_0046DA70,MATCH,465,src/campscor.cpp,?FUN_0046DA70@CampaignScoreClass@@QAEXXZ
 0x0046DC50,FUN_0046DC50,MATCH,62,src/campscor.cpp,?FUN_0046DC50@@YIXXZ
 0x0046DC90,FUN_0046DC90,MATCH,40,src/campscor.cpp,?FUN_0046DC90@@YAHPBX0@Z
 0x0046DCC0,FUN_0046DCC0,MATCH,166,src/campscor.cpp,?FUN_0046DCC0@@YIXPAUHWND__@@_N@Z
@@ -2005,6 +2005,7 @@ address,name,result,size,source,symbol
 0x0046FAC0,FUN_0046FAC0,MATCH,143,src/campscor.cpp,?FUN_0046FAC0@@YIXPAUHWND__@@@Z
 0x0046FB50,FUN_0046FB50,MATCH,116,src/campscor.cpp,?FUN_0046FB50@@YIXPAUHWND__@@@Z
 0x0046FBD0,FUN_0046FBD0,MATCH,33,src/campscor.cpp,?FUN_0046FBD0@@YI_NXZ
+0x0046FC00,CampaignScoreClass::Show,MATCH,4088,src/campscor.cpp,?Show@CampaignScoreClass@@UAEXV?$DynamicVectorClass@PAUMPlayerScoreType@@@@H_NHPBG@Z
 0x00470C00,CampScoreResults::CampScoreResults,MATCH,33,src/campscor.cpp,??0CampScoreResults@@QAE@XZ
 0x00470C30,CampScoreResults::~CampScoreResults,MATCH,7,src/campscor.cpp,??1CampScoreResults@@UAE@XZ
 0x00470C40,FUN_00470C40,MATCH,67,src/campscor.cpp,?FUN_00470C40@@YIXPAUHWND__@@HH@Z
@@ -2012,7 +2013,7 @@ address,name,result,size,source,symbol
 0x00470D30,FUN_00470D30,MATCH,1731,src/campscor.cpp,?FUN_00470D30@@YGHPAUHWND__@@IIJ@Z
 0x00471400,FUN_00471400,MATCH,32,src/campscor.cpp,?FUN_00471400@@YIXXZ
 0x00471420,CampScoreResults::Show,MATCH,210,src/campscor.cpp,?Show@CampScoreResults@@UAEXV?$DynamicVectorClass@PAUMPlayerScoreType@@@@HHHPBG@Z
-0x00471500,??_GCampScoreLink@@UAEPAXI@Z,MATCH,32,src/campscor.cpp,??_GCampScoreLink@@UAEPAXI@Z
+0x00471500,??_GCampaignScoreClass@@UAEPAXI@Z,MATCH,32,src/campscor.cpp,??_GCampaignScoreClass@@UAEPAXI@Z
 0x00471520,??_GCampScoreResults@@UAEPAXI@Z,MATCH,32,src/campscor.cpp,??_GCampScoreResults@@UAEPAXI@Z
 0x00471540,_$E2,MATCH,40,src/capturemanager.cpp,_$E2
 0x00471570,_$E5,MATCH,19,src/capturemanager.cpp,_$E5
@@ -8789,7 +8790,7 @@ address,name,result,size,source,symbol
 0x005C1A10,MPCooperative::vt_entry_20,MATCH,663,src/mpcoop.cpp,?vt_entry_20@MPCooperative@@UAEXXZ
 0x005C1CB0,MPCooperative::vt_entry_24,MATCH,8,src/mpcoop.cpp,?vt_entry_24@MPCooperative@@UAEXXZ
 0x005C1CC0,MPCooperative::FirstValidMapIndex,MATCH,186,src/mpcoop.cpp,?FirstValidMapIndex@MPCooperative@@UAEHXZ
-0x005C1D80,MPCooperative::vt_entry_14,MATCH,53,src/mpcoop.cpp,?vt_entry_14@MPCooperative@@UAE_NI@Z
+0x005C1D80,MPCooperative::vt_entry_14,MATCH,53,src/mpcoop.cpp,?vt_entry_14@MPCooperative@@UAE_NPAVWideWstring@@@Z
 0x005C1DC0,MPCooperative::vt_entry_18,MATCH,475,src/mpcoop.cpp,?vt_entry_18@MPCooperative@@UAE_NXZ
 0x005C1FA0,MPCooperative::vt_entry_28,MATCH,159,src/mpcoop.cpp,?vt_entry_28@MPCooperative@@UAEHXZ
 0x005C2040,MPCooperative::vt_entry_58,MATCH,182,src/mpcoop.cpp,?vt_entry_58@MPCooperative@@UAE_NHV?$DynamicVectorClass@H@@PBD1@Z
@@ -8887,7 +8888,7 @@ address,name,result,size,source,symbol
 0x005C5CE0,MPFreeForAllClass::MPFreeForAllClass,MATCH,52,src/mpfreeforall.cpp,??0MPFreeForAllClass@@QAE@ABVWideWstring@@0ABVWstring@@1_NH@Z
 0x005C5D20,MPFreeForAllClass::~MPFreeForAllClass,MATCH,11,src/mpfreeforall.cpp,??1MPFreeForAllClass@@UAE@XZ
 0x005C5D30,MPFreeForAllClass::vt_entry_10,MATCH,5,src/mpfreeforall.cpp,?vt_entry_10@MPFreeForAllClass@@UAE_NXZ
-0x005C5D40,MPFreeForAllClass::vt_entry_14,MATCH,75,src/mpfreeforall.cpp,?vt_entry_14@MPFreeForAllClass@@UAE_NI@Z
+0x005C5D40,MPFreeForAllClass::vt_entry_14,MATCH,75,src/mpfreeforall.cpp,?vt_entry_14@MPFreeForAllClass@@UAE_NPAVWideWstring@@@Z
 0x005C5D90,MPFreeForAllClass::vt_entry_18,MATCH,56,src/mpfreeforall.cpp,?vt_entry_18@MPFreeForAllClass@@UAE_NXZ
 0x005C5DD0,MPFreeForAllClass::PopulateTeamDropdownForPlayer,MATCH,81,src/mpfreeforall.cpp,?PopulateTeamDropdownForPlayer@MPFreeForAllClass@@UAEXPAUHWND__@@H@Z
 0x005C5E30,MPFreeForAllClass::vt_entry_40,MATCH,3,src/mpfreeforall.cpp,?vt_entry_40@MPFreeForAllClass@@UAE_NXZ
@@ -9027,7 +9028,7 @@ address,name,result,size,source,symbol
 0x005CA630,MPSiegeClass::MPSiegeClass,MATCH,52,src/mpsiege.cpp,??0MPSiegeClass@@QAE@ABVWideWstring@@0ABVWstring@@1_NH@Z
 0x005CA670,MPSiegeClass::~MPSiegeClass,MATCH,11,src/mpsiege.cpp,??1MPSiegeClass@@UAE@XZ
 0x005CA680,MPSiegeClass::vt_entry_10,MATCH,79,src/mpsiege.cpp,?vt_entry_10@MPSiegeClass@@UAE_NXZ
-0x005CA6D0,MPSiegeClass::vt_entry_14,MATCH,242,src/mpsiege.cpp,?vt_entry_14@MPSiegeClass@@UAE_NI@Z
+0x005CA6D0,MPSiegeClass::vt_entry_14,MATCH,242,src/mpsiege.cpp,?vt_entry_14@MPSiegeClass@@UAE_NPAVWideWstring@@@Z
 0x005CA7D0,MPSiegeClass::vt_entry_18,MATCH,5,src/mpsiege.cpp,?vt_entry_18@MPSiegeClass@@UAE_NXZ
 0x005CA7E0,MPSiegeClass::IsAIAllowed,MATCH,3,src/mpsiege.cpp,?IsAIAllowed@MPSiegeClass@@UAE_NXZ
 0x005CA7F0,MPSiegeClass::UnfixAlliances,MATCH,5,src/mpsiege.cpp,?UnfixAlliances@MPSiegeClass@@UAE_NXZ
@@ -9076,7 +9077,7 @@ address,name,result,size,source,symbol
 0x005CB3A0,MPUnholyAllianceClass::MPUnholyAllianceClass,MATCH,52,src/mpunholyalliance.cpp,??0MPUnholyAllianceClass@@QAE@ABVWideWstring@@0ABVWstring@@1_NH@Z
 0x005CB3E0,MPUnholyAllianceClass::~MPUnholyAllianceClass,MATCH,11,src/mpunholyalliance.cpp,??1MPUnholyAllianceClass@@UAE@XZ
 0x005CB3F0,MPUnholyAllianceClass::vt_entry_10,MATCH,8,src/mpunholyalliance.cpp,?vt_entry_10@MPUnholyAllianceClass@@UAE_NXZ
-0x005CB400,MPUnholyAllianceClass::vt_entry_14,MATCH,36,src/mpunholyalliance.cpp,?vt_entry_14@MPUnholyAllianceClass@@UAE_NI@Z
+0x005CB400,MPUnholyAllianceClass::vt_entry_14,MATCH,36,src/mpunholyalliance.cpp,?vt_entry_14@MPUnholyAllianceClass@@UAE_NPAVWideWstring@@@Z
 0x005CB430,MPUnholyAllianceClass::vt_entry_18,MATCH,8,src/mpunholyalliance.cpp,?vt_entry_18@MPUnholyAllianceClass@@UAE_NXZ
 0x005CB440,MPUnholyAllianceClass::SpawnBaseUnits,MATCH,242,src/mpunholyalliance.cpp,?SpawnBaseUnits@MPUnholyAllianceClass@@UAE_NPAVHouseClass@@I@Z
 0x005CB540,??_GMPUnholyAllianceClass@@UAEPAXI@Z,MATCH,36,src/mpunholyalliance.cpp,??_GMPUnholyAllianceClass@@UAEPAXI@Z
@@ -9405,7 +9406,7 @@ address,name,result,size,source,symbol
 0x005D5ED0,Game_Mode_Total,MATCH,88,src/multiplayer.cpp,?Game_Mode_Total@@YIHXZ
 0x005D5F30,MultiplayerGameMode::Get,MATCH,201,src/multiplayer.cpp,?Get@MultiplayerGameMode@@SIPAV1@H@Z
 0x005D62C0,MultiplayerGameMode::vt_entry_10,MATCH,73,src/multiplayer.cpp,?vt_entry_10@MultiplayerGameMode@@UAE_NXZ
-0x005D6310,MultiplayerGameMode::vt_entry_14,MATCH,5,src/multiplayer.cpp,?vt_entry_14@MultiplayerGameMode@@UAE_NI@Z
+0x005D6310,MultiplayerGameMode::vt_entry_14,MATCH,5,src/multiplayer.cpp,?vt_entry_14@MultiplayerGameMode@@UAE_NPAVWideWstring@@@Z
 0x005D6320,MultiplayerGameMode::vt_entry_04,MATCH,3,src/multiplayer.cpp,?vt_entry_04@MultiplayerGameMode@@UAE_NXZ
 0x005D6330,MultiplayerGameMode::vt_entry_08,MATCH,3,src/multiplayer.cpp,?vt_entry_08@MultiplayerGameMode@@UAE_NXZ
 0x005D6340,MultiplayerGameMode::vt_entry_18,MATCH,3,src/multiplayer.cpp,?vt_entry_18@MultiplayerGameMode@@UAE_NXZ
@@ -10285,6 +10286,7 @@ address,name,result,size,source,symbol
 0x00614190,OwnerDraw::EditHandler,MATCH,2075,src/ownrdraw.cpp,?EditHandler@OwnerDraw@@YGJPAUHWND__@@IIJ@Z
 0x006149B0,FUN_006149B0,MATCH,373,src/ownrdraw.cpp,?FUN_006149B0@@YIHPAUHWND__@@PAGHPAH@Z
 0x006163A0,OwnerDraw::CheckBoxButtonHandler,MATCH,1497,src/ownrdraw.cpp,?CheckBoxButtonHandler@OwnerDraw@@YGJPAUHWND__@@IIJ@Z
+0x00616980,OwnerDraw::AutoRadioButtonHandler,MATCH,2254,src/ownrdraw.cpp,?AutoRadioButtonHandler@OwnerDraw@@YGJPAUHWND__@@IIJ@Z
 0x0061D6D0,OwnerDraw::ProgressHandler,MATCH,638,src/ownrdraw.cpp,?ProgressHandler@OwnerDraw@@YGJPAUHWND__@@IIJ@Z
 0x0061ECA0,OwnerDraw::HotkeyHandler,MATCH,716,src/ownrdraw.cpp,?HotkeyHandler@OwnerDraw@@YGJPAUHWND__@@IIJ@Z
 0x0061EF70,UI::GetKeyboardKeyString,MATCH,535,src/ownrdraw.cpp,?GetKeyboardKeyString@UI@@YIXGPAG@Z
@@ -12597,6 +12599,7 @@ address,name,result,size,source,symbol
 0x006ACCA0,FUN_006ACCA0,MATCH,187,src/skirmish.cpp,?FUN_006ACCA0@@YI_NH@Z
 0x006ACD60,FUN_006ACD60,MATCH,284,src/skirmish.cpp,?FUN_006ACD60@@YIXPAUHWND__@@@Z
 0x006ACE80,FUN_006ACE80,MATCH,94,src/skirmish.cpp,?FUN_006ACE80@@YIXPAUHWND__@@H@Z
+0x006ACEE0,FUN_006ACEE0,MATCH,3382,src/skirmish.cpp,?FUN_006ACEE0@@YIXPAUHWND__@@HJH@Z
 0x006ADC20,FUN_006ADC20,MATCH,453,src/skirmish.cpp,?FUN_006ADC20@@YIXPAUHWND__@@H@Z
 0x006ADDF0,FUN_006ADDF0,MATCH,263,src/skirmish.cpp,?FUN_006ADDF0@@YIXPAUHWND__@@HH@Z
 0x006ADF00,FUN_006ADF00,MATCH,372,src/skirmish.cpp,?FUN_006ADF00@@YIXPAUHWND__@@HH@Z
@@ -16759,6 +16762,7 @@ address,name,result,size,source,symbol
 0x00767FB0,?FUN_00767FB0@WorldDominationTour@@YI?AV?$rc_ptr@VMap@WorldDominationTour@@@@HHH@Z,MATCH,75,src/wdtmap.cpp,?FUN_00767FB0@WorldDominationTour@@YI?AV?$rc_ptr@VMap@WorldDominationTour@@@@HHH@Z
 0x00768000,WorldDominationTour::Map::Map,MATCH,179,src/wdtmap.cpp,??0Map@WorldDominationTour@@QAE@HHH@Z
 0x007680C0,WorldDominationTour::Map::~Map,MATCH,276,src/wdtmap.cpp,??1Map@WorldDominationTour@@UAE@XZ
+0x00768F50,WorldDominationTour::Map::FUN_00768F50,MATCH,651,src/wdtmap.cpp,?FUN_00768F50@Map@WorldDominationTour@@QAEPAVMSShapeAnim@@ABVINIClass@@ABVWstring@@1PAVConvertClass@@@Z
 0x007691E0,WorldDominationTour::Map::FUN_007691E0,MATCH,196,src/wdtmap.cpp,?FUN_007691E0@Map@WorldDominationTour@@QAEPAVConvertClass@@ABVWstring@@@Z
 0x007692B0,WorldDominationTour::Map::AnimationPalette::AnimationPalette,MATCH,26,src/wdtmap.cpp,??0AnimationPalette@Map@WorldDominationTour@@QAE@ABVWstring@@PAVConvertClass@@@Z
 0x007692D0,WorldDominationTour::Map::AnimationPalette::~AnimationPalette,MATCH,25,src/wdtmap.cpp,??1AnimationPalette@Map@WorldDominationTour@@QAE@XZ

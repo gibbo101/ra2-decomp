@@ -37,7 +37,7 @@ class MPCooperative : public MultiplayerGameMode
 		virtual bool vt_entry_04(void) override;
 		virtual bool vt_entry_08(void) override;
 		virtual bool vt_entry_10(void) override;
-		virtual bool vt_entry_14(unsigned a) override;
+		virtual bool vt_entry_14(WideWstring * message) override;
 		virtual bool vt_entry_18(void) override;
 		virtual bool vt_entry_1C(unsigned a) override;
 		virtual void vt_entry_20(void) override;
