@@ -152,6 +152,7 @@ namespace OwnerDraw {
 			} ScrollBar;
 
 			struct {
+				unsigned char reserved28[0xC0];
 				int result;
 				int dragging;
 				int range;

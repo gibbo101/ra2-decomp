@@ -892,6 +892,7 @@ address,name,result,size,source,symbol
 0x004238D0,AnimClass::Occupy_List,MATCH,69,src/anim.cpp,?Occupy_List@AnimClass@@UBEPBVCell@@_N@Z
 0x00423920,_$E146,MATCH,1,src/anim.cpp,_$E146
 0x00423930,AnimClass::Bounce_AI,MATCH,392,src/anim.cpp,?Bounce_AI@AnimClass@@UAE?AW4BounceResultType@@XZ
+0x00423AC0,AnimClass::AI,MATCH,4234,src/anim.cpp,?AI@AnimClass@@UAEXXZ
 0x00424B50,AnimClass::SetOwnerObject,MATCH,315,src/anim.cpp,?SetOwnerObject@AnimClass@@QAEXPAVObjectClass@@@Z
 0x00424C90,AnimClass::FUN_00424C90,MATCH,13,src/anim.cpp,?FUN_00424C90@AnimClass@@QAEXPAVBulletClass@@@Z
 0x00424CA0,AnimClass::FUN_00424CA0,MATCH,13,src/anim.cpp,?FUN_00424CA0@AnimClass@@QAEXPAVHouseClass@@@Z
@@ -1512,6 +1513,7 @@ address,name,result,size,source,symbol
 0x00445880,BuildingClass::Limbo,MATCH,1478,src/building.cpp,?Limbo@BuildingClass@@UAE_NXZ
 0x00445E50,BuildingClass::Turret_Facing,MATCH,171,src/building.cpp,?Turret_Facing@BuildingClass@@UBE?AVDirType@@XZ
 0x00445F00,BuildingClass::Greatest_Threat,MATCH,114,src/building.cpp,?Greatest_Threat@BuildingClass@@UBEPAVAbstractClass@@W4ThreatType@@ABVCoord@@_N@Z
+0x00445F80,BuildingClass::Grand_Opening,MATCH,4200,src/building.cpp,?Grand_Opening@BuildingClass@@UAEX_N@Z
 0x00446FF0,BuildingClass::Repair,MATCH,279,src/building.cpp,?Repair@BuildingClass@@UAEXH@Z
 0x00447110,BuildingClass::Sell_Back,MATCH,247,src/building.cpp,?Sell_Back@BuildingClass@@UAEXH@Z
 0x00447210,BuildingClass::What_Action,MATCH,808,src/building.cpp,?What_Action@BuildingClass@@UBE?AW4ActionType@@PBVObjectClass@@_N@Z
@@ -5639,6 +5641,7 @@ address,name,result,size,source,symbol
 0x00502A80,HouseClass::RegisterGain,MATCH,687,src/house.cpp,?RegisterGain@HouseClass@@QAEXPAVTechnoClass@@_N@Z
 0x00502D30,HouseClass::FindByCountryIndex,MATCH,48,src/house.cpp,?FindByCountryIndex@HouseClass@@SIPAV1@H@Z
 0x00502D60,HouseClass::Compute_CRC,MATCH,734,src/house.cpp,?Compute_CRC@HouseClass@@UBEXAAVCRCEngine@@@Z
+0x00503040,HouseClass::Load,MATCH,4147,src/house.cpp,?Load@HouseClass@@UAGJPAUIStream@@@Z
 0x00504080,HouseClass::Save,MATCH,1637,src/house.cpp,?Save@HouseClass@@UAGJPAUIStream@@H@Z
 0x005046F0,HouseClass::GetClassID,MATCH,56,src/house.cpp,?GetClassID@HouseClass@@UAGJPAU_GUID@@@Z
 0x00504730,HouseClass::Fetch_Object_Size,MATCH,6,src/house.cpp,?Fetch_Object_Size@HouseClass@@UBEHXZ
@@ -10300,6 +10303,7 @@ address,name,result,size,source,symbol
 0x006163A0,OwnerDraw::CheckBoxButtonHandler,MATCH,1497,src/ownrdraw.cpp,?CheckBoxButtonHandler@OwnerDraw@@YGJPAUHWND__@@IIJ@Z
 0x00616980,OwnerDraw::AutoRadioButtonHandler,MATCH,2254,src/ownrdraw.cpp,?AutoRadioButtonHandler@OwnerDraw@@YGJPAUHWND__@@IIJ@Z
 0x0061D6D0,OwnerDraw::ProgressHandler,MATCH,638,src/ownrdraw.cpp,?ProgressHandler@OwnerDraw@@YGJPAUHWND__@@IIJ@Z
+0x0061D950,OwnerDraw::TrackBarHandler,MATCH,3489,src/ownrdraw.cpp,?TrackBarHandler@OwnerDraw@@YGJPAUHWND__@@IIJ@Z
 0x0061ECA0,OwnerDraw::HotkeyHandler,MATCH,716,src/ownrdraw.cpp,?HotkeyHandler@OwnerDraw@@YGJPAUHWND__@@IIJ@Z
 0x0061EF70,UI::GetKeyboardKeyString,MATCH,535,src/ownrdraw.cpp,?GetKeyboardKeyString@UI@@YIXGPAG@Z
 0x0061F190,ODInitMasks,MATCH,118,src/ownrdraw.cpp,?ODInitMasks@@YIXXZ
@@ -11867,6 +11871,7 @@ address,name,result,size,source,symbol
 0x0067C670,FUN_0067C670,MATCH,26,src/saveload.cpp,?FUN_0067C670@@YIXXZ
 0x0067C690,FUN_0067C690,MATCH,78,src/saveload.cpp,?FUN_0067C690@@YIJPAUIStream@@@Z
 0x0067C6E0,Object_CRCs,MATCH,2050,src/saveload.cpp,?Object_CRCs@@YI?AVCRCEngine@@XZ
+0x0067E730,Get_All,MATCH,4258,src/saveload.cpp,?Get_All@@YI_NPAUIStream@@_N@Z
 0x0067F7E0,Save_Misc_Values,MATCH,476,src/saveload.cpp,?Save_Misc_Values@@YIHPAUIStream@@@Z
 0x0067F9C0,Load_Misc_Values,MATCH,855,src/saveload.cpp,?Load_Misc_Values@@YIHPAUIStream@@@Z
 0x0067FD20,Get_Savefile_Info,MATCH,153,src/saveload.cpp,?Get_Savefile_Info@@YI_NPBDPAVSaveVersionInfo@@@Z
@@ -14996,7 +15001,7 @@ address,name,result,size,source,symbol
 0x00720F70,ThemeClass::Suspend,MATCH,85,src/theme.cpp,?Suspend@ThemeClass@@QAEXXZ
 0x00720FD0,ThemeClass::Still_Playing,MATCH,54,src/theme.cpp,?Still_Playing@ThemeClass@@QBE_NXZ
 0x00721010,ThemeClass::Save,MATCH,45,src/theme.cpp,?Save@ThemeClass@@QAEJPAUIStream@@@Z
-0x00721040,Theme_Load,MATCH,251,src/theme.cpp,?Theme_Load@@YGJPAUIStream@@@Z
+0x00721040,ThemeClass::Load,MATCH,251,src/theme.cpp,?Load@ThemeClass@@QAEJPAUIStream@@@Z
 0x00721140,ThemeClass::Is_Allowed,MATCH,147,src/theme.cpp,?Is_Allowed@ThemeClass@@QBE_NW4ThemeType@@@Z
 0x007211E0,ThemeClass::IsNormal,MATCH,44,src/theme.cpp,?IsNormal@ThemeClass@@QBE_NW4ThemeType@@@Z
 0x00721210,ThemeClass::From_Name,MATCH,83,src/theme.cpp,?From_Name@ThemeClass@@QBE?AW4ThemeType@@PBD@Z
@@ -17532,6 +17537,7 @@ address,name,result,size,source,symbol
 0x00793B30,FUN_00793B30,MATCH,116,src/wonline.cpp,?FUN_00793B30@@YIXHPBD@Z
 0x00793CD0,FUN_00793CD0,MATCH,72,src/wonline.cpp,?FUN_00793CD0@@YIXH@Z
 0x00795650,FUN_00795650,MATCH,1664,src/wonline.cpp,?FUN_00795650@@YI_NPAVIPXAddressClass@@@Z
+0x00795CD0,FUN_00795CD0,MATCH,2618,src/wonline.cpp,?FUN_00795CD0@@YIH_N@Z
 0x00796710,FUN_00796710,MATCH,589,src/wonline.cpp,?FUN_00796710@@YI_NXZ
 0x00796960,FUN_00796960,MATCH,441,src/wonline.cpp,?FUN_00796960@@YIXXZ
 0x00796B20,FUN_00796B20,MATCH,1,src/wonline.cpp,?FUN_00796B20@@YIXXZ

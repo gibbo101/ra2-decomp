@@ -73,6 +73,10 @@ class SHPStruct
 		Rect GetFrameBounds(int frame) const;
 };
 extern ParticleSystemClass * DAT_00A8ED78;
+class AudioEvent;
+AudioEvent * __fastcall FUN_00750D40(Coord const & coord, AudioController * controller);
+bool __fastcall FUN_0043B4C0(HouseClass * house, CellClass * cell);
+SideType FUN_006A46D0(char const * name);
 
 // SYNTHETIC: GAMEMD 0x00421CB0 SYMBOL
 // _$E106
@@ -303,6 +307,270 @@ BounceResultType AnimClass::Bounce_AI(void)
 	Set_Coord(bounce.Get_Bounce_Coord());
 
 	return(bounce_result);
+}
+
+#include "houstype.h"
+#include "infantry.h"
+#include "infatype.h"
+
+// FUNCTION: GAMEMD 0x00423AC0
+void AnimClass::AI(void)
+{
+	if (!IsInert && Type->Report != -1) {
+		FUN_00750D40(Center_Coord(), &StartSoundAudioController);
+	}
+
+	if (Type->IsFlamingGuy) {
+		Flaming_Guy_AI();
+		BASECLASS::AI();
+	}
+
+	if (Type->PsiWarning) {
+		Invisible = !FUN_0043B4C0(Owner, &Map[Center_Coord()]);
+	}
+
+	if (Type == Rule->Behind) {
+		if (!Options.ShowHidden) {
+			Invisible = true;
+		} else {
+			Invisible = false;
+		}
+	}
+
+	if (Type->HideIfNoOre) {
+		CellClass * cellptr = Get_Cell_Ptr();
+		if (cellptr != NULL && cellptr->Tiberium_Value() != 0) {
+			Invisible = false;
+		} else {
+			Invisible = true;
+		}
+	}
+
+	if (Type->MakeInfantry != -1) {
+		Set_Occupy_Bit(PositionCoord);
+	}
+
+	if (Unpaused && PausedAnimFrame == Animation.Fetch_Stage()) {
+		Unpaused = false;
+	}
+
+	if (HasExtras) {
+		BounceResultType bounce_result = Bounce_AI();
+		if (bounce_result == BOUNCE_SETTLED || bounce_result == BOUNCE_IMPACT) {
+			bool water = Map[Get_Coord()].Land_Type() == LAND_WATER;
+			bool bridge = PositionCoord.Z >= Map.Get_Height_GL(PositionCoord) + BRIDGE_LEPTON_HEIGHT;
+
+			if (water && !bridge) {
+				if (Type->IsMeteor) {
+					new AnimClass(Rule->SplashList[Rule->SplashList.Count()-1], PositionCoord + Coord(0, 0, 3));
+				} else {
+					new AnimClass(Rule->Wake, PositionCoord);
+					new AnimClass(Rule->SplashList[0], PositionCoord + Coord(0, 0, 3));
+				}
+			} else {
+				if (Type->ExpireAnim != NULL) {
+					Vector3 bouncecoord = Bounce.MyCoord;
+					new AnimClass(Type->ExpireAnim, Coord(bouncecoord.X, bouncecoord.Y, bouncecoord.Z), 0, 1, ShapeFlags_Type(SHAPE_CENTER|SHAPE_WIN_REL|SHAPE_ZGRAD), -30);
+					FUN_00489280(Bounce.Get_Bounce_Coord(), Type->Damage, NULL, Type->Warhead, true, NULL);
+					Combat_Lighting(Bounce.Get_Bounce_Coord(), Type->Damage, Type->Warhead);
+				}
+			}
+
+			if (!water || bridge) {
+				Coord coord = Bounce.Get_Bounce_Coord();
+				if (Type->Spawns != NULL && Type->SpawnCount > 0) {
+					int count = Random_Pick(0, Type->SpawnCount) + Random_Pick(0, Type->SpawnCount);
+					for (int i = 0; i < count; i++) {
+						new AnimClass(Type->Spawns, coord);
+					}
+				}
+
+				Rect updaterect(0, 0, 0, 0);
+				if (Type->IsTiberium && !bridge) {
+					for (int x = -Type->TiberiumSpreadRadius; x <= Type->TiberiumSpreadRadius; x++) {
+						for (int y = -Type->TiberiumSpreadRadius; y <= Type->TiberiumSpreadRadius; y++) {
+							if ((int)fastmath::sqrt((double)x * (double)x + (double)y * (double)y) <= Type->TiberiumSpreadRadius) {
+								CellClass * cellptr = &Map[Cell(AdjacentCell[x & 0x07] + Cell(coord))];
+								if (cellptr->Can_Tiberium_Germinate(NULL) && Type->TiberiumSpawnType != NULL) {
+									new OverlayClass(OverlayTypes[Type->TiberiumSpawnType->HeapID + Random_Pick(0, 3)], cellptr->Fetch_CellID());
+									cellptr->OverlayData = Random_Pick(0, 2);
+									Rect overlayrect = cellptr->Overlay_Render_Rect();
+									overlayrect.Y -= TacticalRect.Y;
+									updaterect = Union(updaterect, overlayrect);
+								}
+							}
+						}
+					}
+					TacticalMap->Register_Dirty_Area(updaterect);
+				}
+			}
+
+			Delete_Me();
+			return;
+		}
+	}
+
+	if (IsActive && !UnableToContinue) {
+		if (Type->TrailerAnim != NULL && (Type->TrailerSeperation == 1 || (Frame % Type->TrailerSeperation == 0))) {
+			new AnimClass(Type->TrailerAnim, Center_Coord(), 1);
+		}
+	}
+
+	if (Type == Rule->FlareAnim && Map[Center_Coord()].Cell_Building()) {
+		UnableToContinue = true;
+	}
+
+	if (UnableToContinue) {
+		Delete_Me();
+		return;
+	}
+
+	if (SkipProcessOnce) {
+		SkipProcessOnce = false;
+		return;
+	}
+
+	if (LoopDelay) {
+		LoopDelay--;
+		if (!LoopDelay) {
+			Start();
+		}
+	} else if (IsActive) {
+		if (Type->IsAnimatedTiberium) {
+			OverlayType overlay = Map[Center_Coord() - Coord(CELL_LEPTON * 1.5, CELL_LEPTON * 1.5, 0)].Overlay;
+			if (overlay == OVERLAY_NONE || OverlayTypes[overlay]->CellAnim != Type) {
+				UnableToContinue = true;
+			}
+		}
+
+		if (Type->End == -1) {
+			Type->End = ((ShapeSet const *)Type->Get_Image_Data())->Get_Count();
+			if (Type->Shadow) {
+				Type->End /= 2;
+			}
+		}
+		if (Type->LoopEnd == -1) {
+			Type->LoopEnd = Type->End;
+		}
+
+		Mark(MARK_CHANGE);
+
+		if (!PowerOff && !Paused && Animation.Graphic_Logic()) {
+			int stage = Animation.Fetch_Stage();
+
+			if (Type->Damage > 0 && !HasExtras) {
+				if (OwnerObject != NULL && OwnerObject->Fetch_RTTI() == RTTI_TERRAIN) {
+					Accum += Type->Damage * 5;
+				} else {
+					Accum += Type->Damage;
+				}
+
+				if (Accum >= 1 && !IsInert) {
+					int damage = Accum;
+					Accum -= damage;
+					if (strcmp(Type->IniName, "INVISO") == 0) {
+						FUN_00489280(Center_Coord(), damage, NULL, Rule->C4Warhead, true, NULL);
+					} else {
+						FUN_00489280(Center_Coord(), damage, NULL, Rule->FlameDamage2, true, NULL);
+					}
+					if (!IsActive) {
+						return;
+					}
+				}
+			}
+
+			if (Type->MiddleFrameIndex && Type->Start+stage == Type->MiddleFrameIndex && !HasExtras) {
+				Middle();
+			}
+
+			if (Type->PingPong) {
+				if ((RemainingIterations <= 1 && (stage >= Type->End || stage == 0)) || (RemainingIterations > 1 && (stage >= Type->LoopEnd-Type->Start || stage == Type->Start))) {
+					Animation.Set_Step(-Animation.Fetch_Step());
+					return;
+				}
+			}
+
+			if ((RemainingIterations <= 1 && stage >= Type->End) || (RemainingIterations > 1 && stage >= Type->LoopEnd-Type->Start) || (Type->Shadow && !Type->Reverse && !Reverse && stage >= Type->LoopEnd-Type->Start) || ((Type->Reverse || Reverse) && stage <= 0)) {
+				if (RemainingIterations && RemainingIterations != UCHAR_MAX) RemainingIterations--;
+				if (RemainingIterations) {
+					if (!Type->Reverse && !Reverse) {
+						Animation.Set_Stage(Type->LoopStart-Type->Start);
+					} else {
+						Animation.Set_Stage(Type->LoopEnd);
+					}
+					if (Type->RandomLoopDelay.Min != 0 || Type->RandomLoopDelay.Max != 0) {
+						LoopDelay = Random_Pick(Type->RandomLoopDelay.Min, Type->RandomLoopDelay.Max);
+					}
+				} else {
+					if (Type->Next != NULL) {
+						Type = Type->Next;
+
+						if (Type->End == -1) {
+							Type->End = ((ShapeSet const *)Type->Get_Image_Data())->Get_Count();
+							if (Type->Shadow) {
+								Type->End /= 2;
+							}
+						}
+						if (Type->LoopEnd == -1) {
+							Type->LoopEnd = Type->End;
+						}
+
+						UnableToContinue = false;
+						RemainingIterations = Type->LoopCount;
+						Accum = 0;
+						int delay = Type->Rate;
+						if (Type->RandomRate.Min != 0 || Type->RandomRate.Max != 0) {
+							delay = Random_Pick(Type->RandomRate.Min, Type->RandomRate.Max);
+						}
+						if (Type->Normalized) {
+							Animation.Set_Rate(Options.Normalize_Delay(delay));
+						} else {
+							Animation.Set_Rate(delay);
+						}
+						Animation.Set_Stage(Type->Start);
+						Start();
+					} else if (Type->MakeInfantry != -1) {
+						Clear_Occupy_Bit(PositionCoord);
+						if (Type->MakeInfantry <= Rule->AnimToInfantry.Count()) {
+							if (Owner == NULL || Owner->IsDefeated) {
+								int count = Houses.Count();
+								SideType side = FUN_006A46D0("Civilian");
+								for (int i = 0; i < count; i++) {
+									if (Houses[i]->Class->Side == side) {
+										Owner = Houses[i];
+										break;
+									}
+								}
+							}
+							if (Owner != NULL) {
+								InfantryClass * infantry = (InfantryClass *)InfantryTypes[Rule->AnimToInfantry[Type->MakeInfantry]->HeapID]->Create_One_Of(Owner);
+								if (infantry->Unlimbo(PositionCoord, DIR_SE)) {
+									Cell cell = Center_Coord().As_Cell();
+									CellClass * cellptr = &Map[cell];
+									if (cellptr != NULL && cellptr->IsUnderBridge && PositionCoord.Z > cellptr->Center_Coord().Z) {
+										infantry->Mark(MARK_UP);
+										infantry->IsOnBridge = true;
+										infantry->Mark(MARK_DOWN);
+									}
+									if (!Owner->IsHuman) {
+										infantry->QueueMission(MISSION_HUNT, false);
+									}
+								} else {
+									Animation.Set_Stage(Animation.Fetch_Stage() - 1);
+									return;
+								}
+							}
+						}
+						TimeToDie = true;
+						Delete_Me();
+					} else {
+						TimeToDie = true;
+						Delete_Me();
+					}
+				}
+			}
+		}
+	}
 }
 
 // FUNCTION: GAMEMD 0x00424B50

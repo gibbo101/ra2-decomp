@@ -891,6 +891,7 @@ address,size,symbol,source,sha256
 0x004238D0,69,?Occupy_List@AnimClass@@UBEPBVCell@@_N@Z,src/anim.cpp,d8e64bc56b48955beebb517f346a25918e36b867efa29877b367df6b3fce764f
 0x00423920,1,_$E146,src/anim.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
 0x00423930,392,?Bounce_AI@AnimClass@@UAE?AW4BounceResultType@@XZ,src/anim.cpp,d383f7caee42a04b51f40c3c98216aba4ec3b2a34e6ceb7d14b6c37c5c492764
+0x00423AC0,4234,?AI@AnimClass@@UAEXXZ,src/anim.cpp,8247489612c284c6a30d9b31b273aab750b67e9e51901a598d37691e49418579
 0x00424B50,315,?SetOwnerObject@AnimClass@@QAEXPAVObjectClass@@@Z,src/anim.cpp,4c2749c70d74e17c3354879b022c88058a252d932838cbdf9f648c3a22ff7369
 0x00424C90,13,?FUN_00424C90@AnimClass@@QAEXPAVBulletClass@@@Z,src/anim.cpp,20a444e79e403ab82ad6b675cd13953419787667f60f513427f679646f2ac8db
 0x00424CA0,13,?FUN_00424CA0@AnimClass@@QAEXPAVHouseClass@@@Z,src/anim.cpp,56d3e46bd91b9a6af1a703dd1d94cd054a1bd3dbe54d27351e70ea9fc6a31b5e
@@ -1512,6 +1513,7 @@ address,size,symbol,source,sha256
 0x00445880,1478,?Limbo@BuildingClass@@UAE_NXZ,src/building.cpp,66babc7d11b191691713bf536a290181672c39629b1e3b3e804deb401b7642cf
 0x00445E50,171,?Turret_Facing@BuildingClass@@UBE?AVDirType@@XZ,src/building.cpp,a7f5612b3fda1c32ffd6f20d42d2f295e515f970adfc993faf85bab104d3f442
 0x00445F00,114,?Greatest_Threat@BuildingClass@@UBEPAVAbstractClass@@W4ThreatType@@ABVCoord@@_N@Z,src/building.cpp,b679aad9cf63b785c7f63607fa3debdc3178940921760746f7ae43c6a06e6a97
+0x00445F80,4200,?Grand_Opening@BuildingClass@@UAEX_N@Z,src/building.cpp,8cdfc6f692f07f0d56c49ad1b9f052a4f84009ab11031566e601317a38d00b79
 0x00446FF0,279,?Repair@BuildingClass@@UAEXH@Z,src/building.cpp,bff8816e288f57eb93a4ffea5fb60f4e1e032453a7c4d87e026621a9e5a8bcf0
 0x00447110,247,?Sell_Back@BuildingClass@@UAEXH@Z,src/building.cpp,6447b2fba8ea0946b0c80fc7ba429a5188cb9a3c5f836650444fdcb9e009f3b6
 0x00447210,808,?What_Action@BuildingClass@@UBE?AW4ActionType@@PBVObjectClass@@_N@Z,src/building.cpp,f19b0b61ec0b0130acebf4a22693f7b78739e51f55210cdbb2b3b2e0c2b27a8c
@@ -5639,6 +5641,7 @@ address,size,symbol,source,sha256
 0x00502A80,687,?RegisterGain@HouseClass@@QAEXPAVTechnoClass@@_N@Z,src/house.cpp,0edde949177cf1767bf2ab3949146e8ceb00ad5cc8aa47c9fc3e6a3dee8a328e
 0x00502D30,48,?FindByCountryIndex@HouseClass@@SIPAV1@H@Z,src/house.cpp,6cdcedafe10869296cf621f6fd1d427d3f6d4c8fb3c7c9e470a00799079a3d57
 0x00502D60,734,?Compute_CRC@HouseClass@@UBEXAAVCRCEngine@@@Z,src/house.cpp,2dd2bda208701c9d7e81d67307bfa6a5e27978afb36ea09df585f9133e3efde2
+0x00503040,4147,?Load@HouseClass@@UAGJPAUIStream@@@Z,src/house.cpp,63e8816a2460c30182ff2e5f0bcfe8403d3c6e591e444fd9256b4bf31f6ce291
 0x00504080,1637,?Save@HouseClass@@UAGJPAUIStream@@H@Z,src/house.cpp,d26a185d61284f870119744693009d9d0fd4734655af9df57e42d1e8ed299103
 0x005046F0,56,?GetClassID@HouseClass@@UAGJPAU_GUID@@@Z,src/house.cpp,1b19ef31c3eaadab6bab16fe86ad0d1a0913644c84db8398b46a23d426f9ac31
 0x00504730,6,?Fetch_Object_Size@HouseClass@@UBEHXZ,src/house.cpp,883a1a4eb1db131b1013007f280fadb6d26cd53df7b54c4a810a7052a5b79c48
@@ -10300,6 +10303,7 @@ address,size,symbol,source,sha256
 0x006163A0,1497,?CheckBoxButtonHandler@OwnerDraw@@YGJPAUHWND__@@IIJ@Z,src/ownrdraw.cpp,4eb6e5d48e8483565ae963d1b0069ba9083d7819657a216ab99b342b492c1bc8
 0x00616980,2254,?AutoRadioButtonHandler@OwnerDraw@@YGJPAUHWND__@@IIJ@Z,src/ownrdraw.cpp,e2ba7d94596698855f8e5b76ea9370a2c06dcc157fd6720d350f90da8fb59c8f
 0x0061D6D0,638,?ProgressHandler@OwnerDraw@@YGJPAUHWND__@@IIJ@Z,src/ownrdraw.cpp,c882cd785ecadf3f0e59a39b45e24983e07aa845b120d768c0c68d06cb24fb47
+0x0061D950,3489,?TrackBarHandler@OwnerDraw@@YGJPAUHWND__@@IIJ@Z,src/ownrdraw.cpp,044edb1dd3633514214a96e6f4e94fb915a545f46b263363b962a81788d06116
 0x0061ECA0,716,?HotkeyHandler@OwnerDraw@@YGJPAUHWND__@@IIJ@Z,src/ownrdraw.cpp,6a68c7e8b50a444fe11a6c91613956975d2b7d754c33333ace7bcccc081b605b
 0x0061EF70,535,?GetKeyboardKeyString@UI@@YIXGPAG@Z,src/ownrdraw.cpp,3329d3c3e3c325012a025f512e2b737372306e9fda16b5e05c39386f5718d5d0
 0x0061F190,118,?ODInitMasks@@YIXXZ,src/ownrdraw.cpp,f054b349319eabe360231aafb03eb5f53b7be85228154a2f6abac06174a83503
@@ -11867,6 +11871,7 @@ address,size,symbol,source,sha256
 0x0067C670,26,?FUN_0067C670@@YIXXZ,src/saveload.cpp,91e436c1cec1f58ce6cdb3dda6e45c6e48eda53fe425b24072fe1cf0b26768f8
 0x0067C690,78,?FUN_0067C690@@YIJPAUIStream@@@Z,src/saveload.cpp,770f65478530516d5ce6bd705bb08b23bb09f10348286eb93e2931500447c717
 0x0067C6E0,2050,?Object_CRCs@@YI?AVCRCEngine@@XZ,src/saveload.cpp,67b3e02a7c53cc9748eb0d0c9cc0801bfb5044f84faf5a9607aa47e1a0485fee
+0x0067E730,4258,?Get_All@@YI_NPAUIStream@@_N@Z,src/saveload.cpp,b91d26e3a28081ea9bd86416a125b525d670e26dbc349d69ef7f736f3c035014
 0x0067F7E0,476,?Save_Misc_Values@@YIHPAUIStream@@@Z,src/saveload.cpp,6b9fda91f5271ce416246ae882147f97f53d4d4485bdaecd0d0654e40f285de3
 0x0067F9C0,855,?Load_Misc_Values@@YIHPAUIStream@@@Z,src/saveload.cpp,723533fbd18c53caa0ef31836291bfebb028089df1e0708ae6c5a84836968b92
 0x0067FD20,153,?Get_Savefile_Info@@YI_NPBDPAVSaveVersionInfo@@@Z,src/saveload.cpp,ac191fc76be09ce32a5df969d0c2ac651a862f8ec4a07271309a09e6591052f7
@@ -14996,7 +15001,7 @@ address,size,symbol,source,sha256
 0x00720F70,85,?Suspend@ThemeClass@@QAEXXZ,src/theme.cpp,c45c84416fa13cb9f5e66db6d8ab9f4c5b3b9b263d85a2a2dcd9c39329a9e175
 0x00720FD0,54,?Still_Playing@ThemeClass@@QBE_NXZ,src/theme.cpp,0f8b203a2f5ca1ef84ce7bad075e63cd8269a7a3a89a5711a93c54becdfb341b
 0x00721010,45,?Save@ThemeClass@@QAEJPAUIStream@@@Z,src/theme.cpp,d2207adcb187e9cf74c934e93b2d7c6e66816d225cd5e0036512d1f81c0d8017
-0x00721040,251,?Theme_Load@@YGJPAUIStream@@@Z,src/theme.cpp,0ba9ca440f99f741f5b2571bfda37d1c730ced01fa1390b49bb2d78c6a9b1698
+0x00721040,251,?Load@ThemeClass@@QAEJPAUIStream@@@Z,src/theme.cpp,0ba9ca440f99f741f5b2571bfda37d1c730ced01fa1390b49bb2d78c6a9b1698
 0x00721140,147,?Is_Allowed@ThemeClass@@QBE_NW4ThemeType@@@Z,src/theme.cpp,3d5923d37c145592286d5d0cd0e87e9d1235aa5c8fe7476707e1d278752481a9
 0x007211E0,44,?IsNormal@ThemeClass@@QBE_NW4ThemeType@@@Z,src/theme.cpp,3845aa5a2da3cee0028248b93034673716a19e101645ec82d83f0c21fabc014e
 0x00721210,83,?From_Name@ThemeClass@@QBE?AW4ThemeType@@PBD@Z,src/theme.cpp,59d555378c9a101fc02c730f556f9887a67b4750bac3b917df78f4bd67d41658
@@ -17455,6 +17460,7 @@ address,size,symbol,source,sha256
 0x00793B30,116,?FUN_00793B30@@YIXHPBD@Z,src/wonline.cpp,e74e00808c6e4808957658be0f0965b81fe4f82a9d432e4175c913f6ed591c1d
 0x00793CD0,72,?FUN_00793CD0@@YIXH@Z,src/wonline.cpp,3df49af9047432961fe29b2aa433aff7c8842f68130a4ff216dfcdadb5064128
 0x00795650,1664,?FUN_00795650@@YI_NPAVIPXAddressClass@@@Z,src/wonline.cpp,4038293d3cf9210798f5420d087f692ef07143b221828a5fbdc1e7ffc5c59cd4
+0x00795CD0,2618,?FUN_00795CD0@@YIH_N@Z,src/wonline.cpp,d3d9d56fd573f8039746a7cc01651b3681c46e91fc15859bbcb761b4bea24b52
 0x00796710,589,?FUN_00796710@@YI_NXZ,src/wonline.cpp,8b2de9b4167b1f6bc96d282fd1891dfe2a0dfbbeebfb42ef41ea5cb8fc7c7e66
 0x00796960,441,?FUN_00796960@@YIXXZ,src/wonline.cpp,c76e4369d194f41af040711513407ee8f607706c83c2133b4b6a40019fa3e281
 0x00796B20,1,?FUN_00796B20@@YIXXZ,src/wonline.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e

@@ -2736,9 +2736,6 @@ bool __fastcall FUN_0060B880(HWND dialog, HWND control)
 	return false;
 }
 
-void __fastcall FUN_0060B000(HWND window, LPARAM lparam);
-void __fastcall FUN_0060B1D0(HWND window, LPARAM lparam);
-
 namespace Drawing {
 extern int RenderWidth;
 extern int RenderHeight;
@@ -4109,13 +4106,358 @@ LRESULT CALLBACK OwnerDraw::ProgressHandler(HWND window, UINT message, WPARAM wp
 
 			DAT_00887310->Blit_From(destrect, *data->cachedSurface, sourcerect);
 			int pos = (data->ProgressBar.position << 16) / (data->ProgressBar.maximum - data->ProgressBar.minimum);
-			int color = ODColorToHiColor(0x000000FF);
+			int color = 0x000000FF;
+			color = ODColorToHiColor(color);
 			OwnerDraw::BlendGradientRect(destrect, *DAT_00887310, color, pos);
 			ValidateRect(window, NULL);
 			break;
 		}
 		}
 	}
+	return 0;
+}
+
+namespace OwnerDraw {
+LRESULT CALLBACK TrackBarHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+}
+
+// FUNCTION: GAMEMD 0x0061D950
+// OwnerDraw::TrackBarHandler
+LRESULT CALLBACK OwnerDraw::TrackBarHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	bool play_click = true;
+
+	RECT client_rect;
+	RECT display_rect;
+	GetClientRect(window, &client_rect);
+	Get_Display_Rect(window, &display_rect);
+	int number_width = 50;
+
+	OwnerDraw::WinData *data = Find_Data(window);
+	if (data == NULL) {
+		return 0;
+	}
+
+	int message_result = data->TrackBar.result;
+	int dragging = data->TrackBar.dragging;
+	int range = data->TrackBar.range;
+	int value = data->TrackBar.value;
+	int minimum = data->TrackBar.minimum;
+	int maximum;
+	int thumb_pos = data->TrackBar.thumbPos;
+	int step = data->TrackBar.step;
+	int show_numbers = data->TrackBar.showNumbers;
+
+	if (!show_numbers) {
+		number_width = 0;
+	}
+
+	int slider_width = client_rect.right - client_rect.left - number_width - 13;
+	if (slider_width <= 1) {
+		slider_width = 1;
+	}
+
+	if (!range) {
+		WNDPROC proc = NULL;
+		WNDPROC *found = NULL;
+		if (OwnerDraw::DialogProcs.getPointer(window, &found) && found) {
+			proc = *found;
+		}
+
+		int range_max = CallWindowProc(proc, window, TBM_GETRANGEMAX, 0, 0);
+		minimum = CallWindowProc(proc, window, TBM_GETRANGEMIN, 0, 0);
+		range = range_max - minimum;
+		value = CallWindowProc(proc, window, TBM_GETPOS, 0, 0) - minimum;
+		thumb_pos = value * slider_width / range;
+		if (!range) {
+			range = 100;
+		}
+
+		data->TrackBar.thumbPos = thumb_pos;
+		data->TrackBar.range = range;
+		data->TrackBar.value = value;
+		data->TrackBar.minimum = minimum;
+		data->TrackBar.step = step;
+		data->TrackBar.showNumbers = show_numbers;
+	}
+
+	if (!step) {
+		number_width = 50;
+		step = 1;
+		show_numbers = 1;
+	}
+
+	LONG grip_left;
+	LONG grip_right;
+	if (!dragging) {
+		grip_left = client_rect.left + thumb_pos + 1;
+		grip_right = grip_left + 12;
+	} else {
+		POINT point;
+		GetCursorPos(&point);
+		ScreenToClient(window, &point);
+
+		int xpos = point.x - 6;
+		if (xpos < 1) {
+			xpos = 1;
+		}
+		if (client_rect.right - number_width - 12 < xpos) {
+			xpos = client_rect.right - number_width - 12;
+		}
+
+		int idx = ((range + 1) * (xpos - 1)) / slider_width;
+		if (idx >= range) {
+			idx = range;
+		}
+
+		value = step * ((minimum + idx) / step) - minimum;
+		thumb_pos = value * slider_width / range;
+		grip_left = thumb_pos + 1;
+		grip_right = grip_left + 12;
+	}
+
+	switch (message) {
+		case WM_NCHITTEST:
+		case WM_GETDLGCODE: {
+			WNDPROC proc = NULL;
+			WNDPROC *found = NULL;
+			if (OwnerDraw::DialogProcs.getPointer(window, &found) && found) {
+				proc = *found;
+			}
+			return CallWindowProc(proc, window, message, wparam, lparam);
+		}
+
+		case WM_ENABLE:
+			InvalidateRect(window, NULL, FALSE);
+			break;
+
+		case WM_PAINT: {
+			RECT paint_rect;
+			Get_Display_Rect(window, &paint_rect);
+			Rect disp_rect(paint_rect.left, paint_rect.top, paint_rect.right - paint_rect.left, paint_rect.bottom - paint_rect.top);
+			LONG style = GetWindowLong(window, GWL_STYLE);
+
+			if (data->cachedSurface == NULL) {
+				RECT disp_copy;
+				RECT client_copy;
+				Get_Display_Rect(window, &disp_copy);
+				GetClientRect(window, &client_copy);
+
+				Surface *surf = new BSurface(client_copy.right + 1, client_copy.bottom + 1, 2);
+				data->cachedSurface = surf;
+				OwnerDraw::CachedSurfaceCount++;
+
+				Rect src_rect(0, 0, client_copy.right + 1, client_copy.bottom + 1);
+				Rect dst_rect(disp_copy.left, disp_copy.top, client_copy.right + 1, client_copy.bottom + 1);
+				surf->Blit_From(src_rect, *DAT_00887310, dst_rect);
+				FUN_00621B80(&src_rect, surf, 0, data->Edit.alpha);
+			}
+
+			if (data->cachedSurface != NULL) {
+				RECT disp_copy;
+				RECT client_copy;
+				Get_Display_Rect(window, &disp_copy);
+				GetClientRect(window, &client_copy);
+
+				Rect src_rect(0, 0, client_copy.right + 1, client_copy.bottom + 1);
+				Rect dst_rect(disp_copy.left, disp_copy.top, client_copy.right + 1, client_copy.bottom + 1);
+				DAT_00887310->Blit_From(dst_rect, *data->cachedSurface, src_rect);
+			}
+
+			if (show_numbers) {
+				{
+					Surface *center = SurfaceCache.GetSurface("trofm.pcx", NULL);
+					Rect center_rect(disp_rect.X + disp_rect.Width - number_width + 1, disp_rect.Y - 1, number_width, center->Get_Height());
+					SurfaceCache.Draw(center_rect, *DAT_00887310, *center, 0, 0);
+				}
+				{
+					Surface *left = SurfaceCache.GetSurface("trofl.pcx", NULL);
+					Rect left_dst(disp_rect.X + disp_rect.Width - number_width + 1, disp_rect.Y - 1, left->Get_Width(), left->Get_Height());
+					Rect left_src = left_dst;
+					left_src.Y = 0;
+					left_src.X = 0;
+					DAT_00887310->Blit_From(left_dst, *left, left_src);
+				}
+				{
+					Surface *right = SurfaceCache.GetSurface("trofr.pcx", NULL);
+					Rect right_dst(disp_rect.X + disp_rect.Width - right->Get_Width() + 1, disp_rect.Y - 1, right->Get_Width(), right->Get_Height());
+					Rect right_src = right_dst;
+					right_src.Y = 0;
+					right_src.X = 0;
+
+					DAT_00887310->Blit_From(right_dst, *right, right_src);
+				}
+			}
+
+			Rect grip_rect(paint_rect.left + grip_left, paint_rect.top, grip_right - grip_left, paint_rect.bottom - paint_rect.top);
+			Surface *grip = SurfaceCache.GetSurface("trakgrip.pcx", NULL);
+			Rect grip_src;
+			grip_src.X = 0;
+			grip_src.Y = 0;
+			grip_src.Width = grip->Get_Width();
+			grip_src.Height = grip->Get_Height();
+			DAT_00887310->Blit_From(grip_rect, *grip, grip_src);
+
+			int disabled = style & WS_DISABLED;
+			if (disabled) {
+				FUN_00621B80(&grip_rect, DAT_00887310, 0, OwnerDraw::DisabledOverlayAlpha);
+			}
+
+			int frame_color = ODColorToHiColor(OwnerDraw::DefaultBorderColor);
+			if (disabled) {
+				frame_color = ODColorToHiColor(OwnerDraw::DisabledBorderColor);
+			}
+
+			Rect frame_rect = disp_rect;
+			frame_rect.Width = disp_rect.Width - number_width;
+			OwnerDraw::DrawBeveledBorder(*DAT_00887310, frame_rect, 2, frame_color);
+
+			Rect number_rect = disp_rect;
+			int inset = (show_numbers != 0) + 1;
+			number_rect.X = inset - number_width + disp_rect.Width + disp_rect.X;
+			number_rect.Width = number_width - inset;
+			OwnerDraw::DrawBeveledBorder(*DAT_00887310, number_rect, 2, frame_color);
+
+			if (show_numbers) {
+				wchar_t buffer[32];
+
+
+				swprintf(buffer, L"%d", step * ((minimum + value) / step));
+
+				int text_color = OwnerDraw::PrimaryTextColor;
+				if (disabled) {
+					text_color = OwnerDraw::DisabledTextColor;
+				}
+
+				RECT text_rect = paint_rect;
+				text_rect.left = paint_rect.right - 49;
+				OwnerDraw::DrawWideText(DAT_00887310, buffer, (LTRBStruct *)&text_rect, data->Wide.font, text_color, 5, 0xc, 0, 0, 0);
+			}
+
+			ValidateRect(window, NULL);
+			break;
+		}
+
+		case WM_ERASEBKGND:
+			return 0;
+
+		case WM_MOUSEMOVE:
+			if (dragging) {
+				RECT rect = client_rect;
+				InvalidateRect(window, &rect, FALSE);
+			}
+			if (wparam & MK_LBUTTON) {
+				break;
+			}
+
+		case WM_LBUTTONUP:
+			message_result = 0;
+			dragging = 0;
+			ReleaseCapture();
+			break;
+
+		case WM_LBUTTONDOWN:
+		case WM_LBUTTONDBLCLK: {
+			if (message == WM_LBUTTONDOWN) {
+				message_result = 1;
+				SetCapture(window);
+			} else {
+				message_result = 0;
+				ReleaseCapture();
+			}
+
+			int xpos = LOWORD(lparam);
+			int ypos = HIWORD(lparam);
+			if (ypos > client_rect.bottom - 18) {
+				if (xpos >= grip_left && xpos < grip_right) {
+					if (message == WM_LBUTTONDOWN) {
+						dragging = 1;
+					}
+				} else {
+					int x = xpos - 6;
+					if (x < 1) {
+						x = 1;
+					}
+					if (client_rect.right - number_width - 12 < x) {
+						x = client_rect.right - number_width - 12;
+					}
+
+
+					int idx = ((range + 1) * (x - 1)) / slider_width;
+					if (idx >= range) {
+						idx = range;
+					}
+
+					value = step * ((minimum + idx) / step) - minimum;
+					thumb_pos = value * slider_width / range;
+				}
+			}
+			break;
+		}
+
+		case TBM_GETPOS:
+			return step * ((minimum + value) / step);
+
+		case TBM_SETPOS:
+			if (lparam - minimum <= range && lparam - minimum >= 0) {
+				value = lparam - minimum;
+			}
+			play_click = false;
+			thumb_pos = value * slider_width / range;
+			break;
+
+		case TBM_SETRANGE:
+			minimum = LOWORD(lparam);
+			maximum = HIWORD(lparam);
+			range = maximum - minimum;
+			if (value > range) {
+				value = range;
+			}
+			if (value < minimum) {
+				value = minimum;
+			}
+			play_click = false;
+			thumb_pos = value * slider_width / range;
+			break;
+
+		case OD_SETTRACKSTEP:
+			step = lparam;
+			break;
+
+		case OD_TRACKNUMBERS:
+			show_numbers = lparam;
+			break;
+
+		case OD_TRACKSILENT:
+			data->TrackBar.clickSuppress = (wparam == 0);
+			break;
+	}
+
+	int changed = 0;
+	if (value != data->TrackBar.value || range != data->TrackBar.range || minimum != data->TrackBar.minimum) {
+		changed = 1;
+	}
+
+	data->TrackBar.result = message_result;
+	data->TrackBar.dragging = dragging;
+	data->TrackBar.thumbPos = thumb_pos;
+	data->TrackBar.range = range;
+	data->TrackBar.value = value;
+	data->TrackBar.minimum = minimum;
+	data->TrackBar.step = step;
+	data->TrackBar.showNumbers = show_numbers;
+
+	if (changed) {
+		InvalidateRect(window, NULL, FALSE);
+
+		HWND parent = GetParent(window);
+		SendMessage(parent, WM_HSCROLL, MAKEWPARAM(TB_THUMBTRACK, (unsigned short)(minimum + value)), (LPARAM)window);
+
+		if (play_click == true && !data->TrackBar.clickSuppress) {
+			VocClass::PlayGlobal(Rule->GenericClick, 1.0f, 0x2000);
+		}
+	}
+
 	return 0;
 }
 
@@ -4292,19 +4634,14 @@ int ODColorToHiColor(COLORREF color)
 	if (color == 0xFFFFFFFF) {
 		return(0xFFFFFFFF);
 	}
-	union {
-		struct {
-			unsigned int red : 8;
-			unsigned int green : 8;
-			unsigned int blue : 8;
-			unsigned int a : 8;
-		};
-		int v;
-	} c;
+	struct ColorBytes {
+		unsigned int red : 8;
+		unsigned int green : 8;
+		unsigned int blue : 8;
+		unsigned int a : 8;
+	};
 
-	c.v = color;
-
-	return(DSurface::Build_Hicolor_Pixel(c.red, c.green, c.blue));
+	return(DSurface::Build_Hicolor_Pixel(((ColorBytes *)&color)->red, ((ColorBytes *)&color)->green, ((ColorBytes *)&color)->blue));
 }
 
 // FUNCTION: GAMEMD 0x00620CD0

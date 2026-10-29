@@ -150,14 +150,9 @@ HRESULT FUN_0067C690(IStream * stream)
 	LPVOID obj;
 
 	HRESULT result = stream->Read(&count, sizeof(count), NULL);
-	if (FAILED(result)) {
-		return(result);
-	}
+	if (FAILED(result)) return(result);
 	for (index = 0; index < count; index++) {
-		result = OleLoadFromStream(stream, IID_IUnknown, &obj);
-		if (FAILED(result)) {
-			return(result);
-		}
+		if (FAILED(result = OleLoadFromStream(stream, IID_IUnknown, &obj))) return(result);
 	}
 	return(S_OK);
 }
@@ -231,6 +226,398 @@ CRCEngine Object_CRCs(void)
 	crc((int)Frame);
 	crc(CurrentObject.Count());
 	return(crc);
+}
+
+#include "bomblist.h"
+#include "kamikaze.h"
+#include "theme.h"
+
+extern bool UserInputLocked;
+extern int DAT_007F5BF8;
+extern DynamicVectorClass<BuildingClass *> DAT_008B41E0;
+bool __fastcall FUN_00534FA0(int side);
+Rect __fastcall FUN_0072AD20(void);
+void __cdecl FUN_004068E0(char const * format, ...);
+HRESULT __fastcall FUN_00751710(IStream * stream);
+HRESULT __fastcall FUN_007533F0(IStream * stream);
+
+// FUNCTION: GAMEMD 0x0067E730
+bool Get_All(IStream * stream, bool save_net)
+{
+	int i;
+	HRESULT res;
+
+	Clear_Scenario();
+	Scen->Load(stream);
+	UserInputLocked = Scen->IsInputLocked;
+
+	if (!FUN_00534FA0(Scen->PlayerSideIndex)) {
+		return(false);
+	}
+
+	Rect temp = FUN_0072AD20();
+
+	Allocate_Surfaces(VisibleRect, Rect(0, 0, temp.Width, VisibleRect.Height), Rect(0, 0, temp.Width, VisibleRect.Height), Rect(0, 0, DAT_007F5BF8, VisibleRect.Height), false);
+
+	Map.Set_View_Dimensions(temp);
+
+	Environment.Load(stream);
+
+	Init_Theater(Scen->Theater);
+
+	Rule->Load(stream);
+
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+
+	Map.Load(stream);
+
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+
+	if (FAILED(Load_Misc_Values(stream))) {
+		return(false);
+	}
+
+	Map.Reset_All_Subzones();
+	Logic.Load(stream);
+
+	if (TacticalMap != NULL) {
+		delete TacticalMap;
+		TacticalMap = NULL;
+	}
+	Tactical * old_tactical;
+	if (FAILED(OleLoadFromStream(stream, IID_IUnknown, (LPVOID *)&old_tactical))) {
+		return(false);
+	}
+
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	{
+		int count;
+		SuperClass * ptr;
+		ShowTimers.Clear();
+		res = stream->Read(&count, sizeof(count), NULL);
+		if (SUCCEEDED(res) && count > 0) {
+			for (i = 0; i < count; i++) {
+				res = stream->Read(&ptr, sizeof(ptr), NULL);
+				if (FAILED(res)) {
+					break;
+				}
+				ShowTimers.Add(ptr);
+			}
+			for (i = 0; i < count; i++) {
+				Swizzle_Pointer(&ShowTimers[i]);
+			}
+		}
+	}
+	if (FAILED(res)) {
+		return(false);
+	}
+
+	{
+		int count;
+		BuildingClass * ptr;
+		DAT_008B41E0.Clear();
+		res = stream->Read(&count, sizeof(count), NULL);
+		if (SUCCEEDED(res) && count > 0) {
+			for (i = 0; i < count; i++) {
+				res = stream->Read(&ptr, sizeof(ptr), NULL);
+				if (FAILED(res)) {
+					break;
+				}
+				DAT_008B41E0.Add(ptr);
+			}
+			for (i = 0; i < count; i++) {
+				Swizzle_Pointer(&DAT_008B41E0[i]);
+			}
+		}
+	}
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	if (!VeinholeMonsterClass::Load_All(stream)) {
+		return(false);
+	}
+	if (!RadarEventClass::Load(stream)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+
+	AircraftTracker.Clear();
+	if (FAILED(AircraftTracker.Load(stream))) {
+		return(false);
+	}
+
+	KamikazeInstance.Clear();
+	if (FAILED(KamikazeInstance.Load(stream))) {
+		return(false);
+	}
+
+	BombListInstance.FUN_00439110();
+	if (FAILED(BombListInstance.Load(stream))) {
+		return(false);
+	}
+
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = FUN_0067C690(stream);
+	if (FAILED(res)) {
+		return(false);
+	}
+
+	if (Session.Type == GAME_SKIRMISH) {
+		FUN_004068E0("Reading Skirmish Session.Options\n");
+		if (!Session.Options.Load(stream)) {
+			FUN_004068E0("\t***** FAILED!\n");
+			return(false);
+		}
+	}
+
+	if (FAILED(FUN_00751710(stream))) {
+		return(false);
+	}
+	if (FAILED(FUN_007533F0(stream))) {
+		return(false);
+	}
+	if (FAILED(Theme.Load(stream))) {
+		return(false);
+	}
+
+	Map.Flag_To_Redraw(GS_REDRAW_ALL);
+
+	if (Session.Type == GAME_NORMAL) {
+		ScenarioClass::WasGameSaved = true;
+	}
+
+	return(true);
 }
 
 namespace Unsorted { extern int CurrentFrame; }

@@ -454,6 +454,8 @@ Each entry: what the diff showed, then the source change that fixed it.
   checker reports as 'no compiled function has this name'.
 - An inline constructor or destructor in a shared header on a class with vector members
   shifts `$E` and `$S` numbers in every includer: declare it, define it inline in its file.
+- Two heap-sensitive functions in different files that want opposite states of a header's
+  unused declarations: move those declarations into the one .cpp that needs them.
 - A header that needs a type only by reference forward-declares it (`class Wstring;`):
   a new `#include` there flipped wonline 0x00788180; the .cpp includes the full header.
 - An `#include` a new function needs goes after the file's last global definition: in

@@ -1434,6 +1434,216 @@ AbstractClass * BuildingClass::Greatest_Threat(ThreatType threat, Coord const & 
 	return(BASECLASS::Greatest_Threat(threat, coord, onlyenemy));
 }
 
+static inline void Replay_Anim(BuildingClass * building, BAnimType anim, bool damaged)
+{
+	char const * name = damaged ? building->Class->AnimData[anim].AnimDamaged : building->Class->AnimData[anim].Anim;
+	if (name != NULL && *name) {
+		building->PlayAnim(name, anim, damaged, false, false);
+	}
+}
+
+namespace Unsorted { extern int MuteSWLaunches; extern bool ArmageddonMode; }
+
+// FUNCTION: GAMEMD 0x00445F80
+void BuildingClass::Grand_Opening(bool captured)
+{
+	if (!ActuallyPlacedOnMap || captured) {
+		if (Class->ProduceCashDelay) {
+			CashProductionTimer = Class->ProduceCashDelay;
+		}
+
+		if (!ActuallyPlacedOnMap) {
+			if (Class->IsRefinery) {
+				int level = (int)Storage.Get_Total_Amount();
+				if (level != 0) {
+					level = (4 * (int)Storage.Get_Total_Amount()) / Class->Capacity;
+				}
+				StorageFilledSlots = level;
+				if (StorageFilledSlots >= 3) {
+					Replay_Anim(this, BANIM_ACTIVE_FOUR, HealthRatio <= Rule->ConditionYellow);
+				} else if (StorageFilledSlots >= 2) {
+					Replay_Anim(this, BANIM_ACTIVE_THREE, HealthRatio <= Rule->ConditionYellow);
+				} else if (StorageFilledSlots >= 1) {
+					Replay_Anim(this, BANIM_ACTIVE_TWO, HealthRatio <= Rule->ConditionYellow);
+				} else if (StorageFilledSlots >= 0) {
+					Replay_Anim(this, BANIM_ACTIVE_ONE, HealthRatio <= Rule->ConditionYellow);
+				}
+			} else {
+				Begin_Anim(BANIM_IDLE, HealthRatio <= Rule->ConditionYellow);
+				Begin_Anim(BANIM_ACTIVE_ONE, HealthRatio <= Rule->ConditionYellow);
+				Replay_Anim(this, BANIM_ACTIVE_TWO, HealthRatio <= Rule->ConditionYellow);
+				Replay_Anim(this, BANIM_ACTIVE_THREE, HealthRatio <= Rule->ConditionYellow);
+				Replay_Anim(this, BANIM_ACTIVE_FOUR, HealthRatio <= Rule->ConditionYellow);
+			}
+
+			if (Class->OrePurifier) {
+				House->NumOrePurifiers++;
+			}
+			if (Class->InfantryGainSelfHeal) {
+				House->InfantrySelfHeal += Class->InfantryGainSelfHeal;
+			}
+			if (Class->UnitsGainSelfHeal) {
+				House->UnitsSelfHeal += Class->UnitsGainSelfHeal;
+			}
+			if (Class->IsHelipad) {
+				House->AirportDocks += Class->NumberOfDocks;
+				Map.FUN_006A60E0(3);
+			}
+
+			if (Class->SuperWeapon != SUPER_NONE) {
+				for (int i = 0; i < House->SuperWeapon.Count(); i++) {
+					SuperClass * super = House->SuperWeapon[i];
+					if (super->Class->Type == Class->SuperWeapon) {
+						if (super->Control.Value() / 15 * 60 <= 4) {
+							Begin_Anim(BANIM_SUPER_THREE, HealthRatio <= Rule->ConditionYellow);
+						} else {
+							Begin_Anim(BANIM_SUPER_ONE, HealthRatio <= Rule->ConditionYellow);
+						}
+					}
+				}
+			}
+
+			if (Is_Turret_Equipped() && !Class->IsTurretAnimAVoxel) {
+				if (TurretIndex != -1) {
+					int idx = TurretIndex;
+					TurretIndex = -1;
+					Set_Turret_Index(idx);
+				} else {
+					Replay_Anim(this, BANIM_TURRET, false);
+				}
+				Set_Turret_Frame();
+			}
+
+			if (Class->LightIntensity) {
+				if (LightSource == NULL) {
+					LightSource = new LightSourceClass(Center_Coord(), Class->LightVisibility, Class->LightIntensity, Class->LightRedTint, Class->LightGreenTint, Class->LightBlueTint);
+				}
+				LightSource->Enable();
+			}
+			if (Class->IsLaserFencePost) {
+				Toggle_Laser_Fence_Post(false);
+			}
+			if (Class->IsSensorArray) {
+				FUN_00455820(DAT_0089C818);
+			}
+			if (Class->DetectDisguise) {
+				SensorArrayActivate(DAT_0089C818);
+			}
+			IsReadyToCommence = true;
+		}
+
+		if (Class->IsPowered) {
+			FUN_004547C0();
+		}
+
+		if (Class->RevealToAll && !House->Is_Player_Control()) {
+			if (!captured) {
+				UpdateSight(false, false, true, PlayerPtr, 0);
+				Map.RevealArea3(PositionCoord, 0, LastSightRange + 3, false);
+			}
+			RadarEventClass::Create(RADAREVENT_SUPERWEAPON_DETECTED, PositionCoord.As_Cell());
+		}
+
+		if (!House->Is_Player_Control() && !House->Is_Ally(PlayerPtr) && !Unsorted::MuteSWLaunches && Session.Type != GAME_NORMAL) {
+			if (Class->SuperWeapon == SUPER_NONE || SuperWeapons[Class->SuperWeapon]->Class->AuxBuilding == NULL || House->ABQuantity.Value(SuperWeapons[Class->SuperWeapon]->Class->AuxBuilding->HeapID) != 0) {
+				switch (Class->SuperWeapon) {
+					case SUPER_MULTI_MISSILE:
+						VoxClass::Play("EVA_NuclearSiloDetected");
+						break;
+
+					case SUPER_IRON_CURTAIN:
+						VoxClass::Play("EVA_IronCurtainDetected");
+						break;
+
+					case SUPER_LIGHTNING_STORM:
+						VoxClass::Play("EVA_WeatherDeviceReady");
+						break;
+
+					case SUPER_PSYCHIC_DOMINATOR:
+						VoxClass::Play("EVA_PsychicDominatorDetected");
+						break;
+
+					case SUPER_GENETIC_CONVERTER:
+						VoxClass::Play("EVA_GeneticMutatorDetected");
+						break;
+
+					case SUPER_CHRONO_SPHERE:
+						VoxClass::Play("EVA_ChronosphereDetected");
+						break;
+
+					default:
+						break;
+				}
+			}
+		}
+
+		if (Class->IsWeaponsFactory && Class->Naval && ArchiveTarget == NULL) {
+			Cell cell = Map.Nearby_Location(Get_Cell(), SPEED_FLOAT, -1, MZONE_WATER, false, Point2D(5, 5));
+			cell = Cell(cell.X + 2, cell.Y + 2);
+			if (cell != DAT_0089C818) {
+				Assign_Rally_Point(cell, false);
+			}
+		}
+
+		House->IsRecalcNeeded = true;
+		ActuallyPlacedOnMap = true;
+		House->RecalcPower = true;
+		House->RecalcRadar = true;
+
+		if (Techno_Type_Class()->GapGenerator) {
+			CreateGap();
+		}
+
+		if (Class->FreeUnit != NULL && !ScenarioInit && !captured && !Unsorted::ArmageddonMode && (!House->FUN_0050B730() || PurchasePrice == 0 || PurchasePrice > Class->Raw_Cost())) {
+			Cell cell = Adjacent_Cell(Center_Coord().As_Cell(), FACING_S);
+
+			bool placed = false;
+			UnitClass * unit = new UnitClass(Class->FreeUnit, House);
+			if (unit != NULL) {
+				if (!unit->Unlimbo(Coord(cell), DIR_W)) {
+					cell = Map.Nearby_Location(PositionCoord.As_Cell(), SPEED_WHEEL, Map.Get_Cell_Zone(PositionCoord.As_Cell(), unit->Class->MZone), unit->Class->MZone, false, Point2D(1,1), true, true, false, false);
+
+					if (cell == DAT_0089C818 || !unit->Unlimbo(Coord(cell), DIR_SW)) {
+						Cell newcell = Map.Nearby_Location(PositionCoord.As_Cell(), SPEED_WHEEL, Map.Get_Cell_Zone(PositionCoord.As_Cell(), unit->Class->MZone), unit->Class->MZone, false, Point2D(1,1), false, true, false, false);
+
+						if (newcell == DAT_0089C818 || !unit->Unlimbo(Coord(newcell), DIR_SW)) {
+							House->Refund_Money(unit->Class->GetRefund(House, true));
+							delete unit;
+						} else {
+							placed = true;
+						}
+					} else {
+						placed = true;
+					}
+				} else {
+					placed = true;
+				}
+
+				if (placed) {
+					unit->QueueMission(MISSION_HARVEST, false);
+					unit->Commence();
+				}
+			} else {
+				House->Refund_Money(Class->FreeUnit->GetRefund(House, true));
+			}
+		}
+
+		if (!Rule->IsSeparate && Class->IsHoverPad && !captured) {
+			ScenarioInit++;
+			AircraftClass * air = new AircraftClass(Rule->PadAircraft[0], House);
+			if (air) {
+				air->HeightAGL = 0;
+				if (air->Unlimbo(Center_Coord(), air->Pose_Dir())) {
+					air->QueueMission(MISSION_GUARD, false);
+					air->Transmit_Message(RADIO_HELLO, this);
+					Transmit_Message(RADIO_TETHER, air);
+				}
+			}
+			ScenarioInit--;
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x00446FF0
 void BuildingClass::Repair(int control)
 {
@@ -2281,14 +2491,6 @@ int BuildingClass::Power_Drain(void) const
 		return(drain);
 	}
 	return(0);
-}
-
-static inline void Replay_Anim(BuildingClass * building, BAnimType anim, bool damaged)
-{
-	char const * name = damaged ? building->Class->AnimData[anim].AnimDamaged : building->Class->AnimData[anim].Anim;
-	if (name != NULL && *name) {
-		building->PlayAnim(name, anim, damaged, false, false);
-	}
 }
 
 // FUNCTION: GAMEMD 0x0044E8F0

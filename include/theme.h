@@ -80,6 +80,7 @@ class ThemeClass
 		void Set_Volume(int volume);
 		bool IsNormal(ThemeType index) const;
 		long Save(struct IStream * stream);
+		long Load(struct IStream * stream);
 		void Fade_Stream(void);
 
 		void Init_Themes(CCINIClass & ini);

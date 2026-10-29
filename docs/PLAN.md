@@ -1,6 +1,6 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 29 October 2026: 18,119 of 19,367 game functions match (94%; 65% of game code
+Status, 29 October 2026: 18,125 of 19,367 game functions match (94%; 65% of game code
 by size), landed in batches module by module. The rounds below record each one.
 
 ## The goal
@@ -1113,6 +1113,17 @@ Session.Players. Recording then exposed three UI-command functions building char
 ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; their RTTI
 fixed them. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
+
+### Batch 146 (29 October 2026)
+
+**6 functions** of 8, Opus on the smallest untried function of 1.5 KB or more in eight
+modules: AnimClass::AI, BuildingClass::Grand_Opening, HouseClass::Load, Get_All (with
+ThemeClass::Load, until now a free Theme_Load), OwnerDraw::TrackBarHandler and wonline's
+0x00795CD0, all 2.6 to 4.3 KB. ODColorToHiColor reads the COLORREF's bytes through a
+bitfield struct, not TibSun's union, so TrackBarHandler inlines it as the exe does. wonline
+and DrawMap wanted opposite states of two unused ownrdraw.h externs; wonline.cpp now
+declares them itself. MapGen's Generate_Urban_Roads (89%) and Sidebar's StripClass::Draw_It
+(97.3%) stay banked. Merge gate: 18,125 of 18,125 (2,427.4 KB).
 
 ### Batches 144 and 145 (29 October 2026)
 

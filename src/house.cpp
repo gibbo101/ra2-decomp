@@ -3008,6 +3008,394 @@ void HouseClass::Compute_CRC(CRCEngine & crc) const
 	Base.Compute_CRC(crc);
 }
 
+// FUNCTION: GAMEMD 0x00503040
+HRESULT STDMETHODCALLTYPE HouseClass::Load(IStream * stream)
+{
+	int index;
+
+	ConYards.Clear();
+	Buildings.Clear();
+	UnitRepairStations.Clear();
+	Grinders.Clear();
+	Absorbers.Clear();
+	Bunkers.Clear();
+	Occupiables.Clear();
+	CloningVats.Clear();
+	SecretLabs.Clear();
+	PsychicDetectionBuildings.Clear();
+	FactoryPlants.Clear();
+
+	for (index = StartingUnits.Count() - 1; index >= 0; index--) {
+		delete StartingUnits[index];
+	}
+	StartingUnits.Clear();
+
+	for (index = 0; index < PowerEventConnectionPoints.Count(); index++) {
+		while (PowerEventConnectionPoints[index]->Release() > 0U) {
+			;
+		}
+		PowerEventConnectionPoints[index] = NULL;
+	}
+	PowerEventConnectionPoints.Clear();
+
+	while (SuperWeapon.Count()) {
+		delete SuperWeapon[0];
+		SuperWeapon.Delete_Index(0);
+	}
+
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		new(this) HouseClass(NoInitClass());
+
+		BaseClass * base = &Base;
+		base->Load(stream);
+
+		BQuantity.Load(stream);
+		UQuantity.Load(stream);
+		IQuantity.Load(stream);
+		AQuantity.Load(stream);
+
+		ABQuantity.Load(stream);
+		AUQuantity.Load(stream);
+		AIQuantity.Load(stream);
+		AAQuantity.Load(stream);
+
+		PBQuantity.Load(stream);
+		PUQuantity.Load(stream);
+		PIQuantity.Load(stream);
+		PAQuantity.Load(stream);
+
+		Swizzle_Pointer(&Class);
+		Swizzle_Pointer(&InfantryFactory);
+		Swizzle_Pointer(&UnitFactory);
+		Swizzle_Pointer(&AircraftFactory);
+		Swizzle_Pointer(&Primary_ForShips);
+		Swizzle_Pointer(&BuildingFactory);
+		Swizzle_Pointer(&Primary_Unused1);
+		Swizzle_Pointer(&Primary_Unused2);
+		Swizzle_Pointer(&Primary_Unused3);
+		Swizzle_Pointer(&Primary_ForDefenses);
+		Swizzle_Pointer(&ToCapture);
+
+		for (index = 0; index < PATH_COUNT; index++) {
+			Swizzle_Pointer(&Paths[index]);
+		}
+
+		for (index = 0; index < ARRAY_SIZE(DropshipLoadouts); index++) {
+			DropshipLoadouts[index].Swizzle();
+		}
+
+		int count;
+
+		count = 0;
+		result = stream->Read(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+		while (count--) {
+			SuperClass * ptr = NULL;
+			result = stream->Read(&ptr, sizeof(ptr), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+			SuperWeapon.Add(ptr);
+		}
+
+		count = 0;
+		result = stream->Read(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+		while (count--) {
+			TagClass * ptr = NULL;
+			result = stream->Read(&ptr, sizeof(ptr), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+			HouseTags.Add(ptr);
+		}
+
+		count = 0;
+		result = stream->Read(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+		while (count--) {
+			AngerStruct node;
+			result = stream->Read(&node, sizeof(node), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+			AngerNodes.Add(node);
+		}
+		for (index = 0; index < AngerNodes.Count(); index++) {
+			Swizzle_Pointer(&AngerNodes[index].House);
+		}
+
+		count = 0;
+		result = stream->Read(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+		while (count--) {
+			ScoutStruct node;
+			result = stream->Read(&node, sizeof(node), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+			ScoutNodes.Add(node);
+		}
+		for (index = 0; index < ScoutNodes.Count(); index++) {
+			Swizzle_Pointer(&ScoutNodes[ScoutNodes.Count() - 1].House);
+		}
+
+		count = 0;
+		result = stream->Read(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+		while (count--) {
+			BuildingClass * ptr = NULL;
+			result = stream->Read(&ptr, sizeof(ptr), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+			ConYards.Add(ptr);
+		}
+
+		count = 0;
+		result = stream->Read(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+		while (count--) {
+			BuildingClass * ptr = NULL;
+			result = stream->Read(&ptr, sizeof(ptr), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+			Buildings.Add(ptr);
+		}
+
+		count = 0;
+		result = stream->Read(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+		while (count--) {
+			BuildingClass * ptr = NULL;
+			result = stream->Read(&ptr, sizeof(ptr), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+			UnitRepairStations.Add(ptr);
+		}
+
+		count = 0;
+		result = stream->Read(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+		while (count--) {
+			BuildingClass * ptr = NULL;
+			result = stream->Read(&ptr, sizeof(ptr), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+			Grinders.Add(ptr);
+		}
+
+		count = 0;
+		result = stream->Read(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+		while (count--) {
+			BuildingClass * ptr = NULL;
+			result = stream->Read(&ptr, sizeof(ptr), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+			Absorbers.Add(ptr);
+		}
+
+		count = 0;
+		result = stream->Read(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+		while (count--) {
+			BuildingClass * ptr = NULL;
+			result = stream->Read(&ptr, sizeof(ptr), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+			Bunkers.Add(ptr);
+		}
+
+		count = 0;
+		result = stream->Read(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+		while (count--) {
+			BuildingClass * ptr = NULL;
+			result = stream->Read(&ptr, sizeof(ptr), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+			Occupiables.Add(ptr);
+		}
+
+		count = 0;
+		result = stream->Read(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+		while (count--) {
+			BuildingClass * ptr = NULL;
+			result = stream->Read(&ptr, sizeof(ptr), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+			CloningVats.Add(ptr);
+		}
+
+		count = 0;
+		result = stream->Read(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+		while (count--) {
+			BuildingClass * ptr = NULL;
+			result = stream->Read(&ptr, sizeof(ptr), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+			SecretLabs.Add(ptr);
+		}
+
+		count = 0;
+		result = stream->Read(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+		while (count--) {
+			BuildingClass * ptr = NULL;
+			result = stream->Read(&ptr, sizeof(ptr), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+			PsychicDetectionBuildings.Add(ptr);
+		}
+
+		count = 0;
+		result = stream->Read(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+		while (count--) {
+			BuildingClass * ptr = NULL;
+			result = stream->Read(&ptr, sizeof(ptr), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+			FactoryPlants.Add(ptr);
+		}
+
+		count = 0;
+		result = stream->Read(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+		while (count--) {
+			StartingTechnoStruct * unit = new StartingTechnoStruct;
+			TechnoTypeClass const * type = NULL;
+			result = stream->Read(&type, sizeof(type), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+			short x;
+			result = stream->Read(&x, sizeof(x), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+			short y;
+			result = stream->Read(&y, sizeof(y), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+			unit->Type = type;
+			unit->CellID.X = x;
+			unit->CellID.Y = y;
+			StartingUnits.Add(unit);
+		}
+
+		for (index = 0; index < SuperWeapon.Count(); index++) {
+			Swizzle_Pointer(&SuperWeapon[index]);
+		}
+
+		for (index = 0; index < HouseTags.Count(); index++) {
+			Swizzle_Pointer(&HouseTags[index]);
+		}
+
+		for (index = 0; index < ConYards.Count(); index++) {
+			Swizzle_Pointer(&ConYards[index]);
+		}
+
+		for (index = 0; index < Buildings.Count(); index++) {
+			Swizzle_Pointer(&Buildings[index]);
+		}
+
+		for (index = 0; index < UnitRepairStations.Count(); index++) {
+			Swizzle_Pointer(&UnitRepairStations[index]);
+		}
+
+		for (index = 0; index < Grinders.Count(); index++) {
+			Swizzle_Pointer(&Grinders[index]);
+		}
+
+		for (index = 0; index < Absorbers.Count(); index++) {
+			Swizzle_Pointer(&Absorbers[index]);
+		}
+
+		for (index = 0; index < Bunkers.Count(); index++) {
+			Swizzle_Pointer(&Bunkers[index]);
+		}
+
+		for (index = 0; index < Occupiables.Count(); index++) {
+			Swizzle_Pointer(&Occupiables[index]);
+		}
+
+		for (index = 0; index < CloningVats.Count(); index++) {
+			Swizzle_Pointer(&CloningVats[index]);
+		}
+
+		for (index = 0; index < SecretLabs.Count(); index++) {
+			Swizzle_Pointer(&SecretLabs[index]);
+		}
+
+		for (index = 0; index < PsychicDetectionBuildings.Count(); index++) {
+			Swizzle_Pointer(&PsychicDetectionBuildings[index]);
+		}
+
+		for (index = 0; index < FactoryPlants.Count(); index++) {
+			Swizzle_Pointer(&FactoryPlants[index]);
+		}
+
+		for (index = 0; index < StartingUnits.Count(); index++) {
+			Swizzle_Pointer(&StartingUnits[index]->Type);
+		}
+
+		int hasaigen = false;
+		result = stream->Read(&hasaigen, sizeof(hasaigen), NULL);
+		if (SUCCEEDED(result) && hasaigen) {
+			result = OleLoadFromStream(stream, IID_IAIHouse, (void **)&AIGeneral);
+		}
+	}
+	return(result);
+}
+
 // FUNCTION: GAMEMD 0x00504080
 HRESULT STDMETHODCALLTYPE HouseClass::Save(IStream * stream, BOOL cleardirty)
 {

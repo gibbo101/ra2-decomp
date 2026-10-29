@@ -38,12 +38,10 @@
 #include <wchar.h>
 #include "stringtable.h"
 
+extern COLORREF ODColorText;
+extern COLORREF ODColorTextDim;
 HWND WS_Find_Dialog(int id);
 HWND FUN_00775B10(void);
-extern long DAT_00B77EA8;
-void __fastcall FUN_004E34A0(HWND dialog, int side, int flag);
-void __fastcall FUN_005E3720(char const * text);
-extern int DAT_00B76440[];
 rc_ptr<PlayerProfile> __fastcall FUN_00778710(void);
 
 unsigned int __fastcall Wstring_Hash(Wstring & string);
@@ -1080,7 +1078,6 @@ int __fastcall FUN_0077E300(WideWstring const & msg)
 
 #include "goptions.h"
 namespace Game { extern int Seed; }
-extern char DAT_00889F64[];
 
 extern int DAT_00B77E00;
 extern int DAT_00B77E04;
@@ -1281,7 +1278,7 @@ extern unsigned int DAT_00B77DC8;
 extern wchar_t DAT_00B77AD0[];
 extern char DAT_0084A584[];
 void __fastcall FUN_00792BE0(int id, WideWstring const & text, char flag);
-void __fastcall FUN_007757E0(HWND window, int flag);
+bool __fastcall FUN_007757E0(HWND window, int flag);
 
 static inline void Focus_Chat_Input(void)
 {
@@ -1457,7 +1454,6 @@ extern int DAT_00B77E64;
 extern int DAT_00B77E20;
 
 
-void __cdecl FUN_005E2700(int color, wchar_t const * text, ...);
 void __fastcall FUN_005E32D0(bool force, bool now);
 int FUN_00775B20(void);
 void Call_Back(void);
@@ -3042,15 +3038,12 @@ int __fastcall FUN_00788180(bool flag)
 	return best;
 }
 
-void FUN_0072C600(void);
-void FUN_0072C650(void);
-void FUN_0072BCA0(void);
-void FUN_0072BCF0(void);
-BOOL CALLBACK FUN_00799EA0(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
-Wstring __fastcall FUN_00779B50(void);
-Wstring __fastcall FUN_00779DD0(void);
-bool FUN_00779730(void);
-extern char DAT_00B77E68;
+extern long DAT_00B77EA8;
+void __fastcall FUN_004E34A0(HWND dialog, int side, int flag);
+void __fastcall FUN_005E3720(char const * text);
+extern int DAT_00B76440[];
+extern char DAT_00889F64[];
+void __cdecl FUN_005E2700(int color, wchar_t const * text, ...);
 int __fastcall FUN_00789500(char const * login, char const * password, int plain, int locale);
 void __fastcall FUN_0052FEC0(Surface * surface, bool flag);
 void __fastcall FUN_00779C90(Wstring const * value);
@@ -5450,6 +5443,241 @@ bool __fastcall FUN_00795650(IPXAddressClass * address)
 
 extern bool DAT_00B77E2C;
 
+namespace OwnerDraw {
+char * __fastcall WideToCharString(char * dest, wchar_t const * src, int count);
+}
+
+static inline bool Is_Local_Host(void)
+{
+	return FUN_007930A0();
+}
+
+bool __fastcall FUN_006951F0(char const * name, unsigned int length, char const * digest, bool official, bool flag);
+bool __fastcall FUN_00693B70(char * name, int type, bool flag);
+bool __fastcall FUN_00694760(char * name, int type, bool a, bool b);
+void FUN_0058BC20(void);
+
+// FUNCTION: GAMEMD 0x00795CD0
+int __fastcall FUN_00795CD0(bool go)
+{
+	GlobalPacketType packet;
+	int responses[MAX_PLAYERS];
+	bool no_scenario = false;
+	bool dont_go = !go;
+	int result = 0;
+
+	Ipx.Global_Channel_Clear_FieldC8();
+	Ipx.Set_Timing(50, (unsigned int)-1, 5000);
+
+	if (Is_Local_Host()) {
+		memset(&packet, 0, sizeof(packet));
+
+		memset(responses, 0, sizeof(responses));
+		int num_responses = 0;
+		bool send_scenario = false;
+		FUN_004068E0("About to wait for 'GO' response.\n");
+
+		CDTimerClass<SystemTimerClass> response_timer;
+		response_timer = 900;
+		if (dont_go) {
+			response_timer = 300;
+		}
+
+		do {
+			Call_Back();
+			if (Ipx.Get_Global_Message(&Session.GPacket, &Session.GPacketlen, &Session.GAddress, &Session.GProductID) && Session.GProductID == IPXGlobalConnClass::COMMAND_AND_CONQUER4) {
+				FUN_004068E0("Packet is YR packet\n");
+
+				for (int i = 1; i < Session.Players.Count(); i++) {
+					if (Session.Players[i]->Address.FUN_0053EF30(Session.GAddress) && stricmp(FUN_007350C0(Session.Players[i]->Name), Session.GPacket.Name) == 0) {
+						if (!responses[i]) {
+							if (Session.GPacket.Command == NET_REQ_SCENARIO) {
+								FUN_004068E0("Packet type is NET_REQ_SCENARIO\n");
+								responses[i] = Session.GPacket.Command;
+								send_scenario = true;
+								num_responses++;
+							}
+							if (Session.GPacket.Command == NET_READY_TO_GO) {
+								FUN_004068E0("Packet type is NET_READY_TO_GO\n");
+								responses[i] = Session.GPacket.Command;
+								num_responses++;
+							}
+							if (Session.GPacket.Command == 42) {
+								FUN_004068E0("Packet type is NET_DONT_GO\n");
+								responses[i] = Session.GPacket.Command;
+								num_responses++;
+								dont_go = true;
+								FUN_00793460(i, 0);
+							}
+							if (Session.GPacket.Command == NET_NO_SCENARIO) {
+								FUN_004068E0("Packet type is NET_NO_SCENARIO\n");
+								responses[i] = Session.GPacket.Command;
+								result = 2;
+								dont_go = true;
+								no_scenario = true;
+								num_responses++;
+							}
+						}
+					}
+				}
+			}
+		} while (num_responses < Session.Players.Count() - 1 && response_timer);
+
+		if (no_scenario) {
+			result = 2;
+		}
+
+		if (!dont_go && !no_scenario && send_scenario && num_responses == Session.Players.Count() - 1) {
+			while (FUN_007757E0(NULL, 0) == 1) {
+			}
+			memset(Session.ScenarioRequests, 0, sizeof(Session.ScenarioRequests));
+			Session.RequestCount = 0;
+			for (int i = 1; i < Session.Players.Count(); i++) {
+				if (responses[i] == NET_REQ_SCENARIO) {
+					Session.ScenarioRequests[Session.RequestCount++] = (char)i;
+				}
+			}
+			if (!FUN_00694760(Scen->ScenarioName, GAME_INTERNET, false, true)) {
+				result = 2;
+				dont_go = false;
+			}
+			if (Session.Is_Random_Map()) {
+				if (!FUN_00694760("RandMap.img", GAME_INTERNET, false, true)) {
+					result = 2;
+					dont_go = false;
+				}
+			}
+		}
+
+		memset(&packet, 0, sizeof(packet));
+		if (!dont_go && num_responses == Session.Players.Count() - 1 && !no_scenario) {
+			packet.Command = NET_GO;
+		} else {
+			packet.Command = (NetCommandType)42;
+			dont_go = true;
+			if (result == 0) {
+				result = 1;
+			}
+		}
+		OwnerDraw::WideToCharString(packet.Name, Session.Players[0]->Name, -1);
+
+		for (int j = 1; j < Session.Players.Count(); j++) {
+			CDTimerClass<SystemTimerClass> timer = 600;
+			if (dont_go) {
+				timer = 300;
+			}
+			do {
+				Call_Back();
+			} while (!Ipx.Send_Global_Message_To_Name(&packet, 0x2f, 1, Session.Players[j]->Name) && timer);
+		}
+
+	} else {
+
+		if (FUN_006951F0(Session.ScenarioFileName, Session.ScenarioFileLength, Session.ScenarioDigest, Session.ScenarioIsOfficial, true)) {
+			memset(&packet, 0, sizeof(packet));
+			packet.Command = NET_READY_TO_GO;
+			if (dont_go) {
+				packet.Command = (NetCommandType)42;
+			}
+			OwnerDraw::WideToCharString(packet.Name, Session.Players[0]->Name, -1);
+			User * host = FUN_007931A0();
+			if (host) {
+				Ipx.Send_Global_Message_To_Name(&packet, 0x2f, 1, FUN_00735120(host->Nick));
+			}
+
+			CDTimerClass<SystemTimerClass> timer;
+			timer = 1200;
+			if (dont_go) {
+				timer = 300;
+			}
+			while (Ipx.Global_Num_Send() > 0 && timer) {
+				Call_Back();
+			}
+
+		} else {
+			if ((Session.unknown_0C != 3 && (Session.unknown_0C == 1 || Session.unknown_0C == 2)) || (Session.ScenarioIsOfficial && !Session.Is_Random_Map())) {
+				memset(&packet, 0, sizeof(packet));
+				packet.Command = NET_NO_SCENARIO;
+				User * host = FUN_007931A0();
+				if (host) {
+					Ipx.Send_Global_Message_To_Name(&packet, 0x2f, 1, FUN_00735120(host->Nick));
+				}
+				FUN_004068E0("Sent NET_NO_SCENARIO\n");
+
+				CDTimerClass<SystemTimerClass> timer;
+				timer = 1200;
+				while (Ipx.Global_Num_Send() > 0 && timer) {
+					Call_Back();
+				}
+				result = 2;
+				dont_go = true;
+			} else {
+				while (FUN_007757E0(NULL, 0) == 1) {
+				}
+				FUN_0058BC20();
+				if (!FUN_00693B70(Session.ScenarioFileName, GAME_INTERNET, true)) {
+					result = 2;
+					dont_go = true;
+				} else if (!dont_go && Session.Is_Random_Map()) {
+					char preview_name[16];
+					if (!FUN_00693B70(preview_name, GAME_INTERNET, true)) {
+						result = 2;
+						dont_go = true;
+					}
+				}
+			}
+		}
+
+		strcpy(Scen->ScenarioName, Session.ScenarioFileName);
+		FUN_004068E0("About to wait for 'GO' from host.\n");
+
+		CDTimerClass<SystemTimerClass> response_timer;
+		response_timer = 1200;
+		if (dont_go) {
+			response_timer = 300;
+		}
+
+		do {
+			Call_Back();
+			if (Ipx.Get_Global_Message(&Session.GPacket, &Session.GPacketlen, &Session.GAddress, &Session.GProductID) && Session.GProductID == IPXGlobalConnClass::COMMAND_AND_CONQUER4) {
+				FUN_004068E0("Packet is YR packet\n");
+				User * host = FUN_007931A0();
+				if (host && stricmp(Session.GPacket.Name, host->Nick) == 0) {
+					if (Session.GPacket.Command == NET_GO) {
+						FUN_004068E0("Got NET_GO from host\n");
+						goto done;
+					}
+					if (Session.GPacket.Command == 42) {
+						FUN_004068E0("Got NET_DONT_GO from host\n");
+						dont_go = true;
+						int k;
+						for (k = 0; k < Session.Players.Count(); k++) {
+							if (stricmp(FUN_007350C0(Session.Players[k]->Name), host->Nick) == 0) {
+								FUN_00793460(k, 3);
+								break;
+							}
+						}
+						break;
+					}
+				}
+			}
+		} while (response_timer);
+
+		if (!response_timer) {
+			dont_go = true;
+		}
+	}
+
+done:
+	Ipx.Set_Timing(Ipx.Global_Response_Time() + 2, (unsigned int)-1, MAX(2 * TIMER_SECOND, Ipx.Global_Response_Time() * 8));
+	Ipx.Global_Channel_Set_FieldC8();
+
+	if (result != 2 && dont_go) {
+		result = 1;
+	}
+	return(result);
+}
+
 // FUNCTION: GAMEMD 0x00796710
 bool FUN_00796710(void)
 {
@@ -5485,15 +5713,6 @@ bool FUN_00796710(void)
 		}
 	}
 	return false;
-}
-
-namespace OwnerDraw {
-char * __fastcall WideToCharString(char * dest, wchar_t const * src, int count);
-}
-
-static inline bool Is_Local_Host(void)
-{
-	return FUN_007930A0();
 }
 
 static inline int Current_Channel_Type(void)

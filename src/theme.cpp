@@ -403,7 +403,7 @@ long ThemeClass::Save(IStream * stream)
 }
 
 // FUNCTION: GAMEMD 0x00721040
-long __stdcall Theme_Load(IStream * stream)
+long ThemeClass::Load(IStream * stream)
 {
 	int score;
 	int pending;
