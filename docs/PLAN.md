@@ -1,6 +1,6 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 29 October 2026: 18,116 of 19,367 game functions match (94%; 65% of game code
+Status, 29 October 2026: 18,119 of 19,367 game functions match (94%; 65% of game code
 by size), landed in batches module by module. The rounds below record each one.
 
 ## The goal
@@ -1113,6 +1113,15 @@ Session.Players. Recording then exposed three UI-command functions building char
 ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; their RTTI
 fixed them. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
+
+### Batches 144 and 145 (29 October 2026)
+
+**3 functions** of the 34 near misses at 95 to 98%, in six Opus jobs: Plain_Text_Print_Wide
+(by returning through the ColorScheme overload the file already defines, which VC6
+inlines), HouseClass::Invalidate_Base_Node_Position, and AircraftTrackerClass's index
+helper 0x00412A40 with its declaration in foot.h. 0x004A65C0 prints 100% but is a
+callerless byte twin whose signature nothing proves, so it stays out. The rest are one
+register, slot or operand order short. Merge gate: 18,119 of 18,119 (2,405.0 KB).
 
 ### Batches 142 and 143 (29 October 2026)
 

@@ -240,6 +240,8 @@ Each entry: what the diff showed, then the source change that fixed it.
   one-line plain wrapper (`_Conscript` in team.cpp).
 - An out-of-line copy of a header inline that calls a template member with no body in
   the file stays a near miss: define that body in the file (`TPoint2D<T>::operator==`).
+- An odd channel or load order can be a same-file overload being inlined: return through
+  the overload the file defines (Plain_Text_Print_Wide via its ColorScheme form).
 - An inline helper written as a template can crash VC6 (internal compiler error); write
   one overload per type.
 - The shape of repeated inlines matters, not only their count: a nested ternary left
@@ -401,7 +403,9 @@ Each entry: what the diff showed, then the source change that fixed it.
   A member whose type has a constructor (`Point2D`) flipped it where two `int` members did
   not: bisect a header change one field at a time before moving declarations.
 - Two checks of one source file at the same time overwrite each other's output: give each
-  parallel check its own copy of the file, outside any overlay directory.
+  parallel check its own copy of the file, outside any overlay directory. checkall and
+  refaudit at the same time can deadlock Wine's CL.EXE (idle, blocked on a pipe): run
+  them one after the other; `WINEPREFIX=toolchain/wineprefix wineserver -k` clears a hang.
 - A named reference to an object indexed more than once (`CellClass & center = Map[cell]`)
   can pin the order: it took Generate_Rural_Buildings from 24 of 64 failing offsets to 0.
 - Never remove a function data/progress.csv records from src/: report the stand-in instead.

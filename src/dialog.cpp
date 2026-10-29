@@ -243,6 +243,15 @@ Point2D Conquer_Clip_Text_Print_Wide(wchar_t const * text, Surface * surface, Re
 	return Conquer_Clip_Text_Print_Wide(text, surface, rect, pt, fore, back, flag, width, tabs);
 }
 
+// FUNCTION: GAMEMD 0x004A66D0
+Point2D Plain_Text_Print_Wide(wchar_t const * text, Surface * surface, Rect const * rect, Point2D const * pt, unsigned fore, unsigned back, TextPrintType flag, int scheme, int unused)
+{
+	if (scheme == -1) {
+		return Simple_Text_Print_Wide(text, surface, rect, pt, fore, back, flag, unused);
+	}
+	return Simple_Text_Print_Wide(text, surface, rect, pt, ColorSchemes[scheme], back, flag, unused);
+}
+
 // FUNCTION: GAMEMD 0x004A67E0
 unsigned char * Font_Palette(int color)
 {

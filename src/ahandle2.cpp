@@ -79,6 +79,16 @@ void AircraftTrackerClass::FUN_004129C0(int index)
 	}
 }
 
+// FUNCTION: GAMEMD 0x00412A40
+int AircraftTrackerClass::FUN_00412A40(int index, Point2D offset)
+{
+	int x = index % 20;
+	int y = index / 20;
+	x = MIN(19, MAX(0, x + offset.X));
+	y = MIN(19, MAX(0, y + offset.Y));
+	return x + y * 20;
+}
+
 // FUNCTION: GAMEMD 0x00412AC0
 int AircraftTrackerClass::GetVectorIndex(Cell pos)
 {

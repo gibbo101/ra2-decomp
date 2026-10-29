@@ -28,6 +28,7 @@ class AircraftTrackerClass
 		FootClass * Get(void);
 		int GetVectorIndex(Cell pos);
 		void FUN_004129C0(int index);
+		int FUN_00412A40(int index, Point2D offset);
 		HRESULT Load(IStream * stream);
 		HRESULT Save(IStream * stream);
 

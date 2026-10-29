@@ -83,7 +83,7 @@ extern DynamicVectorClass<FootClass *> DAT_008B3DC0;
 #define Foots DAT_008B3DC0
 extern DynamicVectorClass<FactoryClass *> DAT_00A83E30;
 namespace Game { extern bool IsActive; }
-namespace Unsorted { extern int CurrentFrame; extern int MuteSWLaunches; extern Cell CellSpreadTable[]; extern bool SWAllowed; }
+namespace Unsorted { extern int CurrentFrame; extern int MuteSWLaunches; extern Cell CellSpreadTable[]; extern bool SWAllowed; extern bool ArmageddonMode; }
 #define Factories DAT_00A83E30
 extern DynamicVectorClass<ObjectClass *> DAT_00A8ECB8;
 extern HouseClass * DAT_00AC1198;
@@ -4140,6 +4140,29 @@ void HouseClass::FUN_0050A350(SuperClass * super)
 		if (target != NULL) {
 			Cell cell = target->Center_Coord().As_Cell();
 			Place_Special_Blast((SuperWeaponType)SuperWeapon.ID(super), cell);
+		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x0050A490
+void HouseClass::Invalidate_Base_Node_Position(BuildingClass * building)
+{
+	if (!Unsorted::ArmageddonMode) {
+		Cell cell = building->PositionCoord.As_Cell();
+		for (int i = 0; i < Base.Nodes.Count(); i++) {
+			if (Base.Nodes[i].Type == building->Class->HeapID && Base.Nodes[i].CellID == cell) {
+				Cell node_cell = Base.Nodes[i].CellID;
+				for (int j = 0; j < Base.Nodes.Count(); j++) {
+					if (i != j && Base.Nodes[j].CellID == node_cell) {
+						Base.Nodes[j].CellID = CELL_NONE;
+					}
+				}
+				if (building->Class->IsBaseDefense && Session.Type != GAME_NORMAL) {
+					Base.Nodes[i].Type = STRUCT_NONE;
+					Base.Nodes[i].CellID = CELL_NONE;
+				}
+				return;
+			}
 		}
 	}
 }
