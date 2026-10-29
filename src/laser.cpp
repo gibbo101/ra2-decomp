@@ -57,9 +57,9 @@
 DynamicVectorClass<LaserDrawClass *> LaserDrawClass::LaserDraws;
 
 // SYNTHETIC: GAMEMD 0x0054FDC0 SYMBOL
-// _$E117
+// _$E118
 // SYNTHETIC: GAMEMD 0x0054FE00 SYMBOL
-// _$E114
+// _$E115
 
 // FUNCTION: GAMEMD 0x0054FE60
 LaserDrawClass::LaserDrawClass(Coord start, Coord end, int zadjust, bool unknown, RGBClass inner_color, RGBClass outer_color, RGBClass outer_spread, int duration, bool blinks, bool fades, float start_intensity, float end_intensity) :
@@ -242,7 +242,7 @@ void LaserDrawClass::Draw_It(void)
 }
 
 // SYNTHETIC: GAMEMD 0x005509E0 SYMBOL
-// _$E120
+// _$E121
 
 // TEMPLATE: GAMEMD 0x005512D0
 // ?Clear@?$DynamicVectorClass@PAVLaserDrawClass@@@@UAEXXZ

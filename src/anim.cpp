@@ -50,23 +50,12 @@
 #include "fastmath.h"
 #include "coord.h"
 #include <math.h>
+#include "geometry.h"
 
 // SYNTHETIC: GAMEMD 0x00421C90 SYMBOL
 // _$E2
 
 extern DynamicVectorClass<AnimClass *> DAT_00A83E00;
-extern const double DAT_007E3308;
-extern const double DAT_007E3310;
-extern double DAT_0089A158;
-extern double DAT_0089A1B8;
-extern double DAT_0089A1A0;
-extern double DAT_0089A198;
-extern double DAT_0089A168;
-extern double DAT_0089A138;
-extern int DAT_0089A1C0;
-extern double DAT_0089A170;
-extern double DAT_0089A188;
-extern int DAT_0089A1B4;
 struct FileSystem
 {
 	static char TEMPERAT_PAL[];
@@ -85,83 +74,32 @@ class SHPStruct
 };
 extern ParticleSystemClass * DAT_00A8ED78;
 
-// FUNCTION: GAMEMD 0x00421CB0
-
-
-
-double DAT_0089A158 = fastmath::sqrt(pow((double)CELL_LEPTON_H, 2) * 2);
-
-// FUNCTION: GAMEMD 0x00421CE0
-
-
-
-double DAT_0089A1B8 = DAT_0089A158 / DAT_007E3308;
-
-// FUNCTION: GAMEMD 0x00421D00
-
-
-
-double DAT_0089A1A0 = 1.0 / DAT_0089A1B8;
-
-// FUNCTION: GAMEMD 0x00421D20
-
-
-
-double DAT_0089A198 = DAT_007E3310 * 45;
-
-// FUNCTION: GAMEMD 0x00421D40
-
-
-
-double DAT_0089A168 = DAT_007E3310 * 60;
-
-// FUNCTION: GAMEMD 0x00421D60
-
-
-
-double DAT_0089A138 = DAT_007E3310 * 90;
-
-// FUNCTION: GAMEMD 0x00421D80
-
-
-
-int DAT_0089A1C0 = (int)(fastmath::tan(DAT_0089A138 - DAT_0089A168) * DAT_0089A158 * 0.5);
-
-// FUNCTION: GAMEMD 0x00421DC0
-
-
-
-double DAT_0089A170 = fastmath::atan(DAT_0089A1C0 * (1 / (double)CELL_LEPTON_H));
-
-// FUNCTION: GAMEMD 0x00421DF0
-
-
-
-double DAT_0089A188 = fastmath::atan((DAT_0089A1C0 * 2) / DAT_0089A158);
-
-// FUNCTION: GAMEMD 0x00421E20
-
-
-
-int DAT_0089A1B4 = (int)((DAT_0089A1C0 * 4) + 0.5);
-
-// FUNCTION: GAMEMD 0x00421E50
-
-
-
-Cell const DAT_0089A150(0, 0);
-
-// FUNCTION: GAMEMD 0x00421E60
-
-
-
-Coord const DAT_0089A178(0, 0, 0);
-
-// FUNCTION: GAMEMD 0x00421E80
-
-
-
-Coord const DAT_0089A1A8(CELL_LEPTON_W / 2, CELL_LEPTON_H / 2, 0);
+// SYNTHETIC: GAMEMD 0x00421CB0 SYMBOL
+// _$E106
+// SYNTHETIC: GAMEMD 0x00421CE0 SYMBOL
+// _$E109
+// SYNTHETIC: GAMEMD 0x00421D00 SYMBOL
+// _$E112
+// SYNTHETIC: GAMEMD 0x00421D20 SYMBOL
+// _$E115
+// SYNTHETIC: GAMEMD 0x00421D40 SYMBOL
+// _$E118
+// SYNTHETIC: GAMEMD 0x00421D60 SYMBOL
+// _$E121
+// SYNTHETIC: GAMEMD 0x00421D80 SYMBOL
+// _$E124
+// SYNTHETIC: GAMEMD 0x00421DC0 SYMBOL
+// _$E127
+// SYNTHETIC: GAMEMD 0x00421DF0 SYMBOL
+// _$E130
+// SYNTHETIC: GAMEMD 0x00421E20 SYMBOL
+// _$E133
+// SYNTHETIC: GAMEMD 0x00421E50 SYMBOL
+// _$E136
+// SYNTHETIC: GAMEMD 0x00421E60 SYMBOL
+// _$E139
+// SYNTHETIC: GAMEMD 0x00421E80 SYMBOL
+// _$E142
 
 // FUNCTION: GAMEMD 0x00422720
 AnimClass::AnimClass(void) :
@@ -328,7 +266,7 @@ Cell const * AnimClass::Occupy_List(bool) const
 }
 
 // SYNTHETIC: GAMEMD 0x00423920 SYMBOL
-// _$E145
+// _$E146
 
 // FUNCTION: GAMEMD 0x00423930
 BounceResultType AnimClass::Bounce_AI(void)
@@ -709,24 +647,24 @@ void AnimClass::Flaming_Guy_AI(void)
 		Animation.Set_Rate(0);
 	}
 
-	if (FlamingGuyCoords != DAT_0089A178 && !FlamingGuyExpire) {
+	if (FlamingGuyCoords != COORD_NONE && !FlamingGuyExpire) {
 		if (_Flat_Distance(FlamingGuyCoords, PositionCoord) <= _max_distance) {
 			if (!IsFalling) {
 				Coord nextcoord = Next_Flaming_Guy_Coord();
-				bool sink = (Map[FlamingGuyCoords].Land_Type() == LAND_WATER || Map[FlamingGuyCoords].Land_Type() == LAND_BEACH) && HeightAGL <= DAT_0089A1C0;
-				if (nextcoord != DAT_0089A178 && FlamingGuyRetries < _max_tries && !sink) {
+				bool sink = (Map[FlamingGuyCoords].Land_Type() == LAND_WATER || Map[FlamingGuyCoords].Land_Type() == LAND_BEACH) && HeightAGL <= LEVEL_LEPTON_H;
+				if (nextcoord != COORD_NONE && FlamingGuyRetries < _max_tries && !sink) {
 					FlamingGuyRetries++;
 					int z = PositionCoord.Z;
 					Coord oldcoord = FlamingGuyCoords;
-					if (z <= Map.Get_Height_GL(oldcoord) + 2 * DAT_0089A1C0) {
+					if (z <= Map.Get_Height_GL(oldcoord) + 2 * LEVEL_LEPTON_H) {
 						oldcoord.Z = Map.Get_Height_GL(oldcoord);
 					} else {
-						oldcoord.Z = Map.Get_Height_GL(oldcoord) + DAT_0089A1B4;
+						oldcoord.Z = Map.Get_Height_GL(oldcoord) + BRIDGE_LEPTON_HEIGHT;
 					}
 					PositionCoord = oldcoord;
 					FlamingGuyCoords = nextcoord;
 				} else {
-					FlamingGuyCoords = DAT_0089A178;
+					FlamingGuyCoords = COORD_NONE;
 					FlamingGuyExpire = true;
 					Animation.Set_Rate(1);
 					Animation.Set_Stage(Type->RunningFrames * FACING_COUNT + 1);
@@ -737,17 +675,17 @@ void AnimClass::Flaming_Guy_AI(void)
 			int z = PositionCoord.Z;
 			DirType direction = _Direction(this, FlamingGuyCoords);
 			Coord newcoord = _Move_Coord(PositionCoord, direction, _max_distance);
-			if (z <= Map.Get_Height_GL(newcoord) + 2 * DAT_0089A1C0) {
+			if (z <= Map.Get_Height_GL(newcoord) + 2 * LEVEL_LEPTON_H) {
 				newcoord.Z = Map.Get_Height_GL(newcoord);
 			} else {
-				newcoord.Z = Map.Get_Height_GL(newcoord) + DAT_0089A1B4;
+				newcoord.Z = Map.Get_Height_GL(newcoord) + BRIDGE_LEPTON_HEIGHT;
 			}
 			PositionCoord = newcoord;
 		}
 
 		if (!IsFalling) {
 			Cell position = PositionCoord.As_Cell();
-			if (PositionCoord.Z >= Map.Get_Height_GL(PositionCoord) + DAT_0089A1B4) {
+			if (PositionCoord.Z >= Map.Get_Height_GL(PositionCoord) + BRIDGE_LEPTON_HEIGHT) {
 				if (!Map[Get_Coord()].IsUnderBridge && !Map[Adjacent_Cell(position, FACING_W)].IsUnderBridge && !Map[Adjacent_Cell(position, FACING_N)].IsUnderBridge) {
 					IsFalling = true;
 				}
@@ -757,10 +695,10 @@ void AnimClass::Flaming_Guy_AI(void)
 		if (!IsFalling) {
 			if (!FlamingGuyExpire) {
 				Coord nextcoord = Next_Flaming_Guy_Coord();
-				if (nextcoord != DAT_0089A178) {
+				if (nextcoord != COORD_NONE) {
 					FlamingGuyCoords = nextcoord;
 				} else {
-					FlamingGuyCoords = DAT_0089A178;
+					FlamingGuyCoords = COORD_NONE;
 					FlamingGuyExpire = true;
 					Animation.Set_Rate(1);
 					Animation.Set_Stage(Type->RunningFrames * FACING_COUNT + 1);
@@ -771,7 +709,7 @@ void AnimClass::Flaming_Guy_AI(void)
 
 	if (!FlamingGuyExpire) {
 		int stage = _min_stage;
-		if (FlamingGuyCoords != DAT_0089A178) {
+		if (FlamingGuyCoords != COORD_NONE) {
 			stage = Type->RunningFrames * (Facing_Sub(-1, ::Direction(Center_Coord(), FlamingGuyCoords).As_Dir8()));
 		}
 		Animation.Set_Stage(stage + Frame / _frame_divisor % Type->RunningFrames);
@@ -789,7 +727,7 @@ bool AnimClass::Is_Valid_Flaming_Guy_Cell(Cell const & cell)
 {
 	CellClass * cptr = &Map[cell];
 
-	if (cptr->IsUnderBridge && Get_Coord().Z - DAT_0089A1C0 * cptr->Height > 2 * DAT_0089A1C0) {
+	if (cptr->IsUnderBridge && Get_Coord().Z - LEVEL_LEPTON_H * cptr->Height > 2 * LEVEL_LEPTON_H) {
 		if ((cptr->BridgeFlag.Occupy.Building || cptr->BridgeFlag.Occupy.Monolith || cptr->BridgeFlag.Occupy.Vehicle)) {
 			return(false);
 		}
@@ -800,7 +738,7 @@ bool AnimClass::Is_Valid_Flaming_Guy_Cell(Cell const & cell)
 		if (cptr->Overlay != OVERLAY_NONE && OverlayTypes[cptr->Overlay]->IsWall) {
 			return(false);
 		}
-		if ((cptr->Flag.Occupy.Building || cptr->Flag.Occupy.Monolith || cptr->Flag.Occupy.Vehicle) || DAT_0089A1C0 * cptr->Height - Get_Coord().Z > 2 * DAT_0089A1C0) {
+		if ((cptr->Flag.Occupy.Building || cptr->Flag.Occupy.Monolith || cptr->Flag.Occupy.Vehicle) || LEVEL_LEPTON_H * cptr->Height - Get_Coord().Z > 2 * LEVEL_LEPTON_H) {
 			return(false);
 		}
 	}
@@ -830,7 +768,7 @@ void AnimClass::Set_Occupy_Bit(Coord const & coord)
 {
 	int spot_index = CellClass::Spot_Index(coord);
 	CellClass & cell = Map[coord];
-	if (Map.Get_Height_GL(coord) + DAT_0089A1B4 <= coord.Z && cell.IsUnderBridge) {
+	if (Map.Get_Height_GL(coord) + BRIDGE_LEPTON_HEIGHT <= coord.Z && cell.IsUnderBridge) {
 		cell.BridgeFlag.Composite |= (1 << spot_index);
 		cell.BridgeInfType = ((AbstractClass *)this)->Owner();
 	} else {
@@ -846,7 +784,7 @@ void AnimClass::Clear_Occupy_Bit(Coord const & coord)
 	CellClass & cell = Map[coord];
 	int height = Map.Get_Height_GL(coord);
 
-	if (height + DAT_0089A1B4 <= coord.Z) {
+	if (height + BRIDGE_LEPTON_HEIGHT <= coord.Z) {
 		cell.BridgeFlag.Composite &= ~(1 << spot_index);
 		if (!(cell.BridgeFlag.Composite & 0x1C)) {
 			cell.BridgeInfType = HOUSE_NONE;
@@ -969,6 +907,13 @@ RTTIType AnimClass::Fetch_RTTI(void) const
 // SYNTHETIC: GAMEMD 0x00426590
 // ??_GAnimClass@@UAEPAXI@Z
 
+// FUNCTION: GAMEMD 0x004265B0
+// DirType::Direction
+template<class T>
+bool TPoint2D<T>::operator == (TPoint2D<T> const & rvalue) const
+{
+	return(X==rvalue.X && Y==rvalue.Y);
+}
 
 // TEMPLATE: GAMEMD 0x00426620
 // ??0?$CDTimerClass@VFrameTimerClass@@@@QAE@ABVNoInitClass@@@Z

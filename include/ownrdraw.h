@@ -258,6 +258,7 @@ namespace OwnerDraw {
 
 	class DialogControl {
 		public:
+			DialogControl(void);
 			virtual ~DialogControl(void);
 			virtual void F1(HWND window, int value) = 0;
 			virtual bool F2(void) = 0;
@@ -268,6 +269,7 @@ namespace OwnerDraw {
 	class SimpleDialogControl : public DialogControl {
 		public:
 			SimpleDialogControl(void);
+			virtual ~SimpleDialogControl(void);
 			virtual void F1(HWND window, int value);
 			virtual bool F2(void);
 			virtual int F3(void);
@@ -323,8 +325,6 @@ void On_WM_NCDESTROY(HWND window);
 
 int Build_Hotkey_String(KeyNumType key, char * buffer);
 
-extern COLORREF ODColorText;
-extern COLORREF ODColorTextDim;
 extern COLORREF ODColorDisabled;
 extern COLORREF ODColorFrame;
 extern COLORREF ODListBoxColor;

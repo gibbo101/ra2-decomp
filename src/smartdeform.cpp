@@ -111,9 +111,9 @@ struct UndoInfoStruct {
 };
 
 // SYNTHETIC: GAMEMD 0x006B23B0 SYMBOL
-// _$E197
+// _$E198
 // SYNTHETIC: GAMEMD 0x006B23F0 SYMBOL
-// _$E195
+// _$E196
 DynamicVectorClass<UndoInfoStruct> UndoRecords;
 
 bool Commit_Deform_Grid(Cell center, bool forced);

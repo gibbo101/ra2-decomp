@@ -49,31 +49,31 @@ inline Cell Next_Cell(Cell const & cell, FacingType facing)
 	return(cell + (AdjacentCell[facing]));
 }
 // SYNTHETIC: GAMEMD 0x00429590 SYMBOL
-// _$E78
+// _$E79
 // SYNTHETIC: GAMEMD 0x004295C0 SYMBOL
-// _$E81
+// _$E82
 // SYNTHETIC: GAMEMD 0x004295E0 SYMBOL
-// _$E84
+// _$E85
 // SYNTHETIC: GAMEMD 0x00429600 SYMBOL
-// _$E87
+// _$E88
 // SYNTHETIC: GAMEMD 0x00429620 SYMBOL
-// _$E90
+// _$E91
 // SYNTHETIC: GAMEMD 0x00429640 SYMBOL
-// _$E93
+// _$E94
 // SYNTHETIC: GAMEMD 0x00429660 SYMBOL
-// _$E96
+// _$E97
 // SYNTHETIC: GAMEMD 0x004296A0 SYMBOL
-// _$E99
+// _$E100
 // SYNTHETIC: GAMEMD 0x004296D0 SYMBOL
-// _$E102
+// _$E103
 // SYNTHETIC: GAMEMD 0x00429700 SYMBOL
-// _$E105
+// _$E106
 // SYNTHETIC: GAMEMD 0x00429730 SYMBOL
-// _$E108
+// _$E109
 // SYNTHETIC: GAMEMD 0x00429740 SYMBOL
-// _$E111
+// _$E112
 // SYNTHETIC: GAMEMD 0x00429760 SYMBOL
-// _$E114
+// _$E115
 
 // FUNCTION: GAMEMD 0x00429780
 Cell Follow_Path(Cell const & cell, int count, FacingType const * path)
@@ -448,7 +448,7 @@ PathStruct * AStarClass::Build_Final_Path(RegularOpenNode *final_node, FacingTyp
 }
 
 // SYNTHETIC: GAMEMD 0x0042ABF0 SYMBOL
-// _$E117
+// _$E118
 
 // FUNCTION: GAMEMD 0x0042AC00
 void AStarClass::Update_Map_Dimensions(Rect const & dimensions)

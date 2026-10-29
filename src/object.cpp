@@ -1061,7 +1061,7 @@ Cell const * ObjectClass::Occupy_List(bool placement) const
 }
 
 // SYNTHETIC: GAMEMD 0x005F5C10 SYMBOL
-// _$E165
+// _$E166
 
 // FUNCTION: GAMEMD 0x005F5C20
 BuildingClass * ObjectClass::Who_Can_Build_Me(bool intheory, bool legal) const

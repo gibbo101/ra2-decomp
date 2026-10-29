@@ -67,9 +67,9 @@
 // SYNTHETIC: GAMEMD 0x0045B190 SYMBOL
 // _$E41
 // SYNTHETIC: GAMEMD 0x0045B1B0 SYMBOL
-// _$E222
+// _$E223
 // SYNTHETIC: GAMEMD 0x0045B1C0 SYMBOL
-// _$E199
+// _$E200
 Cell const BuildingTypeClass::OccupyLists[BSIZE_COUNT][30] = {
 	/* BSIZE_11 */ { Cell(0,0),REFRESH_EOL },
 	/* BSIZE_21 */ { Cell(0,0),Cell(1,0),REFRESH_EOL },
@@ -96,9 +96,9 @@ Cell const BuildingTypeClass::OccupyLists[BSIZE_COUNT][30] = {
 };
 
 // SYNTHETIC: GAMEMD 0x0045C2F0 SYMBOL
-// _$E247
+// _$E248
 // SYNTHETIC: GAMEMD 0x0045C300 SYMBOL
-// _$E224
+// _$E225
 Cell const BuildingTypeClass::ExitLists[BSIZE_COUNT][30] = {
 	/* BSIZE_11 */ { Cell(0,1),Cell(-1,1),Cell(1,1),Cell(-1,0),Cell(1,0),Cell(0,-1),Cell(-1,-1),Cell(1,-1),REFRESH_EOL },
 	/* BSIZE_21 */ { Cell(0,1),Cell(1,1),Cell(-1,1),Cell(2,1),Cell(-1,0),Cell(2,0),Cell(0,-1),Cell(1,-1),Cell(-1,-1),Cell(2,-1),REFRESH_EOL },

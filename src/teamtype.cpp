@@ -60,7 +60,7 @@
 // SYNTHETIC: GAMEMD 0x006F0640 SYMBOL
 // _$E38
 // SYNTHETIC: GAMEMD 0x006F0660 SYMBOL
-// _$E58
+// _$E59
 
 DynamicVectorClass<TeamTypeClass *> TeamTypeClass::Array;
 

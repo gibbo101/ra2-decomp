@@ -69,36 +69,36 @@ BOOL CALLBACK ODAddWindowToList(HWND window, ArrayList<HWND> * list);
 
 namespace fastmath { double __cdecl sqrt(double x); double __cdecl tan(double x); double __cdecl atan(double x); }
 // SYNTHETIC: GAMEMD 0x00600340 SYMBOL
-// _$E56
+// _$E57
 // SYNTHETIC: GAMEMD 0x00600370 SYMBOL
-// _$E59
+// _$E60
 // SYNTHETIC: GAMEMD 0x00600390 SYMBOL
-// _$E62
+// _$E63
 // SYNTHETIC: GAMEMD 0x006003B0 SYMBOL
-// _$E65
+// _$E66
 // SYNTHETIC: GAMEMD 0x006003D0 SYMBOL
-// _$E68
+// _$E69
 // SYNTHETIC: GAMEMD 0x006003F0 SYMBOL
-// _$E71
+// _$E72
 // SYNTHETIC: GAMEMD 0x00600410 SYMBOL
-// _$E74
+// _$E75
 // SYNTHETIC: GAMEMD 0x00600450 SYMBOL
-// _$E77
+// _$E78
 // SYNTHETIC: GAMEMD 0x00600480 SYMBOL
-// _$E80
+// _$E81
 // SYNTHETIC: GAMEMD 0x006004B0 SYMBOL
-// _$E83
+// _$E84
 // SYNTHETIC: GAMEMD 0x006004E0 SYMBOL
-// _$E86
+// _$E87
 // SYNTHETIC: GAMEMD 0x006004F0 SYMBOL
-// _$E89
+// _$E90
 // SYNTHETIC: GAMEMD 0x00600510 SYMBOL
-// _$E92
+// _$E93
 
 // SYNTHETIC: GAMEMD 0x00600530 SYMBOL
-// _$E97
+// _$E98
 // SYNTHETIC: GAMEMD 0x00600550 SYMBOL
-// _$E95
+// _$E96
 SurfaceCacheClass SurfaceCache;
 
 namespace OwnerDraw {
@@ -182,19 +182,19 @@ bool OwnerDraw::CtrlMsgData::operator ==(CtrlMsgData const & that) const
 }
 
 // SYNTHETIC: GAMEMD 0x006006B0 SYMBOL
-// _$E102
+// _$E103
 // SYNTHETIC: GAMEMD 0x00600750 SYMBOL
-// _$E100
+// _$E101
 namespace OwnerDraw { Dictionary<HWND, WNDPROC> DialogProcs(Hash_HWND); }
 
 // SYNTHETIC: GAMEMD 0x00600880 SYMBOL
-// _$E107
+// _$E108
 // SYNTHETIC: GAMEMD 0x00600920 SYMBOL
-// _$E105
+// _$E106
 namespace OwnerDraw { Dictionary<HWND, WNDPROC> SubclassProcs(Hash_HWND); }
 
 // SYNTHETIC: GAMEMD 0x00600A50 SYMBOL
-// _$E112
+// _$E113
 namespace OwnerDraw { Dictionary<HWND, OwnerDraw::WinData> Dialogs(Hash_HWND); }
 
 // FUNCTION: GAMEMD 0x00600C70
@@ -3296,7 +3296,7 @@ union ODColorBits {
 };
 
 // SYNTHETIC: GAMEMD 0x006107A0 SYMBOL
-// _$E117
+// _$E118
 OwnerDraw::Tooltip ODTooltip;
 
 // FUNCTION: GAMEMD 0x006107E0
@@ -3422,11 +3422,11 @@ bool OwnerDraw::End_Tooltip(void)
 }
 
 // SYNTHETIC: GAMEMD 0x00612910 SYMBOL
-// _$E120
+// _$E121
 static ArrayList<HWND> ActiveWindows;
 
 // SYNTHETIC: GAMEMD 0x00612930 SYMBOL
-// _$E125
+// _$E126
 static Dictionary<OwnerDraw::CtrlMsgData, bool> ProcessedMessages(Hash_CtrlMsg);
 
 // FUNCTION: GAMEMD 0x00612A60
@@ -5094,6 +5094,16 @@ int __fastcall FUN_00624020(HWND combo, int index, WideWstring * out)
 	return result;
 }
 
+// FUNCTION: GAMEMD 0x00624080
+OwnerDraw::DialogControl::DialogControl(void)
+{
+}
+
+// FUNCTION: GAMEMD 0x00624090
+OwnerDraw::DialogControl::~DialogControl(void)
+{
+}
+
 // FUNCTION: GAMEMD 0x006240A0
 void CALLBACK FUN_006240A0(HWND dialog, int unused)
 {
@@ -5110,7 +5120,7 @@ OwnerDraw::SimpleDialogControl::SimpleDialogControl(void)
 }
 
 // FUNCTION: GAMEMD 0x00624130
-OwnerDraw::DialogControl::~DialogControl(void)
+OwnerDraw::SimpleDialogControl::~SimpleDialogControl(void)
 {
 }
 

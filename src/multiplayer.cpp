@@ -88,7 +88,7 @@ DynamicVectorClass<MultiplayerGameMode *> & Game_Modes(void)
 }
 
 // SYNTHETIC: GAMEMD 0x005D5B20 SYMBOL
-// _$E134
+// _$E135
 
 static int Game_Mode_Count(void)
 {

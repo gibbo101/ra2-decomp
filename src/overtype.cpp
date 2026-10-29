@@ -134,7 +134,7 @@ Cell const * OverlayTypeClass::Occupy_List(bool) const
 }
 
 // SYNTHETIC: GAMEMD 0x005FE520 SYMBOL
-// _$E128
+// _$E129
 
 extern char DAT_00889F64[];
 

@@ -179,7 +179,7 @@ class BuildingClass : public TechnoClass
 		virtual bool Ready_To_Next_Mission(void) const override;
 		virtual int Do_MISSION_CAPTURE(void) override;
 		virtual bool Is_Weapon_Equipped(void) const override;
-		virtual unsigned vt_entry_2C8(unsigned, unsigned) override;
+		virtual DirType Barrel_Pitch(AbstractClass * target) const override;
 		virtual int Anti_Air(void) const override;
 		virtual int Anti_Armor(void) const override;
 		virtual int Anti_Infantry(void) const override;

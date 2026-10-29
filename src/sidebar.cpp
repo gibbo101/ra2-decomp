@@ -92,9 +92,9 @@ SidebarClass::StripClass::SelectClass::SelectClass(void) :
 }
 
 // SYNTHETIC: GAMEMD 0x006A4C10 SYMBOL
-// _$E173
+// _$E174
 // SYNTHETIC: GAMEMD 0x006A4C40 SYMBOL
-// _$E170
+// _$E171
 SidebarClass::SBGadgetClass SidebarClass::Background;
 
 // FUNCTION: GAMEMD 0x006A4E40
@@ -104,35 +104,35 @@ SidebarClass::SBGadgetClass::SBGadgetClass(void) :
 }
 
 // SYNTHETIC: GAMEMD 0x006A4C60 SYMBOL
-// _$E179
+// _$E180
 // SYNTHETIC: GAMEMD 0x006A4C80 SYMBOL
-// _$E176
+// _$E177
 ShapeButtonClass SidebarClass::Power;
 // SYNTHETIC: GAMEMD 0x006A4CA0 SYMBOL
-// _$E184
+// _$E185
 // SYNTHETIC: GAMEMD 0x006A4CC0 SYMBOL
-// _$E182
+// _$E183
 ShapeButtonClass SidebarClass::Repair;
 // SYNTHETIC: GAMEMD 0x006A4CE0 SYMBOL
-// _$E189
+// _$E190
 // SYNTHETIC: GAMEMD 0x006A4D10 SYMBOL
-// _$E187
+// _$E188
 ShapeButtonClass SidebarClass::TabButtons[4];
 // SYNTHETIC: GAMEMD 0x006A4D40 SYMBOL
-// _$E194
+// _$E195
 // SYNTHETIC: GAMEMD 0x006A4D60 SYMBOL
-// _$E192
+// _$E193
 ShapeButtonClass SidebarClass::Upgrade;
 // SYNTHETIC: GAMEMD 0x006A4D80 SYMBOL
-// _$E199
+// _$E200
 // SYNTHETIC: GAMEMD 0x006A4DA0 SYMBOL
-// _$E197
+// _$E198
 ShapeButtonClass SidebarClass::Waypoint;
 
 // SYNTHETIC: GAMEMD 0x006A4DC0 SYMBOL
-// _$E204
+// _$E205
 // SYNTHETIC: GAMEMD 0x006A4E10 SYMBOL
-// _$E202
+// _$E203
 SidebarClass::StripClass::SelectClass SidebarClass::StripClass::SelectButton[SidebarClass::StripClass::SELECT_BUTTONS];
 
 // FUNCTION: GAMEMD 0x006A4E60
@@ -549,16 +549,6 @@ extern bool DAT_00884B8F;
 extern bool DAT_00B0B518;
 bool __fastcall FUN_004E1470(GadgetClass * gadget);
 
-static inline int First_Active_Tab(SidebarClass & sidebar)
-{
-	for (int index = 0; index < SidebarClass::STRIPS; index++) {
-		if (sidebar.Column[index].BuildableCount > 0) {
-			return index;
-		}
-	}
-	return -1;
-}
-
 extern void * DAT_00B0B47C;
 extern void * DAT_00B0B480;
 extern bool DAT_00B0B48C;
@@ -719,48 +709,14 @@ bool SidebarClass::FUN_006A6290(int control)
 bool SidebarClass::AddCameo(RTTIType type, int id)
 {
 	if (!Unsorted::ArmageddonMode) {
-		int previous = First_Active_Tab(*this);
+		int previous = FUN_006ABD10();
 		int tab = GetObjectTabIdx(type, id, false);
-		StripClass & strip = Column[tab];
-
-		if (strip.BuildableCount <= StripClass::MAX_BUILDABLES) {
-			for (int index = 0; index < strip.BuildableCount; index++) {
-				if (strip.Buildables[index].BuildableType == type && strip.Buildables[index].BuildableID == id) {
-					return false;
-				}
-			}
-
-			if (!ScenarioInit && type != RTTI_SPECIAL) {
-				VoxClass::Play("EVA_NewConstructionOptions");
-			}
-			strip.FUN_006A8710(type, id);
-			strip.IsToRedraw = true;
-			DAT_00884B8F = true;
+		if (Column[tab].Add(type, id)) {
 			FUN_006A67A0(tab);
 			Activate(true);
 
 			if (previous == -1) {
-				int first = First_Active_Tab(*this);
-				if (first != ActiveTabIndex) {
-					TabButtons[ActiveTabIndex].Turn_Off();
-					StripClass & old = Column[ActiveTabIndex];
-					old.AllowedToDraw = false;
-					for (int slot = 0; slot < 60; slot++) {
-						Map.Remove_A_Button(StripClass::SelectButton[old.ID * 60 + slot]);
-					}
-					ActiveTabIndex = first;
-					TabButtons[first].Turn_On();
-					StripClass & current = Column[ActiveTabIndex];
-					current.AllowedToDraw = true;
-					int count = Map.GetVisibleCameoCount();
-					for (int added = 0; added < count; added++) {
-						StripClass::SelectButton[current.ID * 60 + added].Zap();
-						Map.Add_A_Button(StripClass::SelectButton[current.ID * 60 + added]);
-					}
-					DAT_00884B8F = true;
-					UpdateScrollButtons();
-					IsForceCompleteRedraw = true;
-				}
+				SetTab(FUN_006ABD10());
 			}
 
 			IsToRedraw = true;
@@ -834,7 +790,7 @@ void SidebarClass::UpdateScrollButtons(void)
 // FUNCTION: GAMEMD 0x006A67A0
 void SidebarClass::FUN_006A67A0(int tab)
 {
-	if (First_Active_Tab(*this) == -1 && DAT_00B0B478) {
+	if (FUN_006ABD10() == -1 && DAT_00B0B478) {
 		unknown_5398 = 1;
 		unknown_5394 = 0;
 	}
@@ -855,7 +811,7 @@ void SidebarClass::FUN_006A6820(int tab)
 	}
 	TabButtons[tab].Disable();
 
-	int first = First_Active_Tab(*this);
+	int first = FUN_006ABD10();
 	if (first == -1) {
 		UpdateScrollButtons();
 		if (DAT_00B0B478) {
@@ -1078,34 +1034,18 @@ void SidebarClass::FUN_006A74A0(int tab)
 	UpdateScrollButtons();
 }
 
-static inline void Select_Tab(SidebarClass & sb, int tab)
-{
-	if (tab != sb.ActiveTabIndex) {
-		SidebarClass::TabButtons[sb.ActiveTabIndex].Turn_Off();
-		SidebarClass::StripClass & old = sb.Column[sb.ActiveTabIndex];
-		old.AllowedToDraw = false;
-		for (int slot = 0; slot < 60; slot++) {
-			Map.Remove_A_Button(SidebarClass::StripClass::SelectButton[old.ID * 60 + slot]);
-		}
-		sb.ActiveTabIndex = tab;
-		SidebarClass::TabButtons[tab].Turn_On();
-		SidebarClass::StripClass & current = sb.Column[sb.ActiveTabIndex];
-		current.AllowedToDraw = true;
-		int count = Max_Visible_Cameos() * 2;
-		for (int added = 0; added < count; added++) {
-			SidebarClass::StripClass::SelectButton[current.ID * 60 + added].Zap();
-			Map.Add_A_Button(SidebarClass::StripClass::SelectButton[current.ID * 60 + added]);
-		}
-		DAT_00884B8F = true;
-		sb.UpdateScrollButtons();
-		sb.IsForceCompleteRedraw = true;
-	}
-}
-
 // FUNCTION: GAMEMD 0x006A7590
 void SidebarClass::SetTab(int tab)
 {
-	Select_Tab(*this, tab);
+	if (tab != ActiveTabIndex) {
+		TabButtons[ActiveTabIndex].Turn_Off();
+		Column[ActiveTabIndex].RemoveButtons();
+		ActiveTabIndex = tab;
+		TabButtons[tab].Turn_On();
+		Column[ActiveTabIndex].AddButtons();
+		UpdateScrollButtons();
+		IsForceCompleteRedraw = true;
+	}
 }
 
 // FUNCTION: GAMEMD 0x006A76F0
@@ -1338,7 +1278,7 @@ void SidebarClass::StripClass::Init_IO(int id)
 // FUNCTION: GAMEMD 0x006A8330
 void SidebarClass::StripClass::Activate(void)
 {
-	int count = Strip_Rows() * 2;
+	int count = Map.GetVisibleCameoCount();
 	for (int index = 0; index < count; index++) {
 		SelectButton[ID * 60 + index].Zap();
 		Map.Add_A_Button(SelectButton[ID * 60 + index]);
@@ -1567,21 +1507,14 @@ unsigned short const * SidebarClass::StripClass::Help_Text(int id)
 void SidebarClass::StripClass::AddButtons(void)
 {
 	AllowedToDraw = true;
-	int count = Strip_Rows() * 2;
-	for (int index = 0; index < count; index++) {
-		SelectButton[ID * 60 + index].Zap();
-		Map.Add_A_Button(SelectButton[ID * 60 + index]);
-	}
-	DAT_00884B8F = true;
+	Activate();
 }
 
 // FUNCTION: GAMEMD 0x006A94B0
 void SidebarClass::StripClass::RemoveButtons(void)
 {
 	AllowedToDraw = false;
-	for (int index = 0; index < 60; index++) {
-		Map.Remove_A_Button(SelectButton[ID * 60 + index]);
-	}
+	Deactivate();
 }
 
 // FUNCTION: GAMEMD 0x006A94F0
@@ -1780,6 +1713,21 @@ int SidebarClass::Max_Visible(void)
 		reserved = 0x12;
 	}
 	return (DAT_00886F94 - DAT_00B0B4F8 - reserved + DAT_00886F9C - 7) / 50;
+}
+
+// FUNCTION: GAMEMD 0x006AC430
+int SidebarClass::GetVisibleCameoCount(void)
+{
+	int side = Scen->PlayerSideIndex;
+	int reserved;
+	if (side == 0) {
+		reserved = 0x1a;
+	} else if (side == 1) {
+		reserved = 0x12;
+	} else {
+		reserved = 0x12;
+	}
+	return (DAT_00886F94 - DAT_00B0B4F8 - reserved + DAT_00886F9C - 7) / 50 * 2;
 }
 
 // FUNCTION: GAMEMD 0x006AC5D0

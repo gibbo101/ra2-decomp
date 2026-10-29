@@ -198,7 +198,7 @@ FrameSyncStruct::FrameSyncStruct(void)
 }
 
 // SYNTHETIC: GAMEMD 0x00646D20 SYMBOL
-// _$E208
+// _$E209
 FrameSyncStruct SyncBarFrameSync[7];
 
 void __fastcall FUN_00543090(IPXManagerClass *ipx);
@@ -221,13 +221,13 @@ void Queue_Ipx_Clear(void)
 }
 
 // SYNTHETIC: GAMEMD 0x00646D90 SYMBOL
-// _$E213
+// _$E214
 // SYNTHETIC: GAMEMD 0x00646DB0 SYMBOL
 // _$E47
 BasicTimerClass<SystemTimerClass> SentFrameSyncTimer;
 
 // SYNTHETIC: GAMEMD 0x00646DC0 SYMBOL
-// _$E216
+// _$E217
 FrameSyncStruct TheirFrameSync[7];
 
 // FUNCTION: GAMEMD 0x00646DF0
@@ -237,9 +237,9 @@ void __fastcall Stamp_Their_Timing(int index)
 }
 
 // SYNTHETIC: GAMEMD 0x00646E10 SYMBOL
-// _$E221
+// _$E222
 // SYNTHETIC: GAMEMD 0x00646E60 SYMBOL
-// _$E219
+// _$E220
 QueueRecord QueueRecords[256];
 
 

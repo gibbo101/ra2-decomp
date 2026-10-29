@@ -210,6 +210,19 @@ void RadBeam::FUN_006599C0(void)
 	Length = fastmath::sqrt(Delta.X * Delta.X + Delta.Y * Delta.Y + Delta.Z * Delta.Z);
 }
 
+// FUNCTION: GAMEMD 0x00659A30
+void RadBeam::FUN_00659A30(void)
+{
+	unknown_8C = (int)(Length / unknown_18);
+	Coord step(Delta.X, Delta.Y, Delta.Z);
+	step /= unknown_8C;
+	double phase = unknown_7C;
+	unknown_80 = phase / Period * Amplitude;
+	AndAnotherLocation = step;
+	PointA = SourceLocation;
+	Tint = Color;
+}
+
 // FUNCTION: GAMEMD 0x00659CA0
 bool RadBeam::FUN_00659CA0(void)
 {

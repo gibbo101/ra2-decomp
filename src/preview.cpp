@@ -40,31 +40,31 @@
 // SYNTHETIC: GAMEMD 0x006404D0 SYMBOL
 // _$E2
 // SYNTHETIC: GAMEMD 0x006404F0 SYMBOL
-// _$E83
+// _$E84
 // SYNTHETIC: GAMEMD 0x00640520 SYMBOL
-// _$E86
+// _$E87
 // SYNTHETIC: GAMEMD 0x00640540 SYMBOL
-// _$E89
+// _$E90
 // SYNTHETIC: GAMEMD 0x00640560 SYMBOL
-// _$E92
+// _$E93
 // SYNTHETIC: GAMEMD 0x00640580 SYMBOL
-// _$E95
+// _$E96
 // SYNTHETIC: GAMEMD 0x006405A0 SYMBOL
-// _$E98
+// _$E99
 // SYNTHETIC: GAMEMD 0x006405C0 SYMBOL
-// _$E101
+// _$E102
 // SYNTHETIC: GAMEMD 0x00640600 SYMBOL
-// _$E104
+// _$E105
 // SYNTHETIC: GAMEMD 0x00640630 SYMBOL
-// _$E107
+// _$E108
 // SYNTHETIC: GAMEMD 0x00640660 SYMBOL
-// _$E110
+// _$E111
 // SYNTHETIC: GAMEMD 0x00640690 SYMBOL
-// _$E113
+// _$E114
 // SYNTHETIC: GAMEMD 0x006406A0 SYMBOL
-// _$E116
+// _$E117
 // SYNTHETIC: GAMEMD 0x006406C0 SYMBOL
-// _$E119
+// _$E120
 
 // FUNCTION: GAMEMD 0x006406E0
 MapPreviewClass::MapPreviewClass(void) :
@@ -86,6 +86,16 @@ void * __fastcall FileSystem_LoadWholeFileEx(char const * name, bool & loaded);
 ConvertClass * FUN_0072E280(void);
 
 static inline int Min_Ref(int a, int b) { return (b < a) ? b : a; }
+
+#include "house.h"
+#include "lightcon.h"
+
+struct Drawing {
+	static int RenderWidth;
+};
+
+extern int DAT_007F5BE4;
+extern int DAT_007F5BE8;
 
 // FUNCTION: GAMEMD 0x00640710
 void MapPreviewClass::DrawStartPoints(HWND window)
@@ -122,6 +132,109 @@ void MapPreviewClass::DrawStartPoints(HWND window)
 				Fancy_Text_Print_Wide(Scratch(Point2D()), L"%d", AlternateSurface, &AlternateSurface->Get_Rect(), &(Point2D const &)Point2D(x - 2, y - 6), scheme, 8, TextPrintType(0x19), i + 1);
 			}
 		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x00640A40
+void MapPreviewClass::DrawMap(DSurface & surface)
+{
+	if (SurfacePtr != NULL) {
+		CellClass * cptr;
+
+		Map.Reset_Iterator();
+
+		int minx = 10000;
+		int originx = 10000;
+		int miny = 10000;
+		int maxx = 0;
+		int maxy = 0;
+
+		cptr = Map.Iterate();
+		while (cptr != NULL) {
+			if (Map.In_Local_Radar(cptr->CellID, false)) {
+				Point2D pixel = Cell_To_Preview_Pixel(cptr->CellID);
+				if (pixel.X < minx) {
+					originx = pixel.X;
+					minx = pixel.X;
+				}
+				if (pixel.X > maxx) {
+					maxx = pixel.X;
+				}
+				if (pixel.Y < miny) {
+					miny = pixel.Y;
+				}
+				if (pixel.Y > maxy) {
+					maxy = pixel.Y;
+				}
+			}
+			cptr = Map.Iterate();
+		}
+
+		int count = 0;
+		int i;
+		for (i = 0; i < 8; i++) {
+			if (Scen->Is_Valid_Waypoint(i)) {
+				count++;
+			}
+		}
+
+		for (int j = 0; j < count; j++) {
+			if (j == 0 || j <= i) {
+				if (Scen->Is_Valid_Waypoint(j)) {
+					Point2D pixel = Cell_To_Preview_Pixel(Scen->Get_Waypoint_Cell(j));
+					pixel = pixel - Point2D(minx, miny);
+					Rect rect(2 * pixel.X - 1, pixel.Y - 1, 4, 4);
+					SurfacePtr->Fill_Rect(SurfacePtr->Get_Rect(), rect, DSurface::Build_Hicolor_Pixel(0, 0, 0));
+				}
+			}
+		}
+
+		Rect framerect;
+		if (Drawing::RenderWidth == DAT_007F5BE4) {
+			framerect = Rect(499, 379, 216, 166);
+		} else if (Drawing::RenderWidth == DAT_007F5BE8) {
+			framerect = Rect(570, 424, 300, 260);
+		} else {
+			framerect = Rect(385, 270, 200, 200);
+		}
+
+		Rect srcrect = SurfacePtr->Get_Rect();
+		int scale = Min_Ref(1000 * framerect.Width / srcrect.Width, 1000 * framerect.Height / srcrect.Height);
+
+		int dx = (framerect.Width - (scale * srcrect.Width) / 1000) / 2;
+		int dy = (framerect.Height - (scale * srcrect.Height) / 1000) / 2;
+		Rect destrect;
+		destrect.X = dx;
+		destrect.Width = framerect.Width - 2 * dx;
+		destrect.Height = framerect.Height - 2 * dy;
+		destrect.Y = dy;
+
+		DSurface * surf = new DSurface(framerect.Width, framerect.Height, true);
+		surf->Blit_From(destrect, *SurfacePtr, SurfacePtr->Get_Rect(), false, false);
+
+		bool allocated = false;
+		ShapeSet * shape = (ShapeSet *)FileSystem_LoadWholeFileEx("mmpb.shp", allocated);
+
+		for (int k = 0; k < count; k++) {
+			if (k == 0 || k <= i) {
+				if (Scen->Is_Valid_Waypoint(k)) {
+					Point2D pixel = Cell_To_Preview_Pixel(Scen->Get_Waypoint_Cell(k));
+					pixel = pixel - Point2D(originx, miny);
+					if (Scen->HouseIndices[k] != -1) {
+						ConvertClass * convert = ColorSchemes[Houses[Scen->HouseIndices[k]]->Scheme]->Converter;
+						if (shape != NULL && convert != NULL) {
+							int x = (pixel.X * 1000000 / Scen->Width) * destrect.Width / 1000000 + destrect.X - 3;
+							int y = (pixel.Y * 1000000 / Scen->Height) * destrect.Height / 1000000 + destrect.Y - 2;
+							Draw_Shape(*surf, *convert, shape, 0, Point2D(x, y), surf->Get_Rect(), (ShapeFlags_Type)0x400);
+						}
+					}
+				}
+			}
+		}
+
+		surface.Fill_Rect(framerect, 0);
+		surface.Blit_From(framerect, *surf, surf->Get_Rect(), false, false);
+		delete surf;
 	}
 }
 

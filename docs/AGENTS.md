@@ -140,6 +140,10 @@ Each entry: what the diff showed, then the source change that fixed it.
   fixed a double X store that `predicted - (Coord(pp, 0) + coord)` gave.
 - x87 loads of a Coord difference in Z, Y, X order: the difference in a named local
   inside a file-local helper. `Distance_To` and `(a - b).Length()` load Y, Z, X.
+- An `fild`/`fidiv` pair split by unrelated `lea`s comes back together when the int
+  operand goes through a named double local (`double phase = unknown_7C;`, 0x00659A30).
+- VC6 folds `44 - (used + 1)` into `0x2B - used`; the exe's `inc` survives when the
+  counter is a named reference (`int & used = length;`, 0x00699980).
 - `Map[Adjacent_Cell(Get_Cell(), face)]` with no named Cell local keeps the original's
   add order; a named local loads the adjacent offset first.
 - A sum used once stays inline in its expression; a local for it reschedules the code.
@@ -234,6 +238,8 @@ Each entry: what the diff showed, then the source change that fixed it.
   can break a matched caller (0x006CB560). One too big
   to inline: a file-local `static inline` helper holds the body, and the member is a
   one-line plain wrapper (`_Conscript` in team.cpp).
+- An out-of-line copy of a header inline that calls a template member with no body in
+  the file stays a near miss: define that body in the file (`TPoint2D<T>::operator==`).
 - An inline helper written as a template can crash VC6 (internal compiler error); write
   one overload per type.
 - The shape of repeated inlines matters, not only their count: a nested ternary left
@@ -297,7 +303,8 @@ Each entry: what the diff showed, then the source change that fixed it.
 - A module's header initialisers (geometry.h's run, the 23-byte initialiser) start its
   range: the run after a module's last function belongs to the next file.
 - Byte-identical template instances with no vtable (`_com_ptr_t::_Release`) can be folded:
-  label one only from a caller whose type proves it, or leave it unlabelled.
+  label one only from a caller whose type proves it, or leave it unlabelled. The IID the
+  caller passes to QueryInterface names the interface (each GUID is in the exe twice).
 - A null test then `push 1; call` on a class with no virtual destructor is `delete p`:
   annotate the callee as SYNTHETIC `??_GClass@@QAEPAXI@Z`, never a new member.
 - One address called with two argument types is two overloads the linker folded: declare
@@ -439,6 +446,8 @@ Each entry: what the diff showed, then the source change that fixed it.
 - Every static data member a header declares, even a `static int`, uses up one `$E` number
   in each file including it; static member functions do not. Statics only the class's
   own .cpp uses stay out of the shared header: that file declares the full class itself.
+  When one must land, shift each includer's markers by one from the first number the
+  checker reports as 'no compiled function has this name'.
 - An inline constructor or destructor in a shared header on a class with vector members
   shifts `$E` and `$S` numbers in every includer: declare it, define it inline in its file.
 - A header that needs a type only by reference forward-declares it (`class Wstring;`):

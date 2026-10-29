@@ -135,7 +135,7 @@ template class TPoint3D<int>;
 template class IndexClass<int, StaticBufferClass::Entry *>;
 
 // SYNTHETIC: GAMEMD 0x006F2AD0 SYMBOL
-// _$E277
+// _$E278
 CDTimerClass<FrameTimerClass> TechnoClass::ActionLineTimer;
 
 // FUNCTION: GAMEMD 0x006F2AF0

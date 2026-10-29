@@ -6,6 +6,7 @@
 #define NDEBUG
 
 #include "always.h"
+#include "_keyboar.h"
 #include "_map.h"
 #include "_palette.h"
 #include "_rules.h"
@@ -30,6 +31,7 @@
 #include "init.h"
 #include "inline.h"
 #include "isotype.h"
+#include "keyboard.h"
 #include "language\language.h"
 #include "mapgen.h"
 #include "netshare.h"
@@ -220,13 +222,13 @@ struct TerritoryData {
 };
 
 // SYNTHETIC: GAMEMD 0x0058B740 SYMBOL
-// _$E185
+// _$E186
 // SYNTHETIC: GAMEMD 0x0058B760 SYMBOL
-// _$E183
+// _$E184
 // SYNTHETIC: GAMEMD 0x0058B770 SYMBOL
-// _$E188
+// _$E189
 // SYNTHETIC: GAMEMD 0x0058B780 SYMBOL
-// _$E191
+// _$E192
 
 // FUNCTION: GAMEMD 0x0058B7B0
 void FUN_0058B7B0(void)
@@ -367,9 +369,9 @@ void FUN_0058BC20(void)
 DynamicVectorClass<MapRegionClass *> MapRegionClass::MapRegions;
 
 // SYNTHETIC: GAMEMD 0x0058BC30 SYMBOL
-// _$E197
+// _$E198
 // SYNTHETIC: GAMEMD 0x0058BC70 SYMBOL
-// _$E194
+// _$E195
 
 // FUNCTION: GAMEMD 0x0058BCD0
 bool FUN_0058BCD0(int value)
@@ -1678,6 +1680,47 @@ MapGeneratorClass::MapGeneratorClass(void) :
 {
 }
 
+static inline void Reset_Cell_Data(void)
+{
+	if (RMGCellData != NULL) {
+		int grid_size = MapCellStride * MapCellStride;
+		for (int i = 0; i < grid_size; i++) {
+			RMGCellData[i].RegionID = -1;
+			RMGCellData[i].SpreadID = -1;
+		}
+	}
+}
+
+static inline void Delete_Regions(void)
+{
+	for (int i = MapRegionClass::MapRegions.Count() - 1; i >= 0; i--) {
+		delete MapRegionClass::MapRegions[i];
+	}
+}
+
+// FUNCTION: GAMEMD 0x005958E0
+MapGeneratorClass::~MapGeneratorClass(void)
+{
+	Reset_Cell_Data();
+	Delete_Regions();
+	MapRegionClass::TotalCount = 0;
+
+	if (RMGCellData != NULL) {
+		delete [] RMGCellData;
+		RMGCellData = NULL;
+	}
+
+	if (MapSeeder != NULL) {
+		delete MapSeeder;
+		MapSeeder = NULL;
+	}
+
+	if (MapPreview != NULL) {
+		delete MapPreview;
+		MapPreview = NULL;
+	}
+}
+
 // FUNCTION: GAMEMD 0x00595BC0
 int Do_Random_Map_Dialog(bool (*callback)())
 {
@@ -1870,6 +1913,292 @@ void Do_Random_Map(HWND dialog, bool (*callback)())
 		delete RandomMapGen.MapSeeder;
 		RandomMapGen.MapSeeder = NULL;
 	}
+}
+
+namespace UI {
+	int __fastcall StandardWndProc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+}
+char FUN_006067A0(HWND dialog);
+extern bool DAT_0082B030;
+
+static inline void Clear_Start_Bounds(void)
+{
+	DAT_00ABDFD4 = 0;
+	DAT_00ABDFD0 = 0;
+	DAT_00ABEC90 = 0;
+	DAT_00ABECD0 = 0;
+}
+
+// FUNCTION: GAMEMD 0x00596300
+BOOL CALLBACK Map_Seed_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	static int _unused = -1;
+
+	BOOL result = UI::StandardWndProc(window, message, wparam, lparam);
+	if (result) {
+		return(result);
+	}
+
+	LONG * state = (LONG *)GetWindowLongA(window, DWL_USER);
+	HWND handle;
+	bool enable;
+
+	switch (message) {
+
+		case WM_COMMAND:
+			switch (LOWORD(wparam)) {
+
+				case 0x3EA:
+				case 0x405:
+				case 0x406:
+				case 0x407:
+				case 0x408:
+					if (HIWORD(wparam) != CBN_SELCHANGE) {
+						return(0);
+					}
+					handle = GetDlgItem(window, 0x6C5);
+					if (handle != NULL) {
+						EnableWindow(handle, false);
+					}
+					handle = GetDlgItem(window, 0x6C3);
+					if (handle != NULL) {
+						EnableWindow(handle, false);
+					}
+					RandomMapGen.SeedData.Get_Settings(window);
+					InvalidateRect(window, NULL, false);
+					return(0);
+
+				case 0x5C0:
+					*state = 2;
+					return(1);
+
+				case 0x620: {
+					MouseCursor->Hide_Mouse();
+					if (DAT_0082B030) {
+						RandomMapGen.PreviewStale = true;
+					} else {
+						RandomMapGen.PreviewStale = false;
+						DAT_0082B030 = true;
+					}
+					RandomMapGen.SeedData.Get_Settings(window);
+					DAT_00ABED0C = 0;
+					int i;
+					for (i = 0; i < 8; i++) {
+						DAT_00ABE304[i] = CELL_NONE;
+						DAT_00ABE328[i] = Point2D(0, 0);
+					}
+					Clear_Start_Bounds();
+					if (Scen != NULL) {
+						Scen->NumberStartingPoints = DAT_00ABED0C;
+						for (i = 0; i < Scen->NumberStartingPoints; i++) {
+							Point2D point;
+							if (i >= 0 && i < DAT_00ABED0C) {
+								point = DAT_00ABE328[i];
+							} else {
+								point.X = 0;
+								point.Y = 0;
+							}
+							Scen->StartingPoints[i] = point;
+							Scen->HouseHomeCells[i] = DAT_00ABE304[i];
+						}
+						Scen->StartX = DAT_00ABDFD4;
+						Scen->StartY = DAT_00ABDFD0;
+						Scen->Width = DAT_00ABEC90;
+						Scen->Height = DAT_00ABECD0;
+					}
+					EnableWindow(GetDlgItem(window, 0x405), false);
+					EnableWindow(GetDlgItem(window, 0x3EA), false);
+					EnableWindow(GetDlgItem(window, 0x407), false);
+					EnableWindow(GetDlgItem(window, 0x406), false);
+					EnableWindow(GetDlgItem(window, 0x408), false);
+					EnableWindow(GetDlgItem(window, 0x3EB), false);
+					EnableWindow(GetDlgItem(window, 0x621), false);
+					EnableWindow(GetDlgItem(window, 0x620), false);
+					EnableWindow(GetDlgItem(window, 0x6C2), false);
+					EnableWindow(GetDlgItem(window, 0x6C3), false);
+					EnableWindow(GetDlgItem(window, 0x6C4), false);
+					EnableWindow(GetDlgItem(window, 0x6C5), false);
+					EnableWindow(GetDlgItem(window, 0x5C0), false);
+					wcscpy(RandomMapGen.SeedData.MapDescription, StringTable::LoadString("TXT_RANDOM_MAP_DESCRIPTION", NULL, "D:\\ra2mdpost\\MapGen.cpp", 3934));
+					RandomMapGen.Generate_Random_Map(true, window);
+					RandomMapGen.MapPreview->Create_Preview();
+					EnableWindow(GetDlgItem(window, 0x405), true);
+					EnableWindow(GetDlgItem(window, 0x3EA), true);
+					EnableWindow(GetDlgItem(window, 0x407), true);
+					EnableWindow(GetDlgItem(window, 0x406), true);
+					EnableWindow(GetDlgItem(window, 0x408), true);
+					EnableWindow(GetDlgItem(window, 0x3EB), true);
+					EnableWindow(GetDlgItem(window, 0x621), true);
+					EnableWindow(GetDlgItem(window, 0x620), true);
+					EnableWindow(GetDlgItem(window, 0x6C2), true);
+					EnableWindow(GetDlgItem(window, 0x6C3), true);
+					EnableWindow(GetDlgItem(window, 0x6C4), true);
+					EnableWindow(GetDlgItem(window, 0x6C5), true);
+					EnableWindow(GetDlgItem(window, 0x5C0), true);
+					if (RandomMapGen.MapSeeder != NULL) {
+						delete RandomMapGen.MapSeeder;
+					}
+					MapSeedClass * seeder = new MapSeedClass;
+					RandomMapGen.MapSeeder = seeder;
+					memcpy(seeder, &RandomMapGen.SeedData, sizeof(MapSeedClass));
+					MouseCursor->Show_Mouse();
+					Keyboard->Clear();
+					PostMessageA(window, WM_PAINT, 0, 0);
+					return(0);
+				}
+
+				case 0x621:
+					RandomMapGen.SeedData.Get_Settings(window);
+					RandomMapGen.SeedData.Set_Settings(window);
+					RandomMapGen.SeedData.Biome = Sim_Random_Pick(0U, 100U) >= 50;
+					RandomMapGen.SeedData.MapType = NonCriticalRandomNumber(1, 4);
+					RandomMapGen.SeedData.Time = NonCriticalRandomNumber(0, 3);
+					RandomMapGen.SeedData.Resources = NonCriticalRandomNumber(0, 3);
+					RandomMapGen.SeedData.Height = RandomMapGen.SeedData.Width = NonCriticalRandomNumber(0, 3);
+					RandomMapGen.SeedData.Randomize(RandomMapGen.SeedData.MapType);
+					wcscpy(RandomMapGen.SeedData.MapDescription, StringTable::LoadString("TXT_RANDOM_MAP_DESCRIPTION", NULL, "D:\\ra2mdpost\\MapGen.cpp", 3934));
+					RandomMapGen.SeedData.Seed = NonCriticalRandomNumber(0, 65535);
+					RandomMapGen.SeedData.Fixup_Settings();
+					RandomMapGen.SeedData.Set_Settings(window);
+					delete RandomMapGen.MapPreview;
+					RandomMapGen.MapPreview = NULL;
+					handle = GetDlgItem(window, 0x6C5);
+					if (handle != NULL) {
+						EnableWindow(handle, false);
+					}
+					handle = GetDlgItem(window, 0x6C3);
+					if (handle != NULL) {
+						EnableWindow(handle, false);
+					}
+					InvalidateRect(window, NULL, false);
+					return(0);
+
+				case 0x6C3:
+					RandomMapGen.SeedData.Get_Settings(window);
+					RandomMapGen.SeedData.LoadOptionsClass::Save(RandomMapGen.SeedData.MapDescription);
+					enable = RandomMapGen.SeedData.Files_Present();
+					handle = GetDlgItem(window, 0x6C2);
+					if (handle != NULL) {
+						EnableWindow(handle, enable);
+					}
+					handle = GetDlgItem(window, 0x6C4);
+					if (handle == NULL) {
+						break;
+					}
+					EnableWindow(handle, enable);
+					return(0);
+
+				case 0x6C2: {
+					RandomMapGen.SeedData.Get_Settings(window);
+					bool loaded = RandomMapGen.SeedData.LoadOptionsClass::Load() != 0;
+					if (loaded) {
+						DAT_0082B030 = !loaded;
+						PostMessageA(window, WM_COMMAND, 0x620, (LPARAM)GetDlgItem(window, 0x620));
+					}
+					while (MouseCursor->Get_Mouse_State()) {
+						MouseCursor->Show_Mouse();
+					}
+					RandomMapGen.SeedData.Set_Settings(window);
+					return(0);
+				}
+
+				case 0x6C4:
+					RandomMapGen.SeedData.Get_Settings(window);
+					RandomMapGen.SeedData.LoadOptionsClass::Delete();
+					enable = RandomMapGen.SeedData.Files_Present();
+					handle = GetDlgItem(window, 0x6C2);
+					if (handle != NULL) {
+						EnableWindow(handle, enable);
+					}
+					handle = GetDlgItem(window, 0x6C4);
+					if (handle == NULL) {
+						break;
+					}
+					EnableWindow(handle, enable);
+					return(0);
+
+				case 0x6C5:
+					RandomMapGen.SeedData.Get_Settings(window);
+					if (Debug_Map) {
+						RandomMapGen.Generate_Random_Map(false, window);
+						Scen->Set_Scenario_Name("Random Map");
+						Write_Scenario_INI("RandMap.Map", true);
+					} else if (RandomMapGen.MapPreview == NULL || RandomMapGen.MapPreview->Get_Preview_Surface() == NULL) {
+						RandomMapGen.Generate_Random_Map(true, window);
+						if (Debug_Map) {
+							Scen->Set_Scenario_Name("Random Map");
+							Write_Scenario_INI("RandMap.Map", true);
+						}
+					}
+					*state = 1;
+					return(1);
+			}
+			break;
+
+		case WM_PAINT:
+			if (RandomMapGen.MapPreview != NULL) {
+				if (!FUN_006067A0(GetDlgItem(window, 0x468))) {
+					RandomMapGen.MapPreview->DrawStartPoints(window);
+				}
+			}
+			if (Progress.Has_Dialog()) {
+				Progress.Display_Progress();
+			}
+			ValidateRect(window, NULL);
+			return(0);
+
+		case WM_HSCROLL:
+			if (lparam != 0 && GetDlgCtrlID((HWND)lparam) == 0x3EB) {
+				handle = GetDlgItem(window, 0x6C5);
+				if (handle != NULL) {
+					EnableWindow(handle, false);
+				}
+				handle = GetDlgItem(window, 0x6C3);
+				if (handle != NULL) {
+					EnableWindow(handle, false);
+				}
+				RandomMapGen.SeedData.Get_Settings(window);
+				InvalidateRect(window, NULL, false);
+				return(0);
+			}
+			return(0);
+
+		case 0x497: {
+			_unused = -1;
+			HWND preview = GetDlgItem(window, 0x620);
+			if (Debug_Map) {
+				EnableWindow(preview, false);
+			} else {
+				EnableWindow(preview, true);
+			}
+			if (RandomMapGen.SeedData.Seed == -1) {
+				RandomMapGen.SeedData.Seed = Scen->RandomNumber(0, 65535);
+				RandomMapGen.PreviewStale = true;
+			}
+			DAT_0082B030 = true;
+			RandomMapGen.SeedData.Set_Settings(window);
+			enable = RandomMapGen.SeedData.Files_Present();
+			handle = GetDlgItem(window, 0x6C2);
+			if (handle != NULL) {
+				EnableWindow(handle, enable);
+			}
+			handle = GetDlgItem(window, 0x6C4);
+			if (handle != NULL) {
+				EnableWindow(handle, enable);
+			}
+			handle = GetDlgItem(window, 0x6C5);
+			if (handle != NULL) {
+				EnableWindow(handle, false);
+			}
+			handle = GetDlgItem(window, 0x6C3);
+			if (handle != NULL) {
+				EnableWindow(handle, false);
+			}
+			return(0);
+		}
+	}
+
+	return(0);
 }
 
 // FUNCTION: GAMEMD 0x00596C70
@@ -3766,6 +4095,56 @@ double MapGeneratorClass::Get_Forest_Score(const Cell & cell1, const Cell & cell
 	return(RMG_RANDOM_DOUBLE(_random_range) + dist);
 }
 
+// FUNCTION: GAMEMD 0x005A4B60
+void MapGeneratorClass::Place_Tile_Patch(CellClass * cellptr, IsometricTileType ittype, int count, int origin_id, bool on_pavement)
+{
+	CellNode * node = NULL;
+	CellNode * nodes = new CellNode[10 * count];
+	PriorityQueueClass<CellNode> * queue = new PriorityQueueClass<CellNode>(10 * count);
+	int i = 0;
+	queue->Clear();
+
+	int node_count = 0;
+	Cell cell = cellptr->Fetch_CellID();
+	nodes[node_count].Element = cell;
+	nodes[node_count].Score = 0;
+	node_count++;
+
+	MapRegionClass::Get_Cell_Data(cellptr->Fetch_CellID()).SpreadID = origin_id;
+
+	queue->Insert(*nodes);
+
+	node = queue->Extract_Min();
+	while (i < count && node != NULL) {
+		CellClass * cptr = &Map[node->Element];
+		cptr->ITType = ittype;
+
+		FacingType dir = FACING_FIRST;
+		CellNode * newnode = &nodes[node_count];
+		for (; dir < FACING_COUNT; dir++) {
+			Cell newcell = Adjacent_Cell(node->Element, dir);
+			if (My_In_Radar(newcell)) {
+				CellClass * newcellptr = &Map[newcell];
+				if (newcellptr->Is_Tile_Clear() || on_pavement && (newcellptr->Is_Tile_Pavement() || newcellptr->Is_Tile_Misc_Pavement())) {
+					if (MapRegionClass::Get_Cell_Data(newcell).SpreadID != origin_id && newcellptr->Ramp == RAMP_NONE && newcellptr->Overlay == OVERLAY_NONE && newcellptr->Cell_Occupier() == NULL) {
+						newnode->Element = newcell;
+						newnode->Score = Get_Tile_Patch_Score(cellptr->Fetch_CellID(), newcell);
+						MapRegionClass::Get_Cell_Data(newcell).SpreadID = origin_id;
+						node_count++;
+						queue->Insert(*newnode++);
+					}
+				}
+			}
+		}
+
+		i++;
+		node = queue->Extract_Min();
+	}
+
+	delete[] nodes;
+	delete queue;
+}
+
 // FUNCTION: GAMEMD 0x005A4FA0
 double MapGeneratorClass::Get_Tile_Patch_Score(const Cell & cell1, const Cell & cell2) const
 {
@@ -4788,9 +5167,9 @@ DirtRoadTile::~DirtRoadTile(void)
 }
 
 // SYNTHETIC: GAMEMD 0x005A9C20 SYMBOL
-// _$E204
+// _$E206
 // SYNTHETIC: GAMEMD 0x005AC190 SYMBOL
-// _$E202
+// _$E204
 DirtRoadTile DirtRoadTiles[] = {
 	/* 0 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_N), DirtRoadLink(Cell(2, 0), FACING_NE)),
 	/* 1 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_N), DirtRoadLink(Cell(1, 0), FACING_E)),
@@ -5126,31 +5505,31 @@ template class VectorClass<double>;
 #include "geometry.h"
 
 // SYNTHETIC: GAMEMD 0x0058B530 SYMBOL
-// _$E207
+// _$E209
 // SYNTHETIC: GAMEMD 0x0058B560 SYMBOL
-// _$E210
+// _$E212
 // SYNTHETIC: GAMEMD 0x0058B580 SYMBOL
-// _$E213
+// _$E215
 // SYNTHETIC: GAMEMD 0x0058B5A0 SYMBOL
-// _$E216
+// _$E218
 // SYNTHETIC: GAMEMD 0x0058B5C0 SYMBOL
-// _$E219
+// _$E221
 // SYNTHETIC: GAMEMD 0x0058B5E0 SYMBOL
-// _$E222
+// _$E224
 // SYNTHETIC: GAMEMD 0x0058B600 SYMBOL
-// _$E225
+// _$E227
 // SYNTHETIC: GAMEMD 0x0058B640 SYMBOL
-// _$E228
+// _$E230
 // SYNTHETIC: GAMEMD 0x0058B670 SYMBOL
-// _$E231
+// _$E233
 // SYNTHETIC: GAMEMD 0x0058B6A0 SYMBOL
-// _$E234
+// _$E236
 // SYNTHETIC: GAMEMD 0x0058B6D0 SYMBOL
-// _$E237
+// _$E239
 // SYNTHETIC: GAMEMD 0x0058B6E0 SYMBOL
-// _$E240
+// _$E242
 // SYNTHETIC: GAMEMD 0x0058B700 SYMBOL
-// _$E243
+// _$E245
 // SYNTHETIC: GAMEMD 0x0058B720 SYMBOL
-// _$E246
+// _$E248
 const Rect RECT_NONE_2(0, 0, 0, 0);

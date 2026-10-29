@@ -141,10 +141,13 @@ ArrayList<WolChannel> DAT_00B76AE0;
 
 struct User {
 	unsigned int Flags;
-	char Pad[0x10];
+	int Group;
+	unsigned long Reserved;
+	unsigned long Reserved2;
+	unsigned long Reserved3;
 	unsigned long Squad;
 	unsigned long IPAddr;
-	char Pad2[4];
+	unsigned long SquadIcon;
 	User * Next;
 	char Nick[10];
 	char Login[0x57 - 0x2E];
@@ -183,8 +186,15 @@ struct Ladder {
 	int locale;
 };
 
-struct LadderB {
-	char Data[0x44];
+struct Highscore {
+	unsigned int sku;
+	unsigned int wins;
+	unsigned int losses;
+	unsigned int points;
+	unsigned int rank;
+	unsigned int accomplishments;
+	Highscore * next;
+	unsigned char login_name[40];
 };
 
 enum WolEntryState {
@@ -205,7 +215,7 @@ Dictionary<Wstring, Ladder> DAT_00B77D80 HASH_ARG;
 
 // FUNCTION: GAMEMD 0x0077BFB0
 // FUNCTION: GAMEMD 0x0077C050
-Dictionary<Wstring, LadderB> DAT_00B76640 HASH_ARG;
+Dictionary<Wstring, Highscore> DAT_00B76640 HASH_ARG;
 
 // FUNCTION: GAMEMD 0x0077C180
 // FUNCTION: GAMEMD 0x0077C220
@@ -2249,7 +2259,9 @@ struct AtlExitNode {
 
 struct AtlModule {
 	unsigned int cbSize;
-	char Pad0[0xC];
+	HINSTANCE Instance;
+	HINSTANCE ResourceInstance;
+	HINSTANCE TypeLibInstance;
 	AtlObjectEntry * Entries;
 	long LockCount;
 	HANDLE Heap;
@@ -2257,13 +2269,13 @@ struct AtlModule {
 	CRITICAL_SECTION Lock1;
 	CRITICAL_SECTION Lock2;
 	unsigned int BuildVersion;
-	char Pad2[4];
+	void * CreateWndList;
 	bool OwnsHeaps;
 	char Pad3[3];
 	GUID const * VersionGuid;
 	unsigned int HeapCount;
 	HANDLE * Heaps;
-	char Pad4[4];
+	int HeapIndex;
 	AtlExitNode * ExitList;
 
 	long Init(void * objects, HINSTANCE instance, GUID const * libid = NULL);
@@ -2795,7 +2807,6 @@ rc_ptr<PlayerProfile> __fastcall FUN_00778A20(Wstring const * name);
 extern char DAT_0084A238;
 extern int DAT_00B77A90;
 extern char DAT_00B761A8[];
-extern char DAT_00B75E4C;
 #include "wolopt.h"
 
 static inline int Pick_Locale(void)
@@ -2930,8 +2941,6 @@ namespace UI {
 extern wchar_t * DAT_00B75E50;
 extern int DAT_00B77DD4;
 rc_ptr<WDTState> * __cdecl FUN_007B0210(void);
-void __fastcall FUN_00735060(wchar_t * dest, char const * source, int limit);
-
 static inline void Set_Lobby_Number(WolChannel & chan)
 {
 	DAT_00B77DD4 = atol(chan.Name + strlen("Lob_41_"));
@@ -6029,7 +6038,7 @@ void FUN_00797C20(void)
 }
 
 // SYNTHETIC: GAMEMD 0x00798120 SYMBOL
-// _$E366
+// _$E367
 // FUNCTION: GAMEMD 0x00798140
 void FUN_00798140(void)
 {
@@ -7944,6 +7953,43 @@ void __fastcall FUN_007B0220(rc_ptr<WDTState> const & state);
 // FUNCTION: GAMEMD 0x007A2EA0
 // FUN_007A2EA0
 
+static inline AtlObjectEntry * Next_Object_Entry(AtlModule * module, AtlObjectEntry * entry)
+{
+	if (module->cbSize == 0x64) {
+		return (AtlObjectEntry *)((char *)entry + 0x1C);
+	}
+	return entry + 1;
+}
+
+// FUNCTION: GAMEMD 0x007A2F30
+long __stdcall FUN_007A2F30(AtlModule * module, void * objects, HINSTANCE instance)
+{
+	if (module == NULL) {
+		return E_INVALIDARG;
+	}
+	module->Entries = (AtlObjectEntry *)objects;
+	module->Instance = module->TypeLibInstance = module->ResourceInstance = instance;
+	module->LockCount = 0;
+	module->Heap = NULL;
+	InitializeCriticalSection(&module->Lock0);
+	InitializeCriticalSection(&module->Lock1);
+	InitializeCriticalSection(&module->Lock2);
+	module->CreateWndList = NULL;
+	module->OwnsHeaps = true;
+	module->HeapCount = 0;
+	module->HeapIndex = 0;
+	module->Heaps = NULL;
+	module->ExitList = NULL;
+	if (module->Entries != NULL) {
+		AtlObjectEntry * entry = module->Entries;
+		while (entry->Clsid != NULL) {
+			entry->ObjectMain(TRUE);
+			entry = Next_Object_Entry(module, entry);
+		}
+	}
+	return S_OK;
+}
+
 // FUNCTION: GAMEMD 0x007A2FC0
 CNetUtilEventSink::CNetUtilEventSink(void)
 {
@@ -8147,6 +8193,31 @@ long __stdcall FUN_007A3100(void * sink, long result, Ladder * list, int, long, 
 	HWND dialog = FUN_00775940(0x116);
 	if (dialog) {
 		FUN_0079C040(dialog);
+	}
+	return 0;
+}
+
+static inline void Remove_Highscore(Wstring & name)
+{
+	DAT_00B76640.remove(name);
+}
+
+// FUNCTION: GAMEMD 0x007A3B30
+long __stdcall FUN_007A3B30(void * sink, long result, Highscore * list, int, long, int)
+{
+	if (result == 0) {
+		Highscore * temp = list;
+		Wstring ladder_name("");
+		while (temp != NULL) {
+			ladder_name.set((char const *)temp->login_name);
+			ladder_name.toLower();
+			FUN_004068E0("Hey, I just got %s's high score, which happens to be %d. Guess what, his all-time highest rank is %d\n", ladder_name.get(), temp->points, temp->rank);
+			Remove_Highscore(ladder_name);
+			DAT_00B76640.add(ladder_name, *temp);
+			temp = temp->next;
+		}
+	} else {
+		FUN_004068E0("There was a problem with getting a high score.\n");
 	}
 	return 0;
 }
@@ -8545,6 +8616,136 @@ static inline WideWstring Widen(char const * text)
 	Wstring narrow(text);
 	return FUN_007B7ED0(narrow);
 }
+
+extern int DAT_007EEF3C;
+extern char DAT_0084AFDC[];
+
+static inline bool Is_Internal_Session(void)
+{
+	return Session.unknown_0C == 3 || Session.unknown_0C == 1 || Session.unknown_0C == 2;
+}
+
+// FUNCTION: GAMEMD 0x007A8DA0
+long __stdcall FUN_007A8DA0(void * sink, long result, void * channel, User * user, char const * text)
+{
+	if (DAT_00B77DC1)
+		return 0;
+	if (result < 0)
+		return 0;
+	if (Is_Internal_Session()) {
+		if (user->Flags & 1) {
+			FUN_007A16B0(text, false);
+			return 0;
+		}
+		return 0;
+	}
+	bool allowed;
+	{
+		Wstring narrow(text);
+		allowed = FUN_0077D2A0(user);
+	}
+	if (!allowed)
+		return 0;
+	if (!FUN_0077D4C0(user))
+		return 0;
+	WideWstring wide = Widen(text);
+	int color = DAT_007EEF2C;
+	if (user->Flags & 1) {
+		color = DAT_007EEF3C;
+	}
+	if (stricmp(Session.Handle, user->Nick) != 0) {
+		FUN_005E2700(color, L"[%hs] : %s", user->Nick, wide.get());
+	}
+	return 0;
+}
+
+// FUNCTION: GAMEMD 0x007A8ED0
+long __stdcall FUN_007A8ED0(void * sink, long result, void * channel, User * user, wchar_t const * text)
+{
+	if (DAT_00B77DC1) {
+		return 0;
+	}
+	if (result < 0) {
+		return 0;
+	}
+	WideWstring wide(text);
+	if (!FUN_0077D2E0(user, &wide)) {
+		return 0;
+	}
+	if (!FUN_0077D4C0(user)) {
+		return 0;
+	}
+	int color = DAT_007EEF2C;
+	if (user->Flags & 1) {
+		color = DAT_007EEF3C;
+	}
+	if (stricmp(Session.Handle, user->Nick) != 0) {
+		FUN_005E2700(color, L"[%hs] : %s", user->Nick, wide.get());
+	}
+	return 0;
+}
+
+// FUNCTION: GAMEMD 0x007A8FC0
+long __stdcall FUN_007A8FC0(void * sink, long result, User * user, char const * text)
+{
+	if (DAT_00B77DC1)
+		return 0;
+	if (result < 0)
+		return 0;
+	if (Is_Internal_Session()) {
+		if (user->Flags & 1) {
+			FUN_007A16B0(text, true);
+			return 0;
+		}
+		FUN_004068E0(DAT_0084AFDC, user->Nick, text);
+		return 0;
+	}
+	bool allowed;
+	{
+		Wstring narrow(text);
+		allowed = FUN_0077D2A0(user);
+	}
+	if (!allowed)
+		return 0;
+	if (!FUN_0077D4C0(user))
+		return 0;
+	WideWstring wide = Widen(text);
+	int color = DAT_007EEF30;
+	if (user->Flags & 1) {
+		color = DAT_007EEF3C;
+	}
+	if (stricmp(Session.Handle, user->Nick) != 0) {
+		FUN_005E2700(color, L"%hs : %s", user->Nick, wide.get());
+	}
+	return 0;
+}
+
+// FUNCTION: GAMEMD 0x007A9110
+long __stdcall FUN_007A9110(void * sink, long result, User * user, wchar_t const * text)
+{
+	if (DAT_00B77DC1) {
+		return 0;
+	}
+	if (result < 0) {
+		return 0;
+	}
+	WideWstring wide(text);
+	if (!FUN_0077D2E0(user, &wide)) {
+		return 0;
+	}
+	if (!FUN_0077D4C0(user)) {
+		return 0;
+	}
+	int color = DAT_007EEF30;
+	if (user->Flags & 1) {
+		color = DAT_007EEF3C;
+	}
+	if (stricmp(Session.Handle, user->Nick) != 0) {
+		FUN_005E2700(color, L"%hs : %s", user->Nick, wide.get());
+	}
+	return 0;
+}
+
 
 // FUNCTION: GAMEMD 0x007A9200
 long __stdcall FUN_007A9200(void * sink, long result, User * user, char const * text)
@@ -9414,7 +9615,7 @@ template class ArrayList<int>;
 template class Dictionary<Wstring, Ladder>;
 
 // TEMPLATE: GAMEMD 0x007AE0E0
-// ?expand@?$Dictionary@VWstring@@ULadderB@@@@AAEXXZ
+// ?expand@?$Dictionary@VWstring@@UHighscore@@@@AAEXXZ
 
 // TEMPLATE: GAMEMD 0x007AE180
 // ?getPointer@?$Dictionary@VWstring@@H@@QAEDAAVWstring@@PAPAH@Z
@@ -9430,7 +9631,7 @@ template class Dictionary<Wstring, Ladder>;
 
 // TEMPLATE: GAMEMD 0x007AE5B0
 // ?keyHash@?$Dictionary@VWstring@@H@@AAEIAAVWstring@@@Z
-template class Dictionary<Wstring, LadderB>;
+template class Dictionary<Wstring, Highscore>;
 template class Dictionary<Wstring, int>;
 
 // TEMPLATE: GAMEMD 0x007AE5D0
@@ -9478,7 +9679,7 @@ template class Dictionary<Wstring, WolChannel>;
 // ?growVector@?$ArrayList@H@@AAEDXZ
 
 // TEMPLATE: GAMEMD 0x007AEF50
-// ?shrink@?$Dictionary@VWstring@@ULadderB@@@@AAEXXZ
+// ?shrink@?$Dictionary@VWstring@@UHighscore@@@@AAEXXZ
 
 // TEMPLATE: GAMEMD 0x007AF000
 // ?growVector@?$ArrayList@VWstring@@@@AAEDXZ

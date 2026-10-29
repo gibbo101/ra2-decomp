@@ -275,9 +275,9 @@ BOOL CALLBACK Game_Options_Dialog_Proc(HWND window, UINT message, WPARAM wparam,
 }
 
 // SYNTHETIC: GAMEMD 0x004F1700 SYMBOL
-// _$E110
+// _$E111
 // SYNTHETIC: GAMEMD 0x004F1710 SYMBOL
-// _$E109
+// _$E110
 
 // FUNCTION: GAMEMD 0x004F1720
 void Game_Options_On_INITDIALOG(HWND window)

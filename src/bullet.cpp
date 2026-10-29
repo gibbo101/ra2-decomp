@@ -86,9 +86,9 @@ extern ULONG COMRefCount;
 
 
 // SYNTHETIC: GAMEMD 0x004662E0 SYMBOL
-// _$E165
+// _$E166
 // SYNTHETIC: GAMEMD 0x00466320 SYMBOL
-// _$E162
+// _$E163
 
 // FUNCTION: GAMEMD 0x00466380
 BulletClass::BulletClass(void) :
@@ -534,6 +534,27 @@ void BulletClass::InitScalable(void)
 		extra = 0;
 	}
 	Class->SetScaledSpawnDelay(Class->SpawnDelay + extra / 3);
+}
+
+// FUNCTION: GAMEMD 0x0046B310
+void BulletClass::NukeMaker(void)
+{
+	AbstractClass * target = TarCom;
+	CellClass * cptr = &Map[target->Center_Coord().As_Cell()];
+	WeaponTypeClass * weapon = Weapons[WeaponTypeClass::From_Name("NukePayload")];
+
+	BulletTypeClass const * type = weapon->Bullet;
+	WarheadTypeClass const * warhead = weapon->WarheadPtr;
+	int speed = weapon->MaxSpeed;
+	BulletClass * bullet = Create_Bullet(type, target, Payback, weapon->Attack, warhead, speed, true);
+	if (bullet != NULL) {
+		bullet->Limbo();
+		bullet->WeaponType = weapon;
+		Coord coord = cptr->Center_Coord();
+		coord = coord + Coord(0, 0, WeaponType->Bullet->DetonationAltitude);
+		TVelocity3D<double> velocity(DIR_N, DIR_N, -1.0);
+		bullet->Unlimbo(coord, velocity);
+	}
 }
 
 // FUNCTION: GAMEMD 0x0046B560

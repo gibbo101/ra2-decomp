@@ -56,51 +56,51 @@ struct IntTriple {
 };
 
 // SYNTHETIC: GAMEMD 0x005ADB20 SYMBOL
-// _$E15
+// _$E16
 double DAT_00ABED78 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
 
 // SYNTHETIC: GAMEMD 0x005ADB50 SYMBOL
-// _$E18
+// _$E19
 double DAT_00ABEDC8 = DAT_00ABED78 / DAT_007EDB38;
 
 // SYNTHETIC: GAMEMD 0x005ADB70 SYMBOL
-// _$E21
+// _$E22
 double DAT_00ABEDB0 = DAT_007E1718 / DAT_00ABEDC8;
 
 // SYNTHETIC: GAMEMD 0x005ADB90 SYMBOL
-// _$E24
+// _$E25
 double DAT_00ABEDA8 = DAT_007E1720 * DAT_007EDB40;
 
 // SYNTHETIC: GAMEMD 0x005ADBB0 SYMBOL
-// _$E27
+// _$E28
 double DAT_00ABED80 = DAT_007E1728 * DAT_007EDB40;
 
 // SYNTHETIC: GAMEMD 0x005ADBD0 SYMBOL
-// _$E30
+// _$E31
 double DAT_00ABED58 = DAT_007E1730 * DAT_007EDB40;
 
 // SYNTHETIC: GAMEMD 0x005ADBF0 SYMBOL
-// _$E33
+// _$E34
 int DAT_00ABEDD0 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00ABED58 - DAT_00ABED80) * DAT_00ABED78));
 
 // SYNTHETIC: GAMEMD 0x005ADC30 SYMBOL
-// _$E36
+// _$E37
 double DAT_00ABED88 = FUN_004CADE0(DAT_00ABEDD0 * DAT_007E1740);
 
 // SYNTHETIC: GAMEMD 0x005ADC60 SYMBOL
-// _$E39
+// _$E40
 double DAT_00ABEDA0 = FUN_004CADE0((DAT_00ABEDD0 * 2) / DAT_00ABED78);
 
 // SYNTHETIC: GAMEMD 0x005ADC90 SYMBOL
-// _$E42
+// _$E43
 int DAT_00ABEDC4 = (int)(DAT_00ABEDD0 * 4 + DAT_007E1738);
 
 // SYNTHETIC: GAMEMD 0x005ADCC0 SYMBOL
-// _$E45
+// _$E46
 ShortPair DAT_00ABED70;
 
 // SYNTHETIC: GAMEMD 0x005ADCD0 SYMBOL
-// _$E48
+// _$E49
 IntTriple DAT_00ABED90;
 
 class MapSelect : public MSEngine {
@@ -233,6 +233,42 @@ bool MapSelect::Advance_Progression(ScenarioClass * scen, Wstring const & map_na
 
 	Choices.Deinit();
 	return(strlen(scen->ScenarioName) > 0);
+}
+
+// FUNCTION: GAMEMD 0x005AE100
+bool MapSelect::SetNextScenario(ScenarioClass * scen)
+{
+	if (Init(scen) == false) {
+		return(false);
+	}
+
+	ScenarioClass::WasGameSaved = false;
+
+	MapStage * stage = Choices.Find_Stage_By_Scenario(scen->ScenarioName);
+
+	FUN_004068E0("MapSelect: Stage: %s\n", stage->Get_Stage_Label().c_str());
+
+	if (stage->Get_Map_VQ_Name() != NULL) {
+		Theme.Play_Song(Theme.From_Name("LOADING"));
+
+		char const * label = stage->Get_Selection(0)->Get_Stage_Label().text();
+
+		if (label != NULL) {
+			FUN_004068E0("Selected %s\n", label);
+
+			MapStage * next = Choices.Find_Stage_By_Name(label);
+			Wstring name = next->Get_Scenario_Name();
+
+			if (name.length() != 0) {
+				scen->Set_Scenario_Name(name.get());
+				scen->Stage = Choices.Get_Stage_ID(next);
+			}
+		}
+	}
+
+	Deinit();
+
+	return(true);
 }
 
 // FUNCTION: GAMEMD 0x005AE220

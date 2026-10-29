@@ -57,9 +57,9 @@
 DynamicVectorClass<TiberiumClass *> Tiberiums;
 
 // SYNTHETIC: GAMEMD 0x00721640 SYMBOL
-// _$E104
+// _$E105
 // SYNTHETIC: GAMEMD 0x00721680 SYMBOL
-// _$E102
+// _$E103
 
 // FUNCTION: GAMEMD 0x007216C0
 TiberiumClass::TiberiumClass(char const * ininame) :

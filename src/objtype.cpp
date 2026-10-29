@@ -76,9 +76,9 @@ struct FileSystem {
 };
 
 // SYNTHETIC: GAMEMD 0x005F6FF0 SYMBOL
-// _$E100
+// _$E101
 // SYNTHETIC: GAMEMD 0x005F7030 SYMBOL
-// _$E97
+// _$E98
 DynamicVectorClass<ObjectTypeClass *> ObjectTypeClass::ObjectTypes;
 
 static inline bool _Add_Type(DynamicVectorClass<ObjectTypeClass *> & v, ObjectTypeClass * p) { return v.Add(p); }

@@ -49,11 +49,11 @@
 // SYNTHETIC: GAMEMD 0x005FF1B0 SYMBOL
 // _$E41
 // SYNTHETIC: GAMEMD 0x005FF1D0 SYMBOL
-// _$E120
+// _$E121
 DynamicVectorClass<SpotLightClass *> SpotLights;
 
 // SYNTHETIC: GAMEMD 0x005FF210 SYMBOL
-// _$E118
+// _$E119
 
 int *SpotLightMMXBuffer;
 

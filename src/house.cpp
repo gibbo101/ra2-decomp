@@ -120,10 +120,10 @@ ThreatType __fastcall FUN_00645BB0(QuarryType quarry);
 // _$E41
 
 // SYNTHETIC: GAMEMD 0x004F50F0 SYMBOL
-// _$E200
+// _$E201
 
 // SYNTHETIC: GAMEMD 0x004F5130 SYMBOL
-// _$E197
+// _$E198
 DynamicVectorClass<HouseClass::BuildChoiceClass *> HouseClass::BuildChoice;
 
 // FUNCTION: GAMEMD 0x004F5190
@@ -1994,6 +1994,65 @@ void HouseClass::Tracking_Remove(TechnoClass const * techno)
 			UQuantity.Decrement(techno->TClass->Fetch_Heap_ID());
 			if (techno->TClass->Naval && techno->TClass->MaxPassengers == 0) {
 				OwnedNavy--;
+			}
+			break;
+
+		default:
+			break;
+	}
+}
+
+// FUNCTION: GAMEMD 0x004FF700
+void HouseClass::Tracking_Add(TechnoClass const * techno)
+{
+	((TechnoClass *)techno)->CountedAsOwned = true;
+	if (techno->TClass->IsInsignificant) return;
+	if (techno->TClass->DontScore) return;
+
+	switch ((RTTIType)techno->Fetch_RTTI()) {
+		case RTTI_BUILDING:
+			if (techno->IsStrange() || (((BuildingClass *)techno)->Class->UndeploysInto != NULL && ((BuildingClass *)techno)->Class->UndeploysInto->ResourceGatherer)) {
+				CurUnits++;
+			} else {
+				CurBuildings++;
+			}
+			{
+				int id = techno->TClass->Fetch_Heap_ID();
+				BQuantity.Increment(id);
+				BuildingTotals.Increment_Unit_Total(id);
+			}
+			break;
+
+		case RTTI_AIRCRAFT:
+			CurAircraft++;
+			{
+				int id = techno->TClass->Fetch_Heap_ID();
+				AQuantity.Increment(id);
+				AircraftTotals.Increment_Unit_Total(id);
+			}
+			break;
+
+		case RTTI_INFANTRY:
+			{
+				int id = techno->TClass->Fetch_Heap_ID();
+				if (!techno->CountedAsOwnedSpecial && !techno->Absorbed) {
+					CurInfantry++;
+					((TechnoClass *)techno)->CountedAsOwnedSpecial = true;
+				}
+				IQuantity.Increment(id);
+				InfantryTotals.Increment_Unit_Total(id);
+			}
+			break;
+
+		case RTTI_UNIT:
+			CurUnits++;
+			{
+				int id = techno->TClass->Fetch_Heap_ID();
+				UQuantity.Increment(id);
+				UnitTotals.Increment_Unit_Total(id);
+			}
+			if (techno->TClass->Naval && techno->TClass->MaxPassengers == 0) {
+				OwnedNavy++;
 			}
 			break;
 

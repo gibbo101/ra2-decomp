@@ -53,9 +53,9 @@ extern "C" const CLSID CLSID_CaptureManagerClass;
 // SYNTHETIC: GAMEMD 0x00471730 SYMBOL
 // _$E47
 // SYNTHETIC: GAMEMD 0x00471750 SYMBOL
-// _$E91
+// _$E92
 // SYNTHETIC: GAMEMD 0x00471790 SYMBOL
-// _$E89
+// _$E90
 DynamicVectorClass<CaptureManagerClass *> CaptureManagerArray;
 
 // FUNCTION: GAMEMD 0x004717D0

@@ -178,9 +178,9 @@ struct SHPStruct
 // SYNTHETIC: GAMEMD 0x006BB240 SYMBOL
 // _$E38
 // SYNTHETIC: GAMEMD 0x006BB260 SYMBOL
-// _$E328
+// _$E329
 // SYNTHETIC: GAMEMD 0x006BB2A0 SYMBOL
-// _$E326
+// _$E327
 
 namespace DirectDrawWrap { extern bool DoSmth; void DisposeOfStuff(void); }
 void FUN_004C19B0(void);

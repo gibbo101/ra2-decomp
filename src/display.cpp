@@ -125,9 +125,9 @@ extern BeaconManagerClass BeaconManager;
 // _$E41
 
 // SYNTHETIC: GAMEMD 0x004A8630 SYMBOL
-// _$E240
+// _$E241
 // SYNTHETIC: GAMEMD 0x004A8680 SYMBOL
-// _$E237
+// _$E238
 LayerClass DisplayClass::Layer[LAYER_COUNT];
 
 void const * DisplayClass::ShadowShapes;
@@ -135,9 +135,9 @@ void const * DisplayClass::PlacementShapes;
 void const * DAT_008A0418;
 
 // SYNTHETIC: GAMEMD 0x004A86E0 SYMBOL
-// _$E246
+// _$E247
 // SYNTHETIC: GAMEMD 0x004A8710 SYMBOL
-// _$E243
+// _$E244
 DisplayClass::TacticalClass DisplayClass::TacButton;
 
 // FUNCTION: GAMEMD 0x004A8730
@@ -315,7 +315,7 @@ void DisplayClass::SetActiveFoundation(Cell const * list)
 }
 
 // SYNTHETIC: GAMEMD 0x004A8D40 SYMBOL
-// _$E249
+// _$E250
 // FUNCTION: GAMEMD 0x004A8D50
 void DisplayClass::FUN_004A8D50(Cell const * list)
 {
@@ -339,7 +339,7 @@ void DisplayClass::FUN_004A8D50(Cell const * list)
 }
 
 // SYNTHETIC: GAMEMD 0x004A8EA0 SYMBOL
-// _$E251
+// _$E252
 // FUNCTION: GAMEMD 0x004A94F0
 Cell DisplayClass::Get_Occupy_Dimensions(Cell const * list) const
 {

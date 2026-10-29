@@ -59,6 +59,27 @@ static char const * PersistentName[3] = {
 	"Persistent"
 };
 
+// FUNCTION: GAMEMD 0x00726C80
+TriggerTypeClass::TriggerTypeClass(char const * name) :
+	BASECLASS(name),
+	HeapID(-1),
+	_IsEnabled(true),
+	IsEnabledOnEasy(true),
+	IsEnabledOnMedium(true),
+	IsEnabledOnHard(true),
+	IsToInherit(false),
+	House(NULL),
+	LinkedTo(NULL),
+	FirstEvent(NULL),
+	FirstAction(NULL)
+{
+	EventActionPtrTracker.Add(this);
+	AbstractTypePtrTracker.Add(this);
+
+	HeapID = TriggerTypes.Count();
+	TriggerTypes.Add(this);
+}
+
 // FUNCTION: GAMEMD 0x00726E00
 TriggerTypeClass::~TriggerTypeClass(void)
 {
@@ -280,23 +301,23 @@ bool TriggerTypeClass::Read_INI(CCINIClass & ini)
 
 		token = strtok(NULL, ",");
 		if (token != NULL && atoi(token) != 0) {
-			Difficulty.IsEnabledOnEasy = true;
+			IsEnabledOnEasy = true;
 		} else {
-			Difficulty.IsEnabledOnEasy = false;
+			IsEnabledOnEasy = false;
 		}
 
 		token = strtok(NULL, ",");
 		if (token != NULL && atoi(token) != 0) {
-			Difficulty.IsEnabledOnMedium = true;
+			IsEnabledOnMedium = true;
 		} else {
-			Difficulty.IsEnabledOnMedium = false;
+			IsEnabledOnMedium = false;
 		}
 
 		token = strtok(NULL, ",");
 		if (token != NULL && atoi(token) != 0) {
-			Difficulty.IsEnabledOnHard = true;
+			IsEnabledOnHard = true;
 		} else {
-			Difficulty.IsEnabledOnHard = false;
+			IsEnabledOnHard = false;
 		}
 
 		token = strtok(NULL, ",");
@@ -360,9 +381,9 @@ bool TriggerTypeClass::Write_INI(CCINIClass & ini) const
 		(LinkedTo != NULL) ? (char const *)LinkedTo->IniName : "<none>",
 		(char const *)GivenName,
 		IsEnabled ? 0 : 1,
-		Difficulty.IsEnabledOnEasy ? 1 : 0,
-		Difficulty.IsEnabledOnMedium ? 1 : 0,
-		Difficulty.IsEnabledOnHard ? 1 : 0,
+		IsEnabledOnEasy ? 1 : 0,
+		IsEnabledOnMedium ? 1 : 0,
+		IsEnabledOnHard ? 1 : 0,
 		IsToInherit ? 1 : 0);
 
 	ini.Put_String(INI_NAME, IniName, buffer);

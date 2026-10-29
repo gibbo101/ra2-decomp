@@ -1270,7 +1270,7 @@ int __fastcall FUN_00733990(int value)
 	return value == 1 ? 2 : 0;
 }
 
-char * __fastcall FUN_00733E10(ObjectList * items, char const * preferred, int limit, int * best);
+char * __fastcall FUN_00733E10(TechnoList * items, char const * preferred, int limit, int * best);
 int __fastcall FUN_00733C60(TechnoClass * techno, char const * name);
 extern char DAT_00B0FD70[];
 
@@ -1342,9 +1342,9 @@ void __fastcall FUN_007339B0(bool redraw)
 			DAT_00B0FE6C = (UICommandHolder *)Wrap_Filter((bool (__fastcall *)(ObjectClass *, int))FUN_007335F0, 0);
 		}
 		FUN_006DA740(TacticalMap);
-		chosen = FUN_00733E10((ObjectList *)DAT_00B0FE6C, NULL, 0x7fffffff, &best);
+		chosen = FUN_00733E10((TechnoList *)DAT_00B0FE6C, NULL, 0x7fffffff, &best);
 	} else {
-		chosen = FUN_00733E10((ObjectList *)DAT_00B0FE6C, DAT_00B0FD70, DAT_00B0FE70, &best);
+		chosen = FUN_00733E10((TechnoList *)DAT_00B0FE6C, DAT_00B0FD70, DAT_00B0FE70, &best);
 		if (redraw) {
 			FUN_006DA740(TacticalMap);
 		}
@@ -1399,6 +1399,79 @@ NameList * __fastcall FUN_00733CD0(ObjectList * objects)
 }
 
 extern int DAT_00845558;
+
+typedef DynamicVectorClass<int> IntList;
+
+static inline NameList * Names_Of(TechnoList * items)
+{
+	NameList * names = new NameList(0, 0);
+	int count = items->Count();
+	for (int i = 0; i < count; i++) {
+		char const * name = (*items)[i]->Class_Of()->Name();
+		if (FUN_00732210(names, name) == -1) {
+			names->Add(name);
+		}
+	}
+	return names;
+}
+
+// FUNCTION: GAMEMD 0x00733E10
+char * __fastcall FUN_00733E10(TechnoList * items, char const * preferred, int limit, int * best)
+{
+	IntList * totals;
+	NameList * names = Names_Of(items);
+	int i;
+	int j;
+	int count;
+	totals = new IntList;
+	int namecount = names->Count();
+	for (int n = namecount; n > 0; n--) {
+		totals->Add(0);
+	}
+	count = items->Count();
+	for (i = 0; i < count; i++) {
+		TechnoClass * item = (*items)[i];
+		char const * name = item->Class_Of()->Name();
+		int found = FUN_00732210(names, name);
+		HouseClass * key = item->House;
+		int old = (*totals)[found];
+		int cost = item->Class_Of()->Cost_Of(key);
+		(*totals)[found] = old + cost;
+	}
+	*best = 0;
+	int pick = -1;
+	if (preferred) {
+		for (j = 0; j < namecount; j++) {
+			if (strcmp(preferred, (*names)[j]) && (*totals)[j] < limit && (*totals)[j] > *best) {
+				*best = (*totals)[j];
+				pick = j;
+			}
+		}
+	}
+	if (!preferred || *best == 0) {
+		int max = 0;
+		int idx = -1;
+		for (j = 0; j < namecount; j++) {
+			if ((*totals)[j] > max) {
+				max = (*totals)[j];
+				idx = j;
+			}
+		}
+		*best = max;
+		pick = idx;
+	}
+	char const * chosen = preferred;
+	if (pick != -1) {
+		chosen = (*names)[pick];
+	}
+	char * result = new char[100];
+	if (chosen) {
+		strcpy(result, chosen);
+	}
+	delete names;
+	delete totals;
+	return(result);
+}
 
 // FUNCTION: GAMEMD 0x00734210
 void FUN_00734210(void)

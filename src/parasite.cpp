@@ -56,9 +56,9 @@ namespace Unsorted { extern bool ScenarioStarted; }
 // SYNTHETIC: GAMEMD 0x00629170 SYMBOL
 // _$E47
 // SYNTHETIC: GAMEMD 0x00629190 SYMBOL
-// _$E128
+// _$E129
 // SYNTHETIC: GAMEMD 0x006291D0 SYMBOL
-// _$E126
+// _$E127
 DynamicVectorClass<ParasiteClass *> Parasites;
 
 // FUNCTION: GAMEMD 0x00629210

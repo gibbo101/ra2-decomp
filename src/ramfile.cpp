@@ -52,9 +52,9 @@ namespace Unsorted { extern int CurrentFrame; }
 DynamicVectorClass<RadSiteClass *> RadSites;
 
 // SYNTHETIC: GAMEMD 0x0065B160 SYMBOL
-// _$E101
+// _$E102
 // SYNTHETIC: GAMEMD 0x0065B1A0 SYMBOL
-// _$E99
+// _$E100
 
 // FUNCTION: GAMEMD 0x0065B1E0
 RadSiteClass::RadSiteClass(void) :

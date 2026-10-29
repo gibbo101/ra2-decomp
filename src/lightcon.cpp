@@ -41,31 +41,31 @@ struct PsyDom {
 // SYNTHETIC: GAMEMD 0x00555B90 SYMBOL
 // _$E3
 // SYNTHETIC: GAMEMD 0x00555BB0 SYMBOL
-// _$E32
+// _$E33
 // SYNTHETIC: GAMEMD 0x00555BE0 SYMBOL
-// _$E35
+// _$E36
 // SYNTHETIC: GAMEMD 0x00555C00 SYMBOL
-// _$E38
+// _$E39
 // SYNTHETIC: GAMEMD 0x00555C20 SYMBOL
-// _$E41
+// _$E42
 // SYNTHETIC: GAMEMD 0x00555C40 SYMBOL
-// _$E44
+// _$E45
 // SYNTHETIC: GAMEMD 0x00555C60 SYMBOL
-// _$E47
+// _$E48
 // SYNTHETIC: GAMEMD 0x00555C80 SYMBOL
-// _$E50
+// _$E51
 // SYNTHETIC: GAMEMD 0x00555CC0 SYMBOL
-// _$E53
+// _$E54
 // SYNTHETIC: GAMEMD 0x00555CF0 SYMBOL
-// _$E56
+// _$E57
 // SYNTHETIC: GAMEMD 0x00555D20 SYMBOL
-// _$E59
+// _$E60
 // SYNTHETIC: GAMEMD 0x00555D50 SYMBOL
-// _$E62
+// _$E63
 // SYNTHETIC: GAMEMD 0x00555D60 SYMBOL
-// _$E65
+// _$E66
 // SYNTHETIC: GAMEMD 0x00555D80 SYMBOL
-// _$E68
+// _$E69
 
 // FUNCTION: GAMEMD 0x00555DA0
 LightConvertClass::LightConvertClass(PaletteClass const & artpalette, PaletteClass const & screenpalette, Surface const & typicalsurface, int red_tint, int green_tint, int blue_tint, bool blitters_created, bool * tint_mask, int intensity_levels) :

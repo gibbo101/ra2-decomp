@@ -70,11 +70,11 @@ TriggerClass::TriggerClass(TriggerTypeClass * trigtype) :
 		Reset_All_Timed_Events();
 		if (!Class->Is_Enabled()) {
 			IsActive = false;
-		} else if (Scen->Difficulty == DIFF_EASY && !Class->Difficulty.IsEnabledOnEasy) {
+		} else if (Scen->Difficulty == DIFF_EASY && !Class->IsEnabledOnEasy) {
 			IsActive = false;
-		} else if (Scen->Difficulty == DIFF_NORMAL && !Class->Difficulty.IsEnabledOnMedium) {
+		} else if (Scen->Difficulty == DIFF_NORMAL && !Class->IsEnabledOnMedium) {
 			IsActive = false;
-		} else if (Scen->Difficulty == DIFF_HARD && !Class->Difficulty.IsEnabledOnHard) {
+		} else if (Scen->Difficulty == DIFF_HARD && !Class->IsEnabledOnHard) {
 			IsActive = false;
 		}
 	}

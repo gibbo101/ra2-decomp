@@ -440,6 +440,28 @@ int IPXManagerClass::Connection_Index(int id)
 	return CONNECTION_NONE;
 }
 
+// FUNCTION: GAMEMD 0x00541070
+int IPXManagerClass::FUN_00541070(IPXConnClass * connection)
+{
+	int i;
+
+	for (i = 0; i < NumConnections; i++) {
+		if (Connection[i] == connection) {
+			return i;
+		}
+	}
+	if (connection == MulticastChannel) {
+		return -4;
+	}
+	if (connection == LobbyChannel) {
+		return -3;
+	}
+	if (connection == GlobalChannel) {
+		return -2;
+	}
+	return CONNECTION_NONE;
+}
+
 // FUNCTION: GAMEMD 0x005410C0
 void IPXManagerClass::Set_Connection_Parms(int index, int id, wchar_t *name)
 {

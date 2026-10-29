@@ -706,6 +706,183 @@ void SessionClass::Write_Chat_Settings(void)
 	DAT_008870C0.Save(file, false);
 }
 
+#include "mixfile.h"
+
+extern PKey DAT_00886980;
+extern int DAT_0081C1D0;
+void __fastcall FUN_004790B0(int disk);
+extern DynamicVectorClass<MixFileClass *> DAT_00884DC0;
+void __fastcall FUN_006994F0(char const * filename, wchar_t * description, char * digest, char * game_modes, bool * official, int * min_players, int * max_players);
+
+static inline void Add_Missions(DynamicVectorClass<MultiMission *> & scenarios, INIClass & ini, char * name_buffer)
+{
+	int count = ini.Entry_Count("MultiMaps");
+	for (int index = 0; index < count; index++) {
+		if (ini.Get_String("MultiMaps", ini.Get_Entry("MultiMaps", index), DAT_00889F64, name_buffer, 64)) {
+			scenarios.Add(new MultiMission(ini, name_buffer));
+		}
+	}
+}
+
+static inline bool Next_File(HANDLE handle, WIN32_FIND_DATA & block)
+{
+	return(FindNextFile(handle, &block) != 0);
+}
+
+// FUNCTION: GAMEMD 0x00699980
+void SessionClass::Read_Scenario_Descriptions(void)
+{
+	INIClass ini;
+	char name_buffer[64];
+	WIN32_FIND_DATA block;
+	HANDLE handle;
+
+	Scenarios.Clear();
+
+	CCFileClass file("MISSIONSMD.PKT");
+	if (file.Is_Available()) {
+		ini.Load(file, false);
+		Add_Missions(Scenarios, ini, name_buffer);
+	}
+	ini.Clear();
+	file.Close();
+
+	handle = FindFirstFile("*.PKT", &block);
+	while (handle != INVALID_HANDLE_VALUE) {
+		if ((block.dwFileAttributes & (FILE_ATTRIBUTE_DIRECTORY | FILE_ATTRIBUTE_HIDDEN | FILE_ATTRIBUTE_SYSTEM | FILE_ATTRIBUTE_TEMPORARY)) == 0) {
+			char const * name = &block.cAlternateFileName[0];
+			if (strlen(name) == 0) {
+				name = &block.cFileName[0];
+			}
+
+			if (stricmp(name, "MISSIONSMD.PKT")) {
+				file.Set_Name(name);
+				ini.Load(file, false);
+				Add_Missions(Scenarios, ini, name_buffer);
+			}
+		}
+
+		if (!Next_File(handle, block)) {
+			break;
+		}
+	}
+
+	if (handle != INVALID_HANDLE_VALUE) {
+		FindClose(handle);
+	}
+
+	ini.Clear();
+	file.Close();
+
+	handle = FindFirstFile("*.YRO", &block);
+	int previous_disk = DAT_0081C1D0;
+	FUN_004790B0(-2);
+	while (handle != INVALID_HANDLE_VALUE) {
+		if ((block.dwFileAttributes & (FILE_ATTRIBUTE_DIRECTORY | FILE_ATTRIBUTE_HIDDEN | FILE_ATTRIBUTE_SYSTEM | FILE_ATTRIBUTE_TEMPORARY)) == 0) {
+			char const * name = &block.cAlternateFileName[0];
+			if (strlen(name) == 0) {
+				name = &block.cFileName[0];
+			}
+
+			if (stricmp(name, "MISSIONS.YRO")) {
+				MixFileClass * mix = new MixFileClass(name, &DAT_00886980);
+				if (mix != NULL) {
+					DAT_00884DC0.Add(mix);
+
+					char pkt_name[260];
+					int length = strlen(name);
+					strncpy(pkt_name, name, length - 3);
+					pkt_name[length - 3] = 0;
+					strcat(pkt_name, "PKT");
+					pkt_name[length] = 0;
+					file.Set_Name(pkt_name);
+					if (file.Is_Available()) {
+						ini.Load(file, false);
+
+						int count = ini.Entry_Count("MultiMaps");
+						for (int index = 0; index < count; index++) {
+							if (ini.Get_String("MultiMaps", ini.Get_Entry("MultiMaps", index), DAT_00889F64, name_buffer, sizeof(name_buffer))) {
+								MultiMission * mission = new MultiMission(ini, name_buffer);
+								if (mission != NULL) {
+									wchar_t players[64];
+									wchar_t text[44];
+									int max_count = mission->MaxPlayers;
+									int min_count = mission->MinPlayers;
+									if (min_count != max_count) {
+										swprintf(players, L"%c%d-%d%c", L'(', min_count, max_count, L')');
+									} else {
+										swprintf(players, L"%c%d%c", L'(', min_count, L')');
+									}
+									int length = wcslen(mission->ScenarioDescription);
+									int & used = length;
+									wcscpy(text, mission->ScenarioDescription);
+									wcsncat(text, L" ", 44 - used);
+									used++;
+									wcsncat(text, players, 44 - used);
+									mission->Set_Description(text);
+									Scenarios.Add(mission);
+								}
+							}
+						}
+						ini.Clear();
+					} else {
+						FUN_004068E0("Can't see .pkt inside .yro!\n");
+					}
+				}
+			}
+		}
+
+		if (!Next_File(handle, block)) {
+			break;
+		}
+	}
+
+	FUN_004790B0(previous_disk);
+	if (handle != INVALID_HANDLE_VALUE) {
+		FindClose(handle);
+	}
+
+	ini.Clear();
+	file.Close();
+
+	char digest_buffer[32];
+	wchar_t description[64];
+	char game_modes[256];
+	bool official = false;
+	int min_players;
+	int max_players;
+
+	handle = FindFirstFile("*.YRM", &block);
+	official = false;
+	while (handle != INVALID_HANDLE_VALUE) {
+		if ((block.dwFileAttributes & (FILE_ATTRIBUTE_DIRECTORY | FILE_ATTRIBUTE_HIDDEN | FILE_ATTRIBUTE_SYSTEM | FILE_ATTRIBUTE_TEMPORARY)) == 0) {
+			char const * file_name = &block.cAlternateFileName[0];
+			if (strlen(file_name) == 0) {
+				file_name = &block.cFileName[0];
+			}
+
+			ini.Get_String("Basic", "Name", "No Name", name_buffer, sizeof(name_buffer));
+			ini.Get_String("Digest", "1", "No Digest", digest_buffer, sizeof(digest_buffer));
+			FUN_00735060(description, name_buffer, -1);
+			official = ini.Get_Bool("Basic", "Official", false);
+			min_players = 2;
+			max_players = 4;
+
+			FUN_006994F0(file_name, description, digest_buffer, game_modes, &official, &min_players, &max_players);
+			MultiMission * mission = new MultiMission(file_name, description, digest_buffer, official, game_modes, min_players, max_players);
+			Scenarios.Add(mission);
+		}
+
+		if (!Next_File(handle, block)) {
+			break;
+		}
+	}
+
+	if (handle != INVALID_HANDLE_VALUE) {
+		FindClose(handle);
+	}
+}
+
 // FUNCTION: GAMEMD 0x0069A1F0
 void SessionClass::Free_Scenario_Descriptions(void)
 {

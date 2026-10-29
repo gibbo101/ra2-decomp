@@ -1320,6 +1320,110 @@ static bool Init_One_Time_Systems(void)
 	return(true);
 }
 
+#include "bitfont.h"
+#include "draw.h"
+
+struct FileSystem
+{
+	static void const * LoadFile(char const * name, bool flag);
+	static char TEMPERAT_PAL[];
+};
+extern unsigned __int64 DAT_00A8F788;
+
+// FUNCTION: GAMEMD 0x005312A0
+void FUN_005312A0(void)
+{
+	CCFileClass file("GLSMD.PAL");
+	PaletteClass * pal = NULL;
+	SHPStruct * shp = NULL;
+	ConvertClass * convert = NULL;
+
+	if (file.Is_Available()) {
+		pal = (PaletteClass *)Load_Alloc_Data(file);
+		file.Close();
+		for (int index = 0; index < 256; index++) {
+			(*pal)[index] = RGBClass(
+				(unsigned char)((*pal)[index].Get_Red() << 2),
+				(unsigned char)((*pal)[index].Get_Green() << 2),
+				(unsigned char)((*pal)[index].Get_Blue() << 2));
+		}
+		if (pal != NULL) {
+			convert = new ConvertClass(*pal, *(PaletteClass *)FileSystem::TEMPERAT_PAL, *VisibleSurface, 1, false);
+			if (convert != NULL) {
+				shp = (SHPStruct *)FileSystem::LoadFile(Drawing::RenderWidth == 640 ? "GLSSMD.SHP" : "GLSLMD.SHP", false);
+			}
+		}
+	}
+
+	RECT client;
+	GetClientRect(Game::hWnd, &client);
+	Rect bounds(0, 0, client.right - client.left, client.bottom - client.top);
+	if (shp != NULL) {
+		Point2D pt((bounds.Width - shp->Get_Width()) / 2, (bounds.Height - shp->Get_Height()) / 2);
+		Draw_Shape(*HiddenSurface, *convert, (ShapeSet *)shp, 0, pt, bounds);
+	}
+
+	Point2D textpt;
+	wchar_t const * text = StringTable::LoadString("TXT_COPYRIGHT", NULL, "D:\\ra2mdpost\\Init.CPP", 0x1342);
+	BitFont * font = Font_From_TPF((TextPrintType)0x16);
+	textpt.X = 0;
+	textpt.Y = bounds.Height - 40;
+	if (font) {
+		textpt.X = bounds.Width - font->FUN_00433ED0(text, 0) - 10;
+	}
+	{
+		Point2D ret;
+		Fancy_Text_Print_Wide(&ret, text, HiddenSurface, &bounds, &textpt, 0xFFFF, 0, (TextPrintType)0x16);
+	}
+
+	text = StringTable::LoadString("GUI:WWBrand", NULL, "D:\\ra2mdpost\\Init.CPP", 0x134D);
+	if (font) {
+		textpt.X = bounds.Width - font->FUN_00433ED0(text, 0) - 10;
+		textpt.Y = textpt.Y + font->field_1C + 3;
+	}
+	{
+		Point2D ret;
+		Fancy_Text_Print_Wide(&ret, text, HiddenSurface, &bounds, &textpt, 0xFFFF, 0, (TextPrintType)0x16);
+	}
+
+	text = StringTable::LoadString("GUI:LoadingEx", NULL, "D:\\ra2mdpost\\Init.CPP", 0x1357);
+	textpt.X = 10;
+	textpt.Y = 10;
+	{
+		Point2D ret;
+		Fancy_Text_Print_Wide(&ret, text, HiddenSurface, &bounds, &textpt, 0xFFFF, 0, (TextPrintType)0x16);
+	}
+
+	text = StringTable::LoadString("GUI:TradeMarkTop", NULL, "D:\\ra2mdpost\\Init.CPP", 0x135E);
+	textpt.X = 10;
+	textpt.Y = bounds.Height - 40;
+	{
+		Point2D ret;
+		Fancy_Text_Print_Wide(&ret, text, HiddenSurface, &bounds, &textpt, 0xFFFF, 0, (TextPrintType)0x16);
+	}
+
+	text = StringTable::LoadString("GUI:TradeMarkBottom", NULL, "D:\\ra2mdpost\\Init.CPP", 0x1365);
+	textpt.X = 10;
+	textpt.Y = textpt.Y + font->field_1C + 3;
+	{
+		Point2D ret;
+		Fancy_Text_Print_Wide(&ret, text, HiddenSurface, &bounds, &textpt, 0xFFFF, 0, (TextPrintType)0x16);
+	}
+
+	Update_Visible_Surface(true, HiddenSurface);
+	DAT_00A8F788 = Game::AudioGetTime() + 5000;
+
+	if (pal != NULL) {
+		delete pal;
+	}
+	if (shp != NULL) {
+		delete shp;
+	}
+	if (convert != NULL) {
+		delete convert;
+	}
+}
+
 // FUNCTION: GAMEMD 0x00531680
 bool Init_Bulk_Data(void)
 {

@@ -92,7 +92,7 @@
 // SYNTHETIC: GAMEMD 0x006D1A20 SYMBOL
 // _$E47
 // SYNTHETIC: GAMEMD 0x006D1A40 SYMBOL
-// _$E265
+// _$E266
 
 extern Rect TacticalDimensions;
 void __fastcall FUN_00731D00(int mode);
@@ -125,25 +125,25 @@ static double ZPixelsPerLepton = fastmath::sin(RAD_60) * (PixelsPerLepton = 60.0
 static double ZLeptonsPerPixel = CELL_LEPTON_DIAG / (fastmath::sin(RAD_60) * 60.0);
 
 // SYNTHETIC: GAMEMD 0x006D1A60 SYMBOL
-// _$E243
+// _$E244
 
 // SYNTHETIC: GAMEMD 0x006D1AA0 SYMBOL
-// _$E240
+// _$E241
 
 // SYNTHETIC: GAMEMD 0x006D1B00 SYMBOL
 // _$E41
 
 // SYNTHETIC: GAMEMD 0x006D1B10 SYMBOL
-// _$E252
+// _$E253
 
 // SYNTHETIC: GAMEMD 0x006D1B50 SYMBOL
-// _$E249
+// _$E250
 
 // SYNTHETIC: GAMEMD 0x006D1BB0 SYMBOL
-// _$E255
+// _$E256
 
 // SYNTHETIC: GAMEMD 0x006D1BF0 SYMBOL
-// _$E258
+// _$E259
 
 // FUNCTION: GAMEMD 0x006D1C20
 Tactical::Tactical(void) :
@@ -1478,7 +1478,7 @@ FacingType Tactical::Scroll_Dir(FacingType dir)
 }
 
 // SYNTHETIC: GAMEMD 0x006DA350 SYMBOL
-// _$E246
+// _$E247
 
 // FUNCTION: GAMEMD 0x006DA360
 Cell Tactical::Clamp_Cursor_To_Tactical(Cell const & cell, Cell const * list)

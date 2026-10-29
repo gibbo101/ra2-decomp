@@ -164,9 +164,9 @@ extern DynamicVectorClass<TechnoClass *> DAT_00A8EC78;
 // SYNTHETIC: GAMEMD 0x006DCF60 SYMBOL
 // _$E47
 // SYNTHETIC: GAMEMD 0x006DCF80 SYMBOL
-// _$E172
+// _$E173
 // SYNTHETIC: GAMEMD 0x006DCFC0 SYMBOL
-// _$E170
+// _$E171
 
 // FUNCTION: GAMEMD 0x006DD000
 TActionClass::TActionClass(void) :
@@ -1533,9 +1533,9 @@ bool TActionClass::TAction_ENABLE_TRIGGER(HouseClass * , ObjectClass * , Trigger
 			TriggerClass * trig = Triggers[index];
 			TriggerTypeClass * type = trig->Class;
 			if (type == Trigger) {
-				if ((Scen->Difficulty != 0 || type->Difficulty.IsEnabledOnEasy) &&
-						(Scen->Difficulty != 1 || type->Difficulty.IsEnabledOnMedium) &&
-						(Scen->Difficulty != 2 || type->Difficulty.IsEnabledOnHard)) {
+				if ((Scen->Difficulty != 0 || type->IsEnabledOnEasy) &&
+						(Scen->Difficulty != 1 || type->IsEnabledOnMedium) &&
+						(Scen->Difficulty != 2 || type->IsEnabledOnHard)) {
 					trig->Enable();
 				}
 			}
@@ -1792,6 +1792,30 @@ bool TActionClass::TAction_ION_CANNON(HouseClass * , ObjectClass * , TriggerClas
 
 	new IonBlastClass(coord);
 	return(true);
+}
+
+// FUNCTION: GAMEMD 0x006E3410
+bool TActionClass::TAction_MULTI_MISSILE(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+{
+	Cell waypoint = Scen->Get_Waypoint_Cell(EffectLocation);
+	Coord coord = Coord (waypoint);
+	coord.Z = Map.Get_Height_GL(coord);
+	if (Map[waypoint].IsUnderBridge) {
+		coord.Z += BRIDGE_LEPTON_HEIGHT;
+	}
+
+	WeaponTypeClass * weapon_type = Weapons[WeaponTypeClass::From_Name("NukePayload")];
+	BulletTypeClass const * bullet_type = weapon_type->Bullet;
+	BulletClass * bullet = FUN_0046B050(bullet_type, &Map[coord], NULL, weapon_type->Attack, weapon_type->WarheadPtr, 50, false);
+	bullet->Set_Weapon_Type(weapon_type);
+
+	Coord launch(coord.X, coord.Y, coord.Z + 20000);
+	if (bullet != NULL) {
+		TVelocity3D<double> velocity(Dir256(DIR_N), Dir256(DIR_N), -100.0);
+		bullet->Unlimbo(launch, velocity);
+		return(true);
+	}
+	return(false);
 }
 
 // FUNCTION: GAMEMD 0x006E35F0

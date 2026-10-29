@@ -73,15 +73,9 @@ class TriggerTypeClass : public AbstractTypeClass
 		int HeapID;
 
 		// Difficulty levels this trigger is active at; off for the chosen one disables it on load.
-		struct DifficultyStruct {
-			bool IsEnabledOnEasy;
-			bool IsEnabledOnMedium;
-			bool IsEnabledOnHard;
-			DifficultyStruct(void) {}
-			DifficultyStruct(bool easy, bool medium, bool hard) : IsEnabledOnEasy(easy), IsEnabledOnMedium(medium), IsEnabledOnHard(hard) {}
-		};
-
-		DifficultyStruct Difficulty;
+		bool IsEnabledOnEasy;
+		bool IsEnabledOnMedium;
+		bool IsEnabledOnHard;
 
 	private:
 		// Whether triggers of this type start out able to spring.

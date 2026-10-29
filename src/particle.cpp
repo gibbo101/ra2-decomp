@@ -528,7 +528,7 @@ Cell const * ParticleClass::Occupy_List(bool placement) const
 }
 
 // SYNTHETIC: GAMEMD 0x0062D760 SYMBOL
-// _$E155
+// _$E156
 
 // FUNCTION: GAMEMD 0x0062D770
 LayerType ParticleClass::In_Which_Layer(void) const

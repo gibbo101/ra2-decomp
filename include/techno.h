@@ -362,7 +362,7 @@ class TechnoClass : public RadioClass
 		virtual int Refund_Amount(void) const;
 		virtual int Risk(void) const;
 		virtual bool Is_In_Same_Zone_As(ObjectClass const * object) const;
-		virtual unsigned vt_entry_2C8(unsigned, unsigned);
+		virtual DirType Barrel_Pitch(AbstractClass * target) const;
 		virtual bool Is_In_Same_Zone(Coord const & coord) const;
 		virtual int How_Many_Survivors(void) const;
 		virtual int Anti_Air(void) const {return(0);}
@@ -571,7 +571,6 @@ class TechnoClass : public RadioClass
 		bool Is_Immobilized(void) const {return(IsUnderEMP() || IsParalyzed() || IsBeingWarpedOut() || IsWarpingIn());}
 		void Scatter_Incoming_Infantry(void) const;
 		int Get_Collateral_Damage(void) const;
-		DirType Barrel_Pitch(AbstractClass * target) const;
 		void Laser_Zap(AbstractClass * target, int which, WeaponTypeClass const * weapon, Coord const & source_coord);
 		void Rock(Coord const & coord, float force);
 		void FUN_0070F670(CellClass * cell);

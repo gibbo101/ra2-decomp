@@ -39,7 +39,7 @@
 // SYNTHETIC: GAMEMD 0x0049F2D0 SYMBOL
 // _$E41
 // SYNTHETIC: GAMEMD 0x0049F2F0 SYMBOL
-// _$E91
+// _$E92
 Cell const AdjacentCell[FACING_COUNT] = {
 	Cell(0,  -1),
 	Cell(1,  -1),
@@ -52,7 +52,7 @@ Cell const AdjacentCell[FACING_COUNT] = {
 };
 
 // SYNTHETIC: GAMEMD 0x0049F3A0 SYMBOL
-// _$E94
+// _$E95
 Point2D const AdjacentPoint[FACING_COUNT] = {
 	Point2D(0,              -CELL_LEPTON_H),
 	Point2D(CELL_LEPTON_W,  -CELL_LEPTON_H),

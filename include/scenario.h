@@ -67,6 +67,7 @@ class ScenarioClass {
 		ScenarioClass(void);
 		ScenarioClass(NoInitClass const &);
 		void Set_Scenario_Name(char const * name);
+		static bool WasGameSaved;
 		void Reset(void);
 
 		int Get_Unique_ID(void);

@@ -1,6 +1,6 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 29 October 2026: 18,089 of 19,367 game functions match (93%; 64% of game code
+Status, 29 October 2026: 18,116 of 19,367 game functions match (94%; 65% of game code
 by size), landed in batches module by module. The rounds below record each one.
 
 ## The goal
@@ -1113,6 +1113,18 @@ Session.Players. Recording then exposed three UI-command functions building char
 ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; their RTTI
 fixed them. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
+
+### Batches 142 and 143 (29 October 2026)
+
+**26 functions** of the 101 near misses at 98% or more, one Opus job per module or group
+of six, each starting from its banked attempt. Real code replaced what had matched only
+through stand-ins: six wonline callbacks (one with WOLAPI's Highscore struct), ATL's module
+fields and Map_Seed_Dialog_Proc on real headers. Others landed once a header came in:
+include/fastmath.h, TibSun's flat difficulty flags in trigtype.h, ScenarioClass::WasGameSaved
+(which renumbered the `$E` markers of 64 files), DialogControl's constructor and destructor.
+0x004FF700 was a map fault and 0x0045A160 is IPiggyback's `_Release`. The rest wait on
+callers not yet landed, or are one register or operand order short. Merge gate: 18,116 of
+18,116 (2,404.4 KB).
 
 ### Batch 141 (29 October 2026)
 

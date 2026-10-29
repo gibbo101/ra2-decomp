@@ -63,9 +63,9 @@ static bool MouseShapesLoaded;
 void * __fastcall FileSystem_LoadWholeFileEx(char const * name, bool & loaded);
 
 // SYNTHETIC: GAMEMD 0x005BD9F0 SYMBOL
-// _$E178
+// _$E179
 // SYNTHETIC: GAMEMD 0x005BDA20 SYMBOL
-// _$E175
+// _$E176
 CDTimerClass<SystemTimerClass> MouseClass::Timer = 0;
 
 // FUNCTION: GAMEMD 0x005BDA40

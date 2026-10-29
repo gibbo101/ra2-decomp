@@ -71,6 +71,10 @@ DynamicVectorClass<VocEntry *> VocArray;
 
 DynamicVectorClass<VocClass *> Vocs;
 
+#include "_map.h"
+#include "cell.h"
+#include "map.h"
+
 // SYNTHETIC: GAMEMD 0x007500F0 SYMBOL
 // _$E55
 // SYNTHETIC: GAMEMD 0x00750110 SYMBOL
@@ -305,6 +309,68 @@ void * VocClass::PlayAt(int voc, Coord const & coord, AudioController * controll
 		controller->SetEvent(event, type);
 	}
 	return event;
+}
+
+// FUNCTION: GAMEMD 0x00750AC0
+float __fastcall FUN_00750AC0(Coord const & coord, int * panning, VocClass * voc)
+{
+	*panning = 0;
+	float volume = 0.0f;
+	float halfWidth = TacticalRect.Width * 0.5f;
+	float halfHeight = TacticalRect.Height * 0.5f;
+	float width = halfWidth + halfWidth;
+	float range = (float)(voc->FUN_00405130() * 60);
+	int type = voc->FUN_00405160();
+
+	if (type & 0x800) {
+		Cell cell = Cell(coord.X / 256, coord.Y / 256);
+		if (cell == CELL_NONE) {
+			return 0.0f;
+		}
+		CellClass & cellptr = Map[cell];
+		if (!cellptr.IsMapped && !cellptr.IsVisible) {
+			return 0.0f;
+		}
+	}
+
+	Point2D point;
+	TacticalMap->Coord_To_Pixel(coord, point);
+	float offset = point.X - halfWidth;
+	float x = abs((int)offset);
+	float y = abs((int)(point.Y - halfHeight));
+	if (!(type & 0x40)) {
+		x -= halfWidth;
+		y -= halfHeight;
+		if (x < 0.0f) {
+			x = 0.0f;
+		}
+		if (y < 0.0f) {
+			y = 0.0f;
+		}
+	}
+	y = y + y;
+
+	if (x < range && y < range && range > 0.0f) {
+		volume = (range - (x > y ? x : y)) / range;
+	}
+
+	if (type & 0x10) {
+		if (voc->FUN_00405140() > volume) {
+			volume = voc->FUN_00405140();
+		}
+	}
+
+	if (volume < 0.05) {
+		return 0.0f;
+	}
+
+	if (offset < -width) {
+		offset = -width;
+	} else if (offset > width) {
+		offset = width;
+	}
+	*panning = (int)(offset * 8192.0f / width + 8192.0f);
+	return volume;
 }
 
 // FUNCTION: GAMEMD 0x00750D40

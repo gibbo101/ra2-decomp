@@ -6094,7 +6094,8 @@ template class DynamicVectorClass<Reestablish *>;
 template class TRect<int>;
 
 // TEMPLATE: GAMEMD 0x0045A160
-// ?_Release@?$_com_ptr_t@V?$_com_IIID@UILocomotion@@$1?_GUID_070f3290_9841_11d1_b709_00a024ddafd1@@3U__s_GUID@@A@@@@AAEXXZ
+// ?_Release@?$_com_ptr_t@V?$_com_IIID@UIPiggyback@@$1?_GUID_92fea800_a184_11d1_b70a_00a024ddafd1@@3U__s_GUID@@A@@@@AAEXXZ
+template class _com_ptr_t<_com_IIID<IPiggyback, &__uuidof(IPiggyback)> >;
 
 // TEMPLATE: GAMEMD 0x0045A170
 // ?_AddRef@?$_com_ptr_t@V?$_com_IIID@UILocomotion@@$1?_GUID_070f3290_9841_11d1_b709_00a024ddafd1@@3U__s_GUID@@A@@@@AAEXXZ

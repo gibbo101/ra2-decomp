@@ -70,15 +70,15 @@
 // SYNTHETIC: GAMEMD 0x00543E30 SYMBOL
 // _$E38
 // SYNTHETIC: GAMEMD 0x00543E50 SYMBOL
-// _$E196
+// _$E197
 // SYNTHETIC: GAMEMD 0x00543E70 SYMBOL
-// _$E202
+// _$E203
 // SYNTHETIC: GAMEMD 0x00543EB0 SYMBOL
-// _$E199
+// _$E200
 // SYNTHETIC: GAMEMD 0x00543F10 SYMBOL
-// _$E205
+// _$E206
 // SYNTHETIC: GAMEMD 0x00544690 SYMBOL
-// _$E208
+// _$E209
 
 enum {
 	ISO_WIDTH = 48,
@@ -338,7 +338,7 @@ Cell const * IsometricTileTypeClass::Occupy_List(bool placement) const
 }
 
 // SYNTHETIC: GAMEMD 0x00544DF0 SYMBOL
-// _$E211
+// _$E212
 
 // FUNCTION: GAMEMD 0x00544E00
 IsometricTileTypeClass * IsometricTileTypeClass::Next_Tile_From_Set(int index)
@@ -662,7 +662,7 @@ Cell const * IsometricTileTypeClass::Shadow_Caster_List(void) const
 }
 
 // SYNTHETIC: GAMEMD 0x00547CE0 SYMBOL
-// _$E213
+// _$E214
 
 // FUNCTION: GAMEMD 0x00549830
 bool IsometricTileTypeClass::Get_Tile_Image(int tilenum, unsigned char **buffer, int width, int height)

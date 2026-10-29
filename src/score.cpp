@@ -488,7 +488,7 @@ void ScoreClass::Animate_Cursor(int pos, int ypos)
 }
 
 // SYNTHETIC: GAMEMD 0x00690150 SYMBOL
-// _$E107
+// _$E108
 
 // FUNCTION: GAMEMD 0x00690160
 void ScoreClass::Call_Back_Delay(int time)

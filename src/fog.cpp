@@ -68,15 +68,15 @@
 // SYNTHETIC: GAMEMD 0x004D0730 SYMBOL
 // _$E38
 // SYNTHETIC: GAMEMD 0x004D0750 SYMBOL
-// _$E134
+// _$E135
 // SYNTHETIC: GAMEMD 0x004D0790 SYMBOL
-// _$E131
+// _$E132
 DynamicVectorClass<FoggedObjectClass *> FoggedObjectClass::FoggyObjects;
 
 // SYNTHETIC: GAMEMD 0x004D07F0 SYMBOL
-// _$E140
+// _$E141
 // SYNTHETIC: GAMEMD 0x004D0820 SYMBOL
-// _$E137
+// _$E138
 IndexClass<int, FoggedObjectClass *> FoggedObjectClass::FoggedObjectIndex;
 
 // FUNCTION: GAMEMD 0x004D0860

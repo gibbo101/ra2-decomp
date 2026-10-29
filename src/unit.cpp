@@ -1845,6 +1845,70 @@ int UnitClass::Do_MISSION_PATROL(void)
 	return(BASECLASS::Do_MISSION_PATROL());
 }
 
+static inline DirType & _Direction(DirType & dir, ObjectClass const * from, ObjectClass const * to)
+{
+	return(dir.Direction(from->Center_Coord(), to->Center_Coord()));
+}
+
+// FUNCTION: GAMEMD 0x00740B60
+FacingType UnitClass::Desired_Load_Dir(ObjectClass * passenger, Cell & moveto) const
+{
+	FacingType face = FACING_N;
+	FacingType faceto;
+	if (passenger != NULL) {
+		DirType direction = _Direction(direction, this, passenger);
+		faceto = (FacingType)direction.As_Dir256();
+	} else {
+		faceto = (FacingType)(PrimaryFacing.Current().Right_180()).As_Dir256();
+	}
+	int desired = (int)(signed char)faceto;
+
+	FacingType bestdir = FACING_N;
+	int bestval = -1;
+	for (; face < FACING_COUNT; face++) {
+		int value = 0;
+		Cell cellnum = Adjacent_Cell(PositionCell, face);
+
+		if (passenger != NULL) {
+			value = (passenger->Can_Enter_Cell(&Map[cellnum], face, Get_Cell_Height()) == MOVE_OK || passenger->PositionCell == cellnum) ? 128 : -128;
+		} else {
+			CellClass * cell = &Map[Cell(cellnum)];
+			if (Ground[cell->Land_Type()].Cost[SPEED_FOOT] == 0 || cell->Flag.Occupy.Building || cell->Flag.Occupy.Vehicle || cell->Flag.Occupy.Monolith || (cell->Flag.Composite & 0x01F) == 0x01F) {
+				value = -128;
+			} else {
+				if (cell->Cell_Techno() && !House->Is_Ally(cell->Cell_Techno())) {
+					value = -128;
+				} else {
+					value = 128;
+				}
+			}
+		}
+
+		value -= (int)abs((int)(signed char)DirType(face).As_Dir256() - desired);
+		if (face == FACING_S) {
+			value -= 100;
+		}
+
+		if (bestval == -1 || value > bestval) {
+			bestval = value;
+			bestdir = face;
+		}
+	}
+
+	FacingType facing = FACING_S;
+	moveto = CELL_NONE;
+	if (bestval > 0) {
+		moveto = Adjacent_Cell(PositionCell, bestdir);
+		facing = (FacingType)Harvester_Load_List[bestdir];
+	}
+
+	if (Class->IsTrain) {
+		facing = PrimaryFacing.Current().As_Dir8();
+	}
+
+	return(facing);
+}
+
 // FUNCTION: GAMEMD 0x00740DF0
 bool UnitClass::Flag_Attach(HousesType house)
 {

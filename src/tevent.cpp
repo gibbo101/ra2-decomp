@@ -51,9 +51,9 @@
 // SYNTHETIC: GAMEMD 0x0071E600 SYMBOL
 // _$E47
 // SYNTHETIC: GAMEMD 0x0071E620 SYMBOL
-// _$E85
+// _$E86
 // SYNTHETIC: GAMEMD 0x0071E660 SYMBOL
-// _$E83
+// _$E84
 DynamicVectorClass<TEventClass *> Events;
 
 namespace Unsorted { extern bool ArmageddonMode; }

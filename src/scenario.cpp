@@ -139,7 +139,7 @@
 // SYNTHETIC: GAMEMD 0x00683240 SYMBOL
 // _$E38
 // SYNTHETIC: GAMEMD 0x00683260 SYMBOL
-// _$E49
+// _$E50
 
 bool Read_Scenario(char const * fname);
 int __fastcall FUN_004790A0(int timeout);
