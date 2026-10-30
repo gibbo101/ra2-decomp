@@ -488,6 +488,8 @@ Each entry: what the diff showed, then the source change that fixed it.
   0x0072D730, 0x0072E450, 0x0072F540): helpers, budget fillers and call forms all failed.
 - `DynamicVectorClass<T>`'s constructor and Add are called for some T and inlined for
   others in the original; no instantiation order tried reproduces it.
+- voc 0x00751710, 0x00750E20 and 0x00751040 match only with `SoundNode::Retired` volatile;
+  no other thread is known to write it, so the rules bar it until one is found.
 
 ## Report
 
