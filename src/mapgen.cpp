@@ -11,6 +11,7 @@
 #include "_palette.h"
 #include "_rules.h"
 #include "_tactica.h"
+#include "_theater.h"
 #include "animtype.h"
 #include "astar.h"
 #include "building.h"
@@ -39,6 +40,7 @@
 #include "overtype.h"
 #include "ownrdraw.h"
 #include "pcx.h"
+#include "preview.h"
 #include "progress.h"
 #include "queue.h"
 #include "rules.h"
@@ -2795,6 +2797,303 @@ void MapGeneratorClass::Cleanup(void)
 	Map.Compute_Radar_Image();
 }
 
+static float const _waterfall_chance = 0.25f;
+
+// FUNCTION: GAMEMD 0x00599650
+void MapGeneratorClass::Init_Map(bool full_init)
+{
+	static const int _width_min[] = {70, 70, 70, 80, 90, 100, 100};
+	static const int _width_max[] = {80, 80, 80, 90, 100, 110, 120};
+	static const int _height_min[] = {70, 70, 70, 80, 90, 100, 100};
+	static const int _height_max[] = {80, 80, 80, 90, 100, 110, 120};
+
+	int size_index = SeedData.NumPlayers - 2;
+	float width_frac = SeedData.Width * (1.0f / 3.0f);
+	float height_frac = SeedData.Height * (1.0f / 3.0f);
+
+	Load_Settings();
+
+	if (SeedData.MapType != 3 && SeedData.MapType != 4) {
+		width_frac = MIN(width_frac, 1.2);
+		height_frac = MIN(height_frac, 1.2);
+	}
+
+	LocalWidth = (int)(_width_min[size_index] * (1.0f - width_frac) + _width_max[size_index] * width_frac);
+	LocalHeight = (int)(_height_min[size_index] * (1.0f - height_frac) + _height_max[size_index] * height_frac);
+
+	Rect size(0, 0, LocalWidth + 4, LocalHeight + 12);
+	Rect lsize(2, 5, LocalWidth, LocalHeight);
+
+	CellHeight = 4;
+
+	CCINIClass ini;
+
+	ini.Clear();
+
+	CellHeight = 4;
+
+	ini.Put_String("Map", "Theater", Theaters[SeedData.Biome].Name);
+	ini.Put_Rect("Map", "Size", size);
+	ini.Put_Rect("Map", "LocalSize", lsize);
+	ini.Put_Int("Map", "Level", CellHeight, 0);
+	ini.Put_String(HouseTypes[HOUSE_GOOD]->IniName, "TechLevel", "0");
+	ini.Put_String("Basic", "Player", HouseTypes[HOUSE_GOOD]->IniName);
+
+	double ambient = (SeedData.Biome == THEATER_TEMPERATE ? TemperateAmbientLight[SeedData.Time] : SnowAmbientLight[SeedData.Time]) * 0.01;
+	ini.Put_Float("Lighting", "Ambient", ambient);
+	ini.Put_Float("Lighting", "RedTint", 1.0);
+	ini.Put_Float("Lighting", "GreenTint", 1.0);
+	ini.Put_Float("Lighting", "BlueTint", 1.0);
+	ini.Put_Float("Lighting", "Ground", 0.0);
+	ini.Put_Float("Lighting", "Level", RMGLevelLightSettings[SeedData.Time] / 100);
+	ini.Put_Float("Lighting", "IonAmbient", ambient);
+	ini.Put_Float("Lighting", "IonRed", 0.3);
+	ini.Put_Float("Lighting", "IonGreen", 0.4);
+	ini.Put_Float("Lighting", "IonBlue", 0.75);
+	ini.Put_Float("Lighting", "IonGround", 0.0);
+	ini.Put_Float("Lighting", "IonLevel", 0.0);
+
+	if (!Scen->IsReadingScenario) {
+		Progress.Set_Progress_Percent(0, 1);
+	}
+
+	if (RMGCallback != NULL) RMGCallback();
+
+	TiberiumClass::Deinit_Tiberium_Spread_System();
+	TiberiumClass::Deinit_Tiberium_Growth_System();
+	if (!full_init) {
+		ScenarioInit++;
+		Scen->Set_Scenario_Name("");
+		if (Debug_Map) {
+			Clear_Scenario();
+		}
+		Read_Scenario_INI(ini, true);
+		Fill_In_Data();
+		Cell c(Map.PlayRect.Width / 2 + Map.PlayRect.Height / 2 + 1, Map.PlayRect.Width / 2 + Map.PlayRect.Height / 2);
+		Scen->Set_Waypoint(WAYPT_REINF, c);
+		Scen->Set_Waypoint(Scen->Home, Scen->Get_Waypoint_Cell(WAYPT_REINF));
+		Map[Scen->Get_Waypoint_Cell(Scen->Home)].IsWaypoint = true;
+		Map.Set_Tactical_Position(Scen->Get_Waypoint_Coord(Scen->Home));
+		ScenarioInit--;
+	} else {
+
+		Scen->Reset();
+		if (MapPreview == NULL) {
+			MapPreview = new MapPreviewClass;
+		}
+
+		Update_Progress(2);
+
+		TheaterType theater = (TheaterType)SeedData.Biome;
+		bool changed = true;
+		TheaterType last = Scen->Theater;
+
+		if (MapSeeder != NULL) {
+			last = (TheaterType)MapSeeder->Biome;
+			if (MapSeeder->Width == SeedData.Width && MapSeeder->Height == SeedData.Height && last == theater
+					&& MapSeeder->NumPlayers == SeedData.NumPlayers) {
+				changed = false;
+			}
+		}
+
+		if (RMGCallback != NULL) RMGCallback();
+
+		if (MapSeeder == NULL || theater != last || changed) {
+			for (int index = AbstractTypes.Count() - 1; index >= 0; index--) {
+				if (AbstractTypes[index]->What_Am_I() == RTTI_ISOTILETYPE) {
+					AbstractTypes.Delete_Index(index);
+				}
+			}
+
+			if (RMGCallback != NULL) RMGCallback();
+
+			Delete_All_Objects();
+
+			if (RMGCallback != NULL) RMGCallback();
+
+			for (int tile_index = 0; tile_index < IsometricTileTypes.Count(); tile_index++) {
+				AbstractTypes.Add(IsometricTileTypes[tile_index]);
+			}
+		}
+
+		Update_Progress(5);
+
+		if (RMGCallback != NULL) RMGCallback();
+
+		if (changed) {
+			Map.Init_Clear();
+			Map.Set_Map_Dimensions(size, true, 0, true);
+			Map.Set_Local_Dimensions(lsize);
+			if (TacticalMap != NULL) {
+				delete TacticalMap;
+			}
+			TacticalMap = new Tactical;
+			TacticalMap->Reset_Dirty_Rectangles();
+		}
+
+		Update_Progress(10);
+
+		while (Units.Count() > 0) {
+			delete Units[Units.Count() - 1];
+		}
+
+		while (Infantry.Count() > 0) {
+			delete Infantry[Infantry.Count() - 1];
+		}
+
+		while (Buildings.Count() > 0) {
+			delete Buildings[Buildings.Count() - 1];
+		}
+
+		while (Terrains.Count() > 0) {
+			delete Terrains[Terrains.Count() - 1];
+		}
+
+		if (RMGCallback != NULL) RMGCallback();
+
+		Map.Reset_Iterator();
+		CellClass *cptr = Map.Iterate();
+		while (cptr != NULL) {
+			cptr->Ramp = 0;
+			cptr->Height = 4;
+			cptr->ITType = ISOTILE_CLEAR;
+			cptr->SubTile = 0;
+			cptr->Overlay = OVERLAY_NONE;
+			cptr->OverlayData = 0;
+			cptr = Map.Iterate();
+		}
+
+		if (RMGCallback != NULL) RMGCallback();
+
+		Update_Progress(15);
+
+		Map.Compute_Zone_Connections();
+		Map.Zone_Reset();
+		Map.Reset_All_Subzones();
+
+		Update_Progress(20);
+
+		if (RMGCallback != NULL) RMGCallback();
+
+		Scen->Clear_All_Waypoints();
+		Cell c(Map.PlayRect.Width / 2 + Map.PlayRect.Height / 2 + 1, Map.PlayRect.Width / 2 + Map.PlayRect.Height / 2);
+		Scen->Set_Waypoint(WAYPT_REINF, c);
+		Scen->Set_Waypoint(WAYPT_HOME, Scen->Get_Waypoint_Cell(WAYPT_REINF));
+		Map[Scen->Get_Waypoint_Cell(WAYPT_HOME)].IsWaypoint = true;
+		Map.Set_Tactical_Position(Scen->Get_Waypoint_Coord(WAYPT_HOME));
+
+		Update_Progress(25);
+
+		if (RMGCallback != NULL) RMGCallback();
+
+		ScenarioInit++;
+
+		if (theater != Scen->Theater) {
+			Init_Theater(theater);
+			Scen->Theater = theater;
+		}
+
+		Update_Progress(30);
+
+		if (RMGCallback != NULL) RMGCallback();
+
+		if (MapSeeder == NULL || theater != last || changed) {
+			Rule->Initialize(*RuleINI);
+			Scen->Read_Global_INI(*RuleINI);
+		}
+
+		Update_Progress(35);
+
+		if (RMGCallback != NULL) RMGCallback();
+
+		if (MapSeeder == NULL || theater != last || changed) {
+
+			if (Houses.Count() == 0) {
+				for (int house = 0; house < HouseTypes.Count(); house++) {
+					HouseClass * hptr = new HouseClass(HouseTypes[house]);
+					hptr->Read_INI(ini);
+				}
+			}
+
+			if (RMGCallback != NULL) RMGCallback();
+
+			TerrainTypeClass::Init(Scen->Theater);
+			if (Scen->Theater != LastTheater) {
+				IsometricTileTypeClass::Read_Control_File(Scen->Theater, true);
+			} else {
+				IsometricTileTypeClass::Clear_Use_Counts();
+			}
+
+			OverlayTypeClass::Init(Scen->Theater);
+
+			if (RMGCallback != NULL) RMGCallback();
+			if (RMGCallback != NULL) RMGCallback();
+			if (RMGCallback != NULL) RMGCallback();
+
+			BuildingTypeClass::Init(Scen->Theater);
+
+			if (RMGCallback != NULL) RMGCallback();
+
+			AnimTypeClass::Init(Scen->Theater);
+
+			if (RMGCallback != NULL) RMGCallback();
+
+			SmudgeTypeClass::Init(Scen->Theater);
+
+			if (RMGCallback != NULL) RMGCallback();
+
+			IsometricTileTypeClass::Load_Tiles(0, 1);
+		}
+		LastTheater = Scen->Theater;
+		ScenarioInit--;
+	}
+
+	Update_Progress(40);
+
+	if (RMGCallback != NULL) RMGCallback();
+
+	if (RMGCellData != NULL) {
+		delete [] RMGCellData;
+	}
+
+	RMGCellData = new MapRegionClass::CellData[MapCellStride * MapCellStride];
+
+	Map.Reset_Iterator();
+	CellClass *cptr = Map.Iterate();
+	while (cptr != NULL) {
+		Cell cell = cptr->CellID;
+		MapRegionClass::Get_Cell_Data(cell).CellID = cell;
+		cptr->Height = CellHeight;
+		cptr = Map.Iterate();
+	}
+
+	Update_Progress(45);
+
+	if (RMGCallback != NULL) RMGCallback();
+
+	MapRegionClass::Delete_All_Regions();
+
+	SeededWaterAmount = 0;
+	WorkingRegionID = 0;
+	PlaceWaterfall = Random_Fraction() < _waterfall_chance;
+	Map.Clear_Radar();
+	Map.Set_Local_Dimensions(lsize);
+	Map.Init_Radar();
+	Map.Compute_Radar_Image();
+
+	Scen->AmbientLight = SeedData.Biome == THEATER_TEMPERATE ? TemperateAmbientLight[SeedData.Time] : SnowAmbientLight[SeedData.Time];
+	Scen->NormalLighting.LevelLight = RMGLevelLightSettings[SeedData.Time];
+	Scen->NormalLighting.RedTint = SeedData.Biome == THEATER_TEMPERATE ? TemperateAmbientRed[SeedData.Time] : SnowAmbientRed[SeedData.Time];
+	Scen->NormalLighting.GreenTint = SeedData.Biome == THEATER_TEMPERATE ? TemperateAmbientGreen[SeedData.Time] : SnowAmbientGreen[SeedData.Time];
+	Scen->NormalLighting.BlueTint = SeedData.Biome == THEATER_TEMPERATE ? TemperateAmbientBlue[SeedData.Time] : SnowAmbientBlue[SeedData.Time];
+
+	Update_Progress(50);
+
+	if (wcslen(SeedData.MapDescription) == 0) {
+		wcscpy(SeedData.MapDescription, StringTable::LoadString("TXT_RANDOM_MAP_DESCRIPTION", NULL, "D:\\ra2mdpost\\MapGen.cpp", 6746));
+	}
+}
+
 // FUNCTION: GAMEMD 0x0059A670
 void MapGeneratorClass::Update_Progress(int percent_progress)
 {
@@ -5167,9 +5466,9 @@ DirtRoadTile::~DirtRoadTile(void)
 }
 
 // SYNTHETIC: GAMEMD 0x005A9C20 SYMBOL
-// _$E206
+// _$E207
 // SYNTHETIC: GAMEMD 0x005AC190 SYMBOL
-// _$E204
+// _$E205
 DirtRoadTile DirtRoadTiles[] = {
 	/* 0 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_N), DirtRoadLink(Cell(2, 0), FACING_NE)),
 	/* 1 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_N), DirtRoadLink(Cell(1, 0), FACING_E)),
@@ -5505,31 +5804,31 @@ template class VectorClass<double>;
 #include "geometry.h"
 
 // SYNTHETIC: GAMEMD 0x0058B530 SYMBOL
-// _$E209
+// _$E210
 // SYNTHETIC: GAMEMD 0x0058B560 SYMBOL
-// _$E212
+// _$E213
 // SYNTHETIC: GAMEMD 0x0058B580 SYMBOL
-// _$E215
+// _$E216
 // SYNTHETIC: GAMEMD 0x0058B5A0 SYMBOL
-// _$E218
+// _$E219
 // SYNTHETIC: GAMEMD 0x0058B5C0 SYMBOL
-// _$E221
+// _$E222
 // SYNTHETIC: GAMEMD 0x0058B5E0 SYMBOL
-// _$E224
+// _$E225
 // SYNTHETIC: GAMEMD 0x0058B600 SYMBOL
-// _$E227
+// _$E228
 // SYNTHETIC: GAMEMD 0x0058B640 SYMBOL
-// _$E230
+// _$E231
 // SYNTHETIC: GAMEMD 0x0058B670 SYMBOL
-// _$E233
+// _$E234
 // SYNTHETIC: GAMEMD 0x0058B6A0 SYMBOL
-// _$E236
+// _$E237
 // SYNTHETIC: GAMEMD 0x0058B6D0 SYMBOL
-// _$E239
+// _$E240
 // SYNTHETIC: GAMEMD 0x0058B6E0 SYMBOL
-// _$E242
+// _$E243
 // SYNTHETIC: GAMEMD 0x0058B700 SYMBOL
-// _$E245
+// _$E246
 // SYNTHETIC: GAMEMD 0x0058B720 SYMBOL
-// _$E248
+// _$E249
 const Rect RECT_NONE_2(0, 0, 0, 0);

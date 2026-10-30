@@ -269,7 +269,7 @@ SessionClass::SessionClass(void) :
 	unknown_30A0 = 0;
 	unknown_30A4 = 0;
 	unknown_30A8 = -1;
-	*(unsigned short *)unknown_2984 = 0;
+	PacketRouterPort = 0;
 
 	SquadAlliances = false;
 	SawGameCompletion = false;
@@ -404,8 +404,8 @@ int SessionClass::Create_Connections(void)
 			if (wcsicmp(Players[i]->Name, MasterPlayerName) == 0) {
 				MasterPlayerID = Players[i]->Player.ID;
 				Session.Players[i]->Address.Get_Address(net, node);
-				Session.unknown_296C.Set_Address(net, node, 0);
-				Ipx.FUN_00543050(&Session.unknown_296C);
+				Session.PacketRouterAddress.Set_Address(net, node, 0);
+				Ipx.FUN_00543050(&Session.PacketRouterAddress);
 			}
 
 			Houses[Players[i]->Player.ID]->SquadID = Players[i]->Player.SquadID;

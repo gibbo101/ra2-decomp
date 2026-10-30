@@ -4,75 +4,37 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
-
-#include <math.h>
+#include "geometry.h"
+#include "rect.h"
 
 // SYNTHETIC: GAMEMD 0x00552830 SYMBOL
-// _$E38
-
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007ECF50;
-extern const double DAT_007ECF58;
-
+// _$E41
 // SYNTHETIC: GAMEMD 0x00552850 SYMBOL
 // _$E2
-double DAT_00ABC960 = FUN_004CAC40(pow(256.0, 2.0) * 2);
-
 // SYNTHETIC: GAMEMD 0x00552880 SYMBOL
 // _$E5
-double DAT_00ABC9B0 = DAT_00ABC960 / DAT_007ECF50;
-
 // SYNTHETIC: GAMEMD 0x005528A0 SYMBOL
 // _$E8
-double DAT_00ABC998 = 1.0 / DAT_00ABC9B0;
-
 // SYNTHETIC: GAMEMD 0x005528C0 SYMBOL
 // _$E11
-double DAT_00ABC990 = DAT_007ECF58 * 45.0;
-
 // SYNTHETIC: GAMEMD 0x005528E0 SYMBOL
 // _$E14
-double DAT_00ABC968 = DAT_007ECF58 * 60.0;
-
 // SYNTHETIC: GAMEMD 0x00552900 SYMBOL
 // _$E17
-double DAT_00ABC940 = DAT_007ECF58 * 90.0;
-
 // SYNTHETIC: GAMEMD 0x00552920 SYMBOL
 // _$E20
-int DAT_00ABC9B8 = (int)(FUN_004CAD50(DAT_00ABC940 - DAT_00ABC968) * DAT_00ABC960 * 0.5);
-
 // SYNTHETIC: GAMEMD 0x00552960 SYMBOL
 // _$E23
-double DAT_00ABC970 = FUN_004CADE0(DAT_00ABC9B8 * 0.00390625);
-
 // SYNTHETIC: GAMEMD 0x00552990 SYMBOL
 // _$E26
-double DAT_00ABC988 = FUN_004CADE0((DAT_00ABC9B8 * 2) / DAT_00ABC960);
-
 // SYNTHETIC: GAMEMD 0x005529C0 SYMBOL
 // _$E29
-int DAT_00ABC9AC = (int)(DAT_00ABC9B8 * 4 + 0.5);
-
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
-
 // SYNTHETIC: GAMEMD 0x005529F0 SYMBOL
 // _$E32
-ShortPair DAT_00ABC958;
-
 // SYNTHETIC: GAMEMD 0x00552A00 SYMBOL
 // _$E35
-IntTriple DAT_00ABC978;
+// SYNTHETIC: GAMEMD 0x00552A20 SYMBOL
+// _$E38
 
 #include "ldprgmgr.h"
 #include "mixfile.h"
@@ -82,15 +44,16 @@ IntTriple DAT_00ABC978;
 #include "surface.h"
 #include "dsurface.h"
 #include "_surface.h"
+#include "rgb.h"
 
 struct Drawing {
 	static int RenderWidth;
 	static int RenderHeight;
-	static unsigned short RedShiftLeft;
+	static int RedShiftLeft;
 	static int RedShiftRight;
-	static unsigned short GreenShiftLeft;
+	static int GreenShiftLeft;
 	static int GreenShiftRight;
-	static unsigned short BlueShiftLeft;
+	static int BlueShiftLeft;
 	static int BlueShiftRight;
 };
 
@@ -98,9 +61,6 @@ extern int DAT_007F5BE0;
 extern int DAT_007F5BE4;
 extern int DAT_007F5BEC;
 extern int DAT_007F5BF0;
-extern int DAT_00ABC9A0;
-extern int DAT_00ABC9A4;
-extern int DAT_00ABC9A8;
 extern PKey DAT_00886980;
 
 void __cdecl FUN_0072B460(void);
@@ -113,14 +73,6 @@ void __fastcall FUN_0072B530(int country);
 void __fastcall FUN_00621B80(Rect * rect, Surface * surface, unsigned short color, unsigned char alpha);
 
 LoadProgressManager * LoadProgressManager::Instance;
-
-// FUNCTION: GAMEMD 0x00552A20
-void FUN_00552A20(void)
-{
-	DAT_00ABC9A8 = 0;
-	DAT_00ABC9A0 = 128;
-	DAT_00ABC9A4 = 128;
-}
 
 // FUNCTION: GAMEMD 0x00552A40
 LoadProgressManager * LoadProgressManager::Create(void)
@@ -220,28 +172,59 @@ void LoadProgressManager::Load_Mixes(void)
 }
 
 // FUNCTION: GAMEMD 0x00554100
-void __fastcall FUN_00554100(Point2D * point)
+void __fastcall FUN_00554100(Rect * rect)
 {
 	int width = Drawing::RenderWidth;
 	int box_width = DAT_007F5BE4;
 	if (width >= box_width) {
 		int dy = (Drawing::RenderHeight - DAT_007F5BF0) / 2;
 		int dx = (width - box_width) / 2;
-		point->X += dx;
-		point->Y += dy;
+		rect->X += dx;
+		rect->Y += dy;
 	}
+}
+
+// FUNCTION: GAMEMD 0x00554150
+Rect __fastcall FUN_00554150(void)
+{
+	Rect rect;
+	if (Drawing::RenderWidth == DAT_007F5BE0) {
+		rect = Rect(0x10, 0xeb, 200, 20);
+	} else {
+		rect = Rect(0x14, 0x12c, 200, 20);
+	}
+	FUN_00554100(&rect);
+	return rect;
+}
+
+// FUNCTION: GAMEMD 0x005541C0
+void __fastcall FUN_005541C0(wchar_t const * text, Surface * surface, Point2D point, int max_width, unsigned char align, bool fixed_width)
+{
+	int width = 0;
+	int height = 0;
+	BitFont::Instance->GetTextDimension(text, &width, &height, max_width);
+	if (fixed_width) {
+		width = max_width;
+	}
+	Rect rect;
+	rect = Rect(point.X, point.Y, width, height);
+	if (align & 1) {
+		rect.X = point.X + (max_width - width) / 2;
+	} else if (align & 2) {
+		rect.X = point.X - width + max_width;
+	}
+	FUN_0072A9E0(&rect, -4);
+	FUN_00621B80(&rect, surface, 0, 0x9f);
 }
 
 namespace OwnerDraw {
 void __fastcall DrawWideText(Surface * surface, wchar_t const * text, LTRBStruct * rect, BitFont * font, unsigned color, int a, int flags, int b, int c, int d);
 }
 
-struct ColourBytes {
-	unsigned char R;
-	unsigned char G;
-	unsigned char B;
-	unsigned Packed(void) const { return (((B << 8) | G) << 8) | R; }
-};
+inline RGBClass Int_To_RGB(unsigned short color)
+{
+	return RGBClass(color >> Drawing::RedShiftLeft << Drawing::RedShiftRight, color >> Drawing::GreenShiftLeft << Drawing::GreenShiftRight, color >> Drawing::BlueShiftLeft << Drawing::BlueShiftRight);
+}
 
 // FUNCTION: GAMEMD 0x00554280
 void __fastcall FUN_00554280(wchar_t const * text, Surface * surface, Rect * rect, unsigned short color, int a)
@@ -251,11 +234,8 @@ void __fastcall FUN_00554280(wchar_t const * text, Surface * surface, Rect * rec
 	bounds.Top = rect->Y;
 	bounds.Right = rect->X + rect->Width;
 	bounds.Bottom = rect->Y + rect->Height;
-	ColourBytes c;
-	c.R = color >> Drawing::RedShiftLeft << Drawing::RedShiftRight;
-	c.G = color >> Drawing::GreenShiftLeft << Drawing::GreenShiftRight;
-	c.B = color >> Drawing::BlueShiftLeft << Drawing::BlueShiftRight;
-	OwnerDraw::DrawWideText(surface, text, &bounds, BitFont::Instance, c.Packed(), a, 0xc, 0, 0, 0);
+	RGBClass rgb = Int_To_RGB(color);
+	OwnerDraw::DrawWideText(surface, text, &bounds, BitFont::Instance, (((rgb.Get_Blue() << 8) | rgb.Get_Green()) << 8) | rgb.Get_Red(), a, 0xc, 0, 0, 0);
 }
 
 // FUNCTION: GAMEMD 0x00554350

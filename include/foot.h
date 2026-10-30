@@ -167,7 +167,7 @@ class FootClass : public TechnoClass
 		virtual void AddPassenger(FootClass * passenger) override;
 		virtual bool Crash(ObjectClass * killer) override;
 		virtual Coord GetAttackCoordinates(void) const override;
-		virtual void vt_entry_47C(unsigned) override;
+		virtual void vt_entry_47C(AbstractClass * target) override;
 		virtual bool ForceCreate(Coord & coord, unsigned unk = 0) override;
 		virtual int RespondMegaEventMission(void * event) override;
 		virtual void ClearMegaMissionData(void) override;

@@ -352,14 +352,14 @@ int IPXGlobalConnClass::Send_To(char *buf, int buflen, IPXAddressClass *address,
 			((GlobalHeaderType *)buf)->Field3 = result;
 		}
 
-		dest = Session.unknown_296C;
+		dest = Session.PacketRouterAddress;
 		dest_port = DAT_00841F3C;
 		if (Session.unknown_2978 == Session.Players[0]->Address && dest.FUN_0053EF30(Session.Players[0]->Address)) {
 			((GlobalHeaderType *)buf)->FieldC = 0;
 			memset(&((GlobalHeaderType *)buf)->Field8, 0, 4);
 		}
 		else {
-			dest_port = *(unsigned short *)Session.unknown_2984;
+			dest_port = Session.PacketRouterPort;
 			((GlobalHeaderType *)buf)->FieldC = DAT_00841F3C;
 			memset(&((GlobalHeaderType *)buf)->Field8, 0, 4);
 		}

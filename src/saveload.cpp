@@ -241,6 +241,361 @@ void __cdecl FUN_004068E0(char const * format, ...);
 HRESULT __fastcall FUN_00751710(IStream * stream);
 HRESULT __fastcall FUN_007533F0(IStream * stream);
 
+template<class T>
+HRESULT Save_Vector(IStream * stream, const DynamicVectorClass<T> &list)
+{
+	int count;
+	int index;
+	LPPERSISTSTREAM lpPS;
+
+	count = list.Count();
+	HRESULT result = stream->Write(&count, sizeof(count), NULL);
+	if (FAILED(result)) return(result);
+	for (index = 0; index < count; index++) {
+		lpPS = NULL;
+		if (FAILED(result = list[index]->QueryInterface(IID_IPersistStream, (LPVOID *)&lpPS))) return(result);
+		if (FAILED(result = OleSaveToStream(lpPS, stream))) return(result);
+		if (FAILED(result = lpPS->Release())) return(result);
+	}
+	return(S_OK);
+}
+
+extern DynamicVectorClass<AirstrikeClass *> Airstrikes;
+extern DynamicVectorClass<BombClass *> Bombs;
+HRESULT __fastcall FUN_00751620(IStream * stream);
+HRESULT __fastcall FUN_007533B0(IStream * stream);
+
+// FUNCTION: GAMEMD 0x0067D300
+bool Put_All(IStream * stream, int save_net)
+{
+	HRESULT res;
+
+	Scen->Save(stream);
+	Environment.Save(stream);
+	Rule->Save(stream);
+
+	res = Save_Vector(stream, AnimTypes);
+	if (FAILED(res)) {
+		return(false);
+	}
+
+	Map.Save(stream);
+
+	res = Save_Vector(stream, Tubes);
+	if (FAILED(res)) {
+		return(false);
+	}
+
+	if (FAILED(Save_Misc_Values(stream))) {
+		return(false);
+	}
+
+	Logic.Save(stream);
+
+	if (FAILED(OleSaveToStream(TacticalMap, stream))) {
+		return(false);
+	}
+
+	res = Save_Vector(stream, HouseTypes);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = Save_Vector(stream, Houses);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = Save_Vector(stream, Units);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = Save_Vector(stream, UnitTypes);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = Save_Vector(stream, InfantryTypes);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = Save_Vector(stream, Infantry);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = Save_Vector(stream, BuildingTypes);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = Save_Vector(stream, Buildings);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = Save_Vector(stream, AircraftTypes);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = Save_Vector(stream, Aircraft);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = Save_Vector(stream, Anims);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = Save_Vector(stream, TaskForces);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = Save_Vector(stream, TeamTypes);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = Save_Vector(stream, Teams);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = Save_Vector(stream, ScriptTypes);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = Save_Vector(stream, Scripts);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = Save_Vector(stream, TagTypes);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = Save_Vector(stream, Tags);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = Save_Vector(stream, TriggerTypes);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = Save_Vector(stream, Triggers);
+	if (FAILED(res)) {
+		return(false);
+	}
+	Save_Vector(stream, AITriggerTypes);
+	Save_Vector(stream, Actions);
+	res = Save_Vector(stream, Events);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = Save_Vector(stream, Factories);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = Save_Vector(stream, VoxelAnimTypes);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = Save_Vector(stream, VoxelAnims);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = Save_Vector(stream, Warheads);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = Save_Vector(stream, Weapons);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = Save_Vector(stream, ParticleTypes);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = Save_Vector(stream, Particles);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = Save_Vector(stream, ParticleSystemTypes);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = Save_Vector(stream, ParticleSystems);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = Save_Vector(stream, BulletTypes);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = Save_Vector(stream, Bullets);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = Save_Vector(stream, WaypointPaths);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = Save_Vector(stream, SmudgeTypes);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = Save_Vector(stream, OverlayTypes);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = Save_Vector(stream, LightSources);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = Save_Vector(stream, BuildingLights);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = Save_Vector(stream, Sides);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = Save_Vector(stream, Tiberiums);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = Save_Vector(stream, EMPulseClass::EMPulses);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = Save_Vector(stream, SuperWeaponTypes);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = Save_Vector(stream, SuperWeapons);
+	if (FAILED(res)) {
+		return(false);
+	}
+
+	{
+	int count = ShowTimers.Count();
+	res = stream->Write(&count, sizeof(count), NULL);
+	if (SUCCEEDED(res)) {
+		for (int i = 0; i < count; i++) {
+			SuperClass * ptr = ShowTimers[i];
+			res = stream->Write(&ptr, sizeof(ptr), NULL);
+			if (FAILED(res)) {
+				break;
+			}
+		}
+	}
+	}
+	if (FAILED(res)) {
+		return(false);
+	}
+
+	{
+	int count = DAT_008B41E0.Count();
+	res = stream->Write(&count, sizeof(count), NULL);
+	if (SUCCEEDED(res)) {
+		for (int i = 0; i < count; i++) {
+			BuildingClass * ptr = DAT_008B41E0[i];
+			res = stream->Write(&ptr, sizeof(ptr), NULL);
+			if (FAILED(res)) {
+				break;
+			}
+		}
+	}
+	}
+	if (FAILED(res)) {
+		return(false);
+	}
+
+	res = Save_Vector(stream, TerrainTypes);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = Save_Vector(stream, Terrains);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = Save_Vector(stream, FoggedObjectClass::FoggyObjects);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = Save_Vector(stream, AlphaShapes);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = Save_Vector(stream, Waves);
+	if (FAILED(res)) {
+		return(false);
+	}
+	if (!VeinholeMonsterClass::Save_All(stream)) {
+		return(false);
+	}
+	if (!RadarEventClass::Save(stream)) {
+		return(false);
+	}
+	res = Save_Vector(stream, CaptureManagerArray);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = Save_Vector(stream, DiskLasers);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = Save_Vector(stream, Parasites);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = Save_Vector(stream, Temporals);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = Save_Vector(stream, Airstrikes);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = Save_Vector(stream, SpawnManagers);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = Save_Vector(stream, SlaveManagers);
+	if (FAILED(res)) {
+		return(false);
+	}
+
+	if (FAILED(AircraftTracker.Save(stream))) {
+		return(false);
+	}
+	if (FAILED(KamikazeInstance.Save(stream))) {
+		return(false);
+	}
+	if (FAILED(BombListInstance.Save(stream))) {
+		return(false);
+	}
+
+	res = Save_Vector(stream, Bombs);
+	if (FAILED(res)) {
+		return(false);
+	}
+	res = Save_Vector(stream, RadSites);
+	if (FAILED(res)) {
+		return(false);
+	}
+
+	if (Session.Type == GAME_SKIRMISH) {
+		FUN_004068E0("Writing Skirmish Session.Options\n");
+		if (!Session.Options.Save(stream)) {
+			FUN_004068E0("\t***** FAILED!\n");
+			return(false);
+		}
+	}
+
+	if (FAILED(FUN_00751620(stream))) {
+		return(false);
+	}
+	if (FAILED(FUN_007533B0(stream))) {
+		return(false);
+	}
+	if (FAILED(Theme.Save(stream))) {
+		return(false);
+	}
+
+	return(true);
+}
+
 // FUNCTION: GAMEMD 0x0067E730
 bool Get_All(IStream * stream, bool save_net)
 {
@@ -881,32 +1236,6 @@ template class _com_ptr_t<_com_IIID<IStorage, &__uuidof(IStorage)> >;
 // TEMPLATE: GAMEMD 0x0067FDE0
 // ?_Release@?$_com_ptr_t@V?$_com_IIID@UIStream@@$1?_GUID_0000000c_0000_0000_c000_000000000046@@3U__s_GUID@@A@@@@AAEXXZ
 template class _com_ptr_t<_com_IIID<IStream, &__uuidof(IStream)> >;
-
-template<class T>
-HRESULT Save_Vector(IStream * stream, const DynamicVectorClass<T> &list)
-{
-	int count = list.Count();
-	HRESULT result = stream->Write(&count, sizeof(count), NULL);
-	if (SUCCEEDED(result)) {
-		for (int index = 0; index < count; index++) {
-			LPPERSISTSTREAM lpPS = NULL;
-			result = list[index]->QueryInterface(IID_IPersistStream, (LPVOID *)&lpPS);
-			if (FAILED(result)) {
-				return(result);
-			}
-			result = OleSaveToStream(lpPS, stream);
-			if (FAILED(result)) {
-				return(result);
-			}
-			result = lpPS->Release();
-			if (FAILED(result)) {
-				return(result);
-			}
-		}
-		result = S_OK;
-	}
-	return(result);
-}
 
 // TEMPLATE: GAMEMD 0x0067FDF0
 // ?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVFactoryClass@@@@@Z

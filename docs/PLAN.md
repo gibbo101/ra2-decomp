@@ -1,6 +1,6 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 29 October 2026: 18,125 of 19,367 game functions match (94%; 65% of game code
+Status, 30 October 2026: 18,140 of 19,367 game functions match (94%; 67% of game code
 by size), landed in batches module by module. The rounds below record each one.
 
 ## The goal
@@ -1113,6 +1113,19 @@ Session.Players. Recording then exposed three UI-command functions building char
 ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; their RTTI
 fixed them. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
+
+### Batches 147 to 149 (30 October 2026)
+
+**15 functions** (13 of 22 and two helpers), Opus on the smallest untried function of 1.5 KB
+or more in 22 modules, 2.6 to 5.6 KB: BuildingClass::Unlimbo, BulletClass::Detonate,
+EventClass::Execute, FootClass::Approach_Target, HouseClass's constructor, MapGen's
+Init_Map, Net2Remote_Connect, ODCacheImages, RulesClass::Detach, Put_All,
+Read_Scenario_INI, Unit_Draw_Voxel and wonline's 0x007A41C0. Execute matched once DEPLOY
+took TibSun's own form: past a size limit VC6 stopped scheduling the last cases fully.
+Headers took Explosion_Damage's int return, IsAbsorbAllowed's bool, GetParticleSysOffset by
+value, Session's PacketRouterAddress and Port, TibSun's playcd.h and DrawMap(XSurface &).
+Combat, Infantry, Init, LdPrgMgr's Draw, map, mech, Queue (99.7%), Techno (99.8%) and walk
+stay banked. Merge gate: 18,140 of 18,140 (2,483.8 KB).
 
 ### Batch 146 (29 October 2026)
 

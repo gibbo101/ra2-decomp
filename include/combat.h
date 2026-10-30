@@ -20,7 +20,7 @@ struct DamageGroup;
 
 int Modify_Damage(int damage, WarheadTypeClass const * warhead, ArmorType armor, int distance);
 void Chain_Reaction_Damage(Cell const & cell);
-void Explosion_Damage(Coord const & coord, int strength, TechnoClass * source, WarheadTypeClass const * warhead, bool dochainreaction=true, HouseClass * house=0);
+int Explosion_Damage(Coord const & coord, int strength, TechnoClass * source, WarheadTypeClass const * warhead, bool dochainreaction=true, HouseClass * house=0);
 AnimTypeClass const * Combat_Anim(int damage, WarheadTypeClass const * warhead, LandType land, Coord const & coord);
 void Combat_Lighting(Coord coord, int damage, WarheadTypeClass const * warhead, bool forced=false, unsigned int disable_flags=0);
 void Wide_Area_Damage(Coord const & coord, LEPTON radius, int rawdamage, TechnoClass * source, WarheadTypeClass const * warhead);

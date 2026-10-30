@@ -31,6 +31,7 @@ class LoadProgressManager : public INoticeSink
 		Point2D Text_Origin(void);
 		int FUN_00552C90(void);
 		void Load_Mixes(void);
+		void Draw(void);
 
 		static LoadProgressManager * Instance;
 

@@ -210,17 +210,17 @@ void __fastcall Destroy_Connection(int id, int error)
 					for (i = 0; i < count; i++) {
 						if (Session.Players[i]->Player.ID == newid) {
 							addr = &Session.Players[i]->Address;
-							*(unsigned short *)Session.unknown_2984 = Session.PlayerPorts[i];
+							Session.PacketRouterPort = Session.PlayerPorts[i];
 							break;
 						}
 					}
 					NetNumType net;
 					NetNodeType node;
 					addr->Get_Address(net, node);
-					Session.unknown_296C.Set_Address(net, node, 0);
-					FUN_004068E0("Session.PacketRouterAddress = %s\n", Session.unknown_296C.As_String(0));
-					FUN_004068E0("Session.PacketRouterPort = %d\n", *(unsigned short *)Session.unknown_2984);
-					Ipx.FUN_00543050(&Session.unknown_296C);
+					Session.PacketRouterAddress.Set_Address(net, node, 0);
+					FUN_004068E0("Session.PacketRouterAddress = %s\n", Session.PacketRouterAddress.As_String(0));
+					FUN_004068E0("Session.PacketRouterPort = %d\n", Session.PacketRouterPort);
+					Ipx.FUN_00543050(&Session.PacketRouterAddress);
 				}
 				wcscpy(Session.MasterPlayerName, newmaster->UIName);
 				FUN_004068E0("New game host is %ls\n", Session.MasterPlayerName);

@@ -83,6 +83,21 @@ extern Cell DAT_0089DDF0;
 extern int DAT_0089DE70;
 extern int DAT_0081AF00;
 extern ULONG COMRefCount;
+#include "airstrike.h"
+#include "bomb.h"
+#include "bomblist.h"
+#include "capmgr.h"
+#include "parasite.h"
+#include "scenario.h"
+#include "tag.h"
+#include "temporal.h"
+#include "unittype.h"
+#include "vanim.h"
+#include "vector3.h"
+#include "voc.h"
+
+extern double DAT_0081AEF8;
+
 
 
 // SYNTHETIC: GAMEMD 0x004662E0 SYMBOL
@@ -398,6 +413,268 @@ void BulletClass::Bullet_Explodes(bool forced)
 		}
 	} else {
 		Detonate(coord);
+	}
+}
+
+static inline TechnoClass * Techno_Of(AbstractClass * target)
+{
+	return(target == NULL ? NULL : ((target->AbstractFlags & 1) ? (TechnoClass *)target : NULL));
+}
+
+static inline ObjectClass * Object_Of(AbstractClass * target)
+{
+	return(target == NULL ? NULL : ((target->AbstractFlags & 2) ? (ObjectClass *)target : NULL));
+}
+
+static inline FootClass * Foot_Of(AbstractClass * target)
+{
+	return(target == NULL ? NULL : ((target->AbstractFlags & 4) ? (FootClass *)target : NULL));
+}
+
+static inline bool Is_Foot_Object(AbstractClass const * target)
+{
+	return(target != NULL && (target->AbstractFlags & 4));
+}
+
+static inline UnitClass * Unit_Of(AbstractClass * target)
+{
+	return(target == NULL ? NULL : ((target->Fetch_RTTI() == RTTI_UNIT) ? (UnitClass *)target : NULL));
+}
+
+static inline Vector3 Normalize_Dir(const Vector3 & vec)
+{
+	float len = (float)fastmath::sqrt(vec.Z*vec.Z + vec.Y*vec.Y + vec.X*vec.X);
+	if (len != 0.0) {
+		return(vec / len);
+	}
+	return(vec);
+}
+
+// FUNCTION: GAMEMD 0x004690B0
+void BulletClass::Detonate(Coord const & coord)
+{
+	int result = 1;
+	bool nullified = false;
+
+	if (Warhead->ShakeXlo != 0 || Warhead->ShakeXhi != 0) {
+		Map.ScreenX = Sim_Random_Pick(Warhead->ShakeXlo, Warhead->ShakeXhi);
+	}
+	if (Warhead->ShakeYlo != 0 || Warhead->ShakeYhi != 0) {
+		Map.ScreenY = Sim_Random_Pick(Warhead->ShakeYlo, Warhead->ShakeYhi);
+	}
+
+	if (WeaponType != NULL && WeaponType->RadLevel > 0) {
+		ApplyRadiationToCell(coord.As_Cell(), (int)WeaponType->WarheadPtr->SpreadFactor, WeaponType->RadLevel);
+	}
+
+	if (Warhead->MindControl) {
+		if (Payback != NULL && Payback->CaptureManager != NULL) {
+			ObjectClass * object = Object_Of(TarCom);
+			bool player = (TarCom != NULL && (TarCom->AbstractFlags & 1) && ((TechnoClass *)TarCom)->House->Is_Player_Control());
+			if (object != NULL && object->IsActive && object->Tag != NULL) {
+				object->Tag->Spring(TEVENT_ATTACKED, object, DAT_0089DDF0, false, Payback);
+				object->Tag->Spring(TEVENT_ATTACKED_BY, object, DAT_0089DDF0, false, Payback);
+			}
+			if (Payback->CaptureManager->CaptureUnit(TarCom) && Rule->YuriMindControlSound != -1) {
+				if (Payback->House->Is_Player_Control() || player) {
+					VocClass::PlayAt(Rule->YuriMindControlSound, object->PositionCoord);
+				}
+			}
+		}
+	} else if (Warhead->IvanBomb) {
+		BombListInstance.Plant(Payback, Techno_Of(TarCom));
+	} else if (Warhead->ElectricAssault) {
+		if (TarCom != NULL && TarCom->Fetch_RTTI() == RTTI_BUILDING && Payback != NULL && Payback->Fetch_RTTI() == RTTI_INFANTRY) {
+			((BuildingClass *)TarCom)->FUN_00452820((InfantryClass *)Payback);
+		}
+	} else if (Warhead->Parasite) {
+		if (Payback != NULL) {
+			((FootClass *)Payback)->ParasiteImUsing->TryInfect(Foot_Of(TarCom));
+		}
+	} else if (Warhead->Temporal) {
+		if (Payback != NULL && TarCom != NULL) {
+			if (!(TarCom->AbstractFlags & 4) || Foot_Of(TarCom)->In_Which_Layer() == LAYER_GROUND) {
+				TechnoClass * techno = (TechnoClass *)TarCom;
+				if (techno != NULL) {
+					if (!(techno->AbstractFlags & 1)) {
+						techno = NULL;
+					} else if (techno->BunkerLinkedItem != NULL && techno->Fetch_RTTI() == RTTI_UNIT) {
+						techno = techno->BunkerLinkedItem;
+						Payback->Assign_Target(techno);
+					}
+				}
+				Payback->TemporalImUsing->Fire(techno);
+			}
+		}
+	} else if (Warhead->IsLocomotor) {
+		if (Payback != NULL && Payback->LocomotorTarget != TarCom && Payback->LocomotorSource == NULL) {
+			if (!Is_Foot_Object(Payback) || !Foot_Of(Payback)->IsAttackedByLocomotor) {
+				bool infactory = false;
+				if (TarCom != NULL && TarCom->Fetch_RTTI() == RTTI_UNIT) {
+					TechnoClass * contact = Unit_Of(TarCom)->FUN_0065AD30(0);
+					if (contact != NULL && contact->Fetch_RTTI() == RTTI_BUILDING && ((BuildingClass *)contact)->Class->IsWeaponsFactory) {
+						if (Map[Unit_Of(TarCom)->Get_Coord()].Cell_Building() == contact) {
+							infactory = true;
+						}
+					}
+				}
+
+				if (Payback->LocomotorTarget != NULL) {
+					Payback->ReleaseLocomotor(false);
+				}
+
+				if (TarCom != NULL && !infactory) {
+					if (!Is_Foot_Object(TarCom) || Foot_Of(TarCom)->In_Which_Layer() == LAYER_GROUND) {
+						FootClass * foot = (FootClass *)TarCom;
+						if (Is_Foot_Object(foot) && !foot->IsIronCurtained()) {
+							if ((TarCom != NULL && TarCom->Fetch_RTTI() == RTTI_UNIT) || (TarCom != NULL && TarCom->Fetch_RTTI() == RTTI_AIRCRAFT)) {
+								if (!foot->IsAttackedByLocomotor && foot->Techno_Type_Class()->Size < Strength) {
+									Payback->ImbueLocomotor(foot, Warhead->Locomotor);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	} else if (Warhead->Airstrike) {
+		if (Payback != NULL && TarCom != NULL && (TarCom->AbstractFlags & 1) && Payback->Airstrike != NULL) {
+			if (Payback->Airstrike->FUN_0041D7E0(Techno_Of(TarCom))) {
+				Payback->Airstrike->StartMission(Techno_Of(TarCom));
+			}
+		}
+	} else if (Warhead->DirectRocker && TarCom != NULL && TarCom->Fetch_RTTI() == RTTI_UNIT) {
+		TechnoClass * techno = Techno_Of(TarCom);
+		if (Payback != NULL && techno != NULL && !techno->IsIronCurtained()) {
+			double force = MIN(((DamageMultiplier * Strength) >> 8) * Rule->DirectRockingCoefficient / DAT_0081AEF8, 4.0);
+			Coord tcoord = techno->PositionCoord;
+			Coord pcoord = Payback->PositionCoord;
+			Vector3 dir((float)(pcoord.X - tcoord.X), (float)(pcoord.Y - tcoord.Y), (float)(pcoord.Z - tcoord.Z));
+			Vector3 unit = Normalize_Dir(dir);
+			Vector3 push(unit.X * 10.0f, unit.Y * 10.0f, unit.Z * 10.0f);
+			tcoord += Coord((int)push.X, (int)push.Y, (int)push.Z);
+			techno->vt_entry_3D8(tcoord, (float)force, true);
+			techno->DirectRockerLinkedUnit = (FootClass *)Payback;
+			Payback->DirectRockerLinkedUnit = (FootClass *)techno;
+		}
+	} else if (Warhead->BombDisarm) {
+		if (TarCom != NULL && (TarCom->AbstractFlags & 2) && ((ObjectClass *)TarCom)->AttachedBomb != NULL) {
+			((ObjectClass *)TarCom)->AttachedBomb->Disarm();
+		}
+	} else if (Warhead->MakesDisguise) {
+		if (Payback != NULL) {
+			Payback->DisguiseAs(TarCom);
+		}
+	} else if (Warhead->NukeMaker) {
+		NukeMaker();
+	} else {
+		if (Class->ShrapnelWeapon != NULL) {
+			Shrapnel();
+		}
+		int damage = (DamageMultiplier * Strength) >> 8;
+		HouseClass * house = NULL;
+		if (Payback != NULL) {
+			house = Payback->House;
+		}
+		result = MapClass::DamageArea(coord, damage, Payback, Warhead, true, house);
+		if (!IsActive) return;
+		if (result == 2) {
+			nullified = true;
+		}
+	}
+
+	Coord blast = coord;
+	if (Class->IsInvisible) {
+		blast = Coord_Scatter(blast, CELL_LEPTON / 8, false);
+	}
+
+	LandType land = LAND_NONE;
+	if (HeightAGL < DAT_0089DE70 * 2) {
+		land = Map[Get_Coord()].Land_Type();
+		if (land == LAND_WATER && result == 0) {
+			ObjectClass * occupier = Map[Get_Coord()].Cell_Occupier();
+			if (occupier != NULL && occupier->Fetch_RTTI() == RTTI_UNIT) {
+				UnitTypeClass * utype = ((UnitClass *)occupier)->Class;
+				if (utype->Naval && !utype->Underwater) {
+					land = LAND_NONE;
+				}
+			}
+		}
+	}
+
+	AnimTypeClass const * anim = Combat_Anim(Strength, Warhead, land, PositionCoord);
+
+	if (IsBright && !nullified) {
+		unsigned int flags = 0;
+		if (Warhead->CLDisableRed) flags = 2;
+		if (Warhead->CLDisableGreen) flags |= 4;
+		if (Warhead->CLDisableBlue) flags |= 8;
+		Combat_Lighting(blast, Strength, Warhead, true, flags);
+	}
+
+	if (nullified) {
+		AnimTypeClass const * nullanim = Rule->WeaponNullifyAnim;
+		if (nullanim != NULL) {
+			new AnimClass(nullanim, blast, 0, 1, ShapeFlags_Type(0x2600), Get_Explosion_Z(blast));
+		}
+		return;
+	}
+
+	if (anim != NULL) {
+		AnimClass * aptr = new AnimClass(anim, blast, 0, 1, ShapeFlags_Type(0x2600), Get_Explosion_Z(blast));
+		if (aptr == NULL && Warhead == Rule->NukeWarhead) {
+			HousesType house = HOUSE_NONE;
+			if (Payback != NULL) {
+				house = Payback->House->Class->House;
+			}
+			AnimClass::Do_Atom_Damage(house, blast.As_Cell());
+		}
+	}
+
+	if (Warhead->MaxDebris > 0) {
+		int count = Random_Pick(Warhead->MinDebris, Warhead->MaxDebris - 1);
+		if (Warhead->DebrisTypes.Count() > 0) {
+			int index = 0;
+			while (count > 0) {
+				int number = abs((int)Scen->RandomNumber) % (Warhead->DebrisMaximums[index] + 1);
+				if (number >= count) number = count;
+				for (int i = 0; i < number; i++) {
+					new VoxelAnimClass(Warhead->DebrisTypes[index], Center_Coord(), NULL);
+				}
+				count -= number;
+				index++;
+				if (index >= Warhead->DebrisTypes.Count()) {
+					index = 0;
+				}
+			}
+		}
+		if (Warhead->DebrisTypes.Count() == 0) {
+			for (; count > 0; count--) {
+				new AnimClass(Rule->MetallicDebris[Random_Pick(0, Rule->MetallicDebris.Count() - 1)], Center_Coord() + Coord(0, 0, 20), 0, 1, ShapeFlags_Type(0x600), 0, false);
+			}
+		}
+	}
+
+	if (Class->IsAirburst) {
+		WeaponTypeClass * weapon = Class->AirburstWeapon;
+		BulletTypeClass const * btype = weapon->Bullet;
+		FacingType face = FACING_N;
+		CellClass * cell = Get_Cell_Ptr();
+		for (int i = 0; i < 8; i++) {
+			CellClass * adjacent = &cell->Adjacent_Cell(face);
+			face = FacingType((face + 1) & 7);
+			BulletClass * bullet = Create_Bullet(btype, adjacent, Payback, weapon->Attack, weapon->WarheadPtr, 50, false);
+			if (bullet != NULL) {
+				TVelocity3D<double> velocity(DirType((Dir256)Random_Pick(DIR_MIN, DIR_NE)), DirType(DIR_S), weapon->MaxSpeed / 10);
+				bullet->Unlimbo(PositionCoord, velocity);
+			}
+		}
+
+		BulletClass * bullet = Create_Bullet(btype, cell, Payback, weapon->Attack, weapon->WarheadPtr, 50, false);
+		if (bullet != NULL) {
+			TVelocity3D<double> velocity(DirType((Dir256)Random_Pick(DIR_MIN, DIR_NE)), DirType(DIR_S), weapon->MaxSpeed / 10);
+			bullet->Unlimbo(PositionCoord, velocity);
+		}
 	}
 }
 

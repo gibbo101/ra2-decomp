@@ -1185,6 +1185,589 @@ bool Decrypt_Serial(char * buffer)
 	return(true);
 }
 
+namespace UI {
+	void RegisterComboDropAndNewEditClasses(void);
+	void RegisterWindow(HWND window, int id);
+}
+namespace Game { extern HINSTANCE hInstance; extern HWND hWnd; extern int ObserverMode; }
+BOOL CALLBACK MPlayer_Game_List_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+bool __fastcall FUN_005E7BF0(int slot);
+extern int DAT_008316A4;
+extern bool DAT_00AC0269;
+extern int DAT_00AA0430;
+int __fastcall FUN_0053E770(MSG * msg, HWND window, unsigned int filter_min, unsigned int filter_max, unsigned int remove);
+void __cdecl FUN_004068E0(char const * format, ...);
+int __fastcall FUN_005DF410(int index, char flag);
+void __fastcall Unjoin_Game(int game_index);
+BOOL CALLBACK MPlayer_Host_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+void FUN_0072CF40(void);
+void FUN_0072CF90(void);
+void FUN_005E3630(void);
+void __fastcall FUN_005E8DA0(int slot);
+void __fastcall FUN_005E9E00(HWND dialog);
+void __fastcall FUN_0052FEC0(Surface * surface, bool flag);
+bool __fastcall FUN_005E93F0(NodeNameType * slot);
+bool __fastcall FUN_005E9440(NodeNameType * slot);
+bool __fastcall FUN_005E9470(NodeNameType * slot);
+void FUN_005DAF30(void);
+
+// True unless every player shares one team and the game mode forbids that.
+static inline bool Net2_Teams_Allowed(MultiplayerGameMode * mode)
+{
+	int team = -1;
+	for (int i = 0; i < 8; i++) {
+		NodeNameType * slot = Session.Slots[i];
+		if (FUN_005E9470(slot)) {
+			if (FUN_005E93F0(slot) && slot->Slot.SpectatorFlag != -1) {
+				if (i == 0) {
+					team = slot->Slot.Team;
+				} else if (team != slot->Slot.Team) {
+					return(true);
+				}
+			} else if (FUN_005E9440(slot) && slot->Slot.SpectatorFlag != -1) {
+				if (team != Session.Options.AISlots.Allies[i]) {
+					return(true);
+				}
+			}
+		}
+	}
+	return(team < 0 || mode->vt_entry_04());
+}
+
+// FUNCTION: GAMEMD 0x005DC350
+bool Net2Remote_Connect(void)
+{
+	int i;
+
+	RulesID = RulesClass::Get_Rule_Unique_ID();
+	RulesClass::Load_Art_INI();
+	ArtID = RulesClass::Get_Art_Unique_ID();
+	AIID = RulesClass::Get_AI_Unique_ID();
+	Decrypt_Serial(DAT_00ABFF7C);
+
+	Ipx.Set_Timing(TIMER_SECOND / 2, (unsigned int)-1, 10 * TIMER_SECOND);
+
+	Session.NetStealth = false;
+	Session.GameName[0] = 0;
+	Session.NetOpen = true;
+	Net2GameStarted = false;
+
+	UI::RegisterComboDropAndNewEditClasses();
+
+	HWND game_list_dialog = WS_Create_Dialog(Game::hInstance, IDD_MPLAYER_GAME_LIST, Game::hWnd, MPlayer_Game_List_Dialog_Proc, FALSE);
+	UI::RegisterWindow(game_list_dialog, IDD_MPLAYER_GAME_LIST);
+	ShowWindow(game_list_dialog, SW_SHOWNORMAL);
+	Net2DisplayUsers();
+
+	CurGame = 0;
+	_netresponse = 0;
+	JoinState = JOIN_NOTHING;
+	Net2IsGameListActive = true;
+
+	for (;;) {
+		while (_netresponse == 0) {
+			Ipx.Service();
+			Sleep(0);
+			Call_Back();
+			Ipx.Service();
+			Title_Screen_Restore(false);
+
+			DAT_00AA0430++;
+			MSG msg;
+			while (FUN_0053E770(&msg, NULL, 0, 0, PM_REMOVE)) {
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+			}
+
+			Call_Back();
+			if (_netresponse != 0) {
+				break;
+			}
+
+			if (WS_Top_Window()) {
+				Send_Join_Queries(0, 0, 0, 0);
+				Get_Join_Responses();
+				if (WS_Top_Window_ID() == IDD_MPLAYER_HOST) {
+					PumpGameopts(false, false);
+				}
+				Net2ServiceGameList();
+
+				if (!DAT_00AC0230 && JoinState == JOIN_WAIT_CONFIRM) {
+					FUN_004068E0("Timing out LAN join request!\n");
+					Unjoin_Game(CurGame);
+					JoinState = JOIN_NOTHING;
+					Send_Join_Queries(0, 0, 1, 0);
+					PMessagePrintf(ColorSystem, StringTable::LoadString("TXT_REQUEST_DENIED", NULL, "D:\\ra2mdpost\\netdlg2.cpp", 0x57e));
+					VocClass::PlayGlobal(Rule->SystemError, 1.0f, 0x2000);
+					HWND top = WS_Top_Window();
+					if (top) {
+						EnableWindow(top, TRUE);
+						HWND name = GetDlgItem(top, 0x541);
+						if (name) {
+							EnableWindow(name, TRUE);
+						}
+					}
+				}
+			}
+		}
+
+		if (_netresponse == 0x5c0 || _netresponse == IDCANCEL) {
+			Session.Write_MultiPlayer_Settings();
+			if (WS_Top_Window_ID() == IDD_MPLAYER_GAME_LIST) {
+				if (JoinState > JOIN_NOTHING) {
+					Unjoin_Game(CurGame);
+					Ipx.Service();
+				}
+				WS_Destroy_Dialog(NULL, 0);
+				FUN_005E8B40();
+				FUN_005E8AE0();
+				Clear_Vector(&Session.Players);
+				Clear_Vector(&Session.Games);
+				Clear_Vector(&Session.Chat);
+				Session.NetOpen = false;
+				Ipx.Service();
+				return(false);
+			}
+
+			if (WS_Top_Window_ID() == IDD_MPLAYER_HOST) {
+				Unjoin_Game(CurGame);
+				JoinState = JOIN_NOTHING;
+				WS_Destroy_Dialog(WS_Top_Window(), 0);
+				FUN_0072CF90();
+				FUN_005E8B60();
+				game_list_dialog = WS_Create_Dialog(Game::hInstance, IDD_MPLAYER_GAME_LIST, Game::hWnd, MPlayer_Game_List_Dialog_Proc, 0);
+				UI::RegisterWindow(game_list_dialog, IDD_MPLAYER_GAME_LIST);
+				ShowWindow(game_list_dialog, SW_SHOWNORMAL);
+				Send_Join_Queries(0, 0, 1, 0);
+			} else if (WS_Top_Window_ID() == IDD_MPLAYER_GUEST) {
+				if (JoinState == JOIN_CONFIRMED) {
+					Unjoin_Game(CurGame);
+					JoinState = JOIN_NOTHING;
+				} else {
+					GlobalPacketType gpacket;
+					memset(&gpacket, 0, sizeof(gpacket));
+					gpacket.Command = NET_SIGN_OFF;
+					strcpy(gpacket.Name, Session.Handle);
+					for (i = 1; i < Session.Chat.Count(); i++) {
+						Ipx.Send_Global_Message(&gpacket, sizeof(gpacket), 1, &Session.Chat[i]->Address);
+						Call_Back();
+					}
+
+					Ipx.Send_Global_Message(&gpacket, sizeof(gpacket), 0, NULL);
+					if (Session.IsBridge) {
+						Ipx.Send_Global_Message(&gpacket, sizeof(gpacket), 0, &Session.BridgeNet);
+					}
+				}
+
+				CDTimerClass<SystemTimerClass> timeout = TIMER_SECOND * 10;
+				while (Ipx.Global_Num_Send() > 0) {
+					if (Ipx.Service() == 0) {
+						break;
+					}
+					if (timeout == 0) {
+						break;
+					}
+					Call_Back();
+				}
+
+				Session.GameName[0] = 0;
+				JoinState = JOIN_NOTHING;
+				WS_Destroy_Dialog(NULL, 0);
+				_netresponse = 0;
+				FUN_0072CF90();
+				CurGame = 0;
+				Clear_Vector(&Session.Players);
+				FUN_005E8B40();
+				FUN_005E8B60();
+				game_list_dialog = WS_Create_Dialog(Game::hInstance, IDD_MPLAYER_GAME_LIST, Game::hWnd, MPlayer_Game_List_Dialog_Proc, 0);
+				UI::RegisterWindow(game_list_dialog, IDD_MPLAYER_GAME_LIST);
+				ShowWindow(game_list_dialog, SW_SHOWNORMAL);
+			} else {
+				if (JoinState == JOIN_CONFIRMED) {
+					Unjoin_Game(CurGame);
+					JoinState = JOIN_NOTHING;
+				} else {
+					GlobalPacketType gpacket;
+					memset(&gpacket, 0, sizeof(gpacket));
+					gpacket.Command = NET_SIGN_OFF;
+					strcpy(gpacket.Name, Session.Handle);
+					for (i = 1; i < Session.Chat.Count(); i++) {
+						Ipx.Send_Global_Message(&gpacket, sizeof(gpacket), 1, &Session.Chat[i]->Address);
+						Call_Back();
+					}
+
+					Ipx.Send_Global_Message(&gpacket, sizeof(gpacket), 0, NULL);
+					if (Session.IsBridge) {
+						Ipx.Send_Global_Message(&gpacket, sizeof(gpacket), 0, &Session.BridgeNet);
+					}
+				}
+
+				CDTimerClass<SystemTimerClass> timeout = TIMER_SECOND * 10;
+				while (Ipx.Global_Num_Send() > 0) {
+					if (Ipx.Service() == 0) {
+						break;
+					}
+					if (timeout == 0) {
+						break;
+					}
+					Call_Back();
+				}
+
+				Session.GameName[0] = 0;
+				JoinState = JOIN_NOTHING;
+				_netresponse = 0;
+				CurGame = 0;
+				Clear_Vector(&Session.Players);
+				FUN_005E8B40();
+				FUN_005E8B60();
+				game_list_dialog = WS_Create_Dialog(Game::hInstance, IDD_MPLAYER_GAME_LIST, Game::hWnd, MPlayer_Game_List_Dialog_Proc, 0);
+				UI::RegisterWindow(game_list_dialog, IDD_MPLAYER_GAME_LIST);
+				ShowWindow(game_list_dialog, SW_SHOWNORMAL);
+			}
+		}
+
+		if (_netresponse == 0x6cd) {
+			Session.NetStealth = false;
+			Session.Write_MultiPlayer_Settings();
+			if (FUN_005DF410(CurGame, Game::ObserverMode != 0)) {
+				JoinState = JOIN_WAIT_CONFIRM;
+			} else {
+				HWND top = WS_Top_Window();
+				if (top) {
+					EnableWindow(top, TRUE);
+					HWND name = GetDlgItem(top, 0x541);
+					if (name) {
+						EnableWindow(name, TRUE);
+					}
+				}
+			}
+			if (Session.MPGameMode) {
+				Session.MPGameMode->vt_entry_24();
+			}
+		}
+
+		if (_netresponse == 0x6ce) {
+			Session.NetStealth = false;
+			Session.Write_MultiPlayer_Settings();
+			if (FUN_005DF410(CurGame, true)) {
+				JoinState = JOIN_WAIT_CONFIRM;
+			} else {
+				HWND top = WS_Top_Window();
+				if (top) {
+					EnableWindow(top, TRUE);
+					HWND name = GetDlgItem(top, 0x541);
+					if (name) {
+						EnableWindow(name, TRUE);
+					}
+				}
+			}
+			if (Session.MPGameMode) {
+				Session.MPGameMode->vt_entry_24();
+			}
+		}
+
+		if (_netresponse == 0x6cc) {
+			bool ok = true;
+
+			if (strlen(Session.Handle) < 1) {
+				ODMessageBox(StringTable::LoadString("TXT_NAME_BLANK", NULL, "D:\\ra2mdpost\\netdlg2.cpp", 0x683), 0, Net2Callback);
+				ok = false;
+			}
+
+			for (i = 0; i < Session.Games.Count(); i++) {
+				if (ok && !stricmp(FUN_007350C0(Session.Games[i]->Name), Session.Handle)) {
+					ODMessageBox(StringTable::LoadString("TXT_GAMENAME_MUSTBE_UNIQUE", NULL, "D:\\ra2mdpost\\netdlg2.cpp", 0x68d), 0, Net2Callback);
+					ok = false;
+					break;
+				}
+			}
+
+			if (ok) {
+				wcscpy(Session.GameName, FUN_00735120(Session.Handle));
+
+				Session.NetOpen = true;
+				Session.NetStealth = false;
+				Session.Options.ScenarioIndex = 0;
+				Session.PlayingAgainstVersion = VerNum.Version_Number();
+				FUN_005E7BF0(Session.Options.ScenarioIndex);
+
+				WS_Destroy_Dialog(NULL, 0);
+				_netresponse = 0;
+
+				Clear_Vector(&Session.Players);
+
+				NodeNameType * who = new NodeNameType;
+				memset(who, 0, sizeof(*who));
+				wcscpy(who->Name, FUN_00735120(Session.Handle));
+				strcpy(who->Player.Serial, DAT_00ABFF7C);
+				who->Set_Country(Session.FUN_0069B700());
+				who->Set_Color(Session.FUN_0069B720());
+				who->Set_Start(-2);
+				who->Set_Team(-2);
+				who->Slot.Unknown77 = 1;
+				who->Slot.SpectatorFlag = 0;
+				DAT_008316A4 = 7;
+				if (DAT_00AC0269) {
+					DAT_008316A4 = 0;
+					who->Slot.SpectatorFlag = -1;
+				} else if (who->Get_Country() == -3) {
+					who->Set_Country(-2);
+				}
+				Session.Players.Add(who);
+
+				if (Session.MPGameMode) {
+					Session.MPGameMode->vt_entry_24();
+				}
+				FUN_005E8B40();
+				FUN_005E8B60();
+				FUN_005E8DA0(0);
+				if (DAT_008316A4 == 0) {
+					Session.Slots[0]->Set_Country(-3);
+					Session.Slots[0]->Slot.SpectatorFlag = -1;
+				}
+
+				JoinState = JOIN_CONFIRMED;
+
+				NodeNameType * game = new NodeNameType;
+				wcscpy(game->Name, FUN_00735120(Session.Handle));
+				game->Address = Session.GAddress;
+				game->Game.IsOpen = true;
+				game->Game.LastTime = TickCount;
+				Session.Games.Add(game);
+
+				CurGame = Session.Games.Count() - 1;
+
+				FUN_0072CF40();
+				HWND host_dialog = WS_Create_Dialog(Game::hInstance, IDD_MPLAYER_HOST, Game::hWnd, MPlayer_Host_Dialog_Proc, 0);
+				UI::RegisterWindow(host_dialog, IDD_MPLAYER_HOST);
+				SendMessage(host_dialog, OD_SETTOP, 0, 1);
+				ShowWindow(host_dialog, SW_SHOWNORMAL);
+			} else {
+				HWND top = WS_Top_Window();
+				if (top) {
+					EnableWindow(top, TRUE);
+					HWND name = GetDlgItem(top, 0x541);
+					if (name) {
+						EnableWindow(name, TRUE);
+					}
+				}
+			}
+		}
+
+		if (_netresponse == 1 && WS_Top_Window_ID() == IDD_MPLAYER_GUEST) {
+			while (WS_Destroy_Dialog(NULL, 0) == true) {}
+			FUN_0072CF90();
+
+			if (JoinState == 3) {
+				if (!Net2ReadyToGo(0)) {
+					_netresponse = IDCANCEL;
+					Net2GameStarted = false;
+					continue;
+				}
+				Net2GameStarted = true;
+			} else if (JoinState == 4) {
+				Net2ReadyToGo(1);
+			}
+			_netresponse = 0;
+
+			PregameSetup();
+
+			Session.FrameSendRate = 5;
+			Session.LatencyFudge = 0;
+			Session.PrecalcMaxAhead = 0;
+			Session.PrecalcDesiredFrameRate = 0;
+			if (Session.CommProtocol == COMM_PROTOCOL_MULTI_E_COMP) {
+				Session.MaxAhead = MAX(((((Ipx.Global_Response_Time() / 8) + (Session.FrameSendRate - 1)) / Session.FrameSendRate) * Session.FrameSendRate), NETWORK_MIN_MAX_AHEAD * Session.FrameSendRate);
+			} else {
+				Session.MaxAhead = MAX(((int)Ipx.Global_Response_Time() / 8), NETWORK_MIN_MAX_AHEAD);
+			}
+			Session.NetOpen = false;
+			Session.Write_MultiPlayer_Settings();
+			return(true);
+		}
+
+		if (_netresponse == 0x588) {
+			Net2GameStarted = false;
+			Session.Write_MultiPlayer_Settings();
+		}
+
+		int count = Session.Players.Count();
+		int observers = 0;
+		for (i = 0; i < count; i++) {
+			if (Session.Players[i]->Slot.SpectatorFlag == -1) {
+				observers++;
+			}
+		}
+
+		if (_netresponse == 0x588) {
+			if (count - observers <= 1) {
+				PMessagePrintf(-1, StringTable::LoadString("TXT_ONLY_ONE", NULL, "D:\\ra2mdpost\\netdlg2.cpp", 0x748));
+				_netresponse = 0;
+				EnableWindow(GetDlgItem(WS_Top_Window(), 0x588), TRUE);
+			}
+
+			if (_netresponse == 0x588) {
+				bool nomap = false;
+				for (i = 1; i < count; i++) {
+					if (Session.Players[i]->Slot.Unknown7F == 0) {
+						PMessagePrintf(-1, StringTable::LoadString("GUI:HostNoMap", NULL, "D:\\ra2mdpost\\netdlg2.cpp", 0x754), Session.Players[i], Session.Options.ScenarioDescription);
+						nomap = true;
+					}
+				}
+				if (nomap) {
+					_netresponse = 0;
+					EnableWindow(GetDlgItem(WS_Top_Window(), 0x588), TRUE);
+				}
+			}
+		}
+
+		MultiplayerGameMode * mode = Session.MPGameMode;
+		if (_netresponse == 0x588) {
+			int waypoints = RandomMapWaypointCount(Session.Options.ScenarioIndex);
+			if (waypoints < Session.Options.AIPlayers - observers + count) {
+				PMessagePrintf(-1, StringTable::LoadString("TXT_SCENARIO_TOO_SMALL", NULL, "D:\\ra2mdpost\\netdlg2.cpp", 0x767), waypoints);
+				EnableWindow(GetDlgItem(WS_Top_Window(), 0x588), TRUE);
+				_netresponse = 0;
+			}
+
+			WideWstring message;
+			if (!mode->vt_entry_14(&message)) {
+				PMessagePrintf(-1, message.get());
+				EnableWindow(GetDlgItem(WS_Top_Window(), 0x588), TRUE);
+				_netresponse = 0;
+			}
+		}
+
+		FUN_005E9E00(WS_Top_Window());
+
+		if (_netresponse == 0x588) {
+			if (!Net2_Teams_Allowed(mode)) {
+				PMessagePrintf(-1, StringTable::LoadString("TXT_CANNOT_ALLY", NULL, "D:\\ra2mdpost\\netdlg2.cpp", 0x79a));
+				EnableWindow(GetDlgItem(WS_Top_Window(), 0x588), TRUE);
+				_netresponse = 0;
+			}
+			if (_netresponse == 0x588) {
+				for (i = 0; i < count; i++) {
+					if (Session.Players[i]->Slot.Unknown77 == 0) {
+						FUN_005E3630();
+						PMessagePrintf(-1, StringTable::LoadString("GUI:HostGameStartHost", NULL, "D:\\ra2mdpost\\netdlg2.cpp", 0x7ac));
+						_netresponse = 0;
+						EnableWindow(GetDlgItem(WS_Top_Window(), 0x588), TRUE);
+						break;
+					}
+				}
+			}
+		}
+
+		if (_netresponse != 0x588) {
+			_netresponse = 0;
+		} else {
+			Net2GameStarted = true;
+
+			for (i = 0; i < Session.Players.Count(); i++) {
+				if (Session.Players[i]->Slot.SpectatorFlag == -1) {
+					Session.Players[i]->Set_Color(-2);
+				}
+			}
+
+			mode->vt_entry_68();
+			Session.FUN_0069B8C0();
+			PumpGameopts(true, true);
+			FUN_005DAF30();
+			mode->vt_entry_64();
+
+			if (MultiplayerMapPreview != NULL) {
+				delete MultiplayerMapPreview;
+				MultiplayerMapPreview = NULL;
+			}
+
+			PregameSetup();
+
+			Session.FrameSendRate = 5;
+			Session.LatencyFudge = 0;
+			Session.PrecalcMaxAhead = 0;
+			Session.PrecalcDesiredFrameRate = 0;
+			if (Session.CommProtocol == COMM_PROTOCOL_MULTI_E_COMP) {
+				Session.MaxAhead = MAX(((((Ipx.Global_Response_Time() / 8) + (Session.FrameSendRate - 1)) / Session.FrameSendRate) * Session.FrameSendRate), NETWORK_MIN_MAX_AHEAD * Session.FrameSendRate);
+			} else {
+				Session.MaxAhead = MAX(((int)Ipx.Global_Response_Time() / 8), NETWORK_MIN_MAX_AHEAD);
+			}
+
+			Ipx.Set_Timing(MAX(TIMER_SECOND / 2, (unsigned int)Ipx.Global_Response_Time() + 2), (unsigned int)-1, 10 * TIMER_SECOND);
+
+			GlobalPacketType gpacket;
+			memset(&gpacket, 0, sizeof(gpacket));
+			gpacket.Command = NET_GO;
+			gpacket.ResponseTime.OneWay = Session.MaxAhead;
+			for (i = 1; i < Session.Players.Count(); i++) {
+				Ipx.Send_Global_Message(&gpacket, sizeof(gpacket), 1, &(Session.Players[i]->Address));
+			}
+
+			CDTimerClass<SystemTimerClass> timeout = TIMER_SECOND * 20;
+			while (Ipx.Global_Num_Send() > 0 && !timeout) {
+				Call_Back();
+			}
+
+			int responses[MAX_PLAYERS];
+			memset(responses, 0, sizeof(responses));
+			int num_responses = 0;
+			bool send_scenario = false;
+			FUN_004068E0("About to wait for 'GO' response.\n");
+			CDTimerClass<SystemTimerClass> response_timer;
+			response_timer = TIMER_SECOND * 10;
+
+			do {
+				Call_Back();
+				int retcode = Ipx.Get_Global_Message(&Session.GPacket, &Session.GPacketlen, &Session.GAddress, &Session.GProductID);
+				if (retcode && Session.GProductID == IPXGlobalConnClass::COMMAND_AND_CONQUER4) {
+					for (i = 1; i < Session.Players.Count(); i++) {
+						if (Session.Players[i]->Address == Session.GAddress) {
+							if (!responses[i]) {
+								if (Session.GPacket.Command == NET_REQ_SCENARIO) {
+									FUN_004068E0("Received REQ_SCENARIO packet.\n");
+									responses[i] = Session.GPacket.Command;
+									send_scenario = true;
+									num_responses++;
+								}
+								if (Session.GPacket.Command == NET_READY_TO_GO) {
+									FUN_004068E0("Received READY_TO_GO packet.\n");
+									responses[i] = Session.GPacket.Command;
+									num_responses++;
+								}
+							}
+						}
+					}
+				}
+			} while (num_responses < Session.Players.Count() - 1 && response_timer);
+
+			WS_Destroy_Dialog(NULL, 0);
+			FUN_0072CF90();
+			FUN_0052FEC0(NULL, true);
+
+			if (send_scenario) {
+				memset(Session.ScenarioRequests, 0, sizeof(Session.ScenarioRequests));
+				Session.RequestCount = 0;
+				for (i = 1; i < Session.Players.Count(); i++) {
+					if (responses[i] == NET_REQ_SCENARIO) {
+						Session.ScenarioRequests[Session.RequestCount++] = i;
+					}
+				}
+				Send_Remote_File(Scen->ScenarioName, 3, false, true);
+				if (Session.Is_Random_Map()) {
+					Send_Remote_File("RandMap.img", 3, false, true);
+				}
+			}
+
+			Ipx.Set_Timing(MAX(Ipx.Global_Response_Time() + 2, TIMER_SECOND / 2), (unsigned int)-1, MAX(2 * TIMER_SECOND, Ipx.Global_Response_Time() * 8));
+			break;
+		}
+	}
+
+	Session.NetOpen = false;
+	Session.Write_MultiPlayer_Settings();
+	return(true);
+}
+
 // FUNCTION: GAMEMD 0x005DD8A0
 bool Net2ReadyToGo(int load_game)
 {

@@ -268,7 +268,7 @@ class TechnoClass : public RadioClass
 
 		bool IsDiscoveredByComputer;
 		bool unknown_bool_41D;
-		bool unknown_bool_41E;
+		unsigned char unknown_41E;
 		bool unknown_bool_41F;
 
 		char SightIncrease;
@@ -518,7 +518,7 @@ class TechnoClass : public RadioClass
 		virtual void ClearDisguise(void);
 		virtual bool Is_Ready_To_Random_Animate(void) const;
 		virtual bool Random_Animate(void) {return(false);}
-		virtual void vt_entry_47C(unsigned);
+		virtual void vt_entry_47C(AbstractClass * target);
 		virtual void Assign_Destination(AbstractClass * target, bool = true);
 		virtual bool Enter_Idle_Mode(bool initial=false, bool = true);
 		bool Is_Draining(void) const;

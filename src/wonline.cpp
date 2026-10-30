@@ -117,7 +117,8 @@ OLEInitializer g_OLEInitializer;
 Wstring DAT_00B73AE0;
 
 struct Server {
-	char Pad[0x18];
+	char Pad[0x14];
+	Server * next;
 	char name[71];
 	char connlabel[5];
 	char conndata[128];
@@ -1405,8 +1406,8 @@ extern int DAT_00B779C8;
 extern int DAT_00B736F0;
 extern int DAT_0084A234;
 extern WolChannel DAT_00B73BE8;
-extern char DAT_00B75E58[0xF8];
-extern char DAT_00B769C8[0xF8];
+extern Server DAT_00B75E58;
+extern Server DAT_00B769C8;
 extern int DAT_00B736CC[8];
 extern char DAT_00B77A94[0x29];
 extern int DAT_00B76468;
@@ -1493,8 +1494,8 @@ void FUN_00780110(void)
 	}
 	memset(&DAT_00B76B10, 0, 0x10C);
 	memset(&DAT_00B73BE8, 0, 0x10C);
-	memset(DAT_00B75E58, 0, 0xF8);
-	memset(DAT_00B769C8, 0, 0xF8);
+	memset(&DAT_00B75E58, 0, sizeof(DAT_00B75E58));
+	memset(&DAT_00B769C8, 0, sizeof(DAT_00B769C8));
 	DAT_00B77AD0[0] = 0;
 	DAT_00B77E14 = 0;
 	DAT_00B73A20 = 1;
@@ -8585,6 +8586,173 @@ counted:
 // FUNCTION: GAMEMD 0x007A41A0
 CChatEventSink::CChatEventSink(void)
 {
+}
+
+extern char DAT_00B77930[];
+extern int DAT_00B76184;
+extern char DAT_00B77CE8[];
+extern int DAT_00B75F5C;
+extern char DAT_00B73E44[64][128];
+extern int DAT_00B77E1C;
+extern int DAT_00B76338[64];
+#include "ccrand.h"
+
+// FUNCTION: GAMEMD 0x007A41C0
+long __stdcall FUN_007A41C0(void * sink, long result, Server * servers)
+{
+	Server * tmp = servers;
+	Server * server = NULL;
+	int chat_server_index = 0;
+	int skumatchcount = 0;
+	int game_srv_found = 0;
+	char namebuf[128];
+	char conndata[128];
+	char conndata2[128];
+	char conndata3[128];
+	char token[128];
+	char manglerdata[128];
+
+	srand(time(0));
+
+	if (result < 0) {
+		SetEvent(DAT_00B73684[0]);
+		swprintf(DAT_00B77AD0, StringTable::LoadString("TXT_NO_SERV_LIST", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x149B));
+		return 0;
+	}
+
+	bool mangler_found = false;
+	while (tmp != NULL) {
+		if (strcmp(tmp->connlabel, "IRC") == 0) {
+			if (chat_server_index == 0) {
+				DAT_00B778D8.addTail(*tmp);
+				DAT_00B76468 = 0;
+				chat_server_index = 1;
+			} else {
+				DAT_00B778D8.addTail(*tmp);
+				char * nameToken;
+				strcpy(namebuf, tmp->name);
+				int sku = -1;
+				nameToken = strtok(namebuf, ",");
+				while (nameToken != NULL) {
+					sku = atol(nameToken);
+					if (sku == (unsigned char)DAT_0084A234) {
+						break;
+					}
+					if (strchr(nameToken, ':') != NULL) {
+						break;
+					}
+					nameToken = strtok(NULL, ",");
+				}
+				if (sku == (unsigned char)DAT_0084A234) {
+					double pick_roll = rand();
+					pick_roll /= 32767.0;
+					double pick_chance = 1.0 / (double)++skumatchcount;
+					if (pick_roll <= pick_chance) DAT_00B76468 = chat_server_index;
+				}
+				DAT_00B779CC = DAT_00B76468;
+				chat_server_index++;
+			}
+		} else if (strcmp(tmp->connlabel, "LAD") == 0) {
+			char * host;
+			char * port;
+			strcpy(token, tmp->conndata);
+			strtok(token, ";");
+			host = strtok(NULL, ";");
+			if (host != NULL) {
+				strcpy(DAT_00B761A8, host);
+			}
+			port = strtok(NULL, ";");
+			if (port != NULL) {
+				DAT_00B77A90 = atol(port);
+			}
+		} else if (strcmp(tmp->connlabel, "GAM") == 0 && game_srv_found == 0) {
+			char * host;
+			char * port;
+			memcpy(&DAT_00B75E58, tmp, sizeof(DAT_00B75E58));
+			strcpy(conndata, DAT_00B75E58.conndata);
+			strtok(conndata, ";");
+			host = strtok(NULL, ";");
+			if (host != NULL) {
+				strcpy(DAT_00B77930, host);
+			}
+			port = strtok(NULL, ";");
+			if (port != NULL) {
+				DAT_00B76184 = atol(port);
+			}
+			DAT_00B77CE8[0] = 0;
+			DAT_00B75F5C = 0;
+			game_srv_found = 1;
+		} else if (strcmp(tmp->connlabel, "GAM") == 0 && game_srv_found == 1) {
+			char * host;
+			char * port;
+			memcpy(&DAT_00B75E58, tmp, sizeof(DAT_00B75E58));
+			strcpy(conndata3, DAT_00B75E58.conndata);
+			strtok(conndata3, ";");
+			host = strtok(NULL, ";");
+			if (host != NULL) {
+				strcpy(DAT_00B77CE8, host);
+			}
+			port = strtok(NULL, ";");
+			if (port != NULL) {
+				DAT_00B75F5C = atol(port);
+			}
+			game_srv_found = 2;
+		} else if (strcmp(tmp->connlabel, "WDT") == 0) {
+			char * host;
+			char * port;
+			memcpy(&DAT_00B769C8, tmp, sizeof(DAT_00B769C8));
+			strcpy(conndata2, DAT_00B769C8.conndata);
+			strtok(conndata2, ";");
+			host = strtok(NULL, ";");
+			if (host != NULL) {
+				strcpy(DAT_00B73B34, host);
+			}
+			port = strtok(NULL, ";");
+			if (port != NULL) {
+				DAT_00B76B0C = atol(port);
+			}
+		} else if (stricmp(tmp->connlabel, "MGL") == 0) {
+			FUN_004068E0("MGL entry in server list\n");
+			if (!mangler_found) {
+				memset(DAT_00B73E44, 0, sizeof(DAT_00B73E44));
+				memset(DAT_00B76338, 0, sizeof(DAT_00B76338));
+				DAT_00B77E1C = 0;
+				mangler_found = true;
+			}
+			Server * mangler = new Server;
+			memcpy(mangler, tmp, sizeof(Server));
+			strcpy(manglerdata, mangler->conndata);
+			strtok(manglerdata, ";");
+			char * host = strtok(NULL, ";");
+			if (host != NULL) {
+				strcpy(DAT_00B73E44[DAT_00B77E1C], host);
+				char * port = strtok(NULL, ";");
+				if (port != NULL) {
+					DAT_00B76338[DAT_00B77E1C] = atol(port);
+				}
+				FUN_004068E0("Got mangler server from servserv - address is %s ; %d\n", DAT_00B73E44[DAT_00B77E1C], DAT_00B76338[DAT_00B77E1C]);
+				DAT_00B77E1C++;
+			}
+			delete mangler;
+		}
+		tmp = tmp->next;
+	}
+
+	server = NULL;
+	for (int i = 0; i < DAT_00B778D8.length(); i++) {
+		DAT_00B778D8.getPointer(&server, i);
+		strcpy(server->login, DAT_00B73E40.get());
+		strcpy(server->password, DAT_00B7778C.get());
+	}
+
+	FUN_004068E0("Got %d mangler servers\n", DAT_00B77E1C);
+	DAT_00B77E20 = (DAT_00B77E1C > 1) ? Sim_Random_Pick(0, DAT_00B77E1C - 1) : 0;
+	FUN_004068E0("CurrentManglerServer = %d\n", DAT_00B77E20);
+
+	FUN_00792E90(StringTable::LoadString("TXT_DETECTING_FIREWALL_SETTINGS", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x1552));
+	DAT_00ABFEC8.Save_Detected();
+	SetEvent(DAT_00B73684[1]);
+	return 0;
 }
 
 struct UpdateEntry {

@@ -136,7 +136,7 @@ void MapPreviewClass::DrawStartPoints(HWND window)
 }
 
 // FUNCTION: GAMEMD 0x00640A40
-void MapPreviewClass::DrawMap(DSurface & surface)
+void MapPreviewClass::DrawMap(XSurface & surface)
 {
 	if (SurfacePtr != NULL) {
 		CellClass * cptr;

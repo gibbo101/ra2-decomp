@@ -200,6 +200,10 @@ Each entry: what the diff showed, then the source change that fixed it.
 - Locals are laid out by size, not declaration order. To fix two objects' order, make
   them members of one local struct.
 - A buffer declared inside the loop body gives `push ecx`; one at function level does not.
+- Swapped slot pairs can come from two short-lived temporaries sharing a slot: move the
+  test into a file-local inline helper to give each its own (0x0073B470).
+- A spill reload one place off at a loop exit can come from a same-named local declared
+  again in later blocks: reuse the outer variable (`Cell cell` in 0x00440580).
 - One variable shared by two branches shares a slot; one per branch gets its own.
 - A frame too big by a fixed amount with every `[esp+N]` matching: a local buffer has the
   wrong size (name[200], not [256], in 0x00542620).
@@ -231,6 +235,8 @@ Each entry: what the diff showed, then the source change that fixed it.
   moving one member's cleanup into a file-local inline helper shifts which stay calls,
   and a late expression's shape decides whether an earlier call inlines
   (`Clear_Occupy_Bit(Coord(Position))`, not `PositionCoord`, in 0x0051DBD0).
+- In a very large function VC6 can stop scheduling the last switch cases fully: a tail
+  that resists every rewrite may be fixed by a leaner form of an earlier case (0x004C6CB0).
 - Nested inline decisions depend on how many expansions a function already holds; a
   code-neutral inline helper can flip them.
 - A plain function defined above its callers is inlined and also emitted; at /Ob2 VC6

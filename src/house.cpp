@@ -165,6 +165,316 @@ HouseClass::HouseClass(NoInitClass const & x) :
 
 }
 
+extern char DAT_00889F64[];
+extern Cell DAT_00A8EF98;
+
+// FUNCTION: GAMEMD 0x004F54A0
+HouseClass::HouseClass(HouseTypeClass const * type) :
+	BASECLASS(),
+	HeapID(HOUSE_NONE),
+	Class((HouseTypeClass *)type),
+	HouseTags(),
+	ConYards(),
+	Buildings(),
+	UnitRepairStations(),
+	Grinders(),
+	Absorbers(),
+	Bunkers(),
+	Occupiables(),
+	CloningVats(),
+	SecretLabs(),
+	PsychicDetectionBuildings(),
+	FactoryPlants(),
+	CountResourceGatherers(0),
+	CountResourceDestinations(0),
+	CountWarfactories(0),
+	InfantrySelfHeal(0),
+	UnitsSelfHeal(0),
+	StartingUnits(),
+	Difficulty(Scen->CDifficulty),
+	FirepowerBias(1.0),
+	GroundspeedBias(1.0),
+	AirspeedBias(1.0),
+	ArmorBias(1.0),
+	ROFBias(1.0),
+	CostBias(1.0),
+	BuildSpeedBias(1.0),
+	RepairDelay(0.0),
+	BuildDelay(0.0),
+	ProductionMode(EVERYTHING),
+	IsHuman(false),
+	IsPlayerControl(false),
+	IsStarted(false),
+	IsAlerted(false),
+	NodeLogic_1F0(true),
+	ShipYardConst_1F1(false),
+	IsAITriggersOn(false),
+	IsBaseBuilding(false),
+	IsDiscovered(false),
+	IsDefeated(false),
+	IsToDie(false),
+	IsToWin(false),
+	IsToLose(false),
+	IsCivEvacuated(false),
+	FirestormDefenseActivated(false),
+	IsThreatRatingNodeActive(false),
+	IsRecalcNeeded(true),
+	IPAddress(0),
+	SquadID(0),
+	LostConnection(false),
+	SelectedPath(PATH_NONE),
+	IsVisionary(false),
+	MapIsClear(false),
+	IsTiberiumShort(false),
+	IsSpied(false),
+	IsThieved(false),
+	DidRepair(false),
+	IsBuiltSomething(false),
+	IsResigner(false),
+	IsGiverUpper(false),
+	IsAllToHunt(false),
+	IsParanoid(false),
+	IsToLook(true),
+	IQ(Control.IQ),
+	State(STATE_BUILDUP),
+	SuperWeapon(),
+	JustBuiltStructure(STRUCT_NONE),
+	JustBuiltInfantry(INFANTRY_NONE),
+	JustBuiltUnit(UNIT_NONE),
+	JustBuiltAircraft(AIRCRAFT_NONE),
+	Blockage(0),
+	RepairTimer(0),
+	AlertTime(0),
+	BorrowedTime(0),
+	PowerBlackoutTimer(0),
+	RadarBlackoutTimer(0),
+	Side2TechInfiltrated(false),
+	Side1TechInfiltrated(false),
+	Side0TechInfiltrated(false),
+	BarracksInfiltrated(false),
+	WarFactoryInfiltrated(false),
+	InfantryAltOwner(0),
+	UnitAltOwner(0),
+	AircraftAltOwner(0),
+	BuildingAltOwner(0),
+	AirportDocks(0),
+	PoweredUnitCenters(0),
+	CreditsSpent(0),
+	HarvestedCredits(0),
+	StolenBuildingsCredits(0),
+	CurUnits(0),
+	OwnedNavy(0),
+	CurBuildings(0),
+	CurInfantry(0),
+	CurAircraft(0),
+	Tiberium(),
+	Credits(0),
+	Capacity(0),
+	Weed(),
+	AircraftTotals(),
+	InfantryTotals(),
+	UnitTotals(),
+	BuildingTotals(),
+	DestroyedAircraft(),
+	DestroyedInfantry(),
+	DestroyedUnits(),
+	DestroyedBuildings(),
+	CapturedBuildings(),
+	TotalCrates(),
+	AircraftFactories(0),
+	InfantryFactories(0),
+	UnitFactories(0),
+	BuildingFactories(0),
+	NumShipyards(0),
+	NumOrePurifiers(0),
+	CostInfantryMult(1.0f),
+	CostUnitsMult(1.0f),
+	CostAircraftMult(1.0f),
+	CostBuildingsMult(1.0f),
+	CostDefensesMult(1.0f),
+	Power(0),
+	Drain(0),
+	AircraftFactory(NULL),
+	InfantryFactory(NULL),
+	UnitFactory(NULL),
+	Primary_ForShips(NULL),
+	BuildingFactory(NULL),
+	Primary_Unused1(NULL),
+	Primary_Unused2(NULL),
+	Primary_Unused3(NULL),
+	Primary_ForDefenses(NULL),
+	AircraftType_53D0(0),
+	InfantryType_53D1(0),
+	VehicleType_53D2(0),
+	ShipType_53D3(0),
+	BuildingType_53D4(0),
+	unknown_53D5(0),
+	unknown_53D6(0),
+	unknown_53D7(0),
+	DefenseType_53D8(0),
+	FlagLocation(NULL),
+	FlagHome(0, 0),
+	UnitsLost(0),
+	BuildingsLost(0),
+	WhoLastHurtMe(HOUSE_NONE),
+	BaseSpawnCell(DAT_00A8EF98),
+	BaseCenter(DAT_00A8EF98),
+	Radius(0),
+	LATime(0),
+	LAEnemy(HOUSE_NONE),
+	ToCapture(NULL),
+	RadarSpied(0),
+	PointTotal(0),
+	PreferredTarget(QUARRY_ANYTHING),
+	PreferredTargetCell(0, 0),
+	PreferredDefensiveCell(0, 0),
+	PreferredDefensiveCell2(0, 0),
+	PreferredDefensiveCellStartTime(-100),
+	Attack(),
+	Enemy(HOUSE_NONE),
+	AngerNodes(),
+	ScoutNodes(),
+	AITimer(0),
+	PickEnemyTimer(0),
+	BuildStructure(STRUCT_NONE),
+	BuildUnit(UNIT_NONE),
+	BuildInfantry(INFANTRY_NONE),
+	BuildAircraft(AIRCRAFT_NONE),
+	RatioAITriggerTeam(100),
+	RatioTeamAircraft(75),
+	RatioTeamInfantry(75),
+	RatioTeamUnits(75),
+	BaseDefenseTeamCount(0),
+	CurrentDropship(0),
+	HasCloakGenerator(false),
+	RemapColorRGB(),
+	LaserColor(255, 255, 255),
+	Base(),
+	RecalcPower(true),
+	RecalcRadar(true),
+	SpySatActive(false),
+	IsBeingDrained(false),
+	Edge(SourceType(0)),
+	EMPDest(0, 0),
+	NukeDest(0, 0),
+	Allies(0),
+	DamageTime(TICKS_PER_MINUTE * Rule->DamageDelay),
+	TeamTime(1),
+	TriggerTime(0),
+	SpeakAttackDelay(1),
+	SpeakPowerDelay(1),
+	SpeakMoneyDelay(1),
+	SpeakMaxedDelay(1),
+	AIGeneral(NULL),
+	IniName(),
+	UINameString(),
+	Scheme(0),
+	BaseAreaMap(NULL),
+	PowerEventConnectionPoints(),
+	PowerEvents(NULL),
+	field_10E20(0),
+	field_10E28(1.0),
+	DefenseCostMultiplier(1.0),
+	EnemyArmorForcePrediction(0.33f),
+	EnemyAirForcePrediction(0.33f),
+	EnemyInfantryForcePrediction(0.33f),
+	TotalOwnedInfantryCost(0),
+	TotalOwnedVehicleCost(0),
+	TotalOwnedAircraftCost(0),
+	PowerSurplus(0)
+{
+	int index;
+
+	UINameString = DAT_00889F64;
+	UIName[0] = L'\0';
+
+	Create_ID();
+
+	if (Class) {
+		Scheme = Class->Scheme;
+	}
+
+	AbstractTypePtrTracker.Add(this);
+	FactoryPtrTracker.Add(this);
+	WaypointPathPtrTracker.Add(this);
+	TagPtrTracker.Add(this);
+	ObjectPtrTracker.Add(this);
+
+	HeapID = (HousesType)Houses.Count();
+
+	if (type != NULL) {
+		for (index = 0; index < Houses.Count(); index++) {
+			Houses[index]->AngerNodes.Add(this);
+			AngerNodes.Add(Houses[index]);
+
+			Houses[index]->ScoutNodes.Add(this);
+			ScoutNodes.Add(Houses[index]);
+		}
+	}
+
+	Houses.Add(this);
+
+	memset((void *)&Regions[0], 0x00, sizeof(Regions));
+
+	for (index = 0; index < SuperWeaponTypes.Count(); index++) {
+		SuperWeapon.Add(new SuperClass(SuperWeaponTypes[index], this));
+	}
+
+	memset(UnitsKilled, 0, sizeof(UnitsKilled));
+	memset(BuildingsKilled, 0, sizeof(BuildingsKilled));
+	if (type != NULL) {
+		IniName = type->Name();
+		wcscpy(UIName, type->UIName);
+	}
+	memset((void *)&Regions[0], 0x00, sizeof(Regions));
+	Control.Allies |= (1L << HeapID);
+
+	int attack = Random_Pick(TICKS_PER_MINUTE/2, TICKS_PER_MINUTE*2);
+	attack = int(attack * Rule->AttackDelay);
+	Attack.Timer = attack;
+	Attack.InitialAttack = attack;
+
+	AircraftTotals.Populate_Unit_Count(AircraftTypes.Count());
+	InfantryTotals.Populate_Unit_Count(InfantryTypes.Count());
+	UnitTotals.Populate_Unit_Count(UnitTypes.Count());
+	BuildingTotals.Populate_Unit_Count(BuildingTypes.Count());
+	DestroyedAircraft.Populate_Unit_Count(AircraftTypes.Count());
+	DestroyedInfantry.Populate_Unit_Count(InfantryTypes.Count());
+	DestroyedUnits.Populate_Unit_Count(UnitTypes.Count());
+	DestroyedBuildings.Populate_Unit_Count(BuildingTypes.Count());
+	CapturedBuildings.Populate_Unit_Count(BuildingTypes.Count());
+	TotalCrates.Populate_Unit_Count(CRATE_COUNT);
+
+	for (index = 0; index < ARRAY_SIZE(Paths); index++) {
+		Paths[index] = 0;
+	}
+
+	if (type != NULL) {
+		IsThreatRatingNodeActive = true;
+	}
+
+	ActLike = HOUSE_NONE;
+	if (Class != NULL) {
+		if (Class->Side == SIDE_GDI) {
+			ActLike = HOUSE_GOOD;
+		} else if (Class->Side == SIDE_NOD) {
+			ActLike = HOUSE_BAD;
+		} else if (Class->Side == SIDE_CIVILIAN) {
+			ActLike = HOUSE_NEUTRAL;
+		}
+	}
+
+	IUnknown * unknown = NULL;
+	QueryInterface(IID_IUnknown, (void **)&unknown);
+	PowerEvents = new ConnectionPointClass(IID_IPowerEvents, unknown);
+
+	IConnectionPoint * cp;
+	PowerEvents->QueryInterface(IID_IConnectionPoint, (void **)&cp);
+	PowerEventConnectionPoints.Add(cp);
+
+	unknown->Release();
+}
+
 inline UnitTypeClass const * First_Ownable(HouseClass const * house, TypeList<UnitTypeClass const *> const & list)
 {
 	int owners = 1 << HouseTypeClass::From_Name(house->Class->ParentCountry);

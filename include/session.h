@@ -733,9 +733,10 @@ class SessionClass
 
 		bool ViaPacketRouter;
 		unsigned char unknown_2969[3];
-		IPXAddressClass unknown_296C;
+		IPXAddressClass PacketRouterAddress;
 		IPXAddressClass unknown_2978;
-		unsigned char unknown_2984[4];
+		unsigned short PacketRouterPort;
+		unsigned short : 16;
 		IPXAddressClass unknown_2988;
 		IPXAddressClass unknown_2994[MAX_PLAYERS];
 		int unknown_29F4[MAX_PLAYERS];

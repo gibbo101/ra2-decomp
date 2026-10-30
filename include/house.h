@@ -445,7 +445,7 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 		void FUN_005007A0(RTTIType type, bool naval, int buildcat, bool flag);
 		ProdFailType Suspend_Production(RTTIType type, int id, bool naval);
 		ProdFailType Abandon_Production(RTTIType type, int id, bool naval, bool all);
-		bool Place_Object(RTTIType type, int id, bool naval, Cell const * cell);
+		bool Place_Object(RTTIType type, int id, bool naval, Cell const & cell);
 		bool Manual_Place(BuildingClass * builder, BuildingClass * object);
 		void Just_Built(TechnoClass * product);
 		void Special_Weapon_AI(SuperWeaponType id);

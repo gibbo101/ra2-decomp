@@ -32,6 +32,7 @@
 #include "event.h"
 #include "goptions.h"
 #include "house.h"
+#include "ilocos.h"
 #include "incdec.h"
 #include "infantry.h"
 #include "infatype.h"
@@ -687,6 +688,341 @@ static inline void Nav_Pop(FootClass * foot)
 	}
 }
 
+template<class T>
+bool TPoint2D<T>::operator == (TPoint2D<T> const & rvalue) const
+{
+	return(X==rvalue.X && Y==rvalue.Y);
+}
+
+static inline TechnoClass * Techno_Of(AbstractClass * a)
+{
+	if (a == NULL) return(NULL);
+	return((a->AbstractFlags & 1) ? (TechnoClass *)a : NULL);
+}
+
+static inline int Flat_Distance(Point2D const & a, Point2D const & b)
+{
+	Point2D diff = a - b;
+	double y = diff.Y;
+	double x = diff.X;
+	return((int)fastmath::sqrt(x*x + y*y));
+}
+
+// FUNCTION: GAMEMD 0x004D5690
+AbstractClass * FootClass::Approach_Target(bool force)
+{
+	if (LocomotorTarget != NULL && LocomotorTarget == TarCom) {
+		return(NULL);
+	}
+
+	if (TarCom != NULL) {
+		int primary = What_Weapon_Should_I_Use(TarCom);
+
+		int maxrange = Weapon_Range(primary);
+		if (maxrange >= 0x200) {
+			maxrange -= 0x80;
+		}
+		bool inrange = In_Range(TarCom, primary);
+
+		if (!inrange && CurrentMission == MISSION_STICKY) {
+			if (!force) {
+				Assign_Target(NULL);
+				Assign_Destination(NULL);
+			}
+			return(NULL);
+		} else {
+			bool approach = Techno_Type_Class()->CanApproachTarget;
+			if (Is_Draining()) {
+				approach = false;
+			}
+			if (BunkerLinkedItem != NULL) {
+				approach = false;
+			}
+			if (InOpenToppedTransport) {
+				approach = false;
+			}
+
+			if (!inrange && !approach) {
+				bool chase = false;
+				if (CurrentMission == MISSION_ATTACK) {
+					chase = true;
+				}
+				if (CurrentMission == MISSION_GUARD_AREA && House->FUN_0050B730()) {
+					chase = true;
+				}
+				if (CurrentMission == MISSION_HUNT && !House->FUN_0050B730()) {
+					chase = true;
+				}
+				if (!chase) {
+					if (!force) {
+						Assign_Target(NULL);
+						Assign_Destination(NULL);
+					}
+					return(NULL);
+				}
+			}
+		}
+
+		bool checkbuild = false;
+		if (RTTI == RTTI_UNIT && ((UnitClass *)this)->Class->DeployToFire) {
+			if (!Map[(Coord const &)PositionCoord].Can_Build_Here()) {
+				checkbuild = true;
+				int dist = Distance(TarCom) + 2 * CELL_LEPTON;
+				if (maxrange >= dist) {
+					maxrange = dist;
+				}
+			}
+		}
+
+		bool flyer = (RTTI == RTTI_AIRCRAFT);
+
+		CLSID clsid;
+		IPersistPtr persist(Locomotion);
+		persist->GetClassID(&clsid);
+		if (clsid == CLSID_JumpjetLocomotion) {
+			flyer = true;
+		}
+
+		if (NavCom != NULL) {
+			if (TarCom != NULL && Techno_Type_Class()->CanRecalcApproachTarget && !inrange) {
+				if (NavCom->Center_Coord().Distance_To(TarCom->Center_Coord()) > Rule->ApproachTargetResetMultiplier * maxrange && !force) {
+					unknown_5A0 = NULL;
+					NavCom = NULL;
+				}
+			}
+		}
+
+		if ((NavCom != NULL && !In_Air()) || (inrange && IsInPlayfield && !checkbuild)) {
+			return(NULL);
+		}
+		{
+
+			if (RouteQueue.Count() > 0) {
+				AbstractClass * route = RouteQueue[0];
+				if (!force) {
+					Assign_Destination(route, false);
+					RouteQueue.Delete_Index(0);
+				}
+				return(route);
+			}
+
+			if (TarCom->RTTI == RTTI_CELL) {
+				CellClass * cellptr = (CellClass *)TarCom;
+				if (cellptr->Is_Tile_Destroyable_Cliff()) {
+					Cell cell = Map.Closest_Passable_Cell(cellptr->CellID, Destination_Coord().As_Cell());
+					if (!force) {
+						Assign_Target(&Map[cell]);
+					}
+				}
+			}
+
+			if (TarCom->RTTI == RTTI_BUILDING) {
+				BuildingClass * obj = (BuildingClass *)TarCom;
+				if (obj != NULL) {
+					maxrange += ((obj->Class->Width() + obj->Class->Height()) * (CELL_LEPTON / 4));
+				}
+			}
+
+			double adjust;
+			if (RTTI == RTTI_INFANTRY) {
+				adjust = (double)maxrange - 281.6;
+			} else {
+				adjust = (double)maxrange - 179.2;
+			}
+			maxrange = (int)adjust;
+			maxrange = (maxrange <= 0) ? 0 : maxrange;
+			if (maxrange > 0 && maxrange <= CELL_LEPTON) {
+				maxrange = CELL_LEPTON;
+			}
+
+			Coord tcoord = TarCom->Center_Coord();
+			Coord trycoord;
+			Cell tcell = tcoord.As_Cell();
+			Cell trycell = tcell;
+
+			Dir256 dir = DirType().Direction(tcoord, Center_Coord()).As_Dir256();
+
+			bool found = false;
+			bool tarbridge = false;
+			if (TarCom->RTTI == RTTI_CELL) {
+				tarbridge = ((CellClass *)TarCom)->IsUnderBridge;
+			} else {
+				if (TarCom != NULL && (TarCom->AbstractFlags & 2)) {
+					tarbridge = ((ObjectClass *)TarCom)->IsOnBridge;
+				}
+			}
+
+			if (RTTI == RTTI_INFANTRY && Techno_Type_Class()->CloseRange && (double)maxrange < 332.8) {
+				maxrange = 332;
+			}
+
+			if (Techno_Type_Class()->CloseRange) {
+				Coord mycoord = Get_Cell_Ptr()->Center_Coord();
+				Coord tarcoord;
+				if (TarCom != NULL && (TarCom->AbstractFlags & 1)) {
+					tarcoord = Techno_Of(TarCom)->Get_Cell_Ptr()->Center_Coord();
+				} else {
+					tarcoord = TarCom->Center_Coord();
+				}
+				Coord mycenter = Map[mycoord].Center_Coord();
+				Coord tarcenter = Map[tarcoord].Center_Coord();
+				int dist = Point_Distance((Point2D)mycenter, (Point2D)tarcenter);
+				if ((double)dist <= 384.0) {
+					CellClass * mycell = Get_Cell_Ptr();
+					Coord spot = mycell->Closest_Free_Spot(TarCom->Center_Coord(), false, false, true);
+					if (Point_Distance((Point2D)spot, (Point2D)tarcoord) < dist) {
+						if (!force) {
+							Locomotion->Force_Immediate_Destination(spot);
+						}
+						found = true;
+					}
+				}
+			}
+
+			if (TarCom->On_Ground()) {
+				tcoord.Z = Map.Get_Height_GL(tcoord);
+				if (Map[tcoord].IsUnderBridge) {
+					tcoord.Z += BRIDGE_LEPTON_HEIGHT;
+				}
+			}
+
+			MZoneType mzone = Techno_Type_Class()->MZone;
+
+			for (int range = maxrange; (double)range > CELL_LEPTON / 1.25 && found != true; range -= CELL_LEPTON) {
+				static int _angles[] = {
+					DIR_MIN,
+					DIR_STEP_256, -DIR_STEP_256,
+					DIR_STEP_128, -DIR_STEP_128,
+					DIR_STEP_128 + DIR_STEP_256, -(DIR_STEP_128 + DIR_STEP_256),
+					DIR_STEP_64, -DIR_STEP_64,
+					DIR_STEP_64 + DIR_STEP_256, -(DIR_STEP_64 + DIR_STEP_256),
+					DIR_STEP_64 + DIR_STEP_128, -(DIR_STEP_64 + DIR_STEP_128),
+					DIR_STEP_32, -DIR_STEP_32,
+					DIR_STEP_16, -DIR_STEP_16,
+					DIR_STEP_16 + DIR_STEP_32, -(DIR_STEP_16 + DIR_STEP_32),
+					DIR_STEP_8, -DIR_STEP_8,
+					DIR_STEP_8 + DIR_STEP_16, -(DIR_STEP_8 + DIR_STEP_16),
+					DIR_STEP_4, -DIR_STEP_4
+				};
+
+				for (int index = 0; index < ARRAY_SIZE(_angles); index++) {
+					trycoord = Move_Coord(tcoord, DirType((Dir256)(dir + _angles[index])).Snap_To_256(), range);
+
+					if (RTTI == RTTI_INFANTRY && Techno_Type_Class()->CloseRange) {
+						CellClass * trycellptr = &Map[trycoord];
+						trycoord = trycellptr->Closest_Free_Spot(TarCom->Center_Coord(), false, false, true);
+					} else {
+						trycoord = Coord(trycoord.As_Cell());
+					}
+
+					if (checkbuild && !Map[trycoord].Can_Build_Here()) continue;
+
+					trycoord.Z = Map.Get_Height_GL(trycoord);
+					if (Map[trycoord].IsUnderBridge) {
+						trycoord.Z += BRIDGE_LEPTON_HEIGHT;
+					}
+
+					maxrange = Point_Distance((Point2D)trycoord, (Point2D)TarCom->Center_Coord());
+					if (In_Weapon_Range(trycoord, TarCom, Get_Class_Weapon_Data(primary)->Weapon) || (Techno_Type_Class()->CloseRange && (double)maxrange < 307.2)) {
+						trycell = trycoord.As_Cell();
+						if (Map.In_Local_Radar(trycell)) {
+							bool clear;
+							if (Techno_Type_Class()->CloseRange) {
+								Mark(MARK_UP);
+								clear = Map[trycell].Is_Clear_To_Move(Techno_Type_Class()->Speed, false, false, Map.Get_Cell_Zone(Destination_Coord().As_Cell(), mzone, IsOnBridge), mzone);
+								Mark(MARK_DOWN);
+							} else {
+								clear = Map[trycell].Is_Clear_To_Move(Techno_Type_Class()->Speed, false, false, Map.Get_Cell_Zone(Destination_Coord().As_Cell(), mzone, IsOnBridge), mzone);
+							}
+
+							if (!clear) {
+								if (RTTI == RTTI_INFANTRY) continue;
+
+								Coord savecoord = trycoord;
+								Cell savecell = trycell;
+								for (FacingType face = FACING_N; face < FACING_COUNT; face++) {
+									trycell = Adjacent_Cell_By_Value(trycell, face);
+									trycoord = Coord(trycell);
+
+									maxrange = Flat_Distance((Point2D)trycoord, (Point2D)TarCom->Center_Coord());
+									if (In_Weapon_Range(trycoord, TarCom, Get_Class_Weapon_Data(primary)->Weapon) || (Techno_Type_Class()->CloseRange && (double)maxrange < 307.2)) {
+										if (Techno_Type_Class()->CloseRange) {
+											Mark(MARK_UP);
+											clear = Map[trycell].Is_Clear_To_Move(Techno_Type_Class()->Speed, false, false, Map.Get_Cell_Zone(Destination_Coord().As_Cell(), mzone, IsOnBridge), mzone);
+											Mark(MARK_DOWN);
+										} else {
+											clear = Map[trycell].Is_Clear_To_Move(Techno_Type_Class()->Speed, false, false, Map.Get_Cell_Zone(Destination_Coord().As_Cell(), mzone, IsOnBridge), mzone);
+										}
+										if (clear) goto passable;
+									}
+								}
+								trycoord = savecoord;
+								trycell = savecell;
+								continue;
+							}
+
+passable:
+
+							int maxdist = MAX(abs(trycell.X - tcell.X), abs(trycell.Y - tcell.Y));
+							CellClass * cellptr = &Map[trycell];
+
+							if (flyer) {
+								found = true;
+								break;
+							}
+
+							if (Search.Test_Cell_Walk(trycell, tcell, this, cellptr->IsUnderBridge, tarbridge, MZONE_NONE) <= maxdist + 8) {
+								found = true;
+								break;
+							}
+
+							Cell destcell = Destination_Coord().As_Cell();
+							int destdist = MAX(abs(destcell.X - trycell.X), abs(destcell.Y - trycell.Y));
+							if (Search.Test_Cell_Walk(destcell, trycell, this, Is_Moving_Onto_Bridge(), cellptr->IsUnderBridge, MZONE_NONE) <= destdist + 8) {
+								found = true;
+								break;
+							}
+						}
+					}
+				}
+				if (found) break;
+			}
+
+			if (found) {
+				if (!force) {
+					Assign_Destination(&Map[trycell]);
+				}
+				return(&Map[trycell]);
+			} else if (Techno_Type_Class()->IsHunterSeeker || (RTTI == RTTI_INFANTRY && ((InfantryClass *)this)->Class->IsVehicleThief)) {
+				if (!force) {
+					Assign_Destination(TarCom);
+				}
+				return(TarCom);
+			} else {
+				trycell = Map.Nearby_Location(trycell,
+					Techno_Type_Class()->Speed,
+					Map.Get_Cell_Zone(Destination_Coord().As_Cell(), mzone, Is_Moving_Onto_Bridge()),
+					mzone,
+					Map[trycell].IsUnderBridge,
+					Point2D(1, 1),
+					false,
+					true,
+					false,
+					false);
+				if (!force) {
+					Assign_Target(NULL);
+					if (trycell != CELL_NONE) {
+						Assign_Destination(&Map[trycell]);
+					} else {
+						Assign_Destination(NULL);
+					}
+				}
+			}
+		}
+	}
+	return(NULL);
+}
+
 // FUNCTION: GAMEMD 0x004D6AA0
 int FootClass::Do_MISSION_GUARD_AREA(void)
 {
@@ -1202,9 +1538,9 @@ int FootClass::Do_MISSION_ENTER(void)
 }
 
 // FUNCTION: GAMEMD 0x004D94A0
-void FootClass::vt_entry_47C(unsigned value)
+void FootClass::vt_entry_47C(AbstractClass * target)
 {
-	unknown_5A0 = (AbstractClass *)value;
+	unknown_5A0 = target;
 }
 
 namespace LocomotionClass { namespace CLSIDs { extern const CLSID Hover; } }

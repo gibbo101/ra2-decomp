@@ -93,9 +93,9 @@ class UnitClass : public FootClass
 
 		virtual bool Render(Rect &, bool forced, bool extras_only) const override;
 		virtual void Draw_It(Point2D const & point, Rect const & cliprect) const override;
-		virtual void Unit_Draw_Voxel(Point2D xyoff, Rect rect, int intensity, int tint);
+		virtual void Unit_Draw_Voxel(Point2D xyoff, Rect rect, int intensity, WORD tint);
 		virtual void Unit_Draw_Shape(Point2D xyoff, Rect rect, int intensity, int tint);
-		virtual void Unit_Blit_Voxel(Surface * surface, Point2D xyoff, Rect rect, int alpha, int tint);
+		virtual void Unit_Blit_Voxel(Surface * surface, Point2D xyoff, Rect rect, int alpha, WORD tint);
 
 		virtual ActionType What_Action(Cell const &, bool check_fog = false, bool disallow_force = false) const override;
 		virtual ActionType What_Action(ObjectClass const *, bool disallow_force = false) const override;

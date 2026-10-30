@@ -29,7 +29,7 @@ public:
 	void Create_Preview(void);
 	void Blit_Preview(HWND window);
 	void DrawStartPoints(HWND window);
-	void DrawMap(DSurface & surface);
+	void DrawMap(XSurface & surface);
 
 	unsigned * Create_Paletted_Preview(int, int & size);
 	void Create_Preview_Surface(char * buffer);

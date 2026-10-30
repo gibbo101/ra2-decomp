@@ -733,6 +733,284 @@ int BuildingClass::Shape_Number(void) const
 	return(shapenum);
 }
 
+// FUNCTION: GAMEMD 0x00440580
+bool BuildingClass::Unlimbo(Coord const & coord, Dir256 dir)
+{
+	bool ok = Can_Enter_Cell(&Map[coord], FACING_NONE) == MOVE_OK;
+
+	if (ok) {
+		if (Class == Rule->WallTower) {
+			CellClass * cellptr = &Map[coord];
+			HouseClass * owner = NULL;
+			if (cellptr->Owner >= HOUSE_FIRST) {
+				owner = Houses[cellptr->Owner];
+			}
+			if (owner == House) {
+				if (cellptr->Overlay == OVERLAY_BRICK_WALL || cellptr->Overlay == OVERLAY_SANDBAG_WALL) {
+					House->Sell_Wall(cellptr->CellID);
+				}
+			}
+		} else if (Class->ToOverlay != NULL) {
+			CellClass * cellptr = &Map[coord];
+			HouseClass * owner = NULL;
+			if (cellptr->Owner >= HOUSE_FIRST) {
+				owner = Houses[cellptr->Owner];
+			}
+			if (owner == House) {
+				if (cellptr->Overlay == Class->ToOverlay->HeapID) {
+					House->Sell_Wall(cellptr->CellID);
+				}
+			}
+		} else if (Class->IsGate) {
+			Cell cell = coord.As_Cell();
+			Cell const * occupy = Class->Occupy_List(true);
+			while (*occupy != REFRESH_EOL) {
+				CellClass * cellptr = &Map[cell + *occupy];
+				HouseClass * owner = NULL;
+				if (cellptr->Owner >= HOUSE_FIRST) {
+					owner = Houses[cellptr->Owner];
+				}
+				if (owner == House) {
+					if (cellptr->Overlay == OVERLAY_BRICK_WALL || cellptr->Overlay == OVERLAY_SANDBAG_WALL || cellptr->Overlay == OVERLAY_NOD_WALL) {
+						House->Sell_Wall(cellptr->CellID);
+					}
+				}
+				BuildingClass * building = cellptr->Cell_Building();
+				if (building != NULL && building->Class->IsLaserFence && building->Owner() == Owner()) {
+					Unlimbo_Laser_Fence_Helper(cellptr->Fetch_CellID());
+				}
+				occupy++;
+			}
+		}
+	}
+
+	if (Class->IsWall) {
+		if (Can_Enter_Cell(&Map[coord], FACING_NONE) == MOVE_OK) {
+			ObjectClass * o = Class->ToOverlay->Create_One_Of(House);
+			if (o && o->Unlimbo(coord)) {
+				Map[coord].Owner = (HousesType)House->HeapID;
+				Transmit_Message(RADIO_OVER_OUT);
+				Map.RevealArea2((Coord *)&coord, Class->SightRange, House, false, false, false, true, false);
+				Map.RevealArea2((Coord *)&coord, Class->SightRange, House, false, false, false, true, true);
+				Delete_Me();
+				return(true);
+			}
+		}
+		return(false);
+	}
+
+	if (Class->PowersUpBuilding[0] != '\0') {
+		ObjectClass * object = Map.Cell_Object(coord.As_Cell(), Point2D(0, 0));
+		if (object != NULL && object->RTTI == RTTI_BUILDING) {
+			BuildingClass * building = (BuildingClass *)object;
+			BuildingTypeClass * btype = Class;
+			if (House == building->House && stricmp(btype->PowersUpBuilding, (char *)building->Class->IniName) == 0) {
+				bool ok = false;
+				if (btype->PowersUpToLevel != -1) {
+					if (btype->PowersUpToLevel <= 0 || btype->PowersUpToLevel > BUILDING_UPGRADE_MAX) {
+						return(false);
+					}
+				} else {
+					if (building->UpgradeLevel < building->Class->Upgrades) {
+						ok = true;
+					}
+				}
+				if (!ok && building->UpgradeLevel) {
+					return(false);
+				}
+
+				House->RecalcRadar = true;
+				House->RecalcPower = true;
+				int levels = Class->PowersUpToLevel;
+				if (levels == -1) {
+					levels = 1;
+				}
+				char * anim = building->Class->AnimData[building->UpgradeLevel].Anim;
+				if (stricmp(anim, Class->GraphicName) != 0) {
+					strncpy(anim, Class->GraphicName, sizeof(building->Class->AnimData[0].Anim));
+				}
+				while (levels) {
+					building->Add_Upgrade();
+					levels--;
+				}
+				building->Upgrades[building->UpgradeLevel - 1] = Class;
+				House->AISupers();
+				House->IsRecalcNeeded = true;
+				if (Class->IsThreatRatingNode) {
+					House->Activate_Threat_Node();
+				}
+				Delete_Me();
+				return(true);
+			}
+		}
+
+		return(false);
+	}
+
+	if (Class->IsLaserFence) {
+		if ((DirType(dir).As_Dir8() & 3) == FACING_E) {
+			LaserFenceFrame = 8;
+		} else {
+			LaserFenceFrame = 12;
+		}
+	}
+
+	if (ok && Class->IsLaserFencePost) {
+		LaserFenceFrame = 0;
+		BuildingClass * building = Map[coord.As_Cell()].Cell_Building();
+		if (building != NULL && building->Class->IsLaserFence && Owner() == building->Owner()) {
+			building->Delete_Me();
+		}
+	}
+
+	if (BASECLASS::Unlimbo(coord, dir)) {
+
+		if (Class->IsCloakGenerator) {
+			House->HasCloakGenerator = true;
+		}
+
+		if (!IsActive) {
+			return(true);
+		}
+
+		if (Session.Type != GAME_NORMAL && !House->FUN_0050B730() && !House->Class->IsMultiplayPassive) {
+			IsToRepair = true;
+		}
+
+		if (Scen->Special.IsFogOfWar) {
+			if (Should_Fog()) {
+				Make_Fogged();
+			}
+		}
+
+		if ((Class->UndeploysInto == NULL || !Class->ResourceGatherer) && !IsStrange()) {
+			Reserve_Base_Area();
+		}
+
+		int width = Class->Width();
+		int height = Class->Height();
+		Cell cell = coord.As_Cell();
+
+		for (int y = 0; y < height + 2; y++) {
+			for (int x = 0; x < width + 2; x++) {
+				CellClass * cptr = &Map[Cell(x, y) + (cell - Cell(1,1))];
+				cptr->AdjacentObjectCount++;
+			}
+		}
+
+		House->Recalc_Center();
+		House->Active_Add(this);
+		House->IsRecalcNeeded = true;
+		LastStrength = 0;
+
+		if ((!IsDiscoveredByPlayer && Map[coord].IsVisible) || Session.Type != GAME_NORMAL) {
+			Revealed(PlayerPtr);
+		} else if (Class->LightIntensity != 0) {
+			if (LightSource == NULL) {
+				LightSource = new LightSourceClass(Center_Coord(), Class->LightVisibility, Class->LightIntensity, Class->LightRedTint, Class->LightGreenTint, Class->LightBlueTint);
+			}
+			LightSource->Enable();
+		}
+
+		if (Class->IsLaserFencePost && !ScenarioInit) {
+			if (IsActive && !IsInLimbo) {
+				Connect_Laser_Fence(FACING_N);
+				Connect_Laser_Fence(FACING_E);
+				Connect_Laser_Fence(FACING_S);
+				Connect_Laser_Fence(FACING_W);
+				Toggle_Laser_Fence_Post(true);
+			}
+		}
+
+		if (!House->FUN_0050B730()) {
+			Revealed(House);
+		}
+
+		if (IsOwnedByPlayer) {
+			Map.PowerClass::IsToRedraw = true;
+			Map.Flag_To_Redraw();
+		}
+
+		if (Class->NaturalParticleSystem != NULL && ParticleSystems[2] == NULL) {
+			Coord sysloc = Class->NaturalParticleLocation;
+			ParticleSystems[2] = new ParticleSystemClass(Class->NaturalParticleSystem, PositionCoord + sysloc, &Map[Get_Coord()], NULL, (Coord const &)DAT_0089C848, NULL);
+		}
+
+		if (Class == Rule->WallTower) {
+			cell = Map[coord].Fetch_CellID();
+			Map[cell + Cell(1, 0)].Wall_Update();
+			Map[cell + Cell(-1, 0)].Wall_Update();
+			Map[cell + Cell(0, 1)].Wall_Update();
+			Map[cell + Cell(0, -1)].Wall_Update();
+		}
+
+		if (Class == Rule->GDIGateOne || Class == Rule->NodGateOne) {
+			cell = Map[coord].Fetch_CellID();
+			Map[cell + Cell(-1, 0)].Wall_Update();
+			Map[cell + Cell(3, 0)].Wall_Update();
+		}
+
+		if (Class == Rule->GDIGateTwo || Class == Rule->NodGateTwo) {
+			cell = Map[coord].Fetch_CellID();
+			Map[cell + Cell(0, -1)].Wall_Update();
+			Map[cell + Cell(0, 3)].Wall_Update();
+		}
+
+		if (Class->HasSpotlight) {
+			BuildingLight = new BuildingLightClass(this);
+		}
+
+		IsLeader = false;
+		if (Class->ToBuild != RTTI_NONE) {
+			FUN_00448070(false);
+		}
+
+		if (Rule->BuildConst.Is_In_List(Class)) {
+			House->ConYards.Add(this);
+		}
+		if (Class->IsCanUnitRepair) {
+			House->UnitRepairStations.Add(this);
+		}
+		if (Class->Grinding) {
+			House->Grinders.Add(this);
+		}
+		if (Class->UnitAbsorb || Class->InfantryAbsorb) {
+			House->Absorbers.Add(this);
+		}
+		if (Class->Bunker) {
+			House->Bunkers.Add(this);
+		}
+		if (Class->CanBeOccupied && Class->Level > -1) {
+			House->Occupiables.Add(this);
+		}
+		if (Class->Cloning) {
+			House->CloningVats.Add(this);
+		}
+		if (Class->SecretLab) {
+			House->SecretLabs.Add(this);
+		}
+		if (Class->PsychicDetectionRadius > 0) {
+			House->PsychicDetectionBuildings.Add(this);
+		}
+		if (Class->FactoryPlant) {
+			House->FactoryPlants.Add(this);
+			House->CalculateCostMultipliers();
+		}
+		House->Buildings.Add(this);
+
+		if (!House->FUN_0050B730()) {
+			House->Base.Mark_Node_Placed(this);
+		}
+
+		if (Class->ToBuild != RTTI_NONE) {
+			House->Update_Factories(Class->ToBuild, Class->Naval, 0);
+		}
+
+		return(true);
+	}
+	return(false);
+}
+
 extern DynamicVectorClass<BuildingClass *> DAT_008B41E0;
 
 inline void Register_Dirty(Rect const & area)
@@ -6025,12 +6303,9 @@ int BuildingClass::Anti_Infantry(void) const
 }
 
 // FUNCTION: GAMEMD 0x004598A0
-int BuildingClass::IsAbsorbAllowed(void) const
+bool BuildingClass::IsAbsorbAllowed(void) const
 {
-	if (Class->UnitAbsorb || Class->InfantryAbsorb) {
-		return(true);
-	}
-	return(false);
+	return(Class->UnitAbsorb || Class->InfantryAbsorb);
 }
 
 // FUNCTION: GAMEMD 0x004598D0

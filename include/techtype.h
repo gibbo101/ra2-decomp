@@ -503,7 +503,7 @@ class TechnoTypeClass : public ObjectTypeClass
 		bool HasMultipleTurrets(void) const;
 		void FUN_00717890(int index, int weapon);
 		int FUN_007178B0(int weapon) const;
-		CoordStruct * GetParticleSysOffset(CoordStruct * buffer) const;
+		Coord GetParticleSysOffset(void) const;
 		void FUN_00717820(void);
 		static void FUN_00717840(void);
 		virtual bool Read_INI(CCINIClass & ini) override;

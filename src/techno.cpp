@@ -265,7 +265,7 @@ TechnoClass::TechnoClass(HouseClass * house) :
 	IsDiscoveredByPlayer(false),
 	IsDiscoveredByComputer(false),
 	unknown_bool_41D(false),
-	unknown_bool_41E(false),
+	unknown_41E(0),
 	unknown_bool_41F(false),
 	SightIncrease(0),
 	IsTeamRecruitable(true),
@@ -4530,7 +4530,7 @@ bool TechnoClass::Is_Ready_To_Random_Animate(void) const
 }
 
 // FUNCTION: GAMEMD 0x00709A20
-void TechnoClass::vt_entry_47C(unsigned)
+void TechnoClass::vt_entry_47C(AbstractClass *)
 {
 }
 
@@ -5015,7 +5015,7 @@ void TechnoClass::Compute_CRC(CRCEngine & crc) const
 	}
 	crc(unknown_bool_41D);
 	crc((int)EMPLockRemaining);
-	crc((int)unknown_bool_41E);
+	crc((int)unknown_41E);
 	crc((int)unknown_bool_41F);
 	crc(SightIncrease);
 	int count = CurrentTargets.Count();
