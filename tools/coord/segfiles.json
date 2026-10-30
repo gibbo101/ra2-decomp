@@ -1,0 +1,118 @@
+{
+ "seg_0040B350": {
+  "file": "_astar2",
+  "note": "Module _astar2 is the unnamed range seg_0040B350 in data/modules.csv (ctx.py reports seg_0040B350). It opens with a header run, so it is a module of its own whose name is unknown: create src/_astar2.cpp (a provisional name that sorts right after its neighbour, as the linker orders modules) and land its functions there."
+ },
+ "seg_00412660": {
+  "file": "ahandle2",
+  "note": "Module ahandle2 is the unnamed range seg_00412660 in data/modules.csv (ctx.py reports seg_00412660). It opens with a header run, so it is a module of its own whose name is unknown: create src/ahandle2.cpp (a provisional name that sorts right after its neighbour, as the linker orders modules) and land its functions there. Its header-run initialisers already match as _$E markers in src/ahandle.cpp; move them into src/ahandle2.cpp with the numbers check.py reports there, if every one still matches, else leave them where they are."
+ },
+ "seg_00432670": {
+  "file": "bfiofile2",
+  "note": "Module bfiofile2 is the unnamed range seg_00432670 in data/modules.csv (ctx.py reports seg_00432670). It opens with a header run, so it is a module of its own whose name is unknown: create src/bfiofile2.cpp (a provisional name that sorts right after its neighbour, as the linker orders modules) and land its functions there. Its header-run initialiser 0x00432670 already matches in src/bfiofile.cpp: move it to the top of this file, in address order, with the $E number check.py reports there, if it and every function of src/bfiofile.cpp still match; else leave it where it is."
+ },
+ "seg_0048BB20": {
+  "file": "combuf2",
+  "note": "Module combuf2 is the unnamed range seg_0048BB20 in data/modules.csv (ctx.py reports seg_0048BB20). It opens with a header run, so it is a module of its own whose name is unknown: create src/combuf2.cpp (a provisional name that sorts right after its neighbour, as the linker orders modules) and land its functions there. Its header-run initialiser 0x0048BB20 already matches in src/combuf.cpp: move it to the top of this file, in address order, with the $E number check.py reports there, if it and every function of src/combuf.cpp still match; else leave it where it is."
+ },
+ "seg_004CBEF0": {
+  "file": "findpath2",
+  "note": "Module findpath2 is the unnamed range seg_004CBEF0 in data/modules.csv (ctx.py reports seg_004CBEF0). It opens with a header run, so it is a module of its own whose name is unknown: create src/findpath2.cpp (a provisional name that sorts right after its neighbour, as the linker orders modules) and land its functions there."
+ },
+ "seg_004F2C50": {
+  "file": "grphmenu2",
+  "note": "Module grphmenu2 is the unnamed range seg_004F2C50 in data/modules.csv (ctx.py reports seg_004F2C50). It opens with a header run, so it is a module of its own whose name is unknown: create src/grphmenu2.cpp (a provisional name that sorts right after its neighbour, as the linker orders modules) and land its functions there."
+ },
+ "seg_00510B00": {
+  "file": "house2",
+  "note": "Module house2 is the unnamed range seg_00510B00 in data/modules.csv (ctx.py reports seg_00510B00). It opens with a header run, so it is a module of its own whose name is unknown: create src/house2.cpp (a provisional name that sorts right after its neighbour, as the linker orders modules) and land its functions there. Its header-run initialisers already match as _$E markers in src/house.cpp; move them into src/house2.cpp with the numbers check.py reports there, if every one still matches, else leave them where they are."
+ },
+ "seg_00556790": {
+  "file": "link2",
+  "note": "Module link2 is the unnamed range seg_00556790 in data/modules.csv (ctx.py reports seg_00556790). It opens with a header run, so it is a module of its own whose name is unknown: create src/link2.cpp (a provisional name that sorts right after its neighbour, as the linker orders modules) and land its functions there. Its header-run initialisers already match as _$E markers in src/link.cpp; move them into src/link2.cpp with the numbers check.py reports there, if every one still matches, else leave them where they are."
+ },
+ "seg_0058B110": {
+  "file": "map2",
+  "note": "Module map2 is the unnamed range seg_0058B110 in data/modules.csv (ctx.py reports seg_0058B110). It opens with a header run, so it is a module of its own whose name is unknown: create src/map2.cpp (a provisional name that sorts right after its neighbour, as the linker orders modules) and land its functions there."
+ },
+ "seg_0058B320": {
+  "file": "map3",
+  "note": "Module map3 is the unnamed range seg_0058B320 in data/modules.csv (ctx.py reports seg_0058B320). It opens with a header run, so it is a module of its own whose name is unknown: create src/map3.cpp (a provisional name that sorts right after its neighbour, as the linker orders modules) and land its functions there."
+ },
+ "seg_005D8D80": {
+  "file": "multiplayerteam2",
+  "note": "Module multiplayerteam2 is the unnamed range seg_005D8D80 in data/modules.csv (ctx.py reports seg_005D8D80). It opens with a header run, so it is a module of its own whose name is unknown: create src/multiplayerteam2.cpp (a provisional name that sorts right after its neighbour, as the linker orders modules) and land its functions there."
+ },
+ "seg_006635F0": {
+  "file": "rocket2",
+  "note": "Module rocket2 is the unnamed range seg_006635F0 in data/modules.csv (ctx.py reports seg_006635F0). It opens with a header run, so it is a module of its own whose name is unknown: create src/rocket2.cpp (a provisional name that sorts right after its neighbour, as the linker orders modules) and land its functions there."
+ },
+ "seg_0072A690": {
+  "file": "txtlabel2",
+  "note": "Module txtlabel2 is the unnamed range seg_0072A690 in data/modules.csv (ctx.py reports seg_0072A690). It opens with a header run, so it is a module of its own whose name is unknown: create src/txtlabel2.cpp (a provisional name that sorts right after its neighbour, as the linker orders modules) and land its functions there. Its header-run initialiser 0x0072A690 already matches in src/txtlabel.cpp: move it to the top of this file, in address order, with the $E number check.py reports there, if it and every function of src/txtlabel.cpp still match; else leave it where it is."
+ },
+ "seg_00734430": {
+  "file": "uicmnds2",
+  "note": "Module uicmnds2 is the unnamed range seg_00734430 in data/modules.csv (ctx.py reports seg_00734430). It opens with a header run, so it is a module of its own whose name is unknown: create src/uicmnds2.cpp (a provisional name that sorts right after its neighbour, as the linker orders modules) and land its functions there. Its header-run initialisers already match as _$E markers in src/uicmnds.cpp; move them into src/uicmnds2.cpp with the numbers check.py reports there, if every one still matches, else leave them where they are."
+ },
+ "seg_0077B070": {
+  "file": "wolpersonainformation2",
+  "note": "Module wolpersonainformation2 is the unnamed range seg_0077B070 in data/modules.csv (ctx.py reports seg_0077B070). It opens with a header run, so it is a module of its own whose name is unknown: create src/wolpersonainformation2.cpp (a provisional name that sorts right after its neighbour, as the linker orders modules) and land its functions there. Its header-run initialiser 0x0077B070 already matches in src/wolpersonainformation.cpp: move it to the top of this file, in address order, with the $E number check.py reports there, if it and every function of src/wolpersonainformation.cpp still match; else leave it where it is."
+ },
+ "seg_0043AE80": {
+  "file": "buff",
+  "note": "Module buff here includes the unnamed range seg_0043AE80 in data/modules.csv (ctx.py reports seg_0043AE80). It has no header run, so it is taken as the end of buff's module: land it in src/buff.cpp in address order."
+ },
+ "seg_004796E0": {
+  "file": "cd",
+  "note": "Module cd here includes the unnamed range seg_004796E0 in data/modules.csv (ctx.py reports seg_004796E0). It has no header run, so it is taken as the end of cd's module: land it in src/cd.cpp in address order."
+ },
+ "seg_004A2060": {
+  "file": "crcpipe",
+  "note": "Module crcpipe here includes the unnamed range seg_004A2060 in data/modules.csv (ctx.py reports seg_004A2060). It has no header run, so it is taken as the end of crcpipe's module: land it in src/crcpipe.cpp in address order."
+ },
+ "seg_004E23C0": {
+  "file": "gamedlg",
+  "note": "Module gamedlg here includes the unnamed range seg_004E23C0 in data/modules.csv (ctx.py reports seg_004E23C0). It has no header run, so it is taken as the end of gamedlg's module: land it in src/gamedlg.cpp in address order."
+ },
+ "seg_004E6030": {
+  "file": "gdlgsupp",
+  "note": "Module gdlgsupp here includes the unnamed range seg_004E6030 in data/modules.csv (ctx.py reports seg_004E6030). It has no header run, so it is taken as the end of gdlgsupp's module: land it in src/gdlgsupp.cpp in address order."
+ },
+ "seg_004E6140": {
+  "file": "getcd",
+  "note": "Module getcd here includes the unnamed range seg_004E6140 in data/modules.csv (ctx.py reports seg_004E6140). It has no header run, so it is taken as the end of getcd's module: land it in src/getcd.cpp in address order."
+ },
+ "seg_004F4C20": {
+  "file": "gscreen",
+  "note": "Module gscreen here includes the unnamed range seg_004F4C20 in data/modules.csv (ctx.py reports seg_004F4C20). It has no header run, so it is taken as the end of gscreen's module: land it in src/gscreen.cpp in address order."
+ },
+ "seg_00517340": {
+  "file": "hover",
+  "note": "Module hover here includes the unnamed range seg_00517340 in data/modules.csv (ctx.py reports seg_00517340). It has no header run, so it is taken as the end of hover's module: land it in src/hover.cpp in address order."
+ },
+ "seg_00645BB0": {
+  "file": "quarry",
+  "note": "Module quarry here includes the unnamed range seg_00645BB0 in data/modules.csv (ctx.py reports seg_00645BB0). It has no header run, so it is taken as the end of quarry's module: land it in src/quarry.cpp in address order."
+ },
+ "seg_0065C630": {
+  "file": "ramfile",
+  "note": "Module ramfile here includes the unnamed range seg_0065C630 in data/modules.csv (ctx.py reports seg_0065C630). It has no header run, so it is taken as the end of ramfile's module: land it in src/ramfile.cpp in address order."
+ },
+ "seg_006614F0": {
+  "file": "rgb",
+  "note": "Module rgb here includes the unnamed range seg_006614F0 in data/modules.csv (ctx.py reports seg_006614F0). It has no header run, so it is taken as the end of rgb's module: land it in src/rgb.cpp in address order."
+ },
+ "seg_006615D0": {
+  "file": "rle",
+  "note": "Module rle here includes the unnamed range seg_006615D0 in data/modules.csv (ctx.py reports seg_006615D0). It has no header run, so it is taken as the end of rle's module: land it in src/rle.cpp in address order."
+ },
+ "seg_0069E9F0": {
+  "file": "shastraw",
+  "note": "Module shastraw here includes the unnamed range seg_0069E9F0 in data/modules.csv (ctx.py reports seg_0069E9F0). It has no header run, so it is taken as the start of shastraw's module: land it in src/shastraw.cpp in address order."
+ },
+ "seg_00751C30": {
+  "file": "voc",
+  "note": "Module voc here includes the unnamed range seg_00751C30 in data/modules.csv (ctx.py reports seg_00751C30). It has no header run, so it is taken as the end of voc's module: land it in src/voc.cpp in address order."
+ }
+}
