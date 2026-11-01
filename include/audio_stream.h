@@ -2,6 +2,7 @@
 // Copyright 2026 ra2-decomp contributors
 #pragma once
 #include "vox.h"
+#include "audio_support.h"
 #include <windows.h>
 #include <stddef.h>
 
@@ -173,13 +174,17 @@ AUDIO_ASSERT(channel_data, offsetof(AudioChannel, QueueData) == 0x170);
 AUDIO_ASSERT(channel_size, offsetof(AudioChannel, QueueSize) == 0x174);
 AUDIO_ASSERT(channel_remaining, offsetof(AudioChannel, QueueRemaining) == 0x178);
 
+// Workers record elapsed time while diagnostics read and update the timer record.
 struct AudioTimer {
-    unsigned __int64 unknown_00[11];
-    void FUN_00403820(void);
-    void FUN_00403870(unsigned __int64 value);
-    void FUN_004038A0(unsigned __int64 value);
-    void FUN_004038C0(unsigned __int64 value);
-    void FUN_00403920(unsigned __int64 value);
+    unsigned __int64 Duration, Threshold, LastDelta, MaximumDelta;
+    unsigned __int64 ResetLimit, PreviousTime, PeakDelta, LastReport, ReportInterval;
+    int Samples, Overruns, DisplayedSamples, DisplayIndex;
+    void FUN_00403820(void) volatile;
+    void FUN_00403870(unsigned __int64 value) volatile;
+    void FUN_004038A0(unsigned __int64 value) volatile;
+    void FUN_004038C0(unsigned __int64 value) volatile;
+    int FUN_004038E0(unsigned __int64 value) volatile;
+    void FUN_00403920(unsigned __int64 value) volatile;
 };
 struct AudioWorker {
     volatile int Stop;
@@ -189,7 +194,7 @@ struct AudioWorker {
     volatile unsigned __int64 Interval;
     volatile int Running;
     int unknown_1C;
-    AudioTimer Timer;
+    volatile AudioTimer Timer;
 };
 extern AudioWorker DAT_0087E770;
 extern HANDLE DAT_0087E7F0;
@@ -234,4 +239,11 @@ AUDIO_ASSERT(AudioBufferOwner_Flags, offsetof(AudioBufferOwner, Flags) == 0x10);
 AUDIO_ASSERT(AudioBufferOwner_TotalBytes, offsetof(AudioBufferOwner, TotalBytes) == 0x14);
 AUDIO_ASSERT(AudioBufferOwner_Playback, offsetof(AudioBufferOwner, Playback) == 0x18);
 AUDIO_ASSERT(AudioBufferOwner_ActiveReferences, offsetof(AudioBufferOwner, ActiveReferences) == 0x98);
+AUDIO_ASSERT(timer_size, sizeof(AudioTimer) == 0x58);
+AUDIO_ASSERT(timer_delta, offsetof(AudioTimer, LastDelta) == 0x10);
+AUDIO_ASSERT(timer_reset_limit, offsetof(AudioTimer, ResetLimit) == 0x20);
+AUDIO_ASSERT(timer_previous, offsetof(AudioTimer, PreviousTime) == 0x28);
+AUDIO_ASSERT(timer_peak, offsetof(AudioTimer, PeakDelta) == 0x30);
+AUDIO_ASSERT(timer_samples, offsetof(AudioTimer, Samples) == 0x48);
+AUDIO_ASSERT(timer_overruns, offsetof(AudioTimer, Overruns) == 0x4C);
 #undef AUDIO_ASSERT
