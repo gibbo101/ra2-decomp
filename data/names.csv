@@ -232,3 +232,5 @@ address,name,symbol,evidence
 0x00AA0E18,IsometricTileTypeClass::GreenTile,,stored from the GreenTile lookup result in 0x00545150 (isotype.h static)
 0x008B4138,Tubes,,0x00727FD0 TubeClass::TubeClass adds this to the vector at 0x008B4138 (mov ecx and call through [0x8b4138])
 0x00B1CFC0,UnitCompositeDirtyRect,,0x0073B470 UnitClass::Unit_Draw_Voxel reads and writes it at +0/+4/+8/+C
+0x0056DC20,MapClass::Nearby_Location,,YRpp MapClass::NearByLocation; matched Recalc_Center calls with the proven map.h signature and default arguments
+0x007C5F00,_ftol,,YRpp Unsorted.h Game::F2I64; x87 conversion helper called by matched JumpjetLocomotionClass::Movement_AI and its geometry initializers
