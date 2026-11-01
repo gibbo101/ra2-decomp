@@ -1880,3 +1880,108 @@ template class VectorClass<ShadowControlClass *>;
 // SYNTHETIC: GAMEMD 0x006DCD20
 // ??_G?$DynamicVectorClass@PAVShadowControlClass@@@@UAEPAXI@Z
 Rect TacticalDimensions(0,0,0,0);
+
+
+// FUNCTION: GAMEMD 0x006DA770
+bool __fastcall FUN_006DA770(void)
+{
+	if (CurrentObject.Count() == 1) {
+		ObjectClass * object = CurrentObject[0];
+		if (object->Owner_HouseClass() != NULL) {
+			if (Session.Type == GAME_NORMAL) {
+				if (!object->Owner_HouseClass()->IsPlayerControl) {
+					object->Unselect();
+					return true;
+				}
+			} else {
+				if (!object->Owner_HouseClass()->Is_Player_Control()) {
+					object->Unselect();
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}
+
+// FUNCTION: GAMEMD 0x006D6410
+Cell Tactical::Coord_To_Cell(Coord const & coord)
+{
+	Cell cell = coord.As_Cell();
+	Coord center(cell);
+
+	bool isbridge = Map[cell].IsBridgeSurface;
+	int baseheight = Map[cell].Height;
+
+	Coord scan;
+	scan = Coord(Point2D(center.X + CELL_LEPTON_W * 6, center.Y + CELL_LEPTON_H * 6), 0);
+
+	Cell scancell = cell;
+	while (true) {
+		scan -= Coord(8, 8, 0);
+		scancell = scan;
+
+		CellClass *cellptr = &Map[scancell];
+		int heightdiff = cellptr->Height - baseheight;
+		if (isbridge) {
+			heightdiff += BRIDGE_CELL_HEIGHT * cellptr->IsUnderBridge;
+		}
+
+		Cell projected = Coord(scan - Coord(heightdiff * (CELL_LEPTON_H / 2), heightdiff * (CELL_LEPTON_H / 2)));
+		if (projected.X <= cell.X && projected.Y <= cell.Y) {
+			return(scancell);
+		}
+		if (scancell == cell) {
+			return(cell);
+		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x006D3040
+void Tactical::Render_Tile_Shadows(Rect const & xpanrect, Rect const & ypanrect, bool fullredraw)
+{
+	// Redraw the view or the strips exposed by panning.
+	if (fullredraw) {
+		Draw_Tile_Shadows(TacticalRect, TacticalRect);
+	} else {
+		if (xpanrect.Is_Valid()) {
+			Draw_Tile_Shadows(xpanrect, xpanrect);
+		}
+		if (ypanrect.Is_Valid()) {
+			Draw_Tile_Shadows(ypanrect, ypanrect);
+		}
+	}
+
+	// Refresh cells flagged for redraw.
+	if (CellRedrawCount > 0 && !fullredraw) {
+		for (int i = 0; i < CellRedrawCount; i++) {
+			Coord coord = Coord_Whole(Coord(CellRedraw[i]->Fetch_CellID()));
+			Point2D pixel;
+			Coord_To_Pixel(coord, pixel);
+
+			Rect rect;
+			(Point2D &)rect = Point2D(pixel.X - ISO_TILE_PIXEL_W / 2, pixel.Y);
+			((Point2D *)&rect)[1] = Point2D(ISO_TILE_PIXEL_W, ISO_TILE_PIXEL_H);
+			rect.Y += TacticalRect.Y;
+
+			Rect inter = Intersect(TacticalRect, rect);
+
+			if (inter.Is_Valid()) {
+				Draw_Tile_Shadows(inter, inter);
+			}
+		}
+	}
+
+	// Refresh registered dirty areas.
+	if (DirtyAreas.Count()) {
+		for (int j = DirtyAreas.Count() - 1; j >= 0; j--) {
+			Rect redraw = DirtyAreas[j].Area;
+			redraw.Y += TacticalRect.Y;
+			redraw = Intersect(TacticalRect, redraw);
+
+			if (redraw.Is_Valid()) {
+				Draw_Tile_Shadows(redraw, redraw);
+			}
+		}
+	}
+}

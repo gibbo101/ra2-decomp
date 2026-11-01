@@ -7083,6 +7083,7 @@ address,name,result,size,source,symbol
 0x0054A7B0,??_G?$VectorClass@PAUTileInsertType@IsometricTileTypeClass@@@@UAEPAXI@Z,MATCH,73,src/isotype.cpp,??_G?$VectorClass@PAUTileInsertType@IsometricTileTypeClass@@@@UAEPAXI@Z
 0x0054A800,??_G?$DynamicVectorClass@PAUTileInsertType@IsometricTileTypeClass@@@@UAEPAXI@Z,MATCH,73,src/isotype.cpp,??_G?$DynamicVectorClass@PAUTileInsertType@IsometricTileTypeClass@@@@UAEPAXI@Z
 0x0054A850,??0?$VectorClass@PAG@@QAE@HPBQAG@Z,MATCH,74,src/isotype.cpp,??0?$VectorClass@PAG@@QAE@HPBQAG@Z
+0x00547230,IsometricTileTypeClass::Draw_Shadow_Caster,MATCH,315,src/isotype.cpp,?Draw_Shadow_Caster@IsometricTileTypeClass@@QAEXHPAVSurface@@VPoint2D@@V?$TRect@H@@H@Z
 0x0054A8A0,_$E2,MATCH,23,src/jshell.cpp,_$E2
 0x0054A8C0,Fatal,MATCH,62,src/jshell.cpp,?Fatal@@YAXPBDZZ
 0x0054A900,Set_Bit,MATCH,78,src/jshell.cpp,?Set_Bit@@YIXPAXHH@Z
@@ -13860,6 +13861,9 @@ address,name,result,size,source,symbol
 0x006DCC80,??_G?$DynamicVectorClass@UDirtyAreaStruct@@@@UAEPAXI@Z,MATCH,73,src/tactical.cpp,??_G?$DynamicVectorClass@UDirtyAreaStruct@@@@UAEPAXI@Z
 0x006DCCD0,??_G?$VectorClass@PAVShadowControlClass@@@@UAEPAXI@Z,MATCH,73,src/tactical.cpp,??_G?$VectorClass@PAVShadowControlClass@@@@UAEPAXI@Z
 0x006DCD20,??_G?$DynamicVectorClass@PAVShadowControlClass@@@@UAEPAXI@Z,MATCH,73,src/tactical.cpp,??_G?$DynamicVectorClass@PAVShadowControlClass@@@@UAEPAXI@Z
+0x006DA770,FUN_006DA770,MATCH,87,src/tactical.cpp,?FUN_006DA770@@YI_NXZ
+0x006D6410,Tactical::Coord_To_Cell,MATCH,379,src/tactical.cpp,?Coord_To_Cell@Tactical@@QAE?AVCell@@ABVCoord@@@Z
+0x006D3040,Tactical::Render_Tile_Shadows,MATCH,588,src/tactical.cpp,?Render_Tile_Shadows@Tactical@@QAEXABV?$TRect@H@@0_N@Z
 0x006DCD70,_$E2,MATCH,40,src/taction.cpp,_$E2
 0x006DCDA0,_$E5,MATCH,19,src/taction.cpp,_$E5
 0x006DCDC0,_$E8,MATCH,19,src/taction.cpp,_$E8
@@ -14418,6 +14422,7 @@ address,name,result,size,source,symbol
 0x006F2A50,_$E35,MATCH,18,src/techno.cpp,_$E35
 0x006F2A70,_$E38,MATCH,26,src/techno.cpp,_$E38
 0x006F2A90,_$E41,MATCH,23,src/techno.cpp,_$E41
+0x006F2AB0,_$E281,MATCH,32,src/techno.cpp,_$E281
 0x006F2AD0,_$E278,MATCH,21,src/techno.cpp,_$E278
 0x006F2AF0,_$E286,MATCH,37,src/techno.cpp,_$E286
 0x006F2B20,_$E284,MATCH,21,src/techno.cpp,_$E284
