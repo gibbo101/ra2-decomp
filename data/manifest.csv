@@ -10776,6 +10776,7 @@ address,size,symbol,source,sha256
 0x00634960,4,?Get_Queued@PlanningNodeClass@@QAE_NXZ,src/planmgr.cpp,efef38aeb810a323430fc66bf44c23344f05bb31daf4f7d709e70ff3be2db95d
 0x00634970,53,?Rebuild@PlanningNodeClass@@QAEXXZ,src/planmgr.cpp,835f0a6572f6cac480226982ecb4e1c55241b9afccd3700291853255a7dd3085
 0x006349B0,356,?Update_Active@PlanningNodeClass@@QAEXXZ,src/planmgr.cpp,e61acda3a9bd785e5cb45b519de1cbd11d98a82f082f04c6ef91fccd836a8d99
+0x00634B20,407,?FUN_00634B20@@YIXPAVPlanningNodeClass@@@Z,src/planmgr.cpp,b1da3974b3bc54e1091f63c672ebd856efcebfede33bbebd2aebb1d7bdd298f5
 0x00634CC0,326,?Find_Branch@PlanningNodeClass@@QAEHPAVTechnoClass@@@Z,src/planmgr.cpp,44879874e4cd4030a9c332580567a9fc0be95023360644d8f1c6bb0554edc1b6
 0x00635060,183,?Detach@PlanningNodeClass@@QAEXPAVPlanningMemberClass@@@Z,src/planmgr.cpp,e6123ba46c199df42c3b08b4742e8940fdf24fed3fdcb769d630f5d576caff32
 0x00635120,114,?Clear@PlanningNodeClass@@QAEXXZ,src/planmgr.cpp,407b14ca7c125f2998f398aa078083e10cc4044282986ec25e0a8982a75af2dc
@@ -10803,6 +10804,8 @@ address,size,symbol,source,sha256
 0x00636570,31,?Has_Started@PlanningTokenClass@@QAE_NXZ,src/planmgr.cpp,d7a186c1239222383c391fd34883ad6f212e65228d76dc85b7c7418e1fd9128f
 0x006367B0,454,?Share_Range@PlanningTokenClass@@QAEXPAVTechnoClass@@HH@Z,src/planmgr.cpp,7ce875fc68b2758b5707527cc8f057e4d63e753fd41a48d727962f50366e438b
 0x00636980,452,?Share_From@PlanningTokenClass@@QAEXPAVTechnoClass@@H@Z,src/planmgr.cpp,a88a4c2f10da72ae0ffb4170f4a338a0d96d7d82c52e4c16243edbe0b4a84fd7
+0x00636B50,386,?FUN_00636B50@PlanningTokenClass@@QAEXH@Z,src/planmgr.cpp,63c49a923ac2ed92d35c15351bd0009664940a3883b0f3465bdbb2f8351725ad
+0x00636CE0,176,?FUN_00636CE0@PlanningTokenClass@@QAEXXZ,src/planmgr.cpp,b5c8f7de5a5b4418915ca1bddef836416a550f383a348e52b985988127f66fee
 0x00636D90,7,?Get_F8C@PlanningTokenClass@@QAEHXZ,src/planmgr.cpp,923d1a98e397f42b18b1fe647cb0d836cdfa25ef31f2788ff06a51f12dcb3c64
 0x00636DA0,32,?Reached@PlanningTokenClass@@QAE_NH@Z,src/planmgr.cpp,bec8029b294fcd2b394263054771d265e6dbdb29149720363f0eb399aad9e902
 0x00636DC0,4,?Node_Count@PlanningTokenClass@@QAEHXZ,src/planmgr.cpp,01d3abacb68aac3537badfe563d0e21d0244fb61db1d805bcef8f455407fad96
