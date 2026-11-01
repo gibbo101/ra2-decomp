@@ -3983,3 +3983,50 @@ template class Dictionary<WideWstring, bool>;
 // TEMPLATE: GAMEMD 0x005EF0B0
 // ??0?$VectorClass@PBVMultiMission@@@@QAE@HPBQBVMultiMission@@@Z
 template class VectorClass<MultiMission const *>;
+
+// FUNCTION: GAMEMD 0x005E84D0
+char * CalcRandomMapDigest(void)
+{
+	unsigned char * data = (unsigned char *)&RandomMapGen.SeedData.Biome;
+	char description[sizeof(RandomMapGen.SeedData.MapDescription)];
+	char * digest;
+	int size;
+	unsigned char *bytes;
+	unsigned int val;
+	unsigned int hibit;
+	unsigned int checksum = 0;
+
+	memcpy(description, RandomMapGen.SeedData.MapDescription, sizeof(description));
+
+	// Exclude the localized description from the settings digest.
+	size = (sizeof(RandomMapGen.SeedData) - offsetof(MapSeedClass, Biome));
+	memset(RandomMapGen.SeedData.MapDescription, '\0', sizeof(description));
+
+	while (size > 0) {
+		hibit = checksum >> 31;
+		if (size >= 4) {
+			val = (*(unsigned int *)data);
+			checksum <<= 1;
+			checksum += val;
+			checksum += hibit;
+			data += sizeof(unsigned int);
+			size -= sizeof(unsigned int);
+		} else {
+			val = 0;
+			bytes = data;
+			while (size) {
+				val <<= 8;
+				val |= (*bytes++);
+				size--;
+			}
+			checksum <<= 1;
+			checksum += val;
+			checksum += hibit;
+		}
+	}
+
+	digest = new char[12];
+	sprintf(digest, "%08X", checksum);
+	memcpy(RandomMapGen.SeedData.MapDescription, description, sizeof(description));
+	return(digest);
+}
