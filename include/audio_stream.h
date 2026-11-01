@@ -9,6 +9,7 @@
 struct AudioStream;
 struct AudioChannel;
 struct AudioBufferOwner;
+struct AudioSampleBlock;
 class FileClass;
 
 struct AudioFormat {
@@ -25,6 +26,7 @@ struct AudioData {
     SoundLink Buffers;
     int unknown_14, unknown_18, unknown_1C;
     void FUN_004084E0(void);
+    AudioSampleBlock * FUN_00408520(void);
 };
 struct AudioChunk;
 struct AudioSpan { char * Data; int Size; };
@@ -84,27 +86,108 @@ struct AudioChunk : SoundLink {
     unsigned int : 32;
 };
 AudioChunk * __fastcall FUN_00408D80(int size, int alignment);
-struct AudioSource {
+struct AudioAttributes {
+    AudioRamp Ramps[3];
+    unsigned unknown_78, unknown_7C;
+};
+struct AudioChannelDriver {
+    int (__fastcall *unknown_00)(AudioChannel *);
+    int (__fastcall *Open)(AudioChannel *);
+    int (__fastcall *Close)(AudioChannel *);
+    int (__fastcall *Play)(AudioChannel *);
+    int (__fastcall *Stop)(AudioChannel *);
+    int (__fastcall *Pause)(AudioChannel *);
+    int (__fastcall *Resume)(AudioChannel *);
+    int (__fastcall *unknown_1C)(AudioChannel *);
+    int (__fastcall *unknown_20)(AudioChannel *);
+    int (__fastcall *Queue)(AudioChannel *);
+    void (__fastcall *Lock)(AudioChannel *);
+    void (__fastcall *Unlock)(AudioChannel *);
+};
+struct AudioDeviceDriver;
+struct AudioSource : SoundLink {
+    unsigned Flags;
+    int References, unknown_14;
+    AudioDeviceDriver * DeviceDriver;
+    int DriverIndex;
+    char unknown_20[0x24];
+    AudioFormat DefaultFormat;
+    unsigned int : 32;
+    AudioAttributes Attributes;
+    AudioAttributes * GroupAttributes;
+    unsigned int : 32;
+    int ChannelCount;
+    unsigned int : 32;
+    SoundLink ChannelList;
+    // Channel-list mutation on the game thread is observed by the backend worker.
+    volatile int ListReferences;
+    unsigned int : 32;
+    void (__fastcall *Service)(AudioSource *);
+    char unknown_110[0xC0];
+    AudioChannelDriver * Driver;
     AudioStream * FUN_00407860(unsigned __int64 duration);
     AudioChannel * __fastcall FUN_004036C0(int group);
+    AudioChannel * FUN_00402040(void);
+    void __fastcall FUN_00402860(AudioChannel * channel);
 };
-struct AudioChannel {
-    char unknown_00[0x90];
-    int Mixer[4];
-    char unknown_A0[0x10];
+struct AudioSampleBlock : SoundLink { void * Data; int Size; };
+struct AudioChannel : SoundLink {
+    int Type;
+    AudioAttributes Attributes;
+    AudioAttributes * Mixer[4];
+    int Priority;
+    // Playback callbacks and game-side controls update these shared fields.
+    volatile unsigned Flags;
+    volatile int LoopCount;
+    AudioSource * Device;
     int (__fastcall *Fill)(AudioChannel *);
-    void * unknown_B4;
+    int (__fastcall *unknown_B4)(AudioChannel *);
     int (__fastcall *StopA)(AudioChannel *);
     int (__fastcall *StopB)(AudioChannel *);
     AudioStream * Stream;
-    char unknown_C4[0xAC];
+    char unknown_C4[0x10];
+    AudioChannelDriver * Driver;
+    AudioAttributes Output;
+    void * BackendData;
+    int (__fastcall *NextFrame)(AudioChannel *);
+    int (__fastcall *NextSample)(AudioChannel *);
+    int (__fastcall *SampleDone)(AudioChannel *);
+    AudioData * Sample;
+    AudioSampleBlock * Block;
     void * QueueData;
     int QueueSize, QueueRemaining;
+    AudioFormat Format;
+    int FormatChanged, DriverFormatChanged;
+    unsigned int : 32;
+    unsigned __int64 RatePeriod, BufferDuration;
+    char unknown_1B8[8];
+    void FUN_00402170(void);
+    void FUN_00402190(void);
+    void FUN_00402220(void);
+    int FUN_00402430(void);
+    void __fastcall FUN_00402440(int type);
+    void FUN_004024A0(void);
+    void FUN_00402550(void);
     void FUN_004025B0(void);
     void FUN_00402600(void);
     void FUN_00402650(void);
-    void FUN_004024A0(void);
+    void FUN_004026A0(void);
+    void FUN_004026B0(void);
+    void FUN_004026C0(void);
+    void FUN_004026F0(void);
+    int FUN_00402720(void);
+    void __fastcall FUN_00402790(AudioData * sample);
+    int __fastcall FUN_00402800(AudioFormat * format);
+    void FUN_004028B0(void);
 };
+void __fastcall FUN_00401000(AudioAttributes * attributes);
+void __fastcall FUN_00401080(AudioAttributes * attributes);
+void __fastcall FUN_004010C0(AudioAttributes * output, AudioAttributes * input);
+void __fastcall FUN_00401170(AudioAttributes * attributes);
+int __fastcall FUN_004022C0(AudioChannel * channel);
+int __fastcall FUN_00402330(AudioChannel * channel);
+int __fastcall FUN_004023F0(AudioChannel * channel);
+extern AudioAttributes * DAT_0087DE30;
 struct AudioStream : SoundLink {
     // The file-reading worker clears the read flag while stream controls update it.
     volatile unsigned Flags;
@@ -239,6 +322,21 @@ AUDIO_ASSERT(AudioBufferOwner_Flags, offsetof(AudioBufferOwner, Flags) == 0x10);
 AUDIO_ASSERT(AudioBufferOwner_TotalBytes, offsetof(AudioBufferOwner, TotalBytes) == 0x14);
 AUDIO_ASSERT(AudioBufferOwner_Playback, offsetof(AudioBufferOwner, Playback) == 0x18);
 AUDIO_ASSERT(AudioBufferOwner_ActiveReferences, offsetof(AudioBufferOwner, ActiveReferences) == 0x98);
+AUDIO_ASSERT(attributes_size, sizeof(AudioAttributes) == 0x80);
+AUDIO_ASSERT(channel_size_full, sizeof(AudioChannel) == 0x1C0);
+AUDIO_ASSERT(channel_flags, offsetof(AudioChannel, Flags) == 0xA4);
+AUDIO_ASSERT(channel_loop_count, offsetof(AudioChannel, LoopCount) == 0xA8);
+AUDIO_ASSERT(channel_device, offsetof(AudioChannel, Device) == 0xAC);
+AUDIO_ASSERT(channel_driver, offsetof(AudioChannel, Driver) == 0xD4);
+AUDIO_ASSERT(channel_output, offsetof(AudioChannel, Output) == 0xD8);
+AUDIO_ASSERT(channel_sample, offsetof(AudioChannel, Sample) == 0x168);
+AUDIO_ASSERT(channel_format, offsetof(AudioChannel, Format) == 0x17C);
+AUDIO_ASSERT(source_format, offsetof(AudioSource, DefaultFormat) == 0x44);
+AUDIO_ASSERT(source_attributes, offsetof(AudioSource, Attributes) == 0x68);
+AUDIO_ASSERT(source_groups, offsetof(AudioSource, GroupAttributes) == 0xE8);
+AUDIO_ASSERT(source_channels, offsetof(AudioSource, ChannelList) == 0xF8);
+AUDIO_ASSERT(source_references, offsetof(AudioSource, ListReferences) == 0x104);
+AUDIO_ASSERT(source_driver, offsetof(AudioSource, Driver) == 0x1D0);
 AUDIO_ASSERT(timer_size, sizeof(AudioTimer) == 0x58);
 AUDIO_ASSERT(timer_delta, offsetof(AudioTimer, LastDelta) == 0x10);
 AUDIO_ASSERT(timer_reset_limit, offsetof(AudioTimer, ResetLimit) == 0x20);

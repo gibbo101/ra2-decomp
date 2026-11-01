@@ -5,10 +5,10 @@
 #include <string.h>
 
 // FUNCTION: GAMEMD 0x00407B40
-void __fastcall FUN_00407B40(AudioStream * stream, int mixer) { stream->Channel->Mixer[1] = mixer; }
+void __fastcall FUN_00407B40(AudioStream * stream, int mixer) { stream->Channel->Mixer[1] = (AudioAttributes *)mixer; }
 
 // FUNCTION: GAMEMD 0x00407B50
-void __fastcall FUN_00407B50(AudioStream * stream, int mixer) { stream->Channel->Mixer[3] = mixer; }
+void __fastcall FUN_00407B50(AudioStream * stream, int mixer) { stream->Channel->Mixer[3] = (AudioAttributes *)mixer; }
 
 // FUNCTION: GAMEMD 0x00407F40
 void AudioStream::FUN_00407F40(void)
