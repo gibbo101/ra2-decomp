@@ -33,12 +33,7 @@ struct SoundNode : SoundLink
 
 };
 
-struct SoundPool
-{
-	void FUN_00407510(void);
-	SoundNode * FUN_00407520(void);
-	void __fastcall FUN_00407530(SoundNode * node);
-};
+#include "audio_pool.h"
 
 extern SoundLink DAT_00B1D320;
 extern SoundPool * DAT_00B1D3A4;

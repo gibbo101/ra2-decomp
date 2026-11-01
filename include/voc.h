@@ -79,7 +79,7 @@ class VocClass
 		int FUN_00405160(void);
 		AudioEvent * FUN_00405190(void);
 		int FUN_00406650(void);
-		bool __fastcall FUN_004064A0(char const * sample);
+		int __fastcall FUN_004064A0(char const * sample);
 		void __fastcall FUN_00406520(int attack);
 		void __fastcall FUN_00406530(int decay);
 		void __fastcall FUN_00406540(int priority);

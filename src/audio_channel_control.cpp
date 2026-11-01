@@ -53,7 +53,7 @@ void AudioChannel::FUN_00402650(void)
 // FUNCTION: GAMEMD 0x004026A0
 void AudioChannel::FUN_004026A0(void) { Driver->Lock(this); }
 // FUNCTION: GAMEMD 0x004026B0
-void AudioChannel::FUN_004026B0(void) { Driver->Unlock(this); }
+void __fastcall AudioChannel::FUN_004026B0(void) { Driver->Unlock(this); }
 // FUNCTION: GAMEMD 0x004026C0
 void AudioChannel::FUN_004026C0(void)
 {

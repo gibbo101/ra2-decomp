@@ -234,3 +234,13 @@ address,name,symbol,evidence
 0x00B1CFC0,UnitCompositeDirtyRect,,0x0073B470 UnitClass::Unit_Draw_Voxel reads and writes it at +0/+4/+8/+C
 0x007C94BC,fread,_fread,Retail CRT wrapper locks the FILE then calls __fread_lk at 0x007C94EB and unlocks it; read caller 0x00409030
 0x007C95D3,fwrite,_fwrite,Retail CRT wrapper locks the FILE then calls __fwrite_lk at 0x007C9602 and unlocks it; write caller 0x00409030
+0x007C8DF0,strrchr,_strrchr,retail call/data reference from AudioIDXData::Create
+0x007C8D20,stricmp,_stricmp,retail call/data reference from AudioIDXData::Create
+0x007C8B48,qsort,_qsort,retail call/data reference from AudioIDXData::Create
+0x004011C0,AudioIDXData::Create,?Create@AudioIDXData@@SIPAU1@PBD0@Z,exact matched function body
+0x004015C0,AudioIDXData::FindSampleIndex,?FindSampleIndex@AudioIDXData@@QAIHPBD@Z,Retail audio event routines: direct call/global operands in 0x00404700 through 0x004064A0; checked against address-specific disassembly.
+0x00886B88,Randomizer::Global,?Global@Randomizer@@3VRandom2Class@@A,Retail audio event routines: direct call/global operands in 0x00404700 through 0x004064A0; checked against address-specific disassembly.
+0x007C91D0,strncpy,_strncpy,Retail audio event routines: direct call/global operands in 0x00404700 through 0x004064A0; checked against address-specific disassembly.
+0x00401580,AudioIDXData::~AudioIDXData,??1AudioIDXData@@QAE@XZ,retail call/data references in FUN_00406D40
+0x007E16B0,CCFileClass::vftable,??_7CCFileClass@@6B@,Unique primary CCFileClass RTTI vftable; complete-object base offset is zero
+0x007E1668,CDFileClass::vftable,??_7CDFileClass@@6B@,Unique primary CDFileClass RTTI vftable; complete-object base offset is zero

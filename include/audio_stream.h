@@ -104,27 +104,46 @@ struct AudioChannelDriver {
     void (__fastcall *Lock)(AudioChannel *);
     void (__fastcall *Unlock)(AudioChannel *);
 };
+// Workers record elapsed time while diagnostics read and update the timer record.
+struct AudioTimer {
+    unsigned __int64 Duration, Threshold, LastDelta, MaximumDelta;
+    unsigned __int64 ResetLimit, PreviousTime, PeakDelta, LastReport, ReportInterval;
+    int Samples, Overruns, DisplayedSamples, DisplayIndex;
+    void FUN_00403820(void) volatile;
+    void FUN_00403870(unsigned __int64 value) volatile;
+    void FUN_004038A0(unsigned __int64 value) volatile;
+    void FUN_004038C0(unsigned __int64 value) volatile;
+    int FUN_004038E0(unsigned __int64 value) volatile;
+    void FUN_00403920(unsigned __int64 value) volatile;
+};
+
 struct AudioDeviceDriver;
 struct AudioSource : SoundLink {
     unsigned Flags;
     int References, unknown_14;
     AudioDeviceDriver * DeviceDriver;
     int DriverIndex;
-    char unknown_20[0x24];
+    unsigned unknown_20;
+    AudioFormat InputFormat;
     AudioFormat DefaultFormat;
     unsigned int : 32;
     AudioAttributes Attributes;
     AudioAttributes * GroupAttributes;
-    unsigned int : 32;
+    int OutputIndex;
     int ChannelCount;
     unsigned int : 32;
     SoundLink ChannelList;
     // Channel-list mutation on the game thread is observed by the backend worker.
     volatile int ListReferences;
     unsigned int : 32;
-    void (__fastcall *Service)(AudioSource *);
-    char unknown_110[0xC0];
+    int (__fastcall *Service)(AudioSource *);
+    // The output worker updates timing statistics while the game thread reads them.
+    volatile AudioTimer ServiceTimer;
+    unsigned __int64 unknown_168;
+    volatile AudioTimer UpdateTimer;
+    unsigned __int64 unknown_1C8;
     AudioChannelDriver * Driver;
+    char unknown_1D4[0x14];
     AudioStream * FUN_00407860(unsigned __int64 duration);
     AudioChannel * __fastcall FUN_004036C0(int group);
     AudioChannel * FUN_00402040(void);
@@ -172,7 +191,7 @@ struct AudioChannel : SoundLink {
     void FUN_00402600(void);
     void FUN_00402650(void);
     void FUN_004026A0(void);
-    void FUN_004026B0(void);
+    void __fastcall FUN_004026B0(void);
     void FUN_004026C0(void);
     void FUN_004026F0(void);
     int FUN_00402720(void);
@@ -257,18 +276,6 @@ AUDIO_ASSERT(channel_data, offsetof(AudioChannel, QueueData) == 0x170);
 AUDIO_ASSERT(channel_size, offsetof(AudioChannel, QueueSize) == 0x174);
 AUDIO_ASSERT(channel_remaining, offsetof(AudioChannel, QueueRemaining) == 0x178);
 
-// Workers record elapsed time while diagnostics read and update the timer record.
-struct AudioTimer {
-    unsigned __int64 Duration, Threshold, LastDelta, MaximumDelta;
-    unsigned __int64 ResetLimit, PreviousTime, PeakDelta, LastReport, ReportInterval;
-    int Samples, Overruns, DisplayedSamples, DisplayIndex;
-    void FUN_00403820(void) volatile;
-    void FUN_00403870(unsigned __int64 value) volatile;
-    void FUN_004038A0(unsigned __int64 value) volatile;
-    void FUN_004038C0(unsigned __int64 value) volatile;
-    int FUN_004038E0(unsigned __int64 value) volatile;
-    void FUN_00403920(unsigned __int64 value) volatile;
-};
 struct AudioWorker {
     volatile int Stop;
     volatile int Iterations;
@@ -345,3 +352,7 @@ AUDIO_ASSERT(timer_peak, offsetof(AudioTimer, PeakDelta) == 0x30);
 AUDIO_ASSERT(timer_samples, offsetof(AudioTimer, Samples) == 0x48);
 AUDIO_ASSERT(timer_overruns, offsetof(AudioTimer, Overruns) == 0x4C);
 #undef AUDIO_ASSERT
+
+typedef char audio_source_size[(sizeof(AudioSource) == 0x1E8) ? 1 : -1];
+typedef char audio_source_service_timer[(offsetof(AudioSource, ServiceTimer) == 0x110) ? 1 : -1];
+typedef char audio_source_update_timer[(offsetof(AudioSource, UpdateTimer) == 0x170) ? 1 : -1];
