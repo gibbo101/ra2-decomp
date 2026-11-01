@@ -3951,3 +3951,33 @@ template class VectorClass<FootClass *>;
 
 // TEMPLATE: GAMEMD 0x004E0ED0
 // ?Delete_Index@?$DynamicVectorClass@PAVFootClass@@@@QAE_NH@Z
+
+
+// FUNCTION: GAMEMD 0x004DF0E0
+int FootClass::RespondMegaEventMission(void * data)
+{
+	EventClass * event = (EventClass *)data;
+	int mission = event->Data.MegaMission.Mission;
+	if (mission == MISSION_ATTACK_MOVE) {
+		bool has_destination = event->Data.MegaMission.Destination.Is_Valid();
+		bool has_target = event->Data.MegaMission.Target.Is_Valid();
+		if (!CanAttackOnTheMove()) {
+			mission = has_target ? MISSION_ATTACK : MISSION_MOVE;
+		} else {
+			HasAttackMoveTarget = false;
+			MegaMission = MISSION_ATTACK_MOVE;
+			if (has_destination) {
+				MegaDestination = event->Data.MegaMission.Destination.As_Abstract();
+				mission = MISSION_MOVE;
+			} else if (has_target) {
+				MegaTarget = event->Data.MegaMission.Target.As_Abstract();
+				mission = MISSION_ATTACK;
+			} else {
+				ClearMegaMissionData();
+			}
+		}
+	} else {
+		ClearMegaMissionData();
+	}
+	return mission;
+}

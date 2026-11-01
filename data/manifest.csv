@@ -4502,6 +4502,7 @@ address,size,symbol,source,sha256
 0x004DEE80,442,?FindCloserDockBuilding@FootClass@@UBEPAVBuildingClass@@PAVBuildingTypeClass@@IIPAH@Z,src/foot.cpp,7b15cce6dec69d267c37f31cba77dcd45d09b30d340017d0cd5f5bb1fab8c9e3
 0x004DF040,129,?TryNearestDockBuilding@FootClass@@UBEPAVBuildingClass@@PAV?$TypeList@PAVBuildingTypeClass@@@@II@Z,src/foot.cpp,8ef387a7838f96d8bbbef0e3674acaf48942fea5fa9faae950d781dec37a4fdc
 0x004DF0D0,15,?AbortMotion@FootClass@@QAEXXZ,src/foot.cpp,1e55f06250b0b6c8273d45cab83feced288bc555cdbfb9abf4e107bd1f0e08cb
+0x004DF0E0,188,?RespondMegaEventMission@FootClass@@UAEHPAX@Z,src/foot.cpp,746cb69f83c0631c740a344809c91927cfa84ab6de62ef8e11bc70b97b22e3df
 0x004DF1A0,31,?ClearMegaMissionData@FootClass@@UAEXXZ,src/foot.cpp,074c397c9fcba96db7b38c764a6c24c2a1d3bc6c70afbf9926a856767d11a38a
 0x004DF1C0,15,?HaveMegaMission@FootClass@@UBE_NXZ,src/foot.cpp,0202f7d8f5ac849ed3fd5710259a659e95782af23d47dd978cea90eae17fecb1
 0x004DF1D0,7,?HaveAttackMoveTarget@FootClass@@UBE_NXZ,src/foot.cpp,b6e7755dc1843802d44eeac6f7ecfb3c9f56f5ff1b54fb62f566be10ec81f3c8
@@ -14253,6 +14254,7 @@ address,size,symbol,source,sha256
 0x006EA500,257,?AddMember@TeamClass@@QAE_NPAVFootClass@@_N@Z,src/team.cpp,ab948a42d096b23655aef7af391f0a89d6dcde31556cfc8b3d1f0468cd9f00bb
 0x006EA610,594,?Can_Add@TeamClass@@QBE_NPAVFootClass@@AAH_N@Z,src/team.cpp,dda8bcc5e6e8a880d678ad0d75315b7e73792d5679cc15163830e663e57fe08c
 0x006EA870,532,?Remove@TeamClass@@QAE_NPAVFootClass@@H_N@Z,src/team.cpp,0acbbed9248ecf9b7573e42e971547f54bfea67e33223edcc988ce4034f2c4b4
+0x006EAA90,976,?Recruit@TeamClass@@AAEHH@Z,src/team.cpp,12fc0c127cabba220b2d9053b5fe2746e3067971964733de06ff3ca6d427da4e
 0x006EAE60,115,?Detach@TeamClass@@UAEXPBVAbstractClass@@_N@Z,src/team.cpp,f0c0dca615a3bc6fa23c5e9a1c5f7994c16f61bdbce6f0ed88c15013c45bf3c7
 0x006EAEE0,1178,?Calc_Center@TeamClass@@ABEXAAPAVAbstractClass@@0@Z,src/team.cpp,55126f23d6f88660b8aafa081f56c4b23b87a216be9681050428f4e69f2ae1f3
 0x006EB380,259,?Took_Damage@TeamClass@@QAEXPAVFootClass@@W4ResultType@@PAVTechnoClass@@@Z,src/team.cpp,347c82eea6f19004be14663f00c2a002ce78bc7db79d2ef1657ed7869494823e
@@ -14336,7 +14338,9 @@ address,size,symbol,source,sha256
 0x006EF610,192,?TMission_PLAY_ANIM@TeamClass@@AAEXPAVTeamMissionClass@@_N@Z,src/team.cpp,03f08c07cffdcd48e37f486524642cf550e689754e3643a6af2632899d156db9
 0x006EF6D0,37,?TMission_TALK_BUBBLE@TeamClass@@AAEXPAVTeamMissionClass@@_N@Z,src/team.cpp,b2e90f95ca08791bfc40eadcd5c54c22dc6fae77dc21dbc78814a0c7ac258180
 0x006EF9E0,46,?_Is_It_Breathing@@YI_NPBVFootClass@@@Z,src/team.cpp,3e053906a8be72a34170920f8363a29250ee0303398cf08a40db70826de99298
+0x006EFA10,608,?TMission_MOVE_TO_BASE_FRONT@TeamClass@@AAEXPAVTeamMissionClass@@_N@Z,src/team.cpp,f7dc519b168e109ef7d336b381c787eed45045571011ed946d8e6c2555898418
 0x006EFC70,482,?TMission_IRON_CURTAIN@TeamClass@@AAEXPAVTeamMissionClass@@_N@Z,src/team.cpp,de41a23616491b2b38194a8556cfb8afb33da10d566b6cf9c8be621d6e9ceb2c
+0x006EFE60,709,?TMission_CHRONO_BUILDING@TeamClass@@AAEXPAVTeamMissionClass@@_N@Z,src/team.cpp,fef9fe2fab6d55f64e3b3c777062b30b561040d2f3cb505132cfdaaa4a2ad73e
 0x006F0130,626,?TMission_CHRONO_ATTACK@TeamClass@@AAEXPAVTeamMissionClass@@_N@Z,src/team.cpp,6f79e1f14318f1a1b4e0bb7195bd73f4fd7be959a88d6161d9bb1c0fb71b2851
 0x006F03B0,60,?Stray_Distance@TeamClass@@QAEHXZ,src/team.cpp,44db318a8259e8fe98cda7ca68443fe8eb972480bf91a553c16d04e2b259664b
 0x006F03F0,61,?Has_Ammo@TeamClass@@QBE_NXZ,src/team.cpp,2ec1705e637204a3a1722224ef2e130f9aad515f9afad97ce5836ba68bd4c0b1

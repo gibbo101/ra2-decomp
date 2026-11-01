@@ -4567,6 +4567,7 @@ address,name,result,size,source,symbol
 0x004E0E20,??_G?$DynamicVectorClass@V?$DistributionObject@PAVCellClass@@@?$DiscreteDistributionClass@VCellClass@@@@@@UAEPAXI@Z,MATCH,84,src/foot.cpp,??_G?$DynamicVectorClass@V?$DistributionObject@PAVCellClass@@@?$DiscreteDistributionClass@VCellClass@@@@@@UAEPAXI@Z
 0x004E0E80,??0?$VectorClass@PAVAbstractClass@@@@QAE@HPBQAVAbstractClass@@@Z,MATCH,74,src/foot.cpp,??0?$VectorClass@PAVAbstractClass@@@@QAE@HPBQAVAbstractClass@@@Z
 0x004E0ED0,?Delete_Index@?$DynamicVectorClass@PAVFootClass@@@@QAE_NH@Z,MATCH,49,src/foot.cpp,?Delete_Index@?$DynamicVectorClass@PAVFootClass@@@@QAE_NH@Z
+0x004DF0E0,FootClass::RespondMegaEventMission,MATCH,188,src/foot.cpp,?RespondMegaEventMission@FootClass@@UAEHPAX@Z
 0x004E0F10,_$E2,MATCH,40,src/fuse.cpp,_$E2
 0x004E0F40,_$E5,MATCH,19,src/fuse.cpp,_$E5
 0x004E0F60,_$E8,MATCH,19,src/fuse.cpp,_$E8
@@ -14343,6 +14344,9 @@ address,name,result,size,source,symbol
 0x006F0430,TeamClass::Fetch_Object_Size,MATCH,6,src/team.cpp,?Fetch_Object_Size@TeamClass@@UBEHXZ
 0x006F0440,TeamClass::Fetch_RTTI,MATCH,6,src/team.cpp,?Fetch_RTTI@TeamClass@@UBE?AW4RTTIType@@XZ
 0x006F0450,??_GTeamClass@@UAEPAXI@Z,MATCH,30,src/team.cpp,??_GTeamClass@@UAEPAXI@Z
+0x006EFE60,TeamClass::TMission_CHRONO_BUILDING,MATCH,709,src/team.cpp,?TMission_CHRONO_BUILDING@TeamClass@@AAEXPAVTeamMissionClass@@_N@Z
+0x006EFA10,TeamClass::TMission_MOVE_TO_BASE_FRONT,MATCH,608,src/team.cpp,?TMission_MOVE_TO_BASE_FRONT@TeamClass@@AAEXPAVTeamMissionClass@@_N@Z
+0x006EAA90,TeamClass::Recruit,MATCH,976,src/team.cpp,?Recruit@TeamClass@@AAEHH@Z
 0x006F0470,_$E2,MATCH,40,src/teamtype.cpp,_$E2
 0x006F04A0,_$E5,MATCH,19,src/teamtype.cpp,_$E5
 0x006F04C0,_$E8,MATCH,19,src/teamtype.cpp,_$E8

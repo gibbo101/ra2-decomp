@@ -2518,3 +2518,200 @@ bool TeamClass::Has_Ammo(void) const
 
 // SYNTHETIC: GAMEMD 0x006F0450
 // ??_GTeamClass@@UAEPAXI@Z
+
+// FUNCTION: GAMEMD 0x006EFE60
+void TeamClass::TMission_CHRONO_BUILDING(TeamMissionClass * mission, bool)
+{
+	FootClass * leader = _Team_Leader(this);
+	if (leader == NULL) {
+		IsNextMission = true;
+		return;
+	}
+	{
+		HouseClass * house = leader->House;
+		SuperClass * sphere = NULL;
+		SuperClass * warp = NULL;
+		for (int index = 0; index < house->SuperWeapon.Count(); index++) {
+			SuperClass * super = house->SuperWeapon[index];
+			if (super->Class->Type == SUPER_CHRONO_SPHERE) {
+				sphere = super;
+			}
+			if (super->Class->Type == SUPER_CHRONO_WARP) {
+				warp = super;
+			}
+		}
+		if (sphere != NULL && warp != NULL) {
+			if (sphere->IsReady && house->Power_Fraction() >= 1.0) {
+				TargetPropertyType prop = TargetPropertyType((unsigned short)mission->Data.Prop);
+				int type = mission->Data.Type;
+				BuildingTypeClass * btype = BuildingTypes[type];
+				HouseClass * enemy = NULL;
+				if (leader->House->Enemy != HOUSE_NONE) enemy = Houses[leader->House->Enemy];
+				BuildingClass * target = Pick_Building_With_Property(btype, enemy, leader, prop, Class->OnlyTargetHouseEnemy);
+				if (target != NULL) {
+					_Fire_Super(house, sphere, Zone->Center_Coord().As_Cell());
+					_Fire_Super(house, warp, target->Center_Coord().As_Cell());
+					Assign_Mission_Target(target);
+				}
+				IsNextMission = true;
+			} else {
+				int left = sphere->Control;
+				double recharge = sphere->GetRechargeTime();
+				if (sphere->IsPresent) {
+					if ((double)left / recharge <= 1.0f - Rule->AIMinorSuperReadyPercent) {
+						return;
+					}
+				}
+				IsNextMission = true;
+			}
+		} else {
+			IsNextMission = true;
+		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x006EFA10
+void TeamClass::TMission_MOVE_TO_BASE_FRONT(TeamMissionClass * mission, bool first_time)
+{
+	if (first_time) {
+		FootClass * leader = Fetch_A_Leader();
+		HouseClass * enemy = NULL;
+		if (leader != NULL && leader->House->Enemy != HOUSE_NONE) {
+			enemy = Houses[leader->House->Enemy];
+		}
+		Coord base = leader->House->FUN_0050DF30();
+		DirType dir;
+		if (enemy == NULL) {
+			dir = DirType((Dir256)Random_Pick(0, 255));
+		} else {
+			Coord target = enemy->FUN_0050DF30();
+			target = target - base;
+			dir = DirType(fastmath::atan2((double)-target.Y, (double)target.X));
+		}
+		Cell cell = Move_Coord(base, dir, Rule->AISafeDistance * CELL_LEPTON_W).As_Cell();
+		cell = Map.Nearby_Location(cell, leader->TClass->Speed, -1, MZONE_NORMAL, false, Point2D(3, 3));
+		Assign_Mission_Target(&Map[cell]);
+	}
+	Coordinate_Move();
+}
+
+// FUNCTION: GAMEMD 0x006EAA90
+int TeamClass::Recruit(int typeindex)
+{
+	Coord center = Zone != NULL ? Zone->Center_Coord() : COORD_NONE;
+
+	if (Class->Get_Origin() != CELL_NONE) {
+		center = Class->Get_Origin().As_Coord();
+	}
+
+	int added = 0;				// Total number added to team.
+
+	if (Class->TaskForce->Members[typeindex].Quantity > Quantity[typeindex]) {
+		int group = Class->Get_Group();
+		switch ((RTTIType)Class->TaskForce->Members[typeindex].Class->RTTI) {
+
+			case RTTI_INFANTRYTYPE:
+			case RTTI_INFANTRY:
+				{
+					InfantryClass * best = 0;
+					int bestdist = -1;
+
+					for (int index = 0; index < Infantry.Count(); index++) {
+						InfantryClass * infantry = Infantry[index];
+						if (group == -2 || infantry->Group == group || Class->IsRecruiter) {
+							int d = infantry->Relative_Distance(center);
+
+							if (infantry->Group != group) {
+								d += 50 * CELL_LEPTON;
+							}
+
+							if ((d < bestdist || bestdist == -1) && Can_Add(infantry, typeindex, false)) {
+								best = infantry;
+								bestdist = d;
+							}
+						}
+					}
+
+					if (best) {
+						best->Assign_Target(NULL);
+						AddMember(best, false);
+						added++;
+					}
+				}
+				goto done;
+
+			case RTTI_AIRCRAFTTYPE:
+			case RTTI_AIRCRAFT:
+				{
+					AircraftClass * best = 0;
+					int bestdist = -1;
+
+					for (int index = 0; index < Aircraft.Count(); index++) {
+						AircraftClass * aircraft = Aircraft[index];
+						if (group == -2 || aircraft->Group == group || Class->IsRecruiter) {
+							int d = aircraft->Relative_Distance(center);
+
+							if (aircraft->Group != group) {
+								d += 50 * CELL_LEPTON;
+							}
+
+							if ((d < bestdist || bestdist == -1) && Can_Add(aircraft, typeindex, false)) {
+								best = aircraft;
+								bestdist = d;
+							}
+						}
+					}
+
+					if (best) {
+						best->Assign_Target(NULL);
+						AddMember(best, false);
+						added++;
+					}
+				}
+				goto done;
+
+			case RTTI_UNITTYPE:
+			case RTTI_UNIT:
+				{
+					UnitClass * best = 0;
+					int bestdist = -1;
+
+					for (int index = 0; index < Units.Count(); index++) {
+						UnitClass * unit = Units[index];
+						if (group == -2 || unit->Group == group || Class->IsRecruiter) {
+							int d = unit->Relative_Distance(center);
+
+							if (unit->Group != group) {
+								d += 12800;
+							}
+
+							if (unit->House == House && unit->Class == Class->TaskForce->Members[typeindex].Class) {
+
+								if ((d < bestdist || bestdist == -1) && Can_Add(unit, typeindex, false)) {
+									best = unit;
+									bestdist = d;
+								}
+
+							}
+						}
+					}
+
+					if (best) {
+						best->Assign_Target(NULL);
+						AddMember(best, false);
+						added++;
+
+						FootClass * f = best->Cargo.Attached_Object();
+						while (f) {
+							AddMember(f, false);
+							f = (FootClass *)(ObjectClass *)f->Next;
+							if (f == NULL || !(f->AbstractFlags & 4)) break;
+						}
+					}
+				}
+				goto done;
+		}
+	}
+done:
+	return(added);
+}
