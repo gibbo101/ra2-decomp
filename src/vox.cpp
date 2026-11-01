@@ -56,24 +56,9 @@
 // _$E67
 DynamicVectorClass<VoxClass *> VoxArray;
 
-struct AudioStream
-{
-	void FUN_00407F40(void);
-	void FUN_00407A90(void);
-	int FUN_00408070(void);
-	void FUN_00407FB0(void);
-	void FUN_00408000(void);
-	unsigned __int64 FUN_00408140(void);
-};
-struct AudioSource
-{
-	AudioStream * FUN_00407860(int a, int b);
-};
+#include "audio_stream.h"
 extern int FUN_00407000(void);
 extern AudioSource * FUN_00407010(void);
-extern void __fastcall FUN_00408080(AudioStream * stream, char const * name);
-extern void __fastcall FUN_00407B40(AudioStream * stream, int value);
-extern void __fastcall FUN_00407B50(AudioStream * stream, int value);
 extern int __fastcall FUN_00407B60(AudioStream * stream, char const * name, int flag);
 extern unsigned __int64 __fastcall FUN_004093B0(void);
 
@@ -121,7 +106,7 @@ int FUN_00752290(void)
 	DAT_00B1D4B8 = NULL;
 	DAT_00B1D4BC = 1;
 	if (!DAT_00B1D4CC) {
-		DAT_00B1D4CC = FUN_00407010()->FUN_00407860(3000, 0);
+		DAT_00B1D4CC = FUN_00407010()->FUN_00407860(3000);
 		if (!DAT_00B1D4CC) {
 			return 0;
 		}
@@ -372,7 +357,7 @@ void __fastcall FUN_00752AB0(int volume)
 int FUN_00752AD0(void)
 {
 	if (!DAT_00B1D4D8) {
-		DAT_00B1D4D8 = FUN_00407010()->FUN_00407860(3000, 0);
+		DAT_00B1D4D8 = FUN_00407010()->FUN_00407860(3000);
 		if (!DAT_00B1D4D8) {
 			return 0;
 		}

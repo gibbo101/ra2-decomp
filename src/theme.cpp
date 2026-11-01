@@ -52,29 +52,10 @@
 // _$E15
 
 
-struct AudioStream {
-	int FUN_004080D0(void);
-	void FUN_00407F40(void);
-	int FUN_00408070(void);
-	void FUN_004080C0(void);
-	void FUN_004080F0(void);
-	void FUN_00407A90(void);
-};
-struct AudioFormat {
-	char data[32];
-	void FUN_004085A0(void);
-	unsigned __int64 __fastcall FUN_00408560(int);
-};
-struct AudioSource {
-	AudioStream * FUN_00407860(int a, int b);
-};
+#include "audio_stream.h"
 extern int FUN_00407000(void);
 extern AudioSource * FUN_00407010(void);
-extern void __fastcall FUN_00408080(AudioStream * stream, char const * name);
-extern void __fastcall FUN_00407B40(AudioStream * stream, int value);
-extern void __fastcall FUN_00407B50(AudioStream * stream, int value);
 extern int __fastcall FUN_00407B60(AudioStream * stream, char const * name, int flag);
-extern int __fastcall FUN_00408610(CCFileClass * file, AudioFormat * format, int * length);
 extern int __fastcall FUN_004790A0(int timeout);
 extern void __cdecl FUN_004068E0(char const * format, ...);
 extern char DAT_00889F64[];
@@ -144,7 +125,7 @@ void ThemeClass::Init_Themes(CCINIClass & ini)
 	}
 
 	if (FUN_00407010()) {
-		Stream = FUN_00407010()->FUN_00407860(20000, 0);
+		Stream = FUN_00407010()->FUN_00407860(20000);
 		if (Stream) {
 			FUN_00408080(Stream, "Music Stream");
 			FUN_00407B40(Stream, DAT_0087E744);

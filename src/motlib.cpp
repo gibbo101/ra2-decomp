@@ -132,14 +132,8 @@ extern DebugPage * DAT_00ABF180;
 extern DebugPage * DAT_00ABF184;
 extern void __fastcall FUN_005BCC90(DebugPage * page);
 extern void __fastcall FUN_00752480(int index, int a, int b);
-struct AudioStream {
-	void FUN_00407A90(void);
-	void FUN_00407F40(void);
-};
-struct AudioSource {
-	AudioStream * FUN_00407860(void);
-};
-extern AudioSource * __stdcall FUN_00407010(int a, int b);
+#include "audio_stream.h"
+extern AudioSource * FUN_00407010(void);
 extern int __fastcall FUN_00407B60(AudioStream * stream, char const * name, int flag);
 extern void FUN_00406EE0(void);
 extern AudioStream * DAT_00ABF114[5];
@@ -399,7 +393,7 @@ BOOL CALLBACK FUN_005BC6E0(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 			return FALSE;
 		case '[':
 			if (DAT_00ABF228 < 5) {
-				AudioStream * stream = FUN_00407010(5000, 0)->FUN_00407860();
+				AudioStream * stream = FUN_00407010()->FUN_00407860(5000);
 				DAT_00ABF114[DAT_00ABF228] = stream;
 				if (stream != NULL) {
 					if (FUN_00407B60(stream, "intro.wav", 1) != 0) {
