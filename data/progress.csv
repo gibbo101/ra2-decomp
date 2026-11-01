@@ -7108,6 +7108,7 @@ address,name,result,size,source,symbol
 0x0054AD30,JumpjetLocomotionClass::Link_To_Object,MATCH,286,src/jumpjet.cpp,?Link_To_Object@JumpjetLocomotionClass@@UAGJPAX@Z
 0x0054AE50,JumpjetLocomotionClass::Is_Moving,MATCH,10,src/jumpjet.cpp,?Is_Moving@JumpjetLocomotionClass@@UAGEXZ
 0x0054AE60,JumpjetLocomotionClass::Destination,MATCH,81,src/jumpjet.cpp,?Destination@JumpjetLocomotionClass@@UAG?AUCoordStruct@@XZ
+0x0054AEC0,JumpjetLocomotionClass::Process,MATCH,760,src/jumpjet.cpp,?Process@JumpjetLocomotionClass@@UAGEXZ
 0x0054B1C0,JumpjetLocomotionClass::Move_To,MATCH,783,src/jumpjet.cpp,?Move_To@JumpjetLocomotionClass@@UAGXUCoordStruct@@@Z
 0x0054B4D0,JumpjetLocomotionClass::Stop_Moving,MATCH,527,src/jumpjet.cpp,?Stop_Moving@JumpjetLocomotionClass@@UAGXXZ
 0x0054B6E0,JumpjetLocomotionClass::Do_Turn,MATCH,34,src/jumpjet.cpp,?Do_Turn@JumpjetLocomotionClass@@UAGXUDirStruct@@@Z
@@ -7122,6 +7123,7 @@ address,name,result,size,source,symbol
 0x0054CA90,JumpjetLocomotionClass::Process_Crashing,MATCH,1573,src/jumpjet.cpp,?Process_Crashing@JumpjetLocomotionClass@@QAEXXZ
 0x0054D0C0,JumpjetLocomotionClass::Process_Unknown,MATCH,1,src/jumpjet.cpp,?Process_Unknown@JumpjetLocomotionClass@@QAEXXZ
 0x0054D0D0,JumpjetLocomotionClass::Is_Moving_Now,MATCH,26,src/jumpjet.cpp,?Is_Moving_Now@JumpjetLocomotionClass@@UAGEXZ
+0x0054D0F0,JumpjetLocomotionClass::Movement_AI,MATCH,1494,src/jumpjet.cpp,?Movement_AI@JumpjetLocomotionClass@@QAEXXZ
 0x0054D6D0,JumpjetLocomotionClass::Closest_Free_Spot,MATCH,334,src/jumpjet.cpp,?Closest_Free_Spot@JumpjetLocomotionClass@@QBE?AVCoord@@ABV2@@Z
 0x0054D820,JumpjetLocomotionClass::Desired_Flight_Level,MATCH,270,src/jumpjet.cpp,?Desired_Flight_Level@JumpjetLocomotionClass@@QBEHXZ
 0x0054D930,JumpjetLocomotionClass::Mark_All_Occupation_Bits,MATCH,122,src/jumpjet.cpp,?Mark_All_Occupation_Bits@JumpjetLocomotionClass@@UAGXH@Z
