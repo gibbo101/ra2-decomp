@@ -59,3 +59,18 @@ char const * AudioStream::FUN_004080A0(void) { return Name; }
 
 // FUNCTION: GAMEMD 0x00408140
 unsigned __int64 AudioStream::FUN_00408140(void) { return CallbackTime; }
+
+// FUNCTION: GAMEMD 0x00408000
+void AudioStream::FUN_00408000(void)
+{
+    if (PauseCount) {
+        if (--PauseCount < 0) PauseCount = 0;
+        if (!PauseCount && Channel) {
+            EnterCriticalSection(&DAT_0087E7F8);
+            unsigned flags = Flags;
+            if (flags & 2) Flags = (flags & ~2) | 1;
+            Channel->FUN_00402650();
+            LeaveCriticalSection(&DAT_0087E7F8);
+        }
+    }
+}
