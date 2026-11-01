@@ -20,6 +20,7 @@
 #include "scenario.h"
 #include "techno.h"
 #include "voc.h"
+#include "ccrand.h"
 
 extern SideType FUN_006A46D0(char const * name);
 extern "C" const CLSID CLSID_CaptureManagerClass;
@@ -130,6 +131,46 @@ bool CaptureManagerClass::CanCapture(TechnoClass * techno)
 		return true;
 	}
 	return false;
+}
+
+// FUNCTION: GAMEMD 0x00471A50
+void CaptureManagerClass::HandleOverload(void)
+{
+	if (!InfiniteMindControl) return;
+	if (OverloadPipState > 0) --OverloadPipState;
+	if (OverloadDamageDelay > 0) {
+		--OverloadDamageDelay;
+		return;
+	}
+	int stage = 0;
+	while (ControlNodes.Count() > Rule->OverloadCount[stage]) {
+		if (stage >= Rule->OverloadCount.Count() - 1) break;
+		++stage;
+	}
+	OverloadDamageDelay = Rule->OverloadFrames[stage];
+	int damage = Rule->OverloadDamage[stage];
+	if (damage > 0) {
+		OverloadPipState = 10;
+		Owner->Take_Damage(damage, 0, Rule->C4Warhead, NULL, false, false, NULL);
+		if (!OverloadDeathSoundPlayed) {
+			VocClass::PlayAt(Rule->MasterMindOverloadDeathSound, Owner->PositionCoord, NULL);
+			OverloadDeathSoundPlayed = true;
+		}
+		for (int i = 0; i < 5; ++i) {
+			Coord where(Owner->PositionCoord.X + Random_Pick(-200, 200),
+				Owner->PositionCoord.Y + Random_Pick(-200, 200),
+				Owner->PositionCoord.Z + 100);
+			new ParticleSystemClass(Rule->DefaultSparkSystem, where);
+		}
+		if (stage > 0 && Owner->IsActive) {
+			float rate = 0.015f;
+			if (stage != 1) rate = 0.03f;
+			if (Random_Pick(0, 100) < 50) rate = -rate;
+			Owner->RockingSidewaysPerFrame = rate;
+		}
+	} else {
+		OverloadDeathSoundPlayed = false;
+	}
 }
 
 // FUNCTION: GAMEMD 0x00471D40

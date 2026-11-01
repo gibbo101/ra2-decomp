@@ -2043,6 +2043,7 @@ address,name,result,size,source,symbol
 0x00471950,CaptureManagerClass::CaptureManagerClass,MATCH,78,src/capturemanager.cpp,??0CaptureManagerClass@@QAE@ABVNoInitClass@@@Z
 0x004719A0,CaptureManagerClass::~CaptureManagerClass,MATCH,162,src/capturemanager.cpp,??1CaptureManagerClass@@UAE@XZ
 0x00471C90,CaptureManagerClass::CanCapture,MATCH,172,src/capturemanager.cpp,?CanCapture@CaptureManagerClass@@QAE_NPAVTechnoClass@@@Z
+0x00471A50,CaptureManagerClass::HandleOverload,MATCH,575,src/capturemanager.cpp,?HandleOverload@CaptureManagerClass@@QAEXXZ
 0x00471D40,CaptureManagerClass::CaptureUnit,MATCH,583,src/capturemanager.cpp,?CaptureUnit@CaptureManagerClass@@QAE_NPAVAbstractClass@@@Z
 0x00471F90,CaptureManagerClass::FUN_00471F90,MATCH,93,src/capturemanager.cpp,?FUN_00471F90@CaptureManagerClass@@QAE_NPAVAbstractClass@@@Z
 0x00471FF0,CaptureManagerClass::FreeUnit,MATCH,333,src/capturemanager.cpp,?FreeUnit@CaptureManagerClass@@QAE_NPAVTechnoClass@@@Z

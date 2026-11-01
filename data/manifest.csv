@@ -2042,6 +2042,7 @@ address,size,symbol,source,sha256
 0x00471890,178,??0CaptureManagerClass@@QAE@XZ,src/capturemanager.cpp,533f352da726e0251d4fe40f5809b5f0bfa0198dad22b16b2c54c0e4e8c34329
 0x00471950,78,??0CaptureManagerClass@@QAE@ABVNoInitClass@@@Z,src/capturemanager.cpp,b05aadf27fc8c907bb8385f4c5941b80d7b5afc4590f9a4eb54a99e666ffa0e8
 0x004719A0,162,??1CaptureManagerClass@@UAE@XZ,src/capturemanager.cpp,4607965413111e6223101be614a262df1205d0a2fa024037da419b5fdc0636c2
+0x00471A50,575,?HandleOverload@CaptureManagerClass@@QAEXXZ,src/capturemanager.cpp,902fa6a02c54a0b4da57390b24d0ab402d6b78fa612be015bb42191c38fe78ff
 0x00471C90,172,?CanCapture@CaptureManagerClass@@QAE_NPAVTechnoClass@@@Z,src/capturemanager.cpp,85336ea93cf9c23eade227de75769face8b0bfc5cce24bb93bd73607685975e9
 0x00471D40,583,?CaptureUnit@CaptureManagerClass@@QAE_NPAVAbstractClass@@@Z,src/capturemanager.cpp,a7d5a4c169f129ff4003b0d3c5af51894e1715b4d0836479b88eb35dc9e33d33
 0x00471F90,93,?FUN_00471F90@CaptureManagerClass@@QAE_NPAVAbstractClass@@@Z,src/capturemanager.cpp,6cdf402e8ed844ce9e693428f19d11944069b08833cfb33a63ba40777195125e
