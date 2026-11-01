@@ -44,6 +44,7 @@
 #include "session.h"
 #include "scheme.h"
 #include "shapeset.h"
+#undef LoadString
 #include "stringtable.h"
 #include "super.h"
 #include "suprtype.h"
@@ -1814,3 +1815,76 @@ void SidebarClass::StripClass::FUN_006AC740(int id, int frames)
 // TEMPLATE: GAMEMD 0x006AC8D0
 // ??0?$DynamicVectorClass@VPoint2D@@@@QAE@IPBVPoint2D@@@Z
 template class DynamicVectorClass<Point2D>;
+
+namespace Unsorted { extern int WSDialogCount; }
+// FUNCTION: GAMEMD 0x006A6A00
+bool SidebarClass::Scroll(bool up, int column)
+{
+	if (Unsorted::WSDialogCount) return false;
+	if (column == -1) column = ActiveTabIndex;
+	if (Column[column].Scroll(up)) {
+		Flag_To_Redraw();
+		return true;
+	}
+	return false;
+}
+
+extern wchar_t DAT_00B079B0[];
+// FUNCTION: GAMEMD 0x006AC210
+char const * SidebarClass::Help_Text(int id)
+{
+	wchar_t const * text = (wchar_t const *)PowerClass::Help_Text(id);
+	if (text) return (char const *)text;
+	bool disabled = false;
+	if (id == 200) {
+		text = StringTable::LoadString("Tip:ScrollUp", NULL, "D:\\ra2mdpost\\Sidebar.CPP", 0x13cd);
+		disabled = !FUN_004E1470(&Waypoint);
+	} else if (id == 201) {
+		text = StringTable::LoadString("Tip:ScrollDown", NULL, "D:\\ra2mdpost\\Sidebar.CPP", 0x13d3);
+		disabled = !FUN_004E1470(&Upgrade);
+	} else if (id >= 203 && id < 207) {
+		int tab = id - 203;
+		if (tab == 0) text = StringTable::LoadString("Tip:Tab1", NULL, "D:\\ra2mdpost\\Sidebar.CPP", 0x13db);
+		else if (tab == 1) text = StringTable::LoadString("Tip:Tab2", NULL, "D:\\ra2mdpost\\Sidebar.CPP", 0x13dd);
+		else if (tab == 2) text = StringTable::LoadString("Tip:Tab3", NULL, "D:\\ra2mdpost\\Sidebar.CPP", 0x13df);
+		else if (tab == 3) text = StringTable::LoadString("Tip:Tab4", NULL, "D:\\ra2mdpost\\Sidebar.CPP", 0x13e1);
+		disabled = !FUN_004E1470(&TabButtons[tab]);
+	} else {
+		int side = Scen->PlayerSideIndex;
+		int reserved;
+		if (side == 0) reserved = 26;
+		else if (side == 1) reserved = 18;
+		else reserved = 18;
+		int rows = (DAT_00886F94 - DAT_00B0B4F8 - reserved + DAT_00886F9C - 7) / 50;
+		if (id >= 1000 && id < 1000 + rows * 2) return (char const *)Column[ActiveTabIndex].Help_Text(id - 1000);
+	}
+	if (disabled) {
+		swprintf(DAT_00B079B0, L"%s\n(%s)", text, StringTable::LoadString("Tip:Disabled", NULL, "D:\\ra2mdpost\\Sidebar.CPP", 0x13f4));
+		return (char const *)DAT_00B079B0;
+	}
+	return (char const *)text;
+}
+
+// FUNCTION: GAMEMD 0x006A8710
+void SidebarClass::StripClass::FUN_006A8710(RTTIType type, int id)
+{
+	BuildableCount++;
+	for (int index = 0; index < BuildableCount; index++) {
+		RTTIType otherType = Buildables[index].BuildableType;
+		int otherID = Buildables[index].BuildableID;
+		if (SortsBefore(type, id, otherType, otherID)) {
+			for (int move = BuildableCount - 1; move > index; move--) {
+				Buildables[move] = Buildables[move - 1];
+			}
+			Buildables[index].BuildableType = type;
+			Buildables[index].BuildableID = id;
+			if (type == RTTI_BUILDINGTYPE) Buildables[index].IsAlt = FUN_005004E0(type, id);
+			Buildables[index].Factory = NULL;
+			Buildables[index].unknown_10 = 0;
+			Buildables[index].Progress.Set_Stage(0);
+			Buildables[index].Progress.Set_Rate(0);
+			Buildables[index].FlashEndFrame = 0;
+			return;
+		}
+	}
+}

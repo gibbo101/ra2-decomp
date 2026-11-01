@@ -84,3 +84,58 @@ const char * CCToolTip::ToolTip_Text(int id)
 	}
 	return(Map.Help_Text(id));
 }
+
+#include "bitfont.h"
+namespace Drawing { extern RGBClass TooltipColor; }
+
+// FUNCTION: GAMEMD 0x00478E30
+void CCToolTip::Draw(ToolTipText const * text)
+{
+	Rect drawrect;
+	Point2D point(text->Pos.x, text->Pos.y);
+	Surface * surface = NULL;
+	if (Options.IsSidebarOnRight == true) {
+		int offset = TacticalRect.X + TacticalRect.Width;
+		if (point.X + text->TextWidth <= offset) {
+			surface = CompositeSurface;
+		} else if (UseSidebarSurface == true && point.X >= offset) {
+			surface = SidebarSurface;
+			point.X -= offset;
+			Map.IsToBlitSidebar = true;
+		}
+	} else {
+		int offset = SidebarRect.X + SidebarRect.Width;
+		if (point.X >= offset) {
+			surface = CompositeSurface;
+			point.X -= offset;
+		} else if (UseSidebarSurface == true && point.X + text->TextWidth < offset) {
+			surface = SidebarSurface;
+			Map.IsToBlitSidebar = true;
+		}
+	}
+	if (surface) {
+		LTRBStruct bounds;
+		bounds.Right = bounds.Left = point.X;
+		bounds.Bottom = bounds.Top = point.Y;
+		BitFont * font = BitFont::Instance;
+		int textwidth;
+		int textheight;
+		font->GetTextDimension(text->Text, &textwidth, &textheight, surface->Get_Width());
+		bounds.Right = bounds.Left + textwidth;
+		bounds.Bottom = bounds.Top + textheight;
+		int width = bounds.Right - bounds.Left + 8;
+		int height = bounds.Bottom - bounds.Top + 4;
+		if (bounds.Left + width > surface->Get_Width()) bounds.Left = surface->Get_Width() - width;
+		bounds.Right = bounds.Left + width;
+		bounds.Bottom = bounds.Top + height;
+		int color = DSurface::Build_Hicolor_Pixel(Drawing::TooltipColor);
+		drawrect.Set(bounds.Left, bounds.Top, width, height);
+		surface->Fill_Rect(drawrect, TBLACK);
+		surface->Draw_Rect(drawrect, color);
+		font->SetClipMode(true);
+		font->SetBounds(&bounds);
+		font->SetColor(color);
+		BitText::Instance->DrawText(font, surface, text->Text, bounds.Left + 4, bounds.Top + 2,
+			bounds.Right - bounds.Left, bounds.Bottom - bounds.Top, 0, 0, 0);
+	}
+}
