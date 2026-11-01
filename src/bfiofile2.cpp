@@ -527,3 +527,25 @@ unsigned int __fastcall FUN_004336C0(unsigned char * source, unsigned char * des
 	}
 	return bytes;
 }
+
+// FUNCTION: GAMEMD 0x00433770
+unsigned int __fastcall FUN_00433770(unsigned char * source, wchar_t * dest, unsigned int count)
+{
+	BitCursor in;
+	BitCursor out;
+	Bits_Open_Write(&out, (unsigned char *)dest, Bits_Open_Read(&in, source));
+	unsigned int index = 0;
+	int bits = 0;
+	unsigned int words = 0;
+	while (words < count) {
+		++index;
+		if (index % 7 == 0) Bits_Read(&in);
+		Bits_Write(&out, Bits_Read(&in));
+		if (++bits % 16 == 0) {
+			++words;
+			if (*(wchar_t *)(out.Ptr - 2) == 0) return words;
+		}
+	}
+	dest[count - 1] = 0;
+	return words;
+}

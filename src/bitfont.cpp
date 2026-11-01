@@ -245,6 +245,52 @@ unsigned char * BitFont::GetCharacterBitmap(wchar_t ch)
 	return result;
 }
 
+// FUNCTION: GAMEMD 0x00433F50
+int BitFont::FUN_00433F50(wchar_t const * text, int maxwidth, int maxchars, int wrap)
+{
+	int width = 0;
+	int count = 0;
+	if (!InternalPTR || !text) return 0;
+	{
+		unsigned short ch = *text;
+		while (ch) {
+			switch (ch) {
+				case 9:
+					width += Unknown_28;
+					width -= width % Unknown_28;
+					break;
+				case 10:
+				case 13:
+					break;
+				default: {
+					unsigned char * bitmap = GetCharacterBitmap(ch);
+					if (!bitmap) bitmap = (unsigned char *)Pointer_8;
+					if (bitmap) width += *bitmap + State_2C;
+					break;
+				}
+			}
+			++count;
+			if (width > maxwidth) {
+				--count;
+				if (wrap && ch > 32) {
+					--text;
+					int split = count;
+					while (split && *text > 32) {
+						--split;
+						--text;
+					}
+					if (split) count = split;
+				}
+				break;
+			}
+			if (maxchars && count == maxchars) break;
+			if (wrap && (ch == 13 || ch == 10)) break;
+			ch = *++text;
+		}
+	}
+	return count;
+}
+
 // FUNCTION: GAMEMD 0x00434700
 void BitFont::FUN_00434700(void)
 {
@@ -362,3 +408,74 @@ void BitFont::FUN_004349F0(void)
 
 // SYNTHETIC: GAMEMD 0x00434A40
 // ??_GBitFont@@UAEPAXI@Z
+
+// FUNCTION: GAMEMD 0x00433CF0
+bool BitFont::GetTextDimension(wchar_t const * text, int * width, int * height, int maxwidth)
+{
+	int break_width = 0;
+	if (!InternalPTR || !text) {
+		if (height) *height = 0;
+		if (width) *width = 0;
+		return false;
+	}
+	int max_line_width = 0;
+	int line_width = 0;
+	int line_height = field_1C;
+	int total_height = line_height;
+	int count = 0;
+	wchar_t const * break_text = 0;
+	unsigned short previous = 0;
+	unsigned short ch = *text++;
+	while (ch) {
+		switch (ch) {
+		case 10:
+		case 13:
+			if (previous != 13) {
+				line_width = 0;
+				count = 0;
+				total_height += line_height;
+			}
+			break;
+		case 9:
+			line_width += Unknown_28;
+			line_width -= line_width % Unknown_28;
+			break;
+		case 32:
+			break_text = text;
+			break_width = max_line_width;
+		default: {
+			unsigned char * bitmap = GetCharacterBitmap(ch);
+			if (!bitmap) bitmap = (unsigned char *)Pointer_8;
+			if (bitmap) {
+				int char_width = *bitmap;
+				++count;
+				line_width += char_width + State_2C;
+				if (maxwidth && line_width > maxwidth) {
+					if (break_text) {
+						if (count > 1) {
+							text = break_text;
+							max_line_width = break_width;
+						}
+					} else {
+						if (count > 1) {
+							line_width -= char_width + State_2C;
+							--text;
+						}
+						if (line_width > max_line_width) max_line_width = line_width;
+					}
+					line_width = 0;
+					count = 0;
+					break_text = 0;
+					total_height += line_height;
+				} else if (line_width > max_line_width) max_line_width = line_width;
+			}
+			break;
+		}
+		}
+		previous = ch;
+		ch = *text++;
+	}
+	if (width) *width = max_line_width;
+	if (height) *height = total_height;
+	return true;
+}

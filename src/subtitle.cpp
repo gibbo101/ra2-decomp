@@ -359,8 +359,8 @@ template class VectorClass<SubTitle *>;
 // FUNCTION: GAMEMD 0x006CA940
 bool __fastcall FUN_006CA940(Straw * straw, wchar_t * buffer, int length)
 {
-	bool eof = false;
 	buffer[0] = 0;
+	bool eof = false;
 	int count = 0;
 
 	while (count < length) {
@@ -395,3 +395,37 @@ bool __fastcall FUN_006CA940(Straw * straw, wchar_t * buffer, int length)
 // ??_G?$VectorClass@PAVSubTitle@@@@UAEPAXI@Z
 // TEMPLATE: GAMEMD 0x006CABA0
 // ??0?$VectorClass@PAVSubTitle@@@@QAE@HPBQAVSubTitle@@@Z
+
+// FUNCTION: GAMEMD 0x006CA4F0
+wchar_t * SubTitleParserClass::Get_Next_Line(void)
+{
+	bool eof = false;
+	while (!eof) {
+		eof = FUN_006CA940(&mInput, mBuffer, 1024);
+		++mLineNumber;
+		wchar_t * line = wcstrim(mBuffer);
+		if (wcslen(line) > 0 && *line != L';') return line;
+	}
+	return NULL;
+}
+
+// FUNCTION: GAMEMD 0x006CA1E0
+bool SubTitleParserClass::Find_Movie_Entry(char const * moviename)
+{
+	wchar_t movie[32];
+	mbstowcs(movie, moviename, 32);
+	wchar_t * line;
+	while ((line = Get_Next_Line()) != NULL) {
+		if (_wcsnicmp(line, L"BeginMovie", wcslen(L"BeginMovie")) == 0) {
+			wchar_t * name = wcschr(line, L' ');
+			if (name) {
+				wcstrim(name);
+				if (_wcsicmp(name, movie) == 0) {
+					FUN_004068E0("Found movie entry %s\n", moviename);
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}
