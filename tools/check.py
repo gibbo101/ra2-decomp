@@ -48,6 +48,7 @@ fails like a double claim. Either finding for any other function is printed as a
 address in the image, every jump target inside the function and every stack-slot
 displacement ([esp+N], [ebp-N], and [ebp+N] in a function with a frame) masked, so a
 changed frame size or a shifted jump does not hide progress.
+--summary adds a completion record after all targets have been checked.
 """
 
 import csv
@@ -698,6 +699,9 @@ def main() -> None:
         raise SystemExit(__doc__)
     argv = sys.argv[1:]
     overlay = None
+    summary = "--summary" in argv
+    if summary:
+        argv.remove("--summary")
     score = "--score" in argv
     if score:
         argv.remove("--score")
@@ -748,6 +752,8 @@ def main() -> None:
         if not res.matched:
             failed += 1
             print("\n".join(res.diff[:400]))
+    if summary:
+        print(f"CHECK-SUMMARY: checked={len(targets)} failed={failed}")
     raise SystemExit(1 if failed else 0)
 
 

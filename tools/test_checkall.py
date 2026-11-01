@@ -1,0 +1,164 @@
+"""Exercise the merge gate with real child processes and synthetic checker output."""
+
+import contextlib
+import csv
+import io
+import json
+from pathlib import Path
+import tempfile
+import unittest
+from unittest.mock import patch
+
+import checkall
+
+
+class MergeGateTests(unittest.TestCase):
+    def setUp(self):
+        self.root = Path(tempfile.mkdtemp(prefix="checkall-test-"))
+        for directory in ("src", "tools", "data"):
+            (self.root / directory).mkdir()
+        self.files = []
+        self.write("tools/check.py", """import json, pathlib, sys
+assert sys.argv[2:] == ['--summary']
+case = json.loads(pathlib.Path(sys.argv[1]).read_text())
+print(case['stdout'], end='')
+print(case.get('stderr', ''), end='', file=sys.stderr)
+sys.exit(case['exit'])
+""")
+        self.progress = self.root / "data/progress.csv"
+        self.write("data/progress.csv", "address,name,result,size,source,symbol\n"
+                   "0x00401000,First,MATCH,1,src/example.cpp,_First\n"
+                   "0x00401010,Second,MATCH,1,src/example.cpp,_Second\n")
+
+    def tearDown(self):
+        for path in self.files:
+            path.unlink(missing_ok=True)
+        for directory in ("src", "tools", "data"):
+            (self.root / directory).rmdir()
+        self.root.rmdir()
+
+    def write(self, relative, text):
+        path = self.root / relative
+        path.write_text(text)
+        if path not in self.files:
+            self.files.append(path)
+
+    def child(self, output, exit_code=0, name="example.cpp", stderr=""):
+        self.write(f"src/{name}", json.dumps(dict(stdout=output, exit=exit_code, stderr=stderr)))
+
+    def match(self, address="0x00401000", name="First"):
+        return f"{address} {name}: MATCH (1/1 bytes) _{name}\n"
+
+    def complete(self, count, failures=0):
+        return f"CHECK-SUMMARY: checked={count} failed={failures}\n"
+
+    def baseline(self):
+        return self.match() + self.match("0x00401010", "Second")
+
+    def run_gate(self, record=False):
+        original = self.progress.read_bytes()
+        output = io.StringIO()
+        argv = ["checkall.py", *(["--record"] if record else [])]
+        with patch.object(checkall, "ROOT", self.root), \
+             patch.object(checkall, "PROGRESS", self.progress), \
+             patch.object(checkall.sys, "argv", argv), contextlib.redirect_stdout(output):
+            with self.assertRaises(SystemExit) as result:
+                checkall.main()
+        if result.exception.code != 0:
+            self.assertEqual(original, self.progress.read_bytes())
+        return result.exception.code, output.getvalue()
+
+    def test_all_prior_matches_pass_and_record(self):
+        self.child(self.baseline() + self.complete(2))
+        code, _ = self.run_gate(record=True)
+        self.assertEqual(code, 0)
+        with self.progress.open() as stream:
+            self.assertEqual(len(list(csv.DictReader(stream))), 2)
+
+    def test_disappearing_match_fails_without_rewriting_progress(self):
+        self.child(self.match() + self.complete(1))
+        code, output = self.run_gate(record=True)
+        self.assertEqual(code, 1)
+        self.assertIn("0x00401010: previously matched function missing", output)
+
+    def test_deleted_source_fails_without_rewriting_progress(self):
+        self.assertEqual(self.run_gate(record=True)[0], 1)
+
+    def test_matches_may_move_between_sources(self):
+        self.child(self.match() + self.complete(1), name="moved.cpp")
+        self.child(self.match("0x00401010", "Second") + self.complete(1), name="second.asm")
+        self.assertEqual(self.run_gate(record=True)[0], 0)
+
+    def test_new_partial_is_allowed_and_recorded(self):
+        partial = "0x00401020 Third: 82.1% (3/4 bytes) _Third\n"
+        self.child(self.baseline() + partial + self.complete(3, 1), exit_code=1)
+        self.assertEqual(self.run_gate(record=True)[0], 0)
+        self.assertIn("82.1%", self.progress.read_text())
+
+    def test_previous_match_regressing_fails(self):
+        partial = "0x00401010 Second: 82.1% (3/4 bytes) _Second\n"
+        self.child(self.match() + partial + self.complete(2, 1), exit_code=1)
+        self.assertEqual(self.run_gate(record=True)[0], 1)
+
+    def test_crash_after_matches_fails(self):
+        self.child(self.baseline(), exit_code=1, stderr="synthetic traceback\n")
+        code, output = self.run_gate(record=True)
+        self.assertEqual(code, 1)
+        self.assertIn("synthetic traceback", output)
+
+    def test_crash_after_new_partial_is_not_a_completed_partial_run(self):
+        self.child(self.baseline() + "0x00401020 Third: 82.1% (3/4 bytes) _Third\n", exit_code=1)
+        self.assertEqual(self.run_gate(record=True)[0], 1)
+
+    def test_error_exit_with_success_summary_fails(self):
+        self.child(self.baseline() + self.complete(2), exit_code=1)
+        self.assertEqual(self.run_gate(record=True)[0], 1)
+
+    def test_nonstandard_exit_with_complete_output_fails(self):
+        self.child(self.baseline() + self.complete(2), exit_code=137)
+        self.assertEqual(self.run_gate(record=True)[0], 1)
+
+    def test_zero_exit_without_completion_fails(self):
+        self.child(self.baseline())
+        self.assertEqual(self.run_gate(record=True)[0], 1)
+
+    def test_missing_result_from_completed_run_fails(self):
+        self.child(self.baseline() + self.complete(3))
+        self.assertEqual(self.run_gate(record=True)[0], 1)
+
+    def test_multiple_completion_records_fail(self):
+        self.child(self.baseline() + self.complete(2) + self.complete(2))
+        self.assertEqual(self.run_gate(record=True)[0], 1)
+
+    def test_unaccounted_failure_fails(self):
+        self.child(self.baseline() + self.complete(2, 1), exit_code=1)
+        self.assertEqual(self.run_gate(record=True)[0], 1)
+
+    def test_warnings_remain_nonfatal(self):
+        warning = "0x00401000 First: warning: synthetic class warning\n"
+        self.child(self.baseline() + warning + self.complete(2))
+        self.assertEqual(self.run_gate(record=True)[0], 0)
+
+    def test_duplicate_claim_remains_fatal(self):
+        diagnostic = "0x00401020 Third: same compiled function as 0x00401000 First\n"
+        self.child(diagnostic + self.baseline() + self.complete(2, 1), exit_code=1)
+        code, output = self.run_gate(record=True)
+        self.assertEqual(code, 1)
+        self.assertIn(diagnostic.strip(), output)
+
+    def test_wrong_template_class_remains_fatal(self):
+        diagnostic = "0x00401000 First: a slot of Other in the exe, not of First\n"
+        self.child(self.baseline() + diagnostic + self.complete(2, 1), exit_code=1)
+        code, output = self.run_gate(record=True)
+        self.assertEqual(code, 1)
+        self.assertIn(diagnostic.strip(), output)
+
+    def test_new_wrong_target_is_a_completed_partial(self):
+        partial = "0x00401020 Third: WRONG TARGETS (4/4 bytes) _Third\n"
+        self.child(self.baseline() + partial + self.complete(3, 1), exit_code=1)
+        self.assertEqual(self.run_gate(record=True)[0], 0)
+        self.assertIn("WRONG TARGETS", self.progress.read_text())
+
+
+if __name__ == "__main__":
+    unittest.main()

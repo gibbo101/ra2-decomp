@@ -3,10 +3,11 @@
 Usage: uv run tools/checkall.py [--record]
 
 Prints one line per function. Fails if a function data/progress.csv records as MATCH no
-longer matches, since a header edit can change the code of functions it never touches,
+longer matches or disappears, since a header edit can change the code of functions it never touches,
 if two annotations in one file claim the same compiled function, or if a template
 instance's label names a class whose vtables in the exe do not hold the function
 (check.py's class check). The class check's warnings are counted.
+An incomplete checker run fails; a completed run containing new partials is allowed.
 --record rewrites data/progress.csv with the results.
 """
 
@@ -22,21 +23,27 @@ LINE = re.compile(r"^(0x[0-9A-F]{8}) (.+?): (MATCH|WRONG TARGETS|[\d.]+%) \((\d+
 DUPLICATE = re.compile(r"^(0x[0-9A-F]{8}) .+: same compiled function as ")
 WRONG_CLASS = re.compile(r"^(0x[0-9A-F]{8}) .+: a slot of .+ in the exe, not of ")
 WARNING = re.compile(r"^(0x[0-9A-F]{8}) .+: warning: ")
+SUMMARY = re.compile(r"^CHECK-SUMMARY: checked=(\d+) failed=(\d+)$")
 
 
 def main() -> None:
     record = "--record" in sys.argv[1:]
-    before = {}
+    before = set()
     if PROGRESS.exists():
         with PROGRESS.open() as f:
-            before = {r["address"]: r["result"] for r in csv.DictReader(f)}
+            before = {r["address"] for r in csv.DictReader(f) if r["result"] == "MATCH"}
     sources = sorted(f for ext in ("*.cpp", "*.asm") for f in (ROOT / "src").rglob(ext))
     rows, broken, warnings = [], [], 0
     for src in sources:
-        proc = subprocess.run([sys.executable, str(ROOT / "tools/check.py"), str(src)],
+        proc = subprocess.run([sys.executable, str(ROOT / "tools/check.py"), str(src), "--summary"],
                               capture_output=True, text=True, cwd=ROOT)
         found = False
+        checked, partials, summaries = 0, 0, []
         for line in proc.stdout.splitlines():
+            summary = SUMMARY.fullmatch(line)
+            if summary:
+                summaries.append(tuple(map(int, summary.groups())))
+                continue
             if WARNING.match(line):
                 print(line)
                 warnings += 1
@@ -49,14 +56,28 @@ def main() -> None:
             if not m:
                 continue
             found = True
+            checked += 1
             print(line)
             addr, name, result, size, symbol = m.group(1), m.group(2), m.group(3), m.group(5), m.group(6)
             rows.append([addr, name, result, size, src.relative_to(ROOT).as_posix(), symbol])
-            if before.get(addr) == "MATCH" and result != "MATCH":
+            partials += result != "MATCH"
+            if addr in before and result != "MATCH":
                 broken.append(f"{addr} {name}")
+        if (len(summaries) != 1 or summaries[0] != (checked, partials)
+                or proc.returncode != (1 if partials else 0)):
+            problem = f"{src.relative_to(ROOT)}: incomplete or failed checker run (exit {proc.returncode})"
+            print(problem)
+            if proc.stderr.strip():
+                print(proc.stderr.strip())
+            broken.append(problem)
         if not found:
             print(f"{src.relative_to(ROOT)}: {(proc.stdout + proc.stderr).strip()}")
             broken.append(str(src.relative_to(ROOT)))
+    seen = {r[0] for r in rows}
+    for addr in sorted(before - seen):
+        problem = f"{addr}: previously matched function missing from results"
+        print(problem)
+        broken.append(problem)
     matched = [r for r in rows if r[2] == "MATCH"]
     if warnings:
         print(f"{warnings} class warnings: labels or stored vftables of a class the exe's RTTI does not name there")
