@@ -63,15 +63,7 @@
 // SYNTHETIC: GAMEMD 0x005FA2C0 SYMBOL
 // _$E41
 
-struct MovieUnlockableInfo {
-	char const * Filename;
-	char const * Description;
-	int DiskRequired;
-
-	static MovieUnlockableInfo Common[];
-	static MovieUnlockableInfo Allied[];
-	static MovieUnlockableInfo Soviet[];
-};
+#include "movieunlock.h"
 
 extern CCINIClass DAT_008870C0;
 extern void * DAT_0087E740;

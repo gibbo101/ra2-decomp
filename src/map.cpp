@@ -64,7 +64,6 @@ extern const char * _mzones[MZONE_COUNT];
 
 void __cdecl FUN_004068E0(char const * format, ...);
 extern void FUN_00561910(void);
-extern void FUN_005638D0(void);
 
 unsigned int Pick_Random_UInt(unsigned int minval, unsigned int maxval);
 
@@ -107,16 +106,28 @@ void Init_00561900(void)
 	FUN_00561910();
 }
 
-// FUNCTION: GAMEMD 0x005638C0
-void Init_005638C0(void)
-{
-	FUN_005638D0();
-}
+// SYNTHETIC: GAMEMD 0x005638C0 SYMBOL
+// _$E222
+// SYNTHETIC: GAMEMD 0x005638D0 SYMBOL
+// _$E221
+Cell const MapClass::OcclusionOffset[] = {
+	Cell(0,0),
+	Cell(-1,1),Cell(0,1),Cell(1,1),Cell(1,0),Cell(-1,0),Cell(1,-1),Cell(0,-1),Cell(-1,-1),
+	Cell(1,1),Cell(0,1),Cell(-1,1),Cell(1,1),Cell(-1,1),Cell(1,0),Cell(-1,0),Cell(1,-1),Cell(-1,-1),Cell(1,-1),Cell(0,-1),Cell(-1,-1),
+	Cell(0,1),Cell(0,1),Cell(0,1),Cell(1,1),Cell(-1,1),Cell(1,0),Cell(-1,0),Cell(1,0),Cell(-1,0),Cell(1,0),Cell(-1,0),Cell(1,-1),Cell(-1,-1),Cell(0,-1),Cell(0,-1),Cell(0,-1),
+	Cell(0,1),Cell(0,1),Cell(0,1),Cell(1,1),Cell(1,1),Cell(-1,1),Cell(-1,1),Cell(1,1),Cell(-1,1),Cell(1,0),Cell(-1,0),Cell(1,0),Cell(-1,0),Cell(1,0),Cell(-1,0),Cell(1,-1),Cell(-1,-1),Cell(1,-1),Cell(1,-1),Cell(-1,-1),Cell(-1,-1),Cell(0,-1),Cell(0,-1),Cell(0,-1),
+	Cell(0,1),Cell(0,1),Cell(0,1),Cell(1,1),Cell(1,1),Cell(-1,1),Cell(-1,1),Cell(1,1),Cell(-1,1),Cell(1,1),Cell(-1,1),Cell(1,0),Cell(-1,0),Cell(1,0),Cell(-1,0),Cell(1,0),Cell(-1,0),Cell(1,-1),Cell(-1,-1),Cell(1,-1),Cell(-1,-1),Cell(1,-1),Cell(1,-1),Cell(-1,-1),Cell(-1,-1),Cell(0,-1),Cell(0,-1),Cell(0,-1),
+	Cell(0,1),Cell(0,1),Cell(0,1),Cell(1,1),Cell(0,1),Cell(0,1),Cell(-1,1),Cell(1,1),Cell(-1,1),Cell(1,1),Cell(-1,1),Cell(1,0),Cell(1,0),Cell(1,0),Cell(-1,0),Cell(1,0),Cell(-1,0),Cell(1,0),Cell(-1,0),Cell(1,0),Cell(-1,0),Cell(1,-1),Cell(-1,-1),Cell(1,-1),Cell(-1,-1),Cell(1,-1),Cell(0,-1),Cell(0,-1),Cell(-1,-1),Cell(0,-1),Cell(0,-1),Cell(0,-1),
+	Cell(0,1),Cell(0,1),Cell(0,1),Cell(1,1),Cell(0,1),Cell(0,1),Cell(-1,1),Cell(1,1),Cell(1,1),Cell(-1,1),Cell(-1,1),Cell(1,1),Cell(-1,1),Cell(1,1),Cell(-1,1),Cell(1,0),Cell(-1,0),Cell(1,0),Cell(-1,0),Cell(1,0),Cell(-1,0),Cell(1,0),Cell(-1,0),Cell(1,0),Cell(-1,0),Cell(1,-1),Cell(-1,-1),Cell(1,-1),Cell(-1,-1),Cell(1,-1),Cell(1,-1),Cell(-1,-1),Cell(-1,-1),Cell(1,-1),Cell(0,-1),Cell(0,-1),Cell(-1,-1),Cell(0,-1),Cell(0,-1),Cell(0,-1),
+	Cell(0,1),Cell(0,1),Cell(0,1),Cell(0,1),Cell(0,1),Cell(0,1),Cell(0,1),Cell(1,1),Cell(1,1),Cell(-1,1),Cell(-1,1),Cell(1,1),Cell(-1,1),Cell(1,1),Cell(-1,1),Cell(1,0),Cell(-1,0),Cell(1,0),Cell(-1,0),Cell(1,0),Cell(-1,0),Cell(1,0),Cell(-1,0),Cell(1,0),Cell(-1,0),Cell(1,0),Cell(-1,0),Cell(1,0),Cell(-1,0),Cell(1,-1),Cell(-1,-1),Cell(1,-1),Cell(-1,-1),Cell(1,-1),Cell(1,-1),Cell(-1,-1),Cell(-1,-1),Cell(0,-1),Cell(0,-1),Cell(0,-1),Cell(0,-1),Cell(0,-1),Cell(0,-1),Cell(0,-1),
+	Cell(0,1),Cell(0,1),Cell(0,1),Cell(0,1),Cell(0,1),Cell(0,1),Cell(0,1),Cell(1,1),Cell(1,1),Cell(-1,1),Cell(-1,1),Cell(1,1),Cell(-1,1),Cell(1,1),Cell(-1,1),Cell(1,1),Cell(-1,1),Cell(1,0),Cell(-1,0),Cell(1,0),Cell(-1,0),Cell(1,0),Cell(-1,0),Cell(1,0),Cell(-1,0),Cell(1,0),Cell(-1,0),Cell(1,0),Cell(-1,0),Cell(1,0),Cell(-1,0),Cell(1,-1),Cell(-1,-1),Cell(1,-1),Cell(-1,-1),Cell(1,-1),Cell(-1,-1),Cell(1,-1),Cell(1,-1),Cell(-1,-1),Cell(-1,-1),Cell(0,-1),Cell(0,-1),Cell(0,-1),Cell(0,-1),Cell(0,-1),Cell(0,-1),Cell(0,-1),
+	Cell(0,1),Cell(0,1),Cell(0,1),Cell(0,1),Cell(0,1),Cell(0,1),Cell(0,1),Cell(1,1),Cell(1,1),Cell(-1,1),Cell(-1,1),Cell(1,1),Cell(1,1),Cell(-1,1),Cell(-1,1),Cell(1,1),Cell(-1,1),Cell(1,1),Cell(-1,1),Cell(1,1),Cell(-1,1),Cell(1,0),Cell(-1,0),Cell(1,0),Cell(-1,0),Cell(1,0),Cell(-1,0),Cell(1,0),Cell(-1,0),Cell(1,0),Cell(-1,0),Cell(1,0),Cell(-1,0),Cell(1,0),Cell(-1,0),Cell(1,-1),Cell(-1,-1),Cell(1,-1),Cell(-1,-1),Cell(1,-1),Cell(-1,-1),Cell(1,-1),Cell(1,-1),Cell(-1,-1),Cell(-1,-1),Cell(1,-1),Cell(1,-1),Cell(-1,-1),Cell(-1,-1),Cell(0,-1),Cell(0,-1),Cell(0,-1),Cell(0,-1),Cell(0,-1),Cell(0,-1),Cell(0,-1)
+};
 
 // SYNTHETIC: GAMEMD 0x00565060 SYMBOL
-// _$E224
+// _$E227
 // SYNTHETIC: GAMEMD 0x00565080 SYMBOL
-// _$E222
+// _$E225
 CellClass InvalidCell;
 
 // FUNCTION: GAMEMD 0x00565090
@@ -1602,7 +1613,7 @@ ObjectClass * MapClass::Close_Object(Coord const & coord) const
 }
 
 // SYNTHETIC: GAMEMD 0x0056C500 SYMBOL
-// _$E228
+// _$E231
 
 // FUNCTION: GAMEMD 0x0056CB80
 int SubzoneHash(unsigned int const & key)
@@ -3528,7 +3539,7 @@ bool MapClass::Expand_High_Ground(CellClass * cellptr, int region_id)
 }
 
 // SYNTHETIC: GAMEMD 0x00579320 SYMBOL
-// _$E231
+// _$E234
 const Cell CliffVariantOffsets[] = {
 	Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0),
 	Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0),
@@ -3866,7 +3877,7 @@ int MapClass::Straight_Shore_Length(CellClass * cellptr, FacingType direction)
 }
 
 // SYNTHETIC: GAMEMD 0x0057A9C0 SYMBOL
-// _$E235
+// _$E238
 Cell ShorePieceOffsets[] = {
 	Cell(0, -1),
 	Cell(0, -1),
@@ -5856,7 +5867,7 @@ bool MapClass::Rebuild_Cliffs_At(Cell const & cell)
 }
 
 // SYNTHETIC: GAMEMD 0x00585EE0 SYMBOL
-// _$E240
+// _$E243
 Cell RegionQuadrantOffsets[4] = {
 	Cell(0, 0), Cell(REGION_WIDTH, 0), Cell(0, REGION_HEIGHT), Cell(REGION_WIDTH, REGION_HEIGHT),
 };

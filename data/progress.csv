@@ -2705,6 +2705,7 @@ address,name,result,size,source,symbol
 0x0048E6A0,_$E29,MATCH,61,src/convert.cpp,_$E29
 0x0048E6E0,_$E26,MATCH,88,src/convert.cpp,_$E26
 0x0048E740,ConvertClass::ConvertClass,MATCH,1185,src/convert.cpp,??0ConvertClass@@QAE@ABVPaletteClass@@0ABVSurface@@H_N@Z
+0x0048EBF0,ConvertClass::Create_Blitters,MATCH,6145,src/convert.cpp,?Create_Blitters@ConvertClass@@QAEXXZ
 0x00490400,ConvertClass::~ConvertClass,MATCH,137,src/convert.cpp,??1ConvertClass@@UAE@XZ
 0x00491210,??_GConvertClass@@UAEPAXI@Z,MATCH,157,src/convert.cpp,??_GConvertClass@@UAEPAXI@Z
 0x00490490,ConvertClass::Destroy_Blitters,MATCH,1787,src/convert.cpp,?Destroy_Blitters@ConvertClass@@QAEXXZ
@@ -6332,6 +6333,7 @@ address,name,result,size,source,symbol
 0x0052D640,FUN_0052D640,MATCH,328,src/init.cpp,?FUN_0052D640@@YGHPAUHWND__@@IIJ@Z
 0x0052D790,FUN_0052D790,MATCH,214,src/init.cpp,?FUN_0052D790@@YGHPAUHWND__@@IIJ@Z
 0x0052D870,FUN_0052D870,MATCH,297,src/init.cpp,?FUN_0052D870@@YGHPAUHWND__@@IIJ@Z
+0x0052D9A0,Select_Game,MATCH,4696,src/init.cpp,?Select_Game@@YI_N_N@Z
 0x0052EC00,FUN_0052EC00,MATCH,2024,src/init.cpp,?FUN_0052EC00@@YGHPAUHWND__@@IIJ@Z
 0x0052F610,Anim_Init,MATCH,12,src/init.cpp,?Anim_Init@@YIXXZ
 0x0052F620,Parse_Command_Line,MATCH,1531,src/init.cpp,?Parse_Command_Line@@YI_NHQAPAD@Z
@@ -7685,9 +7687,10 @@ address,name,result,size,source,symbol
 0x005618C0,_$E38,MATCH,18,src/map.cpp,_$E38
 0x005618E0,_$E41,MATCH,26,src/map.cpp,_$E41
 0x00561900,Init_00561900,MATCH,5,src/map.cpp,?Init_00561900@@YIXXZ
-0x005638C0,Init_005638C0,MATCH,5,src/map.cpp,?Init_005638C0@@YIXXZ
-0x00565060,_$E224,MATCH,22,src/map.cpp,_$E224
-0x00565080,_$E222,MATCH,10,src/map.cpp,_$E222
+0x005638C0,_$E222,MATCH,5,src/map.cpp,_$E222
+0x005638D0,_$E221,MATCH,6028,src/map.cpp,_$E221
+0x00565060,_$E227,MATCH,22,src/map.cpp,_$E227
+0x00565080,_$E225,MATCH,10,src/map.cpp,_$E225
 0x00565090,MapClass::MapClass,MATCH,244,src/map.cpp,??0MapClass@@QAE@XZ
 0x00565190,MapClass::MapClass,MATCH,292,src/map.cpp,??0MapClass@@QAE@ABVNoInitClass@@@Z
 0x005652C0,MapClass::~MapClass,MATCH,429,src/map.cpp,??1MapClass@@UAE@XZ
@@ -7741,7 +7744,7 @@ address,name,result,size,source,symbol
 0x0056C020,MapClass::Remove_Crate,MATCH,466,src/map.cpp,?Remove_Crate@MapClass@@QAE_NABVCell@@@Z
 0x0056C200,FUN_0056C200,MATCH,6,src/map.cpp,?FUN_0056C200@@YIHXZ
 0x0056C210,MapClass::Close_Object,MATCH,744,src/map.cpp,?Close_Object@MapClass@@QBEPAVObjectClass@@ABVCoord@@@Z
-0x0056C500,_$E228,MATCH,1,src/map.cpp,_$E228
+0x0056C500,_$E231,MATCH,1,src/map.cpp,_$E231
 0x0056CB80,SubzoneHash,MATCH,16,src/map.cpp,?SubzoneHash@@YIHABI@Z
 0x0056D3A0,MapClass::Get_Cell_Zone_ID,MATCH,78,src/map.cpp,?Get_Cell_Zone_ID@MapClass@@QAEHABVCell@@@Z
 0x0056D3F0,MapClass::Get_Cell_Zone_Index,MATCH,54,src/map.cpp,?Get_Cell_Zone_Index@MapClass@@QAEHABVCell@@@Z
@@ -7806,13 +7809,13 @@ address,name,result,size,source,symbol
 0x00578D80,MapClass::Is_Tile_Cliff,MATCH,219,src/map.cpp,?Is_Tile_Cliff@MapClass@@SI_NW4IsometricTileType@@H@Z
 0x00578E60,MapClass::Build_All_Cliffs,MATCH,428,src/map.cpp,?Build_All_Cliffs@MapClass@@QAE_NHH@Z
 0x00579010,MapClass::Expand_High_Ground,MATCH,771,src/map.cpp,?Expand_High_Ground@MapClass@@QAE_NPAVCellClass@@H@Z
-0x00579320,_$E231,MATCH,762,src/map.cpp,_$E231
+0x00579320,_$E234,MATCH,762,src/map.cpp,_$E234
 0x00579620,MapClass::Place_Cliff,MATCH,1352,src/map.cpp,?Place_Cliff@MapClass@@QAE_NPAVCellClass@@H@Z
 0x0057A0C0,MapClass::FUN_0057A0C0,MATCH,595,src/map.cpp,?FUN_0057A0C0@MapClass@@QAE_NH_N@Z
 0x0057A320,MapClass::Prune_Water,MATCH,264,src/map.cpp,?Prune_Water@MapClass@@QAEXPAVCellClass@@H_N@Z
 0x0057A430,MapClass::Expand_Water,MATCH,1220,src/map.cpp,?Expand_Water@MapClass@@QAE_NPAVCellClass@@H_N@Z
 0x0057A900,MapClass::Straight_Shore_Length,MATCH,178,src/map.cpp,?Straight_Shore_Length@MapClass@@SIHPAVCellClass@@W4FacingType@@@Z
-0x0057A9C0,_$E235,MATCH,809,src/map.cpp,_$E235
+0x0057A9C0,_$E238,MATCH,809,src/map.cpp,_$E238
 0x0057ACF0,MapClass::Place_Shore,MATCH,1304,src/map.cpp,?Place_Shore@MapClass@@QAE_NPAVCellClass@@HH_N@Z
 0x0057B210,MapClass::Get_Water_Mask,MATCH,549,src/map.cpp,?Get_Water_Mask@MapClass@@QAEHPAVCellClass@@H@Z
 0x0057B790,MapClass::Area_Reduce_Tiberium,MATCH,211,src/map.cpp,?Area_Reduce_Tiberium@MapClass@@QAEXABVCell@@@Z
@@ -7852,7 +7855,7 @@ address,name,result,size,source,symbol
 0x005856B0,MapClass::Rebuild_Shores_At,MATCH,628,src/map.cpp,?Rebuild_Shores_At@MapClass@@QAE_NABVCell@@@Z
 0x00585930,MapClass::Mark_Fill_Area,MATCH,969,src/map.cpp,?Mark_Fill_Area@MapClass@@QAEXABVCell@@_N@Z
 0x00585D00,MapClass::Rebuild_Cliffs_At,MATCH,477,src/map.cpp,?Rebuild_Cliffs_At@MapClass@@QAE_NABVCell@@@Z
-0x00585EE0,_$E240,MATCH,89,src/map.cpp,_$E240
+0x00585EE0,_$E243,MATCH,89,src/map.cpp,_$E243
 0x005862C0,MapClass::Is_Something_Nearby,MATCH,145,src/map.cpp,?Is_Something_Nearby@MapClass@@QAE_NABVCell@@H@Z
 0x00586360,MapClass::Is_Shrouded,MATCH,309,src/map.cpp,?Is_Shrouded@MapClass@@QAE_NABVCoord@@@Z
 0x005864A0,MapClass::FUN_005864A0,MATCH,309,src/map.cpp,?FUN_005864A0@MapClass@@QAE_NABVCoord@@@Z
@@ -8111,13 +8114,14 @@ address,name,result,size,source,symbol
 0x0059C880,MapGeneratorClass::Clear_Region_Cells,MATCH,156,src/mapgen.cpp,?Clear_Region_Cells@MapGeneratorClass@@QAEXHHHW4IsometricTileType@@@Z
 0x0059D440,MapGeneratorClass::Get_Target_Water_Amount,MATCH,49,src/mapgen.cpp,?Get_Target_Water_Amount@MapGeneratorClass@@QAEHXZ
 0x0059D480,MapGeneratorClass::Get_Spread_Score,MATCH,137,src/mapgen.cpp,?Get_Spread_Score@MapGeneratorClass@@QBENABVCell@@0H@Z
+0x0059D510,MapGeneratorClass::Seed_River,MATCH,4386,src/mapgen.cpp,?Seed_River@MapGeneratorClass@@QAE_NABVCell@@N_N@Z
 0x0059E640,MapGeneratorClass::Set_Height_Of_ID,MATCH,114,src/mapgen.cpp,?Set_Height_Of_ID@MapGeneratorClass@@QAEXHD@Z
 0x0059E6C0,MapGeneratorClass::Increase_Height_Of_ID,MATCH,114,src/mapgen.cpp,?Increase_Height_Of_ID@MapGeneratorClass@@QAEXHD@Z
 0x005A0090,MapGeneratorClass::Set_Cell_Data_Region,MATCH,47,src/mapgen.cpp,?Set_Cell_Data_Region@MapGeneratorClass@@QAEXABVCell@@H@Z
 0x005A00C0,MapGeneratorClass::Get_Cell_Data_Region,MATCH,49,src/mapgen.cpp,?Get_Cell_Data_Region@MapGeneratorClass@@QAEHABVCell@@@Z
 0x005A0100,MapGeneratorClass::Set_Cell_Data_Spread,MATCH,43,src/mapgen.cpp,?Set_Cell_Data_Spread@MapGeneratorClass@@QAEXABVCell@@H@Z
 0x005A0130,MapGeneratorClass::Get_Cell_Data_Spread,MATCH,38,src/mapgen.cpp,?Get_Cell_Data_Spread@MapGeneratorClass@@QAEHABVCell@@@Z
-0x005A0160,MapGeneratorClass::Grow_Region,MATCH,678,src/mapgen.cpp,?Grow_Region@MapGeneratorClass@@QAE_NHHV?$TRect@H@@DD@Z
+0x005A0160,MapGeneratorClass::Grow_Region,MATCH,678,src/mapgen.cpp,?Grow_Region@MapGeneratorClass@@QAE_NHHV?$TRect@H@@DH@Z
 0x005A0410,MapGeneratorClass::Clear_Region_Border,MATCH,737,src/mapgen.cpp,?Clear_Region_Border@MapGeneratorClass@@QAE_NHHH@Z
 0x005A0700,MapGeneratorClass::Build_Region_Border_Cell_List,MATCH,459,src/mapgen.cpp,?Build_Region_Border_Cell_List@MapGeneratorClass@@QAEPAV?$DynamicVectorClass@VCell@@@@H@Z
 0x005A1190,MapGeneratorClass::Get_Angle_Score,MATCH,221,src/mapgen.cpp,?Get_Angle_Score@MapGeneratorClass@@QAENABVCell@@0N@Z
@@ -14490,6 +14494,7 @@ address,name,result,size,source,symbol
 0x00701410,TechnoClass::Renovate,MATCH,142,src/techno.cpp,?Renovate@TechnoClass@@UAEXXZ
 0x007014A0,TechnoClass::Captured,MATCH,1043,src/techno.cpp,?Captured@TechnoClass@@UAE_NPAVHouseClass@@_N@Z
 0x007018C0,TechnoClass::Set_Owner,MATCH,49,src/techno.cpp,?Set_Owner@TechnoClass@@QAEXPAVHouseClass@@@Z
+0x00701900,TechnoClass::Take_Damage,MATCH,5176,src/techno.cpp,?Take_Damage@TechnoClass@@UAE?AW4ResultType@@AAHHPBVWarheadTypeClass@@PAV1@_N3PAVHouseClass@@@Z
 0x00702D40,TechnoClass::RegisterDestruction,MATCH,1251,src/techno.cpp,?RegisterDestruction@TechnoClass@@UAEXPAV1@@Z
 0x006F8960,TechnoClass::TryAutoTargetObject,MATCH,688,src/techno.cpp,?TryAutoTargetObject@TechnoClass@@QBE_NW4ThreatType@@HABVCell@@HPAPBV1@AAHH@Z
 0x006F8C10,TechnoClass::Evaluate_Just_Cell,MATCH,478,src/techno.cpp,?Evaluate_Just_Cell@TechnoClass@@QBEHABVCell@@@Z
@@ -15783,6 +15788,7 @@ address,name,result,size,source,symbol
 0x007393C0,UnitClass::Try_To_Deploy,MATCH,1784,src/unit.cpp,?Try_To_Deploy@UnitClass@@QAE_NXZ
 0x00739AC0,UnitClass::Deploy,MATCH,516,src/unit.cpp,?Deploy@UnitClass@@QAEXXZ
 0x00739CD0,UnitClass::Undeploy,MATCH,494,src/unit.cpp,?Undeploy@UnitClass@@QAEXXZ
+0x00739EC0,UnitClass::Per_Cell_Process,MATCH,4591,src/unit.cpp,?Per_Cell_Process@UnitClass@@UAEXW4PCPType@@@Z
 0x0073B0B0,UnitClass::Render,MATCH,140,src/unit.cpp,?Render@UnitClass@@UBE_NAAV?$TRect@H@@_N1@Z
 0x0073B470,UnitClass::Unit_Draw_Voxel,MATCH,4473,src/unit.cpp,?Unit_Draw_Voxel@UnitClass@@UAEXVPoint2D@@V?$TRect@H@@HG@Z
 0x0073CEC0,UnitClass::Draw_It,MATCH,1417,src/unit.cpp,?Draw_It@UnitClass@@UBEXABVPoint2D@@ABV?$TRect@H@@@Z
@@ -17436,7 +17442,7 @@ address,name,result,size,source,symbol
 0x0077D490,FUN_0077D490,MATCH,36,src/wonline.cpp,?FUN_0077D490@@YI_NPAUUser@@0@Z
 0x0077D4C0,FUN_0077D4C0,MATCH,579,src/wonline.cpp,?FUN_0077D4C0@@YI_NPAUUser@@@Z
 0x0077D710,FUN_0077D710,MATCH,5,src/wonline.cpp,?FUN_0077D710@@YIXXZ
-0x0077D720,FUN_0077D720,MATCH,113,src/wonline.cpp,?FUN_0077D720@@YI?AVIPXAddressClass@@PAUHostEntry@@@Z
+0x0077D720,FUN_0077D720,MATCH,113,src/wonline.cpp,?FUN_0077D720@@YI?AVIPXAddressClass@@PAUUser@@@Z
 0x0077D7A0,FUN_0077D7A0,MATCH,119,src/wonline.cpp,?FUN_0077D7A0@@YIX_N@Z
 0x0077D820,FUN_0077D820,MATCH,28,src/wonline.cpp,?FUN_0077D820@@YI_NXZ
 0x0077D840,FUN_0077D840,MATCH,121,src/wonline.cpp,?FUN_0077D840@@YIXXZ
@@ -17634,6 +17640,7 @@ address,name,result,size,source,symbol
 0x007A55F0,FUN_007A55F0,MATCH,145,src/wonline.cpp,?FUN_007A55F0@@YGJPAXJPBD@Z
 0x007A5690,FUN_007A5690,MATCH,501,src/wonline.cpp,?FUN_007A5690@@YGJPAXJPAUWolChannel@@@Z
 0x007A70E0,FUN_007A70E0,MATCH,40,src/wonline.cpp,?FUN_007A70E0@@YGJPAXJ0PAUUser@@@Z
+0x007A7110,FUN_007A7110,MATCH,2640,src/wonline.cpp,?FUN_007A7110@@YGJPAXJ0PAUUser@@@Z
 0x007A8DA0,FUN_007A8DA0,MATCH,297,src/wonline.cpp,?FUN_007A8DA0@@YGJPAXJ0PAUUser@@PBD@Z
 0x007A8ED0,FUN_007A8ED0,MATCH,239,src/wonline.cpp,?FUN_007A8ED0@@YGJPAXJ0PAUUser@@PBG@Z
 0x007A8FC0,FUN_007A8FC0,MATCH,322,src/wonline.cpp,?FUN_007A8FC0@@YGJPAXJPAUUser@@PBD@Z

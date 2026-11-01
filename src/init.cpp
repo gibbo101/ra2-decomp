@@ -215,6 +215,7 @@ struct Game {
 	static HWND hWnd;
 	static HINSTANCE hInstance;
 	static unsigned __int64 __fastcall AudioGetTime(void);
+	static int ObserverMode;
 };
 
 // FUNCTION: GAMEMD 0x0052CB50
@@ -657,6 +658,635 @@ extern const char * DAT_00825C70;
 extern unsigned char DAT_00A8F7AD;
 extern AudioController DAT_00A8F300;
 extern unsigned char DAT_00ABCE08;
+
+#include "ownertalk.h"
+
+extern ConnectionClass * DAT_00A8EA0C;
+bool Load_Recording_Values(CCFileClass & file);
+bool Save_Recording_Values(CCFileClass & file);
+
+struct CheatEntryStruct {
+	bool * State;
+	const char * CheatString;
+	const char * VersionSuffix;
+	bool IsAllowedInMP;
+};
+
+extern CheatEntryStruct OriginalCheats[4];
+
+#include "movieunlock.h"
+
+namespace UI {
+	HWND __fastcall BeginDialog(int id, DLGPROC proc, int extra);
+	void __fastcall EndDialog(HWND window);
+	bool __fastcall Updated(void);
+}
+
+BOOL CALLBACK FUN_0052EC00(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+int Main_Menu(unsigned int timeout);
+bool FUN_0052F3F0(void);
+int __fastcall FUN_0077B2A0(bool returning);
+void FUN_0072D9A0(void);
+void FUN_0072DAA0(void);
+int __fastcall FUN_0060D380(int resource, DLGPROC proc, bool focus);
+void __fastcall FUN_0053F1F0(int value);
+bool FUN_006AE2C0(void);
+void __fastcall FUN_0078ABF0(bool a, wchar_t const * text);
+void FUN_006370B0(void);
+void FUN_004C3E30(void);
+extern unsigned char DAT_008A00A0;
+extern int DAT_00825C84;
+
+static void Cheat_Disable(void)
+{
+	for (int c = 0; c < 4; c++) {
+		if (!OriginalCheats[c].IsAllowedInMP) {
+			*OriginalCheats[c].State = false;
+		}
+	}
+}
+
+static CampaignType Choose_Campaign(void)
+{
+	CampaignPick pick;
+	pick.Done = false;
+	pick.Choice = -1;
+
+	if (Campaigns.Count() == 0) {
+		FUN_0052CB90();
+		if (Campaigns.Count() == 0) {
+			return(CAMPAIGN_NONE);
+		}
+	}
+
+	FUN_0072D9A0();
+	DAT_00A8F300.FUN_00405BE0();
+	DAT_00A8F7A0 = 0;
+	DAT_00A8F7A8 = 0;
+	HWND dialog = UI::BeginDialog(0x94, FUN_0052EC00, 0);
+	if (dialog != NULL) {
+		SetWindowLong(dialog, DWL_USER, (LONG)&pick);
+		Center_Window_Within_Window(dialog, Game::hWnd);
+		OwnerDraw::Display_Dialog(dialog);
+		while (!pick.Done && UI::Updated() != true) {
+			if (DAT_00825C20 != -1 && DAT_00A8F7A0 < Game::AudioGetTime()) {
+				DAT_00A8F300.Stop();
+				VocClass::PlayGlobal(DAT_00825C20, 1.0f, 0x2000, &DAT_00A8F300);
+				DAT_00825C20 = -1;
+			}
+			if (DAT_008A00A0) {
+				DAT_008A00A0 = 0;
+				FUN_0052FEC0(NULL, true);
+				Update_Visible_Surface(false, HiddenSurface);
+			}
+		}
+		UI::EndDialog(dialog);
+	}
+
+	DAT_00A8F7A0 = Game::AudioGetTime() + 3000;
+	while (DAT_00A8F300.GetEvent() && DAT_00A8F7A0 > Game::AudioGetTime()) {
+		Call_Back();
+	}
+	FUN_0072DAA0();
+	return((CampaignType)pick.Choice);
+}
+
+// FUNCTION: GAMEMD 0x0052D9A0
+bool Select_Game(bool )
+{
+	bool gameloaded;
+	int selection;
+	bool process;
+
+	Theme.Play_Song(Theme.From_Name("INTRO"));
+
+restart:
+	gameloaded = false;
+	process = true;
+
+	GameActive = true;
+	PlayerPtr = NULL;
+	DoList.Init();
+	OutList.Init();
+	Frame = 0;
+	Scen->MissionTimer = 0;
+	Scen->MissionTimer.Stop();
+	Scen->CDifficulty = DIFF_NORMAL;
+	Scen->Difficulty = DIFF_NORMAL;
+	PlayerWins = false;
+	PlayerLoses = false;
+	PlayerRestarts = false;
+	PlayerAborts = false;
+	Session.MultiplayerObserver = false;
+	Map.SetActiveFoundation(NULL);
+	Map.PendingObjectPtr = 0;
+	Map.PendingObject = 0;
+	Map.PendingHouse = HOUSE_NONE;
+
+	Session.ProcessTicks = 0;
+	Session.ProcessFrames = 0;
+	Session.DesiredFrameRate = 30;
+	NewMaxAheadFrame1 = 0;
+	NewMaxAheadFrame2 = 0;
+
+	for (int i = 0; i < MAX_MULTI_GAMES; i++) {
+		Session.Score[i].Kills[Session.CurGame] = -1;
+	}
+
+	Map.Set_Default_Mouse(MOUSE_NORMAL, false);
+
+	if (ToolTips != NULL) {
+		ToolTips->Activate(false);
+	}
+
+	if (Session.Type == GAME_NORMAL) {
+		selection = 0x12;
+	} else if (Session.Type == GAME_INTERNET) {
+		selection = 0x11;
+	} else {
+		selection = 0x10;
+	}
+
+	if (!Debug_Map) {
+
+		if (Session.Play && Session.RecordFile.Is_Available()) {
+			if (Session.RecordFile.Open(FileClass::READ)) {
+				Load_Recording_Values(Session.RecordFile);
+				process = false;
+				Theme.Stop(true);
+			} else {
+				Session.Play = false;
+			}
+		}
+
+		while (process) {
+
+			if (PacketTransport != NULL) {
+				if (Session.ViaPacketRouter) {
+					if (DAT_00A8EA0C) {
+						OwnerTalk.Send_Shutdown();
+					}
+					Session.ViaPacketRouter = false;
+				}
+				delete PacketTransport;
+				PacketTransport = NULL;
+				FUN_0052F3F0();
+			}
+
+			if (selection == 0x12 && !Debug_ForceScenario) {
+				selection = Main_Menu(3600);
+			}
+
+			if (Debug_ForceScenario) {
+				selection = 8;
+			}
+
+			if (selection != 7) {
+				Theme.Play_Song(Theme.From_Name("INTRO"));
+			}
+
+			Call_Back();
+
+			switch (selection) {
+
+				case -1:
+					if (Session.Attract && Session.RecordFile.Is_Available()) {
+						Session.Play = true;
+
+						if (Session.RecordFile.Open(FileClass::READ)) {
+							Load_Recording_Values(Session.RecordFile);
+							process = false;
+							Theme.Stop(true);
+						} else {
+							Session.Play = false;
+							selection = 0x12;
+						}
+					} else {
+						selection = 0x12;
+					}
+					break;
+
+				case 1:
+					Game::ObserverMode = false;
+					selection = FUN_0060D380(0x100, FUN_0052D640, true);
+					break;
+
+				case 2:
+					selection = 0x10;
+					Session.Type = GAME_INTERNET;
+					FUN_0053F1F0(2);
+					break;
+
+				case 3:
+					selection = 0x10;
+					Session.Type = GAME_IPX;
+					FUN_0053F1F0(1);
+					break;
+
+				case 4:
+					selection = FUN_0060D380(0x101, FUN_0052D790, true);
+					break;
+
+				case 5:
+					selection = 0x12;
+					Main_Options_Dialog();
+					break;
+
+				case 6: {
+					wchar_t const * text = StringTable::LoadString("GUI:ExitAreYouSure", NULL, "D:\\ra2mdpost\\Init.CPP", 0x9C6);
+					wchar_t const * ok = StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\Init.CPP", 0x9C7);
+					wchar_t const * cancel = StringTable::LoadString("GUI:Cancel", NULL, "D:\\ra2mdpost\\Init.CPP", 0x9C8);
+					FUN_0052FEC0(NULL, true);
+					if (WWMessageBox().Process(text, ok, cancel, NULL) == 0) {
+						selection = 7;
+						Options.Save_Settings();
+					} else {
+						FUN_0052FEC0(NULL, true);
+						selection = 0x12;
+					}
+					break;
+				}
+
+				case 13:
+					selection = 4;
+					Game::PlayMovie("RENEGADE.BIK", -1, 1, 1, 1, 0);
+					FUN_0052FEC0(NULL, true);
+					break;
+
+				case 14: {
+					MovieUnlockableInfo * movie = (MovieUnlockableInfo *)FUN_0060D380(0x129, FUN_0052D870, true);
+					if (movie != (MovieUnlockableInfo *)-1 && movie != NULL) {
+						if (CD().Force_Available((DiskID)movie->DiskRequired)) {
+							Game::PlayMovie(movie->Filename, -1, 1, 1, 1, 0);
+							FUN_0052FEC0(NULL, true);
+						}
+					} else {
+						selection = 4;
+					}
+					break;
+				}
+
+				case 15:
+					selection = 4;
+					FUN_004C3E30();
+					Theme.Queue_Song(Theme.From_Name("INTRO"));
+					FUN_0052FEC0(NULL, true);
+					break;
+
+				case 7: {
+					Theme.Stop(true);
+
+					int timeout = (TickCount + 50 * TIMER_SECOND);
+
+					while (Theme.Still_Playing() && Is_Speaking() && (timeout > TickCount)) {
+						Call_Back();
+					}
+
+					Theme.Stop();
+
+					if (!HicolorFlag) {
+						Set_Palette(BlackPalette, FADE_PALETTE_SLOW);
+					}
+
+					return(false);
+				}
+
+				case 8:
+					new (&Environment) EnvironmentClass;
+
+					Scen->Campaign = Choose_Campaign();
+					if (Scen->Campaign == CAMPAIGN_NONE) {
+						process = true;
+						selection = 1;
+						break;
+					}
+
+					switch (Options.Difficulty) {
+						case 0:
+							Scen->CDifficulty = DIFF_HARD;
+							Scen->Difficulty = DIFF_EASY;
+							break;
+
+						case 1:
+							Scen->CDifficulty = DIFF_HARD;
+							Scen->Difficulty = DIFF_NORMAL;
+							break;
+
+						case 2:
+							Scen->CDifficulty = DIFF_NORMAL;
+							Scen->Difficulty = DIFF_NORMAL;
+							break;
+
+						case 3:
+							Scen->CDifficulty = DIFF_EASY;
+							Scen->Difficulty = DIFF_NORMAL;
+							break;
+
+						case 4:
+							Scen->CDifficulty = DIFF_EASY;
+							Scen->Difficulty = DIFF_HARD;
+							break;
+					}
+
+					Session.Type = GAME_NORMAL;
+					process = false;
+					break;
+
+				case 9:
+					ScenarioInit++;
+					FUN_0052CB90();
+					ScenarioInit--;
+					if (LoadOptionsClass().Load()) {
+						process = false;
+						gameloaded = true;
+					} else {
+						selection = 1;
+					}
+					break;
+
+				case 10:
+					selection = 1;
+					break;
+
+				case 11:
+					Session.Type = GAME_SKIRMISH;
+
+				case 0x10:
+				case 0x11: {
+					Session.Read_MultiPlayer_Settings();
+
+					for (int house = 0; house < HouseTypes.Count(); house++) {
+						HouseTypes[house]->Read_INI(*RuleINI);
+					}
+
+					Session.Suspended = 0;
+
+					switch (Session.Type) {
+						case GAME_NORMAL:
+							selection = 0x12;
+							continue;
+
+						case GAME_SKIRMISH:
+							if (!FUN_006AE2C0()) {
+								Session.Type = GAME_NORMAL;
+								selection = 1;
+							}
+							break;
+
+						case GAME_NULL_MODEM:
+						case GAME_MODEM:
+							Cheat_Disable();
+							Session.NetOpen = true;
+
+							if (NullModem.Num_Connections()) {
+								NullModem.Init_Send_Queue();
+
+								if ((Session.Type == GAME_NULL_MODEM && Session.ModemType == MODEM_NULL_HOST) || (Session.Type == GAME_MODEM && Session.ModemType == MODEM_DIALER)) {
+									if (!ModemHost().Dialog()) {
+										Session.Type = GAME_NORMAL;
+										selection = 0x12;
+									}
+								} else {
+									if (ModemGuest().Dialog() == false) {
+										Session.Type = GAME_NORMAL;
+										selection = 0x12;
+									}
+								}
+							} else {
+								selection = 0x12;
+								Session.Type = GAME_NORMAL;
+								continue;
+							}
+							break;
+
+						case GAME_INTERNET: {
+							Cheat_Disable();
+							FUN_004068E0("Init.cpp - GAME_INTERNET\n");
+							memset(Session.unknown_29F4, 0, sizeof(Session.unknown_29F4));
+							Session.unknown_3070 = 0;
+							bool success = FUN_0052F3F0();
+							int res = FUN_0077B2A0(selection == 0x11);
+							selection = 0x10;
+							Session.NetOpen = false;
+
+							switch (res) {
+								case -1:
+									Theme.Stop(true);
+
+									if (!HicolorFlag) {
+										Set_Palette(BlackPalette, FADE_PALETTE_SLOW);
+									}
+
+									if (PacketTransport != NULL) {
+										delete PacketTransport;
+									}
+
+									PacketTransport = NULL;
+									return(false);
+
+								case -2:
+								case 0:
+									if (PacketTransport != NULL) {
+										delete PacketTransport;
+									}
+
+									PacketTransport = NULL;
+									selection = 0x12;
+									Session.Type = GAME_NORMAL;
+									Theme.Play_Song(Theme.From_Name("INTRO"));
+									break;
+
+								case 1:
+									FUN_004068E0("Return from WOL to play a %d player game\n", Session.Players.Count());
+									if (success) {
+										process = false;
+										DAT_00825C84 = 2;
+									} else {
+										Session.Type = GAME_NORMAL;
+										selection = 0x12;
+
+										if (PacketTransport != NULL) {
+											delete PacketTransport;
+										}
+
+										PacketTransport = NULL;
+										DAT_00825C84 = -1;
+									}
+									break;
+
+								case 2:
+									if (PacketTransport != NULL) {
+										delete PacketTransport;
+									}
+
+									PacketTransport = NULL;
+									Session.Type = GAME_NORMAL;
+									selection = 0xB;
+									break;
+							}
+							break;
+						}
+					}
+
+					switch (Session.Type) {
+						case GAME_MODEM:
+						case GAME_NULL_MODEM:
+						case GAME_INTERNET:
+						case GAME_SKIRMISH:
+							process = false;
+							break;
+
+						case GAME_IPX:
+							Cheat_Disable();
+							Session.Read_MultiPlayer_Settings();
+
+							if (PacketTransport != NULL) {
+								delete PacketTransport;
+								PacketTransport = NULL;
+							}
+
+							for (int house = 0; house < HouseTypes.Count(); house++) {
+								HouseTypes[house]->Read_INI(*RuleINI);
+							}
+
+							Session.Type = GAME_IPX;
+							Session.CommProtocol = COMM_PROTOCOL_MULTI_E_COMP;
+
+							if (PacketTransport == NULL) {
+								PacketTransport = new IPXInterfaceClass;
+								PacketTransport->Init();
+
+								FUN_0052FEC0(NULL, true);
+
+								if (Net2Init_Network() && Net2Remote_Connect()) {
+									process = false;
+								} else {
+									Session.Type = GAME_NORMAL;
+									selection = 0x12;
+
+									if (PacketTransport != NULL) {
+										delete PacketTransport;
+									}
+
+									PacketTransport = NULL;
+								}
+							}
+							break;
+					}
+					break;
+				}
+
+				default:
+					break;
+			}
+		}
+	}
+
+	if (Session.Type == GAME_INTERNET) {
+		FUN_0078ABF0(true, StringTable::LoadString("TXT_AWAY_LOADING", NULL, "D:\\ra2mdpost\\Init.CPP", 0xBB1));
+	}
+
+	Keyboard->Clear();
+
+	Game::InitRandom();
+	FUN_006370B0();
+
+	if (!gameloaded && !Session.LoadGame) {
+		FUN_004068E0("About to load a %d player game.\n", Session.Players.Count());
+
+		Hide_Mouse();
+
+		if (selection != 8) {
+			if (!HicolorFlag) {
+				Set_Palette(BlackPalette, FADE_PALETTE_MEDIUM, Call_Back);
+			}
+
+			HiddenSurface->Fill(0);
+			Update_Visible_Surface(true, HiddenSurface);
+		}
+
+		Show_Mouse();
+
+		if (Session.Type == GAME_INTERNET) {
+			for (int i = 0; i < MAX_PLAYERS; i++) {
+				Session.unknown_304C[i] = TickCount;
+			}
+		}
+
+		if (Session.Type != GAME_NORMAL || Debug_ForceScenario || Session.Play) {
+			if (!Start_Scenario(Scen->ScenarioName, true, CAMPAIGN_NONE)) {
+				if (Debug_Map) {
+					FUN_0078ABF0(false, L"");
+					return(false);
+				} else {
+					goto restart;
+				}
+			}
+		} else {
+			if (!Start_Scenario(Campaigns[Scen->Campaign]->ScenarioName, true, Scen->Campaign)) {
+				if (Debug_Map) {
+					FUN_0078ABF0(false, L"");
+					return(false);
+				} else {
+					goto restart;
+				}
+			}
+		}
+
+		if (Session.Record) {
+			if (Session.RecordFile.Open(FileClass::WRITE)) {
+				Save_Recording_Values(Session.RecordFile);
+			} else {
+				Session.Record = false;
+			}
+		}
+
+		Special.IsFromInstall = false;
+	}
+
+	FUN_004068E0("IsTGrowth = %d\n", Special.IsTGrowth);
+	FUN_004068E0("IsTSpread = %d\n", Special.IsTSpread);
+
+	if (Session.Type != GAME_NORMAL && Session.Type != GAME_SKIRMISH && !Session.Play) {
+		Session.Create_Connections();
+
+		if (Session.Type == GAME_IPX) {
+			Ipx.Set_Timing(MAX(TIMER_SECOND / 4, Ipx.Global_Response_Time() + 2), (unsigned int) -1, 10 * TIMER_SECOND, true);
+
+			Ipx.Set_External_Timing(MAX(TIMER_SECOND, Ipx.Global_Response_Time() + 2), (unsigned int) -1, 10 * TIMER_SECOND);
+		} else {
+			if (Session.Type == GAME_INTERNET && Session.PrecalcDesiredFrameRate == 0) {
+				Ipx.Set_Timing(MAX(TIMER_SECOND, Ipx.Global_Response_Time() + 2), (unsigned int) -1, 10 * TIMER_SECOND, true);
+			}
+		}
+	}
+
+	Call_Back();
+	Hide_Mouse();
+
+	if (!HicolorFlag) {
+		Set_Palette(BlackPalette, FADE_PALETTE_MEDIUM, Call_Back);
+	}
+
+	HiddenSurface->Fill(0);
+	Update_Visible_Surface(true, HiddenSurface);
+	Show_Mouse();
+	LogicalSurface = HiddenSurface;
+	Map.Override_Mouse_Shape(MOUSE_NO_MOVE);
+	Map.Revert_Mouse_Shape();
+
+	if (!Debug_Map) {
+		Map.Activate(1);
+	}
+
+	Map.Flag_To_Redraw();
+	Call_Back();
+
+	Hide_Mouse();
+	FUN_0078ABF0(false, L"");
+
+	return(true);
+}
 
 static inline HWND Child_At(HWND window, LPARAM lparam)
 {
@@ -1569,14 +2199,6 @@ void Version_Dialog(void)
 	}
 }
 
-struct CheatEntryStruct {
-	bool * State;
-	const char * CheatString;
-	const char * VersionSuffix;
-	bool IsAllowedInMP;
-};
-
-extern CheatEntryStruct OriginalCheats[4];
 extern char DAT_00A8F7B8[32];
 void __fastcall FUN_004790B0(int disk);
 void __cdecl FUN_004A4AC0(const char * text);

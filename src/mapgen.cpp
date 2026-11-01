@@ -3480,6 +3480,246 @@ double MapGeneratorClass::Get_Spread_Score(const Cell & cell1, const Cell & cell
 	return(random_value + dist_term - step_term);
 }
 
+// FUNCTION: GAMEMD 0x0059D510
+bool MapGeneratorClass::Seed_River(const Cell & cell, double start_angle, bool is_branch)
+{
+	bool orig_subcall = is_branch;
+	bool success = true;
+	int waterfall_count = 0;
+
+	Cell seed_cell;
+	double angle;
+
+	if (cell == Cell(0, 0)) {
+		Cell corner(1, Map.PlayRect.Width);
+		Cell far_corner = corner + Cell(Map.PlayRect.Width, -Map.PlayRect.Width) + Cell(Map.PlayRect.Height, Map.PlayRect.Height) + Cell(-2, 0);
+
+		int dir4 = (int)Pick_Random_UInt(0, 3);
+		int x = (int)Pick_Random_UInt(0, Map.PlayRect.Width - 1);
+		int y = (int)Pick_Random_UInt(0, Map.PlayRect.Height - 1);
+
+		Cell candidates[4];
+		candidates[0] = corner + Cell(x, -x);
+		candidates[1] = far_corner - Cell(y, y);
+		candidates[2] = far_corner - Cell(x, -x);
+		candidates[3] = corner + Cell(y, y);
+
+		double base_angle = DEG_TO_RAD(315) - (double)dir4 * M_PI_2;
+
+		seed_cell = candidates[dir4];
+		angle = Sample_Truncated_Normal(base_angle, DEG_TO_RAD(30), base_angle - M_PI_4, base_angle + M_PI_4);
+	} else {
+		seed_cell = cell;
+		angle = start_angle;
+	}
+
+	if (!My_In_Radar(seed_cell)) {
+		return(false);
+	}
+
+	int seeded_count = 0;
+
+	double width_d = (double)SeedData.WaterAmount * 0.07;
+	if (1.0 > width_d) {
+		width_d = 1.0;
+	}
+	int width_top = (int)width_d;
+	double width_pick = (double)Pick_Random_UInt(1, width_top);
+	double width = width_pick;
+	int half = (int)width_pick / 2;
+	double width_hi = (double)half + width_pick;
+	double width_lo = width_pick - (double)half;
+
+	int length = (int)Pick_Random_UInt(35, 125);
+
+	double cur_x = (double)seed_cell.X + 0.5;
+	double cur_y = (double)seed_cell.Y + 0.5;
+	double cur_angle = angle;
+	double angle_hi = angle + M_PI_2;
+	double angle_lo = angle - M_PI_2;
+
+	double stop_roll = 1.0;
+	while (My_In_Radar(Cell((int)cur_x, (int)cur_y)) && success) {
+
+		double step_y = fastmath::cos(cur_angle);
+		double step_x = fastmath::sin(cur_angle);
+
+		int span = (int)(width + 0.5);
+		bool x_run = true;
+		bool y_run = true;
+
+		double offset_x = (double)(span - 1) * step_x * 0.5;
+		double px = cur_x - offset_x;
+		double offset_y = (double)(span - 1) * step_y * 0.5;
+		double py = cur_y - offset_y;
+
+		for (int i = 0; i < span; i++) {
+			if (My_In_Radar(Cell((int)px, (int)py))) {
+				Cell pcell = Cell((int)px, (int)py);
+				if (Get_Cell_Data_Region(pcell) == 0
+						&& Map[pcell].Is_Tile_Clear()
+						|| Get_Cell_Data_Region(pcell) == WorkingRegionID) {
+
+					Set_Cell_Data_Region(pcell, WorkingRegionID);
+					CellClass * cellptr = &Map[Cell((int)px, (int)py)];
+					cellptr->ITType = IsometricTileTypeClass::WaterSet;
+					cellptr->SubTile = 0;
+				} else {
+					success = false;
+				}
+			}
+
+			if ((int)px != (int)(px + step_x)) {
+				x_run = false;
+			}
+			if ((int)py != (int)(py + step_y)) {
+				y_run = false;
+			}
+
+			px += step_x;
+			py += step_y;
+		}
+
+		if (fabs(step_y) > fabs(step_x)) {
+			y_run = false;
+		} else {
+			x_run = false;
+		}
+
+		if (!is_branch && (x_run || y_run) && waterfall_count < 1
+				&& (double)abs((int)(cur_angle - angle)) < M_PI_4) {
+
+			if (PlaceWaterfall) {
+				if (seeded_count > length) {
+					int type;
+					if (x_run) {
+						type = (step_y > 0.0) ? 2 : 6;
+					} else {
+						type = (step_x > 0.0) ? 0 : 4;
+					}
+
+					bool placed = false;
+					Cell from((int)(px - step_x), (int)(py - step_y));
+					Cell to((int)(cur_x - offset_x), (int)(cur_y - offset_y));
+					Place_Waterfall(WorkingRegionID, to, from, type, placed, cur_x, cur_y);
+					if (placed) {
+						WorkingRegionID++;
+						waterfall_count++;
+					}
+				}
+			}
+		}
+
+		cur_x += step_y;
+		cur_y -= step_x;
+
+		if (Random_Fraction() < 0.01) {
+			if (success) {
+				if (!is_branch && waterfall_count == 0) {
+					is_branch = true;
+					double branch_base = cur_angle + M_PI_2;
+					success = Seed_River(Cell((int)px, (int)py), Sample_Truncated_Normal_Inline(branch_base, DEG_TO_RAD(30),
+							cur_angle + DEG_TO_RAD(30), cur_angle + DEG_TO_RAD(150)), true);
+				}
+			}
+		}
+
+		if (seeded_count > 5) {
+			double delta_angle = Sample_Truncated_Normal_Inline(0.0, DEG_TO_RAD(18),
+					angle_lo - cur_angle, angle_hi - cur_angle);
+			cur_angle += delta_angle;
+		}
+
+		if (half > 0) {
+			double hi = width_hi - width;
+			double lo = width_lo - width;
+			double delta_width = Sample_Truncated_Normal_Inline(0.0, 0.5, lo, hi);
+			width += delta_width;
+		}
+
+		stop_roll = Random_Fraction();
+		seeded_count++;
+		if (stop_roll < 0.005) {
+			break;
+		}
+	}
+
+	if (seeded_count < 40) {
+		success = false;
+	}
+
+	if (stop_roll < 0.005) {
+		if (My_In_Radar(Cell((int)cur_x, (int)cur_y)) && success) {
+			if (!Seed_Lake(Cell((int)cur_x, (int)cur_y))) {
+				success = false;
+			}
+		}
+	}
+
+	if (!orig_subcall && success) {
+		success = Map.FUN_0057A0C0(WorkingRegionID, false);
+		if (success) {
+			success = Grow_Region(WorkingRegionID, 1, Rect(0, 0, MAP_CELL_W, MAP_CELL_H), 0, 0);
+			Green_Region_Tiles(WorkingRegionID);
+		}
+	}
+
+	bool raised = false;
+
+	if (waterfall_count == 0 && success && CellHeight == 4 && !orig_subcall) {
+
+		if (Random_Fraction() < 0.7) {
+
+			Rect bounds(0, 0, MAP_CELL_W, MAP_CELL_H);
+			if (Grow_Water_Region(WorkingRegionID, 0.01f, bounds, seed_cell, true)) {
+				success = Grow_Region(WorkingRegionID, 6, Rect(0, 0, MAP_CELL_W, MAP_CELL_H), 0, 0);
+				if (success) {
+					int region_id = WorkingRegionID;
+					Map.Reset_Iterator();
+					CellClass * cptr = Map.Iterate();
+					while (cptr != NULL) {
+						Cell c = cptr->CellID;
+						int rid = Get_Cell_Data_Region(c);
+						if (rid != region_id) {
+							cptr->Height += 4;
+						}
+						cptr = Map.Iterate();
+					}
+					raised = true;
+				}
+			} else {
+				success = false;
+			}
+		}
+	}
+
+	if (!orig_subcall && success && waterfall_count == 0) {
+		if (!raised) {
+			success = Grow_Region(WorkingRegionID, 2, Rect(0, 0, MAP_CELL_W, MAP_CELL_H), 0, 0);
+		}
+	} else if (waterfall_count > 0) {
+		if (success) {
+			success = Grow_Region(WorkingRegionID, 2, Rect(0, 0, MAP_CELL_W, MAP_CELL_H), 1, CellHeight);
+		}
+	}
+
+	if (success) {
+		if (raised) {
+			CellHeight += 4;
+		}
+		SeededWaterAmount += seeded_count;
+		return(true);
+	}
+
+	Clear_Region_Cells(WorkingRegionID, 0, -1, ISOTILE_CLEAR);
+
+	if (waterfall_count > 0) {
+		Clear_Region_Cells(WorkingRegionID - 1, 0, -1, ISOTILE_CLEAR);
+	}
+
+	return(false);
+}
+
 // FUNCTION: GAMEMD 0x0059E640
 void MapGeneratorClass::Set_Height_Of_ID(int id, char cell_height)
 {
@@ -3531,7 +3771,7 @@ int MapGeneratorClass::Get_Cell_Data_Spread(Cell const &cell)
 }
 
 // FUNCTION: GAMEMD 0x005A0160
-bool MapGeneratorClass::Grow_Region(int id, int rings, Rect rect, char set_height, char height)
+bool MapGeneratorClass::Grow_Region(int id, int rings, Rect rect, char set_height, int height)
 {
 	DynamicVectorClass<Cell> * cells = Build_Region_Border_Cell_List(id);
 

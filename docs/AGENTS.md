@@ -200,6 +200,8 @@ Each entry: what the diff showed, then the source change that fixed it.
 - Locals are laid out by size, not declaration order. To fix two objects' order, make
   them members of one local struct.
 - A buffer declared inside the loop body gives `push ecx`; one at function level does not.
+- An inline helper's x87 shape can follow how its arguments are evaluated: naming the
+  bounds as locals, upper first, gave Seed_River's `fst; fadd` (0x0059D510).
 - Swapped slot pairs can come from two short-lived temporaries sharing a slot: move the
   test into a file-local inline helper to give each its own (0x0073B470).
 - A spill reload one place off at a loop exit can come from a same-named local declared

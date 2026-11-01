@@ -244,7 +244,7 @@ class TechnoTypeClass : public ObjectTypeClass
 		bool OpportunityFire;
 		bool DistributedFire;
 		bool DamageReducesReadiness;
-		int ReadinessReductionMultiplier;
+		float ReadinessReductionMultiplier;
 		UnitTypeClass *UnloadingClass;
 		AnimTypeClass *DeployingAnim;
 		bool AttackFriendlies;

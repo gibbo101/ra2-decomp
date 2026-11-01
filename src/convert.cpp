@@ -3,6 +3,7 @@
 // Copyright 2025 Electronic Arts Inc.; 2026 OpenTS contributors
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
+#define NDEBUG
 #include "always.h"
 
 #include "convert.h"
@@ -175,6 +176,144 @@ ConvertClass::ConvertClass(PaletteClass const & artpalette, PaletteClass const &
 	}
 
 	Drawers.Add(this);
+}
+
+// FUNCTION: GAMEMD 0x0048EBF0
+void ConvertClass::Create_Blitters(void)
+{
+	if (BBP == 1) {
+		PlainBlitter = new BlitPlainXlat<unsigned char>((unsigned char const *)Translator);
+		TransBlitter = new BlitTransXlat<unsigned char>((unsigned char const *)Translator);
+		RemapBlitter = new BlitTransZRemapXlat<unsigned char>(&RemapTable, (unsigned char const *)Translator);
+		ShadowBlitter = new BlitTransRemapDest<unsigned char>(ShadowTable);
+		Translucent1Blitter = new BlitTransRemapXlat<unsigned char>(ShadowTable, (unsigned char const *)Translator);
+		Translucent2Blitter = new BlitTransRemapXlat<unsigned char>(ShadowTable, (unsigned char const *)Translator);
+		Translucent3Blitter = new BlitTransRemapXlat<unsigned char>(ShadowTable, (unsigned char const *)Translator);
+
+		RLETransBlitter = new RLEBlitTransXlat<unsigned char>((unsigned char const *)Translator);
+		RLERemapBlitter = new RLEBlitTransZRemapXlat<unsigned char>(&RemapTable, (unsigned char const *)Translator);
+		RLEShadowBlitter = new RLEBlitTransRemapDest<unsigned char>(ShadowTable);
+		RLETranslucent1Blitter = new RLEBlitTransRemapXlat<unsigned char>(ShadowTable, (unsigned char const *)Translator);
+		RLETranslucent2Blitter = new RLEBlitTransRemapXlat<unsigned char>(ShadowTable, (unsigned char const *)Translator);
+		RLETranslucent3Blitter = new RLEBlitTransRemapXlat<unsigned char>(ShadowTable, (unsigned char const *)Translator);
+
+		RLEBlitTransXlatZReadPtr = new RLEBlitTransXlatZRead<unsigned char>((unsigned char const *)Translator);
+		RLEBlitTransZRemapXlatZReadPtr = new RLEBlitTransZRemapXlatZRead<unsigned char>(&RemapTable, (unsigned char const*)Translator);
+		RLEBlitTransDarkenZReadPtr = new RLEBlitTransRemapDestZRead<unsigned char>(ShadowTable);
+		RLEBlitTransLucent75ZReadPtr = new RLEBlitTransRemapXlatZRead<unsigned char>(ShadowTable, (unsigned char const *)Translator);
+		RLEBlitTransLucent50ZReadPtr = new RLEBlitTransRemapXlatZRead<unsigned char>(ShadowTable, (unsigned char const *)Translator);
+		RLEBlitTransLucent25ZReadPtr = new RLEBlitTransRemapXlatZRead<unsigned char>(ShadowTable, (unsigned char const *)Translator);
+
+		RLEBlitTransXlatZReadWritePtr = new RLEBlitTransXlatZReadWrite<unsigned char>((unsigned char const *)Translator);
+		RLEBlitTransZRemapXlatZReadWritePtr = new RLEBlitTransZRemapXlatZReadWrite<unsigned char>(&RemapTable, (unsigned char const*)Translator);
+		RLEBlitTransDarkenZReadWritePtr = new RLEBlitTransRemapDestZReadWrite<unsigned char>(ShadowTable);
+		RLEBlitTransLucent75ZReadWritePtr = new RLEBlitTransRemapXlatZReadWrite<unsigned char>(ShadowTable, (unsigned char const *)Translator);
+		RLEBlitTransLucent50ZReadWritePtr = new RLEBlitTransRemapXlatZReadWrite<unsigned char>(ShadowTable, (unsigned char const *)Translator);
+		RLEBlitTransLucent25ZReadWritePtr = new RLEBlitTransRemapXlatZReadWrite<unsigned char>(ShadowTable, (unsigned char const *)Translator);
+
+	} else {
+		PlainBlitter = new BlitPlainXlat<unsigned short>((unsigned short const *)Translator);
+		TransBlitter = new BlitTransXlat<unsigned short>((unsigned short const *)Translator);
+		RemapBlitter = new BlitTransZRemapXlat<unsigned short>(&RemapTable, (unsigned short const *)Translator);
+		ShadowBlitter = new BlitTransDarken<unsigned short>((unsigned short)HalfbrightMask);
+		Translucent1Blitter = new BlitTransLucent75<unsigned short>((unsigned short const *)Translator, (unsigned short)QuarterbrightMask);
+		Translucent2Blitter = new BlitTransLucent50<unsigned short>((unsigned short const *)Translator, (unsigned short)HalfbrightMask);
+		Translucent3Blitter = new BlitTransLucent25<unsigned short>((unsigned short const *)Translator, (unsigned short)QuarterbrightMask);
+
+		BlitPlainXlatZReadPtr = new BlitPlainXlatZRead<unsigned short>((unsigned short const *)Translator);
+		BlitTransXlatZReadPtr = new BlitTransXlatZRead<unsigned short>((unsigned short const *)Translator);
+		BlitTransZRemapXlatZReadPtr = new BlitTransZRemapXlatZRead<unsigned short>(&RemapTable, (unsigned short const*)Translator);
+		BlitTransDarkenZReadPtr = new BlitTransDarkenZRead<unsigned short>((unsigned short)HalfbrightMask);
+		BlitTransLucent75ZReadPtr = new BlitTransLucent75ZRead<unsigned short>((unsigned short const *)Translator, (unsigned short)QuarterbrightMask);
+		BlitTransLucent50ZReadPtr = new BlitTransLucent50ZRead<unsigned short>((unsigned short const *)Translator, (unsigned short)HalfbrightMask);
+		BlitTransLucent25ZReadPtr = new BlitTransLucent25ZRead<unsigned short>((unsigned short const *)Translator, (unsigned short)QuarterbrightMask);
+		BlitTransLucent75ZReadWarpPtr = new BlitTransLucent75ZReadWarp<unsigned short>((unsigned short const *)Translator, (unsigned short)QuarterbrightMask);
+		BlitTransLucent50ZReadWarpPtr = new BlitTransLucent50ZReadWarp<unsigned short>((unsigned short const *)Translator, (unsigned short)HalfbrightMask);
+		BlitTransLucent25ZReadWarpPtr = new BlitTransLucent25ZReadWarp<unsigned short>((unsigned short const *)Translator, (unsigned short)QuarterbrightMask);
+
+		BlitPlainXlatZReadWritePtr = new BlitPlainXlatZReadWrite<unsigned short>((unsigned short const *)Translator);
+		BlitTransXlatZReadWritePtr = new BlitTransXlatZReadWrite<unsigned short>((unsigned short const *)Translator);
+		BlitTransZRemapXlatZReadWritePtr = new BlitTransZRemapXlatZReadWrite<unsigned short>(&RemapTable, (unsigned short const*)Translator);
+		BlitTransDarkenZReadWritePtr = new BlitTransDarkenZReadWrite<unsigned short>((unsigned short)HalfbrightMask);
+		BlitTransLucent75ZReadWritePtr = new BlitTransLucent75ZReadWrite<unsigned short>((unsigned short const *)Translator, (unsigned short)QuarterbrightMask);
+		BlitTransLucent50ZReadWritePtr = new BlitTransLucent50ZReadWrite<unsigned short>((unsigned short const *)Translator, (unsigned short)HalfbrightMask);
+		BlitTransLucent25ZReadWritePtr = new BlitTransLucent25ZReadWrite<unsigned short>((unsigned short const *)Translator, (unsigned short)QuarterbrightMask);
+
+		BlitPlainXlatAlphaPtr = new BlitPlainXlatAlpha<unsigned short>((unsigned short const *)IntensityTranslator, IntensityLevels);
+		BlitTransXlatAlphaPtr = new BlitTransXlatAlpha<unsigned short>((unsigned short const *)IntensityTranslator, IntensityLevels);
+		BlitTransZRemapXlatAlphaPtr = new BlitTransZRemapXlatAlpha<unsigned short>(&RemapTable, (unsigned short const *)IntensityTranslator, IntensityLevels);
+		BlitTransLucent75AlphaPtr = new BlitTransLucent75Alpha<unsigned short>((unsigned short const *)IntensityTranslator, IntensityLevels, (unsigned short)QuarterbrightMask);
+		BlitTransLucent50AlphaPtr = new BlitTransLucent50Alpha<unsigned short>((unsigned short const *)IntensityTranslator, IntensityLevels, (unsigned short)HalfbrightMask);
+		BlitTransLucent25AlphaPtr = new BlitTransLucent25Alpha<unsigned short>((unsigned short const *)IntensityTranslator, IntensityLevels, (unsigned short)QuarterbrightMask);
+
+		BlitTransXlatWriteAlphaPtr = new BlitTransXlatWriteAlpha<unsigned short>();
+		BlitTransXlatMultWriteAlphaPtr = new BlitTransXlatMultWriteAlpha<unsigned short>();
+		BlitTranslucentWriteAlphaPtr = new BlitTranslucentWriteAlpha<unsigned short>((unsigned short const *)IntensityTranslator);
+		BlitTranslucent50NonzeroAlphaPtr = new BlitTranslucent50NonzeroAlpha<unsigned short>((unsigned short const *)Translator, (unsigned short)HalfbrightMask);
+		BlitTranslucent50ZeroAlphaPtr = new BlitTranslucent50ZeroAlpha<unsigned short>((unsigned short const *)Translator, (unsigned short)HalfbrightMask);
+
+		BlitPlainXlatAlphaZReadPtr = new BlitPlainXlatAlpha<unsigned short>((unsigned short const *)IntensityTranslator, IntensityLevels);
+		BlitTransXlatAlphaZReadPtr = new BlitTransXlatAlphaZRead<unsigned short>((unsigned short const *)IntensityTranslator, IntensityLevels);
+		BlitTransZRemapXlatAlphaZReadPtr = new BlitTransZRemapXlatAlphaZRead<unsigned short>(&RemapTable, (unsigned short const *)IntensityTranslator, IntensityLevels);
+		BlitTransLucent75AlphaZReadPtr = new BlitTransLucent75AlphaZRead<unsigned short>((unsigned short const *)IntensityTranslator, IntensityLevels, (unsigned short)QuarterbrightMask);
+		BlitTransLucent50AlphaZReadPtr = new BlitTransLucent50AlphaZRead<unsigned short>((unsigned short const *)IntensityTranslator, IntensityLevels, (unsigned short)HalfbrightMask);
+		BlitTransLucent25AlphaZReadPtr = new BlitTransLucent25AlphaZRead<unsigned short>((unsigned short const *)IntensityTranslator, IntensityLevels, (unsigned short)QuarterbrightMask);
+		BlitTransLucent75AlphaZReadWarpPtr = new BlitTransLucent75AlphaZReadWarp<unsigned short>((unsigned short const *)IntensityTranslator, IntensityLevels, (unsigned short)QuarterbrightMask);
+		BlitTransLucent50AlphaZReadWarpPtr = new BlitTransLucent50AlphaZReadWarp<unsigned short>((unsigned short const *)IntensityTranslator, IntensityLevels, (unsigned short)HalfbrightMask);
+		BlitTransLucent25AlphaZReadWarpPtr = new BlitTransLucent25AlphaZReadWarp<unsigned short>((unsigned short const *)IntensityTranslator, IntensityLevels, (unsigned short)QuarterbrightMask);
+
+		BlitPlainXlatAlphaZReadWritePtr = new BlitPlainXlatAlpha<unsigned short>((unsigned short const *)IntensityTranslator, IntensityLevels);
+		BlitTransXlatAlphaZReadWritePtr = new BlitTransXlatAlphaZReadWrite<unsigned short>((unsigned short const *)IntensityTranslator, IntensityLevels);
+		BlitTransZRemapXlatAlphaZReadWritePtr = new BlitTransZRemapXlatAlphaZReadWrite<unsigned short>(&RemapTable, (unsigned short const *)IntensityTranslator, IntensityLevels);
+		BlitTransLucent75AlphaZReadWritePtr = new BlitTransLucent75AlphaZReadWrite<unsigned short>((unsigned short const *)IntensityTranslator, IntensityLevels, (unsigned short)QuarterbrightMask);
+		BlitTransLucent50AlphaZReadWritePtr = new BlitTransLucent50AlphaZReadWrite<unsigned short>((unsigned short const *)IntensityTranslator, IntensityLevels, (unsigned short)HalfbrightMask);
+		BlitTransLucent25AlphaZReadWritePtr = new BlitTransLucent25AlphaZReadWrite<unsigned short>((unsigned short const *)IntensityTranslator, IntensityLevels, (unsigned short)QuarterbrightMask);
+
+		RLETransBlitter = new RLEBlitTransXlat<unsigned short>((unsigned short const *)Translator);
+		RLERemapBlitter = new RLEBlitTransZRemapXlat<unsigned short>(&RemapTable, (unsigned short const *)Translator);
+		RLEShadowBlitter = new RLEBlitTransDarken<unsigned short>((unsigned short)HalfbrightMask);
+		RLETranslucent1Blitter = new RLEBlitTransLucent75<unsigned short>((unsigned short const *)Translator, (unsigned short)QuarterbrightMask);
+		RLETranslucent2Blitter = new RLEBlitTransLucent50<unsigned short>((unsigned short const *)Translator, (unsigned short)HalfbrightMask);
+		RLETranslucent3Blitter = new RLEBlitTransLucent25<unsigned short>((unsigned short const *)Translator, (unsigned short)QuarterbrightMask);
+
+		RLEBlitTransXlatZReadPtr = new RLEBlitTransXlatZRead<unsigned short>((unsigned short const *)Translator);
+		RLEBlitTransZRemapXlatZReadPtr = new RLEBlitTransZRemapXlatZRead<unsigned short>(&RemapTable, (unsigned short const*)Translator);
+		RLEBlitTransDarkenZReadPtr = new RLEBlitTransDarkenZRead<unsigned short>((unsigned short)HalfbrightMask);
+		RLEBlitTransLucent75ZReadPtr = new RLEBlitTransLucent75ZRead<unsigned short>((unsigned short const *)Translator, (unsigned short)QuarterbrightMask);
+		RLEBlitTransLucent50ZReadPtr = new RLEBlitTransLucent50ZRead<unsigned short>((unsigned short const *)Translator, (unsigned short)HalfbrightMask);
+		RLEBlitTransLucent25ZReadPtr = new RLEBlitTransLucent25ZRead<unsigned short>((unsigned short const *)Translator, (unsigned short)QuarterbrightMask);
+		RLEBlitTransLucent75ZReadWarpPtr = new RLEBlitTransLucent75ZReadWarp<unsigned short>((unsigned short const *)Translator, (unsigned short)QuarterbrightMask);
+		RLEBlitTransLucent50ZReadWarpPtr = new RLEBlitTransLucent50ZReadWarp<unsigned short>((unsigned short const *)Translator, (unsigned short)HalfbrightMask);
+		RLEBlitTransLucent25ZReadWarpPtr = new RLEBlitTransLucent25ZReadWarp<unsigned short>((unsigned short const *)Translator, (unsigned short)QuarterbrightMask);
+
+		RLEBlitTransXlatZReadWritePtr = new RLEBlitTransXlatZReadWrite<unsigned short>((unsigned short const *)Translator);
+		RLEBlitTransZRemapXlatZReadWritePtr = new RLEBlitTransZRemapXlatZReadWrite<unsigned short>(&RemapTable, (unsigned short const*)Translator);
+		RLEBlitTransDarkenZReadWritePtr = new RLEBlitTransDarkenZReadWrite<unsigned short>((unsigned short)HalfbrightMask);
+		RLEBlitTransLucent75ZReadWritePtr = new RLEBlitTransLucent75ZReadWrite<unsigned short>((unsigned short const *)Translator, (unsigned short)QuarterbrightMask);
+		RLEBlitTransLucent50ZReadWritePtr = new RLEBlitTransLucent50ZReadWrite<unsigned short>((unsigned short const *)Translator, (unsigned short)HalfbrightMask);
+		RLEBlitTransLucent25ZReadWritePtr = new RLEBlitTransLucent25ZReadWrite<unsigned short>((unsigned short const *)Translator, (unsigned short)QuarterbrightMask);
+
+		RLEBlitTransXlatAlphaPtr = new RLEBlitTransXlatAlpha<unsigned short>((unsigned short const *)IntensityTranslator, IntensityLevels);
+		RLEBlitTransZRemapXlatAlphaPtr = new RLEBlitTransZRemapXlatAlpha<unsigned short>(&RemapTable, (unsigned short const *)IntensityTranslator, IntensityLevels);
+		RLEBlitTransLucent75AlphaPtr = new RLEBlitTransLucent75Alpha<unsigned short>((unsigned short const *)IntensityTranslator, IntensityLevels, (unsigned short)QuarterbrightMask);
+		RLEBlitTransLucent50AlphaPtr = new RLEBlitTransLucent50Alpha<unsigned short>((unsigned short const *)IntensityTranslator, IntensityLevels, (unsigned short)HalfbrightMask);
+		RLEBlitTransLucent25AlphaPtr = new RLEBlitTransLucent25Alpha<unsigned short>((unsigned short const *)IntensityTranslator, IntensityLevels, (unsigned short)QuarterbrightMask);
+
+		RLEBlitTransXlatAlphaZReadPtr = new RLEBlitTransXlatAlphaZRead<unsigned short>((unsigned short const *)IntensityTranslator, IntensityLevels);
+		RLEBlitTransZRemapXlatAlphaZReadPtr = new RLEBlitTransZRemapXlatAlphaZRead<unsigned short>(&RemapTable, (unsigned short const *)IntensityTranslator, IntensityLevels);
+		RLEBlitTransLucent75AlphaZReadPtr = new RLEBlitTransLucent75AlphaZRead<unsigned short>((unsigned short const *)IntensityTranslator, IntensityLevels, (unsigned short)QuarterbrightMask);
+		RLEBlitTransLucent50AlphaZReadPtr = new RLEBlitTransLucent50AlphaZRead<unsigned short>((unsigned short const *)IntensityTranslator, IntensityLevels, (unsigned short)HalfbrightMask);
+		RLEBlitTransLucent25AlphaZReadPtr = new RLEBlitTransLucent25AlphaZRead<unsigned short>((unsigned short const *)IntensityTranslator, IntensityLevels, (unsigned short)QuarterbrightMask);
+		RLEBlitTransLucent75AlphaZReadWarpPtr = new RLEBlitTransLucent75AlphaZReadWarp<unsigned short>((unsigned short const *)IntensityTranslator, IntensityLevels, (unsigned short)QuarterbrightMask);
+		RLEBlitTransLucent50AlphaZReadWarpPtr = new RLEBlitTransLucent50AlphaZReadWarp<unsigned short>((unsigned short const *)IntensityTranslator, IntensityLevels, (unsigned short)HalfbrightMask);
+		RLEBlitTransLucent25AlphaZReadWarpPtr = new RLEBlitTransLucent25AlphaZReadWarp<unsigned short>((unsigned short const *)IntensityTranslator, IntensityLevels, (unsigned short)QuarterbrightMask);
+
+		RLEBlitTransXlatAlphaZReadWritePtr = new RLEBlitTransXlatAlphaZReadWrite<unsigned short>((unsigned short const *)IntensityTranslator, IntensityLevels);
+		RLEBlitTransZRemapXlatAlphaZReadWritePtr = new RLEBlitTransZRemapXlatAlphaZReadWrite<unsigned short>(&RemapTable, (unsigned short const *)IntensityTranslator, IntensityLevels);
+		RLEBlitTransLucent75AlphaZReadWritePtr = new RLEBlitTransLucent75AlphaZReadWrite<unsigned short>((unsigned short const *)IntensityTranslator, IntensityLevels, (unsigned short)QuarterbrightMask);
+		RLEBlitTransLucent50AlphaZReadWritePtr = new RLEBlitTransLucent50AlphaZReadWrite<unsigned short>((unsigned short const *)IntensityTranslator, IntensityLevels, (unsigned short)HalfbrightMask);
+		RLEBlitTransLucent25AlphaZReadWritePtr = new RLEBlitTransLucent25AlphaZReadWrite<unsigned short>((unsigned short const *)IntensityTranslator, IntensityLevels, (unsigned short)QuarterbrightMask);
+	}
 }
 
 // FUNCTION: GAMEMD 0x00490400

@@ -2386,6 +2386,306 @@ void TechnoClass::Set_Owner(HouseClass * newowner)
 	IsOwnedByPlayer = (newowner == PlayerPtr && PlayerPtr != NULL);
 }
 
+static inline void Stop_Drain(TechnoClass * drainer);
+
+// FUNCTION: GAMEMD 0x00701900
+ResultType TechnoClass::Take_Damage(int & damage, int distance, WarheadTypeClass const * warhead, TechnoClass * source, bool forced, bool no_crew, HouseClass * house)
+{
+	bool negative = damage < 0;
+
+	if (!forced && !negative) {
+		damage = (int)((double)damage / (House->GetArmorMultiplier(Techno_Type_Class()) * ArmorBias));
+		if (Has_Ability(ABILITY_STRONGER)) {
+			damage = (int)(damage / Rule->VeteranArmor);
+		}
+		if (damage < 1) {
+			damage = 1;
+		}
+		if (source != NULL) {
+			if (Techno_Type_Class()->IsTypeImmune) {
+				if (Techno_Type_Class() == source->Techno_Type_Class() && House == source->House) {
+					return(RESULT_NONE);
+				}
+			}
+		}
+	}
+
+	if (IsIronCurtained() && !forced && !negative) {
+		if (ForceShielded == 1) {
+			Combat_Lighting(Position, damage * 2, warhead, true, 6);
+		} else {
+			Combat_Lighting(Position, damage * 2, warhead, true, 1);
+		}
+		damage = 0;
+		return(RESULT_NONE);
+	}
+
+	if (IsBeingWarpedOut() && !forced) {
+		damage = 0;
+		return(RESULT_NONE);
+	}
+
+	if (Techno_Type_Class()->DamageReducesReadiness) {
+		double ratio = (double)damage / Techno_Type_Class()->MaxStrength * Techno_Type_Class()->ReadinessReductionMultiplier;
+		Ammo = (int)(Ammo - Techno_Type_Class()->MaxAmmo * ratio);
+		if (Ammo < 0) {
+			Ammo = 0;
+		}
+		StartReloading();
+	}
+
+	if (BunkerLinkedItem != NULL && !forced) {
+		if (Fetch_RTTI() == RTTI_BUILDING) {
+			if (warhead != NULL && warhead->PenetratesBunker) {
+				damage = 0;
+				return(RESULT_NONE);
+			}
+		} else if (warhead != NULL && !warhead->PenetratesBunker && Get_Cell_Ptr()->Cell_Building() == BunkerLinkedItem) {
+			damage = 0;
+			return(RESULT_NONE);
+		}
+	}
+
+	if (warhead != NULL) {
+		if (warhead->Radiation && Techno_Type_Class()->ImmuneToRadiation) {
+			damage = 0;
+			return(RESULT_NONE);
+		}
+		if (warhead->PsychicDamage && Techno_Type_Class()->ImmuneToPsionicWeapons) {
+			damage = 0;
+			return(RESULT_NONE);
+		}
+		if (warhead->Poison && Techno_Type_Class()->ImmuneToPoison) {
+			damage = 0;
+			return(RESULT_NONE);
+		}
+		if (!warhead->AffectsAllies && source != NULL && source->House->Is_Ally(House)) {
+			damage = 0;
+			return(RESULT_NONE);
+		}
+		if (warhead->Psychedelic) {
+			if (House->Is_Ally(house)) {
+				return(RESULT_NONE);
+			}
+			if (Techno_Type_Class()->ImmuneToPsionics) {
+				return(RESULT_NONE);
+			}
+			if (this != NULL && Fetch_RTTI() == RTTI_BUILDING) {
+				return(RESULT_NONE);
+			}
+			BerzerkDurationLeft = damage = Modify_Damage(damage, warhead, Class_Of()->Armor, 0);
+			if (!Berzerk) {
+				Berzerk = true;
+				if (this != NULL && (AbstractFlags & 4)) {
+					((FootClass *)this)->Remove_From_Team();
+				}
+				Assign_Target(NULL);
+				QueueMission(MISSION_HUNT, false);
+			}
+			return(RESULT_LIGHT);
+		}
+	}
+
+	ResultType result = ObjectClass::Take_Damage(damage, distance, warhead, source, forced, no_crew, house);
+
+	if (source != NULL) {
+		House->Add_Anger((int)(Techno_Type_Class()->Raw_Cost() * ((double)damage / Techno_Type_Class()->MaxStrength)), source->House);
+	}
+
+	if (result == RESULT_DESTROYED && Fetch_RTTI() == RTTI_BUILDING && warhead != NULL && warhead->CausesDelayKill) {
+		BuildingClass * building = (this == NULL) ? NULL : Building_If_Building(this);
+		if (building->Class->EligibleForDelayKill) {
+			int frames = warhead->DelayKillFrames;
+			int delay = (int)(frames + (warhead->DelayKillAtMax * (double)frames - frames) / (double)((int)warhead->SpreadFactor * CELL_LEPTON) * distance);
+			if (!building->IsGoingToBlow || delay < building->CountDown) {
+				building->IsGoingToBlow = true;
+				building->CountDown = delay;
+			}
+			IsActive = true;
+			Strength = 1;
+			result = RESULT_ALREADY_DESTROYED;
+		}
+	}
+
+	if (result == RESULT_ALREADY_DESTROYED) {
+		return(RESULT_ALREADY_DESTROYED);
+	}
+
+	if (result != RESULT_NONE) {
+		RadarFlashTimer = Rule->RadarCombatFlashTime;
+	}
+
+	if (result != RESULT_NONE && result != RESULT_DESTROYED && Techno_Type_Class()->CanDisguise && !Techno_Type_Class()->PermaDisguise) {
+		if (IsDisguised()) {
+			ClearDisguise();
+		}
+		InfantryBlinkTimer = damage * 2;
+	}
+
+	if (Strength == 0) {
+		result = RESULT_DESTROYED;
+	}
+
+	switch (result) {
+		case RESULT_DESTROYED:
+			if (SlaveManager != NULL) {
+				SlaveManager->Killed(source);
+			}
+			if (DrainTarget != NULL) {
+				Stop_Drain(this);
+			}
+			if (DrainingMe != NULL) {
+				Stop_Drain(DrainingMe);
+			}
+			if (CaptureManager != NULL) {
+				CaptureManager->FreeAll();
+			}
+
+			if (Techno_Type_Class()->VoiceDie.Count() > 0 && House->Is_Player_Control()) {
+				VocClass::PlayAt(Techno_Type_Class()->VoiceDie.Pick(NonCriticalRandomNumber()), PositionCoord);
+			}
+			if (Techno_Type_Class()->DieSound.Count() > 0) {
+				VocClass::PlayAt(Techno_Type_Class()->DieSound.Pick(NonCriticalRandomNumber()), PositionCoord);
+			}
+
+			SendToEachLink(RADIO_OVER_OUT);
+			Stun();
+
+			if (ParticleSystems[0] != NULL) {
+				ParticleSystems[0]->Delete_Me();
+				ParticleSystems[0] = NULL;
+			}
+
+			if (!(HeightAGL <= 10 && IsToExplode && Map[Get_Coord()].Land_Type() == LAND_WATER)) {
+				if (Techno_Type_Class()->MaxDebris > 0) {
+					int remaining = Random_Pick(Techno_Type_Class()->MinDebris, Techno_Type_Class()->MaxDebris - 1);
+					if (Techno_Type_Class()->DebrisTypes.Count() > 0) {
+						int index = 0;
+						while (remaining > 0) {
+							int count = abs((int)Scen->RandomNumber) % (Techno_Type_Class()->DebrisMaximums[index] + 1);
+							if (count >= remaining) {
+								count = remaining;
+							}
+							for (int j = 0; j < count; j++) {
+								new VoxelAnimClass(Techno_Type_Class()->DebrisTypes[index], Center_Coord(), House);
+							}
+							remaining -= count;
+							index++;
+							if (index >= Techno_Type_Class()->DebrisTypes.Count()) {
+								index = 0;
+							}
+						}
+					}
+					if (Techno_Type_Class()->DebrisAnims.Count() > 0) {
+						for (int i = 0; i < remaining; i++) {
+							new AnimClass(Techno_Type_Class()->DebrisAnims[Random_Pick(0, Techno_Type_Class()->DebrisAnims.Count() - 1)], Center_Coord() + Coord(0, 0, 20), 0, 1, ShapeFlags_Type(0x600), 0, false);
+						}
+					} else if (Techno_Type_Class()->DebrisTypes.Count() == 0) {
+						for (int i = 0; i < remaining; i++) {
+							new AnimClass(Rule->MetallicDebris[Random_Pick(0, Rule->MetallicDebris.Count() - 1)], Center_Coord() + Coord(0, 0, 20), 0, 1, ShapeFlags_Type(0x600), 0, false);
+						}
+					}
+				}
+
+				WeaponTypeClass const * weapon = Get_Class_Weapon_Data(CurrentWeaponNumber)->Weapon;
+				if (Techno_Type_Class()->IsExploding || Has_Ability(ABILITY_EXPLODES) || (weapon != NULL && weapon->Suicide)) {
+					Kill_Cargo(source);
+					FireDeathWeapon(0);
+				}
+			}
+
+			if (AttachedBomb != NULL) {
+				AttachedBomb->Detonate();
+			}
+			break;
+
+		case RESULT_HALF: {
+			TechnoTypeClass const * ttype = Techno_Type_Class();
+			if (ttype->VoiceFeedback.Count() > 0 && NonCriticalRandomNumber(0, 99) < 30 && House->Is_Player_Control()) {
+				int pick = NonCriticalRandomNumber();
+				VocClass::PlayAt(ttype->VoiceFeedback.Pick(pick), Center_Coord());
+			}
+			break;
+		}
+
+		case RESULT_NONE:
+			break;
+
+		case RESULT_MAJOR:
+			break;
+
+		default:
+			if (Techno_Type_Class()->DamageSound != -1) {
+				VocClass::PlayIndexAtPos(Techno_Type_Class()->DamageSound, PositionCoord, 0);
+			}
+			if (Techno_Type_Class()->DamageSound != -1) {
+				VocClass::PlayIndexAtPos(Techno_Type_Class()->DamageSound, PositionCoord, 0);
+			}
+			if ((Techno_Type_Class()->IsToProtect || unknown_bool_3CF) && !House->FUN_0050B730()) {
+				if (source != NULL) {
+					Base_Is_Attacked(source);
+				}
+			}
+			break;
+	}
+
+	if (result != RESULT_DESTROYED) {
+		if (source != NULL) {
+			if (!House->Is_Ally(source)) {
+				IsTickedOff = true;
+			}
+		}
+		Do_Shimmer();
+
+		if (HealthRatio > Rule->ConditionYellow) {
+			if (ParticleSystems[3] != NULL) {
+				ParticleSystems[3]->Delete_Me();
+			}
+		} else if (result == RESULT_HALF || result == RESULT_MAJOR) {
+			DynamicVectorClass<ParticleSystemTypeClass const *> systems;
+
+			for (int index = Techno_Type_Class()->DamageParticleSystems.Count() - 1; index >= 0; index--) {
+				if (Techno_Type_Class()->DamageParticleSystems[index]->BehavesLike == 0) {
+					systems.Add(Techno_Type_Class()->DamageParticleSystems[index]);
+				}
+			}
+
+			if (ParticleSystems[3] == NULL && systems.Count() > 0 && HeightAGL > -10) {
+				Coord spawn = Techno_Type_Class()->GetParticleSysOffset();
+				ParticleSystems[3] = new ParticleSystemClass(systems[Scen->RandomNumber(0, systems.Count() - 1)], PositionCoord + spawn, NULL, this, COORD_NONE, NULL);
+			}
+		}
+
+		if (!negative) {
+			if (CanRetaliateToAttacker(source, (WarheadTypeClass *)warhead)) {
+				if (source != NULL) {
+					int which = What_Weapon_Should_I_Use(source);
+					if (In_Range(source, which) || !House->FUN_0050B730() || (double)Distance_To(source) <= ((double)Techno_Type_Class()->SightRange + 0.5) * CELL_LEPTON) {
+						Override_Mission(MISSION_ATTACK, source, NULL);
+					}
+				}
+
+				if (this != NULL && (AbstractFlags & 4)) {
+					FootClass * foot = (FootClass *)this;
+					if (TarCom == NULL && foot->NavCom == NULL) {
+						if (Rule->IsScatter || Has_Ability(ABILITY_SCATTER)) {
+							Scatter(COORD_NONE, true, false);
+						}
+					}
+				}
+			} else if (this != NULL && (AbstractFlags & 4)) {
+				FootClass * foot = (FootClass *)this;
+				if (Current_Mission_Control().IsScatter && !IsTethered && !foot->Locomotion->Is_Moving() && TarCom == NULL && foot->NavCom == NULL && Fetch_RTTI() != RTTI_AIRCRAFT) {
+					if (!House->FUN_0050B730() || Rule->IsScatter || Has_Ability(ABILITY_SCATTER)) {
+						Scatter(COORD_NONE, true, false);
+					}
+				}
+			}
+		}
+	}
+	return(result);
+}
+
 namespace Unsorted { extern bool ArmageddonMode; }
 
 // FUNCTION: GAMEMD 0x00702D40

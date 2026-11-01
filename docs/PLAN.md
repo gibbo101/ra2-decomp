@@ -1,6 +1,6 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 30 October 2026: 18,140 of 19,367 game functions match (94%; 67% of game code
+Status, 1 November 2026: 18,147 of 19,367 game functions match (94%; 68% of game code
 by size), landed in batches module by module. The rounds below record each one.
 
 ## The goal
@@ -1113,6 +1113,18 @@ Session.Players. Recording then exposed three UI-command functions building char
 ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; their RTTI
 fixed them. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
+
+### Batches 150 and 151 (1 November 2026)
+
+**7 of 16**, Opus on the smallest untried function of 1.5 KB or more in 16 modules, 2.6 to
+6.7 KB: ConvertClass::Create_Blitters, Select_Game, map's 6 KB initialiser `_$E221`,
+MapGeneratorClass::Seed_River, TechnoClass::Take_Damage (on the third-tier retry),
+UnitClass::Per_Cell_Process and wonline's 0x007A7110. Headers: MovieUnlockableInfo moved to
+its own movieunlock.h (options.cpp and init.cpp held identical copies),
+TechnoTypeClass::ReadinessReductionMultiplier became a float (Read_INI stores it with
+`fstp dword`), and Grow_Region's height an int. names.csv gained Tubes and
+UnitCompositeDirtyRect. Building, bullet, cell, drive, dsurface, ownrdraw, rules, ship and
+stats stay banked. Merge gate: 18,147 of 18,147 (2,516.7 KB).
 
 ### Batches 147 to 149 (30 October 2026)
 

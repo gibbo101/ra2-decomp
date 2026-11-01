@@ -38,8 +38,6 @@
 #include <wchar.h>
 #include "stringtable.h"
 
-extern COLORREF ODColorText;
-extern COLORREF ODColorTextDim;
 HWND WS_Find_Dialog(int id);
 HWND FUN_00775B10(void);
 rc_ptr<PlayerProfile> __fastcall FUN_00778710(void);
@@ -560,21 +558,22 @@ void FUN_0077D710(void)
 	FUN_0077F900();
 }
 
-struct HostEntry {
-	char Pad[0x18];
-	unsigned long Address;
+struct SquadEntry {
+	char Pad[0x168];
+	char Name[0x29];
+	char Abbreviation[0x29];
 };
 
 unsigned long __stdcall FUN_007C896E(unsigned long value);
 
 // FUNCTION: GAMEMD 0x0077D720
-IPXAddressClass __fastcall FUN_0077D720(HostEntry * host)
+IPXAddressClass __fastcall FUN_0077D720(User * user)
 {
 	NetNumType netnum;
 	NetNodeType net;
 	memset(&netnum, 0, sizeof(netnum));
 	memset(&net, 0, sizeof(net));
-	unsigned int ip_addr = FUN_007C896E(host->Address);
+	unsigned int ip_addr = FUN_007C896E(user->IPAddr);
 	net[3] = ip_addr & 0xff;
 	net[2] = (ip_addr >> 8) & 0xff;
 	net[1] = (ip_addr >> 16) & 0xff;
@@ -822,7 +821,7 @@ struct ChatSink {
 	virtual long __stdcall V41(char const * name, char const * value);
 	virtual long __stdcall V42(char * info);
 	virtual void V43(void);
-	virtual void V44(void);
+	virtual long __stdcall V44(unsigned long squad);
 	virtual void V45(void);
 	virtual long __stdcall V46(int locale);
 	virtual long __stdcall V47(User * users);
@@ -8828,12 +8827,6 @@ long __stdcall FUN_007A4C10(void * sink, long result, UpdateEntry * updates)
 	return 0;
 }
 
-struct SquadEntry {
-	char Pad[0x168];
-	char Name[0x29];
-	char Abbreviation[0x29];
-};
-
 // FUNCTION: GAMEMD 0x007A4EC0
 long __stdcall FUN_007A4EC0(void * sink, long result, unsigned long id, SquadEntry * squad)
 {
@@ -9010,6 +9003,192 @@ extern char DAT_0084AFDC[];
 static inline bool Is_Internal_Session(void)
 {
 	return Session.unknown_0C == 3 || Session.unknown_0C == 1 || Session.unknown_0C == 2;
+}
+
+extern int DAT_00AC1178;
+void __fastcall FUN_005EDDE0(HWND dialog, bool enable);
+void FUN_005E9850(void);
+
+// FUNCTION: GAMEMD 0x007A7110
+long __stdcall FUN_007A7110(void * sink, long result, void * channel, User * users)
+{
+	if (DAT_00B77DC1) {
+		return 0;
+	}
+
+	static char keys[512];
+	memset(keys, 0, sizeof(keys));
+	Wstring ladder_name;
+
+	if (result < 0) {
+		return 0;
+	}
+
+	SendDlgItemMessage(FUN_00775B10(), 0x53E, LB_RESETCONTENT, 0, 0);
+	DAT_00B77900.clear();
+
+	unsigned int flags;
+	int batch_count = 0;
+	int user_count = 0;
+	bool saw_owner = false;
+
+	while (users != NULL) {
+		user_count++;
+
+		if (users->Squad != 0 && strlen(users->Abbrev) == 0) {
+			DAT_00B77DDC++;
+			DAT_00AC116C->V44(users->Squad);
+		} else if (DAT_00AC1170 && users->Squad != 0 && strlen(users->Abbrev) != 0) {
+			Wstring abbrev(users->Abbrev);
+			abbrev.toLower();
+			if (!DAT_00B768C0.contains(abbrev)) {
+				DAT_00AC1170->V05(DAT_00B761A8, DAT_00B77A90, users->Abbrev, 0x802100, -1, 0, 0);
+			}
+		}
+
+		char name[128];
+		flags = users->Flags;
+		strcpy(name, users->Nick);
+		User copy = *users;
+		copy.Next = NULL;
+		if (DAT_00B76B10.Type == 0) {
+			FUN_00783070(&copy);
+		} else {
+			DAT_00B77900.addTail(copy);
+		}
+
+		if (flags & 1) {
+			saw_owner = true;
+		}
+
+		ladder_name.set(users->Nick);
+		ladder_name.toLower();
+
+		if (Session.Type == GAME_INTERNET && Session.unknown_0C == 3) {
+			if (!DAT_00B76680.contains(ladder_name)) {
+				DAT_00B777A0.addHead(ladder_name);
+			}
+		}
+
+		if (!DAT_00B76530.contains(ladder_name)) {
+			DAT_00B765F8.addHead(ladder_name);
+		}
+
+		if (!DAT_00B77E0C->contains(ladder_name) && user_count < 100) {
+			ladder_name.set(users->Nick);
+			ladder_name.toLower();
+			strcat(keys, ladder_name.get());
+			strcat(keys, ":");
+			batch_count++;
+		}
+
+		if (batch_count > 20) {
+			DAT_00AC1170->V05(DAT_00B761A8, DAT_00B77A90, keys, DAT_0084A234 & 0xFFFF00, -1, 0, 0);
+			DAT_00AC1170->V14(DAT_00B761A8, DAT_00B77A90, keys, DAT_0084A234 & 0xFFFF00);
+			batch_count = 0;
+			memset(keys, 0, sizeof(keys));
+		}
+
+		if (DAT_00B76B10.Type != 0 && !DAT_00B77E4C) {
+			Wstring nick(users->Nick);
+			int index = FUN_0077D240(&nick);
+			memset(&DAT_00B76E40[index * 0x94], 0, 0x94);
+			strcpy(&DAT_00B76E40[index * 0x94], users->Nick);
+			if (stricmp(users->Nick, DAT_00B73E40.get()) != 0) {
+				if (Session.Players.Count() == 1) {
+					wcscpy(Session.GameName, FUN_00735120(users->Nick));
+				}
+				NodeNameType * node = new NodeNameType;
+				memset(node, 0, sizeof(NodeNameType));
+				WideWstring wide = Widen(users->Nick);
+				wcscpy(node->Name, wide.get());
+				node->Address = FUN_0077D720(users);
+				node->Set_Country(-2);
+				node->Set_Color(-2);
+				node->Set_Start(-2);
+				node->Set_Team(-2);
+				Session.Players.Add(node);
+			}
+		}
+
+		users = users->Next;
+	}
+
+	if (strlen(keys)) {
+		DAT_00AC1170->V05(DAT_00B761A8, DAT_00B77A90, keys, DAT_0084A234 & 0xFFFF00, -1, 0, 0);
+		DAT_00AC1170->V14(DAT_00B761A8, DAT_00B77A90, keys, DAT_0084A234 & 0xFFFF00);
+	}
+
+	if (DAT_00B76B10.Type != 0) {
+		if (!saw_owner) {
+			User user;
+			for (int i = 0; i < DAT_00B77900.length(); i++) {
+				if (DAT_00B77900.get(user, i) && stricmp(user.Nick, DAT_00B73E40.get()) == 0) {
+					FUN_00785740(&user);
+					break;
+				}
+			}
+		}
+
+		if (DAT_00B76B10.Type != 0) {
+			if (!DAT_00B77E4C && DAT_00B77900.length() == 1 && stricmp(users->Nick, DAT_00B73E40.get()) == 0) {
+				FUN_00785740(users);
+			}
+
+			if (DAT_00B76B10.Type != 0) {
+				DAT_00AC1178 = 1;
+				if (!DAT_00B77E4C) {
+					HWND dialog = FUN_00775940(0xC9);
+					FUN_005EDDE0(dialog, true);
+				}
+				FUN_005E9850();
+
+				WOLOptionsClass options;
+				rc_ptr<PlayerProfile> profile;
+				if (options.Is_Bit1_Clear()) {
+					profile = FUN_00778A20(&DAT_00B73E40);
+				} else {
+					profile = DAT_00B75E48;
+				}
+				Session.FUN_0069B760(profile->Field1C, false);
+				Session.FUN_0069B7E0(profile->Field20, false);
+
+				if (Game::ObserverMode && !Is_Internal_Session()) {
+					Session.FUN_0069B760(-3, false);
+					Session.FUN_0069B7E0(-2, false);
+				}
+				if (!Game::ObserverMode && !Is_Internal_Session() && Session.FUN_0069B700() == -3) {
+					if (Session.Players.Count()) {
+						Session.FUN_0069B760(Session.Players[0]->Get_Country(), false);
+						Session.FUN_0069B7E0(Session.Players[0]->Get_Color(), false);
+					} else {
+						Session.FUN_0069B760(-2, false);
+						Session.FUN_0069B7E0(-2, false);
+					}
+				}
+
+				char buffer[128];
+				{
+					NetNumType net;
+					NetNodeType node;
+					unsigned short port;
+					Session.unknown_2988.Get_Address(net, node, &port);
+					sprintf(buffer, "R%d,%d,%d,%d,%x,%x,%x", Session.FUN_0069B700(), Session.FUN_0069B720(), -2, -2, *(int *)node, (unsigned short)DAT_00ABFEC8.Detected, Session.PortBase);
+				}
+				FUN_004068E0("Sending private game options (%s)\n", buffer);
+				User host;
+				if (DAT_00B77900.getHead(host)) {
+					DAT_00AC116C->V14(&host, buffer);
+				}
+			}
+		}
+	}
+
+	if (Is_Internal_Session() && DAT_00B76B10.Type == 0 && !FUN_007A0690()) {
+		SetEvent(DAT_00B73684[5]);
+	}
+	FUN_00783C80(0, false);
+	return 0;
 }
 
 // FUNCTION: GAMEMD 0x007A8DA0

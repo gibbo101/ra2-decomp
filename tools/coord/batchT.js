@@ -116,7 +116,7 @@ if (requests.length) {
     `order with its // FUNCTION: GAMEMD marker (or TEMPLATE/SYNTHETIC), and keep it only if it prints MATCH. Delete a banked file once its ` +
     `function lands. Leave every other file in build/batch/ alone, including overlays from earlier batches: ` +
     `a banked attempt still needs its overlay.\n` +
-    `3. Run uv run tools/checkall.py, but first check with pgrep -f 'tools/checkall.py|tools/refaudit.py' that no other batch's checkall or refaudit is running, and wait for it if one is: two at once overwrite each other's output and can hang Wine's compiler. No regressions against data/progress.csv are allowed. Do not run --record ` +
+    `3. Run uv run tools/checkall.py, but first check with ps -eo args= | grep -v -e bash -e grep | grep -E 'tools/(checkall|refaudit)[.]py' (pgrep -f also matches your own shell, whose command line holds the pattern) that no other batch's checkall or refaudit is running, and wait for it if one is: two at once overwrite each other's output and can hang Wine's compiler. No regressions against data/progress.csv are allowed. Do not run --record ` +
     `and do not edit data/; the coordinator records. Then, after your checkall has finished, run uv run tools/refaudit.py: for any symbol it lists that ` +
     `is one real object (not per-file constant copies, overloads, template instances or function-local statics), fix ` +
     `the offset error and report its address and evidence so the coordinator can add a data/names.csv row.\n` +

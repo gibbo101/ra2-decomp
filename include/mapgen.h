@@ -299,7 +299,7 @@ class MapGeneratorClass
 		void Fixup_Cliff_Corners(void);
 		void Fixup_Cliff_Edges(void);
 		bool Expand_All_High_Ground(void);
-		bool Grow_Region(int id, int rings, Rect rect, char set_height, char height);
+		bool Grow_Region(int id, int rings, Rect rect, char set_height, int height);
 		bool Clear_Region_Border(int id, int rings, int new_id);
 		void Clear_Region_Cells(int id, int new_id, int cell_height, IsometricTileType ittype);
 		DynamicVectorClass<Cell> *Build_Region_Border_Cell_List(int id);
