@@ -6935,6 +6935,9 @@ address,name,result,size,source,symbol
 0x0053F0E0,IPXAddressClass::As_String,MATCH,258,src/ipxaddr.cpp,?As_String@IPXAddressClass@@QAEPBDPAV1@@Z
 0x0053F1F0,FUN_0053F1F0,MATCH,7,src/ipxaddr.cpp,?FUN_0053F1F0@@YIXH@Z
 0x0053F200,IPXAddressClass::Set_Port,MATCH,20,src/ipxaddr.cpp,?Set_Port@IPXAddressClass@@QAEXG@Z
+0x0053E1D0,FUN_0053E1D0,MATCH,488,src/ipxaddr.cpp,?FUN_0053E1D0@@YIXXZ
+0x0053DE00,FUN_0053DE00,MATCH,609,src/ipxaddr.cpp,?FUN_0053DE00@@YIHHH@Z
+0x0053E070,FUN_0053E070,MATCH,344,src/ipxaddr.cpp,?FUN_0053E070@@YGKPAX@Z
 0x0053F220,_$E13,MATCH,23,src/ipxconn.cpp,_$E13
 0x0053F240,_$E21,MATCH,40,src/ipxconn.cpp,_$E21
 0x0053F270,_$E24,MATCH,19,src/ipxconn.cpp,_$E24

@@ -16,11 +16,9 @@
 // SYNTHETIC: GAMEMD 0x0053DDE0 SYMBOL
 // _$E2
 
-struct StreamRing {
-	unsigned int FUN_00409320(void);
-};
+#include "audio_stream.h"
 
-extern int __fastcall FUN_00409030(StreamRing * ring, FILE * file, int count, int * written);
+extern int __fastcall FUN_00409030(AudioPlayback * ring, FILE * file, int count, int * written);
 void __fastcall FUN_0053E5F0(void);
 void __fastcall FUN_0053E6B0(void);
 
@@ -30,9 +28,9 @@ extern int DAT_00AA0444;
 extern int DAT_00AA0448;
 extern int * DAT_00AA044C;
 extern int DAT_00AA0450;
-extern void * DAT_00AA045C;
-extern StreamRing * DAT_00AA0460;
-extern StreamRing * DAT_00AA0464;
+extern AudioBufferOwner * DAT_00AA045C;
+extern AudioPlayback * DAT_00AA0460;
+extern AudioPlayback * DAT_00AA0464;
 extern FILE * DAT_00AA0468;
 extern int DAT_00AA046C;
 extern int DAT_00AA0470;
@@ -50,7 +48,7 @@ extern int DAT_00AA0368;
 extern unsigned int DAT_00AA036C;
 extern int DAT_00AA0370;
 namespace Unsorted { extern int CurrentFrame; }
-extern void __fastcall FUN_00408EE0(StreamRing * ring, void * buffer, int count);
+extern int __fastcall FUN_00408EE0(AudioPlayback * ring, void * buffer, int count);
 
 struct MouseRecord {
 	int Frame;
@@ -544,4 +542,133 @@ void IPXAddressClass::Set_Port(unsigned short port)
 	if (DAT_00828140 == 2) {
 		*(unsigned short *)NetworkNumber = port;
 	}
+}
+
+extern AudioWorker DAT_00AA0378;
+extern HANDLE DAT_00AA03F8;
+extern int DAT_00AA0454;
+extern int DAT_00AA0458;
+
+// FUNCTION: GAMEMD 0x0053E1D0
+void __fastcall FUN_0053E1D0(void)
+{
+	FUN_0053E6B0();
+	FUN_0053E5F0();
+	if (DAT_00AA044C) {
+		delete [] DAT_00AA044C;
+		DAT_00AA044C = 0;
+	}
+	DAT_00AA0450 = 0;
+	if (DAT_00AA0458) {
+		DAT_00AA0378.Stop = 1;
+		while (!DAT_00AA0378.Finished) Sleep(0);
+		WaitForSingleObject(DAT_00AA03F8, 5000);
+		CloseHandle(DAT_00AA03F8);
+		DAT_00AA0458 = 0;
+	}
+	if (DAT_00AA0460) {
+		DAT_00AA0460->FUN_00408E70();
+		DAT_00AA0460 = 0;
+	}
+	if (DAT_00AA0464) {
+		DAT_00AA0464->FUN_00408E70();
+		DAT_00AA0464 = 0;
+	}
+	if (DAT_00AA045C) {
+		DAT_00AA045C->FUN_00408840();
+		DAT_00AA045C = 0;
+	}
+	if (DAT_00AA0454) {
+		DeleteCriticalSection(&DAT_00AA0418);
+		DeleteCriticalSection(&DAT_00AA0400);
+		DAT_00AA0454 = 0;
+	}
+	DAT_00AA0448 = 0;
+}
+
+
+extern DWORD DAT_00AA03FC;
+namespace Game { extern HWND hWnd; }
+DWORD WINAPI FUN_0053E070(void * context);
+void __cdecl FUN_004068E0(char const * format, ...);
+extern char DAT_0081628C[];
+
+// FUNCTION: GAMEMD 0x0053DE00
+int __fastcall FUN_0053DE00(int capacity, int size)
+{
+	char error[1024];
+	InitializeCriticalSection(&DAT_00AA0418);
+	InitializeCriticalSection(&DAT_00AA0400);
+	DAT_00AA0454 = 1;
+	if (capacity <= 0) goto failed;
+	if (size < 10240) size = 10240;
+	DAT_00AA044C = new int[capacity];
+	if (!DAT_00AA044C) goto failed;
+	memset(DAT_00AA044C, 0, capacity * sizeof(int));
+	DAT_00AA0450 = 0;
+	DAT_00AA0374 = capacity;
+	DAT_00AA0378.Stop = 0;
+	DAT_00AA0378.Finished = 0;
+	DAT_00AA0378.Running = 0;
+	DAT_00AA0378.Interval = 100;
+	DAT_00AA0378.Iterations = 0;
+	DAT_00AA0378.Timer.FUN_00403820();
+	DAT_00AA0378.Timer.FUN_00403870(DAT_00AA0378.Interval);
+	DAT_00AA0378.Timer.FUN_004038A0(DAT_00AA0378.Interval * 4);
+	DAT_00AA0378.Timer.FUN_004038C0(DAT_00AA0378.Interval * 4);
+	DAT_00AA03F8 = CreateThread(NULL, 4096, FUN_0053E070, &DAT_00AA0378, 0, &DAT_00AA03FC);
+	if (!DAT_00AA03F8) goto failed;
+	DAT_00AA0458 = 1;
+	if (!SetThreadPriority(DAT_00AA03F8, THREAD_PRIORITY_HIGHEST)) {
+		FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), 0, error, sizeof(error), NULL);
+		FUN_004068E0(DAT_0081628C, error);
+		goto failed;
+	}
+	DAT_00AA045C = FUN_004087F0();
+	if (!DAT_00AA045C) goto failed;
+	if (!DAT_00AA045C->FUN_00408B40(1, size, 0)) goto failed;
+	DAT_00AA045C->FUN_00408A70();
+	DAT_00AA0460 = DAT_00AA045C->FUN_00408C30(0);
+	DAT_00AA0464 = DAT_00AA045C->FUN_00408C30(1);
+	if (!DAT_00AA0460 || !DAT_00AA0464) goto failed;
+	DAT_00AA0448 = 1;
+	memset(DAT_00AA0168, 0, sizeof(DAT_00AA0168));
+	FUN_0053E3C0(Game::hWnd);
+	return 1;
+failed:
+	FUN_0053E1D0();
+	return 0;
+}
+
+#include "audio_clock.h"
+
+// FUNCTION: GAMEMD 0x0053E070
+DWORD WINAPI FUN_0053E070(void * context)
+{
+	AudioWorker * worker = (AudioWorker *)context;
+	worker->Running = 1;
+	worker->Finished = 0;
+	while (!worker->Stop) {
+		worker->Timer.FUN_00403920(Game::AudioGetTime());
+		AudioBufferOwner * owner = DAT_00AA045C;
+		if (DAT_00AA045C && DAT_00AA0444 && DAT_00AA0468) {
+			EnterCriticalSection(&DAT_00AA0418);
+			if (DAT_00AA0444 == 2 && owner->FUN_00408D30() < (unsigned int)owner->FUN_00408D50() / 2) {
+				if (DAT_00AA0460) {
+					int transferred;
+					if (FUN_00409030(DAT_00AA0460, DAT_00AA0468, owner->FUN_00408D40(), &transferred) != 1) DAT_00AA046C = 1;
+				}
+			} else if (DAT_00AA0444 == 1 && owner->FUN_00408D40() < (unsigned int)owner->FUN_00408D50() / 2) {
+				if (DAT_00AA0464) {
+					FUN_00409030(DAT_00AA0464, DAT_00AA0468, (unsigned int)owner->FUN_00408D50() / 2, 0);
+					fflush(DAT_00AA0468);
+				}
+			}
+			LeaveCriticalSection(&DAT_00AA0418);
+		}
+		Sleep((DWORD)worker->Interval);
+		++worker->Iterations;
+	}
+	worker->Finished = 1;
+	return 0;
 }
