@@ -202,7 +202,7 @@ class Tactical : public AbstractClass
 		void Noop(int);
 
 		int Selectable_Count(void);
-		static ObjectClass * __stdcall Selectable_Object(int index);
+		ObjectClass * Selectable_Object(int index);
 
 	public:
 		enum {

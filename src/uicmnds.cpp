@@ -63,6 +63,9 @@
 #include <mmsystem.h>
 #include <string.h>
 #include <math.h>
+#ifdef LoadString
+#undef LoadString
+#endif
 #include "stringtable.h"
 
 typedef DynamicVectorClass<TechnoClass *> TechnoList;
@@ -628,13 +631,6 @@ wchar_t * __fastcall FUN_00731D10(wchar_t * buffer)
 
 typedef DynamicVectorClass<ObjectClass *> ObjectList;
 
-class TacticalSelection
-{
-	public:
-		int Count(void);
-		ObjectClass * Get(int index);
-};
-extern TacticalSelection * TacticalSelectionInstance;
 extern bool DAT_00B0FE64;
 extern int DAT_00A8ECC8;
 unsigned char __fastcall FUN_007342C0(ObjectClass * object);
@@ -687,9 +683,9 @@ TechnoList * __fastcall FUN_00731EB0(bool (__fastcall * test)(TechnoClass *, int
 TechnoList * __fastcall FUN_00731F70(bool (__fastcall * test)(ObjectClass *, int), int arg)
 {
 	TechnoList * result = new TechnoList;
-	int count = TacticalSelectionInstance->Count();
+	int count = TacticalMap->Selectable_Count();
 	for (int i = 0; i < count; i++) {
-		ObjectClass * object = TacticalSelectionInstance->Get(i);
+		ObjectClass * object = TacticalMap->Selectable_Object(i);
 		if (object && object->Is_Techno() && test(object, arg)) {
 			result->Add((TechnoClass *)object);
 		}
@@ -770,9 +766,9 @@ int __fastcall FUN_00732210(DynamicVectorClass<char const *> * list, char const 
 static inline TechnoList * Collect_Owned_Visible(void)
 {
 	TechnoList * list = new TechnoList;
-	int count = TacticalSelectionInstance->Count();
+	int count = TacticalMap->Selectable_Count();
 	for (int i = 0; i < count; ++i) {
-		ObjectClass * object = TacticalSelectionInstance->Get(i);
+		ObjectClass * object = TacticalMap->Selectable_Object(i);
 		if (FUN_007342C0(object)) {
 			TechnoClass * item = (TechnoClass *)object;
 			if (FUN_00732580(item, 0)) {
@@ -797,7 +793,7 @@ static inline bool Has_Unselected_Combatants(TechnoList * list)
 }
 
 // FUNCTION: GAMEMD 0x00732280
-void __fastcall Select_Combatants(bool clear)
+void __fastcall FUN_00732280(bool clear)
 {
 	wchar_t text[256];
 	if (Unsorted::MuteSWLaunches) {
@@ -869,9 +865,9 @@ bool __fastcall FUN_00732770(TechnoClass * techno, char const * name);
 static inline TechnoList * Visible_Of_Name(char const * name)
 {
 	TechnoList * list = new TechnoList(0, NULL);
-	int count = TacticalSelectionInstance->Count();
+	int count = TacticalMap->Selectable_Count();
 	for (int i = 0; i < count; i++) {
-		ObjectClass * object = TacticalSelectionInstance->Get(i);
+		ObjectClass * object = TacticalMap->Selectable_Object(i);
 		if (object && object->Is_Techno()) {
 			TechnoClass * item = (TechnoClass *)object;
 			if (FUN_00732770(item, name)) {
@@ -930,8 +926,10 @@ typedef DynamicVectorClass<char const *> NameList;
 NameList * FUN_00732D10(void);
 bool __fastcall FUN_00732C30(TechnoClass * techno, NameList * names);
 
+namespace Game { void __fastcall UICommands_TypeSelect_7327D0(char const * name); }
+
 // FUNCTION: GAMEMD 0x007327D0
-void __fastcall Select_Units_Of_Type(char const * name)
+void __fastcall Game::UICommands_TypeSelect_7327D0(char const * name)
 {
 	bool feedback = Unsorted::MoveFeedback;
 	Unsorted::MoveFeedback = false;
@@ -1069,7 +1067,7 @@ static inline TechnoList * New_Techno_List(void)
 }
 
 // FUNCTION: GAMEMD 0x00733160
-void __fastcall Remove_Navigation_Object(TechnoClass * object)
+void __fastcall FUN_00733160(AbstractClass * object)
 {
 	if (DAT_00B0FE6C) {
 		for (int i = DAT_00B0FE6C->Count() - 1; i >= 0; --i) {
@@ -1104,9 +1102,9 @@ void FUN_007331B0(void)
 		}
 		DAT_00B0FE6C = NULL;
 		list = New_Techno_List();
-		int visible = TacticalSelectionInstance->Count();
+		int visible = TacticalMap->Selectable_Count();
 		for (i = 0; i < visible; i++) {
-			ObjectClass * object = TacticalSelectionInstance->Get(i);
+			ObjectClass * object = TacticalMap->Selectable_Object(i);
 			if (object && object->Is_Techno() && object->IsActive && Player_Owned((TechnoClass *)object) && object->Fetch_RTTI() != RTTI_BUILDING) {
 				list->Add((TechnoClass *)object);
 			}
@@ -1605,7 +1603,7 @@ Cell Recall_Radar_Event_Cell(void);
 Cell Recall_Previous_Radar_Event_Cell(void);
 
 // FUNCTION: GAMEMD 0x00734120
-void Center_On_Radar_Event(void)
+void FUN_00734120(void)
 {
 	Cell cell;
 	if (timeGetTime() - DAT_00845558 < 1600) {
