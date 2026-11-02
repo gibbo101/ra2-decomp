@@ -4623,6 +4623,69 @@ void MapGeneratorClass::Generate_Arctic_Vegetation(void)
 	}
 }
 
+static inline void Delete_Forest_Search(CellNode * nodes, PriorityQueueClass<CellNode> * queue)
+{
+	delete[] nodes;
+	delete queue;
+}
+
+// FUNCTION: GAMEMD 0x005A45E0
+int MapGeneratorClass::Place_Forest(CellClass const * cellptr, int count, double density)
+{
+	CellNode * nodes = new CellNode[25 * count];
+	PriorityQueueClass<CellNode> * queue = new PriorityQueueClass<CellNode>(25 * count);
+
+	queue->Clear();
+
+	int node_count = 0;
+	Cell cell = cellptr->Fetch_CellID();
+	nodes[node_count].Element = cell;
+	nodes[node_count].Score = 0;
+	node_count++;
+
+	MapRegionClass::Get_Cell_Data(cellptr->Fetch_CellID()).Forested = true;
+
+	queue->Insert(*nodes);
+
+	CellNode * node = queue->Extract_Min();
+
+	int i = 0;
+	while (i < count && node != NULL && node_count < 25 * count) {
+		CellClass * cptr = &Map[node->Element];
+		if (cptr->Is_Tile_Clear() && cptr->Cell_Occupier() == NULL && cptr->Overlay == OVERLAY_NONE && cptr->Land_Type() != LAND_ROCK) {
+			if (Random_Fraction() < density) {
+				char tree_name[20];
+				int tree_index = Pick_Random_UInt(1, 25);
+				sprintf(tree_name, "TREE%d%d", tree_index / 10, tree_index % 10);
+				new TerrainClass(TerrainTypes[TerrainTypeClass::From_Name(tree_name)], cptr->Fetch_CellID());
+				i++;
+			}
+		}
+
+		FacingType dir = FACING_FIRST;
+		CellNode * newnode = &nodes[node_count];
+		for (; dir < FACING_COUNT; dir++) {
+			Cell const & offset = AdjacentCell[(int)dir & 7];
+			Cell newcell(offset.X + node->Element.X, offset.Y + node->Element.Y);
+			if (My_In_Radar(newcell)) {
+				MapRegionClass::CellData & data = MapRegionClass::Get_Cell_Data(newcell);
+				if (!data.Forested && !data.Inviolate && node_count < 25 * count) {
+					newnode->Element = newcell;
+					newnode->Score = Get_Forest_Score(cellptr->Fetch_CellID(), newcell);
+					data.Forested = true;
+					node_count++;
+					queue->Insert(*newnode++);
+				}
+			}
+		}
+
+		node = queue->Extract_Min();
+	}
+
+	Delete_Forest_Search(nodes, queue);
+	return i;
+}
+
 // FUNCTION: GAMEMD 0x005A4AE0
 double MapGeneratorClass::Get_Forest_Score(const Cell & cell1, const Cell & cell2) const
 {
@@ -5706,11 +5769,11 @@ DirtRoadTile::~DirtRoadTile(void)
 }
 
 // SYNTHETIC: GAMEMD 0x005A9C20 SYMBOL
-// _$E207
+// _$E208
 // SYNTHETIC: GAMEMD 0x005A9C40 SYMBOL
-// _$E204
-// SYNTHETIC: GAMEMD 0x005AC190 SYMBOL
 // _$E205
+// SYNTHETIC: GAMEMD 0x005AC190 SYMBOL
+// _$E206
 DirtRoadTile DirtRoadTiles[] = {
 	/* 0 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_N), DirtRoadLink(Cell(2, 0), FACING_NE)),
 	/* 1 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_N), DirtRoadLink(Cell(1, 0), FACING_E)),
@@ -6046,33 +6109,33 @@ template class VectorClass<double>;
 #include "geometry.h"
 
 // SYNTHETIC: GAMEMD 0x0058B530 SYMBOL
-// _$E210
+// _$E211
 // SYNTHETIC: GAMEMD 0x0058B560 SYMBOL
-// _$E213
+// _$E214
 // SYNTHETIC: GAMEMD 0x0058B580 SYMBOL
-// _$E216
+// _$E217
 // SYNTHETIC: GAMEMD 0x0058B5A0 SYMBOL
-// _$E219
+// _$E220
 // SYNTHETIC: GAMEMD 0x0058B5C0 SYMBOL
-// _$E222
+// _$E223
 // SYNTHETIC: GAMEMD 0x0058B5E0 SYMBOL
-// _$E225
+// _$E226
 // SYNTHETIC: GAMEMD 0x0058B600 SYMBOL
-// _$E228
+// _$E229
 // SYNTHETIC: GAMEMD 0x0058B640 SYMBOL
-// _$E231
+// _$E232
 // SYNTHETIC: GAMEMD 0x0058B670 SYMBOL
-// _$E234
+// _$E235
 // SYNTHETIC: GAMEMD 0x0058B6A0 SYMBOL
-// _$E237
+// _$E238
 // SYNTHETIC: GAMEMD 0x0058B6D0 SYMBOL
-// _$E240
+// _$E241
 // SYNTHETIC: GAMEMD 0x0058B6E0 SYMBOL
-// _$E243
+// _$E244
 // SYNTHETIC: GAMEMD 0x0058B700 SYMBOL
-// _$E246
+// _$E247
 // SYNTHETIC: GAMEMD 0x0058B720 SYMBOL
-// _$E249
+// _$E250
 const Rect RECT_NONE_2(0, 0, 0, 0);
 
 // FUNCTION: GAMEMD 0x005A78D0
