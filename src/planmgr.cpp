@@ -1394,7 +1394,7 @@ void __fastcall FUN_006375B0(EventClass const & source)
 	EventClass * event = new EventClass;
 	*event = source;
 	if (event->Type == EventClass::MEGAMISSION) {
-		*(unsigned char *)&event->Data.MegaMission.IsPlanningEvent = 2;
+		event->Data.MegaMission.IsPlanningEvent = 2;
 	}
 	PlanningTokenClass::Events.Add(event);
 }
@@ -1573,6 +1573,32 @@ bool TechnoClass::TryNextPlanningTokenNode(void)
 	return false;
 }
 
+void __fastcall FUN_00638840(TechnoClass * techno);
+
+// FUNCTION: GAMEMD 0x006386E0
+void __fastcall FUN_006386E0(TechnoClass * techno, EventClass * event)
+{
+	if (techno != NULL) {
+		PlanningTokenClass * token = techno->FUN_00705D20();
+		if (token != NULL) {
+			int flag = event != NULL ? event->Data.MegaMission.IsPlanningEvent : 0;
+			if (flag == 0 && token->Node_Count() > 0) {
+				FUN_00638840(techno);
+			}
+			token->Clear_F1C();
+		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x00638840
+void __fastcall FUN_00638840(TechnoClass * techno)
+{
+	PlanningTokenClass * token = techno->FUN_00705D20();
+	if (token != NULL) {
+		token->Cancel_Owner();
+	}
+}
+
 // FUNCTION: GAMEMD 0x00638A20
 void __fastcall FUN_00638A20(PlanningNodeClass * node)
 {
@@ -1643,7 +1669,7 @@ bool __fastcall FUN_00638C40(int mission, TargetClass target)
 	return false;
 }
 
-static inline bool Mission_Fits(int mission, TargetClass target)
+static inline bool Mission_Fits(int mission, xTargetClass target)
 {
 	if (mission == 1 || mission == 0xb) {
 		if ((RTTIType)target == RTTI_CELL) goto fits;
@@ -1666,6 +1692,49 @@ bool __fastcall FUN_00638C70(TechnoClass * techno)
 		return Mission_Fits(mission, TargetClass(techno->TarCom));
 	}
 	return false;
+}
+
+static inline TargetClass Planning_Target(xTargetClass const & packed)
+{
+	TargetClass target;
+	static_cast<xTargetClass &>(target) = packed;
+	return target;
+}
+
+static inline EventClass Last_Planning_Event(PlanningTokenClass * token)
+{
+	return token->Event_At(token->Node_Count() - 1);
+}
+
+static inline int Previous_Order_Status(PlanningTokenClass * token)
+{
+	EventClass previous = Last_Planning_Event(token);
+	int mission = previous.Data.MegaMission.Mission;
+	if (FUN_00638C20(mission)) {
+		return 1;
+	}
+	if (Mission_Fits(mission, Planning_Target(previous.Data.MegaMission.Target))) {
+		return 2;
+	}
+	return -1;
+}
+
+// FUNCTION: GAMEMD 0x00638CE0
+int __fastcall FUN_00638CE0(TechnoClass * techno, EventClass const & event)
+{
+	if (FUN_00638B50(event.Type)) {
+		return 0;
+	}
+	int mission = event.Data.MegaMission.Mission;
+	xTargetClass const & target = event.Data.MegaMission.Target;
+	if (FUN_00638B70(techno, mission, Planning_Target(target))) {
+		return 0;
+	}
+	PlanningTokenClass * token = techno->FUN_00705D20();
+	if (token != NULL && token->Node_Count() > 0) {
+		return Previous_Order_Status(token);
+	}
+	return -1;
 }
 
 // FUNCTION: GAMEMD 0x00638DC0
@@ -2224,6 +2293,20 @@ void __fastcall FUN_0063A360(int kind)
 	} else if (kind == 2) {
 		FUN_0063A230("MSG:PlanningModeNoUnknowns");
 	}
+}
+
+// FUNCTION: GAMEMD 0x0063A440
+int __fastcall FUN_0063A440(PlanningTokenClass * token, EventClass const & event)
+{
+	int mission = event.Data.MegaMission.Mission;
+	xTargetClass const & target = event.Data.MegaMission.Target;
+	if (FUN_00638C20(mission)) {
+		return 0;
+	}
+	if (Mission_Fits(mission, target)) {
+		return 0;
+	}
+	return token->Node_Count() == 15 ? 2 : -1;
 }
 
 // FUNCTION: GAMEMD 0x0063A4A0

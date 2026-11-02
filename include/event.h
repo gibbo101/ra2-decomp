@@ -117,7 +117,7 @@ class EventClass
 				xTargetClass	Target;
 				xTargetClass	Destination;
 				xTargetClass	Follow;
-				bool			IsPlanningEvent;
+				char			IsPlanningEvent;
 			} MegaMission;
 			struct {
 				xTargetClass	Whom;
