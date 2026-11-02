@@ -84,7 +84,7 @@ class UnitClass : public FootClass
 
 		bool IsDeactivated(void) const;
 		bool Is_Route_Broken(Cell const & from, Cell const & to) const;
-		AbstractClass * Plan_Route(AbstractClass const & object) const;
+		AbstractClass * Plan_Route(AbstractClass * dest);
 
 		virtual bool Limbo(void) override;
 		virtual bool Unlimbo(Coord const & , Dir256 facing=DIR_N) override;

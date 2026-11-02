@@ -41,6 +41,10 @@
 #include "vector.h"
 #include "zbuffer.h"
 
+struct FileSystem {
+	static void const * LoadFile(char const * name, bool as_shape);
+};
+
 // SYNTHETIC: GAMEMD 0x00543C40 SYMBOL
 // _$E41
 // SYNTHETIC: GAMEMD 0x00543C60 SYMBOL
@@ -436,6 +440,527 @@ void IsometricTileTypeClass::Init_Drawers(void)
 	while (cptr != NULL) {
 		cptr->Drawer = NULL;
 		cptr = Map.Iterate();
+	}
+}
+
+// FUNCTION: GAMEMD 0x00545150
+void IsometricTileTypeClass::Read_Control_File(TheaterType theater, bool from_ccfile)
+{
+	int i;
+	int j;
+
+	CCINIClass ini;
+	IsometricTileTypeClass * tile = NULL;
+	CDTimerClass<SystemTimerClass> callback_timer;
+	int shadow_casters = 0;
+
+	memset(ShadowCasterTiles, 0, sizeof(ShadowCasterTiles));
+
+	CCFileClass cshadow("C_SHADOW.SHP");
+	if (CellShadowShapes) {
+		delete [] ((char *)CellShadowShapes);
+		CellShadowShapes = NULL;
+	}
+	CellShadowShapes = (ShapeSet *)new char[cshadow.Size()];
+	cshadow.Read(CellShadowShapes, cshadow.Size());
+
+	if (TileInsertTypes.Count() != 0) {
+		for (i = TileInsertTypes.Count() - 1; i >= 0; --i) {
+			delete TileInsertTypes[i];
+			TileInsertTypes.Delete_Index(i);
+		}
+	}
+
+	for (i = 0; i < ARRAY_SIZE(SlopeZShapes); i++) {
+		if (SlopeZShapes[i]) {
+			delete [] ((char *)SlopeZShapes[i]);
+			SlopeZShapes[i] = NULL;
+		}
+	}
+
+	char slopzname[32];
+	sprintf(slopzname, "SLOP01Z.%s", Theaters[theater].Suffix);
+	CCFileClass slopz(slopzname);
+
+	SlopeZShapes[0] = (ShapeSet *)new char[slopz.Size()];
+	slopz.Read(SlopeZShapes[0], slopz.Size());
+
+	slopzname[5] = '2';
+	slopz.Set_Name(slopzname);
+	SlopeZShapes[1] = (ShapeSet *)new char[slopz.Size()];
+	slopz.Read(SlopeZShapes[1], slopz.Size());
+
+	slopzname[5] = '3';
+	slopz.Set_Name(slopzname);
+	SlopeZShapes[2] = (ShapeSet *)new char[slopz.Size()];
+	slopz.Read(SlopeZShapes[2], slopz.Size());
+
+	slopzname[5] = '4';
+	slopz.Set_Name(slopzname);
+	SlopeZShapes[3] = (ShapeSet *)new char[slopz.Size()];
+	slopz.Read(SlopeZShapes[3], slopz.Size());
+
+	while (IsometricTileTypes.Count() != 0) {
+		delete IsometricTileTypes[0];
+	}
+
+	char palname[32];
+	sprintf(palname, "ISO%s.PAL", Theaters[theater].Suffix);
+	CCFileClass palette(palname);
+	if (palette.Is_Available()) {
+		palette.Read(&IsoTilePalette, sizeof(IsoTilePalette));
+		unsigned char * color = (unsigned char *)IsoTilePalette;
+		for (i = 0; i < sizeof(PaletteClass); i++) {
+			*color <<= 2;
+			color++;
+		}
+	}
+	IsometricTileTypeClass::Init_Drawers();
+
+	char ininame[20];
+	sprintf(ininame, "%sMD.INI", Theaters[theater].Root);
+	CCFileClass inifile(ininame);
+	ini.Load(inifile, false, false);
+
+	int setid = 0;
+	int heapid = 0;
+	int tile_count = 0;
+
+	IsometricTileType _RampStart = (IsometricTileType)ini.Get_Int("General", "RampBase", ISOTILE_INVALID);
+	IsometricTileType _RampSmooth = (IsometricTileType)ini.Get_Int("General", "RampSmooth", ISOTILE_INVALID);
+	IsometricTileType _MMRampBase = (IsometricTileType)ini.Get_Int("General", "MMRampBase", ISOTILE_INVALID);
+	IsometricTileType _ClearTile = (IsometricTileType)ini.Get_Int("General", "ClearTile", ISOTILE_INVALID);
+	IsometricTileType _RoughTile = (IsometricTileType)ini.Get_Int("General", "RoughTile", ISOTILE_INVALID);
+	IsometricTileType _SandTile = (IsometricTileType)ini.Get_Int("General", "SandTile", ISOTILE_INVALID);
+	IsometricTileType _GreenTile = (IsometricTileType)ini.Get_Int("General", "GreenTile", ISOTILE_INVALID);
+	IsometricTileType _PaveTile = (IsometricTileType)ini.Get_Int("General", "PaveTile", ISOTILE_INVALID);
+	IsometricTileType _MiscPaveTile = (IsometricTileType)ini.Get_Int("General", "MiscPaveTile", ISOTILE_INVALID);
+	IsometricTileType _ClearToRoughLat = (IsometricTileType)ini.Get_Int("General", "ClearToRoughLat", ISOTILE_INVALID);
+	IsometricTileType _ClearToSandLat = (IsometricTileType)ini.Get_Int("General", "ClearToSandLat", ISOTILE_INVALID);
+	IsometricTileType _ClearToGreenLat = (IsometricTileType)ini.Get_Int("General", "ClearToGreenLat", ISOTILE_INVALID);
+	IsometricTileType _ClearToPaveLat = (IsometricTileType)ini.Get_Int("General", "ClearToPaveLat", ISOTILE_INVALID);
+	IsometricTileType _HeightBase = (IsometricTileType)ini.Get_Int("General", "HeightBase", ISOTILE_INVALID);
+	IsometricTileType _BlackTile = (IsometricTileType)ini.Get_Int("General", "BlackTile", ISOTILE_INVALID);
+	IsometricTileType _BridgeSet = (IsometricTileType)ini.Get_Int("General", "BridgeSet", ISOTILE_INVALID);
+	IsometricTileType _TrainBridgeSet = (IsometricTileType)ini.Get_Int("General", "WoodBridgeSet", ISOTILE_INVALID);
+	IsometricTileType _CliffSet = (IsometricTileType)ini.Get_Int("General", "CliffSet", ISOTILE_INVALID);
+	IsometricTileType _ShorePieces = (IsometricTileType)ini.Get_Int("General", "ShorePieces", ISOTILE_INVALID);
+	IsometricTileType _WaterSet = (IsometricTileType)ini.Get_Int("General", "WaterSet", ISOTILE_INVALID);
+	IsometricTileType _SlopeSetPieces = (IsometricTileType)ini.Get_Int("General", "SlopeSetPieces", ISOTILE_INVALID);
+	IsometricTileType _SlopeSetPieces2 = (IsometricTileType)ini.Get_Int("General", "SlopeSetPieces2", ISOTILE_INVALID);
+	IsometricTileType _MonorailSlopes = (IsometricTileType)ini.Get_Int("General", "MonorailSlopes", ISOTILE_INVALID);
+	IsometricTileType _Tunnels = (IsometricTileType)ini.Get_Int("General", "Tunnels", ISOTILE_INVALID);
+	IsometricTileType _TrackTunnels = (IsometricTileType)ini.Get_Int("General", "TrackTunnels", ISOTILE_INVALID);
+	IsometricTileType _DirtTunnels = (IsometricTileType)ini.Get_Int("General", "DirtTunnels", ISOTILE_INVALID);
+	IsometricTileType _DirtTrackTunnels = (IsometricTileType)ini.Get_Int("General", "DirtTrackTunnels", ISOTILE_INVALID);
+	IsometricTileType _WaterfallEast = (IsometricTileType)ini.Get_Int("General", "WaterfallEast", ISOTILE_INVALID);
+	IsometricTileType _WaterfallWest = (IsometricTileType)ini.Get_Int("General", "WaterfallWest", ISOTILE_INVALID);
+	IsometricTileType _WaterfallNorth = (IsometricTileType)ini.Get_Int("General", "WaterfallNorth", ISOTILE_INVALID);
+	IsometricTileType _WaterfallSouth = (IsometricTileType)ini.Get_Int("General", "WaterfallSouth", ISOTILE_INVALID);
+	IsometricTileType _CliffRamps = (IsometricTileType)ini.Get_Int("General", "CliffRamps", ISOTILE_INVALID);
+	IsometricTileType _PavedRoads = (IsometricTileType)ini.Get_Int("General", "PavedRoads", ISOTILE_INVALID);
+	IsometricTileType _PavedRoadEnds = (IsometricTileType)ini.Get_Int("General", "PavedRoadEnds", ISOTILE_INVALID);
+	IsometricTileType _Medians = (IsometricTileType)ini.Get_Int("General", "Medians", ISOTILE_INVALID);
+	IsometricTileType _RoughGround = (IsometricTileType)ini.Get_Int("General", "RoughGround", ISOTILE_INVALID);
+	IsometricTileType _DirtRoadJunction = (IsometricTileType)ini.Get_Int("General", "DirtRoadJunction", ISOTILE_INVALID);
+	IsometricTileType _DirtRoadCurve = (IsometricTileType)ini.Get_Int("General", "DirtRoadCurve", ISOTILE_INVALID);
+	IsometricTileType _DirtRoadStraight = (IsometricTileType)ini.Get_Int("General", "DirtRoadStraight", ISOTILE_INVALID);
+	IsometricTileType _DestroyableCliffs = (IsometricTileType)ini.Get_Int("General", "DestroyableCliffs", ISOTILE_INVALID_CLIFF);
+	IsometricTileType _WaterCaves = (IsometricTileType)ini.Get_Int("General", "WaterCaves", ISOTILE_INVALID);
+	IsometricTileType _WaterCliffs = (IsometricTileType)ini.Get_Int("General", "WaterCliffs", ISOTILE_INVALID);
+	IsometricTileType _PavedRoadSlopes = (IsometricTileType)ini.Get_Int("General", "PavedRoadSlopes", ISOTILE_INVALID);
+	IsometricTileType _DirtRoadSlopes = (IsometricTileType)ini.Get_Int("General", "DirtRoadSlopes", ISOTILE_INVALID);
+	IsometricTileType _Rocks = (IsometricTileType)ini.Get_Int("General", "Rocks", ISOTILE_INVALID);
+	IsometricTileType _WaterBridge = (IsometricTileType)ini.Get_Int("General", "WaterBridge", ISOTILE_INVALID);
+
+	RampStart = ISOTILE_INVALID;
+	RampSmooth = ISOTILE_INVALID;
+	MMRampBase = ISOTILE_INVALID;
+	ClearTile = ISOTILE_INVALID;
+	RoughTile = ISOTILE_INVALID;
+	SandTile = ISOTILE_INVALID;
+	GreenTile = ISOTILE_INVALID;
+	PaveTile = ISOTILE_INVALID;
+	MiscPaveTile = ISOTILE_INVALID;
+	ClearToRoughLat = ISOTILE_INVALID;
+	ClearToSandLat = ISOTILE_INVALID;
+	ClearToGreenLat = ISOTILE_INVALID;
+	ClearToPaveLat = ISOTILE_INVALID;
+	HeightBase = ISOTILE_INVALID;
+	BlackTile = ISOTILE_INVALID;
+	BridgeSet = ISOTILE_INVALID;
+	TrainBridgeSet = ISOTILE_INVALID;
+	CliffSet = ISOTILE_INVALID;
+	ShorePieces = ISOTILE_INVALID;
+	WaterSet = ISOTILE_INVALID;
+	SlopeSetPieces = ISOTILE_INVALID;
+	SlopeSetPieces2 = ISOTILE_INVALID;
+	MonorailSlopes = ISOTILE_INVALID;
+	Tunnels = ISOTILE_INVALID;
+	TrackTunnels = ISOTILE_INVALID;
+	DirtTunnels = ISOTILE_INVALID;
+	DirtTrackTunnels = ISOTILE_INVALID;
+	WaterfallEast = ISOTILE_INVALID;
+	WaterfallWest = ISOTILE_INVALID;
+	WaterfallNorth = ISOTILE_INVALID;
+	WaterfallSouth = ISOTILE_INVALID;
+	CliffRamps = ISOTILE_INVALID;
+	PavedRoads = ISOTILE_INVALID;
+	PavedRoadEnds = ISOTILE_INVALID;
+	Medians = ISOTILE_INVALID;
+	RoughGround = ISOTILE_INVALID;
+	DirtRoadJunction = ISOTILE_INVALID;
+	DirtRoadCurve = ISOTILE_INVALID;
+	DirtRoadStraight = ISOTILE_INVALID;
+	DestroyableCliffs = ISOTILE_INVALID_CLIFF;
+	WaterCaves = ISOTILE_INVALID;
+	WaterCliffs = ISOTILE_INVALID;
+	PavedRoadSlopes = ISOTILE_INVALID;
+	DirtRoadSlopes = ISOTILE_INVALID;
+	Rocks = ISOTILE_INVALID;
+	WaterBridge = ISOTILE_INVALID;
+
+	BridgeTopLeft1 = (IsometricTileType)ini.Get_Int("General", "BridgeTopLeft1", ISOTILE_INVALID);
+	BridgeTopLeft2 = (IsometricTileType)ini.Get_Int("General", "BridgeTopLeft2", ISOTILE_INVALID);
+	BridgeBottomRight1 = (IsometricTileType)ini.Get_Int("General", "BridgeBottomRight1", ISOTILE_INVALID);
+	BridgeBottomRight2 = (IsometricTileType)ini.Get_Int("General", "BridgeBottomRight2", ISOTILE_INVALID);
+	BridgeTopRight1 = (IsometricTileType)ini.Get_Int("General", "BridgeTopRight1", ISOTILE_INVALID);
+	BridgeTopRight2 = (IsometricTileType)ini.Get_Int("General", "BridgeTopRight2", ISOTILE_INVALID);
+	BridgeBottomLeft1 = (IsometricTileType)ini.Get_Int("General", "BridgeBottomLeft1", ISOTILE_INVALID);
+	BridgeBottomLeft2 = (IsometricTileType)ini.Get_Int("General", "BridgeBottomLeft2", ISOTILE_INVALID);
+	BridgeMiddle1 = (IsometricTileType)ini.Get_Int("General", "BridgeMiddle1", ISOTILE_INVALID);
+	BridgeMiddle2 = (IsometricTileType)ini.Get_Int("General", "BridgeMiddle2", ISOTILE_INVALID);
+
+	TileSetLookupCount = 0;
+	callback_timer = 4;
+
+	while (true) {
+		if (callback_timer == 0) {
+			Call_Back();
+			callback_timer = 4;
+		}
+
+		TileSetIDLookup[TileSetLookupCount++] = (IsometricTileType)heapid;
+
+		if (setid == _RampStart) RampStart = (IsometricTileType)heapid;
+		if (setid == _RampSmooth) RampSmooth = (IsometricTileType)heapid;
+		if (setid == _MMRampBase) MMRampBase = (IsometricTileType)heapid;
+		if (setid == _ClearTile) ClearTile = (IsometricTileType)heapid;
+		if (setid == _RoughTile) RoughTile = (IsometricTileType)heapid;
+		if (setid == _SandTile) SandTile = (IsometricTileType)heapid;
+		if (setid == _GreenTile) GreenTile = (IsometricTileType)heapid;
+		if (setid == _PaveTile) PaveTile = (IsometricTileType)heapid;
+		if (setid == _MiscPaveTile) MiscPaveTile = (IsometricTileType)heapid;
+		if (setid == _ClearToRoughLat) ClearToRoughLat = (IsometricTileType)heapid;
+		if (setid == _ClearToSandLat) ClearToSandLat = (IsometricTileType)heapid;
+		if (setid == _ClearToGreenLat) ClearToGreenLat = (IsometricTileType)heapid;
+		if (setid == _ClearToPaveLat) ClearToPaveLat = (IsometricTileType)heapid;
+		if (setid == _HeightBase) HeightBase = (IsometricTileType)heapid;
+		if (setid == _BlackTile) BlackTile = (IsometricTileType)heapid;
+		if (setid == _BridgeSet) BridgeSet = (IsometricTileType)heapid;
+		if (setid == _TrainBridgeSet) TrainBridgeSet = (IsometricTileType)heapid;
+		if (setid == _CliffSet) CliffSet = (IsometricTileType)heapid;
+		if (setid == _ShorePieces) ShorePieces = (IsometricTileType)heapid;
+		if (setid == _WaterSet) WaterSet = (IsometricTileType)heapid;
+		if (setid == _SlopeSetPieces) SlopeSetPieces = (IsometricTileType)heapid;
+		if (setid == _SlopeSetPieces2) SlopeSetPieces2 = (IsometricTileType)heapid;
+		if (setid == _MonorailSlopes) MonorailSlopes = (IsometricTileType)heapid;
+		if (setid == _DirtTunnels) DirtTunnels = (IsometricTileType)heapid;
+		if (setid == _DirtTrackTunnels) DirtTrackTunnels = (IsometricTileType)heapid;
+		if (setid == _Tunnels) Tunnels = (IsometricTileType)heapid;
+		if (setid == _TrackTunnels) TrackTunnels = (IsometricTileType)heapid;
+		if (setid == _WaterfallEast) WaterfallEast = (IsometricTileType)heapid;
+		if (setid == _WaterfallWest) WaterfallWest = (IsometricTileType)heapid;
+		if (setid == _WaterfallNorth) WaterfallNorth = (IsometricTileType)heapid;
+		if (setid == _WaterfallSouth) WaterfallSouth = (IsometricTileType)heapid;
+		if (setid == _CliffRamps) CliffRamps = (IsometricTileType)heapid;
+		if (setid == _PavedRoads) PavedRoads = (IsometricTileType)heapid;
+		if (setid == _PavedRoadEnds) PavedRoadEnds = (IsometricTileType)heapid;
+		if (setid == _Medians) Medians = (IsometricTileType)heapid;
+		if (setid == _RoughGround) RoughGround = (IsometricTileType)heapid;
+		if (setid == _DirtRoadJunction) DirtRoadJunction = (IsometricTileType)heapid;
+		if (setid == _DirtRoadCurve) DirtRoadCurve = (IsometricTileType)heapid;
+		if (setid == _DirtRoadStraight) DirtRoadStraight = (IsometricTileType)heapid;
+		if (setid == _DestroyableCliffs) DestroyableCliffs = (IsometricTileType)heapid;
+		if (setid == _WaterCliffs) WaterCliffs = (IsometricTileType)heapid;
+		if (setid == _WaterCaves) WaterCaves = (IsometricTileType)heapid;
+		if (setid == _PavedRoadSlopes) PavedRoadSlopes = (IsometricTileType)heapid;
+		if (setid == _DirtRoadSlopes) DirtRoadSlopes = (IsometricTileType)heapid;
+		if (setid == _Rocks) Rocks = (IsometricTileType)heapid;
+		if (setid == _WaterBridge) WaterBridge = (IsometricTileType)heapid;
+
+		char section[64];
+		sprintf(section, "TileSet%04d", setid);
+		ini.Reset();
+		int tiles_in_set = ini.Get_Int(section, "TilesInSet", -1);
+		if (tiles_in_set == -1) {
+			break;
+		}
+
+		int last_tiles_in_set = ini.Get_Int(section, "LastTilesInSet", -1);
+		if (last_tiles_in_set == -1 || last_tiles_in_set == tiles_in_set) {
+			tile_count += tiles_in_set;
+		} else {
+			TileInsertType * insert = new TileInsertType;
+			insert->Count = tile_count + last_tiles_in_set;
+			insert->Offset = tiles_in_set - last_tiles_in_set;
+			TileInsertTypes.Add(insert);
+			tile_count += last_tiles_in_set;
+		}
+
+		char set_name[64];
+		char file_name[64];
+		ini.Get_String(section, "SetName", "No Name", set_name, sizeof(set_name));
+		ini.Get_String(section, "FileName", "TILE", file_name, sizeof(file_name));
+		IsometricTileType _MarbleMadness = (IsometricTileType)ini.Get_Int(section, "MarbleMadness", ISOTILE_NONE);
+		IsometricTileType _NonMarbleMadness = (IsometricTileType)ini.Get_Int(section, "NonMarbleMadness", ISOTILE_NONE);
+		bool _Morphable = ini.Get_Bool(section, "Morphable", false);
+		bool _AllowToPlace = ini.Get_Bool(section, "AllowToPlace", true);
+		bool _AllowBurrowing = ini.Get_Bool(section, "AllowBurrowing", true);
+		bool _AllowTiberium = ini.Get_Bool(section, "AllowTiberium", false);
+		bool _RequiredForRMG = ini.Get_Bool(section, "RequiredForRMG", false);
+		IsometricTileType _ToSnowTheater = (IsometricTileType)ini.Get_Int(section, "ToSnowTheater", ISOTILE_INVALID);
+		IsometricTileType _ToTemperateTheater = (IsometricTileType)ini.Get_Int(section, "ToTemperateTheater", ISOTILE_INVALID);
+
+		bool is_shadow_caster = ini.Get_Bool(section, "ShadowCaster", false);
+		if (is_shadow_caster) {
+			ShadowCasterTiles[shadow_casters++] = (IsometricTileType)heapid;
+		}
+		int shadow_tiles = 0;
+		if (is_shadow_caster) {
+			shadow_tiles = ini.Get_Int(section, "ShadowTiles", shadow_tiles);
+		}
+
+		bool has_section = ini.Is_Present(set_name);
+
+		for (i = 0; i < tiles_in_set; i++) {
+			int tile_count = 0;
+
+			IsometricTileTypeClass * head_tile = NULL;
+			IsometricTileTypeClass * tail_tile = NULL;
+
+			IsoTileSet * mixfile_set = NULL;
+			bool found_image = false;
+
+			do {
+				char letter_suffix[2];
+				char suffix[10];
+				char tile_name[128];
+				char given_name[128];
+
+				if (tile_count != 0) {
+					letter_suffix[0] = tile_count + 'a' - 1;
+					letter_suffix[1] = 0;
+				} else {
+					letter_suffix[0] = 0;
+				}
+
+				sprintf(suffix, "%02d", i + 1);
+				strcat(suffix, letter_suffix);
+				strcpy(tile_name, file_name);
+				strcat(tile_name, suffix);
+				sprintf(given_name, "%.28s %02d", set_name, i + 1);
+
+				int uninitialized_value = -65;
+
+				if (tile_count == 0) {
+					tile = new IsometricTileTypeClass((IsometricTileType)heapid++, uninitialized_value, 0, tile_name, false);
+
+					tile->GivenName = given_name;
+					tile->MarbleMadness = _MarbleMadness;
+					tile->NonMarbleMadness = _NonMarbleMadness;
+					tile->IsMorphable = _Morphable;
+					tile->IsAllowToPlace = _AllowToPlace;
+					tile->IsAllowBurrowing = _AllowBurrowing;
+					tile->IsAllowTiberium = _AllowTiberium;
+					tile->IsRequiredForRMG = _RequiredForRMG;
+					tile->ImageData = NULL;
+					tile->ImageAllocated = false;
+					tile->ToSnowTheater = _ToSnowTheater;
+					tile->ToTemperateTheater = _ToTemperateTheater;
+					if (is_shadow_caster && shadow_tiles) {
+						tile->IsShadowCaster = is_shadow_caster;
+					}
+					if (from_ccfile) {
+						tile->IsFileLoaded = true;
+					}
+					tile->TileSetBaseID = TileSetIDLookup[TileSetLookupCount - 1];
+					tile->PreviewTiles.Clear();
+					if (has_section) {
+
+						char entry[32];
+						sprintf(entry, "Tile%02dAnim", i + 1);
+
+						char anim_name[128];
+						if (ini.Get_String(set_name, entry, (const char *)"", anim_name, sizeof(anim_name))) {
+
+							AnimTypeClass * animtype = AnimTypeClass::Find_Or_Make(anim_name);
+							if (animtype != NULL) {
+								tile->Anim = (AnimType)animtype->Fetch_Heap_ID();
+								sprintf(entry, "Tile%02dXOffset", i + 1);
+								tile->Offset.X = ini.Get_Int(set_name, entry, tile->Offset.X);
+								sprintf(entry, "Tile%02dYOffset", i + 1);
+								tile->Offset.Y = ini.Get_Int(set_name, entry, tile->Offset.Y);
+								sprintf(entry, "Tile%02dAttachesTo", i + 1);
+								tile->AttachesTo = ini.Get_Int(set_name, entry, tile->AttachesTo);
+								sprintf(entry, "Tile%02dZAdjust", i + 1);
+								tile->ZAdjust = ini.Get_Int(set_name, entry, tile->ZAdjust);
+							}
+						}
+					}
+					head_tile = tile;
+					tail_tile = tile;
+				}
+
+				char file_path[512];
+				_makepath(file_path, NULL, NULL, tile_name, Theaters[theater].Suffix);
+
+				found_image = false;
+				mixfile_set = NULL;
+
+				if (from_ccfile) {
+					CCFileClass file(file_path);
+					found_image = file.Is_Available();
+					if (found_image && tile_count == 0) {
+						strncpy(tile->Filename, file_path, sizeof(tile->Filename)-2);
+					}
+				} else {
+					mixfile_set = (IsoTileSet *)FileSystem::LoadFile(file_path, false);
+					if (mixfile_set) {
+						found_image = true;
+					}
+				}
+				if (!found_image && _NonMarbleMadness) {
+					if (theater != THEATER_NONE) {
+						_makepath(file_path, NULL, NULL, tile_name, Theaters[theater].MMExtension);
+					} else {
+						_makepath(file_path, NULL, NULL, tile_name, ".MMT");
+					}
+					if (from_ccfile) {
+						CCFileClass file(file_path);
+						found_image = file.Is_Available();
+						if (found_image && tile_count == 0) {
+							strncpy(tile->Filename, file_path, sizeof(tile->Filename)-2);
+						}
+					} else {
+						mixfile_set = (IsoTileSet *)FileSystem::LoadFile(file_path, false);
+						if (mixfile_set) {
+							found_image = true;
+						}
+					}
+					if (!found_image) {
+						_makepath(file_path, NULL, NULL, tile_name, ".TEM");
+						if (from_ccfile) {
+							CCFileClass file(file_path);
+							found_image = file.Is_Available();
+							if (found_image && tile_count == 0) {
+								strncpy(tile->Filename, file_path, sizeof(tile->Filename)-2);
+							}
+						} else {
+							mixfile_set = (IsoTileSet *)FileSystem::LoadFile(file_path, false);
+							if (mixfile_set) {
+								found_image = true;
+							}
+						}
+						if (!found_image) {
+							_makepath(file_path, NULL, NULL, tile_name, ".URB");
+							if (from_ccfile) {
+								CCFileClass file(file_path);
+								found_image = file.Is_Available();
+								if (found_image && tile_count == 0) {
+									strncpy(tile->Filename, file_path, sizeof(tile->Filename)-2);
+								}
+							} else {
+								mixfile_set = (IsoTileSet *)FileSystem::LoadFile(file_path, false);
+								if (mixfile_set) {
+									found_image = true;
+								}
+							}
+						}
+					}
+				}
+
+				if (tile_count != 0) {
+					if (!mixfile_set && !found_image) {
+						break;
+					}
+					tile = new IsometricTileTypeClass((IsometricTileType)(heapid - 1), uninitialized_value, 0, tile_name, true);
+
+					tile->GivenName = given_name;
+					tile->MarbleMadness = _MarbleMadness;
+					tile->NonMarbleMadness = _NonMarbleMadness;
+					tile->IsMorphable = _Morphable;
+					tile->IsAllowToPlace = _AllowToPlace;
+					tile->IsAllowBurrowing = _AllowBurrowing;
+					tile->IsAllowTiberium = _AllowTiberium;
+					tile->IsRequiredForRMG = _RequiredForRMG;
+					if (from_ccfile) {
+						tile->IsFileLoaded = true;
+						strncpy(tile->Filename, file_path, sizeof(tile->Filename)-2);
+					}
+					if (is_shadow_caster && shadow_tiles) {
+						tile->IsShadowCaster = is_shadow_caster;
+					}
+					tile->TileSetBaseID = TileSetIDLookup[TileSetLookupCount - 1];
+					tail_tile->NextTileTypeInSet = tile;
+					tile->PreviewTiles.Clear();
+					tail_tile = tile;
+				}
+
+				if (tile_count == 0 || mixfile_set) {
+					tile->ImageData = mixfile_set;
+				}
+
+				if (mixfile_set != NULL) {
+					IsoTileSet const * tileset = mixfile_set;
+					tile->Width = (unsigned char)tileset->MapWidth;
+					tile->Height = (unsigned char)tileset->MapHeight;
+					for (j = 0; j < mixfile_set->Tile_Count(); j++) {
+						IsoTileRecord ** record = &mixfile_set->Tiles[j];
+						if (*record != 0 && (unsigned int)*record < (unsigned int)mixfile_set) {
+							*record = (IsoTileRecord *)((unsigned int)mixfile_set + (unsigned int)*record);
+						}
+					}
+					tile->Build_Preview_Tiles();
+				} else {
+					if (tile_count == 0) {
+						tile->Width = 0;
+						tile->Height = 0;
+					}
+				}
+				tile_count++;
+			} while (mixfile_set != NULL || found_image);
+
+			if (tile_count > 1) {
+				IsometricTileTypeClass * tile = head_tile;
+				for (char t = tile_count; t > 1; t--) {
+					tile->NumTileTypesInSet = t;
+					tile = tile->NextTileTypeInSet;
+				}
+			}
+		}
+		setid++;
+	}
+
+	for (j = 0; j < IsometricTileTypes.Count(); ++j) {
+		IsometricTileTypeClass * isotype = IsometricTileTypes[j];
+		int offset = isotype->HeapID - isotype->TileSetBaseID;
+		if (isotype->MarbleMadness != ISOTILE_NONE) {
+			isotype->MarbleMadness = (IsometricTileType)(TileSetIDLookup[isotype->MarbleMadness] + offset);
+		}
+		if (isotype->NonMarbleMadness != ISOTILE_NONE) {
+			isotype->NonMarbleMadness = (IsometricTileType)(TileSetIDLookup[isotype->NonMarbleMadness] + offset);
+		}
+	}
+
+	if (theater == THEATER_LUNAR) {
+		ShorePieces = ISOTILE_INVALID;
+		WaterSet = ISOTILE_INVALID;
+		CliffSet = ISOTILE_INVALID;
+		WaterCliffs = ISOTILE_INVALID;
+		WaterBridge = ISOTILE_INVALID;
+		BridgeSet = ISOTILE_INVALID;
+		TrainBridgeSet = ISOTILE_INVALID;
 	}
 }
 

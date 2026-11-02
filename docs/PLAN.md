@@ -1,6 +1,6 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 2 November 2026: 18,525 of 19,367 game functions match (96%; 70% of game code
+Status, 2 November 2026: 18,531 of 19,367 game functions match (96%; 71% of game code
 by size), landed in batches module by module. The rounds below record each one.
 
 ## The goal
@@ -1113,6 +1113,21 @@ Session.Players. Recording then exposed three UI-command functions building char
 ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; their RTTI
 fixed them. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
+
+### Batches 156 to 158 (2 November 2026)
+
+**6 functions, 35 KB.** Batches 156 and 157 put Opus on the last twelve untried functions
+of 1.5 KB or more outside the skipped modules; batch 158 retried 45 near misses of 98% or
+more in modules those two did not own. Matched: RulesClass::RulesClass (9.2 KB), MapGen's
+DirtRoadTiles initialiser `_$E204` (9.5 KB, its source was already in place and only lacked
+the marker), IsometricTileTypeClass::Read_Control_File (7.2 KB; YR renames TS's IceShoreSet
+to WaterBridge, the exe's INI key), UnitClass::Plan_Route (6.2 KB),
+FootClass::Per_Cell_Process and a reference-parameter twin of Plain_Text_Print_Wide.
+TechnoTypeClass's turret and barrel data became a 20-byte TurretAnimControl. WinMain,
+Read_INI, the Dropship screen, ownrdraw 0x00617250 and wonline 0x0079F140 stay at 61 to 68%
+on VC6's inline budget; Print_CRCs matches only with DebugPage in a header. Most near misses
+held at their old scores, and every small function outside vqalib/unvq has now been tried.
+Merge gate: 18,531 of 18,531 (2,623.7 KB).
 
 ### dk8827's pull requests (2 November 2026)
 

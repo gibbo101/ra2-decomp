@@ -3843,6 +3843,7 @@ address,size,symbol,source,sha256
 0x004A61C0,416,?Fancy_Text_Print_Wide@@YAPAVPoint2D@@PAV1@PBGPAVSurface@@PBV?$TRect@H@@PBV1@PAVColorScheme@@IW4TextPrintType@@ZZ,src/dialog.cpp,43d15b98a81417962e8d13bd1052c6d9a4518cbfeabf169c2000065d96b6497d
 0x004A6360,404,?Conquer_Clip_Text_Print_Wide@@YI?AVPoint2D@@PBGPAVSurface@@PBV?$TRect@H@@PBV1@IIW4TextPrintType@@HPBH@Z,src/dialog.cpp,2e3e252051e8769dd0b02c87ed5c94fdc21a9109cc37f78a2204df82a9193459
 0x004A6500,192,?Conquer_Clip_Text_Print_Wide@@YI?AVPoint2D@@PBGPAVSurface@@PBV?$TRect@H@@PBV1@PAVColorScheme@@IW4TextPrintType@@HPBH@Z,src/dialog.cpp,4ab64e3a300f7fb3e6abb178e065cb2217b658ac45873e6cd3e6dce576986bd5
+0x004A65C0,267,?Plain_Text_Print_Wide@@YI?AVPoint2D@@PBGAAVSurface@@ABV?$TRect@H@@ABV1@IIW4TextPrintType@@HH@Z,src/dialog.cpp,1c9097ecdeb748e835c260c5fb445cc70476b9dfd93db1e882e13466a47c738a
 0x004A66D0,267,?Plain_Text_Print_Wide@@YI?AVPoint2D@@PBGPAVSurface@@PBV?$TRect@H@@PBV1@IIW4TextPrintType@@HH@Z,src/dialog.cpp,61f3d6234abecdb155acdc2c5a10a80f9cb5049e44001b30b749012f4cd25797
 0x004A67E0,52,?Font_Palette@@YIPAEH@Z,src/dialog.cpp,bb5a1b697afdd169b8c81c1170994aaec33e8b589d37445b852bd930aa73b517
 0x004A6820,23,_$E2,src/dib.cpp,48a68e5401fdcd216549138d9e78fcab868285ba83f965c3498365b9b72babc3
@@ -4772,6 +4773,7 @@ address,size,symbol,source,sha256
 0x004D7D50,1375,?Active_Click_With@FootClass@@UAE_NW4ActionType@@ABVCell@@1_N@Z,src/foot.cpp,f99f07b4261fad1860de0b3324edd4f82440f3aeb1525dd92ce47eaed248ef9a
 0x004D82B0,679,?Enter_Idle_Mode@FootClass@@UAE_N_N0@Z,src/foot.cpp,e48bdf15f53560f221628aff1b6b55641804aa6d344686ca3cbe45b352f193a6
 0x004D8560,106,?GetAttackCoordinates@FootClass@@UBE?AVCoord@@XZ,src/foot.cpp,cc345669186294be37520d755b417ddd1645f65cf2f80c61aa6d311bc3f33318
+0x004D85D0,2401,?Per_Cell_Process@FootClass@@UAEXW4PCPType@@@Z,src/foot.cpp,d0f40a32ae3541b43d0bae828c36a500f299aa675423a94e220e7208e827c920
 0x004D8F40,56,?Override_Mission@FootClass@@UAEXW4MissionType@@PAVAbstractClass@@1@Z,src/foot.cpp,10782d850e2c4253bb6bb1e7e0fc1be904c4d7099989483043e203d1d5b72389
 0x004D8F80,39,?Restore_Mission@FootClass@@UAE_NXZ,src/foot.cpp,dde801463459e49395f6b5cd92a4dd6446f636116393656a3640593201b3b6d6
 0x004D8FB0,727,?Receive_Message@FootClass@@UAE?AW4RadioMessageType@@PAVRadioClass@@W42@AAH@Z,src/foot.cpp,4fe069b07f798ebd1d5c4f1a20ea3c7e63609dc5e5fe0fe3c239044e01fa4738
@@ -7391,6 +7393,7 @@ address,size,symbol,source,sha256
 0x00544E70,369,?Find_Or_Make_Drawer@IsometricTileTypeClass@@SIPAVLightConvertClass@@HHH@Z,src/isotype.cpp,509fddecf00581ff52b48c3f02ae6268b7dad8427df5d381e58bc38fc068d2e9
 0x00544FF0,3,?Free_Unused_Drawers@IsometricTileTypeClass@@SI_NH_N@Z,src/isotype.cpp,01cb47d078b4841b8408ec4fe278efa83115c6f6e101972987507d2b2b57dcf0
 0x00545000,330,?Init_Drawers@IsometricTileTypeClass@@SIXXZ,src/isotype.cpp,a2d8b37ed9c6fb9aaf05e3323fb90bb4144f0704134bd2a0e749f08becfee641
+0x00545150,7233,?Read_Control_File@IsometricTileTypeClass@@SIXW4TheaterType@@_N@Z,src/isotype.cpp,2feaded6099c07033ae52b4b380cf799ed038669316671f62e5d5e598188e480
 0x00546DA0,637,?Load_Tiles@IsometricTileTypeClass@@SIX_N0@Z,src/isotype.cpp,41308761211451b2dcce0012551cdf59ad584578e430b3b7bca0ddb50cc90b31
 0x00547020,231,?Load_Tile_Data@IsometricTileTypeClass@@QAEHXZ,src/isotype.cpp,fe22b0cdeeb01d258e9e0f1a48060a3f6f2b49d8b595c490793a99472af9123a
 0x00547110,52,?Clear_Use_Counts@IsometricTileTypeClass@@SIXXZ,src/isotype.cpp,2829e916304a581c80ba10627ee174bfa46b0b0668042ce8c483ae5c81d9f582
@@ -8558,6 +8561,7 @@ address,size,symbol,source,sha256
 0x005A9BF0,16,??0DirtRoadTile@@QAE@XZ,src/mapgen.cpp,9d20fb9737545d0eeb198c79dc5d325beabd6d570a4058d3f1e7f4a887df0403
 0x005A9C00,24,??1DirtRoadTile@@QAE@XZ,src/mapgen.cpp,2e19990a0d311df8978ee53438a2b50007934db54fb638fbde25362c57a9091e
 0x005A9C20,17,_$E207,src/mapgen.cpp,c3462275ba15b40163c6acb5aba7d5eeab63b161ca49bbeccbee899040c4cd19
+0x005A9C40,9537,_$E204,src/mapgen.cpp,d1e1a1964aaee4228741fa279cbea899fbf17abde489ab1ab3604f4598776622
 0x005AC190,39,_$E205,src/mapgen.cpp,14c9910388e5bda70a30fed94d0fa394c214f8e9aa5d205892d335f4eebaa928
 0x005AC1C0,48,?Dirt_Road_Tile_Index@@YIHW4IsometricTileType@@@Z,src/mapgen.cpp,fb22b1f2ccee4e85ac32623118d0dffd7ee5121966e0965cc693f19e49926c2c
 0x005AC1F0,61,?Init_Dirt_Roads@@YIXXZ,src/mapgen.cpp,4fe916f4e36662f9e72e78fcb2546669479af04c73436cb8facbbaac648190f7
@@ -12104,6 +12108,7 @@ address,size,symbol,source,sha256
 0x00664CE0,26,_$E71,src/rules.cpp,4602fe7f33a504e6adab8796e6fa5474ca440671a5738a32984f4a1bf577a1af
 0x00664D00,23,_$E10,src/rules.cpp,05b88fbcb49a3fc36a84b7a6f09ad3968fafe7ece6c0d2ebe3ce348ffc8fe720
 0x00664D20,2346,??0RulesClass@@QAE@ABVNoInitClass@@@Z,src/rules.cpp,2d68e156d133729182c6683271bd701886366930c75422119a3b9971efba4ffc
+0x00665650,9175,??0RulesClass@@QAE@XZ,src/rules.cpp,e184b9168995f4360d66ad7de1f634706b7a4b9c3ab1aa733d1b90fd4955e09d
 0x00667A30,3202,??1RulesClass@@QAE@XZ,src/rules.cpp,f7db1eb1e8adaae1345d45e666322e8da7f403a5be849cf7327e29cc19e64afc
 0x006686C0,1320,?Initialize@RulesClass@@QAEXAAVCCINIClass@@@Z,src/rules.cpp,c862b374cd37fc6a9f3999c960e32a6872c7dec9f7a86f1d68db7054ce479fd3
 0x00668FB0,545,?Special_Weapons@RulesClass@@QAE_NAAVCCINIClass@@@Z,src/rules.cpp,c52ba9ecce95045f441e039f332b38564015ee01fc98ee46cd172412364393eb
@@ -16207,6 +16212,7 @@ address,size,symbol,source,sha256
 0x007446E0,56,?Detach@UnitClass@@UAEXPBVAbstractClass@@_N@Z,src/unit.cpp,76d851d866c3c397743050e83588c815d13feebe0f299600707991ac386df101
 0x00744720,122,?RegisterDestruction@UnitClass@@UAEXPAVTechnoClass@@@Z,src/unit.cpp,4024e28386143a978a53ce66c09f80538bc043192830e2f8801a2e4e544414d7
 0x007447A0,5,?Do_MISSION_ATTACK@UnitClass@@UAEHXZ,src/unit.cpp,03855e0459c171e3661d5a5cb158da41ed591ddb3466122cc444d40f733c5d33
+0x007447B0,6215,?Plan_Route@UnitClass@@QAEPAVAbstractClass@@PAV2@@Z,src/unit.cpp,8aba11849d063177a7c59d9c8a2e5034173f912448d4880f4490cf6b827f2aef
 0x00746000,254,?AStarAttempt@UnitClass@@QAE_NPBVCell@@0@Z,src/unit.cpp,c8d2b0dd5ad7840da53dfe59692bf15fa3fb6ac945c3738207fd31b5fc4706f5
 0x00746100,669,?INoticeSink_Unknown@UnitClass@@UAE_NKK@Z,src/unit.cpp,970d9b8e6a0af3b49010afd8293c2a33762815ba001d03eb9acb2ed4ddb6860a
 0x007463A0,83,?Captured@UnitClass@@UAE_NPAVHouseClass@@_N@Z,src/unit.cpp,68e8626a6ea24ae45e15bfcfb9c698b7e55c642ce2b22f8898e0271b210a2ec8

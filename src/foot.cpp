@@ -661,6 +661,12 @@ inline Cell Adjacent_Cell_By_Value(Cell cell, FacingType dir)
 	return(cell + AdjacentCell[(int)dir & 0x07]);
 }
 
+inline Cell Adjacent_Cell_From_Offset(Cell const & cell, FacingType dir)
+{
+	Cell const & offset = AdjacentCell[(int)dir & 0x07];
+	return(Cell(offset.X + cell.X, offset.Y + cell.Y));
+}
+
 static inline bool Is_Foot_Object(AbstractClass const * object)
 {
 	if (object == NULL) {
@@ -1401,6 +1407,168 @@ Coord FootClass::GetAttackCoordinates(void) const
 		}
 	}
 	return(BASECLASS::GetAttackCoordinates());
+}
+
+// FUNCTION: GAMEMD 0x004D85D0
+void FootClass::Per_Cell_Process(PCPType why)
+{
+	Cell cell;
+
+	if (why == PCP_END) {
+		IsScattering = false;
+		IsUnloading = false;
+
+		if (Techno_Type_Class()->SensorsSight != 0) {
+			RemoveSensorsAt(LastAdjacencyCell);
+			AddSensorsAt(CELL_NONE);
+		}
+
+		if (LastAdjacencyCell != Cell(0, 0)) {
+			if (Map.Cell_Region(LastAdjacencyCell) != Map.Cell_Region(Get_Cell())) {
+				FUN_0070F6A0(&Map[LastAdjacencyCell]);
+				FUN_0070F670(Get_Cell_Ptr());
+			}
+			int face;
+			for (face = FACING_FIRST; face < FACING_COUNT; face++) {
+				CellClass * cptr = &Map[Adjacent_Cell(LastAdjacencyCell, (FacingType)face)];
+				cptr->AdjacentObjectCount--;
+			}
+			LastAdjacencyCell = Get_Cell();
+			for (face = FACING_FIRST; face < FACING_COUNT; face++) {
+				Cell c = Adjacent_Cell(LastAdjacencyCell, (FacingType)face);
+				CellClass * cptr = &Map[c];
+				cptr->AdjacentObjectCount++;
+			}
+		}
+
+		if (Cloak == CLOAKED) {
+			for (FacingType face = FACING_N; face < FACING_COUNT; face++) {
+				Cell c = Adjacent_Cell_From_Offset(Get_Cell(), face);
+
+				if (Map.In_Local_Radar(c)) {
+					TechnoClass const * techno = Map[c].Cell_Techno();
+
+					if (techno && !techno->House->Is_Ally(this) && (techno->Techno_Type_Class()->IsScanner || techno->Has_Ability(ABILITY_SENSORS))) {
+						Do_Shimmer();
+						break;
+					}
+				}
+			}
+		}
+
+		int primary = What_Weapon_Should_I_Use(TarCom);
+		bool inrange = false;
+		if (TarCom != NULL && (TarCom->AbstractFlags & 4)) {
+			FootClass const * foot = (FootClass *)TarCom;
+			if (Techno_Type_Class()->OpenTopped) {
+				inrange = Distance(foot->Center_Coord()) < Weapon_Range(primary);
+			} else {
+				inrange = In_Range(foot->Likely_Coord(), primary);
+			}
+		}
+
+		if ((Mission == MISSION_RESCUE || Mission == MISSION_GUARD_AREA || Mission == MISSION_ATTACK || Mission == MISSION_HUNT) && inrange && RouteQueue.Count() == 0) {
+			Assign_Destination(NULL);
+			Path[0] = FACING_NONE;
+		}
+
+		cell = Get_Cell();
+		CellClass * cellptr = &Map[cell];
+
+		TagClass * tag = cellptr->Tag;
+		int x = cell.X;
+		int y = cell.Y;
+		if (((!cellptr->IsUnderBridge && !cellptr->WasUnderBridge) || IsOnBridge) && tag != NULL) {
+			tag->Spring(TEVENT_PLAYER_ENTERED, this, Get_Cell());
+			tag->Spring((TEventType)0x3b, this, Get_Cell());
+			if (RTTI == RTTI_INFANTRY && ((InfantryClass *)this)->Class->IsAgent) {
+				tag->Spring((TEventType)0x35, this, Get_Cell());
+				tag->Spring((TEventType)0x36, this, Get_Cell());
+			}
+		}
+
+		if (cellptr->IsHorizontalLine) {
+			for (int index = 0; index < Map.MapRect.Width; index++) {
+				cellptr = &Map[Cell(index+Map.MapRect.X, y)];
+				tag = cellptr->Tag;
+				if (tag != NULL) {
+					if (tag->Is_Cross_Horizontal()) {
+						tag->Spring(TEVENT_CROSS_HORIZONTAL, this, Get_Cell());
+					}
+				}
+			}
+		}
+
+		if (cellptr->IsVerticalLine) {
+			for (int index = 0; index < Map.MapRect.Height; index++) {
+				tag = Map[Cell(x, index+Map.MapRect.Y)].Tag;
+				if (tag != NULL) {
+					if (tag->Is_Cross_Vertical()) {
+						tag->Spring(TEVENT_CROSS_VERTICAL, this, Get_Cell());
+					}
+				}
+			}
+		}
+
+		for (MapTriggerID = 0; MapTriggerID < MapTags.Count(); MapTriggerID++) {
+			tag = MapTags[MapTriggerID];
+			if (tag != NULL) {
+				if (tag->Is_Enters_Zone()) {
+					if (Map.Is_Same_Cell_Zone(tag->Get_Position(), Destination_Coord().As_Cell(), Techno_Type_Class()->MZone, Map[tag->Get_Position()].IsUnderBridge, Is_Moving_Onto_Bridge())) {
+						tag->Spring(TEVENT_ENTERS_ZONE, this, Destination_Coord().As_Cell());
+					}
+				}
+			}
+		}
+
+		BuildingClass * building = cellptr->Cell_Building();
+		if (building != NULL) {
+			if (building->Class->IsLaserFence && building->LaserFenceFrame < 8) {
+				RTTIType rtti = RTTI;
+				if (rtti > RTTI_NONE && (rtti <= RTTI_AIRCRAFT || rtti == RTTI_INFANTRY) && Strength > 0) {
+					Take_Damage(Strength, 0, Rule->C4Warhead, building, true, true);
+				}
+			}
+		}
+
+		if (IsOnBridge && !Map[(Coord const &)PositionCoord].IsUnderBridge) {
+			Fall_From_Height();
+		}
+
+		if (!IsActive) {
+			return;
+		}
+
+		if (!Map.In_Local_Radar(Get_Cell()) && Should_Delete_Off_Map()) {
+			Delete_Me();
+			return;
+		}
+
+		if (IsSelected && !House->Is_Player_Control() && Map.Is_Shrouded(PositionCoord)) {
+			Unselect();
+		}
+	}
+
+	if (CurrentPath != PATH_NONE) {
+		WaypointPathClass * path = PlayerPtr->Paths[CurrentPath];
+		WaypointClass * next_waypoint = path->Get_Waypoint(NextWaypoint);
+		if (next_waypoint != NULL) {
+			Cell wp_cell = next_waypoint->Location;
+			if (Map.DraggedWaypoint == next_waypoint) {
+				wp_cell = Map.DraggedWaypointCoord;
+			}
+			if (wp_cell + WaypointOffsetCell != WaypointTargetCell) {
+				Execute_Waypoint_Path(next_waypoint);
+			}
+		} else {
+			CurrentPath = PATH_NONE;
+			NextWaypoint = NULL;
+			WaypointOffsetCell = Cell(0, 0);
+			WaypointTargetCell = Cell(0, 0);
+		}
+	}
+
+	BASECLASS::Per_Cell_Process(why);
 }
 
 // FUNCTION: GAMEMD 0x004D8F40

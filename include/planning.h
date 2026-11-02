@@ -109,6 +109,7 @@ class PlanningNodeClass
 		void Locate_Loop_Branch(void);
 		void Select_All(void);
 		void Unselect_All(void);
+		void Draw_Lead_Box(int color);
 		void Fill_Lead_Box(int color);
 		void Frame_Lead_Box(int color);
 		int Node_Color(void);

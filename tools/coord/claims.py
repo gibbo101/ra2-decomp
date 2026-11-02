@@ -9,7 +9,7 @@ import csv, json, re, subprocess, sys
 
 MARKER = re.compile(r"^\+\s*// (?:FUNCTION|SYNTHETIC|TEMPLATE|LIBRARY): GAMEMD (0x[0-9A-Fa-f]{8})", re.M)
 ROW = re.compile(r"^\+(0x[0-9A-Fa-f]{8}),[^\n]*,MATCH,", re.M)
-SPAN = re.compile(r"\b(0x[0-9A-Fa-f]{8})(?:\s*(?:-|\.\.)\s*(0x[0-9A-Fa-f]{8}))?\b")
+SPAN = re.compile(r"\b(0x[0-9A-Fa-f]{8})(?:\s*(?:[-\u2013\u2014]|\.\.)\s*(0x[0-9A-Fa-f]{8}))?\b")
 LABEL = "claims"
 
 

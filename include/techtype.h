@@ -49,6 +49,13 @@ struct TurretControl
 	int FUN_00717AD0(void) const;
 };
 
+struct TurretAnimControl : public TurretControl
+{
+	TurretAnimControl(void) {}
+	TurretAnimControl(int travel, int compress, int recover, int hold) : TurretControl(travel, compress, recover, hold), UnknownBool(false) {}
+	bool UnknownBool;
+};
+
 class TechnoTypeClass : public ObjectTypeClass
 {
 		typedef ObjectTypeClass BASECLASS;
@@ -350,13 +357,8 @@ class TechnoTypeClass : public ObjectTypeClass
 
 		bool IsTurretEquipped;
 		bool TurretRecoil;
-		TurretControl TurretAnimData;
-		bool UnknownBoolCB4;
-		TurretControl BarrelAnimData;
-		bool UnknownBoolCC8;
-		unsigned char : 8;
-		unsigned char : 8;
-		unsigned char : 8;
+		TurretAnimControl TurretAnimData;
+		TurretAnimControl BarrelAnimData;
 
 		bool IsRepairable;
 

@@ -246,7 +246,7 @@ class IsometricTileTypeClass : public ObjectTypeClass
 		static IsometricTileType Ice2Set;
 		static IsometricTileType Ice3Set;
 
-		static IsometricTileType IceShoreSet;
+		static IsometricTileType WaterBridge;
 
 		static IsometricTileType SlopeSetPieces;
 		static IsometricTileType SlopeSetPieces2;

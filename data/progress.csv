@@ -3490,6 +3490,7 @@ address,name,result,size,source,symbol
 0x004A61C0,Fancy_Text_Print_Wide,MATCH,416,src/dialog.cpp,?Fancy_Text_Print_Wide@@YAPAVPoint2D@@PAV1@PBGPAVSurface@@PBV?$TRect@H@@PBV1@PAVColorScheme@@IW4TextPrintType@@ZZ
 0x004A6360,Conquer_Clip_Text_Print_Wide,MATCH,404,src/dialog.cpp,?Conquer_Clip_Text_Print_Wide@@YI?AVPoint2D@@PBGPAVSurface@@PBV?$TRect@H@@PBV1@IIW4TextPrintType@@HPBH@Z
 0x004A6500,Conquer_Clip_Text_Print_Wide,MATCH,192,src/dialog.cpp,?Conquer_Clip_Text_Print_Wide@@YI?AVPoint2D@@PBGPAVSurface@@PBV?$TRect@H@@PBV1@PAVColorScheme@@IW4TextPrintType@@HPBH@Z
+0x004A65C0,Plain_Text_Print_Wide,MATCH,267,src/dialog.cpp,?Plain_Text_Print_Wide@@YI?AVPoint2D@@PBGAAVSurface@@ABV?$TRect@H@@ABV1@IIW4TextPrintType@@HH@Z
 0x004A66D0,Plain_Text_Print_Wide,MATCH,267,src/dialog.cpp,?Plain_Text_Print_Wide@@YI?AVPoint2D@@PBGPAVSurface@@PBV?$TRect@H@@PBV1@IIW4TextPrintType@@HH@Z
 0x004A67E0,Font_Palette,MATCH,52,src/dialog.cpp,?Font_Palette@@YIPAEH@Z
 0x004A6820,_$E2,MATCH,23,src/dib.cpp,_$E2
@@ -4419,6 +4420,7 @@ address,name,result,size,source,symbol
 0x004D7D50,FootClass::Active_Click_With,MATCH,1375,src/foot.cpp,?Active_Click_With@FootClass@@UAE_NW4ActionType@@ABVCell@@1_N@Z
 0x004D82B0,FootClass::Enter_Idle_Mode,MATCH,679,src/foot.cpp,?Enter_Idle_Mode@FootClass@@UAE_N_N0@Z
 0x004D8560,FootClass::GetAttackCoordinates,MATCH,106,src/foot.cpp,?GetAttackCoordinates@FootClass@@UBE?AVCoord@@XZ
+0x004D85D0,FootClass::Per_Cell_Process,MATCH,2401,src/foot.cpp,?Per_Cell_Process@FootClass@@UAEXW4PCPType@@@Z
 0x004D8F40,FootClass::Override_Mission,MATCH,56,src/foot.cpp,?Override_Mission@FootClass@@UAEXW4MissionType@@PAVAbstractClass@@1@Z
 0x004D8F80,FootClass::Restore_Mission,MATCH,39,src/foot.cpp,?Restore_Mission@FootClass@@UAE_NXZ
 0x004D8FB0,FootClass::Receive_Message,MATCH,727,src/foot.cpp,?Receive_Message@FootClass@@UAE?AW4RadioMessageType@@PAVRadioClass@@W42@AAH@Z
@@ -7038,6 +7040,7 @@ address,name,result,size,source,symbol
 0x00544E70,IsometricTileTypeClass::Find_Or_Make_Drawer,MATCH,369,src/isotype.cpp,?Find_Or_Make_Drawer@IsometricTileTypeClass@@SIPAVLightConvertClass@@HHH@Z
 0x00544FF0,IsometricTileTypeClass::Free_Unused_Drawers,MATCH,3,src/isotype.cpp,?Free_Unused_Drawers@IsometricTileTypeClass@@SI_NH_N@Z
 0x00545000,IsometricTileTypeClass::Init_Drawers,MATCH,330,src/isotype.cpp,?Init_Drawers@IsometricTileTypeClass@@SIXXZ
+0x00545150,IsometricTileTypeClass::Read_Control_File,MATCH,7233,src/isotype.cpp,?Read_Control_File@IsometricTileTypeClass@@SIXW4TheaterType@@_N@Z
 0x005471F0,IsometricTileTypeClass::Is_Randomized,MATCH,54,src/isotype.cpp,?Is_Randomized@IsometricTileTypeClass@@QBE_NH@Z
 0x00546DA0,IsometricTileTypeClass::Load_Tiles,MATCH,637,src/isotype.cpp,?Load_Tiles@IsometricTileTypeClass@@SIX_N0@Z
 0x00547020,IsometricTileTypeClass::Load_Tile_Data,MATCH,231,src/isotype.cpp,?Load_Tile_Data@IsometricTileTypeClass@@QAEHXZ
@@ -8191,6 +8194,7 @@ address,name,result,size,source,symbol
 0x005A9BF0,DirtRoadTile::DirtRoadTile,MATCH,16,src/mapgen.cpp,??0DirtRoadTile@@QAE@XZ
 0x005A9C00,DirtRoadTile::~DirtRoadTile,MATCH,24,src/mapgen.cpp,??1DirtRoadTile@@QAE@XZ
 0x005A9C20,_$E207,MATCH,17,src/mapgen.cpp,_$E207
+0x005A9C40,_$E204,MATCH,9537,src/mapgen.cpp,_$E204
 0x005AC190,_$E205,MATCH,39,src/mapgen.cpp,_$E205
 0x005AC1C0,Dirt_Road_Tile_Index,MATCH,48,src/mapgen.cpp,?Dirt_Road_Tile_Index@@YIHW4IsometricTileType@@@Z
 0x005AC1F0,Init_Dirt_Roads,MATCH,61,src/mapgen.cpp,?Init_Dirt_Roads@@YIXXZ
@@ -11751,6 +11755,7 @@ address,name,result,size,source,symbol
 0x00664CE0,_$E71,MATCH,26,src/rules.cpp,_$E71
 0x00664D00,_$E10,MATCH,23,src/rules.cpp,_$E10
 0x00664D20,RulesClass::RulesClass,MATCH,2346,src/rules.cpp,??0RulesClass@@QAE@ABVNoInitClass@@@Z
+0x00665650,RulesClass::RulesClass,MATCH,9175,src/rules.cpp,??0RulesClass@@QAE@XZ
 0x00667A30,RulesClass::~RulesClass,MATCH,3202,src/rules.cpp,??1RulesClass@@QAE@XZ
 0x006686C0,RulesClass::Initialize,MATCH,1320,src/rules.cpp,?Initialize@RulesClass@@QAEXAAVCCINIClass@@@Z
 0x00668FB0,RulesClass::Special_Weapons,MATCH,545,src/rules.cpp,?Special_Weapons@RulesClass@@QAE_NAAVCCINIClass@@@Z
@@ -15854,6 +15859,7 @@ address,name,result,size,source,symbol
 0x007446E0,UnitClass::Detach,MATCH,56,src/unit.cpp,?Detach@UnitClass@@UAEXPBVAbstractClass@@_N@Z
 0x00744720,UnitClass::RegisterDestruction,MATCH,122,src/unit.cpp,?RegisterDestruction@UnitClass@@UAEXPAVTechnoClass@@@Z
 0x007447A0,UnitClass::Do_MISSION_ATTACK,MATCH,5,src/unit.cpp,?Do_MISSION_ATTACK@UnitClass@@UAEHXZ
+0x007447B0,UnitClass::Plan_Route,MATCH,6215,src/unit.cpp,?Plan_Route@UnitClass@@QAEPAVAbstractClass@@PAV2@@Z
 0x00746000,UnitClass::AStarAttempt,MATCH,254,src/unit.cpp,?AStarAttempt@UnitClass@@QAE_NPBVCell@@0@Z
 0x00746100,UnitClass::INoticeSink_Unknown,MATCH,669,src/unit.cpp,?INoticeSink_Unknown@UnitClass@@UAE_NKK@Z
 0x007463A0,UnitClass::Captured,MATCH,83,src/unit.cpp,?Captured@UnitClass@@UAE_NPAVHouseClass@@_N@Z

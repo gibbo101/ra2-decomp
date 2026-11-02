@@ -105,9 +105,7 @@ TechnoTypeClass::TechnoTypeClass(NoInitClass const & x) :
 	DamageParticleSystems(),
 	DestroyParticleSystems(),
 	TurretAnimData(2, 1, 1, 1),
-	UnknownBoolCB4(false),
-	BarrelAnimData(2, 1, 1, 1),
-	UnknownBoolCC8(false)
+	BarrelAnimData(2, 1, 1, 1)
 {
 	bool found = false;
 	for (int i = 0; i < Array.Count(); i++) {

@@ -1,7 +1,7 @@
 """Write batchN.js/json for a near-miss round: unmatched game functions whose best attempt is >= MIN%.
 
-Usage: python3 tools/coord/mknear.py TEMPLATE.js FIRST_BATCH NBATCHES MIN [PER_JOB [MAX]]
-MAX, if given, keeps only near misses whose best is below it.
+Usage: python3 tools/coord/mknear.py TEMPLATE.js FIRST_BATCH NBATCHES MIN [PER_JOB [MAX]] [skip=mod,...]
+MAX, if given, keeps only near misses whose best is below it. skip= leaves out modules another batch owns.
 One Opus job per module with PER_JOB or more near misses, smaller modules grouped to about PER_JOB.
 Functions claimed by open pull requests or the claims issue (claims.py) are never picked.
 """
@@ -14,6 +14,9 @@ COORD = Path(__file__).resolve().parent
 OUT = Path("build/coord")
 OUT.mkdir(parents=True, exist_ok=True)
 SKIP = {"vqalib/unvq", "_alpha", "?"}
+skips = [a for a in sys.argv if a.startswith("skip=")]
+sys.argv = [a for a in sys.argv if not a.startswith("skip=")]
+SKIP |= {m for a in skips for m in a[5:].split(",") if m}
 template = Path(sys.argv[1]).read_text()
 first, nb, MIN = int(sys.argv[2]), int(sys.argv[3]), float(sys.argv[4])
 PER = int(sys.argv[5]) if len(sys.argv) > 5 else 6

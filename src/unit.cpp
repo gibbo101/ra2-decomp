@@ -3198,6 +3198,286 @@ int UnitClass::Do_MISSION_ATTACK(void)
 	return(BASECLASS::Do_MISSION_ATTACK());
 }
 
+// FUNCTION: GAMEMD 0x007447B0
+AbstractClass * UnitClass::Plan_Route(AbstractClass * dest)
+{
+	RouteQueue.Clear();
+
+	bool onbridge = Is_Moving_Onto_Bridge();
+
+	Cell from = Destination_Coord().As_Cell();
+
+	bool canburrowfrom = Map[from].Can_Burrow_Here() || Get_Height_AGL() < 0;
+
+	Cell to = dest->Center_Coord().As_Cell();
+
+	CellClass * toptr = &Map[to];
+	bool isunderbridgeto = toptr->IsUnderBridge;
+	bool canburrowto = toptr->Can_Burrow_Here();
+
+	if (onbridge) {
+		if (isunderbridgeto) {
+			Cell frombridge = Map.Get_Zone_Connection_Destination(from, to);
+			Cell tobridge = Map.Get_Zone_Connection_Destination(to, to);
+
+			if (AStarAttempt(&frombridge, &tobridge)) {
+				Cell fromspot = Map.Nearby_Location(frombridge, SPEED_TRACK, Map.Get_Cell_Zone(frombridge), MZONE_NORMAL, false, Point2D(1, 1), false, true, true);
+				Cell tospot = Map.Nearby_Location(tobridge, SPEED_TRACK, Map.Get_Cell_Zone(frombridge), MZONE_NORMAL, false, Point2D(1, 1), false, true, true);
+
+				if (fromspot != CELL_NONE && tospot != CELL_NONE) {
+					RouteQueue.Add(&Map[fromspot]);
+					RouteQueue.Add(&Map[tospot]);
+
+				} else if (Map.Is_Same_Cell_Zone(from, to, MZONE_NORMAL, true, true, false)) {
+					if (frombridge != from) {
+						RouteQueue.Add(&Map[frombridge]);
+					}
+					RouteQueue.Add(&Map[tobridge]);
+
+				} else if (fromspot != CELL_NONE) {
+					tospot = Map.Nearby_Location(to, SPEED_TRACK, -1, MZONE_NORMAL, true, Point2D(1, 1), false, false, true);
+					if (tospot != CELL_NONE && fromspot != tospot) {
+						RouteQueue.Add(&Map[fromspot]);
+						dest = &Map[tospot];
+					} else {
+						Cell fallback = Map.Nearby_Location(to, SPEED_TRACK, Map.Get_Cell_Zone(from, MZONE_NORMAL, true), MZONE_NORMAL, true, Point2D(1, 1), false, true, false);
+						if (fallback == CELL_NONE || Get_Height_AGL() < 0) {
+							return(NULL);
+						}
+						dest = &Map[fallback];
+					}
+
+				} else {
+					Cell fallback = Map.Nearby_Location(to, SPEED_TRACK, Map.Get_Cell_Zone(from, MZONE_NORMAL, true), MZONE_NORMAL, true, Point2D(1, 1), false, true, false);
+					if (fallback == CELL_NONE || Get_Height_AGL() < 0) {
+						return(NULL);
+					}
+					dest = &Map[fallback];
+				}
+
+			} else {
+				if (frombridge != from) {
+					RouteQueue.Add(&Map[frombridge]);
+				}
+				RouteQueue.Add(&Map[tobridge]);
+			}
+
+		} else if (canburrowto) {
+			Cell frombridge = Map.Get_Zone_Connection_Destination(from, to);
+
+			if (AStarAttempt(&frombridge, &to)) {
+				Cell fromspot = Map.Nearby_Location(frombridge, SPEED_TRACK, Map.Get_Cell_Zone(frombridge), MZONE_NORMAL, false, Point2D(1, 1), false, true, true);
+
+				if (fromspot != CELL_NONE) {
+					RouteQueue.Add(&Map[fromspot]);
+
+				} else if (Map.Is_Same_Cell_Zone(from, to, MZONE_NORMAL, true, false, false)) {
+					if (frombridge != from) {
+						RouteQueue.Add(&Map[frombridge]);
+					}
+
+				} else {
+					Cell fallback = Map.Nearby_Location(to, SPEED_TRACK, Map.Get_Cell_Zone(from, MZONE_NORMAL, true), MZONE_NORMAL, true, Point2D(1, 1), false, true, false);
+					if (fallback == CELL_NONE || Get_Height_AGL() < 0) {
+						return(NULL);
+					}
+					dest = &Map[fallback];
+				}
+
+			} else if (frombridge != from) {
+				RouteQueue.Add(&Map[frombridge]);
+			}
+
+		} else {
+			Cell frombridge = Map.Get_Zone_Connection_Destination(from, to);
+
+			if (AStarAttempt(&frombridge, &to)) {
+				Cell fromspot = Map.Nearby_Location(frombridge, SPEED_TRACK, Map.Get_Cell_Zone(frombridge), MZONE_NORMAL, false, Point2D(1, 1), false, true, true);
+				Cell tospot = Map.Nearby_Location(to, SPEED_TRACK, Map.Get_Cell_Zone(to), MZONE_NORMAL, false, Point2D(1, 1), false, true, true);
+
+				if (fromspot != CELL_NONE && tospot != CELL_NONE) {
+					RouteQueue.Add(&Map[fromspot]);
+					RouteQueue.Add(&Map[tospot]);
+
+				} else if (Map.Is_Same_Cell_Zone(from, to, MZONE_NORMAL, true, false, false)) {
+					if (frombridge != from) {
+						RouteQueue.Add(&Map[frombridge]);
+					}
+
+				} else if (fromspot != CELL_NONE) {
+					tospot = Map.Nearby_Location(to, SPEED_TRACK, -1, MZONE_NORMAL, true, Point2D(1, 1), false, true, true);
+					if (tospot != CELL_NONE && tospot != fromspot) {
+						RouteQueue.Add(&Map[fromspot]);
+						dest = &Map[tospot];
+					} else {
+						Cell fallback = Map.Nearby_Location(to, SPEED_TRACK, Map.Get_Cell_Zone(from, MZONE_NORMAL, true), MZONE_NORMAL, true, Point2D(1, 1), false, true, false);
+						if (fallback == CELL_NONE || Get_Height_AGL() < 0) {
+							return(NULL);
+						}
+						dest = &Map[fallback];
+					}
+
+				} else {
+					Cell fallback = Map.Nearby_Location(to, SPEED_TRACK, Map.Get_Cell_Zone(from, MZONE_NORMAL, true), MZONE_NORMAL, true, Point2D(1, 1), false, true, false);
+					if (fallback == CELL_NONE || Get_Height_AGL() < 0) {
+						return(NULL);
+					}
+					dest = &Map[fallback];
+				}
+
+			} else if (frombridge != from) {
+				RouteQueue.Add(&Map[frombridge]);
+			}
+		}
+
+	} else if (canburrowfrom) {
+		if (isunderbridgeto) {
+			Cell tobridge = Map.Get_Zone_Connection_Destination(to, to);
+
+			if (AStarAttempt(&from, &tobridge)) {
+				Cell tospot = Map.Nearby_Location(tobridge, SPEED_TRACK, Map.Get_Cell_Zone(tobridge), MZONE_NORMAL, false, Point2D(1, 1), false, true, true);
+
+				if (tospot != CELL_NONE) {
+					RouteQueue.Add(&Map[tospot]);
+
+				} else if (Map.Is_Same_Cell_Zone(from, to, MZONE_NORMAL, false, true, false)) {
+					if (tobridge != from) {
+						RouteQueue.Add(&Map[tobridge]);
+					}
+
+				} else {
+					tospot = Map.Nearby_Location(to, SPEED_TRACK, -1, MZONE_NORMAL, false, Point2D(1, 1), false, false, true);
+					if (tospot != CELL_NONE) {
+						dest = &Map[tospot];
+					} else {
+						Cell fallback = Map.Nearby_Location(to, SPEED_TRACK, Map.Get_Cell_Zone(from), MZONE_NORMAL, false, Point2D(1, 1), false, true, false);
+						if (fallback == CELL_NONE || Get_Height_AGL() < 0) {
+							return(NULL);
+						}
+						dest = &Map[fallback];
+					}
+				}
+
+			} else if (tobridge != from) {
+				RouteQueue.Add(&Map[tobridge]);
+			}
+
+		} else if (!canburrowto && AStarAttempt(&from, &to)) {
+			Cell tospot = Map.Nearby_Location(to, SPEED_TRACK, Map.Get_Cell_Zone(to), MZONE_NORMAL, false, Point2D(1, 1), false, true, true);
+
+			if (tospot != CELL_NONE) {
+				RouteQueue.Add(&Map[tospot]);
+
+			} else if (!Map.Is_Same_Cell_Zone(from, to, MZONE_NORMAL, true, true, false)) {
+				tospot = Map.Nearby_Location(to, SPEED_TRACK, -1, MZONE_NORMAL, false, Point2D(1, 1), false, false, true);
+				if (tospot != CELL_NONE) {
+					dest = &Map[tospot];
+				} else {
+					Cell fallback = Map.Nearby_Location(to, SPEED_TRACK, Map.Get_Cell_Zone(from), MZONE_NORMAL, false, Point2D(1, 1), false, false, false);
+					if (fallback == CELL_NONE || Get_Height_AGL() < 0) {
+						return(NULL);
+					}
+					dest = &Map[fallback];
+				}
+			}
+		}
+
+	} else if (isunderbridgeto) {
+		Cell tobridge = Map.Get_Zone_Connection_Destination(to, to);
+
+		if (AStarAttempt(&from, &tobridge)) {
+			Cell fromspot = Map.Nearby_Location(from, SPEED_TRACK, Map.Get_Cell_Zone(from), MZONE_NORMAL, false, Point2D(1, 1), false, true, true);
+			Cell tospot = Map.Nearby_Location(tobridge, SPEED_TRACK, Map.Get_Cell_Zone(tobridge), MZONE_NORMAL, false, Point2D(1, 1), false, true, true);
+
+			if (fromspot != CELL_NONE && tospot != CELL_NONE) {
+				RouteQueue.Add(&Map[fromspot]);
+				RouteQueue.Add(&Map[tospot]);
+
+			} else if (Map.Is_Same_Cell_Zone(from, to, MZONE_NORMAL, false, true, false)) {
+				if (tobridge != from) {
+					RouteQueue.Add(&Map[tobridge]);
+				}
+
+			} else if (fromspot != CELL_NONE) {
+				tospot = Map.Nearby_Location(to, SPEED_TRACK, -1, MZONE_NORMAL, false, Point2D(1, 1), false, false, true);
+				if (tospot != CELL_NONE && fromspot != tospot) {
+					RouteQueue.Add(&Map[fromspot]);
+					dest = &Map[tospot];
+				} else {
+					Cell fallback = Map.Nearby_Location(to, SPEED_TRACK, Map.Get_Cell_Zone(from), MZONE_NORMAL, false, Point2D(1, 1), false, false, false);
+					if (fallback == CELL_NONE || Get_Height_AGL() < 0) {
+						return(NULL);
+					}
+					dest = &Map[fallback];
+				}
+
+			} else {
+				Cell fallback = Map.Nearby_Location(to, SPEED_TRACK, Map.Get_Cell_Zone(from), MZONE_NORMAL, false, Point2D(1, 1), false, false, false);
+				if (fallback == CELL_NONE || Get_Height_AGL() < 0) {
+					return(NULL);
+				}
+				dest = &Map[fallback];
+			}
+
+		} else if (tobridge != from) {
+			RouteQueue.Add(&Map[tobridge]);
+		}
+
+	} else if (canburrowto) {
+		if (AStarAttempt(&from, &to)) {
+			Cell fromspot = Map.Nearby_Location(from, SPEED_TRACK, Map.Get_Cell_Zone(from), MZONE_NORMAL, false, Point2D(1, 1), false, true, true);
+
+			if (fromspot != CELL_NONE) {
+				RouteQueue.Add(&Map[fromspot]);
+
+			} else if (!Map.Is_Same_Cell_Zone(from, to, MZONE_NORMAL, false, false, false)) {
+				Cell fallback = Map.Nearby_Location(to, SPEED_TRACK, Map.Get_Cell_Zone(from), MZONE_NORMAL, false, Point2D(1, 1), false, false, false);
+				if (fallback == CELL_NONE || Get_Height_AGL() < 0) {
+					return(NULL);
+				}
+				dest = &Map[fallback];
+			}
+		}
+
+	} else {
+		if (AStarAttempt(&from, &to)) {
+			Cell fromspot = Map.Nearby_Location(from, SPEED_TRACK, Map.Get_Cell_Zone(from), MZONE_NORMAL, false, Point2D(1, 1), false, true, true);
+			Cell tospot = Map.Nearby_Location(to, SPEED_TRACK, Map.Get_Cell_Zone(to), MZONE_NORMAL, false, Point2D(1, 1), false, true, true);
+
+			if (fromspot != CELL_NONE && tospot != CELL_NONE) {
+				RouteQueue.Add(&Map[fromspot]);
+				RouteQueue.Add(&Map[tospot]);
+
+			} else if (!Map.Is_Same_Cell_Zone(from, to, MZONE_NORMAL, true, true, false)) {
+				if (fromspot != CELL_NONE) {
+					tospot = Map.Nearby_Location(to, SPEED_TRACK, -1, MZONE_NORMAL, false, Point2D(1, 1), false, false, true);
+					if (tospot != CELL_NONE && fromspot != tospot) {
+						RouteQueue.Add(&Map[fromspot]);
+						dest = &Map[tospot];
+					} else {
+						Cell fallback = Map.Nearby_Location(to, SPEED_TRACK, Map.Get_Cell_Zone(from), MZONE_NORMAL, false, Point2D(1, 1), false, false, false);
+						if (fallback == CELL_NONE || Get_Height_AGL() < 0) {
+							return(NULL);
+						}
+						dest = &Map[fallback];
+					}
+				} else {
+					Cell fallback = Map.Nearby_Location(to, SPEED_TRACK, Map.Get_Cell_Zone(from), MZONE_NORMAL, false, Point2D(1, 1), false, false, false);
+					if (fallback == CELL_NONE || Get_Height_AGL() < 0) {
+						return(NULL);
+					}
+					dest = &Map[fallback];
+				}
+			}
+		}
+	}
+
+	RouteQueue.Add(dest);
+	AbstractClass * next = RouteQueue[0];
+	RouteQueue.Delete_Index(0);
+	return(next);
+}
+
 // FUNCTION: GAMEMD 0x00746000
 bool UnitClass::AStarAttempt(Cell const * from, Cell const * to)
 {
