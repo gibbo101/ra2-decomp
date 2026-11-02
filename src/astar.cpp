@@ -764,6 +764,122 @@ int AStarClass::Try_Diagonal_Shortcut(FootClass * foot, FacingType * moves, unsi
 	return(first_leg_length);
 }
 
+// FUNCTION: GAMEMD 0x0042B7F0
+void AStarClass::Optimize_Moves(PathStruct * path, FootClass * foot)
+{
+	int splice_index;
+	Cell splice_cell;
+	FacingType * moves = path->Command;
+	int max_len = path->Length;
+	max_len--;
+	int scan_index = 0;
+	int prev_turn_index = 0;
+	Cell cursor_cell = path->Start;
+	unsigned int * heights = path->Height;
+	int index;
+	int last_turn_index = 0;
+	int max_axis;
+	int max_axis_extent = 0;
+	Cell path_offset(0, 0);
+	Cell last_turn_cell(0, 0);
+	int max_dev_x = 0;
+	int max_dev_y = 0;
+	Cell candidate_offset(0, 0);
+	while (scan_index < max_len && scan_index < 20) {
+		FacingType move = moves[scan_index];
+		FacingType step = moves[scan_index];
+
+		if (step == TUNNEL) {
+			cursor_cell = Adjacent_Cell(cursor_cell, FACING_N);
+			path_offset = Cell(0, 0);
+			scan_index++;
+			prev_turn_index = scan_index;
+			max_axis_extent = 0;
+			max_dev_x = 0;
+			max_dev_y = 0;
+			candidate_offset = Cell(0, 0);
+			last_turn_index = scan_index;
+			last_turn_cell = Cell(0, 0);
+			continue;
+		}
+
+		if (move == EMPTY) {
+			scan_index++;
+			continue;
+		}
+
+		Cell new_offset = Cell(path_offset + AdjacentCell[(int)move & 7]);
+		Cell new_candidate_offset = AdjacentCell[(int)move & 7] + candidate_offset;
+		if (abs(new_candidate_offset.X) >= max_dev_x && abs(new_candidate_offset.Y) >= max_dev_y) {
+
+			candidate_offset = new_candidate_offset;
+
+			max_dev_x = abs(new_candidate_offset.X);
+			max_dev_y = abs(new_candidate_offset.Y);
+
+			max_axis = max(abs(new_offset.X), abs(new_offset.Y));
+
+			cursor_cell = Adjacent_Cell(cursor_cell, step);
+			if (max_axis_extent < max_axis) {
+				max_axis_extent = max_axis;
+			} else {
+				splice_cell = cursor_cell;
+				Splice_Path(moves, scan_index, prev_turn_index, splice_index, splice_cell);
+
+				Plot_Straight_Line(&moves[splice_index], scan_index - splice_index + 1, splice_cell,
+				Cell(cursor_cell - splice_cell), foot, heights[splice_index], false);
+			}
+
+			path_offset = new_offset;
+			++scan_index;
+		} else {
+			if (last_turn_cell == Cell(0, 0)) {
+				max_dev_x = 0;
+				max_dev_y = 0;
+				last_turn_cell = cursor_cell;
+				last_turn_index = scan_index;
+				candidate_offset = Cell(0, 0);
+			} else {
+				prev_turn_index = last_turn_index;
+				path_offset = last_turn_cell - cursor_cell;
+				max_dev_x = 0;
+				max_dev_y = 0;
+				candidate_offset = Cell(0, 0);
+				max_axis_extent = max(abs(path_offset.X), abs(path_offset.Y));
+				last_turn_cell = cursor_cell;
+				last_turn_index = scan_index;
+			}
+		}
+	}
+	if (last_turn_cell != Cell(0, 0)) {
+		Cell diff = cursor_cell - last_turn_cell;
+		max_axis = max(abs(diff.X), abs(diff.Y));
+		if ((scan_index - last_turn_index - 1) > max_axis) {
+			scan_index--;
+			splice_cell = cursor_cell;
+			Splice_Path(moves, scan_index, last_turn_index, splice_index, splice_cell);
+
+			Plot_Straight_Line(&moves[splice_index], scan_index - splice_index + 1, splice_cell,
+				Cell(cursor_cell - splice_cell), foot, heights[splice_index], true);
+		}
+	}
+	index = 0;
+	int new_len = 0;
+	FacingType dir = moves[index];
+	while (dir != END && index < max_len) {
+		if (dir != EMPTY) {
+			moves[new_len++] = moves[index];
+		}
+		dir = moves[++index];
+	}
+	int fill = new_len;
+	while (fill < path->Length + 1) {
+		moves[fill++] = END;
+	}
+
+	path->Length = new_len + 1;
+}
+
 // FUNCTION: GAMEMD 0x0042BCA0
 void AStarClass::Splice_Path(FacingType * moves, int start_index, int end_index, int & splice_index, Cell & cell)
 {
