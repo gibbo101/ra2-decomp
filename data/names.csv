@@ -243,3 +243,4 @@ address,name,symbol,evidence
 0x0054BD30,JumpjetLocomotionClass::Process_Hover,?Process_Hover@JumpjetLocomotionClass@@QAEXXZ,HOVERING switch entry in matched Process calls 0x0054BD30; retail compares HeadToCoord with position before descent or cruise as in TibSun Process_Hover
 0x00A8B230,Scen,,YRpp ScenarioClass.h ScenarioClass::Instance; ScenarioClass pointer read by matched JumpjetLocomotionClass::Process for Special.IsFogOfWar
 0x007C5F00,_ftol,,YRpp Unsorted.h Game::F2I64; x87 conversion helper called by matched JumpjetLocomotionClass::Movement_AI and its geometry initializers
+0x0056DC20,MapClass::Nearby_Location,,YRpp MapClass::NearByLocation; matched Recalc_Center calls with the proven map.h signature and default arguments

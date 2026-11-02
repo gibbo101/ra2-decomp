@@ -5724,6 +5724,7 @@ address,name,result,size,source,symbol
 0x0050D290,HouseClass::FUN_0050D290,MATCH,57,src/house.cpp,?FUN_0050D290@HouseClass@@QAEXPAV1@@Z
 0x0050D2D0,HouseClass::FUN_0050D2D0,MATCH,67,src/house.cpp,?FUN_0050D2D0@HouseClass@@QAEXPAV1@@Z
 0x0050D320,HouseClass::RespawnStartingBuildings,MATCH,286,src/house.cpp,?RespawnStartingBuildings@HouseClass@@QAEXXZ
+0x0050D440,HouseClass::RespawnStartingForces,MATCH,278,src/house.cpp,?RespawnStartingForces@HouseClass@@QAEXXZ
 0x0050D560,HouseClass::FUN_0050D560,MATCH,99,src/house.cpp,?FUN_0050D560@HouseClass@@QAEXPBVTechnoTypeClass@@VCell@@@Z
 0x0050D5D0,HouseClass::FUN_0050D5D0,MATCH,52,src/house.cpp,?FUN_0050D5D0@HouseClass@@QAEXXZ
 0x0050D610,HouseClass::FUN_0050D610,MATCH,178,src/house.cpp,?FUN_0050D610@HouseClass@@QAEXXZ
@@ -5887,6 +5888,8 @@ address,name,result,size,source,symbol
 0x00510AD0,HouseClass::QueryInterface,MATCH,10,src/house.cpp,?QueryInterface@HouseClass@@WCM@AGJABU_GUID@@PAPAX@Z
 0x00510AE0,HouseClass::AddRef,MATCH,10,src/house.cpp,?AddRef@HouseClass@@WCM@AGKXZ
 0x00510AF0,HouseClass::Release,MATCH,10,src/house.cpp,?Release@HouseClass@@WCM@AGKXZ
+0x004FD150,HouseClass::Recalc_Center,MATCH,944,src/house.cpp,?Recalc_Center@HouseClass@@QAEXXZ
+0x00505FD0,HouseClass::Base_Cell_Weight_By_Defense_Coverage,MATCH,212,src/house.cpp,?Base_Cell_Weight_By_Defense_Coverage@HouseClass@@SIHABV1@ABVCell@@HH@Z
 0x00510B00,_$E2,MATCH,40,src/house2.cpp,_$E2
 0x00510B30,_$E5,MATCH,19,src/house2.cpp,_$E5
 0x00510B50,_$E8,MATCH,19,src/house2.cpp,_$E8

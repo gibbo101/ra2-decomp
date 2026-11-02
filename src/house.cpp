@@ -5778,6 +5778,37 @@ void HouseClass::RespawnStartingBuildings(void)
 	}
 }
 
+static inline TechnoClass * Cast_Respawn_Techno(ObjectClass * object)
+{
+	return object == NULL ? NULL : (object->AbstractFlags & 1) ? (TechnoClass *)object : NULL;
+}
+
+// FUNCTION: GAMEMD 0x0050D440
+void HouseClass::RespawnStartingForces(void)
+{
+	for (int index = StartingUnits.Count() - 1; index >= 0; index--) {
+		StartingTechnoStruct * entry = StartingUnits[index];
+		TechnoTypeClass const * type = entry->Type;
+		TechnoClass * object = NULL;
+		switch (type->Fetch_RTTI()) {
+		case RTTI_AIRCRAFTTYPE:
+			object = Cast_Respawn_Techno(type->Create_One_Of(this));
+			break;
+		case RTTI_BUILDINGTYPE:
+			object = Cast_Respawn_Techno(type->Create_One_Of(this));
+			break;
+		case RTTI_UNITTYPE:
+			object = Cast_Respawn_Techno(type->Create_One_Of(this));
+			break;
+		case RTTI_INFANTRYTYPE:
+			object = Cast_Respawn_Techno(((InfantryTypeClass const *)type)->Create_One_Of(this));
+			break;
+		}
+		Coord coord = Map[entry->CellID].Center_Coord();
+		if (!object->ForceCreate(coord, 0)) object->Delete_Me();
+	}
+}
+
 // FUNCTION: GAMEMD 0x0050D560
 void HouseClass::FUN_0050D560(TechnoTypeClass const * type, Cell cell)
 {
@@ -6512,3 +6543,81 @@ template class VectorClass<BUILDING_DIST_OBJ>;
 // HouseClass::AddRef
 // FUNCTION: GAMEMD 0x00510AF0
 // HouseClass::Release
+
+// FUNCTION: GAMEMD 0x004FD150
+void HouseClass::Recalc_Center(void)
+{
+	BaseSpawnCell = CELL_NONE;
+	Radius = 0;
+	for (ZoneType zone = ZONE_FIRST; zone < ZONE_COUNT; zone++) {
+		ZoneInfo[zone].AirDefense = 0;
+		ZoneInfo[zone].ArmorDefense = 0;
+		ZoneInfo[zone].InfantryDefense = 0;
+	}
+	if (CurBuildings > 0) {
+		int x = 0;
+		int y = 0;
+		int count = 0;
+		int index;
+		int bcount = Buildings.Count();
+		for (index = 0; index < bcount; index++) {
+			BuildingClass const * b = Buildings[index];
+			if (b != NULL && !b->IsInLimbo && b->Strength > 0) {
+				int weight = (b->Class->Cost_Of(this) / 1000) + 1;
+				for (int i = 0; i < weight; i++) {
+					x += b->Center_Coord().X;
+					y += b->Center_Coord().Y;
+					count++;
+				}
+			}
+		}
+		if (count > 0) {
+			x /= count;
+			y /= count;
+			Cell cell = Coord(x, y).As_Cell();
+			cell = Map.Nearby_Location(cell, SPEED_FOOT, -1, MZONE_NORMAL, false, Point2D(1, 1), false, false, false, true, Cell(0, 0), false, false);
+			BaseSpawnCell = cell;
+		}
+		if (count > 1) {
+			int radius = 0;
+			int index;
+			int bcount = Buildings.Count();
+			for (index = 0; index < bcount; index++) {
+				BuildingClass const * b = Buildings[index];
+				if (b != NULL && !b->IsInLimbo && b->Strength > 0) {
+					radius += FUN_0050DF30().Distance_To(b->Center_Coord());
+				}
+			}
+			Radius = MAX(radius / count, 2 * CELL_LEPTON_W);
+			bcount = Buildings.Count();
+			for (int index3 = 0; index3 < bcount; index3++) {
+				BuildingClass const * b = Buildings[index3];
+				if (b != NULL && !b->IsInLimbo && b->Strength > 0) {
+					ZoneType z = Which_Zone(b->Center_Coord());
+					if (z != ZONE_NONE) {
+						ZoneInfo[z].ArmorDefense += b->Anti_Armor();
+						ZoneInfo[z].AirDefense += b->Anti_Air();
+						ZoneInfo[z].InfantryDefense += b->Anti_Infantry();
+					}
+				}
+			}
+		} else {
+			Radius = 2 * CELL_LEPTON_W;
+		}
+	}
+}
+// FUNCTION: GAMEMD 0x00505FD0
+int HouseClass::Base_Cell_Weight_By_Defense_Coverage(HouseClass const & house, Cell const & cell, int tie_breaker, int context)
+{
+	int value = house.BaseAreaMap[(cell.X - house.Base.BaseAreaRect.X) + (cell.Y - house.Base.BaseAreaRect.Y) * house.Base.BaseAreaRect.Width];
+	int offset = 0;
+	if (context != FACING_NONE) {
+		Point2D delta(cell.X - house.Base.PlacementCenter.X, cell.Y - house.Base.PlacementCenter.Y);
+		DirType dir = DirType(fastmath::atan2((double)-delta.Y, (double)delta.X));
+		offset = abs(DIR_STEP_8 * context - dir.As_Dir256());
+		if (offset >= DIR_STEP_2) {
+			offset = DIR_MAX - offset;
+		}
+	}
+	return(tie_breaker + 1000 * (offset + (value * 128)));
+}

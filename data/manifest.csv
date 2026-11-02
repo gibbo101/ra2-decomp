@@ -5955,6 +5955,7 @@ address,size,symbol,source,sha256
 0x004FD040,24,?Suggest_New_Building@HouseClass@@QBEPBVBuildingTypeClass@@XZ,src/house.cpp,8b792159819589666b9fe60b498d0f884544613f6c678443b627b15fe451cd24
 0x004FD060,179,?Find_Building@HouseClass@@QBEPAVBuildingClass@@W4StructType@@W4ZoneType@@@Z,src/house.cpp,700559656bcb8c7842258b5dfbd9797097e0486562e7c6dbe024e8ee57aba1ed
 0x004FD120,35,?Find_Build_Location@HouseClass@@QBE?AVCoord@@PAVBuildingClass@@@Z,src/house.cpp,277b138232b37045f0ec92246f0b7979ef1de3ce7e9217a699cd46a799c41213
+0x004FD150,944,?Recalc_Center@HouseClass@@QAEXXZ,src/house.cpp,5b316e510fe0ebc0ad3696345f8c16b9087eb7d1fd5d852ffc6c4bb04fb3c5f8
 0x004FD940,88,?Check_Fire_Sale@HouseClass@@QAE?AW4UrgencyType@@XZ,src/house.cpp,da97ee446eb45d9b1dc0b1f0e7a4dd6c766823177bb76593882f4904aed23e75
 0x004FDCE0,35,?AI_Fire_Sale@HouseClass@@QAE_NW4UrgencyType@@@Z,src/house.cpp,461df85bd74345835d9ad80319e3a795a6354d3130b5ced9650e7e5d6c8e4ac7
 0x004FEA60,1147,?AI_Unit@HouseClass@@AAEHXZ,src/house.cpp,1734d22f68bf02d90fb80c15272ae061f0c6a3d0facc3c6c7b173e10c98b7b92
@@ -6014,6 +6015,7 @@ address,size,symbol,source,sha256
 0x005051E0,291,?FirstBuildableFromArray@HouseClass@@QBEPBVTechnoTypeClass@@ABV?$DynamicVectorClass@PBVBuildingTypeClass@@@@@Z,src/house.cpp,72f87b189ac38a75c3c4f7b4bcc2bf39534cf0cb951b5d43fd234c19e7ea2e85
 0x00505310,79,?Get_First_Ownable@HouseClass@@QBEPBVBuildingTypeClass@@ABV?$DynamicVectorClass@PBVBuildingTypeClass@@@@@Z,src/house.cpp,9379e9613688c83bfdfe9d40983b9ae45bcd5683d89bfc7e88c28f3cc5c65331
 0x00505F80,66,?Base_Cell_Weight_By_Distance@HouseClass@@SIHABV1@ABVCell@@HH@Z,src/house.cpp,9d75bf44bac3974f01b45ea26cc079f835f71cbc805713843be8de588fe6eee7
+0x00505FD0,212,?Base_Cell_Weight_By_Defense_Coverage@HouseClass@@SIHABV1@ABVCell@@HH@Z,src/house.cpp,c51e8a67e054be28a2620bf7ef5acdb4c3bb84d952a277c7757587c988d4dbb0
 0x00506B70,1,?FUN_00506B70@@YIXXZ,src/house.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
 0x00506B80,1,?FUN_00506B80@@YIXXZ,src/house.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
 0x00506B90,320,?Where_To_Place_Upgrade@HouseClass@@QBE?AVCell@@PBVBuildingTypeClass@@@Z,src/house.cpp,213e2ecb60fd33ac9aa2e4f4fc66e5d877aed6adc716eb990ac6849e1ba3883a
@@ -6077,6 +6079,7 @@ address,size,symbol,source,sha256
 0x0050D290,57,?FUN_0050D290@HouseClass@@QAEXPAV1@@Z,src/house.cpp,ff3d3789d3a6275d93dedf80ae3bb05bb6e99ed5fbb218a42bd764ed5d2193f3
 0x0050D2D0,67,?FUN_0050D2D0@HouseClass@@QAEXPAV1@@Z,src/house.cpp,b3259d1217da169195748806043ce64f9afa922a3e0e8a7a8d17846634d573b6
 0x0050D320,286,?RespawnStartingBuildings@HouseClass@@QAEXXZ,src/house.cpp,ae98fbe12d9fc92667502654d732118baa77b52c9096a4a7cba0ca624a20ab47
+0x0050D440,278,?RespawnStartingForces@HouseClass@@QAEXXZ,src/house.cpp,53e859a384bf547ba7bea99140baa5892d9faebe81d59257472e798581783d93
 0x0050D560,99,?FUN_0050D560@HouseClass@@QAEXPBVTechnoTypeClass@@VCell@@@Z,src/house.cpp,492507fed94b5ad64d4903576ccbf56a475aa663da94aa5217406d92eea8e8e0
 0x0050D5D0,52,?FUN_0050D5D0@HouseClass@@QAEXXZ,src/house.cpp,f003e43f5f89f61aaa241a0b562aa30d06bd51bae4315c94d904511fd6fea946
 0x0050D610,178,?FUN_0050D610@HouseClass@@QAEXXZ,src/house.cpp,372bf6268f92a9f45cec5fcc39f058647a299cfca8ba95a71fbf711f21e54036
