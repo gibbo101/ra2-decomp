@@ -269,6 +269,155 @@ bool FootClass::Is_In_Same_Zone(Coord const & coord) const
 	return(Map.Is_Same_Cell_Zone(cell2, cell1, zone, ((ObjectClass *)this)->Is_Moving_Onto_Bridge(), Map[cell1].IsUnderBridge, Is_Allowed_To_Leave_Map()));
 }
 
+// FUNCTION: GAMEMD 0x004D3920
+bool FootClass::Basic_Path(Cell cell, int path_offset, int avoidance)
+{
+	static const MZoneType _simple_mzone[MZONE_COUNT] = {
+		MZONE_NORMAL,
+		MZONE_NORMAL,
+		MZONE_NORMAL,
+		MZONE_AMPHIBIOUS,
+		MZONE_AMPHIBIOUS,
+		MZONE_AMPHIBIOUS,
+		MZONE_SUBTERANNEAN,
+		MZONE_INFANTRY,
+		MZONE_INFANTRY,
+		MZONE_FLYER,
+	};
+
+	PathStruct * path;
+	int skip_path = false;
+
+	if (path_offset == 0) {
+		Path[0] = FACING_NONE;
+	}
+
+	if (!Is_In_Same_Zone(Coord(cell))) {
+		Path[0] = FACING_NONE;
+		return(false);
+	}
+
+	int dist = Distance(Coord(cell));
+	int checkdist = Team != NULL ? Team->Stray_Distance() : Rule->CloseEnoughDistance;
+	int maxdist = 0;
+
+	bool istrain = Techno_Type_Class()->IsTrain;
+
+	MoveType move = Can_Enter_Cell(&Map[cell]);
+
+	if (move == MOVE_TEMP && dist > checkdist && !istrain) {
+		MZoneType mzone = _simple_mzone[Techno_Type_Class()->MZone];
+		bool check = Techno_Type_Class()->IsSubterranean && Map[cell].Can_Burrow_Here() ? true : false;
+
+		Cell nearby = Map.Nearby_Location(cell, Techno_Type_Class()->Speed, Map.Get_Cell_Zone(Get_Cell(), mzone, IsOnBridge), mzone, IsOnBridge, Point2D(1, 1), false, true, check, true, Get_Cell());
+		maxdist = MAX(abs(nearby.X - cell.X), abs(nearby.Y - cell.Y));
+
+		if (nearby != CELL_NONE && ::Distance(Coord(cell), Coord(nearby)) < dist) {
+			int adist = Search.Test_Cell_Walk(nearby, cell, this, Map[nearby].IsUnderBridge, Map[cell].IsUnderBridge, check ? MZONE_NORMAL : MZONE_NONE);
+			if (adist <= maxdist + 6) {
+				Assign_Destination(&Map[nearby]);
+				cell = nearby;
+			}
+		}
+	}
+
+	if (move == MOVE_NO && !istrain) {
+		if (Map[cell].Cell_Building() != NULL) {
+			MZoneType mzone = _simple_mzone[Techno_Type_Class()->MZone];
+			bool check = Techno_Type_Class()->IsSubterranean && Map[cell].Can_Burrow_Here() ? true : false;
+
+			Cell nearby = Map.Nearby_Location(cell, Techno_Type_Class()->Speed, Map.Get_Cell_Zone(Get_Cell(), mzone, IsOnBridge), mzone, IsOnBridge, Point2D(1, 1), false, true, check, true, Get_Cell());
+
+			Assign_Destination(&Map[nearby]);
+			cell = nearby;
+		}
+	}
+
+	Mark(MARK_UP);
+	if (path_offset == 0) {
+		Path[0] = FACING_NONE;
+	}
+
+	bool found = false;
+	PathStruct path1;
+	FacingType workpath[200*10];
+
+	path = Find_Path(cell, &workpath[0], ARRAY_SIZE(workpath), MOVE_OK, path_offset, avoidance);
+
+	if (path && path->Cost) {
+		memcpy(&path1, path, sizeof(path1));
+		found = true;
+	}
+
+	if (found) {
+		Fixup_Path(&path1);
+		memcpy(&Path[path_offset], &workpath[0], MIN(path->Length, ARRAY_SIZE(Path) - path_offset) * sizeof(Path[0]));
+	}
+
+	Mark(MARK_DOWN);
+
+	PathDelay = 0;
+
+	if (RTTI == RTTI_UNIT && Path[0] != FACING_NONE) {
+		UnitClass * unit = (UnitClass *)this;
+		UnitClass * follower = unit->FollowingMe;
+		int length = 0;
+		if (path != NULL) {
+			length = path->Length - 2;
+		}
+		Cell ncell = cell;
+		if (follower != NULL && !unit->IsFollowing) {
+			while (follower != NULL) {
+				CellClass * cptr = &Map[ncell];
+				ncell = cptr->Adjacent_Cell(FacingType((workpath[length] + FACING_180) % FACING_COUNT)).Fetch_CellID();
+				AbstractClass * nav = follower->NavCom;
+				if (nav == NULL || nav->Destination_Coord().As_Cell() != ncell) {
+					follower->QueueMission(MISSION_MOVE, false);
+					follower->Assign_Destination(&Map[ncell]);
+					follower->Basic_Path(ncell);
+				}
+				follower = follower->FollowingMe;
+			}
+		}
+	}
+
+	if (path != NULL) {
+		LastPathingCell = Get_Cell();
+		return(true);
+	}
+
+	PathDelay = Rule->PathDelay * TICKS_PER_MINUTE;
+
+	Stop_Driver();
+
+	Cell mycell = PositionCoord;
+	maxdist = MAX(abs(mycell.X - cell.X), abs(mycell.Y - cell.Y));
+	if (maxdist > 1 || (!IsOnBridge && Map[cell].IsUnderBridge)) {
+		if (Team != NULL) {
+			Locomotion->Lock();
+			Team->Remove(this);
+			Locomotion->Unlock();
+		}
+
+		Assign_Destination(NULL);
+		Assign_Target(NULL);
+
+		if (!House->Is_Human_Player()) {
+			QueueMission(MISSION_GUARD_AREA, false);
+			if (Session.Type != GAME_NORMAL) {
+				Cell where = House->Where_To_Go(this);
+				if (where != CELL_NONE) {
+					Assign_Destination(&Map[where]);
+				}
+			}
+		} else {
+			QueueMission(MISSION_GUARD, false);
+		}
+	}
+
+	return(false);
+}
+
 // FUNCTION: GAMEMD 0x004D4200
 int FootClass::Do_MISSION_MOVE(void)
 {
@@ -3818,6 +3967,58 @@ bool FootClass::RefreshMegaMission(void)
 
 namespace LocomotionClass { namespace CLSIDs { extern const CLSID Teleport; } }
 extern int DAT_008B3DF4;
+
+// FUNCTION: GAMEMD 0x004DF510
+bool FootClass::ForceCreate(Coord & coord, unsigned unk)
+{
+	Cell where = coord.As_Cell();
+	CellClass & cell = Map[where];
+	DynamicVectorClass<TechnoClass *> objs;
+	ObjectClass * occupier;
+	int index;
+	if (cell.Cell_Occupier() != NULL) {
+		for (;;) {
+			occupier = cell.Cell_Occupier();
+			if (!occupier || !(occupier->AbstractFlags & 1) || occupier->RTTI == RTTI_BUILDING) {
+				for (index = objs.Count() - 1; index >= 0; index--) {
+					TechnoClass * object = objs[index];
+					Coord position = object->Position;
+					if (!object->Unlimbo(position, DIR_N)) {
+						object->Delete_Me();
+					}
+				}
+				goto fail;
+			}
+			objs.Add((TechnoClass *)occupier);
+			occupier->Limbo();
+			if (cell.Cell_Occupier() == NULL) {
+				break;
+			}
+		}
+	}
+	if (!Unlimbo(coord, (Dir256)unk)) {
+		Delete_Me();
+		for (index = objs.Count() - 1; index >= 0; index--) {
+			TechnoClass * object = objs[index];
+			Coord position = object->Position;
+			if (!object->Unlimbo(position, DIR_N)) {
+				object->Delete_Me();
+			}
+		}
+fail:
+		objs.Clear();
+		return(false);
+	}
+	for (index = objs.Count() - 1; index >= 0; index--) {
+		TechnoClass * object = objs[index];
+		Cell current = object->Get_Cell();
+		Cell nearby = Map.Nearby_Location(current, object->TClass->Speed);
+		if (!object->Unlimbo(Map[nearby].Center_Coord(), DIR_N)) {
+			object->Delete_Me();
+		}
+	}
+	return(true);
+}
 
 // FUNCTION: GAMEMD 0x004DF7F0
 bool FootClass::ChronoWarpTo(Coord dest)

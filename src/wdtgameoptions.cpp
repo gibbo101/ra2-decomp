@@ -111,7 +111,7 @@ rc_ptr<FlagGameOption> __fastcall FUN_00767460(unsigned int bitmask, Wstring off
 // ?Get_Display_Priority@FlagGameOption@WorldDominationTour@@UAEHABV?$rc_ptr@VWDTTerritory@@@@@Z
 int FlagGameOption::Get_Display_Priority(const rc_ptr<WDTTerritory> & territory)
 {
-	if (territory->Booleans & Bitmask) {
+	if (territory.Get()->Booleans & Bitmask) {
 		return(OnValue);
 	}
 	return(OffValue);
@@ -121,7 +121,7 @@ int FlagGameOption::Get_Display_Priority(const rc_ptr<WDTTerritory> & territory)
 // ?Get_String@FlagGameOption@WorldDominationTour@@UAE?AVWideWstring@@ABV?$rc_ptr@VWDTTerritory@@@@ABV3@@Z
 WideWstring FlagGameOption::Get_String(const rc_ptr<WDTTerritory> & territory, const WideWstring & prefix)
 {
-	Wstring key = (territory->Booleans & Bitmask) ? OnString : OffString;
+	Wstring key = (territory.Get()->Booleans & Bitmask) ? OnString : OffString;
 	if (key.length() == 0) {
 		return(prefix);
 	}
@@ -143,7 +143,7 @@ int NumberOfPlayersGameOption::Get_Display_Priority(const rc_ptr<WDTTerritory> &
 // ?Get_String@NumberOfPlayersGameOption@WorldDominationTour@@UAE?AVWideWstring@@ABV?$rc_ptr@VWDTTerritory@@@@ABV3@@Z
 WideWstring NumberOfPlayersGameOption::Get_String(const rc_ptr<WDTTerritory> & territory, const WideWstring & prefix)
 {
-	Wstring key = (territory->NumPlayers == 4) ? "WDT:FourPlayerOnly" : "WDT:TwoPlayerOnly";
+	Wstring key = (territory.Get()->NumPlayers == 4) ? "WDT:FourPlayerOnly" : "WDT:TwoPlayerOnly";
 	if (prefix.length() > 0) {
 		WideWstring comma(L", ");
 		return(FUN_007B8170(prefix, comma) + StringTable::LoadString(key.get(), 0, "D:\\ra2mdpost\\WDTGameOptions.cpp", 104));

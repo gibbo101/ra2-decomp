@@ -148,6 +148,30 @@ void Selection::Update_Hovered_Territory(Point2D const & point)
 	}
 }
 
+// FUNCTION: GAMEMD 0x0076DED0
+// WorldDominationTour::Selection::Remove_Target_Anims
+void Selection::Remove_Target_Anims(void)
+{
+	for (TERR_ITER it(WorldMap.Get()->Territories, 0); it; it++) {
+		MSShapeAnim * anim = it->FUN_0076FF30();
+		if (anim != NULL) {
+			Remove_Anim(anim);
+		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x0076DF50
+// WorldDominationTour::Selection::Remove_Target_Anims2
+void Selection::Remove_Target_Anims2(void)
+{
+	for (TERR_ITER it(WorldMap.Get()->Territories, 0); it; it++) {
+		MSShapeAnim * anim = it->FUN_0076FF30();
+		if (anim != NULL) {
+			Remove_Anim(anim);
+		}
+	}
+}
+
 extern bool UserInputLocked;
 
 class InputManagerClass {
@@ -191,6 +215,52 @@ void Selection::On_Map_Leave(void)
 	HoveredTerritoryID = -1;
 	rc_ptr<Territory> none;
 	Select_Territory(none);
+}
+
+#undef LoadString
+#include "stringtable.h"
+WideWstring __fastcall FUN_007B7E40(int value, int digits);
+
+// FUNCTION: GAMEMD 0x0076E4F0
+// WorldDominationTour::Selection::Present_Ticks
+bool Selection::Present_Ticks(int tick_from, int tick_to)
+{
+	int i = tick_from;
+	bool first = true;
+	int len = 0;
+
+	while (i <= tick_to) {
+		Check_For_Breakout();
+		if (Brokeout) {
+			break;
+		}
+		{
+			WideWstring str1(StringTable::LoadString("WDT:ReviewingHistory", NULL, "D:\\ra2mdpost\\WDTSel.cpp", 0x3e3));
+			str1 += L"\n";
+			if (first) {
+				len = str1.length();
+			}
+			str1 += WideWstring(StringTable::LoadString("WDT:ReviewingHistoryDay", NULL, "D:\\ra2mdpost\\WDTSel.cpp", 0x3eb)) + WideWstring(L" ") + FUN_007B7E40(i + 1, 2);
+			Set_Text(str1, first == 0 ? len : 0);
+			Do_Target_Anim(TourCampaign.Get()->CycleHistory->FUN_00767BB0(i), false, first);
+			first = false;
+			Wait_For_Anim(TextAnim, 300000);
+			int loops = 5;
+			while (!Brokeout) {
+				if (loops-- == 0) {
+					break;
+				}
+				Wait_Delay(5);
+				Check_For_Breakout();
+			}
+			if (Brokeout) {
+				break;
+			}
+		}
+		i++;
+	}
+
+	return(first);
 }
 
 // FUNCTION: GAMEMD 0x0076E9D0

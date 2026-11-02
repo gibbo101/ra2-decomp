@@ -179,6 +179,86 @@ int PowerClass::Max_Power_Height(void)
 	return((DAT_00B0B504 + 3) / 3);
 }
 
+// FUNCTION: GAMEMD 0x0063FB20
+void PowerClass::Draw_It(bool complete)
+{
+	if (complete || IsToRedraw) {
+		if (DAT_00884B8D) {
+			IsToRedraw = false;
+			DAT_00B0B518 = true;
+
+			int side = Scen->PlayerSideIndex;
+			int x;
+			if (side == 0) {
+				x = 5;
+			} else if (side == 1) {
+				x = 0;
+			} else if (side == 2) {
+				x = 0;
+			} else {
+				x = 0;
+			}
+			side = Scen->PlayerSideIndex;
+			int yoff;
+			if (side == 0) {
+				yoff = 69;
+			} else if (side == 1) {
+				yoff = 69;
+			} else {
+				yoff = 69;
+			}
+			int y = DAT_00886F94 + yoff;
+			Rect rect = DAT_00887300->Get_Rect();
+
+			int num = Max_Power_Height() - RedPipCount - YellowPipCount - GreenPipCount;
+
+			int index;
+			for (index = 0; index < num; index++) {
+				Draw_Shape(*DAT_00887300, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)PowerPipShape, POWER_PIP_EMPTY, Point2D(x, y), rect, SHAPE_WIN_REL);
+				y += POWER_PIP_HEIGHT;
+			}
+
+			index = 0;
+			if (FlashCount > 0) {
+				if ((FlashCount % 2) == 0) {
+					Draw_Shape(*DAT_00887300, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)PowerPipShape, POWER_PIP_WHITE, Point2D(x, y), rect, SHAPE_WIN_REL);
+					y += POWER_PIP_HEIGHT;
+					index++;
+				}
+			}
+
+			if (GreenPipCount > 0) {
+				while (index < GreenPipCount) {
+					Draw_Shape(*DAT_00887300, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)PowerPipShape, POWER_PIP_GREEN, Point2D(x, y), rect, SHAPE_WIN_REL);
+					y += POWER_PIP_HEIGHT;
+					index++;
+				}
+				index = 0;
+			}
+
+			if (YellowPipCount > 0) {
+				while (index < YellowPipCount) {
+					Draw_Shape(*DAT_00887300, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)PowerPipShape, POWER_PIP_YELLOW, Point2D(x, y), rect, SHAPE_WIN_REL);
+					y += POWER_PIP_HEIGHT;
+					index++;
+				}
+				index = 0;
+			}
+
+			if (RedPipCount > 0) {
+				while (index < RedPipCount) {
+					Draw_Shape(*DAT_00887300, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)PowerPipShape, POWER_PIP_RED, Point2D(x, y), rect, SHAPE_WIN_REL);
+					y += POWER_PIP_HEIGHT;
+					index++;
+				}
+				index = 0;
+			}
+		}
+	}
+
+	BASECLASS::Draw_It(complete);
+}
+
 // FUNCTION: GAMEMD 0x0063FDC0
 void PowerClass::Remove_Pip(void)
 {

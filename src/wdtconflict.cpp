@@ -154,20 +154,20 @@ WideWstring Conflict::FUN_007665D0(void)
 
 	for (; left && it; it++) {
 		rc_ptr<GameOption> opt = *it;
-		if ((value & opt->Bitmask) == 0 && opt->Get_Display_Priority(Territory) == WDT_GAME_OPT_PRIORITY) {
-			text = opt->Get_String(Territory, text);
+		if ((value & opt.Get()->Bitmask) == 0 && opt.Get()->Get_Display_Priority(Territory) == WDT_GAME_OPT_PRIORITY) {
+			text = opt.Get()->Get_String(Territory, text);
 			left--;
-			value |= opt->Bitmask;
+			value |= opt.Get()->Bitmask;
 		}
 	}
 
 	it.Reset();
 	for (; left && it; it++) {
 		rc_ptr<GameOption> opt = *it;
-		if ((value & opt->Bitmask) == 0 && opt->Get_Display_Priority(Territory) != WDT_GAME_OPT_USER_MOD) {
-			text = opt->Get_String(Territory, text);
+		if ((value & opt.Get()->Bitmask) == 0 && opt.Get()->Get_Display_Priority(Territory) != WDT_GAME_OPT_USER_MOD) {
+			text = opt.Get()->Get_String(Territory, text);
 			left--;
-			value |= opt->Bitmask;
+			value |= opt.Get()->Bitmask;
 		}
 	}
 

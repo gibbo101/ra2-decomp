@@ -2567,6 +2567,357 @@ int BuildingClass::Do_MISSION_HARVEST(void)
 	return(MissionClass::Do_MISSION_HARVEST());
 }
 
+static inline Cell Target_Cell(AbstractClass * target)
+{
+	return(target->Center_Coord().As_Cell());
+}
+
+static inline FootClass * Foot_Of(AbstractClass * target)
+{
+	return(target == NULL ? NULL : ((target->AbstractFlags & 4) ? (FootClass *)target : NULL));
+}
+
+// FUNCTION: GAMEMD 0x0044B780
+int BuildingClass::Do_MISSION_REPAIR(void)
+{
+	if (Class->Bunker) {
+		UpdateBunker();
+	}
+
+	if (Class->IsConstructionYard) {
+		switch (Status) {
+			case 0:
+				Begin_Mode(BSTATE_ACTIVE);
+				PlayNthAnim(BANIM_PRE_PRODUCTION, HealthRatio <= Rule->ConditionYellow, false);
+				Status = 2;
+				break;
+
+			case 2:
+				if (!HasAnyLink()) {
+					QueueMission(MISSION_GUARD, false);
+					DestroyNthAnim(BANIM_PRE_PRODUCTION);
+				}
+				break;
+
+			default:
+				break;
+		}
+		return(1);
+	}
+
+	if (Class->IsHospital) {
+		switch (Status) {
+			case 0:
+				Status = 2;
+				IsReadyToCommence = false;
+				BuildingStage.Set_Stage(0);
+				BuildingStage.Set_Rate(1);
+				if (Class->MaxAmmo != -1) {
+					Ammo--;
+					Ammo = MAX(Ammo, 0);
+				}
+				break;
+
+			case 2:
+				BuildingStage.Graphic_Logic();
+				if (BuildingStage.Fetch_Stage() >= (Rule->IRepairRate * TICKS_PER_MINUTE)) {
+					IsReadyToCommence = false;
+					BuildingStage.Set_Stage(0);
+					switch (Transmit_Message(RADIO_REPAIR)) {
+						case RADIO_ALL_DONE:
+							if (House->Is_Player_Control()) {
+								if (RadarEventClass::Create(RADAREVENT_UNIT_REPAIRED, Get_Cell())) {
+									VoxClass::Play("EVA_UnitRepaired");
+								}
+								VocClass::PlayAt(Rule->HealCrateSound, PositionCoord);
+							}
+
+						case RADIO_NEGATIVE:
+							Exit_Object(Cargo.Detach_Object(), CELL_NONE);
+							QueueMission(MISSION_GUARD, false);
+							break;
+
+						case RADIO_CANT:
+							Exit_Object(Cargo.Detach_Object(), CELL_NONE);
+							return(1);
+
+						default:
+							break;
+					}
+				}
+				return(1);
+
+			default:
+				break;
+		}
+		return(Current_Mission_Control().Normal_Delay());
+	}
+
+	if (Class->IsArmory) {
+		switch (Status) {
+			case 0:
+				Status = 2;
+				IsReadyToCommence = false;
+				BuildingStage.Set_Stage(0);
+				BuildingStage.Set_Rate(1);
+				Ammo--;
+				Ammo = MAX(Ammo, 0);
+				break;
+
+			case 2:
+				BuildingStage.Graphic_Logic();
+				if (BuildingStage.Fetch_Stage() >= (Rule->IRepairRate * TICKS_PER_MINUTE)) {
+					FootClass * contact = (FootClass *)FUN_0065AD30(0);
+					if (contact->Veterancy.Is_Dumbass()) {
+						contact->Veterancy.Set_Veteran(true);
+					} else {
+						contact->Veterancy.Set_Elite(true);
+					}
+					Exit_Object(Cargo.Detach_Object(), CELL_NONE);
+					QueueMission(MISSION_GUARD, false);
+				}
+				break;
+
+			default:
+				break;
+		}
+		return(Current_Mission_Control().Normal_Delay());
+	}
+
+	if (Class->IsCanUnitRepair) {
+		switch (Status) {
+			case 0:
+				{
+					if (!HasAnyLink()) {
+						DestroyNthAnim(BANIM_PRODUCTION);
+						DestroyNthAnim(BANIM_SPECIAL_TWO);
+						PlayNthAnim(BANIM_SPECIAL_THREE, HealthRatio <= Rule->ConditionYellow, false);
+						PlayNthAnim(BANIM_ACTIVE_ONE, HealthRatio <= Rule->ConditionYellow, false);
+						QueueMission(MISSION_GUARD, true);
+						return(1);
+					}
+					IsReadyToCommence = false;
+					int distance = 100;
+					FootClass * tech = (FootClass *)FUN_0065AD30(0);
+					IPersistPtr persist(tech->Locomotion);
+					CLSID clsid;
+					persist->GetClassID(&clsid);
+					if (clsid == CLSID_HoverLocomotion) {
+						distance = 200;
+					}
+					if (clsid == CLSID_ShipLocomotion) {
+						distance = 200;
+					}
+					if (Transmit_Message(RADIO_NEED_TO_MOVE) == RADIO_ROGER && DistanceToDockingCoord(FUN_0065AD30(0)) < distance) {
+						Status = 1;
+						return(TICKS_PER_SECOND/4);
+					}
+					if (!House->IonSensitivesShouldBeOffline()) {
+						tech->Locomotion->Power_On();
+					}
+					break;
+				}
+
+			case 1:
+				{
+					if (!HasAnyLink()) {
+						if (Anim_Active(BANIM_PRODUCTION) || Anim_Active(BANIM_SPECIAL_TWO)) {
+							PlayNthAnim(BANIM_SPECIAL_THREE, HealthRatio <= Rule->ConditionYellow, false);
+							PlayNthAnim(BANIM_ACTIVE_ONE, HealthRatio <= Rule->ConditionYellow, false);
+							DestroyNthAnim(BANIM_PRODUCTION);
+							DestroyNthAnim(BANIM_SPECIAL_TWO);
+						}
+						if (!Anim_Active(BANIM_SPECIAL_THREE)) {
+							IsReadyToCommence = true;
+							QueueMission(MISSION_GUARD, true);
+						}
+						return(1);
+					}
+					if (Anim_Active(BANIM_PRODUCTION)) {
+						return(1);
+					}
+
+					FootClass * radio = (FootClass *)FUN_0065AD30(0);
+					if (DistanceToDockingCoord(FUN_0065AD30(0)) < 200) {
+						if (radio->Locomotion->Is_Powered()) {
+							if (!radio->Locomotion->Is_Moving()) {
+								radio->Locomotion->Power_Off();
+							}
+							return(1);
+						}
+						if (!radio->Locomotion->Is_Powered()) {
+							if (((FootClass *)FUN_0065AD30(0))->NavCom != NULL) {
+								((FootClass *)FUN_0065AD30(0))->AbortMotion();
+							}
+						}
+					}
+
+					if (Transmit_Message(RADIO_NEED_TO_MOVE) == RADIO_ROGER) {
+						TechnoClass * client = FUN_0065AD30(0);
+						bool damaged = client->HealthRatio < Rule->ConditionGreen;
+						bool manual_reload = client->Techno_Type_Class()->IsManualReload;
+						RadioMessageType msg = Transmit_Message(RADIO_REPAIR);
+						bool roger = msg == RADIO_ROGER;
+						bool all_done = msg == RADIO_ALL_DONE;
+						if (!damaged && !manual_reload || !roger && !all_done) {
+							if (client->HealthRatio == Rule->ConditionGreen) {
+								if (!((FootClass *)client)->Locomotion->Is_Powered()) {
+									FootClass * mover = Foot_Of(FUN_0065AD30(0));
+									mover->Locomotion->Power_On();
+									if (mover->ArchiveTarget != NULL && !mover->House->FUN_0050B730()) {
+										mover->QueueMission(MISSION_MOVE, false);
+										mover->Assign_Destination(mover->ArchiveTarget, true);
+										mover->ArchiveTarget = NULL;
+										mover->QueueUpToEnter = NULL;
+										Transmit_Message(RADIO_OVER_OUT);
+									} else {
+										Cell exit = Find_Exit_Cell(FUN_0065AD30(0), CELL_NONE);
+										if (ArchiveTarget != NULL) {
+											exit = Target_Cell(ArchiveTarget);
+										}
+										if (exit != CELL_NONE) {
+											mover->QueueMission(MISSION_MOVE, false);
+											mover->Assign_Destination(&Map[exit], true);
+											mover->ArchiveTarget = NULL;
+											Transmit_Message(RADIO_OVER_OUT);
+											mover->QueueUpToEnter = NULL;
+										}
+									}
+								}
+							}
+						} else {
+							if (client->IsUseless && !client->House->FUN_0050B730()) {
+								client->Sell_Back(1);
+								Status = 0;
+								IsReadyToCommence = true;
+							} else {
+								if (IsOwnedByPlayer) VoxClass::Play("EVA_Repairing");
+								Status = 2;
+								PlayNthAnim(BANIM_SPECIAL_ONE, HealthRatio <= Rule->ConditionYellow, false);
+								DestroyNthAnim(BANIM_ACTIVE_ONE);
+								DestroyNthAnim(BANIM_IDLE);
+								IsReadyToCommence = false;
+								BuildingStage.Set_Stage(0);
+								BuildingStage.Set_Rate(1);
+							}
+						}
+					} else if (!House->IonSensitivesShouldBeOffline() && !((FootClass *)FUN_0065AD30(0))->Locomotion->Is_Powered()) {
+						((FootClass *)FUN_0065AD30(0))->Locomotion->Power_On();
+					}
+				}
+				break;
+
+			case 2:
+				if (!HasAnyLink()) {
+					DestroyNthAnim(BANIM_PRODUCTION);
+					DestroyNthAnim(BANIM_SPECIAL_TWO);
+					PlayNthAnim(BANIM_SPECIAL_THREE, HealthRatio <= Rule->ConditionYellow, false);
+					PlayNthAnim(BANIM_ACTIVE_ONE, HealthRatio <= Rule->ConditionYellow, false);
+					Status = 1;
+					return(1);
+				}
+
+				if (BuildingStage.Fetch_Rate() == 0) {
+					BuildingStage.Just_Set_Rate(1);
+				}
+				BuildingStage.Graphic_Logic();
+
+				if (BuildingStage.Fetch_Stage() >= (Rule->URepairRate * TICKS_PER_MINUTE) && Transmit_Message(RADIO_NEED_TO_MOVE) == RADIO_ROGER) {
+					IsReadyToCommence = false;
+					BuildingStage.Set_Stage(0);
+
+					switch (Transmit_Message(RADIO_REPAIR)) {
+						case RADIO_ROGER:
+							break;
+
+						case RADIO_CANT:
+							if (IsOwnedByPlayer && House->Available_Money() == 0) {
+								VoxClass::Play("EVA_InsufficientFunds");
+							}
+							DestroyNthAnim(BANIM_PRODUCTION);
+							DestroyNthAnim(BANIM_SPECIAL_TWO);
+							PlayNthAnim(BANIM_SPECIAL_THREE, HealthRatio <= Rule->ConditionYellow, false);
+							PlayNthAnim(BANIM_ACTIVE_ONE, HealthRatio <= Rule->ConditionYellow, false);
+							Status = 1;
+							break;
+
+						case RADIO_ALL_DONE:
+						default:
+							{
+								if (IsOwnedByPlayer) {
+									if (RadarEventClass::Create(RADAREVENT_UNIT_REPAIRED, Get_Cell())) {
+										VoxClass::Play("EVA_UnitRepaired");
+									}
+								}
+								DestroyNthAnim(BANIM_PRODUCTION);
+								DestroyNthAnim(BANIM_SPECIAL_TWO);
+								PlayNthAnim(BANIM_SPECIAL_THREE, HealthRatio <= Rule->ConditionYellow, false);
+								PlayNthAnim(BANIM_ACTIVE_ONE, HealthRatio <= Rule->ConditionYellow, false);
+								Status = 1;
+
+								FootClass * foot = Foot_Of(Contact_With_Whom());
+								if (foot->ArchiveTarget != NULL && !foot->House->FUN_0050B730()) {
+									foot->QueueMission(MISSION_MOVE, false);
+									foot->Assign_Destination(foot->ArchiveTarget, true);
+									foot->ArchiveTarget = NULL;
+									Transmit_Message(RADIO_OVER_OUT);
+									foot->QueueUpToEnter = NULL;
+								} else {
+									Cell exit = Find_Exit_Cell(FUN_0065AD30(0), CELL_NONE);
+									if (ArchiveTarget != NULL) {
+										exit = Target_Cell(ArchiveTarget);
+									}
+									if (exit != CELL_NONE) {
+										foot->QueueMission(MISSION_MOVE, false);
+										foot->Assign_Destination(&Map[exit], true);
+										Transmit_Message(RADIO_OVER_OUT);
+										foot->QueueUpToEnter = NULL;
+										return(1);
+									}
+								}
+								return(1);
+							}
+					}
+				}
+				return(1);
+
+			default:
+				break;
+		}
+		return(Current_Mission_Control().Normal_Delay());
+	}
+
+	if (Class->IsCanUnitReload) {
+		bool reloading = false;
+		for (int index = 0; index < RadioLinks.Length(); index++) {
+			TechnoClass * techno = FUN_0065AD30(index);
+			if (techno != NULL) {
+				if (Transmit_Message(RADIO_PREPARED, techno) != RADIO_ROGER || techno->Strength != techno->Techno_Type_Class()->MaxStrength) {
+					if (techno->Get_Mission() == MISSION_ENTER) continue;
+					if (Transmit_Message(RADIO_NEED_TO_MOVE, techno) != RADIO_ROGER) continue;
+					reloading = true;
+					if (techno->Get_Mission() != MISSION_SLEEP) {
+						techno->QueueMission(MISSION_SLEEP, false);
+						continue;
+					}
+					if (Transmit_Message(RADIO_RELOAD, techno) == RADIO_ROGER) continue;
+					if (Transmit_Message(RADIO_REPAIR, techno) == RADIO_ROGER) continue;
+				}
+				techno->Enter_Idle_Mode(false, true);
+				techno->Set_Mission(MISSION_GUARD);
+				techno->Advance_Waypoint_Path();
+			}
+		}
+		if (reloading) {
+			return(int(Rule->ReloadRate * TICKS_PER_MINUTE));
+		}
+		QueueMission(MISSION_GUARD, false);
+		return(3);
+	}
+
+	return(TICKS_PER_SECOND);
+}
+
 // FUNCTION: GAMEMD 0x0044D5D0
 bool BuildingClass::Revealed(HouseClass * house)
 {
@@ -4461,6 +4812,34 @@ void BuildingClass::Toggle_Laser_Fence_Post(bool force)
 			}
 		}
 	}
+}
+
+
+// FUNCTION: GAMEMD 0x00453840
+Coord BuildingClass::Fire_Coord(int which, Coord base) const
+{
+	if (Class->CanBeOccupied && GetOccupantCount() > 0) {
+		Coord pt(TacticalMap->Pixel_To_Lepton(Class->MuzzleFlash[FiringOccupantIndex]), 0);
+		return(pt + Render_Coord());
+	}
+	if (Class->PrimaryFirePixelOffset != Point2D(0xFFFF, 0xFFFF)) {
+		if (Class->PrimaryFireDualOffset) {
+			Coord pt(TacticalMap->Pixel_To_Lepton(Class->PrimaryFirePixelOffset), 0);
+			return(BASECLASS::Fire_Coord(which, Coord(0, 0, 0)) + pt);
+		}
+		Coord pt(TacticalMap->Pixel_To_Lepton(Class->PrimaryFirePixelOffset), 0);
+		return(pt + Render_Coord());
+	}
+	if (Class->IsBarrelAnimAVoxel) {
+		return(Voxel_Fire_Coord(which, true));
+	}
+
+	Coord coord = BASECLASS::Fire_Coord(which, Coord(0, 0, 0));
+	if (Class->IsTurretAnimAVoxel) {
+		Point2D pt(Class->AnimData[BANIM_TURRET].Location.X, Class->AnimData[BANIM_TURRET].Location.Y);
+		coord += TacticalMap->Pixel_To_Lepton(pt);
+	}
+	return(coord);
 }
 
 

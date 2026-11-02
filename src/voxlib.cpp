@@ -585,6 +585,278 @@ void __cdecl Draw_Voxel_Reverse_Normals_ZBuffer(VoxelFuncArgumentStruct * state)
 	}
 }
 
+// FUNCTION: GAMEMD 0x007575A0
+void __cdecl Draw_Voxel_Regular_Normals_Lighting(VoxelFuncArgumentStruct * state)
+{
+	Fill_Delta_Table2(state);
+
+	unsigned char value;
+	unsigned char normal_index;
+	unsigned short pixel_x = state->TransformMatrix[0].I;
+	unsigned short pixel_y = state->TransformMatrix[0].J;
+
+	for (unsigned int y = 0; y < state->YSize; y++) {
+		unsigned int base_index = state->StartIndex;
+		unsigned short row_start_x = pixel_x;
+		unsigned short row_start_y = pixel_y;
+
+		for (unsigned int x = 0; x < state->XSize; x++) {
+			unsigned int data_offset = ((unsigned int *)state->StartOffset)[state->StartIndex];
+			unsigned short column_start_x = pixel_x;
+			unsigned short column_start_y = pixel_y;
+
+			if (data_offset != UINT_MAX) {
+				unsigned char * ptr = state->DataOffset + data_offset;
+				unsigned int remaining = state->ZSize;
+
+				while (remaining) {
+					value = *ptr;
+					ptr++;
+
+					pixel_x += VoxelPixelDeltaTable[value][0];
+					pixel_y += VoxelPixelDeltaTable[value][1];
+
+					remaining -= value;
+
+					unsigned int run_length = *ptr;
+					ptr++;
+
+					if (run_length) {
+						remaining -= run_length;
+						while (run_length) {
+							value = *ptr;
+							ptr++;
+							normal_index = *ptr;
+							ptr++;
+							normal_index = VoxelNormalTranslateTable[normal_index];
+
+							unsigned int buffer_index = (pixel_x >> 8) | (pixel_y & 0xFF00);
+							VoxelDrawBuffer[buffer_index] = VoxelPaletteTranslateTable[normal_index][value];
+							VoxelDrawBuffer[buffer_index + 1] = VoxelPaletteTranslateTable[normal_index][value];
+
+							pixel_x += state->TransformMatrix[3].I;
+							pixel_y += state->TransformMatrix[3].J;
+							run_length--;
+						}
+					}
+
+					ptr++;
+				}
+			}
+
+			pixel_x = column_start_x + state->TransformMatrix[1].I;
+			pixel_y = column_start_y + state->TransformMatrix[1].J;
+			state->StartIndex = state->StrideX + state->StartIndex;
+		}
+
+		pixel_x = row_start_x + state->TransformMatrix[2].I;
+		pixel_y = row_start_y + state->TransformMatrix[2].J;
+		state->StartIndex = state->StrideY + base_index;
+	}
+}
+
+// FUNCTION: GAMEMD 0x00757790
+void __cdecl Draw_Voxel_Reverse_Normals_Lighting(VoxelFuncArgumentStruct * state)
+{
+	Fill_Delta_Table2(state);
+
+	unsigned char value;
+	unsigned char normal_index;
+	unsigned short pixel_x = state->TransformMatrix[0].I;
+	unsigned short pixel_y = state->TransformMatrix[0].J;
+
+	for (unsigned int y = 0; y < state->YSize; y++) {
+		unsigned int base_index = state->StartIndex;
+		unsigned short row_start_x = pixel_x;
+		unsigned short row_start_y = pixel_y;
+		for (unsigned int x = 0; x < state->XSize; x++) {
+			unsigned int data_offset = ((unsigned int *)state->EndOffset)[state->StartIndex];
+			unsigned short column_start_x = pixel_x;
+			unsigned short column_start_y = pixel_y;
+			if (data_offset != UINT_MAX) {
+				unsigned char * ptr = state->DataOffset + data_offset;
+				unsigned int remaining = state->ZSize;
+				while (remaining) {
+					unsigned int run_length = *ptr;
+					ptr--;
+					if (run_length) {
+						remaining -= run_length;
+						while (run_length) {
+							normal_index = *ptr;
+							ptr--;
+							normal_index = VoxelNormalTranslateTable[normal_index];
+							value = *ptr;
+							ptr--;
+							unsigned int buffer_index = (pixel_x >> 8) | (pixel_y & 0xFF00);
+							VoxelDrawBuffer[buffer_index] = VoxelPaletteTranslateTable[normal_index][value];
+							VoxelDrawBuffer[buffer_index + 1] = VoxelPaletteTranslateTable[normal_index][value];
+							pixel_x += state->TransformMatrix[3].I;
+							pixel_y += state->TransformMatrix[3].J;
+							run_length--;
+						}
+					}
+					ptr--;
+					value = *ptr;
+					ptr--;
+					pixel_x += VoxelPixelDeltaTable[value][0];
+					pixel_y += VoxelPixelDeltaTable[value][1];
+					remaining -= value;
+				}
+			}
+			pixel_x = column_start_x + state->TransformMatrix[1].I;
+			pixel_y = column_start_y + state->TransformMatrix[1].J;
+			state->StartIndex = state->StrideX + state->StartIndex;
+		}
+		pixel_x = row_start_x + state->TransformMatrix[2].I;
+		pixel_y = row_start_y + state->TransformMatrix[2].J;
+		state->StartIndex = state->StrideY + base_index;
+	}
+}
+
+// FUNCTION: GAMEMD 0x00757980
+void __cdecl Draw_Voxel_Regular_Normals_ZBuffer_Lighting(VoxelFuncArgumentStruct * state)
+{
+	Fill_Delta_Table2(state);
+
+	unsigned char value;
+	unsigned char normal_index;
+	unsigned short pixel_x = state->TransformMatrix[0].I;
+	unsigned short pixel_y = state->TransformMatrix[0].J;
+	unsigned short pixel_z = state->TransformMatrix[0].K;
+
+	for (unsigned int y = 0; y < state->YSize; y++) {
+		unsigned int base_index = state->StartIndex;
+		unsigned short row_start_x = pixel_x;
+		unsigned short row_start_y = pixel_y;
+		unsigned short row_start_z = pixel_z;
+		for (unsigned int x = 0; x < state->XSize; x++) {
+			unsigned short column_start_x = pixel_x;
+			unsigned short column_start_y = pixel_y;
+			unsigned short column_start_z = pixel_z;
+			unsigned int data_offset = ((unsigned int *)state->StartOffset)[state->StartIndex];
+			if (data_offset != UINT_MAX) {
+				unsigned char * ptr = state->DataOffset + data_offset;
+				unsigned int remaining = state->ZSize;
+				while (remaining) {
+					value = *ptr;
+					ptr++;
+					pixel_x += VoxelPixelDeltaTable[value][0];
+					pixel_y += VoxelPixelDeltaTable[value][1];
+					pixel_z += state->TransformMatrix[3].K * value;
+					remaining -= value;
+					unsigned int run_length = *ptr;
+					ptr++;
+					if (run_length) {
+						remaining -= run_length;
+						while (run_length) {
+							unsigned int buffer_index = (pixel_x >> 8) | (pixel_y & 0xFF00);
+							if ((pixel_z >> 8) > VoxelDrawZBuffer[buffer_index]) {
+								value = *ptr;
+								ptr++;
+								normal_index = *ptr;
+								ptr++;
+								normal_index = VoxelNormalTranslateTable[normal_index];
+								VoxelDrawBuffer[buffer_index] = VoxelPaletteTranslateTable[normal_index][value];
+								VoxelDrawBuffer[buffer_index + 1] = VoxelPaletteTranslateTable[normal_index][value];
+								VoxelDrawZBuffer[buffer_index] = (pixel_z >> 8);
+								VoxelDrawZBuffer[buffer_index + 1] = (pixel_z >> 8);
+							} else {
+								ptr++;
+								ptr++;
+							}
+							pixel_x += state->TransformMatrix[3].I;
+							pixel_y += state->TransformMatrix[3].J;
+							pixel_z += state->TransformMatrix[3].K;
+							run_length--;
+						}
+					}
+					ptr++;
+				}
+			}
+			pixel_x = column_start_x + state->TransformMatrix[1].I;
+			pixel_y = column_start_y + state->TransformMatrix[1].J;
+			pixel_z = column_start_z + state->TransformMatrix[1].K;
+			state->StartIndex = state->StrideX + state->StartIndex;
+		}
+		pixel_x = row_start_x + state->TransformMatrix[2].I;
+		pixel_y = row_start_y + state->TransformMatrix[2].J;
+		pixel_z = row_start_z + state->TransformMatrix[2].K;
+		state->StartIndex = state->StrideY + base_index;
+	}
+}
+
+// FUNCTION: GAMEMD 0x00757BF0
+void __cdecl Draw_Voxel_Reverse_Normals_ZBuffer_Lighting(VoxelFuncArgumentStruct * state)
+{
+	Fill_Delta_Table3(state);
+
+	unsigned char value;
+	unsigned char normal_index;
+	unsigned short pixel_x = state->TransformMatrix[0].I;
+	unsigned short pixel_y = state->TransformMatrix[0].J;
+	unsigned short pixel_z = state->TransformMatrix[0].K;
+
+	for (unsigned int y = 0; y < state->YSize; y++) {
+		unsigned int base_index = state->StartIndex;
+		unsigned short row_start_x = pixel_x;
+		unsigned short row_start_y = pixel_y;
+		unsigned short row_start_z = pixel_z;
+		for (unsigned int x = 0; x < state->XSize; x++) {
+			unsigned short column_start_x = pixel_x;
+			unsigned short column_start_y = pixel_y;
+			unsigned short column_start_z = pixel_z;
+			unsigned int data_offset = ((unsigned int *)state->EndOffset)[state->StartIndex];
+			if (data_offset != UINT_MAX) {
+				unsigned char * ptr = state->DataOffset + data_offset;
+				unsigned int remaining = state->ZSize;
+				while (remaining) {
+					unsigned int run_length = *ptr;
+					ptr--;
+					if (run_length) {
+						remaining -= run_length;
+						while (run_length) {
+							unsigned int buffer_index = (pixel_x >> 8) | (pixel_y & 0xFF00);
+							if ((pixel_z >> 8) > VoxelDrawZBuffer[buffer_index]) {
+								normal_index = *ptr;
+								ptr--;
+								normal_index = VoxelNormalTranslateTable[normal_index];
+								value = *ptr;
+								ptr--;
+								VoxelDrawBuffer[buffer_index] = VoxelPaletteTranslateTable[normal_index][value];
+								VoxelDrawBuffer[buffer_index + 1] = VoxelPaletteTranslateTable[normal_index][value];
+								VoxelDrawZBuffer[buffer_index] = (pixel_z >> 8);
+								VoxelDrawZBuffer[buffer_index + 1] = (pixel_z >> 8);
+							} else {
+								ptr--;
+								ptr--;
+							}
+							pixel_x += state->TransformMatrix[3].I;
+							pixel_y += state->TransformMatrix[3].J;
+							pixel_z += state->TransformMatrix[3].K;
+							run_length--;
+						}
+					}
+					ptr--;
+					value = *ptr;
+					ptr--;
+					pixel_x += VoxelPixelDeltaTable[value][0];
+					pixel_y += VoxelPixelDeltaTable[value][1];
+					pixel_z += state->TransformMatrix[3].K * value;
+					remaining -= value;
+				}
+			}
+			pixel_x = column_start_x + state->TransformMatrix[1].I;
+			pixel_y = column_start_y + state->TransformMatrix[1].J;
+			pixel_z = column_start_z + state->TransformMatrix[1].K;
+			state->StartIndex = state->StrideX + state->StartIndex;
+		}
+		pixel_x = row_start_x + state->TransformMatrix[2].I;
+		pixel_y = row_start_y + state->TransformMatrix[2].J;
+		pixel_z = row_start_z + state->TransformMatrix[2].K;
+		state->StartIndex = state->StrideY + base_index;
+	}
+}
+
 // FUNCTION: GAMEMD 0x00757E70
 void __cdecl Draw_Voxel_Regular(VoxelFuncArgumentStruct * state)
 {

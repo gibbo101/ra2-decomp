@@ -41,8 +41,8 @@ class RadioClass : public MissionClass
 		bool HasFreeLink(TechnoClass const * ignore) const;
 		void SetLinkCount(int count);
 		void Radio_Off(void) {RadioLinks[0] = 0;};
-		TechnoClass * Contact_With_Whom(void) const {return(RadioLinks[0]);};
 		TechnoClass * FUN_0065AD30(int index);
+		TechnoClass * Contact_With_Whom(void) {return(FUN_0065AD30(0));};
 		TechnoClass * FUN_0065AD40(int index) const;
 		int FindLinkIndex(TechnoClass const * techno) const;
 		bool ContainsLink(TechnoClass const * techno) const;

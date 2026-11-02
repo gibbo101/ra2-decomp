@@ -61,8 +61,8 @@ WorldDominationTour::State::State(rc_ptr<WDTState> const & state, unsigned int t
 	TourState(state),
 	Owners(NULL)
 {
-	if (TourState.Get() != NULL && tick < TourState->NumTicks) {
-		Owners = TourState->OwnerHistory[tick];
+	if (TourState.Get() != NULL && tick < TourState.Get()->NumTicks) {
+		Owners = TourState.Get()->OwnerHistory[tick];
 	}
 }
 

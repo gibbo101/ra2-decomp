@@ -7809,7 +7809,7 @@ bool FUN_007A0690(void)
 	} else {
 		profile = DAT_00B75E48;
 	}
-	int country = profile->Field1C;
+	int country = profile.Get()->Field1C;
 	Wstring game("Match ");
 	Wstring wdt;
 
@@ -7819,7 +7819,7 @@ bool FUN_007A0690(void)
 		if (campaign.Get() == NULL) {
 			wdt = ", WDS=0";
 		} else {
-			switch (campaign->PlayerFaction) {
+			switch (campaign.Get()->PlayerFaction) {
 				case 2:
 					wdt = ", WDS=0";
 					if (country > 4) {
@@ -7849,9 +7849,9 @@ bool FUN_007A0690(void)
 	request += "COU=";
 	request += Wstring_FromInt(country);
 	request += ", COL=";
-	request += Wstring_FromInt(profile->Field20);
+	request += Wstring_FromInt(profile.Get()->Field20);
 	request += ", MBR=";
-	if (profile->Field38) {
+	if (profile.Get()->Field38) {
 		request += "1";
 	} else {
 		request += "0";
@@ -8633,15 +8633,15 @@ long __stdcall FUN_007A3100(void * sink, long result, Ladder * list, int, long, 
 
 		if (my_name == ladder_name) {
 			rc_ptr<PlayerProfile> profile = FUN_00778A20(&DAT_00B73E40);
-			if (profile.Get() && profile->StatsDiffer(temp)) {
-				profile->UpdateStats(temp);
-				profile->Save(&ladder_name);
+			if (profile.Get() && profile.Get()->StatsDiffer(temp)) {
+				profile.Get()->UpdateStats(temp);
+				profile.Get()->Save(&ladder_name);
 				HWND dialog = FUN_00775940(0x10E);
 				if (dialog == NULL) {
 					dialog = FUN_00775940(0x114);
 				}
 				if (dialog) {
-					profile->FUN_0077A9F0(dialog, &DAT_00B73E40, false);
+					profile.Get()->FUN_0077A9F0(dialog, &DAT_00B73E40, false);
 				}
 			}
 		}
@@ -9397,8 +9397,8 @@ long __stdcall FUN_007A7110(void * sink, long result, void * channel, User * use
 				} else {
 					profile = DAT_00B75E48;
 				}
-				Session.FUN_0069B760(profile->Field1C, false);
-				Session.FUN_0069B7E0(profile->Field20, false);
+				Session.FUN_0069B760(profile.Get()->Field1C, false);
+				Session.FUN_0069B7E0(profile.Get()->Field20, false);
 
 				if (Game::ObserverMode && !Is_Internal_Session()) {
 					Session.FUN_0069B760(-3, false);

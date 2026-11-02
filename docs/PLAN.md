@@ -1,6 +1,6 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 2 November 2026: 18,565 of 19,368 game functions match (96%; 71% of game code
+Status, 2 November 2026: 18,578 of 19,368 game functions match (96%; 71% of game code
 by size), landed in batches module by module. The rounds below record each one.
 
 ## The goal
@@ -1113,6 +1113,18 @@ Session.Players. Recording then exposed three UI-command functions building char
 ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; their RTTI
 fixed them. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
+
+### Batches 162 to 164 (2 November 2026)
+
+**11 functions, 23 KB.** Batch 162 landed header fixes that earlier rounds had proved:
+DebugPage moved unchanged from motlib.cpp into debugpage.h, which lands Print_CRCs (11.2 KB).
+Its other job, TibSun's vector4.h for 0x005AFB80, matched alone but turned Print_CRCs into a
+one-reload near miss, so it is banked. Batches 163 and 164 retried 53 near misses of 80 to
+90%: Do_MISSION_REPAIR (4.6 KB), FootClass::Basic_Path and ForceCreate, Fire_Coord,
+PowerClass::Draw_It, two voxel normal-lighting drawers and three WorldDominationTour
+Selection functions. Those three needed rc_ptr's operator-> to test for null, as the exe's
+dead `lea` shows; eleven field accesses that read without the test now use Get().
+RadioClass::Contact_With_Whom calls 0x0065AD30. Merge gate: 18,578 of 18,578 (2,661.5 KB).
 
 ### dk8827's dialog pull request (2 November 2026)
 

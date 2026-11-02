@@ -1346,6 +1346,675 @@ void Add_CRC(unsigned int *crc, unsigned int val)
 	(*crc) += hibit;
 }
 
+#include "debugpage.h"
+
+extern unsigned int DAT_00B04474[256];
+namespace FPSCounter { extern unsigned TotalFramesElapsed; extern unsigned TotalTimeElapsed; }
+extern WinsockInterfaceClass * PacketTransport;
+const char * FUN_004E62B0(void);
+char * __fastcall FUN_007350C0(wchar_t const * text);
+DebugPage * __fastcall FUN_005BC450(int index);
+void __cdecl FUN_005BD1F0(DebugPage * page, char const * format, ...);
+
+// FUNCTION: GAMEMD 0x0064DEA0
+void __fastcall Print_CRCs(EventClass *ev)
+{
+	int i, j;
+	InfantryClass *infp;
+	UnitClass *unitp;
+	BuildingClass *bldgp;
+	AircraftClass *airp;
+	ObjectClass *objp;
+	FILE *fp;
+	HousesType house;
+
+	char filename[512];
+	sprintf(filename, "SYNC%01d.TXT", PlayerPtr->HeapID);
+	DebugString("Writing sync data to file %s\n", filename);
+
+	DebugPage *mono = FUN_005BC450(4);
+	mono->Reset();
+	mono->Set_Cursor(0, 0);
+
+	fp = fopen(filename, "wt");
+	if (fp == NULL) {
+		DebugString("Error - failed to open sync file for writing. Error code %d - %s\n", GetLastError(), fp);
+		return;
+	}
+
+	fprintf(fp, "RA2 Sync\n");
+
+	fprintf(fp, "\nVersion %s\n", Version_Name());
+	fprintf(fp, "Internal Version %s\n", VerNum.Version_Name());
+
+	char date[128];
+	char builder[128];
+	char number[128];
+
+	date[0] = 0;
+	Build_Date_String(date, sizeof(date));
+	fprintf(fp, "Release Build: %s by %s - %s\r\n", Build_Number_String(number, sizeof(number)), Build_By_String(builder, sizeof(builder)), date);
+
+	int cpu_type = 5;
+	bool mmx = false;
+	Get_CPU_Type(cpu_type, mmx, 0, 0);
+	fprintf(fp, "CPU %s, MMX %s, Vendor: %s\r\n", FUN_004E62B0(), mmx ? "Yes" : "No", "Not available");
+
+	fprintf(fp, "Frames: %d\n", Frame);
+	fprintf(fp, "Average FPS: %d\n", FPSCounter::TotalTimeElapsed != 0 ? FPSCounter::TotalFramesElapsed / FPSCounter::TotalTimeElapsed : 0);
+	fprintf(fp, "Max MaxAhead: %d\n", Session.MaxMaxAhead);
+	fprintf(fp, "Latency setting: %d\n", Session.LatencyFudge);
+	fprintf(fp, "Game speed setting: %d\n", Options.GameSpeed);
+	fprintf(fp, "FrameSendRate: %d\n", Session.FrameSendRate);
+
+	if (PacketTransport) {
+		for (i = 0; i < PacketTransport->Get_Num_Local_Addresses(); i++) {
+			unsigned char *addr = PacketTransport->Get_Local_Address(i);
+			if (addr != NULL) {
+				unsigned int a = *(unsigned int *)addr;
+				fprintf(fp, "Local address: %d.%d.%d.%d\n", (a) & 0xFF, (a >> 8) & 0xFF, (a >> 16) & 0xFF, (a >> 24) & 0xFF);
+			}
+		}
+	}
+
+	for (i = 0; i < MAX_PLAYERS; i++) {
+		MPStatsType *stat = &Session.ConnectionStats[i];
+		if (*stat->Name != '\0') {
+			NetNumType net;
+			NetNodeType node;
+			stat->Address.Get_Address(net, node);
+			fprintf(fp, "\nName: %s\n", stat->Name);
+			fprintf(fp, "Address: %d.%d.%d.%d\n", node[0], node[1], node[2], node[3]);
+			fprintf(fp, "Max avg round trip: %d\n", stat->MaxAvgRoundTrip);
+			fprintf(fp, "Max round trip: %d\n", stat->MaxRoundTrip);
+			fprintf(fp, "Resends: %d\n", stat->Resends);
+			fprintf(fp, "Frame sync stalls: %d\n", stat->FrameSyncStalls);
+			fprintf(fp, "Command cound stalls: %d\n", stat->CommandCountStalls);
+			fprintf(fp, "Lost: %d\n", stat->Lost);
+			fprintf(fp, "Percent lost: %d\n", stat->PercentLost);
+		}
+	}
+
+	for (i = 0; i < 256; i++) {
+		fprintf(fp, "CRC[%d]=%x\n", i, DAT_00B04474[i]);
+	}
+
+	fprintf(fp, "\n---Player Details---\n");
+
+	for (house = HOUSE_FIRST; house < Houses.Count(); house++) {
+		DAT_00AC51FC = 0;
+		HouseClass *housep = Houses[house];
+		HousesType type = housep->Class->HeapID;
+		int scheme = housep->Scheme;
+		char *name = FUN_007350C0(housep->UIName);
+		fprintf(fp, "%s: IsHuman:%d  Color:%s  ID:%d  HouseType:%s  Edge:%d  Startallies:%d  Startspot:%d Visionary:%d MapIsClear:%d\n",
+			name,
+			housep->IsHuman,
+			ColorSchemes[scheme]->Name,
+			housep->HeapID,
+			HouseTypes[type]->Full_Name(),
+			housep->Edge,
+			housep->StartingAllies,
+			housep->StartingPoint,
+			housep->IsVisionary,
+			housep->MapIsClear);
+		FUN_005BD1F0(mono, "House %s:%x\n", housep->Class->Name(), DAT_00AC51FC);
+	}
+
+	for (house = HOUSE_FIRST; house < Houses.Count(); house++) {
+		HouseClass *housep = Houses[house];
+		DAT_00AC51FC = 0;
+		fprintf(fp, "-------------------- %s (%d) Infantry -------------------\n", housep->Class->Name(), housep->HeapID);
+		for (i = 0; i < Infantry.Count(); i++) {
+			infp = Infantry[i];
+			if (infp->House == housep) {
+				Add_CRC(&DAT_00AC51FC, (int)infp->PositionCoord.As_Int() + (int)infp->PrimaryFacing.Current().As_Dir256());
+
+				AbstractClass *tarcom = infp->TarCom;
+				int tarcom_x = 0;
+				int tarcom_y = 0;
+				const char *tarcom_name = "None";
+				if (tarcom != NULL) {
+					tarcom_x = tarcom->Center_Coord().X;
+					tarcom_y = tarcom->Center_Coord().Y;
+					tarcom_name = Name_From_RTTI(tarcom->RTTI);
+				}
+
+				int navcom_x = 0;
+				int navcom_y = 0;
+				const char *navcom_name = "None";
+				AbstractClass *navcom = infp->NavCom;
+				if (navcom != NULL) {
+					navcom_x = navcom->Center_Coord().X;
+					navcom_y = navcom->Center_Coord().Y;
+					navcom_name = Name_From_RTTI(navcom->RTTI);
+				}
+
+				fprintf(fp, "COORD:%d,%d  Facing:%d  Mission:%d  Type:%d(%s)  TarCom:%s(%d,%d)  Speed:%d  NavCom:%s(%d,%d)\n",
+					infp->Center_Coord().X, infp->Center_Coord().Y, (int)infp->PrimaryFacing.Current().As_Dir256(), infp->Get_Mission(),
+					infp->Class->HeapID, infp->Class->Name(), tarcom_name, tarcom_x, tarcom_y, int(infp->Speed * (MPH_LIGHT_SPEED + 1.0)), navcom_name, navcom_x, navcom_y);
+			}
+		}
+		FUN_005BD1F0(mono, "%s Infantry:%x\n", housep->Class->Name(), DAT_00AC51FC);
+	}
+
+	for (house = HOUSE_FIRST; house < Houses.Count(); house++) {
+		HouseClass *housep = Houses[house];
+		DAT_00AC51FC = 0;
+		fprintf(fp, "-------------------- %s (%d) Units -------------------\n", housep->Class->Name(), housep->HeapID);
+		for (i = 0; i < Units.Count(); i++) {
+			unitp = (UnitClass *)Units[i];
+			if (unitp->House == housep) {
+				Add_CRC(&DAT_00AC51FC, (int)unitp->PositionCoord.As_Int() + (int)unitp->PrimaryFacing.Current().As_Dir256() +
+					(int)unitp->SecondaryFacing.Current().As_Dir256());
+
+				AbstractClass *tarcom = unitp->TarCom;
+				int tarcom_x = 0;
+				int tarcom_y = 0;
+				const char *tarcom_name = "None";
+				if (tarcom != NULL) {
+					tarcom_x = tarcom->Center_Coord().X;
+					tarcom_y = tarcom->Center_Coord().Y;
+					tarcom_name = Name_From_RTTI(tarcom->RTTI);
+				}
+
+				int navcom_x = 0;
+				int navcom_y = 0;
+				const char *navcom_name = "None";
+				AbstractClass *navcom = unitp->NavCom;
+				if (navcom != NULL) {
+					navcom_x = navcom->Center_Coord().X;
+					navcom_y = navcom->Center_Coord().Y;
+					navcom_name = Name_From_RTTI(navcom->RTTI);
+				}
+
+				fprintf(fp, "COORD:%d,%d  Facing:%d  Facing2:%d  Mission:%d  Type:%d(%s)  TarCom:%s(%d,%d)  NavCom:%s(%d,%d)  TrkNum:%d  TrkInd:%d  SpdAcc:%d\n",
+					unitp->Center_Coord().X, unitp->Center_Coord().Y, (int)unitp->PrimaryFacing.Current().As_Dir256(), (int)unitp->SecondaryFacing.Current().As_Dir256(), unitp->Get_Mission(),
+					unitp->Class->HeapID, unitp->Class->Name(), tarcom_name, tarcom_x, tarcom_y, navcom_name, navcom_x, navcom_y,
+					unitp->Locomotion->Get_Track_Number(), unitp->Locomotion->Get_Track_Index(), unitp->Locomotion->Get_Speed_Accum());
+			}
+		}
+		FUN_005BD1F0(mono, "%s Units:%x\n", housep->Class->Name(), DAT_00AC51FC);
+	}
+
+	for (house = HOUSE_FIRST; house < Houses.Count(); house++) {
+		HouseClass *housep = Houses[house];
+		DAT_00AC51FC = 0;
+		fprintf(fp, "-------------------- %s (%d) Buildings -------------------\n", housep->Class->Name(), housep->HeapID);
+		for (i = 0; i < Buildings.Count(); i++) {
+			BuildingClass *bldgp = Buildings[i];
+			if (bldgp->House == housep) {
+				Add_CRC(&DAT_00AC51FC, (int)bldgp->PositionCoord.As_Int() + (int)bldgp->PrimaryFacing.Current().As_Dir256());
+
+				AbstractClass *tarcom = bldgp->TarCom;
+				int tarcom_x = 0;
+				int tarcom_y = 0;
+				const char *tarcom_name = "None";
+				if (tarcom != NULL) {
+					tarcom_x = tarcom->Center_Coord().X;
+					tarcom_y = tarcom->Center_Coord().Y;
+					tarcom_name = Name_From_RTTI(tarcom->RTTI);
+				}
+
+				fprintf(fp, "COORD:%d,%d  Facing:%d  Mission:%d  Type:%d(%s)  TarCom:%s(%d,%d)\n",
+					bldgp->Center_Coord().X, bldgp->Center_Coord().Y, (int)bldgp->PrimaryFacing.Current().As_Dir256(), bldgp->Get_Mission(),
+					bldgp->Class->HeapID, bldgp->Class->Name(), tarcom_name, tarcom_x, tarcom_y);
+			}
+		}
+		FUN_005BD1F0(mono, "%s Buildings:%x\n", housep->Class->Name(), DAT_00AC51FC);
+	}
+
+	for (house = HOUSE_FIRST; house < Houses.Count(); house++) {
+		HouseClass *housep = Houses[house];
+		DAT_00AC51FC = 0;
+		fprintf(fp, "-------------------- %s (%d) Aircraft -------------------\n", housep->Class->Name(), housep->HeapID);
+		for (i = 0; i < Aircraft.Count(); i++) {
+			AircraftClass *airp = (AircraftClass *)Aircraft[i];
+			if (airp->House == housep) {
+				Add_CRC(&DAT_00AC51FC, (int)airp->PositionCoord.As_Int() + (int)airp->PrimaryFacing.Current().As_Dir256());
+
+				AbstractClass *tarcom = airp->TarCom;
+				int tarcom_x = 0;
+				int tarcom_y = 0;
+				const char *tarcom_name = "None";
+				if (tarcom != NULL) {
+					tarcom_x = tarcom->Center_Coord().X;
+					tarcom_y = tarcom->Center_Coord().Y;
+					tarcom_name = Name_From_RTTI(tarcom->RTTI);
+				}
+
+				fprintf(fp, "COORD:%d,%d  Facing:%d  Mission:%d  Type:%d(%s)  TarCom:%s(%d,%d)\n",
+					airp->Center_Coord().X, airp->Center_Coord().Y, (int)airp->PrimaryFacing.Current().As_Dir256(), airp->Get_Mission(),
+					airp->Class->HeapID, airp->Class->Name(), tarcom_name, tarcom_x, tarcom_y);
+			}
+		}
+		FUN_005BD1F0(mono, "%s Aircraft:%x\n", housep->Class->Name(), DAT_00AC51FC);
+	}
+
+	DAT_00AC51FC = 0;
+	for (i = 0; i < LAYER_COUNT; i++) {
+		fprintf(fp, ">>>> MAP LAYER %d <<<<\n", i);
+		for (j = 0; j < Map.Layer[i].Count(); j++) {
+			objp = (ObjectClass *)Map.Layer[i][j];
+			if (objp->RTTI == RTTI_ANIM && objp->Fetch_ID() == -2) {
+				continue;
+			}
+			Add_CRC(&DAT_00AC51FC, (int)objp->PositionCoord.As_Int() + (int)objp->RTTI);
+			fprintf(fp, "Object %d: %x ", j, objp->PositionCoord.As_Int());
+			if (objp->RTTI != RTTI_WAVE && objp->RTTI != RTTI_LIGHT) {
+				fprintf(fp, "%s\t(Type:%d(%s)) ",
+					Name_From_RTTI(objp->RTTI),
+					objp->Class_Of()->Fetch_Heap_ID(),
+					(const char *)objp->Class_Of()->IniName);
+			} else {
+				fprintf(fp, "%s\t(Type:%d) ",
+					Name_From_RTTI(objp->RTTI),
+					0);
+			}
+			HouseClass *housep = objp->Owner_HouseClass();
+			if (housep != NULL) {
+				fprintf(fp, "Owner: %s(%d)\n", housep->Class->Name(), housep->HeapID);
+			} else {
+				fprintf(fp, "Owner: NONE\n");
+			}
+
+		}
+	}
+	FUN_005BD1F0(mono, "Map Layers:%x  \n", DAT_00AC51FC);
+
+	DAT_00AC51FC = 0;
+	fprintf(fp, ">>>> LOGIC LAYER <<<<\n");
+	for (i = 0; i < Logic.Count(); i++) {
+		objp = (ObjectClass *)Logic[i];
+		if (objp->RTTI == RTTI_ANIM && objp->Fetch_ID() == -2) {
+			continue;
+		}
+		Add_CRC(&DAT_00AC51FC, (int)objp->PositionCoord.As_Int() + (int)objp->RTTI);
+		fprintf(fp, "Object %d: %x ", i, objp->PositionCoord.As_Int());
+
+		if (objp->RTTI == RTTI_AIRCRAFT)
+			fprintf(fp, "Aircraft  (Type:%d(%s)) ",
+				((AircraftClass *)objp)->Class_Of()->Fetch_Heap_ID(),
+				(const char *)((AircraftClass *)objp)->Class_Of()->IniName);
+		else if (objp->RTTI == RTTI_ANIM)
+			fprintf(fp, "Anim      (Type:%d(%s)) ",
+				((AnimClass *)objp)->Class_Of()->Fetch_Heap_ID(),
+				(const char *)((AnimClass *)objp)->Class_Of()->IniName);
+		else if (objp->RTTI == RTTI_BUILDING)
+			fprintf(fp, "Building  (Type:%d(%s)) ",
+				((BuildingClass *)objp)->Class_Of()->Fetch_Heap_ID(),
+				(const char *)((BuildingClass *)objp)->Class_Of()->IniName);
+		else if (objp->RTTI == RTTI_BULLET)
+			fprintf(fp, "Bullet    (Type:%d(%s)) ",
+				((BulletClass *)objp)->Class_Of()->Fetch_Heap_ID(),
+				(const char *)((BulletClass *)objp)->Class_Of()->IniName);
+		else if (objp->RTTI == RTTI_INFANTRY)
+			fprintf(fp, "Infantry  (Type:%d(%s)) ",
+				((InfantryClass *)objp)->Class_Of()->Fetch_Heap_ID(),
+				(const char *)((InfantryClass *)objp)->Class_Of()->IniName);
+		else if (objp->RTTI == RTTI_OVERLAY)
+			fprintf(fp, "Overlay   (Type:%d(%s)) ",
+				((OverlayClass *)objp)->Class_Of()->Fetch_Heap_ID(),
+				(const char *)((OverlayClass *)objp)->Class_Of()->IniName);
+		else if (objp->RTTI == RTTI_SMUDGE)
+			fprintf(fp, "Smudge    (Type:%d(%s)) ",
+				((SmudgeClass *)objp)->Class_Of()->Fetch_Heap_ID(),
+				(const char *)((SmudgeClass *)objp)->Class_Of()->IniName);
+		else if (objp->RTTI == RTTI_TERRAIN)
+			fprintf(fp, "Terrain   (Type:%d(%s)) ",
+				((TerrainClass *)objp)->Class_Of()->Fetch_Heap_ID(),
+				(const char *)((TerrainClass *)objp)->Class_Of()->IniName);
+		else if (objp->RTTI == RTTI_UNIT)
+			fprintf(fp, "Unit      (Type:%d(%s)) ",
+				((UnitClass *)objp)->Class_Of()->Fetch_Heap_ID(),
+				(const char *)((UnitClass *)objp)->Class_Of()->IniName);
+
+		HouseClass *housep = objp->Owner_HouseClass();
+		if (housep != NULL) {
+			fprintf(fp, "Owner: %s\n", housep->Class->Name());
+		} else {
+			fprintf(fp, "Owner: NONE\n");
+		}
+
+	}
+	FUN_005BD1F0(mono, "Logic:%x  \n", DAT_00AC51FC);
+
+	int rnd = Scen->RandomNumber();
+	FUN_005BD1F0(mono, "Random Number:%x  \n", rnd);
+	fprintf(fp, "\nRandom Number:%d\n", rnd);
+
+	FUN_005BD1F0(mono, "My Frame:%d  \n", Frame);
+	fprintf(fp, "My Frame:%d\n", Frame);
+
+
+	if (ev) {
+		fprintf(fp, "Offending event:\n");
+		fprintf(fp, "Type:         %d\n", ev->Type);
+		fprintf(fp, "Frame:        %d\n", ev->Frame);
+		fprintf(fp, "ID:           %x\n", ev->ID);
+		fprintf(fp, "CRC:          %x\n", ev->Data.FrameInfo.CRC);
+		fprintf(fp, "CommandCount: %d\n", ev->Data.FrameInfo.CommandCount);
+		fprintf(fp, "Delay:        %d\n", ev->Data.FrameInfo.Delay);
+	}
+
+	CRCEngine *crc = new CRCEngine;
+
+	#define CRC_OBJECTS(_vector_) \
+	for (j = 0; j < _vector_.Count(); j++) { \
+		_vector_[j]->Compute_CRC(*crc); \
+		fprintf(fp, "%05d      %08x\n", j, *crc); \
+	}
+	fprintf(fp, "\n\n*************** House Type CRCs**************\n\n");
+	fprintf(fp, "Index     CRC\n");
+	fprintf(fp, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	CRC_OBJECTS(HouseTypes);
+
+	fprintf(fp, "\n\n*************** House CRCs*******************\n\n");
+	fprintf(fp, "Index     CRC\n");
+	fprintf(fp, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	delete crc;
+	crc = new CRCEngine;
+	CRC_OBJECTS(Houses);
+
+	fprintf(fp, "\n\n*************** Unit Type CRCs**************\n\n");
+	fprintf(fp, "Index     CRC\n");
+	fprintf(fp, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	delete crc;
+	crc = new CRCEngine;
+	CRC_OBJECTS(UnitTypes);
+
+	fprintf(fp, "\n\n*************** Unit CRCs**************\n\n");
+	fprintf(fp, "Index     CRC\n");
+	fprintf(fp, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	delete crc;
+	crc = new CRCEngine;
+	CRC_OBJECTS(Units);
+
+	fprintf(fp, "\n\n*************** Infantry Type CRCs**************\n\n");
+	fprintf(fp, "Index     CRC\n");
+	fprintf(fp, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	delete crc;
+	crc = new CRCEngine;
+	CRC_OBJECTS(InfantryTypes);
+
+	fprintf(fp, "\n\n*************** Infantry CRCs**************\n\n");
+	fprintf(fp, "Index     CRC\n");
+	fprintf(fp, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	delete crc;
+	crc = new CRCEngine;
+	CRC_OBJECTS(Infantry);
+
+	fprintf(fp, "\n\n*************** BuildingType CRCs**************\n\n");
+	fprintf(fp, "Index     CRC\n");
+	fprintf(fp, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	delete crc;
+	crc = new CRCEngine;
+	CRC_OBJECTS(BuildingTypes);
+
+	fprintf(fp, "\n\n*************** Building CRCs**************\n\n");
+	fprintf(fp, "Index     CRC\n");
+	fprintf(fp, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	delete crc;
+	crc = new CRCEngine;
+	CRC_OBJECTS(Buildings);
+
+	fprintf(fp, "\n\n*************** Aircraft Type CRCs**************\n\n");
+	fprintf(fp, "Index     CRC\n");
+	fprintf(fp, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	delete crc;
+	crc = new CRCEngine;
+	CRC_OBJECTS(AircraftTypes);
+
+	fprintf(fp, "\n\n*************** Aircraft CRCs**************\n\n");
+	fprintf(fp, "Index     CRC\n");
+	fprintf(fp, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	delete crc;
+	crc = new CRCEngine;
+	CRC_OBJECTS(Aircraft);
+
+	fprintf(fp, "\n\n*************** Anim CRCs**************\n\n");
+	fprintf(fp, "Index     CRC\n");
+	fprintf(fp, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	delete crc;
+	crc = new CRCEngine;
+	for (j = 0; j < Anims.Count(); j++) {
+		AnimClass *anim = (AnimClass *)Anims[j];
+		if (anim->Fetch_ID() != -2) {
+			anim->Compute_CRC(*crc);
+			fprintf(fp, "%05d      %08x\n", j, *crc);
+		}
+	}
+
+	fprintf(fp, "\n\n*************** Anim Type CRCs**************\n\n");
+	fprintf(fp, "Index     CRC\n");
+	fprintf(fp, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	delete crc;
+	crc = new CRCEngine;
+	CRC_OBJECTS(AnimTypes);
+
+	fprintf(fp, "\n\n*************** Task Force CRCs**************\n\n");
+	fprintf(fp, "Index     CRC\n");
+	fprintf(fp, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	delete crc;
+	crc = new CRCEngine;
+	CRC_OBJECTS(TaskForces);
+
+	fprintf(fp, "\n\n*************** Team Type CRCs**************\n\n");
+	fprintf(fp, "Index     CRC\n");
+	fprintf(fp, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	delete crc;
+	crc = new CRCEngine;
+	CRC_OBJECTS(TeamTypes);
+
+	fprintf(fp, "\n\n*************** Team CRCs**************\n\n");
+	fprintf(fp, "Index     CRC\n");
+	fprintf(fp, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	delete crc;
+	crc = new CRCEngine;
+	CRC_OBJECTS(Teams);
+
+	fprintf(fp, "\n\n*************** Script Type CRCs**************\n\n");
+	fprintf(fp, "Index     CRC\n");
+	fprintf(fp, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	delete crc;
+	crc = new CRCEngine;
+	CRC_OBJECTS(ScriptTypes);
+
+	fprintf(fp, "\n\n*************** Script CRCs**************\n\n");
+	fprintf(fp, "Index     CRC\n");
+	fprintf(fp, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	delete crc;
+	crc = new CRCEngine;
+	CRC_OBJECTS(Scripts);
+
+	fprintf(fp, "\n\n*************** Tag Type CRCs**************\n\n");
+	fprintf(fp, "Index     CRC\n");
+	fprintf(fp, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	delete crc;
+	crc = new CRCEngine;
+	CRC_OBJECTS(TagTypes);
+
+	fprintf(fp, "\n\n*************** Tag CRCs**************\n\n");
+	fprintf(fp, "Index     CRC\n");
+	fprintf(fp, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	delete crc;
+	crc = new CRCEngine;
+	CRC_OBJECTS(Tags);
+
+	fprintf(fp, "\n\n*************** Trigger Type CRCs**************\n\n");
+	fprintf(fp, "Index     CRC\n");
+	fprintf(fp, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	delete crc;
+	crc = new CRCEngine;
+	CRC_OBJECTS(TriggerTypes);
+
+	fprintf(fp, "\n\n*************** Trigger CRCs**************\n\n");
+	fprintf(fp, "Index     CRC\n");
+	fprintf(fp, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	delete crc;
+	crc = new CRCEngine;
+	CRC_OBJECTS(Triggers);
+
+	fprintf(fp, "\n\n*************** Action CRCs**************\n\n");
+	fprintf(fp, "Index     CRC\n");
+	fprintf(fp, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	delete crc;
+	crc = new CRCEngine;
+	CRC_OBJECTS(Actions);
+
+	fprintf(fp, "\n\n*************** Event CRCs**************\n\n");
+	fprintf(fp, "Index     CRC\n");
+	fprintf(fp, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	delete crc;
+	crc = new CRCEngine;
+	CRC_OBJECTS(Events);
+
+	fprintf(fp, "\n\n*************** Factory CRCs**************\n\n");
+	fprintf(fp, "Index     CRC\n");
+	fprintf(fp, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	delete crc;
+	crc = new CRCEngine;
+	CRC_OBJECTS(Factories);
+
+	fprintf(fp, "\n\n*************** Voxel Anim Type CRCs**************\n\n");
+	fprintf(fp, "Index     CRC\n");
+	fprintf(fp, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	delete crc;
+	crc = new CRCEngine;
+	CRC_OBJECTS(VoxelAnimTypes);
+
+	fprintf(fp, "\n\n*************** Voxel Anim CRCs**************\n\n");
+	fprintf(fp, "Index     CRC\n");
+	fprintf(fp, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	delete crc;
+	crc = new CRCEngine;
+	CRC_OBJECTS(VoxelAnims);
+
+	fprintf(fp, "\n\n*************** Warhead CRCs**************\n\n");
+	fprintf(fp, "Index     CRC\n");
+	fprintf(fp, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	delete crc;
+	crc = new CRCEngine;
+	CRC_OBJECTS(Warheads);
+
+	fprintf(fp, "\n\n*************** Weapon CRCs**************\n\n");
+	fprintf(fp, "Index     CRC\n");
+	fprintf(fp, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	delete crc;
+	crc = new CRCEngine;
+	CRC_OBJECTS(Weapons);
+
+	fprintf(fp, "\n\n*************** Particle Type CRCs**************\n\n");
+	fprintf(fp, "Index     CRC\n");
+	fprintf(fp, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	delete crc;
+	crc = new CRCEngine;
+	CRC_OBJECTS(ParticleTypes);
+
+	fprintf(fp, "\n\n*************** Particle CRCs**************\n\n");
+	fprintf(fp, "Index     CRC\n");
+	fprintf(fp, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	delete crc;
+	crc = new CRCEngine;
+	CRC_OBJECTS(Particles);
+
+	fprintf(fp, "\n\n*************** Particle System CRCs**************\n\n");
+	fprintf(fp, "Index     CRC\n");
+	fprintf(fp, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	delete crc;
+	crc = new CRCEngine;
+	CRC_OBJECTS(ParticleSystems);
+
+	fprintf(fp, "\n\n*************** Particle System Type CRCs**************\n\n");
+	fprintf(fp, "Index     CRC\n");
+	fprintf(fp, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	delete crc;
+	crc = new CRCEngine;
+	CRC_OBJECTS(ParticleSystemTypes);
+
+	fprintf(fp, "\n\n*************** Bullet Type's**************\n\n");
+	fprintf(fp, "Index     CRC\n");
+	fprintf(fp, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	delete crc;
+	crc = new CRCEngine;
+	CRC_OBJECTS(BulletTypes);
+
+	fprintf(fp, "\n\n*************** Bullet CRCs**************\n\n");
+	fprintf(fp, "Index     CRC\n");
+	fprintf(fp, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	delete crc;
+	crc = new CRCEngine;
+	CRC_OBJECTS(Bullets);
+
+	fprintf(fp, "\n\n*************** Waypoint Path CRCs**************\n\n");
+	fprintf(fp, "Index     CRC\n");
+	fprintf(fp, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	delete crc;
+	crc = new CRCEngine;
+	CRC_OBJECTS(WaypointPaths);
+
+	fprintf(fp, "\n\n*************** Smudge Type CRCs**************\n\n");
+	fprintf(fp, "Index     CRC\n");
+	fprintf(fp, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	delete crc;
+	crc = new CRCEngine;
+	CRC_OBJECTS(SmudgeTypes);
+
+	fprintf(fp, "\n\n*************** Overlay Type CRCs**************\n\n");
+	fprintf(fp, "Index     CRC\n");
+	fprintf(fp, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	delete crc;
+	crc = new CRCEngine;
+	CRC_OBJECTS(OverlayTypes);
+
+	fprintf(fp, "\n\n*************** Light Source CRCs**************\n\n");
+	fprintf(fp, "Index     CRC\n");
+	fprintf(fp, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	delete crc;
+	crc = new CRCEngine;
+	CRC_OBJECTS(LightSources);
+
+	fprintf(fp, "\n\n*************** Building Light CRCs**************\n\n");
+	fprintf(fp, "Index     CRC\n");
+	fprintf(fp, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	delete crc;
+	crc = new CRCEngine;
+	CRC_OBJECTS(BuildingLights);
+
+	fprintf(fp, "\n\n*************** Tube CRCs**************\n\n");
+	fprintf(fp, "Index     CRC\n");
+	fprintf(fp, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	delete crc;
+	crc = new CRCEngine;
+	CRC_OBJECTS(Tubes);
+
+	fprintf(fp, "\n\n*************** Sides CRCs**************\n\n");
+	fprintf(fp, "Index     CRC\n");
+	fprintf(fp, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	delete crc;
+	crc = new CRCEngine;
+	CRC_OBJECTS(Sides);
+
+	fprintf(fp, "\n\n*************** Tiberium CRCs**************\n\n");
+	fprintf(fp, "Index     CRC\n");
+	fprintf(fp, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	delete crc;
+	crc = new CRCEngine;
+	CRC_OBJECTS(Tiberiums);
+
+	fprintf(fp, "\n\n*************** Em Pulse CRCs**************\n\n");
+	fprintf(fp, "Index     CRC\n");
+	fprintf(fp, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	delete crc;
+	crc = new CRCEngine;
+	CRC_OBJECTS(EMPulseClass::EMPulses);
+
+	delete crc;
+
+	fclose(fp);
+
+}
+
 #pragma pack(push, 1)
 struct SyncHouseRecord {
 	char Name[0x14];
@@ -1412,11 +2081,6 @@ struct SyncFrameLog {
 #pragma pack(pop)
 
 extern SyncFrameLog DAT_00AC6660[256];
-
-namespace FPSCounter { extern unsigned TotalFramesElapsed; extern unsigned TotalTimeElapsed; }
-extern WinsockInterfaceClass * PacketTransport;
-extern unsigned int DAT_00B04474[256];
-const char * FUN_004E62B0(void);
 
 // FUNCTION: GAMEMD 0x006516F0
 void __fastcall FUN_006516F0(int slot, EventClass *ev)

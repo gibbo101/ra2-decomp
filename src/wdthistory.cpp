@@ -56,7 +56,7 @@ rc_ptr<WorldDominationTour::State> WorldDominationTour::History::FUN_00767BB0(in
 // FUNCTION: GAMEMD 0x00767BD0
 bool WorldDominationTour::History::Is_Tick_Valid(unsigned int ticks)
 {
-	return(TourState.Get() != NULL && ticks < TourState->NumTicks);
+	return(TourState.Get() != NULL && ticks < TourState.Get()->NumTicks);
 }
 
 // FUNCTION: GAMEMD 0x00767BF0

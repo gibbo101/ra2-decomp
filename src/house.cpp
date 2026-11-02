@@ -5205,15 +5205,6 @@ bool HouseClass::FUN_0050B760(BuildingTypeClass const * type, Cell const & cell)
 	return(false);
 }
 
-struct Drawing {
-	static unsigned short RedShiftLeft;
-	static int RedShiftRight;
-	static unsigned short GreenShiftLeft;
-	static int GreenShiftRight;
-	static unsigned short BlueShiftLeft;
-	static int BlueShiftRight;
-};
-
 // FUNCTION: GAMEMD 0x0050B840
 void HouseClass::FUN_0050B840(void)
 {
@@ -5226,9 +5217,7 @@ void HouseClass::FUN_0050B840(void)
 		Scheme = 5;
 		scheme = ColorSchemes[5];
 	}
-	unsigned short pixel = scheme->Converter->Convert_Pixel(scheme->Bright);
-	RGBClass color((pixel >> Drawing::RedShiftLeft) << Drawing::RedShiftRight, (pixel >> Drawing::GreenShiftLeft) << Drawing::GreenShiftRight, (pixel >> Drawing::BlueShiftLeft) << Drawing::BlueShiftRight);
-	RemapColorRGB = color;
+	RemapColorRGB = DSurface::Deconstruct_Hicolor_Pixel(scheme->Converter->Convert_Pixel(scheme->Bright));
 }
 
 extern double __cdecl FUN_004CAC40(double);

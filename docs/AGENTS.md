@@ -410,6 +410,7 @@ Each entry: what the diff showed, then the source change that fixed it.
   Removing declarations nothing uses works too (nine held it); results jump with set size.
   An unused `#include` is one too: dropping overtype.h restored DrawMap 0x00640A40.
   A user-declared destructor on a widely included struct (AbilityFlagsType) flipped three.
+  Header fixes that each pass alone can clash: gate a round's header changes together.
 - A short global is read as a dword only at offset 0 of an extern aggregate, or where its
   definition lands 4-aligned in .bss, which VC6 orders by a hash of the name.
 - A shared-header layout change can flip it as well: an equally true form with fewer new

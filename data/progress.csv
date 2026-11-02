@@ -1543,6 +1543,7 @@ address,name,result,size,source,symbol
 0x0044ABD0,BuildingClass::FireLaser,MATCH,277,src/building.cpp,?FireLaser@BuildingClass@@QAEXVCoord@@@Z
 0x0044B760,BuildingClass::Do_MISSION_CAPTURE,MATCH,5,src/building.cpp,?Do_MISSION_CAPTURE@BuildingClass@@UAEHXZ
 0x0044B770,BuildingClass::Do_MISSION_HARVEST,MATCH,5,src/building.cpp,?Do_MISSION_HARVEST@BuildingClass@@UAEHXZ
+0x0044B780,BuildingClass::Do_MISSION_REPAIR,MATCH,4605,src/building.cpp,?Do_MISSION_REPAIR@BuildingClass@@UAEHXZ
 0x0044D5D0,BuildingClass::Revealed,MATCH,206,src/building.cpp,?Revealed@BuildingClass@@UAE_NPAVHouseClass@@@Z
 0x0044D6A0,BuildingClass::Enter_Idle_Mode,MATCH,93,src/building.cpp,?Enter_Idle_Mode@BuildingClass@@UAE_N_N0@Z
 0x0044D700,BuildingClass::Pip_Count,MATCH,92,src/building.cpp,?Pip_Count@BuildingClass@@UBEHXZ
@@ -1609,6 +1610,7 @@ address,name,result,size,source,symbol
 0x00453240,BuildingClass::Unlimbo_Laser_Fence_Helper,MATCH,296,src/building.cpp,?Unlimbo_Laser_Fence_Helper@BuildingClass@@SIXABVCell@@@Z
 0x00453370,BuildingClass::Init_Laser_Fence_Frame,MATCH,36,src/building.cpp,?Init_Laser_Fence_Frame@BuildingClass@@QAEXXZ
 0x004533A0,BuildingClass::Toggle_Laser_Fence_Post,MATCH,1180,src/building.cpp,?Toggle_Laser_Fence_Post@BuildingClass@@QAEX_N@Z
+0x00453840,BuildingClass::Fire_Coord,MATCH,550,src/building.cpp,?Fire_Coord@BuildingClass@@UBE?AVCoord@@HV2@@Z
 0x00453A70,BuildingClass::Turret_Coord,MATCH,374,src/building.cpp,?Turret_Coord@BuildingClass@@UBE?AVCoord@@H@Z
 0x00453BF0,BuildingClass::Voxel_Fire_Coord,MATCH,362,src/building.cpp,?Voxel_Fire_Coord@BuildingClass@@QBE?AVCoord@@H_N@Z
 0x00453D60,BuildingClass::Set_Occupy_Bit,MATCH,85,src/building.cpp,?Set_Occupy_Bit@BuildingClass@@UAEXABVCoord@@@Z
@@ -4412,6 +4414,7 @@ address,name,result,size,source,symbol
 0x004D3710,FootClass::Set_Speed,MATCH,103,src/foot.cpp,?Set_Speed@FootClass@@UAEXN@Z
 0x004D3780,FootClass::Mark,MATCH,138,src/foot.cpp,?Mark@FootClass@@UAE_NW4MarkType@@@Z
 0x004D3810,FootClass::Is_In_Same_Zone,MATCH,263,src/foot.cpp,?Is_In_Same_Zone@FootClass@@UBE_NABVCoord@@@Z
+0x004D3920,FootClass::Basic_Path,MATCH,2259,src/foot.cpp,?Basic_Path@FootClass@@QAE_NVCell@@HH@Z
 0x004D4200,FootClass::Do_MISSION_MOVE,MATCH,126,src/foot.cpp,?Do_MISSION_MOVE@FootClass@@UAEHXZ
 0x004D4280,FootClass::Do_MISSION_PATROL,MATCH,2196,src/foot.cpp,?Do_MISSION_PATROL@FootClass@@UAEHXZ
 0x004D4B20,FootClass::Do_MISSION_CAPTURE,MATCH,388,src/foot.cpp,?Do_MISSION_CAPTURE@FootClass@@UAEHXZ
@@ -4527,6 +4530,7 @@ address,name,result,size,source,symbol
 0x004DF320,FootClass::ContinueMegaMission,MATCH,118,src/foot.cpp,?ContinueMegaMission@FootClass@@UAE_NXZ
 0x004DF3A0,FootClass::UpdateAttackMove,MATCH,272,src/foot.cpp,?UpdateAttackMove@FootClass@@UAEXXZ
 0x004DF4B0,FootClass::RefreshMegaMission,MATCH,87,src/foot.cpp,?RefreshMegaMission@FootClass@@UAE_NXZ
+0x004DF510,FootClass::ForceCreate,MATCH,726,src/foot.cpp,?ForceCreate@FootClass@@UAE_NAAVCoord@@I@Z
 0x004DF7F0,FootClass::ChronoWarpTo,MATCH,601,src/foot.cpp,?ChronoWarpTo@FootClass@@UAE_NVCoord@@@Z
 0x004DFA50,FootClass::CanBeSelected,MATCH,18,src/foot.cpp,?CanBeSelected@FootClass@@UBE_NXZ
 0x004DFA70,FootClass::EnterGrinder,MATCH,254,src/foot.cpp,?EnterGrinder@FootClass@@UAE_NXZ
@@ -11054,6 +11058,7 @@ address,name,result,size,source,symbol
 0x0063F850,PowerClass::Desired_Power_Height,MATCH,149,src/power.cpp,?Desired_Power_Height@PowerClass@@AAEHXZ
 0x0063F8F0,PowerClass::Update_Delay,MATCH,73,src/power.cpp,?Update_Delay@PowerClass@@AAEHXZ
 0x0063F940,PowerClass::Max_Power_Height,MATCH,25,src/power.cpp,?Max_Power_Height@PowerClass@@CIHXZ
+0x0063FB20,PowerClass::Draw_It,MATCH,664,src/power.cpp,?Draw_It@PowerClass@@UAEX_N@Z
 0x0063FDC0,PowerClass::Remove_Pip,MATCH,106,src/power.cpp,?Remove_Pip@PowerClass@@AAEXXZ
 0x0063FE30,PowerClass::Add_Pip,MATCH,106,src/power.cpp,?Add_Pip@PowerClass@@AAEXXZ
 0x0063FEA0,PowerClass::AI,MATCH,1279,src/power.cpp,?AI@PowerClass@@UAEXAAW4KeyNumType@@ABVPoint2D@@@Z
@@ -11262,6 +11267,7 @@ address,name,result,size,source,symbol
 0x0064D9E0,Queue_Record,MATCH,205,src/queue.cpp,?Queue_Record@@YIXXZ
 0x0064DAB0,Compute_Game_CRC,MATCH,973,src/queue.cpp,?Compute_Game_CRC@@YIXXZ
 0x0064DE80,Add_CRC,MATCH,17,src/queue.cpp,?Add_CRC@@YIXPAII@Z
+0x0064DEA0,Print_CRCs,MATCH,11242,src/queue.cpp,?Print_CRCs@@YIXPAVEventClass@@@Z
 0x006516F0,FUN_006516F0,MATCH,2417,src/queue.cpp,?FUN_006516F0@@YIXHPAVEventClass@@@Z
 0x00652070,Dump_Packet_Too_Late_Stuff,MATCH,129,src/queue.cpp,?Dump_Packet_Too_Late_Stuff@@YIXPAVEventClass@@@Z
 0x00652100,FUN_00652100,MATCH,1,src/queue.cpp,?FUN_00652100@@YIXXZ
@@ -16333,6 +16339,10 @@ address,name,result,size,source,symbol
 0x00756F80,Draw_Voxel_Reverse_Normals,MATCH,411,src/voxlib.cpp,?Draw_Voxel_Reverse_Normals@@YAXPAUVoxelFuncArgumentStruct@@@Z
 0x00757120,Draw_Voxel_Regular_Normals_ZBuffer,MATCH,565,src/voxlib.cpp,?Draw_Voxel_Regular_Normals_ZBuffer@@YAXPAUVoxelFuncArgumentStruct@@@Z
 0x00757360,Draw_Voxel_Reverse_Normals_ZBuffer,MATCH,563,src/voxlib.cpp,?Draw_Voxel_Reverse_Normals_ZBuffer@@YAXPAUVoxelFuncArgumentStruct@@@Z
+0x007575A0,Draw_Voxel_Regular_Normals_Lighting,MATCH,491,src/voxlib.cpp,?Draw_Voxel_Regular_Normals_Lighting@@YAXPAUVoxelFuncArgumentStruct@@@Z
+0x00757790,Draw_Voxel_Reverse_Normals_Lighting,MATCH,483,src/voxlib.cpp,?Draw_Voxel_Reverse_Normals_Lighting@@YAXPAUVoxelFuncArgumentStruct@@@Z
+0x00757980,Draw_Voxel_Regular_Normals_ZBuffer_Lighting,MATCH,613,src/voxlib.cpp,?Draw_Voxel_Regular_Normals_ZBuffer_Lighting@@YAXPAUVoxelFuncArgumentStruct@@@Z
+0x00757BF0,Draw_Voxel_Reverse_Normals_ZBuffer_Lighting,MATCH,635,src/voxlib.cpp,?Draw_Voxel_Reverse_Normals_ZBuffer_Lighting@@YAXPAUVoxelFuncArgumentStruct@@@Z
 0x00757E70,Draw_Voxel_Regular,MATCH,438,src/voxlib.cpp,?Draw_Voxel_Regular@@YAXPAUVoxelFuncArgumentStruct@@@Z
 0x00758030,Draw_Voxel_Reverse,MATCH,446,src/voxlib.cpp,?Draw_Voxel_Reverse@@YAXPAUVoxelFuncArgumentStruct@@@Z
 0x007581F0,Draw_Voxel_Regular_ZBuffer,MATCH,563,src/voxlib.cpp,?Draw_Voxel_Regular_ZBuffer@@YAXPAUVoxelFuncArgumentStruct@@@Z
@@ -17015,8 +17025,11 @@ address,name,result,size,source,symbol
 0x0076CA60,WorldDominationTour::Selection::Init_Sounds,MATCH,400,src/wdtsel.cpp,?Init_Sounds@Selection@WorldDominationTour@@QAEXABVINIClass@@ABVWstring@@@Z
 0x0076CBF0,WorldDominationTour::Selection::Init_Target,MATCH,417,src/wdtsel.cpp,?Init_Target@Selection@WorldDominationTour@@QAEXABVINIClass@@ABVWstring@@@Z
 0x0076D470,WorldDominationTour::Selection::Update_Hovered_Territory,MATCH,91,src/wdtsel.cpp,?Update_Hovered_Territory@Selection@WorldDominationTour@@QAEXABVPoint2D@@@Z
+0x0076DED0,WorldDominationTour::Selection::Remove_Target_Anims,MATCH,115,src/wdtsel.cpp,?Remove_Target_Anims@Selection@WorldDominationTour@@QAEXXZ
+0x0076DF50,WorldDominationTour::Selection::Remove_Target_Anims2,MATCH,115,src/wdtsel.cpp,?Remove_Target_Anims2@Selection@WorldDominationTour@@QAEXXZ
 0x0076DFD0,WorldDominationTour::Selection::On_Map_Enter,MATCH,181,src/wdtsel.cpp,?On_Map_Enter@Selection@WorldDominationTour@@QAEXXZ
 0x0076E090,WorldDominationTour::Selection::On_Map_Leave,MATCH,237,src/wdtsel.cpp,?On_Map_Leave@Selection@WorldDominationTour@@QAEXXZ
+0x0076E4F0,WorldDominationTour::Selection::Present_Ticks,MATCH,600,src/wdtsel.cpp,?Present_Ticks@Selection@WorldDominationTour@@QAE_NHH@Z
 0x0076E9D0,WorldDominationTour::Selection::Check_For_Breakout,MATCH,66,src/wdtsel.cpp,?Check_For_Breakout@Selection@WorldDominationTour@@QAEXXZ
 0x0076EAF0,WorldDominationTour::Selection::Set_Tooltip,MATCH,225,src/wdtsel.cpp,?Set_Tooltip@Selection@WorldDominationTour@@QAEXABVWideWstring@@@Z
 0x0076EBE0,WorldDominationTour::Selection::Play_SFX,MATCH,158,src/wdtsel.cpp,?Play_SFX@Selection@WorldDominationTour@@QAEXABVWstring@@@Z
