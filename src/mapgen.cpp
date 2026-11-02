@@ -1132,6 +1132,222 @@ void MapRegionClass::Build_Neighbor_Regions(void)
 	delete[] adjacent;
 }
 
+// FUNCTION: GAMEMD 0x0058F2C0
+bool MapRegionClass::Connect_Regions_With_Bridge(MapRegionClass * region1, MapRegionClass * region2)
+{
+	int id1 = region1->ID;
+	int id2 = region2->ID;
+
+	int tries = 0;
+	bool result = false;
+
+	for (; tries < 200 && !result; ++tries) {
+		Cell cell = Pick_Random_Cell();
+
+		Rect north(cell.X - 1, cell.Y, 3, 1);
+		Rect south = north;
+		Rect east(cell.X, cell.Y - 1, 1, 3);
+		Rect west = east;
+
+		bool allow_horizontal = true;
+		bool allow_vertical = true;
+
+		while (!MapGeneratorClass::Can_Place_Paved_Road(north, false, false)) {
+			north.Y--;
+			Cell cell1(north.X, north.Y);
+			Cell cell2(north.X + 2, north.Y);
+			CellClass * cptr1 = &Map[cell1];
+			CellClass * cptr2 = &Map[cell2];
+			if (!Map.In_Local_Radar(cell1) || !Map.In_Local_Radar(cell2) || cptr1->Is_Tile_Cliff() || cptr2->Is_Tile_Cliff()) {
+				allow_vertical = false;
+				break;
+			}
+		}
+
+		if (allow_vertical) {
+			if (MapGeneratorClass::Can_Place_Paved_Road(Rect(north.X, north.Y - 3, 3, 3), false, false)) {
+				while (!MapGeneratorClass::Can_Place_Paved_Road(south, false, false)) {
+					south.Y++;
+					Cell cell1(south.X, south.Y);
+					Cell cell2(south.X + 2, south.Y);
+					CellClass * cptr1 = &Map[cell1];
+					CellClass * cptr2 = &Map[cell2];
+					if (!Map.In_Local_Radar(cell1) || !Map.In_Local_Radar(cell2) || cptr1->Is_Tile_Cliff() || cptr2->Is_Tile_Cliff()) {
+						allow_vertical = false;
+						break;
+					}
+				}
+
+				if (allow_vertical) {
+					if (!MapGeneratorClass::Can_Place_Paved_Road(Rect(south.X, south.Y + 1, 3, 3), false, false)) {
+						allow_vertical = false;
+					}
+				}
+			} else {
+				allow_vertical = false;
+			}
+		}
+
+		while (!MapGeneratorClass::Can_Place_Paved_Road(west, false, false)) {
+			west.X--;
+			Cell cell1(west.X, west.Y);
+			Cell cell2(west.X, west.Y + 2);
+			CellClass * cptr1 = &Map[cell1];
+			CellClass * cptr2 = &Map[cell2];
+			if (!Map.In_Local_Radar(cell1) || !Map.In_Local_Radar(cell2) || cptr1->Is_Tile_Cliff() || cptr2->Is_Tile_Cliff()) {
+				allow_horizontal = false;
+				break;
+			}
+		}
+
+		if (allow_horizontal) {
+			if (MapGeneratorClass::Can_Place_Paved_Road(Rect(west.X - 3, west.Y, 3, 3), false, false)) {
+				while (!MapGeneratorClass::Can_Place_Paved_Road(east, false, false)) {
+					east.X++;
+					Cell cell1(east.X, east.Y);
+					Cell cell2(east.X, east.Y + 2);
+					CellClass * cptr1 = &Map[cell1];
+					CellClass * cptr2 = &Map[cell2];
+					if (!Map.In_Local_Radar(cell1) || !Map.In_Local_Radar(cell2) || cptr1->Is_Tile_Cliff() || cptr2->Is_Tile_Cliff()) {
+						allow_horizontal = false;
+						break;
+					}
+				}
+
+				if (allow_horizontal) {
+					if (!MapGeneratorClass::Can_Place_Paved_Road(Rect(east.X + 1, east.Y, 3, 3), false, false)) {
+						allow_horizontal = false;
+					}
+				}
+			} else {
+				allow_horizontal = false;
+			}
+		}
+
+		int vertical_length = 999;
+		int horizontal_length = 999;
+		int north_region = -1;
+		int south_region = -1;
+		int east_region = -1;
+		int west_region = -1;
+
+		if (allow_vertical) {
+			vertical_length = abs(south.Y - north.Y);
+			north_region = CellData::Get_Region(Cell(north.X, north.Y));
+			south_region = CellData::Get_Region(Cell(south.X, south.Y));
+		}
+
+		if (allow_horizontal) {
+			horizontal_length = abs(east.X - west.X);
+			east_region = CellData::Get_Region(Cell(east.X, east.Y));
+			west_region = CellData::Get_Region(Cell(west.X, west.Y));
+		}
+
+		if (allow_vertical) {
+			if ((north_region != id1 || south_region != id2) && (north_region != id2 || south_region != id1)) {
+				allow_vertical = false;
+			}
+		}
+
+		if (allow_horizontal && (east_region != id1 || west_region != id2) && (east_region != id2 || west_region != id1)) {
+			allow_horizontal = false;
+		}
+
+		if (allow_horizontal && allow_vertical) {
+			if (vertical_length < horizontal_length) {
+				allow_horizontal = false;
+			} else {
+				allow_vertical = false;
+			}
+		}
+
+		Rect bridge(0, 0, 0, 0);
+		int max_len = tries / 25 + 8;
+
+		if (allow_horizontal && horizontal_length < max_len) {
+			bridge = Rect(west.X, west.Y, east.X - west.X + 1, 3);
+		} else if (allow_vertical && vertical_length < max_len) {
+			bridge = Rect(north.X, north.Y, 3, south.Y - north.Y + 1);
+		}
+
+		if (bridge.Is_Valid() && allow_horizontal) {
+			if (Is_Bridge_Allowed(bridge)) {
+				for (int y = bridge.Y; y < bridge.Y + bridge.Height; y++) {
+					for (int x = bridge.X; x < bridge.X + bridge.Width; x++) {
+						if (x == bridge.X) {
+							Map[Cell(x, y)].Overlay = OVERLAY_LOWBRIDGE_21;
+						} else if (x == bridge.X + bridge.Width - 1) {
+							Map[Cell(x, y)].Overlay = OVERLAY_LOWBRIDGE_19;
+						} else {
+							Map[Cell(x, y)].Overlay = (OverlayType)(OVERLAY_LOWBRIDGE_01 + (x % 4));
+						}
+						Map[Cell(x, y)].OverlayData = y - bridge.Y;
+					}
+				}
+
+				if (MapGeneratorClass::Can_Place_Paved_Road_End(Rect(bridge.X + bridge.Width, bridge.Y - 2, 6, 6), false) && Pick_Random_UInt(0, 1)) {
+					MapGeneratorClass::Place_Tile((IsometricTileType)(IsometricTileTypeClass::PavedRoads + 10), Cell(bridge.X + bridge.Width, bridge.Y));
+				} else {
+					MapGeneratorClass::Place_Tile(IsometricTileTypeClass::PavedRoadEnds, Cell(bridge.X + bridge.Width, bridge.Y));
+				}
+
+				if (MapGeneratorClass::Can_Place_Paved_Road_End(Rect(bridge.X - 6, bridge.Y - 2, 6, 6), false) && Pick_Random_UInt(0, 1)) {
+					MapGeneratorClass::Place_Tile((IsometricTileType)(IsometricTileTypeClass::PavedRoads + 9), Cell(bridge.X - 4, bridge.Y));
+				} else {
+					MapGeneratorClass::Place_Tile((IsometricTileType)(IsometricTileTypeClass::PavedRoadEnds + 2), Cell(bridge.X - 1, bridge.Y));
+				}
+
+				if (!Place_Bridge_Hut(Rect(bridge.X, bridge.Y - 1, 2, 5))) {
+					Place_Bridge_Hut(Rect(bridge.X - 1, bridge.Y - 2, 3, 7));
+				}
+
+				if (!Place_Bridge_Hut(Rect(bridge.X + bridge.Width - 2, bridge.Y - 1, 2, 5))) {
+					Place_Bridge_Hut(Rect(bridge.X + bridge.Width - 2, bridge.Y - 2, 3, 7));
+				}
+
+				result = true;
+			}
+		} else if (bridge.Is_Valid() && allow_vertical && Is_Bridge_Allowed(bridge)) {
+			for (int y = bridge.Y; y < bridge.Y + bridge.Height; y++) {
+				for (int x = bridge.X; x < bridge.X + bridge.Width; x++) {
+					if (y == bridge.Y) {
+						Map[Cell(x, y)].Overlay = OVERLAY_LOWBRIDGE_23;
+					} else if (y == bridge.Y + bridge.Height - 1) {
+						Map[Cell(x, y)].Overlay = OVERLAY_LOWBRIDGE_25;
+					} else {
+						Map[Cell(x, y)].Overlay = (OverlayType)(OVERLAY_LOWBRIDGE_10 + (y % 4));
+					}
+					Map[Cell(x, y)].OverlayData = x - bridge.X;
+				}
+			}
+
+			if (MapGeneratorClass::Can_Place_Paved_Road_End(Rect(bridge.X - 2, bridge.Y - 6, 7, 6), false) && Pick_Random_UInt(0, 1)) {
+				MapGeneratorClass::Place_Tile((IsometricTileType)(IsometricTileTypeClass::PavedRoads + 13), Cell(bridge.X, bridge.Y - 4));
+			} else {
+				MapGeneratorClass::Place_Tile((IsometricTileType)(IsometricTileTypeClass::PavedRoadEnds + 1), Cell(bridge.X, bridge.Y - 1));
+			}
+
+			if (MapGeneratorClass::Can_Place_Paved_Road_End(Rect(bridge.X - 2, bridge.Y + bridge.Height, 7, 6), false) && Pick_Random_UInt(0, 1)) {
+				MapGeneratorClass::Place_Tile((IsometricTileType)(IsometricTileTypeClass::PavedRoads + 12), Cell(bridge.X, bridge.Y + bridge.Height));
+			} else {
+				MapGeneratorClass::Place_Tile((IsometricTileType)(IsometricTileTypeClass::PavedRoadEnds + 3), Cell(bridge.X, bridge.Y + bridge.Height));
+			}
+
+			if (!Place_Bridge_Hut(Rect(bridge.X - 1, bridge.Y, 5, 2))) {
+				Place_Bridge_Hut(Rect(bridge.X - 2, bridge.Y - 1, 7, 3));
+			}
+
+			if (!Place_Bridge_Hut(Rect(bridge.X - 1, bridge.Y + bridge.Height - 2, 5, 2))) {
+				Place_Bridge_Hut(Rect(bridge.X - 2, bridge.Y + bridge.Height - 2, 7, 3));
+			}
+
+			result = true;
+		}
+	}
+
+	return(result);
+}
+
 // FUNCTION: GAMEMD 0x005902C0
 bool MapRegionClass::Is_Bridge_Allowed(Rect const & rect) const
 {
