@@ -283,6 +283,7 @@ address,name,symbol,evidence
 0x008A0DD8,DSurface::BlueRight,,YRpp Drawing.h BlueShiftLeft; TibSun and canonical Build_Hicolor_Pixel shift right by *Left and left by *Right; verified in 0x00478E30
 0x008A0DE4,DSurface::GreenLeft,,YRpp Drawing.h GreenShiftRight; TibSun and canonical Build_Hicolor_Pixel shift right by *Left and left by *Right; verified in 0x00478E30
 0x008A0DE0,DSurface::GreenRight,,YRpp Drawing.h GreenShiftLeft; TibSun and canonical Build_Hicolor_Pixel shift right by *Left and left by *Right; verified in 0x00478E30
+0x0089F688,AdjacentCell,?AdjacentCell@@3QBVCell@@B,YRpp Unsorted.h AdjacentCell array; TibSun coord.cpp supplies the eight Cell offsets indexed in CellClass::Wall_Update at 0x00480630
 0x008A0DD4,DSurface::RedLeft,,YRpp Drawing.h RedShiftRight; TibSun and canonical Build_Hicolor_Pixel shift right by *Left and left by *Right; verified in 0x00478E30
 0x008A0DD0,DSurface::RedRight,,YRpp Drawing.h RedShiftLeft; TibSun and canonical Build_Hicolor_Pixel shift right by *Left and left by *Right; verified in 0x00478E30
 0x0087F770,Keyboard,,YRpp InputManagerClass.h Instance; Custom_Message_Box_Proc passes this pointer to matched WWKeyboardClass::Put at 0x0054F1C0
