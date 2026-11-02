@@ -979,6 +979,53 @@ done:
 	return result;
 }
 
+// FUNCTION: GAMEMD 0x00635A40
+int PlanningNodeClass::Branch_Color(int index)
+{
+	PlanningBranchClass * branch = PlanningBranches[index];
+	if (branch->Color != -1) return branch->Color;
+	TechnoClass * last_owner = NULL;
+	int count = PlanningMembers.Count();
+	for (int i = 0; i < count; ++i) {
+		PlanningMemberClass * member = PlanningMembers[i];
+		if (member->Branch == index) {
+			TechnoClass * owner = member->Owner;
+			PlanningTokenClass * token = owner->FUN_00705D20();
+			if (!token->Reached(token->Node_Index(this))) {
+				int slot = FUN_006339B0(owner);
+				return branch->Color = FUN_0063D070(Houses[slot]->RemapColorRGB, DAT_00A83CD9, 0x50);
+			}
+			last_owner = owner;
+		}
+	}
+	if (last_owner == NULL) return -1;
+	int slot = FUN_006339B0(last_owner);
+	return branch->Color = FUN_0063D070(Houses[slot]->RemapColorRGB, DAT_00A80220, 0x64);
+}
+
+// FUNCTION: GAMEMD 0x00635C10
+int PlanningNodeClass::Loop_Color(void)
+{
+	if (LoopBranch.Color != -1) return LoopBranch.Color;
+	TechnoClass * last_owner = NULL;
+	int count = PlanningMembers.Count();
+	for (int i = 0; i < count; ++i) {
+		PlanningMemberClass * member = PlanningMembers[i];
+		if (member->Active) {
+			TechnoClass * owner = member->Owner;
+			PlanningTokenClass * token = owner->FUN_00705D20();
+			if (!token->Get_F98()) {
+				int slot = FUN_006339B0(owner);
+				return LoopBranch.Color = FUN_0063D070(Houses[slot]->RemapColorRGB, DAT_00A83CD9, 0x50);
+			}
+			last_owner = owner;
+		}
+	}
+	if (last_owner == NULL) return -1;
+	int slot = FUN_006339B0(last_owner);
+	return LoopBranch.Color = FUN_0063D070(Houses[slot]->RemapColorRGB, DAT_00A80220, 0x64);
+}
+
 // FUNCTION: GAMEMD 0x00635DB0
 void PlanningNodeClass::Reset_Colors(bool all)
 {
