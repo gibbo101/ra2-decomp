@@ -173,12 +173,6 @@ class INIClass {
 		static void Strip_Comments(char * buffer);
 		static char * Scan_Line_For_Columns(char * buffer, int & assign_pos, int & value_pos, int & comment_pos);
 
-		void Reset_Cache(void) const
-		{
-			CurrentSectionName = NULL;
-			CurrentSection = NULL;
-		}
-
 		mutable char const * CurrentSectionName;
 		mutable INISection * CurrentSection;
 

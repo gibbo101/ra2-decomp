@@ -467,10 +467,16 @@ int INIClass::Entry_Count(Wstring const & section) const
 	return(Entry_Count(section.text()));
 }
 
+static inline void Reset_Cache(char const * & name, INIClass::INISection * & section)
+{
+	name = NULL;
+	section = NULL;
+}
+
 // FUNCTION: GAMEMD 0x00526B00
 void INIClass::Reset(void)
 {
-	Reset_Cache();
+	Reset_Cache(CurrentSectionName, CurrentSection);
 }
 
 // FUNCTION: GAMEMD 0x00526B10
@@ -485,7 +491,7 @@ INIClass::INIEntry * INIClass::Find_Entry(char const * section, char const * ent
 			CurrentSection = secptr;
 			CurrentSectionName = section;
 		} else {
-			Reset_Cache();
+			Reset_Cache(CurrentSectionName, CurrentSection);
 		}
 	}
 
