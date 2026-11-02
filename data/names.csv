@@ -293,3 +293,4 @@ address,name,symbol,evidence
 0x0083925C,DiplomacyChatIDs,_DiplomacyChatIDs,0x00657DA0 indexes these eight diplomacy dialog control IDs by player slot
 0x00ABBEC8,IsometricTileTypeClass::PavedRoads,,CellClass::Is_Tile_Paved_Road reads the base at 0x004866D0 and theater initialization stores the PavedRoads set here
 0x00ABBEC4,IsometricTileTypeClass::PavedRoadEnds,,CellClass::Is_Tile_Paved_Road_End reads the base at 0x004866F0 and theater initialization stores the PavedRoadEnds set here
+0x00B73550,MainWindow,?MainWindow@@3PAUHWND__@@A,Matched ScrollClass::Message_Handler (0x006930A0) passes this HWND to SetCapture and YRpp identifies Game::hWnd at this address
