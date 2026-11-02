@@ -292,6 +292,52 @@ void FUN_0046D810(void)
 	}
 }
 
+wchar_t * __fastcall FUN_00735120(char const * text);
+bool __fastcall FUN_004E4580(int index);
+bool __fastcall FUN_004E50A0(int slot);
+
+// FUNCTION: GAMEMD 0x0046D8B0
+bool FUN_0046D8B0(void)
+{
+	bool changed = false;
+	int index = -1;
+	for (int i = 0; i < 8; i++) {
+		wchar_t const * name = FUN_00735120(Session.GPacket.Name);
+		if (wcscmp(name, Session.Slots[i]->Name) == 0) {
+			index = i;
+			break;
+		}
+	}
+	if (index == -1) return false;
+	CampScoreSlot & received = *(CampScoreSlot *)&Session.GPacket;
+	if (Session.Slots[index]->Get_Country() != received.Country) changed = true;
+	if (Session.MPGameMode != NULL) {
+		if (Session.MPGameMode->vt_entry_1C(received.Country)) {
+			Session.Slots[index]->Set_Country(received.Country);
+		} else if (Session.MPGameMode != NULL && !Session.MPGameMode->vt_entry_1C(Session.Slots[index]->Get_Country())) {
+			Session.Slots[index]->Set_Country(Session.MPGameMode->vt_entry_28());
+		}
+	}
+	if (Session.Slots[index]->Get_Color() != received.Color) changed = true;
+	if (FUN_004E4580(received.Color)) {
+		if (Session.Slots[index]->Get_Color() != received.Color) {
+			Session.Slots[index]->Set_Color(-2);
+			changed = true;
+		}
+	} else {
+		Session.Slots[index]->Set_Color(received.Color);
+	}
+	if (Session.Slots[index]->Get_Color() != received.Start) changed = true;
+	if (FUN_004E50A0(received.Start)) {
+		if (Session.Slots[index]->Get_Start() != received.Start) {
+			Session.Slots[index]->Set_Start(-2);
+		}
+	} else {
+		Session.Slots[index]->Set_Start(received.Start);
+	}
+	return changed;
+}
+
 int __fastcall FUN_0046F5E0(int index);
 int __fastcall FUN_004E37D0(int index);
 int __fastcall FUN_004E41D0(int index);
@@ -800,7 +846,6 @@ extern bool DAT_0089E05C;
 extern bool DAT_0089E05D;
 extern wchar_t DAT_0089E060[];
 extern bool DAT_0089E04C;
-bool FUN_0046D8B0(void);
 BOOL CALLBACK FUN_0046DFD0(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 void __fastcall FUN_0072D300(int side);
 void FUN_0072D350(void);
@@ -810,7 +855,6 @@ void Windows_Message_Handler(void);
 bool __fastcall Process_Global_Packet(GlobalPacketType * packet, IPXAddressClass * address);
 unsigned int __fastcall FUN_005DAC00(wchar_t const * name);
 void __cdecl PMessagePrintf(int color, wchar_t const * text, ...);
-wchar_t * __fastcall FUN_00735120(char const * text);
 
 namespace UI {
 	HWND __fastcall BeginDialog(int resource, DLGPROC proc, int param);

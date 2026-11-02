@@ -17,6 +17,7 @@ class CoopCampaignClass
 		CoopCampaignClass * FUN_0049B660(wchar_t const * name, wchar_t const * map);
 		void FUN_0049B720(void);
 		void FUN_0049B760(wchar_t const * name, wchar_t const * map);
+		bool FUN_0049B930(void);
 		bool FUN_0049BC80(int * out);
 		bool FUN_0049BCA0(int * out);
 		bool FUN_0049BCC0(int * out);

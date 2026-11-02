@@ -267,3 +267,8 @@ address,name,symbol,evidence
 0x0089C2DC,MapCellStride,,0x0058C2A0 MapRegionClass::Get_Cell_Data(Cell) and 0x0058C270 MapRegionClass::CellData::Clear_Inviolates use this global as the grid stride
 0x00ABED10,RMGCellData,,0x0058C2A0 and 0x0058C2C0 MapRegionClass::Get_Cell_Data overloads index the CellData array pointer at this address with sizeof(CellData)=80
 0x007E3890,DynamicVectorClass<Cell>::vftable,??_7?$DynamicVectorClass@VCell@@@@6B@,Raw original COL at 0x7fbe60 -> type descriptor 0x818960 names .?AV?$DynamicVectorClass@VCell@@@@; target 0x00594F40+0xA5 relocation stores this table into actual 24-byte DynamicVectorClass<Cell> after VectorClass<Cell> ctor 0x0042FCB0
+0x007E5C04,VectorClass<DynamicVectorClass<char *> *>::vftable,??_7?$VectorClass@PAV?$DynamicVectorClass@PAD@@@@6B@,Unique primary RTTI table for VectorClass<DynamicVectorClass<char *> *>; both references in generated CoopCampEntry array destructor 0x0049E7C0
+0x007E1AF4,CCINIClass::vftable,??_7CCINIClass@@6B@,Unique primary CCINIClass RTTI table; stored by campaign persistence 0x0049C5A0
+0x007E16B0,CCFileClass::vftable,??_7CCFileClass@@6B@,Unique primary CCFileClass RTTI table; stored by campaign persistence 0x0049C5A0
+0x007E1668,CDFileClass::vftable,??_7CDFileClass@@6B@,Unique primary CDFileClass RTTI table; stored by campaign persistence 0x0049C5A0
+0x006C8C40,SystemTimerClass::operator(),??RSystemTimerClass@@QBEHXZ,Alias of matched SystemTimer::GetTime; timeGetTime shifted right four as in YRpp Timer.h
