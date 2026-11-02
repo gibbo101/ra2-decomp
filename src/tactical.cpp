@@ -1038,12 +1038,12 @@ static inline Coord Tile_Center(Cell const & cell)
 // FUNCTION: GAMEMD 0x006D7C00
 void Tactical::Draw_Tile_Shadows(Rect const & area, Rect const & cliprect)
 {
-	Coord lepton(Pixel_To_Lepton(area.Top_Left() + Point2D(TacPixelX, TacPixelY) - TacticalRect.Top_Left()));
+	Coord lepton(Pixel_To_Lepton(area.Top_Left() + Point2D(TacPixelX, TacPixelY) - TacticalRect.Top_Left()), 0);
 	Cell base = lepton.As_Cell();
 	base.X -= 2;
 	Cell cell = base;
 
-	lepton = Coord(Pixel_To_Lepton(area.Top_Left() + Point2D(TacPixelX, TacPixelY) - TacticalRect.Top_Left()));
+	lepton = Coord(Pixel_To_Lepton(area.Top_Left() + Point2D(TacPixelX, TacPixelY) - TacticalRect.Top_Left()), 0);
 	base = Map[lepton].Fetch_CellID();
 	int ycount = area.Height / (ISO_TILE_PIXEL_H / 2) + 20;
 	int xcount = area.Width / ISO_TILE_PIXEL_W + 7;
