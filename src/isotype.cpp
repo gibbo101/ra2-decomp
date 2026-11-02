@@ -1069,3 +1069,78 @@ ShadowCasterInfo::ShadowCasterInfo(int frame, int index, int x, int y) : Frame(f
 
 // TEMPLATE: GAMEMD 0x0054A850
 // ??0?$VectorClass@PAG@@QAE@HPBQAG@Z
+
+// FUNCTION: GAMEMD 0x00547230
+void IsometricTileTypeClass::Draw_Shadow_Caster(int index, Surface * surf, Point2D point, Rect cliprect, int offset)
+{
+	int x;
+	int y;
+	int frame;
+	int caster_index;
+
+	int tiletype = HeapID;
+
+	bool flat = false;
+
+	int pieces;
+	if (tiletype >= SlopeSetPieces && tiletype < SlopeSetPieces + ARRAY_SIZE(ShadowCasterSlopeInfo)) {
+		pieces = SlopeSetPieces;
+		flat = true;
+	} else {
+		if (tiletype >= SlopeSetPieces2 && tiletype < SlopeSetPieces2 + ARRAY_SIZE(ShadowCasterSlopeInfo)) {
+			pieces = SlopeSetPieces2;
+			flat = true;
+		}
+	}
+
+	bool can_draw = false;
+
+	if (flat && tiletype - pieces != -1) {
+		caster_index = tiletype - pieces;
+
+		if (index == ShadowCasterSlopeInfo[caster_index].Index) {
+
+			frame = ShadowCasterSlopeInfo[caster_index].Frame;
+
+			if (frame != 0) {
+				x = (ISO_TILE_PIXEL_W / 2) + ShadowCasterSlopeInfo[caster_index].XOffset;
+				y = (ISO_TILE_PIXEL_H / 2) + ShadowCasterSlopeInfo[caster_index].YOffset;
+				can_draw = true;
+			}
+		}
+	} else if (IsShadowCaster) {
+
+		for (int i = 0; i < ARRAY_SIZE(ShadowCasterTiles); i++) {
+			caster_index = tiletype - ShadowCasterTiles[i];
+			if (caster_index >= 0 && caster_index < ARRAY_SIZE(ShadowCasterCliffInfo)) break;
+			if (i == 4) return;
+		}
+		if (index == ShadowCasterCliffInfo[caster_index].Index) {
+			frame = ShadowCasterCliffInfo[caster_index].Frame;
+			if (frame != 0) {
+				x = ISO_TILE_PIXEL_W / 2 + ShadowCasterCliffInfo[caster_index].XOffset;
+				y = ISO_TILE_PIXEL_H / 2 + ShadowCasterCliffInfo[caster_index].YOffset;
+				can_draw = true;
+			}
+		}
+	}
+
+	if (can_draw) {
+		point.X += x;
+		point.Y += y;
+		point.X += DSurface::ViewBounds.X;
+		point.Y += DSurface::ViewBounds.Y;
+		point.X -= cliprect.X;
+		point.Y -= cliprect.Y;
+		Draw_Shape(
+			*surf,
+			*TileDrawers[0],
+			(const ShapeSet *)CellShadowShapes,
+			frame - 1,
+			point,
+			cliprect,
+			ShapeFlags_Type(SHAPE_ZWRITE|SHAPE_WIN_REL|SHAPE_CENTER|SHAPE_DARKEN),
+			0,
+			offset);
+	}
+}

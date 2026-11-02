@@ -134,6 +134,8 @@ extern Coord DAT_00B0EA90;
 template class TPoint3D<int>;
 template class IndexClass<int, StaticBufferClass::Entry *>;
 
+// SYNTHETIC: GAMEMD 0x006F2AB0 SYMBOL
+// _$E281
 // SYNTHETIC: GAMEMD 0x006F2AD0 SYMBOL
 // _$E278
 CDTimerClass<FrameTimerClass> TechnoClass::ActionLineTimer;

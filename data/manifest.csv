@@ -7397,6 +7397,7 @@ address,size,symbol,source,sha256
 0x00547150,85,?Get_Tile_Pixel_Dimensions@IsometricTileTypeClass@@QAE_NHAAH0@Z,src/isotype.cpp,eed1b7763d6f82d2d4e35ff0af7b35b1ac11c90e8ff39bede754e1da01dcfbcf
 0x005471B0,49,?Ramp_Type@IsometricTileTypeClass@@QBEHH@Z,src/isotype.cpp,2f34d2292d6064e23b126e13bd55d162f62dbd708c7fdce8837b053f9021031a
 0x005471F0,54,?Is_Randomized@IsometricTileTypeClass@@QBE_NH@Z,src/isotype.cpp,6922245f8a7cecef862a9050dfed7b2323378cfc89a8d754803e3f7a6d470ba0
+0x00547230,315,?Draw_Shadow_Caster@IsometricTileTypeClass@@QAEXHPAVSurface@@VPoint2D@@V?$TRect@H@@H@Z,src/isotype.cpp,4f0c3f00f63baad73918d24922397af37cae33f4af2580b616dff17825594b0c
 0x00547370,2403,?Shadow_Caster_List@IsometricTileTypeClass@@QBEPBVCell@@XZ,src/isotype.cpp,66536cb6c92fd7b62dbfc29a8f5dc4e8342155c9c0375889c9d8c96f12bfbeb2
 0x00547CE0,1,_$E214,src/isotype.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
 0x00549830,455,?Get_Tile_Image@IsometricTileTypeClass@@QAE_NHPAPAEHH@Z,src/isotype.cpp,6c3246cc0e1690aac997b0beea1e804f12a7baf098681a4309bfd11b2a2c945b
@@ -14138,6 +14139,7 @@ address,size,symbol,source,sha256
 0x006D2B50,3,?Tactical_noop@@YIXHHHH@Z,src/tactical.cpp,1d10894625976bca9d8906f3ecf1e766b94e9219ec3bf1c30e02feea5e18e45a
 0x006D2B60,626,?Wipe_Depth@Tactical@@QAEX_NHHABV?$TRect@H@@@Z,src/tactical.cpp,36ea6ec10471241c5e63bc20f106761b617d823d2a0f777bbe9fee3fcdf77130
 0x006D2DE0,605,?Render_Tiles@Tactical@@QAEXABV?$TRect@H@@0_N@Z,src/tactical.cpp,cdc828f68228c0fbf70c11c3d1e385e6408c09f2c3de9a2cd8c46fd0457175d8
+0x006D3040,588,?Render_Tile_Shadows@Tactical@@QAEXABV?$TRect@H@@0_N@Z,src/tactical.cpp,37ea859877c1d59b09c8cb2669263f419a0def8922122eb3e43480f8cdf91fe4
 0x006D3290,472,?Render_Overlays@Tactical@@QAEXABV?$TRect@H@@0_N@Z,src/tactical.cpp,03b0d6840179e2130a54fdc6c1e3bc93fc6178b6a18ccc3d0c2257359b03506d
 0x006D3470,483,?Render_Fogged_Objects@Tactical@@QAEXABV?$TRect@H@@0_N@Z,src/tactical.cpp,4b0cd3caad865f4ac780ec3163719cd33f79205f0627f5bed7a233564e6a708d
 0x006D3660,528,?Render_Shroud@Tactical@@QAEXABV?$TRect@H@@00_N@Z,src/tactical.cpp,ed58ad93a703a3c9569027c8b0dbef9af0f1f720a77cd6d5acc950d1b4cd4de3
@@ -14155,6 +14157,7 @@ address,size,symbol,source,sha256
 0x006D6280,95,?Cell_To_Rectangular@Tactical@@QAEXHHAAH0@Z,src/tactical.cpp,5714c48b3edd4cc539b29eb222f524cd1512bb349e2bac058e4ca630476a866e
 0x006D62E0,137,?Lepton_To_Map_Pixel@Tactical@@QAEXHHAAH0@Z,src/tactical.cpp,6c64d764f5996259f3147c02e5df80f51f218e9edbe3eb78506f943315714acd
 0x006D6370,147,?Cell_To_Rectangular_Centered@Tactical@@QAEXHHAAH0@Z,src/tactical.cpp,20e722c558ebe3ceb63e31083644cf78e4d903a1e42ec8ad34976f9c8cfb8b79
+0x006D6410,379,?Coord_To_Cell@Tactical@@QAE?AVCell@@ABVCoord@@@Z,src/tactical.cpp,30c371480a49c3baa149a44071681952d4482c08d26cd29c49fd4a2f17f8ce01
 0x006D6A90,51,?Get_Cell_Height@Tactical@@QAEHABVCoord@@@Z,src/tactical.cpp,832bec1d1a1707264feefd4d43b6b28571a5a1a49f8c1c84e2ec2c3f5eddbefd
 0x006D6AD0,28,?Get_Cell_Ramp@Tactical@@QAEHABVCoord@@@Z,src/tactical.cpp,910aa9b9d7e7c96d70e2eb049f279a4b2badc67836d10cf25f3e4e974e62336b
 0x006D6AF0,181,?Add_Shadow_Control@Tactical@@QAEXVShadowControlClass@@@Z,src/tactical.cpp,85c53c00ca96c2cd73513591ae2a61388c28b04876c0d1b50f4ede7983d0e765
@@ -14189,6 +14192,7 @@ address,size,symbol,source,sha256
 0x006DA560,82,?Detach@Tactical@@UAEXPBVAbstractClass@@_N@Z,src/tactical.cpp,e59c191a08b5d6e54025748e23d88d287f7aa9c281c1e27ddb5e16992612f002
 0x006DA5C0,380,?Select_These@Tactical@@QAEXABV?$TRect@H@@P6IXPAVObjectClass@@@Z@Z,src/tactical.cpp,1a3b0cdea71bdeb74d25b668725928b7eab2dcc1960153b008883ee67cf8e82c
 0x006DA740,40,?FUN_006DA740@@YIXPAVTactical@@@Z,src/tactical.cpp,9c1afde5559be228677627562e29e3a0efa8590e83bd83a5fa2103d51a7880d2
+0x006DA770,87,?FUN_006DA770@@YI_NXZ,src/tactical.cpp,298c0b80990431e0d91f3b4b2b56eb6f6448f20e53f30934a9f6fd67cd50a0e9
 0x006DA7D0,424,?Flag_Cell@Tactical@@QAEXAAVCellClass@@@Z,src/tactical.cpp,0cb812288a55885da824ad51b172f468ff042d0e2fea5d10ba2cbdd2fc5de2d3
 0x006DA980,70,?Reset_Dirty_Rectangles@Tactical@@QAEXXZ,src/tactical.cpp,a207b8d9580632ecaab778a880385ce7c1de7ea6cf201e4ab6255442b4e13040
 0x006DB210,1036,?Debug_Draw_Occupier_Links@Tactical@@QAEXXZ,src/tactical.cpp,44bb80d9ad6d3613fcf6b1db88cfcdfaeb4f92fbcf5524b6c6171a7d8c47cacf
@@ -14790,6 +14794,7 @@ address,size,symbol,source,sha256
 0x006F2A50,18,_$E35,src/techno.cpp,425cde7e6f9b3e277d37b02311b9a47f9f3e888fd05c21398f9e003e4bc2a49f
 0x006F2A70,26,_$E38,src/techno.cpp,769be7bb387ef33a0db88a4058a4c71e23c6e121d2900fc22fb8307ab705624c
 0x006F2A90,23,_$E41,src/techno.cpp,b8a046bcbc4fbb21ea2c0ecc4ca8cfeb6aa933e9effe5caa62ded1d8af635f2b
+0x006F2AB0,32,_$E281,src/techno.cpp,1c941960b5946d46aaa7d4072eb739ab789284486da2c15d481c5f010cad6722
 0x006F2AD0,21,_$E278,src/techno.cpp,48ffbeff295bd944bc94c329dcc1aa48d54d6624bccd8b3ecb4f5cf976bf652e
 0x006F2AF0,37,_$E286,src/techno.cpp,04e2042730e6a1c49d6e1501759d40137f94a00c017d9248a45ef46c42ddb60d
 0x006F2B20,21,_$E284,src/techno.cpp,c26f6150942c2d0eb0278bd0cad10c476a98306a3532eb0e3939cf687b5dc05d
