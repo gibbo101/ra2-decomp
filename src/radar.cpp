@@ -1444,6 +1444,31 @@ void RadarClass::Radar_Cell(Cell const & cell)
 	}
 }
 
+// FUNCTION: GAMEMD 0x00656750
+void RadarClass::Resolve_Radar_Point(Point2D const & point, Cell & cell, ObjectClass *& object)
+{
+	Point2D pt = point - RadarRect.TopLeft;
+	RadarTrackingStruct track;
+	track.Position = pt;
+
+	RADAR_HASH_TABLE::BucketType & bucket = RadarTrackingTable->Buckets[track.Hash()];
+	int count = bucket.Count();
+	object = NULL;
+	for (int index = count - 1; index >= 0; --index) {
+		RadarTrackingStruct entry = bucket[index].Key;
+		if (entry == track) {
+			object = entry.Object;
+			break;
+		}
+	}
+
+	if (object != NULL) {
+		cell = object->Destination_Coord();
+	} else {
+		cell = Radar_Pixel_To_Cell(pt);
+	}
+}
+
 // FUNCTION: GAMEMD 0x006568A0
 HRESULT RadarClass::Load(IStream * stream)
 {
