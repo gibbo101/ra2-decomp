@@ -10,8 +10,8 @@ when the checker shows its compiled bytes equal the original's, and stand-ins su
 over real objects or hard-coded addresses are rejected however well they score.
 `docs/AGENTS.md` holds the rules the agents follow and every lesson learned.
 
-**Status (1 November 2026):** 18,147 of the game's 19,367 functions match byte for byte
-(94%), covering 2.58 MB of its 3.81 MB of game code (68%). Each function is checked on
+**Status (2 November 2026):** 18,507 of the game's 19,367 functions match byte for byte
+(96%), covering 2.64 MB of its 3.81 MB of game code (69%). Each function is checked on
 its own; linking a whole executable that matches comes later. `docs/PLAN.md` has the
 method and a record of every batch.
 
@@ -57,6 +57,8 @@ address are welcome as issues.
 
 ## Contributing
 
+Only matching work is accepted; see `CONTRIBUTING.md` before you start.
+
 Read `docs/AGENTS.md` first: it says what counts as a match and what does not (no inline
 asm, hard-coded addresses or stand-in structs to force one). Turn on the commit guard
 before your first commit (`docs/COMMIT_GUARD.md`); it keeps game files and personal data
@@ -86,7 +88,7 @@ Electronic Arts Inc.
 
 - **Game source** (`src/`, `include/`): GNU GPL version 3 or later, in `COPYING.md`. Part
   of it derives from source Electronic Arts released under the GPL (Command & Conquer,
-  Red Alert, Renegade) and from [OpenTS](https://github.com/OpenTS-Developers), so
+  Red Alert, Renegade, Generals) and from [OpenTS](https://github.com/OpenTS-Developers), so
   Electronic Arts' additional terms at the end of `COPYING.md` apply to that material.
 - **Tooling and data** (everything else): MIT, in `LICENSE`.
   `tools/permute.py` and `tools/permute_mutate.py` are adapted from the MIT-licensed

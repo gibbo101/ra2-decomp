@@ -9,15 +9,16 @@ class VocClass;
 
 struct AudioController
 {
-	void * Event;
+	AudioEvent * Event;
 	unsigned Stamp;
-	void * EventType;
+	VocClass * EventType;
 	void ** AudioIndex;
 	unsigned Unused;
 
 	void FUN_00405BE0(void);
 	void FUN_00405C00(void);
 	void Stop(void);
+	void StopLooping(void);
 	void End(void);
 	void EndLooping(void);
 

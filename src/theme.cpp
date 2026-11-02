@@ -19,6 +19,7 @@
 #include "house.h"
 #include "scenario.h"
 #include "vector.h"
+#include "audsrc.h"
 #include <string.h>
 #include <stdlib.h>
 
@@ -60,11 +61,6 @@ struct AudioStream {
 	void FUN_004080F0(void);
 	void FUN_00407A90(void);
 };
-struct AudioFormat {
-	char data[32];
-	void FUN_004085A0(void);
-	unsigned __int64 __fastcall FUN_00408560(int);
-};
 struct AudioSource {
 	AudioStream * FUN_00407860(int a, int b);
 };
@@ -74,7 +70,6 @@ extern void __fastcall FUN_00408080(AudioStream * stream, char const * name);
 extern void __fastcall FUN_00407B40(AudioStream * stream, int value);
 extern void __fastcall FUN_00407B50(AudioStream * stream, int value);
 extern int __fastcall FUN_00407B60(AudioStream * stream, char const * name, int flag);
-extern int __fastcall FUN_00408610(CCFileClass * file, AudioFormat * format, int * length);
 extern int __fastcall FUN_004790A0(int timeout);
 extern void __cdecl FUN_004068E0(char const * format, ...);
 extern char DAT_00889F64[];
@@ -182,10 +177,10 @@ void ThemeClass::Scan(void)
 			if (Themes[theme]->Available) {
 				AudioFormat format;
 				int length;
-				format.FUN_004085A0();
+				AudioFormatInit(&format);
 				file.Open(1);
-				if (FUN_00408610(&file, &format, &length)) {
-					Themes[theme]->Duration = (int)(format.FUN_00408560(length) / 1000);
+				if (AudioFormatReadWaveFile(&file, &format, &length)) {
+					Themes[theme]->Duration = (int)(AudioFormatTime(&format, length) / 1000);
 				}
 			}
 		}

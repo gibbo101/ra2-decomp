@@ -177,7 +177,7 @@ class TechnoClass : public RadioClass
 		AirstrikeClass * Airstrike;
 		bool Berzerk;
 		int BerzerkDurationLeft;
-		unsigned SprayOffsetIndex;
+		int SprayOffsetIndex;
 		bool Uncrushable;
 		FootClass * DirectRockerLinkedUnit;
 		FootClass * LocomotorTarget;
@@ -291,7 +291,7 @@ class TechnoClass : public RadioClass
 		bool CountedAsOwnedSpecial;
 		bool Absorbed;
 		bool unknown_bool_43A;
-		unsigned unknown_43C;
+		int unknown_43C;
 
 		mutable DynamicVectorClass<int> CurrentTargetThreatValues;
 		mutable DynamicVectorClass<AbstractClass *> CurrentTargets;

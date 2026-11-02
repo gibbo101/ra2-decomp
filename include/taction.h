@@ -124,7 +124,6 @@ class TActionClass : public AbstractClass
 		bool TAction_BEGIN_PRODUCTION(HouseClass * house, ObjectClass * object, TriggerClass * trig, Cell const & cell);
 		bool TAction_CREATE_TEAM(HouseClass * house, ObjectClass * object, TriggerClass * trig, Cell const & cell);
 		bool TAction_DESTROY_TEAM(HouseClass * house, ObjectClass * object, TriggerClass * trig, Cell const & cell);
-		bool TAction_NOP(HouseClass * house, ObjectClass * object, TriggerClass * trig, Cell const & cell);
 		bool TAction_CLEAR_MODES(HouseClass * house, ObjectClass * object, TriggerClass * trig, Cell const & cell);
 		bool TAction_SPAWN_TEAM(HouseClass * house, ObjectClass * object, TriggerClass * trig, Cell const & cell);
 		bool TAction_SPAWN_TEAM_AT_WP(HouseClass * house, ObjectClass * object, TriggerClass * trig, Cell const & cell);
@@ -270,7 +269,6 @@ class TActionClass : public AbstractClass
 		bool TAction_ResetDefenseCell(HouseClass * house, ObjectClass * object, TriggerClass * trig, Cell const & cell);
 		bool TAction_SetBaseCenter(HouseClass * house, ObjectClass * object, TriggerClass * trig, Cell const & cell);
 		bool TAction_ResetBaseCenter(HouseClass * house, ObjectClass * object, TriggerClass * trig, Cell const & cell);
-		bool TAction_FUN_006E0030(HouseClass * house, ObjectClass * object, TriggerClass * trig, Cell const & cell);
 		bool TAction_FlashBuildingsOfType(HouseClass * house, ObjectClass * object, TriggerClass * trig, Cell const & cell);
 	public:
 		HouseClass * FindHouseByIndex(TriggerClass * trig, int index) const;

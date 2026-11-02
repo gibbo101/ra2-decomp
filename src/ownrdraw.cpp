@@ -4061,6 +4061,411 @@ LRESULT CALLBACK OwnerDraw::AutoRadioButtonHandler(HWND window, UINT message, WP
 	return CallWindowProc(proc, window, message, wparam, lparam);
 }
 
+namespace OwnerDraw {
+LRESULT CALLBACK ScrollBarHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+}
+void ODDrawEdgeGlows(Surface & surface, Rect const & rect, BOOL raised, int count, int left_alpha, int top_alpha, int right_alpha, int bottom_alpha);
+void ODDrawArrowBitmap(Surface * surface, Rect const & rect, BOOL upward, BOOL pressed, bool dark);
+
+// FUNCTION: GAMEMD 0x0061C690
+// OwnerDraw::ScrollBarHandler
+LRESULT CALLBACK OwnerDraw::ScrollBarHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	RECT client_rect;
+	RECT display_rect;
+	GetClientRect(window, &client_rect);
+	Get_Display_Rect(window, &display_rect);
+
+	client_rect.bottom -= 2 * OwnerDraw::ControlInsetPx;
+	client_rect.right -= 2 * OwnerDraw::ControlInsetPx;
+
+	display_rect.left += OwnerDraw::ControlInsetPx;
+	display_rect.right -= OwnerDraw::ControlInsetPx;
+	display_rect.top += OwnerDraw::ControlInsetPx;
+	display_rect.bottom -= OwnerDraw::ControlInsetPx;
+
+	OwnerDraw::WinData *data = Find_Data(window);
+	if (data == NULL) {
+		return 0;
+	}
+
+	bool keep_parent_capture = false;
+	if (data->ScrollBar.keepCapture) {
+		keep_parent_capture = true;
+	}
+	int message_result = data->ScrollBar.result;
+	int dragging = data->ScrollBar.dragging;
+	int range = data->ScrollBar.range;
+	int position = data->ScrollBar.position;
+	int up_pressed = data->ScrollBar.upPressed;
+	int down_pressed = data->ScrollBar.downPressed;
+
+	if (!range) {
+		range = 100;
+	}
+
+	int grip_top = 0;
+	int grip_bottom = 0;
+	int scroll_code = 0;
+
+	int width = client_rect.right - client_rect.left;
+	int travel = client_rect.bottom - client_rect.top - 44;
+	int grip_height = (int)((double)travel - log((double)(range + 1)) * (double)travel * 0.2);
+	if (grip_height <= 14) {
+		grip_height = 14;
+	}
+
+	travel -= grip_height;
+	if (travel <= 1) {
+		travel = 1;
+	}
+
+	if (message < WM_USER || message == OD_REFRESHNOPAINT) {
+		if (!dragging) {
+			grip_top = position * travel / range + client_rect.top + 22;
+			grip_bottom = grip_top + grip_height;
+		} else {
+			POINT cursor;
+			GetCursorPos(&cursor);
+			ScreenToClient(window, &cursor);
+
+			grip_top = cursor.y - grip_height / 2;
+			if (grip_top < 22) {
+				grip_top = 22;
+			}
+
+			if (client_rect.bottom - grip_height - 22 < grip_top) {
+				grip_top = client_rect.bottom - grip_height - 22;
+			}
+
+			grip_bottom = grip_top + grip_height;
+			scroll_code = SB_THUMBTRACK;
+			position = range * (grip_top - 22) / travel;
+		}
+	}
+
+	switch (message) {
+		case SBM_GETPOS:
+			return position;
+
+		case SBM_SETPOS:
+			if ((int)wparam <= range && (int)wparam > 0) {
+				position = (int)wparam;
+			}
+			break;
+
+		case SBM_SETRANGE:
+			range = (int)lparam;
+			if (position > range) {
+				position = range;
+			}
+			break;
+
+		case SBM_SETSCROLLINFO: {
+			SCROLLINFO * info = (SCROLLINFO *)lparam;
+			range = info->nMax;
+			position = info->nPos;
+			break;
+		}
+
+		case WM_NCHITTEST:
+		case WM_GETDLGCODE: {
+			WNDPROC proc = NULL;
+			WNDPROC *found = NULL;
+			if (OwnerDraw::DialogProcs.getPointer(window, &found) && found) {
+				proc = *found;
+			}
+			return CallWindowProc(proc, window, message, wparam, lparam);
+		}
+
+		case WM_ERASEBKGND:
+			return 0;
+
+		case WM_PAINT: {
+			if (data->ScrollBar.skipDraw) {
+				ValidateRect(window, NULL);
+				break;
+			}
+			if (data->paintDisabled) {
+				return 0;
+			}
+
+			Rect src_rect(0, 0, client_rect.right, client_rect.bottom);
+			Rect full_rect(display_rect.left, display_rect.top, client_rect.right, client_rect.bottom);
+
+			HWND parent = GetParent(window);
+			OwnerDraw::WinData * parent_data = NULL;
+			if (parent != NULL) {
+				OwnerDraw::Dialogs.getPointer(parent, &parent_data);
+			}
+
+			RECT parent_display;
+			Get_Display_Rect(parent, &parent_display);
+
+			Rect source_rect = src_rect;
+			if (parent_data != NULL && parent_data->cachedSurface != NULL) {
+				source_rect.X = display_rect.left + source_rect.X - parent_display.left;
+				source_rect.Y += display_rect.top - parent_display.top;
+			}
+
+			if (data->cachedSurface != NULL) {
+				if (data->cachedSurface->Get_Width() != client_rect.right || data->cachedSurface->Get_Height() != client_rect.bottom) {
+					delete data->cachedSurface;
+					data->cachedSurface = NULL;
+				}
+			}
+
+			if (data->cachedSurface == NULL) {
+				Surface * background = new BSurface(client_rect.right, client_rect.bottom, 2);
+				data->cachedSurface = background;
+				OwnerDraw::CachedSurfaceCount++;
+
+				if (parent_data != NULL && parent_data->cachedSurface != NULL) {
+					background->Blit_From(src_rect, *parent_data->cachedSurface, source_rect);
+				}
+
+				int pixel_count = client_rect.right * client_rect.bottom;
+				unsigned short * pixels = (unsigned short *)background->Lock();
+				for (int i = 0; i < pixel_count; i++) {
+					pixels[i] = OD_Blend_Color(pixels[i], 0xFFFF, data->ScrollBar.alpha);
+				}
+				if (pixels != NULL) {
+					background->Unlock();
+				}
+			}
+
+			if (parent_data != NULL && parent_data->cachedSurface != NULL) {
+				DAT_00887310->Blit_From(full_rect, *parent_data->cachedSurface, source_rect);
+			}
+
+			int color = ODColorToHiColor(OwnerDraw::DefaultBorderColor);
+			if (data->ScrollBar.disabled) {
+				color = ODColorToHiColor(OwnerDraw::AltBorderColor);
+			}
+			OwnerDraw::DrawBeveledBorder(*DAT_00887310, full_rect, 2, color);
+
+			Rect grip_rect(display_rect.left, grip_top + display_rect.top, client_rect.right, grip_bottom - grip_top);
+			full_rect = grip_rect;
+			src_rect = grip_rect;
+			src_rect.X = 0;
+			src_rect.Y = grip_top;
+
+			Surface * grip_center;
+			if (data->ScrollBar.disabled) {
+				grip_center = SurfaceCache.GetSurface("gsbgripm.pcx", NULL);
+			} else {
+				grip_center = SurfaceCache.GetSurface("sbgripm.pcx", NULL);
+			}
+			if (grip_center != NULL) {
+				grip_rect.Width = grip_center->Get_Width();
+			}
+			SurfaceCache.Draw(grip_rect, *DAT_00887310, *grip_center, 0, 0);
+
+			Rect grip_src(0, 0, grip_center->Get_Height(), grip_center->Get_Width());
+
+			Surface * grip_top_surf;
+			if (data->ScrollBar.disabled) {
+				grip_top_surf = SurfaceCache.GetSurface("gsbgript.pcx", NULL);
+			} else {
+				grip_top_surf = SurfaceCache.GetSurface("sbgript.pcx", NULL);
+			}
+			if (grip_top_surf != NULL) {
+				full_rect.Height = grip_top_surf->Get_Height();
+			}
+			DAT_00887310->Blit_From(full_rect, *grip_top_surf, grip_src);
+
+			Surface * grip_bottom_surf;
+			if (data->ScrollBar.disabled) {
+				grip_bottom_surf = SurfaceCache.GetSurface("gsbgripb.pcx", NULL);
+			} else {
+				grip_bottom_surf = SurfaceCache.GetSurface("sbgripb.pcx", NULL);
+			}
+			if (grip_bottom_surf != NULL) {
+				full_rect.Y = display_rect.top + grip_bottom - grip_bottom_surf->Get_Height();
+			}
+			DAT_00887310->Blit_From(full_rect, *grip_bottom_surf, grip_src);
+
+			Rect up_rect(display_rect.left, display_rect.top, client_rect.right, 22);
+			full_rect = up_rect;
+			src_rect = up_rect;
+			src_rect.X = 0;
+			src_rect.Y = 0;
+			DAT_00887310->Blit_From(full_rect, *data->cachedSurface, src_rect);
+			ODDrawEdgeGlows(*DAT_00887310, up_rect, up_pressed == 0, 2, OwnerDraw::ScrollButtonBevelAlpha, OwnerDraw::ScrollButtonBevelAlpha, OwnerDraw::ScrollButtonBevelAlpha, OwnerDraw::ScrollButtonBevelAlpha);
+			ODDrawArrowBitmap(DAT_00887310, up_rect, 1, up_pressed, data->ScrollBar.disabled);
+
+			Rect down_rect(display_rect.left, display_rect.bottom - 22, client_rect.right, 22);
+			full_rect = down_rect;
+			src_rect = down_rect;
+			src_rect.X = 0;
+			src_rect.Y = client_rect.bottom - 22;
+			DAT_00887310->Blit_From(full_rect, *data->cachedSurface, src_rect);
+			ODDrawEdgeGlows(*DAT_00887310, down_rect, down_pressed == 0, 2, OwnerDraw::ScrollButtonBevelAlpha, OwnerDraw::ScrollButtonBevelAlpha, OwnerDraw::ScrollButtonBevelAlpha, OwnerDraw::ScrollButtonBevelAlpha);
+			ODDrawArrowBitmap(DAT_00887310, down_rect, 0, down_pressed, data->ScrollBar.disabled);
+
+			ValidateRect(window, NULL);
+			break;
+		}
+
+		case WM_TIMER: {
+			POINT cursor;
+			GetCursorPos(&cursor);
+			ScreenToClient(window, &cursor);
+
+			up_pressed = 0;
+			down_pressed = 0;
+
+			if (message_result && cursor.x > client_rect.right - width) {
+				if (cursor.y < 22) {
+					if (!dragging) {
+						up_pressed = 1;
+					}
+					if (position != 0) {
+						scroll_code = SB_LINEUP;
+						--position;
+					}
+				} else if (cursor.y > client_rect.bottom - 22) {
+					if (!dragging) {
+						down_pressed = 1;
+					}
+					if (position + 1 <= range) {
+						scroll_code = SB_LINEDOWN;
+						++position;
+					}
+				}
+			}
+
+			SetTimer(window, 0, 25, NULL);
+			break;
+		}
+
+		case WM_MOUSEMOVE:
+			if (dragging) {
+				RECT rect = client_rect;
+				rect.left = client_rect.right - width;
+				InvalidateRect(window, &rect, FALSE);
+			}
+
+			if (wparam & MK_LBUTTON) {
+				break;
+			}
+
+		case WM_LBUTTONUP:
+			message_result = 0;
+			dragging = 0;
+			if (up_pressed || down_pressed) {
+				InvalidateRect(window, NULL, FALSE);
+			}
+			up_pressed = 0;
+			down_pressed = 0;
+			KillTimer(window, 0);
+			ReleaseCapture();
+			if (keep_parent_capture) {
+				SetCapture(data->ownerWindow);
+			}
+			scroll_code = SB_ENDSCROLL;
+			break;
+
+		case WM_LBUTTONDOWN:
+		case WM_LBUTTONDBLCLK: {
+			if (message == WM_LBUTTONDOWN) {
+				message_result = 1;
+				SetCapture(window);
+				SetTimer(window, 0, 500, NULL);
+			} else {
+				message_result = 0;
+				dragging = 0;
+				KillTimer(window, 0);
+				ReleaseCapture();
+				if (keep_parent_capture) {
+					SetCapture(data->ownerWindow);
+				}
+			}
+
+			POINT click;
+			click.x = LOWORD(lparam);
+			click.y = HIWORD(lparam);
+			int repeat = 1;
+			if (message == WM_LBUTTONDBLCLK) {
+				repeat = 2;
+			}
+
+			down_pressed = 0;
+			up_pressed = 0;
+
+			while (repeat > 0) {
+				if (click.x > (client_rect.right - width)) {
+					if (click.y < 22 && position) {
+						up_pressed = 1;
+						scroll_code = SB_LINEUP;
+						--position;
+					} else {
+						bool skip_thumb_logic = false;
+						if (click.y > client_rect.bottom - 22) {
+							if (position + 1 <= range) {
+								down_pressed = 1;
+								scroll_code = SB_LINEDOWN;
+								++position;
+								skip_thumb_logic = true;
+							}
+						}
+
+						if (!skip_thumb_logic) {
+							if (click.y < grip_top || click.y >= grip_bottom) {
+								grip_top = click.y - grip_height / 2;
+								if (grip_top < 22) {
+									grip_top = 22;
+								}
+
+								if (client_rect.bottom - grip_height - 22 < grip_top) {
+									grip_top = client_rect.bottom - grip_height - 22;
+								}
+
+								grip_bottom = grip_top + grip_height;
+								scroll_code = SB_THUMBTRACK;
+								position = range * (grip_top - 22) / travel;
+							} else if (message == WM_LBUTTONDOWN) {
+								dragging = 1;
+							}
+						}
+					}
+				}
+				--repeat;
+			}
+			break;
+		}
+
+		case WM_USER + 210:
+			data->ScrollBar.keepCapture = (lparam != 0);
+			break;
+
+		case WM_USER + 241:
+			data->ScrollBar.disabled = (lparam == 1);
+			break;
+	}
+
+	int send_notify = 0;
+	if (position != data->ScrollBar.position || range != data->ScrollBar.range) {
+		if (data->ownerWindow != NULL) {
+			send_notify = 1;
+		}
+	}
+
+	data->ScrollBar.result = message_result;
+	data->ScrollBar.dragging = dragging;
+	data->ScrollBar.range = range;
+	data->ScrollBar.position = position;
+	data->ScrollBar.upPressed = up_pressed;
+	data->ScrollBar.downPressed = down_pressed;
+
+	if (send_notify) {
+		SendMessage(data->ownerWindow, WM_VSCROLL, MAKEWPARAM(scroll_code, (unsigned short)position), (LPARAM)window);
+		InvalidateRect(window, NULL, FALSE);
+	}
+
+	return 0;
+}
+
 // FUNCTION: GAMEMD 0x0061D6D0
 // OwnerDraw::ProgressHandler
 LRESULT CALLBACK OwnerDraw::ProgressHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
@@ -4118,6 +4523,7 @@ LRESULT CALLBACK OwnerDraw::ProgressHandler(HWND window, UINT message, WPARAM wp
 }
 
 namespace OwnerDraw {
+int __fastcall DrawWideText(Surface * surface, wchar_t const * text, LTRBStruct * rect, BitFont * font, unsigned color, int style, int p5, int p6, int p7, int p8);
 LRESULT CALLBACK TrackBarHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 }
 
@@ -4908,9 +5314,6 @@ int __fastcall FUN_00620F60(Surface *surface, wchar_t const *text, RECT *rect, B
 	return 0;
 }
 
-namespace OwnerDraw {
-int __fastcall DrawWideText(Surface * surface, wchar_t const * text, LTRBStruct * rect, BitFont * font, unsigned color, int style, int p5, int p6, int p7, int p8);
-}
 
 // FUNCTION: GAMEMD 0x00621040
 // OwnerDraw::DrawWideText

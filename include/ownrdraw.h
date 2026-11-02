@@ -142,6 +142,13 @@ namespace OwnerDraw {
 			} ListBox;
 
 			struct {
+				unsigned char reserved28[0x94];
+				bool skipDraw;
+				unsigned char reservedBD[0xB];
+				unsigned char alpha;
+				unsigned char reservedC9[4];
+				bool disabled;
+				unsigned char reservedCE[0x1A];
 				int result;
 				int dragging;
 				int range;
@@ -318,7 +325,6 @@ namespace OwnerDraw {
 #define OD_TEXT_ALIGN_CENTER 2
 #define OD_TEXT_ALIGN_MAX 3
 
-int OD_Draw_Text_Remap(Surface & surface, const char * string, Rect const & rect, char const * name, COLORREF color, int flags, int char_spacing);
 int OD_Draw_Text(COLORREF color, HFONT font, Rect const & rect, const char * text, int len, int x_alignment, int y_alignment, Surface * surface);
 void OD_Draw_Rect(Surface & surf, Rect const & rect, int offset, int color);
 

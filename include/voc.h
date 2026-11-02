@@ -5,6 +5,8 @@
 #pragma once
 
 #include "audioctl.h"
+#include "audlist.h"
+#include "audlevel.h"
 #include "coord.h"
 #include "vector.h"
 
@@ -34,34 +36,6 @@ enum ContextType {
 	IN_VAR
 };
 
-struct VocClassHeader
-{
-	VocClassHeader * Next;
-	VocClassHeader * Prev;
-	unsigned Magic;
-};
-
-struct VolumeStruct
-{
-	int Volume;
-	unsigned unknown_4;
-	int unknown_int_8;
-	int unknown_int_C;
-	int unknown_int_10;
-	int unknown_int_14;
-	unsigned nknown_18;
-	int unknown_int_1C;
-};
-
-class AudioEvent
-{
-	public:
-		void FUN_004052E0(void);
-		void FUN_004052F0(void);
-		void FUN_004053E0(void);
-		void FUN_00405430(void);
-};
-
 class VocClass
 {
 	public:
@@ -79,7 +53,7 @@ class VocClass
 		int FUN_00405160(void);
 		AudioEvent * FUN_00405190(void);
 		int FUN_00406650(void);
-		bool __fastcall FUN_004064A0(char const * sample);
+		int __fastcall FUN_004064A0(char const * sample);
 		void __fastcall FUN_00406520(int attack);
 		void __fastcall FUN_00406530(int decay);
 		void __fastcall FUN_00406540(int priority);
@@ -94,35 +68,31 @@ class VocClass
 		void __fastcall FUN_00406620(int shift);
 		void __fastcall FUN_00406640(int loop);
 
-		VocClassHeader Header;
+		ListNode Header;
 		int SamplesOK;
 		unsigned Control;
 		unsigned Type;
-		VolumeStruct Volume;
+		AudioLevel Volume;
 		unsigned unknown_38;
 		unsigned unknown_3C;
 		int Priority;
-		unsigned unknown_44;
+		int Count;
 		int Limit;
 		int Loop;
 		int Range;
 		float MinVolume;
-		int MinDelay;
-		int MaxDelay;
+		unsigned MinDelay;
+		unsigned MaxDelay;
 		int MinFDelta;
 		int MaxFDelta;
 		int VShift;
 		char Name[32];
-		unsigned unknown_8C;
-		unsigned unknown_90;
-		unsigned unknown_94;
-		unsigned unknown_98;
-		unsigned unknown_9C;
-		unsigned unknown_A0;
-		unsigned unknown_A4;
-		unsigned unknown_A8;
-		unsigned unknown_AC;
-		unsigned unknown_B0;
+		ListHead local;
+		int lastFrame;
+		unsigned lastBucketStamp;
+		int maxPri;
+		ListNode nodeVol;
+		unsigned maxVol;
 		int SampleIndex[32];
 		int NumSamples;
 		int Attack;

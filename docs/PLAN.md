@@ -1,6 +1,6 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 1 November 2026: 18,147 of 19,367 game functions match (94%; 68% of game code
+Status, 2 November 2026: 18,507 of 19,367 game functions match (96%; 69% of game code
 by size), landed in batches module by module. The rounds below record each one.
 
 ## The goal
@@ -1113,6 +1113,22 @@ Session.Players. Recording then exposed three UI-command functions building char
 ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; their RTTI
 fixed them. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
+
+### Batches 152 to 154 (2 November 2026)
+
+**360 functions.** Batches 152 and 153 put Opus on the smallest untried function of 1.5 KB
+or more in 16 modules, 2.7 to 10.1 KB, and matched 5: map's 8 KB initialiser `_$E221`
+(0x00561910; later `$E` markers renumbered), Get_Join_Responses, OwnerDraw::ScrollBarHandler,
+TActionClass::operator() (with TStringID<31> as ScenarioClass::MissionTimerText) and wonline's
+0x00794BA0. Batch 154 matched 355 of the 363 functions before `_astar`: Westwood Pacific's
+audio library, now `src/wpaudio/`, and TibSun's `_alpha.cpp`. A naming agent split the
+range by file from evidence; EA's Generals source holds a 2003 copy of the library
+(`AUD_*.cpp`), the source of most file and function names. VocClass took YR's real
+member types (ListNode, AudioLevel), which flipped TrackBarHandler and DrawMap; one moved
+prototype and one unused include put them back. HouseClass::PsiWarn takes a CellClass *.
+Building, drive, isotype, MapGen, netshare, rules, Score, ship (99.8%), Super, Techno and
+Unit stay banked. modules.py names `wpaudio/audevent` but still files the rest of the
+library under `seg_00401000` and `_alpha`. Merge gate: 18,507 of 18,507 (2,580.8 KB).
 
 ### Batches 150 and 151 (1 November 2026)
 

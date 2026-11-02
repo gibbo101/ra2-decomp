@@ -16,7 +16,6 @@
 #include "language\language.h"
 #include "lzopipe.h"
 #include "lzostraw.h"
-#include "overtype.h"
 #include "ownrdraw.h"
 #include "pcx.h"
 #include "scenario.h"

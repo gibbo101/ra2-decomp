@@ -14,6 +14,9 @@ the repository root; generated round files go to `build/coord/`, which is not tr
 - `batchT.js` and `nearT.js` are the workflow templates; the generators fill in the
   repository path, the other batches' modules and the description. The workflow's args are
   the generated `build/coord/batchN.json`.
+- Both generators skip functions claimed by outside work: `claims.py` reads the open pull
+  requests' diffs and open issues labelled `claims`, and stops the generator if GitHub
+  cannot be read. Run it alone to list the claims.
 - `segfiles.json` maps the unnamed `seg_` ranges to the src/ file each lands in;
   `segnames.md` records how they were named.
 

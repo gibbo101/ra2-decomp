@@ -232,3 +232,10 @@ address,name,symbol,evidence
 0x00AA0E18,IsometricTileTypeClass::GreenTile,,stored from the GreenTile lookup result in 0x00545150 (isotype.h static)
 0x008B4138,Tubes,,0x00727FD0 TubeClass::TubeClass adds this to the vector at 0x008B4138 (mov ecx and call through [0x8b4138])
 0x00B1CFC0,UnitCompositeDirtyRect,,0x0073B470 UnitClass::Unit_Draw_Voxel reads and writes it at +0/+4/+8/+C
+0x00816328,_AUD_driver,,"drv_dsnd static AudioDriver: NULL then the 11 driver entry points 0x0040A260-0x0040A790; held by _AUD_system_master"
+0x00816358,_AUD_system_master,,"drv_dsnd static AudioSystemMaster {""Direct Sound Driver V2.0"",0,0,0,'AUDm',load,unload,open,close,&_AUD_driver}; layout equals EA WPAudio AUD_DSoundDriver.cpp"
+0x00816380,AUD_log_table,,"drv_dsnd static int[101] {-10000,-6644,...,0}, EA AUD_DSoundDriver.cpp's table; read by audioUpdate 0x0040A6D0"
+0x00815E98,audioData,,"auddev static AudioData * initialised to &audioDataStruct (0x0087DD88); read by AudioSetUp 0x00402940"
+0x0087DD88,audioDataStruct,,"auddev static AudioData; only 0x00815E98 holds its address"
+0x0087E8A8,AlphaLightingRemapInit,,"TibSun _alpha.cpp global; static initialiser 0x0040AD60 builds it and registers its atexit 0x0040AD80"
+0x0087E294,AudioIDXData::Instance,,"YRpp AudioIDXData::Instance; set by AudioIDXData::Create in audevent.cpp"

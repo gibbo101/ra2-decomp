@@ -3,8 +3,10 @@
 Usage: python3 tools/coord/mknear.py TEMPLATE.js FIRST_BATCH NBATCHES MIN [PER_JOB [MAX]]
 MAX, if given, keeps only near misses whose best is below it.
 One Opus job per module with PER_JOB or more near misses, smaller modules grouped to about PER_JOB.
+Functions claimed by open pull requests or the claims issue (claims.py) are never picked.
 """
 import bisect, collections, csv, glob, json, os, re, sys
+from claims import claimed
 from pathlib import Path
 
 D = "data"
@@ -17,6 +19,7 @@ first, nb, MIN = int(sys.argv[2]), int(sys.argv[3]), float(sys.argv[4])
 PER = int(sys.argv[5]) if len(sys.argv) > 5 else 6
 MAX = float(sys.argv[6]) if len(sys.argv) > 6 else 1000.0
 done = {int(r["address"], 16) for r in csv.DictReader(open(f"{D}/progress.csv"))}
+done |= claimed()
 lib0 = min(int(r["address"], 16) for r in csv.DictReader(open(f"{D}/library.csv")))
 size = {int(r["address"], 16): int(r["size"]) for r in csv.DictReader(open(f"{D}/functions.csv"))}
 mods = [(int(r["first"], 16), int(r["last"], 16), r["module"]) for r in csv.DictReader(open(f"{D}/modules.csv"))]

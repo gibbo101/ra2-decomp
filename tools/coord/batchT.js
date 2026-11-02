@@ -74,7 +74,7 @@ const brief = (name, mods, extra, big) => {
   `matches with the overlay), and report it.\n` +
   `- A scratch root copies what it changes and never symlinks orig/, toolchain/, src/, include/ or data/.\n` +
   `- No git commands of any kind, not even read-only: a stash or checkout takes the work of every running agent with it. Never a recursive delete of any kind; a project hook blocks them, and a block is a stop sign, never something to route around: ` +
-  `delete only files you created, by name or a glob in one directory, then rmdir. Never delete another agent's files or anything in tools/coord/. Delete your own scratch before finishing, in the session scratchpad too, keeping the ` +
+  `delete only files you created, by name, then rmdir; in the shared session scratchpad a glob such as *.txt deletes other agents' files, so prefix yours with your job name. Never delete another agent's files or anything in tools/coord/. Delete your own scratch before finishing, in the session scratchpad too, keeping the ` +
   `banked attempts and any overlay.\n\n` +
   `Your functions${big ? '' : ' (all under 1.5 KB)'}: ${names.map(m => `module ${m}: ${mods[m].join(', ')}`).join('; ')}.\n` +
   `Work through them in address order; start each with uv run tools/ctx.py <ADDR> and the TibSun source. Many are class template instances ` +

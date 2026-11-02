@@ -5,8 +5,10 @@ A module with a cap gets one agent with that many functions; the rest are groupe
 about GROUP functions to an agent. Skips SKIP modules. An unnamed seg_ range joins the module
 tools/coord/segfiles.json gives it (its src/ file), with that file's note. big=K adds last batches of K Opus jobs, eight to a batch, each
 the smallest untried function of 1,536 bytes or more in a module no other job touches.
+Functions claimed by open pull requests or the claims issue (claims.py) are never picked.
 """
 import os, bisect, collections, csv, json, re, sys
+from claims import claimed
 from pathlib import Path
 
 D = "data"
@@ -20,6 +22,7 @@ fn = [(int(r["address"], 16), int(r["size"])) for r in csv.DictReader(open(f"{D}
 done = {int(r["address"], 16) for r in csv.DictReader(open(f"{D}/progress.csv"))}
 lib = {int(r["address"], 16) for r in csv.DictReader(open(f"{D}/library.csv"))}
 tried = {int(r["address"], 16) for r in csv.DictReader(open(f"{D}/attempts.csv"))}
+tried |= claimed()
 patch = [int(r["address"], 16) for r in csv.DictReader(open(f"{D}/exe_patches.csv"))]
 mods = [(int(r["first"], 16), int(r["last"], 16), r["module"]) for r in csv.DictReader(open(f"{D}/modules.csv"))]
 firsts = [m[0] for m in mods]

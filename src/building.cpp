@@ -142,7 +142,7 @@ bool __fastcall FUN_0043B4C0(HouseClass * house, CellClass * cell)
 
 
 // FUNCTION: GAMEMD 0x0043B5E0
-AnimClass * HouseClass::PsiWarn(HouseClass * house, ObjectClass * target, BulletClass * bullet, char const * name)
+AnimClass * HouseClass::PsiWarn(HouseClass * house, CellClass * target, BulletClass * bullet, char const * name)
 {
 	AnimType type = AnimTypeClass::From_Name(name);
 	AnimTypeClass * animtype = AnimTypes[type];

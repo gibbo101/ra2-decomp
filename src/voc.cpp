@@ -6,6 +6,7 @@
 #include "always.h"
 #include "geometry.h"
 #include "voc.h"
+#include "audevent.h"
 #include "_mixfile.h"
 #include "_rect.h"
 #include "_tactica.h"

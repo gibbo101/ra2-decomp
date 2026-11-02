@@ -3,7 +3,7 @@ version 3 or later, reproduced below. The tooling and data are MIT-licensed inst
 `LICENSE`.
 
 Part of the game source is derived from source code Electronic Arts Inc. released under
-that same license (Command & Conquer, Red Alert, Renegade) and from OpenTS, which is
+that same license (Command & Conquer, Red Alert, Renegade, Generals) and from OpenTS, which is
 derived from it. Electronic Arts' additional terms per GPL Section 7, set out at the
 bottom of this file, apply to that material. The files concerned carry an Electronic Arts
 copyright notice in their header.

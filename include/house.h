@@ -625,7 +625,7 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 		TechnoTypeClass const * FirstBuildableFromArray(DynamicVectorClass<BuildingTypeClass const *> const & list) const;
 
 		static void One_Time(void);
-		static AnimClass * PsiWarn(HouseClass * house, ObjectClass * target, BulletClass * bullet, char const * name);
+		static AnimClass * PsiWarn(HouseClass * house, CellClass * target, BulletClass * bullet, char const * name);
 
 		void Invalidate_Base_Node_Position(BuildingClass * building);
 		SourceType FUN_0050DB00(BuildingClass * building);

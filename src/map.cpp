@@ -63,13 +63,11 @@ extern const char * _mzones[MZONE_COUNT];
 #define IS_TILE_IN_SET(setname, setsize) (tile >= IsometricTileTypeClass::setname && tile < IsometricTileTypeClass::setname + setsize)
 
 void __cdecl FUN_004068E0(char const * format, ...);
-extern void FUN_00561910(void);
 
 unsigned int Pick_Random_UInt(unsigned int minval, unsigned int maxval);
 
 extern int DAT_007ED3CC[];
 extern int DAT_007ED3D0[];
-namespace Unsorted { extern Cell CellSpreadTable[]; }
 
 // SYNTHETIC: GAMEMD 0x005616F0 SYMBOL
 // _$E2
@@ -100,16 +98,31 @@ namespace Unsorted { extern Cell CellSpreadTable[]; }
 // SYNTHETIC: GAMEMD 0x005618E0 SYMBOL
 // _$E41
 
-// FUNCTION: GAMEMD 0x00561900
-void Init_00561900(void)
-{
-	FUN_00561910();
+// SYNTHETIC: GAMEMD 0x00561900 SYMBOL
+// _$E222
+// SYNTHETIC: GAMEMD 0x00561910 SYMBOL
+// _$E221
+namespace Unsorted {
+Cell CellSpreadTable[] = {
+	Cell(0,0),
+	Cell(1,-1),Cell(0,-1),Cell(-1,-1),Cell(-1,0),Cell(1,0),Cell(-1,1),Cell(0,1),Cell(1,1),
+	Cell(-1,-2),Cell(0,-2),Cell(1,-2),Cell(-2,-1),Cell(2,-1),Cell(-2,0),Cell(2,0),Cell(-2,1),Cell(2,1),Cell(-1,2),Cell(0,2),Cell(1,2),
+	Cell(-1,-3),Cell(0,-3),Cell(1,-3),Cell(-2,-2),Cell(2,-2),Cell(-3,-1),Cell(3,-1),Cell(-3,0),Cell(3,0),Cell(-3,1),Cell(3,1),Cell(-2,2),Cell(2,2),Cell(-1,3),Cell(0,3),Cell(1,3),
+	Cell(-1,-4),Cell(0,-4),Cell(1,-4),Cell(-3,-3),Cell(-2,-3),Cell(2,-3),Cell(3,-3),Cell(-3,-2),Cell(3,-2),Cell(-4,-1),Cell(4,-1),Cell(-4,0),Cell(4,0),Cell(-4,1),Cell(4,1),Cell(-3,2),Cell(3,2),Cell(-3,3),Cell(-2,3),Cell(2,3),Cell(3,3),Cell(-1,4),Cell(0,4),Cell(1,4),
+	Cell(-1,-5),Cell(0,-5),Cell(1,-5),Cell(-3,-4),Cell(-2,-4),Cell(2,-4),Cell(3,-4),Cell(-4,-3),Cell(4,-3),Cell(-4,-2),Cell(4,-2),Cell(-5,-1),Cell(5,-1),Cell(-5,0),Cell(5,0),Cell(-5,1),Cell(5,1),Cell(-4,2),Cell(4,2),Cell(-4,3),Cell(4,3),Cell(-3,4),Cell(-2,4),Cell(2,4),Cell(3,4),Cell(-1,5),Cell(0,5),Cell(1,5),
+	Cell(-1,-6),Cell(0,-6),Cell(1,-6),Cell(-3,-5),Cell(-2,-5),Cell(2,-5),Cell(3,-5),Cell(-4,-4),Cell(4,-4),Cell(-5,-3),Cell(5,-3),Cell(-5,-2),Cell(5,-2),Cell(-6,-1),Cell(6,-1),Cell(-6,0),Cell(6,0),Cell(-6,1),Cell(6,1),Cell(-5,2),Cell(5,2),Cell(-5,3),Cell(5,3),Cell(-4,4),Cell(4,4),Cell(-3,5),Cell(-2,5),Cell(2,5),Cell(3,5),Cell(-1,6),Cell(0,6),Cell(1,6),
+	Cell(-1,-7),Cell(0,-7),Cell(1,-7),Cell(-3,-6),Cell(-2,-6),Cell(2,-6),Cell(3,-6),Cell(-5,-5),Cell(-4,-5),Cell(4,-5),Cell(5,-5),Cell(-5,-4),Cell(5,-4),Cell(-6,-3),Cell(6,-3),Cell(-6,-2),Cell(6,-2),Cell(-7,-1),Cell(7,-1),Cell(-7,0),Cell(7,0),Cell(-7,1),Cell(7,1),Cell(-6,2),Cell(6,2),Cell(-6,3),Cell(6,3),Cell(-5,4),Cell(5,4),Cell(-5,5),Cell(-4,5),Cell(4,5),Cell(5,5),Cell(-3,6),Cell(-2,6),Cell(2,6),Cell(3,6),Cell(-1,7),Cell(0,7),Cell(1,7),
+	Cell(-1,-8),Cell(0,-8),Cell(1,-8),Cell(-3,-7),Cell(-2,-7),Cell(2,-7),Cell(3,-7),Cell(-5,-6),Cell(-4,-6),Cell(4,-6),Cell(5,-6),Cell(-6,-5),Cell(6,-5),Cell(-6,-4),Cell(6,-4),Cell(-7,-3),Cell(7,-3),Cell(-7,-2),Cell(7,-2),Cell(-8,-1),Cell(8,-1),Cell(-8,0),Cell(8,0),Cell(-8,1),Cell(8,1),Cell(-7,2),Cell(7,2),Cell(-7,3),Cell(7,3),Cell(-6,4),Cell(6,4),Cell(-6,5),Cell(6,5),Cell(-5,6),Cell(-4,6),Cell(4,6),Cell(5,6),Cell(-3,7),Cell(-2,7),Cell(2,7),Cell(3,7),Cell(-1,8),Cell(0,8),Cell(1,8),
+	Cell(-1,-9),Cell(0,-9),Cell(1,-9),Cell(-3,-8),Cell(-2,-8),Cell(2,-8),Cell(3,-8),Cell(-5,-7),Cell(-4,-7),Cell(4,-7),Cell(5,-7),Cell(-6,-6),Cell(6,-6),Cell(-7,-5),Cell(7,-5),Cell(-7,-4),Cell(7,-4),Cell(-8,-3),Cell(8,-3),Cell(-8,-2),Cell(8,-2),Cell(-9,-1),Cell(9,-1),Cell(-9,0),Cell(9,0),Cell(-9,1),Cell(9,1),Cell(-8,2),Cell(8,2),Cell(-8,3),Cell(8,3),Cell(-7,4),Cell(7,4),Cell(-7,5),Cell(7,5),Cell(-6,6),Cell(6,6),Cell(-5,7),Cell(-4,7),Cell(4,7),Cell(5,7),Cell(-3,8),Cell(-2,8),Cell(2,8),Cell(3,8),Cell(-1,9),Cell(0,9),Cell(1,9),
+	Cell(-1,-10),Cell(0,-10),Cell(1,-10),Cell(-3,-9),Cell(-2,-9),Cell(2,-9),Cell(3,-9),Cell(-5,-8),Cell(-4,-8),Cell(4,-8),Cell(5,-8),Cell(-7,-7),Cell(-6,-7),Cell(6,-7),Cell(7,-7),Cell(-7,-6),Cell(7,-6),Cell(-8,-5),Cell(8,-5),Cell(-8,-4),Cell(8,-4),Cell(-9,-3),Cell(9,-3),Cell(-9,-2),Cell(9,-2),Cell(-10,-1),Cell(10,-1),Cell(-10,0),Cell(10,0),Cell(-10,1),Cell(10,1),Cell(-9,2),Cell(9,2),Cell(-9,3),Cell(9,3),Cell(-8,4),Cell(8,4),Cell(-8,5),Cell(8,5),Cell(-7,6),Cell(7,6),Cell(-7,7),Cell(-6,7),Cell(6,7),Cell(7,7),Cell(-5,8),Cell(-4,8),Cell(4,8),Cell(5,8),Cell(-3,9),Cell(-2,9),Cell(2,9),Cell(3,9),Cell(-1,10),Cell(0,10),Cell(1,10),
+	Cell(0,11),Cell(0,-11),Cell(-1,11),Cell(1,11),Cell(-1,-11),Cell(1,-11),Cell(-2,11),Cell(2,11),Cell(-2,-11),Cell(2,-11),Cell(-3,11),Cell(3,11),Cell(-3,-11),Cell(-3,11),Cell(-4,9),Cell(4,9),Cell(-4,-9),Cell(4,-9),Cell(-5,9),Cell(5,9),Cell(-5,-9),Cell(5,-9),Cell(-6,8),Cell(6,8),Cell(-6,-8),Cell(6,-8),Cell(-7,8),Cell(7,8),Cell(-7,-8),Cell(7,-8),Cell(-8,7),Cell(8,7),Cell(-8,-7),Cell(8,-7),Cell(-8,6),Cell(8,6),Cell(-8,-6),Cell(8,-6),Cell(-9,5),Cell(9,5),Cell(-9,-5),Cell(9,-5),Cell(-9,4),Cell(9,4),Cell(-9,-4),Cell(9,-4),Cell(-10,3),Cell(10,3),Cell(-10,-3),Cell(10,-3),Cell(-10,2),Cell(10,2),Cell(-10,-2),Cell(10,-2),Cell(-11,1),Cell(11,1),Cell(-11,-1),Cell(11,-1),Cell(11,0),Cell(-11,0)
+};
 }
 
 // SYNTHETIC: GAMEMD 0x005638C0 SYMBOL
-// _$E222
+// _$E225
 // SYNTHETIC: GAMEMD 0x005638D0 SYMBOL
-// _$E221
+// _$E224
 Cell const MapClass::OcclusionOffset[] = {
 	Cell(0,0),
 	Cell(-1,1),Cell(0,1),Cell(1,1),Cell(1,0),Cell(-1,0),Cell(1,-1),Cell(0,-1),Cell(-1,-1),
@@ -125,9 +138,9 @@ Cell const MapClass::OcclusionOffset[] = {
 };
 
 // SYNTHETIC: GAMEMD 0x00565060 SYMBOL
-// _$E227
+// _$E230
 // SYNTHETIC: GAMEMD 0x00565080 SYMBOL
-// _$E225
+// _$E228
 CellClass InvalidCell;
 
 // FUNCTION: GAMEMD 0x00565090
@@ -1613,7 +1626,7 @@ ObjectClass * MapClass::Close_Object(Coord const & coord) const
 }
 
 // SYNTHETIC: GAMEMD 0x0056C500 SYMBOL
-// _$E231
+// _$E234
 
 // FUNCTION: GAMEMD 0x0056CB80
 int SubzoneHash(unsigned int const & key)
@@ -3539,7 +3552,7 @@ bool MapClass::Expand_High_Ground(CellClass * cellptr, int region_id)
 }
 
 // SYNTHETIC: GAMEMD 0x00579320 SYMBOL
-// _$E234
+// _$E237
 const Cell CliffVariantOffsets[] = {
 	Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0),
 	Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0),
@@ -3877,7 +3890,7 @@ int MapClass::Straight_Shore_Length(CellClass * cellptr, FacingType direction)
 }
 
 // SYNTHETIC: GAMEMD 0x0057A9C0 SYMBOL
-// _$E238
+// _$E241
 Cell ShorePieceOffsets[] = {
 	Cell(0, -1),
 	Cell(0, -1),
@@ -5867,7 +5880,7 @@ bool MapClass::Rebuild_Cliffs_At(Cell const & cell)
 }
 
 // SYNTHETIC: GAMEMD 0x00585EE0 SYMBOL
-// _$E243
+// _$E246
 Cell RegionQuadrantOffsets[4] = {
 	Cell(0, 0), Cell(REGION_WIDTH, 0), Cell(0, REGION_HEIGHT), Cell(REGION_WIDTH, REGION_HEIGHT),
 };

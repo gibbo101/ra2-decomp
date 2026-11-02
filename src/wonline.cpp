@@ -2922,10 +2922,6 @@ bool FUN_00786EF0(void)
 	return result;
 }
 
-namespace UI {
-	void __fastcall FocusOnWindow(HWND window);
-	void __fastcall EndDialog(HWND window);
-}
 
 #include "_mixfile.h"
 #include "_pk.h"
@@ -2941,6 +2937,7 @@ static inline void Set_Lobby_Number(WolChannel & chan)
 {
 	DAT_00B77DD4 = atol(chan.Name + strlen("Lob_41_"));
 }
+
 
 // FUNCTION: GAMEMD 0x00788180
 int __fastcall FUN_00788180(bool flag)
@@ -3037,6 +3034,15 @@ int __fastcall FUN_00788180(bool flag)
 	}
 	return best;
 }
+
+void FUN_0052F3F0(void);
+void __fastcall FUN_0079FC10(int a, int b, int c);
+void __fastcall FUN_005E7460(void);
+extern char DAT_00B77A04[];
+extern char DAT_00B76568[];
+extern int DAT_00841F34;
+extern int DAT_00841F38;
+extern int DAT_00841F3C;
 
 extern long DAT_00B77EA8;
 void __fastcall FUN_004E34A0(HWND dialog, int side, int flag);
@@ -5194,6 +5200,13 @@ void __fastcall FUN_00793CD0(int slot)
 	Session.unknown_2FEC++;
 }
 
+#include "wspudp.h"
+
+static inline bool Is_Local_Host(void)
+{
+	return FUN_007930A0();
+}
+
 #include <snmp.h>
 
 struct tConnInfoStruct {
@@ -5210,6 +5223,254 @@ extern LPVOID (__stdcall * DAT_00B778F0)(DWORD bytes);
 extern VOID (__stdcall * DAT_00B77AC0)(LPVOID mem);
 hostent * __stdcall FUN_007C8980(char const * name);
 int __stdcall FUN_007C897A(void);
+
+#include "ownertalk.h"
+
+extern bool DAT_00B77E26;
+extern bool DAT_00B77E27;
+extern int Frame;
+bool FUN_007947B0(void);
+int __fastcall FUN_00795CD0(bool go);
+
+// FUNCTION: GAMEMD 0x00794BA0
+void FUN_00794BA0(void)
+{
+	FUN_004068E0("Start_Game_Now\n");
+	DAT_00B77E26 = true;
+	if (DAT_00B77900.length() == 0) {
+		DAT_00B77E28 = 0;
+		if (FUN_0077CF40()) {
+			FUN_0079FC10(11, -1, 0);
+		}
+		DAT_00B77DEC = 0;
+		FUN_0052F3F0();
+		DAT_00B77E27 = false;
+		DAT_00B77E26 = false;
+		return;
+	}
+
+	PacketTransport->Discard_In_Buffers();
+	PacketTransport->Discard_Out_Buffers();
+	memset(DAT_00B73BB4, -1, 8 * sizeof(int));
+	FUN_00793250();
+	for (int wait = 0; wait < 100; wait++) {
+		Call_Back();
+	}
+	Ipx.Global_Channel_Op_44(300);
+
+	bool verified = FUN_007947B0();
+	if (!verified) {
+		DAT_00B77DCC = 0;
+		if (!Is_Local_Host()) {
+			FUN_004068E0("Failed to verify connection paths\n");
+		}
+	}
+
+	int result = FUN_00795CD0(verified);
+	if (result) {
+		FUN_004068E0("Negotiate_Scenario_Transfer failed\n");
+		if (result == 2) {
+			ODMessageBox(StringTable::LoadString("TXT_SCENARIOS_DO_NOT_MATCH", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x4F44), 0, FUN_0077D710, 0);
+		}
+		FUN_00793440();
+		DAT_00B77E28 = 0;
+		if (FUN_0077CF40()) {
+			FUN_0079FC10(11, -1, 0);
+		}
+		DAT_00B77DEC = 0;
+		FUN_00793490();
+		FUN_0052F3F0();
+		DAT_00B77E27 = false;
+		DAT_00B77E26 = false;
+		DAT_00B77DC1 = 1;
+		FUN_004068E0("setting EV_EXIT\n");
+		SetEvent(DAT_00B73684[6]);
+		FUN_004068E0("Request channel leave in game start after scenario mismatch\n");
+		DAT_00AC116C->V09();
+		if (Session.unknown_0C == 1 || Session.unknown_0C == 2 || Session.unknown_0C == 3) {
+			FUN_0078ABF0(true, StringTable::LoadString("TXT_AWAY_QUICKMATCH", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x4F69));
+		} else {
+			FUN_0078ABF0(false, DAT_00887734);
+		}
+		return;
+	}
+
+	FUN_004068E0("Negotiate_Scenario_Transfer succeeded\n");
+	for (int p = 0; p < Session.Players.Count(); p++) {
+		if (Session.PlayerPorts[p] == 0) {
+			Session.PlayerPorts[p] = UDPInterfaceClass::UDPListenPort;
+		}
+	}
+	User * host = FUN_007931A0();
+	if (host) {
+		for (int h = 0; h < Session.Players.Count(); h++) {
+			if (stricmp(FUN_007350C0(Session.Players[h]->Name), host->Nick) == 0) {
+				Session.PacketRouterPort = Session.PlayerPorts[h];
+				break;
+			}
+		}
+	}
+
+	FUN_004068E0("Closing Verify Connections Dialog\n");
+	FUN_00793440();
+	FUN_004068E0("Closed Verify Connections Dialog\n");
+
+	if (!(Session.Type == GAME_INTERNET && Session.unknown_0C == 3)) {
+		Session.House = 0;
+	}
+
+	Session.FrameSendRate = 5;
+	switch (Session.Options.GameSpeed) {
+		case 0:
+			Session.MaxAhead = 40;
+			Session.PrecalcDesiredFrameRate = 60;
+			Session.FrameSendRate = 10;
+			break;
+		case 1:
+			Session.MaxAhead = 40;
+			Session.PrecalcDesiredFrameRate = 45;
+			Session.FrameSendRate = 10;
+			break;
+		case 2:
+			Session.MaxAhead = 30;
+			Session.PrecalcDesiredFrameRate = 30;
+			break;
+		case 3:
+			Session.MaxAhead = 20;
+			Session.PrecalcDesiredFrameRate = 20;
+			break;
+		case 4:
+			Session.MaxAhead = 20;
+			Session.PrecalcDesiredFrameRate = 15;
+			break;
+		case 5:
+			Session.MaxAhead = 20;
+			Session.PrecalcDesiredFrameRate = 12;
+			break;
+		default:
+			Session.MaxAhead = 10;
+			Session.PrecalcDesiredFrameRate = 10;
+			break;
+	}
+	if (Session.unknown_3090) {
+		Session.MaxAhead += 20;
+	}
+	Session.PrecalcMaxAhead = 0;
+	if (!FUN_007930A0()) {
+		Session.PrecalcDesiredFrameRate = 0;
+	}
+
+	int worst = 0;
+	for (int q = 0; q < 8; q++) {
+		if (DAT_00B7790C[q] > worst) {
+			worst = DAT_00B7790C[q];
+		}
+	}
+	if (Session.unknown_3090) {
+		worst *= 2;
+	}
+
+	Session.LatencyFudge = 1;
+	if (worst != 0 && worst != 1000) {
+		FUN_004068E0("Max ping is %d ms\n", worst);
+		if (worst > 1000) {
+			Session.LatencyFudge = 2;
+		} else if (worst < 600) {
+			Session.LatencyFudge = 1;
+		}
+		int ticks = 60 * worst / 1000;
+		ticks += 120 * ticks / 100;
+		Ipx.Set_Timing(ticks, (unsigned int)-1, ticks * 8);
+		if (FUN_007930A0()) {
+			unsigned ahead;
+			switch (Session.LatencyFudge) {
+				case 0:
+				case 1:
+					ahead = Session.MaxAhead;
+					break;
+				case 2:
+					ahead = (Session.MaxAhead / 2) + Session.MaxAhead;
+					break;
+				case 3:
+					ahead = Session.MaxAhead * 2;
+					break;
+				default:
+					ahead = Session.PrecalcMaxAhead;
+					break;
+			}
+			ahead = 10 * (ahead / 10);
+			Session.PrecalcMaxAhead = ahead;
+		}
+	} else {
+		FUN_004068E0("Ping times not available - Using defaults\n");
+		Session.PrecalcMaxAhead = 10 * (Session.MaxAhead / 10);
+		if ((unsigned)Session.PrecalcMaxAhead <= 10) {
+			Session.PrecalcMaxAhead = 10;
+		}
+	}
+
+	FUN_004068E0("PrecalcMaxAhead is %d\n", Session.PrecalcMaxAhead);
+	FUN_004068E0("PrecalcDesiredFrameRate is %d\n", Session.PrecalcDesiredFrameRate);
+	FUN_004068E0("LatencyFudge is %d\n", Session.LatencyFudge);
+	FUN_004068E0("FrameSendRate is %d\n", Session.FrameSendRate);
+	Session.MaxMaxAhead = Session.MaxAhead;
+	memset(Session.ConnectionStats, 0, sizeof(Session.ConnectionStats));
+	UDPInterfaceClass::UDPListenPort = 1234;
+	Options.GameSpeed = Session.Options.GameSpeed;
+	DAT_00841F34 = 1235;
+	DAT_00841F38 = 1236;
+	DAT_00841F3C = 1237;
+	Frame = 0;
+	if (Session.unknown_3090) {
+		OwnerTalk.Wait_For_Router_Shutdown(2000, true);
+	}
+	DAT_00B77A04[0] = 0;
+	DAT_00B76568[0] = 0;
+
+	if (FUN_0077D970()) {
+		User * user = NULL;
+		int squad1 = 0;
+		int squad2 = 0;
+		for (int i = 0; i < DAT_00B77900.length(); i++) {
+			DAT_00B77900.getPointer(&user, i);
+			if (squad1 == 0 || squad1 == (int)user->Squad) {
+				strcat(DAT_00B77A04, user->Nick);
+				strcat(DAT_00B77A04, ",");
+				squad1 = user->Squad;
+			} else if (squad2 == 0 || squad2 == (int)user->Squad) {
+				strcat(DAT_00B76568, user->Nick);
+				strcat(DAT_00B76568, ",");
+				squad2 = user->Squad;
+			}
+		}
+	}
+	if (Session.Type == GAME_INTERNET && Session.unknown_0C == 3) {
+		User * user = NULL;
+		for (int i = 0; i < DAT_00B77900.length(); i++) {
+			DAT_00B77900.getPointer(&user, i);
+			if (DAT_00B76E58[i].House == 0) {
+				strcat(DAT_00B77A04, user->Nick);
+				strcat(DAT_00B77A04, ",");
+			} else {
+				strcat(DAT_00B76568, user->Nick);
+				strcat(DAT_00B76568, ",");
+			}
+		}
+	}
+
+	FUN_004068E0("setting EV_STARTGAME\n");
+	SetEvent(DAT_00B73684[7]);
+	if (FUN_0077CF40()) {
+		FUN_0079FC10(11, -1, 0);
+	}
+	DAT_00B77DC1 = 1;
+	FUN_004068E0("Request channel leave in game start\n");
+	DAT_00AC116C->V09();
+	FUN_005E7460();
+	DAT_00B77E27 = false;
+	DAT_00B77E26 = false;
+	FUN_004068E0("Leaving Start_Game_Now\n");
+}
 
 // FUNCTION: GAMEMD 0x00795650
 bool __fastcall FUN_00795650(IPXAddressClass * address)
@@ -5437,19 +5698,10 @@ bool __fastcall FUN_00795650(IPXAddressClass * address)
 	return(found);
 }
 
-#include "conquer.h"
-#include "globals.h"
-#include "wspudp.h"
-
 extern bool DAT_00B77E2C;
 
 namespace OwnerDraw {
 char * __fastcall WideToCharString(char * dest, wchar_t const * src, int count);
-}
-
-static inline bool Is_Local_Host(void)
-{
-	return FUN_007930A0();
 }
 
 bool __fastcall FUN_006951F0(char const * name, unsigned int length, char const * digest, bool official, bool flag);
@@ -5928,11 +6180,6 @@ namespace Game {
 }
 extern int DAT_00B77D6C;
 extern char DAT_00B77830[];
-extern unsigned char DAT_00B77A04;
-extern unsigned char DAT_00B76568;
-extern int DAT_00841F34;
-extern int DAT_00841F38;
-extern int DAT_00841F3C;
 void __fastcall FUN_005C6120(DynamicVectorClass<NodeNameType *> * vec);
 void __fastcall FUN_005E7BF0(int slot);
 void __fastcall FUN_005E7460(void);
@@ -6096,8 +6343,8 @@ void FUN_007970D0(void)
 	DAT_00841F38 = 1236;
 	DAT_00841F3C = 1237;
 	Frame = 0;
-	DAT_00B77A04 = 0;
-	DAT_00B76568 = 0;
+	DAT_00B77A04[0] = 0;
+	DAT_00B76568[0] = 0;
 	FUN_005E7460();
 }
 

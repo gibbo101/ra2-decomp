@@ -131,6 +131,8 @@ Each entry: what the diff showed, then the source change that fixed it.
   into callee-saved registers before a call, load them in earlier statements:
   `int key = p->Key; int old = t[i]; t[i] = old + p->F(key);`. One such statement can
   fix the whole function's register allocation.
+- A random range's arguments that load in the wrong order may want the original's own
+  wrapper: WPAudio's AudioRandomPick(lo, hi) fixed three audevent.cpp functions.
 - A load order no rewording moves: look at the inline constructor's parameter types.
   `CellStruct(int x, int y)` keeps adds 32-bit (`lea`); short parameters narrow them.
 - `(*this)[Count++] = x` through an inline `operator[]`, or
@@ -391,6 +393,8 @@ Each entry: what the diff showed, then the source change that fixed it.
   overloads a names.csv row with their decorated symbol, or check.py resolves by name.
 - A function that matches YRpp's address may be TS's under another name (FindInfantry-
   Subposition is Closest_Free_Spot): compare with TibSun before adding a member.
+- A call into a function landed in the same round stays unverified until --record: the
+  plain re-run after it caught audevent calling AudioCacheGetItem for AudioCacheLoadItem.
 - An unverified reference proves nothing: a wrong offset into a global object whose
   address check.py does not know passes. Give each object you reach into a names.csv
   row; `uv run tools/refaudit.py` lists symbols whose references imply different bases.
@@ -404,6 +408,7 @@ Each entry: what the diff showed, then the source change that fixed it.
   after the function shifts its heap offsets too (wonline 0x00788180); never add unused ones.
   One move may not be enough: move several together (six held it against a new inline).
   Removing declarations nothing uses works too (nine held it); results jump with set size.
+  An unused `#include` is one too: dropping overtype.h restored DrawMap 0x00640A40.
 - A short global is read as a dword only at offset 0 of an extern aggregate, or where its
   definition lands 4-aligned in .bss, which VC6 orders by a hash of the name.
 - A shared-header layout change can flip it as well: an equally true form with fewer new

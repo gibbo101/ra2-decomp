@@ -4,7 +4,8 @@ Usage: uv run tools/modules.py [OPENTS_CODE_DIR]
 
 The linker placed modules in case-insensitive alphabetical order of file name, so each
 module is one address range and the ranges are sorted by name; the VQA library's objects
-follow the game's, in their own alphabetical order, named vqalib/X. Common headers define
+follow the game's, in their own alphabetical order, named vqalib/X; the audio library's
+precede the game's the same way, named wpaudio/X. Common headers define
 static objects, so every module including them begins with the initialisers of its own
 copies: a 23-byte one zeroing a 16-byte object, a run of 13 from a second header, or both
 side by side. Each such set starts a segment, and a segment holds more than one module where
@@ -79,6 +80,7 @@ import pefile
 ROOT = Path(__file__).resolve().parent.parent
 WEIGHT = {"F": 10, "T": 10, "O": 1, "V": 1, "Y": 1, "L": 1, "G": 1, "C": 1, "B": 1, "U": 1, "D": 1}
 LIBRARIES = ("vqalib",)
+LEADING = ("wpaudio",)
 END_MARKER = re.compile(rb"\x33\xc0\xa3....\xa3....\xa3....\xa3....\xc3", re.S)
 HEADER_MARKER = re.compile(rb"\xdd\x05....\xdd\x05....\xe8....\xdc\xc0\x83\xec\x08\xdd\x1c\x24"
                            rb"\xe8....\xdd\x1d....\x83\xc4\x08\xc3", re.S)
@@ -250,8 +252,11 @@ def opents_classes(code_dir: Path):
 
 
 def sort_key(name: str) -> tuple:
-    """Link-order key of a module: the game's objects by name, then each library's."""
+    """Link-order key of a module: the leading libraries' objects, the game's by name, then
+    the trailing libraries'."""
     lib, _, stem = name.lower().rpartition("/")
+    if lib in LEADING:
+        return (LEADING.index(lib) - len(LEADING), stem)
     return (LIBRARIES.index(lib) + 1 if lib else 0, stem)
 
 
@@ -539,7 +544,7 @@ def assign(labels, kinds, segment_of):
 def around(kept, fn):
     """The link-order keys of the kept labels before and after a function."""
     k = bisect.bisect_left([p[3] for p in kept], fn)
-    return (kept[k - 1][1] if k else (-1, ""),
+    return (kept[k - 1][1] if k else (-len(LEADING) - 1, ""),
             kept[k][1] if k < len(kept) else (len(LIBRARIES) + 1, ""))
 
 
@@ -957,7 +962,7 @@ def main() -> None:
                   + (f": {', '.join(why)[:160]}" if why else ""))
 
     # A range still unnamed in the game's own code takes a provisional name from its address.
-    libraries = min((r[1][0] for r in ranges if sort_key(r[0])[0]), default=library_start)
+    libraries = min((r[1][0] for r in ranges if sort_key(r[0])[0] > 0), default=library_start)
     for rng in ranges:
         if rng[0] == "?" and rng[1][0] < libraries:
             stems = {landed[fn] for fn in rng[1] if fn in landed}

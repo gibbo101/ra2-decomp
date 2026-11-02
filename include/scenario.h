@@ -10,6 +10,7 @@
 #include "random.h"
 #include "special.h"
 #include "stimer.h"
+#include "stringid.h"
 #include "timer.h"
 #include "typelist.h"
 #include "types.h"
@@ -35,31 +36,6 @@ class AbstractClass;
 class CellClass;
 class ObjectClass;
 
-class MissionTimerString {
-	public:
-		MissionTimerString(void) { Buffer[0] = '\0'; }
-		MissionTimerString(NoInitClass const &) {}
-		MissionTimerString(char const * text)
-		{
-			if (!text) {
-				Buffer[0] = '\0';
-			} else {
-				strncpy(Buffer, text, sizeof(Buffer) - 1);
-				Buffer[sizeof(Buffer) - 1] = '\0';
-			}
-		}
-		MissionTimerString & operator=(MissionTimerString const & that)
-		{
-			if (&that != this) {
-				memcpy(Buffer, that.Buffer, sizeof(Buffer));
-			}
-			return *this;
-		}
-		operator char const *(void) const { return Buffer; }
-		char const & operator[](int index) const { return Buffer[index]; }
-	private:
-		char Buffer[32];
-};
 
 class ScenarioClass {
 	public:
@@ -153,7 +129,7 @@ class ScenarioClass {
 
 		CDTimerClass<FrameTimerClass> MissionTimer;
 		wchar_t const * MissionTimerTextCSF;
-		MissionTimerString MissionTimerText;
+		TStringID<31> MissionTimerText;
 
 		CDTimerClass<FrameTimerClass> ShroudTimer;
 

@@ -92,15 +92,6 @@ extern DynamicVectorClass<BuildingClass *> DAT_00A8EB40;
 extern DynamicVectorClass<InfantryClass *> DAT_00A83DE8;
 #define Infantry DAT_00A83DE8
 
-inline HouseClass * Find_House(TriggerClass * trig, int index)
-{
-	if (trig == NULL) return(NULL);
-	if (index == 0x2325) return(FUN_00726910(trig));
-	if (index == -1) return(NULL);
-	if (FUN_00510F60(index)) return(FUN_00510ED0(index));
-	return(FUN_00502D30(index));
-}
-
 DynamicVectorClass<TActionClass *> Actions;
 
 void __fastcall FUN_0072DDB0(void);
@@ -400,14 +391,175 @@ void TActionClass::Read_INI(void)
 	}
 }
 
+// FUNCTION: GAMEMD 0x006DD8B0
+bool TActionClass::operator() (HouseClass * house, ObjectClass * object, TriggerClass * trig, Cell const & cell)
+{
+	bool success = true;
+
+	if (object != NULL && !object->IsActive) {
+		object = NULL;
+	}
+
+	switch (Action) {
+		case 97: success = TAction_TOGGLE_TRAIN_CARGO(house, object, trig, cell); break;
+		case 94: success = TAction_ION_CANNON(house, object, trig, cell); break;
+		case 95: success = TAction_MULTI_MISSILE(house, object, trig, cell); break;
+		case 102: success = TAction_LIGHTNING_STORM(house, object, trig, cell); break;
+		case 96: success = TAction_CHEM_MISSILE(house, object, trig, cell); break;
+		case 39:
+		case 92:
+		case 93: success = TAction_DEACTIVATE_FIRESTORM(house, object, trig, cell); break;
+		case 91: success = TAction_GO_BERZERK(house, object, trig, cell); break;
+		case 81: success = TAction_WAKEUP_SELF(house, object, trig, cell); break;
+		case 85: success = TAction_VEIN_GROWTH(house, object, trig, cell); break;
+		case 86: success = TAction_TIB_GROWTH(house, object, trig, cell); break;
+		case 87: success = TAction_ICE_GROWTH(house, object, trig, cell); break;
+		case 82: success = TAction_WAKEUP_ALL_SLEEP(house, object, trig, cell); break;
+		case 83: success = TAction_WAKEUP_ALL_HARMLESS(house, object, trig, cell); break;
+		case 84: success = TAction_WAKEUP_GROUP(house, object, trig, cell); break;
+		case 67: success = TAction_ANNOUNCE_WIN(house, object, trig, cell); break;
+		case 68: success = TAction_ANNOUNCE_LOSE(house, object, trig, cell); break;
+		case 69: success = TAction_FORCE_END(house, object, trig, cell); break;
+		case 63: success = TAction_DAMAGE(house, object, trig, cell); break;
+		case 64: success = TAction_LIGHT_SMALL(house, object, trig, cell); break;
+		case 65: success = TAction_LIGHT_MEDIUM(house, object, trig, cell); break;
+		case 66: success = TAction_LIGHT_LARGE(house, object, trig, cell); break;
+		case 60: success = TAction_SELL_ATTACHED(house, object, trig, cell); break;
+		case 61: success = TAction_TURN_OFF_ATTACHED(house, object, trig, cell); break;
+		case 62: success = TAction_TURN_ON_ATTACHED(house, object, trig, cell); break;
+		case 14: success = TAction_CHANGE_HOUSE(house, object, trig, cell); break;
+		case 36: success = TAction_ALL_CHANGE_HOUSE(house, object, trig, cell); break;
+		case 11: success = TAction_TEXT_TRIGGER(house, object, trig, cell); break;
+		case 37: success = TAction_MAKE_ALLY(house, object, trig, cell); break;
+		case 38: success = TAction_MAKE_ENEMY(house, object, trig, cell); break;
+		case 35: success = TAction_PREFERRED_TARGET(house, object, trig, cell); break;
+		case 30: success = TAction_BASE_BUILDING(house, object, trig, cell); break;
+		case 31: success = TAction_CREEP_SHADOW(house, object, trig, cell); break;
+		case 28: success = TAction_SET_GLOBAL(house, object, trig, cell); break;
+		case 29: success = TAction_CLEAR_GLOBAL(house, object, trig, cell); break;
+		case 59: success = TAction_REDUCE_TIBERIUM(house, object, trig, cell); break;
+		case 17: success = TAction_REVEAL_SOME(house, object, trig, cell); break;
+		case 18: success = TAction_REVEAL_ZONE(house, object, trig, cell); break;
+		case 16: success = TAction_REVEAL_ALL(house, object, trig, cell); break;
+		case 23: success = TAction_START_TIMER(house, object, trig, cell); break;
+		case 24: success = TAction_STOP_TIMER(house, object, trig, cell); break;
+		case 25: success = TAction_ADD_TIMER(house, object, trig, cell); break;
+		case 26: success = TAction_SUB_TIMER(house, object, trig, cell); break;
+		case 27: success = TAction_SET_TIMER(house, object, trig, cell); break;
+		case 103: success = TAction_SET_TIMER_TEXT(house, object, trig, cell); break;
+		case 10: success = TAction_PLAY_MOVIE(house, object, trig, cell); break;
+		case 19: success = TAction_PLAY_SOUND(house, object, trig, cell); break;
+		case 98: success = TAction_PLAY_SOUND_RANDOM(house, object, trig, cell); break;
+		case 99: success = TAction_PLAY_SOUND_AT(house, object, trig, cell); break;
+		case 101: success = TAction_REVEAL_AROUND_WAYPOINT(house, object, trig, cell); break;
+		case 20: success = TAction_PLAY_MUSIC(house, object, trig, cell); break;
+		case 21: success = TAction_PLAY_SPEECH(house, object, trig, cell); break;
+		case 33: success = TAction_1_SPECIAL(house, object, trig, cell); break;
+		case 34: success = TAction_FULL_SPECIAL(house, object, trig, cell); break;
+		case 8: success = TAction_DZ(house, object, trig, cell); break;
+		case 1: success = TAction_WIN(house, object, trig, cell); break;
+		case 2: success = TAction_LOSE(house, object, trig, cell); break;
+		case 3: success = TAction_BEGIN_PRODUCTION(house, object, trig, cell); break;
+		case 9: success = TAction_FIRE_SALE(house, object, trig, cell); break;
+		case 13: success = TAction_AUTOCREATE(house, object, trig, cell); break;
+		case 4: success = TAction_CREATE_TEAM(house, object, trig, cell); break;
+		case 5: success = TAction_DESTROY_TEAM(house, object, trig, cell); break;
+		case 7: success = TAction_SPAWN_TEAM(house, object, trig, cell); break;
+		case 80: success = TAction_SPAWN_TEAM_AT_WP(house, object, trig, cell); break;
+		case 6: success = TAction_ALL_HUNT(house, object, trig, cell); break;
+		case 32: success = TAction_DESTROY_OBJECT(house, object, trig, cell); break;
+		case 40: success = TAction_RESIZE_PLAYER_VIEW(house, object, trig, cell); break;
+		case 41: success = TAction_PLAY_ANIM(house, object, trig, cell); break;
+		case 42: success = TAction_DO_EXPLOSION(house, object, trig, cell); break;
+		case 43: success = TAction_METEOR_IMPACT(house, object, trig, cell); break;
+		case 44: success = TAction_ION_STORM_START(house, object, trig, cell); break;
+		case 45: success = TAction_ION_STORM_STOP(house, object, trig, cell); break;
+		case 46: success = TAction_CLEAR_MODES(house, object, trig, cell); break;
+		case 47: success = TAction_UNLOCK_INPUT(house, object, trig, cell); break;
+		case 48: success = TAction_CENTER_VIEWPOINT(house, object, trig, cell); break;
+		case 49: success = TAction_ZOOM_IN(house, object, trig, cell); break;
+		case 50: success = TAction_ZOOM_OUT(house, object, trig, cell); break;
+		case 51: success = TAction_RESHROUD(house, object, trig, cell); break;
+		case 52: success = TAction_CHANGE_SPOTLIGHT_BEHAVIOR(house, object, trig, cell); break;
+		case 12: success = TAction_DESTROY_TRIGGER(house, object, trig, cell); break;
+		case 70: success = TAction_DESTROY_TAG(house, object, trig, cell); break;
+		case 22: success = TAction_FORCE_TRIGGER(house, object, trig, cell); break;
+		case 53: success = TAction_ENABLE_TRIGGER(house, object, trig, cell); break;
+		case 54: success = TAction_DISABLE_TRIGGER(house, object, trig, cell); break;
+		case 55: success = TAction_RADAR_EVENT(house, object, trig, cell); break;
+		case 56: success = TAction_SET_LOCAL(house, object, trig, cell); break;
+		case 57: success = TAction_CLEAR_LOCAL(house, object, trig, cell); break;
+		case 58: success = TAction_METEOR_SHOWER(house, object, trig, cell); break;
+		case 71: success = TAction_SET_AMBIENT_STEP(house, object, trig, cell); break;
+		case 72: success = TAction_SET_AMBIENT_RATE(house, object, trig, cell); break;
+		case 73: success = TAction_SET_AMBIENT_LIGHT(house, object, trig, cell); break;
+		case 74: success = TAction_BEGIN_AI_TRIGGERS(house, object, trig, cell); break;
+		case 75: success = TAction_STOP_AI_TRIGGERS(house, object, trig, cell); break;
+		case 76: success = TAction_SET_AI_TRIGGER_TEAM_RATIO(house, object, trig, cell); break;
+		case 77: success = TAction_SET_TEAM_AIRCRAFT_RATIO(house, object, trig, cell); break;
+		case 78: success = TAction_SET_TEAM_INFANTRY_RATIO(house, object, trig, cell); break;
+		case 79: success = TAction_SET_TEAM_UNIT_RATIO(house, object, trig, cell); break;
+		case 88: success = TAction_PARTICLE_ANIM(house, object, trig, cell); break;
+		case 89: success = TAction_REMOVE_PARTICLE_ANIM(house, object, trig, cell); break;
+		case 90: success = TAction_ION_LIGHTNING_STRIKE(house, object, trig, cell); break;
+		case 100: success = TAction_PLAY_INGAME_MOVIE(house, object, trig, cell); break;
+		case 104: success = TAction_FLASH_TEAM(house, object, trig, cell); break;
+		case 105: success = TAction_TALK_BUBBLE(house, object, trig, cell); break;
+		case 106: success = TAction_SET_TECH_LEVEL(house, object, trig, cell); break;
+		case 107: success = TAction_CHRONO_IN_TEAM(house, object, trig, cell); break;
+		case 108: success = TAction_CREATE_CRATE(house, object, trig, cell); break;
+		case 109: success = TAction_IRON_CURTAIN(house, object, trig, cell); break;
+		case 110: success = TAction_PAUSE_SCENARIO(house, object, trig, cell); break;
+		case 111: success = TAction_EJECT_OCCUPANTS(house, object, trig, cell); break;
+		case 112: success = TAction_JUMP_VIEWPOINT(house, object, trig, cell); break;
+		case 113: success = TAction_CHEER(house, object, trig, cell); break;
+		case 114: success = TAction_SWITCH_TAB(house, object, trig, cell); break;
+		case 115: success = TAction_FlashCameo(house, object, trig, cell); break;
+		case 116: success = TAction_STOP_SOUND_AT(house, object, trig, cell); break;
+		case 117: success = TAction_PLAY_INGAME_MOVIE_PAUSE(house, object, trig, cell); break;
+		case 118: success = TAction_CLEAR_SMUDGES(house, object, trig, cell); break;
+		case 119: success = TAction_DESTROY_ALL_OBJECTS(house, object, trig, cell); break;
+		case 120: success = TAction_DESTROY_ALL_BUILDINGS(house, object, trig, cell); break;
+		case 121: success = TAction_DESTROY_ALL_NON_NAVAL_UNITS(house, object, trig, cell); break;
+		case 122: success = TAction_DESTROY_ALL_NAVAL_UNITS(house, object, trig, cell); break;
+		case 123: success = TAction_MIND_CONTROL_BUILDINGS(house, object, trig, cell); break;
+		case 124: success = TAction_RELINQUISH_BUILDINGS(house, object, trig, cell); break;
+		case 125: success = TAction_CreateBuildingAt(house, object, trig, cell); break;
+		case 126: success = TAction_RESTORE_STARTING_UNITS(house, object, trig, cell); break;
+		case 127: success = TAction_SET_CHRONO_SCREEN_EFFECT(house, object, trig, cell); break;
+		case 128: success = TAction_TELEPORT_HOUSE(house, object, trig, cell); break;
+		case 129: success = TAction_SetSWChargeLevel(house, object, trig, cell); break;
+		case 130: success = TAction_RESTORE_STARTING_BUILDINGS(house, object, trig, cell); break;
+		case 131: success = TAction_FlashBuildingsOfType(house, object, trig, cell); break;
+		case 132: success = TAction_SetSWRechargeTime(house, object, trig, cell); break;
+		case 133: success = TAction_ResetSWRechargeTime(house, object, trig, cell); break;
+		case 134: success = TAction_ResetSW(house, object, trig, cell); break;
+		case 135: success = TAction_SetPreferredTargetCell(house, object, trig, cell); break;
+		case 136: success = TAction_ResetTargetCell(house, object, trig, cell); break;
+		case 137: success = TAction_SetBaseCenter(house, object, trig, cell); break;
+		case 138: success = TAction_ResetBaseCenter(house, object, trig, cell); break;
+		case 139: success = TAction_RADAR_BLACKOUT(house, object, trig, cell); break;
+		case 140: success = TAction_SetDefenseCell(house, object, trig, cell); break;
+		case 141: success = TAction_ResetDefenseCell(house, object, trig, cell); break;
+		case 142: success = TAction_SET_TINT_RED(house, object, trig, cell); break;
+		case 143: success = TAction_SET_TINT_GREEN(house, object, trig, cell); break;
+		case 144: success = TAction_SET_TINT_BLUE(house, object, trig, cell); break;
+		case 145: success = TAction_CENTER_ON_BASE(house, object, trig, cell); break;
+
+		default:
+			break;
+	}
+	return(success);
+}
+
 // FUNCTION: GAMEMD 0x006E0030
-bool TActionClass::TAction_FUN_006E0030(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+bool TActionClass::TAction_DEACTIVATE_FIRESTORM(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	return(true);
 }
 
 // FUNCTION: GAMEMD 0x006E0040
-bool TActionClass::TAction_CHANGE_ZOOM(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+bool TActionClass::TAction_ACTIVATE_FIRESTORM(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	return(true);
 }
@@ -671,7 +823,7 @@ bool TActionClass::TAction_TURN_ON_ATTACHED(HouseClass * , ObjectClass * , Trigg
 // FUNCTION: GAMEMD 0x006E0AA0
 bool TActionClass::TAction_CHANGE_HOUSE(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
 {
-	HouseClass * hptr = Find_House(trig, Data.Value);
+	HouseClass * hptr = FindHouseByIndex(trig, Data.Value);
 	if (hptr == NULL) {
 		return(false);
 	}
@@ -697,7 +849,7 @@ bool TActionClass::TAction_ALL_CHANGE_HOUSE(HouseClass * house, ObjectClass * , 
 {
 	bool retval = false;
 
-	HouseClass * hptr = Find_House(trig, Data.Value);
+	HouseClass * hptr = FindHouseByIndex(trig, Data.Value);
 	if (hptr == NULL) {
 		return(false);
 	}
@@ -731,7 +883,7 @@ bool TActionClass::TAction_ALL_CHANGE_HOUSE(HouseClass * house, ObjectClass * , 
 // FUNCTION: GAMEMD 0x006E0CA0
 bool TActionClass::TAction_MIND_CONTROL_BUILDINGS(HouseClass * house, ObjectClass * , TriggerClass * trig, Cell const & )
 {
-	HouseClass * hptr = Find_House(trig, Data.Value);
+	HouseClass * hptr = FindHouseByIndex(trig, Data.Value);
 	if (hptr == NULL) {
 		return(false);
 	}
@@ -742,7 +894,7 @@ bool TActionClass::TAction_MIND_CONTROL_BUILDINGS(HouseClass * house, ObjectClas
 // FUNCTION: GAMEMD 0x006E0D00
 bool TActionClass::TAction_RELINQUISH_BUILDINGS(HouseClass * house, ObjectClass * , TriggerClass * trig, Cell const & )
 {
-	HouseClass * hptr = Find_House(trig, Data.Value);
+	HouseClass * hptr = FindHouseByIndex(trig, Data.Value);
 	if (hptr == NULL) {
 		return(false);
 	}
@@ -765,7 +917,7 @@ bool TActionClass::TAction_TEXT_TRIGGER(HouseClass * , ObjectClass * , TriggerCl
 // FUNCTION: GAMEMD 0x006E0DF0
 bool TActionClass::TAction_MAKE_ALLY(HouseClass * house, ObjectClass * , TriggerClass * trig, Cell const & )
 {
-	HouseClass * house2 = Find_House(trig, Data.Value);
+	HouseClass * house2 = FindHouseByIndex(trig, Data.Value);
 	if (house2 == NULL) {
 		return(false);
 	}
@@ -777,7 +929,7 @@ bool TActionClass::TAction_MAKE_ALLY(HouseClass * house, ObjectClass * , Trigger
 // FUNCTION: GAMEMD 0x006E0E60
 bool TActionClass::TAction_MAKE_ENEMY(HouseClass * house, ObjectClass * , TriggerClass * trig, Cell const & )
 {
-	HouseClass * house2 = Find_House(trig, Data.Value);
+	HouseClass * house2 = FindHouseByIndex(trig, Data.Value);
 	if (house2 == NULL) {
 		return(false);
 	}
@@ -950,7 +1102,7 @@ bool TActionClass::TAction_SET_TIMER(HouseClass * , ObjectClass * , TriggerClass
 	Scen->MissionTimer = Data.Value * TICKS_PER_SECOND;
 	Scen->MissionTimer.Start();
 	Scen->MissionTimerTextCSF = DAT_00887734;
-	Scen->MissionTimerText = MissionTimerString(DAT_00889F64);
+	Scen->MissionTimerText = DAT_00889F64;
 	Map.Redraw_Tab();
 	return(true);
 }
@@ -959,13 +1111,13 @@ bool TActionClass::TAction_SET_TIMER(HouseClass * , ObjectClass * , TriggerClass
 bool TActionClass::TAction_SET_TIMER_TEXT(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	char const * text = Text[0] ? Text : NULL;
-	MissionTimerString label(text);
+	TStringID<31> label(text);
 	if (text) {
 		Scen->MissionTimerTextCSF = StringTable::LoadString(text, NULL, "D:\\ra2mdpost\\TAction.CPP", 2242);
 		Scen->MissionTimerText = label;
 	} else {
 		Scen->MissionTimerTextCSF = DAT_00887734;
-		Scen->MissionTimerText = MissionTimerString(DAT_00889F64);
+		Scen->MissionTimerText = DAT_00889F64;
 	}
 	Map.Redraw_Tab();
 	return(true);
@@ -1162,7 +1314,7 @@ bool TActionClass::TAction_LOSE(HouseClass * , ObjectClass * , TriggerClass * , 
 // FUNCTION: GAMEMD 0x006E1E40
 bool TActionClass::TAction_BEGIN_PRODUCTION(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
 {
-	HouseClass * h = Find_House(trig, Data.House);
+	HouseClass * h = FindHouseByIndex(trig, Data.House);
 	if (h == NULL) return(false);
 	h->Begin_Production();
 	return(true);
@@ -1171,7 +1323,7 @@ bool TActionClass::TAction_BEGIN_PRODUCTION(HouseClass * , ObjectClass * , Trigg
 // FUNCTION: GAMEMD 0x006E1EA0
 bool TActionClass::TAction_FIRE_SALE(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
 {
-	HouseClass * h = Find_House(trig, Data.House);
+	HouseClass * h = FindHouseByIndex(trig, Data.House);
 	if (h == NULL) return(false);
 	h->State = STATE_ENDGAME;
 	return(true);
@@ -1180,7 +1332,7 @@ bool TActionClass::TAction_FIRE_SALE(HouseClass * , ObjectClass * , TriggerClass
 // FUNCTION: GAMEMD 0x006E1F00
 bool TActionClass::TAction_AUTOCREATE(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
 {
-	HouseClass * h = Find_House(trig, Data.House);
+	HouseClass * h = FindHouseByIndex(trig, Data.House);
 	if (h == NULL) return(false);
 	h->IsAlerted = true;
 	return(true);
@@ -1225,7 +1377,7 @@ bool TActionClass::TAction_SPAWN_TEAM_AT_WP(HouseClass * , ObjectClass * , Trigg
 // FUNCTION: GAMEMD 0x006E1FF0
 bool TActionClass::TAction_ALL_HUNT(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
 {
-	HouseClass * h = Find_House(trig, Data.House);
+	HouseClass * h = FindHouseByIndex(trig, Data.House);
 	if (h == NULL) return(false);
 	h->All_To_Hunt();
 	return(true);
@@ -1264,7 +1416,7 @@ bool TActionClass::TAction_DESTROY_OBJECT(HouseClass * , ObjectClass * , Trigger
 }
 
 // FUNCTION: GAMEMD 0x006E21D0
-bool TActionClass::TAction_NOP(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
+bool TActionClass::TAction_CHANGE_ZOOM(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	return(true);
 }
@@ -1530,13 +1682,11 @@ bool TActionClass::TAction_ENABLE_TRIGGER(HouseClass * , ObjectClass * , Trigger
 {
 	if (Trigger != NULL) {
 		for (int index = 0; index < Triggers.Count(); index++) {
-			TriggerClass * trig = Triggers[index];
-			TriggerTypeClass * type = trig->Class;
-			if (type == Trigger) {
-				if ((Scen->Difficulty != 0 || type->IsEnabledOnEasy) &&
-						(Scen->Difficulty != 1 || type->IsEnabledOnMedium) &&
-						(Scen->Difficulty != 2 || type->IsEnabledOnHard)) {
-					trig->Enable();
+			if (Triggers[index]->Class == Trigger) {
+				if ((Scen->Difficulty != 0 || Triggers[index]->Class->IsEnabledOnEasy) &&
+						(Scen->Difficulty != 1 || Triggers[index]->Class->IsEnabledOnMedium) &&
+						(Scen->Difficulty != 2 || Triggers[index]->Class->IsEnabledOnHard)) {
+					Triggers[index]->Enable();
 				}
 			}
 		}
@@ -1669,7 +1819,7 @@ bool TActionClass::TAction_SET_CHRONO_SCREEN_EFFECT(HouseClass * , ObjectClass *
 // FUNCTION: GAMEMD 0x006E2FA0
 bool TActionClass::TAction_BEGIN_AI_TRIGGERS(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
 {
-	HouseClass * hptr = Find_House(trig, Data.Value);
+	HouseClass * hptr = FindHouseByIndex(trig, Data.Value);
 	if (hptr == NULL) return(false);
 	hptr->IsAITriggersOn = true;
 	return(true);
@@ -1678,7 +1828,7 @@ bool TActionClass::TAction_BEGIN_AI_TRIGGERS(HouseClass * , ObjectClass * , Trig
 // FUNCTION: GAMEMD 0x006E3000
 bool TActionClass::TAction_STOP_AI_TRIGGERS(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
 {
-	HouseClass * hptr = Find_House(trig, Data.Value);
+	HouseClass * hptr = FindHouseByIndex(trig, Data.Value);
 	if (hptr == NULL) return(false);
 	hptr->IsAITriggersOn = false;
 	return(true);
@@ -1687,7 +1837,7 @@ bool TActionClass::TAction_STOP_AI_TRIGGERS(HouseClass * , ObjectClass * , Trigg
 // FUNCTION: GAMEMD 0x006E3060
 bool TActionClass::TAction_CHEER(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
 {
-	HouseClass * hptr = Find_House(trig, Data.Value);
+	HouseClass * hptr = FindHouseByIndex(trig, Data.Value);
 	if (hptr == NULL) return(false);
 	hptr->Cheer();
 	return(true);
@@ -1696,7 +1846,7 @@ bool TActionClass::TAction_CHEER(HouseClass * , ObjectClass * , TriggerClass * t
 // FUNCTION: GAMEMD 0x006E30C0
 bool TActionClass::TAction_RESTORE_STARTING_UNITS(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
 {
-	HouseClass * hptr = Find_House(trig, Data.Value);
+	HouseClass * hptr = FindHouseByIndex(trig, Data.Value);
 	if (hptr == NULL) return(false);
 	hptr->RespawnStartingForces();
 	return(true);
@@ -1705,7 +1855,7 @@ bool TActionClass::TAction_RESTORE_STARTING_UNITS(HouseClass * , ObjectClass * ,
 // FUNCTION: GAMEMD 0x006E3120
 bool TActionClass::TAction_RESTORE_STARTING_BUILDINGS(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
 {
-	HouseClass * hptr = Find_House(trig, Data.Value);
+	HouseClass * hptr = FindHouseByIndex(trig, Data.Value);
 	if (hptr == NULL) return(false);
 	hptr->RespawnStartingBuildings();
 	return(true);
@@ -1714,7 +1864,7 @@ bool TActionClass::TAction_RESTORE_STARTING_BUILDINGS(HouseClass * , ObjectClass
 // FUNCTION: GAMEMD 0x006E3180
 bool TActionClass::TAction_DESTROY_ALL_OBJECTS(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
 {
-	HouseClass * hptr = Find_House(trig, Data.Value);
+	HouseClass * hptr = FindHouseByIndex(trig, Data.Value);
 	if (hptr == NULL) return(false);
 	hptr->Destroy_All();
 	return(true);
@@ -1723,7 +1873,7 @@ bool TActionClass::TAction_DESTROY_ALL_OBJECTS(HouseClass * , ObjectClass * , Tr
 // FUNCTION: GAMEMD 0x006E31E0
 bool TActionClass::TAction_DESTROY_ALL_BUILDINGS(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
 {
-	HouseClass * hptr = Find_House(trig, Data.Value);
+	HouseClass * hptr = FindHouseByIndex(trig, Data.Value);
 	if (hptr == NULL) return(false);
 	hptr->Destroy_All_Buildings();
 	return(true);
@@ -1732,7 +1882,7 @@ bool TActionClass::TAction_DESTROY_ALL_BUILDINGS(HouseClass * , ObjectClass * , 
 // FUNCTION: GAMEMD 0x006E3240
 bool TActionClass::TAction_DESTROY_ALL_NON_NAVAL_UNITS(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
 {
-	HouseClass * hptr = Find_House(trig, Data.Value);
+	HouseClass * hptr = FindHouseByIndex(trig, Data.Value);
 	if (hptr == NULL) return(false);
 	hptr->Destroy_All_Non_Buildings_Non_Naval();
 	return(true);
@@ -1741,7 +1891,7 @@ bool TActionClass::TAction_DESTROY_ALL_NON_NAVAL_UNITS(HouseClass * , ObjectClas
 // FUNCTION: GAMEMD 0x006E32A0
 bool TActionClass::TAction_DESTROY_ALL_NAVAL_UNITS(HouseClass * , ObjectClass * , TriggerClass * trig, Cell const & )
 {
-	HouseClass * hptr = Find_House(trig, Data.Value);
+	HouseClass * hptr = FindHouseByIndex(trig, Data.Value);
 	if (hptr == NULL) return(false);
 	hptr->Destroy_All_Non_Buildings_Naval();
 	return(true);
@@ -2163,11 +2313,14 @@ bool TActionClass::TAction_EJECT_OCCUPANTS(HouseClass * , ObjectClass * , Trigge
 bool TActionClass::TAction_SWITCH_TAB(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	int tab = Data.Value;
-	if (tab < 4 && tab >= 0 && Map.Column[tab].FUN_006ABAC0()) {
-		Map.SetTab(tab);
-		return(true);
+	if (tab >= 4 || tab < 0) {
+		return(false);
 	}
-	return(false);
+	if (!Map.Column[tab].FUN_006ABAC0()) {
+		return(false);
+	}
+	Map.SetTab(tab);
+	return(true);
 }
 
 // FUNCTION: GAMEMD 0x006E4150
@@ -2347,7 +2500,7 @@ HouseClass * TActionClass::FindHouseByIndex(TriggerClass * trig, int index) cons
 	if (trig == NULL) {
 		return(NULL);
 	}
-	return(Find_House(trig, index));
+	return((index == 0x2325) ? FUN_00726910(trig) : ((index == -1) ? NULL : (FUN_00510F60(index) ? FUN_00510ED0(index) : FUN_00502D30(index))));
 }
 
 // FUNCTION: GAMEMD 0x006E4630
