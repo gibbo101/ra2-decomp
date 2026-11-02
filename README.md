@@ -10,8 +10,8 @@ when the checker shows its compiled bytes equal the original's, and stand-ins su
 over real objects or hard-coded addresses are rejected however well they score.
 `docs/AGENTS.md` holds the rules the agents follow and every lesson learned.
 
-**Status (2 November 2026):** 18,507 of the game's 19,367 functions match byte for byte
-(96%), covering 2.64 MB of its 3.81 MB of game code (69%). Each function is checked on
+**Status (2 November 2026):** 18,525 of the game's 19,367 functions match byte for byte
+(96%), covering 2.65 MB of its 3.81 MB of game code (70%). Each function is checked on
 its own; linking a whole executable that matches comes later. `docs/PLAN.md` has the
 method and a record of every batch.
 
@@ -63,6 +63,12 @@ Read `docs/AGENTS.md` first: it says what counts as a match and what does not (n
 asm, hard-coded addresses or stand-in structs to force one). Turn on the commit guard
 before your first commit (`docs/COMMIT_GUARD.md`); it keeps game files and personal data
 out of history.
+
+## Credits
+
+- [dk8827](https://github.com/dk8827): matched functions in jumpjet, the capture manager,
+  house, team, foot, planning, tactical, isotype and techno, and the checker's completion
+  checks.
 
 ## You need your own copy of the game
 
