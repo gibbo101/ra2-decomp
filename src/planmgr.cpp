@@ -1567,6 +1567,33 @@ bool __fastcall FUN_00637AA0(void)
 	return PlanningNodeClass::PlanningModeActive;
 }
 
+bool __fastcall FUN_00638C70(TechnoClass * techno);
+
+static inline void Commit_Unit_Orders(TechnoClass * techno)
+{
+	PlanningTokenClass * token = techno->FUN_00705D20();
+	if (token != NULL) {
+		bool started = token->Has_Started();
+		token->FUN_00636CE0();
+		bool permitted = FUN_00638C70(techno);
+		if (!started && permitted) {
+			techno->TryNextPlanningTokenNode();
+		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x00637AB0
+void __fastcall Commit_Plans(int house)
+{
+	int count = Technos.Count();
+	for (int i = 0; i < count; i++) {
+		TechnoClass * techno = Technos[i];
+		if (house == FUN_006339B0(techno)) {
+			Commit_Unit_Orders(techno);
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x00637D00
 void __fastcall FUN_00637D00(PlanningNodeClass * node)
 {
