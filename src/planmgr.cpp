@@ -2515,6 +2515,51 @@ PlanningNodeClass * __fastcall FUN_0063AD40(void)
 	return DAT_00AC4C38;
 }
 
+void __fastcall FUN_0063AD50(void);
+
+static inline PlanningNodeClass * Find_Node_At(DynamicVectorClass<PlanningNodeClass *> const & nodes, Point2D const & point)
+{
+	int count = nodes.Count();
+	int i = 0;
+	if (count > 0) {
+		do {
+			PlanningNodeClass * node = nodes[i];
+			if (node->Hit_Test(point.X, point.Y)) return node;
+			++i;
+		} while (i < count);
+	}
+	return NULL;
+}
+
+// FUNCTION: GAMEMD 0x0063A8E0
+bool __stdcall FUN_0063A8E0(Point2D point)
+{
+	if (!FUN_00637AA0()) return false;
+
+	PlanningNodeClass * selected = FUN_0063AD40();
+	PlanningNodeClass * hover = DAT_00AC4CCC;
+	PlanningNodeClass * hit;
+	if (!hover) {
+		hit = NULL;
+	} else {
+		if (hover->Hit_Test(point.X, point.Y)) {
+			hit = DAT_00AC4CCC;
+		} else {
+			hit = NULL;
+		}
+	}
+
+	if (hit && hit == selected) {
+		Map.Set_Default_Mouse(MOUSE_NORMAL, true);
+		FUN_0063AD50();
+	} else {
+		PlanningNodeClass * node = Find_Node_At(PlanningNodeClass::Unknown1, point);
+		if (node && FUN_0063AC70(node) != -1) return true;
+		FUN_0063AD30(NULL);
+	}
+	return selected || hit;
+}
+
 // FUNCTION: GAMEMD 0x0063B050
 AbstractClass * __fastcall FUN_0063B050(EventClass * event)
 {
