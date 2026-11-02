@@ -515,6 +515,7 @@ OLD_VQA_LCW_Uncompress proc C USES ebx ecx edx esi edi source:DWORD, dest:DWORD,
 
 OLD_VQA_LCW_Uncompress endp
 
+; FUNCTION: GAMEMD 0x007C81DB
 VQA_LCW_Uncompress proc C USES ebx ecx edx edi esi source:DWORD, dest:DWORD, _length:DWORD
 
 	;USES ebx,ecx,edx,edi,esi

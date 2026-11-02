@@ -211,6 +211,7 @@ Clip_Rect	ENDP
 ;*=========================================================================*
 ; int Confine_Rect (int* x, int* y, int dw, int dh, int width, int height);          			   *
 
+; FUNCTION: GAMEMD 0x007C5E7E
 Confine_Rect PROC near \
 	uses ebx esi edi \
 	, x:dword \

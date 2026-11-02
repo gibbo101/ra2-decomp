@@ -299,3 +299,7 @@ address,name,symbol,evidence
 0x00877B14,bNybbleTableLow,,soscodec.asm low nibble table at offset 0x2164 in its codec data section
 0x00877C14,bNybbleTableHigh,,soscodec.asm high nibble table at offset 0x2264 in its codec data section
 0x00B1D14C,HicolorTable,_HicolorTable,0x00748360 allocates the color table used by both ASM_UnVQ1_C1_TABLE variants
+0x00879B30,VQA_dwDiffTable,,vqa_sos.asm difference table at the start of its verified 9056-byte codec data section
+0x0087B170,VQA_wIndexTable,,vqa_sos.asm index table at offset 0x1640 of its verified 9056-byte codec data section
+0x0087BC90,VQA_bNybbleTableLow,,vqa_sos.asm low nibble table at offset 0x2160 of its verified 9056-byte codec data section
+0x0087BD90,VQA_bNybbleTableHigh,,vqa_sos.asm high nibble table at offset 0x2260 of its verified 9056-byte codec data section

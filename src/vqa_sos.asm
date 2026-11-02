@@ -163,6 +163,7 @@ INCLUDE		nybbtb.inc
 ;****************************************************************************
 
 	PUBLIC	VQA_sosCODECDecompressData
+; FUNCTION: GAMEMD 0x007C7371
 	VQA_sosCODECDecompressData PROC NEAR \
 	\
 	lpSource:DWORD, \

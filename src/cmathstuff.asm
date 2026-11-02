@@ -38,6 +38,7 @@ OPTION LANGUAGE:C
 ; xyz
 ;==========================================================================
 
+; FUNCTION: GAMEMD 0x007C5EE0
 sub_6B2310		PROC
 
 	mov eax, [esp+0]
