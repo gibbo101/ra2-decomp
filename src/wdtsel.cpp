@@ -288,8 +288,8 @@ void Selection::Set_Text(WideWstring const & text, int start_delay)
 
 	if (text.length() > 0) {
 		WideWstring copy(text);
-		TextAnim = new YRTextAnim(copy, WorldMap.Get()->TextRect, true);
-		TextAnim->FUN_005CD3C0(true);
+		TextAnim = new MSBitPrintAnim(copy, WorldMap.Get()->TextRect, true);
+		TextAnim->Set_Flag(true);
 		Add_Animation(TextAnim);
 	}
 }
@@ -308,8 +308,8 @@ void Selection::Set_Tooltip(WideWstring const & text)
 
 	if (text.length() > 0) {
 		WideWstring copy(text);
-		TooltipAnim = new YRTextAnim(copy, rect, false);
-		TooltipAnim->FUN_005CD3C0(true);
+		TooltipAnim = new MSBitPrintAnim(copy, rect, false);
+		TooltipAnim->Set_Flag(true);
 		Add_Animation(TooltipAnim);
 	}
 }
