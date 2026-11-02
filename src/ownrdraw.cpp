@@ -5751,6 +5751,44 @@ int OwnerDraw::Move_Dialog(HWND window, int x, int y)
 	return(MoveWindow(window, rect2.left, rect2.top, rect2.right, rect2.bottom, FALSE));
 }
 
+LRESULT CALLBACK Custom_Message_Box_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+namespace UI { int __fastcall StandardWndProc(HWND window, UINT message, WPARAM wparam, LPARAM lparam); }
+
+// FUNCTION: GAMEMD 0x00623230
+HWND OwnerDraw::Custom_Message_Box(wchar_t const * btn1txt, wchar_t const * btn2txt, bool * cancelled)
+{
+	HWND dlg = UI::BeginDialog(0xF0, (DLGPROC)Custom_Message_Box_Proc, 0);
+	if (dlg != NULL) {
+		SetWindowLong(dlg, 8, (LONG)cancelled);
+		HWND label = GetDlgItem(dlg, 0x5B0);
+		SendMessage(label, WM_USER + 178, 0, (LPARAM)btn1txt);
+		if (btn2txt) {
+			HWND handle = GetDlgItem(dlg, 0x5C0);
+			SendMessage(handle, WM_USER + 178, 0, (LPARAM)btn2txt);
+			EnableWindow(handle, TRUE);
+			ShowWindow(handle, SW_SHOW);
+		}
+	}
+	return dlg;
+}
+
+// FUNCTION: GAMEMD 0x006232B0
+LRESULT CALLBACK Custom_Message_Box_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	LRESULT res = UI::StandardWndProc(window, message, wparam, lparam);
+	if (res == 0) {
+		if (message == WM_COMMAND && wparam == 0x5C0) {
+			bool * cancelled = (bool *)GetWindowLong(window, 8);
+			if (cancelled) {
+				Keyboard->Put(KN_ESC);
+				*cancelled = true;
+			}
+		}
+		return 0;
+	}
+	return res;
+}
+
 // FUNCTION: GAMEMD 0x00623310
 void OwnerDraw::Set_Custom_Message_Box_Text(HWND window, wchar_t const * text)
 {

@@ -11107,7 +11107,8 @@ address,size,evidence,name
 0x00622B50,1482,PCYG,UI::StandardWndProc
 0x00623120,66,PCYG,UI::Updated
 0x00623170,186,PC,
-0x00623230,217,PCG,
+0x00623230,128,PCG,
+0x006232B0,89,F,
 0x00623310,43,PCG,
 0x00623340,81,PCYG,OwnerDrawDialogElement::OwnerDrawDialogElement
 0x006233A0,115,PCYG,OwnerDrawDialogElement::~OwnerDrawDialogElement

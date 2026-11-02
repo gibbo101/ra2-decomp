@@ -3612,3 +3612,78 @@ int FUN_00730750(void)
 {
 	return Options.ScreenHeight;
 }
+
+extern Rect VisibleRect;
+// FUNCTION: GAMEMD 0x0072AD20
+Rect __fastcall FUN_0072AD20(void)
+{
+	Rect rect = VisibleRect;
+	rect.X = 0;
+	rect.Y = 0;
+	if (!Options.IsSidebarOnRight && !Unsorted::ArmageddonMode) {
+		rect.X = 168;
+	}
+	rect.Width -= 168;
+	rect.Height -= 32;
+	return rect;
+}
+
+// FUNCTION: GAMEMD 0x0072E920
+void __fastcall FUN_0072E920(Surface * surface, Rect const * clip)
+{
+	Rect const * position = DAT_00B0FC1C;
+	Point2D pt(0, 0);
+	int x = position->X;
+	pt.X = x;
+	pt.Y = position->Y;
+	if (Drawing::RenderWidth >= 800) {
+		pt += Point2D(80, 0);
+	}
+	Draw_Shape(*surface, *DAT_00B0FBA8, (ShapeSet const *)DAT_00B0FB00, 0, pt, *clip, SHAPE_WIN_REL);
+}
+
+// FUNCTION: GAMEMD 0x0072E2D0
+void __fastcall FUN_0072E2D0(Surface * surface, Rect const * area)
+{
+	if (Drawing::RenderWidth >= 1024) {
+		int left = DAT_00B0FC1C->X;
+		int right = DAT_00B0FC20->X + DAT_00B0FC20->Width;
+		int top = DAT_00B0FC1C->Y;
+		int bottom = DAT_00B0FC2C->Y + DAT_00B0FC2C->Height;
+		Rect rect(0, 0, left, top);
+		surface->Fill_Rect(rect, *area, 0);
+		{
+			Point2D position(left, 0);
+			Point2D dimensions(800, top);
+			*(Point2D *)&rect = position;
+			((Point2D *)&rect)[1] = dimensions;
+			surface->Fill_Rect(rect, *area, 0);
+		}
+		*(Point2D *)&rect = Point2D(right, 0);
+		((Point2D *)&rect)[1] = Point2D(left, top);
+		surface->Fill_Rect(rect, *area, 0);
+		*(Point2D *)&rect = Point2D(right, top);
+		((Point2D *)&rect)[1] = Point2D(left, 600);
+		surface->Fill_Rect(rect, *area, 0);
+		*(Point2D *)&rect = Point2D(right, bottom);
+		((Point2D *)&rect)[1] = Point2D(left, 600);
+		surface->Fill_Rect(rect, *area, 0);
+		{
+			Point2D position(left, bottom);
+			Point2D dimensions(800, top);
+			*(Point2D *)&rect = position;
+			((Point2D *)&rect)[1] = dimensions;
+			surface->Fill_Rect(rect, *area, 0);
+		}
+		*(Point2D *)&rect = Point2D(0, bottom);
+		((Point2D *)&rect)[1] = Point2D(left, top);
+		surface->Fill_Rect(rect, *area, 0);
+		{
+			Point2D position(0, top);
+			Point2D dimensions(left, 600);
+			*(Point2D *)&rect = position;
+			((Point2D *)&rect)[1] = dimensions;
+			surface->Fill_Rect(rect, *area, 0);
+		}
+	}
+}
