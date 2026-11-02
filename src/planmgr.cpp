@@ -187,7 +187,7 @@ bool PlanningMemberClass::Get_Active(void)
 }
 
 // FUNCTION: GAMEMD 0x0063D630
-void __fastcall FUN_0063D630(int outline, int fill, Point2D a, Point2D b, int frame)
+void __fastcall FUN_0063D630(Point2D a, Point2D b, int outline, int fill, int frame)
 {
 	{
 		Point2D d(a.X - b.X, a.Y - b.Y);
@@ -483,7 +483,7 @@ TechnoClass * PlanningNodeClass::Member_Owner(int index)
 	return PlanningMembers[index]->Owner;
 }
 
-Rect __fastcall FUN_00634510(int size, Point2D center);
+Rect __fastcall FUN_00634510(Point2D center, int size);
 
 // FUNCTION: GAMEMD 0x006342E0
 EventClass PlanningNodeClass::Get_Event(int index)
@@ -533,7 +533,7 @@ static inline Point2D Pixel_5(Coord const & c) { return Pixel_4(c); }
 static inline Point2D Pixel_6(Coord const & c) { return Pixel_5(c); }
 static inline Point2D Pixel_7(Coord const & c) { return Pixel_6(c); }
 static inline Point2D Pixel_Of(Coord c) { Point2D p = Pixel_7(c); return p; }
-static inline Rect Around_0(int size, Point2D p) { return FUN_00634510(size, p); }
+static inline Rect Around_0(int size, Point2D p) { return FUN_00634510(p, size); }
 static inline Rect Around_1(int size, Point2D p) { return Around_0(size, p); }
 static inline Rect Around_2(int size, Point2D p) { return Around_1(size, p); }
 static inline Rect Around_3(int size, Point2D p) { return Around_2(size, p); }
@@ -551,7 +551,7 @@ bool PlanningNodeClass::Hit_Test(int x, int y)
 }
 
 // FUNCTION: GAMEMD 0x00634510
-Rect __fastcall FUN_00634510(int size, Point2D center)
+Rect __fastcall FUN_00634510(Point2D center, int size)
 {
 	int offset = -(size / 2);
 	Point2D corner = center;
@@ -570,7 +570,7 @@ bool PlanningNodeClass::Lead_At(Coord coord)
 // FUNCTION: GAMEMD 0x006345A0
 Rect PlanningNodeClass::Lead_Rect(void)
 {
-	return FUN_00634510(8, Lead_Pixel());
+	return FUN_00634510(Lead_Pixel(), 8);
 }
 
 // FUNCTION: GAMEMD 0x00634630
@@ -922,6 +922,7 @@ void __fastcall FUN_006357D0(Rect * rect, int amount)
 extern RGBClass DAT_00A83CD9;
 extern RGBClass DAT_00A80220;
 struct Drawing {
+	static int RGB_To_Int(int red, int green, int blue);
 	static unsigned char RedShiftRight;
 	static unsigned char GreenShiftRight;
 	static unsigned char BlueShiftRight;
@@ -2621,7 +2622,7 @@ void __fastcall FUN_0063B0A0(void)
 	}
 }
 
-void __fastcall FUN_0063BE60(TechnoClass * techno);
+void __fastcall Draw_Filled_Unit_Waypoints(TechnoClass * techno);
 
 // FUNCTION: GAMEMD 0x0063B150
 void __fastcall FUN_0063B150(void)
@@ -2650,7 +2651,7 @@ void __fastcall FUN_0063B150(void)
 		TechnoClass * techno = Technos[k];
 		HouseClass * house = techno->House;
 		if (house->Is_Ally(PlayerPtr)) {
-			FUN_0063BE60(techno);
+			Draw_Filled_Unit_Waypoints(techno);
 		}
 	}
 }
@@ -2725,6 +2726,153 @@ bool __fastcall FUN_0063BE10(TechnoClass * techno)
 	}
 	return false;
 }
+Coord __fastcall FUN_0063CA80(EventClass const & event, TechnoClass * owner);
+int __fastcall FUN_0063DAD0(RGBClass const & color);
+void __fastcall FUN_0063D480(Point2D p, int color);
+int __fastcall FUN_0063D520(TechnoClass * techno);
+int __fastcall FUN_0063D540(EventClass const & event);
+void __fastcall FUN_0063D810(Point2D from, Point2D to, int spread, int color, bool dashed);
+void __fastcall FUN_0063D960(Point2D from, Point2D to, int width, int color);
+Point2D __fastcall FUN_0063D210(EventClass const * event, TechnoClass * owner);
+extern int FUN_00731CE0(void);
+extern int FUN_00731CD0(void);
+
+static inline bool Has_Planned_Nodes(PlanningTokenClass * token)
+{
+	int count;
+	if (!token) count = 0;
+	else count = token->Node_Count();
+	return count > 0;
+}
+
+static inline bool Should_Draw_Active_Action(TechnoClass * techno, bool has_nodes)
+{
+	return techno->Get_Mission() != MISSION_GUARD && !FUN_0063BE10(techno)
+		&& (has_nodes || techno->IsSelected);
+}
+
+enum WaypointTint {
+	WAYPOINT_NORMAL,
+	WAYPOINT_BRIGHT
+};
+
+static inline int Unit_Path_Tint(TechnoClass * techno, WaypointTint tint)
+{
+	int slot = FUN_006339B0(techno);
+	RGBClass color = Houses[slot]->RemapColorRGB;
+	if (tint == WAYPOINT_NORMAL) {
+		return FUN_0063D070(color, DAT_00A83CD9, 80);
+	}
+	return FUN_0063D070(color, DAT_00A80220, 100);
+}
+
+static inline int RGB_Pixel(RGBClass const & color)
+{
+	return Drawing::RGB_To_Int(color.Get_Red(), color.Get_Green(), color.Get_Blue());
+}
+
+static inline int Waypoint_Fill_Color(TechnoClass * techno)
+{
+	int normal = RGB_Pixel(DAT_00A83CD9);
+	int result;
+	if (techno) {
+		int highlight = FUN_0063DAD0(DAT_00A80220);
+		if (DAT_00AC4BF0) {
+			if (DAT_00AC4BF0->Find_Member(techno) != -1) result = highlight;
+			else result = normal;
+		} else if (techno->IsSelected) {
+			result = highlight;
+		} else {
+			result = normal;
+		}
+	} else {
+		result = normal;
+	}
+	return result;
+}
+
+static inline int Active_Waypoint_Frame(TechnoClass * techno, bool mega_mission, bool attack_move)
+{
+	int frame;
+	if (mega_mission && !attack_move) frame = FUN_0063D520(techno);
+	else frame = techno->Get_Mission() == MISSION_GUARD_AREA ? FUN_00731CE0() : -1;
+	return frame;
+}
+
+static inline int Planned_Waypoint_Frame(EventClass order)
+{
+	return FUN_0063D540(order);
+}
+
+// FUNCTION: GAMEMD 0x0063BE60
+void __fastcall Draw_Filled_Unit_Waypoints(TechnoClass * techno)
+{
+	PlanningTokenClass * token = techno->FUN_00705D20();
+	Coord origin = techno->As_Coord();
+	Point2D center = FUN_006339E0(origin);
+	Point2D source;
+	source.X = center.X;
+	source.Y = center.Y;
+	int color = Unit_Path_Tint(techno, WAYPOINT_NORMAL);
+	int bright = Unit_Path_Tint(techno, WAYPOINT_BRIGHT);
+	bool has_nodes = Has_Planned_Nodes(token);
+	bool draw_action = Should_Draw_Active_Action(techno, has_nodes);
+	int width = 4;
+	int fill = Waypoint_Fill_Color(techno);
+	if (token && token->Owner_Is_Mission()) {
+		EventClass packet(token->Popped);
+		Coord coord = FUN_0063CA80(packet, techno);
+		Point2D target = FUN_006339E0(coord);
+		FUN_0063D480(center, color);
+		FUN_0063D960(center, target, 3, color);
+		int frame = FUN_0063D540(packet);
+		if (frame != -1) FUN_0063D630(center, target, color, fill, frame);
+		FUN_0063D480(target, color);
+		return;
+	}
+
+	if (draw_action) {
+		bool mega_mission = techno->HaveMegaMission();
+		bool attack_move = techno->HaveAttackMoveTarget();
+		Coord coord = techno->GetAttackCoordinates();
+		Point2D action = FUN_006339E0(coord);
+		if (techno->IsInLimbo) {
+			FUN_0063D480(action, color);
+			return;
+		}
+		FUN_0063D480(center, color);
+		FUN_0063D960(center, action, 3, color);
+		int frame = Active_Waypoint_Frame(techno, mega_mission, attack_move);
+		if (frame != -1) FUN_0063D630(center, action, color, fill, frame);
+		FUN_0063D480(action, color);
+		if (attack_move) {
+			Coord attack_coord = techno->GetAttackMoveCoords();
+			Point2D dest = FUN_006339E0(attack_coord);
+			FUN_0063D810(action, dest, 0, color, true);
+			frame = techno->GetMegaMission() == MISSION_ATTACK_MOVE ? FUN_00731CD0() : -1;
+			if (frame != -1) FUN_0063D630(action, dest, color, fill, frame);
+			FUN_0063D480(dest, color);
+			return;
+		}
+		if (!has_nodes) return;
+		source = action;
+		width = 3;
+	} else if (!has_nodes) {
+		return;
+	}
+
+	PlanningNodeClass * node = token->Node_At(0);
+	Point2D target = node->Lead_Pixel();
+	PlanningBranchClass * branch = node->Branch_Of(techno);
+	if (branch) target = FUN_0063D210(&branch->Event, techno);
+	int path_color = token->Reached(0) ? bright : color;
+	FUN_0063D480(source, path_color);
+	FUN_0063D960(source, target, width, path_color);
+	if (branch) FUN_0063D480(target, path_color);
+	int frame = Planned_Waypoint_Frame(node->Get_Event_For(techno));
+	if (frame != -1) FUN_0063D630(source, target, path_color, fill, frame);
+}
+
 // FUNCTION: GAMEMD 0x0063CA80
 Coord __fastcall FUN_0063CA80(EventClass const & event, TechnoClass * owner)
 {
@@ -2740,7 +2888,7 @@ void __fastcall FUN_0063CE40(PlanningNodeClass * node)
 {
 	int color = node->Node_Color();
 	Rect clip = FUN_0072AD20();
-	Rect rect = FUN_00634510(8, node->Lead_Pixel());
+	Rect rect = FUN_00634510(node->Lead_Pixel(), 8);
 	Shrink_Rect(rect);
 	DSurface::Composite->Fill_Rect(clip, rect, color);
 }
@@ -2771,8 +2919,6 @@ static inline int Pack_Wide(RGBClass const & c)
 }
 
 
-extern int FUN_00731CE0(void);
-extern int FUN_00731CD0(void);
 
 
 extern "C" __declspec(dllimport) unsigned long __stdcall timeGetTime(void);
@@ -2844,19 +2990,19 @@ int PlanningNodeClass::Lead_Color(void)
 }
 
 // FUNCTION: GAMEMD 0x0063D400
-void __fastcall FUN_0063D400(int color, Point2D p)
+void __fastcall FUN_0063D400(Point2D p, int color)
 {
 	Rect clip = FUN_0072AD20();
-	Rect rect = FUN_00634510(6, p);
+	Rect rect = FUN_00634510(p, 6);
 	DSurface::Composite->Draw_Rect(clip, rect, color);
 }
 
 // FUNCTION: GAMEMD 0x0063D480
-void __fastcall FUN_0063D480(int color, int unused, int x, int y)
+void __fastcall FUN_0063D480(Point2D p, int color)
 {
 	Rect clip = FUN_0072AD20();
-	Rect rect = FUN_00634510(6, Point2D(x, y));
-	Shrink_Rect(rect);
+	Rect rect = FUN_00634510(p, 6);
+	FUN_006357D0(&rect, -1);
 	DSurface::Composite->Fill_Rect(clip, rect, color);
 }
 
@@ -2892,7 +3038,7 @@ int __fastcall FUN_0063D540(EventClass const & event)
 }
 
 // FUNCTION: GAMEMD 0x0063D560
-void __fastcall FUN_0063D560(int color, Point2D a, Point2D b)
+void __fastcall FUN_0063D560(Point2D a, Point2D b, int color)
 {
 	if (Distance(a, b) >= 0x25) {
 		int x = (a.X + b.X) / 2 - 10;
@@ -2904,7 +3050,7 @@ void __fastcall FUN_0063D560(int color, Point2D a, Point2D b)
 }
 
 // FUNCTION: GAMEMD 0x0063D810
-void __fastcall FUN_0063D810(Point2D p1, int spread, int color, Point2D p2, bool dashed)
+void __fastcall FUN_0063D810(Point2D p1, Point2D p2, int spread, int color, bool dashed)
 {
 	bool horizontal = abs(p2.X - p1.X) > abs(p2.Y - p1.Y);
 	int shiftX = horizontal ? 0 : spread;
@@ -2925,16 +3071,16 @@ void __fastcall FUN_0063D810(Point2D p1, int spread, int color, Point2D p2, bool
 }
 
 // FUNCTION: GAMEMD 0x0063D910
-void __fastcall FUN_0063D910(int width, int color, Point2D p1, Point2D p2)
+void __fastcall FUN_0063D910(Point2D p1, Point2D p2, int width, int color)
 {
 	int high = width / 2;
 	for (int i = high - width + 1; i <= high; i++) {
-		FUN_0063D810(p1, i, color, p2, false);
+		FUN_0063D810(p1, p2, i, color, false);
 	}
 }
 
 // FUNCTION: GAMEMD 0x0063D960
-void __fastcall FUN_0063D960(int width, int color, Point2D p1, Point2D p2)
+void __fastcall FUN_0063D960(Point2D p1, Point2D p2, int width, int color)
 {
 	int span = width - 2;
 	int high;
@@ -2947,7 +3093,7 @@ void __fastcall FUN_0063D960(int width, int color, Point2D p1, Point2D p2)
 		low = high - span + 1;
 	}
 	for (int i = low; i <= high; i++) {
-		FUN_0063D810(p1, i, color, p2, true);
+		FUN_0063D810(p1, p2, i, color, true);
 	}
 }
 
