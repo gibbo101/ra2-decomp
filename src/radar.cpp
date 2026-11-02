@@ -1297,39 +1297,39 @@ void RadarClass::Plot_Radar_Pixel(Point2D const & point)
 	Coord coord = Radar_Pixel_To_Cell(point);
 	coord.Z = Map.Get_Height_GL(coord);
 	bool shadow = MainWindow && Map.Is_Shrouded(coord);
-	bool fog = MainWindow && Map.Is_Fogged(coord);
+	bool fog = MainWindow && Map.FUN_005864A0(coord);
 
 	int hash = (point.X - 5 * point.Y) & 0xFF;
 	RADAR_HASH_TABLE::BucketType & bucket = RadarTrackingTable->Buckets[hash];
 	int count = bucket.Count();
 	RADAR_HASH_TABLE::ObjectType * entries = &bucket[0];
+	TechnoClass * techno = NULL;
 	for (int index = 0; index < count; ++index) {
 		RadarTrackingStruct & track = entries[index].Key;
-		TechnoClass * techno = track.Object;
+		TechnoClass * candidate = track.Object;
 		if (track.Position != point) continue;
-		if (shadow && !techno->House->Is_Player_Control()) continue;
-		if (techno->Techno_Type_Class()->IsStealthy && !PlayerPtr->Is_Ally(techno)) continue;
-		if (techno->Techno_Type_Class()->IsInsignificant && !techno->Techno_Type_Class()->IsRadarVisible &&
-		    (techno->House == NULL || techno->House->Class->IsMultiplayPassive)) continue;
+		if (shadow && !candidate->House->Is_Player_Control()) continue;
+		if (candidate->Techno_Type_Class()->IsStealthy && !PlayerPtr->Is_Ally(candidate)) continue;
+		if (candidate->Techno_Type_Class()->IsInsignificant && !candidate->Techno_Type_Class()->IsRadarVisible &&
+		    (candidate->House == NULL || candidate->House->Class->IsMultiplayPassive)) continue;
 
-		if (techno != NULL) {
-			HouseClass * house = techno->House;
-			if (techno->IsDisguised()) {
-				house = techno->GetDisguiseHouse(false);
-			}
-			int color = house ? DSurface::Build_Hicolor_Pixel(house->RemapColorRGB) : Fetch_Scheme_By_Name("LightGrey", 1)->Bright;
-			int flash = techno->RadarFlashTimer;
-			if (flash > 0 && (flash - 1) / Rule->FlashFrameTime % 2 == 1 && techno->House == PlayerPtr) {
-				RadarSurface->Put_Pixel(point, ~color);
-			} else {
-				RadarSurface->Put_Pixel(point, color);
-			}
-			goto mark_dirty;
-		}
+		techno = candidate;
 		break;
 	}
 
-	if (fog) {
+	if (techno != NULL) {
+		HouseClass * house = techno->House;
+		if (techno->IsDisguised()) {
+			house = techno->GetDisguiseHouse(false);
+		}
+		int color = house ? DSurface::Build_Hicolor_Pixel(house->RemapColorRGB) : Fetch_Scheme_By_Name("LightGrey", 1)->Bright;
+		int flash = techno->RadarFlashTimer;
+		if (flash > 0 && (flash - 1) / Rule->FlashFrameTime % 2 == 1 && techno->House == PlayerPtr) {
+			RadarSurface->Put_Pixel(point, ~color);
+		} else {
+			RadarSurface->Put_Pixel(point, color);
+		}
+	} else if (fog) {
 		RGBClass rgb = DSurface::Deconstruct_Hicolor_Pixel(BackgroundSurface->Get_Pixel(point));
 		RadarSurface->Put_Pixel(point, DSurface::Build_Hicolor_Pixel(rgb.Get_Red() / 2, rgb.Get_Green() / 2, rgb.Get_Blue() / 2));
 	} else if (!shadow) {
@@ -1338,7 +1338,6 @@ void RadarClass::Plot_Radar_Pixel(Point2D const & point)
 		RadarSurface->Put_Pixel(point, 0);
 	}
 
-mark_dirty:
 	LastDrawRect = Union(LastDrawRect, Rect(point, 1, 1) + RadarRect.Top_Left());
 }
 
