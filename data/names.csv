@@ -272,3 +272,5 @@ address,name,symbol,evidence
 0x007E16B0,CCFileClass::vftable,??_7CCFileClass@@6B@,Unique primary CCFileClass RTTI table; stored by campaign persistence 0x0049C5A0
 0x007E1668,CDFileClass::vftable,??_7CDFileClass@@6B@,Unique primary CDFileClass RTTI table; stored by campaign persistence 0x0049C5A0
 0x006C8C40,SystemTimerClass::operator(),??RSystemTimerClass@@QBEHXZ,Alias of matched SystemTimer::GetTime; timeGetTime shifted right four as in YRpp Timer.h
+0x00887338,TickCount,,Initializer 0x0040EBD0 and matched Concat_Message 0x005D3FC0 identify the count-up timer and its Started/Regulator/Accumulated fields
+0x007CC2AC,mbstowcs,,YRpp CRT.h CRT::mbstowcs; retail wrapper calls library __mbstowcs_lk at 0x007CC309

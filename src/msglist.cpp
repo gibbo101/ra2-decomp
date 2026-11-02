@@ -663,3 +663,74 @@ void MessageListClass::Compute_Y(void)
 		}
 	}
 }
+
+#include "session.h"
+#include "voc.h"
+
+// FUNCTION: GAMEMD 0x005D3BA0
+TextLabelClass * MessageListClass::Add_Message(wchar_t const * name, int id, wchar_t const * txt,
+	int color, TextPrintType style, int timeout, bool singleplayer)
+{
+	BitFont * font = Font_From_TPF(style);
+	if (!txt) return NULL;
+	if (!font) return NULL;
+	wchar_t message[MAX_MESSAGE_LENGTH + 50];
+	message[0] = 0;
+	if (name) {
+		wcscpy(message, name);
+		wcscat(message, L":");
+	}
+	int namelen = wcslen(message);
+	int namewidth = font->FUN_00433ED0(message, 0);
+	int textlen = wcslen(txt);
+	int width = Width - namewidth - 8;
+	if (width <= 0) return NULL;
+	int print_this_pass = font->FUN_00433F50(txt, width, MAX_MESSAGE_LENGTH - 1, 1);
+	if (print_this_pass < 0) return NULL;
+	wcsncat(message, txt, print_this_pass);
+	message[namelen + print_this_pass] = 0;
+	TextLabelClass * txtlabel;
+	int i;
+	if (MaxMessages > 0 && Num_Messages() + 1 > MaxMessages) {
+		txtlabel = MessageList;
+		if (!txtlabel) return NULL;
+		MessageList = (TextLabelClass *)txtlabel->Remove();
+		for (i = 0; i < MAX_NUM_MESSAGES; i++) {
+			if (txtlabel->Text == MessageBuffers[i]) BufferAvail[i] = 1;
+		}
+		delete txtlabel;
+	}
+	txtlabel = new TextLabelClass(message, MessagePos.MessageX, MessagePos.MessageY, color, (TextPrintType)(style | 0x8000));
+	if (Session.Type == GAME_INTERNET) txtlabel->Animate = !singleplayer && Session.WOLScrollText;
+	else if (Session.Type == GAME_IPX) txtlabel->Animate = !singleplayer && Session.LANScrollText;
+	else txtlabel->Animate = !singleplayer;
+	if (timeout == -1) txtlabel->UserData1 = 0;
+	else txtlabel->UserData1 = TickCount + timeout;
+	txtlabel->UserData2 = id;
+	txtlabel->PixWidth = Width;
+	int found = 0;
+	for (i = 0; i < MAX_NUM_MESSAGES; i++) {
+		if (BufferAvail[i]) {
+			BufferAvail[i] = 0;
+			memset(MessageBuffers[i], 0, MAX_MESSAGE_LENGTH + 50);
+			wcscpy(MessageBuffers[i], message);
+			txtlabel->Text = MessageBuffers[i];
+			found = 1;
+			break;
+		}
+	}
+	if (!found) {
+		delete txtlabel;
+		return NULL;
+	}
+	if (!singleplayer) VocClass::PlayGlobal(Rule->IncomingMessage, 1.0f, 0x2000, NULL);
+	if (MessageList) txtlabel->Add_Tail(*MessageList);
+	else MessageList = txtlabel;
+	Compute_Y();
+	if (print_this_pass < textlen) {
+		wchar_t const * msg = txt + print_this_pass;
+		while (*msg && *msg < L' ') msg++;
+		if (*msg) Add_Message(name, id, msg, color, style, timeout, true);
+	}
+	return txtlabel;
+}
