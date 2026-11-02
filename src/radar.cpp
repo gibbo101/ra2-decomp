@@ -1904,7 +1904,6 @@ int StandardWndProc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 void FUN_00731840(int);
 LRESULT FUN_00603DB0(HWND window, bool enabled);
 extern wchar_t DAT_00887734[];
-extern wchar_t DAT_00A8B322[];
 static const int DiplomacyNameIDs[8] = {1041, 1042, 1043, 1044, 1045, 1046, 1047, 1048};
 static const int DiplomacyKillsIDs[8] = {1049, 1050, 1051, 1052, 1053, 1054, 1055, 1056};
 static const int DiplomacyAllianceIDs[8] = {-1, 1743, 1744, 1745, 1746, 1747, 1748, 1749};
@@ -2026,7 +2025,7 @@ LRESULT CALLBACK Diplomacy_Dialog_Proc(HWND dialog, UINT message, WPARAM wparam,
 			SendMessage(modeLabel, 0x4b2, 0, (LPARAM)Session.MPGameMode->UIName.text());
 		}
 		HWND label = GetDlgItem(dialog, 0x71B);
-		SendMessage(label, 0x4b2, 0, (LPARAM)DAT_00A8B322);
+		SendMessage(label, 0x4b2, 0, (LPARAM)Session.Options.ScenarioDescription);
 		SetTimer(dialog, 0, 250, NULL);
 		break;
 	}
