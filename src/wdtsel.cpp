@@ -275,6 +275,25 @@ void Selection::Check_For_Breakout(void)
 	}
 }
 
+// FUNCTION: GAMEMD 0x0076EA20
+// WorldDominationTour::Selection::Set_Text
+void Selection::Set_Text(WideWstring const & text, int start_delay)
+{
+	if (TextAnim != NULL) {
+		Remove_Anim(TextAnim);
+		HiddenSurface->Blit_From(WorldMap.Get()->TextRect, *AlternateSurface, WorldMap->TextRect);
+		Add_Update_Rect(WorldMap.Get()->TextRect);
+		TextAnim = NULL;
+	}
+
+	if (text.length() > 0) {
+		WideWstring copy(text);
+		TextAnim = new YRTextAnim(copy, WorldMap.Get()->TextRect, true);
+		TextAnim->FUN_005CD3C0(true);
+		Add_Animation(TextAnim);
+	}
+}
+
 // FUNCTION: GAMEMD 0x0076EAF0
 // WorldDominationTour::Selection::Set_Tooltip
 void Selection::Set_Tooltip(WideWstring const & text)
