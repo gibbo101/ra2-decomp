@@ -262,3 +262,8 @@ address,name,symbol,evidence
 0x006D7C00,"Tactical::Draw_Tile_Shadows(Rect const &, Rect const &)",?Draw_Tile_Shadows@Tactical@@QAEXABV?$TRect@H@@0@Z,0x006D3040 four thiscall sites push two Rect references; retail callee ret8 walks shadow-casting map cells; TibSun matching two-Rect overload. Exact symbol avoids conflating int overload.
 0x00B0CE78,Tactical::DirtyAreas,?DirtyAreas@Tactical@@2V?$DynamicVectorClass@UDirtyAreaStruct@@@@A,YRpp Drawing.h DirtyAreas alias at0x00B0CE78; canonical DynamicVectorClass count+0x10/items+4 and 20-byte DirtyAreaStruct records in matched0x006D3040
 0x00886FA0,TacticalRect,,YRpp Surface.h ViewBounds; TibSun _rect.h TacticalRect; matched CCToolTip::Reset 0x00478DB0 uses the same X/Width fields
+0x007E5C04,VectorClass<DynamicVectorClass<char *> *>::vftable,??_7?$VectorClass@PAV?$DynamicVectorClass@PAD@@@@6B@,Unique primary RTTI table for VectorClass<DynamicVectorClass<char *> *>; both references in generated CoopCampEntry array destructor 0x0049E7C0
+0x007E1AF4,CCINIClass::vftable,??_7CCINIClass@@6B@,Unique primary CCINIClass RTTI table; stored by campaign persistence 0x0049C5A0
+0x007E16B0,CCFileClass::vftable,??_7CCFileClass@@6B@,Unique primary CCFileClass RTTI table; stored by campaign persistence 0x0049C5A0
+0x007E1668,CDFileClass::vftable,??_7CDFileClass@@6B@,Unique primary CDFileClass RTTI table; stored by campaign persistence 0x0049C5A0
+0x006C8C40,SystemTimerClass::operator(),??RSystemTimerClass@@QBEHXZ,Alias of matched SystemTimer::GetTime; timeGetTime shifted right four as in YRpp Timer.h
