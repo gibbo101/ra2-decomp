@@ -287,3 +287,7 @@ address,name,symbol,evidence
 0x008A0DD4,DSurface::RedLeft,,YRpp Drawing.h RedShiftRight; TibSun and canonical Build_Hicolor_Pixel shift right by *Left and left by *Right; verified in 0x00478E30
 0x008A0DD0,DSurface::RedRight,,YRpp Drawing.h RedShiftLeft; TibSun and canonical Build_Hicolor_Pixel shift right by *Left and left by *Right; verified in 0x00478E30
 0x0087F770,Keyboard,,YRpp InputManagerClass.h Instance; Custom_Message_Box_Proc passes this pointer to matched WWKeyboardClass::Put at 0x0054F1C0
+0x008391FC,DiplomacyNameIDs,_DiplomacyNameIDs,0x00657DA0 indexes these eight diplomacy dialog control IDs by player slot
+0x0083921C,DiplomacyKillsIDs,_DiplomacyKillsIDs,0x00657DA0 indexes these eight diplomacy dialog control IDs by player slot
+0x0083923C,DiplomacyAllianceIDs,_DiplomacyAllianceIDs,0x00657DA0 indexes these eight diplomacy dialog control IDs by player slot
+0x0083925C,DiplomacyChatIDs,_DiplomacyChatIDs,0x00657DA0 indexes these eight diplomacy dialog control IDs by player slot

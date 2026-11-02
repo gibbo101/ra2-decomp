@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "multiplayer.h"
 #include "radar.h"
 #include "_convert.h"
 #include "_keyboar.h"
@@ -1814,6 +1815,194 @@ void RadarClass::Complete_Radar_Refresh(void)
 	}
 }
 
+extern HouseClass * DAT_00AC1198;
+int FUN_004E3320(int side);
+LRESULT FUN_00603DD0(HWND window, bool allied);
+namespace UI
+{
+int StandardWndProc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+}
+void FUN_00731840(int);
+LRESULT FUN_00603DB0(HWND window, bool enabled);
+extern wchar_t DAT_00887734[];
+extern wchar_t DAT_00A8B322[];
+static const int DiplomacyNameIDs[8] = {1041, 1042, 1043, 1044, 1045, 1046, 1047, 1048};
+static const int DiplomacyKillsIDs[8] = {1049, 1050, 1051, 1052, 1053, 1054, 1055, 1056};
+static const int DiplomacyAllianceIDs[8] = {-1, 1743, 1744, 1745, 1746, 1747, 1748, 1749};
+static const int DiplomacyChatIDs[8] = {-1, 1750, 1751, 1752, 1753, 1762, 1763, 1764};
+
+static inline void Clear_Diplomacy_Label(HWND dialog, int id)
+{
+	HWND item = GetDlgItem(dialog, id);
+	SendMessage(item, 0x4b2, 0, (LPARAM)DAT_00887734);
+}
+static void Hide_Diplomacy_Control(HWND parent, int id)
+{
+	HWND control = GetDlgItem(parent, id);
+	EnableWindow(control, FALSE);
+	ShowWindow(control, SW_HIDE);
+}
+static int Find_Diplomacy_Control(int const (&controls)[8], int id)
+{
+	for (int i = 0; i < 8; ++i) {
+		if (controls[i] == id) {
+			return i;
+		}
+	}
+	return -1;
+}
+static bool Is_Diplomacy_Control(int const (&controls)[8], int id)
+{
+	for (int i = 0; i < 8; ++i) {
+		if (controls[i] == id) {
+			return true;
+		}
+	}
+	return false;
+}
+// FUNCTION: GAMEMD 0x00657DA0
+LRESULT CALLBACK Diplomacy_Dialog_Proc(HWND dialog, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	int handled = UI::StandardWndProc(dialog, message, wparam, lparam);
+	if (handled) {
+		return handled;
+	}
+	switch (message) {
+	case 0x497: {
+		int slot;
+		for (slot = 0; slot < 8; ++slot) {
+			Clear_Diplomacy_Label(dialog, DiplomacyNameIDs[slot]);
+			Clear_Diplomacy_Label(dialog, DiplomacyKillsIDs[slot]);
+		}
+		bool hasAllianceControls = false, hasChatControls = false;
+		int count = Houses.Count();
+		for (slot = 1; slot < 8; slot++) {
+			int allianceID = DiplomacyAllianceIDs[slot];
+			HWND allianceControl = GetDlgItem(dialog, allianceID);
+			int chatID = DiplomacyChatIDs[slot];
+			HWND chatControl = GetDlgItem(dialog, chatID);
+			int houseIndex = slot;
+			if (houseIndex == PlayerPtr->HeapID) {
+				houseIndex = 0;
+			}
+			HouseClass * house;
+			if (houseIndex < count && (house = Houses[houseIndex]) != NULL && house->Class->IsMultiplay) {
+				if (!Rule->AlliesAllowed || DAT_00AC1198 == PlayerPtr || Session.unknown_0C == 2) {
+					ShowWindow(allianceControl, SW_HIDE);
+				} else {
+					FUN_00603DB0(allianceControl, true);
+					bool ally = PlayerPtr->Is_Ally(house);
+					SendMessage(allianceControl, BM_SETCHECK, ally, 0);
+					FUN_00603DD0(allianceControl, house->Is_Ally(PlayerPtr));
+					hasAllianceControls = true;
+					if (Unsorted::MuteSWLaunches || !house->FUN_0050B730()) {
+						EnableWindow(allianceControl, FALSE);
+					}
+				}
+				if (!house->FUN_0050B730()) {
+					ShowWindow(chatControl, SW_HIDE);
+				} else {
+					if (!Unsorted::MuteSWLaunches) {
+						SendMessage(chatControl, BM_SETCHECK, Session.PlayerChatEnabled[houseIndex], 0);
+					} else {
+						SendMessage(chatControl, BM_SETCHECK, 1, 0);
+						EnableWindow(chatControl, 0);
+					}
+					hasChatControls = true;
+				}
+			} else {
+				Hide_Diplomacy_Control(dialog, FUN_004E3320(slot));
+				Hide_Diplomacy_Control(dialog, DiplomacyNameIDs[slot]);
+				EnableWindow(allianceControl, 0);
+				ShowWindow(allianceControl, SW_HIDE);
+				EnableWindow(chatControl, 0);
+				ShowWindow(chatControl, SW_HIDE);
+				Hide_Diplomacy_Control(dialog, DiplomacyKillsIDs[slot]);
+			}
+		}
+		if (!hasAllianceControls) {
+			HWND heading = GetDlgItem(dialog, 0x597);
+			ShowWindow(heading, SW_HIDE);
+		}
+		if (!hasChatControls) {
+			HWND heading = GetDlgItem(dialog, 0x425);
+			ShowWindow(heading, SW_HIDE);
+		}
+		HWND taunts = GetDlgItem(dialog, 0x730);
+		if (taunts) {
+			if (Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) {
+				ShowWindow(taunts, SW_SHOW);
+				if (Session.Type == GAME_IPX) {
+					SendMessage(taunts, BM_SETCHECK, Session.LANTaunts, 0);
+				} else if (Session.Type == GAME_INTERNET) {
+					SendMessage(taunts, BM_SETCHECK, Session.WOLTaunts, 0);
+				}
+			} else {
+				ShowWindow(taunts, SW_HIDE);
+			}
+		}
+		Map.FUN_00658640(dialog);
+		if (Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) {
+			HWND modeLabel = GetDlgItem(dialog, 0x426);
+			SendMessage(modeLabel, 0x4b2, 0, (LPARAM)Session.MPGameMode->UIName.text());
+		}
+		HWND label = GetDlgItem(dialog, 0x71B);
+		SendMessage(label, 0x4b2, 0, (LPARAM)DAT_00A8B322);
+		SetTimer(dialog, 0, 250, NULL);
+		break;
+	}
+	case WM_TIMER:
+		Map.FUN_00658640(dialog);
+		InvalidateRect(dialog, NULL, TRUE);
+		break;
+	case WM_COMMAND: {
+		HWND control = (HWND)lparam;
+		int id = GetDlgCtrlID(control);
+		if (id == 0x423) {
+			if (!HIWORD(wparam)) {
+				KillTimer(dialog, 0);
+				*(int *)GetWindowLong(dialog, DWL_USER) = 0x423;
+			}
+		} else if (Is_Diplomacy_Control(DiplomacyAllianceIDs, id)) {
+			int code = HIWORD(wparam);
+			if (code == 1 || code == 0) {
+				int houseIndex = Find_Diplomacy_Control(DiplomacyAllianceIDs, id);
+				if (houseIndex == PlayerPtr->HeapID) {
+					houseIndex = 0;
+				}
+				if (code == 0) {
+					SendMessage(control, BM_SETCHECK, 1, 0);
+				} else if (code == 1) {
+					SendMessage(control, BM_SETCHECK, 0, 0);
+				}
+				FUN_00731840(houseIndex);
+			}
+		} else if (Is_Diplomacy_Control(DiplomacyChatIDs, id)) {
+			int code = HIWORD(wparam);
+			if (code == 1 || code == 0) {
+				bool listen = HIWORD(wparam) == 1;
+				int houseIndex = Find_Diplomacy_Control(DiplomacyChatIDs, id);
+				if (houseIndex == PlayerPtr->HeapID) {
+					houseIndex = 0;
+				}
+				Session.PlayerChatEnabled[houseIndex] = listen;
+			}
+		} else if (id == 0x730) {
+			int code = HIWORD(wparam);
+			if (code == 1 || code == 0) {
+				if (Session.Type == GAME_IPX) {
+					Session.LANTaunts = code == 1;
+				} else if (Session.Type == GAME_INTERNET) {
+					Session.WOLTaunts = code == 1;
+				}
+			}
+		}
+		break;
+	}
+	}
+	return 0;
+}
+
 // FUNCTION: GAMEMD 0x00658640
 void RadarClass::FUN_00658640(HWND dialog)
 {
@@ -1849,14 +2038,13 @@ class InputManagerClass {
 };
 extern bool UserInputLocked;
 #include "scenario.h"
-LRESULT CALLBACK FUN_00657DA0(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 
 // FUNCTION: GAMEMD 0x006586D0
 void RadarClass::FUN_006586D0(void)
 {
 	int result;
 
-	HWND dialog = UI::BeginDialog(0x73, FUN_00657DA0, 0);
+	HWND dialog = UI::BeginDialog(0x73, Diplomacy_Dialog_Proc, 0);
 	UserInputLocked = true;
 	InputManagerClass::Instance->DoSomething();
 	if (dialog) {
