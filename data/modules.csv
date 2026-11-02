@@ -424,4 +424,4 @@ vqalib/loader,0x007C0490,0x007C2584,21,yes
 vqalib/task,0x007C2590,0x007C3908,20,yes
 vqalib/timer,0x007C3910,0x007C39B7,4,yes
 ?,0x007C39C0,0x007C3D55,1,no
-vqalib/unvq,0x007C3D60,0x007C8A8D,78,yes
+vqalib/unvq,0x007C3D60,0x007C8A8D,72,yes
