@@ -743,6 +743,22 @@ namespace WorldDominationTour
 
 	rc_ptr<Map> __fastcall FUN_00767FB0(int map_id, int vq_anim, int faction);
 
+	class YRTextAnim : public MSAnim {
+		public:
+			YRTextAnim(WideWstring const & text, Rect const & area, bool transient);
+			virtual ~YRTextAnim(void);
+			virtual bool Advance(Surface * surface, Rect & rect);
+			virtual void Redraw(Surface * surface, Rect const * rect = NULL);
+			virtual Rect Get_Rect(void) const;
+			void FUN_005CD3C0(bool value);
+
+		public:
+			WideWstring Text;
+			Rect Area;
+			bool Transient;
+			bool Drawn;
+	};
+
 	class Selection : public MSEngine {
 		typedef DynamicVectorClass<MSSfxEntry *> SFX_LIST;
 		typedef VectorCursor<MSSfxEntry *, SFX_LIST> SFX_ITER;
