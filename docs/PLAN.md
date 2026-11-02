@@ -1,6 +1,6 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 2 November 2026: 18,531 of 19,367 game functions match (96%; 71% of game code
+Status, 2 November 2026: 18,554 of 19,367 game functions match (96%; 71% of game code
 by size), landed in batches module by module. The rounds below record each one.
 
 ## The goal
@@ -1113,6 +1113,14 @@ Session.Players. Recording then exposed three UI-command functions building char
 ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; their RTTI
 fixed them. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
+
+### dk8827's pull requests, second set (2 November 2026)
+
+**23 functions.** Four more merged once rebased with tabs and rebuilt on our copy: the
+random map generator and netshare (5), the co-op campaign (6, its hex-digit helper left
+as a declaration), text measurement and subtitles (6), and the sidebar, tooltips and radar
+events (6). The fifth waits on its functions.py rule, which as written also drops 38 real
+function starts. Merge gate: 18,554 of 18,554 (2,636.2 KB).
 
 ### Batches 156 to 158 (2 November 2026)
 
