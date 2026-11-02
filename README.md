@@ -81,9 +81,10 @@ audio, maps, strings or other assets, and it never will. You must own a legal co
   takes the executable's resources from it.
 - **Running** the result needs your installed game for all of its data.
 
-The compiler is not included either. `tools/setup_toolchain.sh` fetches Visual C++ 6.0 and
-Service Pack 3 from archive.org, checks them against pinned hashes and sets them up under
-Wine (needs `curl`, `7z`, `cabextract`, `wine` and `python3`).
+`tools/setup_toolchain.sh` fetches Visual C++ 6.0, Service Pack 3 and the Processor Pack
+from archive.org, checks them against pinned hashes and sets them up under Wine (needs
+`curl`, `7z`, `cabextract`, `wine` and `python3`). Only MASM 6.15 and its diagnostics
+come from the Processor Pack. The C++ compiler stays at SP3.
 
 ## Not affiliated with EA
 
@@ -104,8 +105,9 @@ Electronic Arts Inc.
 
 Neither licence grants any right to Electronic Arts' trademarks or to the game itself.
 
-Every file in `src/` and `include/` starts with this header; the second copyright line
-and the last line appear only when the file carries Electronic Arts or OpenTS material:
+The standalone assembly files retain the pinned archive's licence headers. C++ files in
+`src/` and `include/` start with this header; the second copyright line and the last line
+appear only when the file carries Electronic Arts or OpenTS material:
 
 ```cpp
 // SPDX-License-Identifier: GPL-3.0-or-later
