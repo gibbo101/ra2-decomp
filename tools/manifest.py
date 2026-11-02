@@ -6,8 +6,8 @@ Each row names a function of gamemd.exe 1.001 (MD5 2a1307f6f57c9c492f985b4e3afb8
 src/ rebuilds byte for byte: its address and size, the decorated symbol our object gives
 it, the source file, and the SHA-256 of the original's bytes at that address, so a
 verifier knows exactly which bytes the claim covers without the file holding any of them.
-Every file compiles with Visual C++ 6.0 SP3 (C2.DLL 12.00.8447) and the flags in
-check.FLAGS; bytes the linker fills in (relocations) are compared by target, not value.
+C++ uses Visual C++ 6.0 SP3 (C2.DLL 12.00.8447) and check.FLAGS; assembly uses MASM
+and check.ASM_FLAGS. The checker compares linker-filled fields (relocations) by target.
 """
 
 import csv
@@ -16,7 +16,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from check import FLAGS, Original  # noqa: E402
+from check import Original  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -34,7 +34,7 @@ def main() -> None:
             address, size = int(r["address"], 16), int(r["size"])
             digest = hashlib.sha256(orig.read(address, size)).hexdigest()
             w.writerow([f"0x{address:08X}", size, r["symbol"], r["source"], digest])
-    print(f"{len(rows)} functions -> {out.relative_to(ROOT)} (flags: {' '.join(FLAGS[1:])})")
+    print(f"{len(rows)} functions -> {out.relative_to(ROOT)}")
 
 
 if __name__ == "__main__":
