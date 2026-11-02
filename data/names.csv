@@ -239,6 +239,23 @@ address,name,symbol,evidence
 0x0087DD88,audioDataStruct,,"auddev static AudioData; only 0x00815E98 holds its address"
 0x0087E8A8,AlphaLightingRemapInit,,"TibSun _alpha.cpp global; static initialiser 0x0040AD60 builds it and registers its atexit 0x0040AD80"
 0x0087E294,AudioIDXData::Instance,,"YRpp AudioIDXData::Instance; set by AudioIDXData::Create in audevent.cpp"
+0x00822D80,FPU_FLAG,_FPU_FLAG,set_control_word and _ftol share the archive FPU flag initialized to 0xE7F
+0x0084E860,UseCMOV,_UseCMOV,detproc.asm stores the conditional move enable flag at CPUType minus three
+0x0084E861,HasCMOV,_HasCMOV,detproc.asm stores the conditional move capability at CPUType minus two
+0x0084E863,CPUType,_CPUType,Get_CPU_Type at 0x004E6150 reads the processor type set in detproc.asm
+0x008758C4,wCODECIndexTab,,General_sosCODECDecompressData indexes the 210-byte archive data section starting here
+0x008758E4,wCODECStepTab,,olsosdec.asm step table follows its index table at offset 0x20
+0x008759A4,DeformPointWidth,_DeformPointWidth,0x006B24A0 and Asm_Ripple_Deform_Points use this grid stride
+0x00B0B6EC,DeformPoints,_DeformPoints,0x006B24A0 and Asm_Ripple_Deform_Points index this deform point grid
+0x008759B4,dwDiffTable,,soscodec.asm difference table at offset 4 in its verified 9060-byte data section
+0x00876FF4,wIndexTable,,soscodec.asm index table at offset 0x1644 in its codec data section
+0x00877B14,bNybbleTableLow,,soscodec.asm low nibble table at offset 0x2164 in its codec data section
+0x00877C14,bNybbleTableHigh,,soscodec.asm high nibble table at offset 0x2264 in its codec data section
+0x00B1D14C,HicolorTable,_HicolorTable,0x00748360 allocates the color table used by both ASM_UnVQ1_C1_TABLE variants
+0x00879B30,VQA_dwDiffTable,,vqa_sos.asm difference table at the start of its verified 9056-byte codec data section
+0x0087B170,VQA_wIndexTable,,vqa_sos.asm index table at offset 0x1640 of its verified 9056-byte codec data section
+0x0087BC90,VQA_bNybbleTableLow,,vqa_sos.asm low nibble table at offset 0x2160 of its verified 9056-byte codec data section
+0x0087BD90,VQA_bNybbleTableHigh,,vqa_sos.asm high nibble table at offset 0x2260 of its verified 9056-byte codec data section
 0x0054D0F0,JumpjetLocomotionClass::Movement_AI,?Movement_AI@JumpjetLocomotionClass@@QAEXXZ,Called by matched Process at 0x0054AEF0; retail accelerates and updates wobble and flight height as in TibSun Movement_AI
 0x0054BD30,JumpjetLocomotionClass::Process_Hover,?Process_Hover@JumpjetLocomotionClass@@QAEXXZ,HOVERING switch entry in matched Process calls 0x0054BD30; retail compares HeadToCoord with position before descent or cruise as in TibSun Process_Hover
 0x00A8B230,Scen,,YRpp ScenarioClass.h ScenarioClass::Instance; ScenarioClass pointer read by matched JumpjetLocomotionClass::Process for Special.IsFogOfWar
@@ -286,20 +303,3 @@ address,name,symbol,evidence
 0x008A0DD4,DSurface::RedLeft,,YRpp Drawing.h RedShiftRight; TibSun and canonical Build_Hicolor_Pixel shift right by *Left and left by *Right; verified in 0x00478E30
 0x008A0DD0,DSurface::RedRight,,YRpp Drawing.h RedShiftLeft; TibSun and canonical Build_Hicolor_Pixel shift right by *Left and left by *Right; verified in 0x00478E30
 0x0087F770,Keyboard,,YRpp InputManagerClass.h Instance; Custom_Message_Box_Proc passes this pointer to matched WWKeyboardClass::Put at 0x0054F1C0
-0x00822D80,FPU_FLAG,_FPU_FLAG,set_control_word and _ftol share the archive FPU flag initialized to 0xE7F
-0x0084E860,UseCMOV,_UseCMOV,detproc.asm stores the conditional move enable flag at CPUType minus three
-0x0084E861,HasCMOV,_HasCMOV,detproc.asm stores the conditional move capability at CPUType minus two
-0x0084E863,CPUType,_CPUType,Get_CPU_Type at 0x004E6150 reads the processor type set in detproc.asm
-0x008758C4,wCODECIndexTab,,General_sosCODECDecompressData indexes the 210-byte archive data section starting here
-0x008758E4,wCODECStepTab,,olsosdec.asm step table follows its index table at offset 0x20
-0x008759A4,DeformPointWidth,_DeformPointWidth,0x006B24A0 and Asm_Ripple_Deform_Points use this grid stride
-0x00B0B6EC,DeformPoints,_DeformPoints,0x006B24A0 and Asm_Ripple_Deform_Points index this deform point grid
-0x008759B4,dwDiffTable,,soscodec.asm difference table at offset 4 in its verified 9060-byte data section
-0x00876FF4,wIndexTable,,soscodec.asm index table at offset 0x1644 in its codec data section
-0x00877B14,bNybbleTableLow,,soscodec.asm low nibble table at offset 0x2164 in its codec data section
-0x00877C14,bNybbleTableHigh,,soscodec.asm high nibble table at offset 0x2264 in its codec data section
-0x00B1D14C,HicolorTable,_HicolorTable,0x00748360 allocates the color table used by both ASM_UnVQ1_C1_TABLE variants
-0x00879B30,VQA_dwDiffTable,,vqa_sos.asm difference table at the start of its verified 9056-byte codec data section
-0x0087B170,VQA_wIndexTable,,vqa_sos.asm index table at offset 0x1640 of its verified 9056-byte codec data section
-0x0087BC90,VQA_bNybbleTableLow,,vqa_sos.asm low nibble table at offset 0x2160 of its verified 9056-byte codec data section
-0x0087BD90,VQA_bNybbleTableHigh,,vqa_sos.asm high nibble table at offset 0x2260 of its verified 9056-byte codec data section
