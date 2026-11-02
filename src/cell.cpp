@@ -537,9 +537,7 @@ void CellClass::Recalc_Attributes(int cell_height)
 
 	OverlayType overlay = Overlay;
 
-	/*
-	**	Check for wall effects.
-	*/
+	// Check for wall effects.
 	if (overlay != OVERLAY_NONE) {
 		OverlayTypeClass const * otype = OverlayTypes[overlay];
 		Land = otype->Land;
@@ -577,10 +575,7 @@ void CellClass::Recalc_Attributes(int cell_height)
 		ITType = ISOTILE_NONE;
 	}
 
-	/*
-	**	If there is a template associated with this cell, then fetch the
-	**	land type given the template type and icon number.
-	*/
+	// Determine the land type from the template and its icon number.
 	if (ITType != ISOTILE_NONE) {
 		IsometricTileTypeClass * itype = IsometricTileTypes[ITType];
 		bool valid = itype->Is_Tile_Index_Valid(SubTile, false);
@@ -680,9 +675,7 @@ void CellClass::Recalc_Attributes(int cell_height)
 			}
 		}
 	} else {
-		/*
-		**	No template is the same as clear terrain.
-		*/
+		// Treat a missing template as clear terrain.
 		if (overlay == OVERLAY_NONE || OverlayTypes[overlay]->IsNoUseTileLandType) {
 			Land = LAND_CLEAR;
 		} else {
