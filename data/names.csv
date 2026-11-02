@@ -274,3 +274,14 @@ address,name,symbol,evidence
 0x006C8C40,SystemTimerClass::operator(),??RSystemTimerClass@@QBEHXZ,Alias of matched SystemTimer::GetTime; timeGetTime shifted right four as in YRpp Timer.h
 0x00887338,TickCount,,Initializer 0x0040EBD0 and matched Concat_Message 0x005D3FC0 identify the count-up timer and its Started/Regulator/Accumulated fields
 0x007CC2AC,mbstowcs,,YRpp CRT.h CRT::mbstowcs; retail wrapper calls library __mbstowcs_lk at 0x007CC309
+0x00B0B408,SidebarClass::Waypoint,,Static constructor 0x006A4D80 loads this address; Init_IO assigns ID 200 and R-UP.SHP
+0x00B0B328,SidebarClass::Upgrade,,Static constructor 0x006A4D40 loads this address; Init_IO assigns ID 201 and R-DN.SHP
+0x00886F90,SidebarRect,,YRpp Surface.h SidebarBounds; TibSun _rect.h SidebarRect; matched CCToolTip::Reset 0x00478DB0 uses the same X/Width fields
+0x0088731C,CompositeSurface,,YRpp Surface.h Composite; TibSun _surface.h CompositeSurface; CCToolTip::Draw 0x00478E30
+0x00B0B518,SidebarClass::IsToBlitSidebar,,"Matched Blit_Sidebar 0x006A70E0 reads at 0x006A7143, clears at 0x006A7166 and sets at 0x006A723A; TibSun sidebar.cpp static flag"
+0x008A0DDC,DSurface::BlueLeft,,YRpp Drawing.h BlueShiftRight; TibSun and canonical Build_Hicolor_Pixel shift right by *Left and left by *Right; verified in 0x00478E30
+0x008A0DD8,DSurface::BlueRight,,YRpp Drawing.h BlueShiftLeft; TibSun and canonical Build_Hicolor_Pixel shift right by *Left and left by *Right; verified in 0x00478E30
+0x008A0DE4,DSurface::GreenLeft,,YRpp Drawing.h GreenShiftRight; TibSun and canonical Build_Hicolor_Pixel shift right by *Left and left by *Right; verified in 0x00478E30
+0x008A0DE0,DSurface::GreenRight,,YRpp Drawing.h GreenShiftLeft; TibSun and canonical Build_Hicolor_Pixel shift right by *Left and left by *Right; verified in 0x00478E30
+0x008A0DD4,DSurface::RedLeft,,YRpp Drawing.h RedShiftRight; TibSun and canonical Build_Hicolor_Pixel shift right by *Left and left by *Right; verified in 0x00478E30
+0x008A0DD0,DSurface::RedRight,,YRpp Drawing.h RedShiftLeft; TibSun and canonical Build_Hicolor_Pixel shift right by *Left and left by *Right; verified in 0x00478E30

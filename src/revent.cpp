@@ -478,3 +478,59 @@ void Reset_Radar_Event_Cells(void)
 // ??_G?$DynamicVectorClass@PAVRadarEventClass@@@@UAEPAXI@Z
 
 template class DynamicVectorClass<RadarEventClass *>;
+
+// FUNCTION: GAMEMD 0x00660BE0
+Cell Recall_Previous_Radar_Event_Cell(void)
+{
+	if (DAT_00B04D88 == -1) return DAT_00B04D68;
+	int previous = DAT_00B04DD8 - 1;
+	if (previous < 0) previous += 8;
+	if (DAT_00B04D48[previous] == DAT_00B04D68) {
+		Cell result = DAT_00B04D48[DAT_00B04D88];
+		DAT_00B04DD8 = DAT_00B04D88;
+		return result;
+	}
+	Cell result = DAT_00B04D48[previous];
+	DAT_00B04DD8 = previous;
+	return result;
+}
+
+// FUNCTION: GAMEMD 0x00660050
+void RadarEventClass::Draw(void)
+{
+	Point2D event_rect[4];
+	int i;
+
+	RGBClass color1 = Get_Max_Color();
+	RGBClass color2 = Get_Min_Color();
+	if (color1 == RGBClass(0, 0, 0)) return;
+
+	Get_Event_Rect(event_rect);
+
+	for (i = 0; i < ARRAY_SIZE(event_rect); i++) {
+		event_rect[i] += Offset;
+	}
+
+	float color_factor = ColorFactor;
+
+	int dy = abs(event_rect[0].Y - event_rect[1].Y);
+	int dx = abs(event_rect[0].X - event_rect[1].X);
+	int maxdist = MAX(dx, dy);
+
+	float rate = (Radius * 2) * 0.7071067811865475 / (float)maxdist * ColorSpeed;
+
+
+	for (i = 0; i < ARRAY_SIZE(event_rect); i++) {
+		Map.RadarSurface->Draw_Ping_Pong_Gradient_Line(Map.RadarSurface->Get_Rect(), event_rect[i], event_rect[(i + 1) % 4], color1, color2, rate, color_factor);
+	}
+
+	for (i = 0; i < ARRAY_SIZE(event_rect); i++) {
+		Clip_Line_To_Rect(event_rect[i], event_rect[(i + 1) % 4], Map.RadarSurface->Get_Rect());
+	}
+
+	if (Map.RadarMode == RadarClass::RMODE_TACTICAL && Map.RadarState == RadarClass::RSTATE_ACTIVE) {
+		for (i = 0; i < ARRAY_SIZE(event_rect); i++) {
+			Map.LastDrawRect = Intersect(Union(Map.LastDrawRect, Rect(event_rect[i].X, event_rect[i].Y, 1, 1) + Map.RadarRect.TopLeft), Map.RadarRect);
+		}
+	}
+}
