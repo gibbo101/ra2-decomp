@@ -12,6 +12,8 @@
 #include "pk.h"
 #include "readline.h"
 #include "rect.h"
+#undef LoadString
+#include "stringtable.h"
 #include "trim.h"
 #include "xpipe.h"
 #include "wstring.h"
@@ -468,8 +470,29 @@ int INIClass::Entry_Count(Wstring const & section) const
 // FUNCTION: GAMEMD 0x00526B00
 void INIClass::Reset(void)
 {
-	CurrentSectionName = NULL;
-	CurrentSection = NULL;
+	Reset_Cache();
+}
+
+// FUNCTION: GAMEMD 0x00526B10
+INIClass::INIEntry * INIClass::Find_Entry(char const * section, char const * entry) const
+{
+	INISection * secptr;
+	if (section == CurrentSectionName) {
+		secptr = CurrentSection;
+	} else {
+		secptr = Find_Section(section);
+		if (secptr != NULL) {
+			CurrentSection = secptr;
+			CurrentSectionName = section;
+		} else {
+			Reset_Cache();
+		}
+	}
+
+	if (secptr != NULL) {
+		return(secptr->Find_Entry(entry));
+	}
+	return(NULL);
 }
 
 // FUNCTION: GAMEMD 0x00526CC0
@@ -521,26 +544,6 @@ bool INIClass::Put_UUBlock(char const * section, void const * block, int len)
 		counter++;
 	}
 	return(true);
-}
-
-inline int INIClass::Get_String(char const * section, char const * entry, char const * defvalue, char * buffer, int size) const
-{
-	if (buffer == NULL || size < 2 || section == NULL || entry == NULL) return(0);
-
-	INIEntry * entryptr = Find_Entry(section, entry);
-	if (entryptr != NULL && entryptr->Value != NULL) {
-		defvalue = entryptr->Value;
-	}
-
-	if (defvalue == NULL) {
-		buffer[0] = '\0';
-		return(0);
-	} else {
-		strncpy(buffer, defvalue, size);
-		buffer[size-1] = '\0';
-		strtrim(buffer);
-		return(strlen(buffer));
-	}
 }
 
 // FUNCTION: GAMEMD 0x00526FB0
@@ -657,10 +660,46 @@ bool INIClass::Put_Int(Wstring const & section, Wstring const & entry, int numbe
 	return(Put_String(sectionstr, entrystr, buffer));
 }
 
+// FUNCTION: GAMEMD 0x005276D0
+int INIClass::Get_Int(char const * section, char const * entry, int defvalue) const
+{
+	if (section == NULL || entry == NULL) return(defvalue);
+
+	INIEntry * entryptr = Find_Entry(section, entry);
+	if (entryptr != NULL && entryptr->Value != NULL) {
+		if (*entryptr->Value == '$') {
+			sscanf(entryptr->Value, "$%x", &defvalue);
+		} else {
+			if (tolower(entryptr->Value[strlen(entryptr->Value)-1]) == 'h') {
+				sscanf(entryptr->Value, "%xh", &defvalue);
+			} else {
+				defvalue = atoi(entryptr->Value);
+			}
+		}
+	}
+	return(defvalue);
+}
+
 // FUNCTION: GAMEMD 0x005278F0
 int INIClass::Get_Int(Wstring const & section, Wstring const & entry, int defvalue) const
 {
 	return(Get_Int(section.text(), entry.text(), defvalue));
+}
+
+// FUNCTION: GAMEMD 0x00527920
+CLSID const INIClass::Get_CLSID(char const * section, char const * entry, CLSID defvalue) const
+{
+	char buffer[128];
+
+	if (Get_String(section, entry, "", buffer, sizeof(buffer))) {
+		wchar_t olestr[128];
+		MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, buffer, -1, olestr, sizeof(olestr) / sizeof(olestr[0]));
+		CLSID clsid;
+		if (SUCCEEDED(CLSIDFromString(olestr, &clsid))) {
+			return(clsid);
+		}
+	}
+	return(defvalue);
 }
 
 // FUNCTION: GAMEMD 0x00527B90
@@ -697,6 +736,25 @@ bool INIClass::Put_Rect(Wstring const & section, Wstring const & entry, Rect con
 	return(Put_String(sectionstr, entrystr, buffer));
 }
 
+// FUNCTION: GAMEMD 0x00527CC0
+Rect const INIClass::Get_Rect(char const * section, char const * entry, Rect const & defvalue) const
+{
+	char buffer[64];
+
+	if (Get_String(section, entry, "0,0,0,0", buffer, sizeof(buffer))) {
+		Rect retval = defvalue;
+		sscanf(buffer, "%d,%d,%d,%d", &retval.X, &retval.Y, &retval.Width, &retval.Height);
+		return(retval);
+	}
+	return(defvalue);
+}
+
+// FUNCTION: GAMEMD 0x00527F20
+Rect const INIClass::Get_Rect(Wstring const & section, Wstring const & entry, Rect const & defvalue) const
+{
+	return(Get_Rect(section.text(), entry.text(), defvalue));
+}
+
 // FUNCTION: GAMEMD 0x00528170
 bool INIClass::Put_Hex(char const * section, char const * entry, int number)
 {
@@ -715,6 +773,35 @@ bool INIClass::Put_Hex(Wstring const & section, Wstring const & entry, int numbe
 
 	sprintf(buffer, "%X", number);
 	return(Put_String(sectionstr, entrystr, buffer));
+}
+
+// FUNCTION: GAMEMD 0x00528220
+int INIClass::Get_Hex(char const * section, char const * entry, int defvalue) const
+{
+	if (section == NULL || entry == NULL) return(defvalue);
+
+	INIEntry * entryptr = Find_Entry(section, entry);
+	if (entryptr != NULL && entryptr->Value != NULL) {
+		sscanf(entryptr->Value, "%x", &defvalue);
+	}
+	return(defvalue);
+}
+
+// FUNCTION: GAMEMD 0x005283D0
+double INIClass::Get_Float(char const * section, char const * entry, double defvalue) const
+{
+	if (section == NULL || entry == NULL) return(defvalue);
+
+	INIEntry * entryptr = Find_Entry(section, entry);
+	if (entryptr != NULL && entryptr->Value != NULL) {
+		float val;
+		sscanf(entryptr->Value, "%f", &val);
+		defvalue = val;
+		if (strchr(entryptr->Value, '%%') != NULL) {
+			defvalue /= 100.0;
+		}
+	}
+	return(defvalue);
 }
 
 // FUNCTION: GAMEMD 0x005285B0
@@ -797,6 +884,36 @@ bool INIClass::Put_String(Wstring const & section, Wstring const & entry, Wstrin
 	return(Put_String(section.text(), entry.text(), string.text()));
 }
 
+// FUNCTION: GAMEMD 0x00528A10
+int INIClass::Get_String(char const * section, char const * entry, char const * defvalue, char * buffer, int size) const
+{
+	if (buffer == NULL || size < 2 || section == NULL || entry == NULL) return(0);
+
+	INIEntry * entryptr = Find_Entry(section, entry);
+	if (entryptr != NULL && entryptr->Value != NULL) {
+		defvalue = entryptr->Value;
+	}
+
+	if (defvalue == NULL) {
+		buffer[0] = '\0';
+		return(0);
+	} else {
+		strncpy(buffer, defvalue, size);
+		buffer[size-1] = '\0';
+		strtrim(buffer);
+		return(strlen(buffer));
+	}
+}
+
+// FUNCTION: GAMEMD 0x00528C00
+int INIClass::Get_String(Wstring const & section, Wstring const & entry, Wstring const & defvalue, Wstring & result) const
+{
+	char buffer[1024];
+	int count = Get_String(section.text(), entry.text(), defvalue.text(), buffer, sizeof(buffer) - 1);
+	result = buffer;
+	return(count);
+}
+
 // FUNCTION: GAMEMD 0x00528E00
 bool INIClass::Put_UnicodeString(char const * section, char const * entry, wchar_t const * string)
 {
@@ -828,6 +945,53 @@ bool INIClass::Put_UnicodeString(Wstring const & section, Wstring const & entry,
 	return(Put_UnicodeString(section.text(), entry.text(), string.text()));
 }
 
+// FUNCTION: GAMEMD 0x00528F00
+int INIClass::Get_UnicodeString(char const * section, char const * entry, wchar_t const * defvalue, wchar_t * buffer, int size) const
+{
+	char text[20480];
+	int length = Get_String(section, entry, NULL, text, sizeof(text));
+	if (length == 0) {
+		wcsncpy(buffer, defvalue, size);
+		return(wcslen(buffer));
+	}
+
+	char * token = strtok(text, ",");
+	wchar_t * out = buffer;
+	while (token != NULL && size != 0) {
+		unsigned int code;
+		sscanf(token, "%x", &code);
+		*out++ = (wchar_t)code;
+		token = strtok(NULL, ",");
+		--size;
+	}
+	*out = L'\0';
+	return(wcslen(buffer));
+}
+
+// FUNCTION: GAMEMD 0x00529160
+int INIClass::ReadStringtableEntry(char const * section, char const * entry, wchar_t * buffer, int size) const
+{
+	char text[1024];
+	Get_String(section, entry, NULL, text, sizeof(text));
+	wcsncpy(buffer, StringTable::LoadString(text, NULL, "D:\\ra2mdpost\\Ini.CPP", 1858), size);
+	buffer[size - 1] = L'\0';
+	return(wcslen(buffer));
+}
+
+// FUNCTION: GAMEMD 0x00529350
+int INIClass::ReadStringtableEntry(char const * section, char const * entry, wchar_t * buffer, char const * deflabel, int size) const
+{
+	char text[1024];
+	Get_String(section, entry, NULL, text, sizeof(text));
+	if (strlen(text) == 0) {
+		wcsncpy(buffer, StringTable::LoadString(deflabel, NULL, "D:\\ra2mdpost\\Ini.CPP", 1872), size);
+	} else {
+		wcsncpy(buffer, StringTable::LoadString(text, NULL, "D:\\ra2mdpost\\Ini.CPP", 1874), size);
+	}
+	buffer[size - 1] = L'\0';
+	return(wcslen(buffer));
+}
+
 // FUNCTION: GAMEMD 0x00529560
 bool INIClass::Put_Bool(char const * section, char const * entry, bool value)
 {
@@ -851,6 +1015,28 @@ bool INIClass::Put_Bool(Wstring const & section, Wstring const & entry, bool val
 	}
 }
 
+// FUNCTION: GAMEMD 0x005295F0
+bool INIClass::Get_Bool(char const * section, char const * entry, bool defvalue) const
+{
+	if (section == NULL || entry == NULL) return(defvalue);
+
+	INIEntry * entryptr = Find_Entry(section, entry);
+	if (entryptr != NULL && entryptr->Value != NULL) {
+		switch (toupper(*entryptr->Value)) {
+			case 'Y':
+			case 'T':
+			case '1':
+				return(true);
+
+			case 'N':
+			case 'F':
+			case '0':
+				return(false);
+		}
+	}
+	return(defvalue);
+}
+
 // FUNCTION: GAMEMD 0x005297E0
 bool INIClass::Put_Point(char const * section, char const * entry, TPoint2D<int> const & value)
 {
@@ -868,6 +1054,24 @@ bool INIClass::Put_Point(Wstring const & section, Wstring const & entry, TPoint2
 
 	sprintf(buffer, "%d,%d", value.X, value.Y);
 	return(Put_String(sectionstr, entrystr, buffer));
+}
+
+// FUNCTION: GAMEMD 0x00529880
+TPoint2D<int> const INIClass::Get_Point(char const * section, char const * entry, TPoint2D<int> const & defvalue) const
+{
+	char buffer[64];
+	if (Get_String(section, entry, "", buffer, sizeof(buffer))) {
+		int x,y;
+		sscanf(buffer, "%d,%d", &x, &y);
+		return(TPoint2D<int>(x, y));
+	}
+	return(defvalue);
+}
+
+// FUNCTION: GAMEMD 0x00529A30
+TPoint2D<int> const INIClass::Get_Point(Wstring const & section, Wstring const & entry, TPoint2D<int> const & defvalue) const
+{
+	return(Get_Point(section.text(), entry.text(), defvalue));
 }
 
 // FUNCTION: GAMEMD 0x00529BF0
@@ -889,6 +1093,24 @@ bool INIClass::Put_Point(Wstring const & section, Wstring const & entry, TPoint3
 	return(Put_String(sectionstr, entrystr, buffer));
 }
 
+// FUNCTION: GAMEMD 0x00529CA0
+TPoint3D<int> const INIClass::Get_Point(char const * section, char const * entry, TPoint3D<int> const & defvalue) const
+{
+	char buffer[64];
+	if (Get_String(section, entry, "", buffer, sizeof(buffer))) {
+		int x,y,z;
+		sscanf(buffer, "%d,%d,%d", &x, &y, &z);
+		return(TPoint3D<int>(x, y, z));
+	}
+	return(defvalue);
+}
+
+// FUNCTION: GAMEMD 0x00529E70
+TPoint3D<int> const INIClass::Get_Point(Wstring const & section, Wstring const & entry, TPoint3D<int> const & defvalue) const
+{
+	return(Get_Point(section.text(), entry.text(), defvalue));
+}
+
 // FUNCTION: GAMEMD 0x0052A040
 bool INIClass::Put_Point(char const * section, char const * entry, TPoint3D<float> const & value)
 {
@@ -906,6 +1128,24 @@ bool INIClass::Put_Point(Wstring const & section, Wstring const & entry, TPoint3
 
 	sprintf(buffer, "%f,%f,%f", (float)value.X, (float)value.Y, (float)value.Z);
 	return(Put_String(sectionstr, entrystr, buffer));
+}
+
+// FUNCTION: GAMEMD 0x0052A110
+TPoint3D<float> const INIClass::Get_Point(char const * section, char const * entry, TPoint3D<float> const & defvalue) const
+{
+	char buffer[64];
+	if (Get_String(section, entry, "", buffer, sizeof(buffer))) {
+		float x,y,z;
+		sscanf(buffer, "%f,%f,%f", &x, &y, &z);
+		return(TPoint3D<float>(x, y, z));
+	}
+	return(defvalue);
+}
+
+// FUNCTION: GAMEMD 0x0052A2F0
+TPoint3D<float> const INIClass::Get_Point(Wstring const & section, Wstring const & entry, TPoint3D<float> const & defvalue) const
+{
+	return(Get_Point(section.text(), entry.text(), defvalue));
 }
 
 // FUNCTION: GAMEMD 0x0052A4D0
@@ -952,6 +1192,21 @@ PKey INIClass::Get_PKey(bool fast) const
 	key.Decode_Modulus(buffer);
 
 	return(key);
+}
+
+// FUNCTION: GAMEMD 0x0052A760
+int INIClass::ReadTime(char const * section, char const * entry, int defvalue) const
+{
+	if (section == NULL || entry == NULL) return(defvalue);
+	INIEntry * entptr = Find_Entry(section, entry);
+	if (entptr != NULL && entptr->Value != NULL) {
+		int hours = 0;
+		int minutes = 0;
+		int seconds = 0;
+		sscanf(entptr->Value, "%02d:%02d:%02d", &hours, &minutes, &seconds);
+		return(((hours * 60 + minutes) * 60 + seconds) * 60);
+	}
+	return(defvalue);
 }
 
 // FUNCTION: GAMEMD 0x0052A940
