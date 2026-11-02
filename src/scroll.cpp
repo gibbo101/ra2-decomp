@@ -42,7 +42,7 @@ extern FacingType Facing_Between_Points(Point2D const & pt1, Point2D const & pt2
 extern ObjectClass * __fastcall FUN_005353D0(Cell const * cell, ObjectClass const * target);
 extern BeaconManagerClass BeaconManager;
 extern bool __stdcall FUN_0063A5A0(int x, int y);
-extern bool __stdcall FUN_0063A8E0(int x, int y);
+extern bool __stdcall FUN_0063A8E0(Point2D point);
 extern void __stdcall FUN_0063AAC0(int x, int y);
 extern void __stdcall FUN_0063AB00(int x, int y);
 extern bool __stdcall FUN_0063AB60(int x, int y);
@@ -494,7 +494,7 @@ void ScrollClass::Message_Handler(HWND hwnd, UINT & message, UINT & wParam, LONG
 			point.X = pts.x - TacticalRect.X;
 			point.Y = pts.y - TacticalRect.Y;
 
-			if (!FUN_0063A8E0(point.X, point.Y) && IsMouseDown) {
+			if (!FUN_0063A8E0(point) && IsMouseDown) {
 				Resolve_Point(point, cell, coord, object, fog, shadow);
 				Map.Mouse_Left_Release(coord, cell, object, What_Action(cell, object, false));
 				IsMouseDown = false;
