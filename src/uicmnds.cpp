@@ -767,6 +767,77 @@ int __fastcall FUN_00732210(DynamicVectorClass<char const *> * list, char const 
 	return -1;
 }
 
+static inline TechnoList * Collect_Owned_Visible(void)
+{
+	TechnoList * list = new TechnoList;
+	int count = TacticalSelectionInstance->Count();
+	for (int i = 0; i < count; ++i) {
+		ObjectClass * object = TacticalSelectionInstance->Get(i);
+		if (FUN_007342C0(object)) {
+			TechnoClass * item = (TechnoClass *)object;
+			if (FUN_00732580(item, 0)) {
+				list->Add(item);
+			}
+		}
+	}
+	return list;
+}
+
+static inline bool Has_Unselected_Combatants(TechnoList * list)
+{
+	int count = list->Count();
+	for (int i = 0; i < count; ++i) {
+		TechnoClass * techno = (*list)[i];
+		if (techno->Fetch_RTTI() != RTTI_BUILDING && techno->Techno_Type_Class()->IsSelectableCombatant &&
+		    techno->CanBeSelectedNow() && !techno->IsSelected) {
+			return true;
+		}
+	}
+	return false;
+}
+
+// FUNCTION: GAMEMD 0x00732280
+void __fastcall Select_Combatants(bool clear)
+{
+	wchar_t text[256];
+	if (Unsorted::MuteSWLaunches) {
+		return;
+	}
+	FUN_006DA770(TacticalMap);
+	if (Unsorted::NavCycleMode != 1) {
+		DAT_00B0FE64 = false;
+	}
+
+	TechnoList * list;
+	if (DAT_00B0FE64) {
+		list = FUN_00731EB0(FUN_00732580, 0);
+	} else {
+		list = Collect_Owned_Visible();
+		if (!Has_Unselected_Combatants(list)) {
+			DAT_00B0FE64 = true;
+		}
+		if (DAT_00B0FE64) {
+			delete list;
+			list = FUN_00731EB0(FUN_00732580, 0);
+		}
+	}
+	if (clear) {
+		FUN_006DA740(TacticalMap);
+	}
+	int count = list->Count();
+	for (int i = 0; i < count; ++i) {
+		TechnoClass * techno = (*list)[i];
+		if ((unsigned char)FUN_007325C0(techno, 0)) {
+			techno->Select();
+		}
+	}
+	FUN_00731D10(text);
+	FUN_00730A90(text, 240);
+	delete list;
+	Unsorted::NavCycleMode = 1;
+	DAT_00B0FE58 = false;
+}
+
 // FUNCTION: GAMEMD 0x00732580
 int __fastcall Is_Owned_Active(TechnoClass * techno, int unused)
 {
