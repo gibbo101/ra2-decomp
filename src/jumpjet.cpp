@@ -117,6 +117,47 @@ CoordStruct STDMETHODCALLTYPE JumpjetLocomotionClass::Destination(void)
 	}
 }
 
+// FUNCTION: GAMEMD 0x0054AEC0
+boolean STDMETHODCALLTYPE JumpjetLocomotionClass::Process(void)
+{
+	LayerType layer = In_Which_Layer();
+	if (Is_Moving() || Is_Moving_Now()) {
+		Movement_AI();
+		if (!LinkedTo->IsActive) return false;
+		if (LinkedTo->House->IonSensitivesShouldBeOffline()) {
+			if (CurrentState != GROUNDED && CurrentState != CRASHING) LinkedTo->Crash(NULL);
+		}
+		if (LinkedTo->IsCrashing && CurrentState != CRASHING && CurrentState != UNKNOWN && LinkedTo->Get_Height_AGL() > 0) {
+			Coord position = LinkedTo->Center_Coord();
+			FootClass * moving = LinkedTo;
+			Coord center = Map[moving->Center_Coord().As_Cell()].Center_Coord();
+			if (!LinkedTo->IsAttackedByLocomotor || (position.X == center.X && position.Y == center.Y)) {
+				FlightLevel = -5;
+				CurrentState = CRASHING;
+				if (LinkedTo->Fetch_RTTI() == RTTI_INFANTRY) ((InfantryClass *)LinkedTo)->Do_Action((DoType)34, false, false);
+			} else HeadToCoord = center;
+		}
+		switch (CurrentState) {
+		case GROUNDED: Process_Grounded(); break;
+		case ASCENDING: Process_Ascent(); break;
+		case HOVERING: Process_Hover(); break;
+		case CRUISING: Process_Cruise(); break;
+		case DESCENDING: Process_Descent(); break;
+		case CRASHING: Process_Crashing(); break;
+		case UNKNOWN: goto done;
+		}
+done:
+		if (LinkedTo->IsSelected && LinkedTo->House != PlayerPtr) {
+			if (Map.Is_Shrouded(LinkedTo->PositionCoord) || (Scen->Special.IsFogOfWar && Map.IsLocationFogged(LinkedTo->PositionCoord))) LinkedTo->Unselect();
+		}
+		if (!LinkedTo->IsDiscoveredByPlayer && LinkedTo->House != PlayerPtr) {
+			if (!Map.Is_Shrouded(LinkedTo->PositionCoord)) LinkedTo->Revealed(PlayerPtr);
+		}
+	}
+	if (LinkedTo->IsActive && In_Which_Layer() != layer) Map.Submit(LinkedTo);
+	return false;
+}
+
 // FUNCTION: GAMEMD 0x0054B1C0
 void STDMETHODCALLTYPE JumpjetLocomotionClass::Move_To(CoordStruct to)
 {
@@ -727,6 +768,87 @@ boolean STDMETHODCALLTYPE JumpjetLocomotionClass::Is_Moving_Now(void)
 		return(true);
 	}
 	return(false);
+}
+
+#include "infatype.h"
+
+static inline InfantryClass * Jumpjet_Infantry(FootClass * foot)
+{
+	return foot == NULL ? NULL : foot->Fetch_RTTI() == RTTI_INFANTRY ? (InfantryClass *)foot : NULL;
+}
+
+// FUNCTION: GAMEMD 0x0054D0F0
+void JumpjetLocomotionClass::Movement_AI(void)
+{
+	bool need_to_mark = CurrentState != HOVERING && CurrentState != CRUISING;
+	bool was_down = LinkedTo->IsDown;
+	if (need_to_mark) LinkedTo->Mark(MARK_UP);
+	else LinkedTo->IsDown = false;
+
+	if (TargetSpeed > CurrentSpeed) {
+		CurrentSpeed += Accel;
+		CurrentSpeed = MIN(CurrentSpeed, Speed);
+	}
+	if (TargetSpeed < CurrentSpeed) {
+		CurrentSpeed -= Accel * 1.5;
+		CurrentSpeed = MAX(CurrentSpeed, 0);
+	}
+	LinkedTo->Set_Speed(CurrentSpeed / Speed);
+	bool at_destination = LinkedTo->Get_Cell() == HeadToCoord.As_Cell();
+	if ((CurrentState == HOVERING || CurrentState == CRUISING) && !NoWobbles) {
+		CurrentWobble += DEG_TO_RAD(360) / (15.0 / Wobbles);
+	} else CurrentWobble = 0;
+
+	int desired_height = fastmath::sin(CurrentWobble) * Deviation + FlightLevel;
+	int height = LinkedTo->Height;
+	int ground_height = Map.Get_Height_GL(LinkedTo->PositionCoord);
+	if (Map[LinkedTo->Get_Coord()].IsUnderBridge && LinkedTo->PositionCoord.Z >= ground_height + BRIDGE_CELL_HEIGHT * LEVEL_LEPTON_H - Crash) {
+		ground_height += BRIDGE_LEPTON_HEIGHT;
+	}
+	int height_diff = 0;
+	if (CurrentState != DESCENDING && CurrentState != GROUNDED && (!at_destination || LinkedTo->TClass->BalloonHover)) {
+		height_diff = height - Desired_Flight_Level();
+	} else height_diff = height - ground_height;
+
+	bool moved = false;
+	if (height_diff < desired_height) {
+		int height_agl = LinkedTo->HeightAGL;
+		if (Map[LinkedTo->Get_Coord()].IsUnderBridge && !LinkedTo->IsOnBridge) {
+			if (LinkedTo->PositionCoord.Z >= Map.Get_Height_GL(LinkedTo->PositionCoord) + BRIDGE_LEPTON_HEIGHT) height_agl -= BRIDGE_LEPTON_HEIGHT;
+		}
+		if (height_agl == 0) {
+			LinkedTo->Clear_Occupy_Bit(LinkedTo->PositionCoord);
+			LinkedTo->IsOnBridge = false;
+		}
+		if (height_diff + Climb > desired_height) height += desired_height - height_diff;
+		else height += Climb;
+		moved = true;
+	} else if (height_diff > desired_height) {
+		if (height_diff - Climb < desired_height) height += desired_height - height_diff;
+		else height -= Climb;
+		if (height <= ground_height) height = ground_height;
+		height_diff = MAX(height_diff, 0);
+		moved = true;
+	}
+	if (LinkedTo->Get_Cell() != HeadToCoord.As_Cell()) {
+		if (height_diff < desired_height / 2) CurrentSpeed = 0;
+		if (height_diff < desired_height / 4) CurrentSpeed = 0;
+	}
+	if (moved) {
+		LinkedTo->Height = height;
+		if (need_to_mark) LinkedTo->Mark(MARK_UP);
+	}
+	Coord new_coord = Move_Coord(LinkedTo->PositionCoord, Facing.Current(), CurrentSpeed);
+	LinkedTo->Set_Coord(new_coord);
+	if (!LinkedTo->IsAttackedByLocomotor) {
+		if (LinkedTo != NULL && LinkedTo->Fetch_RTTI() == RTTI_INFANTRY
+			&& Jumpjet_Infantry(LinkedTo)->Class->JumpJetTurn
+			&& CurrentState == HOVERING && LinkedTo->TarCom != NULL) {
+			Facing.Set(LinkedTo->GetTargetDirection(LinkedTo->TarCom));
+		} else LinkedTo->PrimaryFacing.Set(Facing.Current());
+	}
+	if (need_to_mark) LinkedTo->Mark(MARK_DOWN);
+	else LinkedTo->IsDown = was_down;
 }
 
 // FUNCTION: GAMEMD 0x0054D6D0

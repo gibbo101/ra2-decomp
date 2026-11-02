@@ -239,3 +239,7 @@ address,name,symbol,evidence
 0x0087DD88,audioDataStruct,,"auddev static AudioData; only 0x00815E98 holds its address"
 0x0087E8A8,AlphaLightingRemapInit,,"TibSun _alpha.cpp global; static initialiser 0x0040AD60 builds it and registers its atexit 0x0040AD80"
 0x0087E294,AudioIDXData::Instance,,"YRpp AudioIDXData::Instance; set by AudioIDXData::Create in audevent.cpp"
+0x0054D0F0,JumpjetLocomotionClass::Movement_AI,?Movement_AI@JumpjetLocomotionClass@@QAEXXZ,Called by matched Process at 0x0054AEF0; retail accelerates and updates wobble and flight height as in TibSun Movement_AI
+0x0054BD30,JumpjetLocomotionClass::Process_Hover,?Process_Hover@JumpjetLocomotionClass@@QAEXXZ,HOVERING switch entry in matched Process calls 0x0054BD30; retail compares HeadToCoord with position before descent or cruise as in TibSun Process_Hover
+0x00A8B230,Scen,,YRpp ScenarioClass.h ScenarioClass::Instance; ScenarioClass pointer read by matched JumpjetLocomotionClass::Process for Special.IsFogOfWar
+0x007C5F00,_ftol,,YRpp Unsorted.h Game::F2I64; x87 conversion helper called by matched JumpjetLocomotionClass::Movement_AI and its geometry initializers

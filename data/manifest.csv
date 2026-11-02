@@ -7463,6 +7463,7 @@ address,size,symbol,source,sha256
 0x0054AD30,286,?Link_To_Object@JumpjetLocomotionClass@@UAGJPAX@Z,src/jumpjet.cpp,2551d4305977d4cd27e4716dbf73b302ab6542dcb8a21e4c4b0700a326349a9f
 0x0054AE50,10,?Is_Moving@JumpjetLocomotionClass@@UAGEXZ,src/jumpjet.cpp,88dd5aa520518b86b32c605f0205bf1dac3a968a60667b1d5391b15fce78d3b1
 0x0054AE60,81,?Destination@JumpjetLocomotionClass@@UAG?AUCoordStruct@@XZ,src/jumpjet.cpp,863fa6ce3c9aaa661725e10bb34e11549d02c95c161b5137549611f2823021dd
+0x0054AEC0,760,?Process@JumpjetLocomotionClass@@UAGEXZ,src/jumpjet.cpp,80ec6696ab100b9ff93fbe6fa63b357cd1fbe57ea9028d4d8ef91e6db36a5524
 0x0054B1C0,783,?Move_To@JumpjetLocomotionClass@@UAGXUCoordStruct@@@Z,src/jumpjet.cpp,5233dce2ec27f170be1c17fc888345975c5366e96663d077ee46e1f9bc22c1c7
 0x0054B4D0,527,?Stop_Moving@JumpjetLocomotionClass@@UAGXXZ,src/jumpjet.cpp,d525c19547ca6ab7e094938c8037f2f703854cfde89728f00812e7d46e8b5dcb
 0x0054B6E0,34,?Do_Turn@JumpjetLocomotionClass@@UAGXUDirStruct@@@Z,src/jumpjet.cpp,529a8dd5d65c14b3956d6c9369d91fda652d81d35da03ef0718ee26637f278ec
@@ -7477,6 +7478,7 @@ address,size,symbol,source,sha256
 0x0054CA90,1573,?Process_Crashing@JumpjetLocomotionClass@@QAEXXZ,src/jumpjet.cpp,4367b200c0f8091decf0cf673b3e25d22051f4f680a7a74c9bde6d8752fac044
 0x0054D0C0,1,?Process_Unknown@JumpjetLocomotionClass@@QAEXXZ,src/jumpjet.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
 0x0054D0D0,26,?Is_Moving_Now@JumpjetLocomotionClass@@UAGEXZ,src/jumpjet.cpp,c5178893a6df55a40ac4f19ad2186af3e700b6e9902d0e46f02926f842dd9743
+0x0054D0F0,1494,?Movement_AI@JumpjetLocomotionClass@@QAEXXZ,src/jumpjet.cpp,07d4ade903480a1945f7005dff06a22b16e7b4dc0bf6975a93b45a40503b2ad6
 0x0054D6D0,334,?Closest_Free_Spot@JumpjetLocomotionClass@@QBE?AVCoord@@ABV2@@Z,src/jumpjet.cpp,2b1be6d6601888176902453516731c995fd2355c5f691eda8d2ad9474e981725
 0x0054D820,270,?Desired_Flight_Level@JumpjetLocomotionClass@@QBEHXZ,src/jumpjet.cpp,2ea8a7bccf50af0eadab27820ba4fa6ef50616d014b29b8bc083c45949161507
 0x0054D930,122,?Mark_All_Occupation_Bits@JumpjetLocomotionClass@@UAGXH@Z,src/jumpjet.cpp,81fab070692f5471865a2ec6fe0ec7a86ad9a5e6fe21e3ec149dab805983a840
