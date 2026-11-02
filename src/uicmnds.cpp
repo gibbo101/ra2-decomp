@@ -811,6 +811,37 @@ static inline TechnoList * Visible_Of_Name(char const * name)
 	return list;
 }
 
+static inline TechnoList * All_Of_Name(char const * name)
+{
+	TechnoList * list = new TechnoList(0, NULL);
+	int count = DAT_00A8EC78.Count();
+	for (int i = 0; i < count; i++) {
+		TechnoClass * techno = DAT_00A8EC78[i];
+		if (FUN_00732770(techno, name)) {
+			list->Add(techno);
+		}
+	}
+	return list;
+}
+
+// FUNCTION: GAMEMD 0x00732600
+void __fastcall Unselect_Units_Of_Type(char const * name)
+{
+	TechnoList * list;
+	if (DAT_00B0FE64) {
+		list = All_Of_Name(name);
+	} else {
+		list = Visible_Of_Name(name);
+	}
+	int count = list->Count();
+	for (int i = 0; i < count; i++) {
+		(*list)[i]->Unselect();
+	}
+	if (list) {
+		delete list;
+	}
+}
+
 // FUNCTION: GAMEMD 0x00732770
 int __fastcall Is_Player_Alive_Unit_Of(TechnoClass * techno, char const * name)
 {
@@ -827,6 +858,27 @@ void __fastcall FUN_00732950(void);
 typedef DynamicVectorClass<char const *> NameList;
 NameList * FUN_00732D10(void);
 bool __fastcall FUN_00732C30(TechnoClass * techno, NameList * names);
+
+// FUNCTION: GAMEMD 0x007327D0
+void __fastcall Select_Units_Of_Type(char const * name)
+{
+	bool feedback = Unsorted::MoveFeedback;
+	Unsorted::MoveFeedback = false;
+	TechnoList * list;
+	if (DAT_00B0FE64) {
+		list = All_Of_Name(name);
+	} else {
+		list = Visible_Of_Name(name);
+	}
+	int count = list->Count();
+	for (int i = 0; i < count; i++) {
+		(*list)[i]->Select();
+	}
+	if (list) {
+		delete list;
+	}
+	Unsorted::MoveFeedback = feedback;
+}
 
 // FUNCTION: GAMEMD 0x00732C30
 bool __fastcall Is_Named_Selectable(TechnoClass * techno, DynamicVectorClass<char const *> * names)
