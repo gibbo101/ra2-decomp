@@ -68,14 +68,15 @@ def sweep(code: bytes, base: int, starts: set, padded: set, calls: set, tables: 
 
 def reached_end(md, code: bytes, base: int, lo: int, hi: int, roots: set,
                 seen: set | None = None, code_only: bool = False,
-                data: set | None = None) -> int:
+                data: set | None = None, callbacks: set | None = None,
+                callback: int | None = None) -> int:
     """The end of the furthest instruction or switch table in [lo, hi) that flow from
     `lo` and `roots` reaches: jumps, branches, calls returning, switch tables, and offsets
     taken as operands. A switch table is data, never decoded as code; a byte index table
-    runs while its entries index the function's jump tables. An offset pushed or moved
-    into a register can name a callback without transferring control to it. With
-    `code_only`, tables do not extend the end. `seen` collects every instruction reached,
-    `data` the (start, end) of each table."""
+    runs while its entries index the function's jump tables. A pushed offset is a callback
+    argument (atexit), not flow. When testing a particular callback, a register-immediate
+    load of that address is not flow either. With `code_only`, tables do not extend the end.
+    `seen` collects every instruction reached, `data` the (start, end) of each table."""
     seen = set() if seen is None else seen
     todo, far = [lo, *roots], lo
     jump_tables, index_tables = {}, set()
@@ -90,10 +91,15 @@ def reached_end(md, code: bytes, base: int, lo: int, hi: int, roots: set,
             far = max(far, at + size)
             t = TABLE_OPERAND.search(ops)
             table = int(t.group(1), 16) if t else None
-            if mnem != "push" and not (mnem == "mov" and REGISTER_IMMEDIATE.fullmatch(ops)):
-                for v in re.findall(r"0x[0-9a-f]+", ops):
-                    if lo < int(v, 16) < hi and int(v, 16) != table:
-                        todo.append(int(v, 16))
+            for v in re.findall(r"0x[0-9a-f]+", ops) if mnem != "push" else ():
+                target = int(v, 16)
+                if lo < target < hi and target != table:
+                    if mnem == "mov" and REGISTER_IMMEDIATE.fullmatch(ops):
+                        if target == callback:
+                            continue
+                        if callbacks is not None and at < target and target % 16 == 0:
+                            callbacks.add((target, at))
+                    todo.append(target)
             if t and mnem == "jmp" and lo <= table < hi:
                 entry = table
                 while entry < hi and lo <= struct.unpack_from("<I", code, entry - base)[0] < hi:
@@ -251,6 +257,24 @@ def main() -> None:
     if first not in evidence:
         evidence[first] = "P"
 
+    callbacks = set()
+
+    def flow_end(a: int, nxt: int, callback: int | None = None) -> tuple[int, bool]:
+        # Data pointers to instructions before a candidate (unwind funclets) extend the
+        # flow; those past it point into the second function, those into a table at nothing.
+        roots, data = set(), set()
+        while True:
+            at = reached_end(md, code, base, a, nxt, roots, data=data,
+                             callbacks=callbacks if callback is None else None, callback=callback)
+            after_data = any(e == at for _, e in data)
+            while at < nxt and code[at - base] == NOP:
+                at += 1
+            more = {p for p in ptrs if a < p < at and p in starts
+                    and not any(s <= p < e for s, e in data)} - roots
+            if not more:
+                return at, after_data
+            roots |= more
+
     # Aligned code past a function's last return or switch table that its flow never
     # reaches is a second function, even where the linear sweep ran through it.
     boundaries = after_end | padded
@@ -261,19 +285,7 @@ def main() -> None:
         for a in pending:
             i = bisect.bisect_right(ordered, a)
             nxt = ordered[i] if i < len(ordered) else end
-            # Data pointers to instructions before a candidate (unwind funclets) extend the
-            # flow; those past it point into the second function, those into a table at nothing.
-            roots, data = set(), set()
-            while True:
-                at = reached_end(md, code, base, a, nxt, roots, data=data)
-                after_data = any(e == at for _, e in data)
-                while at < nxt and code[at - base] == NOP:
-                    at += 1
-                more = {p for p in ptrs if a < p < at and p in starts
-                        and not any(s <= p < e for s, e in data)} - roots
-                if not more:
-                    break
-                roots |= more
+            at, after_data = flow_end(a, nxt)
             if (a < at < nxt and at % 16 == 0 and at not in tables
                     and ((at in starts and at in boundaries) or after_data)):
                 if at not in starts:
@@ -288,7 +300,23 @@ def main() -> None:
         case_labels += dropped
         pending = new
 
+    # Look for callbacks inside the remaining intervals. Existing boundaries are now
+    # fixed. Ignore only the immediate load of the proposed entry: a branch or table
+    # reaching that address still keeps it inside the preceding function.
     ordered = sorted(evidence)
+    for target, site in sorted(callbacks):
+        if target in evidence or target in tables or target not in starts or target not in boundaries:
+            continue
+        i = bisect.bisect_left(ordered, target)
+        lo = ordered[i - 1]
+        if site < lo:
+            continue
+        hi = ordered[i] if i < len(ordered) else end
+        at, _ = flow_end(lo, hi, callback=target)
+        if at == target:
+            evidence[target] = "F"
+            ordered.insert(i, target)
+
     with out.open("w", newline="") as f:
         w = csv.writer(f, lineterminator="\n")
         w.writerow(["address", "size", "evidence", "name"])
