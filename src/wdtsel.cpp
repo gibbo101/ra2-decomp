@@ -221,6 +221,41 @@ void Selection::On_Map_Leave(void)
 #include "stringtable.h"
 WideWstring __fastcall FUN_007B7E40(int value, int digits);
 
+// FUNCTION: GAMEMD 0x0076E2F0
+// WorldDominationTour::Selection::Do_Target_Selection
+void Selection::Do_Target_Selection(int index)
+{
+	{
+		WideWstring blank((wchar_t const *)NULL);
+		Set_Text(blank, 0);
+	}
+
+	int current_tick = TourCampaign.Get()->Properties->FUN_0076BFE0();
+	bool silent = true;
+	int previous_tick = TourCampaign.Get()->Get_Previous_Tick(index);
+
+	if (current_tick - previous_tick > 8) {
+		previous_tick = current_tick - 8;
+	}
+
+	if (previous_tick != current_tick) {
+		silent = !Present_History(previous_tick, current_tick);
+	} else {
+		bool mega = false;
+		int outcome = Get_Outcome(current_tick, mega);
+		VoicePlayer.FUN_007712C0(2, outcome, mega, true, 0);
+	}
+
+	{
+		WideWstring blank((wchar_t const *)NULL);
+		Set_Text(blank, 0);
+	}
+	Check_For_Breakout();
+
+	Do_Target_Anim(TourCampaign.Get()->CycleHistory->FUN_00767BB0(current_tick), true, silent);
+	TourCampaign.Get()->Write_INI(index);
+}
+
 // FUNCTION: GAMEMD 0x0076E4F0
 // WorldDominationTour::Selection::Present_Ticks
 bool Selection::Present_Ticks(int tick_from, int tick_to)
