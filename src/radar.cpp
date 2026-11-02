@@ -40,12 +40,17 @@
 #include "tactical.h"
 #include "voc.h"
 #include "vox.h"
+#include "zbuffer.h"
 #include "vqa.h"
 #include "fastmath.h"
 #include "coord.h"
 
 // SYNTHETIC: GAMEMD 0x00652660 SYMBOL
 // _$E2
+
+extern ObjectClass * __fastcall FUN_005353D0(Cell const * cell, ObjectClass const * target);
+extern bool __fastcall FUN_00637AA0();
+extern int __fastcall FUN_00639DA0();
 
 extern const double ONE_RAD;
 extern const double DAT_007F02A8;
@@ -607,6 +612,162 @@ void RadarClass::AI(KeyNumType & input, Point2D const & xy)
 	} else if (!FUN_0053BAE0()) {
 		FUN_00753580();
 	}
+}
+
+// FUNCTION: GAMEMD 0x006539D0
+int RadarClass::RTacticalClass::Action(unsigned flags, KeyNumType & key, int modifier)
+{
+	if (flags & (RIGHTHELD | LEFTHELD)) {
+		return(false);
+	}
+	if (Map.Is_Playing_Movie()) {
+		return(false);
+	}
+	if (!Map.Is_Radar_Tactical()) {
+		return(false);
+	}
+
+	int x, y;
+	if (flags & (LEFTPRESS | LEFTRELEASE | RIGHTPRESS | RIGHTRELEASE)) {
+		x = Keyboard->MouseQX;
+		y = Keyboard->MouseQY;
+	} else {
+		x = Get_Mouse_X();
+		y = Get_Mouse_Y();
+	}
+	x -= Options.IsSidebarOnRight ? TacticalRect.Width : 0;
+	if (x < Map.RadarRect.X || x >= Map.RadarRect.X + Map.RadarRect.Width ||
+	    y < Map.RadarRect.Y || y >= Map.RadarRect.Y + Map.RadarRect.Height) {
+		Map.Override_Mouse_Shape(MOUSE_NORMAL);
+		return(false);
+	}
+
+	Point2D click(x, y);
+	Cell cell(0, 0);
+	bool shadow;
+	ObjectClass * object = NULL;
+	ActionType action;
+	Map.Resolve_Radar_Point(click, cell, object);
+	if (cell != CELL_NONE) {
+		Coord coord = cell.As_Coord();
+		coord.Z = Map.Get_Height_GL(coord);
+		shadow = (Map.Is_Shrouded(coord) && MainWindow);
+
+		bool multi_missile = Map.IsTargettingMode == SUPER_MULTI_MISSILE;
+		bool iron_curtain = Map.IsTargettingMode == SUPER_IRON_CURTAIN;
+		bool lightning_storm = Map.IsTargettingMode == SUPER_LIGHTNING_STORM;
+		bool para_drop = Map.IsTargettingMode == SUPER_PARA_DROP;
+		bool amer_para_drop = Map.IsTargettingMode == SUPER_AMER_PARA_DROP;
+		bool psychic_dominator = Map.IsTargettingMode == SUPER_PSYCHIC_DOMINATOR;
+		bool spy_plane = Map.IsTargettingMode == SUPER_SPY_PLANE;
+		bool genetic_converter = Map.IsTargettingMode == SUPER_GENETIC_CONVERTER;
+		bool psychic_reveal = Map.IsTargettingMode == SUPER_PSYCHIC_REVEAL;
+		bool right = (flags & (RIGHTPRESS | RIGHTRELEASE)) != 0;
+		if (!right && (CurrentObject.Count() || multi_missile || iron_curtain || lightning_storm ||
+	               para_drop || psychic_dominator || spy_plane || genetic_converter ||
+	               psychic_reveal || amer_para_drop)) {
+			if (multi_missile) {
+				action = ACTION_NUKE_BOMB;
+			} else if (iron_curtain) {
+				action = ACTION_IRON_CURTAIN;
+			} else if (lightning_storm) {
+				action = ACTION_LIGHTNING_STORM;
+			} else if (psychic_dominator) {
+				action = ACTION_PSYCHIC_DOMINATOR;
+			} else if (spy_plane) {
+				action = ACTION_SPY_PLANE;
+			} else if (genetic_converter) {
+				action = ACTION_GENETIC_CONVERTER;
+			} else if (psychic_reveal) {
+				action = ACTION_PSYCHIC_REVEAL;
+			} else if (para_drop) {
+				action = ACTION_PARA_DROP;
+			} else if (amer_para_drop) {
+				action = ACTION_AMER_PARA_DROP;
+			} else if (object) {
+				action = FUN_005353D0(NULL, object)->What_Action(object);
+			} else {
+				action = FUN_005353D0(&cell, NULL)->What_Action(cell);
+			}
+
+			switch (action) {
+				case ACTION_MOVE:
+				case ACTION_NOMOVE:
+				case ACTION_ENTER:
+				case ACTION_ATTACK:
+				case ACTION_HARVEST:
+				case ACTION_CAPTURE:
+				case ACTION_SABOTAGE:
+				case ACTION_NUKE_BOMB:
+				case ACTION_GUARD_AREA:
+				case ACTION_LIGHTNING_STORM:
+				case ACTION_PARA_DROP:
+				case ACTION_AMER_PARA_DROP:
+				case ACTION_PSYCHIC_DOMINATOR:
+				case ACTION_SPY_PLANE:
+				case ACTION_PSYCHIC_REVEAL:
+					break;
+				default:
+					action = ACTION_NONE;
+					object = NULL;
+					break;
+			}
+			if ((!FUN_00637AA0() || FUN_00639DA0() == -1) && action != ACTION_NONE) {
+				if (flags & LEFTUP) {
+					Map.Mouse_Left_Up(cell, shadow, object, action, true);
+				}
+				if (flags & LEFTRELEASE && !drag_select_aborted) {
+					Map.Mouse_Left_Release(Coord(cell), cell, object, action, true);
+				}
+				goto finish_input;
+			}
+		}
+		if (!right) {
+			Map.Set_Default_Mouse(MOUSE_NORMAL, true);
+		}
+		if ((flags & LEFTPRESS) || (flags & RIGHTPRESS)) {
+			if (cell != Cell(0, 0)) {
+				const int tactical_tile_width = 60;
+				const int tactical_tile_height = 30;
+				int side_edge = Map.PlayRect.Width - (TacticalRect.Width / tactical_tile_width + 2) / 2 - 1;
+				int half_view_height = TacticalRect.Height / (2 * tactical_tile_height);
+				int top_edge = half_view_height + Map.PlayRect.Width + 1;
+				int bottom_edge = 2 * Map.PlayRect.Height - half_view_height + Map.PlayRect.Width - 1;
+				int adjust;
+
+				if ((cell.Y - cell.X) > side_edge) {
+					adjust = (cell.Y - cell.X) - side_edge;
+					cell.Y -= adjust;
+					cell.X += adjust;
+				}
+				if ((cell.X - cell.Y) > side_edge - 1) {
+					adjust = (cell.X - cell.Y) - side_edge + 1;
+					cell.Y += adjust;
+					cell.X -= adjust;
+				}
+				if (cell.X + cell.Y < top_edge) {
+					adjust = top_edge - cell.Y - cell.X;
+					cell.X += adjust;
+					cell.Y += adjust;
+				}
+				if ((cell.X + cell.Y) > bottom_edge) {
+					adjust = (cell.X + cell.Y) - bottom_edge;
+					cell.X -= adjust;
+					cell.Y -= adjust;
+				}
+				Coord coord = Map[cell].Cell_Coord();
+				TacticalMap->Set_Tactical_Position(coord);
+				Map.Flag_To_Redraw(GS_REDRAW_TACTICAL);
+				if (DepthBuffer) {
+					DepthBuffer->Set_Scroll(ZBUFFER_MAX);
+				}
+			}
+		}
+	}
+
+finish_input:
+	GadgetClass::Action(0, key, 0);
+	return(true);
 }
 
 // FUNCTION: GAMEMD 0x00653F50
