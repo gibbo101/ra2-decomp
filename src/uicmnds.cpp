@@ -65,15 +65,8 @@
 #include <math.h>
 #include "stringtable.h"
 
-class UICommandHolder
-{
-	public:
-		virtual ~UICommandHolder(void);
-		int Reserved[3];
-		void * Table;
-};
-
-extern UICommandHolder * DAT_00B0FE6C;
+typedef DynamicVectorClass<TechnoClass *> TechnoList;
+extern TechnoList * DAT_00B0FE6C;
 extern DynamicVectorClass<TechnoClass *> DAT_00A8EC78;
 extern DynamicVectorClass<ObjectClass *> DAT_00A8ECB8;
 extern HouseClass * PlayerPtr;
@@ -634,7 +627,6 @@ wchar_t * __fastcall FUN_00731D10(wchar_t * buffer)
 }
 
 typedef DynamicVectorClass<ObjectClass *> ObjectList;
-typedef DynamicVectorClass<TechnoClass *> TechnoList;
 
 class TacticalSelection
 {
@@ -655,7 +647,7 @@ extern Tactical * TacticalMap;
 void __fastcall FUN_00731D90(wchar_t * buffer, wchar_t const * name)
 {
 	wchar_t upper[100];
-	if (DAT_00B0FE6C->Table && name) {
+	if (DAT_00B0FE6C->Count() && name) {
 		wcscpy(upper, name);
 		_wcsupr(upper);
 		int count = DAT_00A8ECB8.Count();
@@ -953,6 +945,19 @@ static inline TechnoList * New_Techno_List(void)
 	return new TechnoList(0, NULL);
 }
 
+// FUNCTION: GAMEMD 0x00733160
+void __fastcall Remove_Navigation_Object(TechnoClass * object)
+{
+	if (DAT_00B0FE6C) {
+		for (int i = DAT_00B0FE6C->Count() - 1; i >= 0; --i) {
+			if ((*DAT_00B0FE6C)[i] == object) {
+				DAT_00B0FE6C->Delete_Index(i);
+				return;
+			}
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x007331B0
 void FUN_007331B0(void)
 {
@@ -969,7 +974,7 @@ void FUN_007331B0(void)
 			list->Add((TechnoClass *)object);
 		}
 	}
-	DAT_00B0FE6C = (UICommandHolder *)list;
+	DAT_00B0FE6C = list;
 	if (list->Count() == 0) {
 		if (list) {
 			delete list;
@@ -983,7 +988,7 @@ void FUN_007331B0(void)
 				list->Add((TechnoClass *)object);
 			}
 		}
-		DAT_00B0FE6C = (UICommandHolder *)list;
+		DAT_00B0FE6C = list;
 	}
 }
 
@@ -1073,13 +1078,13 @@ void __fastcall FUN_00733380(bool redraw)
 	if (Unsorted::NavCycleMode != 3) {
 		FUN_00730970();
 		TechnoList * list = Wrap_All();
-		DAT_00B0FE6C = (UICommandHolder *)list;
+		DAT_00B0FE6C = list;
 		if (list->Count() == 0) {
 			if (list) {
 				delete list;
 			}
 			DAT_00B0FE6C = NULL;
-			DAT_00B0FE6C = (UICommandHolder *)Wrap_Filter((bool (__fastcall *)(ObjectClass *, int))FUN_007335F0, 0);
+			DAT_00B0FE6C = Wrap_Filter((bool (__fastcall *)(ObjectClass *, int))FUN_007335F0, 0);
 		}
 		FUN_006DA740(TacticalMap);
 		next = 0;
@@ -1197,13 +1202,13 @@ void __fastcall FUN_007336C0(bool redraw)
 	if (Unsorted::NavCycleMode != 4) {
 		FUN_00730970();
 		TechnoList * list = Wrap_All();
-		DAT_00B0FE6C = (UICommandHolder *)list;
+		DAT_00B0FE6C = list;
 		if (list->Count() == 0) {
 			if (list) {
 				delete list;
 			}
 			DAT_00B0FE6C = NULL;
-			DAT_00B0FE6C = (UICommandHolder *)Wrap_Filter((bool (__fastcall *)(ObjectClass *, int))FUN_007335F0, 0);
+			DAT_00B0FE6C = Wrap_Filter((bool (__fastcall *)(ObjectClass *, int))FUN_007335F0, 0);
 		}
 		FUN_006DA740(TacticalMap);
 		next = 0;
@@ -1333,18 +1338,18 @@ void __fastcall FUN_007339B0(bool redraw)
 	if (Unsorted::NavCycleMode != 5) {
 		FUN_00730970();
 		TechnoList * list = Wrap_All();
-		DAT_00B0FE6C = (UICommandHolder *)list;
+		DAT_00B0FE6C = list;
 		if (list->Count() == 0) {
 			if (list) {
 				delete list;
 			}
 			DAT_00B0FE6C = NULL;
-			DAT_00B0FE6C = (UICommandHolder *)Wrap_Filter((bool (__fastcall *)(ObjectClass *, int))FUN_007335F0, 0);
+			DAT_00B0FE6C = Wrap_Filter((bool (__fastcall *)(ObjectClass *, int))FUN_007335F0, 0);
 		}
 		FUN_006DA740(TacticalMap);
-		chosen = FUN_00733E10((TechnoList *)DAT_00B0FE6C, NULL, 0x7fffffff, &best);
+		chosen = FUN_00733E10(DAT_00B0FE6C, NULL, 0x7fffffff, &best);
 	} else {
-		chosen = FUN_00733E10((TechnoList *)DAT_00B0FE6C, DAT_00B0FD70, DAT_00B0FE70, &best);
+		chosen = FUN_00733E10(DAT_00B0FE6C, DAT_00B0FD70, DAT_00B0FE70, &best);
 		if (redraw) {
 			FUN_006DA740(TacticalMap);
 		}
@@ -1471,6 +1476,30 @@ char * __fastcall FUN_00733E10(TechnoList * items, char const * preferred, int l
 	delete names;
 	delete totals;
 	return(result);
+}
+
+Cell Recall_Radar_Event_Cell(void);
+Cell Recall_Previous_Radar_Event_Cell(void);
+
+// FUNCTION: GAMEMD 0x00734120
+void Center_On_Radar_Event(void)
+{
+	Cell cell;
+	if (timeGetTime() - DAT_00845558 < 1600) {
+		cell = Recall_Previous_Radar_Event_Cell();
+	} else {
+		cell = Recall_Radar_Event_Cell();
+	}
+	DAT_00845558 = timeGetTime();
+	if (cell != DAT_00B0FDF0) {
+		Coord coord(cell);
+		int lift = Map[coord].Height * CELL_LEPTON_W / 2;
+		coord -= Coord(lift, lift, 0);
+		TacticalMap->Set_Tactical_Position(coord);
+		if (Map.PendingObject) {
+			Map.Set_Cursor_Pos(DAT_00B0FDF0);
+		}
+	}
 }
 
 // FUNCTION: GAMEMD 0x00734210
