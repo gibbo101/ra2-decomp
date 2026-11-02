@@ -712,6 +712,128 @@ void AStarClass::Splice_Path(FacingType * moves, int start_index, int end_index,
 	return;
 }
 
+// FUNCTION: GAMEMD 0x0042BE20
+bool AStarClass::Plot_Straight_Line(FacingType * moves, int move_count, Cell const & from, Cell const & to, FootClass * foot, int cell_height, bool fearless)
+{
+	int first_dist;
+	int second_dist;
+	int tries = 0;
+
+	const int x = to.X;
+	const int y = to.Y;
+
+	FacingType first_dir;
+	if (to.X < 0) {
+		first_dir = to.Y < 0 ? FACING_NW : FACING_SW;
+	} else {
+		first_dir = to.Y < 0 ? FACING_NE : FACING_SE;
+	}
+
+	const int sub_xy = (int)to.X - (int)to.Y;
+	const int sum_xy = (int)to.X + (int)to.Y;
+
+	FacingType second_dir;
+	if (sub_xy > 0) {
+		second_dir = sum_xy > 0 ? FACING_E : FACING_N;
+	} else {
+		second_dir = sum_xy > 0 ? FACING_S : FACING_W;
+	}
+
+	int y_dist = abs(y);
+	int x_dist = abs(x);
+
+	first_dist = MIN(x_dist, y_dist);
+	second_dist = MAX(x_dist, y_dist) - first_dist;
+
+	double avoidance = foot->Threat_Avoidance_Value();
+	int threats = 0;
+	HouseClass * house = foot->House;
+	bool avoid_threats = avoidance > 0.00001;
+
+	bool blocked = false;
+
+	while (tries < 2) {
+
+		threats = 0;
+
+		if (first_dist != 0) {
+			int height = cell_height;
+
+			blocked = false;
+			Cell current = from;
+			int count1 = first_dist;
+			int count2 = second_dist;
+
+			while (count1 > 0 && !blocked) {
+
+				current = current + AdjacentCell[(int)first_dir & 7];
+				CellClass * cellptr = &Map[current];
+
+				if (avoid_threats && Map.GetThreatPosed(current, house) * avoidance >= 0.01) {
+					threats++;
+				}
+
+				blocked = foot->Can_Enter_Cell(cellptr, first_dir, height) != MOVE_OK || cellptr->IsPredictedPath || threats > 3 || (!fearless && threats > 0);
+				count1--;
+
+				int step_height = cellptr->Height;
+
+				if (height - step_height == BRIDGE_CELL_HEIGHT) {
+					height = step_height + BRIDGE_CELL_HEIGHT;
+					if (cellptr->IsUnderBridge) {
+						continue;
+					}
+				}
+
+				height = step_height;
+			}
+
+			while (count2 > 0 && !blocked) {
+
+				current = Cell(current + AdjacentCell[(int)second_dir & 7]);
+				CellClass * cellptr = &Map[current];
+
+				if (avoid_threats && Map.GetThreatPosed(current, house) * avoidance >= 0.01) {
+					threats++;
+				}
+
+				blocked = foot->Can_Enter_Cell(cellptr, second_dir, height) != MOVE_OK || cellptr->IsPredictedPath || threats > 3 || (!fearless && threats > 0);
+				count2--;
+
+				int step_height = cellptr->Height;
+
+				if (height - step_height == BRIDGE_CELL_HEIGHT) {
+					height = step_height + BRIDGE_CELL_HEIGHT;
+					if (cellptr->IsUnderBridge) {
+						continue;
+					}
+				}
+
+				height = step_height;
+			}
+		}
+
+		if (first_dist == 0 || blocked) {
+			swap(second_dir, first_dir);
+			swap(second_dist, first_dist);
+		} else {
+			int i;
+			for (i = 0; i < first_dist; i++) {
+				moves[i] = first_dir;
+			}
+			for (i = 0; i < second_dist; i++) {
+				moves[first_dist + i] = second_dir;
+			}
+			for (i = 0; i < move_count - first_dist - second_dist; i++) {
+				moves[first_dist + second_dist + i] = EMPTY;
+			}
+			return(true);
+		}
+		tries++;
+	}
+	return(false);
+}
+
 // FUNCTION: GAMEMD 0x0042C1C0
 void AStarClass::Reset(void)
 {
