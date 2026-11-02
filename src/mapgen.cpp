@@ -6074,3 +6074,264 @@ template class VectorClass<double>;
 // SYNTHETIC: GAMEMD 0x0058B720 SYMBOL
 // _$E249
 const Rect RECT_NONE_2(0, 0, 0, 0);
+
+// FUNCTION: GAMEMD 0x005A78D0
+void MapGeneratorClass::Generate_Urban_Pavement(DynamicVectorClass<Cell> & cells)
+{
+	Rect sizes[5] = {
+		Rect(0, 0, 6, 4),
+		Rect(0, 0, 4, 6),
+		Rect(0, 0, 4, 4),
+		Rect(0, 0, 4, 2),
+		Rect(0, 0, 2, 4)
+	};
+
+	int count = cells.Count() / 50;
+	int placed = 0;
+
+	for (int tries = 0; tries < 10 * count && placed < count; tries++) {
+		Cell cell = cells[Pick_Random_UInt(0, cells.Count() - 1)];
+		int size = 0;
+		bool place = false;
+		Rect area(cell.X, cell.Y, 0, 0);
+		while (!place) {
+			if (size >= 5) {
+				break;
+			}
+			area.Width = sizes[size].Width;
+			area.Height = sizes[size].Height;
+			if (Can_Place_Misc_Pavement(area)) {
+				place = true;
+			}
+			size++;
+		}
+		if (place) {
+			IsometricTileType tile = (IsometricTileType)(Pick_Random_UInt(0, 5) + IsometricTileTypeClass::MiscPaveTile + 8);
+			for (int y = 0; y < area.Height / 2; y++) {
+				for (int x = 0; x < area.Width / 2; x++) {
+					Place_Tile(tile, Cell(area.X + 2 * x, area.Y + 2 * y));
+				}
+			}
+			placed++;
+		}
+	}
+}
+
+extern double const DAT_007ED720;
+extern double const DAT_007ED728;
+extern double const DAT_007ED730;
+
+// FUNCTION: GAMEMD 0x0059AFA0
+void MapGeneratorClass::Seed_Land_Type1(void)
+{
+	WorkingRegionID = 1;
+	int total = Map_Cell_Count();
+	int placed = 0;
+	int tries = 0;
+	double current = 0.0;
+	double target = (1.0 - SeedData.WaterAmount * 0.01) * (DAT_007ED728 - DAT_007ED720) + DAT_007ED720;
+	int maximum = (int)((double)total * DAT_007ED730 * target);
+	Point2D origin(Map.PlayRect.Width / 2 + Map.PlayRect.Height / 2 + 1,
+				   Map.PlayRect.Width / 2 + Map.PlayRect.Height / 2);
+	Point2D seed = origin;
+
+	Map.Reset_Iterator();
+	CellClass * cptr = Map.Iterate();
+	while (cptr != NULL) {
+		MapRegionClass::Get_Cell_Data(cptr->Fetch_CellID()).SpreadID = 0;
+		cptr = Map.Iterate();
+	}
+
+	Rect bounds = Map.LocalRect;
+	bounds.X++;
+	bounds.Y++;
+	bounds.Width -= 2;
+	bounds.Height -= 2;
+	while (current < target && tries < 100) {
+		int size = (int)((target - current) * (double)total);
+		size = MIN(size, maximum);
+		current = (double)(placed += FUN_0059BBC0(size, bounds, seed, true, Cell(origin.X, origin.Y), 0.75, true)) / (double)total;
+		tries++;
+
+		int nearest = 50000;
+		Cell closest(0, 0);
+		Map.Reset_Iterator();
+		cptr = Map.Iterate();
+		while (cptr != NULL) {
+			if (MapRegionClass::Get_Cell_Data(cptr->CellID).SpreadID == 0) {
+				int distance = abs(cptr->CellID.X - origin.X) + abs(cptr->CellID.Y - origin.Y);
+				if (distance < nearest) {
+					nearest = distance;
+					closest = cptr->CellID;
+				}
+			}
+			cptr = Map.Iterate();
+		}
+		seed = Point2D(closest.X, closest.Y);
+	}
+}
+
+extern double const DAT_007ED740;
+extern double const DAT_007ED748;
+extern double const DAT_007ED750;
+
+// FUNCTION: GAMEMD 0x0059B200
+void MapGeneratorClass::Seed_Land_Type2(void)
+{
+	WorkingRegionID = 1;
+	int total = Map_Cell_Count();
+	int tries = 0;
+	double target = (1.0 - SeedData.WaterAmount * 0.01) * (DAT_007ED748 - DAT_007ED740) + DAT_007ED740;
+	int maximum = (int)((double)total * DAT_007ED750 * target);
+
+	Map.Reset_Iterator();
+	CellClass * cptr = Map.Iterate();
+	while (cptr != NULL) {
+		MapRegionClass::Get_Cell_Data(cptr->Fetch_CellID()).SpreadID = 0;
+		cptr = Map.Iterate();
+	}
+
+	Rect halves[2];
+	if (Random_Fraction() < 0.5) {
+		halves[0] = Rect(Map.LocalRect.X, Map.LocalRect.Y, Map.LocalRect.Width / 2 - 1, Map.LocalRect.Height);
+		halves[1] = Rect(Map.LocalRect.X + Map.LocalRect.Width / 2 + 1, Map.LocalRect.Y, Map.LocalRect.Width / 2 - 1, Map.LocalRect.Height);
+	} else {
+		halves[0] = Rect(Map.LocalRect.X, Map.LocalRect.Y, Map.LocalRect.Width, Map.LocalRect.Height / 2 - 1);
+		halves[1] = Rect(Map.LocalRect.X, Map.LocalRect.Y + Map.LocalRect.Height / 2 + 1, Map.LocalRect.Width, Map.LocalRect.Height / 2 - 1);
+	}
+
+	for (int half = 0; half < 2; half++) {
+		int placed = 0;
+		double current = 0.0;
+		Rect bounds = halves[half];
+		Point2D origin(bounds.X + bounds.Width / 2 + bounds.Height / 2 + bounds.Y + 1,
+					   bounds.Y + Map.PlayRect.Width + bounds.Height / 2 - bounds.Width / 2 - bounds.X);
+		Point2D seed = origin;
+		double x_scale;
+		double y_scale;
+		if (bounds.Height > bounds.Width) {
+			x_scale = (double)bounds.Height / (double)bounds.Width * 1.2;
+			y_scale = 1.0;
+		} else {
+			x_scale = 1.0;
+			y_scale = (double)bounds.Width / (double)bounds.Height * 1.2;
+		}
+		double half_width = (double)bounds.Width * 0.5;
+		double inverse_x = 1.0 / (half_width * half_width);
+		double half_height = (double)bounds.Height * 0.5;
+		double inverse_y = 1.0 / (half_height * half_height);
+
+		while (current < target && tries < 100) {
+			int size = (int)((target - current) * (double)total);
+			size = MIN(size, maximum);
+			current = (double)(placed += FUN_0059BBC0(size, bounds, seed, true, Cell(origin.X, origin.Y), 0.75, true)) / (double)total;
+			tries++;
+
+			int nearest = 50000;
+			Cell closest(0, 0);
+			int count = MapCellStride * MapCellStride;
+			int minimum_diagonal = bounds.X * 2 - Map.PlayRect.Width + 1;
+			int maximum_diagonal = minimum_diagonal + bounds.Width * 2 + 2;
+			int minimum_sum = Map.PlayRect.Width + bounds.Y * 2 + 1;
+			int maximum_sum = minimum_sum + bounds.Height * 2 + 2;
+			for (int index = 0; index < count; index++) {
+				MapRegionClass::CellData & data = MapRegionClass::Get_Cell_Data(index);
+				Cell const & candidate = data.CellID;
+				int sum = candidate.X + candidate.Y;
+				int diagonal = candidate.X - candidate.Y;
+				if (sum >= minimum_sum && sum <= maximum_sum && diagonal >= minimum_diagonal && diagonal <= maximum_diagonal && data.SpreadID == 0 && FUN_0059BAB0(candidate, bounds, true, inverse_x, inverse_y)) {
+					double dy = (double)abs(candidate.Y - origin.Y) * y_scale;
+					double dx = (double)abs(candidate.X - origin.X) * x_scale;
+					int distance = (int)(dy + dx);
+					if (distance < nearest) {
+						nearest = distance;
+						closest = candidate;
+					}
+				}
+			}
+			seed = Point2D(closest.X, closest.Y);
+		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x00594F40
+DynamicVectorClass<Cell> * MapRegionClass::Pick_Spread_Cells(DynamicVectorClass<Cell> & cells)
+{
+	double max_distance = -1.0;
+	int max_cell_index = -1;
+	double layout_fraction = (double)RandomMapGen.SeedData.TiberiumLayout * 0.01;
+	int target_count = (int)((layout_fraction * 12.0 / (double)RandomMapGen.SeedData.NumPlayers + 2.0) * (double)Unknown20);
+	if (Unknown20 == 0 && cells.Count() > 0) {
+		target_count = cells.Count();
+	}
+	if (target_count > cells.Count() || target_count == 0) {
+		if (Unknown20 == 0) {
+			return NULL;
+		}
+		target_count = cells.Count();
+	}
+
+	DynamicVectorClass<Cell> *layout = new DynamicVectorClass<Cell>;
+
+	int first;
+	for (first = 0; first < cells.Count() - 1; first++) {
+		Cell c1 = cells[first];
+		int region1 = MapRegionClass::CellData::Get_Region(c1);
+		int current = first + 1;
+		if (current < cells.Count()) {
+			int c1x = c1.X;
+			int c1y = c1.Y;
+			do {
+				Cell c2 = cells[current];
+				int dx = c1x - c2.X;
+				int dy = c1y - c2.Y;
+				int region2 = MapRegionClass::CellData::Get_Region(c2);
+				double score = fastmath::sqrt((double)(dy * dy + dx * dx)) + (double)(region2 != region1 ? 20 : 0);
+				if (current && score > max_distance) {
+					max_distance = score;
+					max_cell_index = first;
+				}
+				current++;
+			} while (current < cells.Count());
+		}
+	}
+
+	if (max_cell_index != -1) {
+		layout->Add(cells[max_cell_index]);
+	} else if (cells.Count() != 0) {
+		layout->Add(cells[0]);
+		return layout;
+	}
+
+	while (layout->Count() < target_count) {
+		double best_score = -1.0;
+		int best_index = -1;
+
+		for (first = 0; first < cells.Count(); first++) {
+			Cell c1 = cells[first];
+			int region1 = MapRegionClass::CellData::Get_Region(c1);
+
+			double min_score = 9999999.0;
+			for (int j = 0; j < layout->Count(); j++) {
+				Cell c2 = (*layout)[j];
+				int dx = c1.X - c2.X;
+				int dy = c1.Y - c2.Y;
+				int region2 = MapRegionClass::CellData::Get_Region(c2);
+
+				double score = fastmath::sqrt((double)(dy * dy + dx * dx)) + (double)(region2 != region1 ? 20 : 0);
+				if (score < min_score) {
+					min_score = score;
+				}
+			}
+
+			if (min_score > best_score) {
+				best_score = min_score;
+				best_index = first;
+			}
+		}
+
+		layout->Add(cells[best_index]);
+	}
+
+	return(layout);
+}
