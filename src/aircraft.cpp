@@ -693,6 +693,32 @@ int AircraftClass::Do_MISSION_PARADROP_APPROACH(void)
 	return(3);
 }
 
+// FUNCTION: GAMEMD 0x00415960
+int AircraftClass::Do_MISSION_PARADROP_OVERFLY(void)
+{
+	IsLockedStraight = true;
+	if (TarCom != NULL && Cargo.Is_Something_Attached()) {
+		if (Planar_Distance(TarCom) > Rule->ParadropRadius) {
+			IsLockedStraight = false;
+			if (NumParadropsLeft > 0) {
+				QueueMission(MISSION_PARADROP_APPROACH, false);
+			} else {
+				Assign_Target(NULL);
+				Assign_Destination(NULL, true);
+				QueueMission(MISSION_RETREAT, false);
+			}
+		} else if (Map.In_Local_Radar(PositionCoord)) {
+			Paradrop_Cargo();
+		}
+	} else {
+		IsLockedStraight = false;
+		Assign_Target(NULL);
+		Assign_Destination(NULL, true);
+		QueueMission(MISSION_RETREAT, false);
+	}
+	return(5);
+}
+
 // FUNCTION: GAMEMD 0x00415A50
 int AircraftClass::Do_MISSION_RETREAT(void)
 {
@@ -810,6 +836,104 @@ int AircraftClass::Do_MISSION_MOVE(void)
 	}
 	return(Do_MISSION_MOVE_Normal());
 }
+
+// The cell holding the point the aircraft's navigation target sends it to.
+static inline Cell Aircraft_Dest_Cell(AircraftClass * aircraft)
+{
+	return(aircraft->NavCom->Destination_Coord(aircraft).As_Cell());
+}
+
+// FUNCTION: GAMEMD 0x004166E0
+int AircraftClass::Do_MISSION_MOVE_Normal(void)
+{
+	enum {
+		VALIDATE_LZ,
+		TAKE_OFF,
+		FLY_TO_LZ,
+		IDLE,
+		LAND
+	};
+	switch (Status) {
+		case VALIDATE_LZ:
+			if (NavCom == NULL) {
+				Enter_Idle_Mode();
+			} else {
+				Assign_Destination(New_LZ(NavCom), true);
+				Status = TAKE_OFF;
+			}
+			break;
+
+		case TAKE_OFF:
+			if (NavCom == NULL) {
+				Enter_Idle_Mode();
+				return(1);
+			} else {
+				Locomotion->Move_To(NavCom->Destination_Coord(this));
+				Status = FLY_TO_LZ;
+				return(1);
+			}
+			break;
+
+		case FLY_TO_LZ:
+			if (CurrentPath != PATH_NONE) {
+				bool proceed_to_wp = false;
+				if (NavCom != NULL) {
+					Coord tar_coord = NavCom->Center_Coord();
+					Coord here_coord = PositionCoord;
+					proceed_to_wp = Coord(here_coord.X, here_coord.Y, 0).Distance_To(Coord(tar_coord.X, tar_coord.Y, 0)) < CELL_LEPTON;
+				} else {
+					proceed_to_wp = true;
+				}
+				if (proceed_to_wp) {
+					WaypointClass * wp = PlayerPtr->Paths[CurrentPath]->Get_Waypoint(NextWaypoint);
+					WaypointClass * nwp = PlayerPtr->Paths[CurrentPath]->Get_Next_Waypoint(wp);
+					Execute_Waypoint_Path(nwp);
+				}
+			}
+
+			if (Locomotion->Is_Moving()) {
+				if (NavCom == NULL || Aircraft_Dest_Cell(this) != PositionCell) {
+					if (NavCom != NULL && !Cell_Seems_Ok(Aircraft_Dest_Cell(this), true)) {
+						Status = VALIDATE_LZ;
+					} else {
+						Status = LAND;
+					}
+				} else {
+					Status = IDLE;
+				}
+			} else {
+				Status = IDLE;
+			}
+			return(1);
+
+		case IDLE:
+			if (!Locomotion->Is_Moving()) {
+				Enter_Idle_Mode();
+			}
+			return(1);
+
+		case LAND:
+			if (Locomotion->Is_Moving()) {
+				if ((NavCom == NULL || Aircraft_Dest_Cell(this) != PositionCell)) {
+					if (NavCom != NULL && !Cell_Seems_Ok(Aircraft_Dest_Cell(this), true)) {
+						Status = VALIDATE_LZ;
+					}
+				} else {
+					Status = IDLE;
+				}
+			} else {
+				Status = IDLE;
+			}
+			return(1);
+
+		default:
+			break;
+	}
+
+	return(Current_Mission_Control().Normal_Delay() + Random_Pick(0, 2));
+}
+
+
 
 // FUNCTION: GAMEMD 0x00416AF0
 void AircraftClass::Drop_Off_Cargo(void)
@@ -1963,6 +2087,144 @@ FacingType AircraftClass::Desired_Load_Dir(ObjectClass * object, Cell & moveto) 
 	}
 	return(FACING_N);
 }
+
+// The object as a building, or NULL when it is not one.
+static inline BuildingClass * Cast_Building(AbstractClass * object)
+{
+	if (object == NULL) return(NULL);
+	return((object->Fetch_RTTI() == RTTI_BUILDING) ? (BuildingClass *)object : NULL);
+}
+
+// FUNCTION: GAMEMD 0x00419C80
+int AircraftClass::Do_MISSION_ENTER(void)
+{
+	enum {
+		INITIAL,
+		TAKEOFF,
+		ALTITUDE,
+		STACK,
+		DOWNWIND,
+		CROSSWIND,
+		TRAVEL,
+		LANDING
+	};
+
+	if (Get_Height_AGL() == 0 && Class->IsAirportBound && NavCom != NULL && NavCom != Get_Cell_Ptr()->Cell_Building()) {
+		DockNowHeadingTo = Cast_Building(NavCom);
+		Transmit_Message(RADIO_OVER_OUT);
+		QueueMission(MISSION_MOVE, true);
+		return(1);
+	}
+
+	if (Get_Height_AGL() > 0 && DockNowHeadingTo != NavCom && NavCom != NULL && NavCom->Fetch_RTTI() == RTTI_BUILDING) {
+		DockNowHeadingTo = Cast_Building(NavCom);
+	}
+
+	if (NavCom == NULL && In_Which_Layer() != LAYER_GROUND) {
+		if (Transmit_Message(RADIO_DOCKING) != RADIO_ROGER && !Move_To_Object_Nearby()) {
+			Enter_Idle_Mode();
+			return(1);
+		}
+	}
+
+	switch (Status) {
+		case INITIAL:
+			Status = TRAVEL;
+			IsCarryallNotLanding = true;
+			break;
+
+		case TAKEOFF:
+		case ALTITUDE:
+		case STACK:
+		case DOWNWIND:
+		case CROSSWIND:
+			IsCarryallNotLanding = true;
+			break;
+
+		case TRAVEL:
+			if (Class->IsAirportBound && Get_Height_AGL() != 0) {
+				Transmit_Message(RADIO_DOCKING);
+			}
+			if (!HasAnyLink()) {
+				if (!Move_To_Object_Nearby()) {
+					if (Locomotion->Get_Status() == 1) {
+						Status = LANDING;
+						IsCarryallNotLanding = true;
+					}
+					if (MissionQueue == MISSION_NONE) {
+						Assign_Destination(NULL);
+						Enter_Idle_Mode();
+						IsCarryallNotLanding = true;
+						break;
+					} else {
+						IsCarryallNotLanding = true;
+					}
+				}
+				IsCarryallNotLanding = true;
+				break;
+			} else {
+				if (Locomotion->Get_Status() == 1 || (Class->IsAirportBound && Get_Height_AGL() == 0)) {
+					Status = LANDING;
+					IsCarryallNotLanding = false;
+				}
+				return(3);
+			}
+			break;
+
+		case LANDING:
+			if (Locomotion->Get_Status() == 1) {
+				AbstractClass * target = NavCom;
+				if (target != NULL) {
+					Coord nav = (target->Fetch_RTTI() == RTTI_BUILDING) ? ((ObjectClass *)target)->Docking_Coord(this) : NavCom->Center_Coord();
+					Coord pos = PositionCoord;
+					int x = nav.X - pos.X;
+					int y = nav.Y - pos.Y;
+					x = x > 0 ? min(5, x) : max(-5, x);
+					y = y > 0 ? min(5, y) : max(-5, y);
+					pos += Coord(x, y, 0);
+					PositionCoord = pos;
+				}
+				IsCarryallNotLanding = true;
+			} else {
+				IsCarryallNotLanding = true;
+				switch (Transmit_Message(RADIO_IM_IN)) {
+					case RADIO_ROGER:
+						if (Class->IsCarryall && Cargo.Is_Something_Attached()) {
+							TechnoClass * contact = FUN_0065AD30(0);
+							TechnoClass * cargo = Cargo.Detach_Object();
+							Transmit_Message(RADIO_OVER_OUT);
+							if (cargo->Transmit_Message(RADIO_HELLO, contact) == RADIO_ROGER) {
+								Cargo.Attach((FootClass *)cargo);
+								Mark(MARK_UP);
+								Drop_Off_Cargo();
+								Mark(MARK_DOWN);
+							} else {
+								Assign_Destination(Good_LZ());
+							}
+							QueueMission(MISSION_MOVE, false);
+						} else {
+							QueueMission(MISSION_GUARD, false);
+						}
+						break;
+
+					case RADIO_ATTACH:
+						Limbo();
+						FUN_0065AD30(0)->Cargo.Attach(this);
+						break;
+
+					default:
+						Enter_Idle_Mode();
+				}
+			}
+			break;
+
+		default:
+			break;
+	}
+	return(1);
+}
+
+
 
 // FUNCTION: GAMEMD 0x0041B110
 void AircraftClass::Read_INI(CCINIClass & ini)

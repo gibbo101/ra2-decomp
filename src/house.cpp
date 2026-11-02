@@ -2682,6 +2682,79 @@ void HouseClass::Read_All(CCINIClass const & ini)
 	}
 }
 
+// FUNCTION: GAMEMD 0x00500B40
+void HouseClass::Read_INI(CCINIClass const & ini)
+{
+	char name[20];
+	strcpy(name, IniName);
+
+	((CCINIClass &)ini).Reset();
+
+	Control.TechLevel = ini.Get_Int(name, "TechLevel", Scen->Scenario);
+	Control.InitialCredits = ini.Get_Int(name, "Credits", 0) * 100;
+	IsPlayerControl = ini.Get_Bool(name, "PlayerControl", false);
+	if (IsPlayerControl && Session.Type == GAME_NORMAL) {
+		if (Options.Difficulty == 0) {
+			Credits = Control.InitialCredits + Rule->CampaignMoneyDeltaEasy;
+		} else if (Options.Difficulty == 2) {
+			Credits = Control.InitialCredits + Rule->CampaignMoneyDeltaHard;
+		} else {
+			Credits = Control.InitialCredits;
+		}
+		Credits = MAX(Credits, 0);
+	} else {
+		Credits = Control.InitialCredits;
+	}
+
+	char uiname[100];
+	ini.Get_String(name, "UIName", UINameString, uiname, 32);
+	UINameString = TStringID<31>(uiname);
+
+	if (UINameString[0]) {
+		wcsncpy(UIName, StringTable::LoadString(UINameString, NULL, "D:\\ra2mdpost\\House.CPP", 8507), 32);
+		UIName[20] = 0;
+	} else {
+		wcscpy(UIName, Class->UIName);
+	}
+
+	RatioAITriggerTeam = ini.Get_Int(name, "RatioAITriggerTeam", RatioAITriggerTeam);
+	RatioTeamAircraft = ini.Get_Int(name, "RatioTeamAircraft", 75);
+	RatioTeamInfantry = ini.Get_Int(name, "RatioTeamInfantry", 75);
+	RatioTeamUnits = ini.Get_Int(name, "RatioTeamUnits", 75);
+
+	ActLike = (HousesType)Class->Side;
+	if (ActLike == HOUSE_NONE) {
+		ActLike = HOUSE_FIRST;
+	}
+
+	int iq = ini.Get_Int(name, "IQ", 0);
+	if (iq > Rule->MaxIQ) iq = 1;
+	IQ = Control.IQ = iq;
+
+	Control.Edge = ini.Get_SourceType(name, "Edge", SOURCE_NONE);
+	Scheme = ini.Get_Scheme_Index(name, "Color", Scheme);
+
+	FUN_0050B840();
+	FUN_0050BA00();
+
+	AIGeneral = NULL;
+
+	Make_Ally(Houses[HeapID], false);
+
+	int owners = ini.Get_Houses(name, "Allies", 0);
+	for (int h = 0; h < Houses.Count(); h++) {
+		HouseClass * hptr = Houses[h];
+		if ((owners & (1 << hptr->HeapID)) != 0) {
+			Make_Ally(hptr, false);
+		}
+	}
+
+	TeamTime = 175 * HeapID + Rule->TeamDelays[Difficulty];
+
+	Base.Read_INI((CCINIClass &)ini, name);
+	Base.House = this;
+}
+
 // FUNCTION: GAMEMD 0x00501160
 void HouseClass::Write_All(CCINIClass & ini)
 {
@@ -5264,9 +5337,7 @@ void HouseClass::FUN_0050BA00(void)
 		b = 0.0;
 	}
 	FUN_0050B920(&r, &g, &b);
-	LaserColor.Set_Red((unsigned char)(int)r);
-	LaserColor.Set_Green((unsigned char)(int)g);
-	LaserColor.Set_Blue((unsigned char)(int)b);
+	LaserColor.FUN_0050E430((unsigned char)r, (unsigned char)g, (unsigned char)b);
 }
 
 // FUNCTION: GAMEMD 0x0050BC90
@@ -6165,6 +6236,9 @@ int HouseClass::Fetch_Heap_ID(void) const
 
 // SYNTHETIC: GAMEMD 0x0050E380
 // ??_GHouseClass@@UAEPAXI@Z
+
+// FUNCTION: GAMEMD 0x0050E430
+// RGBClass::FUN_0050E430
 
 // FUNCTION: GAMEMD 0x0050E450
 // BaseNodeClass::BaseNodeClass

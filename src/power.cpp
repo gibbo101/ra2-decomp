@@ -179,6 +179,48 @@ int PowerClass::Max_Power_Height(void)
 	return((DAT_00B0B504 + 3) / 3);
 }
 
+// FUNCTION: GAMEMD 0x0063F960
+int PowerClass::Desired_Levels(int & green, int & yellow, int & red)
+{
+	int max_pips = Max_Power_Height();
+	int desired_pips = Desired_Power_Height();
+
+	double power_delta = PlayerPtr->Power_Output() - PlayerPtr->Power_Drain();
+
+	double green_power = 0.0;
+	double yellow_power = 100.0;
+
+	if (power_delta < 0.0) {
+		yellow_power = 0.0;
+		green_power = 0.0;
+	} else {
+		if (power_delta < 100.0) {
+			yellow_power = power_delta;
+		}
+		green_power = power_delta - yellow_power;
+	}
+
+	double red_fraction = 1.0;
+	double green_fraction = 0.0;
+	double yellow_fraction = 0.0;
+
+	double total_power = PlayerPtr->Power_Drain() + yellow_power + green_power;
+
+	if (total_power > 0.0) {
+		red_fraction = PlayerPtr->Power_Drain() / total_power;
+		green_fraction = green_power / total_power;
+		yellow_fraction = yellow_power / total_power;
+	}
+
+	red = desired_pips * red_fraction;
+	yellow = desired_pips * yellow_fraction;
+	green = desired_pips * green_fraction;
+
+	red += (desired_pips * green_fraction - green) + (desired_pips * yellow_fraction - yellow) + (desired_pips * red_fraction - red) + 0.01;
+
+	return(max_pips);
+}
+
 // FUNCTION: GAMEMD 0x0063FB20
 void PowerClass::Draw_It(bool complete)
 {
@@ -370,6 +412,37 @@ void PowerClass::AI(KeyNumType & input, Point2D const & xy)
 	}
 
 	BASECLASS::AI(input, xy);
+}
+
+// FUNCTION: GAMEMD 0x006403A0
+void PowerClass::Reposition_Sidebar(void)
+{
+	BASECLASS::Reposition_Sidebar();
+
+	if (CCToolTip::Instance != NULL) {
+		ToolTip tt;
+		tt.ID = GADGET_POWER;
+		tt.Text = TXT_NONE;
+		int x = 0;
+		if (Scen->PlayerSideIndex == 0) {
+			x = 5;
+		}
+		tt.Region.X = DAT_00886F90 + x;
+		int side = Scen->PlayerSideIndex;
+		int yoff;
+		if (side == 0) {
+			yoff = 69;
+		} else if (side == 1) {
+			yoff = 69;
+		} else {
+			yoff = 69;
+		}
+		tt.Region.Y = DAT_00886F94 + yoff;
+		tt.Region.Width = 8;
+		tt.Region.Height = DAT_00B0B504;
+		CCToolTip::Instance->Remove(tt.ID);
+		CCToolTip::Instance->Add(&tt);
+	}
 }
 
 // FUNCTION: GAMEMD 0x00640450

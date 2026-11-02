@@ -2048,6 +2048,31 @@ void __fastcall FUN_00639BC0(PlanningNodeClass * node)
 	}
 }
 
+// FUNCTION: GAMEMD 0x00639DA0
+int FUN_00639DA0(void)
+{
+	int type = -1;
+	int count = CurrentObject.Count();
+	for (int i = 0; i < count; i++) {
+		ObjectClass * object = CurrentObject[i];
+		if (!object->Is_Techno()) {
+			type = 2;
+			break;
+		}
+		if (!((TechnoClass *)object)->CanUseWaypoint()) {
+			if (object != NULL && object->Fetch_RTTI() == RTTI_AIRCRAFT) {
+				type = 0;
+			} else if (object != NULL && object->Fetch_RTTI() == RTTI_BUILDING) {
+				type = 1;
+			} else {
+				type = 2;
+			}
+			break;
+		}
+	}
+	return(type);
+}
+
 // FUNCTION: GAMEMD 0x00639E30
 bool __fastcall FUN_00639E30(PlanningTokenClass * a, PlanningTokenClass * b)
 {

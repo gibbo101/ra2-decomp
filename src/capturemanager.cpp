@@ -59,6 +59,8 @@ extern "C" const CLSID CLSID_CaptureManagerClass;
 // _$E90
 DynamicVectorClass<CaptureManagerClass *> CaptureManagerArray;
 
+#include "swizzle.h"
+
 // FUNCTION: GAMEMD 0x004717D0
 CaptureManagerClass::CaptureManagerClass(TechnoClass * owner, int damage, bool infinite) :
 	AbstractClass(),
@@ -408,6 +410,45 @@ void CaptureManagerClass::Compute_CRC(CRCEngine & crc) const
 	if (Owner != NULL) {
 		crc(Owner->Fetch_ID());
 	}
+}
+
+// FUNCTION: GAMEMD 0x00472720
+HRESULT STDMETHODCALLTYPE CaptureManagerClass::Load(IStream * stream)
+{
+	int count;
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		new (this) CaptureManagerClass(NoInitClass());
+		Swizzle_Pointer(&Owner);
+		count = 0;
+		result = stream->Read(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return result;
+		}
+		int index;
+		for (index = 0; index < count; index++) {
+			ControlNode * node = new ControlNode;
+			HouseClass * original = NULL;
+			TechnoClass * unit = NULL;
+			HRESULT hr = stream->Read(&original, sizeof(original), NULL);
+			if (FAILED(hr)) {
+				return hr;
+			}
+			result = stream->Read(&unit, sizeof(unit), NULL);
+			if (FAILED(result)) {
+				return result;
+			}
+			node->OriginalOwner = original;
+			node->Unit = unit;
+			node->LinkDrawTimer = CDTimerClass<FrameTimerClass>(0);
+			ControlNodes.Add(node);
+		}
+		for (index = 0; index < count; index++) {
+			Swizzle_Pointer(&ControlNodes[index]->OriginalOwner);
+			Swizzle_Pointer(&ControlNodes[index]->Unit);
+		}
+	}
+	return result;
 }
 
 // FUNCTION: GAMEMD 0x004728E0

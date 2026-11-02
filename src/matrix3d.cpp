@@ -549,6 +549,17 @@ Matrix3D operator * (const Matrix3D & a, const Matrix3D & b)
 	return(c);
 }
 
+// FUNCTION: GAMEMD 0x005AFB80
+Vector3 operator * (const Matrix3D & m, const Vector3 & v)
+{
+	Vector3 vec(
+		(m[0][0] * v.X + m[0][1] * v.Y + m[0][2] * v.Z + m[0][3]),
+		(m[1][0] * v.X + m[1][1] * v.Y + m[1][2] * v.Z + m[1][3]),
+		(m[2][0] * v.X + m[2][1] * v.Y + m[2][2] * v.Z + m[2][3])
+	);
+	return(vec);
+}
+
 // FUNCTION: GAMEMD 0x005AFC00
 Matrix3D & Matrix3D::Matrix3DStruct_To_Matrix3D(Matrix3D & d, const Matrix3DStruct &s)
 {

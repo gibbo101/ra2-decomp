@@ -552,11 +552,13 @@ address,name,result,size,source,symbol
 0x004155F0,AircraftClass::Do_MISSION_SPYPLANE_APPROACH,MATCH,461,src/aircraft.cpp,?Do_MISSION_SPYPLANE_APPROACH@AircraftClass@@UAEHXZ
 0x004157C0,AircraftClass::Do_MISSION_SPYPLANE_OVERFLY,MATCH,274,src/aircraft.cpp,?Do_MISSION_SPYPLANE_OVERFLY@AircraftClass@@UAEHXZ
 0x004158E0,AircraftClass::Do_MISSION_PARADROP_APPROACH,MATCH,125,src/aircraft.cpp,?Do_MISSION_PARADROP_APPROACH@AircraftClass@@UAEHXZ
+0x00415960,AircraftClass::Do_MISSION_PARADROP_OVERFLY,MATCH,227,src/aircraft.cpp,?Do_MISSION_PARADROP_OVERFLY@AircraftClass@@UAEHXZ
 0x00415A50,AircraftClass::Do_MISSION_RETREAT,MATCH,185,src/aircraft.cpp,?Do_MISSION_RETREAT@AircraftClass@@UAEHXZ
 0x00415B10,AircraftClass::Exit_Object,MATCH,336,src/aircraft.cpp,?Exit_Object@AircraftClass@@UAEHPAVTechnoClass@@VCell@@@Z
 0x00415C60,AircraftClass::Paradrop_Cargo,MATCH,630,src/aircraft.cpp,?Paradrop_Cargo@AircraftClass@@QAEHXZ
 0x004165C0,AircraftClass::Take_Damage,MATCH,243,src/aircraft.cpp,?Take_Damage@AircraftClass@@UAE?AW4ResultType@@AAHHPBVWarheadTypeClass@@PAVTechnoClass@@_N3PAVHouseClass@@@Z
 0x004166C0,AircraftClass::Do_MISSION_MOVE,MATCH,26,src/aircraft.cpp,?Do_MISSION_MOVE@AircraftClass@@UAEHXZ
+0x004166E0,AircraftClass::Do_MISSION_MOVE_Normal,MATCH,1028,src/aircraft.cpp,?Do_MISSION_MOVE_Normal@AircraftClass@@AAEHXZ
 0x00416AF0,AircraftClass::Drop_Off_Cargo,MATCH,600,src/aircraft.cpp,?Drop_Off_Cargo@AircraftClass@@QAEXXZ
 0x00416D50,AircraftClass::Do_MISSION_MOVE_Carryall,MATCH,1444,src/aircraft.cpp,?Do_MISSION_MOVE_Carryall@AircraftClass@@AAEHXZ
 0x00417300,AircraftClass::Do_MISSION_PATROL,MATCH,1008,src/aircraft.cpp,?Do_MISSION_PATROL@AircraftClass@@UAEHXZ
@@ -571,6 +573,7 @@ address,name,result,size,source,symbol
 0x00418E20,AircraftClass::New_LZ,MATCH,651,src/aircraft.cpp,?New_LZ@AircraftClass@@QBEPAVAbstractClass@@PAV2@@Z
 0x004190B0,AircraftClass::Receive_Message,MATCH,1254,src/aircraft.cpp,?Receive_Message@AircraftClass@@UAE?AW4RadioMessageType@@PAVRadioClass@@W42@AAH@Z
 0x004195A0,AircraftClass::Desired_Load_Dir,MATCH,260,src/aircraft.cpp,?Desired_Load_Dir@AircraftClass@@UBE?AW4FacingType@@PAVObjectClass@@AAVCell@@@Z
+0x00419C80,AircraftClass::Do_MISSION_ENTER,MATCH,1248,src/aircraft.cpp,?Do_MISSION_ENTER@AircraftClass@@UAEHXZ
 0x0041B110,AircraftClass::Read_INI,MATCH,793,src/aircraft.cpp,?Read_INI@AircraftClass@@SIXAAVCCINIClass@@@Z
 0x0041B430,AircraftClass::Load,MATCH,395,src/aircraft.cpp,?Load@AircraftClass@@UAGJPAUIStream@@@Z
 0x0041B5C0,AircraftClass::Save,MATCH,23,src/aircraft.cpp,?Save@AircraftClass@@UAGJPAUIStream@@H@Z
@@ -1297,6 +1300,7 @@ address,name,result,size,source,symbol
 0x00434700,BitFont::FUN_00434700,MATCH,132,src/bitfont.cpp,?FUN_00434700@BitFont@@QAEXXZ
 0x00434790,BitFont::FUN_00434790,MATCH,19,src/bitfont.cpp,?FUN_00434790@BitFont@@QAEPAXPAG@Z
 0x004347B0,BitFont::FUN_004347B0,MATCH,44,src/bitfont.cpp,?FUN_004347B0@BitFont@@QAEXXZ
+0x004347E0,BitFont::FUN_004347E0,MATCH,85,src/bitfont.cpp,?FUN_004347E0@BitFont@@QAEXXZ
 0x00434840,BitFont::FUN_00434840,MATCH,162,src/bitfont.cpp,?FUN_00434840@BitFont@@QAE_NPAULTRBStruct@@00@Z
 0x004348F0,BitFont::Lock,MATCH,157,src/bitfont.cpp,?Lock@BitFont@@QAEXPAVSurface@@@Z
 0x00434990,BitFont::UnLock,MATCH,24,src/bitfont.cpp,?UnLock@BitFont@@QAEXPAVSurface@@@Z
@@ -1501,6 +1505,7 @@ address,name,result,size,source,symbol
 0x0043C2D0,BuildingClass::Receive_Message,MATCH,3019,src/building.cpp,?Receive_Message@BuildingClass@@UAE?AW4RadioMessageType@@PAVRadioClass@@W42@AAH@Z
 0x0043CEA0,BuildingClass::Render,MATCH,387,src/building.cpp,?Render@BuildingClass@@UBE_NAAV?$TRect@H@@_N1@Z
 0x0043D030,BuildingClass::Editor_Draw_It,MATCH,599,src/building.cpp,?Editor_Draw_It@BuildingClass@@UBEXABVPoint2D@@ABV?$TRect@H@@@Z
+0x0043E7B0,BuildingClass::DrawInfoTipAndSpiedSelection,MATCH,325,src/building.cpp,?DrawInfoTipAndSpiedSelection@BuildingClass@@QBEXPAVPoint2D@@PAV?$TRect@H@@@Z
 0x0043E900,BuildingClass::Get_Z_Adjust,MATCH,52,src/building.cpp,?Get_Z_Adjust@BuildingClass@@UBEHXZ
 0x0043ED40,BuildingClass::Aim_Direction,MATCH,260,src/building.cpp,?Aim_Direction@BuildingClass@@UBE?AVDirType@@PAVAbstractClass@@@Z
 0x0043EE50,BuildingClass::Set_Turret_Frame,MATCH,93,src/building.cpp,?Set_Turret_Frame@BuildingClass@@QAEHXZ
@@ -2066,6 +2071,7 @@ address,name,result,size,source,symbol
 0x00472640,CaptureManagerClass::NeedsToDrawLinks,MATCH,119,src/capturemanager.cpp,?NeedsToDrawLinks@CaptureManagerClass@@QBE_NXZ
 0x004726C0,CaptureManagerClass::IsOverloading,MATCH,41,src/capturemanager.cpp,?IsOverloading@CaptureManagerClass@@QAE_NPA_N@Z
 0x004726F0,CaptureManagerClass::Compute_CRC,MATCH,44,src/capturemanager.cpp,?Compute_CRC@CaptureManagerClass@@UBEXAAVCRCEngine@@@Z
+0x00472720,CaptureManagerClass::Load,MATCH,436,src/capturemanager.cpp,?Load@CaptureManagerClass@@UAGJPAUIStream@@@Z
 0x004728E0,CaptureManagerClass::Save,MATCH,127,src/capturemanager.cpp,?Save@CaptureManagerClass@@UAGJPAUIStream@@H@Z
 0x00472960,CaptureManagerClass::GetClassID,MATCH,56,src/capturemanager.cpp,?GetClassID@CaptureManagerClass@@UAGJPAU_GUID@@@Z
 0x004729A0,CaptureManagerClass::Fetch_Object_Size,MATCH,6,src/capturemanager.cpp,?Fetch_Object_Size@CaptureManagerClass@@UBEHXZ
@@ -2233,6 +2239,7 @@ address,name,result,size,source,symbol
 0x00475C70,CCINIClass::Put_VocType_List,MATCH,247,src/ccini.cpp,?Put_VocType_List@CCINIClass@@QAE_NPBD0V?$TypeList@H@@@Z
 0x00475D70,CCINIClass::Get_IntList,MATCH,441,src/ccini.cpp,?Get_IntList@CCINIClass@@QBE?AV?$TypeList@H@@PBD0V2@@Z
 0x00475F30,CCINIClass::Put_IntList,MATCH,238,src/ccini.cpp,?Put_IntList@CCINIClass@@QAE_NPBD0ABV?$TypeList@H@@@Z
+0x00476020,CCINIClass::Get_Target_List,MATCH,540,src/ccini.cpp,?Get_Target_List@CCINIClass@@QBE?AV?$TypeList@H@@PBD0V2@@Z
 0x00476240,CCINIClass::Put_Target_List,MATCH,250,src/ccini.cpp,?Put_Target_List@CCINIClass@@QAE_NPBD0ABV?$TypeList@H@@@Z
 0x00476340,CCINIClass::Get_Vector,MATCH,222,src/ccini.cpp,?Get_Vector@CCINIClass@@QBE?AV?$TPoint3D@M@@PBD0ABV2@@Z
 0x00476420,CCINIClass::Get_Offset,MATCH,206,src/ccini.cpp,?Get_Offset@CCINIClass@@QBE?AV?$TPoint3D@H@@PBD0ABV2@@Z
@@ -5644,6 +5651,7 @@ address,name,result,size,source,symbol
 0x00500850,HouseClass::Set_Factory,MATCH,180,src/house.cpp,?Set_Factory@HouseClass@@QAEXPAVFactoryClass@@W4RTTIType@@_NH@Z
 0x00500910,HouseClass::FUN_00500910,MATCH,148,src/house.cpp,?FUN_00500910@HouseClass@@QBEHW4RTTIType@@_N@Z
 0x005009B0,HouseClass::Read_All,MATCH,396,src/house.cpp,?Read_All@HouseClass@@SIXABVCCINIClass@@@Z
+0x00500B40,HouseClass::Read_INI,MATCH,1557,src/house.cpp,?Read_INI@HouseClass@@QAEXABVCCINIClass@@@Z
 0x00501160,HouseClass::Write_All,MATCH,169,src/house.cpp,?Write_All@HouseClass@@SIXAAVCCINIClass@@@Z
 0x00501210,HouseClass::Write_INI,MATCH,395,src/house.cpp,?Write_INI@HouseClass@@QAEXAAVCCINIClass@@@Z
 0x005013A0,HouseClass::Fire_Sale,MATCH,85,src/house.cpp,?Fire_Sale@HouseClass@@UAGJXZ
@@ -5774,6 +5782,7 @@ address,name,result,size,source,symbol
 0x0050E360,HouseClass::Fetch_RTTI,MATCH,6,src/house.cpp,?Fetch_RTTI@HouseClass@@UBE?AW4RTTIType@@XZ
 0x0050E370,HouseClass::Fetch_Heap_ID,MATCH,4,src/house.cpp,?Fetch_Heap_ID@HouseClass@@UBEHXZ
 0x0050E380,??_GHouseClass@@UAEPAXI@Z,MATCH,30,src/house.cpp,??_GHouseClass@@UAEPAXI@Z
+0x0050E430,RGBClass::FUN_0050E430,MATCH,23,src/house.cpp,?FUN_0050E430@RGBClass@@QAEXEEE@Z
 0x0050E450,BaseNodeClass::BaseNodeClass,MATCH,28,src/house.cpp,??0BaseNodeClass@@QAE@W4StructType@@ABVCell@@@Z
 0x0050E470,??8?$TPoint2D@F@@QBE_NABV0@@Z,MATCH,35,src/house.cpp,??8?$TPoint2D@F@@QBE_NABV0@@Z
 0x0050E4A0,?Clear@?$DynamicVectorClass@PBVBuildingTypeClass@@@@UAEXXZ,MATCH,42,src/house.cpp,?Clear@?$DynamicVectorClass@PBVBuildingTypeClass@@@@UAEXXZ
@@ -6836,6 +6845,7 @@ address,name,result,size,source,symbol
 0x0053DDA0,?Delete_Index@?$DynamicVectorClass@PAVIonBlastClass@@@@QAE_NH@Z,MATCH,49,src/ionblast.cpp,?Delete_Index@?$DynamicVectorClass@PAVIonBlastClass@@@@QAE_NH@Z
 0x0053DDE0,_$E2,MATCH,23,src/ipxaddr.cpp,_$E2
 0x0053DE00,FUN_0053DE00,MATCH,609,src/ipxaddr.cpp,?FUN_0053DE00@@YIHHH@Z
+0x0053E1D0,FUN_0053E1D0,MATCH,488,src/ipxaddr.cpp,?FUN_0053E1D0@@YIXXZ
 0x0053E3C0,FUN_0053E3C0,MATCH,85,src/ipxaddr.cpp,?FUN_0053E3C0@@YIXPAUHWND__@@@Z
 0x0053E420,FUN_0053E420,MATCH,67,src/ipxaddr.cpp,?FUN_0053E420@@YIXPAUHWND__@@@Z
 0x0053E470,FUN_0053E470,MATCH,74,src/ipxaddr.cpp,?FUN_0053E470@@YIHH@Z
@@ -8371,6 +8381,7 @@ address,name,result,size,source,symbol
 0x005AF4D0,Matrix3D::Rotate_Vector,MATCH,113,src/matrix3d.cpp,?Rotate_Vector@Matrix3D@@QAE?AVVector3@@ABV2@@Z
 0x005AF710,Matrix3D::Obj_Look_At,MATCH,621,src/matrix3d.cpp,?Obj_Look_At@Matrix3D@@QAEXABVVector3@@0M@Z
 0x005AF980,operator*,MATCH,508,src/matrix3d.cpp,??D@YI?AVMatrix3D@@ABV0@0@Z
+0x005AFB80,operator*,MATCH,120,src/matrix3d.cpp,??D@YI?AVVector3@@ABVMatrix3D@@ABV0@@Z
 0x005AFC00,Matrix3D::Matrix3DStruct_To_Matrix3D,MATCH,18,src/matrix3d.cpp,?Matrix3DStruct_To_Matrix3D@Matrix3D@@SIAAV1@AAV1@ABUMatrix3DStruct@@@Z
 0x005AFC20,Matrix3D::Orthogonal_Inverse,MATCH,181,src/matrix3d.cpp,?Orthogonal_Inverse@Matrix3D@@SI?AV1@ABV1@@Z
 0x005AFCE0,_$E2,MATCH,40,src/mech.cpp,_$E2
@@ -10932,6 +10943,7 @@ address,name,result,size,source,symbol
 0x00639740,FUN_00639740,MATCH,185,src/planmgr.cpp,?FUN_00639740@@YIXPAVTechnoClass@@PAVPlanningNodeClass@@@Z
 0x00639A50,FUN_00639A50,MATCH,354,src/planmgr.cpp,?FUN_00639A50@@YIXPAVPlanningNodeClass@@0VEventClass@@@Z
 0x00639BC0,FUN_00639BC0,MATCH,238,src/planmgr.cpp,?FUN_00639BC0@@YIXPAVPlanningNodeClass@@@Z
+0x00639DA0,FUN_00639DA0,MATCH,131,src/planmgr.cpp,?FUN_00639DA0@@YIHXZ
 0x00639E30,FUN_00639E30,MATCH,291,src/planmgr.cpp,?FUN_00639E30@@YI_NPAVPlanningTokenClass@@0@Z
 0x00639F60,FUN_00639F60,MATCH,17,src/planmgr.cpp,?FUN_00639F60@@YIXH@Z
 0x00639F80,FUN_00639F80,MATCH,36,src/planmgr.cpp,?FUN_00639F80@@YIXH@Z
@@ -11058,10 +11070,12 @@ address,name,result,size,source,symbol
 0x0063F850,PowerClass::Desired_Power_Height,MATCH,149,src/power.cpp,?Desired_Power_Height@PowerClass@@AAEHXZ
 0x0063F8F0,PowerClass::Update_Delay,MATCH,73,src/power.cpp,?Update_Delay@PowerClass@@AAEHXZ
 0x0063F940,PowerClass::Max_Power_Height,MATCH,25,src/power.cpp,?Max_Power_Height@PowerClass@@CIHXZ
+0x0063F960,PowerClass::Desired_Levels,MATCH,446,src/power.cpp,?Desired_Levels@PowerClass@@AAEHAAH00@Z
 0x0063FB20,PowerClass::Draw_It,MATCH,664,src/power.cpp,?Draw_It@PowerClass@@UAEX_N@Z
 0x0063FDC0,PowerClass::Remove_Pip,MATCH,106,src/power.cpp,?Remove_Pip@PowerClass@@AAEXXZ
 0x0063FE30,PowerClass::Add_Pip,MATCH,106,src/power.cpp,?Add_Pip@PowerClass@@AAEXXZ
 0x0063FEA0,PowerClass::AI,MATCH,1279,src/power.cpp,?AI@PowerClass@@UAEXAAW4KeyNumType@@ABVPoint2D@@@Z
+0x006403A0,PowerClass::Reposition_Sidebar,MATCH,161,src/power.cpp,?Reposition_Sidebar@PowerClass@@UAEXXZ
 0x00640450,PowerClass::Help_Text,MATCH,83,src/power.cpp,?Help_Text@PowerClass@@UAEPBDH@Z
 0x006404B0,??_GPowerClass@@UAEPAXI@Z,MATCH,30,src/power.cpp,??_GPowerClass@@UAEPAXI@Z
 0x006404D0,_$E2,MATCH,23,src/preview.cpp,_$E2
@@ -13553,6 +13567,7 @@ address,name,result,size,source,symbol
 0x006C8E80,STLScoreScreen::Present,MATCH,141,src/stlscore.cpp,?Present@STLScoreScreen@@QAEXXZ
 0x006C8F10,FUN_006C8F10,MATCH,133,src/stlscore.cpp,?FUN_006C8F10@@YIXPAUHWND__@@HH@Z
 0x006C8FA0,FUN_006C8FA0,MATCH,67,src/stlscore.cpp,?FUN_006C8FA0@@YIXPAUHWND__@@HH@Z
+0x006C8FF0,FUN_006C8FF0,MATCH,1020,src/stlscore.cpp,?FUN_006C8FF0@@YGHPAUHWND__@@IIJ@Z
 0x006C93F0,_$E2,MATCH,40,src/storage.cpp,_$E2
 0x006C9420,_$E5,MATCH,19,src/storage.cpp,_$E5
 0x006C9440,_$E8,MATCH,19,src/storage.cpp,_$E8
@@ -15661,6 +15676,7 @@ address,name,result,size,source,symbol
 0x0072E2A0,FUN_0072E2A0,MATCH,6,src/txtlabel2.cpp,?FUN_0072E2A0@@YIPAVConvertClass@@XZ
 0x0072E2B0,FUN_0072E2B0,MATCH,6,src/txtlabel2.cpp,?FUN_0072E2B0@@YIPAVPaletteClass@@XZ
 0x0072E2C0,OwnerDraw::GetSmallButtonAnimConvert,MATCH,6,src/txtlabel2.cpp,?GetSmallButtonAnimConvert@OwnerDraw@@YIPAVConvertClass@@XZ
+0x0072E450,FUN_0072E450,MATCH,732,src/txtlabel2.cpp,?FUN_0072E450@@YIXPAVSurface@@PBV?$TRect@H@@_N@Z
 0x0072E730,FUN_0072E730,MATCH,240,src/txtlabel2.cpp,?FUN_0072E730@@YIXPAVSurface@@PBV?$TRect@H@@PAVConvertClass@@PAVSHPStruct@@3@Z
 0x0072E820,FUN_0072E820,MATCH,50,src/txtlabel2.cpp,?FUN_0072E820@@YIXPAVSurface@@PBV?$TRect@H@@_N@Z
 0x0072E860,FUN_0072E860,MATCH,83,src/txtlabel2.cpp,?FUN_0072E860@@YIXPAVSurface@@PBV?$TRect@H@@@Z
@@ -15689,6 +15705,7 @@ address,name,result,size,source,symbol
 0x0072F510,FUN_0072F510,MATCH,6,src/txtlabel2.cpp,?FUN_0072F510@@YIPAVConvertClass@@XZ
 0x0072F520,FUN_0072F520,MATCH,6,src/txtlabel2.cpp,?FUN_0072F520@@YIPAVPaletteClass@@XZ
 0x0072F530,FUN_0072F530,MATCH,6,src/txtlabel2.cpp,?FUN_0072F530@@YIPAVConvertClass@@XZ
+0x0072F540,FUN_0072F540,MATCH,1222,src/txtlabel2.cpp,?FUN_0072F540@@YIXPAVSurface@@PBV?$TRect@H@@_N@Z
 0x0072FA10,FUN_0072FA10,MATCH,422,src/txtlabel2.cpp,?FUN_0072FA10@@YIXXZ
 0x0072FBC0,FUN_0072FBC0,MATCH,159,src/txtlabel2.cpp,?FUN_0072FBC0@@YIXXZ
 0x0072FC60,FUN_0072FC60,MATCH,1179,src/txtlabel2.cpp,?FUN_0072FC60@@YIXHH@Z
@@ -16725,6 +16742,7 @@ address,name,result,size,source,symbol
 0x00764FF0,WorldDominationTour::Campaign::Get_Previous_Tick,MATCH,11,src/wdtcampaign.cpp,?Get_Previous_Tick@Campaign@WorldDominationTour@@QAEHH@Z
 0x00765000,WorldDominationTour::Campaign::Write_INI,MATCH,458,src/wdtcampaign.cpp,?Write_INI@Campaign@WorldDominationTour@@QAEXH@Z
 0x007651D0,WorldDominationTour::Campaign::Reset_INI,MATCH,425,src/wdtcampaign.cpp,?Reset_INI@Campaign@WorldDominationTour@@QAEXXZ
+0x00765380,WorldDominationTour::Campaign::Get_Conflict_Iterator,MATCH,129,src/wdtcampaign.cpp,?Get_Conflict_Iterator@Campaign@WorldDominationTour@@QAE?AV?$VectorCursor@V?$rc_ptr@VConflict@WorldDominationTour@@@@V?$DynamicVectorClass@V?$rc_ptr@VConflict@WorldDominationTour@@@@@@@@H@Z
 0x00765410,WorldDominationTour::Campaign::Set_Faction,MATCH,367,src/wdtcampaign.cpp,?Set_Faction@Campaign@WorldDominationTour@@QAEXH@Z
 0x00765580,Load_History_Out,MATCH,125,src/wdtcampaign.cpp,?Load_History_Out@@YGXAAVINIClass@@@Z
 0x00765600,??_GCampaign@WorldDominationTour@@UAEPAXI@Z,MATCH,123,src/wdtcampaign.cpp,??_GCampaign@WorldDominationTour@@UAEPAXI@Z

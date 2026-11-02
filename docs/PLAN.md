@@ -1,6 +1,6 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 2 November 2026: 18,578 of 19,368 game functions match (96%; 71% of game code
+Status, 2 November 2026: 18,596 of 19,368 game functions match (96%; 72% of game code
 by size), landed in batches module by module. The rounds below record each one.
 
 ## The goal
@@ -1113,6 +1113,19 @@ Session.Players. Recording then exposed three UI-command functions building char
 ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; their RTTI
 fixed them. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
+
+### Batches 165 to 167 (2 November 2026)
+
+**18 functions.** Batch 165 landed the two banked header fixes together: TibSun's vector4.h
+(0x005AFB80) and RGBClass's three-channel setter, which lands HouseClass::Read_INI. The six
+heap-sensitive matches held by dropping unused includes from queue.cpp, wonline.cpp,
+ownrdraw.cpp and multiplayerteam2.cpp and moving two existing declarations in queue.cpp.
+Batches 166 and 167 retried 66 near misses of 70 to 80%, staying out of the modules open
+pull requests touch, and matched 15: three AircraftClass missions, two PowerClass sidebar
+functions, two txtlabel2 functions, the streamer shutdown in ipxaddr, a stlscore dialog,
+BitFont and BuildingClass drawers, the capture manager's Load, a ccini reader and a
+PlanMgr helper. UnitClass::Explode stays at 99.3%. Merge gate: 18,596 of 18,596
+(2,671.2 KB).
 
 ### Batches 162 to 164 (2 November 2026)
 

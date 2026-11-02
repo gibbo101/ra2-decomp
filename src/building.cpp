@@ -616,6 +616,37 @@ void BuildingClass::Editor_Draw_It(Point2D const & xdrawpoint, Rect const & xcli
 	}
 }
 
+struct FileSystem {
+	static ConvertClass * PALETTE_PAL;
+};
+
+// FUNCTION: GAMEMD 0x0043E7B0
+void BuildingClass::DrawInfoTipAndSpiedSelection(Point2D * location, Rect * rect) const
+{
+	Cell cell = PositionCell;
+
+	if (IsSelected) {
+		if (House->Is_Ally(PlayerPtr) || (SpiedBy & (1 << PlayerPtr->Class->House))) {
+			Point2D point = Point2D(location->X - 10, location->Y + 10);
+			Draw_Text_Overlay(point, *location, *rect);
+		}
+	}
+	if ((SpiedBy & (1 << PlayerPtr->Class->House)) && IsSelected) {
+		FactoryClass * factory;
+		if (House->FUN_0050B730()) {
+			factory = House->Fetch_Factory(Class->ToBuild, Class->Naval, 0);
+		} else {
+			factory = Factory;
+		}
+		if (factory) {
+			TechnoClass * object = factory->Get_Object();
+			if (object) {
+				Draw_Shape(*DSurface::Temp, *FileSystem::PALETTE_PAL, (ShapeSet const *)object->Techno_Type_Class()->Get_Cameo_Data(), 0, *location, *rect, ShapeFlags_Type(0xe00));
+			}
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x0043E900
 int BuildingClass::Get_Z_Adjust(void) const
 {

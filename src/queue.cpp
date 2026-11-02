@@ -9,7 +9,6 @@
 #include "_keyboar.h"
 #include "_logic.h"
 #include "_map.h"
-#include "_mono.h"
 #include "_rtti.h"
 #include "_rules.h"
 #include "_script.h"
@@ -133,6 +132,8 @@
 // SYNTHETIC: GAMEMD 0x00646C70 SYMBOL
 // _$E55
 
+extern unsigned int DAT_00B04474[256];
+void FUN_005BC400(void);
 void Add_CRC(unsigned int *crc, unsigned int val);
 HWND FUN_00775B10(void);
 extern int DAT_00B779C4;
@@ -1348,7 +1349,6 @@ void Add_CRC(unsigned int *crc, unsigned int val)
 
 #include "debugpage.h"
 
-extern unsigned int DAT_00B04474[256];
 namespace FPSCounter { extern unsigned TotalFramesElapsed; extern unsigned TotalTimeElapsed; }
 extern WinsockInterfaceClass * PacketTransport;
 const char * FUN_004E62B0(void);
@@ -2334,7 +2334,6 @@ bool __fastcall FUN_006521C0(EventClass event)
 
 extern int DAT_00B04874;
 void __fastcall FUN_0072DDB0(void);
-void FUN_005BC400(void);
 
 static inline void Stop_Game(bool is_cancelled)
 {

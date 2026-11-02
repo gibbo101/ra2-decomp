@@ -140,6 +140,44 @@ int __fastcall FUN_0053DE00(int count, int size)
 	return 0;
 }
 
+// FUNCTION: GAMEMD 0x0053E1D0
+void __fastcall FUN_0053E1D0(void)
+{
+	if (DAT_00AA0448) {
+		FUN_0053E6B0();
+		FUN_0053E5F0();
+	}
+	if (DAT_00AA044C) {
+		delete DAT_00AA044C;
+		DAT_00AA044C = 0;
+	}
+	DAT_00AA0450 = 0;
+	if (DAT_00AA0458) {
+		DAT_00AA0378.Stop = 1;
+		while (!DAT_00AA0378.Done) Sleep(0);
+		WaitForSingleObject(DAT_00AA03F8, 5000);
+		CloseHandle(DAT_00AA03F8);
+		DAT_00AA0458 = 0;
+	}
+	if (DAT_00AA0460) {
+		STM_AccessRelease(DAT_00AA0460);
+		DAT_00AA0460 = 0;
+	}
+	if (DAT_00AA0464) {
+		STM_AccessRelease(DAT_00AA0464);
+		DAT_00AA0464 = 0;
+	}
+	if (DAT_00AA045C) {
+		STM_StreamDestroy(DAT_00AA045C);
+		DAT_00AA045C = 0;
+	}
+	if (DAT_00AA0454) {
+		DeleteCriticalSection(&DAT_00AA0418);
+		DeleteCriticalSection(&DAT_00AA0400);
+		DAT_00AA0454 = 0;
+	}
+	DAT_00AA0448 = 0;
+}
 
 // FUNCTION: GAMEMD 0x0053E3C0
 void __fastcall FUN_0053E3C0(HWND window)

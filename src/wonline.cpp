@@ -7,7 +7,6 @@
 
 #include "always.h"
 #include "arraylist.h"
-#include "dict.h"
 #include "session.h"
 #include "timer.h"
 #include "wstring.h"

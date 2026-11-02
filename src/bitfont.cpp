@@ -328,6 +328,24 @@ void BitFont::FUN_004347B0(void)
 	}
 }
 
+// FUNCTION: GAMEMD 0x004347E0
+void BitFont::FUN_004347E0(void)
+{
+	if (InternalPTR) {
+		field_1C++;
+		unsigned char * space = 0;
+		int index = InternalPTR->SymbolTable[0x20];
+		if (index) space = (unsigned char *)(InternalPTR->SymbolDataSize * (index - 1) + InternalPTR->Bitmaps);
+		unsigned char * dest = 0;
+		index = InternalPTR->SymbolTable[0x3000];
+		if (index) dest = (unsigned char *)(InternalPTR->SymbolDataSize * (index - 1) + InternalPTR->Bitmaps);
+		if (dest) {
+			if (space) *dest = *space << 1;
+			else *dest = (unsigned char)InternalPTR->FontWidth;
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x00434840
 bool BitFont::FUN_00434840(LTRBStruct * out, LTRBStruct * rect, LTRBStruct * bounds)
 {

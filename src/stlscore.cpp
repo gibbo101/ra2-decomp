@@ -123,3 +123,88 @@ extern AudioController DAT_00B0BF28;
 extern int DAT_00B0BF64;
 extern HouseClass ** DAT_00A8022C;
 extern int DAT_00A80238;
+
+// FUNCTION: GAMEMD 0x006C8FF0
+int CALLBACK FUN_006C8FF0(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	int handled = FUN_00622B50(window, message, wparam, lparam);
+	if (handled) {
+		return handled;
+	}
+	int * result = (int *)GetWindowLong(window, 8);
+	switch (message) {
+	case WM_COMMAND:
+		if (LOWORD(wparam) == 0x423) {
+			*result = 1;
+			DAT_00B0BF28.End();
+			return 0;
+		}
+		break;
+	case 2:
+		if (DAT_00B0BF64) {
+			DAT_00B0BF28.End();
+			DAT_00B0BF28.FUN_00405C00();
+			DAT_00B0BF64 = 0;
+			return 0;
+		}
+		break;
+	case 0x497:
+	{
+		DAT_00B0BF28.FUN_00405BE0();
+		DAT_00B0BF64 = 1;
+		int par = 0;
+		if (Scen->Difficulty == 0) {
+			par = Scen->ParTimeEasy;
+		} else if (Scen->Difficulty == 1) {
+			par = Scen->ParTimeMedium;
+		} else if (Scen->Difficulty == 2) {
+			par = Scen->ParTimeDifficult;
+		}
+		FUN_006C8F10(window, 0x6f1, par / 60);
+		int elapsed = Scen->ElapsedTimer.Value();
+		FUN_006C8F10(window, 0x6f2, elapsed / 60);
+		char * title;
+		char * message_text;
+		if (elapsed / 60 <= par / 60) {
+			title = Scen->UnderParTitle;
+			message_text = Scen->UnderParMessage;
+		} else {
+			title = Scen->OverParTitle;
+			message_text = Scen->OverParMessage;
+		}
+		wchar_t const * a = StringTable::LoadString(title, NULL, "D:\\ra2mdpost\\stlscore.cpp", 0x8a);
+		wchar_t const * b = StringTable::LoadString(message_text, NULL, "D:\\ra2mdpost\\stlscore.cpp", 0x8b);
+		HWND item = GetDlgItem(window, 0x6f3);
+		SendMessage(item, 0x4b2, 0, (LPARAM)a);
+		item = GetDlgItem(window, 0x6f4);
+		SendMessage(item, 0x4b2, 0, (LPARAM)b);
+		int total = 0;
+		int count = Houses.Count();
+		for (int i = 0; i < count; i++) {
+			HouseClass * house = Houses[i];
+			if (house->IsPlayerControl) {
+				total += house->DestroyedAircraft.Get_Unit_Total();
+				total += house->DestroyedInfantry.Get_Unit_Total();
+				total += house->DestroyedUnits.Get_Unit_Total();
+				total += house->DestroyedBuildings.Get_Unit_Total();
+			}
+		}
+		item = GetDlgItem(window, 0x72b);
+		PostMessage(item, 0x4d7, 0, (LPARAM)window);
+		FUN_006C8FA0(window, 0x6f6, total);
+		Theme.Play_Song(Theme.From_Name("SCORE"));
+		return 0;
+	}
+	case 0x4d8:
+		if (wparam == 0) {
+			SendDlgItemMessage(window, 0x72b, 0x4d5, wparam, 0x1d);
+		}
+		break;
+	case 0x4ec:
+		DAT_00B0BF28.Stop();
+		DAT_00B0BF28.SetEvent((AudioEvent *)VocClass::PlayGlobal(Rule->ScoreAnimSound, 1.0f, 0x2000), NULL);
+		SendDlgItemMessage(window, 0x72b, 0x4d3, 0, 0);
+		break;
+	}
+	return 0;
+}

@@ -2799,6 +2799,69 @@ void __fastcall FUN_0072E2D0(Surface * surface, Rect const * area);
 
 #include "draw.h"
 
+void FUN_0072EC30(void);
+
+static inline void Init_Shapes(void)
+{
+	if (!DAT_00B0FBE0) {
+		FUN_00534E50();
+		FUN_0072EB50();
+		FUN_0072EC30();
+		FUN_0072EC70(Drawing::RenderWidth, Drawing::RenderHeight);
+		DAT_00B0FBE0 = true;
+	}
+}
+
+// FUNCTION: GAMEMD 0x0072E450
+void __fastcall FUN_0072E450(Surface * surface, Rect const * area, bool flag)
+{
+	Init_Shapes();
+	FUN_0072E2D0(surface, area);
+	Point2D pt(0, 0);
+	Rect r = *area;
+	if (r.Width > 0x320) {
+		r.Width = (r.Width - 0x320) / 2 + 0x320;
+	}
+	if (r.Height > 0x258) {
+		r.Height = (r.Height - 0x258) / 2 + 0x258;
+	}
+	pt.X = DAT_00B0FC20->X;
+	pt.Y = DAT_00B0FC20->Y;
+	Draw_Shape(*surface, *FUN_0072E280(), (ShapeSet const *)DAT_00B0FAF8, 0, pt, r, SHAPE_WIN_REL);
+	int i = 0;
+	pt.X = DAT_00B0FC24->X;
+	pt.Y = DAT_00B0FC24->Y;
+	if (DAT_00B0FA20 > 0) {
+		do {
+			Draw_Shape(*surface, *FUN_0072E2A0(), (ShapeSet const *)DAT_00B0FA74, 0, pt, r, SHAPE_WIN_REL);
+			pt.Y += DAT_00B0FC24->Height;
+			i++;
+		} while (i < DAT_00B0FA20);
+	}
+	if (!flag) {
+		i = 0;
+		pt.X = DAT_00B0FC10->X;
+		pt.Y = DAT_00B0FC10->Y;
+		if (DAT_00B0FA20 > 0) {
+			do {
+				Draw_Shape(*surface, *OwnerDraw::GetSmallButtonAnimConvert(), (ShapeSet const *)DAT_00B0FAC4, 10, pt, r, SHAPE_WIN_REL);
+				pt.Y += DAT_00B0FC10->Height;
+				i++;
+			} while (i < DAT_00B0FA20);
+		}
+	}
+	pt.X = DAT_00B0FC28->X;
+	pt.Y = DAT_00B0FC28->Y;
+	Draw_Shape(*surface, *FUN_0072E280(), (ShapeSet const *)DAT_00B0FA38, 0, pt, r, SHAPE_WIN_REL);
+	pt.X = DAT_00B0FC2C->X;
+	pt.Y = DAT_00B0FC2C->Y;
+	if (Drawing::RenderWidth == 0x280) {
+		Draw_Shape(*surface, *FUN_0072E280(), (ShapeSet const *)DAT_00B0FAE8, 0, pt, r, SHAPE_WIN_REL);
+	} else {
+		Draw_Shape(*surface, *FUN_0072E280(), (ShapeSet const *)DAT_00B0FA54, 0, pt, r, SHAPE_WIN_REL);
+	}
+}
+
 // FUNCTION: GAMEMD 0x0072E730
 void __fastcall FUN_0072E730(Surface * surface, Rect const * area, ConvertClass * convert, SHPStruct * shape800, SHPStruct * shape)
 {
@@ -3238,6 +3301,86 @@ extern SHPStruct * DAT_00B0FB08;
 namespace OwnerDraw { extern SHPStruct * SideButtonShape; }
 
 void FUN_0072FBC0(void);
+
+extern Rect VisibleRect;
+Rect __fastcall FUN_0072AD20(void);
+extern int DAT_00B0FADC;
+extern int DAT_00B0F9E4;
+
+static inline void Init_Side_Shapes(void)
+{
+	if (!DAT_00B0FC0C) {
+		FUN_0072FA10();
+		FUN_0072FBC0();
+		FUN_0072FC60(Options.ScreenWidth, Options.ScreenHeight);
+		DAT_00B0FC0C = true;
+	}
+}
+
+// FUNCTION: GAMEMD 0x0072F540
+void __fastcall FUN_0072F540(Surface * surface, Rect const * area, bool flag)
+{
+	Init_Side_Shapes();
+	surface->Fill(0);
+	Point2D pt(0, 0);
+	pt.X = DAT_00B0FC30->X;
+	pt.Y = DAT_00B0FC30->Y;
+	if (Drawing::RenderWidth == 0x280) {
+		Draw_Shape(*surface, *FUN_0072F530(), (ShapeSet const *)DAT_00B0FAD4, 0, pt, *area, SHAPE_WIN_REL);
+	} else if (Drawing::RenderWidth == 0x320) {
+		Draw_Shape(*surface, *FUN_0072F530(), (ShapeSet const *)DAT_00B0FAC8, 0, pt, *area, SHAPE_WIN_REL);
+	} else {
+		Draw_Shape(*surface, *FUN_0072F530(), (ShapeSet const *)DAT_00B0FA50, 0, pt, *area, SHAPE_WIN_REL);
+	}
+	pt.X = DAT_00B0FC34->X;
+	pt.Y = DAT_00B0FC34->Y;
+	Draw_Shape(*surface, *OwnerDraw::GetSideButtonConvert(), (ShapeSet const *)DAT_00B0FB08, 0, pt, *area, SHAPE_WIN_REL);
+	pt.X = DAT_00B0FC38->X;
+	pt.Y = DAT_00B0FC38->Y;
+	Draw_Shape(*surface, *OwnerDraw::GetSideButtonConvert(), (ShapeSet const *)DAT_00B0F9E0, 0, pt, *area, SHAPE_WIN_REL);
+	pt.X = DAT_00B0FC3C->X;
+	pt.Y = DAT_00B0FC3C->Y;
+	Draw_Shape(*surface, *FUN_0072F510(), (ShapeSet const *)DAT_00B0FA68, 0, pt, *area, SHAPE_WIN_REL);
+	pt.X = DAT_00B0FC44->X;
+	pt.Y = DAT_00B0FC44->Y;
+	Draw_Shape(*surface, *OwnerDraw::GetSideButtonConvert(), (ShapeSet const *)DAT_00B0FA70, 0, pt, *area, SHAPE_WIN_REL);
+	pt.X = DAT_00B0FC48->X;
+	pt.Y = DAT_00B0FC48->Y;
+	for (int i = 0; i < DAT_00B0FADC; i++) {
+		Draw_Shape(*surface, *OwnerDraw::GetSideButtonConvert(), (ShapeSet const *)DAT_00B0FA00, 0, pt, *area, SHAPE_WIN_REL);
+		pt.Y += DAT_00B0FC48->Height;
+	}
+	pt.X = DAT_00B0FC4C->X;
+	pt.Y = DAT_00B0FC4C->Y;
+	Draw_Shape(*surface, *OwnerDraw::GetSideButtonConvert(), (ShapeSet const *)DAT_00B0FA8C, 0, pt, *area, SHAPE_WIN_REL);
+	pt.X = DAT_00B0FC50->X;
+	pt.Y = DAT_00B0FC50->Y;
+	Draw_Shape(*surface, *OwnerDraw::GetSideButtonConvert(), (ShapeSet const *)DAT_00B0FA48, 0, pt, *area, SHAPE_WIN_REL);
+	Rect clip = *area;
+	Rect vis = FUN_0072AD20();
+	clip.Width = vis.Width;
+	pt.X = DAT_00B0FC5C->X;
+	pt.Y = DAT_00B0FC5C->Y;
+	Draw_Shape(*surface, *OwnerDraw::GetSideButtonConvert(), (ShapeSet const *)DAT_00B0FA3C, 0, pt, clip, SHAPE_WIN_REL);
+	if (flag) {
+		pt.X = DAT_00B0FC60->X;
+		pt.Y = DAT_00B0FC60->Y;
+		Draw_Shape(*surface, *OwnerDraw::GetSideButtonConvert(), (ShapeSet const *)DAT_00B0FA90, 2, pt, *area, SHAPE_WIN_REL);
+		pt.X = DAT_00B0FC68->X;
+		pt.Y = DAT_00B0FC68->Y;
+		for (int j = 0; j < DAT_00B0F9E4; j++) {
+			Draw_Shape(*surface, *OwnerDraw::GetSideButtonConvert(), (ShapeSet const *)DAT_00B0FAA8, 0, pt, *area, SHAPE_WIN_REL);
+			pt.X += DAT_00B0FC68->Width;
+		}
+	} else {
+		pt.X = DAT_00B0FC64->X;
+		pt.Y = DAT_00B0FC64->Y;
+		Draw_Shape(*surface, *OwnerDraw::GetSideButtonConvert(), (ShapeSet const *)DAT_00B0FA90, 2, pt, *area, SHAPE_WIN_REL);
+	}
+	pt.X = DAT_00B0FC6C->X;
+	pt.Y = DAT_00B0FC6C->Y;
+	Draw_Shape(*surface, *OwnerDraw::GetSideButtonConvert(), (ShapeSet const *)DAT_00B0FABC, 0, pt, *area, SHAPE_WIN_REL);
+}
 
 // FUNCTION: GAMEMD 0x0072FA10
 void FUN_0072FA10(void)

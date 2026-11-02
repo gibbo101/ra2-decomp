@@ -19,7 +19,6 @@ FirewallHelperClass::FirewallHelperClass(void)
 
 FirewallHelperClass DAT_00ABFEC8;
 
-#include "ccini.h"
 #include "conquer.h"
 #include "globals.h"
 #include "stimer.h"

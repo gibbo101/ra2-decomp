@@ -137,6 +137,18 @@ void WorldDominationTour::Campaign::Reset_INI(void)
 	ini.Save(file);
 }
 
+// FUNCTION: GAMEMD 0x00765380
+CONFLICT_ITER WorldDominationTour::Campaign::Get_Conflict_Iterator(int index)
+{
+	CONFLICT_ITER it(Conflicts);
+	for (; it; it++) {
+		if (it->FUN_00766060() == index) {
+			break;
+		}
+	}
+	return(it);
+}
+
 // FUNCTION: GAMEMD 0x00765410
 void WorldDominationTour::Campaign::Set_Faction(int faction)
 {

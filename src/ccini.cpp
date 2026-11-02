@@ -941,6 +941,36 @@ bool CCINIClass::Put_IntList(char const * section, char const * entry, TypeList<
 	return(Put_String(section, entry, buffer));
 }
 
+// FUNCTION: GAMEMD 0x00476020
+TypeList<int> CCINIClass::Get_Target_List(const char * section, const char * entry, TypeList<int> defvalue) const
+{
+	char buffer[MAX_LINE_LENGTH];
+
+	if (Get_String(section, entry, "", buffer, sizeof(buffer))) {
+		TypeList<int> list;
+		char * token = strtok(buffer, ",");
+		while (token != NULL && *token != '\0') {
+			TargetClass trgt;
+			InfantryType inf = InfantryTypeClass::From_Name(token);
+			if (inf != INFANTRY_NONE) {
+				trgt = TargetClass(::InfantryTypes[inf]);
+			} else {
+				UnitType unit = UnitTypeClass::From_Name(token);
+				if (unit != UNIT_NONE) {
+					trgt = TargetClass(::UnitTypes[unit]);
+				}
+			}
+			if (trgt.Is_Valid()) {
+				list.Add((trgt.RTTI << 24) | (trgt.ID & 0x00FFFFFF));
+			}
+			token = strtok(NULL, ",");
+		}
+		return(list);
+	}
+	return(defvalue);
+}
+
+
 // FUNCTION: GAMEMD 0x00476240
 bool CCINIClass::Put_Target_List(const char * section, const char * entry, TypeList<int> const & value)
 {

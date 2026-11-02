@@ -47,6 +47,7 @@ class RGBClass
 		void Set_Red(unsigned char value) {Red = value;}
 		void Set_Green(unsigned char value) {Green = value;}
 		void Set_Blue(unsigned char value) {Blue = value;}
+		void FUN_0050E430(unsigned char red, unsigned char green, unsigned char blue) {Red = red; Green = green; Blue = blue;}
 		void Save(IStream * stream) const;
 		void Load(IStream * stream);
 
