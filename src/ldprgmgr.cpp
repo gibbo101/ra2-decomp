@@ -113,6 +113,34 @@ LoadProgressManager::LoadProgressManager(void)
 	ProgressSurface = 0;
 }
 
+
+// FUNCTION: GAMEMD 0x00552B10
+void LoadProgressManager::Compute_Rects(void)
+{
+	int render_width = Drawing::RenderWidth;
+	bool low_res = render_width == 640;
+	int width = low_res ? DAT_007F5BE0 : DAT_007F5BE4;
+	if (Session.Type == GAME_NORMAL) {
+		int height = (low_res ? DAT_007F5BEC : DAT_007F5BF0) - 80;
+		int x = (render_width - width) / 2;
+		int y = (Drawing::RenderHeight - height - 80) / 2;
+		LoadScreenSHPRect.Width = LoadBarSHPRect.Width = TitleBarRect.Width = width;
+		LoadBarSHPRect.X = TitleBarRect.X = x;
+		TitleBarRect.Y = y;
+		TitleBarRect.Height = 40;
+		y += 40;
+		LoadBarSHPRect.Y = y;
+		LoadScreenSHPRect.X = x;
+		LoadBarSHPRect.Height = height;
+		y += height;
+		LoadScreenSHPRect.Y = y;
+		LoadScreenSHPRect.Height = 40;
+	} else {
+		int height = low_res ? DAT_007F5BEC : DAT_007F5BF0;
+		LoadBarSHPRect.Set((render_width - width) / 2, (Drawing::RenderHeight - height) / 2, width, height);
+	}
+}
+
 // FUNCTION: GAMEMD 0x00552BE0
 Point2D LoadProgressManager::Text_Origin(void)
 {

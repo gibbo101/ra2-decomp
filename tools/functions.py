@@ -29,6 +29,7 @@ import pefile
 ROOT = Path(__file__).resolve().parent.parent
 NOP = 0x90
 PADDING = (NOP, 0xCC)
+REGISTER_IMMEDIATE = re.compile(r"e\w+, 0x[0-9a-f]+")
 TABLE_OPERAND = re.compile(r"(?:dword ptr \[\w+\*4 \+ |byte ptr \[\w+ \+ )(0x[0-9a-f]+)\]")
 
 
@@ -71,9 +72,10 @@ def reached_end(md, code: bytes, base: int, lo: int, hi: int, roots: set,
     """The end of the furthest instruction or switch table in [lo, hi) that flow from
     `lo` and `roots` reaches: jumps, branches, calls returning, switch tables, and offsets
     taken as operands. A switch table is data, never decoded as code; a byte index table
-    runs while its entries index the function's jump tables. A pushed offset is a callback
-    argument (atexit), not flow. With `code_only`, tables do not extend the end. `seen`
-    collects every instruction reached, `data` the (start, end) of each table."""
+    runs while its entries index the function's jump tables. An offset pushed or moved
+    into a register can name a callback without transferring control to it. With
+    `code_only`, tables do not extend the end. `seen` collects every instruction reached,
+    `data` the (start, end) of each table."""
     seen = set() if seen is None else seen
     todo, far = [lo, *roots], lo
     jump_tables, index_tables = {}, set()
@@ -88,9 +90,10 @@ def reached_end(md, code: bytes, base: int, lo: int, hi: int, roots: set,
             far = max(far, at + size)
             t = TABLE_OPERAND.search(ops)
             table = int(t.group(1), 16) if t else None
-            for v in re.findall(r"0x[0-9a-f]+", ops) if mnem != "push" else ():
-                if lo < int(v, 16) < hi and int(v, 16) != table:
-                    todo.append(int(v, 16))
+            if mnem != "push" and not (mnem == "mov" and REGISTER_IMMEDIATE.fullmatch(ops)):
+                for v in re.findall(r"0x[0-9a-f]+", ops):
+                    if lo < int(v, 16) < hi and int(v, 16) != table:
+                        todo.append(int(v, 16))
             if t and mnem == "jmp" and lo <= table < hi:
                 entry = table
                 while entry < hi and lo <= struct.unpack_from("<I", code, entry - base)[0] < hi:

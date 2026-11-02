@@ -343,3 +343,20 @@ int ProgressScreenClass::Label_X_Offset(bool usedialog)
 	Font_Cell_Size(&tw, &th);
 	return (h - th) / 2;
 }
+
+// FUNCTION: GAMEMD 0x00642C80
+void ProgressScreenClass::Set_Layout(Point2D pt, wchar_t const * title, bool usedialog, bool flag)
+{
+	if (pt.X == -1 && pt.Y == -1) {
+		int width, height;
+		Fit_Size(&width, &height, PlayerCount, usedialog);
+		Rect rect = FUN_0072AD20();
+		Pos = Point2D((rect.Width - width) / 2, (rect.Height - height) / 2);
+	} else {
+		Pos.X = pt.X;
+		Pos.Y = pt.Y;
+	}
+	Field50 = title;
+	Field70 = usedialog;
+	Field71 = flag;
+}
