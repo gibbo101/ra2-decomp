@@ -7327,6 +7327,7 @@ address,name,result,size,source,symbol
 0x00552A40,LoadProgressManager::Create,MATCH,90,src/ldprgmgr.cpp,?Create@LoadProgressManager@@SIPAV1@XZ
 0x00552AA0,LoadProgressManager::Destroy,MATCH,40,src/ldprgmgr.cpp,?Destroy@LoadProgressManager@@SIXXZ
 0x00552AD0,LoadProgressManager::LoadProgressManager,MATCH,53,src/ldprgmgr.cpp,??0LoadProgressManager@@QAE@XZ
+0x00552B10,LoadProgressManager::Compute_Rects,MATCH,194,src/ldprgmgr.cpp,?Compute_Rects@LoadProgressManager@@QAEXXZ
 0x00552BE0,LoadProgressManager::Text_Origin,MATCH,166,src/ldprgmgr.cpp,?Text_Origin@LoadProgressManager@@QAE?AVPoint2D@@XZ
 0x00552C90,LoadProgressManager::FUN_00552C90,MATCH,39,src/ldprgmgr.cpp,?FUN_00552C90@LoadProgressManager@@QAEHXZ
 0x00552CC0,LoadProgressManager::Load_Mixes,MATCH,159,src/ldprgmgr.cpp,?Load_Mixes@LoadProgressManager@@QAEXXZ
@@ -10377,6 +10378,8 @@ address,name,result,size,source,symbol
 0x00622800,OwnerDraw::Display_Dialog,MATCH,32,src/ownrdraw.cpp,?Display_Dialog@OwnerDraw@@YIXPAUHWND__@@@Z
 0x00623120,UI::Updated,MATCH,66,src/ownrdraw.cpp,?Updated@UI@@YI_NXZ
 0x00623170,OwnerDraw::Move_Dialog,MATCH,186,src/ownrdraw.cpp,?Move_Dialog@OwnerDraw@@YIHPAUHWND__@@HH@Z
+0x00623230,OwnerDraw::Custom_Message_Box,MATCH,128,src/ownrdraw.cpp,?Custom_Message_Box@OwnerDraw@@YIPAUHWND__@@PBG0PA_N@Z
+0x006232B0,Custom_Message_Box_Proc,MATCH,89,src/ownrdraw.cpp,?Custom_Message_Box_Proc@@YGJPAUHWND__@@IIJ@Z
 0x00623310,OwnerDraw::Set_Custom_Message_Box_Text,MATCH,43,src/ownrdraw.cpp,?Set_Custom_Message_Box_Text@OwnerDraw@@YIXPAUHWND__@@PBG@Z
 0x00623340,OwnerDraw::WinData::WinData,MATCH,81,src/ownrdraw.cpp,??0WinData@OwnerDraw@@QAE@XZ
 0x006233A0,OwnerDraw::WinData::~WinData,MATCH,115,src/ownrdraw.cpp,??1WinData@OwnerDraw@@QAE@XZ
@@ -11117,6 +11120,7 @@ address,name,result,size,source,symbol
 0x006430C0,ProgressScreenClass::Bar_Y_Offset,MATCH,245,src/progress.cpp,?Bar_Y_Offset@ProgressScreenClass@@QAEH_N@Z
 0x006431C0,ProgressScreenClass::Label_Y_Offset,MATCH,250,src/progress.cpp,?Label_Y_Offset@ProgressScreenClass@@QAEH_N@Z
 0x006432C0,ProgressScreenClass::Label_X_Offset,MATCH,266,src/progress.cpp,?Label_X_Offset@ProgressScreenClass@@QAEH_N@Z
+0x00642C80,ProgressScreenClass::Set_Layout,MATCH,358,src/progress.cpp,?Set_Layout@ProgressScreenClass@@QAEXVPoint2D@@PBG_N2@Z
 0x006433D0,ProgressScreenClass::Get_Current_Progress,MATCH,39,src/progress2.cpp,?Get_Current_Progress@ProgressScreenClass@@QBENXZ
 0x00643400,ProgressScreenClass::Draw_Bar,MATCH,419,src/progress2.cpp,?Draw_Bar@ProgressScreenClass@@QAEXVPoint2D@@NPAVSurface@@PAVColorScheme@@@Z
 0x006435B0,ProgressScreenClass::Draw_Flag,MATCH,184,src/progress2.cpp,?Draw_Flag@ProgressScreenClass@@QAEXHHPAVSurface@@@Z
@@ -15690,6 +15694,9 @@ address,name,result,size,source,symbol
 0x00730720,FUN_00730720,MATCH,22,src/txtlabel2.cpp,?FUN_00730720@@YIXHH@Z
 0x00730740,FUN_00730740,MATCH,6,src/txtlabel2.cpp,?FUN_00730740@@YIHXZ
 0x00730750,FUN_00730750,MATCH,6,src/txtlabel2.cpp,?FUN_00730750@@YIHXZ
+0x0072AD20,FUN_0072AD20,MATCH,98,src/txtlabel2.cpp,?FUN_0072AD20@@YI?AV?$TRect@H@@XZ
+0x0072E920,FUN_0072E920,MATCH,104,src/txtlabel2.cpp,?FUN_0072E920@@YIXPAVSurface@@PBV?$TRect@H@@@Z
+0x0072E2D0,FUN_0072E2D0,MATCH,384,src/txtlabel2.cpp,?FUN_0072E2D0@@YIXPAVSurface@@PBV?$TRect@H@@@Z
 0x00730760,_$E2,MATCH,23,src/uicmnds.cpp,_$E2
 0x00730780,_$E5,MATCH,40,src/uicmnds.cpp,_$E5
 0x007307B0,_$E8,MATCH,19,src/uicmnds.cpp,_$E8

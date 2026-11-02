@@ -7680,6 +7680,7 @@ address,size,symbol,source,sha256
 0x00552A40,90,?Create@LoadProgressManager@@SIPAV1@XZ,src/ldprgmgr.cpp,c6660f110634848669c6262fb036fad8e97363fb1f89c665d36272e50a2301e2
 0x00552AA0,40,?Destroy@LoadProgressManager@@SIXXZ,src/ldprgmgr.cpp,c859c12f3f0853aad1fc3b140b346abdbec66b6d39cbd8e466638670ac16a31a
 0x00552AD0,53,??0LoadProgressManager@@QAE@XZ,src/ldprgmgr.cpp,89e758d77629e4636689660724cf3ee07718457647aecfa7b58a1d3ff538b136
+0x00552B10,194,?Compute_Rects@LoadProgressManager@@QAEXXZ,src/ldprgmgr.cpp,d38b2151c83022226a803f4fe45518d95fbe8c5957e4d6adb2306cdba8f610c7
 0x00552BE0,166,?Text_Origin@LoadProgressManager@@QAE?AVPoint2D@@XZ,src/ldprgmgr.cpp,6abb8cc10c2d7b84259aab729ece1258dcfaa7eb32528175b26fe8836f41118a
 0x00552C90,39,?FUN_00552C90@LoadProgressManager@@QAEHXZ,src/ldprgmgr.cpp,0375001d66a0809f4075280948c38edcb455ae34822dc4a3b50b9f23d7034a64
 0x00552CC0,159,?Load_Mixes@LoadProgressManager@@QAEXXZ,src/ldprgmgr.cpp,f5dd3dfbcf9a76b1f1974df8d3a5a43f1398122bd81a2de9b19322a06797b006
@@ -10730,6 +10731,8 @@ address,size,symbol,source,sha256
 0x00622800,32,?Display_Dialog@OwnerDraw@@YIXPAUHWND__@@@Z,src/ownrdraw.cpp,12070f7cc78b4a9205efd1c689fe9ce42dc71c6842d3a12d2b38377513b52381
 0x00623120,66,?Updated@UI@@YI_NXZ,src/ownrdraw.cpp,e2d785673929037e5be333488891aa2289c108a4131650b0dd4f91bc8f81c3b0
 0x00623170,186,?Move_Dialog@OwnerDraw@@YIHPAUHWND__@@HH@Z,src/ownrdraw.cpp,cdeb72780c813a8bd63f5be9633a477faa8a063ba1c287fe8c71e0a40264ef8f
+0x00623230,128,?Custom_Message_Box@OwnerDraw@@YIPAUHWND__@@PBG0PA_N@Z,src/ownrdraw.cpp,fd14b3b3defb6ea102554a8814f7c8c73156be4976ceeb587745eab73959b0ba
+0x006232B0,89,?Custom_Message_Box_Proc@@YGJPAUHWND__@@IIJ@Z,src/ownrdraw.cpp,fe5ca577ab37e034a151702cc51fe8add9ebde547f247302f55deed5a5e0f61f
 0x00623310,43,?Set_Custom_Message_Box_Text@OwnerDraw@@YIXPAUHWND__@@PBG@Z,src/ownrdraw.cpp,2196082646e1f0538c5acb00785e4354888889163ffd872d4dc253ae517d48cf
 0x00623340,81,??0WinData@OwnerDraw@@QAE@XZ,src/ownrdraw.cpp,97c85e84c8d3a78cb7039a90a786ef1e9acceb525418810132f4e5e9d8ef0b6c
 0x006233A0,115,??1WinData@OwnerDraw@@QAE@XZ,src/ownrdraw.cpp,099aad831a65335d89cf1b15d05bcfb095ccc37f962c5e8008a0f8e8346d3b3b
@@ -11461,6 +11464,7 @@ address,size,symbol,source,sha256
 0x00642B60,78,?Loading_Scheme@ProgressScreenClass@@QBEPAVColorScheme@@XZ,src/progress.cpp,64a2e1ba1cc589837543cbfe85170f6b616b378f61cc6574b1635755b6361d4e
 0x00642BB0,108,?Player_Scheme@ProgressScreenClass@@QAEPAVColorScheme@@H@Z,src/progress.cpp,774c1e3d9ad0a67a40a3969b7c35ed5bb2cf3234bb02c78f7672bdc920ba2d6b
 0x00642C20,93,?Set_Graphic_Data@ProgressScreenClass@@QAEXPBD0H@Z,src/progress.cpp,06e4b56ee8ed292a25180824ec2b0aed93dab67feeab2b845240c4ab3372a58f
+0x00642C80,358,?Set_Layout@ProgressScreenClass@@QAEXVPoint2D@@PBG_N2@Z,src/progress.cpp,2b182d01561a738d2be44a93d0d80a854d1b5234748277e147a1da17f78be9c6
 0x00642DF0,10,?Set_Field78@ProgressScreenClass@@QAEXH@Z,src/progress.cpp,c6567f68d714fb4c5945f6e94fd846cf1163ed7ec506509591b338434947c273
 0x00642E00,63,?Bar_Size@ProgressScreenClass@@QAEXPAH0@Z,src/progress.cpp,89d79dec05e2adbb86ad05f24a4001a86c65469948a835bce252f9f4e0ed36c8
 0x00642E40,63,?Dialog_Size@ProgressScreenClass@@QAEXPAH0@Z,src/progress.cpp,a50601704f845ce109401777d0944da1bf0c71e7f16c48e5586b0a165e9266f6
@@ -15806,6 +15810,7 @@ address,size,symbol,source,sha256
 0x0072AA10,47,?FUN_0072AA10@@YIXPAV?$TRect@H@@HH@Z,src/txtlabel2.cpp,67e0927c38e9e19662a3b8342cee9f833426ba66f46a2749918b359df4e6962f
 0x0072AA40,505,?FUN_0072AA40@@YIXXZ,src/txtlabel2.cpp,155d1c0b161597eb061432743b644cad0a1f36d8f38e6816a2e49b01ebed02dd
 0x0072AC40,214,?FUN_0072AC40@@YIXXZ,src/txtlabel2.cpp,35d657e2318843ddb4a58aa94c6c97a9c7c175dba6d2916e9d79cb8dbf78ca7f
+0x0072AD20,98,?FUN_0072AD20@@YI?AV?$TRect@H@@XZ,src/txtlabel2.cpp,5fe56ebd9f55b46c5c19a5870bb4b271e8bbf32e3d0e82263a85e88de601a0fd
 0x0072AD90,72,?FUN_0072AD90@@YI?AV?$TRect@H@@XZ,src/txtlabel2.cpp,824d8d5ef74d0983a1b75b6632971d9875ba4da47bce36a6f46245d4e97a3e84
 0x0072AF10,190,?FUN_0072AF10@@YIXXZ,src/txtlabel2.cpp,010dc8f364c3c41926a9016808157946baac811f35f79b06814367e87ce9581e
 0x0072AFD0,10,?FUN_0072AFD0@@YIXXZ,src/txtlabel2.cpp,7423e42913e0b09c49e7cbc59b3b06c6723fde86a984b29f35ef5ae25d902f4c
@@ -16004,10 +16009,12 @@ address,size,symbol,source,sha256
 0x0072E2A0,6,?FUN_0072E2A0@@YIPAVConvertClass@@XZ,src/txtlabel2.cpp,712e66baa1e8b64a34f94b7c7b902891d96457e9fcc199c0e1f33ad7fef0097e
 0x0072E2B0,6,?FUN_0072E2B0@@YIPAVPaletteClass@@XZ,src/txtlabel2.cpp,4b9dfa3fc82216062e0a0948f8634d30c2995be9f57887c513fc2f7af67f5410
 0x0072E2C0,6,?GetSmallButtonAnimConvert@OwnerDraw@@YIPAVConvertClass@@XZ,src/txtlabel2.cpp,16e8728e1cebecf4c83cba71e806075c78c6177d604f06dc6c2cbde8b6d620e5
+0x0072E2D0,384,?FUN_0072E2D0@@YIXPAVSurface@@PBV?$TRect@H@@@Z,src/txtlabel2.cpp,34b6bf7deeb744da8f80db66fea31fe7b2bf37a2f8884d978e4706fe23b5e30d
 0x0072E730,240,?FUN_0072E730@@YIXPAVSurface@@PBV?$TRect@H@@PAVConvertClass@@PAVSHPStruct@@3@Z,src/txtlabel2.cpp,7bddc7fb793043818bcc30d498d5551aed5512fcb74206428ecacacf45247fbb
 0x0072E820,50,?FUN_0072E820@@YIXPAVSurface@@PBV?$TRect@H@@_N@Z,src/txtlabel2.cpp,64d429dd411e4bdb28f6397875c3f25ced98e6f3e88721de9f03f3254120b967
 0x0072E860,83,?FUN_0072E860@@YIXPAVSurface@@PBV?$TRect@H@@@Z,src/txtlabel2.cpp,aa9279cc54024daaebb71f514ff3dcc011f5a7e30692abbdb891cf84cb4a342c
 0x0072E8C0,84,?FUN_0072E8C0@@YIXPAVSurface@@PBV?$TRect@H@@@Z,src/txtlabel2.cpp,fb6c6bd9daebaf78e046af4db8ee42956a663182f00d55f9924d0d236dba6cb7
+0x0072E920,104,?FUN_0072E920@@YIXPAVSurface@@PBV?$TRect@H@@@Z,src/txtlabel2.cpp,3d4e8155850b51ee8518cea26bcf1043bf575b7d62964c7f58abd9c3b4845987
 0x0072E990,83,?FUN_0072E990@@YIXPAVSurface@@PBV?$TRect@H@@@Z,src/txtlabel2.cpp,ba1cb1f22014079d08e095c38b422f402c5a3781140e5270c969e13c366556e0
 0x0072E9F0,114,?FUN_0072E9F0@@YIXPAVSurface@@PBV?$TRect@H@@@Z,src/txtlabel2.cpp,b60afdd705967eefe480c7bef7f2f8df514c980081256c833d82ac70fce4778e
 0x0072EA70,83,?FUN_0072EA70@@YIXPAVSurface@@PBV?$TRect@H@@@Z,src/txtlabel2.cpp,b4ed663ddc3281367e8cf559f6c5932d62b430c8c50914275e71b070d7c11133

@@ -1,6 +1,6 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 2 November 2026: 18,558 of 19,367 game functions match (96%; 71% of game code
+Status, 2 November 2026: 18,565 of 19,368 game functions match (96%; 71% of game code
 by size), landed in batches module by module. The rounds below record each one.
 
 ## The goal
@@ -1113,6 +1113,13 @@ Session.Players. Recording then exposed three UI-command functions building char
 ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; their RTTI
 fixed them. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
+
+### dk8827's dialog pull request (2 November 2026)
+
+**7 functions.** Custom dialogs, shell borders and load-progress layouts merged once rebuilt
+on our copy. functions.py now treats a code address loaded into a register as a callback
+when testing a split, which separates 0x006232B0 from Custom_Message_Box (19,368 game
+functions). Merge gate: 18,565 of 18,565 (2,639.0 KB).
 
 ### Batches 159 to 161 (2 November 2026)
 
