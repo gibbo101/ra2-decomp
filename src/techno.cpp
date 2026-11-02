@@ -543,6 +543,50 @@ int TechnoClass::How_Many_Survivors(void) const
 	return(0);
 }
 
+// FUNCTION: GAMEMD 0x006F3970
+int TechnoClass::Combat_Damage(int which) const
+{
+	int value = 0;
+
+	if (which == -1) {
+		int divisor = 0;
+		if (Techno_Type_Class()->HasMultipleTurrets() && !Techno_Type_Class()->IsGattling) {
+			WeaponDataStruct const * wdata = Get_Class_Weapon_Data(CurrentWeaponNumber);
+			if (wdata == NULL) {
+				return(0);
+			}
+			WeaponTypeClass const * weapon = wdata->Weapon;
+			if (weapon == NULL) {
+				return(0);
+			}
+			value += weapon->Attack;
+			value += weapon->AmbientDamage;
+			divisor = 1;
+		} else {
+			if (PrimaryWeapon != NULL) {
+				value += PrimaryWeapon->Attack;
+				value += PrimaryWeapon->AmbientDamage;
+				divisor = 1;
+			}
+			if (SecondaryWeapon != NULL) {
+				value += SecondaryWeapon->Attack;
+				value += SecondaryWeapon->AmbientDamage;
+				divisor += 1;
+			}
+		}
+		if (divisor > 0) {
+			return(value / divisor);
+		}
+		return(0);
+	} else {
+		if (Get_Class_Weapon_Data(which)->Weapon != NULL) {
+			value += Get_Class_Weapon_Data(which)->Weapon->Attack;
+			value += Get_Class_Weapon_Data(which)->Weapon->AmbientDamage;
+		}
+		return(value);
+	}
+}
+
 // FUNCTION: GAMEMD 0x006F3AD0
 Coord TechnoClass::Fire_Coord(int which, Coord base) const
 {

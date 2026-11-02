@@ -754,6 +754,37 @@ void __fastcall FUN_007518C0(bool enabled);
 void __fastcall FUN_00753580(void);
 void __fastcall FUN_0053BBA0(bool forward);
 
+void FUN_00406E80(void);
+void __fastcall FUN_007529A0(bool);
+void FUN_00684240(void);
+void FUN_00753570(void);
+
+// FUNCTION: GAMEMD 0x0053B460
+void __fastcall FUN_0053B460(int duration)
+{
+	if (duration > 0) {
+		if (DAT_00A9FA9C_Surface != NULL) {
+			delete DAT_00A9FA9C_Surface;
+			DAT_00A9FA9C_Surface = NULL;
+		}
+		DAT_00A9FA9C_Surface = new DSurface(DSurface::Composite->Get_Width(), DSurface::Composite->Get_Height(), true, false);
+		DAT_00A9FA9C_Surface->Blit_From(*DSurface::Composite, false, true);
+		DAT_00A9FAA0 = 0;
+		DAT_00A9FAA4 = 0;
+		DAT_00A9FA98 = duration;
+		DAT_00A9FAA8 = duration;
+		DAT_00A9FAB0 = 1;
+		FUN_00406E80();
+		FUN_007529A0(true);
+		DAT_00A9F9B8.FUN_00405BE0();
+		VocClass::PlayGlobal(Rule->LetsDoTheTimeWarpOutAgain, 1.0f, 0x2000, &DAT_00A9F9B8);
+		FUN_007518C0(false);
+		DAT_00A9FAD1 = Scen->IsInputLocked;
+		FUN_00684240();
+		FUN_00753570();
+	}
+}
+
 // FUNCTION: GAMEMD 0x0053B560
 void FUN_0053B560(void)
 {

@@ -1829,6 +1829,17 @@ bool SidebarClass::Scroll(bool up, int column)
 	return false;
 }
 
+// FUNCTION: GAMEMD 0x006A6AF0
+bool SidebarClass::Page(bool up, int column)
+{
+	if (column == -1) column = ActiveTabIndex;
+	if (Column[column].Page(up)) {
+		Flag_To_Redraw();
+		return true;
+	}
+	return false;
+}
+
 extern wchar_t DAT_00B079B0[];
 // FUNCTION: GAMEMD 0x006AC210
 char const * SidebarClass::Help_Text(int id)

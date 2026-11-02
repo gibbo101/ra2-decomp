@@ -282,7 +282,7 @@ class MapGeneratorClass
 		bool Green_Region_Tiles(int region_id);
 		void Vary_Water_Tiles(void);
 		static void Clear_Shore_Tiles(void);
-		static void Scatter_Green_Tiles(void);
+		void Scatter_Green_Tiles(void);
 		void Seed_Land_Type0(void);
 		void Seed_Land_Type1(void);
 		void Seed_Land_Type2(void);

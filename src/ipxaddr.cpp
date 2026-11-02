@@ -7,6 +7,8 @@
 #include "ipxaddr.h"
 #include "wsproto.h"
 #include "_xmouse.h"
+#include "audstrm.h"
+#include "audsvc.h"
 #include <cstdio>
 #include <cstring>
 
@@ -16,11 +18,17 @@
 // SYNTHETIC: GAMEMD 0x0053DDE0 SYMBOL
 // _$E2
 
-struct StreamRing {
-	unsigned int FUN_00409320(void);
+struct StreamerThreadData {
+	volatile int Stop;
+	volatile int Ticks;
+	volatile int Done;
+	int : 32;
+	volatile __int64 Period;
+	volatile int Flag;
+	int : 32;
+	AudioServiceInfo Timer;
 };
 
-extern int __fastcall FUN_00409030(StreamRing * ring, FILE * file, int count, int * written);
 void __fastcall FUN_0053E5F0(void);
 void __fastcall FUN_0053E6B0(void);
 
@@ -30,9 +38,9 @@ extern int DAT_00AA0444;
 extern int DAT_00AA0448;
 extern int * DAT_00AA044C;
 extern int DAT_00AA0450;
-extern void * DAT_00AA045C;
-extern StreamRing * DAT_00AA0460;
-extern StreamRing * DAT_00AA0464;
+extern STM_STREAM * DAT_00AA045C;
+extern STM_ACCESS * DAT_00AA0460;
+extern STM_ACCESS * DAT_00AA0464;
 extern FILE * DAT_00AA0468;
 extern int DAT_00AA046C;
 extern int DAT_00AA0470;
@@ -50,7 +58,6 @@ extern int DAT_00AA0368;
 extern unsigned int DAT_00AA036C;
 extern int DAT_00AA0370;
 namespace Unsorted { extern int CurrentFrame; }
-extern void __fastcall FUN_00408EE0(StreamRing * ring, void * buffer, int count);
 
 struct MouseRecord {
 	int Frame;
@@ -66,6 +73,73 @@ struct MessageRecord {
 	int Type;
 	MSG Message;
 };
+
+extern void __cdecl FUN_004068E0(char const * fmt, ...);
+extern char const DAT_0081628C[];
+DWORD WINAPI FUN_0053E070(StreamerThreadData * data);
+void __fastcall FUN_0053E1D0(void);
+void __fastcall FUN_0053E3C0(HWND window);
+extern StreamerThreadData DAT_00AA0378;
+extern HANDLE DAT_00AA03F8;
+extern DWORD DAT_00AA03FC;
+extern int DAT_00AA0454;
+extern int DAT_00AA0458;
+namespace Game { extern HWND hWnd; }
+
+// FUNCTION: GAMEMD 0x0053DE00
+int __fastcall FUN_0053DE00(int count, int size)
+{
+	char message[0x400];
+
+	InitializeCriticalSection(&DAT_00AA0418);
+	InitializeCriticalSection(&DAT_00AA0400);
+	DAT_00AA0454 = 1;
+	if (count > 0) {
+		if (size < 0x2800) size = 0x2800;
+		DAT_00AA044C = new int[count];
+		if (DAT_00AA044C) {
+			memset(DAT_00AA044C, 0, count * 4);
+			DAT_00AA0450 = 0;
+			DAT_00AA0374 = count;
+			DAT_00AA0378.Stop = 0;
+			DAT_00AA0378.Done = 0;
+			DAT_00AA0378.Flag = 0;
+			DAT_00AA0378.Period = 100;
+			DAT_00AA0378.Ticks = 0;
+			AudioServiceInfoInit(&DAT_00AA0378.Timer);
+			AudioServiceSetInterval(&DAT_00AA0378.Timer, DAT_00AA0378.Period);
+			AudioServiceSetMustServiceInterval(&DAT_00AA0378.Timer, DAT_00AA0378.Period * 4);
+			AudioServiceSetResetInterval(&DAT_00AA0378.Timer, DAT_00AA0378.Period * 4);
+			DAT_00AA03F8 = CreateThread(0, 0x1000, (LPTHREAD_START_ROUTINE)FUN_0053E070, &DAT_00AA0378, 0, &DAT_00AA03FC);
+			if (DAT_00AA03F8) {
+				DAT_00AA0458 = 1;
+				if (!SetThreadPriority(DAT_00AA03F8, 2)) {
+					FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, 0, GetLastError(), 0, message, 0x400, 0);
+					FUN_004068E0(DAT_0081628C, message);
+				} else {
+					DAT_00AA045C = STM_StreamCreate();
+					if (DAT_00AA045C) {
+						if (STM_StreamCreateSBuffers(DAT_00AA045C, 1, size, 0)) {
+							STM_StreamReset(DAT_00AA045C);
+							DAT_00AA0460 = STM_StreamAcquireAccess(DAT_00AA045C, 0);
+							DAT_00AA0464 = STM_StreamAcquireAccess(DAT_00AA045C, 1);
+							if (DAT_00AA0460 && DAT_00AA0464) {
+								HWND window = Game::hWnd;
+								DAT_00AA0448 = 1;
+								memset(DAT_00AA0168, 0, sizeof(DAT_00AA0168));
+								if (window) FUN_0053E3C0(window);
+								return 1;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	FUN_0053E1D0();
+	return 0;
+}
+
 
 // FUNCTION: GAMEMD 0x0053E3C0
 void __fastcall FUN_0053E3C0(HWND window)
@@ -151,7 +225,7 @@ int __fastcall FUN_0053E550(char const * name)
 		DAT_00AA046C = 0;
 		if (DAT_00AA0468) {
 			DAT_00AA0444 = 2;
-			if (FUN_00409030(DAT_00AA0460, DAT_00AA0468, DAT_00AA0460->FUN_00409320(), 0) != 1) {
+			if (STM_AccessCRTFileTransfer(DAT_00AA0460, DAT_00AA0468, STM_AccessTotalBytes(DAT_00AA0460), 0) != 1) {
 				DAT_00AA046C = 1;
 			}
 		}
@@ -182,7 +256,7 @@ void __fastcall FUN_0053E6B0(void)
 	if (DAT_00AA0448) {
 		EnterCriticalSection(&DAT_00AA0418);
 		if (DAT_00AA0468 && DAT_00AA045C && DAT_00AA0444 == 1 && DAT_00AA0464) {
-			FUN_00409030(DAT_00AA0464, DAT_00AA0468, DAT_00AA0464->FUN_00409320(), 0);
+			STM_AccessCRTFileTransfer(DAT_00AA0464, DAT_00AA0468, STM_AccessTotalBytes(DAT_00AA0464), 0);
 			fflush(DAT_00AA0468);
 		}
 		LeaveCriticalSection(&DAT_00AA0418);
@@ -234,7 +308,7 @@ int __fastcall FUN_0053E770(MSG * msg, HWND window, unsigned int filter_min, uns
 			DAT_00AA043C = DAT_00AA0434;
 			DAT_00AA0440 = DAT_00AA0438;
 			LeaveCriticalSection(&DAT_00AA0400);
-			FUN_00408EE0(DAT_00AA0460, &rec, 0x14);
+			STM_AccessTransfer(DAT_00AA0460, &rec, 0x14);
 		}
 	}
 
@@ -258,7 +332,7 @@ top:
 		}
 		for (;;) {
 			if (!DAT_00AA0478) {
-				unsigned int avail = DAT_00AA0464->FUN_00409320();
+				unsigned int avail = STM_AccessTotalBytes(DAT_00AA0464);
 				if (avail == 0) {
 					if (DAT_00AA046C) {
 						if (DAT_00AA0448) {
@@ -276,20 +350,20 @@ top:
 					continue;
 				}
 				if (avail < 0xc) continue;
-				FUN_00408EE0(DAT_00AA0464, &DAT_00AA0368, 0xc);
+				STM_AccessTransfer(DAT_00AA0464, &DAT_00AA0368, 0xc);
 				DAT_00AA0478 = 1;
 			}
 			if (DAT_00AA036C > (unsigned int)DAT_00AA0430) return 0;
 			DAT_00AA0478 = 0;
 			if (DAT_00AA0370 == 1) {
-				FUN_00408EE0(DAT_00AA0464, &pt, 8);
+				STM_AccessTransfer(DAT_00AA0464, &pt, 8);
 				EnterCriticalSection(&DAT_00AA0400);
 				DAT_00AA0434 = pt.x;
 				DAT_00AA0438 = pt.y;
 				if (MouseCursor) MouseCursor->Set_Mouse_Point(pt.x, pt.y);
 				LeaveCriticalSection(&DAT_00AA0400);
 			} else {
-				FUN_00408EE0(DAT_00AA0464, msg, 0x1c);
+				STM_AccessTransfer(DAT_00AA0464, msg, 0x1c);
 				msg->hwnd = (HWND)FUN_0053E4C0((int)msg->hwnd);
 				if (msg->hwnd) {
 					result = 1;
@@ -312,7 +386,7 @@ top:
 		rec.message.Frame = Unsorted::CurrentFrame;
 		rec.message.Message = *msg;
 		rec.message.Message.hwnd = (HWND)index;
-		FUN_00408EE0(DAT_00AA0460, &rec, 0x28);
+		STM_AccessTransfer(DAT_00AA0460, &rec, 0x28);
 	}
 	return result;
 }

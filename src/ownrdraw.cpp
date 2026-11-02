@@ -6169,7 +6169,7 @@ template class Dictionary<HWND, WNDPROC>;
 // ?expand@?$Dictionary@PAUHWND__@@P6GJPAU1@IIJ@Z@@AAEXXZ
 
 // TEMPLATE: GAMEMD 0x00624C80
-// ?keyHash@?$Dictionary@PAUHWND__@@UWinData@OwnerDraw@@@@AAEIAAPAUHWND__@@@Z
+// ?keyHash@?$Dictionary@PAUHWND__@@P6GJPAU1@IIJ@Z@@AAEIAAPAUHWND__@@@Z
 
 // TEMPLATE: GAMEMD 0x00624CA0
 // ?remove@?$Dictionary@PAUHWND__@@UWinData@OwnerDraw@@@@QAEDAAPAUHWND__@@AAUWinData@OwnerDraw@@@Z
@@ -6178,7 +6178,7 @@ template class Dictionary<HWND, WNDPROC>;
 // ?expand@?$Dictionary@PAUHWND__@@UWinData@OwnerDraw@@@@AAEXXZ
 
 // TEMPLATE: GAMEMD 0x00625070
-// ?keyHash@?$Dictionary@PAUHWND__@@P6GJPAU1@IIJ@Z@@AAEIAAPAUHWND__@@@Z
+// ?keyHash@?$Dictionary@PAUHWND__@@UWinData@OwnerDraw@@@@AAEIAAPAUHWND__@@@Z
 
 // TEMPLATE: GAMEMD 0x00625090
 // ?remove@?$Dictionary@UCtrlMsgData@OwnerDraw@@_N@@QAEDAAUCtrlMsgData@OwnerDraw@@AA_N@Z

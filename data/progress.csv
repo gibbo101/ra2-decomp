@@ -6770,6 +6770,7 @@ address,name,result,size,source,symbol
 0x0053AE50,FUN_0053AE50,MATCH,227,src/ion.cpp,?FUN_0053AE50@@YIXPAVHouseClass@@VCell@@@Z
 0x0053B080,FUN_0053B080,MATCH,877,src/ion.cpp,?FUN_0053B080@@YIXXZ
 0x0053B3F0,FUN_0053B3F0,MATCH,1,src/ion.cpp,?FUN_0053B3F0@@YIXXZ
+0x0053B460,FUN_0053B460,MATCH,252,src/ion.cpp,?FUN_0053B460@@YIXH@Z
 0x0053B560,FUN_0053B560,MATCH,544,src/ion.cpp,?FUN_0053B560@@YIXXZ
 0x0053B780,FUN_0053B780,MATCH,838,src/ion.cpp,?FUN_0053B780@@YIXPAVDSurface@@@Z
 0x0053BAD0,FUN_0053BAD0,MATCH,14,src/ion.cpp,?FUN_0053BAD0@@YI_NXZ
@@ -6830,6 +6831,7 @@ address,name,result,size,source,symbol
 0x0053DD50,??_G?$DynamicVectorClass@PAVIonBlastClass@@@@UAEPAXI@Z,MATCH,73,src/ionblast.cpp,??_G?$DynamicVectorClass@PAVIonBlastClass@@@@UAEPAXI@Z
 0x0053DDA0,?Delete_Index@?$DynamicVectorClass@PAVIonBlastClass@@@@QAE_NH@Z,MATCH,49,src/ionblast.cpp,?Delete_Index@?$DynamicVectorClass@PAVIonBlastClass@@@@QAE_NH@Z
 0x0053DDE0,_$E2,MATCH,23,src/ipxaddr.cpp,_$E2
+0x0053DE00,FUN_0053DE00,MATCH,609,src/ipxaddr.cpp,?FUN_0053DE00@@YIHHH@Z
 0x0053E3C0,FUN_0053E3C0,MATCH,85,src/ipxaddr.cpp,?FUN_0053E3C0@@YIXPAUHWND__@@@Z
 0x0053E420,FUN_0053E420,MATCH,67,src/ipxaddr.cpp,?FUN_0053E420@@YIXPAUHWND__@@@Z
 0x0053E470,FUN_0053E470,MATCH,74,src/ipxaddr.cpp,?FUN_0053E470@@YIHH@Z
@@ -8128,7 +8130,7 @@ address,name,result,size,source,symbol
 0x0059A6C0,MapGeneratorClass::Seed_Land,MATCH,545,src/mapgen.cpp,?Seed_Land@MapGeneratorClass@@QAEXXZ
 0x0059A8F0,MapGeneratorClass::Partition_Rect,MATCH,1051,src/mapgen.cpp,?Partition_Rect@MapGeneratorClass@@QAEXAAV?$DynamicVectorClass@V?$TRect@H@@@@HABV?$TRect@H@@@Z
 0x0059B6D0,MapGeneratorClass::Green_Shores,MATCH,99,src/mapgen.cpp,?Green_Shores@MapGeneratorClass@@SIXXZ
-0x0059B740,MapGeneratorClass::Scatter_Green_Tiles,MATCH,505,src/mapgen.cpp,?Scatter_Green_Tiles@MapGeneratorClass@@SIXXZ
+0x0059B740,MapGeneratorClass::Scatter_Green_Tiles,MATCH,505,src/mapgen.cpp,?Scatter_Green_Tiles@MapGeneratorClass@@QAEXXZ
 0x0059B940,MapGeneratorClass::FUN_0059B940,MATCH,356,src/mapgen.cpp,?FUN_0059B940@MapGeneratorClass@@QAENABVCell@@0ABV?$TRect@H@@0MM@Z
 0x0059BAB0,MapGeneratorClass::FUN_0059BAB0,MATCH,268,src/mapgen.cpp,?FUN_0059BAB0@MapGeneratorClass@@QAE_NABVCell@@ABV?$TRect@H@@_NNN@Z
 0x0059C530,MapGeneratorClass::Clear_Shore_Tiles,MATCH,72,src/mapgen.cpp,?Clear_Shore_Tiles@MapGeneratorClass@@SIXXZ
@@ -10414,10 +10416,10 @@ address,name,result,size,source,symbol
 0x00624930,?getPointer@?$Dictionary@PAUHWND__@@P6GJPAU1@IIJ@Z@@QAEDAAPAUHWND__@@PAPAP6GJPAU2@IIJ@Z@Z,MATCH,103,src/ownrdraw.cpp,?getPointer@?$Dictionary@PAUHWND__@@P6GJPAU1@IIJ@Z@@QAEDAAPAUHWND__@@PAPAP6GJPAU2@IIJ@Z@Z
 0x006249A0,?remove@?$Dictionary@PAUHWND__@@P6GJPAU1@IIJ@Z@@QAEDAAPAUHWND__@@AAP6GJPAU2@IIJ@Z@Z,MATCH,575,src/ownrdraw.cpp,?remove@?$Dictionary@PAUHWND__@@P6GJPAU1@IIJ@Z@@QAEDAAPAUHWND__@@AAP6GJPAU2@IIJ@Z@Z
 0x00624BE0,?expand@?$Dictionary@PAUHWND__@@P6GJPAU1@IIJ@Z@@AAEXXZ,MATCH,156,src/ownrdraw.cpp,?expand@?$Dictionary@PAUHWND__@@P6GJPAU1@IIJ@Z@@AAEXXZ
-0x00624C80,?keyHash@?$Dictionary@PAUHWND__@@UWinData@OwnerDraw@@@@AAEIAAPAUHWND__@@@Z,MATCH,29,src/ownrdraw.cpp,?keyHash@?$Dictionary@PAUHWND__@@UWinData@OwnerDraw@@@@AAEIAAPAUHWND__@@@Z
+0x00624C80,?keyHash@?$Dictionary@PAUHWND__@@P6GJPAU1@IIJ@Z@@AAEIAAPAUHWND__@@@Z,MATCH,29,src/ownrdraw.cpp,?keyHash@?$Dictionary@PAUHWND__@@P6GJPAU1@IIJ@Z@@AAEIAAPAUHWND__@@@Z
 0x00624CA0,?remove@?$Dictionary@PAUHWND__@@UWinData@OwnerDraw@@@@QAEDAAPAUHWND__@@AAUWinData@OwnerDraw@@@Z,MATCH,794,src/ownrdraw.cpp,?remove@?$Dictionary@PAUHWND__@@UWinData@OwnerDraw@@@@QAEDAAPAUHWND__@@AAUWinData@OwnerDraw@@@Z
 0x00624FC0,?expand@?$Dictionary@PAUHWND__@@UWinData@OwnerDraw@@@@AAEXXZ,MATCH,162,src/ownrdraw.cpp,?expand@?$Dictionary@PAUHWND__@@UWinData@OwnerDraw@@@@AAEXXZ
-0x00625070,?keyHash@?$Dictionary@PAUHWND__@@P6GJPAU1@IIJ@Z@@AAEIAAPAUHWND__@@@Z,MATCH,29,src/ownrdraw.cpp,?keyHash@?$Dictionary@PAUHWND__@@P6GJPAU1@IIJ@Z@@AAEIAAPAUHWND__@@@Z
+0x00625070,?keyHash@?$Dictionary@PAUHWND__@@UWinData@OwnerDraw@@@@AAEIAAPAUHWND__@@@Z,MATCH,29,src/ownrdraw.cpp,?keyHash@?$Dictionary@PAUHWND__@@UWinData@OwnerDraw@@@@AAEIAAPAUHWND__@@@Z
 0x00625090,?remove@?$Dictionary@UCtrlMsgData@OwnerDraw@@_N@@QAEDAAUCtrlMsgData@OwnerDraw@@AA_N@Z,MATCH,607,src/ownrdraw.cpp,?remove@?$Dictionary@UCtrlMsgData@OwnerDraw@@_N@@QAEDAAUCtrlMsgData@OwnerDraw@@AA_N@Z
 0x006252F0,?expand@?$Dictionary@UCtrlMsgData@OwnerDraw@@_N@@AAEXXZ,MATCH,156,src/ownrdraw.cpp,?expand@?$Dictionary@UCtrlMsgData@OwnerDraw@@_N@@AAEXXZ
 0x00625390,?keyHash@?$Dictionary@UCtrlMsgData@OwnerDraw@@_N@@AAEIAAUCtrlMsgData@OwnerDraw@@@Z,MATCH,29,src/ownrdraw.cpp,?keyHash@?$Dictionary@UCtrlMsgData@OwnerDraw@@_N@@AAEIAAUCtrlMsgData@OwnerDraw@@@Z
@@ -12659,6 +12661,7 @@ address,name,result,size,source,symbol
 0x006AC840,DisplayClass::DisplayClass,MATCH,45,src/sidebar.cpp,??0DisplayClass@@QAE@ABVNoInitClass@@@Z
 0x006AC8D0,??0?$DynamicVectorClass@VPoint2D@@@@QAE@IPBVPoint2D@@@Z,MATCH,117,src/sidebar.cpp,??0?$DynamicVectorClass@VPoint2D@@@@QAE@IPBVPoint2D@@@Z
 0x006A6A00,SidebarClass::Scroll,MATCH,240,src/sidebar.cpp,?Scroll@SidebarClass@@QAE_N_NH@Z
+0x006A6AF0,SidebarClass::Page,MATCH,319,src/sidebar.cpp,?Page@SidebarClass@@QAE_N_NH@Z
 0x006AC210,SidebarClass::Help_Text,MATCH,454,src/sidebar.cpp,?Help_Text@SidebarClass@@UAEPBDH@Z
 0x006A8710,SidebarClass::StripClass::FUN_006A8710,MATCH,218,src/sidebar.cpp,?FUN_006A8710@StripClass@SidebarClass@@QAEXW4RTTIType@@H@Z
 0x006AC950,_$E5,MATCH,23,src/skirmish.cpp,_$E5
@@ -14480,6 +14483,7 @@ address,name,result,size,source,symbol
 0x006F3330,TechnoClass::What_Weapon_Should_I_Use,MATCH,1254,src/techno.cpp,?What_Weapon_Should_I_Use@TechnoClass@@UBEHPAVAbstractClass@@@Z
 0x006F3820,TechnoClass::SelectNavalTargeting,MATCH,292,src/techno.cpp,?SelectNavalTargeting@TechnoClass@@UBEHPAVAbstractClass@@@Z
 0x006F3950,TechnoClass::How_Many_Survivors,MATCH,24,src/techno.cpp,?How_Many_Survivors@TechnoClass@@UBEHXZ
+0x006F3970,TechnoClass::Combat_Damage,MATCH,337,src/techno.cpp,?Combat_Damage@TechnoClass@@QBEHH@Z
 0x006F3AD0,TechnoClass::Fire_Coord,MATCH,653,src/techno.cpp,?Fire_Coord@TechnoClass@@UBE?AVCoord@@HV2@@Z
 0x006F3D60,TechnoClass::Turret_Coord,MATCH,468,src/techno.cpp,?Turret_Coord@TechnoClass@@UBE?AVCoord@@H@Z
 0x006F3F40,TechnoClass::Init,MATCH,953,src/techno.cpp,?Init@TechnoClass@@UAEXXZ

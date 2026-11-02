@@ -126,7 +126,11 @@ class IPXManagerClass : public ConnManClass
 		IPXConnClass * Connection[CONNECT_MAX];
 		int NumConnections;
 		IPXGlobalConnClass *GlobalChannel;
+
+	public:
 		IPXGlobalConnClass *LobbyChannel;
+
+	private:
 		IPXConnClass *MulticastChannel;
 
 		int CurConnection;

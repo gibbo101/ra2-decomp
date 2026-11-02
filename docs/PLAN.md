@@ -1,6 +1,6 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 2 November 2026: 18,554 of 19,367 game functions match (96%; 71% of game code
+Status, 2 November 2026: 18,558 of 19,367 game functions match (96%; 71% of game code
 by size), landed in batches module by module. The rounds below record each one.
 
 ## The goal
@@ -1113,6 +1113,19 @@ Session.Players. Recording then exposed three UI-command functions building char
 ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; their RTTI
 fixed them. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
+
+### Batches 159 to 161 (2 November 2026)
+
+**4 functions.** Batch 159 took the last untried large functions in ownrdraw, rules and
+wonline (42 to 89%); batch 160 retried 55 near misses of 90 to 98%; batch 161 put Opus on
+seven callers whose out-of-line helpers already match and wait on them (Projectile_Motion
+is 95.3%, the rest 44 to 87%). Matched: SidebarClass::Page, ChronoScreenEffect::Start,
+TechnoClass::Combat_Damage and ipxaddr's stream-recorder setup 0x0053DE00, whose thread
+parameter block has volatile fields the streamer thread shares; ipxaddr.cpp now reaches
+the audio library through audsvc.h and audstrm.h rather than local stand-ins. The two
+ownrdraw keyHash labels were swapped to the Dictionary each caller passes. Most near
+misses are register-allocation ties no source form has moved. Merge gate: 18,558 of 18,558
+(2,637.6 KB).
 
 ### dk8827's pull requests, second set (2 November 2026)
 
