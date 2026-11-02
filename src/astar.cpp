@@ -487,6 +487,100 @@ void AStarClass::Update_Map_Dimensions(Rect const & dimensions)
 	AStarFacingToOffset[FACING_NW]	= -1 - MapCellStride;
 }
 
+inline Cell Blocker_Path_Cell(Cell const & cell, FacingType facing)
+{
+	if (facing == TUNNEL) {
+		TubeType tube = (TubeType)Map[cell].Tube;
+		if (tube != TUBE_NONE) {
+			return(Cell(Tubes[tube]->Exit));
+		}
+		return(Cell(0,0));
+	}
+	return(AdjacentCell[facing] + cell);
+}
+
+static inline Cell Forward_Cell(Cell const & cell, DirType const & dir)
+{
+	FacingType facing = dir.As_Dir8();
+	return Cell(cell + AdjacentCell[facing]);
+}
+
+// FUNCTION: GAMEMD 0x0042ACF0
+void AStarClass::Apply_Path_Collision_Avoidance(FootClass * foot)
+{
+	if (IsAvoidPathCollision) {
+		Cell current_cell = foot->Get_Cell();
+		CellClass * current_cell_ptr = &Map[current_cell];
+		CellClass * next_cell_ptr = &Map[Forward_Cell(current_cell, foot->PrimaryFacing.Current())];
+
+		FootClass * blocker;
+		bool on_bridge;
+		if (next_cell_ptr->IsUnderBridge && (abs(current_cell_ptr->Height - next_cell_ptr->Height) > 3 || foot->IsOnBridge)) {
+			blocker = (FootClass *)next_cell_ptr->Cell_Bridge_Occupier();
+			on_bridge = true;
+		} else {
+			blocker = (FootClass *)next_cell_ptr->Cell_Occupier();
+			on_bridge = false;
+		}
+		if (blocker == NULL) {
+			blocker = Find_Moving_Blocker(next_cell_ptr->CellID, next_cell_ptr->Height + (on_bridge ? BRIDGE_CELL_HEIGHT : 0));
+		}
+
+		bool marked_path = false;
+		const TechnoTypeClass * foot_type = foot->TClass;
+
+		while (blocker != NULL) {
+			if (blocker->RTTI == RTTI_UNIT || blocker->RTTI == RTTI_INFANTRY) {
+
+				int index = 0;
+				Cell blocker_cell = blocker->LastPathingCell;
+				const TechnoTypeClass * blocker_type = blocker->TClass;
+
+				if (Avoidance == AVOIDANCE_HARD || (foot_type != blocker_type && foot_type->MaxSpeed > blocker_type->MaxSpeed && Map.In_Local_Radar(blocker_cell, true))) {
+					if (blocker->RTTI == RTTI_UNIT) {
+						if (blocker->Path[0] == FACING_NONE || blocker->Path[1] == FACING_NONE) {
+							blocker = (FootClass *)blocker->Next;
+							continue;
+						}
+					} else {
+						if (blocker->Path[0] == FACING_NONE || blocker->Path[1] == FACING_NONE || blocker->Path[2] == FACING_NONE) {
+							blocker = (FootClass *)blocker->Next;
+							continue;
+						}
+					}
+				} else {
+					blocker = (FootClass *)blocker->Next;
+					continue;
+				}
+
+				marked_path = true;
+				while (blocker->Path[index] != FACING_NONE && index < ARRAY_SIZE(blocker->Path)) {
+					blocker_cell = Blocker_Path_Cell(blocker_cell, blocker->Path[index]);
+					Map[blocker_cell].IsPredictedPath = !Map[blocker_cell].IsPredictedPath;
+					index++;
+				}
+			}
+			blocker = (FootClass *)blocker->Next;
+		}
+
+		if (!marked_path && Avoidance == AVOIDANCE_SOFT) {
+			Avoidance = AVOIDANCE_NONE;
+			return;
+		}
+
+		for (int x = -2; x < 3; x++) {
+			for (int y = -2; y < 3; y++) {
+				CellClass * cellptr = &Map[next_cell_ptr->Fetch_CellID() + Cell(x, y)];
+				if (cellptr->Flag.Composite && cellptr->Fetch_CellID() != current_cell) {
+					cellptr->IsPredictedPath = !cellptr->IsPredictedPath;
+				}
+			}
+		}
+
+		next_cell_ptr->IsPredictedPath = !next_cell_ptr->IsPredictedPath;
+	}
+}
+
 // FUNCTION: GAMEMD 0x0042B080
 FootClass * AStarClass::Find_Moving_Blocker(Cell const & cell, int cell_height)
 {
