@@ -1522,7 +1522,45 @@ MapRegionClass * MapRegionClass::From_ID(int id)
 	return(NULL);
 }
 
-void __fastcall Create_Zone_Region(CellClass * cptr, MZoneType mzone, int zone);
+static inline bool In_Zone_Map_Bounds(Cell const & cell)
+{
+	int x = cell.X;
+	int y = cell.Y;
+	int diagonal = y + cell.X;
+	return diagonal > MapRegionClass::MapStartDiagonal &&
+		x - y < MapRegionClass::MapStartDiagonal &&
+		y - x < MapRegionClass::MapStartDiagonal &&
+		diagonal <= MapRegionClass::MapEndDiagonal;
+}
+
+// FUNCTION: GAMEMD 0x00594420
+void Create_Zone_Region(CellClass * cptr, MZoneType mzone, int zone)
+{
+	MapRegionClass * region = new MapRegionClass(cptr->CellID);
+	int id = region->ID;
+	DynamicVectorClass<Cell> pending;
+	pending.Set_Growth_Step(20000);
+	MapRegionClass::CellData::Set_Spread(cptr->CellID, id);
+	pending.Add(cptr->CellID);
+	while (pending.Count() > 0) {
+		Cell cell = pending[pending.Count() - 1];
+		pending.Delete_Index(pending.Count() - 1);
+		MapRegionClass::Get_Cell_Data(cell).RegionID = id;
+		region->CellCount++;
+		region->Cells.Add(cell);
+		for (FacingType dir = FACING_FIRST; dir < FACING_COUNT; dir++) {
+			CellClass & other = Map[Adjacent_Cell(cell, dir)];
+			Cell const & next = other.CellID;
+			if (In_Zone_Map_Bounds(other.CellID)) {
+				MapRegionClass::CellData & data = MapRegionClass::Get_Cell_Data(next);
+				if (other.Passability == PASSABLE_LAND && Map.Get_Cell_Zone(next, mzone, false) == zone && data.SpreadID == -1) {
+					data.SpreadID = id;
+					pending.Add(next);
+				}
+			}
+		}
+	}
+}
 
 // FUNCTION: GAMEMD 0x00594700
 void Create_Zone_Regions(MZoneType mzone, int zone)
