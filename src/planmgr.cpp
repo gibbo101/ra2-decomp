@@ -1116,6 +1116,49 @@ void PlanningTokenClass::Share_From(TechnoClass * techno, int start)
 	}
 }
 
+// FUNCTION: GAMEMD 0x00636B50
+void PlanningTokenClass::FUN_00636B50(int index)
+{
+	if (PlanningNodes.Count() == 1) {
+		F8C = -1;
+	} else if (F8C > 0 && index < F8C) {
+		F8C--;
+	}
+	if (StepsToClosedLoop >= 0) {
+		if (index < StepsToClosedLoop) {
+			StepsToClosedLoop--;
+		} else {
+			ClosedLoopNodeCount--;
+			if (ClosedLoopNodeCount < 3) {
+				StepsToClosedLoop = -1;
+				ClosedLoopNodeCount = 0;
+			}
+		}
+	}
+	PlanningNodeClass * node = PlanningNodes[index];
+	node->Remove_Member(OwnerUnit);
+	PlanningNodes.Delete_Index(index);
+}
+
+
+// FUNCTION: GAMEMD 0x00636CE0
+void PlanningTokenClass::FUN_00636CE0(void)
+{
+	if (F98) {
+		PlanningNodeClass * node = Loop_Node();
+		if (node != NULL) node->Reset_Colors(true);
+		F98 = false;
+	}
+	int start = F8C == -1 ? 0 : F8C;
+	int count = PlanningNodes.Count();
+	for (int index = start; index < count; index++) {
+		PlanningNodeClass * node = PlanningNodes[index];
+		if (node != NULL) node->Reset_Colors(true);
+	}
+	F8C = -1;
+}
+
+
 // FUNCTION: GAMEMD 0x00636D90
 int PlanningTokenClass::Get_F8C(void)
 {
@@ -2878,3 +2921,46 @@ template class VectorClass<PlanningNodeClass *>;
 // TEMPLATE: GAMEMD 0x0063F000
 // ?Delete_Index@?$DynamicVectorClass@PAVTechnoClass@@@@QAE_NH@Z
 template class DynamicVectorClass<TechnoClass *>;
+
+extern void __cdecl FUN_004068E0(char const * format, ...);
+
+// FUNCTION: GAMEMD 0x00634B20
+void __fastcall FUN_00634B20(PlanningNodeClass * node)
+{
+	int branch_count = node->PlanningBranches.Count();
+	for (int branch_index = 0; branch_index < branch_count; ++branch_index) {
+		PlanningBranchClass * branch = node->PlanningBranches[branch_index];
+		int count = branch->Get_Count();
+		EventClass event = branch->Get_Event();
+		Coord origin = FUN_00633BC0(event);
+		FUN_004068E0("Branch [%d];  Member count[%d];  Origin event location[%d, %d, %d]\n",
+			branch_index, count, origin.X, origin.Y, origin.Z);
+		int member_count = node->PlanningMembers.Count();
+		for (int member_index = 0; member_index < member_count; ++member_index) {
+			PlanningMemberClass * member = node->PlanningMembers[member_index];
+			if (member->Get_Branch() == branch_index) {
+				TechnoClass * owner = member->Get_Owner();
+				char const * name = owner->Class_Of()->IniName;
+				Cell cell = owner->Get_Cell();
+				FUN_004068E0("  Member [%s];  Cell location[%d, %d]\n", name, cell.X, cell.Y);
+			}
+		}
+	}
+	int count = node->LoopBranch.Get_Count();
+	if (count > 0) {
+		EventClass event = node->LoopBranch.Get_Event();
+		Coord origin = FUN_00633BC0(event);
+		FUN_004068E0("Loop Branch [%d];  Member count[%d];  Origin event location[%d, %d, %d]\n",
+			node->LoopBranchIndex, count, origin.X, origin.Y, origin.Z);
+		int member_count = node->PlanningMembers.Count();
+		for (int member_index = 0; member_index < member_count; ++member_index) {
+			PlanningMemberClass * member = node->PlanningMembers[member_index];
+			if (member->Get_Active()) {
+				TechnoClass * owner = member->Get_Owner();
+				char const * name = owner->Class_Of()->IniName;
+				Cell cell = owner->Get_Cell();
+				FUN_004068E0("  Member [%s];  Cell location[%d, %d]\n", name, cell.X, cell.Y);
+			}
+		}
+	}
+}

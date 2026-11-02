@@ -10838,6 +10838,8 @@ address,name,result,size,source,symbol
 0x00636570,PlanningTokenClass::Has_Started,MATCH,31,src/planmgr.cpp,?Has_Started@PlanningTokenClass@@QAE_NXZ
 0x006367B0,PlanningTokenClass::Share_Range,MATCH,454,src/planmgr.cpp,?Share_Range@PlanningTokenClass@@QAEXPAVTechnoClass@@HH@Z
 0x00636980,PlanningTokenClass::Share_From,MATCH,452,src/planmgr.cpp,?Share_From@PlanningTokenClass@@QAEXPAVTechnoClass@@H@Z
+0x00636B50,PlanningTokenClass::FUN_00636B50,MATCH,386,src/planmgr.cpp,?FUN_00636B50@PlanningTokenClass@@QAEXH@Z
+0x00636CE0,PlanningTokenClass::FUN_00636CE0,MATCH,176,src/planmgr.cpp,?FUN_00636CE0@PlanningTokenClass@@QAEXXZ
 0x00636D90,PlanningTokenClass::Get_F8C,MATCH,7,src/planmgr.cpp,?Get_F8C@PlanningTokenClass@@QAEHXZ
 0x00636DA0,PlanningTokenClass::Reached,MATCH,32,src/planmgr.cpp,?Reached@PlanningTokenClass@@QAE_NH@Z
 0x00636DC0,PlanningTokenClass::Node_Count,MATCH,4,src/planmgr.cpp,?Node_Count@PlanningTokenClass@@QAEHXZ
@@ -11000,6 +11002,7 @@ address,name,result,size,source,symbol
 0x0063EF20,??_G?$DynamicVectorClass@PAVPlanningTokenClass@@@@UAEPAXI@Z,MATCH,73,src/planmgr.cpp,??_G?$DynamicVectorClass@PAVPlanningTokenClass@@@@UAEPAXI@Z
 0x0063EFB0,??0?$VectorClass@PAVPlanningNodeClass@@@@QAE@HPBQAVPlanningNodeClass@@@Z,MATCH,74,src/planmgr.cpp,??0?$VectorClass@PAVPlanningNodeClass@@@@QAE@HPBQAVPlanningNodeClass@@@Z
 0x0063F000,?Delete_Index@?$DynamicVectorClass@PAVTechnoClass@@@@QAE_NH@Z,MATCH,49,src/planmgr.cpp,?Delete_Index@?$DynamicVectorClass@PAVTechnoClass@@@@QAE_NH@Z
+0x00634B20,FUN_00634B20,MATCH,407,src/planmgr.cpp,?FUN_00634B20@@YIXPAVPlanningNodeClass@@@Z
 0x0063F080,Rasterize_Polygon,MATCH,602,src/polygon.cpp,?Rasterize_Polygon@@YIXABUPolygonShapeStruct@@AAUPolygonRasterStruct@@@Z
 0x0063F2E0,Rasterize_Line_Span,MATCH,439,src/polygon.cpp,?Rasterize_Line_Span@@YIXHHHHHHAAPAVPoint2D@@@Z
 0x0063F4A0,_$E41,MATCH,23,src/power.cpp,_$E41

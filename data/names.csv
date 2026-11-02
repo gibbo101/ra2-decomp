@@ -248,3 +248,5 @@ address,name,symbol,evidence
 0x00A8E390,Aircraft,,reference/YRpp/AircraftClass.h:18 Array; Recruit uses Items+4 and Count+16
 0x008B4108,Units,,reference/YRpp/UnitClass.h:20 Array; Recruit uses Items+4 and Count+16
 0x00A8ED84,Frame,?Frame@@3HA,YRpp Unsorted::CurrentFrame; canonical StageClass::Set_Rate reads this timer in matched sidebar cameo insertion 0x006A8710
+0x007EFF24,VectorClass<PlanningBranchClass *>::vftable,??_7?$VectorClass@PAVPlanningBranchClass@@@@6B@,Unique primary RTTI table for this exact vector type; destructor store in matched PlanningTokenClass::FUN_00636B50 at 0x00636B50
+0x007EFF04,VectorClass<PlanningMemberClass *>::vftable,??_7?$VectorClass@PAVPlanningMemberClass@@@@6B@,Unique primary RTTI table for this exact vector type; destructor store in matched PlanningTokenClass::FUN_00636B50 at 0x00636B50
