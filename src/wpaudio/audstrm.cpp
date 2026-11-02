@@ -227,6 +227,12 @@ int __fastcall STM_StreamTotalBytes(STM_STREAM * stm)
 	return stm->bytes;
 }
 
+// FUNCTION: GAMEMD 0x00408D60
+int __fastcall STM_StreamFull(STM_STREAM * stm)
+{
+	return STM_StreamTotalBytesTillFull(stm) == 0;
+}
+
 // FUNCTION: GAMEMD 0x00408D80
 STM_SBUFFER * __fastcall STM_SBufferCreate(int bytes, int align)
 {
@@ -498,6 +504,65 @@ int __fastcall STM_AccessUpdate(STM_ACCESS * access)
 	return bytes_updated;
 }
 
+// FUNCTION: GAMEMD 0x004091C0
+int __fastcall STM_AccessAdvance(STM_ACCESS * access, int bytes_to_advance)
+{
+	int bytes_advanced = 0;
+	int available = STM_AccessTotalBytes(access) - access->access_pos;
+
+	if (!available) {
+		access->Block.Bytes = 0;
+		return 0;
+	}
+	if (available < bytes_to_advance) {
+		bytes_to_advance = available;
+	}
+	for (;;) {
+		STM_REGION * region = &access->SBuffer->region[access->id];
+		if (access->flags & mSTM_ACCESS_TOP_OF_START) {
+			access->Block.Bytes = available;
+		} else {
+			int bytes = region->Bytes - (access->Block.Data - region->Data);
+			if (bytes < available) {
+				access->Block.Bytes = bytes;
+			} else {
+				access->Block.Bytes = available;
+			}
+		}
+		int advance = bytes_to_advance;
+		if (!advance) {
+			break;
+		}
+		unsigned char * data;
+		if (advance >= access->Block.Bytes) {
+			advance = access->Block.Bytes;
+			access->SBuffer = STM_next_sbuffer(access->SBuffer);
+			if (access->SBuffer == access->start_buffer) {
+				access->flags |= mSTM_ACCESS_TOP_OF_START;
+				data = access->SBuffer->data_region.Data;
+			} else {
+				data = access->SBuffer->region[access->id].Data;
+			}
+		} else {
+			data = access->Block.Data + advance;
+		}
+		access->Block.Data = data;
+		bytes_to_advance -= advance;
+		bytes_advanced += advance;
+		available -= advance;
+	}
+
+	access->access_pos += bytes_advanced;
+	access->position += bytes_advanced;
+	if (access->position >= (unsigned)access->stream->bytes) {
+		access->position %= (unsigned)access->stream->bytes;
+	}
+	if (access->access_pos && access->mode == vSTM_ACCESS_MODE_UPDATE) {
+		STM_AccessUpdate(access);
+	}
+	return bytes_advanced;
+}
+
 // FUNCTION: GAMEMD 0x004092B0
 void __fastcall STM_AccessReturnToStart(STM_ACCESS * access)
 {
@@ -532,6 +597,9 @@ unsigned __fastcall STM_AccessTotalBytes(STM_ACCESS * access)
 
 	bytes_in = access->bytes_in;
 	bytes_out = access->bytes_out;
+	if (bytes_in < bytes_out) {
+		return (0xFFFFFFFFU - bytes_out) + 1 + bytes_in;
+	}
 	return bytes_in - bytes_out;
 }
 

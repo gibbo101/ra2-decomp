@@ -60,8 +60,8 @@ void __fastcall FUN_004037C0(AudioDevice * device, int mode);
 void __fastcall FUN_004033C0(AudioDevice * device);
 void FUN_00402990(void);
 int __fastcall FUN_00403ED0(AudioDevice * device, AudioIDXData * idx);
-void FUN_00403FA0(void);
-void FUN_004041D0(void);
+void AudioEventCloseDown(void);
+void AudioServiceAllEvents(void);
 void FUN_00404E70(void);
 void FUN_00404FD0(void);
 void FUN_00405040(void);
@@ -180,7 +180,7 @@ void FUN_00406D40(void)
 	FUN_004081A0();
 	FUN_00752340();
 	FUN_00752B40();
-	FUN_00403FA0();
+	AudioEventCloseDown();
 	FUN_00407780();
 	if (DAT_0087E724) {
 		FUN_00401580(DAT_0087E724);
@@ -303,7 +303,7 @@ void FUN_00406F70(void)
 		DAT_0087E75C = 1;
 		TimeStamp now = AudioGetTime();
 		if (now - DAT_0087E760 > 33) {
-			FUN_004041D0();
+			AudioServiceAllEvents();
 			FUN_00750EC0();
 			FUN_00752760();
 			Theme.AI();

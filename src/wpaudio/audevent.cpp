@@ -29,6 +29,10 @@ int __fastcall audioEventNextSample(AudioChannel * chan);
 int __fastcall audioEventSampleDone(AudioChannel * chan);
 int __fastcall audioEventStop(AudioChannel * chan);
 int __fastcall AudioEventNeverEnds(AudioEvent * event);
+void __fastcall AudioEventService(AudioEvent * event);
+VocClass * __fastcall bucketGetWeaker(int priority);
+void __fastcall eventLoadAndLockSamples(AudioEvent * event);
+int __fastcall audioEventStart(AudioEvent * event);
 static void eventWait(AudioEvent * event, TimeStamp delay, int nextState);
 
 // SYNTHETIC: GAMEMD 0x00403CE0 SYMBOL
@@ -171,6 +175,35 @@ int __fastcall AudioEventSetUp(AudioDevice * device, AudioIDXData * idx)
 	return 0;
 }
 
+static void eventDestroyAllClasses(void)
+{
+	VocClass * eclass;
+	while ((eclass = (VocClass *)ListFirstItem(&audioEventClasses))) {
+		ListNodeRemove(&eclass->Header);
+		delete eclass;
+	}
+}
+
+// FUNCTION: GAMEMD 0x00403FA0
+void AudioEventCloseDown(void)
+{
+	AudioKillAllEvents();
+	AudioFlushAllDeadEvents();
+
+	eventDestroyAllClasses();
+	if (audioCache) {
+		AudioCacheDestroy(audioCache);
+		audioCache = NULL;
+	}
+	if (audioEventPool) {
+		MemoryPoolDestroy(audioEventPool);
+		audioEventPool = NULL;
+	}
+	eventsOK = 0;
+	initialized = 0;
+}
+
+
 // FUNCTION: GAMEMD 0x00404140
 void __fastcall eventReleaseChannel(AudioEvent * event)
 {
@@ -188,6 +221,216 @@ void __fastcall eventReleaseChannel(AudioEvent * event)
 		event->channel->FadeAttribs = NULL;
 		event->channel = NULL;
 	}
+}
+
+static void eventAddLocalSort(AudioEvent * newEvent)
+{
+	VocClass * eclass;
+	ListNode * node, * head;
+	AudioEvent * event;
+	unsigned volume, newVolume;
+
+	eclass = newEvent->eclass;
+	newVolume = AudioAttribsGetVolume(&newEvent->attribs);
+	head = &eclass->local;
+	node = head->next;
+
+	while (node != head) {
+		int dif, slack;
+		unsigned baseLev;
+		event = (AudioEvent *)((char *)node - offsetof(AudioEvent, local));
+		volume = AudioAttribsGetVolume(&event->attribs);
+		baseLev = (unsigned)eclass->Volume.level >> AUDIO_LEVEL_SCALE;
+		slack = baseLev / NUM_BUCKETS_VOL;
+		dif = volume - newVolume;
+		if ((dif >= 0 ? dif : -dif) < slack) {
+			if (eclass->Control & AUDIO_EVENT_CTRL_INTERRUPT) {
+				if (event->state != AUDIO_EVENT_NEW) {
+					break;
+				}
+			} else {
+				if (event->state == AUDIO_EVENT_NEW) {
+					break;
+				}
+			}
+		} else if (volume < newVolume) {
+			break;
+		}
+		node = node->next;
+	}
+
+	ListNodeInit(&newEvent->local);
+	ListNodeInsert(node, &newEvent->local);
+	eclass->Count++;
+	if (eclass->Limit && (eclass->Count > eclass->Limit)) {
+		event = (AudioEvent *)((char *)head->prev - offsetof(AudioEvent, local));
+		ListNodeRemove(&event->local);
+		AudioEventKill(event);
+		eclass->Count--;
+	}
+}
+
+static void bucketReset(void)
+{
+	int i, k;
+	EClassBucket * ecb;
+	for (i = 0, ecb = eClassBucket; i < NUM_BUCKETS_PRI; i++, ecb++) {
+		for (k = 0; k < NUM_BUCKETS_VOL; k++) {
+			ListInit(&ecb->bucketVol[k]);
+		}
+	}
+	bucketStamp++;
+}
+
+static void bucketAdd(AudioEvent * event)
+{
+	EClassBucket * ecb;
+	VocClass * eclass;
+	int pri;
+	unsigned vol;
+
+	eclass = event->eclass;
+	pri = eclass->Priority + event->adjustPriority;
+	vol = AudioAttribsGetVolume(&event->attribs) / VOLUME_QUANTIZE;
+	ecb = &eClassBucket[pri];
+
+	if (eclass->lastBucketStamp == bucketStamp) {
+		if (pri > eclass->maxPri) {
+			eclass->maxPri = pri;
+			eclass->maxVol = vol;
+			ListNodeRemove(&eclass->nodeVol);
+			ListNodeInsert(&ecb->bucketVol[vol], &eclass->nodeVol);
+		} else if (pri == eclass->maxPri) {
+			if (vol > eclass->maxVol) {
+				eclass->maxVol = vol;
+				ListNodeRemove(&eclass->nodeVol);
+				ListNodeInsert(&ecb->bucketVol[vol], &eclass->nodeVol);
+			}
+		}
+	} else {
+		eclass->lastBucketStamp = bucketStamp;
+		eclass->maxPri = pri;
+		eclass->maxVol = vol;
+		ListNodeInit(&eclass->nodeVol);
+		ListNodeInsert(&ecb->bucketVol[vol], &eclass->nodeVol);
+	}
+}
+
+static int eventClassSacrifice(AudioEvent * newEvent)
+{
+	AudioEvent * event, * next, * head;
+	VocClass * eclassSacrifice = NULL;
+	int killed = 0;
+	eclassSacrifice = bucketGetWeaker(newEvent->eclass->Priority + newEvent->adjustPriority);
+	if (eclassSacrifice == NULL) {
+		return 0;
+	}
+	ListNodeRemove(&eclassSacrifice->nodeVol);
+	head = (AudioEvent *)&audioEvents;
+	event = (AudioEvent *)head->nd.next;
+	while (event != head) {
+		next = (AudioEvent *)event->nd.next;
+		if (event->eclass == eclassSacrifice) {
+			AudioEventKill(event);
+			audioEventDestroy(event);
+			killed = 1;
+		}
+		event = next;
+	}
+	return killed;
+}
+
+// FUNCTION: GAMEMD 0x004041D0
+void AudioServiceAllEvents(void)
+{
+	AudioEvent * event, * next, * head;
+	enum { AVERAGE_LOUDNESS = 20, FULL_LOUDNESS = 100 };
+	int loudness;
+	// The service statistics count active events before each update.
+	int processedEvents = 0;
+
+	if (!initialized || service_in) {
+		return;
+	}
+	service_in = 1;
+	frameStamp++;
+	head = (AudioEvent *)&audioEvents;
+
+	// Sort each class by volume and enforce its event limit.
+	event = (AudioEvent *)head->nd.next;
+	while (event != head) {
+		if (event->eclass->lastFrame != frameStamp) {
+			ListInit(&event->eclass->local);
+			event->eclass->Count = 0;
+			event->eclass->lastFrame = frameStamp;
+		}
+		AudioAttribsUpdate(&event->attribs);
+		if (event->state != AUDIO_EVENT_DONE) {
+			eventAddLocalSort(event);
+		}
+		event = (AudioEvent *)event->nd.next;
+	}
+
+	// Service events before measuring the active channels.
+	event = (AudioEvent *)head->nd.next;
+	while (event != head) {
+		if (event->state != AUDIO_EVENT_DONE) {
+			processedEvents++;
+		}
+		AudioEventService(event);
+		event = (AudioEvent *)event->nd.next;
+	}
+
+	// Remove dead events and compute volume compression.
+	event = (AudioEvent *)head->nd.next;
+	loudness = 0;
+	bucketReset();
+	while (event != head) {
+		next = (AudioEvent *)event->nd.next;
+		if (!event->channel || event != (AudioEvent *)event->channel->Data) {
+			AudioEventKill(event);
+		}
+		if (event->flags & mAUDIO_EVENT_DEAD) {
+			audioEventDestroy(event);
+		} else {
+			if (!AudioEventIsPaused(event)) {
+				loudness += AUDIO_LEVEL_APPLY(&event->eclass->Volume, AVERAGE_LOUDNESS);
+			}
+			bucketAdd(event);
+		}
+		event = next;
+	}
+
+	if (loudness > FULL_LOUDNESS) {
+		AudioLevelAdjust(&audioCompressionAttribs.VolumeLevel, (unsigned)(AUDIO_LEVEL_MAX * FULL_LOUDNESS) / loudness);
+	} else {
+		AudioLevelAdjust(&audioCompressionAttribs.VolumeLevel, AUDIO_LEVEL_MAX);
+	}
+	AudioAttribsUpdate(&audioCompressionAttribs);
+
+	// Load samples and start events at the new compression level.
+	event = (AudioEvent *)head->nd.next;
+	while (event != head) {
+		next = (AudioEvent *)event->nd.next;
+		if (event->state == AUDIO_EVENT_START_PLAYING && !AudioEventIsPaused(event)) {
+			eventLoadAndLockSamples(event);
+			while (!(event->startSample = eventFirstSample(event))) {
+				if (eventClassSacrifice(event)) {
+					next = (AudioEvent *)event->nd.next;
+					eventLoadAndLockSamples(event);
+				} else {
+					break;
+				}
+			}
+			if (!(event->startSample = eventFirstSample(event)) || !audioEventStart(event)) {
+				AudioEventKill(event);
+				audioEventDestroy(event);
+			}
+		}
+		event = next;
+	}
+
+	service_in = 0;
 }
 
 // FUNCTION: GAMEMD 0x00404700
@@ -699,6 +942,7 @@ static int audioEventPrep(AudioEvent * event)
 	}
 	return 1;
 }
+
 
 // FUNCTION: GAMEMD 0x004059F0
 int __fastcall audioEventStop(AudioChannel * chan)

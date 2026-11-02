@@ -370,6 +370,77 @@ static int __fastcall audioLoad(AudioSystem * system)
 	return 0;
 }
 
+static void AUD_update_buffer(AUD_DRV_CHAN * ci)
+{
+	unsigned frame = AUD_get_current_frame(ci);
+	int dif = frame - ci->frame;
+	if (dif) {
+		if (dif < 0) {
+			dif = frame + (vAUD_DRV_FRAMES - ci->frame);
+		}
+		if ((dif -= vAUD_DRV_LAG_FRAMES) > 0) {
+			if ((ci->frame += dif) >= vAUD_DRV_FRAMES) {
+				ci->frame %= vAUD_DRV_FRAMES;
+			}
+			ci->frames_played += dif;
+			dif *= ci->frame_bytes;
+			int filled = AUD_fill_buffer(ci, dif);
+			if (ci->min_fill > dif) {
+				ci->min_fill = dif;
+			}
+			if ((ci->pcm_pos -= dif) <= 0 || !filled) {
+				ci->dsbuf->Stop();
+			}
+		}
+	}
+	ci->service_count++;
+}
+
+static int AUD_service_device(AudioDevice * dev)
+{
+	AudioSearch sh;
+
+	if (!dev->channelAccess.count) {
+		EnterCriticalSection(&thread_access);
+		TimeStamp now = AudioGetTime();
+		AudioServicePerform(&dev->mixerUpdate, now);
+		AudioChannel * chan = AudioDeviceFirstChannel(dev, &sh);
+		while (chan) {
+			if (chan->Status & mAUDIO_CTRL_PLAYING) {
+				if (audioCheck(chan)) {
+					chan->drvData->poll_interval = now - chan->drvData->last_poll;
+					chan->drvData->last_poll = now;
+					AUD_update_buffer(chan->drvData);
+				} else {
+					AUD_channel_stop(chan);
+				}
+			}
+			chan = AudioDeviceNextChannel(&sh);
+		}
+		AUD_service_attribs(dev);
+		LeaveCriticalSection(&thread_access);
+		return TRUE;
+	}
+	return FALSE;
+}
+
+// FUNCTION: GAMEMD 0x004095B0
+DWORD WINAPI AUD_service_thread(AudioThread * thr)
+{
+	thr->running = TRUE;
+	thr->leaving = FALSE;
+	while (!thr->quit) {
+		if (thr->data && !AUD_service_device((AudioDevice *)thr->data)) {
+			Sleep(5);
+		} else {
+			Sleep((DWORD)thr->interval);
+		}
+		thr->count++;
+	}
+	thr->leaving = TRUE;
+	return 0;
+}
+
 // FUNCTION: GAMEMD 0x00409880
 static int __fastcall AUD_fill_buffer(AUD_DRV_CHAN * ci, int total_bytes)
 {

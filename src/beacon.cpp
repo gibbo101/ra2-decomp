@@ -326,14 +326,14 @@ static inline int Coord_Dist3(Coord a, Coord b)
 }
 
 // FUNCTION: GAMEMD 0x00430F70
-bool BeaconManagerClass::SelectBeacon(int x, int y, int z)
+bool BeaconManagerClass::SelectBeacon(Coord coord)
 {
 	int i;
 	int j;
 	if (AllocatedCount) {
 		for (i = 0; i < 8; i++) {
 			for (j = 0; j < 3; j++) {
-				if (Beacons[i][j] && Coord_Dist3(Coord(x, y, z), Beacons[i][j]->BeaconCoord) < 128) {
+				if (Beacons[i][j] && Coord_Dist3(coord, Beacons[i][j]->BeaconCoord) < 128) {
 					goto found;
 				}
 			}

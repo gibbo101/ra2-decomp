@@ -144,7 +144,7 @@ void __fastcall AudioServiceSetResetInterval(AudioServiceInfo * info, TimeStamp 
 void __fastcall AudioServicePerform(AudioServiceInfo * info, TimeStamp now);
 AudioChannel * __fastcall AudioDeviceFirstChannel(AudioDevice * dev, AudioSearch * sh);
 AudioChannel * __fastcall AudioDeviceNextChannel(AudioSearch * sh);
-void __fastcall AudioDeviceService(AudioDevice * dev);
+int __fastcall AudioDeviceService(AudioDevice * dev);
 void __fastcall AudioChannelSetFormat(AudioChannel * chan, AudioFormat * format);
 AudioDevice * __fastcall FUN_00407010(void);
 

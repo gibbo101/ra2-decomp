@@ -286,3 +286,54 @@ address,name,symbol,evidence
 0x008A0DD4,DSurface::RedLeft,,YRpp Drawing.h RedShiftRight; TibSun and canonical Build_Hicolor_Pixel shift right by *Left and left by *Right; verified in 0x00478E30
 0x008A0DD0,DSurface::RedRight,,YRpp Drawing.h RedShiftLeft; TibSun and canonical Build_Hicolor_Pixel shift right by *Left and left by *Right; verified in 0x00478E30
 0x0087F770,Keyboard,,YRpp InputManagerClass.h Instance; Custom_Message_Box_Proc passes this pointer to matched WWKeyboardClass::Put at 0x0054F1C0
+0x006D6070,Tactical::Set_Tactical_Position(Coord const &),?Set_Tactical_Position@Tactical@@QAEXABVCoord@@@Z,YRpp TacticalClass::SetTacticalPosition takes a CoordStruct reference; DisplayClass::Compute_Start_Pos at 0x004AC64D passes the coordinate to this overload
+0x0087E880,thread_access,,DirectSound audioLoad passes this critical section to InitializeCriticalSection at 0x0040947A and AUD_service_thread enters and leaves it at 0x004095F0 and 0x00409823
+0x00ABDC50,InvalidCell,,YRpp MapClass::InvalidCell; returned by 0x005657A0 for invalid cells
+0x00A8ED28,IsometricTileTypes,,YRpp IsometricTileTypeClass::Array; tile vector used by Recalc_Attributes
+0x0047CA80,CellClass::Fixup_LAT,,YRpp CellClass::SetupLAT; the land-transition fixup called by Recalc_Attributes
+0x00421EA0,AnimClass::AnimClass,??0AnimClass@@QAE@PBVAnimTypeClass@@ABVCoord@@HHW4ShapeFlags_Type@@H_N@Z,"YRpp AnimClass constructor with animation type, location, timing, flags, z adjustment and reverse flag"
+0x00AA1054,IsometricTileTypeClass::Tunnels,,The General/Tunnels tile-set index in 0x00545150 selects the heap ID stored at 0x00545E71
+0x00ABB108,IsometricTileTypeClass::TrackTunnels,,The General/TrackTunnels tile-set index in 0x00545150 selects the heap ID stored at 0x00545E80
+0x00AA10B4,IsometricTileTypeClass::DirtTunnels,,The General/DirtTunnels tile-set index in 0x00545150 selects the heap ID stored at 0x00545E53
+0x00ABAD2C,IsometricTileTypeClass::DirtTrackTunnels,,The General/DirtTrackTunnels tile-set index in 0x00545150 selects the heap ID stored at 0x00545E62
+0x0047EC90,CellClass::Draw_Placement_Cursor,,TibSun tactical.cpp and call sites in 0x006D5030. Both footprint loops call this method after checking the map cell and project its coordinates into TacticalRect.
+0x006D5730,Tactical::Draw_Fence_Placement,,TibSun tactical.cpp and call sites in 0x006D5030. Called for the IsLaserFencePost branch in Draw_Placement.
+0x006D59D0,Tactical::Draw_Firestorm_Wall_Placement,,TibSun tactical.cpp and call sites in 0x006D5030. Called for the IsFirestormWall branch in Draw_Placement.
+0x006D5C50,Tactical::Draw_Wall_Placement,,TibSun tactical.cpp and call sites in 0x006D5030. Called for the ToOverlay IsWall branch in Draw_Placement.
+0x0087E180,audioEvents,,Global event list initialized by AudioEventSetUp and iterated in all four passes of AudioServiceAllEvents
+0x0087E28C,AudioEventsCount,,Zeroed by AudioEventSetUp; decremented when AudioServiceAllEvents destroys an event
+0x0087E2A8,audioEventPool,,AudioEventSetUp stores the MemoryPoolCreate result; AudioEventCloseDown destroys this pool
+0x0087E250,audioEventClasses,,Class list initialized by AudioEventSetUp; AudioEventCloseDown removes and deletes each class
+0x0087E298,audioCache,,Cache created by AudioEventSetUp and passed to AudioCacheDestroy at 0x00404101
+0x0087E2A4,eventsOK,,AudioEventSetUp marks the event subsystem ready; AudioEventCloseDown clears the flag at 0x00404122
+0x0087E2AC,frameStamp,,AudioServiceAllEvents advances the stamp and copies it to VocClass::lastFrame
+0x0087E2B0,bucketStamp,,Incremented after the priority and volume buckets are cleared in AudioServiceAllEvents
+0x0087E2B4,service_in,,AudioServiceAllEvents reentrancy guard checked on entry and cleared on return
+0x0087DE38,eClassBucket,,Seven by ten array of list heads cleared by AudioServiceAllEvents and scanned by bucketGetWeaker
+0x0087E1B8,audioCompressionAttribs,,Initialized by AudioEventSetUp; AudioServiceAllEvents adjusts and updates its volume level
+0x004055C0,AudioEventService,,Second event pass in AudioServiceAllEvents calls the per-event state machine
+0x0081CD4C,CellClass::Bounce_Direction::facing_lookup,_?facing_lookup@?1??Bounce_Direction@CellClass@@QBE?AW4FacingType@@ABVCoord@@@Z@4QBW43@B,Nine FacingType values identical in the object and gamemd.exe; lookup at 0x004848EE indexes from the center at 0x0081CD5C
+0x0081CC30,CellClass::Draw_Overlay::_bridge_variation,_?_bridge_variation@?BB@??Draw_Overlay@CellClass@@QAEXABVPoint2D@@ABV?$TRect@H@@@Z@4PAHA,Draw_Overlay 0x0047F6A0 indexes this four-by-four bridge frame table. All 16 dwords match the original data.
+0x00AA1060,SlopeZShapes,?SlopeZShapes@@3PAPAVShapeSet@@A,IsometricTileTypeClass::Clear_Z_Shapes 0x00549B30 clears all four consecutive shape pointers. Draw_Overlay indexes the same array by ramp.
+0x00B054D0,ColorSchemes,?ColorSchemes@@3V?$DynamicVectorClass@PAVColorScheme@@@@A,YRpp ColorScheme::Array. Draw_Overlay indexes the vector by the player color scheme and reads its converter.
+0x00B0F4E8,Tiberiums,?Tiberiums@@3V?$DynamicVectorClass@PAVTiberiumClass@@@@A,YRpp TiberiumClass::Array. Draw_Overlay indexes the vector with the result of Which_Tiberium_Type.
+0x005AFB80,Matrix3D * Vector3,??D@YI?AVVector3@@ABVMatrix3D@@ABV0@@Z,YRpp Matrix3D::MatrixApply; multiplies a three-row affine matrix by a Vector3 in matched Tactical::Pixel_To_Lepton and Draw_Tile_Shadows
+0x006DC4C0,Point2D::operator-=,??ZPoint2D@@QAEABV0@ABV0@@Z,The derived and base TPoint2D<int> subtraction operators both independently match these 30 bytes; Draw_Tile_Shadows calls the derived alias
+0x00A8E9A0,GameActive,?GameActive@@3_NA,YRpp Game::IsActive. The Cell_Object search reads this flag before traversing an active cell.
+0x0047C620,CellClass::Is_Clear_To_Build,?Is_Clear_To_Build@CellClass@@QBE_NW4SpeedType@@PAVBuildingTypeClass@@PAVHouseClass@@@Z,"YRpp CellClass::CanThisExistHere. Draw_Placement_Cursor passes the locomotion speed, pending building type and player house."
+0x008A03FC,DisplayClass::PlacementShapes,?PlacementShapes@DisplayClass@@0PBXB,Matched DisplayClass::One_Time 0x004A8850 stores PLACE.SHP here. Draw_Placement_Cursor draws its placement frames.
+0x0081CC70,CellClass::Wall_Update::_offsets,_?_offsets@?1??Wall_Update@CellClass@@QAEX_N@Z@4PAW4FacingType@@A,All five facing entries match the table addressed by both loops in CellClass::Wall_Update at 0x00480630
+0x0089F688,AdjacentCell,?AdjacentCell@@3QBVCell@@B,YRpp Unsorted.h AdjacentCell array; TibSun coord.cpp supplies the eight Cell offsets indexed in CellClass::Wall_Update at 0x00480630
+0x0081CC20,CellClass::Recalc_Attributes::_facings,_?_facings@?FK@??Recalc_Attributes@CellClass@@QAEXH@Z@4QBW4FacingType@@B,Recalc_Attributes indexes this four-entry tunnel-facing table at 0x0047D935. Its dwords 2/4/6/0 match FACING_E/S/W/N in the object and executable.
+0x00B0CD48,ZPixelsPerLepton,,YRpp TacticalClass::AdjustForZ and the height factor used by 0x006D20E0 and 0x006DB095
+0x00842940,WaypointLinePattern,,16-byte five-on three-off pattern passed to Draw_Masked_Dashed_Line at 0x006DB155
+0x00B0E644,Tactical::Draw_Waypoints::mouseshapes,_?mouseshapes@?4??Draw_Waypoints@Tactical@@QAEX_N@Z@4PBVShapeSet@@B,Only referenced by the MOUSE.SHA lazy-load check and assignment and by its Draw_Shape call in 0x006DAD60
+0x00B0CD80,Tactical::Draw_Waypoints::buffer,_?buffer@?BC@??Draw_Waypoints@Tactical@@QAEX_N@Z@4PAGA,Only referenced by swprintf and Simple_Text_Print_Wide in 0x006DAD60. Four wchar_t units precede RAD_60 at 0x00B0CD88
+0x00A8ED5C,ScenarioActive,?ScenarioActive@@3_NA,YRpp Unsorted::ScenarioStarted. Mouse_Left_Release checks this flag before querying an object's visual character.
+0x00817F98,TechnoTypeClass RTTI type descriptor,??_R0?AVTechnoTypeClass@@@8,The retail type descriptor contains .?AVTechnoTypeClass@@ at offset 8 and is the target type of the placement cast.
+0x00817F78,ObjectTypeClass RTTI type descriptor,??_R0?AVObjectTypeClass@@@8,The retail type descriptor contains .?AVObjectTypeClass@@ at offset 8 and is the source type of the placement cast.
+0x0087F770,Keyboard,?Keyboard@@3PAUKeyboardClass@@A,YRpp InputManagerClass::Instance. Mouse_Left_Release queries its left Shift key state during rubber-band selection.
+0x0089C3B0,BeaconManager,?BeaconManager@@3VBeaconManagerClass@@A,YRpp BeaconManagerClass::Instance. Mouse_Left_Release selects and places beacons on this singleton.
+0x00430F70,BeaconManagerClass::SelectBeacon,?SelectBeacon@BeaconManagerClass@@QAE_NVCoord@@@Z,Mouse_Left_Release passes the coordinate by value. SelectBeacon receives its three components in consecutive stack slots.
+0x00430BA0,BeaconManagerClass::PlaceBeacon,?PlaceBeacon@BeaconManagerClass@@QAEXHVCoord@@H@Z,YRpp BeaconManagerClass::PlaceBeacon. Mouse_Left_Release passes a house ID followed by the coordinate and beacon ID.
+0x0043A0B0,"Vector3::Vector3(float, float, float)",??0Vector3@@QAE@MMM@Z,The three-float constructor emitted by Draw_Tile_Shadows matches all 25 bytes at this address. Both calls in the 0x006D7C00 overload resolve here.

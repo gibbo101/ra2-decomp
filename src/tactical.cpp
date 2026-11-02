@@ -62,6 +62,7 @@
 #include "ramp.hh"
 #include "scrspeed.hh"
 #include "fastmath.h"
+#include <wchar.h>
 
 // SYNTHETIC: GAMEMD 0x006D1830 SYMBOL
 // _$E2
@@ -92,7 +93,7 @@
 // SYNTHETIC: GAMEMD 0x006D1A20 SYMBOL
 // _$E47
 // SYNTHETIC: GAMEMD 0x006D1A40 SYMBOL
-// _$E266
+// _$E269
 
 extern Rect TacticalDimensions;
 void __fastcall FUN_00731D00(int mode);
@@ -101,7 +102,12 @@ extern int DAT_0088097C;
 extern int DAT_00880980;
 namespace Unsorted { extern bool ArmageddonMode; }
 namespace Game { extern HWND hWnd; }
-namespace FileSystem { extern ShapeSet * GRFXTXT_SHP; extern ConvertClass * GRFXTXT_Convert; }
+struct FileSystem {
+	static void const * LoadFile(char const * name, bool as_shape);
+	static ShapeSet * GRFXTXT_SHP;
+	static ConvertClass * GRFXTXT_Convert;
+	static ConvertClass * MOUSE_PAL;
+};
 Point2D Lerp(Point2D const & a, Point2D const & b, float t);
 
 static inline bool Is_Foot_Object(ObjectClass const * object)
@@ -125,25 +131,25 @@ static double ZPixelsPerLepton = fastmath::sin(RAD_60) * (PixelsPerLepton = 60.0
 static double ZLeptonsPerPixel = CELL_LEPTON_DIAG / (fastmath::sin(RAD_60) * 60.0);
 
 // SYNTHETIC: GAMEMD 0x006D1A60 SYMBOL
-// _$E244
+// _$E247
 
 // SYNTHETIC: GAMEMD 0x006D1AA0 SYMBOL
-// _$E241
+// _$E244
 
 // SYNTHETIC: GAMEMD 0x006D1B00 SYMBOL
 // _$E41
 
 // SYNTHETIC: GAMEMD 0x006D1B10 SYMBOL
-// _$E253
-
-// SYNTHETIC: GAMEMD 0x006D1B50 SYMBOL
-// _$E250
-
-// SYNTHETIC: GAMEMD 0x006D1BB0 SYMBOL
 // _$E256
 
-// SYNTHETIC: GAMEMD 0x006D1BF0 SYMBOL
+// SYNTHETIC: GAMEMD 0x006D1B50 SYMBOL
+// _$E253
+
+// SYNTHETIC: GAMEMD 0x006D1BB0 SYMBOL
 // _$E259
+
+// SYNTHETIC: GAMEMD 0x006D1BF0 SYMBOL
+// _$E262
 
 // FUNCTION: GAMEMD 0x006D1C20
 Tactical::Tactical(void) :
@@ -217,22 +223,13 @@ Point2D Tactical::Rectangular_To_Isometric(Point2D point)
 	return(iso);
 }
 
-static int Lepton_To_Z_Pixel(LEPTON lepton)
-{
-	int fudge = 0;
-	if (lepton >= 728) {
-		fudge = 1;
-	}
-	return(int(lepton * ZPixelsPerLepton + fudge + 0.5));
-}
-
 // FUNCTION: GAMEMD 0x006D1F10
 Point2D Tactical::Coord_To_Pixel_Absolute(Coord const & coord)
 {
 	Point2D pixel = Rectangular_To_Isometric(Point2D(coord.X, coord.Y));
 	pixel.X /= 256;
 	pixel.Y /= 256;
-	pixel.Y -= Lepton_To_Z_Pixel(coord.Z);
+	pixel.Y -= Z_Lepton_To_Pixel(coord.Z);
 	return(pixel);
 }
 
@@ -256,7 +253,11 @@ Point2D Tactical::Pixel_To_Lepton(Point2D const & pixel)
 // FUNCTION: GAMEMD 0x006D20E0
 int Tactical::Z_Lepton_To_Pixel(LEPTON lepton)
 {
-	return(Lepton_To_Z_Pixel(lepton));
+	int fudge = 0;
+	if (lepton >= 728) {
+		fudge = 1;
+	}
+	return(int(lepton * ZPixelsPerLepton + fudge + 0.5));
 }
 
 // FUNCTION: GAMEMD 0x006D2120
@@ -269,7 +270,7 @@ LEPTON Tactical::Pixel_To_Z_Lepton(int pixel)
 bool Tactical::Coord_To_Pixel(Coord const & coord, Point2D & pixel)
 {
 	pixel = Coord_To_Pixel_Absolute(coord);
-	pixel -= Point2D(TacPixelX, TacPixelY);
+	pixel.TPoint2D<int>::operator-=(Point2D(TacPixelX, TacPixelY));
 
 	if (pixel.X < -360) {
 		return(false);
@@ -622,7 +623,7 @@ void Tactical::Render_Shroud(Rect const & xpanrect, Rect const & ypanrect, Rect 
 	}
 
 	for (int i = 0; i < DirtyAreas.Count(); i++) {
-		Rect redraw = DirtyAreas[i].Area + TacticalRect.TopLeft;
+		Rect redraw = DirtyAreas[i].Area + Point2D(TacticalRect.X, TacticalRect.Y);
 		Rect inter = Intersect(redraw, cliprect);
 
 		if (DirtyAreas[i].IsToRefreshShroud) {
@@ -749,6 +750,90 @@ void Tactical::Draw_Screen_Text(wchar_t const * text)
 	}
 }
 
+// FUNCTION: GAMEMD 0x006D5030
+void Tactical::Draw_Placement(bool drawtrans)
+{
+	Cell start = Cell(0, 0);
+	Cell dims;
+	if (Map.PendingObject != NULL) {
+		Point2D mouse = MouseCursor->Get_Mouse_Point();
+		if (!TacticalRect.Is_Point_Within(mouse)) {
+			return;
+		}
+
+		if (Map.PendingObject->Fetch_RTTI() == RTTI_BUILDINGTYPE && ((BuildingTypeClass const *)Map.PendingObject)->IsGate) {
+			dims = Cell(3, 3);
+			start = Cell(-1, -1);
+		} else {
+			dims = Map.Get_Occupy_Dimensions(Map.CursorSize);
+		}
+
+		bool all_valid = true;
+		for (int cx = start.X; cx < dims.X; cx++) {
+			for (int cy = start.Y; cy < dims.Y; cy++) {
+				Cell cell = Cell(cx, cy) + Map.ZoneCell + Map.ZoneOffset;
+				Coord coord = Coord_Whole(Coord(cell));
+				Point2D pixel;
+				Coord_To_Pixel(coord, pixel);
+				pixel.X = ISO_TILE_PIXEL_W / -2 + pixel.X;
+				if (Map.In_Radar(cell)) {
+					CellClass * cellptr = &Map[cell];
+					all_valid = cellptr->Draw_Placement_Cursor(pixel, TacticalRect, drawtrans) && all_valid;
+				}
+			}
+		}
+
+		RTTIType rtti = Map.PendingObject->Fetch_RTTI();
+
+		if (Unsorted::ArmageddonMode && Map.PendingObjectPtr != NULL) {
+			Coord coord = Coord(start + Map.ZoneCell + Map.ZoneOffset, 0);
+			if (rtti == RTTI_BUILDINGTYPE) {
+				coord = Coord_Whole(coord);
+			}
+			coord.Z = Map.Get_Height_GL(coord);
+			Map.PendingObjectPtr->Set_Coord(coord);
+			Point2D pixel;
+			Coord_To_Pixel(coord, pixel);
+			if (rtti != RTTI_ISOTILETYPE) {
+				Map.PendingObjectPtr->Editor_Draw_It(pixel, TacticalRect);
+			}
+		}
+
+		if (all_valid && Map.PendingObjectPtr != NULL && Map.PendingObjectPtr->Fetch_RTTI() == RTTI_BUILDING) {
+			BuildingClass * bptr = (BuildingClass *)Map.PendingObjectPtr;
+			if (bptr->Class->IsLaserFencePost) {
+				Draw_Fence_Placement(drawtrans, Cell(start.X, start.Y) + Map.ZoneCell + Map.ZoneOffset);
+			} else if (bptr->Class->IsFirestormWall) {
+				Draw_Firestorm_Wall_Placement(drawtrans, Cell(start.X, start.Y) + Map.ZoneCell + Map.ZoneOffset);
+			} else if (bptr->Class->ToOverlay != NULL && bptr->Class->ToOverlay->IsWall) {
+				Draw_Wall_Placement(drawtrans, Cell(start.X, start.Y) + Map.ZoneCell + Map.ZoneOffset);
+			}
+		}
+	}
+
+	if (!Unsorted::ArmageddonMode && Map.CurrentBuildingTypeCopy) {
+		if (Map.CurrentBuildingTypeCopy->Fetch_RTTI() == RTTI_BUILDINGTYPE && ((BuildingTypeClass const *)Map.CurrentBuildingTypeCopy)->IsGate) {
+			dims = Cell(3, 3);
+			start = Cell(-1, -1);
+		} else {
+			dims = Map.Get_Occupy_Dimensions(Map.CurrentFoundationCopy_Data);
+		}
+		for (int cx = start.X; cx < dims.X; cx++) {
+			for (int cy = start.Y; cy < dims.Y; cy++) {
+				Cell cell = Cell(cx, cy) + Map.CurrentFoundationCopy_CenterCell + Map.CurrentFoundationCopy_TopLeftOffset;
+				Coord coord = Coord_Whole(Coord(cell));
+				Point2D pixel;
+				Coord_To_Pixel(coord, pixel);
+				pixel.X = ISO_TILE_PIXEL_W / -2 + pixel.X;
+				if (Map.In_Radar(cell)) {
+					CellClass * cellptr = &Map[cell];
+					cellptr->Draw_Placement_Cursor(pixel, TacticalRect, drawtrans);
+				}
+			}
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x006D5F30
 bool Tactical::Blit_Tiles(void)
 {
@@ -767,7 +852,7 @@ void Tactical::Set_Tactical_Position(Point2D const & point)
 {
 	Point2D clamped = point;
 	Point2D result;
-	if (Clamp_To_Tactical_Rect(clamped) && !Debug_Map) {
+	if (Clamp_To_Tactical_Rect(clamped) && !Unsorted::ArmageddonMode) {
 		result = clamped;
 	} else {
 		result = point;
@@ -776,6 +861,31 @@ void Tactical::Set_Tactical_Position(Point2D const & point)
 	DesiredTacticalCoord = result;
 	Update_Visible_Cells();
 	IsToRedraw = true;
+}
+
+static inline Point2D Project_Isometric_Point(Point2D const & iso, Coord const & coord)
+{
+	Point2D pixel = iso;
+	pixel.X /= CELL_LEPTON;
+	pixel.Y /= CELL_LEPTON;
+	pixel.Y -= Tactical::Z_Lepton_To_Pixel(coord.Z);
+	return(pixel);
+}
+
+static inline void World_To_View_Pixel(Tactical const & view, Coord const & coord, Point2D & relative)
+{
+	Point2D pixel = Tactical::Rectangular_To_Isometric(Point2D(coord.X, coord.Y));
+	relative = Project_Isometric_Point(pixel, coord);
+	relative -= Point2D(view.TacPixelX, view.TacPixelY);
+}
+
+// FUNCTION: GAMEMD 0x006D6070
+void Tactical::Set_Tactical_Position(Coord const & coord)
+{
+	Point2D pixel;
+	World_To_View_Pixel(*this, coord, pixel);
+	pixel += Point2D(TacPixelX, TacPixelY);
+	Set_Tactical_Position(pixel);
 }
 
 // FUNCTION: GAMEMD 0x006D6170
@@ -914,6 +1024,95 @@ CellClass * Tactical::Find_Bridge_Owner_Cell(Cell const & cell)
 	}
 
 	return(NULL);
+}
+
+static inline Coord Tile_Center(Cell const & cell)
+{
+	Coord center;
+	center.X = cell.X * CELL_LEPTON_W + CELL_LEPTON_W / 2;
+	center.Y = cell.Y * CELL_LEPTON_H + CELL_LEPTON_H / 2;
+	center.Z = 0;
+	return(center);
+}
+
+// FUNCTION: GAMEMD 0x006D7C00
+void Tactical::Draw_Tile_Shadows(Rect const & area, Rect const & cliprect)
+{
+	Coord lepton(Pixel_To_Lepton(area.Top_Left() + Point2D(TacPixelX, TacPixelY) - TacticalRect.Top_Left()), 0);
+	Cell base = lepton.As_Cell();
+	base.X -= 2;
+	Cell cell = base;
+
+	lepton = Coord(Pixel_To_Lepton(area.Top_Left() + Point2D(TacPixelX, TacPixelY) - TacticalRect.Top_Left()), 0);
+	base = Map[lepton].Fetch_CellID();
+	int ycount = area.Height / (ISO_TILE_PIXEL_H / 2) + 20;
+	int xcount = area.Width / ISO_TILE_PIXEL_W + 7;
+	base.X -= 2;
+	base.Y += 3;
+
+	int ix, iy;
+	for (iy = 0; iy < ycount; iy++) {
+		Cell step(iy / 2, (iy + 1) / 2);
+		cell = base + step;
+
+		for (ix = xcount; ix > 0; ix--) {
+			if (Map.In_Radar(cell)) {
+				Coord coord = Coord_Whole(Tile_Center(cell));
+				Point2D pixel;
+				Coord_To_Pixel(coord, pixel);
+				pixel.X += ISO_TILE_PIXEL_W / -2;
+				Map[cell].Draw_Shadow_Cast(pixel, cliprect);
+			}
+			++cell.X;
+			--cell.Y;
+		}
+	}
+}
+
+static inline void Set_Ground_Position(Coord & coord, Point2D const & point)
+{
+	coord.X = point.X;
+	coord.Y = point.Y;
+	coord.Z = 0;
+}
+
+// FUNCTION: GAMEMD 0x006D8260
+void Tactical::Draw_Tile_Shadows(int, Rect const & area)
+{
+	Point2D sample = area.Top_Left() + Point2D(TacPixelX, TacPixelY) - TacticalRect.Top_Left();
+	Coord lepton;
+	Set_Ground_Position(lepton, Pixel_To_Lepton(sample));
+	if (lepton.Y < 0) {
+		lepton.X -= lepton.Y;
+		lepton.Y = 0;
+	}
+	if (lepton.X < 0) {
+		lepton.Y -= lepton.X;
+		lepton.X = 0;
+	}
+
+	Cell base = Map[lepton].Fetch_CellID();
+	int ycount = area.Height / (ISO_TILE_PIXEL_H / 2) + 20;
+	int xcount = area.Width / ISO_TILE_PIXEL_W + 7;
+	base.X -= 2;
+	base.Y += 3;
+
+	int ix, iy;
+	for (iy = 0; iy < ycount; iy++) {
+		Cell step(iy / 2, (iy + 1) / 2);
+		Cell cell = base + step;
+
+		for (ix = xcount; ix > 0; ix--) {
+			if (Map.In_Radar(cell)) {
+				Point2D pixel;
+				Coord_To_Pixel(Coord_Whole(cell.As_Coord()), pixel);
+				pixel.X += ISO_TILE_PIXEL_W / -2;
+				Map[cell].Draw_Shadow_Cast(pixel, area);
+			}
+			++cell.X;
+			--cell.Y;
+		}
+	}
 }
 
 // FUNCTION: GAMEMD 0x006D84D0
@@ -1478,7 +1677,7 @@ FacingType Tactical::Scroll_Dir(FacingType dir)
 }
 
 // SYNTHETIC: GAMEMD 0x006DA350 SYMBOL
-// _$E247
+// _$E250
 
 // FUNCTION: GAMEMD 0x006DA360
 Cell Tactical::Clamp_Cursor_To_Tactical(Cell const & cell, Cell const * list)
@@ -1666,6 +1865,87 @@ void Tactical::Reset_Dirty_Rectangles(void)
 }
 
 extern DynamicVectorClass<ObjectClass *> DAT_00A8E360;
+
+static bool WaypointLinePattern[16] = {
+	true, true, true, true, true, false, false, false,
+	true, true, true, true, true, false, false, false
+};
+
+// FUNCTION: GAMEMD 0x006DAD60
+void Tactical::Draw_Waypoints(bool inshroud)
+{
+	int phase = (0x7FFFFFFF - Frame) % TICKS_PER_SECOND;
+	MouseType cursor = MouseType(60);
+	int start = Map.Get_Mouse_Start_Frame(cursor);
+	int framecount = Map.Get_Mouse_Frame_Count(cursor);
+	int frame = WaypointAnimCounter % framecount + start;
+
+	if (Unsorted::ArmageddonMode) {
+		return;
+	}
+
+	unsigned short * table = (unsigned short *)FileSystem::MOUSE_PAL->Get_Translate_Table();
+	unsigned short saved_colors[8];
+	memcpy(saved_colors, table + 1, sizeof(saved_colors));
+
+	static ShapeSet const * mouseshapes;
+	if (mouseshapes == NULL) {
+		mouseshapes = (ShapeSet const *)FileSystem::LoadFile("MOUSE.SHA", false);
+	}
+
+	Point2D offset(0, TacticalRect.Y + 1);
+	int coloridx = (Scen->Theater != THEATER_SNOW) ? LTGREY : BLACK;
+
+	PathType path = PATH_FIRST;
+	do {
+		PlayerPtr->Ensure_Path(path);
+
+		int count = PlayerPtr->Paths[path]->Waypoint_Count();
+		if (count != 0) {
+			Map.Update_Waypoint_Color(path);
+		}
+
+		for (int index = 0; index < count; index++) {
+			WaypointClass * waypoint = PlayerPtr->Paths[path]->Get_Waypoint(index);
+
+			Point2D pixel;
+			bool onscreen = Coord_To_Pixel(waypoint->Location, pixel)
+				&& ((inshroud && Map.Is_Shrouded(waypoint->Location))
+					|| (!inshroud && !Map.Is_Shrouded(waypoint->Location)));
+			pixel.Y += TacticalRect.Y;
+
+			if (onscreen) {
+				Draw_Shape(*DSurface::Temp, *FileSystem::MOUSE_PAL, mouseshapes, frame, pixel - offset,
+					TacticalRect, (ShapeFlags_Type)(SHAPE_CENTER | SHAPE_WIN_REL));
+
+				static wchar_t buffer[4];
+				swprintf(buffer, L"%d", index);
+				Point2D relative = pixel - offset;
+				Simple_Text_Print_Wide(buffer, DSurface::Temp, &TacticalRect, &Point2D(relative.X - 1, relative.Y - 25),
+					ColorSchemes[coloridx], 0, (TextPrintType)(TPF_CENTER | TPF_EFNT), 1);
+			}
+
+			WaypointClass * next = PlayerPtr->Paths[path]->Get_Next_Waypoint(waypoint);
+			if (next != NULL) {
+				Point2D nextpixel;
+				Coord_To_Pixel(next->Location, nextpixel);
+				nextpixel.Y += TacticalRect.Y;
+
+				if (Clip_Line_To_Rect(pixel, nextpixel, TacticalRect)) {
+					if (path == PlayerPtr->SelectedPath) {
+						phase = DSurface::Temp->Draw_Masked_Dashed_Line(pixel, nextpixel,
+							FileSystem::MOUSE_PAL->Convert_Pixel(3), WaypointLinePattern, phase, inshroud);
+					} else {
+						DSurface::Temp->Draw_Masked_Line(pixel, nextpixel,
+							FileSystem::MOUSE_PAL->Convert_Pixel(3), inshroud);
+					}
+				}
+			}
+		}
+	} while (++path < PATH_COUNT);
+
+	memcpy(table + 1, saved_colors, sizeof(saved_colors));
+}
 
 // FUNCTION: GAMEMD 0x006DB210
 void Tactical::Debug_Draw_Occupier_Links(void)
@@ -1913,8 +2193,9 @@ Cell Tactical::Coord_To_Cell(Coord const & coord)
 	bool isbridge = Map[cell].IsBridgeSurface;
 	int baseheight = Map[cell].Height;
 
-	Coord scan;
-	scan = Coord(Point2D(center.X + CELL_LEPTON_W * 6, center.Y + CELL_LEPTON_H * 6), 0);
+	Coord origin;
+	Set_Ground_Position(origin, Point2D(center.X + CELL_LEPTON_W * 6, center.Y + CELL_LEPTON_H * 6));
+	Coord scan = origin;
 
 	Cell scancell = cell;
 	while (true) {

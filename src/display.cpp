@@ -25,6 +25,7 @@
 #include "airctype.h"
 #include "animtype.h"
 #include "astar.h"
+#include "beacon.h"
 #include "bsurface.h"
 #include "building.h"
 #include "builtype.h"
@@ -76,7 +77,11 @@
 
 #include <cmath>
 
-namespace Unsorted { extern bool MoveFeedback; extern bool ArmageddonMode; }
+namespace Unsorted {
+	extern bool MoveFeedback;
+	extern bool ArmageddonMode;
+	extern int MuteSWLaunches;
+}
 extern bool DAT_00A8ED5D;
 template<class T> inline T Bound2(T original, T minval, T maxval)
 {
@@ -88,12 +93,15 @@ template<class T> inline T Bound2(T original, T minval, T maxval)
 
 extern bool DAT_00884D44;
 void __fastcall UnselectAll(void);
-class BeaconManagerClass
-{
-	public:
-		bool Can_Place_Beacon(int house);
-};
 extern BeaconManagerClass BeaconManager;
+extern bool DAT_00A8ED9D;
+void __fastcall Bandbox_Selection_Callback(ObjectClass * object);
+bool __fastcall FUN_00639040(void);
+bool __fastcall FUN_00639130(void);
+void __fastcall FUN_00731CF0(void);
+bool __fastcall FUN_00732D00(void);
+void __fastcall FUN_00732600(char const * name);
+namespace Game { void __fastcall UICommands_TypeSelect_7327D0(char const * name); }
 
 // SYNTHETIC: GAMEMD 0x004A8420 SYMBOL
 // _$E2
@@ -340,6 +348,59 @@ void DisplayClass::FUN_004A8D50(Cell const * list)
 
 // SYNTHETIC: GAMEMD 0x004A8EA0 SYMBOL
 // _$E252
+static inline Rect Foundation_Rect(Cell const & origin, BuildingTypeClass const * building)
+{
+	int height = building->Height();
+	int width = building->Width();
+	return Rect(origin.X, origin.Y, width, height);
+}
+
+// FUNCTION: GAMEMD 0x004A8EB0
+bool DisplayClass::Passes_Proximity_Check(ObjectTypeClass const * object, HousesType house, Cell const * list, Cell const & trycell) const
+{
+	if (house != PlayerPtr->HeapID) {
+		return(true);
+	}
+
+	if (Unsorted::ArmageddonMode) {
+		return(true);
+	}
+
+	if (list == NULL || trycell == CELL_NONE) {
+		return(true);
+	}
+
+	if (object == NULL || object->RTTI != RTTI_BUILDINGTYPE) {
+		return(true);
+	}
+
+	BuildingTypeClass const * building = static_cast<BuildingTypeClass const *>(object);
+	Rect footprint = Foundation_Rect(trycell, building);
+	int adj = building->Adjacent + 1;
+	Rect range(footprint.X - adj, footprint.Y - adj, footprint.Width + adj * 2, footprint.Height + adj * 2);
+	bool retval = false;
+
+	for (int x = range.X; x < range.X + range.Width; x++) {
+		for (int y = range.Y; y < range.Y + range.Height; y++) {
+			Cell newcell(x, y);
+
+			if (!footprint.Is_Point_Within(Point2D(newcell.X, newcell.Y))) {
+				BuildingClass * newbase = Map[newcell].Cell_Building();
+				if (newbase) {
+					if (newbase->House->HeapID == house && newbase->Class->IsBase) {
+						retval = true;
+					}
+					if (Session.Options.BuildOffAlly && newbase->House->Is_Ally(Houses[house]) && newbase->Class->EligibleForAllyBuilding) {
+						retval = true;
+					}
+				}
+			}
+		}
+	}
+
+	return(retval);
+}
+
 // FUNCTION: GAMEMD 0x004A94F0
 Cell DisplayClass::Get_Occupy_Dimensions(Cell const * list) const
 {
@@ -955,6 +1016,187 @@ void DisplayClass::Mouse_Right_Release(Point2D const & point)
 	Set_Default_Mouse(MOUSE_NORMAL, DAT_00884D44);
 }
 
+static inline Cell Foundation_Cell(Cell const & cell, Cell const & offset)
+{
+	return cell + offset;
+}
+
+// FUNCTION: GAMEMD 0x004AB9B0
+void DisplayClass::Mouse_Left_Release(Coord const & coord, Cell const & cell, ObjectClass * object, ActionType action, bool wsmall)
+{
+	if (object && ScenarioActive && GameActive && !Unsorted::ArmageddonMode && object->Visual_Character() == VISUAL_HIDDEN) {
+		object = NULL;
+	}
+	if (PendingObjectPtr) {
+		if (PendingObject->RTTI == RTTI_BUILDINGTYPE) {
+			ProximityCheck = Passes_Proximity_Check(PendingObject, PendingHouse, CursorSize,
+				Foundation_Cell(cell, ZoneOffset));
+		}
+		if (PendingObject->RTTI == RTTI_BUILDINGTYPE && object && object->RTTI == RTTI_BUILDING &&
+			((BuildingClass *)object)->Can_Upgrade((BuildingTypeClass const *)PendingObject, PlayerPtr)) {
+			ProximityCheck = true;
+		}
+		if (ProximityCheck && ShroudCheck) {
+			TechnoTypeClass const * type = dynamic_cast<TechnoTypeClass const *>(PendingObject);
+			bool naval = type && type->Naval;
+			OutList.Add(EventClass(PlayerPtr->HeapID, EventClass::PLACE, PendingObjectPtr->RTTI,
+				PendingObject->Fetch_Heap_ID(), naval, Foundation_Cell(cell, ZoneOffset)));
+			ObjectClass * pending = PendingObjectPtr;
+			BuildingClass * building;
+			if (pending == NULL) {
+				building = NULL;
+			} else {
+				building = pending->RTTI == RTTI_BUILDING ? (BuildingClass *)pending : NULL;
+			}
+			building->ClearSidebarTabObject();
+			if (!Unsorted::ArmageddonMode) {
+				CurrentBuildingTypeCopy = PendingObject;
+				CurrentBuildingCopy = PendingObjectPtr;
+				CurrentFoundationCopy_CenterCell = cell;
+				CurrentFoundationCopy_TopLeftOffset = ZoneOffset;
+				CurrentFoundationCopy_Data = CursorSize;
+				CurrentBuildingOwnerArrayIndexCopy = PendingHouse;
+				if (CurrentBuildingTypeCopy) {
+					Map.FUN_004A8D50(CurrentBuildingTypeCopy->Occupy_List(true));
+				}
+				Map.SetActiveFoundation(NULL);
+				Map.PendingObjectPtr = NULL;
+				Map.PendingObject = NULL;
+				Map.PendingHouse = HOUSE_NONE;
+			}
+		} else {
+			VoxClass::Play("EVA_CannotDeployHere", -1, -1);
+		}
+		FUN_00731CF0();
+		return;
+	}
+
+	int empty_band = 0;
+	if (IsRubberBand) {
+		TacticalMap->IsToRedraw = true;
+		if (!Keyboard->Down(KN_LSHIFT)) {
+			if (TacticalMap->Rubber_Band_Contains_Selectable()) {
+				Unselect_All();
+			} else {
+				empty_band = 1;
+			}
+		}
+		TacticalMap->Select_Rubber_Band(Bandbox_Selection_Callback);
+		TechnoClass::Reset_Action_Line_Timer();
+		IsRubberBand = false;
+		Set_Default_Mouse(MOUSE_NORMAL, wsmall);
+		IsTentative = false;
+		DAT_00A8ED9D = true;
+		if (!empty_band) {
+			FUN_00731CF0();
+			return;
+		}
+	}
+
+	if (action == ACTION_TOGGLE_SELECT) {
+		if (!object || !CurrentObject.Count() || !CurrentObject[0]->Owner_HouseClass()->Is_Player_Control()) {
+			action = ACTION_SELECT;
+		} else if (object->IsSelected) {
+			if (FUN_00732D00()) {
+				FUN_00732600(object->Class_Of()->IniName);
+			} else {
+				object->Unselect();
+			}
+		} else {
+			if (FUN_00732D00()) {
+				Game::UICommands_TypeSelect_7327D0(object->Class_Of()->IniName);
+			} else {
+				object->Select();
+			}
+		}
+	}
+	if ((action == ACTION_SELECT && object != NULL) ||
+		(action == ACTION_NONE && object && object->CanBeSelected() && !object->IsSelected)) {
+		BuildingClass * building = (BuildingClass *)object;
+		if (building->RTTI != RTTI_BUILDING || building->House->Is_Player_Control() || building->TranslucencyLevel != 15 || building->Is_Sensed_By_Player()) {
+			Unselect_All();
+			if (FUN_00732D00()) {
+				Game::UICommands_TypeSelect_7327D0(object->Class_Of()->IniName);
+			} else {
+				object->Select();
+			}
+			Set_Default_Mouse(MOUSE_NORMAL, wsmall);
+			TechnoClass::Reset_Action_Line_Timer();
+		}
+	}
+	if (action == ACTION_SELECT_BEACON) {
+		Coord spot = cell.As_Coord(Map[cell].Height * LEVEL_LEPTON_H);
+		BeaconManager.SelectBeacon(spot);
+	} else if (action != ACTION_NONE && action != ACTION_SELECT) {
+		if (action != ACTION_TOGGLE_SELECT &&
+			action != ACTION_REPAIR &&
+			action != ACTION_SELL &&
+			action != ACTION_SELL_UNIT &&
+			action != ACTION_NO_SELL &&
+			action != ACTION_NO_REPAIR &&
+			action != ACTION_TOGGLE_POWER &&
+			action != ACTION_NO_TOGGLE_POWER &&
+			action != ACTION_NUKE_BOMB &&
+			action != ACTION_IRON_CURTAIN &&
+			action != ACTION_FORCE_SHIELD &&
+			action != ACTION_NO_FORCE_SHIELD &&
+			action != ACTION_LIGHTNING_STORM &&
+			action != ACTION_CHRONOSPHERE &&
+			action != ACTION_CHRONO_WARP &&
+			action != ACTION_PARA_DROP &&
+			action != ACTION_AMER_PARA_DROP &&
+			action != ACTION_PSYCHIC_DOMINATOR &&
+			action != ACTION_SPY_PLANE &&
+			action != ACTION_GENETIC_CONVERTER &&
+			action != ACTION_PSYCHIC_REVEAL &&
+			action != ACTION_SELECT_NODE &&
+			action != ACTION_PLACE_BEACON) {
+			bool valid = FUN_00639040();
+			bool available = FUN_00639130();
+			if (!valid || !available) {
+				goto done;
+			}
+		}
+		Active_Click(object, cell, action);
+		TechnoClass::Reset_Action_Line_Timer();
+
+		if (action == ACTION_TOGGLE_POWER && object->RTTI == RTTI_BUILDING) {
+			BuildingClass * building = (BuildingClass *)object;
+			if (building->IsOn) {
+				OutList.Add(EventClass(PlayerPtr->HeapID, EventClass::POWEROFF, TargetClass(building)));
+			} else {
+				OutList.Add(EventClass(PlayerPtr->HeapID, EventClass::POWERON, TargetClass(building)));
+			}
+		} else if (action == ACTION_PLACE_BEACON) {
+			if (!Unsorted::MuteSWLaunches) {
+				BeaconManager.PlaceBeacon(PlayerPtr->HeapID, cell.As_Coord(Map[cell].Height * LEVEL_LEPTON_H));
+			}
+			Map.Place_Beacon_Mode_Control(0);
+			Set_Default_Mouse(MOUSE_NORMAL, wsmall);
+		} else if (action == ACTION_REPAIR && object->RTTI == RTTI_BUILDING) {
+			OutList.Add(EventClass(PlayerPtr->HeapID, EventClass::REPAIR, TargetClass(object)));
+		} else if (action == ACTION_SELL_UNIT && object) {
+			RTTIType type = object->RTTI;
+			if (type > RTTI_NONE && type <= RTTI_AIRCRAFT) {
+				OutList.Add(EventClass(PlayerPtr->HeapID, EventClass::SELL, TargetClass(object)));
+			}
+		} else if (action == ACTION_SELL) {
+			if (object) {
+				OutList.Add(EventClass(PlayerPtr->HeapID, EventClass::SELL, TargetClass(object)));
+			} else {
+				OutList.Add(EventClass(PlayerPtr->HeapID, EventClass::SELLCELL, cell));
+			}
+		}
+		SuperWeaponTypeClass * stype = SuperWeaponTypeClass::From_Action(action);
+		if (stype) {
+			OutList.Add(EventClass(PlayerPtr->HeapID, EventClass::SPECIAL_PLACE, stype->HeapID, cell));
+		}
+	}
+done:
+	IsTentative = false;
+	FUN_00731CF0();
+}
+
 // FUNCTION: GAMEMD 0x004AC2B0
 void __fastcall Bandbox_Selection_Callback(ObjectClass * object)
 {
@@ -1002,6 +1244,36 @@ void DisplayClass::Mouse_Left_Held(Point2D const & point)
 				}
 			}
 		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x004AC4F0
+void DisplayClass::Compute_Start_Pos(void)
+{
+	Coord coord(0, 0, 0);
+	int num = 0;
+	for (int i = 0; i < Technos.Count(); i++) {
+		TechnoClass * tech = Technos[i];
+		if (!tech->IsInLimbo && tech->IsOwnedByPlayer) {
+			coord += tech->PositionCoord;
+			num++;
+		}
+	}
+
+	coord.Z = 0;
+
+	if (num != 0) {
+		coord /= num;
+	} else {
+		coord.X = PlayerPtr->FUN_0050DF30().X;
+		coord.Y = PlayerPtr->FUN_0050DF30().Y;
+	}
+
+	Scen->Views[0] = Scen->Views[1] = Scen->Views[2] = Scen->Views[3] = Cell(coord);
+	Scen->AltHome = Scen->Home;
+
+	if (TacticalMap != NULL) {
+		TacticalMap->Set_Tactical_Position(coord);
 	}
 }
 
@@ -1175,7 +1447,7 @@ void DisplayClass::Place_Beacon_Mode_Control(int control)
 	}
 
 	if (mode != PlaceBeaconMode && !PendingObject) {
-		if (mode && !BeaconManager.Can_Place_Beacon(PlayerPtr->HeapID)) {
+		if (mode && !BeaconManager.CanPlaceBeacon(PlayerPtr->HeapID)) {
 			mode = false;
 		}
 		IsSellMode = false;
@@ -1946,6 +2218,59 @@ HRESULT DisplayClass::Save(IStream * stream)
 		if (FAILED(result)) break;
 	}
 	return(result);
+}
+
+// FUNCTION: GAMEMD 0x004AE750
+void DisplayClass::Active_Click(ObjectClass * object, Cell cell, ActionType action)
+{
+	int index;
+	ObjectClass * selected;
+	PathType waypoint_path = PATH_NONE;
+	char waypoint_id = 0;
+	if (Unsorted::ArmageddonMode) {
+		return;
+	}
+	cell = Map.Clip_To_Map(cell);
+	WaypointClass * waypoint = PlayerPtr->Waypoint_At(cell);
+	if (waypoint) {
+		PlayerPtr->Fetch_Waypoint_Data(waypoint, waypoint_path, waypoint_id);
+	}
+	for (index = 0; index < CurrentObject.Count(); index++) {
+		selected = CurrentObject[index];
+		selected->Set_Waypoint_Path(waypoint_path, waypoint_id);
+		if (CurrentObject[index] && CurrentObject[index]->Is_Foot()) {
+			selected = CurrentObject[index];
+			static_cast<TechnoClass *>(selected)->unknown_bool_430 = false;
+		}
+	}
+	if (object) {
+		for (index = 0; index < CurrentObject.Count(); index++) {
+			selected = CurrentObject[index];
+			CurrentObject[index]->Active_Click_With(selected->What_Action(object), object, false);
+			Unsorted::MoveFeedback = false;
+		}
+	} else if (action == ACTION_MOVE || action == ACTION_PATROL_WAYPOINT) {
+		for (index = 0; index < CurrentObject.Count(); index++) {
+			selected = CurrentObject[index];
+			CurrentObject[index]->Active_Click_With(selected->What_Action(cell), cell, cell, false);
+			Unsorted::MoveFeedback = false;
+		}
+	} else if (action == ACTION_NOMOVE) {
+		int count = CurrentObject.Count();
+		for (index = 0; index < count; index++) {
+			selected = CurrentObject[index];
+			CurrentObject[index]->Active_Click_With(selected->What_Action(cell), cell, cell, false);
+			Unsorted::MoveFeedback = false;
+		}
+	} else {
+		for (index = 0; index < CurrentObject.Count(); index++) {
+			Cell empty(-1, -1);
+			selected = CurrentObject[index];
+			CurrentObject[index]->Active_Click_With(selected->What_Action(cell), cell, empty, false);
+			Unsorted::MoveFeedback = false;
+		}
+	}
+	Unsorted::MoveFeedback = true;
 }
 
 // FUNCTION: GAMEMD 0x004AE9B0

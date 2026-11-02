@@ -48,7 +48,7 @@ class BeaconManagerClass
 		void DrawRadar(Surface * surface, Rect bounds);
 		bool RadarBeaconPulsing(void);
 		bool CanPlaceBeacon(int house);
-		bool SelectBeacon(int x, int y, int z);
+		bool SelectBeacon(Coord coord);
 		void ClearSelection(void);
 		BeaconClass * FindBeaconAt(Coord coord);
 		BeaconClass * FindSelected(int house);
