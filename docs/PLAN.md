@@ -1,6 +1,6 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 3 November 2026: 18,737 of 19,362 game functions match (97%; 74% of game code
+Status, 3 November 2026: 18,750 of 19,362 game functions match (97%; 75% of game code
 by size), landed in batches module by module. The rounds below record each one.
 
 ## The goal
@@ -1113,6 +1113,14 @@ Session.Players. Recording then exposed three UI-command functions building char
 ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; their RTTI
 fixed them. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
+
+### dk8827's fourth set of pull requests (3 November 2026)
+
+**13 functions, 17 KB.** Two pull requests merged once rebuilt on our copy and gated
+together: cell transitions, tactical rendering and audio event servicing (11), now with
+Tactical::Coord_To_Cell still matching, and planning route connection and token
+consumption (2). A third waits on a form that keeps INIClass::Find_Entry as TibSun writes
+it. Merge gate: 18,750 of 18,750 (2,774.2 KB).
 
 ### Batches 174 to 176 (3 November 2026)
 

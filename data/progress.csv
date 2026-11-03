@@ -2408,6 +2408,7 @@ address,name,result,size,source,symbol
 0x0047C520,CellClass::Cell_Building,MATCH,47,src/cell.cpp,?Cell_Building@CellClass@@QBEPAVBuildingClass@@XZ
 0x0047C550,CellClass::Cell_Terrain,MATCH,67,src/cell.cpp,?Cell_Terrain@CellClass@@QBEPAVTerrainClass@@_N@Z
 0x0047C5A0,CellClass::Cell_Object,MATCH,121,src/cell.cpp,?Cell_Object@CellClass@@QBEPAVObjectClass@@ABVPoint2D@@_N@Z
+0x0047CA80,CellClass::Fixup_LAT,MATCH,1930,src/cell.cpp,?Fixup_LAT@CellClass@@QAE_NXZ
 0x0047D210,CellClass::Set_Wall_Owner,MATCH,150,src/cell.cpp,?Set_Wall_Owner@CellClass@@QAEXXZ
 0x0047D2B0,CellClass::Recalc_Attributes,MATCH,2740,src/cell.cpp,?Recalc_Attributes@CellClass@@QAEXH@Z
 0x0047DD70,CellClass::Destroy_Bridge,MATCH,711,src/cell.cpp,?Destroy_Bridge@CellClass@@QAEXXZ
@@ -2439,6 +2440,7 @@ address,name,result,size,source,symbol
 0x00481810,CellClass::Adjacent_Cell,MATCH,86,src/cell.cpp,?Adjacent_Cell@CellClass@@QBEABV1@W4FacingType@@@Z
 0x00481870,CellClass::Adjust_Threat,MATCH,107,src/cell.cpp,?Adjust_Threat@CellClass@@QAEXW4HousesType@@H@Z
 0x004818E0,CellClass::Tiberium_Adjust,MATCH,283,src/cell.cpp,?Tiberium_Adjust@CellClass@@QAEH_N@Z
+0x00481A00,CellClass::Goodie_Check,MATCH,6668,src/cell.cpp,?Goodie_Check@CellClass@@QAE_NPAVFootClass@@@Z
 0x00483410,CellClass::Flag_Place,MATCH,68,src/cell.cpp,?Flag_Place@CellClass@@QAE_NW4HousesType@@@Z
 0x00483460,CellClass::Flag_Remove,MATCH,31,src/cell.cpp,?Flag_Remove@CellClass@@QAE_NXZ
 0x00483480,CellClass::Shimmer,MATCH,30,src/cell.cpp,?Shimmer@CellClass@@QAEXXZ
@@ -3609,6 +3611,7 @@ address,name,result,size,source,symbol
 0x004A8D50,DisplayClass::FUN_004A8D50,MATCH,321,src/display.cpp,?FUN_004A8D50@DisplayClass@@QAEXPBVCell@@@Z
 0x004A8EA0,_$E252,MATCH,1,src/display.cpp,_$E252
 0x004A8EB0,DisplayClass::Passes_Proximity_Check,MATCH,438,src/display.cpp,?Passes_Proximity_Check@DisplayClass@@QBE_NPBVObjectTypeClass@@W4HousesType@@PBVCell@@ABV4@@Z
+0x004A9070,DisplayClass::Passes_Shroud_Check,MATCH,312,src/display.cpp,?Passes_Shroud_Check@DisplayClass@@QBE_NPBVObjectTypeClass@@W4HousesType@@PBVCell@@ABV4@@Z
 0x004A94F0,DisplayClass::Get_Occupy_Dimensions,MATCH,169,src/display.cpp,?Get_Occupy_Dimensions@DisplayClass@@QBE?AVCell@@PBV2@@Z
 0x004A95A0,DisplayClass::Cursor_Mark,MATCH,166,src/display.cpp,?Cursor_Mark@DisplayClass@@QAEXABVCell@@_N@Z
 0x004A9650,DisplayClass::Mark_Foundation_Copy,MATCH,166,src/display.cpp,?Mark_Foundation_Copy@DisplayClass@@QAEXABVCell@@_N@Z
@@ -3623,6 +3626,7 @@ address,name,result,size,source,symbol
 0x004AA290,DisplayClass::Cell_Object,MATCH,27,src/display.cpp,?Cell_Object@DisplayClass@@QBEPAVObjectClass@@ABVCell@@ABVPoint2D@@@Z
 0x004AA2B0,DisplayClass::Next_Object,MATCH,203,src/display.cpp,?Next_Object@DisplayClass@@QBEPAVObjectClass@@PAV2@@Z
 0x004AA380,DisplayClass::Prev_Object,MATCH,185,src/display.cpp,?Prev_Object@DisplayClass@@QBEPAVObjectClass@@PAV2@@Z
+0x004AA440,DisplayClass::Calculated_Cell,MATCH,1771,src/display.cpp,?Calculated_Cell@DisplayClass@@QBE?AVCell@@W4SourceType@@ABV2@1W4SpeedType@@_NW4MZoneType@@@Z
 0x004AAB30,DisplayClass::Good_Reinforcement_Cell,MATCH,220,src/display.cpp,?Good_Reinforcement_Cell@DisplayClass@@ABE_NABVCell@@0W4SpeedType@@HW4MZoneType@@@Z
 0x004AAC10,DisplayClass::TacticalClass::Action,MATCH,272,src/display.cpp,?Action@TacticalClass@DisplayClass@@MAEHIAAW4KeyNumType@@H@Z
 0x004AAD20,DisplayClass::Mouse_Right_Press,MATCH,3,src/display.cpp,?Mouse_Right_Press@DisplayClass@@MAEXABVPoint2D@@@Z
@@ -10949,6 +10953,7 @@ address,name,result,size,source,symbol
 0x00636540,PlanningTokenClass::Get_F1C,MATCH,4,src/planmgr.cpp,?Get_F1C@PlanningTokenClass@@QAE_NXZ
 0x00636550,PlanningTokenClass::Owner_Is_Mission,MATCH,32,src/planmgr.cpp,?Owner_Is_Mission@PlanningTokenClass@@QAE_NXZ
 0x00636570,PlanningTokenClass::Has_Started,MATCH,31,src/planmgr.cpp,?Has_Started@PlanningTokenClass@@QAE_NXZ
+0x00636590,PlanningTokenClass::Pop_Front,MATCH,539,src/planmgr.cpp,?Pop_Front@PlanningTokenClass@@QAE?AVEventClass@@XZ
 0x006367B0,PlanningTokenClass::Share_Range,MATCH,454,src/planmgr.cpp,?Share_Range@PlanningTokenClass@@QAEXPAVTechnoClass@@HH@Z
 0x00636980,PlanningTokenClass::Share_From,MATCH,452,src/planmgr.cpp,?Share_From@PlanningTokenClass@@QAEXPAVTechnoClass@@H@Z
 0x00636B50,PlanningTokenClass::FUN_00636B50,MATCH,386,src/planmgr.cpp,?FUN_00636B50@PlanningTokenClass@@QAEXH@Z
@@ -11043,6 +11048,7 @@ address,name,result,size,source,symbol
 0x0063AD30,FUN_0063AD30,MATCH,7,src/planmgr.cpp,?FUN_0063AD30@@YIXPAVPlanningNodeClass@@@Z
 0x0063AD40,FUN_0063AD40,MATCH,6,src/planmgr.cpp,?FUN_0063AD40@@YIPAVPlanningNodeClass@@XZ
 0x0063A8E0,FUN_0063A8E0,MATCH,466,src/planmgr.cpp,?FUN_0063A8E0@@YG_NVPoint2D@@@Z
+0x0063AD50,FUN_0063AD50,MATCH,756,src/planmgr.cpp,?FUN_0063AD50@@YIXXZ
 0x0063B050,FUN_0063B050,MATCH,48,src/planmgr.cpp,?FUN_0063B050@@YIPAVAbstractClass@@PAVEventClass@@@Z
 0x0063B080,FUN_0063B080,MATCH,7,src/planmgr.cpp,?FUN_0063B080@@YIXPAVPlanningNodeClass@@@Z
 0x0063B090,FUN_0063B090,MATCH,11,src/planmgr.cpp,?FUN_0063B090@@YIXXZ
@@ -13936,6 +13942,8 @@ address,name,result,size,source,symbol
 0x006D3290,Tactical::Render_Overlays,MATCH,472,src/tactical.cpp,?Render_Overlays@Tactical@@QAEXABV?$TRect@H@@0_N@Z
 0x006D3470,Tactical::Render_Fogged_Objects,MATCH,483,src/tactical.cpp,?Render_Fogged_Objects@Tactical@@QAEXABV?$TRect@H@@0_N@Z
 0x006D3660,Tactical::Render_Shroud,MATCH,528,src/tactical.cpp,?Render_Shroud@Tactical@@QAEXABV?$TRect@H@@00_N@Z
+0x006D3870,Tactical::Render_Buildings,MATCH,582,src/tactical.cpp,?Render_Buildings@Tactical@@QAEXABV?$TRect@H@@0_N@Z
+0x006D3AC0,Tactical::Render_Terrain,MATCH,582,src/tactical.cpp,?Render_Terrain@Tactical@@QAEXABV?$TRect@H@@0_N@Z
 0x006D4B50,Tactical::DrawTimer,MATCH,607,src/tactical.cpp,?DrawTimer@Tactical@@SIHHPAVColorScheme@@HPBGPA_KPA_N@Z
 0x006D4DB0,Tactical::Set_Caption_Text,MATCH,66,src/tactical.cpp,?Set_Caption_Text@Tactical@@QAEXPBGH@Z
 0x006D4E00,Tactical::Clear_Caption_Text,MATCH,17,src/tactical.cpp,?Clear_Caption_Text@Tactical@@QAEXXZ
@@ -13956,6 +13964,9 @@ address,name,result,size,source,symbol
 0x006D6AD0,Tactical::Get_Cell_Ramp,MATCH,28,src/tactical.cpp,?Get_Cell_Ramp@Tactical@@QAEHABVCoord@@@Z
 0x006D6AF0,Tactical::Add_Shadow_Control,MATCH,181,src/tactical.cpp,?Add_Shadow_Control@Tactical@@QAEXVShadowControlClass@@@Z
 0x006D6BB0,Tactical::Find_Bridge_Owner_Cell,MATCH,337,src/tactical.cpp,?Find_Bridge_Owner_Cell@Tactical@@QAEPAVCellClass@@ABVCell@@@Z
+0x006D6D10,Tactical::Draw_Overlays,MATCH,1232,src/tactical.cpp,?Draw_Overlays@Tactical@@QAEXABV?$TRect@H@@@Z
+0x006D71E0,Tactical::Draw_Shroud,MATCH,894,src/tactical.cpp,?Draw_Shroud@Tactical@@QAEXABV?$TRect@H@@@Z
+0x006D7560,Tactical::Draw_Tiles,MATCH,730,src/tactical.cpp,?Draw_Tiles@Tactical@@QAEXABV?$TRect@H@@0@Z
 0x006D7C00,Tactical::Draw_Tile_Shadows,MATCH,785,src/tactical.cpp,?Draw_Tile_Shadows@Tactical@@QAEXABV?$TRect@H@@0@Z
 0x006D8260,Tactical::Draw_Tile_Shadows,MATCH,619,src/tactical.cpp,?Draw_Tile_Shadows@Tactical@@QAEXHABV?$TRect@H@@@Z
 0x006D84D0,Tactical::Clamp_Pixel_To_Tactical,MATCH,89,src/tactical.cpp,?Clamp_Pixel_To_Tactical@Tactical@@QAE?AVPoint2D@@ABV2@@Z
@@ -18089,6 +18100,7 @@ address,name,result,size,source,symbol
 0x004028B0,audioRemoveChannel,MATCH,78,src/wpaudio/auddev.cpp,?audioRemoveChannel@@YIXPAUAudioChannel@@@Z
 0x00402900,AudioServiceAllDevices,MATCH,56,src/wpaudio/auddev.cpp,?AudioServiceAllDevices@@YIXXZ
 0x00402940,AudioSetUp,MATCH,70,src/wpaudio/auddev.cpp,?AudioSetUp@@YIHXZ
+0x00402990,AudioCloseDown,MATCH,347,src/wpaudio/auddev.cpp,?AudioCloseDown@@YIXXZ
 0x00402AF0,AudioLoadSystem,MATCH,142,src/wpaudio/auddev.cpp,?AudioLoadSystem@@YIPAUAudioSystem@@PAUAudioSystemMaster@@@Z
 0x00402B80,AudioUnloadSystem,MATCH,44,src/wpaudio/auddev.cpp,?AudioUnloadSystem@@YIXPAUAudioSystem@@@Z
 0x00402BB0,AudioUnloadAllSystems,MATCH,80,src/wpaudio/auddev.cpp,?AudioUnloadAllSystems@@YIXXZ
@@ -18168,6 +18180,7 @@ address,name,result,size,source,symbol
 0x00405490,AudioEventIsPaused,MATCH,7,src/wpaudio/audevent.cpp,?AudioEventIsPaused@@YIHPAVAudioEvent@@@Z
 0x004054A0,audioEventStart,MATCH,223,src/wpaudio/audevent.cpp,?audioEventStart@@YIHPAVAudioEvent@@@Z
 0x00405580,AudioEventEnd,MATCH,63,src/wpaudio/audevent.cpp,?AudioEventEnd@@YIXPAVAudioEvent@@@Z
+0x004055C0,AudioEventService,MATCH,1060,src/wpaudio/audevent.cpp,?AudioEventService@@YIXPAVAudioEvent@@@Z
 0x004059F0,audioEventStop,MATCH,16,src/wpaudio/audevent.cpp,?audioEventStop@@YIHPAUAudioChannel@@@Z
 0x00405A00,audioEventSampleDone,MATCH,184,src/wpaudio/audevent.cpp,?audioEventSampleDone@@YIHPAUAudioChannel@@@Z
 0x00405AC0,audioEventNextSample,MATCH,132,src/wpaudio/audevent.cpp,?audioEventNextSample@@YIHPAUAudioChannel@@@Z
