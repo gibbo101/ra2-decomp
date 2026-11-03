@@ -6,6 +6,7 @@
 #define NDEBUG
 #include "always.h"
 #include "ownrdraw.h"
+#include "tiprequest.h"
 #include "_keyboar.h"
 #include "_rules.h"
 #include "_surface.h"
@@ -1483,37 +1484,31 @@ int FUN_00603EA0(HWND dialog)
 	return -1;
 }
 
-struct WideTextRequest {
-	int first;
-	int second;
-	WideWstring text;
-};
-
 // FUNCTION: GAMEMD 0x00603F00
-WideWstring FUN_00603F00(HWND window, int first, int second)
+WideWstring FUN_00603F00(HWND window, HWND control, int index)
 {
-	WideTextRequest request;
-	request.first = first;
-	request.second = second;
+	TooltipRequest request;
+	request.Window = control;
+	request.Index = index;
 	SendMessage(window, 0x4e9, 0, (LPARAM)&request);
-	return request.text;
+	return request.Text;
 }
 
 // FUNCTION: GAMEMD 0x00603F60
-WideWstring FUN_00603F60(HWND window, int first)
+WideWstring FUN_00603F60(HWND window, HWND control)
 {
-	WideTextRequest request;
-	request.first = first;
-	request.second = -1;
+	TooltipRequest request;
+	request.Window = control;
+	request.Index = -1;
 	SendMessage(window, 0x4e9, 0, (LPARAM)&request);
-	return request.text;
+	return request.Text;
 }
 
 // FUNCTION: GAMEMD 0x00603FC0
-WideWstring FUN_00603FC0(HWND window, int first, WORD low, WORD high)
+WideWstring FUN_00603FC0(HWND window, HWND control, WORD low, WORD high)
 {
-	int second = SendMessage((HWND)first, 0x4e8, 0, MAKELONG(low, high));
-	WideWstring text = FUN_00603F00(window, first, second);
+	int index = SendMessage(control, 0x4e8, 0, MAKELONG(low, high));
+	WideWstring text = FUN_00603F00(window, control, index);
 	return text;
 }
 

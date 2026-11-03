@@ -11,6 +11,7 @@
 #include "init.h"
 #include "multiplayer.h"
 #include "netshare.h"
+#include "tiprequest.h"
 #include "rules.h"
 #include "session.h"
 #include "windlg.h"
@@ -720,12 +721,6 @@ bool FUN_006AE2C0(void)
 namespace UI {
 	int __fastcall StandardWndProc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 }
-
-struct TooltipRequest {
-	HWND Window;
-	int Index;
-	WideWstring Text;
-};
 
 void __fastcall FUN_006ACEE0(HWND window, int id, LPARAM lparam, int code);
 int __fastcall FUN_006AE6E0(HWND window, WPARAM wparam, LPARAM lparam);

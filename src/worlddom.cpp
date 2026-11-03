@@ -17,6 +17,7 @@
 #include "mixfile.h"
 #include "geometry.h"
 #include "ownrdraw.h"
+#include "tiprequest.h"
 #include "pcx.h"
 #include "rcptr.h"
 #include "wdtnet.h"
@@ -174,12 +175,6 @@ int __fastcall Run_Dialog_Control(int resource, DLGPROC proc, OwnerDraw::DialogC
 #include "stringtable.h"
 
 void FUN_00607FD0(HWND dialog);
-
-struct TooltipRequest {
-	HWND Window;
-	int Index;
-	WideWstring Text;
-};
 
 // FUNCTION: GAMEMD 0x007AF6C0
 BOOL CALLBACK FUN_007AF6C0(HWND window, UINT message, WPARAM wparam, LPARAM lparam)

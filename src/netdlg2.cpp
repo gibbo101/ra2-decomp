@@ -28,6 +28,7 @@
 #include "netshare.h"
 #include "newmenu.h"
 #include "ownrdraw.h"
+#include "tiprequest.h"
 #include "progress.h"
 #include "rules.h"
 #include "scenario.h"
@@ -1470,12 +1471,6 @@ void __fastcall FUN_005DE360(HWND window, int printcolor, int color)
 		}
 	}
 }
-
-struct TooltipRequest {
-	HWND Window;
-	int Index;
-	WideWstring Text;
-};
 
 void __fastcall FUN_004E3B90(HWND dialog);
 void FUN_004E43C0(void);
