@@ -76,6 +76,19 @@ if [ ! -d "$VC" ]; then
     trap - EXIT
 fi
 
+# The VC6 Processor Pack supplies MASM and its diagnostics separately from the compiler.
+# Extract only those two files so that the SP3 C/C++ tools keep their original versions.
+if [ ! -f "$VC/BIN/ML.EXE" ] || [ ! -f "$VC/BIN/ML.ERR" ]; then
+    pack="$DL/vcpp5.exe"
+    fetch https://archive.org/download/en_vs6_ent/vcpp5.exe "$pack" \
+        96817df1bb0cb58e5b1d0fbcc5b993a63548182add1fbff66365401203ecfb6c
+    tmp="$(mktemp -d -p "$TC")"
+    cabextract -q -F 'ml.*' -d "$tmp" "$pack"
+    cp "$tmp/ml.exe" "$VC/BIN/ML.EXE"
+    cp "$tmp/ml.err" "$VC/BIN/ML.ERR"
+    rm -rf "$tmp"
+fi
+
 # The include path the installer sets up: VC98\include, then mfc\include, then
 # atl\include (its AddToReg actions in SETUP/VS98ENT.STF).
 for sub in MFC ATL; do

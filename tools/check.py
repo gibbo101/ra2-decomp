@@ -333,12 +333,14 @@ def compile_source(src: Path, overlay: Path | None = None, headers: Path | None 
 
 def assemble_source(src: Path, out: Path) -> tuple[Path | None, str]:
     """Assemble src to `out` with MASM, if it copies a file of the TibSun archive."""
-    if archived_asm(src) is None:
+    archive = archived_asm(src)
+    if archive is None:
         return None, f"{src}: not a copy of an .asm file in {TIBSUN.relative_to(ROOT)}"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.unlink(missing_ok=True)
-    cmd = [str(ROOT / "tools/wml"), *ASM_FLAGS, f"/Fo{winpath(out)}", winpath(src)]
-    proc = subprocess.run(cmd, capture_output=True, text=True, cwd=ROOT)
+    # Assemble beside the pinned archive's .inc files (including the SOS codec tables).
+    cmd = [str(ROOT / "tools/wml"), *ASM_FLAGS, f"/Fo{winpath(out)}", winpath(archive)]
+    proc = subprocess.run(cmd, capture_output=True, text=True, cwd=archive.parent)
     log = proc.stdout + proc.stderr
     return (out if proc.returncode == 0 and out.exists() else None), log
 

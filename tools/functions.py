@@ -1,6 +1,9 @@
 """Build the function map of gamemd.exe: data/functions.csv.
 
-Usage: uv run tools/functions.py [EXE] [OUT_CSV]
+Usage: uv run tools/functions.py [EXE] [OUT_CSV] [--no-asm]
+
+Canonical regeneration uses MASM and the pinned archive for any .asm files in src/.
+Use --no-asm with a separate output path for a map without the archive evidence.
 
 A function start needs at least one piece of evidence, recorded as letters:
   P  the alignment padding the compiler puts between functions ends here
@@ -9,6 +12,7 @@ A function start needs at least one piece of evidence, recorded as letters:
   Y  YRpp names it (data/symbols.csv)
   G  Ghidra's analysis found it (build/ghidra/functions.csv, when present)
   L  a prebuilt library function was found here (data/library.csv)
+  A  a public entry in a uniquely located archived assembly code section
   F  code after a function's return or switch tables that no path through that function
      reaches, at an aligned address: a function nothing calls directly, placed with no
      padding before it
@@ -16,11 +20,12 @@ Every start must also be an instruction boundary of a linear sweep of .text. A
 function's size runs to the next start, less the padding (nop or int3) before it.
 """
 
+import argparse
 import bisect
 import csv
 import re
 import struct
-import sys
+import tempfile
 from pathlib import Path
 
 import capstone
@@ -151,9 +156,70 @@ def read_starts(path: Path, kind: str | None = None) -> dict[int, str]:
     return out
 
 
+def assembly_bounds(obj, code: bytes, base: int, evidence: dict[int, str],
+                    iat: set[int]) -> dict[int, int]:
+    """Locate archived MASM procedures independently of the addresses in source annotations."""
+    from coff import REL_DIR32, REL_REL32, STORAGE_EXTERNAL
+    from libmatch import MIN_SIZE, pattern
+
+    def unique(data: bytes, masked: set[int]) -> int | None:
+        if len(data) - len(masked) < MIN_SIZE:
+            return None
+        regex = re.compile(pattern(data, masked), re.DOTALL)
+        first = regex.search(code)
+        if first and not regex.search(code, first.start() + 1):
+            return base + first.start()
+        return None
+
+    def import_jump(addr: int) -> bool:
+        offset = addr - base
+        return (0 <= offset <= len(code) - 6 and code[offset:offset + 2] == b"\xff\x25"
+                and struct.unpack_from("<I", code, offset + 2)[0] in iat)
+
+    anchors = {a for a, flags in evidence.items() if set(flags) - {"P", "F", "A"}}
+    stops = {}
+    for sec in obj.sections:
+        if not sec.is_code or any(r.type not in (REL_DIR32, REL_REL32) for r in sec.relocs):
+            continue
+        procs = [(lo, hi) for sym, section, lo, hi in obj.functions() if section is sec
+                 and sym.type == 0x20 and sym.storage == STORAGE_EXTERNAL and lo < hi]
+        if not procs:
+            continue
+        masked = {r.offset + k for r in sec.relocs for k in range(4)}
+        addr = unique(sec.data, masked)
+        # An independent entry in the image corroborates the section's placement.
+        if addr is not None and any(addr + lo in anchors for lo, _ in procs):
+            for lo, hi in procs:
+                start, stop = addr + lo, addr + hi
+                interior = [a for a in evidence if start < a < stop]
+                if any(set(evidence[a]) - {"P", "F"} for a in interior):
+                    continue
+                for a in interior:
+                    del evidence[a]
+                evidence.setdefault(start, "A")
+                stops[start] = stop
+        else:
+            # A split section can still end at a run of linker import thunks.
+            lo, hi = procs[-1]
+            if hi != len(sec.data):
+                continue
+            at = unique(sec.data[lo:hi], {k - lo for k in masked if lo <= k < hi})
+            if at in anchors:
+                stop = at + hi - lo
+                if import_jump(stop) and import_jump(stop + 6):
+                    stops[at] = stop
+    return stops
+
+
 def main() -> None:
-    exe = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / "orig/gamemd.exe"
-    out = Path(sys.argv[2]) if len(sys.argv) > 2 else ROOT / "data/functions.csv"
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("exe", nargs="?", type=Path, default=ROOT / "orig/gamemd.exe")
+    parser.add_argument("out", nargs="?", type=Path, default=ROOT / "data/functions.csv")
+    parser.add_argument("--no-asm", action="store_true", help="omit MASM evidence in a separate map")
+    args = parser.parse_args()
+    exe, out = args.exe, args.out
+    if args.no_asm and out.resolve() == (ROOT / "data/functions.csv").resolve():
+        parser.error("--no-asm requires a separate output path")
     pe = pefile.PE(str(exe))
     text = pe.sections[0]
     base = pe.OPTIONAL_HEADER.ImageBase + text.VirtualAddress
@@ -317,12 +383,27 @@ def main() -> None:
             evidence[target] = "F"
             ordered.insert(i, target)
 
+    sources = sorted((ROOT / "src").rglob("*.asm"))
+    stops = {}
+    if sources and not args.no_asm:
+        from check import assemble_source
+        from coff import CoffObject
+        iat = {imp.address for dll in getattr(pe, "DIRECTORY_ENTRY_IMPORT", []) for imp in dll.imports}
+        (ROOT / "build").mkdir(exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=ROOT / "build") as tmp:
+            for src in sources:
+                obj, log = assemble_source(src, Path(tmp) / "archive.obj")
+                if obj is None:
+                    raise SystemExit(f"Cannot assemble {src.name} for function discovery: {log}")
+                stops.update(assembly_bounds(CoffObject(obj.read_bytes()), code, base, evidence, iat))
+        ordered = sorted(evidence)
+
     with out.open("w", newline="") as f:
         w = csv.writer(f, lineterminator="\n")
         w.writerow(["address", "size", "evidence", "name"])
         for i, a in enumerate(ordered):
             nxt = ordered[i + 1] if i + 1 < len(ordered) else end
-            stop = nxt
+            stop = min(nxt, stops.get(a, nxt))
             while stop > a + 1 and code[stop - 1 - base] in PADDING:
                 stop -= 1
             w.writerow([f"0x{a:08X}", stop - a, evidence[a], yrpp.get(a) or library.get(a, "")])

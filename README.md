@@ -50,9 +50,9 @@ method and a record of every batch.
 
 `data/manifest.csv` lists every matched function: address, size, the decorated symbol our
 object gives it, the source file, and the SHA-256 of the original's bytes at that address
-(so you know exactly which bytes a claim covers). Every file compiles with Visual C++ 6.0
-SP3 (`C2.DLL` 12.00.8447) and `/O2 /Ob2 /Gr /GR /MT /DWIN32`; `tools/manifest.py`
-regenerates the list. Disagreements with another decompilation's labels at the same
+(so you know exactly which bytes a claim covers). C++ uses Visual C++ 6.0 SP3
+(`C2.DLL` 12.00.8447) with `/O2 /Ob2 /Gr /GR /MT /DWIN32`. Archived assembly uses
+MASM with `/c /coff /Cx`. `tools/manifest.py` regenerates the list. Disagreements with another decompilation's labels at the same
 address are welcome as issues.
 
 ## Contributing
@@ -81,9 +81,10 @@ audio, maps, strings or other assets, and it never will. You must own a legal co
   takes the executable's resources from it.
 - **Running** the result needs your installed game for all of its data.
 
-The compiler is not included either. `tools/setup_toolchain.sh` fetches Visual C++ 6.0 and
-Service Pack 3 from archive.org, checks them against pinned hashes and sets them up under
-Wine (needs `curl`, `7z`, `cabextract`, `wine` and `python3`).
+`tools/setup_toolchain.sh` fetches Visual C++ 6.0, Service Pack 3 and the Processor Pack
+from archive.org, checks them against pinned hashes and sets them up under Wine (needs
+`curl`, `7z`, `cabextract`, `wine` and `python3`). Only MASM 6.15 and its diagnostics
+come from the Processor Pack. The C++ compiler stays at SP3.
 
 ## Not affiliated with EA
 
@@ -104,8 +105,9 @@ Electronic Arts Inc.
 
 Neither licence grants any right to Electronic Arts' trademarks or to the game itself.
 
-Every file in `src/` and `include/` starts with this header; the second copyright line
-and the last line appear only when the file carries Electronic Arts or OpenTS material:
+The standalone assembly files retain the pinned archive's licence headers. C++ files in
+`src/` and `include/` start with this header; the second copyright line and the last line
+appear only when the file carries Electronic Arts or OpenTS material:
 
 ```cpp
 // SPDX-License-Identifier: GPL-3.0-or-later
